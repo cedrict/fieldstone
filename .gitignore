@@ -3,6 +3,15 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+*.out
+*.toc
+*.aux
+*.log
+*.blg
+*.bbl
+
+
+
 # C extensions
 *.so
 

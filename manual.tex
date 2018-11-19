@@ -1,0 +1,558 @@
+\documentclass[a4paper]{article}
+\usepackage{graphicx}
+\usepackage[cm]{fullpage}
+\usepackage{bm}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+\lstset{ 
+  language=Python,
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+}
+
+
+
+\title{The Finite Element Method in Geodynamics}
+
+\author{C. Thieulot}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+practical hands-on approach
+
+as little as possible jargon
+
+no mathematical proof
+
+no optimised codes (readability over efficiency). avoiding as much as possible to have to look elsewhere.
+very sequential, so unavoidable repetitions (jacobian, shape functions)
+
+FE is one of several methods.
+
+\subsection{Acknowledgments}
+
+Jean Braun, Philippe Fullsack, Arie van den Berg.
+Lukas van de Wiel. Robert Myhill.
+Menno, Anne
+Too many BSc and MSc students to name indivisually, although Job Mos did produce the
+very first version of fieldstone as part of his MSc thesis.
+The ASPECT team in general and Wolfgang Bangerth in particular.
+
+%--------------------------------
+\subsection{Essential literature}
+
+\begin{center}
+a)\includegraphics[height=4cm]{images/literature/gerya_book}
+b)\includegraphics[height=4cm]{images/literature/tackley_book}
+c)\includegraphics[height=4cm]{images/literature/donea_huerta_book}
+d)\includegraphics[height=4cm]{images/literature/bercovici_book}
+e)\includegraphics[height=4cm]{images/literature/sto_book}\\
+%a) \url{https://doi.org/10.1017/CBO9780511809101}
+%b) \url{https://doi.org/10.1017/CBO9780511780820}
+%c) \url{https://www.wiley.com/en-us/Finite+Element+Methods+for+Flow+Problems-p-9780471496663}
+%d) \url{https://www.elsevier.com/books/treatise-on-geophysics-volume-7/bercovici/978-0-444-51935-1}
+\end{center}
+
+%---------------------------------------
+\subsection{Installation}
+
+\begin{verbatim}
+python3.6 -m pip install --user numpy scipy matplotlib
+\end{verbatim}
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%
+\section{The physical equations of Fluid Dynamics}
+
+[from aspect manual]
+We focus on the system of equations in a $d=2$- or $d=3$-dimensional
+domain $\Omega$ that describes the motion of a highly viscous fluid driven
+by differences in the gravitational force due to a density that depends on
+the temperature. In the following, we largely follow the exposition of this
+material in Schubert, Turcotte and Olson \cite{scto01}.
+
+Specifically, we consider the following set of equations for velocity $\mathbf
+u$, pressure $p$ and temperature $T$:
+\begin{align}
+  \label{eq:stokes-1}
+  -\nabla \cdot \left[2\eta \left(\dot\varepsilon(\bm v)
+                                  - \frac{1}{3}(\nabla \cdot \bm v)\mathbf 1\right)
+                \right] + \nabla p &=
+  \rho \bm g
+  &
+  & \textrm{in $\Omega$},
+  \\
+  \label{eq:stokes-2}
+  \nabla \cdot (\rho \bm v) &= 0
+  &
+  & \textrm{in $\Omega$},
+  \\
+  \label{eq:temperature}
+  \rho C_p \left(\frac{\partial T}{\partial t} + \bm v\cdot\nabla T\right)
+  - \nabla\cdot k\nabla T
+  &=
+  \rho H
+  \notag
+  \\
+  &\quad
+  +
+  2\eta
+  \left(\dot\varepsilon(\bm v) - \frac{1}{3}(\nabla \cdot \bm v)\mathbf 1\right)
+  :
+  \left(\dot\varepsilon(\bm v) - \frac{1}{3}(\nabla \cdot \bm v)\mathbf 1\right)
+  \\
+  &\quad
+  +\alpha T \left( \bm v \cdot \nabla p \right)
+  \notag
+  \\
+  &\quad
+  + \rho T \Delta S \left(\frac{\partial X}{\partial t} + \bm v\cdot\nabla X\right)
+  &
+  & \textrm{in $\Omega$},
+  \notag
+\end{align}
+where $\dot\varepsilon(\mathbf u) = \frac{1}{2}(\nabla \mathbf u + \nabla\mathbf
+u^T)$ is the symmetric gradient of the velocity (often called the
+\textit{strain rate}).%
+
+In this set of equations, \eqref{eq:stokes-1} and \eqref{eq:stokes-2}
+represent the compressible Stokes equations in which $\mathbf v=\mathbf
+v(\mathbf x,t)$ is the velocity field and $p=p(\mathbf x,t)$ the pressure
+field. Both fields depend on space $\mathbf x$ and time $t$. Fluid flow is
+driven by the gravity force that acts on the fluid and that is proportional to
+both the density of the fluid and the strength of the gravitational pull.
+
+Coupled to this Stokes system is equation \eqref{eq:temperature} for the
+temperature field $T=T(\mathbf x,t)$ that contains heat conduction terms as
+well as advection with the flow velocity $\mathbf v$. The right hand side
+terms of this equation correspond to
+\begin{itemize}
+\item internal heat production for example due to radioactive decay;
+\item friction heating;
+\item adiabatic compression of material;
+\item phase change.
+\end{itemize}
+The last term of the temperature equation corresponds to
+the latent heat generated or consumed in the process of phase change of material. 
+In what follows we will not assume that no phase change takes place so that we disregard this term 
+altogether.
+
+%---------------------------------
+\subsection{the Boussinesq approximation: an Incompressible flow}
+
+[from aspect manual]
+The Boussinesq approximation assumes that the density can be
+considered constant in all occurrences in the equations with the exception of
+the buoyancy term on the right hand side of \eqref{eq:stokes-1}. The primary
+result of this assumption is that the continuity equation \eqref{eq:stokes-2}
+will now read
+\[
+{\bm \nabla}\cdot{\bm v} = 0
+\]
+This implies that the strain rate tensor is deviatoric.
+Under the Boussinesq approximation, the equations are much simplified:
+
+\begin{align}
+  \label{eq:stokes-1}
+  -\nabla \cdot \left[2\eta \dot\varepsilon(\bm v)
+                \right] + \nabla p &=
+  \rho \bm g
+  &
+  & \textrm{in $\Omega$},
+  \\
+  \label{eq:stokes-2}
+  \nabla \cdot (\rho \bm v) &= 0
+  &
+  & \textrm{in $\Omega$},
+  \\
+  \label{eq:temperature}
+  \rho_0 C_p \left(\frac{\partial T}{\partial t} + \bm v\cdot\nabla T\right)
+  - \nabla\cdot k\nabla T
+  &=
+  \rho H
+  &
+  & \textrm{in $\Omega$}
+\end{align}
+Note that all terms on the rhs of the temperature equations have disappeared, with the exception 
+of the source term.
+
+These are the equations which are used and implemented in all the codes, unless otherwise
+indicated.
+
+%---------------------------------
+\subsubsection{The penalty approach}
+
+In order to impose the incompressibility constraint, two widely used procedures are available, namely the 
+Lagrange multiplier method and the penalty method \cite{bathe82,hugh}. The latter is implemented in {\sc elefant}, which allows for the elimination of the pressure variable from the momentum equation (resulting in a reduction of the matrix size).%, based on a relaxation of the incompressibility constraint. 
+
+Mathematical details on the origin and validity of the penalty approach applied to the Stokes problem can for instance be found in  \cite{cuss86}, \cite{redd82} or \cite{gunz89}.
+
+The penalty formulation of the mass conservation equation is based on a relaxation of the incompressibility constraint and writes 
+\begin{equation}
+{\bm \nabla}\cdot {\bm v} + \frac{p}{\lambda} = 0 \label{penal}
+\end{equation}
+where $\lambda$ is the penalty parameter, that can be interpreted (and has the same dimension) as a bulk viscosity. It is 
+equivalent to say that the material is weakly compressible. It can be shown that if one chooses $\lambda$ to be a 
+sufficiently large number, the continuity equation $ {\bm \nabla}\cdot {\bm v} = 0$ will be approximately satisfied in the finite element solution. The value of $\lambda$ is often recommended to be 6 to 7 orders of magnitude larger than the shear viscosity \cite{dohu03,hulb79}.
+
+%Note that Eq. (\ref{penal}) does not form the basis of the penalty method (as often implied) for the Stokes equation but is a consequence of minimising a modified functional of the problem under certain assumptions \cite{redd82}. 
+
+Equation (\ref{penal}) can be used to eliminate the pressure in Eq. (\ref{mce2}) so that the mass and momentum conservation equations fuse to become :
+\begin{equation}
+{\bm \nabla}\cdot ( 2 \eta \dot\varepsilon({\bm v})) + \lambda {\bm \nabla} ({\bm \nabla }\cdot {\bm v}) = \rho {\bm g} = 0 \label{peneq}
+\end{equation}
+
+\cite{mahu78} have established the equivalence for incompressible problems between the reduced integration
+of the penalty term and a mixed Finite Element approach if the pressure nodes coincide with the integration points of the reduced rule.
+
+In the end, the elimination of the pressure unknown in the Stokes equations
+replaces the original saddle-point Stokes problem \cite{begl05} by an elliptical problem, 
+which leads to a symmetric positive definite (SPD) FEM matrix. 
+%Such systems always admit a square root triangular matrix (the Cholesky factor, L) and can be solved, once L has been computed (Cholesky factorization), by 2 triangular matrix solves (upper and lower back-substitutions). 
+This is the major benefit of the penalized approach 
+over the full indefinite solver with the velocity-pressure variables. Indeed, the SPD character of the matrix lends itself 
+to efficient solving stragegies and is less memory-demanding since it is sufficient to store only the upper half of the matrix including the diagonal
+\cite{gova}
+.
+ToDo: list codes which use this approach.
+
+
+
+
+
+\newpage
+%------------------------------------------------------------------------------
+\section{The Finite Element Method}
+
+\subsection{aaa}
+
+
+\subsection{Solving procedures}
+
+\subsubsection{the whole matrix at once}
+
+\subsubsection{the pressure Schur complement appraoch}
+
+
+
+\newpage
+%------------------------------------------------------------------------------
+\section{Additional techniques}
+
+\subsection{The method of manufactured solutions}
+
+\subsection{Sparse storage}
+
+\subsection{Mesh generation}
+
+\subsection{The value of the timestep}
+
+\subsection{Tracking materials}
+
+\subsection{Visco-Plasticity}
+
+\subsection{Picard and Newton}
+
+\subsection{The choice of solvers}
+
+\subsection{The SUPG formulation for the energy equation}
+
+\subsection{Tracking materials and/or interfaces}
+
+\subsection{Dealing with a free surface}
+
+
+
+
+
+
+
+
+
+\newpage
+so much to do ... 
+
+impose bc on el matrix
+
+Q2Q1 
+
+Q3Q2
+
+3D - Burstedde benchmark 
+
+full compressible 
+
+total energy calculations
+
+constraints
+
+Q1Q1-stab
+
+non-linear rheologies (punch, two layer brick spmw16, tosn15) 
+
+Picard vs Newton
+
+markers
+
+Schur complement approach
+
+periodic boundary conditions
+
+open boundary conditions
+
+export to vtu 
+
+free surface 
+
+SUPG
+
+produce fastest version possible for convection box
+
+zaleski disk advection
+
+all kinds of interesting benchmarks
+
+Busse convection pb, compare with aspect 
+
+cvi !!!
+
+pure elastic 
+
+including phase changes (w. R. Myhill)
+
+derivatives on nodes
+
+Nusselt
+
+aBBT matrix as whole to solver?
+
+discontinuous galerkin
+
+formatting of code style
+
+navier-stokes ? (LUKAS)
+
+pressure smoothing
+
+compute strainrate in middle of element or at quad point for punch?
+
+GEO1442 code 
+
+GEO1442 indenter setup in plane ?
+
+in/out flow on sides for lith modelling
+
+\noindent Problems to solve:
+
+colorscale 
+
+velocity arrows 
+
+better yet simple matrix storage ?
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: simple analytical solution}
+\input{python_codes/fieldstone/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: Stokes sphere }
+\input{python_codes/fieldstone_stokes_sphere/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: Convection in a 2D box}
+\input{python_codes/fieldstone_convection_box/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: solcx benchmark}
+\input{python_codes/fieldstone_solcx/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: solkz benchmark}
+\input{python_codes/fieldstone_solkz/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: solvi benchmark}
+\input{python_codes/fieldstone_solvi/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: the indentor benchmark}
+\input{python_codes/fieldstone_indentor/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: the annulus benchmark}
+\input{python_codes/fieldstone_annulus/text}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: stokes sphere (3D)}
+\input{python_codes/fieldstone_stokes_sphere_3D/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: consistent pressure recovery }
+\input{python_codes/fieldstone_consistent_pressure_recovery/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: the Particle in Cell technique (1) - the effect of averaging}
+\input{python_codes/fieldstone_markers_avrg/text}
+
+
+
+
+
+
+
+%\newpage
+%\subsection{Using MUMPS}
+%\subsection{With periodic boundary conditions}
+%\subsection{Different Cmat}
+%\subsection{Penalty Uzawa formulation}
+%\subsection{Powell-Hestenes iterations a la MILAMIN}
+%\subsection{With temperature and phase change}
+%\subsection{Conformal refinement}
+%\subsection{Newton vs Picard solver}
+%\subsection{With markers}
+%\subsection{Stress b.c.}
+%\subsection{open boundary conditions}
+%\subsection{melt generation}
+%after Schmeling paper
+%\subsection{Consistent pressure recovery}
+%\subsection{Uzawa outer scheme}
+%\subsection{PCG outer scheme}
+
+
+\appendix
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The main codes in computational geodynamics}
+
+In what follows I make a quick inventory of the main codes of computational geodynamics, 
+for crust, lithosphere and/or mantle modelling.
+
+\subsection{ADELI}
+
+\subsection{ASPECT}
+
+\subsection{CITCOMS and CITCOMCU}
+
+\subsection{DOUAR}
+
+\subsection{GAIA}
+
+\subsection{GALE}
+
+\subsection{GTECTON}
+
+\subsection{ELVIS}
+
+\subsection{ELEFANT}
+
+\subsection{ELLIPSIS}
+
+\subsection{FANTOM}
+
+\subsection{FLUIDITY}
+
+\subsection{LAMEM}
+
+\subsection{MILAMIN}
+
+\subsection{PARAVOZ/FLAMAR}
+
+\subsection{PTATIN}
+
+\subsection{RHEA}
+
+\subsection{SEPRAN}
+
+\subsection{SOPALE}
+
+\subsection{STAGYY}
+
+\subsection{SULEC}
+SULEC is a finite element code that solves the incompressible Navier-Stokes equations 
+for slow creeping flows. The code is developed by Susan Ellis 
+(GNS Sciences, NZ) and Susanne Buiter (NGU). 
+
+
+\subsection{TERRA}
+
+\subsection{UNDERWORLD 1\&2}
+
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{fieldstone.py}
+%\lstinputlisting{python_codes/fieldstone/fieldstone.py}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{fieldstone\_stokes\_sphere.py}
+%\lstinputlisting{python_codes/fieldstone_stokes_sphere/fieldstone.py}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{fieldstone\_convection\_box.py}
+%\lstinputlisting{python_codes/fieldstone_convection_box/fieldstone_convection_box.py}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{fieldstone\_solcx.py}
+\lstinputlisting{python_codes/fieldstone_solcx/fieldstone.py}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{fieldstone\_indentor.py}
+\lstinputlisting{python_codes/fieldstone_indentor/fieldstone.py}
+
+
+
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\newpage
+\bibliographystyle{plain}
+\bibliography{../writings/biblio_geosciences2}
+
+
+\end{document}
+
+

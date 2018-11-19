@@ -1,0 +1,2 @@
+pdflatex manual.tex
+bibtex manual
