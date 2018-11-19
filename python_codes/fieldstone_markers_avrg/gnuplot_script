@@ -1,0 +1,8 @@
+set term pdf enhanced
+set output 'errors.pdf'
+set xlabel 'nel'
+set ylabel 'v_{rms}'
+plot[][]\
+'vrms_avrg1_norand' u 2:5 w lp t 'avrg=1',\
+'vrms_avrg2_norand' u 2:5 w lp t 'avrg=2',\
+'vrms_avrg3_norand' u 2:5 w lp t 'avrg=3'
