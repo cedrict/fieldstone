@@ -9,7 +9,8 @@ __pycache__/
 *.log
 *.blg
 *.bbl
-
+*.vtu
+*.ascii
 
 
 # C extensions
