@@ -6,7 +6,7 @@ import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 import time as time
 import matplotlib.pyplot as plt
-import tkinter
+from scipy.sparse import csr_matrix, lil_matrix
 
 #------------------------------------------------------------------------------
 
@@ -47,9 +47,9 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    nelz = int(sys.argv[3])
 else:
-   nelx = 24
-   nely = 24
-   nelz = 24
+   nelx = 16
+   nely = 16
+   nelz = 16
 
 assert (nelx>0.), "nelx should be positive" 
 assert (nely>0.), "nely should be positive" 
@@ -120,8 +120,7 @@ for i in range(0, nelx):
 #################################################################
 # define boundary conditions
 #################################################################
-
-print("defining boundary conditions")
+start = time.time()
 
 bc_fix=np.zeros(Nfem,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=float)  # boundary condition, value
@@ -140,24 +139,26 @@ for i in range(0,nnp):
     if z[i]>(Lz-eps):
        bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
 
+print("define b.c.: %.3f s" % (time.time() - start))
+
 #################################################################
 # build FE matrix
 #################################################################
+start = time.time()
 
-print("building FE matrix")
-
-a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-b_mat = np.zeros((6,ndof*m),dtype=np.float64)   # gradient matrix B 
-rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-N     = np.zeros(m,dtype=np.float64)            # shape functions
-dNdx  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-dNdy  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-dNdz  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-dNdr  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-dNds  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-dNdt  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-u     = np.zeros(nnp,dtype=np.float64)          # x-component velocity
-v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
+a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64) # matrix of Ax=b
+b_mat = np.zeros((6,ndof*m),dtype=np.float64)    # gradient matrix B 
+rhs   = np.zeros(Nfem,dtype=np.float64)          # right hand side of Ax=b
+N     = np.zeros(m,dtype=np.float64)             # shape functions
+dNdx  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
+dNdy  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
+dNdz  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
+dNdr  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
+dNds  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
+dNdt  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
+u     = np.zeros(nnp,dtype=np.float64)           # x-component velocity
+v     = np.zeros(nnp,dtype=np.float64)           # y-component velocity
+w     = np.zeros(nnp,dtype=np.float64)           # z-component velocity
 k_mat = np.zeros((6,6),dtype=np.float64) 
 c_mat = np.zeros((6,6),dtype=np.float64) 
 
@@ -379,27 +380,33 @@ for iel in range(0, nel):
                     a_mat[m1,m2]+=a_el[ikk,jkk]
             rhs[m1]+=b_el[ikk]
 
+a_mat=csr_matrix(a_mat)
+
+print("build FE system: %.3f s" % (time.time() - start))
+
 #################################################################
 # solve system
 #################################################################
-
 start = time.time()
-sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+
+sol = sps.linalg.spsolve(a_mat,rhs)
+
 print("solve time: %.3f s" % (time.time() - start))
-print("-----------------------------")
 
 #####################################################################
 # put solution into separate x,y velocity arrays
 #####################################################################
+start = time.time()
 
 u,v,w=np.reshape(sol,(nnp,3)).T
 
-print("u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-print("v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
-print("w (m,M) %.4f %.4f " %(np.min(w),np.max(w)))
+print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
+print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
+print("     -> w (m,M) %.4f %.4f " %(np.min(w),np.max(w)))
 
 np.savetxt('velocity.ascii',np.array([x,y,z,u,v,w]).T,header='# x,y,z,u,v,w')
 
+print("transfer solution: %.3f s" % (time.time() - start))
 #####################################################################
 # retrieve pressure
 #####################################################################
@@ -503,20 +510,20 @@ for iel in range(0,nel):
     sr[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel]+ezz[iel]*ezz[iel])
                     +exy[iel]*exy[iel]+exz[iel]*exz[iel]+eyz[iel]*eyz[iel])
 
-print("p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
-print("exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-print("eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-print("ezz (m,M) %.4f %.4f " %(np.min(ezz),np.max(ezz)))
-print("exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
-print("exz (m,M) %.4f %.4f " %(np.min(exz),np.max(exz)))
-print("eyz (m,M) %.4f %.4f " %(np.min(eyz),np.max(eyz)))
-print("visc (m,M) %.4f %.4f " %(np.min(visc),np.max(visc)))
-print("dens (m,M) %.4f %.4f " %(np.min(dens),np.max(dens)))
+print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
+print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
+print("     -> ezz (m,M) %.4f %.4f " %(np.min(ezz),np.max(ezz)))
+print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+print("     -> exz (m,M) %.4f %.4f " %(np.min(exz),np.max(exz)))
+print("     -> eyz (m,M) %.4f %.4f " %(np.min(eyz),np.max(eyz)))
+print("     -> visc (m,M) %.4f %.4f " %(np.min(visc),np.max(visc)))
+print("     -> dens (m,M) %.4f %.4f " %(np.min(dens),np.max(dens)))
 
 np.savetxt('pressure.ascii',np.array([xc,yc,zc,p]).T,header='# xc,yc,zc,p')
 np.savetxt('strainrate.ascii',np.array([xc,yc,zc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
-print("compute p and strainrate (%.3fs)" % (time.time() - start))
+print("compute p and strainrate: %.3f s" % (time.time() - start))
 
 #####################################################################
 # plot of solution
@@ -598,7 +605,7 @@ if visu==1:
    vtufile.write("</UnstructuredGrid>\n")
    vtufile.write("</VTKFile>\n")
    vtufile.close()
-   print("export to vtu (%.3fs)" % (time.time() - start))
+   print("export to vtu: %.3f s" % (time.time() - start))
 
 print("-----------------------------")
 print("------------the end----------")

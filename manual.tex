@@ -26,12 +26,18 @@
   keywordstyle=\color{blue},       % keyword style
 }
 
+\newcommand{\A}{{\mathbb{A}}}
+\newcommand{\K}{{\mathbb{K}}}
+\newcommand{\G}{{\mathbb{G}}}
+\usepackage{makeidx} 
+
 
 
 \title{The Finite Element Method in Geodynamics}
 
 \author{C. Thieulot}
 
+\makeindex 
 \begin{document}
 
 \maketitle
@@ -166,6 +172,8 @@ altogether.
 %---------------------------------
 \subsection{the Boussinesq approximation: an Incompressible flow}
 
+\index{Boussinesq}
+
 [from aspect manual]
 The Boussinesq approximation assumes that the density can be
 considered constant in all occurrences in the equations with the exception of
@@ -207,6 +215,8 @@ indicated.
 
 %---------------------------------
 \subsubsection{The penalty approach}
+
+\index{penalty formulation}
 
 In order to impose the incompressibility constraint, two widely used procedures are available, namely the 
 Lagrange multiplier method and the penalty method \cite{bathe82,hugh}. The latter is implemented in {\sc elefant}, which allows for the elimination of the pressure variable from the momentum equation (resulting in a reduction of the matrix size).%, based on a relaxation of the incompressibility constraint. 
@@ -298,13 +308,13 @@ ToDo: list codes which use this approach.
 \newpage
 so much to do ... 
 
-impose bc on el matrix
+write about impose bc on el matrix
+
+Q1Q1-stab
 
 Q2Q1 
 
 Q3Q2
-
-3D - Burstedde benchmark 
 
 full compressible 
 
@@ -312,7 +322,7 @@ total energy calculations
 
 constraints
 
-Q1Q1-stab
+free-slip bc on annulus and sphere . See for example p540 Gresho and Sani book.
 
 non-linear rheologies (punch, two layer brick spmw16, tosn15) 
 
@@ -350,8 +360,6 @@ derivatives on nodes
 
 Nusselt
 
-aBBT matrix as whole to solver?
-
 discontinuous galerkin
 
 formatting of code style
@@ -372,14 +380,12 @@ in/out flow on sides for lith modelling
 
 colorscale 
 
-velocity arrows 
-
 better yet simple matrix storage ?
 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: simple analytical solution}
+\section{{\tt fieldstone}: simple analytical solution \label{f1}}
 \input{python_codes/fieldstone/text}
 
 \newpage
@@ -420,8 +426,13 @@ better yet simple matrix storage ?
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: stokes sphere (3D)}
+\section{{\tt fieldstone}: stokes sphere (3D) - penalty\label{f5}}
 \input{python_codes/fieldstone_stokes_sphere_3D/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: stokes sphere (3D) - mixed formulation\label{f5}}
+\input{python_codes/fieldstone_stokes_sphere_3D_saddlepoint/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -433,7 +444,25 @@ better yet simple matrix storage ?
 \section{{\tt fieldstone}: the Particle in Cell technique (1) - the effect of averaging}
 \input{python_codes/fieldstone_markers_avrg/text}
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: solving the full saddle point problem}
+\input{python_codes/fieldstone_saddlepoint/text}
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: solving the full saddle point problem in 3D}
+\input{python_codes/fieldstone_burstedde/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: The non-conforming $Q_1 \times P_0$ element} 
+\input{python_codes/fieldstone_RTelement/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: The stabilised $Q_1 \times Q_1$ element} 
+\input{python_codes/fieldstone_q1q1stab/text}
 
 
 
@@ -537,21 +566,26 @@ for slow creeping flows. The code is developed by Susan Ellis
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{fieldstone\_solcx.py}
-\lstinputlisting{python_codes/fieldstone_solcx/fieldstone.py}
+%\lstinputlisting{python_codes/fieldstone_solcx/fieldstone.py}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{fieldstone\_indentor.py}
-\lstinputlisting{python_codes/fieldstone_indentor/fieldstone.py}
+%\lstinputlisting{python_codes/fieldstone_indentor/fieldstone.py}
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{fieldstone\_saddlepoint.py}
+%\lstinputlisting{python_codes/fieldstone_saddlepoint/fieldstone.py}
 
 
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \newpage
 \bibliographystyle{plain}
-\bibliography{../writings/biblio_geosciences2}
+\bibliography{../../writings/biblio_geosciences2}
 
+\printindex
 
 \end{document}
 

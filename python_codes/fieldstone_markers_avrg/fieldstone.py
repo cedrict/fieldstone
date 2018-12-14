@@ -7,6 +7,7 @@ from scipy.sparse.linalg.dsolve import linsolve
 import time as time
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
+import random
 
 #------------------------------------------------------------------------------
 
@@ -16,6 +17,32 @@ def paint(x,y):
     else:
        val=1
     return val
+
+def onePlot(variable, plotX, plotY, title, labelX, labelY, extVal, limitX, limitY, colorMap):
+    im = axes[plotX][plotY].imshow(np.flipud(variable),extent=extVal, cmap=colorMap, interpolation="nearest")
+    axes[plotX][plotY].set_title(title,fontsize=10, y=1.01)
+
+    if (limitX != 0.0):
+       axes[plotX][plotY].set_xlim(0,limitX)
+
+    if (limitY != 0.0):
+       axes[plotX][plotY].set_ylim(0,limitY)
+
+    axes[plotX][plotY].set_xlabel(labelX)
+    axes[plotX][plotY].set_ylabel(labelY)
+    fig.colorbar(im,ax=axes[plotX][plotY])
+    return
+
+def scatterPlot(x,y,val, plotX, plotY, title, labelX, labelY, extVal, limitX, limitY, colorMap):
+    im = axes[plotX][plotY].scatter(x,y,c=val,s=0.2)
+    axes[plotX][plotY].set_title(title,fontsize=10, y=1.01)
+    axes[plotX][plotY].set_xlim(0,limitX)
+    axes[plotX][plotY].set_ylim(0,limitY)
+    axes[plotX][plotY].set_xlabel(labelX)
+    axes[plotX][plotY].set_ylabel(labelY)
+    axes[plotX][plotY].set_aspect('equal')
+    fig.colorbar(im,ax=axes[plotX][plotY])
+    return
 
 #------------------------------------------------------------------------------
 
@@ -36,20 +63,22 @@ assert (Lx>0.), "Lx should be positive"
 assert (Ly>0.), "Ly should be positive" 
 
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 7):
+if int(len(sys.argv) == 8):
    nelx           =int(sys.argv[1])
    nely           =int(sys.argv[2])
    visu           =int(sys.argv[3])
    avrg           =int(sys.argv[4])
    nmarker_per_dim=int(sys.argv[5])
    random_markers =int(sys.argv[6])
+   proj           =int(sys.argv[7])
 else:
    nelx = 32
    nely = 32
    visu = 1
-   avrg = 2
+   avrg = 3
    nmarker_per_dim=4
    random_markers=0
+   proj = 3
 
 assert (nelx>0.), "nnx should be positive" 
 assert (nely>0.), "nny should be positive" 
@@ -72,7 +101,6 @@ eps=1.e-10
 
 sqrt3=np.sqrt(3.)
 
-
 rho_mat = np.array([1.,2.],dtype=np.float64) 
 eta_mat = np.array([1.,1.e3],dtype=np.float64) 
 
@@ -92,13 +120,15 @@ for j in range(0, nny):
         y[counter]=j*Ly/float(nely)
         counter += 1
 
+#np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
+
 #################################################################
 # connectivity
 #################################################################
 
 print("connectivity")
 
-icon =np.zeros((m, nel),dtype=np.int16)
+icon =np.zeros((m, nel),dtype=np.int32)
 
 counter = 0
 for j in range(0, nely):
@@ -138,12 +168,14 @@ if random_markers==1:
        x4=x[icon[3,iel]] ; y4=y[icon[3,iel]]
        for im in range(0,nmarker_per_element):
            # generate random numbers r,s between 0 and 1
+           r=random.uniform(-1.,+1)
+           s=random.uniform(-1.,+1)
            N1=0.25*(1-r)*(1-s)
            N2=0.25*(1+r)*(1-s)
            N3=0.25*(1+r)*(1+s)
            N4=0.25*(1-r)*(1+s)
-           swarm_x[counter]=0.25*N1*x1+0.25*N2*x2+0.25*N3*x3+0.25*N4*x4
-           swarm_y[counter]=0.25*N1*y1+0.25*N2*y2+0.25*N3*y3+0.25*N4*y4
+           swarm_x[counter]=N1*x1+N2*x2+N3*x3+N4*x4
+           swarm_y[counter]=N1*y1+N2*y2+N3*y3+N4*y4
            counter+=1
 
 else:
@@ -165,21 +197,27 @@ else:
                swarm_y[counter]=N1*y1+N2*y2+N3*y3+N4*y4
                counter+=1
 
-print("swarm_x (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))
-print("swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
+print("     -> swarm_x (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))
+print("     -> swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
 
 #################################################################
 # material layout
 #################################################################
+start = time.time()
 
 for im in range(0,nmarker):
     swarm_mat[im] = paint(swarm_x[im],swarm_y[im])
 
-print("swarm_mat (m,M) %.4f %.4f " %(np.min(swarm_mat),np.max(swarm_mat)))
+print("     -> swarm_mat (m,M) %.4f %.4f " %(np.min(swarm_mat),np.max(swarm_mat)))
+
+np.savetxt('swarm.ascii',np.array([swarm_x,swarm_y,swarm_mat]).T,header='# x,y,mat')
+
+print("material layout: %.3f s" % (time.time() - start))
 
 #################################################################
 # compute elemental averagings 
 #################################################################
+start = time.time()
 
 rho_elemental=np.zeros(nel,dtype=np.float64) 
 eta_elemental=np.zeros(nel,dtype=np.float64) 
@@ -210,8 +248,6 @@ for im in range(0,nmarker):
        
 for iel in range(0,nel):
     rho_elemental[iel]/=nmarker_per_element
-
-for iel in range(0,nel):
     if avrg==1:
        eta_elemental[iel]/=nmarker_per_element
     if avrg==2:
@@ -219,15 +255,124 @@ for iel in range(0,nel):
     if avrg==3:
        eta_elemental[iel]=nmarker_per_element/eta_elemental[iel]
 
-print("rho_elemental (m,M) %.4f %.4f " %(np.min(rho_elemental),np.max(rho_elemental)))
-print("eta_elemental (m,M) %.4f %.4f " %(np.min(eta_elemental),np.max(eta_elemental)))
+print("     -> rho_elemental (m,M) %.4f %.4f " %(np.min(rho_elemental),np.max(rho_elemental)))
+print("     -> eta_elemental (m,M) %.4f %.4f " %(np.min(eta_elemental),np.max(eta_elemental)))
+
+print("projection elemental: %.3f s" % (time.time() - start))
+
+#################################################################
+# compute nodal averagings
+#################################################################
+start = time.time()
+
+rho_nodal1=np.zeros(nnp,dtype=np.float64) 
+rho_nodal2=np.zeros(nnp,dtype=np.float64) 
+eta_nodal1=np.zeros(nnp,dtype=np.float64) 
+eta_nodal2=np.zeros(nnp,dtype=np.float64) 
+count_nodal1=np.zeros(nnp,dtype=np.float64) 
+count_nodal2=np.zeros(nnp,dtype=np.float64) 
+
+for im in range(0,nmarker):
+    ielx=int(swarm_x[im]/Lx*nelx)
+    iely=int(swarm_y[im]/Ly*nely)
+    iel=nelx*(iely)+ielx
+    xmin=x[icon[0,iel]]
+    xmax=x[icon[2,iel]]
+    ymin=y[icon[0,iel]]
+    ymax=y[icon[2,iel]]
+    r=((swarm_x[im]-xmin)/(xmax-xmin)-0.5)*2
+    s=((swarm_y[im]-ymin)/(ymax-ymin)-0.5)*2
+
+    for i in range(0,m):
+        rho_nodal1[icon[i,iel]]+=rho_mat[swarm_mat[im]-1]
+        count_nodal1[icon[i,iel]]+=1
+        if avrg==1: # arithmetic
+           eta_nodal1[icon[i,iel]]+=eta_mat[swarm_mat[im]-1]
+        if avrg==2: # geometric
+           eta_nodal1[icon[i,iel]]+=math.log(eta_mat[swarm_mat[im]-1],10)
+        if avrg==3: # harmonic
+           eta_nodal1[icon[i,iel]]+=1./eta_mat[swarm_mat[im]-1]
+
+    # marker is in lower left quadrant
+    if (r<=0 and s<=0):
+       rho_nodal2[icon[0,iel]]+=rho_mat[swarm_mat[im]-1]
+       count_nodal2[icon[0,iel]]+=1
+       if avrg==1: # arithmetic
+          eta_nodal2[icon[0,iel]]+=eta_mat[swarm_mat[im]-1]
+       if avrg==2: # geometric
+          eta_nodal2[icon[0,iel]]+=math.log(eta_mat[swarm_mat[im]-1],10)
+       if avrg==3: # harmonic
+          eta_nodal2[icon[0,iel]]+=1./eta_mat[swarm_mat[im]-1]
+
+    # marker is in lower right quadrant 
+    if (r>=0 and s<=0):
+       rho_nodal2[icon[1,iel]]+=rho_mat[swarm_mat[im]-1]
+       count_nodal2[icon[1,iel]]+=1
+       if avrg==1: # arithmetic
+          eta_nodal2[icon[1,iel]]+=eta_mat[swarm_mat[im]-1]
+       if avrg==2: # geometric
+          eta_nodal2[icon[1,iel]]+=math.log(eta_mat[swarm_mat[im]-1],10)
+       if avrg==3: # harmonic
+          eta_nodal2[icon[1,iel]]+=1./eta_mat[swarm_mat[im]-1]
+
+    # marker is in upper right quadrant
+    if (r>=0 and s>=0):
+       rho_nodal2[icon[2,iel]]+=rho_mat[swarm_mat[im]-1]
+       count_nodal2[icon[2,iel]]+=1
+       if avrg==1: # arithmetic
+          eta_nodal2[icon[2,iel]]+=eta_mat[swarm_mat[im]-1]
+       if avrg==2: # geometric
+          eta_nodal2[icon[2,iel]]+=math.log(eta_mat[swarm_mat[im]-1],10)
+       if avrg==3: # harmonic
+          eta_nodal2[icon[2,iel]]+=1./eta_mat[swarm_mat[im]-1]
+
+    # marker is in upper left quadrant
+    if (r<=0 and s>=0):
+       rho_nodal2[icon[3,iel]]+=rho_mat[swarm_mat[im]-1]
+       count_nodal2[icon[3,iel]]+=1
+       if avrg==1: # arithmetic
+          eta_nodal2[icon[3,iel]]+=eta_mat[swarm_mat[im]-1]
+       if avrg==2: # geometric
+          eta_nodal2[icon[3,iel]]+=math.log(eta_mat[swarm_mat[im]-1],10)
+       if avrg==3: # harmonic
+          eta_nodal2[icon[3,iel]]+=1./eta_mat[swarm_mat[im]-1]
+
+if np.min(count_nodal2)==0:
+   quit() 
+
+for i in range(0,nnp):
+    rho_nodal1[i]/=count_nodal1[i]
+    rho_nodal2[i]/=count_nodal2[i]
+    if avrg==1: # arithmetic
+       eta_nodal1[i]/=count_nodal1[i]
+       eta_nodal2[i]/=count_nodal2[i]
+    if avrg==2: # geometric
+       eta_nodal1[i]=10.**(eta_nodal1[i]/count_nodal1[i])
+       eta_nodal2[i]=10.**(eta_nodal2[i]/count_nodal2[i])
+    if avrg==3: # harmonic
+       eta_nodal1[i]=count_nodal1[i]/eta_nodal1[i]
+       eta_nodal2[i]=count_nodal2[i]/eta_nodal2[i]
+ 
+print("     -> count_nodal1 (m,M) %.4f %.4f " %(np.min(count_nodal1),np.max(count_nodal1)))
+print("     -> count_nodal2 (m,M) %.4f %.4f " %(np.min(count_nodal2),np.max(count_nodal2)))
+print("     -> rho_nodal1 (m,M) %.4f %.4f " %(np.min(rho_nodal1),np.max(rho_nodal1)))
+print("     -> rho_nodal2 (m,M) %.4f %.4f " %(np.min(rho_nodal2),np.max(rho_nodal2)))
+print("     -> eta_nodal1 (m,M) %.4f %.4f " %(np.min(eta_nodal1),np.max(eta_nodal1)))
+print("     -> eta_nodal2 (m,M) %.4f %.4f " %(np.min(eta_nodal2),np.max(eta_nodal2)))
+
+np.savetxt('count_nodal1.ascii',np.array([x,y,count_nodal1]).T,header='# x,y,count')
+np.savetxt('count_nodal2.ascii',np.array([x,y,count_nodal2]).T,header='# x,y,count')
+np.savetxt('rho_nodal1.ascii',np.array([x,y,rho_nodal1]).T,header='# x,y,rho')
+np.savetxt('rho_nodal2.ascii',np.array([x,y,rho_nodal2]).T,header='# x,y,rho')
+np.savetxt('eta_nodal1.ascii',np.array([x,y,eta_nodal1]).T,header='# x,y,eta')
+np.savetxt('eta_nodal2.ascii',np.array([x,y,eta_nodal2]).T,header='# x,y,eta')
+
+print("projection nodal: %.3f s" % (time.time() - start))
 
 #################################################################
 # define boundary conditions
 #################################################################
 start = time.time()
-
-print("defining boundary conditions")
 
 bc_fix = np.zeros(Nfem, dtype=np.bool)  # boundary condition, yes/no
 bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
@@ -246,12 +391,12 @@ for i in range(0, nnp):
        bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
        bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
+print("define b.c.: %.3f s" % (time.time() - start))
+
 #################################################################
 # build FE matrix
 #################################################################
 start = time.time()
-
-print("building FE matrix")
 
 a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
 b_mat = np.zeros((3,ndof*m),dtype=np.float64)   # gradient matrix B 
@@ -318,8 +463,22 @@ for iel in range(0, nel):
 
             # assign quad point a density and viscosity
 
-            rhoq=rho_elemental[iel]
-            etaq=eta_elemental[iel]
+            if proj==1:
+               rhoq=rho_elemental[iel]
+               etaq=eta_elemental[iel]
+            if proj==2:
+               rhoq=0
+               etaq=0
+               for k in range(0, m):
+                   rhoq+=N[k]*rho_nodal1[icon[k,iel]]
+                   etaq+=N[k]*eta_nodal1[icon[k,iel]]
+            if proj==3:
+               rhoq=0
+               etaq=0
+               for k in range(0, m):
+                   rhoq+=N[k]*rho_nodal2[icon[k,iel]]
+                   etaq+=N[k]*eta_nodal2[icon[k,iel]]
+
 
             # construct 3x8 b_mat matrix
             for i in range(0, m):
@@ -390,11 +549,12 @@ for iel in range(0, nel):
                     a_mat[m1,m2]+=a_el[ikk,jkk]
             rhs[m1]+=b_el[ikk]
 
+print("build FE matrix: %.3f s" % (time.time() - start))
+
 #################################################################
 # impose boundary conditions
 #################################################################
-
-print("imposing boundary conditions")
+start = time.time()
 
 for i in range(0, Nfem):
     if bc_fix[i]:
@@ -409,14 +569,16 @@ for i in range(0, Nfem):
 #print("a_mat (m,M) = %.4f %.4f" %(np.min(a_mat),np.max(a_mat)))
 #print("rhs   (m,M) = %.6f %.6f" %(np.min(rhs),np.max(rhs)))
 
+print("imposing b.c.: %.3f s" % (time.time() - start))
+
 #################################################################
 # solve system
 #################################################################
-
 start = time.time()
+
 sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+
 print("solve time: %.3f s" % (time.time() - start))
-print("-----------------------------")
 
 #####################################################################
 # put solution into separate x,y velocity arrays
@@ -424,8 +586,8 @@ print("-----------------------------")
 
 u,v=np.reshape(sol,(nnp,2)).T
 
-print("u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-print("v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
+print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
+print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
 np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
@@ -482,10 +644,10 @@ for iel in range(0,nel):
 
     p[iel]=-penalty*(exx[iel]+eyy[iel])
 
-print("p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
-print("exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-print("eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-print("exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
+print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
+print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 
 np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
 np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
@@ -528,7 +690,7 @@ for iel in range (0,nel):
 
 vrms=np.sqrt(vrms/(Lx*Ly))
 
-print("nel= %.d ; nmarker= %d ;  vrms = %.6f" %(nel,nmarker,vrms))
+print("     -> nel= %.d ; nmarker= %d ;  vrms= %.6f" %(nel,nmarker,vrms))
 
 #####################################################################
 # plot of solution
@@ -537,49 +699,21 @@ print("nel= %.d ; nmarker= %d ;  vrms = %.6f" %(nel,nmarker,vrms))
 u_temp=np.reshape(u,(nny,nnx))
 v_temp=np.reshape(v,(nny,nnx))
 p_temp=np.reshape(p,(nely,nelx))
-rho_elemental_temp=np.reshape(rho_elemental,(nely,nelx))
-eta_elemental_temp=np.reshape(eta_elemental,(nely,nelx))
+vel_temp=np.reshape((u**2+v**2),(nny,nnx))
 
 fig,axes = plt.subplots(nrows=2,ncols=3,figsize=(18,18))
 
-uextent=(0.,Lx,0.,Ly)
+uextent=(np.amin(x),np.amax(x),np.amin(y),np.amax(y))
 pextent=(np.amin(xc),np.amax(xc),np.amin(yc),np.amax(yc))
 
-im = axes[0][0].imshow(u_temp,extent=uextent,cmap='Spectral_r',interpolation='nearest')
-axes[0][0].set_title('$v_x$', fontsize=10, y=1.01)
-axes[0][0].set_xlabel('x')
-axes[0][0].set_ylabel('y')
-fig.colorbar(im,ax=axes[0][0])
+onePlot(u_temp,  0, 0, "$v_x$",                 "x", "y", uextent,  0,  0, 'Spectral_r')
+onePlot(v_temp,  0, 1, "$v_y$",                 "x", "y", uextent,  0,  0, 'Spectral_r')
+onePlot(p_temp,  0, 2, "$p$",                   "x", "y", pextent, Lx, Ly, 'RdGy_r')
+onePlot(vel_temp,1, 0, "$|v|$",                 "x", "y", uextent,  0,  0, 'Spectral_r')
+axes[1][0].quiver(x,y,u_temp,v_temp, alpha=.95)
 
-im = axes[0][1].imshow(v_temp,extent=uextent,cmap='Spectral_r',interpolation='nearest')
-axes[0][1].set_title('$v_y$', fontsize=10, y=1.01)
-axes[0][1].set_xlabel('x')
-axes[0][1].set_ylabel('y')
-fig.colorbar(im,ax=axes[0][1])
-
-im = axes[0][2].imshow(p_temp,extent=pextent,cmap='RdGy_r',interpolation='nearest')
-axes[0][2].set_title('$p$', fontsize=10, y=1.01)
-axes[0][2].set_xlim(0,Lx)
-axes[0][2].set_ylim(0,Ly)
-axes[0][2].set_xlabel('x')
-axes[0][2].set_ylabel('y')
-fig.colorbar(im,ax=axes[0][2])
-
-im = axes[1][1].imshow(eta_elemental_temp,extent=pextent,cmap='ocean_r',interpolation='nearest',norm=LogNorm())
-axes[1][1].set_title('$\eta_{el}$', fontsize=10, y=1.01)
-axes[1][1].set_xlim(0,Lx)
-axes[1][1].set_ylim(0,Ly)
-axes[1][1].set_xlabel('x')
-axes[1][1].set_ylabel('y')
-fig.colorbar(im,ax=axes[1][1])
-
-im = axes[1][2].imshow(rho_elemental_temp,extent=pextent,cmap='ocean_r',interpolation='nearest')
-axes[1][2].set_title('$rho_{el}$', fontsize=10, y=1.01)
-axes[1][2].set_xlim(0,Lx)
-axes[1][2].set_ylim(0,Ly)
-axes[1][2].set_xlabel('x')
-axes[1][2].set_ylabel('y')
-fig.colorbar(im,ax=axes[1][2])
+scatterPlot(swarm_x,swarm_y,swarm_mat, 1, 1, "markers",                 "x", "y", uextent,  Lx,  Ly, 'Spectral_r')
+#axes[1][1].scatter(swarm_x,swarm_y,s=0.1,c=swarm_mat)
 
 plt.subplots_adjust(hspace=0.5)
 
@@ -587,4 +721,6 @@ if visu==1:
    plt.savefig('solution.pdf', bbox_inches='tight')
    plt.show()
 
+print("-----------------------------")
+print("------------the end----------")
 print("-----------------------------")

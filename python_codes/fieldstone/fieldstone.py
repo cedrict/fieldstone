@@ -4,9 +4,9 @@ import sys as sys
 import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
+from scipy.sparse import csr_matrix, lil_matrix, hstack, vstack
 import time as time
 import matplotlib.pyplot as plt
-#import tkinter
 
 #------------------------------------------------------------------------------
 def bx(x, y):
@@ -33,6 +33,22 @@ def velocity_y(x,y):
 def pressure(x,y):
     val=x*(1.-x)-1./6.
     return val
+
+def onePlot(variable, plotX, plotY, title, labelX, labelY, extVal, limitX, limitY, colorMap):
+    im = axes[plotX][plotY].imshow(np.flipud(variable),extent=extVal, cmap=colorMap, interpolation="nearest")
+    axes[plotX][plotY].set_title(title,fontsize=10, y=1.01)
+
+    if (limitX != 0.0):
+       axes[plotX][plotY].set_xlim(0,limitX)
+
+    if (limitY != 0.0):
+       axes[plotX][plotY].set_ylim(0,limitY)
+
+    axes[plotX][plotY].set_xlabel(labelX)
+    axes[plotX][plotY].set_ylabel(labelY)
+    fig.colorbar(im,ax=axes[plotX][plotY])
+    return
+
 #------------------------------------------------------------------------------
 
 print("-----------------------------")
@@ -57,7 +73,7 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 32
+   nelx = 34
    nely = 32
    visu = 1
 
@@ -87,8 +103,7 @@ print("declaring arrays")
 #################################################################
 # grid point setup
 #################################################################
-
-print("grid point setup")
+start = time.time()
 
 x = np.empty(nnp, dtype=np.float64)  # x coordinates
 y = np.empty(nnp, dtype=np.float64)  # y coordinates
@@ -100,11 +115,12 @@ for j in range(0, nny):
         y[counter]=j*Ly/float(nely)
         counter += 1
 
+print("setup: grid points: %.3f s" % (time.time() - start))
+
 #################################################################
 # connectivity
 #################################################################
-
-print("connectivity")
+start = time.time()
 
 icon =np.zeros((m, nel),dtype=np.int16)
 counter = 0
@@ -123,11 +139,12 @@ for j in range(0, nely):
 #     print ("node 3",icon[2][iel],"at pos.",x[icon[2][iel]], y[icon[2][iel]])
 #     print ("node 4",icon[3][iel],"at pos.",x[icon[3][iel]], y[icon[3][iel]])
 
+print("setup: connectivity: %.3f s" % (time.time() - start))
+
 #################################################################
 # define boundary conditions
 #################################################################
-
-print("defining boundary conditions")
+start = time.time()
 
 bc_fix = np.zeros(Nfem, dtype=np.bool)  # boundary condition, yes/no
 bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
@@ -145,11 +162,14 @@ for i in range(0, nnp):
        bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
        bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
+print("setup: boundary conditions: %.3f s" % (time.time() - start))
+
 #################################################################
 # build FE matrix
 #################################################################
+start = time.time()
 
-print("building FE matrix")
+#a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)
 
 a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
 b_mat = np.zeros((3,ndof*m),dtype=np.float64)   # gradient matrix B 
@@ -283,11 +303,12 @@ for iel in range(0, nel):
                     a_mat[m1,m2]+=a_el[ikk,jkk]
             rhs[m1]+=b_el[ikk]
 
+print("build FE matrix: %.3f s" % (time.time() - start))
+
 #################################################################
 # impose boundary conditions
 #################################################################
-
-print("imposing boundary conditions")
+start = time.time()
 
 for i in range(0, Nfem):
     if bc_fix[i]:
@@ -302,29 +323,35 @@ for i in range(0, Nfem):
 #print("a_mat (m,M) = %.4f %.4f" %(np.min(a_mat),np.max(a_mat)))
 #print("rhs   (m,M) = %.6f %.6f" %(np.min(rhs),np.max(rhs)))
 
+print("impose b.c.: %.3f s" % (time.time() - start))
+
 #################################################################
 # solve system
 #################################################################
-
 start = time.time()
+
 sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+
 print("solve time: %.3f s" % (time.time() - start))
-print("-----------------------------")
 
 #####################################################################
 # put solution into separate x,y velocity arrays
 #####################################################################
+start = time.time()
 
 u,v=np.reshape(sol,(nnp,2)).T
 
-print("u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-print("v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
+print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
+print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
 np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+
+print("split vel into u,v: %.3f s" % (time.time() - start))
 
 #####################################################################
 # retrieve pressure
 #####################################################################
+start = time.time()
 
 xc = np.zeros(nel,dtype=np.float64)  
 yc = np.zeros(nel,dtype=np.float64)  
@@ -375,18 +402,21 @@ for iel in range(0,nel):
 
     p[iel]=-penalty*(exx[iel]+eyy[iel])
 
-print("p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
-print("exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-print("eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-print("exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
+print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
+print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 
 np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
 
 np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
+print("compute press & sr: %.3f s" % (time.time() - start))
+
 #################################################################
 # compute error
 #################################################################
+start = time.time()
 
 error_u = np.empty(nnp,dtype=np.float64)
 error_v = np.empty(nnp,dtype=np.float64)
@@ -437,7 +467,10 @@ for iel in range (0,nel):
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 
-print("nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
+
+print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
+
+print("compute errors: %.3f s" % (time.time() - start))
 
 #####################################################################
 # plot of solution
@@ -445,80 +478,28 @@ print("nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
 
 u_temp=np.reshape(u,(nny,nnx))
 v_temp=np.reshape(v,(nny,nnx))
-p_temp=np.reshape(p,(nelx,nely))
-exx_temp=np.reshape(exx,(nelx,nely))
-eyy_temp=np.reshape(eyy,(nelx,nely))
-exy_temp=np.reshape(exy,(nelx,nely))
-error_u_temp=np.reshape(error_u,(nnx,nny))
-error_v_temp=np.reshape(error_v,(nnx,nny))
-error_p_temp=np.reshape(error_p,(nelx,nely))
+p_temp=np.reshape(p,(nely,nelx))
+exx_temp=np.reshape(exx,(nely,nelx))
+eyy_temp=np.reshape(eyy,(nely,nelx))
+exy_temp=np.reshape(exy,(nely,nelx))
+error_u_temp=np.reshape(error_u,(nny,nnx))
+error_v_temp=np.reshape(error_v,(nny,nnx))
+error_p_temp=np.reshape(error_p,(nely,nelx))
 
 fig,axes = plt.subplots(nrows=3,ncols=3,figsize=(18,18))
 
 uextent=(np.amin(x),np.amax(x),np.amin(y),np.amax(y))
 pextent=(np.amin(xc),np.amax(xc),np.amin(yc),np.amax(yc))
 
-im = axes[0][0].imshow(u_temp,extent=uextent,cmap='Spectral_r',interpolation='nearest')
-axes[0][0].set_title('$v_x$', fontsize=10, y=1.01)
-axes[0][0].set_xlabel('x')
-axes[0][0].set_ylabel('y')
-fig.colorbar(im,ax=axes[0][0])
-
-im = axes[0][1].imshow(v_temp,extent=uextent,cmap='Spectral_r',interpolation='nearest')
-axes[0][1].set_title('$v_y$', fontsize=10, y=1.01)
-axes[0][1].set_xlabel('x')
-axes[0][1].set_ylabel('y')
-fig.colorbar(im,ax=axes[0][1])
-
-im = axes[0][2].imshow(p_temp,extent=pextent,cmap='RdGy_r',interpolation='nearest')
-axes[0][2].set_title('$p$', fontsize=10, y=1.01)
-axes[0][2].set_xlim(0,Lx)
-axes[0][2].set_ylim(0,Ly)
-axes[0][2].set_xlabel('x')
-axes[0][2].set_ylabel('y')
-fig.colorbar(im,ax=axes[0][2])
-
-im = axes[1][0].imshow(exx_temp,extent=pextent, cmap='viridis',interpolation='nearest')
-axes[1][0].set_title('$\dot{\epsilon}_{xx}$',fontsize=10, y=1.01)
-axes[1][0].set_xlim(0,Lx)
-axes[1][0].set_ylim(0,Ly)
-axes[1][0].set_xlabel('x')
-axes[1][0].set_ylabel('y')
-fig.colorbar(im,ax=axes[1][0])
-
-im = axes[1][1].imshow(eyy_temp,extent=pextent,cmap='viridis',interpolation='nearest')
-axes[1][1].set_title('$\dot{\epsilon}_{yy}$',fontsize=10,y=1.01)
-axes[1][1].set_xlim(0,Lx)
-axes[1][1].set_ylim(0,Ly)
-axes[1][1].set_xlabel('x')
-axes[1][1].set_ylabel('y')
-fig.colorbar(im,ax=axes[1][1])
-
-im = axes[1][2].imshow(exy_temp,extent=pextent,cmap='viridis',interpolation='nearest')
-axes[1][2].set_title('$\dot{\epsilon}_{xy}$',fontsize=10,y=1.01)
-axes[1][2].set_xlim(0,Lx)
-axes[1][2].set_ylim(0,Ly)
-axes[1][2].set_xlabel('x')
-axes[1][2].set_ylabel('y')
-fig.colorbar(im,ax=axes[1][2])
-
-im = axes[2][0].imshow(error_u_temp,extent=uextent,cmap='Spectral_r',interpolation='nearest')
-axes[2][0].set_title('$v_x-t^{th}_x$',fontsize=10,y=1.01)
-axes[2][0].set_xlabel('x')
-axes[2][0].set_ylabel('y')
-fig.colorbar(im,ax=axes[2][0])
-
-im = axes[2][1].imshow(error_v_temp,extent=uextent,cmap='Spectral_r',interpolation='nearest')
-axes[2][1].set_title('$v_y-t^{th}_y$',fontsize=10,y=1.01)
-axes[2][1].set_xlabel('x')
-axes[2][1].set_ylabel('y')
-fig.colorbar(im,ax=axes[2][1])
-
-im = axes[2][2].imshow(error_p_temp, extent=uextent, cmap='RdGy_r',interpolation='nearest')
-axes[2][2].set_title('$p-p^{th}$',fontsize=10,y=1.01)
-axes[2][2].set_xlabel('x')
-axes[2][2].set_ylabel('y')
-fig.colorbar(im,ax=axes[2][2])
+onePlot(u_temp,       0, 0, "$v_x$",                 "x", "y", uextent,  0,  0, 'Spectral_r')
+onePlot(v_temp,       0, 1, "$v_y$",                 "x", "y", uextent,  0,  0, 'Spectral_r')
+onePlot(p_temp,       0, 2, "$p$",                   "x", "y", pextent, Lx, Ly, 'RdGy_r')
+onePlot(exx_temp,     1, 0, "$\dot{\epsilon}_{xx}$", "x", "y", pextent, Lx, Ly, 'viridis')
+onePlot(eyy_temp,     1, 1, "$\dot{\epsilon}_{yy}$", "x", "y", pextent, Lx, Ly, 'viridis')
+onePlot(exy_temp,     1, 2, "$\dot{\epsilon}_{xy}$", "x", "y", pextent, Lx, Ly, 'viridis')
+onePlot(error_u_temp, 2, 0, "$v_x-t^{th}_x$",        "x", "y", uextent,  0,  0, 'Spectral_r')
+onePlot(error_v_temp, 2, 1, "$v_y-t^{th}_y$",        "x", "y", uextent,  0,  0, 'Spectral_r')
+onePlot(error_p_temp, 2, 2, "$p-p^{th}$",            "x", "y", uextent,  0,  0, 'RdGy_r')
 
 plt.subplots_adjust(hspace=0.5)
 
@@ -526,4 +507,6 @@ if visu==1:
    plt.savefig('solution.pdf', bbox_inches='tight')
    plt.show()
 
+print("-----------------------------")
+print("------------the end----------")
 print("-----------------------------")

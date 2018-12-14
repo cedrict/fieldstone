@@ -1,1 +1,117 @@
 
+\fbox{
+\parbox{10cm}{{\bf features}
+\begin{itemize}
+\item $Q_1\times P_0$ element \index{$Q_1 \times P_0$}
+\item incompressible flow \index{incompressible flow}
+\item penalty formulation \index{penalty formulation}
+\item Dirichlet boundary conditions (no-slip)
+\item isothermal \index{isothermal}
+\item non-isoviscous \index{non-isoviscous}
+\item particle-in-cell \index{particle-in-cell}
+\end{itemize}
+}}
+
+
+
+After the initial setup of the grid, markers can then be generated and placed in the domain. One could simply randomly generate 
+the marker positions in the whole domain but unless a {\it very} large number of markers is used, the chance that an element does 
+not contain any marker exists and this will prove problematic. In order to get a better control over the markers spatial distribution, 
+one usually generates the marker per element, so that the total number of markers in the domain is the product of the number of 
+elements times the user-chosen initial number of markers per element. 
+
+Our next concern is how to actually place the markers inside an element. Two methods come to mind: on a regular grid, or in a random manner, 
+as shown on the following figure:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_markers_avrg/markers} 
+\end{center}
+
+In both cases we make use of the basis shape functions: we generate the positions of the markers (random or regular) in the reference
+element first ($r_{im},s_{im}$), and then map those out to the real element as follows:
+\[
+x_{im}=\sum_i^m N_i(r_{im},s_{im}) x_i
+\quad\quad
+y_{im}=\sum_i^m N_i(r_{im},s_{im}) y_i
+\]
+where $x_i,y_i$ are the coordinates of the vertices of the element.
+
+When using {\it active} markers, one is faced with the problem of transferring the properties they carry to the mesh on which the PDEs are to be solved. 
+As we have seen, building the FE matrix involves a loop over all elements, so one simple approach consists of assigning each element a single property
+computed as the average of the values carried by the markers in that element. 
+Often in colloquial language "average" refers to the arithmetic mean: \index{arithmetic mean}
+\[
+\langle \phi \rangle_{am}=\frac{1}{n} \sum_k^n \phi_i 
+\]
+where $<\phi>_{am}$ is the arithmetic average of the $n$ numbers $\phi_i$. 
+However, in mathematics other means are commonly used, such as the geometric mean: \index{geometric mean}
+\[
+\langle \phi \rangle_{gm}=\left( \prod_i^n \phi_i \right)
+\]
+and the harmonic mean: \index{harmonic mean}
+\[
+\langle \phi \rangle_{hm}=\left( \frac{1}{n}\sum_i^n \frac{1}{\phi_i} \right)^{-1}
+\]
+Furthermore, there is a well known inequality for any set of positive numbers,
+\[
+\langle \phi \rangle_{am}\quad  \geq \quad
+\langle \phi \rangle_{gm}\quad  \geq \quad
+\langle \phi \rangle_{hm} 
+\]
+which will prove to be important later on. 
+
+Let us now turn to a simple concrete example: the 2D Stokes sphere. 
+There are two materials in the domain, so that markers carry the label "mat=1" or "mat=2".
+For each element an average density and viscosity need to be computed. The majority of elements contains markers
+with a single material label so that the choice of averaging does not matter (it is trivial to verify that 
+if $\phi_i=\phi_0$ then $\langle \phi \rangle_{am}=\langle \phi \rangle_{gm}=\langle \phi \rangle_{hm}=\phi_0$.
+Remain the elements crossed by the interface between the two materials: they contain markers of both materials
+and the average density and viscosity inside those depends on 1) the total number of markers inside the element, 
+2) the ratio of markers 1 to markers 2, 3) the type of averaging. 
+
+This averaging problem has been studied and documented in the literature \cite{scbe08,deka08,thmk14,pukp16}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_markers_avrg/markers2}\\
+Nodal projection. Left: all markers inside elements to which the green node belongs to are taken into account.
+Right: only the markers closest to the green node count. 
+\end{center}
+
+The setup is identical as the Stokes sphere experiment. The bash script {\sl runall} runs the code for many resolutions,
+both initial marker distribution and all three averaging types. The viscosity of the sphere has been 
+set to $10^3$ while the viscosity of the surrounding fluid is 1. 
+The average density is always computed with an arithmetic mean. 
+Root mean square velocity results are shown hereunder:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_markers_avrg/vrms_rand_proj1} 
+\includegraphics[width=8cm]{python_codes/fieldstone_markers_avrg/vrms_norand_proj1}\\ 
+\includegraphics[width=8cm]{python_codes/fieldstone_markers_avrg/vrms_rand_proj2} 
+\includegraphics[width=8cm]{python_codes/fieldstone_markers_avrg/vrms_norand_proj2}\\ 
+\includegraphics[width=8cm]{python_codes/fieldstone_markers_avrg/vrms_rand_proj3} 
+\includegraphics[width=8cm]{python_codes/fieldstone_markers_avrg/vrms_norand_proj3}\\ 
+\end{center}
+
+Conclusions:
+\begin{itemize}
+\item
+With increasing resolution ($h\rightarrow 0$) vrms values seem to converge towards a single value, irrespective 
+of the number of markers. 
+
+\item
+At low resolution, say 32x32 (i.e. h=0.03125), vrms values for the three averagings differ by about 10\%. At higher resolution, say 128x128, vrms values are still not converged.  
+
+\item
+The number of markers per element plays a role at low resolution, but less and less with increasing resolution. 
+
+\item
+Results for random and regular marker distributions are not identical but follow a similar trend and seem to converge to 
+the same value.
+
+\item
+At low resolutions, elemental values yield better results.
+
+\item harmonic mean yields overal the best results
+\end{itemize}
+
+\includegraphics[width=15cm]{python_codes/fieldstone_markers_avrg/vrms} 

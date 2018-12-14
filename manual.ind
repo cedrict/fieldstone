@@ -1,0 +1,50 @@
+\begin{theindex}
+
+  \item $Q_1 \times P_0$, \hyperpage{9}, \hyperpage{15}, \hyperpage{21}, 
+		\hyperpage{27}, \hyperpage{30}
+
+  \indexspace
+
+  \item analytical solution, \hyperpage{9}, \hyperpage{15}, 
+		\hyperpage{30}, \hyperpage{35}
+  \item arithmetic mean, \hyperpage{27}
+
+  \indexspace
+
+  \item Boussinesq, \hyperpage{4}
+
+  \indexspace
+
+  \item geometric mean, \hyperpage{27}
+
+  \indexspace
+
+  \item harmonic mean, \hyperpage{27}
+
+  \indexspace
+
+  \item incompressible flow, \hyperpage{15}, \hyperpage{21}, 
+		\hyperpage{27}, \hyperpage{30}, \hyperpage{35}
+  \item isothermal, \hyperpage{9}, \hyperpage{15}, \hyperpage{21}, 
+		\hyperpage{27}, \hyperpage{30}, \hyperpage{35}
+  \item isoviscous, \hyperpage{9}, \hyperpage{30}
+
+  \indexspace
+
+  \item mixed formulation, \hyperpage{30}, \hyperpage{35}
+
+  \indexspace
+
+  \item non-isoviscous, \hyperpage{15}, \hyperpage{21}, \hyperpage{27}, 
+		\hyperpage{35}
+  \item nonconforming $Q_1 \times P_0$, \hyperpage{35}
+  \item nonlinear rheology, \hyperpage{21}
+
+  \indexspace
+
+  \item particle-in-cell, \hyperpage{27}
+  \item penalty formulation, \hyperpage{5}, \hyperpage{9}, 
+		\hyperpage{15}, \hyperpage{21}, \hyperpage{27}
+  \item pressure smoothing, \hyperpage{30}, \hyperpage{35}
+
+\end{theindex}

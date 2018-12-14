@@ -6,7 +6,6 @@ import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 import time as time
 import matplotlib.pyplot as plt
-import tkinter
 
 #------------------------------------------------------------------------------
 def rho(x,y):
@@ -22,6 +21,21 @@ def mu(x,y):
     else:
        val=1.
     return val
+
+def onePlot(variable, plotX, plotY, title, labelX, labelY, extVal, limitX, limitY, colorMap):
+    im = axes[plotX][plotY].imshow(np.flipud(variable),extent=extVal, cmap=colorMap, interpolation="nearest")
+    axes[plotX][plotY].set_title(title,fontsize=10, y=1.01)
+
+    if (limitX != 0.0):
+       axes[plotX][plotY].set_xlim(0,limitX)
+
+    if (limitY != 0.0):
+       axes[plotX][plotY].set_ylim(0,limitY)
+
+    axes[plotX][plotY].set_xlabel(labelX)
+    axes[plotX][plotY].set_ylabel(labelY)
+    fig.colorbar(im,ax=axes[plotX][plotY])
+    return
 
 #------------------------------------------------------------------------------
 
@@ -42,12 +56,15 @@ assert (Lx>0.), "Lx should be positive"
 assert (Ly>0.), "Ly should be positive" 
 
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 3):
+if int(len(sys.argv) == 4):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
+   visu = int(sys.argv[3])
 else:
-   nelx = 64
-   nely = 64
+   nelx = 48
+   nely = 32
+   visu = 1
+
 
 assert (nelx>0.), "nnx should be positive" 
 assert (nely>0.), "nny should be positive" 
@@ -380,97 +397,37 @@ np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,ex
 # plot of solution
 #####################################################################
 
-u_temp=np.reshape(u,(nnx,nny))
-v_temp=np.reshape(v,(nnx,nny))
-p_temp=np.reshape(p,(nelx,nely))
-exx_temp=np.reshape(exx,(nelx,nely))
-eyy_temp=np.reshape(eyy,(nelx,nely))
-exy_temp=np.reshape(exy,(nelx,nely))
-visc_temp=np.reshape(visc,(nelx,nely))
-dens_temp=np.reshape(dens,(nelx,nely))
-sr_temp=np.reshape(sr,(nelx,nely))
+
+u_temp=np.reshape(u,(nny,nnx))
+v_temp=np.reshape(v,(nny,nnx))
+p_temp=np.reshape(p,(nely,nelx))
+exx_temp=np.reshape(exx,(nely,nelx))
+eyy_temp=np.reshape(eyy,(nely,nelx))
+exy_temp=np.reshape(exy,(nely,nelx))
+visc_temp=np.reshape(visc,(nely,nelx))
+dens_temp=np.reshape(dens,(nely,nelx))
+sr_temp=np.reshape(sr,(nely,nelx))
 
 fig,axes = plt.subplots(nrows=3,ncols=3,figsize=(18,18))
 
 uextent=(np.amin(x),np.amax(x),np.amin(y),np.amax(y))
 pextent=(np.amin(xc),np.amax(xc),np.amin(yc),np.amax(yc))
 
-im = axes[0][0].imshow(u_temp,extent=uextent,cmap='Spectral_r',interpolation='nearest')
-axes[0][0].set_title('$v_x$', fontsize=10, y=1.01)
-axes[0][0].set_xlabel('x')
-axes[0][0].set_ylabel('y')
-fig.colorbar(im,ax=axes[0][0])
-
-im = axes[0][1].imshow(v_temp,extent=uextent,cmap='Spectral_r',interpolation='nearest')
-axes[0][1].set_title('$v_y$', fontsize=10, y=1.01)
-axes[0][1].set_xlabel('x')
-axes[0][1].set_ylabel('y')
-fig.colorbar(im,ax=axes[0][1])
-
-im = axes[0][2].imshow(p_temp,extent=pextent,cmap='RdGy_r',interpolation='nearest')
-axes[0][2].set_title('$p$', fontsize=10, y=1.01)
-axes[0][2].set_xlim(0,Lx)
-axes[0][2].set_ylim(0,Ly)
-axes[0][2].set_xlabel('x')
-axes[0][2].set_ylabel('y')
-fig.colorbar(im,ax=axes[0][2])
-
-im = axes[1][0].imshow(exx_temp,extent=pextent, cmap='viridis',interpolation='nearest')
-axes[1][0].set_title('$\dot{\epsilon}_{xx}$',fontsize=10, y=1.01)
-axes[1][0].set_xlim(0,Lx)
-axes[1][0].set_ylim(0,Ly)
-axes[1][0].set_xlabel('x')
-axes[1][0].set_ylabel('y')
-fig.colorbar(im,ax=axes[1][0])
-
-im = axes[1][1].imshow(eyy_temp,extent=pextent,cmap='viridis',interpolation='nearest')
-axes[1][1].set_title('$\dot{\epsilon}_{yy}$',fontsize=10,y=1.01)
-axes[1][1].set_xlim(0,Lx)
-axes[1][1].set_ylim(0,Ly)
-axes[1][1].set_xlabel('x')
-axes[1][1].set_ylabel('y')
-fig.colorbar(im,ax=axes[1][1])
-
-im = axes[1][2].imshow(exy_temp,extent=pextent,cmap='viridis',interpolation='nearest')
-axes[1][2].set_title('$\dot{\epsilon}_{xy}$',fontsize=10,y=1.01)
-axes[1][2].set_xlim(0,Lx)
-axes[1][2].set_ylim(0,Ly)
-axes[1][2].set_xlabel('x')
-axes[1][2].set_ylabel('y')
-fig.colorbar(im,ax=axes[1][2])
-
-
-
-im = axes[2][0].imshow(sr_temp,extent=pextent,cmap='viridis',interpolation='nearest')
-axes[2][0].set_title('$\dot{\epsilon}$', fontsize=10, y=1.01)
-axes[2][0].set_xlim(0,Lx)
-axes[2][0].set_ylim(0,Ly)
-axes[2][0].set_xlabel('x')
-axes[2][0].set_ylabel('y')
-fig.colorbar(im,ax=axes[2][0])
-
-im = axes[2][1].imshow(visc_temp,extent=pextent,cmap='bone_r',interpolation='nearest')
-axes[2][1].set_title('$\mu$', fontsize=10, y=1.01)
-axes[2][1].set_xlim(0,Lx)
-axes[2][1].set_ylim(0,Ly)
-axes[2][1].set_xlabel('x')
-axes[2][1].set_ylabel('y')
-fig.colorbar(im,ax=axes[2][1])
-
-im = axes[2][2].imshow(dens_temp,extent=pextent,cmap='copper_r',interpolation='nearest')
-axes[2][2].set_title('$rho$', fontsize=10, y=1.01)
-axes[2][2].set_xlim(0,Lx)
-axes[2][2].set_ylim(0,Ly)
-axes[2][2].set_xlabel('x')
-axes[2][2].set_ylabel('y')
-fig.colorbar(im,ax=axes[2][2])
-
-
+onePlot(u_temp,       0, 0, "$v_x$",                 "x", "y", uextent,  0,  0, 'Spectral_r')
+onePlot(v_temp,       0, 1, "$v_y$",                 "x", "y", uextent,  0,  0, 'Spectral_r')
+onePlot(p_temp,       0, 2, "$p$",                   "x", "y", pextent, Lx, Ly, 'RdGy_r')
+onePlot(exx_temp,     1, 0, "$\dot{\epsilon}_{xx}$", "x", "y", pextent, Lx, Ly, 'viridis')
+onePlot(eyy_temp,     1, 1, "$\dot{\epsilon}_{yy}$", "x", "y", pextent, Lx, Ly, 'viridis')
+onePlot(exy_temp,     1, 2, "$\dot{\epsilon}_{xy}$", "x", "y", pextent, Lx, Ly, 'viridis')
+onePlot(sr_temp,      2, 0, "$\dot{\epsilon}$",      "x", "y", pextent,  0,  0, 'viridis')
+onePlot(dens_temp,    2, 1, "density",               "x", "y", uextent,  0,  0, 'copper_r')
+onePlot(visc_temp,    2, 2, "viscosity",             "x", "y", uextent,  0,  0, 'bone_r')
 
 plt.subplots_adjust(hspace=0.5)
 
-plt.savefig('solution.pdf', bbox_inches='tight')
-plt.show()
+if visu==1:
+   plt.savefig('solution.pdf', bbox_inches='tight')
+   plt.show()
 
 print("-----------------------------")
 print("------------the end----------")
