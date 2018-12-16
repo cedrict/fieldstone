@@ -1,0 +1,90 @@
+Let us for a moment consider a single quadrilateral element in the $xy$-plane, 
+as shown on the following figure:
+\begin{center}
+\includegraphics[width=5.8cm]{images/shape.png}
+\end{center}
+Let us assume that we know the values of a given field $u$ at the vertices.
+For a given point $M$ inside the element in the plane, what is the value of the 
+field $u$ at this point?
+It makes sense to postulate that $u_M=u(x_M,y_M)$ will be given  by 
+\[
+u_M= \phi(u_1,u_2,u_3,u_4,x_M,y_M) 
+\]
+where $\phi$ is a function to be determined. Although $\phi$ is not unique, we can 
+decide to express the value $u_M$ as a weighed sum of the values at the vertices $u_i$.
+One option could be to assign all four vertices the same weight, say $1/4$ so that 
+$u_M=(u_1+u_2+u_3+u_4)/4$, i.e. $u_M$ is simply given by the arithmetic mean 
+of the vertices values. This approach suffers from a major drawback as it does
+not use the location of point $M$ inside the element. For instance, when 
+$(x_M,y_M) \rightarrow (x_2,y_2)$ we expect $u_M \rightarrow u_2$.
+
+In light of this, we could now assume that the weights would depend on the position 
+of $M$ in a continuous fashion:
+\[
+u(x_M,y_M) = \sum_{i=1}^4 N_i(x_M,y_M)\;  u_i
+\]
+where the $N_i$ are continous ("well behaved") functions which have the property:
+\[
+N_i(x_j,y_j)=\delta_{ij}
+\]
+or, in other words: 
+\begin{eqnarray}
+N_3(x_1,y_1) &=& 0 \\
+N_3(x_2,y_2) &=& 0 \\
+N_3(x_3,y_3) &=& 1 \\
+N_3(x_4,y_4) &=& 0 
+\end{eqnarray}
+The functions $N_i$ are commonly called basis functions. \index{basis functions}
+
+Omitting the $M$ subscripts for any point inside the element, the velocity components $u$
+and $v$ are given by:
+\[
+u(x,y) = \sum_{i=1}^4 N_i(x,y)\;  u_i
+\]
+\[
+v(x,y) = \sum_{i=1}^4 N_i(x,y)\;  v_i
+\]
+Rather interestingly, one can now easily compute velocity gradients (and therefore the 
+strain rate tensor) since we have assumed the basis functions to be "well behaved" 
+(in this case differentiable):
+\begin{eqnarray}
+\dot{\epsilon}_{xx}(x,y) &=& \frac{\partial u}{\partial x} = \sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  u_i \\
+\dot{\epsilon}_{yy}(x,y) &=& \frac{\partial v}{\partial y} = \sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  v_i \\
+\dot{\epsilon}_{xy}(x,y) &=& \frac{1}{2}\frac{\partial u}{\partial y} 
++ \frac{1}{2}\frac{\partial v}{\partial x} 
+= \frac{1}{2}\sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  u_i
++ \frac{1}{2}\sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  v_i
+\end{eqnarray}
+How we actually obtain the exact form of the basis functions is explained in the coming section.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+\subsubsection{The $Q_1$ space}
+
+
+
+\begin{center}
+\includegraphics[height=3.5cm]{images/element_rs.png}
+\end{center}
+
+\begin{eqnarray}
+N_1(r,s)&=&0.25(1-r)(1-s) \nonumber\\
+N_2(r,s)&=&0.25(1+r)(1-s) \nonumber\\
+N_3(r,s)&=&0.25(1+r)(1+s) \nonumber\\
+N_4(r,s)&=&0.25(1-r)(1+s) \nonumber
+\end{eqnarray}
+
+\begin{eqnarray}
+\frac{\partial N_1}{\partial r}(r,s)&=& - 0.25(1-s) \nonumber\\
+\frac{\partial N_2}{\partial r}(r,s)&=& + 0.25(1-s) \nonumber\\
+\frac{\partial N_3}{\partial r}(r,s)&=& + 0.25(1+s) \nonumber\\
+\frac{\partial N_4}{\partial r}(r,s)&=& - 0.25(1+s) \nonumber
+\end{eqnarray}
+
+\begin{eqnarray}
+\frac{\partial N_1}{\partial s}(r,s)&=& - 0.25(1-r) \nonumber\\
+\frac{\partial N_2}{\partial s}(r,s)&=& - 0.25(1+r) \nonumber\\
+\frac{\partial N_3}{\partial s}(r,s)&=& + 0.25(1+r) \nonumber\\
+\frac{\partial N_4}{\partial s}(r,s)&=& + 0.25(1-r) \nonumber
+\end{eqnarray}
+

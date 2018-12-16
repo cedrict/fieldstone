@@ -1,0 +1,143 @@
+
+\begin{center}
+\begin{tabular}{lll}
+\hline
+Symbol & meaning & unit \\
+\hline
+\hline
+$t$ & Time & s \\
+$x,y,z$ & Cartesian coordinates & m \\
+${\bm v}$ & velocity vector & m$\cdot$ s$^{-1}$\\
+$\rho$ & mass density & kg/m$^3$ \\
+$\eta$ & dynamic viscosity &  Pa$\cdot$ s \\
+$\lambda$ & penalty parameter & Pa$\cdot$ s \\
+$T$ & temperature & K \\
+${\bm \nabla}$ & gradient operator & m$^{-1}$ \\
+${\bm \nabla}\cdot$ & divergence operator & m$^{-1}$ \\
+$p$ & pressure & Pa\\
+$\dot{\bm \epsilon}({\bm v})$ & strain rate tensor & s$^{-1}$ \\
+$\alpha$ & thermal expansion coefficient & K$^{-1}$ \\
+$k$ & thermal conductivity & W/(m $\cdot$ K) \\
+$C_p$ & Heat capacity & J/K \\
+\hline
+\end{tabular}
+\end{center}
+
+[from aspect manual]
+We focus on the system of equations in a $d=2$- or $d=3$-dimensional
+domain $\Omega$ that describes the motion of a highly viscous fluid driven
+by differences in the gravitational force due to a density that depends on
+the temperature. In the following, we largely follow the exposition of this
+material in Schubert, Turcotte and Olson \cite{scto01}.
+
+Specifically, we consider the following set of equations for velocity $\mathbf
+u$, pressure $p$ and temperature $T$:
+\begin{align}
+  \label{eq:stokes-1}
+  -\nabla \cdot \left[2\eta \left(\dot\varepsilon(\bm v)
+                                  - \frac{1}{3}(\nabla \cdot \bm v)\mathbf 1\right)
+                \right] + \nabla p &=
+  \rho \bm g
+  &
+  & \textrm{in $\Omega$},
+  \\
+  \label{eq:stokes-2}
+  \nabla \cdot (\rho \bm v) &= 0
+  &
+  & \textrm{in $\Omega$},
+  \\
+  \label{eq:temperature}
+  \rho C_p \left(\frac{\partial T}{\partial t} + \bm v\cdot\nabla T\right)
+  - \nabla\cdot k\nabla T
+  &=
+  \rho H
+  \notag
+  \\
+  &\quad
+  +
+  2\eta
+  \left(\dot\varepsilon(\bm v) - \frac{1}{3}(\nabla \cdot \bm v)\mathbf 1\right)
+  :
+  \left(\dot\varepsilon(\bm v) - \frac{1}{3}(\nabla \cdot \bm v)\mathbf 1\right)
+  \\
+  &\quad
+  +\alpha T \left( \bm v \cdot \nabla p \right)
+  \notag
+  \\
+  &\quad
+  + \rho T \Delta S \left(\frac{\partial X}{\partial t} + \bm v\cdot\nabla X\right)
+  &
+  & \textrm{in $\Omega$},
+  \notag
+\end{align}
+where $\dot\varepsilon(\mathbf u) = \frac{1}{2}(\nabla \mathbf u + \nabla\mathbf
+u^T)$ is the symmetric gradient of the velocity (often called the
+\textit{strain rate}).%
+
+In this set of equations, \eqref{eq:stokes-1} and \eqref{eq:stokes-2}
+represent the compressible Stokes equations in which $\mathbf v=\mathbf
+v(\mathbf x,t)$ is the velocity field and $p=p(\mathbf x,t)$ the pressure
+field. Both fields depend on space $\mathbf x$ and time $t$. Fluid flow is
+driven by the gravity force that acts on the fluid and that is proportional to
+both the density of the fluid and the strength of the gravitational pull.
+
+Coupled to this Stokes system is equation \eqref{eq:temperature} for the
+temperature field $T=T(\mathbf x,t)$ that contains heat conduction terms as
+well as advection with the flow velocity $\mathbf v$. The right hand side
+terms of this equation correspond to
+\begin{itemize}
+\item internal heat production for example due to radioactive decay;
+\item friction heating;
+\item adiabatic compression of material;
+\item phase change.
+\end{itemize}
+The last term of the temperature equation corresponds to
+the latent heat generated or consumed in the process of phase change of material. 
+In what follows we will not assume that no phase change takes place so that we disregard this term 
+altogether.
+
+%---------------------------------
+\subsection{the Boussinesq approximation: an Incompressible flow}
+
+\index{Boussinesq}
+
+[from aspect manual]
+The Boussinesq approximation assumes that the density can be
+considered constant in all occurrences in the equations with the exception of
+the buoyancy term on the right hand side of \eqref{eq:stokes-1}. The primary
+result of this assumption is that the continuity equation \eqref{eq:stokes-2}
+will now read
+\[
+{\bm \nabla}\cdot{\bm v} = 0
+\]
+This implies that the strain rate tensor is deviatoric.
+Under the Boussinesq approximation, the equations are much simplified:
+
+\begin{align}
+  \label{eq:stokes-1}
+  -\nabla \cdot \left[2\eta \dot\varepsilon(\bm v)
+                \right] + \nabla p &=
+  \rho \bm g
+  &
+  & \textrm{in $\Omega$},
+  \\
+  \label{eq:stokes-2}
+  \nabla \cdot (\rho \bm v) &= 0
+  &
+  & \textrm{in $\Omega$},
+  \\
+  \label{eq:temperature}
+  \rho_0 C_p \left(\frac{\partial T}{\partial t} + \bm v\cdot\nabla T\right)
+  - \nabla\cdot k\nabla T
+  &=
+  \rho H
+  &
+  & \textrm{in $\Omega$}
+\end{align}
+Note that all terms on the rhs of the temperature equations have disappeared, with the exception 
+of the source term.
+
+
+
+
+

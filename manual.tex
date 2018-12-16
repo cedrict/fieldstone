@@ -29,6 +29,7 @@
 \newcommand{\A}{{\mathbb{A}}}
 \newcommand{\K}{{\mathbb{K}}}
 \newcommand{\G}{{\mathbb{G}}}
+\newcommand{\Z}{{\mathbb{Z}}}
 \usepackage{makeidx} 
 
 
@@ -48,6 +49,8 @@
 %%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
+
+
 practical hands-on approach
 
 as little as possible jargon
@@ -59,6 +62,8 @@ very sequential, so unavoidable repetitions (jacobian, shape functions)
 
 FE is one of several methods.
 
+All the python scripts and this document are freely available at {\tt https://github.com/cedrict/fieldstone}.
+
 \subsection{Acknowledgments}
 
 Jean Braun, Philippe Fullsack, Arie van den Berg.
@@ -66,7 +71,7 @@ Lukas van de Wiel. Robert Myhill.
 Menno, Anne
 Too many BSc and MSc students to name indivisually, although Job Mos did produce the
 very first version of fieldstone as part of his MSc thesis.
-The ASPECT team in general and Wolfgang Bangerth in particular.
+The ASPECT team in general and Wolfgang Bangerth and Timo Hesiter in particular.
 
 %--------------------------------
 \subsection{Essential literature}
@@ -95,163 +100,7 @@ python3.6 -m pip install --user numpy scipy matplotlib
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%
 \section{The physical equations of Fluid Dynamics}
-
-[from aspect manual]
-We focus on the system of equations in a $d=2$- or $d=3$-dimensional
-domain $\Omega$ that describes the motion of a highly viscous fluid driven
-by differences in the gravitational force due to a density that depends on
-the temperature. In the following, we largely follow the exposition of this
-material in Schubert, Turcotte and Olson \cite{scto01}.
-
-Specifically, we consider the following set of equations for velocity $\mathbf
-u$, pressure $p$ and temperature $T$:
-\begin{align}
-  \label{eq:stokes-1}
-  -\nabla \cdot \left[2\eta \left(\dot\varepsilon(\bm v)
-                                  - \frac{1}{3}(\nabla \cdot \bm v)\mathbf 1\right)
-                \right] + \nabla p &=
-  \rho \bm g
-  &
-  & \textrm{in $\Omega$},
-  \\
-  \label{eq:stokes-2}
-  \nabla \cdot (\rho \bm v) &= 0
-  &
-  & \textrm{in $\Omega$},
-  \\
-  \label{eq:temperature}
-  \rho C_p \left(\frac{\partial T}{\partial t} + \bm v\cdot\nabla T\right)
-  - \nabla\cdot k\nabla T
-  &=
-  \rho H
-  \notag
-  \\
-  &\quad
-  +
-  2\eta
-  \left(\dot\varepsilon(\bm v) - \frac{1}{3}(\nabla \cdot \bm v)\mathbf 1\right)
-  :
-  \left(\dot\varepsilon(\bm v) - \frac{1}{3}(\nabla \cdot \bm v)\mathbf 1\right)
-  \\
-  &\quad
-  +\alpha T \left( \bm v \cdot \nabla p \right)
-  \notag
-  \\
-  &\quad
-  + \rho T \Delta S \left(\frac{\partial X}{\partial t} + \bm v\cdot\nabla X\right)
-  &
-  & \textrm{in $\Omega$},
-  \notag
-\end{align}
-where $\dot\varepsilon(\mathbf u) = \frac{1}{2}(\nabla \mathbf u + \nabla\mathbf
-u^T)$ is the symmetric gradient of the velocity (often called the
-\textit{strain rate}).%
-
-In this set of equations, \eqref{eq:stokes-1} and \eqref{eq:stokes-2}
-represent the compressible Stokes equations in which $\mathbf v=\mathbf
-v(\mathbf x,t)$ is the velocity field and $p=p(\mathbf x,t)$ the pressure
-field. Both fields depend on space $\mathbf x$ and time $t$. Fluid flow is
-driven by the gravity force that acts on the fluid and that is proportional to
-both the density of the fluid and the strength of the gravitational pull.
-
-Coupled to this Stokes system is equation \eqref{eq:temperature} for the
-temperature field $T=T(\mathbf x,t)$ that contains heat conduction terms as
-well as advection with the flow velocity $\mathbf v$. The right hand side
-terms of this equation correspond to
-\begin{itemize}
-\item internal heat production for example due to radioactive decay;
-\item friction heating;
-\item adiabatic compression of material;
-\item phase change.
-\end{itemize}
-The last term of the temperature equation corresponds to
-the latent heat generated or consumed in the process of phase change of material. 
-In what follows we will not assume that no phase change takes place so that we disregard this term 
-altogether.
-
-%---------------------------------
-\subsection{the Boussinesq approximation: an Incompressible flow}
-
-\index{Boussinesq}
-
-[from aspect manual]
-The Boussinesq approximation assumes that the density can be
-considered constant in all occurrences in the equations with the exception of
-the buoyancy term on the right hand side of \eqref{eq:stokes-1}. The primary
-result of this assumption is that the continuity equation \eqref{eq:stokes-2}
-will now read
-\[
-{\bm \nabla}\cdot{\bm v} = 0
-\]
-This implies that the strain rate tensor is deviatoric.
-Under the Boussinesq approximation, the equations are much simplified:
-
-\begin{align}
-  \label{eq:stokes-1}
-  -\nabla \cdot \left[2\eta \dot\varepsilon(\bm v)
-                \right] + \nabla p &=
-  \rho \bm g
-  &
-  & \textrm{in $\Omega$},
-  \\
-  \label{eq:stokes-2}
-  \nabla \cdot (\rho \bm v) &= 0
-  &
-  & \textrm{in $\Omega$},
-  \\
-  \label{eq:temperature}
-  \rho_0 C_p \left(\frac{\partial T}{\partial t} + \bm v\cdot\nabla T\right)
-  - \nabla\cdot k\nabla T
-  &=
-  \rho H
-  &
-  & \textrm{in $\Omega$}
-\end{align}
-Note that all terms on the rhs of the temperature equations have disappeared, with the exception 
-of the source term.
-
-These are the equations which are used and implemented in all the codes, unless otherwise
-indicated.
-
-%---------------------------------
-\subsubsection{The penalty approach}
-
-\index{penalty formulation}
-
-In order to impose the incompressibility constraint, two widely used procedures are available, namely the 
-Lagrange multiplier method and the penalty method \cite{bathe82,hugh}. The latter is implemented in {\sc elefant}, which allows for the elimination of the pressure variable from the momentum equation (resulting in a reduction of the matrix size).%, based on a relaxation of the incompressibility constraint. 
-
-Mathematical details on the origin and validity of the penalty approach applied to the Stokes problem can for instance be found in  \cite{cuss86}, \cite{redd82} or \cite{gunz89}.
-
-The penalty formulation of the mass conservation equation is based on a relaxation of the incompressibility constraint and writes 
-\begin{equation}
-{\bm \nabla}\cdot {\bm v} + \frac{p}{\lambda} = 0 \label{penal}
-\end{equation}
-where $\lambda$ is the penalty parameter, that can be interpreted (and has the same dimension) as a bulk viscosity. It is 
-equivalent to say that the material is weakly compressible. It can be shown that if one chooses $\lambda$ to be a 
-sufficiently large number, the continuity equation $ {\bm \nabla}\cdot {\bm v} = 0$ will be approximately satisfied in the finite element solution. The value of $\lambda$ is often recommended to be 6 to 7 orders of magnitude larger than the shear viscosity \cite{dohu03,hulb79}.
-
-%Note that Eq. (\ref{penal}) does not form the basis of the penalty method (as often implied) for the Stokes equation but is a consequence of minimising a modified functional of the problem under certain assumptions \cite{redd82}. 
-
-Equation (\ref{penal}) can be used to eliminate the pressure in Eq. (\ref{mce2}) so that the mass and momentum conservation equations fuse to become :
-\begin{equation}
-{\bm \nabla}\cdot ( 2 \eta \dot\varepsilon({\bm v})) + \lambda {\bm \nabla} ({\bm \nabla }\cdot {\bm v}) = \rho {\bm g} = 0 \label{peneq}
-\end{equation}
-
-\cite{mahu78} have established the equivalence for incompressible problems between the reduced integration
-of the penalty term and a mixed Finite Element approach if the pressure nodes coincide with the integration points of the reduced rule.
-
-In the end, the elimination of the pressure unknown in the Stokes equations
-replaces the original saddle-point Stokes problem \cite{begl05} by an elliptical problem, 
-which leads to a symmetric positive definite (SPD) FEM matrix. 
-%Such systems always admit a square root triangular matrix (the Cholesky factor, L) and can be solved, once L has been computed (Cholesky factorization), by 2 triangular matrix solves (upper and lower back-substitutions). 
-This is the major benefit of the penalized approach 
-over the full indefinite solver with the velocity-pressure variables. Indeed, the SPD character of the matrix lends itself 
-to efficient solving stragegies and is less memory-demanding since it is sufficient to store only the upper half of the matrix including the diagonal
-\cite{gova}
-.
-ToDo: list codes which use this approach.
-
+\input{physics}
 
 
 
@@ -260,14 +109,27 @@ ToDo: list codes which use this approach.
 %------------------------------------------------------------------------------
 \section{The Finite Element Method}
 
-\subsection{aaa}
+\subsection{Numerical integration}
 
 
-\subsection{Solving procedures}
+\subsection{The mesh}
 
-\subsubsection{the whole matrix at once}
 
-\subsubsection{the pressure Schur complement appraoch}
+\subsection{Elements and basis functions}
+\input{elements}
+
+
+\subsection{The penalty approach}
+\input{penalty}
+
+
+
+
+%\subsection{Solving procedures}
+
+%\subsubsection{the whole matrix at once}
+
+%\subsubsection{the pressure Schur complement appraoch}
 
 
 
@@ -464,6 +326,10 @@ better yet simple matrix storage ?
 \section{{\tt fieldstone}: The stabilised $Q_1 \times Q_1$ element} 
 \input{python_codes/fieldstone_q1q1stab/text}
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: compressible flow (1)}
+\input{python_codes/fieldstone_compressible1/text}
 
 
 

@@ -1,50 +1,60 @@
 \begin{theindex}
 
-  \item $Q_1 \times P_0$, \hyperpage{9}, \hyperpage{15}, \hyperpage{21}, 
-		\hyperpage{27}, \hyperpage{30}
+  \item $Q_1 \times P_0$, \hyperpage{13}, \hyperpage{19}, 
+		\hyperpage{25}, \hyperpage{31}, \hyperpage{34}, 
+		\hyperpage{42}
 
   \indexspace
 
-  \item analytical solution, \hyperpage{9}, \hyperpage{15}, 
-		\hyperpage{30}, \hyperpage{35}
-  \item arithmetic mean, \hyperpage{27}
+  \item analytical solution, \hyperpage{13}, \hyperpage{19}, 
+		\hyperpage{34}, \hyperpage{39}, \hyperpage{42}
+  \item arithmetic mean, \hyperpage{31}
 
   \indexspace
 
+  \item basis functions, \hyperpage{6}
   \item Boussinesq, \hyperpage{4}
 
   \indexspace
 
-  \item geometric mean, \hyperpage{27}
+  \item geometric mean, \hyperpage{31}
 
   \indexspace
 
-  \item harmonic mean, \hyperpage{27}
+  \item harmonic mean, \hyperpage{31}
 
   \indexspace
 
-  \item incompressible flow, \hyperpage{15}, \hyperpage{21}, 
-		\hyperpage{27}, \hyperpage{30}, \hyperpage{35}
-  \item isothermal, \hyperpage{9}, \hyperpage{15}, \hyperpage{21}, 
-		\hyperpage{27}, \hyperpage{30}, \hyperpage{35}
-  \item isoviscous, \hyperpage{9}, \hyperpage{30}
+  \item incompressible flow, \hyperpage{19}, \hyperpage{25}, 
+		\hyperpage{31}, \hyperpage{34}, \hyperpage{39}, 
+		\hyperpage{42}
+  \item isothermal, \hyperpage{13}, \hyperpage{19}, \hyperpage{25}, 
+		\hyperpage{31}, \hyperpage{34}, \hyperpage{39}, 
+		\hyperpage{42}
+  \item isoviscous, \hyperpage{13}, \hyperpage{34}, \hyperpage{42}
 
   \indexspace
 
-  \item mixed formulation, \hyperpage{30}, \hyperpage{35}
+  \item mixed formulation, \hyperpage{34}, \hyperpage{39}, 
+		\hyperpage{42}
 
   \indexspace
 
-  \item non-isoviscous, \hyperpage{15}, \hyperpage{21}, \hyperpage{27}, 
-		\hyperpage{35}
-  \item nonconforming $Q_1 \times P_0$, \hyperpage{35}
-  \item nonlinear rheology, \hyperpage{21}
+  \item non-isoviscous, \hyperpage{19}, \hyperpage{25}, \hyperpage{31}, 
+		\hyperpage{39}
+  \item nonconforming $Q_1 \times P_0$, \hyperpage{39}
+  \item nonlinear rheology, \hyperpage{25}
 
   \indexspace
 
-  \item particle-in-cell, \hyperpage{27}
-  \item penalty formulation, \hyperpage{5}, \hyperpage{9}, 
-		\hyperpage{15}, \hyperpage{21}, \hyperpage{27}
-  \item pressure smoothing, \hyperpage{30}, \hyperpage{35}
+  \item particle-in-cell, \hyperpage{31}
+  \item penalty formulation, \hyperpage{7}, \hyperpage{13}, 
+		\hyperpage{19}, \hyperpage{25}, \hyperpage{31}
+  \item pressure smoothing, \hyperpage{34}, \hyperpage{39}, 
+		\hyperpage{42}
+
+  \indexspace
+
+  \item weak form, \hyperpage{9}
 
 \end{theindex}
