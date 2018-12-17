@@ -48,7 +48,7 @@ if int(len(sys.argv) == 4):
 else:
    nelx = 32
    nely = 32
-   visu = 1
+   visu = 0
 
 assert (nelx>0.), "nnx should be positive" 
 assert (nely>0.), "nny should be positive" 
@@ -73,7 +73,6 @@ pnormalise=True
 
 write_blocks=False
 
-
 Di=0.5
 Ra=1e5       # Rayleigh number
 alphaT=1e-2   # thermal expansion coefficient
@@ -82,7 +81,6 @@ hcapa=1.     # heat capacity
 hprod=0
 rho0=1       # reference density
 T0=0         # reference temperature
-CFL=1.       # CFL number 
 gx=0
 gy=-Ra/alphaT # vertical component of gravity vector
 viscosity=1
@@ -90,16 +88,15 @@ betaT=0
 #alphaT=0.1*Di
 #viscosity=Di/Ra
 
-CFL_nb=0.5
+CFL_nb=0.25
 
-nstep=10
+nstep=500
 
 incompressible=True
 
 model_time=np.zeros(nstep,dtype=np.float64) 
-Tvect = np.zeros(m,dtype=np.float64)   
 vrms=np.zeros(nstep,dtype=np.float64) 
-Nu=np.zeros(nstep,dtype=np.float64) 
+Nu=np.zeros(nstep,dtype=np.float64) ; Nu[:]=0
 
 if incompressible:
    betaT=0
@@ -170,14 +167,20 @@ print("setup: boundary conditions: %.3f s" % (time.time() - start))
 #################################################################
 # nodal pressure setup
 #################################################################
+start = time.time()
+
 q=np.zeros(nnp,dtype=np.float64)  
 
 for ip in range(0,nnp):
     q[ip]=rho0*np.abs(gy)*(Ly-y[ip])
 
+print("setup: q: %.3f s" % (time.time() - start))
+
 #################################################################
 # temperature and nodal density setup
 #################################################################
+start = time.time()
+
 T=np.zeros(nnp,dtype=np.float64)
 T_prev=np.zeros(nnp,dtype=np.float64)
 rho=np.zeros(nnp,dtype=np.float64)
@@ -186,6 +189,8 @@ for ip in range(0,nnp):
     T[ip]=(1-y[ip]) - 0.01*np.cos(np.pi*x[ip]/Lx)*np.sin(np.pi*y[ip]/Ly)
     rho[ip]=rho0*(1-alphaT*(T[ip]-T0)+betaT*q[ip])
 
+print("setup: T,rho: %.3f s" % (time.time() - start))
+
 ################################################################################################
 ################################################################################################
 # TIME STEPPING
@@ -193,8 +198,9 @@ for ip in range(0,nnp):
 ################################################################################################
 
 for istep in range(0,nstep):
-    print("-----------------------------")
+    print("----------------------------------")
     print("istep= ", istep)
+    print("----------------------------------")
 
     #################################################################
     # build FE matrix
@@ -218,6 +224,7 @@ for istep in range(0,nstep):
     v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
     p     = np.zeros(nel,dtype=np.float64)          # y-component velocity
     c_mat = np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64) 
+    Tvect = np.zeros(m,dtype=np.float64)   
 
     for iel in range(0, nel):
 
@@ -412,7 +419,7 @@ for istep in range(0,nstep):
 
     sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
 
-    print("solve time: %.3f s" % (time.time() - start))
+    print("solve: %.3f s" % (time.time() - start))
 
     ######################################################################
     # put solution into separate x,y velocity arrays
@@ -434,7 +441,7 @@ for istep in range(0,nstep):
     print("split vel into u,v: %.3f s" % (time.time() - start))
 
     ######################################################################
-    # compute strainrate 
+    # compute strainrate, temperature gradient and Nusselt number 
     ######################################################################
     start = time.time()
 
@@ -444,60 +451,75 @@ for istep in range(0,nstep):
     eyy = np.zeros(nel,dtype=np.float64)  
     exy = np.zeros(nel,dtype=np.float64)  
     e   = np.zeros(nel,dtype=np.float64)  
+    dTdx = np.zeros(nel,dtype=np.float64)  
+    dTdy = np.zeros(nel,dtype=np.float64)  
 
-    for iel in range(0,nel):
+    iel=0
+    for iely in range(0,nely):
+        for ielx in range(0,nelx):
 
-        rq = 0.0
-        sq = 0.0
-        wq = 2.0 * 2.0
+            rq = 0.0
+            sq = 0.0
+            wq = 2.0 * 2.0
 
-        N[0]=0.25*(1.-rq)*(1.-sq)
-        N[1]=0.25*(1.+rq)*(1.-sq)
-        N[2]=0.25*(1.+rq)*(1.+sq)
-        N[3]=0.25*(1.-rq)*(1.+sq)
+            N[0]=0.25*(1.-rq)*(1.-sq)
+            N[1]=0.25*(1.+rq)*(1.-sq)
+            N[2]=0.25*(1.+rq)*(1.+sq)
+            N[3]=0.25*(1.-rq)*(1.+sq)
 
-        dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
-        dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
-        dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
-        dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
+            dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
+            dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
+            dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
+            dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
-        jcb=np.zeros((2,2),dtype=np.float64)
-        for k in range(0, m):
-            jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
-            jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
-            jcb[1,0]+=dNds[k]*x[icon[k,iel]]
-            jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+            jcb=np.zeros((2,2),dtype=np.float64)
+            for k in range(0, m):
+                jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+                jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+                jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+                jcb[1,1]+=dNds[k]*y[icon[k,iel]]
 
-        # calculate determinant of the jacobian
-        jcob=np.linalg.det(jcb)
+            # calculate determinant of the jacobian
+            jcob=np.linalg.det(jcb)
 
-        # calculate the inverse of the jacobian
-        jcbi=np.linalg.inv(jcb)
+            # calculate the inverse of the jacobian
+            jcbi=np.linalg.inv(jcb)
 
-        for k in range(0,m):
-            dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-            dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+            for k in range(0,m):
+                dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+                dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
 
-        for k in range(0,m):
-            xc[iel] += N[k]*x[icon[k,iel]]
-            yc[iel] += N[k]*y[icon[k,iel]]
-            exx[iel] += dNdx[k]*u[icon[k,iel]]
-            eyy[iel] += dNdy[k]*v[icon[k,iel]]
-            exy[iel] += 0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
-        e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
+            for k in range(0,m):
+                xc[iel] += N[k]*x[icon[k,iel]]
+                yc[iel] += N[k]*y[icon[k,iel]]
+                exx[iel] += dNdx[k]*u[icon[k,iel]]
+                eyy[iel] += dNdy[k]*v[icon[k,iel]]
+                exy[iel] += 0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
+                dTdx[iel] += dNdx[k]*T[icon[k,iel]]
+                dTdy[iel] += dNdy[k]*T[icon[k,iel]]
+
+            if iely==nely-1:
+               Nu[istep]+=abs(dTdy[iel])*Lx/nelx
+            e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
+            iel+=1
 
     print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
     print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
     print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+    print("     -> dTdx (m,M) %.4f %.4f " %(np.min(dTdx),np.max(dTdx)))
+    print("     -> dTdy (m,M) %.4f %.4f " %(np.min(dTdy),np.max(dTdy)))
+
+    print("     -> time= %.6f ; Nu= %.6f" %(model_time[istep],Nu[istep]))
 
     np.savetxt('p.ascii',np.array([xc,yc,p]).T,header='# x,y,p')
     np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
-    print("compute press & sr: %.3f s" % (time.time() - start))
+    print("compute sr, Nu: %.3f s" % (time.time() - start))
 
     ######################################################################
     # compute vrms 
     ######################################################################
+    start = time.time()
 
     for iel in range (0,nel):
         for iq in [-1,1]:
@@ -532,13 +554,17 @@ for istep in range(0,nstep):
 
     vrms[istep]=np.sqrt(vrms[istep]/(Lx*Ly))
 
-    print("time= %.6f ; vrms   = %.6f" %(model_time[istep],vrms[istep]))
+    print("     -> vrms= %.6f" % vrms[istep])
+
+    print("compute vrms: %.3f s" % (time.time() - start))
 
     ######################################################################
     # compute nodal pressure
     ######################################################################
+    start = time.time()
 
     count=np.zeros(nnp,dtype=np.float64)  
+    q[:]=0
 
     for iel in range(0,nel):
         q[icon[0,iel]]+=p[iel]
@@ -554,13 +580,18 @@ for istep in range(0,nstep):
 
     np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
 
+    print("     -> q (m,M) %.4f %.4f " %(np.min(q),np.max(q)))
+
+    print("compute q: %.3f s" % (time.time() - start))
+
     ######################################################################
     # compute time step value 
     ######################################################################
+    start = time.time()
 
-    dt1=CFL*min(Lx/nelx,Ly/nely)/np.max(np.sqrt(u**2+v**2))
+    dt1=CFL_nb*min(Lx/nelx,Ly/nely)/np.max(np.sqrt(u**2+v**2))
 
-    dt2=CFL*min(Lx/nelx,Ly/nely)**2/(hcond/hcapa/rho0)
+    dt2=CFL_nb*min(Lx/nelx,Ly/nely)**2/(hcond/hcapa/rho0)
 
     dt=min(dt1,dt2)
 
@@ -569,15 +600,14 @@ for istep in range(0,nstep):
     else:
        model_time[istep]=model_time[istep-1]+dt
 
-    print('dt1= %.6f' %dt1)
-    print('dt2= %.6f' %dt2)
-    print('dt = %.6f' %dt)
+    print('     -> dt1= %.6f dt2= %.6f dt= %.6f' % (dt1,dt2,dt))
+
+    print("compute timestep: %.3f s" % (time.time() - start))
 
     ######################################################################
     # build FE matrix for Temperature 
     ######################################################################
-
-    print("building temperature matrix and rhs")
+    start = time.time()
 
     A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
     rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
@@ -630,9 +660,12 @@ for istep in range(0,nstep):
                 # calculate inverse of the jacobian matrix
                 jcbi=np.linalg.inv(jcb)
 
-                # compute dNdx & dNdy
+                # compute dNdx & dNdy and Phi
                 vel[0,0]=0.
                 vel[0,1]=0.
+                exxq=0.
+                eyyq=0.
+                exyq=0.
                 for k in range(0,m):
                     vel[0,0]+=N_mat[k,0]*u[icon[k,iel]]
                     vel[0,1]+=N_mat[k,0]*v[icon[k,iel]]
@@ -640,6 +673,13 @@ for istep in range(0,nstep):
                     dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
                     B_mat[0,k]=dNdx[k]
                     B_mat[1,k]=dNdy[k]
+                    exxq+=dNdx[k]*u[icon[k,iel]]
+                    eyyq+=dNdx[k]*u[icon[k,iel]]
+                    exyq+=(dNdy[k]*u[icon[k,iel]]+dNdx[k]*v[icon[k,iel]])*.5
+                exxd=exxq-(exxq+eyyq)/3.
+                eyyd=eyyq-(exxq+eyyq)/3.
+                exyd=exyq
+                Phi=2.*viscosity*(exxd**2+eyyd**2+2*exyd**2)    
 
                 # compute mass matrix
                 MM=N_mat.dot(N_mat.T)*rho0*hcapa*wq*jcob
@@ -677,80 +717,97 @@ for istep in range(0,nstep):
                         A_mat[m1,m2]+=a_el[k1,k2]
                     rhs[m1]+=b_el[k1]
 
-    print("A_mat (m,M) = %.4f %.4f" %(np.min(A_mat),np.max(A_mat)))
-    print("rhs   (m,M) = %.6f %.6f" %(np.min(rhs),np.max(rhs)))
+    #print("A_mat (m,M) = %.4f %.4f" %(np.min(A_mat),np.max(A_mat)))
+    #print("rhs   (m,M) = %.6f %.6f" %(np.min(rhs),np.max(rhs)))
+
+    print("build FEM matrix T: %.3f s" % (time.time() - start))
 
     #################################################################
     # solve system
     #################################################################
-
     start = time.time()
+
     T = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
-    print("solve T time: %.3f s" % (time.time() - start))
 
     print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
+
+    print("solve T: %.3f s" % (time.time() - start))
 
     #####################################################################
     # update density 
     #####################################################################
+    start = time.time()
 
     for ip in range(0,nnp):
         rho[ip]=rho0*(1-alphaT*(T[ip]-T0)+betaT*q[ip])
 
+    print("     -> rho (m,M) %.4f %.4f " %(np.min(rho),np.max(rho)))
+
+    print("compute density: %.3f s" % (time.time() - start))
+
     #####################################################################
     # plot of solution
     #####################################################################
+    start = time.time()
 
-    u_temp=np.reshape(u,(nny,nnx))
-    v_temp=np.reshape(v,(nny,nnx))
-    q_temp=np.reshape(q,(nny,nnx))
-    p_temp=np.reshape(p,(nely,nelx))
-    e_temp=np.reshape(e,(nely,nelx))
-    exx_temp=np.reshape(exx,(nely,nelx))
-    eyy_temp=np.reshape(eyy,(nely,nelx))
-    exy_temp=np.reshape(exy,(nely,nelx))
-    rho_temp=np.reshape(rho,(nny,nnx))
-    T_temp=np.reshape(T,(nny,nnx))
+    if visu==1 or istep%10==0:
 
-    SMALL_SIZE = 6
-    MEDIUM_SIZE = 6
-    BIGGER_SIZE = 6
-    plt.rc('font',size=SMALL_SIZE)
-    plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
-    plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
-    plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
-    plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
-    plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
-    plt.rc('figure', titlesize=BIGGER_SIZE)  
+       u_temp=np.reshape(u,(nny,nnx))
+       v_temp=np.reshape(v,(nny,nnx))
+       q_temp=np.reshape(q,(nny,nnx))
+       p_temp=np.reshape(p,(nely,nelx))
+       e_temp=np.reshape(e,(nely,nelx))
+       exx_temp=np.reshape(exx,(nely,nelx))
+       eyy_temp=np.reshape(eyy,(nely,nelx))
+       exy_temp=np.reshape(exy,(nely,nelx))
+       rho_temp=np.reshape(rho,(nny,nnx))
+       T_temp=np.reshape(T,(nny,nnx))
+       dTdx_temp=np.reshape(dTdx,(nely,nelx))
+       dTdy_temp=np.reshape(dTdy,(nely,nelx))
 
-    fig,axes=plt.subplots(nrows=3,ncols=4,figsize=(18,18))
+       SMALL_SIZE = 6
+       MEDIUM_SIZE = 6
+       BIGGER_SIZE = 6
+       plt.rc('font',size=SMALL_SIZE)
+       plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+       plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+       plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+       plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+       plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+       plt.rc('figure', titlesize=BIGGER_SIZE)  
 
-    uextent=(np.amin(x),np.amax(x),np.amin(y),np.amax(y))
-    pextent=(np.amin(xc),np.amax(xc),np.amin(yc),np.amax(yc))
+       fig,axes=plt.subplots(nrows=3,ncols=4,figsize=(18,18))
 
-    onePlot(u_temp,      0,0, "$v_x$",                "x", "y", uextent, 0, 0, 'Spectral_r')
-    onePlot(v_temp,      0,1, "$v_y$",                "x", "y", uextent, 0, 0, 'Spectral_r')
-    onePlot(p_temp,      0,2, "$p$",                  "x", "y", pextent, 0, 0, 'RdGy_r')
-    onePlot(q_temp,      0,3, "$q$",                  "x", "y", pextent, 0, 0, 'RdGy_r')
-    onePlot(exx_temp,    1,0, "$\dot{\epsilon}_{xx}$","x", "y", pextent, 0, 0, 'viridis')
-    onePlot(eyy_temp,    1,1, "$\dot{\epsilon}_{yy}$","x", "y", pextent, 0, 0, 'viridis')
-    onePlot(exy_temp,    1,2, "$\dot{\epsilon}_{xy}$","x", "y", pextent, 0, 0, 'viridis')
-    onePlot(e_temp,      1,3, "$\dot{\epsilon}$",     "x", "y", pextent, 0, 0, 'viridis')
-    onePlot(rho_temp,    2,0, "density",              "x", "y", uextent, 0, 0, 'Spectral_r')
-    onePlot(T_temp,      2,1, "temperature",          "x", "y", uextent, 0, 0, 'Spectral_r')
+       uextent=(np.amin(x),np.amax(x),np.amin(y),np.amax(y))
+       pextent=(np.amin(xc),np.amax(xc),np.amin(yc),np.amax(yc))
 
-    plt.subplots_adjust(hspace=0.5)
+       onePlot(u_temp,      0,0, "$v_x$",                "x", "y", uextent, 0, 0, 'Spectral_r')
+       onePlot(v_temp,      0,1, "$v_y$",                "x", "y", uextent, 0, 0, 'Spectral_r')
+       onePlot(p_temp,      0,2, "$p$",                  "x", "y", pextent, 0, 0, 'RdGy_r')
+       onePlot(q_temp,      0,3, "$q$",                  "x", "y", pextent, 0, 0, 'RdGy_r')
+       onePlot(exx_temp,    1,0, "$\dot{\epsilon}_{xx}$","x", "y", pextent, 0, 0, 'viridis')
+       onePlot(eyy_temp,    1,1, "$\dot{\epsilon}_{yy}$","x", "y", pextent, 0, 0, 'viridis')
+       onePlot(exy_temp,    1,2, "$\dot{\epsilon}_{xy}$","x", "y", pextent, 0, 0, 'viridis')
+       onePlot(e_temp,      1,3, "$\dot{\epsilon}$",     "x", "y", pextent, 0, 0, 'viridis')
+       onePlot(rho_temp,    2,0, "density",              "x", "y", uextent, 0, 0, 'Spectral_r')
+       onePlot(T_temp,      2,1, "temperature",          "x", "y", uextent, 0, 0, 'Spectral_r')
+       onePlot(dTdx_temp,   2,2, "dT/dx",                "x", "y", uextent, 0, 0, 'Spectral_r')
+       onePlot(dTdy_temp,   2,3, "dT/dy",                "x", "y", uextent, 0, 0, 'Spectral_r')
 
-    if visu==1:
+       plt.subplots_adjust(hspace=0.5)
+
        filename = 'solution_{:04d}.pdf'.format(istep) 
        plt.savefig(filename, bbox_inches='tight')
        #plt.show()
+
+    print("generate pdf: %.3f s" % (time.time() - start))
+
+    np.savetxt('vrms_Nu.ascii',np.array([model_time,vrms,Nu]).T,header='# t,vrms,Nu')
 
 ################################################################################################
 # END OF TIMESTEPPING
 ################################################################################################
     
-np.savetxt('vrms.ascii',np.array([model_time,vrms]).T,header='# t,vrms')
 
 print("-----------------------------")
 print("------------the end----------")

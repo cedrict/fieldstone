@@ -27,8 +27,44 @@ The perturbation in the initial temperature fields leads to
 a perturbation of the density field and sets the fluid in motion. 
 
 Depending on the initial Rayleigh number, the system ultimately reaches a 
-steady state after some time. The steady-state 
-temperature fields of case 1a,b,c are shown hereunder: 
+steady state after some time. 
+
+The Nusselt number (i.e. the mean surface temperature gradient over mean bottom temperature)
+is computed as follows \cite{blbc89}:
+\begin{equation}
+Nu = L_y \frac{\int \frac{\partial T}{\partial y}(y=L_y) dx  }{\int T(y=0) dx}
+\label{eqNu}
+\end{equation}
+Note that in our case the denominator is equal to 1 since $L_x=1$ and the temperature at the 
+bottom is prescribed to be 1.
+
+Finally, the steady state root mean square velocity and Nusselt number measurements
+are indicated in Table \ref{tab_bl} alongside those of \cite{blbc89} and \cite{tack94}.
+(Note that this benchmark was also carried out and published in  
+other publications \cite{trha98,albe00,gery10,dawk11,lezh11} but since they did not provide  a complete set
+of measurement values, they are not included in the table.)
+
+\begin{center}
+\begin{tabular}{llcc}
+\hline
+          &           & Blankenbach et al & Tackley \cite{tack94}    \\
+\hline
+\hline
+$Ra=10^4$ & $V_{rms}$ &  $42.864947  \pm 0.000020$ & 42.775 \\
+          & $Nu$      &  $4.884409   \pm 0.000010$ & 4.878  \\
+$Ra=10^5$ & $V_{rms}$ &  $193.21454  \pm 0.00010 $ & 193.11 \\
+          & $Nu$      &  $10.534095  \pm 0.000010$ & 10.531 \\
+$Ra=10^6$ & $V_{rms}$ &  $833.98977  \pm 0.00020 $ & 833.55 \\
+          & $Nu$      &  $21.972465  \pm 0.000020$ & 21.998 \\
+\hline
+\end{tabular}\\
+{\small Steady state Nusselt number $Nu$ and $V_{rms}$ measurements as reported in the literature. }
+\end{center}
+
+
+
+
+
 
 \fbox{
 \parbox{10cm}{{\bf features}

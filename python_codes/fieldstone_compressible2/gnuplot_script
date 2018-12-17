@@ -1,0 +1,19 @@
+set term pdf enhanced
+set output 'vrms.pdf'
+set key outside
+set xlabel 'time'
+set ylabel 'v_{rms}'
+plot[][]\
+'vrms_Nu.ascii' w lp notitle
+
+set output 'Nu.pdf'
+set ylabel 'Nu'
+plot[][]\
+'vrms_Nu.ascii' u 1:3 w lp notitle
+
+set output 'vrms_Nu.pdf'
+set xlabel 'vrms'
+set ylabel 'Nu'
+plot[][]\
+'vrms_Nu.ascii' u 2:3 w lp notitle
+

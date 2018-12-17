@@ -1,0 +1,5 @@
+rm *.ascii
+rm *.pdf
+rm page.aux
+rm page.log
+
