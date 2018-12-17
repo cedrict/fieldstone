@@ -15,13 +15,44 @@ $T$ & temperature & K \\
 ${\bm \nabla}$ & gradient operator & m$^{-1}$ \\
 ${\bm \nabla}\cdot$ & divergence operator & m$^{-1}$ \\
 $p$ & pressure & Pa\\
-$\dot{\bm \epsilon}({\bm v})$ & strain rate tensor & s$^{-1}$ \\
+$\dot{\bm \varepsilon}({\bm v})$ & strain rate tensor & s$^{-1}$ \\
 $\alpha$ & thermal expansion coefficient & K$^{-1}$ \\
 $k$ & thermal conductivity & W/(m $\cdot$ K) \\
 $C_p$ & Heat capacity & J/K \\
+$H$ & intrinsic specific heat production & W/kg\\
+$\beta_T$ & isothermal compressibility & Pa$^{-1}$  \\
 \hline
 \end{tabular}
 \end{center}
+
+Let us start from the heat transport equation as shown in Schubert, Turcotte and Olson \cite{scto01}:
+\[
+\rho C_p \frac{DT}{Dt} - \alpha T \frac{Dp}{Dt} = {\bm \nabla} \cdot k {\bm \nabla} T + \Phi + \rho H  
+\]
+with 
+\[
+\frac{DT}{Dt} = \frac{\partial T}{\partial t} + {\bm v}\cdot {\bm \nabla}T
+\quad\quad
+\frac{Dp}{Dt} = \frac{\partial p}{\partial t} + {\bm v}\cdot {\bm \nabla}p
+\]
+In order to arrive at the set of equations that ASPECT solves, we need to neglect the $\partial p/\partial t$. {\color{red}WHY?}
+Also, their definition of the shear heating term $\Phi$ is:
+\[
+\Phi = k_B ({\bm \nabla}\cdot{\bm v})^2 + 2\eta \dot{\bm \varepsilon}^d:\dot{\bm \varepsilon}^d
+\]
+For many fluids the bulk viscosity $k_B$ is very small and is often taken to be zero, an assumption known
+as the Stokes assumption: $k_B=\lambda+2\eta/3=0$. \index{bulk viscosity}
+Note that $\eta$ is the dynamic viscosity and $\lambda$ the second viscosity. \index{dynamic viscosity}
+\index{second viscosity}
+Also, 
+\[
+{\bm \tau}=2\eta \dot{\bm \varepsilon} + \lambda ({\bm \nabla}\cdot{\bm v}) {\bm 1}
+\]
+but since $k_B=\lambda+2\eta/3=0$, then $\lambda=-2\eta/3$ so 
+\[
+{\bm \tau}=2\eta \dot{\bm \varepsilon} -\frac{2}{3}\eta ({\bm \nabla}\cdot{\bm v}) {\bm 1} = 2\eta \dot{\bm \varepsilon}^d
+\]
+
 
 [from aspect manual]
 We focus on the system of equations in a $d=2$- or $d=3$-dimensional
@@ -70,7 +101,7 @@ u$, pressure $p$ and temperature $T$:
   & \textrm{in $\Omega$},
   \notag
 \end{align}
-where $\dot\varepsilon(\mathbf u) = \frac{1}{2}(\nabla \mathbf u + \nabla\mathbf
+where $\dot{\bm \varepsilon}(\mathbf u) = \frac{1}{2}(\nabla \mathbf u + \nabla\mathbf
 u^T)$ is the symmetric gradient of the velocity (often called the
 \textit{strain rate}).%
 
@@ -115,7 +146,7 @@ Under the Boussinesq approximation, the equations are much simplified:
 
 \begin{align}
   \label{eq:stokes-1}
-  -\nabla \cdot \left[2\eta \dot\varepsilon(\bm v)
+  -\nabla \cdot \left[2\eta \dot{\bm \varepsilon}(\bm v)
                 \right] + \nabla p &=
   \rho \bm g
   &

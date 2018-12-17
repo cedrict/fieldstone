@@ -2,18 +2,30 @@
 
   \item $Q_1 \times P_0$, \hyperpage{13}, \hyperpage{19}, 
 		\hyperpage{25}, \hyperpage{31}, \hyperpage{34}, 
-		\hyperpage{42}
+		\hyperpage{42}, \hyperpage{44}
 
   \indexspace
 
   \item analytical solution, \hyperpage{13}, \hyperpage{19}, 
-		\hyperpage{34}, \hyperpage{39}, \hyperpage{42}
+		\hyperpage{34}, \hyperpage{39}, \hyperpage{42}, 
+		\hyperpage{44}
   \item arithmetic mean, \hyperpage{31}
 
   \indexspace
 
   \item basis functions, \hyperpage{6}
-  \item Boussinesq, \hyperpage{4}
+  \item Boussinesq, \hyperpage{5}
+  \item bulk modulus, \hyperpage{43}
+  \item bulk viscosity, \hyperpage{4}
+
+  \indexspace
+
+  \item compressibility, \hyperpage{43}
+  \item compressible flow, \hyperpage{44}
+
+  \indexspace
+
+  \item dynamic viscosity, \hyperpage{4}
 
   \indexspace
 
@@ -31,12 +43,13 @@
   \item isothermal, \hyperpage{13}, \hyperpage{19}, \hyperpage{25}, 
 		\hyperpage{31}, \hyperpage{34}, \hyperpage{39}, 
 		\hyperpage{42}
-  \item isoviscous, \hyperpage{13}, \hyperpage{34}, \hyperpage{42}
+  \item isoviscous, \hyperpage{13}, \hyperpage{34}, \hyperpage{42}, 
+		\hyperpage{44}
 
   \indexspace
 
   \item mixed formulation, \hyperpage{34}, \hyperpage{39}, 
-		\hyperpage{42}
+		\hyperpage{42}, \hyperpage{44}
 
   \indexspace
 
@@ -51,7 +64,15 @@
   \item penalty formulation, \hyperpage{7}, \hyperpage{13}, 
 		\hyperpage{19}, \hyperpage{25}, \hyperpage{31}
   \item pressure smoothing, \hyperpage{34}, \hyperpage{39}, 
-		\hyperpage{42}
+		\hyperpage{42}, \hyperpage{44}
+
+  \indexspace
+
+  \item second viscosity, \hyperpage{4}
+
+  \indexspace
+
+  \item thermal expansion, \hyperpage{43}
 
   \indexspace
 

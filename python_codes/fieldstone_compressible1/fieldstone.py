@@ -10,11 +10,10 @@ import matplotlib.pyplot as plt
 
 #------------------------------------------------------------------------------
 def gx(x,y,ibench):
-    #if ibench==-1:
     if ibench==1:
        val=1/y
     if ibench==2:
-       val = 1/cos(y)
+       val = 1/np.cos(y)
     if ibench==3:
        val=-1
     if ibench==4:
@@ -24,11 +23,10 @@ def gx(x,y,ibench):
     return val
 
 def gy(x,y,ibench):
-    #if ibench==-1:
     if ibench==1:
        val=1/x
     if ibench==2:
-       val=1/cos(x)
+       val=1/np.cos(x)
     if ibench==3:
        val=0
     if ibench==4:
@@ -38,23 +36,19 @@ def gy(x,y,ibench):
     return val
 
 def density(x,y,ibench):
-    if ibench==-1:
-       val=1
     if ibench==1:
        val=x*y
     if ibench==2:
-       val = cos(x)*cos(y)
+       val = np.cos(x)*np.cos(y)
     if ibench==3:
        val=x
     if ibench==4:
        val = 1/(1-x)
     if ibench==5:
-       val=cos(x)
+       val=np.cos(x)
     return val
 
 def u_th(x,y,ibench):
-    if ibench==-1:
-       val = x**2 * (1-x)**2 * (2*y - 6*y**2 + 4*y**3)
     if ibench==1:
        val=1/x
     if ibench==2:
@@ -68,8 +62,6 @@ def u_th(x,y,ibench):
     return val
 
 def v_th(x,y,ibench):
-    if ibench==-1:
-       val = -y**2 * (1-y)**2 * (2*x - 6*x**2 + 4*x**3)
     if ibench==1:
        val=1/y
     if ibench==2:
@@ -83,23 +75,42 @@ def v_th(x,y,ibench):
     return val
 
 def p_th(x,y,ibench):
-    if ibench==-1:
-       pth = x*(1-x)-1/6
     if ibench==1:
        val = -4/(3*x**2) - 4/(3*y**2) + x**2/2 + y**2/2  -1
     if ibench==2:
-       val = 4*sin(x)/(3*cos(x)**2)+4*sin(y)/(3*cos(y)**2) + sin(x) + sin(y) - 3.18834
+       val = 4*np.sin(x)/(3*np.cos(x)**2)+4*np.sin(y)/(3*np.cos(y)**2) + np.sin(x) + np.sin(y) - 2+2*np.cos(1)-8/3*(1/np.cos(1)-1) 
     if ibench==3:
        val =  -4/(3*x**2) - x**2/2 + 11/6
     if ibench==4:
        val = 10*log(x-1) +290.9 
     if ibench==5:
-       val = 4*sin(x)/(3*cos(x)**2) - sin(x) -0.674723
+       val = 4*np.sin(x)/(3*np.cos(x)**2) - np.sin(x) -0.674723
+    return val
+
+def sr_xx_th(x,y,ibench):
+    if ibench==1:
+       val=-1/x**2
+    if ibench==2:
+       val=np.sin(x)/np.cos(x)**2
+    return val
+
+def sr_yy_th(x,y,ibench):
+    if ibench==1:
+       val=-1/y**2
+    if ibench==2:
+       val=np.sin(y)/np.cos(y)**2
+    return val
+
+def sr_xy_th(x,y,ibench):
+    if ibench==1:
+       val=0
+    if ibench==2:
+       val=0
     return val
 
 def onePlot(variable, plotX, plotY, title, labelX, labelY, extVal, limitX, limitY, colorMap):
     im = axes[plotX][plotY].imshow(np.flipud(variable),extent=extVal, cmap=colorMap, interpolation="nearest")
-    axes[plotX][plotY].set_title(title,fontsize=10, y=1.01)
+    axes[plotX][plotY].set_title(title,fontsize=6, y=1.01)
     if (limitX != 0.0):
        axes[plotX][plotY].set_xlim(0,limitX)
     if (limitY != 0.0):
@@ -162,11 +173,8 @@ sqrt3=np.sqrt(3.)
 # 4 - Arie van den Berg
 # 5 - 1D Cartesian Sinusoidal
 
-ibench=1
+ibench=2
 
-if ibench==-1:
-   offsetx=0 
-   offsety=0
 if ibench==1:
    offsetx=1 
    offsety=1
@@ -502,6 +510,9 @@ exx = np.zeros(nel,dtype=np.float64)
 eyy = np.zeros(nel,dtype=np.float64)  
 exy = np.zeros(nel,dtype=np.float64)  
 e   = np.zeros(nel,dtype=np.float64)  
+exx_th = np.zeros(nel,dtype=np.float64)  
+eyy_th = np.zeros(nel,dtype=np.float64)  
+exy_th = np.zeros(nel,dtype=np.float64)  
 
 for iel in range(0,nel):
 
@@ -542,8 +553,10 @@ for iel in range(0,nel):
         exx[iel] += dNdx[k]*u[icon[k,iel]]
         eyy[iel] += dNdy[k]*v[icon[k,iel]]
         exy[iel] += 0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
-
     e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
+    exx_th[iel] = sr_xx_th(xc[iel],yc[iel],ibench)
+    eyy_th[iel] = sr_yy_th(xc[iel],yc[iel],ibench)
+    exy_th[iel] = sr_xy_th(xc[iel],yc[iel],ibench)
 
 print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
@@ -589,12 +602,17 @@ for i in range(0,nnp):
     error_u[i]=u[i]-u_th(x[i],y[i],ibench)
     error_v[i]=v[i]-v_th(x[i],y[i],ibench)
     error_q[i]=q[i]-p_th(x[i],y[i],ibench)
+    #error_u[i]=u_th(x[i],y[i],ibench)
+    #error_v[i]=v_th(x[i],y[i],ibench)
+    #error_q[i]=p_th(x[i],y[i],ibench)
 
 for i in range(0,nel): 
     error_p[i]=p[i]-p_th(xc[i],yc[i],ibench)
+    #error_p[i]=p_th(xc[i],yc[i],ibench)
 
 errv=0.
 errp=0.
+errq=0.
 for iel in range (0,nel):
     for iq in [-1,1]:
         for jq in [-1,1]:
@@ -620,18 +638,22 @@ for iel in range (0,nel):
             yq=0.0
             uq=0.0
             vq=0.0
+            qq=0.0
             for k in range(0,m):
                 xq+=N[k]*x[icon[k,iel]]
                 yq+=N[k]*y[icon[k,iel]]
                 uq+=N[k]*u[icon[k,iel]]
                 vq+=N[k]*v[icon[k,iel]]
+                qq+=N[k]*q[icon[k,iel]]
             errv+=((uq-u_th(xq,yq,ibench))**2+(vq-v_th(xq,yq,ibench))**2)*wq*jcob
             errp+=(p[iel]-p_th(xq,yq,ibench))**2*wq*jcob
+            errq+=(qq-p_th(xq,yq,ibench))**2*wq*jcob
 
 errv=np.sqrt(errv)
+errq=np.sqrt(errq)
 errp=np.sqrt(errp)
 
-print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
+print("     -> nel= %6d ; errv= %.8f ; errp= %.8f ; errq= %.8f" %(nel,errv,errp,errq))
 
 print("compute errors: %.3f s" % (time.time() - start))
 
@@ -654,8 +676,22 @@ error_p_temp=np.reshape(error_p,(nely,nelx))
 rho_temp=np.reshape(rho_nodal,(nny,nnx))
 gx_temp=np.reshape(gx_nodal,(nny,nnx))
 gy_temp=np.reshape(gy_nodal,(nny,nnx))
+exx_th_temp=np.reshape(exx_th,(nely,nelx))
+eyy_th_temp=np.reshape(eyy_th,(nely,nelx))
+exy_th_temp=np.reshape(exy_th,(nely,nelx))
 
-fig,axes=plt.subplots(nrows=4,ncols=4,figsize=(18,18))
+SMALL_SIZE = 6
+MEDIUM_SIZE = 6
+BIGGER_SIZE = 6
+plt.rc('font',size=SMALL_SIZE)
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  
+
+fig,axes=plt.subplots(nrows=5,ncols=4,figsize=(18,18))
 
 uextent=(np.amin(x),np.amax(x),np.amin(y),np.amax(y))
 pextent=(np.amin(xc),np.amax(xc),np.amin(yc),np.amax(yc))
@@ -664,17 +700,20 @@ onePlot(u_temp,      0,0, "$v_x$",                "x", "y", uextent, 0, 0, 'Spec
 onePlot(v_temp,      0,1, "$v_y$",                "x", "y", uextent, 0, 0, 'Spectral_r')
 onePlot(p_temp,      0,2, "$p$",                  "x", "y", pextent, 0, 0, 'RdGy_r')
 onePlot(q_temp,      0,3, "$q$",                  "x", "y", pextent, 0, 0, 'RdGy_r')
-onePlot(exx_temp,    1,0, "$\dot{\epsilon}_{xx}$","x", "y", pextent, 0, 0, 'viridis')
-onePlot(eyy_temp,    1,1, "$\dot{\epsilon}_{yy}$","x", "y", pextent, 0, 0, 'viridis')
-onePlot(exy_temp,    1,2, "$\dot{\epsilon}_{xy}$","x", "y", pextent, 0, 0, 'viridis')
-onePlot(e_temp,      1,3, "$\dot{\epsilon}$",     "x", "y", pextent, 0, 0, 'viridis')
-onePlot(error_u_temp,2,0, "$v_x-t^{th}_x$",       "x", "y", uextent, 0, 0, 'Spectral_r')
-onePlot(error_v_temp,2,1, "$v_y-t^{th}_y$",       "x", "y", uextent, 0, 0, 'Spectral_r')
-onePlot(error_p_temp,2,2, "$p-p^{th}$",           "x", "y", uextent, 0, 0, 'RdGy_r')
-onePlot(error_q_temp,2,3, "$q-p^{th}$",           "x", "y", uextent, 0, 0, 'RdGy_r')
-onePlot(rho_temp,    3,0, "density",              "x", "y", uextent, 0, 0, 'Spectral_r')
-onePlot(gx_temp,     3,1, "$g_x$",                "x", "y", uextent, 0, 0, 'Spectral_r')
-onePlot(gy_temp,     3,2, "$g_y$",                "x", "y", uextent, 0, 0, 'Spectral_r')
+onePlot(error_u_temp,1,0, "$v_x-t^{th}_x$",       "x", "y", uextent, 0, 0, 'Spectral_r')
+onePlot(error_v_temp,1,1, "$v_y-t^{th}_y$",       "x", "y", uextent, 0, 0, 'Spectral_r')
+onePlot(error_p_temp,1,2, "$p-p^{th}$",           "x", "y", uextent, 0, 0, 'RdGy_r')
+onePlot(error_q_temp,1,3, "$q-p^{th}$",           "x", "y", uextent, 0, 0, 'RdGy_r')
+onePlot(exx_temp,    2,0, "$\dot{\epsilon}_{xx}$","x", "y", pextent, 0, 0, 'viridis')
+onePlot(eyy_temp,    2,1, "$\dot{\epsilon}_{yy}$","x", "y", pextent, 0, 0, 'viridis')
+onePlot(exy_temp,    2,2, "$\dot{\epsilon}_{xy}$","x", "y", pextent, 0, 0, 'viridis')
+onePlot(e_temp,      2,3, "$\dot{\epsilon}$",     "x", "y", pextent, 0, 0, 'viridis')
+onePlot(exx_th_temp, 3,0, "$\dot{\epsilon}_{xx}^{th}$","x", "y", pextent, 0, 0, 'viridis')
+onePlot(eyy_th_temp, 3,1, "$\dot{\epsilon}_{yy}^{th}$","x", "y", pextent, 0, 0, 'viridis')
+onePlot(exy_th_temp, 3,2, "$\dot{\epsilon}_{xy}^{th}$","x", "y", pextent, 0, 0, 'viridis')
+onePlot(rho_temp,    4,0, "density",              "x", "y", uextent, 0, 0, 'Spectral_r')
+onePlot(gx_temp,     4,1, "$g_x$",                "x", "y", uextent, 0, 0, 'Spectral_r')
+onePlot(gy_temp,     4,2, "$g_y$",                "x", "y", uextent, 0, 0, 'Spectral_r')
 
 plt.subplots_adjust(hspace=0.5)
 

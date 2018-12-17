@@ -1,4 +1,7 @@
-\indexentry{Boussinesq|hyperpage}{4}
+\indexentry{bulk viscosity|hyperpage}{4}
+\indexentry{dynamic viscosity|hyperpage}{4}
+\indexentry{second viscosity|hyperpage}{4}
+\indexentry{Boussinesq|hyperpage}{5}
 \indexentry{basis functions|hyperpage}{6}
 \indexentry{penalty formulation|hyperpage}{7}
 \indexentry{weak form|hyperpage}{9}
@@ -49,3 +52,12 @@
 \indexentry{isoviscous|hyperpage}{42}
 \indexentry{analytical solution|hyperpage}{42}
 \indexentry{pressure smoothing|hyperpage}{42}
+\indexentry{thermal expansion|hyperpage}{43}
+\indexentry{compressibility|hyperpage}{43}
+\indexentry{bulk modulus|hyperpage}{43}
+\indexentry{$Q_1 \times P_0$|hyperpage}{44}
+\indexentry{compressible flow|hyperpage}{44}
+\indexentry{mixed formulation|hyperpage}{44}
+\indexentry{isoviscous|hyperpage}{44}
+\indexentry{analytical solution|hyperpage}{44}
+\indexentry{pressure smoothing|hyperpage}{44}

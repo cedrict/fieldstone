@@ -30,6 +30,7 @@
 \newcommand{\K}{{\mathbb{K}}}
 \newcommand{\G}{{\mathbb{G}}}
 \newcommand{\Z}{{\mathbb{Z}}}
+\newcommand{\W}{{\mathbb{W}}}
 \usepackage{makeidx} 
 
 
@@ -159,7 +160,7 @@ python3.6 -m pip install --user numpy scipy matplotlib
 
 \subsection{Dealing with a free surface}
 
-
+\subsection{Pressure normalisation}
 
 
 
@@ -183,6 +184,10 @@ full compressible
 total energy calculations
 
 constraints
+
+compositions, marker chain
+
+van keken initial value with deformed mesh
 
 free-slip bc on annulus and sphere . See for example p540 Gresho and Sani book.
 
@@ -331,6 +336,10 @@ better yet simple matrix storage ?
 \section{{\tt fieldstone}: compressible flow (1)}
 \input{python_codes/fieldstone_compressible1/text}
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: compressible flow (2)}
+\input{python_codes/fieldstone_compressible2/text}
 
 
 

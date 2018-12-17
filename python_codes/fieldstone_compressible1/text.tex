@@ -62,7 +62,8 @@ build the full Stokes matrix $\A$.
 
 {\sl Remark}: the term $\Z {\cal V}$ is often put in the rhs (i.e. added to $h$) so that 
 the matrix $\A$ retains the same structure as in the incompressible case. This is indeed 
-how it is implemented in ASPECT. 
+how it is implemented in ASPECT. This however requires more work since the rhs depends 
+on the solution and some form of iterations is needed. 
 
 In the case of a compressible flow the strain rate tensor and the deviatoric strain rate tensor are no more equal (since ${\bm \nabla}\cdot{\bm v} \neq 0$).
 The deviatoric strainrate tensor is given by\footnote{See the ASPECT manual for a justification of the 3 value in the denominator in 2D and 3D.} 
@@ -188,55 +189,71 @@ or,
 \newpage
 In order to test our implementation we have created a few manufactured solutions:
 \begin{itemize}
-\item benchmark \#1 ({\tt ibench=1})): Starting from a density profile of:
+\item \underline{benchmark \#1} ({\tt ibench=1})): Starting from a density profile of:
 \begin{equation}
-    \rho = xy
+    \rho(x,y) = xy
 \end{equation}
 We derive a velocity given by:
 \begin{equation}
-    v_x = \frac{C_x}{x} , v_y = \frac{C_y}{y}
+    v_x(x,y) = \frac{C_x}{x} , v_y(x,y) = \frac{C_y}{y}
 \end{equation}
 
-With $g_x = \frac{1}{x}$ and $g_y = \frac{1}{y}$, this leads us to a pressure profile:
+With $g_x(x,y) = \frac{1}{x}$ and $g_y(x,y) = \frac{1}{y}$, this leads us to a pressure profile:
 \begin{equation}
-    p = - \mu \left( \frac{C_x}{x^2} + \frac{C_y}{y^2} \right)  + xy + C_0
+    p = - \eta \left( \frac{4C_x}{3x^2} + \frac{4C_y}{3y^2} \right)  + xy + C_0
 \end{equation}
 This gives us a strain rate:
-\begin{align}
-    \begin{split}
-        e_{xx} =  \frac{-C_x}{x^2}
-        \\
-        e_{yy} =  \frac{-C_y}{y^2}
-    \end{split}
-\end{align}
-
+\[
+\dot{\epsilon}_{xx} =  \frac{-C_x}{x^2}
+\quad
+\quad
+\quad
+\dot{\epsilon}_{yy} =  \frac{-C_y}{y^2}
+\quad
+\quad
+\quad
+\dot{\epsilon}_{xy} = 0 
+\]
+In what follows, we choose $\eta=1$ and $C_x=C_y=1$ and for a unit square domain $
+[1:2]\times[1:2]$ we compute $C_0$
+so that the pressure is normalised to zero over the whole domain and obtain $C_0=-1$. 
  
-\item benchmark \#2 ({\tt ibench=2}): Starting from a density profile of:
+\item \underline{benchmark \#2} ({\tt ibench=2}): Starting from a density profile of:
 \begin{equation}
-    \rho = cos(x)cos(y)
+    \rho = \cos(x)\cos(y)
 \end{equation}
 We derive a velocity given by:
 \begin{equation}
-    v_x = \frac{C_x}{cos(x)} , v_y = \frac{C_y}{cos(y)}
+    v_x = \frac{C_x}{\cos(x)} , v_y = \frac{C_y}{\cos(y)}
 \end{equation}
-With $g_x = \frac{1}{cos(x)}$ and $g_y = \frac{1}{cos(y)}$, this leads us to a pressure profile:
+With $g_x = \frac{1}{\cos(y)}$ and $g_y = \frac{1}{\cos(x)}$, this leads us to a pressure profile:
 \begin{equation}
-    p =  \mu \Bigg(\frac{C_x sin(x)}{cos^2(x)} + \frac{C_y sin(y)}{cos^2(y)}\Bigg) 
-    -( sin(x) + sin(y) ) + C_0
+    p =  \eta \Bigg(\frac{4C_x \sin(x)}{3\cos^2(x)} + \frac{4C_y \sin(y)}{3\cos^2(y)}\Bigg) 
+    +( \sin(x) + \sin(y) ) + C_0
 \end{equation}
-\begin{align}
-    \begin{split}
-        e_{xx} = C_x \frac{sin(x)}{cos^2(x)}
-        \\
-        e_{yy} = C_y \frac{sin(y)}{cos^2(y)}
-    \end{split}
-\end{align}
+\[
+\dot{\epsilon}_{xx} = C_x \frac{\sin(x)}{\cos^2(x)}
+\quad
+\quad
+\quad
+\dot{\epsilon}_{yy} = C_y \frac{\sin(y)}{\cos^2(y)}
+\quad
+\quad
+\quad
+\dot{\epsilon}_{xy} = 0 
+\]
+We choose $\eta=1$ and $C_x=C_y=1$. The domain is the unit square $[0:1]\times[0:1]$ and we obtain 
+$C_0$ as before and obtain 
+\[
+C_0 = 2 - 2 \cos(1) + 8/3 (\frac{1}{\cos (1)} - 1)
+\simeq 3.18823730
+\]
+(thank you WolframAlpha)
 
 
-
-\item benchmark \#3 
-\item benchmark \#4 
-\item benchmark \#5 
+\item \underline{benchmark \#3} ({\tt ibench=3}) 
+\item \underline{benchmark \#4} ({\tt ibench=4}) 
+\item \underline{benchmark \#5} ({\tt ibench=5}) 
 \end{itemize}
 
 
@@ -249,7 +266,6 @@ With $g_x = \frac{1}{cos(x)}$ and $g_y = \frac{1}{cos(y)}$, this leads us to a p
 \item incompressible flow \index{incompressible flow}
 \item mixed formulation \index{mixed formulation}
 \item Dirichlet boundary conditions (no-slip)
-\item direct solver (?)
 \item isothermal \index{isothermal}
 \item isoviscous \index{isoviscous}
 \item analytical solution \index{analytical solution}
@@ -258,5 +274,13 @@ With $g_x = \frac{1}{cos(x)}$ and $g_y = \frac{1}{cos(y)}$, this leads us to a p
 }}
 
 %\includegraphics[width=16cm]{python_codes/fieldstone_saddlepoint/solution.pdf}
+
+PROBLEMS:
+
+- odd vs even number of elements 
+
+- q is 'fine' everywhere except in the corners - revisit pressure smoothing paper?
+
+
 
 
