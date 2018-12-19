@@ -127,6 +127,33 @@ the latent heat generated or consumed in the process of phase change of material
 In what follows we will not assume that no phase change takes place so that we disregard this term 
 altogether.
 
+\newpage
+A note on the shear heating term $\Phi$: In many publications, $\Phi$ 
+is given by $\Phi=\tau_{ij}\partial_j u_i={\bm \tau}:{\bm \nabla}{\bm v}$.
+
+\begin{eqnarray}
+\Phi 
+&=& \tau_{ij}\partial_j u_i \\
+&=& 2 \eta \dot{\varepsilon}_{ij}^d\partial_j u_i \\
+&=& 2 \eta \frac{1}{2}\left( \dot{\varepsilon}_{ij}^d\partial_j u_i + \dot{\varepsilon}_{ji}^d\partial_i u_j \right) \\
+&=& 2 \eta \frac{1}{2}\left( \dot{\varepsilon}_{ij}^d\partial_j u_i + \dot{\varepsilon}_{ij}^d\partial_i u_j \right) \\
+&=& 2 \eta  \dot{\varepsilon}_{ij}^d  \frac{1}{2}\left(\partial_j u_i + \partial_i u_j \right) \\
+&=& 2 \eta  \dot{\varepsilon}_{ij}^d   \dot{\varepsilon}_{ij} \\
+&=& 2 \eta  \dot{\bm \varepsilon}^d :  \dot{\bm \varepsilon} \\
+&=& 2 \eta  \dot{\bm \varepsilon}^d : \left( \dot{\bm \varepsilon}^d +\frac{1}{3} ({\bm \nabla}\cdot{\bm v}) {\bm 1} \right)\\
+&=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
++ 2 \eta  \dot{\bm \varepsilon}^d : {\bm 1} ({\bm \nabla}\cdot{\bm v}) \\ 
+&=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
+\end{eqnarray}
+Finally
+\[
+\Phi = {\bm \tau}:{\bm \nabla}{\bm v} = 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d
+= 2 \eta \left( (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + 2(\dot{\varepsilon}_{xy}^d)^2 \right)
+\]
+
+
+
+\newpage
 %---------------------------------
 \subsection{the Boussinesq approximation: an Incompressible flow}
 

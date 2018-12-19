@@ -1,27 +1,27 @@
 \begin{theindex}
 
-  \item $Q_1 \times P_0$, \hyperpage{13}, \hyperpage{19}, 
-		\hyperpage{25}, \hyperpage{31}, \hyperpage{34}, 
-		\hyperpage{42}, \hyperpage{44}
+  \item $Q_1 \times P_0$, \hyperpage{15}, \hyperpage{21}, 
+		\hyperpage{27}, \hyperpage{33}, \hyperpage{36}, 
+		\hyperpage{44}, \hyperpage{49}
 
   \indexspace
 
-  \item analytical solution, \hyperpage{13}, \hyperpage{19}, 
-		\hyperpage{34}, \hyperpage{39}, \hyperpage{42}, 
-		\hyperpage{44}
-  \item arithmetic mean, \hyperpage{31}
+  \item analytical solution, \hyperpage{15}, \hyperpage{21}, 
+		\hyperpage{36}, \hyperpage{41}, \hyperpage{44}, 
+		\hyperpage{49}
+  \item arithmetic mean, \hyperpage{33}
 
   \indexspace
 
-  \item basis functions, \hyperpage{6}
-  \item Boussinesq, \hyperpage{5}
-  \item bulk modulus, \hyperpage{43}
+  \item basis functions, \hyperpage{8}
+  \item Boussinesq, \hyperpage{7}
+  \item bulk modulus, \hyperpage{45}
   \item bulk viscosity, \hyperpage{4}
 
   \indexspace
 
-  \item compressibility, \hyperpage{43}
-  \item compressible flow, \hyperpage{44}
+  \item compressibility, \hyperpage{45}
+  \item compressible flow, \hyperpage{49}
 
   \indexspace
 
@@ -29,42 +29,42 @@
 
   \indexspace
 
-  \item geometric mean, \hyperpage{31}
+  \item geometric mean, \hyperpage{33}
 
   \indexspace
 
-  \item harmonic mean, \hyperpage{31}
+  \item harmonic mean, \hyperpage{33}
 
   \indexspace
 
-  \item incompressible flow, \hyperpage{19}, \hyperpage{25}, 
-		\hyperpage{31}, \hyperpage{34}, \hyperpage{39}, 
-		\hyperpage{42}
-  \item isothermal, \hyperpage{13}, \hyperpage{19}, \hyperpage{25}, 
-		\hyperpage{31}, \hyperpage{34}, \hyperpage{39}, 
-		\hyperpage{42}
-  \item isoviscous, \hyperpage{13}, \hyperpage{34}, \hyperpage{42}, 
+  \item incompressible flow, \hyperpage{21}, \hyperpage{27}, 
+		\hyperpage{33}, \hyperpage{36}, \hyperpage{41}, 
 		\hyperpage{44}
+  \item isothermal, \hyperpage{15}, \hyperpage{21}, \hyperpage{27}, 
+		\hyperpage{33}, \hyperpage{36}, \hyperpage{41}, 
+		\hyperpage{44}
+  \item isoviscous, \hyperpage{15}, \hyperpage{36}, \hyperpage{44}, 
+		\hyperpage{49}
 
   \indexspace
 
-  \item mixed formulation, \hyperpage{34}, \hyperpage{39}, 
-		\hyperpage{42}, \hyperpage{44}
+  \item mixed formulation, \hyperpage{36}, \hyperpage{41}, 
+		\hyperpage{44}, \hyperpage{49}
 
   \indexspace
 
-  \item non-isoviscous, \hyperpage{19}, \hyperpage{25}, \hyperpage{31}, 
-		\hyperpage{39}
-  \item nonconforming $Q_1 \times P_0$, \hyperpage{39}
-  \item nonlinear rheology, \hyperpage{25}
+  \item non-isoviscous, \hyperpage{21}, \hyperpage{27}, \hyperpage{33}, 
+		\hyperpage{41}
+  \item nonconforming $Q_1 \times P_0$, \hyperpage{41}
+  \item nonlinear rheology, \hyperpage{27}
 
   \indexspace
 
-  \item particle-in-cell, \hyperpage{31}
-  \item penalty formulation, \hyperpage{7}, \hyperpage{13}, 
-		\hyperpage{19}, \hyperpage{25}, \hyperpage{31}
-  \item pressure smoothing, \hyperpage{34}, \hyperpage{39}, 
-		\hyperpage{42}, \hyperpage{44}
+  \item particle-in-cell, \hyperpage{33}
+  \item penalty formulation, \hyperpage{9}, \hyperpage{15}, 
+		\hyperpage{21}, \hyperpage{27}, \hyperpage{33}
+  \item pressure smoothing, \hyperpage{36}, \hyperpage{41}, 
+		\hyperpage{44}, \hyperpage{49}
 
   \indexspace
 
@@ -72,10 +72,11 @@
 
   \indexspace
 
-  \item thermal expansion, \hyperpage{43}
+  \item thermal expansion, \hyperpage{45}
 
   \indexspace
 
-  \item weak form, \hyperpage{9}
+  \item weak form, \hyperpage{11}
+  \item work against gravity, \hyperpage{47}
 
 \end{theindex}

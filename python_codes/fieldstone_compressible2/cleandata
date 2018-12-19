@@ -1,4 +1,5 @@
 rm *.ascii
+rm *.vtu
 rm *.pdf
 rm page.aux
 rm page.log
