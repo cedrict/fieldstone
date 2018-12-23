@@ -1,3 +1,6 @@
+
+\subsection{The physics}
+
 Let us start with some thermodynamics. Every material has an equation of state.
 The equilibrium thermodynamic state of any material can
 be constrained if any two state variables are specified.
@@ -40,6 +43,9 @@ The full set of equations we wish to solve is given by
 \end{eqnarray}
 
 Note that this presupposes that the density is not zero anywhere in the domain.
+
+
+\subsection{The numerics}
 
 We use a mixed formulation and therefore  
 keep both velocity and pressure as unknowns. We end up having to solve 
@@ -105,13 +111,13 @@ the matrix $\A$ and vector $rhs$ afterwards. $\A$ and $rhs$ are then passed to t
 We will see later that there are alternatives to solve this approach which do not require to 
 build the full Stokes matrix $\A$. 
 
-{\sl Remark 1}: the terms $\Z {\cal V}$ and $\W {\cal P}$ are 
+{\bf Remark 1}: the terms $\Z {\cal V}$ and $\W {\cal P}$ are 
 often put in the rhs (i.e. added to $h$) so that 
 the matrix $\A$ retains the same structure as in the incompressible case. This is indeed 
 how it is implemented in ASPECT, see also appendix A of \cite{lezh08}. This however requires more work since the rhs depends 
 on the solution and some form of iterations is needed. 
 
-{\sl Remark 2}: Very often the adiabatic heating term  
+{\bf Remark 2}: Very often the adiabatic heating term  
 $\alpha T \left( \bm v \cdot \nabla p \right)$ is simplified as follows:
 %aspect manual
 If you assume the vertical component of the gradient of the dynamic pressure to be small compared to the
@@ -128,15 +134,62 @@ We have already established that
 \]
 
 
+The following measurements are carried out:
+\begin{itemize}
+\item The root mean square velocity ({\tt vrms}):
+\[
+v_{rms} = \sqrt{\frac{1}{V}\int_V v^2 dV   }
+\]
+\item The average temperature ({\tt Tavrg}):
+\[
+<T>=\frac{1}{V}\int_V T dV
+\]
+\item The total mass ({\tt mass}):
+\[
+M=\int_V \rho dV 
+\]
+\item The Nusselt number ({\tt Nu}):
+\[
+Nu=-\frac{1}{Lx}\frac{1}{\Delta T} \int_0^{L_x} \frac{\partial T(x,y=L_y)}{\partial y} dx
+\]
+\item The kinetic energy ({\tt EK}):
+\[
+E_K=\int_V \frac{1}{2}\rho v^2 dV
+\]
+\item The work done against gravity 
+\[
+<W>=-\int_V \rho g_y v_y dV
+\]
+\item The total viscous dissipation ({\tt visc\_diss})
+\[
+<\Phi>=\int \Phi dV =\frac{1}{V}\int 2 \eta \dot{\bm \varepsilon}:\dot{\bm \varepsilon} dV 
+\]
+\item The gravitational potential energy ({\tt EG})
+\[
+E_G = \int_V \rho g_y (L_y-y) dV
+\]
+\item The internal thermal energy ({\tt ET})
+\[
+E_T = \int_V \rho_{(0)} C_p T dV
+\]
+
+{\bf Remark 3:} Measuring the total mass can be misleading: indeed because $\rho=\rho_0(1-\alpha T)$, then 
+measuring the total mass amounts to measuring a constant minus the volume-integrated temperature, and there is 
+no reason why the latter should be zero, so that there is no reason why the total mass should be zero...!
+
+\end{itemize}
 
 
-\newpage
+
+
+\subsection{The experimental setup}
+
 The setup is as follows: the domain is $Lx=Ly=3000$km. Free slip boundary conditions are imposed on all four sides. 
 The initial temperature is given by:
 \[
-T(x,y) = \left(  \frac{L_y-y}{Ly} - 0.01\cos(\frac{\pi x}{L_x}) \sin(\frac{\pi y}{Ly}) \right) \Delta T + T_0
+T(x,y) = \left(  \frac{L_y-y}{Ly} - 0.01\cos(\frac{\pi x}{L_x}) \sin(\frac{\pi y}{Ly}) \right) \Delta T + T_{surf}
 \]
-with $\Delta T=4000$K, $T_0=273.15$K. The temperature is set to $\Delta T + T_0$ at the bottom and $T_0$ at the top.
+with $\Delta T=4000$K, $T_{surf}=T_0=273.15$K. The temperature is set to $\Delta T + T_{surf}$ at the bottom and $T_{surf}$ at the top.
 We also set $k=3$, $C_p=1250$, $|g|=10$, $\rho_0=3000$ and we keep the Rayleigh number $Ra$ and dissipation number $Di$ as input parameters:
 \[
 Ra=\frac{\alpha g \Delta T L^3 \rho_0^2 C_p}{\eta k}
@@ -156,148 +209,208 @@ For instance, for $Ra=10^4$ and $Di=0.75$, we obtain $\alpha\simeq 3\cdot 10^{-5
 which are quite reasonable values. 
 
 
+\subsection{Scaling}
 
-{\color{red} WRITE ABOUT REF VALUES }
-
-
-
-
-
-
-The following measurements are carried out:
-\begin{itemize}
-\item The root mean square velocity:
+Following \cite{kilv10}, we non-dimensionalize the equations using the reference values
+for density $\rho_r$, thermal expansivity $\alpha_r$, 
+temperature contrast $\Delta T_r$ ({\tt refTemp}),
+thermal conductivity $k_r$, heat capacity $C_p$,  
+depth of the fluid layer $L$ and viscosity $\eta_r$. The
+non-dimensionalization for velocity, $u_r$ , pressure $p_r$ and time, $t_r$ become
 \[
-v_{rms} = \sqrt{\frac{1}{V}\int_V v^2 dV   }
+u_r = \frac{k_r}{\rho_r C_p L} \quad ({\tt refvel})
 \]
-\item The average temperature:
 \[
-<T>=\frac{1}{V}\int_V T dV
+p_r=\frac{\eta_r k_r}{\rho_r C_p L^2}\quad  ({\tt refpress})
 \]
-\item The total mass:
 \[
-M=\int_V \rho dV
-\]
-\item The Nusselt number:
-\[
-Nu=-\frac{1}{Lx}\frac{1}{\Delta T} \int_0^{L_x} \frac{\partial T(x,y=L_y)}{\partial y} dx
-\]
-\item The kinetic energy:
-\[
-E_K=\int_V \frac{1}{2}\rho v^2 dV
-\]
-\item The work done against gravity
-\[
-<W>=-\int_V \rho g_y v_y dV
-\]
-\item The total viscous dissipation
-\[
-<\Phi>=\int \Phi dV =\frac{1}{V}\int 2 \eta \dot{\bm \varepsilon}:\dot{\bm \varepsilon} dV 
-\]
-\item The gravitational potential energy (GPE)
-\[
-E_G = \int_V \rho g_y (L_y-y) dV
-\]
-\item The internal thermal energy
-\[
-E_T = \int_V \rho C_p T dV
+t_r=\frac{\rho_r C_p L^2}{k_r} \quad ({\tt reftime})
 \]
 
+In the case of the setup described hereabove, and when choosing 
+$Ra=10^4$ and $Di=0.5$, we get:
+\begin{verbatim}
+alphaT 2.083333e-05 
+eta 8.437500e+24 
+reftime 1.125000e+19 
+refvel 2.666667e-13 
+refPress 7.500000e+05 
+\end{verbatim}
 
-\end{itemize}
 
-\newpage
 
-Following \cite{lezh08}, we multiply the momentum equation by ${\bm v}$ and integrate over the whole volume:
+
+\subsection{Conservation of energy 1}
+
+
+
+\subsubsection{under BA and EBA approximations}
+
+Following \cite{lezh08}, we take the dot product of the momentum equation with the velocity ${\bm v}$ and integrate over the whole volume\footnote{Check: this is akin to looking at the power, force*velocity,  says Arie}:
 \[
-\int_V {\bm v} \cdot \left[ -\nabla \cdot {\bm \tau}  + \nabla p \right] dV  = \int_V {\bm v} \cdot \rho {\bm g} dV
+\int_V  \left[ -\nabla \cdot {\bm \tau}  + {\bm \nabla} p \right] \cdot {\bm v} dV  = \int_V  \rho {\bm g} \cdot {\bm v}dV
 \]
 or, 
 \[
--\int_V {\bm v} \cdot \nabla \cdot {\bm \tau} dV +\int_V {\bm v} \cdot  \nabla p dV  = \int_V {\bm v} \cdot \rho {\bm g} dV
+-\int_V (\nabla \cdot {\bm \tau})\cdot {\bm v} dV +\int_V   {\bm \nabla} p \cdot {\bm v} dV  = \int_V  \rho {\bm g} \cdot {\bm v}dV
 \]
 Let us look at each block separately:
 \[
--\int_V {\bm v} \cdot \nabla \cdot {\bm \tau} dV  
-=-\int_S  {\bm \tau} \underbrace{{\bm v}\cdot {\bm n}}_{=0 \; (b.c.)} dS + \int_V {\bm \nabla}{\bm v} : {\bm \tau} dV 
-= \int_V \dot{\bm \varepsilon} : {\bm \tau} dV 
+-\int_V (\nabla \cdot {\bm \tau})\cdot {\bm v} dV 
+=-\int_S  {\bm \tau} \underbrace{{\bm v}\cdot {\bm n}}_{=0 \; (b.c.)} dS + \int_V {\bm \tau}:{\bm \nabla}{\bm v} dV 
+= \int_V {\bm \tau} : \dot{\bm \varepsilon} dV 
 = \int_V \Phi  dV 
 \]
 which is the volume integral of the shear heating. Then,
 \[
-\int_V {\bm v} \cdot  \nabla p dV  =
-\int_S p \underbrace{{\bm v}\cdot {\bm n}}_{=0 \; (b.c.)} dS - \int_V {\bm \nabla}\cdot{\bm v} \; p dV  
+\int_V {\bm \nabla} p \cdot {\bm v} dV  =
+\int_S p \underbrace{{\bm v}\cdot {\bm n}}_{=0 \; (b.c.)} dS - \int_V \underbrace{{\bm \nabla}\cdot{\bm v}}_{=0 \; (incomp.)} \; p dV = 0 
 \]
-which is zero in the case of an incompressible flow. {\color{red} expand when compressible}.
+which is then zero in the case of an incompressible flow. 
 And finally
 \[
-\int_V {\bm v} \cdot \rho {\bm g} dV = W
+\int_V \rho {\bm g} \cdot {\bm v} dV = W
 \]
 which is the work against gravity. \index{work against gravity} 
 
-Conclusion for an incompressible fluid: we should have
-\[
+Conclusion for an {\it incompressible} fluid: we should have
+\begin{equation}
 \int_V \Phi  dV 
 =
-\int_V {\bm v} \cdot \rho {\bm g} dV 
+\int_V \rho {\bm g} \cdot {\bm v} dV 
+\label{ba001}
+\end{equation}
+This formula is hugely problematic: indeed, the term $\rho$ in the rhs is the full density. We know 
+that to the value of $\rho_0$ corresponds a lithostatic pressure gradient $p_L=\rho_0 g y$. In this case one can write $\rho = \rho_0 + \rho'$ and $p=p_L + p'$
+so that we also have 
+\[
+\int_V  \left[ -\nabla \cdot {\bm \tau}  + {\bm \nabla} p' \right] \cdot {\bm v} dV  = \int_V  \rho' {\bm g} \cdot {\bm v}dV
 \]
+which will ultimately yield 
+\begin{equation}
+\int_V \Phi  dV 
+=
+\int_V \rho' {\bm g} \cdot {\bm v} dV 
+=
+\int_V (\rho-\rho_0) {\bm g} \cdot {\bm v} dV 
+\label{ba002}
+\end{equation}
+Obviously Eqs.(\ref{ba001}) and (\ref{ba002}) cannot be true at the same time.
+The problem comes from the nature of the (E)BA approximation: $\rho=\rho_0$ in the mass conservation equation
+but it is not constant in the momentum conservation equation, which is of course inconsistent. Since the mass 
+conservation equation is ${\bm \nabla}\cdot{\bm v}=0$ under this approximation then the term 
+$\int_V {\bm \nabla} p \cdot {\bm v} dV$ is always zero for any pressure (full pressure $p$, or overpressure $p-p_L$), 
+hence the paradox. This paradox will be lifted when a consistent set of equations will be used (compressible formulation).
+On a practical note, Eqs.(\ref{ba001}) is not verified by the code, while (\ref{ba002}) is.   
 
-{\color{red} pressure disappears completely from there, so that whether full pressure or reduced
-pressure is used it yields the same equation, which is impossible since the lith pressure is not 
-altering the flow (i.e. not changing $\Phi$) but the responsible $\rho_0$ will offset the 
-work against gravity.} This works in the code provided the work is computed with $\rho-rho_0$...
+In the end:
+\begin{equation}
+\boxed{
+\underbrace{\int_V \Phi  dV }_{\tt visc\_diss}
+=
+\underbrace{\int_V (\rho-\rho_0) {\bm g} \cdot {\bm v} dV }_{\tt work\_grav}
+}
+\label{ba003}
+\end{equation}
 
-\newpage
-Following the Reynold's transport theorem \cite{malvern},p210, we have for a property $A$ (per unit mass)
+
+\subsubsection{under no  approximation at all}
+
+\begin{eqnarray}
+\int_V {\bm \nabla} p \cdot {\bm v} dV  
+&=& \int_S p \underbrace{{\bm v}\cdot {\bm n}}_{=0 \; (b.c.)} dS - \int_V {\bm \nabla}\cdot{\bm v} \; p dV = 0  \\
+&=&  \int_V \frac{1}{\rho} {\bm v} \cdot {\bm \nabla} \rho \; p dV = 0  \\
+\end{eqnarray}
+
+{\color{red} ToDo}:see section 3 of \cite{lezh08} where this is carried out with the Adams-Williamson eos.
+
+
+\subsection{Conservation of energy 2}
+Also, following the Reynold's transport theorem \cite{malvern},p210, we have for a property $A$ (per unit mass)
 \[
 \frac{d}{dt} \int_V A \rho dV = \int_V \frac{\partial }{\partial t} (A\rho) dV + \int_S A \rho {\bm v}\cdot {\bm n} dS
 \]
-Let us apply to this to $A=C_p T$:
+Let us apply to this to $A=C_p T$ and compute the time derivative of the internal energy:
 \begin{eqnarray}
 \frac{d}{dt} \int_V \rho C_p T dV 
-&=& \int_V \frac{\partial }{\partial t} (\rho C_p T ) dV + \int_S A \rho \underbrace{{\bm v}\cdot {\bm n}}_{=0 \; (b.c.)} dS \\
-&=& \int_V C_p T \frac{\partial \rho}{\partial t} dV + \int_V \rho C_p \frac{\partial T}{\partial t}  dV 
+&=& \int_V \frac{\partial }{\partial t} (\rho C_p T ) dV + \int_S A \rho \underbrace{{\bm v}\cdot {\bm n}}_{=0 \; (b.c.)} dS 
+= \underbrace{\int_V C_p T \frac{\partial \rho}{\partial t} dV}_{I} 
++ \underbrace{\int_V \rho C_p \frac{\partial T}{\partial t}  dV }_{II}
 \end{eqnarray}
 
+In order to expand $I$, the mass conservation equation will be used, while the heat transport equation 
+will be used for $II$:
 
 \begin{eqnarray}
-\int_V \rho C_p \frac{\partial T}{\partial t}  dV
-&=&  
-+ \int_V \left[ -\rho C_p {\bm v}\cdot {\bm \nabla}T +{\bm \nabla}\cdot k {\bm \nabla} T + \rho H  + \Phi    +\alpha T \left( \frac{\partial p}{\partial t}+  \bm v \cdot {\bm \nabla} p \right) \right]  dV \\ 
-&=& 
-+ \int_V \left[ -\rho C_p {\bm v}\cdot {\bm \nabla}T 
-+ \rho H  + \Phi    +\alpha T \left( \frac{\partial p}{\partial t}+  \bm v \cdot {\bm \nabla} p \right) \right]  dV 
-+ \int_V {\bm \nabla}\cdot k {\bm \nabla} T dV \\ 
-&=& 
-+ \int_V \left[ -\rho C_p {\bm v}\cdot {\bm \nabla}T 
-+ \rho H  + \Phi    +\alpha T \left( \frac{\partial p}{\partial t}+  \bm v \cdot {\bm \nabla} p \right) \right]  dV 
-+ \int_S  k {\bm \nabla} T \cdot {\bm n}  dS \\ 
-&=& 
-+ \int_V \left[ -\rho C_p {\bm v}\cdot {\bm \nabla}T 
-+ \rho H  + \Phi    +\alpha T \left( \frac{\partial p}{\partial t}+  \bm v \cdot {\bm \nabla} p \right) \right]  dV 
-- \int_S  {\bm q} \cdot {\bm n}  dS 
-\\
-\\
- \int_V C_p T \frac{\partial \rho}{\partial t} dV
+I= \int_V C_p T \frac{\partial \rho}{\partial t} dV
 &=& 
 - \int_V C_p T {\bm \nabla} \cdot (\rho {\bm v}) dV
 =
 -\int_V C_p T \rho \underbrace{{\bm v} \cdot {\bm n}}_{=0 \; (b.c.)} dS +  \int_V \rho C_p  {\bm \nabla}  T \cdot {\bm v} dV
+\\
+II=\int_V \rho C_p \frac{\partial T}{\partial t}  dV
+&=&  
+ \int_V \left[ -\rho C_p {\bm v}\cdot {\bm \nabla}T +{\bm \nabla}\cdot k {\bm \nabla} T + \rho H  + \Phi    +\alpha T \left( \frac{\partial p}{\partial t}+  \bm v \cdot {\bm \nabla} p \right) \right]  dV \\ 
+&=& 
+ \int_V \left[ -\rho C_p {\bm v}\cdot {\bm \nabla}T 
++ \rho H  + \Phi    +\alpha T \left( \frac{\partial p}{\partial t}+  \bm v \cdot {\bm \nabla} p \right) \right]  dV 
++ \int_V {\bm \nabla}\cdot k {\bm \nabla} T dV \\ 
+&=& 
+ \int_V \left[ -\rho C_p {\bm v}\cdot {\bm \nabla}T 
++ \rho H  + \Phi    +\alpha T \left( \frac{\partial p}{\partial t}+  \bm v \cdot {\bm \nabla} p \right) \right]  dV 
++ \int_S  k {\bm \nabla} T \cdot {\bm n}  dS \\ 
+&=& 
+ \int_V \left[ -\rho C_p {\bm v}\cdot {\bm \nabla}T 
++ \rho H  + \Phi    +\alpha T \left( \frac{\partial p}{\partial t}+  \bm v \cdot {\bm \nabla} p \right) \right]  dV 
+- \int_S  {\bm q} \cdot {\bm n}  dS \label{ba004}
 \end{eqnarray}
 
 Finally:
 
 \begin{eqnarray}
-\frac{d}{dt} \int_V \rho C_p T dV 
+I+II=\frac{d}{dt} \underbrace{\int_V \rho C_p T dV }_{\tt ET}
  &=& 
  \int_V \left[ 
  \rho H  + \Phi    +\alpha T \left( \frac{\partial p}{\partial t}+  \bm v \cdot {\bm \nabla} p \right) \right]  dV 
 - \int_S  {\bm q} \cdot {\bm n}  dS \\ 
+ &=& 
+ \int_V \rho H dV 
++\underbrace{\int_V \Phi  dV}_{\tt visc\_diss}  
++\underbrace{\int_V \alpha T \frac{\partial p}{\partial t} dV}_{\tt extra}
++\underbrace{\int_V \alpha T \bm v \cdot {\bm \nabla} p  dV}_{\tt adiab\_heating} 
+- \underbrace{\int_S  {\bm q} \cdot {\bm n}  dS}_{\tt heatflux\_boundary} \label{ba005}
 \end{eqnarray}
 
+This was of course needlessly complicated as the term $\partial \rho/\partial t$ is always 
+taken to be zero, so that $I=0$ automatically. The mass conservation equation is then 
+simply ${\bm \nabla}\cdot (\rho {\bm v})=0$. Then it follows that 
+\begin{eqnarray}
+0&=& \int_V C_p T {\bm \nabla} \cdot (\rho {\bm v}) dV
+=
+-\int_V C_p T \rho \underbrace{{\bm v} \cdot {\bm n}}_{=0 \; (b.c.)} dS +  \int_V \rho C_p  {\bm \nabla}  T \cdot {\bm v} dV \\
+&=&  \int_V \rho C_p  {\bm \nabla}  T \cdot {\bm v} dV 
+\end{eqnarray}
+so that the same term in Eq.(\ref{ba004}) vanishes too, and then Eq.(\ref{ba005}) is always valid, although one should be careful when computing $E_T$ in the BA and EBA cases as it should use $\rho_0$ and not $\rho$.
 
 
-\newpage
+
+
+\vspace{3cm}
+ 
+
+
+
+
+{\color{red} VERY BIG PROBLEM}
+
+The temperature setup is built as follows: $T_{surf}$ is prescribed at the top, 
+$T_{surf}+\Delta T$ is prescribed at the bottom. The initial temperature profile is linear between these two values. 
+In the case of BA, the actual value of $T_{surf}$ is of no consequence. However, for the EBA the full temperature is present in the adiabatic heating term on the rhs of the hte, and the value of $T_{surf}$ will therefore influence the solution greatly. This is very problematic as there is no real way to arrive at the surface temperature from the King paper. On top of this, the density uses a reference temperature $T_0$ which too will influence the solution without being present in the controlling $Ra$ and $Di$ numbers!!
+
+In light thereof, it will be very difficult to recover the values of King et al for EBA!
+
+\vspace{3cm}
+
 \fbox{
 \parbox{10cm}{{\bf features}
 \begin{itemize}
@@ -311,8 +424,106 @@ Finally:
 \end{itemize}
 }}
 
-Relevant literature: \cite{itki94,tagu07,lezh08,kilv10,lezh11,lizh13,hedg17}
+Relevant literature: \cite{besg92,itki94,tagu07,lezh08,kilv10,lezh11,lizh13,hedg17}
 
 %\includegraphics[width=16cm]{python_codes/fieldstone_saddlepoint/solution.pdf}
 
+ToDo: 
+\begin{itemize}
+\item  heat flux is at the moment elemental, so Nusselt and heat flux on boundaries measurements not as accurate as could be.
+\item implement steady state detection
+\item do $Ra=10^5$ and $Ra=10^6$
+\item non dimensional heat flux at corners \cite{blbc89} 
+\item depth-dependent viscosity (case 2 of \cite{blbc89})
+\end{itemize}
+
+\newpage
+%-------------------------------------------------------
+\subsection{results - BA}
+
+These results were obtained with a 64x64 resolution, and CFL number of 1. Steady state was reached 
+after about 1250 timesteps.
+
+\begin{center}
+(a)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/EK}
+(b)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/ET}
+(c)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/EG}\\
+(d)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/Tavrg}
+(e)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/T_stats}
+(f)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/vel_stats}\\
+(g)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/adiabatic_heating}
+(h)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/viscous_dissipation}
+(i)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/work_grav}\\
+(j)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/heat_flux}
+(k)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/vrms}
+(l)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/Nu}\\
+(l)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/BA/conservation1}
+(m)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/BA/conservation2}\\
+AH: adiabatic heating, VD: viscous dissipation, HF: heat flux, WG: work against gravity
+\end{center}
+
+Eq.(\ref{ba005}) is verified by (l) and Eq.(\ref{ba003}) is verified by (m).
+
+
+\newpage
+\begin{center}
+(a)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/u.png}
+(b)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/v.png}
+(c)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/vel.png}\\
+(d)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/q.png}    
+(e)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/divv.png}    
+(f)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/e2.png}   \\
+(g)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/T.png} 
+(h)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/dTdx.png}
+(i)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/dTdy.png}  \\
+\end{center}
+
+
+
+
+
+\newpage
+%-------------------------------------------------------
+\subsection{results - EBA}
+
+These results were obtained with a 64x64 resolution, and CFL number of 1. Steady state was reached 
+after about 2500 timesteps 
+
+\begin{center}
+(a)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/EK}
+(b)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/ET}
+(c)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/EG}\\
+(d)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/Tavrg}
+(e)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/T_stats}
+(f)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/vel_stats}\\
+(g)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/adiabatic_heating}
+(h)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/viscous_dissipation}
+(i)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/work_grav}\\
+(j)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/heat_flux}
+(k)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/vrms}
+(l)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/Nu}\\
+(l)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/EBA/conservation1}
+(m)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/EBA/conservation2}\\
+AH: adiabatic heating, VD: viscous dissipation, HF: heat flux, WG: work against gravity
+\end{center}
+
+Eq.(\ref{ba005}) is verified by (l) and Eq.(\ref{ba003}) is verified by (m).
+
+\newpage
+\begin{center}
+a)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/u.png}
+b)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/v.png}
+c)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/vel.png}\\
+d)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/q.png}    
+e)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/divv.png}    
+f)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/e2.png}   \\
+g)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/rho.png}  
+h)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/drhodx.png}  
+i)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/drhody.png} \\ 
+j)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/T.png} 
+k)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/dTdx.png}
+l)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/dTdy.png}  \\
+m)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/alpha_T_v_gradp.png}  
+n)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/Phi.png}
+\end{center}
 

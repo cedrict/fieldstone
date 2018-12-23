@@ -32,7 +32,7 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 64 
+   nelx = 64
    nely = 64
    visu = 0
 
@@ -46,6 +46,9 @@ nnp=nnx*nny  # number of nodes
 
 nel=nelx*nely  # number of elements, total
 
+hx=Lx/nelx
+hy=Ly/nely
+
 NfemV=nnp*ndofV   # number of velocity dofs
 NfemP=nel*ndofP   # number of pressure dofs
 Nfem=NfemV+NfemP # total number of dofs
@@ -55,8 +58,7 @@ year=3.154e+7
 eps=1.e-10
 sqrt3=np.sqrt(3.)
 
-
-Di=0.75       # dissipation number
+Di=0.5       # dissipation number
 Ra=1e4        # Rayleigh number
 hcond=3.      # thermal conductivity
 hcapa=1250.   # heat capacity
@@ -66,28 +68,43 @@ gy=-10
 rho0=3000       # reference density
 T0=273.15       # reference temperature
 Delta_Temp=4000 # temperature difference 
+Tsurf=273.15       # reference temperature
 
 alphaT=Di*hcapa/abs(gy)/Ly
 viscosity=Di*hcapa**2*Delta_Temp*Ly**2*rho0**2/Ra/hcond
 reftime=rho0*hcapa*Ly**2/hcond
 refvel=Ly/reftime
 refTemp=Delta_Temp
+refPress=viscosity*hcond/rho0/hcapa/Ly**2
 
 print ("     -> alphaT %e " % alphaT)
 print ("     -> eta %e " %  viscosity)
 print ("     -> reftime %e " %  reftime)
 print ("     -> refvel %e " %  refvel)
+print ("     -> refPress %e " %  refPress)
 
 betaT=0
 
-CFL_nb=0.25
+CFL_nb=1.
 
-nstep=1000
+nstep=5000
 
-incompressible=True
-use_shearheating=False
 pnormalise=True
 write_blocks=False
+
+use_BA=True
+use_EBA=False
+
+if use_BA:
+   incompressible=True
+   use_shearheating=False
+   use_adiabatic_heating=False
+
+if use_EBA:
+   incompressible=True
+   use_shearheating=True
+   use_adiabatic_heating=True
+
 
 if incompressible:
    betaT=0
@@ -102,12 +119,14 @@ u_stats=np.zeros((nstep,2),dtype=np.float64)
 v_stats=np.zeros((nstep,2),dtype=np.float64)
 T_stats=np.zeros((nstep,2),dtype=np.float64)
 mass=np.zeros(nstep,dtype=np.float64)
-viscdiss=np.zeros(nstep,dtype=np.float64)
+visc_diss=np.zeros(nstep,dtype=np.float64)
 work_grav=np.zeros(nstep,dtype=np.float64)
 EK=np.zeros(nstep,dtype=np.float64)
 EG=np.zeros(nstep,dtype=np.float64)
 ET=np.zeros(nstep,dtype=np.float64)
 dt_stats=np.zeros(nstep,dtype=np.float64)
+heatflux_boundary=np.zeros(nstep,dtype=np.float64)
+adiab_heating=np.zeros(nstep,dtype=np.float64)
 
 #################################################################
 # grid point setup
@@ -166,9 +185,9 @@ bc_valT=np.zeros(NfemT,dtype=np.float64)  # boundary condition, value
 
 for i in range(0,nnp):
     if y[i]<eps:
-       bc_fixT[i] = True ; bc_valT[i] = Delta_Temp+T0
+       bc_fixT[i] = True ; bc_valT[i] = Delta_Temp+Tsurf
     if y[i]/Ly>1-eps:
-       bc_fixT[i] = True ; bc_valT[i] = T0
+       bc_fixT[i] = True ; bc_valT[i] = Tsurf
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
@@ -199,7 +218,7 @@ rho_prev=np.zeros(nnp,dtype=np.float64)
 drhodt=np.zeros(nnp,dtype=np.float64)
 
 for ip in range(0,nnp):
-    T[ip]=((Ly-y[ip])/Ly - 0.01*np.cos(np.pi*x[ip]/Lx)*np.sin(np.pi*y[ip]/Ly))*Delta_Temp+T0
+    T[ip]=((Ly-y[ip])/Ly - 0.01*np.cos(np.pi*x[ip]/Lx)*np.sin(np.pi*y[ip]/Ly))*Delta_Temp+Tsurf
     rho[ip]=rho0*(1-alphaT*(T[ip]-T0)+betaT*q[ip])
     
 rho_prev[:]=rho[:]
@@ -456,7 +475,7 @@ for istep in range(0,nstep):
     if pnormalise:
        print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
 
-    np.savetxt('velocity.ascii',np.array([x,y,u*year,v*year]).T,header='# x,y,u,v')
+    #np.savetxt('velocity.ascii',np.array([x,y,u*year,v*year]).T,header='# x,y,u,v')
 
     print("split vel into u,v: %.3f s" % (time.time() - start))
 
@@ -481,42 +500,36 @@ for istep in range(0,nstep):
     T_el=np.zeros(nel,dtype=np.float64)
     dqdx=np.zeros(nel,dtype=np.float64)
     dqdy=np.zeros(nel,dtype=np.float64)
-
+    qtop=0.
+    qbottom=0.
+    qleft=0.
+    qright=0.
+ 
     iel=0
     for iely in range(0,nely):
         for ielx in range(0,nelx):
-
             rq = 0.0
             sq = 0.0
             wq = 2.0 * 2.0
-
             N[0]=0.25*(1.-rq)*(1.-sq)
             N[1]=0.25*(1.+rq)*(1.-sq)
             N[2]=0.25*(1.+rq)*(1.+sq)
             N[3]=0.25*(1.-rq)*(1.+sq)
-
             dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
             dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
             dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
             dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
-
             jcb=np.zeros((2,2),dtype=np.float64)
             for k in range(0, m):
                 jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
                 jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
                 jcb[1,0]+=dNds[k]*x[icon[k,iel]]
                 jcb[1,1]+=dNds[k]*y[icon[k,iel]]
-
-            # calculate determinant of the jacobian
             jcob=np.linalg.det(jcb)
-
-            # calculate the inverse of the jacobian
             jcbi=np.linalg.inv(jcb)
-
             for k in range(0,m):
                 dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
                 dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
-
             for k in range(0,m):
                 xc[iel] += N[k]*x[icon[k,iel]]
                 yc[iel] += N[k]*y[icon[k,iel]]
@@ -536,11 +549,19 @@ for istep in range(0,nstep):
             eyyd=eyy[iel]-(exx[iel]+eyy[iel])/3.
             exyd=exy[iel]
             Phi[iel]=2.*viscosity*(exxd**2+eyyd**2+2*exyd**2)    
-
+            if iely==0:
+               qbottom+=-k*dTdy[iel]*hx *-1
             if iely==nely-1:
-               Nu[istep]+=abs(dTdy[iel])*Lx/nelx  * Ly  / (Lx*Delta_Temp)
+               qtop+=-k*dTdy[iel]*hx    *1 
+               Nu[istep]-=dTdy[iel]*hx *Ly/(Lx*Delta_Temp)
+            if ielx==0:
+               qleft+=-k*dTdx[iel]*hy   *-1
+            if ielx==nelx-1:
+               qright+=-k*dTdx[iel]*hy  *1
             e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
             iel+=1
+
+    heatflux_boundary[istep]=qtop+qbottom+qleft+qright
 
     print("     -> exx (m,M) %.5e %.5e " %(np.min(exx),np.max(exx)))
     print("     -> eyy (m,M) %.5e %.5e " %(np.min(eyy),np.max(eyy)))
@@ -550,8 +571,8 @@ for istep in range(0,nstep):
 
     print("     -> time= %.6f ; Nu= %.6f" %(model_time[istep]/year,Nu[istep]))
 
-    np.savetxt('p.ascii',np.array([xc,yc,p]).T,header='# x,y,p')
-    np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+    #np.savetxt('p.ascii',np.array([xc,yc,p]).T,header='# x,y,p')
+    #np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
     print("compute sr, Nu: %.3f s" % (time.time() - start))
 
@@ -602,7 +623,7 @@ for istep in range(0,nstep):
                 exxd=exxq-(exxq+eyyq)/3.
                 eyyd=eyyq-(exxq+eyyq)/3.
                 exyd=exyq
-                viscdiss[istep]+=2.*viscosity*(exxd**2+eyyd**2+2*exyd**2)*wq*jcob 
+                visc_diss[istep]+=2.*viscosity*(exxd**2+eyyd**2+2*exyd**2)*wq*jcob 
                 EK[istep]+=0.5*rhoq*(uq**2+vq**2)*wq*jcob 
                 EG[istep]+=rhoq*gy*yq*wq*jcob 
                 work_grav[istep]+=(rhoq-rho0)*gy*vq*wq*jcob 
@@ -657,7 +678,7 @@ for istep in range(0,nstep):
 
     dqdt=(q[:]-q_prev[:])/dt
 
-    np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
+    #np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
 
     print("     -> q (m,M) %.4e %.4e " %(np.min(q),np.max(q)))
 
@@ -666,6 +687,8 @@ for istep in range(0,nstep):
     ######################################################################
     # build FE matrix for Temperature 
     ######################################################################
+    # ToDo: look at np.outer product in python so N_mat -> N
+
     start = time.time()
 
     A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
@@ -713,20 +736,22 @@ for istep in range(0,nstep):
                     jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
                     jcb[1,0]+=dNds[k]*x[icon[k,iel]]
                     jcb[1,1]+=dNds[k]*y[icon[k,iel]]
-
-                # calculate the determinant of the jacobian
                 jcob=np.linalg.det(jcb)
-
-                # calculate inverse of the jacobian matrix
                 jcbi=np.linalg.inv(jcb)
 
                 # compute dNdx & dNdy and Phi
+                Tq=0.
+                rhoq=0.
                 vel[0,0]=0.
                 vel[0,1]=0.
                 exxq=0.
                 eyyq=0.
                 exyq=0.
+                dqdxq=0.
+                dqdyq=0.
                 for k in range(0,m):
+                    Tq+=N_mat[k,0]*T[icon[k,iel]]
+                    rhoq+=N_mat[k,0]*rho[icon[k,iel]]
                     vel[0,0]+=N_mat[k,0]*u[icon[k,iel]]
                     vel[0,1]+=N_mat[k,0]*v[icon[k,iel]]
                     dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
@@ -736,29 +761,43 @@ for istep in range(0,nstep):
                     exxq+=dNdx[k]*u[icon[k,iel]]
                     eyyq+=dNdy[k]*v[icon[k,iel]]
                     exyq+=(dNdy[k]*u[icon[k,iel]]+dNdx[k]*v[icon[k,iel]])*.5
+                    dqdxq+=dNdx[k]*q[icon[k,iel]]
+                    dqdyq+=dNdy[k]*q[icon[k,iel]]
                 exxd=exxq-(exxq+eyyq)/3.
                 eyyd=eyyq-(exxq+eyyq)/3.
                 exyd=exyq
                 Phiq=2.*viscosity*(exxd**2+eyyd**2+2*exyd**2)    
 
+                if use_BA or use_EBA:
+                   rho_lhs=rho0
+                else:
+                   rho_lhs=rhoq
+
                 # compute mass matrix
-                MM=N_mat.dot(N_mat.T)*rho0*hcapa*wq*jcob
+                MM=N_mat.dot(N_mat.T)*rho_lhs*hcapa*wq*jcob
 
                 # compute diffusion matrix
                 Kd=B_mat.T.dot(B_mat)*hcond*wq*jcob
 
                 # compute advection matrix
-                Ka=N_mat.dot(vel.dot(B_mat))*rho0*hcapa*wq*jcob
+                Ka=N_mat.dot(vel.dot(B_mat))*rho_lhs*hcapa*wq*jcob
 
                 # compute shear heating rhs term
                 if use_shearheating:
-                   f_el[:]=N_mat[:,0]*Phiq*dt*jcob*wq
+                   f_el[:]+=N_mat[:,0]*Phiq*jcob*wq
                 else:
-                   f_el[:]=0
+                   f_el[:]+=0
+
+                # compute adiabatic heating rhs term 
+                if use_adiabatic_heating:
+                   f_el[:]+=N_mat[:,0]*alphaT*Tq*(vel[0,0]*dqdxq+vel[0,1]*dqdyq)*wq*jcob
+                else:
+                   f_el[:]+=0
+
 
                 a_el=MM+(Ka+Kd)*dt
 
-                b_el=MM.dot(Tvect) + f_el
+                b_el=MM.dot(Tvect) + f_el*dt
 
                 # apply boundary conditions
 
@@ -841,13 +880,30 @@ for istep in range(0,nstep):
                     jcb[1,0]+=dNds[k]*x[icon[k,iel]]
                     jcb[1,1]+=dNds[k]*y[icon[k,iel]]
                 jcob=np.linalg.det(jcb)
+                jcbi=np.linalg.inv(jcb)
+                for k in range(0,m):
+                    dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+                    dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
                 Tq=0.
+                uq=0.
+                vq=0.
+                rhoq=0.
+                dqdxq=0.
+                dqdyq=0.
                 for k in range(0,m):
                     Tq+=N[k]*T[icon[k,iel]]
+                    uq+=N[k]*u[icon[k,iel]]
+                    vq+=N[k]*v[icon[k,iel]]
                     rhoq+=N[k]*rho[icon[k,iel]]
+                    dqdxq+=dNdx[k]*q[icon[k,iel]]
+                    dqdyq+=dNdy[k]*q[icon[k,iel]]
                 Tavrg[istep]+=Tq*wq*jcob
                 mass[istep]+=rhoq*wq*jcob
-                ET[istep]+=rhoq*hcapa*Tq*wq*jcob
+                if use_BA or use_EBA:
+                   ET[istep]+=rho0*hcapa*Tq*wq*jcob
+                else:
+                   ET[istep]+=rhoq*hcapa*Tq*wq*jcob
+                adiab_heating[istep]+=alphaT*Tq*(uq*dqdxq+vq*dqdyq)*wq*jcob
 
     Tavrg[istep]/=Lx*Ly
 
@@ -1007,22 +1063,26 @@ for istep in range(0,nstep):
 
     np.savetxt('vrms_Nu.ascii',np.array([model_time[0:istep]/year,vrms[0:istep],Nu[0:istep]]).T,header='# t/year,vrms,Nu')
     np.savetxt('vrms_Nu_adim.ascii',np.array([model_time[0:istep]/reftime,vrms[0:istep]/refvel,Nu[0:istep]]).T,header='# t/reftime,vrms/refvel,Nu')
-
     np.savetxt('Tavrg.ascii',np.array([model_time[0:istep]/year,Tavrg[0:istep]]).T,header='# t/year,Tavrg')
     np.savetxt('Tavrg_adim.ascii',np.array([model_time[0:istep]/reftime,Tavrg[0:istep]/refTemp]).T,header='# t/reftime,Tavrg/refTemp')
-
     np.savetxt('M.ascii',np.array([model_time[0:istep]/year,mass[0:istep],mass[0:istep]/mass[0]]).T,header='# t/year,M,M/M0')
     np.savetxt('EK.ascii',np.array([model_time[0:istep]/year,EK[0:istep]]).T,header='# t/year,EK')
     np.savetxt('EG.ascii',np.array([model_time[0:istep]/year,EG[0:istep],EG[0:istep]-EG[0]]).T,header='# t/year,EG,EG-EG(0)')
     np.savetxt('ET.ascii',np.array([model_time[0:istep]/year,ET[0:istep]]).T,header='# t/year,ET')
-    np.savetxt('viscous_dissipation.ascii',np.array([model_time[0:istep]/year,viscdiss[0:istep]]).T,header='# t/year,Phi')
+    np.savetxt('viscous_dissipation.ascii',np.array([model_time[0:istep]/year,visc_diss[0:istep]]).T,header='# t/year,Phi')
     np.savetxt('work_grav.ascii',np.array([model_time[0:istep]/year,work_grav[0:istep]]).T,header='# t/year,W')
-
+    np.savetxt('heat_flux_boundary.ascii',np.array([model_time[0:istep]/year,heatflux_boundary[0:istep]]).T,header='# t/year,q')
+    np.savetxt('adiabatic_heating.ascii',np.array([model_time[0:istep]/year,adiab_heating[0:istep]]).T,header='# t/year,ad.heat.')
+    np.savetxt('viscous_dissipation_adim.ascii',np.array([model_time[0:istep]/reftime,visc_diss[0:istep]/(refPress*refvel*Ly**2)]).T,header='# t/reftime,Phi')
+    np.savetxt('work_grav_adim.ascii',np.array([model_time[0:istep]/reftime,work_grav[0:istep]/(refPress*refvel*Ly**2)]).T,header='# t/reftime,W')
+    np.savetxt('conservation.ascii',np.array([model_time[0:istep]/year,visc_diss[0:istep],adiab_heating[0:istep],heatflux_boundary[0:istep]]).T,header='# t/reftime,W')
     np.savetxt('u_stats.ascii',np.array([model_time[0:istep]/year,u_stats[0:istep,0],u_stats[0:istep,1]]).T,header='# t/year,min(u),max(u)')
     np.savetxt('v_stats.ascii',np.array([model_time[0:istep]/year,v_stats[0:istep,0],v_stats[0:istep,1]]).T,header='# t/year,min(v),max(v)')
     np.savetxt('T_stats.ascii',np.array([model_time[0:istep]/year,T_stats[0:istep,0],T_stats[0:istep,1]]).T,header='# t/year,min(T),max(T)')
-
     np.savetxt('dt_stats.ascii',np.array([model_time[0:istep]/year,dt_stats[0:istep]]).T,header='# t/year,dt')
+
+    if istep>0:
+       np.savetxt('dETdt.ascii',np.array([model_time[1:istep]/year,  ((ET[1:istep]-ET[0:istep-1])/dt)   ]).T,header='# t/year,ET')
 
     print("output stats: %.3f s" % (time.time() - start))
 
