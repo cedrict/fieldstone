@@ -92,13 +92,14 @@ print("-----------------------------")
 print("----------SimpleFEM----------")
 print("-----------------------------")
 
-m=8      # number of nodes making up an element
+mV=27    # number of velocity nodes making up an element
+mP=8     # number of pressure nodes making up an element
 ndofV=3  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-Lx=1.  # x- extent of the domain 
-Ly=1.  # y- extent of the domain 
-Lz=1.  # z- extent of the domain 
+Lx=4.  # x- extent of the domain 
+Ly=3.  # y- extent of the domain 
+Lz=2.  # z- extent of the domain 
 
 assert (Lx>0.), "Lx should be positive" 
 assert (Ly>0.), "Ly should be positive" 
@@ -110,9 +111,9 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    nelz = int(sys.argv[3])
 else:
-   nelx = 13
-   nely = 13
-   nelz = 13
+   nelx = 4
+   nely = 3
+   nelz = 2
 
 assert (nelx>0.), "nelx should be positive" 
 assert (nely>0.), "nely should be positive" 
@@ -120,23 +121,40 @@ assert (nelz>0.), "nelz should be positive"
 
 visu=1
     
-nnx=nelx+1  # number of elements, x direction
-nny=nely+1  # number of elements, y direction
-nnz=nelz+1  # number of elements, z direction
+nnx=2*nelx+1  # number of elements, x direction
+nny=2*nely+1  # number of elements, y direction
+nnz=2*nelz+1  # number of elements, z direction
 
 nnp=nnx*nny*nnz  # number of nodes
 
 nel=nelx*nely*nelz  # number of elements, total
 
-NfemV=nnp*ndofV   # number of velocity dofs
-NfemP=nel*ndofP   # number of pressure dofs
-Nfem=NfemV+NfemP # total number of dofs
+NfemV=nnp*ndofV               # number of velocity dofs
+NfemP=(nelx+1)*(nely+1)*(nelx+1)*ndofP # number of pressure dofs
+Nfem=NfemV+NfemP              # total number of dofs
 
 eps=1.e-10
-
+qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
+qweights=[5./9.,8./9.,5./9.]
 sqrt3=np.sqrt(3.)
 
 beta=0
+
+hx=Lx/nelx
+hy=Ly/nely
+hz=Lz/nelz
+
+#################################################################
+#################################################################
+
+print("nelx",nelx)
+print("nely",nely)
+print("nelz",nelz)
+print("nel",nel)
+print("nnx=",nnx)
+print("nny=",nny)
+print("nnz=",nnz)
+print("nnp=",nnp)
 
 ######################################################################
 # grid point setup
@@ -148,12 +166,12 @@ y = np.empty(nnp, dtype=np.float64)  # y coordinates
 z = np.empty(nnp, dtype=np.float64)  # z coordinates
 
 counter=0
-for i in range(0, nnx):
-    for j in range(0, nny):
-        for k in range(0, nny):
-            x[counter]=i*Lx/float(nelx)
-            y[counter]=j*Ly/float(nely)
-            z[counter]=k*Lz/float(nelz)
+for i in range(0,nnx):
+    for j in range(0,nny):
+        for k in range(0,nnz):
+            x[counter]=i*hx/2
+            y[counter]=j*hy/2
+            z[counter]=k*hz/2
             counter += 1
 
 print("grid points setup: %.3f s" % (time.time() - start))
@@ -163,20 +181,66 @@ print("grid points setup: %.3f s" % (time.time() - start))
 ######################################################################
 start = time.time()
 
-icon =np.zeros((m, nel),dtype=np.int16)
+iconV=np.zeros((mV,nel),dtype=np.int16)
 counter = 0
-for i in range(0, nelx):
-    for j in range(0, nely):
-        for k in range(0, nelz):
-            icon[0,counter]=nny*nnz*(i-1+1)+nnz*(j-1+1)+k
-            icon[1,counter]=nny*nnz*(i  +1)+nnz*(j-1+1)+k
-            icon[2,counter]=nny*nnz*(i  +1)+nnz*(j  +1)+k
-            icon[3,counter]=nny*nnz*(i-1+1)+nnz*(j  +1)+k
-            icon[4,counter]=nny*nnz*(i-1+1)+nnz*(j-1+1)+k+1
-            icon[5,counter]=nny*nnz*(i  +1)+nnz*(j-1+1)+k+1
-            icon[6,counter]=nny*nnz*(i  +1)+nnz*(j  +1)+k+1
-            icon[7,counter]=nny*nnz*(i-1+1)+nnz*(j  +1)+k+1
+for i in range(0,nelx):
+    for j in range(0,nely):
+        for k in range(0,nelz):
+            iconV[ 0,counter]=(2*(k)+1)+ nnz*(2*(j)+0) + nny*nnz*(2*(i)+0) -1
+            iconV[ 1,counter]=(2*(k)+1)+ nnz*(2*(j)+0) + nny*nnz*(2*(i)+2) -1
+            iconV[ 2,counter]=(2*(k)+1)+ nnz*(2*(j)+2) + nny*nnz*(2*(i)+2) -1
+            iconV[ 3,counter]=(2*(k)+1)+ nnz*(2*(j)+2) + nny*nnz*(2*(i)+0) -1
+            iconV[ 4,counter]=(2*(k)+3)+ nnz*(2*(j)+0) + nny*nnz*(2*(i)+0) -1
+            iconV[ 5,counter]=(2*(k)+3)+ nnz*(2*(j)+0) + nny*nnz*(2*(i)+2) -1
+            iconV[ 6,counter]=(2*(k)+3)+ nnz*(2*(j)+2) + nny*nnz*(2*(i)+2) -1
+            iconV[ 7,counter]=(2*(k)+3)+ nnz*(2*(j)+2) + nny*nnz*(2*(i)+0) -1
+            iconV[ 8,counter]=(2*(k)+1)+ nnz*(2*(j)+0) + nny*nnz*(2*(i)+1) -1
+            iconV[ 9,counter]=(2*(k)+1)+ nnz*(2*(j)+1) + nny*nnz*(2*(i)+2) -1
+            iconV[10,counter]=(2*(k)+1)+ nnz*(2*(j)+2) + nny*nnz*(2*(i)+1) -1
+            iconV[11,counter]=(2*(k)+1)+ nnz*(2*(j)+1) + nny*nnz*(2*(i)+0) -1
+            iconV[12,counter]=(2*(k)+3)+ nnz*(2*(j)+0) + nny*nnz*(2*(i)+1) -1
+            iconV[13,counter]=(2*(k)+3)+ nnz*(2*(j)+1) + nny*nnz*(2*(i)+2) -1
+            iconV[14,counter]=(2*(k)+3)+ nnz*(2*(j)+2) + nny*nnz*(2*(i)+1) -1
+            iconV[15,counter]=(2*(k)+3)+ nnz*(2*(j)+1) + nny*nnz*(2*(i)+0) -1
+            iconV[16,counter]=(2*(k)+2)+ nnz*(2*(j)+0) + nny*nnz*(2*(i)+0) -1
+            iconV[17,counter]=(2*(k)+2)+ nnz*(2*(j)+0) + nny*nnz*(2*(i)+2) -1
+            iconV[18,counter]=(2*(k)+2)+ nnz*(2*(j)+2) + nny*nnz*(2*(i)+2) -1
+            iconV[19,counter]=(2*(k)+2)+ nnz*(2*(j)+2) + nny*nnz*(2*(i)+0) -1
+            iconV[20,counter]=(2*(k)+1)+ nnz*(2*(j)+1) + nny*nnz*(2*(i)+1) -1
+            iconV[21,counter]=(2*(k)+2)+ nnz*(2*(j)+0) + nny*nnz*(2*(i)+1) -1
+            iconV[22,counter]=(2*(k)+2)+ nnz*(2*(j)+1) + nny*nnz*(2*(i)+2) -1
+            iconV[23,counter]=(2*(k)+2)+ nnz*(2*(j)+2) + nny*nnz*(2*(i)+1) -1
+            iconV[24,counter]=(2*(k)+2)+ nnz*(2*(j)+1) + nny*nnz*(2*(i)+0) -1
+            iconV[25,counter]=(2*(k)+3)+ nnz*(2*(j)+1) + nny*nnz*(2*(i)+1) -1
+            iconV[26,counter]=(2*(k)+2)+ nnz*(2*(j)+1) + nny*nnz*(2*(i)+1) -1
             counter += 1
+
+print ('=======iconV=======')
+for iel in range (0,nel):
+    print ("iel=",iel)
+#    for i in range(0,27):
+#        print ("node",i,iconV[i,iel],"at pos.",x[iconV[i,iel]], y[iconV[i,iel]])
+
+iconP =np.zeros((mP,nel),dtype=np.int16)
+counter = 0
+for i in range(0,nelx):
+    for j in range(0,nely):
+        for k in range(0,nelz):
+            iconP[0,counter]=(nely+1)*(nelz+1)*(i-1+1)+(nelz+1)*(j-1+1)+k  +1
+            iconP[1,counter]=(nely+1)*(nelz+1)*(i  +1)+(nelz+1)*(j-1+1)+k  +1
+            iconP[2,counter]=(nely+1)*(nelz+1)*(i  +1)+(nelz+1)*(j  +1)+k  +1
+            iconP[3,counter]=(nely+1)*(nelz+1)*(i-1+1)+(nelz+1)*(j  +1)+k  +1
+            iconP[4,counter]=(nely+1)*(nelz+1)*(i-1+1)+(nelz+1)*(j-1+1)+k+1  +1
+            iconP[5,counter]=(nely+1)*(nelz+1)*(i  +1)+(nelz+1)*(j-1+1)+k+1  +1
+            iconP[6,counter]=(nely+1)*(nelz+1)*(i  +1)+(nelz+1)*(j  +1)+k+1  +1
+            iconP[7,counter]=(nely+1)*(nelz+1)*(i-1+1)+(nelz+1)*(j  +1)+k+1  +1
+            counter += 1
+
+print ('=======iconP=======')
+for iel in range (0,nel):
+    print ("iel=",iel)
+    for i in range(0,8):
+        print ("node",i,iconP[i,iel],"at pos.",x[iconP[i,iel]], y[iconP[i,iel]])
 
 print("build connectivity: %.3f s" % (time.time() - start))
 
@@ -186,7 +250,7 @@ print("build connectivity: %.3f s" % (time.time() - start))
 start = time.time()
 
 bc_fix=np.zeros(Nfem,dtype=np.bool)  # boundary condition, yes/no
-bc_val=np.zeros(Nfem,dtype=float)  # boundary condition, value
+bc_val=np.zeros(Nfem,dtype=np.float64)  # boundary condition, value
 
 for i in range(0,nnp):
     if x[i]<eps:
@@ -226,14 +290,16 @@ G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
 f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
 h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
 
-b_mat = np.zeros((6,ndofV*m),dtype=np.float64)   # gradient matrix B 
-N     = np.zeros(m,dtype=np.float64)            # shape functions
-dNdx  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-dNdy  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-dNdz  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-dNdr  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-dNds  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-dNdt  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
+b_mat = np.zeros((6,ndofV*mV),dtype=np.float64)   # gradient matrix B 
+N_mat = np.zeros((6,ndofP*mP),dtype=np.float64) # matrix  
+NV     = np.zeros(mV,dtype=np.float64)            # shape functions
+NP     = np.zeros(mP,dtype=np.float64)           # shape functions P
+dNVdx  = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
+dNVdy  = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
+dNVdz  = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
+dNVdr  = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
+dNVds  = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
+dNVdt  = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 u     = np.zeros(nnp,dtype=np.float64)          # x-component velocity
 v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
 w     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
@@ -243,75 +309,159 @@ c_mat = np.zeros((6,6),dtype=np.float64)
 c_mat[0,0]=2. ; c_mat[1,1]=2. ; c_mat[2,2]=2.
 c_mat[3,3]=1. ; c_mat[4,4]=1. ; c_mat[5,5]=1.
 
-for iel in range(0, nel):
+for iel in range(0,nel):
 
     # set arrays to 0 every loop
-    f_el =np.zeros((m*ndofV),dtype=np.float64)
-    K_el =np.zeros((m*ndofV,m*ndofV),dtype=np.float64)
-    G_el=np.zeros((m*ndofV,1),dtype=np.float64)
-    h_el=np.zeros((1,1),dtype=np.float64)
+    f_el =np.zeros((mV*ndofV),dtype=np.float64)
+    K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
+    G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
+    h_el=np.zeros((mP*ndofP),dtype=np.float64)
 
     # integrate viscous term at 4 quadrature points
-    for iq in [-1, 1]:
-        for jq in [-1, 1]:
-            for kq in [-1, 1]:
+    for iq in [0,1,2]:
+        for jq in [0,1,2]:
+            for kq in [0,1,2]:
 
                 # position & weight of quad. point
-                rq=iq/sqrt3
-                sq=jq/sqrt3
-                tq=kq/sqrt3
-                wq=1.*1.*1.
+                rq=qcoords[iq]
+                sq=qcoords[jq]
+                tq=qcoords[kq]
+                wq=qweights[iq]*qweights[jq]*qweights[kq]
 
                 # calculate shape functions
-                N[0]=0.125*(1-rq)*(1-sq)*(1-tq)
-                N[1]=0.125*(1+rq)*(1-sq)*(1-tq)
-                N[2]=0.125*(1+rq)*(1+sq)*(1-tq)
-                N[3]=0.125*(1-rq)*(1+sq)*(1-tq)
-                N[4]=0.125*(1-rq)*(1-sq)*(1+tq)
-                N[5]=0.125*(1+rq)*(1-sq)*(1+tq)
-                N[6]=0.125*(1+rq)*(1+sq)*(1+tq)
-                N[7]=0.125*(1-rq)*(1+sq)*(1+tq)
+                NV[ 0]= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.) * 0.5*tq*(tq-1.) 
+                NV[ 1]= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.) * 0.5*tq*(tq-1.) 
+                NV[ 2]= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.) * 0.5*tq*(tq-1.)
+                NV[ 3]= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.) * 0.5*tq*(tq-1.)
+                NV[ 4]= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.) * 0.5*tq*(tq+1.)
+                NV[ 5]= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.) * 0.5*tq*(tq+1.)
+                NV[ 6]= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.) * 0.5*tq*(tq+1.)
+                NV[ 7]= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.) * 0.5*tq*(tq+1.)
+                NV[ 8]= (1.-rq**2)     * 0.5*sq*(sq-1.) * 0.5*tq*(tq-1.)
+                NV[ 9]= 0.5*rq*(rq+1.) * (1.-sq**2)     * 0.5*tq*(tq-1.)
+                NV[10]= (1.-rq**2)     * 0.5*sq*(sq+1.) * 0.5*tq*(tq-1.)
+                NV[11]= 0.5*rq*(rq-1.) * (1.-sq**2)     * 0.5*tq*(tq-1.)
+                NV[12]= (1.-rq**2)     * 0.5*sq*(sq-1.) * 0.5*tq*(tq+1.)
+                NV[13]= 0.5*rq*(rq+1.) * (1.-sq**2)     * 0.5*tq*(tq+1.)
+                NV[14]= (1.-rq**2)     * 0.5*sq*(sq+1.) * 0.5*tq*(tq+1.)
+                NV[15]= 0.5*rq*(rq-1.) * (1.-sq**2)     * 0.5*tq*(tq+1.)
+                NV[16]= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.) * (1.-tq**2)
+                NV[17]= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.) * (1.-tq**2)
+                NV[18]= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.) * (1.-tq**2)
+                NV[19]= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.) * (1.-tq**2)
+                NV[20]= (1.-rq**2)     * (1.-sq**2)     * 0.5*tq*(tq-1.)
+                NV[21]= (1.-rq**2)     * 0.5*sq*(sq-1.) * (1.-tq**2)
+                NV[22]= 0.5*rq*(rq+1.) * (1.-sq**2)     * (1.-tq**2)
+                NV[23]= (1.-rq**2)     * 0.5*sq*(sq+1.) * (1.-tq**2)
+                NV[24]= 0.5*rq*(rq-1.) * (1.-sq**2)     * (1.-tq**2)
+                NV[25]= (1.-rq**2)     * (1.-sq**2)     * 0.5*tq*(tq+1.)
+                NV[26]= (1.-rq**2)     * (1.-sq**2)     * (1.-tq**2)
 
-                # calculate shape function derivatives
-                dNdr[0]=-0.125*(1-sq)*(1-tq) 
-                dNdr[1]=+0.125*(1-sq)*(1-tq)
-                dNdr[2]=+0.125*(1+sq)*(1-tq)
-                dNdr[3]=-0.125*(1+sq)*(1-tq)
-                dNdr[4]=-0.125*(1-sq)*(1+tq)
-                dNdr[5]=+0.125*(1-sq)*(1+tq)
-                dNdr[6]=+0.125*(1+sq)*(1+tq)
-                dNdr[7]=-0.125*(1+sq)*(1+tq)
+                dNVdr[ 0]= 0.5*(2*rq-1.) * 0.5*sq*(sq-1.) * 0.5*tq*(tq-1.) 
+                dNVdr[ 1]= 0.5*(2*rq+1.) * 0.5*sq*(sq-1.) * 0.5*tq*(tq-1.) 
+                dNVdr[ 2]= 0.5*(2*rq+1.) * 0.5*sq*(sq+1.) * 0.5*tq*(tq-1.) 
+                dNVdr[ 3]= 0.5*(2*rq-1.) * 0.5*sq*(sq+1.) * 0.5*tq*(tq-1.) 
+                dNVdr[ 4]= 0.5*(2*rq-1.) * 0.5*sq*(sq-1.) * 0.5*tq*(tq+1.) 
+                dNVdr[ 5]= 0.5*(2*rq+1.) * 0.5*sq*(sq-1.) * 0.5*tq*(tq+1.) 
+                dNVdr[ 6]= 0.5*(2*rq+1.) * 0.5*sq*(sq+1.) * 0.5*tq*(tq+1.) 
+                dNVdr[ 7]= 0.5*(2*rq-1.) * 0.5*sq*(sq+1.) * 0.5*tq*(tq+1.) 
+                dNVdr[ 8]= (-2*rq)       * 0.5*sq*(sq-1.) * 0.5*tq*(tq-1.) 
+                dNVdr[ 9]= 0.5*(2*rq+1.) * (1.-sq**2)    * 0.5*tq*(tq-1.) 
+                dNVdr[10]= (-2*rq)       * 0.5*sq*(sq+1.) * 0.5*tq*(tq-1.) 
+                dNVdr[11]= 0.5*(2*rq-1.) * (1.-sq**2)    * 0.5*tq*(tq-1.) 
+                dNVdr[12]= (-2*rq)       * 0.5*sq*(sq-1.) * 0.5*tq*(tq+1.) 
+                dNVdr[13]= 0.5*(2*rq+1.) * (1.-sq**2)    * 0.5*tq*(tq+1.) 
+                dNVdr[14]= (-2*rq)       * 0.5*sq*(sq+1.) * 0.5*tq*(tq+1.) 
+                dNVdr[15]= 0.5*(2*rq-1.) * (1.-sq**2)    * 0.5*tq*(tq+1.) 
+                dNVdr[16]= 0.5*(2*rq-1.) * 0.5*sq*(sq-1.) * (1.-tq**2) 
+                dNVdr[17]= 0.5*(2*rq+1.) * 0.5*sq*(sq-1.) * (1.-tq**2) 
+                dNVdr[18]= 0.5*(2*rq+1.) * 0.5*sq*(sq+1.) * (1.-tq**2) 
+                dNVdr[19]= 0.5*(2*rq-1.) * 0.5*sq*(sq+1.) * (1.-tq**2) 
+                dNVdr[20]= (-2*rq)       * (1.-sq**2)    * 0.5*tq*(tq-1.) 
+                dNVdr[21]= (-2*rq)       * 0.5*sq*(sq-1.) * (1.-tq**2) 
+                dNVdr[22]= 0.5*(2*rq+1.) * (1.-sq**2)    * (1.-tq**2) 
+                dNVdr[23]= (-2*rq)       * 0.5*sq*(sq+1.) * (1.-tq**2) 
+                dNVdr[24]= 0.5*(2*rq-1.) * (1.-sq**2)    * (1.-tq**2) 
+                dNVdr[25]= (-2*rq)       * (1.-sq**2)    * 0.5*tq*(tq+1.) 
+                dNVdr[26]= (-2*rq)       * (1.-sq**2)    * (1.-tq**2) 
 
-                dNds[0]=-0.125*(1-rq)*(1-tq) 
-                dNds[1]=-0.125*(1+rq)*(1-tq)
-                dNds[2]=+0.125*(1+rq)*(1-tq)
-                dNds[3]=+0.125*(1-rq)*(1-tq)
-                dNds[4]=-0.125*(1-rq)*(1+tq)
-                dNds[5]=-0.125*(1+rq)*(1+tq)
-                dNds[6]=+0.125*(1+rq)*(1+tq)
-                dNds[7]=+0.125*(1-rq)*(1+tq)
+                dNVds[ 0]= 0.5*rq*(rq-1.) * 0.5*(2*sq-1.) * 0.5*tq*(tq-1.) 
+                dNVds[ 1]= 0.5*rq*(rq+1.) * 0.5*(2*sq-1.) * 0.5*tq*(tq-1.) 
+                dNVds[ 2]= 0.5*rq*(rq+1.) * 0.5*(2*sq+1.) * 0.5*tq*(tq-1.) 
+                dNVds[ 3]= 0.5*rq*(rq-1.) * 0.5*(2*sq+1.) * 0.5*tq*(tq-1.) 
+                dNVds[ 4]= 0.5*rq*(rq-1.) * 0.5*(2*sq-1.) * 0.5*tq*(tq+1.) 
+                dNVds[ 5]= 0.5*rq*(rq+1.) * 0.5*(2*sq-1.) * 0.5*tq*(tq+1.) 
+                dNVds[ 6]= 0.5*rq*(rq+1.) * 0.5*(2*sq+1.) * 0.5*tq*(tq+1.) 
+                dNVds[ 7]= 0.5*rq*(rq-1.) * 0.5*(2*sq+1.) * 0.5*tq*(tq+1.) 
+                dNVds[ 8]= (1.-rq**2)     * 0.5*(2*sq-1.) * 0.5*tq*(tq-1.) 
+                dNVds[ 9]= 0.5*rq*(rq+1.) * (-2*sq)       * 0.5*tq*(tq-1.) 
+                dNVds[10]= (1.-rq**2)     * 0.5*(2*sq+1.) * 0.5*tq*(tq-1.) 
+                dNVds[11]= 0.5*rq*(rq-1.) * (-2*sq)       * 0.5*tq*(tq-1.) 
+                dNVds[12]= (1.-rq**2)     * 0.5*(2*sq-1.) * 0.5*tq*(tq+1.) 
+                dNVds[13]= 0.5*rq*(rq+1.) * (-2*sq)       * 0.5*tq*(tq+1.) 
+                dNVds[14]= (1.-rq**2)     * 0.5*(2*sq+1.) * 0.5*tq*(tq+1.) 
+                dNVds[15]= 0.5*rq*(rq-1.) * (-2*sq)       * 0.5*tq*(tq+1.) 
+                dNVds[16]= 0.5*rq*(rq-1.) * 0.5*(2*sq-1.) * (1.-tq**2) 
+                dNVds[17]= 0.5*rq*(rq+1.) * 0.5*(2*sq-1.) * (1.-tq**2) 
+                dNVds[18]= 0.5*rq*(rq+1.) * 0.5*(2*sq+1.) * (1.-tq**2) 
+                dNVds[19]= 0.5*rq*(rq-1.) * 0.5*(2*sq+1.) * (1.-tq**2) 
+                dNVds[20]= (1.-rq**2)     * (-2*sq)       * 0.5*tq*(tq-1.) 
+                dNVds[21]= (1.-rq**2)     * 0.5*(2*sq-1.) * (1.-tq**2) 
+                dNVds[22]= 0.5*rq*(rq+1.) * (-2*sq)       * (1.-tq**2) 
+                dNVds[23]= (1.-rq**2)     * 0.5*(2*sq+1.) * (1.-tq**2) 
+                dNVds[24]= 0.5*rq*(rq-1.) * (-2*sq)       * (1.-tq**2) 
+                dNVds[25]= (1.-rq**2)     * (-2*sq)       * 0.5*tq*(tq+1.) 
+                dNVds[26]= (1.-rq**2)     * (-2*sq)       * (1.-tq**2) 
 
-                dNdt[0]=-0.125*(1-rq)*(1-sq) 
-                dNdt[1]=-0.125*(1+rq)*(1-sq)
-                dNdt[2]=-0.125*(1+rq)*(1+sq)
-                dNdt[3]=-0.125*(1-rq)*(1+sq)
-                dNdt[4]=+0.125*(1-rq)*(1-sq)
-                dNdt[5]=+0.125*(1+rq)*(1-sq)
-                dNdt[6]=+0.125*(1+rq)*(1+sq)
-                dNdt[7]=+0.125*(1-rq)*(1+sq)
+                dNVdt[ 0]= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.) * 0.5*(2*tq-1.) 
+                dNVdt[ 1]= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.) * 0.5*(2*tq-1.) 
+                dNVdt[ 2]= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.) * 0.5*(2*tq-1.) 
+                dNVdt[ 3]= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.) * 0.5*(2*tq-1.) 
+                dNVdt[ 4]= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.) * 0.5*(2*tq+1.) 
+                dNVdt[ 5]= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.) * 0.5*(2*tq+1.) 
+                dNVdt[ 6]= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.) * 0.5*(2*tq+1.) 
+                dNVdt[ 7]= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.) * 0.5*(2*tq+1.) 
+                dNVdt[ 8]= (1.-rq**2)     * 0.5*sq*(sq-1.) * 0.5*(2*tq-1.) 
+                dNVdt[ 9]= 0.5*rq*(rq+1.) * (1.-sq**2)     * 0.5*(2*tq-1.) 
+                dNVdt[10]= (1.-rq**2)     * 0.5*sq*(sq+1.) * 0.5*(2*tq-1.) 
+                dNVdt[11]= 0.5*rq*(rq-1.) * (1.-sq**2)     * 0.5*(2*tq-1.) 
+                dNVdt[12]= (1.-rq**2)     * 0.5*sq*(sq-1.) * 0.5*(2*tq+1.) 
+                dNVdt[13]= 0.5*rq*(rq+1.) * (1.-sq**2)     * 0.5*(2*tq+1.) 
+                dNVdt[14]= (1.-rq**2)     * 0.5*sq*(sq+1.) * 0.5*(2*tq+1.) 
+                dNVdt[15]= 0.5*rq*(rq-1.) * (1.-sq**2)     * 0.5*(2*tq+1.) 
+                dNVdt[16]= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.) * (-2*tq) 
+                dNVdt[17]= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.) * (-2*tq) 
+                dNVdt[18]= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.) * (-2*tq) 
+                dNVdt[19]= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.) * (-2*tq) 
+                dNVdt[20]= (1.-rq**2)     * (1.-sq**2)     * 0.5*(2*tq-1.) 
+                dNVdt[21]= (1.-rq**2)     * 0.5*sq*(sq-1.) * (-2*tq) 
+                dNVdt[22]= 0.5*rq*(rq+1.) * (1.-sq**2)     * (-2*tq) 
+                dNVdt[23]= (1.-rq**2)     * 0.5*sq*(sq+1.) * (-2*tq) 
+                dNVdt[24]= 0.5*rq*(rq-1.) * (1.-sq**2)     * (-2*tq) 
+                dNVdt[25]= (1.-rq**2)     * (1.-sq**2)     * 0.5*(2*tq+1.) 
+                dNVdt[26]= (1.-rq**2)     * (1.-sq**2)     * (-2*tq) 
+
+                NP[0]=0.125*(1-rq)*(1-sq)*(1-tq)
+                NP[1]=0.125*(1+rq)*(1-sq)*(1-tq)
+                NP[2]=0.125*(1+rq)*(1+sq)*(1-tq)
+                NP[3]=0.125*(1-rq)*(1+sq)*(1-tq)
+                NP[4]=0.125*(1-rq)*(1-sq)*(1+tq)
+                NP[5]=0.125*(1+rq)*(1-sq)*(1+tq)
+                NP[6]=0.125*(1+rq)*(1+sq)*(1+tq)
+                NP[7]=0.125*(1-rq)*(1+sq)*(1+tq)
 
                 # calculate jacobian matrix
                 jcb=np.zeros((3,3),dtype=np.float64)
-                for k in range(0,m):
-                    jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
-                    jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
-                    jcb[0, 2] += dNdr[k]*z[icon[k,iel]]
-                    jcb[1, 0] += dNds[k]*x[icon[k,iel]]
-                    jcb[1, 1] += dNds[k]*y[icon[k,iel]]
-                    jcb[1, 2] += dNds[k]*z[icon[k,iel]]
-                    jcb[2, 0] += dNdt[k]*x[icon[k,iel]]
-                    jcb[2, 1] += dNdt[k]*y[icon[k,iel]]
-                    jcb[2, 2] += dNdt[k]*z[icon[k,iel]]
+                for k in range(0,mV):
+                    jcb[0,0] += dNVdr[k]*x[iconV[k,iel]]
+                    jcb[0,1] += dNVdr[k]*y[iconV[k,iel]]
+                    jcb[0,2] += dNVdr[k]*z[iconV[k,iel]]
+                    jcb[1,0] += dNVds[k]*x[iconV[k,iel]]
+                    jcb[1,1] += dNVds[k]*y[iconV[k,iel]]
+                    jcb[1,2] += dNVds[k]*z[iconV[k,iel]]
+                    jcb[2,0] += dNVdt[k]*x[iconV[k,iel]]
+                    jcb[2,1] += dNVdt[k]*y[iconV[k,iel]]
+                    jcb[2,2] += dNVdt[k]*z[iconV[k,iel]]
 
                 # calculate the determinant of the jacobian
                 jcob = np.linalg.det(jcb)
@@ -323,62 +473,81 @@ for iel in range(0, nel):
                 xq=0.0
                 yq=0.0
                 zq=0.0
-                for k in range(0, m):
-                    xq+=N[k]*x[icon[k,iel]]
-                    yq+=N[k]*y[icon[k,iel]]
-                    zq+=N[k]*z[icon[k,iel]]
-                    dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
-                    dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]+jcbi[1,2]*dNdt[k]
-                    dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
+                for k in range(0,mV):
+                    xq+=NV[k]*x[iconV[k,iel]]
+                    yq+=NV[k]*y[iconV[k,iel]]
+                    zq+=NV[k]*z[iconV[k,iel]]
+                    dNVdx[k]=jcbi[0,0]*dNVdr[k]+jcbi[0,1]*dNVds[k]+jcbi[0,2]*dNVdt[k]
+                    dNVdy[k]=jcbi[1,0]*dNVdr[k]+jcbi[1,1]*dNVds[k]+jcbi[1,2]*dNVdt[k]
+                    dNVdz[k]=jcbi[2,0]*dNVdr[k]+jcbi[2,1]*dNVds[k]+jcbi[2,2]*dNVdt[k]
 
-                # construct 3x8 b_mat matrix
-                for i in range(0, m):
-                    b_mat[0:6, 3*i:3*i+3] = [[dNdx[i],0.     ,0.     ],
-                                             [0.     ,dNdy[i],0.     ],
-                                             [0.     ,0.     ,dNdz[i]],
-                                             [dNdy[i],dNdx[i],0.     ],
-                                             [dNdz[i],0.     ,dNdx[i]],
-                                             [0.     ,dNdz[i],dNdy[i]]]
+                # construct 6x24 b_mat matrix
+                for i in range(0,mV):
+                    b_mat[0:6, 3*i:3*i+3] = [[dNVdx[i],0.      ,0.     ],
+                                             [0.      ,dNVdy[i],0.     ],
+                                             [0.      ,0.      ,dNVdz[i]],
+                                             [dNVdy[i],dNVdx[i],0.     ],
+                                             [dNVdz[i],0.      ,dNVdx[i]],
+                                             [0.      ,dNVdz[i],dNVdy[i]]]
 
                 K_el += b_mat.T.dot(c_mat.dot(b_mat))*mu(xq,yq,zq,beta)*wq*jcob
 
-                for i in range(0, m):
-                    f_el[ndofV*i+0]+=N[i]*jcob*wq*bx(xq,yq,zq,beta)
-                    f_el[ndofV*i+1]+=N[i]*jcob*wq*by(xq,yq,zq,beta)
-                    f_el[ndofV*i+2]+=N[i]*jcob*wq*bz(xq,yq,zq,beta)
-                    G_el[ndofV*i+0,0]-=dNdx[i]*jcob*wq
-                    G_el[ndofV*i+1,0]-=dNdy[i]*jcob*wq
-                    G_el[ndofV*i+2,0]-=dNdz[i]*jcob*wq
+                # compute elemental rhs vector
+                for i in range(0,mV):
+                    f_el[ndofV*i+0]+=NV[i]*jcob*wq*bx(xq,yq,zq,beta)
+                    f_el[ndofV*i+1]+=NV[i]*jcob*wq*by(xq,yq,zq,beta)
+                    f_el[ndofV*i+2]+=NV[i]*jcob*wq*bz(xq,yq,zq,beta)
+
+
+                for i in range(0,mP):
+                    N_mat[0,i]=NP[i]
+                    N_mat[1,i]=NP[i]
+                    N_mat[2,i]=NP[i]
+                    N_mat[3,i]=0.
+                    N_mat[4,i]=0.
+                    N_mat[5,i]=0.
+
+                G_el-=b_mat.T.dot(N_mat)*wq*jcob
 
     # impose b.c. 
-    for k1 in range(0,m):
+    for k1 in range(0,mV):
         for i1 in range(0,ndofV):
             ikk=ndofV*k1          +i1
-            m1 =ndofV*icon[k1,iel]+i1
+            m1 =ndofV*iconV[k1,iel]+i1
             if bc_fix[m1]:
                K_ref=K_el[ikk,ikk] 
-               for jkk in range(0,m*ndofV):
+               for jkk in range(0,mV*ndofV):
                    f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
                    K_el[ikk,jkk]=0
                    K_el[jkk,ikk]=0
                K_el[ikk,ikk]=K_ref
                f_el[ikk]=K_ref*bc_val[m1]
-               h_el[0]-=G_el[ikk,0]*bc_val[m1]
-               G_el[ikk,0]=0
+               h_el[:]-=G_el[ikk,:]*bc_val[m1]
+               G_el[ikk,:]=0
 
     # assemble matrix K_mat and right hand side rhs
-    for k1 in range(0,m):
+    for k1 in range(0,mV):
         for i1 in range(0,ndofV):
             ikk=ndofV*k1          +i1
-            m1 =ndofV*icon[k1,iel]+i1
-            for k2 in range(0,m):
+            m1 =ndofV*iconV[k1,iel]+i1
+            for k2 in range(0,mV):
                 for i2 in range(0,ndofV):
                     jkk=ndofV*k2          +i2
-                    m2 =ndofV*icon[k2,iel]+i2
+                    m2 =ndofV*iconV[k2,iel]+i2
                     K_mat[m1,m2]+=K_el[ikk,jkk]
+            for k2 in range(0,mP):
+                jkk=k2
+                m2 =iconP[k2,iel]
+                G_mat[m1,m2]+=G_el[ikk,jkk]
             f_rhs[m1]+=f_el[ikk]
-            G_mat[m1,iel]+=G_el[ikk,0]
-    h_rhs[iel]+=h_el[0]
+    for k2 in range(0,mP):
+        m2=iconP[k2,iel]
+        h_rhs[m2]+=h_el[k2]
+
+print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
+print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
+print("     -> f_mat (m,M) %.4f %.4f " %(np.min(f_rhs),np.max(f_rhs)))
+print("     -> h_mat (m,M) %.4f %.4f " %(np.min(h_rhs),np.max(h_rhs)))
 
 print("build FE matrix: %.3f s" % (time.time() - start))
 
@@ -387,15 +556,15 @@ print("build FE matrix: %.3f s" % (time.time() - start))
 ######################################################################
 start = time.time()
 
-a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64)  # matrix of Ax=b
-rhs   = np.zeros(Nfem+1,dtype=np.float64)         # right hand side of Ax=b
+a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
 
 a_mat[0:NfemV,0:NfemV]=K_mat
 a_mat[0:NfemV,NfemV:Nfem]=G_mat
 a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
 
-a_mat[Nfem,NfemV:Nfem]=1
-a_mat[NfemV:Nfem,Nfem]=1
+#a_mat[Nfem,NfemV:Nfem]=1
+#a_mat[NfemV:Nfem,Nfem]=1
 
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
@@ -490,7 +659,7 @@ for iel in range(0,nel):
 
     # calculate jacobian matrix
     jcb=np.zeros((3,3),dtype=np.float64)
-    for k in range(0,m):
+    for k in range(0,mV):
         jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
         jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
         jcb[0, 2] += dNdr[k]*z[icon[k,iel]]
@@ -507,12 +676,12 @@ for iel in range(0,nel):
     # calculate the inverse of the jacobian
     jcbi=np.linalg.inv(jcb)
 
-    for k in range(0,m):
+    for k in range(0,mV):
         dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
         dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]+jcbi[1,2]*dNdt[k]
         dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
 
-    for k in range(0, m):
+    for k in range(0, mV):
         xc[iel]+=N[k]*x[icon[k,iel]]
         yc[iel]+=N[k]*y[icon[k,iel]]
         zc[iel]+=N[k]*z[icon[k,iel]]

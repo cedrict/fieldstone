@@ -239,7 +239,7 @@ refPress 7.500000e+05
 
 
 
-
+%-------------------------------------------
 \subsection{Conservation of energy 1}
 
 
@@ -393,11 +393,22 @@ simply ${\bm \nabla}\cdot (\rho {\bm v})=0$. Then it follows that
 so that the same term in Eq.(\ref{ba004}) vanishes too, and then Eq.(\ref{ba005}) is always valid, although one should be careful when computing $E_T$ in the BA and EBA cases as it should use $\rho_0$ and not $\rho$.
 
 
+%-------------------------------------------
+\subsection{The problem of the onset of convection}
+
+[wiki] In geophysics, the Rayleigh number is of fundamental importance: it indicates the presence and strength of convection within a fluid body such as the Earth's mantle. The mantle is a solid that behaves as a fluid over geological time scales.
+
+ The Rayleigh number essentially is an indicator of the type of heat transport mechanism. At low Rayleigh numbers conduction processes dominate over convection ones. At high Rayleigh numbers it is the other way around. There is a so-called critical value of the number with delineates the transition from one regime to the other. 
+
+This problem has been studied and approached both theoretically and numerically \cite[e.g.]{tusc} and it was found that
+the critical Rayleigh number $Ra_c$ is 
+\[
+Ra_c=(27/4)\pi^4 \simeq 657.5
+\]
+in setups similar to ours.
 
 
 \vspace{3cm}
- 
-
 
 
 
@@ -430,35 +441,36 @@ Relevant literature: \cite{besg92,itki94,tagu07,lezh08,kilv10,lezh11,lizh13,hedg
 
 ToDo: 
 \begin{itemize}
-\item  heat flux is at the moment elemental, so Nusselt and heat flux on boundaries measurements not as accurate as could be.
+\item heat flux is at the moment elemental, so Nusselt and heat flux on boundaries measurements not as accurate as could be.
 \item implement steady state detection
 \item do $Ra=10^5$ and $Ra=10^6$
+\item velocity average at surface
 \item non dimensional heat flux at corners \cite{blbc89} 
 \item depth-dependent viscosity (case 2 of \cite{blbc89})
 \end{itemize}
 
 \newpage
 %-------------------------------------------------------
-\subsection{results - BA}
+\subsection{results - BA - $Ra=10^4$}
 
 These results were obtained with a 64x64 resolution, and CFL number of 1. Steady state was reached 
 after about 1250 timesteps.
 
 \begin{center}
-(a)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/EK}
-(b)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/ET}
-(c)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/EG}\\
-(d)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/Tavrg}
-(e)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/T_stats}
-(f)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/vel_stats}\\
-(g)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/adiabatic_heating}
-(h)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/viscous_dissipation}
-(i)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/work_grav}\\
-(j)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/heat_flux}
-(k)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/vrms}
-(l)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA/Nu}\\
-(l)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/BA/conservation1}
-(m)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/BA/conservation2}\\
+(a)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/EK}
+(b)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/ET}
+(c)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/EG}\\
+(d)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/Tavrg}
+(e)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/T_stats}
+(f)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/vel_stats}\\
+(g)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/adiabatic_heating}
+(h)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/viscous_dissipation}
+(i)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/work_grav}\\
+(j)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/heat_flux}
+(k)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/vrms}
+(l)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/Nu}\\
+(l)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/BA_104/conservation1}
+(m)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/BA_104/conservation2}\\
 AH: adiabatic heating, VD: viscous dissipation, HF: heat flux, WG: work against gravity
 \end{center}
 
@@ -467,16 +479,51 @@ Eq.(\ref{ba005}) is verified by (l) and Eq.(\ref{ba003}) is verified by (m).
 
 \newpage
 \begin{center}
-(a)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/u.png}
-(b)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/v.png}
-(c)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/vel.png}\\
-(d)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/q.png}    
-(e)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/divv.png}    
-(f)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/e2.png}   \\
-(g)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/T.png} 
-(h)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/dTdx.png}
-(i)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/dTdy.png}  \\
+(a)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/u.png}
+(b)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/v.png}
+(c)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/vel.png}\\
+(d)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/q.png}    
+(e)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/divv.png}    
+(f)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/e2.png}   \\
+(g)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/T.png} 
+(h)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/dTdx.png}
+(i)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_104/dTdy.png}  \\
 \end{center}
+
+\newpage
+%-------------------------------------------------------
+\subsection{results - BA - $Ra=10^5$}
+
+These results were obtained with a 64x64 resolution, and CFL number of 1. Steady state was reached 
+after about 1250 timesteps.
+
+\begin{center}
+(a)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_105/EK}
+(b)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_105/ET}
+(c)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_105/EG}\\
+(d)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_105/Tavrg}
+(e)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_105/T_stats}
+(f)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_105/vel_stats}\\
+(g)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_105/adiabatic_heating}
+(h)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_105/viscous_dissipation}
+(i)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_105/work_grav}\\
+(j)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_105/heat_flux}
+(k)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_105/vrms}
+(l)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/BA_105/Nu}\\
+(l)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/BA_105/conservation1}
+(m)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/BA_105/conservation2}\\
+AH: adiabatic heating, VD: viscous dissipation, HF: heat flux, WG: work against gravity
+\end{center}
+
+Eq.(\ref{ba005}) is verified by (l) and Eq.(\ref{ba003}) is verified by (m).
+
+
+
+
+\newpage
+%-------------------------------------------------------
+\subsection{results - BA - $Ra=10^6$}
+
 
 
 
@@ -484,26 +531,26 @@ Eq.(\ref{ba005}) is verified by (l) and Eq.(\ref{ba003}) is verified by (m).
 
 \newpage
 %-------------------------------------------------------
-\subsection{results - EBA}
+\subsection{results - EBA - $Ra=10^4$}
 
 These results were obtained with a 64x64 resolution, and CFL number of 1. Steady state was reached 
 after about 2500 timesteps 
 
 \begin{center}
-(a)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/EK}
-(b)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/ET}
-(c)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/EG}\\
-(d)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/Tavrg}
-(e)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/T_stats}
-(f)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/vel_stats}\\
-(g)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/adiabatic_heating}
-(h)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/viscous_dissipation}
-(i)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/work_grav}\\
-(j)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/heat_flux}
-(k)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/vrms}
-(l)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/Nu}\\
-(l)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/EBA/conservation1}
-(m)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/EBA/conservation2}\\
+(a)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/EK}
+(b)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/ET}
+(c)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/EG}\\
+(d)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/Tavrg}
+(e)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/T_stats}
+(f)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/vel_stats}\\
+(g)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/adiabatic_heating}
+(h)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/viscous_dissipation}
+(i)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/work_grav}\\
+(j)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/heat_flux}
+(k)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/vrms}
+(l)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/Nu}\\
+(l)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/EBA_104/conservation1}
+(m)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/EBA_104/conservation2}\\
 AH: adiabatic heating, VD: viscous dissipation, HF: heat flux, WG: work against gravity
 \end{center}
 
@@ -511,19 +558,64 @@ Eq.(\ref{ba005}) is verified by (l) and Eq.(\ref{ba003}) is verified by (m).
 
 \newpage
 \begin{center}
-a)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/u.png}
-b)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/v.png}
-c)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/vel.png}\\
-d)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/q.png}    
-e)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/divv.png}    
-f)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/e2.png}   \\
-g)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/rho.png}  
-h)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/drhodx.png}  
-i)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/drhody.png} \\ 
-j)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/T.png} 
-k)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/dTdx.png}
-l)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/dTdy.png}  \\
-m)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/alpha_T_v_gradp.png}  
-n)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA/Phi.png}
+a)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/u.png}
+b)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/v.png}
+c)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/vel.png}\\
+d)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/q.png}    
+e)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/divv.png}    
+f)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/e2.png}   \\
+g)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/rho.png}  
+h)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/drhodx.png}  
+i)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/drhody.png} \\ 
+j)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/T.png} 
+k)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/dTdx.png}
+l)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/dTdy.png}  \\
+m)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/alpha_T_v_gradp.png}  
+n)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_104/Phi.png}
 \end{center}
+
+
+
+\newpage
+%-------------------------------------------------------
+\subsection{results - EBA - $Ra=10^5$}
+
+These results were obtained with a 64x64 resolution, and CFL number of 1. Simulation 
+ was stopped after about 4300 timesteps. 
+
+\begin{center}
+(a)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_105/EK}
+(b)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_105/ET}
+(c)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_105/EG}\\
+(d)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_105/Tavrg}
+(e)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_105/T_stats}
+(f)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_105/vel_stats}\\
+(g)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_105/adiabatic_heating}
+(h)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_105/viscous_dissipation}
+(i)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_105/work_grav}\\
+(j)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_105/heat_flux}
+(k)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_105/vrms}
+(l)\includegraphics[width=5cm]{python_codes/fieldstone_compressible2/EBA_105/Nu}\\
+(l)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/EBA_105/conservation1}
+(m)\includegraphics[width=7cm]{python_codes/fieldstone_compressible2/EBA_105/conservation2}\\
+AH: adiabatic heating, VD: viscous dissipation, HF: heat flux, WG: work against gravity
+\end{center}
+
+
+\newpage
+\subsection{Onset of convection}
+
+The code can be run for values of Ra between 500 and 1000, at various resolutions for the BA formulation.
+The value $v_{rms}(t)-v_{rms}(0)$ is plotted as a function of $Ra$ and for the 10 first timesteps. If the $v_{rms}$
+is found to decrease, then the Rayleigh number is not high enough to allow for convection and the initial temperature
+perturbation relaxes by diffusion (and then $v_{rms}(t)-v_{rms}(0)<0$. If the $v_{rms}$ is found to increase, then 
+$v_{rms}(t)-v_{rms}(0)>0$ and the system is going to showcase convection. The zero value of $v_{rms}(t)-v_{rms}(0)$ 
+gives us the critical Rayleigh number, which is found between 775 and 790. 
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_compressible2/ONSET/onset.pdf} 
+\includegraphics[width=8cm]{python_codes/fieldstone_compressible2/ONSET/onset_zoom.pdf}
+\end{center}
+
 

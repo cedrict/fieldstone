@@ -27,14 +27,16 @@ assert (Lx>0.), "Lx should be positive"
 assert (Ly>0.), "Ly should be positive" 
 
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 4):
+if int(len(sys.argv) == 5):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
+   Ra   = float(sys.argv[4])
 else:
    nelx = 64
    nely = 64
    visu = 0
+   Ra=1e5        # Rayleigh number
 
 assert (nelx>0.), "nnx should be positive" 
 assert (nely>0.), "nny should be positive" 
@@ -59,7 +61,6 @@ eps=1.e-10
 sqrt3=np.sqrt(3.)
 
 Di=0.5       # dissipation number
-Ra=1e4        # Rayleigh number
 hcond=3.      # thermal conductivity
 hcapa=1250.   # heat capacity
 hprod=0       # heat production coeff
@@ -87,13 +88,13 @@ betaT=0
 
 CFL_nb=1.
 
-nstep=5000
+nstep=50000
 
 pnormalise=True
 write_blocks=False
 
-use_BA=True
-use_EBA=False
+use_EBA=True
+use_BA=False
 
 if use_BA:
    incompressible=True
@@ -630,7 +631,7 @@ for istep in range(0,nstep):
 
     vrms[istep]=np.sqrt(vrms[istep]/(Lx*Ly))
 
-    print("     -> vrms= %.6e" % vrms[istep])
+    print("     -> vrms= %.6e ; Ra= %.6e ; vrmsdiff= %.6e " % (vrms[istep],Ra,vrms[istep]-vrms[0]))
 
     print("compute vrms: %.3f s" % (time.time() - start))
 
@@ -917,7 +918,7 @@ for istep in range(0,nstep):
     #####################################################################
     start = time.time()
 
-    if visu==1 or istep%10==0:
+    if visu==1 or istep%25==0:
 
        filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")

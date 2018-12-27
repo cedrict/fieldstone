@@ -1,82 +1,83 @@
 \begin{theindex}
 
-  \item $Q_1 \times P_0$, \hyperpage{15}, \hyperpage{21}, 
-		\hyperpage{27}, \hyperpage{33}, \hyperpage{36}, 
-		\hyperpage{44}, \hyperpage{49}
+  \item $Q_1 \times P_0$, \hyperpage{16}, \hyperpage{22}, 
+		\hyperpage{28}, \hyperpage{34}, \hyperpage{37}, 
+		\hyperpage{47}, \hyperpage{53}
+  \item $Q_2 \times Q_1$, \hyperpage{42}
 
   \indexspace
 
-  \item analytical solution, \hyperpage{15}, \hyperpage{21}, 
-		\hyperpage{36}, \hyperpage{41}, \hyperpage{44}, 
-		\hyperpage{49}
-  \item arithmetic mean, \hyperpage{33}
+  \item analytical solution, \hyperpage{16}, \hyperpage{22}, 
+		\hyperpage{37}, \hyperpage{42}, \hyperpage{44}, 
+		\hyperpage{47}, \hyperpage{53}
+  \item arithmetic mean, \hyperpage{34}
 
   \indexspace
 
-  \item basis functions, \hyperpage{8}
-  \item Boussinesq, \hyperpage{7}
-  \item bulk modulus, \hyperpage{45}
-  \item bulk viscosity, \hyperpage{4}
+  \item basis functions, \hyperpage{9}
+  \item Boussinesq, \hyperpage{8}
+  \item bulk modulus, \hyperpage{48}
+  \item bulk viscosity, \hyperpage{5}
 
   \indexspace
 
-  \item compressibility, \hyperpage{45}
-  \item compressible flow, \hyperpage{49}
+  \item compressibility, \hyperpage{48}
+  \item compressible flow, \hyperpage{53}
 
   \indexspace
 
-  \item dynamic viscosity, \hyperpage{4}
+  \item dynamic viscosity, \hyperpage{5}
 
   \indexspace
 
-  \item geometric mean, \hyperpage{33}
+  \item geometric mean, \hyperpage{34}
 
   \indexspace
 
-  \item harmonic mean, \hyperpage{33}
+  \item harmonic mean, \hyperpage{34}
 
   \indexspace
 
-  \item incompressible flow, \hyperpage{21}, \hyperpage{27}, 
-		\hyperpage{33}, \hyperpage{36}, \hyperpage{41}, 
+  \item incompressible flow, \hyperpage{22}, \hyperpage{28}, 
+		\hyperpage{34}, \hyperpage{37}, \hyperpage{42}, 
+		\hyperpage{44}, \hyperpage{47}
+  \item isothermal, \hyperpage{16}, \hyperpage{22}, \hyperpage{28}, 
+		\hyperpage{34}, \hyperpage{37}, \hyperpage{42}, 
+		\hyperpage{44}, \hyperpage{47}
+  \item isoviscous, \hyperpage{16}, \hyperpage{37}, \hyperpage{42}, 
+		\hyperpage{47}, \hyperpage{53}
+
+  \indexspace
+
+  \item mixed formulation, \hyperpage{37}, \hyperpage{42}, 
+		\hyperpage{44}, \hyperpage{47}, \hyperpage{53}
+
+  \indexspace
+
+  \item non-isoviscous, \hyperpage{22}, \hyperpage{28}, \hyperpage{34}, 
 		\hyperpage{44}
-  \item isothermal, \hyperpage{15}, \hyperpage{21}, \hyperpage{27}, 
-		\hyperpage{33}, \hyperpage{36}, \hyperpage{41}, 
-		\hyperpage{44}
-  \item isoviscous, \hyperpage{15}, \hyperpage{36}, \hyperpage{44}, 
-		\hyperpage{49}
+  \item nonconforming $Q_1 \times P_0$, \hyperpage{44}
+  \item nonlinear rheology, \hyperpage{28}
 
   \indexspace
 
-  \item mixed formulation, \hyperpage{36}, \hyperpage{41}, 
-		\hyperpage{44}, \hyperpage{49}
+  \item particle-in-cell, \hyperpage{34}
+  \item penalty formulation, \hyperpage{10}, \hyperpage{16}, 
+		\hyperpage{22}, \hyperpage{28}, \hyperpage{34}
+  \item pressure smoothing, \hyperpage{37}, \hyperpage{44}, 
+		\hyperpage{47}, \hyperpage{53}
 
   \indexspace
 
-  \item non-isoviscous, \hyperpage{21}, \hyperpage{27}, \hyperpage{33}, 
-		\hyperpage{41}
-  \item nonconforming $Q_1 \times P_0$, \hyperpage{41}
-  \item nonlinear rheology, \hyperpage{27}
+  \item second viscosity, \hyperpage{5}
 
   \indexspace
 
-  \item particle-in-cell, \hyperpage{33}
-  \item penalty formulation, \hyperpage{9}, \hyperpage{15}, 
-		\hyperpage{21}, \hyperpage{27}, \hyperpage{33}
-  \item pressure smoothing, \hyperpage{36}, \hyperpage{41}, 
-		\hyperpage{44}, \hyperpage{49}
+  \item thermal expansion, \hyperpage{48}
 
   \indexspace
 
-  \item second viscosity, \hyperpage{4}
-
-  \indexspace
-
-  \item thermal expansion, \hyperpage{45}
-
-  \indexspace
-
-  \item weak form, \hyperpage{11}
-  \item work against gravity, \hyperpage{47}
+  \item weak form, \hyperpage{12}
+  \item work against gravity, \hyperpage{50}
 
 \end{theindex}
