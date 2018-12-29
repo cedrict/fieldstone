@@ -1,28 +1,28 @@
 \begin{theindex}
 
-  \item $Q_1 \times P_0$, \hyperpage{16}, \hyperpage{22}, 
-		\hyperpage{28}, \hyperpage{34}, \hyperpage{37}, 
-		\hyperpage{47}, \hyperpage{53}
-  \item $Q_2 \times Q_1$, \hyperpage{42}
+  \item $Q_1 \times P_0$, \hyperpage{20}, \hyperpage{26}, 
+		\hyperpage{32}, \hyperpage{38}, \hyperpage{41}, 
+		\hyperpage{51}, \hyperpage{57}
+  \item $Q_2 \times Q_1$, \hyperpage{46}
 
   \indexspace
 
-  \item analytical solution, \hyperpage{16}, \hyperpage{22}, 
-		\hyperpage{37}, \hyperpage{42}, \hyperpage{44}, 
-		\hyperpage{47}, \hyperpage{53}
-  \item arithmetic mean, \hyperpage{34}
+  \item analytical solution, \hyperpage{20}, \hyperpage{26}, 
+		\hyperpage{41}, \hyperpage{46}, \hyperpage{48}, 
+		\hyperpage{51}, \hyperpage{57}
+  \item arithmetic mean, \hyperpage{38}
 
   \indexspace
 
-  \item basis functions, \hyperpage{9}
+  \item basis functions, \hyperpage{12}
   \item Boussinesq, \hyperpage{8}
-  \item bulk modulus, \hyperpage{48}
+  \item bulk modulus, \hyperpage{52}
   \item bulk viscosity, \hyperpage{5}
 
   \indexspace
 
-  \item compressibility, \hyperpage{48}
-  \item compressible flow, \hyperpage{53}
+  \item compressibility, \hyperpage{52}
+  \item compressible flow, \hyperpage{57}
 
   \indexspace
 
@@ -30,42 +30,57 @@
 
   \indexspace
 
-  \item geometric mean, \hyperpage{34}
+  \item Gauss quadrature, \hyperpage{10}
+  \item geometric mean, \hyperpage{38}
 
   \indexspace
 
-  \item harmonic mean, \hyperpage{34}
+  \item harmonic mean, \hyperpage{38}
 
   \indexspace
 
-  \item incompressible flow, \hyperpage{22}, \hyperpage{28}, 
-		\hyperpage{34}, \hyperpage{37}, \hyperpage{42}, 
-		\hyperpage{44}, \hyperpage{47}
-  \item isothermal, \hyperpage{16}, \hyperpage{22}, \hyperpage{28}, 
-		\hyperpage{34}, \hyperpage{37}, \hyperpage{42}, 
-		\hyperpage{44}, \hyperpage{47}
-  \item isoviscous, \hyperpage{16}, \hyperpage{37}, \hyperpage{42}, 
-		\hyperpage{47}, \hyperpage{53}
+  \item incompressible flow, \hyperpage{26}, \hyperpage{32}, 
+		\hyperpage{38}, \hyperpage{41}, \hyperpage{46}, 
+		\hyperpage{48}, \hyperpage{51}
+  \item isothermal, \hyperpage{20}, \hyperpage{26}, \hyperpage{32}, 
+		\hyperpage{38}, \hyperpage{41}, \hyperpage{46}, 
+		\hyperpage{48}, \hyperpage{51}
+  \item isoviscous, \hyperpage{20}, \hyperpage{41}, \hyperpage{46}, 
+		\hyperpage{51}, \hyperpage{57}
 
   \indexspace
 
-  \item mixed formulation, \hyperpage{37}, \hyperpage{42}, 
-		\hyperpage{44}, \hyperpage{47}, \hyperpage{53}
+  \item Legendre polynomial, \hyperpage{10}
 
   \indexspace
 
-  \item non-isoviscous, \hyperpage{22}, \hyperpage{28}, \hyperpage{34}, 
-		\hyperpage{44}
-  \item nonconforming $Q_1 \times P_0$, \hyperpage{44}
-  \item nonlinear rheology, \hyperpage{28}
+  \item midpoint rule, \hyperpage{9}
+  \item mixed formulation, \hyperpage{41}, \hyperpage{46}, 
+		\hyperpage{48}, \hyperpage{51}, \hyperpage{57}
 
   \indexspace
 
-  \item particle-in-cell, \hyperpage{34}
-  \item penalty formulation, \hyperpage{10}, \hyperpage{16}, 
-		\hyperpage{22}, \hyperpage{28}, \hyperpage{34}
-  \item pressure smoothing, \hyperpage{37}, \hyperpage{44}, 
-		\hyperpage{47}, \hyperpage{53}
+  \item Newton-Cotes, \hyperpage{10}
+  \item non-isoviscous, \hyperpage{26}, \hyperpage{32}, \hyperpage{38}, 
+		\hyperpage{48}
+  \item nonconforming $Q_1 \times P_0$, \hyperpage{48}
+  \item nonlinear rheology, \hyperpage{32}
+
+  \indexspace
+
+  \item particle-in-cell, \hyperpage{38}
+  \item penalty formulation, \hyperpage{14}, \hyperpage{20}, 
+		\hyperpage{26}, \hyperpage{32}, \hyperpage{38}
+  \item pressure smoothing, \hyperpage{41}, \hyperpage{48}, 
+		\hyperpage{51}, \hyperpage{57}
+
+  \indexspace
+
+  \item quadrature, \hyperpage{10}
+
+  \indexspace
+
+  \item rectangle rule, \hyperpage{9}
 
   \indexspace
 
@@ -73,11 +88,12 @@
 
   \indexspace
 
-  \item thermal expansion, \hyperpage{48}
+  \item thermal expansion, \hyperpage{52}
+  \item trapezoidal rule, \hyperpage{9}
 
   \indexspace
 
-  \item weak form, \hyperpage{12}
-  \item work against gravity, \hyperpage{50}
+  \item weak form, \hyperpage{16}
+  \item work against gravity, \hyperpage{54}
 
 \end{theindex}

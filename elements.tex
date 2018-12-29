@@ -38,12 +38,10 @@ The functions $N_i$ are commonly called basis functions. \index{basis functions}
 
 Omitting the $M$ subscripts for any point inside the element, the velocity components $u$
 and $v$ are given by:
-\[
-u(x,y) = \sum_{i=1}^4 N_i(x,y)\;  u_i
-\]
-\[
-v(x,y) = \sum_{i=1}^4 N_i(x,y)\;  v_i
-\]
+\begin{eqnarray}
+\hat{u}(x,y) &=& \sum_{i=1}^4 N_i(x,y)\;  u_i \\
+\hat{v}(x,y) &=& \sum_{i=1}^4 N_i(x,y)\;  v_i \label{bf01}
+\end{eqnarray}
 Rather interestingly, one can now easily compute velocity gradients (and therefore the 
 strain rate tensor) since we have assumed the basis functions to be "well behaved" 
 (in this case differentiable):
@@ -58,14 +56,32 @@ strain rate tensor) since we have assumed the basis functions to be "well behave
 How we actually obtain the exact form of the basis functions is explained in the coming section.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-\subsubsection{The $Q_1$ space}
 
 
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{The $Q_1$ basis in 2D}
+
+In this section, we place ourselves in the most favorables case, i.e. the element is a square defined 
+by $-1<r<1$, $-1<s<1$ in the Cartesian coordinates system $(r,s)$:
 
 \begin{center}
-\includegraphics[height=3.5cm]{images/element_rs.png}
+\includegraphics[height=5cm]{images/element_rs.png}\\
+{\color{red} add corner numbering}
 \end{center}
+
+This element is commonly called the reference element. How we go from the $(x,y)$ coordinate system 
+to the $(r,s)$ once and vice versa will be dealt later on.
+For now, the basis functions in the above reference element and in the reduced 
+coordinates system $(r,s)$ are given by:
 
 \begin{eqnarray}
 N_1(r,s)&=&0.25(1-r)(1-s) \nonumber\\
@@ -73,6 +89,8 @@ N_2(r,s)&=&0.25(1+r)(1-s) \nonumber\\
 N_3(r,s)&=&0.25(1+r)(1+s) \nonumber\\
 N_4(r,s)&=&0.25(1-r)(1+s) \nonumber
 \end{eqnarray}
+
+The partial derivatives of these functions with respect to $r$ ans $s$ automatically follow:
 
 \begin{eqnarray}
 \frac{\partial N_1}{\partial r}(r,s)&=& - 0.25(1-s) \nonumber\\
@@ -87,4 +105,102 @@ N_4(r,s)&=&0.25(1-r)(1+s) \nonumber
 \frac{\partial N_3}{\partial s}(r,s)&=& + 0.25(1+r) \nonumber\\
 \frac{\partial N_4}{\partial s}(r,s)&=& + 0.25(1-r) \nonumber
 \end{eqnarray}
+
+Let us go back to Eq.(\ref{bf01}). And let us assume that the function $v(r,s)=C$ so that $v_i=C$ for $i=1,2,3,4$. 
+It then follows that 
+\[
+\hat{v}(r,s) = \sum_{i=1}^4 N_i(r,s)\;  v_i = C \sum_{i=1}^4 N_i(r,s)
+=C [
+N_1(r,s)
++N_2(r,s)
++N_3(r,s)
++N_4(r,s)]=C
+\]
+This is a very important property: if the $v$ function used to assign values at the vertices is constant, then 
+the value of $\hat{v}$ {\it anywhere} in the element is exactly $C$.
+If we now turn to the derivatives of $v$ with respect to $r$ and $s$:
+\[
+\frac{\partial \hat{v}}{\partial r}(r,s) = \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s)\;  v_i = C \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s) 
+= C \left[ - 0.25(1-s)  + 0.25(1-s)  + 0.25(1+s)  - 0.25(1+s) \right] = 0 
+\]
+
+\[
+\frac{\partial \hat{v}}{\partial s}(r,s) = \sum_{i=1}^4 \frac{\partial N_i}{\partial s}(r,s)\;  v_i = C \sum_{i=1}^4 \frac{\partial N_i}{\partial s}(r,s) 
+= C \left[ - 0.25(1-r) - 0.25(1+r) + 0.25(1+r) + 0.25(1-r) \right] = 0 
+\]
+We reassuringly find that the derivative of a constant field anywhere in the element is exactly zero.
+
+If we now choose $v(r,s)=ar+bs$ with $a$ and $b$ two constant scalars, we find:
+\begin{eqnarray}
+\hat{v}(r,s) 
+&=& \sum_{i=1}^4 N_i(r,s)\;  v_i  \\
+&=& \sum_{i=1}^4 N_i(r,s) (ar_i+bs_i) \\
+&=& a \underbrace{\sum_{i=1}^4 N_i(r,s) r_i}_{r} + b \underbrace{\sum_{i=1}^4 N_i(r,s) s_i}_{s} \\
+&=& a \left[ 
+0.25(1-r)(1-s)(-1)
++0.25(1+r)(1-s)(+1)
++0.25(1+r)(1+s)(+1)
++0.25(1-r)(1+s)(-1) \right]  \nonumber\\
+&+& b  
+\left[ 
+0.25(1-r)(1-s)(-1)
++0.25(1+r)(1-s)(-1)
++0.25(1+r)(1+s)(+1)
++0.25(1-r)(1+s)(+1) \right]  \nonumber\\
+&=& a \left[ 
+-0.25(1-r)(1-s)
++0.25(1+r)(1-s)
++0.25(1+r)(1+s)
+-0.25(1-r)(1+s) \right]  \nonumber\\
+&+& b  
+\left[ 
+-0.25(1-r)(1-s)
+-0.25(1+r)(1-s)
++0.25(1+r)(1+s)
++0.25(1-r)(1+s) \right]  \nonumber\\
+&=& ar+bs
+\end{eqnarray}
+{\color{red} verify above eq}.
+This set of bilinear shape functions is therefore capable of exactly representing a bilinear field.
+The derivatives are:
+\begin{eqnarray}
+\frac{\partial \hat{v}}{\partial r}(r,s) 
+&=& \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s)\;  v_i  \\
+&=& a \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s) r_i + b \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s) s_i \\
+&=& a \left[
+- 0.25(1-s)(-1) 
++ 0.25(1-s)(+1) 
++ 0.25(1+s)(+1) 
+- 0.25(1+s)(-1) 
+\right] \nonumber\\
+&+&b \left[
+- 0.25(1-s)(-1) 
++ 0.25(1-s)(-1) 
++ 0.25(1+s)(+1) 
+- 0.25(1+s)(+1) 
+\right] \nonumber\\
+&=& \frac{a}{4} \left[
+ (1-s)
++ (1-s)
++ (1+s)
++ (1+s)
+\right] \nonumber\\
+&+&\frac{b}{4} \left[
+ (1-s)
+- (1-s)
++ (1+s)
+- (1+s)
+\right] \nonumber\\
+&=& a 
+\end{eqnarray}
+Here again, we find that the derivative of the bilinear field inside the element is exact: 
+$\frac{\partial \hat{v}}{\partial r} = \frac{\partial v}{\partial r}$.
+
+However, following the same methodology as above, one can easily prove that this is no more true for polynomials of degree strivtly higher than 1. This fact has serious consequences: if the solution to the problem at hand is for instance a parabola, the $Q_1$ shape functions cannot represent the solution properly, but only by approximating the parabola in each element by a line. As we will see later, $Q_2$ basis functions can remedy this problem by containing themselves quadratic terms.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{The $Q_2$ basis in 2D}
+
+
+
 
