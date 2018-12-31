@@ -1,0 +1,9 @@
+rm -f errors
+python3 fieldstone.py   3  3  3 0 | grep errv >> errors
+python3 fieldstone.py   4  4  4 0 | grep errv >> errors
+python3 fieldstone.py   5  5  5 0 | grep errv >> errors
+python3 fieldstone.py   6  6  6 0 | grep errv >> errors
+python3 fieldstone.py   7  7  7 0 | grep errv >> errors
+python3 fieldstone.py   8  8  8 0 | grep errv >> errors
+python3 fieldstone.py   9  9  9 0 | grep errv >> errors
+python3 fieldstone.py  10 10 10 0 | grep errv >> errors

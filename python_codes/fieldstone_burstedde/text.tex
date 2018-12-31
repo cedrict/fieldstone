@@ -1,6 +1,6 @@
-
-{\color{red} this does not work because of the Dirichlet b.c. on all 6 sides and all three components}
-It does work well with Q2Q1.
+When using $Q_1 \times P_0$ elements, this benchmark fails 
+ because of the Dirichlet b.c. on all 6 sides and all three components.
+However, as we will see, it does work well with $Q_2 \times Q_1$ elements. \index{$Q_2 \times Q_1$}.
 
 This benchmark begins by postulating a polynomial solution to the 3D Stokes equation \cite{dobo04}:
 \begin{equation}
@@ -28,9 +28,9 @@ simply use Eq. (\ref{eqbur}).
 Following \cite{busa13}, the viscosity
 is given by the smoothly varying function
 \begin{equation}
-\mu = exp(1 - \beta(x(1 - x) + y(1 - y) + z(1 - z)))
+\mu = \exp(1 - \beta(x(1 - x) + y(1 - y) + z(1 - z)))
 \end{equation}
-Choosing $\beta=0$ yields a constant velocity $\mu=e^1$ (and greatly simplifies the right-hand side).
+
 One can easily show that the ratio of viscosities $\mu^\star$
 in the system follows $\mu^\star=\exp(-3\beta/4)$ so that choosing $\beta=10$ yields
 $\mu^\star\simeq 1808$ and $\beta=20$ yields $\mu^\star\simeq 3.269\times10^6$.
@@ -92,19 +92,49 @@ We further have
 \frac{\partial p}{\partial z} &=& xy+x^3y^3
 \end{eqnarray}
 
-The viscosity is chosen to be 
+%The viscosity is chosen to be 
+%\[
+%\mu(x,y,z) = \exp \left[ 1-\beta ( x(1-x)+y(1-y)+z(1-z) )   \right]
+%\]
+\index{pressure normalisation}
+\paragraph{Pressure normalisation} Here again, because Dirichlet boundary conditions are prescribed on all sides the 
+pressure is known up to an arbitrary constant. This constant can be determined by (arbitrarily) choosing 
+to normalised the pressure field as follows:
+\begin{equation}
+\int_\Omega p \; d\Omega = 0 \label{constr1}
+\end{equation}
+This is a single constraint associated to a single Lagrange multiplier $\lambda$ and the global Stokes system takes the form 
 \[
-\mu(x,y,z) = \exp \left[ 1-\beta ( x(1-x)+y(1-y)+z(1-z) )   \right]
+\left(
+\begin{array}{ccc}
+\K & \G & 0 \\
+\G^T & 0 & {\cal C}\\
+0 & {\cal C}^T & 0
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+V \\ P \\ \lambda
+\end{array}
+\right)
 \]
+In this particular case the constraint matrix ${\cal C}$ is a vector and it only acts on the pressure degrees of freedom because
+of Eq.(\ref{constr1}). Its exact expression is as follows:
+\[
+\int_\Omega p \; d\Omega = \sum_e \int_{\Omega_e}  p \; d\Omega 
+=\sum_e \int_{\Omega_e}  \sum_{i} N^p_i p_i \; d\Omega  
+=\sum_e \sum_i \left( \int_{\Omega_e}  N^p_i \; d\Omega \right)  p_i 
+=\sum_e {\cal C}_e \cdot {\bm p}_e
+\] 
+where ${\bm p}_e$ is the list of pressure dofs of element $e$. The elemental constraint vector contains the 
+corresponding pressure basis functions integrated over the element. These elemental constraints are then 
+assembled into the vector ${\cal C}$.
 
 %-----------------------------
-\paragraph{Constant viscosity}
+\subsubsection{Constant viscosity}
 
-Setting $\beta=0$ yields 
-\[
-\mu(x,y,z) = e \simeq 2.718
-\]
-so that 
+Choosing $\beta=0$ yields a constant velocity $\mu(x,y,z) = \exp(1) \simeq 2.718$
+(and greatly simplifies the right-hand side) so that 
 \begin{eqnarray}
 \frac{\partial }{\partial x} \mu(x,y,z) &=& 0 \\
 \frac{\partial }{\partial y} \mu(x,y,z) &=& 0 \\
@@ -120,10 +150,10 @@ f_x
 +2\mu\frac{\partial}{\partial z} \dot{\epsilon}_{xz} \nonumber\\
 &=&
 -(yz+3x^2y^3z)
-+ 2(2 +6xy) + (1+4xy) + (-3 -10xy)   \\
++ 2(2 +6xy) + (1+4xy) + (-3 -10xy)   \nonumber\\
 &=&
 -(yz+3x^2y^3z)
-+\mu(2+6xy ) \\
++\mu(2+6xy ) \nonumber\\
 f_y 
 &=&  
 -\frac{\partial p}{\partial y} 
@@ -135,11 +165,11 @@ f_y
 +
 \mu(1+2y^2+3x^2)
 +\mu2( 2+2x^2 )  
-+\mu(-3-5x^2) \\
++\mu(-3-5x^2) \nonumber\\
 &=&
 -(xz +3x^3y^2z)
 + \mu ( 2 + 2x^2 +  2y^2)
-\\ 
+\nonumber\\ 
 f_z 
 &=&
 -\frac{\partial p}{\partial z} 
@@ -148,14 +178,12 @@ f_z
 +2\mu\frac{\partial}{\partial z} \dot{\epsilon}_{zz}  \nonumber\\
 &=&
 -(xy+x^3y^3) 
-+ \mu (-10yz) + 0 + 0 \\
++ \mu (-10yz) + 0 + 0 \nonumber\\
 &=&
 -(xy+x^3y^3) 
-+\mu (-10yz) 
++\mu (-10yz) \nonumber
 \end{eqnarray}
-
-finally
-
+Finally
 \[
 {\bm f} = 
 -
@@ -175,20 +203,25 @@ xy+x^3y^3
 \end{array}
 \right)
 \]
+Note that there seems to be a 
+sign problem with Eq.(26) in \cite{busa13}.
 
-$\Rightarrow$ sign problem with Burstedde et al Eq 26 !!
-
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_burstedde/results_isoviscous/velocity}
+\includegraphics[width=8cm]{python_codes/fieldstone_burstedde/results_isoviscous/pressure}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_burstedde/results_isoviscous/errors.pdf}
+\end{center}
 
 
 %-----------------------------
-\paragraph{Variable viscosity}
-
+\subsubsection{Variable viscosity}
+The spatial derivatives of the viscosity are then given by
 \begin{eqnarray}
 \frac{\partial }{\partial x} \mu(x,y,z) &=& -(1-2x)\beta \mu(x,y,z) \nonumber\\
 \frac{\partial }{\partial y} \mu(x,y,z) &=& -(1-2y)\beta \mu(x,y,z) \nonumber\\
 \frac{\partial }{\partial z} \mu(x,y,z) &=& -(1-2z)\beta \mu(x,y,z) \nonumber
 \end{eqnarray}
-
+and thr right-hand side by
 \begin{eqnarray}
 {\bm f} 
 &=& 
@@ -277,15 +310,15 @@ x+y+2xy^2+x^3 \\
 \right) \nonumber
 \end{eqnarray}
 
-at $(x,y,z)=(0,0,0)$, $\mu=\exp(1)$, 
-
-at $(x,y,z)=(0.5,0.5,0.5)$, $\mu=\exp(1-3\beta/4)$
-
-Viscosity ratio is given by 
+Note that at $(x,y,z)=(0,0,0)$, $\mu=\exp(1)$, 
+and at $(x,y,z)=(0.5,0.5,0.5)$, $\mu=\exp(1-3\beta/4)$
+so that the maximum 
+viscosity ratio is given by 
 \[
 \mu^\star = \frac{\exp(1-3\beta/4)}{\exp(1)} = \exp(-3\beta/4)
 \]
-By varying $\beta$ between 1 and 22 we can get up to 7 orders of magnitude viscosity difference !
+By varying $\beta$ between 1 and 22 we can get up to 7 orders of magnitude viscosity difference.
+
 
 
 
