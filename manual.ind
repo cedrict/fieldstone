@@ -2,27 +2,27 @@
 
   \item $Q_1 \times P_0$, \hyperpage{20}, \hyperpage{26}, 
 		\hyperpage{32}, \hyperpage{38}, \hyperpage{41}, 
-		\hyperpage{52}, \hyperpage{58}
-  \item $Q_2 \times Q_1$, \hyperpage{43}, \hyperpage{47}
+		\hyperpage{53}, \hyperpage{59}
+  \item $Q_2 \times Q_1$, \hyperpage{43}, \hyperpage{48}
 
   \indexspace
 
   \item analytical solution, \hyperpage{20}, \hyperpage{26}, 
-		\hyperpage{41}, \hyperpage{47}, \hyperpage{49}, 
-		\hyperpage{52}, \hyperpage{58}
+		\hyperpage{41}, \hyperpage{48}, \hyperpage{50}, 
+		\hyperpage{53}, \hyperpage{59}
   \item arithmetic mean, \hyperpage{38}
 
   \indexspace
 
   \item basis functions, \hyperpage{12}
   \item Boussinesq, \hyperpage{8}
-  \item bulk modulus, \hyperpage{53}
+  \item bulk modulus, \hyperpage{54}
   \item bulk viscosity, \hyperpage{5}
 
   \indexspace
 
-  \item compressibility, \hyperpage{53}
-  \item compressible flow, \hyperpage{58}
+  \item compressibility, \hyperpage{54}
+  \item compressible flow, \hyperpage{59}
 
   \indexspace
 
@@ -40,13 +40,13 @@
   \indexspace
 
   \item incompressible flow, \hyperpage{26}, \hyperpage{32}, 
-		\hyperpage{38}, \hyperpage{41}, \hyperpage{47}, 
-		\hyperpage{49}, \hyperpage{52}
+		\hyperpage{38}, \hyperpage{41}, \hyperpage{48}, 
+		\hyperpage{50}, \hyperpage{53}
   \item isothermal, \hyperpage{20}, \hyperpage{26}, \hyperpage{32}, 
-		\hyperpage{38}, \hyperpage{41}, \hyperpage{47}, 
-		\hyperpage{49}, \hyperpage{52}
-  \item isoviscous, \hyperpage{20}, \hyperpage{41}, \hyperpage{47}, 
-		\hyperpage{52}, \hyperpage{58}
+		\hyperpage{38}, \hyperpage{41}, \hyperpage{48}, 
+		\hyperpage{50}, \hyperpage{53}
+  \item isoviscous, \hyperpage{20}, \hyperpage{41}, \hyperpage{48}, 
+		\hyperpage{53}, \hyperpage{59}
 
   \indexspace
 
@@ -55,15 +55,15 @@
   \indexspace
 
   \item midpoint rule, \hyperpage{9}
-  \item mixed formulation, \hyperpage{41}, \hyperpage{47}, 
-		\hyperpage{49}, \hyperpage{52}, \hyperpage{58}
+  \item mixed formulation, \hyperpage{41}, \hyperpage{48}, 
+		\hyperpage{50}, \hyperpage{53}, \hyperpage{59}
 
   \indexspace
 
   \item Newton-Cotes, \hyperpage{10}
   \item non-isoviscous, \hyperpage{26}, \hyperpage{32}, \hyperpage{38}, 
-		\hyperpage{49}
-  \item nonconforming $Q_1 \times P_0$, \hyperpage{49}
+		\hyperpage{50}
+  \item nonconforming $Q_1 \times P_0$, \hyperpage{50}
   \item nonlinear rheology, \hyperpage{32}
 
   \indexspace
@@ -72,8 +72,8 @@
   \item penalty formulation, \hyperpage{14}, \hyperpage{20}, 
 		\hyperpage{26}, \hyperpage{32}, \hyperpage{38}
   \item pressure normalisation, \hyperpage{44}
-  \item pressure smoothing, \hyperpage{41}, \hyperpage{49}, 
-		\hyperpage{52}, \hyperpage{58}
+  \item pressure smoothing, \hyperpage{41}, \hyperpage{50}, 
+		\hyperpage{53}, \hyperpage{59}
 
   \indexspace
 
@@ -89,12 +89,12 @@
 
   \indexspace
 
-  \item thermal expansion, \hyperpage{53}
+  \item thermal expansion, \hyperpage{54}
   \item trapezoidal rule, \hyperpage{9}
 
   \indexspace
 
   \item weak form, \hyperpage{16}
-  \item work against gravity, \hyperpage{55}
+  \item work against gravity, \hyperpage{56}
 
 \end{theindex}

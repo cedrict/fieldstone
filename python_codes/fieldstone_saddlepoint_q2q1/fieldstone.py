@@ -14,6 +14,7 @@ def bx(x, y):
          (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
          1.-4.*y+12.*y*y-8.*y*y*y)
     return val
+
 def by(x, y):
     val=((8.-48.*y+48.*y*y)*x*x*x+
          (-12.+72.*y-72.*y*y)*x*x+
@@ -21,17 +22,60 @@ def by(x, y):
          12.*y*y+24.*y*y*y-12.*y**4)
     return val
 
-def velocity_x(x,y):
+def uth(x,y):
     val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
     return val
 
-def velocity_y(x,y):
+def vth(x,y):
     val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
     return val
 
-def pressure(x,y):
+def pth(x,y):
     val=x*(1.-x)-1./6.
     return val
+
+def NNV(rq,sq):
+    NV_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
+    NV_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
+    NV_2= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.)
+    NV_3= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.)
+    NV_4=     (1.-rq**2) * 0.5*sq*(sq-1.)
+    NV_5= 0.5*rq*(rq+1.) *     (1.-sq**2)
+    NV_6=     (1.-rq**2) * 0.5*sq*(sq+1.)
+    NV_7= 0.5*rq*(rq-1.) *     (1.-sq**2)
+    NV_8=     (1.-rq**2) *     (1.-sq**2)
+    return NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,NV_6,NV_7,NV_8
+
+def dNNVdr(rq,sq):
+    dNVdr_0= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
+    dNVdr_1= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
+    dNVdr_2= 0.5*(2.*rq+1.) * 0.5*sq*(sq+1)
+    dNVdr_3= 0.5*(2.*rq-1.) * 0.5*sq*(sq+1)
+    dNVdr_4=       (-2.*rq) * 0.5*sq*(sq-1)
+    dNVdr_5= 0.5*(2.*rq+1.) *    (1.-sq**2)
+    dNVdr_6=       (-2.*rq) * 0.5*sq*(sq+1)
+    dNVdr_7= 0.5*(2.*rq-1.) *    (1.-sq**2)
+    dNVdr_8=       (-2.*rq) *    (1.-sq**2)
+    return dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,dNVdr_6,dNVdr_7,dNVdr_8
+
+def dNNVds(rq,sq):
+    dNVds_0= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
+    dNVds_1= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
+    dNVds_2= 0.5*rq*(rq+1.) * 0.5*(2.*sq+1.)
+    dNVds_3= 0.5*rq*(rq-1.) * 0.5*(2.*sq+1.)
+    dNVds_4=     (1.-rq**2) * 0.5*(2.*sq-1.)
+    dNVds_5= 0.5*rq*(rq+1.) *       (-2.*sq)
+    dNVds_6=     (1.-rq**2) * 0.5*(2.*sq+1.)
+    dNVds_7= 0.5*rq*(rq-1.) *       (-2.*sq)
+    dNVds_8=     (1.-rq**2) *       (-2.*sq)
+    return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8
+
+def NNP(rq,sq):
+    NP_0=0.25*(1-rq)*(1-sq)
+    NP_1=0.25*(1+rq)*(1-sq)
+    NP_2=0.25*(1+rq)*(1+sq)
+    NP_3=0.25*(1-rq)*(1+sq)
+    return NP_0,NP_1,NP_2,NP_3
 
 #------------------------------------------------------------------------------
 
@@ -83,6 +127,8 @@ qweights=[5./9.,8./9.,5./9.]
 hx=Lx/nelx
 hy=Ly/nely
 
+pnormalise=True
+
 #################################################################
 #################################################################
 
@@ -92,6 +138,7 @@ print("nel",nel)
 print("nnx=",nnx)
 print("nny=",nny)
 print("nnp=",nnp)
+print("------------------------------")
 
 #################################################################
 # grid point setup
@@ -132,15 +179,6 @@ for j in range(0,nely):
         iconV[6,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1
         iconV[7,counter]=(i)*2+1+(j)*2*nnx+nnx -1
         iconV[8,counter]=(i)*2+2+(j)*2*nnx+nnx -1
-#     1   icon[0,counter]=(i)*2+1+(j)*2*nnx -1
-#     2   icon[2,counter]=(i)*2+3+(j)*2*nnx -1
-#     3   icon[8,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1
-#     4   icon[6,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1
-#     5   icon[1,counter]=(i)*2+2+(j)*2*nnx -1
-#     6   icon[5,counter]=(i)*2+3+(j)*2*nnx+nnx -1
-#     7   icon[7,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1
-#     8   icon[3,counter]=(i)*2+1+(j)*2*nnx+nnx -1
-#     9   icon[4,counter]=(i)*2+2+(j)*2*nnx+nnx -1
         counter += 1
 
 #for iel in range (0,nel):
@@ -207,6 +245,7 @@ K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K
 G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
 f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
 h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
+constr= np.zeros(NfemP,dtype=np.float64)         # constraint matrix/vector
 
 b_mat = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
 N_mat = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
@@ -227,6 +266,7 @@ for iel in range(0,nel):
     K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
     G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
     h_el=np.zeros((mP*ndofP),dtype=np.float64)
+    NNNP= np.zeros(mP*ndofP,dtype=np.float64)   
 
     # integrate viscous term at 4 quadrature points
     for iq in [0,1,2]:
@@ -235,42 +275,12 @@ for iel in range(0,nel):
             # position & weight of quad. point
             rq=qcoords[iq]
             sq=qcoords[jq]
-            wq=qweights[iq]*qweights[jq]
+            weightq=qweights[iq]*qweights[jq]
 
-            NV[0]= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
-            NV[1]= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
-            NV[2]= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.)
-            NV[3]= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.)
-            NV[4]=     (1.-rq**2) * 0.5*sq*(sq-1.)
-            NV[5]= 0.5*rq*(rq+1.) *     (1.-sq**2)
-            NV[6]=     (1.-rq**2) * 0.5*sq*(sq+1.)
-            NV[7]= 0.5*rq*(rq-1.) *     (1.-sq**2)
-            NV[8]=     (1.-rq**2) *     (1.-sq**2)
-
-            dNVdr[0]= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
-            dNVdr[1]= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
-            dNVdr[2]= 0.5*(2.*rq+1.) * 0.5*sq*(sq+1)
-            dNVdr[3]= 0.5*(2.*rq-1.) * 0.5*sq*(sq+1)
-            dNVdr[4]=       (-2.*rq) * 0.5*sq*(sq-1)
-            dNVdr[5]= 0.5*(2.*rq+1.) *    (1.-sq**2)
-            dNVdr[6]=       (-2.*rq) * 0.5*sq*(sq+1)
-            dNVdr[7]= 0.5*(2.*rq-1.) *    (1.-sq**2)
-            dNVdr[8]=       (-2.*rq) *    (1.-sq**2)
-
-            dNVds[0]= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
-            dNVds[1]= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
-            dNVds[2]= 0.5*rq*(rq+1.) * 0.5*(2.*sq+1.)
-            dNVds[3]= 0.5*rq*(rq-1.) * 0.5*(2.*sq+1.)
-            dNVds[4]=     (1.-rq**2) * 0.5*(2.*sq-1.)
-            dNVds[5]= 0.5*rq*(rq+1.) *       (-2.*sq)
-            dNVds[6]=     (1.-rq**2) * 0.5*(2.*sq+1.)
-            dNVds[7]= 0.5*rq*(rq-1.) *       (-2.*sq)
-            dNVds[8]=     (1.-rq**2) *       (-2.*sq)
-
-            NP[0]=0.25*(1-rq)*(1-sq)
-            NP[1]=0.25*(1+rq)*(1-sq)
-            NP[2]=0.25*(1+rq)*(1+sq)
-            NP[3]=0.25*(1-rq)*(1+sq)
+            NV[0:9]=NNV(rq,sq)
+            dNVdr[0:9]=dNNVdr(rq,sq)
+            dNVds[0:9]=dNNVds(rq,sq)
+            NP[0:4]=NNP(rq,sq)
 
             # calculate jacobian matrix
             jcb=np.zeros((2,2),dtype=np.float64)
@@ -298,19 +308,21 @@ for iel in range(0,nel):
                                          [dNVdy[i],dNVdx[i]]]
 
             # compute elemental a_mat matrix
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity*wq*jcob
+            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity*weightq*jcob
 
             # compute elemental rhs vector
             for i in range(0,mV):
-                f_el[ndofV*i  ]+=NV[i]*jcob*wq*bx(xq,yq)
-                f_el[ndofV*i+1]+=NV[i]*jcob*wq*by(xq,yq)
+                f_el[ndofV*i  ]+=NV[i]*jcob*weightq*bx(xq,yq)
+                f_el[ndofV*i+1]+=NV[i]*jcob*weightq*by(xq,yq)
 
             for i in range(0,mP):
                 N_mat[0,i]=NP[i]
                 N_mat[1,i]=NP[i]
                 N_mat[2,i]=0.
 
-            G_el-=b_mat.T.dot(N_mat)*wq*jcob
+            G_el-=b_mat.T.dot(N_mat)*weightq*jcob
+
+            NNNP[:]+=NP[:]*jcob*weightq
 
     # impose b.c. 
     for k1 in range(0,mV):
@@ -346,6 +358,7 @@ for iel in range(0,nel):
     for k2 in range(0,mP):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
+        constr[m2]+=NNNP[k2]
 
 print("build FE matrix: %.3f s" % (time.time() - start))
 
@@ -354,12 +367,20 @@ print("build FE matrix: %.3f s" % (time.time() - start))
 ######################################################################
 start = time.time()
 
-a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-
-a_mat[0:NfemV,0:NfemV]=K_mat
-a_mat[0:NfemV,NfemV:Nfem]=G_mat
-a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+if pnormalise:
+   a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
+   rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
+   a_mat[0:NfemV,0:NfemV]=K_mat
+   a_mat[0:NfemV,NfemV:Nfem]=G_mat
+   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+   a_mat[Nfem,NfemV:Nfem]=constr
+   a_mat[NfemV:Nfem,Nfem]=constr
+else:
+   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+   rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+   a_mat[0:NfemV,0:NfemV]=K_mat
+   a_mat[0:NfemV,NfemV:Nfem]=G_mat
+   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
 
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
@@ -407,37 +428,11 @@ for iel in range(0,nel):
 
     rq = 0.0
     sq = 0.0
-    wq = 2.0 * 2.0
+    weightq = 2.0 * 2.0
 
-    NV[0]= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
-    NV[1]= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
-    NV[2]= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.)
-    NV[3]= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.)
-    NV[4]=     (1.-rq**2) * 0.5*sq*(sq-1.)
-    NV[5]= 0.5*rq*(rq+1.) *     (1.-sq**2)
-    NV[6]=     (1.-rq**2) * 0.5*sq*(sq+1.)
-    NV[7]= 0.5*rq*(rq-1.) *     (1.-sq**2)
-    NV[8]=     (1.-rq**2) *     (1.-sq**2)
-
-    dNVdr[0]= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
-    dNVdr[1]= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
-    dNVdr[2]= 0.5*(2.*rq+1.) * 0.5*sq*(sq+1)
-    dNVdr[3]= 0.5*(2.*rq-1.) * 0.5*sq*(sq+1)
-    dNVdr[4]=       (-2.*rq) * 0.5*sq*(sq-1)
-    dNVdr[5]= 0.5*(2.*rq+1.) *    (1.-sq**2)
-    dNVdr[6]=       (-2.*rq) * 0.5*sq*(sq+1)
-    dNVdr[7]= 0.5*(2.*rq-1.) *    (1.-sq**2)
-    dNVdr[8]=       (-2.*rq) *    (1.-sq**2)
-
-    dNVds[0]= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
-    dNVds[1]= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
-    dNVds[2]= 0.5*rq*(rq+1.) * 0.5*(2.*sq+1.)
-    dNVds[3]= 0.5*rq*(rq-1.) * 0.5*(2.*sq+1.)
-    dNVds[4]=     (1.-rq**2) * 0.5*(2.*sq-1.)
-    dNVds[5]= 0.5*rq*(rq+1.) *       (-2.*sq)
-    dNVds[6]=     (1.-rq**2) * 0.5*(2.*sq+1.)
-    dNVds[7]= 0.5*rq*(rq-1.) *       (-2.*sq)
-    dNVds[8]=     (1.-rq**2) *       (-2.*sq)
+    NV[0:9]=NNV(rq,sq)
+    dNVdr[0:9]=dNNVdr(rq,sq)
+    dNVds[0:9]=dNNVds(rq,sq)
 
     jcb=np.zeros((2,2),dtype=np.float64)
     for k in range(0,mV):
@@ -479,39 +474,15 @@ errp=0.
 for iel in range (0,nel):
     for iq in [0,1,2]:
         for jq in [0,1,2]:
+
             rq=qcoords[iq]
             sq=qcoords[jq]
-            wq=qweights[iq]*qweights[jq]
+            weightq=qweights[iq]*qweights[jq]
 
-            NV[0]= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
-            NV[1]= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
-            NV[2]= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.)
-            NV[3]= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.)
-            NV[4]=     (1.-rq**2) * 0.5*sq*(sq-1.)
-            NV[5]= 0.5*rq*(rq+1.) *     (1.-sq**2)
-            NV[6]=     (1.-rq**2) * 0.5*sq*(sq+1.)
-            NV[7]= 0.5*rq*(rq-1.) *     (1.-sq**2)
-            NV[8]=     (1.-rq**2) *     (1.-sq**2)
-
-            dNVdr[0]= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
-            dNVdr[1]= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
-            dNVdr[2]= 0.5*(2.*rq+1.) * 0.5*sq*(sq+1)
-            dNVdr[3]= 0.5*(2.*rq-1.) * 0.5*sq*(sq+1)
-            dNVdr[4]=       (-2.*rq) * 0.5*sq*(sq-1)
-            dNVdr[5]= 0.5*(2.*rq+1.) *    (1.-sq**2)
-            dNVdr[6]=       (-2.*rq) * 0.5*sq*(sq+1)
-            dNVdr[7]= 0.5*(2.*rq-1.) *    (1.-sq**2)
-            dNVdr[8]=       (-2.*rq) *    (1.-sq**2)
-
-            dNVds[0]= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
-            dNVds[1]= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
-            dNVds[2]= 0.5*rq*(rq+1.) * 0.5*(2.*sq+1.)
-            dNVds[3]= 0.5*rq*(rq-1.) * 0.5*(2.*sq+1.)
-            dNVds[4]=     (1.-rq**2) * 0.5*(2.*sq-1.)
-            dNVds[5]= 0.5*rq*(rq+1.) *       (-2.*sq)
-            dNVds[6]=     (1.-rq**2) * 0.5*(2.*sq+1.)
-            dNVds[7]= 0.5*rq*(rq-1.) *       (-2.*sq)
-            dNVds[8]=     (1.-rq**2) *       (-2.*sq)
+            NV[0:9]=NNV(rq,sq)
+            dNVdr[0:9]=dNNVdr(rq,sq)
+            dNVds[0:9]=dNNVds(rq,sq)
+            NP[0:4]=NNP(rq,sq)
 
             jcb=np.zeros((2,2),dtype=np.float64)
             for k in range(0,mV):
@@ -520,6 +491,7 @@ for iel in range (0,nel):
                 jcb[1,0]+=dNVds[k]*x[iconV[k,iel]]
                 jcb[1,1]+=dNVds[k]*y[iconV[k,iel]]
             jcob=np.linalg.det(jcb)
+
             xq=0.0
             yq=0.0
             uq=0.0
@@ -529,15 +501,16 @@ for iel in range (0,nel):
                 yq+=NV[k]*y[iconV[k,iel]]
                 uq+=NV[k]*u[iconV[k,iel]]
                 vq+=NV[k]*v[iconV[k,iel]]
-            errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*wq*jcob
+            errv+=((uq-uth(xq,yq))**2+\
+                   (vq-vth(xq,yq))**2)*weightq*jcob
+
             pq=0.0
             for k in range(0,mP):
                 pq+=NP[k]*p[iconP[k,iel]]
-            errp+=(pq-pressure(xq,yq))**2*wq*jcob
+            errp+=(pq-pth(xq,yq))**2*weightq*jcob
 
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
-
 
 print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
 
@@ -547,18 +520,20 @@ print("compute errors: %.3f s" % (time.time() - start))
 # interpolate pressure onto velocity grid points
 #####################################################################
 
-p2=np.zeros(nnp,dtype=np.float64)          # y-component velocity
+q=np.zeros(nnp,dtype=np.float64)
 
 for iel in range(0,nel):
-    p2[iconV[0,iel]]=p[iconP[0,iel]]
-    p2[iconV[1,iel]]=p[iconP[1,iel]]
-    p2[iconV[2,iel]]=p[iconP[2,iel]]
-    p2[iconV[3,iel]]=p[iconP[3,iel]]
-    p2[iconV[4,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
-    p2[iconV[5,iel]]=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
-    p2[iconV[6,iel]]=(p[iconP[2,iel]]+p[iconP[3,iel]])*0.5
-    p2[iconV[7,iel]]=(p[iconP[3,iel]]+p[iconP[0,iel]])*0.5
-    p2[iconV[8,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]]+p[iconP[3,iel]])*0.25
+    q[iconV[0,iel]]=p[iconP[0,iel]]
+    q[iconV[1,iel]]=p[iconP[1,iel]]
+    q[iconV[2,iel]]=p[iconP[2,iel]]
+    q[iconV[3,iel]]=p[iconP[3,iel]]
+    q[iconV[4,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
+    q[iconV[5,iel]]=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
+    q[iconV[6,iel]]=(p[iconP[2,iel]]+p[iconP[3,iel]])*0.5
+    q[iconV[7,iel]]=(p[iconP[3,iel]]+p[iconP[0,iel]])*0.5
+    q[iconV[8,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]]+p[iconP[3,iel]])*0.25
+
+np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
 
 #####################################################################
 # plot of solution
@@ -571,7 +546,7 @@ vtufile=open(filename,"w")
 vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
 vtufile.write("<UnstructuredGrid> \n")
 vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnp,nel))
-       #####
+#####
 vtufile.write("<Points> \n")
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
 for i in range(0,nnp):
@@ -594,9 +569,14 @@ for i in range(0,nnp):
     vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
 vtufile.write("</DataArray>\n")
 #--
-vtufile.write("<DataArray type='Float32' Name='p2' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
 for i in range(0,nnp):
-    vtufile.write("%10e \n" %p2[i])
+    vtufile.write("%10e \n" %q[i])
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
+for i in range(0,nnp):
+    vtufile.write("%10e \n" %pth(x[i],y[i]))
 vtufile.write("</DataArray>\n")
 vtufile.write("</PointData>\n")
 #####
