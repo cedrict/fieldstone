@@ -1,0 +1,13 @@
+set term pdf enhanced
+set key outside
+
+##############################################
+
+set output 'vrms.pdf'
+set xlabel 'time/year'
+set ylabel 'v_{rms}'
+plot[][]\
+'vrms.ascii' w lp ps .5 notitle
+
+
+

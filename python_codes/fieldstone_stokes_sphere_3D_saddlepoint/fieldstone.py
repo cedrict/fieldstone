@@ -23,6 +23,50 @@ def mu(x,y,z):
        val=1.
     return val
 
+def NNV(rq,sq,tq):
+    N_0=0.125*(1-rq)*(1-sq)*(1-tq)
+    N_1=0.125*(1+rq)*(1-sq)*(1-tq)
+    N_2=0.125*(1+rq)*(1+sq)*(1-tq)
+    N_3=0.125*(1-rq)*(1+sq)*(1-tq)
+    N_4=0.125*(1-rq)*(1-sq)*(1+tq)
+    N_5=0.125*(1+rq)*(1-sq)*(1+tq)
+    N_6=0.125*(1+rq)*(1+sq)*(1+tq)
+    N_7=0.125*(1-rq)*(1+sq)*(1+tq)
+    return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7
+
+def dNNVdr(rq,sq,tq):
+    dNdr_0=-0.125*(1-sq)*(1-tq) 
+    dNdr_1=+0.125*(1-sq)*(1-tq)
+    dNdr_2=+0.125*(1+sq)*(1-tq)
+    dNdr_3=-0.125*(1+sq)*(1-tq)
+    dNdr_4=-0.125*(1-sq)*(1+tq)
+    dNdr_5=+0.125*(1-sq)*(1+tq)
+    dNdr_6=+0.125*(1+sq)*(1+tq)
+    dNdr_7=-0.125*(1+sq)*(1+tq)
+    return dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7
+
+def dNNVds(rq,sq,tq):
+    dNds_0=-0.125*(1-rq)*(1-tq) 
+    dNds_1=-0.125*(1+rq)*(1-tq)
+    dNds_2=+0.125*(1+rq)*(1-tq)
+    dNds_3=+0.125*(1-rq)*(1-tq)
+    dNds_4=-0.125*(1-rq)*(1+tq)
+    dNds_5=-0.125*(1+rq)*(1+tq)
+    dNds_6=+0.125*(1+rq)*(1+tq)
+    dNds_7=+0.125*(1-rq)*(1+tq)
+    return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7
+
+def dNNVdt(rq,sq,tq):
+    dNdt_0=-0.125*(1-rq)*(1-sq) 
+    dNdt_1=-0.125*(1+rq)*(1-sq)
+    dNdt_2=-0.125*(1+rq)*(1+sq)
+    dNdt_3=-0.125*(1-rq)*(1+sq)
+    dNdt_4=+0.125*(1-rq)*(1-sq)
+    dNdt_5=+0.125*(1+rq)*(1-sq)
+    dNdt_6=+0.125*(1+rq)*(1+sq)
+    dNdt_7=+0.125*(1-rq)*(1+sq)
+    return dNdt_0,dNdt_1,dNdt_2,dNdt_3,dNdt_4,dNdt_5,dNdt_6,dNdt_7
+
 #------------------------------------------------------------------------------
 
 print("-----------------------------")
@@ -47,9 +91,9 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    nelz = int(sys.argv[3])
 else:
-   nelx =22 
-   nely =22
-   nelz =22
+   nelx =16 
+   nely =16
+   nelz =16
 
 assert (nelx>0.), "nelx should be positive" 
 assert (nely>0.), "nely should be positive" 
@@ -79,6 +123,19 @@ eps=1.e-10
 
 sqrt3=np.sqrt(3.)
 
+#################################################################
+#################################################################
+
+print("nelx",nelx)
+print("nely",nely)
+print("nelz",nelz)
+print("nel",nel)
+print("nnx=",nnx)
+print("nny=",nny)
+print("nnz=",nnz)
+print("nnp=",nnp)
+print("------------------------------")
+
 ######################################################################
 # grid point setup
 ######################################################################
@@ -91,7 +148,7 @@ z = np.empty(nnp, dtype=np.float64)  # z coordinates
 counter=0
 for i in range(0, nnx):
     for j in range(0, nny):
-        for k in range(0, nny):
+        for k in range(0, nnz):
             x[counter]=i*Lx/float(nelx)
             y[counter]=j*Ly/float(nely)
             z[counter]=k*Lz/float(nelz)
@@ -192,42 +249,10 @@ for iel in range(0, nel):
                 wq=1.*1.*1.
 
                 # calculate shape functions
-                N[0]=0.125*(1-rq)*(1-sq)*(1-tq)
-                N[1]=0.125*(1+rq)*(1-sq)*(1-tq)
-                N[2]=0.125*(1+rq)*(1+sq)*(1-tq)
-                N[3]=0.125*(1-rq)*(1+sq)*(1-tq)
-                N[4]=0.125*(1-rq)*(1-sq)*(1+tq)
-                N[5]=0.125*(1+rq)*(1-sq)*(1+tq)
-                N[6]=0.125*(1+rq)*(1+sq)*(1+tq)
-                N[7]=0.125*(1-rq)*(1+sq)*(1+tq)
-
-                # calculate shape function derivatives
-                dNdr[0]=-0.125*(1-sq)*(1-tq) 
-                dNdr[1]=+0.125*(1-sq)*(1-tq)
-                dNdr[2]=+0.125*(1+sq)*(1-tq)
-                dNdr[3]=-0.125*(1+sq)*(1-tq)
-                dNdr[4]=-0.125*(1-sq)*(1+tq)
-                dNdr[5]=+0.125*(1-sq)*(1+tq)
-                dNdr[6]=+0.125*(1+sq)*(1+tq)
-                dNdr[7]=-0.125*(1+sq)*(1+tq)
-
-                dNds[0]=-0.125*(1-rq)*(1-tq) 
-                dNds[1]=-0.125*(1+rq)*(1-tq)
-                dNds[2]=+0.125*(1+rq)*(1-tq)
-                dNds[3]=+0.125*(1-rq)*(1-tq)
-                dNds[4]=-0.125*(1-rq)*(1+tq)
-                dNds[5]=-0.125*(1+rq)*(1+tq)
-                dNds[6]=+0.125*(1+rq)*(1+tq)
-                dNds[7]=+0.125*(1-rq)*(1+tq)
-
-                dNdt[0]=-0.125*(1-rq)*(1-sq) 
-                dNdt[1]=-0.125*(1+rq)*(1-sq)
-                dNdt[2]=-0.125*(1+rq)*(1+sq)
-                dNdt[3]=-0.125*(1-rq)*(1+sq)
-                dNdt[4]=+0.125*(1-rq)*(1-sq)
-                dNdt[5]=+0.125*(1+rq)*(1-sq)
-                dNdt[6]=+0.125*(1+rq)*(1+sq)
-                dNdt[7]=+0.125*(1-rq)*(1+sq)
+                N[0:8]=NNV(rq,sq,tq)
+                dNdr[0:8]=dNNVdr(rq,sq,tq)
+                dNds[0:8]=dNNVds(rq,sq,tq)
+                dNdt[0:8]=dNNVdt(rq,sq,tq)
 
                 # calculate jacobian matrix
                 jcb=np.zeros((3,3),dtype=np.float64)
@@ -389,41 +414,10 @@ for iel in range(0,nel):
     tq=0.
     wq=2.*2.*2.
 
-    N[0]=0.125*(1.-rq)*(1.-sq)*(1.-tq)
-    N[1]=0.125*(1.+rq)*(1.-sq)*(1.-tq)
-    N[2]=0.125*(1.+rq)*(1.+sq)*(1.-tq)
-    N[3]=0.125*(1.-rq)*(1.+sq)*(1.-tq)
-    N[4]=0.125*(1.-rq)*(1.-sq)*(1.+tq)
-    N[5]=0.125*(1.+rq)*(1.-sq)*(1.+tq)
-    N[6]=0.125*(1.+rq)*(1.+sq)*(1.+tq)
-    N[7]=0.125*(1.-rq)*(1.+sq)*(1.+tq)
-
-    dNdr[0]=-0.125*(1.-sq)*(1.-tq) 
-    dNdr[1]=+0.125*(1.-sq)*(1.-tq)
-    dNdr[2]=+0.125*(1.+sq)*(1.-tq)
-    dNdr[3]=-0.125*(1.+sq)*(1.-tq)
-    dNdr[4]=-0.125*(1.-sq)*(1.+tq)
-    dNdr[5]=+0.125*(1.-sq)*(1.+tq)
-    dNdr[6]=+0.125*(1.+sq)*(1.+tq)
-    dNdr[7]=-0.125*(1.+sq)*(1.+tq)
-
-    dNds[0]=-0.125*(1.-rq)*(1.-tq) 
-    dNds[1]=-0.125*(1.+rq)*(1.-tq)
-    dNds[2]=+0.125*(1.+rq)*(1.-tq)
-    dNds[3]=+0.125*(1.-rq)*(1.-tq)
-    dNds[4]=-0.125*(1.-rq)*(1.+tq)
-    dNds[5]=-0.125*(1.+rq)*(1.+tq)
-    dNds[6]=+0.125*(1.+rq)*(1.+tq)
-    dNds[7]=+0.125*(1.-rq)*(1.+tq)
-
-    dNdt[0]=-0.125*(1.-rq)*(1.-sq) 
-    dNdt[1]=-0.125*(1.+rq)*(1.-sq)
-    dNdt[2]=-0.125*(1.+rq)*(1.+sq)
-    dNdt[3]=-0.125*(1.-rq)*(1.+sq)
-    dNdt[4]=+0.125*(1.-rq)*(1.-sq)
-    dNdt[5]=+0.125*(1.+rq)*(1.-sq)
-    dNdt[6]=+0.125*(1.+rq)*(1.+sq)
-    dNdt[7]=+0.125*(1.-rq)*(1.+sq)
+    N[0:8]=NNV(rq,sq,tq)
+    dNdr[0:8]=dNNVdr(rq,sq,tq)
+    dNds[0:8]=dNNVds(rq,sq,tq)
+    dNdt[0:8]=dNNVdt(rq,sq,tq)
 
     # calculate jacobian matrix
     jcb=np.zeros((3,3),dtype=np.float64)
@@ -437,11 +431,7 @@ for iel in range(0,nel):
         jcb[2, 0] += dNdt[k]*x[icon[k,iel]]
         jcb[2, 1] += dNdt[k]*y[icon[k,iel]]
         jcb[2, 2] += dNdt[k]*z[icon[k,iel]]
-
-    # calculate determinant of the jacobian
     jcob=np.linalg.det(jcb)
-
-    # calculate the inverse of the jacobian
     jcbi=np.linalg.inv(jcb)
 
     for k in range(0,m):

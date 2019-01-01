@@ -96,15 +96,10 @@ e)\includegraphics[height=4cm]{images/literature/sto_book}\\
 python3.6 -m pip install --user numpy scipy matplotlib
 \end{verbatim}
 
-
-
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%
 \section{The physical equations of Fluid Dynamics}
 \input{physics}
-
-
-
 
 \newpage
 %------------------------------------------------------------------------------
@@ -112,9 +107,6 @@ python3.6 -m pip install --user numpy scipy matplotlib
 
 \subsection{Numerical integration}
 \input{quadrature}
-
-
-
 
 \subsection{The mesh}
 
@@ -126,8 +118,6 @@ python3.6 -m pip install --user numpy scipy matplotlib
 
 \subsection{The penalty approach}
 \input{penalty}
-
-
 
 
 %\subsection{Solving procedures}
@@ -173,11 +163,9 @@ python3.6 -m pip install --user numpy scipy matplotlib
 
 
 \newpage
-so much to do ... 
+{\bf To Do}:
 
 write about impose bc on el matrix
-
-Q3Q2
 
 full compressible 
 
@@ -207,11 +195,7 @@ free surface
 
 SUPG
 
-produce fastest version possible for convection box
-
 zaleski disk advection
-
-all kinds of interesting benchmarks
 
 Busse convection pb, compare with aspect 
 
@@ -222,8 +206,6 @@ pure elastic
 including phase changes (w. R. Myhill)
 
 derivatives on nodes
-
-Nusselt
 
 discontinuous galerkin
 
@@ -323,6 +305,16 @@ better yet simple matrix storage ?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{{\tt fieldstone}: solving the full saddle point problem with $Q_2\times Q_1$ elements}
 \input{python_codes/fieldstone_saddlepoint_q2q1/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: solving the full saddle point problem with $Q_3\times Q_2$ elements}
+\input{python_codes/fieldstone_saddlepoint_q3q2/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: the Busse benchmark}
+\input{python_codes/fieldstone_busse/text}
 
 
 \newpage
@@ -430,31 +422,31 @@ for slow creeping flows. The code is developed by Susan Ellis
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{fieldstone.py}
+%\section{fieldstone.py}
 %\lstinputlisting{python_codes/fieldstone/fieldstone.py}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{fieldstone\_stokes\_sphere.py}
+%\section{fieldstone\_stokes\_sphere.py}
 %\lstinputlisting{python_codes/fieldstone_stokes_sphere/fieldstone.py}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{fieldstone\_convection\_box.py}
+%\section{fieldstone\_convection\_box.py}
 %\lstinputlisting{python_codes/fieldstone_convection_box/fieldstone_convection_box.py}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{fieldstone\_solcx.py}
+%\section{fieldstone\_solcx.py}
 %\lstinputlisting{python_codes/fieldstone_solcx/fieldstone.py}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{fieldstone\_indentor.py}
+%\section{fieldstone\_indentor.py}
 %\lstinputlisting{python_codes/fieldstone_indentor/fieldstone.py}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{fieldstone\_saddlepoint.py}
+%\section{fieldstone\_saddlepoint.py}
 %\lstinputlisting{python_codes/fieldstone_saddlepoint/fieldstone.py}
 
 

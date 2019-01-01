@@ -90,7 +90,7 @@ z = np.empty(nnp, dtype=np.float64)  # z coordinates
 counter=0
 for i in range(0, nnx):
     for j in range(0, nny):
-        for k in range(0, nny):
+        for k in range(0, nnz):
             x[counter]=i*Lx/float(nelx)
             y[counter]=j*Ly/float(nely)
             z[counter]=k*Lz/float(nelz)

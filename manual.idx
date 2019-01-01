@@ -53,27 +53,33 @@
 \indexentry{isothermal|hyperpage}{48}
 \indexentry{isoviscous|hyperpage}{48}
 \indexentry{analytical solution|hyperpage}{48}
-\indexentry{nonconforming $Q_1 \times P_0$|hyperpage}{50}
-\indexentry{incompressible flow|hyperpage}{50}
-\indexentry{mixed formulation|hyperpage}{50}
-\indexentry{isothermal|hyperpage}{50}
-\indexentry{non-isoviscous|hyperpage}{50}
-\indexentry{analytical solution|hyperpage}{50}
-\indexentry{pressure smoothing|hyperpage}{50}
-\indexentry{$Q_1 \times P_0$|hyperpage}{53}
+\indexentry{$Q_3 \times Q_2$|hyperpage}{51}
+\indexentry{incompressible flow|hyperpage}{51}
+\indexentry{mixed formulation|hyperpage}{51}
+\indexentry{isothermal|hyperpage}{51}
+\indexentry{isoviscous|hyperpage}{51}
+\indexentry{analytical solution|hyperpage}{51}
+\indexentry{nonconforming $Q_1 \times P_0$|hyperpage}{53}
 \indexentry{incompressible flow|hyperpage}{53}
 \indexentry{mixed formulation|hyperpage}{53}
 \indexentry{isothermal|hyperpage}{53}
-\indexentry{isoviscous|hyperpage}{53}
+\indexentry{non-isoviscous|hyperpage}{53}
 \indexentry{analytical solution|hyperpage}{53}
 \indexentry{pressure smoothing|hyperpage}{53}
-\indexentry{thermal expansion|hyperpage}{54}
-\indexentry{compressibility|hyperpage}{54}
-\indexentry{bulk modulus|hyperpage}{54}
-\indexentry{work against gravity|hyperpage}{56}
-\indexentry{$Q_1 \times P_0$|hyperpage}{59}
-\indexentry{compressible flow|hyperpage}{59}
-\indexentry{mixed formulation|hyperpage}{59}
-\indexentry{isoviscous|hyperpage}{59}
-\indexentry{analytical solution|hyperpage}{59}
-\indexentry{pressure smoothing|hyperpage}{59}
+\indexentry{$Q_1 \times P_0$|hyperpage}{56}
+\indexentry{incompressible flow|hyperpage}{56}
+\indexentry{mixed formulation|hyperpage}{56}
+\indexentry{isothermal|hyperpage}{56}
+\indexentry{isoviscous|hyperpage}{56}
+\indexentry{analytical solution|hyperpage}{56}
+\indexentry{pressure smoothing|hyperpage}{56}
+\indexentry{thermal expansion|hyperpage}{57}
+\indexentry{compressibility|hyperpage}{57}
+\indexentry{bulk modulus|hyperpage}{57}
+\indexentry{work against gravity|hyperpage}{59}
+\indexentry{$Q_1 \times P_0$|hyperpage}{62}
+\indexentry{compressible flow|hyperpage}{62}
+\indexentry{mixed formulation|hyperpage}{62}
+\indexentry{isoviscous|hyperpage}{62}
+\indexentry{analytical solution|hyperpage}{62}
+\indexentry{pressure smoothing|hyperpage}{62}
