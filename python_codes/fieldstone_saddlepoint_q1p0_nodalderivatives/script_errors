@@ -1,0 +1,23 @@
+rm -f errors
+rm -f errors_exx
+rm -f errors_eyy
+rm -f errors_exy
+rm -f errors_exx_markers
+rm -f errors_eyy_markers
+rm -f errors_exy_markers
+
+for n in 8 9 10 11 12 16 20 24 32 48 64 80 96 112 128; do
+    python3 fieldstone.py   $n   $n 0 > opla
+    grep errv opla >> errors
+    grep errexx opla >> errors_exx
+    grep erreyy opla >> errors_eyy
+    grep errexy opla >> errors_exy
+    grep exx opla | grep markers >> errors_exx_markers
+    grep eyy opla | grep markers >> errors_eyy_markers
+    grep exy opla | grep markers >> errors_exy_markers
+
+done
+
+rm opla
+
+

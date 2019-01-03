@@ -3,11 +3,37 @@ set key outside
 
 ##############################################
 
-set output 'vrms.pdf'
 set xlabel 'time/year'
+
+set output 'vrms.pdf'
 set ylabel 'v_{rms}'
 plot[][]\
 'vrms.ascii' w lp ps .5 notitle
+
+set output 'Tavrg.pdf'
+set ylabel '<T>'
+plot[][]\
+'Tavrg.ascii' w lp ps .5 notitle
+
+
+set output 'wmid.pdf'
+set ylabel 'w at Lz/2'
+plot[][]\
+'wmid_stats.ascii' u 1:2 w lp ps .5 notitle,\
+'wmid_stats.ascii' u 1:3 w lp ps .5 notitle,\
+'wmid_stats.ascii' u 1:4 w lp ps .5 notitle,\
+'wmid_stats.ascii' u 1:5 w lp ps .5 notitle,\
+
+set output 'hf.pdf'
+set ylabel 'heat flux'
+plot[][]\
+'hf_stats.ascii' u 1:2 w lp ps .5 notitle,\
+'hf_stats.ascii' u 1:3 w lp ps .5 notitle,\
+'hf_stats.ascii' u 1:4 w lp ps .5 notitle,\
+'hf_stats.ascii' u 1:5 w lp ps .5 notitle,\
+
+
+
 
 
 

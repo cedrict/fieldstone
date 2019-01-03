@@ -1,0 +1,72 @@
+set term pdf enhanced
+set key outside
+unset grid
+
+set output 'errors.pdf'
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+plot[][]\
+'errors' u (1./sqrt($3)):6 w lp t 'velocity',\
+'errors' u (1./sqrt($3)):9 w lp t 'pressure',\
+x**2/10. w l t 'x^2',\
+x**1/10. w l t 'x^1'
+
+
+set output 'errors_exx.pdf'
+plot[][]\
+'errors_exx' u (1./sqrt($3)):6 w l t 'exx_0',\
+'errors_exx' u (1./sqrt($3)):7 w l t 'exx_1',\
+'errors_exx' u (1./sqrt($3)):8 w l t 'exx_2',\
+'errors_exx' u (1./sqrt($3)):9 w l t 'exx_3',\
+x**2/2.5 w l lt 1 lc 0 dt 2 t 'h^2',\
+x**1.5/8. w l lt 1 lc 0 dt 3 t 'h^{1.5}',\
+x**1/15. w l lt 2 lc 0 dt 4 t 'h^1'
+
+set output 'errors_eyy.pdf'
+plot[][]\
+'errors_eyy' u (1./sqrt($3)):6 w l t 'eyy_0',\
+'errors_eyy' u (1./sqrt($3)):7 w l t 'eyy_1',\
+'errors_eyy' u (1./sqrt($3)):8 w l t 'eyy_2',\
+'errors_eyy' u (1./sqrt($3)):9 w l t 'eyy_3',\
+x**2/2.5 w l lt 1 lc 0 dt 2 t 'h^2',\
+x**1.5/8. w l lt 1 lc 0 dt 3 t 'h^{1.5}',\
+x**1/15. w l lt 2 lc 0 dt 4 t 'h^1'
+
+set output 'errors_exy.pdf'
+plot[][]\
+'errors_exy' u (1./sqrt($3)):6 w l t 'exy_0',\
+'errors_exy' u (1./sqrt($3)):7 w l t 'exy_1',\
+'errors_exy' u (1./sqrt($3)):8 w l t 'exy_2',\
+'errors_exy' u (1./sqrt($3)):9 w l t 'exy_3',\
+x**2/2.5 w l lt 1 lc 0 dt 2 t 'h^2',\
+x**1.5/8. w l lt 1 lc 0 dt 3 t 'h^{1.5}',\
+x**1/15. w l lt 2 lc 0 dt 4 t 'h^1'
+
+set output 'errors_exx_markers.pdf'
+plot[][]\
+'errors_exx_markers' u (1./sqrt($2)):(abs($7))  w l t 'exx_0',\
+'errors_exx_markers' u (1./sqrt($2)):(abs($8))  w l t 'exx_1',\
+'errors_exx_markers' u (1./sqrt($2)):(abs($9))  w l t 'exx_2',\
+'errors_exx_markers' u (1./sqrt($2)):(abs($10)) w l t 'exx_3'
+
+set output 'errors_eyy_markers.pdf'
+plot[][]\
+'errors_eyy_markers' u (1./sqrt($2)):(abs($7))  w l t 'eyy_0',\
+'errors_eyy_markers' u (1./sqrt($2)):(abs($8))  w l t 'eyy_1',\
+'errors_eyy_markers' u (1./sqrt($2)):(abs($9))  w l t 'eyy_2',\
+'errors_eyy_markers' u (1./sqrt($2)):(abs($10)) w l t 'eyy_3'
+
+set output 'errors_exy_markers.pdf'
+plot[][]\
+'errors_exy_markers' u (1./sqrt($2)):(abs($7))  w l t 'exy_0',\
+'errors_exy_markers' u (1./sqrt($2)):(abs($8))  w l t 'exy_1',\
+'errors_exy_markers' u (1./sqrt($2)):(abs($9))  w l t 'exy_2',\
+'errors_exy_markers' u (1./sqrt($2)):(abs($10)) w l t 'exy_3'
+
+
+
+
+
+
+

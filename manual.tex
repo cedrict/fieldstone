@@ -110,6 +110,9 @@ python3.6 -m pip install --user numpy scipy matplotlib
 
 \subsection{The mesh}
 
+\subsection{A bit of FE terminology}
+\input{terminology}
+
 \subsection{Elements and basis functions in 1D}
 
 \subsection{Elements and basis functions in 2D}
@@ -156,7 +159,7 @@ python3.6 -m pip install --user numpy scipy matplotlib
 
 \subsection{Pressure normalisation}
 
-
+\subsection{Static condensation} \index{static condensation}
 
 
 
@@ -190,6 +193,8 @@ Schur complement approach
 periodic boundary conditions
 
 open boundary conditions
+
+consistent boundary flux (CBF)
 
 free surface 
 
@@ -319,7 +324,7 @@ better yet simple matrix storage ?
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: The non-conforming $Q_1 \times P_0$ element} 
+\section{{\tt fieldstone}: The non-conforming $Q_1 \times P_0$ element} \label{ncq1p0} 
 \input{python_codes/fieldstone_RTelement/text}
 
 \newpage

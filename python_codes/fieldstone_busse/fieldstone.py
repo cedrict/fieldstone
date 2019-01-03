@@ -84,9 +84,11 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    nelz = int(sys.argv[3])
 else:
-   nelx =10 
-   nely =8
-   nelz =12
+   nelx =12 
+   nely =10
+   nelz =24
+
+assert (nelz%2==0), "nelz should be even" 
 
 assert (nelx>0.), "nelx should be positive" 
 assert (nely>0.), "nely should be positive" 
@@ -121,17 +123,18 @@ rho0=3300.
 eta0=8.0198e23
 hcond=3.564
 hcapa=1080
+alpha=1.e-5
 
 eps=1.e-10
 
-CFL_nb=0.1
+CFL_nb=0.25
 
 year=3.154e+7
 sqrt3=np.sqrt(3.)
 
 nstep=200
 
-Ra=1
+Ra=alpha*abs(gz)*(Temperature1-Temperature2)*Lz**3*rho0**2*hcapa/hcond/eta0
 
 #################################################################
 #################################################################
@@ -144,6 +147,7 @@ print("nnx=",nnx)
 print("nny=",nny)
 print("nnz=",nnz)
 print("nnp=",nnp)
+print("Ra",Ra,3e5)
 print("------------------------------")
 
 #################################################################
@@ -157,6 +161,8 @@ v_stats=np.zeros((nstep,2),dtype=np.float64)
 w_stats=np.zeros((nstep,2),dtype=np.float64)
 T_stats=np.zeros((nstep,2),dtype=np.float64)
 dt_stats=np.zeros(nstep,dtype=np.float64)
+wmid_stats=np.zeros((nstep,4),dtype=np.float64)
+hf_stats=np.zeros((nstep,4),dtype=np.float64)
 
 ######################################################################
 # grid point setup
@@ -271,20 +277,18 @@ for istep in range(0,nstep):
     G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
     f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
     h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
-
     b_mat = np.zeros((6,ndofV*m),dtype=np.float64)   # gradient matrix B 
-    N     = np.zeros(m,dtype=np.float64)            # shape functions
-    dNdx  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-    dNdy  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-    dNdz  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-    dNdr  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-    dNds  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-    dNdt  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-    u     = np.zeros(nnp,dtype=np.float64)          # x-component velocity
-    v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
-    w     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
-    p     = np.zeros(nel,dtype=np.float64)          # y-component velocity
-
+    N     = np.zeros(m,dtype=np.float64)             # shape functions
+    dNdx  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
+    dNdy  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
+    dNdz  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
+    dNdr  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
+    dNds  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
+    dNdt  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
+    u     = np.zeros(nnp,dtype=np.float64)           # x-component velocity
+    v     = np.zeros(nnp,dtype=np.float64)           # y-component velocity
+    w     = np.zeros(nnp,dtype=np.float64)           # y-component velocity
+    p     = np.zeros(nel,dtype=np.float64)           # pressure field
 
     for iel in range(0, nel):
 
@@ -439,10 +443,10 @@ for istep in range(0,nstep):
     u,v,w=np.reshape(sol[0:NfemV],(nnp,3)).T
     p=sol[NfemV:Nfem]*(eta0/Lz)
 
-    print("     -> u (m,M) %.4f %.4f " %(np.min(u)*year,np.max(u)*year))
-    print("     -> v (m,M) %.4f %.4f " %(np.min(v)*year,np.max(v)*year))
-    print("     -> w (m,M) %.4f %.4f " %(np.min(w)*year,np.max(w)*year))
-    print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+    print("     -> u (m,M) %.4e %.4e " %(np.min(u)*year,np.max(u)*year))
+    print("     -> v (m,M) %.4e %.4e " %(np.min(v)*year,np.max(v)*year))
+    print("     -> w (m,M) %.4e %.4e " %(np.min(w)*year,np.max(w)*year))
+    print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
     if pnormalise:
        print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
@@ -527,11 +531,6 @@ for istep in range(0,nstep):
     print("     -> vrms= %.6e ; Ra= %.6e ; vrmsdiff= %.6e " % (vrms[istep],Ra,vrms[istep]-vrms[0]))
 
     print("compute vrms: %.3f s" % (time.time() - start))
-
-    ######################################################################
-    # compute time step value 
-    ######################################################################
-    start = time.time()
 
     ######################################################################
     # build FE matrix for Temperature 
@@ -639,7 +638,6 @@ for istep in range(0,nstep):
                        a_el[k1,k1]=Aref
                        b_el[k1]=Aref*bc_valT[m1]
 
-
                 # assemble matrix A_mat and right hand side rhs
                 for k1 in range(0,m):
                     m1=icon[k1,iel]
@@ -681,70 +679,122 @@ for istep in range(0,nstep):
     exz = np.zeros(nel,dtype=np.float64)  
     eyz = np.zeros(nel,dtype=np.float64)  
     sr = np.zeros(nel,dtype=np.float64)  
+    dTdx = np.zeros(nel,dtype=np.float64)  
+    dTdy = np.zeros(nel,dtype=np.float64)  
+    dTdz = np.zeros(nel,dtype=np.float64)  
 
-    for iel in range(0,nel):
+    iel=0
+    for ii in range(0,nelx):
+        for jj in range(0,nely):
+            for kk in range(0,nelz):
 
-        rq=0.
-        sq=0.
-        tq=0.
+                rq=0.
+                sq=0.
+                tq=0.
 
-        N[0:8]=NNV(rq,sq,tq)
-        dNdr[0:8]=dNNVdr(rq,sq,tq)
-        dNds[0:8]=dNNVds(rq,sq,tq)
-        dNdt[0:8]=dNNVdt(rq,sq,tq)
+                N[0:8]=NNV(rq,sq,tq)
+                dNdr[0:8]=dNNVdr(rq,sq,tq)
+                dNds[0:8]=dNNVds(rq,sq,tq)
+                dNdt[0:8]=dNNVdt(rq,sq,tq)
 
-        # calculate jacobian matrix
-        jcb=np.zeros((3,3),dtype=np.float64)
-        for k in range(0,m):
-            jcb[0,0] += dNdr[k]*x[icon[k,iel]]
-            jcb[0,1] += dNdr[k]*y[icon[k,iel]]
-            jcb[0,2] += dNdr[k]*z[icon[k,iel]]
-            jcb[1,0] += dNds[k]*x[icon[k,iel]]
-            jcb[1,1] += dNds[k]*y[icon[k,iel]]
-            jcb[1,2] += dNds[k]*z[icon[k,iel]]
-            jcb[2,0] += dNdt[k]*x[icon[k,iel]]
-            jcb[2,1] += dNdt[k]*y[icon[k,iel]]
-            jcb[2,2] += dNdt[k]*z[icon[k,iel]]
-        jcob=np.linalg.det(jcb)
-        jcbi=np.linalg.inv(jcb)
+                # calculate jacobian matrix
+                jcb=np.zeros((3,3),dtype=np.float64)
+                for k in range(0,m):
+                    jcb[0,0] += dNdr[k]*x[icon[k,iel]]
+                    jcb[0,1] += dNdr[k]*y[icon[k,iel]]
+                    jcb[0,2] += dNdr[k]*z[icon[k,iel]]
+                    jcb[1,0] += dNds[k]*x[icon[k,iel]]
+                    jcb[1,1] += dNds[k]*y[icon[k,iel]]
+                    jcb[1,2] += dNds[k]*z[icon[k,iel]]
+                    jcb[2,0] += dNdt[k]*x[icon[k,iel]]
+                    jcb[2,1] += dNdt[k]*y[icon[k,iel]]
+                    jcb[2,2] += dNdt[k]*z[icon[k,iel]]
+                jcob=np.linalg.det(jcb)
+                jcbi=np.linalg.inv(jcb)
 
-        for k in range(0,m):
-            dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
-            dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]+jcbi[1,2]*dNdt[k]
-            dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
+                for k in range(0,m):
+                    dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
+                    dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]+jcbi[1,2]*dNdt[k]
+                    dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
 
-        for k in range(0, m):
-            xc[iel]+=N[k]*x[icon[k,iel]]
-            yc[iel]+=N[k]*y[icon[k,iel]]
-            zc[iel]+=N[k]*z[icon[k,iel]]
-            exx[iel]+=dNdx[k]*u[icon[k,iel]]
-            eyy[iel]+=dNdy[k]*v[icon[k,iel]]
-            ezz[iel]+=dNdz[k]*w[icon[k,iel]]
-            exy[iel]+=0.5*dNdy[k]*u[icon[k,iel]]+0.5*dNdx[k]*v[icon[k,iel]]
-            exz[iel]+=0.5*dNdz[k]*u[icon[k,iel]]+0.5*dNdx[k]*w[icon[k,iel]]
-            eyz[iel]+=0.5*dNdz[k]*v[icon[k,iel]]+0.5*dNdy[k]*w[icon[k,iel]]
+                for k in range(0, m):
+                    xc[iel]+=N[k]*x[icon[k,iel]]
+                    yc[iel]+=N[k]*y[icon[k,iel]]
+                    zc[iel]+=N[k]*z[icon[k,iel]]
+                    exx[iel]+=dNdx[k]*u[icon[k,iel]]
+                    eyy[iel]+=dNdy[k]*v[icon[k,iel]]
+                    ezz[iel]+=dNdz[k]*w[icon[k,iel]]
+                    exy[iel]+=0.5*dNdy[k]*u[icon[k,iel]]+0.5*dNdx[k]*v[icon[k,iel]]
+                    exz[iel]+=0.5*dNdz[k]*u[icon[k,iel]]+0.5*dNdx[k]*w[icon[k,iel]]
+                    eyz[iel]+=0.5*dNdz[k]*v[icon[k,iel]]+0.5*dNdy[k]*w[icon[k,iel]]
+                    dTdx[iel]+=dNdx[k]*T[icon[k,iel]]
+                    dTdy[iel]+=dNdy[k]*T[icon[k,iel]]
+                    dTdz[iel]+=dNdz[k]*T[icon[k,iel]]
 
-        sr[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel]+ezz[iel]*ezz[iel])
-                        +exy[iel]*exy[iel]+exz[iel]*exz[iel]+eyz[iel]*eyz[iel])
+                sr[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel]+ezz[iel]*ezz[iel])
+                                +exy[iel]*exy[iel]+exz[iel]*exz[iel]+eyz[iel]*eyz[iel])
 
-    print("exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
-    print("eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
-    print("ezz (m,M) %.4e %.4e " %(np.min(ezz),np.max(ezz)))
-    print("exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
-    print("exz (m,M) %.4e %.4e " %(np.min(exz),np.max(exz)))
-    print("eyz (m,M) %.4e %.4e " %(np.min(eyz),np.max(eyz)))
+                if kk==nelz-1:
+                   if ii==0 and jj==0:
+                      hf_stats[istep,0]=dTdz[iel]
+                   if ii==nelx-1 and jj==0:
+                      hf_stats[istep,1]=dTdz[iel]
+                   if ii==0 and jj==nely-1:
+                      hf_stats[istep,2]=dTdz[iel]
+                   if ii==nelx-1 and jj==nely-1:
+                      hf_stats[istep,3]=dTdz[iel]
+
+    print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
+    print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
+    print("     -> ezz (m,M) %.4e %.4e " %(np.min(ezz),np.max(ezz)))
+    print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
+    print("     -> exz (m,M) %.4e %.4e " %(np.min(exz),np.max(exz)))
+    print("     -> eyz (m,M) %.4e %.4e " %(np.min(eyz),np.max(eyz)))
 
     np.savetxt('strainrate.ascii',np.array([xc,yc,zc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
     np.savetxt('p.ascii',np.array([xc,yc,zc,p]).T,header='# xc,yc,p')
 
     print("compute strainrate: %.3f s" % (time.time() - start))
 
+    ######################################################################
+    # compute nodal pressure
+    ######################################################################
+
+    q=np.zeros(nnp,dtype=np.float64)  
+    count=np.zeros(nnp,dtype=np.float64)  
+
+    for iel in range(0,nel):
+        for k in range(0,m):
+            q[icon[k,iel]]+=p[iel]
+            count[icon[k,iel]]+=1
+
+    q=q/count
+
+    print("     -> q (m,M) %.4e %.4e " %(np.min(q),np.max(q)))
+
+    #np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
+
+    #####################################################################
+    # velocity at mid side edges
+    #####################################################################
+
+    for i in range(0,nnp):
+        if abs(z[i]-Lz/2.)/Lz<eps:
+           if x[i]/Lx<eps and y[i]/Ly<eps: 
+              wmid_stats[istep,0]=w[i]*year
+           if x[i]/Lx>1-eps and y[i]/Ly<eps: 
+              wmid_stats[istep,1]=w[i]*year
+           if x[i]/Lx<eps and y[i]/Ly>1-eps: 
+              wmid_stats[istep,2]=w[i]*year
+           if x[i]/Lx>1-eps and y[i]/Ly>1-eps: 
+              wmid_stats[istep,3]=w[i]*year
+
     #####################################################################
     # plot of solution
     #####################################################################
     start = time.time()
 
-    if visu==1 or istep%10==0:
+    if visu==1 and istep%10==0:
 
        filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
@@ -771,6 +821,21 @@ for istep in range(0,nstep):
            vtufile.write("%f\n" % sr[iel])
        vtufile.write("</DataArray>\n")
        #--
+       vtufile.write("<DataArray type='Float32' Name='dTdx' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%f\n" % dTdx[iel])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='dTdy' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%f\n" % dTdy[iel])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='dTdz' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%f\n" % dTdz[iel])
+       vtufile.write("</DataArray>\n")
+       #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='6' Name='strainrate' Format='ascii'> \n")
        for iel in range (0,nel):
            vtufile.write("%f %f %f %f %f %f\n" % (exx[iel], eyy[iel], ezz[iel], exy[iel], eyz[iel], exz[iel]))
@@ -788,6 +853,11 @@ for istep in range(0,nstep):
        vtufile.write("<DataArray type='Float32' Name='temperature' Format='ascii'> \n")
        for i in range(0,nnp):
            vtufile.write("%10f \n" %T[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10f \n" %q[i])
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</PointData>\n")
@@ -824,6 +894,10 @@ for istep in range(0,nstep):
     np.savetxt('w_stats.ascii',np.array([model_time[0:istep]/year,w_stats[0:istep,0],w_stats[0:istep,1]]).T,header='# t/year,min(w),max(w)')
     np.savetxt('T_stats.ascii',np.array([model_time[0:istep]/year,T_stats[0:istep,0],T_stats[0:istep,1]]).T,header='# t/year,min(T),max(T)')
     np.savetxt('Tavrg.ascii',np.array([model_time[0:istep]/year,Tavrg[0:istep]]).T,header='# t/year,Tavrg')
+    np.savetxt('wmid_stats.ascii',np.array([model_time[0:istep]/year,wmid_stats[0:istep,0],wmid_stats[0:istep,1],\
+                                                                     wmid_stats[0:istep,2],wmid_stats[0:istep,3]]).T,header='# t/year,w1,w2,w3,w4')
+    np.savetxt('hf_stats.ascii',np.array([model_time[0:istep]/year,hf_stats[0:istep,0],hf_stats[0:istep,1],\
+                                                                   hf_stats[0:istep,2],hf_stats[0:istep,3]]).T,header='# t/year,hf1,hf2,hf3,hf4')
 
 print("-----------------------------")
 print("------------the end----------")
