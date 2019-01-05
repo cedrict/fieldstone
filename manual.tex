@@ -31,6 +31,7 @@
 \newcommand{\G}{{\mathbb{G}}}
 \newcommand{\Z}{{\mathbb{Z}}}
 \newcommand{\W}{{\mathbb{W}}}
+\newcommand{\fieldstone}{{\bf fieldstone}}
 \usepackage{makeidx} 
 
 
@@ -137,10 +138,235 @@ python3.6 -m pip install --user numpy scipy matplotlib
 
 \subsection{The method of manufactured solutions}
 
+\subsection{Assigning values to quadrature points}
+
+As we have seen in Section \ref{XXX}, the building of the elemental matrix and rhs
+requires (at least) to assign a density and viscosity value to each quadrature point inside
+the element. Depending on the type of modelling, this task can prove more complex than 
+one might expect and have large consequences on the solution accuracy.
+
+Here are several options:
+
+\begin{itemize}
+\item The simplest way (which is often used for benchmarks) consists in computing the 'real'
+coordinates $(x_q,y_q,z_q)$ of a given quadrature point based on its reduced coordinates 
+$(r_q,s_q,t_q)$, and passing these coordinates to a function which returns density and/or viscosity
+at this location. For instance, for the Stokes sphere:
+\begin{verbatim}
+def rho(x,y):
+    if (x-.5)**2+(y-0.5)**2<0.123**2:
+       val=2.
+    else:
+       val=1.
+    return val
+
+def mu(x,y):
+    if (x-.5)**2+(y-0.5)**2<0.123**2:
+       val=1.e2
+    else:
+       val=1.
+    return val
+\end{verbatim}
+This is very simple, but it has been shown to potentially be problematic. In essence, it can introduce very large contrasts inside a single element and perturb the quadrature. Please read section 3.3 of \cite{hedg17} and/or
+have a look at the section titled "Averaging material properties" in the ASPECT manual.
+
+\item another similar approach consists in assigning a density and viscosity value to the nodes of the FE mesh first, and then using these nodal values to assign values to the quadrature points. Very often ,and quite logically, the shape functions are used to this effect. Indeed we have seen before that for any point $(r,s,t)$ inside an element we have
+\[
+f_h(r,s,t) = \sum_{i}^m f_i N_i(r,s,t)
+\]  
+where the $f_i$ are the nodal values and the $N_i$ the corresponding basis functions. 
+
+In the case of linear elements ($Q_1$ basis functions), this is straightforward. In fact, the basis functions $N_i$ can be seen as moving weights: the closer the point is to a node, the higher the weight (basis function value). 
+
+However, this is quite another story for quadratic elements ($Q_2$ basis functions). In order to illustrate the 
+problem, let us consider a 1D problem. The basis functions are 
+\[
+N_1(r) =\frac{1}{2}r(r-1)
+\quad\quad
+N_2(r)=1-r^2
+\quad\quad
+N_3(r) =\frac{1}{2}r(r+1)
+\]
+Let us further assign: $\rho_1=\rho_2=0$ and $\rho_3=1$. Then 
+\[
+\rho_h(r) = \sum_{i}^m \rho_i N_i(r) = N_3(r)
+\]  
+There lies the core of the problem: the $N_3(r)$ basis function is negative for $r\in[-1,0]$. This means that the quadrature point in this interval will be assigned a negative density, which is nonsensical and numerically problematic!
+
+{\color{red} use 2X Q1. write about it !}
+
+\end{itemize}
+
+The above methods work fine as long as the domain contains a single material. As soon as there are multiple fluids in the domain a special technique is needed to track either the fluids themselves or their interfaces. 
+Let us start with markers. We are then confronted to the infernal trio (a {\it menage a trois}?)
+which is present for each element, composed of its nodes, its markers and its quadrature points. 
+
+Each marker carries the material information (density and viscosity). 
+This information must ultimately be projected onto the quadrature points. Two main options are possible: an algorithm is designed and projects the marker-based fields onto the quadrature points directly or the marker fields are first projected onto the FE nodes and then onto the quadrature points using the techniques above.  
+ 
+\newpage
 \subsection{Sparse storage}
 
+
+
+
+
+
+
+
+
+
+
+
+\newpage
 \subsection{Mesh generation}
 
+Before basis functions can be defined and PDEs can be discretised and solved 
+we must first tesselate the domain with strictly convex polygons
+\footnote{all interior angles are strictly less than 180 degrees}, e.g. triangles and 
+quadrilaterals in 2D, tetrahedra, prisms and hexahedra in 3D. \index{convex polygon} 
+
+When the domain is itself simple (e.g. a rectangle, a sphere, ...) the mesh (or grid) can 
+be (more or less) easily produced and the connectivity array filled with straightforward 
+algorithms \cite{thie18}.
+However, real life applications can involve etremely complex geometries (e.g. a bridge, 
+a human spine, a car chassis and body, etc ...) and dedicated algorithms/softwares 
+must be used (see \cite{thsw,frge,xiyz09}). 
+
+We usually distinguish between two broad classes of grids: structured grids (with a regular 
+connectivity) and unstructured grids (with an irregular connectivity).
+\index{structured grid} \index{unstructured grid}
+
+\begin{center}
+\includegraphics[width=5cm]{images/meshes/structured_grid}
+\includegraphics[width=5cm]{images/meshes/unstructured_grid}
+\end{center}
+
+On the following figure are shown various triangle- tetrahedron-based meshes. 
+These are obviously better suited for simulations of complex geometries:
+\begin{center}
+\includegraphics[height=4cm]{images/meshes/tr1.png}
+\includegraphics[height=4cm]{images/meshes/dolfin.png}
+\includegraphics[height=4cm]{images/meshes/tetra.png}\\
+{\color{red} add more examples}
+\end{center}
+
+
+Let us now focus on the case of a rectangular computational domain of size 
+{\tt Lx} $\times$ {\tt Ly} with a regular mesh composed of {\tt nelx}$\times${\tt nely}={\tt nel}
+   quadrilaterals.  
+There are then {\tt nnx}$\times${\tt nny}={\tt nnp} grid points.
+The elements are of size {\tt hx}$\times${\tt hy} with {\tt hx}={\tt Lx}/{\tt nelx}.
+
+We have no reason to come up with an irregular/ilogical node numbering so 
+we can number nodes row by row or column by column as shown on the example 
+hereunder of a 3$\times$2 grid:
+
+\begin{verbatim}
+8=======9======10======11       2=======5=======8======11
+|       |       |       |       |       |       |       |
+|  (3)  |  (4)  |  (5)  |       |  (1)  |  (3)  |  (5)  |
+|       |       |       |       |       |       |       |
+4=======5=======6=======7       1=======4=======7======10
+|       |       |       |       |       |       |       |
+|  (0)  |  (1)  |  (2)  |       |  (0)  |  (2)  |  (4)  |
+|       |       |       |       |       |       |       |
+0=======1=======2=======3       0=======3=======6=======9
+
+     "row by row"                  "column by column"
+\end{verbatim}
+
+The numbering of the elements themselves could be done in a somewhat chaotic 
+way but we follow the numbering of the nodes for simplicity.
+The row by row option is the adopted one in \fieldstone and the coordinates of the 
+points are computed as follows:
+
+\begin{lstlisting}
+x = np.empty(nnp, dtype=np.float64)
+y = np.empty(nnp, dtype=np.float64)
+counter = 0
+for j in range(0,nny):
+    for i in range(0,nnx):
+        x[counter]=i*hx
+        y[counter]=j*hy
+        counter += 1
+\end{lstlisting}
+The inner loop has {\tt i} ranging from {\tt 0} to {\tt nnx-1} first for {\tt j}=0, 1, ...
+up to {\tt nny-1} which indeed corresponds to the row by row numbering.
+
+\index{connectivity array} 
+We now turn to the connectivity. As mentioned before, this is a structured mesh so that the so-called
+connectivity array, named {\tt icon} in our case, can be filled easily. For each element we need
+to store the node identities of its vertices. Since there are {\tt nel} elements and {\tt m=4} corners, 
+this is a {\tt m}$\times${\tt nel} array. The algorithm goes as follows:
+
+\begin{lstlisting}
+icon =np.zeros((m,nel),dtype=np.int16)
+counter = 0
+for j in range(0,nely):
+    for i in range(0,nelx):
+        icon[0,counter] = i + j * nnx 
+        icon[1,counter] = i + 1 + j * nnx 
+        icon[2,counter] = i + 1 + (j + 1) * nnx 
+        icon[3,counter] = i + (j + 1) * nnx 
+        counter += 1
+\end{lstlisting}
+
+In the case of the 3$\times$2 mesh, the {\tt icon} is filled as follows:
+\begin{center}
+\begin{tabular}{ccccccc}
+element id$\rightarrow$ &0 &1&2&3&4&5 \\
+node id$\downarrow$ \\
+0& 0& 1& 2& 4& 5  &6\\
+1& 1& 2& 3& 5& 6  &7\\
+2& 5& 6& 7& 9& 10 &11\\
+3& 4& 5& 6& 8& 9  &10\\
+\end{tabular}
+\end{center}
+It is to be understood as follows: element $\#4$ is composed of nodes 5, 6, 10 and 9.
+Note that nodes are always stored in a counter clockwise manner, starting at the bottom left.
+This is very important since the corresponding basis functions and their derivatives 
+will be labelled accordingly.
+
+In three dimensions things are very similar. The mesh now counts 
+{\tt nelx}$\times${\tt nely}$\times${\tt nelz}={\tt nel} elements which represent 
+a cuboid of size {\tt Lx}$\times${\tt Ly}$\times${\tt Lz}.
+The position of the nodes is obtained as follows:
+\begin{lstlisting}
+x = np.empty(nnp,dtype=np.float64)
+y = np.empty(nnp,dtype=np.float64)
+z = np.empty(nnp,dtype=np.float64)
+counter=0
+for i in range(0,nnx):
+    for j in range(0,nny):
+        for k in range(0,nnz):
+            x[counter]=i*hx
+            y[counter]=j*hy
+            z[counter]=k*hz
+            counter += 1
+\end{lstlisting}
+The connectivity array is now of size {\tt m}$\times${\tt nel} with {\tt m=8}:
+\begin{lstlisting}
+icon =np.zeros((m,nel),dtype=np.int16)
+counter = 0
+for i in range(0,nelx):
+    for j in range(0,nely):
+        for k in range(0,nelz):
+            icon[0,counter]=nny*nnz*(i  )+nnz*(j  )+k
+            icon[1,counter]=nny*nnz*(i+1)+nnz*(j  )+k
+            icon[2,counter]=nny*nnz*(i+1)+nnz*(j+1)+k
+            icon[3,counter]=nny*nnz*(i  )+nnz*(j+1)+k
+            icon[4,counter]=nny*nnz*(i  )+nnz*(j  )+k+1
+            icon[5,counter]=nny*nnz*(i+1)+nnz*(j  )+k+1
+            icon[6,counter]=nny*nnz*(i+1)+nnz*(j+1)+k+1
+            icon[7,counter]=nny*nnz*(i  )+nnz*(j+1)+k+1
+            counter += 1
+\end{lstlisting}
+
+{\color{red} produce drawing of node numbering}
+
+
+\newpage
 \subsection{The value of the timestep}
 
 \subsection{Tracking materials}
@@ -157,8 +383,86 @@ python3.6 -m pip install --user numpy scipy matplotlib
 
 \subsection{Dealing with a free surface}
 
+
+
+\newpage
+\subsection{Pressure smoothing}
+
+It has been widely documented that the use of the $Q_1 \times P_0$ element is not without problems. Aside from the 
+consequences it has on the FE matrix properties, we will here focus on another unavoidable side effect: the spurious pressure 
+checkerboard modes. \index{pressure smoothing} \index{checkerboard}
+
+These modes have been thoroughly analysed \cite{grsi94,chpc95,sagl81a,sagl81b}.
+They can be filtered out \cite{chpc95} or simply smoothed \cite{legs79}.
+
+On the following figure (a,b), pressure fields for the lid driven cavity experiment 
+are presented for both an even and un-even number of elements. We see that 
+the amplitude of the modes can sometimes be so large that the 'real' pressure is 
+not visible and that something as simple as the number of elements in the 
+domain can trigger those or not at all.
+
+\begin{center}
+a)\includegraphics[width=3cm]{images/checkerboard/p_el}
+\includegraphics[width=3cm]{images/checkerboard/p_el_33x33}
+b)\includegraphics[width=5cm]{images/checkerboard/press_doneahuerta}
+c)\includegraphics[width=5cm]{images/checkerboard/douarpunch}\\
+{\small a) element pressure for a 32x32 grid and for a 33x33 grid;\\ 
+b) image from \cite[p307]{dohu} for a manufactured solution;\\ 
+c) elemental pressure and smoothed pressure for the punch experiment \cite{thfb08}}
+\end{center}
+
+The easiest post-processing step that can be used (especially when a regular grid is used) 
+is explained in \cite{thfb08}: "The element-to-node interpolation is performed by
+averaging the elemental values from elements common to each node; 
+the node-to-element interpolation is performed
+by averaging the nodal values element-by-element. This
+method is not only very efficient but produces a smoothing
+of the pressure that is adapted to the local density of the
+octree. Note that these two steps can be repeated until a
+satisfying level of smoothness (and diffusion) of the pres-
+sure field is attained."
+
+In the codes which rely on the $Q_1 \times P_0$ element, the (elemental) pressure
+is simply defined as 
+\begin{lstlisting}
+p=np.zeros(nel,dtype=np.float64)  
+\end{lstlisting}
+while the nodal pressure is then defined as 
+\begin{lstlisting}
+q=np.zeros(nnp,dtype=np.float64)  
+\end{lstlisting}
+The element-to-node algorithm is then simply (in 2D):
+
+\begin{lstlisting}
+count=np.zeros(nnp,dtype=np.int16)  
+for iel in range(0,nel):
+    q[icon[0,iel]]+=p[iel]
+    q[icon[1,iel]]+=p[iel]
+    q[icon[2,iel]]+=p[iel]
+    q[icon[3,iel]]+=p[iel]
+    count[icon[0,iel]]+=1
+    count[icon[1,iel]]+=1
+    count[icon[2,iel]]+=1
+    count[icon[3,iel]]+=1
+q=q/count
+\end{lstlisting}
+
+{\color{red} produce figure to explain this}
+
+{\color{red} link to proto paper }
+
+{\color{red} link to least square and nodal derivatives}
+
+
+
+
+\newpage
 \subsection{Pressure normalisation}
 
+
+
+
+\newpage
 \subsection{Static condensation} \index{static condensation}
 
 
@@ -210,15 +514,12 @@ pure elastic
 
 including phase changes (w. R. Myhill)
 
-derivatives on nodes
-
 discontinuous galerkin
 
 formatting of code style
 
 navier-stokes ? (LUKAS)
 
-pressure smoothing
 
 compute strainrate in middle of element or at quad point for punch?
 
@@ -249,6 +550,12 @@ better yet simple matrix storage ?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{{\tt fieldstone}: Convection in a 2D box}
 \input{python_codes/fieldstone_convection_box/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone}: The lid driven cavity}
+\input{python_codes/fieldstone_lid_driven_cavity/text}
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -367,60 +674,8 @@ better yet simple matrix storage ?
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The main codes in computational geodynamics}
-
-In what follows I make a quick inventory of the main codes of computational geodynamics, 
-for crust, lithosphere and/or mantle modelling.
-
-\subsection{ADELI}
-
-\subsection{ASPECT}
-
-\subsection{CITCOMS and CITCOMCU}
-
-\subsection{DOUAR}
-
-\subsection{GAIA}
-
-\subsection{GALE}
-
-\subsection{GTECTON}
-
-\subsection{ELVIS}
-
-\subsection{ELEFANT}
-
-\subsection{ELLIPSIS}
-
-\subsection{FANTOM}
-
-\subsection{FLUIDITY}
-
-\subsection{LAMEM}
-
-\subsection{MILAMIN}
-
-\subsection{PARAVOZ/FLAMAR}
-
-\subsection{PTATIN}
-
-\subsection{RHEA}
-
-\subsection{SEPRAN}
-
-\subsection{SOPALE}
-
-\subsection{STAGYY}
-
-\subsection{SULEC}
-SULEC is a finite element code that solves the incompressible Navier-Stokes equations 
-for slow creeping flows. The code is developed by Susan Ellis 
-(GNS Sciences, NZ) and Susanne Buiter (NGU). 
-
-
-\subsection{TERRA}
-
-\subsection{UNDERWORLD 1\&2}
+%\section{The main codes in computational geodynamics}
+%\input{codes}
 
 
 

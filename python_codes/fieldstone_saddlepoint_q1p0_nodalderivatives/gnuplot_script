@@ -48,21 +48,24 @@ plot[][]\
 'errors_exx_markers' u (1./sqrt($2)):(abs($7))  w l t 'exx_0',\
 'errors_exx_markers' u (1./sqrt($2)):(abs($8))  w l t 'exx_1',\
 'errors_exx_markers' u (1./sqrt($2)):(abs($9))  w l t 'exx_2',\
-'errors_exx_markers' u (1./sqrt($2)):(abs($10)) w l t 'exx_3'
+'errors_exx_markers' u (1./sqrt($2)):(abs($10)) w l t 'exx_3',\
+'errors_exx_markers' u (1./sqrt($2)):(abs($11)) w l t 'exx_4'
 
 set output 'errors_eyy_markers.pdf'
 plot[][]\
 'errors_eyy_markers' u (1./sqrt($2)):(abs($7))  w l t 'eyy_0',\
 'errors_eyy_markers' u (1./sqrt($2)):(abs($8))  w l t 'eyy_1',\
 'errors_eyy_markers' u (1./sqrt($2)):(abs($9))  w l t 'eyy_2',\
-'errors_eyy_markers' u (1./sqrt($2)):(abs($10)) w l t 'eyy_3'
+'errors_eyy_markers' u (1./sqrt($2)):(abs($10)) w l t 'eyy_3',\
+'errors_eyy_markers' u (1./sqrt($2)):(abs($11)) w l t 'eyy_4'
 
 set output 'errors_exy_markers.pdf'
 plot[][]\
 'errors_exy_markers' u (1./sqrt($2)):(abs($7))  w l t 'exy_0',\
 'errors_exy_markers' u (1./sqrt($2)):(abs($8))  w l t 'exy_1',\
 'errors_exy_markers' u (1./sqrt($2)):(abs($9))  w l t 'exy_2',\
-'errors_exy_markers' u (1./sqrt($2)):(abs($10)) w l t 'exy_3'
+'errors_exy_markers' u (1./sqrt($2)):(abs($10)) w l t 'exy_3',\
+'errors_exy_markers' u (1./sqrt($2)):(abs($11)) w l t 'exy_4'
 
 
 

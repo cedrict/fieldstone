@@ -840,7 +840,6 @@ errexy1=np.sqrt(errexy1)
 errexy2=np.sqrt(errexy2)
 errexy3=np.sqrt(errexy3)
 
-
 print("     -> nel= %6d ; errv= %.8e ; errp= %.8e " %(nel,errv,errp))
 print("     -> nel= %6d ; errexx1,2,3 %.8e %.8e %.8e %.8e" %(nel,errexx0,errexx1,errexx2,errexx3))
 print("     -> nel= %6d ; erreyy1,2,3 %.8e %.8e %.8e %.8e" %(nel,erreyy0,erreyy1,erreyy2,erreyy3))
@@ -924,6 +923,13 @@ if visu==1:
        for i in range(0,nnp):
            vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
+
+       #-------------
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='q' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e \n" % q[i])
+       vtufile.write("</DataArray>\n")
+
        #-------------
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exx1' Format='ascii'> \n")
        for i in range(0,nnp):
@@ -1046,7 +1052,6 @@ if visu==1:
 
 print("generate vtu: %.3f s" % (time.time() - start))
 
-
 #####################################################################
 # using markers  
 #####################################################################
@@ -1055,7 +1060,7 @@ start = time.time()
 if random_grid:
    print ("random grid is on!!")
 
-nmarker=100000
+nmarker=10000
 
 xm = np.zeros(nmarker,dtype=np.float64)  # x coordinates
 ym = np.zeros(nmarker,dtype=np.float64)  # y coordinates
@@ -1063,18 +1068,23 @@ exx0m = np.zeros(nmarker,dtype=np.float64)
 exx1m = np.zeros(nmarker,dtype=np.float64)  
 exx2m = np.zeros(nmarker,dtype=np.float64)  
 exx3m = np.zeros(nmarker,dtype=np.float64)  
+exx4m = np.zeros(nmarker,dtype=np.float64)  
+
 eyy0m = np.zeros(nmarker,dtype=np.float64)  
 eyy1m = np.zeros(nmarker,dtype=np.float64)  
 eyy2m = np.zeros(nmarker,dtype=np.float64)  
 eyy3m = np.zeros(nmarker,dtype=np.float64)  
+eyy4m = np.zeros(nmarker,dtype=np.float64)  
+
 exy0m = np.zeros(nmarker,dtype=np.float64)  
 exy1m = np.zeros(nmarker,dtype=np.float64)  
 exy2m = np.zeros(nmarker,dtype=np.float64)  
 exy3m = np.zeros(nmarker,dtype=np.float64)  
+exy4m = np.zeros(nmarker,dtype=np.float64)  
     
-exx0mT=0. ; exx1mT=0. ; exx2mT=0. ; exx3mT=0.
-eyy0mT=0. ; eyy1mT=0. ; eyy2mT=0. ; eyy3mT=0.
-exy0mT=0. ; exy1mT=0. ; exy2mT=0. ; exy3mT=0.
+exx0mT=0. ; exx1mT=0. ; exx2mT=0. ; exx3mT=0. ; exx4mT=0.
+eyy0mT=0. ; eyy1mT=0. ; eyy2mT=0. ; eyy3mT=0. ; eyy4mT=0.
+exy0mT=0. ; exy1mT=0. ; exy2mT=0. ; exy3mT=0. ; exy4mT=0.
 
 for i in range(0,nmarker):
     xm[i]=random.random()
@@ -1089,58 +1099,80 @@ for i in range(0,nmarker):
     ymax=y[icon[2,iel]]
     sm=((ym[i]-ymin)/(ymax-ymin)-0.5)*2
     N[0:m]=NNV(rm,sm)
+    dNdr[0:m]=dNNVdr(rm,sm)
+    dNds[0:m]=dNNVds(rm,sm)
+    jcb=np.zeros((2,2),dtype=float)
+    for k in range(0,m):
+        jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+        jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+        jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+        jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+    jcob=np.linalg.det(jcb)
+    jcbi=np.linalg.inv(jcb)
+    for k in range(0, m):
+        dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+        dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
 
     exx0m[i]=exx[iel]
     exx1m[i]=N[:].dot(exx1[icon[:,iel]])     
     exx2m[i]=N[:].dot(exx2[icon[:,iel]])     
     exx3m[i]=N[:].dot(exx3[icon[:,iel]])     
+    exx4m[i]=dNdx[:].dot(u[icon[:,iel]])
     eyy0m[i]=eyy[iel]
     eyy1m[i]=N[:].dot(eyy1[icon[:,iel]])     
     eyy2m[i]=N[:].dot(eyy2[icon[:,iel]])     
     eyy3m[i]=N[:].dot(eyy3[icon[:,iel]])     
+    eyy4m[i]=dNdy[:].dot(v[icon[:,iel]])
     exy0m[i]=exy[iel]
     exy1m[i]=N[:].dot(exy1[icon[:,iel]])     
     exy2m[i]=N[:].dot(exy2[icon[:,iel]])     
     exy3m[i]=N[:].dot(exy3[icon[:,iel]])     
+    exy4m[i]=dNdx[:].dot(v[icon[:,iel]])*0.5\
+            +dNdy[:].dot(u[icon[:,iel]])*0.5
 
     exx0mT+=abs(exx0m[i]-exxth(xm[i],ym[i]))
     exx1mT+=abs(exx1m[i]-exxth(xm[i],ym[i]))
     exx2mT+=abs(exx2m[i]-exxth(xm[i],ym[i]))
     exx3mT+=abs(exx3m[i]-exxth(xm[i],ym[i]))
+    exx4mT+=abs(exx4m[i]-exxth(xm[i],ym[i]))
 
     eyy0mT+=abs(eyy0m[i]-eyyth(xm[i],ym[i]))
     eyy1mT+=abs(eyy1m[i]-eyyth(xm[i],ym[i]))
     eyy2mT+=abs(eyy2m[i]-eyyth(xm[i],ym[i]))
     eyy3mT+=abs(eyy3m[i]-eyyth(xm[i],ym[i]))
+    eyy4mT+=abs(eyy4m[i]-eyyth(xm[i],ym[i]))
 
     exy0mT+=abs(exy0m[i]-exyth(xm[i],ym[i]))
     exy1mT+=abs(exy1m[i]-exyth(xm[i],ym[i]))
     exy2mT+=abs(exy2m[i]-exyth(xm[i],ym[i]))
     exy3mT+=abs(exy3m[i]-exyth(xm[i],ym[i]))
+    exy4mT+=abs(exy4m[i]-exyth(xm[i],ym[i]))
 
 
 exx0mT/=nmarker
 exx1mT/=nmarker
 exx2mT/=nmarker
 exx3mT/=nmarker
+exx4mT/=nmarker
 
 eyy0mT/=nmarker
 eyy1mT/=nmarker
 eyy2mT/=nmarker
 eyy3mT/=nmarker
+eyy4mT/=nmarker
 
 exy0mT/=nmarker
 exy1mT/=nmarker
 exy2mT/=nmarker
 exy3mT/=nmarker
+exy4mT/=nmarker
 
-print ('nel ',nel,'avrg exx on markers ',exx0mT,exx1mT,exx2mT,exx3mT)
-print ('nel ',nel,'avrg eyy on markers ',eyy0mT,eyy1mT,eyy2mT,eyy3mT)
-print ('nel ',nel,'avrg exy on markers ',exy0mT,exy1mT,exy2mT,exy3mT)
+print ('nel ',nel,'avrg exx on markers ',exx0mT,exx1mT,exx2mT,exx3mT,exx4mT)
+print ('nel ',nel,'avrg eyy on markers ',eyy0mT,eyy1mT,eyy2mT,eyy3mT,eyy4mT)
+print ('nel ',nel,'avrg exy on markers ',exy0mT,exy1mT,exy2mT,exy3mT,exy4mT)
 
 print("marker errors: %.3f s" % (time.time() - start))
 
-#np.savetxt('markers.ascii',np.array([xm,ym]).T,header='# x,y')
 
 if visu==1:
 
@@ -1168,6 +1200,11 @@ if visu==1:
    for i in range(0,nmarker):
        vtufile.write("%15e \n" % exx3m[i])
    vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exx4' Format='ascii'> \n")
+   for i in range(0,nmarker):
+       vtufile.write("%15e \n" % exx4m[i])
+   vtufile.write("</DataArray>\n")
+
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exx0 (err)' Format='ascii'> \n")
    for i in range(0,nmarker):
        vtufile.write("%15e \n" % (exx0m[i]-exxth(xm[i],ym[i])))
@@ -1183,6 +1220,10 @@ if visu==1:
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exx3 (err)' Format='ascii'> \n")
    for i in range(0,nmarker):
        vtufile.write("%15e \n" % (exx3m[i]-exxth(xm[i],ym[i])))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exx4 (err)' Format='ascii'> \n")
+   for i in range(0,nmarker):
+       vtufile.write("%15e \n" % (exx4m[i]-exxth(xm[i],ym[i])))
    vtufile.write("</DataArray>\n")
 
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exy0' Format='ascii'> \n")
@@ -1201,6 +1242,11 @@ if visu==1:
    for i in range(0,nmarker):
        vtufile.write("%15e \n" % exy3m[i])
    vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exy4' Format='ascii'> \n")
+   for i in range(0,nmarker):
+       vtufile.write("%15e \n" % exy4m[i])
+   vtufile.write("</DataArray>\n")
+
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exy0 (err)' Format='ascii'> \n")
    for i in range(0,nmarker):
        vtufile.write("%15e \n" % (exy0m[i]-exyth(xm[i],ym[i])))
@@ -1216,6 +1262,10 @@ if visu==1:
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exy3 (err)' Format='ascii'> \n")
    for i in range(0,nmarker):
        vtufile.write("%15e \n" % (exy3m[i]-exyth(xm[i],ym[i])))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exy4 (err)' Format='ascii'> \n")
+   for i in range(0,nmarker):
+       vtufile.write("%15e \n" % (exy4m[i]-exyth(xm[i],ym[i])))
    vtufile.write("</DataArray>\n")
 
    vtufile.write("</PointData>\n")
@@ -1251,10 +1301,8 @@ if visu==1:
    vtufile.write("</VTKFile>\n")
    vtufile.close()
 
-
-
-
-
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")
+
+
