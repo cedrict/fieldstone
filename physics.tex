@@ -21,40 +21,99 @@ $k$ & thermal conductivity & W/(m $\cdot$ K) \\
 $C_p$ & Heat capacity & J/K \\
 $H$ & intrinsic specific heat production & W/kg\\
 $\beta_T$ & isothermal compressibility & Pa$^{-1}$  \\
+${\bm \tau}$ & deviatoric stress tensor & Pa \\
+${\bm \sigma}$ & full stress tensor & Pa \\
 \hline
 \end{tabular}
 \end{center}
+
+%------------------------------------------------------------------------
+\subsection{The heat transport equation - energy conservation equation}
 
 Let us start from the heat transport equation as shown in Schubert, Turcotte and Olson \cite{scto01}:
 \[
 \rho C_p \frac{DT}{Dt} - \alpha T \frac{Dp}{Dt} = {\bm \nabla} \cdot k {\bm \nabla} T + \Phi + \rho H  
 \]
-with 
+with $D/Dt$ being the total derivatives so that 
 \[
 \frac{DT}{Dt} = \frac{\partial T}{\partial t} + {\bm v}\cdot {\bm \nabla}T
 \quad\quad
 \frac{Dp}{Dt} = \frac{\partial p}{\partial t} + {\bm v}\cdot {\bm \nabla}p
 \]
-In order to arrive at the set of equations that ASPECT solves, we need to neglect the $\partial p/\partial t$. {\color{red}WHY?}
-Also, their definition of the shear heating term $\Phi$ is:
+Solving for temperature, this equation is often rewritten as follows:
+\begin{mdframed}[backgroundcolor=blue!5]
 \[
-\Phi = k_B ({\bm \nabla}\cdot{\bm v})^2 + 2\eta \dot{\bm \varepsilon}^d:\dot{\bm \varepsilon}^d
+\rho C_p \frac{DT}{Dt} - {\bm \nabla} \cdot k {\bm \nabla} T =  \alpha T \frac{Dp}{Dt} + \Phi + \rho H  
 \]
-For many fluids the bulk viscosity $k_B$ is very small and is often taken to be zero, an assumption known
-as the Stokes assumption: $k_B=\lambda+2\eta/3=0$. \index{bulk viscosity}
-Note that $\eta$ is the dynamic viscosity and $\lambda$ the second viscosity. \index{dynamic viscosity}
-\index{second viscosity}
-Also, 
+\end{mdframed}
+
+A note on the shear heating term $\Phi$: In many publications, $\Phi$ 
+is given by $\Phi=\tau_{ij}\partial_j u_i={\bm \tau}:{\bm \nabla}{\bm v}$.
+
+\begin{eqnarray}
+\Phi 
+&=& \tau_{ij}\partial_j u_i \nonumber\\
+&=& 2 \eta \dot{\varepsilon}_{ij}^d\partial_j u_i \nonumber\\
+&=& 2 \eta \frac{1}{2}\left( \dot{\varepsilon}_{ij}^d\partial_j u_i + \dot{\varepsilon}_{ji}^d\partial_i u_j \right) \nonumber\\
+&=& 2 \eta \frac{1}{2}\left( \dot{\varepsilon}_{ij}^d\partial_j u_i + \dot{\varepsilon}_{ij}^d\partial_i u_j \right) \nonumber\\
+&=& 2 \eta  \dot{\varepsilon}_{ij}^d  \frac{1}{2}\left(\partial_j u_i + \partial_i u_j \right) \nonumber\\
+&=& 2 \eta  \dot{\varepsilon}_{ij}^d   \dot{\varepsilon}_{ij} \nonumber\\
+&=& 2 \eta  \dot{\bm \varepsilon}^d :  \dot{\bm \varepsilon} \nonumber\\
+&=& 2 \eta  \dot{\bm \varepsilon}^d : \left( \dot{\bm \varepsilon}^d +\frac{1}{3} ({\bm \nabla}\cdot{\bm v}) {\bm 1} \right)\nonumber\\
+&=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
++ 2 \eta  \dot{\bm \varepsilon}^d : {\bm 1} ({\bm \nabla}\cdot{\bm v}) \nonumber\\ 
+&=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
+\end{eqnarray}
+Finally
 \[
-{\bm \tau}=2\eta \dot{\bm \varepsilon} + \lambda ({\bm \nabla}\cdot{\bm v}) {\bm 1}
-\]
-but since $k_B=\lambda+2\eta/3=0$, then $\lambda=-2\eta/3$ so 
-\[
-{\bm \tau}=2\eta \dot{\bm \varepsilon} -\frac{2}{3}\eta ({\bm \nabla}\cdot{\bm v}) {\bm 1} = 2\eta \dot{\bm \varepsilon}^d
+\Phi = {\bm \tau}:{\bm \nabla}{\bm v} = 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d
+= 2 \eta \left( (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + 2(\dot{\varepsilon}_{xy}^d)^2 \right)
 \]
 
+%------------------------------------------------------------------------
+\subsection{The momentum conservation equations} 
 
-[from aspect manual]
+Because the Prandlt number is virtually zero in Earth science applications the Navier Stokes 
+equations reduce to the Stokes equation:
+\[
+{\bm \nabla}\cdot {\bm \sigma} + \rho {\bm g} = 0
+\]
+Since 
+\[
+{\bm \sigma} = -p {\bm 1} + {\bm \tau}
+\]
+it also writes
+\[
+-{\bm \nabla}p + {\bm \nabla}\cdot {\bm \tau} + \rho {\bm g} = 0
+\]
+Using the relationship ${\bm \tau} = 2 \eta \dot{\bm \varepsilon}^d$ we arrive at 
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+-{\bm \nabla}p + {\bm \nabla}\cdot (2 \eta \dot{\bm \varepsilon}^d ) + \rho {\bm g} = 0
+\]
+\end{mdframed}
+
+%------------------------------------------------------------------------
+\subsection{The mass conservation equations} 
+
+The mass conservation equation is given by
+\[
+\frac{D\rho}{Dt} + \rho {\bm \nabla}\cdot{\bm v} = 0
+\]
+or, 
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+\frac{\partial \rho}{\partial t} + {\bm \nabla}\cdot(\rho {\bm v}) = 0
+\]
+\end{mdframed}
+In the case of an incompressible flow, then $\partial \rho/\partial t=0$ and 
+${\bm \nabla}\rho=0$, i.e. $D\rho/Dt=0$ and the remaining equation is simply:
+\[
+{\bm \nabla}\cdot{\bm v} = 0
+\]
+
+\subsection{The equations in ASPECT manual}
+The following is lifted off the ASPECT manual.
 We focus on the system of equations in a $d=2$- or $d=3$-dimensional
 domain $\Omega$ that describes the motion of a highly viscous fluid driven
 by differences in the gravitational force due to a density that depends on
@@ -96,7 +155,6 @@ u$, pressure $p$ and temperature $T$:
   \notag
   \\
   &\quad
-  + \rho T \Delta S \left(\frac{\partial X}{\partial t} + \bm v\cdot\nabla X\right)
   &
   & \textrm{in $\Omega$},
   \notag
@@ -120,36 +178,38 @@ terms of this equation correspond to
 \item internal heat production for example due to radioactive decay;
 \item friction (shear) heating;
 \item adiabatic compression of material;
-\item phase change.
 \end{itemize}
-The last term of the temperature equation corresponds to
-the latent heat generated or consumed in the process of phase change of material. 
-In what follows we will not assume that no phase change takes place so that we disregard this term 
-altogether.
 
-\newpage
-A note on the shear heating term $\Phi$: In many publications, $\Phi$ 
-is given by $\Phi=\tau_{ij}\partial_j u_i={\bm \tau}:{\bm \nabla}{\bm v}$.
+In order to arrive at the set of equations that ASPECT solves, 
+we need to 
+\begin{itemize}
+\item neglect the $\partial p/\partial t$. {\color{red}WHY?}
+\item neglect the $\partial \rho / \partial t$ . {\color{red}WHY?}
+\end{itemize}
+from equations above. 
 
-\begin{eqnarray}
-\Phi 
-&=& \tau_{ij}\partial_j u_i \\
-&=& 2 \eta \dot{\varepsilon}_{ij}^d\partial_j u_i \\
-&=& 2 \eta \frac{1}{2}\left( \dot{\varepsilon}_{ij}^d\partial_j u_i + \dot{\varepsilon}_{ji}^d\partial_i u_j \right) \\
-&=& 2 \eta \frac{1}{2}\left( \dot{\varepsilon}_{ij}^d\partial_j u_i + \dot{\varepsilon}_{ij}^d\partial_i u_j \right) \\
-&=& 2 \eta  \dot{\varepsilon}_{ij}^d  \frac{1}{2}\left(\partial_j u_i + \partial_i u_j \right) \\
-&=& 2 \eta  \dot{\varepsilon}_{ij}^d   \dot{\varepsilon}_{ij} \\
-&=& 2 \eta  \dot{\bm \varepsilon}^d :  \dot{\bm \varepsilon} \\
-&=& 2 \eta  \dot{\bm \varepsilon}^d : \left( \dot{\bm \varepsilon}^d +\frac{1}{3} ({\bm \nabla}\cdot{\bm v}) {\bm 1} \right)\\
-&=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
-+ 2 \eta  \dot{\bm \varepsilon}^d : {\bm 1} ({\bm \nabla}\cdot{\bm v}) \\ 
-&=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
-\end{eqnarray}
-Finally
+----------------------------------------
+
+Also, their definition of the shear heating term $\Phi$ is:
 \[
-\Phi = {\bm \tau}:{\bm \nabla}{\bm v} = 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d
-= 2 \eta \left( (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + 2(\dot{\varepsilon}_{xy}^d)^2 \right)
+\Phi = k_B ({\bm \nabla}\cdot{\bm v})^2 + 2\eta \dot{\bm \varepsilon}^d:\dot{\bm \varepsilon}^d
 \]
+For many fluids the bulk viscosity $k_B$ is very small and is often taken to be zero, an assumption known
+as the Stokes assumption: $k_B=\lambda+2\eta/3=0$. \index{bulk viscosity}
+Note that $\eta$ is the dynamic viscosity and $\lambda$ the second viscosity. \index{dynamic viscosity}
+\index{second viscosity}
+Also, 
+\[
+{\bm \tau}=2\eta \dot{\bm \varepsilon} + \lambda ({\bm \nabla}\cdot{\bm v}) {\bm 1}
+\]
+but since $k_B=\lambda+2\eta/3=0$, then $\lambda=-2\eta/3$ so 
+\[
+{\bm \tau}=2\eta \dot{\bm \varepsilon} -\frac{2}{3}\eta ({\bm \nabla}\cdot{\bm v}) {\bm 1} = 2\eta \dot{\bm \varepsilon}^d
+\]
+
+
+
+
 
 
 

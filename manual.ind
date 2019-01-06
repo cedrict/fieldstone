@@ -1,124 +1,131 @@
 \begin{theindex}
 
-  \item $P_m \times P_n$, \hyperpage{11}
-  \item $P_m \times P_{-n}$, \hyperpage{11}
-  \item $Q_1 \times P_0$, \hyperpage{28}, \hyperpage{34}, 
-		\hyperpage{36}, \hyperpage{42}, \hyperpage{48}, 
-		\hyperpage{51}, \hyperpage{67}, \hyperpage{73}
-  \item $Q_2 \times Q_1$, \hyperpage{11}, \hyperpage{53}, 
-		\hyperpage{58}
-  \item $Q_3 \times Q_2$, \hyperpage{61}
-  \item $Q_m \times P_{-n}$, \hyperpage{11}
-  \item $Q_m \times Q_n$, \hyperpage{11}
-  \item $Q_m \times Q_{-n}$, \hyperpage{11}
+  \item $P_m \times P_n$, \hyperpage{12}
+  \item $P_m \times P_{-n}$, \hyperpage{12}
+  \item $Q_1 \times P_0$, \hyperpage{36}, \hyperpage{42}, 
+		\hyperpage{44}, \hyperpage{50}, \hyperpage{56}, 
+		\hyperpage{59}, \hyperpage{75}, \hyperpage{81}, 
+		\hyperpage{91}
+  \item $Q_2 \times Q_1$, \hyperpage{12}, \hyperpage{61}, 
+		\hyperpage{66}
+  \item $Q_3 \times Q_2$, \hyperpage{69}
+  \item $Q_m \times P_{-n}$, \hyperpage{12}
+  \item $Q_m \times Q_n$, \hyperpage{12}
+  \item $Q_m \times Q_{-n}$, \hyperpage{12}
 
   \indexspace
 
-  \item analytical solution, \hyperpage{28}, \hyperpage{36}, 
-		\hyperpage{51}, \hyperpage{58}, \hyperpage{61}, 
-		\hyperpage{64}, \hyperpage{67}, \hyperpage{73}
-  \item arithmetic mean, \hyperpage{48}
+  \item analytical solution, \hyperpage{36}, \hyperpage{44}, 
+		\hyperpage{59}, \hyperpage{66}, \hyperpage{69}, 
+		\hyperpage{72}, \hyperpage{75}, \hyperpage{81}
+  \item arithmetic mean, \hyperpage{56}
 
   \indexspace
 
-  \item basis functions, \hyperpage{12}
-  \item Boussinesq, \hyperpage{7}
-  \item bubble function, \hyperpage{11}
-  \item bulk modulus, \hyperpage{68}
-  \item bulk viscosity, \hyperpage{4}
+  \item basis functions, \hyperpage{16}
+  \item Boussinesq, \hyperpage{8}
+  \item bubble function, \hyperpage{12}
+  \item bulk modulus, \hyperpage{76}
+  \item bulk viscosity, \hyperpage{7}
 
   \indexspace
 
-  \item checkerboard, \hyperpage{24}
-  \item compressibility, \hyperpage{68}
-  \item compressible flow, \hyperpage{73}
-  \item conforming element, \hyperpage{11}
-  \item connectivity array, \hyperpage{22}
-  \item convex polygon, \hyperpage{21}
+  \item checkerboard, \hyperpage{30}
+  \item Compressed Sparse Column, \hyperpage{24}
+  \item Compressed Sparse Row, \hyperpage{24}
+  \item compressibility, \hyperpage{76}
+  \item compressible flow, \hyperpage{81}
+  \item conforming element, \hyperpage{12}
+  \item connectivity array, \hyperpage{28}
+  \item convex polygon, \hyperpage{27}
+  \item CSC, \hyperpage{24}
+  \item CSR, \hyperpage{24}
 
   \indexspace
 
-  \item dynamic viscosity, \hyperpage{4}
+  \item dynamic viscosity, \hyperpage{7}
 
   \indexspace
 
-  \item Gauss quadrature, \hyperpage{9}
-  \item geometric mean, \hyperpage{48}
+  \item Gauss quadrature, \hyperpage{10}
+  \item geometric mean, \hyperpage{56}
 
   \indexspace
 
-  \item harmonic mean, \hyperpage{48}
+  \item harmonic mean, \hyperpage{56}
 
   \indexspace
 
-  \item incompressible flow, \hyperpage{36}, \hyperpage{42}, 
-		\hyperpage{48}, \hyperpage{51}, \hyperpage{58}, 
-		\hyperpage{61}, \hyperpage{64}, \hyperpage{67}
-  \item isothermal, \hyperpage{28}, \hyperpage{34}, \hyperpage{36}, 
-		\hyperpage{42}, \hyperpage{48}, \hyperpage{51}, 
-		\hyperpage{58}, \hyperpage{61}, \hyperpage{64}, 
-		\hyperpage{67}
-  \item isoviscous, \hyperpage{28}, \hyperpage{34}, \hyperpage{51}, 
-		\hyperpage{58}, \hyperpage{61}, \hyperpage{67}, 
-		\hyperpage{73}
+  \item incompressible flow, \hyperpage{44}, \hyperpage{50}, 
+		\hyperpage{56}, \hyperpage{59}, \hyperpage{66}, 
+		\hyperpage{69}, \hyperpage{72}, \hyperpage{75}, 
+		\hyperpage{91}
+  \item isothermal, \hyperpage{36}, \hyperpage{42}, \hyperpage{44}, 
+		\hyperpage{50}, \hyperpage{56}, \hyperpage{59}, 
+		\hyperpage{66}, \hyperpage{69}, \hyperpage{72}, 
+		\hyperpage{75}, \hyperpage{91}
+  \item isoviscous, \hyperpage{36}, \hyperpage{42}, \hyperpage{59}, 
+		\hyperpage{66}, \hyperpage{69}, \hyperpage{75}, 
+		\hyperpage{81}
 
   \indexspace
 
-  \item Legendre polynomial, \hyperpage{9}
+  \item Legendre polynomial, \hyperpage{10}
 
   \indexspace
 
-  \item midpoint rule, \hyperpage{8}
-  \item mixed formulation, \hyperpage{51}, \hyperpage{58}, 
-		\hyperpage{61}, \hyperpage{64}, \hyperpage{67}, 
-		\hyperpage{73}
+  \item midpoint rule, \hyperpage{9}
+  \item mixed formulation, \hyperpage{59}, \hyperpage{66}, 
+		\hyperpage{69}, \hyperpage{72}, \hyperpage{75}, 
+		\hyperpage{81}, \hyperpage{91}
 
   \indexspace
 
-  \item Newton-Cotes, \hyperpage{9}
-  \item non-conforming element, \hyperpage{11}
-  \item non-isoviscous, \hyperpage{36}, \hyperpage{42}, \hyperpage{48}, 
-		\hyperpage{64}
-  \item nonconforming $Q_1 \times P_0$, \hyperpage{64}
-  \item nonlinear rheology, \hyperpage{42}
+  \item Newton-Cotes, \hyperpage{10}
+  \item non-conforming element, \hyperpage{12}
+  \item non-isoviscous, \hyperpage{44}, \hyperpage{50}, \hyperpage{56}, 
+		\hyperpage{72}
+  \item nonconforming $Q_1 \times P_0$, \hyperpage{72}
+  \item nonlinear rheology, \hyperpage{50}
+  \item numerical benchmark, \hyperpage{91}
 
   \indexspace
 
-  \item particle-in-cell, \hyperpage{48}
-  \item penalty formulation, \hyperpage{14}, \hyperpage{28}, 
-		\hyperpage{34}, \hyperpage{36}, \hyperpage{42}, 
-		\hyperpage{48}
-  \item piecewise, \hyperpage{11}
-  \item pressure normalisation, \hyperpage{54}
-  \item pressure smoothing, \hyperpage{24}, \hyperpage{51}, 
-		\hyperpage{64}, \hyperpage{67}, \hyperpage{73}
+  \item particle-in-cell, \hyperpage{56}
+  \item penalty formulation, \hyperpage{19}, \hyperpage{36}, 
+		\hyperpage{42}, \hyperpage{44}, \hyperpage{50}, 
+		\hyperpage{56}
+  \item piecewise, \hyperpage{12}
+  \item pressure normalisation, \hyperpage{62}
+  \item pressure smoothing, \hyperpage{30}, \hyperpage{59}, 
+		\hyperpage{72}, \hyperpage{75}, \hyperpage{81}
 
   \indexspace
 
-  \item quadrature, \hyperpage{9}
+  \item quadrature, \hyperpage{10}
 
   \indexspace
 
-  \item rectangle rule, \hyperpage{8}
+  \item rectangle rule, \hyperpage{9}
 
   \indexspace
 
-  \item second viscosity, \hyperpage{4}
-  \item static condensation, \hyperpage{26}
-  \item structured grid, \hyperpage{21}
+  \item second viscosity, \hyperpage{7}
+  \item static condensation, \hyperpage{32}
+  \item structured grid, \hyperpage{27}
 
   \indexspace
 
-  \item thermal expansion, \hyperpage{68}
-  \item trapezoidal rule, \hyperpage{8}
+  \item thermal expansion, \hyperpage{76}
+  \item trapezoidal rule, \hyperpage{9}
 
   \indexspace
 
-  \item unstructured grid, \hyperpage{21}
+  \item unstructured grid, \hyperpage{27}
 
   \indexspace
 
-  \item weak form, \hyperpage{16}
-  \item work against gravity, \hyperpage{70}
+  \item weak form, \hyperpage{20}
+  \item work against gravity, \hyperpage{78}
 
 \end{theindex}

@@ -73,7 +73,7 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 34
+   nelx = 32
    nely = 32
    visu = 1
 

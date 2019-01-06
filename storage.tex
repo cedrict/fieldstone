@@ -1,0 +1,203 @@
+The FE matrix is the result of the assembly process of all elemental matrices. 
+Its size can become quite large when the resolution is being increased (from thousands
+of lines/columns to tens of millions).
+
+One important property of the matrix is its sparsity. Typically less than 1\% of the 
+matrix terms is not zero and this means that the matrix storage can and should be optimised. 
+Clever storage formats were designed early on since the amount of RAM memory in computers
+was the limiting factor 3 or 4 decades ago. \cite{saad}
+
+There are several standard formats:
+\begin{itemize}
+\item compressed sparse row (CSR) format\index{CSR} \index{Compressed Sparse Row}
+\item compressed sparse column format (CSC) \index{CSC} \index{Compressed Sparse Column}
+\item the Coordinate Format (COO)
+\item Skyline Storage Format
+\item ...
+\end{itemize}
+
+I focus on  the CSR format in what follows. 
+
+\subsubsection{2D domain - One degree of freedom per node}
+
+Let us consider again the  $3\times2$ element grid which counts 12 nodes.
+\begin{verbatim}
+8=======9======10======11
+|       |       |       |
+|  (3)  |  (4)  |  (5)  |
+|       |       |       |
+4=======5=======6=======7
+|       |       |       |
+|  (0)  |  (1)  |  (2)  |
+|       |       |       |
+0=======1=======2=======3
+\end{verbatim}
+
+In the case there is only a single degree of freedom per node, the 
+assembled FEM matrix will look like this:
+
+\[
+\left(
+\begin{array}{cccccccccccc}
+X & X &   &   & X & X &   &   &   &   &   &   \\
+X & X & X &   & X & X & X &   &   &   &   &   \\
+  & X & X & X &   & X & X & X &   &   &   &   \\
+  &   & X & X &   &   & X & X &   &   &   &   \\
+X & X &   &   & X & X &   &   & X & X &   &   \\
+X & X & X &   & X & X & X &   & X & X & X &   \\
+  & X & X & X &   & X & X & X &   & X & X & X \\
+  &   & X & X &   &   & X & X &   &   & X & X \\
+  &   &   &   & X & X &   &   & X & X &   &   \\
+  &   &   &   & X & X & X &   & X & X & X &   \\
+  &   &   &   &   & X & X & X &   & X & X & X \\
+  &   &   &   &   &   & X & X &   &   & X & X \\
+\end{array}
+\right)
+\]
+where the $X$ stand for non-zero terms.
+This matrix structure stems from the fact that
+\begin{itemize}
+\item node 0 sees nodes 0,1,4,5
+\item node 1 sees nodes 0,1,2,4,5,6 
+\item node 2 sees nodes 1,2,3,5,6,7 
+\item ...
+\item node 5 sees nodes 0,1,2,4,5,6,8,9,10 
+\item ...
+\item node 10 sees nodes 5,6,7,9,10,11 
+\item node 11 sees nodes 6,7,10,11
+\end{itemize}
+In light thereof, we have
+\begin{itemize}
+\item 4 corner nodes which have 4 neighbours (counting themselves) 
+\item 2(nnx-2) nodes which have 6 neighbours
+\item 2(nny-2) nodes which have 6 neighbours
+\item (nnx-2)$\times$(nny-2) nodes which have 9 neighbours
+\end{itemize}
+In total, the number of non-zero terms in the matrix is then:
+\[
+NZ=4\times4+4\times6+2\times6+2\times9=70
+\]
+In general, we would then have:
+\[
+NZ=4\times4+[2(nnx-2)+2(nny-2)]\times6 + (nnx-2)(nny-2)\times9
+\]
+
+Let us temporarily assume $nnx=nny=n$. Then the matrix size (total
+number of unknowns) is $N=n^2$ and  
+\[
+NZ=16+24(n-2)+9(n-2)^2
+\]
+A full matrix array would contain $N^2=n^4$ terms. 
+The ratio of $NZ$ (the actual number of reals to store)
+to the full matrix size (the number of reals a full matrix contains) is then 
+\[
+R = \frac{16+24(n-2)+9(n-2)^2}{n^4}
+\]
+It is then obvious that when $n$ is large enough $R \sim 1/n^2$.
+
+CSR stores the nonzeros of the matrix row by row, in a
+single indexed array A of double precision  numbers.
+Another array COLIND contains the column index of each
+corresponding entry in the A array. A third integer array RWPTR
+contains pointers to the beginning of each row, which an additional pointer to
+the first index following the nonzeros of the matrix A.
+A and COLIND have length NZ and RWPTR has length N+1.
+
+In the case of the here-above matrix, the arrays COLIND and RWPTR will look like:
+\[
+COLIND=(0,1,4,5, \; 0,1,2,4,5,6, \; 1,2,3,5,6,7, ..., 6,7,10,11)
+\]
+\[
+RWPTR=(0,4,10,16, ... )
+\]
+
+%--------------------------------------------------------
+\subsubsection{2D domain - Two degrees of freedom per node}
+
+When there are now two degrees of freedom per node, such as in the case of the Stokes equation
+in two-dimensions, the size of the $\K$ matrix is given by 
+\begin{lstlisting}
+NfemV=nnp*ndofV  
+\end{lstlisting}
+In the case of the small grid above, we have {\tt NfemV=24}.
+Elemental matrices are now $8\times8$ in size.
+
+We still have
+\begin{itemize}
+\item 4 corner nodes which have 4 ,neighbours,
+\item 2(nnx-2) nodes which have 6 neighbours
+\item 2(nny-2) nodes which have 6 neighbours
+\item (nnx-2)x(nny-2) nodes which have 9 neighbours,
+\end{itemize}
+but now each degree of freedom from a node sees the other two
+degrees of freedom of another node too.
+In that case, the number of nonzeros has been multiplied by four
+and the assembled FEM matrix looks like:
+\begin{equation}
+\left(
+\begin{array}{cccccccccccccccccccccccc}
+X&X & X&X &  &  &  &  & X&X & X&X &  &  &  &  &  &  &  &  &  &  &  &  \\
+X&X & X&X &  &  &  &  & X&X & X&X &  &  &  &  &  &  &  &  &  &  &  &  \\
+X&X & X&X & X&X &  &  & X&X & X&X & X&X &  &  &  &  &  &  &  &  &  &  \\
+X&X & X&X & X&X &  &  & X&X & X&X & X&X &  &  &  &  &  &  &  &  &  &  \\
+ &  & X&X & X&X & X&X &  &  & X&X & X&X & X&X &  &  &  &  &  &  &  &  \\
+ &  & X&X & X&X & X&X &  &  & X&X & X&X & X&X &  &  &  &  &  &  &  &  \\
+ &  &  &  & X&X & X&X &  &  &  &  & X&X & X&X &  &  &  &  &  &  &  &  \\
+ &  &  &  & X&X & X&X &  &  &  &  & X&X & X&X &  &  &  &  &  &  &  &  \\
+X&X & X&X &  &  &  &  & X&X & X&X &  &  &  &  & X&X & X&X &  &  &  &  \\
+X&X & X&X &  &  &  &  & X&X & X&X &  &  &  &  & X&X & X&X &  &  &  &  \\
+X&X & X&X & X&X &  &  & X&X & X&X & X&X &  &  & X&X & X&X & X&X &  &  \\
+X&X & X&X & X&X &  &  & X&X & X&X & X&X &  &  & X&X & X&X & X&X &  &  \\
+ &  & X&X & X&X & X&X &  &  & X&X & X&X & X&X &  &  & X&X & X&X & X&X \\
+ &  & X&X & X&X & X&X &  &  & X&X & X&X & X&X &  &  & X&X & X&X & X&X \\
+ &  &  &  & X&X & X&X &  &  &  &  & X&X & X&X &  &  &  &  & X&X & X&X \\
+ &  &  &  & X&X & X&X &  &  &  &  & X&X & X&X &  &  &  &  & X&X & X&X \\
+ &  &  &  &  &  &  &  & X&X & X&X &  &  &  &  & X&X & X&X &  &  &  &  \\
+ &  &  &  &  &  &  &  & X&X & X&X &  &  &  &  & X&X & X&X &  &  &  &  \\
+ &  &  &  &  &  &  &  & X&X & X&X & X&X &  &  & X&X & X&X & X&X &  &  \\
+ &  &  &  &  &  &  &  & X&X & X&X & X&X &  &  & X&X & X&X & X&X &  &  \\
+ &  &  &  &  &  &  &  &  &  & X&X & X&X & X&X &  &  & X&X & X&X & X&X \\
+ &  &  &  &  &  &  &  &  &  & X&X & X&X & X&X &  &  & X&X & X&X & X&X \\
+ &  &  &  &  &  &  &  &  &  &  &  & X&X & X&X &  &  &  &  & X&X & X&X \\
+ &  &  &  &  &  &  &  &  &  &  &  & X&X & X&X &  &  &  &  & X&X & X&X \\
+\end{array}
+\right)\nonumber
+\end{equation}
+Note that the degrees of freedom are organised as follows: 
+\[
+(u_0,v_0,u_1,v_1,u_2,v_2, ... u_{11},v_{11})
+\]
+In general, we would then have:
+\[
+NZ=4 \left[4\times4+[2(nnx-2)+2(nny-2)]\times6 + (nnx-2)(nny-2)\times9 \right]
+\]
+and in the case of the small grid,
+the number of non-zero terms in the matrix is then:
+\[
+NZ=4\left[4\times4+4\times6+2\times6+2\times9\right]=280
+\]
+In the case of the here-above matrix, the arrays COLIND and RWPTR will look like:
+\[
+COLIND=(0,1,2,3,8,9,10,11, \; 0,1,2,3,8,9,10,11,\; ...)
+\]
+\[
+RWPTR=(0,8,16,28, ... )
+\]
+
+\subsubsection{in fieldstone}
+
+The majority of the codes have the FE matrix being a full array
+\begin{lstlisting}
+a_mat = np.zeros((Nfem,Nfem),dtype=np.float64) 
+\end{lstlisting}
+and it is converted to CSR format on the fly in the solve phase:
+\begin{lstlisting}
+sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+\end{lstlisting}
+
+Note that linked list storages can be used (lil\_matrix). Substantial memory savings 
+but much longer compute times.
+
+
+
+
