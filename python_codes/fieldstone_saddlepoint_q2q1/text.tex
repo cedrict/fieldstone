@@ -13,40 +13,6 @@ Vector $f$ is of size $NfemV$ and vector $h$ is of size $NfemP$.
 {\color{red} renumber all nodes to start at zero!! Also internal numbering does not work here }
 \end{center}
 
-The velocity shape functions are given by:
-\begin{eqnarray}
-N^V_0&=& \frac{1}{2}r(r-1)  \frac{1}{2}s(s-1)\nonumber\\
-N^V_1&=& \frac{1}{2}r(r+1)  \frac{1}{2}s(s-1)\nonumber\\
-N^V_2&=& \frac{1}{2}r(r+1)  \frac{1}{2}s(s+1)\nonumber\\
-N^V_3&=& \frac{1}{2}r(r-1)  \frac{1}{2}s(s+1)\nonumber\\
-N^V_4&=&     (1-r^2)  \frac{1}{2}s(s-1)\nonumber\\
-N^V_5&=& \frac{1}{2}r(r+1)      (1-s^2)\nonumber\\
-N^V_6&=&     (1-r^2)  \frac{1}{2}s(s+1)\nonumber\\
-N^V_7&=& \frac{1}{2}r(r-1)      (1-s^2)\nonumber\\
-N^V_8&=&     (1-r^2)      (1-s^2)\nonumber
-\end{eqnarray}
-and their derivatives:
-\begin{eqnarray}
-\frac{\partial N^V_0}{\partial r}&=& \frac{1}{2}(2r-1)  \frac{1}{2}s(s-1)\nonumber\\
-\frac{\partial N^V_1}{\partial r}&=& \frac{1}{2}(2r+1)  \frac{1}{2}s(s-1)\nonumber\\
-\frac{\partial N^V_2}{\partial r}&=& \frac{1}{2}(2r+1)  \frac{1}{2}s(s+1)\nonumber\\
-\frac{\partial N^V_3}{\partial r}&=& \frac{1}{2}(2r-1)  \frac{1}{2}s(s+1)\nonumber\\
-\frac{\partial N^V_4}{\partial r}&=&       (-2r)  \frac{1}{2}s(s-1)\nonumber\\
-\frac{\partial N^V_5}{\partial r}&=& \frac{1}{2}(2r+1)     (1-s^2)\nonumber\\
-\frac{\partial N^V_6}{\partial r}&=&       (-2r)  \frac{1}{2}s(s+1)\nonumber\\
-\frac{\partial N^V_7}{\partial r}&=& \frac{1}{2}(2r-1)     (1-s^2)\nonumber\\
-\frac{\partial N^V_8}{\partial r}&=&       (-2r)     (1-s^2)\nonumber  \\ \nonumber\\
-\frac{\partial N^V_0}{\partial s}&=& \frac{1}{2}r(r-1)  \frac{1}{2}(2s-1)\nonumber\\
-\frac{\partial N^V_1}{\partial s}&=& \frac{1}{2}r(r+1)  \frac{1}{2}(2s-1)\nonumber\\
-\frac{\partial N^V_2}{\partial s}&=& \frac{1}{2}r(r+1)  \frac{1}{2}(2s+1)\nonumber\\
-\frac{\partial N^V_3}{\partial s}&=& \frac{1}{2}r(r-1)  \frac{1}{2}(2s+1)\nonumber\\
-\frac{\partial N^V_4}{\partial s}&=&     (1-r^2)  \frac{1}{2}(2s-1)\nonumber\\
-\frac{\partial N^V_5}{\partial s}&=& \frac{1}{2}r(r+1)        (-2s)\nonumber\\
-\frac{\partial N^V_6}{\partial s}&=&     (1-r^2)  \frac{1}{2}(2s+1)\nonumber\\
-\frac{\partial N^V_7}{\partial s}&=& \frac{1}{2}r(r-1)        (-2s)\nonumber\\
-\frac{\partial N^V_8}{\partial s}&=&     (1-r^2)        (-2s)\nonumber
-\end{eqnarray}
-
 \fbox{
 \parbox{10cm}{{\bf features}
 \begin{itemize}
