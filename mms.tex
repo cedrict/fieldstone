@@ -1,0 +1,26 @@
+\index{MMS} \index{method of manufactured solutions}
+
+The method of manufactured solutions is a relatively simple way of carrying out
+code verification. In essence, one postulates a solution for the PDE at hand (as
+well as the proper boundary conditions), inserts it in the PDE and computes the 
+corresponding source term. 
+The same source term and boundary conditions will then be used in a numerical 
+simulation so that the computed solution can be compared with the (postulated)
+true analytical solution. 
+
+Examples of this approach are to be found in \cite{dohu,busa13,dodg06}.
+
+
+\begin{mdframed}[backgroundcolor=green!5]
+\begin{itemize}
+\item[$\triangleright$] {\sl python\_codes/fieldstone}
+\item[$\triangleright$] {\sl python\_codes/fieldstone\_saddlepoint}
+\item[$\triangleright$] {\sl python\_codes/fieldstone\_saddlepoint\_q2q1}
+\item[$\triangleright$] {\sl python\_codes/fieldstone\_saddlepoint\_q3q2}
+\item[$\triangleright$] {\sl python\_codes/fieldstone\_burstedde}
+\end{itemize}
+\end{mdframed}
+
+
+
+

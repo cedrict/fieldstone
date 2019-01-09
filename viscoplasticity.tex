@@ -1,0 +1,132 @@
+
+\subsubsection{Tensor invariants}
+
+Before we dive into the world of nonlinear rheologies it is necessary to introduce the concept of tensor 
+invariants since they are needed further on. \index{tensor invariant}
+Unfortunately there are many different notations used in the literature and these can prove to be 
+confusing.
+
+Given a tensor $\bm{T}$,  one can compute its (moment) invariants as follows:
+\begin{itemize}
+\item first invariant : 
+\begin{eqnarray}
+T_I|^{2D} &=& Tr[\bm{T}] = T_{xx} + T_{yy} \nonumber\\
+T_I|^{3D} &=& Tr[\bm{T}] = T_{xx} + T_{yy} + T_{zz} \nonumber
+\end{eqnarray}
+\item second invariant :
+\begin{eqnarray}
+T_{II}|^{2D} &=& \frac{1}{2} Tr[{\bm{T}^2}] = \frac{1}{2} \sum_{ij} T_{ij} T_{ji} = \frac{1}{2} (T_{xx}^2 + T_{yy}^2) + T_{xy}^2 \nonumber\\
+T_{II}|^{3D} &=& \frac{1}{2} Tr[{\bm{T}^2}] = \frac{1}{2} \sum_{ij} T_{ij} T_{ji} = \frac{1}{2} (T_{xx}^2 + T_{yy}^2 + T_{yy}^2) + T_{xy}^2 + T_{xz}^2 + T_{yz}^2 \nonumber
+\end{eqnarray}
+\item third invariant : 
+\[
+T_{III} = \frac{1}{3} Tr[{\bm{T}^3}]  = \frac{1}{3}\sum_{ijk} T_{ij} T_{jk} T_{ki} 
+\]
+\end{itemize}
+
+
+The implementation of the plasticity criterions relies essentially 
+on the second invariants of the (deviatoric) stress ${\bm \tau}$ and the (deviatoric) strainrate tensors $\dot{\bm \varepsilon}$:
+
+\begin{eqnarray}
+\tau_{II}|^{2D}            &=& \frac{1}{2} ( \tau_{xx}^2 + \tau_{yy}^2  ) + \tau_{xy}^2   \nonumber\\
+           &=& \frac{1}{4} (\sigma_{xx} - \sigma_{yy})^2 + \sigma_{xy}^2 \nonumber\\
+           &=& \frac{1}{4} (\sigma_{1} - \sigma_{2})^2 \nonumber\\
+\nonumber\\
+\tau_{II}|^{3D}        &=& \frac{1}{2} ( \tau_{xx}^2 + \tau_{yy}^2 + \tau_{zz}^2 ) + \tau_{xy}^2 + \tau_{xz}^2 + \tau_{yz}^2  \nonumber\\
+           &=& \frac{1}{6} \left[ (\sigma_{xx}-\sigma_{yy})^2 + (\sigma_{yy}-\sigma_{zz})^2 + (\sigma_{xx}-\sigma_{zz})^2 \right] 
+               + \sigma_{xy}^2 + \sigma_{xz}^2 + \sigma_{yz}^2 \nonumber \\
+           &=& \frac{1}{6} \left[ (\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 + (\sigma_{1}-\sigma_{3})^2 \right] \nonumber\\
+\nonumber\\
+\varepsilon_{II}|^{2D} 
+           &=& \frac{1}{2} \left[ (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2  \right] + (\dot{\varepsilon}_{xy}^d)^2  \nonumber\\
+           &=& \frac{1}{2} \left[ 
+               \frac{1}{4}(\dot{\varepsilon}_{xx} - \dot{\varepsilon}_{yy})^2 + \frac{1}{4}(\dot{\varepsilon}_{yy} - \dot{\varepsilon}_{xx})^2 
+               \right] + \dot{\varepsilon}_{xy}^2  \nonumber\\
+           &=& \frac{1}{4} (\dot{\varepsilon}_{xx} - \dot{\varepsilon}_{yy})^2  + \dot{\varepsilon}_{xy}^2  \nonumber\\
+\nonumber\\
+\varepsilon_{II}|^{3D} 
+&=& \frac{1}{2} \left[ (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + (\dot{\varepsilon}_{zz}^d)^2   \right] 
++ (\dot{\varepsilon}_{xy}^d)^2  
++ (\dot{\varepsilon}_{xz}^d)^2  
++ (\dot{\varepsilon}_{yz}^d)^2  \nonumber\\
+           &=& \frac{1}{6} \left[ (\dot{\epsilon}_{xx}-\dot{\epsilon}_{yy})^2 + (\dot{\epsilon}_{yy}-\dot{\epsilon}_{zz})^2 + (\dot{\epsilon}_{xx}-\dot{\epsilon}_{zz})^2 \right] 
+               + \dot{\epsilon}_{xy}^2 + \dot{\epsilon}_{xz}^2 + \dot{\epsilon}_{yz}^2 \nonumber \\
+\nonumber
+\end{eqnarray}
+
+Note that these (second) invariants are almost always used under a square root so we define:
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+\underline{\tau}_{II}=\sqrt{\tau_{II}}
+\quad\quad
+\quad\quad
+\dot{\underline{\varepsilon}}_{II}=\sqrt{\dot\varepsilon_{II}}
+\]
+\end{mdframed}
+Note that these quantities have the same dimensions as their tensor counterparts, i.e. Pa for stresses and s$^{-1}$ for strain rates.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Scalar viscoplasticity}
+
+This formulation is quite easy to implement. It is widely used, e.g. \cite{will92,thfb08,spmw16}, and relies on the assumption that 
+a scalar quantity $\eta_p$ (the 'effective plastic viscosity') exists such that the deviatoric stress tensor 
+\begin{equation}
+{\bm \tau}=2\eta_p \dot{\bm\varepsilon} \label{eqscpl1}
+\end{equation}
+is bounded by some yield stress value $Y$.
+From Eq. (\ref{eqscpl1}) it follows that $\underline{\tau}_{II}= 2\eta_p \dot{\underline{\varepsilon}}_{II}=Y$ which yields
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+\eta_p = \frac{Y}{2 \dot{\underline{\varepsilon}}_{II}}
+\]
+\end{mdframed}
+This approach has also been coined the Viscosity Rescaling Method (VRM) \cite{kacha04}. \index{VRM} \index{Viscosity Rescaling Method}
+
+{\color{red} insert here the rederivation 2.1.1 of spmw16}
+
+It is at this stage important to realise that (i) in areas where the strainrate is low, the resulting effective viscosity will be large, and 
+(ii) in areas where the strainrate is high, the resulting effective viscosity will be low. This is not without consequences since 
+(effective) viscosity contrasts up to 8-10 orders of magnitude have been observed/obtained with this formulation and it makes the FE 
+matrix very stiff, leading to (iterative) solver convergence issues.
+In order to contain these viscosity contrasts one usually resorts to viscosity limiters $\eta_{min}$ and $\eta_{max}$ such that 
+\[
+\eta_{min} \leq \eta_p \leq \eta_{max}
+\]
+Caution must be taken when choosing both values as they may influence the final results.
+
+
+\begin{mdframed}[backgroundcolor=green!5]
+\begin{itemize}
+\item[$\triangleright$] {\sl python\_codes/fieldstone\_indentor}
+\end{itemize}
+\end{mdframed}
+
+
+
+
+%-------------------------------------------------
+\subsubsection{about the yield stress value $Y$}
+
+In geodynamics the yield stress value is often given as a simple function. 
+It can be constant (in space and time) and in this case we are dealing with a von Mises plasticity yield criterion. 
+\index{von Mises}. We simply assume $Y_{vM}=C$ where $C$ is a constant cohesion independent of pressure, strainrate,
+deformation history, etc ... \index{cohesion}
+
+Another model is often used: the Drucker-Prager plasticity model. \index{Drucker-Prager}
+A friction angle $\phi$ is then introduced and the yield value $Y$ takes the form
+\[
+Y_{DP}=p \sin\phi + C \cos \phi
+\]
+and therefore depends on the pressure $p$. Because $\phi$ is with the range $[0^\circ,45^\circ]$, $Y$ is
+found to increase with depth (since the lithostatic pressure often dominates the overpressure).
+
+Note that a slightly modified verion of this plasticity model has been used: the total pressure $p$
+is then replaced by the lithostatic pressure $p_{lith}$.
+
+
+
+
+
+
+

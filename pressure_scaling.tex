@@ -1,0 +1,82 @@
+\index{pressure scaling}
+
+As perfectly explained in the step 32 of deal.ii\footnote{https://www.dealii.org/9.0.0/doxygen/deal.II/step\_32.html},
+we often need to scale the $\G$ term since it is many orders of magnitude smaller than $\K$, 
+which introduces large inaccuracies in the solving process to the point that the solution is nonsensical. 
+This scaling coefficient is $\eta/L$. 
+We start from 
+\[
+\left(
+\begin{array}{cc}
+\K & \G \\ \G^T & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+{\cal V} \\ {\cal P}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+ f \\ h
+\end{array}
+\right)
+\]
+and introduce the scaling coefficient as follows (which in fact does not alter the solution at all):
+\[
+\left(
+\begin{array}{cc}
+\K & \frac{\eta}{L}\G \\ \frac{\eta}{L}\G^T & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+{\cal V} \\\frac{L}{\eta} {\cal P}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+ f \\ \frac{\eta}{L} h
+\end{array}
+\right)
+\]
+We then end up with the modified Stokes system:
+\[
+\left(
+\begin{array}{cc}
+\K & \underline{\G} \\ \underline{\G}^T & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+{\cal V} \\ \underline{\cal P}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+ f \\ \underline{h}
+\end{array}
+\right)
+\]
+where 
+\[
+\underline{\G}=\frac{\eta}{L}\G
+\quad\quad
+\quad\quad
+\underline{\cal P}=\frac{L}{\eta} {\cal P}
+\quad\quad
+\quad\quad
+\underline{h}=\frac{\eta}{L}h
+\]
+After the solve phase, we recover the real pressure with ${\cal P}=\frac{\eta}{L}{\cal P}'$.
+
+
+
+
+
