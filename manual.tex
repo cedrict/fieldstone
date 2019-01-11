@@ -1,14 +1,21 @@
 \documentclass[a4paper]{article}
 \usepackage{graphicx}
-\usepackage[cm]{fullpage}
+
+\usepackage[  margin=2.5cm,  includefoot,  footskip=30pt,]{geometry}
+
+%\usepackage[cm]{fullpage}
 \usepackage{bm}
 \usepackage{listings}
-\usepackage{color}
+%\usepackage{color}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{hyperref}
-\usepackage{xcolor}
+%\usepackage{xcolor}
 \usepackage{mdframed}
+\usepackage{makeidx} 
+\usepackage{xargs}
+\usepackage[pdftex,dvipsnames]{xcolor}
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \hypersetup{
     colorlinks,
     citecolor=black,
@@ -34,11 +41,21 @@
 \newcommand{\G}{{\mathbb{G}}}
 \newcommand{\Z}{{\mathbb{Z}}}
 \newcommand{\W}{{\mathbb{W}}}
+\newcommand{\LLL}{{\mathbb{L}}}
 \newcommand{\SSS}{{\mathbb{S}}}
 \newcommand{\fieldstone}{{\bf fieldstone}}
-\usepackage{makeidx} 
 
+\newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\change}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
+\newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!15,bordercolor=Plum,#1]{#2}}
+\newcommandx{\thiswillnotshow}[2][1=]{\todo[disable,#1]{#2}}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \title{The Finite Element Method in Geodynamics}
 
@@ -125,11 +142,15 @@ python3.6 -m pip install --user numpy scipy matplotlib
 \subsection{Elements and basis functions in 2D}
 \input{elements}
 
-\newpage
+\newpage %------------------------------------------------------------------
 %---------------------------------------------------------------------------
-\section{Solving the Stokes equations with the FEM}
-\subsection{The penalty approach}
-\input{penalty}
+\section{Solving the Stokes equations with the FEM} %-----------------------
+\input{incompressible} %----------------------------------------------------
+\subsection{strong and weak forms} \input{strongweak} %---------------------
+\subsection{The penalty approach} \input{penalty} %-------------------------
+\subsection{The mixed FEM} \input{mixed} %----------------------------------
+
+
 
 \newpage
 %---------------------------------------------------------------------------
@@ -170,8 +191,6 @@ python3.6 -m pip install --user numpy scipy matplotlib
 \newpage
 \subsection{The value of the timestep}
 
-\subsection{Tracking materials}
-
 \subsection{Picard and Newton}
 
 
@@ -197,14 +216,18 @@ python3.6 -m pip install --user numpy scipy matplotlib
 \subsection{Pressure scaling} \input{pressure_scaling} %-----------------------
 
 \newpage %---------------------------------------------------------------------
-\subsection{Pressure normalisation} %\input{pressure_normalisation} %----------
+\subsection{Pressure normalisation} \input{pressure_normalisation} %----------
 
 \newpage %---------------------------------------------------------------------
 \subsection{Convergence criterion for nonlinear iterations}
 
 
-%------------------------------------------------------------------------------
+\newpage %---------------------------------------------------------------------
 \subsection{The choice of solvers} \input{solvers} %---------------------------
+
+\newpage %---------------------------------------------------------------------
+\subsection{The consistent boundary flux (CBF)} \input{CBF} %------------------
+
 
 
 \newpage
@@ -302,7 +325,6 @@ periodic boundary conditions
 
 open boundary conditions
 
-consistent boundary flux (CBF)
 
 free surface 
 
@@ -482,7 +504,6 @@ deal with large matrices.
 %\subsection{Uzawa outer scheme}
 %\subsection{PCG outer scheme}
 
-
 \appendix
 
 \newpage
@@ -490,47 +511,18 @@ deal with large matrices.
 %\section{The main codes in computational geodynamics}
 %\input{codes}
 
+\newpage %---------------------------------------------------------------------
+\bibliographystyle{plain} %----------------------------------------------------
+\bibliography{../../writings/biblio_geosciences2} %----------------------------
 
+\printindex %------------------------------------------------------------------
 
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{fieldstone.py}
-%\lstinputlisting{python_codes/fieldstone/fieldstone.py}
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{fieldstone\_stokes\_sphere.py}
-%\lstinputlisting{python_codes/fieldstone_stokes_sphere/fieldstone.py}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{fieldstone\_convection\_box.py}
-%\lstinputlisting{python_codes/fieldstone_convection_box/fieldstone_convection_box.py}
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{fieldstone\_solcx.py}
-%\lstinputlisting{python_codes/fieldstone_solcx/fieldstone.py}
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{fieldstone\_indentor.py}
-%\lstinputlisting{python_codes/fieldstone_indentor/fieldstone.py}
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{fieldstone\_saddlepoint.py}
-%\lstinputlisting{python_codes/fieldstone_saddlepoint/fieldstone.py}
-
-
-%------------------------------------------------------------------------------
-%------------------------------------------------------------------------------
-\newpage
-\bibliographystyle{plain}
-\bibliography{../../writings/biblio_geosciences2}
-
-\printindex
+\newpage %---------------------------------------------------------------------
+\listoftodos[Notes] %----------------------------------------------------------
 
 \end{document}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{fieldstone.py}
+%\lstinputlisting{python_codes/fieldstone/fieldstone.py}

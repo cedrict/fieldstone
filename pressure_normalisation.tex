@@ -1,0 +1,69 @@
+When Dirichlet boundary conditions are imposed everywhere on the boundary, pressure is only present by its gradient in 
+the equations. It is thus determined up to an arbitrary constant. 
+In such a case, one commonly impose the average of the pressure over the whole domain or on a subsect of the boundary 
+to be have a zero average, i.e.
+\[
+\int_\Omega p dV = 0
+\]
+Another possibility is to impose the pressure value at a single node. 
+
+Let us assume that we are using $Q_1 \times P_0$ elements. Then the pressure is constant 
+inside each element. 
+The integral above becomes:
+\[
+\int_\Omega p dV = 
+\sum_e  \int_{\Omega_e} p dV = 
+\sum_e  p_e \int_{\Omega_e} dV = 
+\sum_e  p_e A_e = 
+\]
+where the sum runs over all elements $e$ of area $A_e$.
+This can be rewritten 
+\[
+\LLL^T {\cal P}=0
+\] 
+and it is a constraint on the pressure. As we have seen before \ref{XXX}, we can associate to it a 
+Lagrange multiplier $\lambda$ so that we must solve the modified Stokes system:
+\[
+\left(
+\begin{array}{ccc}
+\K & \G & 0\\ 
+\G^T & 0 & \LLL \\
+0 & \LLL^T & 0
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+{\cal V} \\ {\cal P} \\ \lambda
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+ f \\ h \\ 0
+\end{array}
+\right)
+\]
+When higher order spaces are used for pressure (continuous or discontinuous)
+one must then carry out the above integration numerically by means of (usually)
+a Gauss-Legendre quadrature.
+
+
+
+\begin{mdframed}[backgroundcolor=green!5]
+\begin{itemize}
+\item[$\triangleright$] {\sl python\_codes/fieldstone\_stokes\_sphere\_3D\_saddlepoint/}
+\item[$\triangleright$] {\sl python\_codes/fieldstone\_burstedde/}
+\item[$\triangleright$] {\sl python\_codes/fieldstone\_busse/}
+\item[$\triangleright$] {\sl python\_codes/fieldstone\_RTinstability1/}
+\item[$\triangleright$] {\sl python\_codes/fieldstone\_saddlepoint\_q2q1/}
+\item[$\triangleright$] {\sl python\_codes/fieldstone\_compressible2/}
+\item[$\triangleright$] {\sl python\_codes/fieldstone\_compressible1/}
+\item[$\triangleright$] {\sl python\_codes/fieldstone\_saddlepoint\_q3q2/}
+\end{itemize}
+\end{mdframed}
+
+
+
+
+

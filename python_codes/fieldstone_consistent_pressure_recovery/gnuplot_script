@@ -10,4 +10,5 @@ plot[][]\
 'errors' u (1./sqrt($2)):11 w lp ps 0.5 t 'pressure (q1)',\
 'errors' u (1./sqrt($2)):14 w lp ps 0.5 t 'pressure (q2)',\
 x**2/10. w l lt -1 lw 3 t 'x^2',\
+x**1.5/10. w l lt -1 t 'x^{1.5}',\
 x**1/10. w l lt -1 t 'x^1'
