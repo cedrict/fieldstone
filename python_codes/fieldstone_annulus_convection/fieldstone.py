@@ -97,6 +97,7 @@ hcond=1.
 nstep=2500
 use_BA=True
 use_EBA=False
+every=10
 
 eps=1.e-10
 sqrt3=np.sqrt(3.)
@@ -129,13 +130,12 @@ adiab_heating=np.zeros(nstep,dtype=np.float64)
 vr_stats=np.zeros((nstep,2),dtype=np.float64)
 vt_stats=np.zeros((nstep,2),dtype=np.float64)
 
-psfile=open('power_sprectra.ascii',"w")
+psTfile=open('power_sprectra_T.ascii',"w")
+psVfile=open('power_sprectra_V.ascii',"w")
 
 #################################################################
 # grid point setup
 #################################################################
-
-print("grid point setup")
 
 x=np.empty(nnp,dtype=np.float64)     # x coordinates
 y=np.empty(nnp,dtype=np.float64)     # y coordinates
@@ -209,7 +209,7 @@ for i in range(0, nnp):
        bc_fixV[i*ndof]   = True ; bc_valV[i*ndof]   = 0. 
        bc_fixV[i*ndof+1] = True ; bc_valV[i*ndof+1] = 0.
 
-print("defining V boundary conditions: %.3fs" % (time.time() - start))
+print("defining V b.c.: %.3fs" % (time.time() - start))
 
 #################################################################
 # define temperature boundary conditions
@@ -225,7 +225,7 @@ for i in range(0, nnp):
     if r[i]>(R2-eps):
        bc_fixT[i] = True ; bc_valT[i] = Temp_surf
 
-print("defining T boundary conditions: %.3fs" % (time.time() - start))
+print("defining T b.c.: %.3fs" % (time.time() - start))
 
 #################################################################
 # initial temperature field 
@@ -256,7 +256,7 @@ for i in range(0,nnp):
 
 rho_prev[:]=rho[:]
 
-print("setup: T,rho: %.3f s" % (time.time() - start))
+print("setup: T,rho: %.3fs" % (time.time() - start))
 
 ################################################################################################
 ################################################################################################
@@ -419,7 +419,7 @@ for istep in range(0,nstep):
                         a_mat[m1,m2]+=a_el[ikk,jkk]
                 rhs[m1]+=b_el[ikk]
 
-    print("build FE matrixs & rhs (%.3fs)" % (time.time() - start))
+    print("build FE matrixs & rhs: %.3fs" % (time.time() - start))
 
     #################################################################
     # solve system
@@ -442,7 +442,7 @@ for istep in range(0,nstep):
     u_stats[istep,0]=np.min(u) ; u_stats[istep,1]=np.max(u)
     v_stats[istep,0]=np.min(v) ; v_stats[istep,1]=np.max(v)
 
-    print("reshape solution (%.3fs)" % (time.time() - start))
+    print("reshape solution: %.3fs" % (time.time() - start))
 
     vr= np.cos(theta)*u+np.sin(theta)*v
     vt=-np.sin(theta)*u+np.cos(theta)*v
@@ -498,13 +498,13 @@ for istep in range(0,nstep):
         p[iel]=-penalty*(exx[iel]+eyy[iel])
 
 
-    print("     -> p        (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
-    print("     -> exx      (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
-    print("     -> eyy      (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
-    print("     -> exy      (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
-    print("     -> dTdx     (m,M) %.4e %.4e " %(np.min(dTdx),np.max(dTdx)))
-    print("     -> dTdy     (m,M) %.4e %.4e " %(np.min(dTdy),np.max(dTdy)))
-    print("     -> dTdr     (m,M) %.4e %.4e " %(np.min(dTdr),np.max(dTdr)))
+    print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
+    print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
+    print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
+    print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
+    print("     -> dTdx (m,M) %.4e %.4e " %(np.min(dTdx),np.max(dTdx)))
+    print("     -> dTdy (m,M) %.4e %.4e " %(np.min(dTdy),np.max(dTdy)))
+    print("     -> dTdr (m,M) %.4e %.4e " %(np.min(dTdr),np.max(dTdr)))
     print("     -> dTdtheta (m,M) %.4e %.4e " %(np.min(dTdtheta),np.max(dTdtheta)))
 
     print("compute p & sr | time: %.3f s" % (time.time() - start))
@@ -527,11 +527,11 @@ for istep in range(0,nstep):
 
     dt_stats[istep]=dt
 
-    print('     -> dt1= %.6e dt2= %.6e dt= %.6e' % (dt1,dt2,dt))
+    print('     -> dt1= %.6e ' % (dt1))
+    print('     -> dt2= %.6e ' % (dt2))
+    print('     -> dt = %.6e ' % (dt))
 
-    print("compute timestep: %.3f s" % (time.time() - start))
-
-
+    print("compute timestep: %.3fs" % (time.time() - start))
 
     ######################################################################
     # compute nodal pressure
@@ -557,7 +557,7 @@ for istep in range(0,nstep):
 
     print("     -> q (m,M) %.4e %.4e " %(np.min(q),np.max(q)))
 
-    print("compute q: %.3f s" % (time.time() - start))
+    print("compute nodal press: %.3fs" % (time.time() - start))
 
     ######################################################################
     # build FE matrix for Temperature 
@@ -823,7 +823,7 @@ for istep in range(0,nstep):
     Tavrg[istep]/=area
 
     print("     -> avrg T= %.6e" % Tavrg[istep])
-    print("     -> vrms= %.6e ; Ra= %.6e ; vrmsdiff= %.6e " % (vrms[istep],Ra,vrms[istep]-vrms[0]))
+    print("     -> vrms= %.6e ; Ra= %.4e " % (vrms[istep],Ra))
 
     print("compute vrms, Tavrg, EK, EG, WAG: %.3f s" % (time.time() - start))
 
@@ -832,51 +832,56 @@ for istep in range(0,nstep):
     #####################################################################
     start = time.time()
 
-    PS_T = np.zeros(2,dtype=np.float64) 
-    PS_V = np.zeros(2,dtype=np.float64) 
-    PS_vr = np.zeros(2,dtype=np.float64) 
-    PS_vt = np.zeros(2,dtype=np.float64) 
+    if istep%every==0:
 
-    for kk in range (1,11):
-        PS_T[:]=0.
-        PS_V[:]=0.
-        PS_vr[:]=0.
-        PS_vt[:]=0.
-        iiq=0
-        for iel in range (0,nel):
-            for iq in [-1,1]:
-                for jq in [-1,1]:
-                    rq=iq/sqrt3
-                    sq=jq/sqrt3
-                    N[0:m]=NNV(rq,sq)
-                    xq=0.
-                    yq=0.
-                    uq=0.
-                    vq=0.
-                    Tq=0.
-                    for k in range(0,m):
-                        xq+=N[k]*x[icon[k,iel]]
-                        yq+=N[k]*y[icon[k,iel]]
-                        uq+=N[k]*u[icon[k,iel]]
-                        vq+=N[k]*v[icon[k,iel]]
-                        Tq+=N[k]*T[icon[k,iel]]
-                    thetaq=math.atan2(yq,xq)
-                    vrq= np.cos(thetaq)*uq+np.sin(thetaq)*vq
-                    vtq=-np.sin(thetaq)*uq+np.cos(thetaq)*vq
-                    PS_T[0]+=Tq*JxWq[iiq]*np.cos(kk*thetaq)
-                    PS_T[1]+=Tq*JxWq[iiq]*np.sin(kk*thetaq)
-                    PS_V[0]+=np.sqrt(uq**2+vq**2)*JxWq[iiq]*np.cos(kk*thetaq)
-                    PS_V[1]+=np.sqrt(uq**2+vq**2)*JxWq[iiq]*np.sin(kk*thetaq)
-                    PS_vr[0]+=vrq*JxWq[iiq]*np.cos(kk*thetaq)
-                    PS_vr[1]+=vrq*JxWq[iiq]*np.sin(kk*thetaq)
-                    PS_vt[0]+=vtq*JxWq[iiq]*np.cos(kk*thetaq)
-                    PS_vt[1]+=vtq*JxWq[iiq]*np.sin(kk*thetaq)
-                    iiq+=1
+       PS_T = np.zeros(2,dtype=np.float64) 
+       PS_V = np.zeros(2,dtype=np.float64) 
+       PS_vr = np.zeros(2,dtype=np.float64) 
+       PS_vt = np.zeros(2,dtype=np.float64) 
 
-        psfile.write("%d %d %4e %4e %4e\n " %(kk,istep,PS_T[0],PS_T[1],np.sqrt(PS_T[0]**2+PS_T[1]**2)) )
+       for kk in range (1,21):
+           PS_T[:]=0.
+           PS_V[:]=0.
+           PS_vr[:]=0.
+           PS_vt[:]=0.
+           iiq=0
+           for iel in range (0,nel):
+               for iq in [-1,1]:
+                   for jq in [-1,1]:
+                       rq=iq/sqrt3
+                       sq=jq/sqrt3
+                       N[0:m]=NNV(rq,sq)
+                       xq=0.
+                       yq=0.
+                       uq=0.
+                       vq=0.
+                       Tq=0.
+                       for k in range(0,m):
+                           xq+=N[k]*x[icon[k,iel]]
+                           yq+=N[k]*y[icon[k,iel]]
+                           uq+=N[k]*u[icon[k,iel]]
+                           vq+=N[k]*v[icon[k,iel]]
+                           Tq+=N[k]*T[icon[k,iel]]
+                       thetaq=math.atan2(yq,xq)
+                       #vrq= np.cos(thetaq)*uq+np.sin(thetaq)*vq
+                       #vtq=-np.sin(thetaq)*uq+np.cos(thetaq)*vq
+                       PS_T[0]+=Tq*JxWq[iiq]*np.cos(kk*thetaq)
+                       PS_T[1]+=Tq*JxWq[iiq]*np.sin(kk*thetaq)
+                       PS_V[0]+=np.sqrt(uq**2+vq**2)*JxWq[iiq]*np.cos(kk*thetaq)
+                       PS_V[1]+=np.sqrt(uq**2+vq**2)*JxWq[iiq]*np.sin(kk*thetaq)
+                       #PS_vr[0]+=vrq*JxWq[iiq]*np.cos(kk*thetaq)
+                       #PS_vr[1]+=vrq*JxWq[iiq]*np.sin(kk*thetaq)
+                       #PS_vt[0]+=vtq*JxWq[iiq]*np.cos(kk*thetaq)
+                       #PS_vt[1]+=vtq*JxWq[iiq]*np.sin(kk*thetaq)
+                       iiq+=1
 
-    psfile.write(" ")   
-    psfile.flush()
+           psTfile.write("%d %d %4e %4e %4e\n " %(kk,istep,PS_T[0],PS_T[1],np.sqrt(PS_T[0]**2+PS_T[1]**2)) )
+           psVfile.write("%d %d %4e %4e %4e\n " %(kk,istep,PS_V[0],PS_V[1],np.sqrt(PS_V[0]**2+PS_V[1]**2)) )
+
+       psTfile.write(" \n")   
+       psTfile.flush()
+       psVfile.write(" \n")   
+       psVfile.flush()
 
     print("compute power spectrum: %.3f s" % (time.time() - start))
 
@@ -885,7 +890,7 @@ for istep in range(0,nstep):
     #####################################################################
     start = time.time()
 
-    if visu==1 or istep%5==0:
+    if visu==1 and istep%every==0:
        filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")

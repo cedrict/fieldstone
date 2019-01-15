@@ -5,7 +5,7 @@
   \item $Q_1 \times P_0$, \hyperpage{53}, \hyperpage{60}, 
 		\hyperpage{62}, \hyperpage{68}, \hyperpage{75}, 
 		\hyperpage{79}, \hyperpage{95}, \hyperpage{102}, 
-		\hyperpage{119}
+		\hyperpage{119}, \hyperpage{121}
   \item $Q_1$, \hyperpage{13}, \hyperpage{17}
   \item $Q_2 \times Q_1$, \hyperpage{12}, \hyperpage{81}, 
 		\hyperpage{86}
@@ -67,11 +67,11 @@
   \item incompressible flow, \hyperpage{62}, \hyperpage{68}, 
 		\hyperpage{75}, \hyperpage{79}, \hyperpage{86}, 
 		\hyperpage{89}, \hyperpage{92}, \hyperpage{95}, 
-		\hyperpage{119}
+		\hyperpage{119}, \hyperpage{121}
   \item isothermal, \hyperpage{53}, \hyperpage{60}, \hyperpage{62}, 
 		\hyperpage{68}, \hyperpage{75}, \hyperpage{79}, 
 		\hyperpage{86}, \hyperpage{89}, \hyperpage{92}, 
-		\hyperpage{95}, \hyperpage{119}
+		\hyperpage{95}, \hyperpage{119}, \hyperpage{121}
   \item isoviscous, \hyperpage{53}, \hyperpage{60}, \hyperpage{79}, 
 		\hyperpage{86}, \hyperpage{89}, \hyperpage{95}, 
 		\hyperpage{102}
@@ -86,7 +86,7 @@
   \item midpoint rule, \hyperpage{9}
   \item mixed formulation, \hyperpage{79}, \hyperpage{86}, 
 		\hyperpage{89}, \hyperpage{92}, \hyperpage{95}, 
-		\hyperpage{102}, \hyperpage{119}
+		\hyperpage{102}, \hyperpage{119}, \hyperpage{121}
   \item MMS, \hyperpage{28}
 
   \indexspace
@@ -96,6 +96,7 @@
   \item non-isoviscous, \hyperpage{62}, \hyperpage{68}, \hyperpage{75}, 
 		\hyperpage{92}
   \item nonconforming $Q_1 \times P_0$, \hyperpage{92}
+  \item nonlinear, \hyperpage{121}
   \item nonlinear rheology, \hyperpage{68}
   \item numerical benchmark, \hyperpage{119}
 
