@@ -1,0 +1,17 @@
+set term pdf enhanced
+
+set output 'RaDi.pdf'
+set xlabel 'Ra'
+set ylabel 'Di'
+plot[9500:10500][0.24:0.26] 'RaDi' pt 5 ps .25 notitle
+
+set output 'DTL.pdf'
+set xlabel 'DT'
+set ylabel 'L'
+plot[500:4500][1000000:] 'RaDi' u 3:4 pt 5 ps .25 notitle
+
+
+set output 'rhoeta.pdf'
+set xlabel 'rho'
+set ylabel 'eta'
+plot[2800:4200][1.e23:] 'RaDi' u 5:6 pt 5 ps .25 notitle

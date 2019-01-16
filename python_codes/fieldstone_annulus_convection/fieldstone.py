@@ -130,8 +130,8 @@ adiab_heating=np.zeros(nstep,dtype=np.float64)
 vr_stats=np.zeros((nstep,2),dtype=np.float64)
 vt_stats=np.zeros((nstep,2),dtype=np.float64)
 
-psTfile=open('power_sprectra_T.ascii',"w")
-psVfile=open('power_sprectra_V.ascii',"w")
+psTfile=open('power_spectra_T.ascii',"w")
+psVfile=open('power_spectra_V.ascii',"w")
 
 #################################################################
 # grid point setup
@@ -1063,7 +1063,8 @@ for istep in range(0,nstep):
 # END OF TIMESTEPPING
 ################################################################################################
        
-psfile.close()
+psVfile.close()
+psTfile.close()
 
 print("-----------------------------")
 print("------------the end----------")

@@ -67,7 +67,7 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 151
+   nelx = 175
    nely = int(nelx*Ly/Lx)
    visu = 1
 

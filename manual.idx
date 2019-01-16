@@ -33,27 +33,28 @@
 \indexentry{weak form|hyperpage}{23}
 \indexentry{MMS|hyperpage}{28}
 \indexentry{method of manufactured solutions|hyperpage}{28}
-\indexentry{CSR|hyperpage}{32}
-\indexentry{Compressed Sparse Row|hyperpage}{32}
-\indexentry{CSC|hyperpage}{32}
-\indexentry{Compressed Sparse Column|hyperpage}{32}
-\indexentry{convex polygon|hyperpage}{35}
-\indexentry{structured grid|hyperpage}{35}
-\indexentry{unstructured grid|hyperpage}{35}
-\indexentry{connectivity array|hyperpage}{36}
-\indexentry{tensor invariant|hyperpage}{38}
-\indexentry{VRM|hyperpage}{39}
-\indexentry{Viscosity Rescaling Method|hyperpage}{39}
-\indexentry{von Mises|hyperpage}{39}
-\indexentry{cohesion|hyperpage}{39}
-\indexentry{Drucker-Prager|hyperpage}{39}
-\indexentry{pressure smoothing|hyperpage}{40}
-\indexentry{checkerboard|hyperpage}{40}
-\indexentry{pressure scaling|hyperpage}{42}
-\indexentry{Schur complement|hyperpage}{45}
-\indexentry{SPD|hyperpage}{45}
-\indexentry{CG|hyperpage}{45}
-\indexentry{conjugate gradient|hyperpage}{45}
+\indexentry{CSR|hyperpage}{31}
+\indexentry{Compressed Sparse Row|hyperpage}{31}
+\indexentry{CSC|hyperpage}{31}
+\indexentry{Compressed Sparse Column|hyperpage}{31}
+\indexentry{convex polygon|hyperpage}{34}
+\indexentry{structured grid|hyperpage}{34}
+\indexentry{unstructured grid|hyperpage}{34}
+\indexentry{connectivity array|hyperpage}{35}
+\indexentry{tensor invariant|hyperpage}{37}
+\indexentry{VRM|hyperpage}{38}
+\indexentry{Viscosity Rescaling Method|hyperpage}{38}
+\indexentry{von Mises|hyperpage}{38}
+\indexentry{cohesion|hyperpage}{38}
+\indexentry{Drucker-Prager|hyperpage}{38}
+\indexentry{pressure smoothing|hyperpage}{39}
+\indexentry{checkerboard|hyperpage}{39}
+\indexentry{pressure scaling|hyperpage}{41}
+\indexentry{Schur complement|hyperpage}{44}
+\indexentry{SPD|hyperpage}{44}
+\indexentry{CG|hyperpage}{44}
+\indexentry{conjugate gradient|hyperpage}{44}
+\indexentry{hyperbolic PDE|hyperpage}{48}
 \indexentry{static condensation|hyperpage}{49}
 \indexentry{$Q_1 \times P_0$|hyperpage}{53}
 \indexentry{penalty formulation|hyperpage}{53}
@@ -130,13 +131,13 @@
 \indexentry{isoviscous|hyperpage}{102}
 \indexentry{analytical solution|hyperpage}{102}
 \indexentry{pressure smoothing|hyperpage}{102}
-\indexentry{$Q_1 \times P_0$|hyperpage}{119}
-\indexentry{incompressible flow|hyperpage}{119}
-\indexentry{mixed formulation|hyperpage}{119}
-\indexentry{isothermal|hyperpage}{119}
-\indexentry{numerical benchmark|hyperpage}{119}
-\indexentry{$Q_1 \times P_0$|hyperpage}{121}
-\indexentry{incompressible flow|hyperpage}{121}
-\indexentry{mixed formulation|hyperpage}{121}
-\indexentry{isothermal|hyperpage}{121}
-\indexentry{nonlinear|hyperpage}{121}
+\indexentry{$Q_1 \times P_0$|hyperpage}{114}
+\indexentry{incompressible flow|hyperpage}{114}
+\indexentry{mixed formulation|hyperpage}{114}
+\indexentry{isothermal|hyperpage}{114}
+\indexentry{numerical benchmark|hyperpage}{114}
+\indexentry{$Q_1 \times P_0$|hyperpage}{116}
+\indexentry{incompressible flow|hyperpage}{116}
+\indexentry{mixed formulation|hyperpage}{116}
+\indexentry{isothermal|hyperpage}{116}
+\indexentry{nonlinear|hyperpage}{116}

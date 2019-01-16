@@ -5,7 +5,7 @@
   \item $Q_1 \times P_0$, \hyperpage{53}, \hyperpage{60}, 
 		\hyperpage{62}, \hyperpage{68}, \hyperpage{75}, 
 		\hyperpage{79}, \hyperpage{95}, \hyperpage{102}, 
-		\hyperpage{119}, \hyperpage{121}
+		\hyperpage{114}, \hyperpage{116}
   \item $Q_1$, \hyperpage{13}, \hyperpage{17}
   \item $Q_2 \times Q_1$, \hyperpage{12}, \hyperpage{81}, 
 		\hyperpage{86}
@@ -33,24 +33,24 @@
 
   \indexspace
 
-  \item CG, \hyperpage{45}
-  \item checkerboard, \hyperpage{40}
-  \item cohesion, \hyperpage{39}
-  \item Compressed Sparse Column, \hyperpage{32}
-  \item Compressed Sparse Row, \hyperpage{32}
+  \item CG, \hyperpage{44}
+  \item checkerboard, \hyperpage{39}
+  \item cohesion, \hyperpage{38}
+  \item Compressed Sparse Column, \hyperpage{31}
+  \item Compressed Sparse Row, \hyperpage{31}
   \item compressibility, \hyperpage{97}
   \item compressible flow, \hyperpage{102}
   \item conforming element, \hyperpage{12}
-  \item conjugate gradient, \hyperpage{45}
-  \item connectivity array, \hyperpage{36}
-  \item convex polygon, \hyperpage{35}
-  \item CSC, \hyperpage{32}
-  \item CSR, \hyperpage{32}
+  \item conjugate gradient, \hyperpage{44}
+  \item connectivity array, \hyperpage{35}
+  \item convex polygon, \hyperpage{34}
+  \item CSC, \hyperpage{31}
+  \item CSR, \hyperpage{31}
 
   \indexspace
 
   \item divergence free, \hyperpage{22}
-  \item Drucker-Prager, \hyperpage{39}
+  \item Drucker-Prager, \hyperpage{38}
   \item dynamic viscosity, \hyperpage{7}
 
   \indexspace
@@ -61,17 +61,18 @@
   \indexspace
 
   \item harmonic mean, \hyperpage{76}
+  \item hyperbolic PDE, \hyperpage{48}
 
   \indexspace
 
   \item incompressible flow, \hyperpage{62}, \hyperpage{68}, 
 		\hyperpage{75}, \hyperpage{79}, \hyperpage{86}, 
 		\hyperpage{89}, \hyperpage{92}, \hyperpage{95}, 
-		\hyperpage{119}, \hyperpage{121}
+		\hyperpage{114}, \hyperpage{116}
   \item isothermal, \hyperpage{53}, \hyperpage{60}, \hyperpage{62}, 
 		\hyperpage{68}, \hyperpage{75}, \hyperpage{79}, 
 		\hyperpage{86}, \hyperpage{89}, \hyperpage{92}, 
-		\hyperpage{95}, \hyperpage{119}, \hyperpage{121}
+		\hyperpage{95}, \hyperpage{114}, \hyperpage{116}
   \item isoviscous, \hyperpage{53}, \hyperpage{60}, \hyperpage{79}, 
 		\hyperpage{86}, \hyperpage{89}, \hyperpage{95}, 
 		\hyperpage{102}
@@ -86,7 +87,7 @@
   \item midpoint rule, \hyperpage{9}
   \item mixed formulation, \hyperpage{79}, \hyperpage{86}, 
 		\hyperpage{89}, \hyperpage{92}, \hyperpage{95}, 
-		\hyperpage{102}, \hyperpage{119}, \hyperpage{121}
+		\hyperpage{102}, \hyperpage{114}, \hyperpage{116}
   \item MMS, \hyperpage{28}
 
   \indexspace
@@ -96,9 +97,9 @@
   \item non-isoviscous, \hyperpage{62}, \hyperpage{68}, \hyperpage{75}, 
 		\hyperpage{92}
   \item nonconforming $Q_1 \times P_0$, \hyperpage{92}
-  \item nonlinear, \hyperpage{121}
+  \item nonlinear, \hyperpage{116}
   \item nonlinear rheology, \hyperpage{68}
-  \item numerical benchmark, \hyperpage{119}
+  \item numerical benchmark, \hyperpage{114}
 
   \indexspace
 
@@ -108,8 +109,8 @@
 		\hyperpage{75}
   \item piecewise, \hyperpage{12}
   \item pressure normalisation, \hyperpage{82}
-  \item pressure scaling, \hyperpage{42}
-  \item pressure smoothing, \hyperpage{40}, \hyperpage{79}, 
+  \item pressure scaling, \hyperpage{41}
+  \item pressure smoothing, \hyperpage{39}, \hyperpage{79}, 
 		\hyperpage{92}, \hyperpage{95}, \hyperpage{102}
 
   \indexspace
@@ -122,28 +123,28 @@
 
   \indexspace
 
-  \item Schur complement, \hyperpage{45}
+  \item Schur complement, \hyperpage{44}
   \item second viscosity, \hyperpage{7}
-  \item SPD, \hyperpage{45}
+  \item SPD, \hyperpage{44}
   \item static condensation, \hyperpage{49}
   \item strong form, \hyperpage{22}
-  \item structured grid, \hyperpage{35}
+  \item structured grid, \hyperpage{34}
 
   \indexspace
 
-  \item tensor invariant, \hyperpage{38}
+  \item tensor invariant, \hyperpage{37}
   \item thermal expansion, \hyperpage{97}
   \item trapezoidal rule, \hyperpage{9}
 
   \indexspace
 
-  \item unstructured grid, \hyperpage{35}
+  \item unstructured grid, \hyperpage{34}
 
   \indexspace
 
-  \item Viscosity Rescaling Method, \hyperpage{39}
-  \item von Mises, \hyperpage{39}
-  \item VRM, \hyperpage{39}
+  \item Viscosity Rescaling Method, \hyperpage{38}
+  \item von Mises, \hyperpage{38}
+  \item VRM, \hyperpage{38}
 
   \indexspace
 

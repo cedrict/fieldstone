@@ -1,5 +1,4 @@
 
-
 It has been widely documented that the use of the $Q_1 \times P_0$ element is not without problems. Aside from the 
 consequences it has on the FE matrix properties, we will here focus on another unavoidable side effect: the spurious pressure 
 checkerboard modes. \index{pressure smoothing} \index{checkerboard}
@@ -58,6 +57,8 @@ for iel in range(0,nel):
     count[icon[3,iel]]+=1
 q=q/count
 \end{lstlisting}
+
+Pressure smoothing is further discussed in \cite{hulb79}.
 
 \improvement[inline]{produce figure to explain this}
 
