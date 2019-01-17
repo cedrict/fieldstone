@@ -81,7 +81,7 @@ The Conjugate Gradient algorithm is as follows:
 \frame{
 \includegraphics[width=6cm]{images/solvers/cgwiki}
 }\\
-Algorithm obtained from {\tt https://en.wikipedia.org/wiki/Conjugate\_gradient\_method}
+Algorithm obtained from \url{https://en.wikipedia.org/wiki/Conjugate\_gradient\_method}
 \end{center}
 
 Let us look at this algorithm up close. The parts which may prove to be somewhat tricky 
@@ -149,7 +149,9 @@ and we can insert this minor extra calculation inside the algorithm and get the 
 nearly for free. The final CG algorithm is then 
 
 \begin{mdframed}[backgroundcolor=blue!5]
+\underline{\bf solver\_cg}:
 \begin{itemize}
+\item compute ${\cal V}_0=\K^{-1}(f-\G{\cal P}_0)$
 \item $r_0 = \G^T {\cal V}_0 - h$ 
 \item if $r_0$ is sufficiently small, then return $({\cal V}_0,{\cal P}_0)$ as the result
 \item $p_0=r_0$
@@ -162,7 +164,7 @@ nearly for free. The final CG algorithm is then
 \item ${\cal P}_{k+1} = {\cal P}_k+\alpha_k p_k$
 \item $ {\cal V}_{k+1} = {\cal V}_k - \alpha_k d_k$
 \item $r_{k+1} = r_k - \alpha_k \G^T d_k $
-\item if $r_{k+1}$ is sufficiently small, then exit loop
+\item if $r_{k+1}$ is sufficiently small ($|r_{k+1}|_2/|r_0|_2 <tol$), then exit loop
 \item $\beta_k=(r_{k+1}^T r_{k+1})/(r_k^T r_k)$
 \item $p_{k+1} =r_{k+1}+ \beta_k p_k$
 \item $k=k+1$
@@ -180,8 +182,11 @@ with matrix $\K$ per iteration but says nothing about the method employed to do 
 One thing we know improves the convergence of any iterative solver is the use of a 
 preconditioner matrix.  
 
-{\color{red} PCG}
 
+
+
+
+\improvement[inline]{repeat for PCG}
 
 
 
