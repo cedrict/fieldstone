@@ -76,7 +76,6 @@ Since $\SSS$ is SPD, the Conjugate Gradient (CG) method is very appropriate to s
 Indeed, looking at the definition of Wikipedia: {\it In mathematics, the conjugate gradient method is an algorithm for the numerical solution of particular systems of linear equations, namely those whose matrix is symmetric and positive-definite. The conjugate gradient method is often implemented as an iterative algorithm, applicable to sparse systems that are too large to be handled by a direct implementation or other direct methods such as the Cholesky decomposition. Large sparse systems often arise when numerically solving partial differential equations or optimization problems.}
 
 The Conjugate Gradient algorithm is as follows:
-
 \begin{center}
 \frame{
 \includegraphics[width=6cm]{images/solvers/cgwiki}
@@ -113,7 +112,7 @@ Then we need to look at the term $\SSS p_k$:
 \[
 \SSS p_k = \G^T \K^{-1} \G p_k = \G^T \K^{-1} \tilde{p}_k = \G^T d_k
 \]
-We can then rewrite the CG algorithm as follows:
+We can then rewrite the CG algorithm as follows \cite{zhym07}:
 \begin{itemize}
 \item $r_0 = \G^T {\cal V}_0 - h$ 
 \item if $r_0$ is sufficiently small, then return $({\cal V}_0,{\cal P}_0)$ as the result
@@ -179,14 +178,54 @@ $\SSS$ is never built. Also, we know that large viscosity contrasts in the domai
 will influence this too. Finally, we notice that this algorithm requires one solve
 with matrix $\K$ per iteration but says nothing about the method employed to do so.
 
+\index{preconditioned conjugate gradient}  
 One thing we know improves the convergence of any iterative solver is the use of a 
-preconditioner matrix.  
+preconditioner matrix and therefore use the Preconditioned Conjugate Gradient method:
+\begin{center}
+\frame{
+\includegraphics[width=6.5cm]{images/solvers/pcgwiki}
+}\\
+Algorithm obtained from \url{https://en.wikipedia.org/wiki/Conjugate\_gradient\_method}
+\end{center}
+
+In the algorithm above the preconditioner matrix $M$ 
+has to be symmetric positive-definite and fixed, i.e., cannot change from iteration to iteration. 
+
+We see that this algorithm introduces an additional vector $z$ and a solve with the matrix $M$
+at each iteration, which means that $M$ must be such that solving $M x= f$ where $f$ is a given 
+rhs vector must be cheap. Ultimately, the PCG algorithm applied to the Schur complement 
+equation takes the form:
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\underline{\bf solver\_pcg}:
+\begin{itemize}
+\item compute ${\cal V}_0=\K^{-1}(f-\G{\cal P}_0)$
+\item $r_0 = \G^T {\cal V}_0 - h$
+\item if $r_0$ is sufficiently small, then return $({\cal V}_0,{\cal P}_0)$ as the result
+\item $z_0= M^{-1} r_0$ 
+\item $p_0=z_0$
+\item $k=0$
+\item repeat
+\begin{itemize}
+\item compute $\tilde{p}_k = \G p_k$
+\item solve $\K d_k = \tilde{p}_k$
+\item compute $\alpha_k=(r_k^T z_k)/(\tilde{p}_k^T d_k)$
+\item ${\cal P}_{k+1} = {\cal P}_k+\alpha_k p_k$
+\item $ {\cal V}_{k+1} = {\cal V}_k - \alpha_k d_k$
+\item $r_{k+1} = r_k - \alpha_k \G^T d_k $
+\item if $r_{k+1}$ is sufficiently small ($|r_{k+1}|_2/|r_0|_2 <tol$), then exit loop
+\item $z_{k+1}=M^{-1}r_{k+1}$
+\item $\beta_k=(z_{k+1}^T r_{k+1})/(z_k^T r_k)$
+\item $p_{k+1} =z_{k+1}+ \beta_k p_k$
+\item $k=k+1$
+\end{itemize}
+\item return ${\cal P}_{k+1}$ as result
+\end{itemize}
+\end{mdframed}
+
+\improvement[inline]{how to compute $M$ for the Schur complement ?}
 
 
-
-
-
-\improvement[inline]{repeat for PCG}
 
 
 
