@@ -1,0 +1,84 @@
+Before you proceed further, please read :
+
+\url{http://en.wikipedia.org/wiki/Gravity_anomaly}
+
+\url{http://en.wikipedia.org/wiki/Gravimeter}
+
+Let us consider a vertical domain $Lx \times Ly$ where $L_x=1000km$
+and $Ly=500km$. This domain is discretised by means of a grid which counts $nnp= nnx \times nny$ nodes.
+This grid then counts $nel=nelx \times nely = (nnx-1)\times(nny-1)$ cells.
+The horizontal spacing between nodes is $hx$ and the vertical spacing is $hy$.
+
+\begin{center}
+\includegraphics[width=7cm]{/home/cedrict/Desktop/FIELDSTONE/fieldstone/python_codes/gravity_01/images/drawing}
+\end{center}
+
+Assume that this domain is filled with a rock type which 
+mass density is given by $\rho_{medium}=3000kg/m^3$, 
+and that there is a circular inclusion of another rock type  ($\rho_{sphere}=3200kg/m^3$) 
+at location ($xsphere$, $ysphere$) of radius $rsphere$.
+The density in the system is then given by 
+\[
+\rho(x,y) = 
+\left\{
+\begin{array}{l}
+\rho_{sphere} \; {\rm  inside \; the\; circle} \\
+\rho_{medium} \; {\rm outside \; the\; circle}
+\end{array}
+\right.
+\]
+
+Let us now assume that we place $nsurf$ gravimeters at the surface of the model. These are placed 
+equidistantly between coordinates $x=0$ and coordinates $x=Lx$. We will use the arrays $xsurf$ and $ysurf$
+to store the coordinates of these locations. 
+The spacing between the gravimeters is $\delta_x=Lx/(nsurf-1)$.
+
+At any given point $(x_i,y_i)$ in a 2D space, one can show that 
+the gravity anomaly due to the presence of a 
+circular inclusion can be computed as follows:
+\begin{equation}
+g(x_i,y_i)={2 \pi {\cal G} (\rho_{sphere}-\rho_0) R^2}\frac{y_i-y_{sphere}}{(x_i-x_{sphere})^2+(y_i-y_{sphere})^2}
+\end{equation}
+where $r_{sphere}$ is the radius of the inclusion, $(x_{sphere},y_{sphere})$ 
+are the coordinates of the center of the inclusion, and
+$\rho_0$ is a reference density.
+
+However, the general formula to compute the gravity anomaly at a given point $(x_i,y_i)$ in space 
+due to a density anomaly of any shape is given by:
+\begin{equation}
+g(x_i,y_i) = 2 {\cal G} \int\int_\Omega \frac{ \Delta \rho(x,y)  (y-y_i)}{(x-x_i)^2 + (y-y_i)^2  } dxdy
+\end{equation}
+where $\Omega$ is the area of the domain on which the integration is to be carried out. 
+Furthermore the density anomaly can be written : $\Delta \rho (x,y)= \rho(x,y)-\rho_0$.
+We can then carry out the integration for each cell and sum their contributions:
+\begin{equation}
+g(x_i,y_i) = 2 {\cal G} \sum_{ic=1}^{nel} \int\int_{\Omega_e} \frac{ (\rho(x,y) -\rho_0)  (y-y_i)}{(x-x_i)^2 + (y-y_i)^2  } dxdy
+\end{equation}
+where $\Omega_e$ is now the area of a single cell.
+Finally, one can assume the density to be constant within each cell so that $\rho(x,y)\rightarrow \rho(ic)$
+and $\int\int_{\Omega_e} dx dy \rightarrow hx \times hy$ and then 
+\begin{equation}
+g(x_i,y_i) = 2 {\cal G} \sum_{ic=1}^{nel} \frac{ (\rho(ic) -\rho_0)  (y(ic)-y_i)}{(x(ic)-x_i)^2 + (y(ic)-y_i)^2  } s_xs_y
+\end{equation}
+
+We will then use the array $gsurf$ to store the value of the gravity anomaly 
+measured at each gravimeter at the surface. 
+
+\begin{center}
+\includegraphics[width=12cm]{/home/cedrict/Desktop/FIELDSTONE/fieldstone/python_codes/gravity_01/solution.pdf}
+\end{center}
+
+
+\paragraph{To go further}
+
+\begin{itemize}
+\item explore the effect of the size of the inclusion on the gravity profile.
+\item explore the effect of the $\rho_0$ value.
+\item explore the effect of the grid resolution.
+\item measure the time that is required to compute the gravity. 
+How does this time vary with nsurf ? how does it vary when the grid resolution is doubled ?
+\item Assume now that $\rho_2<\rho_1$. What does the gravity profile look like ?
+\item what happens when the gravimeters are no more at the surface of the Earth but in a satellite ?
+\item if you feel brave, redo the whole exercise in 3D...
+\end{itemize}
+
