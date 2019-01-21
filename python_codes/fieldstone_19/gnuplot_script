@@ -1,0 +1,11 @@
+set term pdf enhanced
+set key outside
+set output 'errors.pdf'
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+plot[][]\
+'errors' u (1./sqrt($3)):6 w lp t 'velocity',\
+'errors' u (1./sqrt($3)):9 w lp t 'pressure',\
+x**4/500. w l t 'x^4',\
+x**3/1000. w l t 'x^3'

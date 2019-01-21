@@ -1,0 +1,10 @@
+set term pdf enhanced
+set grid
+set xlabel 'x'
+set ylabel 'pressure'
+
+set output 'p.pdf'
+plot[][]\
+'ldc0/p_top.ascii' w l t 'ldc0',\
+'ldc1/p_top.ascii' w l t 'ldc1',\
+'ldc2/p_top.ascii' w l t 'ldc2',\

@@ -1,7 +1,0 @@
-set term pdf enhanced
-set key outside
-set output 'vrms.pdf'
-set log xy
-set xlabel 'h_x'
-set ylabel 'v_{rms}'
-plot[][] 'vrms' u 3:5 w lp notitle

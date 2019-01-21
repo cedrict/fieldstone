@@ -279,9 +279,6 @@ non-linear rheologies (two layer brick spmw16, tosn15)
 Picard vs Newton
 
 \item
-markers
-
-\item
 periodic boundary conditions
 
 \item
@@ -335,6 +332,16 @@ Fehlberg RK advection
 
 \end{itemize}
 
+%\newpage
+%\subsection{With periodic boundary conditions}
+%\subsection{Different Cmat}
+%\subsection{Penalty Uzawa formulation}
+%\subsection{Powell-Hestenes iterations a la MILAMIN}
+%\subsection{With temperature and phase change}
+%\subsection{Conformal refinement}
+%\subsection{Stress b.c.}
+%\subsection{open boundary conditions}
+%\subsection{melt generation}
 
 \noindent Problems to solve:
 
@@ -406,27 +413,27 @@ deal with large matrices.
 17 & $Q_2 \times Q_1$ & saddle point & mixed   & Burstedde benchmark         & 3 &       &        & &\\ 
    &                  & + full matrix& &&&&&&\\    
 \hline
-17 & $Q_2 \times Q_1$ & saddle point & mixed   & analytical benchmark        & 2 &       &        & &\\ 
+18 & $Q_2 \times Q_1$ & saddle point & mixed   & analytical benchmark        & 2 &       &        & &\\ 
    &                  & + full matrix& &&&&&&\\    
 \hline
-18 & $Q_3 \times Q_2$ & saddle point & mixed   & analytical benchmark        & 2 &       &        & &\\ 
+19 & $Q_3 \times Q_2$ & saddle point & mixed   & analytical benchmark        & 2 &       &        & &\\ 
    &                  & + full matrix& &&&&&&\\    
 \hline
-19 & $Q_1 \times P_0$ &              & penalty & Busse convection            & 3 & $\dag$& $\dag$ & &\\ 
+20 & $Q_1 \times P_0$ &              & penalty & Busse convection            & 3 & $\dag$& $\dag$ & &\\ 
 \hline
-20 & Rannacher-Turek  &              & penalty & analytical benchmark        & 2 &       &        & &\\ 
+21 & Rannacher-Turek  &              & penalty & analytical benchmark        & 2 &       &        & &\\ 
 \hline
-21 & $Q_1 \times Q_1$-stab & saddle point  & mixed & analytical benchmark    & 2 &       &        & &\\ 
+22 & $Q_1 \times Q_1$-stab & saddle point  & mixed & analytical benchmark    & 2 &       &        & &\\ 
    &                  & + full matrix& &&&&&&\\    
 \hline
-22 & $Q_1 \times P_0$ &              & mixed  & analytical benchmark         & 2 &       &        & & $\dag$ \\ 
+23 & $Q_1 \times P_0$ &              & mixed  & analytical benchmark         & 2 &       &        & & $\dag$ \\ 
 \hline
-23 & $Q_1 \times P_0$ &              & mixed  & convection box               & 2 & $\dag$& $\dag$ & & $\dag$ \\
+24 & $Q_1 \times P_0$ &              & mixed  & convection box               & 2 & $\dag$& $\dag$ & & $\dag$ \\
 \hline
-24 & $Q_1 \times P_0$ & saddle point & mixed  & Rayleigh-Taylor instability  & 2 &       &        & & \\ 
+25 & $Q_1 \times P_0$ & saddle point & mixed  & Rayleigh-Taylor instability  & 2 &       &        & & \\ 
    &                  & + full matrix& &&&&&&\\    
 \hline
-25 & $Q_1 \times P_0$ & saddle point & mixed  & Slab detachment              & 2 &       &        & $\dag$ & \\ 
+26 & $Q_1 \times P_0$ & saddle point & mixed  & Slab detachment              & 2 &       &        & $\dag$ & \\ 
    &                  & + full matrix& &&&&&&\\
 \hline
 \hline
@@ -435,160 +442,140 @@ deal with large matrices.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: simple analytical solution \label{f1}}
-\input{python_codes/fieldstone/text}
+\section{{\tt fieldstone\_01}: simple analytical solution \label{f01}}
+\input{python_codes/fieldstone_01/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: Stokes sphere }
-\input{python_codes/fieldstone_stokes_sphere/text}
+\section{{\tt fieldstone\_02}: Stokes sphere \label{f02}}
+\input{python_codes/fieldstone_02/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: Convection in a 2D box}
-\input{python_codes/fieldstone_convection_box/text}
+\section{{\tt fieldstone\_03}: Convection in a 2D box \label{f03}}
+\input{python_codes/fieldstone_03/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: The lid driven cavity}
-\input{python_codes/fieldstone_lid_driven_cavity/text}
-
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: solcx benchmark}
-\input{python_codes/fieldstone_solcx/text}
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: solkz benchmark}
-\input{python_codes/fieldstone_solkz/text}
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: solvi benchmark}
-\input{python_codes/fieldstone_solvi/text}
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: the indentor benchmark}
-\input{python_codes/fieldstone_indentor/text}
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: the annulus benchmark}
-\input{python_codes/fieldstone_annulus/text}
+\section{{\tt fieldstone\_04}: The lid driven cavity \label{f04}}
+\input{python_codes/fieldstone_04/text}
 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: stokes sphere (3D) - penalty\label{f5}}
-\input{python_codes/fieldstone_stokes_sphere_3D/text}
+\section{{\tt fieldstone\_05}: SolCx benchmark \label{f05}}
+\input{python_codes/fieldstone_05/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: stokes sphere (3D) - mixed formulation\label{f5}}
-\input{python_codes/fieldstone_stokes_sphere_3D_saddlepoint/text}
+\section{{\tt fieldstone\_06}: SolKz benchmark \label{f06}}
+\input{python_codes/fieldstone_06/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: consistent pressure recovery }
-\input{python_codes/fieldstone_consistent_pressure_recovery/text}
+\section{{\tt fieldstone\_07}: SolVi benchmark \label{f07}}
+\input{python_codes/fieldstone_07/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: the Particle in Cell technique (1) - the effect of averaging}
-\input{python_codes/fieldstone_markers_avrg/text}
+\section{{\tt fieldstone\_08}: the indentor benchmark \label{f08}}
+\input{python_codes/fieldstone_08/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: solving the full saddle point problem \label{sec_fspq1p0}}
-\input{python_codes/fieldstone_saddlepoint_q1p0/text}
+\section{{\tt fieldstone\_09}: the annulus benchmark \label{f09}}
+\input{python_codes/fieldstone_09/text}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone\_10}: Stokes sphere (3D) - penalty \label{f10}}
+\input{python_codes/fieldstone_10/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone\_11}: stokes sphere (3D) - mixed formulation \label{f11}}
+\input{python_codes/fieldstone_11/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone\_12}: consistent pressure recovery \label{f12}}
+\input{python_codes/fieldstone_12/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone\_13}: the Particle in Cell technique (1) - the effect of averaging \label{f13}}
+\input{python_codes/fieldstone_13/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone\_f14}: solving the full saddle point problem \label{f14}}
+\input{python_codes/fieldstone_14/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: saddle point problem with Schur complement approach - benchmark \label{sec_fspq1p0sc_cg}}
-\input{python_codes/fieldstone_saddlepoint_q1p0_schurcomplement_cg/text}
+\section{{\tt fieldstone\_f15}: saddle point problem with Schur complement approach - benchmark \label{f15}}
+\input{python_codes/fieldstone_15/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: saddle point problem with Schur complement approach - Stokes sphere \label{sec_fspq1p0sc_pcg}}
-\input{python_codes/fieldstone_saddlepoint_q1p0_schurcomplement_pcg/text}
+\section{{\tt fieldstone\_f16}: saddle point problem with Schur complement approach - Stokes sphere \label{f16}}
+\input{python_codes/fieldstone_16/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: solving the full saddle point problem in 3D}
-\input{python_codes/fieldstone_burstedde/text}
+\section{{\tt fieldstone\_17}: solving the full saddle point problem in 3D \label{f17}}
+\input{python_codes/fieldstone_17/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: solving the full saddle point problem with $Q_2\times Q_1$ elements}
-\input{python_codes/fieldstone_saddlepoint_q2q1/text}
+\section{{\tt fieldstone\_18}: solving the full saddle point problem with $Q_2\times Q_1$ elements \label{f18}}
+\input{python_codes/fieldstone_18/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: solving the full saddle point problem with $Q_3\times Q_2$ elements}
-\input{python_codes/fieldstone_saddlepoint_q3q2/text}
+\section{{\tt fieldstone\_19}: solving the full saddle point problem with $Q_3\times Q_2$ elements \label{f19}}
+\input{python_codes/fieldstone_19/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: the Busse benchmark}
-\input{python_codes/fieldstone_busse/text}
-
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: The non-conforming $Q_1 \times P_0$ element} \label{ncq1p0} 
-\input{python_codes/fieldstone_RTelement/text}
+\section{{\tt fieldstone\_20}: the Busse benchmark \label{f20}}
+\input{python_codes/fieldstone_20/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: The stabilised $Q_1 \times Q_1$ element} 
-\input{python_codes/fieldstone_q1q1stab/text}
+\section{{\tt fieldstone\_21}: The non-conforming $Q_1 \times P_0$ element \label{f21}}
+\input{python_codes/fieldstone_21/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: compressible flow (1)}
-\input{python_codes/fieldstone_compressible1/text}
+\section{{\tt fieldstone\_22}: The stabilised $Q_1 \times Q_1$ element \label{f22}} 
+\input{python_codes/fieldstone_22/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: compressible flow (2)}
-\input{python_codes/fieldstone_compressible2/text}
+\section{{\tt fieldstone\_23}: compressible flow (1) - analytical benchmark \label{f23}}
+\input{python_codes/fieldstone_23/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: Rayleigh-Taylor instability (1)}
-\input{python_codes/fieldstone_RTinstability1/text}
+\section{{\tt fieldstone\_24}: compressible flow (2) - convection box \label{f24}}
+\input{python_codes/fieldstone_24/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone}: Slab detachment benchmark (1)}
-\input{python_codes/fieldstone_slab_detachment1/text}
+\section{{\tt fieldstone\_25}: Rayleigh-Taylor instability (1) - instantaneous \label{f25}}
+\input{python_codes/fieldstone_25/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone\_26}: Slab detachment benchmark (1) - instantaneous \label{f26}}
+\input{python_codes/fieldstone_26/text}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{{\tt fieldstone}: Gravity: buried sphere}
 \input{python_codes/gravity_01/text}
-
-
-%\newpage
-%\subsection{Using MUMPS}
-%\subsection{With periodic boundary conditions}
-%\subsection{Different Cmat}
-%\subsection{Penalty Uzawa formulation}
-%\subsection{Powell-Hestenes iterations a la MILAMIN}
-%\subsection{With temperature and phase change}
-%\subsection{Conformal refinement}
-%\subsection{Newton vs Picard solver}
-%\subsection{With markers}
-%\subsection{Stress b.c.}
-%\subsection{open boundary conditions}
-%\subsection{melt generation}
-%after Schmeling paper
-%\subsection{Consistent pressure recovery}
-%\subsection{Uzawa outer scheme}
-%\subsection{PCG outer scheme}
 
 \appendix
 
