@@ -1,7 +1,165 @@
-Original paper: \cite{mizu86,zhgh93}
+The Consistent Boundary Flux technique was devised to 
+alleviate the problem of the accuracy of primary variables 
+derivatives (mainly velocity and temperature) on boundaries, 
+where basis function (nodal) derivatives do not exist.
+These derivatives are important since they are needed to compute
+the heat flux (and therefore the NUsselt number) or 
+dynamic topography and geoid. 
 
-Find all papers citing it. 
 
-\cite{zhmt08}
+The idea was first introduced in \cite{mizu86} and later used 
+in geodynamics \cite{zhgh93}. It was finally implemented 
+in the CitcomS code \cite{zhmt08} and more recently
+in the ASPECT code (dynamic topography postprocessor).
+Note that the CBF should be seen as a post-processor step 
+as it does not alter the primary variables values.
 
-in ASPECT: aspect/source/postprocess//dynamic\_topography.cc
+The CBF method is implemented and used in \ref{f_XX}.
+
+%---------------------------------------------------------------
+\subsubsection{applied to the Stokes equation}
+We start from the strong form:
+\[
+{\bm \nabla}\cdot{\bm \sigma} = {\bm b}
+\]
+and then write the weak form:
+\[
+\int_\Omega N {\bm \nabla}\cdot{\bm \sigma} dV = \int_\Omega N {\bm b} dV
+\]
+where $N$ is any test function. We then use the two equations:
+\[
+\bm \nabla \cdot ( N  \bm \sigma ) = N \bm \nabla \cdot \bm \sigma + \bm \nabla N \cdot  \bm \sigma  
+\quad\quad \text{(chain rule)}
+\]
+\[
+\int_\Omega (\bm \nabla \cdot \bm f )\; dV = \int_\Gamma \bm f\cdot \bm n \; dS
+\quad\quad \text{(divergence theorem)}
+\]
+Integrating the first equation over $\Omega$ and using the second, we can write:
+\[
+\int_\Gamma N {\bm \sigma}\cdot {\bm n} \; dS 
+-  \int_\Omega {\nabla N} \cdot{\bm \sigma} \; dV 
+= \int_\Omega N {\bm b} dV
+\]
+On $\Gamma$, the traction vector is given by ${\bm t}={\bm \sigma}\cdot {\bm n}$: 
+\[
+\int_\Gamma N {\bm t} dS =  \int_\Omega {\nabla N} \cdot{\bm \sigma} dV + \int_\Omega N {\bm b} dV
+\]
+Considering the traction vector as an unknown living on the nodes on the boundary, 
+we can expand (for $Q_1$ elements)
+\[
+t_x = \sum_{i=1}^2 t_{x|i} N_i 
+\quad\quad
+t_y = \sum_{i=1}^2 t_{y|i} N_i 
+\]
+on the boundary so that the left hand term yields a mass matrix $M'$.
+Finally, using our previous experience of discretising the weak form, we can write:
+\[
+M' \cdot {\cal T} = -\K {\cal V} - \G {\cal P} + f
+\]
+where ${\cal T}$ is the vector of assembled tractions which we want to compute 
+and ${\cal V}$ and ${\cal T}$ are the solutions of the Stokes problem. 
+Note that the assembly
+only takes place on the elements along the boundary.
+
+Note that the assembled mass matrix is tri-diagonal can be easily solved with 
+a Conjugate Gradient method. With a trapezoidal integration rule 
+(i.e. Gauss-Lobatto) the matrix can even be diagonalised and the resulting 
+matrix is simply diagonal, which results in a very cheap solve \cite{zhgh93}.
+
+%---------------------------------------------------------------
+\subsubsection{applied to the heat equation}
+We start from the strong form of the heat transfer equation (without the source terms for simplicity):
+\[
+\rho c_p
+\left(\frac{\partial T}{\partial t} + {\bm v}\cdot {\bm \nabla}T\right)
+=
+{\bm \nabla} \cdot k{\bm \nabla T}
+\]
+The weak form then writes:
+%\[
+%\int_\Omega N
+%\rho c_p
+%\left(\frac{\partial T}{\partial t} + {\bm v}\cdot {\bm \nabla}T\right) dV
+%=
+%\int_\Omega N
+%{\bm \nabla} \cdot k{\bm \nabla T} dV
+%\]
+\[
+\int_\Omega N
+\rho c_p
+\frac{\partial T}{\partial t} dV 
++
+\rho c_p
+\int_\Omega N
+ {\bm v}\cdot {\bm \nabla}T  dV
+=
+\int_\Omega N
+{\bm \nabla} \cdot k{\bm \nabla T} dV
+\]
+Using once again integration by parts and divergence theorem:
+\[
+\int_\Omega N
+\rho c_p
+\frac{\partial T}{\partial t} dV 
++
+\rho c_p
+\int_\Omega N
+ {\bm v}\cdot {\bm \nabla}T  dV
+=
+\int_\Gamma N k {\bm \nabla T} \cdot {\bm n} d\Gamma
+-
+\int_\Omega  {\bm \nabla} N \cdot k{\bm \nabla T} dV
+\]
+On the boundary we are interested in the heat flux ${\bm q}=-k {\bm \nabla T}$
+\[
+\int_\Omega N
+\rho c_p
+\frac{\partial T}{\partial t} dV 
++
+\rho c_p
+\int_\Omega N
+ {\bm v}\cdot {\bm \nabla}T  dV
+=
+-\int_\Gamma N {\bm q} \cdot {\bm n} d\Gamma
+- \int_\Omega  {\bm \nabla} N \cdot k{\bm \nabla T} dV
+\]
+or,
+\[
+\int_\Gamma N {\bm q} \cdot {\bm n} d\Gamma
+=
+-\int_\Omega N
+\rho c_p
+\frac{\partial T}{\partial t} dV 
+-\rho c_p
+\int_\Omega N
+ {\bm v}\cdot {\bm \nabla}T  dV
+- \int_\Omega  {\bm \nabla} N \cdot k{\bm \nabla T} dV
+\]
+Considering the normal heat flux $q_n = {\bm q} \cdot {\bm n}$ as an unknown 
+living on the nodes on the boundary, 
+\[
+q_n = \sum_{i=1}^2 q_{n|i} N_i
+\]
+so that the left hand term becomes a mass matrix for the shape functions living on 
+the boundary.
+We have already covered the right hand side terms when building the FE system 
+to solve the heat transport equation, so that in the end 
+\[
+M' \cdot {\cal Q}_n =
+- M \cdot \frac{\partial \bm T}{\partial t} -K_a \cdot {\bm T} - K_d \cdot {\bm T} 
+\]
+where ${\cal Q}_n$ is the assembled vector of normal heat flux components.
+Note that in all terms the assembly only takes place over the elements along the boundary.
+
+
+
+
+
+
+
+
+
+
+
+

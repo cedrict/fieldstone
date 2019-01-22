@@ -21,6 +21,43 @@ Examples of this approach are to be found in \cite{dohu,busa13,dodg06}.
 \end{itemize}
 \end{mdframed}
 
+%-----------------------------------------------------------------------------
+\subsubsection{Analytical benchmark I \label{mms1}}
+
+Taken from \cite{dohu03}.
+
+\begin{eqnarray}
+u(x,y) &=& x^2(1- x)^2 (2y - 6y^2 + 4y^3)  \nonumber\\
+v(x,y) &=& -y^2 (1 - y)^2 (2x - 6x^2 + 4x^3) \nonumber\\
+p(x,y) &=& x(1 -x)- 1/6 \nonumber 
+\end{eqnarray}
+Note that the pressure obeys $\int_{\Omega} p \; d\Omega = 0$
+
+The corresponding components of the body force ${\bm b}$ are prescribed as 
+\begin{eqnarray}
+b_x &=& (12 - 24y) x^4 + (-24 + 48y) x^3 + (-48y + 72y^2 - 48 y^3 + 12) x^2 \nonumber\\
+    && + (-2 + 24y -72y^2+48y^3)x + 1-4y + 12y^2-8y^3 \nonumber\\ 
+b_y &=& (8 - 48y + 48 y^2) x^3 + (-12 + 72y - 72y^2) x^2  \nonumber\\
+    && + (4 - 24y + 48y^2 - 48y^3 + 24y^4) x - 12y^2 + 24y^3 - 12y^4  \nonumber
+\end{eqnarray}
+With this prescribed body force, the exact solution is 
+
+%-----------------------------------------------------------------------------
+\subsubsection{Analytical benchmark II \label{mms2}}
+
+Taken from \cite{dobo04}
+
+\begin{eqnarray}
+u(x,y) &=& x+x^2 - 2xy+x^3 - 3xy^2 + x^2y \\
+v(x,y) &=& -y-2xy+y^2 -3x^2y + y^3 - xy^2 \\
+p(x,y) &=& xy+x+y+x^3y^2 - 4/3
+\end{eqnarray}
+Note that the pressure obeys $\int_{\Omega} p \; d\Omega = 0$
+
+\begin{eqnarray}
+b_x &=& - (1+y-3x^2y^2) \\
+b_y &=& - (1-3x-2x^3y) 
+\end{eqnarray}
 
 
 
