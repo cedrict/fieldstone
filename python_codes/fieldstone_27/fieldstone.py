@@ -89,7 +89,7 @@ gy=-1
 
 pnormalise=True
 viscosity=1  # dynamic viscosity \mu
-y0=59./64.
+y0=63./64.
 rho_alpha=64.
 
 eps=1.e-10
@@ -366,17 +366,14 @@ for iel in range(0,nel):
         exy[iel] += 0.5*dNdy[k]*u[icon[k,iel]]+\
                     0.5*dNdx[k]*v[icon[k,iel]]
 
-print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
+print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
+print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
 
 np.savetxt('p.ascii',np.array([xc,yc,p]).T,header='# x,y,p')
 np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
 print("compute press & sr: %.3f s" % (time.time() - start))
-
-
-
 
 ######################################################################
 # compute nodal pressure
@@ -412,7 +409,7 @@ sigmayy_el = np.empty(nel, dtype=np.float64)
 sigmayy_analytical = np.empty(nnx,dtype=np.float64)  
 
 for iel in range(1,nel):
-    sigmayy_el[iel]=(-p[iel]+2.*viscosity*eyy[iel])/abs(gy)
+    sigmayy_el[iel]=(-p[iel]+2.*viscosity*eyy[iel])
 
 np.savetxt('sigmayy_el.ascii',np.array([xc[nel-nelx:nel],\
                                         sigmayy_el[nel-nelx:nel],\
@@ -426,12 +423,14 @@ np.savetxt('sigmayy_nod.ascii',np.array([x[nnp-nnx:nnp],\
                                          sigmayy_th(x[nnp-nnx:nnp],y0),\
                                         ]).T,header='# x,sigmayy,error')
 
-counter=0
-for i in range(nnp-nnx,nnp):
-    sigmayy_analytical[counter]=sigmayy_th(x[i],y0)
-    counter+=1
+#counter=0
+#for i in range(nnp-nnx,nnp):
+#    sigmayy_analytical[counter]=sigmayy_th(x[i],y0)
+#    counter+=1
+#np.savetxt('sigmayy_analytical.ascii',np.array([x[nnp-nnx:nnp],sigmayy_analytical]).T,header='# x,sigmayy')
 
-np.savetxt('sigmayy_analytical.ascii',np.array([x[nnp-nnx:nnp],sigmayy_analytical]).T,header='# x,sigmayy')
+print("     -> sigmayy_el  (N-E) %6f " % (sigmayy_el[nel-1]))
+print("     -> sigmayy_nod (N-E) %6f " % (-q[nnp-1]+2.*viscosity*eyyn[nnp-1]) ) 
 
 #####################################################################
 # plot of solution

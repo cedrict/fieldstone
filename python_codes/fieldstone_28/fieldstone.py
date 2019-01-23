@@ -102,13 +102,13 @@ hcapa=1.            # heat capacity
 rho0=1.             # reference density
 T0=0                # reference temperature
 
-CFL_nb=1      # CFL number 
+CFL_nb=0.5    # CFL number 
 every=50      # vtu output frequency
 nstep=10000   # maximum number of timestep   
 
 #--------------------------------------
 
-case=0
+case=1
 
 if case==0:
    Ra=1e4  
@@ -759,6 +759,7 @@ for istep in range(0,nstep):
 
     print("compute vrms,Tavrg : %.3f s" % (time.time() - start))
 
+
     #####################################################################
     # plot of solution
     #####################################################################
@@ -771,6 +772,30 @@ for istep in range(0,nstep):
        for iel in range(0,nel):
            rho_el[iel]=(rhoq[iel*4]+rhoq[iel*4+1]+rhoq[iel*4+2]+rhoq[iel*4+3])*0.25
            eta_el[iel]=(etaq[iel*4]+etaq[iel*4+1]+etaq[iel*4+2]+etaq[iel*4+3])*0.25
+
+       # compute depth-averaged profiles
+       T_profile=np.zeros(nny,dtype=np.float64)
+       y_profile=np.zeros(nny,dtype=np.float64)
+       V_profile=np.zeros(nny,dtype=np.float64)
+       counter = 0
+       for j in range(0,nny):
+           for i in range(0,nnx):
+               T_profile[j]+=T[counter]/nnx
+               y_profile[j]+=y[counter]/nnx
+               V_profile[j]+=np.sqrt(u[counter]**2+v[counter]**2)/nnx
+               counter += 1
+       np.savetxt('T_profile.ascii',np.array([y_profile,T_profile]).T,header='# y,T')
+       np.savetxt('V_profile.ascii',np.array([y_profile,V_profile]).T,header='# y,V')
+
+       yc_profile=np.zeros(nely,dtype=np.float64)
+       eta_profile=np.zeros(nely,dtype=np.float64)
+       counter = 0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               eta_profile[j]+=eta_el[counter]/nelx
+               yc_profile[j]+=yc[counter]/nelx
+               counter += 1
+       np.savetxt('eta_profile.ascii',np.array([yc_profile,eta_profile]).T,header='# y,eta')
 
        filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")

@@ -1,0 +1,13 @@
+set term pdf enhanced
+set output 'sigmazz.pdf'
+k=2*pi
+y0=63./64.
+set key bottom 
+
+set xlabel 'x'
+set ylabel 'sigma_{yy}'
+plot[0:1]\
+cos(k*x)/sinh(k)**2*(k*(1-y0)*sinh(k)*cosh(k*y0)-k*sinh(k*(1-y0))+sinh(k)*sinh(k*y0) ) t 'analytical',\
+'sigmayy_el.ascii' u 1:2 w l t 'elemental'
+ 
+#'sigmayy_analytical.ascii' w l ,
