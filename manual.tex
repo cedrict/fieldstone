@@ -331,6 +331,8 @@ in/out flow on sides for lith modelling
 \item
 Fehlberg RK advection
 
+\item redo puth17 2 layer experiment
+
 \end{itemize}
 
 %\newpage
@@ -359,7 +361,7 @@ deal with large matrices.
 \section{List of tutorials}
 
 {\small
-\begin{tabular}{|p{0.4cm}||p{1.3cm}p{2cm}p{1.7cm}p{4.4cm}p{0.4cm}p{0.4cm}p{0.4cm}p{0.4cm}p{0.4cm}|}
+\begin{tabular}{|p{0.4cm}||p{1.9cm}p{2.6cm}p{1.5cm}p{4.1cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|}
 \hline
 \hline
 \rotatebox{90}{tutorial number} 
@@ -371,71 +373,67 @@ deal with large matrices.
 & \rotatebox{90}{temperature} 
 & \rotatebox{90}{time stepping} 
 & \rotatebox{90}{nonlinear}  
-& \rotatebox{90}{compressible} \\ 
+& \rotatebox{90}{compressible} 
+& \rotatebox{90}{analytical benchmark} 
+& \rotatebox{90}{numerical benchmark} \\
 \hline \hline
-1  & $Q_1 \times P_0$ &              & penalty & analytical benchmark        & 2 &       &        & &\\ 
+1  & $Q_1 \times P_0$ &              & penalty & analytical benchmark        & 2 &       &        & &&\\ 
 \hline
-2  & $Q_1 \times P_0$ &              & penalty & Stokes sphere               & 2 &       &        & &\\ 
+2  & $Q_1 \times P_0$ &              & penalty & Stokes sphere               & 2 &       &        & &&\\ 
 \hline
-3  & $Q_1 \times P_0$ &              & penalty & Convection box              & 2 & $\dag$& $\dag$ & &\\ 
+3  & $Q_1 \times P_0$ &              & penalty & Blankenbach et al., 1989    & 2 & $\dag$& $\dag$ & &&\\ 
 \hline
-4  & $Q_1 \times P_0$ &              & penalty & Lid driven cavity           & 2 &       &        & &\\ 
+4  & $Q_1 \times P_0$ &              & penalty & Lid driven cavity           & 2 &       &        & &&\\ 
 \hline
-5  & $Q_1 \times P_0$ &              & penalty & SolCx benchmark             & 2 &       &        & &\\ 
+5  & $Q_1 \times P_0$ &              & penalty & SolCx benchmark             & 2 &       &        & &&\\ 
 \hline
-6  & $Q_1 \times P_0$ &              & penalty & SolKz benchmark             & 2 &       &        & &\\ 
+6  & $Q_1 \times P_0$ &              & penalty & SolKz benchmark             & 2 &       &        & &&\\ 
 \hline
-7  & $Q_1 \times P_0$ &              & penalty & SolVi benchmark             & 2 &       &        & &\\ 
+7  & $Q_1 \times P_0$ &              & penalty & SolVi benchmark             & 2 &       &        & &&\\ 
 \hline
-8  & $Q_1 \times P_0$ &              & penalty & Indentor                    & 2 &       &        & $\dag$ &\\ 
+8  & $Q_1 \times P_0$ &              & penalty & Indentor                    & 2 &       &        & $\dag$ &&\\ 
 \hline
-9  & $Q_1 \times P_0$ &              & penalty & annulus benchmark           & 2 &       &        & &\\ 
+9  & $Q_1 \times P_0$ &              & penalty & annulus benchmark           & 2 &       &        & &&\\ 
 \hline
-10 & $Q_1 \times P_0$ &              & penalty & Stokes sphere               & 3 &       &        & &\\ 
+10 & $Q_1 \times P_0$ &              & penalty & Stokes sphere               & 3 &       &        & &&\\ 
 \hline
-11 & $Q_1 \times P_0$ & saddle point & mixed   & Stokes sphere               & 3 &       &        & &\\ 
-   &                  & + full matrix& &&&&&&\\
+11 & $Q_1 \times P_0$ & full matrix& mixed   & Stokes sphere               & 3 &       &        & &&\\ 
 \hline
-12 & $Q_1 \times P_0$ &              & penalty & analytical benchmark        & 2 &       &        & &\\
-   &                  &              &         & + consistent press recovery &   &       &        & &\\
+12 & $Q_1 \times P_0$ &              & penalty & analytical benchmark        & 2 &       &        & &&\\
+   &                  &              &         & + consistent press recovery &   &       &        & &&\\
 \hline
-13 & $Q_1 \times P_0$ &              & penalty & Stokes sphere               & 2 &       &        & &\\ 
-   &                  &              &         & + markers averaging         &   &       &        & &\\
+13 & $Q_1 \times P_0$ &              & penalty & Stokes sphere               & 2 &       &        & &&\\ 
+   &                  &              &         & + markers averaging         &   &       &        & &&\\
 \hline
-14 & $Q_1 \times P_0$ & saddle point & mixed   & analytical benchmark        & 2 &       &        & &\\ 
-   &                  & + full matrix& &&&&&&\\
+14 & $Q_1 \times P_0$ & full matrix & mixed   & analytical benchmark        & 2 &       &        & & &\\ 
 \hline
-15 & $Q_1 \times P_0$ & saddle point & mixed   & analytical benchmark        & 2 &       &        & &\\ 
-   &                  & + Schur comp. CG & &&&&&&\\
+15 & $Q_1 \times P_0$ & Schur comp. CG & mixed   & analytical benchmark        & 2 &       &        & &&\\ 
 \hline
-16 & $Q_1 \times P_0$ & saddle point & mixed   & Stokes sphere               & 2 &       &        & &\\ 
-   &                  & + Schur comp. PCG & &&&&&&\\
+16 & $Q_1 \times P_0$ & Schur comp. PCG & mixed   & Stokes sphere               & 2 &       &        & &&\\ 
 \hline
-17 & $Q_2 \times Q_1$ & saddle point & mixed   & Burstedde benchmark         & 3 &       &        & &\\ 
-   &                  & + full matrix& &&&&&&\\    
+17 & $Q_2 \times Q_1$ & full matrix & mixed   & Burstedde benchmark         & 3 &       &        & &&\\ 
 \hline
-18 & $Q_2 \times Q_1$ & saddle point & mixed   & analytical benchmark        & 2 &       &        & &\\ 
-   &                  & + full matrix& &&&&&&\\    
+18 & $Q_2 \times Q_1$ & full matrix & mixed   & analytical benchmark        & 2 &       &        & &&\\ 
 \hline
-19 & $Q_3 \times Q_2$ & saddle point & mixed   & analytical benchmark        & 2 &       &        & &\\ 
-   &                  & + full matrix& &&&&&&\\    
+19 & $Q_3 \times Q_2$ & full matrix & mixed   & analytical benchmark        & 2 &       &        & &&\\ 
 \hline
-20 & $Q_1 \times P_0$ &              & penalty & Busse convection            & 3 & $\dag$& $\dag$ & &\\ 
+20 & $Q_1 \times P_0$ &              & penalty & Busse et al., 1993            & 3 & $\dag$& $\dag$ & & &\\ 
 \hline
-21 & Rannacher-Turek  &              & penalty & analytical benchmark        & 2 &       &        & &\\ 
+21 & $Q_1 \times P_0$ R-T  &              & penalty & analytical benchmark        & 2 &       &        & &&\\ 
 \hline
-22 & $Q_1 \times Q_1$-stab & saddle point  & mixed & analytical benchmark    & 2 &       &        & &\\ 
-   &                  & + full matrix& &&&&&&\\    
+22 & $Q_1 \times Q_1$-stab & full matrix  & mixed & analytical benchmark    & 2 &       &        & &&\\ 
 \hline
-23 & $Q_1 \times P_0$ &              & mixed  & analytical benchmark         & 2 &       &        & & $\dag$ \\ 
+23 & $Q_1 \times P_0$ &              & mixed  & analytical benchmark         & 2 &       &        & & $\dag$ &\\ 
 \hline
-24 & $Q_1 \times P_0$ &              & mixed  & convection box               & 2 & $\dag$& $\dag$ & & $\dag$ \\
+24 & $Q_1 \times P_0$ &              & mixed  & convection box               & 2 & $\dag$& $\dag$ & & $\dag$ &\\
 \hline
-25 & $Q_1 \times P_0$ & saddle point & mixed  & Rayleigh-Taylor instability  & 2 &       &        & & \\ 
-   &                  & + full matrix& &&&&&&\\    
+25 & $Q_1 \times P_0$ & full matrix & mixed  & Rayleigh-Taylor instability  & 2 &       &        & & &\\ 
 \hline
-26 & $Q_1 \times P_0$ & saddle point & mixed  & Slab detachment              & 2 &       &        & $\dag$ & \\ 
-   &                  & + full matrix& &&&&&&\\
+26 & $Q_1 \times P_0$ & full matrix & mixed  & Slab detachment              & 2 &       &        & $\dag$ & &\\ 
+\hline
+27 & $Q_1 \times P_0$ & full matrix & mixed  & CBF benchmarks               & 2 &       &        & $\dag$ &  & $\dag$\\ 
+\hline
+28 & $Q_1 \times P_0$ & full matrix & mixed  & Tosi et al, 2015             & 2 &  $\dag$     &  $\dag$  & $\dag$ & & &$\dag$\\ 
 \hline
 \hline
 \end{tabular}
@@ -572,6 +570,20 @@ deal with large matrices.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{{\tt fieldstone\_26}: Slab detachment benchmark (1) - instantaneous \label{f26}}
 \input{python_codes/fieldstone_26/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone\_27}: Consistent Boundary Flux \label{f27}}
+\input{python_codes/fieldstone_27/text}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone\_28}: convection 2D box - Tosi et al, 2015 \label{f28}}
+\input{python_codes/fieldstone_28/text}
+
+
+
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

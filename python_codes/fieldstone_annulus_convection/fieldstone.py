@@ -342,8 +342,8 @@ for istep in range(0,nstep):
                     eyyq+=dNdy[k]*v[icon[k,iel]]
                     exyq+=0.5*dNdy[k]*u[icon[k,iel]]+\
                           0.5*dNdx[k]*v[icon[k,iel]]
-                    rhoq[iiq]=density(rho0,alpha,Tq,T0)
-                    etaq[iiq]=viscosity(Tq,exxq,eyyq,exyq,gamma_T,gamma_y,sigma_y,eta_star,case)
+                rhoq[iiq]=density(rho0,alpha,Tq,T0)
+                etaq[iiq]=viscosity(Tq,exxq,eyyq,exyq,gamma_T,gamma_y,sigma_y,eta_star,case)
 
                 # construct 3x8 b_mat matrix
                 for i in range(0, m):

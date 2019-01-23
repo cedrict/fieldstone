@@ -1,0 +1,97 @@
+
+The viscosity
+field $\mu$ is calculated as the harmonic average between a linear part $\mu_{lin}$ 
+that depends on
+temperature only or on temperature and depth $d$ , and a non-linear,
+plastic part $\mu_{plast}$ dependent on the strain rate:
+
+\begin{equation}
+\mu(T,z,\dot{\boldsymbol{\epsilon}}) = 
+2 \left(\frac{1}{\mu_\text{lin}(T,z)} + \frac{1}{\mu_\text{plast}(\dot{\boldsymbol{\epsilon}})} \right)^{-1}. 
+\label{eq:mu}
+\end{equation}
+
+The linear part is given by the linearized Arrhenius law (the so-called Frank-Kamenetskii approximation \cite{frank1969}):
+
+\begin{equation}
+\mu_\text{lin} (T,z) = \exp(-\gamma_T T + \gamma_{z} z), \label{eq:mu_Ty}
+\end{equation}
+
+where $\gamma_T = \ln ( \Delta\mu_T)$ and $\gamma_{z} = \ln ( \Delta\mu_{z})$ are parameters controlling the total viscosity 
+contrast due to temperature ($\Delta\mu_T$) and pressure ($\Delta\mu_{z}$). The non-linear part is given by \cite{trompert1998}: 
+
+\begin{equation}
+\mu_\text{plast} (\dot{\boldsymbol{\epsilon}}) = \mu^{*} + \frac{\sigma_Y}{\sqrt{\dot{\boldsymbol{\epsilon}}:\dot{\boldsymbol{\epsilon}}}}, \label{eq:mu_sigma}
+\end{equation}
+
+where $\mu^*$ is a constant representing the effective viscosity at high stresses \cite{stein2014b} and $\sigma_Y$ is the yield stress, also assumed to be constant. In 2-D, the denominator in the second term of equation (\ref{eq:mu_sigma}) is given explicitly by
+
+\begin{equation}
+\sqrt{\dot{\boldsymbol{\epsilon}}:\dot{\boldsymbol{\epsilon}}} 
+= \sqrt{\dot{\epsilon}_{ij} \dot{\epsilon}_{ij} } \\
+ = \sqrt{\left( \frac{\partial u_x}{\partial x} \right)^2 + \frac{1}{2} \left( \frac{\partial u_x}{\partial y} 
++ \frac{\partial u_y}{\partial x} \right)^2 + \left( \frac{\partial u_y}{\partial y} \right)^2  }.
+\end{equation}
+
+The viscoplastic flow law (equation \ref{eq:mu}) leads to linear viscous deformation at low stresses (equation (\ref{eq:mu_Ty})) and to plastic deformation for stresses that exceed $\sigma_Y$ (equation (\ref{eq:mu_sigma})), with the decrease in viscosity limited by the choice of $\mu^{*}$ \cite{stein2014b}.
+
+
+In all cases that we present, the domain is a two-dimensional square box. The mechanical boundary conditions are for all boundaries free-slip with no flux across, i.e. $\tau_{xy}=\tau_{yx}=0$ and $\boldsymbol{u}\cdot \boldsymbol{n}=0$, where $\boldsymbol{n}$ denotes the outward normal to the boundary. Concerning the energy equation, the bottom and top boundaries are isothermal, with the temperature $T$ set to 1 and 0, respectively, while side-walls are assumed to be insulating, i.e. $\partial T/\partial x = 0$. The initial distribution of the temperature field is prescribed as follows:
+
+\begin{equation}
+T(x,y) = (1-y) + A \cos(\pi x)\sin(\pi y), \label{eq:initemp}
+\end{equation}
+where $A=0.01$ is the amplitude of the initial perturbation.
+
+
+In the following Table \ref{tab:bench_cases}, we list the benchmark cases according to the parameters used. 
+
+
+\begin{center}
+\begin{tabular}{c c c c c c c} 
+\hline
+Case & $Ra$ & $\Delta\mu_T$ & $\Delta\mu_y$ & $\mu^*$ & $\sigma_Y$ & Convective regime \\
+\hline
+1   & $10^2$ & $10^5$    & 1  & -- & --             & Stagnant lid    \\
+2   & $10^2$ & $10^5$    & 1  & $10^{-3}$ & 1       & Mobile lid \\
+3   & $10^2$ & $10^5$    & 10 & --  & --            & Stagnant lid \\
+4   & $10^2$ & $10^5$    & 10 & $10^{-3}$ & 1       & Mobile lid  \\
+5a  & $10^2$ & $10^5$    & 10 & $10^{-3}$ & 4       & Periodic  \\
+5b  & $10^2$ & $10^5$    & 10 & $10^{-3}$ & 3 -- 5  & Mobile lid -- Periodic -- Stagnant lid \\
+\hline
+\end{tabular}\\
+{\small Benchmark cases and corresponding parameters.} 
+\end{center}
+
+In Cases 1 and 3 the viscosity is directly calculated from equation (\ref{eq:mu_Ty}), while for Cases 2, 4, 5a, and 5b, we used equation (\ref{eq:mu}). For a given mesh resolution, Case 5b requires running simulations with yield stress varying between 3 and 5
+
+
+In all tests, the reference Rayleigh number is set at the surface ($y=1$) to $10^2$, and the viscosity contrast due to temperature $\Delta\mu_T$ is $10^5$, implying therefore a maximum effective Rayleigh number of $10^7$ for $T=1$. Cases 3, 4, 5a, and 5b employ in addition a depth-dependent rheology with viscosity contrast  $\Delta\mu_z=10$. Cases 1 and 3 assume a linear viscous rheology that leads to a stagnant lid regime. Cases 2 and 4 assume a viscoplastic rheology that leads instead to a mobile lid regime. Case 5a also assumes a viscoplastic rheology but a higher yield stress, which ultimately causes the emergence of a strictly periodic regime. The setup of Case 5b is identical to that of Case 5a but the test consists in running several simulations using different yield stresses. Specifically, we varied $\sigma_Y$ between 3 and 5 in increments of 0.1 in order to identify the values of the yield stress corresponding to the transition from mobile to periodic and from periodic to stagnant lid regime. 
+
+\newpage
+\subsubsection{Case 0: Newtonian case, a la Blankenbach et al., 1989}
+
+\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case0/vrms.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case0/Nu.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case0/vrms_Nu.pdf}
+
+\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case0/temp}
+\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case0/vel}
+
+
+
+\newpage %-------------------------------------------------------
+\subsubsection{Case 1}
+
+In this case $\mu^\star=0$ and $\sigma_Y=0$ so that $\mu_{plast}$ can be discarded.
+The CFL number is set to 0.5 and the viscosity is given by 
+$\mu(T,z,\dot{\boldsymbol{\epsilon}}) =   \mu_\text{lin}(T,z) $.
+And since $\Delta \mu_z=1$ then $\gamma_z=0$ so that
+$\mu_\text{lin} (T,z) = \exp(-\gamma_T T )$
+
+
+
+
+
+
+
