@@ -1014,6 +1014,18 @@ for istep in range(0,nstep):
     np.savetxt('vrdepthavrg.ascii',np.array([rdepthavrg[0:nnr],vrdepthavrg[0:nnr]]).T,header='# r,vr')
     np.savetxt('vtdepthavrg.ascii',np.array([rdepthavrg[0:nnr],vtdepthavrg[0:nnr]]).T,header='# r,vt')
 
+    etadepthavrg=np.zeros(nelr,dtype=np.float64)
+    rdepthavrg=np.zeros(nelr,dtype=np.float64)
+
+    counter=0
+    for j in range(0, nelr):
+        for i in range(0, nelt):
+            etadepthavrg[j]+=eta_el[counter]/nelt
+            rdepthavrg[j]=(r[icon[0,counter]]+r[icon[3,counter]])/2.
+            counter+=1
+
+    np.savetxt('etadepthavrg.ascii',np.array([rdepthavrg[0:nelr],etadepthavrg[0:nelr]]).T,header='# r,T')
+
     #####################################################################
     # write to file 
     #####################################################################
