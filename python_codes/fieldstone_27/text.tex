@@ -3,8 +3,8 @@ Zhong et al. \cite{zhgh93}.
 
 The first benchmark showcases a unit square domain with free slip 
 boundary conditions prescribed on all sides.
-The resolution is fixed to 64x64 $Q_1 \times P_0$ elements. 
-The flow is isoviscous and the buoyancy force is given by 
+The resolution is fixed to $64\times64$ $Q_1 \times P_0$ elements. 
+The flow is isoviscous and the buoyancy force ${\bm f}$ is given by 
 \begin{eqnarray}
 f_x &=& 0 \nonumber\\
 f_y &=& \rho_0 \alpha T(x,y) \nonumber
@@ -32,11 +32,11 @@ k(1-y_0)\sinh(k) \cosh(ky_0)-k \sinh(k(1-y_0))
 \]
 
 We choose $\rho_0 \alpha = 64$, $\eta=1$ (note that in this case the 
-normalising coefficient of the stress is exactly 1 (since $h=L_x/nelx=1/64)$ so it is not implemented).
+normalising coefficient of the stress is exactly 1 (since $h=L_x/nelx=1/64)$ so it is not implemented in the code).
 $\lambda=1$ is set to 1 and we explore $y_0 = \frac{63}{64},\frac{62}{64},\frac{59}{64}$ and $y_0=32/64$.
 Under these assumptions the density field for $y_0=59/64$ is:
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_27/rho}
+\includegraphics[width=7cm]{python_codes/fieldstone_27/rho}
 \end{center}
 
 We can recover the stress at the boundary by computing 
@@ -48,7 +48,7 @@ Note that pressure is by definition elemental, and that strain rate
 components are then also computed in the middle of each element.
 
 These elemental quantities can be projected onto the nodes (see section \ref{f_XX})
-by means of the C$->$N algorithm or a least square algorithm (LS). 
+by means of the C$\rightarrow$N algorithm or a least square algorithm (LS). 
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_27/results/32_64/sigmazz.pdf}
@@ -62,7 +62,8 @@ by means of the C$->$N algorithm or a least square algorithm (LS).
 \end{center}
 
 The consistent boundary flux (CBF) method allows us to compute traction vectors ${\bm t}={\bm \sigma}\cdot{\bm n}$
-on the boundary of the domain. On the top boundary, ${\bm n}=(0,1)$ so that ${\bm t}=(\sigma_{xy}, \sigma_{yy})^T$.
+on the boundary of the domain. On the top boundary, ${\bm n}=(0,1)$ so that ${\bm t}=(\sigma_{xy}, \sigma_{yy})^T$ and 
+$t_y$ is the quantity we need to consider and compare to other results.
 
 In the following table are shown the results presented in \cite{zhgh93} alongside the results obtained with Fieldstone:
 \begin{center}
@@ -76,6 +77,7 @@ Method             & $y_0=63/64$ & $y_0=62/64$ &  $y_0=59/64$
 Analytic solution                   & 0.995476 & 0.983053  &  0.912506 & 0.178136 \\
 Pressure smoothing \cite{zhgh93}    & 1.15974  & 1.06498   &  0.911109 & n.a. \\
 CBF                \cite{zhgh93}    & 0.994236 & 0.982116  &  0.912157 & n.a. \\
+\hline
 \hline
 fieldstone: elemental               & 0.824554 (-17.17 \%) & 0.978744 (-0.44\%) & 0.909574 (-0.32 \%) & 0.177771 (-0.20 \%)\\
 fieldstone: nodal (C$\rightarrow$N) & 0.824554 (-17.17 \%) & 0.978744 (-0.44\%) & 0.909574 (-0.32 \%) & 0.177771 (-0.20 \%)\\
@@ -91,6 +93,12 @@ On the following figures are shown the velocity, pressure and traction fields fo
 \includegraphics[width=5cm]{python_codes/fieldstone_27/results/32_64/vel}
 \includegraphics[width=5cm]{python_codes/fieldstone_27/results/32_64/p}
 \includegraphics[width=5cm]{python_codes/fieldstone_27/results/32_64/tractions}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_27/results/59_64/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_27/results/59_64/p}
+\includegraphics[width=5cm]{python_codes/fieldstone_27/results/59_64/tractions}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_27/results/62_64/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_27/results/62_64/p}
+\includegraphics[width=5cm]{python_codes/fieldstone_27/results/62_64/tractions}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_27/results/63_64/vel}
 \includegraphics[width=5cm]{python_codes/fieldstone_27/results/63_64/p}
 \includegraphics[width=5cm]{python_codes/fieldstone_27/results/63_64/tractions}
@@ -99,10 +107,13 @@ On the following figures are shown the velocity, pressure and traction fields fo
 Here lies the superiority of our approach over the one presented in the original article: 
 our code computes all traction vectors on all boundaries at once.
 
-\todo{explain how Medge is arrived at!}
+\todo[inline]{explain how Medge is arrived at!}
 
-\todo{compare with ASPECT ??!}
+\todo[inline]{compare with ASPECT ??!}
 
+\todo[inline]{gauss-lobatto integration?}
+
+\todo[inline]{pressure average on surface instead of volume ?}
 
 
 
