@@ -7,19 +7,23 @@ The resolution is fixed to 64x64 $Q_1 \times P_0$ elements.
 The flow is isoviscous and the buoyancy force is given by 
 \begin{eqnarray}
 f_x &=& 0 \nonumber\\
-f_y &=& \rho \alpha T(x,y) \nonumber
+f_y &=& \rho_0 \alpha T(x,y) \nonumber
 \end{eqnarray}
 with the temperature field given by 
 \[
 T(x,y) = \cos(kx) \delta(y-y_0)
 \]
 where $k=2\pi/\lambda$ and $\lambda$ is a wavelength, 
-and $y_0$ represents the location of the buoyancy.
+and $y_0$ represents the location of the buoyancy strip.
+We set $g_y=-1$ and prescribe $\rho(x,y)=\rho_0 \alpha \cos(kx) \delta(y-y_0)$ on the nodes
+of the mesh.
 
 One can prove (\cite{zhgh93} and refs. therein) that 
-there is an analytic solution for the surface stress $\sigma_{zz}$:
+there is an analytic solution for the surface stress $\sigma_{zz}$
+\footnote{Note that in the paper the authors use $\rho \alpha g$ which does not have the 
+dimensions of a stress}
 \[
-\frac{\sigma_{yy}}{\rho \alpha g} =
+\frac{\sigma_{yy}}{\rho \alpha g h} =
 \frac{\cos (kx)}{\sinh^2(k)}
 \left[
 k(1-y_0)\sinh(k) \cosh(ky_0)-k \sinh(k(1-y_0))
@@ -27,53 +31,77 @@ k(1-y_0)\sinh(k) \cosh(ky_0)-k \sinh(k(1-y_0))
 \right]
 \]
 
-{\bf Remark}: This is suspicious since $\rho \alpha g$ does not have the 
-dimensions of a stress! Instead we shall use $\rho \alpha g h$, and choosing 
-where $h$ is the element size.
-
+We choose $\rho_0 \alpha = 64$, $\eta=1$ (note that in this case the 
+normalising coefficient of the stress is exactly 1 (since $h=L_x/nelx=1/64)$ so it is not implemented).
+$\lambda=1$ is set to 1 and we explore $y_0 = \frac{63}{64},\frac{62}{64},\frac{59}{64}$ and $y_0=32/64$.
+Under these assumptions the density field for $y_0=59/64$ is:
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_27/rho}\\
-density field for $y_0=59/64$
+\includegraphics[width=6cm]{python_codes/fieldstone_27/rho}
 \end{center}
 
-We choose $\rho \alpha = 64$, $\eta=1$, $g_y=-1$ (note that in this case the 
-normalising coefficient of the stress is exactly 1 so it is not implemented).
-$\lambda=1$ is set to 1 and we explore $y_0 = \frac{63}{64},\frac{62}{64},\frac{59}{64}$.
-Zhong et al. report the following measurements
-\footnote{The paper says 60/64 in the last column but it is in fact 59/64}
- at $x=0$:
-
-\begin{center}
-\begin{tabular}{l||lll}
-\hline
-Method             & $y_0=63/64$ & $y_0=62/64$ &  $y_0=59/64$ \\ 
-\hline
-\hline
-Analytic solution                   & 0.995476 & 0.983053  &  0.912506 \\
-Pressure smoothing                  & 1.15974  & 1.06498   &  0.911109 \\
-CBF                                 & 0.994236 & 0.982116  &  0.912157 \\
-\hline
-fieldstone: elemental               & 0.824554 & 0.978744  & 0.909574 \\
-fieldstone: nodal (C$\rightarrow$N) & 0.824554 & 0.978744  & 0.909574 \\
-\hline
-\end{tabular}
-\end{center}
-
-The $yy$ component of the stress tensor is simply given by
+We can recover the stress at the boundary by computing 
+the $yy$ component of the stress tensor in the top row of elements: 
 \[
 \sigma_{yy} = -p + 2 \eta \dot{\epsilon}_{yy}
 \]
-and we start with trivial measurements in the elements 
-forming the top row of the mesh (pressure is by definition elemental, and strain rate
-components are computed in the middle of each element). 
+Note that pressure is by definition elemental, and that strain rate
+components are then also computed in the middle of each element.
+
+These elemental quantities can be projected onto the nodes (see section \ref{f_XX})
+by means of the C$->$N algorithm or a least square algorithm (LS). 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_27/results/59_64/sigmazz.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_27/results/62_64/sigmazz.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_27/results/63_64/sigmazz.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_27/results/32_64/sigmazz.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_27/results/32_64/sigmazz_error.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_27/results/59_64/sigmazz.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_27/results/59_64/sigmazz_error.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_27/results/62_64/sigmazz.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_27/results/62_64/sigmazz_error.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_27/results/63_64/sigmazz.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_27/results/63_64/sigmazz_error.pdf}
 \end{center}
 
+The consistent boundary flux (CBF) method allows us to compute traction vectors ${\bm t}={\bm \sigma}\cdot{\bm n}$
+on the boundary of the domain. On the top boundary, ${\bm n}=(0,1)$ so that ${\bm t}=(\sigma_{xy}, \sigma_{yy})^T$.
 
+In the following table are shown the results presented in \cite{zhgh93} alongside the results obtained with Fieldstone:
+\begin{center}
+\begin{tabular}{l||llll}
+\hline
+Method             & $y_0=63/64$ & $y_0=62/64$ &  $y_0=59/64$
+\footnote{The paper says 60/64 in the last column but it is in fact 59/64}
+ & $y_0=32/64$\\ 
+\hline
+\hline
+Analytic solution                   & 0.995476 & 0.983053  &  0.912506 & 0.178136 \\
+Pressure smoothing \cite{zhgh93}    & 1.15974  & 1.06498   &  0.911109 & n.a. \\
+CBF                \cite{zhgh93}    & 0.994236 & 0.982116  &  0.912157 & n.a. \\
+\hline
+fieldstone: elemental               & 0.824554 (-17.17 \%) & 0.978744 (-0.44\%) & 0.909574 (-0.32 \%) & 0.177771 (-0.20 \%)\\
+fieldstone: nodal (C$\rightarrow$N) & 0.824554 (-17.17 \%) & 0.978744 (-0.44\%) & 0.909574 (-0.32 \%) & 0.177771 (-0.20 \%)\\
+fieldstone: LS                      & 1.165321 ( 17.06 \%) & 1.070105 ( 8.86\%) & 0.915496 ( 0.33 \%) & 0.178182 ( 0.03 \%)\\
+fieldstone: CBF                     & 0.994236 ( -0.13 \%) & 0.982116 (-0.10\%) & 0.912157 (-0.04 \%) & 0.177998 (-0.08 \%)\\
+\hline
+\end{tabular}
+\end{center}
+We see that we recover the published results with the same exact accuracy, thereby validating our implmentation.
+
+On the following figures are shown the velocity, pressure and traction fields for two cases $y_0=32/64$ and $y_0=63/64$.
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_27/results/32_64/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_27/results/32_64/p}
+\includegraphics[width=5cm]{python_codes/fieldstone_27/results/32_64/tractions}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_27/results/63_64/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_27/results/63_64/p}
+\includegraphics[width=5cm]{python_codes/fieldstone_27/results/63_64/tractions}
+\end{center}
+
+Here lies the superiority of our approach over the one presented in the original article: 
+our code computes all traction vectors on all boundaries at once.
+
+\todo{explain how Medge is arrived at!}
+
+\todo{compare with ASPECT ??!}
 
 
 

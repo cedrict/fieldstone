@@ -1,13 +1,27 @@
 set term pdf enhanced
-set output 'sigmazz.pdf'
 k=2*pi
 y0=63./64.
 set key bottom 
 
 set xlabel 'x'
 set ylabel 'sigma_{yy}'
+set output 'sigmazz.pdf'
 plot[0:1]\
 cos(k*x)/sinh(k)**2*(k*(1-y0)*sinh(k)*cosh(k*y0)-k*sinh(k*(1-y0))+sinh(k)*sinh(k*y0) ) t 'analytical',\
-'sigmayy_el.ascii' u 1:2 w l t 'elemental'
+'sigmayy_el.ascii'  u 1:2 w l t 'elemental',\
+'sigmayy_C-N.ascii' u 1:2 w l t 'C-N',\
+'sigmayy_LS.ascii'  u 1:2 w l t 'LS',\
+'sigmayy_cbf.ascii' u 1:2 w l t 'cbf'
+
+f(x)=cos(k*x)/sinh(k)**2*(k*(1-y0)*sinh(k)*cosh(k*y0)-k*sinh(k*(1-y0))+sinh(k)*sinh(k*y0) )
+
+set output 'sigmazz_error.pdf'
+set ylabel 'sigma_{yy} error'
+plot[0:1]\
+'sigmayy_el.ascii'  u 1:($2-f($1)) w l t 'elemental',\
+'sigmayy_C-N.ascii' u 1:($2-f($1)) w l t 'C-N',\
+'sigmayy_LS.ascii'  u 1:($2-f($1)) w l t 'LS',\
+'sigmayy_cbf.ascii' u 1:($2-f($1)) w l t 'cbf',\
+0. lt -1 
+
  
-#'sigmayy_analytical.ascii' w l ,

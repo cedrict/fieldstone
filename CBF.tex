@@ -317,22 +317,252 @@ Note that the resulting matrix is symmetric.
 
 \newpage
 Let us start with a small example, a 3x2 element FE grid:
-
 \begin{center}
-\begin{verbatim}
-8=======9======10======11
-|       |       |       |
-|  (3)  |  (4)  |  (5)  |
-|       |       |       |
-4=======5=======6=======7
-|       |       |       |
-|  (0)  |  (1)  |  (2)  |
-|       |       |       |
-0=======1=======2=======3
-\end{verbatim}
+\begin{tikzpicture}
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (8,6); %background grid
+\draw[thick] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;  
+\draw[thick] (3,1) -- (5,1) -- (5,3) -- (3,3) -- cycle; 
+\draw[thick] (5,1) -- (7,1) -- (7,3) -- (5,3) -- cycle; 
+\draw[thick] (1,3) -- (3,3) -- (3,5) -- (1,5) -- cycle;  
+\draw[thick] (3,3) -- (5,3) -- (5,5) -- (3,5) -- cycle; 
+\draw[thick] (5,3) -- (7,3) -- (7,5) -- (5,5) -- cycle; 
+\node[draw] at (2,2) {0};
+\node[draw] at (4,2) {1};
+\node[draw] at (6,2) {2};
+\node[draw] at (2,4) {3};
+\node[draw] at (4,4) {4};
+\node[draw] at (6,4) {5};
+%pressure dofs
+\node at (0.9,0.9) {\tiny 0};
+\node at (2.9,0.9) {\tiny 1};
+\node at (4.9,0.9) {\tiny 2};
+\node at (6.9,0.9) {\tiny 3};
+\node at (0.9,2.9) {\tiny 4};
+\node at (2.9,2.9) {\tiny 5};
+\node at (4.9,2.9) {\tiny 6};
+\node at (6.9,2.9) {\tiny 7};
+\node at (0.9,4.9) {\tiny 8};
+\node at (2.9,4.9) {\tiny 9};
+\node at (4.9,4.9) {\tiny 10};
+\node at (6.9,4.9) {\tiny 11};
+%velocity dofs
+\node[red] at (1.1,1.1) {\tiny 0};  \node[blue] at (1.25,1.1) {\tiny 1};
+\node[red] at (3.1,1.1) {\tiny 2};  \node[blue] at (3.25,1.1) {\tiny 3};
+\node[red] at (5.1,1.1) {\tiny 4};  \node[blue] at (5.25,1.1) {\tiny 5};
+\node[red] at (7.1,1.1) {\tiny 6};  \node[blue] at (7.25,1.1) {\tiny 7};
+\node[red] at (1.1,3.1) {\tiny 8};  \node[blue] at (1.25,3.1) {\tiny 9};
+\node[red] at (3.1,3.1) {\tiny 10}; \node[blue] at (3.35,3.1) {\tiny 11};
+\node[red] at (5.1,3.1) {\tiny 12}; \node[blue] at (5.35,3.1) {\tiny 13};
+\node[red] at (7.1,3.1) {\tiny 14}; \node[blue] at (7.35,3.1) {\tiny 15};
+\node[red] at (1.,5.1) {\tiny 16}; \node[blue] at (1.3,5.1) {\tiny 17};
+\node[red] at (3.,5.1) {\tiny 18}; \node[blue] at (3.3,5.1) {\tiny 19};
+\node[red] at (5.,5.1) {\tiny 20}; \node[blue] at (5.3,5.1) {\tiny 21};
+\node[red] at (7.,5.1) {\tiny 22}; \node[blue] at (7.3,5.1) {\tiny 23};
+\end{tikzpicture}\\
+{\tiny Red color corresponds to the dofs in the x direction, blue color indicates a dof in the y direction.}
 \end{center}
 
+We have nnp=12, nel=6, NfemV=24. Let us assume that free slip boundary conditions are applied. 
+The {\tt fix\_bc} array is then:
+\begin{center}
+\begin{tikzpicture}
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (9,0.7); %background grid
+\node  at (0.45,.1) {\tiny bc\_fix=[};
 
+\node[red]  at (1.00,.1) {\tiny T};
+\node[blue] at (1.25,.1) {\tiny T};
+\node[red]  at (1.50,.1) {\tiny T};
+\node[blue] at (1.75,.1) {\tiny T};
+\node[red]  at (2.00,.1) {\tiny T};
+\node[blue] at (2.25,.1) {\tiny T};
+\node[red]  at (2.50,.1) {\tiny T};
+\node[blue] at (2.75,.1) {\tiny T};
+\node[red]  at (3.00,.1) {\tiny T};
+\node[blue] at (3.25,.1) {\tiny T};
+\node[red]  at (3.50,.1) {\tiny T};
+\node[blue] at (3.75,.1) {\tiny T};
+\node[red]  at (4.00,.1) {\tiny T};
+\node[blue] at (4.25,.1) {\tiny T};
+\node[red]  at (4.50,.1) {\tiny T};
+\node[blue] at (4.75,.1) {\tiny T};
+\node[red]  at (5.00,.1) {\tiny T};
+\node[blue] at (5.25,.1) {\tiny T};
+\node[red]  at (5.50,.1) {\tiny T};
+\node[blue] at (5.75,.1) {\tiny T};
+\node[red]  at (6.00,.1) {\tiny T};
+\node[blue] at (6.25,.1) {\tiny T};
+\node[red]  at (6.50,.1) {\tiny T};
+\node[blue] at (6.75,.1) {\tiny T};
+
+\node  at (7,.1) {\tiny ]};
+
+\end{tikzpicture}\\
+\end{center}
+Note that since corners belong to two edges, we effectively prescribed 
+no-slip boundary conditions on those. 
+
+We wish to compute the tractions on the boundaries, and more precisely for the dofs for which 
+a Dirichlecht velocity boundary condition has been prescribed.
+The number of (traction) unknowns NfemTr is then the number of {\tt T} in the {\tt bc\_fix} array.
+In our specific case, we wave NfemTr= .
+This means that we need for each targeted dof to be able to find its identity/number
+between 0 and NfemTr-1. We therefore create the array {\tt bc\_nb} which is 
+filled as follows: 
+ 
+\begin{center}
+\begin{tikzpicture}
+\draw[step=0.5cm,gray,very thin] (0,0) grid (9,0.7); %background grid
+
+\node  at (0.5,.1) {\tiny bc\_nb=[};
+
+\node[red]  at (1.00,.1) {\tiny T};
+\node[blue] at (1.25,.1) {\tiny T};
+\node[red]  at (1.50,.1) {\tiny T};
+\node[blue] at (1.75,.1) {\tiny T};
+\node[red]  at (2.00,.1) {\tiny T};
+\node[blue] at (2.25,.1) {\tiny T};
+\node[red]  at (2.50,.1) {\tiny T};
+\node[blue] at (2.75,.1) {\tiny T};
+\node[red]  at (3.00,.1) {\tiny T};
+\node[blue] at (3.25,.1) {\tiny T};
+\node[red]  at (3.50,.1) {\tiny T};
+\node[blue] at (3.75,.1) {\tiny T};
+\node[red]  at (4.00,.1) {\tiny T};
+\node[blue] at (4.25,.1) {\tiny T};
+\node[red]  at (4.50,.1) {\tiny T};
+\node[blue] at (4.75,.1) {\tiny T};
+\node[red]  at (5.00,.1) {\tiny T};
+\node[blue] at (5.25,.1) {\tiny T};
+\node[red]  at (5.50,.1) {\tiny T};
+\node[blue] at (5.75,.1) {\tiny T};
+\node[red]  at (6.00,.1) {\tiny T};
+\node[blue] at (6.25,.1) {\tiny T};
+\node[red]  at (6.50,.1) {\tiny T};
+\node[blue] at (6.75,.1) {\tiny T};
+\node  at (7,.1) {\tiny ]};
+\end{tikzpicture}\\
+\end{center}
+
+This translates as follows in the code:
+\begin{lstlisting}
+NfemTr=np.sum(bc_fix)
+bc_nb=np.zeros(NfemV,dtype=np.int32)
+counter=0
+for i in range(0,NfemV):
+    if (bc_fix[i]):
+       bc_nb[i]=counter
+       counter+=1
+\end{lstlisting}
+
+
+
+
+
+
+
+The algorithm is then as follows
+
+\begin{itemize}
+\item[A] Prepare two arrays to store the matrix $M_{cbf}$ and its right hand side $rhs_{cbf}$  
+
+\item[B] 
+Loop over all elements 
+
+\item[C] 
+For each element touching a boundary, compute the residual vector 
+$R_{el}=-f_{el} + \K_{el}{\cal V}_{el} + \G_{el} {\cal P}_{el}$
+
+\item[D]
+Loop over the four edges of the element using the connectivity array
+
+\item[E]
+For each edge loop over the number of degrees of freedom (2 in 2D)
+
+\item[F] 
+For each edge assess whether the dofs on both ends are target dofs. 
+
+\item[G]
+If so, compute the mass matrix $M_{edge}$ for this edge 
+
+\item[H] extract the 2 values off the element residual vector and assemble these
+in $rhs_{cbf}$
+
+\item[I] Assemble $M_{edge}$ into NfemTrxNfemTr matrix using bc\_nb
+\end{itemize}
+
+
+\begin{lstlisting}
+M_cbf = np.zeros((NfemTr,NfemTr),np.float64)         # A
+rhs_cbf = np.zeros(NfemTr,np.float64)
+
+for iel in range(0,nel):                             # B
+
+    ... compute elemental residual ...               # C
+
+    #boundary 0-1                                    # D
+    for i in range(0,ndofV):                         # E
+        idof0=2*icon[0,iel]+i
+        idof1=2*icon[1,iel]+i
+        if (bc_fix[idof0] and bc_fix[idof1]):        # F
+           idofTr0=bc_nb[idof0]   
+           idofTr1=bc_nb[idof1]
+           rhs_cbf[idofTr0]+=res_el[0+i]             # H
+           rhs_cbf[idofTr1]+=res_el[2+i]              
+           M_cbf[idofTr0,idofTr0]+=M_edge[0,0]       # 
+           M_cbf[idofTr0,idofTr1]+=M_edge[0,1]       # I
+           M_cbf[idofTr1,idofTr0]+=M_edge[1,0]       # 
+           M_cbf[idofTr1,idofTr1]+=M_edge[1,1]       #
+
+    #boundary 1-2                                    #[D]
+
+    ...
+
+    #boundary 2-3                                    #[D]
+
+    ...
+
+    #boundary 3-0                                    #[D]
+
+    ...
+
+
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
 \begin{eqnarray}
 \text{Element 0:} \quad\quad
 \int_{\Gamma} N_i {\bm t} dS 
@@ -416,7 +646,6 @@ We see that the
 
 
 
-\end{document}
 
 
 

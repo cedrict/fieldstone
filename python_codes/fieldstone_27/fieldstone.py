@@ -82,13 +82,15 @@ gy=-1
 
 pnormalise=True
 viscosity=1  # dynamic viscosity \mu
-y0=62./64.
-rho_alpha=1.#64.
+y0=32./64.
+rho_alpha=64.
 
 hx=Lx/nelx
 
 eps=1.e-10
 sqrt3=np.sqrt(3.)
+
+sigmayy_NE=sigmayy_th(1.,y0)
 
 #################################################################
 # grid point setup
@@ -112,6 +114,7 @@ print("setup: grid points: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
+element_on_bd=np.zeros(nel,dtype=np.bool)  # elt boundary indicator
 icon =np.zeros((m, nel),dtype=np.int16)
 counter = 0
 for j in range(0, nely):
@@ -120,6 +123,7 @@ for j in range(0, nely):
         icon[1, counter] = i + 1 + j * (nelx + 1)
         icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
         icon[3, counter] = i + (j + 1) * (nelx + 1)
+        element_on_bd[counter]=True
         counter += 1
 
 print("setup: connectivity: %.3f s" % (time.time() - start))
@@ -138,37 +142,37 @@ start = time.time()
 
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
-on_bd=np.zeros((nnp,4),dtype=np.bool)  # boundary indicator
+node_on_bd=np.zeros((nnp,4),dtype=np.bool)  # boundary indicator
 
 for i in range(0, nnp):
     if x[i]<eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       on_bd[i,0]=True
+       node_on_bd[i,0]=True
     if x[i]>(Lx-eps):
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       on_bd[i,1]=True
+       node_on_bd[i,1]=True
     if y[i]<eps:
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-       on_bd[i,2]=True
+       node_on_bd[i,2]=True
     if y[i]>(Ly-eps):
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-       on_bd[i,3]=True
+       node_on_bd[i,3]=True
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
-NfemTr=np.sum(bc_fix)
-print (NfemTr)
+#################################################################
+# build bc_nb array for cbf
+#################################################################
 
-bc_nb=np.zeros(NfemV,dtype=np.int32)  # boundary condition, yes/no
+NfemTr=np.sum(bc_fix)
+
+bc_nb=np.zeros(NfemV,dtype=np.int32)
 
 counter=0
 for i in range(0,NfemV):
     if (bc_fix[i]):
        bc_nb[i]=counter
        counter+=1
-
-print (np.min(bc_nb))
-print (np.max(bc_nb))
 
 #################################################################
 # building density array
@@ -524,7 +528,7 @@ for j in range(0,nely):
 
            # node 1 of patch
            ip=icon[1,iel0] 
-           if on_bd[ip,2]:
+           if node_on_bd[ip,2]:
               q3[ip]=solp[0]+solp[1]*x[ip]+solp[2]*y[ip]+solp[3]*x[ip]*y[ip]
               exxn3[ip]=solxx[0]+solxx[1]*x[ip]+solxx[2]*y[ip]+solxx[3]*x[ip]*y[ip]
               eyyn3[ip]=solyy[0]+solyy[1]*x[ip]+solyy[2]*y[ip]+solyy[3]*x[ip]*y[ip]
@@ -532,7 +536,7 @@ for j in range(0,nely):
 
            # node 3 of patch
            ip=icon[3,iel0] 
-           if on_bd[ip,0]:
+           if node_on_bd[ip,0]:
               q3[ip]=solp[0]+solp[1]*x[ip]+solp[2]*y[ip]+solp[3]*x[ip]*y[ip]
               exxn3[ip]=solxx[0]+solxx[1]*x[ip]+solxx[2]*y[ip]+solxx[3]*x[ip]*y[ip]
               eyyn3[ip]=solyy[0]+solyy[1]*x[ip]+solyy[2]*y[ip]+solyy[3]*x[ip]*y[ip]
@@ -540,7 +544,7 @@ for j in range(0,nely):
 
            # node 5 of patch
            ip=icon[2,iel1] 
-           if on_bd[ip,1]:
+           if node_on_bd[ip,1]:
               q3[ip]=solp[0]+solp[1]*x[ip]+solp[2]*y[ip]+solp[3]*x[ip]*y[ip]
               exxn3[ip]=solxx[0]+solxx[1]*x[ip]+solxx[2]*y[ip]+solxx[3]*x[ip]*y[ip]
               eyyn3[ip]=solyy[0]+solyy[1]*x[ip]+solyy[2]*y[ip]+solyy[3]*x[ip]*y[ip]
@@ -548,7 +552,7 @@ for j in range(0,nely):
 
            # node 7 of patch
            ip=icon[3,iel2] 
-           if on_bd[ip,3]:
+           if node_on_bd[ip,3]:
               q3[ip]=solp[0]+solp[1]*x[ip]+solp[2]*y[ip]+solp[3]*x[ip]*y[ip]
               exxn3[ip]=solxx[0]+solxx[1]*x[ip]+solxx[2]*y[ip]+solxx[3]*x[ip]*y[ip]
               eyyn3[ip]=solyy[0]+solyy[1]*x[ip]+solyy[2]*y[ip]+solyy[3]*x[ip]*y[ip]
@@ -556,7 +560,7 @@ for j in range(0,nely):
 
            # lower left corner of domain
            ip=icon[0,iel0] 
-           if on_bd[ip,0] and on_bd[ip,2]:
+           if node_on_bd[ip,0] and node_on_bd[ip,2]:
               q3[ip]=solp[0]+solp[1]*x[ip]+solp[2]*y[ip]+solp[3]*x[ip]*y[ip]
               exxn3[ip]=solxx[0]+solxx[1]*x[ip]+solxx[2]*y[ip]+solxx[3]*x[ip]*y[ip]
               eyyn3[ip]=solyy[0]+solyy[1]*x[ip]+solyy[2]*y[ip]+solyy[3]*x[ip]*y[ip]
@@ -564,7 +568,7 @@ for j in range(0,nely):
 
            # lower right corner of domain
            ip=icon[1,iel1] 
-           if on_bd[ip,1] and on_bd[ip,2]:
+           if node_on_bd[ip,1] and node_on_bd[ip,2]:
               q3[ip]=solp[0]+solp[1]*x[ip]+solp[2]*y[ip]+solp[3]*x[ip]*y[ip]
               exxn3[ip]=solxx[0]+solxx[1]*x[ip]+solxx[2]*y[ip]+solxx[3]*x[ip]*y[ip]
               eyyn3[ip]=solyy[0]+solyy[1]*x[ip]+solyy[2]*y[ip]+solyy[3]*x[ip]*y[ip]
@@ -572,7 +576,7 @@ for j in range(0,nely):
 
            # upper right corner of domain
            ip=icon[2,iel2] 
-           if on_bd[ip,1] and on_bd[ip,3]:
+           if node_on_bd[ip,1] and node_on_bd[ip,3]:
               q3[ip]=solp[0]+solp[1]*x[ip]+solp[2]*y[ip]+solp[3]*x[ip]*y[ip]
               exxn3[ip]=solxx[0]+solxx[1]*x[ip]+solxx[2]*y[ip]+solxx[3]*x[ip]*y[ip]
               eyyn3[ip]=solyy[0]+solyy[1]*x[ip]+solyy[2]*y[ip]+solyy[3]*x[ip]*y[ip]
@@ -580,7 +584,7 @@ for j in range(0,nely):
 
            # lower right corner of domain
            ip=icon[3,iel3] 
-           if on_bd[ip,0] and on_bd[ip,3]:
+           if node_on_bd[ip,0] and node_on_bd[ip,3]:
               q3[ip]=solp[0]+solp[1]*x[ip]+solp[2]*y[ip]+solp[3]*x[ip]*y[ip]
               exxn3[ip]=solxx[0]+solxx[1]*x[ip]+solxx[2]*y[ip]+solxx[3]*x[ip]*y[ip]
               eyyn3[ip]=solyy[0]+solyy[1]*x[ip]+solyy[2]*y[ip]+solyy[3]*x[ip]*y[ip]
@@ -609,18 +613,18 @@ for iel in range(1,nel):
     sigmayy_el[iel]=(-p[iel]+2.*viscosity*eyy[iel])
 
 np.savetxt('sigmayy_el.ascii',np.array([xc[nel-nelx:nel],\
-                                        (sigmayy_el[nel-nelx:nel])/hx,\
+                                        (sigmayy_el[nel-nelx:nel]),\
                                        ]).T,header='# xc,sigmayy')
 
 np.savetxt('sigmayy_C-N.ascii',np.array([x[nnp-nnx:nnp],\
-                                        (-q1[nnp-nnx:nnp]+2.*viscosity*eyyn1[nnp-nnx:nnp])/hx,\
-                                        (-q1[nnp-nnx:nnp]+2.*viscosity*eyyn1[nnp-nnx:nnp])/hx - \
+                                        (-q1[nnp-nnx:nnp]+2.*viscosity*eyyn1[nnp-nnx:nnp]),\
+                                        (-q1[nnp-nnx:nnp]+2.*viscosity*eyyn1[nnp-nnx:nnp]) - \
                                          sigmayy_th(x[nnp-nnx:nnp],y0),\
                                         ]).T,header='# x,sigmayy,error')
 
 np.savetxt('sigmayy_LS.ascii',np.array([x[nnp-nnx:nnp],\
-                                        (-q3[nnp-nnx:nnp]+2.*viscosity*eyyn3[nnp-nnx:nnp])/hx,\
-                                        (-q3[nnp-nnx:nnp]+2.*viscosity*eyyn3[nnp-nnx:nnp])/hx - \
+                                        (-q3[nnp-nnx:nnp]+2.*viscosity*eyyn3[nnp-nnx:nnp]),\
+                                        (-q3[nnp-nnx:nnp]+2.*viscosity*eyyn3[nnp-nnx:nnp]) - \
                                          sigmayy_th(x[nnp-nnx:nnp],y0),\
                                         ]).T,header='# x,sigmayy,error')
 
@@ -632,181 +636,188 @@ np.savetxt('sigmayy_LS.ascii',np.array([x[nnp-nnx:nnp],\
 #    counter+=1
 #np.savetxt('sigmayy_analytical.ascii',np.array([x[nnp-nnx:nnp],sigmayy_analytical]).T,header='# x,sigmayy')
 
-print("     -> sigmayy_el       (N-E) %6f " % ((sigmayy_el[nel-1])/hx) ) 
-print("     -> sigmayy_nod C->N (N-E) %6f " % ((-q1[nnp-1]+2.*viscosity*eyyn1[nnp-1])/hx) ) 
-print("     -> sigmayy_nod LS   (N-E) %6f " % ((-q3[nnp-1]+2.*viscosity*eyyn3[nnp-1])/hx) )
+print("     -> sigmayy analyt.  (N-E) %6f " % (sigmayy_NE))
+temp=sigmayy_el[nel-1]
+print("     -> sigmayy_el       (N-E) %6f ; rel error %6f " % (temp , ((temp-sigmayy_NE)/sigmayy_NE*100) ))
+temp=-q1[nnp-1]+2.*viscosity*eyyn1[nnp-1]
+print("     -> sigmayy_nod C->N (N-E) %6f ; rel error %6f " % (temp , ((temp-sigmayy_NE)/sigmayy_NE*100) ))
+temp=-q3[nnp-1]+2.*viscosity*eyyn3[nnp-1]
+print("     -> sigmayy_nod LS   (N-E) %6f ; rel error %6f " % (temp , ((temp-sigmayy_NE)/sigmayy_NE*100) ))
 
 #####################################################################
 # Consistent Boundary Flux method
 #####################################################################
-# we wish to compute sigma_yy on the top boundary only
-# this boundary counts nnx nodes, each with 1 dof for ty
 
-M_prime = np.zeros((NfemTr,NfemTr),np.float64)
+M_cbf = np.zeros((NfemTr,NfemTr),np.float64)
 rhs_cbf = np.zeros(NfemTr,np.float64)
 tx = np.zeros(nnp,np.float64)
 ty = np.zeros(nnp,np.float64)
 
-M_prime_el =(hx/2.)*np.array([ \
+M_edge=(hx/2.)*np.array([ \
 [2./3.,1./3.],\
 [1./3.,2./3.]])
 
 for iel in range(0,nel):
 
-    #-----------------------
-    # compute Kel, Gel, f
-    #-----------------------
+    if element_on_bd[iel]:
 
-    f_el =np.zeros((m*ndofV),dtype=np.float64)
-    K_el =np.zeros((m*ndofV,m*ndofV),dtype=np.float64)
-    G_el=np.zeros((m*ndofV,1),dtype=np.float64)
-    rhs_el =np.zeros((m*ndofV),dtype=np.float64)
+       #-----------------------
+       # compute Kel, Gel, f
+       #-----------------------
 
-    # integrate viscous term at 4 quadrature points
-    for iq in [-1, 1]:
-        for jq in [-1, 1]:
+       f_el =np.zeros((m*ndofV),dtype=np.float64)
+       K_el =np.zeros((m*ndofV,m*ndofV),dtype=np.float64)
+       G_el=np.zeros((m*ndofV,1),dtype=np.float64)
+       rhs_el =np.zeros((m*ndofV),dtype=np.float64)
 
-            # position & weight of quad. point
-            rq=iq/sqrt3
-            sq=jq/sqrt3
-            weightq=1.*1.
+       for iq in [-1, 1]:
+           for jq in [-1, 1]:
 
-            # calculate shape functions
-            N[0:m]=NNV(rq,sq)
-            dNdr[0:m]=dNNVdr(rq,sq)
-            dNds[0:m]=dNNVds(rq,sq)
+               # position & weight of quad. point
+               rq=iq/sqrt3
+               sq=jq/sqrt3
+               weightq=1.*1.
 
-            # calculate jacobian matrix
-            jcb = np.zeros((2, 2),dtype=float)
-            for k in range(0,m):
-                jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
-                jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
-                jcb[1, 0] += dNds[k]*x[icon[k,iel]]
-                jcb[1, 1] += dNds[k]*y[icon[k,iel]]
-            jcob = np.linalg.det(jcb)
-            jcbi = np.linalg.inv(jcb)
+               # calculate shape functions
+               N[0:m]=NNV(rq,sq)
+               dNdr[0:m]=dNNVdr(rq,sq)
+               dNds[0:m]=dNNVds(rq,sq)
 
-            # compute dNdx & dNdy
-            rhoq=0.
-            for k in range(0, m):
-                rhoq+=N[k]*rho[icon[k,iel]]
-                dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-                dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+               # calculate jacobian matrix
+               jcb = np.zeros((2, 2),dtype=float)
+               for k in range(0,m):
+                   jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
+                   jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
+                   jcb[1, 0] += dNds[k]*x[icon[k,iel]]
+                   jcb[1, 1] += dNds[k]*y[icon[k,iel]]
+               jcob = np.linalg.det(jcb)
+               jcbi = np.linalg.inv(jcb)
 
-            # construct 3x8 b_mat matrix
-            for i in range(0, m):
-                b_mat[0:3, 2*i:2*i+2] = [[dNdx[i],0.     ],
-                                         [0.     ,dNdy[i]],
-                                         [dNdy[i],dNdx[i]]]
+               # compute dNdx & dNdy
+               rhoq=0.
+               for k in range(0, m):
+                   rhoq+=N[k]*rho[icon[k,iel]]
+                   dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+                   dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
 
-            # compute elemental a_mat matrix
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity*weightq*jcob
+               # construct 3x8 b_mat matrix
+               for i in range(0, m):
+                   b_mat[0:3, 2*i:2*i+2] = [[dNdx[i],0.     ],
+                                            [0.     ,dNdy[i]],
+                                            [dNdy[i],dNdx[i]]]
 
-            # compute elemental rhs vector
-            for i in range(0, m):
-                f_el[ndofV*i  ]+=N[i]*jcob*weightq*rhoq*gx
-                f_el[ndofV*i+1]+=N[i]*jcob*weightq*rhoq*gy
-                G_el[ndofV*i  ,0]-=dNdx[i]*jcob*weightq
-                G_el[ndofV*i+1,0]-=dNdy[i]*jcob*weightq
+               # compute elemental a_mat matrix
+               K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity*weightq*jcob
 
-        # end for jq
-    # end for iq
+               # compute elemental rhs vector
+               for i in range(0, m):
+                   f_el[ndofV*i  ]+=N[i]*jcob*weightq*rhoq*gx
+                   f_el[ndofV*i+1]+=N[i]*jcob*weightq*rhoq*gy
+                   G_el[ndofV*i  ,0]-=dNdx[i]*jcob*weightq
+                   G_el[ndofV*i+1,0]-=dNdy[i]*jcob*weightq
 
-    #-----------------------
-    # compute total rhs
-    #-----------------------
+           # end for jq
+       # end for iq
 
-    v_el = np.array([u[icon[0,iel]],v[icon[0,iel]],\
-                     u[icon[1,iel]],v[icon[1,iel]],\
-                     u[icon[2,iel]],v[icon[2,iel]],\
-                     u[icon[3,iel]],v[icon[3,iel]] ])
+       #-----------------------------------------
+       # compute (8x1) elemental residual vector
+       #-----------------------------------------
 
-    rhs_el=-f_el+K_el.dot(v_el)+G_el[:,0]*p[iel]
+       v_el = np.array([u[icon[0,iel]],v[icon[0,iel]],\
+                        u[icon[1,iel]],v[icon[1,iel]],\
+                        u[icon[2,iel]],v[icon[2,iel]],\
+                        u[icon[3,iel]],v[icon[3,iel]] ])
 
-    #-----------------------
-    # assemble 
-    #-----------------------
+       res_el=-f_el+K_el.dot(v_el)+G_el[:,0]*p[iel]
 
-    #boundary 0-1 : x,y dofs
-    for i in range(0,ndofV):
-        idof0=2*icon[0,iel]+i
-        idof1=2*icon[1,iel]+i
-        if (bc_fix[idof0] and bc_fix[idof1]):  
-           idofTr0=bc_nb[idof0]   
-           idofTr1=bc_nb[idof1]
-           rhs_cbf[idofTr0]+=rhs_el[0+i]   
-           rhs_cbf[idofTr1]+=rhs_el[2+i]   
-           M_prime[idofTr0,idofTr0]+=M_prime_el[0,0]
-           M_prime[idofTr0,idofTr1]+=M_prime_el[0,1]
-           M_prime[idofTr1,idofTr0]+=M_prime_el[1,0]
-           M_prime[idofTr1,idofTr1]+=M_prime_el[1,1]
+       #-------------------------
+       # build M_cbf and rhs_cbf 
+       #-------------------------
 
-    #boundary 1-2 : x,y dofs
-    for i in range(0,ndofV):
-        idof0=2*icon[1,iel]+i
-        idof1=2*icon[2,iel]+i
-        if (bc_fix[idof0] and bc_fix[idof1]):  
-           idofTr0=bc_nb[idof0]   
-           idofTr1=bc_nb[idof1]
-           rhs_cbf[idofTr0]+=rhs_el[2+i]   
-           rhs_cbf[idofTr1]+=rhs_el[4+i]   
-           M_prime[idofTr0,idofTr0]+=M_prime_el[0,0]
-           M_prime[idofTr0,idofTr1]+=M_prime_el[0,1]
-           M_prime[idofTr1,idofTr0]+=M_prime_el[1,0]
-           M_prime[idofTr1,idofTr1]+=M_prime_el[1,1]
+       #boundary 0-1 : x,y dofs
+       for i in range(0,ndofV):
+           idof0=ndofV*icon[0,iel]+i
+           idof1=ndofV*icon[1,iel]+i
+           if (bc_fix[idof0] and bc_fix[idof1]):  
+              idofTr0=bc_nb[idof0]   
+              idofTr1=bc_nb[idof1]
+              rhs_cbf[idofTr0]+=res_el[0+i]   
+              rhs_cbf[idofTr1]+=res_el[2+i]   
+              M_cbf[idofTr0,idofTr0]+=M_edge[0,0]
+              M_cbf[idofTr0,idofTr1]+=M_edge[0,1]
+              M_cbf[idofTr1,idofTr0]+=M_edge[1,0]
+              M_cbf[idofTr1,idofTr1]+=M_edge[1,1]
 
-    #boundary 2-3 : x,y dofs
-    for i in range(0,ndofV):
-        idof0=2*icon[2,iel]+i
-        idof1=2*icon[3,iel]+i
-        if (bc_fix[idof0] and bc_fix[idof1]):  
-           idofTr0=bc_nb[idof0]   
-           idofTr1=bc_nb[idof1]
-           rhs_cbf[idofTr0]+=rhs_el[4+i]   
-           rhs_cbf[idofTr1]+=rhs_el[6+i]   
-           M_prime[idofTr0,idofTr0]+=M_prime_el[0,0]
-           M_prime[idofTr0,idofTr1]+=M_prime_el[0,1]
-           M_prime[idofTr1,idofTr0]+=M_prime_el[1,0]
-           M_prime[idofTr1,idofTr1]+=M_prime_el[1,1]
+       #boundary 1-2
+       for i in range(0,ndofV):
+           idof0=ndofV*icon[1,iel]+i
+           idof1=ndofV*icon[2,iel]+i
+           if (bc_fix[idof0] and bc_fix[idof1]):  
+              idofTr0=bc_nb[idof0]   
+              idofTr1=bc_nb[idof1]
+              rhs_cbf[idofTr0]+=res_el[2+i]   
+              rhs_cbf[idofTr1]+=res_el[4+i]   
+              M_cbf[idofTr0,idofTr0]+=M_edge[0,0]
+              M_cbf[idofTr0,idofTr1]+=M_edge[0,1]
+              M_cbf[idofTr1,idofTr0]+=M_edge[1,0]
+              M_cbf[idofTr1,idofTr1]+=M_edge[1,1]
 
-    #boundary 3-0 : x,y dofs
-    for i in range(0,ndofV):
-        idof0=2*icon[3,iel]+i
-        idof1=2*icon[0,iel]+i
-        if (bc_fix[idof0] and bc_fix[idof1]):  
-           idofTr0=bc_nb[idof0]   
-           idofTr1=bc_nb[idof1]
-           rhs_cbf[idofTr0]+=rhs_el[6+i]   
-           rhs_cbf[idofTr1]+=rhs_el[0+i]   
-           M_prime[idofTr0,idofTr0]+=M_prime_el[0,0]
-           M_prime[idofTr0,idofTr1]+=M_prime_el[0,1]
-           M_prime[idofTr1,idofTr0]+=M_prime_el[1,0]
-           M_prime[idofTr1,idofTr1]+=M_prime_el[1,1]
+       #boundary 2-3 
+       for i in range(0,ndofV):
+           idof0=ndofV*icon[2,iel]+i
+           idof1=ndofV*icon[3,iel]+i
+           if (bc_fix[idof0] and bc_fix[idof1]):  
+              idofTr0=bc_nb[idof0]   
+              idofTr1=bc_nb[idof1]
+              rhs_cbf[idofTr0]+=res_el[4+i]   
+              rhs_cbf[idofTr1]+=res_el[6+i]   
+              M_cbf[idofTr0,idofTr0]+=M_edge[0,0]
+              M_cbf[idofTr0,idofTr1]+=M_edge[0,1]
+              M_cbf[idofTr1,idofTr0]+=M_edge[1,0]
+              M_cbf[idofTr1,idofTr1]+=M_edge[1,1]
 
+       #boundary 3-0 
+       for i in range(0,ndofV):
+           idof0=ndofV*icon[3,iel]+i
+           idof1=ndofV*icon[0,iel]+i
+           if (bc_fix[idof0] and bc_fix[idof1]):  
+              idofTr0=bc_nb[idof0]   
+              idofTr1=bc_nb[idof1]
+              rhs_cbf[idofTr0]+=res_el[6+i]   
+              rhs_cbf[idofTr1]+=res_el[0+i]   
+              M_cbf[idofTr0,idofTr0]+=M_edge[0,0]
+              M_cbf[idofTr0,idofTr1]+=M_edge[0,1]
+              M_cbf[idofTr1,idofTr0]+=M_edge[1,0]
+              M_cbf[idofTr1,idofTr1]+=M_edge[1,1]
+
+    # end if
 # end for iel
 
-#np.savetxt("rhs_cbf.ascii",rhs_cbf)
 #matfile=open("matrix.ascii","w")
 #for i in range(0,NfemTr):
 #    for j in range(0,NfemTr):
-#        if abs(M_prime[i,j])>1e-16:
-#           matfile.write(" %d %d %e \n " % (i,j,M_prime[i,j]))
+#        if abs(M_cbf[i,j])>1e-16:
+#           matfile.write(" %d %d %e \n " % (i,j,M_cbf[i,j]))
 #matfile.close()
+#print("     -> M_cbf (m,M) %.4e %.4e " %(np.min(M_cbf),np.max(M_cbf)))
+#print("     -> rhs_cbf (m,M) %.4e %.4e " %(np.min(rhs_cbf),np.max(rhs_cbf)))
 
-print("     -> M_prime (m,M) %.4e %.4e " %(np.min(M_prime),np.max(M_prime)))
-print("     -> rhs_cbf (m,M) %.4e %.4e " %(np.min(rhs_cbf),np.max(rhs_cbf)))
+sol=sps.linalg.spsolve(sps.csr_matrix(M_cbf),rhs_cbf)
 
-sol=sps.linalg.spsolve(sps.csr_matrix(M_prime),rhs_cbf)#,use_umfpack=True)
+# redistribute solution onto mesh
 
 for i in range(0,nnp):
-    idof=2*i+0
+    idof=ndofV*i+0
     if bc_fix[idof]:
        tx[i]=sol[bc_nb[idof]]
-    idof=2*i+1
+    idof=ndofV*i+1
     if bc_fix[idof]:
        ty[i]=sol[bc_nb[idof]]
 
 np.savetxt('sigmayy_cbf.ascii',np.array([x[nnp-nnx:nnp],ty[nnp-nnx:nnp]]).T,header='# x,sigmayy')
+
+temp=ty[nnp-1]
+print("     -> sigmayy_nod CBF  (N-E) %6f ; rel error %6f " % (temp , ((temp-sigmayy_NE)/sigmayy_NE*100) ))
 
 print("     -> tx (m,M) %.4e %.4e " %(np.min(tx),np.max(tx)))
 print("     -> ty (m,M) %.4e %.4e " %(np.min(ty),np.max(ty)))
