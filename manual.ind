@@ -6,7 +6,7 @@
 		\hyperpage{67}, \hyperpage{73}, \hyperpage{80}, 
 		\hyperpage{84}, \hyperpage{88}, \hyperpage{90}, 
 		\hyperpage{106}, \hyperpage{113}, \hyperpage{125}, 
-		\hyperpage{127}, \hyperpage{131}
+		\hyperpage{127}, \hyperpage{131}, \hyperpage{138}
   \item $Q_1$, \hyperpage{13}, \hyperpage{17}
   \item $Q_2 \times Q_1$, \hyperpage{12}, \hyperpage{91}, 
 		\hyperpage{96}
@@ -73,7 +73,7 @@
 		\hyperpage{80}, \hyperpage{84}, \hyperpage{88}, 
 		\hyperpage{90}, \hyperpage{96}, \hyperpage{99}, 
 		\hyperpage{102}, \hyperpage{106}, \hyperpage{125}, 
-		\hyperpage{127}, \hyperpage{131}
+		\hyperpage{127}, \hyperpage{131}, \hyperpage{138}
   \item isoparametric, \hyperpage{53}
   \item isothermal, \hyperpage{58}, \hyperpage{65}, \hyperpage{67}, 
 		\hyperpage{73}, \hyperpage{80}, \hyperpage{84}, 
@@ -82,7 +82,8 @@
 		\hyperpage{125}, \hyperpage{127}, \hyperpage{131}
   \item isoviscous, \hyperpage{58}, \hyperpage{65}, \hyperpage{84}, 
 		\hyperpage{88}, \hyperpage{96}, \hyperpage{99}, 
-		\hyperpage{106}, \hyperpage{113}, \hyperpage{131}
+		\hyperpage{106}, \hyperpage{113}, \hyperpage{131}, 
+		\hyperpage{138}
 
   \indexspace
 
@@ -95,7 +96,8 @@
   \item mixed formulation, \hyperpage{84}, \hyperpage{88}, 
 		\hyperpage{90}, \hyperpage{96}, \hyperpage{99}, 
 		\hyperpage{102}, \hyperpage{106}, \hyperpage{113}, 
-		\hyperpage{125}, \hyperpage{127}, \hyperpage{131}
+		\hyperpage{125}, \hyperpage{127}, \hyperpage{131}, 
+		\hyperpage{138}
   \item MMS, \hyperpage{28}
 
   \indexspace
@@ -108,6 +110,10 @@
   \item nonlinear, \hyperpage{127}
   \item nonlinear rheology, \hyperpage{73}
   \item numerical benchmark, \hyperpage{125}
+
+  \indexspace
+
+  \item open boundary conditions, \hyperpage{138}
 
   \indexspace
 

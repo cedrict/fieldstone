@@ -1,0 +1,125 @@
+In what follows we will investigate the use of the so-called open boundary conditions in 
+the very simple context of a 2D Stokes sphere experiment. 
+
+
+We start with a domain without the sphere. Essentially, it is what people would 
+call an aquarium.
+Free slip boundary conditions are prescribed on the sides and no-slip conditions at the bottom. 
+The top surface is left free. The fluid has a density $\rho_0=1$ and a viscosity $\eta_0=1$.
+In the absence of any density difference in the domain there is no active buoyancy force
+so that we expect a zero velocity field and a lithostatic pressure field. 
+This is indeed what we recover:  
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_29/results/aquarium/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_29/results/aquarium/p}
+\end{center}
+
+If we now implement a sphere parametrised by its density $\rho_s=\rho_0+1$, its 
+viscosity $\eta_s=10^3$ and its radius $R_s=0.123$ in the middle of the domain,  
+we see clear velocity field which logically shows the sphere falling downward and 
+a symmetric return flow of the fluid on each side:
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_29/results/sphere_free_slip/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_29/results/sphere_free_slip/p}
+\includegraphics[width=5cm]{python_codes/fieldstone_29/results/sphere_free_slip/density}
+\end{center}
+
+Unfortunately it has been widely documented that the presence of free-slip 
+boundary conditions affects the evolution of subduction \cite{chgv12}, 
+even when these are placed rather far from the subduction zone. 
+A proposed solution to this problem is the use of 'open boundary conditions'
+which are in fact stress boundary conditions. 
+The main idea is to prescribe a stress on the lateral boundaries (instead of free slip)
+so that it balances out exactly the existing lithostatic pressure inside the domain 
+along the side walls. Only pressure deviations with respect to the 
+lithostatic are responsible for flow and such boundary conditions allow flow  
+across the boundaries.
+
+We need the lithostatic pressure and compute it before hand (which is trivial in 
+our case but can prove to be a bit more tedious in real life situations when for instance
+density varies in the domain as a function of temperature and/or pressure).
+
+\begin{lstlisting}
+plith = np.zeros(nnp,dtype=np.float64)
+for i in range(0,nnp):
+    plith[i]=(Ly-y[i])*rho0*abs(gy)
+\end{lstlisting}
+
+
+Let us start with a somewhat pathological case: even in the absence of the 
+sphere, what happens when no 
+boundary conditions are prescribed on the sides? The answer is simple: 
+think about an aquarium without side walls, or a broken dam. The velocity field 
+indeed shows a complete collapse of the fluid left and right of the bottom.
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_29/results/nobc/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_29/results/nobc/p}
+\end{center}
+
+Let us then continue (still with no sphere) but let us now switch on the open 
+boundary conditions. Since the side boundary conditions match the lithostatic 
+pressure we expect no flow at all in the absence of any density perturbation
+in the system. This is indeed what is recovered:
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_29/results/no_sphere_openbc/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_29/results/no_sphere_openbc/p}
+\end{center}
+ 
+Finally, let us reintroduce the sphere. This 
+time flow is allowed through the left and right side boundaries:
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_29/results/sphere_openbc/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_29/results/sphere_openbc/p}
+\end{center}
+
+Finally, although horizontal velocity Dirichlet boundary conditions and open 
+boundary conditions are not compatible, the same is not true for the vertical component 
+of the velocity: the open b.c. implementation acts on the horizontal velocity 
+dofs only, so that one can fix the vertical component to zero, as is shown hereunder:
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_29/results/sphere_openbc_v0/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_29/results/sphere_openbc_v0/p}
+\end{center}
+
+We indeed see that the in/outflow on the sides is perpendicular to the boundaries. 
+
+Turning now to the actual implementation, we see that it is quite trivial, since 
+all element edges are vertical, and all have the same vertical dimension $h_x$. 
+Since we use a $Q_0$ approximation for the pressure we need to prescribe a single
+pressure value in the middle of the element. Finally because of the sign of the 
+normal vector projection onto the $x$-axis, we obtain:
+
+\begin{lstlisting}
+if open_bc_left and x[icon[0,iel]]<eps: # left side
+   pmid=0.5*(plith[icon[0,iel]]+plith[icon[3,iel]])
+   f_el[0]+=0.5*hy*pmid
+   f_el[6]+=0.5*hy*pmid
+if open_bc_right and x[icon[1,iel]]>Lx-eps: # right side
+   pmid=0.5*(plith[icon[1,iel]]+plith[icon[2,iel]])
+   f_el[2]-=0.5*hy*pmid
+   f_el[4]-=0.5*hy*pmid
+\end{lstlisting}
+
+These few lines of code are added after the elemental matrices and rhs are built, 
+and before the application of other Dirichlet boundary conditions, and assembly.
+
+
+
+
+\fbox{
+\parbox{10cm}{{\bf features}
+\begin{itemize}
+\item $Q_1\times P_0$ element \index{$Q_1 \times P_0$}
+\item incompressible flow \index{incompressible flow}
+\item mixed formulation \index{mixed formulation}
+\item open boundary conditions \index{open boundary conditions}
+\item isoviscous \index{isoviscous}
+\end{itemize}
+}}
+
