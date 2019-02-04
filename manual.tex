@@ -13,6 +13,7 @@
 \usepackage{mdframed}
 \usepackage{makeidx} 
 \usepackage{xargs}
+\usepackage{algorithm,algorithmic}
 \usepackage[pdftex,dvipsnames]{xcolor}
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \hypersetup{
@@ -245,7 +246,11 @@ python3.6 -m pip install --user numpy scipy matplotlib
 \newpage %---------------------------------------------------------------------
 \subsection{Exporting data to vtk format} \input{exporting_to_vtk} %-----------
 
+\newpage %---------------------------------------------------------------------
+\subsection{Runge-Kutta methods} \input{rungekutta} %--------------------------
 
+\newpage %---------------------------------------------------------------------
+\subsection{Am I in or not?} \input{amiin} %-----------------------------------
 
 
 
@@ -284,6 +289,9 @@ periodic boundary conditions
 
 \item
 free surface 
+
+\item 
+newton method to localise markers
 
 \item
 zaleski disk advection

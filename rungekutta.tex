@@ -1,0 +1,29 @@
+These methods were developed around 1900 by the German mathematicians Carl Runge and Martin Kutta.
+The RK methods are methods for the numerical integration of ODEs. These methods are well 
+documented in any numerical analysis textbook and the reader is referred to \cite{gery10,tack10}.
+
+
+
+
+
+
+Any Runge-Kutta method is uniquely identified by its Butcher tableau.
+
+
+The following method is called the Runge-Kutta-Fehlberg method and is 
+commonly abbreviated RKF45. Its Butcher tableau is as follows: 
+
+\begin{tabular}{c|cccccc}
+0 & \\
+1/4 	&1/4\\ 
+3/8 	&3/32 		&9/32 \\
+12/13 	&1932/2197 	&-7200/2197 &	7296/2197\\
+1 	&439/216 	&-8 	&3680/513 &	-845/4104\\
+1/2 	&-8/27 		&2 	&-3544/2565& 	1859/4104 &	-11/40 	\\
+\hline
+&16/135 	&0 		&6656/12825 	&28561/56430 	&-9/50& 	2/55\\
+&25/216 	&0 	&1408/2565 	&2197/4104 	&-1/5 	&0 
+\end{tabular}
+
+
+The first row of coefficients at the bottom of the table gives the fifth-order accurate method, and the second row gives the fourth-order accurate method. 
