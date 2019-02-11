@@ -28,10 +28,10 @@ def viscosity(T,exx,eyy,exy,y,gamma_T,gamma_y,sigma_y,eta_star,case):
     #-------------------
     elif case==2:
        e=np.sqrt(0.5*(exx**2+eyy**2)+exy**2)
-       e=max(e,1e-8)
+       e=max(e,1e-12)
        eta_lin=np.exp(-gamma_T*T)
-       eta_plast=eta_star + sigma_y/(np.sqrt(2)*e)
-       val=2/(1/eta_lin + 1/eta_plast)
+       eta_plast=eta_star + sigma_y/(np.sqrt(2.)*e)
+       val=2./(1./eta_lin + 1./eta_plast)
     #-------------------
     # tosi et al, case 3
     #-------------------
@@ -94,7 +94,6 @@ Lx=1.               # horizontal extent of the domain
 Ly=1.               # vertical extent of the domain 
 eta_ref=1           # rheology parameter 
 gamma_T=np.log(1e5) # rheology parameter 
-gamma_y=np.log(1.)  # rheology parameter 
 eta_star=1e-3       # rheology parameter 
 alphaT=1e-4         # thermal expansion coefficient
 hcond=1.            # thermal conductivity
@@ -104,34 +103,44 @@ T0=0                # reference temperature
 
 CFL_nb=0.5    # CFL number 
 every=50      # vtu output frequency
-nstep=10000   # maximum number of timestep   
+nstep=100   # maximum number of timestep   
+tol_nl=1.e-6  # nonlinear convergence coeff.
 
 #--------------------------------------
 
-case=1
+case=2
 
 if case==0:
    Ra=1e4  
    sigma_y=0.
+   gamma_y=np.log(1.)  # rheology parameter 
+   niter_nl=1
 
 if case==1:
    Ra=1e2 
    sigma_y=1.
+   gamma_y=np.log(1.)  # rheology parameter 
+   niter_nl=1
 
 if case==2:
    Ra=1e2 
    sigma_y = 1
+   gamma_y=np.log(1.)  # rheology parameter 
+   niter_nl=100
 
 if case==3:
    Ra=1e2 
+   gamma_y=np.log(10.)  # rheology parameter 
 
 if case==4:
    Ra=1e2 
    sigma_y = 1
+   gamma_y=np.log(10.)  # rheology parameter 
 
 if case==5:
    Ra=1e2 
    sigma_y=4
+   gamma_y=np.log(10.)  # rheology parameter 
 
 gx=0.
 gy=-Ra/alphaT  # vertical component of gravity vector
@@ -143,8 +152,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 24
+   nely = 24
    visu = 0
 
 #--------------------------------------
@@ -165,6 +174,8 @@ hy=Ly/nely
 
 eps=1.e-10
 sqrt3=np.sqrt(3.)
+       
+convfile=open("conv_nl.ascii","w")
 
 #################################################################
 
@@ -266,198 +277,231 @@ for istep in range(0,nstep):
     print("istep= ", istep)
     print("----------------------------------")
 
-    #################################################################
-    # build FE matrix
-    #################################################################
-    start = time.time()
-
-    K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-    G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
-    f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
-    h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
-    b_mat = np.zeros((3,ndofV*m),dtype=np.float64)   # gradient matrix B 
     N     = np.zeros(m,dtype=np.float64)             # shape functions
     dNdx  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
     dNdy  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
     dNdr  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
     dNds  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
+    if pnormalise:
+       Res   = np.zeros(Nfem+1,dtype=np.float64)         # non-linear residual 
+       sol   = np.zeros(Nfem+1,dtype=np.float64)         # solution vector 
+    else:
+       Res   = np.zeros(Nfem,dtype=np.float64)         # non-linear residual 
+       sol   = np.zeros(Nfem,dtype=np.float64)         # solution vector 
     u     = np.zeros(nnp,dtype=np.float64)           # x-component velocity
     v     = np.zeros(nnp,dtype=np.float64)           # y-component velocity
     p     = np.zeros(nel,dtype=np.float64)           # y-component velocity
-    etaq  = np.zeros(4*nel,dtype=np.float64)         # viscosity at q points
-    rhoq  = np.zeros(4*nel,dtype=np.float64)         # density at q points
 
-    iiq=0
-    for iel in range(0, nel):
 
-        # set arrays to 0 every loop
-        f_el =np.zeros((m*ndofV),dtype=np.float64)
-        K_el =np.zeros((m*ndofV,m*ndofV),dtype=np.float64)
-        G_el=np.zeros((m*ndofV,1),dtype=np.float64)
-        h_el=np.zeros((1,1),dtype=np.float64)
+    for iter_nl in range(0,niter_nl):
 
-        # integrate viscous term at 4 quadrature points
-        for iq in [-1, 1]:
-            for jq in [-1, 1]:
+        print("iter_nl= ", iter_nl)
 
-                # position & weight of quad. point
-                rq=iq/sqrt3
-                sq=jq/sqrt3
-                weightq=1.*1.
+        #################################################################
+        # build FE matrix
+        #################################################################
+        start = time.time()
 
-                # calculate shape functions
-                N[0:m]=NNV(rq,sq)
-                dNdr[0:m]=dNNVdr(rq,sq)
-                dNds[0:m]=dNNVds(rq,sq)
+        K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
+        G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
+        f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
+        h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
+        b_mat = np.zeros((3,ndofV*m),dtype=np.float64)   # gradient matrix B 
+        etaq  = np.zeros(4*nel,dtype=np.float64)         # viscosity at q points
+        rhoq  = np.zeros(4*nel,dtype=np.float64)         # density at q points
 
-                # calculate jacobian matrix
-                jcb = np.zeros((2, 2),dtype=np.float64)
-                for k in range(0,m):
-                    jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
-                    jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
-                    jcb[1, 0] += dNds[k]*x[icon[k,iel]]
-                    jcb[1, 1] += dNds[k]*y[icon[k,iel]]
+        iiq=0
+        for iel in range(0, nel):
 
-                # calculate the determinant of the jacobian
-                jcob = np.linalg.det(jcb)
+            # set arrays to 0 every loop
+            f_el =np.zeros((m*ndofV),dtype=np.float64)
+            K_el =np.zeros((m*ndofV,m*ndofV),dtype=np.float64)
+            G_el=np.zeros((m*ndofV,1),dtype=np.float64)
+            h_el=np.zeros((1,1),dtype=np.float64)
 
-                # calculate inverse of the jacobian matrix
-                jcbi = np.linalg.inv(jcb)
+            # integrate viscous term at 4 quadrature points
+            for iq in [-1, 1]:
+                for jq in [-1, 1]:
 
-                # compute dNdx & dNdy
-                xq=0.
-                yq=0.
-                Tq=0.0
-                exxq=0.
-                eyyq=0.
-                exyq=0.
-                for k in range(0, m):
-                    xq+=N[k]*x[icon[k,iel]]
-                    yq+=N[k]*y[icon[k,iel]]
-                    Tq+=N[k]*T[icon[k,iel]]
-                    dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-                    dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
-                    exxq+=dNdx[k]*u[icon[k,iel]]
-                    eyyq+=dNdy[k]*v[icon[k,iel]]
-                    exyq+=0.5*dNdy[k]*u[icon[k,iel]]+\
-                          0.5*dNdx[k]*v[icon[k,iel]]
-                rhoq[iiq]=density(rho0,alphaT,Tq,T0,case)
-                etaq[iiq]=viscosity(Tq,exxq,eyyq,exyq,yq,gamma_T,gamma_y,sigma_y,eta_star,case)
+                    # position & weight of quad. point
+                    rq=iq/sqrt3
+                    sq=jq/sqrt3
+                    weightq=1.*1.
 
-                # construct 3x8 b_mat matrix
-                for i in range(0, m):
-                    b_mat[0:3, 2*i:2*i+2] = [[dNdx[i],0.     ],
-                                             [0.     ,dNdy[i]],
-                                             [dNdy[i],dNdx[i]]]
+                    # calculate shape functions
+                    N[0:m]=NNV(rq,sq)
+                    dNdr[0:m]=dNNVdr(rq,sq)
+                    dNds[0:m]=dNNVds(rq,sq)
 
-                # compute elemental a_mat matrix
-                K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq[iiq]*weightq*jcob
+                    # calculate jacobian matrix
+                    jcb = np.zeros((2, 2),dtype=np.float64)
+                    for k in range(0,m):
+                        jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
+                        jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
+                        jcb[1, 0] += dNds[k]*x[icon[k,iel]]
+                        jcb[1, 1] += dNds[k]*y[icon[k,iel]]
 
-                # compute elemental rhs vector
-                for i in range(0, m):
-                    f_el[ndofV*i  ]+=N[i]*jcob*weightq*rhoq[iiq]*gx
-                    f_el[ndofV*i+1]+=N[i]*jcob*weightq*rhoq[iiq]*gy
-                    G_el[ndofV*i  ,0]-=dNdx[i]*jcob*weightq
-                    G_el[ndofV*i+1,0]-=dNdy[i]*jcob*weightq
+                    # calculate the determinant of the jacobian
+                    jcob = np.linalg.det(jcb)
 
-                iiq+=1
+                    # calculate inverse of the jacobian matrix
+                    jcbi = np.linalg.inv(jcb)
 
-            # end for jq
-        # end for iq
+                    # compute dNdx & dNdy
+                    xq=0.
+                    yq=0.
+                    Tq=0.0
+                    exxq=0.
+                    eyyq=0.
+                    exyq=0.
+                    for k in range(0, m):
+                        xq+=N[k]*x[icon[k,iel]]
+                        yq+=N[k]*y[icon[k,iel]]
+                        Tq+=N[k]*T[icon[k,iel]]
+                        dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+                        dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+                        exxq+=dNdx[k]*u[icon[k,iel]]
+                        eyyq+=dNdy[k]*v[icon[k,iel]]
+                        exyq+=0.5*dNdy[k]*u[icon[k,iel]]+\
+                              0.5*dNdx[k]*v[icon[k,iel]]
+                    rhoq[iiq]=density(rho0,alphaT,Tq,T0,case)
+                    etaq[iiq]=viscosity(Tq,exxq,eyyq,exyq,yq,gamma_T,gamma_y,sigma_y,eta_star,case)
+    
+                    # construct 3x8 b_mat matrix
+                    for i in range(0, m):
+                        b_mat[0:3, 2*i:2*i+2] = [[dNdx[i],0.     ],
+                                                 [0.     ,dNdy[i]],
+                                                 [dNdy[i],dNdx[i]]]
 
-        # impose b.c. 
-        for k1 in range(0,m):
-            for i1 in range(0,ndofV):
-                ikk=ndofV*k1          +i1
-                m1 =ndofV*icon[k1,iel]+i1
-                if bc_fixV[m1]:
-                   K_ref=K_el[ikk,ikk] 
-                   for jkk in range(0,m*ndofV):
-                       f_el[jkk]-=K_el[jkk,ikk]*bc_valV[m1]
-                       K_el[ikk,jkk]=0
-                       K_el[jkk,ikk]=0
-                       K_el[ikk,ikk]=K_ref
-                   f_el[ikk]=K_ref*bc_valV[m1]
-                   h_el[0]-=G_el[ikk,0]*bc_valV[m1]
-                   G_el[ikk,0]=0
+                    # compute elemental a_mat matrix
+                    K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq[iiq]*weightq*jcob
 
-        # assemble matrix K_mat and right hand side rhs
-        for k1 in range(0,m):
-            for i1 in range(0,ndofV):
-                ikk=ndofV*k1          +i1
-                m1 =ndofV*icon[k1,iel]+i1
-                for k2 in range(0,m):
-                    for i2 in range(0,ndofV):
-                        jkk=ndofV*k2          +i2
-                        m2 =ndofV*icon[k2,iel]+i2
-                        K_mat[m1,m2]+=K_el[ikk,jkk]
-                f_rhs[m1]+=f_el[ikk]
-                G_mat[m1,iel]+=G_el[ikk,0]
+                    # compute elemental rhs vector
+                    for i in range(0, m):
+                        f_el[ndofV*i  ]+=N[i]*jcob*weightq*rhoq[iiq]*gx
+                        f_el[ndofV*i+1]+=N[i]*jcob*weightq*rhoq[iiq]*gy
+                        G_el[ndofV*i  ,0]-=dNdx[i]*jcob*weightq
+                        G_el[ndofV*i+1,0]-=dNdy[i]*jcob*weightq
 
-    # end for iel
+                    iiq+=1
 
-    G_mat*=eta_ref/Ly
+                # end for jq
+            # end for iq
 
-    print("     -> K (m,M) %.5e %.5e " %(np.min(K_mat),np.max(K_mat)))
-    print("     -> G (m,M) %.5e %.5e " %(np.min(G_mat),np.max(G_mat)))
-    print("     -> f (m,M) %.5e %.5e " %(np.min(f_rhs),np.max(f_rhs)))
-    print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
+            # impose b.c. 
+            for k1 in range(0,m):
+                for i1 in range(0,ndofV):
+                    ikk=ndofV*k1          +i1
+                    m1 =ndofV*icon[k1,iel]+i1
+                    if bc_fixV[m1]:
+                       K_ref=K_el[ikk,ikk] 
+                       for jkk in range(0,m*ndofV):
+                           f_el[jkk]-=K_el[jkk,ikk]*bc_valV[m1]
+                           K_el[ikk,jkk]=0
+                           K_el[jkk,ikk]=0
+                           K_el[ikk,ikk]=K_ref
+                       f_el[ikk]=K_ref*bc_valV[m1]
+                       h_el[0]-=G_el[ikk,0]*bc_valV[m1]
+                       G_el[ikk,0]=0
 
-    print("build FE matrix: %.3f s" % (time.time() - start))
+            # assemble matrix K_mat and right hand side rhs
+            for k1 in range(0,m):
+                for i1 in range(0,ndofV):
+                    ikk=ndofV*k1          +i1
+                    m1 =ndofV*icon[k1,iel]+i1
+                    for k2 in range(0,m):
+                        for i2 in range(0,ndofV):
+                            jkk=ndofV*k2          +i2
+                            m2 =ndofV*icon[k2,iel]+i2
+                            K_mat[m1,m2]+=K_el[ikk,jkk]
+                    f_rhs[m1]+=f_el[ikk]
+                    G_mat[m1,iel]+=G_el[ikk,0]
 
-    ######################################################################
-    # assemble K, G, GT, f, h into A and rhs
-    ######################################################################
-    start = time.time()
+        # end for iel
 
-    if pnormalise:
-       a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
-       rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
-       a_mat[0:NfemV,0:NfemV]=K_mat
-       a_mat[0:NfemV,NfemV:Nfem]=G_mat
-       a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-       a_mat[Nfem,NfemV:Nfem]=1
-       a_mat[NfemV:Nfem,Nfem]=1
-    else:
-       a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-       rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-       a_mat[0:NfemV,0:NfemV]=K_mat
-       a_mat[0:NfemV,NfemV:Nfem]=G_mat
-       a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+        G_mat*=eta_ref/Ly
 
-    rhs[0:NfemV]=f_rhs
-    rhs[NfemV:Nfem]=h_rhs
+        print("     -> K (m,M) %.5e %.5e " %(np.min(K_mat),np.max(K_mat)))
+        print("     -> G (m,M) %.5e %.5e " %(np.min(G_mat),np.max(G_mat)))
+        print("     -> f (m,M) %.5e %.5e " %(np.min(f_rhs),np.max(f_rhs)))
+        print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
 
-    print("assemble blocks: %.3f s" % (time.time() - start))
+        print("build FE matrix: %.3f s" % (time.time() - start))
 
-    ######################################################################
-    # solve system
-    ######################################################################
-    start = time.time()
+        ######################################################################
+        # assemble K, G, GT, f, h into A and rhs
+        ######################################################################
+        start = time.time()
 
-    sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+        if pnormalise:
+           a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
+           rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
+           a_mat[0:NfemV,0:NfemV]=K_mat
+           a_mat[0:NfemV,NfemV:Nfem]=G_mat
+           a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+           a_mat[Nfem,NfemV:Nfem]=1
+           a_mat[NfemV:Nfem,Nfem]=1
+        else:
+           a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+           rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+           a_mat[0:NfemV,0:NfemV]=K_mat
+           a_mat[0:NfemV,NfemV:Nfem]=G_mat
+           a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
 
-    print("solve: %.3f s" % (time.time() - start))
+        rhs[0:NfemV]=f_rhs
+        rhs[NfemV:Nfem]=h_rhs
 
-    ######################################################################
-    # put solution into separate x,y velocity arrays
-    ######################################################################
-    start = time.time()
+        print("assemble blocks: %.3f s" % (time.time() - start))
 
-    u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
-    p=sol[NfemV:Nfem]*(eta_ref/Ly)
+        #################################################################
+        # compute non-linear residual
+        #################################################################
 
-    print("     -> u (m,M) %.5e %.5e " %(np.min(u),np.max(u)))
-    print("     -> v (m,M) %.5e %.5e " %(np.min(v),np.max(v)))
-    print("     -> p (m,M) %.5e %.5e " %(np.min(p),np.max(p)))
+        Res=a_mat.dot(sol)-rhs
 
-    u_stats[istep,0]=np.min(u) ; u_stats[istep,1]=np.max(u)
-    v_stats[istep,0]=np.min(v) ; v_stats[istep,1]=np.max(v)
+        if iter_nl==0:
+           Res0=np.max(abs(Res))
 
-    if pnormalise:
-       print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
+        print("Nonlinear residual (inf. norm) %.7e" % (np.max(abs(Res))/Res0))
+          
+        convfile.write("%e %e \n" %( istep+iter_nl/200. ,  np.max(abs(Res))/Res0 ))
+        convfile.flush()
 
-    print("split vel into u,v: %.3f s" % (time.time() - start))
+        if np.max(abs(Res))/Res0 < tol_nl:
+          break 
+
+        ######################################################################
+        # solve system
+        ######################################################################
+        start = time.time()
+
+        sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+
+        print("solve: %.3f s" % (time.time() - start))
+
+        ######################################################################
+        # put solution into separate x,y velocity arrays
+        ######################################################################
+        start = time.time()
+
+        u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
+        p=sol[NfemV:Nfem]*(eta_ref/Ly)
+
+        print("     -> u (m,M) %.5e %.5e " %(np.min(u),np.max(u)))
+        print("     -> v (m,M) %.5e %.5e " %(np.min(v),np.max(v)))
+        print("     -> p (m,M) %.5e %.5e " %(np.min(p),np.max(p)))
+
+        u_stats[istep,0]=np.min(u) ; u_stats[istep,1]=np.max(u)
+        v_stats[istep,0]=np.min(v) ; v_stats[istep,1]=np.max(v)
+
+        if pnormalise:
+           print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
+
+        print("split vel into u,v: %.3f s" % (time.time() - start))
+
+
+    # end of nonlinear iterations
+
 
     ######################################################################
     # compute strainrate, temperature gradient and Nusselt number 

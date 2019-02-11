@@ -141,7 +141,7 @@ else:
    nelx = 32
    nely = 32
    visu = 1
-   nmarker_per_dim=10
+   nmarker_per_dim=5
    random_markers=1
    CFL_nb=0.0000005  
    RKorder=1
