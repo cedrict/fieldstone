@@ -2,24 +2,25 @@
 
 rm -f vrms_*
 
-for k in 10 11 12 13 14 15 16 18 20 21 24 28 32 39 48 55 64 71 80 100 128; do
+for k in 10 12 14 16 20 32 48; do # 12 13 14 15 16    # 18 20 21 24 28 32 39 48 55 64 71 80 100 128; do
     echo nelx=nely= $k
-for j in 3 4 5 6 7 8; do
+for j in 3 4 5 6 7 8; do 
     echo nmarker_per_dim= $j
 for p in 1 2 3; do 
     echo projection= $p
-    echo $k $k 0 1 $j 0 $p 
-    python3 fieldstone.py $k $k 0 1 $j 0 $p | grep vrms >> vrms_avrg1.norand$j.proj$p
-    echo $k $k 0 2 $j 0 $p 
-    python3 fieldstone.py $k $k 0 2 $j 0 $p | grep vrms >> vrms_avrg2.norand$j.proj$p
-    echo $k $k 0 3 $j 0 $p 
-    python3 fieldstone.py $k $k 0 3 $j 0 $p | grep vrms >> vrms_avrg3.norand$j.proj$p
-    echo $k $k 0 1 $j 1 $p 
-    python3 fieldstone.py $k $k 0 1 $j 1 $p | grep vrms >> vrms_avrg1.rand$j.proj$p
-    echo $k $k 0 2 $j 1 $p 
-    python3 fieldstone.py $k $k 0 2 $j 1 $p | grep vrms >> vrms_avrg2.rand$j.proj$p
-    echo $k $k 0 3 $j 1 $p 
-    python3 fieldstone.py $k $k 0 3 $j 1 $p | grep vrms >> vrms_avrg3.rand$j.proj$p
+
+    echo $k $k 0 1 $j 1 $p ; python3 fieldstone.py $k $k 0 1 $j 1 $p | grep vrms >> vrms_avrg1.rand$j.proj$p
+    echo $k $k 0 2 $j 1 $p ; python3 fieldstone.py $k $k 0 2 $j 1 $p | grep vrms >> vrms_avrg2.rand$j.proj$p
+    echo $k $k 0 3 $j 1 $p ; python3 fieldstone.py $k $k 0 3 $j 1 $p | grep vrms >> vrms_avrg3.rand$j.proj$p
+
+    echo $k $k 0 1 $j 2 $p ; python3 fieldstone.py $k $k 0 1 $j 2 $p | grep vrms >> vrms_avrg1.reg$j.proj$p
+    echo $k $k 0 2 $j 2 $p ; python3 fieldstone.py $k $k 0 2 $j 2 $p | grep vrms >> vrms_avrg2.reg$j.proj$p
+    echo $k $k 0 3 $j 2 $p ; python3 fieldstone.py $k $k 0 3 $j 2 $p | grep vrms >> vrms_avrg3.reg$j.proj$p
+
+    echo $k $k 0 1 $j 3 $p ; python3 fieldstone.py $k $k 0 1 $j 3 $p | grep vrms >> vrms_avrg1.poissondisc$j.proj$p
+    echo $k $k 0 2 $j 3 $p ; python3 fieldstone.py $k $k 0 2 $j 3 $p | grep vrms >> vrms_avrg2.poissondisc$j.proj$p
+    echo $k $k 0 3 $j 3 $p ; python3 fieldstone.py $k $k 0 3 $j 3 $p | grep vrms >> vrms_avrg3.poissondisc$j.proj$p
+
 done 
 done 
 done 

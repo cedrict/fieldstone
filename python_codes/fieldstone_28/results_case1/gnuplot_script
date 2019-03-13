@@ -3,11 +3,16 @@ set xlabel 'time'
 set grid
 set size square
 
+set key bottom
 set output 'vrms.pdf'
 set ylabel 'v_{rms}'
 plot[][:300]\
-'vrms_Nu_32x32.ascii' u 1:2 w l notitle,\
-250 lt -1 
+'vrms_Nu_32x32.ascii' u 1:2 w l t 'FIELDSTONE, 32x32',\
+'ELEFANT/vrms32.out'  u 1:2 w l t 'ELEFANT, 32x32',\
+'ELEFANT/vrms48.out'  u 1:2 w l t 'ELEFANT, 48x48',\
+'ELEFANT/vrms64.out'  u 1:2 w l t 'ELEFANT, 64x64',\
+'ELEFANT/vrms100.out' u 1:2 w l t 'ELEFANT, 100x100',\
+ 248.9252 w l lt -1 lw 1 t 'min' , 252.0906 w l lt -1 lw 1 t 'max'
 
 set output 'Nu.pdf'
 set ylabel 'Nu'

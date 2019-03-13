@@ -101,10 +101,10 @@ hcapa=1.            # heat capacity
 rho0=1.             # reference density
 T0=0                # reference temperature
 
-CFL_nb=0.5    # CFL number 
+CFL_nb=0.75    # CFL number 
 every=50      # vtu output frequency
-nstep=100   # maximum number of timestep   
-tol_nl=1.e-6  # nonlinear convergence coeff.
+nstep=5000   # maximum number of timestep   
+tol_nl=1.e-4  # nonlinear convergence coeff.
 
 #--------------------------------------
 
@@ -152,8 +152,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 24
-   nely = 24
+   nelx = 28
+   nely = 28
    visu = 0
 
 #--------------------------------------
@@ -176,6 +176,7 @@ eps=1.e-10
 sqrt3=np.sqrt(3.)
        
 convfile=open("conv_nl.ascii","w")
+niterfile=open("niter_nl.ascii","w")
 
 #################################################################
 
@@ -468,7 +469,9 @@ for istep in range(0,nstep):
         convfile.flush()
 
         if np.max(abs(Res))/Res0 < tol_nl:
-          break 
+           niterfile.write("%d %d \n" %( istep, iter_nl ))
+           niterfile.flush()
+           break 
 
         ######################################################################
         # solve system
@@ -971,6 +974,9 @@ for istep in range(0,nstep):
 ################################################################################################
 # END OF TIMESTEPPING
 ################################################################################################
+
+convfile.close()
+niterfile.close()
     
 
 print("-----------------------------")

@@ -8,6 +8,7 @@ import time as time
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 import random
+import jatten as jatten 
 
 #------------------------------------------------------------------------------
 
@@ -69,7 +70,7 @@ if int(len(sys.argv) == 8):
    visu           =int(sys.argv[3])
    avrg           =int(sys.argv[4])
    nmarker_per_dim=int(sys.argv[5])
-   random_markers =int(sys.argv[6])
+   mdistribution  =int(sys.argv[6])
    proj           =int(sys.argv[7])
 else:
    nelx = 32
@@ -77,7 +78,7 @@ else:
    visu = 1
    avrg = 3
    nmarker_per_dim=4
-   random_markers=0
+   mdistribution=3
    proj = 3
 
 assert (nelx>0.), "nnx should be positive" 
@@ -153,13 +154,11 @@ start = time.time()
 
 nmarker_per_element=nmarker_per_dim*nmarker_per_dim
 
-nmarker=nel*nmarker_per_element
-
-swarm_x=np.empty(nmarker,dtype=np.float64)  
-swarm_y=np.empty(nmarker,dtype=np.float64)  
-swarm_mat=np.empty(nmarker,dtype=np.int16)  
-
-if random_markers==1:
+if mdistribution==1: # pure random
+   nmarker=nel*nmarker_per_element
+   swarm_x=np.empty(nmarker,dtype=np.float64)  
+   swarm_y=np.empty(nmarker,dtype=np.float64)  
+   swarm_mat=np.empty(nmarker,dtype=np.int16)  
    counter=0
    for iel in range(0,nel):
        x1=x[icon[0,iel]] ; y1=y[icon[0,iel]]
@@ -178,7 +177,11 @@ if random_markers==1:
            swarm_y[counter]=N1*y1+N2*y2+N3*y3+N4*y4
            counter+=1
 
-else:
+elif mdistribution==2: # regular
+   nmarker=nel*nmarker_per_element
+   swarm_x=np.empty(nmarker,dtype=np.float64)  
+   swarm_y=np.empty(nmarker,dtype=np.float64)  
+   swarm_mat=np.empty(nmarker,dtype=np.int16)  
    counter=0
    for iel in range(0,nel):
        x1=x[icon[0,iel]] ; y1=y[icon[0,iel]]
@@ -196,6 +199,16 @@ else:
                swarm_x[counter]=N1*x1+N2*x2+N3*x3+N4*x4
                swarm_y[counter]=N1*y1+N2*y2+N3*y3+N4*y4
                counter+=1
+
+else: # Poisson disc
+
+   kpoisson=30
+   nmarker_wish=nel*nmarker_per_element # target
+   avrgdist=np.sqrt(Lx*Ly/nmarker_wish)/1.25
+   #print (avrgdist)
+   nmarker,swarm_x,swarm_y = jatten.PoissonDisc(kpoisson,avrgdist,Lx,Ly)
+   swarm_mat=np.empty(nmarker,dtype=np.int16)  
+   print ('nmarker_wish, nmarker, ratio: %d %d %e ' % (nmarker_wish,nmarker,nmarker/nmarker_wish) )
 
 print("     -> swarm_x (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))
 print("     -> swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))

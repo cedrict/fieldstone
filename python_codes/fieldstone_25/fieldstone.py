@@ -53,7 +53,7 @@ mP=1     # number of pressure node in element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-Lx=1.  # horizontal extent of the domain 
+Lx=0.9142  # horizontal extent of the domain 
 Ly=1.  # vertical extent of the domain 
 
 assert (Lx>0.), "Lx should be positive" 

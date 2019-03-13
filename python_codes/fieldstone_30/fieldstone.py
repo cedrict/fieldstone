@@ -6,16 +6,16 @@ import solcx as solcx
 import random
 
 #------------------------------------------------------------------------------
-def viscosity(x,y):
-    if x<0.5:
-       val=1.
-    else:
-       val=1.e6
-    return val
+#def viscosity(x,y):
+#    if x<0.5:
+#       val=1.
+#    else:
+#       val=1.e6
+#    return val
 
-def density(x,y):
-    val=math.sin(math.pi*y)*math.cos(math.pi*x)
-    return val
+#def density(x,y):
+#    val=math.sin(math.pi*y)*math.cos(math.pi*x)
+#    return val
 
 def NQ1(rq,sq):
     N_0=0.25*(1.-rq)*(1.-sq)
@@ -101,10 +101,90 @@ def compute_CVI_corr (u,v,icon,rm,sm,iel,use_cvi,Q):
        v21=(v[icon[2,iel]]-v[icon[1,iel]])*0.25
        u_corr=0.5*(v03+v21)*(1.-rm)*(1+rm) 
        v_corr=0.5*(u01+u23)*(1.-sm)*(1+sm) 
+    elif use_cvi==1 and Q==2:
+       hx=0.125
+       hy=0.125
+       Jxx=2./hx ; Jxy=0.
+       Jyx=0.    ; Jyy=2./hy
+       #
+       U1=Jxx*u[icon[0,iel]]+Jyx*v[icon[0,iel]]
+       U2=Jxx*u[icon[1,iel]]+Jyx*v[icon[1,iel]]
+       U3=Jxx*u[icon[2,iel]]+Jyx*v[icon[2,iel]]
+       U4=Jxx*u[icon[3,iel]]+Jyx*v[icon[3,iel]]
+       U5=Jxx*u[icon[4,iel]]+Jyx*v[icon[4,iel]]
+       U6=Jxx*u[icon[5,iel]]+Jyx*v[icon[5,iel]]
+       U7=Jxx*u[icon[6,iel]]+Jyx*v[icon[6,iel]]
+       U8=Jxx*u[icon[7,iel]]+Jyx*v[icon[7,iel]]
+       U9=Jxx*u[icon[8,iel]]+Jyx*v[icon[8,iel]]
+
+       V1=Jxy*u[icon[0,iel]]+Jyy*v[icon[0,iel]]
+       V2=Jxy*u[icon[1,iel]]+Jyy*v[icon[1,iel]]
+       V3=Jxy*u[icon[2,iel]]+Jyy*v[icon[2,iel]]
+       V4=Jxy*u[icon[3,iel]]+Jyy*v[icon[3,iel]]
+       V5=Jxy*u[icon[4,iel]]+Jyy*v[icon[4,iel]]
+       V6=Jxy*u[icon[5,iel]]+Jyy*v[icon[5,iel]]
+       V7=Jxy*u[icon[6,iel]]+Jyy*v[icon[6,iel]]
+       V8=Jxy*u[icon[7,iel]]+Jyy*v[icon[7,iel]]
+       V9=Jxy*u[icon[8,iel]]+Jyy*v[icon[8,iel]]
+
+       D0=(-2*U8+2*U6-2*V5+2*V7)*0.25
+       D1=(4*U8-8*U9+4*U6+V1-V4-V2+V3)*0.25
+       D2=(U1-U4-U2+U3+4*V5-8*V9+4*V7)*0.25
+       D3=(-2*U1+2*U4+4*U5-4*U7-2*U2+2*U3\
+           -2*V1+4*V8-2*V4+2*V2-4*V6+2*V3)*0.25
+       D4=(-V1+V4+2*V5-2*V7-V2+V3)*0.25
+       D5=(-U1+2*U8-U4+U2-2*U6+U3)*0.25
+       D6=(2*V1-4*V8+2*V4-4*V5+8*V9-4*V7+2*V2-4*V6+2*V3)*0.25
+       D7=(2*U1-4*U8+2*U4-4*U5+8*U9-4*U7+2*U2-4*U6+2*U3)*0.25
+
+       alpha4=D3/2./(Jxx+Jyy)
+       a1=(D4-Jxy*alpha4)/(3*Jxx)
+       b1=(D5-Jyx*alpha4)/(3*Jyy)
+       b3=(Jxx*D6-Jxy*D7)/(Jxx*Jyy-Jxy*Jyx)/2.
+       a3=(D7-2*Jyx*b3)/(2*Jxx)
+       a0=(D1+2*Jyx*b3)/(2*Jxx)
+       b0=(D2+2*Jxy*a3)/(2*Jyy)
+
+       #verification
+       #print (-2*Jxx*a0+2*Jyx*b3+D1)
+       #print (-2*Jxy*a3-2*Jyy*b0+D2)
+       #print (-2*Jxy*a3-2*Jyy*b3+D6)
+       #print (-2*Jxx*a3-2*Jyx*b3+D7)
+       #print (-2*Jxx*alpha4-2*Jyy*alpha4+D3)
+       #print (-3*Jxx*a1-Jxy*alpha4+D4)
+       #print (-Jyx*alpha4-3*Jyy*b1+D5)
+
+       u_corr=(1-rm**2)*(a0+a1*rm+a3*sm**2+alpha4*sm)
+       v_corr=(1-sm**2)*(b0+b1*sm+b3*rm**2+alpha4*rm)
+
     else:
        u_corr=0.
        v_corr=0.
     return u_corr,v_corr
+
+def stay_in (x,y):
+    if (y>=-x+1. and x>1. ):
+       delta=2.-(x+y)
+       xnew=x-delta
+       ynew=y+delta
+       while xnew>1.:
+          xnew-=delta
+          ynew+=delta
+          #print (x,y,'->',xnew,ynew)
+    elif (y<=-x+1. and y<0):
+       delta=x+y
+       xnew=x-delta
+       ynew=y+delta
+       while ynew<0.:
+          xnew-=delta
+          ynew+=delta
+          #print (x,y,'->',xnew,ynew)
+    else:
+       xnew=x
+       ynew=y
+    #if xnew>1.:
+    #   print ('ARG:',x,y,'->',xnew,ynew)
+    return xnew,ynew
 
 #------------------------------------------------------------------------------
 
@@ -112,19 +192,10 @@ print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
 
-# declare variables
-print("variable declaration")
-
 ndof=2  # number of degrees of freedom per node
 
 Lx=1.  # horizontal extent of the domain 
 Ly=1.  # vertical extent of the domain 
-
-gx=0
-gy=1
-
-assert (Lx>0.), "Lx should be positive" 
-assert (Ly>0.), "Ly should be positive" 
 
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 10):
@@ -138,12 +209,12 @@ if int(len(sys.argv) == 10):
    use_cvi        =int(sys.argv[8])
    Q              =int(sys.argv[9])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 8
+   nely = 8
    visu = 1
-   nmarker_per_dim=5
-   random_markers=1
-   CFL_nb=0.0000005  
+   nmarker_per_dim=12
+   random_markers=0
+   CFL_nb=0.0004
    RKorder=1
    use_cvi=1
    Q=1
@@ -239,6 +310,13 @@ if Q==2:
 
 #################################################################
 # connectivity
+#
+#  04===07===03
+#  ||   ||   ||
+#  08===09===06
+#  ||   ||   ||
+#  01===05===02
+#
 #################################################################
 print("connectivity")
 
@@ -338,6 +416,7 @@ else:
                swarm_y[counter]=N1*y1+N2*y2+N3*y3+N4*y4
                counter+=1
 
+print("     -> nmarker %d " % nmarker)
 print("     -> swarm_x (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))
 print("     -> swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
 
@@ -398,6 +477,8 @@ for istep in range (0,nstep):
 
            swarm_x[im]+=(swarm_u[im]+swarm_u_corr[im])*dt
            swarm_y[im]+=(swarm_v[im]+swarm_v_corr[im])*dt
+
+           swarm_x[im],swarm_y[im]= stay_in (swarm_x[im],swarm_y[im])
 
        # end for im
 
@@ -551,6 +632,15 @@ for istep in range (0,nstep):
     for im in range (0,nmarker):
         ielx=int(swarm_x[im]/Lx*nelx)
         iely=int(swarm_y[im]/Ly*nely)
+        if ielx<0:
+           exit('ielx<0')
+        if iely<0:
+           exit('iely<0')
+        if ielx>nelx-1:
+           print (swarm_x[im],swarm_y[im],ielx,iely)
+           exit('ielx>nelx-1')
+        if iely>nely-1:
+           exit('iely>nely-1')
         iel=nelx*(iely)+ielx
         count[iel]+=1
 
@@ -610,11 +700,11 @@ for istep in range (0,nstep):
 #           vtufile.write("%10e %10e %10e \n" %(ui,vi,0.))
 #       vtufile.write("</DataArray>\n")
        #--
-#       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='error' Format='ascii'> \n")
-#       for im in range(0,nmarker):
-#           ui,vi,pi=solcx.SolCxSolution(swarm_x[im],swarm_y[im]) 
-#           vtufile.write("%10e %10e %10e \n" %(swarm_u[im]+swarm_u_corr[im]-ui,swarm_v[im]+swarm_v_corr[im]-vi,0.))
-#       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='error' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           ui,vi,pi=solcx.SolCxSolution(swarm_x[im],swarm_y[im]) 
+           vtufile.write("%10e %10e %10e \n" %(swarm_u[im]+swarm_u_corr[im]-ui,swarm_v[im]+swarm_v_corr[im]-vi,0.))
+       vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='paint' Format='ascii'> \n")
        for im in range(0,nmarker):

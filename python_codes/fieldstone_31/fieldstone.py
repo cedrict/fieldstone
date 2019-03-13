@@ -4,43 +4,65 @@ import sys as sys
 import scipy
 import time as time
 import random
+import solcxREAL as solcx
 
 #------------------------------------------------------------------------------
 
 def u_th(x,y,z):
-    val=(y+z)*(1-x**2)
+    val=2*np.sin(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
+    #val=(y+z)*(1-x**2)
+    #val=(2-x**2-x**4)*(3*y+3*y**3)*(z+2*z*3)
     return val
 
 def v_th(x,y,z):
-    val=(-x+z)*(1-y**2)
+    val=-np.sin(np.pi*y)*np.cos(np.pi*x)*np.cos(np.pi*z)
+    #val=(-x+z)*(1-y**2)
+    val=(2-y**2-y**4)*(x+2*x**3)*(-z-2*z**3)
     return val
 
 def w_th(x,y,z):
-    val=(-x-y)*(1-z**2)
+    val=-np.sin(np.pi*z)*np.cos(np.pi*x)*np.cos(np.pi*y)
+    #val=(-x-y)*(1-z**2)
+    val=(2-z**2-z**4)*(-x-2*x**3)*(2*y+y**3)
     return val
 
 def exx_th(x,y,z):
-    val=-2*x*(y+z)
+    val=2.*np.pi*np.cos(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
+    #val=-2*x*(y+z)
+    #val=(-2*x-4*x**3)*(3*y+3*y**3)*(z+2*z**3)
     return val
 
 def eyy_th(x,y,z):
-    val=-2*y*(-x+z)
+    val=-np.pi*np.cos(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
+    #val=-2*y*(-x+z)
+    val=(-2*y-4*y**3)*(x+2*x**3)*(-z-2*z**3)
     return val
 
 def ezz_th(x,y,z):
-    val=-2*z*(-x-z)
+    val=-np.pi*np.cos(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
+    #val=-2*z*(-x-z)
+    #val=(-2*z-4*z**3)*(-x-2*x**3)*(2*y+y**3)
     return val
 
+#def divv_th(x,y,z):
+#    val=(-2.*x-4.*x**3.)*(3.*y+3.*y**3.)*(   z+2.*z**3.)\
+#       +(-2.*y-4.*y**3.)*(   x+2.*x**3.)*(  -z-2.*z**3.)\
+#       +(-2.*z-4.*z**3.)*(  -x-2.*x**3.)*(2.*y+   y**3.)
+#    return val
+
 def exy_th(x,y,z):
-    val=0.5*(y**2-x**2)
+    val=-0.5*np.pi*np.sin(np.pi*x)*np.sin(np.pi*y)*np.cos(np.pi*z)
+    #val=0.5*(y**2-x**2)
     return val
 
 def exz_th(x,y,z):
-    val=0.5*(z**2-x**2)
+    val=0.
+    #val=0.5*(z**2-x**2)
     return val
 
 def eyz_th(x,y,z):
-    val=0.5*(y**2-x**2)
+    val=0.
+    #val=0.5*(y**2-x**2)
     return val
 
 #------------------------------------------------------------------------------
@@ -218,9 +240,9 @@ def dNQ2dt(rq,sq,tq):
            dNVdt_18,dNVdt_19,dNVdt_20,dNVdt_21,dNVdt_22,dNVdt_23,dNVdt_24,dNVdt_25,dNVdt_26
 
 def interpolate_vel_on_pt(xm,ym,zm,x,y,z,u,v,w,icon,Lx,Ly,Lz,nelx,nely,nelz,m,Q):
-    ielx=int((xm+Lx/2)/Lx*nelx)
-    iely=int((ym+Ly/2)/Ly*nely)
-    ielz=int((zm+Lz/2)/Ly*nelz)
+    ielx=int((xm+Lxoffset)/Lx*nelx)
+    iely=int((ym+Lyoffset)/Ly*nely)
+    ielz=int((zm+Lzoffset)/Ly*nelz)
     iel=nely*nelz*ielx+nelz*iely+ielz
     xx=x[icon[0:m,iel]]
     yy=y[icon[0:m,iel]]
@@ -244,32 +266,124 @@ def interpolate_vel_on_pt(xm,ym,zm,x,y,z,u,v,w,icon,Lx,Ly,Lz,nelx,nely,nelz,m,Q)
         wm+=N[k]*w[icon[k,iel]]
     return um,vm,wm,rm,sm,tm,iel 
 
-def compute_CVI_corr (u,v,w,icon,rm,sm,tm,iel,use_cvi,Q):
+def compute_CVI_corr (u,v,w,icon,rm,sm,tm,iel,use_cvi,Q,option):
     if use_cvi==1 and Q==1:
-       dNdr=dNQ1dr(rm,sm,tm)
-       dNds=dNQ1ds(rm,sm,tm)
-       dNdt=dNQ1dt(rm,sm,tm)
-       # calculate jacobian matrix
-       jcb=np.zeros((3,3),dtype=np.float64)
-       for k in range(0,m):
-           jcb[0,0] += dNdr[k]*x[icon[k,iel]]
-           jcb[0,1] += dNdr[k]*y[icon[k,iel]]
-           jcb[0,2] += dNdr[k]*z[icon[k,iel]]
-           jcb[1,0] += dNds[k]*x[icon[k,iel]]
-           jcb[1,1] += dNds[k]*y[icon[k,iel]]
-           jcb[1,2] += dNds[k]*z[icon[k,iel]]
-           jcb[2,0] += dNdt[k]*x[icon[k,iel]]
-           jcb[2,1] += dNdt[k]*y[icon[k,iel]]
-           jcb[2,2] += dNdt[k]*z[icon[k,iel]]
-       jcbi = np.linalg.inv(jcb)
+       #dNdr=dNQ1dr(rm,sm,tm)
+       #dNds=dNQ1ds(rm,sm,tm)
+       #dNdt=dNQ1dt(rm,sm,tm)
+       #jcb=np.zeros((3,3),dtype=np.float64)
+       #for k in range(0,m):
+       #    jcb[0,0] += dNdr[k]*x[icon[k,iel]]
+       #    jcb[0,1] += dNdr[k]*y[icon[k,iel]]
+       #    jcb[0,2] += dNdr[k]*z[icon[k,iel]]
+       #    jcb[1,0] += dNds[k]*x[icon[k,iel]]
+       #    jcb[1,1] += dNds[k]*y[icon[k,iel]]
+       #    jcb[1,2] += dNds[k]*z[icon[k,iel]]
+       #    jcb[2,0] += dNdt[k]*x[icon[k,iel]]
+       #    jcb[2,1] += dNdt[k]*y[icon[k,iel]]
+       #    jcb[2,2] += dNdt[k]*z[icon[k,iel]]
+       #jcbi = np.linalg.inv(jcb)
+       #Jxx=jcbi[0,0] ; Jxy=jcbi[0,1] ; Jxz=jcbi[0,2]
+       #Jyx=jcbi[1,0] ; Jyy=jcbi[1,1] ; Jyz=jcbi[1,2]
+       #Jzx=jcbi[2,0] ; Jzy=jcbi[2,1] ; Jzz=jcbi[2,2]
+       #Jxx=jcbi[0,0]
+       #Jyy=jcbi[1,1]
+       #Jzz=jcbi[2,2]
+       #print (Jxx,Jyy,Jzz)
 
-       a=hx/2/hz*
-       e=
-       g=
+       Jxyt=0.
+       Jxzt=0.
+       Jyxt=0.
+       Jzxt=0.
+       Jyzt=0.
+       Jzyt=0.
 
-       u_corr=(1.-rm**2)
-       v_corr=(1.-sm**2)
-       w_corr=(1.-tm**2)
+       Jxxt=12.
+       Jyyt=12.
+       Jzzt=12.       
+
+       u1=u[icon[0,iel]] ; v1=v[icon[0,iel]] ; w1=w[icon[0,iel]] 
+       u2=u[icon[1,iel]] ; v2=v[icon[1,iel]] ; w2=w[icon[1,iel]] 
+       u3=u[icon[2,iel]] ; v3=v[icon[2,iel]] ; w3=w[icon[2,iel]] 
+       u4=u[icon[3,iel]] ; v4=v[icon[3,iel]] ; w4=w[icon[3,iel]] 
+       u5=u[icon[4,iel]] ; v5=v[icon[4,iel]] ; w5=w[icon[4,iel]] 
+       u6=u[icon[5,iel]] ; v6=v[icon[5,iel]] ; w6=w[icon[5,iel]] 
+       u7=u[icon[6,iel]] ; v7=v[icon[6,iel]] ; w7=w[icon[6,iel]] 
+       u8=u[icon[7,iel]] ; v8=v[icon[7,iel]] ; w8=w[icon[7,iel]] 
+
+       U1=Jxxt*u1+Jyxt*v1+Jzxt*w1
+       U2=Jxxt*u2+Jyxt*v2+Jzxt*w2
+       U3=Jxxt*u3+Jyxt*v3+Jzxt*w3
+       U4=Jxxt*u4+Jyxt*v4+Jzxt*w4
+       U5=Jxxt*u5+Jyxt*v5+Jzxt*w5
+       U6=Jxxt*u6+Jyxt*v6+Jzxt*w6
+       U7=Jxxt*u7+Jyxt*v7+Jzxt*w7
+       U8=Jxxt*u8+Jyxt*v8+Jzxt*w8
+
+       V1=Jxyt*u1+Jyyt*v1+Jzyt*w1
+       V2=Jxyt*u2+Jyyt*v2+Jzyt*w2
+       V3=Jxyt*u3+Jyyt*v3+Jzyt*w3
+       V4=Jxyt*u4+Jyyt*v4+Jzyt*w4
+       V5=Jxyt*u5+Jyyt*v5+Jzyt*w5
+       V6=Jxyt*u6+Jyyt*v6+Jzyt*w6
+       V7=Jxyt*u7+Jyyt*v7+Jzyt*w7
+       V8=Jxyt*u8+Jyyt*v8+Jzyt*w8
+
+       W1=Jxzt*u1+Jyzt*v1+Jzzt*w1
+       W2=Jxzt*u2+Jyzt*v2+Jzzt*w2
+       W3=Jxzt*u3+Jyzt*v3+Jzzt*w3
+       W4=Jxzt*u4+Jyzt*v4+Jzzt*w4
+       W5=Jxzt*u5+Jyzt*v5+Jzzt*w5
+       W6=Jxzt*u6+Jyzt*v6+Jzzt*w6
+       W7=Jxzt*u7+Jyzt*v7+Jzzt*w7
+       W8=Jxzt*u8+Jyzt*v8+Jzzt*w8
+
+       D1=( V1-V2+V3-V4+V5-V6+V7-V8 + W1-W2-W3+W4-W5+W6+W7-W8 )*0.125
+       D2=( U1-U2+U3-U4+U5-U6+U7-U8 + W1+W2-W3-W4-W5-W6+W7+W8 )*0.125
+       D3=( U1-U2-U3+U4-U5+U6+U7-U8 + V1+V2-V3-V4-V5-V6+V7+V8 )*0.125
+       D4=(-W1+W2-W3+W4+W5-W6+W7-W8 )*0.125
+       D5=(-V1+V2-V3+V4+V5-V6+V7-V8 )*0.125
+       D6=(-U1+U2-U3+U4+U5-U6+U7-U8 )*0.125
+
+       c=D1/Jxxt/2.
+       f=D2/Jyyt/2.
+       i=D3/Jzzt/2.
+
+       if option==1:
+          a=D4/2./Jxxt
+          b=0
+          d=0
+          e=D6/2./Jyyt
+          g=D5/2./Jzzt
+          h=0
+
+       if option==2:
+          a=Jzz*wt4/2./(Jxx+Jyy)
+          b=Jyy*vs4/2./(Jxx+Jzz)
+          d=a
+          e=Jxx*ur4/2./(Jyy+Jzz)
+          g=b
+          h=e
+
+       if option==3:
+          a=(-Jxx*ur4+Jyy*vs4+Jzz*wt4)/Jxx/4.
+          b=a
+          d=( Jxx*ur4-Jyy*vs4+Jzz*wt4)/Jyy/4.
+          e=d
+          g=( Jxx*ur4+Jyy*vs4-Jzz*wt4)/Jzz/4.
+          h=g
+
+       if option==4:
+          a=0
+          b=0
+          d=0
+          e=0
+          g=0
+          h=0
+
+       u_corr=(1.-rm**2)*(a*sm+b*tm+c)
+       v_corr=(1.-sm**2)*(d*rm+e*tm+f)
+       w_corr=(1.-tm**2)*(g*rm+h*sm+i)
     else:
        u_corr=0.
        v_corr=0.
@@ -287,28 +401,34 @@ Lx=2.  # x- extent of the domain
 Ly=2.  # y- extent of the domain 
 Lz=2.  # z- extent of the domain 
 
+Lxoffset=1.
+Lyoffset=1.
+Lzoffset=1.
+
 if int(len(sys.argv) == 5):
    nelx           =int(sys.argv[1])
    nely           =int(sys.argv[2])
-   nelz           = int(sys.argv[3])
-   visu           =int(sys.argv[3])
-   nmarker_per_dim=int(sys.argv[4])
-   random_markers =int(sys.argv[5])
-   CFL_nb         =float(sys.argv[6])
-   RKorder        =int(sys.argv[7])
-   use_cvi        =int(sys.argv[8])
-   Q              =int(sys.argv[9])
+   nelz           =int(sys.argv[3])
+   visu           =int(sys.argv[4])
+   nmarker_per_dim=int(sys.argv[5])
+   random_markers =int(sys.argv[6])
+   CFL_nb         =float(sys.argv[7])
+   RKorder        =int(sys.argv[8])
+   use_cvi        =int(sys.argv[9])
+   Q              =int(sys.argv[10])
+   option         =int(sys.argv[11])
 else:
-   nelx = 10
-   nely = 10
-   nelz = 10
+   nelx = 16
+   nely = 16
+   nelz = 16
    visu = 1
-   nmarker_per_dim=4
-   random_markers=1
-   CFL_nb=0.5  
-   RKorder=2
+   nmarker_per_dim=5
+   random_markers=0
+   CFL_nb=0.4  
+   RKorder=1
    use_cvi=1
    Q=1
+   option=4
 
 if Q==1:
    nnx=nelx+1  # number of elements, x direction
@@ -328,7 +448,7 @@ hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
 
-nstep=250
+nstep=100
 every=1      # vtu output frequency
 
 tijd=0.
@@ -344,6 +464,8 @@ print("nny=",nny)
 print("nnz=",nnz)
 print("nnp=",nnp)
 print("Q=",Q)
+print("RKorder=",RKorder)
+print("option=",option)
 print("------------------------------")
 
 countfile=open("markercount_stats_nelx"+str(nelx)+\
@@ -352,7 +474,17 @@ countfile=open("markercount_stats_nelx"+str(nelx)+\
                                 "_CFL_"+str(CFL_nb)+\
                                   "_rk"+str(RKorder)+\
                                  "_cvi"+str(use_cvi)+\
-                                   "_Q"+str(Q)+".ascii","w")
+                                   "_Q"+str(Q)+\
+                              "_option"+str(option)+".ascii","w")
+
+m0file=open("marker0_nelx"+str(nelx)+\
+                     '_nm'+str(nmarker_per_dim)+\
+                   "_rand"+str(random_markers)+\
+                   "_CFL_"+str(CFL_nb)+\
+                     "_rk"+str(RKorder)+\
+                    "_cvi"+str(use_cvi)+\
+                      "_Q"+str(Q)+\
+                 "_option"+str(option)+".ascii","w")
 
 ######################################################################
 # grid point setup
@@ -368,9 +500,9 @@ if Q==1:
    for i in range(0,nnx):
        for j in range(0,nny):
            for k in range(0,nnz):
-               x[counter]=i*hx-Lx/2
-               y[counter]=j*hy-Ly/2
-               z[counter]=k*hz-Lz/2
+               x[counter]=i*hx-Lxoffset
+               y[counter]=j*hy-Lyoffset
+               z[counter]=k*hz-Lzoffset
                counter += 1
 
 if Q==2:
@@ -378,9 +510,9 @@ if Q==2:
    for i in range(0,nnx):
        for j in range(0,nny):
            for k in range(0,nnz):
-               x[counter]=i*hx/2-Lx/2
-               y[counter]=j*hy/2-Ly/2
-               z[counter]=k*hz/2-Lz/2
+               x[counter]=i*hx/2-Lxoffset
+               y[counter]=j*hy/2-Lyoffset
+               z[counter]=k*hz/2-Lzoffset
                counter += 1
 
 np.savetxt('grid.ascii',np.array([x,y,z]).T,header='# x,y,z')
@@ -442,7 +574,6 @@ if Q==2:
                icon[25,counter]=(2*k+3)+ nnz*(2*j+1) + nny*nnz*(2*i+1) -1
                icon[26,counter]=(2*k+2)+ nnz*(2*j+1) + nny*nnz*(2*i+1) -1
                counter += 1
-   print(icon)
 
 print("build connectivity: %.3f s" % (time.time() - start))
 
@@ -457,6 +588,10 @@ for i in range(0,nnp):
     u[i]=u_th(x[i],y[i],z[i]) 
     v[i]=v_th(x[i],y[i],z[i]) 
     w[i]=w_th(x[i],y[i],z[i]) 
+
+#for i in range(0,nnp):
+#    u[i],v[i],w[i]=solcx.SolCxSolution(x[i],y[i]) 
+
 
 #################################################################
 
@@ -541,9 +676,9 @@ print("marker setup: %.3f s" % (time.time() - start))
 
 count=np.zeros(nel,dtype=np.int16)
 for im in range (0,nmarker):
-    ielx=int((swarm_x[im]+Lx/2)/Lx*nelx)
-    iely=int((swarm_y[im]+Ly/2)/Ly*nely)
-    ielz=int((swarm_z[im]+Lz/2)/Lz*nelz)
+    ielx=int((swarm_x[im]+Lxoffset)/Lx*nelx)
+    iely=int((swarm_y[im]+Lyoffset)/Ly*nely)
+    ielz=int((swarm_z[im]+Lzoffset)/Lz*nelz)
     iel=nely*nelz*ielx+nelz*iely+ielz
     count[iel]+=1
 
@@ -561,19 +696,19 @@ swarm_mat=np.zeros(nmarker,dtype=np.int16)
 for i in [0,2,4,6,8,10,12,14]:
     dx=Lx/16
     for im in range (0,nmarker):
-        if swarm_x[im]>-Lx/2++i*dx and swarm_x[im]<-Lx/2+(i+1)*dx:
+        if swarm_x[im]>-Lxoffset+i*dx and swarm_x[im]<-Lxoffset+(i+1)*dx:
            swarm_mat[im]+=1
 
 for i in [0,2,4,6,8,10,12,14]:
     dy=Ly/16
     for im in range (0,nmarker):
-        if swarm_y[im]>-Ly/2+i*dy and swarm_y[im]<-Ly/2+(i+1)*dy:
+        if swarm_y[im]>-Lyoffset+i*dy and swarm_y[im]<-Lyoffset+(i+1)*dy:
            swarm_mat[im]+=1
 
 for i in [0,2,4,6,8,10,12,14]:
     dz=Lz/16
     for im in range (0,nmarker):
-        if swarm_z[im]>-Lz/2+i*dz and swarm_z[im]<-Lz/2+(i+1)*dz:
+        if swarm_z[im]>-Lzoffset+i*dz and swarm_z[im]<-Lzoffset+(i+1)*dz:
            swarm_mat[im]+=1
 
 ################################################################################################
@@ -591,6 +726,17 @@ for istep in range (0,nstep):
     print("----------------------------------")
     start = time.time()
 
+    if RKorder==0:
+
+       for im in range(0,nmarker):
+
+           swarm_u[im]=u_th(swarm_x[im],swarm_y[im],swarm_z[im]) 
+           swarm_v[im]=v_th(swarm_x[im],swarm_y[im],swarm_z[im]) 
+           swarm_w[im]=w_th(swarm_x[im],swarm_y[im],swarm_z[im]) 
+           swarm_x[im]+=swarm_u[im]*dt
+           swarm_y[im]+=swarm_v[im]*dt
+           swarm_z[im]+=swarm_w[im]*dt
+
     if RKorder==1:
 
        for im in range(0,nmarker):
@@ -600,13 +746,20 @@ for istep in range (0,nstep):
                                  x,y,z,u,v,w,icon,Lx,Ly,Lz,nelx,nely,nelz,m,Q)
 
            swarm_u_corr[im],swarm_v_corr[im],swarm_w_corr[im]=\
-           compute_CVI_corr(u,v,w,icon,rm,sm,tm,iel,use_cvi,Q)
+           compute_CVI_corr(u,v,w,icon,rm,sm,tm,iel,use_cvi,Q,option)
 
            swarm_x[im]+=(swarm_u[im]+swarm_u_corr[im])*dt
            swarm_y[im]+=(swarm_v[im]+swarm_v_corr[im])*dt
            swarm_z[im]+=(swarm_w[im]+swarm_w_corr[im])*dt
 
        # end for im
+    
+       #print("     -> u (m,M) %e %e " %(np.min(swarm_u),np.max(swarm_u)))
+       #print("     -> v (m,M) %e %e " %(np.min(swarm_v),np.max(swarm_v)))
+       #print("     -> w (m,M) %e %e " %(np.min(swarm_w),np.max(swarm_w)))
+       print("     -> u_corr (m,M) %e %e " %(np.min(swarm_u_corr),np.max(swarm_u_corr)))
+       print("     -> v_corr (m,M) %e %e " %(np.min(swarm_v_corr),np.max(swarm_v_corr)))
+       print("     -> w_corr (m,M) %e %e " %(np.min(swarm_w_corr),np.max(swarm_w_corr)))
 
     elif RKorder==2:
 
@@ -617,7 +770,7 @@ for istep in range (0,nstep):
            zA=swarm_z[im]
            uA,vA,wA,rm,sm,tm,iel=interpolate_vel_on_pt(xA,yA,zA,x,y,z,u,v,w,icon,\
                                                        Lx,Ly,Lz,nelx,nely,nelz,m,Q)
-           uAcorr,vAcorr,wAcorr=compute_CVI_corr(u,v,w,icon,rm,sm,tm,iel,use_cvi,Q)
+           uAcorr,vAcorr,wAcorr=compute_CVI_corr(u,v,w,icon,rm,sm,tm,iel,use_cvi,Q,option)
            uA+=uAcorr
            vA+=vAcorr
            wA+=wAcorr
@@ -627,7 +780,7 @@ for istep in range (0,nstep):
            zB=zA+wA*dt/2.
            uB,vB,wB,rm,sm,tm,iel=interpolate_vel_on_pt(xB,yB,zB,x,y,z,u,v,w,icon,\
                                                        Lx,Ly,Lz,nelx,nely,nelz,m,Q)
-           uBcorr,vBcorr,wBcorr=compute_CVI_corr(u,v,w,icon,rm,sm,tm,iel,use_cvi,Q)
+           uBcorr,vBcorr,wBcorr=compute_CVI_corr(u,v,w,icon,rm,sm,tm,iel,use_cvi,Q,option)
            uB+=uBcorr
            vB+=vBcorr
            wB+=wBcorr
@@ -637,6 +790,48 @@ for istep in range (0,nstep):
            swarm_z[im]=zA+wB*dt
        # end for im
 
+    elif RKorder==3:
+
+       for im in range(0,nmarker):
+           #--------------
+           xA=swarm_x[im]
+           yA=swarm_y[im]
+           zA=swarm_z[im]
+           uA,vA,wA,rm,sm,tm,iel=interpolate_vel_on_pt(xA,yA,zA,x,y,z,u,v,w,icon,\
+                                                       Lx,Ly,Lz,nelx,nely,nelz,m,Q)
+           uAcorr,vAcorr,wAcorr=compute_CVI_corr(u,v,w,icon,rm,sm,tm,iel,use_cvi,Q,option)
+           uA+=uAcorr
+           vA+=vAcorr
+           wA+=wAcorr
+           #--------------
+           xB=xA+uA*dt/2.
+           yB=yA+vA*dt/2.
+           zB=zA+wA*dt/2.
+           uB,vB,wB,rm,sm,tm,iel=interpolate_vel_on_pt(xB,yB,zB,x,y,z,u,v,w,icon,\
+                                                       Lx,Ly,Lz,nelx,nely,nelz,m,Q)
+           uBcorr,vBcorr,wBcorr=compute_CVI_corr(u,v,w,icon,rm,sm,tm,iel,use_cvi,Q,option)
+           uB+=uBcorr
+           vB+=vBcorr
+           wB+=wBcorr
+           #--------------
+           xC=xA+(2*uB-uA)*dt/2.
+           yC=yA+(2*vB-vA)*dt/2.
+           zC=zA+(2*wB-wA)*dt/2.
+           uC,vC,wC,rm,sm,tm,iel=interpolate_vel_on_pt(xC,yC,zC,x,y,z,u,v,w,icon,\
+                                                       Lx,Ly,Lz,nelx,nely,nelz,m,Q)
+           uCcorr,vCcorr,wCcorr=compute_CVI_corr(u,v,w,icon,rm,sm,tm,iel,use_cvi,Q,option)
+           uC+=uCcorr
+           vC+=vCcorr
+           wC+=wCcorr
+           #--------------
+           swarm_x[im]=xA+(uA+4*uB+uC)*dt/6.
+           swarm_y[im]=yA+(vA+4*vB+vC)*dt/6.
+           swarm_z[im]=zA+(wA+4*wB+wC)*dt/6.
+       # end for im
+
+    print("     -> x (m,M) %e %e " %(np.min(swarm_x),np.max(swarm_x)))
+    print("     -> y (m,M) %e %e " %(np.min(swarm_y),np.max(swarm_y)))
+    print("     -> z (m,M) %e %e " %(np.min(swarm_z),np.max(swarm_z)))
 
     tijd+=dt
 
@@ -648,9 +843,9 @@ for istep in range (0,nstep):
 
     count=np.zeros(nel,dtype=np.int16)
     for im in range (0,nmarker):
-        ielx=int((swarm_x[im]+Lx/2)/Lx*nelx)
-        iely=int((swarm_y[im]+Ly/2)/Ly*nely)
-        ielz=int((swarm_z[im]+Lz/2)/Lz*nelz)
+        ielx=int((swarm_x[im]+Lxoffset)/Lx*nelx)
+        iely=int((swarm_y[im]+Lyoffset)/Ly*nely)
+        ielz=int((swarm_z[im]+Lzoffset)/Lz*nelz)
         iel=nely*nelz*ielx+nelz*iely+ielz
         count[iel]+=1
 
@@ -663,9 +858,13 @@ for istep in range (0,nstep):
     countfile.flush()
 
     #############################
+
+    m0file.write(" %e %e %e %e\n" % (tijd,swarm_x[0],swarm_y[0],swarm_z[0]))
+    m0file.flush()
+
+    #############################
     # export markers to vtk file
     #############################
-
 
     if visu==1 and istep%every==0:
 
@@ -700,10 +899,10 @@ for istep in range (0,nstep):
            vtufile.write("%10e %10e %10e \n" %(swarm_u[im],swarm_v[im],swarm_w[im]))
        vtufile.write("</DataArray>\n")
        #--
-       #vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (correction)' Format='ascii'> \n")
-       #for im in range(0,nmarker):
-       #    vtufile.write("%10e %10e %10e \n" %(swarm_u_corr[im],swarm_v_corr[im],swarm_w_corr[im]))
-       #vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (correction)' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           vtufile.write("%e %e %e \n" %(swarm_u_corr[im],swarm_v_corr[im],swarm_w_corr[im]))
+       vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='paint' Format='ascii'> \n")
        for im in range(0,nmarker):
@@ -737,138 +936,114 @@ for istep in range (0,nstep):
        vtufile.close()
 
 
+       filename = 'solution_{:04d}.vtu'.format(istep) 
+       vtufile=open(filename,"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnp,nel))
+       #####
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10f %10f %10f \n" %(x[i],y[i],z[i]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
+       #####
+       vtufile.write("<CellData Scalars='scalars'>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='element id' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d\n" % iel)
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='count' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d\n" % count[iel])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</CellData>\n")
+       #####
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e %10e %10e \n" % (u[i],v[i],w[i]) )
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exx' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e \n" %(exx_th(x[i],y[i],z[i]) ))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='eyy' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e \n" %(eyy_th(x[i],y[i],z[i]) ))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='ezz' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e \n" %(ezz_th(x[i],y[i],z[i]) ))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exy' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e \n" %(exy_th(x[i],y[i],z[i]) ))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exz' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e \n" %(exz_th(x[i],y[i],z[i]) ))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='eyz' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e \n" %(eyz_th(x[i],y[i],z[i]) ))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</PointData>\n")
+       #####
+       vtufile.write("<Cells>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       if Q==1:
+          for iel in range (0,nel):
+              vtufile.write("%d %d %d %d %d %d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel],
+                                                          icon[4,iel],icon[5,iel],icon[6,iel],icon[7,iel]))
 
-
-
-
-
-if visu==1:
-   vtufile=open("solution.vtu","w")
-   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-   vtufile.write("<UnstructuredGrid> \n")
-   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnp,nel))
-   #####
-   vtufile.write("<Points> \n")
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10f %10f %10f \n" %(x[i],y[i],z[i]))
-   vtufile.write("</DataArray>\n")
-   vtufile.write("</Points> \n")
-   #####
-   vtufile.write("<CellData Scalars='scalars'>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='element id' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%d\n" % iel)
-   vtufile.write("</DataArray>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
-   #for iel in range (0,nel):
-   #    vtufile.write("%f\n" % visc[iel])
-   #vtufile.write("</DataArray>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
-   #for iel in range (0,nel):
-   #    vtufile.write("%f\n" % sr[iel])
-   #vtufile.write("</DataArray>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' NumberOfComponents='6' Name='strainrate' Format='ascii'> \n")
-   #for iel in range (0,nel):
-   #    vtufile.write("%f %f %f %f %f %f\n" % (exx[iel], eyy[iel], ezz[iel], exy[iel], eyz[iel], exz[iel]))
-   #vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("</CellData>\n")
-   #####
-   vtufile.write("<PointData Scalars='scalars'>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-   #for i in range(0,nnp):
-   #    vtufile.write("%10f %10f %10f \n" %(u[i],v[i],w[i]))
-   #vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10e %10e %10e \n" % (u[i],v[i],w[i]) )
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exx' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10e \n" %(exx_th(x[i],y[i],z[i]) ))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='eyy' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10e \n" %(eyy_th(x[i],y[i],z[i]) ))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='ezz' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10e \n" %(ezz_th(x[i],y[i],z[i]) ))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exy' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10e \n" %(exy_th(x[i],y[i],z[i]) ))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exz' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10e \n" %(exz_th(x[i],y[i],z[i]) ))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='eyz' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10e \n" %(eyz_th(x[i],y[i],z[i]) ))
-   vtufile.write("</DataArray>\n")
-
-
-
-
-   #--
-   vtufile.write("</PointData>\n")
-   #####
-   vtufile.write("<Cells>\n")
-   #--
-   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-   if Q==1:
-      for iel in range (0,nel):
-          vtufile.write("%d %d %d %d %d %d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel],
-                                                      icon[4,iel],icon[5,iel],icon[6,iel],icon[7,iel]))
-
-   if Q==2:
-      for iel in range (0,nel):
-          vtufile.write("%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d\n" %\
-                        (icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel],icon[4,iel],\
-                         icon[5,iel],icon[6,iel],icon[7,iel],icon[8,iel],icon[9,iel],\
-                         icon[10,iel],icon[11,iel],icon[12,iel],icon[13,iel],icon[14,iel],\
-                         icon[15,iel],icon[16,iel],icon[17,iel],icon[18,iel],icon[19,iel]))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-   if Q==1:
-      for iel in range (0,nel):
-          vtufile.write("%d \n" %((iel+1)*8))
-   if Q==2:
-      for iel in range (0,nel):
-          vtufile.write("%d \n" %((iel+1)*20))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-   if Q==1:
-      for iel in range (0,nel):
-          vtufile.write("%d \n" %12)
-   if Q==2:
-      for iel in range (0,nel):
-          vtufile.write("%d \n" %25)
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("</Cells>\n")
-   #####
-   vtufile.write("</Piece>\n")
-   vtufile.write("</UnstructuredGrid>\n")
-   vtufile.write("</VTKFile>\n")
-   vtufile.close()
-   print("export to vtu: %.3f s" % (time.time() - start))
+       if Q==2:
+          for iel in range (0,nel):
+              vtufile.write("%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d\n" %\
+                            (icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel],icon[4,iel],\
+                             icon[5,iel],icon[6,iel],icon[7,iel],icon[8,iel],icon[9,iel],\
+                             icon[10,iel],icon[11,iel],icon[12,iel],icon[13,iel],icon[14,iel],\
+                             icon[15,iel],icon[16,iel],icon[17,iel],icon[18,iel],icon[19,iel]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       if Q==1:
+          for iel in range (0,nel):
+              vtufile.write("%d \n" %((iel+1)*8))
+       if Q==2:
+          for iel in range (0,nel):
+              vtufile.write("%d \n" %((iel+1)*20))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       if Q==1:
+          for iel in range (0,nel):
+              vtufile.write("%d \n" %12)
+       if Q==2:
+          for iel in range (0,nel):
+              vtufile.write("%d \n" %25)
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</Cells>\n")
+       #####
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
+       print("export to vtu: %.3f s" % (time.time() - start))
 
 countfile.close()
 print("-----------------------------")
