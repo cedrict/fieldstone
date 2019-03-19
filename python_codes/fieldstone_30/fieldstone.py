@@ -209,15 +209,15 @@ if int(len(sys.argv) == 10):
    use_cvi        =int(sys.argv[8])
    Q              =int(sys.argv[9])
 else:
-   nelx = 8
-   nely = 8
+   nelx = 32
+   nely = 32
    visu = 1
-   nmarker_per_dim=12
+   nmarker_per_dim=8
    random_markers=0
-   CFL_nb=0.0004
-   RKorder=1
-   use_cvi=1
-   Q=1
+   CFL_nb=0.25
+   RKorder=2
+   use_cvi=0
+   Q=2
     
 if Q==1:
    nnx=nelx+1    # number of elements, x direction
@@ -234,8 +234,8 @@ nel=nelx*nely    # number of elements, total
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
 
-nstep=1
-every=1      # vtu output frequency
+nstep=5001
+every=100      # vtu output frequency
 
 rkf_c2=1./4.      
 rkf_c3=3./8.    
@@ -466,6 +466,14 @@ for istep in range (0,nstep):
     print("----------------------------------")
     print("istep= ", istep)
     print("----------------------------------")
+
+    if RKorder==0:
+
+       for im in range(0,nmarker):
+
+           swarm_u[im],swarm_v[im],ptemp=solcx.SolCxSolution(swarm_x[im],swarm_y[im]) 
+           swarm_x[im]+=swarm_u[im]*dt
+           swarm_y[im]+=swarm_v[im]*dt
 
     if RKorder==1:
 

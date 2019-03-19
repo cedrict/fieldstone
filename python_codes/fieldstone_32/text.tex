@@ -3,13 +3,16 @@ The stream function is a function of coordinates and time of an inviscid liquid.
 It allows to determine the components of velocity by differentiating the stream function 
 with respect to the space coordinates. 
 A family of curves $\Psi = const$ represent {\it streamlines}, i.e. 
-the stream function remains constant along a stream line. 
+the stream function remains constant along a streamline. 
+Although also valid in 3D, this approach is mostly used in 2D because of its 
+relative simplicity {\color{red} REFERENCES}.
 
 In two dimensions the velocity is obtained as follows:
 \begin{equation}
 {\bm v} = \left( \frac{\partial \Psi}{\partial y},-\frac{\partial \Psi}{\partial x} \right) 
 \end{equation}
-This automatically insures that the flow is incompressible:
+Provided the function $\Psi$ is a smooth enough function, 
+this automatically insures that the flow is incompressible:
 \begin{equation}
 {\bm \nabla}\cdot {\bm v} = 
 \frac{\partial u}{\partial x} + \frac{\partial v}{\partial y}
@@ -20,49 +23,49 @@ Assuming constant viscosity, the Stokes equation writes:
 \begin{equation}
 -{\bm \nabla}p + \mu \Delta {\bm v} = \rho {\bm g}
 \end{equation}
-In each dimension:
+Let us introduce the vector ${\bm W}$ for convenience such that in each dimension:
 \begin{eqnarray}
 W_x=-\frac{\partial p}{\partial x} 
 + \mu\left( \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial x^y} \right)&=& \rho g_x  \\
 W_y=-\frac{\partial p}{\partial y} 
 + \mu \left(\frac{\partial^2 v}{\partial x^2} + \frac{\partial^2 v}{\partial x^y} \right) &=& \rho g_y  
 \end{eqnarray}
-Taking the curl of the vector ${\bm W}$ and only looking at the component perpendicular to the $xy$-plane:
+Taking the curl of the vector ${\bm W}$ and only considering the component perpendicular to the $xy$-plane:
 \begin{equation}
 \frac{\partial V_y}{\partial x} - \frac{\partial V_x}{\partial y}  = 
-\frac{\partial g_y}{\partial x} - \frac{\partial g_x}{\partial y}   
+\frac{\partial \rho g_y}{\partial x} - \frac{\partial \rho g_x}{\partial y}   
 \end{equation}
 The advantage of this approach is that the pressure terms cancel out (the curl of a gradient is always zero), 
 so that:
-\[
+\begin{equation}
 \frac{\partial}{\partial x}\mu\left(( \frac{\partial^2 v}{\partial x^2} + \frac{\partial^2 v}{\partial x^y}  \right) 
 - \frac{\partial }{\partial y} \mu \left( \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial x^y} \right) = 
-\frac{\partial g_y}{\partial x} - \frac{\partial g_x}{\partial y}   
-\]
+\frac{\partial \rho g_y}{\partial x} - \frac{\partial \rho g_x}{\partial y}   
+\end{equation}
 and then replacing $u,v$ by the their stream function derivatives yields (for a constant viscosity):
-\[
+\begin{equation}
 \mu \left(\frac{\partial^4 \Psi}{\partial x^4} + 
 \frac{\partial^4 \Psi}{\partial y^4} + 
 2\frac{\partial^4 \Psi}{\partial x^2y^2} \right)
 =
-\frac{\partial g_y}{\partial x} - \frac{\partial g_x}{\partial y}   
-\]
+\frac{\partial \rho g_y}{\partial x} - \frac{\partial \rho g_x}{\partial y}   
+\end{equation}
 or, 
-\[
+\begin{equation}
 {\bm \nabla}^4 \Psi 
 =
 \left(\frac{\partial^2 }{\partial x^2} + \frac{\partial^2 }{\partial y^2} \right) 
-\left(\frac{\partial^2 }{\partial x^2} + \frac{\partial^2 }{\partial y^2} \right) 
+\left(\frac{\partial^2 }{\partial x^2} + \frac{\partial^2 }{\partial y^2} \right) \Psi
 =
-\frac{\partial g_y}{\partial x} - \frac{\partial g_x}{\partial y}   
-\]
-See Eq. 1.43 of Tackley book, p 70-71 of Gerya book.
+\frac{\partial \rho g_y}{\partial x} - \frac{\partial \rho g_x}{\partial y}   
+\end{equation}
+These equations are also to be found in the geodynamics literature, eee Eq. 1.43 of Tackley book, p 70-71 of Gerya book.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \subsection{A simple application}
-I wish to formulate a 2D incompressible flow in a square bound by $[-1:1]\times[-1:1]$
-of constant viscosity $\mu=1$ and subject to free slip boundary conditions on all sides.
-I postulate the following stream function:
+I wish to arrive at an analytical formulation for a 2D incompressible flow in the square domain $[-1:1]\times[-1:1]$
+The fluid has constant viscosity $\mu=1$ and is subject to free slip boundary conditions on all sides.
+For reasons that will become clear in what follows I postulate the following stream function:
 \begin{equation}
 \Psi(x,y)=\sin( m \pi x)\sin( n\pi y)
 \end{equation}
@@ -82,7 +85,7 @@ The strain rate components are then:
 \end{eqnarray}
 Note that if $m=n$ the last term is identically zero, which is not desirable 
 (flow is too 'simple')
-so in what follows we will assume $m\neq n$.
+so in what follows we will prefer $m\neq n$.
 
 It is also easy to verify that $u=0$ on the sides and $v=0$ at the top and bottom and that the 
 term $\dot\varepsilon_{xy}$ is nul on all four sides, thereby garanteeing free slip. 
