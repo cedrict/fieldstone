@@ -1,0 +1,6 @@
+rm *.ascii
+rm *.pdf
+rm vrms
+rm page.aux
+rm page.log
+
