@@ -216,8 +216,8 @@ else:
    random_markers=0
    CFL_nb=0.25
    RKorder=2
-   use_cvi=0
-   Q=2
+   use_cvi=1
+   Q=1
     
 if Q==1:
    nnx=nelx+1    # number of elements, x direction
@@ -234,7 +234,7 @@ nel=nelx*nely    # number of elements, total
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
 
-nstep=5001
+nstep=1001
 every=100      # vtu output frequency
 
 rkf_c2=1./4.      
