@@ -1,11 +1,64 @@
+This is based on the community benchmark for viscoplastic thermal convection
+in a 2D square box \cite{tosn15} as already carried out in \ref{f_28}.
 
-todo
+In this experiment the geometry is an annulus of inner radius 
+$R_1=1.22$ and outer radius $R_2=2.22$. 
+The rheology and buoyancy forces are identical to those of the box 
+experiment. The initial temperature is now given by:
+\[
+T(r,\theta) = s+A\; s(1-s) \cos(N_0 \theta)
+\quad\quad s=\frac{R_2-r}{R_2-R_1} \in [0,1]
+\]
+where $s$ in the normalised depth, $A$ is the amplitude of the perturbation and $N_0$ the 
+number of lobes.
 
-- power spectrum
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_33/images/T_N03}
+\includegraphics[width=4cm]{python_codes/fieldstone_33/images/T_N05}
+\includegraphics[width=4cm]{python_codes/fieldstone_33/images/T_N11}\\
+{\small Examples of initial temperature fields for $N_0=3,5,11$}
+\end{center}
 
-- cbf 
+Boundary conditions can be either no-slip or free-slip on both inner and outer boundary. However, when free-slip 
+is used on both a velocity null space exists and must be filtered out. In other words,
+the solver may be able to come up with a solution to the Stokes operator, but 
+that solution plus an arbitrary rotation is also an equally valid solution.
+This additional velocity field can be problematic since it is used for advecting temperature (and/or compositions)
+and it also essentially determines the time step value for a chosen mesh size (CFL condition).
 
-- mixed finite elem 
+For these reasons the nullspace must be removed from the obtained solution after every timestep.
+There are two types of nullspace removal: removing net angular momentum, and removing net rotations.
+
+
+
+
+We calculate the following output parameters: 
+\begin{itemize}
+\item the average temperature $<T>$
+\begin{equation}
+\langle T \rangle = \frac{\int_\Omega T  d\Omega }{\int_\Omega d \Omega }
+=\frac{1}{V_\Omega}\int_\Omega T d\Omega
+\end{equation}
+\item the root mean square velocity $v_{rms}$
+\begin{equation}
+v_{rms} = \left ( \frac{\int_\Omega |{\bm v}|^2 \;  d \Omega}{\int_\Omega d\Omega }  \right )^{1/2}
+=\left ( \frac{1}{V_\Omega} \int_\Omega |{\bm v}|^2 \;  d \Omega \right )^{1/2}
+\end{equation}
+\item the heat transfer through both boundaries $Q$ ({\color{red} TODO}) 
+\begin{equation}
+Q_{inner, outer} = R_{inner, outer} \int_\Gamma \boldsymbol{q} \cdot \boldsymbol{{n}} \; d\Gamma 
+\end{equation}
+\item the Nusselt number at both boundaries $Nu$  ({\color{red} TODO}) 
+\begin{equation}
+Nu_{inner, outer} = Q_{inner, outer} \bigg / \frac{-k \; 2 \pi}{\ln{\frac{R_{inner}}{R_{outer}}}}
+\end{equation}
+\item the power spectrum of the temperature field:
+\begin{equation}
+PS_n(T) = \left |\int_\Omega T(r, \theta) e^{in\theta} d\Omega \right |^2.
+\end{equation}
+\end{itemize}
+
+
 
 
 \fbox{
@@ -21,3 +74,8 @@ todo
 \end{itemize}
 }}
 
+
+
+TODO:
+
+nonlinear iterations!!

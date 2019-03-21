@@ -1,0 +1,96 @@
+The setup is as follows: a 2D square of elastic material of size $L$ is 
+subjected to the following boundary conditions: free slip on the sides, no slip at the 
+bottom and free at the top. It has a density $\rho$ and is placed is a gravity 
+field ${\bm g}=-g {\bm e}_y$.
+For an isotropic elastic medium the stress tensor is given by:
+\[
+{\bm \sigma} = \lambda ({\bm \nabla}\cdot{\bm u}) {\bm 1} + 2 \mu {\bm \varepsilon}
+\]
+where $\lambda$ is the Lam{\'e} parameter and $\mu$ is the shear modulus.
+The displacement field is ${\bm u}=(0,u_y(y))$ because of symmetry reasons 
+(we do not expect any of the dynamic quantities to depend on the $x$ coordinate and 
+also expect the horizontal displacement to be exactly zero).
+The velocity divergence is then ${\bm \nabla}\cdot{\bm u} = \partial u_y/\partial y$
+and the strain tensor:
+\[
+{\bm \varepsilon}
+=
+\left(
+\begin{array}{cc}
+0 & 0 \\
+0 & \frac{\partial u_y}{\partial y}
+\end{array}
+\right)
+\]
+so that the stress tensor is:
+
+\[
+{\bm \sigma} =
+\left(
+\begin{array}{cc}
+\lambda \frac{\partial u_y}{\partial y} &  0 \\
+0 & (\lambda + 2 \mu) \frac{\partial u_y}{\partial y}
+\end{array}
+\right)
+\]
+
+\[
+{\bm \nabla}\cdot {\bm \sigma} =
+(\partial_x \quad \partial_y)\cdot 
+\left(
+\begin{array}{cc}
+\lambda \frac{\partial u_y}{\partial y} &  0 \\
+0 & (\lambda + 2 \mu) \frac{\partial u_y}{\partial y}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+0 \\
+(\lambda + 2 \mu) \frac{\partial^2 u_y}{\partial y^2}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+0 \\
+\rho g
+\end{array}
+\right)
+\]
+so that the vertical displacement is then given by:
+\[
+u_y(y) = \frac{1}{2} \frac{\rho g}{\lambda + 2 \mu} y^2 + \alpha y + \beta 
+\] 
+where $\alpha$ and $\beta$ are two integration constants.
+We need now to use the two boundary conditions: the first one states that the displacement
+is zero at the bottom, i.e. $u_y(y=0)=0$ which immediately implies $\beta=0$.
+The second states that the stress at the top is zero (free surface), which implies that 
+$\partial u_y/\partial y (y=L)=0$ which allows us to compute $\alpha$.
+Finally:
+\[
+u_y(y) = \frac{\rho g}{\lambda + 2 \mu} (\frac{y^2}{2}-L y) 
+\] 
+The pressure is given by
+\[
+p=-(\lambda + \frac{2}{3} \mu) {\bm \nabla}\cdot{\bm u}
+= (\lambda + \frac{2}{3} \mu)  \frac{\rho g}{\lambda + 2 \mu} (L -y)
+= \frac{\lambda + \frac{2}{3} \mu}{\lambda + 2 \mu} \rho g (L-y)  
+= \frac{1 + \frac{2 \mu}{3 \lambda} }{1 + 2 \mu/\lambda} \rho g (L-y)  
+\]
+In the incompressible limit, the poisson ratio is $\nu \sim 0.5$. 
+Materials are characterised by a finite Young's modulus $E$, which is related to 
+$\nu$ and $\lambda$:
+\[
+\lambda=\frac{E \nu}{(1+\nu)(1-2\nu)}
+\quad\quad
+\mu=\frac{E}{2(1+\nu)}
+\]
+It is then clear that for incompressible parameters $\lambda$ becomes 
+infinite while $\mu$ remains finite. In that case the pressure 
+then logically converges to the well known formula:
+\[
+p=\rho g (L-y)
+\]
+
+

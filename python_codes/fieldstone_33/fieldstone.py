@@ -106,8 +106,8 @@ rho0=1.             # reference density
 T0=0                # reference temperature
 
 CFL_nb=0.5   # CFL number 
-every=1      # vtu output frequency
-nstep=50    # maximum number of timestep   
+every=5      # vtu output frequency
+nstep=200    # maximum number of timestep   
 tol_nl=1.e-4  # nonlinear convergence coeff.
 
 #--------------------------------------
@@ -157,7 +157,7 @@ if int(len(sys.argv) == 4):
 else:
    nelr = 20
    visu = 1
-   N0=7
+   N0=3
 
 R1=1.22
 R2=2.22
@@ -1011,14 +1011,17 @@ for istep in range(0,nstep):
                        PS_V[0]+=np.sqrt(uq**2+vq**2)*JxWq[iiq]*np.cos(kk*thetaq)
                        PS_V[1]+=np.sqrt(uq**2+vq**2)*JxWq[iiq]*np.sin(kk*thetaq)
                        iiq+=1
+                   # for jq
+               # for iq
+           # for iel
 
            psTfile.write("%d %d %4e %4e %4e %4e \n " %(kk,istep,PS_T[0],PS_T[1],np.sqrt(PS_T[0]**2+PS_T[1]**2),model_time[istep]) )
            psVfile.write("%d %d %4e %4e %4e %4e \n " %(kk,istep,PS_V[0],PS_V[1],np.sqrt(PS_V[0]**2+PS_V[1]**2),model_time[istep]) )
 
-       psTfile.write(" \n")   
-       psTfile.flush()
-       psVfile.write(" \n")   
-       psVfile.flush()
+       # for kk
+
+       psTfile.write(" \n") ; psTfile.flush()
+       psVfile.write(" \n") ; psVfile.flush()
 
     print("compute power spectrum: %.3f s" % (time.time() - start))
 
@@ -1059,21 +1062,21 @@ for istep in range(0,nstep):
            vtufile.write("%f\n" % p[iel])
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='elt_inner' Format='ascii'> \n")
-       for iel in range (0,nel):
-           if elt_inner[iel]:
-              vtufile.write("%f\n" % 1.)
-           else:
-              vtufile.write("%f\n" % 0.)
-       vtufile.write("</DataArray>\n")
+       #vtufile.write("<DataArray type='Float32' Name='elt_inner' Format='ascii'> \n")
+       #for iel in range (0,nel):
+       #    if elt_inner[iel]:
+       #       vtufile.write("%f\n" % 1.)
+       #    else:
+       #       vtufile.write("%f\n" % 0.)
+       #vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='elt_outer' Format='ascii'> \n")
-       for iel in range (0,nel):
-           if elt_outer[iel]:
-              vtufile.write("%f\n" % 1.)
-           else:
-              vtufile.write("%f\n" % 0.)
-       vtufile.write("</DataArray>\n")
+       #vtufile.write("<DataArray type='Float32' Name='elt_outer' Format='ascii'> \n")
+       #for iel in range (0,nel):
+       #    if elt_outer[iel]:
+       #       vtufile.write("%f\n" % 1.)
+       #    else:
+       #       vtufile.write("%f\n" % 0.)
+       #vtufile.write("</DataArray>\n")
 
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='viscosity' Format='ascii'> \n")
@@ -1125,21 +1128,21 @@ for istep in range(0,nstep):
            vtufile.write("%10f \n" %T[i])
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='node_outer' Format='ascii'> \n")
-       for i in range (0,nnp):
-           if node_outer[i]:
-              vtufile.write("%f\n" % 1.)
-           else:
-              vtufile.write("%f\n" % 0.)
-       vtufile.write("</DataArray>\n")
+       #vtufile.write("<DataArray type='Float32' Name='node_outer' Format='ascii'> \n")
+       #for i in range (0,nnp):
+       #    if node_outer[i]:
+       #       vtufile.write("%f\n" % 1.)
+       #    else:
+       #       vtufile.write("%f\n" % 0.)
+       #vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='node_inner' Format='ascii'> \n")
-       for i in range (0,nnp):
-           if node_inner[i]:
-              vtufile.write("%f\n" % 1.)
-           else:
-              vtufile.write("%f\n" % 0.)
-       vtufile.write("</DataArray>\n")
+       #vtufile.write("<DataArray type='Float32' Name='node_inner' Format='ascii'> \n")
+       #for i in range (0,nnp):
+       #    if node_inner[i]:
+       #       vtufile.write("%f\n" % 1.)
+       #    else:
+       #       vtufile.write("%f\n" % 0.)
+       #vtufile.write("</DataArray>\n")
 
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='q' Format='ascii'> \n")
