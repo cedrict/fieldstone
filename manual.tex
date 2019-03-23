@@ -2,7 +2,7 @@
 \usepackage{graphicx}
 
 \usepackage[  margin=2.5cm,  includefoot,  footskip=30pt,]{geometry}
-
+\usepackage{pdflscape}
 %\usepackage[cm]{fullpage}
 \usepackage{bm}
 \usepackage{listings}
@@ -91,7 +91,8 @@ The codes I provide here are by no means optimised as I value code readability
 over code efficiency. I have also chosen to avoid resorting to multiple code 
 files or even functions to favour a sequential reading of the codes. 
 These codes are not designed to form the basis of a real life application:
-Existing open source highly optimised codes shoud be preferred, such as ASPECT, 
+Existing open source highly optimised codes shoud be preferred, such as 
+ASPECT \cite{krhb12,hedg17}, 
 CITCOM, LAMEM, PTATIN, PYLITH, ... 
 
 All kinds of feedback is welcome on the text (grammar, typos, ...) or on the 
@@ -111,6 +112,7 @@ over the years. I wish to name these instrumental people in particular and
 in alphabetic order: 
 Wolfgang Bangerth, 
 Jean Braun, 
+Rens Elbertsen,
 Philippe Fullsack, 
 Menno Fraters, 
 Anne Glerum,
@@ -118,13 +120,15 @@ Timo Heister,
 Robert Myhill,
 John Naliboff,
 Lukas van de Wiel,
-Arie van den Berg, and the whole ASPECT family/team. 
+Arie van den Berg, 
+Tom Weir,
+and the whole ASPECT family/team. 
 
-I wish to acknowledge many BSc and MSc students for their questions and feedback.
-and wish to mention: Job Mos (the
-very first version of fieldstone was part of his MSc thesis), 
-Tom Weir (contributions to the compressible formulation - MSc thesis), 
-and Rens Elbertsen (Tosi benchmark - BSc thesis).
+%I wish to acknowledge many BSc and MSc students for their questions and feedback.
+%and wish to mention: Job Mos (the
+%very first version of fieldstone was part of his MSc thesis), 
+%Tom Weir (contributions to the compressible formulation - MSc thesis), 
+%and Rens Elbertsen (Tosi benchmark - BSc thesis).
 
 
 
@@ -147,10 +151,18 @@ http://www-udc.ig.utexas.edu/external/becker/Geodynamics557.pdf
 python3.6 -m pip install --user numpy scipy matplotlib
 \end{verbatim}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{list} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The physical equations of Fluid Dynamics} %%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\input{physics}
+\section{The physical equations} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{physics} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -370,96 +382,13 @@ write Scott about matching compressible2 setup with his paper
 
 deal with large matrices. 
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{List of tutorials}
 
-{\small
-\begin{tabular}{|p{0.4cm}||p{1.9cm}p{2.6cm}p{1.5cm}p{4.1cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|}
-\hline
-\hline
-\rotatebox{90}{tutorial number} 
-& element
-& outer solver 
-& formulation 
-& physical problem & 
-\rotatebox{90}{3D} 
-& \rotatebox{90}{temperature} 
-& \rotatebox{90}{time stepping} 
-& \rotatebox{90}{nonlinear}  
-& \rotatebox{90}{compressible} 
-& \rotatebox{90}{analytical benchmark} 
-& \rotatebox{90}{numerical benchmark} \\
-\hline \hline
-1  & $Q_1 \times P_0$ &              & penalty & analytical benchmark        &  &       &        & & &\dag  &\\ 
-\hline
-2  & $Q_1 \times P_0$ &              & penalty & Stokes sphere               &  &       &        & &&&\\ 
-\hline
-3  & $Q_1 \times P_0$ &              & penalty & Blankenbach et al., 1989    &  & $\dag$& $\dag$ & &&&\\ 
-\hline
-4  & $Q_1 \times P_0$ &              & penalty & Lid driven cavity           &  &       &        & &&&\\ 
-\hline
-5  & $Q_1 \times P_0$ &              & penalty & SolCx benchmark             &  &       &        & &&&\\ 
-\hline
-6  & $Q_1 \times P_0$ &              & penalty & SolKz benchmark             &  &       &        & &&&\\ 
-\hline
-7  & $Q_1 \times P_0$ &              & penalty & SolVi benchmark             &  &       &        & &&&\\ 
-\hline
-8  & $Q_1 \times P_0$ &              & penalty & Indentor                    &  &       &        & $\dag$ &&&\\ 
-\hline
-9  & $Q_1 \times P_0$ &              & penalty & annulus benchmark           &  &       &        & &&&\\ 
-\hline
-10 & $Q_1 \times P_0$ &              & penalty & Stokes sphere               & $\dag$ &       &        & &&&\\ 
-\hline
-11 & $Q_1 \times P_0$ & full matrix& mixed   & Stokes sphere               & $\dag$ &       &        & &&&\\ 
-\hline
-12 & $Q_1 \times P_0$ &              & penalty & analytical benchmark        &  &       &        & &&&\\
-   &                  &              &         & + consistent press recovery &   &       &        & &&&\\
-\hline
-13 & $Q_1 \times P_0$ &              & penalty & Stokes sphere               &  &       &        & &&&\\ 
-   &                  &              &         & + markers averaging         &   &       &        & &&&\\
-\hline
-14 & $Q_1 \times P_0$ & full matrix & mixed   & analytical benchmark        &  &       &        & & &&\\ 
-\hline
-15 & $Q_1 \times P_0$ & Schur comp. CG & mixed   & analytical benchmark        &  &       &        & &&&\\ 
-\hline
-16 & $Q_1 \times P_0$ & Schur comp. PCG & mixed   & Stokes sphere               &  &       &        & &&&\\ 
-\hline
-17 & $Q_2 \times Q_1$ & full matrix & mixed   & Burstedde benchmark         & $\dag$ &       &        & &&&\\ 
-\hline
-18 & $Q_2 \times Q_1$ & full matrix & mixed   & analytical benchmark        &  &       &        & &&&\\ 
-\hline
-19 & $Q_3 \times Q_2$ & full matrix & mixed   & analytical benchmark        &  &       &        & &&&\\ 
-\hline
-20 & $Q_1 \times P_0$ &              & penalty & Busse et al., 1993            & $\dag$ & $\dag$& $\dag$ & & & &\\ 
-\hline
-21 & $Q_1 \times P_0$ R-T  &              & penalty & analytical benchmark        &  &       &        & &&&\\ 
-\hline
-22 & $Q_1 \times Q_1$-stab & full matrix  & mixed & analytical benchmark    &  &       &        & &&&\\ 
-\hline
-23 & $Q_1 \times P_0$ &              & mixed  & analytical benchmark         &  &       &        & & $\dag$ &&\\ 
-\hline
-24 & $Q_1 \times P_0$ &              & mixed  & convection box               &  & $\dag$& $\dag$ & & $\dag$ &&\\
-\hline
-25 & $Q_1 \times P_0$ & full matrix & mixed  & Rayleigh-Taylor instability  &  &       &        & & & &\\ 
-\hline
-26 & $Q_1 \times P_0$ & full matrix & mixed  & Slab detachment              &  &       &        & $\dag$ & & &\\ 
-\hline
-27 & $Q_1 \times P_0$ & full matrix & mixed  & CBF benchmarks               &  &       &        & $\dag$ &  & $\dag$ &\\ 
-\hline
-28 & $Q_1 \times P_0$ & full matrix & mixed  & Tosi et al, 2015             &  &  $\dag$     &  $\dag$  & $\dag$ & & &$\dag$\\ 
-\hline
-29 & $Q_1 \times P_0$ & full matrix & mixed  & Open Boundary conditions     &  &       & & & &  $\dag$ & \\
-\hline
-30 & $Q_1,Q_2$        &       X     &   X    & Cons. Vel. Interp (cvi)    & & & $\dag$ & & & $\dag$ & \\
-\hline
-31 & $Q_1,Q_2$        &       X     &   X    & Cons. Vel. Interp (cvi)    & $\dag$ & & $\dag$ & & & $\dag$ & \\
-\hline
-32  & $Q_1 \times P_0$ & full matrix & mixed & analytical benchmark        &  &       &        & & &\dag  &\\ 
-\hline
-\hline
-\end{tabular}
-}
+
+
+
+
+
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

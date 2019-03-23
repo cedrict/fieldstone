@@ -78,7 +78,7 @@ else:
    visu = 1
    avrg = 3
    nmarker_per_dim=4
-   mdistribution=3
+   mdistribution=2 # 1: random, 2: regular, 3: Poisson disc
    proj = 3
 
 assert (nelx>0.), "nnx should be positive" 
@@ -733,6 +733,45 @@ plt.subplots_adjust(hspace=0.5)
 if visu==1:
    plt.savefig('solution.pdf', bbox_inches='tight')
    plt.show()
+
+   vtufile=open('markers.vtu',"w")
+   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+   vtufile.write("<UnstructuredGrid> \n")
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nmarker,nmarker))
+
+   #vtufile.write("<PointData Scalars='scalars'>\n")
+   #vtufile.write("</PointData>\n")
+
+   vtufile.write("<Points> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+   for i in range(0,nmarker):
+       vtufile.write("%10e %10e %10e \n" %(swarm_x[i],swarm_y[i],0.))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Points> \n")
+
+   vtufile.write("<Cells>\n")
+
+   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+   for i in range(0,nmarker):
+       vtufile.write("%d " % i)
+   vtufile.write("</DataArray>\n")
+
+   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+   for i in range(0,nmarker):
+       vtufile.write("%d " % (i+1))
+   vtufile.write("</DataArray>\n")
+
+   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+   for i in range(0,nmarker):
+       vtufile.write("%d " % 1)
+   vtufile.write("</DataArray>\n")
+
+   vtufile.write("</Cells>\n")
+
+   vtufile.write("</Piece>\n")
+   vtufile.write("</UnstructuredGrid>\n")
+   vtufile.write("</VTKFile>\n")
+   vtufile.close()
 
 print("-----------------------------")
 print("------------the end----------")

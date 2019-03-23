@@ -256,6 +256,96 @@ Note that all terms on the rhs of the temperature equations have disappeared, wi
 of the source term.
 
 
+\newpage
+\subsection{Stokes equation for elastic medium}
+
+What follows is mostly borrowed from Becker \& Kaus lecture notes.
+
+%\begin{tabular}{|l|l|l|}
+%\hline
+%${\bm u}       $ & displacement vector &   \\
+%${\bm \sigma}  $ & full stress tensor  & Pa\\
+%${\bm \epsilon}$ & strain tensor       &   \\
+%${\bm 1}       $ & unit tensor         &   \\
+%${\bm f}       $ & body forces         &   \\
+%\hline
+%\end{tabular}
+
+The strong form of the PDE that governs force balance in a medium is given by
+\[
+{\bm \nabla}\cdot{\bm \sigma}  + {\bm f} = {\bm 0}
+\]
+where ${\bm \sigma}$ is the stress tensor and ${\bm f}$ is a body force.
+
+The stress tensor is related to the strain tensor through the generalised 
+Hooke's law:
+\begin{equation}
+\sigma_{ij}=\sum_{kl}C_{ijkl}\epsilon{kl} \label{eq:one}
+\end{equation}
+where ${\bm C}$ is the fourth-order elastic tensor.
+In the case of an isotropic material, this relationship simplifies to
+\begin{equation}
+\sigma_{ij}=\lambda \epsilon_{kk} \delta_{ij} + 2\mu \epsilon_{ij}
+\quad\quad
+or, 
+\quad\quad
+{\bm \sigma} = \lambda ({\bm \nabla}\cdot{\bm u})  {\bm 1} + 2\mu {\bm \epsilon}   \label{eq:two}
+\end{equation}
+where $\lambda$ is the Lam\'e parameter and $\mu$ is the shear modulus\footnote{It is also sometimes written $G$}.
+The term ${\bm \nabla}\cdot{\bm u}$ is the isotropic dilation.
+
+\index{Lam\'e parameter} \index{shear modulus}
+
+The strain tensor is related to the displacement as follows: \index{strain tensor}
+\[
+{\bm \epsilon} = \frac{1}{2}({\bm \nabla}{\bm u} + {\bm \nabla}{\bm u}^T)
+\]
+
+The incompressibility (bulk modulus), $K$, is defined as $p=-K {\bm \nabla}\cdot{\bm u}$ 
+where $p$ is the pressure with \index{bulk modulus}
+\begin{eqnarray}
+p&=&-\frac{1}{3}Tr({\bm \sigma}) \nonumber\\
+ &=& -\frac{1}{3} [ \lambda ({\bm \nabla}\cdot{\bm u}) Tr[{\bm 1}] + 2 \mu Tr[{\bm \epsilon}]] \nonumber\\
+ &=& -\frac{1}{3} [ \lambda ({\bm \nabla}\cdot{\bm u})  3  + 2 \mu  ({\bm \nabla}\cdot{\bm u}) ] \nonumber\\
+ &=& -[ \lambda  + \frac{2}{3} \mu ]   ({\bm \nabla}\cdot{\bm u})  
+\end{eqnarray}
+so that $K=\lambda+\frac{2}{3}\mu$.
+
+%or
+%\[
+%\mu=\frac{3K(1-2\nu)}{2(1+\nu)}
+%\]
+
+
+\paragraph{Remark}: Eq. (\ref{eq:one}) and (\ref{eq:two}) are analogous to the ones that one has to solve
+in the context of viscous flow using the penalty method. In this case $\lambda$ is the penalty coefficient, 
+${\bm u}$ is the velocity, and $\mu$ is then the dynamic viscosity.
+
+%\begin{center}
+%\includegraphics[width=15cm]{images/coeffs}\\
+%{\small Homogeneous isotropic linear elastic materials have their elastic properties uniquely determined by any two moduli among these; thus, given any two, any other of the elastic moduli can be calculated according to these formulas.}
+%\end{center}
+
+The Lam\'e parameter and the shear modulus are also linked to $\nu$ the poisson ratio, 
+and $E$, Young's modulus: \index{Poisson ratio} \index{Young's modulus}
+\[
+\lambda=\mu\frac{2\nu}{1-2\nu}
+=\frac{\nu E}{(1+\nu)(1-2\nu)}
+\quad\quad
+{\rm with}
+\quad\quad
+E=2\mu(1+\nu)
+\]
+The shear modulus, expressed often in GPa, describes the material's response to shear stress.
+The poisson ratio describes the response in the direction orthogonal to uniaxial stress.
+The Young modulus, expressed in GPa, describes the material's strain response to uniaxial stress in the 
+direction of this stress.
+
+
+
+
+
+
 
 
 

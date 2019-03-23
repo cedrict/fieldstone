@@ -36,6 +36,26 @@ y_{im}=\sum_i^m N_i(r_{im},s_{im}) y_i
 \]
 where $x_i,y_i$ are the coordinates of the vertices of the element.
 
+A third option consists in the use of the so-called Poisson-disc sampling which 
+produces points that are tightly-packed, but no closer to each other than 
+a specified minimum distance, resulting in a more natural pattern 
+\footnote{https://en.wikipedia.org/wiki/Supersampling}. Note that 
+the Poisson-disc algorithm fills the whole domain at once, not element after element.
+
+{\color{red} say smthg about avrg dist}  
+
+{\color{red} insert here theory and link about Poisson disc }
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_13/images/markers_reg} 
+\includegraphics[width=5cm]{python_codes/fieldstone_13/images/markers_rand} 
+\includegraphics[width=5cm]{python_codes/fieldstone_13/images/markers_pd} \\
+{\small Left: regular distribution, middle: random, right: Poisson disc.\\
+ 16384 markers (32x32 grid, 16 markers per element).}
+\end{center}
+
+
+
 When using {\it active} markers, one is faced with the problem of transferring the properties they carry to the mesh on which the PDEs are to be solved. 
 As we have seen, building the FE matrix involves a loop over all elements, so one simple approach consists of assigning each element a single property
 computed as the average of the values carried by the markers in that element. 
@@ -73,12 +93,14 @@ This averaging problem has been studied and documented in the literature \cite{s
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_13/markers2}\\
-Nodal projection. Left: all markers inside elements to which the green node belongs to are taken into account.
-Right: only the markers closest to the green node count. 
+{\small Nodal projection. Left: all markers inside elements to which the green node belongs to are taken into account. Right: only the markers closest to the green node count. }
 \end{center}
 
-The setup is identical as the Stokes sphere experiment. The bash script {\sl runall} runs the code for many resolutions,
-both initial marker distribution and all three averaging types. The viscosity of the sphere has been 
+
+
+
+
+The setup is identical to the Stokes sphere experiment. The bash script {\sl runall} runs the code for many resolutions, both initial marker distribution and all three averaging types. The viscosity of the sphere has been 
 set to $10^3$ while the viscosity of the surrounding fluid is 1. 
 The average density is always computed with an arithmetic mean. 
 Root mean square velocity results are shown hereunder:
@@ -93,8 +115,8 @@ Root mean square velocity results are shown hereunder:
 \includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_rand_proj3} 
 \includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_poissondisc_proj3} 
 \includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_reg_proj3}\\
-Left column: random markers. Right column: regular markers.
-Top row: elemental projection. Middle row: nodal 1 projection. Bottom row: nodal 2 projection. 
+{\small Left column: random markers, middle column: Poisson disc, right column: regular markers.
+Top row: elemental projection, middle row: nodal 1 projection, bottom row: nodal 2 projection. }
 \end{center}
 
 Conclusions:
@@ -119,4 +141,4 @@ At low resolutions, elemental values yield better results.
 \item harmonic mean yields overal the best results
 \end{itemize}
 
-\includegraphics[width=15cm]{python_codes/fieldstone_13/vrms} 
+\includegraphics[width=16cm]{python_codes/fieldstone_13/vrms} 
