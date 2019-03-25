@@ -97,21 +97,42 @@ and assuming the viscosity and the gravity vector to be constant we get:
 %=
 %- \frac{1}{\eta} \frac{\partial \rho }{\partial \theta} g_r
 %\]
-%Then
+%The
+Let us assume the following separation of variables $\boxed{\Psi(r,\theta)=\phi(r)\xi(\theta)}$.
+Then 
+\[
+v_r = \frac{1}{r}\frac{\partial \Psi}{\partial \theta} = \frac{\phi \xi'}{r}
+\quad\quad
+v_\theta = - \frac{\partial \Psi}{\partial r} = -\phi' \xi
+\]
 
-Let us first express $A_r$ and $A_\theta$ as functions of $\Psi$:
+
+Let us first express $A_r$ and $A_\theta$ as functions of $\Psi$
+and 
 \begin{eqnarray}
 A_r 
 &=& 
-\frac{\partial^2 v_r}{\partial r^2} + \frac{1}{r} \frac{\partial v_r}{\partial r} +   
+\frac{\partial^2 v_r}{\partial r^2} 
++ \frac{1}{r} \frac{\partial v_r}{\partial r} +   
 \frac{1}{r^2} \frac{\partial^2 v_r}{\partial \theta^2}
-- \frac{v_r}{r^2} - \frac{2}{r^2} \frac{\partial u_\theta}{\partial \theta} \\ 
+- \frac{v_r}{r^2} 
+- \frac{2}{r^2} \frac{\partial u_\theta}{\partial \theta} \\ 
 &=& 
-\frac{\partial^2 }{\partial r^2} (\frac{1}{r}\frac{\partial \Psi}{\partial \theta})
-+ \frac{1}{r} \frac{\partial }{\partial r} (\frac{1}{r}\frac{\partial \Psi}{\partial \theta})
-+ \frac{1}{r^2} \frac{\partial^2 }{\partial \theta^2} (\frac{1}{r}\frac{\partial \Psi}{\partial \theta})
-- \frac{1}{r^2} (\frac{1}{r}\frac{\partial \Psi}{\partial \theta})
-- \frac{2}{r^2} \frac{\partial }{\partial \theta} (-\frac{\partial \Psi}{\partial r})\\
+\frac{\partial^2 }{\partial r^2}  (\frac{\phi \xi'}{r})
++ \frac{1}{r} \frac{\partial }{\partial r}  (\frac{\phi \xi'}{r})  
++\frac{1}{r^2} \frac{\partial^2 }{\partial \theta^2}(\frac{\phi \xi'}{r})
+- \frac{1}{r^2} (\frac{\phi \xi'}{r})
+- \frac{2}{r^2} \frac{\partial }{\partial \theta} (-\phi' \xi) \\
+&=& 
+(\frac{\phi''}{r} - 2\frac{\phi'}{r^2} +  2\frac{\phi}{r^3} )\xi'
++ (\frac{\phi'}{r^2} - \frac{\phi}{r^3} )  \xi' 
++\frac{\phi }{r^3} \xi'''  
+-  \frac{\phi \xi'}{r^3}
++ \frac{2}{r^2} \phi' \xi' \\
+&=&
+\frac{\phi'' \xi'}{r} + \frac{\phi' \xi'}{r^2} + \frac{\phi\xi''' }{r^3} \\
+\frac{\partial A_r}{\partial \theta} &=& 
+\frac{\phi'' \xi''}{r} + \frac{\phi' \xi''}{r^2} + \frac{\phi\xi'''' }{r^3} \\
 \\
 A_\theta 
 &=&
@@ -121,17 +142,17 @@ A_\theta
 +\frac{2}{r^2} \frac{\partial v_r}{\partial \theta} 
 - \frac{v_\theta}{r^2} \\
 &=&
-\frac{\partial^2 }{\partial r^2} (- \frac{\partial \Psi}{\partial r})
-+ \frac{1}{r} \frac{\partial }{\partial r} (- \frac{\partial \Psi}{\partial r})
-+ \frac{1}{r^2} \frac{\partial^2 }{\partial \theta^2}(- \frac{\partial \Psi}{\partial r})
-+\frac{2}{r^2} \frac{\partial }{\partial \theta} (\frac{1}{r}\frac{\partial \Psi}{\partial \theta})
-- \frac{1}{r^2} (- \frac{\partial \Psi}{\partial r})\\
-&=&
-- \frac{\partial^3 \Psi}{\partial r^3} 
-- \frac{1}{r} \frac{\partial^2 \Psi}{\partial r^2} 
-- \frac{1}{r^2} \frac{\partial^3 \Psi}{\partial \theta^2 \partial r} 
-+\frac{2}{r^3} \frac{\partial^2 \Psi}{\partial \theta^2}
-+ \frac{1}{r^2} \frac{\partial \Psi}{\partial r}\\
+\frac{\partial^2 }{\partial r^2}(-\phi' \xi) 
++ \frac{1}{r} \frac{\partial }{\partial r} (-\phi' \xi)
++ \frac{1}{r^2} \frac{\partial^2 }{\partial \theta^2}(-\phi' \xi)
++\frac{2}{r^2} \frac{\partial }{\partial \theta} (\frac{\phi \xi'}{r})
+- \frac{1}{r^2} (-\phi' \xi) \\
+&=& - \phi''' \xi 
+- \frac{\phi'' \xi}{r} 
+- \frac{\phi' \xi''}{r^2} 
++\frac{2 \phi \xi''}{r^2} 
++  \frac{\phi' \xi}{r^2} \\
+\frac{\partial (r A_\theta)}{\partial r} &=& 
 \end{eqnarray}
 
 
