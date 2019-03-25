@@ -1,12 +1,59 @@
 
 
+%and the Laplacian of any scalar function $f$ is 
+%\[
+%\Delta f = \frac{1}{r} \frac{\partial }{\partial r} \left( r  \frac{\partial f}{\partial r} \right) 
+%+  \frac{1}{r^2} \frac{\partial^2 f}{\partial \theta^2} 
+%\]
+
+We seek an exact solution to the incompressible Stokes equations for an isoviscous, isothermal fluid in an  annulus.Given the geometry of the problem, we work in polar coordinates.
+We denote the orthonormal basis vectors by $\mathbf{ e}_r$ and $\mathbf{ e}_\theta$, the inner radius of the annulus by $R_1$ and the outer radius by $R_2$.
+Further, we assume that the viscosity $\mu$ is constant, which we set to $\mu = 1$ we set the gravity vector to $\mathbf{g} = -g_r \, \mathbf{e}_r$ with $g_r = 1$. 
+
+Given these assumptions, the incompressible Stokes equations in the annulus are~\cite{scto01}
+\begin{eqnarray}
+A_r =     \frac{\partial^2 v_r}{\partial r^2} + \frac{1}{r} \frac{\partial v_r}{\partial r} +   
+      \frac{1}{r^2} \frac{\partial^2 v_r}{\partial \theta^2}
+    - \frac{v_r}{r^2} - \frac{2}{r^2} \frac{\partial u_\theta}{\partial \theta} 
+-\frac{\partial p}{\partial r}  &=& \rho g_r \label{eq1} \\
+A_\theta=
+\frac{\partial^2 v_\theta}{\partial r^2} + \frac{1}{r} \frac{\partial v_\theta}{\partial r} + \frac{1}{r^2} \frac{\partial^2 v_\theta}{\partial \theta^2}
++\frac{2}{r^2} \frac{\partial v_r}{\partial \theta} - \frac{v_\theta}{r^2} 
+-\frac{1}{r}\frac{\partial p}{\partial \theta} &=& 0
+\label{eq2} \\
+\frac{1}{r} \frac{\partial (rv_r)}{\partial r} + \frac{1}{r} \frac{\partial v_\theta}{\partial \theta} &=&0 \label{eq3}
+\end{eqnarray}
+Equations (\ref{eq1}) and (\ref{eq2}) are the momentum equations in polar coordinates while
+Equation (\ref{eq3}) is the incompressibility constraint. 
 The components of the velocity are obtained from the stream function as follows:
 \[
-u = \frac{1}{r}\frac{\partial \Psi}{\partial \theta}
+v_r = \frac{1}{r}\frac{\partial \Psi}{\partial \theta}
 \quad\quad
-v = - \frac{\partial \Psi}{\partial r}
+v_\theta = - \frac{\partial \Psi}{\partial r}
 \]
-where $u$ is the radial component and $v$ is the tangential component.
+where $v_r$ is the radial component and $v_\theta$ is the tangential component of the velocity vector.
+
+The stream function is defined for incompressible (divergence-free) 
+flows in 2D (as well as in 3D with axisymmetry).
+The stream function can be used to plot streamlines, 
+which represent the trajectories of particles in a steady flow.
+From calculus it is known that the gradient vector $\nabla \Psi$
+is normal to the curve $\Psi =C$. 
+It can be shown that everywhere ${\boldsymbol {u}}\cdot \nabla \Psi =0$ 
+using the formula for $\boldsymbol{u}$ in terms of 
+$\Psi$ which proves that level curves of $\Psi$ are streamlines:
+\[
+{\bm u}\cdot \nabla \Psi 
+= v_r \frac{\partial \Psi}{\partial r} + v_\theta \frac{1}{r} \frac{\partial \Psi}{\partial \theta} 
+= \frac{1}{r}\frac{\partial \Psi}{\partial \theta} \frac{\partial \Psi}{\partial r} 
+- \frac{\partial \Psi}{\partial r} \frac{1}{r} \frac{\partial \Psi}{\partial \theta} 
+=0
+\] 
+
+
+
+
+
 In polar coordinates the curl of a vector ${\bm A}$ is:
 \[
 {\bm \nabla}\times {\bm A}
@@ -17,16 +64,6 @@ In polar coordinates the curl of a vector ${\bm A}$ is:
 \frac{\partial A_r}{\partial \theta}
 \right)
 \]
-and the Laplacian of any scalar function $f$ is 
-\[
-\Delta f = \frac{1}{r} \frac{\partial }{\partial r} \left( r  \frac{\partial f}{\partial r} \right) 
-+  \frac{1}{r^2} \frac{\partial^2 f}{\partial \theta^2} 
-\]
-The Stokes equations are
-\begin{eqnarray}
-A_r=-\frac{\partial p}{\partial r} + \eta \Delta u &=& \rho g_r \\
-A_\theta=-\frac{1}{r}\frac{\partial p}{\partial \theta} + \eta \Delta v &=& \rho g_\theta 
-\end{eqnarray}
 Taking the curl of vector ${\bm A}$ yields:
 \[
 \frac{1}{r}\left(  
@@ -35,11 +72,10 @@ Taking the curl of vector ${\bm A}$ yields:
 \right)
 =
 \frac{1}{r}\left(  
-\frac{\partial (r \rho g_\theta)}{\partial r}
 - \frac{\partial (\rho g_r)}{\partial \theta}
 \right)
 \]
-Multiplying on each side by $r$ and assuming the gravity vector is radial ($g_\theta=0$):
+Multiplying on each side by $r$ 
 \[
 \frac{\partial (r A_\theta)}{\partial r}
 - \frac{\partial A_r}{\partial \theta}
@@ -47,21 +83,65 @@ Multiplying on each side by $r$ and assuming the gravity vector is radial ($g_\t
 - \frac{\partial \rho g_r}{\partial \theta}
 \]
 If we now replace $A_r$ and $A_\theta$ by their expressions as a function of velocity and pressure, 
-we see that the pressure terms cancel out so that only the Laplacian terms remain:
-\[
-\frac{\partial (r \eta \Delta v)}{\partial r}
-- \frac{\partial (\eta \Delta u)}{\partial \theta}
-=
-- \frac{\partial \rho g_r}{\partial \theta}
-\]
-Assuming the viscosity and the gravity vector to be constant:
-\[
-\frac{\partial (r  \Delta v)}{\partial r}
-- \frac{\partial  \Delta u}{\partial \theta}
-=
-- \frac{1}{\eta} \frac{\partial \rho }{\partial \theta} g_r
-\]
-Then
+we see that the pressure terms cancel out 
+and assuming the viscosity and the gravity vector to be constant we get:
+%\[
+%\frac{\partial (r \eta \Delta v)}{\partial r}
+%- \frac{\partial (\eta \Delta u)}{\partial \theta}
+%=
+%- \frac{\partial \rho g_r}{\partial \theta}
+%\]
+%\[
+%\frac{\partial (r  \Delta v)}{\partial r}
+%- \frac{\partial  \Delta u}{\partial \theta}
+%=
+%- \frac{1}{\eta} \frac{\partial \rho }{\partial \theta} g_r
+%\]
+%Then
+
+Let us first express $A_r$ and $A_\theta$ as functions of $\Psi$:
+\begin{eqnarray}
+A_r 
+&=& 
+\frac{\partial^2 v_r}{\partial r^2} + \frac{1}{r} \frac{\partial v_r}{\partial r} +   
+\frac{1}{r^2} \frac{\partial^2 v_r}{\partial \theta^2}
+- \frac{v_r}{r^2} - \frac{2}{r^2} \frac{\partial u_\theta}{\partial \theta} \\ 
+&=& 
+\frac{\partial^2 }{\partial r^2} (\frac{1}{r}\frac{\partial \Psi}{\partial \theta})
++ \frac{1}{r} \frac{\partial }{\partial r} (\frac{1}{r}\frac{\partial \Psi}{\partial \theta})
++ \frac{1}{r^2} \frac{\partial^2 }{\partial \theta^2} (\frac{1}{r}\frac{\partial \Psi}{\partial \theta})
+- \frac{1}{r^2} (\frac{1}{r}\frac{\partial \Psi}{\partial \theta})
+- \frac{2}{r^2} \frac{\partial }{\partial \theta} (-\frac{\partial \Psi}{\partial r})\\
+\\
+A_\theta 
+&=&
+\frac{\partial^2 v_\theta}{\partial r^2} 
++ \frac{1}{r} \frac{\partial v_\theta}{\partial r} 
++ \frac{1}{r^2} \frac{\partial^2 v_\theta}{\partial \theta^2}
++\frac{2}{r^2} \frac{\partial v_r}{\partial \theta} 
+- \frac{v_\theta}{r^2} \\
+&=&
+\frac{\partial^2 }{\partial r^2} (- \frac{\partial \Psi}{\partial r})
++ \frac{1}{r} \frac{\partial }{\partial r} (- \frac{\partial \Psi}{\partial r})
++ \frac{1}{r^2} \frac{\partial^2 }{\partial \theta^2}(- \frac{\partial \Psi}{\partial r})
++\frac{2}{r^2} \frac{\partial }{\partial \theta} (\frac{1}{r}\frac{\partial \Psi}{\partial \theta})
+- \frac{1}{r^2} (- \frac{\partial \Psi}{\partial r})\\
+&=&
+- \frac{\partial^3 \Psi}{\partial r^3} 
+- \frac{1}{r} \frac{\partial^2 \Psi}{\partial r^2} 
+- \frac{1}{r^2} \frac{\partial^3 \Psi}{\partial \theta^2 \partial r} 
++\frac{2}{r^3} \frac{\partial^2 \Psi}{\partial \theta^2}
++ \frac{1}{r^2} \frac{\partial \Psi}{\partial r}\\
+\end{eqnarray}
+
+
+
+
+
+
+\newpage
+
+WRONG:
 \begin{eqnarray}
 \frac{\partial (r  \Delta v)}{\partial r}
 &=&
@@ -124,7 +204,8 @@ then
 +k^2 \frac{1}{r} \phi'' \xi 
 - k^4\frac{1}{r^3} \phi \xi
 \]
-By choosing $\rho$ such that $\rho= f(r)g(\theta)$ and such that $\partial_\theta g = \xi$
+By choosing $\rho$ such that $\rho= \lambda(r) \Upsilon(\theta)$ and such that 
+$\partial_\theta \Upsilon = \xi=\cos(k\theta)$
 then we have 
 \[
  -2 \phi''' \xi - r \phi'''' \xi - k^2 \frac{1}{r^2} \phi' \xi  +k^2 \frac{1}{r} \phi'' \xi 
@@ -133,7 +214,7 @@ then we have
 +k^2 \frac{1}{r} \phi'' \xi 
 - k^4\frac{1}{r^3} \phi \xi
 =
-- \frac{1}{\eta} f \xi  g_r
+- \frac{1}{\eta} \lambda \xi  g_r
 \]
 and then dividing by $\xi$: (IS THIS OK ?)
 \[
@@ -143,7 +224,7 @@ and then dividing by $\xi$: (IS THIS OK ?)
 +k^2 \frac{1}{r} \phi'' 
 - k^4\frac{1}{r^3} \phi 
 =
-- \frac{1}{\eta} f   g_r
+- \frac{1}{\eta} \lambda   g_r
 \]
 
 \[
@@ -152,20 +233,44 @@ and then dividing by $\xi$: (IS THIS OK ?)
 +2k^2 \frac{1}{r} \phi''  
 + (k^2-k^4) \frac{1}{r^3} \phi 
 =
-- \frac{1}{\eta} f   g_r
+- \frac{1}{\eta} \lambda   g_r
 \]
 so 
-
-
 \[
 \boxed{
-f(r) = \frac{\eta}{g} \left( 
+\lambda(r) = \frac{\eta}{g_r} \left( 
 2 \phi'''  + r \phi''''  + 2k^2 \frac{1}{r^2} \phi'   
 -2k^2 \frac{1}{r} \phi''  
 - (k^2-k^4) \frac{1}{r^3} \phi 
 \right)
 }
 \]
+
+Also not forget $\Upsilon=\frac{1}{k}\sin(k\theta)$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+\subsection{Linking with our paper}
+We have 
+\begin{eqnarray}
+\phi(r) &=& -rg(r) \\
+\phi'(r) &=& -g(r) - r g'(r) = -f(r) \\
+\phi''(r) &=& -f'(r) \\
+\phi'''(r) &=& -f''(r) \\
+\phi''''(r) &=& -f'''(r) 
+\end{eqnarray}
+
+\[
+f(r) = \frac{\eta_0}{g_0} \left( 
+2 f''(r)  + r f'''(r)  + 2k^2 \frac{1}{r^2} f(r)
+-2k^2 \frac{1}{r} f'(r)  
++ (k^2-k^4) \frac{1}{r^2} g(r) 
+\right)
+\]
+
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \subsection{No slip boundary conditions}
@@ -204,7 +309,9 @@ We would then have
 In what follows we will take ${\cal F}(r)=1$ for simplicity.
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_35/images/vels}
+\includegraphics[width=12cm]{python_codes/fieldstone_35/images/vels}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_35/images/psi}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_35/images/psi_arrows}
 \end{center}
 
 COMPUTE $f$ from $\phi$ and then the pressure.
@@ -237,57 +344,31 @@ Finally $\Psi$ must fulfill (on the boundaries!):
 \[
 -\frac{\partial^2 \Psi}{\partial r^2} + \frac{1}{r}  \frac{\partial \Psi}{\partial r} + \frac{1}{r^2} \frac{\partial^2 \Psi}{\partial \theta^2}=0
 \]
-or, 
 \[
 - \phi'' \xi + \frac{1}{r} \phi' \xi +  \frac{1}{r^2}  \phi \xi'' = 0
 \]
-\newpage
-%Since $\xi''=-k^2 \xi$ and 
-Since we are looking for a solution $\phi$ such that $\phi(r=R_1)=\phi(r=R_2)=0 $ then we have to ensure the following equality on the boundary:
+or, 
 \[
-- \phi'' \xi + \frac{1}{r} \phi' \xi  = 0
+- \phi''  + \frac{1}{r} \phi'  -k^2  \frac{1}{r^2}  \phi  = 0
 \]
-or,
+Note that this equation is a so-called Euler Differential 
+Equation\footnote{http://mathworld.wolfram.com/EulerDifferentialEquation.html}.
+Since we are looking for a solution $\phi$ such that $\phi(R_1)=\phi(R_2)=0 $ then 
+the 3rd term of the equation above is by definition zero on the boundaries.
+We have to ensure the following equality on the boundary:
 \[
-- r \phi''  + \phi' = 0  \quad\quad \text{for} \quad r=R_1,R_2
+- \phi''  + \frac{1}{r} \phi'   = 0\quad\quad \text{for} \quad r=R_1,R_2
 \]
-
-I then postulate $\phi(r)=(r-R_1)(r-R_2)\chi(r)$ so that it automatically fulfills $\phi(r=R_1)=\phi(r=R_2)=0 $. 
-We then have
-\begin{eqnarray}
-\phi(r) &=& (r-R_1)(r-R_2)\chi(r) \\
-\phi'(r) &=& [2r-(R_1+R_2)] \chi(r) + (r-R_1)(r-R_2)\chi'(r) \\
-\phi''(r) &=& 2\chi(r) +   2[2r-(R_1+R_2)] \chi'(r) + (r-R_1)(r-R_2)\chi''(r)\\
--r\phi''(r) &=& - 2r\chi(r) -   2r[2r-(R_1+R_2)] \chi'(r) - r(r-R_1)(r-R_2)\chi''(r)
-\end{eqnarray}
-\[
- - 2r\chi(r) -   2r[2r-(R_1+R_2)] \chi'(r) - r(r-R_1)(r-R_2)\chi''(r) 
-+[2r-(R_1+R_2)] \chi(r) + (r-R_1)(r-R_2)\chi'(r) =0
-\]
-\[
--   2r[2r-(R_1+R_2)] \chi'(r) 
--(R_1+R_2) \chi(r) 
-- r(r-R_1)(r-R_2)\chi''(r) 
-+ (r-R_1)(r-R_2)\chi'(r) =0
-\]
+The solution of this ODE is of the form $\phi(r)=ar^2+b$ and it becomes 
+evident that it cannot satisfy $\phi(r=R_1)=\phi(r=R_2)=0$.
 
 
-Then the function $\chi$ must fulfill:
-\begin{eqnarray}
-0 =-R_1\phi''(R_1) + \phi'(R_1) 
-&=& - 2R_1\chi(R_1) -  2R_1[R_1-R_2] \chi'(R_1) +[R_1-R_2] \chi(R_1)  \\
-&=& -  2R_1[R_1-R_2] \chi'(R_1) - [R_1+ R_2] \chi(R_1)  \\
-0=-R_2\phi''(R_2) + \phi'(R_2) 
-&=& - 2R_2\chi(R_2) + 2R_2[R_1-R_2] \chi'(R_2) -[R_1-R_2] \chi(R_2) \\
-&=&  2R_2[R_1-R_2] \chi'(R_2) -[R_1+R_2] \chi(R_2) 
-\end{eqnarray}
-
-http://mathworld.wolfram.com/EulerDifferentialEquation.html
 
 
 \end{itemize}
 
-{\color{red} I am stuck here}
+{\color{red} Separation of variables leads to solutions which cannot fulfill the free slip 
+boundary conditions}
 
 
 

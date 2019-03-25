@@ -14,6 +14,12 @@ def density(x,y,R1,R2,k,rho0,g0):
     val=1.
     return val
 
+def Psi(x,y,R1,R2,k):
+    r=np.sqrt(x*x+y*y)
+    theta=math.atan2(y,x)
+    val=(r-R1)**2*(r-R2)**2 *math.cos(k*theta)
+    return val
+
 def velocity_x(x,y,R1,R2,k,rho0,g0):
     r=np.sqrt(x*x+y*y)
     theta=math.atan2(y,x)
@@ -541,6 +547,11 @@ if visu==1:
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='density' Format='ascii'> \n")
    for i in range(0,nnp):
        vtufile.write("%10f \n" %density(x[i],y[i],R1,R2,kk,rho0,g0))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='Psi' Format='ascii'> \n")
+   for i in range(0,nnp):
+       vtufile.write("%10f \n" %Psi(x[i],y[i],R1,R2,kk))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("</PointData>\n")

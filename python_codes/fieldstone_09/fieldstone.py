@@ -22,6 +22,15 @@ def density(x,y,R1,R2,k,rho0,g0):
     val=k*math.sin(k*theta)*alephr + rho0 
     return val
 
+def Psi(x,y,R1,R2,k):
+    r=np.sqrt(x*x+y*y)
+    theta=math.atan2(y,x)
+    A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
+    B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
+    gr=A/2.*r + B/r*math.log(r) - 1./r
+    val=-r*gr*math.cos(k*theta)
+    return val
+
 def velocity_x(x,y,R1,R2,k,rho0,g0):
     r=np.sqrt(x*x+y*y)
     theta=math.atan2(y,x)
@@ -364,6 +373,12 @@ print("v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
 np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
+vr= np.cos(theta)*u+np.sin(theta)*v
+vt=-np.sin(theta)*u+np.cos(theta)*v
+    
+print("     -> vr (m,M) %.4f %.4f " %(np.min(vr),np.max(vr)))
+print("     -> vt (m,M) %.4f %.4f " %(np.min(vt),np.max(vt)))
+
 print("reshape solution (%.3fs)" % (time.time() - start))
 
 #####################################################################
@@ -526,7 +541,7 @@ if visu==1:
        vtufile.write("%10f %10f %10f \n" %(gx(x[i],y[i],g0),gy(x[i],y[i],g0),0.))
    vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (x,y)' Format='ascii'> \n")
    for i in range(0,nnp):
        vtufile.write("%10f %10f %10f \n" %(u[i],v[i],0.))
    vtufile.write("</DataArray>\n")
@@ -539,6 +554,11 @@ if visu==1:
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (error)' Format='ascii'> \n")
    for i in range(0,nnp):
        vtufile.write("%10f %10f %10f \n" %(u[i]-velocity_x(x[i],y[i],R1,R2,kk,rho0,g0),v[i]-velocity_y(x[i],y[i],R1,R2,kk,rho0,g0),0.))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (r,theta)' Format='ascii'> \n")
+   for i in range(0,nnp):
+       vtufile.write("%10f %10f %10f \n" %(vr[i],vt[i],0.))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='r' Format='ascii'> \n")
@@ -554,6 +574,11 @@ if visu==1:
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='density' Format='ascii'> \n")
    for i in range(0,nnp):
        vtufile.write("%10f \n" %density(x[i],y[i],R1,R2,kk,rho0,g0))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='Psi' Format='ascii'> \n")
+   for i in range(0,nnp):
+       vtufile.write("%10f \n" %Psi(x[i],y[i],R1,R2,kk))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("</PointData>\n")
