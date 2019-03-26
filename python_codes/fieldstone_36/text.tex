@@ -9,12 +9,12 @@ density $\rho_0$. The gravity ${\bm g}=-g_0 {\bm e}_r$ is pointing towards the c
 
 Given these assumptions, the momentum Stokes equations in the annulus are~\cite{scto01}
 \begin{eqnarray}
-   \frac{\partial^2 v_r}{\partial r^2} + \frac{1}{r} \frac{\partial v_r}{\partial r} +   
+\mu \left(   \frac{\partial^2 v_r}{\partial r^2} + \frac{1}{r} \frac{\partial v_r}{\partial r} +   
       \frac{1}{r^2} \frac{\partial^2 v_r}{\partial \theta^2}
-    - \frac{v_r}{r^2} - \frac{2}{r^2} \frac{\partial u_\theta}{\partial \theta} 
+    - \frac{v_r}{r^2} - \frac{2}{r^2} \frac{\partial u_\theta}{\partial \theta} \right)
 -\frac{\partial p}{\partial r}  &=& \rho g_r \label{eq1} \\
-\frac{\partial^2 v_\theta}{\partial r^2} + \frac{1}{r} \frac{\partial v_\theta}{\partial r} + \frac{1}{r^2} \frac{\partial^2 v_\theta}{\partial \theta^2}
-+\frac{2}{r^2} \frac{\partial v_r}{\partial \theta} - \frac{v_\theta}{r^2} 
+\mu \left( \frac{\partial^2 v_\theta}{\partial r^2} + \frac{1}{r} \frac{\partial v_\theta}{\partial r} + \frac{1}{r^2} \frac{\partial^2 v_\theta}{\partial \theta^2}
++\frac{2}{r^2} \frac{\partial v_r}{\partial \theta} - \frac{v_\theta}{r^2} \right)
 -\frac{1}{r}\frac{\partial p}{\partial \theta} &=& 0
 \label{eq2} 
 \end{eqnarray}
@@ -24,7 +24,7 @@ vector $v_\theta$ is assumed to be zero as well as all terms containing $\partia
 Under these assumptions the second equation is automatically fulfilled.
 Of the first one remain the following terms:
 \[
-\frac{\partial^2 v_r}{\partial r^2} + \frac{1}{r} \frac{\partial v_r}{\partial r} - \frac{v_r}{r^2} 
+\mu\left( \frac{\partial^2 v_r}{\partial r^2} + \frac{1}{r} \frac{\partial v_r}{\partial r} - \frac{v_r}{r^2} \right)
 -\frac{\partial p}{\partial r}  = \rho g_r 
 \]
 As we have seen before we have 
@@ -85,11 +85,13 @@ p=-\lambda {\bm \nabla}\cdot {\bm v}
 \end{center}
 
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_36/disp}
-\includegraphics[width=6cm]{python_codes/fieldstone_36/p}
+\includegraphics[width=7cm]{python_codes/fieldstone_36/disp}
+\includegraphics[width=7cm]{python_codes/fieldstone_36/p}
 \end{center}
 
-\includegraphics[width=13cm]{python_codes/fieldstone_36/errors}
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_36/errors}
+\end{center}
 
 
 
