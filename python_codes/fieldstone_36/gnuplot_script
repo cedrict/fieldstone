@@ -8,3 +8,15 @@ plot[2890e3:6371e3][]\
 set output 'pressure_rtheta.pdf'  
 plot[2890e3:6371e3][]\
 'pressure.ascii' u 4:3 w lp notitle 
+
+set output 'errors.pdf'
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+set key outside
+plot[][]\
+'errors' u (1./sqrt($3)):6 w lp t 'velocity',\
+'errors' u (1./sqrt($3)):9 w lp t 'pressure',\
+x**2*1e12 w l t 'x^2',\
+x**1*1e17 w l t 'x^1'
+

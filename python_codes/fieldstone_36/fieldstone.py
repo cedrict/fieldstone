@@ -46,6 +46,16 @@ def displacement_y(x,y,R1,R2,rho,g0,lambdaa,mu):
     val=vr*math.sin(theta)
     return val
 
+def pressure(x,y,R1,R2,rho,g0,lambdaa,mu):
+    r=np.sqrt(x*x+y*y)
+    C1 = rho0 * g0 / (lambdaa + 2 * mu) / 3.
+    k1 = (2*mu + lambdaa) * C1 * (2 * R1**2 * R2**3 - R1**3 * R2**2)
+    k2 = lambdaa * C1 * (R1**2 * R2**3 - R1**3 * R2**2)
+    C3 = (k1 + k2) / (( (R2**2+R1**2)*(2*mu+lambdaa) )  +  lambdaa * (R2**2-R1**2) )
+    C2 = -C1 * R1 - C3 / R1**2
+    val=-lambdaa*(3*C1*r+2*C2)
+    return val
+
 def gx(x,y,g0):
     val=-x/np.sqrt(x*x+y*y)*g0
     return val
@@ -375,15 +385,15 @@ for iel in range(0,nel):
 
     p[iel]=-lambdaa*(exx[iel]+eyy[iel])
 
-print("p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
-print("exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-print("eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-print("exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
+print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
+print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 
 np.savetxt('pressure.ascii',np.array([xc,yc,p,np.sqrt(xc**2+yc**2)]).T,header='# xc,yc,p')
 np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
-print("compute p & sr | time: %.3f s" % (time.time() - start))
+print("compute p & sr (%.3f s)" % (time.time() - start))
 
 #################################################################
 # compute error
@@ -391,6 +401,7 @@ print("compute p & sr | time: %.3f s" % (time.time() - start))
 start = time.time()
 
 errv=0.
+errp=0.
 for iel in range (0,nel):
     for iq in [-1,1]:
         for jq in [-1,1]:
@@ -423,12 +434,14 @@ for iel in range (0,nel):
                 vq+=N[k]*v[icon[k,iel]]
             errv+=((uq-displacement_x(xq,yq,R1,R2,rho0,g0,lambdaa,mu))**2+\
                    (vq-displacement_y(xq,yq,R1,R2,rho0,g0,lambdaa,mu))**2)*weightq*jcob
+            errp+=(p[iel]-pressure(xq,yq,R1,R2,rho0,g0,lambdaa,mu))**2*weightq*jcob
 
 errv=np.sqrt(errv)
+errp=np.sqrt(errp)
 
-print("nel= %6d ; errv= %.8f " %(nel,errv))
+print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
 
-print("compute errors | time: %.3f s" % (time.time() - start))
+print("compute errors (%.3f s)" % (time.time() - start))
 
 #####################################################################
 # plot of solution
@@ -458,6 +471,16 @@ if visu==1:
    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
    for iel in range (0,nel):
        vtufile.write("%f\n" % p[iel])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%f\n" % pressure(xc[iel],yc[iel],R1,R2,rho0,g0,lambdaa,mu))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='p (error)' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%f\n" % (p[iel]-pressure(xc[iel],yc[iel],R1,R2,rho0,g0,lambdaa,mu)))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("</CellData>\n")
@@ -529,7 +552,7 @@ if visu==1:
    vtufile.write("</UnstructuredGrid>\n")
    vtufile.write("</VTKFile>\n")
    vtufile.close()
-   print("export to vtu | time: %.3f s" % (time.time() - start))
+   print("export to vtu (%.3f s)" % (time.time() - start))
 
 print("-----------------------------")
 print("------------the end----------")
