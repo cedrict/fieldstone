@@ -17,6 +17,6 @@ set key outside
 plot[][]\
 'errors' u (1./sqrt($3)):6 w lp t 'velocity',\
 'errors' u (1./sqrt($3)):9 w lp t 'pressure',\
-x**2*1e12 w l t 'x^2',\
-x**1*1e17 w l t 'x^1'
+x**2 w l t 'x^2',\
+x**1*1e5 w l t 'x^1'
 

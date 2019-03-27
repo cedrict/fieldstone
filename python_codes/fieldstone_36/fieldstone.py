@@ -5,9 +5,9 @@ import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 import time as time
-import matplotlib.pyplot as plt
 
 #------------------------------------------------------------------------------
+
 def displacement_r(x,y,R1,R2,rho,g0,lambdaa,mu):
     r=np.sqrt(x*x+y*y)
     C1 = rho0 * g0 / (lambdaa + 2 * mu) / 3.
@@ -19,8 +19,7 @@ def displacement_r(x,y,R1,R2,rho,g0,lambdaa,mu):
     return val
 
 def displacement_theta(x,y,R1,R2,rho,g0,lambdaa,mu):
-    val=0
-    return val
+    return 0
 
 def displacement_x(x,y,R1,R2,rho,g0,lambdaa,mu):
     r=np.sqrt(x*x+y*y)
@@ -80,31 +79,29 @@ else:
    nelr = 24
    visu = 1
 
-assert (nelr>0.), "nnx should be positive" 
-
-R1=2891e3
+R1=2890e3
 R2=6371e3
+area=math.pi*(R2**2-R1**2)
 
-dr=(R2-R1)/nelr
+dr=(R2-R1)/nelr 
 nelt=int(2.*math.pi*R2/dr)
 nel=nelr*nelt  # number of elements, total
-nnr=nelr+1
-nnt=nelt
+nnr=nelr+1 # number of nodes radial direction
+nnt=nelt # number of nodes tangential direction
 nnp=nnr*nnt  # number of nodes
 Nfem=nnp*ndof  # Total number of degrees of freedom
 
-rho0=2800.
+rho0=3300.
 g0=9.81
-
-#lambdaa = 2.4e10
-#mu      = 2.4e10
-
 E=6e10 # Young's modulus
 nu=0.49 # Poisson ratio
 mu=E/2/(1+nu)
 lambdaa=E*nu/(1+nu)/(1-2*nu)
 
-print (mu,lambdaa)
+print('g0=',g0)
+print('rho0=',rho0)
+print('mu=',mu)
+print('lambda=',lambdaa)
 
 eps=1.e-10
 
@@ -113,8 +110,7 @@ sqrt3=np.sqrt(3.)
 #################################################################
 # grid point setup
 #################################################################
-
-print("grid point setup")
+start = time.time()
 
 x=np.empty(nnp,dtype=np.float64)  # x coordinates
 y=np.empty(nnp,dtype=np.float64)  # y coordinates
@@ -147,11 +143,12 @@ for j in range(0,nnr):
            theta[counter]+=2.*math.pi
         counter+=1
 
+print("grid setup (%.3fs)" % (time.time() - start))
+
 #################################################################
 # connectivity
 #################################################################
-
-print("connectivity")
+start = time.time()
 
 icon =np.zeros((m, nel),dtype=np.int16)
 
@@ -171,8 +168,11 @@ for j in range(0, nelr):
         icon[3, counter] = icon3
         counter += 1
 
+print("connectivity (%.3fs)" % (time.time() - start))
+
 #################################################################
 # define boundary conditions
+# actually prescribing no slip at the bottom because easier
 #################################################################
 start = time.time()
 
@@ -385,10 +385,10 @@ for iel in range(0,nel):
 
     p[iel]=-lambdaa*(exx[iel]+eyy[iel])
 
-print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
-print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
+print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
+print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
+print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
 
 np.savetxt('pressure.ascii',np.array([xc,yc,p,np.sqrt(xc**2+yc**2)]).T,header='# xc,yc,p')
 np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
@@ -397,6 +397,7 @@ print("compute p & sr (%.3f s)" % (time.time() - start))
 
 #################################################################
 # compute error
+# errors are normalised by the area !
 #################################################################
 start = time.time()
 
@@ -436,10 +437,10 @@ for iel in range (0,nel):
                    (vq-displacement_y(xq,yq,R1,R2,rho0,g0,lambdaa,mu))**2)*weightq*jcob
             errp+=(p[iel]-pressure(xq,yq,R1,R2,rho0,g0,lambdaa,mu))**2*weightq*jcob
 
-errv=np.sqrt(errv)
-errp=np.sqrt(errp)
+errv=np.sqrt(errv)/area
+errp=np.sqrt(errp)/area
 
-print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
+print("     -> nel= %6d ; errv= %.4e ; errp= %.4e" %(nel,errv,errp))
 
 print("compute errors (%.3f s)" % (time.time() - start))
 

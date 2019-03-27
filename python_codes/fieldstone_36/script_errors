@@ -14,6 +14,8 @@ python3 fieldstone.py  28   0 | grep nel >> errors
 python3 fieldstone.py  32   0 | grep nel >> errors
 python3 fieldstone.py  36   0 | grep nel >> errors
 python3 fieldstone.py  40   0 | grep nel >> errors
+python3 fieldstone.py  44   0 | grep nel >> errors
+python3 fieldstone.py  48   0 | grep nel >> errors
 
 
 
