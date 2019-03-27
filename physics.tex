@@ -257,6 +257,7 @@ of the source term.
 
 
 \newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 \subsection{Stokes equation for elastic medium}
 
 What follows is mostly borrowed from Becker \& Kaus lecture notes.
@@ -342,7 +343,57 @@ The Young modulus, expressed in GPa, describes the material's strain response to
 direction of this stress.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+\newpage
+\subsection{The strain rate tensor in all coordinate systems}
 
+The strain rate tensor $\dot{\bm\varepsilon}$ is given by
+\begin{equation}
+\dot{\bm \varepsilon} = \frac{1}{2}( {\bm \nabla}{\bm v}+ {\bm \nabla}{\bm v}^T) 
+\end{equation}
+
+\subsubsection{Cartesian coordinates}
+\begin{eqnarray}
+\dot\varepsilon_{xx} &=& \frac{\partial u}{\partial x} \\
+\dot\varepsilon_{yy} &=& \frac{\partial v}{\partial y} \\
+\dot\varepsilon_{zz} &=& \frac{\partial w}{\partial z} \\
+\dot\varepsilon_{yx} =
+\dot\varepsilon_{xy} &=& \frac{1}{2} \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x}  \right)\\
+\dot\varepsilon_{zx} =
+\dot\varepsilon_{xz} &=& \frac{1}{2} \left( \frac{\partial u}{\partial z} + \frac{\partial w}{\partial x}  \right)\\
+\dot\varepsilon_{zy} =
+\dot\varepsilon_{yz} &=& \frac{1}{2} \left( \frac{\partial v}{\partial z} + \frac{\partial w}{\partial y}  \right)
+\end{eqnarray}
+
+\subsubsection{Polar coordinates}
+
+\begin{eqnarray}
+\dot\varepsilon_{rr} &=& \frac{\partial v_r}{\partial r} \\
+\dot\varepsilon_{\theta\theta} &=& \frac{v_r}{r} + \frac{1}{r} \frac{\partial v_\theta}{\partial \theta}  \\
+\dot\varepsilon_{\theta r} =
+\dot\varepsilon_{r\theta} &=& \frac{1}{2} \left(   \frac{\partial v_\theta}{\partial r} - \frac{v_\theta}{r} 
++\frac{1}{r} \frac{\partial v_r}{\partial \theta}  \right) 
+\end{eqnarray}
+
+\subsubsection{Cylindrical coordinates}
+
+http://eml.ou.edu/equation/FLUIDS/STRAIN/STRAIN.HTM
+
+\subsubsection{Sperical coordinates}
+
+\begin{eqnarray}
+\dot\varepsilon_{rr} &=& \frac{\partial v_r}{\partial r} \\
+\dot\varepsilon_{\theta\theta} &=& \frac{v_r}{r} + \frac{1}{r} \frac{\partial v_\theta}{\partial \theta}  \\
+\dot\varepsilon_{\phi\phi} &=& \frac{1}{r \sin\theta} \frac{\partial v_\phi}{\partial \phi} \\
+\dot\varepsilon_{\theta r} =
+\dot\varepsilon_{r\theta}   &=& \frac{1}{2} \left( r \frac{\partial}{\partial r} (\frac{v_\theta}{r} ) 
++\frac{1}{r} \frac{\partial v_r}{\partial \theta} \right) \\
+\dot\varepsilon_{\phi r} =
+\dot\varepsilon_{r\phi}      &=&  \frac{1}{2} \left(  \frac{1}{r \sin\theta} \frac{\partial v_r}{\partial \phi} 
++ r \frac{\partial }{\partial r} (\frac{v_\phi}{r}) \right)  \\
+\dot\varepsilon_{\phi \theta} =
+\dot\varepsilon_{\theta\phi} &=& \frac{1}{2} \left( \frac{\sin \theta}{r} \frac{\partial }{\partial \theta} (\frac{v_\phi}{\sin\theta}) + \frac{1}{r \sin\theta} \frac{\partial v_\theta}{\partial \phi}    \right) 
+\end{eqnarray}
 
 
 

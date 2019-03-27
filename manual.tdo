@@ -1,15 +1,15 @@
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here figure}{13}{section*.3}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here figure}{13}{section*.4}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ list codes which use this approach}{26}{section*.8}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ add more examples coming from geo}{39}{section*.9}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ produce drawing of node numbering}{41}{section*.10}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here the rederivation 2.1.1 of spmw16}{43}{section*.11}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ produce figure to explain this}{45}{section*.12}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ link to proto paper }{45}{section*.13}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ link to least square and nodal derivatives}{45}{section*.14}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ how to compute $M$ for the Schur complement ?}{51}{section*.15}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ build S and have python compute its smallest and largest eigenvalues as a function of resolution?}{96}{section*.16}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ explain how Medge is arrived at!}{138}{section*.18}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ compare with ASPECT ??!}{138}{section*.19}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ gauss-lobatto integration?}{138}{section*.20}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ pressure average on surface instead of volume ?}{138}{section*.21}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here figure}{14}{section*.3}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here figure}{14}{section*.4}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ list codes which use this approach}{27}{section*.8}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ add more examples coming from geo}{40}{section*.9}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ produce drawing of node numbering}{42}{section*.10}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here the rederivation 2.1.1 of spmw16}{44}{section*.11}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ produce figure to explain this}{46}{section*.12}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ link to proto paper }{46}{section*.13}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ link to least square and nodal derivatives}{46}{section*.14}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ how to compute $M$ for the Schur complement ?}{52}{section*.15}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ build S and have python compute its smallest and largest eigenvalues as a function of resolution?}{97}{section*.16}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ explain how Medge is arrived at!}{139}{section*.18}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ compare with ASPECT ??!}{139}{section*.19}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ gauss-lobatto integration?}{139}{section*.20}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ pressure average on surface instead of volume ?}{139}{section*.21}

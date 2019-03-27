@@ -93,6 +93,109 @@ p=-\lambda {\bm \nabla}\cdot {\bm v}
 \includegraphics[width=14cm]{python_codes/fieldstone_36/errors}
 \end{center}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Alternative derivation of the solution}
 
+We start from the strain tensor:
+\[
+{\bm \varepsilon} =
+\left(
+\begin{array}{cc}
+\varepsilon_{rr} & \varepsilon_{r\theta} \\ 
+\varepsilon_{r\theta} & \varepsilon_{\theta\theta} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\frac{\partial v_r}{\partial r} & 0 \\
+0 &  \frac{v_r}{r} 
+\end{array}
+\right)
+\]
+\[
+{\bm \sigma} 
+= - p {\bm 1} + 2\mu {\bm \varepsilon}
+=  
+\left(
+\begin{array}{cc}
+\lambda \frac{1}{r} \frac{\partial (r v_r)}{\partial r} + 2\mu\frac{\partial v_r}{\partial r} & 0 \\
+0 & \lambda \frac{1}{r} \frac{\partial (r v_r)}{\partial r}  +  2 \mu\frac{v_r}{r} 
+\end{array}
+\right)
+\]
+The divergence of the stress tensor is given by:
+\[
+{\bm \nabla}\cdot {\bm \sigma} 
+=
+\left(
+\begin{array}{c}
+\frac{\partial \sigma_{rr}}{\partial r} + \frac{\sigma_{rr}-\sigma_{\theta\theta}}{r} + \frac{1}{r} \frac{\partial \sigma_{\theta r}}{\partial \theta} \\ \\
+\frac{\partial \sigma_{r \theta}}{\partial r} + \frac{1}{r} \frac{\sigma_{\theta\theta}}{\partial \theta}
++\frac{\sigma_{r\theta} + \sigma_{\theta r}}{r}
+\end{array}
+\right)
+\]
+Since the stress tensor is diagonal this simplifies to (also $\partial_\theta =0$):
+\[
+{\bm \nabla}\cdot {\bm \sigma} 
+=
+\left(
+\begin{array}{c}
+\frac{\partial \sigma_{rr}}{\partial r} + \frac{\sigma_{rr}-\sigma_{\theta\theta}}{r} \\ \\
+0
+\end{array}
+\right)
+\]
+So
+\begin{eqnarray}
+({\bm \nabla}\cdot {\bm \sigma})_r 
+&=& 
+\frac{\partial \sigma_{rr}}{\partial r} + \frac{\sigma_{rr}-\sigma_{\theta\theta}}{r} \\
+&=& 
+\frac{\partial }{\partial r} \left[
+\lambda \frac{1}{r} \frac{\partial (r v_r)}{\partial r} + 2\mu\frac{\partial v_r}{\partial r} 
+ \right] 
++ \frac{1}{r}
+\left[
+\lambda \frac{1}{r} \frac{\partial (r v_r)}{\partial r} + 2\mu\frac{\partial v_r}{\partial r} 
+-
+\lambda \frac{1}{r} \frac{\partial (r v_r)}{\partial r}  -  2 \mu\frac{v_r}{r} 
+\right] \\
+ &=& 
+\lambda \frac{\partial }{\partial r}  \frac{1}{r} \frac{\partial (r v_r)}{\partial r} 
++ 2\mu\frac{\partial^2 v_r}{\partial r^2} 
++ 
+\lambda \frac{1}{r^2} \frac{\partial (r v_r)}{\partial r} + \frac{2\mu}{r}\frac{\partial v_r}{\partial r} 
+- \lambda \frac{1}{r^2} \frac{\partial (r v_r)}{\partial r}  - \frac{2 \mu v_r}{r^2} \\
+&=&
+\lambda ( -\frac{v_r}{r^2} + \frac{1}{r} \frac{\partial v_r}{\partial r} + \frac{\partial^2 v_r}{\partial r^2} )
++ 2\mu\frac{\partial^2 v_r}{\partial r^2} 
+%+\lambda ( \frac{v_r}{r^2}  + \frac{1}{r} \frac{\partial v_r}{\partial r}  )
++ \frac{2\mu}{r}\frac{\partial v_r}{\partial r}
+- \frac{2 \mu v_r}{r^2} \\ 
+&=&
+-(2\mu+\lambda)\frac{v_r}{r^2} 
++(2\mu+\lambda)\frac{1}{r}\frac{\partial v_r}{\partial r}  
++(2\mu+\lambda)\frac{\partial^2 v_r}{\partial r^2}  
+\end{eqnarray}
+So we then have 
+\[
+({\bm \nabla}\cdot {\bm \sigma})_r
+= 
+-(2\mu+\lambda)\frac{v_r}{r^2} 
++(2\mu+\lambda)\frac{1}{r}\frac{\partial v_r}{\partial r}  
++(2\mu+\lambda)\frac{\partial^2 v_r}{\partial r^2} 
+=\rho_0 g_r 
+\]
+or, 
+\[
+\boxed{
+\frac{\partial^2 v_r}{\partial r^2} 
++\frac{1}{r}\frac{\partial v_r}{\partial r}  
+-\frac{v_r}{r^2} 
+=\frac{\rho_0 g_r}{\lambda+2\mu}
+}
+\]
 
 
