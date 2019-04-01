@@ -401,18 +401,40 @@ http://eml.ou.edu/equation/FLUIDS/STRAIN/STRAIN.HTM
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Boundary conditions}
 
+%wiki
+In mathematics, the Dirichlet (or first-type) 
+boundary condition is a type of boundary condition, named after Peter Gustav Lejeune Dirichlet.
+When imposed on an ODE or PDE, it specifies the values that a solution needs 
+to take on along the boundary of the domain.
+Note that a Dirichlet boundary condition may also be referred to as a fixed boundary condition. 
+
+The Neumann (or second-type) boundary condition is a type of boundary condition, 
+named after Carl Neumann. When imposed on an ordinary or a partial differential equation, 
+the condition specifies the values in which the derivative of a solution is 
+applied within the boundary of the domain.
+
+It is possible to describe the problem using other boundary conditions: 
+a Dirichlet boundary condition specifies the values of the solution itself 
+(as opposed to its derivative) on the boundary, whereas the Cauchy boundary condition, mixed boundary condition and Robin boundary condition are all different types of combinations of the Neumann and Dirichlet boundary conditions.
+
+\index{Dirichlet boundary condition}
+\index{Neumann boundary condition}
+
+
 \subsubsection{The Stokes equations}
 
+You may find the following terms in the computational geodynamics literature:
+
 \begin{itemize}
-\item { free surface}
-\item { free slip}
-\item { no slip}
-\item { prescribed velocity}
-\item stress b.c.
-\item open .b.c.
+\item { free surface}: this means that no force is acting on the surface, i.e. ${\bm \sigma}\cdot {\bm n}={\bm 0}$. It is usually used on the top boundary of the domain and allows for topography evolution.
+\item { free slip}: ${\bm v}\cdot \bm n = 0$ and $({\bm \sigma}\cdot{\bm n})\times {\bm n}={\bm 0}$. This condition ensures a frictionless flow parallel to the boundary where it is prescribed.
+\item { no slip}: this means that the velocity (or displacement) is exactly zero on the boundary, i.e. ${\bm v}={\bm 0}$.
+\item { prescribed velocity}: ${\bm v}={\bm v}_{bc}$
+\item stress b.c.: 
+\item open .b.c.: see fieldstone 29. 
 \end{itemize}
 
 \subsubsection{The heat transport equation}
 
-
+There are two types of boundary conditions for this equation: temperature boundary conditions (Dirichlet boundary conditions) and heat flux boundary conditions (Neumann boundary conditions). 
 

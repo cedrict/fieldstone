@@ -1,1 +1,341 @@
 \label{sec_mixed}
+
+What follows is formulated in 2D as the extension to 3D is 
+rather trivial. Also the flow is assumed to be incompressible, 
+isoviscous, isothermal. 
+
+The methodology to derive the discretised equations of the mixed system is 
+quite similar to the one we have used in the case of the penalty formulation.
+The big difference comes from the fact that we are now solving for both 
+velocity and pressure at the same time, and that we therefore must solve 
+the mass and momentum conservation equations together.
+As before, velocity inside an element is given by 
+\begin{equation}
+{\vec \upnu}({\bm r})=\sum_{i=1}^{m_v} N_i^v({\bm r}) {\vec \upnu}_i
+\label{mixed01}
+\end{equation}
+where $N_i^{v}$ are the polynomial basis functions for the velocity,
+and the summation runs over the $m_v$ nodes composing the element.
+A similar expression is used for pressure:
+\begin{equation}
+p({\bm r})=\sum_{i=1}^{m_p} N_i^p({\bm r}) p_i
+\label{mixed02}
+\end{equation}
+Note that the velocity is a vector of size while pressure (and temperature)
+is a scalar. There are then $ndof_v$ velocity degrees of freedom per node
+and $ndof_p$ pressure degrees of freedom.
+It is also very important to remember that the numbers of 
+velocity nodes and pressure nodes for a given element 
+are more often than not different and that velocity and pressure
+nodes need not be colocated. Indeed, unless 
+co-called 'stabilised elements' are used, we have $m_v>m_p$, which 
+means that the polynomial order of the velocity field is higher than 
+the polynomial order of the pressure field (usually by value 1).
+
+\todo[inline]{insert here link(s) to manual and literature} 
+
+Other notations are sometimes used for Eqs.(\ref{mixed01},\ref{mixed02}):
+\begin{equation}
+u({\bm r}) = \vec{N}^v \cdot \vec{u}
+\quad\quad\quad\quad
+v({\bm r}) = \vec{N}^v \cdot \vec{v}
+\quad\quad\quad\quad
+p({\bm r}) = \vec{N}^p \cdot \vec{p}
+\end{equation} 
+where ${\vec \upnu}=(u,v)$ and $\vec{N}^v$ is the vector containing all basis functions evaluated at location ${\bm r}$:
+\begin{eqnarray}
+\vec{N}^v &=& \left( N_1^v({\bm r}),  N_2^v({\bm r}),  N_3^v({\bm r}), \dots  N_{m_v}^v({\bm r}) \right) \\
+\vec{N}^p &=& \left( N_1^p({\bm r}),  N_2^p({\bm r}),  N_3^p({\bm r}), \dots  N_{m_p}^p({\bm r}) \right)
+\end{eqnarray}
+and with 
+\begin{eqnarray}
+\vec{u} &=& \left( u_1,  u_2,  u_3, \dots  u_{m_v} \right) \\
+\vec{v} &=& \left( v_1,  v_2,  v_3, \dots  v_{m_v} \right) \\
+\vec{p} &=& \left( p_1,  p_2,  p_3, \dots  p_{m_p} \right) 
+\end{eqnarray}
+We will now establish the weak form of the momentum conservation equation. 
+We start again from 
+\begin{eqnarray}
+{\vec \nabla}\cdot {\bm \sigma} + {\vec b} &=& {\vec 0} \\
+{\vec \nabla}\cdot {\vec v} &=& 0
+\end{eqnarray}
+For the $N_i^v$'s and $N_i^p$ 'regular enough', we can write:
+\begin{eqnarray}
+\int_{\Omega_e} N_i^v {\vec \nabla}\cdot {\bm \sigma} d\Omega + \int_{\Omega_e} N_i^v  {\vec b} \; d\Omega 
+&=& \vec 0 \\
+\int_{\Omega_e} N_i^p {\vec \nabla}\cdot {\vec v} d\Omega &=& 0
+\end{eqnarray}
+We can integrate by parts and drop the surface term\footnote{We will come back to this at a later stage}:
+\begin{eqnarray}
+\int_{\Omega_e} {\vec \nabla } N_i^v \cdot {\bm \sigma} d\Omega &=& \int_{\Omega_e} N_i^v  {\vec b} d\Omega \\
+\int_{\Omega_e} N_i^p {\vec \nabla}\cdot {\vec v} d\Omega &=& 0
+\end{eqnarray}
+or, 
+\begin{equation}
+\int_{\Omega_e} 
+\left(
+\begin{array}{ccc}
+\frac{\partial N_i}{\partial x} & 0 & \frac{\partial N_i}{\partial y} \\  \\
+0 & \frac{\partial N_i}{\partial y} &  \frac{\partial N_i}{\partial x}  
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\sigma_{xx}\\
+\sigma_{yy}\\
+\sigma_{xy}\\
+\end{array}
+\right)
+d\Omega = \int_{\Omega_e} N_i {\vec b} d\Omega 
+\end{equation}
+As before (see section XXX) the above equation can ultimately be written:
+\begin{equation}
+\int_{\Omega_e} {\bm B}^T \cdot 
+\left(
+\begin{array}{c}
+\sigma_{xx}\\
+\sigma_{yy}\\
+\sigma_{xy}\\
+\end{array}
+\right)
+d\Omega
+=
+\int_{\Omega_e} {\vec N}_b d\Omega 
+\end{equation}
+We have previously established that the strain rate 
+vector $\vec{\dot \varepsilon}$ is:
+\begin{equation}
+\vec{\dot\varepsilon}=
+\left(
+\begin{array}{c}
+\frac{\partial u}{\partial x} \\ \\
+\frac{\partial v}{\partial y} \\ \\
+\frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \\
+\end{array}
+\right)
+=
+\underbrace{
+\left(
+\begin{array}{ccccccccccc}
+\frac{\partial N_1^v}{\partial x} & 0 & 
+\frac{\partial N_2^v}{\partial x} & 0 & 
+\frac{\partial N_3^v}{\partial x} & 0 & \dots & 
+\frac{\partial N_{m_v}^v}{\partial x} & 0
+\\  \\
+0 & \frac{\partial N_1^v}{\partial y} & 
+0 & \frac{\partial N_2^v}{\partial y} &
+0 & \frac{\partial N_3^v}{\partial y} & \dots & 
+0 & \frac{\partial N_{m_v}^v}{\partial x} 
+\\ \\
+\frac{\partial N_1^v}{\partial y} &  \frac{\partial N_1^v}{\partial x} &  
+\frac{\partial N_2^v}{\partial y} &  \frac{\partial N_2^v}{\partial x} & 
+\frac{\partial N_3^v}{\partial y} &  \frac{\partial N_3^v}{\partial x} &   \dots &  
+\frac{\partial N_{m_v}^v}{\partial y} &  \frac{\partial N_{m_v}^v}{\partial x}  
+\end{array}
+\right) 
+}_{\bm B}
+\cdot
+\underbrace{
+\left(
+\begin{array}{c}
+u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3 \\ \dots \\ u_{m_v} \\ v_{m_v}
+\end{array}
+\right)
+}_{\vec V}
+\end{equation}
+or, $\vec{\dot \varepsilon}={\bm B}\cdot {\vec V}$ where ${\bm B}$ is the gradient 
+matrix and ${\vec V}$ is the vector of all vector degrees of freedom for the 
+element. The matrix ${\bm B}$ is then of size $3\times m_v$ and the vector
+${\vec V}$ is $m_v$ long.
+we have 
+\begin{eqnarray}
+\sigma_{xx}&=&-p + 2\eta \dot\varepsilon_{xx} \\
+\sigma_{yy}&=&-p + 2\eta \dot\varepsilon_{yy} \\
+\sigma_{xy}&=& \hspace{5.5mm} + 2\eta \dot\varepsilon_{xy} 
+\end{eqnarray}
+so
+\begin{equation}
+\vec{\sigma} 
+=-\left( 
+\begin{array}{c}
+1 \\ 1 \\ 0 
+\end{array}
+\right) p+ 2 \eta \vec{\dot\varepsilon}
+=
+- \left(
+\begin{array}{c}
+1 \\ 1 \\ 0 
+\end{array}
+\right)
+\vec{N^p} \cdot {\vec P}  + 
+{\bm C} \cdot  {\bm B}\cdot {\vec V}
+\end{equation}
+Let us define matrix ${\bm N}^p$ of size $3\times m_p$:
+\begin{equation}
+{\bm N}^p=
+\left(
+\begin{array}{c}
+1 \\ 1 \\ 0
+\end{array}
+\right)
+\vec{N^p} 
+=
+\left(
+\begin{array}{c}
+\vec{N^p} \\
+\vec{N^p} \\
+0
+\end{array}
+\right)
+\end{equation}
+so that
+\begin{equation}
+\vec{\sigma} 
+= - {\bm N}^p
+ \cdot {\vec P}  + 
+{\bm C} \cdot  {\bm B}\cdot {\vec V}
+\end{equation}
+finally
+\begin{equation}
+\int_{\Omega_e} {\bm B}^T \cdot 
+[
+- {\bm N}^p  \cdot {\vec P}  + {\bm C} \cdot  {\bm B}\cdot {\vec V}
+]
+d\Omega
+=
+\int_{\Omega_e} {\bm N}_b d\Omega 
+\end{equation}
+or,
+\begin{equation}
+\underbrace{\left(-\int_{\Omega_e} {\bm B}^T \cdot 
+{\bm N}^p  
+d\Omega \right)}_{\G} \cdot {\vec P} 
++
+\underbrace{
+\left(
+\int_{\Omega_e} {\bm B}^T \cdot 
+{\bm C} \cdot  {\bm B}
+d\Omega
+\right)}_{\K}
+\cdot {\vec V}
+=
+\underbrace{\int_{\Omega_e} {\vec N}_b d\Omega }_{\vec f}
+\end{equation}
+where the matrix $\K$ is of size $(m_v*ndof_v \times m_v*ndof_v)$, 
+and matrix ${\G}$ is of size $(m_v*ndof_v \times m_p*ndof_p)$.
+Turning now to the mass conservation equation:
+\begin{eqnarray}
+0&=&\int_{\Omega_e} \vec{N}^p {\vec \nabla}\cdot {\vec v} \; d\Omega \nonumber\\
+&=& \int_{\Omega_e} \vec{N}^p \sum_{i=1}^{m_v} 
+\left( \frac{\partial N_i^v}{\partial x} u_i + \frac{\partial N_i^v}{\partial y} v_i \right)  d\Omega \nonumber\\
+&=& 
+\int_{\Omega_e} 
+\left(
+\begin{array}{c}
+N_1^p \left(\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} u_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} v_i \right) \\
+N_2^p \left(\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} u_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} v_i \right) \\
+N_3^p \left(\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} u_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} v_i \right) \\
+\dots \\
+N_{m_p}^p \left(\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} u_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} v_i \right) \\
+\end{array}
+\right) d \Omega \nonumber \\  %%%%%%%%%%%%%%%%%%%%%%%%%%
+&=& 
+\int_{\Omega_e} 
+\left(
+\begin{array}{ccc}
+{N}_1^p & {N}_1^p & 0 \\
+{N}_2^p & {N}_2^p & 0 \\
+{N}_3^p & {N}_3^p & 0 \\
+\dots & \dots & \dots \\
+{N}_{m_p}^p & {N}_{m_p}^p & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} u_i \\ 
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} v_i \\
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} v_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} u_i 
+\end{array}
+\right) d\Omega \nonumber\\ %%%%%%%%%%%%%%%%%%%%%%%%%%
+&=& 
+\int_{\Omega_e} 
+\left(
+\begin{array}{ccc}
+{N}_1^p & {N}_1^p & 0 \\
+{N}_2^p & {N}_2^p & 0 \\
+{N}_3^p & {N}_3^p & 0 \\
+\dots & \dots & \dots \\
+{N}_{m_p}^p & {N}_{m_p}^p & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccccccccccc}
+\frac{\partial N_1^v}{\partial x} & 0 & 
+\frac{\partial N_2^v}{\partial x} & 0 & 
+\frac{\partial N_3^v}{\partial x} & 0 & \dots & 
+\frac{\partial N_{m_v}^v}{\partial x} & 0
+\\  \\
+0 & \frac{\partial N_1^v}{\partial y} & 
+0 & \frac{\partial N_2^v}{\partial y} &
+0 & \frac{\partial N_3^v}{\partial y} & \dots & 
+0 & \frac{\partial N_{m_v}^v}{\partial x} 
+\\ \\
+\frac{\partial N_1^v}{\partial y} &  \frac{\partial N_1^v}{\partial x} &  
+\frac{\partial N_2^v}{\partial y} &  \frac{\partial N_2^v}{\partial x} & 
+\frac{\partial N_3^v}{\partial y} &  \frac{\partial N_3^v}{\partial x} &   \dots &  
+\frac{\partial N_{m_v}^v}{\partial y} &  \frac{\partial N_{m_v}^v}{\partial x}  
+\end{array}
+\right) 
+\cdot
+\left(
+\begin{array}{c}
+u_1 \\ v_1 \\ u_2 \\ v_2 \\ \dots \\ u_{m_v} \\ v_{m_v}
+\end{array}
+\right)
+d\Omega  \nonumber \\
+&=& 
+\left(\int {\bm N}^p \cdot {\bm B} d\Omega \right) \cdot \vec{V} \nonumber\\
+&=& -\G_e^T \cdot {\vec V}
+\end{eqnarray}
+
+\todo[inline]{say something about minus sign?}
+
+Ultimately we obtain the following system for each element:
+\[
+\left(
+\begin{array}{cc}
+\K_e & \G_e \\
+\G_e^T & 0
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{V} \\ \vec{P} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{f}_e \\ 0 
+\end{array}
+\right)
+\]
+Such a matrix is then generated for each element and then must me assembled into the 
+global F.E. matrix. 
+
+
+
+
+
+
+
+
