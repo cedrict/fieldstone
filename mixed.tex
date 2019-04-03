@@ -11,14 +11,14 @@ velocity and pressure at the same time, and that we therefore must solve
 the mass and momentum conservation equations together.
 As before, velocity inside an element is given by 
 \begin{equation}
-{\vec \upnu}({\bm r})=\sum_{i=1}^{m_v} N_i^v({\bm r}) {\vec \upnu}_i
+{\vec \upnu}({\vec r})=\sum_{i=1}^{m_v} N_i^\upnu({\vec r})\;  {\vec \upnu}_i
 \label{mixed01}
 \end{equation}
 where $N_i^{v}$ are the polynomial basis functions for the velocity,
 and the summation runs over the $m_v$ nodes composing the element.
 A similar expression is used for pressure:
 \begin{equation}
-p({\bm r})=\sum_{i=1}^{m_p} N_i^p({\bm r}) p_i
+p({\vec r})=\sum_{i=1}^{m_p} N_i^p({\vec r}) \; p_i
 \label{mixed02}
 \end{equation}
 Note that the velocity is a vector of size while pressure (and temperature)
@@ -36,16 +36,16 @@ the polynomial order of the pressure field (usually by value 1).
 
 Other notations are sometimes used for Eqs.(\ref{mixed01},\ref{mixed02}):
 \begin{equation}
-u({\bm r}) = \vec{N}^v \cdot \vec{u}
+u({\vec r}) = \vec{N}^\upnu \cdot \vec{u}
 \quad\quad\quad\quad
-v({\bm r}) = \vec{N}^v \cdot \vec{v}
+v({\vec r}) = \vec{N}^\upnu \cdot \vec{v}
 \quad\quad\quad\quad
-p({\bm r}) = \vec{N}^p \cdot \vec{p}
+p({\vec r}) = \vec{N}^p \cdot \vec{p}
 \end{equation} 
-where ${\vec \upnu}=(u,v)$ and $\vec{N}^v$ is the vector containing all basis functions evaluated at location ${\bm r}$:
+where ${\vec \upnu}=(u,v)$ and $\vec{N}^\upnu$ is the vector containing all basis functions evaluated at location ${\vec r}$:
 \begin{eqnarray}
-\vec{N}^v &=& \left( N_1^v({\bm r}),  N_2^v({\bm r}),  N_3^v({\bm r}), \dots  N_{m_v}^v({\bm r}) \right) \\
-\vec{N}^p &=& \left( N_1^p({\bm r}),  N_2^p({\bm r}),  N_3^p({\bm r}), \dots  N_{m_p}^p({\bm r}) \right)
+\vec{N}^v &=& \left( N_1^\upnu({\vec r}),  N_2^\upnu({\vec r}),  N_3^\upnu({\vec r}), \dots  N_{m_v}^\upnu({\vec r}) \right) \\
+\vec{N}^p &=& \left( N_1^p({\vec r}),  N_2^p({\vec r}),  N_3^p({\vec r}), \dots  N_{m_p}^p({\vec r}) \right)
 \end{eqnarray}
 and with 
 \begin{eqnarray}
@@ -59,15 +59,15 @@ We start again from
 {\vec \nabla}\cdot {\bm \sigma} + {\vec b} &=& {\vec 0} \\
 {\vec \nabla}\cdot {\vec v} &=& 0
 \end{eqnarray}
-For the $N_i^v$'s and $N_i^p$ 'regular enough', we can write:
+For the $N_i^\upnu$'s and $N_i^p$ 'regular enough', we can write:
 \begin{eqnarray}
-\int_{\Omega_e} N_i^v {\vec \nabla}\cdot {\bm \sigma} d\Omega + \int_{\Omega_e} N_i^v  {\vec b} \; d\Omega 
+\int_{\Omega_e} N_i^\upnu {\vec \nabla}\cdot {\bm \sigma} d\Omega + \int_{\Omega_e} N_i^\upnu  {\vec b} \; d\Omega 
 &=& \vec 0 \\
 \int_{\Omega_e} N_i^p {\vec \nabla}\cdot {\vec v} d\Omega &=& 0
 \end{eqnarray}
 We can integrate by parts and drop the surface term\footnote{We will come back to this at a later stage}:
 \begin{eqnarray}
-\int_{\Omega_e} {\vec \nabla } N_i^v \cdot {\bm \sigma} d\Omega &=& \int_{\Omega_e} N_i^v  {\vec b} d\Omega \\
+\int_{\Omega_e} {\vec \nabla } N_i^\upnu \cdot {\bm \sigma} d\Omega &=& \int_{\Omega_e} N_i^\upnu  {\vec b} d\Omega \\
 \int_{\Omega_e} N_i^p {\vec \nabla}\cdot {\vec v} d\Omega &=& 0
 \end{eqnarray}
 or, 
@@ -75,8 +75,8 @@ or,
 \int_{\Omega_e} 
 \left(
 \begin{array}{ccc}
-\frac{\partial N_i}{\partial x} & 0 & \frac{\partial N_i}{\partial y} \\  \\
-0 & \frac{\partial N_i}{\partial y} &  \frac{\partial N_i}{\partial x}  
+\frac{\partial N_i^\upnu}{\partial x} & 0 & \frac{\partial N_i^\upnu}{\partial y} \\  \\
+0 & \frac{\partial N_i^\upnu}{\partial y} &  \frac{\partial N_i^\upnu}{\partial x}  
 \end{array}
 \right)
 \cdot
@@ -87,7 +87,7 @@ or,
 \sigma_{xy}\\
 \end{array}
 \right)
-d\Omega = \int_{\Omega_e} N_i {\vec b} d\Omega 
+d\Omega = \int_{\Omega_e} N_i^\upnu {\vec b} d\Omega 
 \end{equation}
 As before (see section XXX) the above equation can ultimately be written:
 \begin{equation}
@@ -118,20 +118,20 @@ vector $\vec{\dot \varepsilon}$ is:
 \underbrace{
 \left(
 \begin{array}{ccccccccccc}
-\frac{\partial N_1^v}{\partial x} & 0 & 
-\frac{\partial N_2^v}{\partial x} & 0 & 
-\frac{\partial N_3^v}{\partial x} & 0 & \dots & 
-\frac{\partial N_{m_v}^v}{\partial x} & 0
+\frac{\partial N_1^\upnu}{\partial x} & 0 & 
+\frac{\partial N_2^\upnu}{\partial x} & 0 & 
+\frac{\partial N_3^\upnu}{\partial x} & 0 & \dots & 
+\frac{\partial N_{m_v}^\upnu}{\partial x} & 0
 \\  \\
-0 & \frac{\partial N_1^v}{\partial y} & 
-0 & \frac{\partial N_2^v}{\partial y} &
-0 & \frac{\partial N_3^v}{\partial y} & \dots & 
-0 & \frac{\partial N_{m_v}^v}{\partial x} 
+0 & \frac{\partial N_1^\upnu}{\partial y} & 
+0 & \frac{\partial N_2^\upnu}{\partial y} &
+0 & \frac{\partial N_3^\upnu}{\partial y} & \dots & 
+0 & \frac{\partial N_{m_v}^\upnu}{\partial x} 
 \\ \\
-\frac{\partial N_1^v}{\partial y} &  \frac{\partial N_1^v}{\partial x} &  
-\frac{\partial N_2^v}{\partial y} &  \frac{\partial N_2^v}{\partial x} & 
-\frac{\partial N_3^v}{\partial y} &  \frac{\partial N_3^v}{\partial x} &   \dots &  
-\frac{\partial N_{m_v}^v}{\partial y} &  \frac{\partial N_{m_v}^v}{\partial x}  
+\frac{\partial N_1^\upnu}{\partial y} &  \frac{\partial N_1^\upnu}{\partial x} &  
+\frac{\partial N_2^\upnu}{\partial y} &  \frac{\partial N_2^\upnu}{\partial x} & 
+\frac{\partial N_3^\upnu}{\partial y} &  \frac{\partial N_3^\upnu}{\partial x} &   \dots &  
+\frac{\partial N_{m_v}^\upnu}{\partial y} &  \frac{\partial N_{m_v}^\upnu}{\partial x}  
 \end{array}
 \right) 
 }_{\bm B}
@@ -228,20 +228,21 @@ Turning now to the mass conservation equation:
 \begin{eqnarray}
 0&=&\int_{\Omega_e} \vec{N}^p {\vec \nabla}\cdot {\vec v} \; d\Omega \nonumber\\
 &=& \int_{\Omega_e} \vec{N}^p \sum_{i=1}^{m_v} 
-\left( \frac{\partial N_i^v}{\partial x} u_i + \frac{\partial N_i^v}{\partial y} v_i \right)  d\Omega \nonumber\\
+\left( \frac{\partial N_i^\upnu}{\partial x} u_i + \frac{\partial N_i^\upnu}{\partial y} v_i \right)  
+d\Omega \nonumber\\
 &=& 
 \int_{\Omega_e} 
 \left(
 \begin{array}{c}
-N_1^p \left(\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} u_i +
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} v_i \right) \\
-N_2^p \left(\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} u_i +
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} v_i \right) \\
-N_3^p \left(\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} u_i +
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} v_i \right) \\
+N_1^p \left(\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu }{\partial x} u_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu }{\partial x} v_i \right) \\
+N_2^p \left(\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu }{\partial x} u_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu }{\partial x} v_i \right) \\
+N_3^p \left(\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu }{\partial x} u_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu }{\partial x} v_i \right) \\
 \dots \\
-N_{m_p}^p \left(\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} u_i +
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} v_i \right) \\
+N_{m_p}^p \left(\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu }{\partial x} u_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu }{\partial x} v_i \right) \\
 \end{array}
 \right) d \Omega \nonumber \\  %%%%%%%%%%%%%%%%%%%%%%%%%%
 &=& 
@@ -258,10 +259,10 @@ N_{m_p}^p \left(\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} u_i +
 \cdot
 \left(
 \begin{array}{c}
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} u_i \\ 
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} v_i \\
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} v_i +
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^v }{\partial x} u_i 
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial x} u_i \\ 
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial x} v_i \\
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial x} v_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial x} u_i 
 \end{array}
 \right) d\Omega \nonumber\\ %%%%%%%%%%%%%%%%%%%%%%%%%%
 &=& 

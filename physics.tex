@@ -7,15 +7,18 @@ Symbol & meaning & unit \\
 \hline
 $t$ & Time & s \\
 $x,y,z$ & Cartesian coordinates & m \\
-${\bm v}$ & velocity vector & m$\cdot$ s$^{-1}$\\
+$r,\theta$ & Polar coordinates & m,-\\
+$r,\theta, z$ & Cylindrical coordinates & m,-,m\\
+$r,\theta,\phi$ & Spherical coordinates & m,-,- \\
+${\vec \upnu}$ & velocity vector & m$\cdot$ s$^{-1}$\\
 $\rho$ & mass density & kg/m$^3$ \\
 $\eta$ & dynamic viscosity &  Pa$\cdot$ s \\
 $\lambda$ & penalty parameter & Pa$\cdot$ s \\
 $T$ & temperature & K \\
-${\bm \nabla}$ & gradient operator & m$^{-1}$ \\
-${\bm \nabla}\cdot$ & divergence operator & m$^{-1}$ \\
+${\vec \nabla}$ & gradient operator & m$^{-1}$ \\
+${\vec \nabla}\cdot$ & divergence operator & m$^{-1}$ \\
 $p$ & pressure & Pa\\
-$\dot{\bm \varepsilon}({\bm v})$ & strain rate tensor & s$^{-1}$ \\
+$\dot{\bm \varepsilon}({\vec \upnu})$ & strain rate tensor & s$^{-1}$ \\
 $\alpha$ & thermal expansion coefficient & K$^{-1}$ \\
 $k$ & thermal conductivity & W/(m $\cdot$ K) \\
 $C_p$ & Heat capacity & J/K \\
@@ -32,23 +35,23 @@ ${\bm \sigma}$ & full stress tensor & Pa \\
 
 Let us start from the heat transport equation as shown in Schubert, Turcotte and Olson \cite{scto01}:
 \[
-\rho C_p \frac{DT}{Dt} - \alpha T \frac{Dp}{Dt} = {\bm \nabla} \cdot k {\bm \nabla} T + \Phi + \rho H  
+\rho C_p \frac{DT}{Dt} - \alpha T \frac{Dp}{Dt} = {\vec \nabla} \cdot k {\vec \nabla} T + \Phi + \rho H  
 \]
 with $D/Dt$ being the total derivatives so that 
 \[
-\frac{DT}{Dt} = \frac{\partial T}{\partial t} + {\bm v}\cdot {\bm \nabla}T
+\frac{DT}{Dt} = \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec \nabla}T
 \quad\quad
-\frac{Dp}{Dt} = \frac{\partial p}{\partial t} + {\bm v}\cdot {\bm \nabla}p
+\frac{Dp}{Dt} = \frac{\partial p}{\partial t} + {\vec \upnu}\cdot {\vec \nabla}p
 \]
 Solving for temperature, this equation is often rewritten as follows:
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
-\rho C_p \frac{DT}{Dt} - {\bm \nabla} \cdot k {\bm \nabla} T =  \alpha T \frac{Dp}{Dt} + \Phi + \rho H  
+\rho C_p \frac{DT}{Dt} - {\vec \nabla} \cdot k {\vec \nabla} T =  \alpha T \frac{Dp}{Dt} + \Phi + \rho H  
 \]
 \end{mdframed}
 
 A note on the shear heating term $\Phi$: In many publications, $\Phi$ 
-is given by $\Phi=\tau_{ij}\partial_j u_i={\bm \tau}:{\bm \nabla}{\bm v}$.
+is given by $\Phi=\tau_{ij}\partial_j u_i={\bm \tau}:{\vec \nabla}{\vec \upnu}$.
 
 \begin{eqnarray}
 \Phi 
@@ -59,14 +62,14 @@ is given by $\Phi=\tau_{ij}\partial_j u_i={\bm \tau}:{\bm \nabla}{\bm v}$.
 &=& 2 \eta  \dot{\varepsilon}_{ij}^d  \frac{1}{2}\left(\partial_j u_i + \partial_i u_j \right) \nonumber\\
 &=& 2 \eta  \dot{\varepsilon}_{ij}^d   \dot{\varepsilon}_{ij} \nonumber\\
 &=& 2 \eta  \dot{\bm \varepsilon}^d :  \dot{\bm \varepsilon} \nonumber\\
-&=& 2 \eta  \dot{\bm \varepsilon}^d : \left( \dot{\bm \varepsilon}^d +\frac{1}{3} ({\bm \nabla}\cdot{\bm v}) {\bm 1} \right)\nonumber\\
+&=& 2 \eta  \dot{\bm \varepsilon}^d : \left( \dot{\bm \varepsilon}^d +\frac{1}{3} ({\vec \nabla}\cdot{\vec \upnu}) {\bm 1} \right)\nonumber\\
 &=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
-+ 2 \eta  \dot{\bm \varepsilon}^d : {\bm 1} ({\bm \nabla}\cdot{\bm v}) \nonumber\\ 
++ 2 \eta  \dot{\bm \varepsilon}^d : {\bm 1} ({\vec \nabla}\cdot{\vec \upnu}) \nonumber\\ 
 &=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
 \end{eqnarray}
 Finally
 \[
-\Phi = {\bm \tau}:{\bm \nabla}{\bm v} = 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d
+\Phi = {\bm \tau}:{\vec \nabla}{\vec \upnu} = 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d
 = 2 \eta \left( (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + 2(\dot{\varepsilon}_{xy}^d)^2 \right)
 \]
 
@@ -76,7 +79,7 @@ Finally
 Because the Prandlt number is virtually zero in Earth science applications the Navier Stokes 
 equations reduce to the Stokes equation:
 \[
-{\bm \nabla}\cdot {\bm \sigma} + \rho {\bm g} = 0
+{\vec \nabla}\cdot {\bm \sigma} + \rho {\vec g} = 0
 \]
 Since 
 \[
@@ -84,12 +87,12 @@ Since
 \]
 it also writes
 \[
--{\bm \nabla}p + {\bm \nabla}\cdot {\bm \tau} + \rho {\bm g} = 0
+-{\vec \nabla}p + {\vec \nabla}\cdot {\bm \tau} + \rho {\vec g} = 0
 \]
 Using the relationship ${\bm \tau} = 2 \eta \dot{\bm \varepsilon}^d$ we arrive at 
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
--{\bm \nabla}p + {\bm \nabla}\cdot (2 \eta \dot{\bm \varepsilon}^d ) + \rho {\bm g} = 0
+-{\vec \nabla}p + {\vec \nabla}\cdot (2 \eta \dot{\bm \varepsilon}^d ) + \rho {\vec g} = 0
 \]
 \end{mdframed}
 
@@ -98,18 +101,18 @@ Using the relationship ${\bm \tau} = 2 \eta \dot{\bm \varepsilon}^d$ we arrive a
 
 The mass conservation equation is given by
 \[
-\frac{D\rho}{Dt} + \rho {\bm \nabla}\cdot{\bm v} = 0
+\frac{D\rho}{Dt} + \rho {\vec \nabla}\cdot{\vec \upnu} = 0
 \]
 or, 
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
-\frac{\partial \rho}{\partial t} + {\bm \nabla}\cdot(\rho {\bm v}) = 0
+\frac{\partial \rho}{\partial t} + {\vec \nabla}\cdot(\rho {\vec \upnu}) = 0
 \]
 \end{mdframed}
 In the case of an incompressible flow, then $\partial \rho/\partial t=0$ and 
-${\bm \nabla}\rho=0$, i.e. $D\rho/Dt=0$ and the remaining equation is simply:
+${\vec \nabla}\rho=0$, i.e. $D\rho/Dt=0$ and the remaining equation is simply:
 \[
-{\bm \nabla}\cdot{\bm v} = 0
+{\vec \nabla}\cdot{\vec \upnu} = 0
 \]
 
 \subsection{The equations in ASPECT manual}
@@ -124,21 +127,21 @@ Specifically, we consider the following set of equations for velocity $\mathbf
 u$, pressure $p$ and temperature $T$:
 \begin{align}
   \label{eq:stokes-1}
-  -\nabla \cdot \left[2\eta \left(\dot\varepsilon(\bm v)
-                                  - \frac{1}{3}(\nabla \cdot \bm v)\mathbf 1\right)
-                \right] + \nabla p &=
+  -\vec\nabla \cdot \left[2\eta \left(\dot{\bm \varepsilon}(\vec \upnu)
+                                  - \frac{1}{3}(\vec\nabla \cdot \bm v)\mathbf 1\right)
+                \right] + \vec\nabla p &=
   \rho \bm g
   &
   & \textrm{in $\Omega$},
   \\
   \label{eq:stokes-2}
-  \nabla \cdot (\rho \bm v) &= 0
+  \vec\nabla \cdot (\rho \bm v) &= 0
   &
   & \textrm{in $\Omega$},
   \\
   \label{eq:temperature}
-  \rho C_p \left(\frac{\partial T}{\partial t} + \bm v\cdot\nabla T\right)
-  - \nabla\cdot k\nabla T
+  \rho C_p \left(\frac{\partial T}{\partial t} + \bm v\cdot\vec\nabla T\right)
+  - \vec\nabla\cdot k\vec\nabla T
   &=
   \rho H
   \notag
@@ -146,12 +149,12 @@ u$, pressure $p$ and temperature $T$:
   &\quad
   +
   2\eta
-  \left(\dot\varepsilon(\bm v) - \frac{1}{3}(\nabla \cdot \bm v)\mathbf 1\right)
+  \left(\dot\varepsilon(\bm v) - \frac{1}{3}(\vec\nabla \cdot \vec \upnu)\mathbf 1\right)
   :
-  \left(\dot\varepsilon(\bm v) - \frac{1}{3}(\nabla \cdot \bm v)\mathbf 1\right)
+  \left(\dot\varepsilon(\bm v) - \frac{1}{3}(\vec\nabla \cdot \vec \upnu)\mathbf 1\right)
   \\
   &\quad
-  +\alpha T \left( \bm v \cdot \nabla p \right)
+  +\alpha T \left( \bm v \cdot \vec\nabla p \right)
   \notag
   \\
   &\quad
@@ -159,7 +162,7 @@ u$, pressure $p$ and temperature $T$:
   & \textrm{in $\Omega$},
   \notag
 \end{align}
-where $\dot{\bm \varepsilon}(\mathbf u) = \frac{1}{2}(\nabla \mathbf u + \nabla\mathbf
+where $\dot{\bm \varepsilon}(\vec\upnu) = \frac{1}{2}(\nabla \mathbf u + \nabla\mathbf
 u^T)$ is the symmetric gradient of the velocity (often called the
 \textit{strain rate}).%
 
@@ -349,7 +352,7 @@ direction of this stress.
 
 The strain rate tensor $\dot{\bm\varepsilon}$ is given by
 \begin{equation}
-\dot{\bm \varepsilon} = \frac{1}{2}( {\bm \nabla}{\bm v}+ {\bm \nabla}{\bm v}^T) 
+\dot{\bm \varepsilon} = \frac{1}{2}( {\vec \nabla}{\vec \upnu}+ {\vec \nabla}{\vec \upnu}^T) 
 \end{equation}
 
 \subsubsection{Cartesian coordinates}
@@ -426,10 +429,10 @@ a Dirichlet boundary condition specifies the values of the solution itself
 You may find the following terms in the computational geodynamics literature:
 
 \begin{itemize}
-\item { free surface}: this means that no force is acting on the surface, i.e. ${\bm \sigma}\cdot {\bm n}={\bm 0}$. It is usually used on the top boundary of the domain and allows for topography evolution.
-\item { free slip}: ${\bm v}\cdot \bm n = 0$ and $({\bm \sigma}\cdot{\bm n})\times {\bm n}={\bm 0}$. This condition ensures a frictionless flow parallel to the boundary where it is prescribed.
-\item { no slip}: this means that the velocity (or displacement) is exactly zero on the boundary, i.e. ${\bm v}={\bm 0}$.
-\item { prescribed velocity}: ${\bm v}={\bm v}_{bc}$
+\item { free surface}: this means that no force is acting on the surface, i.e. ${\bm \sigma}\cdot {\vec n}={\vec 0}$. It is usually used on the top boundary of the domain and allows for topography evolution.
+\item { free slip}: ${\vec \upnu}\cdot \vec n = 0$ and $({\bm \sigma}\cdot{\vec n})\times {\vec n}={\vec 0}$. This condition ensures a frictionless flow parallel to the boundary where it is prescribed.
+\item { no slip}: this means that the velocity (or displacement) is exactly zero on the boundary, i.e. ${\vec \upnu}={\vec 0}$.
+\item { prescribed velocity}: ${\vec \upnu}={\vec \upnu}_{bc}$
 \item stress b.c.: 
 \item open .b.c.: see fieldstone 29. 
 \end{itemize}
@@ -480,6 +483,7 @@ the one obtained from a purely conductive profile which yields Nu=1.
 Note that a relationship Ra $\propto$ Nu$^\alpha $ exists between the Rayleigh number Ra and the Nusselt number Nu in convective systems, see \cite{wodd09} and references therein. 
 
 
+\todo[inline]{what is the right formula for cylindrical, spherical geometries ?}
 
  
 \item Temperature (K):

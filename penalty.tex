@@ -9,17 +9,18 @@ Mathematical details on the origin and validity of the penalty approach applied 
 
 The penalty formulation of the mass conservation equation is based on a relaxation of the incompressibility constraint and writes 
 \begin{equation}
-{\bm \nabla}\cdot {\bm v} + \frac{p}{\lambda} = 0 \label{penal}
+{\vec \nabla}\cdot {\vec \upnu} + \frac{p}{\lambda} = 0 \label{penal}
 \end{equation}
 where $\lambda$ is the penalty parameter, that can be interpreted (and has the same dimension) as a bulk viscosity. It is 
 equivalent to say that the material is weakly compressible. It can be shown that if one chooses $\lambda$ to be a 
-sufficiently large number, the continuity equation $ {\bm \nabla}\cdot {\bm v} = 0$ will be approximately satisfied in the finite element solution. The value of $\lambda$ is often recommended to be 6 to 7 orders of magnitude larger than the shear viscosity \cite{dohu03,hulb79}.
+sufficiently large number, the continuity equation $ {\vec \nabla}\cdot {\vec \upnu} = 0$ will be approximately satisfied in the finite element solution. The value of $\lambda$ is often recommended to be 6 to 7 orders of magnitude larger than the shear viscosity \cite{dohu03,hulb79}.
 
 %Note that Eq. (\ref{penal}) does not form the basis of the penalty method (as often implied) for the Stokes equation but is a consequence of minimising a modified functional of the problem under certain assumptions \cite{redd82}. 
 
 Equation (\ref{penal}) can be used to eliminate the pressure in Eq. (\ref{mce2}) so that the mass and momentum conservation equations fuse to become :
 \begin{equation}
-{\bm \nabla}\cdot ( 2 \eta \dot\varepsilon({\bm v})) + \lambda {\bm \nabla} ({\bm \nabla }\cdot {\bm v}) = \rho {\bm g} = 0 \label{peneq}
+{\vec \nabla}\cdot ( 2 \eta \dot\varepsilon({\vec \upnu})) 
++ \lambda {\vec \nabla} ({\vec \nabla }\cdot {\vec \upnu}) = \rho {\bm g} = 0 \label{peneq}
 \end{equation}
 
 \cite{mahu78} have established the equivalence for incompressible problems between the reduced integration
@@ -179,15 +180,15 @@ Finally,
 We will now establish the weak form of the momentum conservation equation. 
 We start again from 
 \[
-{\bm \nabla}\cdot {\bm \sigma} + {\bm b} = {\bm 0} 
+{\vec \nabla}\cdot {\bm \sigma} + {\vec b} = {\vec 0} 
 \]
 For the $N_i$'s 'regular enough', we can write:
 \[
-\int_{\Omega_e} N_i {\bm \nabla}\cdot {\bm \sigma} d\Omega + \int_{\Omega_e} N_i  {\bm b} d\Omega =0
+\int_{\Omega_e} N_i {\vec \nabla}\cdot {\bm \sigma} d\Omega + \int_{\Omega_e} N_i  {\bm b} d\Omega =0
 \]
 We can integrate by parts and drop the surface term\footnote{We will come back to this at a later stage}:
 \[
-\int_{\Omega_e} {\bm \nabla } N_i \cdot {\bm \sigma} d\Omega = \int_{\Omega_e} N_i  {\bm b} d\Omega 
+\int_{\Omega_e} {\vec \nabla } N_i \cdot {\bm \sigma} d\Omega = \int_{\Omega_e} N_i  {\bm b} d\Omega 
 \]
 or, 
 \[

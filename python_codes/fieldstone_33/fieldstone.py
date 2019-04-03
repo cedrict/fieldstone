@@ -107,12 +107,12 @@ T0=0                # reference temperature
 
 CFL_nb=0.5   # CFL number 
 every=1      # vtu output frequency
-nstep=1   # maximum number of timestep   
-tol_nl=1.e-4  # nonlinear convergence coeff.
+nstep=10   # maximum number of timestep   
+tol_nl=1.e-3  # nonlinear convergence coeff.
 
 #--------------------------------------
 
-case=1
+case=2
 
 if case==0:
    Ra=1e4  
@@ -130,21 +130,24 @@ if case==2:
    Ra=1e2 
    sigma_y = 1
    gamma_y=np.log(1.)  # rheology parameter 
-   niter_nl=100
+   niter_nl=10
 
 if case==3:
    Ra=1e2 
+   sigma_y=0.
    gamma_y=np.log(10.)  # rheology parameter 
 
 if case==4:
    Ra=1e2 
    sigma_y = 1
    gamma_y=np.log(10.)  # rheology parameter 
+   niter_nl=10
 
 if case==5:
    Ra=1e2 
    sigma_y=4
    gamma_y=np.log(10.)  # rheology parameter 
+   niter_nl=10
 
 g0=Ra/alphaT
 
@@ -155,7 +158,7 @@ if int(len(sys.argv) == 4):
    visu = int(sys.argv[2])
    N0   = int(sys.argv[3])
 else:
-   nelr = 24
+   nelr = 20
    visu = 1
    N0=3
 
@@ -193,6 +196,9 @@ if use_EBA:
    use_shearheating=True
    use_adiabatic_heating=True
 
+convfile=open("conv_nl.ascii","w")
+niterfile=open("niter_nl.ascii","w")
+
 #################################################################
 #################################################################
 
@@ -221,7 +227,8 @@ EK=np.zeros(nstep,dtype=np.float64)
 EG=np.zeros(nstep,dtype=np.float64)
 ET=np.zeros(nstep,dtype=np.float64)
 dt_stats=np.zeros(nstep,dtype=np.float64)
-heatflux_boundary=np.zeros(nstep,dtype=np.float64)
+heatflux_boundary1=np.zeros(nstep,dtype=np.float64)
+heatflux_boundary2=np.zeros(nstep,dtype=np.float64)
 adiab_heating=np.zeros(nstep,dtype=np.float64)
 vr_stats=np.zeros((nstep,2),dtype=np.float64)
 vt_stats=np.zeros((nstep,2),dtype=np.float64)
@@ -369,6 +376,10 @@ q     = np.zeros(nnp,dtype=np.float64)          # nodal pressure
 q_prev= np.zeros(nnp,dtype=np.float64)
 dqdt  = np.zeros(nnp,dtype=np.float64)
 eta   = np.zeros(nel,dtype=np.float64)          # elemental visc for visu
+Res   = np.zeros(NfemV,dtype=np.float64)         # non-linear residual 
+sol   = np.zeros(NfemV,dtype=np.float64)         # solution vector 
+k_mat = np.array([[1,1,0],[1,1,0],[0,0,0]],dtype=np.float64) 
+c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 for istep in range(0,nstep):
     print("----------------------------------")
@@ -391,234 +402,260 @@ for istep in range(0,nstep):
     JxWq  = np.zeros(4*nel,dtype=np.float64)         # weight*jacobian at qpoint 
     etaq  = np.zeros(4*nel,dtype=np.float64)         # viscosity at q points
     rhoq  = np.zeros(4*nel,dtype=np.float64)         # density at q points
-    k_mat = np.array([[1,1,0],[1,1,0],[0,0,0]],dtype=np.float64) 
-    c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
-    iiq=0
-    for iel in range(0, nel):
+    for iter_nl in range(0,niter_nl):
 
-        # set 2 arrays to 0 every loop
-        b_el = np.zeros(m * ndof)
-        a_el = np.zeros((m * ndof, m * ndof), dtype=np.float64)
+        print("iter_nl= ", iter_nl)
 
-        # integrate viscous term at 4 quadrature points
-        for iq in [-1, 1]:
-            for jq in [-1, 1]:
+        iiq=0
+        for iel in range(0, nel):
 
-                # position & weight of quad. point
-                rq=iq/sqrt3
-                sq=jq/sqrt3
-                weightq=1.*1.
+            # set 2 arrays to 0 every loop
+            b_el = np.zeros(m * ndof)
+            a_el = np.zeros((m * ndof, m * ndof), dtype=np.float64)
 
-                # calculate shape functions
-                N[0:m]=NNV(rq,sq)
-                dNdr[0:m]=dNNVdr(rq,sq)
-                dNds[0:m]=dNNVds(rq,sq)
+            # integrate viscous term at 4 quadrature points
+            for iq in [-1, 1]:
+                for jq in [-1, 1]:
 
-                # calculate jacobian matrix
-                jcb = np.zeros((2, 2),dtype=float)
-                for k in range(0,m):
-                    jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
-                    jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
-                    jcb[1, 0] += dNds[k]*x[icon[k,iel]]
-                    jcb[1, 1] += dNds[k]*y[icon[k,iel]]
+                    # position & weight of quad. point
+                    rq=iq/sqrt3
+                    sq=jq/sqrt3
+                    weightq=1.*1.
 
-                # calculate the determinant of the jacobian
-                jcob = np.linalg.det(jcb)
+                    # calculate shape functions
+                    N[0:m]=NNV(rq,sq)
+                    dNdr[0:m]=dNNVdr(rq,sq)
+                    dNds[0:m]=dNNVds(rq,sq)
 
-                JxWq[iiq]=jcob*weightq
+                    # calculate jacobian matrix
+                    jcb = np.zeros((2, 2),dtype=float)
+                    for k in range(0,m):
+                        jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
+                        jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
+                        jcb[1, 0] += dNds[k]*x[icon[k,iel]]
+                        jcb[1, 1] += dNds[k]*y[icon[k,iel]]
 
-                # calculate inverse of the jacobian matrix
-                jcbi = np.linalg.inv(jcb)
+                    # calculate the determinant of the jacobian
+                    jcob = np.linalg.det(jcb)
 
-                # compute dNdx & dNdy
-                xq=0.0
-                yq=0.0
-                Tq=0.0
-                exxq=0.
-                eyyq=0.
-                exyq=0.
-                for k in range(0, m):
-                    xq+=N[k]*x[icon[k,iel]]
-                    yq+=N[k]*y[icon[k,iel]]
-                    Tq+=N[k]*T[icon[k,iel]]
-                    dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-                    dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
-                    exxq+=dNdx[k]*u[icon[k,iel]]
-                    eyyq+=dNdy[k]*v[icon[k,iel]]
-                    exyq+=0.5*dNdy[k]*u[icon[k,iel]]+\
-                          0.5*dNdx[k]*v[icon[k,iel]]
-                rq=np.sqrt(xq*xq+yq*yq)
-                rhoq[iiq]=density(rho0,alphaT,Tq,T0)
-                etaq[iiq]=viscosity(Tq,exxq,eyyq,exyq,gamma_T,gamma_y,sigma_y,eta_star,case,rq,R2)
+                    JxWq[iiq]=jcob*weightq
 
-                # construct 3x8 b_mat matrix
-                for i in range(0, m):
-                    b_mat[0:3, 2*i:2*i+2] = [[dNdx[i],0.     ],
-                                             [0.     ,dNdy[i]],
-                                             [dNdy[i],dNdx[i]]]
+                    # calculate inverse of the jacobian matrix
+                    jcbi = np.linalg.inv(jcb)
 
-                # compute elemental a_mat matrix
-                a_el += b_mat.T.dot(c_mat.dot(b_mat))*etaq[iiq]*JxWq[iiq] #weightq*jcob
+                    # compute dNdx & dNdy
+                    xq=0.0
+                    yq=0.0
+                    Tq=0.0
+                    exxq=0.
+                    eyyq=0.
+                    exyq=0.
+                    for k in range(0, m):
+                        xq+=N[k]*x[icon[k,iel]]
+                        yq+=N[k]*y[icon[k,iel]]
+                        Tq+=N[k]*T[icon[k,iel]]
+                        dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+                        dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+                        exxq+=dNdx[k]*u[icon[k,iel]]
+                        eyyq+=dNdy[k]*v[icon[k,iel]]
+                        exyq+=0.5*dNdy[k]*u[icon[k,iel]]+\
+                              0.5*dNdx[k]*v[icon[k,iel]]
+                    rq=np.sqrt(xq*xq+yq*yq)
+                    rhoq[iiq]=density(rho0,alphaT,Tq,T0)
+                    etaq[iiq]=viscosity(Tq,exxq,eyyq,exyq,gamma_T,gamma_y,sigma_y,eta_star,case,rq,R2)
 
-                # compute elemental rhs vector
-                for i in range(0, m):
-                    b_el[2*i  ]+=N[i]*jcob*weightq*gx(xq,yq,g0)*rhoq[iiq]
-                    b_el[2*i+1]+=N[i]*jcob*weightq*gy(xq,yq,g0)*rhoq[iiq]
+                    # construct 3x8 b_mat matrix
+                    for i in range(0, m):
+                        b_mat[0:3, 2*i:2*i+2] = [[dNdx[i],0.     ],
+                                                 [0.     ,dNdy[i]],
+                                                 [dNdy[i],dNdx[i]]]
 
-                iiq+=1
+                    # compute elemental a_mat matrix
+                    a_el += b_mat.T.dot(c_mat.dot(b_mat))*etaq[iiq]*JxWq[iiq] #weightq*jcob
 
-        # integrate penalty term at 1 point
-        rq=0.
-        sq=0.
-        weightq=2.*2.
+                    # compute elemental rhs vector
+                    for i in range(0, m):
+                        b_el[2*i  ]+=N[i]*jcob*weightq*gx(xq,yq,g0)*rhoq[iiq]
+                        b_el[2*i+1]+=N[i]*jcob*weightq*gy(xq,yq,g0)*rhoq[iiq]
 
-        N[0:m]=NNV(rq,sq)
-        dNdr[0:m]=dNNVdr(rq,sq)
-        dNds[0:m]=dNNVds(rq,sq)
+                    iiq+=1
 
-        # compute the jacobian
-        jcb=np.zeros((2,2),dtype=float)
-        for k in range(0, m):
-            jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
-            jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
-            jcb[1,0]+=dNds[k]*x[icon[k,iel]]
-            jcb[1,1]+=dNds[k]*y[icon[k,iel]]
-        jcob = np.linalg.det(jcb)
-        jcbi = np.linalg.inv(jcb)
+            # integrate penalty term at 1 point
+            rq=0.
+            sq=0.
+            weightq=2.*2.
 
-        # compute dNdx and dNdy
-        for k in range(0,m):
-            dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-            dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+            N[0:m]=NNV(rq,sq)
+            dNdr[0:m]=dNNVdr(rq,sq)
+            dNds[0:m]=dNNVds(rq,sq)
 
-        # compute gradient matrix
-        for i in range(0,m):
-            b_mat[0:3,2*i:2*i+2]=[[dNdx[i],0.     ],
-                                  [0.     ,dNdy[i]],
-                                  [dNdy[i],dNdx[i]]]
+            # compute the jacobian
+            jcb=np.zeros((2,2),dtype=float)
+            for k in range(0, m):
+                jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+                jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+                jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+                jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+            jcob = np.linalg.det(jcb)
+            jcbi = np.linalg.inv(jcb)
 
-        # compute elemental matrix
-        a_el += b_mat.T.dot(k_mat.dot(b_mat))*penalty*weightq*jcob
+            # compute dNdx and dNdy
+            for k in range(0,m):
+                dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+                dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
 
-        # apply boundary conditions
-        for k1 in range(0,m):
-            for i1 in range(0,ndof):
-                m1 =ndof*icon[k1,iel]+i1
-                if bc_fixV[m1]: 
-                   fixt=bc_valV[m1]
-                   ikk=ndof*k1+i1
-                   aref=a_el[ikk,ikk]
-                   for jkk in range(0,m*ndof):
-                       b_el[jkk]-=a_el[jkk,ikk]*fixt
-                       a_el[ikk,jkk]=0.
-                       a_el[jkk,ikk]=0.
-                   a_el[ikk,ikk]=aref
-                   b_el[ikk]=aref*fixt
+            # compute gradient matrix
+            for i in range(0,m):
+                b_mat[0:3,2*i:2*i+2]=[[dNdx[i],0.     ],
+                                      [0.     ,dNdy[i]],
+                                      [dNdy[i],dNdx[i]]]
 
-        if use_freeslip_inner:
-           if elt_inner[iel]: # if element is on inner boundary
-              for iii in range(0,m): # loop over corners of element
-                  inode=icon[iii,iel]
-                  if node_inner[inode]: # if node is on inner boundary 
-                     # define rotation matrix for -theta angle
-                     RotMat=np.zeros((8,8),dtype=np.float64)
-                     for i in range(0,8):
-                         RotMat[i,i]=1.
-                     if iii==0:
-                        RotMat[0,0]= np.cos(theta[inode]) ; RotMat[0,1]=np.sin(theta[inode])  
-                        RotMat[1,0]=-np.sin(theta[inode]) ; RotMat[1,1]=np.cos(theta[inode])  
-                     if iii==1:  
-                        RotMat[2,2]= np.cos(theta[inode]) ; RotMat[2,3]=np.sin(theta[inode])  
-                        RotMat[3,2]=-np.sin(theta[inode]) ; RotMat[3,3]=np.cos(theta[inode])  
-                     # apply counter rotation 
-                     a_el=RotMat.dot(a_el.dot(RotMat.T))
-                     b_el=RotMat.dot(b_el)
-                     # apply boundary conditions
-                     ikk=iii*ndof
-                     fixt=0
-                     aref=a_el[ikk,ikk]
-                     for jkk in range(0,m*ndof):
-                         b_el[jkk]-=a_el[jkk,ikk]*fixt
-                         a_el[ikk,jkk]=0.
-                         a_el[jkk,ikk]=0.
-                     a_el[ikk,ikk]=aref
-                     b_el[ikk]=aref*fixt
-                     # apply positive rotation 
-                     a_el=RotMat.T.dot(a_el.dot(RotMat))
-                     b_el=RotMat.T.dot(b_el)
+            # compute elemental matrix
+            a_el += b_mat.T.dot(k_mat.dot(b_mat))*penalty*weightq*jcob
 
-        if use_freeslip_outer:
-           if elt_outer[iel]: # if element is on outer boundary
-              for iii in range(0,m): # loop over corners of element
-                  inode=icon[iii,iel]
-                  if node_outer[inode]: # if node is on outer boundary 
-                     # define rotation matrix for -theta angle
-                     RotMat=np.zeros((8,8),dtype=np.float64)
-                     for i in range(0,8):
-                         RotMat[i,i]=1.
-                     if iii==2:
-                        RotMat[4,4]= np.cos(theta[inode]) ; RotMat[4,5]=np.sin(theta[inode])  
-                        RotMat[5,4]=-np.sin(theta[inode]) ; RotMat[5,5]=np.cos(theta[inode])  
-                     if iii==3:  
-                        RotMat[6,6]= np.cos(theta[inode]) ; RotMat[6,7]=np.sin(theta[inode])  
-                        RotMat[7,6]=-np.sin(theta[inode]) ; RotMat[7,7]=np.cos(theta[inode])  
-                     # apply counter rotation 
-                     a_el=RotMat.dot(a_el.dot(RotMat.T))
-                     b_el=RotMat.dot(b_el)
-                     # apply boundary conditions
-                     ikk=iii*ndof
-                     fixt=0
-                     aref=a_el[ikk,ikk]
-                     for jkk in range(0,m*ndof):
-                         b_el[jkk]-=a_el[jkk,ikk]*fixt
-                         a_el[ikk,jkk]=0.
-                         a_el[jkk,ikk]=0.
-                     a_el[ikk,ikk]=aref
-                     b_el[ikk]=aref*fixt
-                     # apply positive rotation 
-                     a_el=RotMat.T.dot(a_el.dot(RotMat))
-                     b_el=RotMat.T.dot(b_el)
+            # apply boundary conditions
+            for k1 in range(0,m):
+                for i1 in range(0,ndof):
+                    m1 =ndof*icon[k1,iel]+i1
+                    if bc_fixV[m1]: 
+                       fixt=bc_valV[m1]
+                       ikk=ndof*k1+i1
+                       aref=a_el[ikk,ikk]
+                       for jkk in range(0,m*ndof):
+                           b_el[jkk]-=a_el[jkk,ikk]*fixt
+                           a_el[ikk,jkk]=0.
+                           a_el[jkk,ikk]=0.
+                       a_el[ikk,ikk]=aref
+                       b_el[ikk]=aref*fixt
 
-        # assemble matrix a_mat and right hand side rhs
-        for k1 in range(0,m):
-            for i1 in range(0,ndof):
-                ikk=ndof*k1          +i1
-                m1 =ndof*icon[k1,iel]+i1
-                for k2 in range(0,m):
-                    for i2 in range(0,ndof):
-                        jkk=ndof*k2          +i2
-                        m2 =ndof*icon[k2,iel]+i2
-                        a_mat[m1,m2]+=a_el[ikk,jkk]
-                rhs[m1]+=b_el[ikk]
+            if use_freeslip_inner:
+               if elt_inner[iel]: # if element is on inner boundary
+                  for iii in range(0,m): # loop over corners of element
+                      inode=icon[iii,iel]
+                      if node_inner[inode]: # if node is on inner boundary 
+                         # define rotation matrix for -theta angle
+                         RotMat=np.zeros((8,8),dtype=np.float64)
+                         for i in range(0,8):
+                             RotMat[i,i]=1.
+                         if iii==0:
+                            RotMat[0,0]= np.cos(theta[inode]) ; RotMat[0,1]=np.sin(theta[inode])  
+                            RotMat[1,0]=-np.sin(theta[inode]) ; RotMat[1,1]=np.cos(theta[inode])  
+                         if iii==1:  
+                            RotMat[2,2]= np.cos(theta[inode]) ; RotMat[2,3]=np.sin(theta[inode])  
+                            RotMat[3,2]=-np.sin(theta[inode]) ; RotMat[3,3]=np.cos(theta[inode])  
+                         # apply counter rotation 
+                         a_el=RotMat.dot(a_el.dot(RotMat.T))
+                         b_el=RotMat.dot(b_el)
+                         # apply boundary conditions
+                         ikk=iii*ndof
+                         fixt=0
+                         aref=a_el[ikk,ikk]
+                         for jkk in range(0,m*ndof):
+                             b_el[jkk]-=a_el[jkk,ikk]*fixt
+                             a_el[ikk,jkk]=0.
+                             a_el[jkk,ikk]=0.
+                         a_el[ikk,ikk]=aref
+                         b_el[ikk]=aref*fixt
+                         # apply positive rotation 
+                         a_el=RotMat.T.dot(a_el.dot(RotMat))
+                         b_el=RotMat.T.dot(b_el)
 
-    print("build FE matrix & rhs (%.3fs)" % (time.time() - start))
+            if use_freeslip_outer:
+               if elt_outer[iel]: # if element is on outer boundary
+                  for iii in range(0,m): # loop over corners of element
+                      inode=icon[iii,iel]
+                      if node_outer[inode]: # if node is on outer boundary 
+                         # define rotation matrix for -theta angle
+                         RotMat=np.zeros((8,8),dtype=np.float64)
+                         for i in range(0,8):
+                             RotMat[i,i]=1.
+                         if iii==2:
+                            RotMat[4,4]= np.cos(theta[inode]) ; RotMat[4,5]=np.sin(theta[inode])  
+                            RotMat[5,4]=-np.sin(theta[inode]) ; RotMat[5,5]=np.cos(theta[inode])  
+                         if iii==3:  
+                            RotMat[6,6]= np.cos(theta[inode]) ; RotMat[6,7]=np.sin(theta[inode])  
+                            RotMat[7,6]=-np.sin(theta[inode]) ; RotMat[7,7]=np.cos(theta[inode])  
+                         # apply counter rotation 
+                         a_el=RotMat.dot(a_el.dot(RotMat.T))
+                         b_el=RotMat.dot(b_el)
+                         # apply boundary conditions
+                         ikk=iii*ndof
+                         fixt=0
+                         aref=a_el[ikk,ikk]
+                         for jkk in range(0,m*ndof):
+                             b_el[jkk]-=a_el[jkk,ikk]*fixt
+                             a_el[ikk,jkk]=0.
+                             a_el[jkk,ikk]=0.
+                         a_el[ikk,ikk]=aref
+                         b_el[ikk]=aref*fixt
+                         # apply positive rotation 
+                         a_el=RotMat.T.dot(a_el.dot(RotMat))
+                         b_el=RotMat.T.dot(b_el)
 
-    #np.savetxt('etaq.ascii',np.array(etaq).T,header='# r,T')
-    #np.savetxt('rhoq.ascii',np.array(rhoq).T,header='# r,T')
+            # assemble matrix a_mat and right hand side rhs
+            for k1 in range(0,m):
+                for i1 in range(0,ndof):
+                    ikk=ndof*k1          +i1
+                    m1 =ndof*icon[k1,iel]+i1
+                    for k2 in range(0,m):
+                        for i2 in range(0,ndof):
+                            jkk=ndof*k2          +i2
+                            m2 =ndof*icon[k2,iel]+i2
+                            a_mat[m1,m2]+=a_el[ikk,jkk]
+                    rhs[m1]+=b_el[ikk]
 
-    #################################################################
-    # solve system
-    #################################################################
-    start = time.time()
+        print("build FE matrix & rhs (%.3fs)" % (time.time() - start))
 
-    sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
-    print("solving system (%.3fs)" % (time.time() - start))
+        #np.savetxt('etaq.ascii',np.array(etaq).T,header='# r,T')
+        #np.savetxt('rhoq.ascii',np.array(rhoq).T,header='# r,T')
+
+        #################################################################
+        # compute non-linear residual
+        #################################################################
+
+        Res=a_mat.dot(sol)-rhs
+
+        if iter_nl==0:
+           Res0=np.max(abs(rhs))
+           #Res0=np.max(abs(Res))
+
+        print("Nonlinear normalised residual (inf. norm) %.7e" % (np.max(abs(Res))/Res0))
+          
+        convfile.write("%e %e %e %e %e %e  \n" %( istep+iter_nl/200.,  np.max(abs(Res))/Res0, np.min(u),np.max(u),np.min(v),np.max(v) ))
+        convfile.flush()
+
+        if np.max(abs(Res))/Res0 < tol_nl or iter_nl==niter_nl-1:
+           niterfile.write("%d %d \n" %( istep, iter_nl ))
+           niterfile.flush()
+           break 
+
+        #################################################################
+        # solve system
+        #################################################################
+        start = time.time()
+
+        sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+        print("solving system (%.3fs)" % (time.time() - start))
+
+        #####################################################################
+        # put solution into separate x,y velocity arrays
+        #####################################################################
+        start = time.time()
+
+        u,v=np.reshape(sol,(nnp,2)).T
+
+        print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
+        print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
+
+        print("reshape solution (%.3fs)" % (time.time() - start))
+
+    # end of nonlinear iterations
 
     #####################################################################
-    # put solution into separate x,y velocity arrays
-    #####################################################################
-    start = time.time()
-
-    u,v=np.reshape(sol,(nnp,2)).T
-
-    print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-    print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
     u_stats[istep,0]=np.min(u) ; u_stats[istep,1]=np.max(u)
     v_stats[istep,0]=np.min(v) ; v_stats[istep,1]=np.max(v)
-
-    print("reshape solution (%.3fs)" % (time.time() - start))
 
     vr= np.cos(theta)*u+np.sin(theta)*v
     vt=-np.sin(theta)*u+np.cos(theta)*v
@@ -700,6 +737,9 @@ for istep in range(0,nstep):
            surf=np.sqrt( (x[icon[3,iel]]-x[icon[2,iel]])**2+\
                          (y[icon[3,iel]]-y[icon[2,iel]])**2 )
            hf2-=dTdr[iel]*surf
+
+    heatflux_boundary1[istep]=hf1
+    heatflux_boundary2[istep]=hf2
 
     print("     -> heat flux inner boundary %.4e " % hf1 )
     print("     -> heat flux outer boundary %.4e " % hf2 )
@@ -1266,10 +1306,10 @@ for istep in range(0,nstep):
     np.savetxt('ET.ascii',np.array([model_time[0:istep],ET[0:istep]]).T,header='# t,ET')
     np.savetxt('viscous_dissipation.ascii',np.array([model_time[0:istep],visc_diss[0:istep]]).T,header='# t,Phi')
     np.savetxt('work_grav.ascii',np.array([model_time[0:istep],work_grav[0:istep]]).T,header='# t,W')
-    np.savetxt('heat_flux_boundary.ascii',np.array([model_time[0:istep],heatflux_boundary[0:istep]]).T,header='# t,q')
+    np.savetxt('heat_flux_boundaries.ascii',np.array([model_time[0:istep],heatflux_boundary1[0:istep],heatflux_boundary2[0:istep]]).T,header='# t,Q1,Q2')
     np.savetxt('adiabatic_heating.ascii',np.array([model_time[0:istep],adiab_heating[0:istep]]).T,header='# t,ad.heat.')
     np.savetxt('conservation.ascii',np.array([model_time[0:istep],visc_diss[0:istep],\
-                                    adiab_heating[0:istep],heatflux_boundary[0:istep]]).T,header='# t,W')
+                                    adiab_heating[0:istep],heatflux_boundary1[0:istep],heatflux_boundary2[0:istep]]).T,header='# t,W')
     np.savetxt('u_stats.ascii',np.array([model_time[0:istep],u_stats[0:istep,0],u_stats[0:istep,1]]).T,header='# t,min(u),max(u)')
     np.savetxt('v_stats.ascii',np.array([model_time[0:istep],v_stats[0:istep,0],v_stats[0:istep,1]]).T,header='# t,min(v),max(v)')
     np.savetxt('T_stats.ascii',np.array([model_time[0:istep],T_stats[0:istep,0],T_stats[0:istep,1]]).T,header='# t,min(T),max(T)')
