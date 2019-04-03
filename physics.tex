@@ -438,3 +438,58 @@ You may find the following terms in the computational geodynamics literature:
 
 There are two types of boundary conditions for this equation: temperature boundary conditions (Dirichlet boundary conditions) and heat flux boundary conditions (Neumann boundary conditions). 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Meaningful physical quantities}
+
+\begin{itemize}
+\item Velocity (m/s):
+\item Pressure (Pa):
+\item Stress (Pa):
+\item Strain (X):
+\item Strain rate (s$^{-1}$):
+\item Rayleigh number (X):
+\item Prandtl number (X):
+\item Nusselt number (X):  the Nusselt number (Nu) is the ratio of convective to conductive heat transfer across (normal to) the boundary. The conductive component is measured under the same conditions as the heat convection but with a (hypothetically) stagnant (or motionless) fluid.
+
+In practice the Nusselt number Nu of a layer (typically the mantle of a planet) is defined as follows:
+\begin{equation}
+\text{Nu} = \frac{q}{q_c}
+\end{equation} 
+where $q$ is the heat transferred by convection while $q_c=k \Delta T /D$ 
+is the amount of heat that would be conducted through a layer of
+thickness $D$ with a temperature difference $\Delta T$ across it with 
+$k$ being the thermal conductivity.
+
+For 2D Cartesian systems of size ($L_x$,$L_y$) the Nu is computed \cite{blbc89}
+\[
+\text{Nu} = 
+ \frac{\frac{1}{L_x}\int_{0}^{L_x} k \frac{\partial T}{\partial y}(x,y=L_y) dx }
+{-\frac{1}{L_x}\int_0^{L_x} k T(x,y=0) /L_y dx}
+=-L_y \frac{\int_{0}^{L_x} \frac{\partial T}{\partial y}(x,y=L_y) dx }{\int_0^{L_x} T(x,y=0) dx}
+\]
+i.e. it is the mean surface temperature gradient
+over the mean bottom temperature.
+
+\todo[inline]{finish. not happy with definition. Look at literature}
+
+Note that in the case when no convection takes place then the measured heat flux at the top is 
+the one obtained from a purely conductive profile which yields Nu=1.
+
+
+Note that a relationship Ra $\propto$ Nu$^\alpha $ exists between the Rayleigh number Ra and the Nusselt number Nu in convective systems, see \cite{wodd09} and references therein. 
+
+
+
+ 
+\item Temperature (K):
+\item Viscosity (Pa.s):
+\item Density (kg/m$^3$):
+\item Heat capacity ():
+\item Heat conductivity ():
+\end{itemize}
+
+
+
+
+

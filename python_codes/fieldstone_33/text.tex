@@ -1,4 +1,4 @@
-{\sl This fieldstone was developed in collaboration with Rens Elbertsen}.
+{\sl This fieldstone was developed in collaboration with Rens Elbertsen}. \index{Rens Elbertsen}
 
 This is based on the community benchmark for viscoplastic thermal convection
 in a 2D square box \cite{tosn15} as already carried out in \ref{f_28}.
@@ -8,11 +8,28 @@ $R_1=1.22$ and outer radius $R_2=2.22$.
 The rheology and buoyancy forces are identical to those of the box 
 experiment. The initial temperature is now given by:
 \[
-T(r,\theta) = s+A\; s(1-s) \cos(N_0 \theta)
+T(r,\theta) = T_c(r)+A\; s(1-s) \cos(N_0 \theta)
 \quad\quad s=\frac{R_2-r}{R_2-R_1} \in [0,1]
 \]
 where $s$ in the normalised depth, $A$ is the amplitude of the perturbation and $N_0$ the 
-number of lobes.
+number of lobes. In this equation $T_c(r)$ stands for the steady state purely conductive 
+temperature solution which is obtained by solving the Laplace's equation in 
+polar coordinates (all terms in $\theta$ are dropped because of radial symmetry) 
+supplemented with two boundary conditions:
+\[
+\Delta T_c = \frac{1}{r}\frac{\partial }{\partial r} \left( r \frac{\partial T}{\partial r} \right) =0 
+\quad\quad
+\quad\quad
+T(r=R_1)=T_1=1
+\quad\quad
+\quad\quad
+T(r=R_2)=T_2=0
+\]
+We obtain 
+\[
+T_c(r)=\frac{\log (r/R_2)}{\log(R_1/R_2)}
+\]
+Note that this profile differs from the straight line that is used in \ref{tosn15} and in \ref{f28}.
 
 \begin{center}
 \includegraphics[width=4cm]{python_codes/fieldstone_33/images/T_N03}
@@ -46,9 +63,9 @@ We calculate the following output parameters:
 v_{rms} = \left ( \frac{\int_\Omega |{\bm v}|^2 \;  d \Omega}{\int_\Omega d\Omega }  \right )^{1/2}
 =\left ( \frac{1}{V_\Omega} \int_\Omega |{\bm v}|^2 \;  d \Omega \right )^{1/2}
 \end{equation}
-\item the heat transfer through both boundaries $Q$ ({\color{red} TODO}) 
+\item the heat transfer through both boundaries $Q$:
 \begin{equation}
-Q_{inner, outer} = R_{inner, outer} \int_\Gamma \boldsymbol{q} \cdot \boldsymbol{{n}} \; d\Gamma 
+Q_{inner, outer} = \int_{\Gamma_{i,o}} \boldsymbol{q} \cdot \boldsymbol{{n}} \; d\Gamma 
 \end{equation}
 \item the Nusselt number at both boundaries $Nu$  ({\color{red} TODO}) 
 \begin{equation}

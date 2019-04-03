@@ -130,17 +130,20 @@ if case==2:
 
 if case==3:
    Ra=1e2 
+   sigma_y = 1
    gamma_y=np.log(10.)  # rheology parameter 
 
 if case==4:
    Ra=1e2 
    sigma_y = 1
    gamma_y=np.log(10.)  # rheology parameter 
+   niter_nl=100
 
 if case==5:
    Ra=1e2 
    sigma_y=4
    gamma_y=np.log(10.)  # rheology parameter 
+   niter_nl=100
 
 gx=0.
 gy=-Ra/alphaT  # vertical component of gravity vector

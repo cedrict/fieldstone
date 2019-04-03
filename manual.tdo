@@ -1,17 +1,18 @@
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here figure}{15}{section*.3}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here figure}{15}{section*.4}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ list codes which use this approach}{28}{section*.8}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ insert here link(s) to manual and literature}{31}{section*.9}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ say something about minus sign?}{33}{section*.10}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ add more examples coming from geo}{43}{section*.11}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ produce drawing of node numbering}{45}{section*.12}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here the rederivation 2.1.1 of spmw16}{47}{section*.13}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ produce figure to explain this}{49}{section*.14}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ link to proto paper }{49}{section*.15}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ link to least square and nodal derivatives}{49}{section*.16}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ how to compute $M$ for the Schur complement ?}{55}{section*.17}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ build S and have python compute its smallest and largest eigenvalues as a function of resolution?}{100}{section*.18}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ explain how Medge is arrived at!}{142}{section*.20}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ compare with ASPECT ??!}{142}{section*.21}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ gauss-lobatto integration?}{142}{section*.22}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ pressure average on surface instead of volume ?}{142}{section*.23}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ finish. not happy with definition. Look at literature}{15}{section*.3}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here figure}{16}{section*.4}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here figure}{16}{section*.5}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ list codes which use this approach}{29}{section*.9}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ insert here link(s) to manual and literature}{32}{section*.10}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ say something about minus sign?}{34}{section*.11}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ add more examples coming from geo}{44}{section*.12}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ produce drawing of node numbering}{46}{section*.13}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here the rederivation 2.1.1 of spmw16}{48}{section*.14}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ produce figure to explain this}{50}{section*.15}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ link to proto paper }{50}{section*.16}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ link to least square and nodal derivatives}{50}{section*.17}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ how to compute $M$ for the Schur complement ?}{56}{section*.18}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ build S and have python compute its smallest and largest eigenvalues as a function of resolution?}{101}{section*.19}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ explain how Medge is arrived at!}{143}{section*.21}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ compare with ASPECT ??!}{143}{section*.22}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ gauss-lobatto integration?}{143}{section*.23}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ pressure average on surface instead of volume ?}{143}{section*.24}

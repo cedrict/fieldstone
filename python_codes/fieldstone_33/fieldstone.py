@@ -106,8 +106,8 @@ rho0=1.             # reference density
 T0=0                # reference temperature
 
 CFL_nb=0.5   # CFL number 
-every=5      # vtu output frequency
-nstep=200    # maximum number of timestep   
+every=1      # vtu output frequency
+nstep=1   # maximum number of timestep   
 tol_nl=1.e-4  # nonlinear convergence coeff.
 
 #--------------------------------------
@@ -155,7 +155,7 @@ if int(len(sys.argv) == 4):
    visu = int(sys.argv[2])
    N0   = int(sys.argv[3])
 else:
-   nelr = 20
+   nelr = 24
    visu = 1
    N0=3
 
@@ -202,6 +202,8 @@ print("nel",nel)
 print("nnr=",nnr)
 print("nnt=",nnt)
 print("nnp=",nnp)
+print("NfemV=",NfemV)
+print("NfemT=",NfemT)
 print("------------------------------")
 
 #################################################################
@@ -273,7 +275,7 @@ for j in range(0,nnr):
 #################################################################
 start = time.time()
 
-icon =np.zeros((m, nel),dtype=np.int16)
+icon =np.zeros((m, nel),dtype=np.int32)
 elt_inner = np.zeros(nel, dtype=np.bool)  
 elt_outer = np.zeros(nel, dtype=np.bool)  
 
@@ -297,7 +299,15 @@ for j in range(0, nelr):
            elt_outer[counter]=True
         counter += 1
 
-print("connectivity: %.3fs" % (time.time() - start))
+#for iel in range (0,nel):
+#    print ("iel=",iel)
+#    print ("node 1",icon[0][iel],"at pos.",x[icon[0][iel]], y[icon[0][iel]])
+#    print ("node 2",icon[1][iel],"at pos.",x[icon[1][iel]], y[icon[1][iel]])
+#    print ("node 3",icon[2][iel],"at pos.",x[icon[2][iel]], y[icon[2][iel]])
+#    print ("node 4",icon[3][iel],"at pos.",x[icon[3][iel]], y[icon[3][iel]])
+    
+
+print("connectivity (%.3fs)" % (time.time() - start))
 
 #################################################################
 # define velocity boundary conditions
@@ -317,7 +327,7 @@ for i in range(0,nnp):
           bc_fixV[i*ndof]   = True ; bc_valV[i*ndof]   = 0. 
           bc_fixV[i*ndof+1] = True ; bc_valV[i*ndof+1] = 0.
 
-print("defining V b.c.: %.3fs" % (time.time() - start))
+print("defining V b.c. (%.3fs)" % (time.time() - start))
 
 #################################################################
 # define temperature boundary conditions
@@ -333,7 +343,7 @@ for i in range(0, nnp):
     if r[i]>(R2-eps):
        bc_fixT[i] = True ; bc_valT[i] = Temp_surf
 
-print("defining T b.c.: %.3fs" % (time.time() - start))
+print("defining T b.c. (%.3fs)" % (time.time() - start))
 
 #################################################################
 # initial temperature field 
@@ -344,9 +354,9 @@ T = np.zeros(nnp,dtype=np.float64)          # temperature
 
 for i in range(0,nnp):
     s=(R2-r[i])/(R2-R1)
-    T[i]=s+0.2*s*(1.-s)*np.cos(N0*theta[i])
+    T[i]=(np.log(r[i]/R2))/(np.log(R1/R2))+0.2*s*(1.-s)*np.cos(N0*theta[i])
 
-print("temperature layout: %.3fs" % (time.time() - start))
+print("temperature layout (%.3fs)" % (time.time() - start))
 
 ################################################################################################
 ################################################################################################
@@ -582,7 +592,7 @@ for istep in range(0,nstep):
                         a_mat[m1,m2]+=a_el[ikk,jkk]
                 rhs[m1]+=b_el[ikk]
 
-    print("build FE matrixs & rhs: %.3fs" % (time.time() - start))
+    print("build FE matrix & rhs (%.3fs)" % (time.time() - start))
 
     #np.savetxt('etaq.ascii',np.array(etaq).T,header='# r,T')
     #np.savetxt('rhoq.ascii',np.array(rhoq).T,header='# r,T')
@@ -608,7 +618,7 @@ for istep in range(0,nstep):
     u_stats[istep,0]=np.min(u) ; u_stats[istep,1]=np.max(u)
     v_stats[istep,0]=np.min(v) ; v_stats[istep,1]=np.max(v)
 
-    print("reshape solution: %.3fs" % (time.time() - start))
+    print("reshape solution (%.3fs)" % (time.time() - start))
 
     vr= np.cos(theta)*u+np.sin(theta)*v
     vt=-np.sin(theta)*u+np.cos(theta)*v
@@ -663,7 +673,6 @@ for istep in range(0,nstep):
             dTdtheta[iel]=-np.sin(thetac)*dTdx[iel]+np.cos(thetac)*dTdy[iel]
         p[iel]=-penalty*(exx[iel]+eyy[iel])
 
-
     print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
     print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
     print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
@@ -673,7 +682,29 @@ for istep in range(0,nstep):
     print("     -> dTdr (m,M) %.4e %.4e " %(np.min(dTdr),np.max(dTdr)))
     print("     -> dTdtheta (m,M) %.4e %.4e " %(np.min(dTdtheta),np.max(dTdtheta)))
 
-    print("compute p & sr | time: %.3f s" % (time.time() - start))
+    print("compute p & sr (%.3fs)" % (time.time() - start))
+
+    ######################################################################
+    # compute total heat flux on boundaries
+    ######################################################################
+    start = time.time()
+
+    hf1=0.
+    hf2=0.
+    for iel in range(0,nel):
+        if elt_inner[iel]:
+           surf=np.sqrt( (x[icon[1,iel]]-x[icon[0,iel]])**2+\
+                         (y[icon[1,iel]]-y[icon[0,iel]])**2 )
+           hf1+=dTdr[iel]*surf
+        if elt_outer[iel]:
+           surf=np.sqrt( (x[icon[3,iel]]-x[icon[2,iel]])**2+\
+                         (y[icon[3,iel]]-y[icon[2,iel]])**2 )
+           hf2-=dTdr[iel]*surf
+
+    print("     -> heat flux inner boundary %.4e " % hf1 )
+    print("     -> heat flux outer boundary %.4e " % hf2 )
+
+    print("compute heat flux on boundaries (%.3fs)" % (time.time() - start))
 
     ######################################################################
     # compute time step value 
@@ -697,7 +728,7 @@ for istep in range(0,nstep):
     print('     -> dt2= %.6e ' % (dt2))
     print('     -> dt = %.6e ' % (dt))
 
-    print("compute timestep: %.3fs" % (time.time() - start))
+    print("compute timestep (%.3fs)" % (time.time() - start))
 
     ######################################################################
     # compute nodal pressure
@@ -706,7 +737,6 @@ for istep in range(0,nstep):
 
     count=np.zeros(nnp,dtype=np.float64)
     q[:]=0
-
     for iel in range(0,nel):
         q[icon[0,iel]]+=p[iel]
         q[icon[1,iel]]+=p[iel]
@@ -716,14 +746,13 @@ for istep in range(0,nstep):
         count[icon[1,iel]]+=1
         count[icon[2,iel]]+=1
         count[icon[3,iel]]+=1
-
     q=q/count
 
     dqdt=(q[:]-q_prev[:])/dt
 
     print("     -> q (m,M) %.4e %.4e " %(np.min(q),np.max(q)))
 
-    print("compute nodal press: %.3fs" % (time.time() - start))
+    print("compute nodal press (%.3fs)" % (time.time() - start))
 
     ######################################################################
     # build FE matrix for Temperature 
@@ -858,7 +887,7 @@ for istep in range(0,nstep):
     #print("A_mat (m,M) = %.4f %.4f" %(np.min(A_mat),np.max(A_mat)))
     #print("rhs   (m,M) = %.6f %.6f" %(np.min(rhs),np.max(rhs)))
 
-    print("build FEM matrix T: %.3f s" % (time.time() - start))
+    print("build FEM matrix T (%.3fs)" % (time.time() - start))
 
     #################################################################
     # solve system
@@ -871,7 +900,7 @@ for istep in range(0,nstep):
 
     T_stats[istep,0]=np.min(T) ; T_stats[istep,1]=np.max(T)
 
-    print("solve T: %.3f s" % (time.time() - start))
+    print("solve T (%.3fs)" % (time.time() - start))
 
     ######################################################################
     # compute nodal temperature gradient
@@ -902,7 +931,7 @@ for istep in range(0,nstep):
     print("     -> dTdr_n_1     (m,M) %.4e %.4e " %(np.min(dTdr_n_1),np.max(dTdr_n_1)))
     print("     -> dTdtheta_n_1 (m,M) %.4e %.4e " %(np.min(dTdtheta_n_1),np.max(dTdtheta_n_1)))
 
-    print("compute temperature gradient: %.3f s" % (time.time() - start))
+    print("compute temperature gradient (%.3fs)" % (time.time() - start))
 
     ######################################################################
     # compute vrms 
@@ -968,7 +997,7 @@ for istep in range(0,nstep):
     print("     -> avrg T= %.6e" % Tavrg[istep])
     print("     -> vrms= %.6e ; Ra= %.4e " % (vrms[istep],Ra))
 
-    print("compute vrms, Tavrg, EK, EG, WAG: %.3f s" % (time.time() - start))
+    print("compute vrms, Tavrg, EK, EG, WAG (%.3fs)" % (time.time() - start))
 
     #####################################################################
     # compute power spectrum 
@@ -1023,7 +1052,7 @@ for istep in range(0,nstep):
        psTfile.write(" \n") ; psTfile.flush()
        psVfile.write(" \n") ; psVfile.flush()
 
-    print("compute power spectrum: %.3f s" % (time.time() - start))
+    print("compute power spectrum (%.3fs)" % (time.time() - start))
 
     #####################################################################
     # plot of solution
@@ -1185,7 +1214,7 @@ for istep in range(0,nstep):
        vtufile.write("</UnstructuredGrid>\n")
        vtufile.write("</VTKFile>\n")
        vtufile.close()
-       print("export to vtu: %.3f s" % (time.time() - start))
+       print("export to vtu (%.3fs)" % (time.time() - start))
 
     #####################################################################
     # depth average
@@ -1249,7 +1278,7 @@ for istep in range(0,nstep):
     if istep>0:
        np.savetxt('dETdt.ascii',np.array([model_time[1:istep],  ((ET[1:istep]-ET[0:istep-1])/dt)   ]).T,header='# t,ET')
 
-    print("output stats: %.3f s" % (time.time() - start))
+    print("output stats (%.3fs)" % (time.time() - start))
 
     #####################################################################
 
