@@ -97,8 +97,42 @@ This averaging problem has been studied and documented in the literature \cite{s
 {\small Nodal projection. Left: all markers inside elements to which the green node belongs to are taken into account. Right: only the markers closest to the green node count. }
 \end{center}
 
+Let $k$ be the green node of the figures above. Let $(r,s)$ denote the coordinates of a marker inside its element.
+For clarity, we define the follow three nodal averaging schemes:
+\begin{itemize}
+\item nodal type A: 
+\[
+f_k = \frac{\text{sum of values carried by markers in 4 neighbour elements}}
+{\text{number of markers in 4 neighbour elements}}
+\]
+\item nodal type B: 
+\[
+f_k = \frac{\text{sum of values carried by markers inside dashed line}}
+{\text{number of markers in area delimited by the dashed line}}
+\]
+\item nodal type C 
+\[
+f_k = \frac{\text{sum of values carried by markers in 4 neighbour elements } * N_p(r,s)}
+{\text{sum of }N_p(r,s)} 
+\]
+where $N_p$ is the $Q_1$ basis function corresponding to node $p$ defined on each element. Since these 
+functions are 1 on node $k$ and then linearly decrease and become zero on the neighbouring nodes, this
+effectively gives more weight to those markers closest to node $k$.
 
-
+This strategy is adopted in \cite{mabl14,mabl15} (although it is used to interpolate onto the nodes of $Q_2P_{-1}$
+elements. It is formulated as follows:\\
+"We assume that an arbitrary material point property $f$, is discretized via 
+$f(\bm x)\simeq \delta(\bm x - \bm x_p) f_p$. We then utilize an approximate local $L_2$ projection
+of $f_p$ onto a continuous $Q_1$ finite element space. The corner vertices of
+each $Q_2$ finite element define the mesh $f_p$ is projected onto.
+The local reconstruction for a node i is defined by
+\[
+\hat{f}_i = \frac{\int_{\Omega_i}N_i(\bm x) f(\bm x)}{\int_{\Omega_i} N_i(\bm x)} \simeq
+\frac{\sum_p N_i(\bm x_p) f_p }{\sum_p N_i(\bm x_p)}
+\]
+where the summation over $p$ includes all material points 
+contained within the support $\Omega_i$ of the trilinear interpolant $N_i$".
+\end{itemize}
 
 
 The setup is identical to the Stokes sphere experiment. The bash script {\sl runall} runs the code for many resolutions, both initial marker distribution and all three averaging types. The viscosity of the sphere has been 
@@ -116,8 +150,12 @@ Root mean square velocity results are shown hereunder:
 \includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_rand_proj3} 
 \includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_poissondisc_proj3} 
 \includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_reg_proj3}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_rand_proj4} 
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_poissondisc_proj4} 
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_reg_proj4}\\
 {\small Left column: random markers, middle column: Poisson disc, right column: regular markers.
-Top row: elemental projection, middle row: nodal 1 projection, bottom row: nodal 2 projection. }
+First row: elemental projection, second row: nodal 1 projection, 
+third row: nodal 2 projection, fourth row: nodal 3 projection. }
 \end{center}
 
 Conclusions:
@@ -136,10 +174,14 @@ The number of markers per element plays a role at low resolution, but less and l
 Results for random and regular marker distributions are not identical but follow a similar trend and seem to converge to 
 the same value.
 
-\item
-At low resolutions, elemental values yield better results.
+\item  elemental values yield better results (espcecially at low resolutions)
 
 \item harmonic mean yields overal the best results
 \end{itemize}
 
-\includegraphics[width=16cm]{python_codes/fieldstone_13/vrms} 
+%\begin{center}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_13/vrms_am} 
+\includegraphics[width=5.5cm]{python_codes/fieldstone_13/vrms_gm} 
+\includegraphics[width=5.5cm]{python_codes/fieldstone_13/vrms_hm}\\
+Left to right: arithmetic, geometric, harmonic averaging for viscosity. 
+%\end{center}

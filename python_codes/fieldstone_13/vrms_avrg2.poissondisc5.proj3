@@ -1,7 +1,7 @@
-     -> nel= 100 ; nmarker= 2498 ;  vrms= 0.004894
-     -> nel= 144 ; nmarker= 3586 ;  vrms= 0.006083
-     -> nel= 196 ; nmarker= 4879 ;  vrms= 0.006243
-     -> nel= 256 ; nmarker= 6305 ;  vrms= 0.006432
-     -> nel= 400 ; nmarker= 9849 ;  vrms= 0.007180
-     -> nel= 1024 ; nmarker= 25036 ;  vrms= 0.007890
-     -> nel= 2304 ; nmarker= 56609 ;  vrms= 0.008436
+     -> nel= 100 ; nmarker= 2500 ;  vrms= 0.005005
+     -> nel= 144 ; nmarker= 3587 ;  vrms= 0.005951
+     -> nel= 196 ; nmarker= 4804 ;  vrms= 0.006356
+     -> nel= 256 ; nmarker= 6275 ;  vrms= 0.006459
+     -> nel= 400 ; nmarker= 9840 ;  vrms= 0.007228
+     -> nel= 1024 ; nmarker= 25212 ;  vrms= 0.007938
+     -> nel= 2304 ; nmarker= 56459 ;  vrms= 0.008447

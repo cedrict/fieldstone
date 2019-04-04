@@ -280,10 +280,13 @@ start = time.time()
 
 rho_nodal1=np.zeros(nnp,dtype=np.float64) 
 rho_nodal2=np.zeros(nnp,dtype=np.float64) 
+rho_nodal3=np.zeros(nnp,dtype=np.float64) 
 eta_nodal1=np.zeros(nnp,dtype=np.float64) 
 eta_nodal2=np.zeros(nnp,dtype=np.float64) 
+eta_nodal3=np.zeros(nnp,dtype=np.float64) 
 count_nodal1=np.zeros(nnp,dtype=np.float64) 
 count_nodal2=np.zeros(nnp,dtype=np.float64) 
+count_nodal3=np.zeros(nnp,dtype=np.float64) 
 
 for im in range(0,nmarker):
     ielx=int(swarm_x[im]/Lx*nelx)
@@ -296,6 +299,10 @@ for im in range(0,nmarker):
     r=((swarm_x[im]-xmin)/(xmax-xmin)-0.5)*2
     s=((swarm_y[im]-ymin)/(ymax-ymin)-0.5)*2
 
+    # compute rho_nodal1,eta_nodal1
+    # proj=2: use all four elements around node
+    # nodal A
+
     for i in range(0,m):
         rho_nodal1[icon[i,iel]]+=rho_mat[swarm_mat[im]-1]
         count_nodal1[icon[i,iel]]+=1
@@ -305,6 +312,10 @@ for im in range(0,nmarker):
            eta_nodal1[icon[i,iel]]+=math.log(eta_mat[swarm_mat[im]-1],10)
         if avrg==3: # harmonic
            eta_nodal1[icon[i,iel]]+=1./eta_mat[swarm_mat[im]-1]
+
+    # compute rho_nodal2,eta_nodal2
+    # proj=3: use all four quadrants around node
+    # nodal B
 
     # marker is in lower left quadrant
     if (r<=0 and s<=0):
@@ -350,35 +361,84 @@ for im in range(0,nmarker):
        if avrg==3: # harmonic
           eta_nodal2[icon[3,iel]]+=1./eta_mat[swarm_mat[im]-1]
 
+    # compute rho_nodal3,eta_nodal3
+    # proj=4: use all four elements around node w/ averaging
+    # nodal C
+
+    N0=0.25*(1-r)*(1-s)
+    N1=0.25*(1+r)*(1-s)
+    N2=0.25*(1+r)*(1+s)
+    N3=0.25*(1-r)*(1+s)
+
+    rho_nodal3[icon[0,iel]]+=rho_mat[swarm_mat[im]-1]*N0
+    rho_nodal3[icon[1,iel]]+=rho_mat[swarm_mat[im]-1]*N1
+    rho_nodal3[icon[2,iel]]+=rho_mat[swarm_mat[im]-1]*N2
+    rho_nodal3[icon[3,iel]]+=rho_mat[swarm_mat[im]-1]*N3
+
+    if avrg==1: # arithmetic
+       eta_nodal3[icon[0,iel]]+=eta_mat[swarm_mat[im]-1]*N0
+       eta_nodal3[icon[1,iel]]+=eta_mat[swarm_mat[im]-1]*N1
+       eta_nodal3[icon[2,iel]]+=eta_mat[swarm_mat[im]-1]*N2
+       eta_nodal3[icon[3,iel]]+=eta_mat[swarm_mat[im]-1]*N3
+    if avrg==2: # geometric
+       eta_nodal3[icon[0,iel]]+=math.log(eta_mat[swarm_mat[im]-1],10)*N0
+       eta_nodal3[icon[1,iel]]+=math.log(eta_mat[swarm_mat[im]-1],10)*N1
+       eta_nodal3[icon[2,iel]]+=math.log(eta_mat[swarm_mat[im]-1],10)*N2
+       eta_nodal3[icon[3,iel]]+=math.log(eta_mat[swarm_mat[im]-1],10)*N3
+    if avrg==3: # harmonic
+       eta_nodal3[icon[0,iel]]+=1./eta_mat[swarm_mat[im]-1]*N0
+       eta_nodal3[icon[1,iel]]+=1./eta_mat[swarm_mat[im]-1]*N1
+       eta_nodal3[icon[2,iel]]+=1./eta_mat[swarm_mat[im]-1]*N2
+       eta_nodal3[icon[3,iel]]+=1./eta_mat[swarm_mat[im]-1]*N3
+
+    count_nodal3[icon[0,iel]]+=N0
+    count_nodal3[icon[1,iel]]+=N1
+    count_nodal3[icon[2,iel]]+=N2
+    count_nodal3[icon[3,iel]]+=N3
+
+
 if np.min(count_nodal2)==0:
+   quit() 
+
+if np.min(count_nodal3)==0:
    quit() 
 
 for i in range(0,nnp):
     rho_nodal1[i]/=count_nodal1[i]
     rho_nodal2[i]/=count_nodal2[i]
+    rho_nodal3[i]/=count_nodal3[i]
     if avrg==1: # arithmetic
        eta_nodal1[i]/=count_nodal1[i]
        eta_nodal2[i]/=count_nodal2[i]
+       eta_nodal3[i]/=count_nodal3[i]
     if avrg==2: # geometric
        eta_nodal1[i]=10.**(eta_nodal1[i]/count_nodal1[i])
        eta_nodal2[i]=10.**(eta_nodal2[i]/count_nodal2[i])
+       eta_nodal3[i]=10.**(eta_nodal3[i]/count_nodal3[i])
     if avrg==3: # harmonic
        eta_nodal1[i]=count_nodal1[i]/eta_nodal1[i]
        eta_nodal2[i]=count_nodal2[i]/eta_nodal2[i]
+       eta_nodal3[i]=count_nodal3[i]/eta_nodal3[i]
  
 print("     -> count_nodal1 (m,M) %.4f %.4f " %(np.min(count_nodal1),np.max(count_nodal1)))
 print("     -> count_nodal2 (m,M) %.4f %.4f " %(np.min(count_nodal2),np.max(count_nodal2)))
+print("     -> count_nodal3 (m,M) %.4f %.4f " %(np.min(count_nodal3),np.max(count_nodal3)))
 print("     -> rho_nodal1 (m,M) %.4f %.4f " %(np.min(rho_nodal1),np.max(rho_nodal1)))
 print("     -> rho_nodal2 (m,M) %.4f %.4f " %(np.min(rho_nodal2),np.max(rho_nodal2)))
+print("     -> rho_nodal3 (m,M) %.4f %.4f " %(np.min(rho_nodal3),np.max(rho_nodal3)))
 print("     -> eta_nodal1 (m,M) %.4f %.4f " %(np.min(eta_nodal1),np.max(eta_nodal1)))
 print("     -> eta_nodal2 (m,M) %.4f %.4f " %(np.min(eta_nodal2),np.max(eta_nodal2)))
+print("     -> eta_nodal3 (m,M) %.4f %.4f " %(np.min(eta_nodal3),np.max(eta_nodal3)))
 
 np.savetxt('count_nodal1.ascii',np.array([x,y,count_nodal1]).T,header='# x,y,count')
 np.savetxt('count_nodal2.ascii',np.array([x,y,count_nodal2]).T,header='# x,y,count')
+np.savetxt('count_nodal3.ascii',np.array([x,y,count_nodal3]).T,header='# x,y,count')
 np.savetxt('rho_nodal1.ascii',np.array([x,y,rho_nodal1]).T,header='# x,y,rho')
 np.savetxt('rho_nodal2.ascii',np.array([x,y,rho_nodal2]).T,header='# x,y,rho')
+np.savetxt('rho_nodal3.ascii',np.array([x,y,rho_nodal3]).T,header='# x,y,rho')
 np.savetxt('eta_nodal1.ascii',np.array([x,y,eta_nodal1]).T,header='# x,y,eta')
 np.savetxt('eta_nodal2.ascii',np.array([x,y,eta_nodal2]).T,header='# x,y,eta')
+np.savetxt('eta_nodal3.ascii',np.array([x,y,eta_nodal3]).T,header='# x,y,eta')
 
 print("projection nodal: %.3f s" % (time.time() - start))
 
@@ -491,7 +551,12 @@ for iel in range(0, nel):
                for k in range(0, m):
                    rhoq+=N[k]*rho_nodal2[icon[k,iel]]
                    etaq+=N[k]*eta_nodal2[icon[k,iel]]
-
+            if proj==4:
+               rhoq=0
+               etaq=0
+               for k in range(0, m):
+                   rhoq+=N[k]*rho_nodal3[icon[k,iel]]
+                   etaq+=N[k]*eta_nodal3[icon[k,iel]]
 
             # construct 3x8 b_mat matrix
             for i in range(0, m):
