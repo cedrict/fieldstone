@@ -2,3 +2,4 @@
      -> nel= 196 ; nmarker= 1764 ;  vrms= 0.007171
      -> nel= 256 ; nmarker= 2304 ;  vrms= 0.007428
      -> nel= 400 ; nmarker= 3600 ;  vrms= 0.007723
+     -> nel= 4096 ; nmarker= 36864 ;  vrms= 0.008957

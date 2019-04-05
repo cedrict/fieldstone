@@ -479,11 +479,46 @@ over the mean bottom temperature.
 Note that in the case when no convection takes place then the measured heat flux at the top is 
 the one obtained from a purely conductive profile which yields Nu=1.
 
-
 Note that a relationship Ra $\propto$ Nu$^\alpha $ exists between the Rayleigh number Ra and the Nusselt number Nu in convective systems, see \cite{wodd09} and references therein. 
 
+Turning now to cylindrical geometries with inner radius $R_1$ and outer radius $R_2$, we define $f=R_1/R_2$. A small value of $f$ corresponds to a high
+degree of curvature. We assume now that $R_2-R_1=1$, so that $R_2=1/(1-f)$ and $R_1=f/(1-f)$. 
+Following \cite{jarv93}, the Nusselt number at the inner and outer boundaries are:
+\begin{equation}
+\boxed{
+\text{Nu}_{inner} = \frac{f \ln f}{1-f} \frac{1}{2\pi} \int_0^{2\pi} \left( \frac{\partial T}{\partial r} \right)_{r=R_1} d\theta
+}
+\label{eqNuAnnIn}
+\end{equation}
+\begin{equation}
+\boxed{
+\text{Nu}_{outer} = \frac{\ln f}{1-f} \frac{1}{2\pi} \int_0^{2\pi} \left( \frac{\partial T}{\partial r} \right)_{r=R_2} d\theta
+}
+\label{eqNuAnnOut}
+\end{equation}
 
-\todo[inline]{what is the right formula for cylindrical, spherical geometries ?}
+Note that a conductive geotherm in such an annulus between temperatures $T_1$ and $T_2$ is given by 
+\[
+T_c(r)=\frac{\ln (r/R_2)}{\ln(R_1/R_2)} = \frac{\ln(r(1-f))}{\ln f}
+\]
+so that 
+\[
+\frac{\partial T_c}{\partial r} = \frac{1}{r}\frac{1}{\ln f} 
+\]
+We then find:
+\begin{eqnarray}
+\text{Nu}_{inner} 
+&=& \frac{f \ln f}{1-f} \frac{1}{2\pi} \int_0^{2\pi} \left( \frac{\partial T}{\partial r} \right)_{r=R_1} d\theta
+= \frac{f \ln f}{1-f} \frac{1}{R_1}\frac{1}{\ln f} 
+= 1 \\
+\text{Nu}_{outer} 
+&=& \frac{\ln f}{1-f} \frac{1}{2\pi} \int_0^{2\pi} \left( \frac{\partial T}{\partial r} \right)_{r=R_2} d\theta 
+= \frac{\ln f}{1-f} \frac{1}{R_2}\frac{1}{\ln f} = 1 
+\end{eqnarray}
+As expected, the recovered Nusselt number at both boundaries is exactly 1 when the temperature field is
+given by a steady state conductive geotherm.
+
+\todo[inline]{derive formula for Earth size R1 and R2}
 
  
 \item Temperature (K):
