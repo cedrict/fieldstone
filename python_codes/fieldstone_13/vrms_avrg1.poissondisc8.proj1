@@ -5,3 +5,5 @@
      -> nel= 400 ; nmarker= 25136 ;  vrms= 0.007389
      -> nel= 1024 ; nmarker= 64301 ;  vrms= 0.008506
      -> nel= 2304 ; nmarker= 144502 ;  vrms= 0.008805
+     -> nel= 4096 ; nmarker= 256550 ;  vrms= 0.008893
+     -> nel= 6400 ; nmarker= 400788 ;  vrms= 0.009034

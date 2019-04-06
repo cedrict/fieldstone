@@ -174,6 +174,8 @@ nnp=nnr*nnt  # number of nodes
 NfemV=nnp*ndof  # Total number of V degrees of freedom
 NfemT=nnp*ndofT # Total number of T degrees of freedom
 
+f=R1/R2
+
 penalty=1.e8 
 
 Temp_surf=0
@@ -216,7 +218,6 @@ print("------------------------------")
 
 model_time=np.zeros(nstep,dtype=np.float64)
 vrms=np.zeros(nstep,dtype=np.float64)
-Nu=np.zeros(nstep,dtype=np.float64)
 Tavrg=np.zeros(nstep,dtype=np.float64)
 u_stats=np.zeros((nstep,2),dtype=np.float64)
 v_stats=np.zeros((nstep,2),dtype=np.float64)
@@ -229,6 +230,8 @@ ET=np.zeros(nstep,dtype=np.float64)
 dt_stats=np.zeros(nstep,dtype=np.float64)
 heatflux_boundary1=np.zeros(nstep,dtype=np.float64)
 heatflux_boundary2=np.zeros(nstep,dtype=np.float64)
+Nu_boundary1=np.zeros(nstep,dtype=np.float64)
+Nu_boundary2=np.zeros(nstep,dtype=np.float64)
 adiab_heating=np.zeros(nstep,dtype=np.float64)
 vr_stats=np.zeros((nstep,2),dtype=np.float64)
 vt_stats=np.zeros((nstep,2),dtype=np.float64)
@@ -740,9 +743,14 @@ for istep in range(0,nstep):
 
     heatflux_boundary1[istep]=hf1
     heatflux_boundary2[istep]=hf2
+ 
+    Nu_boundary1[istep]=abs(hf1/(2*math.pi*R1)*np.log(f)/(1-f)*f)
+    Nu_boundary2[istep]=abs(hf2/(2*math.pi*R2)*np.log(f)/(1-f)  )
 
     print("     -> heat flux inner boundary %.4e " % hf1 )
     print("     -> heat flux outer boundary %.4e " % hf2 )
+    print("     -> Nusselt nb inner boundary %.4e " % Nu_boundary1[istep] )
+    print("     -> Nusselt nb outer boundary %.4e " % Nu_boundary2[istep] )
 
     print("compute heat flux on boundaries (%.3fs)" % (time.time() - start))
 
@@ -1299,7 +1307,8 @@ for istep in range(0,nstep):
     start = time.time()
 
     np.savetxt('vrms.ascii',np.array([model_time[0:istep],vrms[0:istep]]).T,header='# t,vrms')
-    np.savetxt('Nu.ascii',np.array([model_time[0:istep],Nu[0:istep]]).T,header='# t,Nu')
+    np.savetxt('Nu_boundary1.ascii',np.array([model_time[0:istep],Nu_boundary1[0:istep]]).T,header='# t,Nu')
+    np.savetxt('Nu_boundary2.ascii',np.array([model_time[0:istep],Nu_boundary2[0:istep]]).T,header='# t,Nu')
     np.savetxt('Tavrg.ascii',np.array([model_time[0:istep],Tavrg[0:istep]]).T,header='# t,Tavrg')
     np.savetxt('EK.ascii',np.array([model_time[0:istep],EK[0:istep]]).T,header='# t,EK')
     np.savetxt('EG.ascii',np.array([model_time[0:istep],EG[0:istep],EG[0:istep]-EG[0]]).T,header='# t,EG,EG-EG(0)')

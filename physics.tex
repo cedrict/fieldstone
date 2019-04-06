@@ -447,6 +447,26 @@ There are two types of boundary conditions for this equation: temperature bounda
 
 \begin{itemize}
 \item Velocity (m/s):
+\item Root mean square velocity (m/s): 
+\begin{equation}
+\upnu_{rms} = \left ( \frac{\int_\Omega |{\vec \upnu}|^2 \;  d \Omega}{\int_\Omega d\Omega }  \right )^{1/2}
+=\left ( \frac{1}{V_\Omega} \int_\Omega |{\vec \upnu}|^2 \;  d \Omega \right )^{1/2} \label{eqVrms}
+\end{equation}
+In Cartesian coordinates, for a cuboid domain of size $Lx\times L_y \times Lz$, the $v_{rms}$ is simply given by:
+\begin{equation}
+\upnu_{rms}  = \left ( \frac{1}{L_xL_yL_z} \int_0^{L_x}\int_0^{L_y}\int_0^{L_z} (u^2 + v^2 + w^2) dxdydz  \right )^{1/2}
+\end{equation}
+In the case of an annulus domain, although calculations are carried out in Cartesian coordinates, it makes sense
+to look at the radial velocity component $v_r$ and the tangential velocity component $v_\theta$, and their respective
+root mean square averages:
+\begin{equation}
+v_r|_{rms}  =\left ( \frac{1}{V_\Omega} \int_\Omega v_r^2 \;  d \Omega \right )^{1/2} \label{eqVrVrms}
+\end{equation}
+\begin{equation}
+v_\theta|_{rms}  = \left ( \frac{1}{V_\Omega} \int_\Omega v_\theta^2 \;  d \Omega \right )^{1/2} \label{eqThetaVrms}
+\end{equation}
+
+
 \item Pressure (Pa):
 \item Stress (Pa):
 \item Strain (X):
@@ -508,11 +528,11 @@ so that
 We then find:
 \begin{eqnarray}
 \text{Nu}_{inner} 
-&=& \frac{f \ln f}{1-f} \frac{1}{2\pi} \int_0^{2\pi} \left( \frac{\partial T}{\partial r} \right)_{r=R_1} d\theta
+&=& \frac{f \ln f}{1-f} \frac{1}{2\pi} \int_0^{2\pi} \left( \frac{\partial T_c}{\partial r} \right)_{r=R_1} d\theta
 = \frac{f \ln f}{1-f} \frac{1}{R_1}\frac{1}{\ln f} 
 = 1 \\
 \text{Nu}_{outer} 
-&=& \frac{\ln f}{1-f} \frac{1}{2\pi} \int_0^{2\pi} \left( \frac{\partial T}{\partial r} \right)_{r=R_2} d\theta 
+&=& \frac{\ln f}{1-f} \frac{1}{2\pi} \int_0^{2\pi} \left( \frac{\partial T_c}{\partial r} \right)_{r=R_2} d\theta 
 = \frac{\ln f}{1-f} \frac{1}{R_2}\frac{1}{\ln f} = 1 
 \end{eqnarray}
 As expected, the recovered Nusselt number at both boundaries is exactly 1 when the temperature field is

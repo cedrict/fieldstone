@@ -30,11 +30,11 @@ as shown on the following figure:
 
 In both cases we make use of the basis shape functions: we generate the positions of the markers (random or regular) in the reference
 element first ($r_{im},s_{im}$), and then map those out to the real element as follows:
-\[
+\begin{equation}
 x_{im}=\sum_i^m N_i(r_{im},s_{im}) x_i
-\quad\quad
+\quad\quad\quad\quad
 y_{im}=\sum_i^m N_i(r_{im},s_{im}) y_i
-\]
+\end{equation}
 where $x_i,y_i$ are the coordinates of the vertices of the element.
 
 A third option consists in the use of the so-called Poisson-disc sampling which 
@@ -48,9 +48,9 @@ the Poisson-disc algorithm fills the whole domain at once, not element after ele
 {\color{red} insert here theory and link about Poisson disc }
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_13/images/markers_reg} 
-\includegraphics[width=5cm]{python_codes/fieldstone_13/images/markers_rand} 
-\includegraphics[width=5cm]{python_codes/fieldstone_13/images/markers_pd} \\
+\includegraphics[width=5.134cm]{python_codes/fieldstone_13/images/markers_reg} 
+\includegraphics[width=5.134cm]{python_codes/fieldstone_13/images/markers_rand} 
+\includegraphics[width=5.134cm]{python_codes/fieldstone_13/images/markers_pd} \\
 {\small Left: regular distribution, middle: random, right: Poisson disc.\\
  16384 markers (32x32 grid, 16 markers per element).}
 \end{center}
@@ -61,24 +61,24 @@ When using {\it active} markers, one is faced with the problem of transferring t
 As we have seen, building the FE matrix involves a loop over all elements, so one simple approach consists of assigning each element a single property
 computed as the average of the values carried by the markers in that element. 
 Often in colloquial language "average" refers to the arithmetic mean: \index{arithmetic mean}
-\[
+\begin{equation}
 \langle \phi \rangle_{am}=\frac{1}{n} \sum_k^n \phi_i 
-\]
+\end{equation}
 where $<\phi>_{am}$ is the arithmetic average of the $n$ numbers $\phi_i$. 
 However, in mathematics other means are commonly used, such as the geometric mean: \index{geometric mean}
-\[
+\begin{equation}
 \langle \phi \rangle_{gm}=\left( \prod_i^n \phi_i \right)
-\]
+\end{equation}
 and the harmonic mean: \index{harmonic mean}
-\[
+\begin{equation}
 \langle \phi \rangle_{hm}=\left( \frac{1}{n}\sum_i^n \frac{1}{\phi_i} \right)^{-1}
-\]
+\end{equation}
 Furthermore, there is a well known inequality for any set of positive numbers,
-\[
+\begin{equation}
 \langle \phi \rangle_{am}\quad  \geq \quad
 \langle \phi \rangle_{gm}\quad  \geq \quad
 \langle \phi \rangle_{hm} 
-\]
+\end{equation}
 which will prove to be important later on. 
 
 Let us now turn to a simple concrete example: the 2D Stokes sphere. 

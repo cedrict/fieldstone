@@ -29,7 +29,7 @@ We obtain
 \[
 T_c(r)=\frac{\log (r/R_2)}{\log(R_1/R_2)}
 \]
-Note that this profile differs from the straight line that is used in \ref{tosn15} and in \ref{f28}.
+Note that this profile differs from the straight line that is used in \cite{tosn15} and in section \ref{f28}.
 
 \begin{center}
 \includegraphics[width=4cm]{python_codes/fieldstone_33/images/T_N03}
@@ -58,19 +58,13 @@ We calculate the following output parameters:
 \langle T \rangle = \frac{\int_\Omega T  d\Omega }{\int_\Omega d \Omega }
 =\frac{1}{V_\Omega}\int_\Omega T d\Omega
 \end{equation}
-\item the root mean square velocity $v_{rms}$
-\begin{equation}
-v_{rms} = \left ( \frac{\int_\Omega |{\bm v}|^2 \;  d \Omega}{\int_\Omega d\Omega }  \right )^{1/2}
-=\left ( \frac{1}{V_\Omega} \int_\Omega |{\bm v}|^2 \;  d \Omega \right )^{1/2}
-\end{equation}
+\item the root mean square velocity $v_{rms}$ as given by equation (\ref{eqVrms}).
+\item the root mean square of the radial and tangential velocity components as given by equations (\ref{eqVrVrms}) and (\ref{eqThetaVrms}).
 \item the heat transfer through both boundaries $Q$:
 \begin{equation}
 Q_{inner, outer} = \int_{\Gamma_{i,o}} \boldsymbol{q} \cdot \boldsymbol{{n}} \; d\Gamma 
 \end{equation}
-\item the Nusselt number at both boundaries $Nu$  ({\color{red} TODO}) 
-\begin{equation}
-Nu_{inner, outer} = Q_{inner, outer} \bigg / \frac{-k \; 2 \pi}{\ln{\frac{R_{inner}}{R_{outer}}}}
-\end{equation}
+\item the Nusselt number at both boundaries $Nu$ as given by equations (\ref{eqNuAnnIn}) and  (\ref{eqNuAnnOut}). 
 \item the power spectrum of the temperature field:
 \begin{equation}
 PS_n(T) = \left |\int_\Omega T(r, \theta) e^{in\theta} d\Omega \right |^2.
@@ -95,6 +89,4 @@ PS_n(T) = \left |\int_\Omega T(r, \theta) e^{in\theta} d\Omega \right |^2.
 
 
 
-TODO:
 
-nonlinear iterations!!
