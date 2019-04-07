@@ -1,0 +1,101 @@
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Linear basis functions in tetrahedra ($P_1$)}
+\index{$P_1$}
+
+
+\begin{verbatim}
+(r_0,s_0) = (0,0,0)
+(r_1,s_1) = (1,0,0)
+(r_2,s_2) = (0,2,0)
+(r_3,s_3) = (0,0,1)
+\end{verbatim}
+
+The basis polynomial is given by
+\[
+f(r,s,t)=c_0 + c_1 r + c_2 s + c_3 t
+\]
+
+\begin{eqnarray}
+f_1 &=& f(r_1,s_1,t_1) = c_0 \\
+f_2 &=& f(r_2,s_2,t_2) = c_0 + c_1\\
+f_3 &=& f(r_3,s_3,t_3) = c_0 + c_2\\
+f_4 &=& f(r_4,s_4,t_4) = c_0 + c_3
+\end{eqnarray}
+
+which yields:
+\[
+c_0=f_1
+\quad
+\quad
+c_1=f_2-f_1
+\quad
+\quad
+c_2=f_3-f_1
+\quad
+\quad
+c_3=f_4-f_1
+\]
+
+\begin{eqnarray}
+f(r,s,t) 
+&=& c_0 + c_1 r + c_2 s + c_3 t \nonumber\\
+&=& f_1 + (f_2-f_1) r + (f_3-f_1) s + (f_4-f_1) t \nonumber\\
+&=& f_1 (1-r-s-t) + f_2 r + f_3 s + f_4 t \nonumber\\
+&=& \sum_i N_i(r,s,t) f_i \nonumber
+\end{eqnarray}
+
+Finally,
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+N_1(r,s,t) &=& 1-r-s-t \nonumber\\
+N_2(r,s,t) &=& r \nonumber\\
+N_3(r,s,t) &=& s \nonumber\\
+N_4(r,s,t) &=& t \nonumber
+\end{eqnarray}
+\end{mdframed}
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Triquadratic basis functions in 3D ($Q_2$)}
+\index{$Q_2$}
+
+\begin{eqnarray}
+N_{1}&=& 0.5r(r-1)  \;0.5s(s-1)\; 0.5t(t-1)  \nonumber\\
+N_{2}&=& 0.5r(r+1)  \;0.5s(s-1)\; 0.5t(t-1)  \nonumber\\
+N_{3}&=& 0.5r(r+1)  \;0.5s(s+1)\; 0.5t(t-1)  \nonumber\\
+N_{4}&=& 0.5r(r-1)  \;0.5s(s+1)\; 0.5t(t-1)  \nonumber\\
+N_{5}&=& 0.5r(r-1)  \;0.5s(s-1)\; 0.5t(t+1)  \nonumber\\
+N_{6}&=& 0.5r(r+1)  \;0.5s(s-1)\; 0.5t(t+1)  \nonumber\\
+N_{7}&=& 0.5r(r+1)  \;0.5s(s+1)\; 0.5t(t+1)  \nonumber\\
+N_{8}&=& 0.5r(r-1)  \;0.5s(s+1)\; 0.5t(t+1)  \nonumber\\
+N_{9}&=& (1.-r^2)   \;0.5s(s-1)\; 0.5t(t-1)  \nonumber\\
+N_{10}&=& 0.5r(r+1) \;(1-s^2)  \; 0.5t(t-1)  \nonumber\\
+N_{11}&=& (1.-r^2)  \;0.5s(s+1)\; 0.5t(t-1)  \nonumber\\
+N_{12}&=& 0.5r(r-1) \;(1-s^2)  \; 0.5t(t-1)  \nonumber\\
+N_{13}&=& (1.-r^2)  \;0.5s(s-1)\; 0.5t(t+1)  \nonumber\\
+N_{14}&=& 0.5r(r+1) \;(1-s^2)  \; 0.5t(t+1)  \nonumber\\
+N_{15}&=& (1.-r^2)  \;0.5s(s+1)\; 0.5t(t+1)  \nonumber\\
+N_{16}&=& 0.5r(r-1) \;(1-s^2)  \; 0.5t(t+1)  \nonumber\\
+N_{17}&=& 0.5r(r-1) \;0.5s(s-1)\; (1-t^2)  \nonumber\\
+N_{18}&=& 0.5r(r+1) \;0.5s(s-1)\; (1-t^2)  \nonumber\\
+N_{19}&=& 0.5r(r+1) \;0.5s(s+1)\; (1-t^2)  \nonumber\\
+N_{20}&=& 0.5r(r-1) \;0.5s(s+1)\; (1-t^2)  \nonumber\\
+N_{21}&=& (1-r^2)   \;(1-s^2)  \; 0.5t(t-1)  \nonumber\\
+N_{22}&=& (1-r^2)   \;0.5s(s-1)\; (1-t^2)  \nonumber\\
+N_{23}&=& 0.5r(r+1) \;(1-s^2)  \; (1-t^2)  \nonumber\\
+N_{24}&=& (1-r^2)   \;0.5s(s+1)\; (1-t^2)  \nonumber\\
+N_{25}&=& 0.5r(r-1) \;(1-s^2)  \; (1-t^2)  \nonumber\\
+N_{26}&=& (1-r^2)   \;(1-s^2)  \; 0.5t(t+1)  \nonumber\\
+N_{27}&=& (1-r^2)   \;(1-s^2)  \; (1-t^2)  \nonumber
+\end{eqnarray}
+

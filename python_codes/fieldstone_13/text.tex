@@ -135,28 +135,14 @@ contained within the support $\Omega_i$ of the trilinear interpolant $N_i$".
 \end{itemize}
 
 
-The setup is identical to the Stokes sphere experiment. The bash script {\sl runall} runs the code for many resolutions, both initial marker distribution and all three averaging types. The viscosity of the sphere has been 
+The setup is identical to the Stokes sphere experiment. The bash script {\sl script\_runall} 
+runs the code for many resolutions, both initial marker distribution and all four 
+averaging types. The viscosity of the sphere has been 
 set to $10^3$ while the viscosity of the surrounding fluid is 1. 
 The average density is always computed with an arithmetic mean. 
-Root mean square velocity results are shown hereunder:
 
-\begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_rand_proj1} 
-\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_poissondisc_proj1} 
-\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_reg_proj1}\\ 
-\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_rand_proj2} 
-\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_poissondisc_proj2} 
-\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_reg_proj2}\\ 
-\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_rand_proj3} 
-\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_poissondisc_proj3} 
-\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_reg_proj3}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_rand_proj4} 
-\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_poissondisc_proj4} 
-\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_reg_proj4}\\
-{\small Left column: random markers, middle column: Poisson disc, right column: regular markers.
-First row: elemental projection, second row: nodal 1 projection, 
-third row: nodal 2 projection, fourth row: nodal 3 projection. }
-\end{center}
+
+
 
 Conclusions:
 \begin{itemize}
@@ -179,9 +165,29 @@ the same value.
 \item harmonic mean yields overal the best results
 \end{itemize}
 
-%\begin{center}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_13/vrms_am} 
-\includegraphics[width=5.5cm]{python_codes/fieldstone_13/vrms_gm} 
-\includegraphics[width=5.5cm]{python_codes/fieldstone_13/vrms_hm}\\
-Left to right: arithmetic, geometric, harmonic averaging for viscosity. 
-%\end{center}
+\newpage
+Root mean square velocity results are shown hereunder:
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_rand_proj1} 
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_poissondisc_proj1} 
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_reg_proj1}\\ 
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_rand_proj2} 
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_poissondisc_proj2} 
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_reg_proj2}\\ 
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_rand_proj3} 
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_poissondisc_proj3} 
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_reg_proj3}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_rand_proj4} 
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_poissondisc_proj4} 
+\includegraphics[width=5cm]{python_codes/fieldstone_13/vrms_reg_proj4}\\
+{\small Left column: random markers, middle column: Poisson disc, right column: regular markers.
+First row: elemental projection, second row: nodal 1 projection, 
+third row: nodal 2 projection, fourth row: nodal 3 projection. }
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.cm]{python_codes/fieldstone_13/vrms_am} 
+\includegraphics[width=5.cm]{python_codes/fieldstone_13/vrms_gm} 
+\includegraphics[width=5.cm]{python_codes/fieldstone_13/vrms_hm}\\
+{\small Left to right: arithmetic, geometric, harmonic averaging for viscosity.}
+\end{center}

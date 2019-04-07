@@ -161,7 +161,7 @@ so
 \begin{array}{c}
 1 \\ 1 \\ 0 
 \end{array}
-\right) p+ 2 \eta \vec{\dot\varepsilon}
+\right) p+ {\bm C} \cdot \vec{\dot\varepsilon}
 =
 - \left(
 \begin{array}{c}
@@ -170,6 +170,26 @@ so
 \right)
 \vec{N^p} \cdot {\vec P}  + 
 {\bm C} \cdot  {\bm B}\cdot {\vec V}
+\end{equation}
+with
+\begin{equation}
+{\bm C}=
+\left(
+\begin{array}{ccc}
+2 & 0 & 0 \\
+0 & 2 & 0 \\
+0 & 0 & 1  
+\end{array}
+\right)
+\quad\quad\quad
+\vec{\dot \varepsilon} = 
+\left(
+\begin{array}{c}
+\dot \varepsilon_{xx} \\
+\dot \varepsilon_{yy} \\
+2\dot \varepsilon_{xy} 
+\end{array}
+\right)
 \end{equation}
 Let us define matrix ${\bm N}^p$ of size $3\times m_p$:
 \begin{equation}
@@ -333,10 +353,237 @@ Ultimately we obtain the following system for each element:
 Such a matrix is then generated for each element and then must me assembled into the 
 global F.E. matrix. 
 
+%--------------------------------------------------------------------------------
+\paragraph{On the physical dimensions of the Stokes matrix blocks}
 
+We start from the Stokes equations:
 
+\begin{eqnarray}
+- {\vec \nabla p} + {\vec \nabla} \cdot (2 \mu \dot{\bm \varepsilon} ) + \rho {\bm g} &=& 0  \\
+\vec \nabla \cdot \vec \upnu &=& 0 
+\end{eqnarray}
 
+The dimensions of the terms in the first equation are: $ML^{-2}T^{-2}$. The blocks $\K$ and $\G$
+stem from the weak form which obtained by multiplying the strong form equations by the (dimensionless)
+basis funstions and integrating over the domain, so that it follows that 
+\[
+[ \K \cdot \vec V] = [\G \cdot \vec P] = [\vec f] = ML^{-2}T^{-2} L^3 = MLT^{-2} 
+\]
+We can then easily deduce:
+\[
+[\K]=MT^{-1}
+\quad
+\quad
+[\G]=L^2
+\]
+%and finally this also imposes that $[\G^T V]= L^3T^{-1} $, and also that $[\C P]=L^3T^{-1} $,
+%i.e. $[\C]=M^{-1}L^4T$ (analogous to $h^3/\mu$, which is also the dimension of the Schur
+%complement $\SSS$). One can easily verify that $[\G^T \K \G]=[\C]$.
 
+%--------------------------------------------------------------------------------
+\paragraph{On elemental level mass balance.}
+
+Note that in what is above no assumption has been made about whether 
+the pressure basis functions are continuous or discontinuous from one 
+element to another. 
+
+Indeed, as mentioned in \cite{grsa}, since the 
+weak formulation of the momentum equation involves
+integration by parts of ${\vec \nabla }p$, the resulting weak form contains 
+no derivatives of pressure. This introduces the possibility of approximating it
+by functions (piecewise polynomials, of course) that are not $C^0$-continuous, 
+and indeed this has been done and is quite popular/useful. 
+
+It is then worth noting that {\sl only} discontinuous pressure 
+elements assure an element-level mass balance \cite{grsa}:
+if for instance $N_i^p$ is piecewise-constant on element $e$ (of value 1), the 
+elemental weak form of the mass conservervation equation is 
+\[
+\int_{\Omega_e} N_i^p {\vec \nabla} \cdot {\vec \upnu} = 
+\int_{\Omega_e} {\vec \nabla} \cdot {\vec \upnu} = 
+\int_{\Gamma_e} {\vec n} \cdot {\vec \upnu} = 0
+\]
+One potentially unwelcome consequence of using 
+discontinuous pressure elements is that they 
+do not possess uniquely defined pressure 
+on the element boundaries; they are dual valued there, 
+and often multi-valued at certain velocity nodes. 
+
+%--------------------------------------------------------------------------------
+\paragraph{On the ${\bm C}$ matrix}
+
+The relationship between deviatoric stress and deviatoric strain rate tensor is 
+\begin{eqnarray}
+\bm \tau 
+&=& 2 \eta \dot{\bm \varepsilon}^d \\
+&=& 2 \eta \left( \dot{\bm \varepsilon} -\frac{1}{3}(\vec\nabla\cdot\vec v) {\bm 1} \right) \\
+&=& 2 \eta
+\left[ 
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{xx} & \dot\varepsilon_{xy} & \dot\varepsilon_{xz} \\ 
+\dot\varepsilon_{yx} & \dot\varepsilon_{yy} & \dot\varepsilon_{yz} \\ 
+\dot\varepsilon_{zx} & \dot\varepsilon_{zy} & \dot\varepsilon_{zz} 
+\end{array}
+\right)
+-
+\frac{1}{3}
+(\dot\varepsilon_{xx} + \dot\varepsilon_{yy} +  \dot\varepsilon_{zz})
+\left(
+\begin{array}{ccc}
+1 &0 &0 \\
+0 &1 &0\\ 
+0 &0 &1 
+\end{array}
+\right)
+\right] \\
+&=& \frac{2}{3} \eta
+\left(
+\begin{array}{ccc}
+2\dot\varepsilon_{xx} -\dot\varepsilon_{yy} -\dot\varepsilon_{zz} & 
+3\dot\varepsilon_{xy} &
+3\dot\varepsilon_{xz} \\ 
+3\dot\varepsilon_{yx} & 
+-\dot\varepsilon_{yy} +2\dot\varepsilon_{yy} -\dot\varepsilon_{yy} & 
+3\dot\varepsilon_{yz} \\ 
+3\dot\varepsilon_{zx} & 
+3\dot\varepsilon_{zy} & 
+-\dot\varepsilon_{xx} -\dot\varepsilon_{yy} 2\dot\varepsilon_{zz}  
+\end{array}
+\right)
+\end{eqnarray}
+so that 
+\[
+\vec \tau  
+= \frac{2}{3} \eta
+\left(
+\begin{array}{c}
+2\dot\varepsilon_{xx} -\dot\varepsilon_{yy} -\dot\varepsilon_{zz} \\ 
+-\dot\varepsilon_{yy} +2\dot\varepsilon_{yy} -\dot\varepsilon_{yy} \\ 
+-\dot\varepsilon_{xx} -\dot\varepsilon_{yy} +2\dot\varepsilon_{zz} \\
+3\dot\varepsilon_{xy} \\
+3\dot\varepsilon_{xz} \\
+3\dot\varepsilon_{yz} 
+\end{array}
+\right)
+=
+\frac{\eta}{3}
+\left(
+\begin{array}{cccccc}
+4 & -2& -2& 0& 0& 0\\
+-2 & 4& -2& 0& 0& 0\\
+-2 & -2& 4& 0& 0& 0\\
+0 &0 &0 & 3& 0& 0\\
+0 &0 &0 & 0& 3& 0\\
+0 &0 &0 & 0& 0& 3 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\dot\varepsilon_{xx} \\
+\dot\varepsilon_{xx} \\
+\dot\varepsilon_{xx} \\
+2\dot\varepsilon_{xx} \\
+2\dot\varepsilon_{xx} \\
+2\dot\varepsilon_{xx} \\
+\end{array}
+\right)
+=
+{\bm C} \cdot \vec{\dot \varepsilon}
+\]
+In the case where we assume incompressible flow from the beginning, i.e. ${\bm \varepsilon}={\bm \varepsilon}^d$, then 
+\[
+\vec \tau  
+=
+\eta
+\left(
+\begin{array}{cccccc}
+2 & 0& 0& 0& 0& 0\\
+0 & 2& 0& 0& 0& 0\\
+0 & 0& 2& 0& 0& 0\\
+0 &0 &0 & 1& 0& 0\\
+0 &0 &0 & 0& 1& 0\\
+0 &0 &0 & 0& 0& 1 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\dot\varepsilon_{xx} \\
+\dot\varepsilon_{xx} \\
+\dot\varepsilon_{xx} \\
+2\dot\varepsilon_{xx} \\
+2\dot\varepsilon_{xx} \\
+2\dot\varepsilon_{xx} \\
+\end{array}
+\right)
+=
+{\bm C} \cdot \vec{\dot \varepsilon}
+\]
+
+%--------------------------------------------------------------------------------
+\paragraph{On going from 3D to 2D}
+
+The world is three-dimensional. However, for many different reasons one may wish to solve problems
+which are two-dimensional. 
+
+Following ASPECT manual, we  will think of two-dimensional models in the following way: 
+\begin{itemize}
+\item We assume that the domain we want to solve on is a two-dimensional cross section (in the $x-y$ plane) 
+that extends infinitely far in both negative and positive $z$ direction.  
+\item We assume that the velocity is zero in the $z$ direction and that all variables 
+have no variation in the $z$ direction. 
+\end{itemize}
+
+As a consequence, two-dimensional models are three-dimensional ones in which the $z$ 
+component of the velocity is zero and so are all $z$ derivatives.
+This allows to reduce the momentum conservation equations from 3 equations to 2 equations. 
+However, contrarily to what is often seen, the 3D definition of the deviatoric strain rate 
+remains, i.e. in other words:
+\[
+\dot{\bm \varepsilon}^d = \dot{\bm \varepsilon} -\frac{1}{3}(\vec\nabla\cdot\vec v) {\bm 1} 
+\]
+and not $1/2$.
+In light of all this, the full strain rate tensor and the 
+deviatoric strain rate tensor in 2D are given by:
+
+\[
+{\bm \varepsilon}=
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{xx} & \dot\varepsilon_{xy} & \dot\varepsilon_{xz} \\ 
+\dot\varepsilon_{yx} & \dot\varepsilon_{yy} & \dot\varepsilon_{yz} \\ 
+\dot\varepsilon_{zx} & \dot\varepsilon_{zy} & \dot\varepsilon_{zz} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+\frac{\partial u}{\partial x} & \frac{1}{2}\left(\frac{\partial u}{\partial y} + \frac{\partial v}{\partial x}\right)  & 0 \\
+\frac{1}{2}\left(\frac{\partial u}{\partial y} + \frac{\partial v}{\partial x}\right)  &  \frac{\partial v}{\partial y} & 0 \\
+0 & 0 & 0
+\end{array}
+\right)
+\]
+
+\[
+\dot{\bm \varepsilon}^d=
+\frac{1}{3}
+\left(
+\begin{array}{ccc}
+2 \frac{\partial u}{\partial x} - \frac{\partial v}{\partial y} &  
+ \frac{1}{2}\left(\frac{\partial u}{\partial y} + \frac{\partial v}{\partial x}\right) &
+0 \\ 
+ \frac{1}{2}\left(\frac{\partial u}{\partial y} + \frac{\partial v}{\partial x}\right) &
+- \frac{\partial u}{\partial x} +2 \frac{\partial v}{\partial y} &  
+0 \\ 
+0 & 0 & -\frac{\partial u}{\partial x} - \frac{\partial v}{\partial y}
+\end{array}
+\right)
+\]
+Although the bottom right term may be surprising, it is of no consequence when this expression of the deviatoric strain rate
+is used in the Stokes equation. 
 
 
 

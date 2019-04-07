@@ -1,192 +1,198 @@
-\indexentry{bulk viscosity|hyperpage}{10}
-\indexentry{dynamic viscosity|hyperpage}{10}
-\indexentry{second viscosity|hyperpage}{10}
-\indexentry{Boussinesq|hyperpage}{11}
-\indexentry{Lam\'e parameter|hyperpage}{12}
-\indexentry{shear modulus|hyperpage}{12}
-\indexentry{strain tensor|hyperpage}{12}
-\indexentry{bulk modulus|hyperpage}{12}
-\indexentry{Poisson ratio|hyperpage}{12}
-\indexentry{Young's modulus|hyperpage}{12}
-\indexentry{Dirichlet boundary condition|hyperpage}{14}
-\indexentry{Neumann boundary condition|hyperpage}{14}
-\indexentry{midpoint rule|hyperpage}{17}
-\indexentry{rectangle rule|hyperpage}{17}
-\indexentry{trapezoidal rule|hyperpage}{17}
-\indexentry{quadrature|hyperpage}{18}
-\indexentry{Newton-Cotes|hyperpage}{18}
-\indexentry{Gauss quadrature|hyperpage}{18}
-\indexentry{Legendre polynomial|hyperpage}{18}
-\indexentry{$P_m \times P_n$|hyperpage}{20}
-\indexentry{piecewise|hyperpage}{20}
-\indexentry{$P_m \times P_{-n}$|hyperpage}{20}
-\indexentry{$Q_m \times Q_n$|hyperpage}{20}
-\indexentry{$Q_2 \times Q_1$|hyperpage}{20}
-\indexentry{$Q_m \times Q_{-n}$|hyperpage}{20}
-\indexentry{$Q_m \times P_{-n}$|hyperpage}{20}
-\indexentry{bubble function|hyperpage}{20}
-\indexentry{conforming element|hyperpage}{20}
-\indexentry{non-conforming element|hyperpage}{20}
-\indexentry{$Q_1$|hyperpage}{21}
-\indexentry{$Q_2$|hyperpage}{21}
-\indexentry{$Q_3$|hyperpage}{22}
-\indexentry{basis functions|hyperpage}{25}
-\indexentry{$Q_1$|hyperpage}{25}
-\indexentry{$Q_2$|hyperpage}{27}
-\indexentry{$Q_3$|hyperpage}{28}
-\indexentry{divergence free|hyperpage}{30}
-\indexentry{strong form|hyperpage}{30}
-\indexentry{weak form|hyperpage}{30}
-\indexentry{penalty formulation|hyperpage}{30}
-\indexentry{weak form|hyperpage}{31}
-\indexentry{static condensation|hyperpage}{38}
-\indexentry{MMS|hyperpage}{39}
-\indexentry{method of manufactured solutions|hyperpage}{39}
-\indexentry{CSR|hyperpage}{43}
-\indexentry{Compressed Sparse Row|hyperpage}{43}
-\indexentry{CSC|hyperpage}{43}
-\indexentry{Compressed Sparse Column|hyperpage}{43}
-\indexentry{convex polygon|hyperpage}{46}
-\indexentry{structured grid|hyperpage}{46}
-\indexentry{unstructured grid|hyperpage}{46}
-\indexentry{connectivity array|hyperpage}{47}
-\indexentry{tensor invariant|hyperpage}{49}
-\indexentry{VRM|hyperpage}{50}
-\indexentry{Viscosity Rescaling Method|hyperpage}{50}
-\indexentry{von Mises|hyperpage}{50}
-\indexentry{cohesion|hyperpage}{50}
-\indexentry{Drucker-Prager|hyperpage}{50}
-\indexentry{pressure smoothing|hyperpage}{51}
-\indexentry{checkerboard|hyperpage}{51}
-\indexentry{pressure scaling|hyperpage}{53}
-\indexentry{Schur complement|hyperpage}{55}
-\indexentry{SPD|hyperpage}{55}
-\indexentry{CG|hyperpage}{55}
-\indexentry{conjugate gradient|hyperpage}{55}
-\indexentry{preconditioned conjugate gradient|hyperpage}{57}
-\indexentry{hyperbolic PDE|hyperpage}{64}
-\indexentry{isoparametric|hyperpage}{65}
-\indexentry{Newton's method|hyperpage}{70}
-\indexentry{$Q_1 \times P_0$|hyperpage}{73}
-\indexentry{penalty formulation|hyperpage}{73}
-\indexentry{isothermal|hyperpage}{73}
-\indexentry{isoviscous|hyperpage}{73}
-\indexentry{analytical solution|hyperpage}{73}
-\indexentry{penalty formulation|hyperpage}{76}
-\indexentry{buoyancy-driven flow|hyperpage}{76}
-\indexentry{Stokes sphere|hyperpage}{76}
-\indexentry{$Q_1 \times P_0$|hyperpage}{80}
-\indexentry{penalty formulation|hyperpage}{80}
-\indexentry{isothermal|hyperpage}{80}
-\indexentry{isoviscous|hyperpage}{80}
-\indexentry{$Q_1 \times P_0$|hyperpage}{82}
-\indexentry{incompressible flow|hyperpage}{82}
-\indexentry{penalty formulation|hyperpage}{82}
-\indexentry{isothermal|hyperpage}{82}
-\indexentry{non-isoviscous|hyperpage}{82}
-\indexentry{analytical solution|hyperpage}{82}
-\indexentry{$Q_1 \times P_0$|hyperpage}{88}
-\indexentry{incompressible flow|hyperpage}{88}
-\indexentry{penalty formulation|hyperpage}{88}
-\indexentry{isothermal|hyperpage}{88}
-\indexentry{non-isoviscous|hyperpage}{88}
-\indexentry{nonlinear rheology|hyperpage}{88}
-\indexentry{$Q_1 \times P_0$|hyperpage}{95}
-\indexentry{incompressible flow|hyperpage}{95}
-\indexentry{penalty formulation|hyperpage}{95}
-\indexentry{isothermal|hyperpage}{95}
-\indexentry{non-isoviscous|hyperpage}{95}
-\indexentry{particle-in-cell|hyperpage}{95}
-\indexentry{arithmetic mean|hyperpage}{96}
-\indexentry{geometric mean|hyperpage}{96}
-\indexentry{harmonic mean|hyperpage}{96}
-\indexentry{$Q_1 \times P_0$|hyperpage}{99}
-\indexentry{incompressible flow|hyperpage}{99}
-\indexentry{mixed formulation|hyperpage}{99}
-\indexentry{isothermal|hyperpage}{99}
-\indexentry{isoviscous|hyperpage}{99}
-\indexentry{analytical solution|hyperpage}{99}
-\indexentry{pressure smoothing|hyperpage}{99}
-\indexentry{$Q_1 \times P_0$|hyperpage}{103}
-\indexentry{incompressible flow|hyperpage}{103}
-\indexentry{mixed formulation|hyperpage}{103}
-\indexentry{Schur complement approach|hyperpage}{103}
-\indexentry{isothermal|hyperpage}{103}
-\indexentry{isoviscous|hyperpage}{103}
-\indexentry{analytical solution|hyperpage}{103}
+\indexentry{bulk viscosity|hyperpage}{11}
+\indexentry{dynamic viscosity|hyperpage}{11}
+\indexentry{second viscosity|hyperpage}{11}
+\indexentry{Boussinesq|hyperpage}{12}
+\indexentry{Lam\'e parameter|hyperpage}{13}
+\indexentry{shear modulus|hyperpage}{13}
+\indexentry{strain tensor|hyperpage}{13}
+\indexentry{bulk modulus|hyperpage}{13}
+\indexentry{Poisson ratio|hyperpage}{13}
+\indexentry{Young's modulus|hyperpage}{13}
+\indexentry{Dirichlet boundary condition|hyperpage}{15}
+\indexentry{Neumann boundary condition|hyperpage}{15}
+\indexentry{midpoint rule|hyperpage}{18}
+\indexentry{rectangle rule|hyperpage}{18}
+\indexentry{trapezoidal rule|hyperpage}{18}
+\indexentry{quadrature|hyperpage}{19}
+\indexentry{Newton-Cotes|hyperpage}{19}
+\indexentry{Gauss quadrature|hyperpage}{19}
+\indexentry{Legendre polynomial|hyperpage}{19}
+\indexentry{$P_m \times P_n$|hyperpage}{21}
+\indexentry{piecewise|hyperpage}{21}
+\indexentry{$P_m \times P_{-n}$|hyperpage}{21}
+\indexentry{$Q_m \times Q_n$|hyperpage}{21}
+\indexentry{$Q_2 \times Q_1$|hyperpage}{21}
+\indexentry{$Q_m \times Q_{-n}$|hyperpage}{21}
+\indexentry{$Q_m \times P_{-n}$|hyperpage}{21}
+\indexentry{bubble function|hyperpage}{21}
+\indexentry{conforming element|hyperpage}{21}
+\indexentry{non-conforming element|hyperpage}{21}
+\indexentry{$Q_1$|hyperpage}{22}
+\indexentry{$Q_2$|hyperpage}{22}
+\indexentry{$Q_3$|hyperpage}{23}
+\indexentry{basis functions|hyperpage}{26}
+\indexentry{$Q_1$|hyperpage}{26}
+\indexentry{$Q_2$|hyperpage}{28}
+\indexentry{$Q_2^s$|hyperpage}{29}
+\indexentry{$Q_3$|hyperpage}{30}
+\indexentry{$P_1$|hyperpage}{31}
+\indexentry{$P_2$|hyperpage}{31}
+\indexentry{$P_3$|hyperpage}{32}
+\indexentry{$P_1$|hyperpage}{33}
+\indexentry{$Q_2$|hyperpage}{34}
+\indexentry{divergence free|hyperpage}{35}
+\indexentry{strong form|hyperpage}{35}
+\indexentry{weak form|hyperpage}{35}
+\indexentry{penalty formulation|hyperpage}{36}
+\indexentry{weak form|hyperpage}{37}
+\indexentry{static condensation|hyperpage}{45}
+\indexentry{MMS|hyperpage}{46}
+\indexentry{method of manufactured solutions|hyperpage}{46}
+\indexentry{CSR|hyperpage}{53}
+\indexentry{Compressed Sparse Row|hyperpage}{53}
+\indexentry{CSC|hyperpage}{53}
+\indexentry{Compressed Sparse Column|hyperpage}{53}
+\indexentry{convex polygon|hyperpage}{56}
+\indexentry{structured grid|hyperpage}{56}
+\indexentry{unstructured grid|hyperpage}{56}
+\indexentry{connectivity array|hyperpage}{57}
+\indexentry{tensor invariant|hyperpage}{59}
+\indexentry{VRM|hyperpage}{60}
+\indexentry{Viscosity Rescaling Method|hyperpage}{60}
+\indexentry{von Mises|hyperpage}{60}
+\indexentry{cohesion|hyperpage}{60}
+\indexentry{Drucker-Prager|hyperpage}{60}
+\indexentry{pressure smoothing|hyperpage}{61}
+\indexentry{checkerboard|hyperpage}{61}
+\indexentry{pressure scaling|hyperpage}{63}
+\indexentry{Schur complement|hyperpage}{65}
+\indexentry{SPD|hyperpage}{65}
+\indexentry{CG|hyperpage}{65}
+\indexentry{conjugate gradient|hyperpage}{65}
+\indexentry{preconditioned conjugate gradient|hyperpage}{67}
+\indexentry{hyperbolic PDE|hyperpage}{74}
+\indexentry{isoparametric|hyperpage}{75}
+\indexentry{Newton's method|hyperpage}{80}
+\indexentry{$Q_1 \times P_0$|hyperpage}{84}
+\indexentry{penalty formulation|hyperpage}{84}
+\indexentry{isothermal|hyperpage}{84}
+\indexentry{isoviscous|hyperpage}{84}
+\indexentry{analytical solution|hyperpage}{84}
+\indexentry{penalty formulation|hyperpage}{86}
+\indexentry{buoyancy-driven flow|hyperpage}{86}
+\indexentry{Stokes sphere|hyperpage}{86}
+\indexentry{$Q_1 \times P_0$|hyperpage}{90}
+\indexentry{penalty formulation|hyperpage}{90}
+\indexentry{isothermal|hyperpage}{90}
+\indexentry{isoviscous|hyperpage}{90}
+\indexentry{$Q_1 \times P_0$|hyperpage}{92}
+\indexentry{incompressible flow|hyperpage}{92}
+\indexentry{penalty formulation|hyperpage}{92}
+\indexentry{isothermal|hyperpage}{92}
+\indexentry{non-isoviscous|hyperpage}{92}
+\indexentry{analytical solution|hyperpage}{92}
+\indexentry{$Q_1 \times P_0$|hyperpage}{98}
+\indexentry{incompressible flow|hyperpage}{98}
+\indexentry{penalty formulation|hyperpage}{98}
+\indexentry{isothermal|hyperpage}{98}
+\indexentry{non-isoviscous|hyperpage}{98}
+\indexentry{nonlinear rheology|hyperpage}{98}
 \indexentry{$Q_1 \times P_0$|hyperpage}{105}
 \indexentry{incompressible flow|hyperpage}{105}
-\indexentry{mixed formulation|hyperpage}{105}
-\indexentry{Schur complement approach|hyperpage}{105}
+\indexentry{penalty formulation|hyperpage}{105}
 \indexentry{isothermal|hyperpage}{105}
 \indexentry{non-isoviscous|hyperpage}{105}
-\indexentry{Stokes sphere|hyperpage}{105}
-\indexentry{$Q_2 \times Q_1$|hyperpage}{106}
-\indexentry{pressure normalisation|hyperpage}{107}
-\indexentry{$Q_2 \times Q_1$|hyperpage}{111}
-\indexentry{incompressible flow|hyperpage}{111}
-\indexentry{mixed formulation|hyperpage}{111}
-\indexentry{isothermal|hyperpage}{111}
-\indexentry{isoviscous|hyperpage}{111}
-\indexentry{analytical solution|hyperpage}{111}
-\indexentry{$Q_3 \times Q_2$|hyperpage}{114}
-\indexentry{incompressible flow|hyperpage}{114}
-\indexentry{mixed formulation|hyperpage}{114}
-\indexentry{isothermal|hyperpage}{114}
-\indexentry{isoviscous|hyperpage}{114}
-\indexentry{analytical solution|hyperpage}{114}
-\indexentry{nonconforming $Q_1 \times P_0$|hyperpage}{117}
-\indexentry{incompressible flow|hyperpage}{117}
-\indexentry{mixed formulation|hyperpage}{117}
-\indexentry{isothermal|hyperpage}{117}
-\indexentry{non-isoviscous|hyperpage}{117}
-\indexentry{analytical solution|hyperpage}{117}
-\indexentry{pressure smoothing|hyperpage}{117}
-\indexentry{$Q_1 \times P_0$|hyperpage}{121}
+\indexentry{particle-in-cell|hyperpage}{105}
+\indexentry{arithmetic mean|hyperpage}{106}
+\indexentry{geometric mean|hyperpage}{106}
+\indexentry{harmonic mean|hyperpage}{106}
+\indexentry{$Q_1 \times P_0$|hyperpage}{109}
+\indexentry{incompressible flow|hyperpage}{109}
+\indexentry{mixed formulation|hyperpage}{109}
+\indexentry{isothermal|hyperpage}{109}
+\indexentry{isoviscous|hyperpage}{109}
+\indexentry{analytical solution|hyperpage}{109}
+\indexentry{pressure smoothing|hyperpage}{109}
+\indexentry{$Q_1 \times P_0$|hyperpage}{113}
+\indexentry{incompressible flow|hyperpage}{113}
+\indexentry{mixed formulation|hyperpage}{113}
+\indexentry{Schur complement approach|hyperpage}{113}
+\indexentry{isothermal|hyperpage}{113}
+\indexentry{isoviscous|hyperpage}{113}
+\indexentry{analytical solution|hyperpage}{113}
+\indexentry{$Q_1 \times P_0$|hyperpage}{115}
+\indexentry{incompressible flow|hyperpage}{115}
+\indexentry{mixed formulation|hyperpage}{115}
+\indexentry{Schur complement approach|hyperpage}{115}
+\indexentry{isothermal|hyperpage}{115}
+\indexentry{non-isoviscous|hyperpage}{115}
+\indexentry{Stokes sphere|hyperpage}{115}
+\indexentry{$Q_2 \times Q_1$|hyperpage}{116}
+\indexentry{pressure normalisation|hyperpage}{117}
+\indexentry{$Q_2 \times Q_1$|hyperpage}{121}
 \indexentry{incompressible flow|hyperpage}{121}
 \indexentry{mixed formulation|hyperpage}{121}
 \indexentry{isothermal|hyperpage}{121}
 \indexentry{isoviscous|hyperpage}{121}
 \indexentry{analytical solution|hyperpage}{121}
-\indexentry{pressure smoothing|hyperpage}{121}
-\indexentry{thermal expansion|hyperpage}{123}
-\indexentry{compressibility|hyperpage}{123}
-\indexentry{bulk modulus|hyperpage}{123}
-\indexentry{work against gravity|hyperpage}{126}
-\indexentry{$Q_1 \times P_0$|hyperpage}{128}
-\indexentry{compressible flow|hyperpage}{128}
-\indexentry{mixed formulation|hyperpage}{128}
-\indexentry{isoviscous|hyperpage}{128}
-\indexentry{analytical solution|hyperpage}{128}
-\indexentry{pressure smoothing|hyperpage}{128}
-\indexentry{$Q_1 \times P_0$|hyperpage}{140}
-\indexentry{incompressible flow|hyperpage}{140}
-\indexentry{mixed formulation|hyperpage}{140}
-\indexentry{isothermal|hyperpage}{140}
-\indexentry{numerical benchmark|hyperpage}{140}
-\indexentry{$Q_1 \times P_0$|hyperpage}{142}
-\indexentry{incompressible flow|hyperpage}{142}
-\indexentry{mixed formulation|hyperpage}{142}
-\indexentry{isothermal|hyperpage}{142}
-\indexentry{nonlinear|hyperpage}{142}
-\indexentry{$Q_1 \times P_0$|hyperpage}{146}
-\indexentry{incompressible flow|hyperpage}{146}
-\indexentry{mixed formulation|hyperpage}{146}
-\indexentry{isothermal|hyperpage}{146}
-\indexentry{isoviscous|hyperpage}{146}
-\indexentry{analytical solution|hyperpage}{146}
-\indexentry{pressure smoothing|hyperpage}{146}
-\indexentry{CBF|hyperpage}{146}
-\indexentry{Rens Elbertsen|hyperpage}{147}
-\indexentry{$Q_1 \times P_0$|hyperpage}{161}
-\indexentry{incompressible flow|hyperpage}{161}
-\indexentry{mixed formulation|hyperpage}{161}
-\indexentry{open boundary conditions|hyperpage}{161}
-\indexentry{isoviscous|hyperpage}{161}
-\indexentry{$Q_1 \times P_0$|hyperpage}{162}
-\indexentry{incompressible flow|hyperpage}{162}
-\indexentry{penalty formulation|hyperpage}{162}
-\indexentry{isothermal|hyperpage}{162}
-\indexentry{non-isoviscous|hyperpage}{162}
-\indexentry{analytical solution|hyperpage}{162}
-\indexentry{Rens Elbertsen|hyperpage}{168}
+\indexentry{$Q_3 \times Q_2$|hyperpage}{124}
+\indexentry{incompressible flow|hyperpage}{124}
+\indexentry{mixed formulation|hyperpage}{124}
+\indexentry{isothermal|hyperpage}{124}
+\indexentry{isoviscous|hyperpage}{124}
+\indexentry{analytical solution|hyperpage}{124}
+\indexentry{nonconforming $Q_1 \times P_0$|hyperpage}{127}
+\indexentry{incompressible flow|hyperpage}{127}
+\indexentry{mixed formulation|hyperpage}{127}
+\indexentry{isothermal|hyperpage}{127}
+\indexentry{non-isoviscous|hyperpage}{127}
+\indexentry{analytical solution|hyperpage}{127}
+\indexentry{pressure smoothing|hyperpage}{127}
+\indexentry{$Q_1 \times P_0$|hyperpage}{131}
+\indexentry{incompressible flow|hyperpage}{131}
+\indexentry{mixed formulation|hyperpage}{131}
+\indexentry{isothermal|hyperpage}{131}
+\indexentry{isoviscous|hyperpage}{131}
+\indexentry{analytical solution|hyperpage}{131}
+\indexentry{pressure smoothing|hyperpage}{131}
+\indexentry{thermal expansion|hyperpage}{133}
+\indexentry{compressibility|hyperpage}{133}
+\indexentry{bulk modulus|hyperpage}{133}
+\indexentry{work against gravity|hyperpage}{136}
+\indexentry{$Q_1 \times P_0$|hyperpage}{138}
+\indexentry{compressible flow|hyperpage}{138}
+\indexentry{mixed formulation|hyperpage}{138}
+\indexentry{isoviscous|hyperpage}{138}
+\indexentry{analytical solution|hyperpage}{138}
+\indexentry{pressure smoothing|hyperpage}{138}
+\indexentry{$Q_1 \times P_0$|hyperpage}{150}
+\indexentry{incompressible flow|hyperpage}{150}
+\indexentry{mixed formulation|hyperpage}{150}
+\indexentry{isothermal|hyperpage}{150}
+\indexentry{numerical benchmark|hyperpage}{150}
+\indexentry{$Q_1 \times P_0$|hyperpage}{152}
+\indexentry{incompressible flow|hyperpage}{152}
+\indexentry{mixed formulation|hyperpage}{152}
+\indexentry{isothermal|hyperpage}{152}
+\indexentry{nonlinear|hyperpage}{152}
+\indexentry{$Q_1 \times P_0$|hyperpage}{156}
+\indexentry{incompressible flow|hyperpage}{156}
+\indexentry{mixed formulation|hyperpage}{156}
+\indexentry{isothermal|hyperpage}{156}
+\indexentry{isoviscous|hyperpage}{156}
+\indexentry{analytical solution|hyperpage}{156}
+\indexentry{pressure smoothing|hyperpage}{156}
+\indexentry{CBF|hyperpage}{156}
+\indexentry{Rens Elbertsen|hyperpage}{157}
+\indexentry{$Q_1 \times P_0$|hyperpage}{171}
+\indexentry{incompressible flow|hyperpage}{171}
+\indexentry{mixed formulation|hyperpage}{171}
+\indexentry{open boundary conditions|hyperpage}{171}
+\indexentry{isoviscous|hyperpage}{171}
+\indexentry{$Q_1 \times P_0$|hyperpage}{172}
+\indexentry{incompressible flow|hyperpage}{172}
+\indexentry{penalty formulation|hyperpage}{172}
+\indexentry{isothermal|hyperpage}{172}
+\indexentry{non-isoviscous|hyperpage}{172}
+\indexentry{analytical solution|hyperpage}{172}
+\indexentry{Rens Elbertsen|hyperpage}{178}

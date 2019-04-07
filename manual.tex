@@ -50,7 +50,7 @@
 \newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
 \newcommandx{\change}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
 \newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
-\newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!15,bordercolor=Plum,#1]{#2}}
+\newcommandx{\improvement}[2][1=]{\todo[inline,linecolor=Plum,backgroundcolor=Plum!15,bordercolor=Plum,#1]{#2}}
 \newcommandx{\thiswillnotshow}[2][1=]{\todo[disable,#1]{#2}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,23 +185,26 @@ of {\sl stone}s which echoes the primary application of these codes: geodynamic 
 
 \subsection{Elements and basis functions in 1D} \input{elements1D} %-----------
 
-\subsection{Elements and basis functions in 2D} \input{elements} %-------------
+\subsection{Elements and basis functions in 2D} \input{elements2D} %-----------
+
+\subsection{Elements and basis functions in 3D} \input{elements3D} %-----------
 
 \newpage 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Solving the flow equations with the FEM} %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Solving the flow equations with the FEM} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{incompressible} %-------------------------------------------------------
 
 \subsection{strong and weak forms} \input{strongweak} %------------------------
 
-\subsection{The penalty approach for viscous flow} \input{penalty} %----------------------------
+\subsection{Which velocity-pressure pair ?} \input{pair} %---------------------
 
-\subsection{The mixed FEM for viscous flow} \input{mixed} %-------------------------------------
+\subsection{The penalty approach for viscous flow} \input{penalty} %-----------
 
-\subsection{Solving the elastic equations}
+\subsection{The mixed FEM for viscous flow} \input{mixed} %--------------------
 
-\subsection{Solving the heat transport equation} \input{hte_fem}
+\subsection{Solving the elastic equations} %-----------------------------------
 
+\subsection{Solving the heat transport equation} \input{hte_fem} %-------------
 
 
 %\subsection{Solving procedures}
@@ -230,48 +233,36 @@ of {\sl stone}s which echoes the primary application of these codes: geodynamic 
 
 \newpage %---------------------------------------------------------------------
 \subsection{The method of manufactured solutions} \input{mms} %----------------
-
 \newpage %---------------------------------------------------------------------
 \subsection{Assigning values to quadrature points} \input{averagings} %--------
-
 \newpage %---------------------------------------------------------------------
 \subsection{Matrix (Sparse) storage} \input{storage} %-------------------------
-
 \newpage %---------------------------------------------------------------------
 \subsection{Mesh generation} \label{subsection_meshes} \input{meshes} %--------
-
 \newpage %---------------------------------------------------------------------
 \subsection{Visco-Plasticity} \input{viscoplasticity} %------------------------
-
 \newpage %---------------------------------------------------------------------
 \subsection{Pressure smoothing} \input{pressure_smoothing} %-------------------
-
 \newpage %---------------------------------------------------------------------
 \subsection{Pressure scaling} \input{pressure_scaling} %-----------------------
-
 \newpage %---------------------------------------------------------------------
 \subsection{Pressure normalisation} \input{pressure_normalisation} %----------
-
 \newpage %---------------------------------------------------------------------
 \subsection{The choice of solvers\label{sec_solvers}} \input{solvers} %--------
-
 \newpage %---------------------------------------------------------------------
 \subsection{The consistent boundary flux (CBF)} \input{CBF} %------------------
-
 \newpage %---------------------------------------------------------------------
 \subsection{The value of the timestep} \input{cfl} %---------------------------
-
 \newpage %---------------------------------------------------------------------
 \subsection{mappings} \input{mappings} %---------------------------------------
-
 \newpage %---------------------------------------------------------------------
 \subsection{Exporting data to vtk format} \input{exporting_to_vtk} %-----------
-
 \newpage %---------------------------------------------------------------------
 \subsection{Runge-Kutta methods} \input{rungekutta} %--------------------------
-
 \newpage %---------------------------------------------------------------------
 \subsection{Am I in or not?} \input{amiin} %-----------------------------------
+\newpage %---------------------------------------------------------------------
+\subsection{Error measurements and convergence rates} \input{errors} %---------
 
 
 
