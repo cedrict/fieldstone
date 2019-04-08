@@ -1,0 +1,129 @@
+\subsubsection{Single layer with imposed temperature b.c.}
+
+Let us take a single layer of material characterised by
+a heat capacity $c_p$, a heat conductivity $k$
+and a heat production term $H$.
+
+\begin{center}
+\includegraphics[width=5cm]{images/initial_temperature/tempcond.png}
+\end{center}
+
+The Heat transport equation writes
+\[
+\rho c_p ( \frac{\partial T}{\partial t} + {\vec v} \cdot {\vec \nabla} { T}) = 
+{\vec \nabla} \cdot (k {\vec \nabla} T) + \rho H
+\]
+At steady state and in the absence of a velocity field, and assuming
+that the material properties to be independent of time and space, and that
+there is no heat production ($H=0$), this equation
+simplifies to
+\[
+\Delta T =0 
+\]
+Assuming the layer to be parallel to the $x$-axis, this yields to write
+\[
+T(x,y)=T(y)=\alpha T+ \beta
+\]
+In order to specify the constants $\alpha$ and $\beta$, we need two constraints.
+
+At the bottom of the layer $y=y_b$ a temperature $T_b$ is prescribed while a temperature
+$T_t$ is prescribed at the top with $y=y_t$. This ultimately yields a temperature field in
+the layer given by
+\[
+\boxed{
+T(y) = \frac{T_t-T_b}{y_t-y_b}(y-y_b) + T_b
+}
+\]
+
+If now the heat production coefficient is not zero, the differential equation
+reads
+\[
+ k \Delta T + H = 0 
+\]
+The temperature field is then expected to be of the form
+\[
+T(y)= - \frac{H}{2k} y^2 + \alpha y + \beta 
+\]
+Supplied again with the same boundary conditions, this leads to
+\[
+\beta=T_b + \frac{H}{2k} y_b^2 - \alpha y_b
+\]
+ie,
+\[
+T(y) = -\frac{H}{2k} (y^2-y_b^2) + \alpha (y-y_b) + T_b
+\]
+and finally
+\[
+\alpha =  \frac{T_t-T_b}{y_t-y_b}  + \frac{H}{2k}(y_b+y_t)
+\]
+or,
+\[
+T(y) = -\frac{H}{2k} (y^2-y_b^2) + \left( \frac{T_t-T_b}{y_t-y_b}  + \frac{H}{2k}(y_b+y_t)   \right) (y-y_b) + T_b
+\]
+
+Taking $H=0$ in this equation obviously yields the temperature field obtained previously.
+Taking $k=2.25$, $T_t=0C$, $T_b=550C$, $y_t=660km$, $y_b=630km$ yields the following
+temperature profiles and heat fluxes when the heat production $H$ varies:
+\begin{center}
+\includegraphics[width=5cm]{images/initial_temperature/temperature1.pdf}
+\includegraphics[width=5cm]{images/initial_temperature/heatflux1.pdf}
+\end{center}
+Looking at the values at the top, which are somewhat estimated to be
+about $55-65mW/m^2$ \cite[table 8.6]{jama}, one sees that value $H=0.8e-6$ yields a very acceptable
+heat flux.
+Looking at the bottom, the heat flux is then about $0.03W/m^2$
+which is somewhat problematic since the heat flux at the Moho
+is reported to be somewhere between 10 and 20 $mW/m^2$ in \cite[table 7.1]{jama}.
+
+
+%-----------------------------------------------------
+\subsection{Single layer with imposed heat flux b.c.}
+
+Let us now assume that heat fluxes are imposed at the top and bottom of the layer:
+\begin{center} 
+\includegraphics[width=5cm]{images/initial_temperature/tempcond2.png}
+\end{center}
+
+We start again from the ODE
+\[
+k \Delta T + H = 0 
+\]
+but only integrate it once:
+\[
+k \frac{dT}{dy}  + H y + \alpha  = 0 
+\]
+At the bottom $q=k(dT/dy)|_{y=y_b} = q_b$ and at the top
+$q=k(dT/dy)|_{y=y_t} = q_t$ so that 
+
+\todo[inline]{to finish}
+
+
+ 
+%-----------------------------------------------------
+\subsection{Single layer with imposed heat flux and temperature b.c. }
+
+\begin{center}
+\includegraphics[width=5cm]{images/initial_temperature/tempcond3.png}
+\end{center}
+
+\todo[inline]{to finish}
+
+
+%---------------------------------------------------------------
+\subsubsection{Half cooling space}
+
+%---------------------------------------------------------------
+\subsubsection{Plate model}
+
+%---------------------------------------------------------------
+\subsubsection{McKenzie slab}
+
+
+
+
+
+
+
+
+
+
