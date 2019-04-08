@@ -128,19 +128,19 @@ u$, pressure $p$ and temperature $T$:
 \begin{align}
   \label{eq:stokes-1}
   -\vec\nabla \cdot \left[2\eta \left(\dot{\bm \varepsilon}(\vec \upnu)
-                                  - \frac{1}{3}(\vec\nabla \cdot \bm v)\mathbf 1\right)
+                                  - \frac{1}{3}(\vec\nabla \cdot \vec \upnu)\mathbf 1\right)
                 \right] + \vec\nabla p &=
-  \rho \bm g
+  \rho \vec g
   &
   & \textrm{in $\Omega$},
   \\
   \label{eq:stokes-2}
-  \vec\nabla \cdot (\rho \bm v) &= 0
+  \vec\nabla \cdot (\rho \vec v) &= 0
   &
   & \textrm{in $\Omega$},
   \\
   \label{eq:temperature}
-  \rho C_p \left(\frac{\partial T}{\partial t} + \bm v\cdot\vec\nabla T\right)
+  \rho C_p \left(\frac{\partial T}{\partial t} + \vec \upnu\cdot\vec\nabla T\right)
   - \vec\nabla\cdot k\vec\nabla T
   &=
   \rho H
@@ -162,8 +162,7 @@ u$, pressure $p$ and temperature $T$:
   & \textrm{in $\Omega$},
   \notag
 \end{align}
-where $\dot{\bm \varepsilon}(\vec\upnu) = \frac{1}{2}(\nabla \mathbf u + \nabla\mathbf
-u^T)$ is the symmetric gradient of the velocity (often called the
+where $\dot{\bm \varepsilon}(\vec\upnu) = \frac{1}{2}(\vec\nabla \vec\upnu + \vec\nabla \vec\upnu^T)$ is the symmetric gradient of the velocity (often called the
 \textit{strain rate}).%
 
 In this set of equations, \eqref{eq:stokes-1} and \eqref{eq:stokes-2}
@@ -544,8 +543,14 @@ given by a steady state conductive geotherm.
 \item Temperature (K):
 \item Viscosity (Pa.s):
 \item Density (kg/m$^3$):
-\item Heat capacity ():
-\item Heat conductivity ():
+\item Heat capacity $c_p$ ($J.K^{-1}.kg^{-1}$): It is the measure of the heat energy required to increase the 
+temperature of a unit quantity of a substance by unit degree.
+\item Heat conductivity, or thermal conductivity $k$ ($W.m^{-1}.K^{-1}$). It is the property of a material that indicates its ability to conduct     heat. It appears primarily in Fourier's Law for heat conduction.
+\item Heat diffusivity: $\kappa=k/(\rho c_p)$ ($m^2.s^{-1}$). Substances with high thermal diffusivity rapidly adjust their temperature to that of their surroundings, because they 
+conduct heat quickly in comparison to their volumetric heat capacity or 'thermal bulk'.
+\item thermal expansion $\alpha$ (K$^{-1}$): it is the tendency of a matter to change in volume in response to a change in
+temperature.
+
 \end{itemize}
 
 

@@ -93,8 +93,7 @@ over code efficiency. I have also chosen to avoid resorting to multiple code
 files or even functions to favour a sequential reading of the codes. 
 These codes are not designed to form the basis of a real life application:
 Existing open source highly optimised codes shoud be preferred, such as 
-ASPECT \cite{krhb12,hedg17}, 
-CITCOM, LAMEM, PTATIN, PYLITH, ... 
+ASPECT \cite{krhb12,hedg17}, CITCOM, LAMEM, PTATIN, PYLITH, ... 
 
 All kinds of feedback is welcome on the text (grammar, typos, ...) or on the 
 code(s). You will have my eternal gratitude if you wish to contribute an 
@@ -153,17 +152,18 @@ python3.6 -m pip install --user numpy scipy matplotlib
 \end{verbatim}
 
 \subsection{What is a fieldstone?} %-------------------------------------------
+Simply put, it is stone collected from the surface of fields where it 
+occurs naturally. It also stands for the bad acronym: {\sl fi}nite 
+{\sl el}ement {\sl d}eformation of {\sl stone}s which echoes the primary 
+application of these codes: geodynamic modelling.
 
-Simply put, it is stone collected from the surface of fields where it occurs naturally.
-It also stands for the bad acronym: {\sl fi}nite {\sl el}ement {\sl d}eformation
-of {\sl stone}s which echoes the primary application of these codes: geodynamic modelling.
+\subsection{Why the Finite Element method?} \input{why} %----------------------
 
-
+\subsection{Notations} \input{notations} %-------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{list} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -171,53 +171,35 @@ of {\sl stone}s which echoes the primary application of these codes: geodynamic 
 \input{physics} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The building blocks of the Finite Element Method} %%%%%%%%%%%%%%%%%%%%
-
 \subsection{Numerical integration} \input{quadrature} %------------------------
-
 \subsection{The mesh}
-
 \subsection{A bit of FE terminology} \input{terminology} %---------------------
-
 \subsection{Elements and basis functions in 1D} \input{elements1D} %-----------
-
 \subsection{Elements and basis functions in 2D} \input{elements2D} %-----------
-
 \subsection{Elements and basis functions in 3D} \input{elements3D} %-----------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Solving the flow equations with the FEM} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{incompressible} %-------------------------------------------------------
-
 \subsection{strong and weak forms} \input{strongweak} %------------------------
-
-\subsection{Which velocity-pressure pair ?} \input{pair} %---------------------
-
+\subsection{Which velocity-pressure pair for Stokes?} \input{pair} %-----------
 \subsection{The penalty approach for viscous flow} \input{penalty} %-----------
-
 \subsection{The mixed FEM for viscous flow} \input{mixed} %--------------------
-
 \subsection{Solving the elastic equations} %-----------------------------------
-
 \subsection{Solving the heat transport equation} \input{hte_fem} %-------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-%\subsection{Solving procedures}
-
-%\subsubsection{the whole matrix at once}
-
-%\subsubsection{the pressure Schur complement appraoch}
 
 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Additional techniques} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Additional techniques and features} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Picard and Newton}
 
@@ -263,124 +245,10 @@ of {\sl stone}s which echoes the primary application of these codes: geodynamic 
 \subsection{Am I in or not?} \input{amiin} %-----------------------------------
 \newpage %---------------------------------------------------------------------
 \subsection{Error measurements and convergence rates} \input{errors} %---------
-
-
-
-
-
-\newpage
-{\bf To Do}:
-
-\begin{itemize}
-\item
-write about impose bc on el matrix
-
-\item
-full compressible 
-
-\item
-total energy calculations
-
-\item
-constraints
-
-\item
-compositions, marker chain
-
-\item
-free-slip bc on annulus and sphere . See for example p540 Gresho and Sani book.
-
-\item
-non-linear rheologies (two layer brick spmw16, tosn15) 
-
-\item
-Picard vs Newton
-
-\item
-periodic boundary conditions
-
-\item
-free surface 
-
-\item 
-newton method to localise markers
-
-\item
-zaleski disk advection
-
-\item matrix singular annulus conv
-
-\item
-pure elastic 
-
-\item
-including phase changes (w. R. Myhill)
-
-\item
-discontinuous galerkin
-
-\item
-nonlinear poiseuille
-
-\item
-formatting of code style
-
-\item
-navier-stokes ? (LUKAS)
-
-\item
-compute strainrate in middle of element or at quad point for punch?
-
-\item
-GEO1442 code 
-
-\item
-GEO1442 indenter setup in plane ?
-
-\item
-in/out flow on sides for lith modelling
-
-\item
-Fehlberg RK advection
-
-\item redo puth17 2 layer experiment
-
-\end{itemize}
-
-
-https://peterkovesi.com/projects/colourmaps/
-velocity: CET-D1A
-pressure: CET-D1
-divv: CET-L1
-density: CET-D3
-strainrate: CET-R2
-
-
-
-
-%\newpage
-%\subsection{With periodic boundary conditions}
-%\subsection{Different Cmat}
-%\subsection{Penalty Uzawa formulation}
-%\subsection{Powell-Hestenes iterations a la MILAMIN}
-%\subsection{With temperature and phase change}
-%\subsection{Conformal refinement}
-%\subsection{Stress b.c.}
-%\subsection{open boundary conditions}
-%\subsection{melt generation}
-
-\noindent Problems to solve:
-
-colorscale 
-
-better yet simple matrix storage ?
-
-write Scott about matching compressible2 setup with his paper
-
-deal with large matrices. 
-
-
-
+\newpage %---------------------------------------------------------------------
+\subsection{The initial temperature field} \input{initial_temperature} %-------
+\newpage %---------------------------------------------------------------------
+\subsection{Kinematic boundary conditions} \input{kinematic_bc} %--------------
 
 
 
@@ -540,39 +408,37 @@ deal with large matrices.
 \input{python_codes/fieldstone_30/text}
 
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{{\tt fieldstone\_31}: conservative velocity interpolation 3D \label{f31}}
 %\input{python_codes/fieldstone_30/text}
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{{\tt fieldstone\_32}: 2D analytical sol. from stream function \label{f32}}
-\input{python_codes/fieldstone_32/text}
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_33}: Convection in an annulus \label{f33}}
-\input{python_codes/fieldstone_33/text}
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{python_codes/fieldstone_32/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone\_33}: Convection in an annulus \label{f33}} %%%%%%%%%%%%%%
+\input{python_codes/fieldstone_33/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{{\tt fieldstone\_34}: the Cartesian geometry elastic aquarium \label{f34}}
-\input{python_codes/fieldstone_34/text}
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{python_codes/fieldstone_34/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{{\tt fieldstone\_35}: 2D analytical sol. in annulus from stream function \label{f35}}
-\input{python_codes/fieldstone_35/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_36}: the annulus geometry elastic aquarium \label{f36}}
-\input{python_codes/fieldstone_36/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{python_codes/fieldstone_35/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone\_36}: the annulus geometry elastic aquarium \label{f36}}%%
+\input{python_codes/fieldstone_36/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{{\tt fieldstone\_37}: marker advection and population control \label{f37}}
-\input{python_codes/fieldstone_37/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{python_codes/fieldstone_37/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone\_38}: Critical Rayleigh number \label{f38}} %%%%%%%%%%%%%%
+\input{python_codes/fieldstone_38/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \newpage
@@ -592,6 +458,11 @@ deal with large matrices.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Three-dimensional applications} \input{threedee} %--------------------
+
+
+
+
 %\section{The main codes in computational geodynamics}
 %\input{codes}
 

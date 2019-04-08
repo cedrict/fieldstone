@@ -108,7 +108,7 @@ tol_nl=1.e-4  # nonlinear convergence coeff.
 
 #--------------------------------------
 
-case=2
+case=5
 
 if case==0:
    Ra=1e4  
@@ -141,9 +141,9 @@ if case==4:
 
 if case==5:
    Ra=1e2 
-   sigma_y=4
+   sigma_y=4.25
    gamma_y=np.log(10.)  # rheology parameter 
-   niter_nl=100
+   niter_nl=10
 
 gx=0.
 gy=-Ra/alphaT  # vertical component of gravity vector
@@ -155,8 +155,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 28
-   nely = 28
+   nelx = 32
+   nely = 32
    visu = 0
 
 #--------------------------------------
