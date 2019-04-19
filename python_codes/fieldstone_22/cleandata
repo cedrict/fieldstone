@@ -3,4 +3,6 @@ rm *.vtu
 rm *.pdf
 rm page.aux
 rm page.log
+rm opla*
+rm *.dat
 

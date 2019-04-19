@@ -1,0 +1,9 @@
+rm -f errors.dat
+
+for n in {8..64} ; do
+    echo mesh $n X $n
+    python3 fieldstone.py  $n $n 0 0 0 0 0 | grep Errors >> errors.dat
+done
+
+
+

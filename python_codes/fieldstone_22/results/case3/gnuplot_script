@@ -1,0 +1,10 @@
+set term pdf enhanced
+set log xy
+set pointsize .5
+set xlabel '{/Symbol h}_2/{/Symbol h}_1'
+set ylabel '|v_z| {/Symbol h}_1/{/Symbol d}{/Symbol r}'
+set output 'fallingblock.pdf'
+plot[][]\
+'measurements.dat' u ($4/$3):($7*$3/($6-$5)) w lp notitle,\
+
+

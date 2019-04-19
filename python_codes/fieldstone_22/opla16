@@ -1,0 +1,32 @@
+-----------------------------
+----------fieldstone---------
+-----------------------------
+nelx=nely= 16 
+Lx=Ly= 5.120000e+05 
+rho1= 0.000000e+00 
+rho2= 1.280000e+02 
+eta1= 1.000000e+21 
+eta2= 1.000000e+27 
+setup: grid points: 0.000 s
+setup: connectivity: 0.000 s
+setup: boundary conditions: 0.001 s
+     -> K (m,M) -1.0000e+27 4.0000e+27 
+     -> G (m,M) -2.0833e+19 2.0833e+19 
+     -> C (m,M) -1.3563e+17 7.5955e+17 
+build FE matrix: 0.183 s
+assemble blocks: 0.002 s
+solve time: 0.013 s
+     -> u (m,M) -9.3861e-10 9.3861e-10 
+     -> v (m,M) -5.7732e-10 6.7096e-10 
+split vel into u,v: 0.016 s
+     -> exx (m,M) -6.1963e-15 1.3746e-14 
+     -> eyy (m,M) -1.4326e-14 6.2706e-15 
+     -> exy (m,M) -7.3384e-15 7.3384e-15 
+compute press & sr: 0.013 s
+     -> Errors: nel=    256 ; errv= 0.00019580 ; errp= 8742480847895.36035156
+compute errors: 0.032 s
+FallingBlock     16 1.0000e+21 1.0000e+27 0.0000e+00 1.2800e+02 2.115954e-02 
+generate vtu: 0.036 s
+-----------------------------
+------------the end----------
+-----------------------------
