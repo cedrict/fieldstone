@@ -15,211 +15,224 @@ This explains why direct solvers are often used for 2D problems and rarely in 3D
 exceptions \cite{thfb08,yahb09,brya09,lobh10,alht11,alht12,alhf13,whbb14,neew18}. 
 
 In light of all this, let us start again from the (full) Stokes system:
-\[
+\begin{equation}
 \left(
 \begin{array}{cc}
-\K & \G \\ \G^T & 0 
+\K & \G \\ \G^T & -\C 
 \end{array}
 \right)
 \cdot
 \left(
 \begin{array}{c}
-{\cal V} \\ {\cal P}
+\vec{\cal V} \\ \vec{\cal P}
 \end{array}
 \right)
 =
 \left(
 \begin{array}{c}
- f \\ h
+\vec{f} \\ \vec{h}
 \end{array}
 \right)
-\]
-We need to solve this system in order to obtain the solution, i.e. the ${\cal V}$ 
-and ${\cal P}$ vectors. But how? 
+\label{StokesSyst}
+\end{equation}
 
-Unfortunately, this question is not simple to answer and the 'right' depends on many 
-parameters. 
-How big is the matrix ? what is the condition number of the matrix $\K$ ? 
-Is it symmetric ? (i.e. how are compressible terms handled?). 
+We need to solve this system in order to obtain the solution, i.e. the $\vec{\cal V}$ 
+and $\vec{\cal P}$ vectors. But how? 
 
+Unfortunately, this question is not simple to answer and the appropriate method depends on many 
+parameters, but mainly on how big the matrix blocks are and what the condition number of the matrix $\K$ is. 
+
+In what follow I cover:
+\begin{itemize}
+\item the penalty method(s)
+\item the Schur complement approach
+\item the FGMRES approach
+\item the Augmented Lagrangian approach
+\end{itemize}
 
 %--------------------------------------------
 \subsubsection{The Schur complement approach}
 Let us write the above system as two equations:
 \begin{eqnarray}
-\K {\cal V} + \G {\cal P} &=& f \\
-\G^T {\cal V} \quad\quad &=& h 
+\K \cdot \vec{\cal V} + \G \cdot \vec{\cal P} &=& \vec{f} \\
+\G^T \cdot  \vec{\cal V} \quad\quad &=& \vec{h} 
 \end{eqnarray}
-The first line can be re-written ${\cal V}=\K^{-1} (f - \G {\cal P})$ and can be inserted in the second:
+The first line can be re-written $\vec{\cal V}=\K^{-1}\cdot (\vec{f} - \G \cdot \vec{\cal P})$ and can be inserted in the second:
 \[
-\G^T {\cal V} =\G^T [ \K^{-1} (f - \G {\cal P}) ] = h 
+\G^T\cdot \vec{\cal V} =\G^T \cdot  [ \K^{-1} \cdot  (\vec{f} - \G \cdot  \vec{\cal P}) ] = \vec{h} 
 \]
 or, 
-
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
-\G^T K^{-1} \G {\cal P} = \G^T \K^{-1} f - h 
+(\G^T \cdot K^{-1} \cdot \G) \cdot \vec{\cal P} = \G^T \cdot \K^{-1}\cdot \vec{f} - \vec{h} 
 \]
 \end{mdframed}
-The matrix $\SSS= \G^T \K^{-1} \G $ is called the Schur complement. \index{Schur complement} 
+The matrix $\SSS= \G^T \cdot \K^{-1} \cdot \G $ is called the Schur complement. \index{Schur complement} 
 It is Symmetric (since $\K$ is symmetric) and  Postive-Definite\footnote{$M$ 
 positive definite $\iff$ $x^TMx>0$ $\forall \; x\in \mathbb{R}^n \setminus {\bm 0}$ }
 (SPD) \index{SPD} if $Ker({\G})=0$. 
 {\color{red} look in donea-huerta book for details}
-Having solved this equation (we have obtained ${\cal P}$), the velocity can be recovered by solving 
-$\K {\cal V} =f- \G {\cal P}$. 
-For now, let us assume that we have built the $\SSS$ matrix and the right hand side $\tilde{f}=\G^T \K^{-1} f - h$.
-We must solve $\SSS {\cal P} = \tilde{f}$.
+Having solved this equation (we have obtained $\vec{\cal P}$), the velocity can be recovered by solving 
+$\K\cdot \vec{\cal V} =\vec{f}- \G \cdot \vec{\cal P}$. 
+For now, let us assume that we have built the $\SSS$ matrix and the right hand side $\underline{\vec{f}}=\G^T \cdot \K^{-1} \cdot \vec{f} - \vec{h}$.
+We must solve $\SSS\cdot \vec{\cal P} = \underline{\vec{f}}$.
 
 \index{CG} \index{conjugate gradient}
 Since $\SSS$ is SPD, the Conjugate Gradient (CG) method is very appropriate to solve this system. 
-Indeed, looking at the definition of Wikipedia: {\it In mathematics, the conjugate gradient method is an algorithm for the numerical solution of particular systems of linear equations, namely those whose matrix is symmetric and positive-definite. The conjugate gradient method is often implemented as an iterative algorithm, applicable to sparse systems that are too large to be handled by a direct implementation or other direct methods such as the Cholesky decomposition. Large sparse systems often arise when numerically solving partial differential equations or optimization problems.}
+Indeed, looking at the definition of Wikipedia: "{\it In mathematics, the conjugate gradient method is an algorithm for the numerical solution of particular systems of linear equations, namely those whose matrix is symmetric and positive-definite. The conjugate gradient method is often implemented as an iterative algorithm, applicable to sparse systems that are too large to be handled by a direct implementation or other direct methods such as the Cholesky decomposition. Large sparse systems often arise when numerically solving partial differential equations or optimization problems.}"
 
-The Conjugate Gradient algorithm is as follows:
+A simple Google search tells us that the Conjugate Gradient algorithm is as follows:
 \begin{center}
 \frame{
 \includegraphics[width=6cm]{images/solvers/cgwiki}
 }\\
-Algorithm obtained from \url{https://en.wikipedia.org/wiki/Conjugate\_gradient\_method}
+Algorithm as obtained from Wikipedia \footnote{\url{https://en.wikipedia.org/wiki/Conjugate\_gradient\_method}}
 \end{center}
+This algorithm is of course explained in detail in many textbooks such as \cite{saad}\todo[inline]{add biblio}.
 
 Let us look at this algorithm up close. The parts which may prove to be somewhat tricky 
-are those involving the matrix (in our case the Schur complement).
-We start the iterations with a guess pressure ${\cal P}_0$ (
-and an initial guess velocity which could be obtained by solving $\K {\cal V}_0 =f- \G {\cal P}_0$).
+are those involving the matrix inverse (in our case the Schur complement).
+We start the iterations with a guess pressure $\vec{\cal P}_0$ (
+and an initial guess velocity which could be obtained by solving $\K\cdot \vec{\cal V}_0 =\vec{f}- \G\cdot \vec{\cal P}_0$).
 \begin{eqnarray}
-r_0 
-&=& \tilde{f}-\SSS {\cal P}_0 \\
-&=& \G^T \K^{-1} f - h - (\G^T \K^{-1} \G ) {\cal P}_0 \\ 
-&=& \G^T \K^{-1} (f - \G {\cal P}_0) - h \\
-&=& \G^T \K^{-1} \K {\cal V}_0 - h \\ 
-&=& \G^T {\cal V}_0 - h \\ 
+\vec{r}_0 
+&=& \underline{\vec{f}}-\SSS \cdot \vec{\cal P}_0 \\
+&=& \G^T\cdot \K^{-1}\cdot \vec{f} - \vec{h} - (\G^T\cdot \K^{-1}\cdot \G )\cdot \vec{\cal P}_0 \\ 
+&=& \G^T\cdot \K^{-1}\cdot (\vec{f} - \G\cdot \vec{\cal P}_0) - \vec{h} \\
+&=& \G^T\cdot \K^{-1}\cdot \K\cdot \vec{\cal V}_0 - \vec{h} \\ 
+&=& \G^T\cdot \vec{\cal V}_0 - \vec{h} \\ 
 \end{eqnarray}
 We now turn to the $\alpha_k$ coefficient:
 \[
 \alpha_k 
-= \frac{r_k^T r_k }{p_k \SSS p_k } 
-= \frac{r_k^T r_k }{p_k \G^T \K^{-1} \G  p_k } 
-= \frac{r_k^T r_k }{(\G p_k)^T  \K^{-1} (\G  p_k) } 
+= \frac{\vec{r}_k^T\cdot \vec{r}_k }{\vec{p}_k \cdot \SSS\cdot  \vec{p}_k } 
+= \frac{\vec{r}_k^T \cdot \vec{r}_k }{\vec{p}_k\cdot \G^T \cdot \K^{-1} \cdot \G \cdot \vec{p}_k } 
+= \frac{\vec{r}_k^T \cdot \vec{r}_k }{(\G\cdot \vec{p}_k)^T \cdot  \K^{-1} \cdot (\G \cdot \vec{p}_k) } 
 \]
-We then define $\tilde{p}_k = \G p_k$, so that $\alpha_k$ can be computed as follows:
+We then define $\tilde{\vec{p}}_k = \G \cdot \vec{p}_k$, so that $\alpha_k$ can be computed as follows:
 \begin{enumerate}
-\item compute $\tilde{p}_k = \G p_k$
-\item solve $\K d_k = \tilde{p}_k$
-\item compute $\alpha_k=(r_k^T r_k)/(\tilde{p}_k^T d_k)$
+\item compute $\tilde{\vec{p}}_k = \G \cdot  \vec{p}_k$
+\item solve $\K\cdot  \vec{d}_k = \tilde{\vec{p}}_k$
+\item compute $\alpha_k=(\vec{r}_k^T \cdot \vec{r}_k)/(\tilde{\vec{p}}_k^T \cdot \vec{d}_k)$
 \end{enumerate}
-Then we need to look at the term $\SSS p_k$:
+Then we need to look at the term $\SSS\cdot \vec{p}_k$:
 \[
-\SSS p_k = \G^T \K^{-1} \G p_k = \G^T \K^{-1} \tilde{p}_k = \G^T d_k
+\SSS\cdot \vec{p}_k = \G^T\cdot \K^{-1}\cdot \G\cdot \vec{p}_k = \G^T\cdot \K^{-1}\cdot \tilde{\vec{p}}_k = \G^T\cdot  \vec{d}_k
 \]
 We can then rewrite the CG algorithm as follows \cite{zhym07}:
 \begin{itemize}
-\item $r_0 = \G^T {\cal V}_0 - h$ 
-\item if $r_0$ is sufficiently small, then return $({\cal V}_0,{\cal P}_0)$ as the result
-\item $p_0=r_0$
+\item $\vec{r}_0 = \G^T\cdot \vec{\cal V}_0 - \vec{h}$ 
+\item if $\vec{r}_0$ is sufficiently small, then return $(\vec{\cal V}_0,\vec{\cal P}_0)$ as the result
+\item $\vec{p}_0=\vec{r}_0$
 \item $k=0$
 \item repeat
 \begin{itemize}
-\item compute $\tilde{p}_k = \G p_k$
-\item solve $\K d_k = \tilde{p}_k$
-\item compute $\alpha_k=(r_k^T r_k)/(\tilde{p}_k^T d_k)$
-\item ${\cal P}_{k+1} = {\cal P}_k+\alpha_k p_k$
-\item $r_{k+1} = r_k - \alpha_k \G^T d_k $
-\item if $r_{k+1}$ is sufficiently small, then exit loop
-\item $\beta_k=(r_{k+1}^T r_{k+1})/(r_k^T r_k)$
-\item $p_{k+1} =r_{k+1}+ \beta_k p_k$
+\item compute $\tilde{\vec{p}}_k = \G\cdot \vec{p}_k$
+\item solve $\K\cdot  \vec{d}_k = \tilde{\vec{p}}_k$
+\item compute $\alpha_k=(\vec{r}_k^T \cdot  \vec{r}_k)/(\tilde{\vec{p}}_k^T\cdot  \vec{d}_k)$
+\item $\vec{\cal P}_{k+1} = \vec{\cal P}_k+\alpha_k \vec{p}_k$
+\item $\vec{r}_{k+1} = \vec{r}_k - \alpha_k \G^T \cdot \vec{d}_k $
+\item if $\vec{r}_{k+1}$ is sufficiently small, then exit loop
+\item $\beta_k=(\vec{r}_{k+1}^T \cdot \vec{r}_{k+1})/(\vec{r}_k^T \cdot \vec{r}_k)$
+\item $\vec{p}_{k+1} =\vec{r}_{k+1}+ \beta_k \vec{p}_k$
 \item $k=k+1$
 \end{itemize}
-\item return ${\cal P}_{k+1}$ as result
+\item return $\vec{\cal P}_{k+1}$ as result
 \end{itemize}
 We see that we have managed to solve the Schur complement equation with the Conjugate Gradient method
-without ever building the matrix $\SSS$. Having obtained the pressure solution, we can easily recover the corresponding velocity with $\K {\cal V}_{k+1} =f- \G {\cal P}_{k+1}$. However, this is rather unfortunate because it requires yet another solve with the $\K$ matrix. As it turns out, we can slightly alter the above algorithm to have it update the velocity as well so that this last solve is unnecessary.
+without ever building the matrix $\SSS$. Having obtained the pressure solution, we can easily recover 
+the corresponding velocity with $\K\cdot \vec{\cal V}_{k+1} =\vec{f}- \G\cdot \vec{\cal P}_{k+1}$. 
+However, this is rather unfortunate because it requires yet another solve with the $\K$ matrix. 
+As it turns out, we can slightly alter the above algorithm to have it update the velocity 
+as well so that this last solve is unnecessary.
 
 We have 
-\[
-{\cal V}_{k+1} 
-= \K^{-1} (f - \G {\cal P}_{p+1} )
-= \K^{-1} (f - \G ({\cal P}_k+\alpha_k p_k) )
-= \K^{-1} (f - \G {\cal P}_k) - \alpha_k \K^{-1} \G p_k 
-= {\cal V} - \alpha_k \K^{-1} \tilde{p}_k 
-= {\cal V}_k - \alpha_k d_k 
-\] 
+\begin{eqnarray}
+\vec{\cal V}_{k+1} 
+&=& \K^{-1}\cdot (f - \G\cdot \vec{\cal P}_{p+1} )\\
+&=& \K^{-1}\cdot (f - \G\cdot (\vec{\cal P}_k+\alpha_k \vec{p}_k) ) \\
+&=& \K^{-1}\cdot (f - \G\cdot \vec{\cal P}_k) - \alpha_k \K^{-1}\cdot \G \cdot \vec{p}_k \\
+&=& \vec{\cal V}_k - \alpha_k \K^{-1}\cdot \tilde{\vec{p}}_k  \\
+&=& \vec{\cal V}_k - \alpha_k \vec{d}_k 
+\end{eqnarray}
 and we can insert this minor extra calculation inside the algorithm and get the velocity solution 
 nearly for free. The final CG algorithm is then 
 
 \begin{mdframed}[backgroundcolor=blue!5]
 \underline{\bf solver\_cg}:
 \begin{itemize}
-\item compute ${\cal V}_0=\K^{-1}(f-\G{\cal P}_0)$
-\item $r_0 = \G^T {\cal V}_0 - h$ 
-\item if $r_0$ is sufficiently small, then return $({\cal V}_0,{\cal P}_0)$ as the result
-\item $p_0=r_0$
+\item compute $\vec{\cal V}_0=\K^{-1}\cdot (\vec{f}-\G \cdot \vec{\cal P}_0)$
+\item $\vec{r}_0 = \G^T\cdot \vec{\cal V}_0 - \vec{h}$ 
+\item if $\vec{r}_0$ is sufficiently small, then return $(\vec{\cal V}_0,\vec{\cal P}_0)$ as the result
+\item $\vec{p}_0=\vec{r}_0$
 \item $k=0$
 \item repeat
 \begin{itemize}
-\item compute $\tilde{p}_k = \G p_k$
-\item solve $\K d_k = \tilde{p}_k$
-\item compute $\alpha_k=(r_k^T r_k)/(\tilde{p}_k^T d_k)$
-\item ${\cal P}_{k+1} = {\cal P}_k+\alpha_k p_k$
-\item $ {\cal V}_{k+1} = {\cal V}_k - \alpha_k d_k$
-\item $r_{k+1} = r_k - \alpha_k \G^T d_k $
-\item if $r_{k+1}$ is sufficiently small ($|r_{k+1}|_2/|r_0|_2 <tol$), then exit loop
+\item compute $\tilde{\vec{p}}_k = \G \cdot \vec{p}_k$
+\item solve $\K\cdot \vec{d}_k = \tilde{p}_k$
+\item compute $\alpha_k=(\vec{r}_k^T \cdot  \vec{r}_k)/(\tilde{\vec{p}}_k^T \cdot \vec{d}_k)$
+\item $\vec{\cal P}_{k+1} = \vec{\cal P}_k+\alpha_k \vec{p}_k$
+\item $ \vec{\cal V}_{k+1} = \vec{\cal V}_k - \alpha_k \vec{d}_k$
+\item $\vec{r}_{k+1} = \vec{r}_k - \alpha_k \G^T \cdot \vec{d}_k $
+\item if $\vec{r}_{k+1}$ is sufficiently small ($||\vec{r}_{k+1}||_2/||\vec{r}_0||_2 <tol$), then exit loop
 \item $\beta_k=(r_{k+1}^T r_{k+1})/(r_k^T r_k)$
-\item $p_{k+1} =r_{k+1}+ \beta_k p_k$
+\item $\vec{p}_{k+1} =\vec{r}_{k+1}+ \beta_k \vec{p}_k$
 \item $k=k+1$
 \end{itemize}
-\item return ${\cal P}_{k+1}$ as result
+\item return $\vec{\cal P}_{k+1}$ as result
 \end{itemize}
 \end{mdframed}
 
 This iterative algorithm will converge to the solution with a rate which depends on 
-the condition number of the $\SSS$ matrix, which is not easily obtainable since 
-$\SSS$ is never built. Also, we know that large viscosity contrasts in the domain 
-will influence this too. Finally, we notice that this algorithm requires one solve
-with matrix $\K$ per iteration but says nothing about the method employed to do so.
+the condition number of the $\SSS$ matrix, which is not easy to compute since 
+$\SSS$ is never built. However, it has been established that large viscosity contrasts in the domain 
+will have a negative impact on the convergence. 
+
+\underline{Remark:} this algorithm requires one solve
+with matrix $\K$ per iteration but says nothing about the method employed to do so (direct solver, iterative solver, ...)
 
 \index{preconditioned conjugate gradient}  
 One thing we know improves the convergence of any iterative solver is the use of a 
-preconditioner matrix and therefore use the Preconditioned Conjugate Gradient method:
+preconditioner matrix and therefore now focus on the Preconditioned Conjugate Gradient (PCG) method.
+Once again a quick Google search yields:
 \begin{center}
 \frame{
 \includegraphics[width=6.5cm]{images/solvers/pcgwiki}
 }\\
-Algorithm obtained from \url{https://en.wikipedia.org/wiki/Conjugate\_gradient\_method}
+Algorithm obtained from Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Conjugate\_gradient\_method}}.
 \end{center}
 
-In the algorithm above the preconditioner matrix $M$ 
+Note that in the algorithm above the preconditioner matrix $M$ 
 has to be symmetric positive-definite and fixed, i.e., cannot change from iteration to iteration. 
-
-We see that this algorithm introduces an additional vector $z$ and a solve with the matrix $M$
-at each iteration, which means that $M$ must be such that solving $M x= f$ where $f$ is a given 
-rhs vector must be cheap. Ultimately, the PCG algorithm applied to the Schur complement 
-equation takes the form:
+We see that this algorithm introduces an additional vector $\vec{z}$ and a solve with the 
+matrix $M$ at each iteration, which means that $M$ must be such that solving $M\cdot \vec{x}= \vec{f}$ 
+where $\vec{f}$ is a given rhs vector must be cheap. Ultimately, the PCG algorithm applied to 
+the Schur complement equation takes the form:
 
 \begin{mdframed}[backgroundcolor=blue!5]
 \underline{\bf solver\_pcg}:
 \begin{itemize}
 \item compute ${\cal V}_0=\K^{-1}(f-\G{\cal P}_0)$
 \item $r_0 = \G^T {\cal V}_0 - h$
-\item if $r_0$ is sufficiently small, then return $({\cal V}_0,{\cal P}_0)$ as the result
-\item $z_0= M^{-1} r_0$ 
-\item $p_0=z_0$
+\item if $\vec{r}_0$ is sufficiently small, then return $(\vec{\cal V}_0,\vec{\cal P}_0)$ as the result
+\item $\vec{z}_0= M^{-1} \cdot \vec{r}_0$ 
+\item $\vec{p}_0=\vec{z}_0$
 \item $k=0$
 \item repeat
 \begin{itemize}
-\item compute $\tilde{p}_k = \G p_k$
-\item solve $\K d_k = \tilde{p}_k$
-\item compute $\alpha_k=(r_k^T z_k)/(\tilde{p}_k^T d_k)$
-\item ${\cal P}_{k+1} = {\cal P}_k+\alpha_k p_k$
-\item $ {\cal V}_{k+1} = {\cal V}_k - \alpha_k d_k$
-\item $r_{k+1} = r_k - \alpha_k \G^T d_k $
-\item if $r_{k+1}$ is sufficiently small ($|r_{k+1}|_2/|r_0|_2 <tol$), then exit loop
-\item $z_{k+1}=M^{-1}r_{k+1}$
-\item $\beta_k=(z_{k+1}^T r_{k+1})/(z_k^T r_k)$
-\item $p_{k+1} =z_{k+1}+ \beta_k p_k$
+\item compute $\tilde{\vec{p}}_k = \G \cdot \vec{p}_k$
+\item solve $\K\cdot  \vec{d}_k = \tilde{\vec{p}}_k$
+\item compute $\alpha_k=(\vec{r}_k^T \cdot \vec{z}_k)/(\tilde{\vec{p}}_k^T \cdot \vec{d}_k)$
+\item $\vec{\cal P}_{k+1} = {\cal P}_k+\alpha_k \vec{p}_k$
+\item $\vec{\cal V}_{k+1} = {\cal V}_k - \alpha_k \vec{d}_k$
+\item $\vec{r}_{k+1} = \vec{r}_k - \alpha_k \G^T \cdot \vec{d}_k $
+\item if $r_{k+1}$ is sufficiently small ($||r_{k+1}||_2/||r_0||_2 <tol$), then exit loop
+\item $\vec{z}_{k+1}=M^{-1} \cdot r_{k+1}$
+\item $\beta_k=(\vec{z}_{k+1}^T \cdot  \vec{r}_{k+1})/(\vec{z}_k^T \cdot  \vec{r}_k)$
+\item $\vec{p}_{k+1} =\vec{z}_{k+1}+ \beta_k \vec{p}_k$
 \item $k=k+1$
 \end{itemize}
-\item return ${\cal P}_{k+1}$ as result
+\item return $\vec{\cal P}_{k+1}$ as result
 \end{itemize}
 \end{mdframed}
 
@@ -236,3 +249,107 @@ equation takes the form:
 
 
 \subsection{The GMRES approach}
+
+
+%---------------------------------------------
+\subsection{The Augmented Lagrangian approach}
+
+\index{Augmented Lagrangian}
+
+see LaCoDe paper.
+
+We start from the saddle point Stokes system:
+\begin{equation}
+\left(
+\begin{array}{cc}
+\K & \G \\ \G^T & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal V} \\ \vec{\cal P}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{f} \\ \vec{h}
+\end{array}
+\right)
+\label{StokesSyst2}
+\end{equation}
+The AL method consists of subtracting $\lambda^{-1} \mathbb{M}_p \cdot \vec{\cal P}$ from tre left and 
+right-side of the mass conservation equation (where $\mathbb{M}_p$ is the pressure mass matrix) 
+and introducing the following iterative scheme:
+\begin{equation}
+\left(
+\begin{array}{cc}
+\K & \G \\ \G^T & -\lambda^{-1} \mathbb{M}_p
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal V}^{k+1} \\ \vec{\cal P}^{k+1}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{f} \\ \vec{h} - \lambda^{-1} \mathbb{M}_p \cdot \vec{\cal P}^k
+\end{array}
+\right)
+\label{ALStokes}
+\end{equation}
+where $k$ is the iteration counter and $\lambda$ is an artificial compressibility term which has units of dynamic viscosity. 
+The choice of $\lambda$ can be difficult as too low or too high a value yields either erroneous results and/or terribly ill-conditioned matrices. LaCoDe paper (!!) use such a method and report that $\lambda=\max_\Omega({\eta})$
+works well. 
+Note that at convergence we have $||\vec{\cal P}^{k+1}-\vec{\cal P}^k||<\epsilon$ and then Eq.(\ref{ALStokes}) converges to Eq.(\ref{StokesSyst2}) and the velocity and pressure fields are solution of the unmodified system Eq.(\ref{StokesSyst2}).
+
+The introduction of this term serves one purpose: allowing us to solve the system in a segregated manner (i.e. computing successive iterates of the velocity and pressure fields until convergence is reached).
+The second line of Eq.~(\ref{ALStokes}) is 
+\[
+\G^T \cdot \vec{\cal V}^{k+1} - \lambda^{-1} \mathbb{M}_p \cdot \vec{\cal P}^{k+1} = \vec{h} - \lambda^{-1} \mathbb{M}_p \cdot \vec{\cal P}^k
+\]
+and can therefore be rewritten
+\[
+\vec{\cal P}^{k+1} = \vec{\cal P}^k + \lambda \mathbb{M}_p^{-1} \cdot (\G^T \cdot \vec{\cal V}^{k+1} - \vec h)
+\]
+We can then substitute this expression of $\vec{\cal P}^{k+1}$ in the first equation. This yields:
+\begin{eqnarray}
+\K \cdot \vec{\cal V}^{k+1}  
+&=& \vec f - \G \cdot {\cal P}^{k+1}) \\
+\K \cdot \vec{\cal V}^{k+1}  
+&=& \vec f - \G \cdot ( \vec{\cal P}^k + \lambda \mathbb{M}_p^{-1} \cdot  (\G^T \cdot \vec{\cal V}^{k+1} - \vec h)  ) \\
+\K \cdot \vec{\cal V}^{k+1} + \lambda \G \cdot \mathbb{M}_p^{-1} \cdot \G^T \cdot \vec{\cal V}^{k+1} 
+&=& \vec f - \G \cdot ( \vec{\cal P}^k - \lambda \mathbb{M}_p^{-1}\vec h)  ) \\
+\underbrace{  \left(  \K  + \lambda \G \cdot \mathbb{M}_p^{-1} \cdot \G^T \right)   }_{\tilde{\K}  } \cdot \vec{\cal V}^{k+1} 
+&=& \underbrace{ \vec f - \G \cdot ( \vec{\cal P}^k - \lambda \mathbb{M}_p^{-1}\vec h)  )}_{\vec{f}^{k+1}} \\
+\end{eqnarray}
+The iterative algorithm goes as follows:
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{enumerate}
+\item if it is the first timestep, set $\vec{\cal P}^0=0$ , otherwise set it to the pressure of the previous timestep.
+\item calculate $\tilde{\K}$
+\item calculate $\vec{f}^{k+1}$
+\item solve $\tilde{\K} \cdot \vec{\cal V}^{k+1} = \vec{f}^{k+1}$
+\item update pressure with 
+$\vec{\cal P}^{k+1} = \vec{\cal P}^k + \lambda \mathbb{M}_p^{-1} \cdot (\G^T \cdot \vec{\cal V}^{k+1} - \vec h)$
+\end{enumerate}
+\end{mdframed}
+
+\underline{Remark 1:} If discontinuous pressures are used, the pressure mass matrix can be inverted element by element which is 
+cheaper than inverting $\mathbb{M}_p$ as a whole.
+
+\underline{Remark 2:} This method has obvious ties with the penalty method. 
+
+\underline{Remark 3:} If $\lambda >> \max_\Omega{\eta}$ then the matrix $\tilde{\K}$ is ill-conditioned and an iterative solver must be used.
+
+
+
+
+
+
+
+

@@ -1,0 +1,82 @@
+\index{static condensation}
+
+The idea behind \index{static condensation} is quite simple: in some cases, there are dofs 
+belonging to an element which only belong to that element. For instance, the so-called MINI 
+element ($P_1^+ \times P_1$) showcases a bubble function in the middle (see section \ref{pair}). 
+In the following, $\vec{V}^\star$ corresponds to the list of such dofs inside an element.
+The discretised Stokes equartions on any element looks like:
+
+\[
+\left(
+\begin{array}{ccc}
+\K   & L & \G \\
+L^T & \K^\star  & H \\
+\G^T & H^T & 0
+\end{array}
+\right)_e
+\left(
+\begin{array}{c}
+\vec{\cal V} \\ \vec{\cal V}^\star \\ \vec{\cal P}
+\end{array}
+\right)_e
+=
+\left(
+\begin{array}{c}
+\vec{f} \\ \vec{f}^\star \\ \vec{h}
+\end{array}
+\right)_e
+\]
+This is only a re-writing of the elemental Stokes matrix where the matrix $\K$ has been 
+split in four parts.
+Note that the matrix $\K^\star$ is diagonal.\todo{check}
+
+This can also be re-written in non-matrix form:
+\begin{eqnarray}
+\K \cdot \vec{\cal V} + L \cdot \vec{\cal V}^\star + \G \cdot \vec{\cal P} &=& \vec{f} \\
+L^T V + K^\star \cdot  \vec{\cal V}^\star + H \cdot \vec{\cal P} &=& \vec{f}^\star \\
+\G^T \cdot \vec{\cal V} + H^T \vec{\cal V}^\star &=& \vec{h}
+\end{eqnarray}
+The $V^\star$ in the second equation can be isolated:
+\[
+\vec{\cal V}^\star = \K^{-\star} \cdot ( \vec{f}^\star - L^T \cdot \vec{\cal V} - H \cdot \vec{\cal P})
+\]
+and inserted in the first and third equations:
+\begin{eqnarray}
+\K \cdot \vec{\cal V} + L \left[ \K^{-\star} ( \vec{f}^\star - L^T \cdot \vec{\cal V} - H \cdot \vec{\cal P} )  \right] + \G \cdot \vec{\cal P} &=& \vec{f} \\
+\G^T \cdot \vec{\cal V} + H^T \left[  \K^{-\star} ( \vec{f}^\star - L^T \cdot \vec{\cal V} - H \cdot \vec{\cal P}) \right]  &=& \vec{h}
+\end{eqnarray}
+or,
+\begin{eqnarray}
+(K-L\cdot \K^{-\star} \cdot L^T)\cdot \vec{\cal V} + (G-L\cdot K^{-\star} \cdot H) \cdot \vec{\cal P} &=& \vec{f}-L\cdot \K^{-\star} \cdot \vec{f}^\star \\
+(G^T -H^T\cdot \K^{-\star}\cdot  L^T ) \cdot \vec{\cal V}  - 
+(H^T \cdot \K^{-\star} \cdot H )\cdot \vec{\cal P}   &=& \vec{h} -H^T\cdot K^{-\star}\cdot \vec{f}^\star
+\end{eqnarray}
+i.e.
+\begin{eqnarray}
+\underline{\K} \cdot \vec{\cal V} + \underline{\G}\cdot \vec{\cal P} &=& \underline{\vec{f}} \\
+\underline{\G}^T \cdot \vec{\cal V} - \underline{\C} \cdot \vec{\cal P} &=& \underline{\vec{h}}
+\end{eqnarray}
+with
+\begin{eqnarray}
+\underline{\K}&=& K-L\cdot \K^{-\star} \cdot L^T \\
+\underline{\G}&=& G-L\cdot K^{-\star} \cdot H \\
+\underline{\C}&=& H^T \cdot \K^{-\star} \cdot H \\
+\underline{\vec{f}}&=& \vec{f}-L\cdot \K^{-\star} \cdot \vec{f}^\star \\
+\underline{\vec{h}}&=& \vec{h} -H^T\cdot K^{-\star}\cdot \vec{f}^\star
+\end{eqnarray}
+Note that $\underline{\K}$ is symmetric, and so is the Stokes matrix.
+
+
+For instance, in the case of the MINI element, the dofs corresponding to the bubble 
+could be eliminated at the elemental level, which would make the Stokes matrix smaller. 
+However, it is then important to note that static condensation introduces a 
+pressure-pressure term which was not there in the original formulation.
+
+
+
+
+
+
+
+
+

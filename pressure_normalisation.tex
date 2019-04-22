@@ -1,5 +1,9 @@
+
+%..................................................
+\subsubsection{Basic idea and naive implementation}
+
 When Dirichlet boundary conditions are imposed everywhere on the boundary, pressure is only present by its gradient in 
-the equations. It is thus determined up to an arbitrary constant. 
+the equations. It is thus determined up to an arbitrary constant (one speaks then of a null space of size 1).  
 In such a case, one commonly impose the average of the pressure over the whole domain or on a subsect of the boundary 
 to be have a zero average, i.e.
 \[
@@ -14,14 +18,15 @@ The integral above becomes:
 \int_\Omega p dV = 
 \sum_e  \int_{\Omega_e} p dV = 
 \sum_e  p_e \int_{\Omega_e} dV = 
-\sum_e  p_e A_e = 
+\sum_e  p_e A_e = 0
 \]
 where the sum runs over all elements $e$ of area $A_e$.
 This can be rewritten 
 \[
-\LLL^T {\cal P}=0
+\LLL^T \cdot \vec{\cal P}=0
 \] 
-and it is a constraint on the pressure. As we have seen before \ref{XXX}, we can associate to it a 
+and it is a constraint on the pressure solution. 
+As we have seen before \ref{XXX}, we can associate to it a 
 Lagrange multiplier $\lambda$ so that we must solve the modified Stokes system:
 \[
 \left(
@@ -34,13 +39,13 @@ Lagrange multiplier $\lambda$ so that we must solve the modified Stokes system:
 \cdot
 \left(
 \begin{array}{c}
-{\cal V} \\ {\cal P} \\ \lambda
+\vec{\cal V} \\ \vec{\cal P} \\ \lambda
 \end{array}
 \right)
 =
 \left(
 \begin{array}{c}
- f \\ h \\ 0
+\vec{f} \\ \vec{h} \\ 0
 \end{array}
 \right)
 \]
@@ -48,20 +53,22 @@ When higher order spaces are used for pressure (continuous or discontinuous)
 one must then carry out the above integration numerically by means of (usually)
 a Gauss-Legendre quadrature.
 
+Although valid, this approach has one main disadvantage: it makes the Stokes matrix larger (although
+marginally so -- only one row and column are added), but more importantly it prevents the use of some
+of the solving strategies of Section \ref{solvers}.
 
 
-\begin{mdframed}[backgroundcolor=green!5]
-\begin{itemize}
-\item[$\triangleright$] {\sl python\_codes/fieldstone\_stokes\_sphere\_3D\_saddlepoint/}
-\item[$\triangleright$] {\sl python\_codes/fieldstone\_burstedde/}
-\item[$\triangleright$] {\sl python\_codes/fieldstone\_busse/}
-\item[$\triangleright$] {\sl python\_codes/fieldstone\_RTinstability1/}
-\item[$\triangleright$] {\sl python\_codes/fieldstone\_saddlepoint\_q2q1/}
-\item[$\triangleright$] {\sl python\_codes/fieldstone\_compressible2/}
-\item[$\triangleright$] {\sl python\_codes/fieldstone\_compressible1/}
-\item[$\triangleright$] {\sl python\_codes/fieldstone\_saddlepoint\_q3q2/}
-\end{itemize}
-\end{mdframed}
+%..................................................
+\subsubsection{Implementation -- the real deal}
+
+The idea is actually quite simple and requires two steps:
+\begin{enumerate}
+\item remove the null space by prescribing the pressure at one location and solve the system;
+\item post-process the pressure so as to arrive at a pressure field which fulfills the required normalisation (surface, volume, ...)
+\end{enumerate}
+
+\todo[inline]{finish explain}
+
 
 
 

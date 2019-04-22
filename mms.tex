@@ -8,18 +8,8 @@ The same source term and boundary conditions will then be used in a numerical
 simulation so that the computed solution can be compared with the (postulated)
 true analytical solution. 
 
-Examples of this approach are to be found in \cite{dohu,busa13,dodg06}.
+Examples of this approach are to be found in \cite{dohu,busa13,bodg06}.
 
-
-\begin{mdframed}[backgroundcolor=green!5]
-\begin{itemize}
-\item[$\triangleright$] {\sl python\_codes/fieldstone}
-\item[$\triangleright$] {\sl python\_codes/fieldstone\_saddlepoint}
-\item[$\triangleright$] {\sl python\_codes/fieldstone\_saddlepoint\_q2q1}
-\item[$\triangleright$] {\sl python\_codes/fieldstone\_saddlepoint\_q3q2}
-\item[$\triangleright$] {\sl python\_codes/fieldstone\_burstedde}
-\end{itemize}
-\end{mdframed}
 
 %-----------------------------------------------------------------------------
 \subsubsection{Analytical benchmark I \label{mms1}}
@@ -28,17 +18,13 @@ Taken from \cite{dohu03}. We consider a two-dimensional problem
 in the square domain $\Omega=[0,1]\times[0,1]$, which possesses a closed-form analytical 
 solution. The problem consists of determining the velocity field ${\vec \upnu} = (u,v)$ 
 and the pressure $p$ such that 
-\[
--\eta \Delta {\vec \upnu} + {\vec \nabla} p + {\vec b} = \vec 0 \quad\quad {\rm in} \; \Omega
-\]
-\[
-{\bm \nabla} \cdot {\bm v} = 0 \quad\quad {\rm in} \; \Omega
-\]
-\[
-{\bm v}={\bm 0} \quad\quad {\rm on} \; \Gamma
-\]
+\begin{eqnarray}
+\eta \Delta {\vec \upnu} - {\vec \nabla} p + {\vec b} &=& \vec 0 \quad\quad {\rm in} \; \Omega\\
+\vec{\nabla} \cdot \vec{v} &=& 0 \quad\quad {\rm in} \; \Omega\\
+\vec{v}&=&\vec{0} \quad\quad {\rm on} \; \Gamma_D
+\end{eqnarray}
 where the fluid viscosity is taken as $\eta=1$.
-The components of the body force ${\bm b}$ are prescribed as 
+The components of the body force $\vec{b}$ are prescribed as 
 \begin{eqnarray}
 b_x &=& (12 - 24y) x^4 + (-24 + 48y) x^3 + (-48y + 72y^2 - 48 y^3 + 12) x^2 \nonumber\\
     && + (-2 + 24y -72y^2+48y^3)x + 1-4y + 12y^2-8y^3 \nonumber\\ 
@@ -51,7 +37,7 @@ u(x,y) &=& x^2(1- x)^2 (2y - 6y^2 + 4y^3)  \nonumber\\
 v(x,y) &=& -y^2 (1 - y)^2 (2x - 6x^2 + 4x^3) \nonumber\\
 p(x,y) &=& x(1 -x)- 1/6 \nonumber 
 \end{eqnarray}
-Note that the pressure obeys $\int_{\Omega} p \; d\Omega = 0$
+Note that the pressure obeys $\int_{\Omega} p \; d\Omega = 0$.
 One can turn to the spatial derivatives of the fields:
 \begin{eqnarray}
 \frac{\partial u}{\partial x} &=&  (2x -6x^2 +4 x^3 ) (2y - 6y^2 + 4y^3)  \\
