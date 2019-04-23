@@ -242,20 +242,6 @@ $0.1353 < \mu <   2.7182$, i.e. a ratio of approx. 20 within the domain. We then
 \todo[inline]{sort out mess wrt Eq 26 of busa13}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 %-----------------------------------------------------------------------------
 \subsubsection{Analytical benchmark IV \label{mms4}}
 
@@ -285,8 +271,31 @@ p &=& (x-1/2)(y-1/2)
 \end{eqnarray}
 
 
+%-----------------------------------------------------------------------------
+\subsubsection{Analytical benchmark V \label{mms5}}
 
+This is taken from Appendix D1 of \cite{john16}.
 
+The domain $\Omega$ is a unit square. We consider the stream function
+\[
+\phi(x,y)=1000x^2(1-x)^4y^3(1-y)^2
+\]
+The velocity field is defined by
+\begin{eqnarray}
+u(x,y) &=&  \partial_y \phi = 1000(x^2(1-x)^4 y^2 (1-y)(3-5y)  ) \\
+v(x,y) &=& -\partial_x \phi = 1000(-2x(1-x)^3(1-3x)y^3(1-y)^2)
+\end{eqnarray}
+and it is easy to verify that $\vec\nabla\cdot\vec v=0$.
+
+The pressure is given by:
+\[
+p(x,y)=\pi^2( xy^3\cos(2\pi x^2y) - x^2y \sin(2\pi xy)) + \frac{1}{8}
+\]
+
+\begin{center}
+\includegraphics[width=8cm]{images/mms/mms5}\\
+Taken from \cite{john16}.
+\end{center}
 
 
 

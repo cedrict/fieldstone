@@ -188,8 +188,10 @@ the condition number of the $\SSS$ matrix, which is not easy to compute since
 $\SSS$ is never built. However, it has been established that large viscosity contrasts in the domain 
 will have a negative impact on the convergence. 
 
-\underline{Remark:} this algorithm requires one solve
-with matrix $\K$ per iteration but says nothing about the method employed to do so (direct solver, iterative solver, ...)
+\begin{remark} 
+his algorithm requires one solve with matrix $\K$ per iteration 
+but says nothing about the method employed to do so (direct solver, iterative solver, ...)
+\end{remark} 
 
 \index{preconditioned conjugate gradient}  
 One thing we know improves the convergence of any iterative solver is the use of a 
@@ -339,13 +341,18 @@ $\vec{\cal P}^{k+1} = \vec{\cal P}^k + \lambda \mathbb{M}_p^{-1} \cdot (\G^T \cd
 \end{enumerate}
 \end{mdframed}
 
-\underline{Remark 1:} If discontinuous pressures are used, the pressure mass matrix can be inverted element by element which is 
+\begin{remark} 
+If discontinuous pressures are used, the pressure mass matrix can be inverted element by element which is 
 cheaper than inverting $\mathbb{M}_p$ as a whole.
+\end{remark}
 
-\underline{Remark 2:} This method has obvious ties with the penalty method. 
+\begin{remark} 
+This method has obvious ties with the penalty method. 
+\end{remark}
 
-\underline{Remark 3:} If $\lambda >> \max_\Omega{\eta}$ then the matrix $\tilde{\K}$ is ill-conditioned and an iterative solver must be used.
-
+\begin{remark} 
+If $\lambda >> \max_\Omega{\eta}$ then the matrix $\tilde{\K}$ is ill-conditioned and an iterative solver must be used.
+\end{remark}
 
 
 

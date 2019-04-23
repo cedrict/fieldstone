@@ -3,30 +3,47 @@
 The success of a mixed finite element formulation crucially depends on a proper choice of the local interpolations of the velocity and the pressure. 
 
 %----------------------------------------------------------------------
-\subsubsection{The compatibility condition (or LBB condition)}
+\subsection{The compatibility condition (or LBB condition)}
+\index{LBB} \index{optimal rate}
 
+'LBB stable' elements assure the existence of a unique solution 
+and assure convergence at the optimal rate. 
 
 %----------------------------------------------------------------------
 \subsection{Families}
 
-Taylor-Hood
+\index{Taylor-Hood}
 
-USE \cite{john16} section 3.6.2
+The family of Taylor-Hood finite element spaces on triangular/tetrahedral 
+grids is given by $P_k \times P_{k-1}$ with $k\geq 2$, 
+and on quadrilateral/hexahedral grids by $Q_k \times Q_{k-1}$ with $k\geq 2$.
+This means that the pressure is then approximated by continuous functions. 
+
+These finite elements are very popular, in particular the pairs for $k=2$, i.e.
+$Q_2\times Q_1$ and $P_2\times P_1$.
+The reason why $k\geq 2$ comes from the fact that the 
+$Q_1 \times Q_0$ (i.e. $Q_1 \times P_0$) and $P_2\times P_1$
+are not stable elements (they are not inf-sup stable). 
+
+\begin{remark}
+Note that a similar element to $Q_2 \times Q_1$ has been proposed
+and used succesfully used \cite{taho73,hota74}: it is denoted by $Q_2^{(8)} \times Q_1$ 
+since the center node ('$x^2y^2$') and its associated degrees of freedom have been removed. It 
+has also been proved to be LBB stable. 
+\end{remark}
 
 
-
-
-\subsubsection{The bi/tri-linear velocity - constant pressure element ($Q_1\times P_0$)}
+\subsection{The bi/tri-linear velocity - constant pressure element ($Q_1\times P_0$)}
 \includegraphics[width=3cm]{images/under_construction}
 
 discussed in example 3.71 of \cite{john16}
 
 %----------------------------------------------------------------------
-\subsubsection{The bi/tri-quadratic velocity - discontinuous linear pressure element ($Q_2 \times P_{-1}$)}
+\subsection{The bi/tri-quadratic velocity - discontinuous linear pressure element ($Q_2 \times P_{-1}$)}
 \includegraphics[width=3cm]{images/under_construction}
 
 %----------------------------------------------------------------------
-\subsubsection{The bi/tri-quadratic velocity - bi/tri-linear pressure element ($Q_2 \times Q_1$)}
+\subsection{The bi/tri-quadratic velocity - bi/tri-linear pressure element ($Q_2 \times Q_1$)}
 \includegraphics[width=3cm]{images/under_construction}
 
 
@@ -40,17 +57,17 @@ Biquadratic velocities, bilinear pressure. See Hood and Taylor. The element sati
 
 
 %----------------------------------------------------------------------
-\subsubsection{The stabilised bi/tri-linear velocity -  bi/tri-linear pressure element ($Q_1\times Q_1$-stab)}
+\subsection{The stabilised bi/tri-linear velocity -  bi/tri-linear pressure element ($Q_1\times Q_1$-stab)}
 \includegraphics[width=3cm]{images/under_construction}
 
 %----------------------------------------------------------------------
-\subsubsection{The MINI triangular element ($P_1^+\times P_1$)}
+\subsection{The MINI triangular element ($P_1^+\times P_1$)}
 \includegraphics[width=3cm]{images/under_construction}
 
 discussed in section 3.6.1 of \cite{john16}
 
 %----------------------------------------------------------------------
-\subsubsection{The quadratic velocity - linear pressure triangle ($P_2\times P_1$)}
+\subsection{The quadratic velocity - linear pressure triangle ($P_2\times P_1$)}
 \includegraphics[width=3cm]{images/under_construction}
 
 From \cite{segal}.
@@ -67,7 +84,7 @@ are used. The quadrilateral counterpart of this triangle is the $Q_2\times Q_1$ 
 
 
 %----------------------------------------------------------------------
-\subsubsection{The Crouzeix-Raviart triangle ($P_2^+\times P_{-1}$)}
+\subsection{The Crouzeix-Raviart triangle ($P_2^+\times P_{-1}$)}
 \includegraphics[width=3cm]{images/under_construction}
 
 From \cite{daks08}: seven-node Crouzeix-Raviart triangle with quadratic velocity shape functions enhanced by a cubic bubble function and discontinuous linear interpolation for the pressure field [e.g., Cuvelier et al., 1986]. This element is stable and no additional stabilization techniques are required [Elman et al., 2005].
@@ -81,6 +98,11 @@ The most simple Crouzeix-Raviart element is the non-conforming linear triangle
 with constant pressure ($P_1\times P_0$).
 
 p248 of Elman book. satisfies LBB condition. 
+
+%-----------------------------------------------------------------
+\subsection{The Rannacher-Turek element - rotated $Q_1\times P_0$}
+
+p. 722 of \cite{john16}
 
 %----------------------------
 \subsection{Other elements}

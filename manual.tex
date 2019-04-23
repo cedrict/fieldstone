@@ -17,6 +17,9 @@
 \usepackage{algorithm,algorithmic}
 \usepackage[pdftex,dvipsnames]{xcolor}
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+\usepackage{amsthm}
+\newtheorem*{remark}{Remark}
+
 \hypersetup{
     colorlinks,
     citecolor=black,
@@ -35,6 +38,7 @@
   keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
   keywordstyle=\color{blue},       % keyword style
 }
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
 
 \newcommand{\nn}{\nonumber}
 \newcommand{\A}{{\mathbb{A}}}
@@ -205,14 +209,13 @@ application of these codes: geodynamic modelling.
 
 \subsection{The SUPG formulation for the energy equation}
 
-
 \subsection{Dealing with a free surface}
 
 \subsection{Convergence criterion for nonlinear iterations}
 
 
 \newpage %---------------------------------------------------------------------
-\subsection{The method of manufactured solutions} \input{mms} %----------------
+\subsection{The method of manufactured solutions \label{mms}} \input{mms} %----
 \newpage %---------------------------------------------------------------------
 \subsection{Assigning values to quadrature points} \input{averagings} %--------
 \newpage %---------------------------------------------------------------------
@@ -253,6 +256,9 @@ application of these codes: geodynamic modelling.
 \subsection{Tracking materials and/or interfaces} \input{tracking} %-----------
 \newpage %---------------------------------------------------------------------
 \subsection{Static condensation} \input{static_condensation} %-----------------
+\newpage %---------------------------------------------------------------------
+\subsection{Measuring incompressibility \label{ss_incomp}} \input{incomp} %----
+
 
 %==================================================================================================
 %==================================================================================================

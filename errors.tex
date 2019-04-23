@@ -1,80 +1,132 @@
+\index{$L_1$ norm}
+\index{$L_2$ norm}
+
 What follows is written in the case of a two-dimensional model. Generalisation to
 3D is trivial. What follows is mostly borrowed from \cite{thmk14}.
 
-When measuring the order of accuracy of the primitive variables ${\bm v}$ and $p$,
+When measuring the order of accuracy of the primitive variables $\vec{v}$ and $p$,
 it is standard to report errors in both the $L_1$ and the $L_2$ norm.
 For a scalar quantity $\Psi$, the $L_1$ and $L_2$ norms are computed as
 \[
-||\Psi||_1 = \int_V |\Psi| dV
+\norm{\Psi}_1 = \int_V |\Psi| dV
 \quad\quad
 \quad\quad
-||\Psi||_2 = \sqrt{ \int_V \Psi^2 dV }
+\norm{\Psi}_2 = \sqrt{ \int_V \Psi^2 dV }
 \]
-For a vector quantity ${\bm k}=(k_x,k_y)$,
+For a vector quantity $\vec{k}=(k_x,k_y)$ in a two-dimensional space,
 the $L_1$ and $L_2$ norms are defined as:
 \[
-||{\bm k}||_1 = \int_V (|k_x|+|k_y|) dV
+\norm{\vec{k}}_1 = \int_V (|k_x|+|k_y|) dV
 \quad\quad
 \quad\quad
-||{\bm k}||_2 = \sqrt{ \int_V (k_x^2+k_y^2) dV }
+\norm{\vec{k}}_2 = \sqrt{ \int_V (k_x^2+k_y^2) dV }
 \]
-
 To compute the respective norms
 the integrals in the above norms can be approximated by splitting them
 into their element-wise contributions. The element volume integral can then
-be easily computed by numerical integration using Gauss–Legendre quadrature.
+be easily computed by numerical integration using Gauss-Legendre quadrature.
 
 The respective $L_1$ and $L_2$ norms for the pressure error can be evaluated via
 \[
-||e_p||_1 = \sum_{i=1}^{n_e} \sum_{q=1}^{n_q} |e_p({\bm r}_q)| w_q |J_q|
+e_p^h|_1 = \sum_{i=1}^{n_e} \sum_{q=1}^{n_q} |e_p^h(\vec{r}_q)| w_q |J_q|
 \quad\quad
 \quad\quad
-||e_p||_2=\sqrt{ \sum_{i=1}^{n_e} \sum_{q=1}^{n_q} |e_p({\bm r}_q)|^2 w_q |J_q| }
+e_p^h|_2=\sqrt{ \sum_{i=1}^{n_e} \sum_{q=1}^{n_q} |e_p^h(\vec{r}_q)|^2 w_q |J_q| }
 \]
-where
-\[
-e_p({\bm r}_q)=p({\bm r}_q) - p^{th}({\bm r}_q)
-\]
-is the pressure error evaluated at the $q$th quadrature associated with
+where $e_p^h(\vec{r}_q)=p^h(\vec{r}_q) - p(\vec{r}_q)$ 
+is the pressure error evaluated at the $q$-th quadrature associated with
 the $i$th element. $n_e$ and $n_q$ refer to the number of elements and
 the number of quadrature points per element.
 $w_q$ and $J_q$ are the quadrature weight of the Jacobian associated with
 point $q$.
 
-The velocity error $e_v$ is evaluated using the following two norms
+The velocity error $e_{\vec v}^h$ is evaluated using the following two norms
 \[
-||e_v||_1 = \sum_{i=1}^{n_e} \sum_{q=1}^{n_q} [ |e_u({\bm r}_q)| + |e_v({\bm r}_q)| ]    w_q |J_q|
+e_{\vec{v}}^h|_1 = \sum_{i=1}^{n_e} \sum_{q=1}^{n_q} [ |e_u^h(\vec{r}_q)| + |e_v^h(\vec{r}_q)| ]    w_q |J_q|
 \quad\quad
 \quad\quad
-||e_v||_2=\sqrt{ \sum_{i=1}^{n_e} \sum_{q=1}^{n_q} \left[ |e_u({\bm r}_q)|^2 +  e_v({\bm r}_q)|^2 \right] w_q |J_q| }
+e_{\vec v}^h|_2=\sqrt{ \sum_{i=1}^{n_e} \sum_{q=1}^{n_q} \left[ |e_u^h({\bm r}_q)|^2 +  e_v^h({\bm r}_q)|^2 \right] w_q |J_q| }
 \]
-where
+where $e_u^h(\vec{r}_q)=u^h(\vec{r}_q) - u(\vec{r}_q)$ and $e_v^h(\vec{r}_q)=v^h(\vec{r}_q)-v(\vec{r}_q)$.
+
+
+
+
+\index{$H^1(\Omega)$ space} \index{$H^1$ norm} \index{$H^1$ semi-norm}
+Another norm is very varely used in the geodynamics literature but is preferred in the 
+Finite Element literature: the so-called $H^1$ norm. The mathematical basis for this
+norm and the nature of the $H^1(\Omega)$ Hilbert space is to be found in many FE books \cite{dohu03,john16,hugh}.
+This norm is expression is expressed as follows for a function $f$ such that $f,|\nabla f|\in L^2(\Omega)$
+\footnote{\url{https://en.wikipedia.org/wiki/Sobolev_space}}
 \[
-e_u({\bm r}_q)=u({\bm r}_q) - u^{th}({\bm r}_q)
-\quad\quad
-\quad\quad
-e_v({\bm r}_q)=v({\bm r}_q) - v^{th}({\bm r}_q)
+\norm{f}_{H^1} = \left( \int_\Omega ( |f|^2 + |\nabla f|^2  ) d\Omega   \right)^{1/2}
 \]
-We compute the different error norms for $e_p$ and $e_v$ for a set of numerical experiments with
-varying resolution $h$. We expect the error norms to follow the following relationships:
+We then have 
 \[
-||e_v||_1 = C h^{r_v} \quad\quad\quad ||e_v||_2 = C h^{r_v'}
+e_{\vec v}^h|_{H^1} = \norm{\vec{v}^h-\vec{v}}_{H^1} = \sqrt{
+\sum\limits_{i=1}^d 
+\int_\Omega  
+\left[
+({v}_i^h-{v}_i)^2
++
+\vec\nabla(v_i^h-v_i)\cdot\vec\nabla(v_i^h-v_i) 
+\right] d\Omega   
+}
+\]
+where $d$ is the number of dimensions.
+Note that sometimes the following semi-norm is used \cite{dobo04,bodg06}:
+\[
+e_{\vec v}^h|_{H^1} = \norm{\vec{v}^h-\vec{v}}_{H^1} = \sqrt{
+\sum\limits_{i=1}^d 
+\int_\Omega  
+\left[
+\vec\nabla(v_i^h-v_i)\cdot\vec\nabla(v_i^h-v_i) 
+\right] d\Omega   
+}
+\]
+ 
+
+When computing the different error norms for $e_p$ and $e_{\vec v}$ for a set of numerical experiments with
+varying resolution $h$ we expect the error norms to follow the following relationships:
+\[
+e_{\vec v}^h|_1 = C h^{rvL_1} 
+\quad\quad\quad\quad
+e_{\vec v}^h|_2 = C h^{rvL_2} 
+\quad\quad\quad\quad 
+e_{\vec v}^h|_{H^1} = C h^{rvH^1}
 \]
 \[
-||e_p||_1 = C h^{r_p} \quad\quad\quad ||e_p||_2 = C h^{r_p'}
+e_p^h|_1 = C h^{rpL_1} 
+\quad\quad\quad 
+e_p^h|_2 = C h^{rpL_2}
 \]
 where $C$ is a resolution-independent constant
-and $r_p$, $r_p'$ and $r_v$, $r_v'$ are the convergence rates for
-pressure and velocity, respectively. Using linear regression
-on the logarithm of the respective error norm and the resolution,
-we compute the convergence rates of the numerical solutions.
+and $rpXX$ and $rvXX$ are the convergence rates for
+pressure and velocity in various norms, respectively. 
+Using linear regression on the logarithm of the respective error norm and the resolution $h$,
+one can compute the convergence rates of the numerical solutions.
 
-\begin{itemize}
-\item For $Q_1P_0$, the theoretical lower bound for $r_v'$ is 2 and for $r_p'$ it is 1
-\item For $Q_2P_{-1}$, the theoretical lower bound for $r_v'$ is 3 and for $r_p'$ it is 2
-\end{itemize}
+As mentioned in \cite{dobo04}, when finite element solutions converge at
+the same rates as the interpolants we say that the method is optimal, i.e.:
+\index{optimal rate}
 
+\[
+e_{\vec v}^h|_{L_2} = {\cal O}(h^3)
+\quad\quad\quad\quad
+e_{\vec v}^h|_{H^1} = {\cal O}(h^2)
+\quad\quad\quad\quad
+e_{p}^h|_{L_2} = {\cal O}(h^2)
+\]
+
+%\begin{itemize}
+%\item For $Q_1P_0$, the theoretical lower bound for $r_v'$ is 2 and for $r_p'$ it is 1
+%\item For $Q_2P_{-1}$, the theoretical lower bound for $r_v'$ is 3 and for $r_p'$ it is 2
+%\end{itemize}
 We note that when using discontinuous pressure space
 (e.g., $P_0$, $P_{-1}$), these bounds remain valid even
 when the viscosity is discontinuous provided that the element boundaries conform to the discontinuity.
+
+\todo[inline]{insert appendix of Thieulot \& Bangerth}
+ 
+
 

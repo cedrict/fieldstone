@@ -1,32 +1,34 @@
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ finish. not happy with definition. Look at literature}{17}{section*.3}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ derive formula for Earth size R1 and R2}{18}{section*.4}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ check aspect manual The 2D cylindrical shell benchmarks by Davies et al. 5.4.12}{18}{section*.5}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ finish. not happy with definition. Look at literature}{17}{section*.2}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ derive formula for Earth size R1 and R2}{18}{section*.3}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ check aspect manual The 2D cylindrical shell benchmarks by Davies et al. 5.4.12}{18}{section*.4}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here figure}{19}{section*.5}
 \contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here figure}{19}{section*.6}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here figure}{19}{section*.7}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ citation needed}{29}{section*.11}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ verify those}{31}{section*.12}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ verify those}{34}{section*.13}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ list codes which use this approach}{38}{section*.14}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ insert here link(s) to manual and literature}{41}{section*.15}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ say something about minus sign?}{44}{section*.16}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ other time discr schemes!}{49}{section*.21}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ sort out mess wrt Eq 26 of busa13}{54}{section*.24}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ add more examples coming from geo}{61}{section*.25}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ produce drawing of node numbering}{63}{section*.26}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here the rederivation 2.1.1 of spmw16}{65}{section*.27}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ produce figure to explain this}{67}{section*.28}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ link to proto paper }{67}{section*.29}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ link to least square and nodal derivatives}{67}{section*.30}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ finish explain}{69}{section*.31}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ add biblio}{71}{section*.32}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ how to compute $M$ for the Schur complement ?}{74}{section*.33}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ to finish}{90}{section*.34}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ to finish}{90}{section*.35}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ check}{94}{section*.36}
-\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ build S and have python compute its smallest and largest eigenvalues as a function of resolution?}{124}{section*.37}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ compare my rates with original paper!}{141}{section*.39}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ explain how Medge is arrived at!}{167}{section*.40}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ compare with ASPECT ??!}{167}{section*.41}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ gauss-lobatto integration?}{167}{section*.42}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ pressure average on surface instead of volume ?}{167}{section*.43}
-\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ cross check with CIG database}{211}{section*.45}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ citation needed}{29}{section*.10}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ verify those}{31}{section*.11}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ verify those}{34}{section*.12}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ list codes which use this approach}{38}{section*.13}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ insert here link(s) to manual and literature}{41}{section*.14}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ say something about minus sign?}{44}{section*.15}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ other time discr schemes!}{49}{section*.20}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ sort out mess wrt Eq 26 of busa13}{54}{section*.23}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ add more examples coming from geo}{62}{section*.24}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ produce drawing of node numbering}{64}{section*.25}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ insert here the rederivation 2.1.1 of spmw16}{66}{section*.26}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ produce figure to explain this}{68}{section*.27}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ link to proto paper }{68}{section*.28}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ link to least square and nodal derivatives}{68}{section*.29}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ finish explain}{70}{section*.30}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ add biblio}{72}{section*.31}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ how to compute $M$ for the Schur complement ?}{75}{section*.32}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ insert appendix of Thieulot \& Bangerth}{90}{section*.33}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ to finish}{92}{section*.34}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ to finish}{92}{section*.35}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ check}{96}{section*.36}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ implement and report}{97}{section*.37}
+\contentsline {todo}{\color@fb@x {}{Plum}{}{Plum!15}{\leavevmode {\color {Plum!15}o}}\ build S and have python compute its smallest and largest eigenvalues as a function of resolution?}{127}{section*.38}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ compare my rates with original paper!}{144}{section*.40}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ explain how Medge is arrived at!}{170}{section*.41}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ compare with ASPECT ??!}{170}{section*.42}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ gauss-lobatto integration?}{170}{section*.43}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ pressure average on surface instead of volume ?}{170}{section*.44}
+\contentsline {todo}{\color@fb@x {}{black}{}{orange}{\leavevmode {\color {orange}o}}\ cross check with CIG database}{214}{section*.46}

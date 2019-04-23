@@ -1,20 +1,20 @@
-The details of the numerical setup are presented in Section \ref{f1}.
+The details of the numerical setup are presented in Section \ref{mms}.
 
 We will here focus on the $Q_1 \times Q_1$ element, which, unless stabilised,
 violates  the LBB stability condition and therefore is unusable. 
-Stabilisation can be of two types: least-squares (see for example \cite{dohu03}) 
-\cite{temr92,kibr,gubl06},
+Stabilisation can be of two types: least-squares \cite{dohu03,temr92,kibr,gubl06},
 or by means of an additional term in the weak form as first introduced in \cite{dobo04,bodg06}.
 It is further analysed in \cite{nosi01,lihc09}.
 Note that an equal-order velocity-pressure formulation that does not exhibit spurious
 pressure modes (without stabilisaion) has been presented in \cite{risc86}.
 
-This element corresponds to Bilinear velocities, bilinear pressure (equal order interpolation for both
-velocity and pressure) which is very convenient in terms of data structures since all dofs 
-are colocated.
+This element corresponds to bilinear velocities, bilinear pressure 
+(equal order interpolation for both velocity and pressure) which is 
+very convenient in terms of data structures since all dofs are colocated.
 
-In geodynamics, it is used in the Rhea code \cite{stgb10,busa13} and in Gale.
+In geodynamics, it is used in the Rhea code \cite{stgb10,busa13} and in Gale \cite{arbi13}.
 It is also used in \cite{lezh11} in its stabilised form, in conjunction with AMR. 
+This element is quickly discussed at page 217 of Volker John's book \cite{john16}.
 
 The stabilisation term $\C$ enters the Stokes matrix in the (2,2) position:
 \[

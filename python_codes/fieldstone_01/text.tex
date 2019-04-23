@@ -1,21 +1,22 @@
 
 {\sl This fieldstone was developed in collaboration with Job Mos}.
 
-From \cite{dohu}. In order to illustrate the behavior of selected mixed finite elements in the solution 
+This benchmark is taken from \cite{dohu03} and is described fully in section \ref{mms}. 
+In order to illustrate the behavior of selected mixed finite elements in the solution 
 of stationary Stokes flow,  we consider a two-dimensional problem 
 in the square domain $\Omega=[0,1]\times[0,1]$, which possesses a closed-form analytical 
 solution. The problem consists of determining the velocity field ${\bm v} = (u,v)$ and the 
 pressure $p$ such that 
 \[
--\nu \Delta {\bm v} + {\bm \nabla} p = {\bm b}  \quad\quad {\rm in} \; \Omega
+\eta \Delta \vec{v} - \vec{\nabla} p + \vec{b} = \vec{0}   \quad\quad {\rm in} \; \Omega
 \]
 \[
-{\bm \nabla} \cdot {\bm v} = 0 \quad\quad {\rm in} \; \Omega
+\vec{\nabla} \cdot \vec{v} = 0 \quad\quad {\rm in} \; \Omega
 \]
 \[
-{\bm v}={\bm 0} \quad\quad {\rm on} \; \Gamma
+\vec{\bm v}=\vec{0} \quad\quad {\rm on} \; \Gamma_D
 \]
-where the fluid viscosity is taken as $\nu=1$. 
+where the fluid viscosity is taken as $\eta=1$. 
 
 
 \fbox{
