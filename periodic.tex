@@ -1,0 +1,53 @@
+
+This type of boundary conditions can be handy in some specific cases such 
+as infinite domains. The idea is simple: when material leaves the domain 
+through a boundary it comes back in through the opposite boundary (which 
+of course presupposes a certain topology of the domain). 
+
+For instance, if one wants to model a gas a the molecular level and wishes 
+to avoid interactions of the molecules with the walls of the container, 
+such boundary conditions can be used, mimicking an infinite domain in all 
+directions. 
+
+Let us consider the small mesh depicted hereunder:
+
+We wish to implement horizontal boundary conditions so that 
+\[
+u_5=u_1
+\quad\quad
+u_{10}=u_6
+\quad\quad
+u_{15}=u_{11}
+\quad\quad
+u_{20}=u_{16}
+\]
+One could of course rewrite these conditions as constraints and extend the Stokes 
+matrix but this approach turns out to be not practical at all. 
+
+Instead, the method is rather simple: replace in the connectivity array the dofs on the right side
+(nodes 5, 10, 15, 20) by the dofs on the left side. In essence, we wrap the system upon itself 
+in the horizontal direction so that elements 4, 8 and 12 'see' and are 'made of' the nodes 1, 6, 11 and 16.
+In fact, this is only necessary during the assembly. Everywhere in the loops nodes 5, 10, 15 and 20 appear 
+one must replace them by their left pendants 1, 6, 11 and 16. This autmatically generates a matrix 
+with lines and columns corresponding to the $u_5$, $u_{10}$, $u_{15}$ and $u_{20}$ being exactly zero. 
+The Stokes matrix is the same size, the blocks are the same size and the symmetric character of the matrix 
+is respected. However, there is a remaining problem. There are zeros on the diagonal 
+of the above mentioned lines and columns. One must then place there 1 or a value more
+appropriate.
+
+Another way of seeing this is as follows: let us assume we have built and assembled
+the Stokes matrix, and we want to impose periodic b.c. so that dof $j$ and $i$ are the same. 
+The algorithm is composed of four steps:
+\begin{enumerate} 
+\item add col $j$ to col $i$
+\item add row $j$ to row $i$ (including rhs)
+\item zero out row $j$, col $j$
+\item put average diagonal value on diagonal ($j,j$)
+\end{enumerate} 
+
+\begin{remark}
+Unfortunately the non-zero pattern of the matrix with periodic b.c. is not the same 
+as the matrix without periodic b.c.
+\end{remark}
+
+

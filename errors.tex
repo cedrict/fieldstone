@@ -1,5 +1,6 @@
 \index{$L_1$ norm}
 \index{$L_2$ norm}
+\index{$H^1$ norm}
 
 What follows is written in the case of a two-dimensional model. Generalisation to
 3D is trivial. What follows is mostly borrowed from \cite{thmk14}.
@@ -126,7 +127,59 @@ We note that when using discontinuous pressure space
 (e.g., $P_0$, $P_{-1}$), these bounds remain valid even
 when the viscosity is discontinuous provided that the element boundaries conform to the discontinuity.
 
-\todo[inline]{insert appendix of Thieulot \& Bangerth}
  
+\subsubsection{About extrapolation}
+\index{Extrapolation}
 
+{\it Section contributed by W. Bangerth and part of Thieulot \& Bangerth [in prep.]}
+
+In a number of numerical benchmarks we
+want to estimate the error $X_h-X^\ast$ between a quantity $X_h$ computed
+from the numerical solution $\vec{u}_h,p_h$ and the corresponding value
+$X$ computed from the exact solution $\vec{u},p$. Examples of such quantities
+$X$ are the root mean square velocity $v_{rms}$, but it could also be a mass flux
+across a boundary, an average horizontal velocity at the top boundary, or
+any other scalar quantity.
+
+If the exact solution is known, then one can of course compute $X$ from it.
+On the other hand, we would of course like to assess convergence also in
+cases where the exact solution is not known. In that case, one can compute
+an \textit{estimate} $X^\ast$ for $X$ by way of \textit{extrapolation}.
+To this end, we make the assumption that asymptotically, $X_h$ converges to
+$X$ at a fixed (but unknown) rate $r$, so that
+\begin{equation}
+  \label{eq:extrapolation-1}
+  e_h=|X_h-X| \approx C h^r.
+\end{equation}
+Here, $X$, $C$ and $r$ are all unknown constants to be determined, although
+we are not really interested in $C$.
+We can evaluate $X_h$ from the numerical solution
+on successively refined meshes with mesh sizes $h$, $h/2$, and $h/4$. Then,
+in addition to \eqref{eq:extrapolation-1} we also have
+\begin{eqnarray}
+  \label{eq:extrapolation-2}
+  e_{h/2}=|X_{h/2}-X| \approx C \left(\frac h2\right)^r,
+  \\
+  \label{eq:extrapolation-3}
+  e_{h/4} =|X_{h/4}-X| \approx C \left(\frac h4\right)^r.
+\end{eqnarray}
+Taking ratios of equations \eqref{eq:extrapolation-1}--\eqref{eq:extrapolation-3},
+and replacing the unknown $X$ by an \textit{estimate} $X^\ast$, we then
+arrive at the following equation:
+\begin{equation*}
+\frac{|X_h-X^\star|}{|X_{h/2}-X^\star|}
+=
+\frac{|X_{h/2}-X^\star|}{|X_{h/4}-X^\star|}=2^r.
+\end{equation*}
+If one assumes that $X_h$ converges to $X$ uniformly either from above or
+below (rather than oscillate around $X$), then this equation allows us
+to solve for $X^\ast$ and $r$:
+\begin{equation*}
+X^\star = \frac{X_h X_{h/2}-X_{h/2}^2}{X_h - 2 X_{h/2} + X_{h/4}}, \qquad\qquad
+r = \log_2 \frac{X_{h/2}-X^\star}{X_{h/4}-X^\star}.
+\end{equation*}
+In the determination of $r$, we could also have used $X_h$ and $X_{h/2}$,
+but using $X_{h/2}$ and $X_{h/4}$ is generally more reliable because
+the higher order terms we have omitted in \eqref{eq:extrapolation-1} are less
+visible on finer meshes.
 

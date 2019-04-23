@@ -86,11 +86,12 @@
 \subsection{Philosophy} %------------------------------------------------------
 This document was writing with my students in mind, i.e. 3rd and 4th year 
 Geology/Geophysics students at Utrecht University. 
-I have chosen to use jargon as little as possible unless it is a term that is 
+I have chosen to use as little jargon as possible unless it is a term that is 
 commonly found in the geodynamics literature (methods paper as well as 
 application papers). There is no mathematical proof of any theorem or statement 
 I make. These are to be found in generic Numerical Analysic, Finite Element and 
-Linear Algebra books. 
+Linear Algebra books. If you find that this books lacks references
+to Sobolev spaces, Hilbert spaces, and other spaces, this book is just not for you.  
 
 The codes I provide here are by no means optimised as I value code readability 
 over code efficiency. I have also chosen to avoid resorting to multiple code 
@@ -151,6 +152,8 @@ http://www-udc.ig.utexas.edu/external/becker/Geodynamics557.pdf
 %---------------------------------------
 \subsection{Installation}
 
+If numpy, scipy or matplotlib are not installed on your machine, here is how you 
+can install them:
 \begin{verbatim}
 python3.6 -m pip install --user numpy scipy matplotlib
 \end{verbatim}
@@ -258,6 +261,9 @@ application of these codes: geodynamic modelling.
 \subsection{Static condensation} \input{static_condensation} %-----------------
 \newpage %---------------------------------------------------------------------
 \subsection{Measuring incompressibility \label{ss_incomp}} \input{incomp} %----
+\newpage %---------------------------------------------------------------------
+\subsection{Periodic boundary condtions\label{ss_periodic}} \input{periodic} %-
+
 
 
 %==================================================================================================
