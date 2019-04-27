@@ -31,6 +31,40 @@ ${\bm \sigma}$ & full stress tensor & Pa \\
 \end{center}
 
 %------------------------------------------------------------------------
+\subsection{Strain rate and spin tensor}
+\index{velocity gradient}
+\index{strain rate}
+\index{spin tensor}
+
+The velocity gradient is given in Cartesian coordinates by:
+\[
+\vec\nabla\vec\upnu = 
+\left(
+\begin{array}{ccc}
+\frac{\partial u}{\partial x} & \frac{\partial v}{\partial x} & \frac{\partial w}{\partial x} \\\\
+\frac{\partial u}{\partial y} & \frac{\partial v}{\partial y} & \frac{\partial w}{\partial y} \\\\
+\frac{\partial u}{\partial z} & \frac{\partial v}{\partial z} & \frac{\partial w}{\partial z} 
+\end{array}
+\right)
+\]
+It can be decomposed into its symmetric and skew-symmetric parts according to:
+\[
+\vec\nabla\vec\upnu = \vec\nabla^s\vec\upnu + \vec\nabla^w\vec\upnu
+\]
+The symmetric part is called the strain rate (or rate of deformation):
+\[
+\dot{\bm \epsilon}(\vec \upnu) = \frac{1}{2}\left( \vec\nabla\vec\upnu + \vec\nabla\vec\upnu^T \right)
+\]
+The skew-symmetric tensor is called spin tensor (or vorticity tensor):
+\[
+\dot{\bm R}(\vec \upnu) = \frac{1}{2}\left( \vec\nabla\vec\upnu - \vec\nabla\vec\upnu^T \right)
+\]
+
+
+
+
+
+%------------------------------------------------------------------------
 \subsection{The heat transport equation - energy conservation equation}
 
 Let us start from the heat transport equation as shown in Schubert, Turcotte and Olson \cite{scto01}:
@@ -402,7 +436,7 @@ http://eml.ou.edu/equation/FLUIDS/STRAIN/STRAIN.HTM
 
 
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-------------------------------
 \subsection{Boundary conditions}
 
 %wiki
@@ -425,6 +459,10 @@ a Dirichlet boundary condition specifies the values of the solution itself
 \index{Neumann boundary condition}
 
 
+
+
+
+%....................................
 \subsubsection{The Stokes equations}
 
 You may find the following terms in the computational geodynamics literature:
@@ -438,12 +476,13 @@ You may find the following terms in the computational geodynamics literature:
 \item open .b.c.: see fieldstone 29. 
 \end{itemize}
 
+%....................................
 \subsubsection{The heat transport equation}
 
 There are two types of boundary conditions for this equation: temperature boundary conditions (Dirichlet boundary conditions) and heat flux boundary conditions (Neumann boundary conditions). 
 
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%------------------------------------------
 \subsection{Meaningful physical quantities}
 
 \begin{itemize}
@@ -453,12 +492,19 @@ There are two types of boundary conditions for this equation: temperature bounda
 \upnu_{rms} = \left ( \frac{\int_\Omega |{\vec \upnu}|^2 \;  d \Omega}{\int_\Omega d\Omega }  \right )^{1/2}
 =\left ( \frac{1}{V_\Omega} \int_\Omega |{\vec \upnu}|^2 \;  d \Omega \right )^{1/2} \label{eqVrms}
 \end{equation}
-In Cartesian coordinates, for a cuboid domain of size $Lx\times L_y \times Lz$, the $v_{rms}$ is simply given by:
+\begin{remark}
+$V_\Omega$ is usually computed numerically at the same time $\upnu_{vrms}$ is computed.
+\end{remark}
+In Cartesian coordinates, for a cuboid domain of size $Lx\times L_y \times Lz$, 
+the $\upnu_{rms}$ is simply given by:
 \begin{equation}
-\upnu_{rms}  = \left ( \frac{1}{L_xL_yL_z} \int_0^{L_x}\int_0^{L_y}\int_0^{L_z} (u^2 + v^2 + w^2) dxdydz  \right )^{1/2}
+\upnu_{rms}  = \left ( \frac{1}{L_xL_yL_z} \int_0^{L_x}\int_0^{L_y}\int_0^{L_z} 
+(u^2 + v^2 + w^2) dxdydz  \right )^{1/2}
 \end{equation}
-In the case of an annulus domain, although calculations are carried out in Cartesian coordinates, it makes sense
-to look at the radial velocity component $v_r$ and the tangential velocity component $v_\theta$, and their respective
+In the case of an annulus domain, although calculations are carried out 
+in Cartesian coordinates, it makes sense
+to look at the radial velocity component $v_r$ and the tangential velocity 
+component $v_\theta$, and their respective
 root mean square averages:
 \begin{equation}
 v_r|_{rms}  =\left ( \frac{1}{V_\Omega} \int_\Omega v_r^2 \;  d \Omega \right )^{1/2} \label{eqVrVrms}
@@ -557,6 +603,23 @@ temperature.
 
 
 \todo[inline]{check aspect manual The 2D cylindrical shell benchmarks by Davies et al. 5.4.12}
+
+
+\newpage
+%--------------------------------------------
+\subsection{The need for numerical modelling}
+
+The gouverning equations we have seen in this chapter require the use 
+of numerical solution techniques for three main reasons:
+\begin{itemize}
+\item the advection term in the energy equation couples velocity and temperature;
+\item the constitutive law (the relationship between stress and strain rate) 
+often depends on velocity (or rather, strain rate), temperature, pressure, ...
+\item Even when the coefficients of the PDE's are linear, often their spatial
+variability, coupled to potentially complex domain geometries prevent 
+arriving at the analytical solution.
+\end{itemize}
+
 
 
 

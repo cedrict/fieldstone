@@ -1,0 +1,42 @@
+
+The velocity divergence error integrated over the whole element is given by
+\begin{equation}
+e_{div}= \int_\Omega (\vec\nabla\cdot \vec v^h - \underbrace{\vec\nabla\cdot \vec v}_{=0}  ) \; d\Omega
+= \int_\Omega (\vec\nabla\cdot \vec v^h) \; d\Omega
+\end{equation}
+where $\Gamma_e$ is the boundary of element $e$ and $\vec{n}$ is the unit 
+outward normal of $\Gamma_e$.
+
+Furthermore we also have \cite{dobo04}:
+\[
+e_{div}
+= \int_{\Gamma_e} \vec{v}^h\cdot\vec{n} \;  d\Gamma
+\]
+The reason is as follows and is called the divergence theorem:
+suppose a volume $V$ subset of $\mathbb{R}^d$ which is compact
+and has a piecewise smooth boundary $S$, and if $\vec F$ is
+a continuously differentiable vector field then
+\[
+\int_V ( \vec\nabla\cdot\vec F)\; dV = \int_S (\vec F \cdot \vec n)\; dS
+\]
+The left side is a volume integral while the right side is a surface integral.
+Note that sometimes the notation $d\vec S = \vec n \; dS $ is used so that 
+$\vec F \cdot \vec n \; dS = \vec F \cdot d\vec S$.
+
+The average velocity divergence over an element can be defined as 
+\[
+<\vec \nabla \cdot \vec v>_e 
+= \frac{1}{V_e} \int_{\Omega_e}  (\vec\nabla\cdot\vec v) \; d\Omega
+= \frac{1}{V_e} \int_{\Gamma_e} \vec{v}\cdot\vec{n} \; d\Gamma
+\]
+Note that for elements using discontinuous pressures we shall 
+recover a zero divergence element per element (local mass conservation)
+while for continuous pressure elements the mass conservation 
+is guaranteed only globally (i.e. over the whole domain), see section 3.13.2 of \cite{grsa}.
+
+Note that one could instead compute $<|\vec\nabla\cdot \vec v|>_e$. Either volume or 
+surface integral can be computed by means of an appropriate Gauss-Legendre quadrature algorithm.
+
+\improvement[inline]{implement and report}
+
+

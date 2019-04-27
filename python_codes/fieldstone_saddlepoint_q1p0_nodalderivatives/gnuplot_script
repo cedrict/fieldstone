@@ -15,33 +15,101 @@ x**1/10. w l t 'x^1'
 
 set output 'errors_exx.pdf'
 plot[][]\
-'errors_exx' u (1./sqrt($3)):6 w l t 'exx_0',\
-'errors_exx' u (1./sqrt($3)):7 w l t 'exx_1',\
-'errors_exx' u (1./sqrt($3)):8 w l t 'exx_2',\
-'errors_exx' u (1./sqrt($3)):9 w l t 'exx_3',\
+'errors_exx' u (1./sqrt($3)):6  w l t 'exx_0',\
+'errors_exx' u (1./sqrt($3)):7  w l t 'exx_1',\
+'errors_exx' u (1./sqrt($3)):8  w l t 'exx_2',\
+'errors_exx' u (1./sqrt($3)):9  w l t 'exx_3',\
+'errors_exx' u (1./sqrt($3)):10 w l t 'exx_4',\
 x**2/2.5 w l lt 1 lc 0 dt 2 t 'h^2',\
 x**1.5/8. w l lt 1 lc 0 dt 3 t 'h^{1.5}',\
 x**1/15. w l lt 2 lc 0 dt 4 t 'h^1'
 
 set output 'errors_eyy.pdf'
 plot[][]\
-'errors_eyy' u (1./sqrt($3)):6 w l t 'eyy_0',\
-'errors_eyy' u (1./sqrt($3)):7 w l t 'eyy_1',\
-'errors_eyy' u (1./sqrt($3)):8 w l t 'eyy_2',\
-'errors_eyy' u (1./sqrt($3)):9 w l t 'eyy_3',\
+'errors_eyy' u (1./sqrt($3)):6  w l t 'eyy_0',\
+'errors_eyy' u (1./sqrt($3)):7  w l t 'eyy_1',\
+'errors_eyy' u (1./sqrt($3)):8  w l t 'eyy_2',\
+'errors_eyy' u (1./sqrt($3)):9  w l t 'eyy_3',\
+'errors_eyy' u (1./sqrt($3)):10 w l t 'exx_4',\
 x**2/2.5 w l lt 1 lc 0 dt 2 t 'h^2',\
 x**1.5/8. w l lt 1 lc 0 dt 3 t 'h^{1.5}',\
 x**1/15. w l lt 2 lc 0 dt 4 t 'h^1'
 
 set output 'errors_exy.pdf'
 plot[][]\
-'errors_exy' u (1./sqrt($3)):6 w l t 'exy_0',\
-'errors_exy' u (1./sqrt($3)):7 w l t 'exy_1',\
-'errors_exy' u (1./sqrt($3)):8 w l t 'exy_2',\
-'errors_exy' u (1./sqrt($3)):9 w l t 'exy_3',\
-x**2/2.5 w l lt 1 lc 0 dt 2 t 'h^2',\
+'errors_exy' u (1./sqrt($3)):6  w l t 'exy_0',\
+'errors_exy' u (1./sqrt($3)):7  w l t 'exy_1',\
+'errors_exy' u (1./sqrt($3)):8  w l t 'exy_2',\
+'errors_exy' u (1./sqrt($3)):9  w l t 'exy_3',\
+'errors_exy' u (1./sqrt($3)):10 w l t 'exy_4',\
+x**2/10 w l lt 1 lc 0 dt 2 t 'h^2',\
 x**1.5/8. w l lt 1 lc 0 dt 3 t 'h^{1.5}',\
 x**1/15. w l lt 2 lc 0 dt 4 t 'h^1'
+
+set grid
+set key inside left
+
+set output 'method0.pdf'
+plot[][1e-5:]\
+'errors_exx' u (1./sqrt($3)):6  w l t 'exx',\
+'errors_eyy' u (1./sqrt($3)):6  w l t 'eyy',\
+'errors_exy' u (1./sqrt($3)):6  w l t 'exy',\
+x/10 lt -1 t 'h^1'
+
+set output 'method1.pdf'
+plot[][1e-5:]\
+'errors_exx' u (1./sqrt($3)):7  w l t 'exx',\
+'errors_eyy' u (1./sqrt($3)):7  w l t 'eyy',\
+'errors_exy' u (1./sqrt($3)):7  w l t 'exy',\
+x**1.5/10 lt -1 t 'h^{1.5}'
+
+set output 'method2.pdf'
+plot[][1e-5:]\
+'errors_exx' u (1./sqrt($3)):8  w l t 'exx',\
+'errors_eyy' u (1./sqrt($3)):8  w l t 'eyy',\
+'errors_exy' u (1./sqrt($3)):8  w l t 'exy',\
+x**1.5/20 lt -1 t 'h^{1.5}'
+
+set output 'method3.pdf'
+plot[][1e-5:]\
+'errors_exx' u (1./sqrt($3)):9  w l t 'exx',\
+'errors_eyy' u (1./sqrt($3)):9  w l t 'eyy',\
+'errors_exy' u (1./sqrt($3)):9  w l t 'exy',\
+x**2/20 lt -1 t 'h^{2}'
+
+set output 'method4.pdf'
+plot[][1e-5:]\
+'errors_exx' u (1./sqrt($3)):10  w l t 'exx',\
+'errors_eyy' u (1./sqrt($3)):10  w l t 'eyy',\
+'errors_exy' u (1./sqrt($3)):10  w l t 'exy',\
+x**1.5/10 lt -1 t 'h^{2}'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 set output 'errors_exx_markers.pdf'
 plot[][]\

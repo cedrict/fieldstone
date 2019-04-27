@@ -1,0 +1,73 @@
+\index{nonlinear} \index{Picard iterations} \index{relaxation}
+
+\todo[inline]{explain why our eqs are nonlinear}
+
+Let us consider the following system of nonlinear algebraic equations:
+\[
+\mathbb{A}(\vec X) \cdot \vec X = \vec b(\vec X)
+\]
+Both matrix and right hand side depend on the solution vector $\vec X$.
+
+For many mildly nonlinear problems, a simple successive substitution 
+iteration scheme (also called Picard method) will converge to the solution
+and it is given by the simple relationship:
+\[
+\mathbb{A}(\vec X^n) \cdot \vec X^{n+1} = \vec b(\vec X^n)
+\]
+where $n$ is the iteration number. 
+It is easy to implement:
+\begin{enumerate}
+\item guess $\vec X^0$ or use the solution from previous time step
+\item compute $\mathbb{A}$ and $\vec b$ with current solution vector $\vec X^{old}$
+\item solve system, obtain $T^{new}$
+\item check for convergence (are $\vec X^{old}$ and$\vec X^{new}$ close enough?)
+\item $\vec X^{old} \leftarrow \vec X^{new}$
+\item go back to 2.
+\end{enumerate}
+
+There are various ways to test whether iterations have converged. The simplest
+one is to look at $\norm{\vec X^{old}-\vec X^{new} }$ (in the $L_1$, $L_2$ or maximum norm)
+and assess whether this term is smaller than a given tolerance $\epsilon$. 
+However this approach poses a problem: in geodynamics, if two consecutively obtained 
+temperatures do not change by more than a thousandth of a Kelvin (say $\epsilon=10^{-3}$K )
+we could consider that iterations have converged but looking now at velocities which 
+are of the order of a cm/year (i.e. $\sim 3\cdot 10^{-11}$m/s) we would need a tolerance 
+probably less than $10^{-13}$m/s. We see that using absolute values for a convergence 
+criterion is a potentially dangerous affair, which is why one uses a relative 
+formulation (thereby making $\epsilon$ a dimensionless parameter):
+\[
+\frac{\norm{\vec X^{old}-\vec X^{new}}}{\norm{\vec X^{new}}} < \epsilon
+\]
+Another convergence criterion is proposed by Reddy (section 3.7.2) \cite{reddybook2}:
+\[
+\left(
+\frac{ (\vec X^{old}-\vec X^{new})\cdot(\vec X^{old}-\vec X^{new} ) }{ X^{new}\cdot X^{new}  } 
+\right)^{1/2} < \epsilon
+\]
+Yet another convergence criterion is used in \cite{thie11}: the means $<\vec X^{old}>$, $<\vec X^{new}>$
+as well as the variances $\sigma^{old}$ amd $\sigma^{new}$ are computed, followed by the 
+correlation factor $R$:
+\[
+R= \frac{ <  (\vec X^{old}-<\vec X^{old}>)\cdot( \vec X^{new}-<\vec X^{new}> )>  }{\sqrt{\sigma^{old}\sigma^{new}}}
+\]
+Since the correlation is normalised, it takes values between 0
+(very dissimilar velocity fields) and 1 (very similar fields). The
+following convergence criterion is then used: $1-R < \epsilon$.
+
+\todo[inline]{write about nonlinear residual}
+
+
+Note that in some instances and improvement in convergence rate cane be obtained by use of a 
+relaxation formula where one first solves
+\[
+\mathbb{A}(\vec X^n) \cdot \vec X^{\star} = \vec b(\vec X^n)
+\]
+and then update $\vec X^n$ as follows:
+\[
+\vec X^n = \gamma \vec X^n + (1-\gamma) \vec X^\star 
+\quad\quad\quad
+0 < \gamma \leq 1
+\]
+When $\gamma=1$ we recover the standard Picard iterations formula above.
+
+

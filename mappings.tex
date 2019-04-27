@@ -1,4 +1,39 @@
 
 \index{isoparametric}
 The name isoparametric derives from the fact that the same ('iso') 
-functions are used as basis functions and for the mapping to the reference element. 
+functions are used as basis functions and for the mapping to the reference element.
+
+
+%.............................
+\subsubsection{On a triangle}
+
+\begin{verbatim}
+2
+|\     s
+| \    |_r
+|  \
+3===1
+\end{verbatim}
+
+Let us assume that the coordinates of the vertices are 
+$(x_1,y_1)$,  
+$(x_2,y_2)$, and 
+$(x_3,y_3)$.
+The coordinates inside the reference element are $(r,s)$. We then simply have the 
+following relationship, i.e. any point of the reference element 
+can be mapped to the physical triangle as follows:
+\begin{eqnarray}
+x&=& r x_1 + s x_2 + (1-r-s) x_3 \\
+y&=& r y_1 + s y_2 + (1-r-s) y_3 
+\end{eqnarray} 
+There is also an inverse map, which is easily computed:
+\begin{eqnarray}
+r&=& \frac{(y_2-y_3)(x-x_3)-(x_2-x_3)(y-y_3)}{(x_1-x_3)(y_2-y_3)-(y_1-y_3)(x_2-x_3)} \\
+s&=& \frac{-(y_1-y_3)(x-x_3)+(x_1-x_3)(y-y_3)}{(x_1-x_3)(y_2-y_3)-(y_1-y_3)(x_2-x_3)} 
+\end{eqnarray} 
+\begin{remark}
+The denominator will not vanish, because it is a multiple of the area of the triangle.
+\end{remark}
+
+
+ 

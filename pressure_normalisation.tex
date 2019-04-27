@@ -67,8 +67,11 @@ The idea is actually quite simple and requires two steps:
 \item post-process the pressure so as to arrive at a pressure field which fulfills the required normalisation (surface, volume, ...)
 \end{enumerate}
 
-\todo[inline]{finish explain}
-
+The reason why it works is as follows: a constant pressure value lies in the null space, so that one can 
+add or delete any value to the pressure field without consequence. As such I can choose said constant such that 
+the pressure at a given node/element is zero. All other computed pressures are then relative to that one. 
+The post-processing step will redistribute a constant value to all pressures (it will shift them up or down)
+so that the normalising condition is respected. 
 
 
 

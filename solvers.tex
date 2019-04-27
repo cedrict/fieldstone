@@ -119,7 +119,7 @@ Then we need to look at the term $\SSS\cdot \vec{p}_k$:
 \[
 \SSS\cdot \vec{p}_k = \G^T\cdot \K^{-1}\cdot \G\cdot \vec{p}_k = \G^T\cdot \K^{-1}\cdot \tilde{\vec{p}}_k = \G^T\cdot  \vec{d}_k
 \]
-We can then rewrite the CG algorithm as follows \cite{zhym07}:
+We can then rewrite the CG algorithm as follows \cite{zhym12}:
 \begin{itemize}
 \item $\vec{r}_0 = \G^T\cdot \vec{\cal V}_0 - \vec{h}$ 
 \item if $\vec{r}_0$ is sufficiently small, then return $(\vec{\cal V}_0,\vec{\cal P}_0)$ as the result
@@ -237,6 +237,16 @@ the Schur complement equation takes the form:
 \item return $\vec{\cal P}_{k+1}$ as result
 \end{itemize}
 \end{mdframed}
+
+Following \cite{zhym12} one can define the following matrix as preconditioner:
+\[
+M = diag \left[ \G^T (diag [\K]  )^{-1} \G \right]
+\]
+which is the preconditioner used for the Citcom codes (see appendix \ref{codes}). It 
+can be constructed while the FEM matrix is being build/assembled
+and it is trivial to invert.
+
+
 
 \improvement[inline]{how to compute $M$ for the Schur complement ?}
 

@@ -122,6 +122,11 @@ hy=Ly/nely
 
 random_grid=False
 
+pnormalise=True
+
+eta_ref=1.
+pressure_scaling=eta_ref/Lx
+
 #################################################################
 # grid point setup
 #################################################################
@@ -328,6 +333,9 @@ for iel in range(0, nel):
             G_mat[m1,iel]+=G_el[ikk,0]
     h_rhs[iel]+=h_el[0]
 
+G_mat*=pressure_scaling
+h_rhs*=pressure_scaling
+
 print("build FE matrix: %.3f s" % (time.time() - start))
 
 ######################################################################
@@ -335,12 +343,20 @@ print("build FE matrix: %.3f s" % (time.time() - start))
 ######################################################################
 start = time.time()
 
-a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-
-a_mat[0:NfemV,0:NfemV]=K_mat
-a_mat[0:NfemV,NfemV:Nfem]=G_mat
-a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+if pnormalise:
+   a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
+   rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
+   a_mat[0:NfemV,0:NfemV]=K_mat
+   a_mat[0:NfemV,NfemV:Nfem]=G_mat
+   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+   a_mat[Nfem,NfemV:Nfem]=1
+   a_mat[NfemV:Nfem,Nfem]=1
+else:
+   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+   rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+   a_mat[0:NfemV,0:NfemV]=K_mat
+   a_mat[0:NfemV,NfemV:Nfem]=G_mat
+   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
 
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
@@ -362,7 +378,7 @@ print("solve time: %.3f s" % (time.time() - start))
 start = time.time()
 
 u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
-p=sol[NfemV:Nfem]
+p=sol[NfemV:Nfem]*pressure_scaling
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
@@ -448,8 +464,6 @@ q=q/count
 
 np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
 
-
-
 #####################################################################
 # compute nodal strain rate - method 1 : center to node
 #####################################################################
@@ -503,8 +517,8 @@ count=np.zeros(nnp,dtype=np.float64)
 for iel in range(0,nel):
 
     # lower left
-    rq=-1.+eps
-    sq=-1.+eps
+    rq=-1.
+    sq=-1.
     dNdr[0:m]=dNNVdr(rq,sq)
     dNds[0:m]=dNNVds(rq,sq)
     jcb=np.zeros((2,2),dtype=np.float64)
@@ -528,8 +542,8 @@ for iel in range(0,nel):
     count[icon[0,iel]]+=1
 
     # lower right
-    rq=+1.-eps
-    sq=-1.+eps
+    rq=+1.
+    sq=-1.
     dNdr[0:m]=dNNVdr(rq,sq)
     dNds[0:m]=dNNVds(rq,sq)
     jcb=np.zeros((2,2),dtype=np.float64)
@@ -553,8 +567,8 @@ for iel in range(0,nel):
     count[icon[1,iel]]+=1
 
     # upper right
-    rq=+1.-eps
-    sq=+1.-eps
+    rq=+1.
+    sq=+1.
     dNdr[0:m]=dNNVdr(rq,sq)
     dNds[0:m]=dNNVds(rq,sq)
     jcb=np.zeros((2,2),dtype=np.float64)
@@ -578,8 +592,8 @@ for iel in range(0,nel):
     count[icon[2,iel]]+=1
 
     # upper left
-    rq=-1.+eps
-    sq=+1.-eps
+    rq=-1.
+    sq=+1.
     dNdr[0:m]=dNNVdr(rq,sq)
     dNds[0:m]=dNNVds(rq,sq)
     jcb=np.zeros((2,2),dtype=np.float64)
@@ -751,6 +765,122 @@ print("     -> exy3 (m,M) %.4f %.4f " %(np.min(exy3),np.max(exy3)))
 
 np.savetxt('srn_3.ascii',np.array([x,y,exx3,eyy3,exy3]).T,header='# x,y,exx3,eyy3,exy3')
 
+
+#####################################################################
+# compute nodal strain rate - method 4: global 
+#####################################################################
+
+reduced=False
+
+exx4=np.zeros(nnp,dtype=np.float64)  
+eyy4=np.zeros(nnp,dtype=np.float64)  
+exy4=np.zeros(nnp,dtype=np.float64)  
+
+A_mat=np.zeros((nnp,nnp),dtype=np.float64) # Q1 mass matrix
+rhs_xx=np.zeros(nnp,dtype=np.float64)     # rhs
+rhs_yy=np.zeros(nnp,dtype=np.float64)     # rhs
+rhs_xy=np.zeros(nnp,dtype=np.float64)     # rhs
+
+for iel in range(0, nel):
+
+    # set arrays to 0 every loop
+    fxx_el =np.zeros(m,dtype=np.float64)
+    fyy_el =np.zeros(m,dtype=np.float64)
+    fxy_el =np.zeros(m,dtype=np.float64)
+    M_el =np.zeros((m,m),dtype=np.float64)
+
+    # integrate viscous term at 4 quadrature points
+    for iq in [-1, 1]:
+        for jq in [-1, 1]:
+
+            # position & weight of quad. point
+            rq=iq/sqrt3
+            sq=jq/sqrt3
+            wq=1.*1.
+
+            # calculate shape functions
+            N[0:m]=NNV(rq,sq)
+            dNdr[0:m]=dNNVdr(rq,sq)
+            dNds[0:m]=dNNVds(rq,sq)
+
+            # calculate jacobian matrix
+            jcb = np.zeros((2,2),dtype=np.float64)
+            for k in range(0,m):
+                jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
+                jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
+                jcb[1, 0] += dNds[k]*x[icon[k,iel]]
+                jcb[1, 1] += dNds[k]*y[icon[k,iel]]
+            jcob = np.linalg.det(jcb)
+            jcbi = np.linalg.inv(jcb)
+
+            # compute dNdx & dNdy
+            exxq=0.0
+            eyyq=0.0
+            exyq=0.0
+            for k in range(0, m):
+                dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+                dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+                exxq += dNdx[k]*u[icon[k,iel]]
+                eyyq += dNdy[k]*v[icon[k,iel]]
+                exyq += (dNdx[k]*v[icon[k,iel]]+dNdy[k]*u[icon[k,iel]])*0.5
+
+            for i in range(0,m):
+                for j in range(0,m):
+                    M_el[i,j]+=N[i]*N[j]*wq*jcob
+                if not reduced:
+                   fxx_el[i]+=N[i]*exxq*wq*jcob
+                   fyy_el[i]+=N[i]*eyyq*wq*jcob
+                   fxy_el[i]+=N[i]*exyq*wq*jcob
+
+    if reduced:
+       rq=0.
+       sq=0.
+       wq=2.*2.
+       N[0:m]=NNV(rq,sq)
+       dNdr[0:m]=dNNVdr(rq,sq)
+       dNds[0:m]=dNNVds(rq,sq)
+       jcb = np.zeros((2,2),dtype=np.float64)
+       for k in range(0,m):
+           jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+           jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+           jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+           jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+       jcob=np.linalg.det(jcb)
+       jcbi=np.linalg.inv(jcb)
+       exxq=0.0
+       eyyq=0.0
+       exyq=0.0
+       for k in range(0, m):
+           dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+           dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+           exxq += dNdx[k]*u[icon[k,iel]]
+           eyyq += dNdy[k]*v[icon[k,iel]]
+           exyq += (dNdx[k]*v[icon[k,iel]]+dNdy[k]*u[icon[k,iel]])*0.5
+       for i in range(0,m):
+           fxx_el[i]+=N[i]*exxq*wq*jcob
+           fyy_el[i]+=N[i]*eyyq*wq*jcob
+           fxy_el[i]+=N[i]*exyq*wq*jcob
+
+    # assemble matrix a_mat and right hand side rhs
+    for k1 in range(0,m):
+        ik=icon[k1,iel]
+        for k2 in range(0,m):
+            jk=icon[k2,iel]
+            A_mat[ik,jk]+=M_el[k1,k2]
+        rhs_xx[ik]+=fxx_el[k1]
+        rhs_yy[ik]+=fyy_el[k1]
+        rhs_xy[ik]+=fxy_el[k1]
+
+exx4=sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_xx)
+eyy4=sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_yy)
+exy4=sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_xy)
+
+print("     -> exx4 (m,M) %.4f %.4f " %(np.min(exx4),np.max(exx4)))
+print("     -> eyy4 (m,M) %.4f %.4f " %(np.min(eyy4),np.max(eyy4)))
+print("     -> exy4 (m,M) %.4f %.4f " %(np.min(exy4),np.max(exy4)))
+
+np.savetxt('srn_4.ascii',np.array([x,y,exx4,eyy4,exy4]).T,header='# x,y,exx4,eyy4,exy4')
+
 ######################################################################
 # compute error
 ######################################################################
@@ -758,9 +888,9 @@ start = time.time()
 
 errv=0.
 errp=0.
-errexx0=0. ; errexx1=0. ; errexx2=0. ; errexx3=0.
-erreyy0=0. ; erreyy1=0. ; erreyy2=0. ; erreyy3=0.
-errexy0=0. ; errexy1=0. ; errexy2=0. ; errexy3=0.
+errexx0=0. ; errexx1=0. ; errexx2=0. ; errexx3=0. ; errexx4=0.
+erreyy0=0. ; erreyy1=0. ; erreyy2=0. ; erreyy3=0. ; erreyy4=0.
+errexy0=0. ; errexy1=0. ; errexy2=0. ; errexy3=0. ; errexy4=0.
 for iel in range (0,nel):
     for iq in [-1,1]:
         for jq in [-1,1]:
@@ -784,12 +914,15 @@ for iel in range (0,nel):
             exx1q=0.0
             exx2q=0.0
             exx3q=0.0
+            exx4q=0.0
             eyy1q=0.0
             eyy2q=0.0
             eyy3q=0.0
+            eyy4q=0.0
             exy1q=0.0
             exy2q=0.0
             exy3q=0.0
+            exy4q=0.0
             for k in range(0,m):
                 xq+=N[k]*x[icon[k,iel]]
                 yq+=N[k]*y[icon[k,iel]]
@@ -798,12 +931,15 @@ for iel in range (0,nel):
                 exx1q+=N[k]*exx1[icon[k,iel]]
                 exx2q+=N[k]*exx2[icon[k,iel]]
                 exx3q+=N[k]*exx3[icon[k,iel]]
+                exx4q+=N[k]*exx4[icon[k,iel]]
                 eyy1q+=N[k]*eyy1[icon[k,iel]]
                 eyy2q+=N[k]*eyy2[icon[k,iel]]
                 eyy3q+=N[k]*eyy3[icon[k,iel]]
+                eyy4q+=N[k]*eyy4[icon[k,iel]]
                 exy1q+=N[k]*exy1[icon[k,iel]]
                 exy2q+=N[k]*exy2[icon[k,iel]]
                 exy3q+=N[k]*exy3[icon[k,iel]]
+                exy4q+=N[k]*exy4[icon[k,iel]]
             exx0q=exx[iel]
             eyy0q=eyy[iel]
             exy0q=exy[iel]
@@ -813,14 +949,17 @@ for iel in range (0,nel):
             errexx1+=(exx1q-exxth(xq,yq))**2*weightq*jcob
             errexx2+=(exx2q-exxth(xq,yq))**2*weightq*jcob
             errexx3+=(exx3q-exxth(xq,yq))**2*weightq*jcob
+            errexx4+=(exx4q-exxth(xq,yq))**2*weightq*jcob
             erreyy0+=(eyy0q-eyyth(xq,yq))**2*weightq*jcob
             erreyy1+=(eyy1q-eyyth(xq,yq))**2*weightq*jcob
             erreyy2+=(eyy2q-eyyth(xq,yq))**2*weightq*jcob
             erreyy3+=(eyy3q-eyyth(xq,yq))**2*weightq*jcob
+            erreyy4+=(eyy4q-eyyth(xq,yq))**2*weightq*jcob
             errexy0+=(exy0q-exyth(xq,yq))**2*weightq*jcob
             errexy1+=(exy1q-exyth(xq,yq))**2*weightq*jcob
             errexy2+=(exy2q-exyth(xq,yq))**2*weightq*jcob
             errexy3+=(exy3q-exyth(xq,yq))**2*weightq*jcob
+            errexy4+=(exy4q-exyth(xq,yq))**2*weightq*jcob
 
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
@@ -829,21 +968,24 @@ errexx0=np.sqrt(errexx0)
 errexx1=np.sqrt(errexx1)
 errexx2=np.sqrt(errexx2)
 errexx3=np.sqrt(errexx3)
+errexx4=np.sqrt(errexx4)
 
 erreyy0=np.sqrt(erreyy0)
 erreyy1=np.sqrt(erreyy1)
 erreyy2=np.sqrt(erreyy2)
 erreyy3=np.sqrt(erreyy3)
+erreyy4=np.sqrt(erreyy4)
 
 errexy0=np.sqrt(errexy0)
 errexy1=np.sqrt(errexy1)
 errexy2=np.sqrt(errexy2)
 errexy3=np.sqrt(errexy3)
+errexy4=np.sqrt(errexy4)
 
 print("     -> nel= %6d ; errv= %.8e ; errp= %.8e " %(nel,errv,errp))
-print("     -> nel= %6d ; errexx1,2,3 %.8e %.8e %.8e %.8e" %(nel,errexx0,errexx1,errexx2,errexx3))
-print("     -> nel= %6d ; erreyy1,2,3 %.8e %.8e %.8e %.8e" %(nel,erreyy0,erreyy1,erreyy2,erreyy3))
-print("     -> nel= %6d ; errexy1,2,3 %.8e %.8e %.8e %.8e" %(nel,errexy0,errexy1,errexy2,errexy3))
+print("     -> nel= %6d ; errexx0,1,2,3,4 %.8e %.8e %.8e %.8e %.8e " %(nel,errexx0,errexx1,errexx2,errexx3,errexx4))
+print("     -> nel= %6d ; erreyy0,1,2,3,4 %.8e %.8e %.8e %.8e %.8e " %(nel,erreyy0,erreyy1,erreyy2,erreyy3,erreyy4))
+print("     -> nel= %6d ; errexy0,1,2,3,4 %.8e %.8e %.8e %.8e %.8e " %(nel,errexy0,errexy1,errexy2,errexy3,errexy4))
 
 print("compute errors: %.3f s" % (time.time() - start))
 
@@ -1021,6 +1163,36 @@ if visu==1:
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exy3 (err)' Format='ascii'> \n")
        for i in range(0,nnp):
            vtufile.write("%10e \n" % (exy3[i]-exyth(x[i],y[i])))
+       vtufile.write("</DataArray>\n")
+       #-------------
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exx4' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e \n" % exx4[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='eyy4' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e \n" % eyy4[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exy4' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e \n" % exy4[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exx4 (err)' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e \n" % (exx4[i]-exxth(x[i],y[i])))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='eyy4 (err)' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e \n" % (eyy4[i]-eyyth(x[i],y[i])))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exy4 (err)' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e \n" % (exy4[i]-exyth(x[i],y[i])))
        vtufile.write("</DataArray>\n")
 
        #--

@@ -1,0 +1,14 @@
+
+When free slip boundary conditions are prescribed in an annulus or
+hollow sphere geometry there exists a rotational nullspace, or in other words there exists
+a tangential velocity field ('pure rotation') which if added or subtracted to the solution 
+does not alter the solution. 
+
+As in the pressure normalisation case (see section \ref{ss_pnorm}), the solution is simple:
+\begin{enumerate}
+\item fix the tangential velocity at one node on a boundary, and solve the sytem (the nullspace 
+has been removed)
+\item post-process the solution to have the velocity field fulfill the required conditions. 
+\end{enumerate}
+
+

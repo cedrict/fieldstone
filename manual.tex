@@ -199,6 +199,7 @@ application of these codes: geodynamic modelling.
 \subsection{The mixed FEM for viscous flow} \input{mixed} %--------------------
 \subsection{Solving the elastic equations} %-----------------------------------
 \subsection{Solving the heat transport equation} \input{hte_fem} %-------------
+\subsection{A quick tour of similar literature} \input{similar} %--------------
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -208,7 +209,6 @@ application of these codes: geodynamic modelling.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Additional techniques and features} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Picard and Newton}
 
 \subsection{The SUPG formulation for the energy equation}
 
@@ -232,9 +232,9 @@ application of these codes: geodynamic modelling.
 \newpage %---------------------------------------------------------------------
 \subsection{Pressure scaling} \input{pressure_scaling} %-----------------------
 \newpage %---------------------------------------------------------------------
-\subsection{Pressure normalisation} \input{pressure_normalisation} %-----------
-\newpage %---------------------------------------------------------------------
-\subsection{Solving the Stokes system \label{sec_solvers}} \input{solvers} %---
+\subsection{Pressure normalisation\label{ss_pnorm}} \input{pressure_normalisation} %--
+\newpage %----------------------------------------------------------------------------
+\subsection{Solving the Stokes system \label{sec_solvers}} \input{solvers} %----------
 \newpage %---------------------------------------------------------------------
 \subsection{The consistent boundary flux (CBF)} \input{CBF} %------------------
 \newpage %---------------------------------------------------------------------
@@ -262,7 +262,16 @@ application of these codes: geodynamic modelling.
 \newpage %---------------------------------------------------------------------
 \subsection{Measuring incompressibility \label{ss_incomp}} \input{incomp} %----
 \newpage %---------------------------------------------------------------------
-\subsection{Periodic boundary condtions\label{ss_periodic}} \input{periodic} %-
+\subsection{Periodic boundary conditions\label{ss_periodic}}\input{periodic} %-
+\newpage %---------------------------------------------------------------------
+\subsection{Removing rotational nullspace\label{ss_nullspace}} \input{nullspace}
+\newpage %---------------------------------------------------------------------
+\subsection{Picard and Newton \label{ss_nonlinear}} \input{nonlinear} %--------
+
+
+%\subsection{Steady state thermal problems \label{ss_ss}} \input{steadystate} %-
+
+
 
 
 
@@ -456,7 +465,7 @@ application of these codes: geodynamic modelling.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Three-dimensional applications} \input{threedee} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Codes in geodynamics} \input{codes} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Codes in geodynamics \label{codes} }\input{codes} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Matrix properties} \input{matrices} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
