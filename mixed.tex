@@ -287,7 +287,7 @@ where the matrix $\K$ is of size $(m_v*ndof_v \times m_v*ndof_v)$,
 and matrix ${\G}$ is of size $(m_v*ndof_v \times m_p*ndof_p)$.
 Turning now to the mass conservation equation:
 \begin{eqnarray}
-0&=&\int_{\Omega_e} \vec{N}^p {\vec \nabla}\cdot {\vec v} \; d\Omega \nonumber\\
+\vec 0&=&\int_{\Omega_e} \vec{N}^p {\vec \nabla}\cdot {\vec v} \; d\Omega \nonumber\\
 &=& \int_{\Omega_e} \vec{N}^p \sum_{i=1}^{m_v} 
 \left( \frac{\partial N_i^\upnu}{\partial x} u_i + \frac{\partial N_i^\upnu}{\partial y} v_i 
 + \frac{\partial N_i^\upnu}{\partial z} w_i 
@@ -359,7 +359,9 @@ N_{m_p}^p \left(
 &=& -\G_e^T \cdot {\vec V}
 \end{eqnarray}
 
-\todo[inline]{say something about minus sign?}
+Note that it is common to actually start from $- \vec\nabla\cdot\vec v=0$ (see Eq.(3) in \cite{mabl14})
+so as to arrive at $\G_e^T \cdot {\vec V}=\vec 0$
+
 
 Ultimately we obtain the following system for each element:
 \[
@@ -406,7 +408,8 @@ One can also define the following symmetric modified Stokes matrix:
 \end{array}
 \right)
 \]
-This matrix is symmetric, but indefinite. It is non-singular if $ker(\mathbb{G}^T)={ 0}$, which is the case if t    he compatibility condition holds.
+This matrix is symmetric, but indefinite. It is non-singular if $ker(\mathbb{G}^T)={ 0}$, which is the case if 
+the compatibility condition holds.
 
 
 

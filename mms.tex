@@ -298,4 +298,48 @@ Taken from \cite{john16}.
 \end{center}
 
 
+%-----------------------------------------------------------------------------
+\subsubsection{Analytical benchmark VI \label{mms6}}
+\index{Poiseuille flow} \index{Shear Heating}
+
+This is taken from \cite{ilpe07}.
+
+Let us consider the Poiseuille flow of a Newtonian fluid. The channel has 
+isothermal flat walls located at $y=\pm h$. The velocity distribution is parabolic:
+\[
+u = u_0 \left(1-\frac{y^2}{h^2} \right) 
+\quad\quad\quad
+v=0
+\]
+where $u_0$ is the maximum velocity. The (steady state) temperature field is the solution of
+the advection-diffusion equation:
+\[
+\rho c_p \vec v \cdot \vec\nabla T
+= k \Delta T + \Phi
+\]
+where $\Phi$ is the dissipation function given by
+\[
+\Phi
+=\eta \left[  
+2\left(\frac{\partial u}{\partial x} \right)^2 + 
+2\left(\frac{\partial v}{\partial y} \right)^2 +
+\left( \frac{\partial v}{\partial x} + \frac{\partial u}{\partial y} \right)^2
+\right]
+=
+\eta \left( \frac{\partial u}{\partial y} \right)^2 = 4 \eta \frac{u_0^2 y^2}{h^4}
+\]
+We logically assume that $T=T(y)$ so that $\partial T/\partial x=0$ and $\vec v \cdot \vec\nabla T=0$.
+We then have to solve:
+\[
+k \frac{\partial^2 T}{\partial y^2} + 4 \eta \frac{u_0^2 y^2}{h^4} = 0
+\]
+We can integrate twice and use the boundary conditions $T(y=\pm h)=T_0$ to arrive at:
+\[
+T(y) = T_0 + \frac{1}{3} \frac{\eta u_0^2}{k} \left[ 1-\left(\frac{y}{h}\right)^4  \right]
+\]
+with a maximum temperature
+\[
+T_M = T(y=0) = T_0 + \frac{1}{3} \frac{\eta u_0^2}{k} 
+\]
+
 
