@@ -1,10 +1,11 @@
 The details of the numerical setup are presented in Section \ref{mms}.
 
-We will here focus on the $Q_1 \times Q_1$ element, which, unless stabilised,
+We wish to use $Q_1 \times Q_1$ element, which, unless stabilised,
 violates  the LBB stability condition and therefore is unusable. 
 Stabilisation can be of two types: least-squares \cite{dohu03,temr92,kibr,gubl06},
-or by means of an additional term in the weak form as first introduced in \cite{dobo04,bodg06}.
-It is further analysed in \cite{nosi01,lihc09}.
+or by means of an additional term in the weak form as first introduced in \cite{dobo04,bodg06}, 
+which is appealing since there is no explicit satabilisation parameter.
+It is further analysed in \cite{nosi01,lihc09,hufb86,shry78,grcc95}.
 Note that an equal-order velocity-pressure formulation that does not exhibit spurious
 pressure modes (without stabilisaion) has been presented in \cite{risc86}.
 
@@ -20,7 +21,7 @@ The stabilisation term $\C$ enters the Stokes matrix in the (2,2) position:
 \[
 \left(
 \begin{array}{cc}
-\K & \G \\ \G^T & \C 
+\K & \G \\ \G^T & -\C 
 \end{array}
 \right)
 \cdot
@@ -36,8 +37,110 @@ The stabilisation term $\C$ enters the Stokes matrix in the (2,2) position:
 \end{array}
 \right)
 \]
+The purpose of the $\C$ term is to stabilise the linear system. It is given by:
+\[
+\C(p,q) = \sum_e \int_{\Omega_e} \frac{1}{\eta} (p-\Pi p)(q-\Pi q) d\Omega
+\]
+where $\Pi$ is the $L^2$-projection onto the space of element-wise constant functions:
+\[
+\Pi p = \frac{1}{|\Omega_e|}\int_{\Omega_e} p d\Omega
+\]
+Because of the stabilisation matrix $\C$, the numerical solution satisfies the incompressibility
+condition only approximately. Local mesh refinement helps to control these unwanted effects
+\cite{bugs09,busa13}.
+Since $\K$ and $\C$ are symmetric matrices, the Stokes system is then an indefinite symmetric system.
+The Schur complement matrix $\SSS$ is then given by 
+\[
+\SSS = \G^T \cdot \K^{-1}\cdot \G + \C
+\]
+One can further expand the above expression for the $\C$ term:
+\begin{eqnarray}
+\C(p,q) 
+&=& \sum_e \int_{\Omega_e} \frac{1}{\eta} (p-\Pi p)(q-\Pi q) d\Omega \nonumber\\
+&=& \sum_e \int_{\Omega_e} \frac{1}{\eta} [ pq - (\Pi p)q -(\Pi q)p + (\Pi p)(\Pi q)] d\Omega \nonumber\\
+&=& \sum_e \frac{1}{\eta_e} \left[  
+\int_{\Omega_e} pq   d\Omega -\int_{\Omega_e} (\Pi p)q d\Omega 
+-\int_{\Omega_e} (\Pi q)p  d\Omega +  \int_{\Omega_e}   (\Pi p)(\Pi q) d\Omega \right] \nonumber\\
+&=& \sum_e \frac{1}{\eta_e} \left[  
+\int_{\Omega_e} pq   d\Omega - (\Pi p) \int_{\Omega_e} q d\Omega 
+- (\Pi q) \int_{\Omega_e} p  d\Omega +  (\Pi p)(\Pi q)  \int_{\Omega_e}  d\Omega \right] \nonumber\\
+&=& \sum_e \frac{1}{\eta_e} \left[  
+\int_{\Omega_e} pq   d\Omega 
+- (\Pi p) |\Omega_e| (\Pi q) 
+- (\Pi q) |\Omega_e| (\Pi p) 
++ (\Pi p)(\Pi q) |\Omega_e| \right] \nonumber\\
+&=& \sum_e \frac{1}{\eta_e} \left[  
+\int_{\Omega_e} pq   d\Omega 
+- |\Omega_e| (\Pi p) (\Pi q) 
+\right]
+\end{eqnarray}
+where we have used the fact that on each element $\Pi p^h$ is constant. 
+The left term will obviously yield a $Q_1$ mass matrix (scaled by the elemental viscosities).
+Note that this approach is not used in practice as we'll see hereafter. 
 
-Let us take a simple example: a 3x2 element grid.
+The pressure inside an element is given by 
+\[
+p^h(\vec x) = \sum_k N_k^p(\vec x) p_k
+\]
+so that 
+\begin{eqnarray}
+\Pi p^h 
+&=& \frac{1}{|\Omega_e|} \int_{\Omega_e} \sum_k N_k^p p_k d\Omega 
+= \sum_k \left(\underbrace{\frac{1}{|\Omega_e|} \int_{\Omega_e} N_k^p  d\Omega}_{\tilde{N}_k^p} \right) p_k
+\end{eqnarray}
+and then
+\[
+p^h -\Pi p^h 
+= \sum_k N_k^p(\vec x) p_k - \sum_k \tilde{N}_k^p p_k  
+= \sum_k (N_k^p(\vec x) - \tilde{N}_k^p) p_k  
+\]
+The algorithm is straighforward and as follows:
+In the loop over elements, a) Compute the average of each shape function $N_k^p(\vec x)$ over the element;
+b) Substract this average to the shape function; c) Build mass matrix with modified/offset shape functions
+(taking in account the viscosity).
+ 
+In the case of rectangular elements of size $(h_x,h_y)$, $\tilde{N}_k^p$ simplifies even more:
+\begin{eqnarray}
+\tilde{N}_k^p 
+&=& \frac{1}{|\Omega_e|} \int_{\Omega_e} N_k^p(\vec x)   d\Omega  
+= \frac{1}{h_xh_y} \frac{h_xh_y}{4} \int_{-1}^{+1} \int_{-1}^{+1} N_k^p(r,s)   drds 
+= \frac{1}{4} \int_{-1}^{+1} \int_{-1}^{+1} N_k^p(r,s)   drds 
+\end{eqnarray}
+It is easy to show that the average of the $Q_1$ shape functions of over the reference 
+element is 1, so that $ \tilde{N}_k^p=1/4$. 
+This explains why in the code we have:
+\begin{lstlisting}
+Navrg = np.zeros(m,dtype=np.float64)
+Navrg[0]=0.25
+Navrg[1]=0.25
+Navrg[2]=0.25
+Navrg[3]=0.25
+\end{lstlisting}
+This also means that $\Pi p^h = (p_1+p_2+p_3+p_4)/4$, i.e. the projected pressure
+is the mean of the vertex values. It follows, as shown on p.244 of \cite{elsw} that 
+the elemental $\C$ matrix is (omitting the viscosity term)
+\[
+\C_{el} = \mathbb{M}_{el} - \vec q^T \vec q |\Omega_e| \qquad\qquad 
+\vec q=\left(\frac{1}{4},\frac{1}{4},\frac{1}{4},\frac{1}{4} \right)
+\]
+The nullspace of $\C$ consists of constant vectors, i.e. $\vec 1 \in \text{null}(\C)$ which means
+that the assembled stabilisation operator is consistent.
+
+The elemental $\C_{el}$ matrix is then computed like a mass matrix, although with modified 
+shape function vectors. Inside the loop over quadrature points, we do:
+\begin{lstlisting}
+Nvect[0,0:m]=N[0:m]-Navrg[0:m]
+C_el+=Nvect.T.dot(Nvect)*jcob*weightq/viscosity(xq,yq,case)
+\end{lstlisting}
+It is then assembled inside the big FEM matrix 
+\begin{lstlisting}
+for k1 in range(0,m):
+    for k2 in range(0,m):
+        C_mat[icon[k1,iel],icon[k2,iel]]+=C_el[k1,k2] 
+\end{lstlisting}
+
+\noindent
+\underline{Non-zero pattern of the $\G$ matrix}: Let us take a simple example: a 3x2 element grid.
 
 \begin{center}
 \begin{tikzpicture}
@@ -311,11 +414,18 @@ so that the $\G^T$ matrix non-zero structure then is as follows:
 \end{tikzpicture}
 \end{center}
 
-We will here use the formulation of \cite{dobo04}, which is very appealing since 
-it does not require any free (user-chosen) parameter. Furthermore the matrix 
-$\C$ is rather simple to compute as we will see hereafter.
+\noindent
+\underline{Non-zero pattern of the $\C$ matrix}: Let us take a simple example: a 3x2 element grid.
 
-We also impose $\int p dV=0$ which means that the following constraint is added 
+\todo[inline]{finish structure of C matrix for q1q1}
+
+
+
+
+
+
+
+We impose $\int p dV=0$ which means that the following constraint is added 
 to the Stokes matrix:
 \[
 \left(
@@ -338,6 +448,16 @@ to the Stokes matrix:
 \end{array}
 \right)
 \]
+
+
+
+
+
+
+
+
+
+
 
 %-----------------------------------------
 \subsection{The Donea \& Huerta benchmark}

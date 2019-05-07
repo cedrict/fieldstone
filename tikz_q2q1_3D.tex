@@ -1,0 +1,42 @@
+
+\begin{center}
+\begin{tikzpicture}
+\draw[fill=gray!23,gray!23](0,0) rectangle (5,5);
+%\draw[step=0.25cm,gray,very thin] (0,0) grid (5,4); %background grid
+\draw[thick] (1,0.5) -- (2,0.55) --(3.25,0.75) -- (3,3) -- (0.5,2.5) -- cycle; %1-9-2-6-5
+\draw[thick] (3.25,0.75) -- (3.6,1.05) -- (4,1.5) -- (4.25,3.75) -- (3,3) -- cycle; %2-10-3-7-6
+\draw[thick] (0.5,2.5) -- (3,3) -- (4.25,3.75) -- (1.75,3.5) -- (1.1,3.1) -- cycle; %5-6-7-4-13
+\draw[thin]   (1,0.5) -- (1.5,1.25) -- (2,1.75) -- (1.75,3.5) -- (1.1,3.1) -- (0.5,2.5) --cycle; % 1-8-0-4-5-13 
+\draw[thin] (2,1.75) -- (3,1.75) -- (4,1.5); %0-11-3
+%pressure nodes
+\draw (2,1.75) circle (4pt); % 0
+\draw (1,0.5) circle (4pt); % 1 
+\draw (3.25,0.75) circle (4pt); % 2
+\draw (4,1.5) circle (4pt); % 3 
+\draw (1.75,3.5) circle (4pt); % 4
+\draw (0.5,2.5) circle (4pt); % 5
+\draw (3,3) circle (4pt); % 6
+\draw (4.25,3.75) circle (4pt); % 7
+%velocity nodes
+\draw[black,fill=black] (1,0.5)   circle (2pt);
+\draw[black,fill=black] (3.25,0.75)   circle (2pt);
+\draw[black,fill=black] (3,3)   circle (2pt);
+\draw[black,fill=black] (0.5,2.5)   circle (2pt);
+\draw[black,fill=black] (1.75,3.5)  circle (2pt);
+\draw[black,fill=black] (4.25,3.75)  circle (2pt);
+\draw[black,fill=black] (4,1.5) circle (2pt);
+\draw[black,fill=black] (2,1.75) circle (2pt);
+\draw[black,fill=black] (1.5,1.25) circle (2pt); % 8
+\draw[black,fill=black] (2,0.55) circle (2pt); % 9 
+\draw[black,fill=black] (3.6,1.05) circle (2pt); % 10
+\draw[black,fill=black] (3,1.75) circle (2pt); % 11
+\draw[black,fill=black] (0.75,1.5) circle (2pt); % 12
+\draw[black,fill=black] (1.1,3.1) circle (2pt); % 13
+\draw[black,fill=black] (0.75,1.5) circle (2pt); % 18
+\draw[black,fill=black] (2.7,1.1) circle (2pt); % 21
+% legend
+\draw[black,fill=black] (3.1,0.2) circle (2pt); \node[] at (3.4,0.2) {$\vec\upnu$};
+\draw (4.1,0.2) circle (4pt); \node[] at (4.4,0.2) {$p$};
+\node[] at (2.5,4.5) {27 vel. nodes, 8 press. nodes};
+\end{tikzpicture}\\
+\end{center}

@@ -268,9 +268,14 @@ v     = np.zeros(nnp,dtype=np.float64)                       # y-component veloc
 p     = np.zeros(nnp,dtype=np.float64)                       # pressure 
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
-Navrg = np.zeros(m,dtype=np.float64)
 Nvect = np.zeros((1,m),dtype=np.float64)
 N_mat = np.zeros((3,m),dtype=np.float64)
+    
+Navrg = np.zeros(m,dtype=np.float64)
+Navrg[0]=0.25
+Navrg[1]=0.25
+Navrg[2]=0.25
+Navrg[3]=0.25
 
 for iel in range(0,nel):
 
@@ -280,12 +285,6 @@ for iel in range(0,nel):
     G_el=np.zeros((m*ndofV,m*ndofP),dtype=np.float64)
     C_el=np.zeros((m*ndofP,m*ndofP),dtype=np.float64)
     h_el=np.zeros((m*ndofP),dtype=np.float64)
-
-    #compute Navrg 
-    Navrg[0]=0.25#/(Lx*Ly/nel)
-    Navrg[1]=0.25#/(Lx*Ly/nel)
-    Navrg[2]=0.25#/(Lx*Ly/nel)
-    Navrg[3]=0.25#/(Lx*Ly/nel)
 
     # integrate viscous term at 4 quadrature points
     for iq in [-1, 1]:

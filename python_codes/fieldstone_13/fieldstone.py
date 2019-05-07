@@ -12,6 +12,27 @@ import jatten as jatten
 
 #------------------------------------------------------------------------------
 
+def NNV(rq,sq):
+    N_0=0.25*(1.-rq)*(1.-sq)
+    N_1=0.25*(1.+rq)*(1.-sq)
+    N_2=0.25*(1.+rq)*(1.+sq)
+    N_3=0.25*(1.-rq)*(1.+sq)
+    return N_0,N_1,N_2,N_3
+
+def dNNVdr(rq,sq):
+    dNdr_0=-0.25*(1.-sq)
+    dNdr_1=+0.25*(1.-sq)
+    dNdr_2=+0.25*(1.+sq)
+    dNdr_3=-0.25*(1.+sq)
+    return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+
+def dNNVds(rq,sq):
+    dNds_0=-0.25*(1.-rq)
+    dNds_1=-0.25*(1.+rq)
+    dNds_2=+0.25*(1.+rq)
+    dNds_3=+0.25*(1.-rq)
+    return dNds_0,dNds_1,dNds_2,dNds_3
+
 def paint(x,y):
     if (x-.5)**2+(y-0.5)**2<0.123**2:
        val=2
@@ -73,8 +94,8 @@ if int(len(sys.argv) == 8):
    mdistribution  =int(sys.argv[6])
    proj           =int(sys.argv[7])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 24
+   nely = 24
    visu = 1
    avrg = 3
    nmarker_per_dim=4
@@ -139,13 +160,6 @@ for j in range(0, nely):
         icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
         icon[3, counter] = i + (j + 1) * (nelx + 1)
         counter += 1
-
-# for iel in range (0,nel):
-#     print ("iel=",iel)
-#     print ("node 1",icon[0][iel],"at pos.",x[icon[0][iel]], y[icon[0][iel]])
-#     print ("node 2",icon[1][iel],"at pos.",x[icon[1][iel]], y[icon[1][iel]])
-#     print ("node 3",icon[2][iel],"at pos.",x[icon[2][iel]], y[icon[2][iel]])
-#     print ("node 4",icon[3][iel],"at pos.",x[icon[3][iel]], y[icon[3][iel]])
 
 #################################################################
 # marker setup
@@ -274,7 +288,7 @@ print("     -> eta_elemental (m,M) %.4f %.4f " %(np.min(eta_elemental),np.max(et
 print("projection elemental: %.3f s" % (time.time() - start))
 
 #################################################################
-# compute nodal averagings
+# compute nodal averagings 1,2,3
 #################################################################
 start = time.time()
 
@@ -440,7 +454,100 @@ np.savetxt('eta_nodal1.ascii',np.array([x,y,eta_nodal1]).T,header='# x,y,eta')
 np.savetxt('eta_nodal2.ascii',np.array([x,y,eta_nodal2]).T,header='# x,y,eta')
 np.savetxt('eta_nodal3.ascii',np.array([x,y,eta_nodal3]).T,header='# x,y,eta')
 
-print("projection nodal: %.3f s" % (time.time() - start))
+print("projection nodal 1,2,3: %.3f s" % (time.time() - start))
+
+#################################################################
+# compute nodal averagings 4
+#################################################################
+# This method is not documented in the manual. It uses a Q1 projection
+# by means of the Q1 mass matrix. 
+# The problem is that it does not work well, even in the ideal case 
+# of regularly spaced markers. The rhs is \int N(r,s) rho dV
+# where dV is actually the average volume a marker takes.
+# If the mass matrix is lumped, one logically recovers the results
+# of the nodal3 algorithm.
+# This mass matrix approach is bound to fail in the sense that 
+# inside the element with 2 different materials the jump cannot
+# be represented by Q1. 
+#################################################################
+
+start = time.time()
+
+N=np.zeros(m,dtype=np.float64)
+dNdr  = np.zeros(m,dtype=np.float64)
+dNds  = np.zeros(m,dtype=np.float64)
+A_mat=np.zeros((nnp,nnp),dtype=np.float64) # Q1 mass matrix
+rhs=np.zeros(nnp,dtype=np.float64)      # rhs
+Adiag=np.zeros(nnp,dtype=np.float64) # Q1 mass matrix
+rho_nodal4=np.zeros(nnp,dtype=np.float64) 
+markervolume=Lx*Ly/nmarker
+
+for iel in range(0,nel):
+
+    # set arrays to 0 every loop
+    f_el =np.zeros(m,dtype=np.float64)
+    M_el =np.zeros((m,m),dtype=np.float64)
+    Mdiag_el=np.zeros(m,dtype=np.float64)
+
+    # integrate viscous term at 4 quadrature points
+    for iq in [-1, 1]:
+        for jq in [-1, 1]:
+
+            # position & weight of quad. point
+            rq=iq/sqrt3
+            sq=jq/sqrt3
+            wq=1.*1.
+
+            # calculate shape functions
+            N[0:m]=NNV(rq,sq)
+            dNdr[0:m]=dNNVdr(rq,sq)
+            dNds[0:m]=dNNVds(rq,sq)
+
+            # calculate jacobian matrix
+            jcb = np.zeros((2,2),dtype=np.float64)
+            for k in range(0,m):
+                jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+                jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+                jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+                jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+            jcob = np.linalg.det(jcb)
+
+            for i in range(0,m):
+                for j in range(0,m):
+                    M_el[i,j]+=N[i]*N[j]*wq*jcob
+                    Mdiag_el[i]+=N[i]*N[j]*wq*jcob
+
+    for im in range(0,nmarker):
+        ielx=int(swarm_x[im]/Lx*nelx)
+        iely=int(swarm_y[im]/Ly*nely)
+        ielm=nelx*(iely)+ielx
+        if ielm==iel:
+           xmin=x[icon[0,iel]]
+           xmax=x[icon[2,iel]]
+           ymin=y[icon[0,iel]]
+           ymax=y[icon[2,iel]]
+           r=((swarm_x[im]-xmin)/(xmax-xmin)-0.5)*2
+           s=((swarm_y[im]-ymin)/(ymax-ymin)-0.5)*2
+           N[0:m]=NNV(r,s)
+           for i in range(0,m):
+               f_el[i]+=N[i]*markervolume*rho_mat[swarm_mat[im]-1]
+
+    # assemble matrix a_mat and right hand side rhs
+    for k1 in range(0,m):
+        ik=icon[k1,iel]
+        for k2 in range(0,m):
+            jk=icon[k2,iel]
+            A_mat[ik,jk]+=M_el[k1,k2]
+        rhs[ik]+=f_el[k1]
+        Adiag[ik]+=Mdiag_el[k1]
+
+
+rho_nodal4=sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
+#rho_nodal4[:]=rhs[:]/Adiag[:]
+
+np.savetxt('rho_nodal4.ascii',np.array([x,y,rho_nodal4]).T,header='# x,y,rho')
+
+print("projection nodal 4: %.3f s" % (time.time() - start))
 
 #################################################################
 # define boundary conditions

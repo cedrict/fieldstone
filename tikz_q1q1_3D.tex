@@ -1,0 +1,35 @@
+
+\begin{center}
+\begin{tikzpicture}
+\draw[fill=gray!23,gray!23](0,0) rectangle (5,5);
+%\draw[step=0.25cm,gray,very thin] (0,0) grid (5,4); %background grid
+\draw[thick] (1,0.5) -- (3.25,0.75) -- (3,3) -- (0.5,2.5) -- cycle; %1-2-6-5
+\draw[thick] (3.25,0.75) -- (4,1.5) -- (4.25,3.75) -- (3,3) -- cycle; %2-3-7-6
+\draw[thick] (0.5,2.5) -- (3,3) -- (4.25,3.75) -- (1.75,3.5) -- cycle; %5-6-7-4
+\draw[thin]   (1,0.5) -- (2,1.75) -- (1.75,3.5) -- (0.5,2.5)   --cycle; % 1-0-4-5 
+\draw[thin] (2,1.75) -- (4,1.5); 
+%\node[] at (0.8,0.8) {0};
+%\node[] at (3.2,1) {1};
+%\node[] at (2.9,3.1) {2};
+%\node[] at (0.9,3.2) {3};
+\draw (1,0.5) circle (4pt);
+\draw (3.25,0.75) circle (4pt);
+\draw (4,1.5) circle (4pt);
+\draw (2,1.75) circle (4pt);
+\draw (0.5,2.5) circle (4pt);
+\draw (3,3) circle (4pt);
+\draw (4.25,3.75) circle (4pt);
+\draw (1.75,3.5) circle (4pt);
+\draw[black,fill=black] (1,0.5)   circle (2pt);
+\draw[black,fill=black] (3.25,0.75)   circle (2pt);
+\draw[black,fill=black] (3,3)   circle (2pt);
+\draw[black,fill=black] (0.5,2.5)   circle (2pt);
+\draw[black,fill=black] (1.75,3.5)  circle (2pt);
+\draw[black,fill=black] (4.25,3.75)  circle (2pt);
+\draw[black,fill=black] (4,1.5) circle (2pt);
+\draw[black,fill=black] (2,1.75) circle (2pt);
+\draw[black,fill=black] (3.1,0.2) circle (2pt); \node[] at (3.4,0.2) {$\vec\upnu$};
+\draw (4.1,0.2) circle (4pt); \node[] at (4.4,0.2) {$p$};
+\node[] at (2.5,4.5) {8 vel. nodes, 8 press. nodes};
+\end{tikzpicture}\\
+\end{center}

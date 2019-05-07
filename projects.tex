@@ -45,3 +45,9 @@
 \item Delaunay triangulation, Voronoi, stripack
 \end{itemize}
 
+How to deal with large sparse matrices in Python?!!
+\begin{verbatim}
+a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)
+a_mat=a_mat.tocsr()
+sol = spsolve(sps.csr_matrix(a_mat),rhs)
+\end{verbatim}

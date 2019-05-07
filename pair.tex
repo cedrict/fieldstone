@@ -2,14 +2,14 @@
 
 The success of a mixed finite element formulation crucially depends on a proper choice of the local interpolations of the velocity and the pressure. 
 
-%----------------------------------------------------------------------
+%........................................................................................
 \subsubsection{The compatibility condition (or LBB condition)}
 \index{LBB} \index{optimal rate}
 
 'LBB stable' elements assure the existence of a unique solution 
 and assure convergence at the optimal rate. 
 
-%----------------------------------------------------------------------
+%........................................................................................
 \subsubsection{Families}
 
 \index{Taylor-Hood}
@@ -35,16 +35,15 @@ has also been proved to be LBB stable.
 
 The \underline{Raviart-Thomas} family\todo{find literature} on triangles and quadrilaterals.
 
-
-
- 
-
-
+%........................................................................................
 \subsubsection{The bi/tri-linear velocity - constant pressure element ($Q_1\times P_0$)}
-\includegraphics[width=3cm]{images/under_construction}
-\input{tikz_q1p0}
-\input{tikz_q1p0_3D}
 
+\begin{minipage}[t]{0.5\textwidth}
+\input{tikz_q1p0}
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+\input{tikz_q1p0_3D}
+\end{minipage}
 
 discussed in example 3.71 of \cite{john16}
 
@@ -79,7 +78,12 @@ This element is crowned "probably the most accurate 2D element" in \cite{grsa}.
 %----------------------------------------------------------------------
 \subsubsection{The bi/tri-quadratic velocity - bi/tri-linear pressure element ($Q_2 \times Q_1$)}
 
+\begin{minipage}[t]{0.5\textwidth}
 \input{tikz_q2q1}
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+\input{tikz_q2q1_3D}
+\end{minipage}
 
 
 In \cite{grsa} Gresho \& Sani write that in their opinion $div(\vec v)=0$ is not strong enough.
@@ -96,7 +100,12 @@ Biquadratic velocities, bilinear pressure. See Hood and Taylor. The element sati
 %----------------------------------------------------------------------
 \subsubsection{The stabilised bi/tri-linear velocity -  bi/tri-linear pressure element ($Q_1\times Q_1$-stab)}
 
+\begin{minipage}[t]{0.5\textwidth}
 \input{tikz_q1q1}
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+\input{tikz_q1q1_3D}
+\end{minipage}
 
 
 %----------------------------------------------------------------------
