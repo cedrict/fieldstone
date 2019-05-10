@@ -1,0 +1,87 @@
+What follows was published online on July 17th, 2017 at 
+\url{https://blogs.egu.eu/divisions/gd/2017/07/19/dont-be-a-hero-unless-you-have-to/}
+It was written by me and edited by Iris van Zelst, at the time PhD student at ETH Z\"urich.
+
+\vspace{3mm}
+
+In December 2013, I was invited to give a talk about the ASPECT code [1] 
+at the American Geological Union conference in San Francisco. Right 
+after my talk, Prof. Louis Moresi took the stage and gave a talk entitled: 
+{\it Underworld: What we set out to do, How far did we get, What did we Learn?}
+
+The abstract went as follows:
+
+"Underworld was conceived as a tool for modelling 3D lithospheric deformation coupled with the underlying / surrounding mantle flow. The challenges involved were to find a method capable of representing the complicated, non-linear, history dependent rheology of the near surface as well as being able to model mantle convection, and, simultaneously, to be able to solve the numerical system efficiently. […] The elegance of the method is that it can be completely described in a couple of sentences. However, there are some limitations: it is not obvious how to retain this elegance for unstructured or adaptive meshes, arbitrary element types are not sufficiently well integrated by the simple quadrature approach, and swarms of particles representing volumes are usually an inefficient representation of surfaces."
+
+Aside from the standard numerical modelling jargon, Louis used a term during his talk which I thought at the time had a nice ring to it: hero codes. In short, I believe he meant the codes written essentially by one or two people who at some point in time spent great effort into writing a code (usually choosing a range of applications, a geometry, a number of dimensions, a particular numerical method to solve the relevant PDEs(1), and a tracking method for the various fields of interest).
+
+In the long list of Hero codes, one could cite (in alphabetical order) CITCOM [1], DOUAR [8], FANTOM [2], IELVIS [5], LaMEM [3], pTatin [4], SLIM3D [10], SOPALE [7], StaggYY [6], SULEC [11], Underworld [9], and I apologise to all other heroes out there whom I may have overlooked. And who does not want to be a hero? The Spiderman of geodynamics, the Superwoman of modelling?
+
+Louis' talk echoed my thoughts on two key choices we (computational geodynamicists) are facing: Hero or not, and if yes, what type?
+
+\vspace{3mm}
+
+{\bf Hero or not?}
+
+\vspace{3mm}
+
+Speaking from experience, it is an intense source of satisfaction when peer-reviewed published results are obtained with the very code one has painstakingly put together over months, if not years. But is it worth it?
+
+On the one hand, writing one own’s code is a source of deep learning, a way to ensure that one understands the tool and knows its limitations, and a way to ensure that the code has the appropriate combination of features which are necessary to answer the research question at hand. On the other hand, it is akin to a journey; a rather long term commitment; a sometimes frustrating endeavour, with no guarantee of success. Let us not deny it – many a student has started with one code only to switch to plan B sooner or later. Ultimately, this yiels a satisfactory tool with often little to no perennial survival over the 5 year mark, a scarce if at all existent documentation, and almost always not compliant with the growing trend of long term repeatability. Furthermore, the resulting code will probably bear the marks of its not-all-knowing creator in its DNA and is likely not to be optimal nor efficient by modern computational standards.
+
+This brings me to the second choice: elegance \& modularity or taylored code \& raw performance? Should one develop a code in a very broad framework using as much external libraries as possible or is there still space for true heroism?
+
+It is my opinion that the answer to this question is: both. The current form of heroism no more lies in writing one’s own FEM(2)/FDM(3) packages, meshers, or solvers from scratch, but in cleverly taking advantage of state-of-the-art packages such as for example p4est [15] for Adaptive Mesh Refinement, PetSc [13] or Trilinos [14] for solvers, Saint Germain [17] for particle tracking, deal.ii [12] or Fenics [16] for FEM, and sharing their codes through platforms such as svn, bitbucket or github.
+
+In reality, the many different ways of approaching the development or usage of a (new) code is linked to the diversity of individual projects, but ultimately anyone who dares to touch a code (let alone write one) is a hero in his/her own right: although (super-)heroes can be awesome on their own, they often complete each other, team up and join forces for maximum efficiency. Let us all be heroes, then, and join efforts to serve Science to the best of our abilities.
+
+\vspace{3mm}
+
+\noindent Abbreviations
+
+(1) PDE: Partial Differential Equation 
+
+(2) FEM: Finite Element Method 
+
+(3) FDM: Finite Difference Method
+
+\noindent References
+
+[1] Zhong et al., JGR 105, 2000; 
+
+[2] Thieulot, PEPI 188, 2011; 
+
+[3] Kaus et al., NIC Symposium proceedings, 2016; 
+
+[4] May et al, CMAME 290, 2015 
+
+[5] Gerya and Yuen, PEPI 163, 2007 
+
+[6] Tackley, PEPI 171, 2008 
+
+[7] Fullsack, GJI 120, 1995 
+
+[8] Braun et al., PEPI 171, 2008 
+
+[9] http://www.underworldcode.org/ 
+
+[10] Popov and Sobolev, PEPI 171, 2008 
+
+[11] http://www.geodynamics.no/buiter/sulec.html 
+
+[12] Bangerth et al., J. Numer. Math., 2016; http://www.dealii.org/ 
+
+[13] http://www.mcs.anl.gov/petsc/ 
+
+[14] https://trilinos.org/ 
+
+[15] Burstedde et al., SIAM journal on Scientific Computing, 2011; http://www.p4est.org/ 
+
+[16] https://fenicsproject.org/ 
+
+[17] Quenette et al., Proceedings 19th IEEE, 2007
+
+
+
+
+
