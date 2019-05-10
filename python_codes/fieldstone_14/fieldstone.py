@@ -7,14 +7,17 @@ from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix, lil_matrix, hstack, vstack
 import time as time
 import matplotlib.pyplot as plt
+from numpy import linalg as LA
 
 #------------------------------------------------------------------------------
+
 def bx(x, y):
     val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
          (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
          (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
          1.-4.*y+12.*y*y-8.*y*y*y)
     return val
+
 def by(x, y):
     val=((8.-48.*y+48.*y*y)*x*x*x+
          (-12.+72.*y-72.*y*y)*x*x+
@@ -54,8 +57,6 @@ def onePlot(variable, plotX, plotY, title, labelX, labelY, extVal, limitX, limit
 print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
-
-# declare variables
 print("variable declaration")
 
 m=4     # number of nodes making up an element
@@ -65,17 +66,13 @@ ndofP=1  # number of pressure degrees of freedom
 Lx=1.  # horizontal extent of the domain 
 Ly=1.  # vertical extent of the domain 
 
-assert (Lx>0.), "Lx should be positive" 
-assert (Ly>0.), "Ly should be positive" 
-
-# allowing for argument parsing through command line
 if int(len(sys.argv) == 4):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 100
-   nely = 100
+   nelx = 32
+   nely = 32
    visu = 1
 
 assert (nelx>0.), "nnx should be positive" 
@@ -97,6 +94,10 @@ Nfem=NfemV+NfemP # total number of dofs
 eps=1.e-10
 
 sqrt3=np.sqrt(3.)
+
+pnormalise=True
+
+Gscaling=viscosity/(Ly/nely)
 
 # declare arrays
 print("declaring arrays")
@@ -172,10 +173,14 @@ print("setup: boundary conditions: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
-f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
-h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
+if pnormalise:
+   A_mat = lil_matrix((Nfem+1,Nfem+1),dtype=np.float64)# matrix A 
+   rhs   = np.zeros((Nfem+1),dtype=np.float64)         # right hand side 
+   A_mat[Nfem,NfemV:Nfem]=1
+   A_mat[NfemV:Nfem,Nfem]=1
+else:
+   A_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)# matrix A 
+   rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side 
 
 b_mat = np.zeros((3,ndofV*m),dtype=np.float64)  # gradient matrix B 
 N     = np.zeros(m,dtype=np.float64)            # shape functions
@@ -227,8 +232,6 @@ for iel in range(0, nel):
 
             # calculate the determinant of the jacobian
             jcob = np.linalg.det(jcb)
-
-            # calculate inverse of the jacobian matrix
             jcbi = np.linalg.inv(jcb)
 
             # compute dNdx & dNdy
@@ -256,6 +259,8 @@ for iel in range(0, nel):
                 G_el[ndofV*i  ,0]-=dNdx[i]*jcob*wq
                 G_el[ndofV*i+1,0]-=dNdy[i]*jcob*wq
 
+    G_el*=Gscaling
+
     # impose b.c. 
     for k1 in range(0,m):
         for i1 in range(0,ndofV):
@@ -281,36 +286,22 @@ for iel in range(0, nel):
                 for i2 in range(0,ndofV):
                     jkk=ndofV*k2          +i2
                     m2 =ndofV*icon[k2,iel]+i2
-                    K_mat[m1,m2]+=K_el[ikk,jkk]
-            f_rhs[m1]+=f_el[ikk]
-            G_mat[m1,iel]+=G_el[ikk,0]
-    h_rhs[iel]+=h_el[0]
+                    A_mat[m1,m2]+=K_el[ikk,jkk]
+            rhs[m1]+=f_el[ikk]
+            A_mat[m1,NfemV+iel]+=G_el[ikk,0]
+            A_mat[NfemV+iel,m1]+=G_el[ikk,0]
+    rhs[NfemV+iel]+=h_el[0]
+
+A_mat=A_mat.tocsr()
 
 print("build FE matrix: %.3f s" % (time.time() - start))
-
-######################################################################
-# assemble K, G, GT, f, h into A and rhs
-######################################################################
-start = time.time()
-
-a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-
-a_mat[0:NfemV,0:NfemV]=K_mat
-a_mat[0:NfemV,NfemV:Nfem]=G_mat
-a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-
-rhs[0:NfemV]=f_rhs
-rhs[NfemV:Nfem]=h_rhs
-
-print("assemble blocks: %.3f s" % (time.time() - start))
 
 ######################################################################
 # solve system
 ######################################################################
 start = time.time()
 
-sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+sol=sps.linalg.spsolve(A_mat,rhs)
 
 print("solve time: %.3f s" % (time.time() - start))
 
@@ -320,7 +311,7 @@ print("solve time: %.3f s" % (time.time() - start))
 start = time.time()
 
 u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
-p=sol[NfemV:Nfem]
+p=sol[NfemV:Nfem]*Gscaling
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))

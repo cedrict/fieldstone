@@ -106,5 +106,52 @@ In this case the discretised heat transport equation is:
 \left( {\bm M}^\uptheta  + ({\bm K}_a + {\bm K}_d) \delta t \right) \cdot \vec T^{(k)} =  {\bm M}^\uptheta \cdot \vec T^{(k-1)}
 }
 \]
-\todo[inline]{other time discr schemes!}
+\todo[inline]{add source term!!}
+
+
+
+
+Let us then write this equation at times $t$ and $t+\delta t$ :
+\begin{eqnarray}
+{\bm M}^\uptheta(t) \cdot \dot{\vec T}(t) + {\bm K}(t) \cdot \vec T(t) &=& \vec F(t)  \label{htefem3} \\ 
+{\bm M}^\uptheta(t+\delta t) \cdot \dot{\vec T}(t+\delta t) + {\bm K}(t+\delta t)\cdot {\vec T}(t+\delta t) &=& {\vec F}(t+\delta t) \label{htefem4} 
+\end{eqnarray}
+The time derivative of temperature can be written as follows:
+\[
+\frac{\vec T(t+\delta t)-\vec T(t) }{\delta t} = \alpha \dot{\vec T}(t+\delta t) + (1-\alpha) \dot{\vec T}(t)
+\]
+If $\alpha=0$ then this is a fully implicit scheme, if $\alpha=1$ this is a fully explicit scheme. 
+If $\alpha=1/2$ this is a second order accurate, mid-point implicit scheme 
+One can multiply Eq. (\ref{htefem3}) by $1-\alpha$ and Eq. (\ref{htefem4}) by $\alpha$ and sum them :
+\begin{eqnarray}
+(1-\alpha) {\bm M}^\uptheta(t) \cdot \dot{\vec T}(t) + (1-\alpha){\bm K}(t)\cdot {\vec T}(t)
+&=& (1-\alpha){\vec F}(t)  \nn\\
++ \alpha  {\bm M}(t+\delta t) \cdot \dot{\vec T}(t+\delta t) 
++ \alpha {\bm K}(t+\delta t)\cdot {\vec T}(t+\delta t) && +  \alpha {\vec F}(t+\delta t) \nn 
+\end{eqnarray}
+Assuming ${\bm M}^\uptheta(t)\approx {\bm M}^\uptheta(t+\delta t)$, ${\bm K}(t+\delta t)={\bm K}(t)$  
+and ${\vec F}(t)\approx {\vec F}(t+\delta t)$, then 
+\begin{eqnarray}
+{\bm M}(t) \cdot \frac{\vec T(t+\delta t)-\vec T(t) }{\delta t} 
++ (1-\alpha){\bm K}(t)\cdot {\vec T}(t)   
++ \alpha {\bm K}(t)\cdot {\vec T}(t+\delta t) 
+&=& {\vec F}(t)  \nn
+\end{eqnarray}
+and finally
+\[
+\left[ {\bm M}^\uptheta(t) + \alpha {\bm K}(t) \; \delta t \right] \cdot  {\vec T}(t+\delta t)
+= \left[ {\bm M}^\uptheta(t) - (1-\alpha) {\bm K}(t) \; \delta t \right] \cdot  {\vec T}(t) + {\vec F}(t) \; \delta t
+\]
+or, 
+\[
+{\bm A}\cdot {\vec T} = {\vec b}
+\]
+with 
+\begin{eqnarray}
+{\bm A} &=& {\bm M}^\uptheta(t) + \alpha {\bm K}(t) \; \delta t  \nn\\
+{\vec b} &=& \left[ {\bm M}^\uptheta(t) - (1-\alpha) {\bm K}(t) \; \delta t \right] \cdot  {\vec T}(t) + {\vec F}(t) \; \delta t \nn
+\end{eqnarray}
+
+
+\todo[inline]{there's got to be a prettier way to arrive at this ...}
 

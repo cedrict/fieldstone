@@ -70,3 +70,7 @@ with fieldstone.
 
 Rather interestingly, the nodal pressure (obtained with a simple center-to-node algorithm)
 fails to recover a correct pressure at the four corners.
+
+Note that the umfpack solver complains a lot about the matrix condition number, 
+even at (very) low resolutions. I believe it does not like the zeros on the (2,2)
+block of the assembled Stokes matrix. 

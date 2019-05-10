@@ -70,4 +70,74 @@ and then update $\vec X^n$ as follows:
 \]
 When $\gamma=1$ we recover the standard Picard iterations formula above.
 
+\subsection{Defect correction formulation}
+
+VERY MUCH WORK IN PROGRESS - ABSORBED FROM MASTODON
+
+We start from the system to solve:
+\[
+{\bm A}(\vec X) \cdot \vec X = \vec b(\vec X)
+\]
+with the associated residual vector $\vec F$ 
+\[
+\vec F(\vec X) = {\bm A}(\vec X) \cdot \vec X - \vec b(\vec X)
+\]
+The Newton-Raphson algorithm consists of two steps:
+\begin{enumerate}
+\item $\bm J_k \cdot \delta \vec X_k = -\vec F(\vec X_k)$, or in the 
+case of the incompressible Stokes equation FEM system:
+\[
+\left(
+\begin{array}{cc}
+\bm J^{{\cal V}{\cal V}}_k & \bm J^{{\cal V}{\cal P}}_k \\
+\bm J^{{\cal P}{\cal V}}_k & 0
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\delta \vec {\cal V}_k \\ \delta \vec {\cal P}_k
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+- \vec F_k^{\cal V} \\ -\vec F_k^{\cal P}
+\end{array}
+\right)
+\]
+
+\item $\vec X_{k+1} = \vec X_k + \alpha_k \delta \vec X_k$
+\end{enumerate}
+The defect correction Picard approach consists of neglecting the derivative terms present 
+in the $J$ terms (Eqs. 16,17,18 of \cite{frbt19}) so that 
+\[
+\bm J^{{\cal V}{\cal V}}_k \simeq \K_k 
+\quad\quad
+\bm J^{{\cal V}{\cal P}}_k \simeq \G 
+\quad\quad
+\bm J^{{\cal P}{\cal V}}_k \simeq \G^T
+\]
+so that step 1 of the above iterations become:
+\[
+\left(
+\begin{array}{cc}
+\K_k & \G \\ \G^T & 0
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\delta \vec {\cal V}_k \\ \delta \vec {\cal P}_k
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+- \vec F_k^{\cal V} \\ -\vec F_k^{\cal P}
+\end{array}
+\right)
+\]
+
+
 
