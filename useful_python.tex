@@ -1,0 +1,35 @@
+\subsection{Sparse matrices}
+
+So far, the best way I have found to deal with sparse matrices is to 
+declare the matrix as a 'lil\_matrix' (linked list).
+
+\begin{lstlisting}
+from scipy.sparse import csr_matrix, lil_matrix
+A_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)
+\end{lstlisting}
+
+One then adds terms to it as if it was a full/dense matrix. 
+Once the assembly is done, the conversion to CSR format is trivial:
+
+\begin{lstlisting}
+A_mat=A_mat.tocsr()
+\end{lstlisting}
+
+Finally the solver can be called:
+
+\begin{lstlisting}
+sol=sps.linalg.spsolve(A_mat,rhs)
+\end{lstlisting}
+
+\subsection{condition number}
+
+if the matrix has been declared as lil\_matrix, first convert it to a dense matrix:
+\begin{lstlisting}
+A_mat=A_mat.dense()
+\end{lstlisting}
+The condition number of the matrix is simply obtained as follows:
+\begin{lstlisting}
+from numpy import linalg as LA
+print(LA.cond(A_mat))
+\end{lstlisting}
+

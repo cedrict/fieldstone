@@ -1,20 +1,5 @@
 
-Let us first look at the penalty formulation. In this case we are only solving for 
-velocity since pressure is recovered in a post-processing step. We also know that 
-the penalty factor is many orders of magnitude higher than the viscosity and 
-in combination with the use of the $Q_1 \times P_0$ element the resulting matrix 
-condition number is very high so that the use of iterative solvers in precluded. 
-Indeed codes such as SOPALE \cite{full95}, DOUAR \cite{brtf08}, or FANTOM \cite{thie11} 
-relying on the penalty formulation all use direct solvers (BLKFCT, MUMPS, WSMP).
-
-The main advantage of direct solvers is used in this case: They can solve ill-conditioned 
-matrices. However memory requirements for the storage of number of nonzeros in the 
-Cholesky matrix grow very fast as the number of equations/grid size increases, especially in 3D,
-to the point that even modern computers with tens of Gb of RAM cannot deal with a $100^3$ element mesh.
-This explains why direct solvers are often used for 2D problems and rarely in 3D with noticeable 
-exceptions \cite{thfb08,yahb09,brya09,lobh10,alht11,alht12,alhf13,whbb14,neew18}. 
-
-In light of all this, let us start again from the (full) Stokes system:
+Let us start again from the (full) Stokes system:
 \begin{equation}
 \left(
 \begin{array}{cc}
@@ -35,23 +20,60 @@ In light of all this, let us start again from the (full) Stokes system:
 \right)
 \label{StokesSyst}
 \end{equation}
-
 We need to solve this system in order to obtain the solution, i.e. the $\vec{\cal V}$ 
 and $\vec{\cal P}$ vectors. But how? 
-
 Unfortunately, this question is not simple to answer and the appropriate method depends on many 
 parameters, but mainly on how big the matrix blocks are and what the condition number of the matrix $\K$ is. 
 
 In what follow I cover:
 \begin{itemize}
-\item the penalty method(s)
+\item solving when the penalty approach is used
 \item the Schur complement approach
 \item the FGMRES approach
 \item the Augmented Lagrangian approach
 \end{itemize}
 
-%--------------------------------------------
-\subsubsection{The Schur complement approach}
+%...................................................
+\subsubsection{when using the penalty formulation}
+
+In this case we are only solving for 
+velocity since pressure is recovered in a post-processing step:
+\[
+(\K_\eta+\K_\lambda) \cdot \vec {\cal V} = \vec f
+\]
+ We also know that 
+the penalty factor is many orders of magnitude higher than the viscosity and 
+in combination with the use of the $Q_1 \times P_0$ element the resulting matrix 
+condition number is very high so that the use of iterative solvers in precluded. 
+Indeed codes such as SOPALE \cite{full95}, DOUAR \cite{brtf08}, or FANTOM \cite{thie11} 
+relying on the penalty formulation all use direct solvers.
+The most popular are BLKFCT, MUMPS, WSMP, UMFPACK, SuperLU, PARDISO, CholMod. 
+
+Braun et al \cite{brtf08} list the following features of such solvers:
+\begin{itemize}
+\item Robust
+\item Black-box operation
+\item Difficult to parallelize
+\item Memory consumption
+\item Limited scalability
+\end{itemize}
+
+The main advantage of direct solvers is used in this case: They can solve ill-conditioned 
+matrices. However memory requirements for the storage of number of nonzeros in the 
+Cholesky matrix grow very fast as the number of equations/grid size increases, especially in 3D,
+to the point that even modern computers with tens of Gb of RAM cannot deal with a $100^3$ element mesh.
+This explains why direct solvers are often used for 2D problems and rarely in 3D with noticeable 
+exceptions \cite{thfb08,yahb09,brya09,lobh10,alht11,alht12,alhf13,whbb14,neew18}. 
+
+
+%...................................................
+\subsubsection{Conjugate gradient and the Schur complement approach }
+
+
+
+
+
+
 Let us write the above system as two equations:
 \begin{eqnarray}
 \K \cdot \vec{\cal V} + \G \cdot \vec{\cal P} &=& \vec{f} \\
@@ -64,7 +86,7 @@ The first line can be re-written $\vec{\cal V}=\K^{-1}\cdot (\vec{f} - \G \cdot 
 or, 
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
-(\G^T \cdot K^{-1} \cdot \G) \cdot \vec{\cal P} = \G^T \cdot \K^{-1}\cdot \vec{f} - \vec{h} 
+(\G^T \cdot \K^{-1} \cdot \G) \cdot \vec{\cal P} = \G^T \cdot \K^{-1}\cdot \vec{f} - \vec{h} 
 \]
 \end{mdframed}
 The matrix $\SSS= \G^T \cdot \K^{-1} \cdot \G $ is called the Schur complement. \index{Schur complement} 
@@ -74,8 +96,160 @@ positive definite $\iff$ $x^TMx>0$ $\forall \; x\in \mathbb{R}^n \setminus {\bm 
 {\color{red} look in donea-huerta book for details}
 Having solved this equation (we have obtained $\vec{\cal P}$), the velocity can be recovered by solving 
 $\K\cdot \vec{\cal V} =\vec{f}- \G \cdot \vec{\cal P}$. 
-For now, let us assume that we have built the $\SSS$ matrix and the right hand side $\underline{\vec{f}}=\G^T \cdot \K^{-1} \cdot \vec{f} - \vec{h}$.
+
+For now, let us assume that we have built the $\SSS$ matrix and the right hand 
+side $\underline{\vec{f}}=\G^T \cdot \K^{-1} \cdot \vec{f} - \vec{h}$.
 We must solve $\SSS\cdot \vec{\cal P} = \underline{\vec{f}}$.
+
+\index{Richardson iterations}
+One can resort to so-called Richardson iterations, defined as follows (e.g., see \cite{varga}, p141):
+in solving the matrix equation ${\bm A}\cdot {\vec X}={\vec b}$,
+the Richardson iterative method is defined by: 
+\[
+{\vec X}_{k+1} = {\vec X}_k + \alpha_k (-{\bm A} \cdot {\vec X}_k + {\vec b})
+\quad\quad
+m\geq 0 
+\]
+where the $\alpha_k$'s are real scalars. 
+It is easy to see that when the method converges then ${\vec X}_{k+1} \simeq {\vec X}_k$  and then 
+${\bm A}\cdot {\vec X}={\vec b}$ is satisfied. 
+In our case, it writes:
+\begin{eqnarray}
+\vec {\cal P}_{k+1} 
+&=& \vec {\cal P}_k + \alpha_k ( - \SSS \cdot \vec{\cal P}_k  +  \underline{\vec{f}}) \nonumber\\
+&=& \vec {\cal P}_k + \alpha_k ( - \G^T \cdot \K^{-1} \cdot \G \cdot \vec{\cal P}_k  
++  \G^T \cdot \K^{-1} \cdot \vec{f} - \vec{h}   ) \nonumber\\
+&=& \vec {\cal P}_k + \alpha_k \left[ \G^T \cdot \K^{-1} \cdot ( - \G \cdot \vec{\cal P}_k + \vec{f}) - \vec{h} \right] \nonumber\\
+&=& \vec {\cal P}_k + \alpha_k \left[ \G^T \cdot \K^{-1} \cdot ( \K\cdot \vec{\cal V}_k)  - \vec{h} \right] \nonumber\\
+&=& \vec {\cal P}_k + \alpha_k \left( \G^T \cdot \vec{\cal V}_k  - \vec{h} \right) 
+\end{eqnarray}
+The above iterations are then carried out and for each new pressure field the associated velocity field 
+is computed. The method of using Richardson iterations applied to the Schur complement 
+is commonly called the Uzawa algorithm \cite[p221]{braess}.
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\underline{\bf Uzawa algorithm (1)}:
+\begin{eqnarray}
+\text{solve} \qquad \mathbb{K} \cdot \vec{\cal V}_k &=& \vec f - \mathbb{G}\cdot \vec {\cal P}_{k-1} \\
+{\cal P}_k &=& {\cal P}_{k-1}  + \alpha (\mathbb{G}^T\cdot \vec{\cal V}_k -\vec h)
+\quad
+\quad
+\quad
+\quad
+k=1,2, ... \label{uzaa2}
+\end{eqnarray}
+\end{mdframed}
+
+
+This method is rather simple to implement, although
+what makes an appropriate set of $\alpha_k$ values is not straightforward, which is why 
+the conjugate gradient is often preferred, as detailed in the next subsection. 
+
+It is known that such iterations will converge for $0< \alpha < \rho(\SSS)= \lambda_{max}(\SSS)$ 
+where $\rho(\SSS)$ is the spectral radius of the matrix $\SSS$
+which is essentially the largest, in absolute value, eigenvalue of $\SSS$ (neither of which 
+can be computed easily).  
+It can also be proven that the rate of convergence depends on the condition number of the matrix.
+
+Richardson iterations are part of the family of stationary iterative methods, since it can be rewritten 
+\[
+{\vec X}_{k+1} = ({\bm I} - \alpha_k {\bm A} ) \cdot {\vec X}_k + \alpha_k {\vec b}
+\]
+which is the definition of a stationary method. 
+
+
+Since the $\alpha$ parameter is the key to a succesful Uzawa algorithm, 
+this issue has of course been looked into What follows is 
+presented in \cite[p221]{braess}.
+For the analysis of the Uzawa algorithm, we define the residue
+\[
+\vec {\cal R}_k = \vec h - \mathbb{G}^T \cdot \vec{\cal V}_k
+\]
+In addition, suppose the solution of the saddle point problem is denoted
+by $({\cal V}^\star,{\cal P}^\star)$.
+Now substituting the iteration formula for ${\cal V}_k$, we get
+\begin{eqnarray}
+{\cal R}_k 
+&=& \G^T\cdot\vec{\cal V}^\star -\mathbb{G}^T\cdot \mathbb{K}^{-1} (\vec f - \mathbb{G}\cdot {\cal P}_{k-1}) \\
+&=& \G^T\cdot\vec{\cal V}^\star -\mathbb{G}^T\cdot \mathbb{K}^{-1} (\K\cdot\vec{\cal V}^\star + \G\cdot\vec{\cal P}^\star - \mathbb{G}\cdot {\cal P}_{k-1}) \\
+&=& \mathbb{G}^T \cdot \mathbb{K}^{-1} \cdot \mathbb{G}\cdot (\vec {\cal P}_{k-1} - \vec{\cal P}^\star) 
+\end{eqnarray}
+
+From Eq. \ref{uzaa2} it follows that:
+\begin{eqnarray}
+{\cal P}_k - {\cal P}_{k-1}  
+&=& \alpha (\mathbb{G}^T\cdot \vec{\cal V}_k -\vec h) \\
+&=& -\alpha \vec{\cal R}_k \\ 
+&=& -\alpha \mathbb{G}^T \cdot \mathbb{K}^{-1} \cdot \mathbb{G}\cdot (\vec {\cal P}_{k-1} - \vec{\cal P}^\star)\\ 
+&=& \alpha \mathbb{G}^T \cdot \mathbb{K}^{-1} \cdot \mathbb{G}\cdot 
+(\vec{\cal P}^\star - \vec {\cal P}_{k-1} ) 
+\end{eqnarray}
+Thus the Uzawa algorithm is equivalent to applying the gradient method 
+to the reduced equation using a fixed step size. 
+In particular, the iteration converges for
+\[
+\alpha < 2 || \G^T \cdot \K^{-1} \cdot \G ||^{-1}
+\]
+and one can show that the good step size $\alpha_k$ is given by 
+\begin{equation}
+\alpha_k = \frac{{\cal R}_k \cdot {\cal R}_k}{(\G q_k)\cdot (\K^{-1} \G q_k)}
+\label{uzaa3}
+\end{equation}
+However, if we were to use this rule formally, we would 
+need an additional multiplication by $\K^{-1}$ in every step 
+of the iteration. This can be avoided by storing an 
+auxiliary vector. 
+
+Note that in \cite{glow} it is stated: the convergence of this algorithm is proved for 
+$\alpha \in (0,2\mu/d)$ (where $d$ is the number of dimensions).
+\todo[inline]{check this, and report page number}
+Note that this algorithm is presented in \cite{zivt85} in the context of viscosplastic flow.
+
+
+As mentioned above, there is a way to rework the original Uzawa algorithm 
+to include Eq. (\ref{uzaa3}). It is yields a modified 
+Uzawa algorithm \cite[p221]{braess}:
+
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\underline{\bf Uzawa algorithm (2)}:
+Solve $\mathbb{K}\cdot \vec{\cal V}_1 = \vec f - \mathbb{G}\cdot  \vec{\cal P}_0$. 
+For $k=1,2,...$, compute 
+\begin{eqnarray}
+\vec q_k &=& \vec h-\mathbb{G}^T \cdot \vec{\cal V}_k \\
+\vec{p}_k &=& {\G}\cdot q_k \\
+\vec H_k &=& {\K}^{-1}\cdot \vec{p}_k \\
+\alpha_k &=& \frac{\vec q_k \cdot \vec q_k}{\vec{p}_k \cdot \vec H_k} \\
+\vec {\cal P}_k &=& \vec {\cal P}_{k-1} - \alpha_k  \vec q_k \\
+\vec {\cal V}_{k+1} &=& \vec {\cal V}_k + \alpha_k  \vec H_k
+\end{eqnarray}
+\end{mdframed}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%...................................................
+\subsubsection{Conjugate gradient and the Schur complement approach }
+
 
 \index{CG} \index{conjugate gradient}
 Since $\SSS$ is SPD, the Conjugate Gradient (CG) method is very appropriate to solve this system. 
