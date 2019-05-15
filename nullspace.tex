@@ -6,9 +6,146 @@ does not alter the solution.
 
 As in the pressure normalisation case (see section \ref{ss_pnorm}), the solution is simple:
 \begin{enumerate}
-\item fix the tangential velocity at one node on a boundary, and solve the sytem (the nullspace 
+\item fix the tangential velocity at {\it one} node on a boundary, and solve the sytem (the nullspace 
 has been removed)
-\item post-process the solution to have the velocity field fulfill the required conditions. 
+\item post-process the solution to have the velocity field fulfill the required conditions, i.e.
+either a zero net angular momentum or a zero net angular velocity of the domain. 
 \end{enumerate}
+
+\begin{remark}
+In \aspect{} this is available under the option 
+"Remove nullspace = angular momentum" and "Remove nullspace = net rotation".
+The "angular momentum" option removes a rotation such that the net angular momentum is zero.
+The "net rotation" option removes the net rotation of the domain.
+\end{remark}
+
+In order to remove the angular momentum, we search for a rotation
+vector ${\vec \omega}$ such that
+\begin{equation}
+\int_\Omega \rho[{\vec r} \times ({\vec v}-{\vec \omega} \times {\vec r})] \; d\vec r= \vec 0
+\end{equation}
+Recognizing that the angular momentum vector ${\vec H}$ is given by
+\begin{equation}
+{\vec H} = \int_\Omega \rho{\vec r} \times {\vec v}\; d\vec r
+\end{equation}
+and that the moment of inertia
+(also called inertia tensor)\footnote{\url{https://en.wikipedia.org/wiki/Moment\_of\_inertia}}
+ for a continuous body 
+ $3\times3$ matrix ${\bm I}$ is given by
+\begin{equation}
+{\bm I}= 
+\int_\Omega \rho(\vec r) [\vec r\cdot\vec r \; \bm 1 - \vec r \times \vec r  ] d\vec r 
+\end{equation}
+so that the above equation writes:
+$
+{\vec H}={\bm I}\cdot {\vec \omega}
+$
+and then ${\vec \omega}={\bm I}^{-1} \cdot {\vec H}$.
+A rotation about the rotation vector ${\vec \omega}$ is then subtracted from the velocity 
+solution \cite[eq. 26]{zhmt08}:
+\begin{equation}
+\vec v_{new} = \vec v_{old} - \vec \omega \times \vec r 
+\end{equation}
+
+\index{angular velocity} \index{angular momentum}
+
+%...............................
+\subsubsection{Three dimensions}
+
+The angular momentum vector is given by:
+\begin{equation}
+\vec H = \int_\Omega \rho(\vec r) \left( 
+\begin{array}{c} 
+yw-zv \\ zu-xw \\ xv-yu 
+\end{array} \right) d\vec r
+\end{equation}
+while the inertia tensor for a continuous body is given 
+by
+\begin{eqnarray}
+\bm I
+&=&\int_\Omega \rho(\vec r) [\vec r\cdot\vec r \; \bm 1 - \vec r \times \vec r  ] d\vec r \\
+&=&\int_\Omega \rho(\vec r) 
+\left[
+\left(
+\begin{array}{ccc}
+r^2 & 0 & 0 \\
+0 & r^2 & 0 \\
+0 & 0 & r^2
+\end{array}
+\right)
+- 
+\left(
+\begin{array}{ccc}
+xx & xy & xz \\
+yx & yy & yz \\
+zx & zy & zz 
+\end{array}
+\right)
+\right] 
+d\vec r \\
+&=&\int_\Omega \rho(\vec r) 
+\left(
+\begin{array}{ccc}
+y^2+z^2 & -xy & -xz \\
+-yx & x^2+z^2 & -yz \\
+-zx & -zy & x^2+y^2 
+\end{array}
+\right)
+d\vec r \\
+\end{eqnarray}
+
+The angular velocity\footnote{\url{https://en.wikipedia.org/wiki/Angular_velocity }}
+ vector is given by $\vec\omega = \frac{\vec r\times \vec v}{r^2}$
+so that the volume-averaged angular velocity of the cylindrical shell is:
+\[
+<\vec {\omega}> = \frac{1}{|\Omega|} \int_\Omega \frac{{\vec r}\times {\vec v}}{r^2} d\vec r
+\]
+ Note that it can be straightforwardly computed the same way as the angular momentum
+(it is in fact the same equation but without the density):
+
+%-----------------------------
+\subsubsection{Two dimensions}
+
+In two dimensions, flow is taking place in the $(x,y)$ plane. This means that $\vec r$ and $\vec v$ are coplanar, 
+and therefore that $\vec H$ is perpendicular to the plane, i.e. $\vec H \propto \vec e_z$.
+We have then
+\begin{equation}
+\vec H = \int_\Omega \rho(\vec r) \left( 
+\begin{array}{c} 
+0 \\ 0 \\ xv-yu 
+\end{array} \right) d\vec r
+\end{equation}
+and 
+\begin{equation}
+\bm I=
+\int_\Omega \rho(\vec r) 
+\left(
+\begin{array}{ccc}
+y^2 & -xy & 0 \\
+-yx & x^2 & 0 \\
+0 & 0 & x^2+y^2 
+\end{array}
+\right)
+d\vec r 
+\end{equation}
+The volume-averaged angular velocity is then simply:
+\begin{equation}
+<\omega_z> = \frac{1}{|\Omega|}\int_\Omega \frac{xv-yu}{r^2}d\vec r
+\end{equation}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

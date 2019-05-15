@@ -342,4 +342,111 @@ with a maximum temperature
 T_M = T(y=0) = T_0 + \frac{1}{3} \frac{\eta u_0^2}{k} 
 \]
 
+%-----------------------------------------------------------------------------
+\subsubsection{Analytical benchmark VII \label{mms7}}
+
+This benchmark was designed by Dave May. 
+The velocity and pressure fields are given by
+\begin{eqnarray}
+u(x,y) &=& x^3 y + x^2 + xy + x \nn\\
+v(x,y) &=& -\frac{3}{2}x^2y^2 - 2xy - \frac{1}{2}y^2 - y \nn\\
+p(x,y) &=& x^2y^2 + xy + 5 + p_0\nn
+\end{eqnarray}
+while the viscosity is chosen to be
+\[
+\eta(x,y)=-\sin(p)+1+\epsilon = -\sin (x^2y^2 + xy + 5) + 1 + \epsilon 
+\]
+where $\epsilon$ actually controls the viscosity contrast.
+We have
+\begin{eqnarray}
+\dot{\varepsilon}_{xx} = \frac{\partial u}{\partial x} &=& 3x^2y+2x+y+1 \nn\\
+\dot{\varepsilon}_{yy} = \frac{\partial v}{\partial y} &=& -3x^2y-2x-y-1 \nn\\
+\dot{\varepsilon}_{xy} = \frac{1}{2}\left(\frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right)
+&=& \frac{1}{2}\left(x^3+x-3xy^2-2y \right)
+\end{eqnarray}
+and we can verify that the velocity field is incompressible:
+\[
+{\bm \nabla}\cdot{\bm v} = 
+\dot{\varepsilon}_{xx} + \dot{\varepsilon}_{yy} 
+= (3x^2y+2x+y+1)+(-3x^2y-2x-y-1)=0
+\]
+The pressure gradient is given by
+\begin{eqnarray}
+\frac{\partial p}{\partial x} &=& 2xy^2+y \nn\\
+\frac{\partial p}{\partial y} &=& 2x^2y+x \nn
+\end{eqnarray}
+The right hand side term of the Stokes equation is such that (MINUS SIGN?) 
+\begin{eqnarray}
+f_x &=& - \frac{\partial p}{\partial x} + \frac{\partial s_{xx}}{\partial x} + \frac{\partial s_{yx}}{\partial y} \nn\\
+f_y &=& - \frac{\partial p}{\partial y} + \frac{\partial s_{xy}}{\partial x} + \frac{\partial s_{yy}}{\partial y} 
+\end{eqnarray}
+with 
+\begin{eqnarray}
+\frac{\partial s_{xx}}{\partial x} 
+&=& \frac{\partial (2 \eta \dot{\epsilon}_{xx}) }{\partial x} = 2 \eta \frac{\partial  \dot{\epsilon}_{xx} }{\partial x} +  2\frac{\partial \eta }{\partial x} \dot{\epsilon}_{xx} \nn\\
+\frac{\partial s_{zx}}{\partial z} 
+&=& \frac{\partial (2 \eta \dot{\epsilon}_{zx}) }{\partial z} = 2 \eta \frac{\partial  \dot{\epsilon}_{zx} }{\partial z} +  2\frac{\partial \eta }{\partial z} \dot{\epsilon}_{zx} \nn\\
+\frac{\partial s_{xz}}{\partial x} 
+&=& \frac{\partial (2 \eta \dot{\epsilon}_{xz}) }{\partial x} = 2 \eta \frac{\partial  \dot{\epsilon}_{xz} }{\partial x} +  2\frac{\partial \eta }{\partial x} \dot{\epsilon}_{xz} \nn\\
+\frac{\partial s_{zz}}{\partial z} 
+&=& \frac{\partial (2 \eta \dot{\epsilon}_{zz}) }{\partial z} = 2 \eta \frac{\partial  \dot{\epsilon}_{zz} }{\partial z} +  2\frac{\partial \eta }{\partial z} \dot{\epsilon}_{zz} \nn\\
+\frac{\partial \eta }{\partial x} &=& -z (2 x z + 1) \cos(x^2 z^2 + x z + 5) \nn\\
+\frac{\partial \eta }{\partial z} &=& -x (2 x z + 1) \cos(x^2 z^2 + x z + 5) \nn\\
+\frac{\partial  \dot{\epsilon}_{xx} }{\partial x} &=& 6xz+2 \nn\\
+\frac{\partial  \dot{\epsilon}_{zx} }{\partial z} &=& -3xz-1  \nn\\
+\frac{\partial  \dot{\epsilon}_{xz} }{\partial x} &=& \frac{1}{2}(3x^2+1-3z^2)  \nn\\
+\frac{\partial  \dot{\epsilon}_{zz} }{\partial z} &=& -3x^2-1  \nn
+\end{eqnarray}
+
+Velocity boundary conditions are prescribed on all four boundaries so that the pressure is known up to a constant, 
+and the $p_0$ constant can be determined by requiring that
+\[
+\int_0^L\int_0^L p(x,y) \; dx dy = 
+\int_0^L\int_0^L (x^2y^2+xy+5) dx dy + \int_0^L \int_0^L p_0 \; dxdy = 
+\int_0^L\int_0^L (x^2y^2+xy+5) dx dy + p_0 L^2 =0 
+\]
+where $L$ is the size of the square domain.
+Then
+\[
+p_0 =-  \frac{1}{L^2}  \int_0^L\int_0^L (x^2y^2+xy+5) dx dy
+-\frac{L^4}{9}-\frac{L^2}{4} - 5 
+\]
+\[
+\]
+\begin{itemize}
+\item
+When the domain is $1\times 1$, $p_0=-\frac{1}{9}-\frac{1}{4} - 5 = -193/36$.
+\item
+When the domain is $2\times 2$, $p_0=-\frac{16}{9}-\frac{4}{4} - 5*4 = -70/9$.
+\item
+When the domain is $3\times 3$, $p_0=-\frac{81}{9}-\frac{9}{4} - 5*9 = -585/16$.
+\item
+When the domain is $4\times 4$, $p_0=-\frac{256}{9}-\frac{16}{4} - 5*16 = -1348/9$.
+\end{itemize}
+
+The value of $\epsilon$ controls the viscosity field amplitude:
+\begin{center}
+\includegraphics[width=14cm]{images/mms/mms7_mueffs}\\
+Domain size 2x2 with $\epsilon=0.1, 0.01, 0.001$
+\end{center}
+
+Another interesting aspect of this benchmark is the fact that increasing the domain size
+adds complexity to it as it increases the number of low viscosity zones and also decreases their spacing:
+
+\begin{center}
+\includegraphics[width=14cm]{images/mms/mms7_grids}\\
+Three different domain sizes (1x1, 2x2, 4x4) with $\epsilon=0.001$.
+\end{center}
+
+Because we know the analytical expression for both components of the velocity, we can also
+compute the root mean square velocity exactly:
+\begin{center}
+\includegraphics[width=8cm]{images/mms/mms7_vrmstheo}
+\end{center}
+and we end up with (for $L=2$)
+\[
+v_{rms} = \sqrt{\frac{1}{L^2}\frac{861752}{1575}} = \sqrt{\frac{215438}{1575}}
+\simeq 11.6955560683
+\]
+
 

@@ -19,14 +19,8 @@ connectivity) and unstructured grids (with an irregular connectivity).
 \includegraphics[width=5cm]{images/meshes/unstructured_grid}
 \end{center}
 
-On the following figure are shown various triangle- tetrahedron-based meshes. 
-These are obviously better suited for simulations of complex geometries:
-\begin{center}
-\includegraphics[height=4cm]{images/meshes/tr1.png}
-\includegraphics[height=4cm]{images/meshes/dolfin.png}
-\includegraphics[height=4cm]{images/meshes/tetra.png}\\
-\end{center}
-\improvement[inline]{add more examples coming from geo}
+%............................................
+\subsubsection{Quadrilateral-based meshes}
 
 Let us now focus on the case of a rectangular computational domain of size 
 {\tt Lx} $\times$ {\tt Ly} with a regular mesh composed of {\tt nelx}$\times${\tt nely}={\tt nel}
@@ -141,5 +135,45 @@ for i in range(0,nelx):
 
 \improvement[inline]{produce drawing of node numbering}
 
+%...................................................
+\subsubsection{Delaunay triangulation and Voronoi cells}
 
+Triangle-based meshes are obviously better suited for simulations of complex geometries:
+\begin{center}
+\includegraphics[height=4cm]{images/meshes/tr1.png}
+\includegraphics[height=4cm]{images/meshes/dolfin.png}
+\end{center}
+
+
+%...........................
+\subsubsection{Tetrahedra}
+
+\begin{center}
+\includegraphics[height=4cm]{images/meshes/tetra.png}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{images/meshes/glacier}
+{\small Example of 3D mesh \cite{yash15}  }
+\end{center}
+
+%............................................
+\subsubsection{Hexahedra}
+
+A hexahedron is a convex polytope isomorphic to the cube $[0,1]^3$.
+Edges are line segments, facets are strictly {\bf planar} convex polygons.
+
+\begin{center}
+\includegraphics[width=5cm]{images/meshes/hexa.jpg}
+\includegraphics[width=6cm]{images/meshes/hexa2}
+\end{center}
+
+
+
+
+%.......................................
+\subsubsection{Adaptive Mesh Refinement}
+
+
+\input{amr_exercise}
 

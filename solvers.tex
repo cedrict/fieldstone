@@ -434,11 +434,10 @@ and it is trivial to invert.
 
 
 
-\subsection{The GMRES approach}
 
 
 %---------------------------------------------
-\subsection{The Augmented Lagrangian approach}
+\subsubsection{The Augmented Lagrangian approach}
 
 \index{Augmented Lagrangian}
 
@@ -539,6 +538,60 @@ If $\lambda >> \max_\Omega{\eta}$ then the matrix $\tilde{\K}$ is ill-conditione
 \end{remark}
 
 
+
+
+%...................................................
+\subsubsection{The GMRES approach}
+
+The Generalized Minimal Residual method \cite{sasc86} 
+is an extension of MINRES (which is only applicable to symmetric systems) to unsymmetric systems. 
+Like MINRES, it generates a sequence of orthogonal vectors and 
+and combines these through a least-squares solve and update. However, 
+in the absence of symmetry this can no longer be done with short recurrences. As a consequence, 
+all previously computed vectors in the orthogonal sequence have to be retained and 
+for this reason ''restarted'' versions of the method are used.
+
+It must be said that the (preconditioned) GMRES method is actually much more difficult to implement 
+than the (preconditioned) Conjugate Gradient method.
+However, since it can deal with unsymmetric matrices, it means that it can be applied 
+directly to the Stokes system matrix (as opposed to the CG method which is used on the Schur complement
+equation).
+
+ 
+%In what follows we wish to solve the linear system ${\bm A}\cdot \vec x = \vec b$ and use the preconditioner 
+%matrix ${\bm M}$.
+
+Resources: \cite[p208]{eijkhout} \cite{saad} \cite{babc94}
+
+\todo[inline]{finish GMRES algo description. not sure what to do, hard to explain, not easy to code.}
+
+%Let $\vec x^{(0)}$ be an initial guess of the solution.
+
+%for j=1,2,...
+
+%    solve $\vec r$ from ${\bm M}\cdot \vec r = \vec b - {\bm A}\cdot \vec x^{(0)}$
+
+%    $\vec v^{(1)}=\vec{r}/||\vec r||_2$
+
+%    $\vec s = ||\vec r||_2 \; \vec e_1$
+
+%    for i=1,2,...m
+ 
+%        solve $\vec w$ from $\bm M \cdot \vec w = \bm A \cdot \vec v^{(i)}$
+
+%        for k=1,...i
+
+%            $h_{k,i}=(\vec w,\vec v^{(k)})$
+
+%            $\vec w=\vec w-h_{k,i} \vec v^{(k)}$
+
+%        end 
+
+%        $h_{i+1,i}=||\vec w||_2$
+
+%        $\vec v^{(i+1)} = \vec w/h_{i+1,i}$
+
+%end 
 
 
 

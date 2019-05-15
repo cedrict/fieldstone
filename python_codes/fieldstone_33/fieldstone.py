@@ -7,6 +7,7 @@ from scipy.sparse.linalg.dsolve import linsolve
 import time as time
 
 #------------------------------------------------------------------------------
+
 def density(rho0,alpha,T,T0):
     val=rho0*(1.-alpha*(T-T0)) -rho0
     return val
@@ -112,42 +113,48 @@ tol_nl=1.e-3  # nonlinear convergence coeff.
 
 #--------------------------------------
 
-case=2
+case=1
 
 if case==0:
    Ra=1e4  
    sigma_y=0.
    gamma_y=np.log(1.)  # rheology parameter 
    niter_nl=1
+   nonlinear=False
 
 if case==1:
    Ra=1e2 
    sigma_y=1.
    gamma_y=np.log(1.)  # rheology parameter 
    niter_nl=1
+   nonlinear=False
 
 if case==2:
    Ra=1e2 
    sigma_y = 1
    gamma_y=np.log(1.)  # rheology parameter 
    niter_nl=10
+   nonlinear=True
 
 if case==3:
    Ra=1e2 
    sigma_y=0.
    gamma_y=np.log(10.)  # rheology parameter 
+   nonlinear=False
 
 if case==4:
    Ra=1e2 
    sigma_y = 1
    gamma_y=np.log(10.)  # rheology parameter 
    niter_nl=10
+   nonlinear=True
 
 if case==5:
    Ra=1e2 
    sigma_y=4
    gamma_y=np.log(10.)  # rheology parameter 
    niter_nl=10
+   nonlinear=True
 
 g0=Ra/alphaT
 
@@ -188,7 +195,11 @@ eps=1.e-10
 sqrt3=np.sqrt(3.)
 
 use_freeslip_outer=True
-use_freeslip_inner=False
+use_freeslip_inner=True
+
+pin_one_node = use_freeslip_inner and use_freeslip_outer
+
+print (pin_one_node)
 
 if use_BA:
    use_shearheating=False
@@ -233,8 +244,8 @@ heatflux_boundary2=np.zeros(nstep,dtype=np.float64)
 Nu_boundary1=np.zeros(nstep,dtype=np.float64)
 Nu_boundary2=np.zeros(nstep,dtype=np.float64)
 adiab_heating=np.zeros(nstep,dtype=np.float64)
-vr_stats=np.zeros((nstep,2),dtype=np.float64)
-vt_stats=np.zeros((nstep,2),dtype=np.float64)
+vr_stats=np.zeros((nstep,3),dtype=np.float64)
+vt_stats=np.zeros((nstep,3),dtype=np.float64)
 
 psTfile=open('power_spectra_T.ascii',"w")
 psVfile=open('power_spectra_V.ascii',"w")
@@ -328,14 +339,21 @@ bc_fixV = np.zeros(NfemV, dtype=np.bool)
 bc_valV = np.zeros(NfemV, dtype=np.float64) 
 
 for i in range(0,nnp):
-    if r[i]<R1+eps:
+    # inner boundary
+    if r[i]<R1+eps: 
        if not use_freeslip_inner:
           bc_fixV[i*ndof]   = True ; bc_valV[i*ndof]   = 0.
           bc_fixV[i*ndof+1] = True ; bc_valV[i*ndof+1] = 0. 
+    # outer boundary
     if r[i]>(R2-eps):
        if not use_freeslip_outer:
           bc_fixV[i*ndof]   = True ; bc_valV[i*ndof]   = 0. 
           bc_fixV[i*ndof+1] = True ; bc_valV[i*ndof+1] = 0.
+
+if pin_one_node:
+   bc_fixV[0] = True ; bc_valV[0] = 0. 
+   bc_fixV[1] = True ; bc_valV[1] = 0.
+
 
 print("defining V b.c. (%.3fs)" % (time.time() - start))
 
@@ -438,14 +456,10 @@ for istep in range(0,nstep):
                         jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
                         jcb[1, 0] += dNds[k]*x[icon[k,iel]]
                         jcb[1, 1] += dNds[k]*y[icon[k,iel]]
-
-                    # calculate the determinant of the jacobian
                     jcob = np.linalg.det(jcb)
+                    jcbi = np.linalg.inv(jcb)
 
                     JxWq[iiq]=jcob*weightq
-
-                    # calculate inverse of the jacobian matrix
-                    jcbi = np.linalg.inv(jcb)
 
                     # compute dNdx & dNdy
                     xq=0.0
@@ -628,7 +642,7 @@ for istep in range(0,nstep):
         convfile.write("%e %e %e %e %e %e  \n" %( istep+iter_nl/200.,  np.max(abs(Res))/Res0, np.min(u),np.max(u),np.min(v),np.max(v) ))
         convfile.flush()
 
-        if np.max(abs(Res))/Res0 < tol_nl or iter_nl==niter_nl-1:
+        if nonlinear and (np.max(abs(Res))/Res0 < tol_nl or iter_nl==niter_nl-1):
            niterfile.write("%d %d \n" %( istep, iter_nl ))
            niterfile.flush()
            break 
@@ -662,6 +676,9 @@ for istep in range(0,nstep):
 
     vr= np.cos(theta)*u+np.sin(theta)*v
     vt=-np.sin(theta)*u+np.cos(theta)*v
+
+    vr_stats[istep,0]=np.min(vr) ; vr_stats[istep,1]=np.max(vr)
+    vt_stats[istep,0]=np.min(vt) ; vt_stats[istep,1]=np.max(vt)
 
     print("     -> vr (m,M) %.4f %.4f " %(np.min(vr),np.max(vr)))
     print("     -> vt (m,M) %.4f %.4f " %(np.min(vt),np.max(vt)))
@@ -983,10 +1000,11 @@ for istep in range(0,nstep):
 
     ######################################################################
     # compute vrms 
-    # QUESTION: should i divide by area or by int 1 dV ?
     ######################################################################
     start = time.time()
 
+    avrg_vr=0.
+    avrg_vt=0.
     iiq=0
     for iel in range (0,nel):
         for iq in [-1,1]:
@@ -1010,6 +1028,8 @@ for istep in range(0,nstep):
                     dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
                 uq=0.
                 vq=0.
+                vrq=0.
+                vtq=0.
                 Tq=0.
                 exxq=0.
                 eyyq=0.
@@ -1019,6 +1039,8 @@ for istep in range(0,nstep):
                 for k in range(0,m):
                     uq+=N[k]*u[icon[k,iel]]
                     vq+=N[k]*v[icon[k,iel]]
+                    vrq+=N[k]*vr[icon[k,iel]]
+                    vtq+=N[k]*vt[icon[k,iel]]
                     Tq+=N[k]*T[icon[k,iel]]
                     dqdxq+=dNdx[k]*q[icon[k,iel]]
                     dqdyq+=dNdy[k]*q[icon[k,iel]]
@@ -1026,6 +1048,8 @@ for istep in range(0,nstep):
                     eyyq+=dNdy[k]*v[icon[k,iel]]
                     exyq+=0.5*dNdy[k]*u[icon[k,iel]]+\
                           0.5*dNdx[k]*v[icon[k,iel]]
+                avrg_vr+=vrq*weightq*jcob
+                avrg_vt+=vtq*weightq*jcob
                 Tavrg[istep]+=Tq*weightq*jcob
                 vrms[istep]+=(uq**2+vq**2)*weightq*jcob
                 visc_diss[istep]+=2.*etaq[iiq]*(exxq**2+eyyq**2+2*exyq**2)*weightq*jcob
@@ -1039,9 +1063,13 @@ for istep in range(0,nstep):
                    ET[istep]+=rhoq[iiq]*hcapa*Tq*weightq*jcob
                 iiq+=1
 
+    avrg_vr/=area ; vr_stats[istep,2]=avrg_vr
+    avrg_vt/=area ; vt_stats[istep,2]=avrg_vt
     vrms[istep]=np.sqrt(vrms[istep]/area)
     Tavrg[istep]/=area
 
+    print("     -> avrg vr= %.6e" % avrg_vr)
+    print("     -> avrg vt= %.6e" % avrg_vt)
     print("     -> avrg T= %.6e" % Tavrg[istep])
     print("     -> vrms= %.6e ; Ra= %.4e " % (vrms[istep],Ra))
 
@@ -1323,6 +1351,8 @@ for istep in range(0,nstep):
     np.savetxt('v_stats.ascii',np.array([model_time[0:istep],v_stats[0:istep,0],v_stats[0:istep,1]]).T,header='# t,min(v),max(v)')
     np.savetxt('T_stats.ascii',np.array([model_time[0:istep],T_stats[0:istep,0],T_stats[0:istep,1]]).T,header='# t,min(T),max(T)')
     np.savetxt('dt_stats.ascii',np.array([model_time[0:istep],dt_stats[0:istep]]).T,header='# t,dt')
+    np.savetxt('vr_stats.ascii',np.array([model_time[0:istep],vr_stats[0:istep,0],vr_stats[0:istep,1],vr_stats[0:istep,2]]).T,header='# t,min(u),max(u),avrg(vr)')
+    np.savetxt('vt_stats.ascii',np.array([model_time[0:istep],vt_stats[0:istep,0],vt_stats[0:istep,1],vt_stats[0:istep,2]]).T,header='# t,min(u),max(u),avrg(vt)')
 
     if istep>0:
        np.savetxt('dETdt.ascii',np.array([model_time[1:istep],  ((ET[1:istep]-ET[0:istep-1])/dt)   ]).T,header='# t,ET')

@@ -18,6 +18,7 @@
 \usepackage[pdftex,dvipsnames]{xcolor}
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \usepackage{amsthm}
+\newcommand{\aspect}{{\textsc{Aspect}}}
 \newtheorem*{remark}{Remark}
 
 \hypersetup{
@@ -195,17 +196,18 @@ application of these codes: geodynamic modelling.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Solving the flow equations with the FEM} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{incompressible} %-------------------------------------------------------
-\subsection{strong and weak forms} \input{strongweak} %------------------------
-\subsection{Which velocity-pressure pair for Stokes?} \input{pair} %-----------
-\subsection{The penalty approach for viscous flow} \input{penalty} %-----------
-\subsection{The mixed FEM for viscous flow} \input{mixed} %--------------------
-\subsection{Solving the elastic equations} %-----------------------------------
-\subsection{Solving the heat transport equation} \input{hte_fem} %-------------
-\subsection{A quick tour of similar literature} \input{similar} %--------------
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Solving the flow equations with the FEM} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{incompressible} %-----------------------------------------------------------------
+\subsection{strong and weak forms} \input{strongweak} %----------------------------------
+\subsection{Which velocity-pressure pair for Stokes?} \input{pair} %---------------------
+\subsection{The penalty approach for viscous flow} \input{penalty} %---------------------
+\subsection{The mixed FEM for viscous flow} \input{mixed} %------------------------------
+\subsection{Solving the elastic equations} %---------------------------------------------
+\subsection{Solving the heat transport equation} \input{hte_fem} %-----------------------
+\subsection{A quick tour of similar literature} \input{similar} %------------------------
+\subsection{The case against the $Q_1\times P_0$ element} \input{case_against_q1p0} %----
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
@@ -224,6 +226,8 @@ application of these codes: geodynamic modelling.
 
 \newpage %---------------------------------------------------------------------
 \subsection{The method of manufactured solutions \label{mms}} \input{mms} %----
+\newpage %---------------------------------------------------------------------
+\subsection{Geodynamical benchmarks} \input{geodynamics_benchmarks} %----------
 \newpage %---------------------------------------------------------------------
 \subsection{Assigning values to quadrature points} \input{averagings} %--------
 \newpage %---------------------------------------------------------------------
@@ -479,7 +483,8 @@ application of these codes: geodynamic modelling.
 \section{A FANTOM, an ELEFANT and a GHOST} \input{mycodes} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Some useful Python commands} \input{useful_python} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Some useful maths} \input{maths} \label{app_maths} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %==================================================================================================
