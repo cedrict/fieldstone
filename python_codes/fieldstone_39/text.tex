@@ -1,0 +1,112 @@
+The Drucker-Prager yield function is given by the function $f$:
+\[
+f = p \sin\phi + c\cos \phi - \tau
+\]
+where $\tau$ is the square root of the second invariant of the deviatoric stress.
+We have
+\[
+p=\frac{1}{2}(\sigma_1+\sigma_3) 
+\]
+and 
+\[
+\tau = \frac{1}{2}(\sigma_1-\sigma_3)
+\]
+Inserting these into $f$ yields:
+\[
+f= \frac{1}{2}(\sigma_1+\sigma_3) \sin\phi + c \cos\phi - \frac{1}{2}(\sigma_1-\sigma_3)
+\]
+The yield condition $f=0$ can be reworked as follows:
+\[
+\sigma_1 - \frac{1 + \sin\phi}{1-\sin\phi} \sigma_3 - 2 \frac{\cos \phi}{1-\sin\phi} c = 0
+\]
+The third term can further be modified as follows:
+\[
+\frac{\cos \phi}{1-\sin\phi}
+=\frac{\sqrt{1-\sin^2 \phi}}{\sqrt{(1-\sin\phi)^2}}
+=\frac{\sqrt{(1-\sin \phi)(1+\sin\phi)}}{\sqrt{(1-\sin\phi)^2}}
+=\sqrt{
+\frac{1+\sin\phi}{1-\sin\phi}
+}
+\]
+Finally, we define $N_\phi$ as follows 
+\[
+N_\phi=\frac{1+\sin \phi}{1-\sin\phi}
+\]
+so that the yield condition becomes:
+\[
+\sigma_1 - N_\phi \sigma_3 - 2 \sqrt{N_\phi} c = 0
+\]
+which is Eq.~3 of the article by Choi \& Petersen \cite{chpe15}.
+
+This paper offers a solution to the problem of the angle of shear bands in 
+geodynamic models. The underlying idea is based on simple modifications 
+brought to existing incompressible flow codes. Note that the codes
+featured in that paper also implemented elastic behaviour but this can 
+be easily switched off by setting $Z=1$ in their equations.
+
+Their plasticity implementation starts with a modification of the 
+continuity equation:
+\[
+\vec\nabla\cdot\vec\upnu = R = 2 \sin\psi \, \dot{\varepsilon}_p
+\]
+where $R$ is the dilation rate, $\Psi$ is the dilation angle 
+and $\dot{\varepsilon}_p$ is the square root of 
+the second invariant of the plastic strain rate.
+
+Under this assumption, the deviatoric strain rate tensor is given by
+\[
+\dot{\bm \varepsilon}^d(\upnu)
+= \dot{\bm \varepsilon}(\upnu)- \frac{1}{2} Tr[\dot{\bm \varepsilon}(\upnu)] {\bm 1}
+= \dot{\bm \varepsilon}(\upnu)- \frac{1}{2} \vec\nabla\cdot\vec\upnu \; {\bm 1}
+= \dot{\bm \varepsilon}(\upnu)- \frac{1}{2} R \; {\bm 1}
+\]
+Turning now to the momentum conservation equation:
+\begin{eqnarray}
+-\vec\nabla p + \vec\nabla \cdot {\bm \tau} 
+&=& -\vec\nabla p + \vec\nabla \cdot (2 \eta \dot{\bm \varepsilon}^d(\vec\upnu))  \\
+&=& -\vec\nabla p + \vec\nabla \cdot \left[ 2 \eta \left(\dot{\bm \varepsilon}(\upnu)- \frac{1}{2} R \; {\bm 1}\right) \right] \\
+&=& -\vec\nabla p 
++ \vec\nabla \cdot \left( 2 \eta \dot{\bm \varepsilon}(\upnu)\right) - \vec\nabla(\eta R) 
+\end{eqnarray}
+The last term is then an addition to the right hand side of the momentum equation 
+and its weak form is as follows:
+\[
+\vec f' 
+= \int_\Omega N_v \vec\nabla(\eta R) dV
+= 2 \sin \Psi \int_\Omega N_v \vec\nabla(\eta \dot{\varepsilon}_p) dV
+\]
+This formulation proves to be problematic since in order to compute the gradient, we would
+need the viscosity and the plastic strain rate on the mesh nodes and both these quantities
+are effectively computed on the quadrature points. One option could be to project those quadrature
+values onto the nodes, which may introduce interpolation errors/artefacts and/or smoothing. 
+Another option is to resort to integration by parts:
+\[
+\int_\Omega N_v \vec\nabla(\eta \dot{\varepsilon}_p) dV
+= \left[ N_v \eta \dot{\varepsilon}_p \right]_\Gamma 
+-
+\int_\Omega \vec\nabla N_v (\eta \dot{\varepsilon}_p) dV
+\]
+The last term is now trivial to compute since the shape function derivatives, the viscosity
+and the plastic strain rate are known at the quadrature points. Remains the surface term. 
+We will neglect it for now to simplify our implementation and note that a) it will not directly 
+affect what happens inside the domain, b) it could be somewhat important when shear bands
+intersect with the free surface. 
+
+Finally, we need to define what the plastic strain rate tensor is. When using a rigid plastic 
+rheology, the only deformation mechanism {\it is} plasticity so that the plastic strain rate {\it is}
+the strain rate. When using a visco-plastic rheology, the plastic strain rate is the strain rate 
+of the zones above/at yield (the shear bands, where the vrm is active).
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
