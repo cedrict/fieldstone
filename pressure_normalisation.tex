@@ -2,30 +2,32 @@
 %..................................................
 \subsubsection{Basic idea and naive implementation}
 
-When Dirichlet boundary conditions are imposed everywhere on the boundary, pressure is only present by its gradient in 
-the equations. It is thus determined up to an arbitrary constant (one speaks then of a null space of size 1).  
+When Dirichlet boundary conditions are imposed everywhere on the boundary, 
+pressure is only present by its gradient in 
+the equations. It is thus determined up to an arbitrary constant (one speaks then 
+of a nullspace of size 1).  \index{nullspace}
 In such a case, one commonly impose the average of the pressure over the whole domain or on a subsect of the boundary 
 to be have a zero average, i.e.
-\[
+\begin{equation}
 \int_\Omega p dV = 0
-\]
+\end{equation}
 Another possibility is to impose the pressure value at a single node. 
 
-Let us assume that we are using $Q_1 \times P_0$ elements. Then the pressure is constant 
+Let us assume for example that we are using $Q_1 \times P_0$ elements. Then the pressure is constant 
 inside each element. 
 The integral above becomes:
-\[
+\begin{equation}
 \int_\Omega p dV = 
 \sum_e  \int_{\Omega_e} p dV = 
 \sum_e  p_e \int_{\Omega_e} dV = 
 \sum_e  p_e A_e = 0
-\]
+\end{equation}
 where the sum runs over all elements $e$ of area $A_e$.
 This can be rewritten 
 \[
 \LLL^T \cdot \vec{\cal P}=0
 \] 
-and it is a constraint on the pressure solution. 
+and it is a constraint on the pressure solution which couples {\it all} pressure dofs. 
 As we have seen before \ref{XXX}, we can associate to it a 
 Lagrange multiplier $\lambda$ so that we must solve the modified Stokes system:
 \[

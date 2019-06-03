@@ -8,32 +8,32 @@ What follows is written in the case of a two-dimensional model. Generalisation t
 When measuring the order of accuracy of the primitive variables $\vec{v}$ and $p$,
 it is standard to report errors in both the $L_1$ and the $L_2$ norm.
 For a scalar quantity $\Psi$, the $L_1$ and $L_2$ norms are computed as
-\[
+\begin{equation}
 \norm{\Psi}_1 = \int_V |\Psi| dV
 \quad\quad
 \quad\quad
 \norm{\Psi}_2 = \sqrt{ \int_V \Psi^2 dV }
-\]
+\end{equation}
 For a vector quantity $\vec{k}=(k_x,k_y)$ in a two-dimensional space,
 the $L_1$ and $L_2$ norms are defined as:
-\[
+\begin{equation}
 \norm{\vec{k}}_1 = \int_V (|k_x|+|k_y|) dV
 \quad\quad
 \quad\quad
 \norm{\vec{k}}_2 = \sqrt{ \int_V (k_x^2+k_y^2) dV }
-\]
+\end{equation}
 To compute the respective norms
 the integrals in the above norms can be approximated by splitting them
 into their element-wise contributions. The element volume integral can then
 be easily computed by numerical integration using Gauss-Legendre quadrature.
 
 The respective $L_1$ and $L_2$ norms for the pressure error can be evaluated via
-\[
+\begin{equation}
 e_p^h|_1 = \sum_{i=1}^{n_e} \sum_{q=1}^{n_q} |e_p^h(\vec{r}_q)| w_q |J_q|
 \quad\quad
 \quad\quad
 e_p^h|_2=\sqrt{ \sum_{i=1}^{n_e} \sum_{q=1}^{n_q} |e_p^h(\vec{r}_q)|^2 w_q |J_q| }
-\]
+\end{equation}
 where $e_p^h(\vec{r}_q)=p^h(\vec{r}_q) - p(\vec{r}_q)$ 
 is the pressure error evaluated at the $q$-th quadrature associated with
 the $i$th element. $n_e$ and $n_q$ refer to the number of elements and
@@ -42,15 +42,13 @@ $w_q$ and $J_q$ are the quadrature weight of the Jacobian associated with
 point $q$.
 
 The velocity error $e_{\vec v}^h$ is evaluated using the following two norms
-\[
+\begin{equation}
 e_{\vec{v}}^h|_1 = \sum_{i=1}^{n_e} \sum_{q=1}^{n_q} [ |e_u^h(\vec{r}_q)| + |e_v^h(\vec{r}_q)| ]    w_q |J_q|
 \quad\quad
 \quad\quad
 e_{\vec v}^h|_2=\sqrt{ \sum_{i=1}^{n_e} \sum_{q=1}^{n_q} \left[ |e_u^h({\bm r}_q)|^2 +  e_v^h({\bm r}_q)|^2 \right] w_q |J_q| }
-\]
+\end{equation}
 where $e_u^h(\vec{r}_q)=u^h(\vec{r}_q) - u(\vec{r}_q)$ and $e_v^h(\vec{r}_q)=v^h(\vec{r}_q)-v(\vec{r}_q)$.
-
-
 
 
 \index{$H^1(\Omega)$ space} \index{$H^1$ norm} \index{$H^1$ semi-norm}
@@ -59,11 +57,11 @@ Finite Element literature: the so-called $H^1$ norm. The mathematical basis for 
 norm and the nature of the $H^1(\Omega)$ Hilbert space is to be found in many FE books \cite{dohu03,john16,hugh}.
 This norm is expression is expressed as follows for a function $f$ such that $f,|\nabla f|\in L^2(\Omega)$
 \footnote{\url{https://en.wikipedia.org/wiki/Sobolev_space}}
-\[
+\begin{equation}
 \norm{f}_{H^1} = \left( \int_\Omega ( |f|^2 + |\nabla f|^2  ) d\Omega   \right)^{1/2}
-\]
+\end{equation}
 We then have 
-\[
+\begin{equation}
 e_{\vec v}^h|_{H^1} = \norm{\vec{v}^h-\vec{v}}_{H^1} = \sqrt{
 \sum\limits_{i=1}^d 
 \int_\Omega  
@@ -73,10 +71,10 @@ e_{\vec v}^h|_{H^1} = \norm{\vec{v}^h-\vec{v}}_{H^1} = \sqrt{
 \vec\nabla(v_i^h-v_i)\cdot\vec\nabla(v_i^h-v_i) 
 \right] d\Omega   
 }
-\]
+\end{equation}
 where $d$ is the number of dimensions.
 Note that sometimes the following semi-norm is used \cite{dobo04,bodg06}:
-\[
+\begin{equation}
 e_{\vec v}^h|_{H^1} = \norm{\vec{v}^h-\vec{v}}_{H^1} = \sqrt{
 \sum\limits_{i=1}^d 
 \int_\Omega  
@@ -84,23 +82,22 @@ e_{\vec v}^h|_{H^1} = \norm{\vec{v}^h-\vec{v}}_{H^1} = \sqrt{
 \vec\nabla(v_i^h-v_i)\cdot\vec\nabla(v_i^h-v_i) 
 \right] d\Omega   
 }
-\]
- 
+\end{equation}
 
 When computing the different error norms for $e_p$ and $e_{\vec v}$ for a set of numerical experiments with
 varying resolution $h$ we expect the error norms to follow the following relationships:
-\[
+\begin{equation}
 e_{\vec v}^h|_1 = C h^{rvL_1} 
 \quad\quad\quad\quad
 e_{\vec v}^h|_2 = C h^{rvL_2} 
 \quad\quad\quad\quad 
 e_{\vec v}^h|_{H^1} = C h^{rvH^1}
-\]
-\[
+\end{equation}
+\begin{equation}
 e_p^h|_1 = C h^{rpL_1} 
 \quad\quad\quad 
 e_p^h|_2 = C h^{rpL_2}
-\]
+\end{equation}
 where $C$ is a resolution-independent constant
 and $rpXX$ and $rvXX$ are the convergence rates for
 pressure and velocity in various norms, respectively. 
@@ -111,13 +108,13 @@ As mentioned in \cite{dobo04}, when finite element solutions converge at
 the same rates as the interpolants we say that the method is optimal, i.e.:
 \index{optimal rate}
 
-\[
+\begin{equation}
 e_{\vec v}^h|_{L_2} = {\cal O}(h^3)
 \quad\quad\quad\quad
 e_{\vec v}^h|_{H^1} = {\cal O}(h^2)
 \quad\quad\quad\quad
 e_{p}^h|_{L_2} = {\cal O}(h^2)
-\]
+\end{equation}
 
 %\begin{itemize}
 %\item For $Q_1P_0$, the theoretical lower bound for $r_v'$ is 2 and for $r_p'$ it is 1

@@ -12,7 +12,7 @@ Examples of this approach are to be found in \cite{dohu,busa13,bodg06}.
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark I \label{mms1}}
+\subsubsection{Analytical benchmark I \label{mms1} - "Donea \& Huerta"}
 
 Taken from \cite{dohu03}. We consider a two-dimensional problem 
 in the square domain $\Omega=[0,1]\times[0,1]$, which possesses a closed-form analytical 
@@ -76,7 +76,7 @@ Taking into account that the proposed problem has got analytical solution, it is
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark II \label{mms2}}
+\subsubsection{Analytical benchmark II \label{mms2} - "Dohrmann \& Bochev 2D"}
 
 Taken from \cite{dobo04}. It is for a unit square with $\nu=\mu/\rho=1$ and the smooth exact solution is
 \begin{eqnarray}
@@ -93,7 +93,7 @@ b_y &=& - (1-3x-2x^3y)
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark III \label{mms3}}
+\subsubsection{Analytical benchmark III \label{mms3} - "Dohrmann \& Bochev 3D"}
 
 This benchmark begins by postulating a polynomial solution 
 to the 3D Stokes equation \cite{dobo04}:
@@ -243,7 +243,7 @@ $0.1353 < \mu <   2.7182$, i.e. a ratio of approx. 20 within the domain. We then
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark IV \label{mms4}}
+\subsubsection{Analytical benchmark IV \label{mms4} - "Bercovier \& Engelman"}
 
 From \cite{been79}. The two-dimensional domain is a unit square. The body forces are:
 \begin{eqnarray}
@@ -272,7 +272,7 @@ p &=& (x-1/2)(y-1/2)
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark V \label{mms5}}
+\subsubsection{Analytical benchmark V \label{mms5} - "VJ"}
 
 This is taken from Appendix D1 of \cite{john16}.
 
@@ -299,7 +299,7 @@ Taken from \cite{john16}.
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark VI \label{mms6}}
+\subsubsection{Analytical benchmark VI \label{mms6} - "Ilinca \& Pelletier"}
 \index{Poiseuille flow} \index{Shear Heating}
 
 This is taken from \cite{ilpe07}.
@@ -343,20 +343,22 @@ T_M = T(y=0) = T_0 + \frac{1}{3} \frac{\eta u_0^2}{k}
 \]
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark VII \label{mms7}}
+\subsubsection{Analytical benchmark VII \label{mms7} - "grooves"}
 
 This benchmark was designed by Dave May. 
 The velocity and pressure fields are given by
 \begin{eqnarray}
 u(x,y) &=& x^3 y + x^2 + xy + x \nn\\
 v(x,y) &=& -\frac{3}{2}x^2y^2 - 2xy - \frac{1}{2}y^2 - y \nn\\
-p(x,y) &=& x^2y^2 + xy + 5 + p_0\nn
+p(x,y) &=& x^2y^2 + xy + 5 + p_0
 \end{eqnarray}
-while the viscosity is chosen to be
-\[
+where $p_0$ is a constant to be determined based on the type of pressure normalisation.
+The viscosity is chosen to be
+\begin{equation}
 \eta(x,y)=-\sin(p)+1+\epsilon = -\sin (x^2y^2 + xy + 5) + 1 + \epsilon 
-\]
-where $\epsilon$ actually controls the viscosity contrast.
+\end{equation}
+where $\epsilon$ actually controls the viscosity contrast. Note that inserting the polynomial 
+expression of the pressure inside the viscosity expression makes the problem linear. 
 We have
 \begin{eqnarray}
 \dot{\varepsilon}_{xx} = \frac{\partial u}{\partial x} &=& 3x^2y+2x+y+1 \nn\\
@@ -364,41 +366,39 @@ We have
 \dot{\varepsilon}_{xy} = \frac{1}{2}\left(\frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right)
 &=& \frac{1}{2}\left(x^3+x-3xy^2-2y \right)
 \end{eqnarray}
-and we can verify that the velocity field is incompressible:
-\[
-{\bm \nabla}\cdot{\bm v} = 
-\dot{\varepsilon}_{xx} + \dot{\varepsilon}_{yy} 
-= (3x^2y+2x+y+1)+(-3x^2y-2x-y-1)=0
-\]
+and we can verify that the velocity field is incompressible since ${\vec \nabla}\cdot{\vec \upnu} = 
+\dot{\varepsilon}_{xx} + \dot{\varepsilon}_{yy} =0$.
 The pressure gradient is given by
 \begin{eqnarray}
 \frac{\partial p}{\partial x} &=& 2xy^2+y \nn\\
 \frac{\partial p}{\partial y} &=& 2x^2y+x \nn
 \end{eqnarray}
-The right hand side term of the Stokes equation is such that (MINUS SIGN?) 
+The right hand side term of the Stokes equation is such that
 \begin{eqnarray}
-f_x &=& - \frac{\partial p}{\partial x} + \frac{\partial s_{xx}}{\partial x} + \frac{\partial s_{yx}}{\partial y} \nn\\
-f_y &=& - \frac{\partial p}{\partial y} + \frac{\partial s_{xy}}{\partial x} + \frac{\partial s_{yy}}{\partial y} 
+ - \frac{\partial p}{\partial x} + \frac{\partial s_{xx}}{\partial x} + \frac{\partial s_{yx}}{\partial y} +f_x&=&0\nn\\
+ - \frac{\partial p}{\partial y} + \frac{\partial s_{xy}}{\partial x} + \frac{\partial s_{yy}}{\partial y} +f_y&=&0
 \end{eqnarray}
 with 
 \begin{eqnarray}
 \frac{\partial s_{xx}}{\partial x} 
-&=& \frac{\partial (2 \eta \dot{\epsilon}_{xx}) }{\partial x} = 2 \eta \frac{\partial  \dot{\epsilon}_{xx} }{\partial x} +  2\frac{\partial \eta }{\partial x} \dot{\epsilon}_{xx} \nn\\
+&=& \frac{\partial (2 \eta \dot{\varepsilon}_{xx}) }{\partial x} = 2 \eta \frac{\partial  \dot{\varepsilon}_{xx} }{\partial x} +  2\frac{\partial \eta }{\partial x} \dot{\varepsilon}_{xx} \nn\\
 \frac{\partial s_{zx}}{\partial z} 
-&=& \frac{\partial (2 \eta \dot{\epsilon}_{zx}) }{\partial z} = 2 \eta \frac{\partial  \dot{\epsilon}_{zx} }{\partial z} +  2\frac{\partial \eta }{\partial z} \dot{\epsilon}_{zx} \nn\\
+&=& \frac{\partial (2 \eta \dot{\varepsilon}_{zx}) }{\partial z} = 2 \eta \frac{\partial  \dot{\varepsilon}_{zx} }{\partial z} +  2\frac{\partial \eta }{\partial z} \dot{\varepsilon}_{zx} \nn\\
 \frac{\partial s_{xz}}{\partial x} 
-&=& \frac{\partial (2 \eta \dot{\epsilon}_{xz}) }{\partial x} = 2 \eta \frac{\partial  \dot{\epsilon}_{xz} }{\partial x} +  2\frac{\partial \eta }{\partial x} \dot{\epsilon}_{xz} \nn\\
+&=& \frac{\partial (2 \eta \dot{\varepsilon}_{xz}) }{\partial x} = 2 \eta \frac{\partial  \dot{\varepsilon}_{xz} }{\partial x} +  2\frac{\partial \eta }{\partial x} \dot{\varepsilon}_{xz} \nn\\
 \frac{\partial s_{zz}}{\partial z} 
-&=& \frac{\partial (2 \eta \dot{\epsilon}_{zz}) }{\partial z} = 2 \eta \frac{\partial  \dot{\epsilon}_{zz} }{\partial z} +  2\frac{\partial \eta }{\partial z} \dot{\epsilon}_{zz} \nn\\
+&=& \frac{\partial (2 \eta \dot{\varepsilon}_{zz}) }{\partial z} = 2 \eta \frac{\partial  \dot{\varepsilon}_{zz} }{\partial z} +  2\frac{\partial \eta }{\partial z} \dot{\varepsilon}_{zz} \nn\\
 \frac{\partial \eta }{\partial x} &=& -z (2 x z + 1) \cos(x^2 z^2 + x z + 5) \nn\\
 \frac{\partial \eta }{\partial z} &=& -x (2 x z + 1) \cos(x^2 z^2 + x z + 5) \nn\\
-\frac{\partial  \dot{\epsilon}_{xx} }{\partial x} &=& 6xz+2 \nn\\
-\frac{\partial  \dot{\epsilon}_{zx} }{\partial z} &=& -3xz-1  \nn\\
-\frac{\partial  \dot{\epsilon}_{xz} }{\partial x} &=& \frac{1}{2}(3x^2+1-3z^2)  \nn\\
-\frac{\partial  \dot{\epsilon}_{zz} }{\partial z} &=& -3x^2-1  \nn
+\frac{\partial  \dot{\varepsilon}_{xx} }{\partial x} &=& 6xz+2 \nn\\
+\frac{\partial  \dot{\varepsilon}_{zx} }{\partial z} &=& -3xz-1  \nn\\
+\frac{\partial  \dot{\varepsilon}_{xz} }{\partial x} &=& \frac{1}{2}(3x^2+1-3z^2)  \nn\\
+\frac{\partial  \dot{\varepsilon}_{zz} }{\partial z} &=& -3x^2-1  \nn
 \end{eqnarray}
 
-Velocity boundary conditions are prescribed on all four boundaries so that the pressure is known up to a constant, 
+\index{pressure nullspace}
+Velocity boundary conditions are prescribed on all four boundaries so that the pressure is known up to a constant
+(the pressure solution has a nullspace), 
 and the $p_0$ constant can be determined by requiring that
 \[
 \int_0^L\int_0^L p(x,y) \; dx dy = 
@@ -409,37 +409,44 @@ where $L$ is the size of the square domain.
 Then
 \[
 p_0 =-  \frac{1}{L^2}  \int_0^L\int_0^L (x^2y^2+xy+5) dx dy
--\frac{L^4}{9}-\frac{L^2}{4} - 5 
+= -\frac{L^4}{9}-\frac{L^2}{4} - 5 
 \]
 \[
 \]
-\begin{itemize}
-\item
-When the domain is $1\times 1$, $p_0=-\frac{1}{9}-\frac{1}{4} - 5 = -193/36$.
-\item
-When the domain is $2\times 2$, $p_0=-\frac{16}{9}-\frac{4}{4} - 5*4 = -70/9$.
-\item
-When the domain is $3\times 3$, $p_0=-\frac{81}{9}-\frac{9}{4} - 5*9 = -585/16$.
-\item
-When the domain is $4\times 4$, $p_0=-\frac{256}{9}-\frac{16}{4} - 5*16 = -1348/9$.
-\end{itemize}
+%\begin{itemize}
+%\item
+%When the domain is $1\times 1$, $p_0=-\frac{1}{9}-\frac{1}{4} - 5 = -193/36$.
+%\item
+%When the domain is $2\times 2$, $p_0=-\frac{16}{9}-\frac{4}{4} - 5*4 = -70/9$.
+%\item
+%When the domain is $3\times 3$, $p_0=-\frac{81}{9}-\frac{9}{4} - 5*9 = -585/16$.
+%\item
+%When the domain is $4\times 4$, $p_0=-\frac{256}{9}-\frac{16}{4} - 5*16 = -1348/9$.
+%\end{itemize}
 
-The value of $\epsilon$ controls the viscosity field amplitude:
+As seen in the following figure, the value of $\epsilon$ controls the viscosity field amplitude.
+This is simply explained by the fact that when the $\sin$ term of the viscosity takes value 1, the viscosity
+is then equal to $\epsilon$.
 \begin{center}
 \includegraphics[width=14cm]{images/mms/mms7_mueffs}\\
 Domain size 2x2 with $\epsilon=0.1, 0.01, 0.001$
 \end{center}
 
 Another interesting aspect of this benchmark is the fact that increasing the domain size
-adds complexity to it as it increases the number of low viscosity zones and also decreases their spacing:
+adds complexity to it as it increases the number of low viscosity zones and the spacing 
+between them also decreases:
 
 \begin{center}
-\includegraphics[width=14cm]{images/mms/mms7_grids}\\
-Three different domain sizes (1x1, 2x2, 4x4) with $\epsilon=0.001$.
+\includegraphics[width=7.28cm]{images/mms/mms7_visc}
+\includegraphics[width=7.28cm]{images/mms/mms7_vel}\\
+\includegraphics[width=7.28cm]{images/mms/mms7_press}
+\includegraphics[width=7.28cm]{images/mms/mms7_rhs}\\
+Three different domain sizes (1x1, 2x2, 3x3) with $\epsilon=0.001$.
 \end{center}
 
-Because we know the analytical expression for both components of the velocity, we can also
-compute the root mean square velocity exactly:
+
+Finally, because the analytical expression for both components of the velocity is a polynomial, we can also
+compute the root mean square velocity exactly. For instance, for a 2x2 domain:
 \begin{center}
 \includegraphics[width=8cm]{images/mms/mms7_vrmstheo}
 \end{center}
