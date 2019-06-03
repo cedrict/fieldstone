@@ -63,10 +63,11 @@ Under this assumption, the deviatoric strain rate tensor is given by
 Turning now to the momentum conservation equation:
 \begin{eqnarray}
 -\vec\nabla p + \vec\nabla \cdot {\bm \tau} 
-&=& -\vec\nabla p + \vec\nabla \cdot (2 \eta \dot{\bm \varepsilon}^d(\vec\upnu))  \\
-&=& -\vec\nabla p + \vec\nabla \cdot \left[ 2 \eta \left(\dot{\bm \varepsilon}(\vec\upnu)- \frac{1}{3} R \; {\bm 1}\right) \right] \\
+&=& -\vec\nabla p + \vec\nabla \cdot (2 \eta \dot{\bm \varepsilon}^d(\vec\upnu)) \nonumber \\
+&=& -\vec\nabla p + \vec\nabla \cdot \left[ 2 \eta \left(\dot{\bm \varepsilon}(\vec\upnu)- \frac{1}{3} R \; {\bm 1}\right) \right] \nonumber\\
 &=& -\vec\nabla p 
 + \vec\nabla \cdot \left( 2 \eta \dot{\bm \varepsilon}(\vec\upnu)\right) -\frac{2}{3} \vec\nabla(\eta R) 
+\label{chpeform}
 \end{eqnarray}
 The last term is then an addition to the right hand side of the momentum equation 
 and its weak form is as follows:
@@ -99,11 +100,52 @@ intersect with the free surface.
 -\frac{2}{3} \int_\Omega \vec\nabla N_v (\eta R) dV
 \]
 
+Although the authors do indicate that they add a term in each rhs, it is not very clear how they deal with
+the implementation issue above. We then propose an alternative: instead of explicitely removing the deviatoric 
+part of the strain rate as in Eq.~\ref{chpeform} and replace the trace of the tensor by $R$, one could 
+leave the term inside the matrix, thereby using a compressible form of the viscous block of the Stokes 
+matrix. We will recover the same converged solution as before, but the path to convergence will be 
+different that the first approach.
+In what follows, we denote the original approach by Choi \& Petersen 'method 1' and the latter 'method 2'.
+
+
 Finally, we need to define what the plastic strain rate tensor is. When using a rigid plastic 
 rheology, the only deformation mechanism {\it is} plasticity so that the plastic strain rate {\it is}
 the strain rate. When using a visco-plastic rheology, the plastic strain rate is the strain rate 
 of the zones above/at yield (the shear bands, where the vrm is active).
  
+
+The setup is similar to the one in \cite{kaus10}. It is a 2D Cartesian domain filled with a 
+single rigid-plastic material characterised by a cohesion $c=10\text{MPa}$, an 
+angle of friction $\phi$, a dilation angle $\psi$ and a density $\rho=2800\text{kg/m}^3$.
+Extensional boundary conditions are as follows: 
+\begin{itemize}
+\item left boundary: $u=- v_{bc}$;
+\item right boundary: $u=+ v_{bc}$; 
+\item bottom boundary: $v=0$, $u=- v_{bc}$ for $x<L_x/2$,  $u=+ v_{bc}$ for $x>L_x/2$, and $u=0$ if $x=L_x/2$;
+\item top boundary: zero traction.
+\end{itemize}
+For compressional boundary conditions the signs of all horizontal velocities should be reversed.
+The nonlinear tolerance is set to $\text{tol}=10^{-6}$. Nonlinear iterations stop when 
+maximum of the normalised nonlinear residual reaches the desired tolerance.
+
+Following Choi \& Petersen \cite{chpe15}, we run the experiment with an associative ($\phi=\psi$) plasticity
+and a non associative one ($\psi=0$, i.e. $R=0$). This second approach is essentially what many codes 
+do. 
+
+The velocity, pressure, strain rate, dilation rate, and velocity divergence are shown hereunder both in 
+extension and compression.
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/velx}\\
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/vely}\\
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/etaeff}\\
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/sr}
+\end{center}
+
+\begin{center}
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/conv}
+\end{center}
 
 
 

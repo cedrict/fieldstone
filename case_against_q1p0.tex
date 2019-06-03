@@ -1,0 +1,101 @@
+What follows was written by Dave May and sent to me by email in May 2014. 
+It captures so well the problem at hand that I have decided to reproduce it hereunder.
+
+\hspace{4mm}
+
+In the case of the incompressible Stokes equations, we would like to solve
+\[
+\left(
+\begin{array}{cc}
+\K   & \G\\
+\G^T & 0
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+\vec{\cal V}\\
+\vec{\cal P}
+\end{array}
+\right)
+= 
+\left(
+\begin{array}{c}
+\vec f \\0
+\end{array}
+\right)
+\]
+with an iterative method which is algorithmically scalable and optimal. 
+Scalable here would mean
+that the number of iterations doesn't grow as the mesh is refined. Optimal means the solution 
+time varyies linearly with the total number of unknowns. 
+When using a stable element,
+If we right precondition the above system with
+\[
+P=
+\left(
+\begin{array}{cc}
+\K   & \G\\
+0   & -\SSS
+\end{array}
+\right)
+\]
+then convergence will occur in 2 iterations,
+however this requires an exact solve on $\K$ 
+and on $\SSS = \G^T\cdot \K^{-1}\cdot \G$ ($\SSS$ is the pressure schur complement).
+In practice, people relax the ideal "two iteration" scenario by first replacing
+$\SSS$ via 
+$\SSS^* = \int \eta^{-1} \vec N^T \vec N \, dv$ 
+(e.g. the pressure mass matrix scaled by the local inverse of viscosity).
+\[
+P^*=
+\left(
+\begin{array}{cc}
+\K   & \G\\
+0   & -\SSS^*
+\end{array}
+\right)
+\]
+
+Using $P^*$, we obtain iteration counts which are larger than 2, but likely
+less than 10 - HOWEVER, the number of iterations is independent of the mesh size
+Replacing the exact $\K$ solve in $P^*$ again increases the iterations required to solve Stokes,
+but its still independent of the number of elements. When you have this behaviour,
+we say the preconditioner ($P^*$) is spectrally equivalent to the operator (which here is Stokes)
+
+The problem with $Q_1\times P_0$ is that there are no approximations for
+$\SSS$ which can be generated that ensure a spectrally equivalent $P^*$. Thus, as you refine
+the mesh using $Q_1 \times P_0$ elements, the iteration count ALWAYS grows. I worked on this problem
+during my thesis, making some improvements to the situation - however the problem still remains,
+it cannot be completely fixed and stems entirely from using unstable elements.
+
+Citcom solvers works like this:
+\begin{enumerate}
+\item Solve $\SSS \cdot {\cal P} = \vec f'$  for pressure
+\item Solve $\K \cdot {\cal V} = \vec f - \G \cdot {\cal P}$ for velocity
+\end{enumerate}
+To obtain a scalable method, we need the number of iterations performed in (1) and (2)
+to be independent of the mesh. This means we need a spectrally equivalent preconditioner
+for $\SSS$ and $\K$. Thus, we have the same issue as when you iterate on the full stokes system.
+
+When we don't have a scalable method, it means increasing the resolution requires 
+more cpu time in a manner which cannot be predicted. The increase in iteration counts 
+as the mesh is refined can be dramatic.
+
+If we can bound the number of iterations, AND ensure that the cost per iteration is 
+linearly related to the number of unknowns, then we have a good method which can 
+run on any mesh resolution with a predicatable cpu time. Obtaining scalable and 
+optimal preconditioners for $\K$ is somewhat easier. Multi-grid will provide us with this.
+
+The reason citcom doesn't run with $400^3$ elements is exactly due to this issue.
+I've added petsc support in citcom (when i was young and naive) - but the root cause of the
+non-scalable solve is directly caused by the element choice. Note that many of the high resolution
+citcom jobs are single time step calculations--- there is a reason for that.
+
+For many lithosphere dynamics problems, we need a reasonable resolution (at least $200^3$ and realistically $400^3$ to $800^3$). Given the increase in cost which occurs when using Q1P0, this is not achievable, as the citcom code has demonstrated.
+Note that citcom is 20 years old now and for its time, it was great, 
+but we know much more now and we know how to improve on it.
+As a result of this realization, I dumped all my old Q1P0 codes (and Q1Q1 codes, but for other reasons) 
+in the trash and started from scratch. The only way to make something like $800^3$ tractable is via iterative, scalable and optimal methods and
+that mandates stable elements. I can actually run at something like $1000^3$ (nodal points) these days because of such design choices.
+
+

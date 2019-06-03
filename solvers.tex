@@ -80,14 +80,14 @@ Let us write the above system as two equations:
 \G^T \cdot  \vec{\cal V} \quad\quad &=& \vec{h} 
 \end{eqnarray}
 The first line can be re-written $\vec{\cal V}=\K^{-1}\cdot (\vec{f} - \G \cdot \vec{\cal P})$ and can be inserted in the second:
-\[
+\begin{equation}
 \G^T\cdot \vec{\cal V} =\G^T \cdot  [ \K^{-1} \cdot  (\vec{f} - \G \cdot  \vec{\cal P}) ] = \vec{h} 
-\]
+\end{equation}
 or, 
 \begin{mdframed}[backgroundcolor=blue!5]
-\[
+\begin{equation}
 (\G^T \cdot \K^{-1} \cdot \G) \cdot \vec{\cal P} = \G^T \cdot \K^{-1}\cdot \vec{f} - \vec{h} 
-\]
+\end{equation}
 \end{mdframed}
 The matrix $\SSS= \G^T \cdot \K^{-1} \cdot \G $ is called the Schur complement. \index{Schur complement} 
 It is Symmetric (since $\K$ is symmetric) and  Postive-Definite\footnote{$M$ 
@@ -105,11 +105,11 @@ We must solve $\SSS\cdot \vec{\cal P} = \underline{\vec{f}}$.
 One can resort to so-called Richardson iterations, defined as follows (e.g., see \cite{varga}, p141):
 in solving the matrix equation ${\bm A}\cdot {\vec X}={\vec b}$,
 the Richardson iterative method is defined by: 
-\[
+\begin{equation}
 {\vec X}_{k+1} = {\vec X}_k + \alpha_k (-{\bm A} \cdot {\vec X}_k + {\vec b})
 \quad\quad
 m\geq 0 
-\]
+\end{equation}
 where the $\alpha_k$'s are real scalars. 
 It is easy to see that when the method converges then ${\vec X}_{k+1} \simeq {\vec X}_k$  and then 
 ${\bm A}\cdot {\vec X}={\vec b}$ is satisfied. 
@@ -152,11 +152,10 @@ can be computed easily).
 It can also be proven that the rate of convergence depends on the condition number of the matrix.
 
 Richardson iterations are part of the family of stationary iterative methods, since it can be rewritten 
-\[
+\begin{equation}
 {\vec X}_{k+1} = ({\bm I} - \alpha_k {\bm A} ) \cdot {\vec X}_k + \alpha_k {\vec b}
-\]
+\end{equation}
 which is the definition of a stationary method. 
-
 
 Since the $\alpha$ parameter is the key to a succesful Uzawa algorithm, 
 this issue has of course been looked into What follows is 
@@ -187,9 +186,9 @@ From Eq. \ref{uzaa2} it follows that:
 Thus the Uzawa algorithm is equivalent to applying the gradient method 
 to the reduced equation using a fixed step size. 
 In particular, the iteration converges for
-\[
+$
 \alpha < 2 || \G^T \cdot \K^{-1} \cdot \G ||^{-1}
-\]
+$
 and one can show that the good step size $\alpha_k$ is given by 
 \begin{equation}
 \alpha_k = \frac{{\cal R}_k \cdot {\cal R}_k}{(\G q_k)\cdot (\K^{-1} \G q_k)}
