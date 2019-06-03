@@ -8,14 +8,14 @@ from scipy.sparse import csr_matrix, lil_matrix, hstack, vstack
 import time as time
 
 #------------------------------------------------------------------------------
-def gx(x, y):
+def gx(x,y):
     return 0
 
-def gy(x, y):
+def gy(x,y):
     return -9.81
 
 def ubc(x,y):
-    vaal=1.e-15*(Lx/2.0)
+    vaal=-1.e-15*(Lx/2.0)
     if x<Lx/2:
        val=vaal
     elif x>Lx/2:
@@ -129,7 +129,7 @@ phi=30./180*np.pi
 psi=30./180*np.pi
 tol=1e-6
 
-method=2
+method=1
 
 eta_ref=1.e23      # scaling of G blocks
 
@@ -517,10 +517,10 @@ for iel in range(0,nel):
     for k in range(0,mP):
         pc[iel] += NP[k]*p[iconP[k,iel]]
 
-print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
-print("     -> pc  (m,M) %.4f %.4f " %(np.min(pc),np.max(pc)))
+print("     -> exx (m,M) %.5e %.5e " %(np.min(exx),np.max(exx)))
+print("     -> eyy (m,M) %.5e %.5e " %(np.min(eyy),np.max(eyy)))
+print("     -> exy (m,M) %.5e %.5e " %(np.min(exy),np.max(exy)))
+print("     -> pc  (m,M) %.5e %.5e " %(np.min(pc),np.max(pc)))
 
 np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
