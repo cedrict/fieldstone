@@ -1,3 +1,5 @@
+{\tiny \date{\today} - C.T.}
+\index{angular velocity} \index{angular momentum} \index{moment of inertia}
 
 When free slip boundary conditions are prescribed in an annulus or
 hollow sphere geometry there exists a rotational nullspace, or in other words there exists
@@ -19,19 +21,44 @@ The "angular momentum" option removes a rotation such that the net angular momen
 The "net rotation" option removes the net rotation of the domain.
 \end{remark}
 
+%____________________________________
+\paragraph{Angular momentum approach}
+
 In order to remove the angular momentum, we search for a rotation
 vector ${\vec \omega}$ such that
 \begin{equation}
 \int_\Omega \rho[{\vec r} \times ({\vec v}-{\vec \omega} \times {\vec r})] \; d\vec r= \vec 0
 \end{equation}
-Recognizing that the angular momentum vector ${\vec H}$ is given by
+
+The angular momentum of a rigid body can be obtained from the sum 
+of the angular momentums of the particles forming the 
+body\footnote{\url{http://www.kwon3d.com/theory/moi/iten.html}}:
+\begin{eqnarray}
+\vec H 
+&=& \sum_i \vec L_i\\
+&=& \sum_i \vec r_i \times m_i \vec v_i\\
+&=& \sum_i \vec r_i \times m_i (\vec \omega_i \times \vec r_i)\\
+&=& \sum_i m_i 
+\left(
+\begin{array}{ccc}
+\sum_i m_i(y_i^2+z_i^2) & -\sum_i m_i x_iy_i & -\sum_i m_i x_i z_i \\
+-\sum_i m_i x_iy_i & \sum_i m_i(x_i^2+z_i^2) & -\sum_i m_i y_i z_i \\
+-\sum_i m_i x_i z_i & -\sum_i m_i y_i z_i & \sum_i m_i(x_i^2+y_i^2)
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\omega_x \\ \omega_y \\ \omega_z
+\end{array}
+\right)
+\end{eqnarray}
+In the continuum limit, we have:
 \begin{equation}
-{\vec H} = \int_\Omega \rho{\vec r} \times {\vec v}\; d\vec r
+{\vec H} = \int_\Omega \rho(\vec r) \, {\vec r} \times {\vec v}\; d\vec r
 \end{equation}
-and that the moment of inertia
-(also called inertia tensor)\footnote{\url{https://en.wikipedia.org/wiki/Moment\_of\_inertia}}
- for a continuous body 
- $3\times3$ matrix ${\bm I}$ is given by
+and the $3\times3$ moment of inertia tensor $\bm I$
+(also called inertia tensor) is given by\footnote{\url{https://en.wikipedia.org/wiki/Moment\_of\_inertia}}
 \begin{equation}
 {\bm I}= 
 \int_\Omega \rho(\vec r) [\vec r\cdot\vec r \; \bm 1 - \vec r \times \vec r  ] d\vec r 
@@ -41,23 +68,47 @@ $
 {\vec H}={\bm I}\cdot {\vec \omega}
 $
 and then ${\vec \omega}={\bm I}^{-1} \cdot {\vec H}$.
-A rotation about the rotation vector ${\vec \omega}$ is then subtracted from the velocity 
+
+Ultimately, at each velocity node a rotation about the rotation 
+vector ${\vec \omega}$ is then subtracted from the velocity 
 solution \cite[eq. 26]{zhmt08}:
 \begin{equation}
 \vec v_{new} = \vec v_{old} - \vec \omega \times \vec r 
 \end{equation}
 
-\index{angular velocity} \index{angular momentum}
+
+%____________________________________
+\paragraph{Angular velocity approach}
+
+The angular velocity\footnote{\url{https://en.wikipedia.org/wiki/Angular_velocity }}
+ vector is given by $\vec\omega = \frac{\vec r\times \vec v}{r^2}$
+so that the volume-averaged angular velocity of the cylindrical shell is:
+\begin{equation}
+\vec {\omega} = \frac{1}{|\Omega|} \int_\Omega \frac{{\vec r}\times {\vec v}}{r^2} d\vec r
+\end{equation}
+
 
 %...............................
 \subsubsection{Three dimensions}
 
 The angular momentum vector is given by:
 \begin{equation}
-\vec H = \int_\Omega \rho(\vec r) \left( 
+\vec H 
+= \int_\Omega \rho(\vec r) \left( 
 \begin{array}{c} 
 yw-zv \\ zu-xw \\ xv-yu 
 \end{array} \right) d\vec r
+= 
+\left(\begin{array}{c} 
+\int_\Omega \rho(\vec r) (yw-zv) d\vec r\\
+\int_\Omega \rho(\vec r) (zu-xw) d\vec r\\
+\int_\Omega \rho(\vec r) (xv-yu) d\vec r
+\end{array} \right)
+= 
+\left( 
+\begin{array}{c} 
+H_x \\ H_y \\ H_z
+\end{array} \right)
 \end{equation}
 while the inertia tensor for a continuous body is given 
 by
@@ -68,9 +119,9 @@ by
 \left[
 \left(
 \begin{array}{ccc}
-r^2 & 0 & 0 \\
-0 & r^2 & 0 \\
-0 & 0 & r^2
+x^2+y^2+z^2 & 0 & 0 \\
+0 & x^2+y^2+z^2 & 0 \\
+0 & 0 & x^2+y^2+z^2
 \end{array}
 \right)
 - 
@@ -92,45 +143,115 @@ y^2+z^2 & -xy & -xz \\
 \end{array}
 \right)
 d\vec r \\
+&=&
+\left(
+\begin{array}{ccc}
+\int_\Omega \rho(\vec r) (y^2+z^2) d\vec r & 
+-\int_\Omega \rho(\vec r) xy d\vec r & 
+-\int_\Omega \rho(\vec r) xz d\vec r \\\\
+-\int_\Omega \rho(\vec r) yx d\vec r & 
+\int_\Omega \rho(\vec r) (x^2+z^2) d\vec r & 
+-\int_\Omega \rho(\vec r) yz d\vec r \\\\
+-\int_\Omega \rho(\vec r) zx d\vec r & 
+-\int_\Omega \rho(\vec r) zy d\vec r & 
+\int_\Omega \rho(\vec r) (x^2+y^2) d\vec r 
+\end{array}
+\right)\\
+&=&
+\left(
+\begin{array}{ccc}
+I_{xx} & I_{xy} & I_{xz} \\
+I_{yx} & I_{yy} & I_{yz} \\
+I_{zx} & I_{zy} & I_{zz} 
+\end{array}
+\right)
 \end{eqnarray}
 
-The angular velocity\footnote{\url{https://en.wikipedia.org/wiki/Angular_velocity }}
- vector is given by $\vec\omega = \frac{\vec r\times \vec v}{r^2}$
-so that the volume-averaged angular velocity of the cylindrical shell is:
-\[
-<\vec {\omega}> = \frac{1}{|\Omega|} \int_\Omega \frac{{\vec r}\times {\vec v}}{r^2} d\vec r
-\]
- Note that it can be straightforwardly computed the same way as the angular momentum
-(it is in fact the same equation but without the density):
 
 %-----------------------------
 \subsubsection{Two dimensions}
 
-In two dimensions, flow is taking place in the $(x,y)$ plane. This means that $\vec r$ and $\vec v$ are coplanar, 
-and therefore that $\vec H$ is perpendicular to the plane, i.e. $\vec H \propto \vec e_z$.
+In two dimensions, flow is taking place in the $(x,y)$ plane. 
+This means that $\vec r=(x,y,0)$ and $\vec v=(u,v,0)$ are coplanar, 
+and therefore that $\vec \omega$ is perpendicular to the plane.
 We have then
 \begin{equation}
 \vec H = \int_\Omega \rho(\vec r) \left( 
 \begin{array}{c} 
 0 \\ 0 \\ xv-yu 
 \end{array} \right) d\vec r
+= 
+\left(\begin{array}{c} 
+0 \\ 0 \\
+\int_\Omega \rho(\vec r) (xv-yu) d\vec r
+\end{array} \right)
 \end{equation}
 and 
 \begin{equation}
-\bm I=
-\int_\Omega \rho(\vec r) 
+\bm I
+=
 \left(
 \begin{array}{ccc}
-y^2 & -xy & 0 \\
--yx & x^2 & 0 \\
-0 & 0 & x^2+y^2 
+I_{xx} & I_{xy} & I_{xz} \\
+I_{yx} & I_{yy} & I_{yz} \\
+I_{zx} & I_{zy} & I_{zz} 
 \end{array}
 \right)
-d\vec r 
+=
+\left(
+\begin{array}{ccc}
+I_{xx} & I_{xy} & 0 \\
+I_{yx} & I_{yy} & 0 \\
+0      & 0      & I_{zz} 
+\end{array}
+\right)
 \end{equation}
-The volume-averaged angular velocity is then simply:
+since $I_{xz}=I_{yz}=0$ as $z=0$, and with 
+$I_{xx}=\int_\Omega \rho(\vec r) y^2 d\vec r$ and 
+$I_{yy}=\int_\Omega \rho(\vec r) x^2 d\vec r$.
+The solution to ${\bm I}\cdot \vec \omega = \vec H$ can be easily obtained 
+(see Appendix \ref{sec:inv3x3}):
+\begin{eqnarray}
+\omega_x
+&=&
+\frac{1}{det(\bm I)}
+\left| 
+\begin{array}{ccc}
+0 & I_{xy} & 0 \\
+0 & I_{yy} & 0 \\
+H_3 & 0 & I_{zz} 
+\end{array}
+\right| = 0 \\ \nonumber\\
+\omega_y
+&=&
+\frac{1}{det(\bm I)}
+\left| 
+\begin{array}{ccc}
+I_{xx} & 0 & 0 \\
+I_{yx} & 0 & 0 \\
+0 & H_z & I_{zz} 
+\end{array}
+\right| = 0 \\ \nonumber\\ 
+\omega_z
+&=&
+\frac{1}{det(\bm I)}
+\left| 
+\begin{array}{ccc}
+I_{xx} & I_{xy} & 0\\
+I_{yx} & I_{yy} & 0\\
+0 & 0 & H_z
+\end{array}
+\right| \\
+&=& \frac{1}{det(\bm I)} \left( I_{xx}I_{yy}H_z - I_{yx}I_{xy}H_z \right) \\
+&=& \frac{1}{det(\bm I)} \left( I_{xx}I_{yy} - I_{yx}I_{xy} \right) H_z 
+\end{eqnarray}
+with $det(\bm I)=I_{xx}I_{yy}I_{zz}-I_{yx}I_{xy}I_{zz}$.
+Concretely, this means that in 2D one does not need to solve the system ${\bm I}\cdot \vec \omega = \vec H$
+since only $\omega_z$ is not zero.
+
+Likewise, the volume-averaged angular velocity is then simply:
 \begin{equation}
-<\omega_z> = \frac{1}{|\Omega|}\int_\Omega \frac{xv-yu}{r^2}d\vec r
+\omega_z = \frac{1}{|\Omega|}\int_\Omega \frac{xv-yu}{r^2}d\vec r
 \end{equation}
 
 

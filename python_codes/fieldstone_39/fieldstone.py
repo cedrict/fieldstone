@@ -101,8 +101,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 160#150
-   nely = 16#25
+   nelx = 240
+   nely = 24
    visu = 1
     
 nnx=2*nelx+1  # number of elements, x direction
@@ -129,11 +129,11 @@ phi=30./180*np.pi
 psi=30./180*np.pi
 tol=1e-6
 
-eta_ref=1.e23
+method=2
 
-niter=50
+eta_ref=1.e23      # scaling of G blocks
 
-pnormalise=True
+niter=200
 
 #################################################################
 #################################################################
@@ -163,7 +163,7 @@ for j in range(0, nny):
         y[counter]=j*hy/2.
         counter += 1
 
-np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
+#np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
 
 print("setup: grid points: %.3f s" % (time.time() - start))
 
@@ -231,8 +231,11 @@ print("setup: boundary conditions: %.3f s" % (time.time() - start))
 #------------------------------------------------------------------------------
 # non-linear iterations
 #------------------------------------------------------------------------------
+if method==1:
+   c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+elif method==2:
+   c_mat = np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,3]],dtype=np.float64) 
 
-c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 dNVdx = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 dNVdy = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 dNVdr = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
@@ -246,6 +249,7 @@ b_mat = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B
 N_mat = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
 NV    = np.zeros(mV,dtype=np.float64)           # shape functions V
 NP    = np.zeros(mP,dtype=np.float64)           # shape functions P
+conv  = np.zeros(niter,dtype=np.float64)        
 
 for iter in range(0,niter):
 
@@ -334,8 +338,11 @@ for iter in range(0,niter):
                for i in range(0,mV):
                    f_el[ndofV*i+0]+=NV[i]*jcob*weightq*gx(xq,yq)*rho
                    f_el[ndofV*i+1]+=NV[i]*jcob*weightq*gy(xq,yq)*rho
-                   f_el[ndofV*i+0]-=2./3.*dNVdx[i]*jcob*weightq*eta_eff*dilation_rate
-                   f_el[ndofV*i+1]-=2./3.*dNVdy[i]*jcob*weightq*eta_eff*dilation_rate
+
+               if method==1:
+                  for i in range(0,mV):
+                      f_el[ndofV*i+0]-=2./3.*dNVdx[i]*jcob*weightq*eta_eff*dilation_rate
+                      f_el[ndofV*i+1]-=2./3.*dNVdy[i]*jcob*weightq*eta_eff*dilation_rate
 
                for i in range(0,mP):
                    N_mat[0,i]=NP[i]
@@ -428,6 +435,8 @@ for iter in range(0,niter):
 
    print("Nonlinear residual (inf. norm) %.7e" % (np.max(abs(Res))/Res0))
 
+   conv[iter]=np.max(abs(Res))/Res0
+
    if np.max(abs(Res))/Res0<tol:
       break
 
@@ -452,11 +461,13 @@ for iter in range(0,niter):
    print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
    print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
-   np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+   np.savetxt('conv.ascii',np.array(conv[0:niter]).T)
 
 #------------------------------------------------------------------------------
 # end of non-linear iterations
 #------------------------------------------------------------------------------
+   
+np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
 ######################################################################
 # compute strainrate 
@@ -539,6 +550,7 @@ np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
 #####################################################################
 # the 9-node Q2 element does not exist in vtk, but the 8-node one 
 # does, i.e. type=23. 
+    
 
 filename = 'solution.vtu'
 vtufile=open(filename,"w")
