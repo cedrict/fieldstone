@@ -1,0 +1,21 @@
+rm vy.dat
+
+for visc2 in 1.25e20 2.5e20 5e20 1e21 2e21 4e21 8e21 16e21; do 
+    for lambda in 64e3 128e3 256e3; do 
+
+        echo lambda= $lambda visc2= ${visc2}
+
+        python3 fieldstone.py 64 64  0 $lambda 3000 $visc2 > opla
+
+        echo -n $lambda >> vy.dat 
+        echo -n ' ' >> vy.dat 
+        echo -n $visc2 >> vy.dat 
+        echo -n ' ' >> vy.dat 
+        grep vy opla >> vy.dat 
+
+    done
+ 
+    echo ' ' >> vy.dat
+
+done
+
