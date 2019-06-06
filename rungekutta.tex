@@ -1,17 +1,82 @@
 These methods were developed around 1900 by the German mathematicians Carl Runge and Martin Kutta.
-The RK methods are methods for the numerical integration of ODEs. These methods are well 
+The RK methods are methods for the numerical integration of 
+ODEs\footnote{\url{https://en.wikipedia.org/wiki/Runge-Kutta_methods}}. These methods are well 
 documented in any numerical analysis textbook and the reader is referred to \cite{gery10,tack10}.
+Any Runge-Kutta method is uniquely identified by its Butcher tableau (REF?) which contains 
+all necessary coefficients to build the algorithm.
+
+The simplest Runge–Kutta method is the (forward) Euler method. Its tableau is:
+
+\begin{tabular}{c|c}
+0 & \\
+\hline
+ & 1
+\end{tabular}
+
+\index{midpoint method} \index{RK2}
+The standard second-order RK method method (also called midpoint method) is:
+
+\begin{tabular}{c|cccccc}
+0 & \\
+1/2 & 1/2 \\
+\hline
+ & 0 & 1 
+\end{tabular}
+
+\index{Heun's emthod}
+Another second-order RK method, called Heun's 
+method\footnote{\url{https://en.wikipedia.org/wiki/Heun's_method}} is follows:
+
+\begin{tabular}{c|cccccc}
+0 & \\
+1 & 1 \\
+\hline
+ & 1/2 & 1/2 
+\end{tabular}
+
+\index{RK3}
+A third-order RK method is as follows:
+
+\begin{tabular}{c|ccccc}
+0 & \\
+1/2 & 1/2 \\
+1 & -1 & 2 \\ 
+\hline
+ & 1/6 & 4/6  & 1/6
+\end{tabular}
 
 
+\index{RK4}
+The RK4 method falls in this framework. Its tableau is:
+
+\begin{tabular}{c|cccccc}
+0 & \\
+1/2 & 1/2 \\
+1/2 & 0 & 1/2 \\
+1 & 0 & 0 & 1 \\
+\hline
+ & 1/6 & 1/6 & 1/3 & 1/6 
+\end{tabular}
+
+A slight variation of the standard RK4 method is also due to Kutta in 1901 and is called the 3/8-rule. 
+Almost all of the error coefficients are smaller than in the standard method but it requires slightly more FLOPs 
+per time step. Its Butcher tableau is
+
+\begin{tabular}{c|cccccc}
+0 & \\
+1/3 & 1/3 \\
+2/3 & -1/3 & 1 \\
+1 & 1 & -1 & 1 \\
+\hline
+ & 1/8 & 3/8 & 3/8 & 1/8 
+\end{tabular}
 
 
-
-
-Any Runge-Kutta method is uniquely identified by its Butcher tableau.
-
-
+\index{RK45} \index{Runge-Kutta-Fehlberg method}
 The following method is called the Runge-Kutta-Fehlberg method and is 
-commonly abbreviated RKF45. Its Butcher tableau is as follows: 
+commonly abbreviated 
+RKF45\footnote{\url{https://en.wikipedia.org/wiki/Runge-Kutta-Fehlberg_method}}
+. Its Butcher tableau is as follows: 
 
 \begin{tabular}{c|cccccc}
 0 & \\
@@ -27,3 +92,44 @@ commonly abbreviated RKF45. Its Butcher tableau is as follows:
 
 
 The first row of coefficients at the bottom of the table gives the fifth-order accurate method, and the second row gives the fourth-order accurate method. 
+
+\subsubsection{Using RK methods to advect particles/markers}
+
+In the context of geodynamical modelling, one is usually confronted to the following problem:
+now that I have a velocity field on my FE mesh, how can I use it to advect the Lagrangian 
+markers?
+
+Runge-Kutta methods are used to this effect but only their spatial component is used:
+the velocity solution is not recomputed at the intermediate fractional timesteps, i.e. 
+only the coefficients of the right hand side of the tableaus is used.
+
+The RK1 method is simple. Carry out a loop over markers and 
+\begin{enumerate}
+\item interpolate velocity $\vec\upnu_{m}$ onto each marker $m$
+\item compute new position as follows: $\vec r_m(t+\delta t)=\vec r_m(t) + \vec\upnu_m \delta t$
+\end{enumerate}
+
+The RK2 method is also simple but requires a bit more work. Carry out a loop over markers and 
+\begin{enumerate}
+\item interpolate velocity $\vec\upnu_{m}$ onto each marker $m$ at position $\vec r_m$
+\item compute new intermediate position as follows: $\vec r_m^{(1)}(t+\delta t)=\vec r_m(t) + \vec\upnu_m \delta t/2$
+\item compute velocity $\vec\upnu_{m}^{(1)}$ at position $\vec r_m^{(1)}$
+\item compute new position: $\vec r_m(t+\delta t)=\vec r_m(t) + \vec\upnu_m^{(1)} \delta t$ 
+\end{enumerate}
+Note that the intermediate positions could be in a different element of the mesh so extra care must be taken when 
+computing intermediate velocities. 
+
+The RK3 method introduces two intermediate steps. Carry out a loop over markers and 
+\begin{enumerate}
+\item interpolate velocity $\vec\upnu_{m}$ onto each marker $m$ at position $\vec r_m$
+\item compute new intermediate position as follows: $\vec r_m^{(1)}(t+\delta t)=\vec r_m(t) + \vec\upnu_m \delta t/2$
+\item compute velocity $\vec\upnu_{m}^{(1)}$ at position $\vec r_m^{(1)}$
+\item compute new intermediate position as follows: 
+$\vec r_m^{(2)}(t+\delta t)=\vec r_m(t) + (2\vec\upnu_m^{(1)}-\vec\upnu_m) \delta t/2$
+\item compute velocity $\vec\upnu_{m}^{(2)}$ at position $\vec r_m^{(2)}$
+\item compute new position: 
+$\vec r_m(t+\delta t)=\vec r_m(t) + (\vec\upnu_m +4 \vec\upnu_m^{(1)} + \vec\upnu_m^{(2)}    )\delta t/6$ 
+\end{enumerate}
+
+
+
