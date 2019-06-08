@@ -6,7 +6,7 @@ quadrilaterals in 2D, tetrahedra, prisms and hexahedra in 3D. \index{convex poly
 When the domain is itself simple (e.g. a rectangle, a sphere, ...) the mesh (or grid) can 
 be (more or less) easily produced and the connectivity array filled with straightforward 
 algorithms \cite{thie18}.
-However, real life applications can involve etremely complex geometries (e.g. a bridge, 
+However, real life applications can involve extremely complex geometries (e.g. a bridge, 
 a human spine, a car chassis and body, etc ...) and dedicated algorithms/softwares 
 must be used (see \cite{thsw,frge,xiyz09}). 
 
@@ -28,7 +28,7 @@ Let us now focus on the case of a rectangular computational domain of size
 There are then {\tt nnx}$\times${\tt nny}={\tt nnp} grid points.
 The elements are of size {\tt hx}$\times${\tt hy} with {\tt hx}={\tt Lx}/{\tt nelx}.
 
-We have no reason to come up with an irregular/ilogical node numbering so 
+We have no reason to come up with an irregular/illogical node numbering so 
 we can number nodes row by row or column by column as shown on the example 
 hereunder of a 3$\times$2 grid:
 
@@ -48,7 +48,7 @@ hereunder of a 3$\times$2 grid:
 
 The numbering of the elements themselves could be done in a somewhat chaotic 
 way but we follow the numbering of the nodes for simplicity.
-The row by row option is the adopted one in \fieldstone and the coordinates of the 
+The row by row option is the adopted one in \fieldstone{} and the coordinates of the 
 points are computed as follows:
 
 \begin{lstlisting}

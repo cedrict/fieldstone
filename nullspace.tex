@@ -3,8 +3,8 @@
 
 When free slip boundary conditions are prescribed in an annulus or
 hollow sphere geometry there exists a rotational nullspace, or in other words there exists
-a tangential velocity field ('pure rotation') which if added or subtracted to the solution 
-does not alter the solution. 
+a tangential velocity field ('pure rotation') which, 
+if added or subtracted to the solution, genrates a solution which is still the solution of the PDEs. 
 
 As in the pressure normalisation case (see section \ref{ss_pnorm}), the solution is simple:
 \begin{enumerate}
@@ -27,7 +27,7 @@ The "net rotation" option removes the net rotation of the domain.
 In order to remove the angular momentum, we search for a rotation
 vector ${\vec \omega}$ such that
 \begin{equation}
-\int_\Omega \rho[{\vec r} \times ({\vec v}-{\vec \omega} \times {\vec r})] \; d\vec r= \vec 0
+\int_\Omega \rho[{\vec r} \times ({\vec v}-{\vec \omega} \times {\vec r})] \; dV= \vec 0
 \end{equation}
 
 The angular momentum of a rigid body can be obtained from the sum 
@@ -55,13 +55,13 @@ body\footnote{\url{http://www.kwon3d.com/theory/moi/iten.html}}:
 \end{eqnarray}
 In the continuum limit, we have:
 \begin{equation}
-{\vec H} = \int_\Omega \rho(\vec r) \, {\vec r} \times {\vec v}\; d\vec r
+{\vec H} = \int_\Omega \rho(\vec r) \, {\vec r} \times {\vec v}\; dV
 \end{equation}
 and the $3\times3$ moment of inertia tensor $\bm I$
 (also called inertia tensor) is given by\footnote{\url{https://en.wikipedia.org/wiki/Moment\_of\_inertia}}
 \begin{equation}
 {\bm I}= 
-\int_\Omega \rho(\vec r) [\vec r\cdot\vec r \; \bm 1 - \vec r \times \vec r  ] d\vec r 
+\int_\Omega \rho(\vec r) [\vec r\cdot\vec r \; \bm 1 - \vec r \times \vec r  ] dV
 \end{equation}
 so that the above equation writes:
 $
@@ -84,7 +84,7 @@ The angular velocity\footnote{\url{https://en.wikipedia.org/wiki/Angular_velocit
  vector is given by $\vec\omega = \frac{\vec r\times \vec v}{r^2}$
 so that the volume-averaged angular velocity of the cylindrical shell is:
 \begin{equation}
-\vec {\omega} = \frac{1}{|\Omega|} \int_\Omega \frac{{\vec r}\times {\vec v}}{r^2} d\vec r
+\vec {\omega} = \frac{1}{|\Omega|} \int_\Omega \frac{{\vec r}\times {\vec v}}{r^2} dV
 \end{equation}
 
 

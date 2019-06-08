@@ -23,7 +23,7 @@ It is easy to implement:
 \item guess $\vec X^0$ or use the solution from previous time step
 \item compute $\mathbb{A}$ and $\vec b$ with current solution vector $\vec X^{old}$
 \item solve system, obtain $T^{new}$
-\item check for convergence (are $\vec X^{old}$ and$\vec X^{new}$ close enough?)
+\item check for convergence (are $\vec X^{old}$ and $\vec X^{new}$ close enough?)
 \item $\vec X^{old} \leftarrow \vec X^{new}$
 \item go back to 2.
 \end{enumerate}
@@ -48,7 +48,7 @@ Another convergence criterion is proposed by Reddy (section 3.7.2) \cite{reddybo
 \right)^{1/2} < \epsilon
 \]
 Yet another convergence criterion is used in \cite{thie11}: the means $<\vec X^{old}>$, $<\vec X^{new}>$
-as well as the variances $\sigma^{old}$ amd $\sigma^{new}$ are computed, followed by the 
+as well as the variances $\sigma^{old}$ and $\sigma^{new}$ are computed, followed by the 
 correlation factor $R$:
 \[
 R= \frac{ <  (\vec X^{old}-<\vec X^{old}>)\cdot( \vec X^{new}-<\vec X^{new}> )>  }{\sqrt{\sigma^{old}\sigma^{new}}}
@@ -65,7 +65,7 @@ relaxation formula where one first solves
 \[
 \mathbb{A}(\vec X^n) \cdot \vec X^{\star} = \vec b(\vec X^n)
 \]
-and then update $\vec X^n$ as follows:
+and then updates $\vec X^n$ as follows:
 \[
 \vec X^n = \gamma \vec X^n + (1-\gamma) \vec X^\star 
 \quad\quad\quad

@@ -205,7 +205,7 @@ Let us start with a small example, a 3x2 element FE grid:
 \end{center}
 
 We have nnp=12, nel=6, NfemV=24. Let us assume that free slip boundary conditions are applied. 
-The {\tt fix\_bc} array is then:
+The boundary conditions {\tt fix\_bc} array is then:
 \begin{center}
 \begin{tikzpicture}
 %\draw[step=0.5cm,gray,very thin] (0,0) grid (9,0.7); %background grid
@@ -242,11 +242,14 @@ The {\tt fix\_bc} array is then:
 \end{center}
 Note that since corners belong to two edges, we effectively prescribed 
 no-slip boundary conditions on those. 
+\todo[inline]{why does array contain only T??}
+
 
 We wish to compute the tractions on the boundaries, and more precisely for the dofs for which 
-a Dirichlecht velocity boundary condition has been prescribed.
+a Dirichlet velocity boundary condition has been prescribed.
 The number of (traction) unknowns NfemTr is then the number of {\tt T} in the {\tt bc\_fix} array.
 In our specific case, we wave NfemTr= .
+\todo{finish}
 This means that we need for each targeted dof to be able to find its identity/number
 between 0 and NfemTr-1. We therefore create the array {\tt bc\_nb} which is 
 filled as follows: 
@@ -295,19 +298,6 @@ for i in range(0,NfemV):
        bc_nb[i]=counter
        counter+=1
 \end{lstlisting}
-
-
-
-
-
-\begin{algorithm}
-\begin{algorithmic}
-\item kjhg kf
-\item gfhfk 
-\end{algorithmic}
-\caption{dksjfhfjk ghdf}
-\end{algorithm}
-
 
 
 The algorithm is then as follows

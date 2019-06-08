@@ -173,8 +173,8 @@ u_1 \\ v_1 \\ w_1 \\ u_2 \\ v_2 \\ w_2 \\ u_3 \\ v_3 \\ \dots \\ u_{m_v} \\ v_{m
 \end{equation}
 or, $\vec{\dot \varepsilon}={\bm B}\cdot {\vec V}$ where ${\bm B}$ is the gradient 
 matrix and ${\vec V}$ is the vector of all vector degrees of freedom for the 
-element. The matrix ${\bm B}$ is then of size $3\times m_v$ and the vector
-${\vec V}$ is $m_v$ long.
+element. The matrix ${\bm B}$ is then of size $3\times m_v\times ndim $ and the vector
+${\vec V}$ is $m_v*ndof$ long.
 we have 
 \begin{eqnarray}
 \sigma_{xx}&=&-p + 2\eta \dot\varepsilon_{xx}^d \\
@@ -437,7 +437,7 @@ We start from the Stokes equations:
 
 The dimensions of the terms in the first equation are: $ML^{-2}T^{-2}$. The blocks $\K$ and $\G$
 stem from the weak form which obtained by multiplying the strong form equations by the (dimensionless)
-basis funstions and integrating over the domain, so that it follows that 
+basis functions and integrating over the domain, so that it follows that 
 \[
 [ \K \cdot \vec V] = [\G \cdot \vec P] = [\vec f] = ML^{-2}T^{-2} L^3 = MLT^{-2} 
 \]

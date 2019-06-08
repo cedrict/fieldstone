@@ -27,7 +27,7 @@ In the case of the incompressible Stokes equations, we would like to solve
 with an iterative method which is algorithmically scalable and optimal. 
 Scalable here would mean
 that the number of iterations doesn't grow as the mesh is refined. Optimal means the solution 
-time varyies linearly with the total number of unknowns. 
+time varies linearly with the total number of unknowns. 
 When using a stable element,
 If we right precondition the above system with
 \[
@@ -57,9 +57,9 @@ P^*=
 \]
 
 Using $P^*$, we obtain iteration counts which are larger than 2, but likely
-less than 10 - HOWEVER, the number of iterations is independent of the mesh size
+less than 10 - {\it however}, the number of iterations is independent of the mesh size.
 Replacing the exact $\K$ solve in $P^*$ again increases the iterations required to solve Stokes,
-but its still independent of the number of elements. When you have this behaviour,
+but it's still independent of the number of elements. When you have this behaviour,
 we say the preconditioner ($P^*$) is spectrally equivalent to the operator (which here is Stokes)
 
 The problem with $Q_1\times P_0$ is that there are no approximations for
@@ -83,7 +83,7 @@ as the mesh is refined can be dramatic.
 
 If we can bound the number of iterations, AND ensure that the cost per iteration is 
 linearly related to the number of unknowns, then we have a good method which can 
-run on any mesh resolution with a predicatable cpu time. Obtaining scalable and 
+run on any mesh resolution with a predictable cpu time. Obtaining scalable and 
 optimal preconditioners for $\K$ is somewhat easier. Multi-grid will provide us with this.
 
 The reason citcom doesn't run with $400^3$ elements is exactly due to this issue.

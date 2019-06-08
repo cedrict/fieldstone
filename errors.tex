@@ -38,7 +38,7 @@ where $e_p^h(\vec{r}_q)=p^h(\vec{r}_q) - p(\vec{r}_q)$
 is the pressure error evaluated at the $q$-th quadrature associated with
 the $i$th element. $n_e$ and $n_q$ refer to the number of elements and
 the number of quadrature points per element.
-$w_q$ and $J_q$ are the quadrature weight of the Jacobian associated with
+$w_q$ and $J_q$ are the quadrature weight and the Jacobian associated with
 point $q$.
 
 The velocity error $e_{\vec v}^h$ is evaluated using the following two norms
@@ -52,10 +52,10 @@ where $e_u^h(\vec{r}_q)=u^h(\vec{r}_q) - u(\vec{r}_q)$ and $e_v^h(\vec{r}_q)=v^h
 
 
 \index{$H^1(\Omega)$ space} \index{$H^1$ norm} \index{$H^1$ semi-norm}
-Another norm is very varely used in the geodynamics literature but is preferred in the 
-Finite Element literature: the so-called $H^1$ norm. The mathematical basis for this
+Another norm is very rarely used in the geodynamics literature but is preferred in the 
+Finite Element literature: the $H^1$ norm. The mathematical basis for this
 norm and the nature of the $H^1(\Omega)$ Hilbert space is to be found in many FE books \cite{dohu03,john16,hugh}.
-This norm is expression is expressed as follows for a function $f$ such that $f,|\nabla f|\in L^2(\Omega)$
+This norm is expressed as follows for a function $f$ such that $f,|\nabla f|\in L^2(\Omega)$
 \footnote{\url{https://en.wikipedia.org/wiki/Sobolev_space}}
 \begin{equation}
 \norm{f}_{H^1} = \left( \int_\Omega ( |f|^2 + |\nabla f|^2  ) d\Omega   \right)^{1/2}

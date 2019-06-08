@@ -8,7 +8,7 @@ We start from
 \[
 \left(
 \begin{array}{cc}
-\K & \G \\ \G^T & 0 
+\K & \G \\ \G^T & -\C 
 \end{array}
 \right)
 \cdot
@@ -28,7 +28,7 @@ and introduce the scaling coefficient as follows (which in fact does not alter t
 \[
 \left(
 \begin{array}{cc}
-\K & \frac{\eta}{L}\G \\ \frac{\eta}{L}\G^T & 0 
+\K & \frac{\eta}{L}\G \\ \frac{\eta}{L}\G^T & - \frac{\eta^2}{L^2} \C 
 \end{array}
 \right)
 \cdot
@@ -48,7 +48,7 @@ We then end up with the modified Stokes system:
 \[
 \left(
 \begin{array}{cc}
-\K & \underline{\G} \\ \underline{\G}^T & 0 
+\K & \underline{\G} \\ \underline{\G}^T & \underline{\C} 
 \end{array}
 \right)
 \cdot
@@ -70,6 +70,9 @@ where
 \quad\quad
 \quad\quad
 \underline{\vec{\cal P}}=\frac{L}{\eta} \vec{\cal P}
+\quad\quad
+\quad\quad
+\underline{\C}=\frac{\eta^2}{L^2} \C
 \quad\quad
 \quad\quad
 \underline{\vec{h}}=\frac{\eta}{L}\vec{h}

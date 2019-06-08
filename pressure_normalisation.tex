@@ -6,8 +6,9 @@ When Dirichlet boundary conditions are imposed everywhere on the boundary,
 pressure is only present by its gradient in 
 the equations. It is thus determined up to an arbitrary constant (one speaks then 
 of a nullspace of size 1).  \index{nullspace}
-In such a case, one commonly impose the average of the pressure over the whole domain or on a subsect of the boundary 
-to be have a zero average, i.e.
+In such a case, one commonly impose the average of the pressure over the whole domain or on 
+a subset of the boundary 
+to have a zero average, i.e.
 \begin{equation}
 \int_\Omega p dV = 0
 \end{equation}
@@ -57,7 +58,7 @@ a Gauss-Legendre quadrature.
 
 Although valid, this approach has one main disadvantage: it makes the Stokes matrix larger (although
 marginally so -- only one row and column are added), but more importantly it prevents the use of some
-of the solving strategies of Section \ref{solvers}.
+of the solving strategies of Section \ref{sec:solvers}.
 
 
 %..................................................

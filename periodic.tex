@@ -4,12 +4,14 @@ as infinite domains. The idea is simple: when material leaves the domain
 through a boundary it comes back in through the opposite boundary (which 
 of course presupposes a certain topology of the domain). 
 
-For instance, if one wants to model a gas a the molecular level and wishes 
+For instance, if one wants to model a gas at the molecular level and wishes 
 to avoid interactions of the molecules with the walls of the container, 
 such boundary conditions can be used, mimicking an infinite domain in all 
 directions. 
 
 Let us consider the small mesh depicted hereunder:
+
+\todo[inline]{missing picture}
 
 We wish to implement horizontal boundary conditions so that 
 \[
@@ -31,9 +33,9 @@ In fact, this is only necessary during the assembly. Everywhere in the loops nod
 one must replace them by their left pendants 1, 6, 11 and 16. This autmatically generates a matrix 
 with lines and columns corresponding to the $u_5$, $u_{10}$, $u_{15}$ and $u_{20}$ being exactly zero. 
 The Stokes matrix is the same size, the blocks are the same size and the symmetric character of the matrix 
-is respected. However, there is a remaining problem. There are zeros on the diagonal 
-of the above mentioned lines and columns. One must then place there 1 or a value more
-appropriate.
+is respected. However, there remains a problem. There are zeros on the diagonal 
+of the above mentioned lines and columns. One must then place there 1 or a more
+appropriate value.
 
 Another way of seeing this is as follows: let us assume we have built and assembled
 the Stokes matrix, and we want to impose periodic b.c. so that dof $j$ and $i$ are the same. 

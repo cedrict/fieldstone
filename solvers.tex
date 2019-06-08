@@ -44,7 +44,7 @@ velocity since pressure is recovered in a post-processing step:
  We also know that 
 the penalty factor is many orders of magnitude higher than the viscosity and 
 in combination with the use of the $Q_1 \times P_0$ element the resulting matrix 
-condition number is very high so that the use of iterative solvers in precluded. 
+condition number is very high so that the use of iterative solvers is precluded. 
 Indeed codes such as SOPALE \cite{full95}, DOUAR \cite{brtf08}, or FANTOM \cite{thie11} 
 relying on the penalty formulation all use direct solvers.
 The most popular are BLKFCT, MUMPS, WSMP, UMFPACK, SuperLU, PARDISO, CholMod. 
@@ -90,7 +90,7 @@ or,
 \end{equation}
 \end{mdframed}
 The matrix $\SSS= \G^T \cdot \K^{-1} \cdot \G $ is called the Schur complement. \index{Schur complement} 
-It is Symmetric (since $\K$ is symmetric) and  Postive-Definite\footnote{$M$ 
+It is Symmetric (since $\K$ is symmetric) and  Positive-Definite\footnote{$M$ 
 positive definite $\iff$ $x^TMx>0$ $\forall \; x\in \mathbb{R}^n \setminus {\bm 0}$ }
 (SPD) \index{SPD} if $Ker({\G})=0$. 
 {\color{red} look in donea-huerta book for details}
@@ -158,7 +158,7 @@ Richardson iterations are part of the family of stationary iterative methods, si
 which is the definition of a stationary method. 
 
 Since the $\alpha$ parameter is the key to a succesful Uzawa algorithm, 
-this issue has of course been looked into What follows is 
+this issue has of course been looked into. What follows is 
 presented in \cite[p221]{braess}.
 For the analysis of the Uzawa algorithm, we define the residue
 \[
@@ -257,7 +257,7 @@ Indeed, looking at the definition of Wikipedia: "{\it In mathematics, the conjug
 A simple Google search tells us that the Conjugate Gradient algorithm is as follows:
 \begin{center}
 \frame{
-\includegraphics[width=6cm]{images/solvers/cgwiki}
+\includegraphics[width=7cm]{images/solvers/cgwiki}
 }\\
 Algorithm as obtained from Wikipedia \footnote{\url{https://en.wikipedia.org/wiki/Conjugate\_gradient\_method}}
 \end{center}
@@ -362,7 +362,7 @@ $\SSS$ is never built. However, it has been established that large viscosity con
 will have a negative impact on the convergence. 
 
 \begin{remark} 
-his algorithm requires one solve with matrix $\K$ per iteration 
+This algorithm requires one solve with matrix $\K$ per iteration 
 but says nothing about the method employed to do so (direct solver, iterative solver, ...)
 \end{remark} 
 
@@ -416,7 +416,7 @@ Following \cite{zhym12} one can define the following matrix as preconditioner:
 M = diag \left[ \G^T (diag [\K]  )^{-1} \G \right]
 \]
 which is the preconditioner used for the Citcom codes (see appendix \ref{codes}). It 
-can be constructed while the FEM matrix is being build/assembled
+can be constructed while the FEM matrix is being built/assembled
 and it is trivial to invert.
 
 
@@ -463,7 +463,7 @@ We start from the saddle point Stokes system:
 \right)
 \label{StokesSyst2}
 \end{equation}
-The AL method consists of subtracting $\lambda^{-1} \mathbb{M}_p \cdot \vec{\cal P}$ from tre left and 
+The AL method consists of subtracting $\lambda^{-1} \mathbb{M}_p \cdot \vec{\cal P}$ from the left and 
 right-side of the mass conservation equation (where $\mathbb{M}_p$ is the pressure mass matrix) 
 and introducing the following iterative scheme:
 \begin{equation}
@@ -486,7 +486,8 @@ and introducing the following iterative scheme:
 \right)
 \label{ALStokes}
 \end{equation}
-where $k$ is the iteration counter and $\lambda$ is an artificial compressibility term which has units of dynamic viscosity. 
+where $k$ is the iteration counter and $\lambda$ is an artificial compressibility term which has 
+the dimensions of dynamic viscosity. 
 The choice of $\lambda$ can be difficult as too low or too high a value yields either erroneous results and/or terribly ill-conditioned matrices. LaCoDe paper (!!) use such a method and report that $\lambda=\max_\Omega({\eta})$
 works well. 
 Note that at convergence we have $||\vec{\cal P}^{k+1}-\vec{\cal P}^k||<\epsilon$ and then Eq.(\ref{ALStokes}) converges to Eq.(\ref{StokesSyst2}) and the velocity and pressure fields are solution of the unmodified system Eq.(\ref{StokesSyst2}).
@@ -545,7 +546,7 @@ If $\lambda >> \max_\Omega{\eta}$ then the matrix $\tilde{\K}$ is ill-conditione
 The Generalized Minimal Residual method \cite{sasc86} 
 is an extension of MINRES (which is only applicable to symmetric systems) to unsymmetric systems. 
 Like MINRES, it generates a sequence of orthogonal vectors and 
-and combines these through a least-squares solve and update. However, 
+combines these through a least-squares solve and update. However, 
 in the absence of symmetry this can no longer be done with short recurrences. As a consequence, 
 all previously computed vectors in the orthogonal sequence have to be retained and 
 for this reason ''restarted'' versions of the method are used.
