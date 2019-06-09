@@ -14,7 +14,11 @@ __pycache__/
 *.ilg
 *.ind
 *.ascii
-
+opla
+page.pdf
+manual.idx
+manual.ilg
+manual.ind
 
 # C extensions
 *.so
