@@ -1,0 +1,30 @@
+set term pdf enhanced
+
+set grid
+set xlabel 'y'
+set ylabel 'Temperature (C)'
+
+
+k=2.25
+Tt=0
+Tb=550
+yt=660e3
+yb=625e3
+
+set output 'temperature1.pdf'
+plot[yb:yt]  \
+-0.0e-6/2/k*(x**2-yb**2)+( (Tt-Tb)/(yt-yb) + 0.0e-6/2/k*(yb+yt)  )*(x-yb) + Tb t 'H=0.0e-6', \
+-0.8e-6/2/k*(x**2-yb**2)+( (Tt-Tb)/(yt-yb) + 0.8e-6/2/k*(yb+yt)  )*(x-yb) + Tb t 'H=0.8e-6', \
+-1.6e-6/2/k*(x**2-yb**2)+( (Tt-Tb)/(yt-yb) + 1.6e-6/2/k*(yb+yt)  )*(x-yb) + Tb t 'H=1.6e-6'
+
+set key left
+set ylabel 'heat flux (W/m^2)'
+
+set output 'heatflux1.pdf'
+plot[yb:yt]  \
+0.0e-6*x - (k* (Tt-Tb)/(yt-yb) + 0.0e-6/2*(yb+yt)  )  t 'H=0.0e-6',\
+0.4e-6*x - (k* (Tt-Tb)/(yt-yb) + 0.4e-6/2*(yb+yt)  )  t 'H=0.4e-6',\
+0.8e-6*x - (k* (Tt-Tb)/(yt-yb) + 0.8e-6/2*(yb+yt)  )  t 'H=0.8e-6',\
+1.0e-6*x - (k* (Tt-Tb)/(yt-yb) + 1.0e-6/2*(yb+yt)  ) lw 3  t 'H=1.0e-6',\
+1.2e-6*x - (k* (Tt-Tb)/(yt-yb) + 1.2e-6/2*(yb+yt)  )  t 'H=1.2e-6',\
+1.6e-6*x - (k* (Tt-Tb)/(yt-yb) + 1.6e-6/2*(yb+yt)  )  t 'H=1.6e-6'

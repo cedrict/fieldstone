@@ -1,0 +1,58 @@
+set term pdf enhanced
+
+set key left 
+set grid
+
+set xlabel 'max ref. level'
+set ylabel 'number of elements'
+
+set output 'amr_data1.pdf'
+plot 'amr_data.dat' u 1 w lp t 'l 0',\
+     'amr_data.dat' u 2 w lp t 'l 1',\
+     'amr_data.dat' u 3 w lp t 'l 2',\
+     'amr_data.dat' u 4 w lp t 'l 3',\
+     'amr_data.dat' u 5 w lp t 'l 4',\
+     'amr_data.dat' u 6 w lp t 'l 5',\
+     'amr_data.dat' u 7 w lp t 'l 6',\
+     'amr_data.dat' u 8 w lp t 'l 7'
+
+set xlabel 'max ref. level'
+set ylabel 'total number of elements'
+set output 'amr_data2.pdf'
+plot 'amr_data.dat' u ($1+$2+$3+$4+$5+$6+$7+$8) w lp notitle,\
+x**3/2.5 t 'x^3'
+
+
+
+
+
+set xlabel 'max ref. level'
+set ylabel 'number of elements'
+
+set output 'amr_data3.pdf'
+plot 'amr_data2.dat' u 1 w lp t 'l 0',\
+     'amr_data2.dat' u 2 w lp t 'l 1',\
+     'amr_data2.dat' u 3 w lp t 'l 2',\
+     'amr_data2.dat' u 4 w lp t 'l 3',\
+     'amr_data2.dat' u 5 w lp t 'l 4',\
+     'amr_data2.dat' u 6 w lp t 'l 5',\
+     'amr_data2.dat' u 7 w lp t 'l 6',\
+     'amr_data2.dat' u 8 w lp t 'l 7'
+
+set xlabel 'max ref. level'
+set ylabel 'total number of elements'
+set output 'amr_data4.pdf'
+plot 'amr_data2.dat' u ($1+$2+$3+$4+$5+$6+$7+$8) w lp notitle,\
+x**4/4.5 t 'x^4'
+
+
+set xlabel 'max ref. level'
+set ylabel 'tot. nb of elts / nb elts at constant res.'
+set log y
+set output 'amr_data5.pdf'
+
+plot 'amr_data2.dat' u ($1+$2+$3+$4+$5+$6+$7+$8)/((2**$9)**2) w lp notitle
+
+
+
+
