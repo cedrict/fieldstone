@@ -1,0 +1,20 @@
+set term pdf enhanced
+set xlabel 'iteration count'
+set ylabel 'relative nonlinear residual'
+set log y
+
+set output 'conv_extension.pdf'
+plot[:100][]\
+'extension_nonass_120x12/conv.ascii' w l t 'ext, non ass., 120x20',\
+'extension_meth1_120x12/conv.ascii'  w l t 'ext, m1, 120x12',\
+'extension_meth1_240x24/conv.ascii'  w l t 'ext, m1, 240x24',\
+'extension_meth2_120x12/conv.ascii'  w l t 'ext, m2, 120x12',\
+'extension_meth2_240x24/conv.ascii'  w l t 'ext, m2, 240x24',\
+
+set output 'conv_compression.pdf'
+plot[:100][]\
+'compression_nonass_120x12/conv.ascii' w l t 'comp, non ass., 120x20',\
+'compression_meth1_120x12/conv.ascii'  w l t 'comp, m1, 120x12',\
+'compression_meth1_240x24/conv.ascii'  w l t 'comp, m1, 240x24',\
+'compression_meth2_120x12/conv.ascii'  w l t 'comp, m2, 120x12',\
+'compression_meth2_240x24/conv.ascii'  w l t 'comp, m2, 240x24',\
