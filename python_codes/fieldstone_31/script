@@ -1,0 +1,29 @@
+
+#   nelx           =int(sys.argv[1])
+#   nely           =int(sys.argv[2])
+#   nelz           =int(sys.argv[3])
+#   visu           =int(sys.argv[4])
+#   nmarker_per_dim=int(sys.argv[5])
+#   random_markers =int(sys.argv[6])
+#   CFL_nb         =float(sys.argv[7])
+#   RKorder        =int(sys.argv[8])
+#   use_cvi        =int(sys.argv[9])
+#   Q              =int(sys.argv[10])
+#   option         =int(sys.argv[11])
+
+
+#changing Q polynomial order
+python3 fieldstone.py  10 10 10 0 5 0 0.5 1 0 1 0 
+python3 fieldstone.py  10 10 10 0 5 0 0.5 1 0 2 0 
+mv markercount*.ascii results/
+
+# changing random to regular
+python3 fieldstone.py  10 10 10 0 5 0 0.5 1 0 1 0 
+python3 fieldstone.py  10 10 10 0 5 1 0.5 1 0 1 0 
+
+# using cvi
+python3 fieldstone.py  10 10 10 0 5 0 0.5 1 1 1 1
+python3 fieldstone.py  10 10 10 0 5 0 0.5 1 1 1 2 
+python3 fieldstone.py  10 10 10 0 5 0 0.5 1 1 1 3 
+python3 fieldstone.py  10 10 10 0 5 0 0.5 1 1 1 4 
+mv markercount*.ascii results/

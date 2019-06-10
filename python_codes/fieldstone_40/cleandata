@@ -1,0 +1,9 @@
+rm *.ascii
+rm *.vtu
+rm *.aux
+rm *.log
+rm *.pdf
+rm *.dat
+
+
+
