@@ -1,0 +1,96 @@
+Let us consider the following one-dimensional grid: 
+\begin{center}
+\includegraphics[width=10cm]{images/oneD/domain}
+\end{center}
+Its spans the domain $\Omega$ of length $L_x$. 
+It is discretised by means of 
+$nnx$ nodes and $nelx=nnx-1$ elements.
+Zooming in on element which is bounded by two nodes $k$ and $k+1$,
+its size (also sometimes called diameter) is $h_x=x_{k+1}-x_k$, 
+and the temperature field we wish to compute is located on those 
+nodes so that they are logically called $T_k$ and $T_{k+1}$:
+
+\begin{center}
+\includegraphics[width=8cm]{images/oneD/el1D}
+\end{center}
+
+We focus here on the 1D diffusion equation (no advection, no heat sources):
+\begin{equation}
+\rho c_p \frac{\partial T}{\partial t} 
+= \frac{\partial }{\partial x} \left( k \frac{\partial T}{\partial x}  \right)
+\end{equation}
+This is the {\color{olive}strong form} of the ODE to solve.
+I can multiply this equation by a function\footnote{This function should be well-behaved with special properties, but we here assume it is a polynomial function.} $f(x)$ and integrate it over $\Omega$:
+\begin{equation}
+\int_{\Omega} f(x)  \rho c_p\frac{\partial T}{\partial t} dx
+=
+\int_{\Omega} f(x) \frac{\partial }{\partial x} \left( k \frac{\partial T}{\partial x}  \right) dx
+\end{equation}
+Looking at the right hand side, it is of the form $\int u v'$ so that I naturally 
+integrate it by parts:
+\begin{equation}
+\int_{\Omega} f(x) \frac{\partial }{\partial x} 
+\left( k \frac{\partial T}{\partial x}  \right) dx
+=
+\left[
+f(x) k \frac{\partial T}{\partial x}
+\right]_{\partial \Omega}
+-
+\int_{\Omega} \frac{\partial f}{\partial x}  k \frac{\partial T}{\partial x}  dx
+\end{equation}
+Assuming there is no heat flux prescribed on the boundary (i.e. $q_x= - k \partial T/\partial x = 0$ ),
+\todo[inline]{NOT happy with this statement!!} then:
+\begin{equation}
+\int_{\Omega} f(x) \frac{\partial }{\partial x} \left( k \frac{\partial T}{\partial x}  \right) dx
+=
+- \int_{\Omega} \frac{\partial f}{\partial x}  k \frac{\partial T}{\partial x}  dx
+\end{equation}
+We then obtain the {\color{olive}weak form} of the diffusion equation in 1D:
+\begin{equation}
+\boxed{
+\int_{\Omega} f(x) \rho c_p \frac{\partial T}{\partial t} dx
++
+\int_{\Omega} \frac{\partial f}{\partial x}  k \frac{\partial T}{\partial x}  dx = 0
+}
+\end{equation}
+We then use the additive property of the integral 
+$\int_\Omega \dots = \sum_{elts} \int_{\Omega_e} \dots$
+so that 
+\begin{equation}
+\sum_{elts} \left(     
+\underbrace{ \int_{\Omega_e} f(x) \rho c_p   \frac{\partial T}{\partial t} dx }_{{\Lambda}_f^e}
++
+\underbrace{\int_{\Omega_e} \frac{\partial f}{\partial x}  k \frac{\partial T}{\partial x}  dx}_{{\Upsilon}_f^e}      \right) = 0  
+\end{equation}
+
+
+In order to compute these integrals (analytically or by means of a numerical quadrature), 
+we will need to evaluate $T$ inside the element. However, inside the element, 
+the temperature is not known: all we have is the temperature at the nodes. 
+For $x\in [x_k,x_{k+1}]$ we need to come up with a way to compute the temperature at this location. 
+It makes sense to think that $T(x)$ will then be a function of the temperature at the nodes, 
+i.e. $T(x) = \alpha T_k + \beta T_{k+1}$ where $\alpha$ and $\beta$ are coefficients. 
+One over-simplified approach would be to assign $T(x)=(T_k + T_{k+1})/2$ but this would make the
+temperature discontinuous from element to element. 
+The rather logical solution to this problem is a linear temperature field between $T_k$
+and $T_{k+1}$: 
+
+\begin{eqnarray}
+T(x) 
+%&=& N_{k}(x) T_k + N_{k+1}(x) T_{k+1}  \nn\\
+&=& \underbrace{\frac{x_{k+1}-x}{h_x}}_{N_k(x)} T_k 
++ 
+\underbrace{\frac{x-x_k}{h_x}}_{N_{k+1}(x)} T_{k+1} \nn
+\end{eqnarray}
+where $N_k^\theta(x)$ is the (temperature) shape function associated to node $k$ and 
+$N_{k+1}^\theta(x)$ is the shape function associated to node $k+1$.
+
+Rather reassuringly, we have:
+\begin{itemize}
+\item $x=x_k$ yields $T(x)=T_k$
+\item $x=x_{k+1}$ yields $T(x)=T_{k+1}$
+\item $x=(x_k+x_{k+1})/2$ yields $T(x)=(T_k+T_{k+1})/2$
+\end{itemize}
+
+
+

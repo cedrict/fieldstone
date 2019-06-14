@@ -96,14 +96,16 @@ ndofP=1  # number of pressure degrees of freedom
 Lx=100000.  # horizontal extent of the domain 
 Ly=10000.  # vertical extent of the domain 
 
-if int(len(sys.argv) == 4):
+if int(len(sys.argv) == 5):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
+   solver = int(sys.argv[4])
 else:
    nelx = 240
    nely = 24
    visu = 1
+   solver = 2 
     
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
@@ -127,13 +129,30 @@ rho=2800
 cohesion=1e7
 phi=30./180*np.pi
 psi=30./180*np.pi
-tol=1e-6
+tol_nl=1e-6
 
-method=1
+if solver==1:
+   use_SchurComplementApproach=True
+   use_preconditioner=True
+   niter_stokes=250
+   solver_tolerance=1e-6
+else:
+   use_SchurComplementApproach=False
+
+method=2
 
 eta_ref=1.e23      # scaling of G blocks
+scaling_coeff=eta_ref/Ly
 
-niter=200
+niter_min=10
+niter=20
+
+if use_SchurComplementApproach:
+   ls_conv_file=open("linear_solver_convergence.ascii","w")
+   ls_niter_file=open("linear_solver_niter.ascii","w")
+   
+shear_band_L_file=open("shear_band_L.ascii","w")
+shear_band_R_file=open("shear_band_R.ascii","w")
 
 #################################################################
 #################################################################
@@ -144,6 +163,9 @@ print("nel",nel)
 print("nnx=",nnx)
 print("nny=",nny)
 print("nnp=",nnp)
+print("NfemV=",NfemV)
+print("NfemP=",NfemP)
+print("Nfem=",Nfem)
 print("------------------------------")
 
 two_sin_psi=2.*np.sin(psi)
@@ -250,6 +272,10 @@ N_mat = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix
 NV    = np.zeros(mV,dtype=np.float64)           # shape functions V
 NP    = np.zeros(mP,dtype=np.float64)           # shape functions P
 conv  = np.zeros(niter,dtype=np.float64)        
+solP  = np.zeros(NfemP,dtype=np.float64)  
+solV  = np.zeros(NfemV,dtype=np.float64)  
+a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
 
 for iter in range(0,niter):
 
@@ -265,6 +291,7 @@ for iter in range(0,niter):
 
    K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
    G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
+   M_mat = np.zeros((NfemP,NfemP),dtype=np.float64) # schur precond
    f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
    h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
 
@@ -275,6 +302,7 @@ for iter in range(0,niter):
        K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
        G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
        h_el=np.zeros((mP*ndofP),dtype=np.float64)
+       M_el=np.zeros((mP,mP),dtype=np.float64)  
 
        # integrate viscous term at 4 quadrature points
        for iq in [0,1,2]:
@@ -353,6 +381,12 @@ for iter in range(0,niter):
                 
                h_el[:]-=NP[:]*dilation_rate*weightq*jcob
 
+               for i in range(0,mP):
+                   for j in range(0,mP):
+                       M_el[i,j]+=NP[i]*NP[j]*weightq*jcob/eta_eff
+                   # end for j
+               # end for i
+
            # end for jq 
        # end for iq 
 
@@ -367,10 +401,12 @@ for iter in range(0,niter):
                       f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
                       K_el[ikk,jkk]=0
                       K_el[jkk,ikk]=0
+                  #end for jkk
                   K_el[ikk,ikk]=K_ref
                   f_el[ikk]=K_ref*bc_val[m1]
                   h_el[:]-=G_el[ikk,:]*bc_val[m1]
                   G_el[ikk,:]=0
+               # end if 
            # end for i1 
        #end for k1 
 
@@ -384,22 +420,30 @@ for iter in range(0,niter):
                        jkk=ndofV*k2          +i2
                        m2 =ndofV*iconV[k2,iel]+i2
                        K_mat[m1,m2]+=K_el[ikk,jkk]
+                   #end for i2
+               #end for k2
                for k2 in range(0,mP):
                    jkk=k2
                    m2 =iconP[k2,iel]
                    G_mat[m1,m2]+=G_el[ikk,jkk]
                f_rhs[m1]+=f_el[ikk]
+               #end for k2
+           #end for i1
        #end for k1 
 
-       for k2 in range(0,mP):
-           m2=iconP[k2,iel]
-           h_rhs[m2]+=h_el[k2]
-       #end for k2 
+       for k1 in range(0,mP):
+           m1=iconP[k1,iel]
+           h_rhs[m1]+=h_el[k1]
+           for k2 in range(0,mP):
+               m2=iconP[k2,iel]
+               M_mat[m1,m2]+=M_el[k1,k2]
+           #end for k2 
+       #end for k1
 
    # end for iel 
         
-   G_mat*=eta_ref/Ly
-   h_rhs*=eta_ref/Ly
+   G_mat*=scaling_coeff
+   h_rhs*=scaling_coeff
 
    print("     -> K (m,M) %.5e %.5e " %(np.min(K_mat),np.max(K_mat)))
    print("     -> G (m,M) %.5e %.5e " %(np.min(G_mat),np.max(G_mat)))
@@ -413,55 +457,94 @@ for iter in range(0,niter):
    ######################################################################
    start = time.time()
 
-   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-   rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-   a_mat[0:NfemV,0:NfemV]=K_mat
-   a_mat[0:NfemV,NfemV:Nfem]=G_mat
-   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+   if use_SchurComplementApproach:
 
-   rhs[0:NfemV]=f_rhs
-   rhs[NfemV:Nfem]=h_rhs
+      # convert matrices to CSR format
+      G_mat=sps.csr_matrix(G_mat)
+      K_mat=sps.csr_matrix(K_mat)
+      M_mat=sps.csr_matrix(M_mat)
 
-   print("assemble blocks: %.3f s" % (time.time() - start))
+      Res[0:NfemV]=K_mat.dot(solV)+G_mat.dot(solP)-f_rhs
+      Res[NfemV:Nfem]=G_mat.T.dot(solV)-h_rhs
 
-   #################################################################
-   # compute non-linear residual
-   #################################################################
-
-   Res=a_mat.dot(sol)-rhs
-
-   if iter==0:
-      Res0=np.max(abs(Res))
-
-   print("Nonlinear residual (inf. norm) %.7e" % (np.max(abs(Res))/Res0))
-
-   conv[iter]=np.max(abs(Res))/Res0
-
-   if np.max(abs(Res))/Res0<tol:
-      break
-
-   ######################################################################
-   # solve system
-   ######################################################################
-   start = time.time()
-
-   sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
-
-   print("solve time: %.3f s" % (time.time() - start))
-
-   ######################################################################
-   # put solution into separate x,y velocity arrays
-   ######################################################################
-   start = time.time()
-
-   u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
-   p=sol[NfemV:Nfem]*(eta_ref/Ly)
+      # declare necessary arrays
+      rvect_k=np.zeros(NfemP,dtype=np.float64) 
+      pvect_k=np.zeros(NfemP,dtype=np.float64) 
+      zvect_k=np.zeros(NfemP,dtype=np.float64) 
+      ptildevect_k=np.zeros(NfemV,dtype=np.float64) 
+      dvect_k=np.zeros(NfemV,dtype=np.float64) 
+   
+      # carry out solve
+      solP[:]=0.
+      solV=sps.linalg.spsolve(K_mat,f_rhs)
+      rvect_k=G_mat.T.dot(solV)-h_rhs
+      rvect_0=np.linalg.norm(rvect_k)
+      if use_preconditioner:
+         zvect_k=sps.linalg.spsolve(M_mat,rvect_k)
+      else:
+         zvect_k=rvect_k
+      pvect_k=zvect_k
+      for k in range (0,niter_stokes):
+          ptildevect_k=G_mat.dot(pvect_k)
+          dvect_k=sps.linalg.spsolve(K_mat,ptildevect_k)
+          alpha=(rvect_k.dot(zvect_k))/(ptildevect_k.dot(dvect_k))
+          solP+=alpha*pvect_k
+          solV-=alpha*dvect_k
+          rvect_kp1=rvect_k-alpha*G_mat.T.dot(dvect_k)
+          if use_preconditioner:
+              zvect_kp1=sps.linalg.spsolve(M_mat,rvect_kp1)
+          else:
+              zvect_kp1=rvect_kp1
+          beta=(zvect_kp1.dot(rvect_kp1))/(zvect_k.dot(rvect_k))
+          pvect_kp1=zvect_kp1+beta*pvect_k
+          rvect_k=rvect_kp1
+          pvect_k=pvect_kp1
+          zvect_k=zvect_kp1
+          xi=np.linalg.norm(rvect_k)/rvect_0
+          ls_conv_file.write("%d %6e \n"  %(k,xi))
+          print("lin.solver: %d %6e" % (k,xi))
+          if xi<solver_tolerance:
+             ls_niter_file.write("%d \n"  %(k))
+             break 
+      u,v=np.reshape(solV[0:NfemV],(nnp,2)).T
+      p=solP[0:NfemP]*scaling_coeff
+   else:
+      a_mat[:,:]=0
+      a_mat[0:NfemV,0:NfemV]=K_mat
+      a_mat[0:NfemV,NfemV:Nfem]=G_mat
+      a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+      rhs[0:NfemV]=f_rhs
+      rhs[NfemV:Nfem]=h_rhs
+      Res=a_mat.dot(sol)-rhs
+      sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+      u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
+      p=sol[NfemV:Nfem]*scaling_coeff
 
    print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
    print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
    print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
-   np.savetxt('conv.ascii',np.array(conv[0:niter]).T)
+   print("solve system: %.3f s - Nfem %d" % (time.time() - start, Nfem))
+
+   #################################################################
+   # compute non-linear residual
+   #################################################################
+
+   #np.savetxt('Res.ascii',Res,header='# x,y,u,v')
+
+   if iter==0:
+      Res0=np.max(abs(Res))
+
+   #print (iter,Res0,(np.max(abs(Res))))
+
+   print("Nonlinear residual (inf. norm) %.7e" % (np.max(abs(Res))/Res0))
+
+   conv[iter]=np.max(abs(Res))/Res0
+
+   if np.max(abs(Res))/Res0<tol_nl and iter>niter_min:
+      break
+
+   np.savetxt('nonlinear_conv.ascii',np.array(conv[0:niter]).T)
 
 #------------------------------------------------------------------------------
 # end of non-linear iterations
@@ -527,6 +610,30 @@ np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,ex
 print("compute press & sr: %.3f s" % (time.time() - start))
 
 #####################################################################
+# extracting shear bands 
+#####################################################################
+
+counter = 0
+for j in range(0,nely):
+    emaxL=0.
+    emaxR=0.
+    for i in range(0,nelx):
+        if i<=nelx/2 and e[counter]>emaxL:
+           emaxL=e[counter]
+           ilocL=counter
+        # end if
+        if i>=nelx/2 and e[counter]>emaxR:
+           emaxR=e[counter]
+           ilocR=counter
+        # end if
+        counter += 1
+    # end for i
+    shear_band_L_file.write("%6e %6e %6e \n"  % (xc[ilocL],yc[ilocL],e[ilocL]) )
+    shear_band_R_file.write("%6e %6e %6e \n"  % (xc[ilocR],yc[ilocR],e[ilocR]) )
+# end for j
+
+
+#####################################################################
 # interpolate pressure onto velocity grid points
 #####################################################################
 
@@ -570,6 +677,16 @@ vtufile.write("<CellData Scalars='scalars'>\n")
 vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%10e\n" % exx[iel])
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%10e\n" % exy[iel])
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
