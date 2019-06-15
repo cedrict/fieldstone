@@ -1,0 +1,295 @@
+\index{Advection-Diffusion}
+
+We start with the 1D advection-diffusion equation
+\begin{equation}
+\rho c_p \left( \frac{\partial T}{\partial t} 
++ u \frac{\partial T}{\partial x}
+\right)
+= \frac{\partial }{\partial x} \left( k \frac{\partial T}{\partial x}  \right)
++H
+\end{equation}
+This is the {\color{olive}strong form} of the ODE to solve.
+As in the previous section, I multiply this equation by a function $f(x)$ and integrate it over 
+the domain $\Omega$:
+\[
+\int_{\Omega} f(x)  \rho c_p\frac{\partial T}{\partial t} dx
++
+\int_{\Omega} f(x)  \rho c_p u \frac{\partial T}{\partial x} dx
+\!=\!
+\int_{\Omega} f(x) \frac{\partial }{\partial x}\! \left(\! k\! \frac{\partial T}{\partial x}\!  \right)\! dx
++
+\int_{\Omega} f(x) H dx 
+\]
+As in the previous section I integrate the r.h.s. by parts:
+\[
+\int_{\Omega} f(x) \frac{\partial }{\partial x} \left( k \frac{\partial T}{\partial x}  \right) dx
+=
+\left[
+f(x) k \frac{\partial T}{\partial x}
+\right]_{\partial \Omega}
+-
+\int_{\Omega} \frac{\partial f}{\partial x}  k \frac{\partial T}{\partial x}  dx
+\]
+Disregarding the boundary term for now, 
+we then obtain the {\color{olive}weak form} of the diffusion equation in 1D:
+\[
+\boxed{
+\int_{\Omega} f(x) \rho c_p \frac{\partial T}{\partial t} dx
++
+\int_{\Omega} f(x)  \rho c_p u \frac{\partial T}{\partial x} dx
++
+\int_{\Omega} \frac{\partial f}{\partial x}  k \frac{\partial T}{\partial x}  dx = 
+\int_{\Omega} f(x) H dx 
+}
+\]
+
+We then use the additive property of the integral $\int_\Omega \dots = \sum_{elts} \int_{\Omega_e} \dots$
+\[
+\sum_{elts} \left(     
+\underbrace{ \int_{\Omega_e} f(x) \rho c_p   \frac{\partial T}{\partial t} dx }_{{\Lambda}_f^e}
++
+\underbrace{  \int_{\Omega_e} f(x)  \rho c_p u \frac{\partial T}{\partial x} dx  }_{{\Sigma}_f^e}
++
+\underbrace{\int_{\Omega_e} \frac{\partial f}{\partial x}  k \frac{\partial T}{\partial x}  dx}_{{\Upsilon}_f^e}    
+- 
+\underbrace{\int_{\Omega_e} f(x) H dx }_{{\Omega}_f^e}
+  \right) = 0  
+\]
+
+In the element, we have seen that the temperature can be written:
+
+\[
+T(x) 
+= N^\theta_{k}(x) T_k + N^\theta_{k+1}(x) T_{k+1}  
+\]
+In the previous presentation we have computed  ${\Lambda}_f^e$ and ${\Upsilon}_f^e$.
+Let us now turn to ${\Sigma}_f^e$ and ${\Omega}_f^e$.
+
+\begin{eqnarray}
+{\Sigma}_f^e 
+&=&\int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial T}{\partial x} dx \nn\\
+&=&\int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial [ N_{k}(x) {T}_k + N_{k+1}(x) {T}_{k+1} ] }{\partial x} dx \nn\\
+&=&\int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial  N_{k} }{\partial x} T_k dx 
++  \int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial  N_{k+1} }{\partial x} T_{k+1} dx \nn\\
+&=& \left(  \int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial  N_{k} }{\partial x} dx \right) T_k 
++ \left( \int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial  N_{k+1} }{\partial x} dx \right)T_{k+1}  \nn
+%&=&  \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho c_p \;\;  [ {\color{blue}N}_{k}(x) \dot{T}_k + {\color{blue}N}_{k+1}(x) \dot{T}_{k+1} ] \;\; dx  \nn\\
+%&=&  \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho c_p {\color{blue}N}_{k}(x) \dot{T}_k  dx  + \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho c_p {\color{blue}N}_{k+1}(x) \dot{T}_{k+1}   dx \nn\\
+%&=&  \left( \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho c_p  {\color{blue}N}_{k}(x) dx \right) \dot{T}_k  
+%+ \left( \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho c_p {\color{blue}N}_{k+1}(x) dx \right)  \dot{T}_{k+1}  \nn
+\end{eqnarray}
+
+Taking $f(x)=N_k(x)$ and omitting '$(x)$' in the rhs:
+\[
+{\Sigma}_{N_k}^e=
+\left( \int_{x_k}^{x_{k+1}} \rho c_p u N_k \frac{\partial  N_{k} }{\partial x} dx \right) T_k 
++ 
+\left( \int_{x_k}^{x_{k+1}} \rho c_p u N_k \frac{\partial  N_{k+1} }{\partial x} dx \right)T_{k+1}  \nn
+\]
+Taking $f(x)=N_{k+1}(x)$ and omitting '$(x)$' in the rhs:
+\[
+{\Sigma}_{N_{k+1}}^e=
+\left( \int_{x_k}^{x_{k+1}} \rho c_p u N_{k+1} \frac{\partial  N_{k} }{\partial x} dx \right) T_k + 
+\left( \int_{x_k}^{x_{k+1}} \rho c_p u N_{k+1} \frac{\partial  N_{k+1} }{\partial x} dx \right)T_{k+1}  \nn
+\]
+
+
+
+\[
+\left(
+\begin{array}{c}
+{\Sigma}_{N_k}  \\ \\ {\Sigma}_{N_{k+1}}
+\end{array}
+\right)
+\!=\!
+\left(
+\begin{array}{cc}
+\int_{x_k}^{x_{k+1}} \rho c_p u N_k \frac{\partial  N_{k} }{\partial x} dx  & 
+\int_{x_k}^{x_{k+1}} \rho c_p u N_k \frac{\partial  N_{k+1} }{\partial x} dx \\ \\
+\int_{x_k}^{x_{k+1}} \rho c_p u N_{k+1} \frac{\partial  N_{k} }{\partial x} dx  & 
+\int_{x_k}^{x_{k+1}} \rho c_p u N_{k+1} \frac{\partial  N_{k+1} }{\partial x} dx 
+\end{array}
+\right)
+\!\cdot\!
+\left(
+\begin{array}{c}
+{T}_k \\ \\
+{T}_{k+1}
+\end{array}
+\right)
+\]
+or,
+\[
+\left(
+\begin{array}{c}
+{\Sigma}_{N_k} \\ \\ {\Sigma}_{N_{k+1}}
+\end{array}
+\right)
+\!=\!
+\left[
+\int_{x_k}^{x_{k+1}}
+\rho c_p u
+\left(
+\begin{array}{cc}
+N_k \frac{\partial     N_{k} }{\partial x}   & 
+N_k \frac{\partial     N_{k+1} }{\partial x}  \\ \\
+N_{k+1} \frac{\partial N_{k} }{\partial x}   & 
+N_{k+1} \frac{\partial N_{k+1} }{\partial x} 
+\end{array}
+\right)
+dx
+\right]
+\cdot
+\left(
+\begin{array}{c}
+{T}_k \\ \\ 
+{T}_{k+1}
+\end{array}
+\right)
+\]
+
+Finally, we have already defined the vectors 
+\[
+{\vec N}^T = 
+\left(
+\begin{array}{c}
+N_k(x)  \\ \\  N_{k+1} (x)
+\end{array}
+\right)
+\quad\quad
+{\vec B}^T=
+\left(
+\begin{array}{cc}
+ \frac{\partial N_k}{\partial x}   \\ \\
+ \frac{\partial N_{k+1}}{\partial x}
+\end{array}
+\right)
+\quad
+\quad
+{\vec T}^e = 
+\left(
+\begin{array}{c}
+T_k \\ \\ T_{k+1}
+\end{array}
+\right)
+\]
+so that 
+\[
+\left(
+\begin{array}{c}
+{\Sigma}_{N_k} \\  \\ {\Sigma}_{N_{k+1}}
+\end{array}
+\right)
+=
+\left( \int_{x_k}^{x_{k+1}}   {\vec N}^T \rho c_p u {\vec B} dx  \right) \cdot {\vec T}^e
+= {\bm K}_a \cdot \vec T^e
+\]
+One can easily show that 
+\[
+{\bm K}_a^e=
+\rho c_p u
+\left(
+\begin{array}{cc}
+-1/2 & 1/2 \\ \\
+-1/2 & 1/2 
+\end{array}
+\right)
+\]
+Note that the matrix ${\bm K}_a^e$ is {\sl not} symmetric. 
+
+Let us now look at the source term:
+\begin{eqnarray}
+{\Omega}_f^e &=&
+\int_{x_k}^{x^{k+1}} f(x) H(x) dx \nn
+\end{eqnarray}
+Taking $f(x)=N_k(x)$ 
+\[
+{\Omega}_{N_k}=
+\int_{x_k}^{x^{k+1}} N_k(x) H(x) dx \nn
+\]
+Taking $f(x)=N_{k+1}(x)$ 
+\[
+{\Omega}_{N_{k+1}}=
+\int_{x_k}^{x^{k+1}} N_{k+1}(x) H(x) dx \nn
+\]
+We can rearrange both equations as follows:
+\[
+\left(
+\begin{array}{cc}
+ {\Omega}_{N_k} \\ \\ {\Omega}_{N_{k+1}}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\int_{x_k}^{x^{k+1}} N_k(x) H(x) dx \nn \\ \\ 
+\int_{x_k}^{x^{k+1}} N_{k+1}(x) H(x) dx \nn
+\end{array}
+\right)
+\]
+or,
+\[
+\left(
+\begin{array}{cc}
+ {\Omega}_{N_k} \\ \\ {\Omega}_{N_{k+1}}
+\end{array}
+\right)
+=
+\left[
+\int_{x_k}^{x^{k+1}}
+\left(
+\begin{array}{cc}
+N_k(x)  H(x)  \nn \\ \\ 
+N_{k+1}(x) H(x)  \nn
+\end{array}
+\right)
+dx
+\right]
+\]
+so that 
+\[
+\left(
+\begin{array}{cc}
+ {\Omega}_{N_k} \\ \\ {\Omega}_{N_{k+1}}
+\end{array}
+\right)
+=
+\left(
+\int_{x_k}^{x^{k+1}}
+{\vec N}^T H(x) dx
+\right)
+\]
+
+The weak form discretised over 1 element becomes
+\begin{eqnarray}
+&&\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec N}^T \rho c_p {\bm N} dx  \right) }_{\bm M^e} \cdot \dot{\vec T}^e
++
+\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec N}^T \rho c_p u {\bm B} dx  \right)}_{{\bm K}_a^e} \cdot {\vec T}^e 
+ +
+\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec B}^T k {\bm B} dx  \right)}_{{\bm K}_d^e} \cdot {\vec T}^e 
+=
+\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec N}^T H(x) dx \right)}_{{\vec F}^e} \nn 
+\end{eqnarray}
+or,
+\[
+\boxed{
+{\bm M}^e \cdot \dot{\vec T}^e + ({\bm K}_d^e + {\bm K}_a^e)\cdot {\vec T}^e = {\vec F}^e
+}
+\]
+or,
+\[
+\boxed{
+{\bm M}^e \cdot \frac{\partial {\vec T}^e}{\partial t} + ({\bm K}_a^e + {\bm K}_d^e) \cdot {\vec T}^e = {\vec F}^e
+}
+\]
+
+
+
+
+
+
+
+
+
+
+
