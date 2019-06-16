@@ -78,7 +78,7 @@ is reported to be somewhere between 10 and 20 $mW/m^2$ in \cite[table 7.1]{jama}
 
 
 %-----------------------------------------------------
-\subsection{Single layer with imposed heat flux b.c.}
+\subsubsection{Single layer with imposed heat flux b.c.}
 
 Let us now assume that heat fluxes are imposed at the top and bottom of the layer:
 \begin{center} 
@@ -101,7 +101,7 @@ $q=k(dT/dy)|_{y=y_t} = q_t$ so that
 
  
 %-----------------------------------------------------
-\subsection{Single layer with imposed heat flux and temperature b.c. }
+\subsubsection{Single layer with imposed heat flux and temperature b.c. }
 
 \begin{center}
 \includegraphics[width=5cm]{images/initial_temperature/tempcond3.png}
@@ -119,7 +119,99 @@ $q=k(dT/dy)|_{y=y_t} = q_t$ so that
 %---------------------------------------------------------------
 \subsubsection{McKenzie slab}
 
-\todo[inline]{BSc: create mckenzie slab temperature setup}
+When doing thermo-mechanical modelling, the initial temperature
+field in the domain is of prime importance. This is 
+especially true for the temperature in the slab for subduction 
+modelling as its rheological behaviour is strongly temperature-dependent. 
+One could easily design a simple geometrical initial field but it is 
+unlikely to be close to the field of a slowly subducting slab at an angle 
+in a hot mantle. 
+
+McKenzie \cite{mcke69} derived such approximate initial field from the 
+steady-state energy equation in two dimensions:
+\[
+\rho c_p \vec v \cdot \vec\nabla T = k \vec\nabla^2 T
+\]
+We denote by $T_l$ the temperature at the base of the lithosphere
+and $l$ its thickness (i.e. the thickness of the slab).
+
+Assuming $\vec v=(v_x,0)$ yields
+\[
+\rho c_p v_x \frac{\partial T}{\partial x} = k \frac{\partial^2 T}{\partial x^2}
+\]
+and substitution of $T'=T/T_l$, $x'=x/l$ and $z'=z/l\in[0,1]$ in this equation leads to
+\[
+\rho c_p v_x \frac{T_l}{l}\frac{\partial T'}{\partial x'} = k \frac{T_l}{l^2}
+\left( \frac{\partial^2 T'}{\partial x'^2}
++ \frac{\partial^2 T'}{\partial z'^2} \right)
+\]
+or 
+\[
+\frac{\rho c_p v_x l }{k}\frac{\partial T'}{\partial x'} = 
+\frac{\partial^2 T'}{\partial x'^2}
++ \frac{\partial^2 T'}{\partial z'^2} 
+\]
+and finally (see Eq. 2.3 of \cite{mcke69}): 
+\[
+\frac{\partial^2 T'}{\partial x'^2}
+- 2 R \frac{\partial T'}{\partial x'} 
++ \frac{\partial^2 T'}{\partial z'^2} =0
+\]
+where $R$ is the thermal Reynolds number
+\[
+R=\frac{\rho c_p v_x l}{2 k}
+\] 
+The general solution to this PDE with $T'=1$ on the top, left and right boundary is 
+\[
+T'(x',z')= 1 + \sum_n C_n \exp \left[ \left( R-(R^2+n^2\pi^2)^{1/2} \right) x' \right] \sin (n \pi z')
+\]
+We now must make an assumption about the temperature on the left boundary ($x'=0$), 
+which is the temperature of the lithosphere. 
+For simplicity McKenzie assumes that $T'(x'=0,z')=1-z'$ so that $C_n=2(-1)^n/n\pi$ and finally
+\begin{equation}
+\boxed{
+T'(x',z')= 1 + 2\sum_n \frac{(-1)^n}{n \pi} \exp \left[ \left( R-(R^2+n^2\pi^2)^{1/2} \right) x' \right] \sin (n \pi z')
+}
+\end{equation}
+
+Let us build a simple temperature model for a $250\text{km}\times 50\text{km}$ slab, 
+with $\rho=3000$, $c_p=1250$, $k=3$. The python code is available in {\tt images/mckenzie/mckenzie1.py}.
+
+\begin{center}
+\includegraphics[width=0.32\textwidth]{images/mckenzie/temperature_vel0p5.pdf}
+\includegraphics[width=0.32\textwidth]{images/mckenzie/temperature_vel1.pdf}
+\includegraphics[width=0.32\textwidth]{images/mckenzie/temperature_vel2.pdf}\\
+{\small Left to right: Dimensionless temperature $T'$ in a $250\text{km}\times 50\text{km}$ slab 
+for $v_x={0.5,1,2}\text{cm/year}$}
+\end{center}
+
+We logically recover the fact that the slower the slab penetrates the mantle the more 
+temperature diffusion dominates over temperature advection. For $v=0.5\text{cm/year}$ we see that 
+that the slab assumes a constant temperature $T'=1$ at all depthes $0\leq z' \leq 1$ for 
+$x'\geq 125\text{km}$. 
+
+Note that this field is a steady-state field, valid for a constant density, heat conductivity and 
+heat capacity, zero heat production, that it implies that the velocity is constant and that the 
+lithosphere temperature is linear. 
+
+One can also embed the slab in a more realistic context, a subduction zone, involving a 
+subducting lithosphere, an over-riding plate and a mantle. The domain is $1000\text{km}\times 250\text{km}$.
+The mantle temperature is set to $1300\degree$. The slab dip can be varied and so can the 
+velocity. The python code is available in {\tt images/mckenzie/mckenzie2.py}.
+
+\begin{center}
+\includegraphics[width=0.32\textwidth]{images/mckenzie/temperature2_vel0p5_phi30.pdf}
+\includegraphics[width=0.32\textwidth]{images/mckenzie/temperature2_vel1_phi30.pdf}
+\includegraphics[width=0.32\textwidth]{images/mckenzie/temperature2_vel2_phi30.pdf}\\
+{\small Left to right: temperature $T$ for $v_x={0.5,1,2}\text{cm/year}$ and $\phi=30\degree$.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.32\textwidth]{images/mckenzie/temperature2_vel1_phi15.pdf}
+\includegraphics[width=0.32\textwidth]{images/mckenzie/temperature2_vel1_phi30.pdf}
+\includegraphics[width=0.32\textwidth]{images/mckenzie/temperature2_vel1_phi45.pdf}\\
+{\small Left to right: temperature $T$ for $v_x=1\text{cm/year}$ and $\phi={15,30,45}\degree$.}
+\end{center}
 
 
 
@@ -127,5 +219,45 @@ $q=k(dT/dy)|_{y=y_t} = q_t$ so that
 
 
 
+
+
+%\newpage
+
+%From \cite{mcke70}, Eq. 26:
+%\[
+%T(r_0) = \theta_1 \exp \left(  \frac{\alpha g}{c_p} (r_1-r_0) \right)
+%\]
+%where $\theta_1$ is the potential temperature of any piece of the mantle 
+%at the earth's surface.
+%If $x$ is measured from a depth equal to the thickness of the lithosphere down the
+%dip of the slab and $z$ is measured along the normal to the slab from its lower 
+%surface, then the dimensionless potential temperature in the slab is 
+%\begin{eqnarray}
+%\theta'(x',z')
+%&=& 1+2\frac{\theta_1-273}{\theta_1} \sum_{n=1}^\infty \frac{(-1)^n}{n \pi}
+%\exp \left[ \left( R-(R^2+n^2\pi^2)^{1/2} \right) x' \right] \sin n\pi z' \\
+%&=& \frac{1}{\theta_1} \left\{ \theta_1+ 2 (\theta_1-273) \sum_{n=1}^\infty \frac{(-1)^n}{n \pi}
+%\exp \left[ \left( R-(R^2+n^2\pi^2)^{1/2} \right) x' \right] \sin n\pi z' \right\}
+%\end{eqnarray}
+%where $\theta' = \theta/\theta_1$, $x'=x/l$, $z'=z/l$ and 
+%with $l$ the thickness of the slab and $v$ its velocity measured down its dip.
+%We denote by $\phi$ the dip of the slab so that the depth below the surface $r_1-r_0$ is given by
+%$l (x' \sin \phi-z' \cos\phi)$ so that 
+%\[
+%T(r_0) = \theta_1 \exp \left(  \frac{\alpha g}{c_p} l (x' \sin \phi-z' \cos\phi) \right)
+%\]
+%The dimensionless scale height $h'$ is defined by $h'=c_p/\alpha g l$ so that
+%\[
+%T(r_0) = \theta_1 \exp \left[  (x' \sin \phi-z' \cos\phi)/h' \right]
+%\]
+
+%Finally,
+%\[
+%T(x',z')=\exp \left[  (x' \sin \phi-z' \cos\phi)/h' \right] 
+%\left\{ \theta_1+ 2 (\theta_1-273) \sum_{n=1}^\infty \frac{(-1)^n}{n \pi}
+%\exp \left[ \left( R-(R^2+n^2\pi^2)^{1/2} \right) x' \right] \sin n\pi z' \right\}
+%\]
+
+%\todo[inline]{BSc: create mckenzie slab temperature setup}
 
 

@@ -99,35 +99,35 @@ Let us compute ${\Lambda}_f^e$ and ${\Upsilon}_f^e$ separately.
 &=& \int_{x_k}^{x_{k+1}} f(x) \rho c_p \;\;  [ N_{k}^\theta(x) \dot{T}_k + N_{k+1}^\theta(x) \dot{T}_{k+1} ] \;\; dx  \nn\\
 &=& \int_{x_k}^{x_{k+1}} f(x) \rho c_p N_{k}^\theta(x) \dot{T}_k  dx  
 + \int_{x_k}^{x_{k+1}} f(x) \rho c_p N_{k+1}^\theta(x) \dot{T}_{k+1}   dx \nn\\
-&=&  \left( \int_{x_k}^{x_{k+1}} f(x) \rho c_p  N_{k}(x) dx \right) \dot{T}_k  
-+ \left( \int_{x_k}^{x_{k+1}} f(x) \rho c_p N_{k+1}(x) dx \right)  \dot{T}_{k+1}  \nn
+&=&  \left( \int_{x_k}^{x_{k+1}} f(x) \rho c_p  N_{k}^\theta(x) dx \right) \dot{T}_k  
++ \left( \int_{x_k}^{x_{k+1}} f(x) \rho c_p N_{k+1}^\theta(x) dx \right)  \dot{T}_{k+1}  \nn
 \end{eqnarray}
-Taking $f(x)=N_k(x)$ and omitting '$(x)$' in the rhs:
+Taking $f(x)=N_k^\theta(x)$ and omitting '$(x)$' in the rhs:
 \[
-{\Lambda}_{N_k}^e=
+{\Lambda}_{N_k^\theta}^e=
 %\int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho c_p \dot{\color{blue}T}(x) dx
-\left( \int_{x_k}^{x_{k+1}} \rho c_p  N_k N_{k} dx \right) \dot{T}_k  
-+ \left( \int_{x_k}^{x_{k+1}} \rho c_p N_k N_{k+1} dx \right)  \dot{T}_{k+1} 
+\left( \int_{x_k}^{x_{k+1}} \rho c_p  N_k^\theta N_{k}^\theta dx \right) \dot{T}_k  
++ \left( \int_{x_k}^{x_{k+1}} \rho c_p N_k^\theta N_{k+1}^\theta dx \right)  \dot{T}_{k+1} 
 \]
-Taking $f(x)=N_{k+1}(x)$ and omitting '$(x)$' in the rhs:
+Taking $f(x)=N_{k+1}^\theta(x)$ and omitting '$(x)$' in the rhs:
 \[
-{\Lambda}_{N_{k+1}}^e
+{\Lambda}_{N_{k+1}^\theta}^e
 %\int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \dot{\color{blue}T}(x) dx
-=  \left( \int_{x_k}^{x_{k+1}} \rho c_p N_{k+1} N_{k} dx \right) \dot{T}_k  
-+ \left( \int_{x_k}^{x_{k+1}}  \rho c_p  N_{k+1} N_{k+1} dx \right)  \dot{T}_{k+1} 
+=  \left( \int_{x_k}^{x_{k+1}} \rho c_p N_{k+1}^\theta N_{k}^\theta dx \right) \dot{T}_k  
++ \left( \int_{x_k}^{x_{k+1}}  \rho c_p  N_{k+1}^\theta N_{k+1}^\theta dx \right)  \dot{T}_{k+1} 
 \]
 We can rearrange these last two equations as follows:
 \[
 \left(
 \begin{array}{c}
-{\Lambda}_{N_k}^e  \\ \\ {\Lambda}_{N_{k+1}}^e
+{\Lambda}_{N_k^\theta}^e  \\ \\ {\Lambda}_{N_{k+1}^\theta}^e
 \end{array}
 \right)
 =
 \left(
 \begin{array}{cc}
-\int_{x_k}^{x_{k+1}} N_k     \rho c_p N_{k} dx  &  \int_{x_k}^{x_{k+1}} N_k  \rho c_p N_{k+1} dx \\ \\
-\int_{x_k}^{x_{k+1}} N_{k+1} \rho c_p N_{k} dx  &  \int_{x_k}^{x_{k+1}} N_{k+1} \rho c_p N_{k+1} dx 
+\int_{x_k}^{x_{k+1}} N_k^\theta     \rho c_p N_{k}^\theta dx  &  \int_{x_k}^{x_{k+1}} N_k^\theta  \rho c_p N_{k+1}^\theta dx \\ \\
+\int_{x_k}^{x_{k+1}} N_{k+1}^\theta \rho c_p N_{k}^\theta dx  &  \int_{x_k}^{x_{k+1}} N_{k+1}^\theta \rho c_p N_{k+1}^\theta dx 
 \end{array}
 \right)
 \cdot
@@ -142,7 +142,7 @@ and we can take the integrals outside of the matrix:
 \[
 \left(
 \begin{array}{c}
-{\Lambda}_{N_k}^e \\ \\ {\Lambda}_{N_{k+1}}^e
+{\Lambda}_{N_k^\theta}^e \\ \\ {\Lambda}_{N_{k+1}^\theta}^e
 \end{array}
 \right)
 =
@@ -151,8 +151,8 @@ and we can take the integrals outside of the matrix:
 \rho c_p
 \left(
 \begin{array}{cc}
-N_k N_{k}     &  N_k N_{k+1}  \\ \\
-N_{k+1} N_{k} &  N_{k+1} N_{k+1} 
+N_k^\theta N_{k}^\theta     &  N_k^\theta N_{k+1}^\theta  \\ \\
+N_{k+1}^\theta N_{k}^\theta &  N_{k+1}^\theta N_{k+1}^\theta 
 \end{array}
 \right)
 dx
@@ -170,7 +170,7 @@ Finally, we can define the vectors
 {\vec N}^T = 
 \left(
 \begin{array}{c}
-N_k(x)  \\ \\  N_{k+1} (x)
+N_k^\theta(x)  \\ \\  N_{k+1}^\theta (x)
 \end{array}
 \right)
 \]
@@ -198,7 +198,7 @@ so that
 \[
 \left(
 \begin{array}{c}
-{\Lambda}_{N_k}^e \\  \\ {\Lambda}_{N_{k+1}}^e
+{\Lambda}_{N_k^\theta}^e \\  \\ {\Lambda}_{N_{k+1}^\theta}^e
 \end{array}
 \right)
 =
@@ -211,45 +211,45 @@ Back to the diffusion term:
 {\Upsilon}_f^e &=&
 \int_{x_k}^{x^{k+1}} \frac{\partial f}{\partial x} k \frac{\partial T}{\partial x} dx \nn\\
 &=&
-\int_{x_k}^{x^{k+1}} \frac{\partial f}{\partial x} k \frac{\partial  (N_{k}(x) T_k + N_{k+1}(x) T_{k+1} ) }{\partial x} dx  \nn\\
+\int_{x_k}^{x^{k+1}} \frac{\partial f}{\partial x} k \frac{\partial  (N_{k}^\theta(x) T_k + N_{k+1}^\theta(x) T_{k+1} ) }{\partial x} dx  \nn\\
 %&=&
 %\int_{x_k}^{x^{k+1}} \left( \frac{\partial {\color{blue}f}}{\partial x}  \frac{\partial  {\color{blue}N}_{k} } {\partial x}  T_k 
 %+ \frac{\partial {\color{blue}f}}{\partial x}  \frac{\partial  {\color{blue}N}_{k+1} } {\partial x}  T_{k+1} \right)  dx \nn\\
 &=&
-\left( \int_{x_k}^{x^{k+1}} \frac{\partial f}{\partial x}  k \frac{\partial  N_{k} } {\partial x}  dx \right)  T_k 
-+ \left( \int_{x_k}^{x^{k+1}} \frac{\partial f}{\partial x}  k \frac{\partial  N_{k+1} } {\partial x} dx \right) T_{k+1}  \nn
+\left( \int_{x_k}^{x^{k+1}} \frac{\partial f}{\partial x}  k \frac{\partial  N_{k}^\theta } {\partial x}  dx \right)  T_k 
++ \left( \int_{x_k}^{x^{k+1}} \frac{\partial f}{\partial x}  k \frac{\partial  N_{k+1}^\theta } {\partial x} dx \right) T_{k+1}  \nn
 \end{eqnarray}
-Taking $f(x)=N_k(x)$ 
+Taking $f(x)=N_k^\theta(x)$ 
 \[
-{\Upsilon}_{N_k}^e=
+{\Upsilon}_{N_k^\theta}^e=
 %\int_{x_k}^{x^{k+1}} \frac{\partial {\color{blue}f}}{\partial x} \frac{\partial {\color{blue}T}}{\partial x} dx
-\left( \int_{x_k}^{x^{k+1}} k\frac{\partial N_k}{\partial x}  \frac{\partial  N_{k} } {\partial x}  dx \right)  T_k 
-+ \left( \int_{x_k}^{x^{k+1}} k \frac{\partial N_k}{\partial x}  \frac{\partial  N_{k+1} } {\partial x} dx \right) T_{k+1}  \nn
+\left( \int_{x_k}^{x^{k+1}} k\frac{\partial N_k^\theta}{\partial x}  \frac{\partial  N_{k}^\theta } {\partial x}  dx \right)  T_k 
++ \left( \int_{x_k}^{x^{k+1}} k \frac{\partial N_k^\theta}{\partial x}  \frac{\partial  N_{k+1}^\theta } {\partial x} dx \right) T_{k+1}  \nn
 \]
-Taking $f(x)=N_{k+1}(x)$ 
+Taking $f(x)=N_{k+1}^\theta(x)$ 
 \[
-{\Upsilon}_{N_{k+1}}^e=
+{\Upsilon}_{N_{k+1}^\theta}^e=
 %\int_{x_k}^{x^{k+1}} \frac{\partial {\color{blue}f}}{\partial x} \frac{\partial {\color{blue}T}}{\partial x} dx
 %=
-\left( \int_{x_k}^{x^{k+1}} k\frac{\partial N_{k+1}}{\partial x}  \frac{\partial  N_{k} } {\partial x}  dx \right)  T_k 
-+ \left( \int_{x_k}^{x^{k+1}}  k\frac{\partial N_{k+1}}{\partial x}  \frac{\partial  N_{k+1} } {\partial x} dx \right) T_{k+1}  \nn
+\left( \int_{x_k}^{x^{k+1}} k\frac{\partial N_{k+1}^\theta}{\partial x}  \frac{\partial  N_{k}^\theta } {\partial x}  dx \right)  T_k 
++ \left( \int_{x_k}^{x^{k+1}}  k\frac{\partial N_{k+1}^\theta}{\partial x}  \frac{\partial  N_{k+1}^\theta } {\partial x} dx \right) T_{k+1}  \nn
 \]
 
 
 \[
 \left(
 \begin{array}{cc}
- {\Upsilon}_{N_k}^e \\ \\ {\Upsilon}_{N_{k+1}}^e
+ {\Upsilon}_{N_k^\theta}^e \\ \\ {\Upsilon}_{N_{k+1}^\theta}^e
 \end{array}
 \right)
 =
 \left(
 \begin{array}{cc}
-\int_{x_k}^{x^{k+1}} \frac{\partial N_k}{\partial x} k \frac{\partial  N_{k} } {\partial x}  dx & 
-\int_{x_k}^{x^{k+1}} \frac{\partial N_k}{\partial x} k \frac{\partial  N_{k+1} } {\partial x} dx 
+\int_{x_k}^{x^{k+1}} \frac{\partial N_k^\theta}{\partial x} k \frac{\partial  N_{k}^\theta } {\partial x}  dx & 
+\int_{x_k}^{x^{k+1}} \frac{\partial N_k^\theta}{\partial x} k \frac{\partial  N_{k+1}^\theta } {\partial x} dx 
 \\ \\
-\int_{x_k}^{x^{k+1}} \frac{\partial N_{k+1}}{\partial x} k \frac{\partial  N_{k} } {\partial x}  dx & 
-\int_{x_k}^{x^{k+1}} \frac{\partial N_{k+1}}{\partial x} k \frac{\partial  N_{k+1} } {\partial x} dx 
+\int_{x_k}^{x^{k+1}} \frac{\partial N_{k+1}^\theta}{\partial x} k \frac{\partial  N_{k}^\theta } {\partial x}  dx & 
+\int_{x_k}^{x^{k+1}} \frac{\partial N_{k+1}^\theta}{\partial x} k \frac{\partial  N_{k+1}^\theta } {\partial x} dx 
 \end{array}
 \right)
 \cdot
@@ -264,7 +264,7 @@ or,
 \[
 \left(
 \begin{array}{cc}
- {\Upsilon}_{N_k}^e \\ \\ {\Upsilon}_{N_{k+1}}^e
+ {\Upsilon}_{N_k^\theta}^e \\ \\ {\Upsilon}_{N_{k+1}^\theta}^e
 \end{array}
 \right)
 =
@@ -273,11 +273,11 @@ or,
 k
 \left(
 \begin{array}{cc}
-\frac{\partial N_k}{\partial x}  \frac{\partial  N_{k} } {\partial x}   & 
-\frac{\partial N_k}{\partial x}  \frac{\partial  N_{k+1} } {\partial x}  
+\frac{\partial N_k^\theta}{\partial x}  \frac{\partial  N_{k}^\theta } {\partial x}   & 
+\frac{\partial N_k^\theta}{\partial x}  \frac{\partial  N_{k+1}^\theta } {\partial x}  
 \\ \\
-\frac{\partial N_{k+1}}{\partial x}  \frac{\partial  N_{k} } {\partial x}   & 
-\frac{\partial N_{k+1}}{\partial x}  \frac{\partial  N_{k+1} } {\partial x}  
+\frac{\partial N_{k+1}^\theta}{\partial x}  \frac{\partial  N_{k}^\theta } {\partial x}   & 
+\frac{\partial N_{k+1}^\theta}{\partial x}  \frac{\partial  N_{k+1}^\theta } {\partial x}  
 \end{array}
 \right)
 dx
@@ -294,8 +294,8 @@ Finally, we can define the vector
 {\vec B}^T=
 \left(
 \begin{array}{cc}
- \frac{\partial N_k}{\partial x}   \\ \\
- \frac{\partial N_{k+1}}{\partial x}
+ \frac{\partial N_k^\theta}{\partial x}   \\ \\
+ \frac{\partial N_{k+1}^\theta}{\partial x}
 \end{array}
 \right)
 \]
@@ -303,7 +303,7 @@ so that
 \[
 \left(
 \begin{array}{cc}
- {\Upsilon}_{N_k}^e \\ \\ {\Upsilon}_{N_{k+1}}^e
+ {\Upsilon}_{N_k^\theta}^e \\ \\ {\Upsilon}_{N_{k+1}^\theta}^e
 \end{array}
 \right)
 =
@@ -385,15 +385,15 @@ M_{21} & M_{22}
 =
 \left(
 \begin{array}{cc}
-\int_{x_k}^{x_{k+1}} \rho c_p N_k N_{k} dx   &  \int_{x_k}^{x_{k+1}} \rho c_p N_k N_{k+1} dx \\ \\
-\int_{x_k}^{x_{k+1}} \rho c_p N_{k+1} N_{k} dx  &  \int_{x_k}^{x_{k+1}} \rho c_p N_{k+1} N_{k+1} dx 
+\int_{x_k}^{x_{k+1}} \rho c_p N_k^\theta N_{k}^\theta dx   &  \int_{x_k}^{x_{k+1}} \rho c_p N_k^\theta N_{k+1}^\theta dx \\ \\
+\int_{x_k}^{x_{k+1}} \rho c_p N_{k+1}^\theta N_{k}^\theta dx  &  \int_{x_k}^{x_{k+1}} \rho c_p N_{k+1}^\theta N_{k+1}^\theta dx 
 \end{array}
 \right)
 \]
 I only need to compute 3 integrals since $M_{12}=M_{21}$.
 Let us start with $M_{11}$:
 \[
-M_{11}=\int_{x_k}^{x_{k+1}} \rho c_p N_k(x) N_{k}(x) dx
+M_{11}=\int_{x_k}^{x_{k+1}} \rho c_p N_k^\theta(x) N_{k}^\theta(x) dx
 =   
 \int_{x_k}^{x_{k+1}} \rho c_p 
 \frac{x_{k+1}-x}{h_x}  
@@ -467,36 +467,36 @@ Finally
 
 In the new coordinate system, the {\color{olive}shape functions} 
 \[
-N_k(x) = \frac{x_{k+1}-x}{h_x} 
+N_k^\theta(x) = \frac{x_{k+1}-x}{h_x} 
 \quad
 \quad
 \quad
-N_{k+1}(x) = \frac{x-x_k}{h_x} 
+N_{k+1}^\theta(x) = \frac{x-x_k}{h_x} 
 \]
 become 
 \[
-N_k(r) = \frac{1}{2} (1-r)
+N_k^\theta(r) = \frac{1}{2} (1-r)
 \quad
 \quad
 \quad
-N_{k+1}(r) = \frac{1}{2} (1+r)
+N_{k+1}^\theta(r) = \frac{1}{2} (1+r)
 \]
 
 Also, 
 \[
-\frac{\partial N_k}{\partial x} = - \frac{1}{h_x} 
+\frac{\partial N_k^\theta}{\partial x} = - \frac{1}{h_x} 
 \quad
 \quad
 \quad
-\frac{\partial N_{k+1}}{\partial x} = \frac{1}{h_x} 
+\frac{\partial N_{k+1}^\theta}{\partial x} = \frac{1}{h_x} 
 \]
 so that 
 \[
 {\vec B}^T=
 \left(
 \begin{array}{cc}
- \frac{\partial N_k}{\partial x}   \\ \\
- \frac{\partial N_{k+1}}{\partial x}
+ \frac{\partial N_k^\theta}{\partial x}   \\ \\
+ \frac{\partial N_{k+1}^\theta}{\partial x}
 \end{array}
 \right)
 =

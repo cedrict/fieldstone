@@ -68,29 +68,29 @@ Let us now turn to ${\Sigma}_f^e$ and ${\Omega}_f^e$.
 \begin{eqnarray}
 {\Sigma}_f^e 
 &=&\int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial T}{\partial x} dx \nn\\
-&=&\int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial [ N_{k}(x) {T}_k + N_{k+1}(x) {T}_{k+1} ] }{\partial x} dx \nn\\
-&=&\int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial  N_{k} }{\partial x} T_k dx 
-+  \int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial  N_{k+1} }{\partial x} T_{k+1} dx \nn\\
-&=& \left(  \int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial  N_{k} }{\partial x} dx \right) T_k 
-+ \left( \int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial  N_{k+1} }{\partial x} dx \right)T_{k+1}  \nn
+&=&\int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial [ N_{k}^\theta(x) {T}_k + N_{k+1}^\theta(x) {T}_{k+1} ] }{\partial x} dx \nn\\
+&=&\int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial  N_{k}^\theta }{\partial x} T_k dx 
++  \int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial  N_{k+1}^\theta }{\partial x} T_{k+1} dx \nn\\
+&=& \left(  \int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial  N_{k}^\theta }{\partial x} dx \right) T_k 
++ \left( \int_{x_k}^{x_{k+1}} f(x) \rho c_p u\frac{\partial  N_{k+1}^\theta }{\partial x} dx \right)T_{k+1}  \nn
 %&=&  \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho c_p \;\;  [ {\color{blue}N}_{k}(x) \dot{T}_k + {\color{blue}N}_{k+1}(x) \dot{T}_{k+1} ] \;\; dx  \nn\\
 %&=&  \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho c_p {\color{blue}N}_{k}(x) \dot{T}_k  dx  + \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho c_p {\color{blue}N}_{k+1}(x) \dot{T}_{k+1}   dx \nn\\
 %&=&  \left( \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho c_p  {\color{blue}N}_{k}(x) dx \right) \dot{T}_k  
 %+ \left( \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho c_p {\color{blue}N}_{k+1}(x) dx \right)  \dot{T}_{k+1}  \nn
 \end{eqnarray}
 
-Taking $f(x)=N_k(x)$ and omitting '$(x)$' in the rhs:
+Taking $f(x)=N_k^\theta(x)$ and omitting '$(x)$' in the rhs:
 \[
-{\Sigma}_{N_k}^e=
-\left( \int_{x_k}^{x_{k+1}} \rho c_p u N_k \frac{\partial  N_{k} }{\partial x} dx \right) T_k 
+{\Sigma}_{N_k^\theta}^e=
+\left( \int_{x_k}^{x_{k+1}} \rho c_p u N_k^\theta \frac{\partial  N_{k}^\theta }{\partial x} dx \right) T_k 
 + 
-\left( \int_{x_k}^{x_{k+1}} \rho c_p u N_k \frac{\partial  N_{k+1} }{\partial x} dx \right)T_{k+1}  \nn
+\left( \int_{x_k}^{x_{k+1}} \rho c_p u N_k^\theta \frac{\partial  N_{k+1}^\theta }{\partial x} dx \right)T_{k+1}  \nn
 \]
-Taking $f(x)=N_{k+1}(x)$ and omitting '$(x)$' in the rhs:
+Taking $f(x)=N_{k+1}^\theta(x)$ and omitting '$(x)$' in the rhs:
 \[
-{\Sigma}_{N_{k+1}}^e=
-\left( \int_{x_k}^{x_{k+1}} \rho c_p u N_{k+1} \frac{\partial  N_{k} }{\partial x} dx \right) T_k + 
-\left( \int_{x_k}^{x_{k+1}} \rho c_p u N_{k+1} \frac{\partial  N_{k+1} }{\partial x} dx \right)T_{k+1}  \nn
+{\Sigma}_{N_{k+1}^\theta}^e=
+\left( \int_{x_k}^{x_{k+1}} \rho c_p u N_{k+1}^\theta \frac{\partial  N_{k}^\theta }{\partial x} dx \right) T_k + 
+\left( \int_{x_k}^{x_{k+1}} \rho c_p u N_{k+1}^\theta \frac{\partial  N_{k+1}^\theta }{\partial x} dx \right)T_{k+1}  \nn
 \]
 
 
@@ -98,16 +98,16 @@ Taking $f(x)=N_{k+1}(x)$ and omitting '$(x)$' in the rhs:
 \[
 \left(
 \begin{array}{c}
-{\Sigma}_{N_k}  \\ \\ {\Sigma}_{N_{k+1}}
+{\Sigma}_{N_k^\theta}  \\ \\ {\Sigma}_{N_{k+1}^\theta}
 \end{array}
 \right)
 \!=\!
 \left(
 \begin{array}{cc}
-\int_{x_k}^{x_{k+1}} \rho c_p u N_k \frac{\partial  N_{k} }{\partial x} dx  & 
-\int_{x_k}^{x_{k+1}} \rho c_p u N_k \frac{\partial  N_{k+1} }{\partial x} dx \\ \\
-\int_{x_k}^{x_{k+1}} \rho c_p u N_{k+1} \frac{\partial  N_{k} }{\partial x} dx  & 
-\int_{x_k}^{x_{k+1}} \rho c_p u N_{k+1} \frac{\partial  N_{k+1} }{\partial x} dx 
+\int_{x_k}^{x_{k+1}} \rho c_p u N_k^\theta \frac{\partial  N_{k}^\theta }{\partial x} dx  & 
+\int_{x_k}^{x_{k+1}} \rho c_p u N_k^\theta \frac{\partial  N_{k+1}^\theta }{\partial x} dx \\ \\
+\int_{x_k}^{x_{k+1}} \rho c_p u N_{k+1}^\theta \frac{\partial  N_{k}^\theta }{\partial x} dx  & 
+\int_{x_k}^{x_{k+1}} \rho c_p u N_{k+1}^\theta \frac{\partial  N_{k+1}^\theta }{\partial x} dx 
 \end{array}
 \right)
 \!\cdot\!
@@ -122,7 +122,7 @@ or,
 \[
 \left(
 \begin{array}{c}
-{\Sigma}_{N_k} \\ \\ {\Sigma}_{N_{k+1}}
+{\Sigma}_{N_k^\theta} \\ \\ {\Sigma}_{N_{k+1}^\theta}
 \end{array}
 \right)
 \!=\!
@@ -131,10 +131,10 @@ or,
 \rho c_p u
 \left(
 \begin{array}{cc}
-N_k \frac{\partial     N_{k} }{\partial x}   & 
-N_k \frac{\partial     N_{k+1} }{\partial x}  \\ \\
-N_{k+1} \frac{\partial N_{k} }{\partial x}   & 
-N_{k+1} \frac{\partial N_{k+1} }{\partial x} 
+N_k^\theta \frac{\partial     N_{k}^\theta }{\partial x}   & 
+N_k^\theta \frac{\partial     N_{k+1}^\theta }{\partial x}  \\ \\
+N_{k+1}^\theta \frac{\partial N_{k}^\theta }{\partial x}   & 
+N_{k+1}^\theta \frac{\partial N_{k+1}^\theta }{\partial x} 
 \end{array}
 \right)
 dx
@@ -153,15 +153,15 @@ Finally, we have already defined the vectors
 {\vec N}^T = 
 \left(
 \begin{array}{c}
-N_k(x)  \\ \\  N_{k+1} (x)
+N_k^\theta(x)  \\ \\  N_{k+1}^\theta (x)
 \end{array}
 \right)
 \quad\quad
 {\vec B}^T=
 \left(
 \begin{array}{cc}
- \frac{\partial N_k}{\partial x}   \\ \\
- \frac{\partial N_{k+1}}{\partial x}
+ \frac{\partial N_k^\theta}{\partial x}   \\ \\
+ \frac{\partial N_{k+1}^\theta}{\partial x}
 \end{array}
 \right)
 \quad
@@ -177,7 +177,7 @@ so that
 \[
 \left(
 \begin{array}{c}
-{\Sigma}_{N_k} \\  \\ {\Sigma}_{N_{k+1}}
+{\Sigma}_{N_k^\theta} \\  \\ {\Sigma}_{N_{k+1}^\theta}
 \end{array}
 \right)
 =
@@ -202,28 +202,28 @@ Let us now look at the source term:
 {\Omega}_f^e &=&
 \int_{x_k}^{x^{k+1}} f(x) H(x) dx \nn
 \end{eqnarray}
-Taking $f(x)=N_k(x)$ 
+Taking $f(x)=N_k^\theta(x)$: 
 \[
-{\Omega}_{N_k}=
-\int_{x_k}^{x^{k+1}} N_k(x) H(x) dx \nn
+{\Omega}_{N_k^\theta}=
+\int_{x_k}^{x^{k+1}} N_k^\theta(x) H(x) dx \nn
 \]
-Taking $f(x)=N_{k+1}(x)$ 
+Taking $f(x)=N_{k+1}^\theta(x)$: 
 \[
-{\Omega}_{N_{k+1}}=
-\int_{x_k}^{x^{k+1}} N_{k+1}(x) H(x) dx \nn
+{\Omega}_{N_{k+1}^\theta}=
+\int_{x_k}^{x^{k+1}} N_{k+1}^\theta(x) H(x) dx \nn
 \]
 We can rearrange both equations as follows:
 \[
 \left(
 \begin{array}{cc}
- {\Omega}_{N_k} \\ \\ {\Omega}_{N_{k+1}}
+ {\Omega}_{N_k^\theta} \\ \\ {\Omega}_{N_{k+1}^\theta}
 \end{array}
 \right)
 =
 \left(
 \begin{array}{cc}
-\int_{x_k}^{x^{k+1}} N_k(x) H(x) dx \nn \\ \\ 
-\int_{x_k}^{x^{k+1}} N_{k+1}(x) H(x) dx \nn
+\int_{x_k}^{x^{k+1}} N_k^\theta(x) H(x) dx \nn \\ \\ 
+\int_{x_k}^{x^{k+1}} N_{k+1}^\theta(x) H(x) dx \nn
 \end{array}
 \right)
 \]
@@ -231,7 +231,7 @@ or,
 \[
 \left(
 \begin{array}{cc}
- {\Omega}_{N_k} \\ \\ {\Omega}_{N_{k+1}}
+ {\Omega}_{N_k^\theta} \\ \\ {\Omega}_{N_{k+1}^\theta}
 \end{array}
 \right)
 =
@@ -239,8 +239,8 @@ or,
 \int_{x_k}^{x^{k+1}}
 \left(
 \begin{array}{cc}
-N_k(x)  H(x)  \nn \\ \\ 
-N_{k+1}(x) H(x)  \nn
+N_k^\theta(x)  H(x)  \nn \\ \\ 
+N_{k+1}^\theta(x) H(x)  \nn
 \end{array}
 \right)
 dx
@@ -250,7 +250,7 @@ so that
 \[
 \left(
 \begin{array}{cc}
- {\Omega}_{N_k} \\ \\ {\Omega}_{N_{k+1}}
+ {\Omega}_{N_k^\theta} \\ \\ {\Omega}_{N_{k+1}^\theta}
 \end{array}
 \right)
 =
