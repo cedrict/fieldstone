@@ -17,13 +17,13 @@ nodes so that they are logically called $T_k$ and $T_{k+1}$:
 
 We focus here on the 1D diffusion equation (no advection, no heat sources):
 \begin{equation}
-\rho c_p \frac{\partial T}{\partial t} 
+\rho C_p \frac{\partial T}{\partial t} 
 = \frac{\partial }{\partial x} \left( k \frac{\partial T}{\partial x}  \right)
 \end{equation}
 This is the {\color{olive}strong form} of the ODE to solve.
 I can multiply this equation by a function\footnote{This function should be well-behaved with special properties, but we here assume it is a polynomial function.} $f(x)$ and integrate it over $\Omega$:
 \begin{equation}
-\int_{\Omega} f(x)  \rho c_p\frac{\partial T}{\partial t} dx
+\int_{\Omega} f(x)  \rho C_p\frac{\partial T}{\partial t} dx
 =
 \int_{\Omega} f(x) \frac{\partial }{\partial x} \left( k \frac{\partial T}{\partial x}  \right) dx
 \end{equation}
@@ -49,7 +49,7 @@ Assuming there is no heat flux prescribed on the boundary (i.e. $q_x= - k \parti
 We then obtain the {\color{olive}weak form} of the diffusion equation in 1D:
 \begin{equation}
 \boxed{
-\int_{\Omega} f(x) \rho c_p \frac{\partial T}{\partial t} dx
+\int_{\Omega} f(x) \rho C_p \frac{\partial T}{\partial t} dx
 +
 \int_{\Omega} \frac{\partial f}{\partial x}  k \frac{\partial T}{\partial x}  dx = 0
 }
@@ -59,7 +59,7 @@ $\int_\Omega \dots = \sum_{elts} \int_{\Omega_e} \dots$
 so that 
 \begin{equation}
 \sum_{elts} \left(     
-\underbrace{ \int_{\Omega_e} f(x) \rho c_p   \frac{\partial T}{\partial t} dx }_{{\Lambda}_f^e}
+\underbrace{ \int_{\Omega_e} f(x) \rho C_p   \frac{\partial T}{\partial t} dx }_{{\Lambda}_f^e}
 +
 \underbrace{\int_{\Omega_e} \frac{\partial f}{\partial x}  k \frac{\partial T}{\partial x}  dx}_{{\Upsilon}_f^e}      \right) = 0  
 \end{equation}
@@ -95,26 +95,26 @@ In what follows we abbreviate $\partial T/\partial x$ by $\dot{T}$.
 Let us compute ${\Lambda}_f^e$ and ${\Upsilon}_f^e$ separately.
 \begin{eqnarray}
 {\Lambda}_f^e 
-&=&\int_{x_k}^{x_{k+1}} f(x) \rho c_p \dot T(x) dx \nn\\
-&=& \int_{x_k}^{x_{k+1}} f(x) \rho c_p \;\;  [ N_{k}^\theta(x) \dot{T}_k + N_{k+1}^\theta(x) \dot{T}_{k+1} ] \;\; dx  \nn\\
-&=& \int_{x_k}^{x_{k+1}} f(x) \rho c_p N_{k}^\theta(x) \dot{T}_k  dx  
-+ \int_{x_k}^{x_{k+1}} f(x) \rho c_p N_{k+1}^\theta(x) \dot{T}_{k+1}   dx \nn\\
-&=&  \left( \int_{x_k}^{x_{k+1}} f(x) \rho c_p  N_{k}^\theta(x) dx \right) \dot{T}_k  
-+ \left( \int_{x_k}^{x_{k+1}} f(x) \rho c_p N_{k+1}^\theta(x) dx \right)  \dot{T}_{k+1}  \nn
+&=&\int_{x_k}^{x_{k+1}} f(x) \rho C_p \dot T(x) dx \nn\\
+&=& \int_{x_k}^{x_{k+1}} f(x) \rho C_p \;\;  [ N_{k}^\theta(x) \dot{T}_k + N_{k+1}^\theta(x) \dot{T}_{k+1} ] \;\; dx  \nn\\
+&=& \int_{x_k}^{x_{k+1}} f(x) \rho C_p N_{k}^\theta(x) \dot{T}_k  dx  
++ \int_{x_k}^{x_{k+1}} f(x) \rho C_p N_{k+1}^\theta(x) \dot{T}_{k+1}   dx \nn\\
+&=&  \left( \int_{x_k}^{x_{k+1}} f(x) \rho C_p  N_{k}^\theta(x) dx \right) \dot{T}_k  
++ \left( \int_{x_k}^{x_{k+1}} f(x) \rho C_p N_{k+1}^\theta(x) dx \right)  \dot{T}_{k+1}  \nn
 \end{eqnarray}
 Taking $f(x)=N_k^\theta(x)$ and omitting '$(x)$' in the rhs:
 \[
 {\Lambda}_{N_k^\theta}^e=
-%\int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho c_p \dot{\color{blue}T}(x) dx
-\left( \int_{x_k}^{x_{k+1}} \rho c_p  N_k^\theta N_{k}^\theta dx \right) \dot{T}_k  
-+ \left( \int_{x_k}^{x_{k+1}} \rho c_p N_k^\theta N_{k+1}^\theta dx \right)  \dot{T}_{k+1} 
+%\int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho C_p \dot{\color{blue}T}(x) dx
+\left( \int_{x_k}^{x_{k+1}} \rho C_p  N_k^\theta N_{k}^\theta dx \right) \dot{T}_k  
++ \left( \int_{x_k}^{x_{k+1}} \rho C_p N_k^\theta N_{k+1}^\theta dx \right)  \dot{T}_{k+1} 
 \]
 Taking $f(x)=N_{k+1}^\theta(x)$ and omitting '$(x)$' in the rhs:
 \[
 {\Lambda}_{N_{k+1}^\theta}^e
 %\int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \dot{\color{blue}T}(x) dx
-=  \left( \int_{x_k}^{x_{k+1}} \rho c_p N_{k+1}^\theta N_{k}^\theta dx \right) \dot{T}_k  
-+ \left( \int_{x_k}^{x_{k+1}}  \rho c_p  N_{k+1}^\theta N_{k+1}^\theta dx \right)  \dot{T}_{k+1} 
+=  \left( \int_{x_k}^{x_{k+1}} \rho C_p N_{k+1}^\theta N_{k}^\theta dx \right) \dot{T}_k  
++ \left( \int_{x_k}^{x_{k+1}}  \rho C_p  N_{k+1}^\theta N_{k+1}^\theta dx \right)  \dot{T}_{k+1} 
 \]
 We can rearrange these last two equations as follows:
 \[
@@ -126,8 +126,8 @@ We can rearrange these last two equations as follows:
 =
 \left(
 \begin{array}{cc}
-\int_{x_k}^{x_{k+1}} N_k^\theta     \rho c_p N_{k}^\theta dx  &  \int_{x_k}^{x_{k+1}} N_k^\theta  \rho c_p N_{k+1}^\theta dx \\ \\
-\int_{x_k}^{x_{k+1}} N_{k+1}^\theta \rho c_p N_{k}^\theta dx  &  \int_{x_k}^{x_{k+1}} N_{k+1}^\theta \rho c_p N_{k+1}^\theta dx 
+\int_{x_k}^{x_{k+1}} N_k^\theta     \rho C_p N_{k}^\theta dx  &  \int_{x_k}^{x_{k+1}} N_k^\theta  \rho C_p N_{k+1}^\theta dx \\ \\
+\int_{x_k}^{x_{k+1}} N_{k+1}^\theta \rho C_p N_{k}^\theta dx  &  \int_{x_k}^{x_{k+1}} N_{k+1}^\theta \rho C_p N_{k+1}^\theta dx 
 \end{array}
 \right)
 \cdot
@@ -148,7 +148,7 @@ and we can take the integrals outside of the matrix:
 =
 \left[
 \int_{x_k}^{x_{k+1}}
-\rho c_p
+\rho C_p
 \left(
 \begin{array}{cc}
 N_k^\theta N_{k}^\theta     &  N_k^\theta N_{k+1}^\theta  \\ \\
@@ -202,7 +202,7 @@ so that
 \end{array}
 \right)
 =
-\left( \int_{x_k}^{x_{k+1}}   {\vec N}^T \rho c_p  {\vec N} dx  \right) \cdot \dot{\vec T}^e
+\left( \int_{x_k}^{x_{k+1}}   {\vec N}^T \rho C_p  {\vec N} dx  \right) \cdot \dot{\vec T}^e
 \]
 
 Back to the diffusion term:
@@ -312,7 +312,7 @@ so that
 
 The weak form discretised over 1 element becomes
 \[
-\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec N}^T \rho c_p {\vec N} dx  \right) }_{\bm M^e} \cdot \dot{\vec T}^e
+\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec N}^T \rho C_p {\vec N} dx  \right) }_{\bm M^e} \cdot \dot{\vec T}^e
 +
 \underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec B}^T k {\vec B} dx  \right)}_{{\bm K}_d^e} \cdot {\vec T}^e
 =0
@@ -346,7 +346,7 @@ or,
 \]
 with 
 \[
-{\bm M}^e=  \int_{x_k}^{x_{k+1}}   {\vec N}^T \rho c_p {\vec N} dx  
+{\bm M}^e=  \int_{x_k}^{x_{k+1}}   {\vec N}^T \rho C_p {\vec N} dx  
 \quad\quad\quad
 {\bm K}_d^e =
  \int_{x_k}^{x_{k+1}}   {\vec B}^T k {\vec B} dx 
@@ -354,7 +354,7 @@ with
 
 Let us compute ${\bm M}$ for an element:
 \[
-{\bm M}^e=  \int_{x_k}^{x_{k+1}}   {\vec N}^T \rho c_p {\vec N} dx  
+{\bm M}^e=  \int_{x_k}^{x_{k+1}}   {\vec N}^T \rho C_p {\vec N} dx  
 \]
 with 
 \[
@@ -385,17 +385,17 @@ M_{21} & M_{22}
 =
 \left(
 \begin{array}{cc}
-\int_{x_k}^{x_{k+1}} \rho c_p N_k^\theta N_{k}^\theta dx   &  \int_{x_k}^{x_{k+1}} \rho c_p N_k^\theta N_{k+1}^\theta dx \\ \\
-\int_{x_k}^{x_{k+1}} \rho c_p N_{k+1}^\theta N_{k}^\theta dx  &  \int_{x_k}^{x_{k+1}} \rho c_p N_{k+1}^\theta N_{k+1}^\theta dx 
+\int_{x_k}^{x_{k+1}} \rho C_p N_k^\theta N_{k}^\theta dx   &  \int_{x_k}^{x_{k+1}} \rho C_p N_k^\theta N_{k+1}^\theta dx \\ \\
+\int_{x_k}^{x_{k+1}} \rho C_p N_{k+1}^\theta N_{k}^\theta dx  &  \int_{x_k}^{x_{k+1}} \rho C_p N_{k+1}^\theta N_{k+1}^\theta dx 
 \end{array}
 \right)
 \]
 I only need to compute 3 integrals since $M_{12}=M_{21}$.
 Let us start with $M_{11}$:
 \[
-M_{11}=\int_{x_k}^{x_{k+1}} \rho c_p N_k^\theta(x) N_{k}^\theta(x) dx
+M_{11}=\int_{x_k}^{x_{k+1}} \rho C_p N_k^\theta(x) N_{k}^\theta(x) dx
 =   
-\int_{x_k}^{x_{k+1}} \rho c_p 
+\int_{x_k}^{x_{k+1}} \rho C_p 
 \frac{x_{k+1}-x}{h_x}  
 \frac{x_{k+1}-x}{h_x}  
 dx
@@ -412,50 +412,50 @@ r=\frac{2}{h_x}(x-x_k)-1
 x=\frac{h_x}{2}(1+r)+x_k
 \]
 
-In what follows we assume for simplicity that $\rho$ and $c_p$ are constant within each element.
+In what follows we assume for simplicity that $\rho$ and $C_p$ are constant within each element.
 \[
 M_{11}=
-\rho c_p
+\rho C_p
 \int_{\tiny x_k}^{x_{k+1}} 
 \frac{x_{k+1}-x}{h_x}  
 \frac{x_{k+1}-x}{h_x}  
 dx
-%=  \rho c_p \int_{-1}^{+1} \frac{1}{2}(1-r) \frac{1}{2}(1-r)  \frac{h_x}{2} dr  = \frac{h_x}{3} \rho c_p \nn
-=  \frac{\rho c_p h_x}{8} \int_{-1}^{+1} (1-r) (1-r)  dr  = \frac{h_x}{3} \rho c_p
+%=  \rho C_p \int_{-1}^{+1} \frac{1}{2}(1-r) \frac{1}{2}(1-r)  \frac{h_x}{2} dr  = \frac{h_x}{3} \rho C_p \nn
+=  \frac{\rho C_p h_x}{8} \int_{-1}^{+1} (1-r) (1-r)  dr  = \frac{h_x}{3} \rho C_p
 \]
 Similarly we arrive at 
 \begin{eqnarray}
 M_{12}
-%\rho c_p \int_{x_k}^{x_{k+1}}  {\color{blue}N}_k(x) {\color{blue}N}_{k+1}(x) dx
-=\rho c_p 
+%\rho C_p \int_{x_k}^{x_{k+1}}  {\color{blue}N}_k(x) {\color{blue}N}_{k+1}(x) dx
+=\rho C_p 
 \int_{x_k}^{x_{k+1}} 
 \frac{x_{k+1}-x}{h_x}  
 \frac{x-x_k}{h_x}  
 dx
 =
-\frac{\rho c_p  h_x}{8} 
+\frac{\rho C_p  h_x}{8} 
 \int_{-1}^{+1} (1-r) (1+r)dr
-= \frac{h_x}{6} \rho c_p \nn
+= \frac{h_x}{6} \rho C_p \nn
 \end{eqnarray}
 and 
 \[
 M_{22}
-%=\rho c_p \int_{x_k}^{x_{k+1}} {\color{blue}N}_{k+1}(x) {\color{blue}N}_{k+1}(x) dx
+%=\rho C_p \int_{x_k}^{x_{k+1}} {\color{blue}N}_{k+1}(x) {\color{blue}N}_{k+1}(x) dx
 =
-\rho c_p 
+\rho C_p 
 \int_{x_k}^{x_{k+1}} 
 \frac{x-x_k}{h_x}  
 \frac{x-x_k}{h_x}  
 dx
 =
-\frac{\rho c_p  h_x}{8} 
+\frac{\rho C_p  h_x}{8} 
 \int_{-1}^{+1} (1+r) (1+r)dr
-= \frac{h_x}{3} \rho c_p 
+= \frac{h_x}{3} \rho C_p 
 \]
 Finally 
 \[
 \boxed{
-{\bm M}^e= \frac{h_x}{3} \rho c_p  
+{\bm M}^e= \frac{h_x}{3} \rho C_p  
 \left(
 \begin{array}{cc}
 1  & 1/2 \\

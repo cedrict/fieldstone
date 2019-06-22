@@ -4,8 +4,8 @@ The name isoparametric derives from the fact that the same ('iso')
 functions are used as basis functions and for the mapping to the reference element.
 
 
-%.............................
-\subsubsection{On a triangle}
+%...........................................
+\subsubsection{Linear mapping on a triangle}
 
 \begin{verbatim}
 2
@@ -34,6 +34,48 @@ s&=& \frac{-(y_1-y_3)(x-x_3)+(x_1-x_3)(y-y_3)}{(x_1-x_3)(y_2-y_3)-(y_1-y_3)(x_2-
 \begin{remark}
 The denominator will not vanish, because it is a multiple of the area of the triangle.
 \end{remark}
+
+%................................................
+\subsubsection{Linear mapping on a quadrilateral}
+
+\begin{verbatim}
+4====3
+|    |  s
+|    |  |_r
+|    |
+1====2
+\end{verbatim}
+
+The coordinates of the vertices are 
+$(x_1,y_1)$, $(x_2,y_2)$, $(x_3,y_3)$ and $(x_4,y_4)$.
+The coordinates inside the reference element are $(r,s)$. We then simply have the 
+following relationship, i.e. any point of the reference element 
+can be mapped to the physical quadrilateral as follows:
+\begin{eqnarray}
+x&=& N_1(r,s) x_1 + N_2(r,s) x_2 + N_3(r,s) x_3 + N_4(r,s) x_4 \\
+y&=& N_1(r,s) y_1 + N_2(r,s) y_2 + N_3(r,s) y_3 + N_4(r,s) y_4 
+\end{eqnarray} 
+where the shape functions $N_i(r,s)$ are defined in section \ref{elements1D}.
+There is also an inverse map, which is not so easily computed (see section \ref{sec:amiin}).
+
+However, if the quadrilateral in the $(x,y)$ space is a rectangle of size $(h_x,h_y)$, 
+the inverse mapping is trivial:
+\begin{eqnarray}
+r&=&\frac{x-x_1}{x_2-x_1} \\
+s&=&\frac{y-y_1}{y_4-y_1} 
+\end{eqnarray}
+Also in this case the shape functions can easily be written as functions of $(x,y)$:
+\begin{eqnarray}
+N_1(x,y) &=& \left( \frac{x_3 -x }{h_x}  \right) \left( \frac{y_3 -y }{h_y}  \right) \nn\\
+N_2(x,y) &=& \left( \frac{x - x_1}{h_x}  \right) \left( \frac{y_3 -y }{h_y}  \right) \nn\\
+N_3(x,y) &=& \left( \frac{x - x_1}{h_x}  \right) \left( \frac{y - y_1}{h_y}  \right) \nn\\
+N_4(x,y) &=& \left( \frac{x_3 -x }{h_x}  \right) \left( \frac{y - y_1}{h_y}  \right) \nn 
+\end{eqnarray}
+
+
+
+
+
 
 
  

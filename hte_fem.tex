@@ -1,6 +1,6 @@
 We start from the 'bare-bones' heat transport equation (source terms are omitted): 
 \begin{equation}
-\rho c_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec\nabla T} \right)
+\rho C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec\nabla T} \right)
 = {\vec \nabla} \cdot k \vec\nabla T 
 \end{equation}
 In what follows we assume that the velocity vield $\vec \upnu$ is known so that temperature is the 
@@ -15,13 +15,13 @@ where $\vec T$ is a vector of length $m_T$
 The weak form is then 
 \begin{equation}
 \int_\Omega N^\uptheta_i \left[ 
-\rho c_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec\nabla T} \right) \right] d\Omega
+\rho C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec\nabla T} \right) \right] d\Omega
 = \int_\Omega  N^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T  d\Omega
 \end{equation}
 
 \[
-\underbrace{\int_\Omega N^\uptheta_i  \rho c_p \frac{\partial T}{\partial t} d\Omega}_{I}
-+ \underbrace{\int_\Omega N^\uptheta_i  \rho c_p  {\vec \upnu}\cdot {\vec\nabla T}   d\Omega}_{II}
+\underbrace{\int_\Omega N^\uptheta_i  \rho C_p \frac{\partial T}{\partial t} d\Omega}_{I}
++ \underbrace{\int_\Omega N^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T}   d\Omega}_{II}
 = \underbrace{\int_\Omega  N^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T d\Omega}_{III}
 \quad\quad
 i=1,m_T
@@ -29,33 +29,33 @@ i=1,m_T
 
 Looking at the first term:
 \begin{eqnarray}
-\int_\Omega N^\uptheta_i  \rho c_p \frac{\partial T}{\partial t} d\Omega
-&=&  \int_\Omega N^\uptheta_i  \rho c_p \vec N^\uptheta \cdot \dot{\vec T}  d\Omega \\
+\int_\Omega N^\uptheta_i  \rho C_p \frac{\partial T}{\partial t} d\Omega
+&=&  \int_\Omega N^\uptheta_i  \rho C_p \vec N^\uptheta \cdot \dot{\vec T}  d\Omega \\
 \end{eqnarray}
 so that when we assemble all contributions for $i=1,m_T$ we get:
 \[
 I 
-= \int_\Omega \vec N^\uptheta  \rho c_p \vec N^\uptheta \cdot \dot{\vec T}  d\Omega
-= \left( \int_\Omega \rho c_p  \vec N^\uptheta  \vec N^\uptheta  d\Omega \right) \cdot \dot{\vec T}
+= \int_\Omega \vec N^\uptheta  \rho C_p \vec N^\uptheta \cdot \dot{\vec T}  d\Omega
+= \left( \int_\Omega \rho C_p  \vec N^\uptheta  \vec N^\uptheta  d\Omega \right) \cdot \dot{\vec T}
 = {\bm M}^T \cdot \dot{\vec T}
  \]
 where ${\bm M}^T$ is the mass matrix of the system of size $(m_T \times m_T)$ with 
 \[
-M_{ij}^T = \int_\Omega \rho c_p N_i^\uptheta N_j^\uptheta d\Omega
+M_{ij}^T = \int_\Omega \rho C_p N_i^\uptheta N_j^\uptheta d\Omega
 \]
 Turning now to the second term:
 \begin{eqnarray}
-\int_\Omega N^\uptheta_i  \rho c_p  {\vec \upnu}\cdot {\vec\nabla T}   d\Omega
-&=& \int_\Omega N^\uptheta_i  \rho c_p (u \frac{\partial T}{\partial x} +  v \frac{\partial T}{\partial y} ) d\Omega \\
-&=& \int_\Omega N^\uptheta_i  \rho c_p (u \frac{\partial \vec N^\uptheta}{\partial x} +  v \frac{\partial \vec N^\uptheta}{\partial y} ) \cdot \vec T d\Omega \\
+\int_\Omega N^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T}   d\Omega
+&=& \int_\Omega N^\uptheta_i  \rho C_p (u \frac{\partial T}{\partial x} +  v \frac{\partial T}{\partial y} ) d\Omega \\
+&=& \int_\Omega N^\uptheta_i  \rho C_p (u \frac{\partial \vec N^\uptheta}{\partial x} +  v \frac{\partial \vec N^\uptheta}{\partial y} ) \cdot \vec T d\Omega \\
 \end{eqnarray}
 so that when we assemble all contributions for $i=1,m_T$ we get:
 \[
-II = \left(\int_\Omega \rho c_p \vec N^\uptheta (u \frac{\partial \vec N^\uptheta}{\partial x} +  v \frac{\partial \vec N^\uptheta}{\partial y} ) d\Omega \right)  \cdot \vec T = {\bm K}_a \cdot \vec T
+II = \left(\int_\Omega \rho C_p \vec N^\uptheta (u \frac{\partial \vec N^\uptheta}{\partial x} +  v \frac{\partial \vec N^\uptheta}{\partial y} ) d\Omega \right)  \cdot \vec T = {\bm K}_a \cdot \vec T
 \]
 where ${\bm K}_a$ is the advection term matrix of size $(m_T \times m_T)$ with
 \[
-(K_a)_{ij} = \int_\Omega \rho c_p N_i^\uptheta 
+(K_a)_{ij} = \int_\Omega \rho C_p N_i^\uptheta 
 \left(u \frac{\partial N_j^\uptheta}{\partial x} +  v \frac{\partial N_j^\uptheta}{\partial y} \right) d\Omega 
 \]
 Now looking at the third term, we carry out an integration by part and neglect the surface term for now, so that 

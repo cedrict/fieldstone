@@ -231,13 +231,13 @@ application of these codes: geodynamic modelling.
 \section{Additional techniques and features} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\subsection{The SUPG formulation for the energy equation}
-
 \subsection{Dealing with a free surface}
 
 \subsection{Convergence criterion for nonlinear iterations}
 
 
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{The SUPG formulation for the energy equation} \label{sec:supg} \input{supg} %----------
 \newpage %---------------------------------------------------------------------
 \subsection{The method of manufactured solutions \label{mms}} \input{mms} %----
 \newpage %---------------------------------------------------------------------
@@ -268,8 +268,8 @@ application of these codes: geodynamic modelling.
 \subsection{Exporting data to vtk format} \input{exporting_to_vtk} %-----------
 \newpage %---------------------------------------------------------------------
 \subsection{Runge-Kutta methods} \input{rungekutta} %--------------------------
-\newpage %---------------------------------------------------------------------
-\subsection{Am I in or not? - finding reduced coordinates} \input{amiin} %-----
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Am I in or not? - finding reduced coordinates}\label{sec:amiin}\input{amiin} %---------
 \newpage %---------------------------------------------------------------------
 \subsection{Error measurements and convergence rates} \input{errors} %---------
 \newpage %---------------------------------------------------------------------
@@ -474,9 +474,9 @@ application of these codes: geodynamic modelling.
 \section{{\tt fieldstone\_38}: Critical Rayleigh number \label{f38}} %%%%%%%%%%%%%%%%%%%%
 \input{python_codes/fieldstone_38/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{{\tt fieldstone\_39}: chpe15 \label{f39}} %%%%%%%%%%%%%%%%%%%%
-%\input{python_codes/fieldstone_39/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{{\tt fieldstone\_39}: chpe15 \label{f39}} %%%%%%%%%%%%%%%%%%%%
+\input{python_codes/fieldstone_39/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{{\tt fieldstone\_40}: Rayleigh-Taylor instability \label{f40}} %%%%%%%%%%%%%%%%%

@@ -1,7 +1,7 @@
 \subsubsection{Single layer with imposed temperature b.c.}
 
 Let us take a single layer of material characterised by
-a heat capacity $c_p$, a heat conductivity $k$
+a heat capacity $C_p$, a heat conductivity $k$
 and a heat production term $H$.
 
 \begin{center}
@@ -10,7 +10,7 @@ and a heat production term $H$.
 
 The Heat transport equation writes
 \[
-\rho c_p ( \frac{\partial T}{\partial t} + {\vec v} \cdot {\vec \nabla} { T}) = 
+\rho C_p ( \frac{\partial T}{\partial t} + {\vec v} \cdot {\vec \nabla} { T}) = 
 {\vec \nabla} \cdot (k {\vec \nabla} T) + \rho H
 \]
 At steady state and in the absence of a velocity field, assuming
@@ -130,24 +130,24 @@ in a hot mantle.
 McKenzie \cite{mcke69} derived such approximate initial field from the 
 steady-state energy equation in two dimensions:
 \[
-\rho c_p \vec v \cdot \vec\nabla T = k \vec\nabla^2 T
+\rho C_p \vec v \cdot \vec\nabla T = k \vec\nabla^2 T
 \]
 We denote by $T_l$ the temperature at the base of the lithosphere
 and $l$ its thickness (i.e. the thickness of the slab).
 
 Assuming $\vec v=(v_x,0)$ yields
 \[
-\rho c_p v_x \frac{\partial T}{\partial x} = k \frac{\partial^2 T}{\partial x^2}
+\rho C_p v_x \frac{\partial T}{\partial x} = k \frac{\partial^2 T}{\partial x^2}
 \]
 and substitution of $T'=T/T_l$, $x'=x/l$ and $z'=z/l\in[0,1]$ in this equation leads to
 \[
-\rho c_p v_x \frac{T_l}{l}\frac{\partial T'}{\partial x'} = k \frac{T_l}{l^2}
+\rho C_p v_x \frac{T_l}{l}\frac{\partial T'}{\partial x'} = k \frac{T_l}{l^2}
 \left( \frac{\partial^2 T'}{\partial x'^2}
 + \frac{\partial^2 T'}{\partial z'^2} \right)
 \]
 or 
 \[
-\frac{\rho c_p v_x l }{k}\frac{\partial T'}{\partial x'} = 
+\frac{\rho C_p v_x l }{k}\frac{\partial T'}{\partial x'} = 
 \frac{\partial^2 T'}{\partial x'^2}
 + \frac{\partial^2 T'}{\partial z'^2} 
 \]
@@ -159,7 +159,7 @@ and finally (see Eq. 2.3 of \cite{mcke69}):
 \]
 where $R$ is the thermal Reynolds number
 \[
-R=\frac{\rho c_p v_x l}{2 k}
+R=\frac{\rho C_p v_x l}{2 k}
 \] 
 The general solution to this PDE with $T'=1$ on the top, left and right boundary is 
 \[
@@ -175,7 +175,7 @@ T'(x',z')= 1 + 2\sum_n \frac{(-1)^n}{n \pi} \exp \left[ \left( R-(R^2+n^2\pi^2)^
 \end{equation}
 
 Let us build a simple temperature model for a $250\text{km}\times 50\text{km}$ slab, 
-with $\rho=3000$, $c_p=1250$, $k=3$. The python code is available in {\tt images/mckenzie/mckenzie1.py}.
+with $\rho=3000$, $C_p=1250$, $k=3$. The python code is available in {\tt images/mckenzie/mckenzie1.py}.
 
 \begin{center}
 \includegraphics[width=0.32\textwidth]{images/mckenzie/temperature_vel0p5.pdf}
@@ -225,7 +225,7 @@ velocity. The python code is available in {\tt images/mckenzie/mckenzie2.py}.
 
 %From \cite{mcke70}, Eq. 26:
 %\[
-%T(r_0) = \theta_1 \exp \left(  \frac{\alpha g}{c_p} (r_1-r_0) \right)
+%T(r_0) = \theta_1 \exp \left(  \frac{\alpha g}{C_p} (r_1-r_0) \right)
 %\]
 %where $\theta_1$ is the potential temperature of any piece of the mantle 
 %at the earth's surface.
@@ -244,9 +244,9 @@ velocity. The python code is available in {\tt images/mckenzie/mckenzie2.py}.
 %We denote by $\phi$ the dip of the slab so that the depth below the surface $r_1-r_0$ is given by
 %$l (x' \sin \phi-z' \cos\phi)$ so that 
 %\[
-%T(r_0) = \theta_1 \exp \left(  \frac{\alpha g}{c_p} l (x' \sin \phi-z' \cos\phi) \right)
+%T(r_0) = \theta_1 \exp \left(  \frac{\alpha g}{C_p} l (x' \sin \phi-z' \cos\phi) \right)
 %\]
-%The dimensionless scale height $h'$ is defined by $h'=c_p/\alpha g l$ so that
+%The dimensionless scale height $h'$ is defined by $h'=C_p/\alpha g l$ so that
 %\[
 %T(r_0) = \theta_1 \exp \left[  (x' \sin \phi-z' \cos\phi)/h' \right]
 %\]
