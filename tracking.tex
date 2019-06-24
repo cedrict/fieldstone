@@ -1,42 +1,284 @@
 
-Unless fully Lagrangian, one needs an additional numerical method to represent/track
+Unless using a fully Lagrangian formulation, one needs an additional numerical method to represent/track
 the various materials present in an undeformable (Eulerian) mesh.
-
-\todo[inline]{make a distinction between particle-in-cell and marker-and-cell}
+The figure below (by B. Hillebrand) illustrates the three main methods used in geodynamics.
 
 \begin{center}
 \includegraphics[width=15cm]{images/tracking}
 \end{center}
 
+Note that what follows is applicable to FEM, FDM, etc ...
+
 %..............................................
 \subsubsection{The Particle-in-cell technique}
-\index{Particle in Cell}
+\index{Particle-in-Cell}  \index{Marker-and-Cell} \index{PIC} \index{MAC}
 
-\cite{galh18}
+\begin{remark}
+The terms 'particle' and 'marker' are commonly (and unfortunately) interchangeably used in the literature in the context of the particle-in-cell technique. However, one should be aware that the marker-and-cell (MAC) technique is something different: it was invented in the early 60's at the Los Alamos Laboratories by Harlow and Welch \cite{hawe65}. For more information on MAC see the review paper by McKee et al \cite{mctf08}.
+\end{remark}
 
-The Particle-in-cell method is widely used in the geodynamic literature \cite[e.g.][]{popo92}
+The Particle-in-cell method is by far the most widely used in computational geodynamics. 
+In its most basic form it is a rather simple method to implement and this probably owes to its success
+and early adoption \cite{popo92}  in non-parallel codes such as SOPALE \cite{full95}, 
+I2VIS \cite{geyu03} or CITCOM \cite{mczh04} (Appendix~\ref{app:codes}).
+It has been implemented in ASPECT \cite{gahl18} and the inherent load balancing issues arising from the parallel 
+implementation as well as from the use of Adaptive Mesh Refinement are discussed.
 
- [Poliakov and Podladchikov, 1992; Moresi et al., 2003; Gerya and Yuen, 2003; McNamara and
-Zhong, 2004; Popov and Sobolev, 2008; Thielmann et al., 2014]
+The basic methodology goes as follows:
+\begin{enumerate}
+\item distribute particles in the domain
+\item assign a material identity (and/or any other quantity) to each of them
+\item project particle quantities of the Eulerian nodes of the mesh
+\item solve the Stokes equations for a new velocity field
+\item interpolate the velocity onto the particles
+\item move the particles with their respective velocities 
+\item go back to step 3
+\end{enumerate}  
 
-It is the SOPALE, FANTOM, ELEFANT, I2/3(EL)VIS, ...
+As it turns out each step above needs to be carefully executed and is more difficult than it 
+first looks. 
+
+\paragraph{Distributing particles in the domain}. Let us assume we wish to distribute $N_p$ particles
+in the domain. How large must $N_p$ be? To simplify, one end member could be 'as many particles as possible that fit in memory' 
+while the other end member could be 'one per element/cell on average'. While the former does not necessarily guarantee a 
+desired accuracy while being CPU and memory intensive, the latter will certainly lead to zones in the domain void 
+of particles which will be problematic since the projection onto the mesh might yield zero values or very inaccurate values.
+How many particles (per element/cell) will be enough?
+Also, should the particles be randomly distributed in the domain or on some kind of regular grid? 
+See fieldstone 13 (Section~\ref{f13}).
+
+\paragraph{Averaging and projection}. This is a very critical step. Unfortunately, there is no community-wide
+agreed-upon method. The problem at hand boils down to: at a given location $(\vec r)$ in space I need a 
+quantity which is carried by the particles. 
+The first step is to find the particle(s) close to this point. If done naively, this is a very costly affair, 
+and begs the question what 'close' means. Finding all particles within a radius $R$ of point $\vec r$ can 
+be done very efficiently (e.g. with linked lists, Verlet lists, ...) but the choice of $R$ proves to be critical:
+if too small, there may not be any particle inside the circle, and if too large there may be many particles 
+inside the circle and the averaging over so many particles in space will prove to be over diffusive. 
+In practice, the FD or FE mesh is used to provide an indication of $R$. In FDM, the four cells (or quarter cells) around
+a node represent the volume of space containing the particles whose properties are to be averaged \cite{dumg11} 
+as illustrated in the following figure:
+
+\begin{center}
+\includegraphics[width=12cm]{images/dumg11}\\
+{\small Taken from \cite{dumg11}. The "4-cell" and "1-cell" schemes for projecting properties defined on the 
+markers (denoted by stars) onto
+a node (denoted by the solid circle). (A) The 4-cell scheme. The support of the interpolating function $N_i$ associated
+with node $i$ is indicated by the shaded region. Only markers within the support of node $i$ contribute to the projection
+operation used to define the nodal value at $i$. The shape of the bilinear interpolation function for node $i$ is indicated in
+the lower frame. (B) The 1-cell scheme. The thick lines in the lower frame indicate the grid used to discretize the
+Stokes equations, while the thin lines indicate the grid onto which marker properties are projected. The 1-cell scheme
+utilizes a compact support of size $\Delta x \times  \Delta y$. The support for nodes $r$, $s$, $t$ are indicated by 
+the shaded regions. Only
+markers within the nodal support contribute to the projection operation for that node.}
+\end{center}
+
+Given that the FEM requires to compute integrals over each element, only the particles inside the element will contribute 
+to the average values assigned to the quadrature points. However, one could also decide to first average the properties onto the nodes
+before using these nodal values to assign values to the quadrature points. In this case the FDM approach applies. 
+
+Finally, in both FDM and FEM bi/trilinear shape functions are used for the interpolation as they can be interpreted as weighing 
+functions. Higher order shape functions could also be used but the standard $Q_2$ shape functions (Section~\ref{sec:shpfct2d})
+are 2-nd order polynomials which can take negative values (as opposed to the $Q_1$ shape functions which are strictly positive)
+and this can pose problems: in some cases, although all values to be averaged are positive, their weighed average can be negative.
+Q1 projection PUCKETT
+
+\todo[inline]{it would be nice to have a Q1 and Q2 drawing of a 1D element and show that indeed negative values arise}   
+
+Assuming that we have established a list of particles, all tracking a field $f(\vec r)$ and that each particle has an 
+associated weight $N_i$ (function of the location where the average is to be computed or not), 
+we must now compute their average value $<f>$. 
+The simplest approach which comes to mind is the (weighed) arithmetic mean ($am$):
+\[
+\langle f\rangle_{am} = \frac{\sum\limits_{i=1}^n N_i f_i}{\sum\limits_{i=1}^n N_i}
+\]  
+In the case where $f$ is the (mass) density $\rho$, it is indeed what should be used. 
+However, turning now to viscosity $\eta$, we know that its value can vary by many orders of magnitude 
+over very short distances.
+It is then likely that the average runs over values spanning values between $10^{18}\text{Pa s}$ and $10^{25} \text{Pa s}$.
+As explained in \cite{scbe08} the arithmetic averaging tends to 'favour' large values: if the sum runs over 
+10 particles, 9 carrying the value $10^{25}$ and 1 carrying the value $10^{19}$, the average value (assuming $N_i=1$ for simplicity)
+is then
+\[
+\langle\eta\rangle = \frac{9\cdot 10^{25}+1\cdot 10^{19}}{10} \simeq 0.9\cdot 10^{25}
+\]
+which is much much closer to $10^{25}$ than to $10^{19}$.
+Other averagings are then commonly used, namely the geometric mean ($gm$)  and the harmonic mean ($hm$), defined as follows:
+\[
+\langle f\rangle_{gm} = \left( \prod_i f_i^{N_i} \right)^{1/\sum\limits_i N_i} 
+\qquad
+\text{or, }
+\qquad
+\log_{10} \langle f \rangle_{gm} = \frac{\sum_i N_i \log_{10} f_i }{\sum\limits_i N_i}  
+\]
+and 
+\[
+\langle f\rangle_{hm} = \left( \frac{\sum_{i=1}^n N_i \frac{1}{f_i} }{\sum_i N_i}  \right)^{-1}
+\qquad
+\text{or, }
+\qquad
+\frac{1}{\langle f\rangle_{hm} } = \frac{\sum_{i=1}^n N_i \frac{1}{f_i} }{\sum_i N_i}  
+\]
+The geometric mean can be seen as a form of arithmetic mean of $\log_{10}$ values, while the harmonic mean can be seen as 
+a form of arithmetic mean of the inverse values.
+
+Looking back at the above example, the geometric mean of the viscosities is given by 
+\[
+\log \langle \eta\rangle_{gm} = \frac{9\cdot 25+1\cdot 19}{10} = 24.4 
+\qquad \text{or,} \qquad 
+\langle \eta\rangle_{gm} \simeq 2.5 \cdot 10^{24}
+\]
+and the harmonic mean:
+\[
+\langle\eta\rangle_{hm} \simeq \left( \frac{1}{10 \cdot  10^{19}} \right)^{-1} = 10^{20}
+\]
+We see that the harmonic mean tends to favour the small values. Also we recover the known property:
+\begin{equation}
+\langle f \rangle_{am}\quad  \geq \quad
+\langle f \rangle_{gm}\quad  \geq \quad
+\langle f \rangle_{hm} 
+\end{equation}
+
+
+
+When all $f_i$ are equal to $f_0$ their computed average should also be equal to $f_0$. As a consequence the 
+weights $N_i$ should fulfill the condition $\sum\limits_{i=1}^n N_i=1$.
+If all weights are equal, then $N_i=1/n$ and the averagings become:
+
+\begin{equation}
+\langle f\rangle_{am} = \frac{1}{n} \sum\limits_{i=1}^n f_i
+\qquad
+\langle f\rangle_{gm} = \prod_i f_i^{1/n} 
+\qquad
+\langle f\rangle_{hm} = \left( \frac{1}{n}\sum_i^n \frac{1}{\phi_i} \right)^{-1}
+\end{equation}
+
+There are many papers which have looked at particle averagings and projections. 
+I will for now simply point to the following ones:
+\cite{scbe08}
+\cite{deka08}
+\cite{dumg11}
+\cite{modm03}
+\cite{poso08}
+\cite{thmk14}
+\cite{galh18}.
+
+\todo[inline]{write more about particle averaging and projection}
+
+
+\paragraph{Interpolation of the velocity onto particles}.
+
+Once the particle $i$ has been localised inside a given element (Section~\ref{sec:amiin}) 
+and its reduced coordinates $(r,s,t)$ determined, the velocity at this location can 
+be computed through the shape functions:
+\[
+\vec\upnu_i=\sum_{k=1}^m N_i(r,s,t) \vec\upnu_k
+\]
+This approach is not without problem: while the nodal velocities $\vec\upnu_k$ are such 
+that\footnote{for incompressible flows, of course} 
+$\vec\nabla\cdot\vec\upnu=0$ (in the weak sense), the computed velocity $\vec\upnu_i$ 
+is not necessarily divergence-free! In order to remedy this, a 
+Conservative Velocity Interpolation (CVI) has been proposed in \cite{waav15}.
+
+
+\paragraph{Moving the particles}
+
+This is discussed in the context of the Runge-Kutta Methods, see Section~\ref{sec:rkparticles}.
+
+
 
 %..............................................
 \subsubsection{The level set function technique}
-\index{Level Set}
+\index{Level-set Method} \index{Level-set Function} \index{LSM} \index{LSF} \index{ENO}
+
+This method was developed in the 80's by Stanley Osher and James Sethian \cite{}
+
+The Level-set Method (LSM), as it is commonly used in Computational Fluid Dynamics -- and especially 
+in Computational Geodynamics -- represents a close curve $\Gamma$ (say, in our case, the 
+interface between two fluids or layers) by means of a function $\phi$ (called the level-set function, or LSF).
+$\Gamma$ is then the zero level-set of $\phi$:
+\begin{equation}
+\Gamma = \left\{ (x,y) \; |\; \phi(x,y)=0 \right\}
+\end{equation}
+The convention is that $\phi>0$ inside the region delimited by $\Gamma$ and $\phi<0$ outside.
+The function value indicates on which side of the
+interface a point is located (negative or positive) and this is
+used to identify materials. 
+
+Furthermore, if the curve $\Gamma$ moves with a velocity $\vec \upnu$, 
+then it satisfies the following equation:
+\begin{equation}
+\frac{\partial \phi}{\partial t} + \vec\upnu \cdot \vec\nabla \phi = 0 
+\end{equation}
+
+The level set function is generally chosen to
+be a signed distance function, i.e. $|\vec\nabla \phi| = 1$ everywhere 
+and its value is also the distance to the interface.
+
+As explained in \cite{hitg14}, the level-set function $\phi$ is advected 
+with the velocity $\vec\upnu$ which is obtained by solving the Stokes equations.
+This velocity does not guarantee that after an advection step the signed 
+distance quality of the LSF is preserved. 
+The LSF then needs to be corrected, which is also called reinitialisation. 
+Finally, solving the advection equation must be done in an accurate manner both in time and space,
+so that so-called ENO (essentially non-oscillatory) schemes are often employed for the 
+space derivative \cite{ossh91,saev10}.
+
+
+The level set method has not often been used in the geodynamics 
+community with some notable exceptions 
+\cite{bomh06,bomh07,habm07,grbh07,zlfd08,hagr10,sunh10,suhe10,hitg14}
+An overview of the method and applications can
+be found in \cite{osfe01}.
+
 
 
 %..............................................
 \subsubsection{The field/composition technique}
-%\index{Field}
+\index{compositional Field}
 
-This is the approach taken by the ASPECT developers \cite{krhb12,hedg17}
+This is the approach taken by the ASPECT developers \cite{krhb12,hedg17}. 
+Each material $i$ is represented by a compositional field $c_i$, 
+which takes values between 0 and 1.
+The value at a point (Finite element node or quadrature point) is 1 if it is in the 
+domain covered by the material $i$, and 0 otherwise.
+In one dimension, each compositional field is a Heavyside function. 
+This approach is somewhat similar to the LSM but the field is essentially 
+discontinuous across the interface, which makes it very difficult to advect.  
+On the plus side, compositional fields need not be reinitialised, as opposed to LSF's.
+
+Accurate numerical advection is a notoriously difficult problem. Unless very specialised 
+techniques are used it often yields undershoot ($c_i<0$) and overshoot ($c_i>0$), which 
+ultimately yields mass conservation issues. Also, unless special care is taken, 
+compositional fields tend to become more and more diffuse over time: the SUPG method (Section~\ref{sec:supg})
+and the entropy viscosity method add small amounts of diffusion to dampen the under- and 
+overshoots. This means that at a given point two or more compositions may have values, 
+which require some form of averaging. If under- and overshoots are present, these averagings
+can become very problematic and even yield meaningless quantities (e.g. negative viscosities).
+
+\improvement[inline]{write about DG approach}
 
 
 %..............................................
 \subsubsection{Hybrid methods}
 
-Particle level sets \cite{brtf08}, \cite{saev10}
+In Braun et al. \cite{brtf08} a level set method is presented which is based on a 3-D set
+of triangulated points, which makes it a hybrid between tracers and level set functions:
+in the DOUAR code (Appendix~\ref{app:codes}) the interface is then explicitely tracked by means of the tracers while the LSF is computed 
+on the FE nodes. Although very promising in theory, this method proved to be difficult to use in practice
+since it requires a) a triangulation of the interfaces at $t=0$ which is not trivial if the geometries
+are complex (think about a slab in 3D); b) the addition or removal of tracers because of the interface deformation
+and the patching of the triangulation; c) the calculation of the distance to the interfaces for each 
+FE node based on the triangle normal vectors. 
+This probably explains why the Particle-In-Cell method was later implemented in this code \cite{XXX}.
+Note that another very similar approach is used in \cite{saev10}.
+
+
+
+
+
+
+
 
 
 
