@@ -1,0 +1,25 @@
+set term pdf enhanced
+set xlabel 't'
+
+set ylabel 'min. Temperature'
+set output 'Tmin.pdf'
+plot[][-0.25:0.1]\
+'impl/Tmin.ascii' w lp ps .4 t 'implicit',\
+'expl/Tmin.ascii' w lp ps .4 t 'explicit',\
+'crni/Tmin.ascii' w lp ps .4 t 'Crank-Nicolson'
+
+set ylabel 'max. Temperature'
+set output 'Tmax.pdf'
+plot[][0.5:1.1]\
+'impl/Tmax.ascii' w lp ps .4 t 'implicit',\
+'expl/Tmax.ascii' w lp ps .4 t 'explicit',\
+'crni/Tmax.ascii' w lp ps .4 t 'Crank-Nicolson'
+
+set ylabel 'Total thermal energy'
+set output 'ET.pdf'
+plot[][0.0396:0.0402]\
+'impl/ET.ascii' w lp ps .4 t 'implicit',\
+'expl/ET.ascii' w lp ps .4 t 'explicit',\
+'crni/ET.ascii' w lp ps .4 t 'Crank-Nicolson'
+
+ 
