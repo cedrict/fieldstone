@@ -46,4 +46,14 @@ method yield similar energy conservation but the fully-implicit showcases a clea
 \includegraphics[width=15cm]{python_codes/fieldstone_43/images/temp}\\
 {\small Temperature field after a full rotation with isocontours every 0.1 value.\\ Left: Fully-implicit; Right: Crank-Nicolson}
 \end{center}
+Finally we can run the experiment (still a $2\pi$ rotation) 
+with three different time steps ($\delta t=2\pi/30,2\pi/60,2\pi/120$) and we recover very similar results to 
+those presented in \cite{dohu03}:
+
+\begin{center}
+\includegraphics[height=8cm]{python_codes/fieldstone_43/images/dohu03}
+\includegraphics[height=8cm]{python_codes/fieldstone_43/images/temps_30_60_120}\\
+{\small From top to bottom: $\delta t=2\pi/120,2\pi/60,2\pi/30$ with Crank-Nicolson. Left panel is taken from \cite{dohu03}}
+\end{center}
+
 
