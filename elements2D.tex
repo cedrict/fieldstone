@@ -375,7 +375,7 @@ N_{16}(r,s)&=&N_4(r)N_4(s) =
 \end{eqnarray}
 \end{mdframed}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%.....................................................................
 \subsubsection{Linear basis functions for triangles in 2D ($P_1$)}
 \index{$P_1$}
 
@@ -398,6 +398,150 @@ N_0(r,s) &=& 1-r-s \\
 N_1(r,s) &=& r \\
 N_2(r,s) &=& s 
 \end{eqnarray}
+
+%.....................................................................
+\subsubsection{Enriched linear basis functions in triangles ($P_1^+$)}
+\index{$P_1^+$}
+
+As we will see in Section~\ref{pair:mini} the above $P_1$ can be enriched 
+with a so-called bubble function.
+The \index{Bubble Function} bubble function of the MINI element 
+is described in \cite{arbf84} as being $\lambda_1\lambda_2\lambda_3$
+where $\lambda_i$ are the so-called barycentric 
+coordinates\footnote{\url{https://en.wikipedia.org/wiki/Barycentric\_coordinate\_system }}.
+\index{Barycentric Coordinates}
+
+\begin{eqnarray}
+\lambda_1 &=& \frac{(y2-y3)(x-x3)+(x3-x2)(y-y3)}{(y2-y3)(x1-x3)+(x3-x2)(y1-y3)} \nn\\
+\lambda_2 &=& \frac{(y3-y1)(x-x3)+(x1-x3)(y-y3)}{(y2-y3)(x1-x3)+(x3-x2)(y1-y3)} \nn\\
+\lambda_3 &=& 1-\lambda_1-\lambda_2 \nn
+\end{eqnarray}
+
+\begin{center}
+\includegraphics[width=12cm]{images/mini/minielement2.JPG}\\
+{\small representation of the element in the real coordinate system $(x,y)$
+and in the reduced coordinate system $(r,s)$}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{images/mini/barycoord}\\
+{\small Barycentric coordinates ($\lambda _{1},\lambda _{2},\lambda _{3}$) on an equilateral triangle and on a right triangle.}
+\end{center}
+
+In the reference triangle, the barycentric coordinates write
+\begin{eqnarray}
+\lambda_1 &=& \frac{(s_2-s_3)(r-r_3)+(r_3-r_2)(s-s_3)}{(s_2-s_3)(r_1-r_3)+(r_3-r_2)(s_1-s_3)} = \frac{(-1)(r)+(-1)(s-1)}{(-1)(0)+(-1)(-1)} = -r-s+1  \nn\\
+\lambda_2 &=& \frac{(s3-s1)(r-r3)+(r1-r3)(s-s3)}{(s2-s3)(r1-r3)+(r3-r2)(s1-s3)} = \frac{(1)(r)+(0)(s-1)}{(-1)(0)+(-1)(-1)} = r \nn\\
+\lambda_3 &=& 1-\lambda_1-\lambda_2 = 1 - (-r-s+1) - r = s \nn
+\end{eqnarray}
+As we have seen before the bubble function is given by $\lambda_1\lambda_2\lambda_3 = (1-r-s)rs$
+and the polynomial form for the shape functions is given by:
+\[
+f(r,s) =a+br+cs + d (1-r-s)rs
+\]
+Setting the location of the bubble at $r=s=1/3$, i.e. $\lambda_1\lambda_2\lambda_3 = 1/3$, 
+we then have 
+\begin{eqnarray}
+f(r_1,s_1)&=&f_1 = a+br_1+cs_1 + d (1-r_1-s_1)r_1s_1 = a \nn\\
+f(r_2,s_2)&=&f_2 = a+br_2+cs_2 + d (1-r_2-s_2)r_2s_2 = a + b \nn\\
+f(r_3,s_3)&=&f_3 = a+br_3+cs_3 + d (1-r_3-s_3)r_3s_3 = a + c \nn\\
+f(r_4,s_4)&=&f_4 = a+br_4+cs_4 + d (1-r_4-s_4)r_4s_4 = a + \frac{b}{3} + \frac{c}{3} + \frac{1}{27} \nn
+\end{eqnarray}
+where point 4 is the location of the bubble.
+This yields
+\[
+a=f_1 
+\quad\quad\qquad
+b=f_2-a = f_2-f_1
+\quad\quad\qquad
+c=f_3-a = f_3-f_1
+\]
+and
+\[
+d=27(f_4-a-\frac{b}{3} - \frac{c}{3}) = 27 (f_4 - f_1 - \frac{f_2-f_1}{3} - \frac{f_3-f_1}{3} )
+=27(f_4 - \frac{f_1}{3}  - \frac{f_2}{3}  - \frac{f_3}{3} )
+\] 
+
+Finally
+\begin{eqnarray}
+f(r,s) 
+&=&a+br+cs + d (1-r-s)rs \nn\\
+&=& f_1 + (f_2-f_1)r + (f_3-f_1)s + 27(f_4 - \frac{f_1}{3}  - \frac{f_2}{3}  - \frac{f_3}{3} ) (1-r-s)rs \nn\\
+&=& [1-r-s-9(1-r-s)rs] f_1 + [r-9(1-r-s)rs ]f_2 + [s-9(1-r-s)rs ]f_3 + [27(1-r-s)rs]f_4 \nn
+\end{eqnarray}
+so that 
+\[
+f(r,s)=\sum_{i=1}^4 N_i(r,s) f_i
+\]
+with 
+%\begin{mdframed}[backgroundcolor=blue!15]
+\begin{eqnarray}
+N_1(r,s) &=& 1-r-s-9(1-r-s)rs \nn\\
+N_2(r,s) &=& r-9(1-r-s)rs \nn\\
+N_3(r,s) &=& s-9(1-r-s)rs \nn\\
+N_4(r,s) &=& 27(1-r-s)rs \nn
+\end{eqnarray}
+%\end{mdframed}
+It is trivial to verify that $\sum_i N_i =1$ for all values of $r,s$
+and the gradients of the shape functions are:
+\begin{eqnarray}
+\frac{\partial N_1}{\partial r}(r,s) &=& -1 - 9(1-2r-s)s \\ 
+\frac{\partial N_2}{\partial r}(r,s) &=&  +1 - 9(1-2r-s)s \\ 
+\frac{\partial N_3}{\partial r}(r,s) &=&  - 9(1-2r-s)s \\ 
+\frac{\partial N_4}{\partial r}(r,s) &=&  27(1-2r-s)s \\ 
+\\
+\frac{\partial N_1}{\partial s}(r,s) &=& -1 - 9(1-r-2s)r \\ 
+\frac{\partial N_2}{\partial s}(r,s) &=&    - 9(1-r-2s)r \\ 
+\frac{\partial N_3}{\partial s}(r,s) &=& +1 - 9(1-r-2s)r \\ 
+\frac{\partial N_4}{\partial s}(r,s) &=&     27(1-r-2s)r 
+\end{eqnarray}
+
+We have two coordinate systems for the element: the global coordinates $(x,y)$ 
+and the natural coordinates $(r,s)$. Inside the element, the relation between the two is given by
+\begin{eqnarray}
+x &=& N_1 x_1 + N_2 x_2 + N_3 x_3 + N_4 x_4 = \sum_i N_i(r,s) x_i\nn\\
+y &=& N_1 y_1 + N_2 y_2 + N_3 y_3 + N_4 y_4 = \sum_i N_i(r,s) y_i
+\end{eqnarray}
+or,
+\begin{eqnarray}
+x &=& [ 1-r-s-9(1-r-s)rs] x_1 + [r-9(1-r-s)rs] x_2 + [s-9(1-r-s)rs] x_3 + [27(1-r-s)rs] x_4 \nn\\
+&=& x_1 -r (x_1-x_2) -s (x_1-x_3) + (1-r-s)rs (-9 x_1 - 9 x_2  -9 x_3 +27 x_4)  \nn\\
+&=& x_1 -r (x_1-x_2) -s (x_1-x_3) + (1-r-s)rs (-9 x_1 - 9 x_2  -9 x_3 +27 (x_1+x_2+x_3)/3) \nn\\ 
+&=& x_1 -r (x_1-x_2) -s (x_1-x_3) \nn\\ 
+&=& x_1 -r x_{12} -s x_{13} \nn\\ 
+y &=& [ 1-r-s-9(1-r-s)rs] y_1 + [r-9(1-r-s)rs] y_2 + [s-9(1-r-s)rs] y_3 + [27(1-r-s)rs] y_4 \nn\\
+&=& y_1 -r (y_1-y_2) -s (y_1-y_3) + (1-r-s)rs (-9 y_1 - 9 y_2  -9 y_3 +27 y_4)  \nn\\
+&=& y_1 -r (y_1-y_2) -s (y_1-y_3) + (1-r-s)rs (-9 y_1 - 9 y_2  -9 y_3 +27 (y_1+y_2+y_3)/3) \nn\\ 
+&=& y_1 -r (y_1-y_2) -s (y_1-y_3) \nn \\
+&=& y_1 -r y_{12} -s y_{13} \nn 
+\end{eqnarray}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Quadratic basis functions for triangles in 2D ($P_2$)}
@@ -474,6 +618,39 @@ N_5(r,s) &=& 4rs \nonumber\\
 N_6(r,s) &=& 4s-4rs-4s^2 \nonumber
 \end{eqnarray}
 \end{mdframed}
+
+
+%.....................................................................
+\subsubsection{Enriched quadratic basis functions in triangles ($P_2^+$)}
+\index{$P_2^+$}
+
+\begin{verbatim}
+03
+||\\
+|| \\
+||  \\
+06   05
+|| 07 \\
+||     \\
+01==04==02
+\end{verbatim}
+
+\begin{eqnarray}
+N_1(r,s) &=&  (1-r-s)[1-2r-2s+ 3rs] \\
+N_2(r,s) &=& r [2 r -1 + 3s-3rs-3s^2 ] \\
+N_3(r,s) &=& s [2s -1 + 3r-3r^2-3rs ]\\
+N_4(r,s) &=& 4rs [-2+3r+3s]\\
+N_5(r,s) &=& 4(1-r-s)s(1-3r)\\
+N_6(r,s) &=& 4(1-r-s)r(1 -3s ) \\
+N_7(r,s) &=& 27 (1-r-s)rs 
+\end{eqnarray}
+
+
+
+
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

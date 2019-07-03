@@ -107,9 +107,50 @@ Biquadratic velocities, bilinear pressure. See Hood and Taylor. The element sati
 
 
 %----------------------------------------------------------------------
-\subsubsection{The MINI triangular element ($P_1^+\times P_1$)}
+\subsubsection{The MINI triangular element ($P_1^+\times P_1$) in 2D}
+\label{pair:mini}
 
-discussed in section 3.6.1 of \cite{john16}
+The \index{MINI element} MINI element was first introduced in Arnold et al, 1984 \cite{arbf84}.
+It is also discussed in section 3.6.1 of \cite{john16}.
+It is schematically represented hereunder:
+
+\begin{center}
+\includegraphics[width=8cm]{images/mini/minielement}\\
+{\small Figure taken from Donea and Huerta \cite{dohu03}}
+\end{center}
+
+\begin{remark}
+Note that \cite{frol03} propose an equal-order-linear-continuous velocity-pressure variables which is enriched 
+with velocity {\it and} pressure bubble functions to model the Stokes problem. They show by static condensation that
+these bubble functions give rise to a stabilized method involving least-squares forms of the momentum and of the
+continuity equations. In some cases their approach recovers the MINI element. Also check \cite{gamt08}.
+\end{remark}
+
+\begin{remark}
+According to Braess\cite{braess}, since the support of the bubble is restricted to the element, 
+the associated variable (dofs living on the bubble) can be eliminated from the resulting 
+system of linear equations by static condensation. \index{Static Condensation}
+Also, the MINI element is cheaper than the Taylor-Hood element but it is commonly accepted
+that it yields a poorer approximation of the pressure.
+\end{remark}
+
+The 3D MINI element is not very common but it is used for instance in \cite{pico98}.
+
+\begin{center}
+\includegraphics[width=10cm]{images/mini/mini3D}\\
+{\small Velocity and pressure nodes for the 3D MINI element, taken from \cite{pico98}}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
 
 %----------------------------------------------------------------------
 \subsubsection{The quadratic velocity - linear pressure triangle ($P_2\times P_1$)}
@@ -131,23 +172,27 @@ are used. The quadrilateral counterpart of this triangle is the $Q_2\times Q_1$ 
 \subsubsection{The Crouzeix-Raviart triangle ($P_2^+\times P_{-1}$)}
 
 This element was first introduced in \cite{crra73}.
+It is the element used in the MILAMIN code \cite{daks08}.
+It is a seven-node triangle with quadratic velocity shape 
+functions enhanced by a cubic bubble function and discontinuous linear interpolation for 
+the pressure field \cite{cuss86}. 
+This element is LBB stable and no additional stabilization techniques are required\cite{elsw}.
 
-From \cite{daks08}: seven-node Crouzeix-Raviart triangle with quadratic velocity shape functions enhanced by a cubic bubble function and discontinuous linear interpolation for the pressure field [e.g., Cuvelier et al., 1986]. This element is stable and no additional stabilization techniques are required [Elman et al., 2005].
-
-From \cite{segal}. These elements are characterized by a discontinuous pressure; 
-discontinuous on element boundaries. 
+\begin{remark}
+Segal \cite{segal} explains that these elements are characterized by a discontinuous pressure,
+ discontinuous on element boundaries. 
 For output purposes (printing, plotting etc.) these discontinuous pressures are averaged 
 in vertices for all the adjoining elements.
+\end{remark}
 
 The most simple Crouzeix-Raviart element is the non-conforming linear triangle 
-with constant pressure ($P_1\times P_0$).
-
-p248 of Elman book. satisfies LBB condition. 
+with constant pressure ($P_1\times P_0$). VERIFY
 
 
-This element is characterized by a discontinuous pressure; 
-so that for output purposes (printing, plotting etc.) 
-these discontinuous pressures are averaged in vertices for all the adjoining elements. 
+
+
+
+
 
 
 
