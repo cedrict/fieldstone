@@ -1,0 +1,70 @@
+\index{Stream Function}
+
+\subsubsection{In Cartesian coordinates}
+
+The Stream function (commonly denoted by $\Phi$ or $\Psi$) approach is a useful approach in fluid dynamics as it 
+can provide relatively quick solutions to 2D incompressible flow problems.
+Lines of constant $\Phi$ are called stream lines and give a useful representation of the flow.
+The definition of the stream function is such that 
+\begin{eqnarray}
+u &=& -\frac{\partial \Phi}{\partial y} \\
+v &=& \frac{\partial \Phi}{\partial x} 
+\end{eqnarray}
+It then follows that the velocity field based on the above equations 
+automatically fulfills the continuity equation:
+\[
+\vec\nabla\cdot\vec\upnu 
+= \frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}
+= -\frac{\partial^2 \Phi}{\partial x \partial y}+\frac{\partial^2 \Phi}{\partial x\partial y}
+=0
+\]
+The stream function can also be substituted into the (constant viscosity) Stokes equation $-\vec\nabla p + \eta \Delta \vec\upnu=\vec 0$:
+\begin{eqnarray}
+-\frac{\partial p}{\partial x} 
+- \eta \left( \frac{\partial^3 \Phi}{\partial^2 x\partial y} + \frac{\partial^3 \Phi}{\partial^3 y} \right) &=& 0 \\
+-\frac{\partial p}{\partial y} 
+- \eta \left( 
+\frac{\partial^3 \Phi}{\partial^3 x}
++ 
+\frac{\partial^3 \Phi}{\partial x\partial^2 y}  \right) &=& 0
+\end{eqnarray}
+We can now eliminate the pressure term by taking the partial derivative of the 
+first equation with respect to $y$ and the partial derivative of the second one 
+with respect to $x$, and substracting both. We get:
+\begin{equation}
+\frac{\partial^4\Phi}{\partial x^4}+
+\frac{\partial^4\Phi}{\partial x^2 \partial y^2}+
+\frac{\partial^4\Phi}{\partial y^4}=0
+\end{equation}
+or, 
+\begin{equation}
+\left(
+\frac{\partial^2}{\partial x^2}+
+\frac{\partial^2}{\partial y^2}
+\right)
+\left(
+\frac{\partial^2}{\partial x^2}+
+\frac{\partial^2}{\partial y^2}
+\right)
+\Phi = 0
+\end{equation}
+or, 
+\[
+\vec\nabla^2 \vec\nabla^2 \Phi = \vec\nabla^4 \Phi = 0
+\]
+which is known as the Biharmonic operator.
+
+\index{Biharmonic Operator} 
+
+
+\subsubsection{In Cylindrical coordinates}
+
+TODO
+
+VERIFY THOSE! minus signs ?
+\[
+\upnu_r=\frac{1}{r}\frac{\partial \Phi}{\partial \theta} 
+\]
+\[
+\upnu_\theta=-\frac{\partial \Phi}{\partial r} 
+\]

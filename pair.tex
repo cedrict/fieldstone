@@ -177,11 +177,14 @@ It is a seven-node triangle with quadratic velocity shape
 functions enhanced by a cubic bubble function and discontinuous linear interpolation for 
 the pressure field \cite{cuss86}. 
 This element is LBB stable and no additional stabilization techniques are required\cite{elsw}.
+The '+' in its name stands for the bubble while the '-' stands for the discontinuous
+character of the pressure field: once again, it is $P_1$ over the element, but discontinuous
+across element edges.
+
 
 \begin{remark}
-Segal \cite{segal} explains that these elements are characterized by a discontinuous pressure,
- discontinuous on element boundaries. 
-For output purposes (printing, plotting etc.) these discontinuous pressures are averaged 
+Segal \cite{segal} explains 
+for output purposes (printing, plotting etc.) the discontinuous pressures are averaged 
 in vertices for all the adjoining elements.
 \end{remark}
 

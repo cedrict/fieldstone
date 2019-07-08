@@ -1,0 +1,133 @@
+The mantle wedge comprised between the downgoing slab and the overriding plate
+has been extensively studied since very important geodynamical processes take place
+in it or right above it (slab dehydration and water transport, melting, over-riding plate
+deformation, vulcanism, ...).
+
+To first approximation one can approach the problem and simplify it greatly by 
+assuming that both plates kinematic behaviour are independent of what happens 
+in the wedge, that the wedge geometry does not change over time, that the problem 
+is essentially 2D, and that the mantle extends very far away from the actual 
+wedge (plates are infinite). 
+
+Under such assumptions, it is possible to derive an analytical solution 
+for incompressible Stokes flow in the wedge as documented at p. 224 in  Batchelor \cite{batchelor}.
+
+\todo[inline]{FIND refs. check new version of Vol7 theortical geophys}
+
+A corner flow setup is shown hereunder:
+\begin{center}
+\includegraphics[width=8cm]{images/cornerflow/corner}
+\end{center}
+
+\index{Stream Function} \index{Biharmonic Operator}
+The solution to this problem is arrived at by means of the stream function $\Phi$, defined 
+as $u=-\partial \Phi/\partial y$ and $v=\partial \Phi/partial x$, so that we automatically have $\vec\nabla\cdot\vec\upnu=0$.
+As shown in Section~\ref{sec:streamfunction}, the stream function $\Phi$ is then the solution to 
+the biharmonic equation
+\[
+\vec\nabla^2 \vec\nabla^2 \Phi = \vec\nabla^4 \Phi = 0
+\]
+
+Considering the geometry of the problem has plates of infinite extent with constant relative
+velocity, the solution for velocity everywhere is expected to be independent of $r$. This means the
+equation is separable and we will use a solution of the form
+\[
+\Phi(r,\theta)= R(r) f(\theta)
+\]
+However, given the infinite extent of the domain, the velocity is expected to be 
+independent of $r$, so we postulate $R(r)=r$ (look at the relationship between velocity components and 
+stream function), or:
+\[
+\Phi(r,\theta)= r f(\theta)
+\]
+and we then have to solve
+\[
+\Delta \left( \frac{1}{r} (f+f'')\right) = \frac{1}{r^3}(f+2f''+f'''')=0.
+\]
+The solution of this equation for $f$ is:
+\begin{eqnarray}
+f(\theta) &=&A \sin\theta + B \cos \theta + C \theta \sin \theta + D \theta \cos \theta   \nn\\
+f'(\theta)&=&A \cos\theta - B \sin \theta + C (\sin \theta + \theta \cos \theta) + D (\cos \theta - \theta \sin \theta) \nn
+\end{eqnarray}
+with
+\[
+\upnu_r=\frac{1}{r}\frac{\partial \Phi}{\partial \theta} = f'(\theta)
+\]
+\[
+\upnu_\theta=-\frac{\partial \Phi}{\partial r} = -f(\theta)
+\]
+$A$, $B$, $C$ and $D$ are four constants to be determined by means of the boundary conditions which 
+are as follows:
+\begin{eqnarray}
+\upnu_r(\theta=0)            &=&  0 \nonumber\\
+\upnu_\theta(\theta=0)       &=&  0 \nonumber\\
+\upnu_r(\theta=\theta_0)     &=&  -U_0 \nonumber\\
+\upnu_\theta(\theta=\theta_0)&=&  0 \nonumber
+\end{eqnarray}
+or,
+\begin{eqnarray}
+f'(0)= A+D &=& 0 \\
+f(0) = B &=& 0 \\
+f'(\theta_0) &=& -U_0 \\
+f(\theta_0) &=& 0 
+\end{eqnarray}
+
+From the second equation it is trivial to see that $B=0$, so that:
+\[
+f(\theta)=A \sin\theta + C \theta \sin \theta + D \theta \cos \theta
+\]
+\[
+f'(\theta)=A \cos\theta + C (\sin \theta + \theta \cos \theta) + D (\cos \theta - \theta \sin \theta)
+\]
+From the first one we obtain $D=-A$ so that 
+\[
+f(\theta)=A (\sin\theta - \theta \cos \theta)  + C \theta \sin \theta 
+\]
+\[
+f'(\theta)=A ( \theta \sin \theta)    + C (\sin \theta + \theta \cos \theta) 
+\]
+The last two boundary conditions yield:
+\[
+0=A (\sin\theta_0 - \theta_0 \cos \theta_0)  + C \theta_0 \sin \theta_0 
+\]
+\[
+-U_0 = A ( \theta_0 \sin \theta_0)    + C (\sin \theta_0 + \theta_0 \cos \theta_0) 
+\]
+or, 
+\[
+A= - U_0 \frac{\theta_0 \sin\theta_0}{\theta_0^2-\sin^2\theta_0}
+\quad\quad
+C=   U_0 \frac{\sin\theta_0 - \theta_0 \cos \theta_0}{\theta_0^2-\sin^2\theta_0}
+\]
+Finally:
+\[
+(A,B,C,D)=
+(
+-\theta_0 \sin\theta_0,
+0,
+\sin\theta_0 - \theta_0 \cos \theta_0,
+\theta_0 \sin\theta_0
+)
+\frac{U_0}{\theta_0^2-\sin^2\theta_0}
+\]
+
+We have 
+\begin{eqnarray}
+{\bm e}_r      &=& \cos\theta {\bm e}_x + \sin\theta {\bm e}_y \\
+{\bm e}_\theta &=& -\sin\theta {\bm e}_x + \cos\theta {\bm e}_y
+\end{eqnarray}
+so that the velocity field can be expressed in cartesian coordinates:
+\begin{eqnarray}
+{\bm \upnu} 
+&=& \upnu_r {\bm e}_r + \upnu_\theta {\bm e}_\theta \nn\\
+&=& \upnu_r ( \cos\theta {\bm u}_x + \sin\theta {\bm e}_y) + \upnu_\theta (-\sin\theta {\bm u}_x + \cos\theta {\bm e}_y) \nn\\
+&=& ( \upnu_r \cos\theta - \upnu_\theta \sin\theta  ) {\bm e}_x + ( \upnu_r \sin\theta + \upnu_\theta\cos\theta  ) {\bm e}_y
+\end{eqnarray}
+
+
+
+
+
+
+
+
