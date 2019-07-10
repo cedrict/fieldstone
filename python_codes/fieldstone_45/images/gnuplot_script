@@ -1,0 +1,11 @@
+set term pdf enhanced
+set output 'T60.pdf'
+set grid
+set log x
+#set xtics 1
+set xlabel 'h (km)'
+set ylabel 'T slab at (60,540)km point'
+plot[][320:420]\
+'T60.ascii' u (660/$1):5 pt 5 ps 0.5 w lp notitle,\
+385 lt -1 notitle ,\
+387 lt -1 notitle 
