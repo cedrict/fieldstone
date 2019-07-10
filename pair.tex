@@ -170,6 +170,7 @@ are used. The quadrilateral counterpart of this triangle is the $Q_2\times Q_1$ 
 
 %----------------------------------------------------------------------
 \subsubsection{The Crouzeix-Raviart triangle ($P_2^+\times P_{-1}$)}
+\label{sec:crouzeix-raviart}
 
 This element was first introduced in \cite{crra73}.
 It is the element used in the MILAMIN code \cite{daks08}.
@@ -181,17 +182,25 @@ The '+' in its name stands for the bubble while the '-' stands for the discontin
 character of the pressure field: once again, it is $P_1$ over the element, but discontinuous
 across element edges.
 
+\begin{remark}
+Cuvelier et al, 1986 \cite{cuss86} recommend a 6-point or 7-point quadrature rule for this element.
+\end{remark}
 
 \begin{remark}
 Segal \cite{segal} explains 
 for output purposes (printing, plotting etc.) the discontinuous pressures are averaged 
-in vertices for all the adjoining elements.
+in vertices for all the adjoining elements. See also Fig. 7.3 of \cite{cuss86}.
 \end{remark}
 
-The most simple Crouzeix-Raviart element is the non-conforming linear triangle 
-with constant pressure ($P_1\times P_0$). VERIFY
+\begin{remark}
+The simplest Crouzeix-Raviart element is the non-conforming linear triangle 
+with constant pressure ($P_1\times P_0$) \cite{cuss86}. 
+\end{remark}
 
-
+It is worth noting that this element has more degrees of freedom  than the 
+Taylor-Hood element for the same order of accuracy. However, since the 
+bubble can be eliminated, one can design a modified version of this element.
+\todo[inline]{Check Cuvelier book chapter 8 for modified element}
 
 
 
