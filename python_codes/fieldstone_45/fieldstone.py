@@ -365,6 +365,38 @@ for i in range(0,NT):
 print("temperature b.c.: %.3f s" % (timing.time() - start))
 
 #################################################################
+# compute area of elements
+#################################################################
+start = timing.time()
+
+area    = np.zeros(nel,dtype=np.float64) 
+dNdx  = np.zeros(mT,dtype=np.float64)    # shape functions derivatives
+dNdy  = np.zeros(mT,dtype=np.float64)    # shape functions derivatives
+dNdr  = np.zeros(mT,dtype=np.float64)    # shape functions derivatives
+dNds  = np.zeros(mT,dtype=np.float64)    # shape functions derivatives
+
+for iel in range(0,nel):
+    for kq in range (0,nqel):
+        rq=qcoords_r[kq]
+        sq=qcoords_s[kq]
+        weightq=qweights[kq]
+        dNdr[0:mT]=dNNTdr(rq,sq)
+        dNds[0:mT]=dNNTds(rq,sq)
+        jcb=np.zeros((ndim,ndim),dtype=np.float64)
+        for k in range(0,mT):
+            jcb[0,0] += dNdr[k]*xT[iconV[k,iel]]
+            jcb[0,1] += dNdr[k]*yT[iconV[k,iel]]
+            jcb[1,0] += dNds[k]*xT[iconV[k,iel]]
+            jcb[1,1] += dNds[k]*yT[iconV[k,iel]]
+        jcob = np.linalg.det(jcb)
+        area[iel]+=jcob*weightq
+
+print("     -> area (m,M) %.4e %.4e " %(np.min(area),np.max(area)))
+print("     -> sum area %.6f %.6f" %(area.sum(),Lx*Ly))
+
+print("compute elements areas: %.3f s" % (timing.time() - start))
+
+#################################################################
 # build temperature matrix
 #################################################################
 start = timing.time()
@@ -374,10 +406,6 @@ A_mat = lil_matrix((NfemT,NfemT),dtype=np.float64)
 rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
 B_mat = np.zeros((ndim,ndofT*mT),dtype=np.float64)     # gradient matrix B 
 N_mat = np.zeros((mT,1),dtype=np.float64)         # shape functions
-dNdx  = np.zeros(mT,dtype=np.float64)    # shape functions derivatives
-dNdy  = np.zeros(mT,dtype=np.float64)    # shape functions derivatives
-dNdr  = np.zeros(mT,dtype=np.float64)    # shape functions derivatives
-dNds  = np.zeros(mT,dtype=np.float64)    # shape functions derivatives
 
 for iel in range (0,nel):
 
@@ -477,9 +505,43 @@ print("solve T: %.3f s" % (timing.time() - start))
 # post-processing 
 #################################################################
 
+#measuring T_{11,11}
 for i in range(0,NT):
     if abs(xT[i]-60e3)<1 and abs(yT[i]-540e3)<1:
        print ('result1:',xT[i],yT[i],T[i]-273)
+
+diagfile=open('tempdiag.ascii',"w")
+for i in range(0,NT):
+    if abs(xT[i] - (600e3-yT[i]) ) <1:
+       diagfile.write("%10e %10e %10e \n " %(xT[i],yT[i],T[i]-273))
+diagfile.close()
+
+# compute average temperature
+
+Tavrg=0.
+for iel in range(0,nel):
+    for kq in range(0,nqel):
+        rq=qcoords_r[kq]
+        sq=qcoords_s[kq]
+        weightq=qweights[kq]
+        N_mat[0:mT,0]=NNT(rq,sq)
+        dNdr[0:mT]=dNNTdr(rq,sq)
+        dNds[0:mT]=dNNTds(rq,sq)
+        jcb=np.zeros((ndim,ndim),dtype=np.float64)
+        for k in range(0,mT):
+            jcb[0,0]+=dNdr[k]*xT[iconT[k,iel]]
+            jcb[0,1]+=dNdr[k]*yT[iconT[k,iel]]
+            jcb[1,0]+=dNds[k]*xT[iconT[k,iel]]
+            jcb[1,1]+=dNds[k]*yT[iconT[k,iel]]
+        jcob=np.linalg.det(jcb)
+        Tq=0.
+        for k in range(0,mT):
+            Tq+=N_mat[k,0]*T[iconT[k,iel]]
+        Tavrg+=Tq*weightq*jcob
+
+Tavrg/=(Lx*Ly)
+
+print ('Tavrg=',Tavrg)
 
 #################################################################
 
