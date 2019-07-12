@@ -61,6 +61,8 @@ N_4(r,s,t) &=& t \nonumber
 \subsubsection{Enriched linear in tetrahedra($P_1^+$)}
 \index{$P_1^+$}
 
+These shape functions would be used in the MINI element, see Section~\ref{pair:mini}.
+
 In 3D the buble function lools like $rst(1-r-s-t)$ so that 
 \[
 f(r,s,t)=a+b\; r+c\; s+d\; t+e \; rst(1-r-s-t)
@@ -152,6 +154,31 @@ The derivatives are given by:
 \subsubsection{Triquadratic basis functions in 3D ($Q_2$)}
 \index{$Q_2$}
 
+\begin{verbatim}
+   t
+   |
+   .--s
+  /
+ r
+                                    05=====16=====08 
+                                    |      |      |  
+                                    |      |      |  
+                  13=====26=====15  17=====25=====20 
+                  |      |      |   |      |      |  
+                  |      |      |   |      |      |  
+06=====14=====07  22=====27=====24  01=====12=====04 @ r=-1
+|      |      |   |      |      |  
+|      |      |   |      |      |   
+18=====23=====14  09=====21=====11 @ r=0
+|      |      |   
+|      |      |  
+02=====10=====03 @ r=+1
+\end{verbatim}
+
+
+
+
+
 \begin{eqnarray}
 N_{1}&=& 0.5r(r-1)  \;0.5s(s-1)\; 0.5t(t-1)  \nonumber\\
 N_{2}&=& 0.5r(r+1)  \;0.5s(s-1)\; 0.5t(t-1)  \nonumber\\
@@ -161,13 +188,13 @@ N_{5}&=& 0.5r(r-1)  \;0.5s(s-1)\; 0.5t(t+1)  \nonumber\\
 N_{6}&=& 0.5r(r+1)  \;0.5s(s-1)\; 0.5t(t+1)  \nonumber\\
 N_{7}&=& 0.5r(r+1)  \;0.5s(s+1)\; 0.5t(t+1)  \nonumber\\
 N_{8}&=& 0.5r(r-1)  \;0.5s(s+1)\; 0.5t(t+1)  \nonumber\\
-N_{9}&=& (1.-r^2)   \;0.5s(s-1)\; 0.5t(t-1)  \nonumber\\
+N_{9}&=& (1-r^2)   \;0.5s(s-1)\; 0.5t(t-1)  \nonumber\\
 N_{10}&=& 0.5r(r+1) \;(1-s^2)  \; 0.5t(t-1)  \nonumber\\
-N_{11}&=& (1.-r^2)  \;0.5s(s+1)\; 0.5t(t-1)  \nonumber\\
+N_{11}&=& (1-r^2)  \;0.5s(s+1)\; 0.5t(t-1)  \nonumber\\
 N_{12}&=& 0.5r(r-1) \;(1-s^2)  \; 0.5t(t-1)  \nonumber\\
-N_{13}&=& (1.-r^2)  \;0.5s(s-1)\; 0.5t(t+1)  \nonumber\\
+N_{13}&=& (1-r^2)  \;0.5s(s-1)\; 0.5t(t+1)  \nonumber\\
 N_{14}&=& 0.5r(r+1) \;(1-s^2)  \; 0.5t(t+1)  \nonumber\\
-N_{15}&=& (1.-r^2)  \;0.5s(s+1)\; 0.5t(t+1)  \nonumber\\
+N_{15}&=& (1-r^2)  \;0.5s(s+1)\; 0.5t(t+1)  \nonumber\\
 N_{16}&=& 0.5r(r-1) \;(1-s^2)  \; 0.5t(t+1)  \nonumber\\
 N_{17}&=& 0.5r(r-1) \;0.5s(s-1)\; (1-t^2)  \nonumber\\
 N_{18}&=& 0.5r(r+1) \;0.5s(s-1)\; (1-t^2)  \nonumber\\
@@ -180,5 +207,132 @@ N_{24}&=& (1-r^2)   \;0.5s(s+1)\; (1-t^2)  \nonumber\\
 N_{25}&=& 0.5r(r-1) \;(1-s^2)  \; (1-t^2)  \nonumber\\
 N_{26}&=& (1-r^2)   \;(1-s^2)  \; 0.5t(t+1)  \nonumber\\
 N_{27}&=& (1-r^2)   \;(1-s^2)  \; (1-t^2)  \nonumber
+\end{eqnarray}
+
+%.....................................................................
+\subsubsection{Enriched quadratic basis functions in tetrahedra ($P_2^+$)}
+\index{$P_2^+$}
+
+\includegraphics[width=9cm]{images/crouzeix-raviart/p2pp1_3D1}
+\includegraphics[width=5cm]{images/crouzeix-raviart/p2pp1_3D2}
+
+The velocity shape functions are:
+\begin{eqnarray}
+\phi_i &=& \lambda_i(2\lambda_i-1) + 3 (\lambda_i\lambda_j \lambda_k + \lambda_i\lambda_j\lambda_l + \lambda_i\lambda_k\lambda_l) -4 \lambda_i\lambda_j\lambda_k\lambda_l \\
+\phi_{ij} &=& 4\lambda_i\lambda_j - 12( \lambda_i\lambda_j\lambda_k+\lambda_i\lambda_j\lambda_l  ) +32 \lambda_i\lambda_j\lambda_k \lambda_l \\
+\phi_{ijk} &=& 27  \lambda_i\lambda_j\lambda_k - 108 \lambda_i\lambda_j\lambda_k \lambda_l \\
+\phi_c &=& 256 \lambda_i\lambda_j\lambda_k\lambda_l
+\end{eqnarray}
+
+\todo[inline]{REFS ??? better definition of functions !}
+
+%.....................................................................
+\subsubsection{Linear basis functions for tetrahedra ($P_1$)}
+\index{$P_1$}
+
+This is essentially in the $Q_2\times P_{-1}$ element. 
+
+I choose the reduced coordinates of the pressure support points to be :
+
+\begin{tabular}{cccc}
+\hline
+point & r & s & t \\
+\hline
+1& 1/2 &-1/2 &-1/2\\
+2& -1/2 &1/2 &-1/2\\
+3& -1/2 &-1/2& 1/2\\
+4& 1/2 &1/2& 1/2 \\
+\hline
+\end{tabular}
+
+Inside the element the pressure is given as a linear function of the reduced coordinates $r,s,t$:
+\[
+p(r,s,t)=a+br+cs+dt
+\]
+This expression must exactly interpolate the pressure at all four pressure nodes:
+\begin{eqnarray}
+p_1 
+&=& p(r_1,s_1,t_1) 
+= a+br_1+cs_1+dt_1 
+= a+b/2-c/2-d/2\nonumber\\
+p_2
+&=& p(r_2,s_2,t_2)
+= a+br_2+cs_2+dt_2
+= a-b/2+c/2-d/2\nonumber\\
+p_3
+&=& p(r_3,s_3,t_3) 
+= a+br_3+cs_3+dt_3 
+= a-b/2-c/2+d/2\nonumber\\
+p_4
+&=& p(r_4,s_4,t_4) 
+= a+br_4+cs_4+dt_4
+= a+b/2+c/2+d/2\nonumber
+\end{eqnarray}
+or,
+\begin{equation}
+\left(
+\begin{array}{cccc}
+1 & 1/2 & -1/2 & -1/2 \\
+1 & -1/2 & +1/2 & -1/2 \\
+1 & -1/2 & -1/2 & +1/2 \\
+1 & 1/2 & +1/2 & +1/2 
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+a\\b\\c\\d
+\end{array}
+\right)=
+\left(
+\begin{array}{c}
+p_1\\p_2\\p_3\\p_4
+\end{array}
+\right)
+\nonumber
+\end{equation}
+
+The matrix is invertible and we get:
+\[
+\left(
+\begin{array}{c}
+a\\b\\c\\d
+\end{array}
+\right)=
+\left(
+\begin{array}{cccc}
+1/4 & 1/4 & 1/4 & 1/4 \\
+1/2 & -1/2 & -1/2 & 1/2 \\
+-1/2 & 1/2 & -1/2 & 1/2 \\
+-1/2 & -1/2 & 1/2 & 1/2
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+p_1\\p_2\\p_3\\p_4
+\end{array}
+\right)
+\]
+
+so 
+\begin{eqnarray}
+p(r,s,t)
+&=& a+br+cs+dt \nonumber\\
+&=& \frac{1}{4}(p_1+p_2+p_3+p_4)
++\frac{1}{2}(p_1-p_2-p_3+p_4)r
++\frac{1}{2}(-p_1+p_2-p_3+p_4)s
++\frac{1}{2}(-p_1-p_2+p_3+p_4)t\nonumber\\
+&=&
+\frac{1}{4}(1+2r-2s-2t)p_1+
+\frac{1}{4}(1-2r+2s-2t)p_2+
+\frac{1}{4}(1-2r-2s+2t)p_3+
+\frac{1}{4}(1+2r+2s+2t)p_4 \nonumber\\
+&=& \sum_{i=1}^4 N_i(r,s,t) p_i
+\end{eqnarray}
+with
+\begin{eqnarray}
+N_1(r,s,t) &=& \frac{1}{4}(1+2r-2s-2t)\nonumber\\
+N_2(r,s,t) &=& \frac{1}{4}(1-2r+2s-2t)\nonumber\\
+N_3(r,s,t) &=& \frac{1}{4}(1-2r-2s+2t)\nonumber\\
+N_4(r,s,t) &=& \frac{1}{4}(1+2r+2s+2t)\nonumber
 \end{eqnarray}
 

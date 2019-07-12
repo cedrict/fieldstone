@@ -73,6 +73,15 @@ These can be filtered out \cite{chpc95}. Smoothing techniques are also discussed
 
 This element is crowned "probably the most accurate 2D element" in \cite{grsa}.
 
+Piecewise Biquadratic velocities, piecewise linear discontinuous polynomial pressure. 
+The element satisfies the inf-sup condition \cite{hugh}p211.
+It is used in \cite{vssj89}. 
+See \cite{boga02} over the two possible choices for the definition of the pressure space..
+It is mentioned in \cite{kaus10}, \cite{boga02}, \cite{pefc89}.
+
+
+
+
 %----------------------------------------------------------------------
 \subsubsection{The bi/tri-quadratic velocity - bi/tri-linear pressure element ($Q_2 \times Q_1$)}
 
@@ -150,8 +159,6 @@ The 3D MINI element is not very common but it is used for instance in \cite{pico
 
 
 
-
-
 %----------------------------------------------------------------------
 \subsubsection{The quadratic velocity - linear pressure triangle ($P_2\times P_1$)}
 
@@ -203,7 +210,16 @@ bubble can be eliminated, one can design a modified version of this element.
 \todo[inline]{Check Cuvelier book chapter 8 for modified element}
 
 
-
+\begin{remark}
+I have once asked the (main) author of MILAMIN why he chose this element, for 
+example over the $P_2\times P_1$. His answer is as follows:
+"Elements with continuous pressure  are incapable of converging in the Linf 
+norm for mechanical problems exhibiting pressure jumps such as the inclusion-host setup. 
+During my MSc and PhD I was focusing on sharp heterogeneities, so this is why I decided 
+to choose $P_2^+\times P_{-1}$. 
+You will see that it is also easy to invert the pressure mass matrix for such elements, 
+which is really useful (both for the augmentation and preconditioning)."
+\end{remark}
 
 
 
