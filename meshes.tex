@@ -19,6 +19,8 @@ connectivity) and unstructured grids (with an irregular connectivity).
 \includegraphics[width=5cm]{images/meshes/unstructured_grid}
 \end{center}
 
+
+
 %............................................
 \subsubsection{Quadrilateral-based meshes}
 
@@ -136,13 +138,20 @@ for i in range(0,nelx):
 \improvement[inline]{produce drawing of node numbering}
 
 %...................................................
-\subsubsection{Delaunay triangulation and Voronoi cells}
+\subsubsection{Delaunay triangulation and Voronoi cells, and triangle-based meshes}
 
 Triangle-based meshes are obviously better suited for simulations of complex geometries:
 \begin{center}
 \includegraphics[height=4cm]{images/meshes/tr1.png}
 \includegraphics[height=4cm]{images/meshes/dolfin.png}
 \end{center}
+
+A very practical 2D triangle mesher is the code {\sl Triangle}\footnote{\url{https://www.cs.cmu.edu/~quake/triangle.html}}
+written by J.R. Shewchuk \cite{shew96}.
+Triangle is specialized for creating two-dimensional finite element meshes, but can also perform simpler related tasks such as forming Delaunay triangulations under various assumptions.
+ 
+
+\todo[inline]{write about gmesh}
 
 
 %...........................

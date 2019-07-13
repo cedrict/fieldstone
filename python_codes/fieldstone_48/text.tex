@@ -1,0 +1,87 @@
+The numbering of the nodes is somewhat inconsistent: the nodes in the $Q_1$
+element are numbered in a counterclockwise manner while they are numberd
+left-to-right, bottom-to-top for the $Q_2$ and $Q_3$.
+
+\begin{verbatim}
+              Q1/P0          Q2/Q1           Q3/Q2
+          
+          2===========3   6=====7=====8  12==13==14==15
+          |           |   |     |     |   |   |   |   |
+          |           |   |     |     |   8===9==10==11
+          |           |   3=====4=====5   |   |   |   |
+          |           |   |     |     |   4===5===6===7
+          |           |   |     |     |   |   |   |   |
+          0===========1   0=====1=====2   0===1===2===3
+
+          .===========.   2===========3   6=====7=====8
+          |           |   |           |   |     |     |
+          |           |   |           |   |     |     |
+          |     0     |   |           |   3=====4=====5
+          |           |   |           |   |     |     |
+          |           |   |           |   |     |     |
+          .===========.   0===========1   0=====1=====2       
+
+          mV=4, mP=1      mV=9, mP=4      mV=16, mP=9  
+
+\end{verbatim}
+
+In the code the 'order' parameter can take values 1,2 and 3 which 
+correspond to the polynomial order of the velocity approximation ($Q_1$, $Q_2$ and $Q_3$).
+
+When both nelx and nely values have been chosen, the total number of element 
+for a regular 2D grid is simply:
+\begin{lstlisting}
+nel=nelx*nely
+\end{lstlisting}
+
+The number of nodes in each direction is then easily computed:
+\begin{lstlisting}
+nnx=order*nelx+1 
+nny=order*nely+1 
+\end{lstlisting}
+and so is then the total number of velocity nodes:
+\begin{lstlisting}
+NV=nnx*nny
+\end{lstlisting}
+
+The total number of pressure nodes is as follows:
+\begin{lstlisting}
+if order==1:
+   NP=nelx*nely
+if order==2:
+   NP=(nelx+1)*(nely+1)
+if order==3:
+   NP=(2*nelx+1)*(2*nely+1)
+\end{lstlisting}
+
+Each velocity node has 2 dofs (ndofV=2) while pressure nodes have one dof (ndofP=1) so that 
+the size of the blocks and the assembled FE matrix are given by:
+
+\begin{lstlisting}
+NfemV=NV*ndofV      
+NfemP=NP*ndofP    
+Nfem=NfemV+NfemP
+\end{lstlisting}
+
+For the linear element, 2 quadrature points per dimension are enough (nqperdim=2), 
+while 3 are necessary for the quadratic element (nqperdim=3) and 4 are 
+necessary for the cubic element (nqperdim=4), which can be conveniently implemented as follows:
+\begin{lstlisting}
+nqperdim=order+1
+\end{lstlisting}
+
+Because we wish to use a regular grid, the layout of the points for all three elements 
+can be implemented easily:
+
+\begin{lstlisting}
+counter=0    
+for j in range(0,nny):
+    for i in range(0,nnx):
+        xV[counter]=i*hx/order
+        yV[counter]=j*hy/order
+        counter+=1
+\end{lstlisting}
+
+
+
+
