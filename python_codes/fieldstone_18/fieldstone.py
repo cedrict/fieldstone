@@ -310,6 +310,8 @@ for iel in range(0,nel):
                 dNVdx[k]=jcbi[0,0]*dNVdr[k]+jcbi[0,1]*dNVds[k]
                 dNVdy[k]=jcbi[1,0]*dNVdr[k]+jcbi[1,1]*dNVds[k]
 
+            #print (xq,yq)
+
             # construct 3x8 b_mat matrix
             for i in range(0,mV):
                 b_mat[0:3, 2*i:2*i+2] = [[dNVdx[i],0.     ],
@@ -368,6 +370,9 @@ for iel in range(0,nel):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
         constr[m2]+=NNNP[k2]
+
+print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
+print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
 
 print("build FE matrix: %.3f s" % (time.time() - start))
 

@@ -1,0 +1,56 @@
+set term pdf enhanced
+set grid
+set xlabel 'r'
+set key outside
+
+f1(x)=0.5*(1-x)
+f2(x)=0.5*(1+x)
+
+set output 'linear.pdf'
+plot[-1:1][]\
+f1(x) lw 2 title 'N_1(r)',\
+f2(x) lw 2 title 'N_2(r)'
+
+f1(x)=0.5*x*(x-1)
+f2(x)=1-x**2
+f3(x)=0.5*x*(1+x)
+
+set output 'quadratic.pdf'
+plot[-1:1][]\
+f1(x) lw 2 title 'N_1(r)',\
+f2(x) lw 2 title 'N_2(r)',\
+f3(x) lw 2 title 'N_3(r)'
+
+f1(x)=(-1+   x+9*x**2- 9*x**3 )/16
+f2(x)=( 9-27*x-9*x**2+27*x**3 )/16
+f3(x)=( 9+27*x-9*x**2-27*x**3 )/16
+f4(x)=(-1-   x+9*x**2+ 9*x**3 )/16
+
+set output 'cubic.pdf'
+plot[-1:1][]\
+f1(x) lw 2 title 'N_1(r)',\
+f2(x) lw 2 title 'N_2(r)',\
+f3(x) lw 2 title 'N_3(r)',\
+f4(x) lw 2 title 'N_4(r)'
+
+f1(x)= (x- x**2 -4*x**3 +4*x**4 )/6
+f2(x)= (  -8*x+16*x**2 +8*x**3 -16*x**4 )/6
+f3(x)= 1 -5*x**2+4*x**4 
+f4(x)= (  8*x+16*x**2 -8*x**3 -16*x**4)/6
+f5(x)= ( -x- x**2 +4*x**3 +4*x**4)/6
+
+set output 'quartic.pdf'
+plot[-1:1][]\
+f1(x) lw 2 title 'N_1(r)',\
+f2(x) lw 2 title 'N_2(r)',\
+f3(x) lw 2 title 'N_3(r)',\
+f4(x) lw 2 title 'N_4(r)',\
+f5(x) lw 2 title 'N_5(r)',\
+"<echo '-1 0'"     with points lt -1 pt 5 ps .5 notitle,\
+"<echo '-0.5 0'"   with points lt -1 pt 5 ps .5 notitle,\
+"<echo '0 0'"      with points lt -1 pt 5 ps .5 notitle,\
+"<echo '0.5 0'"    with points lt -1 pt 5 ps .5 notitle,\
+"<echo '1 0'"      with points lt -1 pt 5 ps .5 notitle
+
+
+

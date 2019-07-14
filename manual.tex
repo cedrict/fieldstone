@@ -22,6 +22,7 @@
 \usepackage{siunitx} %\si{XX}
 \newcommand{\aspect}{{\textsc{Aspect}}}
 \newtheorem*{remark}{Remark}
+%\setcounter{secnumdepth}{1} % sections are level 1
 
 \hypersetup{
     colorlinks,
@@ -310,214 +311,357 @@ application of these codes: geodynamic modelling.
 %==================================================================================================
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_01}: simple analytical solution \label{f01}} %%%%%%%%%%%%%%%%%%
+\section{Stone 01: simple analytical solution (MMS1) \label{f01}}
 \input{python_codes/fieldstone_01/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_02}: Stokes sphere \label{f02}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Stone 02: Stokes sphere \label{f02}}
 \input{python_codes/fieldstone_02/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_03}: Convection in a 2D box \label{f03}} %%%%%%%%%%%%%%%%%%%%%%
+\section{Stone 03: Convection in a 2D box \label{f03}}
 \input{python_codes/fieldstone_03/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_04}: The lid driven cavity \label{f04}} %%%%%%%%%%%%%%%%%%%%%%%
+\section{Stone 04: The lid driven cavity \label{f04}}
 \input{python_codes/fieldstone_04/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_05}: SolCx benchmark \label{f05}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Stone 05: SolCx benchmark \label{f05}}
 \input{python_codes/fieldstone_05/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_06}: SolKz benchmark \label{f06}}
-\input{python_codes/fieldstone_06/text}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Stone 06: SolKz benchmark \label{f06}}
+\input{python_codes/fieldstone_06/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_07}: SolVi benchmark \label{f07}}
-\input{python_codes/fieldstone_07/text}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Stone 07: SolVi benchmark \label{f07}}
+\input{python_codes/fieldstone_07/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_08}: the indentor benchmark \label{f08}}
-\input{python_codes/fieldstone_08/text}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Stone 08: the indentor benchmark \label{f08}}
+\input{python_codes/fieldstone_08/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_09}: the annulus benchmark \label{f09}}
-\input{python_codes/fieldstone_09/text}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{
+Stone 09: the annulus benchmark 
+\label{f09}}
+\input{python_codes/fieldstone_09/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{
+Stone 10: Stokes sphere (3D) - penalty 
+\label{f10}}
+\input{python_codes/fieldstone_10/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_10}: Stokes sphere (3D) - penalty \label{f10}}
-\input{python_codes/fieldstone_10/text}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{
+Stone 11: stokes sphere (3D) - mixed formulation 
+\label{f11}}
+\input{python_codes/fieldstone_11/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_11}: stokes sphere (3D) - mixed formulation \label{f11}}
-\input{python_codes/fieldstone_11/text}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{
+Stone 12: consistent pressure recovery 
+\label{f12}}
+\input{python_codes/fieldstone_12/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_12}: consistent pressure recovery \label{f12}}
-\input{python_codes/fieldstone_12/text}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{
+Stone 13: the Particle in Cell technique (1) - the effect of averaging 
+\label{f13}}
+\input{python_codes/fieldstone_13/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_13}: the Particle in Cell technique (1) - the effect of averaging \label{f13}}
-\input{python_codes/fieldstone_13/text}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{
+Stone 14: solving the full saddle point problem 
+\label{f14}}
+\input{python_codes/fieldstone_14/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_f14}: solving the full saddle point problem \label{f14}}
-\input{python_codes/fieldstone_14/text}
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_f15}: saddle point problem with Schur complement approach - benchmark \label{f15}}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{
+Stone 15: saddle point problem with Schur complement approach - benchmark 
+\label{f15}}
 \input{python_codes/fieldstone_15/text}
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_f16}: saddle point problem with Schur complement approach - Stokes sphere \label{f16}}
-\input{python_codes/fieldstone_16/text}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{
+Stone 16: saddle point problem with Schur complement approach - Stokes sphere 
+\label{f16}}
+\input{python_codes/fieldstone_16/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_17}: solving the full saddle point problem in 3D \label{f17}}
-\input{python_codes/fieldstone_17/text}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{
+Stone 17: solving the full saddle point problem in 3D 
+\label{f17}}
+\input{python_codes/fieldstone_17/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_18}: solving the full saddle point problem with $Q_2\times Q_1$ elements \label{f18}}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{
+Stone 18: solving the full saddle point problem with $Q_2\times Q_1$ elements 
+\label{f18}}
 \input{python_codes/fieldstone_18/text}
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_19}: solving the full saddle point problem with $Q_3\times Q_2$ elements \label{f19}}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{
+Stone 19: solving the full saddle point problem with $Q_3\times Q_2$ elements 
+\label{f19}}
 \input{python_codes/fieldstone_19/text}
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_20}: the Busse benchmark \label{f20}}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 20: the Busse benchmark 
+\label{f20}}
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 20: the Busse benchmark 
+}
 \input{python_codes/fieldstone_20/text}
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_21}: The non-conforming $Q_1 \times P_0$ element \label{f21}}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 21: The non-conforming $Q_1 \times P_0$ element 
+\label{f21}}
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 21: The non-conforming $Q_1 \times P_0$ element 
+}
 \input{python_codes/fieldstone_21/text}
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_22}: The stabilised $Q_1 \times Q_1$ element \label{f22}} 
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 22: The stabilised $Q_1 \times Q_1$ element 
+\label{f22}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 22: The stabilised $Q_1 \times Q_1$ element 
+}
 \input{python_codes/fieldstone_22/text}
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_23}: compressible flow (1) - analytical benchmark \label{f23}}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 23: compressible flow (1) - analytical benchmark 
+\label{f23}}
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 23: compressible flow (1) - analytical benchmark 
+}
 \input{python_codes/fieldstone_23/text}
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_24}: compressible flow (2) - convection box \label{f24}}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 24: compressible flow (2) - convection box 
+\label{f24}}
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 24: compressible flow (2) - convection box 
+}
 \input{python_codes/fieldstone_24/text}
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_25}: Rayleigh-Taylor instability (1) - instantaneous \label{f25}}
+\section*{
+Stone 25: Rayleigh-Taylor instability (1) - instantaneous 
+\label{f25}}
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 25: Rayleigh-Taylor instability (1) - instantaneous 
+}
 \input{python_codes/fieldstone_25/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_26}: Slab detachment benchmark (1) - instantaneous \label{f26}}
+\section*{
+Stone 26: Slab detachment benchmark (1) - instantaneous 
+\label{f26}}
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 26: Slab detachment benchmark (1) - instantaneous 
+}
 \input{python_codes/fieldstone_26/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_27}: Consistent Boundary Flux \label{f27}} %%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 27: Consistent Boundary Flux 
+\label{f27}} %%%%%%%%%%%%%%%%%%%%
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 27: Consistent Boundary Flux 
+}
 \input{python_codes/fieldstone_27/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_28}: convection 2D box - Tosi et al, 2015 \label{f28}} %%%%%%%%
+\section*{
+Stone 28: convection 2D box - Tosi et al, 2015 
+\label{f28}} %%%%%%%%
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 28: convection 2D box - Tosi et al, 2015 
+}
 \input{python_codes/fieldstone_28/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_29}: open boundary conditions \label{f29}} %%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 29: open boundary conditions 
+\label{f29}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 29: open boundary conditions 
+}
 \input{python_codes/fieldstone_29/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_30}: conservative velocity interpolation \label{f30}} %%%%%%%%%
+\section*{
+Stone 30: conservative velocity interpolation 
+\label{f30}} %%%%%%%%%
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 30: conservative velocity interpolation 
+}
 \input{python_codes/fieldstone_30/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_31}: conservative velocity interpolation 3D \label{f31}} %%%%%%
+\section*{
+Stone 31: conservative velocity interpolation 3D 
+\label{f31}} %%%%%%
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 31: conservative velocity interpolation 3D 
+}
 %\input{python_codes/fieldstone_30/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_32}: 2D analytical sol. from stream function \label{f32}} %%%%%
+\section*{
+Stone 32: 2D analytical sol. from stream function 
+\label{f32}} %%%%%
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 32: 2D analytical sol. from stream function 
+}
 \input{python_codes/fieldstone_32/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_33}: Convection in an annulus \label{f33}} %%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 33: Convection in an annulus 
+\label{f33}}
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 33: Convection in an annulus 
+}
 \input{python_codes/fieldstone_33/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_34}: the Cartesian geometry elastic aquarium \label{f34}} %%%%%
+\section*{
+Stone 34: the Cartesian geometry elastic aquarium 
+\label{f34}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 34: the Cartesian geometry elastic aquarium 
+}
 \input{python_codes/fieldstone_34/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_35}: 2D analytical sol. in annulus from stream function \label{f35}}
+\section*{
+Stone 35: 2D analytical sol. in annulus from stream function 
+\label{f35}}
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 35: 2D analytical sol. in annulus from stream function 
+}
 \input{python_codes/fieldstone_35/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_36}: the annulus geometry elastic aquarium \label{f36}}%%%%%%%%
+\section*{
+Stone 36: the annulus geometry elastic aquarium 
+\label{f36}}%%%%%%%%
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 36: the annulus geometry elastic aquarium 
+}
 \input{python_codes/fieldstone_36/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_37}: marker advection and population control \label{f37}} %%%%%
+\section*{
+Stone 37: marker advection and population control 
+\label{f37}}
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 37: marker advection and population control 
+}
 \input{python_codes/fieldstone_37/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_38}: Critical Rayleigh number \label{f38}} %%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 38: Critical Rayleigh number 
+\label{f38}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 38: Critical Rayleigh number 
+}
 \input{python_codes/fieldstone_38/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_39}: chpe15 \label{f39}} %%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 39: chpe15 
+\label{f39}}
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 39: chpe15 
+}
 \input{python_codes/fieldstone_39/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_40}: Rayleigh-Taylor instability \label{f40}} %%%%%%%%%%%%%%%%%
+\section*{
+Stone 40: Rayleigh-Taylor instability 
+\label{f40}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 40: Rayleigh-Taylor instability 
+}
 \input{python_codes/fieldstone_40/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %41 melchior
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_42}: 1D diffusion \label{f42}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 42: 1D diffusion 
+\label{f42}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 42: 1D diffusion 
+}
 \input{python_codes/fieldstone_42/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_43}: the rotating cone \label{f43}} %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 43: the rotating cone 
+\label{f43}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 43: the rotating cone 
+}
 \input{python_codes/fieldstone_43/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_44}: the flat slab \label{f44}} %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 44: the flat slab 
+\label{f44}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 44: the flat slab 
+}
 \input{python_codes/fieldstone_44/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_45}: the corner flow  \label{f45}} %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 45: the corner flow
+\label{f45}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 45: the corner flow
+}
 \input{python_codes/fieldstone_45/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_46}: MMS1 with Crouzeix-Raviart ($P_2^+\times P_{-1}$) elements  
-\label{f46}} %%%%%%%%
+\section*{
+Stone 46: MMS1 with Crouzeix-Raviart ($P_2^+\times P_{-1}$) elements  
+\label{f46}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 46: MMS1 with Crouzeix-Raviart ($P_2^+\times P_{-1}$) elements  
+}
 \input{python_codes/fieldstone_46/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{{\tt fieldstone\_47}: MMS1 with MINI ($P_1^+\times P_1$) elements  \label{f47}} 
+\section*{
+Stone 47: MMS1 with MINI ($P_1^+\times P_1$) elements
+\label{f47}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 47: MMS1 with MINI ($P_1^+\times P_1$) elements
+}
 \input{python_codes/fieldstone_47/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 48: MMS1 with $Q_1\times P_0$, $Q_2\times Q_1$, $Q_3\times Q_2$ elements
+\label{f48}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 48: MMS1 with $Q_1\times P_0$, $Q_2\times Q_1$, $Q_3\times Q_2$ elements
+}
+\input{python_codes/fieldstone_48/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
