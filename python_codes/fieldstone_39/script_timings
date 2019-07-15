@@ -1,0 +1,24 @@
+rm timings.dat 
+python3 fieldstone.py 100 10 0 2 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 110 11 0 2 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 120 12 0 2 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 130 13 0 2 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 140 14 0 2 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 150 15 0 2 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 160 16 0 2 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 170 17 0 2 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 200 20 0 2 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 240 24 0 2 > opla ; grep solve opla >> timings.dat
+
+python3 fieldstone.py 100 10 0 1 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 110 11 0 1 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 120 12 0 1 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 130 13 0 1 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 140 14 0 1 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 150 15 0 1 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 160 16 0 1 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 170 17 0 1 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 200 20 0 1 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 240 24 0 1 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 300 30 0 1 > opla ; grep solve opla >> timings.dat
+python3 fieldstone.py 320 32 0 1 > opla ; grep solve opla >> timings.dat

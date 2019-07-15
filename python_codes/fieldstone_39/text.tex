@@ -137,25 +137,60 @@ The velocity, pressure, strain rate, dilation rate, and velocity divergence are 
 extension and compression.
 
 \begin{center}
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/velx}\\
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/vely}\\
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/etaeff}\\
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/sr}
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/extension_u}\\
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/extension_v}\\
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/extension_mueff}\\
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/extension_sr}\\
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/extension_press}\\
+{\small Extension. 1st row: Non-associative plasticity; 2nd and 3rd row: associative plasticity ($\psi=\phi$) with method 1 for two resolutions 120x12 and 240; 4th and 5th row: associative plasticity ($\psi=\phi$) with method 2 for two re    solutions 120x12 and 240}
 \end{center}
 
 \begin{center}
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/conv}
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/compression_u}\\
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/compression_v}\\
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/compression_mueff}\\
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/compression_sr}\\
+\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/compression_press}\\
+{\small Compression. 1st row: Non-associative plasticity; 2nd and 3rd row: associative plasticity ($\psi=\phi$) with method 1 for two resolutions 120x12 and 240; 4th and 5th row: associative plasticity ($\psi=\phi$) with method 2 for two re    solutions 120x12 and 240}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=.5\linewidth]{python_codes/fieldstone_39/images/conv_compression}
+\includegraphics[width=.5\linewidth]{python_codes/fieldstone_39/images/conv_extension}
+\end{center}
+
+One can also run the extension model for $\phi=\psi={0,5,10,15,20,25,30}\degree$
+\begin{center}
+\includegraphics[width=.5\linewidth]{python_codes/fieldstone_39/images/sr_0_30}
+\includegraphics[width=.5\linewidth]{python_codes/fieldstone_39/images/etaeff_0_30}\\
+\end{center}
+
+Three angles are mechanically stable (e.g. \cite{kaus10}):
+\[
+\theta=\frac{\pi}{4}\pm \frac{\psi}{2} \qquad \text{Roscoe angle}
+\]
+\[
+\theta=\frac{\pi}{4}\pm \frac{\phi}{2} \qquad \text{Coulomb angle}
+\]
+\[
+\theta=\frac{\pi}{4}\pm \frac{\phi+\phi}{4} \qquad \text{Arthur angle}
+\]
+In the case of associative plasticity, $\phi=\psi$, so that all three angles are the same. 
+Per row of elements, and per half of the domain (left and right) we find the element
+with the highest strain-rate and record their center coordinates on the figure hereunder. 
+These elements are shown for $\phi=\psi=\{0,10,20,30\}\degree$ alongside a line corresponding to 
+the expected analytical shear band angle value.
+\begin{center}
+\includegraphics[width=.6\linewidth]{python_codes/fieldstone_39/images/shear_bands}\\
+\includegraphics[width=.6\linewidth]{python_codes/fieldstone_39/images/shear_bands_nonass}\\
+Results obtained on a 240x24 grid, max 50 nl iterations.
 \end{center}
 
 
 
-
-
-
-
-
-
-
-
+Note that benchmarking this in not easy. One solution Timo and I found was to add a 
+velocity field $\underline{\vec\upnu}=(x,y,z)$ (with $\vec\nabla\cdot\underline{\vec\upnu}=3$)
+to an existing analytical problem, e.g. the Burstedde benchamrk.
 
 

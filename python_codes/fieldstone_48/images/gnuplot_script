@@ -1,0 +1,37 @@
+set term pdf enhanced
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+set key bottom outside 
+
+set output 'errors1.pdf'
+plot[][:1e4]\
+'errors1' u (1./sqrt($3)):6  w lp lt 1 pt 1 t 'v',\
+'errors1' u (1./sqrt($3)):9  w lp lt 2 pt 2 t 'p',\
+'errors1' u (1./sqrt($3)):12 w lp lt 3 pt 3 t 'q',\
+x**2/10. w l t 'x^2',\
+x**1/1. w l t 'x^1'
+
+set output 'errors2.pdf'
+plot[][]\
+'errors2' u (1./sqrt($3)):6  w lp lt 1 pt 1 t 'v',\
+'errors2' u (1./sqrt($3)):9  w lp lt 2 pt 2 t 'p',\
+'errors2' u (1./sqrt($3)):12 w lp lt 3 pt 3 t 'q',\
+x**3/80. w l t 'x^3',\
+x**2/10. w l t 'x^2'
+
+set output 'errors3.pdf'
+plot[][]\
+'errors3' u (1./sqrt($3)):6  w lp lt 1 pt 1 t 'v',\
+'errors3' u (1./sqrt($3)):9  w lp lt 2 pt 2 t 'p',\
+'errors3' u (1./sqrt($3)):12 w lp lt 3 pt 5 ps .25 t 'q',\
+x**4/400. w l t 'x^4',\
+x**5/300. w l t 'x^5'
+
+set output 'errors4.pdf'
+plot[][]\
+'errors4' u (1./sqrt($3)):6  w lp lt 1 pt 1 t 'v',\
+'errors4' u (1./sqrt($3)):9  w lp lt 2 pt 2 t 'p',\
+'errors4' u (1./sqrt($3)):12 w lp lt 3 pt 5 ps .25 t 'q',\
+x**5/10. w l t 'x^5',\
+x**4/10. w l t 'x^4'

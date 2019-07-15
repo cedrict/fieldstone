@@ -1,25 +1,52 @@
 set term pdf enhanced
 set xlabel 't'
 
+set key outside
 set ylabel 'min. Temperature'
 set output 'Tmin.pdf'
 plot[][-0.25:0.1]\
-'impl/Tmin.ascii' w lp ps .4 t 'implicit',\
-'expl/Tmin.ascii' w lp ps .4 t 'explicit',\
-'crni/Tmin.ascii' w lp ps .4 t 'Crank-Nicolson'
+0 lt -1 notitle,\
+'impl/Tmin.ascii'    w lp ps .4 lt 1 t 'fully implicit',\
+'expl/Tmin.ascii'    w lp ps .4 lt 2 t 'fully explicit',\
+'crni/Tmin.ascii'    w lp ps .4 lt 3 t 'C.-N. '
+
+
+set output 'Tmin_CN.pdf'
+plot[][-0.25:0.1]\
+0 lt -1 notitle,\
+'crni30/Tmin.ascii'  w lp ps .4 t 'C.-N. (30)',\
+'crni60/Tmin.ascii'  w lp ps .4 t 'C.-N. (60)',\
+'crni120/Tmin.ascii' w lp ps .4 t 'C.-N. (120)',\
+'crni/Tmin.ascii'    w lp ps .4 t 'C.-N. (200)'
 
 set ylabel 'max. Temperature'
 set output 'Tmax.pdf'
 plot[][0.5:1.1]\
-'impl/Tmax.ascii' w lp ps .4 t 'implicit',\
-'expl/Tmax.ascii' w lp ps .4 t 'explicit',\
-'crni/Tmax.ascii' w lp ps .4 t 'Crank-Nicolson'
+1 lt -1 notitle,\
+'impl/Tmax.ascii'    w lp ps .4 lt 1 t 'fully implicit',\
+'expl/Tmax.ascii'    w lp ps .4 lt 2 t 'fully explicit',\
+'crni/Tmax.ascii'    w lp ps .4 lt 3 t 'C.-N. '
+
+set output 'Tmax_CN.pdf'
+plot[][0.9:1.05]\
+1 lt -1 notitle,\
+'crni30/Tmax.ascii'  w lp ps .4 t 'C.-N. (30)',\
+'crni60/Tmax.ascii'  w lp ps .4 t 'C.-N. (60)',\
+'crni120/Tmax.ascii' w lp ps .4 t 'C.-N. (120)',\
+'crni/Tmax.ascii'    w lp ps .4 t 'C.-N. (200)'
 
 set ylabel 'Total thermal energy'
 set output 'ET.pdf'
 plot[][0.0396:0.0402]\
-'impl/ET.ascii' w lp ps .4 t 'implicit',\
-'expl/ET.ascii' w lp ps .4 t 'explicit',\
-'crni/ET.ascii' w lp ps .4 t 'Crank-Nicolson'
+'impl/ET.ascii'    w lp ps .4 lt 1 t 'fully implicit',\
+'expl/ET.ascii'    w lp ps .4 lt 2 t 'fully explicit',\
+'crni/ET.ascii'    w lp ps .4 lt 3 t 'C.-N. '
+
+set output 'ET_CN.pdf'
+plot[][0.0396:0.0402]\
+'crni30/ET.ascii'  w lp ps .4 t 'C.-N. (30)',\
+'crni60/ET.ascii'  w lp ps .4 t 'C.-N. (60)',\
+'crni120/ET.ascii' w lp ps .4 t 'C.-N. (120)',\
+'crni/ET.ascii'    w lp ps .4 t 'C.-N. (200)'
 
  

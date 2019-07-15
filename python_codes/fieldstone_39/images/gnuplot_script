@@ -1,0 +1,59 @@
+set term pdf enhanced
+set xlabel 'iteration count'
+set ylabel 'relative nonlinear residual'
+set log y
+
+set output 'conv_extension.pdf'
+plot[:100][]\
+'extension_nonass_120x12/conv.ascii' w l t 'ext, non ass., 120x20',\
+'extension_meth1_120x12/conv.ascii'  w l t 'ext, m1, 120x12',\
+'extension_meth1_240x24/conv.ascii'  w l t 'ext, m1, 240x24',\
+'extension_meth2_120x12/conv.ascii'  w l t 'ext, m2, 120x12',\
+'extension_meth2_240x24/conv.ascii'  w l t 'ext, m2, 240x24',\
+
+set output 'conv_compression.pdf'
+plot[:100][]\
+'compression_nonass_120x12/conv.ascii' w l t 'comp, non ass., 120x20',\
+'compression_meth1_120x12/conv.ascii'  w l t 'comp, m1, 120x12',\
+'compression_meth1_240x24/conv.ascii'  w l t 'comp, m1, 240x24',\
+'compression_meth2_120x12/conv.ascii'  w l t 'comp, m2, 120x12',\
+'compression_meth2_240x24/conv.ascii'  w l t 'comp, m2, 240x24',\
+
+set key bottom
+set xlabel 'x'
+set ylabel 'y'
+unset log xy
+set output 'shear_bands.pdf' 
+plot[40000:60000][0:10000]\
+'shear_band_L_00.ascii' w lp lt 1 pt 5 ps 0.5 t '{/Symbol y}={/Symbol f}=00^o',\
+'shear_band_R_00.ascii' w lp lt 1 pt 5 ps 0.5 notitle,\
+'shear_band_L_10.ascii' w lp lt 2 pt 5 ps 0.5 t '{/Symbol y}={/Symbol f}=10^o',\
+'shear_band_R_10.ascii' w lp lt 2 pt 5 ps 0.5 notitle,\
+'shear_band_L_20.ascii' w lp lt 3 pt 5 ps 0.5 t '{/Symbol y}={/Symbol f}=20^o',\
+'shear_band_R_20.ascii' w lp lt 3 pt 5 ps 0.5 notitle,\
+'shear_band_L_30.ascii' w lp lt 4 pt 5 ps 0.5 t '{/Symbol y}={/Symbol f}=30^o',\
+'shear_band_R_30.ascii' w lp lt 4 pt 5 ps 0.5 notitle,\
+(x-50000)*tan(45./180*pi) t '{/Symbol Q}=45^o',\
+(x-50000)*tan(50./180*pi) t '{/Symbol Q}=50^o',\
+(x-50000)*tan(55./180*pi) t '{/Symbol Q}=55^o',\
+(x-50000)*tan(60./180*pi) t '{/Symbol Q}=60^o'
+
+
+set output 'shear_bands_nonass.pdf' 
+plot[40000:60000][0:10000]\
+'shear_band_L_20_10.ascii' w lp lt 1 pt 5 ps 0.25 t '{/Symbol f}=20^o,{/Symbol y}=10^o',\
+'shear_band_R_20_10.ascii' w lp lt 1 pt 5 ps 0.25 notitle,\
+'shear_band_L_30_15.ascii' w lp lt 2 pt 5 ps 0.25 t '{/Symbol f}=30^o,{/Symbol y}=15^o',\
+'shear_band_R_30_15.ascii' w lp lt 2 pt 5 ps 0.25 notitle,\
+'shear_band_L_30_10.ascii' w lp lt 3 pt 5 ps 0.25 t '{/Symbol f}=30^o,{/Symbol y}=10^o',\
+'shear_band_R_30_10.ascii' w lp lt 3 pt 5 ps 0.25 notitle,\
+'shear_band_L_30_20.ascii' w lp lt 4 pt 5 ps 0.25 t '{/Symbol f}=30^o,{/Symbol y}=20^o',\
+'shear_band_R_30_20.ascii' w lp lt 4 pt 5 ps 0.25 notitle,\
+(x-50000)*tan(52.50/180*pi) lt 1 t '{/Symbol Q}=45+(20+10)/4',\
+(x-50000)*tan(56.25/180*pi) lt 2 t '{/Symbol Q}=45+(30+15)/4',\
+(x-50000)*tan(55.00/180*pi) lt 3 t '{/Symbol Q}=45+(30+10)/4',\
+(x-50000)*tan(57.50/180*pi) lt 4 t '{/Symbol Q}=45+(30+20)/4'
+
+
+
+

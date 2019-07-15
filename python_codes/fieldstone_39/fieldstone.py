@@ -70,13 +70,20 @@ def NNP(rq,sq):
     NP_3=0.25*(1-rq)*(1+sq)
     return NP_0,NP_1,NP_2,NP_3
 
-def viscosity(exx,eyy,exy,p,c,phi):
-    e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
-    e2=max(1e-25,e2)
-    Y=pq*np.sin(phi)+c*np.cos(phi)
-    val=Y/(2.*e2)
-    val=min(1.e25,val)
-    val=max(1.e20,val)
+def viscosity(exx,eyy,exy,pq,c,phi,iter):
+    if iter==0:
+       val=1e25
+    else:
+       try: 
+          e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
+          e2=max(1e-25,e2)
+          Y=pq*np.sin(phi)+c*np.cos(phi)
+          val=Y/(2.*e2)
+          val=min(1.e25,val)
+          val=max(1.e20,val)
+       except Exception as e: 
+          print (e)  
+          pass
     return val
 
 #------------------------------------------------------------------------------
@@ -102,8 +109,8 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    solver = int(sys.argv[4])
 else:
-   nelx = 240
-   nely = 24
+   nelx = 120
+   nely = 12
    visu = 1
    solver = 2 
     
@@ -129,7 +136,7 @@ rho=2800
 cohesion=1e7
 phi=30./180*np.pi
 psi=30./180*np.pi
-tol_nl=1e-6
+tol_nl=1e-8
 
 if solver==1:
    use_SchurComplementApproach=True
@@ -144,8 +151,8 @@ method=2
 eta_ref=1.e23      # scaling of G blocks
 scaling_coeff=eta_ref/Ly
 
-niter_min=10
-niter=20
+niter_min=1
+niter=50
 
 if use_SchurComplementApproach:
    ls_conv_file=open("linear_solver_convergence.ascii","w")
@@ -235,18 +242,25 @@ print("setup: connectivity: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
+u     = np.zeros(nnp,dtype=np.float64)          # x-component velocity
+v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
+
 for i in range(0, nnp):
     if x[i]/Lx<eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(x[i],y[i])
        #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(x[i],y[i])
+       u[i]=ubc(x[i],y[i])
     if x[i]/Lx>(1-eps):
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(x[i],y[i])
        #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(x[i],y[i])
+       u[i] = ubc(x[i],y[i])
     if y[i]/Ly<eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(x[i],y[i])
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(x[i],y[i])
+       u[i] = ubc(x[i],y[i])
+       v[i] = vbc(x[i],y[i])
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
@@ -262,8 +276,6 @@ dNVdx = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 dNVdy = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 dNVdr = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 dNVds = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-u     = np.zeros(nnp,dtype=np.float64)          # x-component velocity
-v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
 p     = np.zeros(NfemP,dtype=np.float64)        # pressure field 
 Res   = np.zeros(Nfem,dtype=np.float64)         # non-linear residual 
 sol   = np.zeros(Nfem,dtype=np.float64)         # solution vector 
@@ -294,7 +306,13 @@ for iter in range(0,niter):
    M_mat = np.zeros((NfemP,NfemP),dtype=np.float64) # schur precond
    f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
    h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
+   xq    = np.zeros(9*nel,dtype=np.float64)        # x coords of q points 
+   yq    = np.zeros(9*nel,dtype=np.float64)        # y coords of q points 
+   etaq  = np.zeros(9*nel,dtype=np.float64)        # viscosity of q points 
+   pq    = np.zeros(9*nel,dtype=np.float64)        # pressure of q points 
+   srq   = np.zeros(9*nel,dtype=np.float64)        # strain rate of q points 
 
+   counter=0
    for iel in range(0,nel):
 
        # set arrays to 0 every loop
@@ -305,8 +323,8 @@ for iter in range(0,niter):
        M_el=np.zeros((mP,mP),dtype=np.float64)  
 
        # integrate viscous term at 4 quadrature points
-       for iq in [0,1,2]:
-           for jq in [0,1,2]:
+       for jq in [0,1,2]:
+           for iq in [0,1,2]:
 
                # position & weight of quad. point
                rq=qcoords[iq]
@@ -329,14 +347,12 @@ for iter in range(0,niter):
                jcbi = np.linalg.inv(jcb)
 
                # compute dNdx & dNdy & strainrate
-               xq=0.0
-               yq=0.0
                exxq=0.0
                eyyq=0.0
                exyq=0.0
                for k in range(0,mV):
-                   xq+=NV[k]*x[iconV[k,iel]]
-                   yq+=NV[k]*y[iconV[k,iel]]
+                   xq[counter]+=NV[k]*x[iconV[k,iel]]
+                   yq[counter]+=NV[k]*y[iconV[k,iel]]
                    dNVdx[k]=jcbi[0,0]*dNVdr[k]+jcbi[0,1]*dNVds[k]
                    dNVdy[k]=jcbi[1,0]*dNVdr[k]+jcbi[1,1]*dNVds[k]
                    exxq+=dNVdx[k]*u[iconV[k,iel]]
@@ -344,9 +360,8 @@ for iter in range(0,niter):
                    exyq+=0.5*dNVdy[k]*u[iconV[k,iel]]+ 0.5*dNVdx[k]*v[iconV[k,iel]]
                 
                # compute pressure
-               pq=0.0
                for k in range(0,mP):
-                   pq+=NP[k]*p[iconP[k,iel]]
+                   pq[counter]+=NP[k]*p[iconP[k,iel]]
 
                # construct 3x8 b_mat matrix
                for i in range(0,mV):
@@ -355,12 +370,13 @@ for iter in range(0,niter):
                                             [dNVdy[i],dNVdx[i]]]
 
                # compute effective plastic viscosity
-               eta_eff=viscosity(exxq,eyyq,exyq,pq,cohesion,phi)
-               e_p=np.sqrt(0.5*(exxq*exxq+eyyq*eyyq)+exyq*exyq)
-               dilation_rate=two_sin_psi*e_p
+               etaq[counter]=viscosity(exxq,eyyq,exyq,pq[counter],cohesion,phi,iter)
+               #eta_eff=1e25
+               srq[counter]=np.sqrt(0.5*(exxq*exxq+eyyq*eyyq)+exyq*exyq)
+               dilation_rate=two_sin_psi*srq[counter]
 
                # compute elemental a_mat matrix
-               K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta_eff*weightq*jcob
+               K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq[counter]*weightq*jcob
 
                # compute elemental rhs vector
                for i in range(0,mV):
@@ -383,12 +399,13 @@ for iter in range(0,niter):
 
                for i in range(0,mP):
                    for j in range(0,mP):
-                       M_el[i,j]+=NP[i]*NP[j]*weightq*jcob/eta_eff
+                       M_el[i,j]+=NP[i]*NP[j]*weightq*jcob/etaq[counter]
                    # end for j
                # end for i
 
-           # end for jq 
-       # end for iq 
+               counter+=1
+           # end for iq 
+       # end for jq 
 
        # impose b.c. 
        for k1 in range(0,mV):
@@ -446,8 +463,8 @@ for iter in range(0,niter):
    h_rhs*=scaling_coeff
 
    print("     -> K (m,M) %.5e %.5e " %(np.min(K_mat),np.max(K_mat)))
-   print("     -> G (m,M) %.5e %.5e " %(np.min(G_mat),np.max(G_mat)))
    print("     -> f (m,M) %.5e %.5e " %(np.min(f_rhs),np.max(f_rhs)))
+   print("     -> G (m,M) %.5e %.5e " %(np.min(G_mat),np.max(G_mat)))
    print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
 
    print("build FE matrix: %.3f s" % (time.time() - start))
@@ -546,68 +563,90 @@ for iter in range(0,niter):
 
    np.savetxt('nonlinear_conv.ascii',np.array(conv[0:niter]).T)
 
+   np.savetxt('etaq_{:04d}.ascii'.format(iter),np.array([xq,yq,etaq]).T,header='# x,y,eta')
+   np.savetxt('velocity_{:04d}.ascii'.format(iter),np.array([x,y,u,v]).T,header='# x,y,u,v')
+   np.savetxt('pq_{:04d}.ascii'.format(iter),np.array([xq,yq,pq]).T,header='# x,y,p')
+   np.savetxt('srq_{:04d}.ascii'.format(iter),np.array([xq,yq,srq]).T,header='# x,y,sr')
+
+   #####################################################################
+   # interpolate pressure onto velocity grid points
+   #####################################################################
+
+   q=np.zeros(nnp,dtype=np.float64)
+
+   for iel in range(0,nel):
+       q[iconV[0,iel]]=p[iconP[0,iel]]
+       q[iconV[1,iel]]=p[iconP[1,iel]]
+       q[iconV[2,iel]]=p[iconP[2,iel]]
+       q[iconV[3,iel]]=p[iconP[3,iel]]
+       q[iconV[4,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
+       q[iconV[5,iel]]=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
+       q[iconV[6,iel]]=(p[iconP[2,iel]]+p[iconP[3,iel]])*0.5
+       q[iconV[7,iel]]=(p[iconP[3,iel]]+p[iconP[0,iel]])*0.5
+       q[iconV[8,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]]+p[iconP[3,iel]])*0.25
+
+   np.savetxt('q_{:04d}.ascii',np.array([x,y,q]).T,header='# x,y,q')
+
+   ######################################################################
+   # compute strainrate 
+   ######################################################################
+   start = time.time()
+
+   xc = np.zeros(nel,dtype=np.float64)  
+   yc = np.zeros(nel,dtype=np.float64)  
+   pc = np.zeros(nel,dtype=np.float64)  
+   exx = np.zeros(nel,dtype=np.float64)  
+   eyy = np.zeros(nel,dtype=np.float64)  
+   exy = np.zeros(nel,dtype=np.float64)  
+   e   = np.zeros(nel,dtype=np.float64)  
+
+   for iel in range(0,nel):
+
+       rq = 0.0
+       sq = 0.0
+       weightq = 2.0 * 2.0
+
+       NV[0:9]=NNV(rq,sq)
+       dNVdr[0:9]=dNNVdr(rq,sq)
+       dNVds[0:9]=dNNVds(rq,sq)
+
+       jcb=np.zeros((2,2),dtype=np.float64)
+       for k in range(0,mV):
+           jcb[0,0]+=dNVdr[k]*x[iconV[k,iel]]
+           jcb[0,1]+=dNVdr[k]*y[iconV[k,iel]]
+           jcb[1,0]+=dNVds[k]*x[iconV[k,iel]]
+           jcb[1,1]+=dNVds[k]*y[iconV[k,iel]]
+       jcob=np.linalg.det(jcb)
+       jcbi=np.linalg.inv(jcb)
+
+       for k in range(0,mV):
+           dNVdx[k]=jcbi[0,0]*dNVdr[k]+jcbi[0,1]*dNVds[k]
+           dNVdy[k]=jcbi[1,0]*dNVdr[k]+jcbi[1,1]*dNVds[k]
+
+       for k in range(0,mV):
+           xc[iel] += NV[k]*x[iconV[k,iel]]
+           yc[iel] += NV[k]*y[iconV[k,iel]]
+           exx[iel] += dNVdx[k]*u[iconV[k,iel]]
+           eyy[iel] += dNVdy[k]*v[iconV[k,iel]]
+           exy[iel] += 0.5*dNVdy[k]*u[iconV[k,iel]]+ 0.5*dNVdx[k]*v[iconV[k,iel]]
+
+       e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
+
+       for k in range(0,mP):
+           pc[iel] += NP[k]*p[iconP[k,iel]]
+
+   print("     -> exx (m,M) %.5e %.5e " %(np.min(exx),np.max(exx)))
+   print("     -> eyy (m,M) %.5e %.5e " %(np.min(eyy),np.max(eyy)))
+   print("     -> exy (m,M) %.5e %.5e " %(np.min(exy),np.max(exy)))
+   print("     -> pc  (m,M) %.5e %.5e " %(np.min(pc),np.max(pc)))
+
+   print("compute press & sr: %.3f s" % (time.time() - start))
+
 #------------------------------------------------------------------------------
 # end of non-linear iterations
 #------------------------------------------------------------------------------
-   
-np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
-
-######################################################################
-# compute strainrate 
-######################################################################
-start = time.time()
-
-xc = np.zeros(nel,dtype=np.float64)  
-yc = np.zeros(nel,dtype=np.float64)  
-pc = np.zeros(nel,dtype=np.float64)  
-exx = np.zeros(nel,dtype=np.float64)  
-eyy = np.zeros(nel,dtype=np.float64)  
-exy = np.zeros(nel,dtype=np.float64)  
-e   = np.zeros(nel,dtype=np.float64)  
-
-for iel in range(0,nel):
-
-    rq = 0.0
-    sq = 0.0
-    weightq = 2.0 * 2.0
-
-    NV[0:9]=NNV(rq,sq)
-    dNVdr[0:9]=dNNVdr(rq,sq)
-    dNVds[0:9]=dNNVds(rq,sq)
-
-    jcb=np.zeros((2,2),dtype=np.float64)
-    for k in range(0,mV):
-        jcb[0,0]+=dNVdr[k]*x[iconV[k,iel]]
-        jcb[0,1]+=dNVdr[k]*y[iconV[k,iel]]
-        jcb[1,0]+=dNVds[k]*x[iconV[k,iel]]
-        jcb[1,1]+=dNVds[k]*y[iconV[k,iel]]
-    jcob=np.linalg.det(jcb)
-    jcbi=np.linalg.inv(jcb)
-
-    for k in range(0,mV):
-        dNVdx[k]=jcbi[0,0]*dNVdr[k]+jcbi[0,1]*dNVds[k]
-        dNVdy[k]=jcbi[1,0]*dNVdr[k]+jcbi[1,1]*dNVds[k]
-
-    for k in range(0,mV):
-        xc[iel] += NV[k]*x[iconV[k,iel]]
-        yc[iel] += NV[k]*y[iconV[k,iel]]
-        exx[iel] += dNVdx[k]*u[iconV[k,iel]]
-        eyy[iel] += dNVdy[k]*v[iconV[k,iel]]
-        exy[iel] += 0.5*dNVdy[k]*u[iconV[k,iel]]+ 0.5*dNVdx[k]*v[iconV[k,iel]]
-
-    e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
-
-    for k in range(0,mP):
-        pc[iel] += NP[k]*p[iconP[k,iel]]
-
-print("     -> exx (m,M) %.5e %.5e " %(np.min(exx),np.max(exx)))
-print("     -> eyy (m,M) %.5e %.5e " %(np.min(eyy),np.max(eyy)))
-print("     -> exy (m,M) %.5e %.5e " %(np.min(exy),np.max(exy)))
-print("     -> pc  (m,M) %.5e %.5e " %(np.min(pc),np.max(pc)))
 
 np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
-
-print("compute press & sr: %.3f s" % (time.time() - start))
 
 #####################################################################
 # extracting shear bands 
@@ -633,24 +672,6 @@ for j in range(0,nely):
 # end for j
 
 
-#####################################################################
-# interpolate pressure onto velocity grid points
-#####################################################################
-
-q=np.zeros(nnp,dtype=np.float64)
-
-for iel in range(0,nel):
-    q[iconV[0,iel]]=p[iconP[0,iel]]
-    q[iconV[1,iel]]=p[iconP[1,iel]]
-    q[iconV[2,iel]]=p[iconP[2,iel]]
-    q[iconV[3,iel]]=p[iconP[3,iel]]
-    q[iconV[4,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
-    q[iconV[5,iel]]=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
-    q[iconV[6,iel]]=(p[iconP[2,iel]]+p[iconP[3,iel]])*0.5
-    q[iconV[7,iel]]=(p[iconP[3,iel]]+p[iconP[0,iel]])*0.5
-    q[iconV[8,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]]+p[iconP[3,iel]])*0.25
-
-np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
 
 #####################################################################
 # plot of solution
@@ -696,7 +717,7 @@ vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
 for iel in range (0,nel):
-    vtufile.write("%10e\n" % (  viscosity(exx[iel],eyy[iel],exy[iel],pc[iel],cohesion,phi)))
+    vtufile.write("%10e\n" % (  viscosity(exx[iel],eyy[iel],exy[iel],pc[iel],cohesion,phi,iter)))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='dilation rate (R)' Format='ascii'> \n")
@@ -711,7 +732,7 @@ vtufile.write("<PointData Scalars='scalars'>\n")
 #--
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
 for i in range(0,nnp):
-    vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+    vtufile.write("%10e %10e %10e \n" %(u[i]*year,v[i]*year,0.))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")

@@ -25,10 +25,15 @@ set ylabel 'y'
 unset log xy
 set output 'shear_bands.pdf' 
 plot[40000:60000][0:10000]\
-'shear_band_L_20.ascii' w lp lt 1 pt 5 ps 0.5 t '{/Symbol f}=20',\
-'shear_band_R_20.ascii' w lp lt 1 pt 5 ps 0.5 notitle,\
+'shear_band_L_00.ascii' w lp lt 1 pt 5 ps 0.5 t '{/Symbol y}={/Symbol f}=00',\
+'shear_band_R_00.ascii' w lp lt 1 pt 5 ps 0.5 notitle,\
+'shear_band_L_10.ascii' w lp lt 2 pt 5 ps 0.5 t '{/Symbol y}={/Symbol f}=10',\
+'shear_band_R_10.ascii' w lp lt 2 pt 5 ps 0.5 notitle,\
+'shear_band_L_20.ascii' w lp lt 3 pt 5 ps 0.5 t '{/Symbol y}={/Symbol f}=20',\
+'shear_band_R_20.ascii' w lp lt 3 pt 5 ps 0.5 notitle,\
+'shear_band_L_30.ascii' w lp lt 4 pt 5 ps 0.5 t '{/Symbol y}={/Symbol f}=30',\
+'shear_band_R_30.ascii' w lp lt 4 pt 5 ps 0.5 notitle,\
 (x-50000)*tan(45./180*pi) t '45^o',\
 (x-50000)*tan(50./180*pi) t '50^o',\
 (x-50000)*tan(55./180*pi) t '55^o',\
-(x-50000)*tan(60./180*pi) t '60^o',\
-(x-50000)*tan(65./180*pi) t '65^o'
+(x-50000)*tan(60./180*pi) t '60^o'

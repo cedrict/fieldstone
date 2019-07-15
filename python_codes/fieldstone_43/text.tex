@@ -38,7 +38,8 @@ Turning now to the statistics, we plot $\min(T)$, $\max(T)$ and $E_T$ as a funct
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_43/images/Tmin.pdf}
 \includegraphics[width=5cm]{python_codes/fieldstone_43/images/Tmax.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_43/images/ET.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_43/images/ET.pdf}\\
+{\small Time evolution of the min and max temperature and the total energy}
 \end{center}
 The conclusions are clear: the explicit method diverges quickly and is unusable. The fully implicit and Crank-Nicolson 
 method yield similar energy conservation but the fully-implicit showcases a clear loss in maximum temperature as shown in the following figure:
@@ -46,14 +47,21 @@ method yield similar energy conservation but the fully-implicit showcases a clea
 \includegraphics[width=15cm]{python_codes/fieldstone_43/images/temp}\\
 {\small Temperature field after a full rotation with isocontours every 0.1 value.\\ Left: Fully-implicit; Right: Crank-Nicolson}
 \end{center}
+
 Finally we can run the experiment (still a $2\pi$ rotation) 
-with three different time steps ($\delta t=2\pi/30,2\pi/60,2\pi/120$) and we recover very similar results to 
-those presented in \cite{dohu03}:
+with three different time steps ($\delta t=2\pi/30,2\pi/60,2\pi/120$) 
+and we recover very similar results to those presented in \cite{dohu03}:
 
 \begin{center}
 \includegraphics[height=8cm]{python_codes/fieldstone_43/images/dohu03}
 \includegraphics[height=8cm]{python_codes/fieldstone_43/images/temps_30_60_120}\\
-{\small From top to bottom: $\delta t=2\pi/120,2\pi/60,2\pi/30$ with Crank-Nicolson. Left panel is taken from \cite{dohu03}}
+{\small From top to bottom: $\delta t=2\pi/120,2\pi/60,2\pi/30$ with Crank-Nicolson. Left panel is taken from donea \& Huerta \cite{dohu03}}
 \end{center}
 
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_43/images/Tmin_CN.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_43/images/Tmax_CN.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_43/images/ET_CN.pdf}\\
+{\small Time evolution of the min and max temperature and the total energy obtained with the Crank-Nicolson algorithm for 4 values of the timestep as indicated by the number between parenthesis.}
+\end{center}
 

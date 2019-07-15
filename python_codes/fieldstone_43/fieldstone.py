@@ -23,10 +23,12 @@ hcond=0.     # thermal conductivity
 hcapa=1.     # heat capacity
 rho0=1       # reference density
 CFL=1.       # CFL number 
-nstep=200   # maximum number of timestep   
+nstep=30    # maximum number of timestep   
 sigma=0.2
 xc=1./6.+1./2.
 yc=1./6.+1./2.
+use_bdf=True
+bdf_order=2
 
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 3):
@@ -49,7 +51,7 @@ NfemT=nnp*ndofT  # Total number of degrees of temperature freedom
 # alphaT=0: explicit
 # alphaT=0.5: crank-nicolson
 
-alphaT=1.
+alphaT=0.
 
 #####################################################################
 # grid point setup 
@@ -111,12 +113,23 @@ for i in range(0,nnp):
 #####################################################################
 
 T = np.zeros(nnp,dtype=np.float64)
+Tm1 = np.zeros(nnp,dtype=np.float64) # temperature at timestep n-1
+Tm2 = np.zeros(nnp,dtype=np.float64) # temperature at timestep n-2
+Tm3 = np.zeros(nnp,dtype=np.float64) # temperature at timestep n-3
+Tm4 = np.zeros(nnp,dtype=np.float64) # temperature at timestep n-4
+Tm5 = np.zeros(nnp,dtype=np.float64) # temperature at timestep n-5
 
 for i in range(0,nnp):
     if (x[i]-xc)**2+(y[i]-yc)**2<=sigma**2:
        T[i]=0.25*(1+np.cos(np.pi*(x[i]-xc)/sigma))*(1+np.cos(np.pi*(y[i]-yc)/sigma))
     else:
        T[i]=0.
+
+Tm1[:]=T[:]
+Tm2[:]=T[:]
+Tm3[:]=T[:]
+Tm4[:]=T[:]
+Tm5[:]=T[:]
 
 #np.savetxt('temperature_init.ascii',np.array([x,y,T]).T,header='# x,y,T')
 
@@ -129,7 +142,11 @@ dNdx  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
 dNdy  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
 dNdr  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
 dNds  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
-Tvect = np.zeros(4,dtype=np.float64)   
+Tvectm1 = np.zeros(4,dtype=np.float64)   
+Tvectm2 = np.zeros(4,dtype=np.float64)   
+Tvectm3 = np.zeros(4,dtype=np.float64)   
+Tvectm4 = np.zeros(4,dtype=np.float64)   
+Tvectm5 = np.zeros(4,dtype=np.float64)   
 model_time=np.zeros(nstep,dtype=np.float64) 
 Tavrg=np.zeros(nstep,dtype=np.float64)
 ET=np.zeros(nstep,dtype=np.float64)
@@ -147,13 +164,9 @@ for istep in range(0,nstep):
     #################################################################
     # compute timestep
     #################################################################
-
-    #dt1=CFL*(Lx/nelx)/np.max(np.sqrt(u**2+v**2))
-    #dt2=CFL*(Lx/nelx)**2/(hcond/hcapa/rho0)
-    #dt=np.min([dt1,dt2])
-
     # for this experiment the timestep is fixed:
-    dt=2*np.pi/200
+
+    dt=2*np.pi/nstep
 
     if istep==0:
        model_time[istep]=dt
@@ -182,7 +195,11 @@ for istep in range(0,nstep):
         vel=np.zeros((1,ndim),dtype=np.float64)
 
         for k in range(0,m):
-            Tvect[k]=T[icon[k,iel]]
+            Tvectm1[k]=Tm1[icon[k,iel]]
+            Tvectm2[k]=Tm2[icon[k,iel]]
+            Tvectm3[k]=Tm3[icon[k,iel]]
+            Tvectm4[k]=Tm4[icon[k,iel]]
+            Tvectm5[k]=Tm5[icon[k,iel]]
 
         for iq in [-1,1]:
             for jq in [-1,1]:
@@ -238,8 +255,39 @@ for istep in range(0,nstep):
                 # compute advection matrix
                 Ka=N_mat.dot(vel.dot(B_mat))*rho0*hcapa*wq*jcob
 
-                a_el=MM+alphaT*(Ka+Kd)*dt
-                b_el=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Tvect)
+                if use_bdf:
+                   if istep>bdf_order:
+                      if bdf_order==1:
+                         a_el=MM+1.*dt*(Ka+Kd)
+                         b_el=MM.dot(Tvectm1)
+                      if bdf_order==2:
+                         a_el=MM+2./3.*dt*(Ka+Kd)
+                         b_el=4./3.*MM.dot(Tvectm1)\
+                             -1./3.*MM.dot(Tvectm2)
+                      if bdf_order==3:
+                         a_el=MM+6./11.*dt*(Ka+Kd)
+                         b_el=18./11.*MM.dot(Tvectm1)\
+                              -9./11.*MM.dot(Tvectm2)\
+                              +2./11.*MM.dot(Tvectm3)
+                      if bdf_order==4:
+                         a_el=MM+12./25.*dt*(Ka+Kd)
+                         b_el=48./25.*MM.dot(Tvectm1)\
+                             -36./25.*MM.dot(Tvectm2)\
+                             +16./25.*MM.dot(Tvectm3)\
+                              -3./25.*MM.dot(Tvectm4)
+                      if bdf_order==5:
+                         a_el=MM+60./137.*dt*(Ka+Kd)
+                         b_el=300./137.*MM.dot(Tvectm1)\
+                             -300./137.*MM.dot(Tvectm2)\
+                             +200./137.*MM.dot(Tvectm3)\
+                              -75./137.*MM.dot(Tvectm4)\
+                              +12./137.*MM.dot(Tvectm5)
+                   else:
+                      a_el=MM+alphaT*(Ka+Kd)*dt
+                      b_el=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Tvectm1)
+                else:
+                   a_el=MM+alphaT*(Ka+Kd)*dt
+                   b_el=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Tvectm1)
 
                 # assemble matrix A_mat and right hand side rhs
                 for k1 in range(0,m):
@@ -377,14 +425,21 @@ for istep in range(0,nstep):
     vtufile.write("</VTKFile>\n")
     vtufile.close()
 
+    Tm5=Tm4
+    Tm4=Tm3
+    Tm3=Tm2
+    Tm2=Tm1
+    Tm1=T
+
+    np.savetxt('Tavrg.ascii',np.array([model_time[0:istep],Tavrg[0:istep]]).T,header='# t,Tavrg')
+    np.savetxt('ET.ascii',np.array([model_time[0:istep],ET[0:istep]]).T,header='# t,ET')
+    np.savetxt('Tmin.ascii',np.array([model_time[0:istep],Tmin[0:istep]]).T,header='# t,Tmin')
+    np.savetxt('Tmax.ascii',np.array([model_time[0:istep],Tmax[0:istep]]).T,header='# t,Tmax')
+
 #==============================================================================
 # end time stepping loop
 #==============================================================================
     
-np.savetxt('Tavrg.ascii',np.array([model_time[0:istep],Tavrg[0:istep]]).T,header='# t,Tavrg')
-np.savetxt('ET.ascii',np.array([model_time[0:istep],ET[0:istep]]).T,header='# t,ET')
-np.savetxt('Tmin.ascii',np.array([model_time[0:istep],Tmin[0:istep]]).T,header='# t,Tmin')
-np.savetxt('Tmax.ascii',np.array([model_time[0:istep],Tmax[0:istep]]).T,header='# t,Tmax')
 
 print("-----------------------------")
 print("------------the end----------")
