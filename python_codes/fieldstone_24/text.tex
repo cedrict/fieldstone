@@ -3,7 +3,7 @@ This work is part of the MSc thesis of T. Weir (2018).
 \end{mdframed}
 
 
-\subsection{The physics}
+\subsection*{The physics}
 
 Let us start with some thermodynamics. Every material has an equation of state.
 The equilibrium thermodynamic state of any material can
@@ -49,7 +49,7 @@ The full set of equations we wish to solve is given by
 Note that this presupposes that the density is not zero anywhere in the domain.
 
 
-\subsection{The numerics}
+\subsection*{The numerics}
 
 We use a mixed formulation and therefore  
 keep both velocity and pressure as unknowns. We end up having to solve 
@@ -186,7 +186,7 @@ no reason why the latter should be zero, so that there is no reason why the tota
 
 
 
-\subsection{The experimental setup}
+\subsection*{The experimental setup}
 
 The setup is as follows: the domain is $Lx=Ly=3000$km. Free slip boundary conditions are imposed on all four sides. 
 The initial temperature is given by:
@@ -213,7 +213,7 @@ For instance, for $Ra=10^4$ and $Di=0.75$, we obtain $\alpha\simeq 3\cdot 10^{-5
 which are quite reasonable values. 
 
 
-\subsection{Scaling}
+\subsection*{Scaling}
 
 Following \cite{kilv10}, we non-dimensionalize the equations using the reference values
 for density $\rho_r$, thermal expansivity $\alpha_r$, 
@@ -244,11 +244,11 @@ refPress 7.500000e+05
 
 
 %-------------------------------------------
-\subsection{Conservation of energy 1}
+\subsection*{Conservation of energy 1}
 
 
 
-\subsubsection{under BA and EBA approximations}
+\subsubsection*{under BA and EBA approximations}
 
 Following \cite{lezh08}, we take the dot product of the momentum equation with the velocity ${\bm v}$ and integrate over the whole volume\footnote{Check: this is akin to looking at the power, force*velocity,  says Arie}:
 \[
@@ -318,7 +318,7 @@ In the end:
 \end{equation}
 
 
-\subsubsection{under no  approximation at all}
+\subsubsection*{under no  approximation at all}
 
 \begin{eqnarray}
 \int_V {\bm \nabla} p \cdot {\bm v} dV  
@@ -329,7 +329,7 @@ In the end:
 {\color{red} ToDo}:see section 3 of \cite{lezh08} where this is carried out with the Adams-Williamson eos.
 
 
-\subsection{Conservation of energy 2}
+\subsection*{Conservation of energy 2}
 Also, following the Reynold's transport theorem \cite{malvern},p210, we have for a property $A$ (per unit mass)
 \[
 \frac{d}{dt} \int_V A \rho dV = \int_V \frac{\partial }{\partial t} (A\rho) dV + \int_S A \rho {\bm v}\cdot {\bm n} dS
@@ -398,7 +398,7 @@ so that the same term in Eq.(\ref{ba004}) vanishes too, and then Eq.(\ref{ba005}
 
 
 %-------------------------------------------
-\subsection{The problem of the onset of convection}
+\subsection*{The problem of the onset of convection}
 
 [wiki] In geophysics, the Rayleigh number is of fundamental importance: it indicates the presence and strength of convection within a fluid body such as the Earth's mantle. The mantle is a solid that behaves as a fluid over geological time scales.
 
@@ -455,7 +455,7 @@ ToDo:
 
 \newpage
 %-------------------------------------------------------
-\subsection{results - BA - $Ra=10^4$}
+\subsection*{results - BA - $Ra=10^4$}
 
 These results were obtained with a 64x64 resolution, and CFL number of 1. Steady state was reached 
 after about 1250 timesteps.
@@ -496,7 +496,7 @@ Eq.(\ref{ba005}) is verified by (l) and Eq.(\ref{ba003}) is verified by (m).
 
 \newpage
 %-------------------------------------------------------
-\subsection{results - BA - $Ra=10^5$}
+\subsection*{results - BA - $Ra=10^5$}
 
 These results were obtained with a 64x64 resolution, and CFL number of 1. Steady state was reached 
 after about 1250 timesteps.
@@ -526,7 +526,7 @@ Eq.(\ref{ba005}) is verified by (l) and Eq.(\ref{ba003}) is verified by (m).
 
 \newpage
 %-------------------------------------------------------
-\subsection{results - BA - $Ra=10^6$}
+\subsection*{results - BA - $Ra=10^6$}
 
 
 
@@ -535,7 +535,7 @@ Eq.(\ref{ba005}) is verified by (l) and Eq.(\ref{ba003}) is verified by (m).
 
 \newpage
 %-------------------------------------------------------
-\subsection{results - EBA - $Ra=10^4$}
+\subsection*{results - EBA - $Ra=10^4$}
 
 These results were obtained with a 64x64 resolution, and CFL number of 1. Steady state was reached 
 after about 2500 timesteps 
@@ -582,7 +582,7 @@ n)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/Phi.png}
 
 \newpage
 %-------------------------------------------------------
-\subsection{results - EBA - $Ra=10^5$}
+\subsection*{results - EBA - $Ra=10^5$}
 
 These results were obtained with a 64x64 resolution, and CFL number of 1. Simulation 
  was stopped after about 4300 timesteps. 
@@ -607,7 +607,7 @@ AH: adiabatic heating, VD: viscous dissipation, HF: heat flux, WG: work against 
 
 
 \newpage
-\subsection{Onset of convection}
+\subsection*{Onset of convection}
 
 The code can be run for values of Ra between 500 and 1000, at various resolutions for the BA formulation.
 The value $v_{rms}(t)-v_{rms}(0)$ is plotted as a function of $Ra$ and for the 10 first timesteps. If the $v_{rms}$

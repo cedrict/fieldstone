@@ -115,8 +115,9 @@ T_{\text{wedge}} = \sqrt{ \frac{1}{78} \sum_{i=10}^{21} \sum_{j=10}^i T_{ij}^2}
 
 \end{enumerate}
 
+\newpage
 %----------------------------------
-\subsubsection{Results for case 1a}
+\subsubsection*{Results for case 1a}
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_45/images/vack08_0}
@@ -129,28 +130,44 @@ the model. Figures taken from \cite{vack08}.}
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_45/images/temp}
 \includegraphics[width=7cm]{python_codes/fieldstone_45/images/temp_zoom}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_45/images/T60.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_45/images/vel}\\
-{\small mesh 660x600(x2) elements. Black lines on lower left figure 
+\includegraphics[width=7cm]{python_codes/fieldstone_45/images/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_45/images/T60.pdf}\\
+{\small Results obtained on mesh 660x600(x2) elements. Black lines on lower right figure 
 correspond to a visible range of values as shown in Fig.3a of \cite{vack08}.}
 \end{center}
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_45/images/tempdiag}
 \includegraphics[width=7cm]{python_codes/fieldstone_45/images/tempdiag_zoom}\\
-{\small Temperature values on the slab top surface ($y=L_y-x$)}
+{\small Temperature values on the slab top surface ($y=L_y-x$) plotted as a function of the $x$ coordinate.
+Left is entire slab, right is zoom on the first $70\text{km}$}
 \end{center}
+
+The average temperature 
+\[
+\langle T\rangle =\frac{1}{|\Omega|}\int_\Omega T \; dV
+\]
+is plotted in the following figure:
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_45/images/Tavrg.pdf}\\
+{\small Average temperature in the domain.}
+\end{center}
+We see that this measurement is not 
+appropriate to assert whether the resolution is sufficient so that results converge 
+to a single value, as opposed to the point wise temperature measurement presented above.
+The average temperature changes by about 0.4 for an average value of about 1397, which is 
+not much for a factor 12 increase in resolution (from 55x50 to 660x600).
 
 
 \todo[inline]{carry out other two measurements (need interpolation onto other grid for this}
 
 %----------------------------------
-\subsubsection{Results for case 1b}
+\subsubsection*{Results for case 1b}
 
 TODO
 
 %----------------------------------
-\subsubsection{Results for case 1c}
+\subsubsection*{Results for case 1c}
 
 TODO
 
