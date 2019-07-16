@@ -9,7 +9,7 @@ It models a plane flow of an isothermal isoviscous fluid in a rectangular (usual
 The boundary conditions are indicated in the Fig. \ref{fig_ldc}a. The gravity is set to zero.
 
 %---------------------------------------------------------
-\subsection{the lid driven cavity problem ({\tt ldc=0})}
+\subsection*{the lid driven cavity problem ({\tt ldc=0})}
 In the standard case, the upper side of the cavity moves in its own plane at unit speed, while the other sides are fixed.
 This thereby introduces a discontinuity in the boundary conditions at the two upper corners of the cavity and yields
 an uncertainty as to which boundary (side or top) the corner points belong to. 
@@ -23,7 +23,7 @@ In the case of the incompressible Stokes flow,
 the absence of inertia renders this problem instantaneous so that only one time step is needed.
 
 %---------------------------------------------------------
-\subsection{the lid driven cavity problem - regularisation I ({\tt ldc=1})}
+\subsection*{the lid driven cavity problem - regularisation I ({\tt ldc=1})}
 
 We avoid the top corner nodes issue altogether by  
 prescribing the horizontal velocity of the lid as follows: 
@@ -33,7 +33,7 @@ u(x)=x^2(1-x)^2.
 In this case the velocity and its first derivative is continuous at the corners. This is the so-called regularised lid-driven cavity problem \cite{piva94}.
 
 %---------------------------------------------------------
-\subsection{the lid driven cavity problem - regularisation II ({\tt ldc=2})}
+\subsection*{the lid driven cavity problem - regularisation II ({\tt ldc=2})}
 
 Another regularisation was presented in \cite{dejn16}. Also in Appendix D.4 of \cite{john16}. 
 Here, a regularized lid driven cavity is studied which is consistent in the sense that 

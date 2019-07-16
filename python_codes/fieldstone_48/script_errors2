@@ -1,14 +1,10 @@
 rm -f errors2
+rm -f FEMbuild2
 
-python3 fieldstone.py   4   4 0 2 | grep errv >> errors2
-python3 fieldstone.py   6   6 0 2 | grep errv >> errors2
-python3 fieldstone.py   8   8 0 2 | grep errv >> errors2
-python3 fieldstone.py  10  10 0 2 | grep errv >> errors2
-python3 fieldstone.py  12  12 0 2 | grep errv >> errors2
-python3 fieldstone.py  14  14 0 2 | grep errv >> errors2
-python3 fieldstone.py  16  16 0 2 | grep errv >> errors2
-python3 fieldstone.py  20  20 0 2 | grep errv >> errors2
-python3 fieldstone.py  24  24 0 2 | grep errv >> errors2
-python3 fieldstone.py  28  28 0 2 | grep errv >> errors2
-python3 fieldstone.py  32  32 0 2 | grep errv >> errors2
+for l in 4 6 8 10 12 14 16 24 28 32 36 48 64; do
 
+   python3 fieldstone.py $l $l 0 2 > opla 
+   grep errv opla >> errors2 
+   grep FE opla >> FEMbuild2
+
+done

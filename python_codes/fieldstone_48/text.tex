@@ -1,5 +1,7 @@
 In this experiment we consider 4 different finite elements. The idea behind this stone 
 is to build a code which code(the FEM build and assembly) is common to all. 
+The setup is the Donea \& HUerta benchmark (Section~\ref{mms1}), which has been modified so that 
+the pressure is zero at the top right corner.
 
 \begin{verbatim}
 
@@ -247,14 +249,35 @@ vtufile.write("</DataArray>\n")
 \end{lstlisting}
 
 
+The following results are obtained by running one of the four scripts {\sl script\_errorsX} 
+where X=1,2,3,4. The gnuplot script is to be found in the {\sl images} folder.
+
+The stone implementes two ways of building the FE matrix. When the flag {\sl sparse} 
+is false, the $\K$ and $\G$ matrices are built as full arrays, later assembled in a
+larger full array, and then only converted to Compressed Sparse Row \index{CSR} before 
+it is passed to the solver. When the flag is true, the global FE matrix 
+is defined as a {\sl lil\_matrix} (a List of Lists) and it grows in size/memory
+every time a new term is added to it. As shown on the following plot, it is about 
+twice as slow compared to the first option, but it uses only a fraction of the memory
+that the first one does. 
+
+\begin{center}
+\includegraphics[height=6.cm]{python_codes/fieldstone_48/images/FEMbuildtimes.pdf}
+\end{center}
+
+Also not very surprising: the cost of building the FE matrix increases with the order
+of the used elements. A matrix corresponding to 100 $Q_1\times P_0$ elements can be 
+built in about 1s, while it will take 7s when $Q_4 \times Q_3$ elements are used. 
+
+
 
 %-------------------------------------------------
 \subsection*{Results with $Q_1\times P_0$ element}
 
 
 \begin{center}
-\includegraphics[height=5.cm]{python_codes/fieldstone_48/images/q1q0/vel}
-\includegraphics[height=5.cm]{python_codes/fieldstone_48/images/q1q0/p}\\
+\includegraphics[height=6.cm]{python_codes/fieldstone_48/images/q1q0/vel}
+\includegraphics[height=6.cm]{python_codes/fieldstone_48/images/q1q0/p}\\
 \includegraphics[height=4.cm]{python_codes/fieldstone_48/images/q1q0/pressure.pdf}
 \includegraphics[height=4.cm]{python_codes/fieldstone_48/images/q1q0/errors1.pdf}
 \end{center}
