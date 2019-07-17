@@ -368,5 +368,47 @@ iq=4 & 0.138196601125011 & 0.138196601125011 & 0.585410196624969 & 0.04166666666
 \]
 
 
+%------------------------------------------
+\subsubsection{The Gauss-Lobatto approach}
+
+All what we have seen above falls under the Gauss-Legendre quadrature method. There is however another 
+somewhat common quadrature method: the Gauss-Lobatto  quadrature. \index{Gauss-Lobatto}.
+It is similar to Gaussian quadrature with the following  important differences:
+1) There are integration points in the interval but they also always include the end points of the integration interval;
+2) It is accurate for polynomials up to degree $2n-3$, where $n$ is the number of integration points.
+
+In 1D, it reads:
+\[
+\int_{-1}^{+1} f(x) dx = \frac{2}{n(n-1)} [f(-1)+f(1)] + \sum_{i=2}^{n-1} w_i f(x_i) 
+\]
+The locations and weights of the integration points are as follows:
+
+\begin{center}
+\begin{tabular}{lllll}
+\hline
+n & $x_{iq}$ & $w_{iq}$ & $x_{iq}$ (approx) & $w_{iq}$ (approx) \\
+\hline\hline
+3 & 0 & 4/3 & & \\
+  & $\pm 1$ & 1/3 & &  \\
+\hline
+4 & $\pm\sqrt{\frac{1}{5}}$ & 5/6 & & \\
+  & $\pm 1$ & 1/6 & & \\
+\hline
+5 & 0 & 32/45 & & \\
+  & $\pm\sqrt{\frac{3}{7}}$ & 49/90 & & \\
+  & $\pm 1$ & 1/10 & & \\
+\hline
+6 & $\pm\sqrt{\frac{1}{3} -\frac{2\sqrt{7}}{21}}$ & $\frac{14+\sqrt{7}}{30}$ & & \\
+  & $\pm\sqrt{\frac{1}{3} +\frac{2\sqrt{7}}{21}}$ & $\frac{14-\sqrt{7}}{30}$ & & \\
+  & $\pm 1$ & 1/15 \\
+\hline
+\end{tabular}
+\end{center}
+
+ 
+
+
+
+
 
 

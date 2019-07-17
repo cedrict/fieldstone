@@ -1,0 +1,403 @@
+
+%---------------------------
+\subsection{1D segments}
+
+%.....................................
+\subsubsection{Linear basis functions}
+
+Let us start with the mass matrix (which we encountered in 
+Section~\ref{sec:diff1D} -- although we leave the $\rho C_p$ term out):
+\begin{equation}
+{\bm M}_e=\int_{\Omega_e} \vec{N}^T \vec{N} dV
+= \int_{-1}^{+1} \vec{N}^T \vec{N} dr
+\end{equation}
+on the reference element, with 
+\[
+{\vec N}^T = 
+\left(
+\begin{array}{c}
+N_1(r) \\ N_2(r)
+\end{array}
+\right)
+=
+\frac{1}{2}
+\left(
+\begin{array}{c}
+1-r \\ 1+r
+\end{array}
+\right)
+\]
+We have 
+\begin{eqnarray}
+\int_{-1}^{+1} N_1(r) N_1(r) dr &=& 2/3 \\ 
+\int_{-1}^{+1} N_1(r) N_2(r) dr &=& 1/3 \\
+\int_{-1}^{+1} N_2(r) N_2(r) dr &=& 2/3
+\end{eqnarray}
+
+Following the procedure in Section~\ref{sec:diff1D} we arrive at
+\[
+{\bm M}^e= \frac{1}{3} 
+\left(
+\begin{array}{cc}
+2  & 1 \\
+1 & 2
+\end{array}
+\right)
+\]
+The lumped mass matrix is then
+\begin{eqnarray}
+\bar{\bm M}^e 
+&=&
+\frac{1}{3}
+\left(
+\begin{array}{cc}
+2+1  & 0 \\
+0 & 1+2
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+1  & 0 \\
+0 & 1
+\end{array}
+\right)
+\end{eqnarray}
+
+\begin{remark} 
+The sum of all the terms in the mass matrix must be equal to 2. Indeed:
+\begin{eqnarray}
+\sum_{ij} M_{ij} 
+&=&\sum_{ij} \int_{-1}^{+1} N_i N_j dr \nn\\
+&=&\int_{-1}^{+1} (N_1N_1+N_1N_2+N_2N_1+N_2N_2) dr\nn\\
+&=&\int_{-1}^{+1} [N_1(N_1+N_2)+N_2(N_1+N_2)]dr\nn\\
+&=&\int_{-1}^{+1} (N_1 + N_2) dr\nn\\
+&=& 2\nn
+\end{eqnarray}
+\end{remark}
+
+
+%.....................................
+\subsubsection{Quadratic basis functions}
+There are now three nodes in the segment so that the mass matrix 
+is now a $3\times3$ matrix. We have (see Section~\ref{sec:bf1}) 
+\begin{equation}
+{\vec N}^T(r) = 
+\left(
+\begin{array}{c}
+N_1(r) \\ 
+N_2(r) \\ 
+N_3(r) 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\frac{1}{2} r (r-1) \\
+1-r^2 \\
+\frac{1}{2} r (r+1) 
+\end{array}
+\right)
+\end{equation}
+We then have to compute
+\begin{eqnarray}
+\int_{-1}^{+1} N_1(r) N_1(r) dr &=& \frac{8}{30}  = 0.26666 \nn\\
+\int_{-1}^{+1} N_1(r) N_2(r) dr &=& \frac{4}{30}  =0.13333  \nn\\
+\int_{-1}^{+1} N_1(r) N_3(r) dr &=& -\frac{2}{30} =-0.06666...\nn\\ 
+\int_{-1}^{+1} N_2(r) N_2(r) dr &=& \frac{16}{15} = 1.06666 \nn\\
+\int_{-1}^{+1} N_2(r) N_3(r) dr &=& \frac{4}{30}  =0.13333 \nn\\
+\int_{-1}^{+1} N_3(r) N_3(r) dr &=& \frac{8}{30} = 0.26666  \nn
+\end{eqnarray}
+and finally 
+\begin{equation}
+{\bm M}^e 
+=
+\frac{1}{30}
+\left(
+\begin{array}{ccc}
+8  & 4 & -2 \\
+4  & 32 & 4 \\
+-2 & 4 & 8
+\end{array}
+\right)
+\end{equation}
+
+
+The lumped mass matrix is then
+\begin{eqnarray}
+\bar{\bm M}^e 
+&=&
+\frac{1}{30}
+\left(
+\begin{array}{ccc}
+8 + 4  -2 & 0 & 0\\
+0 & 4 + 32 + 4 \\
+0 & 0 & -2 + 4 + 8
+\end{array}
+\right) \nn\\
+&=&
+\frac{1}{30}
+\left(
+\begin{array}{ccc}
+10 & 0 & 0\\
+0 & 40 & 0\\
+0 & 0 & 10 
+\end{array}
+\right) \nn\\
+&=&
+\frac{1}{3}
+\left(
+\begin{array}{ccc}
+1 & 0 & 0\\
+0 & 4 & 0\\
+0 & 0 & 1 
+\end{array}
+\right) 
+\end{eqnarray}
+
+We can easily verify that
+\[
+\sum_{ij} M_{ij} = 2
+\qquad
+\qquad
+\sum_{ij} \bar{M}_{ij} = 2
+\]
+
+
+%.....................................
+\subsubsection{Cubic basis functions}
+There are now four nodes in the segment so that the mass matrix 
+is now a $4\times4$ matrix. We have (see Section~\ref{sec:bf3}) 
+\begin{equation}
+{\vec N}^T(r) = 
+\left(
+\begin{array}{c}
+N_1(r) \\ 
+N_2(r) \\ 
+N_3(r) \\ 
+N_4(r) 
+\end{array}
+\right)
+=
+\frac{1}{16}
+\left(
+\begin{array}{c}
+ -1+  r+9r^2- 9r^3  \\ 
+  9-27r-9r^2+27r^3  \\
+  9+27r-9r^2-27r^3  \\
+ -1-  r+9r^2+ 9r^3  
+\end{array}
+\right)
+\end{equation}
+
+
+\begin{eqnarray}
+\int_{-1}^{+1} N_1(r) N_1(r) dr &=&  \frac{1}{256}\frac{4096}{105} \nn\\ 
+\int_{-1}^{+1} N_1(r) N_2(r) dr &=&  \frac{1}{256}\frac{1056}{35} \nn\\
+\int_{-1}^{+1} N_1(r) N_3(r) dr &=& -\frac{1}{256}\frac{384}{35} \nn\\
+\int_{-1}^{+1} N_1(r) N_4(r) dr &=&  \frac{1}{256}\frac{608}{105} \nn\\
+\int_{-1}^{+1} N_2(r) N_2(r) dr &=&  \frac{1}{256}\frac{6912}{35} \nn\\
+\int_{-1}^{+1} N_2(r) N_3(r) dr &=& -\frac{1}{256}\frac{864}{35} \nn\\
+\int_{-1}^{+1} N_2(r) N_4(r) dr &=& -\frac{1}{256}\frac{384}{35} \nn\\
+\int_{-1}^{+1} N_3(r) N_3(r) dr &=&  \frac{1}{256}\frac{6912}{35}\nn\\
+\int_{-1}^{+1} N_3(r) N_4(r) dr &=&  \frac{1}{256}\frac{1056}{35}\nn\\
+\int_{-1}^{+1} N_4(r) N_4(r) dr &=&  \frac{1}{256}\frac{4096}{105}\nn
+\end{eqnarray}
+
+and finally 
+\begin{equation}
+{\bm M}^e 
+=
+\frac{1}{16}\frac{1}{105}
+\left(
+\begin{array}{cccc}
+256 & 198 & -72  & 38  \\
+198 & 1296 & -162 & -72 \\
+-72 & -162 & 1296 & 198 \\
+38 & -72 & 198 & 256
+\end{array}
+\right)
+\end{equation}
+
+The lumped mass matrix is then
+\begin{eqnarray}
+\bar{\bm M}^e 
+&=&
+\frac{1}{16}\frac{1}{105}
+\left(
+\begin{array}{cccc}
+256 + 198 -72  +38 & 0 & 0 & 0  \\
+0 & 198 + 1296  -162 -72 & 0 & 0\\
+0 & 0 & -72 -162 + 1296 + 198 & 0\\
+0 & 0 & 0 & 38 -72 + 198 + 256
+\end{array}
+\right) \nn\\
+&=&
+\frac{1}{16}\frac{1}{105}
+\left(
+\begin{array}{cccc}
+420 & 0 & 0 & 0  \\
+0 & 1260 & 0 & 0\\
+0 & 0 & 1260 & 0\\
+0 & 0 & 0 & 420
+\end{array}
+\right) \nn\\
+&=&
+\frac{1}{4}
+\left(
+\begin{array}{cccc}
+1 & 0 & 0 & 0  \\
+0 & 3 & 0 & 0\\
+0 & 0 & 3 & 0\\
+0 & 0 & 0 & 1
+\end{array}
+\right) \nn
+\end{eqnarray}
+
+
+We can easily verify that
+\[
+\sum_{ij} M_{ij} = 2
+\qquad
+\qquad
+\sum_{ij} \bar{M}_{ij} = 2
+\]
+
+
+%.....................................
+\subsubsection{Quartic basis functions}
+There are now five nodes in the segment so that the mass matrix 
+is now a $5\times5$ matrix. We have (see Section~\ref{sec:bf4}) 
+\begin{equation}
+{\vec N}^T(r) = 
+\left(
+\begin{array}{c}
+N_1(r) \\ 
+N_2(r) \\ 
+N_3(r) \\ 
+N_4(r) \\ 
+N_5(r) 
+\end{array}
+\right)
+=
+\frac{1}{6}
+\left(
+\begin{array}{c}
+  r- r^2 -4r^3 +4r^4 \\
+  -8r+16 r^2 +8r^3 -16 r^4  \\
+6 -30r^2+24r^4   \\
+  8r+16 r^2 -8r^3 -16 r^4  \\
+  -r- r^2 +4r^3 +4r^4
+\end{array}
+\right)
+\end{equation}
+
+
+\begin{eqnarray}
+\int_{-1}^{+1} N_1(r) N_1(r) dr &=& \frac{1}{36}\frac{1168}{315} \nn\\ 
+\int_{-1}^{+1} N_1(r) N_2(r) dr &=& \frac{1}{36}\frac{1184}{315} \nn\\ 
+\int_{-1}^{+1} N_1(r) N_3(r) dr &=&-\frac{1}{36}\frac{232}{105}  \nn\\ 
+\int_{-1}^{+1} N_1(r) N_4(r) dr &=& \frac{1}{36}\frac{32}{45}    \nn\\ 
+\int_{-1}^{+1} N_1(r) N_5(r) dr &=&-\frac{1}{36}\frac{116}{315}  \nn\\ 
+\int_{-1}^{+1} N_2(r) N_2(r) dr &=& \frac{1}{36}\frac{1024}{45}  \nn\\ 
+\int_{-1}^{+1} N_2(r) N_3(r) dr &=&-\frac{1}{36}\frac{512}{105}  \nn\\ 
+\int_{-1}^{+1} N_2(r) N_4(r) dr &=& \frac{1}{36}\frac{1024}{315} \nn\\ 
+\int_{-1}^{+1} N_2(r) N_5(r) dr &=& \frac{1}{36}\frac{32}{45}    \nn\\ 
+\int_{-1}^{+1} N_3(r) N_3(r) dr &=& \frac{1}{36}\frac{832}{35}    \nn\\ 
+\int_{-1}^{+1} N_3(r) N_4(r) dr &=& -\frac{1}{36}\frac{512}{105}    \nn\\ 
+\int_{-1}^{+1} N_3(r) N_5(r) dr &=& -\frac{1}{36}\frac{232}{105}    \nn\\ 
+\int_{-1}^{+1} N_4(r) N_4(r) dr &=& \frac{1}{36}\frac{1024}{45}    \nn\\ 
+\int_{-1}^{+1} N_4(r) N_5(r) dr &=& \frac{1}{36}\frac{1184}{315}    \nn\\ 
+\int_{-1}^{+1} N_5(r) N_5(r) dr &=& \frac{1}{36}\frac{1168}{315}    
+\end{eqnarray}
+
+
+\begin{equation}
+{\bm M}^e
+=\frac{1}{36}
+\frac{1}{315}
+\left(
+\begin{array}{ccccc}
+1168 & 1184 & -696 & 224 & -116 \\
+1184 & 7168   & -1536  &  1024 &  224 \\
+-696 & -1536 & 7488  & -1536  & -696  \\
+224   & 1024 & -1536 & 7168 & 1184 \\
+-116 & 224   & -696 & 1184 & 1168
+\end{array}
+\right)
+\end{equation}
+
+The lumped mass matrix is then
+\begin{eqnarray}
+\bar{\bm M}^e 
+&=&
+=\frac{1}{36}
+\frac{1}{315}
+\left(
+\begin{array}{ccccc}
+1764 &0&0&0&0\\
+0&8064 &0&0&0\\
+0&0&3024 &0&0\\
+0&0&0&8064 &0\\
+0&0&0&0&1764 
+\end{array}
+\right)
+=
+\frac{1}{45}
+\left(
+\begin{array}{ccccc}
+7 &0&0&0&0 \\
+0&32 &0&0&0 \\
+0&0&12  &0&0 \\
+0&0&0&32   &0 \\
+0&0&0&0&7      \\
+\end{array}
+\right)
+\end{eqnarray}
+
+
+We can once again easily verify that
+\[
+\sum_{ij} M_{ij} = 2
+\qquad
+\qquad
+\sum_{ij} \bar{M}_{ij} = 2
+\]
+
+
+Note that all the integrals above were done very conveniently 
+with the WolframAlpha software/website\footnote{\url{https://www.wolframalpha.com/}}.
+Example:
+
+\begin{center}
+\includegraphics[width=12cm]{images/app_massmatrix/wolframalpha}
+\end{center}
+
+
+
+
+
+
+
+%---------------------------
+\subsection{Quadrilaterals: rectangular elements}
+
+We here assume that each element is a rectangle of size $h_x \times h_y$. 
+
+
+
+
+%---------------------------
+\subsection{Hexahedra: cuboid elements}
+
+We here assume that each element is a cuboid\footnote{\url{https://en.wikipedia.org/wiki/Cuboid}} 
+of size $h_x \times h_y \times h_z$. 
+
+
+
+
+
+
+
+
+
