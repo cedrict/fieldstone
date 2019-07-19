@@ -1,19 +1,6 @@
 rm -f errors3
 rm -f errors6
-python3 fieldstone.py   8   8 0 6 | grep errv >> errors6
-python3 fieldstone.py   9   9 0 6 | grep errv >> errors6
-python3 fieldstone.py  10  10 0 6 | grep errv >> errors6
-python3 fieldstone.py  11  11 0 6 | grep errv >> errors6
-python3 fieldstone.py  12  12 0 6 | grep errv >> errors6
-python3 fieldstone.py  16  16 0 6 | grep errv >> errors6
-python3 fieldstone.py  20  20 0 6 | grep errv >> errors6
-python3 fieldstone.py  24  24 0 6 | grep errv >> errors6
-python3 fieldstone.py  32  32 0 6 | grep errv >> errors6
-python3 fieldstone.py  36  36 0 6 | grep errv >> errors6
-python3 fieldstone.py  40  40 0 6 | grep errv >> errors6
-python3 fieldstone.py  48  48 0 6 | grep errv >> errors6
-python3 fieldstone.py  64  64 0 6 | grep errv >> errors6
-python3 fieldstone.py  80  80 0 6 | grep errv >> errors6
+rm -f errors7
 
 python3 fieldstone.py   8   8 0 3 | grep errv >> errors3
 python3 fieldstone.py   9   9 0 3 | grep errv >> errors3
@@ -30,6 +17,35 @@ python3 fieldstone.py  48  48 0 3 | grep errv >> errors3
 python3 fieldstone.py  64  64 0 3 | grep errv >> errors3
 python3 fieldstone.py  80  80 0 3 | grep errv >> errors3
 
+python3 fieldstone.py   8   8 0 6 | grep errv >> errors6
+python3 fieldstone.py   9   9 0 6 | grep errv >> errors6
+python3 fieldstone.py  10  10 0 6 | grep errv >> errors6
+python3 fieldstone.py  11  11 0 6 | grep errv >> errors6
+python3 fieldstone.py  12  12 0 6 | grep errv >> errors6
+python3 fieldstone.py  16  16 0 6 | grep errv >> errors6
+python3 fieldstone.py  20  20 0 6 | grep errv >> errors6
+python3 fieldstone.py  24  24 0 6 | grep errv >> errors6
+python3 fieldstone.py  32  32 0 6 | grep errv >> errors6
+python3 fieldstone.py  36  36 0 6 | grep errv >> errors6
+python3 fieldstone.py  40  40 0 6 | grep errv >> errors6
+python3 fieldstone.py  48  48 0 6 | grep errv >> errors6
+python3 fieldstone.py  64  64 0 6 | grep errv >> errors6
+python3 fieldstone.py  80  80 0 6 | grep errv >> errors6
+
+python3 fieldstone.py   8   8 0 7 | grep errv >> errors7
+python3 fieldstone.py   9   9 0 7 | grep errv >> errors7
+python3 fieldstone.py  10  10 0 7 | grep errv >> errors7
+python3 fieldstone.py  11  11 0 7 | grep errv >> errors7
+python3 fieldstone.py  12  12 0 7 | grep errv >> errors7
+python3 fieldstone.py  16  16 0 7 | grep errv >> errors7
+python3 fieldstone.py  20  20 0 7 | grep errv >> errors7
+python3 fieldstone.py  24  24 0 7 | grep errv >> errors7
+python3 fieldstone.py  32  32 0 7 | grep errv >> errors7
+python3 fieldstone.py  36  36 0 7 | grep errv >> errors7
+python3 fieldstone.py  40  40 0 7 | grep errv >> errors7
+python3 fieldstone.py  48  48 0 7 | grep errv >> errors7
+python3 fieldstone.py  64  64 0 7 | grep errv >> errors7
+python3 fieldstone.py  80  80 0 7 | grep errv >> errors7
 
 
 

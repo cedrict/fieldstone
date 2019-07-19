@@ -6,6 +6,7 @@ import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import lil_matrix
 import time as timing
+import random
 
 #------------------------------------------------------------------------------
 
@@ -88,13 +89,18 @@ else:
    nelx = 32
    nely = 32
    visu = 1
-   nqel = 6
+   nqel = 7
+
+rand=True
 
 nel=nelx*nely*2
 nnx=nelx+1
 nny=nely+1
 NV=nnx*nny+nel
 NP=nnx*nny
+
+hx=Lx/nelx
+hy=Ly/nely
 
 ndofV=2
 ndofP=1
@@ -117,6 +123,13 @@ eps=1e-9
 
 eta=1.
 
+if rand:
+   deltax=hx/5.
+   deltay=hy/5.
+else:
+   deltax=0.
+   deltay=0.
+
 #---------------------------------------
 # 6 point integration coeffs and weights 
 
@@ -137,7 +150,16 @@ if nqel==6:
    qcoords_r[4]=0.108103018168070 ; qcoords_s[4]=0.445948490915965 ; qweights[4]=0.223381589678011/2.0 
    qcoords_r[5]=0.445948490915965 ; qcoords_s[5]=0.108103018168070 ; qweights[5]=0.223381589678011/2.0 
 
+if nqel==7:
+   qcoords_r[0]=0.1012865073235 ; qcoords_s[0]=0.1012865073235 ; qweights[0]=0.0629695902724 
+   qcoords_r[1]=0.7974269853531 ; qcoords_s[1]=0.1012865073235 ; qweights[1]=0.0629695902724 
+   qcoords_r[2]=0.1012865073235 ; qcoords_s[2]=0.7974269853531 ; qweights[2]=0.0629695902724 
+   qcoords_r[3]=0.4701420641051 ; qcoords_s[3]=0.0597158717898 ; qweights[3]=0.0661970763942 
+   qcoords_r[4]=0.4701420641051 ; qcoords_s[4]=0.4701420641051 ; qweights[4]=0.0661970763942 
+   qcoords_r[5]=0.0597158717898 ; qcoords_s[5]=0.4701420641051 ; qweights[5]=0.0661970763942 
+   qcoords_r[6]=0.3333333333333 ; qcoords_s[6]=0.3333333333333 ; qweights[6]=0.1125000000000 
 
+print (qweights.sum())
 
 #################################################################
 # checking that all shape functions are 1 on their node and 
@@ -159,8 +181,12 @@ iconV=np.zeros((mV,nel),dtype=np.int32)
 counter=0    
 for j in range(0,nny):
     for i in range(0,nnx):
-        xV[counter]=i*Lx/nelx
-        yV[counter]=j*Ly/nely
+        if i>0 and i<nnx-1 and j>0 and j<nny-1:
+           xV[counter]=i*hx + random.randrange(-100,100,1)/100*deltax
+           yV[counter]=j*hy + random.randrange(-100,100,1)/100*deltay
+        else:
+           xV[counter]=i*hx 
+           yV[counter]=j*hy
         counter+=1
 
 counter=0
@@ -451,7 +477,7 @@ print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
 #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
-#np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))
 

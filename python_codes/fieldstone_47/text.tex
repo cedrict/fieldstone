@@ -19,9 +19,32 @@ For nqel=3 the velocity and pressure errors converge quadratically and linearly 
 but for nqel=6 they converge as $h^2$ and $h^{1.5}$ respectively:
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_47/images/errors}
+\includegraphics[width=12cm]{python_codes/fieldstone_47/images/reg/errors}
 \end{center}
 
+It is worth noticing that although the element is stable, and the error converges
+at a respectable rate, the pressure solution is not 'clean': as shown on the 
+following figure, there is still some under/overshoot with respect to the analytical solution.
 
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_47/images/reg/pressure.pdf}
+\end{center}
 
+Let us now explore the case where the nodes inside the domain are randomly perturbed, i.e. 
+a random value  $(\delta_x,\delta_y)\in[-h_x/5,h_x/5]\times[-h_y/5,h_y/5]$ is added 
+to their position (while preserving the position of the bubble as the barycenter of each triangle), 
+as shown hereunder:
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_47/images/rand/grid}
+\includegraphics[width=7cm]{python_codes/fieldstone_47/images/rand/areas}
+\end{center}
+ 
+Looking again at the convergence rates of the errors, we see that the velocity errors 
+are virtually unchanged but we observe that the pressure errors no more align on a
+single line and that the rates are only maintained on average. 
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_47/images/rand/errors}
+\end{center}
 
