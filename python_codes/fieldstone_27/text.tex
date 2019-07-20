@@ -86,7 +86,7 @@ fieldstone: CBF                     & 0.994236 ( -0.13 \%) & 0.982116 (-0.10\%) 
 \hline
 \end{tabular}
 \end{center}
-We see that we recover the published results with the same exact accuracy, thereby validating our implmentation.
+We see that we recover the published results with the same exact accuracy, thereby validating our implementation. Also rather fascinating is the fact that the original paper carries out the whole study without showing any image of the 2D domain ever. 
 
 On the following figures are shown the velocity, pressure and traction fields for two cases $y_0=32/64$ and $y_0=63/64$.
 \begin{center}
@@ -111,9 +111,66 @@ our code computes all traction vectors on all boundaries at once.
 
 \todo[inline]{compare with ASPECT ??!}
 
-\todo[inline]{gauss-lobatto integration?}
-
 \todo[inline]{pressure average on surface instead of volume ?}
+
+\begin{remark}
+The original article on the CBF \cite{zhgh93} uses a penalty-based formulation (see Section~\ref{sec:penalty})
+so that they do not have to worry about pressure normalisation. However, since constant pressure fields lie 
+in the nullspace of $\G$ the pressure normalisation constant does not play a role.
+\end{remark}
+
+As shown in Appendix~\ref{app:mm}, the $Q_1$ mass matrix for the reference cell/element is given by:
+\[
+{\bm M}^e=
+\frac{1}{3}
+\left(
+\begin{array}{cc}
+2 & 1 \\ 1 & 2
+\end{array}
+\right)
+\]
+This matrix needs to be multiplied by $h/2$ for an element of size $h$.
+Following the methodology presented in \cite{zhgh93}, one can also use the Gauss-Lobatto 
+quadrature method to arrive at the mass matrix, and in this case the simple trapezoidal 
+integration rule variant thereof (see Section~\ref{sec:quad1D}).
+We then have:
+\begin{equation}
+{\bm M}_e=\int_{\Omega_e} \vec{N}^T \vec{N} dV
+= \int_{-1}^{+1} \vec{N}^T \vec{N} dr
+\end{equation}
+on the reference element, with 
+\[
+{\vec N}^T = 
+\left(
+\begin{array}{c}
+N_1(r) \\ N_2(r)
+\end{array}
+\right)
+=
+\frac{1}{2}
+\left(
+\begin{array}{c}
+1-r \\ 1+r
+\end{array}
+\right)
+\]
+We know compute the following integrals with the trapezoidal rule:
+\begin{eqnarray}
+\int_{-1}^{+1} N_1(r) N_1(r) dr &=& (1--1) \frac{N_1(-1) N_1(-1)  + N_1(+1) N_1(+1) }{2} = 1 \\
+\int_{-1}^{+1} N_1(r) N_2(r) dr &=& (1--1) \frac{N_1(-1) N_2(-1)  + N_1(+1) N_2(+1) }{2} = 0 \\
+\int_{-1}^{+1} N_2(r) N_2(r) dr &=& (1--1) \frac{N_2(-1) N_2(-1)  + N_2(+1) N_2(+1) }{2} = 1 
+\end{eqnarray}
+and finally 
+\[
+{\bm M}^e=
+\left(
+\begin{array}{cc}
+1 & 0 \\ 0 & 1
+\end{array}
+\right)
+\]
+The resulting matrix is diagonal and it is simply the lumped version of the exact mass matrix. 
+
 
 
 

@@ -1,0 +1,39 @@
+set term pdf enhanced
+set key outside
+set xtics 0.1
+set xlabel 'x'
+
+set output 'sigmayy_top.pdf'
+plot[][]\
+'sigmayy_top_1_10x10.ascii' w l t 'Q_1xP_0',\
+'sigmayy_top_2_10x10.ascii' w l t 'Q_2xQ_1',\
+'sigmayy_top_2_20x20.ascii' w l t 'Q_2xQ_1',\
+'sigmayy_top_2_30x30.ascii' w l t 'Q_2xQ_1',\
+'sigmayy_top_2_40x40.ascii' w l t 'Q_2xQ_1',\
+'sigmayy_top_3_10x10.ascii' w l t 'Q_3xQ_2',\
+'sigmayy_top_3_20x20.ascii' w l t 'Q_3xQ_2',\
+'sigmayy_top_3_30x30.ascii' w l t 'Q_3xQ_2',\
+'sigmayy_top_3_40x40.ascii' w l t 'Q_3xQ_2',\
+'sigmayy_top_4_10x10.ascii' w l t 'Q_4xQ_3',\
+'sigmayy_top_4_20x20.ascii' w l t 'Q_4xQ_3',\
+'sigmayy_top_4_30x30.ascii' w l t 'Q_4xQ_3',\
+'sigmayy_top_4_30x30.ascii' u 1:3 w l lt -1 t 'analytical'
+
+
+set output 'sigmayy_bot.pdf'
+plot[][]\
+'sigmayy_bot_1_10x10.ascii' w l t 'Q_1xP_0',\
+'sigmayy_bot_2_10x10.ascii' w l t 'Q_2xQ_1',\
+'sigmayy_bot_2_20x20.ascii' w l t 'Q_2xQ_1',\
+'sigmayy_bot_2_30x30.ascii' w l t 'Q_2xQ_1',\
+'sigmayy_bot_2_40x40.ascii' w l t 'Q_2xQ_1',\
+'sigmayy_bot_3_10x10.ascii' w l t 'Q_3xQ_2',\
+'sigmayy_bot_3_20x20.ascii' w l t 'Q_3xQ_2',\
+'sigmayy_bot_3_30x30.ascii' w l t 'Q_3xQ_2',\
+'sigmayy_bot_3_40x40.ascii' w l t 'Q_3xQ_2',\
+'sigmayy_bot_4_10x10.ascii' w l t 'Q_4xQ_3',\
+'sigmayy_bot_4_20x20.ascii' w l t 'Q_4xQ_3',\
+'sigmayy_bot_4_30x30.ascii' w l t 'Q_4xQ_3',\
+'sigmayy_bot_4_30x30.ascii' u 1:(-$3) w l lt -1 t 'analytical'
+
+

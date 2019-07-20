@@ -113,7 +113,25 @@ All the python scripts and this document are freely available at
 \url{https://github.com/cedrict/fieldstone}
 \end{center}
 
+%------------------------------------------------------------------------------
+\subsection{ambition \& motivation} %------------------------------------------
+%------------------------------------------------------------------------------
+
+
+
+enormous bibliography data base - simply search the pdf for keywords
+
+a go-to document for anybody who wants to know more about a particular topic
+in computational geodynamics.
+
+a useful teaching tool for researchers, teachers, students and PhD students alike 
+
+a unique resource of working codes 
+ 
+
+%------------------------------------------------------------------------------
 \subsection{Acknowledgments} %-------------------------------------------------
+%------------------------------------------------------------------------------
 
 I have benefitted from many discussions, lectures, tutorials, coffee machine 
 discussions, debugging sessions, conference poster sessions, etc ... 
@@ -126,6 +144,7 @@ Philippe Fullsack,
 Menno Fraters, 
 Anne Glerum,
 Timo Heister,
+Dave May,
 Robert Myhill,
 John Naliboff,
 E. Gerry Puckett,
@@ -143,7 +162,9 @@ and the whole ASPECT family/team.
 %and Rens Elbertsen (Tosi benchmark - BSc thesis).
 
 
+%------------------------------------------------------------------------------
 \subsection{Essential literature} %--------------------------------------------
+%------------------------------------------------------------------------------
 
 \begin{center}
 \includegraphics[height=3.74cm]{images/literature/gerya_book}
@@ -155,8 +176,10 @@ and the whole ASPECT family/team.
 
 http://www-udc.ig.utexas.edu/external/becker/Geodynamics557.pdf
 
-%---------------------------------------
-\subsection{Installation}
+
+%------------------------------------------------------------------------------
+\subsection{Installation} %----------------------------------------------------
+%------------------------------------------------------------------------------
 
 If numpy, scipy or matplotlib are not installed on your machine, here is how you 
 can install them:
@@ -216,7 +239,7 @@ application of these codes: geodynamic modelling.
 \input{incompressible} %-----------------------------------------------------------------
 \subsection{Strong and weak forms} \input{strongweak} %----------------------------------
 \subsection{Which velocity-pressure pair for Stokes?} \input{pair} %---------------------
-\subsection{The penalty approach for viscous flow} \input{penalty} %---------------------
+\subsection{The penalty approach for viscous flow}\label{sec:penalty}\input{penalty} %---
 \subsection{The mixed FEM for viscous flow} \input{mixed} %------------------------------
 \subsection{Solving the elastic equations} %---------------------------------------------
 \subsection{A quick tour of similar literature} \input{similar} %------------------------
@@ -762,10 +785,13 @@ Stone 48: D\&H with $Q_1\times P_0$, $Q_2\times Q_1$, $Q_3\times Q_2$ and $Q_4\t
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Topics in (computational) geodynamics} \label{app:topics} \input{topics}%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Elemental mass matrices for simple geometries} \input{elemental_matrix} %%%%%%%%
+\section{Elemental mass matrices for simple geometries}\label{app:mm} \input{elemental_matrix}
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Finite element terminology in various languages} \input{languagesFEM} %%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Fun modelling} \input{interesting} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 
