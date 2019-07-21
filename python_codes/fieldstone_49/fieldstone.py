@@ -9,316 +9,169 @@ import time as timing
 
 #------------------------------------------------------------------------------
 
+def Q1(r):
+    return 0.5*(1-r),\
+           0.5*(1+r)
+
+def dQ1d(r):
+    return -0.5,\
+           +0.5
+
+#------------------------------------------------------------------------------
+ 
+def Q2(r):
+    return 0.5*r*(r-1.),\
+           (1.-r**2),\
+           0.5*r*(r+1.)
+
+def dQ2d(r):
+    return 0.5*(2.*r-1.),\
+           (-2.*r),\
+           0.5*(2.*r+1.)
+
+#------------------------------------------------------------------------------
+
+def Q3(r):
+    return (-1    +r +9*r**2 - 9*r**3)/16,\
+           (+9 -27*r -9*r**2 +27*r**3)/16,\
+           (+9 +27*r -9*r**2 -27*r**3)/16,\
+           (-1    -r +9*r**2 + 9*r**3)/16
+
+def dQ3d(r):
+    return ( +1 +18*r -27*r**2)/16,\
+           (-27 -18*r +81*r**2)/16,\
+           (+27 -18*r -81*r**2)/16,\
+           ( -1 +18*r +27*r**2)/16
+
+#------------------------------------------------------------------------------
+
+def Q4(r):
+    return (    r -   r**2 -4*r**3 + 4*r**4)/6,\
+           ( -8*r +16*r**2 +8*r**3 -16*r**4)/6,\
+           (1     - 5*r**2         + 4*r**4)  ,\
+           (  8*r +16*r**2 -8*r**3 -16*r**4)/6,\
+           (   -r -   r**2 +4*r**3 + 4*r**4)/6
+
+def dQ4d(r):
+    return (    1 - 2*r -12*r**2 +16*r**3)/6,\
+           (   -8 +32*r +24*r**2 -64*r**3)/6,\
+           (      -10*r          +16*r**3)  ,\
+           (  8   +32*r -24*r**2 -64*r**3)/6,\
+           (   -1 - 2*r +12*r**2 +16*r**3)/6
+
+#------------------------------------------------------------------------------
+
 def NNV(r,s,order):
     if order==1:
-       N_0=0.25*(1.-r)*(1.-s)
-       N_1=0.25*(1.+r)*(1.-s)
-       N_2=0.25*(1.-r)*(1.+s)
-       N_3=0.25*(1.+r)*(1.+s)
-       return N_0,N_1,N_2,N_3
+       N0r,N1r=Q1(r)
+       N0s,N1s=Q1(s)
+       return N0r*N0s,N1r*N0s,\
+              N0r*N1s,N1r*N1s
     if order==2:
-       N_0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
-       N_1=    (1.-r**2) * 0.5*s*(s-1.)
-       N_2= 0.5*r*(r+1.) * 0.5*s*(s-1.)
-       N_3= 0.5*r*(r-1.) *    (1.-s**2)
-       N_4=    (1.-r**2) *    (1.-s**2)
-       N_5= 0.5*r*(r+1.) *    (1.-s**2)
-       N_6= 0.5*r*(r-1.) * 0.5*s*(s+1.)
-       N_7=    (1.-r**2) * 0.5*s*(s+1.)
-       N_8= 0.5*r*(r+1.) * 0.5*s*(s+1.)
-       return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8
+       N0r,N1r,N2r=Q2(r)
+       N0s,N1s,N2s=Q2(s)
+       return N0r*N0s,N1r*N0s,N2r*N0s,\
+              N0r*N1s,N1r*N1s,N2r*N1s,\
+              N0r*N2s,N1r*N2s,N2r*N2s
     if order==3:
-       N1r=(-1    +r +9*r**2 - 9*r**3)/16
-       N2r=(+9 -27*r -9*r**2 +27*r**3)/16
-       N3r=(+9 +27*r -9*r**2 -27*r**3)/16
-       N4r=(-1    -r +9*r**2 + 9*r**3)/16
-       N1t=(-1    +s +9*s**2 - 9*s**3)/16
-       N2t=(+9 -27*s -9*s**2 +27*s**3)/16
-       N3t=(+9 +27*s -9*s**2 -27*s**3)/16
-       N4t=(-1    -s +9*s**2 + 9*s**3)/16
-       N_00= N1r*N1t 
-       N_01= N2r*N1t 
-       N_02= N3r*N1t 
-       N_03= N4r*N1t 
-       N_04= N1r*N2t 
-       N_05= N2r*N2t 
-       N_06= N3r*N2t 
-       N_07= N4r*N2t 
-       N_08= N1r*N3t 
-       N_09= N2r*N3t 
-       N_10= N3r*N3t 
-       N_11= N4r*N3t 
-       N_12= N1r*N4t 
-       N_13= N2r*N4t 
-       N_14= N3r*N4t 
-       N_15= N4r*N4t 
-       return N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
-              N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15
+       N0r,N1r,N2r,N3r=Q3(r)
+       N0s,N1s,N2s,N3s=Q3(s)
+       return N0r*N0s,N1r*N0s,N2r*N0s,N3r*N0s,\
+              N0r*N1s,N1r*N1s,N2r*N1s,N3r*N1s,\
+              N0r*N2s,N1r*N2s,N2r*N2s,N3r*N2s,\
+              N0r*N3s,N1r*N3s,N2r*N3s,N3r*N3s
     if order==4:
-       N1r=(    r -   r**2 -4*r**3 + 4*r**4)/6
-       N2r=( -8*r +16*r**2 +8*r**3 -16*r**4)/6
-       N3r=(1     - 5*r**2         + 4*r**4) 
-       N4r=(  8*r +16*r**2 -8*r**3 -16*r**4)/6
-       N5r=(   -r -   r**2 +4*r**3 + 4*r**4)/6
-       N1s=(    s -   s**2 -4*s**3 + 4*s**4)/6
-       N2s=( -8*s +16*s**2 +8*s**3 -16*s**4)/6
-       N3s=(1     - 5*s**2         + 4*s**4) 
-       N4s=(  8*s +16*s**2 -8*s**3 -16*s**4)/6
-       N5s=(   -s -   s**2 +4*s**3 + 4*s**4)/6
-       N_00= N1r*N1s
-       N_01= N2r*N1s
-       N_02= N3r*N1s
-       N_03= N4r*N1s
-       N_04= N5r*N1s
-       N_05= N1r*N2s
-       N_06= N2r*N2s
-       N_07= N3r*N2s
-       N_08= N4r*N2s
-       N_09= N5r*N2s
-       N_10= N1r*N3s
-       N_11= N2r*N3s
-       N_12= N3r*N3s
-       N_13= N4r*N3s
-       N_14= N5r*N3s
-       N_15= N1r*N4s
-       N_16= N2r*N4s
-       N_17= N3r*N4s
-       N_18= N4r*N4s
-       N_19= N5r*N4s
-       N_20= N1r*N5s
-       N_21= N2r*N5s
-       N_22= N3r*N5s
-       N_23= N4r*N5s
-       N_24= N5r*N5s
-       return N_00,N_01,N_02,N_03,N_04,\
-              N_05,N_06,N_07,N_08,N_09,\
-              N_10,N_11,N_12,N_13,N_14,\
-              N_15,N_16,N_17,N_18,N_19,\
-              N_20,N_21,N_22,N_23,N_24
+       N0r,N1r,N2r,N3r,N4r=Q4(r)
+       N0s,N1s,N2s,N3s,N4s=Q4(s)
+       return N0r*N0s,N1r*N0s,N2r*N0s,N3r*N0s,N4r*N0s,\
+              N0r*N1s,N1r*N1s,N2r*N1s,N3r*N1s,N4r*N1s,\
+              N0r*N2s,N1r*N2s,N2r*N2s,N3r*N2s,N4r*N2s,\
+              N0r*N3s,N1r*N3s,N2r*N3s,N3r*N3s,N4r*N3s,\
+              N0r*N4s,N1r*N4s,N2r*N4s,N3r*N4s,N4r*N4s
+
+#------------------------------------------------------------------------------
 
 def dNNVdr(r,s,order):
     if order==1:
-       dNdr_0=-0.25*(1.-s) 
-       dNdr_1=+0.25*(1.-s) 
-       dNdr_2=-0.25*(1.+s) 
-       dNdr_3=+0.25*(1.+s) 
-       return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+       dN0dr,dN1dr=dQ1d(r)
+       N0s,N1s=Q1(s)
+       return dN0dr*N0s,dN1dr*N0s,\
+              dN0dr*N1s,dN1dr*N1s
     if order==2:
-       dNdr_0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
-       dNdr_1=       (-2.*r) * 0.5*s*(s-1)
-       dNdr_2= 0.5*(2.*r+1.) * 0.5*s*(s-1)
-       dNdr_3= 0.5*(2.*r-1.) *   (1.-s**2)
-       dNdr_4=       (-2.*r) *   (1.-s**2)
-       dNdr_5= 0.5*(2.*r+1.) *   (1.-s**2)
-       dNdr_6= 0.5*(2.*r-1.) * 0.5*s*(s+1)
-       dNdr_7=       (-2.*r) * 0.5*s*(s+1)
-       dNdr_8= 0.5*(2.*r+1.) * 0.5*s*(s+1)
-       return dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8
+       dN0dr,dN1dr,dN2dr=dQ2d(r)
+       N0s,N1s,N2s=Q2(s)
+       return dN0dr*N0s,dN1dr*N0s,dN2dr*N0s,\
+              dN0dr*N1s,dN1dr*N1s,dN2dr*N1s,\
+              dN0dr*N2s,dN1dr*N2s,dN2dr*N2s
     if order==3:
-       dN1rdr=( +1 +18*r -27*r**2)/16
-       dN2rdr=(-27 -18*r +81*r**2)/16
-       dN3rdr=(+27 -18*r -81*r**2)/16
-       dN4rdr=( -1 +18*r +27*r**2)/16
-       N1s=(-1    +s +9*s**2 - 9*s**3)/16
-       N2s=(+9 -27*s -9*s**2 +27*s**3)/16
-       N3s=(+9 +27*s -9*s**2 -27*s**3)/16
-       N4s=(-1    -s +9*s**2 + 9*s**3)/16
-       dNdr_00= dN1rdr* N1s 
-       dNdr_01= dN2rdr* N1s 
-       dNdr_02= dN3rdr* N1s 
-       dNdr_03= dN4rdr* N1s 
-       dNdr_04= dN1rdr* N2s 
-       dNdr_05= dN2rdr* N2s 
-       dNdr_06= dN3rdr* N2s 
-       dNdr_07= dN4rdr* N2s 
-       dNdr_08= dN1rdr* N3s 
-       dNdr_09= dN2rdr* N3s 
-       dNdr_10= dN3rdr* N3s 
-       dNdr_11= dN4rdr* N3s 
-       dNdr_12= dN1rdr* N4s 
-       dNdr_13= dN2rdr* N4s 
-       dNdr_14= dN3rdr* N4s 
-       dNdr_15= dN4rdr* N4s 
-       return dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,dNdr_05,dNdr_06,dNdr_07,\
-              dNdr_08,dNdr_09,dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,dNdr_15
+       dN0dr,dN1dr,dN2dr,dN3dr=dQ3d(r)
+       N0s,N1s,N2s,N3s=Q3(s)
+       return dN0dr*N0s,dN1dr*N0s,dN2dr*N0s,dN3dr*N0s,\
+              dN0dr*N1s,dN1dr*N1s,dN2dr*N1s,dN3dr*N1s,\
+              dN0dr*N2s,dN1dr*N2s,dN2dr*N2s,dN3dr*N2s,\
+              dN0dr*N3s,dN1dr*N3s,dN2dr*N3s,dN3dr*N3s 
     if order==4:
-       dN1dr=(    1 - 2*r -12*r**2 +16*r**3)/6
-       dN2dr=(   -8 +32*r +24*r**2 -64*r**3)/6
-       dN3dr=(      -10*r          +16*r**3) 
-       dN4dr=(  8   +32*r -24*r**2 -64*r**3)/6
-       dN5dr=(   -1 - 2*r +12*r**2 +16*r**3)/6
-       N1s=(    s -   s**2 -4*s**3 + 4*s**4)/6
-       N2s=( -8*s +16*s**2 +8*s**3 -16*s**4)/6
-       N3s=(1     - 5*s**2         + 4*s**4) 
-       N4s=(  8*s +16*s**2 -8*s**3 -16*s**4)/6
-       N5s=(   -s -   s**2 +4*s**3 + 4*s**4)/6
-       dNdr_00= dN1dr*N1s
-       dNdr_01= dN2dr*N1s
-       dNdr_02= dN3dr*N1s
-       dNdr_03= dN4dr*N1s
-       dNdr_04= dN5dr*N1s
-       dNdr_05= dN1dr*N2s
-       dNdr_06= dN2dr*N2s
-       dNdr_07= dN3dr*N2s
-       dNdr_08= dN4dr*N2s
-       dNdr_09= dN5dr*N2s
-       dNdr_10= dN1dr*N3s
-       dNdr_11= dN2dr*N3s
-       dNdr_12= dN3dr*N3s
-       dNdr_13= dN4dr*N3s
-       dNdr_14= dN5dr*N3s
-       dNdr_15= dN1dr*N4s
-       dNdr_16= dN2dr*N4s
-       dNdr_17= dN3dr*N4s
-       dNdr_18= dN4dr*N4s
-       dNdr_19= dN5dr*N4s
-       dNdr_20= dN1dr*N5s
-       dNdr_21= dN2dr*N5s
-       dNdr_22= dN3dr*N5s
-       dNdr_23= dN4dr*N5s
-       dNdr_24= dN5dr*N5s
-       return dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,\
-              dNdr_05,dNdr_06,dNdr_07,dNdr_08,dNdr_09,\
-              dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,\
-              dNdr_15,dNdr_16,dNdr_17,dNdr_18,dNdr_19,\
-              dNdr_20,dNdr_21,dNdr_22,dNdr_23,dNdr_24
+       dN0dr,dN1dr,dN2dr,dN3dr,dN4dr=dQ4d(r)
+       N0s,N1s,N2s,N3s,N4s=Q4(s)
+       return dN0dr*N0s,dN1dr*N0s,dN2dr*N0s,dN3dr*N0s,dN4dr*N0s,\
+              dN0dr*N1s,dN1dr*N1s,dN2dr*N1s,dN3dr*N1s,dN4dr*N1s,\
+              dN0dr*N2s,dN1dr*N2s,dN2dr*N2s,dN3dr*N2s,dN4dr*N2s,\
+              dN0dr*N3s,dN1dr*N3s,dN2dr*N3s,dN3dr*N3s,dN4dr*N3s,\
+              dN0dr*N4s,dN1dr*N4s,dN2dr*N4s,dN3dr*N4s,dN4dr*N4s
+
+#------------------------------------------------------------------------------
 
 def dNNVds(r,s,order):
     if order==1:
-       dNds_0=-0.25*(1.-r)
-       dNds_1=-0.25*(1.+r)
-       dNds_2=+0.25*(1.-r)
-       dNds_3=+0.25*(1.+r)
-       return dNds_0,dNds_1,dNds_2,dNds_3
+       N0r,N1r=Q1(r)
+       dN0ds,dN1ds=dQ1d(s)
+       return N0r*dN0ds,N1r*dN0ds,\
+              N0r*dN1ds,N1r*dN1ds
     if order==2:
-       dNds_0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
-       dNds_1=    (1.-r**2) * 0.5*(2.*s-1.)
-       dNds_2= 0.5*r*(r+1.) * 0.5*(2.*s-1.)
-       dNds_3= 0.5*r*(r-1.) *       (-2.*s)
-       dNds_4=    (1.-r**2) *       (-2.*s)
-       dNds_5= 0.5*r*(r+1.) *       (-2.*s)
-       dNds_6= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
-       dNds_7=    (1.-r**2) * 0.5*(2.*s+1.)
-       dNds_8= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
-       return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8
+       N0r,N1r,N2r=Q2(r)
+       dN0ds,dN1ds,dN2ds=dQ2d(s)
+       return N0r*dN0ds,N1r*dN0ds,N2r*dN0ds,\
+              N0r*dN1ds,N1r*dN1ds,N2r*dN1ds,\
+              N0r*dN2ds,N1r*dN2ds,N2r*dN2ds
     if order==3:
-       N1r=(-1    +r +9*r**2 - 9*r**3)/16
-       N2r=(+9 -27*r -9*r**2 +27*r**3)/16
-       N3r=(+9 +27*r -9*r**2 -27*r**3)/16
-       N4r=(-1    -r +9*r**2 + 9*r**3)/16
-       dN1sds=( +1 +18*s -27*s**2)/16
-       dN2sds=(-27 -18*s +81*s**2)/16
-       dN3sds=(+27 -18*s -81*s**2)/16
-       dN4sds=( -1 +18*s +27*s**2)/16
-       dNds_00= N1r*dN1sds 
-       dNds_01= N2r*dN1sds 
-       dNds_02= N3r*dN1sds 
-       dNds_03= N4r*dN1sds 
-       dNds_04= N1r*dN2sds 
-       dNds_05= N2r*dN2sds 
-       dNds_06= N3r*dN2sds 
-       dNds_07= N4r*dN2sds 
-       dNds_08= N1r*dN3sds 
-       dNds_09= N2r*dN3sds 
-       dNds_10= N3r*dN3sds 
-       dNds_11= N4r*dN3sds 
-       dNds_12= N1r*dN4sds 
-       dNds_13= N2r*dN4sds 
-       dNds_14= N3r*dN4sds 
-       dNds_15= N4r*dN4sds
-       return dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,dNds_05,dNds_06,dNds_07,\
-              dNds_08,dNds_09,dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,dNds_15
+       N0r,N1r,N2r,N3r=Q3(r)
+       dN0ds,dN1ds,dN2ds,dN3ds=dQ3d(s)
+       return N0r*dN0ds,N1r*dN0ds,N2r*dN0ds,N3r*dN0ds,\
+              N0r*dN1ds,N1r*dN1ds,N2r*dN1ds,N3r*dN1ds,\
+              N0r*dN2ds,N1r*dN2ds,N2r*dN2ds,N3r*dN2ds,\
+              N0r*dN3ds,N1r*dN3ds,N2r*dN3ds,N3r*dN3ds
     if order==4:
-       N1r=(    r -   r**2 -4*r**3 + 4*r**4)/6
-       N2r=( -8*r +16*r**2 +8*r**3 -16*r**4)/6
-       N3r=(1     - 5*r**2         + 4*r**4) 
-       N4r=(  8*r +16*r**2 -8*r**3 -16*r**4)/6
-       N5r=(   -r -   r**2 +4*r**3 + 4*r**4)/6
-       dN1ds=(    1 - 2*s -12*s**2 +16*s**3)/6
-       dN2ds=( -8*1 +32*s +24*s**2 -64*s**3)/6
-       dN3ds=(      -10*s          +16*s**3) 
-       dN4ds=(  8   +32*s -24*s**2 -64*s**3)/6
-       dN5ds=(   -1 - 2*s +12*s**2 +16*s**3)/6
-       dNds_00= N1r*dN1ds
-       dNds_01= N2r*dN1ds
-       dNds_02= N3r*dN1ds
-       dNds_03= N4r*dN1ds
-       dNds_04= N5r*dN1ds
-       dNds_05= N1r*dN2ds
-       dNds_06= N2r*dN2ds
-       dNds_07= N3r*dN2ds
-       dNds_08= N4r*dN2ds
-       dNds_09= N5r*dN2ds
-       dNds_10= N1r*dN3ds
-       dNds_11= N2r*dN3ds
-       dNds_12= N3r*dN3ds
-       dNds_13= N4r*dN3ds
-       dNds_14= N5r*dN3ds
-       dNds_15= N1r*dN4ds
-       dNds_16= N2r*dN4ds
-       dNds_17= N3r*dN4ds
-       dNds_18= N4r*dN4ds
-       dNds_19= N5r*dN4ds
-       dNds_20= N1r*dN5ds
-       dNds_21= N2r*dN5ds
-       dNds_22= N3r*dN5ds
-       dNds_23= N4r*dN5ds
-       dNds_24= N5r*dN5ds
-       return dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,\
-              dNds_05,dNds_06,dNds_07,dNds_08,dNds_09,\
-              dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,\
-              dNds_15,dNds_16,dNds_17,dNds_18,dNds_19,\
-              dNds_20,dNds_21,dNds_22,dNds_23,dNds_24
+       N0r,N1r,N2r,N3r,N4r=Q4(r)
+       dN0ds,dN1ds,dN2ds,dN3ds,dN4ds=dQ4d(s)
+       return N0r*dN0ds,N1r*dN0ds,N2r*dN0ds,N3r*dN0ds,N4r*dN0ds,\
+              N0r*dN1ds,N1r*dN1ds,N2r*dN1ds,N3r*dN1ds,N4r*dN1ds,\
+              N0r*dN2ds,N1r*dN2ds,N2r*dN2ds,N3r*dN2ds,N4r*dN2ds,\
+              N0r*dN3ds,N1r*dN3ds,N2r*dN3ds,N3r*dN3ds,N4r*dN3ds,\
+              N0r*dN4ds,N1r*dN4ds,N2r*dN4ds,N3r*dN4ds,N4r*dN4ds
 
+#------------------------------------------------------------------------------
 
 def NNP(r,s,order):
     if order==1:
-       N_1=1.
-       return N_1
+       return 1.
     if order==2:
-       N_0=0.25*(1-r)*(1-s)
-       N_1=0.25*(1+r)*(1-s)
-       N_2=0.25*(1-r)*(1+s)
-       N_3=0.25*(1+r)*(1+s)
-       return N_0,N_1,N_2,N_3
+       N0r,N1r=Q1(r)
+       N0s,N1s=Q1(s)
+       return N0r*N0s,N1r*N0s,\
+              N0r*N1s,N1r*N1s
     if order==3:
-       N_0= 0.5*r*(r-1) * 0.5*s*(s-1)
-       N_1=    (1-r**2) * 0.5*s*(s-1)
-       N_2= 0.5*r*(r+1) * 0.5*s*(s-1)
-       N_3= 0.5*r*(r-1) *    (1-s**2)
-       N_4=    (1-r**2) *    (1-s**2)
-       N_5= 0.5*r*(r+1) *    (1-s**2)
-       N_6= 0.5*r*(r-1) * 0.5*s*(s+1)
-       N_7=    (1-r**2) * 0.5*s*(s+1)
-       N_8= 0.5*r*(r+1) * 0.5*s*(s+1)
-       return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8
+       N0r,N1r,N2r=Q2(r)
+       N0s,N1s,N2s=Q2(s)
+       return N0r*N0s,N1r*N0s,N2r*N0s,\
+              N0r*N1s,N1r*N1s,N2r*N1s,\
+              N0r*N2s,N1r*N2s,N2r*N2s
     if order==4:
-       N1r=(-1    +r +9*r**2 - 9*r**3)/16
-       N2r=(+9 -27*r -9*r**2 +27*r**3)/16
-       N3r=(+9 +27*r -9*r**2 -27*r**3)/16
-       N4r=(-1    -r +9*r**2 + 9*r**3)/16
-       N1t=(-1    +s +9*s**2 - 9*s**3)/16
-       N2t=(+9 -27*s -9*s**2 +27*s**3)/16
-       N3t=(+9 +27*s -9*s**2 -27*s**3)/16
-       N4t=(-1    -s +9*s**2 + 9*s**3)/16
-       N_00= N1r*N1t 
-       N_01= N2r*N1t 
-       N_02= N3r*N1t 
-       N_03= N4r*N1t 
-       N_04= N1r*N2t 
-       N_05= N2r*N2t 
-       N_06= N3r*N2t 
-       N_07= N4r*N2t 
-       N_08= N1r*N3t 
-       N_09= N2r*N3t 
-       N_10= N3r*N3t 
-       N_11= N4r*N3t 
-       N_12= N1r*N4t 
-       N_13= N2r*N4t 
-       N_14= N3r*N4t 
-       N_15= N4r*N4t 
-       return N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
-              N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15
+       N0r,N1r,N2r,N3r=Q3(r)
+       N0s,N1s,N2s,N3s=Q3(s)
+       return N0r*N0s,N1r*N0s,N2r*N0s,N3r*N0s,\
+              N0r*N1s,N1r*N1s,N2r*N1s,N3r*N1s,\
+              N0r*N2s,N1r*N2s,N2r*N2s,N3r*N2s,\
+              N0r*N3s,N1r*N3s,N2r*N3s,N3r*N3s
 
 #------------------------------------------------------------------------------
 
@@ -379,16 +232,18 @@ ndofP=1  # number of pressure degrees of freedom
 Lx=1.
 Ly=1.
 
-if int(len(sys.argv) == 5):
+if int(len(sys.argv) == 6):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
-   order = int(sys.argv[4])
+   order= int(sys.argv[4])
+   Mlump= int(sys.argv[5])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 24
+   nely = 24
    visu = 1
    order= 2
+   Mlump= 0
 
 nel=nelx*nely
 nnx=order*nelx+1  # number of elements, x direction
@@ -442,8 +297,6 @@ hx=Lx/nelx
 hy=Ly/nely
 
 sparse=True
-   
-Mlump=False
 
 #################################################################
 
@@ -515,13 +368,11 @@ print("-----------------------------")
 # and  zero elsewhere
 #for i in range(0,mV):
 #   print ('node',i,':',NNV(rVnodes[i],sVnodes[i],order))
-
 #################################################################
 # checking that all pressure shape functions are 1 on their node 
 # and  zero elsewhere
 #for i in range(0,mP):
 #   print ('node',i,':',NNP(rPnodes[i],sPnodes[i],order))
-
 #################################################################
 # build velocity nodes coordinates 
 #################################################################
@@ -849,7 +700,6 @@ else:
    a_mat[Nfem-1,Nfem-1]=1
    rhs[Nfem-1]=0
 
-
 ######################################################################
 # solve system
 ######################################################################
@@ -894,8 +744,8 @@ exy = np.zeros(nel,dtype=np.float64)
 e   = np.zeros(nel,dtype=np.float64)  
 
 for iel in range(0,nel):
-    rq = 0.5
-    sq = 0.5
+    rq = 0.
+    sq = 0.
     weightq = 2 
     NNNV[0:mV]=NNV(rq,sq,order)
     dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
@@ -946,7 +796,7 @@ for iel in range(0,nel):
 
 q=q/c
 
-np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
+#np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
 
 print("project p onto Vnodes: %.3f s" % (timing.time() - start))
 
@@ -1110,7 +960,7 @@ for i in range(0,NV):
 start = timing.time()
 
 if order==1:
-   if Mlump:
+   if Mlump==1:
       Mmat = np.array([[1.,0.],\
                        [0.,1.]],dtype=np.float64)
    else: 
@@ -1118,7 +968,7 @@ if order==1:
                        [1.,2.]],dtype=np.float64)/3.
 
 if order==2:
-   if Mlump:
+   if Mlump==1:
       Mmat = np.array([[1.,0.,0.],\
                        [0.,4.,0.],\
                        [0.,0.,1.]],dtype=np.float64)/3.
@@ -1128,7 +978,7 @@ if order==2:
                        [-2., 4., 8.]],dtype=np.float64)/30. 
 
 if order==3:
-   if Mlump:
+   if Mlump==1:
       Mmat = np.array([[1.,0.,0.,0.],\
                        [0.,3.,0.,0.],\
                        [0.,0.,3.,0.],\
@@ -1140,7 +990,7 @@ if order==3:
                        [ 38., -72., 198.,256.]],dtype=np.float64)/16./105.
 
 if order==4:
-   if Mlump:
+   if Mlump==1:
       Mmat = np.array([[7., 0., 0., 0.,0.],\
                        [0.,32., 0., 0.,0.],\
                        [0., 0.,12., 0.,0.],\
@@ -1153,9 +1003,6 @@ if order==4:
                        [ 224., 1024.,-1536., 7168.,1184.],\
                        [-116.,  224., -696., 1184.,1168.]],dtype=np.float64)/36./315. 
 
-
-#print (Mmat.sum())
-
 # compute the nb of traction dofs
 NfemTr=np.sum(bc_fix)
 print ('NfemTr=',NfemTr)
@@ -1163,7 +1010,6 @@ print ('NfemTr=',NfemTr)
 # build array which maps vel dofs which are fixed 
 # to traction dofs
 bc_nb=np.zeros(NfemV,dtype=np.int32)  
-
 counter=0
 for i in range(0,NfemV):
     if (bc_fix[i]):
@@ -1224,12 +1070,11 @@ for iel in range(0,nel):
 
             # compute elemental rhs vector
             for i in range(0,mV):
-                rhs_el[ndofV*i  ]+=(dNNNVdx[i]*sigmaxxq+dNNNVdy[i]*sigmaxyq + NNNV[i]*bx(xq,yq))*jcob*weightq
-                rhs_el[ndofV*i+1]+=(dNNNVdx[i]*sigmaxyq+dNNNVdy[i]*sigmayyq + NNNV[i]*by(xq,yq))*jcob*weightq
+                rhs_el[ndofV*i  ]+=(dNNNVdx[i]*sigmaxxq+dNNNVdy[i]*sigmaxyq -NNNV[i]*bx(xq,yq))*jcob*weightq
+                rhs_el[ndofV*i+1]+=(dNNNVdx[i]*sigmaxyq+dNNNVdy[i]*sigmayyq -NNNV[i]*by(xq,yq))*jcob*weightq
 
         # end for jq
     # end for iq
-
 
     # assemble terms for bottom boundary
     for idof in range(0,ndofV):
@@ -1315,7 +1160,7 @@ for iel in range(0,nel):
 print("     -> M_cbf   (m,M) %.4e %.4e " %(np.min(M_cbf),np.max(M_cbf)))
 print("     -> rhs_cbf (m,M) %.4e %.4e " %(np.min(rhs_cbf),np.max(rhs_cbf)))
 
-sol=sps.linalg.spsolve(sps.csr_matrix(M_cbf),rhs_cbf)#,use_umfpack=True)
+sol=sps.linalg.spsolve(sps.csr_matrix(M_cbf),rhs_cbf)
 
 tx = np.zeros(NV,np.float64)
 ty = np.zeros(NV,np.float64)
@@ -1328,12 +1173,27 @@ for i in range(0,NV):
 print("     -> tx (m,M) %.4e %.4e " %(np.min(tx),np.max(tx)))
 print("     -> ty (m,M) %.4e %.4e " %(np.min(ty),np.max(ty)))
 
-np.savetxt('sigmaxy_top.ascii',np.array([xV[NV-nnx:NV],tx[NV-nnx:NV],stress_xy[NV-nnx:NV]]).T,header='# x,sigmaxy')
-np.savetxt('sigmayy_top.ascii',np.array([xV[NV-nnx:NV],ty[NV-nnx:NV],stress_yy[NV-nnx:NV],sigmayyn[NV-nnx:NV]]).T,header='# x,sigmayy')
-np.savetxt('sigmaxy_bot.ascii',np.array([xV[0:nnx],tx[0:nnx],-stress_xy[0:nnx]]).T,header='# x,sigmaxy')
-np.savetxt('sigmayy_bot.ascii',np.array([xV[0:nnx],ty[0:nnx],-stress_yy[0:nnx]]).T,header='# x,sigmayy')
+np.savetxt('sigmayy_top.ascii',np.array([xV[NV-nnx:NV],\
+                                         ty[NV-nnx:NV],\
+                                         stress_yy[NV-nnx:NV],\
+                                         sigmayyn[NV-nnx:NV]]).T,header='# x,sigmayy')
 
-np.savetxt('tractions.ascii',np.array([xV,yV,tx,ty,stress_xx,stress_yy,stress_xy]).T,header='# x,y,tx,ty')
+np.savetxt('sigmaxy_top.ascii',np.array([xV[NV-nnx:NV],\
+                                         tx[NV-nnx:NV],\
+                                         stress_xy[NV-nnx:NV],\
+                                         sigmaxyn[NV-nnx:NV]]).T,header='# x,sigmaxy')
+
+np.savetxt('sigmaxy_bot.ascii',np.array([xV[0:nnx],
+                                         tx[0:nnx],
+                                         -stress_xy[0:nnx]
+                                         -sigmaxyn[0:nnx]]).T,header='# x,sigmaxy')
+
+np.savetxt('sigmayy_bot.ascii',np.array([xV[0:nnx],\
+                                         ty[0:nnx],\
+                                         -stress_yy[0:nnx],\
+                                         -sigmayyn[0:nnx]]).T,header='# x,sigmayy')
+
+#np.savetxt('tractions.ascii',np.array([xV,yV,tx,ty,stress_xx,stress_yy,stress_xy]).T,header='# x,y,tx,ty')
 
 
 #####################################################################
