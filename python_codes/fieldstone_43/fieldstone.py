@@ -4,6 +4,8 @@ import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 import time as timing
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 
 #------------------------------------------------------------------------------
 
@@ -23,12 +25,12 @@ hcond=0.     # thermal conductivity
 hcapa=1.     # heat capacity
 rho0=1       # reference density
 CFL=1.       # CFL number 
-nstep=30    # maximum number of timestep   
+nstep=200    # maximum number of timestep   
 sigma=0.2
 xc=1./6.+1./2.
 yc=1./6.+1./2.
-use_bdf=True
-bdf_order=2
+use_bdf=False
+bdf_order=1
 
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 3):
@@ -51,7 +53,7 @@ NfemT=nnp*ndofT  # Total number of degrees of temperature freedom
 # alphaT=0: explicit
 # alphaT=0.5: crank-nicolson
 
-alphaT=0.
+alphaT=0.5
 
 #####################################################################
 # grid point setup 
@@ -435,6 +437,19 @@ for istep in range(0,nstep):
     np.savetxt('ET.ascii',np.array([model_time[0:istep],ET[0:istep]]).T,header='# t,ET')
     np.savetxt('Tmin.ascii',np.array([model_time[0:istep],Tmin[0:istep]]).T,header='# t,Tmin')
     np.savetxt('Tmax.ascii',np.array([model_time[0:istep],Tmax[0:istep]]).T,header='# t,Tmax')
+
+    filename = 'solution_{:04d}.pdf'.format(istep) 
+    fig = plt.figure ()
+    ax = fig.gca(projection='3d')
+    ax.plot_surface(x.reshape ((nny,nnx)),y.reshape((nny,nnx)),T.reshape((nny,nnx)),color = 'darkseagreen')
+    ax.set_xlabel ( 'X [ m ] ')
+    ax.set_ylabel ( 'Y [ m ] ')
+    ax.set_zlabel ( ' Temperature  [ C ] ')
+    plt.title('Timestep  %.2d' %(istep),loc='right')
+    plt.grid ()
+    plt.savefig(filename)
+    #plt.show ()
+    plt.close()
 
 #==============================================================================
 # end time stepping loop

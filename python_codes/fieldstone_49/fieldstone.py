@@ -175,49 +175,99 @@ def NNP(r,s,order):
 
 #------------------------------------------------------------------------------
 
-def bx(x, y):
+def bx(x,y):
     val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
          (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
          (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
          1.-4.*y+12.*y*y-8.*y*y*y)
     return val
 
-def by(x, y):
+def by(x,y):
     val=((8.-48.*y+48.*y*y)*x*x*x+
          (-12.+72.*y-72.*y*y)*x*x+
          (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
          12.*y*y+24.*y*y*y-12.*y**4)
     return val
 
-def velocity_x(x,y):
-    val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+def density(x,y):
+    lambdaa=1
+    k=2*np.pi/lambdaa
+    y0=62./64.
+    rho_alpha=64.
+    if abs(y-y0)<1e-6:
+       val=rho_alpha*np.cos(k*x)#+1.
+    else:
+       val=0.#+1.
     return val
 
-def velocity_y(x,y):
-    val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+def velocity_x(x,y,ibench):
+    if ibench==1:
+       val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+    else:
+       val=0.
     return val
 
-def pressure(x,y):
-    val=x*(1.-x)#-1./6.
+def velocity_y(x,y,ibench):
+    if ibench==1:
+       val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    else:
+       val=0.
     return val
 
-def sr_xx(x,y):
-  return x**2*(2*x-2)*(4*y**3-6*y**2+2*y)+2*x*(-x+1)**2*(4*y**3-6*y**2+2*y)
+def pressure(x,y,ibench):
+    if ibench==1:
+       val=x*(1.-x)#-1./6.
+    else:
+       val=0.
+    return val
 
-def sr_xy(x,y):
-  return (x**2*(-x+1)**2*(12*y**2-12*y+2)-y**2*(-y+1)**2*(12*x**2-12*x+2))/2
+def sr_xx(x,y,ibench):
+    if ibench==1:
+       val=x**2*(2*x-2)*(4*y**3-6*y**2+2*y)+2*x*(-x+1)**2*(4*y**3-6*y**2+2*y)
+    else:
+       val=0.
+    return val
 
-def sigma_xx(x,y):
-  return 2*x**2*(2*x-2)*(4*y**3-6*y**2+2*y)+4*x*(-x+1)**2*(4*y**3-6*y**2+2*y)-x*(-x+1)#+1/6
+def sr_xy(x,y,ibench):
+    if ibench==1:
+       val=(x**2*(-x+1)**2*(12*y**2-12*y+2)-y**2*(-y+1)**2*(12*x**2-12*x+2))/2
+    else:
+       val=0.
+    return val
 
-def sigma_xy(x,y):
-  return x**2*(-x+1)**2*(12*y**2-12*y+2)-y**2*(-y+1)**2*(12*x**2-12*x+2)
+def sigma_xx(x,y,ibench):
+    if ibench==1:
+       val=2*x**2*(2*x-2)*(4*y**3-6*y**2+2*y)+4*x*(-x+1)**2*(4*y**3-6*y**2+2*y)-x*(-x+1)+1/6
+    else:
+       val=0.
+    return val
 
-def sigma_yy(x,y):
-  return -x*(-x+1)-2*y**2*(2*y-2)*(4*x**3-6*x**2+2*x)-4*y*(-y+1)**2*(4*x**3-6*x**2+2*x)#+1/6
+def sigma_xy(x,y,ibench):
+    if ibench==1:
+       val=x**2*(-x+1)**2*(12*y**2-12*y+2)-y**2*(-y+1)**2*(12*x**2-12*x+2)
+    else:
+       val=0.
+    return val
 
-def sigma_yx(x,y):
-  return sigma_xy(x,y)
+def sigma_yy(x,y,ibench):
+    if ibench==1:
+       val=-x*(-x+1)-2*y**2*(2*y-2)*(4*x**3-6*x**2+2*x)-4*y*(-y+1)**2*(4*x**3-6*x**2+2*x)+1/6
+    else:
+       lambdaa=1.
+       y0=62./64.
+       k=2*np.pi/lambdaa
+       val=np.cos(k*x)/np.sinh(k)**2*\
+          (k*(1.-y0)*np.sinh(k)*np.cosh(k*y0)\
+          -k*np.sinh(k*(1.-y0))\
+          +np.sinh(k)*np.sinh(k*y0) )
+    return val
+
+def sigma_yx(x,y,ibench):
+    if ibench==1:
+       val=sigma_xy(x,y)
+    else:
+       val=0.
+    return val
 
 #------------------------------------------------------------------------------
 
@@ -239,11 +289,16 @@ if int(len(sys.argv) == 6):
    order= int(sys.argv[4])
    Mlump= int(sys.argv[5])
 else:
-   nelx = 24
-   nely = 24
+   nelx = 64
+   nely = 64
    visu = 1
-   order= 2
+   order= 1
    Mlump= 0
+
+ibench=2
+
+gx=0.
+gy=-1.
 
 nel=nelx*nely
 nnx=order*nelx+1  # number of elements, x direction
@@ -484,21 +539,44 @@ start = timing.time()
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
-for i in range(0,NV):
-    if xV[i]<eps:
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if xV[i]>(Lx-eps):
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if yV[i]<eps:
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if yV[i]>(Ly-eps):
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+if ibench==1:
+   for i in range(0,NV): # no slip
+       if xV[i]<eps:
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if xV[i]>(Lx-eps):
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if yV[i]<eps:
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if yV[i]>(Ly-eps):
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+else:
+   for i in range(0,NV): # free slip
+       if xV[i]<eps:
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+       if xV[i]>(Lx-eps):
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+       if yV[i]<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if yV[i]>(Ly-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+
 
 print("boundary conditions: %.3f s" % (timing.time() - start))
+
+#################################################################
+# building density array
+#################################################################
+
+rho = np.empty(NV, dtype=np.float64)  
+if ibench==1:
+   rho[:]=0.
+else:
+   for i in range(0,NV):
+       rho[i]=density(xV[i],yV[i])
 
 #################################################################
 # compute area of elements
@@ -590,9 +668,11 @@ for iel in range(0,nel):
             # compute dNdx & dNdy
             xq=0.0
             yq=0.0
+            rhoq=0.
             for k in range(0,mV):
                 xq+=NNNV[k]*xV[iconV[k,iel]]
                 yq+=NNNV[k]*yV[iconV[k,iel]]
+                rhoq+=NNNV[k]*rho[iconV[k,iel]]
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
 
@@ -606,9 +686,15 @@ for iel in range(0,nel):
             K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta*weightq*jcob
 
             # compute elemental rhs vector
-            for i in range(0,mV):
-                f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*bx(xq,yq)
-                f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*by(xq,yq)
+            if ibench==1:
+               for i in range(0,mV):
+                   f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*bx(xq,yq)
+                   f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*by(xq,yq)
+            else:
+               for i in range(0,mV):
+                   f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*rhoq*gx
+                   f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*rhoq*gy
+
 
             for i in range(0,mP):
                 N_mat[0,i]=NNNP[i]
@@ -727,9 +813,43 @@ print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
 #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
-#np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))
+
+#####################################################################
+# normalise pressure field 
+#####################################################################
+
+avrg_p=0.
+for iel in range(0,nel):
+    for iq in range(0,nqperdim):
+        for jq in range(0,nqperdim):
+            rq=qcoords[iq]
+            sq=qcoords[jq]
+            weightq=qweights[iq]*qweights[jq]
+            NNNP[0:mP]=NNP(rq,sq,order)
+
+            # compure pressure at q point
+            pq=0.
+            for k in range(0,mP):
+                pq+=NNNP[k]*p[iconP[k,iel]]
+
+            # calculate jacobian matrix
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,mV):
+                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+            jcob = np.linalg.det(jcb)
+
+            avrg_p+=pq*jcob*weightq
+
+print('avrg pressure',avrg_p)
+
+p[:]-=avrg_p
+
+#np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
 #####################################################################
 # compute strainrate at element center
@@ -834,7 +954,7 @@ for iel in range(0,nel):
             e_xy += 0.5*dNNNVdy[k]*u[iconV[k,iel]]+\
                     0.5*dNNNVdx[k]*v[iconV[k,iel]]
         exxn[iconV[i,iel]]+=e_xx
-        eyyn[iconV[i,iel]]+=e_xx
+        eyyn[iconV[i,iel]]+=e_yy
         exyn[iconV[i,iel]]+=e_xy
         c[iconV[i,iel]]+=1.
     # end for i
@@ -863,12 +983,12 @@ error_p = np.empty(NP,dtype=np.float64)
 error_q = np.empty(NV,dtype=np.float64)
 
 for i in range(0,NV): 
-    error_u[i]=u[i]-velocity_x(xV[i],yV[i])
-    error_v[i]=v[i]-velocity_y(xV[i],yV[i])
-    error_q[i]=q[i]-pressure(xV[i],yV[i])
+    error_u[i]=u[i]-velocity_x(xV[i],yV[i],ibench)
+    error_v[i]=v[i]-velocity_y(xV[i],yV[i],ibench)
+    error_q[i]=q[i]-pressure(xV[i],yV[i],ibench)
 
 for i in range(0,NP): 
-    error_p[i]=p[i]-pressure(xP[i],yP[i])
+    error_p[i]=p[i]-pressure(xP[i],yP[i],ibench)
 
 print("     -> error_u (m,M) %.4e %.4e " %(np.min(error_u),np.max(error_u)))
 print("     -> error_v (m,M) %.4e %.4e " %(np.min(error_v),np.max(error_v)))
@@ -918,8 +1038,8 @@ for iel in range (0,nel):
                 uq+=NNNV[k]*u[iconV[k,iel]]
                 vq+=NNNV[k]*v[iconV[k,iel]]
                 qq+=NNNV[k]*q[iconV[k,iel]]
-            errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
-            errq+=(qq-pressure(xq,yq))**2*weightq*jcob
+            errv+=((uq-velocity_x(xq,yq,ibench))**2+(vq-velocity_y(xq,yq,ibench))**2)*weightq*jcob
+            errq+=(qq-pressure(xq,yq,ibench))**2*weightq*jcob
 
             xq=0.
             yq=0.
@@ -928,7 +1048,7 @@ for iel in range (0,nel):
                 xq+=NNNP[k]*xP[iconP[k,iel]]
                 yq+=NNNP[k]*yP[iconP[k,iel]]
                 pq+=NNNP[k]*p[iconP[k,iel]]
-            errp+=(pq-pressure(xq,yq))**2*weightq*jcob
+            errp+=(pq-pressure(xq,yq,ibench))**2*weightq*jcob
 
         # end for jq
     # end for iq
@@ -949,10 +1069,11 @@ print("compute errors: %.3f s" % (timing.time() - start))
 stress_xx = np.zeros(NV,np.float64)
 stress_yy = np.zeros(NV,np.float64)
 stress_xy = np.zeros(NV,np.float64)
+
 for i in range(0,NV):
-    stress_xx[i]=sigma_xx(xV[i],yV[i])
-    stress_yy[i]=sigma_yy(xV[i],yV[i])
-    stress_xy[i]=sigma_xy(xV[i],yV[i])
+    stress_xx[i]=sigma_xx(xV[i],yV[i],ibench)
+    stress_yy[i]=sigma_yy(xV[i],yV[i],ibench)
+    stress_xy[i]=sigma_xy(xV[i],yV[i],ibench)
 
 #####################################################################
 # compute derivatives on domain edges with CBF 
@@ -1050,9 +1171,11 @@ for iel in range(0,nel):
             exxq=0.
             eyyq=0.
             exyq=0.
+            rhoq=0.
             for k in range(0,mV):
                 xq+=NNNV[k]*xV[iconV[k,iel]]
                 yq+=NNNV[k]*yV[iconV[k,iel]]
+                rhoq+=NNNV[k]*rho[iconV[k,iel]]
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
                 exxq += dNNNVdx[k]*u[iconV[k,iel]]
@@ -1069,9 +1192,19 @@ for iel in range(0,nel):
             sigmaxyq=    2*eta*exyq
 
             # compute elemental rhs vector
-            for i in range(0,mV):
-                rhs_el[ndofV*i  ]+=(dNNNVdx[i]*sigmaxxq+dNNNVdy[i]*sigmaxyq -NNNV[i]*bx(xq,yq))*jcob*weightq
-                rhs_el[ndofV*i+1]+=(dNNNVdx[i]*sigmaxyq+dNNNVdy[i]*sigmayyq -NNNV[i]*by(xq,yq))*jcob*weightq
+            if ibench==1:
+               for i in range(0,mV):
+                   rhs_el[ndofV*i  ]+=(dNNNVdx[i]*sigmaxxq+dNNNVdy[i]*sigmaxyq\
+                                      -NNNV[i]*bx(xq,yq))*jcob*weightq
+                   rhs_el[ndofV*i+1]+=(dNNNVdx[i]*sigmaxyq+dNNNVdy[i]*sigmayyq\
+                                      -NNNV[i]*by(xq,yq))*jcob*weightq
+            else:
+               for i in range(0,mV):
+                   rhs_el[ndofV*i  ]+=(dNNNVdx[i]*sigmaxxq+dNNNVdy[i]*sigmaxyq\
+                                      -NNNV[i]*rhoq*gx)*jcob*weightq
+                   rhs_el[ndofV*i+1]+=(dNNNVdx[i]*sigmaxyq+dNNNVdy[i]*sigmayyq\
+                                      -NNNV[i]*rhoq*gy)*jcob*weightq
+            # end if
 
         # end for jq
     # end for iq
@@ -1183,15 +1316,18 @@ np.savetxt('sigmaxy_top.ascii',np.array([xV[NV-nnx:NV],\
                                          stress_xy[NV-nnx:NV],\
                                          sigmaxyn[NV-nnx:NV]]).T,header='# x,sigmaxy')
 
-np.savetxt('sigmaxy_bot.ascii',np.array([xV[0:nnx],
-                                         tx[0:nnx],
-                                         -stress_xy[0:nnx]
-                                         -sigmaxyn[0:nnx]]).T,header='# x,sigmaxy')
+if ibench==2:
+   print ('ty at top right point:',ty[NV-1],sigma_yy(1.,1.,ibench))
 
-np.savetxt('sigmayy_bot.ascii',np.array([xV[0:nnx],\
-                                         ty[0:nnx],\
-                                         -stress_yy[0:nnx],\
-                                         -sigmayyn[0:nnx]]).T,header='# x,sigmayy')
+#np.savetxt('sigmaxy_bot.ascii',np.array([xV[0:nnx],
+#                                         tx[0:nnx],
+#                                         -stress_xy[0:nnx]
+#                                         -sigmaxyn[0:nnx]]).T,header='# x,sigmaxy')
+
+#np.savetxt('sigmayy_bot.ascii',np.array([xV[0:nnx],\
+#                                         ty[0:nnx],\
+#                                         -stress_yy[0:nnx],\
+#                                         -sigmayyn[0:nnx]]).T,header='# x,sigmayy')
 
 #np.savetxt('tractions.ascii',np.array([xV,yV,tx,ty,stress_xx,stress_yy,stress_xy]).T,header='# x,y,tx,ty')
 
@@ -1253,6 +1389,12 @@ if visu==1:
         vtufile.write("%10e \n" %q[i])
     vtufile.write("</DataArray>\n")
     #--
+    if ibench==2:
+       vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
+       for i in range(0,NV):
+          vtufile.write("%10e \n" %rho[i])
+       vtufile.write("</DataArray>\n")
+    #--
     vtufile.write("<DataArray type='Float32' Name='error u' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%.5e \n" %error_u[i])
@@ -1287,12 +1429,12 @@ if visu==1:
     #--
     vtufile.write("<DataArray type='Float32' Name='exxn (analytical)' Format='ascii'> \n")
     for i in range(0,NV):
-        vtufile.write("%.5e \n" %(sr_xx(xV[i],yV[i])))
+        vtufile.write("%.5e \n" %(sr_xx(xV[i],yV[i],ibench)))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='exyn (analytical)' Format='ascii'> \n")
     for i in range(0,NV):
-        vtufile.write("%.5e \n" %(sr_xy(xV[i],yV[i])))
+        vtufile.write("%.5e \n" %(sr_xy(xV[i],yV[i],ibench)))
     vtufile.write("</DataArray>\n")
 
     #--

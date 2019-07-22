@@ -1,11 +1,9 @@
 The Consistent Boundary Flux technique was devised to 
 alleviate the problem of the accuracy of primary variables 
-derivatives (mainly velocity and temperature) on boundaries, 
-where basis function (nodal) derivatives do not exist.
+derivatives (mainly velocity and temperature) on boundaries.
 These derivatives are important since they are needed to compute
-the heat flux (and therefore the NUsselt number) or 
+the heat flux (and therefore the Nusselt number) or 
 dynamic topography and geoid. 
-
 
 The idea was first introduced in \cite{mizu86} and later used 
 in geodynamics \cite{zhgh93}. It was finally implemented 
@@ -14,67 +12,81 @@ in the ASPECT code (dynamic topography postprocessor).
 Note that the CBF should be seen as a post-processor step 
 as it does not alter the primary variables values.
 
-The CBF method is implemented and used in \ref{f_XX}.
+The CBF method is implemented and used in Stone~\ref{f_49}.
 
 %---------------------------------------------------------------
-\subsubsection{applied to the Stokes equation}
+\subsubsection{The CBF applied to the Stokes equation}
 We start from the strong form:
-\[
-{\bm \nabla}\cdot{\bm \sigma} = {\bm b}
-\]
-and then write the weak form:
-\[
-\int_\Omega N {\bm \nabla}\cdot{\bm \sigma} dV = \int_\Omega N {\bm b} dV
-\]
-where $N$ is any test function. We then use the two equations:
+\begin{eqnarray}
+{\vec \nabla}\cdot {\bm \sigma} + {\vec b} &=& {\vec 0} 
+\end{eqnarray}
+and then write the weak form on an element $e$:
+\begin{eqnarray}
+\int_{\Omega_e} N_i^\upnu {\vec \nabla}\cdot {\bm \sigma} d\Omega + \int_{\Omega_e} N_i^\upnu  {\vec b} \; d\Omega 
+&=& \vec 0 
+\end{eqnarray}
+We then use the two equations: \index{chain rule} \index{divergence theorem}
 \[
 \bm \nabla \cdot ( N  \bm \sigma ) = N \bm \nabla \cdot \bm \sigma + \bm \nabla N \cdot  \bm \sigma  
-\quad\quad \text{(chain rule)}
+\qquad \text{(chain rule)}
 \]
 \[
-\int_\Omega (\bm \nabla \cdot \bm f )\; dV = \int_\Gamma \bm f\cdot \bm n \; dS
-\quad\quad \text{(divergence theorem)}
+\int_\Omega (\bm \nabla \cdot {\bm \sigma} )\; dV = \int_\Gamma {\bm \sigma} \cdot \bm n \; dS
+\qquad \text{(divergence theorem)}
 \]
-Integrating the first equation over $\Omega$ and using the second, we can write:
+and integrate by parts in order to obtain:
+\begin{eqnarray}
+\int_\Gamma N_i^\upnu {\bm \sigma}\cdot{\bm n} dS - 
+\int_{\Omega_e} {\vec \nabla } N_i^\upnu \cdot {\bm \sigma} d\Omega + \int_{\Omega_e} N_i^\upnu  {\vec b} d\Omega =\vec{0}
+\end{eqnarray}
+and since the traction vector ${\vec t}$ is given by $\vec{t}={\bm \sigma}\cdot{\bm n}$ we have:
+\begin{eqnarray}
+\int_{\Gamma_e}  N_i^\upnu {\bm t} dS 
+&=& \int_{\Omega_e} {\vec \nabla } N_i^\upnu \cdot {\bm \sigma}\; d\Omega 
+- \int_{\Omega_e} N_i^\upnu  {\vec b} \; d\Omega   \label{eq:cbf1}
+\end{eqnarray}
+The core idea of the method lies in considering the traction vector as an unknown 
+living on the nodes on the boundary, and assuming we have already solved the Stokes 
+equation and therefore have obtained the velocity and pressure.
+
+Finally, since the traction vector can be expressed as a function of the velocity 
+shape functions on the edgem i.e.
 \[
-\int_\Gamma N {\bm \sigma}\cdot {\bm n} \; dS 
--  \int_\Omega {\nabla N} \cdot{\bm \sigma} \; dV 
-= \int_\Omega N {\bm b} dV
+\vec{t} = \sum_{i=1}^m N_i^\upnu \vec{t}_i
 \]
-On $\Gamma$, the traction vector is given by ${\bm t}={\bm \sigma}\cdot {\bm n}$: 
-\[
-\int_\Gamma N {\bm t} dS =  \int_\Omega {\nabla N} \cdot{\bm \sigma} dV + \int_\Omega N {\bm b} dV
-\]
-Considering the traction vector as an unknown living on the nodes on the boundary, 
-we can expand (for $Q_1$ elements)
-\[
-t_x = \sum_{i=1}^2 t_{x|i} N_i 
-\quad\quad
-t_y = \sum_{i=1}^2 t_{y|i} N_i 
-\]
-on the boundary so that the left hand term yields a mass matrix $M'$.
-Finally, using our previous experience of discretising the weak form, we can write:
+the left hand term yields an edge (1D) mass matrix $M'$ (see Section~\ref{app:mm}).
+
+\begin{remark}
+In Stone~\ref{f_27} an alternative to equation \ref{eq:cbf1} is used. Although
+somewhat inefficient, the elemental matrices $\K$ and $\G$ and the corresponding 
+body force rhs are built and the rhs of the traction equation is computed as follows:
 \[
 M' \cdot {\cal T} = -\K {\cal V} - \G {\cal P} + f
 \]
 where ${\cal T}$ is the vector of assembled tractions which we want to compute 
 and ${\cal V}$ and ${\cal T}$ are the solutions of the Stokes problem. 
-Note that the assembly
-only takes place on the elements along the boundary.
+\end{remark}
 
-Note that the assembled mass matrix is tri-diagonal can be easily solved with 
-a Conjugate Gradient method. With a trapezoidal integration rule 
-(i.e. Gauss-Lobatto) the matrix can even be diagonalised and the resulting 
+\begin{remark} 
+The assembled mass matrix is tri-diagonal and can be easily solved with 
+a Conjugate Gradient method. 
+\end{remark}
+
+\begin{remark} 
+With a trapezoidal integration rule 
+(i.e. Gauss-Lobatto - see Section~\ref{sec:loba}) the matrix can even be diagonalised and the resulting 
 matrix is simply diagonal, which results in a very cheap solve \cite{zhgh93}.
+\end{remark}
 
 %---------------------------------------------------------------
-\subsubsection{applied to the heat equation}
+\subsubsection{The CBF applied to the heat transport equation}
+
 We start from the strong form of the heat transfer equation (without the source terms for simplicity):
 \[
 \rho C_p
-\left(\frac{\partial T}{\partial t} + {\bm v}\cdot {\bm \nabla}T\right)
+\left(\frac{\partial T}{\partial t} + \vec{v}\cdot \vec{\nabla}T\right)
 =
-{\bm \nabla} \cdot k{\bm \nabla T}
+\vec{\nabla} \cdot k\vec{\nabla T}
 \]
 The weak form then writes:
 %\[
@@ -86,16 +98,16 @@ The weak form then writes:
 %{\bm \nabla} \cdot k{\bm \nabla T} dV
 %\]
 \[
-\int_\Omega N
+\int_\Omega N^\theta
 \rho C_p
 \frac{\partial T}{\partial t} dV 
 +
 \rho C_p
-\int_\Omega N
- {\bm v}\cdot {\bm \nabla}T  dV
+\int_\Omega N^\theta
+\vec{v}\cdot \vec{\nabla}T  dV
 =
-\int_\Omega N
-{\bm \nabla} \cdot k{\bm \nabla T} dV
+\int_\Omega N^\theta
+\vec{\nabla} \cdot k\vec{\nabla} T dV
 \]
 Using once again integration by parts and divergence theorem:
 \[
@@ -156,8 +168,10 @@ Note that in all terms the assembly only takes place over the elements along the
 Note that the resulting matrix is symmetric.
 
 
-\subsubsection{implementation - Stokes equation}
+\subsubsection{Some implementation details for the Stokes equation}
 
+What follows is relevant for Stone~\ref{f_27} which relies on $Q_1$ shape 
+functions for the velocity. 
 Let us start with a small example, a 3x2 element FE grid:
 \begin{center}
 \begin{tikzpicture}
@@ -367,6 +381,8 @@ for iel in range(0,nel):                             # B
 
 
 \end{lstlisting}
+
+
 
 
 

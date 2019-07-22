@@ -3,37 +3,86 @@ set key outside
 set xtics 0.1
 set xlabel 'x'
 
-set output 'sigmayy_top.pdf'
+###################################Q2Q1##################################################
+
+set ylabel 't_y on top boundary' 
+set output 'sigmayy_top_Q2Q1.pdf'
 plot[][]\
-'sigmayy_top_1_10x10.ascii' w l t 'Q_1xP_0',\
-'sigmayy_top_2_10x10.ascii' w l t 'Q_2xQ_1',\
-'sigmayy_top_2_20x20.ascii' w l t 'Q_2xQ_1',\
-'sigmayy_top_2_30x30.ascii' w l t 'Q_2xQ_1',\
-'sigmayy_top_2_40x40.ascii' w l t 'Q_2xQ_1',\
-'sigmayy_top_3_10x10.ascii' w l t 'Q_3xQ_2',\
-'sigmayy_top_3_20x20.ascii' w l t 'Q_3xQ_2',\
-'sigmayy_top_3_30x30.ascii' w l t 'Q_3xQ_2',\
-'sigmayy_top_3_40x40.ascii' w l t 'Q_3xQ_2',\
-'sigmayy_top_4_10x10.ascii' w l t 'Q_4xQ_3',\
-'sigmayy_top_4_20x20.ascii' w l t 'Q_4xQ_3',\
-'sigmayy_top_4_30x30.ascii' w l t 'Q_4xQ_3',\
-'sigmayy_top_4_30x30.ascii' u 1:3 w l lt -1 t 'analytical'
+'sigmayy_top_8x8_2_0.ascii'   w l t '8x8',\
+'sigmayy_top_16x16_2_0.ascii' w l t '16x16',\
+'sigmayy_top_32x32_2_0.ascii' w l t '32x32',\
+'sigmayy_top_8x8_2_1.ascii'   w l t '8x8 (L)',\
+'sigmayy_top_16x16_2_1.ascii' w l t '16x16 (L)',\
+'sigmayy_top_32x32_2_1.ascii' w l t '32x32 (L)',\
+'sigmayy_top_32x32_2_1.ascii' u 1:3 w l lt -1 t 'analytical'
+
+set ylabel 't_y error on top boundary' 
+set log y
+set output 'sigmayy_top_Q2Q1_err.pdf'
+plot[][:]\
+'sigmayy_top_32x32_2_0.ascii' u 1:(abs($2-$3)) w lp lt 3 pt 3  ps .5 t '32x32',\
+'sigmayy_top_32x32_2_1.ascii' u 1:(abs($2-$3)) w lp lt 6 pt 13 ps .5 t '32x32 (L)',\
+'sigmayy_top_32x32_2_1.ascii' u 1:(abs($4-$3)) w lp lt 7 pt 14 ps .5 t '32x32 (nodal)'
+
+unset log y
+set ylabel 't_x on top boundary' 
+set output 'sigmaxy_top_Q2Q1.pdf'
+plot[][]\
+'sigmaxy_top_8x8_2_0.ascii'   w l t  '8x8',\
+'sigmaxy_top_16x16_2_0.ascii' w l t  '16x16',\
+'sigmaxy_top_32x32_2_0.ascii' w l t  '32x32',\
+'sigmaxy_top_8x8_2_1.ascii'   w l t  '8x8 (L)',\
+'sigmaxy_top_16x16_2_1.ascii' w l t  '16x16 (L)',\
+'sigmaxy_top_32x32_2_1.ascii' w l t  '32x32 (L)',\
+'sigmaxy_top_32x32_2_1.ascii' u 1:3 w l lt -1 t 'analytical'
+
+set ylabel 't_x error on top boundary' 
+set log y
+set output 'sigmaxy_top_Q2Q1_err.pdf'
+plot[][:]\
+'sigmaxy_top_32x32_2_0.ascii' u 1:(abs($2-$3)) w lp lt 3 pt 3  ps .5 t '32x32',\
+'sigmaxy_top_32x32_2_1.ascii' u 1:(abs($2-$3)) w lp lt 6 pt 13 ps .5 t '32x32 (L)',\
+'sigmaxy_top_32x32_2_1.ascii' u 1:(abs($4-$3)) w lp lt 7 pt 14 ps .5 t '32x32 (nodal)'
+
+###################################Q3Q2##################################################
+
+set ylabel 't_y error on top boundary' 
+set log y
+set output 'sigmayy_top_Q3Q2_err.pdf'
+plot[][]\
+'sigmayy_top_32x32_3_0.ascii' u 1:(abs($2-$3)) w lp lt 3 pt 3  ps .5 t '32x32',\
+'sigmayy_top_32x32_3_1.ascii' u 1:(abs($2-$3)) w lp lt 6 pt 13 ps .5 t '32x32 (L)',\
+'sigmayy_top_32x32_3_1.ascii' u 1:(abs($4-$3)) w lp lt 7 pt 14 ps .5 t '32x32 (nodal)'
 
 
-set output 'sigmayy_bot.pdf'
+set ylabel 't_x error on top boundary' 
+set log y
+set output 'sigmaxy_top_Q3Q2_err.pdf'
+plot[][:]\
+'sigmaxy_top_32x32_3_0.ascii' u 1:(abs($2-$3)) w lp lt 3 pt 3  ps .5 t '32x32',\
+'sigmaxy_top_32x32_3_1.ascii' u 1:(abs($2-$3)) w lp lt 6 pt 13 ps .5 t '32x32 (L)',\
+'sigmaxy_top_32x32_3_1.ascii' u 1:(abs($4-$3)) w lp lt 7 pt 14 ps .5 t '32x32 (nodal)'
+
+###################################Q4Q3##################################################
+
+set ylabel 't_y error on top boundary' 
+set log y
+set output 'sigmayy_top_Q4Q3_err.pdf'
 plot[][]\
-'sigmayy_bot_1_10x10.ascii' w l t 'Q_1xP_0',\
-'sigmayy_bot_2_10x10.ascii' w l t 'Q_2xQ_1',\
-'sigmayy_bot_2_20x20.ascii' w l t 'Q_2xQ_1',\
-'sigmayy_bot_2_30x30.ascii' w l t 'Q_2xQ_1',\
-'sigmayy_bot_2_40x40.ascii' w l t 'Q_2xQ_1',\
-'sigmayy_bot_3_10x10.ascii' w l t 'Q_3xQ_2',\
-'sigmayy_bot_3_20x20.ascii' w l t 'Q_3xQ_2',\
-'sigmayy_bot_3_30x30.ascii' w l t 'Q_3xQ_2',\
-'sigmayy_bot_3_40x40.ascii' w l t 'Q_3xQ_2',\
-'sigmayy_bot_4_10x10.ascii' w l t 'Q_4xQ_3',\
-'sigmayy_bot_4_20x20.ascii' w l t 'Q_4xQ_3',\
-'sigmayy_bot_4_30x30.ascii' w l t 'Q_4xQ_3',\
-'sigmayy_bot_4_30x30.ascii' u 1:(-$3) w l lt -1 t 'analytical'
+'sigmayy_top_32x32_4_0.ascii' u 1:(abs($2-$3)) w lp lt 3 pt 3  ps .5 t '32x32',\
+'sigmayy_top_32x32_4_1.ascii' u 1:(abs($2-$3)) w lp lt 6 pt 13 ps .5 t '32x32 (L)',\
+'sigmayy_top_32x32_4_1.ascii' u 1:(abs($4-$3)) w lp lt 7 pt 14 ps .5 t '32x32 (nodal)'
+
+set ylabel 't_x error on top boundary' 
+set log y
+set output 'sigmaxy_top_Q4Q3_err.pdf'
+plot[][:]\
+'sigmaxy_top_32x32_4_0.ascii' u 1:(abs($2-$3)) w lp lt 3 pt 3  ps .5 t '32x32',\
+'sigmaxy_top_32x32_4_1.ascii' u 1:(abs($2-$3)) w lp lt 6 pt 13 ps .5 t '32x32 (L)',\
+'sigmaxy_top_32x32_4_1.ascii' u 1:(abs($4-$3)) w lp lt 7 pt 14 ps .5 t '32x32 (nodal)'
+
+
+
+
 
 

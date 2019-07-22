@@ -1,36 +1,18 @@
-python3 fieldstone.py 10 10 1 2 0
-mv sigmayy_top.ascii sigmayy_top_2_10x10.ascii 
-mv sigmayy_bot.ascii sigmayy_bot_2_10x10.ascii 
-python3 fieldstone.py 20 20 1 2 0
-mv sigmayy_top.ascii sigmayy_top_2_20x20.ascii 
-mv sigmayy_bot.ascii sigmayy_bot_2_20x20.ascii 
-python3 fieldstone.py 30 30 1 2 0
-mv sigmayy_top.ascii sigmayy_top_2_30x30.ascii 
-mv sigmayy_bot.ascii sigmayy_bot_2_30x30.ascii 
-python3 fieldstone.py 40 40 1 2 0
-mv sigmayy_top.ascii sigmayy_top_2_40x40.ascii 
-mv sigmayy_bot.ascii sigmayy_bot_2_40x40.ascii 
+#! /bin/bash
 
-python3 fieldstone.py 10 10 1 3 0
-mv sigmayy_top.ascii sigmayy_top_3_10x10.ascii 
-mv sigmayy_bot.ascii sigmayy_bot_3_10x10.ascii 
-python3 fieldstone.py 20 20 1 3 0
-mv sigmayy_top.ascii sigmayy_top_3_20x20.ascii 
-mv sigmayy_bot.ascii sigmayy_bot_3_20x20.ascii 
-python3 fieldstone.py 30 30 1 3 0
-mv sigmayy_top.ascii sigmayy_top_3_30x30.ascii 
-mv sigmayy_bot.ascii sigmayy_bot_3_30x30.ascii 
-python3 fieldstone.py 40 40 1 3 0
-mv sigmayy_top.ascii sigmayy_top_3_40x40.ascii 
-mv sigmayy_bot.ascii sigmayy_bot_3_40x40.ascii 
+rm *.ascii
 
-python3 fieldstone.py 10 10 1 4 0
-mv sigmayy_top.ascii sigmayy_top_4_10x10.ascii 
-mv sigmayy_bot.ascii sigmayy_bot_4_10x10.ascii 
-python3 fieldstone.py 20 20 1 4 0
-mv sigmayy_top.ascii sigmayy_top_4_20x20.ascii 
-mv sigmayy_bot.ascii sigmayy_bot_4_20x20.ascii 
-python3 fieldstone.py 30 30 1 4 0
-mv sigmayy_top.ascii sigmayy_top_4_30x30.ascii 
-mv sigmayy_bot.ascii sigmayy_bot_4_30x30.ascii 
+for l in 8 16 32 48; do
 
+for m in 2 3 4 ; do
+
+for n in 0 1 ; do
+    echo res: $l X $l - Q: $m - lumped: $n
+
+        python3 fieldstone.py $l $l 0 $m $n > opla
+        mv sigmayy_top.ascii sigmayy_top_${l}x${l}_${m}_${n}.ascii 
+        mv sigmaxy_top.ascii sigmaxy_top_${l}x${l}_${m}_${n}.ascii 
+
+done
+done
+done
