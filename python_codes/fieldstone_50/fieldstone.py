@@ -4,7 +4,7 @@ import sys as sys
 import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix, lil_matrix, hstack, vstack
+from scipy.sparse import csr_matrix
 import time as time
 
 #------------------------------------------------------------------------------
@@ -74,8 +74,8 @@ def rho(xq,yq,imat,Tq):
 
 def eta(xq,yq,imat,exx,eyy,exy,p,T):
     Rgas=8.314
-    mu_min=1.e19
-    mu_max=1.e26
+    eta_min=1.e19
+    eta_max=1.e26
 
     if imat==1: # upper crust
        phi=20./180.*np.pi
@@ -114,19 +114,19 @@ def eta(xq,yq,imat,exx,eyy,exy,p,T):
     #print (exx,eyy,exy,imat,T,p)
     # compute effective viscous viscosity
     if E2<1e-20:
-        mueff_v=mu_max
+       etaeff_v=eta_max
     else:
-        mueff_v= 0.5 *f*A**(-1./n) * E2**(1./n-1.) * np.exp(max(Q+p*V,Q)/n/Rgas/T)
+       etaeff_v= 0.5 *f*A**(-1./n) * E2**(1./n-1.) * np.exp(max(Q+p*V,Q)/n/Rgas/T)
     # compute effective plastic viscosity
     if E2<1e-20: 
-       mueff_p=mu_max
+       etaeff_p=eta_max
     else:
-       mueff_p=( max(p*np.sin(phi)+c*np.cos(phi),c*np.cos(phi)) )/E2 * 0.5
+       etaeff_p=( max(p*np.sin(phi)+c*np.cos(phi),c*np.cos(phi)) )/E2 * 0.5
     # blend the two viscosities
-    mueffq=2./(1./mueff_p + 1./mueff_v)
-    mueffq=min(mueffq,mu_max)
-    mueffq=max(mueffq,mu_min)
-    return mueffq
+    etaeffq=2./(1./etaeff_p + 1./etaeff_v)
+    etaeffq=min(etaeffq,eta_max)
+    etaeffq=max(etaeffq,eta_min)
+    return etaeffq
 
 def bc_fct_left(x,y):
     return -0.25*cm/year
@@ -155,32 +155,26 @@ ndofP=1  # number of pressure degrees of freedom
 Lx=400e3  # horizontal extent of the domain 
 Ly=100e3  # vertical extent of the domain 
 
-assert (Lx>0.), "Lx should be positive" 
-assert (Ly>0.), "Ly should be positive" 
-
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 4):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 100
-   nely = 25
+   nelx = 120
+   nely = 30
    visu = 1
 
-niter=10
+niter=50
     
-nnx=2*nelx+1  # number of elements, x direction
-nny=2*nely+1  # number of elements, y direction
-
-NV=nnx*nny  # number of nodes
-NP=(nelx+1)*(nely+1)
-
-nel=nelx*nely  # number of elements, total
-
-NfemV=NV*ndofV    # number of velocity dofs
-NfemP=NP*ndofP    # number of pressure dofs
-Nfem=NfemV+NfemP  # total number of dofs
+nnx=2*nelx+1         # number of elements, x direction
+nny=2*nely+1         # number of elements, y direction
+NV=nnx*nny           # number of V nodes
+NP=(nelx+1)*(nely+1) # number of P nodes
+nel=nelx*nely        # number of elements, total
+NfemV=NV*ndofV       # number of velocity dofs
+NfemP=NP*ndofP       # number of pressure dofs
+Nfem=NfemV+NfemP     # total number of dofs
 
 eps=1.e-6
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
@@ -334,17 +328,22 @@ for iel in range(0,nel):
 # non linear iterations
 #========================================================================================
 #========================================================================================
-eta_el = np.zeros(nel,dtype=np.float64)  
-rho_el = np.zeros(nel,dtype=np.float64)  
 u      = np.zeros(NV,dtype=np.float64)            # x-component velocity
 v      = np.zeros(NV,dtype=np.float64)            # y-component velocity
 p      = np.zeros(NP,dtype=np.float64)            # y-component velocity
+u_old  = np.zeros(NV,dtype=np.float64)            # x-component velocity
+v_old  = np.zeros(NV,dtype=np.float64)            # y-component velocity
+p_old  = np.zeros(NP,dtype=np.float64)            # y-component velocity
     
 c_mat   = np.array([[2,0,0],\
                     [0,2,0],\
                     [0,0,1]],dtype=np.float64) 
 
 for iter in range(0,niter):
+
+    print('=======================')
+    print('======= iter ',iter,'=======')
+    print('=======================')
 
     #################################################################
     # build FE matrix
@@ -365,7 +364,8 @@ for iter in range(0,niter):
     dNNNVdy = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
     dNNNVdr = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
     dNNNVds = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
-
+    eta_el  = np.zeros(nel,dtype=np.float64)  
+    rho_el  = np.zeros(nel,dtype=np.float64)  
 
     for iel in range(0,nel):
 
@@ -428,15 +428,19 @@ for iter in range(0,niter):
                                              [0.        ,dNNNVdy[i]],
                                              [dNNNVdy[i],dNNNVdx[i]]]
 
-                eta_el[iel]=eta(xq,yq,material[iel],exxq,eyyq,exyq,pq,Tq)
+                etaq=eta(xq,yq,material[iel],exxq,eyyq,exyq,pq,Tq)
+                eta_el[iel]+=etaq/9
+
+                rhoq=rho(xq,yq,material[iel],Tq)
+                rho_el[iel]+=rhoq/9
 
                 # compute elemental a_mat matrix
-                K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(xq,yq,material[iel],exxq,eyyq,exyq,pq,Tq)*weightq*jcob
+                K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq*weightq*jcob
 
                 # compute elemental rhs vector
                 for i in range(0,mV):
-                    f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*rho(xq,yq,material[iel],Tq)*gx
-                    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*rho(xq,yq,material[iel],Tq)*gy
+                    f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*rhoq*gx
+                    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*rhoq*gy
 
                 for i in range(0,mP):
                     N_mat[0,i]=NNNP[i]
@@ -483,8 +487,8 @@ for iter in range(0,niter):
     G_mat*=eta_ref/Ly
     h_rhs*=eta_ref/Ly
 
-    print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
-    print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
+    print("     -> K_mat (m,M) %.4e %.4e " %(np.min(K_mat),np.max(K_mat)))
+    print("     -> G_mat (m,M) %.4e %.4e " %(np.min(G_mat),np.max(G_mat)))
 
     print("build FE matrix: %.3f s" % (time.time() - start))
 
@@ -523,7 +527,7 @@ for iter in range(0,niter):
 
     print("     -> u (m,M) %.4f %.4f cm/yr" %(np.min(u)/cm*year,np.max(u)/cm*year))
     print("     -> v (m,M) %.4f %.4f cm/yr" %(np.min(v)/cm*year,np.max(v)/cm*year))
-    print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+    print("     -> p (m,M) %.4f %.4f Mpa  " %(np.min(p)/1e6,np.max(p)/1e6))
 
     #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
     #np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
@@ -531,9 +535,21 @@ for iter in range(0,niter):
     print("split vel into u,v: %.3f s" % (time.time() - start))
 
 
-#========================================================================================
-#========================================================================================
+    ######################################################################
 
+    xi_u=np.linalg.norm(u-u_old,2)/np.linalg.norm(u+u_old,2)
+    xi_v=np.linalg.norm(v-v_old,2)/np.linalg.norm(v+v_old,2)
+    xi_p=np.linalg.norm(p-p_old,2)/np.linalg.norm(p+p_old,2)
+
+    print("conv: u,v,p: %.6f %.6f %.6f" %(xi_u,xi_v,xi_p))
+
+    u_old=u
+    v_old=v
+    p_old=p
+
+
+#========================================================================================
+#========================================================================================
 
 ######################################################################
 # compute strainrate 
@@ -547,9 +563,9 @@ e   = np.zeros(nel,dtype=np.float64)
 
 for iel in range(0,nel):
 
-    rq = 0.0
-    sq = 0.0
-    weightq = 2.0 * 2.0
+    rq=0.0
+    sq=0.0
+    weightq=2.0*2.0
 
     NNNV[0:mV]=NNV(rq,sq)
     dNNNVdr[0:mV]=dNNVdr(rq,sq)
@@ -581,7 +597,7 @@ print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 
-np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+#np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
 print("compute press & sr: %.3f s" % (time.time() - start))
 
@@ -629,7 +645,11 @@ vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % eta_el[iel])
 vtufile.write("</DataArray>\n")
-
+#--
+vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%10e\n" % rho_el[iel])
+vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
 for iel in range (0,nel):
@@ -672,7 +692,7 @@ vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
 for i in range(0,NV):
-    vtufile.write("%10e \n" %T[i])
+    vtufile.write("%10e \n" %(T[i]-273.15))
 vtufile.write("</DataArray>\n")
 vtufile.write("</PointData>\n")
 #####
