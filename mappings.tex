@@ -36,28 +36,65 @@ The denominator will not vanish, because it is a multiple of the area of the tri
 \end{remark}
 
 %................................................
-\subsubsection{Linear mapping on a quadrilateral}
+\subsubsection{Bilinear mapping on a linear quadrilateral}
 
-\begin{verbatim}
-4====3
-|    |  s
-|    |  |_r
-|    |
-1====2
-\end{verbatim}
+The \index{reference element} is in the $(r,s)$ space. It is a square of size $2\times2$ 
+centered around the origin. We wish to map it to the quadrilateral in the $(x,y)$ space:
+
+\begin{center}
+\includegraphics[width=8cm]{images/mappings/bilinear/mapping_bilinear.png}
+\end{center}
 
 The coordinates of the vertices are 
 $(x_1,y_1)$, $(x_2,y_2)$, $(x_3,y_3)$ and $(x_4,y_4)$.
-The coordinates inside the reference element are $(r,s)$. We then simply have the 
+We then simply have the 
 following relationship, i.e. any point of the reference element 
 can be mapped to the physical quadrilateral as follows:
 \begin{eqnarray}
 x&=& N_1(r,s) x_1 + N_2(r,s) x_2 + N_3(r,s) x_3 + N_4(r,s) x_4 \\
 y&=& N_1(r,s) y_1 + N_2(r,s) y_2 + N_3(r,s) y_3 + N_4(r,s) y_4 
 \end{eqnarray} 
-where the shape functions $N_i(r,s)$ are defined in section \ref{elements1D}.
-There is also an inverse map, which is not so easily computed (see section \ref{sec:amiin}).
+where the shape functions $N_i(r,s)$ are defined in section \ref{sec:elts1D}.
 
+In the following example the program randomly generates 10000 points inside the reference 
+element and computes their mapping into the $(x,y)$ space. 
+
+\begin{lstlisting}
+x1=-1 ; y1=-2
+x2=3  ; y2=-1
+x3=2  ; y3=2
+x4=-3 ; y4=1
+
+npts=10000
+r=np.zeros(npts,dtype=np.float64)   
+s=np.zeros(npts,dtype=np.float64)   
+x=np.zeros(npts,dtype=np.float64)   
+y=np.zeros(npts,dtype=np.float64)   
+
+for i in range(0,npts):
+    # compute random r,s coordinates
+    r[i]=random.uniform(-1.,+1)
+    s[i]=random.uniform(-1.,+1)
+    # compute basis function values at r,s
+    N1=0.25*(1-r[i])*(1-s[i])
+    N2=0.25*(1+r[i])*(1-s[i])
+    N3=0.25*(1+r[i])*(1+s[i])
+    N4=0.25*(1-r[i])*(1+s[i])
+    # compute x,y coordinates
+    x[i]=N1*x1+N2*x2+N3*x3+N4*x4
+    y[i]=N1*y1+N2*y2+N3*y3+N4*y4
+
+np.savetxt('rs.ascii',np.array([r,s]).T)
+np.savetxt('xy.ascii',np.array([x,y]).T)
+\end{lstlisting}
+
+
+\begin{center}
+\includegraphics[width=7cm]{images/mappings/bilinear/rs.pdf}
+\includegraphics[width=7cm]{images/mappings/bilinear/xy.pdf}
+\end{center}
+
+There is also an inverse map, which is not so easily computed (see section \ref{sec:amiin}).
 However, if the quadrilateral in the $(x,y)$ space is a rectangle of size $(h_x,h_y)$, 
 the inverse mapping is trivial:
 \begin{eqnarray}
@@ -71,6 +108,309 @@ N_2(x,y) &=& \left( \frac{x - x_1}{h_x}  \right) \left( \frac{y_3 -y }{h_y}  \ri
 N_3(x,y) &=& \left( \frac{x - x_1}{h_x}  \right) \left( \frac{y - y_1}{h_y}  \right) \nn\\
 N_4(x,y) &=& \left( \frac{x_3 -x }{h_x}  \right) \left( \frac{y - y_1}{h_y}  \right) \nn 
 \end{eqnarray}
+
+We have seen in Section~\ref{XXX} that since
+\[
+x(r,s)=\sum_i N_i(r,s) x_i 
+\qquad
+y(r,s)=\sum_i N_i(r,s) y_i 
+\]
+we have 
+\begin{eqnarray}
+\frac{\partial N_i}{\partial r} &=&
+\frac{\partial N_i}{\partial x}\frac{\partial x}{\partial r}
++\frac{\partial N_i}{\partial y}\frac{\partial y}{\partial r} \\
+\frac{\partial N_i}{\partial s} &=&
+\frac{\partial N_i}{\partial x}\frac{\partial x}{\partial s}
++\frac{\partial N_i}{\partial y}\frac{\partial y}{\partial s}
+\end{eqnarray}
+or in matrix form:
+\[
+\left(
+\begin{array}{c}
+\frac{\partial f}{\partial r} \\ \\
+\frac{\partial f}{\partial s}
+\end{array}
+\right)
+=
+\underbrace{
+\left(
+\begin{array}{cc}
+\frac{\partial x}{\partial r} & \frac{\partial y}{\partial r} \nonumber\\ \\
+\frac{\partial x}{\partial s} & \frac{\partial y}{\partial s} \nonumber
+\end{array}
+\right)
+}_{\bm J}
+\cdot
+\left(
+\begin{array}{c}
+\frac{\partial f}{\partial x} \\ \\
+\frac{\partial f}{\partial y}
+\end{array}
+\right)
+\]
+where ${\bm J}$ is called the Jacobian of the transformation
+By inverting the Jacobian matrix, the desired derivatives with respect to $x$
+and $y$ can be obtained:
+
+
+We have:
+\[
+\left(
+\begin{array}{c}
+\frac{\partial N_i}{\partial x} \\ \\
+\frac{\partial N_i}{\partial y}
+\end{array}
+\right)
+=
+{\bm J}^{-1} \cdot 
+\left(
+\begin{array}{c}i
+\frac{\partial N_i}{\partial r} \\ \\
+\frac{\partial N_i}{\partial s}
+\end{array}
+\right)
+\]
+The inverse of the Jacobian matrix can be simply obtained in 
+2D (Kramer's rule for $2\times2$ matrices):
+\[
+{\bm J}^{-1} = \frac{1}{|{\bm J}|} 
+\left(
+\begin{array}{cc}
+\frac{\partial y}{\partial s} & -\frac{\partial y}{\partial r} \nonumber\\ \\
+-\frac{\partial x}{\partial s} & \frac{\partial x}{\partial r} \nonumber
+\end{array}
+\right)
+\]
+The presence of the determinant in the denominator implies that it cannot 
+be zero anywhere, or in other words: the mapping is not valid if $|{\bm J}|$
+is zero anywhere over the element.
+
+Let us look at this by means of a simple example and let us consider the following 
+element:
+\begin{center}
+\includegraphics[width=4cm]{images/mappings/fournode/ex1}
+\end{center}
+Then a $Q_1$ mapping yields:
+\begin{eqnarray}
+x(r,s) &=& \sum_i N_i(r,s) x_i = N_2 + 2N_3 = \frac{1}{4} (3+3r+ s+rt) \\
+y(r,s) &=& \sum_i N_i(r,s) y_i = 2N_3 + N_4 = \frac{1}{4} (3+r+ 3s+rt) 
+\end{eqnarray}
+The Jacobian matrix is then
+\begin{equation}
+{\bm J} = 
+\left(
+\begin{array}{cc}
+\frac{\partial x}{\partial r} & \frac{\partial y}{\partial r} \nonumber\\ \\
+\frac{\partial x}{\partial s} & \frac{\partial y}{\partial s} \nonumber
+\end{array}
+\right)
+=
+\frac{1}{4}
+\left(
+\begin{array}{cc}
+3+s & 1+s \\
+1+r & 3+r
+\end{array}
+\right)
+\end{equation}
+and its determinant is 
+\begin{equation}
+|{\bm J}|=\frac{1}{4} [(3+s)(3+r)-(1+s)(1+r)]=\frac{1}{2}+\frac{1}{8}r+\frac{1}{8}s
+\end{equation}
+It is clear that $|{\bm J}|>0$ for $-1\leq r \leq +1$ and $-1\leq s \leq +1$. 
+
+Let us now consider another example, the following element:
+\begin{center}
+\includegraphics[width=4cm]{images/mappings/fournode/ex2}
+\end{center}
+It follows that
+\begin{eqnarray}
+x(r,s) &=& \sum_i N_i(r,s) x_i = \frac{1}{4}(1+r)(7+5s) \\ 
+y(r,s) &=& \sum_i N_i(r,s) y_i = \frac{1}{4}(17+5r+7s-5rs)
+\end{eqnarray}
+and the determinant:
+\[
+|{\bm J}|=\frac{3}{2}-\frac{15r}{4}+\frac{15s}{4}
+\]
+is zero for $r-s=2/5$. This mapping is invalid!
+
+\begin{remark}
+Problems also arise when the Jacobian matrix is nearly singular due to round-off errors.
+To avoid problems linked to badly shaped elements, it is recommended that the inside
+angles of an element are larger than $15\degree$ and less than $165\degree$.
+\end{remark}
+
+
+%.................................................................
+\subsubsection{biquadratic mapping of a straight-line face $Q_2$ element }
+
+\begin{center}
+\includegraphics[width=8cm]{images/mappings/biquadratic/mapping1}
+\end{center}
+
+The reference element now contains 9 nodes: 1,3,7,9 are the corners, nodes
+2,4,6,8 are the mid-face points and node 5 is in the middle.
+The mapping from the $(r,s)$ space to the $(x,y)$ space is then as follows:
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+x(r,s) \\ y(r,s)
+\end{array}
+\right)
+&=&
+N_1(r,s)
+\left(
+\begin{array}{c}
+x_1 \\ y_1
+\end{array}
+\right)
++
+N_2(r,s)
+\left(
+\begin{array}{c}
+x_2 \\ y_2
+\end{array}
+\right)
++
+N_3(r,s)
+\left(
+\begin{array}{c}
+x_3 \\ y_3
+\end{array}
+\right)
++
+N_4(r,s)
+\left(
+\begin{array}{c}
+x_4 \\ y_4
+\end{array}
+\right) \nonumber\\
+&+&
+N_5(r,s)
+\left(
+\begin{array}{c}
+x_5 \\ y_5
+\end{array}
+\right)
++
+N_6(r,s)
+\left(
+\begin{array}{c}
+x_6 \\ y_6
+\end{array}
+\right)
++
+N_7(r,s)
+\left(
+\begin{array}{c}
+x_7 \\ y_7
+\end{array}
+\right)
++
+N_8(r,s)
+\left(
+\begin{array}{c}
+x_4 \\ y_8
+\end{array}
+\right) \nonumber\\
+&+&
+N_9(r,s)
+\left(
+\begin{array}{c}
+x_9 \\ y_9
+\end{array}
+\right) 
+\nonumber
+\end{eqnarray}
+where
+\begin{eqnarray}
+N_1(r,t)&=& 0.5r(r-1)  0.5t(t-1) \nonumber\\
+N_2(r,t)&=&      (1-r^2)  0.5t(t-1) \nonumber\\
+N_3(r,t)&=& 0.5r(r+1)  0.5t(t-1) \nonumber\\
+N_4(r,t)&=& 0.5r(r-1)       (1-t^2) \nonumber\\
+N_5(r,t)&=&      (1-r^2)       (1-t^2) \nonumber\\
+N_6(r,t)&=& 0.5r(r+1)       (1-t^2) \nonumber\\
+N_7(r,t)&=& 0.5r(r-1)  0.5t(t+1) \nonumber\\
+N_8(r,t)&=&      (1-r^2)  0.5t(t+1) \nonumber\\
+N_9(r,t)&=& 0.5r(r+1)  0.5t(t+1) \nonumber
+\end{eqnarray}
+
+
+\begin{lstlisting}
+x1=-1                 ; y1=-2
+x3=3                  ; y3=-1
+x9=2                  ; y9=2
+x7=-3                 ; y7=1
+x2=0.5*(x1+x3)        ; y2=0.5*(y1+y3)
+x4=0.5*(x1+x7)        ; y4=0.5*(y1+y7)
+x6=0.5*(x3+x9)        ; y6=0.5*(y3+y9)
+x8=0.5*(x7+x9)        ; y8=0.5*(y7+y9)
+x5=0.25*(x1+x3+x7+x9) ; y5=0.25*(y1+y3+y7+y9)
+
+npts=10000
+r=np.zeros(npts,dtype=np.float64)   
+s=np.zeros(npts,dtype=np.float64)   
+xQ1=np.zeros(npts,dtype=np.float64)   
+yQ1=np.zeros(npts,dtype=np.float64)   
+xQ2=np.zeros(npts,dtype=np.float64)   
+yQ2=np.zeros(npts,dtype=np.float64)   
+
+for i in range(0,npts):
+    # compute random r,s coordinates
+    r[i]=random.uniform(-1.,+1)
+    s[i]=random.uniform(-1.,+1)
+    # compute Q2 basis function values at r,s
+    N1= 0.5*r[i]*(r[i]-1.) * 0.5*s[i]*(s[i]-1.)
+    N2=       (1.-r[i]**2) * 0.5*s[i]*(s[i]-1.)
+    N3= 0.5*r[i]*(r[i]+1.) * 0.5*s[i]*(s[i]-1.)
+    N4= 0.5*r[i]*(r[i]-1.) *       (1.-s[i]**2)
+    N5=       (1.-r[i]**2) *       (1.-s[i]**2)
+    N6= 0.5*r[i]*(r[i]+1.) *       (1.-s[i]**2)
+    N7= 0.5*r[i]*(r[i]-1.) * 0.5*s[i]*(s[i]+1.)
+    N8=       (1.-r[i]**2) * 0.5*s[i]*(s[i]+1.)
+    N9= 0.5*r[i]*(r[i]+1.) * 0.5*s[i]*(s[i]+1.)
+    # compute x,y coordinates
+    xQ2[i]=N1*x1+N2*x2+N3*x3+N4*x4+N5*x5+N6*x6+N7*x7+N8*x8+N9*x9
+    yQ2[i]=N1*y1+N2*y2+N3*y3+N4*y4+N5*y5+N6*y6+N7*y7+N8*y8+N9*y9
+    # compute Q1 basis function values at r,s
+    N1=0.25*(1-r[i])*(1-s[i])
+    N2=0.25*(1+r[i])*(1-s[i])
+    N3=0.25*(1+r[i])*(1+s[i])
+    N4=0.25*(1-r[i])*(1+s[i])
+    # compute x,y coordinates
+    xQ1[i]=N1*x1+N2*x3+N3*x9+N4*x7
+    yQ1[i]=N1*y1+N2*y3+N3*y9+N4*y7
+
+np.savetxt('rs.ascii',np.array([r,s]).T)
+np.savetxt('xyQ1.ascii',np.array([xQ1,yQ1]).T)
+np.savetxt('xyQ2.ascii',np.array([xQ2,yQ2]).T)
+\end{lstlisting}
+
+\begin{center}
+a)\includegraphics[width=4.5cm]{images/mappings/biquadratic/rs.pdf}
+b)\includegraphics[width=4.5cm]{images/mappings/biquadratic/xyQ1.pdf}
+c)\includegraphics[width=4.5cm]{images/mappings/biquadratic/xyQ2.pdf}\\
+{\small a) 10,000 random points in the reference element; b,c) image of these points
+by means of a bilinear and biquadratic mapping respectively. When the sides of the element
+are straight we see that a $Q_1$ mapping is sufficient.}
+\end{center}
+
+%.................................................................
+\subsubsection{biquadratic mapping of a straight-line face $Q_2$ element }
+
+We now carry out the same exercise as before but nodes 2 and 8 are no more 
+in the middle of nodes 1-3 and 7-9 respectively.
+
+\begin{center}
+a)\includegraphics[width=4.5cm]{images/mappings/biquadratic2/rs.pdf}
+b)\includegraphics[width=4.5cm]{images/mappings/biquadratic2/xyQ1.pdf}
+c)\includegraphics[width=4.5cm]{images/mappings/biquadratic2/xyQ2.pdf}\\
+{\small a) 10,000 random points in the reference element; b,c) image of these points
+by means of a bilinear and biquadratic mapping respectively. In this case we see that 
+the $Q_2$ mapping manages to capture the 'real' shape of the element.}
+\end{center}
 
 
 

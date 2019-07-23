@@ -1,0 +1,20 @@
+set term pdf enhanced
+set grid
+set size square
+
+set xlabel 'r'
+set ylabel 's'
+set output 'rs.pdf'
+plot[-2:2][-2:2]\
+'rs.ascii' pt 1 ps .1 notitle,\
+'pts_rs.ascii' lt -1 pt 5 ps .3 notitle
+
+
+set xlabel 'x'
+set ylabel 'y'
+set output 'xy.pdf'
+plot[-4:4][-4:4]\
+'xy.ascii' pt 1 ps .1 notitle,\
+'pts_xy.ascii' lt -1 pt 5 ps .3 notitle
+
+
