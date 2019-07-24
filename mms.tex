@@ -502,3 +502,19 @@ const double pi2 = pi*pi;
 + 3269017.37247211*exp(-3*sqrt(25.0 + 4*pi2)))/(-8*sqrt(25.0 + 4*pi2) + 40.0) 
 + 0.00336897349954273*exp(1.0*sqrt(25.0 + 4*pi2))/(-10.0 + 2.0*sqrt(25.0 + 4*pi2));
 \end{verbatim}
+
+
+%-----------------------------------------------------------------------------
+\subsubsection{Analytical benchmark IX \label{mms9} - "John"}
+
+It is presented in \cite{jolm17} and meant to be a peculiar case where the velocity solution 
+is exactly zero. The viscosity is 1, the domain is a unit square, no-slip boundary conditions 
+are prescribed everywhere. The buoyancy force is given by $\vec{b}=(0,Ra(1-y+3y^2))$ where 
+$Ra>0$ is a parameter. The flow is incompressible and the analytical pressure solution 
+is given by $p=Ra(y^3-y^2/2+y-7/12)$.
+
+
+
+
+
+
