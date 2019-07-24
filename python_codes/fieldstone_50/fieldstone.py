@@ -5,7 +5,9 @@ import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix
+from scipy.sparse import lil_matrix
 import time as time
+import matplotlib.pyplot as plt
 
 #------------------------------------------------------------------------------
 
@@ -137,6 +139,23 @@ def bc_fct_right(x,y):
 def bc_fct_bottom(x,y):
     return 0.125*cm/year
 
+def onePlot(variable, plotX, plotY, title, labelX, labelY, extVal, limitX, limitY, colorMap):
+    im = axes[plotX][plotY].imshow(np.flipud(variable),extent=extVal, cmap=colorMap, interpolation="nearest")
+    axes[plotX][plotY].set_title(title,fontsize=10, y=1.01)
+
+    if (limitX != 0.0):
+       axes[plotX][plotY].set_xlim(0,limitX)
+
+    if (limitY != 0.0):
+       axes[plotX][plotY].set_ylim(0,limitY)
+
+    axes[plotX][plotY].set_xlabel(labelX)
+    axes[plotX][plotY].set_ylabel(labelY)
+    fig.colorbar(im,ax=axes[plotX][plotY])
+    return
+
+
+
 #------------------------------------------------------------------------------
 
 print("-----------------------------")
@@ -156,16 +175,17 @@ Lx=400e3  # horizontal extent of the domain
 Ly=100e3  # vertical extent of the domain 
 
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 4):
-   nelx = int(sys.argv[1])
-   nely = int(sys.argv[2])
-   visu = int(sys.argv[3])
+if int(len(sys.argv) == 5):
+   nelx  = int(sys.argv[1])
+   nely  = int(sys.argv[2])
+   visu  = int(sys.argv[3])
+   niter = int(sys.argv[4])
 else:
-   nelx = 120
-   nely = 30
+   nelx = 200
+   nely = 50
    visu = 1
+   niter= 5
 
-niter=50
     
 nnx=2*nelx+1         # number of elements, x direction
 nny=2*nely+1         # number of elements, y direction
@@ -176,7 +196,9 @@ NfemV=NV*ndofV       # number of velocity dofs
 NfemP=NP*ndofP       # number of pressure dofs
 Nfem=NfemV+NfemP     # total number of dofs
 
-eps=1.e-6
+eps=1.e-8
+
+nqel=9
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
 
@@ -186,7 +208,7 @@ hy=Ly/nely
 gx=0.
 gy=-9.81
 
-eta_ref=1e22      # scaling of G blocks
+eta_ref=1e23      # scaling of G blocks
 
 #################################################################
 #################################################################
@@ -241,8 +263,8 @@ print("setup: grid points: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-iconV=np.zeros((mV,nel),dtype=np.int16)
-iconP=np.zeros((mP,nel),dtype=np.int16)
+iconV=np.zeros((mV,nel),dtype=np.int32)
+iconP=np.zeros((mP,nel),dtype=np.int32)
 
 counter = 0
 for j in range(0,nely):
@@ -352,10 +374,8 @@ for iter in range(0,niter):
     #################################################################
     start = time.time()
 
-    K_mat   = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-    G_mat   = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
-    f_rhs   = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
-    h_rhs   = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
+    A_sparse= lil_matrix((Nfem,Nfem),dtype=np.float64)
+    rhs     = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
     b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64)  # gradient matrix B 
     N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64)  # matrix  
     NNNV    = np.zeros(mV,dtype=np.float64)            # shape functions V
@@ -429,10 +449,10 @@ for iter in range(0,niter):
                                              [dNNNVdy[i],dNNNVdx[i]]]
 
                 etaq=eta(xq,yq,material[iel],exxq,eyyq,exyq,pq,Tq)
-                eta_el[iel]+=etaq/9
+                eta_el[iel]+=etaq/nqel
 
                 rhoq=rho(xq,yq,material[iel],Tq)
-                rho_el[iel]+=rhoq/9
+                rho_el[iel]+=rhoq/nqel
 
                 # compute elemental a_mat matrix
                 K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq*weightq*jcob
@@ -474,46 +494,27 @@ for iter in range(0,niter):
                     for i2 in range(0,ndofV):
                         jkk=ndofV*k2          +i2
                         m2 =ndofV*iconV[k2,iel]+i2
-                        K_mat[m1,m2]+=K_el[ikk,jkk]
+                        A_sparse[m1,m2] += K_el[ikk,jkk]
                 for k2 in range(0,mP):
                     jkk=k2
                     m2 =iconP[k2,iel]
-                    G_mat[m1,m2]+=G_el[ikk,jkk]
-                f_rhs[m1]+=f_el[ikk]
+                    A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]*eta_ref/Ly
+                    A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]*eta_ref/Ly
+                rhs[m1]+=f_el[ikk]
         for k2 in range(0,mP):
             m2=iconP[k2,iel]
-            h_rhs[m2]+=h_el[k2]
+            rhs[NfemV+m2]+=h_el[k2]*eta_ref/Ly
 
-    G_mat*=eta_ref/Ly
-    h_rhs*=eta_ref/Ly
-
-    print("     -> K_mat (m,M) %.4e %.4e " %(np.min(K_mat),np.max(K_mat)))
-    print("     -> G_mat (m,M) %.4e %.4e " %(np.min(G_mat),np.max(G_mat)))
-
-    print("build FE matrix: %.3f s" % (time.time() - start))
-
-    ######################################################################
-    # assemble K, G, GT, f, h into A and rhs
-    ######################################################################
-    start = time.time()
-
-    a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-    rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-    a_mat[0:NfemV,0:NfemV]=K_mat
-    a_mat[0:NfemV,NfemV:Nfem]=G_mat
-    a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-
-    rhs[0:NfemV]=f_rhs
-    rhs[NfemV:Nfem]=h_rhs
-
-    print("assemble blocks: %.3f s" % (time.time() - start))
+    print("build FE matrix: %.5f s nel= %d time/elt %.5f" % (time.time() - start, nel, (time.time()-start)/ nel,))
 
     ######################################################################
     # solve system
     ######################################################################
     start = time.time()
 
-    sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+    sparse_matrix=A_sparse.tocsr()
+
+    sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
     print("solve time: %.3f s" % (time.time() - start))
 
@@ -626,99 +627,138 @@ np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
 # the 9-node Q2 element does not exist in vtk, but the 8-node one 
 # does, i.e. type=23. 
 
-filename = 'solution.vtu'
-vtufile=open(filename,"w")
-vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-vtufile.write("<UnstructuredGrid> \n")
-vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
-#####
-vtufile.write("<Points> \n")
-vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
-vtufile.write("</DataArray>\n")
-vtufile.write("</Points> \n")
-#####
-vtufile.write("<CellData Scalars='scalars'>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%10e\n" % eta_el[iel])
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%10e\n" % rho_el[iel])
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%10e\n" % exx[iel])
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%10e\n" % eyy[iel])
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%10e\n" % exy[iel])
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='material' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%10e\n" % material[iel])
-vtufile.write("</DataArray>\n")
+if visu:
+   filename = 'solution.vtu'
+   vtufile=open(filename,"w")
+   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+   vtufile.write("<UnstructuredGrid> \n")
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+   #####
+   vtufile.write("<Points> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Points> \n")
+   #####
+   vtufile.write("<CellData Scalars='scalars'>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%10e\n" % eta_el[iel])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%10e\n" % rho_el[iel])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%10e\n" % exx[iel])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%10e\n" % eyy[iel])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%10e\n" % exy[iel])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='material' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%10e\n" % material[iel])
+   vtufile.write("</DataArray>\n")
 
-vtufile.write("</CellData>\n")
-#####
-vtufile.write("<PointData Scalars='scalars'>\n")
-#--
-vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%10e \n" %q[i])
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%10e \n" %(T[i]-273.15))
-vtufile.write("</DataArray>\n")
-vtufile.write("</PointData>\n")
-#####
-vtufile.write("<Cells>\n")
-#--
-vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel],iconV[4,iel],iconV[5,iel],iconV[6,iel],iconV[7,iel]))
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%d \n" %((iel+1)*8))
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-for iel in range (0,nel):
-    vtufile.write("%d \n" %23)
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("</Cells>\n")
-#####
-vtufile.write("</Piece>\n")
-vtufile.write("</UnstructuredGrid>\n")
-vtufile.write("</VTKFile>\n")
-vtufile.close()
+   vtufile.write("</CellData>\n")
+   #####
+   vtufile.write("<PointData Scalars='scalars'>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+   vtufile.write("</DataArray>\n")
+
+   #--
+   vtufile.write("<DataArray type='Float32' Name='bc_fix u' Format='ascii'> \n")
+   for i in range(0,NV):
+       if bc_fix[i*ndofV  ]:
+          vtufile.write("%10e \n" % 1.)
+       else:
+          vtufile.write("%10e \n" % 0.)
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='bc_fix v' Format='ascii'> \n")
+   for i in range(0,NV):
+       if bc_fix[i*ndofV+1]:
+          vtufile.write("%10e \n" % 1.)
+       else:
+          vtufile.write("%10e \n" % 0.)
+   vtufile.write("</DataArray>\n")
+
+   #--
+   vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10e \n" %q[i])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10e \n" %(T[i]-273.15))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</PointData>\n")
+   #####
+   vtufile.write("<Cells>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel],iconV[4,iel],iconV[5,iel],iconV[6,iel],iconV[7,iel]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%d \n" %((iel+1)*8))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+   for iel in range (0,nel):
+       vtufile.write("%d \n" %23)
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("</Cells>\n")
+   #####
+   vtufile.write("</Piece>\n")
+   vtufile.write("</UnstructuredGrid>\n")
+   vtufile.write("</VTKFile>\n")
+   vtufile.close()
+
+   fig,axes = plt.subplots(nrows=3,ncols=3,figsize=(18,18))
+   extent=(np.amin(xV),np.amax(xV),np.amin(yV),np.amax(yV))
+
+   onePlot(u.reshape((nny,nnx)),        0, 0, "$v_x$",                 "x", "y", extent,  0,  0, 'Spectral_r')
+   onePlot(v.reshape((nny,nnx)),        0, 1, "$v_y$",                 "x", "y", extent,  0,  0, 'Spectral_r')
+   onePlot(q.reshape((nny,nnx)),        0, 2, "$p$",                   "x", "y", extent, Lx, Ly, 'RdGy_r')
+   onePlot(exx.reshape((nely,nelx)),    1, 0, "$\dot{\epsilon}_{xx}$", "x", "y", extent, Lx, Ly, 'viridis')
+   onePlot(eyy.reshape((nely,nelx)),    1, 1, "$\dot{\epsilon}_{yy}$", "x", "y", extent, Lx, Ly, 'viridis')
+   onePlot(exy.reshape((nely,nelx)),    1, 2, "$\dot{\epsilon}_{xy}$", "x", "y", extent, Lx, Ly, 'viridis')
+   onePlot(rho_el.reshape((nely,nelx)), 2, 0, "density",               "x", "y", extent, Lx, Ly, 'RdGy_r')
+   onePlot(eta_el.reshape((nely,nelx)), 2, 1, "viscosity",             "x", "y", extent, Lx, Ly, 'RdGy_r')
+   onePlot(T.reshape((nny,nnx)),        2, 2, "$T$",                   "x", "y", extent, Lx, Ly, 'RdGy_r')
+
+   plt.subplots_adjust(hspace=0.5)
+   plt.savefig('solution.pdf', bbox_inches='tight')
+   plt.show()
+
+#==============================================================================
+# end time stepping loop
+
 
 print("-----------------------------")
 print("------------the end----------")

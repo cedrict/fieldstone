@@ -1,61 +1,70 @@
 
 \begin{itemize}
+%..............................
+\item Bsc thesis
+\begin{itemize} 
 \item Darcy flow. redo WAFLE (see http://cedricthieulot.net/wafle.html)
-\item carry out critical Rayleigh experiments for various geometries/aspect ratios. Use Arie's notes. 
-\item Newton solver
-\item elasticity with markers
-\item Indentor/punch with stress b.c. ?
-\item chunk grid
-\item read in crust 1.0 in 2D on chunk
-\item compute gravity based on tetrahedra
-\item compare Q2 with Q2-serendipity
-\item NS a la http://ww2.lacan.upc.edu/huerta/exercises/Incompressible/Incompressible\_Ex2.htm
-\item produce example of mckenzie slab temperature
-\item write about impose bc on el matrix
-\item constraints \cite{absh79}
-\item discontinuous galerkin
-\item formatting of code style
-\item navier-stokes ? (LUKAS) use dohu matlab code
 \item nonlinear poiseuille
-\item Finish nonlinear cavity case5.
-\item write about mappings 
-\item write about stream functions 
-\item free surface 
-\item zaleski disk advection
-\item better yet simple matrix storage ?
-\item write Scott about matching compressible2 setup with his paper
-\item deal with large matrices. 
-\item compositions, marker chain
+\item Fehlberg RK advection
+\item implement mms5 \ref{mms5}, mms7 \ref{mms7}
+\item chunk grid
+\end{itemize}
+%..............................
+\item MSc guided research/thesis
+\begin{itemize} 
+\item Newton solver
+\item compare Q2 with Q2-serendipity in 2D and 3D
+\item surface tension 
+\item elasticity with markers
+\item navier-stokes ? (LUKAS) use dohu matlab code
+\item lev hager 2008 RT instability with anisotropic visc
+\item discontinuous galerkin
+\item free surface \cite{dumy16} 
+\end{itemize}
+%..............................
+\item Miscellaneous /to do
+\begin{itemize} 
+\item write about impose bc on el matrix
 \item free-slip bc on annulus and sphere . See for example p540 Gresho and Sani book. find book \cite{deab72}.
 also check \cite{ensa82} !!
-\item non-linear rheologies (two layer brick spmw16, tosn15) 
-\item Picard vs Newton
-\item including phase changes (w. R. Myhill)
-\item compute strainrate in middle of element or at quad point for punch?
-\item GEO1442 code 
-\item GEO1442 indenter setup in plane ?
-\item in/out flow on sides for lith modelling
-\item Fehlberg RK advection
-\item redo puth17 2 layer experiment
+\item mention Lattice-Boltzmann in geosciences \cite{hupc08}
+\item constraints \cite{absh79}
+\item formatting of code style
+\item Finish nonlinear cavity case5.
+\item write about stream functions 
 \item create stone for layeredflow (see folder one up)
+\item in the context of mesh generation on sphere cite \cite{moma19}
+\item about CMR: \cite{vaks15},\cite{kott05}
+\item symmetric vs gradient formulation of Stokes
+\item add \cite{devv00,dadh07} to list of papers doing vankeken bench
+\end{itemize}
+
+
+\item carry out critical Rayleigh experiments for various geometries/aspect ratios. Use Arie's notes. 
+\item Indentor/punch with stress b.c. ?
+\item read in crust 1.0 in 2D on chunk
+\item compute gravity based on tetrahedra
+\item NS a la http://ww2.lacan.upc.edu/huerta/exercises/Incompressible/Incompressible\_Ex2.htm
+\item zaleski disk advection
+\item write Scott about matching compressible2 setup with his paper
+\item compositions, marker chain
+\item non-linear rheologies (two layer brick spmw16, tosn15) 
+\item including phase changes (w. R. Myhill)
+\item GEO1442 indenter setup in plane ?
+\item redo puth17 2 layer experiment
 \item SIMPLE a la p667 \cite{john16} 
-\item implement mms5 \ref{mms5}
-\item implement mms7 \ref{mms7}
 \item implement/monitor div v
 \item shape fct, trial fct, basis fct vs test fct doc
 \item Delaunay triangulation, Voronoi, stripack
-\item symmetric vs gradient formulation of Stokes
 \item write/draw the whole FEM process for a 4x3 grid for compgeo
 \item Sphere drag in a visco-plastic fluid \cite{bemj04}
 %\item Flow over a backward-facing step \cite{grdn}
 %\item Flow past an obstacle \cite{grdn}
 %\item Dam break problem \cite{grdn,hini81,moeb99,basd08}
 %\item Zalesak disc \cite{basd08}
-\item mention Lattice-Boltzmann in geosciences \cite{hupc08}
 \item lukas' 2D and 3D benchmark
 \item ROTATING disc
 \item cylindrical footing on (elasto)-viscous medium - analytical solution, Haskell, etc ...
-\item lev hager 2008 RT instability with anisotropic visc
 \item check the BASIL code by Houseman et al \url{http://homepages.see.leeds.ac.uk/~eargah/basil/}
 on which the ELLE code is based \url{http://elle.ws/} 
 \item try Anderson acceleration for Uzawa \cite{hoow17} with m=1
