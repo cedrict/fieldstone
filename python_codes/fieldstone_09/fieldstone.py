@@ -4,8 +4,10 @@ import sys as sys
 import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
-import time as time
+import time as timing
 import matplotlib.pyplot as plt
+from scipy.sparse import csr_matrix
+from scipy.sparse import lil_matrix
 
 #------------------------------------------------------------------------------
 def density(x,y,R1,R2,k,rho0,g0):
@@ -81,7 +83,7 @@ def gy(x,y,g0):
 #------------------------------------------------------------------------------
 
 print("-----------------------------")
-print("----------fieldstone---------")
+print("--------fieldstone 09--------")
 print("-----------------------------")
 
 m=4     # number of nodes making up an element
@@ -120,11 +122,15 @@ eps=1.e-10
 
 sqrt3=np.sqrt(3.)
 
+print('nelr=',nelr)
+print('nelt=',nelt)
+print('nnp=',nnp)
+print('Nfem=',Nfem)
+
 #################################################################
 # grid point setup
 #################################################################
-
-print("grid point setup")
+start = timing.time()
 
 x=np.empty(nnp,dtype=np.float64)  # x coordinates
 y=np.empty(nnp,dtype=np.float64)  # y coordinates
@@ -157,13 +163,14 @@ for j in range(0,nnr):
            theta[counter]+=2.*math.pi
         counter+=1
 
+print("building coordinate arrays (%.3fs)" % (timing.time() - start))
+
 #################################################################
 # connectivity
 #################################################################
+start = timing.time()
 
-print("connectivity")
-
-icon =np.zeros((m, nel),dtype=np.int16)
+icon =np.zeros((m,nel),dtype=np.int32)
 
 counter = 0
 for j in range(0, nelr):
@@ -181,15 +188,17 @@ for j in range(0, nelr):
         icon[3, counter] = icon3
         counter += 1
 
+print("building connectivity array (%.3fs)" % (timing.time() - start))
+
 #################################################################
 # define boundary conditions
 #################################################################
-start = time.time()
+start = timing.time()
 
 bc_fix = np.zeros(Nfem, dtype=np.bool)  
 bc_val = np.zeros(Nfem, dtype=np.float64) 
 
-for i in range(0, nnp):
+for i in range(0,nnp):
     if r[i]<R1+eps:
        bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = velocity_x(x[i],y[i],R1,R2,kk,rho0,g0)
        bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = velocity_y(x[i],y[i],R1,R2,kk,rho0,g0)
@@ -197,14 +206,14 @@ for i in range(0, nnp):
        bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = velocity_x(x[i],y[i],R1,R2,kk,rho0,g0)
        bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = velocity_y(x[i],y[i],R1,R2,kk,rho0,g0)
 
-print("defining boundary conditions (%.3fs)" % (time.time() - start))
+print("defining boundary conditions (%.3fs)" % (timing.time() - start))
 
 #################################################################
 # build FE matrix
 #################################################################
-start = time.time()
+start = timing.time()
 
-a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+A_sparse= lil_matrix((Nfem,Nfem),dtype=np.float64)
 b_mat = np.zeros((3,ndof*m),dtype=np.float64)   # gradient matrix B 
 rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
 N     = np.zeros(m,dtype=np.float64)            # shape functions
@@ -220,8 +229,8 @@ c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64)
 for iel in range(0, nel):
 
     # set 2 arrays to 0 every loop
-    b_el = np.zeros(m * ndof)
-    a_el = np.zeros((m * ndof, m * ndof), dtype=float)
+    b_el = np.zeros((m*ndof),dtype=np.float64)
+    a_el = np.zeros((m*ndof,m*ndof),dtype=np.float64)
 
     # integrate viscous term at 4 quadrature points
     for iq in [-1, 1]:
@@ -245,7 +254,7 @@ for iel in range(0, nel):
             dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
             # calculate jacobian matrix
-            jcb = np.zeros((2, 2),dtype=float)
+            jcb=np.zeros((2,2),dtype=np.float64)
             for k in range(0,m):
                 jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
                 jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
@@ -339,7 +348,7 @@ for iel in range(0, nel):
                a_el[ikk,ikk]=aref
                b_el[ikk]=aref*fixt
 
-    # assemble matrix a_mat and right hand side rhs
+    # assemble matrix and right hand side
     for k1 in range(0,m):
         for i1 in range(0,ndof):
             ikk=ndof*k1          +i1
@@ -348,28 +357,29 @@ for iel in range(0, nel):
                 for i2 in range(0,ndof):
                     jkk=ndof*k2          +i2
                     m2 =ndof*icon[k2,iel]+i2
-                    a_mat[m1,m2]+=a_el[ikk,jkk]
+                    A_sparse[m1,m2]+=a_el[ikk,jkk]
             rhs[m1]+=b_el[ikk]
 
-print("build FE matrixs & rhs (%.3fs)" % (time.time() - start))
+print("build FE matrixs & rhs (%.3fs)" % (timing.time() - start))
 
 #################################################################
 # solve system
 #################################################################
-start = time.time()
+start = timing.time()
 
-sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
-print("solving system (%.3fs)" % (time.time() - start))
+sol = sps.linalg.spsolve(A_sparse.tocsr(),rhs)
+
+print("solving system (%.3fs)" % (timing.time() - start))
 
 #####################################################################
 # put solution into separate x,y velocity arrays
 #####################################################################
-start = time.time()
+start = timing.time()
 
 u,v=np.reshape(sol,(nnp,2)).T
 
-print("u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-print("v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
+print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
+print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
 np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
@@ -379,12 +389,12 @@ vt=-np.sin(theta)*u+np.cos(theta)*v
 print("     -> vr (m,M) %.4f %.4f " %(np.min(vr),np.max(vr)))
 print("     -> vt (m,M) %.4f %.4f " %(np.min(vt),np.max(vt)))
 
-print("reshape solution (%.3fs)" % (time.time() - start))
+print("reshape solution (%.3fs)" % (timing.time() - start))
 
 #####################################################################
 # retrieve pressure
 #####################################################################
-start = time.time()
+start = timing.time()
 
 xc = np.zeros(nel,dtype=np.float64)  
 yc = np.zeros(nel,dtype=np.float64)  
@@ -409,7 +419,7 @@ for iel in range(0,nel):
     dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
     dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
-    jcb=np.zeros((2,2),dtype=float)
+    jcb=np.zeros((2,2),dtype=np.float64)
     for k in range(0,m):
         jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
@@ -435,20 +445,20 @@ for iel in range(0,nel):
 
     p[iel]=-penalty*(exx[iel]+eyy[iel])
 
-print("p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
-print("exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-print("eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-print("exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
+print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
+print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 
 np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
 np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
-print("compute p & sr | time: %.3f s" % (time.time() - start))
+print("compute p & sr (%.3fs)" % (timing.time() - start))
 
 #################################################################
 # compute error
 #################################################################
-start = time.time()
+start = timing.time()
 
 errv=0.
 errp=0.
@@ -488,14 +498,14 @@ for iel in range (0,nel):
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 
-print("nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
+print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
 
-print("compute errors | time: %.3f s" % (time.time() - start))
+print("compute errors (%.3fs)" % (timing.time() - start))
 
 #####################################################################
 # plot of solution
 #####################################################################
-start = time.time()
+start = timing.time()
 
 if visu==1:
    vtufile=open("solution.vtu","w")
@@ -606,7 +616,7 @@ if visu==1:
    vtufile.write("</UnstructuredGrid>\n")
    vtufile.write("</VTKFile>\n")
    vtufile.close()
-   print("export to vtu | time: %.3f s" % (time.time() - start))
+   print("export to vtu file (%.3fs)" % (timing.time() - start))
 
 print("-----------------------------")
 print("------------the end----------")

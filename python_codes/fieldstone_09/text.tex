@@ -1,3 +1,5 @@
+\fbox{\parbox{16cm}{{\bf keywords:} \input{python_codes/fieldstone_09/keywords}}}
+
 {\sl This fieldstone was developed in collaboration with Prof. E.G.P. Puckett}. 
 
 This benchmark is based on Thieulot \& Puckett [Subm.] in which an analytical solution to the
@@ -25,25 +27,24 @@ the velocity is tangential to both inner and outer surfaces.
 The gravity vector is radial and of unit length.
 In the present case, we set $R_1=1$, $R_2=2$ and $C=-1$. 
 
-\fbox{
-\parbox{10cm}{{\bf features}
-\begin{itemize}
-\item $Q_1\times P_0$ element
-\item incompressible flow
-\item penalty formulation
-\item Dirichlet boundary conditions
-\item direct solver
-\item isothermal
-\item isoviscous
-\item analytical solution
-\item annulus geometry
-\item elemental boundary conditions
-\end{itemize}
-}}
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_09/velocity}
+\includegraphics[width=5cm]{python_codes/fieldstone_09/vr}
+\includegraphics[width=5cm]{python_codes/fieldstone_09/vtheta}\\
+{\small Left to right: velocity norm, $r$ component, $\theta$ component}
+\end{center}
 
+\begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_09/density}
-\includegraphics[width=6cm]{python_codes/fieldstone_09/pressure}
-\includegraphics[width=6cm]{python_codes/fieldstone_09/velocity}
+\includegraphics[width=6cm]{python_codes/fieldstone_09/pressure}\\
+{\small Left: density field; right: pressure field.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_09/psi}
+\includegraphics[width=6cm]{python_codes/fieldstone_09/psi_arrows}\\
+{\small Left: $\psi$ field; right: $\psi$ isolines with velocity arrows.}
+\end{center}
 
 \includegraphics[width=16cm]{python_codes/fieldstone_09/errors}
 
