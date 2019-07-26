@@ -58,7 +58,7 @@ ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 ndofT=1  # number of temperature degrees of freedom 
 
-n=7
+n=30
 
 Lx=1 # horizontal extent of the domain 
 Ly=1 # vertical extent of the domain 
@@ -83,17 +83,15 @@ nqel=6
 
 screwCheckerBoarding = False
 
-Ra=-10.
+Ra=1e6
 
 eta=1.
 
-nstep=25
+nstep=200
 
 hcapa=1
 hcond=1
 rho0=1
-
-dt=1e-7
 
 rand=True
 
@@ -104,7 +102,7 @@ else:
    deltax=0.
    deltay=0.
 
-CFL_nb=0.5
+CFL_nb=0.75
 
 #---------------------------------------
 # 6 point integration coeffs and weights 
@@ -340,6 +338,12 @@ np.savetxt('temperatureinit.ascii',np.array([xT,yT,T]).T,header='# x,y,T')
 
 vrms=np.zeros(nstep,dtype=np.float64) 
 time=np.zeros(nstep,dtype=np.float64) 
+avrgT=np.zeros(nstep,dtype=np.float64) 
+u=np.zeros(NV,dtype=np.float64)          # x-component velocity
+v=np.zeros(NV,dtype=np.float64)          # y-component velocity
+u_old=np.zeros(NV,dtype=np.float64)          # x-component velocity
+v_old=np.zeros(NV,dtype=np.float64)          # y-component velocity
+c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 for istep in range(0,nstep):
 
@@ -368,9 +372,6 @@ for istep in range(0,nstep):
     dNNNVdy  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
     dNNNVdr  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
     dNNNVds  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-    u     = np.zeros(NV,dtype=np.float64)          # x-component velocity
-    v     = np.zeros(NV,dtype=np.float64)          # y-component velocity
-    c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
     for iel in range(0,nel):
 
@@ -587,23 +588,23 @@ for istep in range(0,nstep):
     else:
        time[istep]=time[istep-1]+dt
 
-    print('dt1= %.6f' %dt1)
-    print('dt2= %.6f' %dt2)
-    print('dt = %.6f' %dt)
+    print('     -> dt1= %6e' %dt1)
+    print('     -> dt2= %6e' %dt2)
+    print('     -> dt = %6e' %dt)
 
     #################################################################
     # build temperature matrix
     #################################################################
     start = timing.time()
 
-    A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
-    rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
-    B_mat =np.zeros((ndim,ndofT*mT),dtype=np.float64)     # gradient matrix B 
-    N_mat = np.zeros((mT,1),dtype=np.float64)         # shape functions
-    dNNNTdr  = np.zeros(mT,dtype=np.float64)          # shape functions derivatives
-    dNNNTds  = np.zeros(mT,dtype=np.float64)          # shape functions derivatives
-    dNNNTdx  = np.zeros(mT,dtype=np.float64)          # shape functions derivatives
-    dNNNTdy  = np.zeros(mT,dtype=np.float64)          # shape functions derivatives
+    A_mat = np.zeros((NfemT,NfemT),dtype=np.float64)   # FE matrix 
+    B_mat = np.zeros((ndim,ndofT*mT),dtype=np.float64) # gradient matrix B 
+    N_mat = np.zeros((mT,1),dtype=np.float64)          # shape functions
+    dNNNTdr = np.zeros(mT,dtype=np.float64)            # shape functions derivatives
+    dNNNTds = np.zeros(mT,dtype=np.float64)            # shape functions derivatives
+    dNNNTdx = np.zeros(mT,dtype=np.float64)            # shape functions derivatives
+    dNNNTdy = np.zeros(mT,dtype=np.float64)            # shape functions derivatives
+    rhs   = np.zeros(NfemT,dtype=np.float64)           # FE rhs 
     Tvect = np.zeros(mT,dtype=np.float64)   
 
     for iel in range (0,nel):
@@ -625,7 +626,7 @@ for istep in range(0,nstep):
             sq=qcoords_s[kq]
             weightq=qweights[kq]
 
-            NNNT[0:mT]=NNT(rq,sq)
+            N_mat[0:mT,0]=NNT(rq,sq)
             dNNNTdr[0:mT]=dNNTdr(rq,sq)
             dNNNTds[0:mT]=dNNTds(rq,sq)
             NNNV[0:mV]=NNV(rq,sq)
@@ -640,8 +641,6 @@ for istep in range(0,nstep):
 
             # calculate the determinant of the jacobian
             jcob=np.linalg.det(jcb)
-
-            # calculate inverse of the jacobian matrix
             jcbi=np.linalg.inv(jcb)
 
             # compute dNdx & dNdy
@@ -658,7 +657,7 @@ for istep in range(0,nstep):
                 B_mat[1,k]=dNNNTdy[k]
 
             # compute mass matrix
-            MM=N_mat.dot(N_mat.T)*rho0*hcapa*weightq*jcob
+            MM=N_mat.dot(N_mat.T)*rho0*hcapa*weightq*jcob 
 
             # compute diffusion matrix
             Kd=B_mat.T.dot(B_mat)*hcond*weightq*jcob
@@ -697,30 +696,85 @@ for istep in range(0,nstep):
     #################################################################
     # solve system
     #################################################################
-
     start = timing.time()
+
     T = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
 
     print("     -> T (m,M) %4f %.4f " %(np.min(T),np.max(T)))
 
     print("solve T time: %.3f s" % (timing.time() - start))
 
+    #################################################################
+    # compute vrms 
+    #################################################################
+    start = timing.time()
 
-#==============================================================================
-# end time stepping loop
-#==============================================================================
+    for iel in range (0,nel):
+        for kq in range (0,nqel):
+            rq=qcoords_r[kq]
+            sq=qcoords_s[kq]
+            weightq=qweights[kq]
+            NNNV[0:mV]=NNV(rq,sq)
+            dNNNVdr[0:mV]=dNNVdr(rq,sq)
+            dNNNVds[0:mV]=dNNVds(rq,sq)
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,mV):
+                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+            jcob = np.linalg.det(jcb)
+            uq=0.
+            vq=0.
+            for k in range(0,mV):
+                uq+=NNNV[k]*u[iconV[k,iel]]
+                vq+=NNNV[k]*v[iconV[k,iel]]
+            vrms[istep]+=(uq**2+vq**2)*weightq*jcob
 
+    vrms[istep]=np.sqrt(vrms[istep]/(Lx*Ly))
 
+    print("     -> time= %.6f ; vrms   = %.6f" %(time[istep],vrms[istep]))
 
+    print("compute vrms: %.3fs" % (timing.time() - start))
 
+    #################################################################
+    # compute average temperature 
+    #################################################################
+    start = timing.time()
 
+    for iel in range (0,nel):
+        for kq in range (0,nqel):
+            rq=qcoords_r[kq]
+            sq=qcoords_s[kq]
+            weightq=qweights[kq]
+            NNNT[0:mT]=NNT(rq,sq)
+            dNNNTdr[0:mT]=dNNTdr(rq,sq)
+            dNNNTds[0:mT]=dNNTds(rq,sq)
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,mT):
+                jcb[0,0] += dNNNTdr[k]*xT[iconT[k,iel]]
+                jcb[0,1] += dNNNTdr[k]*yT[iconT[k,iel]]
+                jcb[1,0] += dNNNTds[k]*xT[iconT[k,iel]]
+                jcb[1,1] += dNNNTds[k]*yT[iconT[k,iel]]
+            jcob = np.linalg.det(jcb)
+            Tq=0.
+            for k in range(0,mT):
+                Tq+=NNNT[k]*T[iconT[k,iel]]
+            avrgT[istep]+=Tq*weightq*jcob
 
-#####################################################################
-# plot of solution
-#####################################################################
+    avrgT[istep]/=0.5
 
-if visu==1:
-    vtufile=open('solution.vtu',"w")
+    print("     -> time= %.6f ; avrgT  = %.6f" %(time[istep],avrgT[istep]))
+
+    print("compute avrg T: %.3fs" % (timing.time() - start))
+
+    #####################################################################
+    # plot of solution
+    #####################################################################
+    start = timing.time()
+
+    filename = 'solution_{:04d}.vtu'.format(istep) 
+    vtufile=open(filename,"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
     vtufile.write("<UnstructuredGrid> \n")
     vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NP,nel))
@@ -825,6 +879,20 @@ if visu==1:
     vtufile.write("</VTKFile>\n")
     vtufile.close()
 
+    print("make vtu file: %.3fs" % (timing.time() - start))
+
+    #####################################################################
+
+    u_old=u
+    v_old=v
+
+
+#==============================================================================
+# end time stepping loop
+#==============================================================================
+
+np.savetxt('vrms.ascii',np.array([time,vrms]).T,header='# time, vrms')
+np.savetxt('avrgT.ascii',np.array([time,avrgT]).T,header='# time, avrgT')
 
 
 print("-----------------------------")
