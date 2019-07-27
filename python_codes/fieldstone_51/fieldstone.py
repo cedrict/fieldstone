@@ -34,6 +34,12 @@ def dNNVds(r,s):
 def NNP(r,s):
     return 1-r-s,r,s 
 
+def dNNPdr(r,s):
+    return -1,1,0 
+
+def dNNPds(r,s):
+    return -1,0,1 
+
 def NNT(r,s):
     return 1-r-s,r,s 
 
@@ -42,7 +48,6 @@ def dNNTdr(r,s):
 
 def dNNTds(r,s):
     return -1,0,1 
-
 
 #------------------------------------------------------------------------------
 
@@ -58,7 +63,7 @@ ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 ndofT=1  # number of temperature degrees of freedom 
 
-n=30
+n=50
 
 Lx=1 # horizontal extent of the domain 
 Ly=1 # vertical extent of the domain 
@@ -81,13 +86,13 @@ eps=1e-8
 
 nqel=6
 
-screwCheckerBoarding = False
+scramble = True
 
 Ra=1e6
 
 eta=1.
 
-nstep=200
+nstep=5000
 
 hcapa=1
 hcond=1
@@ -102,7 +107,13 @@ else:
    deltax=0.
    deltay=0.
 
-CFL_nb=0.75
+CFL_nb=0.5
+
+rVnodes=[0.,1.,0.,1./3.]
+sVnodes=[0.,0.,1.,1./3.]
+
+rTnodes=[0.,1.,0.]
+sTnodes=[0.,0.,1.]
 
 #---------------------------------------
 # 6 point integration coeffs and weights 
@@ -139,6 +150,9 @@ print('nel=',nel)
 print('NV=',NV)
 print('NT',NT)
 print('NP',NP)
+       
+filename = 'Nusselt_bottom.ascii'
+Nu_bot=open(filename,"w")
 
 #################################################################
 # grid point setup
@@ -170,7 +184,7 @@ for iY in range(0,n-1):
         topright    = startUpper+iX+1
         bottomleft  = startLower+iX
         bottomright = startLower+iX+1
-        if (screwCheckerBoarding == True and iX%2 == 0 and iY%2==0):
+        if (scramble == True and iX%2 == 0 and iY%2==0):
             # switch the diagonal, in order to have more
             # mesh points with an odd number of elements adjacent to them
             iconV[0:3,iel]   = bottomleft, bottomright, topright
@@ -195,7 +209,7 @@ for iel in range (0,nel): #bubble nodes
     xV[NP+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
     yV[NP+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
 
-np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
+#np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
 
 #for iel in range (0,nel):
 #    print ("iel=",iel)
@@ -231,7 +245,7 @@ iconP[0:mP,0:nel]=iconV[0:mP,0:nel]
 #    print ("node 1",iconP[1,iel],"at pos.",xP[iconP[1][iel]], yP[iconP[1][iel]])
 #    print ("node 2",iconP[2,iel],"at pos.",xP[iconP[2][iel]], yP[iconP[2][iel]])
 
-np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
 
 print("grid and connectivity P: %.3f s" % (timing.time() - start))
 
@@ -249,7 +263,7 @@ yT[0:NT]=yV[0:NT]
 
 iconT[0:mT,0:nel]=iconV[0:mT,0:nel]
 
-np.savetxt('gridT.ascii',np.array([xT,yT]).T,header='# x,y')
+#np.savetxt('gridT.ascii',np.array([xT,yT]).T,header='# x,y')
 
 print("grid and connectivity T: %.3f s" % (timing.time() - start))
 
@@ -330,7 +344,7 @@ for i in range(0,NT):
     if yT[i]/Ly<eps:
        T[i]=2*(1.-np.cos(2*np.pi*xT[i]))
 
-np.savetxt('temperatureinit.ascii',np.array([xT,yT,T]).T,header='# x,y,T')
+#np.savetxt('temperatureinit.ascii',np.array([xT,yT,T]).T,header='# x,y,T')
 
 #==============================================================================
 # timestepping
@@ -341,8 +355,6 @@ time=np.zeros(nstep,dtype=np.float64)
 avrgT=np.zeros(nstep,dtype=np.float64) 
 u=np.zeros(NV,dtype=np.float64)          # x-component velocity
 v=np.zeros(NV,dtype=np.float64)          # y-component velocity
-u_old=np.zeros(NV,dtype=np.float64)          # x-component velocity
-v_old=np.zeros(NV,dtype=np.float64)          # y-component velocity
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 for istep in range(0,nstep):
@@ -522,7 +534,7 @@ for istep in range(0,nstep):
     print("     -> p (m,M) %4e %4e " %(np.min(p),np.max(p)))
 
     #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
-    np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+    #np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
     print("split sol into u,v,p: %.3f s" % (timing.time() - start))
 
@@ -571,7 +583,58 @@ for istep in range(0,nstep):
 
     #np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
-    print("compute strain rate: %.3f s" % (timing.time() - start))
+    print("compute el strain rate: %.3f s" % (timing.time() - start))
+
+    #####################################################################
+    # project strainrate onto velocity grid
+    #####################################################################
+    start = timing.time()
+
+    exxn=np.zeros(NV,dtype=np.float64)
+    eyyn=np.zeros(NV,dtype=np.float64)
+    exyn=np.zeros(NV,dtype=np.float64)
+    c=np.zeros(NV,dtype=np.float64)
+
+    for iel in range(0,nel):
+        for i in range(0,mV):
+            NNNV[0:mV]=NNV(rVnodes[i],sVnodes[i])
+            dNNNVdr[0:mV]=dNNVdr(rVnodes[i],sVnodes[i])
+            dNNNVds[0:mV]=dNNVds(rVnodes[i],sVnodes[i])
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,mV):
+                jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+                jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
+                jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+                jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+            jcob=np.linalg.det(jcb)
+            jcbi=np.linalg.inv(jcb)
+            for k in range(0,mV):
+                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+            e_xx=0.
+            e_yy=0.
+            e_xy=0.
+            for k in range(0,mV):
+                e_xx += dNNNVdx[k]*u[iconV[k,iel]]
+                e_yy += dNNNVdy[k]*v[iconV[k,iel]]
+                e_xy += 0.5*dNNNVdy[k]*u[iconV[k,iel]]+\
+                        0.5*dNNNVdx[k]*v[iconV[k,iel]]
+            exxn[iconV[i,iel]]+=e_xx
+            eyyn[iconV[i,iel]]+=e_yy
+            exyn[iconV[i,iel]]+=e_xy
+            c[iconV[i,iel]]+=1.
+        # end for i
+    # end for iel
+
+    exxn/=c
+    eyyn/=c
+    exyn/=c
+
+    print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
+    print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
+    print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+
+    print("compute nod strain rate: %.3f s" % (timing.time() - start))
 
     #################################################################
     # compute timestep
@@ -756,11 +819,14 @@ for istep in range(0,nstep):
                 jcb[0,1] += dNNNTdr[k]*yT[iconT[k,iel]]
                 jcb[1,0] += dNNNTds[k]*xT[iconT[k,iel]]
                 jcb[1,1] += dNNNTds[k]*yT[iconT[k,iel]]
-            jcob = np.linalg.det(jcb)
+            jcob=np.linalg.det(jcb)
+
             Tq=0.
             for k in range(0,mT):
                 Tq+=NNNT[k]*T[iconT[k,iel]]
             avrgT[istep]+=Tq*weightq*jcob
+        # end for kq
+    # end for iel
 
     avrgT[istep]/=0.5
 
@@ -768,131 +834,254 @@ for istep in range(0,nstep):
 
     print("compute avrg T: %.3fs" % (timing.time() - start))
 
+    #################################################################
+    # compute average pressure 
+    #################################################################
+    start = timing.time()
+
+    dNNNPdr = np.zeros(mP,dtype=np.float64)  
+    dNNNPds = np.zeros(mP,dtype=np.float64)  
+
+    avrgp=0.
+    for iel in range (0,nel):
+        for kq in range (0,nqel):
+            rq=qcoords_r[kq]
+            sq=qcoords_s[kq]
+            weightq=qweights[kq]
+            NNNP[0:mP]=NNP(rq,sq)
+            dNNNPdr[0:mP]=dNNPdr(rq,sq)
+            dNNNPds[0:mP]=dNNPds(rq,sq)
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,mP):
+                jcb[0,0] += dNNNPdr[k]*xP[iconP[k,iel]]
+                jcb[0,1] += dNNNPdr[k]*yP[iconP[k,iel]]
+                jcb[1,0] += dNNNPds[k]*xP[iconP[k,iel]]
+                jcb[1,1] += dNNNPds[k]*yP[iconP[k,iel]]
+            jcob=np.linalg.det(jcb)
+            pq=0.
+            for k in range(0,mP):
+                pq+=NNNP[k]*p[iconP[k,iel]]
+            avrgp+=pq*weightq*jcob
+        # end for kq
+    # end for iel
+    avrgp/=0.5
+
+    p-=avrgp
+
+    print("     -> p (m,M) %4e %4e " %(np.min(p),np.max(p)))
+
+    print("compute avrg p: %.3fs" % (timing.time() - start))
+
+    #####################################################################
+    # compute nodal heat flux
+    #####################################################################
+    start = timing.time()
+
+    qxn=np.zeros(NT,dtype=np.float64)
+    qyn=np.zeros(NT,dtype=np.float64)
+    c=np.zeros(NT,dtype=np.float64)
+
+    for iel in range (0,nel):
+        for i in range(0,mT):
+            NNNT[0:mT]=NNT(rTnodes[i],sTnodes[i])
+            dNNNTdr[0:mT]=dNNTdr(rTnodes[i],sTnodes[i])
+            dNNNTds[0:mT]=dNNTds(rTnodes[i],sTnodes[i])
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,mT):
+                jcb[0,0]+=dNNNTdr[k]*xT[iconT[k,iel]]
+                jcb[0,1]+=dNNNTdr[k]*yT[iconT[k,iel]]
+                jcb[1,0]+=dNNNTds[k]*xT[iconT[k,iel]]
+                jcb[1,1]+=dNNNTds[k]*yT[iconT[k,iel]]
+            jcob=np.linalg.det(jcb)
+            jcbi=np.linalg.inv(jcb)
+            for k in range(0,mT):
+                dNNNTdx[k]=jcbi[0,0]*dNNNTdr[k]+jcbi[0,1]*dNNNTds[k]
+                dNNNTdy[k]=jcbi[1,0]*dNNNTdr[k]+jcbi[1,1]*dNNNTds[k]
+            q_x=0.
+            q_y=0.
+            for k in range(0,mT):
+                q_x+=dNNNTdx[k]*T[iconT[k,iel]]
+                q_y+=dNNNTdy[k]*T[iconT[k,iel]]
+            qxn[iconT[i,iel]]-=q_x*hcond
+            qyn[iconT[i,iel]]-=q_y*hcond
+            c[iconT[i,iel]]+=1.
+        # end for i
+    # end for iel
+
+    qxn/=c
+    qyn/=c
+
+    print("compute nodal heat flux: %.3fs" % (timing.time() - start))
+
+    #####################################################################
+
+    if istep%10==0:
+
+       filename = 'temperature_hypotenuse_{:04d}.ascii'.format(istep) 
+       temp_hyp=open(filename,"w")
+       for i in range(0,NT):
+           if abs(xT[i]+yT[i]-1)<eps:
+              temp_hyp.write("%6e %6e %6e \n" %(xT[i],yT[i],T[i]))
+
+       filename = 'heatflux_bottom_{:04d}.ascii'.format(istep) 
+       hf_bot=open(filename,"w")
+       for i in range(0,NT):
+           if yT[i]<eps:
+              hf_bot.write("%6e %6e \n" %(xT[i],qyn[i]))
+
+    Nu=0.
+    for iel in range(0,nel):
+        if yT[iconT[0,iel]]<eps and yT[iconT[1,iel]]<eps:
+           Nu+=h*(qyn[iconT[0,iel]]+qyn[iconT[1,iel]])/2.
+           #print (xT[iconT[0,iel]],yT[iconT[0,iel]])
+           #print (xT[iconT[1,iel]],yT[iconT[0,iel]])
+    Nu_bot.write("%6e %6e\n" %(time[istep],Nu))
+    Nu_bot.flush()
+
     #####################################################################
     # plot of solution
     #####################################################################
     start = timing.time()
 
-    filename = 'solution_{:04d}.vtu'.format(istep) 
-    vtufile=open(filename,"w")
-    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-    vtufile.write("<UnstructuredGrid> \n")
-    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NP,nel))
-    #####
-    vtufile.write("<Points> \n")
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-    for i in range(0,NP):
-        vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</Points> \n")
-    #####
-    vtufile.write("<CellData Scalars='scalars'>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (area[iel]))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (exx[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
-    for iel in range (0,nel):
+    if istep%10==0:
+       filename = 'solution_{:04d}.vtu'.format(istep) 
+       vtufile=open(filename,"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NP,nel))
+       #####
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+       for i in range(0,NP):
+           vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
+       #####
+       vtufile.write("<CellData Scalars='scalars'>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (area[iel]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (exx[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
+       for iel in range (0,nel):
         vtufile.write("%10e\n" % (eyy[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (exy[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='div(v)' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
-    vtufile.write("</DataArray>\n")
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (exy[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='div(v)' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
+       vtufile.write("</DataArray>\n")
 
-    vtufile.write("</CellData>\n")
-    #####
-    vtufile.write("<PointData Scalars='scalars'>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-    for i in range(0,NP):
-        vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
-    for i in range(0,NP):
-        vtufile.write("%10e \n" %p[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
-    for i in range(0,NP):
-        vtufile.write("%10e \n" %T[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='fix u' Format='ascii'> \n")
-    for i in range(0,NP):
-        if bc_fixV[i*ndofV  ]:
-           vtufile.write("%10e \n" %1.)
-        else:
-           vtufile.write("%10e \n" %0.)
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='fix v' Format='ascii'> \n")
-    for i in range(0,NP):
-        if bc_fixV[i*ndofV+1]:
-           vtufile.write("%10e \n" %1.)
-        else:
-           vtufile.write("%10e \n" %0.)
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='fix T' Format='ascii'> \n")
-    for i in range(0,NT):
-        if bc_fixT[i]:
-           vtufile.write("%10e \n" %1.)
-        else:
-           vtufile.write("%10e \n" %0.)
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("</PointData>\n")
-    #####
-    vtufile.write("<Cells>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d %d %d \n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel]))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d \n" %((iel+1)*3))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-    for iel in range (0,nel):
-        vtufile.write("%d \n" %5)
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("</Cells>\n")
-    #####
-    vtufile.write("</Piece>\n")
-    vtufile.write("</UnstructuredGrid>\n")
-    vtufile.write("</VTKFile>\n")
-    vtufile.close()
+       vtufile.write("</CellData>\n")
+       #####
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+       for i in range(0,NP):
+           vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux' Format='ascii'> \n")
+       for i in range(0,NP):
+           vtufile.write("%10e %10e %10e \n" %(qxn[i],qyn[i],0.))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='exxn' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%.5e \n" %exxn[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='eyyn' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%.5e \n" %eyyn[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='exyn' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%.5e \n" %exyn[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+       for i in range(0,NP):
+           vtufile.write("%10e \n" %p[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
+       for i in range(0,NP):
+           vtufile.write("%10e \n" %T[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='fix u' Format='ascii'> \n")
+       for i in range(0,NP):
+           if bc_fixV[i*ndofV  ]:
+              vtufile.write("%10e \n" %1.)
+           else:
+              vtufile.write("%10e \n" %0.)
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='fix v' Format='ascii'> \n")
+       for i in range(0,NP):
+           if bc_fixV[i*ndofV+1]:
+              vtufile.write("%3e" %1.)
+           else:
+              vtufile.write("%3e" %0.)
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='fix T' Format='ascii'> \n")
+       for i in range(0,NT):
+           if bc_fixT[i]:
+              vtufile.write("%10e \n" %1.)
+           else:
+              vtufile.write("%10e \n" %0.)
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</PointData>\n")
+       #####
+       vtufile.write("<Cells>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d %d %d \n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %((iel+1)*3))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %5)
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</Cells>\n")
+       #####
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
 
-    print("make vtu file: %.3fs" % (timing.time() - start))
+       print("make vtu file: %.3fs" % (timing.time() - start))
 
-    #####################################################################
+       #####################################################################
 
-    u_old=u
-    v_old=v
+       np.savetxt('vrms.ascii',np.array([time,vrms]).T,header='# time, vrms')
+       np.savetxt('avrgT.ascii',np.array([time,avrgT]).T,header='# time, avrgT')
 
 
 #==============================================================================
 # end time stepping loop
 #==============================================================================
 
-np.savetxt('vrms.ascii',np.array([time,vrms]).T,header='# time, vrms')
-np.savetxt('avrgT.ascii',np.array([time,avrgT]).T,header='# time, avrgT')
 
 
 print("-----------------------------")

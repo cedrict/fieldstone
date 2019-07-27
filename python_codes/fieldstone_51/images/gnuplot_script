@@ -1,0 +1,24 @@
+set term pdf enhanced
+set grid
+set output 'vrms.pdf'
+set xlabel 'time'
+set ylabel 'v_{rms}'
+plot[][]\
+'vrms.ascii' w l  notitle
+
+set ylabel '<T>'
+set output 'avrgT.pdf'
+plot[][]\
+'avrgT.ascii' w l  notitle
+
+set output 'temp_hyptenuse.pdf'
+set ylabel 'T'
+plot[][]\
+'temperature_hypotenuse_4990.ascii' u 1:3 w lp ps .4 notitle
+
+set xlabel 'time'
+set ylabel 'Nu'
+set output 'Nu.pdf'
+plot[][0:]\
+'Nusselt_bottom.ascii' w l notitle,\
+24.535 w l lt -1

@@ -186,7 +186,7 @@ Since June 2015 I am assistant professor there in the geophysics group.
 
 
 %------------------------------------------------------------------------------
-\subsection{Essential literature} %--------------------------------------------
+\subsection{Essential/relevant literature} %-----------------------------------
 %------------------------------------------------------------------------------
 
 \begin{center}
@@ -197,7 +197,20 @@ Since June 2015 I am assistant professor there in the geophysics group.
 \includegraphics[height=3.74cm]{images/literature/sto_book}\\
 \end{center}
 
-http://www-udc.ig.utexas.edu/external/becker/Geodynamics557.pdf
+\begin{itemize}
+\item {\it Numerical modeling of Earth Systems} by Thorsten W. Becker and Boris J. P. Kaus,\\ 
+\url{http://www-udc.ig.utexas.edu/external/becker/teaching-557.html}
+
+\item {\it Myths \& Methods in Modeling} by M. Spiegelman,\\
+ \url{https://www.ldeo.columbia.edu/~mspieg/mmm/}
+
+\item {\it Computational Science I} by Matthew G. Knepley,\\
+ \url{https://cse.buffalo.edu/~knepley/classes/caam519/Syllabus.html}
+
+\item {\it Introduction to Numerical Methods for Variational Problems} by Hans Petter Langtangen and 
+Kent-Andre Mardal, \\
+\url{https://hplgit.github.io/fem-book/doc/pub/book/pdf/fem-book-4print.pdf}
+\end{itemize}
 
 
 %------------------------------------------------------------------------------
@@ -233,6 +246,7 @@ application of these codes: geodynamic modelling.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The physical equations} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{physics} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Rheology in geodynamics} \input{rheology} %%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage
@@ -796,6 +810,16 @@ Stone 50: Lithosphere extension
 Stone 50: Lithosphere extension 
 }
 \input{python_codes/fieldstone_50/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 51: Triangular domain benchmark with MINI element
+\label{f51}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 51: Triangular domain benchmark with MINI element
+}
+\input{python_codes/fieldstone_51/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 
