@@ -63,7 +63,7 @@ ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 ndofT=1  # number of temperature degrees of freedom 
 
-n=50
+n=25
 
 Lx=1 # horizontal extent of the domain 
 Ly=1 # vertical extent of the domain 
@@ -86,19 +86,15 @@ eps=1e-8
 
 nqel=6
 
-scramble = True
 
 Ra=1e6
 
 eta=1.
 
-nstep=5000
+nstep=100
 
-hcapa=1
-hcond=1
-rho0=1
-
-rand=True
+scramble = True
+rand=False
 
 if rand:
    deltax=h/4.
@@ -107,7 +103,9 @@ else:
    deltax=0.
    deltay=0.
 
-CFL_nb=0.5
+relax=0.2
+
+CFL_nb=.5
 
 rVnodes=[0.,1.,0.,1./3.]
 sVnodes=[0.,0.,1.,1./3.]
@@ -328,6 +326,8 @@ for iel in range(0,nel):
             jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
         jcob = np.linalg.det(jcb)
         area[iel]+=jcob*weightq
+    # end for kq
+# end for iel
 
 print("     -> area (m,M) %.4e %.4e " %(np.min(area),np.max(area)))
 print("     -> total area %.6f " %(area.sum()))
@@ -339,10 +339,13 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 #################################################################
 
 T=np.zeros(NT,dtype=np.float64) 
+T_old=np.zeros(NT,dtype=np.float64) 
 
 for i in range(0,NT):
     if yT[i]/Ly<eps:
        T[i]=2*(1.-np.cos(2*np.pi*xT[i]))
+
+T_old=T
 
 #np.savetxt('temperatureinit.ascii',np.array([xT,yT,T]).T,header='# x,y,T')
 
@@ -351,10 +354,11 @@ for i in range(0,NT):
 #==============================================================================
 
 vrms=np.zeros(nstep,dtype=np.float64) 
-time=np.zeros(nstep,dtype=np.float64) 
 avrgT=np.zeros(nstep,dtype=np.float64) 
 u=np.zeros(NV,dtype=np.float64)          # x-component velocity
 v=np.zeros(NV,dtype=np.float64)          # y-component velocity
+u_old=np.zeros(NV,dtype=np.float64)      # x-component velocity
+v_old=np.zeros(NV,dtype=np.float64)      # y-component velocity
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 for istep in range(0,nstep):
@@ -442,7 +446,6 @@ for istep in range(0,nstep):
 
             # compute elemental rhs vector
             for i in range(0,mV):
-                #f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*bx(xq,yq)
                 f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*Ra*Tq
 
             for i in range(0,mP):
@@ -451,6 +454,8 @@ for istep in range(0,nstep):
                 N_mat[2,i]=0.
 
             G_el-=b_mat.T.dot(N_mat)*weightq*jcob
+
+        # end for kq
 
         # impose b.c. 
         for k1 in range(0,mV):
@@ -486,6 +491,8 @@ for istep in range(0,nstep):
         for k2 in range(0,mP):
             m2=iconP[k2,iel]
             h_rhs[m2]+=h_el[k2]
+
+    # end for iel
 
     print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
     print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
@@ -539,6 +546,13 @@ for istep in range(0,nstep):
     print("split sol into u,v,p: %.3f s" % (timing.time() - start))
 
     #####################################################################
+    # relaxation step
+    #####################################################################
+
+    u=relax*u+(1-relax)*u_old
+    v=relax*v+(1-relax)*v_old
+
+    #####################################################################
     # compute strain rate components
     #####################################################################
     start = timing.time()
@@ -576,6 +590,9 @@ for istep in range(0,nstep):
             exx[iel] += dNNNVdx[k]*u[iconV[k,iel]]
             eyy[iel] += dNNNVdy[k]*v[iconV[k,iel]]
             exy[iel] += 0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
+        # end for k
+
+    # end for iel
 
     print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
     print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
@@ -637,25 +654,6 @@ for istep in range(0,nstep):
     print("compute nod strain rate: %.3f s" % (timing.time() - start))
 
     #################################################################
-    # compute timestep
-    #################################################################
-
-    dt1=CFL_nb*h/np.max(np.sqrt(u**2+v**2))
-
-    dt2=CFL_nb*h**2/(hcond/hcapa/rho0)
-
-    dt=np.min([dt1,dt2])
-
-    if istep==0:
-       time[istep]=dt
-    else:
-       time[istep]=time[istep-1]+dt
-
-    print('     -> dt1= %6e' %dt1)
-    print('     -> dt2= %6e' %dt2)
-    print('     -> dt = %6e' %dt)
-
-    #################################################################
     # build temperature matrix
     #################################################################
     start = timing.time()
@@ -676,7 +674,6 @@ for istep in range(0,nstep):
         a_el=np.zeros((mT*ndofT,mT*ndofT),dtype=np.float64)
         Ka=np.zeros((mT,mT),dtype=np.float64)   # elemental advection matrix 
         Kd=np.zeros((mT,mT),dtype=np.float64)   # elemental diffusion matrix 
-        MM=np.zeros((mT,mT),dtype=np.float64)   # elemental mass matrix 
         vel=np.zeros((1,ndim),dtype=np.float64)
 
         for k in range(0,mT):
@@ -719,40 +716,43 @@ for istep in range(0,nstep):
                 B_mat[0,k]=dNNNTdx[k]
                 B_mat[1,k]=dNNNTdy[k]
 
-            # compute mass matrix
-            MM=N_mat.dot(N_mat.T)*rho0*hcapa*weightq*jcob 
-
             # compute diffusion matrix
-            Kd=B_mat.T.dot(B_mat)*hcond*weightq*jcob
+            Kd=B_mat.T.dot(B_mat)*weightq*jcob
 
             # compute advection matrix
-            Ka=N_mat.dot(vel.dot(B_mat))*rho0*hcapa*weightq*jcob
+            Ka=N_mat.dot(vel.dot(B_mat))*weightq*jcob
 
-            a_el=MM+(Ka+Kd)*dt
+            a_el+=(Kd+Ka)
 
-            b_el=MM.dot(Tvect)
+        # end for kq
 
-            # apply boundary conditions
+        # apply boundary conditions
+        for k1 in range(0,mT):
+            m1=iconT[k1,iel]
+            if bc_fixT[m1]:
+               Aref=a_el[k1,k1]
+               for k2 in range(0,mT):
+                   m2=iconT[k2,iel]
+                   b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
+                   a_el[k1,k2]=0
+                   a_el[k2,k1]=0
+               # end for k2
+               a_el[k1,k1]=Aref
+               b_el[k1]=Aref*bc_valT[m1]
+            # end if
+        # end for k1
 
-            for k1 in range(0,mT):
-                m1=iconT[k1,iel]
-                if bc_fixT[m1]:
-                   Aref=a_el[k1,k1]
-                   for k2 in range(0,mT):
-                       m2=iconT[k2,iel]
-                       b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
-                       a_el[k1,k2]=0
-                       a_el[k2,k1]=0
-                   a_el[k1,k1]=Aref
-                   b_el[k1]=Aref*bc_valT[m1]
+        # assemble matrix A_mat and right hand side rhs
+        for k1 in range(0,mT):
+            m1=iconT[k1,iel]
+            for k2 in range(0,mT):
+                m2=iconT[k2,iel]
+                A_mat[m1,m2]+=a_el[k1,k2]
+            # end for k2
+            rhs[m1]+=b_el[k1]
+        # end for k1
 
-            # assemble matrix A_mat and right hand side rhs
-            for k1 in range(0,mT):
-                m1=iconT[k1,iel]
-                for k2 in range(0,mT):
-                    m2=iconT[k2,iel]
-                    A_mat[m1,m2]+=a_el[k1,k2]
-                rhs[m1]+=b_el[k1]
+    # end for iel
 
     print("build FE system T: %.3f s" % (timing.time() - start))
 
@@ -766,6 +766,12 @@ for istep in range(0,nstep):
     print("     -> T (m,M) %4f %.4f " %(np.min(T),np.max(T)))
 
     print("solve T time: %.3f s" % (timing.time() - start))
+
+    #################################################################
+    # relax
+    #################################################################
+
+    T=relax*T+(1-relax)*T_old
 
     #################################################################
     # compute vrms 
@@ -793,10 +799,12 @@ for istep in range(0,nstep):
                 uq+=NNNV[k]*u[iconV[k,iel]]
                 vq+=NNNV[k]*v[iconV[k,iel]]
             vrms[istep]+=(uq**2+vq**2)*weightq*jcob
+        # end for kq
+    # end for iel
 
     vrms[istep]=np.sqrt(vrms[istep]/(Lx*Ly))
 
-    print("     -> time= %.6f ; vrms   = %.6f" %(time[istep],vrms[istep]))
+    print("     -> vrms   = %.6f" %(vrms[istep]))
 
     print("compute vrms: %.3fs" % (timing.time() - start))
 
@@ -830,7 +838,7 @@ for istep in range(0,nstep):
 
     avrgT[istep]/=0.5
 
-    print("     -> time= %.6f ; avrgT  = %.6f" %(time[istep],avrgT[istep]))
+    print("     -> avrgT  = %.6f" %(avrgT[istep]))
 
     print("compute avrg T: %.3fs" % (timing.time() - start))
 
@@ -902,8 +910,8 @@ for istep in range(0,nstep):
             for k in range(0,mT):
                 q_x+=dNNNTdx[k]*T[iconT[k,iel]]
                 q_y+=dNNNTdy[k]*T[iconT[k,iel]]
-            qxn[iconT[i,iel]]-=q_x*hcond
-            qyn[iconT[i,iel]]-=q_y*hcond
+            qxn[iconT[i,iel]]-=q_x#*hcond
+            qyn[iconT[i,iel]]-=q_y#*hcond
             c[iconT[i,iel]]+=1.
         # end for i
     # end for iel
@@ -915,7 +923,7 @@ for istep in range(0,nstep):
 
     #####################################################################
 
-    if istep%10==0:
+    if istep%visu==0:
 
        filename = 'temperature_hypotenuse_{:04d}.ascii'.format(istep) 
        temp_hyp=open(filename,"w")
@@ -933,9 +941,7 @@ for istep in range(0,nstep):
     for iel in range(0,nel):
         if yT[iconT[0,iel]]<eps and yT[iconT[1,iel]]<eps:
            Nu+=h*(qyn[iconT[0,iel]]+qyn[iconT[1,iel]])/2.
-           #print (xT[iconT[0,iel]],yT[iconT[0,iel]])
-           #print (xT[iconT[1,iel]],yT[iconT[0,iel]])
-    Nu_bot.write("%6e %6e\n" %(time[istep],Nu))
+    Nu_bot.write("%6e\n" %(Nu))
     Nu_bot.flush()
 
     #####################################################################
@@ -943,7 +949,7 @@ for istep in range(0,nstep):
     #####################################################################
     start = timing.time()
 
-    if istep%10==0:
+    if istep%visu==0:
        filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -1072,20 +1078,23 @@ for istep in range(0,nstep):
 
        print("make vtu file: %.3fs" % (timing.time() - start))
 
-       #####################################################################
+    # end if
 
-       np.savetxt('vrms.ascii',np.array([time,vrms]).T,header='# time, vrms')
-       np.savetxt('avrgT.ascii',np.array([time,avrgT]).T,header='# time, avrgT')
+    #####################################################################
 
+    np.savetxt('vrms.ascii',np.array(vrms[0:istep]).T,header='# time,vrms')
+    np.savetxt('avrgT.ascii',np.array(avrgT[0:istep]).T,header='# time,avrgT')
+
+    #####################################################################
+
+    u_old=u
+    v_old=v
+    T_old=T
 
 #==============================================================================
 # end time stepping loop
 #==============================================================================
 
-
-
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")
-
-

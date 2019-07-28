@@ -1,24 +1,112 @@
 set term pdf enhanced
 set grid
-set output 'vrms.pdf'
-set xlabel 'time'
+set key outside
+set log x
+set xlabel 'step'
 set ylabel 'v_{rms}'
+
+set output 'vrms_gammas.pdf'
 plot[][]\
-'vrms.ascii' w l  notitle
+'relax0p01_25/vrms.ascii'  w l lt 1 t '{/Symbol g}=0.01, n=25',\
+'relax0p05_25/vrms.ascii'  w l lt 2 t '{/Symbol g}=0.05, n=25',\
+'relax0p10_25/vrms.ascii'  w l lt 3 t '{/Symbol g}=0.10, n=25',\
+'relax0p20_25/vrms.ascii'  w l lt 4 t '{/Symbol g}=0.20, n=25',\
+'relax0p30_25/vrms.ascii'  w l lt 5 t '{/Symbol g}=0.30, n=25',\
+'relax0p40_25/vrms.ascii'  w l lt 6 t '{/Symbol g}=0.40, n=25',\
+'relax0p50_25/vrms.ascii'  w l lt 7 t '{/Symbol g}=0.50, n=25',\
+
+set output 'vrms_res.pdf'
+plot[][]\
+'relax0p20_25/vrms.ascii'  w l lt 1 dashtype 1 t 'n=25',\
+'relax0p20_50/vrms.ascii'  w l lt 2 dashtype 1 t 'n=50',\
+'relax0p20_75/vrms.ascii'  w l lt 3 dashtype 1 t 'n=75',\
+'relax0p20_100/vrms.ascii' w l lt 4 dashtype 1 t 'n=100',\
+
+set output 'vrms_res_zoom.pdf'
+plot[100:][]\
+'relax0p20_25/vrms.ascii'  w l lt 1 dashtype 1 t 'n=25',\
+'relax0p20_50/vrms.ascii'  w l lt 2 dashtype 1 t 'n=50',\
+'relax0p20_75/vrms.ascii'  w l lt 3 dashtype 1 t 'n=75',\
+'relax0p20_100/vrms.ascii' w l lt 4 dashtype 1 t 'n=100',\
 
 set ylabel '<T>'
-set output 'avrgT.pdf'
+set output 'avrgT_gammas.pdf'
 plot[][]\
-'avrgT.ascii' w l  notitle
+'relax0p01_25/avrgT.ascii' w l lt 1 t '{/Symbol g}=0.01, n=25',\
+'relax0p05_25/avrgT.ascii' w l lt 2 t '{/Symbol g}=0.05, n=25',\
+'relax0p10_25/avrgT.ascii' w l lt 3 t '{/Symbol g}=0.10, n=25',\
+'relax0p20_25/avrgT.ascii' w l lt 4 t '{/Symbol g}=0.20, n=25',\
+'relax0p30_25/avrgT.ascii' w l lt 5 t '{/Symbol g}=0.30, n=25',\
+'relax0p40_25/avrgT.ascii' w l lt 6 t '{/Symbol g}=0.40, n=25',\
+'relax0p50_25/avrgT.ascii' w l lt 7 t '{/Symbol g}=0.50, n=25',\
 
-set output 'temp_hyptenuse.pdf'
+set ylabel '<T>'
+set output 'avrgT_res.pdf'
+plot[][]\
+'relax0p20_25/avrgT.ascii'  w l lt 1 dashtype 1 t 'n=25',\
+'relax0p20_50/avrgT.ascii'  w l lt 2 dashtype 1 t 'n=50',\
+'relax0p20_75/avrgT.ascii'  w l lt 3 dashtype 1 t 'n=75',\
+'relax0p20_100/avrgT.ascii' w l lt 4 dashtype 1 t 'n=100',\
+
+set ylabel '<T>'
+set output 'avrgT_res_zoom.pdf'
+plot[100:][]\
+'relax0p20_25/avrgT.ascii'  w l lt 1 dashtype 1 t 'n=25',\
+'relax0p20_50/avrgT.ascii'  w l lt 2 dashtype 1 t 'n=50',\
+'relax0p20_75/avrgT.ascii'  w l lt 3 dashtype 1 t 'n=75',\
+'relax0p20_100/avrgT.ascii' w l lt 4 dashtype 1 t 'n=100',\
+
+set ylabel 'Nu'
+set output 'Nu_gammas.pdf'
+plot[][]\
+'relax0p01_25/Nusselt_bottom.ascii' w l lt 1 t '{/Symbol g}=0.01, n=25',\
+'relax0p05_25/Nusselt_bottom.ascii' w l lt 2 t '{/Symbol g}=0.05, n=25',\
+'relax0p10_25/Nusselt_bottom.ascii' w l lt 3 t '{/Symbol g}=0.10, n=25',\
+'relax0p20_25/Nusselt_bottom.ascii' w l lt 4 t '{/Symbol g}=0.20, n=25',\
+'relax0p30_25/Nusselt_bottom.ascii' w l lt 5 t '{/Symbol g}=0.30, n=25',\
+'relax0p40_25/Nusselt_bottom.ascii' w l lt 6 t '{/Symbol g}=0.40, n=25',\
+'relax0p50_25/Nusselt_bottom.ascii' w l lt 7 t '{/Symbol g}=0.50, n=25',\
+24.535 w l lt -1
+
+set ylabel 'Nu'
+set output 'Nu_res.pdf'
+plot[][]\
+'relax0p20_25/Nusselt_bottom.ascii'  w l lt 1 dashtype 1 t 'n=25',\
+'relax0p20_50/Nusselt_bottom.ascii'  w l lt 2 dashtype 1 t 'n=50',\
+'relax0p20_75/Nusselt_bottom.ascii'  w l lt 3 dashtype 1 t 'n=75',\
+'relax0p20_100/Nusselt_bottom.ascii' w l lt 4 dashtype 1 t 'n=100',\
+24.535 w l lt -1
+
+set ylabel 'Nu'
+set output 'Nu_res_zoom.pdf'
+plot[100:][19:25]\
+'relax0p20_25/Nusselt_bottom.ascii'  w l lt 1 dashtype 1 t 'n=25',\
+'relax0p20_50/Nusselt_bottom.ascii'  w l lt 2 dashtype 1 t 'n=50',\
+'relax0p20_75/Nusselt_bottom.ascii'  w l lt 3 dashtype 1 t 'n=75',\
+'relax0p20_100/Nusselt_bottom.ascii' w l lt 4 dashtype 1 t 'n=100',\
+24.535 w l lt -1
+
+
+unset log xy
+set output 'temp_hyp_res.pdf'
+set xlabel 'x'
 set ylabel 'T'
 plot[][]\
-'temperature_hypotenuse_4990.ascii' u 1:3 w lp ps .4 notitle
+'relax0p20_25/temperature_hypotenuse_0480.ascii'  u 1:3 w l lt 1 dashtype 1 t 'n=25',\
+'relax0p20_50/temperature_hypotenuse_0480.ascii'  u 1:3 w l lt 2 dashtype 1 t 'n=50',\
+'relax0p20_75/temperature_hypotenuse_0480.ascii'  u 1:3 w l lt 3 dashtype 1 t 'n=75',\
+'relax0p20_100/temperature_hypotenuse_0480.ascii' u 1:3 w l lt 4 dashtype 1 t 'n=100',\
 
-set xlabel 'time'
-set ylabel 'Nu'
-set output 'Nu.pdf'
-plot[][0:]\
-'Nusselt_bottom.ascii' w l notitle,\
-24.535 w l lt -1
+
+
+set ylabel 'q_y'
+set output 'qy_bot_res.pdf'
+plot[][]\
+'relax0p20_25/heatflux_bottom_0480.ascii'  u 1:2 w l lt 1 dashtype 1 t 'n=25',\
+'relax0p20_50/heatflux_bottom_0480.ascii'  u 1:2 w l lt 2 dashtype 1 t 'n=50',\
+'relax0p20_75/heatflux_bottom_0480.ascii'  u 1:2 w l lt 3 dashtype 1 t 'n=75',\
+'relax0p20_100/heatflux_bottom_0480.ascii' u 1:2 w l lt 4 dashtype 1 t 'n=100'
+
+
+
+

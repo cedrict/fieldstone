@@ -1,14 +1,14 @@
 {\sl This fieldstone was developed in collaboration with L. van de Wiel}. 
 
 
-The following problem is studied in \cite{jolm17}. The equations that they solve are the following ones:
-
-The equation to solve are:
+The following problem is studied in \cite{jolm17}. The equations that they solve are the thermo-mechanically coupled steady state equations:
 \begin{eqnarray}
 -\vec{\nabla}p + \Delta \vec{\upnu} + Ra T \vec{e}_y &=& 0\\
 \vec\nabla\cdot\vec\upnu &=& 0 \\
 -\Delta T + \vec\upnu\cdot\nabla T &=& 0
 \end{eqnarray}
+In our case the code is based on the MINI element (a.k.a. $P_1^+ \times P_1$), see Section~\ref{pair:mini}
+and we set $Ra=10^6$.
 
 The domain is chosen to be the right triangle
 with vertices $(0,0)$, $(1,0)$, and $(0,1)$. 
@@ -32,19 +32,41 @@ c)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/jolm17_T}\\
 Although it is not mentioned in the original article it appears that the 
 pressure field has been normalised so that $\langle p \rangle = \int_\Omega p dV=0$.
 
-As opposed to the mesh presented in \cite{jolm17} we build a regular mesh.
-An example of such a mesh is shown hereunder for $n=5$ (the number of nodes
+As opposed to the mesh presented in \cite{jolm17} I build a regular mesh.
+An example of such a mesh is shown hereunder (a) for $n=5$ (the number of nodes
 per side of the triangular domain). 
+Note that this mesh can also be modified in such a way that the position of 
+nodes inside the domain is perturbed by a small random value (b).
+Finally, in order to generate a mesh which is more isotropic some edges between 
+triangles can be flipped (c). In what follows I denote by $h$ the distance between nodes
+on the horizontal (or vertical) boundaries, i.e. $h=L_x/(n-1)=L_y/(n-1)$.
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_51/images/minigrid5}
+a)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/minigrid5a}
+b)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/minigrid5b}
+c)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/minigrid5c}\\
+{\small a) regular mesh for n=5. b) flipped edges mesh. c) randomized+flipped edges mesh.}
 \end{center}
 
-Instead of the steady-state equations above we solve the time-dependent 
-heat transport equation with $k=1$, $C_p=1$ and $\rho_0=1$. At steady state 
-we will have $\partial T/\partial t=0$ and our equation will become identical 
-to theirs. 
+Since I am solving for the steady-state solution I set the mass matrix in the 
+heat transport part of the code to zero. However, since I am solving the stokes equations
+and the heat transport equation alternatively until convergence is reached, it is well 
+known that this approach does not converge fast (if at all). 
+I then implement a simple relaxation scheme. After I have solved for velocity (using the 
+most recent temperature field in the rhs), I do:
+\[
+\vec{v}^k = \gamma \vec{v}^k + (1-\gamma) \vec{v}^{k-1}
+\]
+and after having solved for temperature having used the most recent velocity field, 
+I do the same for temperature:
+\[
+{T}^k = \gamma {T}^k + (1-\gamma) {T}^{k-1}
+\]
+where the relaxation parameter $\gamma$ is between 0 and 1.
 
-Additionally we measure:
+
+
+
+Additionally I measure:
 \begin{itemize}
 \item the Nusselt number defined by 
 \[
@@ -58,18 +80,75 @@ It is reported to be 24.535 in \cite{jolm17}.
 \item the mean temperature $\langle T \rangle = |\Omega|^{-1} \int_\Omega T \; dV$
 \end{itemize}
 
+%----------------------------------------------------------------------
+\subsubsection*{On the importance of the relaxation parameter $\gamma$}
+
+In what follows the internal node coordinate randomness is switched off.
+I have run the model for various values of $\gamma$ for $n=25$, and results are shown on the 
+following figures. We see that all simulations seem to converge to the same 
+steady state, which is very reassuring. However, it looks like too small a value of $\gamma$
+delays greatly the convergence and too large a value also seems detrimental. 
+In light of this, I have chosen $\gamma=0.2$ for all what follows.
+
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_51/images/vrms.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_51/images/avrgT.pdf}\\
-\includegraphics[width=6cm]{python_codes/fieldstone_51/images/temp_hyptenuse.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_51/images/Nu.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_51/images/vrms_gammas.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_51/images/Nu_gammas.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_51/images/avrgT_gammas.pdf}\\
+{\small Left to right: Root mean square velocity, Nusselt number and average temperature as a function 
+of the iteration counter.}
+\end{center}
+
+%----------------------------------------------------------------------
+\subsubsection*{On the influence of mesh resolution} 
+
+I now explore the influence of the mesh resolution on the results and run steady state 
+calculations for $n=25,50,75,100$.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_51/images/vrms_res.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_51/images/vrms_res_zoom.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_51/images/Nu_res.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_51/images/Nu_res_zoom.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_51/images/avrgT_res.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_51/images/avrgT_res_zoom.pdf}\\
 \end{center}
 
 \begin{center}
-a)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/vel}
-b)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/press}
-c)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/temp}\\
-{\small Steady state fields: a) velocity, b) pressure, c) temperature.}
+\begin{tabular}{llll}
+\hline
+resolution $(n)$ & $v_{rms}$ & Nu & $\langle T \rangle$ \\
+\hline
+\hline
+25  & 154.35406 & 19.51906 &  1.22759\\
+50  & 157.46000 & 22.80683 &  1.23024\\
+75  & 158.01207 & 23.67889 &  1.23038\\
+100 & 158.13157 & 24.00510 &  1.22991\\
+\hline
+\end{tabular}
+\end{center}
+
+The following two plots show the temperature along the hypotenuse (as a function of $x$
+for simplicity) at steady-state and the heat flux measured at the bottom. 
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_51/images/temp_hyp_res.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_51/images/qy_bot_res.pdf}
+\end{center}
+
+Finally, here are the fields for $n=100$ at steady state:
+
+\begin{center}
+a)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/relax0p20_100/grid}
+b)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/relax0p20_100/vel}
+c)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/relax0p20_100/vel2}\\
+d)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/relax0p20_100/p}
+e)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/relax0p20_100/T}
+f)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/relax0p20_100/heatflux}\\
+g)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/relax0p20_100/exx}
+h)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/relax0p20_100/exy}
+i)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/relax0p20_100/divv}\\
+{\small Steady state fields: a) grid (n=100), b,c) velocity, d) pressure, e) temperature,
+f) heat flux, g) $\dot{\varepsilon}_{xx}$, h) $\dot{\varepsilon}_{xy}$, i) velocity 
+divergence measured in the middle of the element.}
 \end{center}
 
 

@@ -73,167 +73,23 @@
 
 \makeindex 
 \begin{document}
-
 \maketitle
-
 \tableofcontents
-
 \newpage
-
 \begin{center}
 {\color{red} \huge WARNING: this is work in progress}
 \end{center}
 
-%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-\subsection{Philosophy} %------------------------------------------------------
-This document was writing with my students in mind, i.e. 3rd and 4th year 
-Geology/Geophysics students at Utrecht University. 
-I have chosen to use as little jargon as possible unless it is a term that is 
-commonly found in the geodynamics literature (methods paper as well as 
-application papers). There is no mathematical proof of any theorem or statement 
-I make. These are to be found in generic Numerical Analysic, Finite Element and 
-Linear Algebra books. If you find that this books lacks references
-to Sobolev spaces, Hilbert spaces, and other spaces, this book is just not for you.  
-
-The codes I provide here are by no means optimised as I value code readability 
-over code efficiency. I have also chosen to avoid resorting to multiple code 
-files or even functions to favour a sequential reading of the codes. 
-These codes are not designed to form the basis of a real life application:
-Existing open source highly optimised codes shoud be preferred, such as 
-ASPECT \cite{krhb12,hedg17}, CITCOM, LAMEM, PTATIN, PYLITH, ... 
-
-All kinds of feedback is welcome on the text (grammar, typos, ...) or on the 
-code(s). You will have my eternal gratitude if you wish to contribute an 
-example, a benchmark, a cookbook. 
-
-All the python scripts and this document are freely available at 
-\begin{center}
-\url{https://github.com/cedrict/fieldstone}
-\end{center}
-
-%------------------------------------------------------------------------------
-\subsection{ambition \& motivation} %------------------------------------------
-%------------------------------------------------------------------------------
-
-In no particular order, provide the community with:
-\begin{itemize}
-\item an enormous bibliography data base - simply search the pdf for keywords
-\item a go-to document for anybody who wants to know more about 
-      a particular topic in computational geodynamics.
-\item a useful teaching tool for researchers, teachers, students and PhD students alike 
-\item small, readable, educative codes 
-\end{itemize}
-
-%------------------------------------------------------------------------------
-\subsection{Acknowledgments} %-------------------------------------------------
-%------------------------------------------------------------------------------
-
-I have benefitted from many discussions, lectures, tutorials, coffee machine 
-discussions, debugging sessions, conference poster sessions, etc ... 
-over the years. I wish to name these instrumental people in particular and 
-in alphabetic order: 
-Wolfgang Bangerth, 
-Jean Braun, 
-Rens Elbertsen,
-Philippe Fullsack, 
-Menno Fraters, 
-Anne Glerum,
-Timo Heister,
-Dave May,
-Robert Myhill,
-John Naliboff,
-E. Gerry Puckett,
-Melchior Schuh-Senlis,
-Michael Tetley,
-Lukas van de Wiel,
-Arie van den Berg, 
-Eric van den Hoogen,
-Tom Weir,
-and the whole ASPECT family/team. 
-
-%I wish to acknowledge many BSc and MSc students for their questions and feedback.
-%and wish to mention: Job Mos (the
-%very first version of fieldstone was part of his MSc thesis), 
-%Tom Weir (contributions to the compressible formulation - MSc thesis), 
-%and Rens Elbertsen (Tosi benchmark - BSc thesis).
-
-%------------------------------------------------------------------------------
-\subsection{About the author} %------------------------------------------------
-%------------------------------------------------------------------------------
-
-I have BSc in mathematics, and an MSc diploma in physics (with a specialization in 
-musical acoustics \cite{dewl02}). I did my PhD at the 
-university of Groningen (The Netherlands) title {\sl Thermodynamically consistent 
-fluid particle modelling of phase separating 
-mixtures}\footnote{\url{http://cedricthieulot.net/thesis.html}}.
-Although half of the thesis deals with the re-derivation of the Navier-Stokes 
-equations for such systems\cite{esth03}, the second half is concerned with 
-the implementation of these equations with the Smoothed Particle Hydrodynamics
-method \cite{thje05a,thje05b,thes05}.
-
-I then taught physics and programming at the University of Rennes (France) for a year, 
-after which I did a 2-year post-doc with Prof. J. 
-Braun\footnote{\url{https://www.gfz-potsdam.de/en/staff/jean-braun/}} in the 
-Geosciences department. 
-I then did a 4-year post-doc with prof. R. 
-Huismans\footnote{\url{https://folk.uib.no/huismans/}} at the University of Bergen (Norway), 
-followed by a 3-year post-doc with profs. T. Torsvik and W. Spakman at the Utrecht
-University (The Netherlands). 
-Since June 2015 I am assistant professor there in the geophysics group.
- 
-
-
-%------------------------------------------------------------------------------
-\subsection{Essential/relevant literature} %-----------------------------------
-%------------------------------------------------------------------------------
-
-\begin{center}
-\includegraphics[height=3.74cm]{images/literature/gerya_book}
-\includegraphics[height=3.74cm]{images/literature/tackley_book}
-\includegraphics[height=3.74cm]{images/literature/donea_huerta_book}
-\includegraphics[height=3.74cm]{images/literature/bercovici_book}
-\includegraphics[height=3.74cm]{images/literature/sto_book}\\
-\end{center}
-
-\begin{itemize}
-\item {\it Numerical modeling of Earth Systems} by Thorsten W. Becker and Boris J. P. Kaus,\\ 
-\url{http://www-udc.ig.utexas.edu/external/becker/teaching-557.html}
-
-\item {\it Myths \& Methods in Modeling} by M. Spiegelman,\\
- \url{https://www.ldeo.columbia.edu/~mspieg/mmm/}
-
-\item {\it Computational Science I} by Matthew G. Knepley,\\
- \url{https://cse.buffalo.edu/~knepley/classes/caam519/Syllabus.html}
-
-\item {\it Introduction to Numerical Methods for Variational Problems} by Hans Petter Langtangen and 
-Kent-Andre Mardal, \\
-\url{https://hplgit.github.io/fem-book/doc/pub/book/pdf/fem-book-4print.pdf}
-\end{itemize}
-
-
-%------------------------------------------------------------------------------
-\subsection{Installation} %----------------------------------------------------
-%------------------------------------------------------------------------------
-
-If numpy, scipy or matplotlib are not installed on your machine, here is how you 
-can install them:
-\begin{verbatim}
-python3.6 -m pip install --user numpy scipy matplotlib
-\end{verbatim}
-To install the umfpack solver:
-\begin{verbatim}
-pip install --upgrade scikit-umfpack --user
-\end{verbatim}
-
-
-\subsection{What is a fieldstone?} %-------------------------------------------
-Simply put, it is stone collected from the surface of fields where it 
-occurs naturally. It also stands for the bad acronym: {\sl fi}nite 
-{\sl el}ement {\sl d}eformation of {\sl stone}s which echoes the primary 
-application of these codes: geodynamic modelling.
-
+\subsection{Philosophy} \input{philosophy} %-----------------------------------
+\subsection{ambition \& motivation} \input{motivation} %-----------------------
+\subsection{Acknowledgements} \input{acknowledgements} %-----------------------
+\subsection{About the author} \input{author} %--------------------------------- 
+\subsection{Essential/relevant literature} \input{literature} %----------------
+\subsection{Installation} \input{install} %------------------------------------
+\subsection{What is a fieldstone?} \input{whatisafieldstone} %-----------------
 \subsection{Why the Finite Element method?} \input{why} %----------------------
 \subsection{Notations} \input{notations} %-------------------------------------
 \subsection{Colour maps for visualisation} \input{colorscale} %----------------
@@ -260,15 +116,12 @@ application of these codes: geodynamic modelling.
 \subsection{Elements and basis functions in 3D} \input{elements3D} %-------------------------------
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \newpage 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Solving the heat transport equation with linear Finite Elements} %%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The diffusion equation in 1D} \label{sec:diff1D} \input{diff1D} %----------------------
 \subsection{The advection-diffusion equation in 1D} \label{sec:advec-diff1D}\input{adv_diff1D} %---
-\subsection{The advection-diffusion equation in 2D}
-
-\input{hte_fem} %-----------------------
+\subsection{The advection-diffusion equation in 2D} \input{hte_fem} %-----------------------
 
 \newpage 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -289,12 +142,8 @@ application of these codes: geodynamic modelling.
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Additional techniques and features} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\subsection{Dealing with a free surface}
-
-\subsection{Convergence criterion for nonlinear iterations}
-
+\subsection{Dealing with a free surface} TODO
+\subsection{Convergence criterion for nonlinear iterations} TODO
 
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{The SUPG formulation for the energy equation} \label{sec:supg} \input{supg} %----------
@@ -360,7 +209,10 @@ application of these codes: geodynamic modelling.
 
 %\subsection{Steady state thermal problems \label{ss_ss}} \input{steadystate} %-
 
-
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Gravity and co}
+\input{gravity}
 
 
 
