@@ -497,9 +497,6 @@ for istep in range(0,nstep):
                     jcb[1,0]+=dNds[k]*x[icon[k,iel]]
                     jcb[1,1]+=dNds[k]*y[icon[k,iel]]
                 jcob = np.linalg.det(jcb)
-                jcbi=np.linalg.inv(jcb)
-                for k in range(0,m):
-                    dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
                 uq=0.
                 vq=0.
                 for k in range(0,m):

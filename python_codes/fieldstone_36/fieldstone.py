@@ -150,7 +150,7 @@ print("grid setup (%.3fs)" % (time.time() - start))
 #################################################################
 start = time.time()
 
-icon =np.zeros((m, nel),dtype=np.int16)
+icon =np.zeros((m, nel),dtype=np.int32)
 
 counter = 0
 for j in range(0, nelr):

@@ -137,8 +137,8 @@ print("setup: grid points: %.3f s" % (time.time() - start))
 # 0---4---1   0-------1
 #################################################################
 start = time.time()
-iconV=np.zeros((mV,nel),dtype=np.int16)
-iconP=np.zeros((mP,nel),dtype=np.int16)
+iconV=np.zeros((mV,nel),dtype=np.int32)
+iconP=np.zeros((mP,nel),dtype=np.int32)
 counter = 0
 for j in range(0,nely):
     for i in range(0,nelx):
@@ -166,7 +166,7 @@ print("setup: connectivity: %.3f s" % (time.time() - start))
 #################################################################
 swarm_x=np.empty(nmarker,dtype=np.float64)  # x coordinates
 swarm_y=np.empty(nmarker,dtype=np.float64)  # y coordinates
-swarm_mat=np.empty(nmarker,dtype=np.int16)  # material id 
+swarm_mat=np.empty(nmarker,dtype=np.int8)  # material id 
 swarm_u=np.empty(nmarker,dtype=np.float64)  # x velocity
 swarm_v=np.empty(nmarker,dtype=np.float64)  # y velocity
 swarm_paint=np.empty(nmarker,dtype=np.float64)  # paint

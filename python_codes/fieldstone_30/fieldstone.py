@@ -320,7 +320,7 @@ if Q==2:
 #################################################################
 print("connectivity")
 
-icon =np.zeros((m, nel),dtype=np.int16)
+icon =np.zeros((m, nel),dtype=np.int32)
 
 if Q==1:
    counter = 0

@@ -181,10 +181,10 @@ if int(len(sys.argv) == 5):
    visu  = int(sys.argv[3])
    niter = int(sys.argv[4])
 else:
-   nelx = 200
-   nely = 50
+   nelx = 120
+   nely = 30
    visu = 1
-   niter= 5
+   niter= 10
 
     
 nnx=2*nelx+1         # number of elements, x direction
@@ -373,7 +373,9 @@ for iter in range(0,niter):
     # [GT 0 ][p] [h]
     #################################################################
     start = time.time()
+   
 
+    #A_sparse= sps.dok_matrix((Nfem,Nfem),dtype=np.float64)
     A_sparse= lil_matrix((Nfem,Nfem),dtype=np.float64)
     rhs     = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
     b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64)  # gradient matrix B 
@@ -512,9 +514,7 @@ for iter in range(0,niter):
     ######################################################################
     start = time.time()
 
-    sparse_matrix=A_sparse.tocsr()
-
-    sol=sps.linalg.spsolve(sparse_matrix,rhs)
+    sol=sps.linalg.spsolve(A_sparse.tocsr(),rhs)
 
     print("solve time: %.3f s" % (time.time() - start))
 
