@@ -277,9 +277,60 @@ T^{n+4}-\frac{48}{25}T^{n+1}+\frac{36}{25}T^{n+1}-\frac{16}{25}T^{n+1}+\frac{3}{
 \]
 
 
+%....................................................
+\subsubsection{On steady states}
 
+It is said that a system is in a steady state if the (state) variables which define the behavior of the system 
+are unchanging in time. In continuous time, this means that the partial derivative with respect to time is zero and remains so:
+\[
+\frac{\partial}{\partial t} =0 \qquad \forall t
+\]
+This is irrelevant for the Stokes equations which do not contain an explicit time dependence but the heat 
+transport equation can reach a steady state. 
+Note that if one is only interested in the steady state solution (and not how the system gets there in time)
+then the heat transport equation should be solved with $\partial T/\partial t$ set to zero. 
 
+%....................................................
+\subsubsection{Anisotropic heat conduction}\label{sec:anisotropic}
 
-%\end{document}
+\index{Isotropic}\index{Orthotropic}
+
+It is most often assumed that the heat conductivity is isotropic so that one speaks of heat conductivity as a 
+scalar $k$.  However many materials are orthotropic and in that case the heat conductivity is a tensor ${\bm k}$
+which (in 2D) writes \cite[p121]{reddybook2}:
+\[
+{\bm k}
+=
+\left(
+\begin{array}{cc}
+k_{xx} & k_{xy} \\
+k_{yx} & k_{yy}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\cos\theta & \sin\theta \\
+-\sin\theta & \cos\theta
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+k_1 & 0 \\ 0 & k_2
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+\cos\theta & -\sin\theta \\
+\sin\theta & \cos\theta
+\end{array}
+\right)
+\]
+where $k_1$ and $k_2$ are the conductivities in the principal axes system and $\theta$ is 
+the local orientation.
+In that case the diffusion term in the heat trasport equation becomes $\vec{\nabla}\cdot({\bm k}\cdot \vec{\nabla}T)$.
+
 
 

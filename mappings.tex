@@ -1,8 +1,13 @@
 
-\index{isoparametric}
+\index{Isoparametric}
 The name isoparametric derives from the fact that the same ('iso') 
 functions are used as basis functions and for the mapping to the reference element.
 
+More generally, if $n_e$ denotes the number of nodes of an element and $n_g$ denotes the 
+number of nodes describing the geometry of the element, 
+then the element is termed subparametric when $n_g<n_e$ and 
+superparametric when $n_g>n_e$.
+\index{Subparametric} \index{Superparametric}
 
 %...........................................
 \subsubsection{Linear mapping on a triangle}
@@ -109,11 +114,11 @@ N_3(x,y) &=& \left( \frac{x - x_1}{h_x}  \right) \left( \frac{y - y_1}{h_y}  \ri
 N_4(x,y) &=& \left( \frac{x_3 -x }{h_x}  \right) \left( \frac{y - y_1}{h_y}  \right) \nn 
 \end{eqnarray}
 
-We have seen in Section~\ref{XXX} that since
+Since
 \[
 x(r,s)=\sum_i N_i(r,s) x_i 
 \qquad
-y(r,s)=\sum_i N_i(r,s) y_i 
+y(r,s)=\sum_i N_i(r,s) y_i,
 \]
 we have 
 \begin{eqnarray}

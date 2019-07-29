@@ -1,26 +1,26 @@
 
-\subsubsection{Tensor invariants}
+\subsubsection{Tensor invariants}\label{sec:invariants}
 
 Before we dive into the world of nonlinear rheologies it is necessary to introduce the concept of tensor 
 invariants since they are needed further on. \index{tensor invariant}
 Unfortunately there are many different notations used in the literature and these can prove to be 
 confusing. Note that we only consider symmetric tensors in what follows.
 
-Given a tensor $\bm{T}$,  one can compute its (moment) invariants as follows:
+Given a tensor $\bm{T}$,  one can compute its (moment) invariants as follows \cite[p.339]{reddybook2}: 
 \begin{itemize}
-\item first invariant : 
+\item first invariant:
 \begin{eqnarray}
 T_I|^{2D} &=& Tr[\bm{T}] = T_{xx} + T_{yy} \nonumber\\
 T_I|^{3D} &=& Tr[\bm{T}] = T_{xx} + T_{yy} + T_{zz} \nonumber
 \end{eqnarray}
-\item second invariant :
+\item second invariant:
 \begin{eqnarray}
 T_{II}|^{2D} &=& \frac{1}{2} Tr[{\bm{T}^2}] = \frac{1}{2} \sum_{ij} T_{ij} T_{ji} = \frac{1}{2} (T_{xx}^2 + T_{yy}^2) + T_{xy}^2 \nonumber\\
 T_{II}|^{3D} &=& \frac{1}{2} Tr[{\bm{T}^2}] = \frac{1}{2} \sum_{ij} T_{ij} T_{ji} = \frac{1}{2} (T_{xx}^2 + T_{yy}^2 + T_{yy}^2) + T_{xy}^2 + T_{xz}^2 + T_{yz}^2 \nonumber
 \end{eqnarray}
-\item third invariant : 
+\item third invariant: 
 \[
-T_{III} = \frac{1}{3} Tr[{\bm{T}^3}]  = \frac{1}{3}\sum_{ijk} T_{ij} T_{jk} T_{ki} 
+T_{III} = \frac{1}{3} Tr[{\bm{T}^3}]  = \frac{1}{3}\sum_i\sum_j \sum_k T_{ij} T_{jk} T_{ki} 
 \]
 \end{itemize}
 

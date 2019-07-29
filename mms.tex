@@ -12,7 +12,7 @@ Examples of this approach are to be found in \cite{dohu03,busa13,bodg06}.
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark I \label{mms1} - "Donea \& Huerta"}
+\subsubsection{Analytical benchmark I \label{mms1} - "DH"}
 
 Taken from \cite{dohu03}. We consider a two-dimensional problem 
 in the square domain $\Omega=[0,1]\times[0,1]$, which possesses a closed-form analytical 
@@ -74,18 +74,18 @@ Taking into account that the proposed problem has got analytical solution, it is
 
 One can also compute the stress components:
 \begin{eqnarray}
-\sigma_{xx} &=&  2*x**2*(2*x - 2)*(4*y**3 - 6*y**2 + 2*y) + 4*x*(-x + 1)**2*(4*y**3 - 6*y**2 + 2*y) - x*(-x + 1) + 1/6 \\
-\sigma_{xy} &=&  x**2*(-x + 1)**2*(12*y**2 - 12*y + 2) - y**2*(-y + 1)**2*(12*x**2 - 12*x + 2) \\
-\sigma_{yy} &=&  -x*(-x + 1) - 2*y**2*(2*y - 2)*(4*x**3 - 6*x**2 + 2*x) - 4*y*(-y + 1)**2*(4*x**3 - 6*x**2 + 2*x) + 1/6
+\sigma_{xx} &=&  2x^2(2x - 2)(4y^3 - 6y^2 + 2y) + 4x(-x + 1)^2*(4y^3 - 6y^2 + 2y) - x(-x + 1) + 1/6 \\
+\sigma_{xy} &=&  x^2(-x + 1)^2*(12y^2 - 12y + 2) - y^2(-y + 1)^2*(12x^2 - 12x + 2) \\
+\sigma_{yy} &=&  -x(-x + 1) - 2y^2(2y - 2)(4x^3 - 6x^2 + 2x) - 4y(-y + 1)^2(4x^3 - 6x^2 + 2x) + 1/6
 \end{eqnarray}
 
 
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark II \label{mms2} - "Dohrmann \& Bochev 2D"}
+\subsubsection{Analytical benchmark II \label{mms2} - "DB2D"}
 
-Taken from \cite{dobo04}. It is for a unit square with $\nu=\mu/\rho=1$ and the smooth exact solution is
+Taken from \cite{dobo04,bodg06}. It is for a unit square with $\nu=\mu/\rho=1$ and the smooth exact solution is
 \begin{eqnarray}
 u(x,y) &=& x+x^2 - 2xy+x^3 - 3xy^2 + x^2y \\
 v(x,y) &=& -y-2xy+y^2 -3x^2y + y^3 - xy^2 \\
@@ -100,7 +100,7 @@ b_y &=& - (1-3x-2x^3y)
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark III \label{mms3} - "Dohrmann \& Bochev 3D"}
+\subsubsection{Analytical benchmark III \label{mms3} - "DB3D"}
 
 This benchmark begins by postulating a polynomial solution 
 to the 3D Stokes equation \cite{dobo04}:
@@ -279,7 +279,7 @@ p &=& (x-1/2)(y-1/2)
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark V \label{mms5} - "VJ"}
+\subsubsection{Analytical benchmark V \label{mms5} - "VJ1"}
 
 This is taken from Appendix D1 of \cite{john16}.
 
@@ -505,13 +505,25 @@ const double pi2 = pi*pi;
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark IX \label{mms9} - "John"}
+\subsubsection{Analytical benchmark IX \label{mms9} - "VJ2"}
 
 It is presented in \cite{jolm17} and meant to be a peculiar case where the velocity solution 
 is exactly zero. The viscosity is 1, the domain is a unit square, no-slip boundary conditions 
 are prescribed everywhere. The buoyancy force is given by $\vec{b}=(0,Ra(1-y+3y^2))$ where 
 $Ra>0$ is a parameter. The flow is incompressible and the analytical pressure solution 
 is given by $p=Ra(y^3-y^2/2+y-7/12)$.
+
+%-----------------------------------------------------------------------------
+\subsubsection{Analytical benchmark X \label{mms10} - "VJ3"}
+
+This benchmark comes from John et al. \cite{jolm17}.
+The domain is once again the unit square. The velocity field has the form of a large vortex.
+
+\begin{eqnarray}
+u(x,y) &=& 200x^2(1-x)^2y(1-y)(1-2y) \\
+v(x,y) &=& -200x(1-x)(1-2x)y^2(1-y)^2 \\
+p(x,y) &=& 10\left[(x-1/2)^3y^2+(1-x)^3(y-1/2)^3 \right]
+\end{eqnarray}
 
 
 

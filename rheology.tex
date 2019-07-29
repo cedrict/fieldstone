@@ -1,0 +1,62 @@
+
+For now what follows only deals with viscous behavior.
+
+
+\subsubsection{Linear viscous aka Newtonian} \index{Newtonian fluid}
+
+Simply put, a Newtonian fluid is a fluid in which the viscous stresses at every point are linearly proportional 
+to the local strain rate.
+Mathematically speaking, this means that the fourth-order tensor ${\bm C}$ relating the viscous stress 
+tensor to the strain rate tensor does not depend on the stress state and velocity of the flow.
+\[
+{\bm s}={\bm C} \cdot \dot{\bm \varepsilon}
+\]
+
+One very often make sthe assumption that the fluid is isotropic, i.e. its mechanical properties are the 
+same along any direction. As a consequence the fourth order viscosity tensor 
+${\bm C}$ is symmetric and will have only two independent real parameters: 
+a bulk viscosity coefficient, that defines the resistance of the medium to gradual uniform compression; 
+and a dynamic viscosity coefficient $\eta$ that expresses its resistance to gradual shearing, 
+(we here neglect the so-called rotational viscosity coefficient which results from a coupling between the fluid flow and the rotation of the individual particles). %wiki
+
+
+
+Rather logically we denote by non-Newtonian fluids with are not Newtonian, i.e. their viscosity (tensor)
+depends on stress. Such fluids are part of our daily life, e.g. honey, toothpaste, paint, blood, and shampoo. 
+ 
+
+
+%------------------------------
+\subsubsection{Power-law model}
+\index{Power-law model}
+
+One of the simplest non-Newtonian viscosity model is the power-law model:
+\begin{equation}
+\eta = K \dot{\varepsilon}_{II}^{(n-1)/2}
+\end{equation}
+where $\dot{\varepsilon}_{II}$ is the second invariant of the strain rate tensor as defined in 
+Section~\ref{sec:invariants}, and $n$ and $K$ are parameters. $n$ is called the power-law index.
+
+Note that a Newtonian viscosity is recovered when $n=1$. Also $n$ and $K$ may depend on temperature
+\cite[p339]{reddybook2}.
+
+
+%------------------------------
+\subsubsection{Carreau model}
+
+
+
+%------------------------------
+\subsubsection{Bingham model}
+
+%------------------------------
+\subsubsection{Dislocation creep}
+
+%------------------------------
+\subsubsection{Diffusion creep}
+
+%------------------------------
+\subsubsection{Peierls creep}
+
+
+

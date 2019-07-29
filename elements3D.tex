@@ -336,3 +336,34 @@ N_3(r,s,t) &=& \frac{1}{4}(1-2r-2s+2t)\nonumber\\
 N_4(r,s,t) &=& \frac{1}{4}(1+2r+2s+2t)\nonumber
 \end{eqnarray}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{20-node serendipity basis functions in 3D ($Q_2^{(20)}$)}
+\index{$Q_2^{(20)}$} \index{Serendipity element}
+
+The serendipity elements are those rectangular elements which have no
+interior nodes \cite[p91]{reddybook2}.
+
+\begin{verbatim}
+   t
+   |
+   .--s
+  /
+ r
+                                    05=====20=====08 
+                                    |             |  
+                                    |             |  
+                  17 - - - - - -19  13            16
+                  .              .  |             |  
+                  .              .  |             |  
+06=====18=====07  .              .  01=====12=====04 @ r=-1
+|             |   .              . 
+|             |   .              .  
+14            15  09 - - - - - -11 @ r=0
+|             |   
+|             |  
+02=====10=====03 @ r=+1
+\end{verbatim}
+
+\todo[inline]{find/build shape functions!}
+
+

@@ -37,7 +37,7 @@ ${\bm \sigma}$ & full stress tensor & Pa \\
 \index{spin tensor}
 
 The velocity gradient is given in Cartesian coordinates by:
-\[
+\begin{equation}
 \vec\nabla\vec\upnu = 
 \left(
 \begin{array}{ccc}
@@ -46,45 +46,40 @@ The velocity gradient is given in Cartesian coordinates by:
 \frac{\partial u}{\partial z} & \frac{\partial v}{\partial z} & \frac{\partial w}{\partial z} 
 \end{array}
 \right)
-\]
+\end{equation}
 It can be decomposed into its symmetric and skew-symmetric parts according to:
-\[
+\begin{equation}
 \vec\nabla\vec\upnu = \vec\nabla^s\vec\upnu + \vec\nabla^w\vec\upnu
-\]
+\end{equation}
 The symmetric part is called the strain rate (or rate of deformation):
-\[
+\begin{equation}
 \dot{\bm \epsilon}(\vec \upnu) = \frac{1}{2}\left( \vec\nabla\vec\upnu + \vec\nabla\vec\upnu^T \right)
-\]
+\end{equation}
 The skew-symmetric tensor is called spin tensor (or vorticity tensor):
-\[
+\begin{equation}
 \dot{\bm R}(\vec \upnu) = \frac{1}{2}\left( \vec\nabla\vec\upnu - \vec\nabla\vec\upnu^T \right)
-\]
-
-
-
-
+\end{equation}
 
 %------------------------------------------------------------------------
 \subsection{The heat transport equation - energy conservation equation}
 
 Let us start from the heat transport equation as shown in Schubert, Turcotte and Olson \cite{scto01}:
-\[
+\begin{equation}
 \rho C_p \frac{DT}{Dt} - \alpha T \frac{Dp}{Dt} = {\vec \nabla} \cdot k {\vec \nabla} T + \Phi + \rho H  
-\]
+\end{equation}
 with $D/Dt$ being the total derivatives so that 
-\[
+\begin{equation}
 \frac{DT}{Dt} = \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec \nabla}T
 \quad\quad
 \frac{Dp}{Dt} = \frac{\partial p}{\partial t} + {\vec \upnu}\cdot {\vec \nabla}p
-\]
+\end{equation}
 Solving for temperature, this equation is often rewritten as follows:
 \begin{mdframed}[backgroundcolor=blue!5]
-\[
+\begin{equation}
 \rho C_p \frac{DT}{Dt} - {\vec \nabla} \cdot k {\vec \nabla} T =  \alpha T \frac{Dp}{Dt} + \Phi + \rho H  
-\]
+\end{equation}
 \end{mdframed}
-
-A note on the shear heating term $\Phi$: In many publications, $\Phi$ 
+where $\Phi$ is the shear heating \cite[p287]{reddybook2}. In many publications, $\Phi$ 
 is given by $\Phi=\tau_{ij}\partial_j u_i={\bm \tau}:{\vec \nabla}{\vec \upnu}$.
 
 \begin{eqnarray}
@@ -112,22 +107,22 @@ Finally
 
 Because the Prandlt number is virtually zero in Earth science applications the Navier Stokes 
 equations reduce to the Stokes equation:
-\[
+\begin{equation}
 {\vec \nabla}\cdot {\bm \sigma} + \rho {\vec g} = 0
-\]
+\end{equation}
 Since 
-\[
+\begin{equation}
 {\bm \sigma} = -p {\bm 1} + {\bm \tau}
-\]
+\end{equation}
 it also writes
-\[
+\begin{equation}
 -{\vec \nabla}p + {\vec \nabla}\cdot {\bm \tau} + \rho {\vec g} = 0
-\]
+\end{equation}
 Using the relationship ${\bm \tau} = 2 \eta \dot{\bm \varepsilon}^d$ we arrive at 
 \begin{mdframed}[backgroundcolor=blue!5]
-\[
+\begin{equation}
 -{\vec \nabla}p + {\vec \nabla}\cdot (2 \eta \dot{\bm \varepsilon}^d ) + \rho {\vec g} = 0
-\]
+\end{equation}
 \end{mdframed}
 
 %------------------------------------------------------------------------
