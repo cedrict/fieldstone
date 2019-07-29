@@ -1,0 +1,27 @@
+set term pdf enhanced
+set output 'errors.pdf'
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+set key outside
+plot[][]\
+'errors_0' u (1./sqrt($3)):6 w lp pt 1 t 'velocity (TH)',\
+'errors_0' u (1./sqrt($3)):9 w lp pt 1 t 'pressure (TH)',\
+'errors_1' u (1./sqrt($3)):6 w lp pt 4 t 'velocity (S)',\
+'errors_1' u (1./sqrt($3)):9 w lp pt 4 t 'pressure (S)',\
+x**3/150. w l lt -1 dashtype 2 t 'x^3',\
+x**2/20.  w l lt -1 dashtype 3 t 'x^2'
+
+unset log xy
+set output 'NV.pdf'
+set xlabel 'nelx(=nely)'
+set ylabel 'NV'
+plot[4:256][]\
+(x+1)*(x+1)+x*(x+1)+ (x+1)*x t 'Serendipity',\
+(2*x+1)*(2*x+1) t 'Taylor-Hood'
+
+set output 'NV_ratio.pdf'
+plot[4:256][0.5:]\
+((x+1)*(x+1)+x*(x+1)+ (x+1)*x)/((2*x+1)*(2*x+1)) notitle
+
+
