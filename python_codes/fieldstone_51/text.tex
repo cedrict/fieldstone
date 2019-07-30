@@ -35,10 +35,11 @@ pressure field has been normalised so that $\langle p \rangle = \int_\Omega p dV
 As opposed to the mesh presented in \cite{jolm17} I build a regular mesh.
 An example of such a mesh is shown hereunder (a) for $n=5$ (the number of nodes
 per side of the triangular domain). 
+In order to generate a mesh which is more isotropic some edges between 
+triangles can be flipped (b). 
 Note that this mesh can also be modified in such a way that the position of 
-nodes inside the domain is perturbed by a small random value (b).
-Finally, in order to generate a mesh which is more isotropic some edges between 
-triangles can be flipped (c). In what follows I denote by $h$ the distance between nodes
+nodes inside the domain is perturbed by a small random value (c).
+In what follows I denote by $h$ the distance between nodes
 on the horizontal (or vertical) boundaries, i.e. $h=L_x/(n-1)=L_y/(n-1)$.
 \begin{center}
 a)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/minigrid5a}

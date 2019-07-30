@@ -56,4 +56,38 @@ understand the serendipity element in 2D (type=23) and 3D (type=25).
 \includegraphics[width=8cm]{python_codes/fieldstone_52/images/errors.pdf}
 \end{center}
 
+It looks like the serendipity element yields the same errors and error convergence 
+rates as its Taylor-Hood counterpart. Since it is cheaper in terms of dofs, 
+one could think that it should be preferred. However, most modern codes 
+use an iterative solver approach to solve the discretised Stokes problem, and 
+often the $\K$ matrix (which is SPD) is 'solved' with a conjugate gradient solver.  
+The convergence of this type of solver depends on the condition number of the matrix
+itself, i.e. the ratio of the largest and smallest eigenvalues. 
+Note that this is rather trivial with Python:
+
+\begin{lstlisting}
+print('condition number:', nel,linalg.cond(K_mat))
+\end{lstlisting}
+However, since I was also curious about the values of the eigenvalues, I implemented 
+it as follows:
+\begin{lstlisting}
+eigvals, eigvecs = linalg.eig(K_mat)
+print('eigenvalues:',nel,eigvals.min(),eigvals.max())
+\end{lstlisting}
+
+
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_52/images/eigenvalues.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_52/images/eigenvalues_ratio.pdf}\\
+{\small Left: min and max eigenvalues for both types of elements as a function of $h$; 
+Right: condition number}
+\end{center}
+As it turns out, the condition number is twice as high for the serendipity element, 
+which means that the CG would have to iterate more to arrive at the solution, 
+thereby offsetting the benefit of less dofs.
+
+
+
+
 

@@ -2,9 +2,13 @@
 
 rm errors_0
 rm errors_1
+rm eigen_0
+rm eigen_1
+rm condnb_0
+rm condnb_1
 rm *.ascii
 
-for l in 8 10 12 14 16 20 24 28 32 40 48 56 64 ; do
+for l in 8 10 12 14 16 20 24 28 32 40; do # 48 56 64 ; do
 
 for e in 0 1; do
 
@@ -13,6 +17,8 @@ for e in 0 1; do
         python3 fieldstone.py $l $l 0 $e > opla
 
         grep errq opla >> errors_$e
+        grep eigen opla >> eigen_$e
+        grep number opla >> condnb_$e
 
 done
 done

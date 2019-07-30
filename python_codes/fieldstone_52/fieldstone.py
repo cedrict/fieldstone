@@ -6,6 +6,7 @@ from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import lil_matrix
 #from dh import bx,by,u_th,v_th,p_th
 from vj3 import bx,by,u_th,v_th,p_th,exx_th,eyy_th,exy_th
+from numpy import linalg 
 
 #------------------------------------------------------------------------------
 
@@ -96,8 +97,8 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    serendipity = int(sys.argv[4])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 16
+   nely = 16
    visu = 1
    serendipity=0
 
@@ -459,6 +460,18 @@ if not sparse:
 print("build FE matrix: %.3fs - %d elts" % (timing.time()-start, nel))
 
 ######################################################################
+# compute min,max eigenvalues of K matrix
+######################################################################
+start = timing.time()
+
+eigvals, eigvecs = linalg.eig(K_mat)
+print('eigenvalues:',nel,eigvals.min(),eigvals.max())
+
+#print('condition number:', nel,linalg.cond(K_mat))
+
+print("eigenvalues and cond nb: %.3f s" % (timing.time() - start))
+
+######################################################################
 # assemble K, G, GT, f, h into A and rhs
 ######################################################################
 start = timing.time()
@@ -499,6 +512,7 @@ if sparse:
    sparse_matrix=A_sparse.tocsr()
 else:
    sparse_matrix=sps.csr_matrix(a_mat)
+
 
 sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
