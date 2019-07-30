@@ -18,6 +18,17 @@ we use this simple $4\times 3$ element mesh:
 24      25      26      27      28      09..10..11..12..13..14..15..16..17
  |       |       |       |       |       |   :   |   :   |   :   |   :   |
 00--20--01--21--02--22--03--23--04      00--01--02--03--04--05--06--07--08
+
+iel= 0:                                  iel= 0
+node  0 : 0 at pos. 0.0 0.0              node  0 : 0 at pos. 0.0 0.0
+node  1 : 1 at pos. 1.0 0.0              node  1 : 2 at pos. 1.0 0.0
+node  2 : 6 at pos. 1.0 1.0              node  2 : 20 at pos. 1.0 1.0
+node  3 : 5 at pos. 0.0 1.0              node  3 : 18 at pos. 0.0 1.0
+node  4 : 20 at pos. 0.5 0.0             node  4 : 1 at pos. 0.5 0.0
+node  5 : 25 at pos. 1.0 0.5             node  5 : 11 at pos. 1.0 0.5
+node  6 : 29 at pos. 0.5 1.0             node  6 : 19 at pos. 0.5 1.0
+node  7 : 24 at pos. 0.0 0.5             node  7 : 9 at pos. 0.0 0.5
+                                         node  8 : 10 at pos. 0.5 0.5
 \end{verbatim}
 
 We see that the serendipity element-based mesh counts only 51 nodes, as
@@ -27,8 +38,8 @@ Setting $nelx=nely$, we can look at the number of velocity nodes for each
 as a function of $nelx$, as shown hereunder:
 
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_52/NV.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_52/NV_ratio.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_52/images/NV.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_52/images/NV_ratio.pdf}
 \end{center}
 Looking at the ratio between both, we see that ultimately 
 at high resolution, a mesh composed of serendipity elements 
@@ -42,7 +53,7 @@ Although the vtk format does not understand the $Q_2$ element in 2D or 3D, it su
 understand the serendipity element in 2D (type=23) and 3D (type=25).
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_52/errors.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_52/images/errors.pdf}
 \end{center}
 
 

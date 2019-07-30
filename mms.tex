@@ -40,8 +40,10 @@ p(x,y) &=& x(1 -x)- 1/6 \nonumber
 Note that the pressure obeys $\int_{\Omega} p \; d\Omega = 0$.
 One can turn to the spatial derivatives of the fields:
 \begin{eqnarray}
-\frac{\partial u}{\partial x} &=&  (2x -6x^2 +4 x^3 ) (2y - 6y^2 + 4y^3)  \\
-\frac{\partial v}{\partial y} &=&  - (2x -6x^2 +4 x^3 ) (2y - 6y^2 + 4y^3)  
+\dot{\varepsilon}_{xx}=\frac{\partial u}{\partial x} &=&  (2x -6x^2 +4 x^3 ) (2y - 6y^2 + 4y^3)  \\
+\dot{\varepsilon}_{yy}=\frac{\partial v}{\partial y} &=&  - (2x -6x^2 +4 x^3 ) (2y - 6y^2 + 4y^3)  \\
+\dot{\varepsilon}_{xy}=\frac{1}{2}\left(\frac{\partial u}{\partial y}+\frac{\partial v}{\partial x}\right) 
+&=&=\frac{1}{2}\left( x^2(1- x)^2 ( 2-12y+12y^2  ) -y^2 (1-y)^2 (2-12x+12x^2) \right)
 \end{eqnarray}
 with of course  ${\vec \nabla} \cdot {\vec \upnu} = 0$ and 
 \begin{eqnarray}
@@ -80,6 +82,8 @@ One can also compute the stress components:
 \end{eqnarray}
 
 
+All the necessary functions to do this benchmark are in {\tt mms/dh.py}:
+\lstinputlisting[language=python]{mms/dh.py}
 
 
 %-----------------------------------------------------------------------------
@@ -530,6 +534,65 @@ p(x,y) &=& 10\left[(x-1/2)^3y^2+(1-x)^3(y-1/2)^3 \right]
 \includegraphics[width=4.5cm]{images/benchmark_VJ3/v.pdf}
 \includegraphics[width=4.5cm]{images/benchmark_VJ3/p.pdf}
 \end{center}
+
+\begin{eqnarray}
+\dot{\varepsilon}_{xx}=\frac{\partial u}{\partial x} &=& -400(1-x)x(2x-1)(y-1)y(2y-1)  \\
+\frac{\partial u}{\partial y} &=& 200(1-x)^2x^2 (6y^2-6y+1)  \\
+\frac{\partial v}{\partial x} &=& -200(6x^2-6x+1)(1-y)^2y^2  \\
+\dot{\varepsilon}_{yy}=\frac{\partial v}{\partial y} &=& 400(x-1)x(2x-1)(1-y)y(2y-1) 
+\end{eqnarray}
+so that 
+\begin{eqnarray}
+\dot{\varepsilon}_{xy}
+&=&\frac{1}{2} \left[ 200(1-x)^2x^2 (6y^2-6y+1)   -200(6x^2-6x+1)(1-y)^2y^2  \right] \nn\\
+&=&100(1-x)^2x^2 (6y^2-6y+1)   -100(6x^2-6x+1)(1-y)^2y^2 
+\end{eqnarray}
+Also
+\begin{eqnarray}
+\frac{\partial \dot{\varepsilon}_{xx}}{\partial x} &=& 400(6x^2-6x+1)y(2y^2-3y+1) \nn\\
+\frac{\partial \dot{\varepsilon}_{xy}}{\partial x} 
+&=& 200 (-2 x^2 (1 - x) (6 y^2 - 6 y + 1) + 2 x (1 - x)^2 (6 y^2 - 6 y + 1) - 6 (2 x - 1) (1 - y)^2 y^2)\nn\\
+&=&  100 (-2 x^2 (1 - x) (6 y^2 - 6 y + 1) + 2 x (1 - x)^2 (6 y^2 - 6 y + 1) - 6 (2 x - 1) (1 - y)^2 y^2) \nn\\
+\frac{\partial \dot{\varepsilon}_{xy}}{\partial y} &=& 400 (6 x^2 - 6 x + 1) (1 - y) y^2 + 200 (1 - x)^2 x^2 (12 y - 6) - 400 (6 x^2 - 6 x + 1) (1 - y)^2 y   \nn \\
+\frac{\partial \dot{\varepsilon}_{yy}}{\partial y} &=& -400x(2x^2-3x+1)(6y^2-6y+1) 
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\frac{\partial p}{\partial x} &=& 30(x-1/2)^2y^2-30(1-x)^2(y-1/2)^3 \\
+\frac{\partial p}{\partial y} &=& 20(x-1/2)^3y + 30(1-x)^3(y-1/2)^2  
+\end{eqnarray}
+
+From $\vec\nabla\cdot{\bm \sigma}+\vec{b}=\vec{0}$ we can obtain the rhs as follows:
+\begin{eqnarray}
+\vec{b} 
+&=& - \vec\nabla\cdot{\bm \sigma} \nn\\ 
+&=& \vec\nabla p -  \vec\nabla\cdot{\bm s} \nn\\ 
+&=& \vec\nabla p -  \vec\nabla\cdot(2 \eta \dot{\bm \varepsilon})  
+\end{eqnarray}
+Assuming $\eta=1$ we arrive at:
+\begin{eqnarray}
+b_x &=&  \frac{\partial p}{\partial x} 
+-2\frac{\partial \dot{\varepsilon}_{xx}}{\partial x}  
+-2\frac{\partial \dot{\varepsilon}_{xy}}{\partial y}  \\
+b_y &=&  \frac{\partial p}{\partial y}  
+-2\frac{\partial \dot{\varepsilon}_{xy}}{\partial x} 
+-2\frac{\partial \dot{\varepsilon}_{yy}}{\partial y}  
+\end{eqnarray}
+
+All the necessary functions to do this benchmark are in {\tt mms/vj3.py}:
+\lstinputlisting[language=python]{mms/vj3.py}
+
+\begin{center}
+\includegraphics[width=4.5cm]{images/mms/vj3/u}
+\includegraphics[width=4.5cm]{images/mms/vj3/v}
+\includegraphics[width=4.5cm]{images/mms/vj3/vel}\\
+\includegraphics[width=4.5cm]{images/mms/vj3/p}
+\includegraphics[width=4.5cm]{images/mms/vj3/exx}
+\includegraphics[width=4.5cm]{images/mms/vj3/exy}
+\end{center}
+
+
 
 
 

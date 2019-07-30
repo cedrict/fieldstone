@@ -4,6 +4,8 @@ import time as timing
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import lil_matrix
+#from dh import bx,by,u_th,v_th,p_th
+from vj3 import bx,by,u_th,v_th,p_th,exx_th,eyy_th,exy_th
 
 #------------------------------------------------------------------------------
 
@@ -81,34 +83,6 @@ def NNP(r,s):
 
 #------------------------------------------------------------------------------
 
-def bx(x, y):
-    val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
-         (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
-         (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
-         1.-4.*y+12.*y*y-8.*y*y*y)
-    return val
-
-def by(x, y):
-    val=((8.-48.*y+48.*y*y)*x*x*x+
-         (-12.+72.*y-72.*y*y)*x*x+
-         (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
-         12.*y*y+24.*y*y*y-12.*y**4)
-    return val
-
-def velocity_x(x,y):
-    val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
-    return val
-
-def velocity_y(x,y):
-    val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
-    return val
-
-def pressure(x,y):
-    val=x*(1.-x)-1./6.
-    return val
-
-#------------------------------------------------------------------------------
-
 ndim=2
 ndofV=2
 ndofP=1
@@ -122,8 +96,8 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    serendipity = int(sys.argv[4])
 else:
-   nelx = 4
-   nely = 3
+   nelx = 32
+   nely = 32
    visu = 1
    serendipity=0
 
@@ -167,8 +141,8 @@ if serendipity==1:
    rVnodes=[-1,1,1,-1,0,1,0,-1]
    sVnodes=[-1,-1,1,1,-1,0,1,0]
 else:
-   rVnodes=[-1,0,+1,-1,0,+1,-1,0,+1]
-   sVnodes=[-1,-1,-1,0,0,0,+1,+1,+1]
+   rVnodes=[-1,1,1,-1,0,1,0,-1,0]
+   sVnodes=[-1,-1,1,1,-1,0,1,0,0]
 
 #################################################################
 # grid point setup
@@ -251,10 +225,10 @@ else:
            iconV[8,counter]=(i)*2+2+(j)*2*nnx+nnx -1
            counter += 1
 
-for iel in range (0,nel):
-     print ("iel=",iel)
-     for i in range(0,mV):
-         print ("node ",i,':',iconV[i,iel],"at pos.",xV[iconV[i,iel]], yV[iconV[i,iel]])
+#for iel in range (0,nel):
+#     print ("iel=",iel)
+#     for i in range(0,mV):
+#         print ("node ",i,':',iconV[i,iel],"at pos.",xV[iconV[i,iel]], yV[iconV[i,iel]])
 
 
 #################################################################
@@ -645,8 +619,8 @@ for iel in range (0,nel):
                 uq+=NNNV[k]*u[iconV[k,iel]]
                 vq+=NNNV[k]*v[iconV[k,iel]]
                 qq+=NNNV[k]*q[iconV[k,iel]]
-            errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
-            errq+=(qq-pressure(xq,yq))**2*weightq*jcob
+            errv+=((uq-u_th(xq,yq))**2+(vq-v_th(xq,yq))**2)*weightq*jcob
+            errq+=(qq-p_th(xq,yq))**2*weightq*jcob
 
             xq=0.
             yq=0.
@@ -655,7 +629,7 @@ for iel in range (0,nel):
                 xq+=NNNP[k]*xP[iconP[k,iel]]
                 yq+=NNNP[k]*yP[iconP[k,iel]]
                 pq+=NNNP[k]*p[iconP[k,iel]]
-            errp+=(pq-pressure(xq,yq))**2*weightq*jcob
+            errp+=(pq-p_th(xq,yq))**2*weightq*jcob
 
         # end for jq
     # end for iq
@@ -714,9 +688,34 @@ if visu==1:
         vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
     vtufile.write("</DataArray>\n")
     #--
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (th)' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e %10e %10e \n" %(u_th(xV[i],yV[i]),v_th(xV[i],yV[i]),0.))
+    vtufile.write("</DataArray>\n")
+    #--
     vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%10e \n" %q[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" %(p_th(xV[i],yV[i])))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='exx (th)' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" %(exx_th(xV[i],yV[i])))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='eyy (th)' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" %(eyy_th(xV[i],yV[i])))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='exy (th)' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" %(exy_th(xV[i],yV[i])))
     vtufile.write("</DataArray>\n")
     #--
     #vtufile.write("<DataArray type='Float32' Name='error u' Format='ascii'> \n")
@@ -748,7 +747,7 @@ if visu==1:
     #--
     vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
     for iel in range (0,nel):
-        vtufile.write("%d \n" %((iel+1)*mV))
+        vtufile.write("%d \n" %((iel+1)*8))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
