@@ -121,13 +121,13 @@ Nfem=NfemV+NfemP
 hx=Lx/nelx
 hy=Ly/nely
 
-print('nelx',nelx)
-print('nely',nely)
-print('nel ',nel)
-print('NV  ',NV)
-print('NP     =',NP)
-print('NfemV =',NfemV)
-print('NfemP =',NfemP)
+print('nelx =',nelx)
+print('nely =',nely)
+print('nel  =',nel)
+print('NV   =',NV)
+print('NP   =',NP)
+print('NfemV=',NfemV)
+print('NfemP=',NfemP)
 
 nqperdim=3
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
@@ -566,7 +566,7 @@ for iel in range(0,nel):
 
 print('avrg pressure',avrg_p)
 
-p[:]-=avrg_p
+p[:]-=avrg_p/Lx/Ly
 
 np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 

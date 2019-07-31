@@ -1,0 +1,20 @@
+set term pdf enhanced
+set output 'results.pdf'
+set log x
+set xlabel '{/Symbol h}_1/{/Symbol h}_2'
+set ylabel '|v_b| {/Symbol h}_1/({/Symbol r}_2-{/Symbol r}_1)'
+set key bottom 
+
+plot[][]\
+'results_3208_32x32' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3208, 32^2',\
+'results_3232_32x32' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3232, 32^2',\
+'results_3328_32x32' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3328, 32^2',\
+'results_3208_48x48' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3208, 48^2',\
+'results_3232_48x48' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3232, 48^2',\
+'results_3328_48x48' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3328, 48^2',\
+'results_3208_64x64' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3208, 64^2',\
+'results_3232_64x64' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3232, 64^2',\
+'results_3328_64x64' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3328, 64^2',\
+
+
+
