@@ -49,6 +49,54 @@ Note that a Newtonian viscosity is recovered when $n=1$. Also $n$ and $K$ may de
 %------------------------------
 \subsubsection{Bingham model}
 
+
+%------------------------------
+\subsubsection{Herschel-Bulkley visco-plastic model}
+
+The Herschel-Bulkley model is effectively a combination of the power-law model and 
+a simple plastic model:
+\begin{eqnarray}
+{\bm s} &=& 2 \left(  K \dot{\varepsilon}^{n-1} + \frac{\tau_0}{\dot{\varepsilon}}\right)\dot{\bm \varepsilon} \qquad \text{ if } {s}_{II}>\tau_0 \\
+\dot{\bm \varepsilon} &=& {\bm 0} \qquad {s}_{II} \leq \tau_0 \\
+\end{eqnarray}
+in which $\dot{\varepsilon}=\sqrt{\dot{\varepsilon}_{II}}$, 
+$\tau_0$ is the yield stress, $K$ the consistency, and $n$ is the flow index \cite{bemj04}.
+The flow index measures the degree to which the fluid is shear-thinning ($n<1$) or shear-thickening ($n>1$).
+If $n=1$ and $\tau_0=0$ the model reduces to the Newtonian model. 
+
+The term between parenthesis above is the nonlinear effective viscosity. Concretely, the implementation goes as 
+follows\footnote{\url{https://en.wikipedia.org/wiki/Herschel-Bulkley_fluid}}:
+\[
+\eta_{eff} = 
+\left\{
+\begin{array}{cc}
+\eta_0 & \dot{\varepsilon}\leq \dot{\varepsilon}_0 \\ 
+K \dot{\varepsilon}^{n-1} + \frac{\tau_0}{\dot{\varepsilon}} & \dot{\varepsilon} \geq \dot{\varepsilon}_0
+\end{array}
+\right.
+\]
+The limiting viscosity $\eta_0$ is chosen such that 
+$\eta_0 =  K \dot{\varepsilon}_0^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_0}$
+
+A large limiting viscosity means that the fluid will only flow in response to a large applied force. 
+This feature captures the Bingham-type behaviour of the fluid. 
+Note that when strain rates are large, the power-law behavior dominates. 
+
+As we have seen for Bingham fluids, the equations above are not easily amenable to implementation so that 
+one usually resorts to regularisation, which is a modification of the 
+equations by introducing a new material parameter which controls the exponential 
+growth of stress. This way the equation is valid for both yielded and unyielded areas
+\cite{blmi97,papa87}:
+\[
+\eta_{eff} = K \dot{\varepsilon}^{n-1} + \frac{\tau_0}{\dot{\varepsilon}} [1 - \exp(-m \dot{\varepsilon})] 
+\]
+When the strain rate becomes (very) small a Taylor expansion of the regularisation 
+term yields $1- \exp(-m \dot{\varepsilon}) \sim m \dot{\varepsilon} $ so that 
+$\eta_{eff} \rightarrow m \tau_0$.
+
+\todo[inline]{Channel flow of wikipedia with analytical solution!}
+
+
 %------------------------------
 \subsubsection{Dislocation creep}
 
