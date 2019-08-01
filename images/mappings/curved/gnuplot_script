@@ -1,0 +1,81 @@
+set term pdf enhanced
+set xlabel 'x'
+set ylabel 'y'
+set size square
+
+set output 'xy1.pdf'
+plot[0:1.5][0:1.5]\
+'xy1.ascii' w d notitle,\
+sqrt(1-x**2) lt -1 notitle,\
+sqrt(1.5**2-x**2) lt -1 notitle
+
+set output 'xy2.pdf'
+plot[0:1.5][0:1.5]\
+'xy2.ascii' w d notitle,\
+sqrt(1-x**2) lt -1 notitle,\
+sqrt(1.5**2-x**2) lt -1 notitle
+
+#set output 'xy2_zoom.pdf'
+#plot[0.6:0.9][0.6:0.9]\
+#'xy2.ascii' w d notitle,\
+#sqrt(1-x**2) lt -1 notitle,\
+#sqrt(1.5**2-x**2) lt -1 notitle
+
+set output 'xy3.pdf'
+plot[0:1.5][0:1.5]\
+'xy3.ascii' w d notitle,\
+sqrt(1-x**2) lt -1 notitle,\
+sqrt(1.5**2-x**2) lt -1 notitle
+
+#########################################################
+set key outside
+
+set output 'nodesQ1.pdf'
+plot[0:1.5][0:1.5]\
+'xy_Q1.ascii' pt 5  notitle,\
+sqrt(1-x**2)      lw .5 lt -1 dashtype 2 notitle,\
+sqrt(1.5**2-x**2) lw .5 lt -1 dashtype 3 notitle,\
+tan(23./180*pi)*x lw .5 lt -1 dashtype 4 t '23^o',\
+tan(52./180*pi)*x lw .5 lt -1 dashtype 5 t '52^o' 
+
+set output 'nodesQ2.pdf'
+plot[0:1.5][0:1.5]\
+'xy_Q2.ascii' pt 5  notitle,\
+sqrt(1-x**2)       lw .5 lt -1 dashtype 2 notitle,\
+sqrt(1.5**2-x**2)  lw .5 lt -1 dashtype 3 notitle,\
+sqrt(1.25**2-x**2) lw .5 lt -1 dashtype 4 notitle,\
+tan(23./180*pi)*x  lw .5 lt -1 dashtype 5 t '23^o',\
+tan(37.5/180*pi)*x lw .5 lt -1 dashtype 8 t '37.5^o',\
+tan(52./180*pi)*x  lw .5 lt -1 dashtype 7 t '52^o' 
+
+set output 'nodesQ3.pdf'
+plot[0:1.5][0:1.5]\
+'xy_Q3.ascii' pt 5  notitle,\
+sqrt(1-x**2)          lw .5 lt -1 dashtype 2 notitle,\
+sqrt(1.16667**2-x**2) lw .5 lt -1 dashtype 3 notitle,\
+sqrt(1.33333**2-x**2) lw .5 lt -1 dashtype 4 notitle,\
+sqrt(1.5**2-x**2)     lw .5 lt -1 dashtype 5 notitle,\
+tan(23./180*pi)*x     lw .5 lt -1 dashtype 9 t '23^o',\
+tan(32.667/180*pi)*x  lw .5 lt -1 dashtype 7 t '32.67^o',\
+tan(42.333/180*pi)*x  lw .5 lt -1 dashtype 8 t '42.33^o',\
+tan(52./180*pi)*x     lw .5 lt -1 dashtype 9 t '52^o' 
+
+
+
+
+
+set ylabel 'error(r)'
+unset xtics
+unset xlabel
+
+set output 'innerline_error_Q1mapping.pdf'
+plot[][]\
+'xy1.ascii' u (1.-$3) w l t 'Q_1 mapping',\
+
+set output 'innerline_error_Q2mapping.pdf'
+plot[][]\
+'xy2.ascii' u (1.-$3) w l t 'Q_2 mapping',\
+
+set output 'innerline_error_Q3mapping.pdf'
+plot[][]\
+'xy3.ascii' u (1.-$3) w l notitle 

@@ -437,7 +437,7 @@ are straight we see that a $Q_1$ mapping is sufficient.}
 \end{center}
 
 %.................................................................
-\subsubsection{biquadratic mapping of a straight-line face $Q_2$ element }
+\subsubsection{biquadratic mapping of a not-so straight-line face $Q_2$ element }
 
 We now carry out the same exercise as before but nodes 2 and 8 are no more 
 in the middle of nodes 1-3 and 7-9 respectively.
@@ -450,6 +450,100 @@ c)\includegraphics[width=4.5cm]{images/mappings/biquadratic2/xyQ2.pdf}\\
 by means of a bilinear and biquadratic mapping respectively. In this case we see that 
 the $Q_2$ mapping manages to capture the 'real' shape of the element.}
 \end{center}
+
+%.......................................................................
+\subsubsection{bilinear, biquadratic and bicubic mapping in an annulus }
+
+In the light of what precedes, we can now ask ourselves how this translates to 
+a real geodynamic cas. Let us then consider the case of an annular domain, 
+a cross section of a hollow sphere. 
+When using quadrilateral elements, the mesh will look similar to this:
+
+\begin{center}
+\includegraphics[width=6cm]{images/mappings/curved/annulus_mesh}
+\end{center}
+
+We here focus on $Q_1$, $Q_2$ and $Q_3$ mappings. We single out an element, 
+and arbitrarily define it as follows in polar coordinates:
+\begin{lstlisting}
+theta1=23./180.*np.pi
+theta2=52./180.*np.pi
+R1=1.
+R2=1.5
+\end{lstlisting}
+The $Q_1$ mapping requires four points, the $Q_2$ nine points and the $Q_3$
+sixteen points. These are placed equidistantly in the $r,\theta$ coordinate
+system, as shown hereunder:
+
+\begin{center}
+\includegraphics[width=5cm]{images/mappings/curved/nodesQ1.pdf}
+\includegraphics[width=5cm]{images/mappings/curved/nodesQ2.pdf}
+\includegraphics[width=5cm]{images/mappings/curved/nodesQ3.pdf}\\
+{\small Left to right: position of the nodes for the $Q_1$, $Q_2$ and $Q_3$ mappings.}
+\end{center}
+
+As before, we randomly shoot 10,000 points inside the reference element 
+and map these out in the $x,y$ space. Resulting swarms of points are shown 
+in the following figures:
+
+\begin{center}
+a)\includegraphics[width=4.5cm]{images/mappings/curved/xy1_keep.pdf}
+b)\includegraphics[width=4.5cm]{images/mappings/curved/xy2_keep.pdf}
+c)\includegraphics[width=4.5cm]{images/mappings/curved/xy3_keep.pdf}
+{\small Left to right: position of the mapped points for the $Q_1$, $Q_2$ and $Q_3$ mappings.}
+\end{center}
+
+The image of a square with a $Q_1$ mapping is obviously a quadrilateral
+so that it looks like quite a few points land outside of the domain $R_1\leq r\leq R_2$.
+Note that points are well within $23\degree \leq \theta \leq 52\degree$, which can 
+simply be explained by the fact that the faces of the element are straight lines.
+
+However, it looks like the biquadratic and bicubic mappings are doing a much better 
+job at mapping the region of space $R_1\leq r\leq R_2$. In order to characterise 
+this better, we now place 10,000 points on the bottom face of the reference element (i.e. $s=-1$)
+and once again compute their coordinates in the the $x,y$ space:
+
+\begin{center}
+a)\includegraphics[width=4.5cm]{images/mappings/curved/xy1.pdf}
+b)\includegraphics[width=4.5cm]{images/mappings/curved/xy2.pdf}
+c)\includegraphics[width=4.5cm]{images/mappings/curved/xy3.pdf}
+{\small Left to right: position of the mapped points for the $Q_1$, $Q_2$ and $Q_3$ mappings.}
+\end{center}
+
+For each point $i$ we now compute ist distance $r_i$ 
+to the origin, which, if the 
+mapping was perfect, whoudl be exactly equal to $R_1=1$. 
+On the following plots are shown the error $r_i-1$ for all 
+points, from $r=-1$ to $r=+1$.
+
+\begin{center}
+a)\includegraphics[width=4.5cm]{images/mappings/curved/innerline_error_Q1mapping.pdf}
+b)\includegraphics[width=4.5cm]{images/mappings/curved/innerline_error_Q2mapping.pdf}
+c)\includegraphics[width=4.5cm]{images/mappings/curved/innerline_error_Q3mapping.pdf}
+{\small Left to right: radius error of the mapped points for the $Q_1$, $Q_2$ and $Q_3$ mappings.}
+\end{center}
+
+We see that the amplitude of the error decreases with the order of the mapping used, 
+which is why for instance ASPECT uses a $Q_4$ mapping by default.
+Actually, in this particular case, the equation which describes the cicrle is not a 
+polynomial so that no high-order mapping will ever be able to {\it exactly} 
+represent the curved boundary of the element!
+
+Another interesting point to keep in mind is that the location of the quadrature points
+in the $x,y$ space is also determined by the mapping used, which can have consequences
+on the accuracy of the integration and it will be reflected (for instance) on the 
+error convergence rate.
+
+Finally, the coordinates of the nodes of the element in the $x,y$ are 
+uniquely determined when they are on the convex hull of the element (
+for instance nodes 0-7 for $Q_2$) but we need to choose the position 
+of the last nodes which are inside the element. Unfortunately, this choice is 
+not neutral. 
+
+\todo[inline]{re ask Wolfgang about this - correlate with deal.ii}
+
+
+
 
 
 
