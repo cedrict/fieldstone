@@ -93,7 +93,6 @@ np.savetxt('rs.ascii',np.array([r,s]).T)
 np.savetxt('xy.ascii',np.array([x,y]).T)
 \end{lstlisting}
 
-
 \begin{center}
 \includegraphics[width=7cm]{images/mappings/bilinear/rs.pdf}
 \includegraphics[width=7cm]{images/mappings/bilinear/xy.pdf}
@@ -114,23 +113,35 @@ N_3(x,y) &=& \left( \frac{x - x_1}{h_x}  \right) \left( \frac{y - y_1}{h_y}  \ri
 N_4(x,y) &=& \left( \frac{x_3 -x }{h_x}  \right) \left( \frac{y - y_1}{h_y}  \right) \nn 
 \end{eqnarray}
 
-Since
-\[
+On the one hand, any variable defined on the element can be approximated using the shape functions:
+\begin{equation}
+f_h(r,s)=\sum_i N_i(r,s) f_i.
+\end{equation}
+If we treat the coordinate variables $x$ and $y$ themselves as functions, 
+then the shape functions can be used to construct the mapping:
+\begin{equation}
 x(r,s)=\sum_i N_i(r,s) x_i 
 \qquad
-y(r,s)=\sum_i N_i(r,s) y_i,
-\]
-we have 
+y(r,s)=\sum_i N_i(r,s) y_i,  \label{eqxy}
+\end{equation}
+leading to write
 \begin{eqnarray}
-\frac{\partial N_i}{\partial r} &=&
-\frac{\partial N_i}{\partial x}\frac{\partial x}{\partial r}
-+\frac{\partial N_i}{\partial y}\frac{\partial y}{\partial r} \\
-\frac{\partial N_i}{\partial s} &=&
-\frac{\partial N_i}{\partial x}\frac{\partial x}{\partial s}
-+\frac{\partial N_i}{\partial y}\frac{\partial y}{\partial s}
+\frac{\partial x}{\partial r} &=& \sum_i \frac{\partial N_i}{\partial r} x_i \\
+\frac{\partial x}{\partial s} &=& \sum_i \frac{\partial N_i}{\partial s} x_i \\
+\frac{\partial y}{\partial r} &=& \sum_i \frac{\partial N_i}{\partial r} y_i \\
+\frac{\partial y}{\partial s} &=& \sum_i \frac{\partial N_i}{\partial s} y_i 
+\end{eqnarray}
+On the other hand we also have 
+\begin{eqnarray}
+\frac{\partial f}{\partial r} &=&
+\frac{\partial f}{\partial x}\frac{\partial x}{\partial r}
++\frac{\partial f}{\partial y}\frac{\partial y}{\partial r} \\
+\frac{\partial f}{\partial s} &=&
+\frac{\partial f}{\partial x}\frac{\partial x}{\partial s}
++\frac{\partial f}{\partial y}\frac{\partial y}{\partial s}
 \end{eqnarray}
 or in matrix form:
-\[
+\begin{equation}
 \left(
 \begin{array}{c}
 \frac{\partial f}{\partial r} \\ \\
@@ -153,26 +164,25 @@ or in matrix form:
 \frac{\partial f}{\partial y}
 \end{array}
 \right)
-\]
+\end{equation}
 where ${\bm J}$ is called the Jacobian of the transformation
 By inverting the Jacobian matrix, the desired derivatives with respect to $x$
 and $y$ can be obtained:
-
 
 We have:
 \[
 \left(
 \begin{array}{c}
-\frac{\partial N_i}{\partial x} \\ \\
-\frac{\partial N_i}{\partial y}
+\frac{\partial f}{\partial x} \\ \\
+\frac{\partial f}{\partial y}
 \end{array}
 \right)
 =
 {\bm J}^{-1} \cdot 
 \left(
-\begin{array}{c}i
-\frac{\partial N_i}{\partial r} \\ \\
-\frac{\partial N_i}{\partial s}
+\begin{array}{c}
+\frac{\partial f}{\partial r} \\ \\
+\frac{\partial f}{\partial s}
 \end{array}
 \right)
 \]
@@ -245,6 +255,30 @@ Problems also arise when the Jacobian matrix is nearly singular due to round-off
 To avoid problems linked to badly shaped elements, it is recommended that the inside
 angles of an element are larger than $15\degree$ and less than $165\degree$.
 \end{remark}
+
+From Eq.~\ref{eqxy}, we can also write:
+\begin{eqnarray}
+dx &=& \frac{\partial x}{\partial r} dr + \frac{\partial x}{\partial s} ds \\
+dy &=& \frac{\partial y}{\partial r} dr + \frac{\partial y}{\partial s} ds 
+\end{eqnarray},
+or, 
+\begin{equation}
+\left(
+\begin{array}{c}
+dx \\ dy
+\end{array}
+\right)
+={\bm J}\cdot
+\left(
+\begin{array}{c}
+dr \\ ds
+\end{array}
+\right)
+\end{equation}
+This means that 
+\[
+\int \int ... dx dy = \int \int ...|{\bm J}| dr ds
+\]
 
 
 %.................................................................
