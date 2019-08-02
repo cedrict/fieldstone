@@ -3,24 +3,21 @@ set xlabel 'x'
 set ylabel 'y'
 set size square
 
+set title 'Q_1 mapping'
 set output 'xy1.pdf'
 plot[0:1.5][0:1.5]\
 'xy1.ascii' w d notitle,\
 sqrt(1-x**2) lt -1 notitle,\
 sqrt(1.5**2-x**2) lt -1 notitle
 
+set title 'Q_2 mapping'
 set output 'xy2.pdf'
 plot[0:1.5][0:1.5]\
 'xy2.ascii' w d notitle,\
 sqrt(1-x**2) lt -1 notitle,\
 sqrt(1.5**2-x**2) lt -1 notitle
 
-#set output 'xy2_zoom.pdf'
-#plot[0.6:0.9][0.6:0.9]\
-#'xy2.ascii' w d notitle,\
-#sqrt(1-x**2) lt -1 notitle,\
-#sqrt(1.5**2-x**2) lt -1 notitle
-
+set title 'Q_3 mapping'
 set output 'xy3.pdf'
 plot[0:1.5][0:1.5]\
 'xy3.ascii' w d notitle,\
@@ -30,17 +27,26 @@ sqrt(1.5**2-x**2) lt -1 notitle
 #########################################################
 set key outside
 
+set label "0" at 0.88,0.29
+set label "1" at 1.4,0.5
+set label "2" at 0.9,1.26
+set label "3" at 0.58,0.87
 set output 'nodesQ1.pdf'
 plot[0:1.5][0:1.5]\
-'xy_Q1.ascii' pt 5  notitle,\
+'xy_Q1.ascii' pt 7  notitle,\
 sqrt(1-x**2)      lw .5 lt -1 dashtype 2 notitle,\
 sqrt(1.5**2-x**2) lw .5 lt -1 dashtype 3 notitle,\
 tan(23./180*pi)*x lw .5 lt -1 dashtype 4 t '23^o',\
 tan(52./180*pi)*x lw .5 lt -1 dashtype 5 t '52^o' 
 
+set label "4" at 1.13,0.39
+set label "5" at 1.2,0.98
+set label "6" at 0.74,1.05
+set label "7" at 0.75,0.52
+set label "8" at 0.97,0.69
 set output 'nodesQ2.pdf'
 plot[0:1.5][0:1.5]\
-'xy_Q2.ascii' pt 5  notitle,\
+'xy_Q2.ascii' pt 7  notitle,\
 sqrt(1-x**2)       lw .5 lt -1 dashtype 2 notitle,\
 sqrt(1.5**2-x**2)  lw .5 lt -1 dashtype 3 notitle,\
 sqrt(1.25**2-x**2) lw .5 lt -1 dashtype 4 notitle,\
@@ -48,9 +54,14 @@ tan(23./180*pi)*x  lw .5 lt -1 dashtype 5 t '23^o',\
 tan(37.5/180*pi)*x lw .5 lt -1 dashtype 8 t '37.5^o',\
 tan(52./180*pi)*x  lw .5 lt -1 dashtype 7 t '52^o' 
 
+unset label
+set label "0" at 0.88,0.29
+set label "3" at 1.4,0.5
+set label "15" at 0.9,1.26
+set label "12" at 0.58,0.87
 set output 'nodesQ3.pdf'
 plot[0:1.5][0:1.5]\
-'xy_Q3.ascii' pt 5  notitle,\
+'xy_Q3.ascii' pt 7  notitle,\
 sqrt(1-x**2)          lw .5 lt -1 dashtype 2 notitle,\
 sqrt(1.16667**2-x**2) lw .5 lt -1 dashtype 3 notitle,\
 sqrt(1.33333**2-x**2) lw .5 lt -1 dashtype 4 notitle,\
@@ -63,19 +74,23 @@ tan(52./180*pi)*x     lw .5 lt -1 dashtype 9 t '52^o'
 
 
 
+unset label
 
 set ylabel 'error(r)'
 unset xtics
 unset xlabel
 
+set title 'Q_1 mapping'
 set output 'innerline_error_Q1mapping.pdf'
 plot[][]\
-'xy1.ascii' u (1.-$3) w l t 'Q_1 mapping',\
+'xy1.ascii' u (1.-$3) w l notitle 
 
+set title 'Q_2 mapping'
 set output 'innerline_error_Q2mapping.pdf'
 plot[][]\
-'xy2.ascii' u (1.-$3) w l t 'Q_2 mapping',\
+'xy2.ascii' u (1.-$3) w l notitle 
 
+set title 'Q_3 mapping'
 set output 'innerline_error_Q3mapping.pdf'
 plot[][]\
 'xy3.ascii' u (1.-$3) w l notitle 

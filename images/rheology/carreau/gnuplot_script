@@ -1,0 +1,17 @@
+set term pdf 
+set grid
+
+etainf=1e19
+eta0=1e25
+n=0.2
+lambda=1e15
+set log x
+
+set xlabel '{/Symbol l} x'
+set ylabel '{/Symbol h}'
+
+set output 'carreau.pdf'
+set log y
+plot[0.01:1e9][1e18:1e26]\
+etainf+(eta0-etainf)*(1+(x)**2)**((n-1.)/2.) lw  2 notitle
+
