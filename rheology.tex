@@ -1,5 +1,6 @@
 
-For now what follows only deals with viscous behavior.
+For now what follows only deals with viscous behavior. The reader is referred to Barnes \cite{barn99}
+for a discussion and review of non-linear viscous rheologies. 
 
 
 \subsubsection{Linear viscous aka Newtonian} \index{Newtonian fluid}
@@ -163,6 +164,18 @@ $\eta_{eff} \rightarrow m \tau_0$.
 \todo[inline]{Channel flow of wikipedia with analytical solution!}
 
 
+%-------------------------------------------------
+\subsubsection{The Casson model}
+
+It is described by \cite{barn99} 
+\[
+\sqrt{\sigma} = \sqrt{\sigma_y} + \sqrt{\eta_p \dot{\varepsilon}_e} 
+\]
+or, when squaring it:
+\[
+\sigma = \sigma_y + \eta_p \dot{\varepsilon}_e + 2\sqrt{\sigma_p \eta_p \dot{\varepsilon}_e} 
+\]
+This modelled has been found to accurately describe the behaviour of synthetic based muds \cite{adlo17}. 
 
 %-------------------------------------------------
 \subsubsection{One model to rule them all?}
