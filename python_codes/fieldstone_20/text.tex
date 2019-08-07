@@ -23,7 +23,7 @@ Nu = L_z \frac{\int\int_{z=L_z} \frac{\partial T}{\partial y} dx dy  }{\int \int
 \item the root mean square velocity $v_{rms}$ and the temperature mean square velocity $T_{rms}$
 \item The vertical velocity $w$ and temperature $T$ at points ${\bm x}_1=(0,0,L_z/2)$, ${\bm x}_2=(L_x,0,L_z/2)$,
 ${\bm x}_3=(0,L_y,L_z/2)$ and ${\bm x}_4=(L_x,L_y,L_z/2)$;
-\item the vertical component of the heat flux $Q$ at the top surface  at all four corners. OR IS IT TEMP DERIVATIVE?
+\item the vertical component of the heat flux $Q$ at the top surface  at all four corners. 
 \end{itemize}
 
 %............................
@@ -95,29 +95,32 @@ c_mat = np.array([[2,0,0,0,0,0],\
 \subsubsection*{Results}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_20/images/velstats.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_20/images/vrms.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_20/images/Tstats.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_20/images/Tavrg.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_20/images/Tmid.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_20/images/Tm.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_20/images/hf.pdf}
+%\includegraphics[width=7cm]{python_codes/fieldstone_20/images/velstats.pdf}
+%\includegraphics[width=7cm]{python_codes/fieldstone_20/images/Tstats.pdf}
+%\includegraphics[width=7cm]{python_codes/fieldstone_20/images/Tavrg.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_20/images/vrms.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_20/images/Tmid.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_20/images/Tm.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_20/images/hf.pdf}\\
 \includegraphics[width=7cm]{python_codes/fieldstone_20/images/wmid.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_20/images/Nu.pdf}
 \end{center}
 
 
 The reported values for Busse et al. in the following table are taken from Table 3 of \cite{bucc93}.
 The reported values for fieldstone are adimensionalised by means of a reference temperature (3700K),
-a reference lengthscale 2700km, and a reference time $L_z^2/\kappa\sim 7.29e+18$s. 
-To find the steady state, we simulate the problem up to non-dimensional time $t=5$, 
-i.e. $t=3.645e+19$s.
+a reference lengthscale 2700km, and a reference time $L_z^2/\kappa\sim 7.29e+18$s.
+The steady state is arrived at by solving the steady state Stokes and temperature equations 
+with a relaxation parameter of 1/2.
+%To find the steady state, we simulate the problem up to non-dimensional time $t=5$, 
+%i.e. $t=3.645e+19$s.
 
 
 
 \begin{tabular}{llllll}
 \hline
                                 & ASPECT & ($Q_2\times Q_1/Q_1$)      &       & Busse et al \cite{bucc93} & fieldstone \\
-Mesh size                       & Lz/24  & Lz/32 & Lz/48 & (best results)            & 20x12x20    \\
+Mesh size                       & Lz/24  & Lz/32 & Lz/48 & (best results)            & $14\times 8\times 20$    \\
 \hline
 Nu                              & 3.5539 &3.5447 & 3.5397 & $3.5374  \pm 0.0005$   \\
 $v_{rms}$                       & 40.997 &40.999 &40.999  & $40.999  \pm 0.004$    \\
@@ -139,7 +142,4 @@ $dTdz(0,L_y,L_z)$  &  & & & $3.1740 \pm 0.0500$ \\
 \end{tabular}
 
 
-
-
-NUSSELT NUMBER !!
 
