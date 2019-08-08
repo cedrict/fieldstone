@@ -33,7 +33,6 @@ In what follows I highlight a few important points which are key to understandin
 is put together and works. 
 
 \begin{verbatim}
-
 load needed modules and functions
 define parameters
 build V grid (xV,yV,zV)
@@ -48,16 +47,17 @@ initial temperature field
 |  assemble them in A,rhs                             |
 |  solve                                              |
 |  split solution vector in u,v,w,p                   |
-|  compute dt from CFL condition                      |
+|  {u,v,w}=relax*{u,v,w}+(1-relax)*{u,v,w}            |
 |  compute vrms                                       |
 |  build A, rhs for temperature                       |
 |  solve for temperature T                            |
+|  T=relax*T+(1-relax)*T                              |
 |  compute elemental strainrate                       |
 |  compute nodal strainrate                           |
 |  compute nodal pressure                             |
-|  measure V and T at mid side edges                  |
+|  measure V and T at mid side edges, Nu ...          |
 |  export to vtu and ascii files                      | 
-<-----------------------------------------------------.
+.---------------------------<-------------------------.
 \end{verbatim}
 
 I fist load the shape functions which are in two separate files:
@@ -98,12 +98,14 @@ c_mat = np.array([[2,0,0,0,0,0],\
 %\includegraphics[width=7cm]{python_codes/fieldstone_20/images/velstats.pdf}
 %\includegraphics[width=7cm]{python_codes/fieldstone_20/images/Tstats.pdf}
 %\includegraphics[width=7cm]{python_codes/fieldstone_20/images/Tavrg.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_20/images/vrms.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_20/images/Tmid.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_20/images/Tm.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_20/images/hf.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_20/images/wmid.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_20/images/Nu.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/images/vrms.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/images/Tmid.pdf}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/images/Tm.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/images/Nu.pdf}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/images/hf1.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/images/hf2.pdf}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/images/wmid1.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/images/wmid2.pdf}
 \end{center}
 
 
@@ -141,5 +143,5 @@ $dTdz(0,L_y,L_z)$  &  & & & $3.1740 \pm 0.0500$ \\
 \hline
 \end{tabular}
 
-
+THIS IS NOT FINISHED: I need to run the model at higher resolutions, which will take a few days.
 
