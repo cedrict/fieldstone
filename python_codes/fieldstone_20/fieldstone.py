@@ -32,9 +32,9 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    nelz = int(sys.argv[3])
 else:
-   nelx =14
-   nely =8
-   nelz =20
+   nelx =16
+   nely =10
+   nelz =24
 
 assert (nelz%4==0), "nelz should be even and multiple of 4" 
 
@@ -124,7 +124,7 @@ print("------------------------------")
 
 model_time=np.zeros(nstep,dtype=np.float64) 
 vrms=np.zeros(nstep,dtype=np.float64) 
-Nu=np.zeros(nstep,dtype=np.float64)
+#Nu=np.zeros(nstep,dtype=np.float64)
 Tavrg=np.zeros(nstep,dtype=np.float64)
 Tm=np.zeros(nstep,dtype=np.float64)
 u_stats=np.zeros((nstep,2),dtype=np.float64)
@@ -135,6 +135,8 @@ dt_stats=np.zeros(nstep,dtype=np.float64)
 wmid_stats=np.zeros((nstep,4),dtype=np.float64) # velocities at z=Lz/2
 Tmid_stats=np.zeros((nstep,4),dtype=np.float64) # temperatures at z=Lz/2
 hf_stats=np.zeros((nstep,4),dtype=np.float64)
+       
+Nufile=open('Nu.ascii',"w")
 
 ######################################################################
 # grid point setup
@@ -1012,11 +1014,48 @@ for istep in range(0,nstep):
     print("compute avrt T at z=3Lz/4: %.3f s" % (timing.time() - start))
 
     #####################################################################
+    # Nusselt number 
+    #####################################################################
+
+    Nu=0.
+    iel=0
+    for ielx in range(nelx):
+        for iely in range(nely):
+            for ielz in range(nelz):
+                if ielz==nelz-1:
+                   for iq in [-1,1]:
+                       for jq in [-1,1]:
+                           rq=iq/sqrt3
+                           sq=jq/sqrt3
+                           weightq=1.*1.
+                           N0=0.25*(1-rq)*(1-sq)
+                           N1=0.25*(1+rq)*(1-sq)
+                           N2=0.25*(1+rq)*(1+sq)
+                           N3=0.25*(1-rq)*(1+sq)
+                           dTdzq=N0*dTdzn[iconT[4,iel]]+\
+                                 N1*dTdzn[iconT[5,iel]]+\
+                                 N2*dTdzn[iconT[6,iel]]+\
+                                 N3*dTdzn[iconT[7,iel]]
+                           #print (zT[iconT[4:7,iel]],Lz*0.75)  
+                           jcob=hx*hy/4
+                           Nu+=abs(dTdzq*jcob*weightq)
+                # end if
+                iel+=1
+            # end for
+        # end for
+    # end for
+
+    Nu*=(Lz/(Lx*Ly*(Temperature1-273)))
+
+    Nufile.write("%.6e\n" % Nu)
+    Nufile.flush()
+
+    #####################################################################
     # plot of solution
     #####################################################################
     start = timing.time()
 
-    if visu==1 and istep%1==0:
+    if visu==1 and istep%20==0:
 
        filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
