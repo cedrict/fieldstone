@@ -61,6 +61,58 @@ The skew-symmetric tensor is called spin tensor (or vorticity tensor):
 \end{equation}
 
 %------------------------------------------------------------------------
+\subsection{Stress tensor}
+
+\index{stress tensor} \index{normal stress} \index{shear stress}
+
+With respect to an orthonormal basis $\{\vec{e}_x,\vec{e}_y,\vec{e}_z\}$, the Cauchy stress tensor
+is given by:
+\begin{equation}
+{\bm \sigma}=
+\left(
+\begin{array}{ccc}
+\sigma_{xx} & \sigma_{xy} & \sigma_{xz} \\
+\sigma_{yx} & \sigma_{yy} & \sigma_{yz} \\
+\sigma_{zx} & \sigma_{zy} & \sigma_{zz} 
+\end{array}
+\right)
+\end{equation}
+The three diagonal elements are called normal stresses while the off-diagonal terms 
+are called shear stresses.
+
+One can easily prove (see for instance Section 3.3.6 of \cite{grbl09}) that the balance 
+of angular momentum leads reduces to the statement that the Cauchy stress tensor 
+is symmetric, i.e. ${\bm \sigma}={\bm \sigma}^T$.
+
+%.............................................
+\subsubsection{Compressible Newtonian Fluid}
+
+For the compressible case, ${\bm \sigma}$ 
+depends linearly on the strain rate tensor $\dot{\bm \varepsilon}$: 
+\[
+{\bm \sigma} = -p(\rho,T) {\bm 1} + \lambda \; \text{tr} (\dot{\bm \varepsilon}) {\bm 1} + 2\eta \dot{\bm \varepsilon}
+\]
+where $p$ is the thermodynamic pressure which is a function of the density $\rho$ and the temperature $T$.
+$\lambda$ and $\eta$ are the coefficients of viscosity. 
+We also have:
+\[
+{\bm \sigma} = -p(\rho,T) {\bm 1} + \zeta \; \text{tr} (\dot{\bm \varepsilon}) {\bm 1} + 2\eta \dot{\bm \varepsilon}^d
+\]
+where $\zeta=\lambda+2\eta/3$ is the bulk viscosity and $\eta$ is the shear viscosity.
+
+%.............................................
+\subsubsection{Incompressible Newtonian Fluid}
+
+In this case the stress tensor is 
+\[
+{\bm \sigma}=-p {\bm 1} + {\bm s}
+\]
+where $p=-1/3 \; \text{tr} \; \bm \sigma$ and 
+\[
+{\bm s}=2\eta \dot{\bm \varepsilon}^d
+\]
+
+%------------------------------------------------------------------------
 \subsection{The heat transport equation - energy conservation equation}
 
 Let us start from the heat transport equation as shown in Schubert, Turcotte and Olson \cite{scto01}:
