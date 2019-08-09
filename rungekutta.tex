@@ -93,6 +93,7 @@ RKF45\footnote{\url{https://en.wikipedia.org/wiki/Runge-Kutta-Fehlberg_method}}
 
 The first row of coefficients at the bottom of the table gives the fifth-order accurate method, and the second row gives the fourth-order accurate method. 
 
+%....................................................................................
 \subsubsection{Using RK methods to advect particles/markers \label{sec:rkparticles}}
 
 In the context of geodynamical modelling, one is usually confronted to the following problem:
@@ -130,6 +131,34 @@ $\vec r_m^{(2)}(t+\delta t)=\vec r_m(t) + (2\vec\upnu_m^{(1)}-\vec\upnu_m) \delt
 \item compute new position: 
 $\vec r_m(t+\delta t)=\vec r_m(t) + (\vec\upnu_m +4 \vec\upnu_m^{(1)} + \vec\upnu_m^{(2)}    )\delta t/6$ 
 \end{enumerate}
+
+The following example is borrowed from \cite{maie12}, itself borrowed from Fullsack \cite[Section 5.4]{full95}.
+It is a whirl flow \cite{otti89}, a flow with rotational symmetry in which concentric layers of material
+rotate around  a centre with an angular velocity:
+\[
+\omega(r)= \omega_0 \frac{r}{r_0} \exp\left(-\frac{r}{r_0}  \right)
+\]  
+The box is $[-0.5,0.5]\times[-0.5,0.5]$, $r_0=0.25$, $\omega_0=0.3$ and $\delta t=1$. 
+$60\times 60$ particles are regularly positioned inside the $[-0.3,0.3]\times[-0.3,0.3]$ square.
+Maierova \cite{maie12} has carried out this experiment for the above Runge-Kutta methods.
+
+\begin{center}
+\includegraphics[height=4cm]{images/rk/maie12a}\\
+{\small Model domain with particles colored at three
+different time-steps: (A) t = 0 (initial position of particles), (B) t = 50, and (C) t = 200.
+The advection is computed using the fourth-order Runge-Kutta scheme. Taken from \cite{maie12}}
+\end{center}
+
+\begin{center}
+\includegraphics[height=4cm]{images/rk/maie12b}
+\includegraphics[height=4cm]{images/rk/maie12c}\\
+{\small The same plot as above, but for different advection schemes at t = 100.
+Advection was computed using (A) the fourth-order Runge-Kutta scheme, (B) the mid-
+point method, (C) Heun’s method and (D) the explicit Euler method. Taken from \cite{maie12}}
+\end{center}
+
+
+
 
 
 
