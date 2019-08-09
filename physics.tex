@@ -63,8 +63,15 @@ The skew-symmetric tensor is called spin tensor (or vorticity tensor):
 %------------------------------------------------------------------------
 \subsection{Stress tensor}
 
-\index{stress tensor} \index{normal stress} \index{shear stress}
+\index{Stress tensor} \index{Normal stress} \index{Shear stress} \index{Stress vector}
 
+The Cauchy tensor\footnote{\url{https://en.wikipedia.org/wiki/Cauchy_stress_tensor}} 
+consists of nine components $\sigma_{ij}$  that completely define the state of stress 
+at a point inside a material. 
+The tensor relates a unit-length direction vector $\vec{n}$ to the so-called 'stress vector' (most commonly called 'traction') $\vec{t}(\vec{n})$ across an imaginary surface perpendicular to $\vec{n}$:
+\[
+\vec{t}(\vec n)={\bm \sigma}\cdot {\vec n}
+\]
 With respect to an orthonormal basis $\{\vec{e}_x,\vec{e}_y,\vec{e}_z\}$, the Cauchy stress tensor
 is given by:
 \begin{equation}
@@ -84,33 +91,37 @@ One can easily prove (see for instance Section 3.3.6 of \cite{grbl09}) that the 
 of angular momentum leads reduces to the statement that the Cauchy stress tensor 
 is symmetric, i.e. ${\bm \sigma}={\bm \sigma}^T$.
 
+The SI units of both stress tensor and traction are $\text{N}/\text{m}^2$.
+
 %.............................................
 \subsubsection{Compressible Newtonian Fluid}
 
 For the compressible case, ${\bm \sigma}$ 
 depends linearly on the strain rate tensor $\dot{\bm \varepsilon}$: 
-\[
+\begin{equation}
 {\bm \sigma} = -p(\rho,T) {\bm 1} + \lambda \; \text{tr} (\dot{\bm \varepsilon}) {\bm 1} + 2\eta \dot{\bm \varepsilon}
-\]
-where $p$ is the thermodynamic pressure which is a function of the density $\rho$ and the temperature $T$.
-$\lambda$ and $\eta$ are the coefficients of viscosity. 
+\end{equation}
+where $p$ is the thermodynamic pressure which is a function of the density $\rho$ and the temperature $T$ (an equation of state is then needed). $\lambda$ and $\eta$ are the coefficients of viscosity. 
 We also have:
-\[
+\begin{equation}
 {\bm \sigma} = -p(\rho,T) {\bm 1} + \zeta \; \text{tr} (\dot{\bm \varepsilon}) {\bm 1} + 2\eta \dot{\bm \varepsilon}^d
-\]
+\end{equation}
 where $\zeta=\lambda+2\eta/3$ is the bulk viscosity and $\eta$ is the shear viscosity.
+
+
 
 %.............................................
 \subsubsection{Incompressible Newtonian Fluid}
 
 In this case the stress tensor is 
-\[
+\begin{equation}
 {\bm \sigma}=-p {\bm 1} + {\bm s}
-\]
-where $p=-1/3 \; \text{tr} \; \bm \sigma$ and 
-\[
-{\bm s}=2\eta \dot{\bm \varepsilon}^d
-\]
+\end{equation}
+where $p=-1/3 \; \text{tr} (\bm \sigma)$ and ${\bm \tau}$ is the deviatoric stress tensor:
+\begin{equation}
+{\bm \tau}=2\eta \dot{\bm \varepsilon}^d
+\end{equation}
+
 
 %------------------------------------------------------------------------
 \subsection{The heat transport equation - energy conservation equation}
