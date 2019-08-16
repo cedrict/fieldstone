@@ -11,6 +11,7 @@ $r,\theta$ & Polar coordinates & m,-\\
 $r,\theta, z$ & Cylindrical coordinates & m,-,m\\
 $r,\theta,\phi$ & Spherical coordinates & m,-,- \\
 ${\vec \upnu}$ & velocity vector & m$\cdot$ s$^{-1}$\\
+${\vec u}$ & displacement vector & m \\
 $\rho$ & mass density & kg/m$^3$ \\
 $\eta$ & dynamic viscosity &  Pa$\cdot$ s \\
 $\lambda$ & penalty parameter & Pa$\cdot$ s \\
@@ -115,7 +116,7 @@ where $\zeta=\lambda+2\eta/3$ is the bulk viscosity and $\eta$ is the shear visc
 
 In this case the stress tensor is 
 \begin{equation}
-{\bm \sigma}=-p {\bm 1} + {\bm s}
+{\bm \sigma}=-p {\bm 1} + {\bm \tau}
 \end{equation}
 where $p=-1/3 \; \text{tr} (\bm \sigma)$ and ${\bm \tau}$ is the deviatoric stress tensor:
 \begin{equation}
@@ -171,7 +172,7 @@ Finally
 Because the Prandlt number is virtually zero in Earth science applications the Navier Stokes 
 equations reduce to the Stokes equation:
 \begin{equation}
-{\vec \nabla}\cdot {\bm \sigma} + \rho {\vec g} = 0
+{\vec \nabla}\cdot {\bm \sigma} + \rho {\vec g} = \vec{0}
 \end{equation}
 Since 
 \begin{equation}
@@ -179,17 +180,18 @@ Since
 \end{equation}
 it also writes
 \begin{equation}
--{\vec \nabla}p + {\vec \nabla}\cdot {\bm \tau} + \rho {\vec g} = 0
+-{\vec \nabla}p + {\vec \nabla}\cdot {\bm \tau} + \rho {\vec g} = \vec{0}
 \end{equation}
 Using the relationship ${\bm \tau} = 2 \eta \dot{\bm \varepsilon}^d$ we arrive at 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
--{\vec \nabla}p + {\vec \nabla}\cdot (2 \eta \dot{\bm \varepsilon}^d ) + \rho {\vec g} = 0
+-{\vec \nabla}p + {\vec \nabla}\cdot (2 \eta \dot{\bm \varepsilon}^d ) + \rho {\vec g} = \vec{0}
 \end{equation}
 \end{mdframed}
 
 %------------------------------------------------------------------------
 \subsection{The mass conservation equations} 
+\index{Solenoidal field} \index{Divergence-free}
 
 The mass conservation equation is given by
 \[
@@ -206,6 +208,9 @@ ${\vec \nabla}\rho=0$, i.e. $D\rho/Dt=0$ and the remaining equation is simply:
 \[
 {\vec \nabla}\cdot{\vec \upnu} = 0
 \]
+A vector field that is divergence-free is also called 
+solenoidal\footnote{\url{https://en.wikipedia.org/wiki/Solenoidal_vector_field}}.
+
 
 \subsection{The equations in ASPECT manual}
 The following is lifted off the ASPECT manual.
@@ -368,41 +373,53 @@ What follows is mostly borrowed from Becker \& Kaus lecture notes.
 
 The strong form of the PDE that governs force balance in a medium is given by
 \[
-{\bm \nabla}\cdot{\bm \sigma}  + {\bm f} = {\bm 0}
+\vec{\nabla}\cdot{\bm \sigma}  + \vec{f} = \vec{0}
 \]
-where ${\bm \sigma}$ is the stress tensor and ${\bm f}$ is a body force.
+where ${\bm \sigma}$ is the stress tensor and $\vec{f}$ is a body force.
 
 The stress tensor is related to the strain tensor through the generalised 
-Hooke's law:
+Hooke's law\footnote{\url{https://en.wikipedia.org/wiki/Hooke's_law}}:
 \begin{equation}
-\sigma_{ij}=\sum_{kl}C_{ijkl}\epsilon{kl} \label{eq:one}
+\sigma_{ij}=\sum_{kl}C_{ijkl}\epsilon_{kl} 
+\qquad
+\text{or}
+\qquad
+{\bm \sigma} = {\bm C} : {\bm \epsilon}
+\label{eq:one}
 \end{equation}
 where ${\bm C}$ is the fourth-order elastic tensor.
-In the case of an isotropic material, this relationship simplifies to
+
+Due to the inherent symmetries of ${\bm \sigma}$, ${\bm \epsilon}$, and ${\bm C}$, 
+only 21 elastic coefficients of the latter are independent. 
+For isotropic media (which have the same physical properties in any direction), ${\bm C}$ 
+can be reduced to only two independent numbers (for example the bulk modulus $K$ and the shear modulus $G$ 
+that quantify the material's resistance to changes in volume and to shearing deformations, respectively). 
+
+One often then write Eq.~\label{eq:one} as follows:
 \begin{equation}
 \sigma_{ij}=\lambda \epsilon_{kk} \delta_{ij} + 2\mu \epsilon_{ij}
 \quad\quad
 or, 
 \quad\quad
-{\bm \sigma} = \lambda ({\bm \nabla}\cdot{\bm u})  {\bm 1} + 2\mu {\bm \epsilon}   \label{eq:two}
+{\bm \sigma} = \lambda (\vec{\nabla}\cdot\vec{u}) {\bm 1} + 2\mu {\bm \epsilon}   \label{eq:two}
 \end{equation}
 where $\lambda$ is the Lam\'e parameter and $\mu$ is the shear modulus\footnote{It is also sometimes written $G$}.
-The term ${\bm \nabla}\cdot{\bm u}$ is the isotropic dilation.
+The term $\vec{\nabla}\cdot\vec{u}$ is the isotropic dilation.
 
 \index{Lam\'e parameter} \index{shear modulus}
 
 The strain tensor is related to the displacement as follows: \index{strain tensor}
 \[
-{\bm \epsilon} = \frac{1}{2}({\bm \nabla}{\bm u} + {\bm \nabla}{\bm u}^T)
+{\bm \epsilon} = \frac{1}{2}(\vec{\nabla}\vec{u} + \vec{\nabla}\vec{u}^T)
 \]
 
-The incompressibility (bulk modulus), $K$, is defined as $p=-K {\bm \nabla}\cdot{\bm u}$ 
+The incompressibility (bulk modulus), $K$, is defined as $p=-K \vec{\nabla}\cdot\vec{u}$ 
 where $p$ is the pressure with \index{bulk modulus}
 \begin{eqnarray}
-p&=&-\frac{1}{3}Tr({\bm \sigma}) \nonumber\\
- &=& -\frac{1}{3} [ \lambda ({\bm \nabla}\cdot{\bm u}) Tr[{\bm 1}] + 2 \mu Tr[{\bm \epsilon}]] \nonumber\\
- &=& -\frac{1}{3} [ \lambda ({\bm \nabla}\cdot{\bm u})  3  + 2 \mu  ({\bm \nabla}\cdot{\bm u}) ] \nonumber\\
- &=& -[ \lambda  + \frac{2}{3} \mu ]   ({\bm \nabla}\cdot{\bm u})  
+p&=&-\frac{1}{3} \text{tr}({\bm \sigma}) \nonumber\\
+ &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u}) \text{tr}[{\bm 1}] + 2 \mu \text{tr}[{\bm \epsilon}]] \nonumber\\
+ &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u})  3  + 2 \mu  (\vec{\nabla}\cdot\vec{u}) ] \nonumber\\
+ &=& -\left[ \lambda + \frac{2}{3} \mu \right] (\vec{\nabla}\cdot\vec{u})  
 \end{eqnarray}
 so that $K=\lambda+\frac{2}{3}\mu$.
 
@@ -448,6 +465,7 @@ The strain rate tensor $\dot{\bm\varepsilon}$ is given by
 \dot{\bm \varepsilon} = \frac{1}{2}( {\vec \nabla}{\vec \upnu}+ {\vec \nabla}{\vec \upnu}^T) 
 \end{equation}
 
+%.....................................
 \subsubsection{Cartesian coordinates}
 \begin{eqnarray}
 \dot\varepsilon_{xx} &=& \frac{\partial u}{\partial x} \\
@@ -461,6 +479,7 @@ The strain rate tensor $\dot{\bm\varepsilon}$ is given by
 \dot\varepsilon_{yz} &=& \frac{1}{2} \left( \frac{\partial v}{\partial z} + \frac{\partial w}{\partial y}  \right)
 \end{eqnarray}
 
+%.....................................
 \subsubsection{Polar coordinates}
 
 \begin{eqnarray}
@@ -471,10 +490,27 @@ The strain rate tensor $\dot{\bm\varepsilon}$ is given by
 +\frac{1}{r} \frac{\partial v_r}{\partial \theta}  \right) 
 \end{eqnarray}
 
+%.....................................
 \subsubsection{Cylindrical coordinates}
+
+\begin{eqnarray}
+\dot\varepsilon_{rr} &=& \frac{\partial v_r}{\partial r} \\
+\dot\varepsilon_{\theta\theta} &=& \frac{v_r}{r} + \frac{1}{r} \frac{\partial v_\theta}{\partial \theta}  \\
+\dot\varepsilon_{\theta r} =
+\dot\varepsilon_{r\theta} &=& \frac{1}{2} \left(   \frac{\partial v_\theta}{\partial r} - \frac{v_\theta}{r} 
++\frac{1}{r} \frac{\partial v_r}{\partial \theta}  \right)\\
+\dot\varepsilon_{zz} &=& \frac{\partial w}{\partial z} \\
+\dot{varepsilon}_{rz} = \dot{varepsilon}_{zr} &=& \frac{1}{2}\left(   \right) \\
+\dot{varepsilon}_{\theta z} = \dot{varepsilon}_{z \theta} &=& \frac{1}{2}\left( \frac{1}{r} \frac{\partial w}{\partial \theta} + \frac{\partial v_\theta}{\partial z}  \right) \\
+\end{eqnarray}
+ 
+CHECK AND HOMOGENIZE NOTATIONS
+
+
 
 http://eml.ou.edu/equation/FLUIDS/STRAIN/STRAIN.HTM
 
+%.....................................
 \subsubsection{Spherical coordinates}
 
 \begin{eqnarray}
@@ -656,8 +692,9 @@ given by a steady state conductive geotherm.
 \item Temperature (K):
 \item Viscosity (Pa.s):
 \item Density (kg/m$^3$):
-\item Heat capacity $C_p$ ($J.K^{-1}.kg^{-1}$): It is the measure of the heat energy required to increase the 
-temperature of a unit quantity of a substance by unit degree.
+\item Heat capacity $C_p$ ($J.K^{-1}$): It is the measure of the heat energy required to increase the 
+temperature of a unit quantity of a substance by unit degree. Note that the specific heat capacity $c_P$ of a 
+substance is the heat capacity of a sample of the substance divided by the mass of the sample, with units $J\cdot K\cdot kg^{-1}$.
 \item Heat conductivity, or thermal conductivity $k$ ($W.m^{-1}.K^{-1}$). It is the property of a material that indicates its ability to conduct     heat. It appears primarily in Fourier's Law for heat conduction.
 Note that it is a function of temperature, especially in mantle convection settings \cite{mika13}.
 

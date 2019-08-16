@@ -9,7 +9,7 @@ plot[:100][]\
 'extension_meth1_120x12/conv.ascii'  w l t 'ext, m1, 120x12',\
 'extension_meth1_240x24/conv.ascii'  w l t 'ext, m1, 240x24',\
 'extension_meth2_120x12/conv.ascii'  w l t 'ext, m2, 120x12',\
-'extension_meth2_240x24/conv.ascii'  w l t 'ext, m2, 240x24',\
+'extension_meth2_240x24_30deg/nonlinear_conv.ascii'  w l t 'ext, m2, 240x24',\
 
 set output 'conv_compression.pdf'
 plot[:100][]\
@@ -31,8 +31,8 @@ plot[40000:60000][0:10000]\
 'shear_band_R_10.ascii' w lp lt 2 pt 5 ps 0.5 notitle,\
 'shear_band_L_20.ascii' w lp lt 3 pt 5 ps 0.5 t '{/Symbol y}={/Symbol f}=20^o',\
 'shear_band_R_20.ascii' w lp lt 3 pt 5 ps 0.5 notitle,\
-'shear_band_L_30.ascii' w lp lt 4 pt 5 ps 0.5 t '{/Symbol y}={/Symbol f}=30^o',\
-'shear_band_R_30.ascii' w lp lt 4 pt 5 ps 0.5 notitle,\
+'shear_band_L_30_nod.ascii' w lp lt 4 pt 5 ps 0.5 t '{/Symbol y}={/Symbol f}=30^o',\
+'shear_band_R_30_nod.ascii' w lp lt 4 pt 5 ps 0.5 notitle,\
 (x-50000)*tan(45./180*pi) t '{/Symbol Q}=45^o',\
 (x-50000)*tan(50./180*pi) t '{/Symbol Q}=50^o',\
 (x-50000)*tan(55./180*pi) t '{/Symbol Q}=55^o',\

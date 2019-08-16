@@ -1,0 +1,89 @@
+
+TOTAL WORK IN PROGRESS!!!
+
+When carrying out global models, i.e.  mantle convection in our case, the effect of the free surface
+is often neglected/negligeable: topography ranges from $\sim$ 10km depth to $\sim$ 10km height, which 
+is very small to the depth of the mantle ($\sim$ 3000km). 
+
+However, it has long been regognised that there is a feedback between topography and crust/lithosphere
+deformation: the surface of the Earth reflects the deeper processes, from orogeny, back-arc basins, 
+rifts, mid-ocean ridges, etc ...
+
+Free surface flows are not unique to Earth sciences, and their modelling has given rise to many studies 
+and textbooks. A typical free-surface flow problem in the CFD literature is the so-called 'dam break' 
+problem \cite{moeb99,bacp07,liir07,lemx08,homa09,anco09}. Other occurrences involve 
+sea waves, flow over structures, flow around ships, mould filling, flow with bubbles \cite{liir07}.
+
+ 
+What distinguishes geodynamics free surface modelling from its engineering 
+counterpart is the absence of surface tension, the fact that the fluids under consideration are
+Stokesian, and that their rheology is complex (the elastic and plastic components can be 
+dominant at the surface).
+
+There are to main modelling approaches employed in Computational Geodynamics: the so-called 
+'sticky air' approach and the Arbitrary-Lagrangian approach.
+
+%.......................................
+\subsubsection{The fully Lagrangian approach}
+
+the mesh is deformed with the velocity (or displacement) computed on its nodes. 
+
+yields potentially highly deformed elements, low accuracy. or even bow-tied. 
+
+large deformation requires re-meshing , 2D ok, not 3D. 
+
+remeshing vs no remeshing gtecton
+
+
+
+%.......................................
+\subsubsection{The Eulerian approach: The Sticky Air}
+
+Sticky air is the default option for numerical methods which mesh 
+cannot be deformed (typically the finite difference method).
+In this case, the air above the crust/sediments is modelled as a zero-density fluid with 
+very low viscosity. One problem quickly arises when one realises that the viscosity of the 
+air is almost 25-30 orders of magnitude lower than the (effective) viscosity of Earth materials. 
+Real air viscosity cannot therefore be used because of 1) round-off errors, 2) extremely 
+poorly-conditioned matrices. Low viscosities around $10^{16}-10^{19}$PS$\cdot$s are then 
+commonly used as they are still negligible next to those of the (plastic) crust, and the 
+flow of air parallel to Earth materials only generates extremely small shear and normal stress values
+(thereby approaching the true nature of a free surface). 
+This approach is the one employed in all the papers based on the I2/I3(EL)VIS code (see ~\ref{app:codes})
+and has been benchmarked in Crameri et al. \cite{crsg12}.
+
+This approach has pros and cons:
+
+1) it is simple to implement 
+2) it is compatible with all the main numerical methods (FEM, FDM,FVM)
+3) it avoids complicated remeshing
+
+but it also has drawbacks:
+
+1) it increases the size of the computational domain, thereby adding more unknowns to the linear system;
+2) it negatively impacts the condition number of the matrix;
+3) unless special methods are put into place, it requires the use of averaging all along the free-surface
+where very large viscosity contrasts are present
+4) it can showcase air entrainment;
+5) it is not clear how thick the air layer must be
+6) it often requires to ascribe thermal parameters to the air;
+7) it makes the implementation of Dirichlet or Neuman boundary conditions for temperature at the surface less
+obvious.
+8) it makes the coupling with surface processes codes less straightforward.
+4) its accuracy depends on the method used to track materials in the rest of the code (markers, level sets, ...)
+
+%..........................................................
+\subsubsection{The Arbitrary Lagrangian Eulerian approach}
+
+It is a very widely used approach in FEM-based geodynamics codes. Although it does 
+not originate 
+
+
+
+
+
+thibault paper \cite{dumy16} 
+\cite{anmp15}
+\cite{krwd12}
+
+

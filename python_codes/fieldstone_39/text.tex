@@ -114,6 +114,8 @@ rheology, the only deformation mechanism {\it is} plasticity so that the plastic
 the strain rate. When using a visco-plastic rheology, the plastic strain rate is the strain rate 
 of the zones above/at yield (the shear bands, where the vrm is active).
  
+%..........................................................
+\subsubsection{The 2010 brick}
 
 The setup is similar to the one in \cite{kaus10}. It is a 2D Cartesian domain filled with a 
 single rigid-plastic material characterised by a cohesion $c=10\text{MPa}$, an 
@@ -192,5 +194,41 @@ Results obtained on a 240x24 grid, max 50 nl iterations.
 Note that benchmarking this in not easy. One solution Timo and I found was to add a 
 velocity field $\underline{\vec\upnu}=(x,y,z)$ (with $\vec\nabla\cdot\underline{\vec\upnu}=3$)
 to an existing analytical problem, e.g. the Burstedde benchamrk.
+
+%..........................................................
+\subsubsection{The 2016 brick}
+
+The setup is similar to the one in \cite{spmw16}. It is a 2D Cartesian domain filled with an 
+isoviscous layer at the bottom and a visco-plastic material on top, as shown here:  
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_39/images/spmw_1.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/images/spmw_2.png}
+\end{center}
+
+
+In what follows the nonlinear tolerance is set to $10^{-6}$. Due to a lack of resolution, I do not
+implement the rounded edges of the seed. $U_0$ is set to 25mm/yr and the background viscosity of the brittle layer
+is set to $\eta_0=10^{24}$Pa.s. Note that the effective viscosity of the brittle layer is computed as follows:
+\[
+\eta_{eff}
+=\left( \frac{1}{\eta_0} + \frac{1}{\eta_p}  \right)^{-1}
+=\left( \frac{1}{\eta_0} + \frac{2 \dot{\epsilon}_{ii}}{Y}  \right)^{-1}
+\]
+with $Y=p \sin \phi + c \cos \phi$. 
+Note that the pressure colour bars in Fig(6) of \cite{spmw16} are most likely not correct at all, 
+and in order for my results to look like theirs I had to change it for VM, DDM and DP. 
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_39/images/spmw_3.png}\\
+{\small Results from Spiegelman et al \cite{spmw16}}
+\end{center}
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_39/sr}
+\includegraphics[width=6cm]{python_codes/fieldstone_39/etaeff}\\
+{\small von Mises case, results with FieldStone, 144x36}
+\end{center}
+
 
 
