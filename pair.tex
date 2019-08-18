@@ -65,6 +65,7 @@ have been thoroughly analysed \cite{grsi94}, \cite{chpc95}, \cite{sagl81a,sagl81
 These can be filtered out \cite{chpc95}. Smoothing techniques are also discussed in \cite{legs79}.
 
 
+\Literature \cite{fobo90}
 
 
 
@@ -77,7 +78,8 @@ Piecewise Biquadratic velocities, piecewise linear discontinuous polynomial pres
 The element satisfies the inf-sup condition \cite{hugh}p211.
 It is used in \cite{vssj89}. 
 See \cite{boga02} over the two possible choices for the definition of the pressure space..
-It is mentioned in \cite{kaus10}, \cite{boga02}, \cite{pefc89}.
+It is mentioned in \cite{kaus10}, \cite{boga02}, \cite{pefc89}. It is used in \cite{freh14}
+to study 3D fold growth rates (see online supplementary material) and in \cite{schm08}.
 
 Note that the serendipity version of this pair, i.e. $Q_2^{(20)}\times P_{-1}$ is also LBB stable
 \cite[p180]{reddybook2}.
@@ -231,6 +233,11 @@ to choose $P_2^+\times P_{-1}$.
 You will see that it is also easy to invert the pressure mass matrix for such elements, 
 which is really useful (both for the augmentation and preconditioning)."
 \end{remark}
+
+This element is used by Poliakov and Podlachikov \cite{popo92} to study the deformation of the surface above a rising diapir. Note that they actually use a "13 point integration formula (Hughes
+1987) for calculation of the stiffness matrix was used in order
+t o conserve detailed information from the marker field in
+the coarse FEM mesh".
 
 
 

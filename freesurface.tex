@@ -1,5 +1,5 @@
+\index{Free Surface}
 
-TOTAL WORK IN PROGRESS!!!
 
 When carrying out global models, i.e.  mantle convection in our case, the effect of the free surface
 is often neglected/negligeable: topography ranges from $\sim$ 10km depth to $\sim$ 10km height, which 
@@ -20,70 +20,249 @@ counterpart is the absence of surface tension, the fact that the fluids under co
 Stokesian, and that their rheology is complex (the elastic and plastic components can be 
 dominant at the surface).
 
-There are to main modelling approaches employed in Computational Geodynamics: the so-called 
-'sticky air' approach and the Arbitrary-Lagrangian approach.
+%There are to main modelling approaches employed in Computational Geodynamics: the so-called 
+%'sticky air' approach and the Arbitrary-Lagrangian approach.
 
 %.......................................
 \subsubsection{The fully Lagrangian approach}
 
-the mesh is deformed with the velocity (or displacement) computed on its nodes. 
+In this case the mesh is deformed with the velocity (or displacement) computed on its nodes. 
+It is sometimes called 'body fitting' \cite{crsg12} or 'boundary fitted'. 
+In the case large deformation occurs (which is rather frequent in geodynamics - 
+think about subduction or rifting processes where materials end up moving across the whole mesh),
+it leads to highly deformed elements, and in some case even bow-tied. 
+In the mildest cases it yields low accuracy calculations, especially when angles between edges 
+become small or large. 
+One way to overcome this problem is to remesh, i.e. generate a better mesh based on the 
+available information on the deformed one. In 2D this is routinely done, especially when 
+triangular elements are used. In 3D, multiple remeshing are very costly and it is generally
+avoided.  
+Note also that re-meshing often involves some form of interpolation and therefore some unwanted 
+numerical diffusion. 
+When deformation is reasonably small, fully lagrangian methods work and have been used in the 
+geodynamics literature \cite{hach96b,mera80,labp00}.
 
-yields potentially highly deformed elements, low accuracy. or even bow-tied. 
+\begin{center}
+\includegraphics[width=7cm]{images/freesurface/labp00}\\
+{\small Taken from \cite{labp00}. Note that the bottom and the top surface are deformed.}
+\end{center}
 
-large deformation requires re-meshing , 2D ok, not 3D. 
 
-remeshing vs no remeshing gtecton
 
+GET:
+Crook et al. 2006, and references therein \cite{crwy06})
+Beaumont et al. 1994;  \cite{befh94}
 
 
 %.......................................
-\subsubsection{The Eulerian approach: The Sticky Air}
+\subsubsection{The Eulerian approach: using sticky air}
+\index{Sticky Air}
 
 Sticky air is the default option for numerical methods which mesh 
 cannot be deformed (typically the finite difference method).
 In this case, the air above the crust/sediments is modelled as a zero-density fluid with 
-very low viscosity. One problem quickly arises when one realises that the viscosity of the 
-air is almost 25-30 orders of magnitude lower than the (effective) viscosity of Earth materials. 
+very low viscosity (see for instance the early article by Zaleski and Julien \cite{zaju92}). 
+One problem quickly arises when one realises that the viscosity of the 
+air ($\sim 18.5\cdot10^{-6}$ Pa$\cdot$s\footnote{\url{https://en.wikipedia.org/wiki/Viscosity}})
+is almost 25-30 orders of magnitude lower than the (effective) viscosity of Earth materials. 
 Real air viscosity cannot therefore be used because of 1) round-off errors, 2) extremely 
-poorly-conditioned matrices. Low viscosities around $10^{16}-10^{19}$PS$\cdot$s are then 
+poorly-conditioned matrices. Low viscosities around $10^{16}-10^{19}$Pa$\cdot$s are then 
 commonly used as they are still negligible next to those of the (plastic) crust, and the 
 flow of air parallel to Earth materials only generates extremely small shear and normal stress values
 (thereby approaching the true nature of a free surface). 
-This approach is the one employed in all the papers based on the I2/I3(EL)VIS code (see ~\ref{app:codes})
+This approach is the one employed in all the papers based on the I2/I3(EL)VIS code (see Appendix~\ref{app:codes})
 and has been benchmarked in Crameri et al. \cite{crsg12}.
 
-This approach has pros and cons:
+This approach has a few advantages:
+\begin{enumerate}
+\item it is simple to implement 
+\item it is compatible with all the standard numerical methods (FEM, FDM,FVM)
+\item it avoids (potentially complicated) remeshing
+\end{enumerate}
+and quite a few drawbacks:
+\begin{enumerate}
+\item it increases the size of the computational domain, thereby adding more unknowns to the linear system: in \cite{scbe08} the air layer is set to 50km while the lithospheric domain underneath is 700km thick;
+\item it requires the use of averaging all along the free-surface
+where very large viscosity contrasts are present. Here is what Poliakov and Podlachikov \cite{popo92}
+say about the sticky air method:
+"Zaleski \& Julien \cite{zaju92} used a top layer with a very low
+viscosity and density to represent air or water above the
+surface. This allows a simple representation of the free
+surface. However, due to the very high viscosity and density
+contrast and diffusion between the top layer and the
+underlying layers, calculations sometimes become unstable
+and give significant errors."
 
-1) it is simple to implement 
-2) it is compatible with all the main numerical methods (FEM, FDM,FVM)
-3) it avoids complicated remeshing
-
-but it also has drawbacks:
-
-1) it increases the size of the computational domain, thereby adding more unknowns to the linear system;
-2) it negatively impacts the condition number of the matrix;
-3) unless special methods are put into place, it requires the use of averaging all along the free-surface
-where very large viscosity contrasts are present
-4) it can showcase air entrainment;
-5) it is not clear how thick the air layer must be
-6) it often requires to ascribe thermal parameters to the air;
-7) it makes the implementation of Dirichlet or Neuman boundary conditions for temperature at the surface less
+\item it can showcase air entrainment:
+\begin{center}
+\includegraphics[width=8cm]{images/freesurface/scbe08}\\
+{\small Taken from \cite{scbe08}. Details of the entrainment and lubrication of the soft surface layer. 
+Light blue particles are sticky air particle and are found to greatly alter the viscosity
+of the subduction channel.}
+\end{center}
+\item it is not clear how thick the air layer must be
+\item it often requires to ascribe thermal parameters to the air;
+\item it makes the implementation of Dirichlet or Neuman boundary conditions for temperature at the surface less
 obvious.
-8) it makes the coupling with surface processes codes less straightforward.
-4) its accuracy depends on the method used to track materials in the rest of the code (markers, level sets, ...)
+\item it makes the coupling with surface processes codes less straightforward.
+\item its accuracy depends on the method used to track materials in the rest of the code (markers, level sets, ...). If markers are used, the free surface position is then known up to the average distance between markers.
+\item it negatively impacts the condition number of the matrix.
+\end{enumerate}
+
+The sticky air approach is employed by various codes in the subduction benchmark study \cite{scbe08}
+
+The term 'sticky water' is sometimes employed too. The dynamic viscosity of water is about 
+$10^{-3}$Pa$\cdot$s so that it is also negligible compared to the viscosity of Earth materials
+and the same reasonng as air applies. However, in such a case a density of about 1000kg/m$^3$ 
+is then assigned to the layer. REF?
+
+In conclusion, as stated in \cite{crsg12}: "the sticky air method is a good way to
+simulate a free surface for Eulerian approaches, provided that its
+parameters are chosen carefully."
+
 
 %..........................................................
-\subsubsection{The Arbitrary Lagrangian Eulerian approach}
+\subsubsection{The Arbitrary Lagrangian Eulerian (ALE) approach}
+\index{Arbitrary Lagrangian Eulerian} \index{ALE}
 
-It is a very widely used approach in FEM-based geodynamics codes. Although it does 
-not originate 
+It is a very widely used approach in FEM-based geodynamics codes but originates in the field of 
+CFD \cite{hiac74,hulz81} and is described at length in \cite{sozo01,dohp04,dohu03}.
+To put is very simply, the key idea in the ALE formulation is
+the introduction of a computational mesh which can move and deform with a velocity 
+independent of the velocity carried by the material particles.
 
+\paragraph{The simple approach in \cite{thie11}.}
+What follows is written with a 2D Cartesian model in mind ($Q_1\times P_0$ elements are used).
+The computational domain is a rectangle of size $L_x \times  L_y$ 
+and a nnx $\times$ nny rectangular grid spanning the simulation
+domain is generated.
+The grid points constituting the top row of the grid define the
+discrete free surface of the domain. Once the Eulerian velocity field
+has been computed on these, their position is first updated using a
+simple Eulerian advection step (see a,b on figure hereunder):
+\[
+\vec{r}_i'(t+\delta t) = \vec{r}_i(t) + \vec{v}_i \cdot \delta t
+\qquad\qquad
+i=1,\dots nnx
+\]
+The other boundaries of the system remain fixed at locations
+$x=0$, $x=L_x$ and $y=0$. Even though the Eulerian grid must conform
+to the current domain shape, only vertical motion of grid nodes is
+allowed. It is therefore necessary to resample the predicted free
+surface given by $\vec{r}_i'$ at equidistant positions between $x=0$ and $x=L_x$.
+The resampling is carried out either with Spline functions or a 
+moving least square algorithm. 
+Finally, the vertical position of all the nodes corresponding
+to column $i\in [1,nnx]$ is recalculated so that they are equidistant, 
+as sketched in Figure d. This has the advantage of keeping
+the mesh distortion to a minimum in the case of large
+deformation.
 
+\begin{center}
+\includegraphics[width=9cm]{images/freesurface/ale2d}\\
+ {\small The ALE algorithm of \cite{thie11} in 2D. 
+(a) Grid and free surface at a given time $t$; 
+(b) advection of the free surface; 
+(c) resampling of the free surface at equidistant abscissae; 
+(d) vertical adjustment of grid nodes in each column at equidistant ordinates.}
+\end{center}
 
+The ALE method is used in the SOPALE, SULEC, FANTOM, ELEFANT, and ASPECT codes to name a few
+(see Appendix~\ref{app:codes}).
 
+\paragraph{The not-so-simple but rather elegant approach of ASPECT}
 
-thibault paper \cite{dumy16} 
+What follows is mostly borrowed from Rose et al \cite{robh17}. Their approach 
+has the advantage that it does not presuppose a geometry (Cartesian, Spherical, ...)
+nor a number of dimensions. It is also designed to work in parallel and on octree-based
+meshes, and with various combinations of boundary conditions.
+Note that the authors specify that "for moderate mesh deformation, the mesh stays smooth and well
+conditioned, though it breaks down for large deformations".
+
+The mesh velocity in normal direction at the free surface (with
+unit normal $\vec{n}$) has to be consistent with the velocity of the Stokes
+velocity solution $\vec{\upnu}(t)$:
+\begin{equation}
+\vec{\upnu}_{\text{mesh}}(t)\cdot \vec{n} = \vec{\upnu}(t)\cdot \vec{n} 
+\qquad
+\text{on}
+\quad
+\Gamma_F
+\end{equation}
+In ALE calculations the internal mesh velocity is usually undetermined, 
+but one wants to smoothly deform the mesh so as to preserve its regularity, 
+avoiding inverted or otherwise poorly conditioned cells. 
+The mesh deformation can be calculated in many different ways, icluding algebraic 
+(as mentioned in the previous paragraph) and PDE based approaches.
+The latter is chosen here. 
+The Laplace equation is solved where the unknown in the mesh velocity, i.e. 
+on must solve:
+\begin{equation}
+\Delta \vec{\upnu}_{\text{mesh}} = 0\label{eq:fsaspect1}
+\end{equation}
+subjected to the following boundary conditions:
+\begin{eqnarray}
+\vec{\upnu}_{\text{mesh}} &=& \vec{0} \qquad\qquad \text{on } \Gamma_0 \\
+\vec{\upnu}_{\text{mesh}} &=& (\vec{\upnu}\cdot\vec{n})\vec{n} \qquad \text{on } \Gamma_F \\
+\vec{\upnu}_{\text{mesh}}\cdot \vec{n} &=& 0 \qquad\qquad \text{on } \Gamma_{FS} \label{eq:fsaspect2}
+\end{eqnarray}
+where $\Gamma_{FS}$ is the part of the boundary with free slip boundary conditions, 
+$\Gamma_0$ is the no-slip part and $\Gamma_{FS}$ is the free slip part.
+
+Once the mesh velocity has been obtained for all mesh points, these can be moved with 
+said velocity. However, it must be noted that the multiple occurences of the normal vector
+in the above equations is not without problem as the normal vectors are not well defined on the
+mesh vertices, which is where the mesh velocity is defined.
+
+The authors list two simple methods of computing the normals:
+\begin{itemize}
+\item one can take $\vec{n}$ as the direction of the local vertical,
+\item one could compute $\vec{n}$ as some weighted average of the cell normals adjacent to a given
+vertex
+\end{itemize}
+but conclude that they have found that these schemes do not necessarily
+have good mass conservation properties.
+
+A better approach is proposed in the form of an $L_2$ projection of the 
+normal velocity $\vec{v}\cdot\vec{n}$ onto the free surface $\Gamma_F$. 
+Multiplying the boundary conditions 
+\[
+\vec{\upnu}_{\text{mesh}} = (\vec{\upnu}\cdot\vec{n})\vec{n} 
+\]
+by a test function $\vec{w}$ and integrating over the free surface part of the boundary, we find:
+\begin{equation}
+\int_{\Gamma_F} \vec{w}\cdot\vec{\upnu}_{\text{mesh}} d\Gamma 
+=
+\int_{\Gamma_F} \vec{w}\cdot (\vec{\upnu}\cdot\vec{n})\vec{n} d\Gamma
+=
+\int_{\Gamma_F} (\vec{w}\cdot\vec{n}) (\vec{\upnu}\cdot\vec{n}) d\Gamma \label{eq:fsaspect3}
+\end{equation}
+When discretized, this forms a linear system which can be
+solved for the mesh velocity $\vec{\upnu}_{\text{mesh}}$ 
+at the free surface. 
+This system, being nonzero over only the
+free surface, is relatively computationally inexpensive to solve.
+
+This yields what the author coin the 'quasi-implicit' scheme 
+(we have so far neglected any kind of stabilisation):
+\begin{enumerate}
+\item Solve the Stokes system;
+\item Solve for the surface mesh velocity using Equation~\ref{eq:fsaspect3};
+\item Solve for the internal mesh velocity using Equations~\ref{eq:fsaspect1}, \ref{eq:fsaspect2}; 
+\item Advect the mesh forward in time using displacements determined by
+the forward Euler scheme: $\vec{x}(t^{n+1} ) = \vec{x}(t^n ) + \vec{\upnu}_{\text{mesh}} \delta t$.
+\end{enumerate}
+
+Note that \cite{robh17} go further than this, propose a 'nonstandard finite difference scheme' and 
+make a link with the stabilisation presented in \cite{kamm10}.
+
+\vspace{1cm}
+TOTAL WORK IN PROGRESS. Need to look at those papers:
+\cite{huli88}
+\cite{dumg11}
+\cite{dumy16} 
 \cite{anmp15}
 \cite{krwd12}
+\cite{stcl10}
 
-
+stabilisation \cite{kamm10,qube11,dumg11}
