@@ -1,4 +1,5 @@
 pdflatex manual.tex
 bibtex manual
+#authorindex manual
 makeindex manual.idx
 #pdflatex manual.tex
