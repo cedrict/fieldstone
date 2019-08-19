@@ -1,0 +1,28 @@
+
+MEGA WORK in PROGRESS!!
+
+Following \cite{spmw16}, one can monitor the relative changes in the solution from iteration to iteration. 
+For instance, 
+\[
+\frac{||\Delta \vec{\cal V} ||_{L2}}{||\vec{\cal V}||_{L2}} 
+=
+\left( \frac{\int\limits_\Omega (\vec{\cal V}_i-\vec{\cal V}_{i-1}) \cdot( \vec{\cal V}_i-\vec{\cal V}_{i-1}) dV}{\int\limits_\Omega \vec{\cal V}_i\cdot\vec{\cal V}_i dV} \right)^{1/2}
+\]
+is a measure of the relative change in the velocity field from iteration $i-1$ to $i$. 
+The same monitoring can be done for pressure:
+\[
+\frac{||\Delta \vec{\cal P} ||_{L2}}{||\vec{\cal P}||_{L2}} 
+=
+\left( \frac{\int\limits_\Omega (\vec{\cal P}_i-\vec{\cal P}_{i-1}) \cdot( \vec{\cal P}_i-\vec{\cal P}_{i-1}) dV}{\int\limits_\Omega \vec{\cal P}_i\cdot\vec{\cal P}_i dV} \right)^{1/2}
+\]
+Convergence is reached when both are below 0.001 \cite{lemm08} or 0.0001 \cite{kaus10}.
+
+
+
+
+nonlinear residual .. see \cite{spmw16} p2222. 
+
+check correlation of \cite{thie11}
+
+
+
