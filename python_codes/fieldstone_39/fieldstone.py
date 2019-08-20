@@ -21,7 +21,7 @@ def ubc(x,y):
     if benchmark==1:
        vaal=-1.e-15*(Lx/2.0)
     else:
-       vaal=-0.0025/year
+       vaal=0.0025/year
 
     if x<Lx/2:
        val=vaal
@@ -63,7 +63,7 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
              eta1=1e24
              e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
              e2=max(1e-25,e2)
-             etap=(pq*np.sin(phi)+c*np.cos(phi))/(2*e2)
+             etap=((pq+2700*9.81*(Ly-y))*np.sin(phi)+c*np.cos(phi))/(2*e2)
              val=1./(1./etap+1./eta1)
              val=min(1.e25,val)
              val=max(1.e20,val)
@@ -130,8 +130,6 @@ mP=4     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-
-
 if int(len(sys.argv) == 6):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
@@ -174,7 +172,8 @@ if benchmark==1:
    phi=30./180*np.pi
    psi=30./180*np.pi
 else:
-   rho=2700
+   #----spmw16----
+   rho=2700.-2700.
    cohesion=1e8
    phi=30./180*np.pi
    psi=0./180*np.pi
@@ -195,7 +194,7 @@ eta_ref=1.e22      # scaling of G blocks
 scaling_coeff=eta_ref/Ly
 
 niter_min=1
-niter=200
+niter=100
 
 if use_SchurComplementApproach:
    ls_conv_file=open("linear_solver_convergence.ascii","w")
@@ -314,7 +313,7 @@ if benchmark==1:
           u[i] = ubc(xV[i],yV[i])
           v[i] = vbc(xV[i],yV[i])
 
-if benchmark==2:
+if benchmark==2: # spmw16
    for i in range(0,NV):
        if xV[i]/Lx<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
