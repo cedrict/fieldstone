@@ -1,0 +1,58 @@
+Several mechanisms may contribute to strain or strain
+rate dependent weakening but their relative and absolute
+importance is poorly constrained. Furthermore, 
+weakening mechanisms are often crudely parameterised in 
+geodynamical codes with simple mathematical functions 
+and a limited number of parameters. 
+
+For example, in \cite{alht11} the authors use a von Mises plasticity formulation so that the 
+rheology is parameterised by the cohesion $c$, or $c=\sigma_y$ in their notations. The
+yield strength $\sigma_y$ starts is constant until the strain
+$\varepsilon$ reaches the threshold value $\varepsilon_1$. It then decreases linearly
+from $\sigma_y$ to $\sigma_{y}^{sw}$ between $\varepsilon_1$ and $\varepsilon_2$. 
+For strain values $\varepsilon>\varepsilon_2$ , the yield strength remains constant 
+at $\sigma_y^{sw}$ .
+
+\begin{center}
+\includegraphics[width=6cm]{images/strainweakening/alht11}\\
+{\tiny Taken from \cite{alht11}}
+\end{center}
+
+The same authors in a subsequent study use a Drucker-Prager rheology parameterised by 
+cohesion $c$ and friction angle $\phi$. They use the same approach as before but now 
+both parameters are subjected to strain weakening: 
+
+\begin{center}
+\includegraphics[width=6cm]{images/strainweakening/alht12}\\
+{\tiny Taken from \cite{alht12}, see also \cite{thie11}}
+\end{center}
+
+They further define the factor $R=C^0/C^{sw}=\phi^0/\phi^{sw}\geq 1$ which is a proxy
+for the ratio $\sigma_y/\sigma_y^{sw}$ where $\sigma_y=p \sin\phi + c \; \cos \phi$, 
+and carry out 3D crustal extensional models for $R$ between 2 and 5. 
+
+
+
+In \cite{lemh17} the authors also define 
+\[
+\tau_y = p \sin (\phi(\varepsilon^p))  + c_0 \cos(\phi(\varepsilon^p))
+\]
+but the cohesion is regarded to be constant. 
+The angle of friction $\phi$ is assumed to decrease as a function of the accumulated plastic
+strain $\varepsilon^p$ to
+\[
+\phi(\varepsilon^p) 
+=
+\max \left(
+\phi_\infty , \phi_0 - \frac{\varepsilon^p (\phi_0-\phi_\infty)}{\varepsilon^p_\infty}
+\right)
+\]
+This equation defines an empirical softening relation which reduces the
+friction angle linearly with accumulated plastic strain.
+$\phi_0$ defines the initial friction angle, $\varepsilon^p_\infty$
+represents the measure of plastic strain after which complete softening is achieved and internal
+friction angle reaches $\phi_\infty$ . Plastic strain represents an integrated,
+tensorial invariant measure of the deformation which has occurred
+due to plastic yielding. Thus, the quantity $\varepsilon^p$ can be regarded as
+a simplified measure of material damage. 
+

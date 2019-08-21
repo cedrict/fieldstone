@@ -628,8 +628,14 @@ When the viscosity $\eta$ is constant this equation becomes
 \eta \Delta \vec v - \vec\nabla p + \vec b = \vec 0
 \]
 In this case the matrix ${\bm B}$ takes a different form \cite[Eq. 6.24]{dohu03}
-and this can have consequences for the Neumann boundary conditions. 
- 
+and one should be aware that this can have consequences for the Neumann boundary conditions. 
+
+In \cite{bugs09} the authors state that when the Laplacian formulation is used 
+it has the computational advantage that the velocity
+components are coupled only through the incompressibility condition. 
+While the two formulations are equivalent only for constant viscosity, they state 
+that they employ the Laplacian approach formulation as a preconditioner for the viscous term. 
+
 
 
 
