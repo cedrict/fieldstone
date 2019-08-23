@@ -5,7 +5,8 @@ computational geodynamics community.
 \begin{itemize}
 \item the plastic brick \cite{lemm08,kaus10,qurj09,mishin11,maie12,spmw16,gltf18,frbt19}
 \item 2D Rayleigh-Benard convection (Blankenbach)  \cite{blbc89,trha98,chhl08,king09,lezh11,vyrc13,trab90}
-\item 2D Rayleigh-Taylor convection/instability \cite{pros81,trab90,popo92,soga01,bast02,taki03,bomh06, basd08,qurj09,saev10,lezh11,vyrc13,vkks97,bomh06,chtl13,deka08,mishin11,maie12,fusc13} 
+\item 2D Rayleigh-Taylor convection/instability \cite{pros81,trab90,wesc92,popo92,soga01,bast02,taki03,bomh06, basd08,qurj09,saev10,lezh11,lomw12,vyrc13,vaks97,bomh06,chtl13,deka08,mishin11,maie12,fusc13} 
+\item 3D Rayleigh-Taylor instability \cite{como97,fukk08,vosc15}
 \item subduction problems \cite{scbe08,vack08,cehg14}
 \item numerical sandbox \cite{bbeg06,maie12,busa16,gltf18}
 \item the Stokes sphere \cite{galemanual}
@@ -16,21 +17,23 @@ computational geodynamics community.
 \item Free surface evolution \cite{crsg12}
 \item Love's problem \cite{bebe04}
 \item Poiseuille flow \cite{fojg94,fuku11}
-\item Couette flow
+\item Couette flow with temperature dependent viscosity \cite{egat10}
+\item Couette flow with shear heating \cite{egat10}
 \item Poiseuille-Couette flow \cite{fusc13}
 \item Lid driven Cavity \cite{foth79,ghgs82,bope98,kawa61}
 \item Wannier flow \cite{wann50,yemu99}
-\item bending of elastic plate \cite{cehg14,boht08a}
+\item bending of elastic plate \cite{cehg14,boht08a,vosc15,egat10}
 \item flexure of finite length elastic plate \cite{chtl13}
 \item thermal diffusion of half-cooling space \cite{chtl13}
-\item stress build-up in Maxwell visco-elastic material \cite{geyu07,chtl13}
+\item stress build-up in Maxwell visco-elastic material \cite{geyu07,chtl13,egat10}
 \item plastic oedometer test  \cite{chtl13}
 \item SolCx \cite{mamo08}
 \item SolKz \cite{mamo08}
-\item SolVi / inclusion \cite{kapo06,maie12,deka08}
-\item channel flow (nonlinear) \cite{maie12,frbt19,gery10}
-\item indentor, punch problem \cite{thfb08,mota77,gepd98,gltf18}. See also \cite{hukm03,fojd04,gerb12} for application.
+\item SolVi, inclusion \cite{kapo06,maie12,deka08,vosc15}
+\item channel flow (nonlinear) \cite{maie12,frbt19,gery10,egat10}
+\item indentor, punch problem \cite{engl82,thfb08,mota77,gepd98,gltf18}. See also \cite{hukm03,fojd04,gerb12} for application.
 \item relaxation of sinusoidal topography \cite{crsg12,robh17}
+\item single layer visco-elastic folding \cite{vosc15}
 \item Three-dimensional folding of an embedded viscous layer in pure shear \cite{flet91}
 \item dam-break problem \cite{moeb99,bacp07,liir07,lemx08,homa09,anco09}
 \item hot blob \cite{bugs09,fumt11}
@@ -71,7 +74,7 @@ where $n$ is a wavenumber which is an integer multiple of 1/2 (taken to be 1/2 e
 %...............................................................
 \subsubsection{the plastic brick}
 
-\Literature \cite{hans03,moml07,lemm08,kaus10,qurj09,mishin11,maie12,spmw16,gltf18,frbt19,aspectmanual}
+\Literature \cite{hans03,moml07,lemm08,kaus10,egat10,qurj09,mishin11,maie12,spmw16,gltf18,frbt19,aspectmanual}
 
 Pretty much all of the brick-type (elasto-)visco-plastic experiments in the literature
 introduce a weak seed at the bottom of the domain to seed deformation (the shear bands

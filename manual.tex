@@ -177,74 +177,78 @@ doi = "10.23644/uu.9209393.v1"
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Additional techniques and features} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Dealing with a free surface} \input{freesurface}
 
-\subsection{Convergence criterion for nonlinear iterations \label{sec:nlconvcrit}} \input{nlconvcrit} 
+Solving the Stokes equations and the energy equations is one thing. Doing it in 
+a geodynamical context requires a lot of additional techniques. 
 
-\subsection{Strain weakening} \label{sec:strainweakening} \input{strainweakening}
-
-\subsection{The gravity vector} \label{sec:gravityvector} \input{gravityvector}
-
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Dealing with a free surface}\label{sec:freesurface} \input{freesurface} %--------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Convergence criterion for nonlinear iterations\label{sec:nlconvcrit}}\input{nlconvcrit} 
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Strain weakening} \label{sec:strainweakening} \input{strainweakening} %----------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{The gravity vector} \label{sec:gravityvector} \input{gravityvector} %------------------
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{The SUPG formulation for the energy equation} \label{sec:supg} \input{supg} %----------
-\newpage %---------------------------------------------------------------------
-\subsection{The method of manufactured solutions \label{mms}} \input{mms} %----
-\newpage %---------------------------------------------------------------------
-\subsection{Geodynamical benchmarks} \input{geodynamics_benchmarks} %----------
-\newpage %---------------------------------------------------------------------
-\subsection{Assigning values to quadrature points} \input{averagings} %--------
-\newpage %---------------------------------------------------------------------
-\subsection{Matrix (Sparse) storage} \input{storage} %-------------------------
-\newpage %---------------------------------------------------------------------
-\subsection{Mesh generation} \label{subsection_meshes} \input{meshes} %--------
-\newpage %---------------------------------------------------------------------
-\subsection{Visco-Plasticity} \input{viscoplasticity} %------------------------
-\newpage %---------------------------------------------------------------------
-\subsection{Pressure smoothing \label{psmoothing}} \input{pressure_smoothing} %-------------------
-\newpage %---------------------------------------------------------------------
-\subsection{Pressure scaling} \input{pressure_scaling} %-----------------------
-\newpage %---------------------------------------------------------------------
-\subsection{Pressure normalisation\label{ss_pnorm}} \input{pressure_normalisation} %--
-\newpage %----------------------------------------------------------------------------
-\subsection{Solving the Stokes system \label{sec:solvers}} \input{solvers} %---
-\newpage %---------------------------------------------------------------------
-\subsection{The consistent boundary flux (CBF)} \input{CBF} %------------------
-\newpage %---------------------------------------------------------------------
-\subsection{The value of the timestep} \input{cfl} %---------------------------
-\newpage %---------------------------------------------------------------------
-\subsection{Mappings} \input{mappings} %---------------------------------------
-\newpage %---------------------------------------------------------------------
-\subsection{Exporting data to vtk format} \input{exporting_to_vtk} %-----------
-\newpage %---------------------------------------------------------------------
-\subsection{Runge-Kutta methods} \input{rungekutta} %--------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{The method of manufactured solutions \label{mms}} \input{mms} %------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Geodynamical benchmarks} \input{geodynamics_benchmarks} %------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Assigning values to quadrature points} \input{averagings} %----------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Matrix (Sparse) storage} \input{storage} %---------------------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Mesh generation} \label{subsection_meshes} \input{meshes} %----------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Visco-Plasticity} \input{viscoplasticity} %--------------------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Pressure smoothing \label{psmoothing}} \input{pressure_smoothing} %--------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Pressure scaling} \input{pressure_scaling} %-------------------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Pressure normalisation\label{ss_pnorm}} \input{pressure_normalisation} %---------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Solving the Stokes system \label{sec:solvers}} \input{solvers} %-----------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{The consistent boundary flux (CBF)} \input{CBF} %--------------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{The value of the timestep} \input{cfl} %-----------------------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Mappings} \input{mappings} %-----------------------------------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Exporting data to vtk format} \input{exporting_to_vtk} %-------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Runge-Kutta methods} \input{rungekutta} %----------------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Am I in or not? - finding reduced coordinates}\label{sec:amiin}\input{amiin} %---------
-\newpage %---------------------------------------------------------------------
-\subsection{Error measurements and convergence rates} \input{errors} %---------
-\newpage %---------------------------------------------------------------------
-\subsection{The initial temperature field} \input{initial_temperature} %-------
-\newpage %---------------------------------------------------------------------
-\subsection{Kinematic boundary conditions} \input{kinematic_bc} %--------------
-\newpage %---------------------------------------------------------------------
-\subsection{Computing gradients - the recovery process} \input{recovery} %-----
-\newpage %---------------------------------------------------------------------
-\subsection{Tracking materials and/or interfaces} \input{tracking} %-----------
-\newpage %---------------------------------------------------------------------
-\subsection{Static condensation} \input{static_condensation} %-----------------
-\newpage %---------------------------------------------------------------------
-\subsection{Measuring incompressibility \label{ss_incomp}} \input{incomp} %----
-\newpage %---------------------------------------------------------------------
-\subsection{Periodic boundary conditions\label{ss_periodic}}\input{periodic} %-
-\newpage %---------------------------------------------------------------------
-\subsection{Removing rotational nullspace\label{ss_nullspace}} \input{nullspace}
-\newpage %---------------------------------------------------------------------
-\subsection{Picard and Newton \label{ss_nonlinear}} \input{nonlinear} %--------
-\newpage %---------------------------------------------------------------------
-\subsection{Parallel or not?} \label{sec:parallel} \input{parallel}
-\newpage %---------------------------------------------------------------------
-\subsection{Stream function} \label{sec:streamfunction} \input{streamfunction}
-\newpage %---------------------------------------------------------------------
-\subsection{Corner flow} \label{sec:cornerflow} \input{cornerflow}
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Error measurements and convergence rates} \input{errors} %-----------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{The initial temperature field} \input{initial_temperature} %---------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Kinematic boundary conditions} \input{kinematic_bc} %----------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Computing gradients - the recovery process} \input{recovery} %-------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Tracking materials and/or interfaces} \input{tracking} %-------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Static condensation} \input{static_condensation} %-------------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Measuring incompressibility \label{ss_incomp}} \input{incomp} %------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Periodic boundary conditions\label{ss_periodic}}\input{periodic} %---------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Removing rotational nullspace\label{ss_nullspace}} \input{nullspace} %-----------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Picard and Newton \label{ss_nonlinear}} \input{nonlinear} %----------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Parallel or not?} \label{sec:parallel} \input{parallel} %------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Stream function} \label{sec:streamfunction} \input{streamfunction} %-------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Corner flow} \label{sec:cornerflow} \input{cornerflow} %-------------------------------
 
 
 %\subsection{Steady state thermal problems \label{ss_ss}} \input{steadystate} %-
