@@ -647,9 +647,9 @@ for istep in range(0,nstep):
     eyyn/=c
     exyn/=c
 
-    print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-    print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-    print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+    print("     -> exxn (m,M) %.4f %.4f " %(np.min(exxn),np.max(exxn)))
+    print("     -> eyyn (m,M) %.4f %.4f " %(np.min(eyyn),np.max(eyyn)))
+    print("     -> exyn (m,M) %.4f %.4f " %(np.min(exyn),np.max(exyn)))
 
     print("compute nod strain rate: %.3f s" % (timing.time() - start))
 

@@ -52,7 +52,7 @@ Since I am solving for the steady-state solution I set the mass matrix in the
 heat transport part of the code to zero. However, since I am solving the stokes equations
 and the heat transport equation alternatively until convergence is reached, it is well 
 known that this approach does not converge fast (if at all). 
-I then implement a simple relaxation scheme. After I have solved for velocity (using the 
+I then implement a simple relaxation scheme \cite{vyrc13}. After I have solved for velocity (using the 
 most recent temperature field in the rhs), I do:
 \[
 \vec{v}^k = \gamma \vec{v}^k + (1-\gamma) \vec{v}^{k-1}
