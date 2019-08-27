@@ -1,49 +1,87 @@
 \index{Free Surface}
 
 
-When carrying out global models, i.e.  mantle convection in our case, the effect of the free surface
+When carrying out global models, typically  mantle convection, the effect of the free surface
 is often neglected/negligeable: topography ranges from $\sim$ 10km depth to $\sim$ 10km height, which 
-is very small to the depth of the mantle ($\sim$ 3000km). 
+is very small compared to the depth of the mantle ($\sim$ 3000km). 
 
 However, it has long been regognised that there is a feedback between topography and crust/lithosphere
 deformation: the surface of the Earth reflects the deeper processes, from orogeny, back-arc basins, 
-rifts, mid-ocean ridges, etc ...
+rifts, mid-ocean ridges, etc ... (see for instance \cite{brau10b}).
 
+\begin{remark}
 Free surface flows are not unique to Earth sciences, and their modelling has given rise to many studies 
 and textbooks. A typical free-surface flow problem in the CFD literature is the so-called 'dam break' 
 problem \cite{moeb99,bacp07,liir07,lemx08,homa09,anco09}. Other occurrences involve 
 sea waves, flow over structures, flow around ships, mould filling, flow with bubbles \cite{liir07}.
-
+\end{remark}
  
 What distinguishes geodynamics free surface modelling from its engineering 
-counterpart is the absence of surface tension, the fact that the fluids under consideration are
-Stokesian, and that their rheology is complex (the elastic and plastic components can be 
+counterpart is (i) the absence of surface tension, (ii) the fact that the fluids under consideration are
+Stokesian, (iii) their rheology is complex (the elastic and plastic components can be 
 dominant at the surface).
 
 %There are to main modelling approaches employed in Computational Geodynamics: the so-called 
 %'sticky air' approach and the Arbitrary-Lagrangian approach.
 
+The problem of dealing with a free surface can be deceptively simple at first glance: as mentioned before the
+amplitude of surface movement is often less than 1\% of the domain size. Isostacy-driven movements are
+easy to deal with since the movement is vertical (and often characteried by  long wavelength). However, computational 
+problems quickly arise in subduction modelling: the downgoing lithosphere subducts below the 
+overriding plate and the relative convergence of the two is likely to generate a cusp at the trench. The presence
+of shear bands intersecting the surface accentuates the problem:
+
+\begin{center}
+\includegraphics[width=13cm]{images/freesurface/matv15} \\
+{\tiny Taken from Maffione et al \cite{matv15}. Example of free surface deformation above 
+intra-oceanic subduction initiation}
+\end{center}
+
+\begin{remark} It is difficult to talk about free surface without including the underlying mesh. What follows
+should be read alongside Section~\ref{sec:meshes}.
+\end{remark}
+
 %.......................................
 \subsubsection{The fully Lagrangian approach}
 
+\index{Bow-tied element}
+
 In this case the mesh is deformed with the velocity (or displacement) computed on its nodes. 
 It is sometimes called 'body fitting' \cite{crsg12} or 'boundary fitted'. 
-In the case large deformation occurs (which is rather frequent in geodynamics - 
-think about subduction or rifting processes where materials end up moving across the whole mesh),
-it leads to highly deformed elements, and in some case even bow-tied. 
-In the mildest cases it yields low accuracy calculations, especially when angles between edges 
-become small or large. 
+In the case when large deformation occurs (which is rather frequent in geodynamics - 
+think about subduction or rifting processes where materials end up moving 100's or 1000's of km, horizontally
+and/or vertically), it leads to highly deformed elements, and in some case even bow-tied:
+
+\begin{center}
+\frame{\includegraphics[width=4.5cm]{images/freesurface/ball00}}
+\frame{\includegraphics[width=4.5cm]{images/freesurface/ball01}}
+\frame{\includegraphics[width=4.5cm]{images/freesurface/ball02}}\\
+\frame{\includegraphics[width=4.5cm]{images/freesurface/ball03}}
+\frame{\includegraphics[width=4.5cm]{images/freesurface/ball05}}
+\frame{\includegraphics[width=4.5cm]{images/freesurface/ball07}}\\
+\frame{\includegraphics[width=4.5cm]{images/freesurface/ball08}}
+\frame{\includegraphics[width=4.5cm]{images/freesurface/ball09}}
+\frame{\includegraphics[width=4.5cm]{images/freesurface/ball10}}\\
+{\tiny Example of a free surface evolution above a sinking sphere. The isostatic rebound above the sphere 
+generates a cusp which, if no special measure is taken, ultimately leads to a bow-tied element. Once this 
+occurs the simulation stops since the mapping of the bow-tied element to the reference element yields to
+wrong elemental matrix. Curtesy of M. Fraters}
+\end{center}
+
+In the mildest cases this does not occur but it has long been established that 
+large mesh deformation yields low accuracy calculations, 
+especially when angles between edges become small or large. 
 One way to overcome this problem is to remesh, i.e. generate a better mesh based on the 
 available information on the deformed one. In 2D this is routinely done, especially when 
 triangular elements are used. In 3D, multiple remeshing are very costly and it is generally
 avoided.  
 Note also that re-meshing often involves some form of interpolation and therefore some unwanted 
 numerical diffusion. 
-When deformation is reasonably small, fully lagrangian methods work and have been used in the 
-geodynamics literature \cite{hach96b,mera80,labp00}.
+When deformation is reasonably small, fully lagrangian methods work and have been used in 
+geodynamics \cite{hach96b,mera80,labp00}.
 
 \begin{center}
-\includegraphics[width=7cm]{images/freesurface/labp00}\\
+\includegraphics[width=8cm]{images/freesurface/labp00}\\
 {\small Taken from \cite{labp00}. Upper-crustal faulting, note that the bottom and the top surface are deformed.}
 \end{center}
 

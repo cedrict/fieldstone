@@ -4,28 +4,21 @@
 \item Bsc thesis
 \begin{itemize} 
 \item Darcy flow. redo WAFLE (see http://cedricthieulot.net/wafle.html)
-\item nonlinear poiseuille
-\item Fehlberg RK advection
-\item implement mms5 \ref{mms5}, mms7 \ref{mms7}
 \item chunk grid
 \end{itemize}
 %..............................
 \item MSc guided research/thesis
 \begin{itemize} 
-\item Newton solver
 \item surface tension see \cite{reddybook2}p28-29 - see ibuprofem 
 \item elasticity with markers
 \item navier-stokes ? (LUKAS) use dohu matlab code
-\item lev hager 2008 RT instability with anisotropic visc
-\item discontinuous galerkin
 \item free surface \cite{dumy16} 
-\item redo benchmarks convection of \cite{trab90}
 \item pure shear deformation of inclusions \cite{trla00}
-\item anisotropic heat conduction\cite[p121]{reddybook2}, \cite[p143]{reddybook2}, section\ref{sec:anisotropic}
-\item sinking sphere in bingham or herschel-bulkley fluid \cite{bemj04} 
 \item redo Buck and Sokoutis benchmark for continental convergence \cite{buso94}
 \item redo topo and geoid calculations a la \cite{king09}
 \item redo Travis study \cite{trab90} which is close to Blankenbach \cite{blbc89}.
+\item propagator matrix ? what is it ? \mscthesis \index{MSc Thesis} 
+\Literature \cite{haoc78,haoc81,riha84,zhon96,como97,mohc98,zhzu00,lezh08,leha08,mofm07,wuch08,mibb09,fope91,lizh13,bugo94} 
 \end{itemize}
 %..............................
 \item Miscellaneous /to do
@@ -33,7 +26,6 @@
 \item write about impose bc on el matrix
 \item free-slip bc on annulus and sphere . See for example p540 Gresho and Sani book. find book \cite{deab72}.
 also check \cite{ensa82} !!
-\item mention Lattice-Boltzmann in geosciences \cite{hupc08}
 \item constraints \cite{absh79}
 \item formatting of code style
 \item Finish nonlinear cavity case5.
@@ -41,10 +33,7 @@ also check \cite{ensa82} !!
 \item create stone for layeredflow (see folder one up)
 \item in the context of mesh generation on sphere cite \cite{moma19}
 \item about CMR: \cite{vaks15},\cite{kott05}
-\item symmetric vs gradient formulation of Stokes
-\item add \cite{devv00a,dadh07} to list of papers doing vankeken bench
-\item illustrate early boundary fitted static meshes with \cite{thar85,boww89,whbw92}
-\item visco-elastic flow past a cylinder in a channel \cite{bepo10}
+\item illustrate early boundary fitted static meshes with \cite{thar85}
 \item \cite{bepo10} spell out the derivation of Jaumann derivative in appendix
 \item look at strain-rate softening in \cite{belz02}
 \end{itemize}
@@ -55,21 +44,16 @@ also check \cite{ensa82} !!
 \item read in crust 1.0 in 2D on chunk
 \item compute gravity based on tetrahedra
 \item NS a la http://ww2.lacan.upc.edu/huerta/exercises/Incompressible/Incompressible\_Ex2.htm
-\item zaleski disk advection
 \item write Scott about matching compressible2 setup with his paper
-\item compositions, marker chain
-\item non-linear rheologies (two layer brick spmw16, tosn15) 
 \item including phase changes (w. R. Myhill)
 \item GEO1442 indenter setup in plane ?
 \item redo puth17 2 layer experiment
 \item SIMPLE a la p667 \cite{john16} 
 \item implement/monitor div v
 \item shape fct, trial fct, basis fct vs test fct doc
-\item Delaunay triangulation, Voronoi, stripack
 \item write/draw the whole FEM process for a 4x3 grid for compgeo
 %\item Flow over a backward-facing step \cite{grdn}
 %\item Flow past an obstacle \cite{grdn}
-%\item Dam break problem \cite{grdn,hini81,moeb99,basd08}
 %\item Zalesak disc \cite{basd08}
 \item lukas' 2D and 3D benchmark
 \item ROTATING disc
@@ -83,8 +67,6 @@ on which the ELLE code is based \url{http://elle.ws/}
 \item write about flexural isostasy \cite{maie12}, bottom Sopale
 \item \cite{maie12} looks at kinetic energy for \cite{trab90} 
 \item mesh containing both quadrilaterals and triangles \cite{anbr80}
-\item Griffith-Murrell criterion \cite{brau94}
-\item when talking about hanging nodes, look at \cite{bugs09} section 3
 \item redo/adapt bsc thesis with inversion on stokes sphere
 \item implementation of fault in FEM codes \cite{zhgu94,zhgu95}
 \end{itemize}
