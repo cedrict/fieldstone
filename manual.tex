@@ -25,6 +25,9 @@
 %\setcounter{secnumdepth}{1} % sections are level 1
 \usepackage{dirtytalk}
 
+\usepackage{auncial}
+\usepackage[B1]{fontenc}
+
 
 \RequirePackage{authorindex}
 
@@ -59,13 +62,14 @@
 \newcommand{\SSS}{{\mathbb{S}}}
 \newcommand{\fieldstone}{{\bf fieldstone}}
 \newcommand{\Literature}{\includegraphics[height=4mm]{images/lit} {\sffamily Literature}}
+\newcommand{\bscthesis}{{(\bf BSc Thesis)}}
+\newcommand{\mscthesis}{{(\bf MSc Thesis)}}
 
 \newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
 \newcommandx{\change}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
 \newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
 \newcommandx{\improvement}[2][1=]{\todo[inline,linecolor=Plum,backgroundcolor=Plum!15,bordercolor=Plum,#1]{#2}}
 \newcommandx{\thiswillnotshow}[2][1=]{\todo[disable,#1]{#2}}
-
 
 %\def\theaipage{\string\hyperpage{\thepage}} 
 %\newcommand{\listofauthorsname}{List of Authors}%
@@ -128,6 +132,8 @@ doi = "10.23644/uu.9209393.v1"
 \subsection{Why the Finite Element method?} \input{why} %----------------------
 \subsection{Notations} \input{notations} %-------------------------------------
 \subsection{Colour maps for visualisation} \input{colorscale} %----------------
+\subsection{Bibliography} \input{mybib} %--------------------------------------
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{list} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -200,7 +206,7 @@ a geodynamical context requires a lot of additional techniques.
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Matrix (Sparse) storage} \input{storage} %---------------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Mesh generation} \label{subsection_meshes} \input{meshes} %----------------------------
+\subsection{Mesh generation} \label{sec:meshes} \input{meshes} %----------------------------
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Visco-Plasticity} \input{viscoplasticity} %--------------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
@@ -604,14 +610,14 @@ Stone 38: Critical Rayleigh number
 }
 \input{python_codes/fieldstone_38/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section*{
-%Stone 39: chpe15 
-%\label{f39}}
-%\addcontentsline{toc}{section}{\protect\numberline{} 
-%Stone 39: chpe15 
-%}
-%\input{python_codes/fieldstone_39/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 39: chpe15 
+\label{f39}}
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 39: chpe15 
+}
+\input{python_codes/fieldstone_39/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{
@@ -732,6 +738,16 @@ Stone 53: the sinking block benchmark
 Stone 53: the sinking block benchmark 
 }
 \input{python_codes/fieldstone_53/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 54: ALEs  
+\label{f53}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 53: ALEs 
+}
+\input{python_codes/fieldstone_54/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 

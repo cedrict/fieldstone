@@ -4,10 +4,39 @@ the various materials present in an undeformable (Eulerian) mesh.
 The figure below (by B. Hillebrand) illustrates the three main methods used in geodynamics.
 
 \begin{center}
-\includegraphics[width=15cm]{images/tracking}
+\includegraphics[width=15cm]{images/tracking/tracking}
 \end{center}
 
 Note that what follows is applicable to FEM, FDM, etc ...
+
+
+A typical test for advection algorithm is the Zalesak disk \cite{zale79}. It is a two dimensional test 
+problem of solid body rotation with a constant angular velocity $\omega$ (in rad/sec):
+
+\begin{center}
+\includegraphics[width=6cm]{images/tracking/zale79a}
+\includegraphics[width=6cm]{images/tracking/zale79b}\\
+{\tiny Taken from \cite{zale79}. Left: Schematic representation of two dimensional 
+solid body rotation problem. The field inside the cut out has value 3 and it is 1
+outside. The rotational speed is such that one full revolution is effected in 
+628 cycles. The width of the gap separating the two halves of the cylinder,
+as well as the maximum extent of the "bridge" connecting the two halves, is 5 cells.
+Right: Perspective view of initial conditions for the two dimensiona! solid body rotation
+problem. Note that only a $50\times50$ portion of the mesh centered on the cylinder is displayed.}
+\end{center}
+
+This benchmark is widely used in the literature \cite{supu00,vasv05,dilp06,basd08,zhbl14}.
+Note that the Zalesak disc is often supplemented with a cone and a Gaussian features:
+
+\begin{center}
+\includegraphics[width=6cm]{images/tracking/leve96}\\
+{\tiny Taken from \cite{leve96}. Initial data for solid rotation tests}
+\end{center}
+
+
+
+
+
 
 %..............................................
 \subsubsection{The Particle-in-cell technique}
@@ -230,6 +259,36 @@ community with some notable exceptions
 An overview of the method and applications can
 be found in \cite{osfe01}.
 
+Several improvements upon the original LSM have been proposed, 
+such as for instance the conservative level set of \cite{zhbl14}.
+The most notable difference between CLS method originally proposed by Olsson et al. \cite{olkr05,olkz07}
+and standard LS method lies in the choice of LS function. Instead of the signed distance function, the
+CLS methods employ the Heaviside function $H(\phi)$ 
+\[
+H(\phi)=
+\left\{
+\begin{array}{ll}
+1 & \phi>0 \\
+1/2 & \phi=0 \\
+0 & \phi<0
+\end{array}
+\right.
+\]
+where $\phi$ is the signed distance function as in the LSM. 
+In practice, a hyperbolic tangent function is used:
+\[
+H(\phi) = \frac{1}{2} (1+\tan (\phi/2\epsilon))
+\]
+where $\epsilon$ defines the spreading width of $H$. In the case where there are only 
+two fluids (i.e. a single level set is sufficient), the material properties such as density and viscosity
+are computed as follows:
+\[
+\rho=\rho_1+(\rho_2-\rho_1)H(\phi)
+\]
+\[
+\eta=\eta_1+(\eta_2-\eta_1)H(\phi)
+\]
+
 
 
 %..............................................
@@ -270,6 +329,14 @@ This method is used in \cite{vyrc13}
 \todo[inline]{ask Arie to write something}
 
 \cite{devv00a}
+
+%.............................................
+\subsubsection{The Marker Chain method}
+
+Literature: \cite{woid78,chri82,chyu84,vaks97}
+
+\index{Marker Chain} method. 
+
 
 %..............................................
 \subsubsection{Hybrid methods}
