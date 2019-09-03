@@ -636,6 +636,106 @@ components are coupled only through the incompressibility condition.
 While the two formulations are equivalent only for constant viscosity, they state 
 that they employ the Laplacian approach formulation as a preconditioner for the viscous term. 
 
+Concretely, we apply the same method as above, i.e. we reorganise the terms of the 
+velocity gradient tensor in a vector:
+\begin{eqnarray}
+\vec\nabla \vec\upnu 
+&\rightarrow &
+\left(
+\begin{array}{c}
+\partial_x u \\
+\partial_y u \\
+\partial_z u \\
+\partial_x v \\
+\partial_y v \\
+\partial_z v \\
+\partial_x w \\
+\partial_y w \\
+\partial_z w 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\sum_i \partial_x N_i u_i \\
+\sum_i \partial_y N_i u_i \\
+\sum_i \partial_z N_i u_i \\
+\sum_i \partial_x N_i v_i \\
+\sum_i \partial_y N_i v_i \\
+\sum_i \partial_z N_i v_i \\
+\sum_i \partial_x N_i w_i \\
+\sum_i \partial_y N_i w_i \\
+\sum_i \partial_z N_i w_i 
+\end{array}
+\right) \nonumber\\
+&=&
+\underbrace{
+\left(
+\begin{array}{cccccccccc}
+\partial_x N_1^\upnu & 0 & 0 & \partial_x N_2^\upnu & 0 & 0 & \cdots & \partial_x N^\upnu_{m_\upnu} & 0 & 0 \\
+\partial_y N_1^\upnu & 0 & 0 & \partial_y N_2^\upnu & 0 & 0 & \cdots & \partial_y N^\upnu_{m_\upnu} & 0 & 0 \\
+\partial_z N_1^\upnu & 0 & 0 & \partial_z N_2^\upnu & 0 & 0 & \cdots & \partial_z N^\upnu_{m_\upnu} & 0 & 0 \\
+0 & \partial_x N_1^\upnu & 0 & 0& \partial_x N_2^\upnu & 0 & \cdots & 0 & \partial_x N^\upnu_{m_\upnu}  & 0 \\
+0 & \partial_y N_1^\upnu & 0 & 0& \partial_y N_2^\upnu & 0 & \cdots & 0 & \partial_y N^\upnu_{m_\upnu}  & 0 \\
+0 & \partial_z N_1^\upnu & 0 & 0& \partial_z N_2^\upnu & 0 & \cdots & 0 & \partial_z N^\upnu_{m_\upnu}  & 0 \\
+0 & 0 & \partial_x N_1^\upnu  & 0& 0& \partial_x N_2^\upnu & \cdots & 0 & 0 & \partial_x N^\upnu_{m_\upnu}  \\
+0 & 0 & \partial_y N_1^\upnu  & 0& 0& \partial_y N_2^\upnu & \cdots & 0 & 0 & \partial_y N^\upnu_{m_\upnu}  \\
+0 & 0 & \partial_z N_1^\upnu  & 0& 0& \partial_z N_2^\upnu & \cdots & 0 & 0 & \partial_z N^\upnu_{m_\upnu}  \\
+\end{array}
+\right) 
+}_{\bm B}
+\!
+\cdot
+\!
+\underbrace{
+\left(
+\begin{array}{c}
+u_1 \\ v_1 \\ w_1 \\ u_2 \\ v_2 \\ w_2 \\ u_3 \\ v_3 \\ \dots \\ u_{m_v} \\ v_{m_v} \\ w_{m_v}
+\end{array}
+\right)
+}_{\vec V} \nonumber
+\end{eqnarray}
+and in two dimensions:
+\[
+\vec\nabla \vec\upnu \rightarrow 
+\left(
+\begin{array}{c}
+\partial_x u \\
+\partial_y u \\
+\partial_x v \\
+\partial_y v 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\sum_i \partial_x N_i u_i \\
+\sum_i \partial_y N_i u_i \\
+\sum_i \partial_x N_i v_i \\
+\sum_i \partial_y N_i v_i 
+\end{array}
+\right)
+=
+\underbrace{
+\left(
+\begin{array}{cccccccccc}
+\partial_x N_1^\upnu & 0  & \partial_x N_2^\upnu & 0  & \cdots & \partial_x N_i^\upnu{m_\upnu} & 0 \\
+\partial_y N_1^\upnu & 0  & \partial_y N_2^\upnu & 0  & \cdots & \partial_y N_i^\upnu{m_\upnu} & 0 \\
+0 & \partial_x N_1^\upnu  & 0& \partial_x N_2^\upnu  & \cdots & 0 & \partial_x N_i^\upnu{m_\upnu}  \\
+0 & \partial_y N_1^\upnu  & 0& \partial_y N_2^\upnu  & \cdots & 0 & \partial_y N_i^\upnu{m_\upnu}  
+\end{array}
+\right) 
+}_{\bm B}
+\cdot
+\underbrace{
+\left(
+\begin{array}{c}
+u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3 \\ \dots \\ u_{m_v} \\ v_{m_v} 
+\end{array}
+\right)
+}_{\vec V}
+\]
+
 
 
 

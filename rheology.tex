@@ -68,12 +68,12 @@ again with viscosity $\eta_\infty$.
  
 \begin{center}
 \includegraphics[width=8cm]{images/rheology/carreau/carreau.pdf}\\
-{\small Carreau model effective viscosity as a function of the product $\lambda \dot{\varepsilon}_{e}$}
+{\scriptsize Carreau model effective viscosity as a function of the product $\lambda \dot{\varepsilon}_{e}$}
 \end{center}
 
 \begin{center}
 \includegraphics[width=6cm]{images/rheology/carreau/carreau1.png}\\
-\url{https://youtu.be/qErs5zZV4BQ}
+{\scriptsize \url{https://youtu.be/qErs5zZV4BQ}}
 \end{center}
 
 Note that the (Bird)-Carreau-Yasuda model \cite{osru14} is very similar to the standard (Bird)-Carreau:
@@ -200,7 +200,7 @@ allow to recover any of the above models (and more) \cite{osru14}.
 Similar conclusions are reached in the following video:
 \begin{center}
 \includegraphics[width=6cm]{images/rheology/hbyoutube}\\
-\url{https://youtu.be/dVCb11dZR7Y}
+{\scriptsize \url{https://youtu.be/dVCb11dZR7Y}}
 \end{center}
 
 
@@ -244,7 +244,7 @@ Furthermore, we know that several other factors will strongly affect the rheolog
 dry means water-free and wet means water-saturated conditions.
 \begin{center}
 \includegraphics[width=8cm]{images/rheology/kawu93}\\
-{\small Taken from Karato and Wu \cite{kawu93}.}
+{\scriptsize Taken from Karato and Wu \cite{kawu93}.}
 \end{center}
 \Literature: \cite{qubu14} and refs therein for the effects of water
 migration on models of subduction dynamics.
@@ -323,8 +323,25 @@ and it seems common to take $k=1$, and $n=2$ \cite{gery10,kaka08}
 \[
 \dot{\epsilon} = A \sigma^2 \exp \left[ -\frac{Q+pV}{RT} \left(1-\frac{\sigma}{\sigma_P}\right)^q  \right]
 \]
+In Chenin et al. (2019) \cite{chmd19} the authors state that their Peierls creep implementation
+relies on parameters from Evans and Goetze (1979) \cite{evgo79} using the approach of 
+Kameyama et al (1999) \cite{kayk99}:
+\[
+\eta^{pe}=\frac{2}{3} \frac{(1-s)/s}{(1+s)/2s} A \; (\varepsilon_e^{ds})^{\frac{1}{n}-1} 
+\]
+with $A$ for this formulation:
+\[
+A = \left[ A_p \exp \left( -\frac{Q(1-\gamma)^2}{RT} \right)  \right]^{-1/s} \gamma \sigma_p
+\]
+where $s$ is an effective stress exponent that depends on the temperature:
+\[
+s = 2 \gamma \frac{Q}{RT} (1-\gamma)
+\]
+where $\gamma$ is a fitting parameter. 
 
-\Literature \cite{kayk99,basv06,buro11,faff11,gagd14,gery10,goev79,kaka08,kako09,kary01,mesk10,zhwa13,chsm18}
+
+
+\Literature \cite{basv06,buro11,faff11,gagd14,gery10,goev79,kaka08,kako09,kary01,mesk10,zhwa13,chsm18}
 
 %-------------------------------------------------
 \subsubsection{Arrhenius law}
@@ -386,7 +403,7 @@ The effective viscosity is then given by
 \begin{center}
 \includegraphics[height=5cm]{images/rheology/glen}
 \includegraphics[height=5cm]{images/rheology/goko01}\\
-{\small Left: Taken from Glen \cite{glen55}; Right: taken from \cite{goko01}.}
+{\scriptsize Left: Taken from Glen \cite{glen55}; Right: taken from \cite{goko01}.}
 \end{center}
 Most of these studies suggest values of the power-law exponent $n\sim 2-4$, and there seems to be 
 a general indication that the exponent is lower at lower stresses.
@@ -418,6 +435,23 @@ but it does not account for the complex evolution of fabric and resulting anisot
 
 \cite{anpa19} \cite{egat10}
 
+Following \cite{chmd19}, one can base the rheological model on the additive decomposition of the 
+deviatoric strain rate tensor ${\bm \varepsilon}^d$:
+\[
+{\bm \varepsilon}^d =
+{\bm \varepsilon}^{el}+
+{\bm \varepsilon}^{pl}+
+{\bm \varepsilon}^{ds}+
+{\bm \varepsilon}^{df}+
+{\bm \varepsilon}^{pe}
+\]
+where the five strain rate terms correspond respectively to the elastic, plastic, and viscous creep (dislocation, diffusion, peierls) contributions. 
+Rather interestingly, Chenin et al \cite{chmd19} state that "this strain rate equation is nonlinear
+and solved locally on cell centroids and vertices in order to define the current effective viscosity 
+and stress \cite{poso08}."
+
+
+
 
 %...........................................
 \subsubsection{Anisotropic viscosity}
@@ -447,7 +481,7 @@ step \cite{mumc04}.
 
 \index{MSc thesis project}
 
-\mscthesis: redo the Rayleigh–Taylor instabilities with anisotropic lithospheric viscosity.
+\mscthesis: redo the Rayleigh-Taylor instabilities with anisotropic lithospheric viscosity.
 experiments of Lev \& Hager (2008) \cite{leha08}.
 \Literature: \cite{mumh02,vatb98,mumc04,mumh02,mima04,rida78,saab84}
 
