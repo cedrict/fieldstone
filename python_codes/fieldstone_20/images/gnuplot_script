@@ -16,6 +16,7 @@ plot[:300][3:]\
 '14x08x20_0p5/Nu.ascii' u ($1*3973/3700) w l t '14x08x20',\
 '16x10x24_0p5/Nu.ascii' u ($1*3973/3700) w l t '16x10x24',\
 '32x20x32_0p5/Nu.ascii' u ($1) w l t '32x20x32',\
+'40x25x40_0p5/Nu.ascii' u ($1) w l t '40x25x40',\
 3.5374 lt -1  t 'Busse et al'
 
 ##############################################
@@ -27,6 +28,7 @@ plot[:300][40:]\
 '16x10x24_0p5/vrms.ascii'  u ($2/velref) w l t '16x10x24',\
 '24x16x32_0p5/vrms.ascii'  u ($2/velref) w l t '24x16x32',\
 '32x20x32_0p5/vrms.ascii'  u ($2/velref) w l t '32x20x32',\
+'40x25x40_0p5/vrms.ascii'  u ($2/velref) w l t '40x25x40',\
 40.999 lt -1 t 'Busse et al.'
 
 ##############################################
@@ -38,6 +40,7 @@ plot[:300][]\
 '16x10x24_0p5/Tavrg.ascii' u ($2/3700) w l t '16x10x24',\
 '24x16x32_0p5/Tavrg.ascii' u ($2/3700) w l t '24x16x32',\
 '32x20x32_0p5/Tavrg.ascii' u ($2/3700) w l t '32x20x32',\
+'40x25x40_0p5/Tavrg.ascii' u ($2/3700) w l t '40x25x40',\
 
 ##############################################
 
@@ -48,6 +51,7 @@ plot[:300][]\
 '16x10x24_0p5/Tm.ascii' u (($2-273)/3700) w l t '16x10x24',\
 '24x16x32_0p5/Tm.ascii' u (($2-273)/3700) w l t '24x16x32',\
 '32x20x32_0p5/Tm.ascii' u (($2-273)/3700) w l t '32x20x32',\
+'40x25x40_0p5/Tm.ascii' u (($2-273)/3700) w l t '40x25x40',\
 0.52148 lt -1 t 'Busse et al.'
 
 ##############################################
@@ -59,6 +63,7 @@ plot[:300][100:]\
 '16x10x24_0p5/wmid_stats.ascii' u ($2/velref) w l t '16x10x24',\
 '24x16x32_0p5/wmid_stats.ascii' u ($2/velref) w l t '24x16x32',\
 '32x20x32_0p5/wmid_stats.ascii' u ($2/velref) w l t '32x20x32',\
+'40x25x40_0p5/wmid_stats.ascii' u ($2/velref) w l t '40x25x40',\
 116.623 lt -1 t 'Busse et al. '
 
 set output 'wmid2.pdf'
@@ -68,6 +73,7 @@ plot[:300][25:]\
 '16x10x24_0p5/wmid_stats.ascii' u ($4/velref) w l t '16x10x24',\
 '24x16x32_0p5/wmid_stats.ascii' u ($4/velref) w l t '24x16x32',\
 '32x20x32_0p5/wmid_stats.ascii' u ($4/velref) w l t '32x20x32',\
+'40x25x40_0p5/wmid_stats.ascii' u ($4/velref) w l t '40x25x40',\
 40.5 lt -1 t 'Busse et al. '
 
 
@@ -84,6 +90,7 @@ plot[:300][]\
 '16x10x24_0p5/Tmid_stats.ascii' u (($2-273)/3700) w l t '16x10x24',\
 '24x16x32_0p5/Tmid_stats.ascii' u (($2-273)/3700) w l t '24x16x32',\
 '32x20x32_0p5/Tmid_stats.ascii' u (($2-273)/3700) w l t '32x20x32',\
+'40x25x40_0p5/Tmid_stats.ascii' u (($2-273)/3700) w l t '40x25x40',\
 0.80130 lt -1 t 'Busse et al.'
 
 #'Tmid_stats.ascii' u 1:(($3-273)/3700) w lp ps .15 t '(L_x,0,L_z/2)',\
@@ -99,6 +106,7 @@ plot[:300][5:]\
 '16x10x24_0p5/hf_stats.ascii' u (abs($2)/hfref) w l t '16x10x24',\
 '24x16x32_0p5/hf_stats.ascii' u (abs($2)/hfref) w l t '24x16x32',\
 '32x20x32_0p5/hf_stats.ascii' u (abs($2)/hfref) w l t '32x20x32',\
+'40x25x40_0p5/hf_stats.ascii' u (abs($2)/hfref) w l t '40x25x40',\
 6.7189 lt -1 t 'Busse et al.'
 
 set output 'hf2.pdf'
@@ -108,6 +116,7 @@ plot[:300][]\
 '16x10x24_0p5/hf_stats.ascii' u (abs($5)/hfref) w l t '16x10x24',\
 '24x16x32_0p5/hf_stats.ascii' u (abs($5)/hfref) w l t '24x16x32',\
 '32x20x32_0p5/hf_stats.ascii' u (abs($5)/hfref) w l t '32x20x32',\
+'40x25x40_0p5/hf_stats.ascii' u (abs($5)/hfref) w l t '40x25x40',\
 0.7174 lt -1 t 'Busse et al.'  
 
 #'hf_stats.ascii' u 1:(abs($3)/hfref) w lp ps .15  t '(L_x,0,L_z)',\
@@ -121,9 +130,6 @@ plot[:300][]\
 ##############################################
 ##############################################
 ##############################################
-
-
-
 
 
 
