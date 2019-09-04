@@ -307,13 +307,149 @@ This yields what the author coin the 'quasi-implicit' scheme
 the forward Euler scheme: $\vec{x}(t^{n+1} ) = \vec{x}(t^n ) + \vec{\upnu}_{\text{mesh}} \delta t$.
 \end{enumerate}
 
-Note that \cite{robh17} go further than this, propose a 'nonstandard finite difference scheme' and 
-make a link with the stabilisation presented in \cite{kamm10}.
+Note that Rose et al (2017) \cite{robh17} go further than this, propose a 'nonstandard finite difference scheme' and make a link with the stabilisation presented in Kaus et al (2010) \cite{kamm10}.
+
+In what follows I omit the subscript 'mesh' and focus on the 2D case. The components of the (mesh) velocity
+are given by
+\[
+u^h = \sum_{i=1}^{m_\upnu} N_i^\upnu u_i
+\qquad
+\qquad
+v^h = \sum_{i=1}^{m_\upnu} N_i^\upnu v_i
+\qquad
+\qquad
+\vec{\upnu}^h=\left( 
+\begin{array}{c}
+u^h \\
+v^h 
+\end{array}  \right)
+\]
+We start from the ODE to solve in its strong form:
+\[
+\Delta \vec{\upnu}^h = \vec{0}
+\]
+We multiply it by a velocity test function $N_i^\upnu$ and integrate over an element: 
+\begin{eqnarray}
+&&\vec 0 \nonumber\\
+&=& \int_{\Omega_e} N_i^\upnu  \Delta \vec{\upnu}^h \nonumber\\ 
+&=&\int_{\Omega_e} N_i^\upnu \Delta \vec\upnu^h dV \nonumber\\
+&=&\int_{\Omega_e}  \left(\begin{array}{c}
+N_i^\upnu \Delta u^h \\
+N_i^\upnu \Delta v^h 
+\end{array}\right) dV \nonumber\\
+&=&\int_{\Omega_e}  \left(\begin{array}{c}
+N_i^\upnu \vec\nabla \cdot \vec\nabla u^h \\
+N_i^\upnu \vec\nabla \cdot \vec\nabla v^h 
+\end{array}\right) dV \nonumber\\
+&=&
+\int_{\Omega_e}   \left(\begin{array}{c}
+\vec\nabla N_i^\upnu \cdot \vec\nabla u^h \\
+\vec\nabla N_i^\upnu \cdot \vec\nabla v^h 
+\end{array}\right) dV \nonumber\\
+&=&
+\int_{\Omega_e}
+\left(\begin{array}{c}
+\partial_x N_i^\upnu \partial_x u^h + \partial_y N_i^\upnu \partial_y u^h \\ 
+\partial_x N_i^\upnu \partial_x v^h + \partial_y N_i^\upnu \partial_y v^h 
+\end{array}\right) dV \nonumber\\
+&=&\int_{\Omega_e}
+\left(
+\begin{array}{cccc}
+\partial_x N_i^\upnu & \partial_y N_i^\upnu & 0 & 0 \\ 
+0 & 0 & \partial_x N_i^\upnu & \partial_y N_i^\upnu  \\ 
+\end{array}
+\right)
+\!\cdot\!
+\left(
+\begin{array}{c}
+\partial_x u^h \\
+\partial_y u^h \\
+\partial_x v^h \\
+\partial_y v^h 
+\end{array}
+\right) dV \nonumber\\
+&=&\int_{\Omega_e}
+\left(
+\begin{array}{cccc}
+\partial_x N_i^\upnu & \partial_y N_i^\upnu & 0 & 0 \\ 
+0 & 0 & \partial_x N_i^\upnu & \partial_y N_i^\upnu  \\ 
+\end{array}
+\right)
+\!\cdot\!
+\left(
+\begin{array}{cccccccccc}
+\partial_x N_1^\upnu & 0  & \partial_x N_2^\upnu & 0  & \cdots & \partial_x N^\upnu_{m_\upnu} & 0 \\
+\partial_y N_1^\upnu & 0  & \partial_y N_2^\upnu & 0  & \cdots & \partial_y N^\upnu_{m_\upnu} & 0 \\
+0 & \partial_x N_1^\upnu  & 0& \partial_x N_2^\upnu  & \cdots & 0 & \partial_x N^\upnu_{m_\upnu}  \\
+0 & \partial_y N_1^\upnu  & 0& \partial_y N_2^\upnu  & \cdots & 0 & \partial_y N^\upnu_{m_\upnu}  
+\end{array}
+\right) 
+\!\cdot\!
+\left(
+\begin{array}{c}
+u_1 \\ v_1 \\ u_2 \\ v_2 \\ \dots \\ u_{m_v} \\ v_{m_v} 
+\end{array}
+\right) dV \nonumber
+\end{eqnarray}
+Writing this equation for $i=1,...m_\upnu$, we obtain:
+\[
+\int
+\left(
+\begin{array}{cccc}
+\partial_x N_1^\upnu & \partial_y N_1^\upnu & 0 & 0 \\ 
+0 & 0 & \partial_x N_1^\upnu & \partial_y N_1^\upnu  \\ 
+\partial_x N_2^\upnu & \partial_y N_2^\upnu & 0 & 0 \\ 
+0 & 0 & \partial_x N_2^\upnu & \partial_y N_2^\upnu  \\ 
+\vdots & \vdots & \vdots & \vdots \\
+\vdots & \vdots & \vdots & \vdots \\
+\partial_x N_{m_\upnu}^\upnu & \partial_y N_{m_\upnu}^\upnu & 0 & 0 \\ 
+0 & 0 & \partial_x N_{m_\upnu}^\upnu & \partial_y N_{m_\upnu}^\upnu  \\ 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cccccccccc}
+\partial_x N_1^\upnu & 0  & \partial_x N_2^\upnu & 0  & \cdots & \partial_x N^\upnu_{m_\upnu} & 0 \\
+\partial_y N_1^\upnu & 0  & \partial_y N_2^\upnu & 0  & \cdots & \partial_y N^\upnu_{m_\upnu} & 0 \\
+0 & \partial_x N_1^\upnu  & 0& \partial_x N_2^\upnu  & \cdots & 0 & \partial_x N^\upnu_{m_\upnu}  \\
+0 & \partial_y N_1^\upnu  & 0& \partial_y N_2^\upnu  & \cdots & 0 & \partial_y N^\upnu_{m_\upnu}  
+\end{array}
+\right) 
+\cdot
+\underbrace{
+\left(
+\begin{array}{c}
+u_1 \\ v_1 \\ u_2 \\ v_2 \\ \dots \\ u_{m_v} \\ v_{m_v} 
+\end{array}
+\right) }_{\vec V}
+dV
+=\vec{0}
+\]
+or, 
+\[
+\left( \int_{\Omega_e} {\bm B}^T  \cdot {\bm B} \; dV \right)\cdot \vec{V} = \vec{0}
+\]
+where ${\bm B}$ is a $(ndim*ndim) \times (m_v*ndofV)$ matrix. This is implemented in 
+Stone 54.
+
+\begin{remark}
+The integration by parts should have a minus appear but since the left hand side 
+is 0, it is not taken into account. 
+\end{remark}
+
+\todo[inline]{surface terms arising from the integration by parts are neglected. EXPLAIN WHY!}
+
+\todo[inline]{Anne says that in ASPECT Q1 functions are used and not Q2 ?}
 
 
 
 
-\vspace{1cm}
+
+
+
+
+
+\vspace{4cm}
 TOTAL WORK IN PROGRESS. Need to look at those papers:
 \cite{huli88}
 \cite{bens89}

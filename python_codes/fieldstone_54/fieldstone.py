@@ -51,22 +51,6 @@ def NNP(r,s):
 
 #------------------------------------------------------------------------------
 
-def eta(x,y):
-    if abs(x-xc_block)<d_block and abs(y-yc_block)<d_block:
-       val=eta2
-    else:
-       val=eta1
-    return val
-
-def rho(x,y):
-    if abs(x-xc_block)<d_block and abs(y-yc_block)<d_block:
-       val=rho2
-    else:
-       val=rho1
-    return val
-
-#------------------------------------------------------------------------------
-
 ndim=2
 ndofV=2
 ndofP=1
@@ -74,20 +58,14 @@ ndofP=1
 Lx=512e3
 Ly=512e3
 
-if int(len(sys.argv) == 7):
+if int(len(sys.argv) == 4):
    nelx=int(sys.argv[1])
    nely=int(sys.argv[2])
    visu=int(sys.argv[3])
-   rho2=float(sys.argv[5])
-   eta1=10.**(float(sys.argv[6]))
-   eta2=10.**(float(sys.argv[7]))
 else:
-   nelx = 16
-   nely = 16
+   nelx = 24
+   nely = 24
    visu = 1
-   rho2 = 3232
-   eta1 = 1e21
-   eta2 = 1e22
 
 nel=nelx*nely
 
@@ -119,16 +97,8 @@ eps=1e-8
 
 gy=-10.
 rho1=3200.
-eta_ref=1e23      # scaling of G blocks
-
-xc_block=256e3
-yc_block=384e3
-d_block=32e3
-
-print('rho1=',rho1)
-print('rho2=',rho2)
-print('eta1=',eta1)
-print('eta2=',eta2)
+eta1=1e22
+eta_ref=1e22   
 
 sparse=False
 
@@ -136,8 +106,9 @@ rVnodes=[-1,1,1,-1,0,1,0,-1,0]
 sVnodes=[-1,-1,1,1,-1,0,1,0,0]
 
 year=3600.*24.*365.
+Myear=1e6*year
 dt=1e4*year
-nstep=100
+nstep=200
 
 method=3
 
@@ -200,6 +171,7 @@ for j in range(0,nely):
         iconP[2,counter]=i+1+(j+1)*(nelx+1)
         iconP[3,counter]=i+(j+1)*(nelx+1)
         counter += 1
+
 counter = 0
 for j in range(0,nely+1):
     for i in range(0,nelx+1):
@@ -232,20 +204,11 @@ for i in range(0,NV):
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 
 #################################################################
-# assign property to elements
+# define boundary conditions
 #################################################################
 
-xc = np.zeros(nel,dtype=np.float64)  
-yc = np.zeros(nel,dtype=np.float64)  
-rhoel = np.zeros(nel,dtype=np.float64)  
-etael = np.zeros(nel,dtype=np.float64)  
-
-for iel in range(0,nel):
-    for k in range(0,mV):
-        xc[iel] += xV[iconV[k,iel]]/mV
-        yc[iel] += yV[iconV[k,iel]]/mV
-    rhoel[iel]=rho(xc[iel],yc[iel])
-    etael[iel]=eta(xc[iel],yc[iel])
+for i in range(NV-(2*nelx+1),NV):
+    yV[i]+=1000.*np.cos(xV[i]/Lx*np.pi)
 
 #==============================================================================
 #==============================================================================
@@ -254,6 +217,8 @@ for iel in range(0,nel):
 #==============================================================================
 
 elevation=np.zeros((nstep,3),dtype=np.float64)
+vrms=np.zeros((nstep,2),dtype=np.float64) 
+volume=np.zeros((nstep,3),dtype=np.float64) 
 
 u = np.zeros(NV,dtype=np.float64)           # x-component velocity
 v = np.zeros(NV,dtype=np.float64)           # y-component velocity
@@ -270,7 +235,7 @@ for istep in range(0,nstep):
 
    if method==1: # Lagrangian approach
 
-      xV+=dt*u
+      #xV+=dt*u
       yV+=dt*v
 
    if method==2: # my ALE
@@ -279,21 +244,21 @@ for istep in range(0,nstep):
       for j in range(0,2*nely+1):
           for i in range(0,2*nelx+1):
               if j==2*nely:
-                 xV[counter]+=u[counter]*dt
+                 #xV[counter]+=u[counter]*dt
                  yV[counter]+=v[counter]*dt
               counter += 1
 
    if method==3: # aspect ALE
 
-      NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
-      dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-      dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-      dNNNVdr = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-      dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-      b_mat   = np.zeros((4,ndofV*mV),dtype=np.float64) # gradient matrix B 
+      NNNV   =np.zeros(mV,dtype=np.float64)           # shape functions V
+      dNNNVdx=np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+      dNNNVdy=np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+      dNNNVdr=np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+      dNNNVds=np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+      b_mat  =np.zeros((4,ndofV*mV),dtype=np.float64) # gradient matrix B 
 
       A_sparse = lil_matrix((NfemV,NfemV),dtype=np.float64)
-      f_rhs   = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
+      f_rhs    = np.zeros(NfemV,dtype=np.float64)  # right hand side f 
       u2 = np.zeros(NV,dtype=np.float64)           # x-component velocity
       v2 = np.zeros(NV,dtype=np.float64)           # y-component velocity
 
@@ -384,20 +349,20 @@ for istep in range(0,nstep):
       print("     -> umesh (m,M) %.4e %.4e " %(np.min(u2),np.max(u2)))
       print("     -> vmesh (m,M) %.4e %.4e " %(np.min(v2),np.max(v2)))
 
-      filename = 'velocity_mesh_{:04d}.ascii'.format(istep) 
-      np.savetxt(filename,np.array([xV,yV,u2,v2]).T,header='# x,y,u,v')
+      #filename = 'velocity_mesh_{:04d}.ascii'.format(istep) 
+      #np.savetxt(filename,np.array([xV,yV,u2,v2]).T,header='# x,y,u,v')
 
       xV+=dt*u2
       yV+=dt*v2
 
-      filename = 'surface_topography_{:04d}.ascii'.format(istep) 
-      np.savetxt(filename,np.array([xV[NV-(2*nelx+1):NV],yV[NV-(2*nelx+1):NV]]).T,header='# x,y')
+   filename = 'surface_topography_{:04d}.ascii'.format(istep) 
+   np.savetxt(filename,np.array([xV[NV-(2*nelx+1):NV],yV[NV-(2*nelx+1):NV]]).T,header='# x,y')
 
-      print("     -> max(yV) %.7e " %(np.max(yV)/Ly))
+   print("     -> max(yV) %.7e " %(np.max(yV)/Ly))
 
-      elevation[istep,1]=istep*dt
-      elevation[istep,1]=np.min(yV[NV-(2*nelx+1):NV])
-      elevation[istep,2]=np.max(yV[NV-(2*nelx+1):NV])
+   elevation[istep,0]=istep*dt/Myear
+   elevation[istep,1]=np.min(yV[NV-(2*nelx+1):NV])-Ly
+   elevation[istep,2]=np.max(yV[NV-(2*nelx+1):NV])-Ly
 
    #################################################################
    # build FE matrix
@@ -465,11 +430,11 @@ for istep in range(0,nstep):
                                             [dNNNVdy[i],dNNNVdx[i]]]
 
                # compute elemental a_mat matrix
-               K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etael[iel]*weightq*jcob
+               K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta1*weightq*jcob
 
                # compute elemental rhs vector
                for i in range(0,mV):
-                   f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*rhoel[iel]*gy
+                   f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*rho1*gy
 
                for i in range(0,mP):
                    N_mat[0,i]=NNNP[i]
@@ -618,12 +583,50 @@ for istep in range(0,nstep):
    print("project p onto Vnodes: %.3f s" % (timing.time() - start))
 
    #####################################################################
-   # measure vel at center of block
+   # compute vrms and total volume 
    #####################################################################
-   #for i in range(0,NV):
-   #    if abs(xV[i]-xc_block)<1 and abs(yV[i]-yc_block)<1:
-   #       print('vblock=',u[i],v[i],eta1/eta2,v[i]*eta1/(rho2-rho1),xV[i],yV[i])
+   start = timing.time()
 
+   vol = np.zeros(nel,dtype=np.float64)        # right hand side f 
+
+   for iel in range (0,nel):
+       for iq in range(0,nqperdim):
+           for jq in range(0,nqperdim):
+               rq=qcoords[iq]
+               sq=qcoords[jq]
+               weightq=qweights[iq]*qweights[jq]
+               NNNV[0:mV]=NNV(rq,sq)
+               dNNNVdr[0:mV]=dNNVdr(rq,sq)
+               dNNNVds[0:mV]=dNNVds(rq,sq)
+               jcb=np.zeros((ndim,ndim),dtype=np.float64)
+               for k in range(0,mV):
+                   jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                   jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                   jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                   jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+               jcob = np.linalg.det(jcb)
+               uq=0.
+               vq=0.
+               for k in range(0,mV):
+                   uq+=NNNV[k]*u[iconV[k,iel]]
+                   vq+=NNNV[k]*v[iconV[k,iel]]
+               vrms[istep,1]+=(uq**2+vq**2)*weightq*jcob
+               volume[istep,1]+=weightq*jcob
+               vol[iel]+=weightq*jcob
+            # end for jq
+        # end for iq
+    # end for iel
+
+   vrms[istep,0]=istep*dt/Myear
+   vrms[istep,1]=np.sqrt(vrms[istep,1]/(Lx*Ly))
+
+   volume[istep,0]=istep*dt/Myear
+   volume[istep,1]/=Lx*Ly
+   volume[istep,2]=volume[istep,1]-1.
+
+   print("     -> vrms   = %.6e" %(vrms[istep,1]))
+
+   print("compute vrms: %.3fs" % (timing.time() - start))
 
    #####################################################################
    # plot of solution
@@ -644,14 +647,14 @@ for istep in range(0,nstep):
    vtufile.write("</Points> \n")
    #####
    vtufile.write("<CellData Scalars='scalars'>\n")
-   vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' Name='volume' Format='ascii'> \n")
    for iel in range(0,nel):
-       vtufile.write("%10e \n" % (rho(xc[iel],yc[iel])))
+       vtufile.write("%10e \n" % vol[iel] )
    vtufile.write("</DataArray>\n")
-   vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
-   for iel in range(0,nel):
-       vtufile.write("%10e \n" % (eta(xc[iel],yc[iel])))
-   vtufile.write("</DataArray>\n")
+   #vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
+   #for iel in range(0,nel):
+   #    vtufile.write("%10e \n" % (eta(xc[iel],yc[iel])))
+   #vtufile.write("</DataArray>\n")
    vtufile.write("</CellData>\n")
    #####
    vtufile.write("<PointData Scalars='scalars'>\n")
@@ -698,6 +701,8 @@ for istep in range(0,nstep):
    print("export to vtu: %.3f s" % (timing.time() - start))
 
    np.savetxt('elevation.ascii',np.array([elevation[0:istep,0],elevation[0:istep,1],elevation[0:istep,2]]).T)
+   np.savetxt('vrms.ascii',np.array([vrms[0:istep,0],vrms[0:istep,1]]).T)
+   np.savetxt('volume.ascii',np.array([volume[0:istep,0],volume[0:istep,1],volume[0:istep,2]]).T)
 
 print("-----------------------------")
 print("------------the end----------")
