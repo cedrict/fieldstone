@@ -111,6 +111,7 @@ dt=1e4*year
 nstep=200
 
 method=3
+vertical=False
 
 #################################################################
 # grid point setup
@@ -204,7 +205,7 @@ for i in range(0,NV):
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 
 #################################################################
-# define boundary conditions
+# define initial elevation 
 #################################################################
 
 for i in range(NV-(2*nelx+1),NV):
@@ -235,7 +236,8 @@ for istep in range(0,nstep):
 
    if method==1: # Lagrangian approach
 
-      #xV+=dt*u
+      if not vertical:
+         xV+=dt*u
       yV+=dt*v
 
    if method==2: # my ALE
@@ -244,7 +246,8 @@ for istep in range(0,nstep):
       for j in range(0,2*nely+1):
           for i in range(0,2*nelx+1):
               if j==2*nely:
-                 #xV[counter]+=u[counter]*dt
+                 if not vertical:
+                    xV[counter]+=u[counter]*dt
                  yV[counter]+=v[counter]*dt
               counter += 1
 
@@ -268,14 +271,45 @@ for istep in range(0,nstep):
       bc_val2 = np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
       bc_fix2[:] = bc_fix[:]
       bc_val2[:] = bc_val[:]
-      nx=0.
-      ny=1.
+
+      # compute normal vector to surface
+      nx = np.zeros(NV,dtype=np.float64) 
+      ny = np.zeros(NV,dtype=np.float64) 
+      
+      if vertical:
+         nx[:]=0.
+         ny[:]=1.
+      else:
+         counter=0
+         for j in range(0,2*nely+1):
+             for i in range(0,2*nelx+1):
+                 if j==2*nely and i<2*nelx:
+                    n_x=-yV[counter+1]+yV[counter]
+                    n_y= xV[counter+1]-xV[counter]
+                    nnorm=np.sqrt(n_x**2+n_y**2)
+                    n_x/=nnorm
+                    n_y/=nnorm
+                    nx[counter]+=n_x
+                    ny[counter]+=n_y
+                    nx[counter+1]+=n_x
+                    ny[counter+1]+=n_y
+                 #end if
+                 counter += 1
+             #end for
+         #end for
+         for i in range(NV-(2*nelx+1),NV):
+             nnorm=np.sqrt(nx[i]**2+ny[i]**2)
+             nx[i]/=nnorm
+             ny[i]/=nnorm
+             #print(xV[i],yV[i],nx[i],ny[i])
+
       counter=0
       for j in range(0,2*nely+1):
           for i in range(0,2*nelx+1):
               if j==2*nely:
-                 bc_fix2[2*counter  ]=True ; bc_val2[2*counter  ]=u[counter]*nx
-                 bc_fix2[2*counter+1]=True ; bc_val2[2*counter+1]=v[counter]*ny
+                 bob=u[counter]*nx[counter]+v[counter]*ny[counter]
+                 bc_fix2[2*counter  ]=True ; bc_val2[2*counter  ]=bob*nx[counter]
+                 bc_fix2[2*counter+1]=True ; bc_val2[2*counter+1]=bob*ny[counter]
               counter += 1
 
       # build FE system
