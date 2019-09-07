@@ -1,0 +1,7 @@
+python3 generate_nodes.py
+./triangle -q -a100000000 -o2 subd.node
+echo "please change the number of elts/nodes in fieldstone.py"
+echo "nel="
+head -1 subd.1.ele
+echo "NV0="
+head -1 subd.1.node
