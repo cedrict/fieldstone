@@ -13,7 +13,8 @@ counter=0
 
 #--------------------------------1
 for i in range (0,np_plate):
-    nodesfile.write("%5d %10e %10e \n" %(counter+1,xK+i*L/(np_plate-1),yL))
+    dx=L/np_plate
+    nodesfile.write("%5d %10e %10e \n" %(counter+1,xK+i*dx+dx/2,yL))
     counter+=1
 
 #--------------------------------2
@@ -24,23 +25,25 @@ for i in range (0,np_slab):
 
 #--------------------------------3
 for i in range (0,np_plate):
-    nodesfile.write("%5d %10e %10e \n" %(counter+1,xK+i*L/(np_plate-1),yL-h/2))
+    dx=L/np_plate
+    nodesfile.write("%5d %10e %10e \n" %(counter+1,xK+i*dx+dx/2,yL-h/2))
     counter+=1
 
 #--------------------------------4
 for i in range (0,np_slab):
-    t=i*theta/(np_slab-1)
+    t=i*theta/(np_slab)
     nodesfile.write("%5d %10e %10e \n"  %(counter+1,xM+(rad-h/2)*np.cos(np.pi/2-t),yM+(rad-h/2)*np.sin(np.pi/2-t)) )
     counter+=1
 
 #--------------------------------5
 for i in range (0,np_plate):
-    nodesfile.write("%5d %10e %10e \n" %(counter+1,xK+i*L/(np_plate-1),yL+h/2))
+    dx=L/np_plate
+    nodesfile.write("%5d %10e %10e \n" %(counter+1,xK+i*dx+dx/2,yL+h/2))
     counter+=1
 
 #--------------------------------6
 for i in range (0,np_slab):
-    t=i*theta/(np_slab-1)
+    t=i*theta/(np_slab)
     nodesfile.write("%5d %10e %10e \n"  %(counter+1,xM+(rad+h/2)*np.cos(np.pi/2-t),yM+(rad+h/2)*np.sin(np.pi/2-t)) )
     counter+=1
 
@@ -66,17 +69,21 @@ for i in range (0,np_box):
 
 #--------------------------------11
 for i in range (0,np_plate2):
-    nodesfile.write("%5d %10e %10e \n" %(counter+1,xK,yK-h/2+i*h/(np_plate2-1)))
+    dy=h/np_plate2
+    nodesfile.write("%5d %10e %10e \n" %(counter+1,xK,yK-h/2+i*dy+dy/2))
     counter+=1
 
 #--------------------------------12
 for i in range (0,np_plate2):
-    nodesfile.write("%5d %10e %10e \n" %(counter+1,xL,yL-h/2+i*h/(np_plate2-1)))
+    dy=h/np_plate2
+    nodesfile.write("%5d %10e %10e \n" %(counter+1,xL,yL-h/2+i*dy+dy/2))
     counter+=1
 
 #--------------------------------13
 for i in range (0,np_plate2):
-    nodesfile.write("%5d %10e %10e \n" %(counter+1,xN+i*(xP-xN)/(np_plate2-1),yN+i*(yP-yN)/(np_plate2-1)))
+    dx=(xP-xN)/np_plate2
+    dy=(yP-yN)/np_plate2
+    nodesfile.write("%5d %10e %10e \n" %(counter+1,xN+i*dx+dx/2,yN+i*dy+dy/2))
     counter+=1
 
 #--------------------------------14

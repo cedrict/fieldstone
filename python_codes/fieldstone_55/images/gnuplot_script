@@ -1,0 +1,15 @@
+set term pdf enhanced
+set grid
+set xlabel 's'
+
+set ylabel 'U(s)'
+set output 'spine_Us.pdf'
+plot[][]\
+'spine.ascii' u 8:4 w l notitle
+ 
+set ylabel 'W(s)'
+set output 'spine_Ws.pdf'
+plot[][]\
+'spine.ascii' u 8:5 w l notitle
+
+

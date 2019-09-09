@@ -31,7 +31,7 @@ xQ=(xN+xP)/2.
 yQ=(yN+yP)/2.
 
 np_plate=120
-np_plate2=40
+np_plate2=32
 np_slab=120
-np_box=100
+np_box=64
 np_circle=100

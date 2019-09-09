@@ -58,8 +58,8 @@ ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
 
-nel=20521
-NV0=41477
+nel=20312
+NV0=40993
 NV=NV0+nel
 
 NfemV=NV*ndofV     # number of velocity dofs
@@ -153,13 +153,13 @@ for iel in range (0,nel):
 #    print ("node 5",iconV[4][iel],"at pos.",xV[iconV[4][iel]], yV[iconV[4][iel]])
 #    print ("node 6",iconV[5][iel],"at pos.",xV[iconV[5][iel]], yV[iconV[5][iel]])
 
-print("iconV (min/max): %d %d" %(np.min(iconV[0,:]),np.max(iconV[0,:])))
-print("iconV (min/max): %d %d" %(np.min(iconV[1,:]),np.max(iconV[1,:])))
-print("iconV (min/max): %d %d" %(np.min(iconV[2,:]),np.max(iconV[2,:])))
-print("iconV (min/max): %d %d" %(np.min(iconV[3,:]),np.max(iconV[3,:])))
-print("iconV (min/max): %d %d" %(np.min(iconV[4,:]),np.max(iconV[4,:])))
-print("iconV (min/max): %d %d" %(np.min(iconV[5,:]),np.max(iconV[5,:])))
-print("iconV (min/max): %d %d" %(np.min(iconV[6,:]),np.max(iconV[6,:])))
+#print("iconV (min/max): %d %d" %(np.min(iconV[0,:]),np.max(iconV[0,:])))
+#print("iconV (min/max): %d %d" %(np.min(iconV[1,:]),np.max(iconV[1,:])))
+#print("iconV (min/max): %d %d" %(np.min(iconV[2,:]),np.max(iconV[2,:])))
+#print("iconV (min/max): %d %d" %(np.min(iconV[3,:]),np.max(iconV[3,:])))
+#print("iconV (min/max): %d %d" %(np.min(iconV[4,:]),np.max(iconV[4,:])))
+#print("iconV (min/max): %d %d" %(np.min(iconV[5,:]),np.max(iconV[5,:])))
+#print("iconV (min/max): %d %d" %(np.min(iconV[6,:]),np.max(iconV[6,:])))
 
 print("setup: connectivity V: %.3f s" % (timing.time() - start))
 
@@ -451,8 +451,7 @@ sol = np.zeros(Nfem,dtype=np.float64)
 
 sparse_matrix=A_sparse.tocsr()
 
-print(sparse_matrix.min())
-print(sparse_matrix.max())
+print(sparse_matrix.min(),sparse_matrix.max())
 
 sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
@@ -599,10 +598,48 @@ for iel in range (0,nel):
 
 avrg_u/=(Lx*Ly)
 
-print("     -> vrms   = %.6e" %(vrms))
-print("     -> avrg u = %.6e" %(avrg_u))
+print("     -> vrms   = %.6e m/s" %(vrms))
+print("     -> avrg u = %.6e m/s" %(avrg_u))
 
 print("compute vrms: %.3fs" % (timing.time() - start))
+
+#####################################################################
+# Us: velocity parallel to midsurface
+# Ws: velocity perpendicular to midsurface
+#####################################################################
+
+filename='spine.ascii'
+spinefile=open(filename,"w")
+
+for j in range (0,np_plate):
+    dx=L/np_plate
+    x_p=xK+j*dx+dx/2
+    y_p=yL
+    n_x=0.
+    n_y=1.
+    for i in range(0,NV):
+        if abs(xV[i]-x_p)<1 and abs(yV[i]-y_p)<1:
+           Us=u[i]*n_y-v[i]*n_x
+           Ws=u[i]*n_x+v[i]*n_y
+           spinefile.write("%5d %6e %6e %6e %6e %6e %6e %6e\n" %(j,x_p,y_p,Us,Ws,n_x,n_y,x_p-xK))
+        #end if
+    #end for
+#end for
+
+for j in range (0,np_slab):
+    t=j*theta/(np_slab-1)
+    x_p=xM+rad*np.cos(np.pi/2-t)
+    y_p=yM+rad*np.sin(np.pi/2-t)
+    n_x=np.cos(np.pi/2-t)
+    n_y=np.sin(np.pi/2-t)
+    for i in range(0,NV):
+        if abs(xV[i]-x_p)<1 and abs(yV[i]-y_p)<1:
+           Us=u[i]*n_y-v[i]*n_x
+           Ws=u[i]*n_x+v[i]*n_y
+           spinefile.write("%5d %6e %6e %6e %6e %6e %6e %6e\n" %(j,x_p,y_p,Us,Ws,n_x,n_y,L+rad*t))
+        #end if
+    #end for
+#end for
 
 #####################################################################
 # plot of solution
