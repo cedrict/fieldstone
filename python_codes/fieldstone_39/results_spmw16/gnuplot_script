@@ -1,0 +1,84 @@
+set term pdf enhanced font "Helvetica,8"
+set xlabel 'iteration count'
+set ylabel 'relative nonlinear residual'
+set log y
+set key outside
+set output 'nonlinear_conv.pdf'
+plot[:100][]\
+'new_spmw16_lvl2_vM/nonlinear_conv.ascii'       w l lt 1 dashtype 2 t 'vM, 96x24 ',\
+'new_spmw16_lvl3_vM/nonlinear_conv.ascii'       w l lt 1 dashtype 5 t 'vM, 144x36 ',\
+'new_spmw16_lvl4_vM/nonlinear_conv.ascii'       w l lt 1 dashtype 4 t 'vM, 192x48',\
+'new_spmw16_lvl2_DP20/nonlinear_conv.ascii'     w l lt 2 dashtype 2 t 'DP, 96x24, {/Symbol f}=20^o, {/Symbol y}=0^o',\
+'new_spmw16_lvl3_DP20/nonlinear_conv.ascii'     w l lt 2 dashtype 5 t 'DP, 144x36, {/Symbol f}=20^o, {/Symbol y}=0^o',\
+'new_spmw16_lvl4_DP20/nonlinear_conv.ascii'     w l lt 2 dashtype 4 t 'DP, 192x48, {/Symbol f}=20^o, {/Symbol y}=0^o',\
+'new_spmw16_lvl2_DP20_ass/nonlinear_conv.ascii' w l lt 3 dashtype 2 t 'DP, 96x24, {/Symbol f}=20^o, {/Symbol y}=20^o',\
+'new_spmw16_lvl3_DP20_ass/nonlinear_conv.ascii' w l lt 3 dashtype 5 t 'DP, 144x36, {/Symbol f}=20^o, {/Symbol y}=20^o',\
+'new_spmw16_lvl4_DP20_ass/nonlinear_conv.ascii' w l lt 3 dashtype 4 t 'DP, 192x48, {/Symbol f}=20^o, {/Symbol y}=20^o',\
+'new_spmw16_lvl2_DP30/nonlinear_conv.ascii'     w l lt 4 dashtype 2 t 'DP, 96x24, 30-0',\
+'new_spmw16_lvl3_DP30/nonlinear_conv.ascii'     w l lt 4 dashtype 5 t 'DP, 144x36, 30-0',\
+'new_spmw16_lvl4_DP30/nonlinear_conv.ascii'     w l lt 4 dashtype 4 t 'DP, 192x48, 30-0',\
+'new_spmw16_lvl2_DP30_ass/nonlinear_conv.ascii' w l lt 5 dashtype 2 t 'DP, 96x24, 30-30',\
+'new_spmw16_lvl3_DP30_ass/nonlinear_conv.ascii' w l lt 5 dashtype 5 t 'DP, 144x36, 30-30',\
+'new_spmw16_lvl4_DP30_ass/nonlinear_conv.ascii' w l lt 5 dashtype 4 t 'DP, 192x48, 30-30',\
+'new_spmw16_lvl5_DP30_ass/nonlinear_conv.ascii' w l lt 5 dashtype 3 t 'DP, 240x60, 30-30',\
+
+unset grid
+set key top
+set size square
+set xlabel 'x (km)'
+set ylabel 'y (km)'
+unset log xy
+set object 2 rect from 20,7.5 to 100,30 fc rgb "gray"
+set object 3 rect from 20,0 to 100,7.5 fc rgb "black"
+set object 4 rect from 57.5,0 to 62.5,10 fc rgb "black"
+set key inside top
+
+set output 'shear_bands_vM.pdf'
+plot[20:100][0:80]\
+'new_spmw16_lvl2_vM/shear_band_L_nod.ascii' u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 2 t 'vM, 96x24',\
+'new_spmw16_lvl2_vM/shear_band_R_nod.ascii' u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 2 notitle ,\
+'new_spmw16_lvl3_vM/shear_band_L_nod.ascii' u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 5 t 'vM, 144x36',\
+'new_spmw16_lvl3_vM/shear_band_R_nod.ascii' u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 5 notitle ,\
+'new_spmw16_lvl4_vM/shear_band_L_nod.ascii' u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 4 t 'vM, 192x48',\
+'new_spmw16_lvl4_vM/shear_band_R_nod.ascii' u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 4 notitle ,\
+(x-60)*tan(45./180*pi)+8.75 lt -1 dashtype 3 t 'Coulomb angle (45^o)',\
+30 lt -1 notitle 
+
+set output 'shear_bands_DP20.pdf'
+plot[20:100][0:80]\
+'new_spmw16_lvl2_DP20/shear_band_L_nod.ascii'     u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 2 t 'DP, 96x24, {/Symbol f}=20^o, {/Symbol y}=0^o',\
+'new_spmw16_lvl2_DP20/shear_band_R_nod.ascii'     u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 2 notitle ,\
+'new_spmw16_lvl3_DP20/shear_band_L_nod.ascii'     u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 5 t 'DP, 144x36, {/Symbol f}=20^o, {/Symbol y}=0^o',\
+'new_spmw16_lvl3_DP20/shear_band_R_nod.ascii'     u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 5 notitle ,\
+'new_spmw16_lvl4_DP20/shear_band_L_nod.ascii'     u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 4 t 'DP, 192x48, {/Symbol f}=20^o, {/Symbol y}=0^o',\
+'new_spmw16_lvl4_DP20/shear_band_R_nod.ascii'     u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 4 notitle ,\
+'new_spmw16_lvl2_DP20_ass/shear_band_L_nod.ascii' u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 2 t 'DP, 96x24, {/Symbol f}=20^o, {/Symbol y}=20^o',\
+'new_spmw16_lvl2_DP20_ass/shear_band_R_nod.ascii' u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 2 notitle,\
+'new_spmw16_lvl3_DP20_ass/shear_band_L_nod.ascii' u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 5 t 'DP, 144x36, {/Symbol f}=20^o, {/Symbol y}=20^o',\
+'new_spmw16_lvl3_DP20_ass/shear_band_R_nod.ascii' u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 5 notitle,\
+'new_spmw16_lvl4_DP20_ass/shear_band_L_nod.ascii' u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 4 t 'DP, 192x48, {/Symbol f}=20^o, {/Symbol y}=20^o',\
+'new_spmw16_lvl4_DP20_ass/shear_band_R_nod.ascii' u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 4 notitle,\
+(x-60)*tan(35./180*pi)+8.75 lt -1 dashtype 3 t 'Coulomb angle (35^o)',\
+30 lt -1  notitle 
+
+set output 'shear_bands_DP30.pdf'
+plot[20:100][0:80]\
+'new_spmw16_lvl2_DP30/shear_band_L_nod.ascii'     u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 2 t 'DP, 96x24, {/Symbol f}=30^o, {/Symbol y}=0^o',\
+'new_spmw16_lvl2_DP30/shear_band_R_nod.ascii'     u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 2 notitle ,\
+'new_spmw16_lvl3_DP30/shear_band_L_nod.ascii'     u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 5 t 'DP, 144x36, {/Symbol f}=30^o, {/Symbol y}=0^o',\
+'new_spmw16_lvl3_DP30/shear_band_R_nod.ascii'     u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 5 notitle ,\
+'new_spmw16_lvl4_DP30/shear_band_L_nod.ascii'     u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 4 t 'DP, 192x48, {/Symbol f}=30^o, {/Symbol y}=0^o',\
+'new_spmw16_lvl4_DP30/shear_band_R_nod.ascii'     u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 4 notitle ,\
+'new_spmw16_lvl2_DP30_ass/shear_band_L_nod.ascii' u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 2 t 'DP, 96x24, {/Symbol f}=30^o, {/Symbol y}=30^o',\
+'new_spmw16_lvl2_DP30_ass/shear_band_R_nod.ascii' u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 2 notitle,\
+'new_spmw16_lvl3_DP30_ass/shear_band_L_nod.ascii' u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 5 t 'DP, 144x36, {/Symbol f}=30^o, {/Symbol y}=30^o',\
+'new_spmw16_lvl3_DP30_ass/shear_band_R_nod.ascii' u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 5 notitle,\
+'new_spmw16_lvl4_DP30_ass/shear_band_L_nod.ascii' u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 4 t 'DP, 192x48, {/Symbol f}=30^o, {/Symbol y}=30^o',\
+'new_spmw16_lvl4_DP30_ass/shear_band_R_nod.ascii' u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 4 notitle,\
+'new_spmw16_lvl5_DP30_ass/shear_band_L_nod.ascii' u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 3 t 'DP, 240x60, {/Symbol f}=30^o, {/Symbol y}=30^o',\
+'new_spmw16_lvl5_DP30_ass/shear_band_R_nod.ascii' u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 3 notitle,\
+(x-60)*tan(30./180*pi)+8.75 lt -1 dashtype 3 t 'Coulomb angle (30^o)',\
+30 lt -1  notitle 
+
+
+
