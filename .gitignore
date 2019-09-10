@@ -3,24 +3,30 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+#*.vtu
+#*.ascii
+
 *.out
 *.toc
 *.aux
 *.log
 *.blg
 *.bbl
-*.vtu
 *.idx
 *.bst
 *.ilg
 *.ind
-*.ascii
 *.tdo
+*.node
+*.ele
 opla
 page.pdf
 manual.idx
 manual.ilg
 manual.ind
+triangle 
+showme
 
 # C extensions
 *.so

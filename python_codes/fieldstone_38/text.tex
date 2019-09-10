@@ -1,7 +1,7 @@
 
 {\sl This fieldstone was developed in collaboration with Arie van den Berg}.
 
-The system is a layer of fluid between $y=0$ and $y=1$, with boundary conditions $T(x,y=0)=1$ and $T(x,y=1)=0$, characterized by $\rho$, $c_p$, $k$, $\eta_0$. The Rayleigh number of the system is 
+The system is a layer of fluid between $y=0$ and $y=1$, with boundary conditions $T(x,y=0)=1$ and $T(x,y=1)=0$, characterized by $\rho$, $C_p$, $k$, $\eta_0$. The Rayleigh number of the system is 
 \[
 \text{Ra}= \frac{\rho_0 g_0 \alpha \Delta T h^3}{\eta_0 \kappa}
 \]
@@ -41,19 +41,19 @@ The temperature perturbation $T_1$ satisfies the homogeneous boundary conditions
 $T_1(x,y=1)=0$.
 The temperature equation is
 \[
-\rho c_p \frac{DT}{Dt}
-=\rho c_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T \right) 
-=\rho c_p \left( \frac{\partial T_0+T_1}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} (T_0+T_1) \right) 
+\rho C_p \frac{DT}{Dt}
+=\rho C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T \right) 
+=\rho C_p \left( \frac{\partial T_0+T_1}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} (T_0+T_1) \right) 
 = k \Delta (T_0+T_1)
 \]
 and can be simplified as follows:
 \[
-\rho c_p \left( \frac{\partial T_1}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T_0 \right) 
+\rho C_p \left( \frac{\partial T_1}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T_0 \right) 
 = k \Delta T_1
 \]
 since $T_0$ does not depend on time, $\Delta T_0=0$ and we assume the nonlinear term ${\vec \upnu}\cdot {\vec \nabla} T_1 $ to be second order (temperature perturbations and coupled velocity changes are assumed to be small).
 Using the relationship between velocity and stream function
-$v_y=-\partial_x \Psi$ we have ${\bm v}\cdot {\bm \nabla} T_0 = -v_y = \partial_x \Psi$ and since $\kappa =k/\rho c_p=1$ we get 
+$v_y=-\partial_x \Psi$ we have ${\bm v}\cdot {\bm \nabla} T_0 = -v_y = \partial_x \Psi$ and since $\kappa =k/\rho C_p=1$ we get 
 \begin{equation}
 \boxed{
 \frac{\partial T_1}{\partial t} - \kappa \Delta T_1 = -\frac{\partial \Psi}{\partial x}
