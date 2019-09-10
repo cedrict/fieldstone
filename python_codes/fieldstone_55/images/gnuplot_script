@@ -1,15 +1,33 @@
 set term pdf enhanced
 set grid
 set xlabel 's'
+year=365.*24.*3600
 
-set ylabel 'U(s)'
+set ylabel 'v_x (m/yr)'
+set output 'spine_u.pdf'
+plot[][]\
+'spine.ascii' u 8:($9*year) w l notitle
+
+set ylabel 'v_y'
+set output 'spine_v.pdf'
+plot[][]\
+'spine.ascii' u 8:($10*year) w l notitle
+
+set ylabel '|v|'
+set output 'spine_vel.pdf'
+plot[][]\
+'spine.ascii' u 8:(sqrt($9**2+$10**2)*year) w l notitle
+
+
+
+set ylabel 'U(s) (m/yr)'
 set output 'spine_Us.pdf'
 plot[][]\
-'spine.ascii' u 8:4 w l notitle
+'spine.ascii' u 8:($4*year) w l notitle
  
-set ylabel 'W(s)'
+set ylabel 'W(s) (m/yr)'
 set output 'spine_Ws.pdf'
 plot[][]\
-'spine.ascii' u 8:5 w l notitle
+'spine.ascii' u 8:($5*year) w l notitle
 
 

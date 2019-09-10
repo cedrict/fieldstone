@@ -1,8 +1,8 @@
 
 import numpy as np
 
-Lx=1800e3
-Ly=600e3
+Lx=2400e3
+Ly=1200e3
 d=50e3
 h=100e3
 eta1=1e21
@@ -12,7 +12,7 @@ L=400e3
 theta=60./180.*np.pi
 rad=300e3
 
-xL=800e3
+xL=1200e3
 yL=Ly-d-h/2
 
 xK=xL-L

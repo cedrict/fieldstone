@@ -58,8 +58,8 @@ ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
 
-nel=20312
-NV0=40993
+nel=26471
+NV0=53304
 NV=NV0+nel
 
 NfemV=NV*ndofV     # number of velocity dofs
@@ -621,7 +621,7 @@ for j in range (0,np_plate):
         if abs(xV[i]-x_p)<1 and abs(yV[i]-y_p)<1:
            Us=u[i]*n_y-v[i]*n_x
            Ws=u[i]*n_x+v[i]*n_y
-           spinefile.write("%5d %6e %6e %6e %6e %6e %6e %6e\n" %(j,x_p,y_p,Us,Ws,n_x,n_y,x_p-xK))
+           spinefile.write("%5d %6e %6e %6e %6e %6e %6e %6e %6e %6e \n" %(j,x_p,y_p,Us,Ws,n_x,n_y,x_p-xK,u[i],v[i]))
         #end if
     #end for
 #end for
@@ -636,7 +636,7 @@ for j in range (0,np_slab):
         if abs(xV[i]-x_p)<1 and abs(yV[i]-y_p)<1:
            Us=u[i]*n_y-v[i]*n_x
            Ws=u[i]*n_x+v[i]*n_y
-           spinefile.write("%5d %6e %6e %6e %6e %6e %6e %6e\n" %(j,x_p,y_p,Us,Ws,n_x,n_y,L+rad*t))
+           spinefile.write("%5d %6e %6e %6e %6e %6e %6e %6e %6e %6e \n" %(j,x_p,y_p,Us,Ws,n_x,n_y,L+rad*t,u[i],v[i]))
         #end if
     #end for
 #end for
