@@ -8,6 +8,10 @@ import time as timing
 from scipy.sparse import lil_matrix
 from parameters import *
 
+from inside  import Polygon
+
+#http://code.activestate.com/recipes/578381-a-point-in-polygon-program-sw-sloan-algorithm/
+
 #------------------------------------------------------------------------------
 
 def NNV(rq,sq):
@@ -57,9 +61,8 @@ mP=3     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-
-nel=26471
-NV0=53304
+nel=31765
+NV0=63914
 NV=NV0+nel
 
 NfemV=NV*ndofV     # number of velocity dofs
@@ -104,7 +107,7 @@ xV[0:NV0],yV[0:NV0]=np.loadtxt('subd.1.node',unpack=True,usecols=[1,2],skiprows=
 print("xV (min/max): %.4f %.4f" %(np.min(xV),np.max(xV)))
 print("yV (min/max): %.4f %.4f" %(np.min(yV),np.max(yV)))
 
-np.savetxt('gridV0.ascii',np.array([xV,yV]).T,header='# xV,yV')
+#np.savetxt('gridV0.ascii',np.array([xV,yV]).T,header='# xV,yV')
 
 print("setup: grid points: %.3f s" % (timing.time() - start))
 
@@ -144,30 +147,13 @@ iconV[5,:]-=1
 for iel in range (0,nel):
     iconV[6,iel]=NV0+iel
 
-#for iel in range (0,nel):
-#    print ("iel=",iel)
-#    print ("node 1",iconV[0][iel],"at pos.",xV[iconV[0][iel]], yV[iconV[0][iel]])
-#    print ("node 2",iconV[1][iel],"at pos.",xV[iconV[1][iel]], yV[iconV[1][iel]])
-#    print ("node 3",iconV[2][iel],"at pos.",xV[iconV[2][iel]], yV[iconV[2][iel]])
-#    print ("node 4",iconV[3][iel],"at pos.",xV[iconV[3][iel]], yV[iconV[3][iel]])
-#    print ("node 5",iconV[4][iel],"at pos.",xV[iconV[4][iel]], yV[iconV[4][iel]])
-#    print ("node 6",iconV[5][iel],"at pos.",xV[iconV[5][iel]], yV[iconV[5][iel]])
-
-#print("iconV (min/max): %d %d" %(np.min(iconV[0,:]),np.max(iconV[0,:])))
-#print("iconV (min/max): %d %d" %(np.min(iconV[1,:]),np.max(iconV[1,:])))
-#print("iconV (min/max): %d %d" %(np.min(iconV[2,:]),np.max(iconV[2,:])))
-#print("iconV (min/max): %d %d" %(np.min(iconV[3,:]),np.max(iconV[3,:])))
-#print("iconV (min/max): %d %d" %(np.min(iconV[4,:]),np.max(iconV[4,:])))
-#print("iconV (min/max): %d %d" %(np.min(iconV[5,:]),np.max(iconV[5,:])))
-#print("iconV (min/max): %d %d" %(np.min(iconV[6,:]),np.max(iconV[6,:])))
-
 print("setup: connectivity V: %.3f s" % (timing.time() - start))
 
 for iel in range (0,nel): #bubble nodes
     xV[NV0+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
     yV[NV0+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
 
-np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# xV,yV')
+#np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# xV,yV')
 
 #################################################################
 # build pressure grid (nodes and icon)
@@ -204,37 +190,51 @@ np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
 print("setup: connectivity P: %.3f s" % (timing.time() - start))
 
 #################################################################
-# read in material properties
+# assigning material properties to elements
 #################################################################
 start = timing.time()
 
-rho=np.zeros(nel,dtype=np.float64)  # boundary condition, value
-eta=np.zeros(nel,dtype=np.float64)  # boundary condition, value
+
+xmid=np.empty(np_mid,dtype=np.float64)   
+ymid=np.empty(np_mid,dtype=np.float64)   
+xmid[0:np_mid],ymid[0:np_mid]=np.loadtxt('cedric1_xmid.dat',unpack=True,usecols=[0,1])
+for i in range (0,np_mid):
+    xmid[i]=xmid[i]*1e5+xL-L
+    ymid[i]=ymid[i]*1e5+Ly
+
+xperim=np.empty(np_perim,dtype=np.float64)   
+yperim=np.empty(np_perim,dtype=np.float64)   
+xperim[0:np_perim],yperim[0:np_perim]=np.loadtxt('cedric1_shape.dat',unpack=True,usecols=[0,1])
+
+for i in range (0,np_perim):
+    xperim[i]=xperim[i]*1e5+xL-L
+    yperim[i]=yperim[i]*1e5+Ly
+
+xmin=np.min(xperim) ; xmax=np.max(xperim)
+ymin=np.min(yperim) ; ymax=np.max(yperim)
+
+poly = Polygon(xperim, yperim) # see inside.py in same folder
+
+rho=np.zeros(nel,dtype=np.float64) 
+eta=np.zeros(nel,dtype=np.float64) 
 
 for iel in range(0,nel):
     x_c=xV[iconV[6,iel]]
     y_c=yV[iconV[6,iel]]
-    if x_c>xK and x_c<xL and y_c>yL-h/2 and y_c<yL+h/2:
-       rho[iel]=drho
-       eta[iel]=eta1*gamma
+    # if element is inside a box containing slab
+    if x_c>xmin and x_c<xmax and y_c>ymin and y_c<ymax:
+       dist = poly.is_inside(x_c, y_c)
+       if dist>0: 
+          rho[iel]=drho
+          eta[iel]=eta1*gamma
+       else:
+          rho[iel]=0.
+          eta[iel]=eta1
     else:
        rho[iel]=0.
        eta[iel]=eta1
-    if np.sqrt((x_c-xK)**2+(y_c-yK)**2)<h/2:
-       rho[iel]=drho
-       eta[iel]=eta1*gamma
-    if np.sqrt((x_c-xQ)**2+(y_c-yQ)**2)<h/2:
-       rho[iel]=drho
-       eta[iel]=eta1*gamma
-    if np.sqrt((x_c-xM)**2+(y_c-yM)**2)<rad+h/2 and\
-       np.sqrt((x_c-xM)**2+(y_c-yM)**2)>rad-h/2 and\
-       y_c > ((yN-yM)/(xN-xM)*(x_c-xM)+yM) and  x_c>xL:
-       rho[iel]=drho
-       eta[iel]=eta1*gamma
-
     # end if
 #end for
-
 
 print("assign density, viscosity: %.3f s" % (timing.time() - start))
 
@@ -253,6 +253,17 @@ for i in range(0, NV):
     if i==NV-1: 
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
     #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+
+    #if xV[i]/Lx<0.0000001:
+    #   bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+
+    #if xV[i]/Lx>0.9999999:
+    #   bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+
+    #if yV[i]/Ly<0.0000001:
+    #   #bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+    #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+
 
 print("define boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -560,8 +571,7 @@ for i in range(0,NV):
     if cc[i] != 0:
        q[i]=q[i]/cc[i]
 
-np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
-
+#np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
 
 #####################################################################
 # compute vrms 
@@ -604,42 +614,34 @@ print("     -> avrg u = %.6e m/s" %(avrg_u))
 print("compute vrms: %.3fs" % (timing.time() - start))
 
 #####################################################################
-# Us: velocity parallel to midsurface
-# Ws: velocity perpendicular to midsurface
+# export velocity on perimeter and midsurface to file
 #####################################################################
 
-filename='spine.ascii'
-spinefile=open(filename,"w")
+perimfile=open('perimeter.ascii',"w")
 
-for j in range (0,np_plate):
-    dx=L/np_plate
-    x_p=xK+j*dx+dx/2
-    y_p=yL
-    n_x=0.
-    n_y=1.
+for j in range (0,np_perim):
     for i in range(0,NV):
-        if abs(xV[i]-x_p)<1 and abs(yV[i]-y_p)<1:
-           Us=u[i]*n_y-v[i]*n_x
-           Ws=u[i]*n_x+v[i]*n_y
-           spinefile.write("%5d %6e %6e %6e %6e %6e %6e %6e %6e %6e \n" %(j,x_p,y_p,Us,Ws,n_x,n_y,x_p-xK,u[i],v[i]))
+        if abs(xV[i]-xperim[j])<1 and abs(yV[i]-yperim[j])<1:
+           perimfile.write("%6e %6e %6e %6e \n" %(xperim[j],yperim[j],u[i],v[i]))
         #end if
     #end for
 #end for
 
-for j in range (0,np_slab):
-    t=j*theta/(np_slab-1)
-    x_p=xM+rad*np.cos(np.pi/2-t)
-    y_p=yM+rad*np.sin(np.pi/2-t)
-    n_x=np.cos(np.pi/2-t)
-    n_y=np.sin(np.pi/2-t)
+
+
+
+midfile=open('midsurface.ascii',"w")
+
+for j in range (0,np_mid):
     for i in range(0,NV):
-        if abs(xV[i]-x_p)<1 and abs(yV[i]-y_p)<1:
-           Us=u[i]*n_y-v[i]*n_x
-           Ws=u[i]*n_x+v[i]*n_y
-           spinefile.write("%5d %6e %6e %6e %6e %6e %6e %6e %6e %6e \n" %(j,x_p,y_p,Us,Ws,n_x,n_y,L+rad*t,u[i],v[i]))
+        if abs(xV[i]-xmid[j])<1 and abs(yV[i]-ymid[j])<1:
+           midfile.write("%6e %6e %6e %6e \n" %(xmid[j],ymid[j],u[i],v[i]))
         #end if
     #end for
 #end for
+
+
+
 
 #####################################################################
 # plot of solution

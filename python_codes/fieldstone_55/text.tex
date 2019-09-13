@@ -10,7 +10,7 @@ This file is then further processed by the triangle
 program\footnote{\url{https://www.cs.cmu.edu/~quake/triangle.html}}
 as follows:
 \begin{verbatim}
-./triangle -q -a100000000 -o2 subd.node
+./triangle -q -a200000000 -o2 subd.node
 \end{verbatim}
 The '-q' option adds vertices to the mesh to
 ensure that all angles are between 20 and 140 degrees. 
@@ -38,31 +38,38 @@ The density of the mantle is set to zero while the subducting plate has a densit
 \includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/press}\\
 \includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/rho}
 \includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/eta}\\
-{\scriptsize Mesh composed of 20,521 triangles, with 123,996 velocity dofs and 61,563 pressure dofs.
+{\scriptsize Mesh composed of 31,765 triangles.
 Other parameters: $\theta_0=60\degree$, $\eta_1=10^{21}$, $\gamma=100$, 
-$L_x$=1800km, $L_y$=600km, $\delta\rho=100$, $L=$400km, $h=$100km, $d=$50km, radius of curved slab 300km. }
+$L_x$=3000km, $L_y$=1500km, $\delta\rho=100$, $L=$400km, $h=$100km, $d=$50km.}
 \end{center}
 
-Limitations: although I could run the models in larger domains, I have no idea how large the domain
-should be to properly simulate a semi-infinite space.
-
-\begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_55/images/spine_u}
-\includegraphics[width=5cm]{python_codes/fieldstone_55/images/spine_v}
-\includegraphics[width=5cm]{python_codes/fieldstone_55/images/spine_vel}\\
-{\scriptsize horizontal and vertical velocity, and velocity norm as a function 
-of $s$. $s$ is measured from 
-left to right on the midsurface and excludes the rounded edges of the slab.}
-\end{center}
-
-
+%\begin{center}
+%\includegraphics[width=5cm]{python_codes/fieldstone_55/images/spine_u}
+%\includegraphics[width=5cm]{python_codes/fieldstone_55/images/spine_v}
+%\includegraphics[width=5cm]{python_codes/fieldstone_55/images/spine_vel}\\
+%{\scriptsize horizontal and vertical velocity, and velocity norm as a function 
+%of $s$. $s$ is measured from 
+%left to right on the midsurface and excludes the rounded edges of the slab.}
+%\end{center}
 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_55/images/spine_Us}
-\includegraphics[width=7cm]{python_codes/fieldstone_55/images/spine_Ws}\\
-{\scriptsize Parallel and perpendicular velocity to midsurface. $s$ is measured from 
-left to right on the midsurface and excludes the rounded edges of the slab.}
+\includegraphics[width=7cm]{python_codes/fieldstone_55/images/u_midsurface}
+\includegraphics[width=7cm]{python_codes/fieldstone_55/images/v_midsurface}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_55/images/u_perimeter}
+\includegraphics[width=7cm]{python_codes/fieldstone_55/images/v_perimeter}\\
+{\scriptsize Top row: midsurface velocity measurements. Bottom row: slab/plate perimeter 
+velocity measurements. 'open' means no b.c. on sides and bottom; 'f.s. sides' means 
+free slip b.c. on left and right sides, open at the bottom; 'f.s. all' means 
+free slip b.c. on sides and bottom.}
 \end{center}
+
+
+%\begin{center}
+%\includegraphics[width=7cm]{python_codes/fieldstone_55/images/spine_Us}
+%\includegraphics[width=7cm]{python_codes/fieldstone_55/images/spine_Ws}\\
+%{\scriptsize Parallel and perpendicular velocity to midsurface. $s$ is measured from 
+%left to right on the midsurface and excludes the rounded edges of the slab.}
+%\end{center}
 
 
