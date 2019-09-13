@@ -305,6 +305,53 @@ The harmonic average is then used:
 =\left( \frac{1}{\eta_{df}}+\frac{1}{\eta_{df}} \right)^{-1}
 \]
 
+\paragraph{A closer look at the diffusion creep of Karato \& Wu (1993)} In the article, the following equation 
+is used: 
+\[
+\dot{\bm \varepsilon} = A \left(\frac{{\bm \tau}}{\mu}\right) \left(\frac{b}{d}\right)^m \exp \left( -\frac{Q+pV}{RT}\right)
+\]
+where $\mu$ is the shear modulus ($\sim$80GPa), $b$ is the length of the Burgers vector ($\sim$0.5nm) and 
+$d$ is the grain size.
+One can express the above equation in terms of second invariants (see Section~\ref{sec:invariants}):
+\[
+\underline{\dot{\varepsilon}}_{II} 
+= A \left(\frac{\underline{\tau}_{II}}{\mu}\right) \left(\frac{b}{d}\right)^m \exp\left( -\frac{Q+pV}{RT} \right)
+\]
+and assuming a Newtonian linearisation/relation between deviatoric stress 
+and strain rate  $\underline{\tau}_{II} = 2 \eta_{df} \underline{\dot\epsilon}_{II}$, one arrive at
+\[
+\eta_{df} = \frac{1}{2} \left(\frac{A}{\mu}\right)^{-1}  \left(\frac{b}{d}\right)^{-m} \exp\left( \frac{Q+pV}{RT} \right)
+\]
+or, 
+\[
+\eta_{df} = \frac{1}{2} \left[ \frac{A}{\mu}   \left(\frac{b}{d}\right)^{m} \right]^{-1} \exp\left( \frac{Q+pV}{RT} \right)
+\]
+The effective diffusion creep viscosity is independent of strain-rate so that one 
+could substitute the total pressure for lithostatic pressure in the equation, assume 
+a geotherm and easily compute the predicted viscosity as a function of grain size $d$.
+
+Let us assume that the 1D profile starts from the base of the lithosphere 
+(say 120km depth) and ends at the 660 boundary. 
+Assume the temperature to increase linearly from 1300\degree C to $T_{bottom}$. At the bottom 
+of the lithosphere, the lithostatic pressure is of the order of 
+$\rho \cdot g \cdot L \simeq 3000\cdot 10 \cdot 120e3 \simeq 4$GPa. 
+At the bottom of the domain, the pressure has increased by $3300\cdot 10 \cdot 630e3 \simeq21$GPa. 
+
+The viscosity profile is plotted hereunder for three different gran sizes, bottom temperature and 
+activation volumes (4,5,6 cm$^3$/mol). 
+
+\begin{center}
+\includegraphics[width=5.cm]{images/rheology/kawudiff/viscosity1.pdf}
+\includegraphics[width=5.cm]{images/rheology/kawudiff/viscosity2.pdf}
+\includegraphics[width=5.cm]{images/rheology/kawudiff/viscosity3.pdf}
+\end{center}
+
+Although this exercise only provides us with first-order results, we can conclude that 
+one can essentially change the diffusion creep effective viscosity by up to 2 orders of 
+magnitude simply by choosing key parameters within acceptable ranges. 
+
+
+
 
 
 \Literature \cite{budr08} 
