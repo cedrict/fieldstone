@@ -157,11 +157,29 @@ Triangle is specialized for creating two-dimensional finite element meshes, but 
 
 \begin{center}
 \includegraphics[width=13cm]{images/meshes/bugw01}\\
-{\small Taken from Buiter et al \cite{bugw01}. Finite element grid. 
+{\scriptsize Taken from Buiter et al \cite{bugw01}. Finite element grid. 
 The subducting plate initially extends to 1226 km in the horizontal direction and 
 is not completely shown here. Discretization in the subducting plate is slightly coarser 
 towards the right edge.}
 \end{center}
+
+\begin{center}
+\includegraphics[width=13cm]{images/meshes/bafl16}\\
+{\scriptsize Numerical model setup of the 2D axisymmetric half-space with all applied 
+boundary conditions to study the effects of ice-cap unloading
+on shallow volcanic systems \cite{bafl16}}
+\end{center}
+
+Although it is rarely used in practice it is possible to produce meshes which contain 
+both quadrilateral and triangular elements:
+\begin{center}
+\includegraphics[width=13cm]{images/meshes/fige95}\\
+{\scriptsize Mesh used to analayse the stress distribution around a pressurized crack in a layered 
+elastic medium \cite{fige95}}
+\end{center}
+
+
+
 
 
 
@@ -211,7 +229,8 @@ Edges are line segments, facets are strictly {\bf planar} convex polygons.
 \subsubsection{Adaptive Mesh Refinement}
 \index{AMR} \index{Adaptive Mesh Refinement}
 
-\Literature: \cite{bugg10}\cite{beck10}\cite{lezh11} \cite[sect 3]{bugs09} 
+\Literature: \cite{bugg10}\cite{beck10}\cite{lezh11} \cite[sect 3]{bugs09} \cite{beck10}
+
 
 \input{amr_exercise}
 
