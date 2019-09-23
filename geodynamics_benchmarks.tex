@@ -40,6 +40,8 @@ computational geodynamics community.
 \item dam-break problem \cite{moeb99,bacp07,liir07,lemx08,homa09,anco09,grdn97,hini81,basd08}
 \item hot blob \cite{bugs09,fumt11}
 \item visco-elastic flow past a cylinder in a channel \cite{bepo10}
+\item Infinite plate with a circular hole \cite{rama16}
+\item Slope stability for elasto-plastic materials \cite{rama16}
 \end{itemize}
 
 \todo[inline]{go through my papers and add relevant ones here}
@@ -185,3 +187,63 @@ with or without viscous lower layer.
 {\small Aspect manual \cite{aspectmanual}}
 \end{minipage}
 \end{center}
+
+%..........................................................................
+\subsubsection{Infinite plate with a circular hole \cite{rama16}}
+
+An infinite plate with a circular hole of radius $a$ 
+is subjected to a unidirectional tensile load of $P$ in the $x$ direction as shown
+in the figure. In this case, only one quarter of the domain is analysed due
+to symmetry along $x$ and $y$ axis. 
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{images/benchmark_hole/rama16}\\
+{\scriptsize Setup for the infinite plate with a circular hole benchmark.}
+\end{center}
+
+
+The analytical stress components for this
+problem are \cite{chnn10}
+
+\begin{eqnarray}
+\sigma_{xx}(x,y) &=& P \left(  1-\frac{a^2}{r^2}(\frac{3}{2}\cos 2\theta + \cos 4\theta) 
++ \frac{3a^4}{2r^4} \cos 4\theta \right) \\
+\sigma_{yy}(x,y) &=& -P \left( \frac{a^2}{r^2} (\frac{3}{2}\cos 2\theta - \cos 4\theta) 
+- \frac{3a^4}{2r^4} \cos 4\theta \right) \\
+\sigma_{xy}(x,y) &=& -P \left( \frac{a^2}{r^2} (\frac{3}{2}\sin 2\theta + \sin 4\theta) 
++ \frac{3a^4}{2r^4} \sin 4\theta \right) 
+\end{eqnarray}
+
+CHECK FORMULAS - never been implemented yet!
+
+
+The inner boundary of the hole is traction free and the right edge was
+imposed with the tractions based on the analytical solutions.
+The left edge is constrained in the $x$ direction and the bottom
+edge is constrained in the $y$ direction, respectively. The plane stress
+condition is considered and the parameters are: 
+Young modulus 3e7 MPa, Poisson Ratio 0.3, Load $P$=10 N/m$^2$, a=1.
+
+%..............................................................................
+\subsubsection{Slope stability for elasto-plastic materials a la \cite{rama16}}
+
+The bottom of the domain is constrained and the model is 
+subjected to gravitational load. The material properties considered are
+
+Young modulus 20e3 MPa, Poisson Ratio 0.49, Constitutive law Mohr-Coulomb 
+(friction angle $\phi=20$\degree, 
+dilatancy angle $\phi=20$\degree, cohesion $c$=50Mpa).
+
+\begin{center}
+\includegraphics[width=0.5\textwidth]{images/benchmark_slope/rama16c}
+\includegraphics[width=0.4\textwidth]{images/benchmark_slope/rama16b}\\
+{\scriptsize Left: Slope stability problem setup; Right: Adaptive Refinement based 
+on Plasticity Indicator}
+\end{center}
+
+
+
+
+
+
+
