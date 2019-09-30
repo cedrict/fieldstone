@@ -1,0 +1,159 @@
+We start from the momentum equation:
+\begin{equation}
+-{\vec \nabla}p + {\vec \nabla}\cdot (2 \eta \dot{\bm \varepsilon}^d(\vec\upnu) ) + \rho {\vec g} = \vec{0}
+\end{equation}
+When the viscosity is constant in space, it can be taken out of the divergence operator:
+\begin{equation}
+-{\vec \nabla}p + 2 \eta {\vec \nabla}\cdot \dot{\bm \varepsilon}^d(\vec\upnu)  + \rho {\vec g} = \vec{0}
+\end{equation}
+
+Let us for simplicity look at a 2D Cartesian formulation of this equation and for incompressible flow:
+\begin{eqnarray}
+2 {\vec \nabla}\cdot \dot{\bm \varepsilon}^d (\vec\upnu)
+&=& \vec\nabla \cdot \left( \vec\nabla \vec\upnu + \vec\nabla \vec\upnu ^T \right) \\ 
+&=& 
+(\partial_x \; \partial_y) \cdot
+\left(
+\begin{array}{cc}
+\partial_x u & \partial_x v \\
+\partial_y u & \partial_y v 
+\end{array}
+\right) + 
+(\partial_x \; \partial_y) \cdot
+\left(
+\begin{array}{cc}
+\partial_x u & \partial_y u \\
+\partial_x v & \partial_y v 
+\end{array}
+\right) \\
+&=&( \partial_x^2 u + \partial_y^2 u , \partial_x^2 v + \partial_y^2 v )
++(\partial_x \partial_x u + \partial_y \partial_x v , 
+ \partial_x \partial_y u + \partial_y \partial_y v)  \\
+&=&( \partial_x^2 u + \partial_y^2 u , \partial_x^2 v + \partial_y^2 v )
++(\partial_x \underbrace{(\partial_x u + \partial_y v)}_{=0} , 
+  \partial_y \underbrace{(\partial_x u + \partial_y v)}_{=0}  \\
+&=&( \partial_x^2 u + \partial_y^2 u , \partial_x^2 v + \partial_y^2 v )
+\end{eqnarray}
+and then finally the Stokes equation is:
+\begin{equation}
+-\vec\nabla p  + \eta \Delta \vec \upnu + \rho \vec g = \vec{0}
+\end{equation}
+
+The mass conservation equation remains unchanged and so does the pressure gradient term. 
+We shall then focus on the weak form of the previously obtained term.
+We multiply it by a velocity test function $N_i^\upnu$ and integrate over an element: 
+\begin{eqnarray}
+&&\int_{\Omega_e} N_i^\upnu \Delta \vec\upnu^h dV \nonumber\\
+&=&\int_{\Omega_e}  \left(\begin{array}{c}
+N_i^\upnu \Delta u^h \\
+N_i^\upnu \Delta v^h 
+\end{array}\right) dV \nonumber\\
+&=&\int_{\Omega_e}  \left(\begin{array}{c}
+N_i^\upnu \vec\nabla \cdot \vec\nabla u^h \\
+N_i^\upnu \vec\nabla \cdot \vec\nabla v^h 
+\end{array}\right) dV \nonumber\\
+&=&
+\int_{\Omega_e}   \left(\begin{array}{c}
+\vec\nabla N_i^\upnu \cdot \vec\nabla u^h \\
+\vec\nabla N_i^\upnu \cdot \vec\nabla v^h 
+\end{array}\right) dV \nonumber\\
+&=&
+\int_{\Omega_e}
+\left(\begin{array}{c}
+\partial_x N_i^\upnu \partial_x u^h + \partial_y N_i^\upnu \partial_y u^h \\ 
+\partial_x N_i^\upnu \partial_x v^h + \partial_y N_i^\upnu \partial_y v^h 
+\end{array}\right) dV \nonumber\\
+&=&\int_{\Omega_e}
+\left(
+\begin{array}{cccc}
+\partial_x N_i^\upnu & \partial_y N_i^\upnu & 0 & 0 \\ 
+0 & 0 & \partial_x N_i^\upnu & \partial_y N_i^\upnu  \\ 
+\end{array}
+\right)
+\!\cdot\!
+\left(
+\begin{array}{c}
+\partial_x u^h \\
+\partial_y u^h \\
+\partial_x v^h \\
+\partial_y v^h 
+\end{array}
+\right) dV \nonumber\\
+&=&\int_{\Omega_e}
+\left(
+\begin{array}{cccc}
+\partial_x N_i^\upnu & \partial_y N_i^\upnu & 0 & 0 \\ 
+0 & 0 & \partial_x N_i^\upnu & \partial_y N_i^\upnu  \\ 
+\end{array}
+\right)
+\!\cdot\!
+\left(
+\begin{array}{cccccccccc}
+\partial_x N_1^\upnu & 0  & \partial_x N_2^\upnu & 0  & \cdots & \partial_x N^\upnu_{m_\upnu} & 0 \\
+\partial_y N_1^\upnu & 0  & \partial_y N_2^\upnu & 0  & \cdots & \partial_y N^\upnu_{m_\upnu} & 0 \\
+0 & \partial_x N_1^\upnu  & 0& \partial_x N_2^\upnu  & \cdots & 0 & \partial_x N^\upnu_{m_\upnu}  \\
+0 & \partial_y N_1^\upnu  & 0& \partial_y N_2^\upnu  & \cdots & 0 & \partial_y N^\upnu_{m_\upnu}  
+\end{array}
+\right) 
+\!\cdot\!
+\left(
+\begin{array}{c}
+u_1 \\ v_1 \\ u_2 \\ v_2 \\ \dots \\ u_{m_v} \\ v_{m_v} 
+\end{array}
+\right) dV \nonumber
+\end{eqnarray}
+Writing this equation for $i=1,...m_\upnu$, we obtain:
+\[
+\int
+\left(
+\begin{array}{cccc}
+\partial_x N_1^\upnu & \partial_y N_1^\upnu & 0 & 0 \\ 
+0 & 0 & \partial_x N_1^\upnu & \partial_y N_1^\upnu  \\ 
+\partial_x N_2^\upnu & \partial_y N_2^\upnu & 0 & 0 \\ 
+0 & 0 & \partial_x N_2^\upnu & \partial_y N_2^\upnu  \\ 
+\vdots & \vdots & \vdots & \vdots \\
+\vdots & \vdots & \vdots & \vdots \\
+\partial_x N_{m_\upnu}^\upnu & \partial_y N_{m_\upnu}^\upnu & 0 & 0 \\ 
+0 & 0 & \partial_x N_{m_\upnu}^\upnu & \partial_y N_{m_\upnu}^\upnu  \\ 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cccccccccc}
+\partial_x N_1^\upnu & 0  & \partial_x N_2^\upnu & 0  & \cdots & \partial_x N^\upnu_{m_\upnu} & 0 \\
+\partial_y N_1^\upnu & 0  & \partial_y N_2^\upnu & 0  & \cdots & \partial_y N^\upnu_{m_\upnu} & 0 \\
+0 & \partial_x N_1^\upnu  & 0& \partial_x N_2^\upnu  & \cdots & 0 & \partial_x N^\upnu_{m_\upnu}  \\
+0 & \partial_y N_1^\upnu  & 0& \partial_y N_2^\upnu  & \cdots & 0 & \partial_y N^\upnu_{m_\upnu}  
+\end{array}
+\right) 
+\cdot
+\underbrace{
+\left(
+\begin{array}{c}
+u_1 \\ v_1 \\ u_2 \\ v_2 \\ \dots \\ u_{m_v} \\ v_{m_v} 
+\end{array}
+\right) }_{\vec V}
+dV
+\]
+or, 
+\[
+{\bm K}_\eta= \eta \int_{\Omega_e} {\bm B}^T  \cdot {\bm B} \; dV 
+\]
+where ${\bm B}$ is a $(ndim*ndim) \times (m_v*ndofV)$ matrix (see also Eq. 6.24 of \cite{dohu03}). 
+
+In three dimensions, the matrix ${\bm B}$ is given by
+\[
+\left(
+\begin{array}{cccccccccc}
+\partial_x N_1^\upnu & 0  & \partial_x N_2^\upnu & 0  & \cdots & \partial_x N^\upnu_{m_\upnu} & 0 \\
+\partial_y N_1^\upnu & 0  & \partial_y N_2^\upnu & 0  & \cdots & \partial_y N^\upnu_{m_\upnu} & 0 \\
+\partial_z N_1^\upnu & 0  & \partial_z N_2^\upnu & 0  & \cdots & \partial_z N^\upnu_{m_\upnu} & 0 \\
+0 & \partial_x N_1^\upnu  & 0& \partial_x N_2^\upnu  & \cdots & 0 & \partial_x N^\upnu_{m_\upnu}  \\
+0 & \partial_y N_1^\upnu  & 0& \partial_y N_2^\upnu  & \cdots & 0 & \partial_y N^\upnu_{m_\upnu}  \\
+0 & \partial_z N_1^\upnu  & 0& \partial_z N_2^\upnu  & \cdots & 0 & \partial_z N^\upnu_{m_\upnu}  
+\end{array}
+\right) 
+\]
+
+
+

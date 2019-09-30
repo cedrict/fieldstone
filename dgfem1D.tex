@@ -120,14 +120,14 @@ equation:
 \frac{d^2T}{dx^2}=0 \qquad T(x=0)=0 \qquad T(x=1)=1 \qquad \text{on} \quad x\in[0,1]
 \end{equation}
 Although this equation is usually solved as is with its second-order derivative, it can also 
-be written in a mixed form:
+be written in a mixed form, using the heat flux $q$ (a scalar in 1D):
 \[
 -\frac{dq}{dx}=0 \qquad q-\frac{dT}{dx}=0 \qquad x\in[0,1]
 \]
 and the boundary conditions remain unchanged. 
 
 We apply the standard approach to establish the weak forms of these two first-order ODEs, and we do so 
-on an element $e$ bound by $x_k$ and $x_{k+1}$
+on an element $e$ bound by nodes $k$ and $k+1$ with coordinates $x_k$ and $x_{k+1}$
 \[
 -\int_{x_k}^{x_{k+1}} \frac{dq}{dx} \tilde{f}(x) dx = -[q \tilde{f} ]_{x_k}^{x_{k+1}} 
 + \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} q(x) dx = 0
@@ -138,6 +138,7 @@ on an element $e$ bound by $x_k$ and $x_{k+1}$
 \int_{x_k}^{x_{k+1}}  q(x) \overline{f}(x) dx
 -[ T \overline{f}  ]_{x_k}^{x_{k+1}} + \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} T(x) dx = 0
 \]
+where $\tilde{f}$ and $\overline{f}$ are test functions.
 We now must examine the term between square brackets. 
 Inside the element, the test functions $\tilde{f}$ and $\overline{f}$ are well defined polynomials
 and we we coin:
@@ -187,32 +188,114 @@ be the shape functions, and in this case for both temperature and flux.
 
 
 \begin{eqnarray}
+0 &=&
 -\hat{q}_{k+1} \tilde{f}(x_{k+1}^-)
 +\hat{q}_k     \tilde{f}(x_k^+)
-+ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} q_h(x) dx &=& 0 \nonumber\\
--\hat{q}_{k+1} \tilde{f}_{k+1}^-
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} q_h(x) dx  \nonumber\\
+&=&-\hat{q}_{k+1} \tilde{f}_{k+1}^-
 +\hat{q}_k     \tilde{f}_k^+
-+ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} ( N_k(x) q_k^+ + N_{k+1}(x)q_{k+1}^- ) dx &=& 0 \nonumber\\
--\hat{q}_{k+1} \tilde{f}_{k+1}^-
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} ( N_k(x) q_k^+ + N_{k+1}(x)q_{k+1}^- ) dx \nonumber\\
+&=& -\hat{q}_{k+1} \tilde{f}_{k+1}^-
 +\hat{q}_k     \tilde{f}_k^+
 + \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} N_k(x) dx \cdot q_k^+ 
-+ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} N_{k+1}(x) dx \cdot q_{k+1}^- &=& 0
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} N_{k+1}(x) dx \cdot q_{k+1}^- \nn\\
+&=&
+-\left( \frac{1}{2}(q_{k+1}^+ + {\color{blue} q_{k+1}^-}) 
+- {\cal E} ({\color{blue}T_{k+1}^-} - T_{k+1}^+) - {\cal C}({\color{blue} q_{k+1}^-} - q_{k+1}^+) \right) \tilde{f}_{k+1}^-
++\left( \frac{1}{2}({\color{blue} q_k^+} + q_k^-) - {\cal E} (T_k^- - {\color{blue}T_k^+}) 
+- {\cal C}(q_k^- - {\color{blue}q_k^+}) \right) \tilde{f}_k^+ \nn\\
+&& + \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} N_k(x) dx \cdot {\color{blue} q_k^+} 
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} N_{k+1}(x) dx \cdot {\color{blue} q_{k+1}^-} \nn\\
+&=&\left[  -(0.5 +{\cal C})    \tilde{f}_{k+1}^- +  \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} N_{k+1}(x) dx   \right]  {\color{blue}q_{k+1}^-}  - {\cal E}    \tilde{f}_{k+1}^- {\color{blue} T_{k+1}^-}  \nn\\
+&&+ \left[ (0.5+{\cal C}) \tilde{f}_k^+  + \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} N_{k+1}(x) dx \right] {\color{blue}q_k^+} + {\cal E} \tilde{f}_k^+ {\color{blue}T_k^+} \nn\\
+&& 
+-\left( \frac{1}{2}q_{k+1}^+   
++ {\cal E} T_{k+1}^+ + {\cal C}  q_{k+1}^+) \right) \tilde{f}_{k+1}^-
++\left( \frac{1}{2} q_k^- - {\cal E} T_k^-  
+- {\cal C}q_k^-  \right) \tilde{f}_k^+ \nn\\
 \end{eqnarray}
+
 
 
 \begin{eqnarray}
-\int_{x_k}^{x_{k+1}}  q_h(x) \overline{f}(x) dx
--[ T \overline{f}  ]_{x_k}^{x_{k+1}} + \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} T_h(x) dx &=& 0 \nn\\
-\int_{x_k}^{x_{k+1}}  q_h(x) \overline{f}(x) dx
+0&=&
+-[ T \overline{f}  ]_{x_k}^{x_{k+1}} 
++ \int_{x_k}^{x_{k+1}}  q_h(x) \overline{f}(x) dx
++ \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} T_h(x) dx  
+\nn\\
+&=&
 -\hat{T}_{k+1} \overline{f}(x_{k+1}^-) 
 +\hat{T}_k     \overline{f}(x_{k}^+) 
-+ \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} T_h(x) dx &=& 0 \nn\\
-\int_{x_k}^{x_{k+1}} ( N_k(x) q_k^+ + N_{k+1}(x)q_{k+1}^-    ) \overline{f}(x) dx
--\hat{T}_{k+1} \overline{f}_{k+1}^-
-+\hat{T}_k     \overline{f}_{k}^+
-+ \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} ( N_k(x) T_k^+ + N_{k+1}(x)T_{k+1}^-  ) dx &=& 0 \nn
++ \int_{x_k}^{x_{k+1}}  q_h(x) \overline{f}(x) dx
++ \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} T_h(x) dx  \nn\\
+&=&
+-\left( \frac{1}{2}({\color{blue}T_{k+1}^-}+ T_{k+1}^+) 
++ {\cal C} ({\color{blue} T_{k+1}^-} - T_{k+1}^+) \right) \overline{f}_{k+1}^-
++\left( \frac{1}{2}(T_k^-+{\color{blue}T_k^+}) + {\cal C} (T_k^- - {\color{blue}T_k^+}) \right) \overline{f}_{k}^+ \nn\\
+&& + \int_{x_k}^{x_{k+1}} ( N_k(x) {\color{blue}q_k^+} + N_{k+1}(x) {\color{blue}q_{k+1}^-}    ) \overline{f}(x) dx
++ \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} ( N_k(x) {\color{blue}T_k^+} + N_{k+1}(x) {\color{blue}T_{k+1}^-}  ) dx \nn
 \end{eqnarray}
 
+If I now rewrite both equations above by taking $\tilde{f}=\{N_k,N_{k+1} \}$ and 
+$\overline{f}=\{N_k,N_{k+1}\}$ then we obtain four equations  
+For each element with the four unknowns ${\color{blue} q_k^+}$, ${\color{blue} q_{k+1}^-}$, 
+${\color{blue}T_k^+}$ and ${\color{blue}T_{k+1}^-}$. 
+All other $q$ and $T$ quantities in the above equations will need to find their way to the rhs. 
 
+We will also use the results obtained in Appendix~\ref{app:mm}:
+\[
+{\bm M}^e
+=\int_{\Omega_e} \vec{N}^T \vec{N} dV
+=\int_{\Omega_e} 
+\left(
+\begin{array}{cc}
+N_k N_k & N_k N_{k+1} \\
+N_{k+1} N_k & N_{k+1}N_{k+1}
+\end{array}
+\right)
+dV 
+= \frac{h}{2} \frac{1}{3} 
+\left(
+\begin{array}{cc}
+2  & 1 \\
+1 & 2
+\end{array}
+\right)
+= 
+\frac{h}{6}
+\left(
+\begin{array}{cc}
+2  & 1 \\
+1 & 2
+\end{array}
+\right)
+\]
+
+and also 
+
+\[
+\int_{\Omega_e} 
+\left(
+\begin{array}{cc}
+\frac{dN_k}{dx} N_k     & \frac{dN_k}{dx} N_{k+1} \\
+\frac{dN_{k+1}}{dx} N_k & \frac{dN_{k+1}}{dx} N_{k+1}
+\end{array}
+\right)
+dV
+=
+\frac{1}{2}
+\left(
+\begin{array}{cc}
+-1  & -1 \\
+1 & 1
+\end{array}
+\right)
+\]
+
+
+
+
+
+%\end{document}
 
 

@@ -187,14 +187,15 @@ doi = "10.23644/uu.9209393.v1"}
 \newpage 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Solving the flow equations with the FEM} \label{solvingFEM} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{incompressible} %-----------------------------------------------------------------
-\subsection{Strong and weak forms} \input{strongweak} %----------------------------------
-\subsection{Which velocity-pressure pair for Stokes?} \input{pair} %---------------------
-\subsection{The penalty approach for viscous flow}\label{sec:penalty}\input{penalty} %---
-\subsection{The mixed FEM for viscous flow} \input{mixed} %------------------------------
-\subsection{Solving the elastic equations} %---------------------------------------------
-\subsection{A quick tour of similar literature} \input{similar} %------------------------
-\subsection{The case against the $Q_1\times P_0$ element} \input{case_against_q1p0} %----
+\input{incompressible} %---------------------------------------------------------------------------
+\subsection{Strong and weak forms} \input{strongweak} %--------------------------------------------
+\subsection{Which velocity-pressure pair for Stokes?} \input{pair} %-------------------------------
+\subsection{The penalty approach for viscous flow}\label{sec:penalty}\input{penalty} %-------------
+\subsection{The mixed FEM for viscous flow} \input{mixed} %----------------------------------------
+\subsection{Solving the elastic equations} %-------------------------------------------------------
+\subsection{A quick tour of similar literature} \input{similar} %----------------------------------
+\subsection{The case against the $Q_1\times P_0$ element} \input{case_against_q1p0} %--------------
+\subsection{Isoviscous Stokes for incompressible flow} \input{isoviscous_stokes} %-----------------
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage
@@ -282,6 +283,9 @@ a geodynamical context requires a lot of additional techniques.
 \subsection{Surface processes \label{sec:surfaceprocesses}} \input{surfaceprocesses} %-------------
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Geometric multigrid} \input{gmg} %-----------------------------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Computing depth \label{ss:depth}} \input{computing_depth} %----------------------------
+
 
 %\subsection{Steady state thermal problems \label{ss_ss}} \input{steadystate} %-
 
@@ -291,6 +295,7 @@ a geodynamical context requires a lot of additional techniques.
 \input{gravity}
 
 
+%%\end{document}
 
 %==================================================================================================
 %==================================================================================================

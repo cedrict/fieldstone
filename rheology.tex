@@ -296,15 +296,6 @@ An additional coefficient is added to the effective viscosity formula(s ??) \cit
 \cite{ranalli}
 \end{remark}
 
-\paragraph{Combining diffusion and dislocation creep} It is rather common in 
-the computational geodynamics to combine both viscosities into one so-called
-'effective viscous viscosity' (as opposed to the so-called 'effective plastic viscosity').
-The harmonic average is then used:
-\[
-\eta_{eff} = \frac{\eta_{df}\eta_{ds}}{\eta_{df}+\eta_{ds}} 
-=\left( \frac{1}{\eta_{df}}+\frac{1}{\eta_{df}} \right)^{-1}
-\]
-See for instance \cite{king16}.
 
 
 \paragraph{A closer look at the diffusion creep of Karato \& Wu (1993)} In the article, the following equation 
@@ -351,6 +342,156 @@ activation volumes (4,5,6 cm$^3$/mol).
 Although this exercise only provides us with first-order results, we can conclude that 
 one can essentially change the diffusion creep effective viscosity by up to 2 orders of 
 magnitude simply by choosing key parameters within acceptable ranges. 
+
+
+%---------------------------------------------------------------------------------
+\subsubsection{Combining diffusion and dislocation creep} It is rather common in 
+the computational geodynamics to combine both viscosities into one so-called
+'effective viscous viscosity' (as opposed to the so-called 'effective plastic viscosity').
+The harmonic average is then used:
+\[
+\eta_{eff} = \frac{\eta_{df}\eta_{ds}}{\eta_{df}+\eta_{ds}} 
+=\left( \frac{1}{\eta_{df}}+\frac{1}{\eta_{df}} \right)^{-1}
+\]
+See for instance \cite{king16}.
+
+However, although this formula seems simple enough, it hides an important fact: 
+strain rates are supposed to be additive, i.e. the total strain rate $\dot{\bm \varepsilon}_T$ of the deformation
+is the sum of the dislocation strain rate $\dot{\bm \varepsilon}_{ds}$ and the diffusion 
+strain rate $\dot{\bm \varepsilon}_{df}$:
+\[
+\dot{\bm \varepsilon}_{T}=\dot{\bm \varepsilon}_{df}+\dot{\bm \varepsilon}_{ds}
+\]
+and so are the effective strain rates (the underscore $e$ has been dropped for convenience - see
+section~\ref{XYZ} for definitions):
+\[
+\dot{\varepsilon}_{T}=\dot{\varepsilon}_{df}+\dot{\varepsilon}_{ds}
+\]
+i.e., 
+\[
+\dot{\varepsilon}_{T}= 
+A_{df} \tau \exp\left(-\frac{Q_{df}+pV_{df}}{RT}\right)
++
+A_{ds} \tau^n \exp\left(-\frac{Q_{ds}+pV_{ds}}{RT}\right)
+\]
+where $\tau$ is the effective shear stress.
+
+We know all the coefficients in this equation with the exception of the scalar $\tau$ (the total strain rate
+is obtained from the previous nonlinear iteration velocity or previous time-step velocity) so that 
+it can be cast under the form $f(\tau)=0$ 
+\[
+f(\tau)=
+\dot{\varepsilon}_{T} - A_{df} \tau \exp\left(-\frac{Q_{df}+pV_{df}}{RT}\right) - A_{ds} \tau^n \exp\left(-\frac{Q_{ds}+pV_{ds}}{RT}\right)
+\]
+A Newton method can be used where and the iterations will be of the form:
+\[
+\tau_{n+1} = \tau_n - \frac{f(\tau_n)}{f'(\tau_n)}
+\]
+where the derivative of the function $f$ with respect to $\tau$ reads:
+\[
+f'(\tau)=\frac{\partial f}{\partial \tau}=
+- A_{df} \exp\left(-\frac{Q_{df}+pV_{df}}{RT}\right) - A_{ds} n \tau^{n-1} \exp\left(-\frac{Q_{ds}+pV_{ds}}{RT}\right)
+\]
+Also, from the additivity of strain rates follows the harmonic averaging of viscosities:
+\[
+\dot{\varepsilon}_{T}=\dot{\varepsilon}_{df}+\dot{\varepsilon}_{ds} 
+\quad
+\quad
+\Rightarrow
+\quad
+\frac{\tau}{2\eta_{eff}}=\frac{\tau}{2\eta_{df}}+\frac{\tau}{2\eta_{ds}}
+\quad
+\quad
+\Rightarrow
+\quad
+\frac{1}{\eta_{eff}}=\frac{1}{\eta_{df}}+\frac{1}{\eta_{ds}}
+\]
+so that the algorithm simply writes:
+\begin{enumerate}
+\item compute $\tau$ iteratively
+\item compute $\dot{\varepsilon}_{df}$, $\dot{\varepsilon}_{ds}$
+\item compute $\eta_{ds}=\tau/(2\dot{\varepsilon}_{ds})$, $\eta_{df}=\tau/(2\dot{\varepsilon}_{df})$
+\item compute $\eta_{eff}$
+\end{enumerate}
+Note that one can also directly compute $\eta_{eff}$ as $\eta_{eff}=\frac{\tau}{2 \dot{\varepsilon}_T}$
+since
+\[
+\eta_{eff}
+=\frac{\tau}{2 \dot{\varepsilon}_T}
+=\frac{\tau}{2 \dot{\varepsilon}_{ds}   +  2\dot{\varepsilon}_{df}  }
+=\frac{1}{2 \dot{\varepsilon}_{ds}/\tau   +  2\dot{\varepsilon}_{df}/\tau  }
+=\frac{1}{1/\eta_{ds} +  1/\eta_{df}  }
+\]
+In the case where many deformation mechanisms are present, the total strain rate is 
+seen as the sum of the strain rates associated to each mechanism:
+\[
+\dot{\bm \varepsilon}_{T}=\dot{\bm \varepsilon}_{1}+\dot{\bm \varepsilon}_{2} +\dot{\bm \varepsilon}_{3} + \dots
+\]
+and then
+\[
+\dot{\varepsilon}_{T}=\dot{\varepsilon}_{1}+\dot{\varepsilon}_{2} +\dot{\varepsilon}_{3} + \dots
+\quad
+\Rightarrow
+\quad
+\frac{\tau}{2\eta_{eff}}=\frac{\tau}{2\eta_{1}}+\frac{\tau}{2\eta_{2}}+\frac{\tau}{2\eta_{3}}+ \dots
+\quad
+\Rightarrow
+\quad
+\frac{1}{\eta_{eff}}=\frac{1}{\eta_{1}}+\frac{1}{\eta_{2}}+\frac{1}{\eta_{3}}+\dots
+\]
+Rather importantly, as we will see hereafter, the following variant is implemented 
+in some codes (e.g. DOUAR, FANTOM, SOPALE) so as to bypass the costly Newton iterations:
+\begin{enumerate}
+\item compute $\eta_{ds}$ and $\eta_{df}$ with the {\it same} strainrate, pressure and temperature values
+\item average them by means of an harmonic average
+\end{enumerate}
+In this case, we have
+\[
+\dot{\varepsilon}_{T}= 
+A_{df} \tau_{df} \exp\left(-\frac{Q_{df}+pV_{df}}{RT}\right)
+\quad\quad\quad
+\dot{\varepsilon}_{T}= 
+A_{ds} \tau_{ds}^n \exp\left(-\frac{Q_{ds}+pV_{ds}}{RT}\right)
+\]
+
+
+
+\paragraph{A concrete example}
+Let us consider a vertical section of upper mantle, from 660km depth to 30km depth.
+The lithosphere is assumed to be 90km thick. The temperature at the moho (the top
+of the domain) is set to 550C, 1330C at the LMB and 1380C at the bottom.
+A constant strainrate $\dot{\epsilon}$ is assumed. The density is set to a constant
+3300kg/m$^3$ and we assume a lithostatic pressure.
+The temperature and pressure fields are shown hereunder:
+\begin{center}
+\includegraphics[width=6cm]{images/rheology/effvisc/temperature.pdf}
+\includegraphics[width=6cm]{images/rheology/effvisc/pressure.pdf}
+\end{center}
+
+In what follows, the values obtained with Newton iterations are coined 'new'
+and those obtained without are coind 'old'.
+The diffusion and dislocation creep viscosities can be
+computed for both old and new algorithms and are shown hereunder
+(the diffusion creep viscosity is independent of strain rate so
+is the same for both):
+\begin{center}
+\includegraphics[width=6cm]{images/rheology/effvisc/both_mu_ds.pdf}
+\includegraphics[width=6cm]{images/rheology/effvisc/both_mu_df.pdf}
+\end{center}
+
+Using the algorithm highlighted hereabove we can compute the
+composite effective viscosity and compare it with the 'standard'
+effective viscosity:
+\begin{center}
+\includegraphics[width=10cm]{images/rheology/effvisc/both_mueff.pdf}
+\end{center}
+
+\todo[inline]{look at folder, codes, clean up, change labels new and old}
+
+
+
+
+
 
 
 

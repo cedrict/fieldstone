@@ -298,6 +298,11 @@ are computed as follows:
 This is the approach taken by the ASPECT developers \cite{krhb12,hedg17}. 
 Each material $i$ is represented by a compositional field $c_i$, 
 which takes values between 0 and 1.
+Each compositional field is then advected with the (prescribed or computed) Stokes velocity:
+\[
+\frac{\partial c_i}{\partial t} + {\bm v}\cdot {\bm \nabla }c_i = 0
+\]
+
 The value at a point (Finite element node or quadrature point) is 1 if it is in the 
 domain covered by the material $i$, and 0 otherwise.
 In one dimension, each compositional field is a Heavyside function. 
@@ -314,9 +319,27 @@ overshoots. This means that at a given point two or more compositions may have v
 which require some form of averaging. If under- and overshoots are present, these averagings
 can become very problematic and even yield meaningless quantities (e.g. negative viscosities).
 
-This method is used in \cite{vyrc13}
+One rather old and popular filtering approach is the so-called Lenardic and Kaula filter \cite{leka93}:
+
+\begin{center}
+\includegraphics[width=6cm]{images/compositions/leka93_filter1}\\
+\includegraphics[width=6cm]{images/compositions/leka93_filter2}\\
+{\small Taken from Lenardic and Kaula \cite{leka93}}
+\end{center}
+
+\begin{center}
+\includegraphics[width=16cm]{images/compositions/leka93_filter3}\\
+{\small From FENICS book}
+\end{center}
+
+\Literature: \cite{vyrc13}
 
 \improvement[inline]{write about DG approach}
+
+
+
+
+
 
 %..............................................
 \subsubsection{The Volume-of-Fluid method}
