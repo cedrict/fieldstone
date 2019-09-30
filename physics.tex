@@ -613,6 +613,36 @@ root mean square averages:
 \item Strain tensor ${\bm \varepsilon}$ (dimensionless): \index{Strain tensor}
 \item Strain rate tensor $ \dot{\bm \varepsilon} (\text{s}^{-1}$): \index{Strain rate tensor}
 \item Rayleigh number $Ra$ (X): \index{Rayleigh Number}
+It is a dimensionless number that expresses the	ratio of the driving forces to the opposing forces.
+The buoyancy force comes from the volumetric thermal expansion while the viscous forces and 
+the heat diffusivity oppose convection (the latter one smoothes out thermal gradients). 
+
+The Rayleigh number for convection driven by a constant temperature hot base and a cold surface
+in a domain of thickness $D$ is:
+\[
+Ra 
+= \frac{\rho_0 g \alpha D^3 }{\eta \kappa}  \cdot  \Delta T
+= \frac{\rho_0^2 C_p g \alpha D^3 \Delta T}{\eta k}
+\]
+The Rayleigh number for convection driven by a hot base (constant basal heat flow $q_b$)
+and a colder surface is:
+\[
+Ra = \frac{\rho_0 g \alpha D^3}{\eta \kappa } \cdot  \frac{q_b D}{k}
+\]  
+The Rayleigh number for convection driven by internal heating $H$ (production per cubic meter) is:
+\[
+Ra = \frac{\rho_0 g \alpha D^3}{\eta \kappa} \cdot  \frac{H D^2}{k }
+\]
+The Rayleigh number for convection driven by both basal heat flow and internal heating is:	
+\[
+Ra = \frac{\rho_0 g \alpha D^3}{\eta \kappa} \cdot  \frac{q_b D + H D^2}{k }
+\]
+For convection to occur, the Rayleigh number must be larger than the so-called critical 
+Rayleigh number, which ranges from 600 to 3000 (it depends on the boundary conditions and the 
+geometry).
+\index{Critical Rayleigh Number}
+
+
 \item Prandtl number $Pr$ (X): \index{Prandtl Number} It is named after the German physicist 
 Ludwig Prandtl and is defined as the ratio of momentum diffusivity to thermal diffusivity. It is given as: 
 \[

@@ -265,12 +265,23 @@ f_y &=& 128[ y^2(y-1)^2 12 (2x-1) + 2 (x-1)(2x-1)y(12y^2-12y+2)  ] \nn\\
 The solution is
 \begin{eqnarray}
 u &=& -256x^2(x-1)^2y(y-1)(2y-1) \nn\\
-v &=&  256x^2(y-1)^2x(x-1)(2x-1) \nn\\
+v &=&  256y^2(y-1)^2x(x-1)(2x-1) \nn\\
 p &=& 0 
 %p &=& (x-1/2)(y-1/2) 
 \end{eqnarray}
 
-Another choice:
+\begin{eqnarray}
+du/dx &=& 512 (1 - 2x) (-1+x) x(-1+y) y(-1+2y) \\ 
+du/dy &=& -256 (-1 + x)^2 x^2 (1 - 6 y + 6 y^2) \\ 
+dv/dx &=&  256y^2(y-1)^2x(x-1)(2x-1) \\ 
+dv/dy &=& -512 (-1 + x) x (1 - 2 x) (-1 + y) y (-1 + 2 y) \\
+\end{eqnarray}
+
+and we can easily verify that $\vec\nabla\cdot\vec\upnu=du/dx+dv/dy=0$.
+
+CHECK RHS !
+
+Another choice with a non-zero pressure:
 \begin{eqnarray}
 f_x &=& 128[ x^2(x-1)^2 12 (2y-1) + 2 (y-1)(2y-1)y(12x^2-12x+2)  ] + y - 1/2 \nn\\
 f_y &=& 128[ y^2(y-1)^2 12 (2x-1) + 2 (x-1)(2x-1)y(12y^2-12y+2)  ] + x - 1/2 \nn\\
@@ -278,7 +289,7 @@ f_y &=& 128[ y^2(y-1)^2 12 (2x-1) + 2 (x-1)(2x-1)y(12y^2-12y+2)  ] + x - 1/2 \nn
 The solution is
 \begin{eqnarray}
 u &=& -256x^2(x-1)^2y(y-1)(2y-1) \nn\\
-v &=&  256x^2(y-1)^2x(x-1)(2x-1) \nn\\
+v &=&  256y^2(y-1)^2x(x-1)(2x-1) \nn\\
 p &=& (x-1/2)(y-1/2) 
 \end{eqnarray}
 

@@ -185,8 +185,8 @@ doi = "10.23644/uu.9209393.v1"}
 \subsection{The advection-diffusion equation in 2D} \input{hte_fem} %-----------------------
 
 \newpage 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Solving the flow equations with the FEM} \label{solvingFEM} %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Solving the flow equations with the FEM} \label{solvingFEM} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{incompressible} %-----------------------------------------------------------------
 \subsection{Strong and weak forms} \input{strongweak} %----------------------------------
 \subsection{Which velocity-pressure pair for Stokes?} \input{pair} %---------------------
@@ -195,9 +195,12 @@ doi = "10.23644/uu.9209393.v1"}
 \subsection{Solving the elastic equations} %---------------------------------------------
 \subsection{A quick tour of similar literature} \input{similar} %------------------------
 \subsection{The case against the $Q_1\times P_0$ element} \input{case_against_q1p0} %----
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Discontinuous Galerkin Finite Element Method (DG-FEM) \label{dgfem}} %%%%%%%%%%%%%%%%%
+\input{dgfem1D}
 
 
 \newpage
@@ -277,6 +280,8 @@ a geodynamical context requires a lot of additional techniques.
 \subsection{Corner flow} \label{sec:cornerflow} \input{cornerflow} %-------------------------------
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Surface processes \label{sec:surfaceprocesses}} \input{surfaceprocesses} %-------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Geometric multigrid} \input{gmg} %-----------------------------------------------------
 
 %\subsection{Steady state thermal problems \label{ss_ss}} \input{steadystate} %-
 
@@ -470,14 +475,14 @@ Stone 20: the Busse benchmark
 }
 \input{python_codes/fieldstone_20/text}
 
-\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{
-Stone 21: The non-conforming $Q_1 \times P_0$ element 
-\label{f21}}
-\addcontentsline{toc}{section}{\protect\numberline{} 
-Stone 21: The non-conforming $Q_1 \times P_0$ element 
-}
-\input{python_codes/fieldstone_21/text}
+%\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section*{
+%Stone 21: The non-conforming $Q_1 \times P_0$ element 
+%\label{f21}}
+%\addcontentsline{toc}{section}{\protect\numberline{} 
+%Stone 21: The non-conforming $Q_1 \times P_0$ element 
+%}
+%\input{python_codes/fieldstone_21/text}
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{
@@ -825,6 +830,8 @@ Stone 55: Subduction as a thin-sheet problem
 \section{Finite element terminology in various languages} \input{languagesFEM} %%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Fun modelling} \input{interesting} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Beautiful images from computational geodynamics} \input{beautiful} %%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 

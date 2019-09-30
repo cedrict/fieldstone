@@ -15,15 +15,15 @@ computational geodynamics community.
 \item the sinking block \cite{thie11,cehg14,gery10,geyu03,mamo08,mishin11,fumt11,maie12}
 \item multiple sinkers \cite{mabl14,mabl15}
 \item 2D compressible Stokes flow problem \cite{itki94,tagu07,lezh08,kilv10,lizh13}
-\item 3D convection at infinite Prandtl number (Busse) \cite{bucc93,trha98}
+\item 3D convection at infinite Prandtl number (Busse) \cite{bucc93,trha98,omma06,krhb12}
 \item Free surface evolution \cite{crsg12}
 \item Love's problem \cite{bebe04}
 \item Poiseuille flow \cite{fojg94,fuku11,tagm09}
 \item Couette flow with temperature dependent viscosity \cite{egat10,demh19}
 \item Couette flow with shear heating \cite{egat10}
 \item Poiseuille-Couette flow \cite{fusc13}
-\item Lid driven Cavity \cite{foth79,ghgs82,bope98,kawa61}
-\item Wannier flow \cite{wann50,yemu99}
+\item Lid driven Cavity \cite{foth79,ghgs82,bope98,kawa61,brsa06}
+\item Wannier flow \cite{wann50,yemu99,cehg14}
 \item bending of elastic plate/beam \cite{cehg14,boht08a,vosc15,egat10,demh19}
 \item flexure of finite length elastic plate \cite{chtl13}
 \item thermal diffusion of half-cooling space \cite{chtl13}
@@ -190,42 +190,57 @@ with or without viscous lower layer.
 
 %..........................................................................
 \subsubsection{Infinite plate with a circular hole \cite{rama16}}
+\mscthesis \index{MSc Thesis}
 
 An infinite plate with a circular hole of radius $a$ 
-is subjected to a unidirectional tensile load of $P$ in the $x$ direction as shown
+is subjected to a unidirectional tensile load of $\sigma$ in the $x$ direction as shown
 in the figure. In this case, only one quarter of the domain is analysed due
 to symmetry along $x$ and $y$ axis. 
 
 \begin{center}
-\includegraphics[width=0.8\textwidth]{images/benchmark_hole/rama16}\\
-{\scriptsize Setup for the infinite plate with a circular hole benchmark.}
+\includegraphics[width=0.65\textwidth]{images/benchmark_hole/yobu02}
+\includegraphics[width=0.25\textwidth]{images/benchmark_hole/yobu02b}\\
+{\scriptsize Left: An infinite plate with a circular hole subjected to unidirectional tension 
+and its quarter model with symmetric conditions imposed on the left and bottom edges.
+Right: Tangential stress distribution for $\theta=0$  and $\theta=\pi/2$. \cite{yobu02}}
 \end{center}
-
-
-The analytical stress components for this
-problem are \cite{chnn10}
-
-\begin{eqnarray}
-\sigma_{xx}(x,y) &=& P \left(  1-\frac{a^2}{r^2}(\frac{3}{2}\cos 2\theta + \cos 4\theta) 
-+ \frac{3a^4}{2r^4} \cos 4\theta \right) \\
-\sigma_{yy}(x,y) &=& -P \left( \frac{a^2}{r^2} (\frac{3}{2}\cos 2\theta - \cos 4\theta) 
-- \frac{3a^4}{2r^4} \cos 4\theta \right) \\
-\sigma_{xy}(x,y) &=& -P \left( \frac{a^2}{r^2} (\frac{3}{2}\sin 2\theta + \sin 4\theta) 
-+ \frac{3a^4}{2r^4} \sin 4\theta \right) 
-\end{eqnarray}
-
-CHECK FORMULAS - never been implemented yet!
-
 
 The inner boundary of the hole is traction free and the right edge was
 imposed with the tractions based on the analytical solutions.
 The left edge is constrained in the $x$ direction and the bottom
 edge is constrained in the $y$ direction, respectively. The plane stress
 condition is considered and the parameters are: 
-Young modulus 3e7 MPa, Poisson Ratio 0.3, Load $P$=10 N/m$^2$, a=1.
+Young modulus $E=$3e7 MPa, Poisson Ratio $\nu=$0.3, Load $\sigma$=10 N/m$^2$, a=1m.
+
+The analytical stress components for this
+problem are 
+
+\begin{eqnarray}
+\sigma_{xx}(x,y) &=& \sigma \left(  1-\frac{a^2}{r^2}\left(\frac{3}{2}\cos 2\theta + \cos 4\theta \right) 
++ \frac{3a^4}{2r^4} \cos 4\theta \right) \\
+\sigma_{yy}(x,y) &=& -\sigma \left( \frac{a^2}{r^2} \left(\frac{1}{2}\cos 2\theta - \cos 4\theta \right) 
+- \frac{3a^4}{2r^4} \cos 4\theta \right) \\
+\sigma_{xy}(x,y) &=& -\sigma \left( \frac{a^2}{r^2} \left(\frac{1}{2}\sin 2\theta + \sin 4\theta\right) 
++ \frac{3a^4}{2r^4} \sin 4\theta \right) 
+\end{eqnarray}
+
+Note that \cite{rama16} cites \cite{chnn10} which cites the book \cite[p772]{yobu02} 
+which cites \cite{budynas} for the solution!
+\todo[inline]{there are discrepancies between \cite{rama16} and \cite{chnn10}}
+
+Following \cite{yobu02}, it can be shown, from linear elasticity, that the tangential
+stress throughout the plate is given by
+\[
+\sigma_\theta = \frac{\sigma}{2} \left[ 1+\frac{a^2}{r^2} - \left( 1+3\frac{a^4}{r^4}  \right) \cos 2\theta   \right]
+\]
+The maximum stress is $\sigma_\theta=3\sigma$ at $r=a$ and $\theta=\pm \pi/2$. Along the surface of the hole, 
+the tangential stress is $-\sigma$ at y $\theta=0$  and $\theta=\pi$, 
+and increases, as $\theta$ increases, to $3\sigma$ at $\theta=\pi/2$ and $\theta=3\pi/2$.
+ 
 
 %..............................................................................
 \subsubsection{Slope stability for elasto-plastic materials a la \cite{rama16}}
+\mscthesis \index{MSc Thesis}
 
 The bottom of the domain is constrained and the model is 
 subjected to gravitational load. The material properties considered are

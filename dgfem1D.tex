@@ -127,69 +127,91 @@ be written in a mixed form:
 and the boundary conditions remain unchanged. 
 
 We apply the standard approach to establish the weak forms of these two first-order ODEs, and we do so 
-on an element $e$ bound by $x_j$ and $x_{j+1}$
+on an element $e$ bound by $x_k$ and $x_{k+1}$
 \[
--\int_{x_j}^{x_{j+1}} \frac{dq}{dx} \tilde{N}(x) dx = -[q \tilde{N} ]_{x_j}^{x_{j+1}} 
-+ \int_{x_j}^{x_{j+1}} \frac{d\tilde{N}}{dx} q(x) dx = 0
+-\int_{x_k}^{x_{k+1}} \frac{dq}{dx} \tilde{f}(x) dx = -[q \tilde{f} ]_{x_k}^{x_{k+1}} 
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} q(x) dx = 0
 \]
 \[
-\int_{x_j}^{x_{j+1}}  \left( q-\frac{dT}{dx} \right) \overline{N}(x) dx
+\int_{x_k}^{x_{k+1}}  \left( q-\frac{dT}{dx} \right) \overline{f}(x) dx
 =
-\int_{x_j}^{x_{j+1}}  q(x) \overline{N}(x) dx
--[ q \overline{N}  ]_{x_j}^{x_{j+1}} + \int_{x_j}^{x_{j+1}} \frac{d\tilde{N}}{dx} T(x) dx = 0
+\int_{x_k}^{x_{k+1}}  q(x) \overline{f}(x) dx
+-[ T \overline{f}  ]_{x_k}^{x_{k+1}} + \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} T(x) dx = 0
 \]
 We now must examine the term between square brackets. 
-Inside the element, the test functions $\tilde{N}$ and $\overline{N}$ are well defined polynomials
+Inside the element, the test functions $\tilde{f}$ and $\overline{f}$ are well defined polynomials
 and we we coin:
 \[
-\tilde{N}_j^+=\tilde{N}(x_j^+)
+\tilde{f}_k^+=\tilde{f}(x_k^+)
 \qquad
-\tilde{N}_{j+1}^-=\tilde{N}(x_{j+1}^-)
+\tilde{f}_{k+1}^-=\tilde{f}(x_{k+1}^-)
 \qquad
 \qquad
-\overline{N}_j^+=\overline{N}(x_j^+)
+\overline{f}_k^+=\overline{f}(x_k^+)
 \qquad
-\overline{N}_{j+1}^-=\overline{N}(x_{j+1}^-)
+\overline{f}_{k+1}^-=\overline{f}(x_{k+1}^-)
 \]
-where $N$ is the number of nodes.
-Concerning $q$ and $T$, we will for now  give them values $\hat{q}_j$ and $\hat{T}_j$ at node $j$
-and $\hat{q}_{j+1}$ and $\hat{T}_{j+1}$ at node $j+1$, and we will specify the hat quantities as follows:
+Concerning $q$ and $T$, we will for now  give them values $\hat{q}_k$ and $\hat{T}_k$ at node $k$
+and $\hat{q}_{k+1}$ and $\hat{T}_{k+1}$ at node $k+1$, and we will specify the hat quantities as follows:
 
 \begin{eqnarray}
-\hat{T}_j &=&
+\hat{T}_k &=&
 \left\{
 \begin{array}{ll}
-T_j^-   & j=1 \\ 
-\frac{1}{2}(T_j^-+T_j^+) + {\cal C} (T_j^- - T_j^+) & j=2,...N-1\\
-T_j^+    & j=N \\ 
+T_k^-   & k=1 \\ 
+\frac{1}{2}(T_k^-+T_k^+) + {\cal C} (T_k^- - T_k^+) & k=2,...N-1\\
+T_k^+    & k=N \\ 
 \end{array}
 \right. \nonumber\\
-\hat{q}_j &=&
+\hat{q}_k &=&
 \left\{
 \begin{array}{ll}
-q_j^+ -{\cal E} (T_j^--T_j^+)  & j=1 \\ 
-\frac{1}{2}(q_j^+ + q_j^-) - {\cal E} (T_j^- - T_j^+) - {\cal C}(q_j^- - q_j^+) & j=2,...N-1\\
-q_j^- -{\cal E} (T_j^--T_j^+)    & j=N \\ 
+q_k^+ -{\cal E} (T_k^--T_k^+)  & k=1 \\ 
+\frac{1}{2}(q_k^+ + q_k^-) - {\cal E} (T_k^- - T_k^+) - {\cal C}(q_k^- - q_k^+) & k=2,...N-1\\
+q_k^- -{\cal E} (T_k^--T_k^+)    & k=N \\ 
 \end{array}
 \right.
 \end{eqnarray}
-where ${\cal C}$ and ${\cal E}$ are two constants. 
+where $N$ is the number of nodes and where ${\cal C}$ and ${\cal E}$ are two constants. 
 
 Inside an element bounded by nodes $k$ and $k+1$, 
 the temperature $T$ and heat flux $q$ are interpolated over an isoparametric linear element:
 \[
-T_h(r) = N_1(r) T_k^+ + N_2(r)T_{k+1}^-
+T_h(x) = N_k(x) T_k^+ + N_{k+1}(x)T_{k+1}^-
 \]
 \[
-q_h(r) = N_1(r) q_k^+ + N_2(r)q_{k+1}^-
+q_h(x) = N_k(x) q_k^+ + N_{k+1}(x)q_{k+1}^-
 \]
 As in the (Continuous) Galerkin case of section~\ref{sec:diff1D}, the test functions are taken to 
 be the shape functions, and in this case for both temperature and flux. 
 
 
+\begin{eqnarray}
+-\hat{q}_{k+1} \tilde{f}(x_{k+1}^-)
++\hat{q}_k     \tilde{f}(x_k^+)
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} q_h(x) dx &=& 0 \nonumber\\
+-\hat{q}_{k+1} \tilde{f}_{k+1}^-
++\hat{q}_k     \tilde{f}_k^+
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} ( N_k(x) q_k^+ + N_{k+1}(x)q_{k+1}^- ) dx &=& 0 \nonumber\\
+-\hat{q}_{k+1} \tilde{f}_{k+1}^-
++\hat{q}_k     \tilde{f}_k^+
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} N_k(x) dx \cdot q_k^+ 
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} N_{k+1}(x) dx \cdot q_{k+1}^- &=& 0
+\end{eqnarray}
 
 
-
+\begin{eqnarray}
+\int_{x_k}^{x_{k+1}}  q_h(x) \overline{f}(x) dx
+-[ T \overline{f}  ]_{x_k}^{x_{k+1}} + \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} T_h(x) dx &=& 0 \nn\\
+\int_{x_k}^{x_{k+1}}  q_h(x) \overline{f}(x) dx
+-\hat{T}_{k+1} \overline{f}(x_{k+1}^-) 
++\hat{T}_k     \overline{f}(x_{k}^+) 
++ \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} T_h(x) dx &=& 0 \nn\\
+\int_{x_k}^{x_{k+1}} ( N_k(x) q_k^+ + N_{k+1}(x)q_{k+1}^-    ) \overline{f}(x) dx
+-\hat{T}_{k+1} \overline{f}_{k+1}^-
++\hat{T}_k     \overline{f}_{k}^+
++ \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} ( N_k(x) T_k^+ + N_{k+1}(x)T_{k+1}^-  ) dx &=& 0 \nn
+\end{eqnarray}
 
 
 
