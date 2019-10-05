@@ -743,6 +743,319 @@ conduct heat quickly in comparison to their volumetric heat capacity or 'thermal
 \todo[inline]{check aspect manual The 2D cylindrical shell benchmarks by Davies et al. 5.4.12}
 
 
+%------------------------------------------------------
+\subsection{Principal stress} \label{sec:princ_stress}
+
+\index{Maximum Shear Stress} \index{Principal Stress}
+
+\subsubsection{In two dimensions}
+
+We are looking for the stress tensor eigenvector vector $\vec{n}=(n_x,n_y)$ associated to the
+eigenvalue $\lambda$ such that 
+\[
+\left(
+\begin{array}{cc}
+\sigma_{xx} & \sigma_{xy} \\
+\sigma_{xy} & \sigma_{yy} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y
+\end{array}
+\right)
+=
+\lambda
+\left(
+\begin{array}{c}
+n_x \\ n_y
+\end{array}
+\right)
+\]
+or,
+\[
+\left(
+\begin{array}{cc}
+\sigma_{xx} & \sigma_{xy} \\
+\sigma_{xy} & \sigma_{yy} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y
+\end{array}
+\right)
+-
+\left(
+\begin{array}{cc}
+\lambda & 0 \\ 
+0 & \lambda 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y
+\end{array}
+\right)
+= \vec{0}
+\]
+i.e.,
+\[
+\left(
+\begin{array}{cc}
+\sigma_{xx}-\lambda  & \sigma_{xy} \\
+\sigma_{xy} & \sigma_{yy} -\lambda 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y
+\end{array}
+\right)
+= \vec{0}
+\]
+
+which yields
+\[
+(\sigma_{xx}-\lambda)(\sigma_{yy}-\lambda)-\sigma_{xy}^2 =0
+\]
+or, 
+\[
+\lambda^2 - (\sigma_{xx}+\sigma_{yy}) \lambda   + (\sigma_{xx}\sigma_{yy}-\sigma_{xy}^2) =0
+\]
+The discriminant $\Delta$ is 
+\begin{eqnarray}
+\Delta 
+&=& (\sigma_{xx}+\sigma_{yy})^2-4(\sigma_{xx}\sigma_{yy}-\sigma_{xy}^2)  \nn\\
+&=& (\sigma_{xx}-\sigma_{yy})^2 +4\sigma_{xy}^2  \nn
+\end{eqnarray}
+The roots are given by:
+\begin{eqnarray}
+\lambda_\pm 
+&=& \frac{ (\sigma_{xx}+\sigma_{yy}) \pm \sqrt{ (\sigma_{xx}-\sigma_{yy})^2 +4\sigma_{xy}^2 } }{2} \nn\\
+&=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} \pm \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \nn\\
+\end{eqnarray}
+The two principal stresses are then:
+\begin{eqnarray}
+\sigma_1 &=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} + \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \nn\\
+\sigma_2 &=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} - \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \nn\\
+\end{eqnarray}
+with the convention $\sigma_1>\sigma_2$.
+The maximum shear stress is defined as one-half the difference between the two principal 
+stresses 
+\[
+\tau_{\text max}=
+\frac{\sigma_1-\sigma_2}{2}
+=\sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } 
+\]
+
+The eigenvector $\vec{n}_1$ corresponding to $\sigma_1$ is obtained by solving 
+\[
+{\bm \sigma}\cdot \vec{n}_1 = \sigma_1 \vec{n}_1
+\]
+and same for the other eigenvalue/vector:
+\[
+{\bm \sigma}\cdot \vec{n}_2 = \sigma_2 \vec{n}_2
+\]
+Each is a system of two equations with two unknowns. These are not difficult to solve, 
+but can prove cumbersome. Note that linear algebra tells us that $\vec{n}_1\cdot\vec{n}_2=0$, 
+i.e. the eigenvectors form a basis of $\mathbb{R}^2$.
+
+This is the reason why often people go another route. One can ask the question: what is the 
+value of the angle $\theta_p$ which, if used to perform a rotation of the axis system, yields 
+a stress tensor that is diagonal, with the principal stresses on the diagonal?
+ 
+\begin{center}
+\includegraphics[width=8cm]{images/princ_stress/PrincipalStress}\\
+{\scriptsize Taken from \url{https://www.efunda.com/formulae/solid_mechanics/mat_mechanics/plane_stress_principal.cfm}}
+\end{center}
+ 
+The rotation matrix is 
+\[
+{\bm R}=
+\left(
+\begin{array}{cc}
+\cos\theta_p & -\sin\theta_p \\
+\sin\theta_p & \cos\theta_p
+\end{array}
+\right)
+\]
+and the image of ${\bm \sigma}$ by means of the axis rotation is 
+${\bm \sigma}'= {\bm R}\cdot {\bm \sigma}\cdot {\bm R}^{-1}$, i.e.
+\begin{eqnarray}
+{\bm \sigma}' 
+&=&
+\left(
+\begin{array}{cc}
+\cos\theta_p & -\sin\theta_p \\
+\sin\theta_p & \cos\theta_p
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+\sigma_{xx} & \sigma_{xy} \\
+\sigma_{xy} & \sigma_{yy} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+\cos\theta_p & \sin\theta_p \\
+-\sin\theta_p & \cos\theta_p
+\end{array}
+\right) \nn\\
+&=&\left(
+\begin{array}{cc}
+\cos\theta_p & -\sin\theta_p \\
+\sin\theta_p & \cos\theta_p
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+\sigma_{xx} \cos\theta_p - \sigma_{xy} \sin\theta_p  &
+\sigma_{xx} \sin\theta_p + \sigma_{xy} \cos\theta_p  \\
+\sigma_{xy} \cos\theta_p - \sigma_{yy} \sin\theta_p & 
+\sigma_{xy} \sin\theta_p + \sigma_{yy} \cos\theta_p 
+\end{array}
+\right) \nn\\
+&=&
+\left(
+\begin{array}{cc}
+\dots & 
+\cos\theta_p(\sigma_{xx} \sin\theta_p + \sigma_{xy} \cos\theta_p )-
+\sin\theta_p(\sigma_{xy} \sin\theta_p + \sigma_{yy} \cos\theta_p ) \\
+\dots & \dots 
+\end{array}
+\right)
+\end{eqnarray}
+In the matrix above I have only computed the off diagonal term since 
+we are actually looking for $\theta_p$ such that $\sigma_{xy}'=0$, or
+\begin{eqnarray}
+\cos\theta_p(\sigma_{xx} \sin\theta_p + \sigma_{xy} \cos\theta_p )-
+\sin\theta_p(\sigma_{xy} \sin\theta_p + \sigma_{yy} \cos\theta_p ) &=& 0 \nn\\
+\sin\theta_p \cos\theta_p (\sigma_{xx}-\sigma_{yy}) + ( \cos^2\theta_p -\sin^2\theta_p )\sigma_{xy} &=& 0 
+\end{eqnarray}
+and then 
+\[
+\frac{ \sin\theta_p \cos\theta_p}{ \cos^2\theta_p -\sin^2\theta_p }
+= \frac{\sigma_{xy}}{ \sigma_{xx}-\sigma_{yy} }
+\]
+The left hand term is actually a trigonometric 
+identity\footnote{\url{https://en.wikipedia.org/wiki/List_of_trigonometric_identities}}:
+\[
+\frac{ \sin\theta_p \cos\theta_p}{ \cos^2\theta_p -\sin^2\theta_p } = \frac{1}{2} \tan 2\theta_p
+\]
+and finally:
+\[
+\tan 2\theta_p = \frac{ 2\sigma_{xy}}{ \sigma_{xx}-\sigma_{yy} }
+\]
+Once $\theta_p$ has been found the other direction is given by $\theta_p +\pi/2$.
+
+\vspace{.5cm}
+
+\underline{Example}: Let us start with 
+\[
+{\bm \sigma} = 
+\left(
+\begin{array}{cc}
+a & 0 \\
+0 & b
+\end{array}
+\right)
+\]
+then $\tan 2\theta_p = 0$, and then $\theta_p=0$. The principal directions are the horizontal and 
+vertical directions, i.e. the Cartesian axis system, which is consistent.
+
+ 
+\subsubsection{In three dimensions}
+
+We are looking for the stress tensor eigenvector vector $\vec{n}=(n_x,n_y)$ associated to the
+eigenvalue $\lambda$ such that 
+\[
+\left(
+\begin{array}{ccc}
+\sigma_{xx} & \sigma_{xy} & \sigma_{xz} \\
+\sigma_{xy} & \sigma_{yy} & \sigma_{yz} \\
+\sigma_{xz} & \sigma_{yz} & \sigma_{zz}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y \\ n_z
+\end{array}
+\right)
+=
+\lambda
+\left(
+\begin{array}{c}
+n_x \\ n_y \\ n_z
+\end{array}
+\right)
+\]
+or,
+\[
+\left(
+\begin{array}{ccc}
+\sigma_{xx} & \sigma_{xy} & \sigma_{xz} \\
+\sigma_{xy} & \sigma_{yy} & \sigma_{yz} \\
+\sigma_{xz} & \sigma_{yz} & \sigma_{zz}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y \\ n_z
+\end{array}
+\right)
+-
+\left(
+\begin{array}{ccc}
+\lambda & 0 & 0\\ 
+0 & \lambda  & 0 \\
+0 & 0 & \lambda 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y \\ n_z
+\end{array}
+\right)
+= \vec{0}
+\]
+
+\[
+\left(
+\begin{array}{ccc}
+\sigma_{xx}-\lambda & \sigma_{xy} & \sigma_{xz} \\
+\sigma_{xy} & \sigma_{yy}-\lambda & \sigma_{yz} \\
+\sigma_{xz} & \sigma_{yz} & \sigma_{zz} -\lambda
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y \\ n_z
+\end{array}
+\right)
+= \vec{0}
+\]
+
+\todo[inline]{finish derivation}
+
+
+
+
+
+
+
 \newpage
 %--------------------------------------------
 \subsection{The need for numerical modelling}

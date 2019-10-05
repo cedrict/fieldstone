@@ -6,8 +6,6 @@ computational geodynamics community.
 \item the plastic brick \cite{lemm08,kaus10,qurj09,mishin11,maie12,spmw16,gltf18,frbt19}
 \item 2D Rayleigh-Benard convection (Blankenbach)  \cite{blbc89,trha98,chhl08,king09,lezh11,vyrc13,trab90,bepo10}
 \item 2D Rayleigh-Taylor convection/instability \cite{pros81,trab90,wesc92,popo92,soga01,bast02,taki03,bomh06, basd08,qurj09,saev10,como97,lezh11,lomw12,vyrc13,vaks97,bomh06,chtl13,deka08,mishin11,maie12,fusc13,devv00a,dadh07,demh19}
-
-
 \item 3D Rayleigh-Taylor instability \cite{fukk08,vosc15}
 \item subduction problems \cite{scbe08,vack08,cehg14}
 \item numerical sandbox \cite{bbeg06,maie12,busa16,gltf18}
@@ -42,6 +40,8 @@ computational geodynamics community.
 \item visco-elastic flow past a cylinder in a channel \cite{bepo10}
 \item Infinite plate with a circular hole \cite{rama16}
 \item Slope stability for elasto-plastic materials \cite{rama16}
+\item Time-dependent flow in an annulus \cite{galb19} (see Section \ref{sec:tdba})
+\item Convection in 2D-box \cite{galb19} (see Section~\ref{sec:citb})
 \end{itemize}
 
 \todo[inline]{go through my papers and add relevant ones here}
@@ -257,8 +257,73 @@ on Plasticity Indicator}
 \end{center}
 
 
+%..............................................................................
+\subsubsection{Time-dependent benchmark in an annulus}\label{sec:tdba}
 
+This benchmark is presented in Gass{m\"o}ller et al \cite{galb19}.
+The domain is a 2D annulus with inner and outer radii $R_1=1$ and $R_2=2$, respectively.
+In this situation, the incompressible isothermal Stokes equations and their solution
+can be expressed in a cylindrical coordinate system in terms of the radius $r$ and the
+azimuthal angle $\theta$. The viscosity is set to $eta=1$, and the density is given by
+\begin{equation}
+\rho(r,\theta)=48r^5
+\end{equation}
+The gravity vector is set to 
+\begin{equation}
+\vec{g}(r,\theta)=\frac{r^3}{384} \vec{e}_r + \vec{e}_\theta
+\end{equation}
+Note that this gravity vector is not the gradient of a gravity potential
+and consequently not physical.
+The Stokes system can then be solved using a separation of variables
+approach and yields
+\begin{equation}
+\vec{\upnu}=-r^7 \vec{e}_\theta
+\quad\quad
+p(r,\theta)=\frac{r^9}{72}-\frac{512}{72}
+\end{equation}
+\begin{center}
+\includegraphics[width=12cm]{images/benchmark_annulus/galb19}\\
+{\scriptsize Taken from \cite{galb19}}
+\end{center}
+Rather importantly, this benchmark was arrived at by means of a stream function (see Section~\ref{sec:streamfunction}) 
+$\psi(r,\theta)=F(r)G(\theta)$ with $F(r)=r^8/8$ and $G(\theta)=1$.
 
+%..............................................................................
+\subsubsection{Convection in 2D-box} \label{sec:citb}
+
+We start from the following stream function (see Section~\ref{sec:streamfunction}):
+\begin{equation}
+\psi(x,y)=\frac{1}{\pi} \sin \pi x \sin \pi y
+\end{equation}
+which yields:
+\begin{eqnarray}
+u(x,y)&=&\frac{\partial \psi}{\partial y} = \sin \pi x \cos \pi y \nn\\
+v(x,y)&=&-\frac{\partial \psi}{\partial x} = - \cos \pi x \sin \pi y
+\end{eqnarray}
+The pressure field is 
+\begin{equation}
+p(x,y) = 2\pi \cos (\pi x) \cos (\pi y) 
+\end{equation}
+with 
+\begin{equation}
+\rho(x,y)=\sin(\pi x) \sin (\pi y)
+\qquad\qquad
+g_y = -4\pi ^2 \frac{\cos (\pi x)}{\sin (\pi x)}
+\end{equation}
+\begin{center}
+\includegraphics[width=12cm]{images/benchmark_convbox/galb19}\\
+{\scriptsize Taken from \cite{galb19}}
+\end{center}
+
+\begin{eqnarray}
+v_{rms} 
+&=& \sqrt{\frac{1}{L_xL_y} \int_0^1 \int_0^1 (u^2+v^2) dxdy} \nn\\
+&=& \sqrt{\int_0^1 \int_0^1 ( \sin^2 (\pi x) \cos^2 (\pi y) + \cos^2 (\pi x) \sin^2 (\pi y) ) dxdy} \nn\\
+&=& \sqrt{ \int_0^1 \sin^2 (\pi x) dx  \cdot \int_0^1 \cos^2 (\pi y) dy + \int_0^1 \cos^2 (\pi x) dx \cdot \int \sin^2 (\pi y) dy } \nn\\
+&=& \sqrt{\frac{1}{2} \frac{1}{2}+ \frac{1}{2} \frac{1}{2} }\nn\\
+&=& \frac{\sqrt{2}}{2} \nn\\
+&\simeq& 0.70711...
+\end{eqnarray}
 
 
 

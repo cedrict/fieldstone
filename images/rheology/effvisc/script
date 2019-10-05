@@ -1,0 +1,67 @@
+set terminal pdf enhanced
+
+set grid
+
+set ylabel 'depth (km)'
+set yrange [:] reverse
+
+set xlabel 'temperature (C)'
+set output 'temperature.pdf'
+plot 'setup.dat' u 2:1  w l notitle
+
+set xlabel 'pressure (MPa)'
+set output 'pressure.pdf'
+plot 'setup.dat' u ($3/1e6):1  w l notitle
+
+
+
+set xlabel 'strain rate dislocation' 
+set output 'new_sr_ds.pdf'
+plot 'new.dat' u 5:1 w l notitle
+
+set xlabel 'strain rate diffusion' 
+set output 'new_sr_df.pdf'
+set yrange [:] reverse
+plot 'new.dat' u 6:1 w l notitle
+
+set log x
+set xlabel 'dislocation viscosity' 
+set output 'new_mu_ds.pdf'
+plot[1e20:1e28] 'new.dat' u 3:1 w l notitle
+
+set xlabel 'diffusion viscosity' 
+set output 'new_mu_df.pdf'
+plot[1e20:1e28] 'new.dat' u 2:1 w l notitle
+
+set xlabel 'diffusion viscosity' 
+set output 'new_mueff.pdf'
+plot[1e20:1e28] 'new.dat' u 4:1 w l notitle
+
+set xlabel 'tau' 
+set output 'new_tau.pdf'
+plot[] 'new.dat' u 8:1 w l notitle
+
+
+set xlabel 'effective viscosity' 
+set output 'both_mueff.pdf'
+plot[1e20:1e26] 'new.dat' u 4:1 w l t 'new',\
+                'old.dat' u 4:1 w l t 'old'
+
+set xlabel 'dislocation viscosity' 
+set output 'both_mu_ds.pdf'
+plot[1e20:1e26] 'new.dat' u 3:1 w l t 'new',\
+                'old.dat' u 3:1 w l t 'old'
+
+set xlabel 'diffusion viscosity' 
+set output 'both_mu_df.pdf'
+plot[1e20:1e26] 'new.dat' u 2:1 w l t 'new',\
+                'old.dat' u 2:1 w l t 'old'
+
+
+
+
+
+
+
+
+
