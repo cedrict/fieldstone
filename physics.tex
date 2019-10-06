@@ -1,37 +1,3 @@
-
-\begin{center}
-\begin{tabular}{lll}
-\hline
-Symbol & meaning & unit \\
-\hline
-\hline
-$t$ & Time & s \\
-$x,y,z$ & Cartesian coordinates & m \\
-$r,\theta$ & Polar coordinates & m,-\\
-$r,\theta, z$ & Cylindrical coordinates & m,-,m\\
-$r,\theta,\phi$ & Spherical coordinates & m,-,- \\
-${\vec \upnu}$ & velocity vector & m$\cdot$ s$^{-1}$\\
-${\vec u}$ & displacement vector & m \\
-$\rho$ & mass density & kg/m$^3$ \\
-$\eta$ & dynamic viscosity &  Pa$\cdot$ s \\
-$\lambda$ & penalty parameter & Pa$\cdot$ s \\
-$T$ & temperature & K \\
-${\vec \nabla}$ & gradient operator & m$^{-1}$ \\
-${\vec \nabla}\cdot$ & divergence operator & m$^{-1}$ \\
-$p$ & pressure & Pa\\
-$\dot{\bm \varepsilon}({\vec \upnu})$ & strain rate tensor & s$^{-1}$ \\
-$\alpha$ & thermal expansion coefficient & K$^{-1}$ \\
-$k$ & thermal conductivity & W/(m $\cdot$ K) \\
-$C_p$ & Heat capacity & J/K \\
-$H$ & intrinsic specific heat production & W/kg\\
-$\beta_T$ & isothermal compressibility & Pa$^{-1}$  \\
-${\bm \tau}$ & deviatoric stress tensor & Pa \\
-${\bm \sigma}$ & full stress tensor & Pa \\
-\hline
-\end{tabular}
-\end{center}
-
-%------------------------------------------------------------------------
 \subsection{Strain rate and spin tensor}
 \index{velocity gradient}
 \index{strain rate}
@@ -66,38 +32,7 @@ In the mathematical literature a different notation for the strain rate tensor i
 $D(\vec \upnu)$, such as for instance in \cite{full95}.
 \end{remark}
 
-%------------------------------------------------------------------------
-\subsection{Stress tensor}
 
-\index{Stress tensor} \index{Normal stress} \index{Shear stress} \index{Stress vector}
-
-The Cauchy tensor\footnote{\url{https://en.wikipedia.org/wiki/Cauchy_stress_tensor}} 
-consists of nine components $\sigma_{ij}$  that completely define the state of stress 
-at a point inside a material. 
-The tensor relates a unit-length direction vector $\vec{n}$ to the so-called 'stress vector' (most commonly called 'traction') $\vec{t}(\vec{n})$ across an imaginary surface perpendicular to $\vec{n}$:
-\[
-\vec{t}(\vec n)={\bm \sigma}\cdot {\vec n}
-\]
-With respect to an orthonormal basis $\{\vec{e}_x,\vec{e}_y,\vec{e}_z\}$, the Cauchy stress tensor
-is given by:
-\begin{equation}
-{\bm \sigma}=
-\left(
-\begin{array}{ccc}
-\sigma_{xx} & \sigma_{xy} & \sigma_{xz} \\
-\sigma_{yx} & \sigma_{yy} & \sigma_{yz} \\
-\sigma_{zx} & \sigma_{zy} & \sigma_{zz} 
-\end{array}
-\right)
-\end{equation}
-The three diagonal elements are called normal stresses while the off-diagonal terms 
-are called shear stresses.
-
-One can easily prove (see for instance Section 3.3.6 of \cite{grbl09}) that the balance 
-of angular momentum leads reduces to the statement that the Cauchy stress tensor 
-is symmetric, i.e. ${\bm \sigma}={\bm \sigma}^T$.
-
-The SI units of both stress tensor and traction are $\text{N}/\text{m}^2$.
 
 %.............................................
 \subsubsection{Compressible Newtonian Fluid}
@@ -748,6 +683,17 @@ conduct heat quickly in comparison to their volumetric heat capacity or 'thermal
 
 \index{Maximum Shear Stress} \index{Principal Stress}
 
+As seen before (see Section~\ref{sec:stresstensor}) 
+the stress tensor is a symmetric $3\times3$ real matrix, and linear algebra tells us that it 
+therefore has three mutually orthogonal unit-length eigenvectors $\vec{n}_{1}$, $\vec{n}_{2}$, 
+$\vec{n}_{3}$ and three real eigenvalues $\lambda _{1},\lambda _{2},\lambda _{3}$ 
+such that ${\bm \sigma}\cdot \vec{n}_i=\lambda_{i} \vec{n}_{i}$.
+
+%from wiki stress 
+As a consequence, in a coordinate system with axes $\vec{n}_{1},\vec{n}_{2},\vec{n}_{3}$, 
+the stress tensor is a diagonal matrix, and has only the three normal components $\lambda _{1},\lambda _{2},\lambda _{3}$
+i.e. the principal stresses. If the three eigenvalues are equal, the stress is an isotropic compression or tension, always perpendicular to any surface, there is no shear stress, and the tensor is a diagonal matrix in any coordinate frame.
+
 \subsubsection{In two dimensions}
 
 We are looking for the stress tensor eigenvector vector $\vec{n}=(n_x,n_y)$ associated to the
@@ -932,14 +878,14 @@ ${\bm \sigma}'= {\bm R}\cdot {\bm \sigma}\cdot {\bm R}^{-1}$, i.e.
 \sin\theta_p(\sigma_{xy} \sin\theta_p + \sigma_{yy} \cos\theta_p ) \\
 \dots & \dots 
 \end{array}
-\right)
+\right) \nn 
 \end{eqnarray}
 In the matrix above I have only computed the off diagonal term since 
 we are actually looking for $\theta_p$ such that $\sigma_{xy}'=0$, or
 \begin{eqnarray}
 \cos\theta_p(\sigma_{xx} \sin\theta_p + \sigma_{xy} \cos\theta_p )-
 \sin\theta_p(\sigma_{xy} \sin\theta_p + \sigma_{yy} \cos\theta_p ) &=& 0 \nn\\
-\sin\theta_p \cos\theta_p (\sigma_{xx}-\sigma_{yy}) + ( \cos^2\theta_p -\sin^2\theta_p )\sigma_{xy} &=& 0 
+\sin\theta_p \cos\theta_p (\sigma_{xx}-\sigma_{yy}) + ( \cos^2\theta_p -\sin^2\theta_p )\sigma_{xy} &=& 0 \nn 
 \end{eqnarray}
 and then 
 \[
@@ -1073,4 +1019,4 @@ arriving at the analytical solution.
 
 
 
-
+%\end{document}
