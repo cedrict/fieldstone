@@ -10,7 +10,7 @@ computational geodynamics community.
 \item subduction problems \cite{scbe08,vack08,cehg14}
 \item numerical sandbox \cite{bbeg06,maie12,busa16,gltf18}
 \item the Stokes sphere \cite{galemanual}, in visco-plastic fluid \cite{bemj04}
-\item the sinking block \cite{thie11,cehg14,gery10,geyu03,mamo08,mishin11,fumt11,maie12}
+\item the sinking block (sinker) \cite{thie11,cehg14,gery10,geyu03,mamo08,mishin11,fumt11,maie12} (see Section~\ref{sec:sinker})
 \item multiple sinkers \cite{mabl14,mabl15}
 \item 2D compressible Stokes flow problem \cite{itki94,tagu07,lezh08,kilv10,lizh13}
 \item 3D convection at infinite Prandtl number (Busse) \cite{bucc93,trha98,omma06,krhb12}
@@ -36,7 +36,7 @@ computational geodynamics community.
 \item single layer visco-elastic folding \cite{vosc15}
 \item Three-dimensional folding of an embedded viscous layer in pure shear \cite{flet91}
 \item dam-break problem \cite{moeb99,bacp07,liir07,lemx08,homa09,anco09,grdn97,hini81,basd08}
-\item hot blob \cite{bugs09,fumt11}
+\item hot blob problem \cite{bugs09,fumt11} (see Section~\ref{sec:hotblob})
 \item visco-elastic flow past a cylinder in a channel \cite{bepo10}
 \item Infinite plate with a circular hole \cite{rama16}
 \item Slope stability for elasto-plastic materials \cite{rama16}
@@ -310,6 +310,7 @@ with
 \qquad\qquad
 g_y = -4\pi ^2 \frac{\cos (\pi x)}{\sin (\pi x)}
 \end{equation}
+
 \begin{center}
 \includegraphics[width=12cm]{images/benchmark_convbox/galb19}\\
 {\scriptsize Taken from \cite{galb19}}
@@ -324,6 +325,83 @@ v_{rms}
 &=& \frac{\sqrt{2}}{2} \nn\\
 &\simeq& 0.70711...
 \end{eqnarray}
+
+
+%..............................................................................
+\subsubsection{The sinker problem}\label{sec:sinker}
+
+This experiment is not a benchmark stricto sensu since there is no analytical solution. However, it is widely used in the technical literature because of its simple setup and since it allows to test solving strategies.
+Also, it can conveniently be carried out in both two and three dimensions.
+
+\paragraph{In two dimensions} The time dependent version of the experiment is for instance to be found 
+in Gerya \cite{gery10} and the same is repeated in Thieulot \cite{thie11}.
+
+This simple benchmark provides challenging numerical experiments 
+dealing with large viscosity variations within the simulation
+domain. It consists of a bulk of fluid 1 ($\eta_1,\rho_1$) 
+in which a block of fluid 2 ($\eta_2,\rho_2$) falls under its own
+weight. The domain is a square of size $L_x = L_y = 500$ km and the
+block is initially centred at point ($x$ = 250 km, $y$ = 400 km) with size
+$100 \times 100$ km.
+Free slip boundary conditions are imposed on all sides of the domain. 
+In \cite{thie11} five experiments have been conducted:
+$\eta_1 = 10^{20}$ Pa.s, $\rho_2$ = 3220 kg/m$^3$ ;
+$\eta_1 = 10^{21}$ Pa.s, $\rho_2$ = 3300 kg/m$^3$ ;
+$\eta_1 = 10^{22}$ Pa.s, $\rho_2$ = 6600 kg/m$^3$ ;
+$\eta_1 = 10^{23}$ Pa.s, $\rho_2$ = 3300 kg/m$^3$ ;
+$\eta_1 = 10^{24}$ Pa.s, $\rho_2$ = 9900 kg/m$^3$,
+while in all experiments the density of the surrounding fluid is
+$\rho_1=3200$ kg/m$^3$ and the viscosity of the block is varied between
+$10^{19}$ and $5\cdot10^{27}$ Pa.s.
+
+\begin{center}
+\includegraphics[width=5cm]{images/benchmark_sinker/thie11a}
+\includegraphics[width=7cm]{images/benchmark_sinker/thie11b}\\
+{\scriptsize Left: 
+$\eta_1 = 10^{21}$ Pa.s, $\rho_2= 3300$ kg/m$^3$. 
+(a) Initial setup; 
+(b) $\eta_1 = 10^{21}$ Pa.s at time $t$ = 10 Myrs; 
+(c) $\eta_1 = 10^{22}$ Pa.s at time $t$ = 20 Myrs; 
+(d) $\eta_1 = 10^{23}$ Pa.s at time $t$ = 20 Myrs; 
+(e) $\eta_1 = 10^{25}$ Pa.s at time $t$ = 20 Myrs; 
+(f) $\eta_1 = 10^{27}$ Pa.s at time $t$ = 20 Myrs. 
+Right: Velocity measurements as a function of the viscosity contrast between
+surrounding medium and block for all experiments.
+Taken from \cite{thie11}}
+\end{center}
+
+\paragraph{In three dimensions}
+Let us look at the sinker experiment from Furuichi et al \cite{fumt11}: 
+The domain is the unit box the origin at the center of the box. A cube with a viscosity $\eta_1=\Delta \eta$ 
+and density $\rho_1 = 1$ was placed at the middle of the domain defined by
+$-0.15 \leq x,y,z \leq 0.15$.
+The material surrounding the cube has the properties $\eta_0=1$ and $\rho_0 = 0$. 
+The body force of the momentum equation was taken as $(0, 0,-\rho g)$ with $g = 1$.
+Along all walls on the domain, free-slip boundary conditions were employed.
+
+\begin{center}
+\includegraphics[width=8cm]{images/benchmark_sinker/fumt11}\\
+{\scriptsize Simulation setup for the 3D falling block (SINKER) problem. The vectors represent computed flow.
+Taken from \cite{fumt11}}
+\end{center}
+
+
+
+%......................................................
+\subsubsection{The hot blob problem}\label{sec:hotblob}
+
+This is a very similar setup as the 3D sinker from the same authors
+with higher but more diffusive variation of viscosity.
+The body force is given by $(0, 0, \beta T)$ and
+where the temperature field $T$ is defined by $T = \exp  (-\gamma (x^2+y^2+(z-0.3)^2))$ 
+with the constant parameters $\beta=10^6$ and $\gamma=200$. 
+The temperature-dependent viscosity $\eta = \exp( -\alpha T)$ is employed with the parameter for viscosity
+contrast $\alpha$.
+
+\begin{center}
+\includegraphics[width=8cm]{images/benchmark_hotblob/fumt11}\\
+{\scriptsize Simulation setting of BLOB problem. Isosurface and vectors represent temperature field \\and computed flow respectively. Taken from \cite{fumt11}}
+\end{center}
 
 
 
