@@ -11,12 +11,12 @@ large deformations).
 The third one ('method 3') is the method used in ASPECT and described in Rose et al (2017) \cite{robh17}.
 Its implementation is described in Section~\ref{sec:freesurface}.
 
-Note that at the moment, and for all three methods, the movement of the surface nodes is limited 
-to the vertical direction!
+%...........................................................
+\subsubsection*{Experiment 1 - relaxation of topography}
 
 The domain is a 2D Cartesian box of size 512$\times$512km, with free slip on left, 
 bottom and right sides, free surface at the top. 
-Mantle material characterised by $\rho_m=3200$ and $\eta_m=10^{21}$. 
+Mantle material characterised by $\rho_m=3200$ and $\eta_m=10^{22}$. 
 Gravity is vertical and Earth like. 
 The surface is perturbed at startup by $\delta y = A \cos (\pi x /L_x)$ with $A$=1km.
 200 time steps with $\delta t=10$kyr are carried out.
@@ -24,8 +24,8 @@ The root mean square velocity, the total volume of the domain, the min/max eleva
 values of the surface are recorded over time. 
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_54/images/u}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_54/images/v}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_54/images/exp1/u}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_54/images/exp1/v}\\
 {\scriptsize velocity field at $t=0$ with resolution 24x24}
 \end{center}
 
@@ -37,16 +37,16 @@ allowed to move in both $x$ and $y$ directions (note that for method 3 the norma
 computed with the method of Eq. 49 in \cite{robh17} but instead by a simple geometric rule).
 
 \begin{center}
-a) \includegraphics[width=7cm]{python_codes/fieldstone_54/images/elevation_vert.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_54/images/elevation_full.pdf}\\
-b) \includegraphics[width=7cm]{python_codes/fieldstone_54/images/elevation_log_vert.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_54/images/elevation_log_full.pdf}\\
-c) \includegraphics[width=7cm]{python_codes/fieldstone_54/images/volume_vert.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_54/images/volume_full.pdf}\\
-d) \includegraphics[width=7cm]{python_codes/fieldstone_54/images/vrms_vert.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_54/images/vrms_full.pdf}\\
-e) \includegraphics[width=7cm]{python_codes/fieldstone_54/images/surface_topography_200_vert.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_54/images/surface_topography_200_full.pdf}\\
+a) \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/elevation_vert.pdf}
+   \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/elevation_full.pdf}\\
+b) \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/elevation_log_vert.pdf}
+   \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/elevation_log_full.pdf}\\
+c) \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/volume_vert.pdf}
+   \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/volume_full.pdf}\\
+d) \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/vrms_vert.pdf}
+   \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/vrms_full.pdf}\\
+e) \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/surface_topography_200_vert.pdf}
+   \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/surface_topography_200_full.pdf}\\
 {\scriptsize 
 a) min/max of free surface topo as a function of time; 
 b) free surface topo maximum (in log scale) as a function of time; 
@@ -54,3 +54,36 @@ c) measured volume of the domain with numerical quadrature normalised by the exp
 d) root mean square velocity as a function of time;
 e) final elevation at the 200th time step.}
 \end{center}
+
+%...........................................................
+\subsubsection*{Experiment 2,3 - extension}
+
+We now consider a rectangular domain (crust sized) of $128\times32$km, discretised by means of $40\times10$ elements.
+The fluid is identical to the one above and so is gravity. 
+Extensional boundary conditions are applied. In the first case, a 1cm/yr horizontal velocity is applied on both sides, while in the second case a 2cm/yr velocity is applied on the right while 0 is prescribed to the left. Free slip conditions are otherwise prescribed on the sides and bottom. 100 time steps are carried out with $\delta t=10^4$yr. Only method 3 is used here and only vertical movement is allowed.  
+
+\begin{center}
+\includegraphics[width=13cm]{python_codes/fieldstone_54/images/exp2-3/vel0}\\
+{\scriptsize Velocity field for both experiments at $t=0$.}
+\end{center}
+
+
+Despite the asymmetry in the boundary conditions, we expect the same evolution of the domain geometry. This is indeed what we recover with surprising accuracy:
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp2-3/volume.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp2-3/surface.pdf}\\
+{\scriptsize Left: time evolution of the normalised volume for both boundary condition types; Right: surface at the end of the simulation.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp2-3/vrms.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp2-3/elevation.pdf}\\
+{\scriptsize Left: Root mean square velocity as a function of time; Right: time evolution of the elevation (min and max virtually indistinguishable).} 
+\end{center}
+
+
+
+
+

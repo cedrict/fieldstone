@@ -51,21 +51,39 @@ def NNP(r,s):
 
 #------------------------------------------------------------------------------
 
+#experiment=1: relaxation of topo
+#experiment=2: extension symmetric
+#experiment=3: extension asymmetric
+
+experiment=3
+
 ndim=2
 ndofV=2
 ndofP=1
 
-Lx=512e3
-Ly=512e3
+if experiment==1:
+   Lx=512e3
+   Ly=512e3
+   if int(len(sys.argv) == 4):
+      nelx=int(sys.argv[1])
+      nely=int(sys.argv[2])
+      visu=int(sys.argv[3])
+   else:
+      nelx = 24
+      nely = 24
+      visu = 1
 
-if int(len(sys.argv) == 4):
-   nelx=int(sys.argv[1])
-   nely=int(sys.argv[2])
-   visu=int(sys.argv[3])
-else:
-   nelx = 24
-   nely = 24
-   visu = 1
+if experiment==2 or experiment==3:
+   Lx=128e3
+   Ly=32e3
+   if int(len(sys.argv) == 4):
+      nelx=int(sys.argv[1])
+      nely=int(sys.argv[2])
+      visu=int(sys.argv[3])
+   else:
+      nelx = 40
+      nely = 10
+      visu = 1
 
 nel=nelx*nely
 
@@ -105,13 +123,14 @@ sparse=False
 rVnodes=[-1,1,1,-1,0,1,0,-1,0]
 sVnodes=[-1,-1,1,1,-1,0,1,0,0]
 
+cm=0.01
 year=3600.*24.*365.
 Myear=1e6*year
 dt=1e4*year
-nstep=200
+nstep=100
 
 method=3
-vertical=False
+vertical_only=True
 
 #################################################################
 # grid point setup
@@ -191,16 +210,33 @@ start = timing.time()
 
 bc_fix = np.zeros(NfemV, dtype=np.bool)  # boundary condition, yes/no
 bc_val = np.zeros(NfemV, dtype=np.float64)  # boundary condition, value
+on_left_boundary = np.zeros(NV, dtype=np.bool)  
+on_right_boundary = np.zeros(NV, dtype=np.bool) 
+on_bottom_boundary = np.zeros(NV, dtype=np.bool)
+on_top_boundary = np.zeros(NV, dtype=np.bool)
+
+if experiment==1:
+   uleft=0.
+   uright=0.
+if experiment==2:
+   uleft=-1.*cm/year
+   uright=+1.*cm/year
+if experiment==3:
+   uleft=0
+   uright=+2.*cm/year
 
 for i in range(0,NV):
     if xV[i]/Lx<eps:
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = uleft
+       on_left_boundary[i]=True
     if xV[i]/Lx>(1-eps):
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = uright
+       on_right_boundary[i]=True
     if yV[i]/Ly<eps:
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    #if yV[i]/Ly>(1-eps):
-    #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       on_bottom_boundary[i]=True
+    if yV[i]/Ly>1-eps:
+       on_top_boundary[i]=True
 
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -208,8 +244,9 @@ print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 # define initial elevation 
 #################################################################
 
-for i in range(NV-(2*nelx+1),NV):
-    yV[i]+=1000.*np.cos(xV[i]/Lx*np.pi)
+if experiment==1:
+   for i in range(NV-(2*nelx+1),NV):
+       yV[i]+=1000.*np.cos(xV[i]/Lx*np.pi)
 
 #==============================================================================
 #==============================================================================
@@ -236,20 +273,23 @@ for istep in range(0,nstep):
 
    if method==1: # Lagrangian approach
 
-      if not vertical:
-         xV+=dt*u
-      yV+=dt*v
+      for i in range(0,NV):
+          if on_left_boundary[i] or on_right_boundary[i]: # only vertical movement
+             yV[i]+=dt*v[i]
+          else:
+             if not vertical_only:
+                xV[i]+=dt*u[i]
+             #end if
+             yV[i]+=dt*v[i]
+          #end if
+      #end for
 
    if method==2: # my ALE
-
-      counter = 0
-      for j in range(0,2*nely+1):
-          for i in range(0,2*nelx+1):
-              if j==2*nely:
-                 if not vertical:
-                    xV[counter]+=u[counter]*dt
-                 yV[counter]+=v[counter]*dt
-              counter += 1
+      for i in range(0,NV):
+          if on_top_boundary[i]:
+             if not vertical_only:
+                xV[i]+=u[i]*dt
+             yV[i]+=v[i]*dt
 
    if method==3: # aspect ALE
 
@@ -265,18 +305,22 @@ for istep in range(0,nstep):
       u2 = np.zeros(NV,dtype=np.float64)           # x-component velocity
       v2 = np.zeros(NV,dtype=np.float64)           # y-component velocity
 
-      # generate bc 
-
+      # generate bc for left, ritgh, bottom boundaries 
       bc_fix2 = np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
       bc_val2 = np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
-      bc_fix2[:] = bc_fix[:]
-      bc_val2[:] = bc_val[:]
+      for i in range(0,NV):
+          if on_bottom_boundary[i]:
+             bc_fix2[i*ndofV  ] = bc_fix[i*ndofV  ] ; bc_val2[i*ndofV  ] = bc_val[i*ndofV] 
+             bc_fix2[i*ndofV+1] = True              ; bc_val2[i*ndofV+1] = 0
+          if on_left_boundary[i] or on_right_boundary[i]:
+             bc_fix2[i*ndofV  ] = True              ; bc_val2[i*ndofV  ] = 0
+             bc_fix2[i*ndofV+1] = bc_fix[i*ndofV+1] ; bc_val2[i*ndofV+1] = bc_val[i*ndofV+1] 
 
       # compute normal vector to surface
       nx = np.zeros(NV,dtype=np.float64) 
       ny = np.zeros(NV,dtype=np.float64) 
       
-      if vertical:
+      if vertical_only:
          nx[:]=0.
          ny[:]=1.
       else:
@@ -303,6 +347,7 @@ for istep in range(0,nstep):
              ny[i]/=nnorm
              #print(xV[i],yV[i],nx[i],ny[i])
 
+      #generate bc for top surface
       counter=0
       for j in range(0,2*nely+1):
           for i in range(0,2*nelx+1):
@@ -693,9 +738,9 @@ for istep in range(0,nstep):
    #####
    vtufile.write("<PointData Scalars='scalars'>\n")
    #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (cm/year)' Format='ascii'> \n")
    for i in range(0,NV):
-       vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+       vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
