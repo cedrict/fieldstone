@@ -60,7 +60,7 @@ e) final elevation at the 200th time step.}
 
 We now consider a rectangular domain (crust sized) of $128\times32$km, discretised by means of $40\times10$ elements.
 The fluid is identical to the one above and so is gravity. 
-Extensional boundary conditions are applied. In the first case, a 1cm/yr horizontal velocity is applied on both sides, while in the second case a 2cm/yr velocity is applied on the right while 0 is prescribed to the left. Free slip conditions are otherwise prescribed on the sides and bottom. 100 time steps are carried out with $\delta t=10^4$yr. Only method 3 is used here and only vertical movement is allowed.  
+Extensional boundary conditions are applied. In the first case, a 1cm/yr horizontal velocity is applied on both sides, while in the second case a 2cm/yr velocity is applied on the right while 0 is prescribed to the left. Free slip conditions are otherwise prescribed on the sides and bottom. 100 time steps are carried out with $\delta t=10^4$yr. Only method 3 is used here.
 
 \begin{center}
 \includegraphics[width=13cm]{python_codes/fieldstone_54/images/exp2-3/vel0}\\
@@ -68,7 +68,8 @@ Extensional boundary conditions are applied. In the first case, a 1cm/yr horizon
 \end{center}
 
 
-Despite the asymmetry in the boundary conditions, we expect the same evolution of the domain geometry. This is indeed what we recover with surprising accuracy:
+Despite the asymmetry in the boundary conditions, we expect the same evolution of the domain geometry. This is indeed what we recover with surprising accuracy. 'vert' stands for only vertical movement allowed (i.e. $n_x=0$, 
+$n_y=1$) while 'both dir' stands for the use of dynamically computed normal vectors (based on geometrical consideration).
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp2-3/volume.pdf}

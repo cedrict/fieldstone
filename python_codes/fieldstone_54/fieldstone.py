@@ -130,7 +130,7 @@ dt=1e4*year
 nstep=100
 
 method=3
-vertical_only=True
+vertical_only=False
 
 #################################################################
 # grid point setup
@@ -324,6 +324,10 @@ for istep in range(0,nstep):
          nx[:]=0.
          ny[:]=1.
       else:
+         # for each segment between two consecutive points at the surface
+         # its normal is computed and the resulting vector is added to 
+         # each point. In a second phase the resulting vector on each point
+         # is normalised. 
          counter=0
          for j in range(0,2*nely+1):
              for i in range(0,2*nelx+1):
@@ -345,6 +349,14 @@ for istep in range(0,nstep):
              nnorm=np.sqrt(nx[i]**2+ny[i]**2)
              nx[i]/=nnorm
              ny[i]/=nnorm
+             if i==NV-(2*nelx+1): #left point of surface
+                nx[i]=0.
+                ny[i]=1.
+             #end if
+             if i==NV-1: #right point of surface
+                nx[i]=0.
+                ny[i]=1.
+             #end if
              #print(xV[i],yV[i],nx[i],ny[i])
 
       #generate bc for top surface
