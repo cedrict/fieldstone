@@ -54,8 +54,10 @@ def NNP(r,s):
 #experiment=1: relaxation of topo
 #experiment=2: extension symmetric
 #experiment=3: extension asymmetric
+#experiment=4: extension symmetric + bottom inflow
+#experiment=5: extension asymmetric + bottom inflow
 
-experiment=3
+experiment=5
 
 ndim=2
 ndofV=2
@@ -73,7 +75,7 @@ if experiment==1:
       nely = 24
       visu = 1
 
-if experiment==2 or experiment==3:
+if experiment==2 or experiment==3 or experiment==4 or experiment==5:
    Lx=128e3
    Ly=32e3
    if int(len(sys.argv) == 4):
@@ -127,7 +129,7 @@ cm=0.01
 year=3600.*24.*365.
 Myear=1e6*year
 dt=1e4*year
-nstep=100
+nstep=101
 
 method=3
 vertical_only=False
@@ -218,10 +220,10 @@ on_top_boundary = np.zeros(NV, dtype=np.bool)
 if experiment==1:
    uleft=0.
    uright=0.
-if experiment==2:
+if experiment==2 or experiment==4:
    uleft=-1.*cm/year
    uright=+1.*cm/year
-if experiment==3:
+if experiment==3 or experiment==5:
    uleft=0
    uright=+2.*cm/year
 
@@ -233,7 +235,17 @@ for i in range(0,NV):
        bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = uright
        on_right_boundary[i]=True
     if yV[i]/Ly<eps:
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if experiment==4 or experiment==5:
+          if xV[i]>= Lx/2.+1e-5:
+             bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = uright
+          elif xV[i]<= Lx/2.-1e-5:
+             bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = uleft
+          else:
+             bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          #end if 
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.5*cm/year
+       else:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
        on_bottom_boundary[i]=True
     if yV[i]/Ly>1-eps:
        on_top_boundary[i]=True
@@ -309,12 +321,12 @@ for istep in range(0,nstep):
       bc_fix2 = np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
       bc_val2 = np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
       for i in range(0,NV):
-          if on_bottom_boundary[i]:
-             bc_fix2[i*ndofV  ] = bc_fix[i*ndofV  ] ; bc_val2[i*ndofV  ] = bc_val[i*ndofV] 
-             bc_fix2[i*ndofV+1] = True              ; bc_val2[i*ndofV+1] = 0
           if on_left_boundary[i] or on_right_boundary[i]:
-             bc_fix2[i*ndofV  ] = True              ; bc_val2[i*ndofV  ] = 0
+             bc_fix2[i*ndofV  ] = True              ; bc_val2[i*ndofV  ] = 0.
              bc_fix2[i*ndofV+1] = bc_fix[i*ndofV+1] ; bc_val2[i*ndofV+1] = bc_val[i*ndofV+1] 
+          if on_bottom_boundary[i]:
+             bc_fix2[i*ndofV  ] = True              ; bc_val2[i*ndofV  ] = 0.
+             bc_fix2[i*ndofV+1] = True              ; bc_val2[i*ndofV+1] = 0.
 
       # compute normal vector to surface
       nx = np.zeros(NV,dtype=np.float64) 

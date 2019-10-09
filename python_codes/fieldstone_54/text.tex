@@ -85,6 +85,29 @@ $n_y=1$) while 'both dir' stands for the use of dynamically computed normal vect
 \end{center}
 
 
+%...........................................................
+\subsubsection*{Experiment 4,5 - extension with bottom inflow}
 
+This is the same setup as above, but we now impose an influx boundary condition at the bottom: $v=0.5cm$ (this balances the outflux exactly) and 
+the horizontal component at the bottom is set to the left value (-1 or 0 cm/yr) for $x\leq L_x/2$ and to the right value +1 or +2 cm/yr for $x\geq L_x/2$.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp4-5/volume.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp4-5/surface.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp4-5/vrms.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp4-5/elevation.pdf}\\
+\end{center}
+
+We can conclude that the 'vertical movement only' conserves volume/mass better and the free surface remains symmetrical unless the full normal is used which is simply explained by having $\vec{v}\cdot\vec{n}$ as a boundary condition: in the asymmetric extension case, the velocity is always to the right while the normal has an $x$ component which is negative and positive, therefore introducing an asymmetry in the surface boundary conditions.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_54/images/exp4-5/v}\\
+{\scriptsize Top to bottom: 
+symmetric extension, full normal vector; 
+symmetric extension, vertical normal vector; 
+asymmetric extension, full normal vector; 
+asymmetric extension, vertical normal vector}
+\end{center}
+%...........................................................
 
 
