@@ -2,7 +2,25 @@
 For now what follows only deals with viscous behavior. The reader is referred to Barnes \cite{barn99}
 for a discussion and review of non-linear viscous rheologies. 
 
+Here is a quick recap of notations:
 
+\begin{center}
+\begin{tabular}{ll}
+\hline
+${\bm \sigma}$ & (full) stress tensor \\
+$\sigma_1$, $\sigma_2$, $\sigma_3$ & principal stresses \\ 
+${\bm \tau}$   & deviatoric stress tensor \\
+$\tau_1$, $\tau_2$, $\tau_3$ & principal stresses \\ 
+${\cal I}_1({\bm T})$ & first invariant of tensor ${\bm T}$ \\
+${\cal I}_2({\bm T})$ & first invariant of tensor ${\bm T}$ \\
+${\cal I}_3({\bm T})$ & first invariant of tensor ${\bm T}$ \\
+${\tau}_{e}=\sqrt{{\cal I}_2({\bm \tau})}$ & effective deviatoric stress \\
+$\dot{{\varepsilon}}_{e}=\sqrt{{\cal I}_2(\dot{\bm \varepsilon}^d)}$ & effective deviatoric strain rate \\
+\hline
+\end{tabular}
+\end{center}
+
+%.....................................................................
 \subsubsection{Linear viscous aka Newtonian} \index{Newtonian fluid}
 
 Simply put, a Newtonian fluid is a fluid in which the viscous stresses at every point are linearly proportional 
@@ -26,16 +44,14 @@ They are also sometimes denoted as Generalized Newtonian Fluid \index{Generalize
  
 
 
-%------------------------------
-\subsubsection{Power-law model}
-\index{Power-law model}
+%.....................................................................
+\subsubsection{Power-law model} \index{Power-law model}
 
 One of the simplest non-Newtonian viscosity model is the power-law model:
 \begin{equation}
-\eta = K \dot{\varepsilon}_{II}^{(n-1)/2}
+\eta = K \dot{\varepsilon}_{e}^{(n-1)/2}
 \end{equation}
-where $\dot{\varepsilon}_{II}$ is the second invariant of the strain rate tensor as defined in 
-Section~\ref{sec:invariants}, and $n$ and $K$ are parameters. $n$ is called the power-law index.
+where $n$ and $K$ are parameters. $n$ is called the power-law index.
 
 Note that a Newtonian viscosity is recovered when $n=1$. Also $n$ and $K$ may depend on temperature
 \cite[p339]{reddybook2}.
@@ -97,7 +113,7 @@ a yield stress $\tau_0$ then the fluid flows. This translates as follows \cite{r
 \end{eqnarray}
 When flow occurs, the effective viscosity is then given by:
 \[
-\eta_{eff} =  \frac{\tau_0}{\dot{\varepsilon}} + 2 \eta_0 
+\eta_{eff} =  \frac{\tau_0}{\dot{\varepsilon}_e} + 2 \eta_0 
 \]
 and when the strain rate is large we recover a Newtonian behaviour.
 Typical Bingham fluids are mud, slurry, toothpaste.  
@@ -109,10 +125,10 @@ which cannot be zero.
 This difficulty can be circumvented by implementing Bingham fluids as follows \cite{reddybook2}:
 
 \begin{eqnarray}
-{\bm s} &=& \left(  \frac{\tau_0(1-\eta/\eta_r)}{\dot{\varepsilon}} + 2 \eta_0  \right)\dot{\bm \varepsilon} \qquad \text{ if } {s}_{II}>\tau_0 \\
+{\bm s} &=& \left(  \frac{\tau_0(1-\eta/\eta_r)}{\dot{\varepsilon}_e} + 2 \eta_0  \right)\dot{\bm \varepsilon} \qquad \text{ if } {s}_{II}>\tau_0 \\
 {\bm s} &=& 2 \eta_r \dot{\bm \varepsilon}  \qquad\qquad\qquad\qquad  \text{if } {s}_{II} \leq \tau_0 
 \end{eqnarray}
-where $\eta_r$ is a pre-yield viscosity and $\eta/eta_r<<1$ (typically 1\% or less). This is a form of 
+where $\eta_r$ is a pre-yield viscosity and $\eta/\eta_r<<1$ (typically 1\% or less). This is a form of 
 regularisation, and we will see a similar one in the next section.
 
 \Literature: \cite{blmi97,mizi01,maky17,syga14,bingham,baru09}
@@ -124,11 +140,10 @@ regularisation, and we will see a similar one in the next section.
 The Herschel-Bulkley model is effectively a combination of the power-law model and 
 a simple plastic model:
 \begin{eqnarray}
-{\bm s} &=& 2 \left(  K \dot{\varepsilon}^{n-1} + \frac{\tau_0}{\dot{\varepsilon}}\right)\dot{\bm \varepsilon} \qquad \text{ if } {s}_{II}>\tau_0 \\
-\dot{\bm \varepsilon} &=& {\bm 0} \qquad\qquad \text{if }{s}_{II} \leq \tau_0 
+{\bm s} &=& 2 \left(  K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}}\right)\dot{\bm \varepsilon} \qquad \text{ if } {\tau}_{e}>\tau_0 \\
+\dot{\bm \varepsilon} &=& {\bm 0} \qquad\qquad \text{if }{\tau}_{e} \leq \tau_0 
 \end{eqnarray}
-in which $\dot{\varepsilon}=\sqrt{\dot{\varepsilon}_{II}}$, 
-$\tau_0$ is the yield stress, $K$ the consistency, and $n$ is the flow index \cite{bemj04}.
+in which $\tau_0$ is the yield stress, $K$ the consistency, and $n$ is the flow index \cite{bemj04}.
 The flow index measures the degree to which the fluid is shear-thinning ($n<1$) or shear-thickening ($n>1$).
 If $n=1$ and $\tau_0=0$ the model reduces to the Newtonian model. 
 
@@ -138,8 +153,8 @@ follows\footnote{\url{https://en.wikipedia.org/wiki/Herschel-Bulkley_fluid}}:
 \eta_{eff} = 
 \left\{
 \begin{array}{cc}
-\eta_0 & \dot{\varepsilon}\leq \dot{\varepsilon}_0 \\ 
-K \dot{\varepsilon}^{n-1} + \frac{\tau_0}{\dot{\varepsilon}} & \dot{\varepsilon} \geq \dot{\varepsilon}_0
+\eta_0 & \dot{\varepsilon}_e\leq \dot{\varepsilon}_0 \\ 
+K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e} & \dot{\varepsilon}_e \geq \dot{\varepsilon}_0
 \end{array}
 \right.
 \]
@@ -156,7 +171,7 @@ equations by introducing a new material parameter which controls the exponential
 growth of stress. This way the equation is valid for both yielded and unyielded areas
 \cite{blmi97,papa87,zifr07}:
 \begin{equation}
-\eta_{eff} = K \dot{\varepsilon}^{n-1} + \frac{\tau_0}{\dot{\varepsilon}} [1 - \exp(-m \dot{\varepsilon})] 
+\eta_{eff} = K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e} [1 - \exp(-m \dot{\varepsilon}_e)] 
 \end{equation}
 When the strain rate becomes (very) small a Taylor expansion of the regularisation 
 term yields $1- \exp(-m \dot{\varepsilon}) \sim m \dot{\varepsilon} $ so that 
@@ -169,7 +184,7 @@ $\eta_{eff} \rightarrow m \tau_0$.
 
 \mscthesis: redo the sinking sphere in Bingham or herschel-Bulkley fluid experiment \cite{bemj04}. index{MSc Thesis}
 
-%-------------------------------------------------
+%...........................................................
 \subsubsection{The Casson model}
 
 It is described by \cite{barn99} 
@@ -212,17 +227,13 @@ Similar conclusions are reached in the following video:
 
 The standard dislocation creep effective viscosity is given by:
 \[
-\eta_{eff}^{ds} = \frac{1}{2} f A^{-1/n} \dot{\varepsilon}_{II}^{(1-n)/2n} \exp \left( \frac{Q+pV}{nRT}  \right)
+\eta_{eff}^{ds} = \frac{1}{2} f A^{-1/n} \dot{\varepsilon}_{e}^{(1-n)/n} \exp \left( \frac{Q+pV}{nRT}  \right)
 \] 
 where $A$ is the pre-exponential scaling factor, $f$ is a scaling factor
 representing viscous weakening or strengthening, $Q$ is the activation energy, 
 $V$ is the activation volume, $T$ is the absolute temperature, $n$ is the power-law 
-exponent, $R$ is the universal gas constant and $\dot{\varepsilon}_{II}$ is the 
-second invariant of the strain rate tensor. Note that one will often find 
-the same formula with the effective strain rate $\dot{\varepsilon}_e=\sqrt{\dot{\varepsilon}_{II}}$:
-\[
-\eta_{eff}^{ds} = \frac{1}{2} f A^{-1/n} \dot{\varepsilon}_{e}^{(1-n)/n} \exp \left( \frac{Q+pV}{nRT}  \right)
-\] 
+exponent, $R$ is the universal gas constant. 
+
 The coefficients $A,n,Q,V$ are material parameters and are obtained in the laboratory 
 by means of high pressure/temperature experiments\cite{kawu93}. Unfortunately 
 these experiments cannot be run at Earth-like strain rate values ($\sim 10^{-15}\text{s}^{-1}$)
@@ -296,6 +307,17 @@ An additional coefficient is added to the effective viscosity formula(s ??) \cit
 \cite{ranalli}
 \end{remark}
 
+\begin{center}
+\includegraphics[width=13cm]{images/rheology/defmap.png}\\
+{\scriptsize Deformation mechanism map calculated for grain size $a=0.1mm$. The lightly shaded area indicates 
+that deformation mainly occurs by diffusion creep. The densely shaded area indicates that 
+deformation mainly occurs by power-law creep. 
+The white region indicates that deformation mainly occurs by the Peierls mechanism. The 
+solid curves are lines of constant strain rate. The numbers attached to each contour indicate the 
+logarithm of the strain rate in the unit of $s^{-1}$ \cite{kayk99}.}
+\end{center}
+
+
 
 
 \paragraph{A closer look at the diffusion creep of Karato \& Wu (1993)} In the article, the following equation 
@@ -307,11 +329,11 @@ where $\mu$ is the shear modulus ($\sim$80GPa), $b$ is the length of the Burgers
 $d$ is the grain size.
 One can express the above equation in terms of second invariants (see Section~\ref{sec:invariants}):
 \[
-\underline{\dot{\varepsilon}}_{II} 
-= A \left(\frac{\underline{\tau}_{II}}{\mu}\right) \left(\frac{b}{d}\right)^m \exp\left( -\frac{Q+pV}{RT} \right)
+\underline{\dot{\varepsilon}}_{e} 
+= A \left(\frac{\underline{\tau}_{e}}{\mu}\right) \left(\frac{b}{d}\right)^m \exp\left( -\frac{Q+pV}{RT} \right)
 \]
 and assuming a Newtonian linearisation/relation between deviatoric stress 
-and strain rate  $\underline{\tau}_{II} = 2 \eta_{df} \underline{\dot\epsilon}_{II}$, one arrive at
+and strain rate  $\underline{\tau}_{e} = 2 \eta_{df} \underline{\dot\epsilon}_{e}$, one arrive at
 \[
 \eta_{df} = \frac{1}{2} \left(\frac{A}{\mu}\right)^{-1}  \left(\frac{b}{d}\right)^{-m} \exp\left( \frac{Q+pV}{RT} \right)
 \]
@@ -349,10 +371,10 @@ magnitude simply by choosing key parameters within acceptable ranges.
 the computational geodynamics to combine both viscosities into one so-called
 'effective viscous viscosity' (as opposed to the so-called 'effective plastic viscosity').
 The harmonic average is then used:
-\[
+\begin{equation}
 \eta_{eff} = \frac{\eta_{df}\eta_{ds}}{\eta_{df}+\eta_{ds}} 
 =\left( \frac{1}{\eta_{df}}+\frac{1}{\eta_{df}} \right)^{-1}
-\]
+\end{equation}
 See for instance \cite{king16}.
 
 However, although this formula seems simple enough, it hides an important fact: 
@@ -363,7 +385,7 @@ strain rate $\dot{\bm \varepsilon}_{df}$:
 \dot{\bm \varepsilon}_{T}=\dot{\bm \varepsilon}_{df}+\dot{\bm \varepsilon}_{ds}
 \]
 and so are the effective strain rates (the underscore $e$ has been dropped for convenience - see
-section~\ref{XYZ} for definitions):
+section~\ref{sec:invariants} for definitions):
 \[
 \dot{\varepsilon}_{T}=\dot{\varepsilon}_{df}+\dot{\varepsilon}_{ds}
 \]
@@ -488,6 +510,66 @@ effective viscosity:
 
 \todo[inline]{look at folder, codes, clean up, change labels new and old}
 
+%------------------------------
+\subsubsection{The von Mises failure criterion}
+\index{von Mises}
+\input{vMcriterion}
+
+%------------------------------
+\subsubsection{The Tresca failure criterion}
+\index{Tresca}
+\input{trcriterion}
+
+%------------------------------
+\subsubsection{The Drucker-Prager failure criterion}
+\index{Drucker-Prager}
+\input{dpcriterion}
+
+%------------------------------
+\subsubsection{The Mohr-Coulomb failure criterion}
+\index{Mohr-Coulomb}
+\input{mccriterion}
+
+%------------------------------
+\subsubsection{The Griffith-Murrell failure criterion}
+\index{Griffith-Murrell}
+
+The Griffith-Murrell yield criterion \cite{brau94,brbe95,babr97} is not often used. 
+Extending the work of Griffith (1921) to three dimensional stress distributions, 
+Murrell (1963) suggested the following criterion for rock failure expressed 
+in terms of the principal stresses:
+\[
+(\sigma_1-\sigma_2)^2 + (\sigma_2-\sigma_3)^2 + (\sigma_3-\sigma_1)^2
++
+24T_0 (\sigma_1+\sigma_2+\sigma_3)=0
+\]
+where $T_0$ is a material property called the tensile strength. In principal stress space, 
+this criterion is represented by a paraboloid of revolution around the pressure (or hydrostatic) axis.
+
+Also found:
+\[
+J_{2D}+12 T_0 p =0
+\]
+
+%.........................................................
+\subsubsection{The failure envelope, or yield surface} 
+
+
+A yield surface is a five-dimensional surface in the six-dimensional space of stresses. 
+The state of stress of inside the yield surface is elastic. 
+When the stress state lies on the surface the material is said to have reached its yield point 
+and the material is said to have become plastic. Further deformation of the material causes 
+the stress state to remain on the yield surface, even though the surface itself may change shape and 
+size as the plastic deformation evolves, this is because stress states that lie outside the yield surface are non-permissible.
+
+The yield surface is usually expressed in terms of (and visualized in) a three-dimensional principal stress space $(\sigma_1,\sigma_2,\sigma_3)$, a two- or three-dimensional space spanned by stress invariants 
+or a version of the three-dimensional Haigh-Westergaard space. 
+
+
+\begin{center}
+\includegraphics[width=14cm]{images/rheology/surfaces}\\
+{\scriptsize yield surfaces in stress space \cite{zico74}}
+\end{center} 
 
 
 

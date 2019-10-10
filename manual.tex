@@ -91,9 +91,9 @@ urlcolor=black}
 \makeindex 
 \begin{document}
 \thispagestyle{empty}
-\includegraphics[width=\linewidth]{images/frontpage.png}
+\includegraphics[width=0.95\linewidth]{images/frontpage.png}
 
-With contributions from: Wolfgang Bangerth, Eric van den Hoogen, Job Mos, Lukas van de Wiel. 
+{\scriptsize With contributions from: Wolfgang Bangerth, Eric van den Hoogen, Job Mos, Lukas van de Wiel, Alraune Zech, Wim Spakman. }
 \newpage
 If you find anything in this document useful for your research please cite it 
 as follows ({\it please} include the doi!):
@@ -214,7 +214,7 @@ Solving the Stokes equations and the energy equations is one thing. Doing it in
 a geodynamical context requires a lot of additional techniques. 
 
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Dealing with a free surface}\label{sec:freesurface} \input{freesurface} %--------------
+\subsection{Dealing with a free surface (and mesh deformation)}\label{sec:freesurface} \input{freesurface} %--------------
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Convergence criterion for nonlinear iterations\label{sec:nlconvcrit}}\input{nlconvcrit} 
 \newpage %-----------------------------------------------------------------------------------------
@@ -800,13 +800,14 @@ Stone 56: Dynamics of the Salt Water - Fresh Water Interface
 }
 \input{python_codes/fieldstone_56/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-
-
-
-
-
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 57: 1D diffusion with DG-FEM 
+\label{f57}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 57: 1D diffusion with DG-FEM 
+}
+\input{python_codes/fieldstone_57/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 

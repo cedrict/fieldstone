@@ -448,8 +448,8 @@ The strain rate tensor $\dot{\bm\varepsilon}$ is given by
 \dot\varepsilon_{r\theta} &=& \frac{1}{2} \left(   \frac{\partial v_\theta}{\partial r} - \frac{v_\theta}{r} 
 +\frac{1}{r} \frac{\partial v_r}{\partial \theta}  \right)\\
 \dot\varepsilon_{zz} &=& \frac{\partial w}{\partial z} \\
-\dot{varepsilon}_{rz} = \dot{varepsilon}_{zr} &=& \frac{1}{2}\left(   \right) \\
-\dot{varepsilon}_{\theta z} = \dot{varepsilon}_{z \theta} &=& \frac{1}{2}\left( \frac{1}{r} \frac{\partial w}{\partial \theta} + \frac{\partial v_\theta}{\partial z}  \right) \\
+\dot{\varepsilon}_{rz} = \dot{\varepsilon}_{zr} &=& \frac{1}{2}\left(   \right) \\
+\dot{\varepsilon}_{\theta z} = \dot{\varepsilon}_{z \theta} &=& \frac{1}{2}\left( \frac{1}{r} \frac{\partial w}{\partial \theta} + \frac{\partial v_\theta}{\partial z}  \right) \\
 \end{eqnarray}
  
 CHECK AND HOMOGENIZE NOTATIONS
@@ -908,6 +908,10 @@ identity\footnote{\url{https://en.wikipedia.org/wiki/List_of_trigonometric_ident
 and finally:
 \[
 \tan 2\theta_p = \frac{ 2\sigma_{xy}}{ \sigma_{xx}-\sigma_{yy} }
+\qquad
+\text{or}
+\qquad
+\theta_p = \frac{1}{2} \tan^{-1} \frac{ 2\sigma_{xy}}{ \sigma_{xx}-\sigma_{yy} }
 \]
 Once $\theta_p$ has been found the other direction is given by $\theta_p +\pi/2$.
 
@@ -926,10 +930,10 @@ a & 0 \\
 then $\tan 2\theta_p = 0$, and then $\theta_p=0$. The principal directions are the horizontal and 
 vertical directions, i.e. the Cartesian axis system, which is consistent.
 
- 
+%...................................... 
 \subsubsection{In three dimensions}
 
-We are looking for the stress tensor eigenvector vector $\vec{n}=(n_x,n_y)$ associated to the
+We are looking for the stress tensor eigenvector vector $\vec{n}=(n_x,n_y,n_z)$ associated to the
 eigenvalue $\lambda$ such that 
 \[
 \left(
@@ -1001,11 +1005,119 @@ n_x \\ n_y \\ n_z
 \right)
 = \vec{0}
 \]
+Non-trivial solutions of this equation require 
+\[
+\left|  
+\begin{array}{ccc}
+\sigma_{xx}-\lambda & \sigma_{xy} & \sigma_{xy} \\
+\sigma_{yx} & \sigma_{yy}-\lambda & \sigma_{yz} \\
+\sigma_{zx} & \sigma_{zy} & \sigma_{zz} -\lambda
+\end{array}
+\right|
+=0
+\]
+Expanding the determinant results in the cubic equation
+\begin{equation}
+\lambda^3 - K_1 \lambda^2 + K_2 \lambda -K_3=0
+\end{equation}
+where:
+\begin{eqnarray}
+K_1 &=& \sigma_{xx}+\sigma_{yy}+\sigma_{zz}\nn\\
+K_2 &=& \sigma_{xx}\sigma_{yy}+\sigma_{yy}\sigma_{zz}+\sigma_{zz}\sigma_{xx}-\sigma_{xy}\sigma_{yx}-\sigma_{xz}\sigma_{zx}-\sigma_{yz}\sigma_{zy}\nn\\
+K_3 &=& \det ({\bm \sigma}) \nn
+\end{eqnarray}
 
-\todo[inline]{finish derivation}
+Very often we will find ourselves interested in the principal components of the deviatoric stress tensor
+$\bm s$. 
+In this case the cubic equation becomes
+\begin{equation} 
+\lambda^3 -J_2 \lambda - J_3 =0 \label{opopop}
+\end{equation}
+where $J_2$ and $J_3$ are the second and third invariants of deviatoric stress tensor ${\bm s}$.
+
+Noting the trigonometric identity
+\begin{equation}
+\sin^3 \theta - \frac{3}{4}\sin \theta + \frac{1}{4} \sin 3\theta = 0\label{pc_eq2}
+\end{equation}
+and substituting $\lambda=r\sin \theta$ into (\ref{opopop}) we have
+\begin{equation}
+\sin^3 \theta -\frac{J_2}{r^2} \sin \theta -\frac{J_3}{r^3}=0\label{pc_eq3}
+\end{equation}
+Comparing (\ref{pc_eq2}) and (\ref{pc_eq3}) gives
+\begin{eqnarray}
+r&=&\frac{2}{\sqrt{3}}\sqrt{J_2}\label{pc_eq4bis} \\
+\sin 3 \theta &=& -\frac{4 J_3}{r^3}=-\frac{3\sqrt{3}}{2}\frac{J_3}{(J_2)^{3/2}} \label{pc_eq4}
+\end{eqnarray}
+The first root of (\ref{pc_eq4}) with $\theta$ determined for $3\theta$ in the range $\pm \pi/2$ is a convenient alternative to the third invariant, $J_3$. By noting the cyclic nature of $\sin (3\theta+2n \pi)$ we have immediatly the three (and only three) possible values of $\sin \theta $ which define the three principal stresses. The deviatoric principal stresses are given by $t=r \sin \theta$ on substitution of the three values of $\sin \theta$ in turn. Substituting for $r$ from (\ref{pc_eq4bis}) and adding the mean hydrodynamic stress component gives the total principal stresses to be
+
+The so-called Lode angle  \cite{zico74} is then given by \index{Lode Angle}
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+\theta=\frac{1}{3} \sin^{-1} \left( -\frac{3\sqrt{3}}{2} \frac{J_3}{J_2^{3/2}} \right)
+\]
+\end{mdframed}
+with $-\pi/6 <\theta <\pi/6 $.
+Note that the Lode angle is one of the Lode 
+coordinates\footnote{\url{https://en.wikipedia.org/wiki/Lode_coordinates}},
+or Haigh–Westergaard coordinates. 
+\index{Haigh-Westergaard Coordinates}
+\index{Lode Coordinates}
 
 
 
+\todo[inline]{SOMETHING missing HERE}
+
+\begin{equation}
+\left\{
+\begin{array}{c}
+\sigma_1 \\ \\
+\sigma_2 \\ \\
+\sigma_3
+\end{array}
+\right\}
+= \sqrt{J_2} 
+\left\{
+\begin{array}{c}
+\cos \theta + \frac{1}{\sqrt{3}} \sin \theta \\ \\
+\frac{2}{\sqrt{3}} \sin \theta \\ \\
+\frac{1}{\sqrt{3}} \sin \theta - \cos \theta 
+\end{array}
+\right\}
++
+\frac{J_1}{3}
+\left\{
+\begin{array}{c}
+1 \\ \\
+1 \\ \\
+1
+\end{array}
+\right\}
+\end{equation}
+
+with $\sigma_1>\sigma_2>\sigma_3$.
+
+We will later need $\sigma_1-\sigma_3$ and $\sigma_1+\sigma_3$ so let's compute these
+quantities now:
+
+\begin{eqnarray}
+\sigma_1 -\sigma_3 
+&=&
+ \left( \frac{1}{3}J_1 + \sqrt{J_2} (\cos \theta + \frac{1}{\sqrt{3}} \sin \theta)  \right) 
+-\left( \frac{1}{3}J_1 + \sqrt{J_2} (\frac{1}{\sqrt{3}} \sin \theta - \cos \theta)  \right)  \nn\\
+&=&
+\sqrt{J_2} \left(  (\cos \theta + \frac{1}{\sqrt{3}} \sin \theta)  
+- (\frac{1}{\sqrt{3}} \sin \theta - \cos \theta)  \right)  \nn\\
+&=&
+2 \sqrt{J_2} \cos \theta  \\ && \nn\\
+\sigma_1 + \sigma_3 
+&=&
+ \left( \frac{1}{3}J_1 + \sqrt{J_2} (\cos \theta + \frac{1}{\sqrt{3}} \sin \theta)  \right) 
++\left( \frac{1}{3}J_1 + \sqrt{J_2} (\frac{1}{\sqrt{3}} \sin \theta - \cos \theta)  \right)  \nn\\
+&=&
+\frac{2}{3}J_1 + \sqrt{J_2} \frac{2}{\sqrt{3}} \sin \theta
+\end{eqnarray}
+
+Note that the expression for the Lode angle is different in \cite[p101]{book_zitf} than in \cite{zico74} or \cite[p62]{book_zita2}
 
 
 

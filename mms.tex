@@ -8,7 +8,7 @@ The same source term and boundary conditions will then be used in a numerical
 simulation so that the computed solution can be compared with the (postulated)
 true analytical solution. 
 
-Examples of this approach are to be found in \cite{dohu03,busa13,bodg06}.
+Examples of this approach are to be found in \cite{dohu03,busa13,bodg06,polp14,blmp16}.
 
 
 %-----------------------------------------------------------------------------
@@ -81,10 +81,10 @@ One can also compute the stress components:
 \sigma_{yy} &=&  -x(-x + 1) - 2y^2(2y - 2)(4x^3 - 6x^2 + 2x) - 4y(-y + 1)^2(4x^3 - 6x^2 + 2x) + 1/6
 \end{eqnarray}
 
-
 All the necessary functions to do this benchmark are in {\tt mms/dh.py}:
 \lstinputlisting[language=python]{mms/dh.py}
 
+This benchmark is implemented in ASPECT \cite{aspectmanual}.
 
 %-----------------------------------------------------------------------------
 \subsubsection{Analytical benchmark II \label{mms2} - "DB2D"}
