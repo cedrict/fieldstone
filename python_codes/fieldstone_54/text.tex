@@ -101,13 +101,80 @@ the horizontal component at the bottom is set to the left value (-1 or 0 cm/yr) 
 We can conclude that the 'vertical movement only' conserves volume/mass better and the free surface remains symmetrical unless the full normal is used which is simply explained by having $\vec{v}\cdot\vec{n}$ as a boundary condition: in the asymmetric extension case, the velocity is always to the right while the normal has an $x$ component which is negative and positive, therefore introducing an asymmetry in the surface boundary conditions.
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_54/images/exp4-5/v}\\
+\includegraphics[width=9cm]{python_codes/fieldstone_54/images/exp4-5/v}\\
 {\scriptsize Top to bottom: 
 symmetric extension, full normal vector; 
 symmetric extension, vertical normal vector; 
 asymmetric extension, full normal vector; 
 asymmetric extension, vertical normal vector}
 \end{center}
+
 %...........................................................
+\subsubsection*{Experiment 6 - pure advection test}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp6/velp}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp6/surface.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp6/elevation.pdf}\\
+{\scriptsize Results after 100 time steps = 1Myr}
+\end{center}
+
+%...........................................................
+\subsubsection*{Experiment 7 - pure advection test of a cosine bump}
+
+The initial topography bump is given by
+\[
+y(x)=A \cos \left( \frac{x-x_0}{w} \frac{\pi}{2} \right)
+\]
+with $A=1000$m, $x_0=0.345678L_x$ and $w=$15km.
+
+The viscosity is set to $10^{26}$Pa$\cdot$s so that the velocity of the 
+viscous relaxation of the topography is negligible with regards to the advection velocity
+(+1cm/yr on left and right boundaries). I also choose a resolution of 80x20 elements.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_54/images/exp7/v}
+\end{center}
+
+If only the vertical normal is used then {\sl nothing} moves since the 
+velocity is always perpendicular to the normal. 
+
+What follows is obtained when the full normal is used. 
+After 20 timesteps the topography has been advected and we already observe some 
+visible asymmetry (and oscillations) on the surface:
+\begin{center}
+\includegraphics[width=9cm]{python_codes/fieldstone_54/images/exp7/surface.pdf}
+\end{center}
+
+On the following plots the left column shows $(\vec{\upnu}\cdot \vec{n})n_x$ 
+as a function of the $x$-coordinate and the 
+right column shows $(\vec{\upnu}\cdot \vec{n})n_y$, both for timesteps 1,2,3,5,10,20. 
+Both quantities form the 
+boundary conditions for the mesh deformation.  
+Since I have chosen $x_0$ such that it does not fall on a node, the initial 
+topography is {\sl not} symmetric and therefore the normal vectors at the nodes 
+on the left and right of the peak are not identical. From the second timestep (the first one 
+for which the free surface algo uses a non zero Stokes velocity as boundary condition)
+we see that both components $(\vec{\upnu}\cdot \vec{n})n_x$ and $(\vec{\upnu}\cdot \vec{n})n_y$ are asymmetric! 
+
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_54/images/exp7/n_dov_v_nx_001.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_54/images/exp7/n_dov_v_ny_001.pdf}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_54/images/exp7/n_dov_v_nx_002.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_54/images/exp7/n_dov_v_ny_002.pdf}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_54/images/exp7/n_dov_v_nx_003.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_54/images/exp7/n_dov_v_ny_003.pdf}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_54/images/exp7/n_dov_v_nx_005.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_54/images/exp7/n_dov_v_ny_005.pdf}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_54/images/exp7/n_dov_v_nx_010.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_54/images/exp7/n_dov_v_ny_010.pdf}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_54/images/exp7/n_dov_v_nx_020.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_54/images/exp7/n_dov_v_ny_020.pdf}
+\end{center}
+
+The inescapable conclusion is that the algorithm (as it is now implemented with the normal 
+vector) is incapable of advecting a bump. ANNE: please confirm with ASPECT too (since my 
+normal vector is geometric while yours in obtained from projection).
 
 

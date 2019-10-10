@@ -1,0 +1,17 @@
+set term pdf enhanced font "Times, 8pt"
+set grid
+set key outside
+
+set output 'surface.pdf'
+set xlabel 'x'
+set ylabel 'topography (m)'
+plot[0:128000][]\
+ 'exp6_method3_40x10_vert/surface_topography_0100.ascii'    u 1:($2-32000) w lp lw 0.5 ps .5 t 'symm., vert.',\
+ 'exp6_method3_40x10_bothdir/surface_topography_0100.ascii' u 1:($2-32000) w lp lw 0.5 ps .5 t 'symm., both dir.',\
+
+set output 'elevation.pdf'
+set xlabel 'time (Myr)'
+set ylabel 'elevation (m)'
+plot[][]\
+ 'exp6_method3_40x10_vert/elevation.ascii' w lp lw 0.5 ps .5 t 'symm., vert.',\
+ 'exp6_method3_40x10_bothdir/elevation.ascii' w lp lw 0.5 ps .5 t 'symm., both dir.',\

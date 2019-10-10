@@ -56,8 +56,10 @@ def NNP(r,s):
 #experiment=3: extension asymmetric
 #experiment=4: extension symmetric + bottom inflow
 #experiment=5: extension asymmetric + bottom inflow
+#experiment=6: pure advection
+#experiment=7: pure advection + bump
 
-experiment=5
+experiment=7
 
 ndim=2
 ndofV=2
@@ -75,7 +77,12 @@ if experiment==1:
       nely = 24
       visu = 1
 
-if experiment==2 or experiment==3 or experiment==4 or experiment==5:
+if experiment==2 or \
+   experiment==3 or \
+   experiment==4 or \
+   experiment==5 or \
+   experiment==6 or \
+   experiment==7:
    Lx=128e3
    Ly=32e3
    if int(len(sys.argv) == 4):
@@ -83,8 +90,8 @@ if experiment==2 or experiment==3 or experiment==4 or experiment==5:
       nely=int(sys.argv[2])
       visu=int(sys.argv[3])
    else:
-      nelx = 40
-      nely = 10
+      nelx = 80
+      nely = 20
       visu = 1
 
 nel=nelx*nely
@@ -118,7 +125,13 @@ eps=1e-8
 gy=-10.
 rho1=3200.
 eta1=1e22
-eta_ref=1e22   
+eta_ref=1e22
+
+if experiment==7:
+   eta1=1e26
+   eta_ref=1e26
+   width=15e3
+   xbump=0.345678*Lx
 
 sparse=False
 
@@ -126,10 +139,11 @@ rVnodes=[-1,1,1,-1,0,1,0,-1,0]
 sVnodes=[-1,-1,1,1,-1,0,1,0,0]
 
 cm=0.01
+km=1e3
 year=3600.*24.*365.
 Myear=1e6*year
 dt=1e4*year
-nstep=101
+nstep=21
 
 method=3
 vertical_only=False
@@ -226,6 +240,9 @@ if experiment==2 or experiment==4:
 if experiment==3 or experiment==5:
    uleft=0
    uright=+2.*cm/year
+if experiment==6 or experiment==7:
+   uleft=+1.*cm/year
+   uright=+1.*cm/year
 
 for i in range(0,NV):
     if xV[i]/Lx<eps:
@@ -260,6 +277,11 @@ if experiment==1:
    for i in range(NV-(2*nelx+1),NV):
        yV[i]+=1000.*np.cos(xV[i]/Lx*np.pi)
 
+if experiment==7:
+   for i in range(NV-(2*nelx+1),NV):
+       if xV[i]>xbump-width and xV[i]<xbump+width:
+          yV[i]+=1000.*np.cos((xV[i]-xbump)/width*np.pi/2 )
+
 #==============================================================================
 #==============================================================================
 # time stepping
@@ -278,6 +300,9 @@ for istep in range(0,nstep):
    print("----------------------------------")
    print("istep= ", istep)
    print("----------------------------------")
+
+   filename = 'bcsurf_{:04d}.ascii'.format(istep) 
+   bcsurffile=open(filename,"w")
 
    #################################################################
    # mesh deformation
@@ -379,6 +404,13 @@ for istep in range(0,nstep):
                  bob=u[counter]*nx[counter]+v[counter]*ny[counter]
                  bc_fix2[2*counter  ]=True ; bc_val2[2*counter  ]=bob*nx[counter]
                  bc_fix2[2*counter+1]=True ; bc_val2[2*counter+1]=bob*ny[counter]
+                 bcsurffile.write("%10e %10e %10e %10e %10e %10e %10e %10e %10e\n"
+                                   %(xV[counter]/km,yV[counter]/km,
+                                     nx[counter],ny[counter],
+                                     bob,
+                                     bob*nx[counter],bob*ny[counter],
+                                     u[counter]*nx[counter],
+                                     v[counter]*ny[counter]))
               counter += 1
 
       # build FE system
@@ -466,6 +498,8 @@ for istep in range(0,nstep):
    elevation[istep,0]=istep*dt/Myear
    elevation[istep,1]=np.min(yV[NV-(2*nelx+1):NV])-Ly
    elevation[istep,2]=np.max(yV[NV-(2*nelx+1):NV])-Ly
+                 
+   bcsurffile.close()
 
    #################################################################
    # build FE matrix

@@ -1,0 +1,102 @@
+set term pdf enhanced font "Times, 8pt"
+set grid
+set key outside
+
+set output 'surface.pdf'
+set xlabel 'x'
+set ylabel 'elevation (m)'
+plot[][]\
+ 'exp7_method3_80x20_bothdir/surface_topography_0000.ascii' w l lw 0.5 t 'istep=00',\
+ 'exp7_method3_80x20_bothdir/surface_topography_0010.ascii' w l lw 0.5 t 'istep=10',\
+ 'exp7_method3_80x20_bothdir/surface_topography_0020.ascii' w l lw 0.5 t 'istep=20',\
+
+
+#set output 'n_dov_v_000.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0000.ascii' u 1:5 w lp lw 0.5 ps .5 t 't=0'
+#set output 'n_dov_v_020.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0020.ascii' u 1:5 w lp lw 0.5 ps .5 t 't=0'
+#set output 'n_dov_v_040.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0040.ascii' u 1:5 w lp lw 0.5 ps .5 t 't=0'
+#set output 'n_dov_v_060.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0060.ascii' u 1:5 w lp lw 0.5 ps .5 t 't=0'
+#set output 'n_dov_v_80.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0080.ascii' u 1:5 w lp lw 0.5 ps .5 t 't=0'
+#set output 'n_dov_v_100.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0100.ascii' u 1:5 w lp lw 0.5 ps .5 t 't=0'
+
+##########################################################################################
+set key inside
+set xlabel 'x (km)'
+
+#set ylabel '(n.v)_x'
+#set output 'n_dov_v_x_001.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0001.ascii' u 1:8 w lp lw 0.5 ps .5 t 'istep=01'
+#set output 'n_dov_v_x_002.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0002.ascii' u 1:8 w lp lw 0.5 ps .5 t 'istep=02'
+#set output 'n_dov_v_x_003.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0003.ascii' u 1:8 w lp lw 0.5 ps .5 t 'istep=03'
+#set output 'n_dov_v_x_005.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0005.ascii' u 1:8 w lp lw 0.5 ps .5 t 'istep=05'
+#set output 'n_dov_v_x_010.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0010.ascii' u 1:8 w lp lw 0.5 ps .5 t 'istep=10'
+#set output 'n_dov_v_x_020.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0020.ascii' u 1:8 w lp lw 0.5 ps .5 t 'istep=20'
+
+#set ylabel '(n.v)_y'
+#set output 'n_dov_v_y_001.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0001.ascii' u 1:9 w lp lw 0.5 ps .5 t 't=01'
+#set output 'n_dov_v_y_002.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0002.ascii' u 1:9 w lp lw 0.5 ps .5 t 't=02'
+#set output 'n_dov_v_y_003.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0003.ascii' u 1:9 w lp lw 0.5 ps .5 t 't=03'
+#set output 'n_dov_v_y_005.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0005.ascii' u 1:9 w lp lw 0.5 ps .5 t 't=05'
+#set output 'n_dov_v_y_010.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0010.ascii' u 1:9 w lp lw 0.5 ps .5 t 't=10'
+#set output 'n_dov_v_y_020.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0020.ascii' u 1:9 w lp lw 0.5 ps .5 t 't=20'
+
+
+#set output 'n_dov_v_dot_v_000.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0000.ascii' u 1:2:($6/cmyr):($7/cmyr) lw .5 w vectors t '010'
+#set output 'n_dov_v_dot_v_010.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0010.ascii' u 1:2:($6/cmyr):($7/cmyr) lw .5 w vectors t '010'
+#set output 'n_dov_v_dot_v_100.pdf'
+#plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0100.ascii' u 1:2:($6/cmyr):($7/cmyr) lw .5 w vectors t '100'
+
+##########################################################################################
+cmyr=0.01/365/3600/24
+
+set ylabel '(n.v)n_x (cm/year)'
+set output 'n_dov_v_nx_001.pdf'
+plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0001.ascii' u 1:($6/cmyr) w lp lw 0.5 ps .5 t 'istep=01'
+set output 'n_dov_v_nx_002.pdf'
+plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0002.ascii' u 1:($6/cmyr) w lp lw 0.5 ps .5 t 'istep=02'
+set output 'n_dov_v_nx_003.pdf'
+plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0003.ascii' u 1:($6/cmyr) w lp lw 0.5 ps .5 t 'istep=03'
+set output 'n_dov_v_nx_005.pdf'
+plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0005.ascii' u 1:($6/cmyr) w lp lw 0.5 ps .5 t 'istep=05'
+set output 'n_dov_v_nx_010.pdf'
+plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0010.ascii' u 1:($6/cmyr) w lp lw 0.5 ps .5 t 'istep=10'
+set output 'n_dov_v_nx_020.pdf'
+plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0020.ascii' u 1:($6/cmyr) w lp lw 0.5 ps .5 t 'istep=20'
+
+set ylabel '(n.v)n_y (cm/year)'
+set output 'n_dov_v_ny_001.pdf'
+plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0001.ascii' u 1:($7/cmyr) w lp lw 0.5 ps .5 t 'istep=01'
+set output 'n_dov_v_ny_002.pdf'
+plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0002.ascii' u 1:($7/cmyr) w lp lw 0.5 ps .5 t 'istep=02'
+set output 'n_dov_v_ny_003.pdf'
+plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0003.ascii' u 1:($7/cmyr) w lp lw 0.5 ps .5 t 'istep=03'
+set output 'n_dov_v_ny_005.pdf'
+plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0005.ascii' u 1:($7/cmyr) w lp lw 0.5 ps .5 t 'istep=05'
+set output 'n_dov_v_ny_010.pdf'
+plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0010.ascii' u 1:($7/cmyr) w lp lw 0.5 ps .5 t 'istep=10'
+set output 'n_dov_v_ny_020.pdf'
+plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0020.ascii' u 1:($7/cmyr) w lp lw 0.5 ps .5 t 'istep=20'
+
+
+
+
+
+
