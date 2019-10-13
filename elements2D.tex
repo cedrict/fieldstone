@@ -435,6 +435,167 @@ Inside an element the local numbering of the nodes is as follows:
 \subsubsection{Linear basis functions for triangles in 2D ($P_1$)}
 \index{$P_1$}
 
+Velocities (or displacements) $(u,v)$ in a plane element are interpolated from nodal velocities
+$(u_i,v_i)$ using shape functions $N_i$ as follows,
+\[
+\left(
+\begin{array}{c}
+u \\v
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cccccc}
+N_1 & 0 & N_2 & 0 & N_3 & 0\\
+0 & N_1 & 0 & N_2 & 0 & N_3\\
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3
+\end{array}
+\right)
+\]
+This is the simplest 2‐D element, which is also called linear triangular element.
+\begin{center}
+\includegraphics[width=5cm]{images/shapefunctions/triangleFEM1}
+\end{center}
+
+For this element, we have three nodes at the vertices of the triangle, which are 
+numbered around the element in the counterclockwise direction. 
+Each node has two degrees of freedom (can move in the $x$ and $y$ directions). 
+The velocities $u$ and $v$ are assumed to be linear functions within the element, that is, 
+\[
+u=b_1 +b_2x+b_3y
+\quad\quad\quad
+v=b_4 +b_5x+b_6y
+\]
+where $b_i$ are constants to be determined and which depend on the triangle shape.
+Note that the strain rate components are then given by
+\[
+\dot\varepsilon_{xx}=b_2 
+\quad\quad
+\dot\varepsilon_{yy}=b_6 
+\quad\quad
+\dot\varepsilon_{xy}=(b_3+b_5)/2
+\]
+and are constant throughout the element.
+
+The velocities should satisfy the following six equations:
+\begin{eqnarray}
+u_1 &=& b_1 + b_2x_1+b_3y_1 \nn\\
+u_2 &=& b_1 + b_2x_2+b_3y_2 \nn\\
+u_3 &=& b_1 + b_2x_3+b_3y_3 \nn\\
+v_1 &=& b_4 + b_5x_1+b_6y_1 \nn\\
+v_2 &=& b_4 + b_5x_2+b_6y_2 \nn\\
+v_3 &=& b_4 + b_5x_3+b_6y_3 \nn
+\end{eqnarray}
+
+This can be re-written:
+\[
+\left(
+\begin{array}{c}
+u_1 \\ u_2 \\ u_3  
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+1 & x_1 & y_1 \\
+1 & x_2 & y_2 \\
+1 & x_3 & y_3 \\
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+b_1 \\ b_2 \\ b_3  
+\end{array}
+\right)
+\]
+In order to obtain $b_1,b_2,b_3$ we need to solve this system, or simply to compute the
+inverse of the 3x3 ${\bm M}$ matrix, as explained in \ref{sec:inv3x3}.
+
+We define $D=det({\bm M})$ and we get
+\[
+\left(
+\begin{array}{c}
+b_1 \\ b_2 \\ b_3  
+\end{array}
+\right)
+=
+\frac{1}{D}
+\tilde{\bm M}
+\cdot
+\left(
+\begin{array}{c}
+u_1 \\ u_2 \\ u_3  
+\end{array}
+\right)
+\]
+
+\[
+\left(
+\begin{array}{c}
+b_4 \\ b_5 \\ b_6  
+\end{array}
+\right)
+=
+\frac{1}{D}
+\tilde{\bm M}
+\cdot
+\left(
+\begin{array}{c}
+v_1 \\ v_2 \\ v_3  
+\end{array}
+\right)
+\]
+
+The matrix $\tilde{\bm M}$ writes:
+\[
+\tilde{\bm M}
+=
+\left(
+\begin{array}{ccc}
+  x_2y_3-x_3y_2  & -(y_3-y_2) &   x_3-x_2 \\
+-(x_1y_3-x_3y_1) &   y_3-y_1  & -(x_3-x_1) \\
+  x_1y_2-x_2y_1  & -(y_2-y_1) &   x_2-x_1
+\end{array}
+\right)
+\]
+ie,
+\[
+\tilde{\bm M}
+=
+\left(
+\begin{array}{ccc}
+x_2y_3-x_3y_2  & y_2-y_3 & x_3-x_2 \\
+x_3y_1-x_1y_3  & y_3-y_1 & x_1-x_3 \\
+x_1y_2-x_2y_1  & y_1-y_2 & x_2-x_1
+\end{array}
+\right)
+\]
+and finally the linear shape functions are given by:
+\begin{eqnarray}
+N_1(x,y) &=& \frac{1}{D}[(x_2y_3-x_3y_2) + (y_2-y_3)x + (x_3-x_2)y] \nn\\
+N_2(x,y) &=& \frac{1}{D}[(x_3y_1-x_1y_3) + (y_3-y_1)x + (x_1-x_3)y] \nn\\
+N_3(x,y) &=& \frac{1}{D}[(x_1y_2-x_2y_1) + (y_1-y_2)x + (x_2-x_1)y] \nn
+\end{eqnarray}
+Note that the area $A$ of the triangle is given by:
+\[
+A=\frac{1}{2}D = \frac{1}{2}
+\left|
+\begin{array}{ccc}
+1 & x_1 & y_1 \\
+1 & x_2 & y_2 \\
+1 & x_3 & y_3 
+\end{array}
+\right|
+\]
+
+If we now conder the reference element in the reduced coordinates space $(r,s)$:
+
 \begin{verbatim}
 2            
 |\
@@ -449,11 +610,13 @@ The basis polynomial is then
 f(r,s) = a + br + cs 
 \]
 and the shape functions:
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
 N_0(r,s) &=& 1-r-s \\
 N_1(r,s) &=& r \\
 N_2(r,s) &=& s 
 \end{eqnarray}
+\end{mdframed}
 
 %.....................................................................
 \subsubsection{Linear basis functions for quadrilaterals in 2D ($P_1$)}

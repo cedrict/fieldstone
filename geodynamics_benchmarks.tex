@@ -9,6 +9,7 @@ computational geodynamics community.
 \item 2D Rayleigh-Taylor convection/instability \cite{pros81,trab90,wesc92,popo92,soga01,bast02,taki03,bomh06}
       \cite{basd08,qurj09,saev10,como97,lezh11,lomw12,vyrc13,vaks97,bomh06,chtl13,deka08,mishin11,maie12}
       \cite{fusc13,devv00a,dadh07,demh19,aspectmanual}
+\item Thin layer entrainment (see Section~\ref{sec:tlentr})
 \item 3D Rayleigh-Taylor instability \cite{fukk08,vosc15}
 \item subduction problems \cite{scbe08,vack08,cehg14}
 \item numerical sandbox \cite{bbeg06,maie12,busa16,gltf18}
@@ -24,24 +25,26 @@ computational geodynamics community.
 \item Couette flow with shear heating \cite{egat10}
 \item Poiseuille-Couette flow \cite{fusc13}
 \item Lid driven Cavity \cite{foth79,ghgs82,bope98,kawa61,brsa06}
+\item Lid driven cavity with analytical solution (see Section~\ref{sec:ldc_anal})
 \item Wannier flow \cite{wann50,yemu99,cehg14}
 \item bending of elastic plate/beam \cite{cehg14,boht08a,vosc15,egat10,demh19}
 \item flexure of finite length elastic plate \cite{chtl13}
-\item thermal diffusion of half-cooling space \cite{chtl13}
+\item thermal diffusion of half-cooling space (see Section~\ref{sec:hcsp}) 
+\item thermal diffusion of Gaussian distribution (see compgeo notes, elefant manual)
 \item stress build-up in Maxwell visco-elastic material \cite{geyu07,chtl13,egat10,demh19}
 \item plastic oedometer test  \cite{chtl13}
 \item SolCx \cite{mamo08,demh19,aspectmanual}
 \item SolKz \cite{mamo08,demh19,aspectmanual}
 \item SolVi, inclusion \cite{kapo06,maie12,deka08,bepo10,vosc15,demh19,aspectmanual}
 \item channel flow (nonlinear) \cite{maie12,frbt19,gery10,egat10} (\bscthesis) \index{BSc Thesis}
-\item indentor, punch problem \cite{engl82,thfb08,mota77,gepd98,gltf18}. 
+\item indentor, punch problem (see Section~\ref{sec:punch})
       See also \cite{hukm03,fojd04,gerb12} for application.
 \item relaxation of sinusoidal topography \cite{crsg12,robh17}
 \item single layer visco-elastic folding \cite{vosc15}
 \item Three-dimensional folding of an embedded viscous layer in pure shear \cite{flet91}
 \item dam-break problem \cite{moeb99,bacp07,liir07,lemx08,homa09,anco09,grdn97,hini81,basd08}
 \item hot blob problem \cite{bugs09,fumt11} (see Section~\ref{sec:hotblob})
-\item visco-elastic flow past a cylinder in a channel \cite{bepo10}
+\item viscous(-elastic) flow around a cylinder in a channel (see Section~\ref{sec:flowcyl})
 \item Infinite plate with a circular hole \cite{rama16}
 \item Slope stability for elasto-plastic materials \cite{rama16}
 \item Time-dependent flow in an annulus \cite{galb19} (see Section \ref{sec:tdba})
@@ -56,9 +59,11 @@ computational geodynamics community.
 \item Layered flow with viscosity contrast \cite{aspectmanual} 
 \item Brittle thrust wedges benchmark \cite{busa16,aspectmanual}
 \item 2D linear viscous subduction \cite{scbe08,gltf18}
-\item mantle convection in 3D spherical shell \cite{rasz96,zhzm00,zhmt08,arfw14,liki19}
+\item mantle convection in 3D spherical shell \cite{rasz96,zhzm00,yoka04,chcc07,zhmt08,kaks08,arfw14,liki19}
 \item Benchmark of 3D numerical models of subduction against a laboratory experiment \cite{memm18}
 \item 3D subduction \cite{ozrs08}
+\item heat flow around a cylinder (see Section~\ref{sec:hfcyl})
+\item Laplace equation on a semi infinite plate (see Section~\ref{sec:lapplate})
 \end{itemize}
 
 \todo[inline]{go through my papers and add relevant ones here}
@@ -419,6 +424,200 @@ contrast $\alpha$.
 \includegraphics[width=8cm]{images/benchmark_hotblob/fumt11}\\
 {\scriptsize Simulation setting of BLOB problem. Isosurface and vectors represent temperature field \\and computed flow respectively. Taken from \cite{fumt11}}
 \end{center}
+
+%...........................................................
+\subsubsection{The punch/indentor problem in 2D} \label{sec:punch}
+
+The punch benchmark is one of the few boundary value problems involving plastic solids for which there exists an exact solution. 
+Such solutions are usually either for highly simplified geometries (spherical or axial symmetry, for instance) or simplified material models (such as rigid plastic solids) \cite{kacha04}.
+
+In this experiment, a rigid punch indents a rigid plastic half space; the slip line field theory gives 
+exact solutions as shown hereunder:
+
+\begin{center}
+\includegraphics[width=6cm]{images/benchmark_punch/thfb08}\\
+{\scriptsize Two-dimensional rigid punch indenting a rigid
+plastic half space. (a) Prandtl’s rigid plastic solution; (b)
+Hill’s solution. Taken from \cite{thfb08}}
+\end{center}
+
+
+The plane strain formulation of the equations and the detailed solution to the problem were derived in the Appendix of \cite{thfb08} and are also presented in \cite{gepd98}.
+
+The two dimensional punch problem has been extensively studied numerically for the past 40 years 
+\cite{zihl75,zihp95,chpe01,chan99,huhy99,yuti06,bufs08,raab07,gltf18} and has been used to draw a parallel with the tectonics of eastern China in the context of the 
+India-Eurasia collision \cite{tamo76,mota77,engl82}.
+It is also worth noting that it has been carried out in one form or another in series of 
+analogue modelling articles 
+concerning the same region, with a rigid indenter colliding with a rheologically stratified lithosphere \cite{peta88,daco88,jodc90}.
+
+ 
+Numerically, the one-time step punch experiment is performed on a two-dimensional
+domain of purely plastic von Mises material. 
+Given that the von Mises rheology yield criterion does not depend on pressure, the density of the material and/or the gravity vector is set to zero. Sides are set to free slip boundary conditions, the bottom to no slip, while a vertical velocity $(0,-v_p)$ is prescribed at the top boundary for nodes whose $x$ coordinate is within $[L_x/2-\delta/2,L_x/2+\delta/2]$. 
+
+The following parameters are used: $L_x=1$, $L_y=0.5$, $\mu_{min}=0.01$, $\mu_{max}=10^4$, $v_p=1$, $\delta=0.123456789$ 
+and the yield value of the material is set to $k=1$. 
+
+The analytical solution predicts that the angle of the shear bands stemming from the sides of the punch 
+is $\pi/4$, that the pressure right under the punch is $1+\pi$, 
+and that the velocity of the rigid blocks on each side of the punch is $v_p/\sqrt{2}$ 
+(this is simply explained by invoking conservation of mass).
+
+
+
+%................................................................................
+\subsubsection{Lid driven cavity with analytical solution} \label{sec:ldc_anal}
+
+This comes from \cite{elsw}(section 3.1.4). The velocity is prescribed to be
+\[
+{\vec v}=(2y(1-x^2) ; -2x(1-y^2) )
+\]
+with a domain given by $\Omega=[-1:1]\times[-1:1]$.
+The strainrate tensor is then given by:
+\[
+\dot{\bm \varepsilon}=
+\left(
+\begin{array}{cc}
+-4xy & -x^2+y^2  \\
+-x^2+y^2 & 4xy   
+\end{array}
+\right)
+\]
+The Stokes equation is then:
+\begin{eqnarray}
+-\frac{\partial p}{\partial x} + 2\mu ( -4y + 2y ) &=& \rho g_x \\
+-\frac{\partial p}{\partial y} + 2\mu ( -2x + 4x ) &=& \rho g_y
+\end{eqnarray}
+where we assume the viscosity $\mu=1$ to be constant in space.
+Assuming $g_x=0$, the first equation is
+\[
+\frac{\partial p}{\partial x} = - 4 y
+\]
+i.e.
+\[
+p(x,y)= -4  y x +f(y)
+\]
+Inserting this in the second equation:
+\[
+4  x - f'(y) + 4 x  = \rho g_y
+\]
+or,
+\[
+-f'(y) + 8  x  = \rho g_y
+\]
+Assuming $g_y=-1$, we get $\rho=-8x$ and then $f'(y)=0$ so $f(y)=C$ where $C$
+is a constant.
+Finally the pressure is given by:
+\[
+p(x,y)=-4  y x + C
+\]
+We add the following requirement: $\int_\Omega p(x,y) d\Omega =0$ so that $C=0$.
+
+\begin{center}
+\includegraphics[width=6cm]{images/benchmark_ldc_anal/velo.png}
+\includegraphics[width=6cm]{images/benchmark_ldc_anal/press.png}
+\end{center}
+
+\begin{eqnarray}
+v_{rms}^2 
+&=& \frac{1}{\Omega} \int_\Omega (u^2+v^2) d\Omega \nonumber\\
+&=& \frac{1}{4} \int_{-1}^{+1}\int_{-1}^{+1} (u^2+v^2) dxdy \nonumber\\
+&=& \frac{1}{4} \int_{-1}^{+1}\int_{-1}^{+1} [ 4y^2(1-x^2)^2 + 4x^2(1-y^2)^2   ] dxdy \nonumber\\
+&=& 
+\end{eqnarray}
+
+\todo[inline]{finish vrms calculation of benchmark}
+
+
+
+%................................................................................
+\subsubsection{Flow around a cylinder} \ref{sec:flowcyl}
+
+There are many variants of this problem: 2D \cite{turek}, 3D \cite{john02}.
+Many studies focus on Navier-Stokes flow since the cylinder generates
+vortices at high Reynolds numbers. Steady state solutions at low Re are shown 
+here\footnote{\url{up of the test and data measurement}}.
+Note the interesting benchmark for 2D visco-elastic flow in \cite{bepo10}.
+
+\begin{center}
+\includegraphics[width=7cm]{images/benchmark_flow_cylinder/turek}
+\includegraphics[width=7cm]{images/benchmark_flow_cylinder/john02}\\
+{\scriptsize Left: taken from \cite{turek}; Right: taken from \cite{john02}}
+\end{center}
+
+
+%................................................................................
+\subsubsection{Thin layer entrainment} \label{sec:tlentr})
+\input{benchmark_thin_layer_entrainment}
+
+
+
+%................................................................................
+\subsubsection{Heat flow around a cylinder} \label{sec:hfcyl}
+
+The domain is a 2D Cartesian box of size 8x4.
+The Stokes equations are not solved and the following velocity is prescribed:
+\begin{eqnarray}
+u(x,y)&=& U_\infty \left(  1-\frac{x^2-y^2}{(x^2+y^2)^2}  \right) \\
+v(x,y)&=& -2U_\infty \frac{xy}{(x^2+y^2)^2}
+\end{eqnarray}
+Boundary conditions are as follows:
+$T=0$ is imposed at the top and bottom of the domain. 
+$T=1$ is imposed inside a disc centered at (2,2) with radius 1.  
+Further: $k=0.01$, $c_p=1$, $\rho=1$, CFL number is 0.1.
+
+\begin{center}
+\includegraphics[width=5cm]{images/benchmark_heatcyl/u.png}
+\includegraphics[width=5cm]{images/benchmark_heatcyl/w.png}
+\includegraphics[width=5cm]{images/benchmark_heatcyl/vel.png}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{images/benchmark_heatcyl/temper_0000}
+\includegraphics[width=5cm]{images/benchmark_heatcyl/temper_0020}
+\includegraphics[width=5cm]{images/benchmark_heatcyl/temper_0040}\\
+\includegraphics[width=5cm]{images/benchmark_heatcyl/temper_0060}
+\includegraphics[width=5cm]{images/benchmark_heatcyl/temper_0080}
+\includegraphics[width=5cm]{images/benchmark_heatcyl/temper_0150}\\
+{\scriptsize Time evolution of the temperature field.
+Results obtained with ELEFANT (unpublished)}
+\end{center}
+
+
+%................................................................................
+\subsubsection{Thermal diffusion of half-cooling space} \label{sec:hcsp}
+
+This is a simple 1D experiment which solution is (for instance) available 
+in Turcotte \& Schubert \cite{tusc} and is also presented in \cite{chtl13}.
+
+The domain is 100km deep. $T_0=$0\degree C is prescribed a the surface and 
+$T_m=$1300\degree C is prescribed at the bottom. The initial temperature is $T(y)=1300$\degree C.
+The material is characterised by $\rho=1000$kg/m$^3$, $C_p=1000$J/kg/K, 
+$k=1$J/m/K. The time-dependent solution is given by:
+\begin{equation}
+T(y,t)=T_0 + (T_0-T_m) \text{erf} \left( \frac{y}{2\sqrt{k t /\rho C_p}}  \right)
+\end{equation}
+
+\begin{center}
+\includegraphics[width=6cm]{images/benchmark_hcsp/chtl13}\\
+{\scriptsize Thermal diffusion of half space cooling plate.
+The temperature profiles in the analytical solution at 1, 5,
+and 15 Myrs are plotted in solid lines. The results from
+DynEarthSol2D are plotted in circles. Taken from \cite{chtl13}}
+\end{center}
+
+
+%................................................................................
+\subsubsection{Laplace equation on a semi infinite plate} \label{sec:lapplate})
+\input{benchmark_laplace_plate}
+
+
+
+
+
+
+
 
 
 

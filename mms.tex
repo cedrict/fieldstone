@@ -125,24 +125,117 @@ and
 \begin{equation}
 p = xyz + x^3 y^3z - 5/32
 \end{equation}
-While it is then trivial to verify that this velocity field is divergence-free,  
+While it is then trivial to verify that this velocity field is divergence-free (see here under),  
 the corresponding body force of the Stokes equation can be computed by  
-inserting this solution into the momentum equation with a given viscosity $\mu$
+inserting this solution into the momentum equation with a given viscosity $\eta(x,y,z)$
 (constant or position/velocity/strain rate dependent). 
 The domain is a unit cube and velocity boundary conditions 
 simply use Eq. (\ref{eqbur}). 
 Note that the pressure fulfills 
 \[
-\int_\Omega p({\vec r}) d\Omega = 0.  
+\int_\Omega p(x,y,z) dV = 0.  
 \]
+Following \cite{busa13}, the viscosity
+is given by the smoothly varying function
+\begin{equation}
+\eta(x,y,z) = exp(1 - \beta(x(1 - x) + y(1 - y) + z(1 - z)))
+\end{equation}
+Choosing $\beta=0$ yields a constant velocity $\eta=e^1$ (and greatly simplifies the right-hand side).
+One can easily show that the ratio of viscosities $\eta^\star$
+in the system follows $\eta^\star=\exp(-3\beta/4)$ so that choosing $\beta=10$ yields
+$\eta^\star\simeq 1808$ and $\beta=20$ yields $\eta^\star\simeq 3.269\times10^6$.
+
+\begin{eqnarray}
+\frac{\partial \mu}{\partial x}&=&-4\beta(1-2x)\mu(x,y,z)\\
+\frac{\partial \mu}{\partial y}&=&-4\beta(1-2y)\mu(x,y,z)\\
+\frac{\partial \mu}{\partial z}&=&-4\beta(1-2z)\mu(x,y,z)
+\end{eqnarray}
 
 
+We can compute the components of the strainrate tensor:
+\begin{eqnarray}
+\dot{\varepsilon}_{xx} &=& 1+2x+y+3x^2y\\
+\dot{\varepsilon}_{yy} &=& 1+x+2y+2x^2y\\
+\dot{\varepsilon}_{zz} &=& -2-3x-3y-5x^2y\\ 
+\dot{\varepsilon}_{xy} &=&  \frac{1}{2} (x+y+2xy^2+x^3)\\
+\dot{\varepsilon}_{xz} &=&  \frac{1}{2} (-3z-10xyz  )\\
+\dot{\varepsilon}_{yz} &=&  \frac{1}{2} ( -3z -5x^2z )
+\end{eqnarray}
+and recover $\dot{\varepsilon}_{xx} +\dot{\varepsilon}_{yy} 
++\dot{\varepsilon}_{zz} =0$ as expected.
+
+We further have
+\begin{eqnarray}
+\frac{\partial}{\partial x} 2\dot{\varepsilon}_{xx}&=& 2(2 +6xy) \nonumber\\ 
+\frac{\partial}{\partial y} 2\dot{\varepsilon}_{xy}&=&  1+4xy \nonumber\\
+\frac{\partial}{\partial z} 2\dot{\varepsilon}_{xz}&=& -3 -10xy   \nonumber\\ 
+\frac{\partial}{\partial x} 2\dot{\varepsilon}_{xy}&=& 1+2y^2+3x^2 \nonumber\\ 
+\frac{\partial}{\partial y} 2\dot{\varepsilon}_{yy}&=& 2( 2+2x^2 ) \nonumber\\ 
+\frac{\partial}{\partial z} 2\dot{\varepsilon}_{yz}&=& -3-5x^2   \nonumber\\
+\frac{\partial}{\partial x} 2\dot{\varepsilon}_{xz}&=& -10yz \nonumber\\ 
+\frac{\partial}{\partial y} 2\dot{\varepsilon}_{yz}&=& 0  \nonumber\\ 
+\frac{\partial}{\partial z} 2\dot{\varepsilon}_{zz}&=& 2( 0 ) \nonumber
+\end{eqnarray}
+
+\begin{eqnarray}
+\frac{\partial p}{\partial x} &=& yz+3x^2y^3z\\
+\frac{\partial p}{\partial y} &=& xz +3x^3y^2z \\
+\frac{\partial p}{\partial z} &=& xy+x^3y^3
+\end{eqnarray}
+
+
+
+%________
 \paragraph{Constant viscosity}
 In this case, the right hand side writes:
 \begin{eqnarray}
+f_x 
+&=& 
+-\frac{\partial p}{\partial x} 
++2\eta\frac{\partial}{\partial x} \dot{\epsilon}_{xx}
++2\eta\frac{\partial}{\partial y} \dot{\epsilon}_{xy}
++2\eta\frac{\partial}{\partial z} \dot{\epsilon}_{xz} \nonumber\\
+&=&
+-(yz+3x^2y^3z)
++ 2(2 +6xy) + (1+4xy) + (-3 -10xy)   \\
+&=&
+-(yz+3x^2y^3z)
++\eta(2+6xy ) \\
+f_y 
+&=&  
+-\frac{\partial p}{\partial y} 
++2\mu\frac{\partial}{\partial x} \dot{\epsilon}_{xy}
++2\mu\frac{\partial}{\partial y} \dot{\epsilon}_{yy}
++2\mu\frac{\partial}{\partial z} \dot{\epsilon}_{yz}  \nonumber\\
+&=&
+-(xz +3x^3y^2z)
++
+\mu(1+2y^2+3x^2)
++\mu2( 2+2x^2 )  
++\mu(-3-5x^2) \\
+&=&
+-(xz +3x^3y^2z)
++ \mu ( 2 + 2x^2 +  2y^2)
+\\ 
+f_z 
+&=&
+-\frac{\partial p}{\partial z} 
++2\mu\frac{\partial}{\partial x} \dot{\epsilon}_{xz}
++2\mu\frac{\partial}{\partial y} \dot{\epsilon}_{yz}
++2\mu\frac{\partial}{\partial z} \dot{\epsilon}_{zz}  \nonumber\\
+&=&
+-(xy+x^3y^3) 
++ \mu (-10yz) + 0 + 0 \\
+&=&
+-(xy+x^3y^3) 
++\mu (-10yz) 
+\end{eqnarray}
+
+and finally
+\begin{eqnarray}
 {\bm f} &=& 
 -{\bm \nabla p} + 
-\mu
+\eta
 \left(
 \begin{array}{c}
 2+6xy \\
@@ -160,7 +253,7 @@ xy+x^3y^3
 \end{array}
 \right) 
 +
-\mu
+\eta
 \left(
 \begin{array}{c}
 2+6xy \\
@@ -171,24 +264,13 @@ xy+x^3y^3
 \nonumber
 \end{eqnarray}
 
-We can compute the components of the strainrate tensor:
-\begin{eqnarray}
-\dot{\varepsilon}_{xx} &=& 1+2x+y+3x^2y\\
-\dot{\varepsilon}_{yy} &=& 1+x+2y+2x^2y\\
-\dot{\varepsilon}_{zz} &=& -2-3x-3y-5x^2y\\ 
-\dot{\varepsilon}_{xy} &=&  \frac{1}{2} (x+y+2xy^2+x^3)\\
-\dot{\varepsilon}_{xz} &=&  \frac{1}{2} (-3z-10xyz  )\\
-\dot{\varepsilon}_{yz} &=&  \frac{1}{2} ( -3z -5x^2z )
-\end{eqnarray}
-Note that we of course have $\dot{\varepsilon}_{xx} +\dot{\varepsilon}_{yy} 
-+\dot{\varepsilon}_{zz} =0$.
-
+%________
 \paragraph{Variable viscosity}
 
 In this case, the right hand side is obtained through
 \begin{eqnarray}
 {\bm f} &=& -{\bm \nabla p} + 
-\mu
+\eta
 \left(
 \begin{array}{c}
 2+6xy \\
@@ -203,7 +285,7 @@ In this case, the right hand side is obtained through
 2 \dot{\varepsilon}_{xy} \\
 2 \dot{\varepsilon}_{xz}
 \end{array}
-\right) \frac{\partial \mu}{\partial x}
+\right) \frac{\partial \eta}{\partial x}
 +
 \left(
 \begin{array}{c}
@@ -211,7 +293,7 @@ In this case, the right hand side is obtained through
 2 \dot{\varepsilon}_{yy} \\
 2 \dot{\varepsilon}_{yz}
 \end{array}
-\right) \frac{\partial \mu}{\partial y}
+\right) \frac{\partial \eta}{\partial y}
 +
 \left(
 \begin{array}{c}
@@ -219,24 +301,9 @@ In this case, the right hand side is obtained through
 2 \dot{\varepsilon}_{yz} \\
 2 \dot{\varepsilon}_{zz} 
 \end{array}
-\right) \frac{\partial \mu}{\partial z}
+\right) \frac{\partial \eta}{\partial z}
 \end{eqnarray}
 
-
-The viscosity can be chosen to be a smooth varying function:
-\begin{equation}
-\mu = exp(1 - \beta(x(1 - x) + y(1 - y) + z(1 - z)))
-\end{equation}
-Choosing $\beta=0$ yields a constant velocity $\mu=e^1$ (and greatly simplifies the right-hand side).
-One can easily show that the ratio of viscosities $\mu^\star$
-in the system follows $\mu^\star=\exp(-3\beta/4)$ so that choosing $\beta=10$ yields
-$\mu^\star\simeq 1808$ and $\beta=20$ yields $\mu^\star\simeq 3.269\times10^6$.
-In this case
-\begin{eqnarray}
-\frac{\partial \mu}{\partial x}&=&-4\beta(1-2x)\mu(x,y,z)\\
-\frac{\partial \mu}{\partial y}&=&-4\beta(1-2y)\mu(x,y,z)\\
-\frac{\partial \mu}{\partial z}&=&-4\beta(1-2z)\mu(x,y,z)
-\end{eqnarray}
 
 
 \cite{busa13} has carried out this benchmark for $\beta=4$, i.e.: 
@@ -614,6 +681,114 @@ All the necessary functions to do this benchmark are in {\tt mms/vj3.py}:
 %-----------------------------------------------------------------------------
 \subsubsection{Analytical benchmark XII \label{mms11} - "PPC2"}
 
+
+
+%-----------------------------------------------------------------------------
+\subsubsection{Annulus with kinematical b.c.}
+
+The domain is a hollow cylinder or inner radius $R_{i}=$ and outside radius $R_{o}=1$.
+Boundary conditions are prescribed both on the inside and the outside with 
+${\vec \upnu}=(u,v)=(-y,x)$, or in 
+polar coordinates ${\vec \upnu}=r {\vec e}_\theta$.
+
+The gravity is radial and is set to
+\[
+g_x=-x/r  \quad\quad g_z=-y/r
+\]
+where $r=\sqrt{x^2+z^2}$, which in polar coordinates is ${\vec g}=-{\vec e}_r$.
+The viscosity is also set to 1, and the density is given by
+\[
+\rho(r)=r^n
+\]
+where $n$ is a positive or nul integer. The pressure is set to zero at the outer boundary.
+
+The gradient operator in polar coordinates writes:
+\[
+{\vec \nabla} = \frac{\partial }{\partial r} {\vec e}_r 
++ \frac{1}{r} \frac{\partial }{\partial \theta} {\vec e}_\theta 
+\]
+and the Laplacian operator:
+\[
+\Delta = \frac{\partial^2}{\partial r^2} + \frac{1}{r} \frac{\partial }{\partial r} + \frac{1}{r^2} \frac{\partial^2 }{\partial \theta^2}
+\]
+Note that in our case we need to take the Laplacian of a vector, and unfortunately the Laplacian of a vector is not the Laplacian 
+of the vector's coordinates in polar coordinates (unlike cartesian coordinates). 
+The Laplacian of a vector is given by\footnote{https://en.wikipedia.org/wiki/Vector\_Laplacian} 
+\[
+\nabla^2 \vec{A} = \nabla(\nabla\cdot\vec{A}) - \nabla\times(\nabla \times\vec{A})
+=
+\left(
+\begin{array}{l}
+\frac{\partial^2 A_r}{\partial r^2} + \frac{1}{r} \frac{\partial A_r}{\partial r} - \frac{1}{r^2} A_r  + \frac{1}{r^2} \frac{\partial^2 A_r}{\partial \theta^2}  - \frac{2}{r^2} \frac{\partial A_\theta}{\partial \theta} \\ \\
+\frac{\partial^2 A_\theta}{\partial r^2} + \frac{1}{r} \frac{\partial A_\theta}{\partial r} - \frac{1}{r^2} A_\theta  + \frac{1}{r^2} \frac{\partial^2 A_\theta}{\partial \theta^2}  + \frac{2}{r^2} \frac{\partial A_r}{\partial \theta} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{l}
+\Delta A_r \\ \\ \Delta A_\theta
+\end{array}
+\right)
+\]
+The Stokes equation writes:
+\[
+\mu \Delta {\vec \upnu} + \rho {\vec g} = {\vec 0 }
+\]
+
+
+The velocity solution is expected to be ${\vec \upnu}= r {\vec e}_\theta $.
+The Stokes equation in polar coordinates then writes:
+\[
+-\frac{\partial p}{\partial r} + \Delta v_r + \rho(r) (- 1)  = 0 
+\]
+\[
+-\frac{1}{r}\frac{\partial p}{\partial \theta} + \Delta v_\theta = 0
+\]
+Since $\Delta v_\theta = 0$, then $\frac{\partial p}{\partial \theta}=0$ and then the pressure is independent of $\theta$, 
+which is what we expect since the density distribution is radial. 
+We then focus on the first equation, and since $v_r=0$, we then obtain:
+\[
+\frac{\partial p}{\partial r}  = - \rho(r)
+\]
+
+\begin{itemize}
+\item If $\rho(r)=1$, then 
+\[
+\frac{\partial p}{\partial r}  = - 1
+\]
+yields $p(r)=-r+C$ where C is a constant determined by means of b.c. ($p(r=1)=0$) so finally
+\[
+\boxed{
+p(r)=1-r
+}
+\]
+
+\item If $\rho(r)=r$, then 
+\[
+\frac{\partial p}{\partial r}  = - r
+\]
+so that $p(r)=-\frac{1}{2}r^2 + C$ and likewise
+\[
+\boxed{
+p(r)=\frac{1}{2} (1- r^2)
+}
+\]
+\end{itemize}
+  
+In general, by taking $\rho(r)=r^n$ with $n=0,1,...$ one arrives to a pressure field given by 
+\[
+\boxed{
+p(r)=\frac{1}{n+1} (1- r^{n+1})
+}
+\]
+
+\begin{center}
+\includegraphics[width=6cm]{images/benchmark_annulus_mms/vel}
+\includegraphics[width=6cm]{images/benchmark_annulus_mms/press}
+\end{center}
+
+This benchmark is of course very simple and the fact that the solution is independent of $\theta$
+renders it not so useful. It has succesfully been implemented in ELEFANT.
 
 
 
