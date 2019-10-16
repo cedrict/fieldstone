@@ -53,15 +53,15 @@ think about subduction or rifting processes where materials end up moving 100's 
 and/or vertically), it leads to highly deformed elements, and in some case even bow-tied:
 
 \begin{center}
-\frame{\includegraphics[width=4.5cm]{images/freesurface/ball00}}
-\frame{\includegraphics[width=4.5cm]{images/freesurface/ball01}}
-\frame{\includegraphics[width=4.5cm]{images/freesurface/ball02}}\\
-\frame{\includegraphics[width=4.5cm]{images/freesurface/ball03}}
-\frame{\includegraphics[width=4.5cm]{images/freesurface/ball05}}
-\frame{\includegraphics[width=4.5cm]{images/freesurface/ball07}}\\
-\frame{\includegraphics[width=4.5cm]{images/freesurface/ball08}}
-\frame{\includegraphics[width=4.5cm]{images/freesurface/ball09}}
-\frame{\includegraphics[width=4.5cm]{images/freesurface/ball10}}\\
+\frame{\includegraphics[width=4.5cm]{images/freesurface/b00}}
+\frame{\includegraphics[width=4.5cm]{images/freesurface/b01}}
+\frame{\includegraphics[width=4.5cm]{images/freesurface/b02}}\\
+\frame{\includegraphics[width=4.5cm]{images/freesurface/b03}}
+\frame{\includegraphics[width=4.5cm]{images/freesurface/b05}}
+\frame{\includegraphics[width=4.5cm]{images/freesurface/b07}}\\
+\frame{\includegraphics[width=4.5cm]{images/freesurface/b08}}
+\frame{\includegraphics[width=4.5cm]{images/freesurface/b09}}
+\frame{\includegraphics[width=4.5cm]{images/freesurface/b10}}\\
 {\tiny Example of a free surface evolution above a sinking sphere. The isostatic rebound above the sphere 
 generates a cusp which, if no special measure is taken, ultimately leads to a bow-tied element. Once this 
 occurs the simulation stops since the mapping of the bow-tied element to the reference element yields to
@@ -293,11 +293,117 @@ by a test function $\vec{w}$ and integrating over the free surface part of the b
 =
 \int_{\Gamma_F} (\vec{w}\cdot\vec{n}) (\vec{\upnu}\cdot\vec{n}) d\Gamma \label{eq:fsaspect3}
 \end{equation}
-When discretized, this forms a linear system which can be
-solved for the mesh velocity $\vec{\upnu}_{\text{mesh}}$ 
-at the free surface. 
-This system, being nonzero over only the
-free surface, is relatively computationally inexpensive to solve.
+When discretized, this forms a linear system which can be solved for the mesh velocity 
+$\vec{\upnu}_{\text{mesh}}$ at the free surface. 
+This system, being nonzero over only the free surface, is relatively computationally inexpensive to solve.
+The authors unfortunately fail to mention that this approach is particularly 
+interesting since  the numerical quadrature used to compute the above integrals
+require the normal $\vec{n}$ between the nodes and these normals are well defined over each 
+segment joining two nodes!\footnote{what if $Q_k$ elements are used and nodes on the surface
+no more form a line?}
+
+I start from the following integral over a $Q_1$ element:
+\begin{eqnarray}
+\int_{\Gamma_e} N_i \vec{\upnu}_{mesh} d\Gamma
+&=& \int N_i \left( \begin{array}{c} u_{mesh} \\ v_{mesh} \end{array} \right) d\Gamma \\
+&=& \int N_i 
+\left( \begin{array}{cccc}  N_1 & 0 & N_2 & 0 \\ 0 & N_1 & 0 & N_2  \end{array}\right)\cdot
+\left( \begin{array}{c} u_1 \\ v_1 \\ u_2 \\ v_2 \end{array} \right) d\Gamma \\
+\end{eqnarray}
+Writing this equation for $N_i=N_1,N_2$ yields:
+\[
+\int_{\Gamma_e} 
+\left( \begin{array}{cccc}  
+N_1N_1 & 0 & N_1N_2 & 0 \\ 
+0 & N_1N_1 & 0 & N_1N_2 \\
+N_2N_1 & 0 & N_2N_2 & 0 \\ 
+0 & N_2N_1 & 0 & N_2N_2 
+\end{array}\right)
+\cdot \left( \begin{array}{c} u_1 \\ v_1 \\ u_2 \\ v_2 \end{array} \right) 
+d\Gamma 
+=
+\int_{\Gamma_e} 
+\left( \begin{array}{cccc}  
+N_1N_1 & 0 & N_1N_2 & 0 \\ 
+0 & N_1N_1 & 0 & N_1N_2 \\
+N_2N_1 & 0 & N_2N_2 & 0 \\ 
+0 & N_2N_1 & 0 & N_2N_2 
+\end{array}\right)
+d\Gamma \quad 
+\cdot \left( \begin{array}{c} u_1 \\ v_1 \\ u_2 \\ v_2 \end{array} \right) 
+\]
+Turning now to the right hand side %(I denote by $\vec{n}_e$ the normal to the element edge):
+\[
+\int_{\Gamma_e} N_i   (\vec{\upnu}\cdot\vec{n}_e)\vec{n}_e  d\Gamma
+\]
+which yields the following rhs:
+\[
+\int_{\Gamma_e}   (\vec{\upnu}\cdot\vec{n}_e)
+\left(\begin{array}{c}
+N_1 n_x \\ N_1 n_y \\ N_2 n_x \\ N_2 n_y
+\end{array}\right)
+ d\Gamma
+\]
+The elemental matrix and rhs must be built for each element and assembled in a 
+global matrix and rhs. The solution is the mesh velocity vector at all surface nodes.
+
+\newpage
+I start from the following integral over a $Q_1$ element:
+\begin{eqnarray}
+\int_{\Gamma_e} N_i \vec{\upnu}_{mesh} d\Gamma
+&=& \int N_i \left( \begin{array}{c} u_{mesh} \\ v_{mesh} \end{array} \right) d\Gamma \\
+&=& \int N_i 
+\left( \begin{array}{cccccc}  
+N_1 & 0 & N_2 & 0 & N_3 & 0\\ 
+0 & N_1 & 0 & N_2 & 0 & N_3 
+\end{array}\right)\cdot
+\left( \begin{array}{c} u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3 \end{array} \right) d\Gamma 
+\end{eqnarray}
+Writing this equation for $N_i=N_1,N_2,N_3$ yields:
+\[
+\int_{\Gamma_e} 
+\left( \begin{array}{cccccc}  
+N_1N_1 & 0 & N_1N_2 & 0 & N_1N_3 & 0 \\ 
+0 & N_1N_1 & 0 & N_1N_2 & 0 & N_1N_3 \\
+N_2N_1 & 0 & N_2N_2 & 0 & N_2N_3 & 0 \\ 
+0 & N_2N_1 & 0 & N_2N_2 & 0 & N_2N_3 \\
+N_3N_1 & 0 & N_3N_2 & 0 & N_3N_3 & 0 \\ 
+0 & N_3N_1 & 0 & N_3N_2 & 0 & N_3N_3 \\
+\end{array}\right)
+\cdot \left( \begin{array}{c} u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3 \end{array} \right) 
+d\Gamma 
+=
+\int_{\Gamma_e} 
+\left( \begin{array}{cccccc}  
+N_1N_1 & 0 & N_1N_2 & 0 & N_1N_3 & 0 \\ 
+0 & N_1N_1 & 0 & N_1N_2 & 0 & N_1N_3 \\
+N_2N_1 & 0 & N_2N_2 & 0 & N_2N_3 & 0 \\ 
+0 & N_2N_1 & 0 & N_2N_2 & 0 & N_2N_3 \\
+N_3N_1 & 0 & N_3N_2 & 0 & N_3N_3 & 0 \\ 
+0 & N_3N_1 & 0 & N_3N_2 & 0 & N_3N_3 
+\end{array}\right)
+d\Gamma \quad 
+\cdot \left( \begin{array}{c} u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3 \end{array} \right) 
+\]
+
+Turning now to the right hand side %(I denote by $\vec{n}_e$ the normal to the element edge):
+\[
+\int_{\Gamma_e} N_i   (\vec{\upnu}\cdot\vec{n}_e)\vec{n}_e  d\Gamma
+\]
+which yields the following rhs:
+\[
+\int_{\Gamma_e}   (\vec{\upnu}\cdot\vec{n}_e)
+\left(\begin{array}{c}
+N_1 n_x \\ N_1 n_y \\ 
+N_2 n_x \\ N_2 n_y \\
+N_3 n_x \\ N_3 n_y 
+\end{array}\right)
+ d\Gamma
+\]
+The elemental matrix and rhs must be built for each element and assembled in a 
+global matrix and rhs. The solution is the mesh velocity vector at all surface nodes.
+
+\newpage
 
 This yields what the author coin the 'quasi-implicit' scheme 
 (we have so far neglected any kind of stabilisation):

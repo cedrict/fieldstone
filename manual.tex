@@ -163,9 +163,11 @@ doi = "10.23644/uu.9209393.v1"}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The physical equations} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{nomenclature} %-----------------------------------------------------------------------------
+\subsection{Coordinate systems} \input{coordinate_systems} \label{ss:coordsys} %-------------------
 \subsection{A continuum mechanics primer}\input{continuum_mechanics} %-----------------------------
 \input{physics} %----------------------------------------------------------------------------------
 \subsection{Rheology in geodynamics} \input{rheology} %--------------------------------------------
+\subsection{Moment of inertia} \input{momentofinertia}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage
@@ -214,7 +216,7 @@ Solving the Stokes equations and the energy equations is one thing. Doing it in
 a geodynamical context requires a lot of additional techniques. 
 
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Dealing with a free surface (and mesh deformation)}\label{sec:freesurface} \input{freesurface} %--------------
+\subsection{Dealing with a free surface (and mesh deformation)}\label{sec:freesurface} \input{freesurface} 
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Convergence criterion for nonlinear iterations\label{sec:nlconvcrit}}\input{nlconvcrit} 
 \newpage %-----------------------------------------------------------------------------------------
@@ -287,6 +289,9 @@ a geodynamical context requires a lot of additional techniques.
 \subsection{Geometric multigrid} \input{gmg} %-----------------------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Computing depth \label{ss:depth}} \input{computing_depth} %----------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Imposing boundary conditions \label{ss:howtobc}} \input{howtobc} %---------------------
+
 
 
 %\subsection{Steady state thermal problems \label{ss_ss}} \input{steadystate} %-
@@ -852,6 +857,7 @@ Stone 57: 1D diffusion with DG-FEM
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Beautiful images from computational geodynamics} \input{beautiful} %%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{People} \input{people} 
 
 
 %==================================================================================================

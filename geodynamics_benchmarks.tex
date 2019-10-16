@@ -51,7 +51,7 @@ computational geodynamics community.
 \item Convection in 2D-box \cite{galb19} (see Section~\ref{sec:citb})
 \item Onset of convection \cite{aspectmanual}
 \item Polydiapirism \cite{wesc92,aspectmanual}
-\item Slab detachment benchmark \cite{schm11,aspectmanual,gltf18}
+\item Slab detachment benchmark (see Section~\ref{sec:slabdetach}) 
 \item Hollow sphere benchmark \cite{thie17}
 \item Annulus benchmark \cite{aspectmanual}
 \item Viscosity grooves benchmark \cite{aspectmanual}
@@ -443,27 +443,32 @@ Hill’s solution. Taken from \cite{thfb08}}
 
 
 The plane strain formulation of the equations and the detailed solution to the problem were derived in the Appendix of \cite{thfb08} and are also presented in \cite{gepd98}.
-
 The two dimensional punch problem has been extensively studied numerically for the past 40 years 
-\cite{zihl75,zihp95,chpe01,chan99,huhy99,yuti06,bufs08,raab07,gltf18} and has been used to draw a parallel with the tectonics of eastern China in the context of the 
-India-Eurasia collision \cite{tamo76,mota77,engl82}.
+\cite{zihl75,zihp95,chpe01,chan99,huhy99,yuti06,bufs08,raab07,gltf18} and has been used to draw a parallel with the tectonics of eastern China 
+in the context of the India-Eurasia collision \cite{tamo76,mota77,engl82}.
 It is also worth noting that it has been carried out in one form or another in series of 
-analogue modelling articles 
-concerning the same region, with a rigid indenter colliding with a rheologically stratified lithosphere \cite{peta88,daco88,jodc90}.
-
+analogue modelling articles concerning the same region, with a rigid indenter colliding with a rheologically 
+stratified lithosphere \cite{peta88,daco88,jodc90}.
  
 Numerically, the one-time step punch experiment is performed on a two-dimensional
 domain of purely plastic von Mises material. 
 Given that the von Mises rheology yield criterion does not depend on pressure, the density of the material and/or the gravity vector is set to zero. Sides are set to free slip boundary conditions, the bottom to no slip, while a vertical velocity $(0,-v_p)$ is prescribed at the top boundary for nodes whose $x$ coordinate is within $[L_x/2-\delta/2,L_x/2+\delta/2]$. 
-
-The following parameters are used: $L_x=1$, $L_y=0.5$, $\mu_{min}=0.01$, $\mu_{max}=10^4$, $v_p=1$, $\delta=0.123456789$ 
-and the yield value of the material is set to $k=1$. 
 
 The analytical solution predicts that the angle of the shear bands stemming from the sides of the punch 
 is $\pi/4$, that the pressure right under the punch is $1+\pi$, 
 and that the velocity of the rigid blocks on each side of the punch is $v_p/\sqrt{2}$ 
 (this is simply explained by invoking conservation of mass).
 
+
+\begin{center}
+\includegraphics[width=10cm]{images/benchmark_punch/gltf18}\\
+{\scriptsize The punch benchmark results after 500 nonlinear iterations for a rough punch (left column) 
+and a smooth punch (right column). (a,f) Viscosity field with analytical slip lines. 
+(b,g) Strain rate norm $\dot\varepsilon_e$ with measured shear band angles. 
+(c,h) Velocity magnitude with velocity vectors along the surface of the domain.
+(d,i) Pressure field. (e,j) Pressure along the surface of the domain (colored line) and analytical 
+solution values $\pi + 1$ and 1 (grey lines). Taken from \cite{gltf18}}
+\end{center}
 
 
 %................................................................................
@@ -613,7 +618,18 @@ DynEarthSol2D are plotted in circles. Taken from \cite{chtl13}}
 \input{benchmark_laplace_plate}
 
 
+%................................................................................
+\subsubsection{Slab detachment benchmark} \label{sec:slabdetach}
 
+\cite{schm11,aspectmanual,gltf18}
+
+\begin{center}
+\includegraphics[width=6cm]{images/benchmark_slabdetach/gltf18}\\
+{\scriptsize The detachment benchmark model setup of Schmalholz \cite{schm11}: 
+a symmetric system of nonlinear viscous lithosphere with a vertical slab extending into a linear 
+viscous mantle. The top and bottom boundaries are free slip, while the vertical boundaries are no slip.
+Taken from \cite{gltf18}.}
+\end{center}
 
 
 
