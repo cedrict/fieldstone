@@ -270,6 +270,18 @@ said velocity. However, it must be noted that the multiple occurences of the nor
 in the above equations is not without problem as the normal vectors are not well defined on the
 mesh vertices, which is where the mesh velocity is defined.
 
+This yields what the author coin the 'quasi-implicit' scheme 
+(we have so far neglected any kind of stabilisation):
+\begin{enumerate}
+\item Solve the Stokes system;
+\item Solve for the surface mesh velocity using Equation~\ref{eq:fsaspect3};
+\item Solve for the internal mesh velocity using Equations~\ref{eq:fsaspect1}, \ref{eq:fsaspect2}; 
+\item Advect the mesh forward in time using displacements determined by
+the forward Euler scheme: $\vec{x}(t^{n+1} ) = \vec{x}(t^n ) + \vec{\upnu}_{\text{mesh}} \delta t$.
+\end{enumerate}
+
+Note that Rose et al (2017) \cite{robh17} go further than this, propose a 'nonstandard finite difference scheme' and make a link with the stabilisation presented in Kaus et al (2010) \cite{kamm10}.
+
 The authors list two simple methods of computing the normals:
 \begin{itemize}
 \item one can take $\vec{n}$ as the direction of the local vertical,
@@ -347,8 +359,7 @@ N_1 n_x \\ N_1 n_y \\ N_2 n_x \\ N_2 n_y
 The elemental matrix and rhs must be built for each element and assembled in a 
 global matrix and rhs. The solution is the mesh velocity vector at all surface nodes.
 
-\newpage
-I start from the following integral over a $Q_1$ element:
+Note that the same can be formulated for $Q_2$ elements:
 \begin{eqnarray}
 \int_{\Gamma_e} N_i \vec{\upnu}_{mesh} d\Gamma
 &=& \int N_i \left( \begin{array}{c} u_{mesh} \\ v_{mesh} \end{array} \right) d\Gamma \\
@@ -400,22 +411,11 @@ N_3 n_x \\ N_3 n_y
 \end{array}\right)
  d\Gamma
 \]
-The elemental matrix and rhs must be built for each element and assembled in a 
-global matrix and rhs. The solution is the mesh velocity vector at all surface nodes.
 
-\newpage
 
-This yields what the author coin the 'quasi-implicit' scheme 
-(we have so far neglected any kind of stabilisation):
-\begin{enumerate}
-\item Solve the Stokes system;
-\item Solve for the surface mesh velocity using Equation~\ref{eq:fsaspect3};
-\item Solve for the internal mesh velocity using Equations~\ref{eq:fsaspect1}, \ref{eq:fsaspect2}; 
-\item Advect the mesh forward in time using displacements determined by
-the forward Euler scheme: $\vec{x}(t^{n+1} ) = \vec{x}(t^n ) + \vec{\upnu}_{\text{mesh}} \delta t$.
-\end{enumerate}
+Having obtained the boundary condition velocity for the Laplace equation, we can now turn our attention 
+to solving this ODE. 
 
-Note that Rose et al (2017) \cite{robh17} go further than this, propose a 'nonstandard finite difference scheme' and make a link with the stabilisation presented in Kaus et al (2010) \cite{kamm10}.
 
 In what follows I omit the subscript 'mesh' and focus on the 2D case. The components of the (mesh) velocity
 are given by
@@ -546,11 +546,6 @@ is 0, it is not taken into account.
 \end{remark}
 
 \todo[inline]{surface terms arising from the integration by parts are neglected. EXPLAIN WHY!}
-
-\todo[inline]{Anne says that in ASPECT Q1 functions are used and not Q2 ?}
-
-
-
 
 
 \begin{center}
