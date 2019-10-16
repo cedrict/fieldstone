@@ -1,0 +1,28 @@
+set term pdf enhanced font "Times, 8pt"
+set grid
+
+set output 'surface.pdf'
+set xlabel 'x'
+set ylabel 'elevation (m)'
+plot[0:][]\
+ '25x25/surface_topography_0000.ascii' w l lw 0.5 t 'istep=000',\
+ '25x25/surface_topography_0100.ascii' w l lw 0.5 t 'istep=100',\
+ '25x25/surface_topography_0200.ascii' w l lw 0.5 t 'istep=200',\
+ '25x25/surface_topography_0300.ascii' w l lw 0.5 t 'istep=300',\
+ '25x25/surface_topography_0400.ascii' w l lw 0.5 t 'istep=400',\
+ '25x25/surface_topography_0500.ascii' w l lw 0.5 t 'istep=500',\
+ '25x25/surface_topography_0600.ascii' w l lw 0.5 t 'istep=600',\
+ '25x25/surface_topography_0700.ascii' w l lw 0.5 t 'istep=700',\
+ '25x25/surface_topography_0800.ascii' w l lw 0.5 t 'istep=800',\
+ '25x25/surface_topography_0900.ascii' w l lw 0.5 t 'istep=900',\
+
+
+
+
+
+
+
+
+
+
+

@@ -124,9 +124,10 @@ asymmetric extension, vertical normal vector}
 
 The initial topography bump is given by
 \[
-y(x)=A \cos \left( \frac{x-x_0}{w} \frac{\pi}{2} \right)
+y(x)=A \left[ 1+ \cos \left( \frac{x-x_0}{w} \pi \right) \right]
 \]
-with $A=1000$m, $x_0=0.345678L_x$ and $w=$15km.
+with $A=1000$m, $x_0=0.345678L_x$ and $w=$15km. This is a somewhat ideal case 
+since the transition from flat to bump is very smooth.
 
 The viscosity is set to $10^{26}$Pa$\cdot$s so that the velocity of the 
 viscous relaxation of the topography is negligible with regards to the advection velocity
@@ -143,7 +144,7 @@ What follows is obtained when the full normal is used.
 After 20 timesteps the topography has been advected and we already observe some 
 visible asymmetry (and oscillations) on the surface:
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_54/images/exp7/surface.pdf}
+\includegraphics[width=11cm]{python_codes/fieldstone_54/images/exp7/surface.pdf}
 \end{center}
 
 On the following plots the left column shows $(\vec{\upnu}\cdot \vec{n})n_x$ 
@@ -174,7 +175,92 @@ we see that both components $(\vec{\upnu}\cdot \vec{n})n_x$ and $(\vec{\upnu}\cd
 \end{center}
 
 The inescapable conclusion is that the algorithm (as it is now implemented with the normal 
-vector) is incapable of advecting a bump. ANNE: please confirm with ASPECT too (since my 
-normal vector is geometric while yours in obtained from projection).
+vector) is incapable of advecting a bump. 
+
+{\bf NEW}: In what follows, the Stokes system is solved once, and the obtained velocity
+is used to compute the mesh velocity boundary condition for the Laplace system. 
+The resolution is set to 100x25. I have implemented the $L_2$ projection approach 
+of \cite{robh17} for both Q1 and Q2 elements. For such a smooth topography the 
+Q1 and geometrical approach (i.e. using geometrically computed normal vectors) are
+very similar although Q1 produces tiny undershoots. Q2 however generates oscillations
+which makes the computed velocity not suited as a boundary condition to move surface nodes. 
+
+From left to right: horizontal component, vertical component, and vector form 
+of the computed mesh velocity bc.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp7/100x25/umesh}
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp7/100x25/vmesh}\\
+\includegraphics[width=11cm]{python_codes/fieldstone_54/images/exp7/100x25/velmesh}
+\end{center}
+
+I haven't used any of the projections to carry out timestepping.
+
+%......................................................................
+\subsubsection*{Experiment 8 - pure advection test of a pyramidal bump}
+
+This is a nearly identical experiment as the previous one, but now the bump is 
+composed of two straight lines, of slopes $\pm 0.1$.
+Pyramid centered at $x=0.345678L_x$, of half width 15km. $\rho=3000$, $\eta=10^{26}$.
+Resolution 60x15. +1cm/yr prescribed on left and right. dt=10kyr. 
+
+\begin{center}
+\includegraphics[width=9cm]{python_codes/fieldstone_54/images/exp8/v}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_54/images/exp8/surface.pdf}\\
+\includegraphics[width=10cm]{python_codes/fieldstone_54/images/exp8/bc_vmesh.pdf}
+\end{center}
+
+Results are not crazy bad, but we should be able to do better ... the pyramid 
+becomes more and more deformed after only 20km of advection (but surprisingly retains its height). 
+
+
+
+{\bf NEW}: In what follows, the Stokes system is solved once, and the obtained velocity
+is used to compute the mesh velocity boundary condition for the Laplace system. 
+The resolution is set to 100x25. I have implemented the $L_2$ projection approach 
+of \cite{robh17} for both Q1 and Q2 elements. For such a broken line topography the 
+geometrical approach (i.e. using geometrically computed normal vectors) is better.
+Q1 and Q2 both produce under/overshoots/oscillations with no clear winner. 
+
+From left to right: horizontal component, vertical component, and vector form 
+of the computed mesh velocity bc.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp8/100x25/umesh}
+\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp8/100x25/vmesh}\\
+\includegraphics[width=11cm]{python_codes/fieldstone_54/images/exp8/100x25/velmesh}
+\end{center}
+
+I haven't used any of the projections to carry out timestepping.
+
+%......................................................................
+
+
+%......................................................................
+\subsubsection*{Experiment 9 - Rayleigh-Taylor instability}
+
+The setup is as follows:
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_54/images/exp9/robh17}
+\end{center}
+The sinusoidal perturbation is given by 
+\[
+y(x)=400e3 - 500 \cos( 2 \pi x /L_x)
+\]
+
+Because I do not have compositional fields or markers implemented in this code I have 
+to align the mesh with the initial sinusoidal perturbation and run the model in 
+Lagrangian mode. Also, as shown in \cite{kamm10}, this experiment is prone to drunken sailor 
+instabilities and I have therefore fixed dt=1000yr.
+As a consequence, the model will run until elements become too distorted. 
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_54/images/exp9/surface}
+\end{center}
+
+
 
 

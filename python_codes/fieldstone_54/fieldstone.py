@@ -57,9 +57,11 @@ def NNP(r,s):
 #experiment=4: extension symmetric + bottom inflow
 #experiment=5: extension asymmetric + bottom inflow
 #experiment=6: pure advection
-#experiment=7: pure advection + bump
+#experiment=7: pure advection + cosine bump
+#experiment=8: pure advection + pyramid bump
+#experiment=9: rayleigh-taylor 
 
-experiment=7
+experiment=8
 
 ndim=2
 ndofV=2
@@ -68,31 +70,28 @@ ndofP=1
 if experiment==1:
    Lx=512e3
    Ly=512e3
-   if int(len(sys.argv) == 4):
-      nelx=int(sys.argv[1])
-      nely=int(sys.argv[2])
-      visu=int(sys.argv[3])
-   else:
-      nelx = 24
-      nely = 24
-      visu = 1
+   nelx = 24
+   nely = 24
 
 if experiment==2 or \
    experiment==3 or \
    experiment==4 or \
    experiment==5 or \
    experiment==6 or \
-   experiment==7:
+   experiment==7 or \
+   experiment==8:
    Lx=128e3
    Ly=32e3
-   if int(len(sys.argv) == 4):
-      nelx=int(sys.argv[1])
-      nely=int(sys.argv[2])
-      visu=int(sys.argv[3])
-   else:
-      nelx = 80
-      nely = 20
-      visu = 1
+   nelx = 100
+   nely = 25
+
+if experiment==9:
+   Lx=500e3
+   Ly=500e3
+   nelx = 25
+   nely = 25
+
+visu = 1
 
 nel=nelx*nely
 
@@ -127,11 +126,16 @@ rho1=3200.
 eta1=1e22
 eta_ref=1e22
 
-if experiment==7:
+if experiment==7 or experiment==8:
    eta1=1e26
    eta_ref=1e26
    width=15e3
    xbump=0.345678*Lx
+   #width=16e3
+   #xbump=0.5*Lx
+
+if experiment==9:
+   eta_ref=1e20
 
 sparse=False
 
@@ -142,8 +146,8 @@ cm=0.01
 km=1e3
 year=3600.*24.*365.
 Myear=1e6*year
-dt=1e4*year
-nstep=21
+dt=2.5e3*year
+nstep=2
 
 method=3
 vertical_only=False
@@ -231,7 +235,7 @@ on_right_boundary = np.zeros(NV, dtype=np.bool)
 on_bottom_boundary = np.zeros(NV, dtype=np.bool)
 on_top_boundary = np.zeros(NV, dtype=np.bool)
 
-if experiment==1:
+if experiment==1 or experiment==9:
    uleft=0.
    uright=0.
 if experiment==2 or experiment==4:
@@ -240,7 +244,7 @@ if experiment==2 or experiment==4:
 if experiment==3 or experiment==5:
    uleft=0
    uright=+2.*cm/year
-if experiment==6 or experiment==7:
+if experiment==6 or experiment==7 or experiment==8:
    uleft=+1.*cm/year
    uright=+1.*cm/year
 
@@ -270,6 +274,36 @@ for i in range(0,NV):
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 
 #################################################################
+
+eta_e=np.zeros(nel,dtype=np.float64)
+rho_e=np.zeros(nel,dtype=np.float64)
+
+if experiment==1 or \
+   experiment==2 or \
+   experiment==3 or \
+   experiment==4 or \
+   experiment==5 or \
+   experiment==6:
+   eta_e[:]=eta1
+   rho_e[:]=rho1
+   
+if experiment==7 or \
+   experiment==8:
+   eta_e[:]=1e26
+   rho_e[:]=rho1
+
+if experiment==9:
+   for iel in range(0,nel):
+       if yV[iconV[0,iel]]<400e3:
+          eta_e[iel]=1e20
+          rho_e[iel]=3200
+       else:
+          eta_e[iel]=1e21
+          rho_e[iel]=3300
+       #end if
+   #end for
+
+#################################################################
 # define initial elevation 
 #################################################################
 
@@ -280,7 +314,35 @@ if experiment==1:
 if experiment==7:
    for i in range(NV-(2*nelx+1),NV):
        if xV[i]>xbump-width and xV[i]<xbump+width:
-          yV[i]+=1000.*np.cos((xV[i]-xbump)/width*np.pi/2 )
+          #yV[i]+=1000.*np.cos((xV[i]-xbump)/width*np.pi/2 )
+          yV[i]+=1000.*(1+np.cos((xV[i]-xbump)/width*np.pi ))
+
+if experiment==8:
+   for i in range(NV-(2*nelx+1),NV):
+       if xV[i]>xbump-width and xV[i]<=xbump:
+          yV[i]+=(xV[i]-(xbump-width))*0.2
+       if xV[i]>xbump and xV[i]<xbump+width:
+          yV[i]+=-(xV[i]-(xbump+width))*0.2
+
+if experiment==9:
+   for i in range(0,NV):
+       if np.abs(yV[i]-400e3)<1:
+          yV[i]-=5e3*np.cos(xV[i]/Lx*np.pi*2)
+   for iel in range(0,iel):
+       yV[iconV[5,iel]]=(yV[iconV[1,iel]]+yV[iconV[2,iel]])/2.
+       yV[iconV[7,iel]]=(yV[iconV[0,iel]]+yV[iconV[3,iel]])/2.
+       yV[iconV[8,iel]]=(yV[iconV[4,iel]]+yV[iconV[6,iel]])/2.
+
+   counter = 0
+   for j in range(0,2*nely+1):
+       for i in range(0,2*nelx+1):
+           xV[counter]=i*hx/2.
+           yV[counter]=j*hy/2. 
+           if yV[counter]<=400e3:
+              yV[counter]-= 5e3*yV[counter]/400e3  *np.cos(xV[counter]/Lx*np.pi*2)
+           else: 
+              yV[counter]-= 5e3*(Ly-yV[counter])/100e3  *np.cos(xV[counter]/Lx*np.pi*2)
+           counter += 1
 
 #==============================================================================
 #==============================================================================
@@ -329,6 +391,207 @@ for istep in range(0,nstep):
              yV[i]+=v[i]*dt
 
    if method==3: # aspect ALE
+
+      print('computing vmesh for bc with Q1 elements')
+
+      #first compute the L2 projection of the mesh velocity
+
+      A_fs = np.zeros(((nelx+1)*ndim,(nelx+1)*ndim),dtype=np.float64)
+      b_fs = np.zeros((nelx+1)*ndim,dtype=np.float64)
+      A_el =np.zeros((4,4),dtype=np.float64)
+      b_el =np.zeros((4),dtype=np.float64)
+      iconFS=np.zeros((2,nelx),dtype=np.int32)
+      umesh_fs = np.zeros((nelx+1),dtype=np.float64)
+      vmesh_fs = np.zeros((nelx+1),dtype=np.float64)
+      x_FS = np.zeros((nelx+1),dtype=np.float64)
+      y_FS = np.zeros((nelx+1),dtype=np.float64)
+
+      counter=0
+      for j in range(0,nely):
+          for i in range(0,nelx):
+              if j==nely-1: # if element is top row
+
+                 # compute normal to element edge
+                 x1=xV[iconV[3,counter]] ; y1=yV[iconV[3,counter]]
+                 x2=xV[iconV[2,counter]] ; y2=yV[iconV[2,counter]]
+                 n_x=-y2+y1
+                 n_y= x2-x1
+                 nnorm=np.sqrt(n_x**2+n_y**2)
+                 n_x/=nnorm
+                 n_y/=nnorm
+                 d12=np.sqrt((x1-x2)**2+(y1-y2)**2)
+                 jcob=d12/2
+
+                 #build connectivity array on the fly
+                 iconFS[0,i]=i+0 
+                 iconFS[1,i]=i+1 
+
+                 x_FS[iconFS[0,i]]=xV[iconV[3,counter]]
+                 x_FS[iconFS[1,i]]=xV[iconV[2,counter]]
+                 y_FS[iconFS[0,i]]=yV[iconV[3,counter]]
+                 y_FS[iconFS[1,i]]=yV[iconV[2,counter]]
+
+
+                 A_el[:,:]=0.
+                 b_el[:]=0.
+                 for iq in [-1,1]:
+                     rq=iq/np.sqrt(3.)
+                     weightq=1. ; JxW=weightq*jcob
+                     N1= 0.5*(1-rq) 
+                     N2= 0.5*(1+rq) 
+                     xq=N1*xV[iconV[3,counter]]+N2*xV[iconV[2,counter]]
+                     yq=N1*yV[iconV[3,counter]]+N2*yV[iconV[2,counter]]
+                     uq=N1*u[iconV[3,counter]]+N2*u[iconV[2,counter]]
+                     vq=N1*v[iconV[3,counter]]+N2*v[iconV[2,counter]]
+                     bob=uq*n_x+vq*n_y
+                     #print (xq,bob,'aaa')
+                     A_el[0,0]+=N1*N1*JxW ; A_el[0,2]+=N1*N2*JxW 
+                     A_el[1,1]+=N1*N1*JxW ; A_el[1,3]+=N1*N2*JxW 
+                     A_el[2,0]+=N2*N1*JxW ; A_el[2,2]+=N2*N2*JxW 
+                     A_el[3,1]+=N2*N1*JxW ; A_el[3,3]+=N2*N2*JxW 
+                     b_el[0]+=bob*N1*n_x*JxW
+                     b_el[1]+=bob*N1*n_y*JxW
+                     b_el[2]+=bob*N2*n_x*JxW
+                     b_el[3]+=bob*N2*n_y*JxW
+                 #end for iq
+      
+                 # assemble matrix A_fs and rhs b_fs
+                 for k1 in range(0,2):
+                     for i1 in range(0,ndofV):
+                         ikk=ndofV*k1          +i1
+                         m1 =ndofV*iconFS[k1,i]+i1
+                         for k2 in range(0,2):
+                             for i2 in range(0,ndofV):
+                                 jkk=ndofV*k2          +i2
+                                 m2 =ndofV*iconFS[k2,i]+i2
+                                 A_fs[m1,m2] += A_el[ikk,jkk]
+                             #end for
+                         #end for
+                         b_fs[m1]+=b_el[ikk]
+                     #end for i1
+                 #end for k1
+              #end if
+              counter+=1
+          #end for
+      #end for
+
+      print("     -> A_fs (m,M) %.4e %.4e " %(np.min(A_fs),np.max(A_fs)))
+      print("     -> b_fs (m,M) %.4e %.4e " %(np.min(b_fs),np.max(b_fs)))
+
+      sparse_matrix=sps.csr_matrix(A_fs)
+      sol=sps.linalg.spsolve(sparse_matrix,b_fs)
+      umesh_fs,vmesh_fs=np.reshape(sol[0:2*(nelx+1)],(nelx+1,2)).T
+
+      print("     -> umesh_fs (m,M) %.4e %.4e " %(np.min(umesh_fs),np.max(umesh_fs)))
+      print("     -> vmesh_fs (m,M) %.4e %.4e " %(np.min(vmesh_fs),np.max(vmesh_fs)))
+   
+      filename = 'velmesh_Q1_{:04d}.ascii'.format(istep) 
+      np.savetxt(filename,np.array([x_FS,y_FS,umesh_fs,vmesh_fs]).T)
+
+
+      ####################################################3
+      #3--6--2  <--- surface element
+      #|  |  |
+      #7--8--5 
+      #|  |  |
+      #0--4--1
+
+      print('computing vmesh for bc with Q2 elements')
+
+      A_fs = np.zeros((nnx*ndim,nnx*ndim),dtype=np.float64)
+      b_fs = np.zeros(nnx*ndim,dtype=np.float64)
+      A_el =np.zeros((6,6),dtype=np.float64)
+      b_el =np.zeros((6),dtype=np.float64)
+      iconFS=np.zeros((3,nelx),dtype=np.int32)
+      umesh_fs = np.zeros(nnx,dtype=np.float64)
+      vmesh_fs = np.zeros(nnx,dtype=np.float64)
+
+      counter=0
+      for j in range(0,nely):
+          for i in range(0,nelx):
+              if j==nely-1: # if element is top row
+
+                 # compute normal to element edge
+                 x1=xV[iconV[3,counter]] ; y1=yV[iconV[3,counter]]
+                 x2=xV[iconV[2,counter]] ; y2=yV[iconV[2,counter]]
+                 n_x=-y2+y1
+                 n_y= x2-x1
+                 nnorm=np.sqrt(n_x**2+n_y**2)
+                 n_x/=nnorm
+                 n_y/=nnorm
+                 d12=np.sqrt((x1-x2)**2+(y1-y2)**2)
+                 jcob=d12/2
+
+                 #build connectivity array on the fly
+                 iconFS[0,i]=2*i+0 
+                 iconFS[1,i]=2*i+1 
+                 iconFS[2,i]=2*i+2
+
+                 A_el[:,:]=0.
+                 b_el[:]=0.
+                 for iq in range(0,nqperdim):
+                     rq=qcoords[iq]
+                     weightq=qweights[iq] ; JxW=weightq*jcob
+                     N1= 0.5*rq*(rq-1.) 
+                     N2=     (1.-rq**2) 
+                     N3= 0.5*rq*(rq+1.) 
+                     xq=N1*xV[iconV[3,counter]]+N2*xV[iconV[6,counter]]+N3*xV[iconV[2,counter]]
+                     yq=N1*yV[iconV[3,counter]]+N2*yV[iconV[6,counter]]+N3*yV[iconV[2,counter]]
+                     uq=N1*u[iconV[3,counter]]+N2*u[iconV[6,counter]]+N3*u[iconV[2,counter]]
+                     vq=N1*v[iconV[3,counter]]+N2*v[iconV[6,counter]]+N3*v[iconV[2,counter]]
+                     bob=uq*n_x+vq*n_y
+                     #print (xq,bob)
+                     A_el[0,0]+=N1*N1*JxW ; A_el[0,2]+=N1*N2*JxW ; A_el[0,4]+=N1*N3*JxW
+                     A_el[1,1]+=N1*N1*JxW ; A_el[1,3]+=N1*N2*JxW ; A_el[1,5]+=N1*N3*JxW
+                     A_el[2,0]+=N2*N1*JxW ; A_el[2,2]+=N2*N2*JxW ; A_el[2,4]+=N2*N3*JxW
+                     A_el[3,1]+=N2*N1*JxW ; A_el[3,3]+=N2*N2*JxW ; A_el[3,5]+=N2*N3*JxW
+                     A_el[4,0]+=N3*N1*JxW ; A_el[4,2]+=N3*N2*JxW ; A_el[4,4]+=N3*N3*JxW
+                     A_el[5,1]+=N3*N1*JxW ; A_el[5,3]+=N3*N2*JxW ; A_el[5,5]+=N3*N3*JxW
+                     b_el[0]+=bob*N1*n_x*JxW
+                     b_el[1]+=bob*N1*n_y*JxW
+                     b_el[2]+=bob*N2*n_x*JxW
+                     b_el[3]+=bob*N2*n_y*JxW
+                     b_el[4]+=bob*N3*n_x*JxW
+                     b_el[5]+=bob*N3*n_y*JxW
+                 #end for iq
+          
+                 # assemble matrix A_fs and rhs b_fs
+                 for k1 in range(0,3):
+                     for i1 in range(0,ndofV):
+                         ikk=ndofV*k1          +i1
+                         m1 =ndofV*iconFS[k1,i]+i1
+                         for k2 in range(0,3):
+                             for i2 in range(0,ndofV):
+                                 jkk=ndofV*k2          +i2
+                                 m2 =ndofV*iconFS[k2,i]+i2
+                                 A_fs[m1,m2] += A_el[ikk,jkk]
+                             #end for
+                         #end for
+                         b_fs[m1]+=b_el[ikk]
+                     #end for i1
+                 #end for k1
+              #end if
+              counter+=1
+          #end for
+      #end for
+
+      print("     -> A_fs (m,M) %.4e %.4e " %(np.min(A_fs),np.max(A_fs)))
+      print("     -> b_fs (m,M) %.4e %.4e " %(np.min(b_fs),np.max(b_fs)))
+
+      sparse_matrix=sps.csr_matrix(A_fs)
+      sol=sps.linalg.spsolve(sparse_matrix,b_fs)
+      #sol=sps.linalg.spsolve(A_fs,b_fs)
+      umesh_fs,vmesh_fs=np.reshape(sol[0:2*nnx],(nnx,2)).T
+
+      print("     -> umesh_fs (m,M) %.4e %.4e " %(np.min(umesh_fs),np.max(umesh_fs)))
+      print("     -> vmesh_fs (m,M) %.4e %.4e " %(np.min(vmesh_fs),np.max(vmesh_fs)))
+   
+      filename = 'velmesh_Q2_{:04d}.ascii'.format(istep) 
+      np.savetxt(filename,np.array([xV[NV-(2*nelx+1):NV],yV[NV-(2*nelx+1):NV],umesh_fs,vmesh_fs]).T)
+
+      #################################################
+
+      print('solving Laplace problem for vmesh')
 
       NNNV   =np.zeros(mV,dtype=np.float64)           # shape functions V
       dNNNVdx=np.zeros(mV,dtype=np.float64)           # shape functions derivatives
@@ -405,7 +668,7 @@ for istep in range(0,nstep):
                  bc_fix2[2*counter  ]=True ; bc_val2[2*counter  ]=bob*nx[counter]
                  bc_fix2[2*counter+1]=True ; bc_val2[2*counter+1]=bob*ny[counter]
                  bcsurffile.write("%10e %10e %10e %10e %10e %10e %10e %10e %10e\n"
-                                   %(xV[counter]/km,yV[counter]/km,
+                                   %(xV[counter],yV[counter],
                                      nx[counter],ny[counter],
                                      bob,
                                      bob*nx[counter],bob*ny[counter],
@@ -508,6 +771,8 @@ for istep in range(0,nstep):
    #################################################################
    start = timing.time()
 
+   print('solving FEM problem')
+
    if sparse:
       A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
    else:   
@@ -567,11 +832,11 @@ for istep in range(0,nstep):
                                             [dNNNVdy[i],dNNNVdx[i]]]
 
                # compute elemental a_mat matrix
-               K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta1*weightq*jcob
+               K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta_e[iel]*weightq*jcob
 
                # compute elemental rhs vector
                for i in range(0,mV):
-                   f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*rho1*gy
+                   f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*rho_e[iel]*gy
 
                for i in range(0,mP):
                    N_mat[0,i]=NNNP[i]
@@ -788,10 +1053,14 @@ for istep in range(0,nstep):
    for iel in range(0,nel):
        vtufile.write("%10e \n" % vol[iel] )
    vtufile.write("</DataArray>\n")
-   #vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
-   #for iel in range(0,nel):
-   #    vtufile.write("%10e \n" % (eta(xc[iel],yc[iel])))
-   #vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
+   for iel in range(0,nel):
+       vtufile.write("%10e \n" % (eta_e[iel]))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
+   for iel in range(0,nel):
+       vtufile.write("%10e \n" % (rho_e[iel]))
+   vtufile.write("</DataArray>\n")
    vtufile.write("</CellData>\n")
    #####
    vtufile.write("<PointData Scalars='scalars'>\n")

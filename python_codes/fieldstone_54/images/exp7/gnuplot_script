@@ -1,15 +1,22 @@
 set term pdf enhanced font "Times, 8pt"
 set grid
-set key outside
 
 set output 'surface.pdf'
 set xlabel 'x'
 set ylabel 'elevation (m)'
-plot[][]\
+plot[0:128000][]\
  'exp7_method3_80x20_bothdir/surface_topography_0000.ascii' w l lw 0.5 t 'istep=00',\
  'exp7_method3_80x20_bothdir/surface_topography_0010.ascii' w l lw 0.5 t 'istep=10',\
  'exp7_method3_80x20_bothdir/surface_topography_0020.ascii' w l lw 0.5 t 'istep=20',\
+ 'exp7_method3_80x20_bothdir/surface_topography_0030.ascii' w l lw 0.5 t 'istep=30',\
+ 'exp7_method3_80x20_bothdir/surface_topography_0040.ascii' w l lw 0.5 t 'istep=40',\
+ 'exp7_method3_80x20_bothdir/surface_topography_0050.ascii' w l lw 0.5 t 'istep=50',\
+ 'exp7_method3_80x20_bothdir/surface_topography_0060.ascii' w l lw 0.5 t 'istep=60',\
+ 'exp7_method3_80x20_bothdir/surface_topography_0070.ascii' w l lw 0.5 t 'istep=70',\
+ 'exp7_method3_80x20_bothdir/surface_topography_0080.ascii' w l lw 0.5 t 'istep=80',\
+ 'exp7_method3_80x20_bothdir/surface_topography_0090.ascii' w l lw 0.5 t 'istep=90',\
 
+set key outside
 
 #set output 'n_dov_v_000.pdf'
 #plot[][] 'exp7_method3_80x20_bothdir/bcsurf_0000.ascii' u 1:5 w lp lw 0.5 ps .5 t 't=0'

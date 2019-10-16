@@ -1,0 +1,28 @@
+set term pdf enhanced font "Times, 8pt"
+set grid
+
+set xlabel 'x (m)'
+set ylabel 'u_{mesh} on surface'
+set output 'umesh.pdf'
+plot[20000:70000][]\
+'velmesh_Q1_0001.ascii' u 1:3 w lp lw .4 ps .3 t 'projection, Q1',\
+'velmesh_Q2_0001.ascii' u 1:3 w lp lw .4 ps .3 t 'projection, Q2',\
+'bcsurf_0001.ascii'     u 1:6 w lp lw .4 ps .3 t 'geometric',  
+
+set ylabel 'v_{mesh} on surface'
+set output 'vmesh.pdf'
+plot[20000:70000][]\
+'velmesh_Q1_0001.ascii' u 1:4 w lp lw .4 ps .3 t 'projection, Q1',\
+'velmesh_Q2_0001.ascii' u 1:4 w lp lw .4 ps .3 t 'projection, Q2',\
+'bcsurf_0001.ascii'     u 1:7 w lp lw .4 ps .3 t 'geometric', 
+
+set size square 
+set ylabel 'v_{mesh} on surface'
+set output 'velmesh.pdf'
+plot[20000:70000][10000:60000]\
+'velmesh_Q1_0001.ascii' u 1:2 w lp lt -1 ps .4 notitle,\
+'velmesh_Q1_0001.ascii' u 1:2:($3*3e14):($4*3e14) w vectors lw .3 lt 1 t 'projection, Q1',\
+'velmesh_Q2_0001.ascii' u 1:2:($3*3e14):($4*3e14) w vectors lw .3 lt 2 t 'projection, Q2',\
+'bcsurf_0001.ascii'     u 1:2:($6*3e14):($7*3e14) w vectors lw .3 lt 3 t 'geometric', 
+
+ 
