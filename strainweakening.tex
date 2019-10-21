@@ -56,4 +56,53 @@ tensorial invariant measure of the deformation which has occurred
 due to plastic yielding. Thus, the quantity $\varepsilon^p$ can be regarded as
 a simplified measure of material damage. 
 
+In Dyksterhuis et al \cite{dyrm07} a variant of the above formulation is used:
+\[
+f(\varepsilon)=
+\left\{
+\begin{array}{cc} 
+1-(1-a)(\varepsilon/\varepsilon_0)^n & \varepsilon \leq \varepsilon_0 \\
+a &  \varepsilon \geq \varepsilon_0 
+\end{array}
+\right.
+\]
+where $\varepsilon$ is the accumulated plastic strain, $\varepsilon_0$ is the
+saturation strain beyond which no further weakening
+takes place, $n$ is an exponent that controls the shape
+of the function and $a$ is a maximum value of strain
+weakening beyond which no further weakening
+occurs. This equation leads to the following plot:
+
+\begin{center}
+\includegraphics[width=6cm]{images/strainweakening/dyrm07}\\
+{\tiny Strain-softening behaviour showing strength weakening from 100 to 20\% 
+after an accumulated strain of 0.5, after which no further weakening occurs. 
+Dashed lines show the effect of the exponential parameter
+(En) on the curve. Taken from \cite{dyrm07}}
+\end{center}
+
+Although it is not specified in $\cite{dyrm07}$ what $f$ is, other users of the code 
+specify that the yield strength is given by 
+\[
+\sigma_y = (B_0 + B_1 p ) f(\varepsilon)
+\]
+where $p$ is the pressure, $B_0$ is the cohesion, or yield stress at
+zero pressure, and $B_p$ is the pressure dependence of the yield
+stress, equivalent to the friction coefficient in Byerlee’s law. 
+
+In \cite{yamz18} the authors take a different approach:
+\[
+C=C_0+C_1 \exp \left( -\frac{\varepsilon_{plast}}{\varepsilon_{ref}} \right)
+\]
+\[
+\mu=\mu_0+\mu_1 \exp \left( -\frac{\varepsilon_{plast}}{\varepsilon_{ref}} \right)
+\]
+where $C_0$ and $C_0+C_1$ represent the minimum and maximum cohesions, respectively;
+$\mu_0$ and $\mu_0+\mu_1$ represent the minimum and maximum frictional coefficients, respectively. 
+$\varepsilon_{plast}$ and $\varepsilon_{ref}$ represent accumulated plastic strain and 
+reference strain, respectively.
+
+
+
+
 \Literature: \cite{nigo15}

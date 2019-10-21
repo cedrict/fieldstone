@@ -226,6 +226,7 @@ deformation.
 The ALE method is used in the SOPALE, SULEC, FANTOM, ELEFANT, and ASPECT codes to name a few
 (see Appendix~\ref{app:codes}).
 
+
 \paragraph{The not-so-simple but rather elegant approach of ASPECT}
 
 What follows is mostly borrowed from Rose et al \cite{robh17}. Their approach 
@@ -235,7 +236,20 @@ meshes, and with various combinations of boundary conditions.
 Note that the authors specify that "for moderate mesh deformation, the mesh stays smooth and well
 conditioned, though it breaks down for large deformations".
 
-The mesh velocity in normal direction at the free surface (with
+
+This approach is obtained by simply imposing the obvious condition 
+that no particle (fluid parcel) can cross the free surface (because it is a material surface). 
+This can be imposed in a straightforward manner by using a Lagrangian description along this surface. 
+However, this condition may be relaxed by imposing only the necessary 
+condition: $\vec{\upnu}$ equal to zero along the normal to the boundary 
+(ie. $\vec{n}\cdot\vec{\upnu} = 0$, where $\vec{n}$ is the outward unit 
+normal to the fluid domain). 
+The mesh position, normal to the free surface, is determined from the normal component of 
+the particle velocity 
+and remeshing can be performed along the tangent; 
+see, for instance Huerta and Liu, 1989 \cite{huli88} or Braess and Wriggers, 2000 \cite{brwr00} 
+
+As mentioned above the mesh velocity in normal direction at the free surface (with
 unit normal $\vec{n}$) has to be consistent with the velocity of the Stokes
 velocity solution $\vec{\upnu}(t)$:
 \begin{equation}
@@ -309,10 +323,13 @@ When discretized, this forms a linear system which can be solved for the mesh ve
 $\vec{\upnu}_{\text{mesh}}$ at the free surface. 
 This system, being nonzero over only the free surface, is relatively computationally inexpensive to solve.
 The authors unfortunately fail to mention that this approach is particularly 
-interesting since  the numerical quadrature used to compute the above integrals
+interesting since the numerical quadrature used to compute the above integrals
 require the normal $\vec{n}$ between the nodes and these normals are well defined over each 
-segment joining two nodes!\footnote{what if $Q_k$ elements are used and nodes on the surface
-no more form a line?}
+segment joining two nodes!\footnote{what if $Q_k$ with $k>1$ elements are used and nodes on the surface
+no more form a line? }
+
+In what follows I present in some detail how to carry out the $L_2$ projection to arrive at the surface velocity
+for both $Q_1$ and $Q_2$ elements.
 
 I start from the following integral over a $Q_1$ element:
 \begin{eqnarray}
@@ -322,7 +339,7 @@ I start from the following integral over a $Q_1$ element:
 \left( \begin{array}{cccc}  N_1 & 0 & N_2 & 0 \\ 0 & N_1 & 0 & N_2  \end{array}\right)\cdot
 \left( \begin{array}{c} u_1 \\ v_1 \\ u_2 \\ v_2 \end{array} \right) d\Gamma \\
 \end{eqnarray}
-Writing this equation for $N_i=N_1,N_2$ yields:
+Writing this equation alternatively for $N_i=N_1,N_2$ yields:
 \[
 \int_{\Gamma_e} 
 \left( \begin{array}{cccc}  
@@ -345,10 +362,7 @@ d\Gamma \quad
 \cdot \left( \begin{array}{c} u_1 \\ v_1 \\ u_2 \\ v_2 \end{array} \right) 
 \]
 Turning now to the right hand side %(I denote by $\vec{n}_e$ the normal to the element edge):
-\[
-\int_{\Gamma_e} N_i   (\vec{\upnu}\cdot\vec{n}_e)\vec{n}_e  d\Gamma
-\]
-which yields the following rhs:
+$\int_{\Gamma_e} N_i   (\vec{\upnu}\cdot\vec{n}_e)\vec{n}_e  d\Gamma$, it yields the following rhs:
 \[
 \int_{\Gamma_e}   (\vec{\upnu}\cdot\vec{n}_e)
 \left(\begin{array}{c}
@@ -358,8 +372,7 @@ N_1 n_x \\ N_1 n_y \\ N_2 n_x \\ N_2 n_y
 \]
 The elemental matrix and rhs must be built for each element and assembled in a 
 global matrix and rhs. The solution is the mesh velocity vector at all surface nodes.
-
-Note that the same can be formulated for $Q_2$ elements:
+the same approach can be taken for $Q_2$ elements:
 \begin{eqnarray}
 \int_{\Gamma_e} N_i \vec{\upnu}_{mesh} d\Gamma
 &=& \int N_i \left( \begin{array}{c} u_{mesh} \\ v_{mesh} \end{array} \right) d\Gamma \\
@@ -370,9 +383,9 @@ N_1 & 0 & N_2 & 0 & N_3 & 0\\
 \end{array}\right)\cdot
 \left( \begin{array}{c} u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3 \end{array} \right) d\Gamma 
 \end{eqnarray}
-Writing this equation for $N_i=N_1,N_2,N_3$ yields:
-\[
-\int_{\Gamma_e} 
+Writing this equation alternatively for $N_i=N_1,N_2,N_3$ yields:
+\begin{eqnarray}
+&&\int_{\Gamma_e} 
 \left( \begin{array}{cccccc}  
 N_1N_1 & 0 & N_1N_2 & 0 & N_1N_3 & 0 \\ 
 0 & N_1N_1 & 0 & N_1N_2 & 0 & N_1N_3 \\
@@ -382,8 +395,8 @@ N_3N_1 & 0 & N_3N_2 & 0 & N_3N_3 & 0 \\
 0 & N_3N_1 & 0 & N_3N_2 & 0 & N_3N_3 \\
 \end{array}\right)
 \cdot \left( \begin{array}{c} u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3 \end{array} \right) 
-d\Gamma 
-=
+d\Gamma \nn\\ 
+&=&
 \int_{\Gamma_e} 
 \left( \begin{array}{cccccc}  
 N_1N_1 & 0 & N_1N_2 & 0 & N_1N_3 & 0 \\ 
@@ -395,13 +408,9 @@ N_3N_1 & 0 & N_3N_2 & 0 & N_3N_3 & 0 \\
 \end{array}\right)
 d\Gamma \quad 
 \cdot \left( \begin{array}{c} u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3 \end{array} \right) 
-\]
+\end{eqnarray}
 
-Turning now to the right hand side %(I denote by $\vec{n}_e$ the normal to the element edge):
-\[
-\int_{\Gamma_e} N_i   (\vec{\upnu}\cdot\vec{n}_e)\vec{n}_e  d\Gamma
-\]
-which yields the following rhs:
+The right hand side is then  
 \[
 \int_{\Gamma_e}   (\vec{\upnu}\cdot\vec{n}_e)
 \left(\begin{array}{c}
@@ -411,8 +420,6 @@ N_3 n_x \\ N_3 n_y
 \end{array}\right)
  d\Gamma
 \]
-
-
 Having obtained the boundary condition velocity for the Laplace equation, we can now turn our attention 
 to solving this ODE. 
 
@@ -479,17 +486,17 @@ N_i^\upnu \vec\nabla \cdot \vec\nabla v^h
 &=&\int_{\Omega_e}
 \left(
 \begin{array}{cccc}
-\partial_x N_i^\upnu & \partial_y N_i^\upnu & 0 & 0 \\ 
-0 & 0 & \partial_x N_i^\upnu & \partial_y N_i^\upnu  \\ 
+\frac{\partial N_i^\upnu}{\partial x} & \frac{\partial N_i^\upnu}{\partial y} & 0 & 0 \\ 
+0 & 0 & \frac{\partial N_i^\upnu}{\partial x} & \frac{\partial N_i^\upnu}{\partial y}  \\ 
 \end{array}
 \right)
 \!\cdot\!
 \left(
 \begin{array}{cccccccccc}
-\partial_x N_1^\upnu & 0  & \partial_x N_2^\upnu & 0  & \cdots & \partial_x N^\upnu_{m_\upnu} & 0 \\
-\partial_y N_1^\upnu & 0  & \partial_y N_2^\upnu & 0  & \cdots & \partial_y N^\upnu_{m_\upnu} & 0 \\
-0 & \partial_x N_1^\upnu  & 0& \partial_x N_2^\upnu  & \cdots & 0 & \partial_x N^\upnu_{m_\upnu}  \\
-0 & \partial_y N_1^\upnu  & 0& \partial_y N_2^\upnu  & \cdots & 0 & \partial_y N^\upnu_{m_\upnu}  
+\frac{\partial N_1^\upnu}{\partial x} & 0  & \frac{\partial N_2^\upnu}{\partial x} & 0  & \cdots & \frac{\partial N^\upnu_{m_\upnu}}{\partial x} & 0 \\ \\
+\frac{\partial N_1^\upnu}{\partial y} & 0  & \frac{\partial N_2^\upnu}{\partial y} & 0  & \cdots & \frac{\partial N^\upnu_{m_\upnu}}{\partial y} & 0 \\ \\
+0 & \frac{\partial N_1^\upnu}{\partial x}  & 0& \frac{\partial N_2^\upnu}{\partial x}  & \cdots & 0 & \frac{\partial N^\upnu_{m_\upnu}}{\partial x}  \\ \\
+0 & \frac{\partial N_1^\upnu}{\partial y}  & 0& \frac{\partial N_2^\upnu}{\partial y}  & \cdots & 0 & \frac{\partial N^\upnu_{m_\upnu}}{\partial y}  
 \end{array}
 \right) 
 \!\cdot\!
@@ -504,23 +511,23 @@ Writing this equation for $i=1,...m_\upnu$, we obtain:
 \int
 \left(
 \begin{array}{cccc}
-\partial_x N_1^\upnu & \partial_y N_1^\upnu & 0 & 0 \\ 
-0 & 0 & \partial_x N_1^\upnu & \partial_y N_1^\upnu  \\ 
-\partial_x N_2^\upnu & \partial_y N_2^\upnu & 0 & 0 \\ 
-0 & 0 & \partial_x N_2^\upnu & \partial_y N_2^\upnu  \\ 
+\frac{\partial N_1^\upnu}{\partial x} & \frac{\partial N_1^\upnu}{\partial y} & 0 & 0 \\ 
+0 & 0 & \frac{\partial N_1^\upnu}{\partial x} & \frac{\partial N_1^\upnu}{\partial y}  \\ 
+\frac{\partial N_2^\upnu}{\partial x} & \frac{\partial N_2^\upnu}{\partial y} & 0 & 0 \\ 
+0 & 0 & \frac{\partial N_2^\upnu}{\partial x} & \frac{\partial N_2^\upnu}{\partial y}  \\ 
 \vdots & \vdots & \vdots & \vdots \\
 \vdots & \vdots & \vdots & \vdots \\
-\partial_x N_{m_\upnu}^\upnu & \partial_y N_{m_\upnu}^\upnu & 0 & 0 \\ 
-0 & 0 & \partial_x N_{m_\upnu}^\upnu & \partial_y N_{m_\upnu}^\upnu  \\ 
+\frac{\partial N_{m_\upnu}^\upnu}{\partial x} & \frac{\partial N_{m_\upnu}^\upnu}{\partial y } & 0 & 0 \\ 
+0 & 0 & \frac{\partial N_{m_\upnu}^\upnu}{\partial x} & \frac{\partial N_{m_\upnu}^\upnu}{\partial y}  \\ 
 \end{array}
 \right)
 \cdot
 \left(
 \begin{array}{cccccccccc}
-\partial_x N_1^\upnu & 0  & \partial_x N_2^\upnu & 0  & \cdots & \partial_x N^\upnu_{m_\upnu} & 0 \\
-\partial_y N_1^\upnu & 0  & \partial_y N_2^\upnu & 0  & \cdots & \partial_y N^\upnu_{m_\upnu} & 0 \\
-0 & \partial_x N_1^\upnu  & 0& \partial_x N_2^\upnu  & \cdots & 0 & \partial_x N^\upnu_{m_\upnu}  \\
-0 & \partial_y N_1^\upnu  & 0& \partial_y N_2^\upnu  & \cdots & 0 & \partial_y N^\upnu_{m_\upnu}  
+\frac{\partial N_1^\upnu}{\partial x} & 0  & \frac{\partial N_2^\upnu}{\partial x} & 0  & \cdots & \frac{\partial N^\upnu_{m_\upnu}}{\partial x} & 0 \\ \\
+\frac{\partial N_1^\upnu}{\partial y} & 0  & \frac{\partial N_2^\upnu}{\partial y} & 0  & \cdots & \frac{\partial N^\upnu_{m_\upnu}}{\partial y} & 0 \\ \\
+0 & \frac{\partial N_1^\upnu}{\partial x}  & 0& \frac{\partial N_2^\upnu}{\partial x}  & \cdots & 0 & \frac{\partial N^\upnu_{m_\upnu}}{\partial x}  \\ \\
+0 & \frac{\partial N_1^\upnu}{\partial y}  & 0& \frac{\partial N_2^\upnu}{\partial y}  & \cdots & 0 & \frac{\partial N^\upnu_{m_\upnu}}{\partial y}  
 \end{array}
 \right) 
 \cdot
@@ -537,8 +544,7 @@ or,
 \[
 \left( \int_{\Omega_e} {\bm B}^T  \cdot {\bm B} \; dV \right)\cdot \vec{V} = \vec{0}
 \]
-where ${\bm B}$ is a $(ndim*ndim) \times (m_v*ndofV)$ matrix. This is implemented in 
-Stone 54.
+where ${\bm B}$ is a $(ndim*ndim) \times (m_v*ndofV)$ matrix. This is implemented in Stone 54 \ref{f54}.
 
 \begin{remark}
 The integration by parts should have a minus appear but since the left hand side 
@@ -548,18 +554,63 @@ is 0, it is not taken into account.
 \todo[inline]{surface terms arising from the integration by parts are neglected. EXPLAIN WHY!}
 
 
+\paragraph{Yet another approach \cite{dohp04}}
+The unknown position of free surfaces can be computed using the following approach:
+for the simple case of a single-valued function $h=h(x,y,t)$, a hyperbolic equation must be solved,
+\begin{equation}
+\frac{\partial h}{\partial t} + (\vec{ \upnu}\cdot \vec{ \nabla}) h = 0    \label{eqfs1}
+\end{equation}
+This is the kinematic equation of the surface and has been used, for instance, 
+by Ramaswamy and Kawahara (1987), Huerta and Liu, 1988b, 1990; Souli and Zolesio (2001).
+
+
+
+
+
+\underline{Idea:} Eq. (\ref{eqfs1}) is a simple advection equation. 
+One could also add a diffusion operator with a diffusion coefficient $D$.
+Low values of $D$ could be used to stabilise the surface while 
+higher values (possibly nonlinear ones) could be used to account for simple 
+surface processes. 
+
+\begin{equation}
+\frac{\partial h}{\partial t} + (\vec{\upnu}\cdot\vec{ \nabla}) h = D \Delta h  \label{eqfs2}
+\end{equation}
+
+Also, Hansen and Nielsen \cite{hanl00,hani03} write:
+During the entire model evolution surface processes act to re-distribute sediments. 
+These processes are modelled by a diffusion equation with a source term enabling the transport 
+of sediments to and from the model profile. The transport equation is written
+\[
+\dot{h}=\nabla\cdot (\kappa \nabla h) + \dot{s}(w)
+\]
+where $\kappa=200 km^2/Ma$ is the diffusivity of topography and $\dot{s}(w)$ 
+is a linear function of water depth. 
+
+
+
+
+
+
+
+
+The following pictures are taken from Naliboff et al \cite{nabp17} on the topic 
+of how complex fault interaction controls continental rifting. It is a beautiful
+example (among many) of the importance of free surface geodynamical expression
+and large deformation:
+
 \begin{center}
 \includegraphics[width=9cm]{images/freesurface/nabp17a}\\
 \includegraphics[width=9cm]{images/freesurface/nabp17b}\\
-\includegraphics[width=9cm]{images/freesurface/nabp17c}\\
-{\scriptsize One example among many of ALE use in long term tectonics. Taken from \cite{nabp17}}
+\includegraphics[width=14cm]{images/freesurface/nabp17c}\\
+{\scriptsize Taken from \cite{nabp17}}
 \end{center}
 
 
 
 
 \vspace{4cm}
-TOTAL WORK IN PROGRESS. Need to look at those papers:
+This is still WORK IN PROGRESS. I Need to look at those papers:
 \cite{huli88}
 \cite{bens89}
 \cite{dumg11}
@@ -570,5 +621,7 @@ TOTAL WORK IN PROGRESS. Need to look at those papers:
 \cite{maie12}
 \cite{guez96}\cite{zhgm96}
 \cite{elsp04}
+and talk about free surface stabilisation \cite{kamm10,qube11,dumg11,robh17}.
 
-stabilisation \cite{kamm10,qube11,dumg11}
+
+

@@ -191,6 +191,7 @@ I will for now simply point to the following ones:
 \cite{thmk14}
 \cite{galh18}
 \cite{galb19}.
+Also check the multiscale PIC in \cite{asmo12}
 
 \todo[inline]{write more about particle averaging and projection}
 
@@ -299,11 +300,10 @@ are computed as follows:
 This is the approach taken by the ASPECT developers \cite{krhb12,hedg17}. 
 Each material $i$ is represented by a compositional field $c_i$, 
 which takes values between 0 and 1.
-Each compositional field is then advected with the (prescribed or computed) Stokes velocity:
-\[
+Each compositional field is then advected with the (prescribed or computed) Stokes velocity \cite{chri92}:
+\begin{equation}
 \frac{\partial c_i}{\partial t} + {\bm v}\cdot {\bm \nabla }c_i = 0
-\]
-
+\end{equation}
 The value at a point (Finite element node or quadrature point) is 1 if it is in the 
 domain covered by the material $i$, and 0 otherwise.
 In one dimension, each compositional field is a Heavyside function. 
@@ -356,12 +356,41 @@ One rather old and popular filtering approach is the so-called Lenardic and Kaul
 
 %.............................................
 \subsubsection{The Marker Chain method}
-\index{Marker Chain} method. 
+\index{Marker Chain method} 
 
-Literature: \cite{woid78,chri82,chyu84,vaks97}
+In two dimensions, the idea is quite simple: each interface is discretised by means of a number
+of Lagrangian points (which may or may not vary in time). The points are numbered and 
+connected (think of the connectivity array of a 1D FEM code). In the case of small deformations, 
+and in the absence of in/out-flow boundaries, the method is reasonably trivial to implement, and 
+each couple of point defines a segment (and therefore its normal vector too) which can then be used
+to answer the question: "at this location, am I above or below this interface" or "am I this domain our
+outside this domain" (in the case that the interface does not reach any of the boundaries).
 
-More recently, it is used to track the free surface position in a FDM code \cite{chmd19}.
+This method becomes somewhat impractical when large deformation occurs or, for example, 
+when a domain splits into two (think: slab break off). One interface must then become two, 
+and it requires an algorithm capable of detecting the breakup of the surface and capable 
+of rebuilding/patching the new ones so that they can still be used further. 
+Note that in case of large deformation some markers may get further and further apart 
+from each other which makes for a poor representation of the surface. New markers should then 
+be added but the question of when and where must then be addressed.
 
+Also, switching to three dimensions can prove to be very difficult or simply very 
+costly: the generation of the inital marker position is trivial but their connectivity 
+can be complicated to establish at startup: for instance, a Stokes sphere will require
+a mesh made of triangles which maps exactly the surface of the sphere (see \cite{thie18,moma19} 
+for methods on how to efficiently produce such meshes). In the case of more complex 3D geometries
+this may prove nearly impossible to do. So will the problem of splitting a surface into two 
+(or merging two domains). \todo{I still have pics from the old days using DOUAR- include} 
+
+This method is usually coupled to Eulerian meshes (typically with FDM, but not only). 
+It was used in \cite{woid78} in the context of salt domes analysis and later in \cite{chri82,chyu84}.
+It is also used in \cite{vaks97} but little details are given about the algorithms used
+to track and update the chain in the presence of such large deformation.
+It is also used (athough coupled to level set functions) in the DOUAR code\cite{brtf08} 
+(see Section~\ref{app:codes}). Having worked myself on this code and having had to produce 
+complex initial triangulated surfaces for simulations (see for example \cite{lobh10}) it is 
+easy to understand why later users of this code did implement the marker-in-cell technique.
+More recently, it is used to track the free surface position in a FDM code \cite{dumy16,chmd19}.
 
 %..............................................
 \subsubsection{Hybrid methods}

@@ -153,15 +153,59 @@ employed in a boundary-fitted way, as shown hereunder:
 %...................................................
 \subsubsection{Delaunay triangulation and Voronoi cells, and triangle-based meshes}
 
+The topic of Delaunay\footnote{The triangulation is named after 
+Boris Delaunay for his work on this topic from 1934.}
+ triangulation is vast, but a simple definition can be written 
+as follows:
+"a Delaunay triangulation for a set P 
+of points in a plane is a triangulation DT(P) such that no point in P is  
+inside the circumcircle of any triangle in DT(P)." [wikipedia]
+Other properties of such triangulations are that they 
+maximize the minimum angle of all the angles of the 
+triangles in the triangulation.
+Note that for four or more 
+points on the same circle (e.g., the vertices of a rectangle) the Delaunay triangulation is  
+not unique and that points on a line also cannot yield a valid triangulation
+(for the simple reason that they do not form a triangle).
+
+\begin{center}
+\includegraphics[width=4cm]{images/meshes/delaunay}
+\includegraphics[width=4cm]{images/meshes/delaunay3}\\
+{\scriptsize a) A Delaunay triangulation in the plane with circumcircles shown.
+b) The Delaunay triangulation of a random set of 100 points in a plane.}
+\end{center}
+
+The Delaunay triangulation of a discrete point set P in general corresponds 
+to the dual graph of the Voronoi diagram for P. 
+A Voronoi diagram is composed of non-overlapping Voronoi cells which make a partition 
+of the plane. 
+For each point there is a corresponding region consisting of all points closer to that 
+point than to any other: this region is the Voronoi cell of that point.
+
+\begin{center}
+a)\includegraphics[width=4cm]{images/meshes/delaunay2}
+b)\includegraphics[width=4cm]{images/meshes/voronoi}\\
+{\scriptsize a) The Delaunay triangulation with all the circumcircles and their centers (in red).
+b) Connecting the centers of the circumcircles produces the Voronoi diagram (in red). }
+\end{center}
+
+The Delaunay triangulation is used in the DOUAR code which is based on a particle levelset function to track materials. These particles are connected by means of a Delaunay triangulation (usually in a plane at startup, and then in a local Euclidean geometry once the surface is deformed) \cite{brtf08}.
+
+\Literature: \cite{gebo}.
+
+
+Once a Delaunay triangulation has been obtained it can be used as a FEM mesh.  
 Triangle-based meshes are obviously better suited for simulations of complex geometries:
 \begin{center}
 \includegraphics[height=4cm]{images/meshes/tr1}
 \includegraphics[height=4cm]{images/meshes/dolfin}
 \end{center}
 
-A very practical 2D triangle mesher is the code {\sl Triangle}\footnote{\url{https://www.cs.cmu.edu/~quake/triangle.html}}
+A very practical 2D triangle mesher is the 
+code {\sl Triangle}\footnote{\url{https://www.cs.cmu.edu/~quake/triangle.html}}
 written by J.R. Shewchuk \cite{shew96}.
-Triangle is specialized for creating two-dimensional finite element meshes, but can also perform simpler related tasks such as forming Delaunay triangulations under various assumptions.
+Triangle is specialized for creating two-dimensional finite element meshes, but can 
+also perform simpler related tasks such as forming Delaunay triangulations under various assumptions.
 
 \begin{center}
 \includegraphics[width=13cm]{images/meshes/bugw01}\\
@@ -195,7 +239,6 @@ elastic medium \cite{fige95}}
 
 \todo[inline]{write about gmesh}
 
-\todo[inline]{write about Delaunay}
 
 %...........................
 \subsubsection{Tetrahedra}
