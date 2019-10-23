@@ -9,42 +9,40 @@ and a heat production term $H$.
 \end{center}
 
 The Heat transport equation writes
-\[
-\rho C_p ( \frac{\partial T}{\partial t} + {\vec v} \cdot {\vec \nabla} { T}) = 
+\begin{equation}
+\rho C_p \left( \frac{\partial T}{\partial t} + {\vec v} \cdot {\vec \nabla} { T} \right) = 
 {\vec \nabla} \cdot (k {\vec \nabla} T) + \rho H
-\]
+\end{equation}
 At steady state and in the absence of a velocity field, assuming
 that the material properties to be independent of time and space, and 
 assuming that
 there is no heat production ($H=0$), this equation
 simplifies to
-\[
+\begin{equation}
 \Delta T =0 
-\]
+\end{equation}
 Assuming the layer to be parallel to the $x$-axis, the temperature is
-\[
-T(x,y)=T(y)=\alpha T+ \beta
-\]
+$T(x,y)=T(y)=\alpha T+ \beta$. 
 In order to specify the constants $\alpha$ and $\beta$, we need two constraints.
 
 At the bottom of the layer $y=y_b$ a temperature $T_b$ is prescribed while a temperature
 $T_t$ is prescribed at the top with $y=y_t$. This ultimately yields a temperature field in
 the layer given by
+\begin{mdframed}[backgroundcolor=blue!5]
 \[
-\boxed{
 T(y) = \frac{T_t-T_b}{y_t-y_b}(y-y_b) + T_b
-}
 \]
+\end{mdframed}
 
 If now the heat production coefficient is not zero, the differential equation
 reads
-\[
+\begin{equation}
  k \Delta T + H = 0 
-\]
+\end{equation}
 The temperature field is then expected to be of the form
-\[
+\begin{equation}
 T(y)= - \frac{H}{2k} y^2 + \alpha y + \beta 
-\]
+\end{equation}
 Supplied again with the same boundary conditions, this leads to
 \[
 \beta=T_b + \frac{H}{2k} y_b^2 - \alpha y_b
@@ -133,9 +131,9 @@ in a hot mantle.
 
 McKenzie \cite{mcke69} derived such approximate initial field from the 
 steady-state energy equation in two dimensions:
-\[
+\begin{equation}
 \rho C_p \vec v \cdot \vec\nabla T = k \vec\nabla^2 T
-\]
+\end{equation}
 We denote by $T_l$ the temperature at the base of the lithosphere
 and $l$ its thickness (i.e. the thickness of the slab).
 
@@ -172,11 +170,11 @@ T'(x',z')= 1 + \sum_n C_n \exp \left[ \left( R-(R^2+n^2\pi^2)^{1/2} \right) x' \
 We now must make an assumption about the temperature on the left boundary ($x'=0$), 
 which is the temperature of the lithosphere. 
 For simplicity McKenzie assumes that $T'(x'=0,z')=1-z'$ so that $C_n=2(-1)^n/n\pi$ and finally
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-\boxed{
 T'(x',z')= 1 + 2\sum_n \frac{(-1)^n}{n \pi} \exp \left[ \left( R-(R^2+n^2\pi^2)^{1/2} \right) x' \right] \sin (n \pi z')
-}
 \end{equation}
+\end{mdframed}
 
 Let us build a simple temperature model for a $250\text{km}\times 50\text{km}$ slab, 
 with $\rho=3000$, $C_p=1250$, $k=3$. The python code is available in {\tt images/mckenzie/mckenzie1.py}.
@@ -185,7 +183,7 @@ with $\rho=3000$, $C_p=1250$, $k=3$. The python code is available in {\tt images
 \includegraphics[width=0.32\textwidth]{images/mckenzie/temperature_vel0p5.pdf}
 \includegraphics[width=0.32\textwidth]{images/mckenzie/temperature_vel1.pdf}
 \includegraphics[width=0.32\textwidth]{images/mckenzie/temperature_vel2.pdf}\\
-{\small Left to right: Dimensionless temperature $T'$ in a $250\text{km}\times 50\text{km}$ slab 
+{\captionfont Left to right: Dimensionless temperature $T'$ in a $250\text{km}\times 50\text{km}$ slab 
 for $v_x={0.5,1,2}\text{cm/year}$}
 \end{center}
 
@@ -207,20 +205,15 @@ velocity. The python code is available in {\tt images/mckenzie/mckenzie2.py}.
 \includegraphics[width=0.32\textwidth]{images/mckenzie/temperature2_vel0p5_phi30.pdf}
 \includegraphics[width=0.32\textwidth]{images/mckenzie/temperature2_vel1_phi30.pdf}
 \includegraphics[width=0.32\textwidth]{images/mckenzie/temperature2_vel2_phi30.pdf}\\
-{\small Left to right: temperature $T$ for $v_x={0.5,1,2}\text{cm/year}$ and $\phi=30\degree$.}
+{\captionfont Left to right: temperature $T$ for $v_x={0.5,1,2}\text{cm/year}$ and $\phi=30\degree$.}
 \end{center}
 
 \begin{center}
 \includegraphics[width=0.32\textwidth]{images/mckenzie/temperature2_vel1_phi15.pdf}
 \includegraphics[width=0.32\textwidth]{images/mckenzie/temperature2_vel1_phi30.pdf}
 \includegraphics[width=0.32\textwidth]{images/mckenzie/temperature2_vel1_phi45.pdf}\\
-{\small Left to right: temperature $T$ for $v_x=1\text{cm/year}$ and $\phi={15,30,45}\degree$.}
+{\captionfont Left to right: temperature $T$ for $v_x=1\text{cm/year}$ and $\phi={15,30,45}\degree$.}
 \end{center}
-
-
-
-
-
 
 
 

@@ -89,7 +89,7 @@ as illustrated in the following figure:
 
 \begin{center}
 \includegraphics[width=12cm]{images/dumg11}\\
-{\small Taken from \cite{dumg11}. The "4-cell" and "1-cell" schemes for projecting properties defined on the 
+{\captionfont Taken from \cite{dumg11}. The "4-cell" and "1-cell" schemes for projecting properties defined on the 
 markers (denoted by stars) onto
 a node (denoted by the solid circle). (A) The 4-cell scheme. The support of the interpolating function $N_i$ associated
 with node $i$ is indicated by the shaded region. Only markers within the support of node $i$ contribute to the projection
@@ -325,12 +325,12 @@ One rather old and popular filtering approach is the so-called Lenardic and Kaul
 \begin{center}
 \includegraphics[width=6cm]{images/compositions/leka93_filter1}\\
 \includegraphics[width=6cm]{images/compositions/leka93_filter2}\\
-{\small Taken from Lenardic and Kaula \cite{leka93}}
+{\captionfont Taken from Lenardic and Kaula \cite{leka93}}
 \end{center}
 
 \begin{center}
 \includegraphics[width=16cm]{images/compositions/leka93_filter3}\\
-{\small From FENICS book}
+{\captionfont From FENICS book}
 \end{center}
 
 \Literature: \cite{vyrc13}
@@ -391,6 +391,23 @@ It is also used (athough coupled to level set functions) in the DOUAR code\cite{
 complex initial triangulated surfaces for simulations (see for example \cite{lobh10}) it is 
 easy to understand why later users of this code did implement the marker-in-cell technique.
 More recently, it is used to track the free surface position in a FDM code \cite{dumy16,chmd19}.
+
+Finally, Christensen \cite{chri92} makes the following interesting comment:  
+"One might assume that different methods 
+of representing the discontinuity, for example, by a tracer 
+chain \cite{chyu84} or a cloud of 
+tracers, would solve these problems. However, the difficulties 
+arise not only from the way in which material boundaries are 
+represented. Physically, the rate of shear strain parallel to a 
+rheological boundary is discontinuous. Within the finite ele-
+ment scheme such jump can only be realized at an element 
+boundary. In an Eulerian scheme, where the discontinuity will 
+crosscut the elements, the jump in strain rate must be approx- 
+imated by a continuous variation, and effectively, the rheolog-
+ical properties on both sides of the discontinuity will be 
+averaged in some way within the element."
+
+
 
 %..............................................
 \subsubsection{Hybrid methods}

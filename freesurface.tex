@@ -82,7 +82,7 @@ geodynamics \cite{hach96b,mera80,labp00}.
 
 \begin{center}
 \includegraphics[width=8cm]{images/freesurface/labp00}\\
-{\small Taken from \cite{labp00}. Upper-crustal faulting, note that the bottom and the top surface are deformed.}
+{\captionfont Taken from \cite{labp00}. Upper-crustal faulting, note that the bottom and the top surface are deformed.}
 \end{center}
 
 
@@ -90,12 +90,12 @@ geodynamics \cite{hach96b,mera80,labp00}.
 \begin{minipage}{0.45\textwidth}
 \centering
 \includegraphics[width=7cm]{images/freesurface/guez96}\\
-{\small Taken from \cite{guez96}. Subduction model, topographic expression is shown without vertical exaggeration}. 
+{\captionfont Taken from \cite{guez96}. Subduction model, topographic expression is shown without vertical exaggeration}. 
 \end{minipage}\hfill
 \begin{minipage}{0.45\textwidth}
 \centering
 \includegraphics[width=6cm]{images/freesurface/gowo93}\\
-{\small Taken from \cite{gowo93}. Asymmetric lithospheric extension.}
+{\captionfont Taken from \cite{gowo93}. Asymmetric lithospheric extension.}
 \end{minipage}
 \end{center}
 
@@ -589,11 +589,6 @@ is a linear function of water depth.
 
 
 
-
-
-
-
-
 The following pictures are taken from Naliboff et al \cite{nabp17} on the topic 
 of how complex fault interaction controls continental rifting. It is a beautiful
 example (among many) of the importance of free surface geodynamical expression
@@ -603,10 +598,34 @@ and large deformation:
 \includegraphics[width=9cm]{images/freesurface/nabp17a}\\
 \includegraphics[width=9cm]{images/freesurface/nabp17b}\\
 \includegraphics[width=14cm]{images/freesurface/nabp17c}\\
-{\scriptsize Taken from \cite{nabp17}}
+{\captionfont Taken from \cite{nabp17}}
 \end{center}
 
+%-------------------------------------------------------
+\subsubsection{On the topic of moving internal nodes}
 
+Braess \& Wriggers \cite{brwr00} propose the following interesting algorithm:
+"A measure of the quality of a triangular mesh is the quotient of the
+outer radius $r_{out}$ and the inner radius $r_{in}$ 
+of each element. This quotient is important because it plays a
+certain role in a priori error estimates. If an element degenerates this quotient will approach infinity.
+Another important feature of good mesh is that no element becomes very large. With these considerations
+in mind the penalty function $W$ is defined:
+\begin{equation}
+W = \sum_{elts} \left( \frac{r_{out}}{r_{in}} \right)^m \left( \frac{r_{out}}{r_0} \right)^n
+\end{equation}
+where $m$, $n$ and $r_0$ are positive constants. 
+For our calculations we chose $m=3$, $n=1$ and $r_0=1$, but the results seem
+to depend only slightly on this choice. Whenever a triangle is distorted or very large, this function becomes
+very large. A similar penalty function was presented in \cite{jole97} for 
+four-node elements. In that case the angles
+of the elements are used to construct the penalty function.
+In order to regularize a distorted mesh the coordinates of the internal nodes will be chosen such that $W$ is
+minimized. It is not necessary to reach the global minimum, a rough approximation is sufficient.
+Therefore the minimization of the potential can be done efficiently with standard procedures and will not be
+discussed in any detail. This algorithm can also be applied to $h$-adaptive mesh-generation by choosing
+appropriate constants $r_0$ for each triangle."\footnote{Indeed, if $r_0$ is the same for all elements
+this parameter will not play any role at all in the minimisation process.} 
 
 
 \vspace{4cm}
@@ -621,6 +640,7 @@ This is still WORK IN PROGRESS. I Need to look at those papers:
 \cite{maie12}
 \cite{guez96}\cite{zhgm96}
 \cite{elsp04}
+\cite{brwr00}
 and talk about free surface stabilisation \cite{kamm10,qube11,dumg11,robh17}.
 
 

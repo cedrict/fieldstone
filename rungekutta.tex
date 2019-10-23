@@ -3,40 +3,46 @@ The RK methods are methods for the numerical integration of
 ODEs\footnote{\url{https://en.wikipedia.org/wiki/Runge-Kutta_methods}}. These methods are well 
 documented in any numerical analysis textbook and the reader is referred to \cite{gery10,tack10}.
 Any Runge-Kutta method is uniquely identified by its Butcher tableau (REF?) which contains 
-all necessary coefficients to build the algorithm.
+all necessary coefficients to build the algorithm.\todo{missing refs for Butcher tableau}
 
 The simplest Runge–Kutta method is the (forward) Euler method. Its tableau is:
 
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{tabular}{c|c}
 0 & \\
 \hline
  & 1
 \end{tabular}
+\end{mdframed}
 
-\index{midpoint method} \index{RK2}
+\index{Midpoint Method} \index{RK2}
 The standard second-order RK method method (also called midpoint method) is:
 
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{tabular}{c|cccccc}
 0 & \\
 1/2 & 1/2 \\
 \hline
  & 0 & 1 
 \end{tabular}
+\end{mdframed}
 
 \index{Heun's emthod}
 Another second-order RK method, called Heun's 
 method\footnote{\url{https://en.wikipedia.org/wiki/Heun's_method}} is follows:
 
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{tabular}{c|cccccc}
 0 & \\
 1 & 1 \\
 \hline
  & 1/2 & 1/2 
 \end{tabular}
+\end{mdframed}
 
-\index{RK3}
-A third-order RK method is as follows:
+A third-order RK method is as follows:\index{RK3}
 
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{tabular}{c|ccccc}
 0 & \\
 1/2 & 1/2 \\
@@ -44,11 +50,13 @@ A third-order RK method is as follows:
 \hline
  & 1/6 & 4/6  & 1/6
 \end{tabular}
+\end{mdframed}
 
 
 \index{RK4}
 The RK4 method falls in this framework. Its tableau is:
 
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{tabular}{c|cccccc}
 0 & \\
 1/2 & 1/2 \\
@@ -57,11 +65,13 @@ The RK4 method falls in this framework. Its tableau is:
 \hline
  & 1/6 & 1/6 & 1/3 & 1/6 
 \end{tabular}
+\end{mdframed}
 
 A slight variation of the standard RK4 method is also due to Kutta in 1901 and is called the 3/8-rule. 
 Almost all of the error coefficients are smaller than in the standard method but it requires slightly more FLOPs 
 per time step. Its Butcher tableau is
 
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{tabular}{c|cccccc}
 0 & \\
 1/3 & 1/3 \\
@@ -70,14 +80,16 @@ per time step. Its Butcher tableau is
 \hline
  & 1/8 & 3/8 & 3/8 & 1/8 
 \end{tabular}
+\end{mdframed}
 
 
 \index{RK45} \index{Runge-Kutta-Fehlberg method}
 The following method is called the Runge-Kutta-Fehlberg method and is 
 commonly abbreviated 
-RKF45\footnote{\url{https://en.wikipedia.org/wiki/Runge-Kutta-Fehlberg_method}}
-. Its Butcher tableau is as follows: 
+RKF45\footnote{\url{https://en.wikipedia.org/wiki/Runge-Kutta-Fehlberg_method}}. 
+Its Butcher tableau is as follows: 
 
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{tabular}{c|cccccc}
 0 & \\
 1/4 	&1/4\\ 
@@ -89,6 +101,7 @@ RKF45\footnote{\url{https://en.wikipedia.org/wiki/Runge-Kutta-Fehlberg_method}}
 &16/135 	&0 		&6656/12825 	&28561/56430 	&-9/50& 	2/55\\
 &25/216 	&0 	&1408/2565 	&2197/4104 	&-1/5 	&0 
 \end{tabular}
+\end{mdframed}
 
 
 The first row of coefficients at the bottom of the table gives the fifth-order accurate method, and the second row gives the fourth-order accurate method. 
@@ -146,7 +159,7 @@ Maierova \cite{maie12} has carried out this experiment for the above Runge-Kutta
 
 \begin{center}
 \includegraphics[height=4cm]{images/rk/maie12a}\\
-{\small Model domain with particles colored at three
+{\captionfont Model domain with particles colored at three
 different time-steps: (A) t = 0 (initial position of particles), (B) t = 50, and (C) t = 200.
 The advection is computed using the fourth-order Runge-Kutta scheme. Taken from \cite{maie12}}
 \end{center}
@@ -154,13 +167,13 @@ The advection is computed using the fourth-order Runge-Kutta scheme. Taken from 
 \begin{center}
 \includegraphics[height=4cm]{images/rk/maie12b}
 \includegraphics[height=4cm]{images/rk/maie12c}\\
-{\small The same plot as above, but for different advection schemes at t = 100.
+{\captionfont The same plot as above, but for different advection schemes at t = 100.
 Advection was computed using (A) the fourth-order Runge-Kutta scheme, (B) the mid-
 point method, (C) Heun’s method and (D) the explicit Euler method. Taken from \cite{maie12}}
 \end{center}
 
 
-\bscthesis \index {BSc Thesis}
+\bscthesis \index{BSc Thesis}
 
 
 

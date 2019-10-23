@@ -26,7 +26,7 @@ values of the surface are recorded over time.
 \begin{center}
 \includegraphics[width=7.5cm]{python_codes/fieldstone_54/images/exp1/u}
 \includegraphics[width=7.5cm]{python_codes/fieldstone_54/images/exp1/v}\\
-{\scriptsize velocity field at $t=0$ with resolution 24x24}
+{\captionfont velocity field at $t=0$ with resolution 24x24}
 \end{center}
 
 The results hereunder are obtained for all three methods at two different resolutions (16x16 
@@ -47,7 +47,7 @@ d) \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/vrms_vert.
    \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/vrms_full.pdf}\\
 e) \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/surface_topography_200_vert.pdf}
    \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/surface_topography_200_full.pdf}\\
-{\scriptsize 
+{\captionfont 
 a) min/max of free surface topo as a function of time; 
 b) free surface topo maximum (in log scale) as a function of time; 
 c) measured volume of the domain with numerical quadrature normalised by the expected volume $L_xL_y$;
@@ -64,7 +64,7 @@ Extensional boundary conditions are applied. In the first case, a 1cm/yr horizon
 
 \begin{center}
 \includegraphics[width=13cm]{python_codes/fieldstone_54/images/exp2-3/vel0}\\
-{\scriptsize Velocity field for both experiments at $t=0$.}
+{\captionfont Velocity field for both experiments at $t=0$.}
 \end{center}
 
 
@@ -74,14 +74,14 @@ $n_y=1$) while 'both dir' stands for the use of dynamically computed normal vect
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp2-3/volume.pdf}
 \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp2-3/surface.pdf}\\
-{\scriptsize Left: time evolution of the normalised volume for both boundary condition types; Right: surface at the end of the simulation.}
+{\captionfont Left: time evolution of the normalised volume for both boundary condition types; Right: surface at the end of the simulation.}
 \end{center}
 
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp2-3/vrms.pdf}
 \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp2-3/elevation.pdf}\\
-{\scriptsize Left: Root mean square velocity as a function of time; Right: time evolution of the elevation (min and max virtually indistinguishable).} 
+{\captionfont Left: Root mean square velocity as a function of time; Right: time evolution of the elevation (min and max virtually indistinguishable).} 
 \end{center}
 
 
@@ -102,7 +102,7 @@ We can conclude that the 'vertical movement only' conserves volume/mass better a
 
 \begin{center}
 \includegraphics[width=9cm]{python_codes/fieldstone_54/images/exp4-5/v}\\
-{\scriptsize Top to bottom: 
+{\captionfont Top to bottom: 
 symmetric extension, full normal vector; 
 symmetric extension, vertical normal vector; 
 asymmetric extension, full normal vector; 
@@ -116,7 +116,7 @@ asymmetric extension, vertical normal vector}
 \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp6/velp}\\
 \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp6/surface.pdf}
 \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp6/elevation.pdf}\\
-{\scriptsize Results after 100 time steps = 1Myr}
+{\captionfont Results after 100 time steps = 1Myr}
 \end{center}
 
 %...........................................................
@@ -177,7 +177,7 @@ we see that both components $(\vec{\upnu}\cdot \vec{n})n_x$ and $(\vec{\upnu}\cd
 The inescapable conclusion is that the algorithm (as it is now implemented with the normal 
 vector) is incapable of advecting a bump. 
 
-{\bf NEW}: In what follows, the Stokes system is solved once, and the obtained velocity
+In what follows, the Stokes system is solved once, and the obtained velocity
 is used to compute the mesh velocity boundary condition for the Laplace system. 
 The resolution is set to 100x25. I have implemented the $L_2$ projection approach 
 of \cite{robh17} for both Q1 and Q2 elements. For such a smooth topography the 
@@ -218,7 +218,7 @@ becomes more and more deformed after only 20km of advection (but surprisingly re
 
 
 
-{\bf NEW}: In what follows, the Stokes system is solved once, and the obtained velocity
+In what follows, the Stokes system is solved once, and the obtained velocity
 is used to compute the mesh velocity boundary condition for the Laplace system. 
 The resolution is set to 100x25. I have implemented the $L_2$ projection approach 
 of \cite{robh17} for both Q1 and Q2 elements. For such a broken line topography the 
