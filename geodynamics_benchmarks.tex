@@ -25,10 +25,10 @@ computational geodynamics community.
 \item Couette flow with temperature dependent viscosity \cite{egat10,demh19}
 \item Couette flow with shear heating \cite{egat10}
 \item Poiseuille-Couette flow \cite{fusc13}
-\item Lid driven Cavity \cite{foth79,ghgs82,bope98,kawa61,brsa06}
+\item Lid driven Cavity \cite{foth79,ghgs82,bope98,kawa61,brsa06,kost84}
 \item Lid driven cavity with analytical solution (see Section~\ref{sec:ldc_anal})
 \item Wannier flow \cite{wann50,yemu99,cehg14}
-\item bending of elastic plate/beam \cite{cehg14,boht08a,vosc15,egat10,demh19,modm02}
+\item bending of elastic plate/beam \cite{cehg14,boht08a,vosc15,egat10,demh19,modm02,litu02}
 \item flexure of finite length elastic plate \cite{chtl13}
 \item thermal diffusion of half-cooling space (see Section~\ref{sec:hcsp}) 
 \item thermal diffusion of Gaussian distribution (see compgeo notes, elefant manual)
@@ -36,7 +36,7 @@ computational geodynamics community.
 \item plastic oedometer test  \cite{chtl13}
 \item SolCx \cite{mamo08,demh19,aspectmanual}
 \item SolKz \cite{mamo08,demh19,aspectmanual}
-\item SolVi, inclusion \cite{kapo06,maie12,deka08,bepo10,vosc15,demh19,aspectmanual}
+\item SolVi, inclusion \cite{kapo06,maie12,deka08,bepo10,vosc15,demh19,aspectmanual,litu02}
 \item channel flow (nonlinear) \cite{maie12,frbt19,gery10,egat10} (\bscthesis) \index{BSc Thesis}
 \item indentor, punch problem (see Section~\ref{sec:punch})
       See also \cite{hukm03,fojd04,gerb12} for application.
@@ -54,7 +54,7 @@ computational geodynamics community.
 \item Polydiapirism \cite{wesc92,aspectmanual}
 \item Slab detachment benchmark (see Section~\ref{sec:slabdetach}) 
 \item Hollow sphere benchmark \cite{thie17}
-\item Annulus benchmark \cite{aspectmanual}
+\item Annulus benchmark \cite{aspectmanual}, \cite{ples11}
 \item Viscosity grooves benchmark \cite{aspectmanual}
 \item Latent heat benchmark \cite{aspectmanual}
 \item Layered flow with viscosity contrast \cite{aspectmanual} 
@@ -65,6 +65,9 @@ computational geodynamics community.
 \item 3D subduction \cite{ozrs08}
 \item heat flow around a cylinder (see Section~\ref{sec:hfcyl})
 \item Laplace equation on a semi infinite plate (see Section~\ref{sec:lapplate})
+\item 2D Stokes flow over cavity \cite{poma14}
+\item fractal networks of  shear bands \cite{pohe94}
+\item square plate with a crack subjected to a horizontal tensile traction \cite{litu02}
 \end{itemize}
 
 \todo[inline]{go through my papers and add relevant ones here}
@@ -459,7 +462,7 @@ Hill’s solution. Taken from \cite{thfb08}}
 
 The plane strain formulation of the equations and the detailed solution to the problem were derived in the Appendix of \cite{thfb08} and are also presented in \cite{gepd98}.
 The two dimensional punch problem has been extensively studied numerically for the past 40 years 
-\cite{zihl75,zihp95,chpe01,chan99,huhy99,yuti06,bufs08,raab07,gltf18} and has been used to draw a parallel with the tectonics of eastern China 
+\cite{zihl75,prlo90,zihp95,chpe01,chan99,huhy99,yuti06,bufs08,raab07,gltf18} and has been used to draw a parallel with the tectonics of eastern China 
 in the context of the India-Eurasia collision \cite{tamo76,mota77,engl82}.
 It is also worth noting that it has been carried out in one form or another in series of 
 analogue modelling articles concerning the same region, with a rigid indenter colliding with a rheologically 
