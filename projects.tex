@@ -12,13 +12,15 @@
 \item surface tension see \cite{reddybook2}p28-29 - see ibuprofem 
 \item elasticity with markers
 \item navier-stokes ? (LUKAS) use dohu matlab code
-\item free surface \cite{dumy16} 
 \item pure shear deformation of inclusions \cite{trla00}
 \item redo Buck and Sokoutis benchmark for continental convergence \cite{buso94}
 \item redo topo and geoid calculations a la \cite{king09}
-\item redo Travis study \cite{trab90} which is close to Blankenbach \cite{blbc89}.
-\item propagator matrix ? what is it ? \mscthesis \index{MSc Thesis} 
+\item redo Travis study \cite{trab90} which is close to Blankenbach \cite{blbc89}. Note that \cite{maie12} looks at kinetic energy for \cite{trab90} 
+\item propagator matrix ? what is it ? \cite{ribe18} \mscthesis \index{MSc Thesis}  
 \Literature \cite{haoc78,haoc81,riha84,zhon96,como97,mohc98,zhzu00,lezh08,leha08,mofm07,wuch08,mibb09,fope91,lizh13,bugo94} 
+\item redo early compressional orogen study by Beaumont \cite{bequ94}
+\item redo erosion solutions by \cite{cull60} \mscthesis \index{MSc Thesis} 
+\item redo extension 3D Allken papers + \cite{poay84,katl95} 
 \end{itemize}
 %..............................
 \item Miscellaneous /to do
@@ -32,10 +34,10 @@ also check \cite{ensa82} !!
 \item write about stream functions 
 \item create stone for layeredflow (see folder one up)
 \item in the context of mesh generation on sphere cite \cite{moma19}
-\item about CMR: \cite{vaks15},\cite{kott05}
 \item illustrate early boundary fitted static meshes with \cite{thar85}
 \item \cite{bepo10} spell out the derivation of Jaumann derivative in appendix
 \item look at strain-rate softening in \cite{belz02}
+\item write section in features about thermo mechanical simulations and how/why we solve vp, then T.
 \end{itemize}
 
 
@@ -65,10 +67,16 @@ on which the ELLE code is based \url{http://elle.ws/}
 \item check \cite{bufm19} for RT0 element use
 \item deformation around rigid particles \cite{ilma93}
 \item write about flexural isostasy \cite{maie12}, bottom Sopale
-\item \cite{maie12} looks at kinetic energy for \cite{trab90} 
 \item mesh containing both quadrilaterals and triangles \cite{anbr80}
 \item redo/adapt bsc thesis with inversion on stokes sphere
 \item implementation of fault in FEM codes \cite{zhgu94,zhgu95}
+\item \url{https://en.wikipedia.org/wiki/Bernstein_polynomial}
+\item cvi pukp16
+\item van keken instantane MINI elt
+\item check $Q_2 \times Q_{-1}$ element, \cite{grsa} p 697. pressure basis function based at the four 2x2 gauss points.
+\item look at condition number of $\K$ block for Q1P0 and Q2Q1 as a function of resolution. Insert results in section about why q1p0 should not be used. 
+\item write about splines as shape functions \cite{chri92}. second or third order shape functions , using extra nodes instead of using more nodes per element. Smaller matrix than Q2 or Q3 but: spline coeffs on nodes are no more unknowns. Plus bc are complicated. Does it work well with visc contrasts ?
+
 \end{itemize}
 
  <Cells>
@@ -77,12 +85,6 @@ on which the ELLE code is based \url{http://elle.ws/}
       <DataArray type=”UInt8” Name=”types” .../>
     </Cells>
 
-
-Why do I have to promise where I am going while I am not there yet?
-
-You can't google something you don't know exists.
-
-You can be correct or you can get stuff done
 
 open questions:
 what does it mean to have a negative pressure ? should we threshold it when computing yield strength ? 

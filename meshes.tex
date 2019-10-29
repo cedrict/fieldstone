@@ -1,7 +1,7 @@
 
 Before basis functions can be defined and PDEs can be discretised and solved 
 we must first tesselate the domain with polygons, e.g. triangles and 
-quadrilaterals in 2D, tetrahedra, prisms and hexahedra in 3D. \index{convex polygon} 
+quadrilaterals in 2D, tetrahedra, prisms and hexahedra in 3D. \index{Convex Polygon} 
 
 When the domain is itself simple (e.g. a rectangle, a sphere, ...) the mesh (or grid) can 
 be (more or less) easily produced and the connectivity array filled with straightforward 
@@ -12,7 +12,7 @@ must be used (see \cite{thsw,frge,xiyz09}).
 
 We usually distinguish between two broad classes of grids: structured grids (with a regular 
 connectivity) and unstructured grids (with an irregular connectivity).
-\index{structured grid} \index{unstructured grid}
+\index{Structured Grid} \index{Unstructured Grid}
 
 \begin{center}
 \includegraphics[width=5cm]{images/meshes/structured_grid}
@@ -20,7 +20,7 @@ connectivity) and unstructured grids (with an irregular connectivity).
 \end{center}
 
 \begin{remark}
-\index{meshless}
+\index{Meshless}
 Various families of so-called meshless methods exist and are commonly employed in Computational 
 Fluid Dynamics \cite{liugu,liliu,grliu,liuliu}. They are however very rarely used in 
 Computational geodynamics, with a noticeable exception \cite{hans03}.
@@ -71,7 +71,7 @@ for j in range(0,nny):
 The inner loop has {\tt i} ranging from {\tt 0} to {\tt nnx-1} first for {\tt j}=0, 1, ...
 up to {\tt nny-1} which indeed corresponds to the row by row numbering.
 
-\index{connectivity array} 
+\index{Connectivity Array} 
 We now turn to the connectivity. As mentioned before, this is a structured mesh so that the so-called
 connectivity array, named {\tt icon} in our case, can be filled easily. For each element we need
 to store the node identities of its vertices. Since there are {\tt nel} elements and {\tt m=4} corners, 
@@ -142,30 +142,97 @@ for i in range(0,nelx):
 
 \improvement[inline]{produce drawing of node numbering}
 
+Although it is not very common in geosciences, quadrilateral meshes are sometimes 
+employed in a boundary-fitted way, as shown hereunder:
+
+\begin{center}
+\includegraphics[width=7cm]{images/meshes/gukt16}\\
+\end{center}
+
+
 %...................................................
 \subsubsection{Delaunay triangulation and Voronoi cells, and triangle-based meshes}
 
-Triangle-based meshes are obviously better suited for simulations of complex geometries:
+The topic of Delaunay\footnote{The triangulation is named after 
+Boris Delaunay for his work on this topic from 1934.}
+ triangulation is vast, but a simple definition can be written 
+as follows:
+"a Delaunay triangulation for a set P 
+of points in a plane is a triangulation DT(P) such that no point in P is  
+inside the circumcircle of any triangle in DT(P)." [wikipedia]
+Other properties of such triangulations are that they 
+maximize the minimum angle of all the angles of the 
+triangles in the triangulation.
+Note that for four or more 
+points on the same circle (e.g., the vertices of a rectangle) the Delaunay triangulation is  
+not unique and that points on a line also cannot yield a valid triangulation
+(for the simple reason that they do not form a triangle).
+
 \begin{center}
-\includegraphics[height=4cm]{images/meshes/tr1.png}
-\includegraphics[height=4cm]{images/meshes/dolfin.png}
+\includegraphics[width=4cm]{images/meshes/delaunay}
+\includegraphics[width=4cm]{images/meshes/delaunay3}\\
+{\captionfont a) A Delaunay triangulation in the plane with circumcircles shown.
+b) The Delaunay triangulation of a random set of 100 points in a plane.}
 \end{center}
 
-A very practical 2D triangle mesher is the code {\sl Triangle}\footnote{\url{https://www.cs.cmu.edu/~quake/triangle.html}}
+The Delaunay triangulation of a discrete point set P in general corresponds 
+to the dual graph of the Voronoi diagram for P. 
+A Voronoi diagram is composed of non-overlapping Voronoi cells which make a partition 
+of the plane. 
+For each point there is a corresponding region consisting of all points closer to that 
+point than to any other: this region is the Voronoi cell of that point.
+
+\begin{center}
+a)\includegraphics[width=4cm]{images/meshes/delaunay2}
+b)\includegraphics[width=4cm]{images/meshes/voronoi}\\
+{\captionfont a) The Delaunay triangulation with all the circumcircles and their centers (in red).
+b) Connecting the centers of the circumcircles produces the Voronoi diagram (in red). }
+\end{center}
+
+The Delaunay triangulation is used in the DOUAR code which is based on a particle levelset function to track materials. These particles are connected by means of a Delaunay triangulation (usually in a plane at startup, and then in a local Euclidean geometry once the surface is deformed) \cite{brtf08}.
+
+\Literature: \cite{gebo}.
+
+
+Once a Delaunay triangulation has been obtained it can be used as a FEM mesh.  
+Triangle-based meshes are obviously better suited for simulations of complex geometries:
+\begin{center}
+\includegraphics[height=4cm]{images/meshes/tr1}
+\includegraphics[height=4cm]{images/meshes/dolfin}
+\includegraphics[height=4cm]{images/meshes/gebk12}\cite{gebk12}
+\end{center}
+
+A very practical 2D triangle mesher is the 
+code {\sl Triangle}\footnote{\url{https://www.cs.cmu.edu/~quake/triangle.html}}
 written by J.R. Shewchuk \cite{shew96}.
-Triangle is specialized for creating two-dimensional finite element meshes, but can also perform simpler related tasks such as forming Delaunay triangulations under various assumptions.
+Triangle is specialized for creating two-dimensional finite element meshes, but can 
+also perform simpler related tasks such as forming Delaunay triangulations under various assumptions.
 
 \begin{center}
 \includegraphics[width=13cm]{images/meshes/bugw01}\\
-{\small Taken from Buiter et al \cite{bugw01}. Finite element grid. 
+{\captionfont Taken from Buiter et al \cite{bugw01}. Finite element grid. 
 The subducting plate initially extends to 1226 km in the horizontal direction and 
 is not completely shown here. Discretization in the subducting plate is slightly coarser 
 towards the right edge.}
 \end{center}
 
+\begin{center}
+\includegraphics[width=13cm]{images/meshes/bafl16}\\
+{\captionfont Numerical model setup of the 2D axisymmetric half-space with all applied 
+boundary conditions to study the effects of ice-cap unloading
+on shallow volcanic systems \cite{bafl16}}
+\end{center}
+
+Although it is rarely used in practice it is possible to produce meshes which contain 
+both quadrilateral and triangular elements:
+\begin{center}
+\includegraphics[width=13cm]{images/meshes/fige95}\\
+{\captionfont Mesh used to analayse the stress distribution around a pressurized crack in a layered 
+elastic medium \cite{fige95}}
+\end{center}
 
 
-\Literature \cite{musd15} 
+\Literature \cite{musd15}\cite{vemm09}
 
 
 
@@ -173,23 +240,22 @@ towards the right edge.}
 
 \todo[inline]{write about gmesh}
 
-\todo[inline]{write about Delaunay}
 
 %...........................
 \subsubsection{Tetrahedra}
 
 \begin{center}
-\includegraphics[height=4cm]{images/meshes/tetra.png}\\
+\includegraphics[height=4cm]{images/meshes/tetra}\\
 \end{center}
 
 \begin{center}
 \includegraphics[width=5cm]{images/meshes/glacier}
-{\small Example of 3D mesh \cite{yash15}  }
+{\captionfont Example of 3D mesh \cite{yash15}  }
 \end{center}
 
 \begin{center}
 \includegraphics[width=5cm]{images/meshes/gowo05}
-{\small Normalized velocities of a STEP subduction model \cite{gowo05}  }
+{\captionfont Normalized velocities of a STEP subduction model \cite{gowo05}  }
 \end{center}
 
 
@@ -204,14 +270,208 @@ Edges are line segments, facets are strictly {\bf planar} convex polygons.
 \includegraphics[width=6cm]{images/meshes/hexa2}
 \end{center}
 
-
-
-
 %.......................................
 \subsubsection{Adaptive Mesh Refinement}
 \index{AMR} \index{Adaptive Mesh Refinement}
 
-\Literature: \cite{bugg10}\cite{beck10}\cite{lezh11} \cite[sect 3]{bugs09} 
+\Literature: \cite{bugg10}\cite{beck10}\cite{lezh11} \cite[sect 3]{bugs09} \cite{beck10}
 
 \input{amr_exercise}
+
+
+%.......................................
+\subsubsection{Conformal Mesh Refinement}
+
+
+\begin{center}
+\includegraphics[width=5cm]{images/meshes/kott05}\\
+{\captionfont Close-up of the two geometrical mesh doubling regions
+in the mantle. Taken from \cite{kott05}}
+\end{center}
+
+
+\Literature: \cite{vaks15}
+
+
+%.......................................
+\subsubsection{Meshes in an annulus}
+
+
+\begin{center}
+\includegraphics[width=7cm]{images/meshes/brhv08}
+\includegraphics[width=7cm]{images/meshes/brva07a}\\
+{\captionfont The quadratic finite element mesh as used in \cite{brhv08,brva07a}}
+\end{center}
+
+
+%.......................................
+\subsubsection{Meshes in a hollow sphere}
+
+The following is for the most part published in \cite{thie18}.
+
+To a first approximation the Earth is a sphere: the Earth's polar diameter is about 43 kilometers shorter 
+than its equatorial diameter, a negligible difference of about 0.3\%. As a consequence, modelling physical processes 
+which take place in the planet require the discretisation of a sphere. 
+Furthermore, because core dynamics occur on vastly difference time scales than mantle dynamics, mantle 
+modelling usually leaves the core out, thereby requiring simulations to be run on a hollow sphere mesh
+(with the noticeable exception of \cite{geyu07}).
+
+Although so-called latitude-longitude grids would seem appealing, they suffer from the convergence of meridians at the poles
+(resulting in over sampling at poles)
+and the juxtaposition of triangles near the poles and quadrilaterals elsewhere. 
+As a consequence more regular, but more complex, grids have been designed over the years which tesselate the surface of the 
+sphere into triangles or quadrilaterals (sometimes overlapping).
+There is the 'cubed sphere' \cite{roip96,chcc07},
+the ying-yang grid \cite{kasa04,yoka04,kaks08,tack08,crta14,crta16}, 
+the spiral grid \cite{hust08}, 
+an icosahedron-based grid \cite{bafr85,tasu01},
+or a grid composed of 12 blocks further subdivided into quadrilaterals \cite{zhzm00} as used in the CitcomS code.
+Note that \cite{oldp12} have also presented a method for generating a numerical grid on a spherical surface wwhich 
+allows the grid to be based on several different regular polyhedrons (including octahedron, cube, icosahedron,
+and rhombic dodecahedron).
+
+How such meshes are built is often not discussed in the literature. It is 
+a tedious exercise of three-dimensional geometry and it can be time-consuming, especially 
+the connectivity array generation. In \cite{thie18} I present an open source 
+mesh generator for three hollow sphere meshes: the 'cubed sphere' mesh, the CitcomS mesh and the 
+icosahedral mesh.
+
+
+The open source code library {\sc ghost}\cite{thie18} allows 
+three different types of hollow sphere meshes to be built
+, i.e. meshes bounded by two concentric spheres:
+
+\begin{itemize}
+\item 
+The cubed sphere ('HS06'), composed of 6 blocks which 
+are themselves subdivided into $N_b \times N_b$ quadrilateral shaped cells  \cite{sado72,roip96,heta03,busa13}.
+%3 types: conformal \cite{rapm96,mcgr96}, obtained with elliptic solvers/spring dynamics \cite{puli07}, 
+%gnomonic  \cite{sado72,mcgr96}
+Four types of cubed spheres meshes have been proposed: the conformal, elliptic, gnomonic and spring types \cite{puli07}.
+However only gnomonic meshes are considered here: these are obtained by inscribing a cube within a sphere and expanding to the surface
+of the sphere.
+The cubed sphere has recently been used in large-scale mantle convection simulation in conjunction with 
+Adaptive Mesh Refinement \cite{algs12,busa13}.  
+
+\item 
+The CitcomS mesh ('HS12') composed of 12 blocks also subdivided 
+into $N_b \times N_b$ quadrilateral shaped cells
+\cite{zhzm00,sthh06,zhmt08,arfw14}.
+Note that ASPECT \cite{krhb12,hedg17}, a relatively new code aimed at superseeding CitcomS can generate and use 
+this type of mesh \cite{thie17} but is not limited to it.
+
+\item The icosahedral mesh ('HS20') composed of 20 triangular blocks \cite{bafr85,baum85} subdivided into triangles, which is 
+used in the TERRA code \cite{burb96,burb97,burl98,dadb13}.
+\end{itemize}
+
+Given the regularity and symmetry of these meshes determining the location of the 
+mesh nodes in space is a relatively straightforward task. Building the mesh connectivity in an 
+efficient manner is where the difficulty lies.
+
+The approach to building all three meshes is identical:
+\begin{enumerate}
+\item A reference square or triangle is populated with cells,
+parametrised by a level $l$: the square is subdivided into $l\times l$ quadrilaterals while 
+the triangle is subdivided into $l^2$ triangles.
+\begin{center}
+\includegraphics[width=8cm]{images/ghost/f01_basics}\\
+{\captionfont Reference square and triangles meshes at level 5.}
+\end{center}
+
+\item This reference square or triangle is then replicated {\sl nblock} times (6, 12 or 20) and mapped
+onto a portion of a unit sphere. The blocks are such that their union covers a full sphere
+but they cannot overlap except at the edges:
+\begin{center}
+\includegraphics[width=.9\linewidth]{images/ghost/f02}\\
+{\captionfont From left to right: HS06, HS12 and HS20 shells coloured by block number.}
+\end{center}
+
+\item All block meshes are then merged together to generate a shell mesh. This task is rather 
+complex as duplicate nodes must be removed and all connectivity arrays of the blocks must then 
+be mended accordingly. 
+
+\item Shell meshes are replicated {\sl nlayer+1} times outwards with increasing radii. 
+The {\sl nlayer} shells are then merged together to form a hollow sphere mesh:
+\begin{center}
+\includegraphics[width=10cm]{images/ghost/f03_3HS}\\
+{\captionfont a) HS06 mesh composed of 6 blocks containing each $6^3$ cells; 
+b) HS12 mesh composed of 12 blocks containing each 
+$6^3$ cells; e) HS20 mesh composed of 20 blocks containing each $6^3$ cells.}
+\end{center}
+
+\end{enumerate}
+
+More information on these steps is available in the manual of the code.
+In the following table the number of nodes and cells for a variety of resolutions 
+for all three mesh types is reported. Looking at the CitcomS literature of the past 20 years, we find that 
+the mesh data presented in this table cover the various resolutions used, e.g.
+$12\times48^3$ \cite{mczh04,arfw14}, $12\times64^3$ \cite{budt14}
+$12\times96^3$ \cite{bumb10}, $12\times128^3$ \cite{beck06,wele16,welm16}.
+Note that in the case of the HS06 and HS12 meshes the mesh nodes are mapped out to the 6 or 12 blocks 
+following either an equidistant or equiangle approach (see \cite{puli07}
+for details on both approaches). 
+
+\begin{center}
+\begin{tabular}{lrrrl}
+\hline
+type & level & $N$ & $N_{el}$ & structure\\
+\hline
+\hline
+HS06 & 
+2   &  78        &  48         &$6\times 2^3$    \\
+HS06 & 
+4   &  490       &  384        &$6\times 4^3$    \\
+HS06 & 
+8   &  3,474      &  3,072       &$6\times 8^3$    \\
+HS06 & 
+16  &  26,146     &  24,576      &$6\times 16^3$    \\
+HS06 & 
+32  &  202,818    &  196,608     &$6\times 32^3$    \\
+HS06 & 
+64  &  1,597,570   &  1,572,864    &$6\times 64^3$    \\
+HS06 & 
+128 &  12,681,474  &  12,582,912   &$6\times 128^3$    \\
+HS06 & 
+256 &  101,057,026 &  100,663,296  &$6\times 256^3$    \\
+\hline
+HS12 & 2    &          150  &          96  &  $12\times 2^3$ \\
+HS12 & 4    &          970  &         768  &  $12\times 4^3$ \\
+HS12 & 8    &        6,930  &       6,144  &  $12\times 8^3$ \\
+HS12 & 16   &       52,258  &      49,152  &  $12\times 16^3$ \\
+HS12 & 32   &      405,570  &     393,216  &  $12\times 32^3$ \\
+HS12 & 48   &    1,354,850  &   1,327,104  &  $12\times 48^3$ \\
+HS12 & 64   &    3,195,010  &   3,145,728  &  $12\times 64^3$ \\
+HS12 & 128  &   25,362,690  &  25,165,824  &  $12\times 128^3$ \\
+HS12 & 256  &  202,113,538  & 201,326,592  &  $12\times 256^3$ \\
+\hline
+HS20 & 
+2     &         126  &         160   & $20 \times 2^3$ \\
+HS20 & 
+4     &         810  &       1,280   & $20 \times 4^3$ \\
+HS20 & 
+8     &       5,778  &      10,240   & $20 \times 8^3$ \\
+HS20 & 
+16    &      43,554  &      81,920   & $20 \times 16^3$ \\
+HS20 & 
+32    &     337,986  &     655,360   & $20 \times 32^3$ \\
+HS20 & 
+64    &   2,662,530  &   5,242,880   & $20 \times 64^3$ \\
+HS20 & 
+128   &  21,135,618  &  41,943,040   & $20 \times 128^3$ \\
+HS20 & 
+256   & 168,428,034  & 335,544,320   & $20 \times 256^3$ \\
+\hline
+\end{tabular}\\
+{\captionfont Number of nodes $N$ and elements/cells $N_{el}$ for the three types of meshes and for various 
+levels.\\ HS06: cubed sphere; HS12: CitcomS mesh; HS20: icosahedral mesh.}
+\end{center}
+
+
+
+
+
+
+
+
+
 

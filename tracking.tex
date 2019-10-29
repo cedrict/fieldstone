@@ -89,7 +89,7 @@ as illustrated in the following figure:
 
 \begin{center}
 \includegraphics[width=12cm]{images/dumg11}\\
-{\small Taken from \cite{dumg11}. The "4-cell" and "1-cell" schemes for projecting properties defined on the 
+{\captionfont Taken from \cite{dumg11}. The "4-cell" and "1-cell" schemes for projecting properties defined on the 
 markers (denoted by stars) onto
 a node (denoted by the solid circle). (A) The 4-cell scheme. The support of the interpolating function $N_i$ associated
 with node $i$ is indicated by the shaded region. Only markers within the support of node $i$ contribute to the projection
@@ -189,7 +189,9 @@ I will for now simply point to the following ones:
 \cite{modm03}
 \cite{poso08}
 \cite{thmk14}
-\cite{galh18}.
+\cite{galh18}
+\cite{galb19}.
+Also check the multiscale PIC in \cite{asmo12}
 
 \todo[inline]{write more about particle averaging and projection}
 
@@ -219,7 +221,7 @@ This is discussed in the context of the Runge-Kutta Methods, see Section~\ref{se
 \subsubsection{The level set function technique}
 \index{Level-set Method} \index{Level-set Function} \index{LSM} \index{LSF} \index{ENO}
 
-This method was developed in the 80's by Stanley Osher and James Sethian \cite{}
+This method was developed in the 80's by Stanley Osher and James Sethian \cite{lofo06}
 
 The Level-set Method (LSM), as it is commonly used in Computational Fluid Dynamics -- and especially 
 in Computational Geodynamics -- represents a close curve $\Gamma$ (say, in our case, the 
@@ -298,6 +300,10 @@ are computed as follows:
 This is the approach taken by the ASPECT developers \cite{krhb12,hedg17}. 
 Each material $i$ is represented by a compositional field $c_i$, 
 which takes values between 0 and 1.
+Each compositional field is then advected with the (prescribed or computed) Stokes velocity \cite{chri92}:
+\begin{equation}
+\frac{\partial c_i}{\partial t} + {\bm v}\cdot {\bm \nabla }c_i = 0
+\end{equation}
 The value at a point (Finite element node or quadrature point) is 1 if it is in the 
 domain covered by the material $i$, and 0 otherwise.
 In one dimension, each compositional field is a Heavyside function. 
@@ -314,9 +320,27 @@ overshoots. This means that at a given point two or more compositions may have v
 which require some form of averaging. If under- and overshoots are present, these averagings
 can become very problematic and even yield meaningless quantities (e.g. negative viscosities).
 
-This method is used in \cite{vyrc13}
+One rather old and popular filtering approach is the so-called Lenardic and Kaula filter \cite{leka93}:
+
+\begin{center}
+\includegraphics[width=6cm]{images/compositions/leka93_filter1}\\
+\includegraphics[width=6cm]{images/compositions/leka93_filter2}\\
+{\captionfont Taken from Lenardic and Kaula \cite{leka93}}
+\end{center}
+
+\begin{center}
+\includegraphics[width=16cm]{images/compositions/leka93_filter3}\\
+{\captionfont From FENICS book}
+\end{center}
+
+\Literature: \cite{vyrc13}
 
 \improvement[inline]{write about DG approach}
+
+
+
+
+
 
 %..............................................
 \subsubsection{The Volume-of-Fluid method}
@@ -332,11 +356,57 @@ This method is used in \cite{vyrc13}
 
 %.............................................
 \subsubsection{The Marker Chain method}
-\index{Marker Chain} method. 
+\index{Marker Chain method} 
 
-Literature: \cite{woid78,chri82,chyu84,vaks97}
+In two dimensions, the idea is quite simple: each interface is discretised by means of a number
+of Lagrangian points (which may or may not vary in time). The points are numbered and 
+connected (think of the connectivity array of a 1D FEM code). In the case of small deformations, 
+and in the absence of in/out-flow boundaries, the method is reasonably trivial to implement, and 
+each couple of point defines a segment (and therefore its normal vector too) which can then be used
+to answer the question: "at this location, am I above or below this interface" or "am I this domain our
+outside this domain" (in the case that the interface does not reach any of the boundaries).
 
-More recently, it is used to track the free surface position in a FDM code \cite{chmd19}.
+This method becomes somewhat impractical when large deformation occurs or, for example, 
+when a domain splits into two (think: slab break off). One interface must then become two, 
+and it requires an algorithm capable of detecting the breakup of the surface and capable 
+of rebuilding/patching the new ones so that they can still be used further. 
+Note that in case of large deformation some markers may get further and further apart 
+from each other which makes for a poor representation of the surface. New markers should then 
+be added but the question of when and where must then be addressed.
+
+Also, switching to three dimensions can prove to be very difficult or simply very 
+costly: the generation of the inital marker position is trivial but their connectivity 
+can be complicated to establish at startup: for instance, a Stokes sphere will require
+a mesh made of triangles which maps exactly the surface of the sphere (see \cite{thie18,moma19} 
+for methods on how to efficiently produce such meshes). In the case of more complex 3D geometries
+this may prove nearly impossible to do. So will the problem of splitting a surface into two 
+(or merging two domains). \todo{I still have pics from the old days using DOUAR- include} 
+
+This method is usually coupled to Eulerian meshes (typically with FDM, but not only). 
+It was used in \cite{woid78} in the context of salt domes analysis and later in \cite{chri82,chyu84}.
+It is also used in \cite{vaks97} but little details are given about the algorithms used
+to track and update the chain in the presence of such large deformation.
+It is also used (athough coupled to level set functions) in the DOUAR code\cite{brtf08} 
+(see Section~\ref{app:codes}). Having worked myself on this code and having had to produce 
+complex initial triangulated surfaces for simulations (see for example \cite{lobh10}) it is 
+easy to understand why later users of this code did implement the marker-in-cell technique.
+More recently, it is used to track the free surface position in a FDM code \cite{dumy16,chmd19}.
+
+Finally, Christensen \cite{chri92} makes the following interesting comment:  
+"One might assume that different methods 
+of representing the discontinuity, for example, by a tracer 
+chain \cite{chyu84} or a cloud of 
+tracers, would solve these problems. However, the difficulties 
+arise not only from the way in which material boundaries are 
+represented. Physically, the rate of shear strain parallel to a 
+rheological boundary is discontinuous. Within the finite ele-
+ment scheme such jump can only be realized at an element 
+boundary. In an Eulerian scheme, where the discontinuity will 
+crosscut the elements, the jump in strain rate must be approx- 
+imated by a continuous variation, and effectively, the rheolog-
+ical properties on both sides of the discontinuity will be 
+averaged in some way within the element."
+
 
 
 %..............................................

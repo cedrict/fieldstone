@@ -1,0 +1,28 @@
+In the case of a perfectly rectangular, cylindrical or spherical domain, 
+computing the depth of any given point inside the domain is trivial. 
+However, when the free surface becomes somewhat distorted, the concept of 
+depth needs to be refined. What follows is an attempt at bringing clarity
+as to how to compute depth in all cases.
+
+The depth $d({\bm r})$ satisfies the equation:
+\[
+\frac{{\bm g}}{|{\bm g}|} \cdot {\bm \nabla} d = 1
+\]
+with $d=0$ at the surface.
+
+This is a form of steady-state advection equation (the time derivative is zero, 
+there is no diffusion, nor any source term).
+
+Given the boundary conditions, one could solve this equation 
+over the whole domain. 
+
+Note that in the case of a cartesian box, ${\bm g}=-g {\bm u}_z$,
+we need to solve 
+\[
+- \frac{\partial}{\partial z} d = 1
+\]
+For a flat top surface at $d(z=L_z)=0$ so that in the end
+\[
+d(z)=L_z-z
+\]
+

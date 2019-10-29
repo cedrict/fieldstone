@@ -18,6 +18,7 @@ There are several standard formats:
 
 I focus on  the CSR format in what follows. 
 
+%..............................................................................
 \subsubsection{2D domain - One degree of freedom per node}
 
 Let us consider again the  $3\times2$ element grid which counts 12 nodes.
@@ -111,7 +112,7 @@ COLIND=(0,1,4,5, \; 0,1,2,4,5,6, \; 1,2,3,5,6,7, ..., 6,7,10,11)
 RWPTR=(0,4,10,16, ... )
 \]
 
-%--------------------------------------------------------
+%..............................................................................
 \subsubsection{2D domain - Two degrees of freedom per node}
 
 When there are now two degrees of freedom per node, such as in the case of the Stokes equation
@@ -184,7 +185,8 @@ COLIND=(0,1,2,3,8,9,10,11, \; 0,1,2,3,8,9,10,11,\; ...)
 RWPTR=(0,8,16,28, ... )
 \]
 
-\subsubsection{in fieldstone}
+%..............................................................................
+\subsubsection{Matrix Storage in fieldstone}
 
 The majority of the codes have the FE matrix being a full array
 \begin{lstlisting}
@@ -199,5 +201,10 @@ Note that linked list storages can be used (lil\_matrix). Substantial memory sav
 but much longer compute times.
 
 
+%..............................................................................
+\subsubsection{Sparse Matrix-Vector multiplication}
+\index{SpMV}
+
+\Literature \cite{krda10}
 
 

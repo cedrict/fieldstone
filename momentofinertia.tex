@@ -1,0 +1,72 @@
+% borrowed from http://farside.ph.utexas.edu/teaching/336k/Newtonhtml/node64.html
+
+Consider a rigid body rotating with fixed angular velocity $\omega$ about an axis which passes through the origin.
+Let ${\bm r}_i$ be the position vector of the $i$th mass element, whose 
+mass is $m_i$. We expect this position vector to precess about the axis of rotation (which is parallel to $\omega$) 
+with angular velocity $\omega$. 
+
+\begin{displaymath} 
+\frac{d{\bm r}_i}{dt} = \mbox{\boldmath$\omega$}\times {\bm r}_i. 
+\end{displaymath}
+
+Thus, the above equation specifies the velocity, ${\bm v}_i = d{\bm r}_i/dt$, of each mass element as the body rotates with fixed angular velocity $\omega$ about an axis passing through the origin. 
+
+
+The total angular momentum of the body (about the origin) is written
+\begin{displaymath} 
+{\bm L} 
+= \sum_{i=1,N} m_i\,{\bm r}_i\times\frac{d{\bm r}_i}{dt}
+= \sum_{i=1,N} m_i\,{\bm r}_i\times ( \mbox{\boldmath$\omega$}\times {\bm r}_i )
+= \sum_{i=1,N} m_i\, [ r_i^2 {\bm \omega} - ({\bm r}_i\cdot {\bm \omega}) {\bm r}_i ]
+\end{displaymath}
+The above formula can be written as a matrix equation of the form
+\begin{displaymath} 
+\left(\begin{array}{c}L_x\\ L_y\\ L_z\end{array}\right)=
+\left(\begin{array}{ccc}
+I_{xx} & I_{xy} & I_{xz} \\
+I_{yx} & I_{yy} & I_{yz} \\
+I_{zx} & I_{zy} & I_{zz} 
+\end{array}\right) 
+\left(\begin{array}{c}\omega_x\\ \omega_y\\ \omega_z\end{array}\right)
+\end{displaymath}
+where
+
+\begin{eqnarray}
+I_{xx}       &=& + \sum_{i=1,N}(y_i^{\,2}+z_i^{\,2}) \,m_i= \int(y^2+ z^2)\,dm = \int_V (y^2+ z^2)\,\rho(x,y,z) dV   \nonumber\\
+I_{yy}       &=& + \sum_{i=1,N}(x_i^{\,2}+z_i^{\,2}) \,m_i= \int(x^2+ z^2)\,dm = \int_V (x^2+ z^2)\,\rho(x,y,z) dV   \nonumber\\
+I_{zz}       &=& + \sum_{i=1,N}(x_i^{\,2}+y_i^{\,2}) \,m_i= \int(x^2+ y^2)\,dm = \int_V (x^2+ y^2)\,\rho(x,y,z) dV   \nonumber\\
+I_{xy}=I_{yx}&=& - \sum_{i=1,N}x_i\,y_i \,m_i=- \int x\,y\,dm =- \int x\,y\,\rho(x,y,z) dV   \nonumber\\
+I_{yz}=I_{zy}&=& - \sum_{i=1,N}y_i\,z_i \,m_i= -\int y\,z\,dm =- \int y\,z\,\rho(x,y,z) dV   \nonumber\\
+I_{xz}=I_{zx}&=& - \sum_{i=1,N}x_i\,z_i \,m_i= -\int x\,z\,dm =- \int x\,z\,\rho(x,y,z) dV   \nonumber
+\end{eqnarray}
+
+Here, $I_{xx}$ is called the moment of inertia about the $x$-axis, $I_{yy}$ the moment of inertia about the $y$-axis, $I_{xy}$ the $xy$ product of inertia, $I_{yz}$ the $yz$ product of inertia, etc.
+The matrix of the $I_{ij}$ values is known as the moment of inertia tensor.
+
+ In general, the angular momentum vector, ${\bf L}$ points in a different direction to the angular velocity vector, $\omega$. In other words, ${\bf L}$ is generally not parallel to $\omega$.
+
+Finally, although the above results were obtained assuming a fixed angular velocity, 
+they remain valid at each instant in time if the angular velocity varies.
+
+In the simplified case of a spherically symmetric planet, it is easy to see that $I_{xx}=I_{yy}=I_{zz}$ so that $I=\frac{1}{3}(I_{xx}+I_{yy}+I_{zz})$, and $\rho=\rho(r)$ with $dV=4\pi r^2 dr$, leading to
+\[
+I=\frac{8\pi}{3}\int_0^R \rho(r) r^4 dr
+\]
+Assuming further that the planet has a constant density $\rho_0$, we obtain 
+\[
+I=\frac{8 \pi}{3} \rho_0 \int_0^R  r^4 dr = \frac{8 \pi}{3} \rho_0 \frac{R^5}{5} = \frac{2}{5} M R^2 
+\]
+where $M$ is the mass of the planet and $R$ is its radius.
+
+Assuming now that the planet is composed of a core of radius $R_c$ and density $\rho_c$ surrounded by a mantle of density $\rho_m$, 
+we have
+\[
+I=\frac{8\pi}{3}\int_0^R \rho(r) r^4 dr
+=\frac{8\pi}{3} \left( \int_0^{R_c} \rho_c r^4 dr +  \int_{R_c}^{R} \rho_m r^4 dr \right)
+=\frac{8\pi}{15} \left( \rho_c R_c^5  +  \rho_m (R^5-R_c^5) \right)
+\] 
+
+The moment of inertia of the core is given in Table 2 of "Core Dynamics", Treatise on Geophysics, edited by Peter Olson:
+$I_{core}=9.2\times10^{36} kg.m^2$. The total moment of inertia for the Earth is then given by $I=I_{core}+I_{mantle}$.
+
+

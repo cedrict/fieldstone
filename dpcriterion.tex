@@ -1,0 +1,85 @@
+The von Mises yield criterion is not suitable for modelling the yielding of frictional material 
+as it does not include the effect of mean stress as observed in experiments. To overcome this 
+limitation, Drucker and Prager \cite{drpr52} proposed a revised function for frictional materials.
+
+The Drucker-Prager yield criterion has the function form
+\begin{equation}
+F({\bm \sigma})=F {\cal I}_1({\bm \sigma}), {\cal I}_2({\bm \sigma}) ) = 0 
+\end{equation}
+This criterion is most often used for concrete where both normal and shear stresses 
+can determine failure. The Drucker-Prager yield criterion may be expressed as
+\begin{equation}
+F^{DP}=\tau_e - (\alpha {\cal I}_1({\bm \sigma}) + k) \label{dpcriterion} 
+\end{equation}
+Since the Drucker-Prager yield surface is a smooth version of the Mohr-Coulomb yield surface, it 
+is often expressed in terms of the cohesion $c$ and the angle of internal friction $\phi$ that are used 
+to describe the Mohr-Coulomb yield surface. One then wishes to relate $\alpha$ and $k$ to $c$ and $\phi$:
+$\alpha= fct(\phi)$ and $k= fct(c,\phi) $.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{two-dimensional space}
+
+By choosing $k=c \cos \phi $ and $\alpha=\frac{1}{2}\sin \phi$ and seeing that that $p=\frac{1}{2} {\cal I}_1({\bm \sigma})$, we can make the Drucker-Prager yield criterion coincide with the Mohr-Coulomb yield criterion
+so that 
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+F^{DP,2D} = \tau_e - (p \sin \phi + c \; \cos \phi) 
+\]
+\end{mdframed}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{three-dimensional space}
+
+Let us first assume that the Drucker-Prager yield surface circumscribes the Mohr-Coulomb yield surface such that the two surfaces coincide at $\theta=\tfrac{\pi}{3}$. 
+The expression for the Mohr-Coulomb yield criterion is
+
+\[
+F^{MC,3D} = -\frac{1}{3}J_1 \sin \phi  + \sqrt{J_2} ( \cos \theta - \frac{1}{\sqrt{3}} \sin \theta  \sin \phi ) - c \cos \phi 
+\]
+Taking $\theta=\pi/6$ yields:
+\begin{eqnarray}
+F^{MC,3D} 
+&=& -\frac{1}{3}J_1 \sin \phi  + \sqrt{J_2} ( \frac{\sqrt{3}}{2} - \frac{1}{\sqrt{3}} \frac{1}{2}  \sin \phi ) - c \cos \phi  \nn\\
+&=& -\frac{1}{3}J_1 \sin \phi  + \frac{1}{2\sqrt{3}}\sqrt{J_2} ( 3 -  \sin \phi ) - c \cos \phi  \nn\\
+&=& -\frac{1}{3}J_1 \sin \phi  + \frac{1}{6}\sqrt{J_2} \sqrt{3}( 3 -  \sin \phi ) - c \cos \phi  \nn\\
+&=& \frac{\sqrt{3}(3-\sin\phi)}{6} \left( -  \frac{2 \sin \phi}{\sqrt{3}(3-\sin\phi)}   J_1  + \sqrt{J_2}  - \frac{6c \cos \phi}{\sqrt{3}(3-\sin\phi)} \right) \nn
+\end{eqnarray}
+The constant in front of the brackets (which always strictly positive) does not matter since we look at the sign of $F$.
+Comparing with 
+\[
+F^{DP}=\sqrt{J_2} - (\alpha J_1 + k) \label{dpcriterion} 
+\]
+we naturally set 
+\[
+\alpha =\frac{2 \sin \phi}{\sqrt{3}(3-\sin\phi)}
+\quad\quad\quad  
+k =  \frac{6c \cos \phi}{\sqrt{3}(3-\sin\phi)} 
+\]
+and since $p=\frac{1}{3}{\cal I}_1({\bm \sigma})$:
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+F^{DP,3D} = \tau_e  - \left[ \frac{6 \sin \phi}{\sqrt{3}(3-\sin\phi)}   p  + 
+\frac{6c \cos \phi}{\sqrt{3}(3-\sin\phi)}  \right]
+\]
+\end{mdframed}
+which is the formula used in \cite{gltf18}.
+
+
+
+
+
+\vspace{1.3cm}
+TO VERIFY
+If the Drucker-Prager surface inscribes the Mohr-Coulomb surface, then matching the two surfaces at $\theta=0$  gives
+\[
+k = \cfrac{6~c~\cos\phi}{\sqrt{3}(3-\sin\phi)} ~;~~ \alpha = \cfrac{2~\sin\phi}{\sqrt{3}(3-\sin\phi)} 
+\]
+In the principal stress space, the Drucker-Prager surface has the form of a circular cone, whilst the von Mises yield surface is an infinitely long cylinder.
+
+%\begin{center}
+%\includegraphics[width=0.6\textwidth]{RHEOLOGY/viscoplasticity/dpcriterion.pdf}
+%\end{center}
+
+
+

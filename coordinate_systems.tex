@@ -1,0 +1,111 @@
+
+
+%........................................
+\subsubsection{Cartesian coordinates}
+
+%........................................
+\subsubsection{Cylindrical coordinates}
+
+
+We have $r>0$ and $\theta=[0,2\pi[$, defined in the $(x,y)-$plane.
+
+The relation between the unit vector in Cartesian and Polar/Cylindrical coordinates
+is given by:
+\[
+\left(
+\begin{array}{c}
+{\vec e}_{r} \\
+{\vec e}_{\theta} \\
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\cos \theta & \sin \theta \\
+-\sin \theta & \cos \theta
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+{\vec e}_{x} \\
+{\vec e}_{y} \\
+\end{array}
+\right)
+\]
+which yields
+\[
+\left(
+\begin{array}{c}
+{\vec e}_{x} \\
+{\vec e}_{y} \\
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\cos \theta & -\sin \theta \\
+\sin \theta & \cos \theta
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+{\vec e}_{r} \\
+{\vec e}_{\theta} \\
+\end{array}
+\right)
+\]
+
+so that for any vector ${\vec V}$
+\begin{eqnarray}
+{\vec V} 
+&=& V_x {\vec e}_x  + V_y {\vec e}_y \nonumber\\
+&=& V_x [(\cos \theta) {\vec e}_r - (\sin \theta) {\vec e}_\theta]  + 
+    V_y [(\sin \theta) {\vec e}_r + (\cos \theta){\vec e}_\theta] \nonumber\\
+&=& [V_x (\cos \theta) + V_y (\sin \theta)] {\vec e}_r +
+[- V_x(\sin \theta) + V_y (\cos \theta)]{\vec e}_\theta  
+\end{eqnarray}
+
+
+
+
+%........................................
+\subsubsection{Spherical coordinates}
+
+On the following figure are represented the three cartesian axis, 
+a point and its spherical coordinates $r,\theta,\phi$:
+\begin{center}
+\includegraphics[width=5cm]{images/sphcoord}\\
+{\captionfont Spherical coordinates as commonly used in physics:\\ polar angle $\theta$, and azimuthal angle $\phi$.} 
+\end{center}
+In this case $\theta\in[0:\pi]$ and $\phi\in]-\pi:\pi]$ and we have the following relationships:
+\begin{eqnarray}
+r &=& \sqrt{x^2+y^2+z^2} \\
+\theta &=& acos (z/r) \\
+\phi &=& atan (y/x) 
+\end{eqnarray}
+The inverse tangent used to compute $\phi$ must be suitably defined, taking into account the correct quadrant of $(x,y)$,
+which is why the atan2 intrinsic function is used in fortran for example.    
+
+In geography one uses latitude and longitude, represented hereunder:
+\begin{center}
+\includegraphics[width=10cm]{images/map.jpg}
+\end{center}
+\begin{itemize}
+\item Latitude  $\in[-90:90]$,   or $\in[-\pi/2:\pi/2]$ 
+\item Longitude $\in]-180:180]$, or $\in]-\pi:\pi]$ 
+\end{itemize}
+
+Since the colatitude is the complementary angle of the latitude, 
+i.e. the difference between 90 and the latitude, 
+where southern latitudes are denoted with a minus sign,
+$\theta$ as shown above is actually is the colatitude.
+The co-latitude is shown in red on the following figure:
+\begin{center}
+\includegraphics[width=3cm]{images/colatitude}
+\end{center}
+
+
+
+

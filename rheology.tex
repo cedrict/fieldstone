@@ -2,7 +2,31 @@
 For now what follows only deals with viscous behavior. The reader is referred to Barnes \cite{barn99}
 for a discussion and review of non-linear viscous rheologies. 
 
+Here is a quick recap of notations:
 
+\begin{center}
+\begin{tabular}{ll}
+\hline
+${\bm \sigma}$ & (full) stress tensor \\
+$\sigma_1$, $\sigma_2$, $\sigma_3$ & principal stresses \\ 
+${\bm \tau}$   & deviatoric stress tensor \\
+$\tau_1$, $\tau_2$, $\tau_3$ & principal stresses \\ 
+${\cal I}_1({\bm T})$ & first invariant of tensor ${\bm T}$ \\
+${\cal I}_2({\bm T})$ & first invariant of tensor ${\bm T}$ \\
+${\cal I}_3({\bm T})$ & first invariant of tensor ${\bm T}$ \\
+${\tau}_{e}=\sqrt{{\cal I}_2({\bm \tau})}$ & effective deviatoric stress \\
+$\dot{{\varepsilon}}_{e}=\sqrt{{\cal I}_2(\dot{\bm \varepsilon}^d)}$ & effective deviatoric strain rate \\
+\hline
+\end{tabular}
+\end{center}
+
+Note that for incompressible flow, the stress tensor is given by 
+${\bm \sigma}=-p {\bm 1} + {\bm \tau}$ so that 
+${\cal I}_1({\bm \sigma})=-p {\cal I}_1({\bm 1}) + {\cal I}_1({\bm \tau})$.
+Since ${\bm \tau}$ is deviatoric, its first invariant is zero. We then have
+${\cal I}_1({\bm \sigma})=-p n_D$ where $n_D$ is the number of dimensions.
+
+%.....................................................................
 \subsubsection{Linear viscous aka Newtonian} \index{Newtonian fluid}
 
 Simply put, a Newtonian fluid is a fluid in which the viscous stresses at every point are linearly proportional 
@@ -26,16 +50,14 @@ They are also sometimes denoted as Generalized Newtonian Fluid \index{Generalize
  
 
 
-%------------------------------
-\subsubsection{Power-law model}
-\index{Power-law model}
+%.....................................................................
+\subsubsection{Power-law model} \index{Power-law model}
 
 One of the simplest non-Newtonian viscosity model is the power-law model:
 \begin{equation}
-\eta = K \dot{\varepsilon}_{II}^{(n-1)/2}
+\eta = K \dot{\varepsilon}_{e}^{(n-1)/2}
 \end{equation}
-where $\dot{\varepsilon}_{II}$ is the second invariant of the strain rate tensor as defined in 
-Section~\ref{sec:invariants}, and $n$ and $K$ are parameters. $n$ is called the power-law index.
+where $n$ and $K$ are parameters. $n$ is called the power-law index.
 
 Note that a Newtonian viscosity is recovered when $n=1$. Also $n$ and $K$ may depend on temperature
 \cite[p339]{reddybook2}.
@@ -68,12 +90,12 @@ again with viscosity $\eta_\infty$.
  
 \begin{center}
 \includegraphics[width=8cm]{images/rheology/carreau/carreau.pdf}\\
-{\scriptsize Carreau model effective viscosity as a function of the product $\lambda \dot{\varepsilon}_{e}$}
+{\captionfont Carreau model effective viscosity as a function of the product $\lambda \dot{\varepsilon}_{e}$}
 \end{center}
 
 \begin{center}
-\includegraphics[width=6cm]{images/rheology/carreau/carreau1.png}\\
-{\scriptsize \url{https://youtu.be/qErs5zZV4BQ}}
+\includegraphics[width=6cm]{images/rheology/carreau/carreau1}\\
+{\captionfont \url{https://youtu.be/qErs5zZV4BQ}}
 \end{center}
 
 Note that the (Bird)-Carreau-Yasuda model \cite{osru14} is very similar to the standard (Bird)-Carreau:
@@ -97,7 +119,7 @@ a yield stress $\tau_0$ then the fluid flows. This translates as follows \cite{r
 \end{eqnarray}
 When flow occurs, the effective viscosity is then given by:
 \[
-\eta_{eff} =  \frac{\tau_0}{\dot{\varepsilon}} + 2 \eta_0 
+\eta_{eff} =  \frac{\tau_0}{\dot{\varepsilon}_e} + 2 \eta_0 
 \]
 and when the strain rate is large we recover a Newtonian behaviour.
 Typical Bingham fluids are mud, slurry, toothpaste.  
@@ -109,13 +131,13 @@ which cannot be zero.
 This difficulty can be circumvented by implementing Bingham fluids as follows \cite{reddybook2}:
 
 \begin{eqnarray}
-{\bm s} &=& \left(  \frac{\tau_0(1-\eta/\eta_r)}{\dot{\varepsilon}} + 2 \eta_0  \right)\dot{\bm \varepsilon} \qquad \text{ if } {s}_{II}>\tau_0 \\
+{\bm s} &=& \left(  \frac{\tau_0(1-\eta/\eta_r)}{\dot{\varepsilon}_e} + 2 \eta_0  \right)\dot{\bm \varepsilon} \qquad \text{ if } {s}_{II}>\tau_0 \\
 {\bm s} &=& 2 \eta_r \dot{\bm \varepsilon}  \qquad\qquad\qquad\qquad  \text{if } {s}_{II} \leq \tau_0 
 \end{eqnarray}
-where $\eta_r$ is a pre-yield viscosity and $\eta/eta_r<<1$ (typically 1\% or less). This is a form of 
+where $\eta_r$ is a pre-yield viscosity and $\eta/\eta_r<<1$ (typically 1\% or less). This is a form of 
 regularisation, and we will see a similar one in the next section.
 
-\Literature: \cite{blmi97,mizi01,maky17,syga14,bingham}
+\Literature: \cite{blmi97,mizi01,maky17,syga14,bingham,baru09}
 
 %------------------------------
 \subsubsection{Herschel-Bulkley visco-plastic model}
@@ -124,11 +146,10 @@ regularisation, and we will see a similar one in the next section.
 The Herschel-Bulkley model is effectively a combination of the power-law model and 
 a simple plastic model:
 \begin{eqnarray}
-{\bm s} &=& 2 \left(  K \dot{\varepsilon}^{n-1} + \frac{\tau_0}{\dot{\varepsilon}}\right)\dot{\bm \varepsilon} \qquad \text{ if } {s}_{II}>\tau_0 \\
-\dot{\bm \varepsilon} &=& {\bm 0} \qquad\qquad \text{if }{s}_{II} \leq \tau_0 
+{\bm s} &=& 2 \left(  K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}}\right)\dot{\bm \varepsilon} \qquad \text{ if } {\tau}_{e}>\tau_0 \\
+\dot{\bm \varepsilon} &=& {\bm 0} \qquad\qquad \text{if }{\tau}_{e} \leq \tau_0 
 \end{eqnarray}
-in which $\dot{\varepsilon}=\sqrt{\dot{\varepsilon}_{II}}$, 
-$\tau_0$ is the yield stress, $K$ the consistency, and $n$ is the flow index \cite{bemj04}.
+in which $\tau_0$ is the yield stress, $K$ the consistency, and $n$ is the flow index \cite{bemj04}.
 The flow index measures the degree to which the fluid is shear-thinning ($n<1$) or shear-thickening ($n>1$).
 If $n=1$ and $\tau_0=0$ the model reduces to the Newtonian model. 
 
@@ -138,8 +159,8 @@ follows\footnote{\url{https://en.wikipedia.org/wiki/Herschel-Bulkley_fluid}}:
 \eta_{eff} = 
 \left\{
 \begin{array}{cc}
-\eta_0 & \dot{\varepsilon}\leq \dot{\varepsilon}_0 \\ 
-K \dot{\varepsilon}^{n-1} + \frac{\tau_0}{\dot{\varepsilon}} & \dot{\varepsilon} \geq \dot{\varepsilon}_0
+\eta_0 & \dot{\varepsilon}_e\leq \dot{\varepsilon}_0 \\ 
+K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e} & \dot{\varepsilon}_e \geq \dot{\varepsilon}_0
 \end{array}
 \right.
 \]
@@ -156,7 +177,7 @@ equations by introducing a new material parameter which controls the exponential
 growth of stress. This way the equation is valid for both yielded and unyielded areas
 \cite{blmi97,papa87,zifr07}:
 \begin{equation}
-\eta_{eff} = K \dot{\varepsilon}^{n-1} + \frac{\tau_0}{\dot{\varepsilon}} [1 - \exp(-m \dot{\varepsilon})] 
+\eta_{eff} = K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e} [1 - \exp(-m \dot{\varepsilon}_e)] 
 \end{equation}
 When the strain rate becomes (very) small a Taylor expansion of the regularisation 
 term yields $1- \exp(-m \dot{\varepsilon}) \sim m \dot{\varepsilon} $ so that 
@@ -164,12 +185,12 @@ $\eta_{eff} \rightarrow m \tau_0$.
 
 \todo[inline]{Channel flow of wikipedia with analytical solution!}
 
-\Literature: \cite{madd13}. Check dam break problem of \cite{anco09}.
+\Literature: \cite{madd13}. Check dam break problem of \cite{anco09,coan09,bafp09,tagm09,miga09}.
 
 
-\mscthesis: redo the sinking sphere in Bingham or herschel-Bulkley fluid experiment \cite{bemj04}. index{MSc Thesis}
+\mscthesis\index{MSc Thesis}: redo the sinking sphere in Bingham or herschel-Bulkley fluid experiment \cite{bemj04}. 
 
-%-------------------------------------------------
+%...........................................................
 \subsubsection{The Casson model}
 
 It is described by \cite{barn99} 
@@ -200,7 +221,7 @@ allow to recover any of the above models (and more) \cite{osru14}.
 Similar conclusions are reached in the following video:
 \begin{center}
 \includegraphics[width=6cm]{images/rheology/hbyoutube}\\
-{\scriptsize \url{https://youtu.be/dVCb11dZR7Y}}
+{\captionfont \url{https://youtu.be/dVCb11dZR7Y}}
 \end{center}
 
 
@@ -212,17 +233,13 @@ Similar conclusions are reached in the following video:
 
 The standard dislocation creep effective viscosity is given by:
 \[
-\eta_{eff}^{ds} = \frac{1}{2} f A^{-1/n} \dot{\varepsilon}_{II}^{(1-n)/2n} \exp \left( \frac{Q+pV}{nRT}  \right)
+\eta_{eff}^{ds} = \frac{1}{2} f A^{-1/n} \dot{\varepsilon}_{e}^{(1-n)/n} \exp \left( \frac{Q+pV}{nRT}  \right)
 \] 
 where $A$ is the pre-exponential scaling factor, $f$ is a scaling factor
 representing viscous weakening or strengthening, $Q$ is the activation energy, 
 $V$ is the activation volume, $T$ is the absolute temperature, $n$ is the power-law 
-exponent, $R$ is the universal gas constant and $\dot{\varepsilon}_{II}$ is the 
-second invariant of the strain rate tensor. Note that one will often find 
-the same formula with the effective strain rate $\dot{\varepsilon}_e=\sqrt{\dot{\varepsilon}_{II}}$:
-\[
-\eta_{eff}^{ds} = \frac{1}{2} f A^{-1/n} \dot{\varepsilon}_{e}^{(1-n)/n} \exp \left( \frac{Q+pV}{nRT}  \right)
-\] 
+exponent, $R$ is the universal gas constant. 
+
 The coefficients $A,n,Q,V$ are material parameters and are obtained in the laboratory 
 by means of high pressure/temperature experiments\cite{kawu93}. Unfortunately 
 these experiments cannot be run at Earth-like strain rate values ($\sim 10^{-15}\text{s}^{-1}$)
@@ -244,7 +261,7 @@ Furthermore, we know that several other factors will strongly affect the rheolog
 dry means water-free and wet means water-saturated conditions.
 \begin{center}
 \includegraphics[width=8cm]{images/rheology/kawu93}\\
-{\scriptsize Taken from Karato and Wu \cite{kawu93}.}
+{\captionfont Taken from Karato and Wu \cite{kawu93}.}
 \end{center}
 \Literature: \cite{qubu14} and refs therein for the effects of water
 migration on models of subduction dynamics.
@@ -268,7 +285,7 @@ is usually approximated using semi-empirical expressions \cite[section~2.2]{daef
 Smaller grains facilitating faster creep.
 
 The evolution of grain size in the lower mantle is discussed in detail by Solomatov 
-\cite{solo01,soet02,sore08}.
+\cite{solo01,soet02,sore08} and Cerpa et al \cite{ceww17}.
 
 
 
@@ -296,18 +313,275 @@ An additional coefficient is added to the effective viscosity formula(s ??) \cit
 \cite{ranalli}
 \end{remark}
 
-\paragraph{Combining diffusion and dislocation creep} It is rather common in 
+\begin{center}
+\includegraphics[width=13cm]{images/rheology/defmap}\\
+{\captionfont Deformation mechanism map calculated for grain size $a=0.1mm$. The lightly shaded area indicates 
+that deformation mainly occurs by diffusion creep. The densely shaded area indicates that 
+deformation mainly occurs by power-law creep. 
+The white region indicates that deformation mainly occurs by the Peierls mechanism. The 
+solid curves are lines of constant strain rate. The numbers attached to each contour indicate the 
+logarithm of the strain rate in the unit of $s^{-1}$ \cite{kayk99}.}
+\end{center}
+
+
+
+
+\paragraph{A closer look at the diffusion creep of Karato \& Wu (1993)} In the article, the following equation 
+is used: 
+\[
+\dot{\bm \varepsilon} = A \left(\frac{{\bm \tau}}{\mu}\right) \left(\frac{b}{d}\right)^m \exp \left( -\frac{Q+pV}{RT}\right)
+\]
+where $\mu$ is the shear modulus ($\sim$80GPa), $b$ is the length of the Burgers vector ($\sim$0.5nm) and 
+$d$ is the grain size.
+One can express the above equation in terms of second invariants (see Section~\ref{sec:invariants}):
+\[
+\underline{\dot{\varepsilon}}_{e} 
+= A \left(\frac{\underline{\tau}_{e}}{\mu}\right) \left(\frac{b}{d}\right)^m \exp\left( -\frac{Q+pV}{RT} \right)
+\]
+and assuming a Newtonian linearisation/relation between deviatoric stress 
+and strain rate  $\underline{\tau}_{e} = 2 \eta_{df} \underline{\dot\epsilon}_{e}$, one arrive at
+\[
+\eta_{df} = \frac{1}{2} \left(\frac{A}{\mu}\right)^{-1}  \left(\frac{b}{d}\right)^{-m} \exp\left( \frac{Q+pV}{RT} \right)
+\]
+or, 
+\[
+\eta_{df} = \frac{1}{2} \left[ \frac{A}{\mu}   \left(\frac{b}{d}\right)^{m} \right]^{-1} \exp\left( \frac{Q+pV}{RT} \right)
+\]
+The effective diffusion creep viscosity is independent of strain-rate so that one 
+could substitute the total pressure for lithostatic pressure in the equation, assume 
+a geotherm and easily compute the predicted viscosity as a function of grain size $d$.
+
+Let us assume that the 1D profile starts from the base of the lithosphere 
+(say 120km depth) and ends at the 660 boundary. 
+Assume the temperature to increase linearly from 1300\degree C to $T_{bottom}$. At the bottom 
+of the lithosphere, the lithostatic pressure is of the order of 
+$\rho \cdot g \cdot L \simeq 3000\cdot 10 \cdot 120e3 \simeq 4$GPa. 
+At the bottom of the domain, the pressure has increased by $3300\cdot 10 \cdot 630e3 \simeq21$GPa. 
+
+The viscosity profile is plotted hereunder for three different gran sizes, bottom temperature and 
+activation volumes (4,5,6 cm$^3$/mol). 
+
+\begin{center}
+\includegraphics[width=5.cm]{images/rheology/kawudiff/viscosity1.pdf}
+\includegraphics[width=5.cm]{images/rheology/kawudiff/viscosity2.pdf}
+\includegraphics[width=5.cm]{images/rheology/kawudiff/viscosity3.pdf}
+\end{center}
+
+Although this exercise only provides us with first-order results, we can conclude that 
+one can essentially change the diffusion creep effective viscosity by up to 2 orders of 
+magnitude simply by choosing key parameters within acceptable ranges. 
+
+
+%---------------------------------------------------------------------------------
+\subsubsection{Combining diffusion and dislocation creep} It is rather common in 
 the computational geodynamics to combine both viscosities into one so-called
 'effective viscous viscosity' (as opposed to the so-called 'effective plastic viscosity').
 The harmonic average is then used:
-\[
+\begin{equation}
 \eta_{eff} = \frac{\eta_{df}\eta_{ds}}{\eta_{df}+\eta_{ds}} 
 =\left( \frac{1}{\eta_{df}}+\frac{1}{\eta_{df}} \right)^{-1}
+\end{equation}
+See for instance \cite{king16}.
+
+However, although this formula seems simple enough, it hides an important fact: 
+strain rates are supposed to be additive, i.e. the total strain rate $\dot{\bm \varepsilon}_T$ of the deformation
+is the sum of the dislocation strain rate $\dot{\bm \varepsilon}_{ds}$ and the diffusion 
+strain rate $\dot{\bm \varepsilon}_{df}$:
+\[
+\dot{\bm \varepsilon}_{T}=\dot{\bm \varepsilon}_{df}+\dot{\bm \varepsilon}_{ds}
+\]
+and so are the effective strain rates (the underscore $e$ has been dropped for convenience - see
+section~\ref{sec:invariants} for definitions):
+\[
+\dot{\varepsilon}_{T}=\dot{\varepsilon}_{df}+\dot{\varepsilon}_{ds}
+\]
+i.e., 
+\[
+\dot{\varepsilon}_{T}= 
+A_{df} \tau \exp\left(-\frac{Q_{df}+pV_{df}}{RT}\right)
++
+A_{ds} \tau^n \exp\left(-\frac{Q_{ds}+pV_{ds}}{RT}\right)
+\]
+where $\tau$ is the effective shear stress.
+
+We know all the coefficients in this equation with the exception of the scalar $\tau$ (the total strain rate
+is obtained from the previous nonlinear iteration velocity or previous time-step velocity) so that 
+it can be cast under the form $f(\tau)=0$ 
+\[
+f(\tau)=
+\dot{\varepsilon}_{T} - A_{df} \tau \exp\left(-\frac{Q_{df}+pV_{df}}{RT}\right) - A_{ds} \tau^n \exp\left(-\frac{Q_{ds}+pV_{ds}}{RT}\right)
+\]
+A Newton method can be used where and the iterations will be of the form:
+\[
+\tau_{n+1} = \tau_n - \frac{f(\tau_n)}{f'(\tau_n)}
+\]
+where the derivative of the function $f$ with respect to $\tau$ reads:
+\[
+f'(\tau)=\frac{\partial f}{\partial \tau}=
+- A_{df} \exp\left(-\frac{Q_{df}+pV_{df}}{RT}\right) - A_{ds} n \tau^{n-1} \exp\left(-\frac{Q_{ds}+pV_{ds}}{RT}\right)
+\]
+Also, from the additivity of strain rates follows the harmonic averaging of viscosities:
+\[
+\dot{\varepsilon}_{T}=\dot{\varepsilon}_{df}+\dot{\varepsilon}_{ds} 
+\quad
+\quad
+\Rightarrow
+\quad
+\frac{\tau}{2\eta_{eff}}=\frac{\tau}{2\eta_{df}}+\frac{\tau}{2\eta_{ds}}
+\quad
+\quad
+\Rightarrow
+\quad
+\frac{1}{\eta_{eff}}=\frac{1}{\eta_{df}}+\frac{1}{\eta_{ds}}
+\]
+so that the algorithm simply writes:
+\begin{enumerate}
+\item compute $\tau$ iteratively
+\item compute $\dot{\varepsilon}_{df}$, $\dot{\varepsilon}_{ds}$
+\item compute $\eta_{ds}=\tau/(2\dot{\varepsilon}_{ds})$, $\eta_{df}=\tau/(2\dot{\varepsilon}_{df})$
+\item compute $\eta_{eff}$
+\end{enumerate}
+Note that one can also directly compute $\eta_{eff}$ as $\eta_{eff}=\frac{\tau}{2 \dot{\varepsilon}_T}$
+since
+\[
+\eta_{eff}
+=\frac{\tau}{2 \dot{\varepsilon}_T}
+=\frac{\tau}{2 \dot{\varepsilon}_{ds}   +  2\dot{\varepsilon}_{df}  }
+=\frac{1}{2 \dot{\varepsilon}_{ds}/\tau   +  2\dot{\varepsilon}_{df}/\tau  }
+=\frac{1}{1/\eta_{ds} +  1/\eta_{df}  }
+\]
+In the case where many deformation mechanisms are present, the total strain rate is 
+seen as the sum of the strain rates associated to each mechanism:
+\[
+\dot{\bm \varepsilon}_{T}=\dot{\bm \varepsilon}_{1}+\dot{\bm \varepsilon}_{2} +\dot{\bm \varepsilon}_{3} + \dots
+\]
+and then
+\[
+\dot{\varepsilon}_{T}=\dot{\varepsilon}_{1}+\dot{\varepsilon}_{2} +\dot{\varepsilon}_{3} + \dots
+\quad
+\Rightarrow
+\quad
+\frac{\tau}{2\eta_{eff}}=\frac{\tau}{2\eta_{1}}+\frac{\tau}{2\eta_{2}}+\frac{\tau}{2\eta_{3}}+ \dots
+\quad
+\Rightarrow
+\quad
+\frac{1}{\eta_{eff}}=\frac{1}{\eta_{1}}+\frac{1}{\eta_{2}}+\frac{1}{\eta_{3}}+\dots
+\]
+Rather importantly, as we will see hereafter, the following variant is implemented 
+in some codes (e.g. DOUAR, FANTOM, SOPALE) so as to bypass the costly Newton iterations:
+\begin{enumerate}
+\item compute $\eta_{ds}$ and $\eta_{df}$ with the {\it same} strainrate, pressure and temperature values
+\item average them by means of an harmonic average
+\end{enumerate}
+In this case, we have
+\[
+\dot{\varepsilon}_{T}= 
+A_{df} \tau_{df} \exp\left(-\frac{Q_{df}+pV_{df}}{RT}\right)
+\quad\quad\quad
+\dot{\varepsilon}_{T}= 
+A_{ds} \tau_{ds}^n \exp\left(-\frac{Q_{ds}+pV_{ds}}{RT}\right)
 \]
 
 
 
-\Literature \cite{budr08} 
+\paragraph{A concrete example}
+Let us consider a vertical section of upper mantle, from 660km depth to 30km depth.
+The lithosphere is assumed to be 90km thick. The temperature at the moho (the top
+of the domain) is set to 550C, 1330C at the LMB and 1380C at the bottom.
+A constant strainrate $\dot{\epsilon}$ is assumed. The density is set to a constant
+3300kg/m$^3$ and we assume a lithostatic pressure.
+The temperature and pressure fields are shown hereunder:
+\begin{center}
+\includegraphics[width=6cm]{images/rheology/effvisc/temperature.pdf}
+\includegraphics[width=6cm]{images/rheology/effvisc/pressure.pdf}
+\end{center}
+
+In what follows, the values obtained with Newton iterations are coined 'new'
+and those obtained without are coind 'old'.
+The diffusion and dislocation creep viscosities can be
+computed for both old and new algorithms and are shown hereunder
+(the diffusion creep viscosity is independent of strain rate so
+is the same for both):
+\begin{center}
+\includegraphics[width=6cm]{images/rheology/effvisc/both_mu_ds.pdf}
+\includegraphics[width=6cm]{images/rheology/effvisc/both_mu_df.pdf}
+\end{center}
+
+Using the algorithm highlighted hereabove we can compute the
+composite effective viscosity and compare it with the 'standard'
+effective viscosity:
+\begin{center}
+\includegraphics[width=10cm]{images/rheology/effvisc/both_mueff.pdf}
+\end{center}
+
+\todo[inline]{look at folder, codes, clean up, change labels new and old}
+
+%------------------------------
+\subsubsection{The von Mises failure criterion}
+\index{von Mises}
+\input{vMcriterion}
+
+%------------------------------
+\subsubsection{The Tresca failure criterion}
+\index{Tresca}
+\input{trcriterion}
+
+%------------------------------
+\subsubsection{The Drucker-Prager failure criterion}
+\index{Drucker-Prager}
+\input{dpcriterion}
+
+%------------------------------
+\subsubsection{The Mohr-Coulomb failure criterion}
+\index{Mohr-Coulomb}
+\input{mccriterion}
+
+%------------------------------
+\subsubsection{The Griffith-Murrell failure criterion}
+\index{Griffith-Murrell}
+
+The Griffith-Murrell yield criterion \cite{brau94,brbe95,babr97} is not often used. 
+Extending the work of Griffith (1921) to three dimensional stress distributions, 
+Murrell (1963) suggested the following criterion for rock failure expressed 
+in terms of the principal stresses:
+\[
+(\sigma_1-\sigma_2)^2 + (\sigma_2-\sigma_3)^2 + (\sigma_3-\sigma_1)^2
++
+24T_0 (\sigma_1+\sigma_2+\sigma_3)=0
+\]
+where $T_0$ is a material property called the tensile strength. In principal stress space, 
+this criterion is represented by a paraboloid of revolution around the pressure (or hydrostatic) axis.
+
+Also found:
+\[
+J_{2D}+12 T_0 p =0
+\]
+
+%.........................................................
+\subsubsection{The failure envelope, or yield surface} 
+
+
+A yield surface is a five-dimensional surface in the six-dimensional space of stresses. 
+The state of stress of inside the yield surface is elastic. 
+When the stress state lies on the surface the material is said to have reached its yield point 
+and the material is said to have become plastic. Further deformation of the material causes 
+the stress state to remain on the yield surface, even though the surface itself may change shape and 
+size as the plastic deformation evolves, this is because stress states that lie outside the yield surface are non-permissible.
+
+The yield surface is usually expressed in terms of (and visualized in) a three-dimensional principal stress space $(\sigma_1,\sigma_2,\sigma_3)$, a two- or three-dimensional space spanned by stress invariants 
+or a version of the three-dimensional Haigh-Westergaard space. 
+
+
+\begin{center}
+\includegraphics[width=14cm]{images/rheology/surfaces}\\
+{\captionfont yield surfaces in stress space \cite{zico74}}
+\end{center} 
+
+
+\Literature: \cite{sccm13}
+
+
+
 
 
 %------------------------------
@@ -383,8 +657,33 @@ This is also called the Frank–Kamenetskii flow rule, as used in \cite{lemh17}:
 \eta' = \eta_0 \exp(-\theta T)
 \]
 where the the parameters $\eta_0$, $\theta$ account for the local chemical composition of the rock.
-
 \index{Frank-Kamenetskii}
+
+Another temperature-dependent common expression is as follows \cite{flyu84}:
+\[
+\eta(T)=\eta_\infty \exp \left( \frac{Q}{R}(\frac{1}{T}-\frac{1}{T_\infty} ) \right)
+\]
+Also, following \cite{flyu84}: For studying transient convection in a non-
+Newtonian rheological fluid, it is expedient from a
+computational point of view to employ a law
+which behaves linearly for low stresses initially
+and becomes gradually non-Newtonian only after
+a certain threshold stress level has been surpassed \cite{chri84,chyu84}:
+\[
+\eta(T,p,\tau_2) =\eta(T,p) \frac{1}{A_2 + A_3 \tau_2^2}
+\]
+where $A_2$ is a parameter describing the linear creep
+at low stress levels and $A_3$ governs the transition
+stress between Newtonian and non-Newtonian rheologies.
+
+Coltice and Sheppard (2018) \cite{cosh18} use a depth- and temperature-dependent 
+viscosity formulation:
+\[
+\eta(z,T)=\eta_0(z) \exp \frac{Q}{RT}
+\]
+Note that this expression is supplemented with a pseudo-plastic formulation \cite{roct12}.
+
+\Literature: \cite{king16}
 
 %-------------------------------------------------
 \subsubsection{Glen's law for ice}
@@ -403,7 +702,7 @@ The effective viscosity is then given by
 \begin{center}
 \includegraphics[height=5cm]{images/rheology/glen}
 \includegraphics[height=5cm]{images/rheology/goko01}\\
-{\scriptsize Left: Taken from Glen \cite{glen55}; Right: taken from \cite{goko01}.}
+{\captionfont Left: Taken from Glen \cite{glen55}; Right: taken from \cite{goko01}.}
 \end{center}
 Most of these studies suggest values of the power-law exponent $n\sim 2-4$, and there seems to be 
 a general indication that the exponent is lower at lower stresses.
@@ -429,6 +728,8 @@ Note that $A$ is also affected by the water content and the presence of impuriti
 Finally, Glen's law is the standard rheology used for ice-sheet modelling 
 but it does not account for the complex evolution of fabric and resulting anisotropy.
 
+\Literature \cite{grev97,krab16,grbl09}
+
 
 %...........................................
 \subsubsection{Elasto-Visco-Plasticity}
@@ -451,7 +752,7 @@ and solved locally on cell centroids and vertices in order to define the current
 and stress \cite{poso08}."
 
 
-
+\Literature: \cite{lopr90,lova01}
 
 %...........................................
 \subsubsection{Anisotropic viscosity}
@@ -479,11 +780,36 @@ flow, and in return determine the viscosity structure for the next time
 step \cite{mumc04}.
 
 
-\index{MSc thesis project}
 
-\mscthesis: redo the Rayleigh-Taylor instabilities with anisotropic lithospheric viscosity.
-experiments of Lev \& Hager (2008) \cite{leha08}.
+\mscthesis\index{MSc Thesis}: redo the Rayleigh-Taylor instabilities with anisotropic lithospheric viscosity.
+experiments of Lev \& Hager (2008) \cite{leha08}. 
+
 \Literature: \cite{mumh02,vatb98,mumc04,mumh02,mima04,rida78,saab84}
 
+%...........................................
+\subsubsection{Rheology of the lithosphere}
 
+
+\begin{center}
+\includegraphics[height=5cm]{images/rheology/budr08}\\
+{\captionfont Schematic view of the three most common first order rheological models of the continental 
+lithosphere under a strain rate of 10$^{-14}$s$^{-1}$ . 
+In all three models the upper crust has its frictional strength increased with pressure and depth. 
+(a) The jelly sandwich model has a weak mid-lower crust and a strong mantle composed of dry olivine. 
+(b) The cr\`eme br\^ul\'ee model assumes that the mantle is weak, due to the presence of water and high 
+temperature deformation, and the dry and brittle crust determines the strength of the lithosphere. 
+(c) The banana split model assumes that the lithosphere as a whole has its strength greatly reduced
+due to various strain weakening and feedback processes \cite{budr08}}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{images/rheology/bird99}\\
+{\captionfont Taken from \cite{bird99}.
+Typical vertical distribution of maximum shear stress in continental lithosphere 
+undergoing compressional (right) or extensional (left) strain at $10^{-15}$s. 
+Friction controls level of shear stress in upper part of crust and sometimes in mantle lithosphere;
+then, below brittle/ductile transition, shear stress is controlled by thermally-activated dislocation creep.}
+\end{center}
+
+\Literature \cite{buwa06,budr08,rana97a,rana97b}
 

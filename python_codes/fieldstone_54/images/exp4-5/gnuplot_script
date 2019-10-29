@@ -1,0 +1,39 @@
+set term pdf enhanced font "Times, 8pt"
+set grid
+set key outside
+set output 'volume.pdf'
+set xlabel 'time (Myr)'
+set ylabel 'normalised volume (V(t)/V(t=0))'
+plot[][]\
+ 'exp4_method3_40x10_vert/volume.ascii' w lp lw 0.5 ps .5 t 'symm., vert.',\
+ 'exp5_method3_40x10_vert/volume.ascii' w lp lw 0.5 ps .5 t 'asymm., vert.',\
+ 'exp4_method3_40x10_bothdir/volume.ascii' w lp lw 0.5 ps .5 t 'symm., both dir.',\
+ 'exp5_method3_40x10_bothdir/volume.ascii' w lp lw 0.5 ps .5 t 'asymm., both dir.',\
+
+set output 'surface.pdf'
+set xlabel 'x'
+set ylabel 'elevation (m)'
+plot[][]\
+ 'exp4_method3_40x10_vert/surface_topography_0100.ascii' w lp lw 0.5 ps .5 t 'symm., vert.',\
+ 'exp5_method3_40x10_vert/surface_topography_0100.ascii' w lp lw 0.5 ps .5 t 'asymm., vert.',\
+ 'exp4_method3_40x10_bothdir/surface_topography_0100.ascii' w lp lw 0.5 ps .5 t 'symm., both dir.',\
+ 'exp5_method3_40x10_bothdir/surface_topography_0100.ascii' w lp lw 0.5 ps .5 t 'asymm., both dir.',\
+
+
+set output 'vrms.pdf'
+set xlabel 'time (Myr)'
+set ylabel 'vrms'
+plot[][]\
+ 'exp4_method3_40x10_vert/vrms.ascii' w lp lw 0.5 ps .5 t 'symm., vert.',\
+ 'exp5_method3_40x10_vert/vrms.ascii' w lp lw 0.5 ps .5 t 'asymm., vert.',\
+ 'exp4_method3_40x10_bothdir/vrms.ascii' w lp lw 0.5 ps .5 t 'symm., both dir.',\
+ 'exp5_method3_40x10_bothdir/vrms.ascii' w lp lw 0.5 ps .5 t 'asymm., both dir.',\
+
+set output 'elevation.pdf'
+set xlabel 'time (Myr)'
+set ylabel 'elevation (m)'
+plot[][]\
+ 'exp4_method3_40x10_vert/elevation.ascii' w lp lw 0.5 ps .5 t 'symm., vert.',\
+ 'exp5_method3_40x10_vert/elevation.ascii' w lp lw 0.5 ps .5 t 'asymm., vert.',\
+ 'exp4_method3_40x10_bothdir/elevation.ascii' w lp lw 0.5 ps .5 t 'symm., both dir.',\
+ 'exp5_method3_40x10_bothdir/elevation.ascii' w lp lw 0.5 ps .5 t 'asymm., both dir.',\

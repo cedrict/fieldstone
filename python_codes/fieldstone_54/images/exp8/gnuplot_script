@@ -1,0 +1,39 @@
+set term pdf enhanced font "Times, 8pt"
+set grid
+
+set output 'surface.pdf'
+set xlabel 'x'
+set ylabel 'elevation (m)'
+plot[0:128e3][]\
+ 'exp8_method3_60x15_bothdir/surface_topography_0000.ascii' w l lt 1  dashtype 2 lw 0.5 t 'istep=000, 60x15',\
+ 'exp8_method3_80x20_bothdir/surface_topography_0000.ascii' w l lt 1  dashtype 1 lw 0.5 t 'istep=000, 80x20',\
+ 'exp8_method3_60x15_bothdir/surface_topography_0020.ascii' w l lt 2  dashtype 2 lw 0.5 t 'istep=020, 60x15',\
+ 'exp8_method3_80x20_bothdir/surface_topography_0020.ascii' w l lt 2  dashtype 1 lw 0.5 t 'istep=020, 80x20',\
+ 'exp8_method3_60x15_bothdir/surface_topography_0040.ascii' w l lt 3  dashtype 2 lw 0.5 t 'istep=040, 60x15',\
+ 'exp8_method3_80x20_bothdir/surface_topography_0040.ascii' w l lt 3  dashtype 1 lw 0.5 t 'istep=040, 80x20',\
+ 'exp8_method3_60x15_bothdir/surface_topography_0060.ascii' w l lt 4  dashtype 2 lw 0.5 t 'istep=060, 60x15',\
+ 'exp8_method3_80x20_bothdir/surface_topography_0060.ascii' w l lt 4  dashtype 1 lw 0.5 t 'istep=060, 80x20',\
+ 'exp8_method3_60x15_bothdir/surface_topography_0080.ascii' w l lt 5  dashtype 2 lw 0.5 t 'istep=080, 60x15',\
+ 'exp8_method3_80x20_bothdir/surface_topography_0080.ascii' w l lt 5  dashtype 1 lw 0.5 t 'istep=080, 80x20',\
+ 'exp8_method3_60x15_bothdir/surface_topography_0100.ascii' w l lt 6  dashtype 2 lw 0.5 t 'istep=100, 60x15',\
+ 'exp8_method3_80x20_bothdir/surface_topography_0100.ascii' w l lt 6  dashtype 1 lw 0.5 t 'istep=100, 80x20',\
+ 'exp8_method3_80x20_bothdir/surface_topography_0120.ascii' w l lt 7  dashtype 1 lw 0.5 t 'istep=120, 80x20',\
+ 'exp8_method3_80x20_bothdir/surface_topography_0140.ascii' w l lt 8  dashtype 1 lw 0.5 t 'istep=140, 80x20',\
+ 'exp8_method3_80x20_bothdir/surface_topography_0160.ascii' w l lt 9  dashtype 1 lw 0.5 t 'istep=160, 80x20',\
+ 'exp8_method3_80x20_bothdir/surface_topography_0180.ascii' w l lt 10 dashtype 1 lw 0.5 t 'istep=180, 80x20',\
+
+set size square
+set output 'bc_vmesh.pdf'
+set xlabel 'x'
+set ylabel '(n.v)n'
+plot[0:128][0:128]\
+'exp8_method3_60x15_bothdir/bcsurf_0001.ascii' u 1:2:6:7 ps .5 notitle,\
+'exp8_method3_60x15_bothdir/bcsurf_0001.ascii' u 1:2:($6*3e11):($7*3e11) w vectors  lw .5 t 'boundary vel. at surface'
+
+
+
+
+
+
+
+

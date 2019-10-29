@@ -1,0 +1,111 @@
+set term pdf enhanced font "Times, 10pt"
+set grid
+set xlabel 's'
+year=365.*24.*3600
+
+Vst=100e3**2 * 9.81*100/1e21 
+
+#set output 'vel_perimeter.pdf'
+#plot[-1:8][-3.5:0]\
+#'cedric1_uperimeter.dat' u 3:4:5:6 w vectors   t 'N.R.',\
+#'perimeter.ascii' u ($1/1e5-11):($2/1e5-15):($3/Vst):($4/Vst) w vectors  t 'C.T.' 
+
+#set output 'vel_midsurface.pdf'
+#plot[-1:8][-3.5:0]\
+#'cedric1_vmid.dat' u 1:2:3:4 w vectors   t 'N.R.',\
+#'midsurface_freeslip.ascii' u ($1/1e5-11):($2/1e5-15):($3/Vst):($4/Vst) w vectors  t 'C.T.' 
+
+set xtics 40
+set key outside
+set xlabel 'perimeter point id'
+set ylabel 'v_x'
+set output 'u_perimeter.pdf'
+plot[:640][]\
+'BEM/cedric1_uperimeter.dat' u 5 w l  lt -1 t 'BEM',\
+'perimeter_open.ascii'           u ($3/Vst) w l t 'open',\
+'perimeter_freeslip_sides.ascii' u ($3/Vst) w l t 'f.s. sides',\
+'perimeter_freeslip.ascii'       u ($3/Vst) w l t 'f.s. all',\
+
+set ylabel 'v_y'
+set output 'v_perimeter.pdf'
+plot[:640][]\
+'BEM/cedric1_uperimeter.dat' u 6 w l  lt -1 t 'BEM',\
+'perimeter_open.ascii'           u ($4/Vst) w l t 'open',\
+'perimeter_freeslip_sides.ascii' u ($4/Vst) w l t 'f.s. sides',\
+'perimeter_freeslip.ascii'       u ($4/Vst) w l t 'f.s. all',\
+
+set xtics 40
+set key outside
+set xlabel 'midsurface point id'
+set ylabel 'v_x'
+set output 'u_midsurface.pdf'
+plot[:281][]\
+'BEM/cedric1_vmid.dat' u 3 w l  lt -1 t 'BEM',\
+'midsurface_open.ascii'           u ($3/Vst) w l t 'open',\
+'midsurface_freeslip_sides.ascii' u ($3/Vst) w l t 'f.s. sides',\
+'midsurface_freeslip.ascii'       u ($3/Vst) w l t 'f.s. all',\
+
+set xtics 40
+set key outside
+set xlabel 'midsurface point id'
+set ylabel 'v_y'
+set output 'v_midsurface.pdf'
+plot[:281][]\
+'BEM/cedric1_vmid.dat' u 4 w l  lt -1 t 'BEM',\
+'midsurface_open.ascii'           u ($4/Vst) w l t 'open',\
+'midsurface_freeslip_sides.ascii' u ($4/Vst) w l t 'f.s. sides',\
+'midsurface_freeslip.ascii'       u ($4/Vst) w l t 'f.s. all',\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#set ylabel 'v_x (m/yr)'
+#set output 'spine_u.pdf'
+#plot[][]\
+#'spine.ascii' u 8:($9*year) w l notitle
+
+#set ylabel 'v_y'
+#set output 'spine_v.pdf'
+#plot[][]\
+#'spine.ascii' u 8:($10*year) w l notitle
+
+#set ylabel '|v|'
+#set output 'spine_vel.pdf'
+#plot[][]\
+#'spine.ascii' u 8:(sqrt($9**2+$10**2)*year) w l notitle
+
+#set ylabel 'U(s) (m/yr)'
+#set output 'spine_Us.pdf'
+#plot[][]\
+#'spine.ascii' u 8:($4*year) w l notitle
+ 
+#set ylabel 'W(s) (m/yr)'
+#set output 'spine_Ws.pdf'
+#plot[][]\
+#'spine.ascii' u 8:($5*year) w l notitle
+
+

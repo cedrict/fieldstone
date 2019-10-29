@@ -1,0 +1,73 @@
+set term pdf enhanced font "Helvetica,8"
+set xlabel 'iteration count'
+set ylabel 'relative nonlinear residual'
+set log y
+#set key outside
+
+set size square
+set output 'nonlinear_conv.pdf'
+plot[:100][]\
+'vM_100x25/nonlinear_conv.ascii'       w l lt 1 dashtype 1 t 'vM, ',\
+'DP20-00_100x25/nonlinear_conv.ascii'  w l lt 2 dashtype 1 t 'DP, {/Symbol f}=20^o, {/Symbol y}=0^o, ext',\
+'DP20-20_100x25/nonlinear_conv.ascii'  w l lt 3 dashtype 1 t 'DP, {/Symbol f}=20^o, {/Symbol y}=20^o, ext',\
+'DP30-00_100x25/nonlinear_conv.ascii'  w l lt 4 dashtype 1 t 'DP, {/Symbol f}=30^o, {/Symbol y}=0^o, ext',\
+'DP30-30_100x25/nonlinear_conv.ascii'  w l lt 5 dashtype 1 t 'DP, {/Symbol f}=30^o, {/Symbol y}=30^o, ext',\
+'DP30-00_100x25_compr/nonlinear_conv.ascii'  w l lt 6 dashtype 1 t 'DP, {/Symbol f}=30^o, {/Symbol y}=0^o, compr',\
+'DP30-30_100x25_compr/nonlinear_conv.ascii'  w l lt 7 dashtype 1 t 'DP, {/Symbol f}=30^o, {/Symbol y}=30^o, compr',\
+
+
+unset grid
+set key top
+set size square
+set xlabel 'x (km)'
+set ylabel 'y (km)'
+unset log xy
+set object 2 rect from 0,0 to 40,10 fc rgb "gray"
+set object 3 rect from 19.6,0 to 20.4,0.4 fc rgb "black"
+set key inside top
+
+set output 'shear_bands_vM.pdf'
+plot[0:40][0:40]\
+'vM_100x25/shear_band_L_nod.ascii' u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 2 t 'vM',\
+'vM_100x25/shear_band_R_nod.ascii' u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 2 notitle ,\
+(x-20)*tan(45./180*pi) lt -1 dashtype 3 t 'Coulomb angle (45^o)',\
+10 lt -1 notitle 
+
+
+set output 'shear_bands_DP20.pdf'
+plot[0:40][0:40]\
+'DP20-00_100x25/shear_band_L_nod.ascii'  u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 2 t 'DP, {/Symbol f}=20^o, {/Symbol y}=0^o',\
+'DP20-00_100x25/shear_band_R_nod.ascii'  u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 2 notitle ,\
+'DP20-20_100x25/shear_band_L_nod.ascii'  u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 4 t 'DP, {/Symbol f}=20^o, {/Symbol y}=20^o',\
+'DP20-20_100x25/shear_band_R_nod.ascii'  u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 4 notitle ,\
+(x-20)*tan(55./180*pi) lt -1 dashtype 3 t 'Coulomb angle (55^o)',\
+10 lt -1  notitle 
+
+
+
+set output 'shear_bands_DP30.pdf'
+plot[0:40][0:40]\
+'DP30-00_100x25/shear_band_L_nod.ascii'  u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 2 t 'DP, {/Symbol f}=30^o, {/Symbol y}=0^o',\
+'DP30-00_100x25/shear_band_R_nod.ascii'  u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 2 notitle ,\
+'DP30-30_100x25/shear_band_L_nod.ascii'  u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 4 t 'DP, {/Symbol f}=30^o, {/Symbol y}=30^o',\
+'DP30-30_100x25/shear_band_R_nod.ascii'  u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 4 notitle ,\
+(x-20)*tan(60./180*pi) lt -1 dashtype 3 t 'Coulomb angle (60^o)',\
+10 lt -1  notitle 
+
+
+set output 'shear_bands_DP30_compr.pdf'
+plot[0:40][0:40]\
+'DP30-00_100x25_compr/shear_band_L_nod.ascii'  u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 2 t 'DP, {/Symbol f}=30^o, {/Symbol y}=0^o',\
+'DP30-00_100x25_compr/shear_band_R_nod.ascii'  u($1/1000):($2/1000) w l lt 1 lw 2 dashtype 2 notitle ,\
+'DP30-30_100x25_compr/shear_band_L_nod.ascii'  u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 4 t 'DP, {/Symbol f}=30^o, {/Symbol y}=30^o',\
+'DP30-30_100x25_compr/shear_band_R_nod.ascii'  u($1/1000):($2/1000) w l lt 2 lw 2 dashtype 4 notitle ,\
+(x-20)*tan(30./180*pi) lt -1 dashtype 3 t 'Coulomb angle (30^o)',\
+10 lt -1  notitle 
+
+
+
+
+
+
+
+

@@ -20,8 +20,10 @@ def gy(x,y):
 def ubc(x,y):
     if benchmark==1:
        vaal=-1.e-15*(Lx/2.0)
-    else:
+    if benchmark==2:
        vaal=0.0025/year
+    if benchmark==3:
+       vaal=1.e-15*(Lx/2.0)
 
     if x<Lx/2:
        val=vaal
@@ -35,7 +37,7 @@ def vbc(x,y):
     return 0
 
 def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
-    if benchmark==1:
+    if benchmark==1: # pure brick
        if iter==0:
           val=1e25
           two_sin_psi=0.
@@ -51,7 +53,7 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
              print (e)  
              pass
           two_sin_psi=2.*np.sin(psi)
-    else:
+    if benchmark==2: # spmw16
        if y<7.5e3 or (abs(x-60e3)<2.5e3 and y<10e3):
           val=1e21
           two_sin_psi=0.
@@ -68,6 +70,24 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
              val=min(1.e25,val)
              val=max(1.e20,val)
              two_sin_psi=2.*np.sin(psi)
+    if benchmark==3: # brick with seed
+       if abs(x-20e3)<400 and y<400:
+          val=1e20
+          two_sin_psi=0.
+       else:
+          if iter==0:
+             val=1e22
+             two_sin_psi=0.
+          else:
+             eta1=1e25
+             e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
+             e2=max(1e-25,e2)
+             etap=(pq*np.sin(phi)+c*np.cos(phi))/(2*e2)
+             val=1./(1./etap+1./eta1)
+             val=min(1.e25,val)
+             val=max(1.e20,val)
+             two_sin_psi=2.*np.sin(psi)
+
     return val,two_sin_psi
 
 #------------------------------------------------------------------------------
@@ -137,19 +157,23 @@ if int(len(sys.argv) == 6):
    solver = int(sys.argv[4])
    benchmark = int(sys.argv[5])
 else:
-   nelx = 48*3
-   nely = 12*3
+   nelx = 100
+   nely = 25
    visu = 1
    solver = 2 
-   benchmark=2
+   benchmark=3
 
 if benchmark==1:
-   Lx=100000.  # horizontal extent of the domain 
-   Ly=10000.  # vertical extent of the domain 
+   Lx=100000. 
+   Ly=10000.  
 
 if benchmark==2:
-   Lx=120000.  # horizontal extent of the domain 
-   Ly=30000.  # vertical extent of the domain 
+   Lx=120000. 
+   Ly=30000.  
+
+if benchmark==3:
+   Lx=40e3
+   Ly=10e3
  
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
@@ -171,10 +195,16 @@ if benchmark==1:
    cohesion=1e7
    phi=30./180*np.pi
    psi=30./180*np.pi
-else:
-   #----spmw16----
+
+if benchmark==2:   #----spmw16----
    rho=2700.-2700.
    cohesion=1e8
+   phi=0./180*np.pi
+   psi=0./180*np.pi
+
+if benchmark==3:   #----kaus10----
+   rho=2700.
+   cohesion=40e6
    phi=30./180*np.pi
    psi=0./180*np.pi
 
@@ -313,7 +343,7 @@ if benchmark==1:
           u[i] = ubc(xV[i],yV[i])
           v[i] = vbc(xV[i],yV[i])
 
-if benchmark==2: # spmw16
+if benchmark==2 or benchmark==3: # spmw16
    for i in range(0,NV):
        if xV[i]/Lx<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])

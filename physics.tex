@@ -1,37 +1,3 @@
-
-\begin{center}
-\begin{tabular}{lll}
-\hline
-Symbol & meaning & unit \\
-\hline
-\hline
-$t$ & Time & s \\
-$x,y,z$ & Cartesian coordinates & m \\
-$r,\theta$ & Polar coordinates & m,-\\
-$r,\theta, z$ & Cylindrical coordinates & m,-,m\\
-$r,\theta,\phi$ & Spherical coordinates & m,-,- \\
-${\vec \upnu}$ & velocity vector & m$\cdot$ s$^{-1}$\\
-${\vec u}$ & displacement vector & m \\
-$\rho$ & mass density & kg/m$^3$ \\
-$\eta$ & dynamic viscosity &  Pa$\cdot$ s \\
-$\lambda$ & penalty parameter & Pa$\cdot$ s \\
-$T$ & temperature & K \\
-${\vec \nabla}$ & gradient operator & m$^{-1}$ \\
-${\vec \nabla}\cdot$ & divergence operator & m$^{-1}$ \\
-$p$ & pressure & Pa\\
-$\dot{\bm \varepsilon}({\vec \upnu})$ & strain rate tensor & s$^{-1}$ \\
-$\alpha$ & thermal expansion coefficient & K$^{-1}$ \\
-$k$ & thermal conductivity & W/(m $\cdot$ K) \\
-$C_p$ & Heat capacity & J/K \\
-$H$ & intrinsic specific heat production & W/kg\\
-$\beta_T$ & isothermal compressibility & Pa$^{-1}$  \\
-${\bm \tau}$ & deviatoric stress tensor & Pa \\
-${\bm \sigma}$ & full stress tensor & Pa \\
-\hline
-\end{tabular}
-\end{center}
-
-%------------------------------------------------------------------------
 \subsection{Strain rate and spin tensor}
 \index{velocity gradient}
 \index{strain rate}
@@ -61,38 +27,12 @@ The skew-symmetric tensor is called spin tensor (or vorticity tensor):
 \dot{\bm R}(\vec \upnu) = \frac{1}{2}\left( \vec\nabla\vec\upnu - \vec\nabla\vec\upnu^T \right)
 \end{equation}
 
-%------------------------------------------------------------------------
-\subsection{Stress tensor}
+\begin{remark}
+In the mathematical literature a different notation for the strain rate tensor is often used, i.e. 
+$D(\vec \upnu)$, such as for instance in \cite{full95}.
+\end{remark}
 
-\index{Stress tensor} \index{Normal stress} \index{Shear stress} \index{Stress vector}
 
-The Cauchy tensor\footnote{\url{https://en.wikipedia.org/wiki/Cauchy_stress_tensor}} 
-consists of nine components $\sigma_{ij}$  that completely define the state of stress 
-at a point inside a material. 
-The tensor relates a unit-length direction vector $\vec{n}$ to the so-called 'stress vector' (most commonly called 'traction') $\vec{t}(\vec{n})$ across an imaginary surface perpendicular to $\vec{n}$:
-\[
-\vec{t}(\vec n)={\bm \sigma}\cdot {\vec n}
-\]
-With respect to an orthonormal basis $\{\vec{e}_x,\vec{e}_y,\vec{e}_z\}$, the Cauchy stress tensor
-is given by:
-\begin{equation}
-{\bm \sigma}=
-\left(
-\begin{array}{ccc}
-\sigma_{xx} & \sigma_{xy} & \sigma_{xz} \\
-\sigma_{yx} & \sigma_{yy} & \sigma_{yz} \\
-\sigma_{zx} & \sigma_{zy} & \sigma_{zz} 
-\end{array}
-\right)
-\end{equation}
-The three diagonal elements are called normal stresses while the off-diagonal terms 
-are called shear stresses.
-
-One can easily prove (see for instance Section 3.3.6 of \cite{grbl09}) that the balance 
-of angular momentum leads reduces to the statement that the Cauchy stress tensor 
-is symmetric, i.e. ${\bm \sigma}={\bm \sigma}^T$.
-
-The SI units of both stress tensor and traction are $\text{N}/\text{m}^2$.
 
 %.............................................
 \subsubsection{Compressible Newtonian Fluid}
@@ -314,9 +254,17 @@ but since $k_B=\lambda+2\eta/3=0$, then $\lambda=-2\eta/3$ so
 
 \newpage
 %---------------------------------
-\subsection{The Boussinesq approximation: an Incompressible flow}
+\subsection{The Boussinesq approximation}
+\index{Boussinesq Approximation}
 
-\index{Boussinesq}
+As nicely explained in Spiegel \& Veronis \cite{spve60}: "In the study of problems of thermal convection it is a frequent practice to simplify the basic equations by introducing certain approximations which are attributed to
+Boussinesq (1903). The Boussinesq approximations can best be summarized by two
+statements: (1) The fluctuations in density which appear with the advent of motion
+result principally from thermal (as opposed to pressure) effects. (2) In the equations
+for the rate of change of momentum and mass, density variations may be neglected except
+when they are coupled to the gravitational acceleration in the buoyancy force."
+Note that their paper examines the Boussinesq approximation for compressible fluids.  
+
 
 [from \aspect{} manual]
 The Boussinesq approximation assumes that the density can be
@@ -435,11 +383,6 @@ in the context of viscous flow using the penalty method. In this case $\lambda$ 
 ${\bm u}$ is the velocity, and $\mu$ is then the dynamic viscosity.
 \end{remark}
 
-%\begin{center}
-%\includegraphics[width=15cm]{images/coeffs}\\
-%{\small Homogeneous isotropic linear elastic materials have their elastic properties uniquely determined by any two moduli among these; thus, given any two, any other of the elastic moduli can be calculated according to these formulas.}
-%\end{center}
-
 The Lam\'e parameter and the shear modulus are also linked to $\nu$ the poisson ratio, 
 and $E$, Young's modulus: \index{Poisson ratio} \index{Young's modulus}
 \[
@@ -500,8 +443,8 @@ The strain rate tensor $\dot{\bm\varepsilon}$ is given by
 \dot\varepsilon_{r\theta} &=& \frac{1}{2} \left(   \frac{\partial v_\theta}{\partial r} - \frac{v_\theta}{r} 
 +\frac{1}{r} \frac{\partial v_r}{\partial \theta}  \right)\\
 \dot\varepsilon_{zz} &=& \frac{\partial w}{\partial z} \\
-\dot{varepsilon}_{rz} = \dot{varepsilon}_{zr} &=& \frac{1}{2}\left(   \right) \\
-\dot{varepsilon}_{\theta z} = \dot{varepsilon}_{z \theta} &=& \frac{1}{2}\left( \frac{1}{r} \frac{\partial w}{\partial \theta} + \frac{\partial v_\theta}{\partial z}  \right) \\
+\dot{\varepsilon}_{rz} = \dot{\varepsilon}_{zr} &=& \frac{1}{2}\left(   \right) \\
+\dot{\varepsilon}_{\theta z} = \dot{\varepsilon}_{z \theta} &=& \frac{1}{2}\left( \frac{1}{r} \frac{\partial w}{\partial \theta} + \frac{\partial v_\theta}{\partial z}  \right) \\
 \end{eqnarray}
  
 CHECK AND HOMOGENIZE NOTATIONS
@@ -580,8 +523,8 @@ There are two types of boundary conditions for this equation: temperature bounda
 \subsection{Meaningful physical quantities}
 
 \begin{itemize}
-\item Velocity $\vec \upnu (\text{m/s})$: This is a vector quantity and both magnitude and direction are needed to define it. It is the rate of change of position with respect to a frame of reference.
-\item Root mean square velocity $\upnu_{rms} (\text{m/s})$: 
+\item \underline{Velocity} $\vec \upnu (\text{m/s})$: This is a vector quantity and both magnitude and direction are needed to define it. It is the rate of change of position with respect to a frame of reference.
+\item \underline{Root mean square velocity} $\upnu_{rms} (\text{m/s})$: 
 \begin{equation}
 \upnu_{rms} = \left ( \frac{\int_\Omega |{\vec \upnu}|^2 \;  d \Omega}{\int_\Omega d\Omega }  \right )^{1/2}
 =\left ( \frac{1}{V_\Omega} \int_\Omega |{\vec \upnu}|^2 \;  d \Omega \right )^{1/2} \label{eqVrms}
@@ -608,12 +551,42 @@ root mean square averages:
 \end{equation}
 
 
-\item Pressure $p (\text{Pa})$:
-\item Stress tensor ${\bm \sigma}$ (Pa): \index{Stress Tensor}
-\item Strain tensor ${\bm \varepsilon}$ (dimensionless): \index{Strain tensor}
-\item Strain rate tensor $ \dot{\bm \varepsilon} (\text{s}^{-1}$): \index{Strain rate tensor}
-\item Rayleigh number $Ra$ (X): \index{Rayleigh Number}
-\item Prandtl number $Pr$ (X): \index{Prandtl Number} It is named after the German physicist 
+\item \underline{Pressure} $p (\text{Pa})$:
+\item \underline{Stress tensor} ${\bm \sigma}$ (Pa): \index{Stress Tensor}
+\item \underline{Strain tensor} ${\bm \varepsilon}$ (dimensionless): \index{Strain tensor}
+\item \underline{Strain rate tensor} $ \dot{\bm \varepsilon} (\text{s}^{-1}$): \index{Strain rate tensor}
+\item \underline{Rayleigh number} $Ra$ (X): \index{Rayleigh Number}
+It is a dimensionless number that expresses the	ratio of the driving forces to the opposing forces.
+The buoyancy force comes from the volumetric thermal expansion while the viscous forces and 
+the heat diffusivity oppose convection (the latter one smoothes out thermal gradients). 
+
+The Rayleigh number for convection driven by a constant temperature hot base and a cold surface
+in a domain of thickness $D$ is:
+\[
+Ra 
+= \frac{\rho_0 g \alpha D^3 }{\eta \kappa}  \cdot  \Delta T
+= \frac{\rho_0^2 C_p g \alpha D^3 \Delta T}{\eta k}
+\]
+The Rayleigh number for convection driven by a hot base (constant basal heat flow $q_b$)
+and a colder surface is:
+\[
+Ra = \frac{\rho_0 g \alpha D^3}{\eta \kappa } \cdot  \frac{q_b D}{k}
+\]  
+The Rayleigh number for convection driven by internal heating $H$ (production per cubic meter) is:
+\[
+Ra = \frac{\rho_0 g \alpha D^3}{\eta \kappa} \cdot  \frac{H D^2}{k }
+\]
+The Rayleigh number for convection driven by both basal heat flow and internal heating is:	
+\[
+Ra = \frac{\rho_0 g \alpha D^3}{\eta \kappa} \cdot  \frac{q_b D + H D^2}{k }
+\]
+For convection to occur, the Rayleigh number must be larger than the so-called critical 
+Rayleigh number, which ranges from 600 to 3000 (it depends on the boundary conditions and the 
+geometry).
+\index{Critical Rayleigh Number}
+
+
+\item \underline{Prandtl number} $Pr$ (X): \index{Prandtl Number} It is named after the German physicist 
 Ludwig Prandtl and is defined as the ratio of momentum diffusivity to thermal diffusivity. It is given as: 
 \[
 Pr = \frac{\text{momentum diffusivity}}{\text{thermal diffusivity}} = \frac{\eta/\rho}{k/(\rho C_p)}= \frac{\eta C_p}{k}
@@ -621,7 +594,7 @@ Pr = \frac{\text{momentum diffusivity}}{\text{thermal diffusivity}} = \frac{\eta
 For Earth materials, we have $Pr \sim (10^{21} 1000)/3 >> 1$, which means that momentum diffusivity dominates.
 
 
-\item Nusselt number $N_u$ (X): \index{Nusselt Number}  the Nusselt number (Nu) is the ratio of convective to conductive heat transfer across (normal to) the boundary. The conductive component is measured under the same conditions as the heat convection but with a (hypothetically) stagnant (or motionless) fluid.
+\item \underline{Nusselt number} $N_u$ (X): \index{Nusselt Number}  the Nusselt number (Nu) is the ratio of convective to conductive heat transfer across (normal to) the boundary. The conductive component is measured under the same conditions as the heat convection but with a (hypothetically) stagnant (or motionless) fluid.
 
 In practice the Nusselt number Nu of a layer (typically the mantle of a planet) is defined as follows:
 \begin{equation}
@@ -689,23 +662,461 @@ given by a steady state conductive geotherm.
 \todo[inline]{derive formula for Earth size R1 and R2}
 
  
-\item Temperature (K):
-\item Viscosity (Pa.s):
-\item Density (kg/m$^3$):
-\item Heat capacity $C_p$ ($J.K^{-1}$): It is the measure of the heat energy required to increase the 
+\item \underline{Temperature} (K):
+\item \underline{Viscosity} (Pa.s):
+\item \underline{Density} (kg/m$^3$):
+\item \underline{Heat capacity} $C_p$ ($J.K^{-1}$): It is the measure of the heat energy required to increase the 
 temperature of a unit quantity of a substance by unit degree. Note that the specific heat capacity $c_P$ of a 
 substance is the heat capacity of a sample of the substance divided by the mass of the sample, with units $J\cdot K\cdot kg^{-1}$.
-\item Heat conductivity, or thermal conductivity $k$ ($W.m^{-1}.K^{-1}$). It is the property of a material that indicates its ability to conduct     heat. It appears primarily in Fourier's Law for heat conduction.
-Note that it is a function of temperature, especially in mantle convection settings \cite{mika13}.
+\item \underline{Heat conductivity}, or thermal conductivity $k$ ($W.m^{-1}.K^{-1}$). It is the property of a material that indicates its ability to conduct     heat. It appears primarily in Fourier's Law for heat conduction.
+Note that it is a function of temperature, especially in mantle convection settings \cite{mika13}. See also \cite{boca99} and refs therein.
 
-\item Heat diffusivity: $\kappa=k/(\rho C_p)$ ($m^2.s^{-1}$). Substances with high thermal diffusivity rapidly adjust their temperature to that of their surroundings, because they 
+\item \underline{Heat diffusivity}: $\kappa=k/(\rho C_p)$ ($m^2.s^{-1}$). Substances with high thermal diffusivity rapidly adjust their temperature to that of their surroundings, because they 
 conduct heat quickly in comparison to their volumetric heat capacity or 'thermal bulk'.
-\item thermal expansion $\alpha$ (K$^{-1}$): it is the tendency of a matter to change in volume in response to a change in temperature. Note that it is a function of temperature, especially in mantle convection settings \cite{mika13}.
+\item \underline{thermal expansion} $\alpha$ (K$^{-1}$): it is the tendency of a matter to change in volume in response to a change in temperature. Note that it is a function of temperature, especially in mantle convection settings \cite{mika13}.
+
+\item \underline{Urey Ratio}: mantle heat production divided by heat loss) is a key constraint for thermal history models. Recent Urey ratio estimates are in the range of 0.21–0.49. \cite{lecm11}
 
 \end{itemize}
 
 
 \todo[inline]{check aspect manual The 2D cylindrical shell benchmarks by Davies et al. 5.4.12}
+
+
+%------------------------------------------------------
+\subsection{Principal stress} \label{sec:princ_stress}
+
+\index{Maximum Shear Stress} \index{Principal Stress}
+
+As seen before (see Section~\ref{sec:stresstensor}) 
+the stress tensor is a symmetric $3\times3$ real matrix, and linear algebra tells us that it 
+therefore has three mutually orthogonal unit-length eigenvectors $\vec{n}_{1}$, $\vec{n}_{2}$, 
+$\vec{n}_{3}$ and three real eigenvalues $\lambda _{1},\lambda _{2},\lambda _{3}$ 
+such that ${\bm \sigma}\cdot \vec{n}_i=\lambda_{i} \vec{n}_{i}$.
+
+%from wiki stress 
+As a consequence, in a coordinate system with axes $\vec{n}_{1},\vec{n}_{2},\vec{n}_{3}$, 
+the stress tensor is a diagonal matrix, and has only the three normal components $\lambda _{1},\lambda _{2},\lambda _{3}$
+i.e. the principal stresses. If the three eigenvalues are equal, the stress is an isotropic compression or tension, always perpendicular to any surface, there is no shear stress, and the tensor is a diagonal matrix in any coordinate frame.
+
+\subsubsection{In two dimensions}
+
+We are looking for the stress tensor eigenvector vector $\vec{n}=(n_x,n_y)$ associated to the
+eigenvalue $\lambda$ such that 
+\[
+\left(
+\begin{array}{cc}
+\sigma_{xx} & \sigma_{xy} \\
+\sigma_{xy} & \sigma_{yy} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y
+\end{array}
+\right)
+=
+\lambda
+\left(
+\begin{array}{c}
+n_x \\ n_y
+\end{array}
+\right)
+\]
+or,
+\[
+\left(
+\begin{array}{cc}
+\sigma_{xx} & \sigma_{xy} \\
+\sigma_{xy} & \sigma_{yy} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y
+\end{array}
+\right)
+-
+\left(
+\begin{array}{cc}
+\lambda & 0 \\ 
+0 & \lambda 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y
+\end{array}
+\right)
+= \vec{0}
+\]
+i.e.,
+\[
+\left(
+\begin{array}{cc}
+\sigma_{xx}-\lambda  & \sigma_{xy} \\
+\sigma_{xy} & \sigma_{yy} -\lambda 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y
+\end{array}
+\right)
+= \vec{0}
+\]
+
+which yields
+\[
+(\sigma_{xx}-\lambda)(\sigma_{yy}-\lambda)-\sigma_{xy}^2 =0
+\]
+or, 
+\[
+\lambda^2 - (\sigma_{xx}+\sigma_{yy}) \lambda   + (\sigma_{xx}\sigma_{yy}-\sigma_{xy}^2) =0
+\]
+The discriminant $\Delta$ is 
+\begin{eqnarray}
+\Delta 
+&=& (\sigma_{xx}+\sigma_{yy})^2-4(\sigma_{xx}\sigma_{yy}-\sigma_{xy}^2)  \nn\\
+&=& (\sigma_{xx}-\sigma_{yy})^2 +4\sigma_{xy}^2  \nn
+\end{eqnarray}
+The roots are given by:
+\begin{eqnarray}
+\lambda_\pm 
+&=& \frac{ (\sigma_{xx}+\sigma_{yy}) \pm \sqrt{ (\sigma_{xx}-\sigma_{yy})^2 +4\sigma_{xy}^2 } }{2} \nn\\
+&=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} \pm \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \nn\\
+\end{eqnarray}
+The two principal stresses are then:
+\begin{eqnarray}
+\sigma_1 &=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} + \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \nn\\
+\sigma_2 &=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} - \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \nn\\
+\end{eqnarray}
+with the convention $\sigma_1>\sigma_2$.
+The maximum shear stress is defined as one-half the difference between the two principal 
+stresses 
+\[
+\tau_{\text max}=
+\frac{\sigma_1-\sigma_2}{2}
+=\sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } 
+\]
+
+The eigenvector $\vec{n}_1$ corresponding to $\sigma_1$ is obtained by solving 
+\[
+{\bm \sigma}\cdot \vec{n}_1 = \sigma_1 \vec{n}_1
+\]
+and same for the other eigenvalue/vector:
+\[
+{\bm \sigma}\cdot \vec{n}_2 = \sigma_2 \vec{n}_2
+\]
+Each is a system of two equations with two unknowns. These are not difficult to solve, 
+but can prove cumbersome. Note that linear algebra tells us that $\vec{n}_1\cdot\vec{n}_2=0$, 
+i.e. the eigenvectors form a basis of $\mathbb{R}^2$.
+
+This is the reason why often people go another route. One can ask the question: what is the 
+value of the angle $\theta_p$ which, if used to perform a rotation of the axis system, yields 
+a stress tensor that is diagonal, with the principal stresses on the diagonal?
+ 
+\begin{center}
+\includegraphics[width=8cm]{images/princ_stress/PrincipalStress}\\
+{\scriptsize Taken from \url{https://www.efunda.com/formulae/solid_mechanics/mat_mechanics/plane_stress_principal.cfm}}
+\end{center}
+ 
+The rotation matrix is 
+\[
+{\bm R}=
+\left(
+\begin{array}{cc}
+\cos\theta_p & -\sin\theta_p \\
+\sin\theta_p & \cos\theta_p
+\end{array}
+\right)
+\]
+and the image of ${\bm \sigma}$ by means of the axis rotation is 
+${\bm \sigma}'= {\bm R}\cdot {\bm \sigma}\cdot {\bm R}^{-1}$, i.e.
+\begin{eqnarray}
+{\bm \sigma}' 
+&=&
+\left(
+\begin{array}{cc}
+\cos\theta_p & -\sin\theta_p \\
+\sin\theta_p & \cos\theta_p
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+\sigma_{xx} & \sigma_{xy} \\
+\sigma_{xy} & \sigma_{yy} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+\cos\theta_p & \sin\theta_p \\
+-\sin\theta_p & \cos\theta_p
+\end{array}
+\right) \nn\\
+&=&\left(
+\begin{array}{cc}
+\cos\theta_p & -\sin\theta_p \\
+\sin\theta_p & \cos\theta_p
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+\sigma_{xx} \cos\theta_p - \sigma_{xy} \sin\theta_p  &
+\sigma_{xx} \sin\theta_p + \sigma_{xy} \cos\theta_p  \\
+\sigma_{xy} \cos\theta_p - \sigma_{yy} \sin\theta_p & 
+\sigma_{xy} \sin\theta_p + \sigma_{yy} \cos\theta_p 
+\end{array}
+\right) \nn\\
+&=&
+\left(
+\begin{array}{cc}
+\dots & 
+\cos\theta_p(\sigma_{xx} \sin\theta_p + \sigma_{xy} \cos\theta_p )-
+\sin\theta_p(\sigma_{xy} \sin\theta_p + \sigma_{yy} \cos\theta_p ) \\
+\dots & \dots 
+\end{array}
+\right) \nn 
+\end{eqnarray}
+In the matrix above I have only computed the off diagonal term since 
+we are actually looking for $\theta_p$ such that $\sigma_{xy}'=0$, or
+\begin{eqnarray}
+\cos\theta_p(\sigma_{xx} \sin\theta_p + \sigma_{xy} \cos\theta_p )-
+\sin\theta_p(\sigma_{xy} \sin\theta_p + \sigma_{yy} \cos\theta_p ) &=& 0 \nn\\
+\sin\theta_p \cos\theta_p (\sigma_{xx}-\sigma_{yy}) + ( \cos^2\theta_p -\sin^2\theta_p )\sigma_{xy} &=& 0 \nn 
+\end{eqnarray}
+and then 
+\[
+\frac{ \sin\theta_p \cos\theta_p}{ \cos^2\theta_p -\sin^2\theta_p }
+= \frac{\sigma_{xy}}{ \sigma_{xx}-\sigma_{yy} }
+\]
+The left hand term is actually a trigonometric 
+identity\footnote{\url{https://en.wikipedia.org/wiki/List_of_trigonometric_identities}}:
+\[
+\frac{ \sin\theta_p \cos\theta_p}{ \cos^2\theta_p -\sin^2\theta_p } = \frac{1}{2} \tan 2\theta_p
+\]
+and finally:
+\[
+\tan 2\theta_p = \frac{ 2\sigma_{xy}}{ \sigma_{xx}-\sigma_{yy} }
+\qquad
+\text{or}
+\qquad
+\theta_p = \frac{1}{2} \tan^{-1} \frac{ 2\sigma_{xy}}{ \sigma_{xx}-\sigma_{yy} }
+\]
+Once $\theta_p$ has been found the other direction is given by $\theta_p +\pi/2$.
+
+\vspace{.5cm}
+
+\underline{Example}: Let us start with 
+\[
+{\bm \sigma} = 
+\left(
+\begin{array}{cc}
+a & 0 \\
+0 & b
+\end{array}
+\right)
+\]
+then $\tan 2\theta_p = 0$, and then $\theta_p=0$. The principal directions are the horizontal and 
+vertical directions, i.e. the Cartesian axis system, which is consistent.
+
+%...................................... 
+\subsubsection{In three dimensions}
+
+We are looking for the stress tensor eigenvector vector $\vec{n}=(n_x,n_y,n_z)$ associated to the
+eigenvalue $\lambda$ such that 
+\[
+\left(
+\begin{array}{ccc}
+\sigma_{xx} & \sigma_{xy} & \sigma_{xz} \\
+\sigma_{xy} & \sigma_{yy} & \sigma_{yz} \\
+\sigma_{xz} & \sigma_{yz} & \sigma_{zz}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y \\ n_z
+\end{array}
+\right)
+=
+\lambda
+\left(
+\begin{array}{c}
+n_x \\ n_y \\ n_z
+\end{array}
+\right)
+\]
+or,
+\[
+\left(
+\begin{array}{ccc}
+\sigma_{xx} & \sigma_{xy} & \sigma_{xz} \\
+\sigma_{xy} & \sigma_{yy} & \sigma_{yz} \\
+\sigma_{xz} & \sigma_{yz} & \sigma_{zz}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y \\ n_z
+\end{array}
+\right)
+-
+\left(
+\begin{array}{ccc}
+\lambda & 0 & 0\\ 
+0 & \lambda  & 0 \\
+0 & 0 & \lambda 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y \\ n_z
+\end{array}
+\right)
+= \vec{0}
+\]
+
+\[
+\left(
+\begin{array}{ccc}
+\sigma_{xx}-\lambda & \sigma_{xy} & \sigma_{xz} \\
+\sigma_{xy} & \sigma_{yy}-\lambda & \sigma_{yz} \\
+\sigma_{xz} & \sigma_{yz} & \sigma_{zz} -\lambda
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+n_x \\ n_y \\ n_z
+\end{array}
+\right)
+= \vec{0}
+\]
+Non-trivial solutions of this equation require 
+\[
+\left|  
+\begin{array}{ccc}
+\sigma_{xx}-\lambda & \sigma_{xy} & \sigma_{xy} \\
+\sigma_{yx} & \sigma_{yy}-\lambda & \sigma_{yz} \\
+\sigma_{zx} & \sigma_{zy} & \sigma_{zz} -\lambda
+\end{array}
+\right|
+=0
+\]
+Expanding the determinant results in the cubic equation
+\begin{equation}
+\lambda^3 - K_1 \lambda^2 + K_2 \lambda -K_3=0
+\end{equation}
+where:
+\begin{eqnarray}
+K_1 &=& \sigma_{xx}+\sigma_{yy}+\sigma_{zz}\nn\\
+K_2 &=& \sigma_{xx}\sigma_{yy}+\sigma_{yy}\sigma_{zz}+\sigma_{zz}\sigma_{xx}-\sigma_{xy}\sigma_{yx}-\sigma_{xz}\sigma_{zx}-\sigma_{yz}\sigma_{zy}\nn\\
+K_3 &=& \det ({\bm \sigma}) \nn
+\end{eqnarray}
+
+Very often we will find ourselves interested in the principal components of the deviatoric stress tensor
+$\bm s$. 
+In this case the cubic equation becomes
+\begin{equation} 
+\lambda^3 -J_2 \lambda - J_3 =0 \label{opopop}
+\end{equation}
+where $J_2$ and $J_3$ are the second and third invariants of deviatoric stress tensor ${\bm s}$.
+
+Noting the trigonometric identity
+\begin{equation}
+\sin^3 \theta - \frac{3}{4}\sin \theta + \frac{1}{4} \sin 3\theta = 0\label{pc_eq2}
+\end{equation}
+and substituting $\lambda=r\sin \theta$ into (\ref{opopop}) we have
+\begin{equation}
+\sin^3 \theta -\frac{J_2}{r^2} \sin \theta -\frac{J_3}{r^3}=0\label{pc_eq3}
+\end{equation}
+Comparing (\ref{pc_eq2}) and (\ref{pc_eq3}) gives
+\begin{eqnarray}
+r&=&\frac{2}{\sqrt{3}}\sqrt{J_2}\label{pc_eq4bis} \\
+\sin 3 \theta &=& -\frac{4 J_3}{r^3}=-\frac{3\sqrt{3}}{2}\frac{J_3}{(J_2)^{3/2}} \label{pc_eq4}
+\end{eqnarray}
+The first root of (\ref{pc_eq4}) with $\theta$ determined for $3\theta$ in the range $\pm \pi/2$ is a convenient alternative to the third invariant, $J_3$. By noting the cyclic nature of $\sin (3\theta+2n \pi)$ we have immediatly the three (and only three) possible values of $\sin \theta $ which define the three principal stresses. The deviatoric principal stresses are given by $t=r \sin \theta$ on substitution of the three values of $\sin \theta$ in turn. Substituting for $r$ from (\ref{pc_eq4bis}) and adding the mean hydrodynamic stress component gives the total principal stresses to be
+
+The so-called Lode angle  \cite{zico74} is then given by \index{Lode Angle}
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+\theta=\frac{1}{3} \sin^{-1} \left( -\frac{3\sqrt{3}}{2} \frac{J_3}{J_2^{3/2}} \right)
+\]
+\end{mdframed}
+with $-\pi/6 <\theta <\pi/6 $.
+Note that the Lode angle is one of the Lode 
+coordinates\footnote{\url{https://en.wikipedia.org/wiki/Lode_coordinates}},
+or Haigh–Westergaard coordinates. 
+\index{Haigh-Westergaard Coordinates}
+\index{Lode Coordinates}
+
+
+
+\todo[inline]{SOMETHING missing HERE}
+
+\begin{equation}
+\left\{
+\begin{array}{c}
+\sigma_1 \\ \\
+\sigma_2 \\ \\
+\sigma_3
+\end{array}
+\right\}
+= \sqrt{J_2} 
+\left\{
+\begin{array}{c}
+\cos \theta + \frac{1}{\sqrt{3}} \sin \theta \\ \\
+\frac{2}{\sqrt{3}} \sin \theta \\ \\
+\frac{1}{\sqrt{3}} \sin \theta - \cos \theta 
+\end{array}
+\right\}
++
+\frac{J_1}{3}
+\left\{
+\begin{array}{c}
+1 \\ \\
+1 \\ \\
+1
+\end{array}
+\right\}
+\end{equation}
+
+with $\sigma_1>\sigma_2>\sigma_3$.
+
+We will later need $\sigma_1-\sigma_3$ and $\sigma_1+\sigma_3$ so let's compute these
+quantities now:
+
+\begin{eqnarray}
+\sigma_1 -\sigma_3 
+&=&
+ \left( \frac{1}{3}J_1 + \sqrt{J_2} (\cos \theta + \frac{1}{\sqrt{3}} \sin \theta)  \right) 
+-\left( \frac{1}{3}J_1 + \sqrt{J_2} (\frac{1}{\sqrt{3}} \sin \theta - \cos \theta)  \right)  \nn\\
+&=&
+\sqrt{J_2} \left(  (\cos \theta + \frac{1}{\sqrt{3}} \sin \theta)  
+- (\frac{1}{\sqrt{3}} \sin \theta - \cos \theta)  \right)  \nn\\
+&=&
+2 \sqrt{J_2} \cos \theta  \\ && \nn\\
+\sigma_1 + \sigma_3 
+&=&
+ \left( \frac{1}{3}J_1 + \sqrt{J_2} (\cos \theta + \frac{1}{\sqrt{3}} \sin \theta)  \right) 
++\left( \frac{1}{3}J_1 + \sqrt{J_2} (\frac{1}{\sqrt{3}} \sin \theta - \cos \theta)  \right)  \nn\\
+&=&
+\frac{2}{3}J_1 + \sqrt{J_2} \frac{2}{\sqrt{3}} \sin \theta
+\end{eqnarray}
+
+Note that the expression for the Lode angle is different in \cite[p101]{book_zitf} than in \cite{zico74} or \cite[p62]{zita2}
+
+
 
 
 \newpage
@@ -725,4 +1136,4 @@ arriving at the analytical solution.
 
 
 
-
+%\end{document}

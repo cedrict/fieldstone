@@ -106,6 +106,10 @@ Biquadratic velocities, bilinear pressure. See Hood and Taylor. The element sati
 \includegraphics[width=6cm]{images/q2q1/q2numering}
 \end{center}
 
+%----------------------------------------------------------------------
+\subsubsection{The stabilised bi/tri-linear velocity -  constant pressure element ($Q_1\times P_0$-stab)}
+
+\Literature: \cite{lisi12}
 
 %----------------------------------------------------------------------
 \subsubsection{The stabilised bi/tri-linear velocity -  bi/tri-linear pressure element ($Q_1\times Q_1$-stab)}
@@ -122,7 +126,7 @@ This element is used in \cite{bugs09,busa13} in conjunction with AMR.
 
 Stabilisation is worked out out in \cite{dobo04,bodg06}.
 
-\Literature: \cite{grcc95,fros07}
+\Literature: \cite{grcc95,knto00,fros07}
 
 
 %----------------------------------------------------------------------
@@ -135,7 +139,7 @@ It is schematically represented hereunder:
 
 \begin{center}
 \includegraphics[width=8cm]{images/mini/minielement}\\
-{\small Figure taken from Donea and Huerta \cite{dohu03}}
+{\captionfont Figure taken from Donea and Huerta \cite{dohu03}}
 \end{center}
 
 \begin{remark}
@@ -158,10 +162,11 @@ It is also said to be LBB stable in \cite[p180]{reddybook2}.
 
 \begin{center}
 \includegraphics[width=10cm]{images/mini/mini3D}\\
-{\small Velocity and pressure nodes for the 3D MINI element, taken from \cite{pico98}}
+{\captionfont Velocity and pressure nodes for the 3D MINI element, taken from \cite{pico98}}
 \end{center}
 
-
+Note that this element is used in \cite{brwr00} in the context of Arbitrary Lagrangian Eulerian 
+finite element analysis of free surface flows.
 
 
 
@@ -238,8 +243,9 @@ which is really useful (both for the augmentation and preconditioning)."
 This element is used by Poliakov and Podlachikov \cite{popo92} to study the deformation of the surface above a rising diapir. Note that they actually use a "13 point integration formula (Hughes
 1987) for calculation of the stiffness matrix was used in order
 t o conserve detailed information from the marker field in
-the coarse FEM mesh".
-
+the coarse FEM mesh". 
+It is also used in \cite{anmp15} in the context of a new free-surface stabilization scheme. 
+It is the element used in LaCoDe \cite{demh19}.
 
 
 
@@ -253,23 +259,22 @@ the coarse FEM mesh".
 
 p. 722 of \cite{john16}
 
-
+\cite{horg95,knob00,lisi12}
 
 
 %----------------------------
 \subsubsection{Other elements}
 
 \begin{itemize}
-\item P1P0 example 3.70 in \cite{john16}
-\item P1P1
-\item Q2P0: 
-\index{$Q_2 \times P_0$} 
+\item $P_1\times P_0$: example 3.70 in \cite{john16}, also \cite{john98}. \index{$P_1\times P_0$}
+\item $P_1\times P_1$
+\item Q2P0: \index{$Q_2 \times P_0$}: 
 Quadratic velocities, constant pressure. The element satisfies the inf-sup condition, but the constant pressure assumption may require fine discretisation.
 
 \item Q2Q2: This element is never used, probably because a) it is unstable, b) it is very costly. 
 There is one reference to it in \cite{hufb86}.
 \item P2P2
-\item the MINI quadrilateral element $Q_1^+\times Q_1$. \index{$Q_1^+ \times Q_1$} 
+\item the MINI quadrilateral element $Q_1^+\times Q_1$. \index{$Q_1^+ \times Q_1$} \cite{kwpa14}
 \item Q1P-1 Bilinear velocities,  piecewise linear discontinuous polynomial pressure.
 \end{itemize}
 

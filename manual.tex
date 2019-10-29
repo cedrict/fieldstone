@@ -25,19 +25,15 @@
 %\setcounter{secnumdepth}{1} % sections are level 1
 \usepackage{dirtytalk}
 
-\usepackage{auncial}
-\usepackage[B1]{fontenc}
-
-
 \RequirePackage{authorindex}
 
 \hypersetup{
-    colorlinks,
-    citecolor=black,
-    filecolor=black,
-    linkcolor=black,
-    urlcolor=black
-}
+colorlinks,
+citecolor=black,
+filecolor=black,
+linkcolor=black,
+urlcolor=black}
+
 \lstset{ 
   language=Python,
   backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
@@ -64,6 +60,7 @@
 \newcommand{\Literature}{\includegraphics[height=4mm]{images/lit} {\sffamily Literature}}
 \newcommand{\bscthesis}{{(\bf BSc Thesis)}}
 \newcommand{\mscthesis}{{(\bf MSc Thesis)}}
+\newcommand{\captionfont}{\tiny}
 
 \newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
 \newcommandx{\change}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
@@ -95,12 +92,14 @@
 \makeindex 
 \begin{document}
 \thispagestyle{empty}
-\includegraphics[width=\linewidth]{images/frontpage.png}
+\includegraphics[width=0.95\linewidth]{images/frontpage.png}
 
-With contributions from: Wolfgang Bangerth, Eric van den Hoogen, Job Mos, Lukas van de Wiel. 
+{\scriptsize With contributions from: Wolfgang Bangerth, Eric van den Hoogen, Job Mos, Lukas van de Wiel, Alraune Zech, Wim Spakman. }
 \newpage
 If you find anything in this document useful for your research please cite it 
 as follows ({\it please} include the doi!):
+%\fbox{\parbox{10cm}{
+
 \begin{verbatim}
 @article{Thieulot2019,
 author = "C.A.P. (Cedric) Thieulot",
@@ -108,9 +107,30 @@ title = "{Fieldstone: The Finite Element Method in Computational Geodynamics}",
 year = "2019",
 month = "8",
 url = "https://uu.figshare.com/articles/manual_pdf/9209393",
-doi = "10.23644/uu.9209393.v1"
-}
+doi = "10.23644/uu.9209393.v1"}
 \end{verbatim}
+
+
+%}}
+
+\vspace{7cm}
+
+\begin{center}
+{\sl Why do I have to promise where I am going while I am not there yet?}
+
+\vspace{1cm}
+
+{\sl You can't google something you don't know exists.}
+
+\vspace{1cm}
+
+{\sl You can be correct or you can get stuff done.}
+\end{center}
+
+
+
+
+
 \newpage
 \maketitle
 \tableofcontents
@@ -141,11 +161,15 @@ doi = "10.23644/uu.9209393.v1"
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The physical equations} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{physics} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Rheology in geodynamics} \input{rheology} %%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The physical equations} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{nomenclature} %-----------------------------------------------------------------------------
+\subsection{Coordinate systems} \input{coordinate_systems} \label{ss:coordsys} %-------------------
+\subsection{A continuum mechanics primer}\input{continuum_mechanics} %-----------------------------
+\input{physics} %----------------------------------------------------------------------------------
+\subsection{Rheology in geodynamics} \input{rheology} %--------------------------------------------
+\subsection{Moment of inertia} \input{momentofinertia}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,19 +190,23 @@ doi = "10.23644/uu.9209393.v1"
 \subsection{The advection-diffusion equation in 2D} \input{hte_fem} %-----------------------
 
 \newpage 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Solving the flow equations with the FEM} \label{solvingFEM} %%%%%%%%%%%%%%%%%%%%
-\input{incompressible} %-----------------------------------------------------------------
-\subsection{Strong and weak forms} \input{strongweak} %----------------------------------
-\subsection{Which velocity-pressure pair for Stokes?} \input{pair} %---------------------
-\subsection{The penalty approach for viscous flow}\label{sec:penalty}\input{penalty} %---
-\subsection{The mixed FEM for viscous flow} \input{mixed} %------------------------------
-\subsection{Solving the elastic equations} %---------------------------------------------
-\subsection{A quick tour of similar literature} \input{similar} %------------------------
-\subsection{The case against the $Q_1\times P_0$ element} \input{case_against_q1p0} %----
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Solving the flow equations with the FEM} \label{solvingFEM} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{incompressible} %---------------------------------------------------------------------------
+\subsection{Strong and weak forms} \input{strongweak} %--------------------------------------------
+\subsection{Which velocity-pressure pair for Stokes?} \input{pair} %-------------------------------
+\subsection{The penalty approach for viscous flow}\label{sec:penalty}\input{penalty} %-------------
+\subsection{The mixed FEM for viscous flow} \input{mixed} %----------------------------------------
+\subsection{Solving the elastic equations} %-------------------------------------------------------
+\subsection{A quick tour of similar literature} \input{similar} %----------------------------------
+\subsection{The case against the $Q_1\times P_0$ element} \input{case_against_q1p0} %--------------
+\subsection{Isoviscous Stokes for incompressible flow} \input{isoviscous_stokes} %-----------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Discontinuous Galerkin Finite Element Method (DG-FEM) \label{dgfem}} %%%%%%%%%%%%%%%%%
+\input{dgfem1D}
 
 
 \newpage
@@ -189,7 +217,7 @@ Solving the Stokes equations and the energy equations is one thing. Doing it in
 a geodynamical context requires a lot of additional techniques. 
 
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Dealing with a free surface}\label{sec:freesurface} \input{freesurface} %--------------
+\subsection{Dealing with a free surface (and mesh deformation)}\label{sec:freesurface} \input{freesurface} 
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Convergence criterion for nonlinear iterations\label{sec:nlconvcrit}}\input{nlconvcrit} 
 \newpage %-----------------------------------------------------------------------------------------
@@ -256,6 +284,18 @@ a geodynamical context requires a lot of additional techniques.
 \subsection{Stream function} \label{sec:streamfunction} \input{streamfunction} %-------------------
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Corner flow} \label{sec:cornerflow} \input{cornerflow} %-------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Surface processes \label{sec:surfaceprocesses}} \input{surfaceprocesses} %-------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Geometric multigrid} \input{gmg} %-----------------------------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Computing depth \label{ss:depth}} \input{computing_depth} %----------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Imposing boundary conditions \label{ss:howtobc}} \input{howtobc} %---------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{The Geoid} \label{ss:geoid} \input{geoid} %--------------------------------------------
+
+
 
 %\subsection{Steady state thermal problems \label{ss_ss}} \input{steadystate} %-
 
@@ -265,6 +305,7 @@ a geodynamical context requires a lot of additional techniques.
 \input{gravity}
 
 
+%%\end{document}
 
 %==================================================================================================
 %==================================================================================================
@@ -449,14 +490,14 @@ Stone 20: the Busse benchmark
 }
 \input{python_codes/fieldstone_20/text}
 
-\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{
-Stone 21: The non-conforming $Q_1 \times P_0$ element 
-\label{f21}}
-\addcontentsline{toc}{section}{\protect\numberline{} 
-Stone 21: The non-conforming $Q_1 \times P_0$ element 
-}
-\input{python_codes/fieldstone_21/text}
+%\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section*{
+%Stone 21: The non-conforming $Q_1 \times P_0$ element 
+%\label{f21}}
+%\addcontentsline{toc}{section}{\protect\numberline{} 
+%Stone 21: The non-conforming $Q_1 \times P_0$ element 
+%}
+%\input{python_codes/fieldstone_21/text}
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{
@@ -749,10 +790,32 @@ Stone 54: ALEs
 }
 \input{python_codes/fieldstone_54/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 55: Subduction as a thin-sheet problem  
+\label{f55}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 55: Subduction as a thin-sheet problem  
+}
+\input{python_codes/fieldstone_55/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 56: Dynamics of the Salt Water - Fresh Water Interface
+\label{f56}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 56: Dynamics of the Salt Water - Fresh Water Interface  
+}
+\input{python_codes/fieldstone_56/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 57: 1D diffusion with DG-FEM 
+\label{f57}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 57: 1D diffusion with DG-FEM 
+}
+\input{python_codes/fieldstone_57/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
@@ -795,6 +858,12 @@ Stone 54: ALEs
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Fun modelling} \input{interesting} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Beautiful/interesting images from computational geodynamics}\input{beautiful}%%%
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{People}\input{people}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Working with Git} \input{github}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
 
 
 %==================================================================================================

@@ -1,0 +1,144 @@
+
+Let us consider a quadrilateral element with one degree of freedom per node and let us assume that we are solving the temperature equation. The local matrix and right-hand side vector are given by 
+\[
+A_{el}(4\times 4) \quad\quad {\text and} \quad\quad B_{el}(4)
+\]
+Let us assume that we want to impose $\tilde{T}=10$ on the third node (local coordinates numbering). For instance, having built $A_{el}$ and $B_{el}$, the system looks like :
+\[
+\left(
+\begin{array}{cccc}
+3 & 1 & 6  & 9 \\
+5 & 2 & 2  & 8 \\
+7 & 4 & 11 & 2 \\
+9 & 6 & 4  & 3
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+T_1 \\ T_2 \\ T_3 \\ T_4
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+4 \\ 3 \\ 1 \\ 2
+\end{array}
+\right)
+\]
+
+
+
+which can be rewritten 
+\[
+3 T_1 + T_2 + 6 T_3 + 9 T_4 = 4
+\]
+\[
+5 T_1 + 2T_2 + 2 T_3 + 8 T_4 = 3
+\]
+\[
+7 T_1 + 4T_2 + 11 T_3 + 2 T_4 = 1
+\]
+\[
+9 T_1 + 6T_2 + 4 T_3 + 3 T_4 = 2
+\]
+or, 
+\[
+3 T_1 + T_2 + \quad  + 9 T_4 = 4 - 6T_3
+\]
+\[
+5 T_1 + 2T_2 + \quad + 8 T_4 = 3 - 2T_3
+\]
+\[
+7 T_1 + 4T_2 + 11T_3 + 2 T_4 = 1 
+\]
+\[
+9 T_1 + 6T_2 + \quad + 3 T_4 = 2 - 4T_3
+\]
+
+
+\begin{itemize}
+
+\item \underline{Technique 1:} (See \cite{smgr}, p55) Replace the hereabove system by
+\[
+\left(
+\begin{array}{cccc}
+3 & 1 & 6  & 9 \\
+5 & 2 & 2  & 8 \\
+7 & 4 & 11 +  10^{12} & 2 \\
+9 & 6 & 4  & 3
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+T_1 \\ T_2 \\ T_3 \\ T_4
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+4 \\ 3 \\ \tilde{T}\times (11 + 10^{12}) \\ 2
+\end{array}
+\right)
+\]
+
+
+
+
+\item \underline{Technique 2:} One can choose not to solve for $T_3$ anymore, i.e. not to consider it as a degree of freedom and therefore write:
+
+\[
+3 T_1 + T_2 + 9 T_4 = 4 - 6T_3
+\]
+\[
+5 T_1 + 2T_2 + 8 T_4 = 3 - 2T_3
+\]
+\[
+9 T_1 + 6T_2 +  3 T_4 = 2 - 4T_3
+\]
+
+
+\item \underline{Technique 3:} Since we want to impose $T_3=10$, then we can write 
+\[
+3 T_1 + T_2 + \quad  + 9 T_4 = 4 - 6T_3
+\]
+\[
+5 T_1 + 2T_2 + \quad + 8 T_4 = 3 - 2T_3
+\]
+\[
+0 + 0 + T_3 + 0 = 10
+\]
+\[
+9 T_1 + 6T_2 + \quad + 3 T_4 = 2 - 4T_3
+\]
+and in matrix form :
+\[
+\left(
+\begin{array}{cccc}
+3 & 1 & 0  & 9 \\
+5 & 2 & 0  & 8 \\
+0 & 0 & 1 & 0 \\
+9 & 6 & 0  & 3
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+T_1 \\ T_2 \\ T_3 \\ T_4
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+4 - A_{13} T_3\\ 3 - A_{23}T_3 \\ 10 \\ 2-A_{43} T_3
+\end{array}
+\right)
+\]
+
+\end{itemize}
+
+The first technique is not a good idea in practice as it introduces very large 
+values and will likely derail the solver. The second option is somewhat difficult
+to implement as it means that elemental matrix and rhs sizes will change from 
+element to element and it therefore requires more book-keeping.
+The third technique is the one adopted throughout this document. 
+
+

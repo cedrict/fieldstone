@@ -1,0 +1,105 @@
+Mohr-Coulomb theory is a model describing the response of a material such as rubble piles or concrete to shear stress as well as normal stress. 
+Most of the classical engineering materials somehow follow this rule in at least a portion of their shear failure envelope. In geology it is used to define shear strength of soils at different effective stresses.
+
+In structural engineering it is used to determine failure load as well as the angle of fracture of a displacement fracture in concrete and similar materials. Coulomb's friction hypothesis is used to determine the combination of shear and normal stress that will cause a fracture of the material. Mohr's circle is used to determine which principal stresses that will produce this combination of shear and normal stress, and the angle of the plane in which this will occur. According to the principle of normality the stress introduced at failure will be perpendicular to the line describing the fracture condition.
+
+%It can be shown that a material failing according to Coulomb's friction hypothesis will show the displacement introduced at failure forming an angle to the line of fracture equal to the angle of friction. This makes the strength of the material determinable by comparing the external mechanical work introduced by the displacement and the external load with the internal mechanical work introduced by the strain and stress at the line of failure. By conservation of energy the sum of these must be zero and this will make it possible to calculate the failure load of the construction.
+
+The Mohr-Coulomb failure criterion represents the linear envelope that is obtained from a plot of the shear strength of a material 
+versus the applied normal stress. This relation is expressed as
+
+\[
+\tau = \sigma~\tan(\phi) + c 
+\]
+
+where $\tau$ is the shear strength, $\sigma$ is the normal stress, $c$ is the intercept of the failure envelope with the $\tau$ axis, and $\phi$ is the slope of the failure envelope. The quantity $c$ is often called the cohesion and the angle $\phi$ is called the angle of internal friction . Compression is assumed to be positive in the following discussion. If compression is assumed to be negative then $\sigma$ should be replaced with $-\sigma$.
+
+%If $\phi=0$, the Mohr-Coulomb criterion reduces to the Tresca criterion. On the other hand, if $\phi = 90^\circ$ the Mohr-Coulomb model is equivalent to the Rankine model. Higher values of $\phi$ are not allowed.
+
+From Mohr's circle we have
+\[
+\sigma = \sigma_m - \tau_m \sin\phi  \quad\quad\quad  \tau = \tau_m \cos\phi 
+\]
+where
+\[
+\tau_m = \cfrac{\sigma_1-\sigma_3}{2} ~;~~ \sigma_m = \cfrac{\sigma_1+\sigma_3}{2} 
+\]
+and $\sigma_1$ is the maximum principal stress and $\sigma_3$ is the minimum principal stress.
+Therefore the Mohr-Coulomb criterion may also be expressed as
+\[
+\tau_m = \sigma_m \sin\phi + c \cos\phi  
+\]
+The Mohr-Coulomb failure (yield) surface is often expressed in Haigh-Westergaad coordinates. For example, the last equation rewrites
+\[
+\cfrac{\sigma_1-\sigma_3}{2} = \cfrac{\sigma_1+\sigma_3}{2}~\sin\phi + c\cos\phi 
+\]
+%or,
+%\[
+%\sigma_1~\cfrac{(1-\sin\phi)}{2~c~\cos\phi} - \sigma_3~\cfrac{(1+\sin\phi)}{2~c~\cos\phi} = 1 ~. 
+%\]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{two-dimensional space}
+
+The principal stress values are given by
+\[
+\sigma_{1,2} = \frac{\sigma_{xx}+\sigma_{yy}}{2} \pm \sqrt{ \frac{1}{4}(\sigma_{xx}-\sigma_{yy})^2 + \sigma_{xy}^2  }
+= \frac{J_1}{2} \pm \sqrt{ J_2'}
+\]
+The Mohr-Coulomb criterion simply writes:
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+F^{MC,2D}=  -\frac{J_1}{2} \sin \phi + \sqrt{J_2} - c  \cos \phi  \label{mc2Dcriterion}
+\]
+\end{mdframed}
+
+
+%which is in fact equivalent to the Drucker-Prager (see next section) with $k=c \cos \phi$ and $\alpha=\sin \phi$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{three-dimensional space}
+
+%The Haigh-Westergaard invariants are related to the principal stresses by
+%\begin{eqnarray}
+%\sigma_1 &=& \cfrac{1}{\sqrt{3}}~\xi + \sqrt{\cfrac{2}{3}}~\rho~\cos\theta  \nonumber\\
+%\sigma_3 &=& \cfrac{1}{\sqrt{3}}~\xi + \sqrt{\cfrac{2}{3}}~\rho~\cos\left(\theta+\cfrac{2\pi}{3}\right) \nonumber
+%\end{eqnarray}
+%Plugging into the expression for the Mohr-Coulomb yield function gives us
+%\[
+% -\sqrt{2}~\xi~\sin\phi + \rho[\cos\theta - \cos(\theta+2\pi/3)] - \rho\sin\phi[\cos\theta+\cos(\theta+2\pi/3)] = \sqrt{6}~c~\cos\phi 
+%\]
+%Using trigonometric identities for the sum and difference of cosines and rearrangement gives us the expression of the Mohr-Coulomb yield function in terms of $\xi$, $\rho$ and $\theta$:
+%\[
+%\left[\sqrt{3}~\sin\left(\theta+\cfrac{\pi}{3}\right) - \sin\phi\cos\left(\theta+\cfrac{\pi}{3}\right)\right]\rho - \sqrt{2}\sin(\phi)\xi = \sqrt{6} c \cos\phi 
+%\]
+%Alternatively, in terms of the invariants $p$,$q$,$r$ we can write
+%\[
+%\left[\cfrac{1}{\sqrt{3}~\cos\phi}~\sin\left(\theta+\cfrac{\pi}{3}\right) - \cfrac{1}{3}\tan\phi~\cos\left(\theta+\cfrac{\pi}{3}\right)\right]q - p~\tan\phi = c 
+%\]
+
+
+We have already established that 
+\begin{eqnarray}
+\sigma_1 - \sigma_3  = 2 \sqrt{J_2} \cos \theta \quad\quad\quad
+\sigma_1 + \sigma_3  = \frac{2}{3}J_1 + \sqrt{J_2} \frac{2}{\sqrt{3}} \sin \theta \nn
+\end{eqnarray}
+
+
+\begin{eqnarray}
+&& \frac{\sigma_1 - \sigma_3}{2} = \frac{\sigma_1 + \sigma_3}{2} \sin \phi  + c \cos \phi \nn\\
+&\Rightarrow&
+\sqrt{J_2} \cos \theta = (\frac{1}{3}J_1 + \sqrt{J_2} \frac{1}{\sqrt{3}} \sin \theta ) \sin \phi + c \cos \phi \nn\\
+&\Rightarrow&
+-\frac{1}{3}J_1 \sin \phi  + \sqrt{J_2} ( \cos \theta - \frac{1}{\sqrt{3}} \sin \theta  \sin \phi ) - c \cos \phi = 0 \nn
+\end{eqnarray}
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+F^{Mc,3D}=-\frac{1}{3}J_1 \sin \phi  + \sqrt{J_2} ( \cos \theta - \frac{1}{\sqrt{3}} \sin \theta  \sin \phi ) - c \cos \phi 
+\]
+\end{mdframed}
+
+Note that the expression for $F$ in the Mohr-Coulomb case in \cite{zico74} contains errors
+which is later corrected in \cite[p102]{book_zitf}. 
+
