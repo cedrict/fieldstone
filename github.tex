@@ -5,7 +5,7 @@ In this appendix we summarize the most important commands one should and remembe
 In order to be able to work within a repository, for instance, to run and compile different programs, you should have you own branch of the repository in which YOU CAN make changes. The following commands should be used to make, copy and publish your own version of the repo to your local device and the online github environment.
 
 \begin{center}
-\begin{tabular}{l|l}
+\begin{tabular}{p{6cm}|p{9cm}}
 \textbf{command} &  \textbf{what it does} \\
 \hline
   git branch & shows all branches of your repository and highlights the one you're in. \\
@@ -15,13 +15,12 @@ In order to be able to work within a repository, for instance, to run and compil
   git branch -d \textless my\_own\_branch\textgreater & Delete your local branch. \\
   \end{tabular}
 \end{center}
-  
 
   The following commands should be used in order to update your own local branches from updates made by somewhere else (upstream/master is the main repository). One should do this for the local master branch and, where possible as well for the different local branches you have committed changes to already. 
 
   
-  \begin{center}
-\begin{tabular}{l|l}
+\begin{center}
+\begin{tabular}{p{6cm}|p{9cm}}
 \textbf{command} &  \textbf{what it does} \\
 \hline
 git checkout master & To make sure you are in the right branch \\
@@ -38,7 +37,7 @@ git checkout master & To make sure you are in the right branch \\
 While you are working in your own branch you can change, add or delete files in any amount you want. However, always check whether your changes do not inflict the outcome of for instance your code. And when uploading from your terminal: if you commit and then push from master branch your changes will automatically be inserted in the online version of your master branch, when done from another branch it will be shown as a pull request towards your master branch. This request can than, for instance be forwarded to the main repo.\\
 
 \begin{center}
-\begin{tabular}{l|l}
+\begin{tabular}{p{6cm}|p{9cm}}
 \textbf{command} &  \textbf{what it does} \\
 \hline
   git commit -a & This will send your changes/updates from your branch as a commit to your own local branch. \\
@@ -50,3 +49,14 @@ While you are working in your own branch you can change, add or delete files in 
   git stash (apply) & ?? While updating your local branch, sometimes git wants to overrule your own changes, with this command you can 'stash' them to look at the differences later. ?? \\
 \end{tabular}
 \end{center}
+
+%..............................................
+\paragraph{Very concretely, if you wish to contribute:} 
+
+\begin{enumerate}
+\item clone/update the last version of fieldstone on your computer
+\item create a branch and check it out
+\item carry out your modifications (typo, additional reference, new equation, new stone, ... anything, really!)
+\item commit and push 
+\item go to github.com and click pull request
+\end{enumerate}
