@@ -3,79 +3,6 @@ This appendix was contributed by E. van der Wiel.
 \end{mdframed}
 
 
-
-\paragraph{Preliminary steps to work with git:} 
-Follow the instructions at \url{https://help.github.com/en/articles/connecting-to-github-with-ssh},
-make sure that you have an account on GitHub (say, \verb"https://github.com/garfield") 
-and carry out a proper setup on your local computer as follows:\\
-\$ \verb'git config --global user.name "firstname lastname" '\\
-\$ \verb'git config --global user.email your@email'
-
-
-On github.com, fork the official fieldstone repository to your repository: 
-go to \verb"https://github.com/cedrict/fieldstone" and click on the 'fork' button 
-on the upper right corner of the screen.
-
-On your machine, in a terminal, clone your repository with \\
-\$ \verb"git clone git@github.com:garfield/fieldstone.git". This is now your master branch.
-
-In what follows we summarize the most important commands one should and remember while working with github. After creating an account one can 'fork' a repository (repo) in the online environment. This repository is a copy from the master directory of the developer and should not be used to adapt or change, as changes from the developer (updates) should be obtained in this 'fork', or as it could also be called; your master branch. 
-  
-In order to be able to work within a repository, for instance, to run and compile different programs, you should have you own branch of the repository in which YOU CAN make changes. The following commands should be used to make, copy and publish your own version of the repo to your local device and the online github environment.
-
-\begin{center}
-\begin{tabular}{p{6cm}|p{9cm}}
-\textbf{command} &  \textbf{what it does} \\
-\hline
-  git branch & shows all branches of your repository and highlights the one you're in. \\
-  git checkout -b \textless my\_own\_branch\textgreater & This makes your own branch called "my\_own\_branch". \\
-  git push origin \textless my\_own\_branch\textgreater & This pushes your own, local, branch to as a second branch in the online repo of github. \\
-  git checkout \textless name\textgreater & changing the branch your working in (e.g. master or my\_own\_branch). Or replace the name with a hyphen to switch to the last branch.\\
-  git branch -d \textless my\_own\_branch\textgreater & Delete your local branch. \\
-  \end{tabular}
-\end{center}
-
-  The following commands should be used in order to update your own local branches from updates made by somewhere else (upstream/master is the main repository). One should do this for the local master branch and, where possible as well for the different local branches you have committed changes to already. 
-
-  
-\begin{center}
-\begin{tabular}{p{6cm}|p{9cm}}
-\textbf{command} &  \textbf{what it does} \\
-\hline
-git checkout master & To make sure you are in the right branch \\
-  git fetch upstream & to fetch updates from upstream repositories to you own local branch (e.g. to update your master branch. \\
-  git merge upstream/master & Command to update the branch with the fethched repo from 'upstream'. \\
-  git push origin master & To level your own online repository again with the one on your local drive (and thus the one upstream). \\
-  git checkout \textless my\_own\_branch\textgreater & To switch to your own adapted branch of the repo. \\
-  git merge master & Used from another branch working directory to combine the new released version of the master repo with the one where all your own changes are put. -\textgreater Then git finds all conflicts in different files which you need to resolve. \\
-  git add . & This adds the resolved issues in your own local branch (not master). After which you are able to commit and push your changes back to the online respository. 
-\end{tabular}
-\end{center}
-
-
-While you are working in your own branch you can change, add or delete files in any amount you want. However, always check whether your changes do not inflict the outcome of for instance your code. And when uploading from your terminal: if you commit and then push from master branch your changes will automatically be inserted in the online version of your master branch, when done from another branch it will be shown as a pull request towards your master branch. This request can than, for instance be forwarded to the main repo.\\
-
-\begin{center}
-\begin{tabular}{p{6cm}|p{9cm}}
-\textbf{command} &  \textbf{what it does} \\
-\hline
-  git commit -a & This will send your changes/updates from your branch as a commit to your own local branch. \\
-  git push origin \textless changes\textgreater & To update the remote repository (on Github) from you local repository (in this case the 'changes' branch). (Actually upload the new version). Online one can then judge what to do with it. !! this is a pull request towards your own fork/local\_branch \\ 
-  git status & Showing the status of your current branch; it shows which files are different between the master file and your adapted branch. \\
-  git diff \textless changes\textgreater& This shows the exact differences between the different branches; one can simply ask for the difference between two branches when pwd in one branch ask for the other branch. \\ 
-  git merge \textless my\_own\_branch\textgreater & When used from the master branch (or any other???) this accepts the changes made in your branch and puts them in your local(!) master branch. \\ 
-  git pull origin master & if the main repository changes, one can pull the newest version towards it's own master file. While keeping your own branches alive with you own changes and vica versa: by running this command the origin/master (remote file) will be cloned and updated to the working branch you are in. \\
-  git stash (apply) & ?? While updating your local branch, sometimes git wants to overrule your own changes, with this command you can 'stash' them to look at the differences later. ?? \\
-\end{tabular}
-\end{center}
-
-
-
-\newpage
-
-
- Follow the instructions at https://help.github.com/en/articles/connecting-to-github-with-ssh  
-
 \begin{enumerate}
 \item make sure that you  have an account on GitHub (say, \verb"https://github.com/myusername") 
 and carry out a proper setup on your local computer as follows:\\
@@ -94,6 +21,7 @@ Note that you can create a public key as follows:
 {\tt https://help.github.com/articles/generating-ssh-keys/}}
  with \$ \verb"less ~/.ssh/id_dsa.pub" and copy this into github.com 
 so you can push to your repository. See \url{https://help.github.com/en/articles/connecting-to-github-with-ssh} on how to configure github with ssh support (no more login/password to type -- if you have cloned the repository wish ssh, not html).
+Please also check the instructions at \url{https://help.github.com/en/articles/connecting-to-github-with-ssh}.  
  
 \item create a remote of your (online) repository\\
 \verb"git remote add origin git@github.com:myusername/fieldstone.git"
@@ -212,8 +140,69 @@ branch as follows:
 \begin{verbatim}
 git branch -d fix_typo
 \end{verbatim}
-
-
-
-
 \end{enumerate}
+
+\newpage
+\begin{center}
+\includegraphics[width=9cm]{images/github/1}\\
+\includegraphics[width=9cm]{images/github/2}\\
+\includegraphics[width=9cm]{images/github/3}\\
+\includegraphics[width=9cm]{images/github/4}\\
+\includegraphics[width=9cm]{images/github/6}\\
+{\captionfont Screen captures of the procedure described above as 
+carried out by E. van der Wiel on his Apple laptop.}
+\end{center}
+
+
+
+\newpage
+In what follows we summarize the most important commands one should and remember while working with github. After creating an account one can 'fork' a repository (repo) in the online environment. This repository is a copy from the master directory of the developer and should not be used to adapt or change, as changes from the developer (updates) should be obtained in this 'fork', or as it could also be called; your master branch. 
+  
+In order to be able to work within a repository, for instance, to run and compile different programs, you should have you own branch of the repository in which YOU CAN make changes. The following commands should be used to make, copy and publish your own version of the repo to your local device and the online github environment.
+
+\begin{center}
+\begin{tabular}{p{6cm}|p{9cm}}
+\textbf{command} &  \textbf{what it does} \\
+\hline
+  git branch & shows all branches of your repository and highlights the one you're in. \\
+  git checkout -b \textless my\_own\_branch\textgreater & This makes your own branch called "my\_own\_branch". \\
+  git push origin \textless my\_own\_branch\textgreater & This pushes your own, local, branch to as a second branch in the online repo of github. \\
+  git checkout \textless name\textgreater & changing the branch your working in (e.g. master or my\_own\_branch). Or replace the name with a hyphen to switch to the last branch.\\
+  git branch -d \textless my\_own\_branch\textgreater & Delete your local branch. \\
+  \end{tabular}
+\end{center}
+
+  The following commands should be used in order to update your own local branches from updates made by somewhere else (upstream/master is the main repository). One should do this for the local master branch and, where possible as well for the different local branches you have committed changes to already. 
+
+  
+\begin{center}
+\begin{tabular}{p{6cm}|p{9cm}}
+\textbf{command} &  \textbf{what it does} \\
+\hline
+git checkout master & To make sure you are in the right branch \\
+  git fetch upstream & to fetch updates from upstream repositories to you own local branch (e.g. to update your master branch. \\
+  git merge upstream/master & Command to update the branch with the fethched repo from 'upstream'. \\
+  git push origin master & To level your own online repository again with the one on your local drive (and thus the one upstream). \\
+  git checkout \textless my\_own\_branch\textgreater & To switch to your own adapted branch of the repo. \\
+  git merge master & Used from another branch working directory to combine the new released version of the master repo with the one where all your own changes are put. -\textgreater Then git finds all conflicts in different files which you need to resolve. \\
+  git add . & This adds the resolved issues in your own local branch (not master). After which you are able to commit and push your changes back to the online respository. 
+\end{tabular}
+\end{center}
+
+
+While you are working in your own branch you can change, add or delete files in any amount you want. However, always check whether your changes do not inflict the outcome of for instance your code. And when uploading from your terminal: if you commit and then push from master branch your changes will automatically be inserted in the online version of your master branch, when done from another branch it will be shown as a pull request towards your master branch. This request can than, for instance be forwarded to the main repo.\\
+
+\begin{center}
+\begin{tabular}{p{6cm}|p{9cm}}
+\textbf{command} &  \textbf{what it does} \\
+\hline
+  git commit -a & This will send your changes/updates from your branch as a commit to your own local branch. \\
+  git push origin \textless changes\textgreater & To update the remote repository (on Github) from you local repository (in this case the 'changes' branch). (Actually upload the new version). Online one can then judge what to do with it. !! this is a pull request towards your own fork/local\_branch \\ 
+  git status & Showing the status of your current branch; it shows which files are different between the master file and your adapted branch. \\
+  git diff \textless changes\textgreater& This shows the exact differences between the different branches; one can simply ask for the difference between two branches when pwd in one branch ask for the other branch. \\ 
+  git merge \textless my\_own\_branch\textgreater & When used from the master branch (or any other???) this accepts the changes made in your branch and puts them in your local(!) master branch. \\ 
+  git pull origin master & if the main repository changes, one can pull the newest version towards it's own master file. While keeping your own branches alive with you own changes and vica versa: by running this command the origin/master (remote file) will be cloned and updated to the working branch you are in. \\
+  git stash (apply) & ?? While updating your local branch, sometimes git wants to overrule your own changes, with this command you can 'stash' them to look at the differences later. ?? \\
+\end{tabular}
+\end{center}
+
