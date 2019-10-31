@@ -1,6 +1,25 @@
-\textbf{MIND YOURSELF: Working in a Mac OS, be carefull with case sensitive file names etc...}
+\begin{mdframed}[backgroundcolor=red!5]
+This appendix was contributed by E. van der Wiel.
+\end{mdframed}
 
-In this appendix we summarize the most important commands one should and remember while working with github. After creating an account one can 'fork' a repository (repo) in the online environment. This repository is a copy from the master directory of the developer and should not be used to adapt or change, as changes from the developer (updates) should be obtained in this 'fork', or as it could also be called; your master branch. 
+
+
+\paragraph{Preliminary steps to work with git:} 
+Follow the instructions at \url{https://help.github.com/en/articles/connecting-to-github-with-ssh},
+make sure that you have an account on GitHub (say, \verb"https://github.com/garfield") 
+and carry out a proper setup on your local computer as follows:\\
+\$ \verb'git config --global user.name "firstname lastname" '\\
+\$ \verb'git config --global user.email your@email'
+
+
+On github.com, fork the official fieldstone repository to your repository: 
+go to \verb"https://github.com/cedrict/fieldstone" and click on the 'fork' button 
+on the upper right corner of the screen.
+
+On your machine, in a terminal, clone your repository with \\
+\$ \verb"git clone git@github.com:garfield/fieldstone.git". This is now your master branch.
+
+In what follows we summarize the most important commands one should and remember while working with github. After creating an account one can 'fork' a repository (repo) in the online environment. This repository is a copy from the master directory of the developer and should not be used to adapt or change, as changes from the developer (updates) should be obtained in this 'fork', or as it could also be called; your master branch. 
   
 In order to be able to work within a repository, for instance, to run and compile different programs, you should have you own branch of the repository in which YOU CAN make changes. The following commands should be used to make, copy and publish your own version of the repo to your local device and the online github environment.
 
