@@ -179,7 +179,7 @@ for iel in range(0,nel):
     iconP[2,iel]=counter
     counter+=1
 
-np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
 
 #for iel in range (0,nel):
 #    print ("iel=",iel)
@@ -237,6 +237,32 @@ for iel in range(0,nel):
 #end for
 
 print("assign density, viscosity: %.3f s" % (timing.time() - start))
+
+
+#################################################################
+# generate regular grid with composition for ASPECT ascii plugin
+#################################################################
+
+n_n=16#512
+aspectfile=open('slab.txt',"w")
+for j in range(0,n_n+1):
+    for i in range(0,n_n+1):
+        x_c=i/n_n*Lx
+        y_c=j/n_n*Ly
+        if x_c>xmin and x_c<xmax and y_c>ymin and y_c<ymax:
+           dist = poly.is_inside(x_c,y_c)
+           if dist>0:
+              comp=1
+           else:
+              comp=0 
+        else:
+           comp=0
+        # end if
+        aspectfile.write("%10e %10e %10e \n" %(x_c,y_c,comp))
+    #end for
+#end for
+#exit()
+
 
 #################################################################
 # define boundary conditions
