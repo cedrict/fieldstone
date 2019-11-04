@@ -1,3 +1,7 @@
+\begin{mdframed}[backgroundcolor=red!5]
+This stone was partially contributed by E. van der Wiel.
+\end{mdframed}
+
 \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_55}
 
 \vspace{1cm}
@@ -40,7 +44,8 @@ The density of the mantle is set to zero while the subducting plate has a densit
 \includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/eta}\\
 {\captionfont Mesh composed of 31,765 triangles.
 Other parameters: $\theta_0=60\degree$, $\eta_1=10^{21}$, $\gamma=100$, 
-$L_x$=3000km, $L_y$=1500km, $\delta\rho=100$, $L=$400km, $h=$100km, $d=$50km.}
+$L_x$=3000km, $L_y$=1500km, $\delta\rho=100$, $L=$400km, $h=$100km, $d=$50km. 
+Note that the bottom boundary is open.}
 \end{center}
 
 %\begin{center}
@@ -52,18 +57,44 @@ $L_x$=3000km, $L_y$=1500km, $\delta\rho=100$, $L=$400km, $h=$100km, $d=$50km.}
 %left to right on the midsurface and excludes the rounded edges of the slab.}
 %\end{center}
 
+We have also run this model with ASPECT for the case where free slip 
+boundary conditions are prescribed on all sides. 
+Velocities on the midsurface are reported hereunder alongside those
+obtained with fieldstone and the BEM method.
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_55/images/u_midsurface}
-\includegraphics[width=7cm]{python_codes/fieldstone_55/images/v_midsurface}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_55/images/u_perimeter}
-\includegraphics[width=7cm]{python_codes/fieldstone_55/images/v_perimeter}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/u_midsurface}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/v_midsurface}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/u_perimeter}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/v_perimeter}\\
 {\captionfont Top row: midsurface velocity measurements. Bottom row: slab/plate perimeter 
 velocity measurements. 'open' means no b.c. on sides and bottom; 'f.s. sides' means 
 free slip b.c. on left and right sides, open at the bottom; 'f.s. all' means 
 free slip b.c. on sides and bottom.}
 \end{center}
 
+\newpage
+Finally, we have run this experiment over time with ASPECT (unfortunately viscosities were 100 times 
+too small so that the times should be multiplied by 100):
+\begin{center}
+\includegraphics[width=5.26cm]{python_codes/fieldstone_55/images/aspect/grid_comp0000}
+\includegraphics[width=5.26cm]{python_codes/fieldstone_55/images/aspect/grid_comp0090}
+\includegraphics[width=5.26cm]{python_codes/fieldstone_55/images/aspect/grid_comp0180}\\
+\includegraphics[width=5.26cm]{python_codes/fieldstone_55/images/aspect/vel_sr0000}
+\includegraphics[width=5.26cm]{python_codes/fieldstone_55/images/aspect/vel_sr0090}
+\includegraphics[width=5.26cm]{python_codes/fieldstone_55/images/aspect/vel_sr0180}\\
+{\captionfont Left: t=0, middle t=64kyr, right: t=100kyr.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=11cm]{python_codes/fieldstone_55/images/mid_evolution}\\
+{\captionfont Time evolution of the midline of the slab.}
+\end{center}
+
+
+
+\vspace{3cm}
 
 %\begin{center}
 %\includegraphics[width=7cm]{python_codes/fieldstone_55/images/spine_Us}
