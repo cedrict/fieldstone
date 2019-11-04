@@ -243,26 +243,33 @@ print("assign density, viscosity: %.3f s" % (timing.time() - start))
 # generate regular grid with composition for ASPECT ascii plugin
 #################################################################
 
-n_n=16#512
-aspectfile=open('slab.txt',"w")
-for j in range(0,n_n+1):
-    for i in range(0,n_n+1):
-        x_c=i/n_n*Lx
-        y_c=j/n_n*Ly
-        if x_c>xmin and x_c<xmax and y_c>ymin and y_c<ymax:
-           dist = poly.is_inside(x_c,y_c)
-           if dist>0:
-              comp=1
-           else:
-              comp=0 
-        else:
-           comp=0
+#n_n=256
+#aspectfile=open('aspect_slab.ascii',"w")
+#aspectfile.write("# POINTS: %8d %8d \n" %((n_n+1),(n_n+1)))
+#aspectfile.write("# Columns: x y phase\n")
+#for j in range(0,n_n+1):
+#    for i in range(0,n_n+1):
+#        x_c=i/n_n*Lx
+#        y_c=j/n_n*Ly
+#        if x_c>xmin and x_c<xmax and y_c>ymin and y_c<ymax:
+#           dist = poly.is_inside(x_c,y_c)
+#           if dist>0:
+#              comp=1
+#           else:
+#              comp=0 
+#        else:
+#           comp=0
         # end if
-        aspectfile.write("%10e %10e %10e \n" %(x_c,y_c,comp))
+#        aspectfile.write("%10e %10e %10e \n" %(x_c,y_c,comp))
     #end for
 #end for
-#exit()
 
+#np.savetxt('aspect_midpositions.ascii',np.array([xmid,ymid]).T)
+
+#xxxp=np.concatenate([xmid,xperim])
+#yyyp=np.concatenate([ymid,yperim])
+#np.savetxt('aspect_allpositions.ascii',np.array([xxxp,yyyp]).T)
+#exit()
 
 #################################################################
 # define boundary conditions
@@ -323,6 +330,8 @@ for iel in range(0,nel):
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area (meas) %.6f " %(area.sum()))
 print("     -> total area (anal) %.6f " %(Lx*Ly))
+
+#print( np.sum(area*rho))
 
 print("compute elements areas: %.3f s" % (timing.time() - start))
 

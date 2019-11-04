@@ -44,6 +44,7 @@ plot[:281][]\
 'midsurface_open.ascii'           u ($3/Vst) w l t 'open',\
 'midsurface_freeslip_sides.ascii' u ($3/Vst) w l t 'f.s. sides',\
 'midsurface_freeslip.ascii'       u ($3/Vst) w l t 'f.s. all',\
+'aspect/particles-00000.0000.gnuplot' u 3:($6/Vst/100) w lp ps .1  t 'ASPECT'
 
 set xtics 40
 set key outside
@@ -55,13 +56,27 @@ plot[:281][]\
 'midsurface_open.ascii'           u ($4/Vst) w l t 'open',\
 'midsurface_freeslip_sides.ascii' u ($4/Vst) w l t 'f.s. sides',\
 'midsurface_freeslip.ascii'       u ($4/Vst) w l t 'f.s. all',\
+'aspect/particles-00000.0000.gnuplot' u 3:($7/Vst/100) w lp ps .1  t 'ASPECT'
 
 
 
 
-
-
-
+set xlabel 'x (km)'
+set ylabel 'y (km)'
+set xtics 250
+set ytics 100
+set output 'mid_evolution.pdf'
+plot[0:3000][0:1500]\
+'aspect/particles-00000.0000.gnuplot' u ($1/1e3):($2/1e3) pt 5 ps .1 t 't=0',\
+'aspect/particles-00020.0000.gnuplot' u ($1/1e3):($2/1e3) pt 5 ps .1 t 't=28kyr',\
+'aspect/particles-00040.0000.gnuplot' u ($1/1e3):($2/1e3) pt 5 ps .1 t 't=43kyr',\
+'aspect/particles-00060.0000.gnuplot' u ($1/1e3):($2/1e3) pt 5 ps .1 t 't=52kyr',\
+'aspect/particles-00080.0000.gnuplot' u ($1/1e3):($2/1e3) pt 5 ps .1 t 't=60kyr',\
+'aspect/particles-00100.0000.gnuplot' u ($1/1e3):($2/1e3) pt 5 ps .1 t 't=68kyr',\
+'aspect/particles-00120.0000.gnuplot' u ($1/1e3):($2/1e3) pt 5 ps .1 t 't=75kyr',\
+'aspect/particles-00140.0000.gnuplot' u ($1/1e3):($2/1e3) pt 5 ps .1 t 't=83kyr',\
+'aspect/particles-00160.0000.gnuplot' u ($1/1e3):($2/1e3) pt 5 ps .1 t 't=91kyr',\
+'aspect/particles-00180.0000.gnuplot' u ($1/1e3):($2/1e3) pt 5 ps .1 t 't=100kyr',\
 
 
 
