@@ -1,4 +1,4 @@
-\subsection{Strain rate and spin tensor}
+\subsubsection{Strain rate and spin tensor}
 \index{velocity gradient}
 \index{strain rate}
 \index{spin tensor}
@@ -20,11 +20,11 @@ It can be decomposed into its symmetric and skew-symmetric parts according to:
 \end{equation}
 The symmetric part is called the strain rate (or rate of deformation):
 \begin{equation}
-\dot{\bm \epsilon}(\vec \upnu) = \frac{1}{2}\left( \vec\nabla\vec\upnu + \vec\nabla\vec\upnu^T \right)
+\dot{\bm \varepsilon}(\vec \upnu) = \frac{1}{2}\left( \vec\nabla\vec\upnu + (\vec\nabla\vec\upnu)^T \right)
 \end{equation}
 The skew-symmetric tensor is called spin tensor (or vorticity tensor):
 \begin{equation}
-\dot{\bm R}(\vec \upnu) = \frac{1}{2}\left( \vec\nabla\vec\upnu - \vec\nabla\vec\upnu^T \right)
+\dot{\bm R}(\vec \upnu) = \frac{1}{2}\left( \vec\nabla\vec\upnu - (\vec\nabla\vec\upnu)^T \right)
 \end{equation}
 
 \begin{remark}
@@ -32,37 +32,78 @@ In the mathematical literature a different notation for the strain rate tensor i
 $D(\vec \upnu)$, such as for instance in \cite{full95}.
 \end{remark}
 
-
-
 %.............................................
-\subsubsection{Compressible Newtonian Fluid}
+\subsection{Viscous Newtonian rheology}
 
-For the compressible case, ${\bm \sigma}$ 
-depends linearly on the strain rate tensor $\dot{\bm \varepsilon}$: 
+The relationship between velocity-related stresses and
+velocity derivatives is such that the total stress tensor has the form \cite{berc09}
 \begin{equation}
-{\bm \sigma} = -p(\rho,T) {\bm 1} + \lambda \; \text{tr} (\dot{\bm \varepsilon}) {\bm 1} + 2\eta \dot{\bm \varepsilon}
+{\bm \sigma} = -p {\bm 1} + {\bm A}:\dot{\bm \varepsilon}
 \end{equation}
-where $p$ is the thermodynamic pressure which is a function of the density $\rho$ and the temperature $T$ (an equation of state is then needed). $\lambda$ and $\eta$ are the coefficients of viscosity. 
-We also have:
+where $p$ is the thermodynamic pressure which is a function of the density $\rho$ and the temperature $T$ (an equation of state is then needed)
+and ${\bm A}$ is the fourth-rank stiffness tensor.
+
+Since both the stress and the strain tensors are symmetric and for isotropic 
+fluids we have \cite{malvern}
 \begin{equation}
-{\bm \sigma} = -p(\rho,T) {\bm 1} + \zeta \; \text{tr} (\dot{\bm \varepsilon}) {\bm 1} + 2\eta \dot{\bm \varepsilon}^d
+{\bm A}:\dot{\bm \varepsilon} = \lambda (\vec\nabla\cdot\vec\upnu) {\bm 1} + 2\eta \dot{\bm \varepsilon}
 \end{equation}
-where $\zeta=\lambda+2\eta/3$ is the bulk viscosity and $\eta$ is the shear viscosity.
-
-
-
-%.............................................
-\subsubsection{Incompressible Newtonian Fluid}
-
-In this case the stress tensor is 
+where $\lambda$ is the bulk viscosity and $\eta$ is the dynamic viscosity\footnote{also sometimes called shear viscosity}. 
+The stress tensor is then 
 \begin{equation}
-{\bm \sigma}=-p {\bm 1} + {\bm \tau}
+{\bm \sigma} = (-p  + \lambda (\vec\nabla\cdot\vec\upnu)) {\bm 1} + 2\eta \dot{\bm \varepsilon}
 \end{equation}
-where $p=-1/3 \; \text{tr} (\bm \sigma)$ and ${\bm \tau}$ is the deviatoric stress tensor:
+By writing 
+\[
+\dot{\bm \varepsilon} = \frac{1}{3}{\text tr}(\dot{\bm \varepsilon}) {\bm 1} + \dot{\bm \varepsilon}^d =
+ \frac{1}{3}(\vec\nabla\cdot\vec\upnu) {\bm 1} + \dot{\bm \varepsilon}^d
+\]
+where $\dot{\bm \varepsilon}^d$ is the deviatoric strain rate tensor and 
+(in Cartesian coordinates)
 \begin{equation}
-{\bm \tau}=2\eta \dot{\bm \varepsilon}^d
+\vec\nabla\cdot\vec\upnu = 
+\text{div} (\vec\upnu ) =
+{\text tr}(\dot{\bm \varepsilon}) =
+\frac{\partial u}{\partial x}+ 
+\frac{\partial v}{\partial y}+ 
+\frac{\partial w}{\partial z} 
+\end{equation} 
+where $\text{tr}$ is the trace operator, we arrive at
+\begin{eqnarray}
+{\bm \sigma} 
+&=& (-p+\lambda(\vec\nabla\cdot\vec\upnu)) {\bm 1} + 2\eta \left[ \frac{1}{3}(\vec\nabla\cdot\vec\upnu) {\bm 1} + \dot{\bm \varepsilon}^d \right] \\
+&=& \left[ -p+\left(\lambda+\frac{2}{3}\eta\right)(\vec\nabla\cdot\vec\upnu)\right] {\bm 1} + 2\eta  \dot{\bm \varepsilon}^d  
+\end{eqnarray}
+Introducing the second viscosity $\zeta=\lambda+\frac{2}{3}\eta$:
+\begin{eqnarray}
+{\bm \sigma} 
+&=& \left[ -p+ \zeta (\vec\nabla\cdot\vec\upnu)\right] {\bm 1} + 2\eta  \dot{\bm \varepsilon}^d \\ 
+&=&  -\overline{p} {\bm 1} + 2\eta  \dot{\bm \varepsilon}^d  
+\end{eqnarray}
+The effect of the volume viscosity $\zeta$ is that the mechanical pressure $\overline{p}$
+is not equivalent to the thermodynamic pressure $p$ 
+\begin{equation}
+\overline{p}=p - \zeta (\vec\nabla\cdot\vec\upnu)
 \end{equation}
+In other words: the isotropic average of the total stress is {\sl not} the pressure term!
+This difference is usually neglected (and it is safe to do so, see \cite[section 7.02.3.2.2]{berc09}) by explicitly assuming $\zeta=0$
+(also called the Stokes assumption \cite[p256]{scto01}), 
+so that one can then refer to pressure as a single well-defined value.
+Note that in the case of an incompressible Newtonian Fluid, 
+the strain rate tensor is deviatoric $({\text tr}(\dot{\bm \varepsilon}) = \text{div}(\vec\upnu) =0)$ and the above considerations vanish.
 
+Finally, for both compressible and incompressible flow, the stress tensor becomes simply
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+{\bm \sigma}=-p {\bm 1} + 2\eta \dot{\bm \varepsilon}^d = -p {\bm 1} + {\bm \tau}
+\end{equation}
+\end{mdframed}
+where ${\bm \tau} = 2\eta \dot{\bm \varepsilon}^d$ is the deviatoric stress tensor.
+
+\begin{remark}
+On page 256 of \cite{scto01}, equation 6.5.3, the authors write $\tau_{ii}/3=k_B e_{ii}$ while stating that $\tau$ is deviatoric in equation 6.4.2. 
+This is an obvious conflict of notations. 
+\end{remark}
 
 %------------------------------------------------------------------------
 \subsection{The heat transport equation - energy conservation equation}
@@ -84,15 +125,16 @@ Solving for temperature, this equation is often rewritten as follows:
 \end{equation}
 \end{mdframed}
 where $\Phi$ is the shear heating \cite[p287]{reddybook2}. In many publications, $\Phi$ 
-is given by $\Phi=\tau_{ij}\partial_j u_i={\bm \tau}:{\vec \nabla}{\vec \upnu}$.
+is given by $\Phi=\tau_{ij}\partial_j \upnu_i={\bm \tau}:{\vec \nabla}{\vec \upnu}$.
 
+In what follows I use the index notation as it makes for easier derivations:
 \begin{eqnarray}
 \Phi 
-&=& \tau_{ij}\partial_j u_i \nonumber\\
-&=& 2 \eta \dot{\varepsilon}_{ij}^d\partial_j u_i \nonumber\\
-&=& 2 \eta \frac{1}{2}\left( \dot{\varepsilon}_{ij}^d\partial_j u_i + \dot{\varepsilon}_{ji}^d\partial_i u_j \right) \nonumber\\
-&=& 2 \eta \frac{1}{2}\left( \dot{\varepsilon}_{ij}^d\partial_j u_i + \dot{\varepsilon}_{ij}^d\partial_i u_j \right) \nonumber\\
-&=& 2 \eta  \dot{\varepsilon}_{ij}^d  \frac{1}{2}\left(\partial_j u_i + \partial_i u_j \right) \nonumber\\
+&=& \tau_{ij}\partial_j \upnu_i \nonumber\\
+&=& 2 \eta \dot{\varepsilon}_{ij}^d\partial_j \upnu_i \nonumber\\
+&=& 2 \eta \frac{1}{2}\left( \dot{\varepsilon}_{ij}^d\partial_j \upnu_i + \dot{\varepsilon}_{ji}^d\partial_i u_j \right) \nonumber\\
+&=& 2 \eta \frac{1}{2}\left( \dot{\varepsilon}_{ij}^d\partial_j \upnu_i + \dot{\varepsilon}_{ij}^d\partial_i u_j \right) \nonumber\\
+&=& 2 \eta  \dot{\varepsilon}_{ij}^d  \frac{1}{2}\left(\partial_j \upnu_i + \partial_i u_j \right) \nonumber\\
 &=& 2 \eta  \dot{\varepsilon}_{ij}^d   \dot{\varepsilon}_{ij} \nonumber\\
 &=& 2 \eta  \dot{\bm \varepsilon}^d :  \dot{\bm \varepsilon} \nonumber\\
 &=& 2 \eta  \dot{\bm \varepsilon}^d : \left( \dot{\bm \varepsilon}^d +\frac{1}{3} ({\vec \nabla}\cdot{\vec \upnu}) {\bm 1} \right)\nonumber\\
@@ -101,10 +143,10 @@ is given by $\Phi=\tau_{ij}\partial_j u_i={\bm \tau}:{\vec \nabla}{\vec \upnu}$.
 &=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
 \end{eqnarray}
 Finally
-\[
+\begin{equation}
 \Phi = {\bm \tau}:{\vec \nabla}{\vec \upnu} = 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d
 = 2 \eta \left( (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + 2(\dot{\varepsilon}_{xy}^d)^2 \right)
-\]
+\end{equation}
 
 %------------------------------------------------------------------------
 \subsection{The momentum conservation equations} 
@@ -328,16 +370,16 @@ where ${\bm \sigma}$ is the stress tensor and $\vec{f}$ is a body force.
 The stress tensor is related to the strain tensor through the generalised 
 Hooke's law\footnote{\url{https://en.wikipedia.org/wiki/Hooke's_law}}:
 \begin{equation}
-\sigma_{ij}=\sum_{kl}C_{ijkl}\epsilon_{kl} 
+\sigma_{ij}=\sum_{kl}C_{ijkl}\varepsilon_{kl} 
 \qquad
 \text{or}
 \qquad
-{\bm \sigma} = {\bm C} : {\bm \epsilon}
+{\bm \sigma} = {\bm C} : {\bm \varepsilon}
 \label{eq:one}
 \end{equation}
 where ${\bm C}$ is the fourth-order elastic tensor.
 
-Due to the inherent symmetries of ${\bm \sigma}$, ${\bm \epsilon}$, and ${\bm C}$, 
+Due to the inherent symmetries of ${\bm \sigma}$, ${\bm \varepsilon}$, and ${\bm C}$, 
 only 21 elastic coefficients of the latter are independent. 
 For isotropic media (which have the same physical properties in any direction), ${\bm C}$ 
 can be reduced to only two independent numbers (for example the bulk modulus $K$ and the shear modulus $G$ 
@@ -345,11 +387,11 @@ that quantify the material's resistance to changes in volume and to shearing def
 
 One often then write Eq.~\label{eq:one} as follows:
 \begin{equation}
-\sigma_{ij}=\lambda \epsilon_{kk} \delta_{ij} + 2\mu \epsilon_{ij}
+\sigma_{ij}=\lambda \varepsilon_{kk} \delta_{ij} + 2\mu \varepsilon_{ij}
 \quad\quad
 or, 
 \quad\quad
-{\bm \sigma} = \lambda (\vec{\nabla}\cdot\vec{u}) {\bm 1} + 2\mu {\bm \epsilon}   \label{eq:two}
+{\bm \sigma} = \lambda (\vec{\nabla}\cdot\vec{u}) {\bm 1} + 2\mu {\bm \varepsilon}   \label{eq:two}
 \end{equation}
 where $\lambda$ is the Lam\'e parameter and $\mu$ is the shear modulus\footnote{It is also sometimes written $G$}.
 The term $\vec{\nabla}\cdot\vec{u}$ is the isotropic dilation.
@@ -358,14 +400,14 @@ The term $\vec{\nabla}\cdot\vec{u}$ is the isotropic dilation.
 
 The strain tensor is related to the displacement as follows: \index{strain tensor}
 \[
-{\bm \epsilon} = \frac{1}{2}(\vec{\nabla}\vec{u} + \vec{\nabla}\vec{u}^T)
+{\bm \varepsilon} = \frac{1}{2}(\vec{\nabla}\vec{u} + \vec{\nabla}\vec{u}^T)
 \]
 
 The incompressibility (bulk modulus), $K$, is defined as $p=-K \vec{\nabla}\cdot\vec{u}$ 
 where $p$ is the pressure with \index{bulk modulus}
 \begin{eqnarray}
 p&=&-\frac{1}{3} \text{tr}({\bm \sigma}) \nonumber\\
- &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u}) \text{tr}[{\bm 1}] + 2 \mu \text{tr}[{\bm \epsilon}]] \nonumber\\
+ &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u}) \text{tr}[{\bm 1}] + 2 \mu \text{tr}[{\bm \varepsilon}]] \nonumber\\
  &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u})  3  + 2 \mu  (\vec{\nabla}\cdot\vec{u}) ] \nonumber\\
  &=& -\left[ \lambda + \frac{2}{3} \mu \right] (\vec{\nabla}\cdot\vec{u})  
 \end{eqnarray}
