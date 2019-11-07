@@ -386,13 +386,13 @@ can be reduced to only two independent numbers (for example the bulk modulus $K$
 that quantify the material's resistance to changes in volume and to shearing deformations, respectively). 
 
 One often then write Eq.~\label{eq:one} as follows:
+%\sigma_{ij}=\lambda \varepsilon_{kk} \delta_{ij} + 2\mu \varepsilon_{ij}
+
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-\sigma_{ij}=\lambda \varepsilon_{kk} \delta_{ij} + 2\mu \varepsilon_{ij}
-\quad\quad
-or, 
-\quad\quad
 {\bm \sigma} = \lambda (\vec{\nabla}\cdot\vec{u}) {\bm 1} + 2\mu {\bm \varepsilon}   \label{eq:two}
 \end{equation}
+\end{mdframed}
 where $\lambda$ is the Lam\'e parameter and $\mu$ is the shear modulus\footnote{It is also sometimes written $G$}.
 The term $\vec{\nabla}\cdot\vec{u}$ is the isotropic dilation.
 
@@ -400,10 +400,10 @@ The term $\vec{\nabla}\cdot\vec{u}$ is the isotropic dilation.
 
 The strain tensor is related to the displacement as follows: \index{strain tensor}
 \[
-{\bm \varepsilon} = \frac{1}{2}(\vec{\nabla}\vec{u} + \vec{\nabla}\vec{u}^T)
+{\bm \varepsilon} = \frac{1}{2}(\vec{\nabla}\vec{u} + (\vec{\nabla}\vec{u})^T)
 \]
 
-The incompressibility (bulk modulus), $K$, is defined as $p=-K \vec{\nabla}\cdot\vec{u}$ 
+The incompressibility (or bulk modulus) $K$ is defined as $p=-K \vec{\nabla}\cdot\vec{u}$ 
 where $p$ is the pressure with \index{bulk modulus}
 \begin{eqnarray}
 p&=&-\frac{1}{3} \text{tr}({\bm \sigma}) \nonumber\\
@@ -707,11 +707,17 @@ given by a steady state conductive geotherm.
 \item \underline{Temperature} (K):
 \item \underline{Viscosity} (Pa.s):
 \item \underline{Density} (kg/m$^3$):
-\item \underline{Heat capacity} $C_p$ ($J.K^{-1}$): It is the measure of the heat energy required to increase the 
+\item \underline{Heat capacity} $C_p$ ($J.K^{-1}$): 
+It is the measure of the heat/energy required to increase the 
 temperature of a unit quantity of a substance by unit degree. Note that the specific heat capacity $c_P$ of a 
 substance is the heat capacity of a sample of the substance divided by the mass of the sample, with units $J\cdot K\cdot kg^{-1}$.
-\item \underline{Heat conductivity}, or thermal conductivity $k$ ($W.m^{-1}.K^{-1}$). It is the property of a material that indicates its ability to conduct     heat. It appears primarily in Fourier's Law for heat conduction.
-Note that it is a function of temperature, especially in mantle convection settings \cite{mika13}. See also \cite{boca99} and refs therein.
+
+\item \underline{Heat conductivity}, or thermal conductivity $k$ ($W.m^{-1}.K^{-1}$). It is the 
+property of a material that indicates its ability to conduct heat. It appears primarily in 
+Fourier's Law for heat conduction.
+Note that it is a function of temperature, especially in mantle convection settings \cite{mika13}. 
+See also \cite{boca99} and refs therein. Note also that it can be a tensorial quantity in 
+anisotropic context. 
 
 \item \underline{Heat diffusivity}: $\kappa=k/(\rho C_p)$ ($m^2.s^{-1}$). Substances with high thermal diffusivity rapidly adjust their temperature to that of their surroundings, because they 
 conduct heat quickly in comparison to their volumetric heat capacity or 'thermal bulk'.

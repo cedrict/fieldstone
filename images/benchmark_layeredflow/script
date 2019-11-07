@@ -1,0 +1,188 @@
+set term pdf enhanced
+set log y
+set xlabel 'z'
+set ylabel 'viscosity'
+set grid
+
+x0=1./3.
+epsilon=0
+
+set title "{/Symbol e}=0.0"
+set output 'viscosityA.pdf'
+plot[-1:1][:]\
+1./(atan((x-x0)/0.001)/pi+0.5+epsilon) t '{/Symbol b}=0.001',\
+1./(atan((x-x0)/0.01)/pi+0.5+epsilon) t '{/Symbol b}=0.01',\
+1./(atan((x-x0)/0.1)/pi+0.5+epsilon) t '{/Symbol b}=0.1',\
+1./(atan((x-x0)/1)/pi+0.5+epsilon) t '{/Symbol b}=1',\
+1./(atan((x-x0)/10)/pi+0.5+epsilon) t '{/Symbol b}=10',\
+1./(atan((x-x0)/100)/pi+0.5+epsilon) t '{/Symbol b}=100'
+
+
+set output 'viscosity1.pdf'
+d=10
+plot[-1:1][:]1./(atan((x-x0)/d)/pi+.5+epsilon) t '{/Symbol d}=10'
+
+set output 'viscosity2.pdf'
+d=1
+plot[-1:1][:]1./(atan(x/d)/pi+.5+epsilon) t '{/Symbol d}=1'
+
+set output 'viscosity3.pdf'
+d=0.1
+plot[-1:1][:]1./(atan(x/d)/pi+.5+epsilon) t '{/Symbol d}=0.1'
+
+set output 'viscosity4.pdf'
+d=0.01
+plot[-1:1][:]1./(atan(x/d)/pi+.5+epsilon) t '{/Symbol d}=0.01'
+
+set output 'viscosity5.pdf'
+d=0.00001
+plot[-1:1][:]1./(atan(x/d)/pi+0.5+epsilon) t '{/Symbol d}=0.001'
+
+
+
+epsilon=.1
+
+set output 'viscosity6.pdf'
+d=10
+plot[-1:1][:]1./(atan(x/d)/pi+.5+epsilon) t '{/Symbol d}=10'
+
+set output 'viscosity7.pdf'
+d=1
+plot[-1:1][:]1./(atan(x/d)/pi+.5+epsilon) t '{/Symbol d}=1'
+
+set output 'viscosity8.pdf'
+d=0.1
+plot[-1:1][:]1./(atan(x/d)/pi+.5+epsilon) t '{/Symbol d}=0.1'
+
+set output 'viscosity9.pdf'
+d=0.01
+plot[-1:1][:]1./(atan(x/d)/pi+.5+epsilon) t '{/Symbol d}=0.01'
+
+set output 'viscosity10.pdf'
+d=0.00001
+plot[-1:1][:]1./(atan(x/d)/pi+0.5+epsilon) t '{/Symbol d}=0.001'
+
+
+
+epsilon=0.05
+unset log y
+set title "{/Symbol e}=0.05"
+set output 'viscosityB.pdf'
+plot[-1:1][:]\
+1./(atan((x-x0)/0.001)/pi+0.5+epsilon) t '{/Symbol b}=0.001',\
+1./(atan((x-x0)/0.01)/pi+0.5+epsilon) t '{/Symbol b}=0.01',\
+1./(atan((x-x0)/0.1)/pi+0.5+epsilon) t '{/Symbol b}=0.1',\
+1./(atan((x-x0)/1)/pi+0.5+epsilon) t '{/Symbol b}=1',\
+1./(atan((x-x0)/10)/pi+0.5+epsilon) t '{/Symbol b}=10',\
+1./(atan((x-x0)/100)/pi+0.5+epsilon) t '{/Symbol b}=100'
+
+
+epsilon=0.1
+unset log y
+set title "{/Symbol e}=0.1"
+set output 'viscosityC.pdf'
+plot[-1:1][:]\
+1./(atan((x-x0)/0.001)/pi+0.5+epsilon) t '{/Symbol b}=0.001',\
+1./(atan((x-x0)/0.01)/pi+0.5+epsilon) t '{/Symbol b}=0.01',\
+1./(atan((x-x0)/0.1)/pi+0.5+epsilon) t '{/Symbol b}=0.1',\
+1./(atan((x-x0)/1)/pi+0.5+epsilon) t '{/Symbol b}=1',\
+1./(atan((x-x0)/10)/pi+0.5+epsilon) t '{/Symbol b}=10',\
+1./(atan((x-x0)/100)/pi+0.5+epsilon) t '{/Symbol b}=100'
+
+epsilon=0.2
+unset log y
+set title "{/Symbol e}=0.2"
+set output 'viscosityD.pdf'
+plot[-1:1][:]\
+1./(atan((x-x0)/0.001)/pi+0.5+epsilon) t '{/Symbol b}=0.001',\
+1./(atan((x-x0)/0.01)/pi+0.5+epsilon) t '{/Symbol b}=0.01',\
+1./(atan((x-x0)/0.1)/pi+0.5+epsilon) t '{/Symbol b}=0.1',\
+1./(atan((x-x0)/1)/pi+0.5+epsilon) t '{/Symbol b}=1',\
+1./(atan((x-x0)/10)/pi+0.5+epsilon) t '{/Symbol b}=10',\
+1./(atan((x-x0)/100)/pi+0.5+epsilon) t '{/Symbol b}=100'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+epsilon=0
+
+set ylabel 'velocity'
+unset log y
+C1=1/(1+2*epsilon)
+
+set output 'velocity1.pdf'
+d=10
+C2=d*C1*log(1+d**2)-2*C1*atan(1./d)+pi*C1
+plot[-1:1][] (-d*C1*log(d**2+x**2)+2*x*C1*atan(x/d) + pi*(1+2*epsilon)*x*C1 + C2)/2/pi  t '{/Symbol d}=10'
+
+set output 'velocity2.pdf'
+d=1
+C2=d*C1*log(1+d**2)-2*C1*atan(1./d)+pi*C1
+plot[-1:1][] (-d*C1*log(d**2+x**2)+2*x*C1*atan(x/d) + pi*(1+2*epsilon)*x*C1 + C2)/2/pi  t '{/Symbol d}=1'
+
+set output 'velocity3.pdf'
+d=0.1
+C2=d*C1*log(1+d**2)-2*C1*atan(1./d)+pi*C1
+plot[-1:1][] (-d*C1*log(d**2+x**2)+2*x*C1*atan(x/d) + pi*(1+2*epsilon)*x*C1 + C2)/2/pi  t '{/Symbol d}=0.1'
+
+set output 'velocity4.pdf'
+d=0.01
+C2=d*C1*log(1+d**2)-2*C1*atan(1./d)+pi*C1
+plot[-1:1][] (-d*C1*log(d**2+x**2)+2*x*C1*atan(x/d) + pi*(1+2*epsilon)*x*C1 + C2)/2/pi  t '{/Symbol d}=0.01'
+
+set output 'velocity5.pdf'
+d=0.001
+C2=d*C1*log(1+d**2)-2*C1*atan(1./d)+pi*C1
+plot[-1:1][] (-d*C1*log(d**2+x**2)+2*x*C1*atan(x/d) + pi*(1+2*epsilon)*x*C1 + C2)/2/pi  t '{/Symbol d}=0.001'
+
+epsilon=0.1
+
+set ylabel 'velocity'
+unset log y
+C1=1/(1+2*epsilon)
+
+set output 'velocity6.pdf'
+d=10
+C2=d*C1*log(1+d**2)-2*C1*atan(1./d)+pi*C1
+plot[-1:1][] (-d*C1*log(d**2+x**2)+2*x*C1*atan(x/d) + pi*(1+2*epsilon)*x*C1 + C2)/2/pi  t '{/Symbol d}=10'
+
+set output 'velocity7.pdf'
+d=1
+C2=d*C1*log(1+d**2)-2*C1*atan(1./d)+pi*C1
+plot[-1:1][] (-d*C1*log(d**2+x**2)+2*x*C1*atan(x/d) + pi*(1+2*epsilon)*x*C1 + C2)/2/pi  t '{/Symbol d}=1'
+
+set output 'velocity8.pdf'
+d=0.1
+C2=d*C1*log(1+d**2)-2*C1*atan(1./d)+pi*C1
+plot[-1:1][] (-d*C1*log(d**2+x**2)+2*x*C1*atan(x/d) + pi*(1+2*epsilon)*x*C1 + C2)/2/pi  t '{/Symbol d}=0.1'
+
+set output 'velocity9.pdf'
+d=0.01
+C2=d*C1*log(1+d**2)-2*C1*atan(1./d)+pi*C1
+plot[-1:1][] (-d*C1*log(d**2+x**2)+2*x*C1*atan(x/d) + pi*(1+2*epsilon)*x*C1 + C2)/2/pi  t '{/Symbol d}=0.01'
+
+set output 'velocity10.pdf'
+d=0.001
+C2=d*C1*log(1+d**2)-2*C1*atan(1./d)+pi*C1
+plot[-1:1][] (-d*C1*log(d**2+x**2)+2*x*C1*atan(x/d) + pi*(1+2*epsilon)*x*C1 + C2)/2/pi  t '{/Symbol d}=0.001'
+
+
+
+
+
+
+

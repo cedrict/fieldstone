@@ -59,7 +59,7 @@ computational geodynamics community.
 \item Annulus benchmark \cite{aspectmanual}, \cite{ples11}
 \item Viscosity grooves benchmark \cite{aspectmanual}
 \item Latent heat benchmark \cite{aspectmanual}
-\item Layered flow with viscosity contrast \cite{aspectmanual} 
+\item Layered flow with viscosity contrast \cite{aspectmanual} (see Section \ref{sec:layfl}) 
 \item Brittle thrust wedges benchmark \cite{busa16,aspectmanual}
 \item 2D linear viscous subduction \cite{scbe08,gltf18}
 \item mantle convection in 3D spherical shell \cite{rasz96,zhzm00,yoka04,chcc07,zhmt08,kaks08,dadb13,arfw14,liki19}
@@ -532,10 +532,10 @@ The strainrate tensor is then given by:
 \]
 The Stokes equation is then:
 \begin{eqnarray}
--\frac{\partial p}{\partial x} + 2\mu ( -4y + 2y ) &=& \rho g_x \\
--\frac{\partial p}{\partial y} + 2\mu ( -2x + 4x ) &=& \rho g_y
+-\frac{\partial p}{\partial x} + 2\eta ( -4y + 2y ) &=& \rho g_x \\
+-\frac{\partial p}{\partial y} + 2\eta ( -2x + 4x ) &=& \rho g_y
 \end{eqnarray}
-where we assume the viscosity $\mu=1$ to be constant in space.
+where we assume the viscosity $\eta=1$ to be constant in space.
 Assuming $g_x=0$, the first equation is
 \[
 \frac{\partial p}{\partial x} = - 4 y
@@ -672,9 +672,182 @@ viscous mantle. The top and bottom boundaries are free slip, while the vertical 
 Taken from \cite{gltf18}.}
 \end{center}
 
+%................................................................................
+\subsubsection{Layered flow with viscosity contrast} \label{sec:layfl}
+
+The idea behind this benchmark is to construct an analytical solution to the incompressible
+Stokes equation in the case where the viscosity field showcases a 
+viscosity contrast at location $y=y_0$ whose amplitude and width can be controlled. 
+The viscosity is defined as
+\[
+\eta(y)=\frac{1}{\frac{1}{\pi} \tan^{-1} (\frac{y-y_0}{\beta} ) + 1/2 + \epsilon}
+\]
+where $\beta$ and $\epsilon$ are parameters. 
+
+\begin{center}
+\includegraphics[width=7cm]{images/benchmark_layeredflow/viscosityA}
+\includegraphics[width=7cm]{images/benchmark_layeredflow/viscosityB}\\
+\includegraphics[width=7cm]{images/benchmark_layeredflow/viscosityC}
+\includegraphics[width=7cm]{images/benchmark_layeredflow/viscosityD}\\
+{\captionfont Viscosity profiles for different values of $\beta$ and $\epsilon$ 
+for $y_0=1/3$.
+When $\beta$ is very large, the viscosity 
+essentially converges to $\sim (1/2 + \epsilon)^{-1}$. 
+$\beta$ controls the width of the transition while $\epsilon$ controls the amplitude 
+of the viscosity variation.}
+\end{center}
+
+The flow is assumed to take place in an infinitely long pipe (in the horizontal direction)
+and bound by 
+$y=-1$ and $y+1$.
+At the bottom we impose $v_x(y=-1)=0$ while we impose $v_x(y=+1)=1$ at the top.
+The density is set to 1 while the gravity is set to zero.
+Under these assumptions, the flow velocity and pressure fields are given by:
+\begin{eqnarray}
+v_x(x,y)&=&\frac{1}{2\pi} \left(  -\beta C_1 \log [\beta^2 + (z-y_0)^2]  + 2 (z-y_0)  C_1 \tan^{-1} \frac{z-y_0}{\beta} + \pi (1+2\epsilon) z C_1  + C_2 \right) \nonumber\\
+v_y(x,y) &=& 0 \nonumber\\ 
+p(x,y) &=& 0 
+\end{eqnarray}
+where $C_1$ and $C_2$ are integration constants:
+\begin{eqnarray}
+C_1 &=& 2\pi \left[ 
+ \beta  \log [\beta^2 + (1+y_0)^2]  -  2(1+y_0) \tan^{-1} \frac{1+y_0}{\beta} 
+-\beta  \log [\beta^2 + (1-y_0)^2]  +  2(1-y_0) \tan^{-1} \frac{1-y_0}{\beta} + 2\pi (1+2\epsilon)   \right]^{-1} \nonumber\\
+C_2 &=&  \left[ \beta  \log [\beta^2 + (1+y_0)^2]  -  2(1+y_0) \tan^{-1} \frac{1+y_0}{\beta} + \pi(1+2\epsilon) \right]C_1, 
+\end{eqnarray}
+
+\begin{center}
+\includegraphics[width=7cm]{images/benchmark_layeredflow/layeredflow_vel}
+\includegraphics[width=7cm]{images/benchmark_layeredflow/layeredflow_viscosity}\\
+{\captionfont Velocity and viscosity fields}
+\end{center}
+
+\paragraph{Analytical derivations} 
+The flow takes place in the horizontal direction and is infinite in the this direction too so that:
+\[
+\vec\upnu=(u(y),0)
+\]
+The strain rate tensor is then given by:
+\[
+\dot{\bm \varepsilon}=
+\frac{1}{2}
+\left(
+\begin{array}{cc}
+0 & du/dy \\
+du/dy & 0
+\end{array}
+\right)
+\]
+The momentum equation then becomes:
+\[
+{\vec \nabla} \cdot (2 \eta \dot{\bm \epsilon} ) -{\vec \nabla}p 
+=
+{\vec \nabla} \cdot \left[ \eta(y) 
+\left(
+\begin{array}{cc}
+0 & du/dy \\
+du/dy & 0
+\end{array}
+\right)
+\right] -{\vec \nabla}p 
+= \rho {\vec g}
+\]
+On the vertical axis, when the gravity is zero, the equation is automatically verified when the 
+pressure is zero.
+On the horizontal axis:
+\[
+\frac{d}{dy} \left(\eta(y) \frac{du}{dy} \right) = 0
+\]
+Then 
+\[
+\eta(y) \frac{du}{dy}  = C_1
+\]
+or,
+\[
+\frac{du}{dy}  = \frac{C_1}{\eta(y)} = C_1 \left(\frac{1}{\pi} \tan^{-1} \frac{y-y_0}{\beta} 
++ 1/2 + \epsilon\right)
+\]
+so that the velocity is given by:
+\[
+u(y) = \frac{1}{\pi} ( y \tan^{-1}((y-y_0)/\beta) - y_0 \tan^{-1}((y-y_0)/beta)  
+-0.5* \beta \log (\beta^2 + y^2 - 2 y y_0 +y_0^2) + \pi y (\epsilon +0.5)) 
+\]
+
+\[
+u(z)=\frac{1}{2\pi} \left(  -\beta C_1 \log [\beta^2 + (z-y_0)^2]  + 2 (z-y_0)  C_1 \tan^{-1} \frac{z-y_0}{\beta} + \pi (1+2\epsilon) z C_1  + C_2 \right)
+\]
+where $C_1$ and $C_2$ are integration constants.
+I wish to impose $u(z=-1)=0$ and $u(z=+1)=1$:
+\[
+\frac{1}{2\pi} \left(  -\beta C_1 \log [\beta^2 + (-1-y_0)^2]  + 2 (-1-y_0)  C_1 \tan^{-1} \frac{-1-y_0}{\beta} - \pi (1+2\epsilon)  C_1  + C_2 \right) = 0
+\]
+\[
+\frac{1}{2\pi} \left(  -\beta C_1 \log [\beta^2 + (1-y_0)^2]  + 2 (1-y_0)  C_1 \tan^{-1} \frac{1-y_0}{\beta} + \pi (1+2\epsilon)  C_1  + C_2 \right) = 1
+\]
+or,
+\[
+ -\beta C_1 \log [\beta^2 + (-1-y_0)^2]  + 2 (-1-y_0)  C_1 \tan^{-1} \frac{-1-y_0}{\beta} - \pi (1+2\epsilon)  C_1  + C_2 = 0
+\]
+\[
+ -\beta C_1 \log [\beta^2 + (1-y_0)^2]  + 2 (1-y_0)  C_1 \tan^{-1} \frac{1-y_0}{\beta} + \pi (1+2\epsilon)  C_1  + C_2 = 2\pi
+\]
+or,
+\[
+ -\beta C_1 \log [\beta^2 + (-1-y_0)^2]  + 2 (1+y_0)  C_1 \tan^{-1} \frac{1+y_0}{\beta} - \pi (1+2\epsilon)  C_1  + C_2 = 0
+\]
+\[
+ -\beta C_1 \log [\beta^2 + (1-y_0)^2]  + 2 (1-y_0)  C_1 \tan^{-1} \frac{1-y_0}{\beta} + \pi (1+2\epsilon)  C_1  + C_2 = 2\pi
+\]
 
 
 
+
+or,
+\[
+-\beta C_1 \log (\beta^2 + (1+y_0)^2)  +  2(1+y_0)C_1 \tan^{-1} ((1+y_0)/\beta) - \pi (1+2\epsilon)  C_1  +C_2  = 0
+\]
+\[
+-\beta C_1 \log (\beta^2 + (1-y_0)^2)  +  2(1-y_0)C_1 \tan^{-1} ((1-y_0)/\beta) + \pi (1+2\epsilon)C_1  +C_2  = 2\pi
+\]
+I can now substract the first line from the second line:
+\[
+\beta C_1 \log (\beta^2 + (1+y_0)^2)  -  2(1+y_0)C_1 \tan^{-1} ((1+y_0)/\beta)  
+-\beta C_1 \log (\beta^2 + (1-y_0)^2)  +  2(1-y_0)C_1 \tan^{-1} ((1-y_0)/\beta) + 2\pi (1+2\epsilon)C_1    = 2\pi
+\]
+i.e.,
+\[
+C_1= 2\pi \left[ 
+ \beta  \log [\beta^2 + (1+y_0)^2]  -  2(1+y_0) \tan^{-1} [\frac{1+y_0}{\beta}] 
+-\beta  \log [\beta^2 + (1-y_0)^2]  +  2(1-y_0) \tan^{-1} [\frac{1-y_0}{\beta}] + 2\pi (1+2\epsilon)   \right]^{-1}
+\]
+and then 
+\[
+C_2= \beta C_1 \log (\beta^2 + (1+y_0)^2)  -  2(1+y_0)C_1 \tan^{-1} ((1+y_0)/\beta) + \pi(1+2\epsilon) C_1 
+\]
+
+
+
+%\newpage
+
+%\newpage
+%For $\epsilon=0$
+
+%\begin{center}
+%\includegraphics[width=15cm]{viscosityA}\\
+%\includegraphics[width=5cm]{velocity1}
+%\includegraphics[width=5cm]{velocity3}
+%\includegraphics[width=5cm]{velocity5}
+%\end{center}
+
+%\newpage
+%For $\epsilon=0.1$
+
+%\begin{center}
+%\includegraphics[width=15cm]{viscosityB}\\
+%\includegraphics[width=5cm]{velocity6}
+%\includegraphics[width=5cm]{velocity8}
+%\includegraphics[width=5cm]{velocity10}
+%\end{center}
 
 
 

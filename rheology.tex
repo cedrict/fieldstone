@@ -107,7 +107,7 @@ Note that the (Bird)-Carreau-Yasuda model \cite{osru14} is very similar to the s
 \end{equation}
 \index{Bird-Carreau-Yasuda model}
 
-
+\Literature \cite{berc95}
 
 %------------------------------
 \subsubsection{Bingham model}
@@ -117,8 +117,9 @@ Bingham fluids can sustain an applied stress without any motion occuring. Only w
 a yield stress $\tau_0$ then the fluid flows. This translates as follows \cite{reddybook2}:
 
 \begin{eqnarray}
-{\bm s} &=& \left(  \frac{\tau_0}{\dot{\varepsilon}} + 2 \eta_0  \right)\dot{\bm \varepsilon} \qquad \text{ if } {s}_{II}>\tau_0 \\
-{\bm s} &=& {\bm 0} \qquad\qquad\qquad\qquad  \text{if } {s}_{II} \leq \tau_0 
+{\bm \tau} &=& \left(  \frac{\tau_0}{\dot{\varepsilon}} + 2 \eta_0  \right)\dot{\bm \varepsilon}^d \qquad 
+\text{ if } {\tau}_{e}>\tau_0 \\
+{\bm \tau} &=& {\bm 0} \qquad\qquad\qquad\qquad  \text{if } \tau_{e} \leq \tau_0 
 \end{eqnarray}
 When flow occurs, the effective viscosity is then given by:
 \[
@@ -134,8 +135,10 @@ which cannot be zero.
 This difficulty can be circumvented by implementing Bingham fluids as follows \cite{reddybook2}:
 
 \begin{eqnarray}
-{\bm s} &=& \left(  \frac{\tau_0(1-\eta/\eta_r)}{\dot{\varepsilon}_e} + 2 \eta_0  \right)\dot{\bm \varepsilon} \qquad \text{ if } {s}_{II}>\tau_0 \\
-{\bm s} &=& 2 \eta_r \dot{\bm \varepsilon}  \qquad\qquad\qquad\qquad  \text{if } {s}_{II} \leq \tau_0 
+{\bm \tau} &=& \left(  \frac{\tau_0(1-\eta/\eta_r)}{\dot{\varepsilon}_e} 
++ 2 \eta_0  \right)\dot{\bm \varepsilon} \qquad \text{ if } \tau_{e}>\tau_0 \\
+{\bm \tau} &=& 2 \eta_r \dot{\bm \varepsilon}  \qquad\qquad\qquad\qquad  
+\text{if } \tau_{e} \leq \tau_0 
 \end{eqnarray}
 where $\eta_r$ is a pre-yield viscosity and $\eta/\eta_r<<1$ (typically 1\% or less). This is a form of 
 regularisation, and we will see a similar one in the next section.
@@ -654,9 +657,10 @@ where $\eta_r$ is a depth dependent viscosity profile (usually defined as
 discontinuous linear profiles for various shells)
 
 The non-dimensional activation coefficient is chosen to be $A=9.2103$ in 
-\cite{budt14} which leads to a temperature-induced viscosity contrast of $10^4$.
+\cite{budt14} which leads to a temperature-induced viscosity contrast of $10^4$ (for 
+$T\in[0,1]$).
 
-This is also called the Frank–Kamenetskii flow rule, as used in \cite{lemh17}:
+This is also called the Frank-Kamenetskii flow rule, as used in \cite{lemh17}:
 \[
 \eta' = \eta_0 \exp(-\theta T)
 \]
@@ -768,7 +772,8 @@ stress and strain rate \cite{mumh02}:
 \sigma_{ij} = -p \delta_{ij} + 2 \eta_N \dot{\varepsilon}_{ij}  - 2(\eta_N-\eta_S)\Lambda_{ijkl}\dot{\varepsilon}_{kl} 
 \]
 where $\eta_N$ is the normal viscosity and $\eta_S$ is the shear viscosity. 
-The fourth order tensor $\Lambda$ reflects the orientation of the directors in space, denotes by $\vec{n}$:
+The fourth order tensor $\Lambda$ reflects the orientation of the directors in space, 
+denoted by $\vec{n}$:
 \[
 \Lambda_{ijkl}=\frac{1}{2} (n_i n_k \delta_{lj} + n_j n_k \delta_{il} + n_i n_l \delta{kj} n_j n_l \delta_{ik} )
 - 2 n_i n_j n_k n_l 
@@ -781,8 +786,6 @@ In each time
 step of the calculation, the directors are advected and rotated by the
 flow, and in return determine the viscosity structure for the next time
 step \cite{mumc04}.
-
-
 
 \mscthesis\index{MSc Thesis}: redo the Rayleigh-Taylor instabilities with anisotropic lithospheric viscosity.
 experiments of Lev \& Hager (2008) \cite{leha08}. 
