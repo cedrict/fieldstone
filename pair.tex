@@ -123,8 +123,12 @@ Biquadratic velocities, bilinear pressure. See Hood and Taylor. The element sati
 
 See \cite{nosi01} for a fourier analysis of the normal and stablised (a la \cite{hufb86}) $Q_1-Q_1$ element.
 This element is used in \cite{bugs09,busa13} in conjunction with AMR. 
-
 Stabilisation is worked out out in \cite{dobo04,bodg06}.
+
+$Q_1\times P_0$-stab. Pro: stabilisation can be switched off; Con: stabilisation for deformed elements? 
+problem near boundaries: incomplete stencil? choice of parameter $\beta$.
+
+$Q_1\times Q_1$-stab. Pro: easier to implement than $Q_1\times P_0$-stab, stabilisation local to element, easier when elements are not rectangular, no free parameter; Con: stabilisation cannot be switched off.
 
 \Literature: \cite{temr92,grcc95,knto00,fros07}
 

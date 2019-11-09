@@ -107,7 +107,7 @@ Note that the (Bird)-Carreau-Yasuda model \cite{osru14} is very similar to the s
 \end{equation}
 \index{Bird-Carreau-Yasuda model}
 
-\Literature \cite{berc95}
+\Literature \cite{berc95,marc00}
 
 %------------------------------
 \subsubsection{Bingham model}
@@ -143,7 +143,7 @@ This difficulty can be circumvented by implementing Bingham fluids as follows \c
 where $\eta_r$ is a pre-yield viscosity and $\eta/\eta_r<<1$ (typically 1\% or less). This is a form of 
 regularisation, and we will see a similar one in the next section.
 
-\Literature: \cite{papa87,blmi97,mizi01,limd02,maky17,syga14,bingham,baru09}
+\Literature: \cite{papa87,blmi97,mizi01,limd02,maky17,syga14,bingham,baru09,been80}
 
 %------------------------------
 \subsubsection{Herschel-Bulkley visco-plastic model}
@@ -624,6 +624,21 @@ where $\gamma$ is a fitting parameter.
 
 \Literature \cite{basv06,buro11,faff11,gagd14,gery10,goev79,kaka08,kako09,kary01,mesk10,zhwa13,chsm18}
 
+
+%-------------------------------------------------
+\subsubsection{Stress limiting rheology}
+
+Taken from \cite{vavv02}:
+
+\[
+\eta_y = \tau_y \dot{\epsilon}_y^{-1/n_y} \dot{\epsilon}^{(1/n_y) -1 } 
+\]
+where the yield stress $\tau_y$, the yield strain rate $\epsilon_y$ and the yield exponent $n_y$ are
+prescribed parameters. In this article, $n_y=10$, $\dot{\epsilon}_y=10^{-15}s^{-1}$
+When $n_y=1$ the viscosity is constant and given by $\tau_y \dot{\epsilon}_y^{-1/n_y}$.
+
+
+
 %-------------------------------------------------
 \subsubsection{Arrhenius law}
 \index{Arrhenius law}
@@ -758,6 +773,7 @@ Rather interestingly, Chenin et al \cite{chmd19} state that "this strain rate eq
 and solved locally on cell centroids and vertices in order to define the current effective viscosity 
 and stress \cite{poso08}."
 
+\includegraphics[width=4cm]{images/rheology/evp}
 
 \Literature: \cite{hoor89,lopr90,homo90,lova01,anpa19,egat10}
 

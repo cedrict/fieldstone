@@ -46,4 +46,95 @@ and then
 \Delta_r U_r - U_r \frac{2}{r^2}=0
 \]
 make a link with my 2018 paper. 
+\newpage
+
+In spherical coordinates, the Laplacian is given by
+\[
+\Delta = 
+\frac{1}{r^2} \frac{\partial }{\partial r} \left( r^2 \frac{\partial }{\partial r} \right)
++
+\frac{1}{r^2 \sin^2 \theta} \frac{\partial}{\partial \theta} \left( \sin\theta \frac{\partial }{\partial \theta} \right)
++
+\frac{1}{r^2 \sin^2 \theta} \frac{\partial^2}{\partial \phi^2}
+\]
+We wish to solve Laplace's equation $\Delta T(r,\theta,\phi)=0$ using the method 
+of separation of variables:
+\[
+T(r,\theta,\phi) = R(r) \Theta(\theta) \Phi(\phi)
+\]
+We can insert this decomposition into the Laplace equation and multiply it by $r^2/R\Theta\Phi$ to obtain
+\[
+\frac{1}{R} \frac{d}{dr} \left( r^2 \frac{dR}{dr} \right) 
++ 
+\frac{1}{\Theta} \frac{1}{\sin \theta} \frac{d}{d\theta} \left( \sin \theta \frac{d\Theta}{d\theta} \right)
++
+\frac{1}{\Phi} \frac{1}{\sin^2 \theta} \frac{d^2\Phi}{d\phi^2}
+=
+0
+\]
+For reasons that will become clear later, the separation constant  is taken to be $-m^2$:
+\begin{equation}
+\frac{1}{\Phi} \frac{d^2\Phi}{d\phi^2} = -m^2
+\label{eq:spha2}
+\end{equation}
+and 
+\begin{equation}
+-\frac{\sin\theta}{\Theta} \frac{d}{d\theta} \left( \sin \theta \frac{d\Theta}{d\theta} \right)
+- \frac{\sin^2\theta}{R} \frac{d}{dr} \left( r^2 \frac{dR}{dr} \right) = -m^2
+\label{eq:spha2}
+\end{equation}
+The first equation yields
+\[
+\Phi(\phi) = 
+\left\{
+\begin{array}{c}
+e^{im\phi} \\ e^{-im\phi}
+\end{array}
+\right.
+\qquad\qquad 
+\text{for} \; m=0,1,2,3,...
+\]
+Note that $m$ must be an integer since $\phi$ is a periodic variable and $\Phi(\phi + 2\pi) = \Phi(\phi)$. 
+In the case of $m=0$, the general solution is $\Phi(\phi) = a\phi + b$, but we must choose $a=0$ to
+be consistent with $\Phi(\phi + 2\pi) = \Phi(\phi)$. Hence in the case of $m = 0$, only one solution is
+allowed.
+
+Equation \ref{eq:spha2} can now be recast in the following form:
+\[
+ \frac{1}{R} \frac{d}{dr} \left( r^2 \frac{dR}{dr} \right) 
+= 
+-\frac{1}{\Theta}\frac{1}{\sin\theta} \frac{d}{d\theta} \left( \sin \theta \frac{d\Theta}{d\theta} \right) 
++\frac{m^2}{\sin^2\theta} = l(l+1)
+\]
+where the separation variable at this step is denoted by $l(l + 1)$ for reasons that will shortly
+become clear.
+The resulting radial equation is 
+\[
+\frac{1}{R} \frac{d}{dr} \left( r^2 \frac{dR}{dr} \right)  = l(l+1)
+\]
+or, 
+\[
+r^2 \frac{d^2R}{dr^2} + 2 r \frac{dR}{dr} - l(l+1)R =0
+\]
+The solution is of the form $R=r^s$. To determine the exponent $s$, 
+we insert this solution back into the above ODE. The end result is
+\[
+s(s+1)=l(l+1) \qquad \Rightarrow \qquad s=l \; \text{or} \; s=-l-1
+\]
+or, 
+\[
+R(r) = 
+\left\{
+\begin{array}{c}
+r^l \\ r^{-(l+1)}
+\end{array}
+\right.
+\]
+
+
+
+
+
+
+
 

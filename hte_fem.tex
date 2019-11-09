@@ -336,4 +336,36 @@ In that case the diffusion term in the heat trasport equation becomes $\vec{\nab
 \mscthesis: \cite[p121]{reddybook2}, \cite[p143]{reddybook2} \index{MSc Thesis}
 
 
+%....................................................
+\subsubsection{About the assembly}
+
+Let us consider for simplicity the following grid composed of 9 nodes and 4 $Q_1$ elements. 
+Each node carries a single degree of freedom. 
+
+\begin{center}
+\includegraphics[width=12cm]{images/assembly/assembly.png} 
+\end{center}
+
+There are four elements:
+\begin{itemize}
+\item element 1 is composed of nodes $(1,2,5,4)={\vec T}^{el1}$
+\item element 2 is composed of nodes $(2,3,6,5)={\vec T}^{el2}$
+\item element 3 is composed of nodes $(4,5,8,7)={\vec T}^{el3}$
+\item element 4 is composed of nodes $(5,6,9,8)={\vec T}^{el4}$
+\end{itemize}
+For each element one has computed an elemental matrix ${\bm A}^{el}$ and a right hand side ${\vec b}^{el}$. 
+\[
+{\bm A}^{el1} \cdot {\bm T}^{el1} = {\bm b}^{el1}
+\]
+\[
+{\bm A}^{el2} \cdot {\bm T}^{el2} = {\bm b}^{el2}
+\]
+\[
+{\bm A}^{el3} \cdot {\bm T}^{el3} = {\bm b}^{el3}
+\]
+\[
+{\bm A}^{el4} \cdot {\bm T}^{el4} = {\bm b}^{el4}
+\]
+As seen in the 1D case, these four linear systems must be assembled in a single large matrix of size 
+$9\times 9$ as shown in the figure above.
 
