@@ -194,7 +194,6 @@ print("setup: connectivity P: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-
 xmid=np.empty(np_mid,dtype=np.float64)   
 ymid=np.empty(np_mid,dtype=np.float64)   
 xmid[0:np_mid],ymid[0:np_mid]=np.loadtxt('cedric1_xmid.dat',unpack=True,usecols=[0,1])
@@ -237,7 +236,6 @@ for iel in range(0,nel):
 #end for
 
 print("assign density, viscosity: %.3f s" % (timing.time() - start))
-
 
 #################################################################
 # generate regular grid with composition for ASPECT ascii plugin
@@ -653,7 +651,6 @@ print("compute vrms: %.3fs" % (timing.time() - start))
 #####################################################################
 
 perimfile=open('perimeter.ascii',"w")
-
 for j in range (0,np_perim):
     for i in range(0,NV):
         if abs(xV[i]-xperim[j])<1 and abs(yV[i]-yperim[j])<1:
@@ -662,11 +659,7 @@ for j in range (0,np_perim):
     #end for
 #end for
 
-
-
-
 midfile=open('midsurface.ascii',"w")
-
 for j in range (0,np_mid):
     for i in range(0,NV):
         if abs(xV[i]-xmid[j])<1 and abs(yV[i]-ymid[j])<1:
@@ -674,9 +667,6 @@ for j in range (0,np_mid):
         #end if
     #end for
 #end for
-
-
-
 
 #####################################################################
 # plot of solution
@@ -739,7 +729,6 @@ if True:
         vtufile.write("%10e\n" % (e[iel]))
     vtufile.write("</DataArray>\n")
 
-
     vtufile.write("</CellData>\n")
     #####
     vtufile.write("<PointData Scalars='scalars'>\n")
@@ -798,12 +787,6 @@ if True:
     vtufile.write("</VTKFile>\n")
     vtufile.close()
 
-
-
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")
-
-
-
-

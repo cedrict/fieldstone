@@ -100,12 +100,12 @@ be consistent with $\Phi(\phi + 2\pi) = \Phi(\phi)$. Hence in the case of $m = 0
 allowed.
 
 Equation \ref{eq:spha2} can now be recast in the following form:
-\[
+\begin{equation}
  \frac{1}{R} \frac{d}{dr} \left( r^2 \frac{dR}{dr} \right) 
 = 
 -\frac{1}{\Theta}\frac{1}{\sin\theta} \frac{d}{d\theta} \left( \sin \theta \frac{d\Theta}{d\theta} \right) 
-+\frac{m^2}{\sin^2\theta} = l(l+1)
-\]
++\frac{m^2}{\sin^2\theta} = l(l+1) \label{eq:spha3}
+\end{equation}
 where the separation variable at this step is denoted by $l(l + 1)$ for reasons that will shortly
 become clear.
 The resulting radial equation is 
@@ -130,11 +130,64 @@ r^l \\ r^{-(l+1)}
 \end{array}
 \right.
 \]
+Eq. (\ref{eq:spha3}) also yields:
+\[
+\frac{1}{\sin\theta} \frac{d}{d\theta} \left( \sin\theta \frac{d\Theta}{d\theta} \right) 
++
+\left[ l(l+1) - \frac{m^2}{\sin^2\theta} \right] \Theta = 0
+\]
+One can then carry out the following change of variables $x=\cos\theta$ and $y=\Theta(\theta)$ so that 
+the above equation reduces to:
+\[
+(1-x^2) \frac{d^2 y}{d x^2} - 2x \frac{dy}{dx} + 
+\left[ l(l+1)-\frac{m^2}{\sin^2\theta} \right] y =0
+\]
+This equation is the differential equation for associated Legendre 
+polynomials\footnote{\url{https://en.wikipedia.org/wiki/Associated_Legendre_polynomials}}.
+\index{Associated Legendre polynomials}
+We then have
+\[
+y=P_l^m(x) \qquad \text{for} \; l=0,1,2,3,... \quad \text{and} \; m=-l,-l+1,...0,...l=1,l
+\]
+and 
+\[
+P_l^m(x)= \frac{(-1)^m}{2^l \; l!} (1-x^2)^{m/2}
+\frac{d^{l+m}}{dx^{l+m}} (x^2-1)^l
+\]
+with $m \geq 0$ and $l\geq 0$.
 
+In our case the differential equation for the associated Legendre polynomials, given above, depends
+on $m^2$ and is therefore not sensitive to the sign of $m$.
+Consequently, $P_l^m(x)$ and $P_l^{-m}(x)$ must be equivalent solutions and 
+hence proportional to each other, and one can show that
+\[
+P_l^{-m}(\cos\theta) = (-1)^m\frac{(l-m)!}{(l+m)} P_l^m(\cos\theta)
+\]
+Combining all the results obtained above, we have found that the general solution to
+Laplace’s equation is of the form
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+T(r,\theta,\phi) = 
+\left\{
+\begin{array}{c}
+r^l \\ r^{-(l+1)}
+\end{array}
+\right\}
+P_l^m(\cos\theta) 
+\left\{
+\begin{array}{c}
+e^{im\phi} \\ e^{-im\phi}
+\end{array}
+\right\}
+\]
+\end{mdframed}
+where $l=0,1,2,3,...$ and $m=-l,-l+1,...,l-1,l$.
 
-
-
-
+When solving the Laplace’s equation in spherical coordinates, it is traditional
+to introduce the spherical harmonics, $Y_l^m(\theta,\phi)$:
+\[
+Y_l^m(\theta,\phi) = (-1)^m \sqrt{\frac{2l+1}{4\pi} \frac{(l-m)!}{(l+m)!}} P_l^m(\cos\theta) e^{im\phi}
+\] 
 
 
 

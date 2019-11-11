@@ -47,6 +47,11 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
              e2=max(1e-25,e2)
              Y=pq*np.sin(phi)+c*np.cos(phi)
              val=Y/(2.*e2)
+
+             #npl=10.
+             #eref=1e-15
+             #val=0.5*Y/eref*(e2/eref)**(1./npl-1)
+
              val=min(1.e25,val)
              val=max(1.e20,val)
           except Exception as e: 
@@ -158,10 +163,10 @@ if int(len(sys.argv) == 6):
    benchmark = int(sys.argv[5])
 else:
    nelx = 100
-   nely = 25
+   nely = 10
    visu = 1
    solver = 2 
-   benchmark=3
+   benchmark=1
 
 if benchmark==1:
    Lx=100000. 
