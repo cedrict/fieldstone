@@ -160,9 +160,10 @@ In our case the differential equation for the associated Legendre polynomials, g
 on $m^2$ and is therefore not sensitive to the sign of $m$.
 Consequently, $P_l^m(x)$ and $P_l^{-m}(x)$ must be equivalent solutions and 
 hence proportional to each other, and one can show that
-\[
+\begin{equation}
 P_l^{-m}(\cos\theta) = (-1)^m\frac{(l-m)!}{(l+m)} P_l^m(\cos\theta)
-\]
+\label{eq:spha4}
+\end{equation}
 Combining all the results obtained above, we have found that the general solution to
 Laplace’s equation is of the form
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -185,9 +186,34 @@ where $l=0,1,2,3,...$ and $m=-l,-l+1,...,l-1,l$.
 
 When solving the Laplace’s equation in spherical coordinates, it is traditional
 to introduce the spherical harmonics, $Y_l^m(\theta,\phi)$:
-\[
+\begin{equation}
 Y_l^m(\theta,\phi) = (-1)^m \sqrt{\frac{2l+1}{4\pi} \frac{(l-m)!}{(l+m)!}} P_l^m(\cos\theta) e^{im\phi}
-\] 
+\qquad 
+\textrm{for} \; l=0,1,2,3,... \; \textrm{and} \; m=-l,-l+1,...,l-1,l
+\label{eq:spha5}
+\end{equation}
+The phase factor (−1) , introduced originally by Condon and Shortley, is convenient for
+applications in quantum mechanics. Note that eq. (\ref{eq:spha4}) implies that
+\[
+Y_l^{−m} (\theta, \phi) = (−1)^m Y_l^m (\theta,\phi)^∗ 
+\]
+where the star means complex conjugation.
+
+The normalization factor in eq. (\ref{eq:spha5}) has been
+chosen such that the spherical harmonics are normalized to one. In particular, these func-
+tions are orthonormal and complete. The orthonormality relation is given by:
+\[
+\int Y_l^m(\theta,\phi) Y_{l'}^{m'}(\theta,\phi) d\Omega = \delta_{ll'} \delta_{mm'}
+\]
+where $d\Omega = \sin\theta d\theta d\phi$ is the differential solid angle in spherical coordinates.
 
 
 
+\begin{remark}
+In \cite{zhmt08} the authors use a normalized associated Legendre
+polynomial that is related to the associated Legendre polynomial $P_l^m$ as:
+\[
+p_{lm}(\theta,\phi) = \sqrt{\frac{2l+1}{2\pi(1+\delta_{m0})} \frac{(l-m)!}{(l+m)!}} P_l^m(\cos\theta)
+\]
+Note the absence of the $(-1)^m$ term and the presence of the kronecker delta in the denominator.
+\end{remark}

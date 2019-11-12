@@ -16,7 +16,7 @@ The velocity gradient is given in Cartesian coordinates by:
 \end{equation}
 It can be decomposed into its symmetric and skew-symmetric parts according to:
 \begin{equation}
-\vec\nabla\vec\upnu = \vec\nabla^s\vec\upnu + \vec\nabla^w\vec\upnu
+\vec\nabla\vec\upnu = \vec\nabla^s\vec\upnu + \vec\nabla^w\vec\upnu = \dot{\bm \varepsilon}(\vec \upnu) +  \dot{\bm \omega}(\vec \upnu)
 \end{equation}
 The symmetric part is called the strain rate (or rate of deformation):
 \begin{equation}
@@ -24,7 +24,7 @@ The symmetric part is called the strain rate (or rate of deformation):
 \end{equation}
 The skew-symmetric tensor is called spin tensor (or vorticity tensor):
 \begin{equation}
-\dot{\bm R}(\vec \upnu) = \frac{1}{2}\left( \vec\nabla\vec\upnu - (\vec\nabla\vec\upnu)^T \right)
+\dot{\bm \omega}(\vec \upnu) = \frac{1}{2}\left( \vec\nabla\vec\upnu - (\vec\nabla\vec\upnu)^T \right)
 \end{equation}
 
 \begin{remark}
@@ -724,6 +724,14 @@ conduct heat quickly in comparison to their volumetric heat capacity or 'thermal
 \item \underline{thermal expansion} $\alpha$ (K$^{-1}$): it is the tendency of a matter to change in volume in response to a change in temperature. Note that it is a function of temperature, especially in mantle convection settings \cite{mika13}.
 
 \item \underline{Urey Ratio}: mantle heat production divided by heat loss) is a key constraint for thermal history models. Recent Urey ratio estimates are in the range of 0.21–0.49. \cite{lecm11}
+
+\item \underline{Shear modulus}: modulus of rigidity, usually expressed in GPa. It describes the 
+material response to shear stress.
+
+\item \underline{Poisson ratio}: response in the direction orthogonal to uniaxial stress.
+
+\item \underline{Young's modulus}: describes the material strain response to uniaxial stress
+in the direction of this stress, usually expressed in GPa.
 
 \end{itemize}
 
