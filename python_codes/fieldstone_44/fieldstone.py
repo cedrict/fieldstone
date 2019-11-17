@@ -72,9 +72,12 @@ NfemV=nnp*ndofV     # number of velocity dofs
 NfemP=nel*3*ndofP   # number of pressure dofs
 Nfem=NfemV+NfemP    # total number of dofs
 
+print ('nel  ', nel)
 print ('NfemV', NfemV)
 print ('NfemP', NfemP)
 print ('Nfem ', Nfem)
+
+pressure_scaling=1e22/6371e3
 
 #---------------------------------------
 # 6 point integration coeffs and weights 
@@ -117,6 +120,9 @@ for line in f:
            y[i]=columns[i]
     counter+=1
 
+x[:]*=1000
+y[:]*=1000
+
 for i in range(0,nnp):
     r[i]=np.sqrt(x[i]**2+y[i]**2)
     theta[i]=math.atan2(y[i],x[i])
@@ -124,7 +130,7 @@ for i in range(0,nnp):
 print("x (min/max): %.4f %.4f" %(np.min(x),np.max(x)))
 print("y (min/max): %.4f %.4f" %(np.min(y),np.max(y)))
 print("r (min/max): %.4f %.4f" %(np.min(r),np.max(r)))
-print("theta (min/max): %.4f %.4f" %(np.min(theta),np.max(theta)))
+print("theta (min/max): %.4f %.4f" %(np.min(theta)/np.pi*180,np.max(theta)/np.pi*180))
 
 np.savetxt('gridV.ascii',np.array([x,y]).T,header='# x,y')
 
@@ -230,7 +236,7 @@ counter=0
 for line in f:
     line = line.strip()
     columns = line.split()
-    rho[counter]=columns[0]
+    rho[counter]=float(columns[0])*1e21
     counter+=1
 
 print("     -> rho (m,M) %.6e %.6e " %(np.min(rho),np.max(rho)))
@@ -240,8 +246,10 @@ counter=0
 for line in f:
     line = line.strip()
     columns = line.split()
-    eta[counter]=columns[0]
+    eta[counter]=float(columns[0])*1e21
     counter+=1
+
+eta[:]=1e22
 
 print("     -> eta (m,M) %.6e %.6e " %(np.min(eta),np.max(eta)))
 
@@ -260,16 +268,20 @@ boundary_left=np.zeros(nnp,dtype=np.bool)
 boundary_right=np.zeros(nnp,dtype=np.bool)
 
 for i in range(0, nnp):
-    if r[i]<4.875:
+    if r[i]<4875:
        boundary_bottom[i]=True
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
-    if r[i]>6.37085:
+       #r[i]=4871
+       #x[i]=r[i]*np.cos(theta[i])
+       #y[i]=r[i]*np.sin(theta[i])
+    if r[i]>6370.85:
        boundary_top[i]=True
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
-       #print(i,r[i])
-
+       #r[i]=6371
+       #x[i]=r[i]*np.cos(theta[i])
+       #y[i]=r[i]*np.sin(theta[i])
     if theta[i]<0.5237:
        boundary_right[i]=True
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
@@ -307,9 +319,14 @@ for iel in range(0,nel):
             jcb[1,1] += dNVds[k]*y[iconV[k,iel]]
         jcob = np.linalg.det(jcb)
         area[iel]+=jcob*weightq
+    if area[iel]<0: 
+       for k in range(0,mV):
+           print (x[iconV[k,iel]],y[iconV[k,iel]])
+   #    print(iel,iconV[:,iel])
 
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area %.6f " %(area.sum()))
+print("     -> total area %.6f " %(105./360.*np.pi*(6371e3**2-4871e3**2)   ))
 
 print("compute elements areas: %.3f s" % (timing.time() - start))
 
@@ -320,9 +337,12 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)
-K_mat = lil_matrix((NfemV,NfemV),dtype=np.float64) # matrix K 
-G_mat = lil_matrix((NfemV,NfemP),dtype=np.float64) # matrix GT
+A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
+rhs = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+
+#a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)
+#K_mat = lil_matrix((NfemV,NfemV),dtype=np.float64) # matrix K 
+#G_mat = lil_matrix((NfemV,NfemP),dtype=np.float64) # matrix GT
 
 f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
 h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
@@ -339,9 +359,9 @@ u     = np.zeros(nnp,dtype=np.float64)          # x-component velocity
 v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
-for iel in range(0,0):
+for iel in range(0,nel):
 
-    if iel%100==0:
+    if iel%250==0:
        print(iel)
 
     # set arrays to 0 every loop
@@ -435,15 +455,18 @@ for iel in range(0,0):
                 for i2 in range(0,ndofV):
                     jkk=ndofV*k2          +i2
                     m2 =ndofV*iconV[k2,iel]+i2
-                    K_mat[m1,m2]+=K_el[ikk,jkk]
+                    #K_mat[m1,m2]+=K_el[ikk,jkk]
+                    A_sparse[m1,m2] += K_el[ikk,jkk]
             for k2 in range(0,mP):
                 jkk=k2
                 m2 =iconP[k2,iel]
-                G_mat[m1,m2]+=G_el[ikk,jkk]
+                #G_mat[m1,m2]+=G_el[ikk,jkk]
+                A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]*pressure_scaling
+                A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]*pressure_scaling
             f_rhs[m1]+=f_el[ikk]
     for k2 in range(0,mP):
         m2=iconP[k2,iel]
-        h_rhs[m2]+=h_el[k2]
+        h_rhs[m2]+=h_el[k2]*pressure_scaling
 
 print("build FE matrix: %.3f s" % (timing.time() - start))
 
@@ -452,13 +475,13 @@ print("build FE matrix: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-#a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-#rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-#a_mat[0:NfemV,0:NfemV]=K_mat
-#a_mat[0:NfemV,NfemV:Nfem]=G_mat
-#a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-#rhs[0:NfemV]=f_rhs
-#rhs[NfemV:Nfem]=h_rhs
+rhs[0:NfemV]=f_rhs
+rhs[NfemV:Nfem]=h_rhs
+
+A_sparse[Nfem-1,:]=0
+A_sparse[:,Nfem-1]=0
+A_sparse[Nfem-1,Nfem-1]=1e20
+rhs[Nfem-1]=0
 
 print("assemble blocks: %.3f s" % (timing.time() - start))
 
@@ -467,9 +490,10 @@ print("assemble blocks: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-sol = np.zeros(Nfem,dtype=np.float64) 
+#sol = np.zeros(Nfem,dtype=np.float64) 
 
-#sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+sparse_matrix=A_sparse.tocsr()
+sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
 print("solve time: %.3f s" % (timing.time() - start))
 
@@ -479,7 +503,7 @@ print("solve time: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
-p=sol[NfemV:Nfem]
+p=sol[NfemV:Nfem]*pressure_scaling
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
