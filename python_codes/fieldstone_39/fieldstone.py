@@ -45,15 +45,26 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
           try: 
              e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
              e2=max(1e-25,e2)
+
+             #original with hard limiters
              Y=pq*np.sin(phi)+c*np.cos(phi)
              val=Y/(2.*e2)
+             val=min(1.e25,val)
+             val=max(1.e20,val)
 
              #npl=10.
              #eref=1e-15
              #val=0.5*Y/eref*(e2/eref)**(1./npl-1)
 
-             val=min(1.e25,val)
-             val=max(1.e20,val)
+             #bingham
+             #Y=max(pq*np.sin(phi)+c*np.cos(phi),0.)
+             #val=Y/(2.*e2)
+             #val=1./(1./(val+1e20)+1./1e25)
+             #if val>1e25:
+             #   print('val too big', val)
+             #if val<1e20:
+             #   print('val too small', val)
+
           except Exception as e: 
              print (e)  
              pass

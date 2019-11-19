@@ -1,0 +1,121 @@
+set term pdf enhanced
+set grid
+
+P=1
+R=1
+D=2.*R
+
+set ylabel 'p on y-axis'
+f(x)=P/pi*(1./(R-x) + 1./(R+x) -2./D)
+set output 'press_yaxis.pdf'
+plot[-1:1][0:15]\
+ '31/yaxis.ascii' u 1:4 lt 1 ps .25 t 'nlayers=31',\
+ '51/yaxis.ascii' u 1:4 lt 2 ps .25 t 'nlayers=51',\
+ '71/yaxis.ascii' u 1:4 lt 3 ps .25 t 'nlayers=71',\
+ '91/yaxis.ascii' u 1:4 lt 4 ps .25 t 'nlayers=91',\
+'111/yaxis.ascii' u 1:4 lt 5 ps .25 t 'nlayers=111',\
+f(x) lt -1 lw 1 t 'pressure'
+
+set ylabel 'p on x-axis'
+l(x)=2./pi*(1/(x**2+1)-1./2.) 
+set output 'press_xaxis.pdf'
+plot[-1:1][]\
+ '31/xaxis.ascii' u 1:4 lt 1 ps .25 t 'nlayers=31',\
+ '51/xaxis.ascii' u 1:4 lt 2 ps .25 t 'nlayers=51',\
+ '71/xaxis.ascii' u 1:4 lt 3 ps .25 t 'nlayers=71',\
+ '91/xaxis.ascii' u 1:4 lt 4 ps .25 t 'nlayers=91',\
+'111/xaxis.ascii' u 1:4 lt 5 ps .25 t 'nlayers=111',\
+l(x) lt -1 lw 2 t 'pressure'
+
+set ylabel 'u on x-axis'
+set key left
+set output 'u_xaxis.pdf'
+plot[-1:1]\
+ '31/xaxis.ascii' u 1:2 ps .25 t 'nlayers=31',\
+ '51/xaxis.ascii' u 1:2 ps .25 t 'nlayers=51',\
+ '71/xaxis.ascii' u 1:2 ps .25 t 'nlayers=71',\
+ '91/xaxis.ascii' u 1:2 ps .25 t 'nlayers=91',\
+'111/xaxis.ascii' u 1:2 ps .25 t 'nlayers=111'
+
+set ylabel 'v on y-axis'
+set key right
+set output 'v_yaxis.pdf'
+plot[-1:1]\
+ '31/yaxis.ascii' u 1:3 ps .25 t 'nlayers=31',\
+ '51/yaxis.ascii' u 1:3 ps .25 t 'nlayers=51',\
+ '71/yaxis.ascii' u 1:3 ps .25 t 'nlayers=71',\
+ '91/yaxis.ascii' u 1:3 ps .25 t 'nlayers=91',\
+'111/yaxis.ascii' u 1:3 ps .25 t 'nlayers=111'
+
+set output 'sigmaxx_xaxis.pdf'
+set ylabel '{/Symbol s}_{xx} on x-axis'
+plot[-1:1][]\
+ '31/xaxis.ascii' u 1:8 ps .25 t 'nlayers=31',\
+ '51/xaxis.ascii' u 1:8 ps .25 t 'nlayers=51',\
+ '71/xaxis.ascii' u 1:8 ps .25 t 'nlayers=71',\
+ '91/xaxis.ascii' u 1:8 ps .25 t 'nlayers=91',\
+'111/xaxis.ascii' u 1:8 ps .25 t 'nlayers=111',\
+2*P/pi/2.*((4-4*x**2)/(4+4*x**2))**2 lt -1 lw 2  t 'analytical'
+
+set key bottom
+set output 'sigmayy_xaxis.pdf'
+set ylabel '{/Symbol s}_{yy} on x-axis'
+plot[-1:1][]\
+ '31/xaxis.ascii' u 1:9 ps .25 t 'nlayers=31',\
+ '51/xaxis.ascii' u 1:9 ps .25 t 'nlayers=51',\
+ '71/xaxis.ascii' u 1:9 ps .25 t 'nlayers=71',\
+ '91/xaxis.ascii' u 1:9 ps .25 t 'nlayers=91',\
+'111/xaxis.ascii' u 1:9 ps .25 t 'nlayers=111',\
+-2*P/pi/2*( 4*2**4/(4+4*x**2)**2 -1 ) lt -1 lw 2 t 'analytical'
+
+set output 'sigmaxy_xaxis.pdf'
+set ylabel '{/Symbol s}_{xy} on x-axis'
+plot[-1:1][-0.01:0.01]\
+ '31/xaxis.ascii' u 1:10 ps .25 t 'nlayers=31',\
+ '51/xaxis.ascii' u 1:10 ps .25 t 'nlayers=51',\
+ '71/xaxis.ascii' u 1:10 ps .25 t 'nlayers=71',\
+ '91/xaxis.ascii' u 1:10 ps .25 t 'nlayers=91',\
+'111/xaxis.ascii' u 1:10 ps .25 t 'nlayers=111',\
+0 lt -1 lw 2 t 'analytical'
+
+set output 'sigmaxx_yaxis.pdf'
+set ylabel '{/Symbol s}_{xx} on y-axis'
+plot[-1:1][-5:5]\
+ '31/yaxis.ascii' u 1:8 ps .25 t 'nlayers=31',\
+ '51/yaxis.ascii' u 1:8 ps .25 t 'nlayers=51',\
+ '71/yaxis.ascii' u 1:8 ps .25 t 'nlayers=71',\
+ '91/yaxis.ascii' u 1:8 ps .25 t 'nlayers=91',\
+'111/yaxis.ascii' u 1:8 ps .25 t 'nlayers=111',\
+2*P/pi/2. lt -1 lw 2 t 'analytical'
+
+set output 'sigmayy_yaxis.pdf'
+set ylabel '{/Symbol s}_{yy} on y-axis'
+plot[-1:1][-50:]\
+ '31/yaxis.ascii' u 1:9 ps .25 t 'nlayers=31',\
+ '51/yaxis.ascii' u 1:9 ps .25 t 'nlayers=51',\
+ '71/yaxis.ascii' u 1:9 ps .25 t 'nlayers=71',\
+ '91/yaxis.ascii' u 1:9 ps .25 t 'nlayers=91',\
+'111/yaxis.ascii' u 1:9 ps .25 t 'nlayers=111',\
+-2*P/pi*(1./(R-x)+1./(R+x)-1./2.) lt -1 lw 2 t 'analytical'
+
+set output 'sigmaxy_yaxis.pdf'
+set ylabel '{/Symbol s}_{xy} on y-axis'
+plot[-1:1][-10:10]\
+ '31/yaxis.ascii' u 1:10 ps .25 t 'nlayers=31',\
+ '51/yaxis.ascii' u 1:10 ps .25 t 'nlayers=51',\
+ '71/yaxis.ascii' u 1:10 ps .25 t 'nlayers=71',\
+ '91/yaxis.ascii' u 1:10 ps .25 t 'nlayers=91',\
+'111/yaxis.ascii' u 1:10 ps .25 t 'nlayers=111',\
+0 lt -1 lw 2 t 'analytical'
+
+
+
+
+
+set ylabel 'v_{rms}'
+set xlabel 'h'
+set output 'vrms.pdf'
+set log x
+plot 'vrms.ascii' u (1./$1):9 w lp  notitle
+
+
