@@ -1,0 +1,29 @@
+set term pdf enhanced
+set output 'nu_eff.pdf'
+set log y
+#set log x 
+set xtics 1 
+eta_min=1.e21
+eta_max=1.e25
+cohesion=2.e8
+
+set xlabel 'log(\dot({/Symbol e})_e)'
+set ylabel '{/Symbol h}_{eff}'
+
+plot[-20:-9][1e17:1e26]\
+cohesion/2./10**x t 'von Mises' lt -1 ,\
+1./(1./eta_max + 1./(cohesion/2./10**x + 1e18)) lt 1 lw 3 t '{/Symbol h}_{min}=10^{18}' ,\
+1./(1./eta_max + 1./(cohesion/2./10**x + 1e19)) lt 2 lw 3 t '{/Symbol h}_{min}=10^{19}' ,\
+1./(1./eta_max + 1./(cohesion/2./10**x + 1e20)) lt 3 lw 3 t '{/Symbol h}_{min}=10^{20}' ,\
+1./(1./eta_max + 1./(cohesion/2./10**x + 1e21)) lt 4 lw 3 t '{/Symbol h}_{min}=10^{21}' ,\
+1./(1./eta_max + 1./(cohesion/2./10**x + 1e22)) lt 5 lw 3 t '{/Symbol h}_{min}=10^{22}' 
+
+
+
+#cohesion/2./10**x+eta_min
+
+
+#plot[1e-16:1e-14][1e20:1e26]\
+
+
+#1./(1./eta_max + 1./(c/2./x + eta_min))

@@ -77,6 +77,9 @@ computational geodynamics community.
 \item Deformation caused by a closed vertical volcanic pipe \cite{boda99}
 \item Mantle convection with reversing mobile plates \cite{kogk05}
 \item A comparison of mantle convection models featuring plates \cite{stlh14}
+\item Elastic material in simple shear (see Section~\ref{sec:elastsimpshear})
+\item Elastic material in pure shear (see Section~\ref{sec:elastpureshear})
+\item Uniform strip load on elastic material (see Section~\ref{sec:elaststripload})
 \end{itemize}
 
 \todo[inline]{go through my papers and add relevant ones here}
@@ -853,5 +856,195 @@ C_2= \beta C_1 \log (\beta^2 + (1+y_0)^2)  -  2(1+y_0)C_1 \tan^{-1} ((1+y_0)/\be
 %\includegraphics[width=5cm]{velocity10}
 %\end{center}
 
+
+
+%................................................................................
+\subsubsection{Elastic material in simple shear} \label{sec:elastsimpshear}
+
+The domain is a Cartesian box of size $1\times1$. The boundary conditions are as follows:
+\begin{itemize}
+\item bottom: $u=v=0$
+\item top: $u=1$, $v=0$
+\end{itemize}
+The shear modulus $\mu$ is set to 1, and the Poisson ratio $\nu$ is set to 0.25. 
+Gravity is set to zero. 
+
+The analytical solution for this problem is given by 
+\[
+\vec{\upnu}=
+\left(
+\begin{array}{c}
+y \\
+0 
+\end{array}
+\right)
+\]
+so that 
+\[
+\vec{\nabla}\vec{\upnu}=
+\left(
+\begin{array}{cc}
+0 & 0 \\
+1 & 0
+\end{array}
+\right)
+\quad\quad
+{\bm \varepsilon} = 
+\frac{1}{2}
+\left(
+\begin{array}{cc}
+0 & 1 \\
+1 & 0
+\end{array}
+\right)
+\]
+The stress tensor then writes:
+\[
+{\bm \sigma}= \lambda \vec{\nabla}\cdot \vec{\upnu} + 2 \mu {\bm \varepsilon} 
+= \mu 
+\left(
+\begin{array}{cc}
+0 & 1 \\
+1 & 0
+\end{array}
+\right)
+\]
+since $\vec{\nabla}\cdot \vec{\upnu}=0$.
+
+The principal direction angle $\theta_p$ defines the principal
+directions where the only stresses are normal stresses, and 
+is given by the relationship:
+\[
+\tan (2\theta_p) =  \frac{2 \sigma_{xy}}{\sigma_{xx} -\sigma_{yy}}
+\]
+In our case the rhs is equal to $\infty$, which means that $2 \theta_p = \frac{\pi}{2}$
+so that $\theta_p=\frac{\pi}{4}$.
+
+The principal stresses are found from the original stresses via
+\[
+\sigma_{1,2}=\frac{\sigma_{xx}+\sigma_{yy}}{2} \pm \sqrt{  \left( \left(\frac{\sigma_x-\sigma_y}{2}\right)^2 +\sigma_{xy}^2  \right)}
+\]
+In our case 
+\[
+\sigma_{1,2} = \pm \sigma_{xy} = \pm \mu
+\]
+When plotting the principal stresses on the domain we expect crosses at 45\degree. 
+
+
+%................................................................................
+\subsubsection{Elastic material in pure shear} \label{sec:elastpureshear}
+
+This is the same material as the previous benchmark but the boundary conditions are 
+now as follows: $u=-1$ on the left, $u=1$ on the right, $v=1$ on the bottom and $v=-1$
+on the top. 
+
+In this case we have 
+\[
+u(x,y)=2(x-1/2) 
+\qquad
+v(x,y)=-2(y-1/2) 
+\]
+so 
+\[
+\vec{\nabla}\vec{\upnu}=
+\left(
+\begin{array}{cc}
+2 & 0 \\
+0 & -2
+\end{array}
+\right)
+={\bm \varepsilon}
+\]
+and $\vec{\nabla}\cdot \vec{\upnu}=0$ so that 
+the stress tensor then writes:
+\[
+{\bm \sigma}= \lambda \vec{\nabla}\cdot \vec{\upnu} + 2 \mu {\bm \varepsilon} 
+= 2\mu 
+\left(
+\begin{array}{cc}
+2 & 0 \\
+0 & -2
+\end{array}
+\right)
+\]
+
+The principal direction angle $\theta_p$ defines the principal
+directions where the only stresses are normal stresses, and 
+is given by the relationship:
+\[
+\tan (2\theta_p) =  \frac{2 \sigma_{xy}}{\sigma_{xx} -\sigma_{yy}} = 0
+\]
+which means that $\theta_p = 0$.
+Then the principal stresses are found from the original stresses via
+\[
+\sigma_{1,2}=\frac{\sigma_{xx}+\sigma_{yy}}{2} \pm \sqrt{  \left( \left(\frac{\sigma_x-\sigma_y}{2}\right)^2 +\sigma_{xy}^2  \right)}
+\]
+In our case 
+\[
+\sigma_{1,2} = \pm 4 \mu 
+\]
+When plotting the principal stresses on the domain we expect crosses which align with the axis. 
+
+
+
+
+
+
+%................................................................................
+\subsubsection{Uniform strip load on elastic material} \label{sec:elaststripload}
+
+
+%\begin{center}
+%\includegraphics[width=8cm]{ELASTOMECHANICS/UNIFORM_STRIP_LOAD/fig2}
+%\end{center}
+
+From Davis and Selvadurai \cite{dase96}(section 4.6) we have the components of the stress tensor:
+\[
+\sigma_{xx}=\frac{p_0}{\pi}\left[ \theta - \frac{1}{2}\sin 2\theta  \right]^{\theta_2}_{\theta_1}
+\quad\quad\quad
+\sigma_{zz}=\frac{p_0}{\pi}\left[ \theta + \frac{1}{2}\sin 2\theta  \right]^{\theta_2}_{\theta_1}
+\quad\quad\quad
+\sigma_{xz}=\frac{p_0}{\pi}\left[ \sin^2 \theta  \right]^{\theta_2}_{\theta_1}
+\]
+or, 
+\begin{eqnarray}
+\tilde{\sigma}_{xx}&=&\left[ \theta - \frac{1}{2}\sin 2\theta  \right]^{\theta_2}_{\theta_1} = \Theta - \frac{1}{2} ( \sin 2\theta_2 - \sin 2\theta_1) \nn\\
+\tilde{\sigma}_{zz}&=&\left[ \theta + \frac{1}{2}\sin 2\theta  \right]^{\theta_2}_{\theta_1} = \Theta + \frac{1}{2} ( \sin 2\theta_2 - \sin 2\theta_1) \nn\\
+\tilde{\sigma}_{xz}&=&\left[ \sin^2 \theta  \right]^{\theta_2}_{\theta_1} =  \sin^2 \theta_2 - \sin^2 \theta_1 \nn
+\end{eqnarray}
+with $\Theta=\theta_2-\theta_1$ and $\tilde{\sigma}_{ij}=\sigma_{ij}\pi/p_0$.
+The (dimensionless) principal stresses are given by 
+\[
+\tilde{\sigma}_{1,2}=\frac{\tilde{\sigma}_{xx}+\tilde{\sigma}_{zz}}{2} \pm \sqrt{  \left(\frac{\tilde{\sigma}_{xx}-\tilde{\sigma}_{zz}}{2}\right)^2 +\tilde{\sigma}_{xz}^2 }
+\]
+We have
+\begin{eqnarray}
+\frac{\tilde{\sigma}_{xx}+\tilde{\sigma}_{zz}}{2} &=&  \Theta 
+\nn\\
+\frac{\tilde{\sigma}_{xx}-\tilde{\sigma}_{zz}}{2}
+&=&  -\frac{1}{2} (  \sin 2\theta_2 - \sin 2\theta_1 ) \nn\\
+&=&  -\frac{1}{2} ( 2 \cos (\theta_1+\theta_2) \sin \Theta ) \nn\\ 
+&=&  -\cos (\theta_1+\theta_2) \sin \Theta  \nn\\ 
+\tilde{\sigma}_{xz}
+&=&\left[ \sin^2 \theta  \right]^{\theta_2}_{\theta_1}  \nn\\
+&=&\sin^2 \theta_2 - \sin^2 \theta_1 \nn\\
+&=&\frac{1}{2} (1-\cos \theta_2) - \frac{1}{2} (1-\cos 2\theta_1) \nn\\
+&=& -\frac{1}{2} (\cos \theta_2 - \cos 2\theta_1) \nn\\
+&=& -\frac{1}{2} ( -2 \sin (\theta_1+\theta_2) \sin(\theta_2-\theta_1) ) \nn\\
+&=& \sin (\theta_1+\theta_2) \sin \Theta \nn
+\end{eqnarray}
+so that the principal stresses are finally given by
+\[
+\sigma_1 = \frac{p_0}{\pi} ( \Theta + \sin \Theta) 
+\quad\quad\quad
+\sigma_3 = \frac{p_0}{\pi} ( \Theta - \sin \Theta) 
+\]
+The principal stresses will be constant on any circle that passes through the edges of the 
+strip load. It can also be shown that the direction of $\sigma_1$ points toward the highest 
+point of this circle.
+
+%\begin{center}
+%\includegraphics[width=8cm]{ELASTOMECHANICS/UNIFORM_STRIP_LOAD/fig3}
+%\end{center}
 
 

@@ -127,8 +127,6 @@ Caution must be taken when choosing both values as they may influence the final 
 \end{mdframed}
 
 
-
-
 %-------------------------------------------------
 \subsubsection{About the yield stress value $Y$}
 
@@ -151,6 +149,78 @@ is then replaced by the lithostatic pressure $p_{lith}$.
 
 
 
+%-------------------------------------------------
+\subsubsection{Work in progress}
+
+\Literature \cite{zico74,zigo74,zico74b,zien75,corm75,zigo75,zihl75,zijo78,vidm82,vidm84,vede84,zivt85,vimd86}
+\cite{wasd97,debo88,debo01,bewv11,mumg10}
+
+
+\begin{center}
+\begin{minipage}[t]{0.5\textwidth}
+\input{tikz_dashpotdashpot}
+\end{minipage}
+\end{center}
+\begin{itemize}
+\item Two dashpots/dampers in series: 
+\[
+\dot{\varepsilon}_1 = \sigma/{2 \eta_1} 
+\qquad
+\dot{\varepsilon}_2 = \sigma/{2 \eta_2} 
+\qquad
+\dot{\varepsilon} = \sigma/{2 \eta_{eff}} 
+\]
+\[
+\dot{\varepsilon} = \dot{\varepsilon}_1 + \dot{\varepsilon}_2
+\Rightarrow
+\sigma/{2 \eta_{eff}} = \sigma/{2 \eta_1} + \sigma/{2 \eta_2} 
+\]
+so
+\[
+\eta_{eff} = \left( \frac{1}{\eta_1} + \frac{1}{\eta_2} \right)^{-1}
+\]
+\item Two dashpots/dampers in parallel: 
+\[
+\eta_{eff} = \eta_1 + \eta_2
+\]
+\end{itemize}
+
+One could consider the following arrangement of dashpots and plastic elements:
+
+\begin{center}
+\begin{minipage}[t]{0.5\textwidth}
+\input{tikz_vvp}
+\end{minipage}
+\end{center}
+
+ which yields the following effective viscosity:
+\[
+\eta_{eff} = \left( \frac{1}{\eta_M}  + \frac{1}{\frac{c}{2 \dot{\varepsilon}_e} + \eta_m}  \right)^{-1}
+\]
+When the strain rate becomes very small,  $\dot{\varepsilon}_e \rightarrow 0$, $\eta_{eff}\rightarrow \eta_{M}$.
+When the strain rate becomes very large,  $\dot{\varepsilon}_e \rightarrow \infty$, $\eta_{eff}\rightarrow \eta_{m}$.
+We can then rewrite the above equation as a function of $\eta_{min}$ and $\eta_{max}$:
+\[
+\eta_{eff} = \left( \frac{1}{\eta_{max}}  + \frac{1}{\frac{c}{2 \dot{\varepsilon}_e} + \eta_{min}}  \right)^{-1}
+\]
+
+The effective viscosity is plotted here for various values of the minimum viscosity (for $c$=200MPa and $\eta_{max}=10^{25}Pa.s$:
+
+\includegraphics[width=8cm]{images/viscoplasticity/nu_eff}
+
+
+
+
+Note that \cite{vidm82,vidm84,vimd86,zivt85} use the following formulation which they attribute to \cite{zijo78}:
+\[
+\eta_{eff} = \frac{c + (\dot{\varepsilon}_e / \gamma)^{1/n}}{ \dot{\varepsilon}_e }
+\] 
+For a perfectly plastic flow law, $\gamma \rightarrow \infty$ and then 
+\[
+\eta_{eff} = \frac{c}{ \dot{\varepsilon}_e }
+\] 
+and when when $c=0$ then the effective viscosity is essentially of the power law type.
+Also, when $n=1$ the formulation becomes identical to the v-vp formulation (when the max viscosity is infinite) and with $1/\gamma=\eta_{min}$.
 
 
 
