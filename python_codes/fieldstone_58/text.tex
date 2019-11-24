@@ -77,6 +77,20 @@ p(0,y)
 &=& \frac{P}{\pi} \left[ \frac{1}{R-y} + \frac{ 1 }{R+y}  - \frac{2}{D} \right] \\
 \end{eqnarray}
 
+In the code the pressure is retrieved after the displacements are computed. 
+In 2D, we have (using Eq.~\ref{eq:twoELAST} for the stress tensor):
+\begin{eqnarray}
+p
+&=& -\frac{1}{2}(\sigma_{xx} + \sigma_{yy}) \nonumber\\
+&=& -\frac{1}{2} \left[
+\lambda (\varepsilon_{xx}+\varepsilon_{yy}) + 2 \mu \varepsilon_{xx} +
+\lambda (\varepsilon_{xx}+\varepsilon_{yy}) + 2 \mu \varepsilon_{yy} 
+\right] \\
+&=& -\frac{1}{2} \left[
+2\lambda (\varepsilon_{xx}+\varepsilon_{yy}) + 2 \mu (\varepsilon_{xx} + \varepsilon_{yy} \right]\nn\\
+&=& -(\lambda+\mu) (\varepsilon_{xx}+\varepsilon_{yy}) 
+\end{eqnarray}
+
 The radius is set to $R=1$, and the disc is centered on the origin. The disc 
 is discretised by means of {\sl nlayers} concentric layers of $P_1$ triangles.
 I set $\mu=1$ and $\nu=0.25$. 
@@ -91,16 +105,16 @@ nicely converge to a single smooth curve.
 
 \newpage
 \begin{center}
-a)\includegraphics[width=6.97cm]{python_codes/fieldstone_58/results/press_xaxis.pdf}
-b)\includegraphics[width=6.97cm]{python_codes/fieldstone_58/results/press_yaxis.pdf}\\
-c)\includegraphics[width=6.97cm]{python_codes/fieldstone_58/results/sigmaxx_xaxis.pdf}
-d)\includegraphics[width=6.97cm]{python_codes/fieldstone_58/results/sigmaxx_yaxis.pdf}\\
-e)\includegraphics[width=6.97cm]{python_codes/fieldstone_58/results/sigmayy_xaxis.pdf}
-f)\includegraphics[width=6.97cm]{python_codes/fieldstone_58/results/sigmayy_yaxis.pdf}\\
-g)\includegraphics[width=6.97cm]{python_codes/fieldstone_58/results/sigmaxy_xaxis.pdf}
-h)\includegraphics[width=6.97cm]{python_codes/fieldstone_58/results/sigmaxy_yaxis.pdf}\\
-i)\includegraphics[width=6.97cm]{python_codes/fieldstone_58/results/u_xaxis.pdf}
-j)\includegraphics[width=6.97cm]{python_codes/fieldstone_58/results/v_yaxis.pdf}\\
+a)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/press_xaxis.pdf}
+b)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/press_yaxis.pdf}\\
+c)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/sigmaxx_xaxis.pdf}
+d)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/sigmaxx_yaxis.pdf}\\
+e)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/sigmayy_xaxis.pdf}
+f)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/sigmayy_yaxis.pdf}\\
+g)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/sigmaxy_xaxis.pdf}
+h)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/sigmaxy_yaxis.pdf}\\
+i)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/u_xaxis.pdf}
+j)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/v_yaxis.pdf}\\
 {\captionfont a,b) pressure along the $x$-axis;
 c,d) $\sigma_{xx}$  along the $x-$ and $y-$axis; 
 e,f) $\sigma_{yy}$  along the $x-$ and $y-$axis; 
@@ -158,6 +172,23 @@ b) computed second invariant of the strain tensor.}
 
 \includegraphics[width=12cm]{python_codes/fieldstone_58/results/vrms}
 \end{center}
+
+
+CHECK AGAINST MY NOTES!
+We can also look at the principal stresses.
+The principal direction angle $\theta_p$ defines the principal
+directions where the only stresses are normal stresses, and 
+is given by the relationship:
+\[
+\tan (2\theta_p) =  \frac{2 \sigma_{xy}}{\sigma_{xx} -\sigma_{yy}}
+\]
+The principal stresses are found from the original stresses via
+ \[
+\sigma_{1,2}=\frac{\sigma_{xx}+\sigma_{yy}}{2} \pm \sqrt{  \left( \left(\frac{\sigma_x-\sigma_y}{2}\right)^2 +\sigma_{xy}^2  \right)}
+ \]
+
+%\includegraphics[width=10cm]{images/pstresses}\\
+
 
 
 

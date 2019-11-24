@@ -13,7 +13,7 @@ def gx(x,y):
     return 0
 
 def gy(x,y):
-    return -9.81
+    return 0 #-10
 
 #------------------------------------------------------------------------------
 
@@ -39,18 +39,32 @@ def vbc(x,y):
 def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
     if benchmark==1: # pure brick
        if iter==0:
-          val=1e25
+          e2=1e-15
           two_sin_psi=0.
        else:
-          try: 
-             e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
-             e2=max(1e-25,e2)
+          e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
+          two_sin_psi=2.*np.sin(psi)
+
+       Y=pq*np.sin(phi)+c*np.cos(phi)
+       val=Y/(2.*e2)
+       #print (iter,val)
+       val=min(1.e25,val)
+       val=max(1.e20,val)
+
+
+#       if iter==0:
+#          val=1e25
+#          two_sin_psi=0.
+#       else:
+#          try: 
+#             e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
+#             e2=max(1e-25,e2)
 
              #original with hard limiters
-             Y=pq*np.sin(phi)+c*np.cos(phi)
-             val=Y/(2.*e2)
-             val=min(1.e25,val)
-             val=max(1.e20,val)
+#             Y=pq*np.sin(phi)+c*np.cos(phi)
+#             val=Y/(2.*e2)
+#             val=min(1.e20,val)
+#             val=max(1.e25,val)
 
              #npl=10.
              #eref=1e-15
@@ -65,10 +79,10 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
              #if val<1e20:
              #   print('val too small', val)
 
-          except Exception as e: 
-             print (e)  
-             pass
-          two_sin_psi=2.*np.sin(psi)
+#          except Exception as e: 
+#             print (e)  
+#             pass
+#          two_sin_psi=2.*np.sin(psi)
     if benchmark==2: # spmw16
        if y<7.5e3 or (abs(x-60e3)<2.5e3 and y<10e3):
           val=1e21
@@ -209,8 +223,8 @@ hy=Ly/nely
 if benchmark==1:
    rho=2800
    cohesion=1e7
-   phi=30./180*np.pi
-   psi=30./180*np.pi
+   phi=0./180*np.pi
+   psi=0./180*np.pi
 
 if benchmark==2:   #----spmw16----
    rho=2700.-2700.
@@ -220,7 +234,7 @@ if benchmark==2:   #----spmw16----
 
 if benchmark==3:   #----kaus10----
    rho=2700.
-   cohesion=40e6
+   cohesion=10e6 # 40e6
    phi=30./180*np.pi
    psi=0./180*np.pi
 
@@ -234,13 +248,13 @@ if solver==1:
 else:
    use_SchurComplementApproach=False
 
-method=2
+method=1
 
-eta_ref=1.e22      # scaling of G blocks
+eta_ref=1.e23      # scaling of G blocks
 scaling_coeff=eta_ref/Ly
 
 niter_min=1
-niter=100
+niter=1
 
 if use_SchurComplementApproach:
    ls_conv_file=open("linear_solver_convergence.ascii","w")
@@ -349,15 +363,17 @@ if benchmark==1:
    for i in range(0,NV):
        if xV[i]/Lx<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
+#          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
           u[i]=ubc(xV[i],yV[i])
        if xV[i]/Lx>(1-eps):
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
+#          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
           u[i] = ubc(xV[i],yV[i])
-       if yV[i]/Ly<eps:
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
-          u[i] = ubc(xV[i],yV[i])
-          v[i] = vbc(xV[i],yV[i])
+#       if yV[i]/Ly<eps:
+#          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
+#          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
+#          u[i] = ubc(xV[i],yV[i])
+#          v[i] = vbc(xV[i],yV[i])
 
 if benchmark==2 or benchmark==3: # spmw16
    for i in range(0,NV):
@@ -379,7 +395,7 @@ print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 if method==1:
    c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 elif method==2:
-   c_mat = np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,3]],dtype=np.float64) 
+   c_mat = np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64) 
 
 dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
@@ -772,6 +788,12 @@ for iter in range(0,niter):
    print("compute press & sr: %.3f s" % (timing.time() - start))
 
    #####################################################################
+
+   avrg_press=np.sum(pc)/nel
+
+   print (avrg_press)
+
+   #####################################################################
    # project strainrate onto velocity grid
    #####################################################################
    start = timing.time()
@@ -940,7 +962,8 @@ vtufile.write("<PointData Scalars='scalars'>\n")
 #--
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
 for i in range(0,NV):
-    vtufile.write("%10e %10e %10e \n" %(u[i]*year,v[i]*year,0.))
+    #vtufile.write("%10e %10e %10e \n" %(u[i]*year,v[i]*year,0.))
+    vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")

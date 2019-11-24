@@ -56,7 +56,7 @@ print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
 
-nLayers = 101   # must be odd !
+nLayers = 91   # must be odd !
 outer_radius=1.
 
 m=3
@@ -490,10 +490,16 @@ print("compute press & sr: %.3f s" % (time.time() - start))
 sigma_xx = np.zeros(nel,dtype=np.float64)  
 sigma_yy = np.zeros(nel,dtype=np.float64)  
 sigma_xy = np.zeros(nel,dtype=np.float64)  
+sigma_angle = np.zeros(nel,dtype=np.float64)  
+sigma_1 = np.zeros(nel,dtype=np.float64)  
 
 sigma_xx[:]=lambdaa*divv[:]+2*mu*exx[:]
 sigma_yy[:]=lambdaa*divv[:]+2*mu*eyy[:]
 sigma_xy[:]=               +2*mu*exy[:]
+
+sigma_angle[:]=np.arctan(sigma_xy[:]/(sigma_xx[:]-sigma_yy[:]))/2. /np.pi*180
+
+sigma_1=0.5*(sigma_xx[:]+sigma_yy[:])+np.sqrt( 0.25*(sigma_xx[:]-sigma_yy[:])**2+sigma_xy[:]**2 )
 
 #################################################################
 # project pressure, strain and stress onto nodes
@@ -507,6 +513,9 @@ exy_nodal = np.zeros(NV,dtype=np.float64)
 sigma_xx_nodal = np.zeros(NV,dtype=np.float64)  
 sigma_yy_nodal = np.zeros(NV,dtype=np.float64)  
 sigma_xy_nodal = np.zeros(NV,dtype=np.float64)  
+sigma_angle_nodal = np.zeros(NV,dtype=np.float64)  
+sigma_1_nodal = np.zeros(NV,dtype=np.float64)  
+sigma_2_nodal = np.zeros(NV,dtype=np.float64)  
 counter = np.zeros(NV,dtype=np.float64)  
 
 for iel in range(0,nel):
@@ -545,6 +554,13 @@ exy_nodal[:]/=counter[:]
 sigma_xx_nodal[:]/=counter[:]
 sigma_yy_nodal[:]/=counter[:]
 sigma_xy_nodal[:]/=counter[:]
+
+sigma_angle_nodal[:]=np.arctan(sigma_xy_nodal[:]/(sigma_xx_nodal[:]-sigma_yy_nodal[:]))/2. /np.pi*180
+
+sigma_1_nodal=0.5*(sigma_xx_nodal[:]+sigma_yy_nodal[:]) \
+           +np.sqrt( 0.25*(sigma_xx_nodal[:]-sigma_yy_nodal[:])**2+sigma_xy_nodal[:]**2 )
+sigma_2_nodal=0.5*(sigma_xx_nodal[:]+sigma_yy_nodal[:]) \
+           -np.sqrt( 0.25*(sigma_xx_nodal[:]-sigma_yy_nodal[:])**2+sigma_xy_nodal[:]**2 )
 
 print("     -> q (m,M) %.4f %.4f " %(np.min(q),np.max(q)))
 print("     -> exx (m,M) %.6e %.6e " %(np.min(exx_nodal),np.max(exx_nodal)))
@@ -682,6 +698,18 @@ if visu==1:
         vtufile.write("%10e\n" % (sigma_xy[iel]))
     vtufile.write("</DataArray>\n")
 
+    vtufile.write("<DataArray type='Float32' Name='sigma_angle' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (sigma_angle[iel]))
+    vtufile.write("</DataArray>\n")
+
+    vtufile.write("<DataArray type='Float32' Name='sigma_1' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (sigma_1[iel]))
+    vtufile.write("</DataArray>\n")
+
+
+
     vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (p_anal(xc[iel],yc[iel],p_bc,outer_radius)))
@@ -730,7 +758,48 @@ if visu==1:
     for i in range(0,NV):
         vtufile.write("%10e \n" % sigma_xy_nodal[i])
     vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='sigma_angle' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" % sigma_angle_nodal[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='sigma_1' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" % sigma_1_nodal[i])
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_2' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" % sigma_2_nodal[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='sigma princ. 1' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e %10e %10e \n" % (sigma_1_nodal[i]*np.cos(sigma_angle_nodal[i]),
+                                             sigma_1_nodal[i]*np.sin(sigma_angle_nodal[i]), 0.)   )
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='sigma princ. 2' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e %10e %10e \n" % (sigma_2_nodal[i]*np.cos(sigma_angle_nodal[i]+np.pi/2),
+                                             sigma_2_nodal[i]*np.sin(sigma_angle_nodal[i]+np.pi/2), 0.)   )
+    vtufile.write("</DataArray>\n")
 
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='sigma princ. 1 dir' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e %10e %10e \n" % (np.cos(sigma_angle_nodal[i]),
+                                             np.sin(sigma_angle_nodal[i]), 0.)   )
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='sigma princ. 2 dir' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e %10e %10e \n" % (np.cos(sigma_angle_nodal[i]+np.pi/2),
+                                             np.sin(sigma_angle_nodal[i]+np.pi/2), 0.)   )
+    vtufile.write("</DataArray>\n")
+
+
+
+
+
+    #--
     vtufile.write("<DataArray type='Float32' Name='sigma_xx (th)' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%10e \n" % sigma_xx_anal(x[i],y[i],p_bc,outer_radius) )
@@ -743,8 +812,7 @@ if visu==1:
     for i in range(0,NV):
         vtufile.write("%10e \n" % sigma_xy_anal(x[i],y[i],p_bc,outer_radius) )
     vtufile.write("</DataArray>\n")
-
-
+    #--
     vtufile.write("<DataArray type='Float32' Name='outer_node' Format='ascii'> \n")
     for i in range(0,NV):
         if outer_node[i]:
@@ -752,7 +820,7 @@ if visu==1:
         else:
            vtufile.write("%10e \n" % 0)
     vtufile.write("</DataArray>\n")
-
+    #--
     vtufile.write("<DataArray type='Float32' Name='bc_fix (u)' Format='ascii'> \n")
     for i in range(0,NV):
         if bc_fix[i*ndof]:
@@ -760,7 +828,7 @@ if visu==1:
         else:
            vtufile.write("%10e \n" % 0)
     vtufile.write("</DataArray>\n")
-
+    #--
     vtufile.write("<DataArray type='Float32' Name='bc_fix (v)' Format='ascii'> \n")
     for i in range(0,NV):
         if bc_fix[i*ndof+1]:
@@ -768,18 +836,6 @@ if visu==1:
         else:
            vtufile.write("%10e \n" % 0)
     vtufile.write("</DataArray>\n")
-
-
-
-
-
-
-
-    #--
-    #vtufile.write("<DataArray type='Float32' Name='theta (deg)' Format='ascii'> \n")
-    #for i in range(0,nnp):
-    #    vtufile.write("%10e \n" %(theta[i]/np.pi*180.))
-    #vtufile.write("</DataArray>\n")
     #--
     vtufile.write("</PointData>\n")
     #####
@@ -807,15 +863,6 @@ if visu==1:
     vtufile.write("</VTKFile>\n")
     vtufile.close()
 
-
-
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")
-
-
-
-
-
-
-
