@@ -1,5 +1,11 @@
 pdflatex manual.tex
 bibtex manual
 #authorindex manual
-makeindex manual.idx
+
+makeindex general
+makeindex stones 
+makeindex contributors 
+makeindex topics
+
+#makeindex manual.idx
 #pdflatex manual.tex

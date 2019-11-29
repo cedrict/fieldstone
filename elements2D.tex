@@ -34,7 +34,7 @@ N_3(x_2,y_2) &=& 0 \\
 N_3(x_3,y_3) &=& 1 \\
 N_3(x_4,y_4) &=& 0 
 \end{eqnarray}
-The functions $N_i$ are commonly called basis functions. \index{basis functions}
+The functions $N_i$ are commonly called basis functions. \index{general}{basis functions}
 
 Omitting the $M$ subscripts for any point inside the element, the velocity components $u$
 and $v$ are given by:
@@ -66,7 +66,7 @@ How we actually obtain the exact form of the basis functions is explained in the
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Bilinear basis functions in 2D ($Q_1$)}
-\index{$Q_1$}
+\index{general}{$Q_1$}
 
 In this section, we place ourselves in the most favorables case, i.e. the element is a square defined 
 by $-1<r<1$, $-1<s<1$ in the Cartesian coordinates system $(r,s)$:
@@ -205,7 +205,7 @@ However, following the same methodology as above, one can easily prove that this
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Biquadratic basis functions in 2D ($Q_2$)}
-\index{$Q_2$}
+\index{general}{$Q_2$}
 
 This element is part of the so-called LAgrange family. 
 \improvement{citation needed}
@@ -268,7 +268,7 @@ These are identical to \cite[p57]{li06}. Their derivatives are given by:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Eight node serendipity basis functions in 2D ($Q_2^{(8)}$)}
 \label{sec:serendipity2D}
-\index{$Q_2^{(8)}$} \index{Serendipity element}
+\index{general}{$Q_2^{(8)}$} \index{general}{Serendipity element}
 
 The serendipity elements are those rectangular elements which have no
 interior nodes \cite[p65]{reddybook2}.
@@ -362,7 +362,7 @@ quadrilateral element.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Bicubic basis functions in 2D ($Q_3$)}
-\index{$Q_3$}
+\index{general}{$Q_3$}
 
 Inside an element the local numbering of the nodes is as follows:
 \begin{verbatim}
@@ -413,7 +413,7 @@ N_{16}(r,s)&=&N_4(r)N_4(s) =
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Biquartic basis functions in 2D ($Q_4$)}
-\index{$Q_4$}
+\index{general}{$Q_4$}
 
 Inside an element the local numbering of the nodes is as follows:
 \begin{verbatim}
@@ -433,7 +433,7 @@ Inside an element the local numbering of the nodes is as follows:
 
 %.....................................................................
 \subsubsection{Linear basis functions for triangles in 2D ($P_1$)}
-\index{$P_1$}
+\index{general}{$P_1$}
 
 Velocities (or displacements) $(u,v)$ in a plane element are interpolated from nodal velocities
 $(u_i,v_i)$ using shape functions $N_i$ as follows,
@@ -620,7 +620,7 @@ N_2(r,s) &=& s
 
 %.....................................................................
 \subsubsection{Linear basis functions for quadrilaterals in 2D ($P_1$)}
-\index{$P_1$}
+\index{general}{$P_1$}
 
 \begin{verbatim}
 .=====.=====.
@@ -678,15 +678,15 @@ N_3(r) &=& 2s
 
 %.....................................................................
 \subsubsection{Enriched linear basis functions in triangles ($P_1^+$)}
-\index{$P_1^+$}
+\index{general}{$P_1^+$}
 
 As we will see in Section~\ref{pair:mini} the above $P_1$ can be enriched 
 with a so-called bubble function.
-The \index{Bubble Function} bubble function of the MINI element 
+The \index{general}{Bubble Function} bubble function of the MINI element 
 is described in \cite{arbf84} as being $\lambda_1\lambda_2\lambda_3$
 where $\lambda_i$ are the so-called barycentric 
 coordinates\footnote{\url{https://en.wikipedia.org/wiki/Barycentric\_coordinate\_system }}.
-\index{Barycentric Coordinates}
+\index{general}{Barycentric Coordinates}
 
 \begin{eqnarray}
 \lambda_1 &=& \frac{(y2-y3)(x-x3)+(x3-x2)(y-y3)}{(y2-y3)(x1-x3)+(x3-x2)(y1-y3)} \nn\\
@@ -822,7 +822,7 @@ y &=& [ 1-r-s-9(1-r-s)rs] y_1 + [r-9(1-r-s)rs] y_2 + [s-9(1-r-s)rs] y_3 + [27(1-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Quadratic basis functions for triangles in 2D ($P_2$)}
-\index{$P_2$}
+\index{general}{$P_2$}
 
 \begin{verbatim}
 2            
@@ -899,10 +899,10 @@ N_6(r,s) &=& 4s-4rs-4s^2 \nonumber
 
 %.....................................................................
 \subsubsection{Enriched quadratic basis functions in triangles ($P_2^+$)}
-\index{$P_2^+$}
+\index{general}{$P_2^+$}
 
 This is used by the Crouzeix-Raviart element, see Section~\ref{sec:crouzeix-raviart}. 
-\index{Crouzeix-Raviart}
+\index{general}{Crouzeix-Raviart}
 
 \begin{verbatim}
 03             (r_1,s_1)=(0,0)
@@ -1008,7 +1008,7 @@ VERIFY that when $\eta_1=1-r-s$, $\eta_2=r$ and $\eta_3=s$ we find the above $r,
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Cubic basis functions for triangles ($P_3$)}
-\index{$P_3$}
+\index{general}{$P_3$}
 
 \begin{verbatim}
 2

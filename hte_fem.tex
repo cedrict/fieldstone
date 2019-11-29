@@ -118,9 +118,9 @@ Essentially we have to solve a PDE of the type:
 \]
 with ${\cal F}=\frac{1}{\rho C_p}(-\vec\upnu\cdot\vec\nabla T + \vec\nabla\cdot k\vec\nabla T)$.
 
-\index{Forward Euler}
-\index{Backward Euler}
-\index{Crank-Nicolson}
+\index{general}{Forward Euler}
+\index{general}{Backward Euler}
+\index{general}{Crank-Nicolson}
 
 The (explicit) forward Euler method is:
 \[
@@ -203,7 +203,7 @@ matrices do not change and the r.h.s. can be constructed with the same matrices 
 
 
 
-\index{BDF-2}
+\index{general}{BDF-2}
 \paragraph{The Backward differentiation formula} (see for instance \cite{hawa91} or Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Backward_differentiation_formula}}. The second-order BDF (or BDF-2) as shown in \cite{krhb12} is as follows: it is a finite-difference 
 quadratic interpolation approximation of the $\partial T/\partial t$ term which involves
 $t^n$, $t^{n-1}$ and $t^{n-2}$:
@@ -293,7 +293,7 @@ then the heat transport equation should be solved with $\partial T/\partial t$ s
 %....................................................
 \subsubsection{Anisotropic heat conduction}\label{sec:anisotropic}
 
-\index{Isotropic}\index{Orthotropic}
+\index{general}{Isotropic}\index{general}{Orthotropic}
 
 It is most often assumed that the heat conductivity is isotropic so that one speaks of heat conductivity as a 
 scalar $k$.  However many materials are orthotropic and in that case the heat conductivity is a tensor ${\bm k}$
@@ -333,7 +333,7 @@ the local orientation.
 In that case the diffusion term in the heat trasport equation becomes $\vec{\nabla}\cdot({\bm k}\cdot \vec{\nabla}T)$.
 
 
-\mscthesis: \cite[p121]{reddybook2}, \cite[p143]{reddybook2} \index{MSc Thesis}
+\mscthesis: \cite[p121]{reddybook2}, \cite[p143]{reddybook2} \index{general}{MSc Thesis}
 
 
 %....................................................

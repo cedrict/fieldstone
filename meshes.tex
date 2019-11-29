@@ -1,7 +1,7 @@
 
 Before basis functions can be defined and PDEs can be discretised and solved 
 we must first tesselate the domain with polygons, e.g. triangles and 
-quadrilaterals in 2D, tetrahedra, prisms and hexahedra in 3D. \index{Convex Polygon} 
+quadrilaterals in 2D, tetrahedra, prisms and hexahedra in 3D. \index{general}{Convex Polygon} 
 
 When the domain is itself simple (e.g. a rectangle, a sphere, ...) the mesh (or grid) can 
 be (more or less) easily produced and the connectivity array filled with straightforward 
@@ -12,7 +12,7 @@ must be used (see \cite{thsw,frge,xiyz09}).
 
 We usually distinguish between two broad classes of grids: structured grids (with a regular 
 connectivity) and unstructured grids (with an irregular connectivity).
-\index{Structured Grid} \index{Unstructured Grid}
+\index{general}{Structured Grid} \index{general}{Unstructured Grid}
 
 \begin{center}
 \includegraphics[width=5cm]{images/meshes/structured_grid}
@@ -20,7 +20,7 @@ connectivity) and unstructured grids (with an irregular connectivity).
 \end{center}
 
 \begin{remark}
-\index{Meshless}
+\index{general}{Meshless}
 Various families of so-called meshless methods exist and are commonly employed in Computational 
 Fluid Dynamics \cite{liugu,liliu,grliu,liuliu}. They are however very rarely used in 
 Computational geodynamics, with a noticeable exception \cite{hans03}.
@@ -71,7 +71,7 @@ for j in range(0,nny):
 The inner loop has {\tt i} ranging from {\tt 0} to {\tt nnx-1} first for {\tt j}=0, 1, ...
 up to {\tt nny-1} which indeed corresponds to the row by row numbering.
 
-\index{Connectivity Array} 
+\index{general}{Connectivity Array} 
 We now turn to the connectivity. As mentioned before, this is a structured mesh so that the so-called
 connectivity array, named {\tt icon} in our case, can be filled easily. For each element we need
 to store the node identities of its vertices. Since there are {\tt nel} elements and {\tt m=4} corners, 
@@ -269,7 +269,7 @@ Edges are line segments, facets are strictly {\bf planar} convex polygons.
 
 %.......................................
 \subsubsection{Adaptive Mesh Refinement}
-\index{AMR} \index{Adaptive Mesh Refinement}
+\index{general}{AMR} \index{general}{Adaptive Mesh Refinement}
 
 \Literature: \cite{bugg10}\cite{beck10}\cite{lezh11} \cite[sect 3]{bugs09} \cite{beck10} \cite{dadh07}
 

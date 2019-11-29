@@ -1,7 +1,7 @@
 \subsubsection{Strain rate and spin tensor}
-\index{velocity gradient}
-\index{strain rate}
-\index{spin tensor}
+\index{general}{velocity gradient}
+\index{general}{strain rate}
+\index{general}{spin tensor}
 
 The velocity gradient is given in Cartesian coordinates by:
 \begin{equation}
@@ -173,7 +173,7 @@ Using the relationship ${\bm \tau} = 2 \eta \dot{\bm \varepsilon}^d$ we arrive a
 
 %------------------------------------------------------------------------
 \subsection{The mass conservation equations} 
-\index{Solenoidal field} \index{Divergence-free}
+\index{general}{Solenoidal field} \index{general}{Divergence-free}
 
 The mass conservation equation is given by
 \[
@@ -277,9 +277,9 @@ Also, their definition of the shear heating term $\Phi$ is:
 \Phi = k_B ({\bm \nabla}\cdot{\bm v})^2 + 2\eta \dot{\bm \varepsilon}^d:\dot{\bm \varepsilon}^d
 \]
 For many fluids the bulk viscosity $k_B$ is very small and is often taken to be zero, an assumption known
-as the Stokes assumption: $k_B=\lambda+2\eta/3=0$. \index{bulk viscosity}
-Note that $\eta$ is the dynamic viscosity and $\lambda$ the second viscosity. \index{dynamic viscosity}
-\index{second viscosity}
+as the Stokes assumption: $k_B=\lambda+2\eta/3=0$. \index{general}{bulk viscosity}
+Note that $\eta$ is the dynamic viscosity and $\lambda$ the second viscosity. \index{general}{dynamic viscosity}
+\index{general}{second viscosity}
 Also, 
 \[
 {\bm \tau}=2\eta \dot{\bm \varepsilon} + \lambda ({\bm \nabla}\cdot{\bm v}) {\bm 1}
@@ -326,7 +326,7 @@ where The Lagrangian or material derivative is
 + \frac{\upnu_\theta}{r} \frac{\partial}{\partial \theta}
 + \upnu_z \frac{\partial}{\partial z}  
 \]
-and the Laplacian operator is \index{Laplace operator} \index{Laplacian} 
+and the Laplacian operator is \index{general}{Laplace operator} \index{general}{Laplacian} 
 \[
 \Delta 
 = \frac{\partial^2 }{\partial r^2}  +\frac{1}{r} \frac{\partial }{\partial r}
@@ -385,7 +385,7 @@ where The Lagrangian or material derivative is
 + \frac{\upnu_\theta}{r} \frac{\partial}{\partial \theta}
 + \frac{\upnu_\phi}{r \sin\theta} \frac{\partial}{\partial \phi}  
 \]
-and the Laplacian operator is \index{Laplace operator} \index{Laplacian} 
+and the Laplacian operator is \index{general}{Laplace operator} \index{general}{Laplacian} 
 \[
 \Delta = \frac{1}{r^2} \frac{\partial }{\partial r}\left( r^2 \frac{\partial }{\partial r}\right)
 +\frac{1}{r^2 \sin\theta} \frac{\partial }{\partial \theta}
@@ -482,7 +482,7 @@ THESE EQUATIONS SHOULD BE CHECKED and RE-CHECKED !!
 \newpage
 %---------------------------------
 \subsection{The Boussinesq approximation}
-\index{Boussinesq Approximation}
+\index{general}{Boussinesq Approximation}
 
 As nicely explained in Spiegel \& Veronis \cite{spve60}: "In the study of problems of thermal convection it is a frequent practice to simplify the basic equations by introducing certain approximations which are attributed to
 Boussinesq (1903). The Boussinesq approximations can best be summarized by two
@@ -581,15 +581,15 @@ One often then write Eq.~\label{eq:one} as follows:
 where $\lambda$ is the Lam\'e parameter and $\mu$ is the shear modulus\footnote{It is also sometimes written $G$}.
 The term $\vec{\nabla}\cdot\vec{u}$ is the isotropic dilation.
 
-\index{Lam\'e parameter} \index{shear modulus}
+\index{general}{Lam\'e parameter} \index{general}{shear modulus}
 
-The strain tensor is related to the displacement as follows: \index{strain tensor}
+The strain tensor is related to the displacement as follows: \index{general}{strain tensor}
 \[
 {\bm \varepsilon} = \frac{1}{2}(\vec{\nabla}\vec{u} + (\vec{\nabla}\vec{u})^T)
 \]
 
 The incompressibility (or bulk modulus) $K$ is defined as $p=-K \vec{\nabla}\cdot\vec{u}$ 
-where $p$ is the pressure with \index{bulk modulus}
+where $p$ is the pressure with \index{general}{bulk modulus}
 \begin{eqnarray}
 p&=&-\frac{1}{3} \text{tr}({\bm \sigma}) \nonumber\\
  &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u}) \text{tr}[{\bm 1}] + 2 \mu \text{tr}[{\bm \varepsilon}]] \nonumber\\
@@ -611,7 +611,7 @@ ${\bm u}$ is the velocity, and $\mu$ is then the dynamic viscosity.
 \end{remark}
 
 The Lam\'e parameter and the shear modulus are also linked to $\nu$ the poisson ratio, 
-and $E$, Young's modulus: \index{Poisson ratio} \index{Young's modulus}
+and $E$, Young's modulus: \index{general}{Poisson ratio} \index{general}{Young's modulus}
 \[
 \lambda=\mu\frac{2\nu}{1-2\nu}
 =\frac{\nu E}{(1+\nu)(1-2\nu)}
@@ -729,8 +729,8 @@ It is possible to describe the problem using other boundary conditions:
 a Dirichlet boundary condition specifies the values of the solution itself 
 (as opposed to its derivative) on the boundary, whereas the Cauchy boundary condition, mixed boundary condition and Robin boundary condition are all different types of combinations of the Neumann and Dirichlet boundary conditions.
 
-\index{Dirichlet boundary condition}
-\index{Neumann boundary condition}
+\index{general}{Dirichlet boundary condition}
+\index{general}{Neumann boundary condition}
 
 
 
@@ -789,10 +789,10 @@ root mean square averages:
 
 
 \item \underline{Pressure} $p (\text{Pa})$:
-\item \underline{Stress tensor} ${\bm \sigma}$ (Pa): \index{Stress Tensor}
-\item \underline{Strain tensor} ${\bm \varepsilon}$ (dimensionless): \index{Strain tensor}
-\item \underline{Strain rate tensor} $ \dot{\bm \varepsilon} (\text{s}^{-1}$): \index{Strain rate tensor}
-\item \underline{Rayleigh number} $Ra$ (X): \index{Rayleigh Number}
+\item \underline{Stress tensor} ${\bm \sigma}$ (Pa): \index{general}{Stress Tensor}
+\item \underline{Strain tensor} ${\bm \varepsilon}$ (dimensionless): \index{general}{Strain tensor}
+\item \underline{Strain rate tensor} $ \dot{\bm \varepsilon} (\text{s}^{-1}$): \index{general}{Strain rate tensor}
+\item \underline{Rayleigh number} $Ra$ (X): \index{general}{Rayleigh Number}
 It is a dimensionless number that expresses the	ratio of the driving forces to the opposing forces.
 The buoyancy force comes from the volumetric thermal expansion while the viscous forces and 
 the heat diffusivity oppose convection (the latter one smoothes out thermal gradients). 
@@ -820,10 +820,10 @@ Ra = \frac{\rho_0 g \alpha D^3}{\eta \kappa} \cdot  \frac{q_b D + H D^2}{k }
 For convection to occur, the Rayleigh number must be larger than the so-called critical 
 Rayleigh number, which ranges from 600 to 3000 (it depends on the boundary conditions and the 
 geometry).
-\index{Critical Rayleigh Number}
+\index{general}{Critical Rayleigh Number}
 
 
-\item \underline{Prandtl number} $Pr$ (X): \index{Prandtl Number} It is named after the German physicist 
+\item \underline{Prandtl number} $Pr$ (X): \index{general}{Prandtl Number} It is named after the German physicist 
 Ludwig Prandtl and is defined as the ratio of momentum diffusivity to thermal diffusivity. It is given as: 
 \[
 Pr = \frac{\text{momentum diffusivity}}{\text{thermal diffusivity}} = \frac{\eta/\rho}{k/(\rho C_p)}= \frac{\eta C_p}{k}
@@ -831,7 +831,7 @@ Pr = \frac{\text{momentum diffusivity}}{\text{thermal diffusivity}} = \frac{\eta
 For Earth materials, we have $Pr \sim (10^{21} 1000)/3 >> 1$, which means that momentum diffusivity dominates.
 
 
-\item \underline{Nusselt number} $N_u$ (X): \index{Nusselt Number}  the Nusselt number (Nu) is the ratio of convective to conductive heat transfer across (normal to) the boundary. The conductive component is measured under the same conditions as the heat convection but with a (hypothetically) stagnant (or motionless) fluid.
+\item \underline{Nusselt number} $N_u$ (X): \index{general}{Nusselt Number}  the Nusselt number (Nu) is the ratio of convective to conductive heat transfer across (normal to) the boundary. The conductive component is measured under the same conditions as the heat convection but with a (hypothetically) stagnant (or motionless) fluid.
 
 In practice the Nusselt number Nu of a layer (typically the mantle of a planet) is defined as follows:
 \begin{equation}
@@ -937,7 +937,7 @@ in the direction of this stress, usually expressed in GPa.
 %------------------------------------------------------
 \subsection{Principal stress} \label{sec:princ_stress}
 
-\index{Maximum Shear Stress} \index{Principal Stress}
+\index{general}{Maximum Shear Stress} \index{general}{Principal Stress}
 
 As seen before (see Section~\ref{sec:stresstensor}) 
 the stress tensor is a symmetric $3\times3$ real matrix, and linear algebra tells us that it 
@@ -1298,7 +1298,7 @@ r&=&\frac{2}{\sqrt{3}}\sqrt{J_2}\label{pc_eq4bis} \\
 \end{eqnarray}
 The first root of (\ref{pc_eq4}) with $\theta$ determined for $3\theta$ in the range $\pm \pi/2$ is a convenient alternative to the third invariant, $J_3$. By noting the cyclic nature of $\sin (3\theta+2n \pi)$ we have immediatly the three (and only three) possible values of $\sin \theta $ which define the three principal stresses. The deviatoric principal stresses are given by $t=r \sin \theta$ on substitution of the three values of $\sin \theta$ in turn. Substituting for $r$ from (\ref{pc_eq4bis}) and adding the mean hydrodynamic stress component gives the total principal stresses to be
 
-The so-called Lode angle  \cite{zico74} is then given by \index{Lode Angle}
+The so-called Lode angle  \cite{zico74} is then given by \index{general}{Lode Angle}
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
 \theta=\frac{1}{3} \sin^{-1} \left( -\frac{3\sqrt{3}}{2} \frac{J_3}{J_2^{3/2}} \right)
@@ -1308,8 +1308,8 @@ with $-\pi/6 <\theta <\pi/6 $.
 Note that the Lode angle is one of the Lode 
 coordinates\footnote{\url{https://en.wikipedia.org/wiki/Lode_coordinates}},
 or Haigh–Westergaard coordinates. 
-\index{Haigh-Westergaard Coordinates}
-\index{Lode Coordinates}
+\index{general}{Haigh-Westergaard Coordinates}
+\index{general}{Lode Coordinates}
 
 
 

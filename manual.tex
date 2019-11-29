@@ -25,7 +25,8 @@
 %\setcounter{secnumdepth}{1} % sections are level 1
 \usepackage{dirtytalk}
 
-\RequirePackage{authorindex}
+%\RequirePackage{authorindex}
+
 
 \hypersetup{
 colorlinks,
@@ -90,7 +91,12 @@ urlcolor=black}
 \title{Computational Geodynamics}
 \author{C. Thieulot}
 
-\makeindex 
+\usepackage{multind}
+\makeindex{general}
+\makeindex{stones}
+\makeindex{contributors}
+\makeindex{topics}
+ 
 \begin{document}
 \thispagestyle{empty}
 \includegraphics[width=0.95\linewidth]{images/frontpage.png}
@@ -166,7 +172,8 @@ doi = "10.23644/uu.9209393.v1"}
 \section{The physical equations} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{nomenclature} %-----------------------------------------------------------------------------
 \subsection{Coordinate systems} \input{coordinate_systems} \label{ss:coordsys} %-------------------
-\subsection{A continuum mechanics primer}\input{continuum_mechanics} %-----------------------------
+\subsection{A continuum mechanics primer} %--------------------------------------------------------
+\input{continuum_mechanics} %----------------------------------------------------------------------
 \input{physics} %----------------------------------------------------------------------------------
 \subsection{Rheology in geodynamics} \input{rheology} %--------------------------------------------
 \subsection{Moment of inertia} \input{momentofinertia}
@@ -197,7 +204,7 @@ doi = "10.23644/uu.9209393.v1"}
 \subsection{Strong and weak forms} \input{strongweak} %--------------------------------------------
 \subsection{Which velocity-pressure pair for Stokes?} \input{pair} %-------------------------------
 \subsection{The penalty approach for viscous flow}\label{sec:penalty}\input{penalty} %-------------
-\subsection{The mixed FEM for viscous flow} \input{mixed} %----------------------------------------
+\subsection{The mixed FEM for viscous flow} \label{sec:mixed} \input{mixed} %----------------------
 \subsection{Solving the elastic equations} %-------------------------------------------------------
 \subsection{A quick tour of similar literature} \input{similar} %----------------------------------
 \subsection{The case against the $Q_1\times P_0$ element} \input{case_against_q1p0} %--------------
@@ -887,8 +894,11 @@ Stone 58: Elastic disk under compression
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bibliographystyle{plain} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-{\small \bibliography{biblio_geosciences2}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\printindex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\small \bibliography{biblio_geosciences2}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\printindex{general}{General Index} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\printindex{stones}{Codes features} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\printindex{contributors}{Contributors} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\printindex{topics}{Topics in the literature} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \listoftodos[Notes] %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

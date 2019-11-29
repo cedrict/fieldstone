@@ -13,7 +13,7 @@ def gx(x,y):
     return 0
 
 def gy(x,y):
-    return 0 #-10
+    return -10
 
 #------------------------------------------------------------------------------
 
@@ -223,8 +223,8 @@ hy=Ly/nely
 if benchmark==1:
    rho=2800
    cohesion=1e7
-   phi=0./180*np.pi
-   psi=0./180*np.pi
+   phi=30./180*np.pi
+   psi=30./180*np.pi
 
 if benchmark==2:   #----spmw16----
    rho=2700.-2700.
@@ -248,13 +248,13 @@ if solver==1:
 else:
    use_SchurComplementApproach=False
 
-method=1
+method=2
 
 eta_ref=1.e23      # scaling of G blocks
 scaling_coeff=eta_ref/Ly
 
 niter_min=1
-niter=1
+niter=50
 
 if use_SchurComplementApproach:
    ls_conv_file=open("linear_solver_convergence.ascii","w")
@@ -363,15 +363,15 @@ if benchmark==1:
    for i in range(0,NV):
        if xV[i]/Lx<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
-#          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
           u[i]=ubc(xV[i],yV[i])
        if xV[i]/Lx>(1-eps):
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
-#          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
           u[i] = ubc(xV[i],yV[i])
-#       if yV[i]/Ly<eps:
-#          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
-#          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
+       if yV[i]/Ly<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
 #          u[i] = ubc(xV[i],yV[i])
 #          v[i] = vbc(xV[i],yV[i])
 
@@ -791,7 +791,7 @@ for iter in range(0,niter):
 
    avrg_press=np.sum(pc)/nel
 
-   print (avrg_press)
+   print ("     -> avrg press. %.5e" % avrg_press)
 
    #####################################################################
    # project strainrate onto velocity grid
@@ -847,6 +847,61 @@ for iter in range(0,niter):
    print("     -> sr  (m,M) %.6e %.6e " %(np.min(srn),np.max(srn)))
 
    print("compute nod strain rate: %.3f s" % (timing.time() - start))
+
+
+   filename = 'solution_nl_{:04d}.vtu'.format(iter)
+   vtufile=open(filename,"w")
+   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+   vtufile.write("<UnstructuredGrid> \n")
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+   #####
+   vtufile.write("<Points> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Points> \n")
+   #####
+   vtufile.write("<CellData Scalars='scalars'>\n")
+   vtufile.write("<DataArray type='Float32' Name='sr(x10^-15)' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%10e\n" % (sr[iel]*1e15))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</CellData>\n")
+   #####
+   vtufile.write("<Cells>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel],iconV[4,iel],iconV[5,iel],iconV[6,iel],iconV[7,iel]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%d \n" %((iel+1)*8))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+   for iel in range (0,nel):
+       vtufile.write("%d \n" %23)
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("</Cells>\n")
+   #####
+   vtufile.write("</Piece>\n")
+   vtufile.write("</UnstructuredGrid>\n")
+   vtufile.write("</VTKFile>\n")
+   vtufile.close()
+
+
+
+
+
+
+
+
+
+
 
 #------------------------------------------------------------------------------
 # end of non-linear iterations
@@ -948,13 +1003,11 @@ for iel in range (0,nel):
     eta,dummy= viscosity(exx[iel],eyy[iel],exy[iel],pc[iel],cohesion,phi,iter,xc[iel],yc[iel])
     vtufile.write("%10e\n" %(np.log10(eta))) 
 vtufile.write("</DataArray>\n")
-
 #--
-#vtufile.write("<DataArray type='Float32' Name='dilation rate (R)' Format='ascii'> \n")
-#for iel in range (0,nel):
-#    vtufile.write("%10e\n" % (  two_sin_psi*sr[iel] ))
-#vtufile.write("</DataArray>\n")
-
+vtufile.write("<DataArray type='Float32' Name='dilation rate (R)' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%10e\n" % (  2.*np.sin(psi)*sr[iel] ))
+vtufile.write("</DataArray>\n")
 #--
 vtufile.write("</CellData>\n")
 #####

@@ -1,17 +1,9 @@
 {\sl This fieldstone is being developed in collaboration with BSc student Eric Hoogen}. 
 
-\fbox{
-\parbox{10cm}{{\bf features}
-\begin{itemize}
-\item $Q_1\times P_0$ element \index{$Q_1 \times P_0$}
-\item incompressible flow \index{incompressible flow}
-\item penalty formulation \index{penalty formulation}
-\item Dirichlet boundary conditions (no-slip)
-\item isothermal \index{isothermal}
-\item non-isoviscous \index{non-isoviscous}
-\item particle-in-cell \index{particle-in-cell}
-\end{itemize}
-}}
+\index{stones}{$Q_1 \times P_0$ element}
+\index{stones}{Penalty Formulation}
+\index{stones}{Variable Viscosity}
+\index{stones}{Particle-in-cell}
 
 
 
@@ -60,17 +52,17 @@ the Poisson-disc algorithm fills the whole domain at once, not element after ele
 When using {\it active} markers, one is faced with the problem of transferring the properties they carry to the mesh on which the PDEs are to be solved. 
 As we have seen, building the FE matrix involves a loop over all elements, so one simple approach consists of assigning each element a single property
 computed as the average of the values carried by the markers in that element. 
-Often in colloquial language "average" refers to the arithmetic mean: \index{arithmetic mean}
+Often in colloquial language "average" refers to the arithmetic mean: \index{stones}{arithmetic mean}
 \begin{equation}
 \langle \phi \rangle_{am}=\frac{1}{n} \sum_k^n \phi_i 
 \end{equation}
 where $<\phi>_{am}$ is the arithmetic average of the $n$ numbers $\phi_i$. 
-However, in mathematics other means are commonly used, such as the geometric mean: \index{geometric mean}
+However, in mathematics other means are commonly used, such as the geometric mean: \index{stones}{geometric mean}
 \begin{equation}
 \langle \phi \rangle_{gm}=\left( \prod_i^n \phi_i \right)
 \end{equation}
 PROBLEM with this formula!!!!
-and the harmonic mean: \index{harmonic mean}
+and the harmonic mean: \index{stones}{harmonic mean}
 \begin{equation}
 \langle \phi \rangle_{hm}=\left( \frac{1}{n}\sum_i^n \frac{1}{\phi_i} \right)^{-1}
 \end{equation}

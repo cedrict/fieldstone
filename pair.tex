@@ -4,7 +4,7 @@ The success of a mixed finite element formulation crucially depends on a proper 
 
 %........................................................................................
 \subsubsection{The compatibility condition (or LBB condition)}
-\index{LBB} \index{optimal rate}
+\index{general}{LBB} \index{general}{optimal rate}
 
 'LBB stable' elements assure the existence of a unique solution 
 and assure convergence at the optimal rate. 
@@ -12,7 +12,7 @@ and assure convergence at the optimal rate.
 %........................................................................................
 \subsubsection{Families}
 
-\index{Taylor-Hood}
+\index{general}{Taylor-Hood}
 
 The family of \underline{Taylor-Hood} finite element spaces on triangular/tetrahedral 
 grids is given by $P_k \times P_{k-1}$ with $k\geq 2$, 
@@ -47,7 +47,7 @@ The \underline{Raviart-Thomas} family\todo{find literature} on triangles and qua
 
 discussed in example 3.71 of \cite{john16}
 
-However simple it may look, the \index{$Q_1 \times P_0$} element is 
+However simple it may look, the \index{general}{$Q_1 \times P_0$} element is 
 one of the hardest elements to analyze and many questions are still open about its properties. 
 The element does not satisfy the inf-sup condition \cite{hugh}p211. 
 In \cite{grsa} it is qualified as follows: slightly unstable but highly usable. 
@@ -137,7 +137,7 @@ $Q_1\times Q_1$-stab. Pro: easier to implement than $Q_1\times P_0$-stab, stabil
 \subsubsection{The MINI triangular element ($P_1^+\times P_1$) in 2D}
 \label{pair:mini}
 
-The \index{MINI element} MINI element was first introduced in Arnold et al, 1984 \cite{arbf84}.
+The \index{general}{MINI element} MINI element was first introduced in Arnold et al, 1984 \cite{arbf84}.
 It is also discussed in section 3.6.1 of \cite{john16}.
 It is schematically represented hereunder:
 
@@ -156,7 +156,7 @@ continuity equations. In some cases their approach recovers the MINI element. Al
 \begin{remark}
 According to Braess\cite{braess}, since the support of the bubble is restricted to the element, 
 the associated variable (dofs living on the bubble) can be eliminated from the resulting 
-system of linear equations by static condensation. \index{Static Condensation}
+system of linear equations by static condensation. \index{general}{Static Condensation}
 Also, the MINI element is cheaper than the Taylor-Hood element but it is commonly accepted
 that it yields a poorer approximation of the pressure.
 \end{remark}
@@ -270,15 +270,15 @@ p. 722 of \cite{john16}
 \subsubsection{Other elements}
 
 \begin{itemize}
-\item $P_1\times P_0$: example 3.70 in \cite{john16}, also \cite{john98}. \index{$P_1\times P_0$}
+\item $P_1\times P_0$: example 3.70 in \cite{john16}, also \cite{john98}. \index{general}{$P_1\times P_0$}
 \item $P_1\times P_1$ stabilised \cite{nosi98}
-\item Q2P0: \index{$Q_2 \times P_0$}: 
+\item Q2P0: \index{general}{$Q_2 \times P_0$}: 
 Quadratic velocities, constant pressure. The element satisfies the inf-sup condition, but the constant pressure assumption may require fine discretisation.
 
 \item Q2Q2: This element is never used, probably because a) it is unstable, b) it is very costly. 
 There is one reference to it in \cite{hufb86}.
 \item P2P2
-\item the MINI quadrilateral element $Q_1^+\times Q_1$. \index{$Q_1^+ \times Q_1$} \cite{bai97,kwpa14}
+\item the MINI quadrilateral element $Q_1^+\times Q_1$. \index{general}{$Q_1^+ \times Q_1$} \cite{bai97,kwpa14}
 \item Q1P-1 Bilinear velocities,  piecewise linear discontinuous polynomial pressure.
 \end{itemize}
 

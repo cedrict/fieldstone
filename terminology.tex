@@ -2,9 +2,9 @@
 We introduce here some terminology for efficient element descriptions \cite{grsa}:
 \begin{itemize}
 \item For triangles/tetrahedra, the designation 
-$P_m \times P_n$ \index{$P_m \times P_n$}
+$P_m \times P_n$ \index{general}{$P_m \times P_n$}
 means that each component of the velocity
-is approximated by continuous piecewise \index{Piecewise} complete Polynomials of degree $m$ and
+is approximated by continuous piecewise \index{general}{Piecewise} complete Polynomials of degree $m$ and
 pressure by continuous piecewise complete Polynomials of degree  $n$.
 For example $P_2 \times P_1$ means 
 \[
@@ -17,7 +17,7 @@ p \sim b_1 + b_2x + b_3 y
 Both velocity and pressure are continuous across element boundaries, 
 and each triangular element contains 6 velocity nodes and three pressure nodes.
 
-\item For the same families, \index{$P_m \times P_{-n}$} 
+\item For the same families, \index{general}{$P_m \times P_{-n}$} 
 $P_m \times P_{-n}$
 is as above, except that pressure is approximated via 
 piecewise {\sl discontinuous} polynomials of degree $n$. For instance, $P_2 \times P_{-1}$ is the same 
@@ -25,11 +25,11 @@ as $P_2P_1$ except that pressure is now an independent linear function in each e
 discontinuous at element boundaries.
 
 \item For quadrilaterals/hexahedra, the designation 
-\index{$Q_m \times Q_n$}  $Q_m \times Q_n$
+\index{general}{$Q_m \times Q_n$}  $Q_m \times Q_n$
 means that each component of the velocity
 is approximated by a continuous piecewise polynomial of degree $m$ {\sl in each direction} on the quadrilateral
 and likewise for pressure, except that the polynomial is of degree $n$.
-For instance,  $Q_2 \times Q_1$ \index{$Q_2 \times Q_1$} means
+For instance,  $Q_2 \times Q_1$ \index{general}{$Q_2 \times Q_1$} means
 \[
 u \sim a_1 + a_2 x + a_3 y + a_4 xy + a_5 x^2 + a_6 y^2 + a_7 x^2y + a_8 xy^2 + a_9 x^2y^2
 \]
@@ -38,14 +38,14 @@ and
 p \sim b_1 + b_2x + b_3 y + b_4 xy
 \]
 \item For these same families, $Q_m \times Q_{-n}$ is as above, except that the pressure approximation 
-is not continuous at element boundaries. \index{$Q_m \times Q_{-n}$}
+is not continuous at element boundaries. \index{general}{$Q_m \times Q_{-n}$}
 
-\item Again for the same families, \index{$Q_m \times P_{-n}$} $Q_m \times P_{-n}$
+\item Again for the same families, \index{general}{$Q_m \times P_{-n}$} $Q_m \times P_{-n}$
  indicates the same velocity approximation 
 with a pressure approximation that is a discontinuous complete piecewise polynomial of degree $n$
 (not of degree $n$ in each direction !)
 
-\item The designation $P_m^+$ or $Q_m^+$ means that some sort of bubble function \index{Bubble Function}
+\item The designation $P_m^+$ or $Q_m^+$ means that some sort of bubble function \index{general}{Bubble Function}
 was added to the polynomial approximation for the velocity. You may also find the term 'enriched element'
 in the literature.
 
@@ -53,7 +53,7 @@ in the literature.
 \end{itemize}
 
 Another point which needs to be clarified is the use of so-called 'conforming elements' 
-(or 'non-conforming elements'). \index{Conforming Element} \index{Non-Conforming Element}
+(or 'non-conforming elements'). \index{general}{Conforming Element} \index{general}{Non-Conforming Element}
 Following again \cite{grsa}, conforming velocity elements are those for which the basis functions for a subset 
 of $H^1$ for the continuous problem (the first derivatives and their squares are integrable in $\Omega$).
 For instance, the rotated $Q_1 \times P_0$ element of Rannacher and Turek (see section \ref{pair}) is such that 

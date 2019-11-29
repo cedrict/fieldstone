@@ -1,4 +1,8 @@
 
+\index{stones}{$Q_1 \times P_0$ element}
+\index{stones}{Penalty Formulation}
+\index{stones}{Analytical Solution}
+
 %Taken from aspect manual. 
 The SolCx benchmark is intended to test the accuracy of the solution to a problem that has a large jump in the viscosity along a line through the domain. Such situations are common in geophysics: for example, the viscosity in a cold, subducting slab is much larger than in the surrounding, relatively hot mantle material.
 
@@ -32,19 +36,6 @@ at the viscosity jump have half their integration points with $\mu=1$ and half w
 (which is a pathological case since the used quadrature rule inside elements cannot represent 
 accurately such a jump).  
 
-\fbox{
-\parbox{10cm}{{\bf features}
-\begin{itemize}
-\item $Q_1\times P_0$ element \index{$Q_1 \times P_0$}
-\item incompressible flow \index{incompressible flow}
-\item penalty formulation \index{penalty formulation}
-\item Dirichlet boundary conditions (free-slip)
-\item direct solver 
-\item isothermal \index{isothermal}
-\item non-isoviscous \index{non-isoviscous}
-\item analytical solution \index{analytical solution}
-\end{itemize}
-}}
 
 \includegraphics[width=16cm]{python_codes/fieldstone_05/solution.pdf}
 

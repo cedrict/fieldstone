@@ -1,6 +1,6 @@
-\index{$L_1$ norm}
-\index{$L_2$ norm}
-\index{$H^1$ norm}
+\index{general}{$L_1$ norm}
+\index{general}{$L_2$ norm}
+\index{general}{$H^1$ norm}
 
 What follows is written in the case of a two-dimensional model. Generalisation to
 3D is trivial. What follows is mostly borrowed from \cite{thmk14}.
@@ -51,7 +51,9 @@ e_{\vec v}^h|_2=\sqrt{ \sum_{i=1}^{n_e} \sum_{q=1}^{n_q} \left[ |e_u^h({\bm r}_q
 where $e_u^h(\vec{r}_q)=u^h(\vec{r}_q) - u(\vec{r}_q)$ and $e_v^h(\vec{r}_q)=v^h(\vec{r}_q)-v(\vec{r}_q)$.
 
 
-\index{$H^1(\Omega)$ space} \index{$H^1$ norm} \index{$H^1$ semi-norm}
+\index{general}{$H^1(\Omega)$ space} 
+\index{general}{$H^1$ norm} 
+\index{general}{$H^1$ semi-norm}
 Another norm is very rarely used in the geodynamics literature but is preferred in the 
 Finite Element literature: the $H^1$ norm. The mathematical basis for this
 norm and the nature of the $H^1(\Omega)$ Hilbert space is to be found in many FE books \cite{dohu03,john16,hugh}.
@@ -106,7 +108,7 @@ one can compute the convergence rates of the numerical solutions.
 
 As mentioned in \cite{dobo04}, when finite element solutions converge at
 the same rates as the interpolants we say that the method is optimal, i.e.:
-\index{optimal rate}
+\index{general}{optimal rate}
 
 \begin{equation}
 e_{\vec v}^h|_{L_2} = {\cal O}(h^3)
@@ -126,7 +128,7 @@ when the viscosity is discontinuous provided that the element boundaries conform
 
  
 \subsubsection{About extrapolation}
-\index{Extrapolation}
+\index{general}{Extrapolation}
 
 {\it Section contributed by W. Bangerth and part of Thieulot \& Bangerth [in prep.]}
 

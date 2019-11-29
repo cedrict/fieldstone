@@ -97,10 +97,11 @@ or,
 (\G^T \cdot \K^{-1} \cdot \G) \cdot \vec{\cal P} = \G^T \cdot \K^{-1}\cdot \vec{f} - \vec{h} 
 \end{equation}
 \end{mdframed}
-The matrix $\SSS= \G^T \cdot \K^{-1} \cdot \G $ is called the Schur complement. \index{Schur complement} 
+The matrix $\SSS= \G^T \cdot \K^{-1} \cdot \G $ is called the Schur complement. 
+\index{general}{Schur complement} 
 It is Symmetric (since $\K$ is symmetric) and  Positive-Definite\footnote{$M$ 
 positive definite $\iff$ $x^TMx>0$ $\forall \; x\in \mathbb{R}^n \setminus {\bm 0}$ }
-(SPD) \index{SPD} if $Ker({\G})=0$. 
+(SPD) \index{general}{SPD} if $Ker({\G})=0$. 
 {\color{red} look in donea-huerta book for details}
 Having solved this equation (we have obtained $\vec{\cal P}$), the velocity can be recovered by solving 
 $\K\cdot \vec{\cal V} =\vec{f}- \G \cdot \vec{\cal P}$. 
@@ -109,7 +110,7 @@ For now, let us assume that we have built the $\SSS$ matrix and the right hand
 side $\underline{\vec{f}}=\G^T \cdot \K^{-1} \cdot \vec{f} - \vec{h}$.
 We must solve $\SSS\cdot \vec{\cal P} = \underline{\vec{f}}$.
 
-\index{Richardson iterations}
+\index{general}{Richardson iterations}
 One can resort to so-called Richardson iterations, defined as follows (e.g., see \cite{varga}, p141):
 in solving the matrix equation ${\bm A}\cdot {\vec X}={\vec b}$,
 the Richardson iterative method is defined by: 
@@ -258,7 +259,7 @@ For $k=1,2,...$, compute
 \subsubsection{Conjugate gradient and the Schur complement approach }
 
 
-\index{CG} \index{conjugate gradient}
+\index{general}{CG} \index{general}{conjugate gradient}
 Since $\SSS$ is SPD, the Conjugate Gradient (CG) method is very appropriate to solve this system. 
 Indeed, looking at the definition of Wikipedia: "{\it In mathematics, the conjugate gradient method is an algorithm for the numerical solution of particular systems of linear equations, namely those whose matrix is symmetric and positive-definite. The conjugate gradient method is often implemented as an iterative algorithm, applicable to sparse systems that are too large to be handled by a direct implementation or other direct methods such as the Cholesky decomposition. Large sparse systems often arise when numerically solving partial differential equations or optimization problems.}"
 
@@ -374,7 +375,7 @@ This algorithm requires one solve with matrix $\K$ per iteration
 but says nothing about the method employed to do so (direct solver, iterative solver, ...)
 \end{remark} 
 
-\index{preconditioned conjugate gradient}  
+\index{general}{preconditioned conjugate gradient}  
 One thing we know improves the convergence of any iterative solver is the use of a 
 preconditioner matrix and therefore now focus on the Preconditioned Conjugate Gradient (PCG) method.
 Once again a quick Google search yields:
@@ -445,7 +446,7 @@ and it is trivial to invert.
 
 %---------------------------------------------
 \subsubsection{The Augmented Lagrangian approach}
-\index{Augmented Lagrangian}
+\index{general}{Augmented Lagrangian}
 
 see LaCoDe paper \cite{demh19}.
 

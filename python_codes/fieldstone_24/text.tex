@@ -1,3 +1,11 @@
+
+\index{stones}{$Q_1 \times P_0$ element}
+\index{stones}{Compressible Flow}
+\index{stones}{Mixed Formulation}
+\index{stones}{Analytical Solution}
+\index{stones}{Pressure Smoothing} 
+
+
 \begin{mdframed}[backgroundcolor=red!5]
 This work is part of the MSc thesis of T. Weir (2018).
 \end{mdframed}
@@ -17,18 +25,18 @@ After linearisation, the density depends on temperature and pressure as follows:
 \rho(T,p) = \rho_0 \left((1 - \alpha(T-T_0) + \beta_T p \right)
 \]
 where $\alpha$ is the coefficient of thermal expansion, also called 
-thermal expansivity: \index{thermal expansion}
+thermal expansivity: \index{stones}{thermal expansion}
 \[
 \alpha=-\frac{1}{\rho}\left( \frac{\partial \rho}{\partial T} \right)_p
 \]
 $\alpha$ is the percentage increase in volume of a material per degree of temperature increase; the
 subscript $p$ means that the pressure is held fixed.
 
-$\beta_T$ is the isothermal compressibility of the fluid, which is given by \index{compressibility}
+$\beta_T$ is the isothermal compressibility of the fluid, which is given by \index{stones}{compressibility}
 \[
 \beta_T = \frac{1}{K} = \frac{1}{\rho}\left( \frac{\partial \rho}{\partial P} \right)_T
 \]
-with $K$ the bulk modulus. \index{bulk modulus}
+with $K$ the bulk modulus. \index{stones}{bulk modulus}
 %aspect manual
 Values of $\beta_T=10^{-12}-10^{-11}$ Pa$^{-1}$ are reasonable for Earth's mantle, with values decreasing by about a
 factor of 5 between the shallow lithosphere and core-mantle boundary.
@@ -276,7 +284,7 @@ And finally
 \[
 \int_V \rho {\bm g} \cdot {\bm v} dV = W
 \]
-which is the work against gravity. \index{work against gravity} 
+which is the work against gravity. \index{stones}{work against gravity} 
 
 Conclusion for an {\it incompressible} fluid: we should have
 \begin{equation}
@@ -427,18 +435,6 @@ In light thereof, it will be very difficult to recover the values of King et al 
 
 \vspace{3cm}
 
-\fbox{
-\parbox{10cm}{{\bf features}
-\begin{itemize}
-\item $Q_1\times P_0$ element \index{$Q_1 \times P_0$}
-\item compressible flow \index{compressible flow}
-\item mixed formulation \index{mixed formulation}
-\item Dirichlet boundary conditions (no-slip)
-\item isoviscous \index{isoviscous}
-\item analytical solution \index{analytical solution}
-\item pressure smoothing \index{pressure smoothing} 
-\end{itemize}
-}}
 
 Relevant literature: \cite{besg92,itki94,tagu07,lezh08,kilv10,lezh11,lizh13,hedg17}
 

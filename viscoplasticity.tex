@@ -4,11 +4,11 @@
 \subsubsection{Tensor invariants}\label{sec:invariants}
 
 Before we dive into the world of nonlinear rheologies it is necessary to introduce the concept of tensor 
-invariants since they are needed further on. \index{tensor invariant}
+invariants since they are needed further on. \index{general}{tensor invariant}
 Unfortunately there are many different notations used in the literature and these can prove to be 
 confusing. Note that we only consider symmetric tensors in what follows.
 
-\index{Moment Invariant}
+\index{general}{Moment Invariant}
 Given a tensor $\bm{T}$,  one can compute its (moment) invariants as follows \cite[p.339]{reddybook2}: 
 \begin{itemize}
 \item first invariant:
@@ -105,7 +105,8 @@ From Eq. (\ref{eqscpl1}) it follows that $\underline{\tau}_{II}= 2\eta_p \dot{\u
 \eta_p = \frac{Y}{2 \dot{\underline{\varepsilon}}_{II}}
 \]
 \end{mdframed}
-This approach has also been coined the Viscosity Rescaling Method (VRM) \cite{kacha04}. \index{VRM} \index{Viscosity Rescaling Method}
+This approach has also been coined the Viscosity Rescaling Method (VRM) \cite{kacha04}. 
+\index{general}{VRM} \index{general}{Viscosity Rescaling Method}
 
 \improvement[inline]{insert here the rederivation 2.1.1 of spmw16}
 
@@ -132,10 +133,10 @@ Caution must be taken when choosing both values as they may influence the final 
 
 In geodynamics the yield stress value is often given as a simple function. 
 It can be constant (in space and time) and in this case we are dealing with a von Mises plasticity yield criterion. 
-\index{von Mises}. We simply assume $Y_{vM}=C$ where $C$ is a constant cohesion independent of pressure, strainrate,
-deformation history, etc ... \index{cohesion}
+\index{general}{von Mises}. We simply assume $Y_{vM}=C$ where $C$ is a constant cohesion independent of pressure, strainrate,
+deformation history, etc ... \index{general}{cohesion}
 
-Another model is often used: the Drucker-Prager plasticity model. \index{Drucker-Prager}
+Another model is often used: the Drucker-Prager plasticity model. \index{general}{Drucker-Prager}
 A friction angle $\phi$ is then introduced and the yield value $Y$ takes the form
 \[
 Y_{DP}=p \sin\phi + C \cos \phi
