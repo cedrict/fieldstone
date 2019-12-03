@@ -1,7 +1,7 @@
 \subsubsection{Strain rate and spin tensor}
-\index{general}{velocity gradient}
-\index{general}{strain rate}
-\index{general}{spin tensor}
+\index{general}{Velocity Gradient}
+\index{general}{Strain Rate}
+\index{general}{Spin Tensor}
 
 The velocity gradient is given in Cartesian coordinates by:
 \begin{equation}
@@ -173,7 +173,7 @@ Using the relationship ${\bm \tau} = 2 \eta \dot{\bm \varepsilon}^d$ we arrive a
 
 %------------------------------------------------------------------------
 \subsection{The mass conservation equations} 
-\index{general}{Solenoidal field} \index{general}{Divergence-free}
+\index{general}{Solenoidal Field} \index{general}{Divergence-free}
 
 The mass conservation equation is given by
 \[
@@ -277,9 +277,10 @@ Also, their definition of the shear heating term $\Phi$ is:
 \Phi = k_B ({\bm \nabla}\cdot{\bm v})^2 + 2\eta \dot{\bm \varepsilon}^d:\dot{\bm \varepsilon}^d
 \]
 For many fluids the bulk viscosity $k_B$ is very small and is often taken to be zero, an assumption known
-as the Stokes assumption: $k_B=\lambda+2\eta/3=0$. \index{general}{bulk viscosity}
-Note that $\eta$ is the dynamic viscosity and $\lambda$ the second viscosity. \index{general}{dynamic viscosity}
-\index{general}{second viscosity}
+as the Stokes assumption: $k_B=\lambda+2\eta/3=0$. \index{general}{Bulk Viscosity}
+Note that $\eta$ is the dynamic viscosity and $\lambda$ the second viscosity. 
+\index{general}{Dynamic Viscosity}
+\index{general}{Second Viscosity}
 Also, 
 \[
 {\bm \tau}=2\eta \dot{\bm \varepsilon} + \lambda ({\bm \nabla}\cdot{\bm v}) {\bm 1}
@@ -326,15 +327,13 @@ where The Lagrangian or material derivative is
 + \frac{\upnu_\theta}{r} \frac{\partial}{\partial \theta}
 + \upnu_z \frac{\partial}{\partial z}  
 \]
-and the Laplacian operator is \index{general}{Laplace operator} \index{general}{Laplacian} 
-\[
+and the Laplacian operator is \index{general}{Laplace Operator} \index{general}{Laplacian} 
+\begin{equation}
 \Delta 
 = \frac{\partial^2 }{\partial r^2}  +\frac{1}{r} \frac{\partial }{\partial r}
 + \frac{1}{r^2}  \frac{\partial^2}{\partial \theta^2}
 + \frac{\partial^2 }{\partial z^2}
-\]
-
-
+\end{equation}
 
 
 %------------------------------------------------------------------------------
@@ -385,7 +384,7 @@ where The Lagrangian or material derivative is
 + \frac{\upnu_\theta}{r} \frac{\partial}{\partial \theta}
 + \frac{\upnu_\phi}{r \sin\theta} \frac{\partial}{\partial \phi}  
 \]
-and the Laplacian operator is \index{general}{Laplace operator} \index{general}{Laplacian} 
+and the Laplacian operator is \index{general}{Laplace Operator} \index{general}{Laplacian} 
 \[
 \Delta = \frac{1}{r^2} \frac{\partial }{\partial r}\left( r^2 \frac{\partial }{\partial r}\right)
 +\frac{1}{r^2 \sin\theta} \frac{\partial }{\partial \theta}
@@ -406,7 +405,6 @@ axisymmetric geometry, for example a plume:
 \begin{center}
 \includegraphics[width=5cm]{images/axisymmetry/keki97}
 \end{center}
-
 
 Assuming the flow velocity does not depend on $\phi$ ($\partial_\phi =0$) and therefore also that $\upnu_\phi=0$
 \[
@@ -581,15 +579,16 @@ One often then write Eq.~\label{eq:one} as follows:
 where $\lambda$ is the Lam\'e parameter and $\mu$ is the shear modulus\footnote{It is also sometimes written $G$}.
 The term $\vec{\nabla}\cdot\vec{u}$ is the isotropic dilation.
 
-\index{general}{Lam\'e parameter} \index{general}{shear modulus}
+\index{general}{Lam\'e Parameter} 
+\index{general}{Shear Modulus}
 
-The strain tensor is related to the displacement as follows: \index{general}{strain tensor}
+The strain tensor is related to the displacement as follows: \index{general}{Strain Tensor}
 \[
 {\bm \varepsilon} = \frac{1}{2}(\vec{\nabla}\vec{u} + (\vec{\nabla}\vec{u})^T)
 \]
 
 The incompressibility (or bulk modulus) $K$ is defined as $p=-K \vec{\nabla}\cdot\vec{u}$ 
-where $p$ is the pressure with \index{general}{bulk modulus}
+where $p$ is the pressure with \index{general}{Bulk Modulus}
 \begin{eqnarray}
 p&=&-\frac{1}{3} \text{tr}({\bm \sigma}) \nonumber\\
  &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u}) \text{tr}[{\bm 1}] + 2 \mu \text{tr}[{\bm \varepsilon}]] \nonumber\\
@@ -611,7 +610,7 @@ ${\bm u}$ is the velocity, and $\mu$ is then the dynamic viscosity.
 \end{remark}
 
 The Lam\'e parameter and the shear modulus are also linked to $\nu$ the poisson ratio, 
-and $E$, Young's modulus: \index{general}{Poisson ratio} \index{general}{Young's modulus}
+and $E$, Young's modulus: \index{general}{Poisson Ratio} \index{general}{Young's Modulus}
 \[
 \lambda=\mu\frac{2\nu}{1-2\nu}
 =\frac{\nu E}{(1+\nu)(1-2\nu)}
@@ -729,12 +728,8 @@ It is possible to describe the problem using other boundary conditions:
 a Dirichlet boundary condition specifies the values of the solution itself 
 (as opposed to its derivative) on the boundary, whereas the Cauchy boundary condition, mixed boundary condition and Robin boundary condition are all different types of combinations of the Neumann and Dirichlet boundary conditions.
 
-\index{general}{Dirichlet boundary condition}
-\index{general}{Neumann boundary condition}
-
-
-
-
+\index{general}{Dirichlet Boundary Condition}
+\index{general}{Neumann Boundary Condition}
 
 %....................................
 \subsubsection{The Stokes equations}
@@ -790,8 +785,8 @@ root mean square averages:
 
 \item \underline{Pressure} $p (\text{Pa})$:
 \item \underline{Stress tensor} ${\bm \sigma}$ (Pa): \index{general}{Stress Tensor}
-\item \underline{Strain tensor} ${\bm \varepsilon}$ (dimensionless): \index{general}{Strain tensor}
-\item \underline{Strain rate tensor} $ \dot{\bm \varepsilon} (\text{s}^{-1}$): \index{general}{Strain rate tensor}
+\item \underline{Strain tensor} ${\bm \varepsilon}$ (dimensionless): \index{general}{Strain Tensor}
+\item \underline{Strain rate tensor} $ \dot{\bm \varepsilon} (\text{s}^{-1}$): \index{general}{Strain Rate Tensor}
 \item \underline{Rayleigh number} $Ra$ (X): \index{general}{Rayleigh Number}
 It is a dimensionless number that expresses the	ratio of the driving forces to the opposing forces.
 The buoyancy force comes from the volumetric thermal expansion while the viscous forces and 
@@ -900,7 +895,10 @@ given by a steady state conductive geotherm.
 
  
 \item \underline{Temperature} (K):
-\item \underline{Viscosity} (Pa.s):
+\item \underline{(Dynamic) Viscosity} (Pa.s): For air it is roughly $10^{-5}$Pa.s, about $10^{-3}$Pa.s for water, about $10^{10}$Pa.s for ice and about $10^{17}$Pa.s for salt. 
+
+
+
 \item \underline{Density} (kg/m$^3$):
 \item \underline{Heat capacity} $C_p$ ($J.K^{-1}$): 
 It is the measure of the heat/energy required to increase the 

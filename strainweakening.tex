@@ -32,8 +32,8 @@ for the ratio $\sigma_y/\sigma_y^{sw}$ where $\sigma_y=p \sin\phi + c \; \cos \p
 and carry out 3D crustal extensional models for $R$ between 2 and 5. 
 
 
-
-In \cite{lemh17} the authors also define 
+\begin{itemize}
+\item In \cite{lemh17} the authors also define 
 \[
 \tau_y = p \sin (\phi(\varepsilon^p))  + c_0 \cos(\phi(\varepsilon^p))
 \]
@@ -56,7 +56,8 @@ tensorial invariant measure of the deformation which has occurred
 due to plastic yielding. Thus, the quantity $\varepsilon^p$ can be regarded as
 a simplified measure of material damage. 
 
-In Dyksterhuis et al \cite{dyrm07} a variant of the above formulation is used:
+
+\item In Dyksterhuis et al \cite{dyrm07} a variant of the above formulation is used:
 \[
 f(\varepsilon)=
 \left\{
@@ -102,7 +103,17 @@ $\mu_0$ and $\mu_0+\mu_1$ represent the minimum and maximum frictional coefficie
 $\varepsilon_{plast}$ and $\varepsilon_{ref}$ represent accumulated plastic strain and 
 reference strain, respectively.
 
+\index{general}{Plastic Hardening}
+\item In \cite{leor89} the authors describe another formulation for plastic hardening. The angle of friction 
+changes with the accumulated plastic strain:
+\[
+\sin \phi = \sin \phi_i  + \frac{2(\sin \phi_f - \sin\phi_i)\sqrt{\varepsilon^p_c  \varepsilon^p }}{\varepsilon^p + \varepsilon^p_c}
+\] 
+where $\phi$ transitions from an initial value $\phi_i$ to a maximum $\phi_f$ attained when the effective
+plastic strain reaches a critical value $\varepsilon_c^p$. When $\varepsilon^p \rightarrow \varepsilon^p_c$
+then $\phi \rightarrow \phi_f$.
+
+\end{itemize}
 
 
-
-\Literature: \cite{nigo15}
+\Literature: \cite{ster99,nigo15}

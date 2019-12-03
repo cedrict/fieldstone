@@ -50,39 +50,6 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
        #print (iter,val)
        val=min(1.e25,val)
        val=max(1.e20,val)
-
-
-#       if iter==0:
-#          val=1e25
-#          two_sin_psi=0.
-#       else:
-#          try: 
-#             e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
-#             e2=max(1e-25,e2)
-
-             #original with hard limiters
-#             Y=pq*np.sin(phi)+c*np.cos(phi)
-#             val=Y/(2.*e2)
-#             val=min(1.e20,val)
-#             val=max(1.e25,val)
-
-             #npl=10.
-             #eref=1e-15
-             #val=0.5*Y/eref*(e2/eref)**(1./npl-1)
-
-             #bingham
-             #Y=max(pq*np.sin(phi)+c*np.cos(phi),0.)
-             #val=Y/(2.*e2)
-             #val=1./(1./(val+1e20)+1./1e25)
-             #if val>1e25:
-             #   print('val too big', val)
-             #if val<1e20:
-             #   print('val too small', val)
-
-#          except Exception as e: 
-#             print (e)  
-#             pass
-#          two_sin_psi=2.*np.sin(psi)
     if benchmark==2: # spmw16
        if y<7.5e3 or (abs(x-60e3)<2.5e3 and y<10e3):
           val=1e21
@@ -254,7 +221,7 @@ eta_ref=1.e23      # scaling of G blocks
 scaling_coeff=eta_ref/Ly
 
 niter_min=1
-niter=50
+niter=25
 
 if use_SchurComplementApproach:
    ls_conv_file=open("linear_solver_convergence.ascii","w")
@@ -849,6 +816,12 @@ for iter in range(0,niter):
    print("compute nod strain rate: %.3f s" % (timing.time() - start))
 
 
+
+
+   ######################################################################
+   # generate vtu output at every nonlinear iteration
+   ######################################################################
+
    filename = 'solution_nl_{:04d}.vtu'.format(iter)
    vtufile=open(filename,"w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -863,7 +836,7 @@ for iter in range(0,niter):
    vtufile.write("</Points> \n")
    #####
    vtufile.write("<CellData Scalars='scalars'>\n")
-   vtufile.write("<DataArray type='Float32' Name='sr(x10^-15)' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' Name='sr_mid(x10^-15)' Format='ascii'> \n")
    for iel in range (0,nel):
        vtufile.write("%10e\n" % (sr[iel]*1e15))
    vtufile.write("</DataArray>\n")
@@ -895,19 +868,11 @@ for iter in range(0,niter):
 
 
 
-
-
-
-
-
-
-
-
 #------------------------------------------------------------------------------
 # end of non-linear iterations
 #------------------------------------------------------------------------------
 
-np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+np.savetxt('sr_middle.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
 #####################################################################
 # extracting shear bands 
@@ -951,6 +916,81 @@ for j in range(0,nny):
     shear_band_R_file_2.write("%6e %6e %6e \n"  % (xV[ilocR],yV[ilocR],srn[ilocR]) )
 # end for j
 
+
+
+######################################################################
+# compute averaged elemental strainrate 
+# I use a 5 point quadrature rule (per dimension) and compute the 
+# average strain rate tensor components per element. 
+######################################################################
+start = timing.time()
+
+exx_avrg = np.zeros(nel,dtype=np.float64)  
+eyy_avrg = np.zeros(nel,dtype=np.float64)  
+exy_avrg = np.zeros(nel,dtype=np.float64)  
+sr_avrg  = np.zeros(nel,dtype=np.float64)  
+
+qc5a=np.sqrt(5.+2.*np.sqrt(10./7.))/3.  
+qc5b=np.sqrt(5.-2.*np.sqrt(10./7.))/3.  
+qc5c=0.    
+qw5a=(322.-13.*np.sqrt(70.))/900.
+qw5b=(322.+13.*np.sqrt(70.))/900.
+qw5c=128./225.
+qcoords5=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
+qweights5=[qw5a,qw5b,qw5c,qw5b,qw5a]
+
+for iel in range(0,nel):
+    for jq in [0,1,2,3,4]:
+        for iq in [0,1,2,3,4]:
+            # position & weight of quad. point
+            rq=qcoords5[iq]
+            sq=qcoords5[jq]
+            weightq=qweights5[iq]*qweights5[jq]
+            NNNV[0:9]=NNV(rq,sq)
+            dNNNVdr[0:9]=dNNVdr(rq,sq)
+            dNNNVds[0:9]=dNNVds(rq,sq)
+            # calculate jacobian matrix
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,mV):
+                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+            # end for
+            jcob = np.linalg.det(jcb)
+            jcbi = np.linalg.inv(jcb)
+            # compute dNdx & dNdy & strainrate
+            exxq=0.0
+            eyyq=0.0
+            exyq=0.0
+            for k in range(0,mV):
+                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                exxq+=dNNNVdx[k]*u[iconV[k,iel]]
+                eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
+                exyq+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
+            # end for
+            exx_avrg[iel] += exxq*jcob*weightq
+            eyy_avrg[iel] += eyyq*jcob*weightq
+            exy_avrg[iel] += exyq*jcob*weightq
+        # end for
+    # end for
+    exx_avrg[iel] /= (hx*hy) 
+    eyy_avrg[iel] /= (hx*hy) 
+    exy_avrg[iel] /= (hx*hy) 
+    sr_avrg[iel]=np.sqrt(0.5*(exx_avrg[iel]**2+eyy_avrg[iel]**2)+exy_avrg[iel]**2)
+#end for
+
+print("     -> exx_avrg (m,M) %.6e %.6e " %(np.min(exx_avrg),np.max(exx_avrg)))
+print("     -> eyy_avrg (m,M) %.6e %.6e " %(np.min(eyy_avrg),np.max(eyy_avrg)))
+print("     -> exy_avrg (m,M) %.6e %.6e " %(np.min(exy_avrg),np.max(exy_avrg)))
+print("     -> sr_avrg  (m,M) %.6e %.6e " %(np.min(sr_avrg),np.max(sr_avrg)))
+
+print("compute avrg elemental strain rate: %.3f s" % (timing.time() - start))
+
+np.savetxt('sr_avrg.ascii',np.array([xc,yc,exx_avrg,eyy_avrg,exy_avrg]).T,header='# xc,yc,exx,eyy,exy')
+
+
 #####################################################################
 # plot of solution
 #####################################################################
@@ -982,14 +1022,29 @@ for iel in range (0,nel):
     vtufile.write("%10e\n" % exx[iel])
 vtufile.write("</DataArray>\n")
 #--
+vtufile.write("<DataArray type='Float32' Name='exx_avrg' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%10e\n" % exx_avrg[iel])
+vtufile.write("</DataArray>\n")
+#--
 vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % exy[iel])
 vtufile.write("</DataArray>\n")
 #--
-vtufile.write("<DataArray type='Float32' Name='sr(x10^-15)' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' Name='exy_avrg' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%10e\n" % exy_avrg[iel])
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='sr_middle(x10^-15)' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % (sr[iel]*1e15))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='sr_avrg(x10^-15)' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%10e\n" % (sr_avrg[iel]*1e15))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")

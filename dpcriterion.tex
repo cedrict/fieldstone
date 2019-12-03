@@ -22,9 +22,9 @@ $\alpha= fct(\phi)$ and $k= fct(c,\phi) $.
 By choosing $k=c \cos \phi $ and $\alpha=\frac{1}{2}\sin \phi$ and seeing that that $p=\frac{1}{2} {\cal I}_1({\bm \sigma})$, we can make the Drucker-Prager yield criterion coincide with the Mohr-Coulomb yield criterion
 so that 
 \begin{mdframed}[backgroundcolor=blue!5]
-\[
+\begin{equation}
 F^{DP,2D} = \tau_e - (p \sin \phi + c \; \cos \phi) 
-\]
+\end{equation}
 \end{mdframed}
 
 
@@ -58,10 +58,11 @@ k =  \frac{6c \cos \phi}{\sqrt{3}(3-\sin\phi)}
 \]
 and since $p=\frac{1}{3}{\cal I}_1({\bm \sigma})$:
 \begin{mdframed}[backgroundcolor=blue!5]
-\[
+\begin{equation}
 F^{DP,3D} = \tau_e  - \left[ \frac{6 \sin \phi}{\sqrt{3}(3-\sin\phi)}   p  + 
 \frac{6c \cos \phi}{\sqrt{3}(3-\sin\phi)}  \right]
-\]
+\label{eqdp3D}
+\end{equation}
 \end{mdframed}
 which is the formula used in \cite{gltf18}.
 
@@ -81,5 +82,16 @@ In the principal stress space, the Drucker-Prager surface has the form of a circ
 %\includegraphics[width=0.6\textwidth]{RHEOLOGY/viscoplasticity/dpcriterion.pdf}
 %\end{center}
 
+
+\vspace{1.3cm}
+Leroy \& Ortiz \cite{leor89} use the Drucker-Prager plasticity model also and match it to the Mohr-Coulomb model in the 
+triaxial test and formulate it as follows\footnote{Their definition of the second invariant of stress contains a 3/2 term}:
+\begin{eqnarray}
+F 
+&=& \tau_e \sqrt{3} + \frac{6 \sin\phi}{3-\sin\phi} \left( -p  - \frac{c}{\tan \phi} \right) \nn\\
+&=& \tau_e \sqrt{3} - \left( \frac{6 \sin\phi}{3-\sin\phi}  p  + c \frac{6 \cos\phi}{3-\sin\phi} \right) \nn\\
+&=& \sqrt{3} \left[ \tau_e  - \left( \frac{6 \sin\phi}{\sqrt{3}(3-\sin\phi)}  p  + c \frac{6 \cos\phi}{\sqrt{3}(3-\sin\phi)} \right)  \right]
+\end{eqnarray}
+Except for the $\sqrt{3}$ this is identical to Eq.~(\ref{eqdp3D})
 
 
