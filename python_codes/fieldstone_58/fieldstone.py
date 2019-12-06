@@ -6,6 +6,8 @@ import time
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 
+#------------------------------------------------------------------------------
+
 def NNV(rq,sq):
     NV_0= (1.-rq-sq)
     NV_1= rq
@@ -24,30 +26,54 @@ def dNNVds(rq,sq):
     dNVds_2= +1.
     return dNVds_0,dNVds_1,dNVds_2
 
+#------------------------------------------------------------------------------
+
 def sigma_xx_anal(x,y,P,R):
-    r1_2=(x-0)**2+(y-R)**2
-    r2_2=(x-0)**2+(y+R)**2
-    val=-2.*P/np.pi*( (R-y)*x**2/r1_2**2 +(R+y)*x**2/r2_2**2 - 1./(2*R)  )
+    if model==1:
+       r1_2=(x-0)**2+(y-R)**2
+       r2_2=(x-0)**2+(y+R)**2
+       val=-2.*P/np.pi*( (R-y)*x**2/r1_2**2 +(R+y)*x**2/r2_2**2 - 1./(2*R)  )
+    else:
+       val=0
     return val
 
 def sigma_yy_anal(x,y,P,R):
-    r1_2=(x-0)**2+(y-R)**2
-    r2_2=(x-0)**2+(y+R)**2
-    val=-2.*P/np.pi*( (R-y)**3/r1_2**2 +(R+y)**3/r2_2**2 - 1./(2*R)  )
+    if model==1:
+       r1_2=(x-0)**2+(y-R)**2
+       r2_2=(x-0)**2+(y+R)**2
+       val=-2.*P/np.pi*( (R-y)**3/r1_2**2 +(R+y)**3/r2_2**2 - 1./(2*R)  )
+    else:
+       val=0
     return val
 
 def sigma_xy_anal(x,y,P,R):
-    r1_2=(x-0)**2+(y-R)**2
-    r2_2=(x-0)**2+(y+R)**2
-    val=2.*P/np.pi*( (R-y)**2*x/r1_2**2 - (R+y)**2*x/r2_2**2  )
+    if model==1:
+       r1_2=(x-0)**2+(y-R)**2
+       r2_2=(x-0)**2+(y+R)**2
+       val=2.*P/np.pi*( (R-y)**2*x/r1_2**2 - (R+y)**2*x/r2_2**2  )
+    else:
+       val=0
+    return val
+
+def sigma_1_anal(x,y,P,R):
+    if model==1:
+       sigxx=sigma_xx_anal(x,y,P,R)
+       sigyy=sigma_yy_anal(x,y,P,R)
+       sigxy=sigma_xy_anal(x,y,P,R)
+       val=0.5*(sigxx+sigyy)+np.sqrt( 0.25*(sigxx-sigyy)**2+sigxy**2 )
+    else:
+       val=0
     return val
 
 def p_anal(x,y,P,R):
-    r1_2=(x-0)**2+(y-R)**2
-    r2_2=(x-0)**2+(y+R)**2
-    val1=-2.*P/np.pi*( (R-y)*x**2/r1_2**2 +(R+y)*x**2/r2_2**2 - 1./(2*R)  )
-    val2=-2.*P/np.pi*( (R-y)**3/r1_2**2 +(R+y)**3/r2_2**2 - 1./(2*R)  )
-    val=-0.5*(val1+val2)
+    if model==1:
+       r1_2=(x-0)**2+(y-R)**2
+       r2_2=(x-0)**2+(y+R)**2
+       val1=-2.*P/np.pi*( (R-y)*x**2/r1_2**2 +(R+y)*x**2/r2_2**2 - 1./(2*R)  )
+       val2=-2.*P/np.pi*( (R-y)**3/r1_2**2 +(R+y)**3/r2_2**2 - 1./(2*R)  )
+       val=-0.5*(val1+val2)
+    else:
+       val=0
     return val
 
 #------------------------------------------------------------------------------
@@ -56,7 +82,7 @@ print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
 
-nLayers = 91   # must be odd !
+nLayers = 81   # must be odd !
 outer_radius=1.
 
 m=3
@@ -78,8 +104,16 @@ p_bc=1.
 
 visu=1
 
-nel = 6 * nLayers * nLayers         # number of elements
-NV  = 1 + 3 * nLayers * (nLayers+1) # number of mesh nodes
+model=2
+
+if model==1:
+   nquadrant=6
+
+if model==2:
+   nquadrant=8
+
+nel = nquadrant * nLayers * nLayers         # number of elements
+NV  = 1 + int(nquadrant/2) * nLayers * (nLayers+1) # number of mesh nodes
 Nfem=NV*ndof                        # Total number of degrees of freedom
 
 qcoords_r=[1./6.,1./6.,2./3.] # coordinates & weights 
@@ -109,7 +143,7 @@ outer_node = np.zeros(NV, dtype=np.bool) # on the outer hull yes/no
 counter = 1 
 for iLayer in range(1,nLayers+1):
     radius = outer_radius * float(iLayer)/float(nLayers)
-    nPointsOnCircle = 6*iLayer
+    nPointsOnCircle = nquadrant*iLayer
     for iPoint in range (0,nPointsOnCircle):
         # Coordinates are created, starting at twelve o'clock, 
         # going in clockwise direction
@@ -132,30 +166,41 @@ start = time.time()
 
 icon=np.zeros((m,nel),dtype=np.int32)
 
-# first 6 triangles by hand
-icon[:,0] = (0,2,1)
-icon[:,1] = (0,3,2)
-icon[:,2] = (0,4,3)
-icon[:,3] = (0,5,4)
-icon[:,4] = (0,6,5)
-icon[:,5] = (0,1,6)
-            
-#print ('   elt=',0,'nodes:',icon[:,0])
-#print ('   elt=',1,'nodes:',icon[:,1])
-#print ('   elt=',2,'nodes:',icon[:,2])
-#print ('   elt=',3,'nodes:',icon[:,3])
-#print ('   elt=',4,'nodes:',icon[:,4])
-#print ('   elt=',5,'nodes:',icon[:,5])
+# first nquadrant triangles by hand
+if nquadrant==4:
+   icon[:,0] = (0,2,1)
+   icon[:,1] = (0,3,2)
+   icon[:,2] = (0,4,3)
+   icon[:,3] = (0,1,4)
+   iInner = 1 
+   iOuter = 5 
+if nquadrant==6:
+   icon[:,0] = (0,2,1)
+   icon[:,1] = (0,3,2)
+   icon[:,2] = (0,4,3)
+   icon[:,3] = (0,5,4)
+   icon[:,4] = (0,6,5)
+   icon[:,5] = (0,1,6)
+   iInner = 1 
+   iOuter = 7 
+if nquadrant==8:
+   icon[:,0] = (0,2,1)
+   icon[:,1] = (0,3,2)
+   icon[:,2] = (0,4,3)
+   icon[:,3] = (0,5,4)
+   icon[:,4] = (0,6,5)
+   icon[:,5] = (0,7,6)
+   icon[:,6] = (0,8,7)
+   icon[:,7] = (0,1,8)
+   iInner = 1 
+   iOuter = 9 
 
-storedElems = 6 
-
-iInner = 1 
-iOuter = 7 
+storedElems = nquadrant 
 
 for iLayer in range(2,nLayers+1):    # ok
-    nPointsOnCircle = 6*iLayer     # ok
+    nPointsOnCircle = nquadrant*iLayer     # ok
     #print ('iLayer=',iLayer,'nPointsOnCircle=',nPointsOnCircle,'iInner=',iInner,'iOuter=',iOuter)  # ok
-    for iSection in range (1,6):     
+    for iSection in range (1,nquadrant):     
         #print ('Section',iSection) 
         for iBlock in range(0,iLayer-1):
             icon[:,storedElems] = (iInner, iOuter +1, iOuter )
@@ -193,12 +238,13 @@ for iLayer in range(2,nLayers+1):    # ok
     #print ('   elt=',storedElems,'nodes:',icon[:,storedElems])
     storedElems = storedElems + 1
 
-    icon[:,storedElems] = (iInner, iInner + 1 - 6*(iLayer-1) , iOuter+1)
+    icon[:,storedElems] = (iInner, iInner + 1 - nquadrant*(iLayer-1) , iOuter+1)
     #print ('   elt=',storedElems,'nodes:',icon[:,storedElems])
     storedElems += 1 
 
     # last element, closing the layer.
-    icon[:,storedElems] = (iInner+1, iOuter+1, iInner + 1 - 6*(iLayer-1))
+    #icon[:,storedElems] = (iInner+1, iOuter+1, iInner + 1 - nquadrant*(iLayer-1))
+    icon[:,storedElems] = ( iInner + 1 - nquadrant*(iLayer-1),iInner+1,iOuter+1 )
     #print ('   elt=',storedElems,'nodes:',icon[:,storedElems])
     storedElems += 1 
 
@@ -233,14 +279,21 @@ start = time.time()
 bc_fix = np.zeros(Nfem, dtype=np.bool)  # boundary condition, yes/no
 bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
 
-for i in range(0,NV):
-    if abs(x[i])<eps:
-       bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
-    if abs(y[i])<eps:
-       bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
-    #if i==0: 
-    #   bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
-    #   bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+if model==1:
+   for i in range(0,NV):
+      if abs(x[i])<eps:
+         bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+      if abs(y[i])<eps:
+         bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+
+if model==2:
+   for i in range(0,NV):
+      if abs(x[i]-outer_radius)<eps:
+         bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
+         bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+      if abs(y[i]-outer_radius)<eps:
+         bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
+         bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
@@ -372,17 +425,42 @@ for iel in range(0, nel):
     inode2=icon[1,iel]
     inode3=icon[2,iel]
     if outer_node[inode2] and outer_node[inode3]: 
-       #top boundary
-       if y[inode1]>0 and x[inode2]>0 and x[inode3]<0: 
-          surf=1#x[inode2]-x[inode3]
-          f_el[3]-=surf*p_bc*0.5
-          f_el[5]-=surf*p_bc*0.5
-       #end if 
-       #bottom boundary
-       if y[inode1]<0 and x[inode2]<0 and x[inode3]>0: 
-          surf=1#x[inode3]-x[inode2]
-          f_el[3]+=surf*p_bc*0.5
-          f_el[5]+=surf*p_bc*0.5
+       if model==1:
+          #top boundary
+          if y[inode1]>0 and x[inode2]>0 and x[inode3]<0: 
+             surf=1#x[inode2]-x[inode3]
+             f_el[3]-=surf*p_bc*0.5
+             f_el[5]-=surf*p_bc*0.5
+          #end if 
+          #bottom boundary
+          if y[inode1]<0 and x[inode2]<0 and x[inode3]>0: 
+             surf=1#x[inode3]-x[inode2]
+             f_el[3]+=surf*p_bc*0.5
+             f_el[5]+=surf*p_bc*0.5
+          #end if 
+       if model==2:
+          # applying Neumann bc on left
+          if abs(x[inode3]+outer_radius)<eps:
+             surf=1
+             f_el[2]+=surf*p_bc*0.5
+             f_el[4]+=surf*p_bc*0.5
+          #end if 
+          if abs(x[inode2]+outer_radius)<eps:
+             surf=1
+             f_el[2]+=surf*p_bc*0.5
+             f_el[4]+=surf*p_bc*0.5
+          #end if 
+          # applying Neumann bc on bottom
+          if abs(y[inode3]+outer_radius)<eps:
+             surf=1
+             f_el[3]+=surf*p_bc*0.5
+             f_el[5]+=surf*p_bc*0.5
+          #end if 
+          if abs(y[inode2]+outer_radius)<eps:
+             surf=1
+             f_el[3]+=surf*p_bc*0.5
+             f_el[5]+=surf*p_bc*0.5
+          #end if 
        #end if 
     #end if 
 
@@ -812,6 +890,12 @@ if visu==1:
     for i in range(0,NV):
         vtufile.write("%10e \n" % sigma_xy_anal(x[i],y[i],p_bc,outer_radius) )
     vtufile.write("</DataArray>\n")
+
+    vtufile.write("<DataArray type='Float32' Name='sigma_1 (th)' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" % sigma_1_anal(x[i],y[i],p_bc,outer_radius) )
+    vtufile.write("</DataArray>\n")
+
     #--
     vtufile.write("<DataArray type='Float32' Name='outer_node' Format='ascii'> \n")
     for i in range(0,NV):
