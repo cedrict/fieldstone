@@ -29,7 +29,7 @@ def dNNVds(rq,sq):
 #------------------------------------------------------------------------------
 
 def sigma_xx_anal(x,y,P,R):
-    if model==1:
+    if experiment==1:
        r1_2=(x-0)**2+(y-R)**2
        r2_2=(x-0)**2+(y+R)**2
        val=-2.*P/np.pi*( (R-y)*x**2/r1_2**2 +(R+y)*x**2/r2_2**2 - 1./(2*R)  )
@@ -38,7 +38,7 @@ def sigma_xx_anal(x,y,P,R):
     return val
 
 def sigma_yy_anal(x,y,P,R):
-    if model==1:
+    if experiment==1:
        r1_2=(x-0)**2+(y-R)**2
        r2_2=(x-0)**2+(y+R)**2
        val=-2.*P/np.pi*( (R-y)**3/r1_2**2 +(R+y)**3/r2_2**2 - 1./(2*R)  )
@@ -47,7 +47,7 @@ def sigma_yy_anal(x,y,P,R):
     return val
 
 def sigma_xy_anal(x,y,P,R):
-    if model==1:
+    if experiment==1:
        r1_2=(x-0)**2+(y-R)**2
        r2_2=(x-0)**2+(y+R)**2
        val=2.*P/np.pi*( (R-y)**2*x/r1_2**2 - (R+y)**2*x/r2_2**2  )
@@ -56,7 +56,7 @@ def sigma_xy_anal(x,y,P,R):
     return val
 
 def sigma_1_anal(x,y,P,R):
-    if model==1:
+    if experiment==1:
        sigxx=sigma_xx_anal(x,y,P,R)
        sigyy=sigma_yy_anal(x,y,P,R)
        sigxy=sigma_xy_anal(x,y,P,R)
@@ -66,7 +66,7 @@ def sigma_1_anal(x,y,P,R):
     return val
 
 def p_anal(x,y,P,R):
-    if model==1:
+    if experiment==1:
        r1_2=(x-0)**2+(y-R)**2
        r2_2=(x-0)**2+(y+R)**2
        val1=-2.*P/np.pi*( (R-y)*x**2/r1_2**2 +(R+y)*x**2/r2_2**2 - 1./(2*R)  )
@@ -104,22 +104,27 @@ p_bc=1.
 
 visu=1
 
-model=2
+# experiment=1: disc under vertical compression
+# experiment=2: disc under compression left and bottom, no-slip top and right
+experiment=2
 
-if model==1:
-   nquadrant=6
+if experiment==1:
+   nsection=6
 
-if model==2:
-   nquadrant=8
+if experiment==2:
+   nsection=8
 
-nel = nquadrant * nLayers * nLayers         # number of elements
-NV  = 1 + int(nquadrant/2) * nLayers * (nLayers+1) # number of mesh nodes
-Nfem=NV*ndof                        # Total number of degrees of freedom
+nel = nsection * nLayers * nLayers                # number of elements
+NV  = 1 + int(nsection/2) * nLayers * (nLayers+1) # number of mesh nodes
+Nfem=NV*ndof                                       # Total number of degrees of freedom
 
 qcoords_r=[1./6.,1./6.,2./3.] # coordinates & weights 
 qcoords_s=[2./3.,1./6.,1./6.] # of quadrature points
 qweights =[1./6.,1./6.,1./6.]
 
+#################################################################
+# WARNING: the Neumann b.c. are not accurate since at the moment
+# they do not use the normal to the element edge!
 #################################################################
 
 print ('nLayers  =',nLayers)
@@ -143,7 +148,7 @@ outer_node = np.zeros(NV, dtype=np.bool) # on the outer hull yes/no
 counter = 1 
 for iLayer in range(1,nLayers+1):
     radius = outer_radius * float(iLayer)/float(nLayers)
-    nPointsOnCircle = nquadrant*iLayer
+    nPointsOnCircle = nsection*iLayer
     for iPoint in range (0,nPointsOnCircle):
         # Coordinates are created, starting at twelve o'clock, 
         # going in clockwise direction
@@ -166,15 +171,15 @@ start = time.time()
 
 icon=np.zeros((m,nel),dtype=np.int32)
 
-# first nquadrant triangles by hand
-if nquadrant==4:
+# first nsection triangles by hand
+if nsection==4:
    icon[:,0] = (0,2,1)
    icon[:,1] = (0,3,2)
    icon[:,2] = (0,4,3)
    icon[:,3] = (0,1,4)
    iInner = 1 
    iOuter = 5 
-if nquadrant==6:
+elif nsection==6:
    icon[:,0] = (0,2,1)
    icon[:,1] = (0,3,2)
    icon[:,2] = (0,4,3)
@@ -183,7 +188,7 @@ if nquadrant==6:
    icon[:,5] = (0,1,6)
    iInner = 1 
    iOuter = 7 
-if nquadrant==8:
+elif nsection==8:
    icon[:,0] = (0,2,1)
    icon[:,1] = (0,3,2)
    icon[:,2] = (0,4,3)
@@ -194,13 +199,16 @@ if nquadrant==8:
    icon[:,7] = (0,1,8)
    iInner = 1 
    iOuter = 9 
+else:
+   exit('nsection value not supported')
+#end if
 
-storedElems = nquadrant 
+storedElems = nsection 
 
-for iLayer in range(2,nLayers+1):    # ok
-    nPointsOnCircle = nquadrant*iLayer     # ok
-    #print ('iLayer=',iLayer,'nPointsOnCircle=',nPointsOnCircle,'iInner=',iInner,'iOuter=',iOuter)  # ok
-    for iSection in range (1,nquadrant):     
+for iLayer in range(2,nLayers+1):  
+    nPointsOnCircle = nsection*iLayer   
+    #print ('iLayer=',iLayer,'nPointsOnCircle=',nPointsOnCircle,'iInner=',iInner,'iOuter=',iOuter) 
+    for iSection in range (1,nsection):     
         #print ('Section',iSection) 
         for iBlock in range(0,iLayer-1):
             icon[:,storedElems] = (iInner, iOuter +1, iOuter )
@@ -218,7 +226,8 @@ for iLayer in range(2,nLayers+1):    # ok
         iOuter = iOuter + 1 
     #enddo
 
-    # do the 6th and closing section. This has some extra difficulty where it is attached to the starting point
+    # do the 6th and closing section. This has some extra difficulty where it is 
+    # attached to the starting point
 
     # first do the regular blocks within the section
     #print ('Section',6) 
@@ -238,13 +247,12 @@ for iLayer in range(2,nLayers+1):    # ok
     #print ('   elt=',storedElems,'nodes:',icon[:,storedElems])
     storedElems = storedElems + 1
 
-    icon[:,storedElems] = (iInner, iInner + 1 - nquadrant*(iLayer-1) , iOuter+1)
+    icon[:,storedElems] = (iInner, iInner + 1 - nsection*(iLayer-1) , iOuter+1)
     #print ('   elt=',storedElems,'nodes:',icon[:,storedElems])
     storedElems += 1 
 
     # last element, closing the layer.
-    #icon[:,storedElems] = (iInner+1, iOuter+1, iInner + 1 - nquadrant*(iLayer-1))
-    icon[:,storedElems] = ( iInner + 1 - nquadrant*(iLayer-1),iInner+1,iOuter+1 )
+    icon[:,storedElems] = ( iInner + 1 - nsection*(iLayer-1),iInner+1,iOuter+1 )
     #print ('   elt=',storedElems,'nodes:',icon[:,storedElems])
     storedElems += 1 
 
@@ -258,35 +266,36 @@ print("setup: connectivity: %.3f s" % (time.time() - start))
 # rotate 90 degree mesh to expose flat surface on top and bottom
 #################################################################
 
-temp=np.zeros(NV,dtype=np.float64)   
-
-temp[:]=x[:]
-x[:]=-y[:]
-y[:]=temp[:]
-
-np.savetxt('grid_rot.ascii',np.array([x,y]).T,header='# x,y')
+if (experiment==1):
+   temp=np.zeros(NV,dtype=np.float64)   
+   temp[:]=x[:]
+   x[:]=-y[:]
+   y[:]=temp[:]
+   np.savetxt('grid_rot.ascii',np.array([x,y]).T,header='# x,y')
 
 #################################################################
 # define boundary conditions
-# The boundary conditions for this benchmark are of Neumann nature.
-# All we need to do is to remove the rotational nullspace. 
-# we do so by zeroing the horizontal displacement on the vertical axis
-# since the system is symmetrical with respect to this axis.
-# Also we zero both displacement components for the center point.
+# Experiment 1: The boundary conditions for this benchmark are of 
+# Neumann nature. # All we need to do is to remove the rotational 
+# nullspace. We do so by zeroing the horizontal displacement on 
+# the vertical axis and the horizontal displacement on the vertical
+# axis since the system is symmetrical with respect to both axis.
+# Experiment 2: the no-slip b.c. on the top and right do not allow
+# for a null space. 
 #################################################################
 start = time.time()
 
 bc_fix = np.zeros(Nfem, dtype=np.bool)  # boundary condition, yes/no
 bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
 
-if model==1:
+if experiment==1:
    for i in range(0,NV):
       if abs(x[i])<eps:
          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
       if abs(y[i])<eps:
          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
-if model==2:
+if experiment==2:
    for i in range(0,NV):
       if abs(x[i]-outer_radius)<eps:
          bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
@@ -321,8 +330,11 @@ for iel in range(0,nel):
             jcb[0,1] += dNNNVdr[k]*y[icon[k,iel]]
             jcb[1,0] += dNNNVds[k]*x[icon[k,iel]]
             jcb[1,1] += dNNNVds[k]*y[icon[k,iel]]
+        #end for
         jcob = np.linalg.det(jcb)
         area[iel]+=jcob*weightq
+    #end for
+#end for
 
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area (meas) %.6f " %(area.sum()))
@@ -418,14 +430,11 @@ for iel in range(0, nel):
     #end for
 
     # impose Neumann b.c.
-    # Note that these are hard-wired to be at y=+/-1 
-    # and such that the grain is put under compression.
-
     inode1=icon[0,iel]
     inode2=icon[1,iel]
     inode3=icon[2,iel]
-    if outer_node[inode2] and outer_node[inode3]: 
-       if model==1:
+    if outer_node[inode2] and outer_node[inode3]: # nodes 2&3 on boundary 
+       if experiment==1:
           #top boundary
           if y[inode1]>0 and x[inode2]>0 and x[inode3]<0: 
              surf=1#x[inode2]-x[inode3]
@@ -438,7 +447,7 @@ for iel in range(0, nel):
              f_el[3]+=surf*p_bc*0.5
              f_el[5]+=surf*p_bc*0.5
           #end if 
-       if model==2:
+       if experiment==2:
           # applying Neumann bc on left
           if abs(x[inode3]+outer_radius)<eps:
              surf=1
@@ -480,7 +489,6 @@ for iel in range(0, nel):
         #end for
     #end for
 #end for
-
 
 print("     -> rhs (m,M) %.4f %.4f " %(np.min(rhs),np.max(rhs)))
 
@@ -651,7 +659,7 @@ np.savetxt('strain_nodal.ascii',np.array([x,y,exx_nodal,eyy_nodal,exy_nodal]).T)
 print("compute nodal quantities: %.3f s" % (time.time() - start))
 
 #####################################################################
-# compute vrms 
+# compute root mean square displacement vrms 
 #####################################################################
 start = time.time()
 
@@ -780,24 +788,18 @@ if visu==1:
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (sigma_angle[iel]))
     vtufile.write("</DataArray>\n")
-
     vtufile.write("<DataArray type='Float32' Name='sigma_1' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (sigma_1[iel]))
     vtufile.write("</DataArray>\n")
-
-
-
     vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (p_anal(xc[iel],yc[iel],p_bc,outer_radius)))
     vtufile.write("</DataArray>\n")
-
     vtufile.write("<DataArray type='Float32' Name='div(v)' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" %divv[iel]) 
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("</CellData>\n")
 
@@ -872,11 +874,6 @@ if visu==1:
         vtufile.write("%10e %10e %10e \n" % (np.cos(sigma_angle_nodal[i]+np.pi/2),
                                              np.sin(sigma_angle_nodal[i]+np.pi/2), 0.)   )
     vtufile.write("</DataArray>\n")
-
-
-
-
-
     #--
     vtufile.write("<DataArray type='Float32' Name='sigma_xx (th)' Format='ascii'> \n")
     for i in range(0,NV):
@@ -890,12 +887,10 @@ if visu==1:
     for i in range(0,NV):
         vtufile.write("%10e \n" % sigma_xy_anal(x[i],y[i],p_bc,outer_radius) )
     vtufile.write("</DataArray>\n")
-
     vtufile.write("<DataArray type='Float32' Name='sigma_1 (th)' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%10e \n" % sigma_1_anal(x[i],y[i],p_bc,outer_radius) )
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' Name='outer_node' Format='ascii'> \n")
     for i in range(0,NV):

@@ -110,7 +110,7 @@ Note that the (Bird)-Carreau-Yasuda model \cite{osru14} is very similar to the s
 \Literature \cite{berc95,marc00}
 
 %------------------------------
-\subsubsection{Bingham model}
+\subsubsection{Bingham model} \label{sec:bingham}
 \index{general}{Bingham model}
 
 Bingham fluids can sustain an applied stress without any motion occuring. Only when the applied stress exceeds
@@ -260,8 +260,6 @@ vs 'strong crust'), see discussion in the supplementary material in \cite{hube11
 This approach has been extensively used by the SOPALE users community, see 
 for instance \cite{wabj08,wabj08b,wabj08c,grpy12}.
 
-
-
 Furthermore, we know that several other factors will strongly affect the rheology:
 \begin{itemize}
 \item water content, or as often mentioned: 'dry' vs 'wet'. Following \cite{kawu93}, 
@@ -291,16 +289,11 @@ where $d$ is the (variable) grain size and $m$ the grain size exponent. Grain gr
 is usually approximated using semi-empirical expressions \cite[section~2.2]{daef17}.
 Smaller grains facilitating faster creep.
 
-The evolution of grain size in the lower mantle is discussed in detail by Solomatov 
-\cite{solo01,soet02,sore08} and Cerpa et al \cite{ceww17}.
+Relevant literature on this topic is in Section~\ref{sec:topics:gsev}.
 
+\item anisotropy, LPO: see relevant literature in Section \ref{sec:topics:anisotropy}.
 
-
-\Literature: \cite{mube18}
-
-\item anisotropy, LPO: 
-
-\item phase changes:
+\item phase changes: 
 
 \end{itemize}
 
@@ -313,7 +306,6 @@ factor of the next remark.
 \begin{remark}
 uniaxial stuff 
 An additional coefficient is added to the effective viscosity formula(s ??) \cite{grpy12,grpy13}.
- 
 \[
 3^{-(1+n)/2n}2^{(1-n)/n}
 \] 
@@ -329,8 +321,6 @@ The white region indicates that deformation mainly occurs by the Peierls mechani
 solid curves are lines of constant strain rate. The numbers attached to each contour indicate the 
 logarithm of the strain rate in the unit of $s^{-1}$ \cite{kayk99}.}
 \end{center}
-
-
 
 
 \paragraph{A closer look at the diffusion creep of Karato \& Wu (1993)} In the article, the following equation 
@@ -757,11 +747,206 @@ but it does not account for the complex evolution of fabric and resulting anisot
 
 \Literature \cite{grev97,krab16,grbl09}
 
+%...........................................
+\subsubsection{Viscoelasticity} \index{general}{Viscoelasticity}
+
+\index{general}{Maxwell Model}
+\index{general}{Kelvin-Voigt Model}
+
+It is the property of materials that exhibit both viscous and elastic 
+characteristics when undergoing deformation.
+Two main models prevail: the Maxwell model and the Kelvin-Voigt model. 
+
+The Maxwell model can be represented by a purely viscous damper and 
+a purely elastic spring connected in series, as shown in the following figure. 
+
+\begin{center}
+\includegraphics[width=7cm]{images/rheology/Maxwell_diagram}
+\hspace{1cm}
+\includegraphics[width=4cm]{images/rheology/Kelvin_Voigt_diagram}
+
+{\captionfont Left: Maxwell mode. Right: Kelvin-Voigt mode.\\ 
+Images taken from \url{https://en.wikipedia.org/wiki/Viscoelasticity}}
+\end{center}
+
+The Kelvin-Voigt model, also known as the Voigt model, 
+consists of a Newtonian damper and Hookean elastic spring connected in parallel
+
 
 %...........................................
-\subsubsection{Elasto-Visco-Plasticity}
+\subsubsection{Elasto-Visco-Plasticity} 
+\index{general}{Elasto-Visco-Plasticity}
 
-Following \cite{chmd19}, one can base the rheological model on the additive decomposition of the 
+When multiple viscous deformation mechanisms are present, one needs more dashpots, and 
+more complicated element diagrams than the ones above occur (also when adding plastic deformation).
+Two important rules are to be remembered:
+\begin{itemize}
+\item for parallel components, stresses are additive, strain rates are equal in each. 
+\item for components in series, stresses are equal in each and strain rates are additive. 
+\end{itemize}
+
+\vspace{.5cm}
+
+In what follows I present a few examples of configurations.
+
+\input{tikz_dashpotdashpot}
+
+\begin{itemize}
+\item two viscous dampers in series: each is subjected to the same stress $\tau$ but deforms 
+with its own strain rate $\dot{\varepsilon}_1$ and $\dot{\varepsilon}_2$ and we have 
+\begin{equation}
+\dot{\varepsilon}_T 
+= \dot{\varepsilon}_1 + \dot{\varepsilon}_2
+= \frac{\tau}{2\eta_1} + \frac{\tau}{2\eta_2}
+\end{equation}
+The effective viscosity of this combination is denoted $\eta_{eff}$ and is such that 
+$\eta_{eff}=\tau/2\dot{\varepsilon}_T$, which means that 
+\[
+\frac{tau}{2\dot{\varepsilon}_T} = \frac{\tau}{2\eta_1} + \frac{\tau}{2\eta_2}
+\]
+or, 
+\[
+\eta_{eff}= \left( \frac{1}{\eta_1} + \frac{1}{\eta_2} \right)^{-1}
+\]
+i.e. it follows that the effective viscosity of two or more viscous dampers in series is the harmonic 
+average of the individual viscosities of the dampers.
+
+In general, for n dampers in series:
+\[
+\eta_{eff}= \left( \sum_{i=1}^n \frac{1}{\eta_i} \right)^{-1}
+\]
+
+
+
+
+\item two viscous dampers in parallel: each is deforms with the same strain rate $\dot{\varepsilon}_T$
+and their stresses add up:
+\[
+\tau = \tau_1 + \tau_2 = 2 \eta_1 \dot{\varepsilon}_T  + 2 \eta_2 \dot{\varepsilon}_T
+\]
+and since we define the effective viscosity as $\tau = 2 \eta_{eff} \dot{\varepsilon}_T$ then it follows:
+\[
+2 \eta_{eff} \dot{\varepsilon}_T = 2 \eta_1 \dot{\varepsilon}_T  + 2 \eta_2 \dot{\varepsilon}_T
+\]
+or, 
+\[
+\eta_{eff} = \eta_1 + \eta_2 
+\]
+i.e., the effective viscosity of two or more viscous dampers is the sum of their viscosities ({\sl 
+but not their arithmetic mean!}).
+
+
+\item on viscous damper and a plastic element in parallel:
+the effective viscosity is then  
+\[
+\eta_{eff} = \frac{Y}{2 \dot{\varepsilon}_T}+\eta_m
+\]
+which is the viscosity of a Bingham fluid (see Section~\ref{sec:bingham}).
+
+
+
+\item two viscous dampers and a plastic element arranged as follows:
+\begin{center}
+\input{tikz_vvp}
+\end{center}
+
+The algorithm goes then as follows:
+\begin{enumerate}
+\item Assume we know $\eta_v$ and $\dot\varepsilon_T$ (from previous iteration), as well as the plasticity parameters $Y$ and $\eta_m$.
+\item if $2 \eta_v \dot\varepsilon_T < Y$ the stress is below the yield stress value and plasticity is not active. Use $\eta_v$ in the material model and $\dot\varepsilon_v=\dot\varepsilon_T$.
+
+\item if $2 \eta_v \dot\varepsilon_T > Y$ the stress is above the yield value, which is not allowed. In this case the plastic element is 'switched on'. In that case the viscous damper is in series with the (visco)plastic element. The former deforms with a strain rate $\dot\epsilon_v$ while the latter with $\dot\epsilon_{vp}$ (both under the same tress $\tau$) and we have  $\dot\varepsilon_T = \dot\varepsilon_v  + \dot\varepsilon_{vp}$. 
+
+\begin{eqnarray}
+\dot\varepsilon_T 
+&=& \dot\varepsilon_v + \dot\varepsilon_{vp}  \nonumber\\
+&=& \dot\varepsilon_v + \frac{\tau}{2 \eta_{vp}} \nonumber\\
+&=& \dot\varepsilon_v + \frac{\tau}{2 \left( \frac{Y}{2\dot\varepsilon_{vp}} + \eta_m  \right)} \nonumber\\
+&=& \dot\varepsilon_v + \frac{\tau}{2 \left( \frac{Y}{2(\dot\varepsilon_T-\dot\varepsilon_v)}+\eta_m\right)} \nonumber\\
+\dot\varepsilon_T - \dot\varepsilon_v 
+&=& \frac{\tau}{2 \left( \frac{Y}{2(\dot\varepsilon_T-\dot\varepsilon_v)}+\eta_m\right)} \nonumber\\
+2 (\dot\varepsilon_T - \dot\varepsilon_v)
+\left( \frac{Y}{2(\dot\varepsilon_T-\dot\varepsilon_v)}+\eta_m\right) &=& \tau \nonumber\\
+Y +  2(\dot\varepsilon_T - \dot\varepsilon_v) \eta_m &=& \tau \nonumber\\
+Y +  2(\dot\varepsilon_T - \frac{\tau}{2 \eta_v}) \eta_m &=& \tau \nonumber\\
+Y +  (2\eta_v \dot\varepsilon_T - \tau) \frac{\eta_m}{\eta_v} &=& \tau \nonumber\\
+Y +  2\eta_m \dot\varepsilon_T  &=& \tau (1 + \frac{\eta_m}{\eta_v} ) \nonumber
+\end{eqnarray}
+and finally 
+\begin{equation}
+\tau  = \frac{Y + 2 \eta_m \dot\varepsilon_T} {1+ \frac{\eta_m}{\eta_v} }
+\end{equation}
+Note that this solution exists even when $\eta_m=0$, and then rather logically $\tau=Y$.
+
+\item Once we have $\tau$, we can easily compute $\dot\epsilon_v = \frac{\tau}{2\eta_v}$
+
+\item We then compute $\dot\varepsilon_{vp} = \dot\varepsilon_T- \dot\varepsilon_v$ which 
+we use to compute $\eta_{vp} = Y/2\dot\varepsilon_{vp}+\eta_m$
+
+\item Having obtained $\eta_{vp}$ we can compute the final effective viscosity
+\[
+\eta_{eff} = \left( \frac{1}{\eta_v}  + \frac{1}{\eta_{vp}}  \right)^{-1}
+\]
+\end{enumerate}
+
+images/rheology/vvp
+
+On the following plots are shown $\tau$, 
+$\dot\varepsilon_{vp}$, $\dot\varepsilon_v$, $\eta_vp$, and $\eta_{eff}$ 
+as a function of  $\dot\varepsilon_T$: 
+
+\begin{center}
+\includegraphics[width=8cm]{images/rheology/vvp/tau.pdf}\\
+\includegraphics[width=8cm]{images/rheology/vvp/strainrates.pdf}\\
+\includegraphics[width=8cm]{images/rheology/vvp/viscosities.pdf}\\
+{\captionfont Obtained for $\eta_m=10^{21}$, $Y=20$MPa and $\eta_v=10^{25}$. Python code 
+in images/rheology/vvp/}
+\end{center}
+
+In the following plots the resulting stress $\tau$ and effective viscosities $\eta_{eff}$
+are compared between the above approach ('new') and the simpler (and naive) 
+approach where $\dot\varepsilon_T$ 
+is used in $\eta_{vp}$ instead of $\dot\varepsilon$ ('old'). In this particular case 
+we see that it makes a difference at low strain rates close to the brittle-ductile transition.
+
+\begin{center}
+\includegraphics[width=7cm]{images/rheology/vvp/tau_comp.pdf}
+\includegraphics[width=7cm]{images/rheology/vvp/viscosities_comp.pdf}\\
+{\captionfont Obtained for $\eta_m=10^{21}$, $Y=20$MPa and $\eta_v=10^{25}$. Python code 
+in images/rheology/vvp/}
+\end{center}
+
+\begin{remark}
+The introduction of the damper $\eta_m$ in parallel with the plastic element has an unavoidable
+effect: the stress $\tau$ becomes larger than $Y$ at high strain rate values! Since the $vp$ 
+block is akin to a bingham fluid, this is no surprise.
+\end{remark}
+
+
+
+%which, if  yields the following effective viscosity:
+%\[
+%\eta_{eff} = \left( \frac{1}{\eta_M}  + \frac{1}{\frac{Y}{2 \dot{\varepsilon}_e} + \eta_m}  \right)^{-1}
+%\]
+%When the strain rate becomes very small,  $\dot{\varepsilon}_e \rightarrow 0$, $\eta_{eff}\rightarrow \eta_{M}$.
+%When the strain rate becomes very large,  $\dot{\varepsilon}_e \rightarrow \infty$, $\eta_{eff}\rightarrow \eta_{m}$.
+%We can then rewrite the above equation as a function of $\eta_{min}$ and $\eta_{max}$:
+%\[
+%\eta_{eff} = \left( \frac{1}{\eta_{max}}  + \frac{1}{\frac{c}{2 \dot{\varepsilon}_e} + \eta_{min}}  \right)^{-1}
+%\]
+%
+%The effective viscosity is plotted here for various values of the minimum viscosity (for $c$=200MPa and $\eta_{max}=10^{25}Pa.s$:
+%\includegraphics[width=8cm]{images/viscoplasticity/nu_eff}
+
+
+
+
+\end{itemize}
+
+\vspace{.5cm}
+
+Following Chenin et al (2019) \cite{chmd19}, 
+one can base the rheological model on the additive decomposition of the 
 deviatoric strain rate tensor ${\bm \varepsilon}^d$:
 \[
 {\bm \varepsilon}^d =
@@ -771,12 +956,13 @@ deviatoric strain rate tensor ${\bm \varepsilon}^d$:
 {\bm \varepsilon}^{df}+
 {\bm \varepsilon}^{pe}
 \]
-where the five strain rate terms correspond respectively to the elastic, plastic, and viscous creep (dislocation, diffusion, peierls) contributions. 
-Rather interestingly, Chenin et al \cite{chmd19} state that "this strain rate equation is nonlinear
+where the five strain rate terms correspond respectively to the elastic, plastic, and viscous creep (dislocation, diffusion, peierls) contributions. This implies that all these elements are in series and the associated 
+viscosities are then averaged with an harmonic mean. 
+Rather interestingly, it is then stated that "this strain rate equation is nonlinear
 and solved locally on cell centroids and vertices in order to define the current effective viscosity 
 and stress \cite{poso08}."
 
-\includegraphics[width=4cm]{images/rheology/evp}
+%\includegraphics[width=4cm]{images/rheology/evp}
 
 \Literature: \cite{hoor89,lopr90,homo90,scps01,lova01,anpa19,egat10}
 

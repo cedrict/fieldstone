@@ -2,6 +2,8 @@
 \Literature \cite{brhb14},\cite{brsp11},\cite{brsp14},\cite{hiok66},\cite{brze95},\cite{wami15}
 \cite{wowu95}\cite{zhwd90}
 
+%----------------------------
+\subsubsection*{Experiment 1}
 
 This benchmark is well document in \cite{sadd14}.
 %what follows is from the book itself
@@ -16,15 +18,24 @@ Standard direct tension testing on such brittle materials has led to difficulty
 in establishing a failure region in the sample’s central interior away from 
 the gripping locations.
 
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/setup}\\
+{\captionfont Setup of the experiment.}
+\end{center}
+
 The mesh is regular and made of concentric layers of triangles. The original algorithm
 which was used in ELEFANT was written by L. van Wiel.  Given the nature of the boundary 
 conditions we wish to apply we make sure that two faces are present at the top and bottom 
-locations of the disc. 
+locations of the disc, which is why the mesh is rotated 90\degree 
+after it is generated. \index{contributors}{L. van de Wiel} 
 
+The mesh is composed of {\tt nsection} sections (must be an even number)
+as shown hereunder (for {\tt nLayers}=3). 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/setup}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/mesh_elt_nb}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/mesh_node_nb}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/images/mesh4}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/images/mesh6}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/images/mesh8}\\
+{\captionfont Mesh composed of 4 sections (left), 6 sections (middle) and 8 sections (right).}
 \end{center}
 
 The pressure $P$ prescribed at $y=\pm R$ is actually given by $P \delta({\bm r_\pm})$. 
@@ -103,54 +114,6 @@ In the coming plots the number of layers (which needs to be odd) is varied, from
 Note that the displacement is not analytically known but the computed displacement 
 nicely converge to a single smooth curve.
 
-\newpage
-\begin{center}
-a)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/press_xaxis.pdf}
-b)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/press_yaxis.pdf}\\
-c)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/sigmaxx_xaxis.pdf}
-d)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/sigmaxx_yaxis.pdf}\\
-e)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/sigmayy_xaxis.pdf}
-f)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/sigmayy_yaxis.pdf}\\
-g)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/sigmaxy_xaxis.pdf}
-h)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/sigmaxy_yaxis.pdf}\\
-i)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/u_xaxis.pdf}
-j)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/results/v_yaxis.pdf}\\
-{\captionfont a,b) pressure along the $x$-axis;
-c,d) $\sigma_{xx}$  along the $x-$ and $y-$axis; 
-e,f) $\sigma_{yy}$  along the $x-$ and $y-$axis; 
-g,h) $\sigma_{xy}$  along the $x-$ and $y-$axis; 
-i) horizontal displacement along the $x-$axis; 
-j) vertical displacement along the $y-$axis}
-\end{center}
-
-\newpage
-\begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/results/111/u}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/results/111/v}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/results/111/divv}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_58/results/111/p}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/results/111/q}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/results/111/e}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_58/results/111/exx}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/results/111/eyy}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/results/111/exy}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_58/results/111/sigma_xx}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/results/111/sigma_yy}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/results/111/sigma_xy}\\
-{\captionfont Results for nLayers=11}
-\end{center}
-
-\newpage
-
-\begin{center}
-a)\includegraphics[width=8cm]{python_codes/fieldstone_58/contours}
-b)\includegraphics[width=5cm]{python_codes/fieldstone_58/results/111/e_2}\\
-{\captionfont 
-a) Maximum shear stress contours and corresponding photoelastic isochromatic 
-for a disk under diametrical compression \cite{sadd14};
-b) computed second invariant of the strain tensor.}
-\end{center}
-
 \begin{center}
 \begin{tabular}{lrrrr}
 \hline
@@ -170,8 +133,60 @@ b) computed second invariant of the strain tensor.}
 \hline
 \end{tabular}
 
-\includegraphics[width=12cm]{python_codes/fieldstone_58/results/vrms}
+\includegraphics[width=12cm]{python_codes/fieldstone_58/experiment1/vrms}
 \end{center}
+
+
+\newpage
+\begin{center}
+a)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/press_xaxis.pdf}
+b)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/press_yaxis.pdf}\\
+c)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/sigmaxx_xaxis.pdf}
+d)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/sigmaxx_yaxis.pdf}\\
+e)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/sigmayy_xaxis.pdf}
+f)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/sigmayy_yaxis.pdf}\\
+g)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/sigmaxy_xaxis.pdf}
+h)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/sigmaxy_yaxis.pdf}\\
+i)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/u_xaxis.pdf}
+j)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/v_yaxis.pdf}\\
+{\captionfont a,b) pressure along the $x$-axis;
+c,d) $\sigma_{xx}$  along the $x-$ and $y-$axis; 
+e,f) $\sigma_{yy}$  along the $x-$ and $y-$axis; 
+g,h) $\sigma_{xy}$  along the $x-$ and $y-$axis; 
+i) horizontal displacement along the $x-$axis; 
+j) vertical displacement along the $y-$axis}
+\end{center}
+
+\newpage
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/u}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/v}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/divv}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/p}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/q}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/e}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/exx}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/eyy}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/exy}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/sigma_xx}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/sigma_yy}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/sigma_xy}\\
+{\captionfont Results for nLayers=11}
+\end{center}
+
+\newpage
+
+\begin{center}
+a)\includegraphics[width=8cm]{python_codes/fieldstone_58/experiment1/contours}
+b)\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/e_2}\\
+{\captionfont 
+a) Maximum shear stress contours and corresponding photoelastic isochromatic 
+for a disk under diametrical compression \cite{sadd14};
+b) computed second invariant of the strain tensor.}
+\end{center}
+
+
+
 
 
 CHECK AGAINST MY NOTES!
@@ -188,6 +203,60 @@ The principal stresses are found from the original stresses via
  \]
 
 %\includegraphics[width=10cm]{images/pstresses}\\
+
+
+\newpage
+%----------------------------
+\subsubsection*{Experiment 2}
+
+This experiment was designed in collaboration with T. Shinohara \index{contributors}{T. Shinohara}. 
+Unlike the previous one it does not have an analytical solution. 
+ 
+\begin{center}
+\begin{tikzpicture}
+%\draw[fill=gray!23,gray!23](0,0) rectangle (11,6);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (11,6); %background grid
+
+\filldraw[fill=blue!40!white, draw=black] (2,2) circle (1cm);
+\filldraw[fill=blue!40!white, draw=black] (4,2) circle (1cm);
+\filldraw[fill=blue!40!white, draw=black] (2,4) circle (1cm);
+\filldraw[fill=blue!40!white, draw=black] (4,4) circle (1cm);
+
+\draw[thick,->] (0.5,2) -- (1,2); \draw[thick,->] (5.5,2) -- (5,2);
+\draw[thick,->] (0.5,4) -- (1,4); \draw[thick,->] (5.5,4) -- (5,4);
+
+\draw[thick,->] (2,0.5) -- (2,1); \draw[thick,->] (2,5.5) -- (2,5);
+\draw[thick,->] (4,0.5) -- (4,1); \draw[thick,->] (4,5.5) -- (4,5);
+
+
+\draw[thick,->] (7.5,2) -- (8,2);
+\draw[thick,->] (9,0.5) -- (9,1); 
+\filldraw[fill=blue!40!white, draw=black] (9,2) circle (1cm);
+
+\filldraw[black] (10,2) circle (2pt) node[anchor=west] {$u=v=0$};
+\filldraw[black] (9,3) circle (2pt) node[anchor=south] {$u=v=0$};
+
+\node[] at (0.5,0.5)   {a)};
+\node[] at (7.5,0.5)   {b)};
+
+\end{tikzpicture}\\
+{\captionfont a) assembly of four circular grains and the pressure boundary conditions; 
+b) simplified setup of a single grain.}
+\end{center}
+
+
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment2/displ}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment2/displx}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment2/disply}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment2/divv}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment2/p}
+\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment2/strain}\\
+\includegraphics[width=9cm]{python_codes/fieldstone_58/experiment2/dispvect}
+\end{center}
+
+
 
 
 
