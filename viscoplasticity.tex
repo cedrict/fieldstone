@@ -18,30 +18,32 @@ Given a tensor $\bm{T}$,  one can compute its (moment) invariants as follows \ci
 \end{eqnarray}
 \item second invariant:
 \begin{eqnarray}
-{\cal I}_2({\bm T})|^{2D} &=& \frac{1}{2} Tr[{\bm{T}^2}] = \frac{1}{2} \sum_{ij} T_{ij} T_{ji} = \frac{1}{2} (T_{xx}^2 + T_{yy}^2) + T_{xy}^2 \nonumber\\
-{\cal I}_2({\bm T})|^{3D} &=& \frac{1}{2} Tr[{\bm{T}^2}] = \frac{1}{2} \sum_{ij} T_{ij} T_{ji} = \frac{1}{2} (T_{xx}^2 + T_{yy}^2 + T_{yy}^2) + T_{xy}^2 + T_{xz}^2 + T_{yz}^2 
+{\cal I}_2({\bm T})|^{2D} &=& \frac{1}{2} Tr[{\bm T}\cdot{\bm T}] = \frac{1}{2} \sum_{ij} T_{ij} T_{ji} = \frac{1}{2} (T_{xx}^2 + T_{yy}^2) + T_{xy}^2 \nonumber\\
+{\cal I}_2({\bm T})|^{3D} &=& \frac{1}{2} Tr[{\bm T}\cdot{\bm T}] = \frac{1}{2} \sum_{ij} T_{ij} T_{ji} = \frac{1}{2} (T_{xx}^2 + T_{yy}^2 + T_{yy}^2) + T_{xy}^2 + T_{xz}^2 + T_{yz}^2 
 \end{eqnarray}
 \item third invariant: 
 \begin{equation}
-{\cal I}_3({\bm T}) = \frac{1}{3} Tr[{\bm{T}^3}]  = \frac{1}{3}\sum_i\sum_j \sum_k T_{ij} T_{jk} T_{ki} 
+{\cal I}_3({\bm T}) = \frac{1}{3} Tr[{\bm T}\cdot{\bm T}\cdot {\bm T}]  = \frac{1}{3}\sum_i\sum_j \sum_k T_{ij} T_{jk} T_{ki} 
 \end{equation}
 \end{itemize}
+These definitions are to be found in Appendix A.2 of \cite{zita2}.
+ 
 
+\subsubsection{Stress invariants}\label{sec:stress_invariants}
 
 The implementation of the plasticity criterions relies essentially 
-on the second invariants of the (deviatoric) stress ${\bm \tau}$ and the (deviatoric) strainrate tensors $\dot{\bm \varepsilon}$:
+on the second invariants of the (deviatoric) stress ${\bm \tau}$ 
+and the (deviatoric) strainrate tensors $\dot{\bm \varepsilon}$:
 
 \begin{eqnarray}
 {\cal I}_2({\bm \tau})|^{2D}            
 &=& \frac{1}{2} ( \tau_{xx}^2 + \tau_{yy}^2  ) + \tau_{xy}^2   \nonumber\\
 &=& \frac{1}{4} (\sigma_{xx} - \sigma_{yy})^2 + \sigma_{xy}^2 \nonumber\\
-&=& \frac{1}{4} (\sigma_{1} - \sigma_{2})^2 \nonumber\\
 \nonumber\\
 {\cal I}_2({\bm \tau})|^{3D}            
 &=&\frac{1}{2}(\tau_{xx}^2 + \tau_{yy}^2 + \tau_{zz}^2 ) + \tau_{xy}^2 + \tau_{xz}^2 + \tau_{yz}^2  \nonumber\\
 &=&\frac{1}{6}\left[(\sigma_{xx}-\sigma_{yy})^2 + (\sigma_{yy}-\sigma_{zz})^2 + (\sigma_{xx}-\sigma_{zz})^2 \right] 
    + \sigma_{xy}^2 + \sigma_{xz}^2 + \sigma_{yz}^2 \nonumber \\
-&=&\frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 +(\sigma_{2}-\sigma_{3})^2 + (\sigma_{1}-\sigma_{3})^2 \right] \nonumber\\
 \nonumber\\
 {\cal I}_2(\dot{\bm{\varepsilon}}^d)|^{2D} 
 &=& \frac{1}{2} \left[ (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2  \right] + (\dot{\varepsilon}_{xy}^d)^2  \nonumber\\
@@ -71,7 +73,95 @@ Note that these (second) invariants are almost always used under a square root s
 \end{mdframed}
 Note that these quantities have the same dimensions as their tensor counterparts, i.e. Pa for stresses and s$^{-1}$ for strain rates.
 
+If the stress tensor is such that it is diagonal, i.e.
+\[
+{\bm \sigma}= \left( \begin{array}{ccc}
+\sigma_1 & 0 & 0 \\
+0 & \sigma_2 & 0 \\
+0 & 0 & \sigma_3
+\end{array}\right)
+\qquad
+{\rm and}
+\qquad
+{\bm \tau}= \left( \begin{array}{ccc}
+\tau_1 & 0 & 0 \\
+0 & \tau_2 & 0 \\
+0 & 0 & \tau_3
+\end{array}\right)
+\]
+then the invariants are 
+\begin{eqnarray}
+{\cal I}_1({\bm \sigma}) &=& \sigma_1 + \sigma_2+ \sigma_3 \nonumber\\
+{\cal I}_2({\bm \tau})|^{2D} &=& \frac{1}{4} (\sigma_{1} - \sigma_{2})^2 \nonumber\\
+{\cal I}_2({\bm \tau})|^{3D} &=& \frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 
++ (\sigma_{1}-\sigma_{3})^2 \right] \\ 
+{\cal I}_3({\bm \tau}) 
+&=& \frac{1}{3} Tr[{\bm T}\cdot{\bm T}\cdot {\bm T}]  \nn\\
+&=& \frac{1}{3} Tr
+\left[
+\left(
+\begin{array}{ccc}
+\tau_1 & 0 & 0 \\
+0 & \tau_2 & 0 \\
+0 & 0 & \tau_3 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\tau_1 & 0 & 0 \\
+0 & \tau_2 & 0 \\
+0 & 0 & \tau_3 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\tau_1 & 0 & 0 \\
+0 & \tau_2 & 0 \\
+0 & 0 & \tau_3 
+\end{array}
+\right)
+\right] \nn\\
+&=&  \frac{1}{3} Tr
+\left(
+\begin{array}{ccc}
+\tau_1^3 & 0 & 0 \\
+0 & \tau_2^3 & 0 \\
+0 & 0 & \tau_3^3 
+\end{array}
+\right) \nn\\
+&=& \frac{1}{3}(\tau_1^3+\tau_2^3+\tau_3^3) \nn\\
+&=&  \frac{1}{3} [ 
+(\sigma_1-{\cal I}_1({\bm \sigma})/3)^3+  
+(\sigma_2-{\cal I}_1({\bm \sigma})/3)^3+
+(\sigma_3-{\cal I}_1({\bm \sigma})/3)^3 ]   \nonumber\\ 
+&=&  \frac{1}{3\cdot 27} [ 
+(3\sigma_1-{\cal I}_1({\bm \sigma}))^3+  
+(3\sigma_2-{\cal I}_1({\bm \sigma}))^3+
+(3\sigma_3-{\cal I}_1({\bm \sigma}))^3 ]   \nonumber\\ 
+&=& \frac{1}{81}
+\left[
+(2\sigma_1-\sigma_2-\sigma_3)^3+
+(2\sigma_2-\sigma_1-\sigma_3)^3+
+(2\sigma_3-\sigma_1-\sigma_2)^3
+\right] 
+\label{eq:3rdinvb} 
+\end{eqnarray}
+This formulation of the third invariant of ${\bm \tau}$ is used in \cite{wojc18}.
 
+
+{\color{gray} 
+One can prove that (REF?)\footnote{Near identical equations are to be found at 
+\url{https://en.wikipedia.org/wiki/Cauchy_stress_tensor}} 
+\begin{eqnarray}
+{\cal I}_3({\bm \tau}) 
+&=& \frac{1}{27} \left( 2 {\cal I}_1({\bm \sigma})^3 + 
+9 {\cal I}_1({\bm \sigma}) {\cal I}_2({\bm \sigma}) 
++27 {\cal I}_3({\bm \sigma})   \right) \nn\\
+&=& det ({\bm\tau}) \nn\\
+&=& \tau_1 \tau_2\tau_3 \nn\\
+\end{eqnarray}
 
 The third (deviatoric) stress invariant is given by: (VERIFY!!)
 \begin{eqnarray}
@@ -83,14 +173,94 @@ The third (deviatoric) stress invariant is given by: (VERIFY!!)
 &=& s_1 s_2 s_3 \nonumber
 \end{eqnarray}
 
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Alternative principal stresses notations}
+
+The principal stress of the stress tensor ${\bm \sigma}$ are $\sigma_1$, $\sigma_2$
+and $\sigma_3$ with $\sigma_1 \geq \sigma_2 \geq \sigma_3$.
+Following \cite{wojc18}, we start by stating that the intermediate principal 
+stress can always be represented as a linear combination of two other stresses:
+\begin{equation}
+\sigma_2 = (1-b)\sigma_1 + b \sigma_3
+\qquad
+{\rm where}
+\qquad
+b = \frac{\sigma_1-\sigma_2}{\sigma_1-\sigma_3}\in [0,1]
+\end{equation}
+The quantity $b$ is called the principal stress ratio. \index{general}{Principal Stress Ratio}
+Let us now introduce the maximum shear plane stresses $p$ and $q$ such that 
+\begin{equation}
+p=\frac{\sigma_1+\sigma_3}{2}
+\qquad
+q=\frac{\sigma_1-\sigma_3}{2}
+\end{equation}
+so that we have 
+\begin{eqnarray}
+\sigma_1 &=& p+q \\
+\sigma_2 &=& p-aq \qquad a=2b-1 \in[-1,1] \\
+\sigma_3 &=& p-q
+\end{eqnarray}
+The quantity $a$ is an equivalent measure of the principal stress ratio.
+We can introduce $a,p,q$ in the invariants above:
+\begin{eqnarray}
+{\cal I}_1({\bm \sigma}) 
+&=& \sigma_1 + \sigma_2 + \sigma_3 \nn\\
+&=& p+q + p-aq + p-q \nn\\
+&=& 3p -aq \\
+{\cal I}_2({\bm \tau}) 
+&=&\frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 +(\sigma_{2}-\sigma_{3})^2 +(\sigma_{1}-\sigma_{3})^2\right]\nn\\ 
+&=&\frac{1}{6}\left[(p+q-p+aq)^2 +(p-aq-p+q)^2 +(p+q-p+q)^2\right]\nn\\ 
+&=&\frac{1}{6}\left[(q+aq)^2 +(-aq+q)^2 +(q+q)^2\right]\nn\\ 
+&=&\frac{q^2}{6}\left[(1+a)^2 +(-a+1)^2 + 4 \right]\nn\\ 
+&=&\frac{q^2}{6}\left[ 1+2a+a^2 +1 - 2a+a^2 + 4 \right]\nn\\ 
+&=&\frac{q^2}{3}\left( a^2 +3 \right)
+\end{eqnarray}
+Using the definition of the third invariant of Eq.~\ref{eq:3rdinvb}:
+\begin{eqnarray}
+{\cal I}_3({\bm \tau}) 
+&=& \frac{1}{81} \left[
+(2\sigma_1-\sigma_2-\sigma_3)^3+
+(2\sigma_2-\sigma_1-\sigma_3)^3+
+(2\sigma_3-\sigma_1-\sigma_2)^3
+\right] \nn\\
+&=& \frac{1}{81} \left[
+(2p+2q-p+aq-p+q)^3+
+(2p-2aq-p-q-p+q)^3+
+(2p-2q-p-q-p+aq)^3
+\right] \nn\\
+&=& \frac{1}{81} \left[ (2q+aq+q)^3+ (-2aq-q+q)^3+ (-2q-q+aq)^3 \right] \nn\\
+&=& \frac{q^3}{81} \left[ (3+a)^3+ (-2a)^3+ (-3+a)^3 \right] \nn\\
+&=& \frac{q^3}{81} \left[ 27 +9a + 3a^2 + a^3  -8a^3 -27 +9a -3a^2 + a^3 \right] \nn\\
+&=& \frac{q^3}{81} \left( 18a  -6 a^3  \right) \nn\\
+&=& \frac{2a q^3}{27} \left( 3 - a^2  \right) 
+\end{eqnarray}
+which is not exactly Eq.(14) of \cite{wojc18}!!
+
+Finally the Lode angle \index{general}{Lode Angle} is defined in \cite{wojc18} by:
+\[
+\sin 3\theta 
+= \frac{{\cal I}_3({\bm \tau})}{2}\left(\frac{3}{{\cal I}_2({\bm \tau})}  \right)^{3/2}
+= \frac{ 3\sqrt{3}}{2} \frac{{\cal I}_3({\bm \tau}) }{ {\cal I}_2({\bm \tau})^{3/2} }
+\]
+Note that this is the opposite of my definition in Eq.~\ref{eq:lodang}.
+
+Finally, we can show that 
+\begin{eqnarray}
+a 
+&=& 2b-1 \nn\\
+&=& 2 \frac{\sigma_1-\sigma_2}{\sigma_1-\sigma_3} -1 \nn\\
+&=& 2 \frac{  -\frac{1}{\sqrt{3}}\sin \theta  + \cos \theta - \frac{2}{\sqrt{3}} \sin \theta }
+{-\frac{1}{\sqrt{3}}\sin \theta  + \cos \theta +\frac{1}{\sqrt{3}}\sin \theta  + \cos \theta } -1 \nn\\
+&=& \frac{ -\frac{1}{\sqrt{3}}\sin \theta  + \cos \theta - \frac{2}{\sqrt{3}}\sin\theta }{\cos \theta } -1 \nn\\
+&=& -\frac{3}{\sqrt{3}} \frac{\sin\theta}{\cos\theta} \nn\\
+&=& -\sqrt{3} \tan\theta
+\end{eqnarray}
+Here again we arrive at the opposite of Eq.16 of \cite{wojc18}. 
 
 
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Scalar viscoplasticity}
 
 This formulation is quite easy to implement. It is widely used, e.g. \cite{will92,thfb08,spmw16}, and relies on the assumption that 

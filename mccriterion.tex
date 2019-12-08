@@ -6,56 +6,54 @@ In structural engineering it is used to determine failure load as well as the an
 %It can be shown that a material failing according to Coulomb's friction hypothesis will show the displacement introduced at failure forming an angle to the line of fracture equal to the angle of friction. This makes the strength of the material determinable by comparing the external mechanical work introduced by the displacement and the external load with the internal mechanical work introduced by the strain and stress at the line of failure. By conservation of energy the sum of these must be zero and this will make it possible to calculate the failure load of the construction.
 
 The Mohr-Coulomb failure criterion represents the linear envelope that is obtained from a plot of the shear strength of a material 
-versus the applied normal stress. This relation is expressed as
-
+versus the applied normal stress. This relation is expressed as \cite[p219]{owhi}
 \[
-\tau = \sigma~\tan(\phi) + c 
+\tau = c- \sigma~\tan(\phi) 
 \]
-
-where $\tau$ is the shear strength, $\sigma$ is the normal stress, $c$ is the intercept of the failure envelope with the $\tau$ axis, and $\phi$ is the slope of the failure envelope. The quantity $c$ is often called the cohesion and the angle $\phi$ is called the angle of internal friction . Compression is assumed to be positive in the following discussion. If compression is assumed to be negative then $\sigma$ should be replaced with $-\sigma$.
+where $\tau$ is the magnitude of the shear stress, 
+$\sigma$ is the normal stress (tensile stress is positive), 
+$c$ is the intercept of the failure envelope with the $\tau$ axis, 
+and $\phi$ is the slope of the failure envelope. 
+The quantity $c$ is often called the cohesion and the angle $\phi$ is called the angle of internal friction . 
+%Compression is assumed to be positive in the following discussion. If compression is assumed to be negative then $\sigma$ should be replaced with $-\sigma$.
 
 %If $\phi=0$, the Mohr-Coulomb criterion reduces to the Tresca criterion. On the other hand, if $\phi = 90^\circ$ the Mohr-Coulomb model is equivalent to the Rankine model. Higher values of $\phi$ are not allowed.
 
-From Mohr's circle we have
+From Mohr's circle the above equation can be rewritten
 \[
-\sigma = \sigma_m - \tau_m \sin\phi  \quad\quad\quad  \tau = \tau_m \cos\phi 
+\sigma_1-\sigma_3 = 2 c \cos \phi - (\sigma_1+\sigma_3) \sin\phi
 \]
-where
+with $\sigma_1$ is the maximum principal stress and $\sigma_3$ is the minimum principal stress, or
 \[
-\tau_m = \cfrac{\sigma_1-\sigma_3}{2} ~;~~ \sigma_m = \cfrac{\sigma_1+\sigma_3}{2} 
+\cfrac{\sigma_1-\sigma_3}{2} = -\cfrac{\sigma_1+\sigma_3}{2}~\sin\phi + c\cos\phi 
 \]
-and $\sigma_1$ is the maximum principal stress and $\sigma_3$ is the minimum principal stress.
-Therefore the Mohr-Coulomb criterion may also be expressed as
-\[
-\tau_m = \sigma_m \sin\phi + c \cos\phi  
-\]
-The Mohr-Coulomb failure (yield) surface is often expressed in Haigh-Westergaad coordinates. For example, the last equation rewrites
-\[
-\cfrac{\sigma_1-\sigma_3}{2} = \cfrac{\sigma_1+\sigma_3}{2}~\sin\phi + c\cos\phi 
-\]
-%or,
-%\[
-%\sigma_1~\cfrac{(1-\sin\phi)}{2~c~\cos\phi} - \sigma_3~\cfrac{(1+\sin\phi)}{2~c~\cos\phi} = 1 ~. 
-%\]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{two-dimensional space}
 
 The principal stress values are given by
 \[
-\sigma_{1,2} = \frac{\sigma_{xx}+\sigma_{yy}}{2} \pm \sqrt{ \frac{1}{4}(\sigma_{xx}-\sigma_{yy})^2 + \sigma_{xy}^2  }
+\sigma_{1,3} = \frac{\sigma_{xx}+\sigma_{yy}}{2} \pm \sqrt{ \frac{1}{4}(\sigma_{xx}-\sigma_{yy})^2 + \sigma_{xy}^2  }
 = \frac{J_1}{2} \pm \sqrt{ J_2'}
+\]
+so
+\[
+\frac{\sigma_1-\sigma_3}{2} = \frac{\sqrt{J_2}- - \sqrt{J_2}}{2} = \sqrt{J_2}
+\]
+\[
+\frac{\sigma_1+\sigma_3}{2} =  \frac{J_1}{2} 
+\]
+and then
+\[
+\sqrt{J_2} = - \frac{J_1}{2} \sin\phi + c\cos\phi 
 \]
 The Mohr-Coulomb criterion simply writes:
 
 \begin{mdframed}[backgroundcolor=blue!5]
-\[
-F^{MC,2D}=  -\frac{J_1}{2} \sin \phi + \sqrt{J_2} - c  \cos \phi  \label{mc2Dcriterion}
-\]
+\begin{equation}
+F^{MC,2D}=  \frac{J_1}{2} \sin \phi + \sqrt{J_2} - c  \cos \phi  \label{mc2Dcriterion}
+\end{equation}
 \end{mdframed}
-
-
-%which is in fact equivalent to the Drucker-Prager (see next section) with $k=c \cos \phi$ and $\alpha=\sin \phi$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{three-dimensional space}
@@ -79,25 +77,25 @@ F^{MC,2D}=  -\frac{J_1}{2} \sin \phi + \sqrt{J_2} - c  \cos \phi  \label{mc2Dcri
 %\]
 
 
-We have already established that 
+We have already established that (see Eq~\ref{eq:sig13}):
 \begin{eqnarray}
 \sigma_1 - \sigma_3  = 2 \sqrt{J_2} \cos \theta \quad\quad\quad
-\sigma_1 + \sigma_3  = \frac{2}{3}J_1 + \sqrt{J_2} \frac{2}{\sqrt{3}} \sin \theta \nn
+\sigma_1 + \sigma_3  = \frac{2}{3}J_1 - \sqrt{J_2} \frac{2}{\sqrt{3}} \sin \theta \nn
 \end{eqnarray}
-
-
+so that 
 \begin{eqnarray}
-&& \frac{\sigma_1 - \sigma_3}{2} = \frac{\sigma_1 + \sigma_3}{2} \sin \phi  + c \cos \phi \nn\\
+&& \frac{\sigma_1 - \sigma_3}{2} = -\frac{\sigma_1 + \sigma_3}{2} \sin \phi  + c \cos \phi \nn\\
 &\Rightarrow&
-\sqrt{J_2} \cos \theta = (\frac{1}{3}J_1 + \sqrt{J_2} \frac{1}{\sqrt{3}} \sin \theta ) \sin \phi + c \cos \phi \nn\\
+\sqrt{J_2} \cos \theta = -(\frac{1}{3}J_1 - \sqrt{J_2} \frac{1}{\sqrt{3}} \sin \theta ) \sin \phi + c \cos \phi \nn\\
 &\Rightarrow&
--\frac{1}{3}J_1 \sin \phi  + \sqrt{J_2} ( \cos \theta - \frac{1}{\sqrt{3}} \sin \theta  \sin \phi ) - c \cos \phi = 0 \nn
+\frac{1}{3}J_1 \sin \phi  + \sqrt{J_2} ( \cos \theta - \frac{1}{\sqrt{3}} \sin \theta  \sin \phi ) - c \cos \phi = 0 \nn
 \end{eqnarray}
 
 \begin{mdframed}[backgroundcolor=blue!5]
-\[
-F^{Mc,3D}=-\frac{1}{3}J_1 \sin \phi  + \sqrt{J_2} ( \cos \theta - \frac{1}{\sqrt{3}} \sin \theta  \sin \phi ) - c \cos \phi 
-\]
+\begin{equation}
+F^{Mc,3D}=\frac{1}{3}J_1 \sin \phi  + 
+\sqrt{J_2} \left( \cos \theta - \frac{1}{\sqrt{3}} \sin \theta  \sin \phi \right) - c \cos \phi 
+\end{equation}
 \end{mdframed}
 
 Note that the expression for $F$ in the Mohr-Coulomb case in \cite{zico74} contains errors
