@@ -4,13 +4,100 @@ limitation, Drucker and Prager \cite{drpr52} proposed a revised function for fri
 
 The Drucker-Prager yield criterion has the function form
 \begin{equation}
-F({\bm \sigma})=F {\cal I}_1({\bm \sigma}), {\cal I}_2({\bm \sigma}) ) = 0 
+F^{\text{\tiny DP}}({\bm \sigma})=F \left( {\cal I}_1({\bm \sigma}), {\cal I}_2({\bm \sigma}) \right) = 0 
 \end{equation}
 This criterion is most often used for concrete where both normal and shear stresses 
 can determine failure. The Drucker-Prager yield criterion may be expressed as
 \begin{equation}
-F^{DP}=\tau_e - (\alpha {\cal I}_1({\bm \sigma}) + k) \label{dpcriterion} 
+F^{\text{\tiny DP}}=\tau_e + \alpha {\cal I}_1({\bm \sigma}) + k =0  
+\qquad
+{\rm with}
+\qquad
+\tau_e= \sqrt{{\cal I}_2({\bm \tau})} \label{dpcriterion} 
 \end{equation}
+Using the parameters $p$, $q$, $a=-\sqrt{3}\tan\theta$, ${\cal I}_1({\bm \sigma})$ 
+and ${\cal I}_2({\bm \tau})$
+of Section~\ref{sec:altinv} we have
+\begin{eqnarray}
+F^{\text{\tiny DP}}
+&=& \tau_e + \alpha {\cal I}_1({\bm \sigma}) + k \nn\\
+&=& \sqrt{\frac{q^2}{3}(a^2+3)} + \alpha (3p-aq) + k \nn\\ 
+&=& q \sqrt{(a^2/3+1)} + \alpha (3p+q\sqrt{3}\tan\theta ) + k    \qquad ({\rm since }\; q>0)\nn\\ 
+&=& q \sqrt{\tan^2\theta+1} + \alpha (3p+q\sqrt{3}\tan\theta ) + k  \nn\\
+&=& q \sqrt{ \frac{1}{\cos^2\theta} } + \alpha (3p+q\sqrt{3}\tan\theta ) + k  \nn\\
+&=& q \frac{1}{\cos\theta}  + \alpha (3p+q\sqrt{3}\tan\theta ) + k  \qquad ({\rm since }\; \cos\theta >0)\nn
+\end{eqnarray}
+$F=0$ then leads to write
+\[
+q  + (3 \alpha p+k)\cos\theta  + q \alpha \sqrt{3}\sin\theta ) =0
+\]
+\[
+\Rightarrow \qquad q(1 + \alpha \sqrt{3}\sin\theta)  + (3 \alpha p+k)\cos\theta =0
+\]
+and finally
+\[
+\boxed{
+q^{\text{\tiny DP}} = -\frac{(3 \alpha p+k)\cos\theta}{1 + \alpha \sqrt{3}\sin\theta}
+}
+\]
+This is the same equation as Eq. 19 of Wojciechowski \cite{wojc18} but with $\theta \rightarrow -\theta$. 
+
+Let us now decompose $q$ as follows:
+\[
+q^{\text{\tiny DP}} = -\frac{3 \alpha \cos\theta}{1 + \alpha \sqrt{3}\sin\theta} p 
+-\frac{k\cos\theta}{1 + \alpha \sqrt{3}\sin\theta}
+\]
+The Mohr-Coulomb yield criterion writes
+\[
+q^{\text{\tiny MC}} = p \sin\phi + c \cos\phi
+\]
+so that equating $q^{\text{\tiny DP}}=q^{\text{\tiny MC}}$ leads to:
+\begin{eqnarray}
+-\frac{3 \alpha \cos\theta}{1 + \alpha \sqrt{3}\sin\theta} &=& \sin\phi \label{eq:qq1}\\
+-\frac{k\cos\theta}{1 + \alpha \sqrt{3}\sin\theta} &=& c \cos\phi \label{eq:qq2}
+\end{eqnarray}
+Eq.~\ref{eq:qq1} yields
+\[
+- 3 \alpha \cos\theta = \sin\phi (1 + \alpha \sqrt{3}\sin\theta) 
+\]
+\[
+\Rightarrow \qquad - 3 \alpha \cos\theta - \alpha \sqrt{3}\sin\theta \sin\phi = \sin\phi 
+\]
+and finally 
+\[
+\boxed{
+\alpha = - \frac{\sin\phi}{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi}
+}
+\]
+Inserting this into Eq.~\ref{eq:qq2}:
+\begin{eqnarray}
+- k \cos\theta 
+&=& c \cos \phi \left(1 +\alpha \sqrt{3} \sin\theta \right)  \nn\\
+&=& c \cos \phi \left(1 - \frac{\sin\phi}{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi}  \sqrt{3} \sin\theta\right) \nn\\
+&=& c \cos \phi \left(1 - 
+\frac{ \sqrt{3}\sin\phi \sin\theta }{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi} \right) \nn\\
+&=& c \cos \phi \left(
+\frac{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi}{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi} 
+ - 
+\frac{ \sqrt{3}\sin\phi \sin\theta }{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi} \right) \nn\\
+&=& c \cos \phi \left(
+\frac{ 3 \cos\theta}{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi} \right) \nn
+\end{eqnarray}
+so that 
+\[
+\boxed{
+k =- \frac{ 3\; c \cos \phi }{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi} 
+}
+\]
+Unsurprisingly we recover the Eqs. 20 and 21 of Wojciechowski \cite{wojc18} by replacing $\theta$ by $-\theta$.
+
+
+
+
+\newpage
+
+DO NOT READ FURTHER! 9dec2019
+
 Since the Drucker-Prager yield surface is a smooth version of the Mohr-Coulomb yield surface, it 
 is often expressed in terms of the cohesion $c$ and the angle of internal friction $\phi$ that are used 
 to describe the Mohr-Coulomb yield surface. One then wishes to relate $\alpha$ and $k$ to $c$ and $\phi$:
