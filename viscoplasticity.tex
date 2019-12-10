@@ -6,7 +6,7 @@
 Before we dive into the world of nonlinear rheologies it is necessary to introduce the concept of tensor 
 invariants since they are needed further on. \index{general}{Tensor Invariant}
 Unfortunately there are many different notations used in the literature and these can prove to be 
-confusing. Note that we only consider symmetric tensors in what follows.
+confusing\footnote{No kidding, true story.}. Note that we only consider symmetric tensors in what follows.
 
 \index{general}{Moment Invariant}
 Given a tensor $\bm{T}$,  one can compute its (moment) invariants as follows \cite[p.339]{reddybook2}: 
@@ -22,14 +22,21 @@ Given a tensor $\bm{T}$,  one can compute its (moment) invariants as follows \ci
 {\cal I}_2({\bm T})|^{3D} &=& \frac{1}{2} Tr[{\bm T}\cdot{\bm T}] = \frac{1}{2} \sum_{ij} T_{ij} T_{ji} = \frac{1}{2} (T_{xx}^2 + T_{yy}^2 + T_{yy}^2) + T_{xy}^2 + T_{xz}^2 + T_{yz}^2 
 \end{eqnarray}
 \item third invariant: 
-\begin{equation}
-{\cal I}_3({\bm T}) = \frac{1}{3} Tr[{\bm T}\cdot{\bm T}\cdot {\bm T}]  = \frac{1}{3}\sum_i\sum_j \sum_k T_{ij} T_{jk} T_{ki} 
-\end{equation}
-\end{itemize}
-These definitions are to be found in Appendix A.2 of \cite{zita2}.
- 
+\begin{eqnarray}
+{\cal I}_3({\bm T}) 
+&=& \frac{1}{3} Tr[{\bm T}\cdot{\bm T}\cdot {\bm T}]   \nn\\
+&=& \frac{1}{3}\sum_i\sum_j \sum_k T_{ij} T_{jk} T_{ki}  \nn\\
+&=& \frac{1}{3} T_{xx} (  T_{xx}^2 + 3 T_{xy}^2 + 3 T_{xz}^2  )     \nonumber\\
+&+& \frac{1}{3} T_{yy} (3 T_{xy}^2 +   T_{yy}^2 + 3 T_{yz}^2  )     \nonumber\\
+&+& \frac{1}{3} T_{zz} (3 T_{xz}^2 + 3 T_{yz}^2 +   T_{zz}^2)       \nonumber\\
+&+& 2 T_{xy} T_{xz} T_{yz}   
+\end{eqnarray}
 
-\subsubsection{Stress invariants}\label{sec:stress_invariants}
+\end{itemize}
+These definitions can be found in Appendix A.2 of \cite{zita2}.
+
+%----------------------------------------------------------------
+\subsubsection{Stress \& strain rate invariants}\label{sec:stress_invariants}
 
 The implementation of the plasticity criterions relies essentially 
 on the second invariants of the (deviatoric) stress ${\bm \tau}$ 
@@ -96,7 +103,7 @@ then the invariants are
 {\cal I}_2({\bm \tau})|^{3D} &=& \frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 
 + (\sigma_{1}-\sigma_{3})^2 \right] \\ 
 {\cal I}_3({\bm \tau}) 
-&=& \frac{1}{3} Tr[{\bm T}\cdot{\bm T}\cdot {\bm T}]  \nn\\
+&=& \frac{1}{3} Tr[{\bm \tau}\cdot{\bm \tau}\cdot {\bm \tau}]  \nn\\
 &=& \frac{1}{3} Tr
 \left[
 \left(
@@ -146,10 +153,12 @@ then the invariants are
 (2\sigma_2-\sigma_1-\sigma_3)^3+
 (2\sigma_3-\sigma_1-\sigma_2)^3
 \right] 
-\label{eq:3rdinvb} 
+\label{eq:3rdinvb} \label{eq:I3tau}
 \end{eqnarray}
-This formulation of the third invariant of ${\bm \tau}$ is used in \cite{wojc18}.
+The formulation of the third invariant of ${\bm \tau}$  in Eq.~\ref{eq:I3tau} 
+is used in Wojciechowski \cite{wojc18}.
 
+\vspace{1cm}
 
 {\color{gray} 
 One can prove that (REF?)\footnote{Near identical equations are to be found at 
@@ -162,25 +171,15 @@ One can prove that (REF?)\footnote{Near identical equations are to be found at
 &=& det ({\bm\tau}) \nn\\
 &=& \tau_1 \tau_2\tau_3 \nn\\
 \end{eqnarray}
-
-The third (deviatoric) stress invariant is given by: (VERIFY!!)
-\begin{eqnarray}
-{\cal I}_3({\bm \tau})|^{3D} 
-&=&  \frac{1}{3} s_{xx} (s_{xx}^2 + 3  s_{xy}^2   + 3  s_{xz}^2  )     \nonumber\\
-&+& \frac{1}{3} s_{yy} (3s_{xy}^2 +  s_{yy}^2   + 3  s_{yz}^2  )     \nonumber\\
-&+& \frac{1}{3} s_{zz} ( 3 s_{xz}^2  + 3 s_{yz}^2 +s_{zz}^2)       \nonumber\\
-&+& 2   s_{xy} s_{xz} s_{yz}   \nonumber \\
-&=& s_1 s_2 s_3 \nonumber
-\end{eqnarray}
-
 }
 
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Alternative principal stresses notations}\label{sec:altinv}
 
 The principal stress of the stress tensor ${\bm \sigma}$ are $\sigma_1$, $\sigma_2$
 and $\sigma_3$ with $\sigma_1 \geq \sigma_2 \geq \sigma_3$.
-Following \cite{wojc18}, we start by stating that the intermediate principal 
+Following Wojciechowski \cite{wojc18}, we start by stating that the intermediate principal 
 stress can always be represented as a linear combination of two other stresses:
 \begin{equation}
 \sigma_2 = (1-b)\sigma_1 + b \sigma_3
@@ -190,34 +189,41 @@ stress can always be represented as a linear combination of two other stresses:
 b = \frac{\sigma_1-\sigma_2}{\sigma_1-\sigma_3}\in [0,1]
 \end{equation}
 The quantity $b$ is called the principal stress ratio. \index{general}{Principal Stress Ratio}
-Let us now introduce the maximum shear plane stresses $p$ and $q$ such that 
+Let us now introduce the maximum shear plane stresses $\sigma_m$ and $\tau_m$ such that
+\footnote{Although most of this section is inspired by Wojciechowski \cite{wojc18}, 
+I have decided not to use his notations which are very confusing since he denotes $\sigma_m$ by $p$} 
 \begin{equation}
-p=\frac{\sigma_1+\sigma_3}{2}
+\boxed{\sigma_m=\frac{\sigma_1+\sigma_3}{2}}
 \qquad
-q=\frac{\sigma_1-\sigma_3}{2}
+\boxed{\tau_m=\frac{\sigma_1-\sigma_3}{2}}
 \end{equation}
 so that we have 
 \begin{eqnarray}
-\sigma_1 &=& p+q \\
-\sigma_2 &=& p-aq \qquad a=2b-1 \in[-1,1] \\
-\sigma_3 &=& p-q
+\sigma_1 &=& \sigma_m+\tau_m \\
+\sigma_2 &=& \sigma_m-a\tau_m \\ 
+\sigma_3 &=& \sigma_m-\tau_m
 \end{eqnarray}
-The quantity $a$ is an equivalent measure of the principal stress ratio.
+The quantity $a\in[-1,1]$ is an equivalent measure of the principal stress ratio and 
+is defined as 
+\begin{equation}
+a=2b-1 =2 \frac{\sigma_1-\sigma_2}{\sigma_1-\sigma_3}-1=\frac{\sigma_1-2\sigma_2+\sigma_3}{\sigma_1-\sigma_3}
+\end{equation}
 We can introduce $a,p,q$ in the invariants above:
 \begin{eqnarray}
 {\cal I}_1({\bm \sigma}) 
 &=& \sigma_1 + \sigma_2 + \sigma_3 \nn\\
-&=& p+q + p-aq + p-q \nn\\
-&=& 3p -aq \\
+&=& (\sigma_m+\tau_m) + (\sigma_m-a\tau_m) + (\sigma_m-\tau_m) \nn\\
+&=& 3\sigma_m -a\tau_m \\
 {\cal I}_2({\bm \tau}) 
 &=&\frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 +(\sigma_{2}-\sigma_{3})^2 +(\sigma_{1}-\sigma_{3})^2\right]\nn\\ 
-&=&\frac{1}{6}\left[(p+q-p+aq)^2 +(p-aq-p+q)^2 +(p+q-p+q)^2\right]\nn\\ 
-&=&\frac{1}{6}\left[(q+aq)^2 +(-aq+q)^2 +(q+q)^2\right]\nn\\ 
-&=&\frac{q^2}{6}\left[(1+a)^2 +(-a+1)^2 + 4 \right]\nn\\ 
-&=&\frac{q^2}{6}\left[ 1+2a+a^2 +1 - 2a+a^2 + 4 \right]\nn\\ 
-&=&\frac{q^2}{3}\left( a^2 +3 \right)
+&=&\frac{1}{6}\left[(\sigma_m+\tau_m-\sigma_m+a\tau_m)^2 +(\sigma_m-a\tau_m-\sigma_m+\tau_m)^2 
++(\sigma_m+\tau_m-\sigma_m+\tau_m)^2\right]\nn\\ 
+&=&\frac{1}{6}\left[(\tau_m+a\tau_m)^2 +(-a\tau_m+\tau_m)^2 +(\tau_m+\tau_m)^2\right]\nn\\ 
+&=&\frac{\tau_m^2}{6}\left[(1+a)^2 +(-a+1)^2 + 4 \right]\nn\\ 
+&=&\frac{\tau_m^2}{6}\left[ 1+2a+a^2 +1 - 2a+a^2 + 4 \right]\nn\\ 
+&=&\frac{\tau_m^2}{3}\left( a^2 +3 \right)
 \end{eqnarray}
-Using the definition of the third invariant of Eq.~\ref{eq:3rdinvb}:
+Using the definition of the third invariant of Eq.~(\ref{eq:3rdinvb}):
 \begin{eqnarray}
 {\cal I}_3({\bm \tau}) 
 &=& \frac{1}{81} \left[
@@ -226,35 +232,74 @@ Using the definition of the third invariant of Eq.~\ref{eq:3rdinvb}:
 (2\sigma_3-\sigma_1-\sigma_2)^3
 \right] \nn\\
 &=& \frac{1}{81} \left[
-(2p+2q-p+aq-p+q)^3+
-(2p-2aq-p-q-p+q)^3+
-(2p-2q-p-q-p+aq)^3
+(2\sigma_m+2\tau_m-\sigma_m+a\tau_m-\sigma_m+\tau_m)^3+
+(2\sigma_m-2a\tau_m-\sigma_m-\tau_m-\sigma_m+\tau_m)^3+
+(2\sigma_m-2\tau_m-\sigma_m-\tau_m-\sigma_m+a\tau_m)^3
 \right] \nn\\
-&=& \frac{1}{81} \left[ (2q+aq+q)^3+ (-2aq-q+q)^3+ (-2q-q+aq)^3 \right] \nn\\
-&=& \frac{q^3}{81} \left[ (3+a)^3+ (-2a)^3+ (-3+a)^3 \right] \nn\\
-&=& \frac{q^3}{81} \left[ 27 +9a + 3a^2 + a^3  -8a^3 -27 +9a -3a^2 + a^3 \right] \nn\\
-&=& \frac{q^3}{81} \left( 18a  -6 a^3  \right) \nn\\
-&=& \frac{2a q^3}{27} \left( 3 - a^2  \right) 
+&=& \frac{1}{81} \left[ (2\tau_m+a\tau_m+\tau_m)^3+ (-2a\tau_m-\tau_m+\tau_m)^3+ (-2\tau_m-\tau_m+a\tau_m)^3 \right] \nn\\
+&=& \frac{\tau_m^3}{81} \left[ (3+a)^3+ (-2a)^3+ (-3+a)^3 \right] \nn\\
+&=& \frac{\tau_m^3}{81} \left[ 27 +9a + 3a^2 + a^3  -8a^3 -27 +9a -3a^2 + a^3 \right] \nn\\
+&=& \frac{\tau_m^3}{81} \left( 18a  -6 a^3  \right) \nn\\
+&=& \frac{2a \tau_m^3}{27} \left( 3 - a^2  \right) 
 \end{eqnarray}
-which is not exactly Eq.(14) of \cite{wojc18}!!
+which is different than Eq. (14) of \cite{wojc18}!!
+
+To recap:
+\begin{eqnarray}
+\boxed{{\cal I}_1({\bm \sigma}) =  3\sigma_m -a\tau_m } 
+\qquad
+\boxed{{\cal I}_2({\bm \tau}) =\frac{\tau_m^2}{3}\left( a^2 +3 \right)}
+\qquad
+\boxed{{\cal I}_3({\bm \tau}) = \frac{2a \tau_m^3}{27} \left( 3 - a^2  \right) }
+\end{eqnarray}
 
 \begin{remark}
 Wojciechowski \cite{wojc18} defines the Lode angle \index{general}{Lode Angle} 
 as being the opposite of my definition in Eq.~\ref{eq:lodang}.
 \end{remark}
 
-Finally, we can show that 
+Finally, we can show using Eqs.~(\ref{eq:sigma1},\ref{eq:sigma2},\ref{eq:sigma3}) that
 \begin{eqnarray}
 a 
-&=& 2b-1 \nn\\
-&=& 2 \frac{\sigma_1-\sigma_2}{\sigma_1-\sigma_3} -1 \nn\\
-&=& 2 \frac{  -\frac{1}{\sqrt{3}}\sin \theta  + \cos \theta - \frac{2}{\sqrt{3}} \sin \theta }
-{-\frac{1}{\sqrt{3}}\sin \theta  + \cos \theta +\frac{1}{\sqrt{3}}\sin \theta  + \cos \theta } -1 \nn\\
-&=& \frac{ -\frac{1}{\sqrt{3}}\sin \theta  + \cos \theta - \frac{2}{\sqrt{3}}\sin\theta }{\cos \theta } -1 \nn\\
+&=&\frac{\sigma_1-2\sigma_2+\sigma_3}{\sigma_1-\sigma_3} \nn\\
+&=& 
+\frac{
+\sqrt{{\cal I}_2({\bm \tau})} \left(-\frac{1}{\sqrt{3}}\sin \theta +\cos\theta \right) 
+-2
+\sqrt{{\cal I}_2({\bm \tau})} \left(\frac{2}{\sqrt{3}}\sin \theta   \right)   
++
+\sqrt{{\cal I}_2({\bm \tau})} \left(-\frac{1}{\sqrt{3}}\sin \theta- \cos \theta \right)  
+}{
+\sqrt{{\cal I}_2({\bm \tau})} \left(-\frac{1}{\sqrt{3}}\sin \theta +\cos\theta \right)
+- 
+\sqrt{{\cal I}_2({\bm \tau})} \left(-\frac{1}{\sqrt{3}}\sin \theta- \cos \theta \right)  
+}
+\nn \\
+&=& 
+\frac{
+\left(-\frac{1}{\sqrt{3}}\sin \theta +\cos\theta \right) 
+-2
+\left(\frac{2}{\sqrt{3}}\sin \theta   \right)   
++
+\left(-\frac{1}{\sqrt{3}}\sin \theta- \cos \theta \right)  
+}{
+\left(-\frac{1}{\sqrt{3}}\sin \theta +\cos\theta \right)
+- 
+\left(-\frac{1}{\sqrt{3}}\sin \theta- \cos \theta \right)  
+}
+\nn \\
+&=& 
+\frac{
+-\frac{6}{\sqrt{3}}\sin \theta  
+}
+{
+2\cos\theta
+}
+\nn\\
 &=& -\frac{3}{\sqrt{3}} \frac{\sin\theta}{\cos\theta} \nn\\
 &=& -\sqrt{3} \tan\theta
 \end{eqnarray}
-Here again we arrive at the opposite of Eq.16 of \cite{wojc18}. 
+Here again we arrive at the opposite of Eq. (16) of Wojciechowski \cite{wojc18}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Scalar viscoplasticity}
@@ -265,10 +310,10 @@ a scalar quantity $\eta_p$ (the 'effective plastic viscosity') exists such that 
 {\bm \tau}=2\eta_p \dot{\bm\varepsilon} \label{eqscpl1}
 \end{equation}
 is bounded by some yield stress value $Y$.
-From Eq. (\ref{eqscpl1}) it follows that $\underline{\tau}_{II}= 2\eta_p \dot{\underline{\varepsilon}}_{II}=Y$ which yields
+From Eq. (\ref{eqscpl1}) it follows that ${\tau}_{e}= 2\eta_p \dot{\varepsilon}_{e}=Y$ which yields
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
-\eta_p = \frac{Y}{2 \dot{\underline{\varepsilon}}_{II}}
+\eta_p = \frac{Y}{2 \dot{\varepsilon}_{e}}
 \]
 \end{mdframed}
 This approach has also been coined the Viscosity Rescaling Method (VRM) \cite{kacha04}. 
@@ -286,13 +331,11 @@ In order to contain these viscosity contrasts one usually resorts to viscosity l
 \]
 Caution must be taken when choosing both values as they may influence the final results.
 
-
 \begin{mdframed}[backgroundcolor=green!5]
 \begin{itemize}
 \item[$\triangleright$] {\sl python\_codes/fieldstone\_indentor}
 \end{itemize}
 \end{mdframed}
-
 
 %-------------------------------------------------
 \subsubsection{About the yield stress value $Y$}
@@ -321,7 +364,7 @@ is then replaced by the lithostatic pressure $p_{lith}$.
 
 \Literature \cite{zico74,zigo74,zico74b,zien75,corm75,zigo75,zihl75,zijo78,vidm82,vidm84,vede84,zivt85,vimd86}
 \cite{wasd97,debo88,debo01,hesd02,bewv11,mumg10,leor89,sccm13,desm93,demu92,debo91,shmv16}
-\cite{modm01}\cite{baji02}
+\cite{modm01}\cite{baji02}\cite{slde92}
 \cite{modm02}
 
 Note that \cite{vidm82,vidm84,vimd86,zivt85} use the following formulation which they attribute to \cite{zijo78}:

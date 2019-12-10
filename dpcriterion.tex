@@ -4,166 +4,192 @@ limitation, Drucker and Prager \cite{drpr52} proposed a revised function for fri
 
 The Drucker-Prager yield criterion has the function form
 \begin{equation}
-F^{\text{\tiny DP}}({\bm \sigma})=F \left( {\cal I}_1({\bm \sigma}), {\cal I}_2({\bm \sigma}) \right) = 0 
+F^{\text{\tiny DP}}({\bm \sigma})=F \left( {\cal I}_1({\bm \sigma}), {\cal I}_2({\bm \tau}) \right) = 0 
 \end{equation}
 This criterion is most often used for concrete where both normal and shear stresses 
 can determine failure. The Drucker-Prager yield criterion may be expressed as
 \begin{equation}
-F^{\text{\tiny DP}}=\tau_e + \alpha {\cal I}_1({\bm \sigma}) + k =0  
-\qquad
-{\rm with}
-\qquad
-\tau_e= \sqrt{{\cal I}_2({\bm \tau})} \label{dpcriterion} 
+F^{\text{\tiny DP}}= \sqrt{{\cal I}_2({\bm \tau})} + \alpha {\cal I}_1({\bm \sigma}) + k =0  \label{dpcriterion} 
 \end{equation}
-Using the parameters $p$, $q$, $a=-\sqrt{3}\tan\theta$, ${\cal I}_1({\bm \sigma})$ 
-and ${\cal I}_2({\bm \tau})$
-of Section~\ref{sec:altinv} we have
+Using the parameters $\sigma_m$, $\tau_m$, $a=-\sqrt{3}\tan\theta$, ${\cal I}_1({\bm \sigma})$ 
+and ${\cal I}_2({\bm \tau})$ of Section~\ref{sec:altinv} we have
 \begin{eqnarray}
 F^{\text{\tiny DP}}
-&=& \tau_e + \alpha {\cal I}_1({\bm \sigma}) + k \nn\\
-&=& \sqrt{\frac{q^2}{3}(a^2+3)} + \alpha (3p-aq) + k \nn\\ 
-&=& q \sqrt{(a^2/3+1)} + \alpha (3p+q\sqrt{3}\tan\theta ) + k    \qquad ({\rm since }\; q>0)\nn\\ 
-&=& q \sqrt{\tan^2\theta+1} + \alpha (3p+q\sqrt{3}\tan\theta ) + k  \nn\\
-&=& q \sqrt{ \frac{1}{\cos^2\theta} } + \alpha (3p+q\sqrt{3}\tan\theta ) + k  \nn\\
-&=& q \frac{1}{\cos\theta}  + \alpha (3p+q\sqrt{3}\tan\theta ) + k  \qquad ({\rm since }\; \cos\theta >0)\nn
+&=&  \sqrt{{\cal I}_2({\bm \tau})} + \alpha {\cal I}_1({\bm \sigma}) + k \nn\\
+&=& \sqrt{\frac{\tau_m^2}{3}(a^2+3)} + \alpha (3\sigma_m-a\tau_m) + k \nn\\ 
+&=& \tau_m \sqrt{(a^2/3+1)} + \alpha (3\sigma_m+\tau_m\sqrt{3}\tan\theta ) + k    \qquad ({\rm since }\; \tau_m>0)\nn\\ 
+&=& \tau_m \sqrt{\tan^2\theta+1} + \alpha (3\sigma_m+\tau_m\sqrt{3}\tan\theta ) + k  \nn\\
+&=& \tau_m \sqrt{ \frac{1}{\cos^2\theta} } + \alpha (3\sigma_m+\tau_m\sqrt{3}\tan\theta ) + k  \nn\\
+&=& \tau_m \frac{1}{\cos\theta} +\alpha (3\sigma_m+\tau_m\sqrt{3}\tan\theta ) + k  \qquad ({\rm since }\; \cos\theta >0)\nn
 \end{eqnarray}
 $F=0$ then leads to write
 \[
-q  + (3 \alpha p+k)\cos\theta  + q \alpha \sqrt{3}\sin\theta ) =0
+\tau_m  + (3 \alpha \sigma_m+k)\cos\theta  + \tau_m \alpha \sqrt{3}\sin\theta  =0
 \]
 \[
-\Rightarrow \qquad q(1 + \alpha \sqrt{3}\sin\theta)  + (3 \alpha p+k)\cos\theta =0
+\Rightarrow \qquad \tau_m(1 + \alpha \sqrt{3}\sin\theta)  + (3 \alpha \sigma_m+k)\cos\theta =0
 \]
 and finally
 \[
-\boxed{
-q^{\text{\tiny DP}} = -\frac{(3 \alpha p+k)\cos\theta}{1 + \alpha \sqrt{3}\sin\theta}
-}
-\]
-This is the same equation as Eq. 19 of Wojciechowski \cite{wojc18} but with $\theta \rightarrow -\theta$. 
-
-Let us now decompose $q$ as follows:
-\[
-q^{\text{\tiny DP}} = -\frac{3 \alpha \cos\theta}{1 + \alpha \sqrt{3}\sin\theta} p 
+\tau_m = -\frac{(3 \alpha \sigma_m+k)\cos\theta}{1 + \alpha \sqrt{3}\sin\theta}
+= -\frac{3 \alpha \cos\theta}{1 + \alpha \sqrt{3}\sin\theta} \sigma_m 
 -\frac{k\cos\theta}{1 + \alpha \sqrt{3}\sin\theta}
 \]
-The Mohr-Coulomb yield criterion writes
+\begin{remark}
+This is the same equation as Eq. 19 of Wojciechowski \cite{wojc18} but with $\theta \rightarrow -\theta$. 
+\end{remark}
+
+\vspace{.5cm}
+
+The Mohr-Coulomb yield criterion writes  (see Eq.~(\ref{eq:mccrit}))
 \[
-q^{\text{\tiny MC}} = p \sin\phi + c \cos\phi
+\tau_m = -\sigma_m \sin\phi + c \cos\phi
 \]
-so that equating $q^{\text{\tiny DP}}=q^{\text{\tiny MC}}$ leads to:
+so that equating both expressions of $\tau_m$ for the DP and MC criteria leads to:
 \begin{eqnarray}
--\frac{3 \alpha \cos\theta}{1 + \alpha \sqrt{3}\sin\theta} &=& \sin\phi \label{eq:qq1}\\
+-\frac{3 \alpha \cos\theta}{1 + \alpha \sqrt{3}\sin\theta} &=& -\sin\phi \label{eq:qq1}\\
 -\frac{k\cos\theta}{1 + \alpha \sqrt{3}\sin\theta} &=& c \cos\phi \label{eq:qq2}
 \end{eqnarray}
-Eq.~\ref{eq:qq1} yields
+Eq.~(\ref{eq:qq1}) yields
 \[
-- 3 \alpha \cos\theta = \sin\phi (1 + \alpha \sqrt{3}\sin\theta) 
+3 \alpha \cos\theta = \sin\phi (1 + \alpha \sqrt{3}\sin\theta) 
 \]
 \[
-\Rightarrow \qquad - 3 \alpha \cos\theta - \alpha \sqrt{3}\sin\theta \sin\phi = \sin\phi 
+\Rightarrow \qquad 3 \alpha \cos\theta - \alpha \sqrt{3}\sin\theta \sin\phi = \sin\phi 
 \]
 and finally 
 \[
 \boxed{
-\alpha = - \frac{\sin\phi}{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi}
+\alpha(\phi) =  \frac{\sin\phi}{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi}
 }
 \]
-Inserting this into Eq.~\ref{eq:qq2}:
+Inserting this into Eq.~(\ref{eq:qq2}):
 \begin{eqnarray}
 - k \cos\theta 
 &=& c \cos \phi \left(1 +\alpha \sqrt{3} \sin\theta \right)  \nn\\
-&=& c \cos \phi \left(1 - \frac{\sin\phi}{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi}  \sqrt{3} \sin\theta\right) \nn\\
-&=& c \cos \phi \left(1 - 
-\frac{ \sqrt{3}\sin\phi \sin\theta }{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi} \right) \nn\\
+&=& c \cos \phi \left(1 + \frac{\sin\phi}{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi}  \sqrt{3} \sin\theta\right) \nn\\
+&=& c \cos \phi \left(1 + 
+\frac{ \sqrt{3}\sin\phi \sin\theta }{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi} \right) \nn\\
 &=& c \cos \phi \left(
-\frac{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi}{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi} 
- - 
-\frac{ \sqrt{3}\sin\phi \sin\theta }{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi} \right) \nn\\
+\frac{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi}{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi} 
++ 
+\frac{ \sqrt{3}\sin\phi \sin\theta }{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi} \right) \nn\\
 &=& c \cos \phi \left(
-\frac{ 3 \cos\theta}{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi} \right) \nn
+\frac{ 3 \cos\theta}{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi} \right) \nn
 \end{eqnarray}
 so that 
 \[
 \boxed{
-k =- \frac{ 3\; c \cos \phi }{ 3 \cos\theta + \sqrt{3}\sin\theta \sin\phi} 
+k(c,\phi) =- \frac{ 3\; c \cos \phi }{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi} 
 }
 \]
-Unsurprisingly we recover the Eqs. 20 and 21 of Wojciechowski \cite{wojc18} by replacing $\theta$ by $-\theta$.
+%Unsurprisingly we recover the Eqs. 20 and 21 of Wojciechowski \cite{wojc18} by replacing $\theta$ by $-\theta$.
 
+The Drucker-Prager yield criterion which for a given $\theta$ is equal to the Mohr-Coulomb yield is then:
+\begin{eqnarray}
+F^{\text{\tiny DP}}
+&=& \sqrt{{\cal I}_2({\bm \tau})} + \alpha {\cal I}_1({\bm \sigma}) + k  \nn\\
+&=& \sqrt{{\cal I}_2({\bm \tau})} 
++ \frac{\sin\phi}{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi}  {\cal I}_1({\bm \sigma})  
+- \frac{ 3\; c \cos \phi }{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi} \nn\\
+&=& \sqrt{{\cal I}_2({\bm \tau})} 
+- \left[ -\frac{3 \sin\phi}{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi}  \frac{{\cal I}_1({\bm \sigma})}{3}
++ \frac{ 3\; c \cos \phi }{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi} \right] \label{eq:Fdp}\\
+&=& \sqrt{{\cal I}_2({\bm \tau})} 
+- \left[ \frac{3\; p \sin\phi}{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi} 
++ \frac{ 3\; c \cos \phi }{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi} \right] \nn\\
+&=& \sqrt{{\cal I}_2({\bm \tau})}  
+- \frac{3\; p \sin\phi  + 3\; c \cos \phi }{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi} \nn\\ 
+&=& \sqrt{{\cal I}_2({\bm \tau})}  
+- \frac{p \sin\phi  + c \cos \phi }{  \cos\theta - \frac{1}{\sqrt{3}}\sin\theta \sin\phi} 
+\end{eqnarray}
+which, when multiplied by $\cos\theta - \frac{1}{\sqrt{3}}\sin\theta \sin\phi$, gives
+the Mohr-Coulomb criterion of Eq.~(\ref{eq:mcF}). 
 
+For $\theta=\pi/6$, the DP yield surface circumscribes the MC yield surface and Eq.~(\ref{eq:Fdp}) writes:
+\begin{eqnarray}
+F^{\text{\tiny DP}}
+&=& \sqrt{{\cal I}_2({\bm \tau})} 
+- \left[ -\frac{3 \sin\phi}{ 3 \sqrt{3}/2 - \sqrt{3}/2 \sin\phi}  \frac{{\cal I}_1({\bm \sigma})}{3}
++ \frac{ 3\; c \cos \phi }{ 3 \sqrt{3}/2 - \sqrt{3}/2 \sin\phi} \right] \nn\\
+&=& \sqrt{{\cal I}_2({\bm \tau})} 
+- \left[ -\frac{6 \sin\phi}{\sqrt{3} (3 - \sin\phi) }  \frac{{\cal I}_1({\bm \sigma})}{3}
++ \frac{ 6\; c \cos \phi }{ \sqrt{3}(3 - \sin\phi)} \right] \nn\\
+&=& \sqrt{{\cal I}_2({\bm \tau})} 
+- \frac{ 6 p \sin \phi + 6\; c \cos \phi }{ \sqrt{3}(3 - \sin\phi)} 
+\end{eqnarray}
+which is the formula used in \cite{gltf18}.
+
+For $\theta=-\pi/6$, the DP yield surface inscribes the MC yield surface and Eq.~(\ref{eq:Fdp}) writes:
+\begin{eqnarray}
+F^{\text{\tiny DP}}
+&=& \sqrt{{\cal I}_2({\bm \tau})} 
+- \left[ -\frac{3 \sin\phi}{ 3 \sqrt{3}/2 + \sqrt{3}/2 \sin\phi}  \frac{{\cal I}_1({\bm \sigma})}{3}
++ \frac{ 3\; c \cos \phi }{ 3 \sqrt{3}/2 + \sqrt{3}/2 \sin\phi} \right] \nn\\
+&=& \sqrt{{\cal I}_2({\bm \tau})} 
+- \left[ -\frac{6 \sin\phi}{\sqrt{3} (3 + \sin\phi) }  \frac{{\cal I}_1({\bm \sigma})}{3}
++ \frac{ 6\; c \cos \phi }{ \sqrt{3}(3 + \sin\phi}) \right] \nn\\
+&=& \sqrt{{\cal I}_2({\bm \tau})} 
+- \frac{6 p \sin\phi + 6 c \cos \phi}{\sqrt{3} (3 + \sin\phi) } 
+\end{eqnarray}
+
+(I need a figure illustrating this - not too sure about inscribe/circumscribe).
 
 
 \newpage
 
 DO NOT READ FURTHER! 9dec2019
 
-Since the Drucker-Prager yield surface is a smooth version of the Mohr-Coulomb yield surface, it 
-is often expressed in terms of the cohesion $c$ and the angle of internal friction $\phi$ that are used 
-to describe the Mohr-Coulomb yield surface. One then wishes to relate $\alpha$ and $k$ to $c$ and $\phi$:
-$\alpha= fct(\phi)$ and $k= fct(c,\phi) $.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{two-dimensional space}
 
 By choosing $k=c \cos \phi $ and $\alpha=\frac{1}{2}\sin \phi$ and seeing that that $p=\frac{1}{2} {\cal I}_1({\bm \sigma})$, we can make the Drucker-Prager yield criterion coincide with the Mohr-Coulomb yield criterion
 so that 
-\begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
 F^{DP,2D} = \tau_e - (p \sin \phi + c \; \cos \phi) 
 \end{equation}
-\end{mdframed}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{three-dimensional space}
+%\paragraph{three-dimensional space}
 
-Let us first assume that the Drucker-Prager yield surface circumscribes the Mohr-Coulomb yield surface such that the two surfaces coincide at $\theta=\tfrac{\pi}{3}$. 
-The expression for the Mohr-Coulomb yield criterion is
+%Let us first assume that the Drucker-Prager yield surface circumscribes the Mohr-Coulomb yield surface such that the two surfaces coincide at $\theta=\tfrac{\pi}{3}$. 
+%The expression for the Mohr-Coulomb yield criterion is
 
-\[
-F^{MC,3D} = -\frac{1}{3}J_1 \sin \phi  + \sqrt{J_2} ( \cos \theta - \frac{1}{\sqrt{3}} \sin \theta  \sin \phi ) - c \cos \phi 
-\]
-Taking $\theta=\pi/6$ yields:
-\begin{eqnarray}
-F^{MC,3D} 
-&=& -\frac{1}{3}J_1 \sin \phi  + \sqrt{J_2} ( \frac{\sqrt{3}}{2} - \frac{1}{\sqrt{3}} \frac{1}{2}  \sin \phi ) - c \cos \phi  \nn\\
-&=& -\frac{1}{3}J_1 \sin \phi  + \frac{1}{2\sqrt{3}}\sqrt{J_2} ( 3 -  \sin \phi ) - c \cos \phi  \nn\\
-&=& -\frac{1}{3}J_1 \sin \phi  + \frac{1}{6}\sqrt{J_2} \sqrt{3}( 3 -  \sin \phi ) - c \cos \phi  \nn\\
-&=& \frac{\sqrt{3}(3-\sin\phi)}{6} \left( -  \frac{2 \sin \phi}{\sqrt{3}(3-\sin\phi)}   J_1  + \sqrt{J_2}  - \frac{6c \cos \phi}{\sqrt{3}(3-\sin\phi)} \right) \nn
-\end{eqnarray}
-The constant in front of the brackets (which always strictly positive) does not matter since we look at the sign of $F$.
-Comparing with 
-\[
-F^{DP}=\sqrt{J_2} - (\alpha J_1 + k) \label{dpcriterion} 
-\]
-we naturally set 
-\[
-\alpha =\frac{2 \sin \phi}{\sqrt{3}(3-\sin\phi)}
-\quad\quad\quad  
-k =  \frac{6c \cos \phi}{\sqrt{3}(3-\sin\phi)} 
-\]
-and since $p=\frac{1}{3}{\cal I}_1({\bm \sigma})$:
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{equation}
-F^{DP,3D} = \tau_e  - \left[ \frac{6 \sin \phi}{\sqrt{3}(3-\sin\phi)}   p  + 
-\frac{6c \cos \phi}{\sqrt{3}(3-\sin\phi)}  \right]
-\label{eqdp3D}
-\end{equation}
-\end{mdframed}
-which is the formula used in \cite{gltf18}.
-
+%\[
+%F^{MC,3D} = -\frac{1}{3}J_1 \sin \phi  + \sqrt{J_2} ( \cos \theta - \frac{1}{\sqrt{3}} \sin \theta  \sin \phi ) - c \cos \phi 
+%\]
+%Taking $\theta=\pi/6$ yields:
+%\begin{eqnarray}
+%F^{MC,3D} 
+%&=& -\frac{1}{3}J_1 \sin \phi  + \sqrt{J_2} ( \frac{\sqrt{3}}{2} - \frac{1}{\sqrt{3}} \frac{1}{2}  \sin \phi ) - c \cos \phi  \nn\\
+%&=& -\frac{1}{3}J_1 \sin \phi  + \frac{1}{2\sqrt{3}}\sqrt{J_2} ( 3 -  \sin \phi ) - c \cos \phi  \nn\\
+%&=& -\frac{1}{3}J_1 \sin \phi  + \frac{1}{6}\sqrt{J_2} \sqrt{3}( 3 -  \sin \phi ) - c \cos \phi  \nn\\
+%&=& \frac{\sqrt{3}(3-\sin\phi)}{6} \left( -  \frac{2 \sin \phi}{\sqrt{3}(3-\sin\phi)}   J_1  + \sqrt{J_2}  - \frac{6c \cos \phi}{\sqrt{3}(3-\sin\phi)} \right) \nn
+%\end{eqnarray}
+%The constant in front of the brackets (which always strictly positive) does not matter since we look at the sign of $F$.
+%Comparing with 
+%\[
+%F^{DP}=\sqrt{J_2} - (\alpha J_1 + k) \label{dpcriterion} 
+%\]
+%we naturally set 
+%\[
+%\alpha =\frac{2 \sin \phi}{\sqrt{3}(3-\sin\phi)}
+%\quad\quad\quad  
+%k =  \frac{6c \cos \phi}{\sqrt{3}(3-\sin\phi)} 
+%\]
+%and since $p=\frac{1}{3}{\cal I}_1({\bm \sigma})$:
+%\begin{mdframed}[backgroundcolor=blue!5]
+%\begin{equation}
+%F^{DP,3D} = \tau_e  - \left[ \frac{6 \sin \phi}{\sqrt{3}(3-\sin\phi)}   p  + 
+%\frac{6c \cos \phi}{\sqrt{3}(3-\sin\phi)}  \right]
+%\label{eqdp3D}
+%\end{equation}
+%\end{mdframed}
 
 
 
 
-\vspace{1.3cm}
-TO VERIFY
-If the Drucker-Prager surface inscribes the Mohr-Coulomb surface, then matching the two surfaces at $\theta=0$  gives
-\[
-k = \cfrac{6~c~\cos\phi}{\sqrt{3}(3-\sin\phi)} ~;~~ \alpha = \cfrac{2~\sin\phi}{\sqrt{3}(3-\sin\phi)} 
-\]
-In the principal stress space, the Drucker-Prager surface has the form of a circular cone, whilst the von Mises yield surface is an infinitely long cylinder.
 
 %\begin{center}
 %\includegraphics[width=0.6\textwidth]{RHEOLOGY/viscoplasticity/dpcriterion.pdf}
@@ -171,6 +197,7 @@ In the principal stress space, the Drucker-Prager surface has the form of a circ
 
 
 \vspace{1.3cm}
+\begin{remark}
 Leroy \& Ortiz \cite{leor89} use the Drucker-Prager plasticity model also and match it to the Mohr-Coulomb model in the 
 triaxial test and formulate it as follows\footnote{Their definition of the second invariant of stress contains a 3/2 term}:
 \begin{eqnarray}
@@ -180,5 +207,7 @@ F
 &=& \sqrt{3} \left[ \tau_e  - \left( \frac{6 \sin\phi}{\sqrt{3}(3-\sin\phi)}  p  + c \frac{6 \cos\phi}{\sqrt{3}(3-\sin\phi)} \right)  \right]
 \end{eqnarray}
 Except for the $\sqrt{3}$ this is identical to Eq.~(\ref{eqdp3D})
+\end{remark}
 
 
+\newpage
