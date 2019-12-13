@@ -1,0 +1,12 @@
+set term pdf enhanced font "Times,12pt"
+
+set xlabel 'T (K)'
+set ylabel 'y'
+set output 'temperature.pdf'
+plot[][]\
+'NEEMdata.csv' u 2:(2505.79-$1) w lp  ps .5 notitle
+
+set xlabel 'grain size (m)'
+set output 'grain_size.pdf'
+plot[][]\
+'NEEMdata.csv' u 3:(2505.79-$1) w lp ps .5 notitle

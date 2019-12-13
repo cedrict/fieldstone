@@ -1287,7 +1287,14 @@ with:
 K_1({\bm \sigma}) &=& \sigma_{xx}+\sigma_{yy}+\sigma_{zz}\nn\\
 K_2({\bm \sigma}) &=& \sigma_{xx}\sigma_{yy}+\sigma_{yy}\sigma_{zz}+\sigma_{xx}\sigma_{zz}
 -\sigma_{xy}^2 -\sigma_{xz}^2 -\sigma_{yz}^2 \nn\\
-K_3({\bm \sigma}) &=& \det ({\bm \sigma}) \nn
+K_3({\bm \sigma}) 
+&=& \det ({\bm \sigma}) \nn\\
+&=& \sigma_{xx}\sigma_{yy}\sigma_{zz}-\sigma_{xx}\sigma_{yz}^2
+-\sigma_{xy}^2\sigma_{zz}+\sigma_{xy}\sigma_{yz}\sigma_{xz}
++\sigma_{xz}\sigma_{xy}\sigma_{yz}-\sigma_{xz}^2\sigma_{yy} \nn\\
+&=& \sigma_{xx}\sigma_{yy}\sigma_{zz}
++2\sigma_{xy}\sigma_{yz}\sigma_{xz}
+-( \sigma_{xx}\sigma_{yz}^2 +  \sigma_{zz} \sigma_{xy}^2 + \sigma_{yy}\sigma_{xz}^2 )
 \end{eqnarray}
 \index{general}{Principal Invariants}
 $K_1$, $K_2$ and $K_3$ are called principal 

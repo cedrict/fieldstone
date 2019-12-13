@@ -51,3 +51,95 @@ It is a circular cylinder of infinite length with its axis inclined at equal ang
 %\includegraphics[width=0.6\textwidth]{RHEOLOGY/viscoplasticity/vMcriterion.pdf}
 %\end{center}
 \newpage
+
+Let us try to draw the yield function in the space $\sigma_1,\sigma_2,\sigma_3$. It is given by
+\[
+\sqrt{ {\cal I}_2({\bm \tau}) } = c 
+\]
+\[
+{\cal I}_2({\bm \tau})  = c^2 
+\]
+\[
+\frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 + (\sigma_{1}-\sigma_{3})^2 \right] 
+=c^2
+\]
+VERIFY 1/6
+\[
+(\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 + (\sigma_{1}-\sigma_{3})^2 = 6c^2 
+\]
+or, 
+\[
+(x-y)^2 + (y-z)^2 + (x-z)^2 = 6c^2 
+\]
+\[
+(x-y)^2 + y^2 - 2yz + z^2 + x^2 -2xz +z^2 = 6c^2
+\]
+\[
+2z^2 - 2(x+y)z + (x-y)^2+x^2+y^2-6c^2 = 0
+\]
+This is a second order polynomial in $z$. 
+\begin{eqnarray}
+\Delta 
+&=& 4(x+y)^2 - 4 \cdot 2 \cdot [(x-y)^2+x^2+y^2-6c^2] \nn\\
+&=& 4x^2 + 8xy + 4y^2 - 8 [x^2-2xy+y^2 +x^2+y^2-6c^2] \nn\\
+&=& 4x^2 + 8xy + 4y^2 - 8 [2x^2-2xy+2y^2 -6c^2] \nn\\
+&=& 4x^2 + 8xy + 4y^2 - 16x^2+ 16xy -16y^2 +48 c^2 \nn\\
+&=& -12x^2 + 24xy -12 y^2  +48 c^2 \nn\\
+&=& -12(x^2 -2xy + y^2)  + 48 c^2 \nn\\
+&=& -12(x-y)^2  + 48 c^2 \nn
+\end{eqnarray}
+
+$\Delta >0$ imposes a restriction on $x,y$:
+\[
+ -12(x-y)^2  + 48 c^2 \nn > 0
+\]
+\[
+(x-y)^2  < 4 c^2 
+\]
+\[
+x-y<2c   
+\qquad
+\text{or,}
+\qquad
+y-x<2c   
+\]
+\[
+y> x-2c   
+\qquad
+\text{or,}
+\qquad
+y<x+2c
+\]
+So the discriminant is positive in the band given by $y>x-2c$ and $y<x+2c$ in the $x,y$-plane, 
+which is a band centered around the line $y=x$.
+When $\Delta>0$ we have then 
+\[
+z= \frac{2(x+y) \pm \sqrt{\Delta}}{4}
+\]
+which means that for each pair $x,y$ there are 2 $z$ values. 
+The middle of this surface is given by the line $z=(x+y)/2$. 
+The plane normal to this lane is given by $z=-2(x+y)$.
+
+For the points on this plane,
+\[
+(x-y)^2 + (y-z)^2 + (x-z)^2 = 6c^2 
+\]
+\[
+(x-y)^2 + (y+2(x+y))^2 + (x+2(x+y))^2 = 6c^2 
+\]
+
+%For $x=y$, we have $\Delta=48c^2$ and 
+%\[
+%z= \frac{2(x+y) \pm c 4\sqrt{3}}{4}
+%\]
+
+For Tresca: 
+\[
+2\sqrt{ {\cal I}_2({\bm \tau})  } \cos \theta - c 
+\]
+
+
+
+
+
+\newpage
