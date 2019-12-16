@@ -1,12 +1,35 @@
-set term pdf enhanced font "Times,12pt"
+set term pdf enhanced font "Times,10pt"
 
+
+#set arrow 1 from 244,1400 to 244,2500 nohead  lw 3  
 set xlabel 'T (K)'
-set ylabel 'y'
+set ylabel 'y (m)'
 set output 'temperature.pdf'
-plot[][]\
-'NEEMdata.csv' u 2:(2505.79-$1) w lp  ps .5 notitle
+plot[][0:2500]\
+'NEEMdata.csv' u 2:(2500-$1) w p  pt 6 ps .5 notitle,\
+-(x-271)*(1000.)/(271-245) ,\
+(x-244)*(1000.)/(244-245) + 2500 
 
+
+set ytics 250
+set arrow 1 from 0.0035,1100 to 0.0035,2500 nohead lw 5  
+set arrow 2 from 0.0025,300 to 0.0025,1100 nohead  lw 5  
+set arrow 3 from 0.007,0 to 0.007,300 nohead  lw 5  
+set xtics 0.0005
 set xlabel 'grain size (m)'
 set output 'grain_size.pdf'
+plot[:0.01][0:2500]\
+'NEEMdata.csv' u 3:(2500-$1) w p pt 6 ps .5 notitle,\
+1100 w l,\
+300 w l
+
+
+reset
+set key outside
+set log y
+set grid
+set output 'strainrate.pdf'
 plot[][]\
-'NEEMdata.csv' u 3:(2505.79-$1) w lp ps .5 notitle
+'sr_glen.ascii'  w l t 'Glen',\
+'sr_disl.ascii'  w l t 'Disl',\
+'sr_gbs.ascii'  w l t 'GBS',\

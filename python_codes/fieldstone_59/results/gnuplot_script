@@ -1,0 +1,118 @@
+set term pdf enhanced font 'Times,10pt'
+set log x
+set key outside
+
+set xlabel '{/Symbol h}_{eff}'
+set ylabel 'y (m)'
+set output 'profiles.pdf'
+plot[1e14:1e16][]\
+ 'nueffs_r1.ascii' u 4:1 w lp ps 0.5 t 'Glen' ,\
+ 'nueffs_r2.ascii' u 4:1 w lp ps 0.5 t 'Disl' ,\
+ 'nueffs_r3.ascii' u 4:1 w lp ps 0.5 t 'GBS' ,\
+
+set ylabel 'T (K)'
+set output 'profiles2.pdf'
+plot[1e14:1e16][]\
+ 'nueffs_r1.ascii' u 4:2 w lp ps 0.5 t 'Glen' ,\
+ 'nueffs_r2.ascii' u 4:2 w lp ps 0.5 t 'Disl' ,\
+ 'nueffs_r3.ascii' u 4:2 w lp ps 0.5 t 'GBS' ,\
+263 lt -1 notitle
+
+reset 
+
+set ylabel 'y (m)'
+set key outside
+set term pdf enhanced font 'Times,10pt'
+set grid
+
+set xlabel 'u (m/s)'
+set output 'u_core1.pdf'
+plot[][]\
+'rh1/core1.ascii' u 3:2 w lp ps .5 t 'Glen',\
+'rh2/core1.ascii' u 3:2 w lp ps .5 t 'Disl',\
+'rh3/core1.ascii' u 3:2 w lp ps .5 t 'GBS',\
+
+set output 'u_core2.pdf'
+plot[][]\
+'rh1/core2.ascii' u 3:2 w lp ps .5 t 'Glen',\
+'rh2/core2.ascii' u 3:2 w lp ps .5 t 'Disl',\
+'rh3/core2.ascii' u 3:2 w lp ps .5 t 'GBS'
+
+
+set xlabel '{/Symbol e}_e'
+set log x
+set output 'sr_core1.pdf'
+plot[1e-14:][]\
+'rh1/core1.ascii' u 11:2 w lp ps .5 t 'Glen',\
+'rh2/core1.ascii' u 11:2 w lp ps .5 t 'Disl',\
+'rh3/core1.ascii' u 11:2 w lp ps .5 t 'GBS',\
+
+set output 'sr_core2.pdf'
+plot[1e-14:][]\
+'rh1/core2.ascii' u 11:2 w lp ps .5 t 'Glen',\
+'rh2/core2.ascii' u 11:2 w lp ps .5 t 'Disl',\
+'rh3/core2.ascii' u 11:2 w lp ps .5 t 'GBS'
+
+
+set xlabel '{/Symbol h}'
+set output 'eta_core1.pdf'
+plot[][]\
+'rh1/core1.ascii' u 12:2 w lp ps .5 t 'Glen',\
+'rh2/core1.ascii' u 12:2 w lp ps .5 t 'Disl',\
+'rh3/core1.ascii' u 12:2 w lp ps .5 t 'GBS',\
+
+unset log xy
+set output 'eta_core2.pdf'
+plot[][]\
+'rh1/core2.ascii' u 12:2 w lp ps .5 t 'Glen',\
+'rh2/core2.ascii' u 12:2 w lp ps .5 t 'Disl',\
+'rh3/core2.ascii' u 12:2 w lp ps .5 t 'GBS'
+
+
+set xlabel 'dev stress xx (Pa)'
+set output 'sigmaxx_core1.pdf'
+plot[][]\
+'rh1/core1.ascii' u (2*$12*$8):2 w lp ps .5 t 'Glen',\
+'rh2/core1.ascii' u (2*$12*$8):2 w lp ps .5 t 'Disl',\
+'rh3/core1.ascii' u (2*$12*$8):2 w lp ps .5 t 'GBS',\
+
+set output 'sigmaxx_core2.pdf'
+plot[][]\
+'rh1/core2.ascii' u (2*$12*$8):2 w lp ps .5 t 'Glen',\
+'rh2/core2.ascii' u (2*$12*$8):2 w lp ps .5 t 'Disl',\
+'rh3/core2.ascii' u (2*$12*$8):2 w lp ps .5 t 'GBS',\
+
+
+set xlabel 'dev stress yy (Pa)'
+set output 'sigmayy_core1.pdf'
+plot[][]\
+'rh1/core1.ascii' u (2*$12*$9):2 w lp ps .5 t 'Glen',\
+'rh2/core1.ascii' u (2*$12*$9):2 w lp ps .5 t 'Disl',\
+'rh3/core1.ascii' u (2*$12*$9):2 w lp ps .5 t 'GBS',\
+
+set output 'sigmayy_core2.pdf'
+plot[][]\
+'rh1/core2.ascii' u (2*$12*$9):2 w lp ps .5 t 'Glen',\
+'rh2/core2.ascii' u (2*$12*$9):2 w lp ps .5 t 'Disl',\
+'rh3/core2.ascii' u (2*$12*$9):2 w lp ps .5 t 'GBS',\
+
+set xlabel 'dev stress xy (Pa)'
+set output 'sigmaxy_core1.pdf'
+plot[][]\
+'rh1/core1.ascii' u (2*$12*$10):2 w lp ps .5 t 'Glen',\
+'rh2/core1.ascii' u (2*$12*$10):2 w lp ps .5 t 'Disl',\
+'rh3/core1.ascii' u (2*$12*$10):2 w lp ps .5 t 'GBS',\
+
+set output 'sigmaxy_core2.pdf'
+plot[][]\
+'rh1/core2.ascii' u (2*$12*$10):2 w lp ps .5 t 'Glen',\
+'rh2/core2.ascii' u (2*$12*$10):2 w lp ps .5 t 'Disl',\
+'rh3/core2.ascii' u (2*$12*$10):2 w lp ps .5 t 'GBS',\
+
+
+
+
+
+
+
+

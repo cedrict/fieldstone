@@ -23,21 +23,30 @@ def viscosity(exx,eyy,exy,pq,iter,x,y,T,d):
        e2=1e-10
     else:
        e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
-       #A=2.4e-24
-       #n=3
-       #val = 0.5*A**(-1./n)*e2**(1./n-1)
-    #end if
 
-       #dislocation (indep of d)
-       #if T<262:
-       #   A=5e5
-       #   n=4
-       #   Q=64.e3
-       #else:
-       #   A=6.96e23
-       #   n=4
-       #   Q=155.e3
-       #end if
+    #glen's flow law
+    if T<263:
+       A=3.61e5
+       n=3
+       Q=60e3
+    else:
+       A=1.73e21
+       n=3
+       Q=139e3
+    #end if
+    eta_glen=0.5*A**(-1./n)*e2**(1./n-1)*np.exp(Q/n/8.314/T) *1e6
+
+    #dislocation (indep of d)
+    if T<262:
+       A=5e5
+       n=4
+       Q=64.e3
+    else:
+       A=6.96e23
+       n=4
+       Q=155.e3
+    #end if
+    eta_disl=0.5*A**(-1./n)*e2**(1./n-1)*np.exp(Q/n/8.314/T) *1e6
 
     #GBS-limited creep
     if T<262:
@@ -46,18 +55,24 @@ def viscosity(exx,eyy,exy,pq,iter,x,y,T,d):
        Q=70.e3
        p=1.4
     else:
-       A=8.5e37*1e6
+       A=8.5e37
        n=1.8
        Q=250.e3
        p=1.4
     #end if
-    #e2=1e-10
-    #d=0.5e-3
-    val=0.5*A**(-1./n)*d**(p/n) *e2**(1./n-1)*np.exp(Q/n/8.314/T) *1e6
+    eta_gbs=0.5*A**(-1./n)*d**(p/n) *e2**(1./n-1)*np.exp(Q/n/8.314/T) *1e6
 
-    #print (y,val)
-    #val=min(1.e15,val)
-    ##val=max(1.e7,val)
+    if rheology==1:
+       val=eta_glen
+    if rheology==2:
+       val=eta_disl
+    if rheology==3:
+       val=eta_gbs
+    if rheology==4:
+       val=1./(1./eta_gbs+1./eta_disl)
+
+    val=min(1.e17,val)
+    val=max(1.e11,val)
     return val
 
 #------------------------------------------------------------------------------
@@ -127,19 +142,23 @@ if int(len(sys.argv) == 6):
    solver = int(sys.argv[4])
    benchmark = int(sys.argv[5])
 else:
-   nelx = 100#0
-   nely = 20
+   nelx = 100 # multiple of 4
+   nely = 25
    visu = 1
    solver = 2 
    benchmark=3
 
 Lx=125e3 
-Ly=2.540e3
+Ly=2.500e3
 g=9.81
 theta=0.1/180.*np.pi
-print (np.sin(theta))
 
-method=1
+#rheology=1: glen
+#rheology=2: disl
+#rheology=3: gbs
+#rheology=4: disl+gbs
+
+rheology=3
 
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
@@ -172,16 +191,11 @@ eta_ref=1.e13      # scaling of G blocks
 scaling_coeff=eta_ref/Ly
 
 niter_min=1
-niter=10
+niter=100
 
 if use_SchurComplementApproach:
    ls_conv_file=open("linear_solver_convergence.ascii","w")
    ls_niter_file=open("linear_solver_niter.ascii","w")
-   
-shear_band_L_file_1=open("shear_band_L_elt.ascii","w")
-shear_band_R_file_1=open("shear_band_R_elt.ascii","w")
-shear_band_L_file_2=open("shear_band_L_nod.ascii","w")
-shear_band_R_file_2=open("shear_band_R_nod.ascii","w")
 
 sparse=True
 
@@ -200,7 +214,6 @@ print("NV=",NV)
 print("NfemV=",NfemV)
 print("NfemP=",NfemP)
 print("Nfem=",Nfem)
-print("method=",method)
 print("sparse",sparse)
 print("hx",hx)
 print("hy",hy)
@@ -295,10 +308,10 @@ print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 T  =np.zeros(NV,dtype=np.float64)  
 
 for i in range(0,NV):
-    if yV[i]>Ly-1400:
-       T[i]=243.
+    if yV[i]<1000:
+       T[i]=-(yV[i])*(271-245)/1000. + 271.
     else:
-       T[i]=-yV[i]*(269-243)/(2540-1400)+269 
+       T[i]=-(yV[i]-1000)/1500.*(245-244)+245.
     #end if
 #end for
 
@@ -308,21 +321,19 @@ for i in range(0,NV):
 d  =np.zeros(NV,dtype=np.float64)  
 
 for i in range(0,NV):
-    if yV[i]>Ly-1400:
-       #d[i]= 0.78e-3
-       d[i]=0.003
-    elif yV[i]>Ly-2200:
-       #d[i]= 0.55e-3
-       d[i]=0.002
-    else:
-       #d[i]= -yV[i]*(0.95e-3-0.59e-3)/(2540-2200)+0.95e-3 
+    if yV[i]>1100:
        d[i]=0.0035
+    elif yV[i]>300:
+       d[i]=0.0025
+    else:
+       d[i]=0.007
     #end if
 #end for
 
 #------------------------------------------------------------------------------
 # non-linear iterations
 #------------------------------------------------------------------------------
+method=1
 if method==1:
    c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 elif method==2:
@@ -822,6 +833,14 @@ for iter in range(0,niter):
 
    print("compute nod strain rate: %.3f s" % (timing.time() - start))
 
+ 
+   ######################################################################
+   etan=np.zeros(NV,dtype=np.float64)
+
+   for i in range (0,NV):
+       etan[i]=viscosity(exxn[i],eyyn[i],exyn[i],q[i],iter,xV[i],yV[i],T[i],d[i])
+
+
    ######################################################################
    # generate vtu output at every nonlinear iteration
    ######################################################################
@@ -963,15 +982,33 @@ print("     -> sr_avrg  (m,M) %.6e %.6e " %(np.min(sr_avrg),np.max(sr_avrg)))
 
 print("compute avrg elemental strain rate: %.3f s" % (timing.time() - start))
 
-np.savetxt('sr_avrg.ascii',np.array([xc,yc,exx_avrg,eyy_avrg,exy_avrg]).T,header='# xc,yc,exx,eyy,exy')
+#np.savetxt('sr_avrg.ascii',np.array([xc,yc,exx_avrg,eyy_avrg,exy_avrg]).T,header='# xc,yc,exx,eyy,exy')
 
 #####################################################################
 
-midfile=open('midvelocity.ascii',"w")
+core1file=open('core1.ascii',"w")
+core2file=open('core2.ascii',"w")
 for i in range(0,NV):
     if abs(xV[i]-Lx/2)/Lx<eps:
-       midfile.write("%5e %5e %5e %5e %5e %5e %5e %5e %5e %5e %5e\n"\
-                       %(xV[i],yV[i],u[i],v[i],q[i],T[i],d[i],exxn[i],eyyn[i],exyn[i],srn[i]))
+       core1file.write("%5e %5e %5e %5e %5e %5e %5e %5e %5e %5e %5e %5e\n"\
+                    %(xV[i],yV[i],u[i],v[i],q[i],T[i],d[i],exxn[i],eyyn[i],exyn[i],srn[i],etan[i]))
+    if abs(xV[i]-Lx/4)/Lx<eps:
+       core2file.write("%5e %5e %5e %5e %5e %5e %5e %5e %5e %5e %5e %5e\n"\
+                    %(xV[i],yV[i],u[i],v[i],q[i],T[i],d[i],exxn[i],eyyn[i],exyn[i],srn[i],etan[i]))
+
+core1file.close()
+core2file.close()
+
+#midfile=open('nueffs.ascii',"w")
+#for i in range(0,NV):
+#    if abs(xV[i]-Lx/2)/Lx<eps:
+#       eta10= viscosity(0.,0.,1e-10,0.,1,0.,0.,T[i],d[i])
+#       eta11= viscosity(0.,0.,1e-11,0.,1,0.,0.,T[i],d[i])
+#       eta12= viscosity(0.,0.,1e-12,0.,1,0.,0.,T[i],d[i])
+#       eta13= viscosity(0.,0.,1e-13,0.,1,0.,0.,T[i],d[i])
+#       midfile.write("%5e %5e %5e %5e %5e %5e %5e\n"\
+#                      %(yV[i],T[i],d[i],eta10,eta11,eta12,eta13))
+#midfile.close()
 
 
 #####################################################################
@@ -1077,6 +1114,11 @@ vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%10e \n" %q[i])
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
+for i in range(0,NV):
+    vtufile.write("%10e \n" %etan[i])
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='Res (u)' Format='ascii'> \n")
