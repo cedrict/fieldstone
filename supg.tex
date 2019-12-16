@@ -2,7 +2,7 @@ As abondantly documented in the literature advection needs to be stabilised
 as it otherwise showcases non-negligible under- and overshoots.
 A standard approach is the Streamline Upwind Petrov Galerkin (SUPG) method.
 
-\Literature \cite{brhu82,brbf92}\cite{humm86}
+\Literature \cite{brhu82,brbf92,teos00,humm86}
 
 %------------------------------
 \subsubsection{Linear elements}
@@ -93,7 +93,7 @@ showcases clearly visible ripples.}
 \begin{remark}
 Note that \aspect{} originally did not rely on the SUPG formulation to stabilise the 
 advection(-diffusion) equations\cite{krhb12}. It instead relied on the Entropy Viscosity
-formulation \cite{gupp11}.
+formulation \cite{gupp10,gupp11}.
 It is only during the 6th Hackathon in May 2019 that the SUPG was introduced on the code.
 Note that the \aspect{} implementation is based on the deal.II step 
 63\footnote{\url{https://www.dealii.org/developer/doxygen/deal.II/step_63.html}}.

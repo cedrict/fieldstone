@@ -1,0 +1,25 @@
+set term pdf enhanced font "Times,10pt"
+set xlabel '{/Symbol s}_1'
+set ylabel 'Yield surface'
+set key outside
+
+set output 'surfaces_xy.pdf'
+plot[][]\
+'VM_xy.ascii'  u 1:3 w p ps .125 t 'von Mises',\
+'TR_xy.ascii'  u 1:3 w p ps .125 t 'Tresca',\
+'MC_xy.ascii'  u 1:3 w p ps .125 t 'Mohr-Coulomb, {/Symbol p}=30^o',\
+'DPi_xy.ascii' u 1:3 w p ps .125 t 'Drucker-Prager (i), {/Symbol p}=30^o',\
+'DPc_xy.ascii' u 1:3 w p ps .125 t 'Drucker-Prager (c), {/Symbol p}=30^o',\
+
+set output 'surfaces_plane.pdf'
+plot[-4e7:4e7][-4e7:4e7]\
+'DPi_plane.ascii' u 1:3 w p ps .125 t 'Drucker-Prager (i), {/Symbol f}=20^o',\
+'DPc_plane.ascii' u 1:3 w p ps .125 t 'Drucker-Prager (c), {/Symbol f}=20^o',\
+'DPm_plane.ascii' u 1:3 w p ps .125 t 'Drucker-Prager (m), {/Symbol f}=20^o',\
+'MC_plane.ascii'  u 1:3 w p ps .125 t 'Mohr-Coulomb, {/Symbol f}=20^o',\
+'pi6_plane.ascii' u 1:3 w p ps .05 t '{/Symbol Q}=30^o',\
+
+#'VM_plane.ascii'  u 1:3 w p ps .125 t 'von Mises',\
+#'TR_plane.ascii'  u 1:3 w p ps .125 t 'Tresca',\
+
+

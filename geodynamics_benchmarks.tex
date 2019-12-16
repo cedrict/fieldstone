@@ -27,9 +27,9 @@ computational geodynamics community.
 \item Couette flow with temperature dependent viscosity \cite{egat10,demh19}
 \item Couette flow with shear heating \cite{egat10}
 \item Poiseuille-Couette flow \cite{fusc13}
-\item Lid driven cavity \cite{shry78,foth79,ghgs82,bope98,kawa61,brsa06,kost84,ertu09}
+\item Lid driven cavity \cite{kawa61,shry78,foth79,ghgs82,bope98,kawa61,brsa06,kost84,ertu09}
 \item Lid driven cavity with analytical solution (see Section~\ref{sec:ldc_anal})
-\item Lid driven cavity with nonlinear rheology \cite{been80}
+\item Lid driven cavity with nonlinear rheology \cite{been80,svna18}
 \item Wannier flow \cite{wann50,yemu99,cehg14}
 \item bending of elastic plate/beam \cite{cehg14,boht08a,vosc15,egat10,demh19,modm02,litu02}
 \item flexure of finite length elastic plate \cite{chtl13}
@@ -50,6 +50,7 @@ computational geodynamics community.
 \item hot blob problem \cite{bugs09,fumt11} (see Section~\ref{sec:hotblob})
 \item viscous(-elastic) flow around a cylinder in a channel (see Section~\ref{sec:flowcyl})
 \item Infinite plate with a circular hole \cite{rama16}
+\item Semi-infinite elastic half plane with a circular hole \cite{verr98}
 \item Slope stability for elasto-plastic materials \cite{rama16}
 \item Time-dependent flow in an annulus \cite{galb19} (see Section \ref{sec:tdba})
 \item Convection in 2D-box \cite{galb19} (see Section~\ref{sec:citb})
@@ -81,6 +82,9 @@ computational geodynamics community.
 \item Elastic material in pure shear (see Section~\ref{sec:elastpureshear})
 \item Uniform strip load on elastic material (see Section~\ref{sec:elaststripload})
 \item Linear Stability Analysis for Thermal Convections in Spherical Shells \cite{yuwa19}
+\item Channel flow \cite{manc08}
+\item Visco-elastic half-space loading \cite{hask35,nala82}
+\item Squeezing flow between moving parallel plates \cite{gugu77}
 \end{itemize}
 
 \todo[inline]{go through my papers and add relevant ones here}
@@ -490,11 +494,10 @@ plastic half space. (a) Prandtl’s rigid plastic solution; (b)
 Hill’s solution. Taken from \cite{thfb08}}
 \end{center}
 
-
 The plane strain formulation of the equations and the detailed solution to the problem 
 were derived in the Appendix of \cite{thfb08} and are also presented in \cite{gepd98} and in \cite[Chapt.6]{bower2009}.
 The two dimensional punch problem has been extensively studied numerically for the past 40 years 
-\cite{zihl75,prlo90,zihp95,chpe01,chan99,huhy99,yuti06,bufs08,raab07,gltf18} and has been used to draw a parallel with the tectonics of eastern China in the context of the 
+\cite{zihl75,prlo90,zihp95,ziph95,chpe01,chan99,huhy99,yuti06,bufs08,raab07,gltf18} and has been used to draw a parallel with the tectonics of eastern China in the context of the 
 India-Eurasia collision \cite{tamo76,mota77,engl82} or the European Alps \cite{repe97}.
 It is also worth noting that it has been carried out in one form or another in series of 
 analogue modelling articles concerning the same region, with a rigid indenter colliding with a rheologically 
@@ -519,6 +522,11 @@ and a smooth punch (right column). (a,f) Viscosity field with analytical slip li
 (d,i) Pressure field. (e,j) Pressure along the surface of the domain (colored line) and analytical 
 solution values $\pi + 1$ and 1 (grey lines). Taken from \cite{gltf18}}
 \end{center}
+
+\begin{remark}
+This benchmark is often mentioned or used in the context of bearing capacity, footings, 
+limit state design/analysis \cite{mich01,zhll03,gork06}.
+\end{remark}
 
 
 %................................................................................
@@ -601,6 +609,7 @@ Note the interesting benchmark for 2D visco-elastic flow in \cite{bepo10}.
 {\captionfont Left: taken from \cite{turek}; Right: taken from \cite{john02}}
 \end{center}
 
+\Literature: \cite{taie87}
 
 %................................................................................
 \subsubsection{Thin layer entrainment} \label{sec:tlentr})

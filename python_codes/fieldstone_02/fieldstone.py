@@ -25,13 +25,10 @@ def mu(x,y):
 def onePlot(variable, plotX, plotY, title, labelX, labelY, extVal, limitX, limitY, colorMap):
     im = axes[plotX][plotY].imshow(np.flipud(variable),extent=extVal, cmap=colorMap, interpolation="nearest")
     axes[plotX][plotY].set_title(title,fontsize=10, y=1.01)
-
     if (limitX != 0.0):
        axes[plotX][plotY].set_xlim(0,limitX)
-
     if (limitY != 0.0):
        axes[plotX][plotY].set_ylim(0,limitY)
-
     axes[plotX][plotY].set_xlabel(labelX)
     axes[plotX][plotY].set_ylabel(labelY)
     fig.colorbar(im,ax=axes[plotX][plotY])
@@ -62,7 +59,7 @@ if int(len(sys.argv) == 4):
    visu = int(sys.argv[3])
 else:
    nelx = 48
-   nely = 32
+   nely = 48
    visu = 1
 
 
@@ -72,13 +69,13 @@ assert (nely>0.), "nny should be positive"
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
 
-nnp=nnx*nny  # number of nodes
+NV=nnx*nny  # number of nodes
 
 nel=nelx*nely  # number of elements, total
 
 penalty=1.e7  # penalty coefficient value
 
-Nfem=nnp*ndof  # Total number of degrees of freedom
+Nfem=NV*ndof  # Total number of degrees of freedom
 
 eps=1.e-10
 
@@ -96,8 +93,8 @@ print("declaring arrays")
 
 print("grid point setup")
 
-x = np.empty(nnp, dtype=np.float64)  # x coordinates
-y = np.empty(nnp, dtype=np.float64)  # y coordinates
+x = np.empty(NV,dtype=np.float64)  # x coordinates
+y = np.empty(NV,dtype=np.float64)  # y coordinates
 counter = 0
 for j in range(0, nny):
     for i in range(0, nnx):
@@ -136,7 +133,7 @@ print("defining boundary conditions")
 
 bc_fix=np.zeros(Nfem,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=float)  # boundary condition, value
-for i in range(0,nnp):
+for i in range(0,NV):
     if x[i]<eps:
        bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
     if x[i]>(Lx-eps):
@@ -160,8 +157,8 @@ dNdx  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNdy  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNdr  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNds  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-u     = np.zeros(nnp,dtype=np.float64)          # x-component velocity
-v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
+u     = np.zeros(NV,dtype=np.float64)          # x-component velocity
+v     = np.zeros(NV,dtype=np.float64)          # y-component velocity
 k_mat = np.array([[1,1,0],[1,1,0],[0,0,0]],dtype=np.float64) 
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
@@ -169,7 +166,7 @@ for iel in range(0, nel):
 
     # set 2 arrays to 0 every loop
     b_el = np.zeros(m * ndof)
-    a_el = np.zeros((m * ndof, m * ndof), dtype=float)
+    a_el = np.zeros((m * ndof, m * ndof), dtype=np.float64)
 
     # integrate viscous term at 4 quadrature points
     for iq in [-1, 1]:
@@ -316,7 +313,7 @@ print("-----------------------------")
 # put solution into separate x,y velocity arrays
 #####################################################################
 
-u,v=np.reshape(sol,(nnp,2)).T
+u,v=np.reshape(sol,(NV,2)).T
 
 print("u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
@@ -396,7 +393,6 @@ np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,ex
 #####################################################################
 # plot of solution
 #####################################################################
-
 
 u_temp=np.reshape(u,(nny,nnx))
 v_temp=np.reshape(v,(nny,nnx))

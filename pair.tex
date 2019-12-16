@@ -11,7 +11,6 @@ and assure convergence at the optimal rate.
 
 %........................................................................................
 \subsubsection{Families}
-
 \index{general}{Taylor-Hood}
 
 The family of \underline{Taylor-Hood} finite element spaces on triangular/tetrahedral 
@@ -87,6 +86,7 @@ Note that the serendipity version of this pair, i.e. $Q_2^{(20)}\times P_{-1}$ i
 
 %----------------------------------------------------------------------
 \subsubsection{The bi/tri-quadratic velocity - bi/tri-linear pressure element ($Q_2 \times Q_1$)}
+\label{ss:pairq2q1}
 
 \begin{minipage}[t]{0.5\textwidth}
 \input{tikz_q2q1}
@@ -130,7 +130,7 @@ problem near boundaries: incomplete stencil? choice of parameter $\beta$.
 
 $Q_1\times Q_1$-stab. Pro: easier to implement than $Q_1\times P_0$-stab, stabilisation local to element, easier when elements are not rectangular, no free parameter; Con: stabilisation cannot be switched off.
 
-\Literature: \cite{shry78,temr92,grcc95,knto00,fros07}
+\Literature: \cite{shry78,temr92,tezd92,grcc95,knto00,fros07}
 
 
 %----------------------------------------------------------------------
@@ -263,7 +263,7 @@ It is the element used in LaCoDe \cite{demh19}.
 
 p. 722 of \cite{john16}
 
-\cite{horg95,knob00,lisi12}
+\cite{horg95,knob00,lisi12,maky17}
 
 
 %----------------------------
@@ -271,7 +271,7 @@ p. 722 of \cite{john16}
 
 \begin{itemize}
 \item $P_1\times P_0$: example 3.70 in \cite{john16}, also \cite{john98}. \index{general}{$P_1\times P_0$}
-\item $P_1\times P_1$ stabilised \cite{nosi98}
+\item $P_1\times P_1$ stabilised \cite{nosi98,tasu00}
 \item Q2P0: \index{general}{$Q_2 \times P_0$}: 
 Quadratic velocities, constant pressure. The element satisfies the inf-sup condition, but the constant pressure assumption may require fine discretisation.
 
