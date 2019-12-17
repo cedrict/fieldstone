@@ -58,8 +58,8 @@ u(y=h)=
 \end{equation}
 
 \begin{center}
-\includegraphics[width=6.4cm]{python_codes/fieldstone_59/images/neem}
-\includegraphics[width=6cm]{python_codes/fieldstone_59/images/narh15}\\
+\includegraphics[height=9cm]{python_codes/fieldstone_59/images/neem}
+\includegraphics[height=9cm]{python_codes/fieldstone_59/images/narh15}\\
 {\captionfont Ice velocity map (magnitude, in logarithmic scale) of the Greenland Ice Sheet
 derived from SAR data of the Sentinel-1A satellite, acquired in Interferometric Wide Swath
 Mode (IW) between January and March 2015. Taken from \cite{narh15}.}
@@ -200,7 +200,7 @@ In order to verify that the values reported in the table above are the ones
 used in \cite{kudd19} I have reproduced the figure 3 of that paper (code and gnuplot
 script in {\sl ./data} folder):
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_59/data/strainrate}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_59/data/strainrate}\\
 {\captionfont Log strain rate versus temperature for Glen’s flow law and 
 the two mechanisms (dislocation creep and GBS-limited creep) that form the end members 
 of the modified composite flow law, using the flow law parameters from the table above. 
@@ -227,6 +227,8 @@ Note that smaller strain rates shift the curves to the right (higher viscosities
 Because the rheologies are non linear we need to carry out nonlinear iterations (see Section~\ref{ss:picard}).
 In what follows we run models for Glen's flow law (rheology=1), 
 dislocation creep (rheology=2), GBS (rheology=3) and dislocation+GBS (rheology=4).
+Note that in the case of rheology=4, the partitioning of the strain rates between both 
+mechanisms is not done (YET) so that the results are not really consistent with the rest!
 
 %\newpage
 \begin{center}
@@ -246,16 +248,25 @@ Core 1 ($x=L_x/4$) \hspace{5cm}  Core 2 ($x=L_x/2$)  \\
 \end{center}
 
 
-Check:
-- ELMER/ice \url{http://elmerice.elmerfem.org/capabilities}
+\begin{center}
+\includegraphics[width=6.cm]{python_codes/fieldstone_59/results/rh4/vel}
+\includegraphics[width=6.cm]{python_codes/fieldstone_59/results/rh4/p}\\
+\includegraphics[width=6.cm]{python_codes/fieldstone_59/results/rh4/sr}
+\includegraphics[width=6.cm]{python_codes/fieldstone_59/results/rh4/eta}\\
+{\captionfont Velocity, pressure, strain rate and viscosity in the middle of the ice sheet
+for rheology=4}
+\end{center}
 
 
-Improvements:
-- better density profile
-- more realistic geometry
+
+Check: ELMER/ice \url{http://elmerice.elmerfem.org/capabilities}
+
+Improvements: better density profile? more realistic geometry ? 
+partitioning of strain rates. Better temperature profile. 
+Better grain size description. Influence of tilt angle? 
 
 
 
 \vspace{1cm}
 
-\Literature \cite{buja89}\cite{issg15}\cite{gors17}\cite{zhjg11}
+\Literature \cite{buja89}\cite{issg15}\cite{gors17}\cite{zhjg11}\cite{yash15}\cite{zwgg07}\cite{heah18}

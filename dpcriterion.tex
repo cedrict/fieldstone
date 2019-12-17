@@ -23,12 +23,10 @@ F^{\text{\tiny DP}}
 &=& \tau_m \frac{1}{\cos\theta} +\alpha (3\sigma_m+\tau_m\sqrt{3}\tan\theta ) + k  \qquad ({\rm since }\; \cos\theta >0)\nn
 \end{eqnarray}
 $F=0$ then leads to write
-\[
-\tau_m  + (3 \alpha \sigma_m+k)\cos\theta  + \tau_m \alpha \sqrt{3}\sin\theta  =0
-\]
-\[
-\Rightarrow \qquad \tau_m(1 + \alpha \sqrt{3}\sin\theta)  + (3 \alpha \sigma_m+k)\cos\theta =0
-\]
+\begin{eqnarray}
+\tau_m  + (3 \alpha \sigma_m+k)\cos\theta  + \tau_m \alpha \sqrt{3}\sin\theta  &=&0 \nn\\
+\Rightarrow \qquad \tau_m(1 + \alpha \sqrt{3}\sin\theta)  + (3 \alpha \sigma_m+k)\cos\theta &=&0 \nn
+\end{eqnarray}
 and finally
 \[
 \tau_m = -\frac{(3 \alpha \sigma_m+k)\cos\theta}{1 + \alpha \sqrt{3}\sin\theta}
@@ -45,7 +43,8 @@ The Mohr-Coulomb yield criterion writes  (see Eq.~(\ref{eq:mccrit}))
 \[
 \tau_m = -\sigma_m \sin\phi + c \cos\phi
 \]
-so that equating both expressions of $\tau_m$ for the DP and MC criteria leads to:
+so that equating both expressions of $\tau_m$ for the Drucker-Prager 
+and Mohr-Coulomb criteria leads to:
 \begin{eqnarray}
 -\frac{3 \alpha \cos\theta}{1 + \alpha \sqrt{3}\sin\theta} &=& -\sin\phi \label{eq:qq1}\\
 -\frac{k\cos\theta}{1 + \alpha \sqrt{3}\sin\theta} &=& c \cos\phi \label{eq:qq2}
@@ -88,7 +87,7 @@ k(c,\phi) =- \frac{ 3\; c \cos \phi }{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\ph
 The Drucker-Prager yield criterion which for a given $\theta$ is equal to the Mohr-Coulomb yield is then:
 \begin{eqnarray}
 F^{\text{\tiny DP}}
-&=& \sqrt{{\cal I}_2({\bm \tau})} + \alpha {\cal I}_1({\bm \sigma}) + k  \nn\\
+&=& \sqrt{{\cal I}_2({\bm \tau})} + \alpha(\phi) {\cal I}_1({\bm \sigma}) + k(c,\phi)  \nn\\
 &=& \sqrt{{\cal I}_2({\bm \tau})} 
 + \frac{\sin\phi}{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi}  {\cal I}_1({\bm \sigma})  
 - \frac{ 3\; c \cos \phi }{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi} \nn\\
@@ -106,21 +105,21 @@ F^{\text{\tiny DP}}
 which, when multiplied by $\cos\theta - \frac{1}{\sqrt{3}}\sin\theta \sin\phi$, gives
 the Mohr-Coulomb criterion of Eq.~(\ref{eq:mcF}). 
 
-For $\theta=\pi/6$, the DP yield surface circumscribes the MC yield surface and Eq.~(\ref{eq:Fdp}) writes:
+For $\theta=\pi/6$, the DP yield surface {\bf circumscribes} the MC yield surface and Eq.~(\ref{eq:Fdp}) writes:
 \begin{eqnarray}
 F^{\text{\tiny DP}}
 &=& \sqrt{{\cal I}_2({\bm \tau})} 
-- \left[ -\frac{3 \sin\phi}{ 3 \sqrt{3}/2 - \sqrt{3}/2 \sin\phi}  \frac{{\cal I}_1({\bm \sigma})}{3}
-+ \frac{ 3\; c \cos \phi }{ 3 \sqrt{3}/2 - \sqrt{3}/2 \sin\phi} \right] \nn\\
+- \left[ -\frac{3 \sin\phi}{ 3 \sqrt{3}/2 - \sqrt{3}/2 \; \sin\phi}  \frac{{\cal I}_1({\bm \sigma})}{3}
++ \frac{ 3\; c \cos \phi }{ 3 \sqrt{3}/2 - \sqrt{3}/2 \; \sin\phi} \right] \nn\\
 &=& \sqrt{{\cal I}_2({\bm \tau})} 
 - \left[ -\frac{6 \sin\phi}{\sqrt{3} (3 - \sin\phi) }  \frac{{\cal I}_1({\bm \sigma})}{3}
 + \frac{ 6\; c \cos \phi }{ \sqrt{3}(3 - \sin\phi)} \right] \nn\\
 &=& \sqrt{{\cal I}_2({\bm \tau})} 
-- \frac{ 6 p \sin \phi + 6\; c \cos \phi }{ \sqrt{3}(3 - \sin\phi)} 
+- \frac{ 6 p \sin \phi + 6\; c \cos \phi }{ \sqrt{3}(3 - \sin\phi)} \label{eq:dpc}
 \end{eqnarray}
-which is the formula used in \cite{gltf18}.
+which is the formula used in Glerum et al (2018) \cite{gltf18}.
 
-For $\theta=-\pi/6$, the DP yield surface inscribes the MC yield surface and Eq.~(\ref{eq:Fdp}) writes:
+For $\theta=-\pi/6$, the DP yield surface {\bf middle circumscribes} the MC yield surface and Eq.~(\ref{eq:Fdp}) writes:
 \begin{eqnarray}
 F^{\text{\tiny DP}}
 &=& \sqrt{{\cal I}_2({\bm \tau})} 
@@ -133,8 +132,10 @@ F^{\text{\tiny DP}}
 - \frac{6 p \sin\phi + 6 c \cos \phi}{\sqrt{3} (3 + \sin\phi) } 
 \end{eqnarray}
 
-
-Note that another DP formulation is to be found on the wikipedia page of the Drucker-Prager yield criterion:
+Another DP formulation which {\bf inscribes} the MC yield surface is found on the 
+wikipedia page of the Drucker-Prager yield criterion
+\footnote{\url{https://en.wikipedia.org/wiki/Drucker-Prager_yield_criterion}}
+(but I have no idea how it is arrived at):
 \begin{eqnarray}
 F^{\text{\tiny DP}}
 &=& \sqrt{{\cal I}_2({\bm \tau})} 
@@ -142,21 +143,19 @@ F^{\text{\tiny DP}}
 + \frac{ 3\; c \cos \phi }{ \sqrt{9+3\sin^2\phi} } \right] \nn\\
 \end{eqnarray}
 
+The yield surfaces of these three Drucker-Prager formulations are plotted against the Mohr-Coulomb
+yield surface in Section~\ref{ss:envelope}. 
 
 
-
-\newpage
-
-DO NOT READ FURTHER! 9dec2019
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{two-dimensional space}
+%\paragraph{two-dimensional space}
 
-By choosing $k=c \cos \phi $ and $\alpha=\frac{1}{2}\sin \phi$ and seeing that that $p=\frac{1}{2} {\cal I}_1({\bm \sigma})$, we can make the Drucker-Prager yield criterion coincide with the Mohr-Coulomb yield criterion
-so that 
-\begin{equation}
-F^{DP,2D} = \tau_e - (p \sin \phi + c \; \cos \phi) 
-\end{equation}
+%By choosing $k=c \cos \phi $ and $\alpha=\frac{1}{2}\sin \phi$ and seeing that that $p=\frac{1}{2} {\cal I}_1({\bm \sigma})$, we can make the Drucker-Prager yield criterion coincide with the Mohr-Coulomb yield criterion
+%so that 
+%\begin{equation}
+%F^{DP,2D} = \tau_e - (p \sin \phi + c \; \cos \phi) 
+%\end{equation}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,14 +207,15 @@ F^{DP,2D} = \tau_e - (p \sin \phi + c \; \cos \phi)
 \vspace{1.3cm}
 \begin{remark}
 Leroy \& Ortiz \cite{leor89} use the Drucker-Prager plasticity model also and match it to the Mohr-Coulomb model in the 
-triaxial test and formulate it as follows\footnote{Their definition of the second invariant of stress contains a 3/2 term}:
+triaxial test and formulate it as follows 
+(Their definition of the second invariant of stress contains a 3/2 term):
 \begin{eqnarray}
 F 
 &=& \tau_e \sqrt{3} + \frac{6 \sin\phi}{3-\sin\phi} \left( -p  - \frac{c}{\tan \phi} \right) \nn\\
 &=& \tau_e \sqrt{3} - \left( \frac{6 \sin\phi}{3-\sin\phi}  p  + c \frac{6 \cos\phi}{3-\sin\phi} \right) \nn\\
 &=& \sqrt{3} \left[ \tau_e  - \left( \frac{6 \sin\phi}{\sqrt{3}(3-\sin\phi)}  p  + c \frac{6 \cos\phi}{\sqrt{3}(3-\sin\phi)} \right)  \right]
 \end{eqnarray}
-Except for the $\sqrt{3}$ this is identical to Eq.~(\ref{eqdp3D})
+Except for the $\sqrt{3}$ this is identical to Eq.~(\ref{eq:dpc}).
 \end{remark}
 
 

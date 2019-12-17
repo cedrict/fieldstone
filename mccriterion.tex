@@ -41,7 +41,7 @@ with $\sigma_1$ is the maximum principal stress and $\sigma_3$ is the minimum pr
 -\cfrac{\sigma_1+\sigma_3}{2}~\sin\phi 
 +c\; \cos\phi 
 \]
-Using Eqs.~\ref{eq:sig13a} and \ref{eq:sig13b} 
+Using Eqs.~(\ref{eq:sig13a}) and (\ref{eq:sig13b}) 
 for $(\sigma_1 - \sigma_3 )/2$ and $(\sigma_1 + \sigma_3 )/2$:
 \begin{eqnarray}
 && \frac{\sigma_1 - \sigma_3}{2} = -\frac{\sigma_1 + \sigma_3}{2} \sin \phi  + c \cos \phi \nn\\
@@ -79,9 +79,10 @@ F^{\text{\tiny MC}}=
 
 
 
-
-Note that the expression for $F$ in the Mohr-Coulomb case in \cite{zico74} contains errors
+\begin{remark}
+The expression for $F$ in the Mohr-Coulomb case in \cite{zico74} contains errors
 which is later corrected in \cite[p102]{book_zitf}. 
+\end{remark}
 
 
 
@@ -90,35 +91,32 @@ which is later corrected in \cite[p102]{book_zitf}.
 
 
 
+%\newpage
+%\paragraph{two-dimensional space}
 
-\newpage
-DO NOT READ FURTHER - 9dec2019
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{two-dimensional space}
-
-The principal stress values are given by
-\[
-\sigma_{1,3} = \frac{\sigma_{xx}+\sigma_{yy}}{2} \pm \sqrt{ \frac{1}{4}(\sigma_{xx}-\sigma_{yy})^2 + \sigma_{xy}^2  }
-= \frac{J_1}{2} \pm \sqrt{ J_2'}
-\]
-so
-\[
-\frac{\sigma_1-\sigma_3}{2} = \frac{\sqrt{J_2}- - \sqrt{J_2}}{2} = \sqrt{J_2}
-\]
-\[
-\frac{\sigma_1+\sigma_3}{2} =  \frac{J_1}{2} 
-\]
-and then
-\[
-\sqrt{J_2} = - \frac{J_1}{2} \sin\phi + c\cos\phi 
-\]
-The Mohr-Coulomb criterion simply writes:
-
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{equation}
-F^{MC,2D}=  \frac{J_1}{2} \sin \phi + \sqrt{J_2} - c  \cos \phi  \label{mc2Dcriterion}
-\end{equation}
-\end{mdframed}
+%The principal stress values are given by
+%\[
+%\sigma_{1,3} = \frac{\sigma_{xx}+\sigma_{yy}}{2} \pm \sqrt{ \frac{1}{4}(\sigma_{xx}-\sigma_{yy})^2 + \sigma_{xy}^2  }
+%= \frac{J_1}{2} \pm \sqrt{ J_2'}
+%\]
+%so
+%\[
+%\frac{\sigma_1-\sigma_3}{2} = \frac{\sqrt{J_2}- - \sqrt{J_2}}{2} = \sqrt{J_2}
+%\]
+%\[
+%\frac{\sigma_1+\sigma_3}{2} =  \frac{J_1}{2} 
+%\]
+%and then
+%\[
+%\sqrt{J_2} = - \frac{J_1}{2} \sin\phi + c\cos\phi 
+%\]
+%The Mohr-Coulomb criterion simply writes:
+%
+%\begin{mdframed}[backgroundcolor=blue!5]
+%\begin{equation}
+%F^{MC,2D}=  \frac{J_1}{2} \sin \phi + \sqrt{J_2} - c  \cos \phi  \label{mc2Dcriterion}
+%\end{equation}
+%\end{mdframed}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\paragraph{three-dimensional space}

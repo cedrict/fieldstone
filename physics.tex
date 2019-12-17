@@ -933,7 +933,7 @@ in the direction of this stress, usually expressed in GPa.
 
 
 %------------------------------------------------------
-\subsection{Principal stress} \label{sec:princ_stress}
+\subsection{Principal stress and principal invariants} \label{sec:princ_stress}
 
 \index{general}{Maximum Shear Stress} \index{general}{Principal Stress}
 
@@ -1163,7 +1163,7 @@ Once $\theta_p$ has been found the other direction is given by $\theta_p +\pi/2$
 
 \vspace{.5cm}
 
-\underline{Example}: Let us start with 
+\noindent \underline{Example}: Let us assume a diagonal stress tensor of the form 
 \[
 {\bm \sigma} = 
 \left(
@@ -1262,7 +1262,7 @@ Non-trivial solutions of this equation require
 \right|
 =0
 \]
-Expanding the determinant results in the cubic equation
+Expanding the determinant results in the following cubic equation:
 \begin{eqnarray}
 0 
 &=&
@@ -1278,7 +1278,7 @@ Expanding the determinant results in the cubic equation
   +\sigma_{yz}^2 +\sigma_{xy}^2 + \sigma_{xz}^2 )\lambda
 + det({\bm \sigma}) \nn
 \end{eqnarray}
-or (after multiplying the last equation by -1),
+or, after multiplying the last line by -1,
 \begin{equation}
 \lambda^3 - K_1({\bm \sigma}) \lambda^2 + K_2({\bm \sigma}) \lambda -K_3({\bm \sigma})=0
 \end{equation}
@@ -1297,7 +1297,7 @@ K_3({\bm \sigma})
 -( \sigma_{xx}\sigma_{yz}^2 +  \sigma_{zz} \sigma_{xy}^2 + \sigma_{yy}\sigma_{xz}^2 )
 \end{eqnarray}
 \index{general}{Principal Invariants}
-$K_1$, $K_2$ and $K_3$ are called principal 
+$K_1$, $K_2$ and $K_3$ are called {\bf principal}
 invariants\footnote{\url{https://en.wikipedia.org/wiki/Invariants_of_tensors}} 
 (see also Appendix A.1 of Zienkiewicz \& Taylor \cite{zita2}). 
 These invariants can be written in a coordinate-free manner:
@@ -1312,7 +1312,7 @@ K_1({\bm \sigma}) &=& \sigma_{1}+\sigma_{2}+\sigma_{3}\nn\\
 K_2({\bm \sigma}) &=& \sigma_{1}\sigma_{2}+\sigma_{2}\sigma_{3}+\sigma_{1}\sigma_{3} \nn\\
 K_3({\bm \sigma}) &=& \sigma_1\sigma_2\sigma_3 \nn
 \end{eqnarray}
-The principal invariants $K_{\{1,2,3\}}$ are related to the moment invariants ${\cal I}_{\{1,2,3\}}$ 
+The principal invariants $K_{\{1,2,3\}}$ are related to the {\bf moment} invariants ${\cal I}_{\{1,2,3\}}$ 
 (see Section~\ref{sec:invariants}) as follows (Appendix A.2 of Zienkiewicz \& Taylor \cite{zita2}):
 \begin{eqnarray}
 {\cal I}_1({\bm \sigma})&=& K_1({\bm \sigma}) \\ 
@@ -1344,7 +1344,7 @@ so that the cubic equation becomes
 \begin{equation} 
 \lambda^3 -  {\cal I}_2({\bm \tau}) \lambda -  {\cal I}_3({\bm \tau}) =0 \label{opopop}
 \end{equation}
-Noting the trigonometric identity (see section 7.4 of Owen \& Hinton \cite{owhi})
+Noting the trigonometric identity\footnote{see section 7.4 of Owen \& Hinton \cite{owhi}}
 \begin{equation}
 \sin 3\theta = 3 \sin \theta - 4 \sin^3 \theta
 \qquad
@@ -1370,7 +1370,7 @@ The so-called Lode angle  \cite{zico74} is then given by \index{general}{Lode An
 \label{eq:lodang}
 \end{equation}
 \end{mdframed}
-with $-\pi/6 <\theta <\pi/6 $. This equation is also to be found in \cite{will92}.
+with $-\pi/6 <\theta <\pi/6 $. The very same equation is also found in Willett (1992) \cite{will92} for instance.
 
 The first root of (\ref{pc_eq4}) with $\theta$ determined for $3\theta$ in the 
 range $\pm \pi/2$ is a convenient alternative to the third invariant, ${\cal I}_3({\bm \tau})$. 
@@ -1407,25 +1407,25 @@ ${\bm \sigma}=-p {\bm 1} + {\bm \tau}$ writes:
 \[
 \left(
 \begin{array}{ccc}
-\sigma_1 & & \\
-& \sigma_2 & \\
-& & \sigma_3  
+\sigma_1 &0 &0 \\
+0& \sigma_2 &0 \\
+0&0 & \sigma_3  
 \end{array}
 \right)
 =
 \left(
 \begin{array}{ccc}
--p&&\\
-&-p&\\
-&&-p
+-p&0&0\\
+0&-p&0\\
+0&0&-p
 \end{array}
 \right)
 +
 \left(
 \begin{array}{ccc}
-\tau_1 & & \\
-& \tau_2 & \\
-& & \tau_3  
+\tau_1 & 0&0 \\
+0& \tau_2 & 0\\
+0&0 & \tau_3  
 \end{array}
 \right)
 \]
@@ -1524,7 +1524,7 @@ so that
 
 \begin{remark} The Lode angle is one of the Lode 
 coordinates\footnote{\url{https://en.wikipedia.org/wiki/Lode_coordinates}},
-or Haigh–Westergaard coordinates. 
+or Haigh-Westergaard coordinates. 
 \index{general}{Haigh-Westergaard Coordinates}
 \index{general}{Lode Coordinates}
 \end{remark}
@@ -1538,7 +1538,7 @@ There are 3 different Lode angles, as explained online\footnote{\url{https://en.
 \[
 \sin 3\theta_s = -\sin 3 \bar{\theta}_s = \cos 3\theta_c = \frac{3\sqrt{3}}{2}\frac{{\cal I}_3({\bm \tau})}{({\cal I}_2({\bm \tau}))^{3/2}}
 \]
-and they are related by $\theta_s = \frac{\pi}{6}-\theta_c$ and $\theta_s = -\bar{\theta}_s$. The one used in fieldstone is in fact $\theta_s$ above.
+and they are related by $\theta_s = \frac{\pi}{6}-\theta_c$ and $\theta_s = -\bar{\theta}_s$. The one used in fieldstone is in fact the $\bar{\theta}_s$ above.
 \label{rq:signs}
 \end{remark}
 
@@ -1585,30 +1585,385 @@ The expression for the Lode angle is different in \cite[p101]{book_zitf} than in
 \end{remark}
 
 
+%------------------------------------------------------
+\subsection{Tensor (moment) invariants}\label{sec:invariants}
 
-\newpage
-%--------------------------------------------
-\subsection{The need for numerical modelling}
+\index{general}{Tensor Invariant}
+\index{general}{Moment Invariant}
 
-The gouverning equations we have seen in this chapter require the use 
-of numerical solution techniques for three main reasons:
-\begin{itemize}
-\item the advection term in the energy equation couples velocity and temperature;
-\item the constitutive law (the relationship between stress and strain rate) 
-often depends on velocity (or rather, strain rate), temperature, pressure, ...
-\item Even when the coefficients of the PDE's are linear, often their spatial
-variability, coupled to potentially complex domain geometries prevent 
-arriving at the analytical solution.
-\end{itemize}
+There are many different notations used in the literature for invariants 
+and these can prove to be 
+confusing\footnote{No kidding, true story.}. Note that we only consider symmetric tensors in what follows.
+Given a tensor $\bm{T}$,  one can compute its (moment) invariants as follows 
+(see \cite[p.339]{reddybook2}, or Appendix A.2 of \cite{zita2})
 
-Note that in CFD one makes a distinction between verification and validation. 
-Simply put \cite{roac97}:
-\begin{itemize}
-\item verification: "solving the equations right"
-\item validation: "solving the right equations"
-\end{itemize}
-\index{general}{Verification}
-\index{general}{Validation}
+\begin{eqnarray}
+{\cal I}_1({\bm T}) 
+&=& Tr[\bm{T}] \\
+&=& T_{xx} + T_{yy} + T_{zz} \\ 
+{\cal I}_2({\bm T}) 
+&=& \frac{1}{2} Tr[{\bm T}\cdot{\bm T}] \\
+&=& \frac{1}{2} \sum_{ij} T_{ij} T_{ji} \\
+&=& \frac{1}{2} (T_{xx}^2 + T_{yy}^2 + T_{zz}^2) + T_{xy}^2 + T_{xz}^2 + T_{yz}^2 \\ 
+{\cal I}_3({\bm T}) 
+&=& \frac{1}{3} Tr[{\bm T}\cdot{\bm T}\cdot {\bm T}]   \\
+&=& \frac{1}{3}\sum_i\sum_j \sum_k T_{ij} T_{jk} T_{ki}  \\
+&=& \frac{1}{3} (T_{xx} ( T_{xx}T_{xx} + T_{xy}T_{xy} + T_{xz}T_{xz} )) \qquad (i=j=x,k=x,y,z)\nn\\ 
+&+& \frac{1}{3} (T_{yy} ( T_{yx}T_{yx} + T_{yy}T_{yy} + T_{yz}T_{yz} )) \qquad (i=j=y,k=x,y,z)\nn\\ 
+&+& \frac{1}{3} (T_{zz} ( T_{zx}T_{zx} + T_{zy}T_{zy} + T_{zz}T_{zz} )) \qquad (i=j=z,k=x,y,z)\nn\\ 
+&+& \frac{2}{3} (T_{xy} ( T_{xx}T_{yx} + T_{xy}T_{yy} + T_{xz}T_{yz} )) \qquad (i=x,j=y,k=x,y,z)\nn\\ 
+&+& \frac{2}{3} (T_{xz} ( T_{xx}T_{zx} + T_{xy}T_{zy} + T_{xz}T_{zz} )) \qquad (i=x,j=z,k=x,y,z)\nn\\ 
+&+& \frac{2}{3} (T_{yz} ( T_{yx}T_{zx} + T_{yy}T_{zy} + T_{yz}T_{zz} )) \qquad (i=y,j=z,k=x,y,z)\nn\\ 
+&=& \frac{1}{3} T_{xx} (  T_{xx}^2 + 3 T_{xy}^2 + 3 T_{xz}^2  )     \nonumber\\
+&+& \frac{1}{3} T_{yy} (3 T_{xy}^2 +   T_{yy}^2 + 3 T_{yz}^2  )     \nonumber\\
+&+& \frac{1}{3} T_{zz} (3 T_{xz}^2 + 3 T_{yz}^2 +   T_{zz}^2)       \nonumber\\
+&+& 2 T_{xy} T_{xz} T_{yz}  
+\end{eqnarray}
 
 
-%\end{document}
+
+
+%----------------------------------------------------------------
+\subsection{Stress \& strain rate invariants}\label{sec:stress_invariants}
+
+The implementation of the plasticity criterions relies essentially 
+on the invariants of the (deviatoric) stress ${\bm \tau}$ 
+and the (deviatoric) strainrate tensors $\dot{\bm \varepsilon}$:
+
+\begin{eqnarray}
+{\cal I}_1({\bm \sigma}) &=& \sigma_{xx}+\sigma_{yy}+\sigma_{zz}\\
+{\cal I}_2({\bm \tau})   
+&=&\frac{1}{2}(\tau_{xx}^2 + \tau_{yy}^2 + \tau_{zz}^2 ) + \tau_{xy}^2 + \tau_{xz}^2 + \tau_{yz}^2  \\
+&=&\frac{1}{6}\left[(\sigma_{xx}-\sigma_{yy})^2 + (\sigma_{yy}-\sigma_{zz})^2 + (\sigma_{xx}-\sigma_{zz})^2 \right]  + \sigma_{xy}^2 + \sigma_{xz}^2 + \sigma_{yz}^2  \\
+\nonumber\\
+{\cal I}_3({\bm \tau}) 
+&=& \frac{1}{3} \tau_{xx} (  \tau_{xx}^2 + 3 \tau_{xy}^2 + 3 \tau_{xz}^2  )     \nonumber\\
+&+& \frac{1}{3} \tau_{yy} (3 \tau_{xy}^2 +   \tau_{yy}^2 + 3 \tau_{yz}^2  )     \nonumber\\
+&+& \frac{1}{3} \tau_{zz} (3 \tau_{xz}^2 + 3 \tau_{yz}^2 +   \tau_{zz}^2)       \nonumber\\
+&+& 2 \tau_{xy} \tau_{xz} \tau_{yz}  
+\end{eqnarray}
+
+and also the second invariant of the deviatoric strain rate is:
+\begin{eqnarray}
+{\cal I}_2(\dot{\bm{\varepsilon}}^d)
+&=& \frac{1}{2} \left[ (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + (\dot{\varepsilon}_{zz}^d)^2   \right] 
++ (\dot{\varepsilon}_{xy}^d)^2  
++ (\dot{\varepsilon}_{xz}^d)^2  
++ (\dot{\varepsilon}_{yz}^d)^2  \nonumber\\
+&=& \frac{1}{6} \left[ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{yy})^2 
++ (\dot{\varepsilon}_{yy}-\dot{\varepsilon}_{zz})^2 
++ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{zz})^2 \right] 
++ \dot{\varepsilon}_{xy}^2 + \dot{\varepsilon}_{xz}^2 + \dot{\varepsilon}_{yz}^2  \\
+\end{eqnarray}
+
+\begin{remark}
+${\cal I}_2({\bm \tau})$ is often called $J_2$ or $J_2'$ so that one sometimes speaks of $J_2$-plasticity.
+\end{remark}
+
+These (second) invariants are almost always used under a square root so we define:
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+\tau_{e}=\sqrt{{\cal I}_2({\bm \tau})}
+\quad\quad
+\quad\quad
+\dot{\varepsilon}_{e}=\sqrt{{\cal I}_2(\dot{\bm \varepsilon}^d)}
+\]
+\end{mdframed}
+Note that these quantities have the same dimensions as their tensor counterparts, i.e. Pa for stresses and s$^{-1}$ for strain rates.
+
+If the stress tensor is such that it is diagonal, i.e.
+\[
+{\bm \sigma}= \left( \begin{array}{ccc}
+\sigma_1 & 0 & 0 \\
+0 & \sigma_2 & 0 \\
+0 & 0 & \sigma_3
+\end{array}\right)
+\qquad
+{\rm and}
+\qquad
+{\bm \tau}= \left( \begin{array}{ccc}
+\tau_1 & 0 & 0 \\
+0 & \tau_2 & 0 \\
+0 & 0 & \tau_3
+\end{array}\right)
+\]
+then the invariants are 
+\begin{eqnarray}
+{\cal I}_1({\bm \sigma}) &=& \sigma_1 + \sigma_2+ \sigma_3 \nonumber\\
+%{\cal I}_2({\bm \tau})|^{2D} &=& \frac{1}{4} (\sigma_{1} - \sigma_{2})^2 \nonumber\\
+{\cal I}_2({\bm \tau}) &=& \frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 
++ (\sigma_{1}-\sigma_{3})^2 \right] \\ 
+{\cal I}_3({\bm \tau}) 
+&=& \frac{1}{3} Tr[{\bm \tau}\cdot{\bm \tau}\cdot {\bm \tau}]  \nn\\
+&=& \frac{1}{3} Tr
+\left[
+\left(
+\begin{array}{ccc}
+\tau_1 & 0 & 0 \\
+0 & \tau_2 & 0 \\
+0 & 0 & \tau_3 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\tau_1 & 0 & 0 \\
+0 & \tau_2 & 0 \\
+0 & 0 & \tau_3 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\tau_1 & 0 & 0 \\
+0 & \tau_2 & 0 \\
+0 & 0 & \tau_3 
+\end{array}
+\right)
+\right] \nn\\
+&=&  \frac{1}{3} Tr
+\left(
+\begin{array}{ccc}
+\tau_1^3 & 0 & 0 \\
+0 & \tau_2^3 & 0 \\
+0 & 0 & \tau_3^3 
+\end{array}
+\right) \nn\\
+&=& \frac{1}{3}(\tau_1^3+\tau_2^3+\tau_3^3) \nn\\
+&=&  \frac{1}{3} [ 
+(\sigma_1-{\cal I}_1({\bm \sigma})/3)^3+  
+(\sigma_2-{\cal I}_1({\bm \sigma})/3)^3+
+(\sigma_3-{\cal I}_1({\bm \sigma})/3)^3 ]   \nonumber\\ 
+&=&  \frac{1}{3\cdot 27} [ 
+(3\sigma_1-{\cal I}_1({\bm \sigma}))^3+  
+(3\sigma_2-{\cal I}_1({\bm \sigma}))^3+
+(3\sigma_3-{\cal I}_1({\bm \sigma}))^3 ]   \nonumber\\ 
+&=& \frac{1}{81}
+\left[
+(2\sigma_1-\sigma_2-\sigma_3)^3+
+(2\sigma_2-\sigma_1-\sigma_3)^3+
+(2\sigma_3-\sigma_1-\sigma_2)^3
+\right] 
+\label{eq:3rdinvb} \label{eq:I3tau}
+\end{eqnarray}
+The formulation of the third invariant of ${\bm \tau}$  in Eq.~\ref{eq:I3tau} 
+is used in Wojciechowski \cite{wojc18}.
+
+\vspace{1cm}
+
+{\color{gray} 
+NOT SURE AT ALL. One can prove that (REF?)\footnote{Near identical equations are to be found at 
+\url{https://en.wikipedia.org/wiki/Cauchy_stress_tensor}} 
+\begin{eqnarray}
+{\cal I}_3({\bm \tau}) 
+&=& \frac{1}{27} \left( 2 {\cal I}_1({\bm \sigma})^3 + 
+9 {\cal I}_1({\bm \sigma}) {\cal I}_2({\bm \sigma}) 
++27 {\cal I}_3({\bm \sigma})   \right) \nn\\
+&=& det ({\bm\tau}) \nn\\
+&=& \tau_1 \tau_2\tau_3 \nn\\
+\end{eqnarray}
+}
+
+\index{general}{Plain Strain}
+\paragraph{Two-dimensional plane strain calculations} 
+
+The plane strain assumption is such that the problem at hand is assumed to be infinite in a given direction. 
+In the case of computational geodynamics, most 2D modelling is a vertical section of the crust-lithosphere-mantle
+and the underlying implicit assumption is then that the orogen/rift/subduction/etc ... is infinite in the 
+direction perpendicular to the screen/paper. 
+
+For example, let us assume that the deformation takes place in the $x,y$-plane. 
+We then have $\dot{\varepsilon}_{zz}=0$ as well as $\dot{\varepsilon}_{xz}=0$ and $\dot{\varepsilon}_{yz}=0$, so
+that the strain rate tensor is 
+\[
+\dot{\bm \varepsilon}=
+\left( \begin{array}{ccc}
+\dot{\varepsilon}_{xx} & \dot{\varepsilon}_{xy} & 0 \\
+\dot{\varepsilon}_{xy} & \dot{\varepsilon}_{yy} & 0 \\
+0 & 0 & 0
+\end{array}\right)
+\]
+However, very importantly, this does not mean that the stress is zero in the $z$-direction! Pressure is 
+isotropic and the stress tensor is then 
+\[
+{\bm \sigma}=
+-p {\bm 1} + {\bm \tau} =
+\left( \begin{array}{ccc}
+{\sigma}_{xx} & {\sigma}_{xy} & 0 \\
+{\sigma}_{xy} & {\sigma}_{yy} & 0 \\
+0 & 0 & -p
+\end{array}\right)
+\]
+However, it is important to keep in mind that the invariants we need to implement 
+the rheologies are ${\cal I}_1({\bm \sigma})$,  ${\cal I}_2({\bm \tau})$ and ${\cal I}_3({\bm \tau})$.
+By formulating our yield surfaces with pressure $p=-{\cal I}_1({\bm \sigma})/3$ we can then 
+avoid confusion, and since the other two invariants are functions of ${\bm \tau}$ the pressure 
+term does not pose any problem: simply set $\tau_{xz}$, $\tau_{yz}$ and $\tau_{zz}$ to zero in the 
+equations of Section~\ref{sec:stress_invariants} and we obtain:
+\begin{eqnarray}
+{\cal I}_2({\bm \tau}) &=&\frac{1}{2}(\tau_{xx}^2 + \tau_{yy}^2 ) + \tau_{xy}^2 \\ 
+{\cal I}_3({\bm \tau}) 
+&=& \frac{1}{3} \tau_{xx} (  \tau_{xx}^2 + 3 \tau_{xy}^2 ) 
++ \frac{1}{3} \tau_{yy} (3 \tau_{xy}^2 +   \tau_{yy}^2 )   \nn\\
+&=& \frac{1}{3}(  \tau_{xx}^3 + 3 \tau_{xx}\tau_{xy}^2  
++ 3 \tau_{yy} \tau_{xy}^2 +   \tau_{yy}^3 )   \nn\\
+&=& \frac{1}{3}(  \tau_{xx}^3 + 3 (\tau_{xx}+\tau_{yy}) \tau_{xy}^2  +  \tau_{yy}^3 )   \nn\\
+&=& \frac{1}{3}(  \tau_{xx}^3 +  \tau_{yy}^3 )  \qquad \text{since } \tau_{ii}=0 
+\end{eqnarray}
+
+\todo[inline]{What of all this if the flow is compressible?}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Alternative principal stresses notations}\label{sec:altinv}
+
+The principal stress of the stress tensor ${\bm \sigma}$ are $\sigma_1$, $\sigma_2$
+and $\sigma_3$ with $\sigma_1 \geq \sigma_2 \geq \sigma_3$.
+Following Wojciechowski \cite{wojc18}, we start by stating that the intermediate principal 
+stress can always be represented as a linear combination of two other stresses:
+\begin{equation}
+\sigma_2 = (1-b)\sigma_1 + b \sigma_3
+\qquad
+{\rm where}
+\qquad
+b = \frac{\sigma_1-\sigma_2}{\sigma_1-\sigma_3}\in [0,1]
+\end{equation}
+The quantity $b$ is called the principal stress ratio. \index{general}{Principal Stress Ratio}
+Let us now introduce the maximum shear plane stresses $\sigma_m$ and $\tau_m$ such that
+\footnote{Although most of this section is inspired by Wojciechowski \cite{wojc18}, 
+I have decided not to use his notations which are very confusing since he denotes $\sigma_m$ by $p$} 
+\begin{equation}
+\boxed{\sigma_m=\frac{\sigma_1+\sigma_3}{2}}
+\qquad
+\boxed{\tau_m=\frac{\sigma_1-\sigma_3}{2}}
+\end{equation}
+so that we have 
+\begin{eqnarray}
+\sigma_1 &=& \sigma_m+\tau_m \\
+\sigma_2 &=& \sigma_m-a\tau_m \\ 
+\sigma_3 &=& \sigma_m-\tau_m
+\end{eqnarray}
+The quantity $a\in[-1,1]$ is an equivalent measure of the principal stress ratio and 
+is defined as 
+\begin{equation}
+a=2b-1 =2 \frac{\sigma_1-\sigma_2}{\sigma_1-\sigma_3}-1=\frac{\sigma_1-2\sigma_2+\sigma_3}{\sigma_1-\sigma_3}
+\end{equation}
+We can introduce $a,p,q$ in the invariants above:
+\begin{eqnarray}
+{\cal I}_1({\bm \sigma}) 
+&=& \sigma_1 + \sigma_2 + \sigma_3 \nn\\
+&=& (\sigma_m+\tau_m) + (\sigma_m-a\tau_m) + (\sigma_m-\tau_m) \nn\\
+&=& 3\sigma_m -a\tau_m \\
+{\cal I}_2({\bm \tau}) 
+&=&\frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 +(\sigma_{2}-\sigma_{3})^2 +(\sigma_{1}-\sigma_{3})^2\right]\nn\\ 
+&=&\frac{1}{6}\left[(\sigma_m+\tau_m-\sigma_m+a\tau_m)^2 +(\sigma_m-a\tau_m-\sigma_m+\tau_m)^2 
++(\sigma_m+\tau_m-\sigma_m+\tau_m)^2\right]\nn\\ 
+&=&\frac{1}{6}\left[(\tau_m+a\tau_m)^2 +(-a\tau_m+\tau_m)^2 +(\tau_m+\tau_m)^2\right]\nn\\ 
+&=&\frac{\tau_m^2}{6}\left[(1+a)^2 +(-a+1)^2 + 4 \right]\nn\\ 
+&=&\frac{\tau_m^2}{6}\left[ 1+2a+a^2 +1 - 2a+a^2 + 4 \right]\nn\\ 
+&=&\frac{\tau_m^2}{3}\left( a^2 +3 \right)
+\end{eqnarray}
+Using the definition of the third invariant of Eq.~(\ref{eq:3rdinvb}):
+\begin{eqnarray}
+{\cal I}_3({\bm \tau}) 
+&=& \frac{1}{81} \left[
+(2\sigma_1-\sigma_2-\sigma_3)^3+
+(2\sigma_2-\sigma_1-\sigma_3)^3+
+(2\sigma_3-\sigma_1-\sigma_2)^3
+\right] \nn\\
+&=& \frac{1}{81} \left[
+(2\sigma_m+2\tau_m-\sigma_m+a\tau_m-\sigma_m+\tau_m)^3+
+(2\sigma_m-2a\tau_m-\sigma_m-\tau_m-\sigma_m+\tau_m)^3+
+(2\sigma_m-2\tau_m-\sigma_m-\tau_m-\sigma_m+a\tau_m)^3
+\right] \nn\\
+&=& \frac{1}{81} \left[ (2\tau_m+a\tau_m+\tau_m)^3+ (-2a\tau_m-\tau_m+\tau_m)^3+ (-2\tau_m-\tau_m+a\tau_m)^3 \right] \nn\\
+&=& \frac{\tau_m^3}{81} \left[ (3+a)^3+ (-2a)^3+ (-3+a)^3 \right] \nn\\
+&=& \frac{\tau_m^3}{81} \left[ 27 +9a + 3a^2 + a^3  -8a^3 -27 +9a -3a^2 + a^3 \right] \nn\\
+&=& \frac{\tau_m^3}{81} \left( 18a  -6 a^3  \right) \nn\\
+&=& \frac{2a \tau_m^3}{27} \left( 3 - a^2  \right) 
+\end{eqnarray}
+which is different than Eq. (14) of  Wojciechowski \cite{wojc18}!!
+
+To recap:
+\begin{eqnarray}
+\boxed{{\cal I}_1({\bm \sigma}) =  3\sigma_m -a\tau_m } 
+\qquad
+\boxed{{\cal I}_2({\bm \tau}) =\frac{\tau_m^2}{3}\left( a^2 +3 \right)}
+\qquad
+\boxed{{\cal I}_3({\bm \tau}) = \frac{2a \tau_m^3}{27} \left( 3 - a^2  \right) }
+\end{eqnarray}
+
+\begin{remark}
+Wojciechowski \cite{wojc18} defines the Lode angle \index{general}{Lode Angle} 
+as being the opposite of my definition in Eq.~\ref{eq:lodang}.
+\end{remark}
+
+Finally, we can show using Eqs.~(\ref{eq:sigma1},\ref{eq:sigma2},\ref{eq:sigma3}) that
+\begin{eqnarray}
+a 
+&=&\frac{\sigma_1-2\sigma_2+\sigma_3}{\sigma_1-\sigma_3} \nn\\
+&=& 
+\frac{
+\sqrt{{\cal I}_2({\bm \tau})} \left(-\frac{1}{\sqrt{3}}\sin \theta +\cos\theta \right) 
+-2
+\sqrt{{\cal I}_2({\bm \tau})} \left(\frac{2}{\sqrt{3}}\sin \theta   \right)   
++
+\sqrt{{\cal I}_2({\bm \tau})} \left(-\frac{1}{\sqrt{3}}\sin \theta- \cos \theta \right)  
+}{
+\sqrt{{\cal I}_2({\bm \tau})} \left(-\frac{1}{\sqrt{3}}\sin \theta +\cos\theta \right)
+- 
+\sqrt{{\cal I}_2({\bm \tau})} \left(-\frac{1}{\sqrt{3}}\sin \theta- \cos \theta \right)  
+}
+\nn \\
+&=& 
+\frac{
+\left(-\frac{1}{\sqrt{3}}\sin \theta +\cos\theta \right) 
+-2
+\left(\frac{2}{\sqrt{3}}\sin \theta   \right)   
++
+\left(-\frac{1}{\sqrt{3}}\sin \theta- \cos \theta \right)  
+}{
+\left(-\frac{1}{\sqrt{3}}\sin \theta +\cos\theta \right)
+- 
+\left(-\frac{1}{\sqrt{3}}\sin \theta- \cos \theta \right)  
+}
+\nn \\
+&=& 
+\frac{
+-\frac{6}{\sqrt{3}}\sin \theta  
+}
+{
+2\cos\theta
+}
+\nn\\
+&=& -\frac{3}{\sqrt{3}} \frac{\sin\theta}{\cos\theta} \nn\\
+&=& -\sqrt{3} \tan\theta
+\end{eqnarray}
+Here again we arrive at the opposite of Eq. (16) of Wojciechowski \cite{wojc18}. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

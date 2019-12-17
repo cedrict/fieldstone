@@ -95,29 +95,29 @@ for x in xvals:
                if abs(x+y+z-1e7)<eps:
                   MCfile_plane.write("%10e %10e %10e \n" %(x,y,z))
 
-            #Drucker-Prager inscribe
+            #Drucker-Prager circumscribe 
             if abs(sqrtI2tau-(-6*sinphi*I1sig/3 + 6*c*cosphi)/(sqrt3*(3-sinphi)))<eps:
-               DPifile.write("%10e %10e %10e \n" %(x,y,z))
-               if abs(x-y)<eps:
-                  DPifile_xy.write("%10e %10e %10e \n" %(x,y,z))
-               if abs(x+y+z-1e7)<eps:
-                  DPifile_plane.write("%10e %10e %10e \n" %(x,y,z))
-
-            #Drucker-Prager circumscribe
-            if abs(sqrtI2tau-(-6*sinphi*I1sig/3 + 6*c*cosphi)/(sqrt3*(3+sinphi)))<eps:
                DPcfile.write("%10e %10e %10e \n" %(x,y,z))
                if abs(x-y)<eps:
                   DPcfile_xy.write("%10e %10e %10e \n" %(x,y,z))
                if abs(x+y+z-1e7)<eps:
                   DPcfile_plane.write("%10e %10e %10e \n" %(x,y,z))
 
-            #Drucker-Prager circumscribe
-            if abs(sqrtI2tau-(-3*sinphi*I1sig/3 + 3*c*cosphi)/np.sqrt(9+3*sinphi**2))<eps:
+            #Drucker-Prager middle-circumscribe
+            if abs(sqrtI2tau-(-6*sinphi*I1sig/3 + 6*c*cosphi)/(sqrt3*(3+sinphi)))<eps:
                DPmfile.write("%10e %10e %10e \n" %(x,y,z))
                if abs(x-y)<eps:
                   DPmfile_xy.write("%10e %10e %10e \n" %(x,y,z))
                if abs(x+y+z-1e7)<eps:
                   DPmfile_plane.write("%10e %10e %10e \n" %(x,y,z))
+
+            #Drucker-Prager inscribe
+            if abs(sqrtI2tau-(-3*sinphi*I1sig/3 + 3*c*cosphi)/np.sqrt(9+3*sinphi**2))<eps:
+               DPifile.write("%10e %10e %10e \n" %(x,y,z))
+               if abs(x-y)<eps:
+                  DPifile_xy.write("%10e %10e %10e \n" %(x,y,z))
+               if abs(x+y+z-1e7)<eps:
+                  DPifile_plane.write("%10e %10e %10e \n" %(x,y,z))
 
 
 

@@ -21,23 +21,21 @@ Huber (1904), in a paper in Polish, anticipated to some extent this criterion.
 Heinrich Hencky formulated the same criterion as von Mises independently in 1924 \cite{henc24,tata03}.
 This criterion is also referred to as the Maxwell-Huber-Hencky-von Mises theory. 
 
-The von Mises yield criterion (also known as Prandtl-Reuss yield criterion) is expressed in the principal stresses as
+The von Mises yield criterion (also known as Prandtl-Reuss yield criterion) 
+is expressed in the principal stresses as
 \[
-\sigma_v=\sqrt{3 {\cal I}_2({\bm \tau}) } = \sigma_Y \quad \text{or}, \quad {(\sigma_1 - \sigma_2)^2 + (\sigma_2 - \sigma_3)^2 + (\sigma_3 - \sigma_1)^2 = 2 {\sigma_y}^2 }\!
+\sqrt{{\cal I}_2({\bm \tau})} = c \quad \text{or}, \quad 
+\frac{1}{6}[(\sigma_1 - \sigma_2)^2 + (\sigma_2 - \sigma_3)^2 + (\sigma_3 - \sigma_1)^2] =  c^2 
 \]
-where $\sigma_Y$ is the yield stress in uniaxial tension.
-
-%Define $k=\sigma_Y/\sqrt{3}$ and 
+where $c$ is the yield stress in uniaxial tension.
 The von Mises yield criterion writes:
 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-F^{\text{\tiny VM}}= \sqrt{ {\cal I}_2({\bm \tau})  } - \frac{2c}{\sqrt{3}}  \label{vmcrit}
+F^{\text{\tiny VM}}= \sqrt{{\cal I}_2({\bm \tau})  } - c  \label{vmcrit}
 \end{equation}
 \end{mdframed}
-
-which is purposely the Drucker-Prager criterion with $\phi=0$.
-
+which is the Drucker-Prager criterion with $\phi=0$.
 
 The following figure shows the von Mises yield surface in the three-dimensional space of principal stresses. 
 \begin{center}
@@ -50,34 +48,22 @@ It is a circular cylinder of infinite length with its axis inclined at equal ang
 %\begin{center}
 %\includegraphics[width=0.6\textwidth]{RHEOLOGY/viscoplasticity/vMcriterion.pdf}
 %\end{center}
-\newpage
-
-Let us try to draw the yield function in the space $\sigma_1,\sigma_2,\sigma_3$. It is given by
-\[
-\sqrt{ {\cal I}_2({\bm \tau}) } = c 
-\]
-\[
-{\cal I}_2({\bm \tau})  = c^2 
-\]
-\[
-\frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 + (\sigma_{1}-\sigma_{3})^2 \right] 
-=c^2
-\]
-VERIFY 1/6
-\[
-(\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 + (\sigma_{1}-\sigma_{3})^2 = 6c^2 
-\]
-or, 
-\[
-(x-y)^2 + (y-z)^2 + (x-z)^2 = 6c^2 
-\]
-\[
-(x-y)^2 + y^2 - 2yz + z^2 + x^2 -2xz +z^2 = 6c^2
-\]
-\[
-2z^2 - 2(x+y)z + (x-y)^2+x^2+y^2-6c^2 = 0
-\]
-This is a second order polynomial in $z$. 
+\paragraph{The yield surface} Let us try to draw the yield function in 
+the space $\sigma_1,\sigma_2,\sigma_3$. It is given by
+\begin{eqnarray}
+&&\sqrt{ {\cal I}_2({\bm \tau}) } = c \\
+&\Rightarrow&  {\cal I}_2({\bm \tau})  = c^2 \\
+&\Rightarrow& \frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 
++ (\sigma_{1}-\sigma_{3})^2 \right] =c^2 \\
+&\Rightarrow & (\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 + (\sigma_{1}-\sigma_{3})^2 = 6c^2 
+\end{eqnarray}
+or, temporarily setting $x=\sigma_1$, $y=\sigma_2$ and $z=\sigma_3$: 
+\begin{eqnarray}
+(x-y)^2 + (y-z)^2 + (x-z)^2 &=& 6c^2 \\
+(x-y)^2 + y^2 - 2yz + z^2 + x^2 -2xz +z^2 &=& 6c^2\\
+2z^2 - 2(x+y)z + (x-y)^2+x^2+y^2-6c^2 &=& 0
+\end{eqnarray}
+This is a second order polynomial in $z$. Its discriminant $\Delta$ is
 \begin{eqnarray}
 \Delta 
 &=& 4(x+y)^2 - 4 \cdot 2 \cdot [(x-y)^2+x^2+y^2-6c^2] \nn\\
@@ -88,8 +74,8 @@ This is a second order polynomial in $z$.
 &=& -12(x^2 -2xy + y^2)  + 48 c^2 \nn\\
 &=& -12(x-y)^2  + 48 c^2 \nn
 \end{eqnarray}
-
-$\Delta >0$ imposes a restriction on $x,y$:
+Since I am looking for $z(x,y)\in \mathbb{R}$ then $\Delta >0$ and this 
+imposes a restriction on admissble $x,y$ pairs:
 \[
  -12(x-y)^2  + 48 c^2 \nn > 0
 \]
@@ -118,28 +104,9 @@ z= \frac{2(x+y) \pm \sqrt{\Delta}}{4}
 \]
 which means that for each pair $x,y$ there are 2 $z$ values. 
 The middle of this surface is given by the line $z=(x+y)/2$. 
-The plane normal to this lane is given by $z=-2(x+y)$.
+The plane normal to this line is given by $z=-2(x+y)$.
 
-For the points on this plane,
-\[
-(x-y)^2 + (y-z)^2 + (x-z)^2 = 6c^2 
-\]
-\[
-(x-y)^2 + (y+2(x+y))^2 + (x+2(x+y))^2 = 6c^2 
-\]
-
-%For $x=y$, we have $\Delta=48c^2$ and 
-%\[
-%z= \frac{2(x+y) \pm c 4\sqrt{3}}{4}
-%\]
-
-For Tresca: 
-\[
-2\sqrt{ {\cal I}_2({\bm \tau})  } \cos \theta - c 
-\]
-
-
-
-
+This approach is reasonably simple for the von Mises criterion but 
+quicly becomes untractable for other criteria.
 
 \newpage

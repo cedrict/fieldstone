@@ -158,7 +158,7 @@ theta=0.1/180.*np.pi
 #rheology=3: gbs
 #rheology=4: disl+gbs
 
-rheology=3
+rheology=4
 
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction

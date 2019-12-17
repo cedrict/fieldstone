@@ -18,6 +18,7 @@ plot[1e14:1e16][]\
  'nueffs_r3.ascii' u 4:2 w lp ps 0.5 t 'GBS' ,\
 263 lt -1 notitle
 
+#############################################################
 reset 
 
 set ylabel 'y (m)'
@@ -31,12 +32,14 @@ plot[][]\
 'rh1/core1.ascii' u 3:2 w lp ps .5 t 'Glen',\
 'rh2/core1.ascii' u 3:2 w lp ps .5 t 'Disl',\
 'rh3/core1.ascii' u 3:2 w lp ps .5 t 'GBS',\
+'rh4/core1.ascii' u 3:2 w lp ps .5 t 'Disl+GBS',\
 
 set output 'u_core2.pdf'
 plot[][]\
 'rh1/core2.ascii' u 3:2 w lp ps .5 t 'Glen',\
 'rh2/core2.ascii' u 3:2 w lp ps .5 t 'Disl',\
-'rh3/core2.ascii' u 3:2 w lp ps .5 t 'GBS'
+'rh3/core2.ascii' u 3:2 w lp ps .5 t 'GBS',\
+'rh4/core2.ascii' u 3:2 w lp ps .5 t 'Disl+GBS',\
 
 
 set xlabel '{/Symbol e}_e'
@@ -46,13 +49,14 @@ plot[1e-14:][]\
 'rh1/core1.ascii' u 11:2 w lp ps .5 t 'Glen',\
 'rh2/core1.ascii' u 11:2 w lp ps .5 t 'Disl',\
 'rh3/core1.ascii' u 11:2 w lp ps .5 t 'GBS',\
+'rh4/core1.ascii' u 11:2 w lp ps .5 t 'Disl+GBS',\
 
 set output 'sr_core2.pdf'
 plot[1e-14:][]\
 'rh1/core2.ascii' u 11:2 w lp ps .5 t 'Glen',\
 'rh2/core2.ascii' u 11:2 w lp ps .5 t 'Disl',\
-'rh3/core2.ascii' u 11:2 w lp ps .5 t 'GBS'
-
+'rh3/core2.ascii' u 11:2 w lp ps .5 t 'GBS',\
+'rh4/core2.ascii' u 11:2 w lp ps .5 t 'Disl+GBS',\
 
 set xlabel '{/Symbol h}'
 set output 'eta_core1.pdf'
@@ -60,13 +64,15 @@ plot[][]\
 'rh1/core1.ascii' u 12:2 w lp ps .5 t 'Glen',\
 'rh2/core1.ascii' u 12:2 w lp ps .5 t 'Disl',\
 'rh3/core1.ascii' u 12:2 w lp ps .5 t 'GBS',\
+'rh4/core1.ascii' u 12:2 w lp ps .5 t 'Disl+GBS',\
 
 unset log xy
 set output 'eta_core2.pdf'
 plot[][]\
 'rh1/core2.ascii' u 12:2 w lp ps .5 t 'Glen',\
 'rh2/core2.ascii' u 12:2 w lp ps .5 t 'Disl',\
-'rh3/core2.ascii' u 12:2 w lp ps .5 t 'GBS'
+'rh3/core2.ascii' u 12:2 w lp ps .5 t 'GBS',\
+'rh4/core2.ascii' u 12:2 w lp ps .5 t 'Disl+GBS',\
 
 
 set xlabel 'dev stress xx (Pa)'
@@ -75,12 +81,14 @@ plot[][]\
 'rh1/core1.ascii' u (2*$12*$8):2 w lp ps .5 t 'Glen',\
 'rh2/core1.ascii' u (2*$12*$8):2 w lp ps .5 t 'Disl',\
 'rh3/core1.ascii' u (2*$12*$8):2 w lp ps .5 t 'GBS',\
+'rh4/core1.ascii' u (2*$12*$8):2 w lp ps .5 t 'Disl+GBS',\
 
 set output 'sigmaxx_core2.pdf'
 plot[][]\
 'rh1/core2.ascii' u (2*$12*$8):2 w lp ps .5 t 'Glen',\
 'rh2/core2.ascii' u (2*$12*$8):2 w lp ps .5 t 'Disl',\
 'rh3/core2.ascii' u (2*$12*$8):2 w lp ps .5 t 'GBS',\
+'rh4/core2.ascii' u (2*$12*$8):2 w lp ps .5 t 'Disl+GBS',\
 
 
 set xlabel 'dev stress yy (Pa)'
@@ -89,12 +97,14 @@ plot[][]\
 'rh1/core1.ascii' u (2*$12*$9):2 w lp ps .5 t 'Glen',\
 'rh2/core1.ascii' u (2*$12*$9):2 w lp ps .5 t 'Disl',\
 'rh3/core1.ascii' u (2*$12*$9):2 w lp ps .5 t 'GBS',\
+'rh4/core1.ascii' u (2*$12*$9):2 w lp ps .5 t 'Disl+GBS',\
 
 set output 'sigmayy_core2.pdf'
 plot[][]\
 'rh1/core2.ascii' u (2*$12*$9):2 w lp ps .5 t 'Glen',\
 'rh2/core2.ascii' u (2*$12*$9):2 w lp ps .5 t 'Disl',\
 'rh3/core2.ascii' u (2*$12*$9):2 w lp ps .5 t 'GBS',\
+'rh4/core2.ascii' u (2*$12*$9):2 w lp ps .5 t 'Disl+GBS',\
 
 set xlabel 'dev stress xy (Pa)'
 set output 'sigmaxy_core1.pdf'
@@ -102,12 +112,14 @@ plot[][]\
 'rh1/core1.ascii' u (2*$12*$10):2 w lp ps .5 t 'Glen',\
 'rh2/core1.ascii' u (2*$12*$10):2 w lp ps .5 t 'Disl',\
 'rh3/core1.ascii' u (2*$12*$10):2 w lp ps .5 t 'GBS',\
+'rh4/core1.ascii' u (2*$12*$10):2 w lp ps .5 t 'Disl+GBS',\
 
 set output 'sigmaxy_core2.pdf'
 plot[][]\
 'rh1/core2.ascii' u (2*$12*$10):2 w lp ps .5 t 'Glen',\
 'rh2/core2.ascii' u (2*$12*$10):2 w lp ps .5 t 'Disl',\
 'rh3/core2.ascii' u (2*$12*$10):2 w lp ps .5 t 'GBS',\
+'rh4/core2.ascii' u (2*$12*$10):2 w lp ps .5 t 'Disl+GBS',\
 
 
 
