@@ -193,7 +193,7 @@ $\eta_{eff} \rightarrow m \tau_0$.
 
 \todo[inline]{Channel flow of wikipedia with analytical solution!}
 
-\Literature: \cite{madd13}. Check dam break problem of \cite{anco09,coan09,bafp09,tagm09,miga09}.
+\Literature: \cite{madd13,mazf}. Check dam break problem of \cite{anco09,coan09,bafp09,tagm09,miga09}.
 
 
 \mscthesis\index{general}{MSc Thesis}: redo the sinking sphere in Bingham or herschel-Bulkley fluid experiment \cite{bemj04}. 
@@ -615,6 +615,7 @@ The second plot is in the plane $\sigma_1+\sigma_2+\sigma_3=0$ which is perpendi
 $\sigma_1=\sigma_2=\sigma_3=0$. To facilitate plotting the envelopes are plotted as a function of $\sigma_1$ only (so that even though their are circles in the chosen plane they appear here as ellipses):
 
 \begin{center}
+\includegraphics[width=12cm]{images/rheology/surfaces/surfaces_plane2.pdf}
 \includegraphics[width=12cm]{images/rheology/surfaces/surfaces_plane.pdf}
 \end{center}
 
@@ -820,7 +821,7 @@ consists of a Newtonian damper and Hookean elastic spring connected in parallel
 
 
 %...........................................
-\subsubsection{Elasto-Visco-Plasticity} 
+\subsubsection{Elasto+Visco+Plasticity ?}
 \index{general}{Elasto-Visco-Plasticity}
 
 When multiple viscous deformation mechanisms are present, one needs more dashpots, and 
@@ -831,14 +832,10 @@ Two important rules are to be remembered:
 \item for components in series, stresses are equal in each and strain rates are additive. 
 \end{itemize}
 
-\vspace{.5cm}
-
-In what follows I present a few examples of configurations.
-
 \input{tikz_dashpotdashpot}
 
 \begin{itemize}
-\item two viscous dampers in series: each is subjected to the same stress $\tau$ but deforms 
+\item \underline{two viscous dampers in series:} each is subjected to the same stress $\tau$ but deforms 
 with its own strain rate $\dot{\varepsilon}_1$ and $\dot{\varepsilon}_2$ and we have 
 \begin{equation}
 \dot{\varepsilon}_T 
@@ -848,7 +845,7 @@ with its own strain rate $\dot{\varepsilon}_1$ and $\dot{\varepsilon}_2$ and we 
 The effective viscosity of this combination is denoted $\eta_{eff}$ and is such that 
 $\eta_{eff}=\tau/2\dot{\varepsilon}_T$, which means that 
 \[
-\frac{tau}{2\dot{\varepsilon}_T} = \frac{\tau}{2\eta_1} + \frac{\tau}{2\eta_2}
+\frac{\tau}{2\dot{\varepsilon}_T} = \frac{\tau}{2\eta_1} + \frac{\tau}{2\eta_2}
 \]
 or, 
 \[
@@ -865,7 +862,8 @@ In general, for n dampers in series:
 
 
 
-\item two viscous dampers in parallel: each is deforms with the same strain rate $\dot{\varepsilon}_T$
+\item \underline{two viscous dampers in parallel:} 
+each is deforms with the same strain rate $\dot{\varepsilon}_T$
 and their stresses add up:
 \[
 \tau = \tau_1 + \tau_2 = 2 \eta_1 \dot{\varepsilon}_T  + 2 \eta_2 \dot{\varepsilon}_T
@@ -882,7 +880,7 @@ i.e., the effective viscosity of two or more viscous dampers is the sum of their
 but not their arithmetic mean!}).
 
 
-\item on viscous damper and a plastic element in parallel:
+\item \underline{one viscous damper and a plastic element in parallel}:
 the effective viscosity is then  
 \[
 \eta_{eff} = \frac{Y}{2 \dot{\varepsilon}_T}+\eta_m
@@ -891,11 +889,11 @@ which is the viscosity of a Bingham fluid (see Section~\ref{sec:bingham}).
 
 
 
-\item two viscous dampers and a plastic element arranged as follows:
+\item \underline{two viscous dampers and a plastic element} arranged as follows:
 \begin{center}
 \input{tikz_vvp}
 \end{center}
-
+This rheology would be called visco-viscoplastic.
 The algorithm goes then as follows:
 \begin{enumerate}
 \item Assume we know $\eta_v$ and $\dot\varepsilon_T$ (from previous iteration), as well as the plasticity parameters $Y$ and $\eta_m$.

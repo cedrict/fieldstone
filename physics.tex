@@ -29,7 +29,7 @@ The skew-symmetric tensor is called spin tensor (or vorticity tensor):
 
 \begin{remark}
 In the mathematical literature a different notation for the strain rate tensor is often used, i.e. 
-$D(\vec \upnu)$, such as for instance in \cite{full95}.
+$D(\vec \upnu)$, such as for instance in Fullsack (1995) \cite{full95}.
 \end{remark}
 
 %.............................................
@@ -86,8 +86,8 @@ is not equivalent to the thermodynamic pressure $p$
 \overline{p}=p - \zeta (\vec\nabla\cdot\vec\upnu)
 \end{equation}
 In other words: the isotropic average of the total stress is {\sl not} the pressure term!
-This difference is usually neglected (and it is safe to do so, see \cite[section 7.02.3.2.2]{berc09}) by explicitly assuming $\zeta=0$
-(also called the Stokes assumption \cite[p256]{scto01}), 
+This difference is usually neglected (and it is safe to do so, see \cite[section 7.02.3.2.2]{berc09}) 
+by explicitly assuming $\zeta=0$ (also called the Stokes assumption \cite[p256]{scto01}), 
 so that one can then refer to pressure as a single well-defined value.
 Note that in the case of an incompressible Newtonian Fluid, 
 the strain rate tensor is deviatoric $({\text tr}(\dot{\bm \varepsilon}) = \text{div}(\vec\upnu) =0)$ and the above considerations vanish.
@@ -101,7 +101,7 @@ Finally, for both compressible and incompressible flow, the stress tensor become
 where ${\bm \tau} = 2\eta \dot{\bm \varepsilon}^d$ is the deviatoric stress tensor.
 
 \begin{remark}
-On page 256 of \cite{scto01}, equation 6.5.3, the authors write $\tau_{ii}/3=k_B e_{ii}$ while stating that $\tau$ is deviatoric in equation 6.4.2. 
+On page 256 of Schubert, Turcotte and Olson \cite{scto01}, equation 6.5.3, the authors write $\tau_{ii}/3=k_B e_{ii}$ while stating that $\tau$ is deviatoric in equation 6.4.2. 
 This is an obvious conflict of notations. 
 \end{remark}
 
@@ -112,10 +112,12 @@ Let us start from the heat transport equation as shown in Schubert, Turcotte and
 \begin{equation}
 \rho C_p \frac{DT}{Dt} - \alpha T \frac{Dp}{Dt} = {\vec \nabla} \cdot k {\vec \nabla} T + \Phi + \rho H  
 \end{equation}
-with $D/Dt$ being the total derivatives so that 
+with $D/Dt$ being the total derivatives, i.e. 
 \begin{equation}
 \frac{DT}{Dt} = \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec \nabla}T
-\quad\quad
+\qquad
+\text{and}
+\qquad
 \frac{Dp}{Dt} = \frac{\partial p}{\partial t} + {\vec \upnu}\cdot {\vec \nabla}p
 \end{equation}
 Solving for temperature, this equation is often rewritten as follows:
@@ -173,13 +175,24 @@ Using the relationship ${\bm \tau} = 2 \eta \dot{\bm \varepsilon}^d$ we arrive a
 
 %------------------------------------------------------------------------
 \subsection{The mass conservation equations} 
-\index{general}{Solenoidal Field} \index{general}{Divergence-free}
+\index{general}{Solenoidal Field} 
+\index{general}{Divergence-free}
 
 The mass conservation equation is given by
 \[
 \frac{D\rho}{Dt} + \rho {\vec \nabla}\cdot{\vec \upnu} = 0
 \]
-or, 
+or, since 
+\[
+\frac{D\rho}{Dt} = \frac{\partial \rho}{\partial t} + {\vec \upnu}\cdot {\vec \nabla}\rho
+\]
+then 
+\[
+\frac{D\rho}{Dt} + \rho {\vec \nabla}\cdot{\vec \upnu} = 
+\frac{\partial \rho}{\partial t} + {\vec \upnu}\cdot {\vec \nabla}\rho
+ + \rho {\vec \nabla}\cdot{\vec \upnu} = 0 
+\]
+and finally:
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
 \frac{\partial \rho}{\partial t} + {\vec \nabla}\cdot(\rho {\vec \upnu}) = 0
@@ -375,7 +388,7 @@ The Navier-Stokes equations of motion for an incompressible fluid with uniform v
 \Delta \upnu_\phi + \frac{2}{r^2 \sin\theta} \frac{\partial \upnu_r}{\partial \phi}
 -\frac{\upnu_\phi}{r^2 \sin^2 \theta} + \frac{2 \cot \theta}{r^2 \sin\theta}
 \frac{\partial \upnu_\theta}{\partial \phi}
-\right) \\
+\right) \nn\\
 \end{eqnarray}
 where The Lagrangian or material derivative is
 \[
@@ -403,7 +416,8 @@ In some cases the assumption can be made that the object we wish to sudy has an
 axisymmetric geometry, for example a plume:
 
 \begin{center}
-\includegraphics[width=5cm]{images/axisymmetry/keki97}
+\includegraphics[width=5cm]{images/axisymmetry/keki97}\\
+{\captionfont Taken from Kellogg \& King (1997) \cite{keki97}.}
 \end{center}
 
 Assuming the flow velocity does not depend on $\phi$ ($\partial_\phi =0$) and therefore also that $\upnu_\phi=0$
@@ -558,7 +572,7 @@ Hooke's law\footnote{\url{https://en.wikipedia.org/wiki/Hooke's_law}}:
 \text{or}
 \qquad
 {\bm \sigma} = {\bm C} : {\bm \varepsilon}
-\label{eq:one}
+\label{eq:oone}
 \end{equation}
 where ${\bm C}$ is the fourth-order elastic tensor.
 
@@ -568,7 +582,7 @@ For isotropic media (which have the same physical properties in any direction), 
 can be reduced to only two independent numbers (for example the bulk modulus $K$ and the shear modulus $G$ 
 that quantify the material's resistance to changes in volume and to shearing deformations, respectively). 
 
-One often then write Eq.~\label{eq:one} as follows:
+One often then write Eq.~\eqref{eq:oone} as follows:
 %\sigma_{ij}=\lambda \varepsilon_{kk} \delta_{ij} + 2\mu \varepsilon_{ij}
 
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -586,7 +600,6 @@ The strain tensor is related to the displacement as follows: \index{general}{Str
 \[
 {\bm \varepsilon} = \frac{1}{2}(\vec{\nabla}\vec{u} + (\vec{\nabla}\vec{u})^T)
 \]
-
 The incompressibility (or bulk modulus) $K$ is defined as $p=-K \vec{\nabla}\cdot\vec{u}$ 
 where $p$ is the pressure with \index{general}{Bulk Modulus}
 \begin{eqnarray}
@@ -595,7 +608,17 @@ p&=&-\frac{1}{3} \text{tr}({\bm \sigma}) \nonumber\\
  &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u})  3  + 2 \mu  (\vec{\nabla}\cdot\vec{u}) ] \nonumber\\
  &=& -\left[ \lambda + \frac{2}{3} \mu \right] (\vec{\nabla}\cdot\vec{u})  
 \end{eqnarray}
-so that $K=\lambda+\frac{2}{3}\mu$.
+so that 
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+p=-K \vec{\nabla}\cdot\vec{u} 
+\qquad
+\text{with}
+\qquad
+K=\lambda+\frac{2}{3}\mu
+\]
+\end{mdframed}
+
 
 %or
 %\[
@@ -604,7 +627,7 @@ so that $K=\lambda+\frac{2}{3}\mu$.
 
 
 \begin{remark}
-Eq. (\ref{eq:one}) and (\ref{eq:twoELAST}) are analogous to the ones that one has to solve
+Eq. (\ref{eq:oone}) and (\ref{eq:twoELAST}) are analogous to the ones that one has to solve
 in the context of viscous flow using the penalty method. In this case $\lambda$ is the penalty coefficient, 
 ${\bm u}$ is the velocity, and $\mu$ is then the dynamic viscosity.
 \end{remark}
@@ -631,7 +654,7 @@ direction of this stress.
 
 The strain rate tensor $\dot{\bm\varepsilon}$ is given by
 \begin{equation}
-\dot{\bm \varepsilon} = \frac{1}{2}( {\vec \nabla}{\vec \upnu}+ ({\vec \nabla}{\vec \upnu})^T) 
+\dot{\bm \varepsilon}({\vec \upnu}) = \frac{1}{2}( {\vec \nabla}{\vec \upnu}+ ({\vec \nabla}{\vec \upnu})^T) 
 \end{equation}
 
 %.....................................
@@ -1302,8 +1325,8 @@ invariants\footnote{\url{https://en.wikipedia.org/wiki/Invariants_of_tensors}}
 (see also Appendix A.1 of Zienkiewicz \& Taylor \cite{zita2}). 
 These invariants can be written in a coordinate-free manner:
 \begin{eqnarray}
-K_1({\bm \sigma}) &=& Tr({\bm \sigma})  \nn\\
-K_2({\bm \sigma}) &=& \frac{1}{2}(  Tr({\bm \sigma}) ^2 - Tr({\bm \sigma}^2)  ) \nn\\
+K_1({\bm \sigma}) &=& tr({\bm \sigma})  \nn\\
+K_2({\bm \sigma}) &=& \frac{1}{2}(  tr({\bm \sigma}) ^2 - tr({\bm \sigma}^2)  ) \nn\\
 K_3({\bm \sigma}) &=& \det ({\bm \sigma}) \nn
 \end{eqnarray}
 and if the stress tensor is diagonal, we have
@@ -1429,7 +1452,7 @@ ${\bm \sigma}=-p {\bm 1} + {\bm \tau}$ writes:
 \end{array}
 \right)
 \]
-so that (since $p=-\frac{1}{3}Tr({\bm \sigma})=-\frac{1}{3}{\cal I}_1({\bm \sigma})$) 
+so that (since $p=-\frac{1}{3}tr({\bm \sigma})=-\frac{1}{3}{\cal I}_1({\bm \sigma})$) 
 \begin{eqnarray}
 \sigma_1 &=& \tau_1 - p = \tau_1 + \frac{1}{3}{\cal I}_1({\bm \sigma})\\ 
 \sigma_2 &=& \tau_2 - p = \tau_2 + \frac{1}{3}{\cal I}_1({\bm \sigma})\\ 
@@ -1599,14 +1622,14 @@ Given a tensor $\bm{T}$,  one can compute its (moment) invariants as follows
 
 \begin{eqnarray}
 {\cal I}_1({\bm T}) 
-&=& Tr[\bm{T}] \\
+&=& tr[\bm{T}] \\
 &=& T_{xx} + T_{yy} + T_{zz} \\ 
 {\cal I}_2({\bm T}) 
-&=& \frac{1}{2} Tr[{\bm T}\cdot{\bm T}] \\
+&=& \frac{1}{2} tr[{\bm T}\cdot{\bm T}] \\
 &=& \frac{1}{2} \sum_{ij} T_{ij} T_{ji} \\
 &=& \frac{1}{2} (T_{xx}^2 + T_{yy}^2 + T_{zz}^2) + T_{xy}^2 + T_{xz}^2 + T_{yz}^2 \\ 
 {\cal I}_3({\bm T}) 
-&=& \frac{1}{3} Tr[{\bm T}\cdot{\bm T}\cdot {\bm T}]   \\
+&=& \frac{1}{3} tr[{\bm T}\cdot{\bm T}\cdot {\bm T}]   \\
 &=& \frac{1}{3}\sum_i\sum_j \sum_k T_{ij} T_{jk} T_{ki}  \\
 &=& \frac{1}{3} (T_{xx} ( T_{xx}T_{xx} + T_{xy}T_{xy} + T_{xz}T_{xz} )) \qquad (i=j=x,k=x,y,z)\nn\\ 
 &+& \frac{1}{3} (T_{yy} ( T_{yx}T_{yx} + T_{yy}T_{yy} + T_{yz}T_{yz} )) \qquad (i=j=y,k=x,y,z)\nn\\ 
@@ -1694,8 +1717,8 @@ then the invariants are
 {\cal I}_2({\bm \tau}) &=& \frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 
 + (\sigma_{1}-\sigma_{3})^2 \right] \\ 
 {\cal I}_3({\bm \tau}) 
-&=& \frac{1}{3} Tr[{\bm \tau}\cdot{\bm \tau}\cdot {\bm \tau}]  \nn\\
-&=& \frac{1}{3} Tr
+&=& \frac{1}{3} tr[{\bm \tau}\cdot{\bm \tau}\cdot {\bm \tau}]  \nn\\
+&=& \frac{1}{3} tr
 \left[
 \left(
 \begin{array}{ccc}
@@ -1721,7 +1744,7 @@ then the invariants are
 \end{array}
 \right)
 \right] \nn\\
-&=&  \frac{1}{3} Tr
+&=&  \frac{1}{3} tr
 \left(
 \begin{array}{ccc}
 \tau_1^3 & 0 & 0 \\
