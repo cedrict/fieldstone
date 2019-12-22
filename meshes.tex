@@ -274,13 +274,65 @@ Edges are line segments, facets are strictly {\bf planar} convex polygons.
 \includegraphics[width=6cm]{images/meshes/hexa2}
 \end{center}
 
+\Literature Efficient Volume computation for Three- Dimensional hexahedral Cells \cite{duko88}
+
 %.......................................
 \subsubsection{Adaptive Mesh Refinement}
 \index{general}{AMR} \index{general}{Adaptive Mesh Refinement}
 
-\Literature: \cite{bugg10}\cite{beck10}\cite{lezh11} \cite[sect 3]{bugs09} \cite{beck10} \cite{dadh07}
-\cite{svna18}
+Let us do a simple calculation and assume we wish to model mantle convection on Earth. 
+The inner radius is $R_1=$3485km and the bottom of the lithosphere is at $R_2=$6250km. 
+The volume of fluid is then 
+\[
+V = \frac{4}{3}\pi (R_2^3-R_1^3) \simeq 8.5\times 10^{11} \text{km}^3
+\]
+Let us further assume that we are satisfied with an average resolution of 10km. 
+Each element/cell is then $10^3\text{km}^3$ and the total number of elements/cell is then 
+\[
+N \simeq 8.5 \times 10^8 \sim {\cal O}(10^9)
+\]
+This is a very large number. The resulting linear systems from the discretisation of the 
+equations on such a mesh will be very even larger for the Stokes equations and solving 
+these systems will require very large numbers of CPUs and long compute times. 
 
+Aside from these considerations it is quite obvious that a high resolution mesh is not needed 
+in parts of the mantle where large scale upwellings and downwellings occur, but 
+probably even higher resolution will be needed in the vicinity of thin plumes and boundary layers. 
+This means that a uniform mesh is a sub-optimal way of discretising space for such problems. 
+
+The same reasoning also holds in the lithosphere where for instance narrow plate boundaries need to 
+be adequately resolved while the inside of rigid plates can be modelled with coarser meshes. 
+
+Finally, although one could employ meshing software to arrive at well balanced meshes in space, the 
+dynamic character of the geodynamics modelling renders this approach cumbersome. A subduction zone, 
+a mid-ocean rift or an ascending plume will evolve in time and the mesh will have to evolve in time too. 
+
+In light of all this, it was only a matter of time before Adaptive Mesh Refinement was adopted 
+in computatinal geodynamics. However, since the use and update of such meshes is somewhat 
+complex in terms of numerical algorithms, its introduction came somewhat late (00's and later).
+The DOUAR code (see Section~\ref{app:codes}) developed originally by J. Braun and Ph. Fullsack 
+is a prime example of an early multi-purpose code relying on a self-written Octree library \cite{brtf08}.
+More recently the ASPECT code was developed on top of the Octree library p4est \cite{buwg11}
+
+For further reading I suggest you read the review by May, Schellart \& Moresi on this topic \cite{masm13}.
+
+\begin{center}
+\includegraphics[height=6cm]{images/meshes/bugg08.jpg}
+\includegraphics[height=6cm]{images/meshes/bugg10.jpg}\\
+{\captionfont Taken from \cite{bugg08} and \cite{bugg10}}
+\end{center}
+
+\begin{center}
+\includegraphics[height=3.8cm]{images/meshes/gltf18.jpg}\\
+{\captionfont Taken from \cite{gltf18}}
+\end{center}
+
+
+\Literature: \cite{bugg08,bugg10}\cite{lezh11} \cite[sect 3]{bugs09} \cite{dadh07}
+\cite{svna18} \cite{mish11}
+
+
+\paragraph{A short illustrative exercise}
 \input{amr_exercise}
 
 
@@ -335,8 +387,8 @@ Although so-called latitude-longitude grids would seem appealing, they suffer fr
 and the juxtaposition of triangles near the poles and quadrilaterals elsewhere. 
 As a consequence more regular, but more complex, grids have been designed over the years which tesselate the surface of the 
 sphere into triangles or quadrilaterals (sometimes overlapping).
-There is the 'cubed sphere' \cite{roip96,heta03,sthh06,chcc07,brmw10,yiym19},
-the ying-yang grid \cite{kasa04,yoka04,kaks08,tack08,crta14,crta16},
+There is the 'cubed sphere' \cite{roip96,heta03,chob05,sthh06,chcc07,brmw10,yiym19},
+the ying-yang grid \cite{kasa04,yoka04,yoka06,kaks08,tack08,crta14,crta16},
 the ying-yang-zhong grid \cite{haka16}, the spiral grid \cite{hust08}, 
 an icosahedron-based grid \cite{bafr85,tasu01},
 or a grid composed of 12 blocks further subdivided into quadrilaterals \cite{zhzm00} as used in the CitcomS code.

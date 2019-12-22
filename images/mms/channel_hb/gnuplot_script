@@ -1,0 +1,52 @@
+set term pdf enhanced
+
+
+n=1.
+Pi=-1e6
+eta0=1.e25
+eps0=1e-15
+H=100e3
+K=1e24
+
+delta=2*eps0*eta0/abs(Pi)
+
+
+x1=0.5*H-delta
+x2=0.5*H+delta
+
+print(delta)
+print(x1)
+print(x2)
+
+print(Pi/eta0*delta)
+
+set xtics 10e3
+exy1(x)=(pi/K*(x-x1)+ (-0.5*Pi/eta0*delta)**n  )**(1./n)
+exy2(x)=0.5*Pi/eta0*(x-H/2)
+exy3(x)=-(-pi/K*(x-x2)+ (-0.5*Pi/eta0*delta)**n  )**(1./n)
+
+set output 'exy.pdf'
+plot[0:H][]\
+exy1(x) t 'exy_1',\
+exy2(x) t 'exy_2',\
+exy3(x) t 'exy_3'
+
+XY= (-0.5*Pi/eta0*delta)**n
+
+u1(x)=2*n/(n+1)*K/Pi*\
+( \
+  ( Pi/K*(x-x1)+ XY**n )**(1.+1./n)  \
+- \
+- ( -Pi/K*x1 + XY**n )**(1.+1./n)  \
+ )
+u2(x)=0.5*Pi/eta0*(x**2-x*H) + 0
+u3(x)=0
+
+set output 'velocity.pdf'
+plot[0:H][]\
+u1(x) t 'u_1',\
+u2(x) t 'u_2',\
+u3(x) t 'u_3'
+
+
+

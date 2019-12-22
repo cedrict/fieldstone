@@ -1,10 +1,198 @@
 
+
+
+
 \begin{landscape}
 \section{List of stones} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-I AM NOT HAPPY ABOUT THIS ... WILL CHANGE THIS SOON-ISH
+%-------------------------------------------------------
+\subsection{Velocity based stones}
 
-%{\small
+%{\scriptsize
+{\tiny
+\begin{tabular}{|l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|} 
+\hline
+feature & 1 &2& 3& 4& 5& 6& 7& 8  \\
+\hline
+geometry & Box &Box&Box&Box&Box& Box&Box & \\
+element type & $Q_1\times P_0$ &$Q_1\times P_0$ &$Q_1\times P_0$ &$Q_1\times P_0$ &$Q_1\times P_0$ &$Q_1\times P_0$ &$Q_1\times P_0$ &$Q_1\times P_0$   \\ 
+mixed or penalty  & penalty& penalty& penalty&&&&& \\
+matrix storage & full& full& full &&&&& \\
+outer solver & N.A.  & N.A. & N.A.&&&&& \\
+\hline
+3 dimensions & . &.&.&.&.&.&.&. \\
+compressible (Y/N) &.&.&.&.&.&.&.&. \\
+analytical benchmark (Y/N) & Y &.&.&.&Y&Y&Y&Y \\
+numerical benchmark (Y/N) & . &.& Y&.&.&.&.&. \\
+error convergence (Y/N) &. &.&.&&&&& \\
+thermo-mechanically coupled (Y/N) &.&.&Y&.&.&.&.&. \\
+time-stepping (Y/N) &.&.&Y&.&.&.&.&. \\
+external mesher (Y/N) &.&.&.&.&.&.&.&. \\
+non-linear (Y/N) &.&.&.&.&.&.&.&Y \\
+plasticity (Y/N) & . &.  &.&.&.&.&.&Y\\ 
+Buoyancy driven flow & . & Y &Y &.&.&.&.&.\\
+Vrms  &  &  & &&&&\\
+Nusselt nb  & . & . &Y &.&.&.&.\\
+Pressure norm. &&&& \\
+Pressure smoothing &&&& \\
+\hline
+Add. feature &&&&&&&& \\
+\hline
+Description &
+"Donea \& Huerta" mms \ref{mms1} &
+Stokes sphere&
+"Blankenbach" benchmark&
+Lid driven cavity&
+SolCx &
+SolKz & 
+SolVi & 
+Indentor \\
+\hline
+Status & better matplotlib interface? &&&&&& \\
+\end{tabular}
+}
+
+\vspace{.5cm}
+
+
+
+
+
+
+
+
+
+
+\noindent 
+{\scriptsize
+\begin{tabular}{|l|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|} 
+\hline
+feature & &&&&&&&&& \\ 
+\hline
+geometry &  &&&&&&&&& \\
+element type &&&&&&&&&\\ 
+mixed or penalty  & &&&&&&&&& \\
+matrix storage & & &&&&&&&& \\
+outer solver &  &&&&&&&&& \\
+\hline
+three dimensions &  &&&&&&&&& \\
+compressible (Y/N) &&&&&&&&&& \\
+analytical benchmark (Y/N) &&&&&&&&&& \\
+numerical benchmark (Y/N) &  &&&&&&&&& \\
+error convergence (Y/N) & &&&&&&&&& \\
+thermo-mechanically coupled (Y/N) &&&&&&&&&& \\
+time-stepping (Y/N) &&&&&&&&&& \\
+external mesher (Y/N) &&&&&&&&&& \\
+non-linear (Y/N) &&&&&&&&&& \\
+plasticity (Y/N) & &  &&&&&&&&\\ 
+Buoyancy driven flow & &  &&&&&&&\\
+\hline
+\end{tabular}
+}
+
+\noindent 
+{\scriptsize
+\begin{tabular}{|l|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|} 
+\hline
+feature & &&&&&&&&& \\ 
+\hline
+geometry &  &&&&&&&&& \\
+element type &&&&&&&&&\\ 
+mixed or penalty  & &&&&&&&&& \\
+matrix storage & & &&&&&&&& \\
+outer solver &  &&&&&&&&& \\
+\hline
+three dimensions &  &&&&&&&&& \\
+compressible (Y/N) &&&&&&&&&& \\
+analytical benchmark (Y/N) &&&&&&&&&& \\
+numerical benchmark (Y/N) &  &&&&&&&&& \\
+error convergence (Y/N) & &&&&&&&&& \\
+thermo-mechanically coupled (Y/N) &&&&&&&&&& \\
+time-stepping (Y/N) &&&&&&&&&& \\
+external mesher (Y/N) &&&&&&&&&& \\
+non-linear (Y/N) &&&&&&&&&& \\
+plasticity (Y/N) & &  &&&&&&&&\\ 
+Buoyancy driven flow & &  &&&&&&&\\
+\hline
+\end{tabular}
+}
+
+
+
+
+
+%-------------------------------------------------------
+\subsection{Displacement based stones}
+
+%-------------------------------------------------------
+\subsection{Stream function based stones}
+
+\noindent 
+{\scriptsize
+\begin{tabular}{|l|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|} 
+\hline
+feature & &&&&&&&&& \\ 
+\hline
+geometry &  &&&&&&&&& \\
+element type &&&&&&&&&\\ 
+matrix storage & & &&&&&&&& \\
+\hline
+three dimensions &  &&&&&&&&& \\
+compressible (Y/N) &&&&&&&&&& \\
+analytical benchmark (Y/N) &&&&&&&&&& \\
+numerical benchmark (Y/N) &  &&&&&&&&& \\
+error convergence (Y/N) & &&&&&&&&& \\
+thermo-mechanically coupled (Y/N) &&&&&&&&&& \\
+time-stepping (Y/N) &&&&&&&&&& \\
+non-linear (Y/N) &&&&&&&&&& \\
+Buoyancy driven flow & &  &&&&&&&\\
+\hline
+\end{tabular}
+}
+
+
+
+
+
+
+
+%-------------------------------------------------------
+\subsection{Other stones}
+
+\noindent 
+{\scriptsize
+\begin{tabular}{|l|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|} 
+\hline
+feature & &&&&&&&&& \\ 
+\hline
+geometry &  &&&&&&&&& \\
+element type &&&&&&&&&\\ 
+matrix storage & & &&&&&&&& \\
+\hline
+three dimensions &  &&&&&&&&& \\
+analytical benchmark (Y/N) &&&&&&&&&& \\
+numerical benchmark (Y/N) &  &&&&&&&&& \\
+error convergence (Y/N) & &&&&&&&&& \\
+time-stepping (Y/N) &&&&&&&&&& \\
+external mesher (Y/N) &&&&&&&&&& \\
+non-linear (Y/N) &&&&&&&&&& \\
+\hline
+\end{tabular}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+{\scriptsize
 
 \begin{tabular}{|p{0.4cm}||p{1.9cm}p{3.6cm}p{1.5cm}p{4.5cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|p{0.2cm}|}
 \hline
@@ -155,7 +343,7 @@ I AM NOT HAPPY ABOUT THIS ... WILL CHANGE THIS SOON-ISH
 XX &&&&&&&&&&&& \\
 \hline
 \end{tabular}
-%}
+}
 
 Analytical benchmark means that an analytical solution exists while numerical benchmark
 means that a comparison with other code(s) has been carried out.

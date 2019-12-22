@@ -140,7 +140,7 @@ wikipedia page of the Drucker-Prager yield criterion
 F^{\text{\tiny DP}}
 &=& \sqrt{{\cal I}_2({\bm \tau})} 
 - \left[ -\frac{3 \sin\phi}{\sqrt{9+3\sin^2\phi} }  \frac{{\cal I}_1({\bm \sigma})}{3}
-+ \frac{ 3\; c \cos \phi }{ \sqrt{9+3\sin^2\phi} } \right] \nn\\
++ \frac{ 3\; c \cos \phi }{ \sqrt{9+3\sin^2\phi} } \right] \label{eq:dp3}
 \end{eqnarray}
 
 The yield surfaces of these three Drucker-Prager formulations are plotted against the Mohr-Coulomb
@@ -194,17 +194,13 @@ yield surface in Section~\ref{ss:envelope}.
 %\label{eqdp3D}
 %\end{equation}
 %\end{mdframed}
-
-
-
-
-
 %\begin{center}
 %\includegraphics[width=0.6\textwidth]{RHEOLOGY/viscoplasticity/dpcriterion.pdf}
 %\end{center}
 
 
 \vspace{1.3cm}
+%..............
 \begin{remark}
 Leroy \& Ortiz \cite{leor89} use the Drucker-Prager plasticity model also and match it to the Mohr-Coulomb model in the 
 triaxial test and formulate it as follows 
@@ -218,5 +214,24 @@ F
 Except for the $\sqrt{3}$ this is identical to Eq.~(\ref{eq:dpc}).
 \end{remark}
 
+%..............
+\begin{remark}
+Bui et al (2008) \cite{bufs08} use yet again another formulation:
+\begin{eqnarray}
+F 
+&=& \sqrt{{\cal I}_2({\bm \tau})} + \frac{\tan \phi}{\sqrt{9 + 12 \tan^2 \phi}} {\cal I}_1({\bm \sigma})
+- \frac{3 c}{\sqrt{9 + 12 \tan^2 \phi}} \nn\\
+&=& \sqrt{{\cal I}_2({\bm \tau})} + \frac{\sin \phi}{\sqrt{9\cos^2 \phi + 12 \sin^2 \phi}} {\cal I}_1({\bm \sigma}) - \frac{3 c \; \cos\phi}{\sqrt{9\cos^2\phi + 12 \sin^2 \phi}} \nn\\
+&=& \sqrt{{\cal I}_2({\bm \tau})} + \frac{\sin \phi}{\sqrt{9 + 3 \sin^2 \phi}} {\cal I}_1({\bm \sigma}) - \frac{3 c \; \cos\phi}{\sqrt{9 + 3\sin^2 \phi}} \nn
+\end{eqnarray}
+which is identical to \eqref{eq:dp3}.
+\end{remark}
+
+%..............
+\begin{remark}
+Cacace \& Jacquey (2017) \cite{caja17} replace $\sqrt{{\cal I}_2({\bm \tau})}$ by 
+$\sqrt{{\cal I}_2({\bm \tau})+\epsilon_0^2}$ where $\epsilon_0$ is a small non-hardening parameters 
+here introduced to relax the singularity at the cone’s tip of the Drucker-Prager yield envelope.
+\end{remark}
 
 \newpage

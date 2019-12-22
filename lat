@@ -3,7 +3,6 @@ bibtex manual
 #authorindex manual
 
 makeindex general
-makeindex stones 
 makeindex contributors 
 makeindex topics
 

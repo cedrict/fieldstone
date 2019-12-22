@@ -157,7 +157,7 @@ a simple plastic model:
 {\bm s} &=& 2 \left(  K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}}\right)\dot{\bm \varepsilon} \qquad \text{ if } {\tau}_{e}>\tau_0 \\
 \dot{\bm \varepsilon} &=& {\bm 0} \qquad\qquad \text{if }{\tau}_{e} \leq \tau_0 
 \end{eqnarray}
-in which $\tau_0$ is the yield stress, $K$ the consistency, and $n$ is the flow index{general} \cite{bemj04}.
+in which $\tau_0$ is the yield stress, $K$ the consistency, and $n$ is the flow index{general} \cite{demj04}.
 The flow index measures the degree to which the fluid is shear-thinning ($n<1$) or shear-thickening ($n>1$).
 If $n=1$ and $\tau_0=0$ the model reduces to the Newtonian model. 
 
@@ -190,13 +190,29 @@ growth of stress. This way the equation is valid for both yielded and unyielded 
 When the strain rate becomes (very) small a Taylor expansion of the regularisation 
 term yields $1- \exp(-m \dot{\varepsilon}) \sim m \dot{\varepsilon} $ so that 
 $\eta_{eff} \rightarrow m \tau_0$.
+However, it seems more physically meaningful to replace $m$ by a reference strain rate value $\dot{\varepsilon}_0$ so that 
+\begin{equation}
+\eta_{eff} = K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e} \left[1 - \exp\left(-\frac{\dot{\varepsilon}_e}{\dot{\varepsilon}_0} \right) \right] 
+\end{equation}
+In this case, when strain rate becomes (very) small a Taylor expansion of the regularisation
+term yields
+\begin{equation}
+\frac{\tau_0}{\dot{\varepsilon}_e} \left[1 - \exp\left(-\frac{\dot{\varepsilon}_e}{\dot{\varepsilon}_0} \right) \right]
+\simeq 
+\frac{\tau_0}{\dot{\varepsilon}_e} \frac{\dot{\varepsilon}_e}{\dot{\varepsilon}_0}
+=
+\frac{\tau_0}{\dot{\varepsilon}_0} 
+\end{equation}
+This has the dimensions of a viscosity and this is effectively the definition of a maximum viscosity $\eta_{max}$.
+
+
 
 \todo[inline]{Channel flow of wikipedia with analytical solution!}
 
 \Literature: \cite{madd13,mazf}. Check dam break problem of \cite{anco09,coan09,bafp09,tagm09,miga09}.
 
 
-\mscthesis\index{general}{MSc Thesis}: redo the sinking sphere in Bingham or herschel-Bulkley fluid experiment \cite{bemj04}. 
+\mscthesis\index{general}{MSc Thesis}: redo the sinking sphere in Bingham or herschel-Bulkley fluid experiment \cite{demj04}. 
 
 %...........................................................
 \subsubsection{The Casson model}
@@ -657,7 +673,7 @@ where $\gamma$ is a fitting parameter.
 
 
 \Literature \cite{basv06,buro11,faff11,gagd14,gery10,goev79,kaka08,kako09,kary01,mesk10,zhwa13,chsm18,shwl17}
-Review article from 1966: Guyot \& Dorn \cite{gudo66}
+Review article from 1966: Guyot \& Dorn \cite{gudo67}
 
 
 %-------------------------------------------------
@@ -819,6 +835,7 @@ Images taken from \url{https://en.wikipedia.org/wiki/Viscoelasticity}}
 The Kelvin-Voigt model, also known as the Voigt model, 
 consists of a Newtonian damper and Hookean elastic spring connected in parallel
 
+\Literature: \cite{boph12}
 
 %...........................................
 \subsubsection{Elasto+Visco+Plasticity ?}
