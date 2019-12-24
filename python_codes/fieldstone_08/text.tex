@@ -1,39 +1,86 @@
-\index{stones}{$Q_1 \times P_0$ element}
-\index{stones}{Penalty Formulation}
-\index{stones}{Variable Viscosity}
-\index{stones}{Nonlinear Rheology}
-
-
 The punch benchmark is one of the few boundary value problems involving plastic solids for which there exists an exact solution. 
 Such solutions are usually either for highly simplified geometries (spherical or axial symmetry, for instance) or simplified material models (such as rigid plastic solids) \cite{kacha04}.
 
 In this experiment, a rigid punch indents a rigid plastic half space; the slip line field theory gives 
-exact solutions as shown in Fig. \ref{fig_punch}a. 
+exact solutions as shown in section~\ref{sec:punch}. 
 The plane strain formulation of the equations and the detailed solution to the problem were derived in the Appendix of \cite{thfb08} and are also presented in \cite{gepd98}.
 
 The two dimensional punch problem has been extensively studied numerically for the past 40 years 
-\cite{zihl75,zihp95,chpe01,chan99,huhy99,yuti06,bufs08,raab07} and has been used to draw a parallel with the tectonics of eastern China in the context of the 
+\cite{zihl75,zihp95,chpe01,chan99,huhy99,yuti06,bufs08,raab07} and has been used to draw a parallel 
+with the tectonics of eastern China in the context of the 
 India-Eurasia collision \cite{tamo76,mota77}.
 It is also worth noting that it has been carried out in one form or another in series of 
 analogue modelling articles 
-concerning the same region, with a rigid indenter colliding with a rheologically stratified lithosphere \cite{peta88,daco88,jodc90}.
-
+concerning the same region, with a rigid indenter colliding with a rheologically stratified 
+lithosphere \cite{peta88,daco88,jodc90}.
  
 Numerically, the one-time step punch experiment is performed on a two-dimensional
 domain of purely plastic von Mises material. 
-Given that the von Mises rheology yield criterion does not depend on pressure, the density of the material and/or the gravity vector is set to zero. Sides are set to free slip boundary conditions, the bottom to no slip, while a vertical velocity $(0,-v_p)$ is prescribed at the top boundary for nodes whose $x$ coordinate is within $[L_x/2-\delta/2,L_x/2+\delta/2]$. 
+Given that the von Mises rheology yield criterion does not depend on pressure
+(see Section~\ref{sec:vMcriterion}), the density of the material and/or the gravity 
+vector is set to zero. Sides are set to free slip boundary conditions, the bottom to no slip, 
+while a vertical velocity $(0,-v_p)$ is prescribed at the top boundary for nodes 
+whose $x$ coordinate is within $[L_x/2-\delta/2,L_x/2+\delta/2]$. 
 
 The following parameters are used: $L_x=1$, $L_y=0.5$, $\mu_{min}=10^{-3}$, 
-$\mu_{max}=10^3$, $v_p=1$, $\delta=0.123456789$ 
-and the yield value of the material is set to $k=1$. 
+$\mu_{max}=10^3$, $v_p=1$, $\delta=0.11111$ 
+and the yield value of the material is set to $\sigma_Y=1$. 
 
 The analytical solution predicts that the angle of the shear bands stemming from the sides of the punch 
 is $\pi/4$, that the pressure right under the punch is $1+\pi$, 
 and that the velocity of the rigid blocks on each side of the punch is $v_p/\sqrt{2}$ 
 (this is simply explained by invoking conservation of mass).
 
-\includegraphics[width=16cm]{python_codes/fieldstone_08/solution.pdf}
+In what follows I show results of the rough and smooth punch for a 124x68 grid. The difference between the two
+lies in the nature of the kinematic boundary conditions under the punched area. 'rough' means that the indentor 
+also fixes the horizontal velocity component to zero while it is free in the smooth case.
 
-ToDo: smooth punch
+We see that the smooth punch does not trigger the checkerboard pressure modes as much as the rough case 
+and we recover nicely the analytical pressure under the punch \cite{thfb08,gltf18}.
+
+\newpage
+%................................................................................
+\paragraph{Rough punch} 
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/rough/velocity.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/rough/pressure.pdf}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/rough/strainrate.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/rough/stress.pdf}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/rough/u_stats.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/rough/v_stats.pdf}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/rough/residual.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/rough/diff_uv.pdf}\\
+{\captionfont a,b,c,d) velocity, pressure, strainrate and stress at the top of the domain; 
+e,f) min/max value of $u$ and $v$;
+g,h) residual and normalised velocity difference.}
+\end{center}
+
+\newpage
+\includegraphics[width=16cm]{python_codes/fieldstone_08/results/rough/solution.pdf}
+
+
+%................................................................................
+\newpage
+\paragraph{Smooth punch}
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/smooth/velocity.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/smooth/pressure.pdf}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/smooth/strainrate.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/smooth/stress.pdf}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/smooth/u_stats.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/smooth/v_stats.pdf}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/smooth/residual.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_08/results/smooth/diff_uv.pdf}\\
+{\captionfont a,b,c,d) velocity, pressure, strainrate and stress at the top of the domain; 
+e,f) min/max value of $u$ and $v$;
+g,h) residual and normalised velocity difference.}
+\end{center}
+
+\newpage
+\includegraphics[width=16cm]{python_codes/fieldstone_08/results/smooth/solution.pdf}
+
+
 
 

@@ -45,8 +45,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 64
-   nely = 32
+   nelx = 128
+   nely = 64
    visu = 1
 
 assert (nelx>0.), "nnx should be positive" 
@@ -67,8 +67,8 @@ eps=1.e-10
 
 sqrt3=np.sqrt(3.)
 
-width=0.123456789
-niter=3
+width=0.111111111
+niter=100
 
 gx=0.
 gy=0.
@@ -134,10 +134,15 @@ for i in range(0, nnp):
     if y[i]<eps:
        bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
     if y[i]>(Ly-eps) and abs(x[i]-Lx/2.)<width:
-       bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+       #bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
        bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = -1.
 
 #####################################################################
+   
+Res_file=open('residual.ascii',"w")
+u_file=open('u_stats.ascii',"w")
+v_file=open('v_stats.ascii',"w")
+diff_file=open('diff_uv.ascii',"w")
 
 N     = np.zeros(m,dtype=np.float64)            # shape functions
 dNdx  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
@@ -150,6 +155,8 @@ k_mat = np.array([[1,1,0],[1,1,0],[0,0,0]],dtype=np.float64)
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 Res   = np.zeros(Nfem,dtype=np.float64)         # non-linear residual 
 sol   = np.zeros(Nfem,dtype=np.float64)         # solution vector 
+u_old = np.zeros(nnp,dtype=np.float64)          # x-component velocity
+v_old = np.zeros(nnp,dtype=np.float64)          # y-component velocity
 
 #------------------------------------------------------------------------------
 # non-linear iterations
@@ -205,6 +212,7 @@ for iter in range(0,niter):
                     jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
                     jcb[1, 0] += dNds[k]*x[icon[k,iel]]
                     jcb[1, 1] += dNds[k]*y[icon[k,iel]]
+                #end for
 
                 # calculate the determinant of the jacobian
                 jcob = np.linalg.det(jcb)
@@ -226,12 +234,14 @@ for iter in range(0,niter):
                     exxq+=dNdx[k]*u[icon[k,iel]]
                     eyyq+=dNdy[k]*v[icon[k,iel]]
                     exyq+=0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
+                #end for
 
                 # construct 3x8 b_mat matrix
                 for i in range(0, m):
                     b_mat[0:3, 2*i:2*i+2] = [[dNdx[i],0.     ],
                                              [0.     ,dNdy[i]],
                                              [dNdy[i],dNdx[i]]]
+                #end for
 
                 # compute elemental a_mat matrix
                 a_el += b_mat.T.dot(c_mat.dot(b_mat))*viscosity(exxq,eyyq,exyq)*wq*jcob
@@ -240,7 +250,9 @@ for iter in range(0,niter):
                 for i in range(0,m):
                     b_el[2*i  ]+=N[i]*jcob*wq*density*gx
                     b_el[2*i+1]+=N[i]*jcob*wq*density*gy
-
+                #end for
+            #end for
+        #end for
 
         # integrate penalty term at 1 point
         rq=0.
@@ -264,6 +276,7 @@ for iter in range(0,niter):
             jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
             jcb[1,0]+=dNds[k]*x[icon[k,iel]]
             jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+        #end for
 
         # calculate determinant of the jacobian
         jcob = np.linalg.det(jcb)
@@ -275,12 +288,14 @@ for iter in range(0,niter):
         for k in range(0,m):
             dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
             dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+        #end for
 
         # compute gradient matrix
         for i in range(0,m):
             b_mat[0:3,2*i:2*i+2]=[[dNdx[i],0.     ],
                                   [0.     ,dNdy[i]],
                                   [dNdy[i],dNdx[i]]]
+        #end for
 
         # compute elemental matrix
         a_el+=b_mat.T.dot(k_mat.dot(b_mat))*penalty*wq*jcob
@@ -295,8 +310,13 @@ for iter in range(0,niter):
                         jkk=ndof*k2          +i2
                         m2 =ndof*icon[k2,iel]+i2
                         a_mat[m1,m2]+=a_el[ikk,jkk]
+                    #end for
+                #end for
                 rhs[m1]+=b_el[ikk]
+            #end for
+        #end for
 
+    #end for
 
     #################################################################
     # impose boundary conditions
@@ -313,16 +333,23 @@ for iter in range(0,niter):
                a_mat[j,i]=0.
                a_mat[i,i]=a_matref
            rhs[i]=a_matref*bc_val[i]
+        #end if
+    #end for
+
     #################################################################
     # compute non-linear residual
     #################################################################
 
     Res=a_mat.dot(sol)-rhs
 
-    if iter==0:
-       Res0=np.max(abs(Res))
+    Res2=np.linalg.norm(Res,2)
 
-    print("Nonlinear residual (inf. norm) %.7e" % (np.max(abs(Res))/Res0))
+    if iter==0:
+       Res2Init=Res2
+
+    Res_file.write("%10e \n" % (Res2/Res2Init))
+
+    print("Nonlinear residual (inf. norm) %.7e" % (Res2/Res2Init))
 
     #################################################################
     # solve system
@@ -341,13 +368,36 @@ for iter in range(0,niter):
     print("u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
     print("v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
+    u_file.write("%10e %10e\n" % (np.min(u),np.max(u)))
+    v_file.write("%10e %10e\n" % (np.min(v),np.max(v)))
+
+    #####################################################################
+
+    udiff=np.linalg.norm(u_old-u,2)
+    vdiff=np.linalg.norm(v_old-v,2)
+    if iter==0:
+       udiffinit=udiff
+       vdiffinit=vdiff
+    
+    diff_file.write("%10e %10e\n" % (udiff/udiffinit,vdiff/vdiffinit))
+
+    u_old[:]=u[:]
+    v_old[:]=v[:]
+
+#end if
 
 #------------------------------------------------------------------------------
 # end of non-linear iterations
 #------------------------------------------------------------------------------
+   
+u_file.close()
+v_file.close()
+Res_file.close()
+diff_file.close()
 
 #####################################################################
 # retrieve pressure and elemental strain rate components
+# in the middle of the element (1 integration point)
 #####################################################################
 
 xc=np.zeros(nel,dtype=np.float64)  
@@ -381,6 +431,7 @@ for iel in range(0,nel):
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
         jcb[1,0]+=dNds[k]*x[icon[k,iel]]
         jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+    #end for
 
     # calculate determinant of the jacobian
     jcob=np.linalg.det(jcb)
@@ -391,6 +442,7 @@ for iel in range(0,nel):
     for k in range(0,m):
         dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
         dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+    #end for
 
     for k in range(0,m):
         xc[iel]+=N[k]*x[icon[k,iel]]
@@ -398,6 +450,7 @@ for iel in range(0,nel):
         exx[iel]+=dNdx[k]*u[icon[k,iel]]
         eyy[iel]+=dNdy[k]*v[icon[k,iel]]
         exy[iel]+=0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
+    #end for
 
     e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
     eta[iel]=viscosity(exx[iel],eyy[iel],exy[iel])
@@ -412,6 +465,18 @@ print("eta (m,M) %.4f %.4f " %(np.min(eta),np.max(eta)))
 np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
 np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+
+#####################################################################
+# computing stress tensor components
+#####################################################################
+
+sigmaxx=np.zeros(nel,dtype=np.float64)  
+sigmayy=np.zeros(nel,dtype=np.float64)  
+sigmaxy=np.zeros(nel,dtype=np.float64)  
+
+sigmaxx=-p+2*eta*exx
+sigmayy=-p+2*eta*eyy
+sigmaxy=   2*eta*exy
 
 #####################################################################
 # smoothing pressure 
@@ -429,6 +494,7 @@ for iel in range(0,nel):
     count[icon[1,iel]]+=1
     count[icon[2,iel]]+=1
     count[icon[3,iel]]+=1
+#end for
 
 q=q/count
 
@@ -439,8 +505,8 @@ q=q/count
 xtop=np.zeros(nnx,dtype=np.float64)  
 utop=np.zeros(nnx,dtype=np.float64)  
 vtop=np.zeros(nnx,dtype=np.float64)  
-ptop=np.zeros(nelx,dtype=np.float64)  
-xctop=np.zeros(nelx,dtype=np.float64)  
+qtop=np.zeros(nnx,dtype=np.float64)  
+
 
 counter=0
 for i in range(0,nnp):
@@ -448,14 +514,40 @@ for i in range(0,nnp):
        xtop[counter]=x[i]
        utop[counter]=u[i]
        vtop[counter]=v[i]
+       qtop[counter]=q[i]
        counter+=1
+   #end if
+#end for
+
+xctop=np.zeros(nelx,dtype=np.float64)  
+ptop=np.zeros(nelx,dtype=np.float64)  
+exxtop=np.zeros(nelx,dtype=np.float64)  
+exytop=np.zeros(nelx,dtype=np.float64)  
+etop=np.zeros(nelx,dtype=np.float64)  
+sigmaxxtop=np.zeros(nelx,dtype=np.float64)  
+sigmayytop=np.zeros(nelx,dtype=np.float64)  
+sigmaxytop=np.zeros(nelx,dtype=np.float64)  
+etatop=np.zeros(nelx,dtype=np.float64)  
 
 counter=0
 for iel in range(0,nel):
     if y[icon[3,iel]]>Ly-eps:
-       ptop[counter]=p[iel]
        xctop[counter]=xc[iel]
+       ptop[counter]=p[iel]
+       exxtop[counter]=exx[iel]
+       exytop[counter]=exy[iel]
+       etop[counter]=e[iel]
+       sigmaxxtop[counter]=sigmaxx[iel]
+       sigmayytop[counter]=sigmayy[iel]
+       sigmaxytop[counter]=sigmaxy[iel]
+       etatop[counter]=eta[iel]
        counter+=1
+   #end if
+#end for
+
+np.savetxt('v_q_top.ascii',np.array([xtop,utop,vtop,qtop]).T,header='# x,y,u,v,q')
+np.savetxt('p_sr_top.ascii',np.array([xctop,ptop,exxtop,exytop,etop]).T,header='# x,y,p,exx,exy,e')
+np.savetxt('sigma_eta_top.ascii',np.array([xctop,sigmaxxtop,sigmayytop,sigmaxytop,etatop]).T,header='# x,y,sigmaxx,sigmaxy')
 
 #####################################################################
 # plot of solution
@@ -467,11 +559,11 @@ np.flipud(u_temp)
 v_temp=np.reshape(v,(nny,nnx))
 p_temp=np.reshape(p,(nely,nelx))
 q_temp=np.reshape(q,(nny,nnx))
-exx_temp=np.reshape(exx,(nelx,nely))
-eyy_temp=np.reshape(eyy,(nelx,nely))
-exy_temp=np.reshape(exy,(nelx,nely))
-eta_temp=np.reshape(eta,(nelx,nely))
-e_temp=np.reshape(e,(nelx,nely))
+exx_temp=np.reshape(exx,(nely,nelx))
+eyy_temp=np.reshape(eyy,(nely,nelx))
+exy_temp=np.reshape(exy,(nely,nelx))
+eta_temp=np.reshape(eta,(nely,nelx))
+e_temp=np.reshape(e,(nely,nelx))
 
 fig,axes = plt.subplots(nrows=4,ncols=3,figsize=(18,18))
 
@@ -557,8 +649,6 @@ axes[3][1].set_ylabel('$v$')
 im = axes[3][2].plot(xctop,ptop)
 axes[3][2].set_xlabel('$x$')
 axes[3][2].set_ylabel('$p$')
-
-
 
 plt.subplots_adjust(hspace=0.5)
 
