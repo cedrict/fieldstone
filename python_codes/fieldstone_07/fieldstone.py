@@ -1,5 +1,4 @@
 import numpy as np
-import math as math
 import sys as sys
 import scipy
 import scipy.sparse as sps
@@ -11,7 +10,7 @@ from matplotlib.colors import LogNorm
 
 #------------------------------------------------------------------------------
 def viscosity(x,y):
-    if (math.sqrt(x*x+y*y) < 0.2):
+    if (np.sqrt(x*x+y*y) < 0.2):
        val=1e3
     else:
        val=1.
@@ -76,8 +75,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 100
-   nely = 100
+   nelx = 150
+   nely = 150
    visu = 1
 
 assert (nelx>0.), "nnx should be positive" 
@@ -375,6 +374,7 @@ for iel in range(0,nel):
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
         jcb[1,0]+=dNds[k]*x[icon[k,iel]]
         jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+    #end for
 
     # calculate determinant of the jacobian
     jcob=np.linalg.det(jcb)
@@ -385,6 +385,7 @@ for iel in range(0,nel):
     for k in range(0, m):
         dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
         dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+    #end for
 
     for k in range(0, m):
         xc[iel] += N[k]*x[icon[k,iel]]
@@ -392,11 +393,14 @@ for iel in range(0,nel):
         exx[iel] += dNdx[k]*u[icon[k,iel]]
         eyy[iel] += dNdy[k]*v[icon[k,iel]]
         exy[iel] += 0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
+    #end for
 
     p[iel]=-penalty*(exx[iel]+eyy[iel])
     visc[iel]=viscosity(xc[iel],yc[iel])
     e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
     dens[iel]=density(xc[iel],yc[iel])
+    
+#end for
 
 print("p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 print("exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
@@ -408,6 +412,64 @@ print("visc (m,M) %.4f %.4f " %(np.min(visc),np.max(visc)))
 
 np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
 np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+
+#####################################################################
+# smoothing pressure 
+#####################################################################
+
+q=np.zeros(nnp,dtype=np.float64)  
+count=np.zeros(nnp,dtype=np.float64)  
+
+for iel in range(0,nel):
+    q[icon[0,iel]]+=p[iel]
+    q[icon[1,iel]]+=p[iel]
+    q[icon[2,iel]]+=p[iel]
+    q[icon[3,iel]]+=p[iel]
+    count[icon[0,iel]]+=1
+    count[icon[1,iel]]+=1
+    count[icon[2,iel]]+=1
+    count[icon[3,iel]]+=1
+#end for
+
+q=q/count
+
+
+#####################################################################
+# extract velocity field at domain bottom and on diagonal
+#####################################################################
+
+xdiag=np.zeros(nnx,dtype=np.float64)  
+udiag=np.zeros(nnx,dtype=np.float64)  
+udiagth=np.zeros(nnx,dtype=np.float64)  
+
+counter=0
+for i in range(0,nnp):
+    if abs(x[i]-y[i])<eps:
+       xdiag[counter]=x[i]
+       ui,vi,qi=solution(x[i],y[i]) 
+       udiag[counter]=u[i]
+       udiagth[counter]=ui
+       counter+=1
+    #end if
+#end for
+
+xbot=np.zeros(nnx,dtype=np.float64)  
+qbotth=np.zeros(nnx,dtype=np.float64)  
+qbot=np.zeros(nnx,dtype=np.float64)  
+
+counter=0
+for i in range(0,nnp):
+    if abs(y[i])<eps:
+       xbot[counter]=x[i]
+       ui,vi,qi=solution(x[i],y[i]) 
+       qbot[counter]=q[i]
+       qbotth[counter]=qi
+       counter+=1
+   #end if
+#end for
+
+np.savetxt('bottom.ascii',np.array([xbot,qbot,qbotth]).T,header='# x,q')
+np.savetxt('diag.ascii',np.array([xdiag,udiag,udiagth]).T,header='# x,u')
 
 #################################################################
 # compute error
@@ -425,6 +487,7 @@ for i in range(0,nnp):
 for i in range(0,nel): 
     ui,vi,pi=solution(xc[i],yc[i]) 
     error_p[i]=p[i]-pi
+#end for
 
 errv=0.
 errp=0.
@@ -448,6 +511,7 @@ for iel in range (0,nel):
                 jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
                 jcb[1,0]+=dNds[k]*x[icon[k,iel]]
                 jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+            #end for
             jcob=np.linalg.det(jcb)
             xq=0.0
             yq=0.0
@@ -458,9 +522,13 @@ for iel in range (0,nel):
                 yq+=N[k]*y[icon[k,iel]]
                 uq+=N[k]*u[icon[k,iel]]
                 vq+=N[k]*v[icon[k,iel]]
+            #end for
             ui,vi,pi=solution(xq,yq) 
             errv+=((uq-ui)**2+(vq-vi)**2)*wq*jcob
             errp+=(p[iel]-pi)**2*wq*jcob
+        #end for
+    #end for
+#end for
 
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)

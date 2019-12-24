@@ -1,0 +1,29 @@
+set term pdf enhanced
+set grid
+set key left 
+set xlabel 'x'
+set ylabel 'x-component velocity'
+
+set output 'veldiag.pdf'
+plot[][]\
+'diag.ascii' w p ps .4 t '150x150',\
+'diag.ascii' u 1:3 w l t 'analytical' 
+
+set key bottom right
+set output 'pressbottom.pdf'
+plot[][]\
+'bottom.ascii' w p ps .4 t '150x150',\
+'bottom.ascii' u 1:3 w l t 'analytical'
+
+
+
+set output 'errors.pdf'
+set key outside
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+plot[][]\
+'errors' u (1./sqrt($2)):5 w lp ps .5 t 'velocity',\
+'errors' u (1./sqrt($2)):8 w lp ps .5 t 'pressure',\
+x**.5/.25 w l t 'x^2',\
+x**1/10. w l t 'x^1'
