@@ -1,5 +1,4 @@
 import numpy as np
-import math as math
 import sys as sys
 import scipy
 import scipy.sparse as sps
@@ -12,11 +11,11 @@ import solkz as solkz
 
 #------------------------------------------------------------------------------
 def viscosity(x,y):
-    val= math.exp(13.8155*y) 
+    val= np.exp(13.8155*y) 
     return val
 
 def density(x,y):
-    val=math.sin(2.*y)*math.cos(3.*math.pi*x)
+    val=np.sin(2.*y)*np.cos(3.*np.pi*x)
     return val
 #------------------------------------------------------------------------------
 
@@ -45,8 +44,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 48
-   nely = 48
+   nelx = 100
+   nely = 100
    visu = 1
 
 assert (nelx>0.), "nnx should be positive" 
@@ -301,7 +300,7 @@ u,v=np.reshape(sol,(nnp,2)).T
 print("u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
-np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+#np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
 #####################################################################
 # retrieve pressure
@@ -370,8 +369,8 @@ print("e (m,M) %.4f %.4f " %(np.min(e),np.max(e)))
 print("dens (m,M) %.4f %.4f " %(np.min(dens),np.max(dens)))
 print("visc (m,M) %.4f %.4f " %(np.min(visc),np.max(visc)))
 
-np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
-np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+#np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
+#np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
 #################################################################
 # compute error

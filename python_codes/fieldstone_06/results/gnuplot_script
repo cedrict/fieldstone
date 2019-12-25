@@ -3,6 +3,7 @@ set output 'errors.pdf'
 set log xy
 set xlabel 'h'
 set ylabel 'error'
+set key bottom
 plot[][]\
 'errors' u (1./sqrt($2)):5 w lp t 'velocity',\
 'errors' u (1./sqrt($2)):8 w lp t 'pressure',\
