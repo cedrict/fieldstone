@@ -1,5 +1,4 @@
 import numpy as np
-import math as math
 import sys as sys
 import scipy
 import scipy.sparse as sps
@@ -10,6 +9,7 @@ import tkinter
 import solcx as solcx
 
 #------------------------------------------------------------------------------
+
 def viscosity(x,y):
     if x<0.5:
        val=1.
@@ -18,8 +18,9 @@ def viscosity(x,y):
     return val
 
 def density(x,y):
-    val=math.sin(math.pi*y)*math.cos(math.pi*x)
+    val=np.sin(np.pi*y)*np.cos(np.pi*x)
     return val
+
 #------------------------------------------------------------------------------
 
 print("-----------------------------")
@@ -47,8 +48,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 64
-   nely = 64
+   nelx = 100
+   nely = 100
    visu = 1
 
 assert (nelx>0.), "nnx should be positive" 
@@ -61,16 +62,13 @@ nnp=nnx*nny  # number of nodes
 
 nel=nelx*nely  # number of elements, total
 
-penalty=1.e7  # penalty coefficient value
+penalty=1.e10  # penalty coefficient value
 
 Nfem=nnp*ndof  # Total number of degrees of freedom
 
 eps=1.e-10
 
 sqrt3=np.sqrt(3.)
-
-# declare arrays
-print("declaring arrays")
 
 #################################################################
 # grid point setup
@@ -127,6 +125,7 @@ for i in range(0, nnp):
        bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
     if y[i]>(Ly-eps):
        bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+#end for
 
 #################################################################
 # build FE matrix
@@ -181,6 +180,7 @@ for iel in range(0, nel):
                 jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
                 jcb[1, 0] += dNds[k]*x[icon[k,iel]]
                 jcb[1, 1] += dNds[k]*y[icon[k,iel]]
+            #end for
 
             # calculate the determinant of the jacobian
             jcob = np.linalg.det(jcb)
@@ -196,12 +196,14 @@ for iel in range(0, nel):
                 yq+=N[k]*y[icon[k,iel]]
                 dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
                 dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+            #end for
 
             # construct 3x8 b_mat matrix
             for i in range(0, m):
                 b_mat[0:3, 2*i:2*i+2] = [[dNdx[i],0.     ],
                                          [0.     ,dNdy[i]],
                                          [dNdy[i],dNdx[i]]]
+            #end for
 
             # compute elemental a_mat matrix
             a_el += b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq,yq)*wq*jcob
@@ -210,6 +212,10 @@ for iel in range(0, nel):
             for i in range(0, m):
                 b_el[2*i  ]+=N[i]*jcob*wq*density(xq,yq)*gx
                 b_el[2*i+1]+=N[i]*jcob*wq*density(xq,yq)*gy
+            #end for
+            
+        #end for
+    #end for
 
     # integrate penalty term at 1 point
     rq=0.
@@ -233,6 +239,7 @@ for iel in range(0, nel):
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
         jcb[1,0]+=dNds[k]*x[icon[k,iel]]
         jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+    #end for
 
     # calculate determinant of the jacobian
     jcob = np.linalg.det(jcb)
@@ -244,12 +251,14 @@ for iel in range(0, nel):
     for k in range(0,m):
         dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
         dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+    #end for
 
     # compute gradient matrix
     for i in range(0,m):
         b_mat[0:3,2*i:2*i+2]=[[dNdx[i],0.     ],
                               [0.     ,dNdy[i]],
                               [dNdy[i],dNdx[i]]]
+    #end for
 
     # compute elemental matrix
     a_el += b_mat.T.dot(k_mat.dot(b_mat))*penalty*wq*jcob
@@ -264,7 +273,13 @@ for iel in range(0, nel):
                     jkk=ndof*k2          +i2
                     m2 =ndof*icon[k2,iel]+i2
                     a_mat[m1,m2]+=a_el[ikk,jkk]
+                #end for
+            #end for
             rhs[m1]+=b_el[ikk]
+        #end for
+    #end for
+
+#end for
 
 #################################################################
 # impose boundary conditions
@@ -280,7 +295,10 @@ for i in range(0, Nfem):
            a_mat[i,j]=0.
            a_mat[j,i]=0.
            a_mat[i,i] = a_matref
+       #end for
        rhs[i]=a_matref*bc_val[i]
+    #end if
+#end for
 
 #print("a_mat (m,M) = %.4f %.4f" %(np.min(a_mat),np.max(a_mat)))
 #print("rhs   (m,M) = %.6f %.6f" %(np.min(rhs),np.max(rhs)))
@@ -303,7 +321,7 @@ u,v=np.reshape(sol,(nnp,2)).T
 print("u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
-np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+#np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
 #####################################################################
 # retrieve pressure
@@ -338,6 +356,7 @@ for iel in range(0,nel):
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
         jcb[1,0]+=dNds[k]*x[icon[k,iel]]
         jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+    #end for
 
     # calculate determinant of the jacobian
     jcob=np.linalg.det(jcb)
@@ -348,6 +367,7 @@ for iel in range(0,nel):
     for k in range(0, m):
         dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
         dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+    #end for
 
     for k in range(0, m):
         xc[iel] += N[k]*x[icon[k,iel]]
@@ -355,17 +375,27 @@ for iel in range(0,nel):
         exx[iel] += dNdx[k]*u[icon[k,iel]]
         eyy[iel] += dNdy[k]*v[icon[k,iel]]
         exy[iel] += 0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
+    #end for
 
     p[iel]=-penalty*(exx[iel]+eyy[iel])
+
+#end for
 
 print("p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 print("exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
 print("eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
 print("exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 
-np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
+#np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
+#np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
-np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+#################################################################
+# pressure normalisation
+#################################################################
+
+#p[:]-=np.sum(p)/nel
+
+#print("p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
 #################################################################
 # compute error
@@ -379,10 +409,14 @@ for i in range(0,nnp):
     ui,vi,pi=solcx.SolCxSolution(x[i],y[i]) 
     error_u[i]=u[i]-ui
     error_v[i]=v[i]-vi
+#end for
 
 for i in range(0,nel): 
     ui,vi,pi=solcx.SolCxSolution(xc[i],yc[i]) 
     error_p[i]=p[i]-pi
+#end for
+
+#np.savetxt('error_pressure.ascii',np.array([xc,yc,error_p]).T,header='# xc,yc,p')
 
 errv=0.
 errp=0.
@@ -406,6 +440,7 @@ for iel in range (0,nel):
                 jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
                 jcb[1,0]+=dNds[k]*x[icon[k,iel]]
                 jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+            #end for
             jcob=np.linalg.det(jcb)
             xq=0.0
             yq=0.0
@@ -416,9 +451,13 @@ for iel in range (0,nel):
                 yq+=N[k]*y[icon[k,iel]]
                 uq+=N[k]*u[icon[k,iel]]
                 vq+=N[k]*v[icon[k,iel]]
+            #end for
             ui,vi,pi=solcx.SolCxSolution(xq,yq) 
             errv+=((uq-ui)**2+(vq-vi)**2)*wq*jcob
             errp+=(p[iel]-pi)**2*wq*jcob
+        #end for
+    #end for
+#end for
 
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)

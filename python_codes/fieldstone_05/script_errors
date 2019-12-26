@@ -1,14 +1,32 @@
-rm -f errors
-python3 fieldstone.py   8   8 0 | grep nel >> errors
-python3 fieldstone.py  12  12 0 | grep nel >> errors
-python3 fieldstone.py  16  16 0 | grep nel >> errors
-python3 fieldstone.py  24  24 0 | grep nel >> errors
-python3 fieldstone.py  32  32 0 | grep nel >> errors
-python3 fieldstone.py  48  48 0 | grep nel >> errors
-python3 fieldstone.py  64  64 0 | grep nel >> errors
-python3 fieldstone.py  96  96 0 | grep nel >> errors
-python3 fieldstone.py 128 128 0 | grep nel >> errors
+rm -f errors_even
+python3 fieldstone.py   8   8 0 | grep nel >> errors_even
+python3 fieldstone.py  12  12 0 | grep nel >> errors_even
+python3 fieldstone.py  16  16 0 | grep nel >> errors_even
+python3 fieldstone.py  20  20 0 | grep nel >> errors_even
+python3 fieldstone.py  24  24 0 | grep nel >> errors_even
+python3 fieldstone.py  28  28 0 | grep nel >> errors_even
+python3 fieldstone.py  32  32 0 | grep nel >> errors_even
+python3 fieldstone.py  40  40 0 | grep nel >> errors_even
+python3 fieldstone.py  48  48 0 | grep nel >> errors_even
+python3 fieldstone.py  64  64 0 | grep nel >> errors_even
+python3 fieldstone.py  80  80 0 | grep nel >> errors_even
+python3 fieldstone.py  96  96 0 | grep nel >> errors_even
+python3 fieldstone.py 128 128 0 | grep nel >> errors_even
+python3 fieldstone.py 150 150 0 | grep nel >> errors_even
 
-
-
+rm -f errors_odd
+python3 fieldstone.py   9   9 0 | grep nel >> errors_odd
+python3 fieldstone.py  13  13 0 | grep nel >> errors_odd
+python3 fieldstone.py  17  17 0 | grep nel >> errors_odd
+python3 fieldstone.py  21  21 0 | grep nel >> errors_odd
+python3 fieldstone.py  25  25 0 | grep nel >> errors_odd
+python3 fieldstone.py  29  29 0 | grep nel >> errors_odd
+python3 fieldstone.py  33  33 0 | grep nel >> errors_odd
+python3 fieldstone.py  41  41 0 | grep nel >> errors_odd
+python3 fieldstone.py  49  49 0 | grep nel >> errors_odd
+python3 fieldstone.py  65  65 0 | grep nel >> errors_odd
+python3 fieldstone.py  81  81 0 | grep nel >> errors_odd
+python3 fieldstone.py  97  97 0 | grep nel >> errors_odd
+python3 fieldstone.py 129 129 0 | grep nel >> errors_odd
+python3 fieldstone.py 151 151 0 | grep nel >> errors_odd
 

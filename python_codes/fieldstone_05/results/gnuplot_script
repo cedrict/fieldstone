@@ -1,0 +1,31 @@
+set term pdf enhanced
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+set key outside
+
+set output 'errors_even.pdf'
+plot[][]\
+'errors_even_1e7'  u (1./sqrt($2)):5 w lp ps .5 t 'velocity, {/Symbol l}=1e7',\
+'errors_even_1e7'  u (1./sqrt($2)):8 w lp ps .5 t 'pressure, {/Symbol l}=1e7',\
+'errors_even_1e8'  u (1./sqrt($2)):5 w lp ps .5 t 'velocity, {/Symbol l}=1e8',\
+'errors_even_1e8'  u (1./sqrt($2)):8 w lp ps .5 t 'pressure, {/Symbol l}=1e8',\
+'errors_even_1e9'  u (1./sqrt($2)):5 w lp ps .5 t 'velocity, {/Symbol l}=1e9',\
+'errors_even_1e9'  u (1./sqrt($2)):8 w lp ps .5 t 'pressure, {/Symbol l}=1e9',\
+'errors_even_1e10' u (1./sqrt($2)):5 w lp ps .5 t 'velocity, {/Symbol l}=1e10',\
+'errors_even_1e10' u (1./sqrt($2)):8 w lp ps .5 t 'pressure, {/Symbol l}=1e10',\
+x**2/10. w l t 'x^2',\
+x**1/10. w l t 'x^1'
+
+set output 'errors_odd.pdf'
+plot[][]\
+'errors_odd_1e7'  u (1./sqrt($2)):5 w lp ps .5 t 'velocity, {/Symbol l}=1e7',\
+'errors_odd_1e7'  u (1./sqrt($2)):8 w lp ps .5 t 'pressure, {/Symbol l}=1e7',\
+'errors_odd_1e8'  u (1./sqrt($2)):5 w lp ps .5 t 'velocity, {/Symbol l}=1e8',\
+'errors_odd_1e8'  u (1./sqrt($2)):8 w lp ps .5 t 'pressure, {/Symbol l}=1e8',\
+'errors_odd_1e9'  u (1./sqrt($2)):5 w lp ps .5 t 'velocity, {/Symbol l}=1e9',\
+'errors_odd_1e9'  u (1./sqrt($2)):8 w lp ps .5 t 'pressure, {/Symbol l}=1e9',\
+'errors_odd_1e10' u (1./sqrt($2)):5 w lp ps .5 t 'velocity, {/Symbol l}=1e10',\
+'errors_odd_1e10' u (1./sqrt($2)):8 w lp ps .5 t 'pressure, {/Symbol l}=1e10',\
+x**1/80 w l t 'x^1',\
+x**.5/30. w l t 'x^{0.5}'

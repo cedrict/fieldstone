@@ -1,7 +1,4 @@
 
-\index{stones}{$Q_1 \times P_0$ element}
-\index{stones}{Penalty Formulation}
-\index{stones}{Analytical Solution}
 
 %Taken from aspect manual. 
 The SolCx benchmark is intended to test the accuracy of the solution to a problem that has a large jump in the viscosity along a line through the domain. Such situations are common in geophysics: for example, the viscosity in a cold, subducting slab is much larger than in the surrounding, relatively hot mantle material.
@@ -16,32 +13,46 @@ The viscosity is prescribed as follows:
 \mu(x,y) = 
 \left\{
 \begin{array}{lll}
-1 & for & x<0.5 \\
-10^6 & for & x>0.5 \\
+1 & \text{for} & x<0.5 \\
+10^6 & \text{for} & x>0.5 \\
 \end{array}
 \right.
 \end{equation}
 Note the strongly discontinuous viscosity field yields a stagnant flow 
 in the right half of the domain and thereby yields a pressure discontinuity along the interface. 
 
-The SolCx benchmark was previously used in \cite{dumg11} (references to earlier uses of the benchmark are available there) and its analytic solution is given in \cite{zhon96}. It has been carried out in \cite{krhb12} and \cite{gemd13}. 
+The SolCx benchmark was previously showcased in Duretz et al (2011) \cite{dumg11} (references to earlier 
+uses of the benchmark are available there) and its analytic solution is given in \cite{zhon96}. 
+It has been carried out in Kronbichler et al (2012) \cite{krhb12} and Gerya et al (2013) \cite{gemd13}. 
 Note that the source code which evaluates the velocity and pressure fields for both SolCx and SolKz is 
-distributed as part of the open source package Underworld (\cite{moql07}, http://underworldproject.org).
+distributed as part of the open source package Underworld (Moresi et al, 2007 \cite{moql07}, http://underworldproject.org).
 
 In this particular example, the viscosity is computed analytically at the quadrature points (i.e. tracers are 
 not used to attribute a viscosity to the element). 
 If the number of elements is even in any direction, all elements (and their associated quadrature points)
-have a constant viscosity($1$ or  $10^6$). If it is odd, then the elements situated 
+have a constant viscosity ($1$ or  $10^6$). If it is odd, then the elements situated 
 at the viscosity jump have half their integration points with $\mu=1$ and half with $\mu=10^6$ 
 (which is a pathological case since the used quadrature rule inside elements cannot represent 
 accurately such a jump).  
 
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_05/results/errors_even.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_05/results/errors_odd.pdf}\\
+{\captionfont Velocity and pressure error convergence as a function of mesh size and for various values
+of the penalty parameter. Left: even number of elements in each direction; Right: odd numbers.
+}
+\end{center}
 
-\includegraphics[width=16cm]{python_codes/fieldstone_05/solution.pdf}
+Because of the high viscosity in the right part of the domain, the penalty parameter should 
+be high enough to insure an incompressible flow and thereby recover the expected convergence rate
+(at least for the even case). Note that values higher than $\lambda=10^{10}$ yield erroneous solutions 
+due to round-off errors. 
 
-\fbox{
-\parbox{10cm}{{\bf What we learn from this}
-}}
+\begin{center}
+\includegraphics[width=16cm]{python_codes/fieldstone_05/results/solution.pdf}
+{\captionfont Various fields for 100x100 mesh}
+\end{center}
+
 
 
 
