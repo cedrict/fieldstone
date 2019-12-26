@@ -4,7 +4,13 @@ set xlabel 'x'
 set ylabel 'pressure'
 
 set output 'p.pdf'
-plot[][]\
+plot[][-200:200]\
 'ldc0/p_top.ascii' w l t 'ldc0',\
 'ldc1/p_top.ascii' w l t 'ldc1',\
 'ldc2/p_top.ascii' w l t 'ldc2',\
+
+set output 'q.pdf'
+plot[][-200:200]\
+'ldc0/q_top.ascii' w l t 'ldc0',\
+'ldc1/q_top.ascii' w l t 'ldc1',\
+'ldc2/q_top.ascii' w l t 'ldc2',\

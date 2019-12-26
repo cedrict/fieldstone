@@ -1,17 +1,15 @@
 
-\index{stones}{$Q_1 \times P_0$ element}
-\index{stones}{Penalty Formulation}
-
 The lid driven cavity is a famous Computational Fluid Dynamics test case 
 \cite{kawa61,ghgs82,paac67,bope98,brsa06,grdn97,shde00}
 and has been studied in countless publications with a wealth of numerical techniques
 (see \cite{ertu09} for a succinct review) and also in the laboratory \cite{kost84}.
 
 It models a plane flow of an isothermal isoviscous fluid in a rectangular (usually square) lid-driven cavity. 
-The boundary conditions are indicated in the Fig. \ref{fig_ldc}a. The gravity is set to zero.
+The boundary conditions are no slip on left, right and bottom. The gravity is set to zero as the flow
+is entirely driven by the moving lid.
 
 %---------------------------------------------------------
-\subsection*{the lid driven cavity problem ({\tt ldc=0})}
+\subsection*{The lid driven cavity problem ({\tt ldc=0})}
 In the standard case, the upper side of the cavity moves in its own plane at unit speed, while the other sides are fixed.
 This thereby introduces a discontinuity in the boundary conditions at the two upper corners of the cavity and yields
 an uncertainty as to which boundary (side or top) the corner points belong to. 
@@ -22,10 +20,10 @@ This benchmark is usually dicussed in the context of low to very high Reynolds n
 Navier-Stokes equations being solved (with the noticeable exception of \cite{sagl81a,sagl81b,chpc95,eid2005}
 which focus on the Stokes equation). 
 In the case of the incompressible Stokes flow, 
-the absence of inertia renders this problem instantaneous so that only one time step is needed.
+the absence of inertia renders this problem instantaneous so that only one time step/Stokes solve is needed.
 
 %---------------------------------------------------------
-\subsection*{the lid driven cavity problem - regularisation I ({\tt ldc=1})}
+\subsection*{The lid driven cavity problem - regularisation I ({\tt ldc=1})}
 
 We avoid the top corner nodes issue altogether by  
 prescribing the horizontal velocity of the lid as follows: 
@@ -35,7 +33,7 @@ u(x)=x^2(1-x)^2.
 In this case the velocity and its first derivative is continuous at the corners. This is the so-called regularised lid-driven cavity problem \cite{piva94}.
 
 %---------------------------------------------------------
-\subsection*{the lid driven cavity problem - regularisation II ({\tt ldc=2})}
+\subsection*{The lid driven cavity problem - regularisation II ({\tt ldc=2})}
 
 Another regularisation was presented in \cite{dejn16}. Also in Appendix D.4 of \cite{john16}. 
 Here, a regularized lid driven cavity is studied which is consistent in the sense that 
@@ -52,16 +50,18 @@ u(x) &=& 1-\frac{1}{4}\left( 1-\cos (\frac{x-(1-x_1)}{x_1}\pi)  \right)^2   \qua
 \end{eqnarray}
 Results are obtained with $x_1=0.1$.
 
-
-
-
 \newpage
-A 100x100 element grid is used. No-slip boundary conditions are prescribed on sides and
-bottom. A zero vertical velocity is prescribed at the top and the exact form of the 
+A 100x100 element grid is used. 
+A zero vertical velocity is prescribed at the top and the exact form of the 
 prescribed horizontal velocity is controlled by the {\tt ldc} parameter.
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_04/results/p.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_04/results/p.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_04/results/q.pdf}\\
+{\captionfont Left: pressure $p$ at $y=L_y$; Right: smoothed pressure $q$ at $y=L_y$.}
+\end{center}
+
+\begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_04/results/velocities}\\
 \includegraphics[width=12cm]{python_codes/fieldstone_04/results/pressures}\\
 \includegraphics[width=12cm]{python_codes/fieldstone_04/results/strainrates}
