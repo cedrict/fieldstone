@@ -1,5 +1,4 @@
 import numpy as np
-import math as math
 import sys as sys
 import scipy
 import scipy.sparse as sps
@@ -48,8 +47,8 @@ if int(len(sys.argv) == 4):
    nelz = int(sys.argv[3])
 else:
    nelx = 16
-   nely = 16
-   nelz = 16
+   nely = nelx
+   nelz = nelx
 
 assert (nelx>0.), "nelx should be positive" 
 assert (nely>0.), "nely should be positive" 
@@ -61,13 +60,13 @@ nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
 nnz=nelz+1  # number of elements, z direction
 
-nnp=nnx*nny*nnz  # number of nodes
+NV=nnx*nny*nnz  # number of nodes
 
 nel=nelx*nely*nelz  # number of elements, total
 
 penalty=1.e7  # penalty coefficient value
 
-Nfem=nnp*ndof  # Total number of degrees of freedom
+Nfem=NV*ndof  # Total number of degrees of freedom
 
 eps=1.e-10
 
@@ -80,12 +79,11 @@ sqrt3=np.sqrt(3.)
 #################################################################
 # grid point setup
 #################################################################
+start = time.time()
 
-print("grid point setup")
-
-x = np.empty(nnp, dtype=np.float64)  # x coordinates
-y = np.empty(nnp, dtype=np.float64)  # y coordinates
-z = np.empty(nnp, dtype=np.float64)  # z coordinates
+x = np.empty(NV,dtype=np.float64)  # x coordinates
+y = np.empty(NV,dtype=np.float64)  # y coordinates
+z = np.empty(NV,dtype=np.float64)  # z coordinates
 
 counter=0
 for i in range(0, nnx):
@@ -95,14 +93,19 @@ for i in range(0, nnx):
             y[counter]=j*Ly/float(nely)
             z[counter]=k*Lz/float(nelz)
             counter += 1
+        #end for
+    #end for
+#end for
+   
+print("mesh setup: %.3f s" % (time.time() - start))
 
 #################################################################
 # connectivity
 #################################################################
-
-print("connectivity")
+start = time.time()
 
 icon =np.zeros((m, nel),dtype=np.int16)
+
 counter = 0
 for i in range(0, nelx):
     for j in range(0, nely):
@@ -116,6 +119,11 @@ for i in range(0, nelx):
             icon[6,counter]=nny*nnz*(i  +1)+nnz*(j  +1)+k+1
             icon[7,counter]=nny*nnz*(i-1+1)+nnz*(j  +1)+k+1
             counter += 1
+        #end for
+    #end for
+#end for
+
+print("connectivity setup: %.3f s" % (time.time() - start))
 
 #################################################################
 # define boundary conditions
@@ -125,7 +133,7 @@ start = time.time()
 bc_fix=np.zeros(Nfem,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=float)  # boundary condition, value
 
-for i in range(0,nnp):
+for i in range(0,NV):
     if x[i]<eps:
        bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
     if x[i]>(Lx-eps):
@@ -138,11 +146,19 @@ for i in range(0,nnp):
        bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
     if z[i]>(Lz-eps):
        bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
+    #end if
+#end for
 
 print("define b.c.: %.3f s" % (time.time() - start))
 
 #################################################################
 # build FE matrix
+#   /1 1 1 0 0 0\      /2 0 0 0 0 0\ 
+#   |1 1 1 0 0 0|      |0 2 0 0 0 0|
+# K=|1 1 1 0 0 0|    C=|0 0 2 0 0 0|
+#   |0 0 0 0 0 0|      |0 0 0 1 0 0|
+#   |0 0 0 0 0 0|      |0 0 0 0 1 0|
+#   \0 0 0 0 0 0/      \0 0 0 0 0 1/
 #################################################################
 start = time.time()
 
@@ -156,9 +172,9 @@ dNdz  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
 dNdr  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
 dNds  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
 dNdt  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
-u     = np.zeros(nnp,dtype=np.float64)           # x-component velocity
-v     = np.zeros(nnp,dtype=np.float64)           # y-component velocity
-w     = np.zeros(nnp,dtype=np.float64)           # z-component velocity
+u     = np.zeros(NV,dtype=np.float64)           # x-component velocity
+v     = np.zeros(NV,dtype=np.float64)           # y-component velocity
+w     = np.zeros(NV,dtype=np.float64)           # z-component velocity
 k_mat = np.zeros((6,6),dtype=np.float64) 
 c_mat = np.zeros((6,6),dtype=np.float64) 
 
@@ -236,6 +252,7 @@ for iel in range(0, nel):
                     jcb[2, 0] += dNdt[k]*x[icon[k,iel]]
                     jcb[2, 1] += dNdt[k]*y[icon[k,iel]]
                     jcb[2, 2] += dNdt[k]*z[icon[k,iel]]
+                #end for 
 
                 # calculate the determinant of the jacobian
                 jcob = np.linalg.det(jcb)
@@ -254,6 +271,7 @@ for iel in range(0, nel):
                     dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
                     dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]+jcbi[1,2]*dNdt[k]
                     dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
+                #end for 
 
                 # construct 3x8 b_mat matrix
                 for i in range(0, m):
@@ -263,6 +281,7 @@ for iel in range(0, nel):
                                              [dNdy[i],dNdx[i],0.     ],
                                              [dNdz[i],0.     ,dNdx[i]],
                                              [0.     ,dNdz[i],dNdy[i]]]
+                #end for 
 
                 # compute elemental a_mat matrix
                 a_el += b_mat.T.dot(c_mat.dot(b_mat))*mu(xq,yq,zq)*wq*jcob
@@ -272,6 +291,11 @@ for iel in range(0, nel):
                     b_el[ndof*i+0]+=N[i]*jcob*wq*rho(xq,yq,zq)*gx
                     b_el[ndof*i+1]+=N[i]*jcob*wq*rho(xq,yq,zq)*gy
                     b_el[ndof*i+2]+=N[i]*jcob*wq*rho(xq,yq,zq)*gz
+                #end for 
+
+            #end for kq 
+        #end for jq  
+    #end for iq  
 
     # integrate penalty term at 1 point
     rq=0.
@@ -328,6 +352,7 @@ for iel in range(0, nel):
         jcb[2, 0] += dNdt[k]*x[icon[k,iel]]
         jcb[2, 1] += dNdt[k]*y[icon[k,iel]]
         jcb[2, 2] += dNdt[k]*z[icon[k,iel]]
+    #end for
 
     # calculate determinant of the jacobian
     jcob = np.linalg.det(jcb)
@@ -340,6 +365,7 @@ for iel in range(0, nel):
         dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
         dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]+jcbi[1,2]*dNdt[k]
         dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
+    #end for
 
     # compute gradient matrix
     for i in range(0,m):
@@ -349,6 +375,7 @@ for iel in range(0, nel):
                                  [dNdy[i],dNdx[i],0.     ],
                                  [dNdz[i],0.     ,dNdx[i]],
                                  [0.     ,dNdz[i],dNdy[i]]]
+    #end for
 
     # compute elemental matrix
     a_el += b_mat.T.dot(k_mat.dot(b_mat))*penalty*wq*jcob
@@ -365,8 +392,12 @@ for iel in range(0, nel):
                    b_el[jkk]-=a_el[jkk,ikk]*fixt
                    a_el[ikk,jkk]=0.
                    a_el[jkk,ikk]=0.
+               #end for
                a_el[ikk,ikk]=aref
                b_el[ikk]=aref*fixt
+            #end if
+        #end for
+    #end for
 
     # assemble matrix a_mat and right hand side rhs
     for k1 in range(0,m):
@@ -378,7 +409,13 @@ for iel in range(0, nel):
                     jkk=ndof*k2          +i2
                     m2 =ndof*icon[k2,iel]+i2
                     a_mat[m1,m2]+=a_el[ikk,jkk]
+                #end for
+            #end for
             rhs[m1]+=b_el[ikk]
+        #end for
+    #end for
+
+#end for iel
 
 a_mat=csr_matrix(a_mat)
 
@@ -398,11 +435,11 @@ print("solve time: %.3f s" % (time.time() - start))
 #####################################################################
 start = time.time()
 
-u,v,w=np.reshape(sol,(nnp,3)).T
+u,v,w=np.reshape(sol,(NV,3)).T
 
-print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
-print("     -> w (m,M) %.4f %.4f " %(np.min(w),np.max(w)))
+print("     -> u (m,M) %.5f %.5f " %(np.min(u),np.max(u)))
+print("     -> v (m,M) %.5f %.5f " %(np.min(v),np.max(v)))
+print("     -> w (m,M) %.5f %.5f " %(np.min(w),np.max(w)))
 
 np.savetxt('velocity.ascii',np.array([x,y,z,u,v,w]).T,header='# x,y,z,u,v,w')
 
@@ -481,6 +518,7 @@ for iel in range(0,nel):
         jcb[2, 0] += dNdt[k]*x[icon[k,iel]]
         jcb[2, 1] += dNdt[k]*y[icon[k,iel]]
         jcb[2, 2] += dNdt[k]*z[icon[k,iel]]
+    #end for
 
     # calculate determinant of the jacobian
     jcob=np.linalg.det(jcb)
@@ -492,6 +530,7 @@ for iel in range(0,nel):
         dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
         dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]+jcbi[1,2]*dNdt[k]
         dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
+    #end for
 
     for k in range(0, m):
         xc[iel]+=N[k]*x[icon[k,iel]]
@@ -503,12 +542,15 @@ for iel in range(0,nel):
         exy[iel]+=0.5*dNdy[k]*u[icon[k,iel]]+0.5*dNdx[k]*v[icon[k,iel]]
         exz[iel]+=0.5*dNdz[k]*u[icon[k,iel]]+0.5*dNdx[k]*w[icon[k,iel]]
         eyz[iel]+=0.5*dNdz[k]*v[icon[k,iel]]+0.5*dNdy[k]*w[icon[k,iel]]
+    #end for
 
     p[iel]=-penalty*(exx[iel]+eyy[iel]+ezz[iel])
     visc[iel]=mu(xc[iel],yc[iel],zc[iel])
     dens[iel]=rho(xc[iel],yc[iel],zc[iel])
     sr[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel]+ezz[iel]*ezz[iel])
                     +exy[iel]*exy[iel]+exz[iel]*exz[iel]+eyz[iel]*eyz[iel])
+    
+#end for
 
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
@@ -534,11 +576,11 @@ if visu==1:
    vtufile=open("solution.vtu","w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
    vtufile.write("<UnstructuredGrid> \n")
-   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnp,nel))
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
    #####
    vtufile.write("<Points> \n")
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-   for i in range(0,nnp):
+   for i in range(0,NV):
        vtufile.write("%10f %10f %10f \n" %(x[i],y[i],z[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("</Points> \n")
@@ -575,7 +617,7 @@ if visu==1:
    vtufile.write("<PointData Scalars='scalars'>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-   for i in range(0,nnp):
+   for i in range(0,NV):
        vtufile.write("%10f %10f %10f \n" %(u[i],v[i],w[i]))
    vtufile.write("</DataArray>\n")
    #--
@@ -610,7 +652,3 @@ if visu==1:
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")
-
-
-
-

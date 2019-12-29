@@ -1,0 +1,8 @@
+set term pdf enhanced
+set xlabel 'pressure'
+set ylabel 'z'
+
+set output 'pressure.pdf'
+plot[][]\
+'pressure.ascii' u 4:3 pt 5 ps .25 t '24^3',\
+
