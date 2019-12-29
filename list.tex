@@ -8,7 +8,6 @@
 %-------------------------------------------------------
 \subsection{Velocity based stones}
 
-%{\scriptsize
 {\tiny
 \begin{tabular}{|l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|} 
 \hline
@@ -38,7 +37,7 @@ Pressure smoothing & .& .& .& Y&.&.&Y&Y \\
 Computing residual(s) &.&.&.&.&.&.&.&Y \\ 
 Paraview output &.&.&.&Y&.&.&.&. \\ 
 \hline
-Add. feature &&&&&&&& \\
+Add. feature &.&.&.&.&.&.&.&. \\
 \hline
 Description &
 "Donea \& Huerta" mms \ref{mms1} &
@@ -55,70 +54,54 @@ Status & better matplotlib interface? & OK & OK & OK & OK & OK & OK & OK \\
 \end{tabular}
 }
 
+
+
+
+
 \vspace{.5cm}
 
-
-
-
-
-
-
-
-
-
-\noindent 
-{\scriptsize
-\begin{tabular}{|l|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|} 
+\noindent
+{\tiny
+\begin{tabular}{|l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|} 
 \hline
-feature & &&&&&&&&& \\ 
+feature & 9 & 10 & 11 & 12 & 13 & 14 & \\ 
 \hline
-geometry &  &&&&&&&&& \\
-element type &&&&&&&&&\\ 
-mixed or penalty  & &&&&&&&&& \\
-matrix storage & & &&&&&&&& \\
-outer solver &  &&&&&&&&& \\
+geometry & Annulus  & Box\\ 
+element type & $Q_1\times P_0$ & $Q_1\times P_0$ & \\ 
+mixed or penalty  & penalty & penalty & \\ 
+matrix storage & 'lil' & 'lil' \\ 
+outer solver & N.A. & N.A. \\ 
 \hline
-three dimensions &  &&&&&&&&& \\
-compressible (Y/N) &&&&&&&&&& \\
-analytical benchmark (Y/N) &&&&&&&&&& \\
-numerical benchmark (Y/N) &  &&&&&&&&& \\
-error convergence (Y/N) & &&&&&&&&& \\
-thermo-mechanically coupled (Y/N) &&&&&&&&&& \\
-time-stepping (Y/N) &&&&&&&&&& \\
-external mesher (Y/N) &&&&&&&&&& \\
-non-linear (Y/N) &&&&&&&&&& \\
-plasticity (Y/N) & &  &&&&&&&&\\ 
-Buoyancy driven flow & &  &&&&&&&\\
+3 dimensions & . & Y & \\ 
+compressible (Y/N)  & . & . &\\
+analytical benchmark (Y/N) & Y & . &  \\ 
+numerical benchmark (Y/N) & . & . & \\ 
+error convergence (Y/N) & Y & . & \\
+thermo-mechanically coupled (Y/N) & . & . &\\
+time-stepping (Y/N) & . & . &\\
+external mesher (Y/N) & .& . & \\
+non-linear (Y/N) & .& . &\\
+plasticity (Y/N) & . & .& \\ 
+Buoyancy driven flow & .& Y & \\ 
+Vrms  & . & . & \\ 
+Nusselt nb  & . & .&\\ 
+Pressure norm. & . & .&\\
+Pressure smoothing & . & . &  \\ 
+Computing residual(s) & .& . &\\
+Paraview output & Y & Y & \\
 \hline
-\end{tabular}
-}
-
-\noindent 
-{\scriptsize
-\begin{tabular}{|l|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|} 
+Add. feature &. &. & & & & & & \\
 \hline
-feature & &&&&&&&&& \\ 
+Description & Annulus benchmark & 3D Stokes sphere\\
 \hline
-geometry &  &&&&&&&&& \\
-element type &&&&&&&&&\\ 
-mixed or penalty  & &&&&&&&&& \\
-matrix storage & & &&&&&&&& \\
-outer solver &  &&&&&&&&& \\
-\hline
-three dimensions &  &&&&&&&&& \\
-compressible (Y/N) &&&&&&&&&& \\
-analytical benchmark (Y/N) &&&&&&&&&& \\
-numerical benchmark (Y/N) &  &&&&&&&&& \\
-error convergence (Y/N) & &&&&&&&&& \\
-thermo-mechanically coupled (Y/N) &&&&&&&&&& \\
-time-stepping (Y/N) &&&&&&&&&& \\
-external mesher (Y/N) &&&&&&&&&& \\
-non-linear (Y/N) &&&&&&&&&& \\
-plasticity (Y/N) & &  &&&&&&&&\\ 
-Buoyancy driven flow & &  &&&&&&&\\
+Status & OK & OK & \\ 
 \hline
 \end{tabular}
 }
+
+
+
+
 
 
 

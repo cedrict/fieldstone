@@ -32,16 +32,17 @@ steady state after some time.
 The Nusselt number (i.e. the mean surface temperature gradient over mean bottom temperature)
 is computed as follows \cite{blbc89}:
 \begin{equation}
-Nu = L_y \frac{\int \frac{\partial T}{\partial y}(y=L_y) dx  }{\int T(y=0) dx}
+Nu = L_y \frac{\int_0^{L_x} \frac{\partial T}{\partial y}(y=L_y) \; dx  }{\int_0^{L_x} T(y=0) \; dx}
 \label{eqNu}
 \end{equation}
 Note that in our case the denominator is equal to 1 since $L_x=1$ and the temperature at the 
 bottom is prescribed to be 1.
 
-Finally, the steady state root mean square velocity and Nusselt number measurements
-are indicated in Table \ref{tab_bl} alongside those of \cite{blbc89} and \cite{tack94}.
+The steady state root mean square velocity and Nusselt number measurements
+are indicated in the following Table alongside those of \cite{blbc89} and \cite{tack94}.
 (Note that this benchmark was also carried out and published in  
-other publications \cite{trha98,albe00,gery10,dawk11,lezh11} but since they did not provide  a complete set
+other publications \cite{trha98,albe00,gery10,bepo10,dawk11,lezh11} but 
+since they did not provide  a complete set
 of measurement values, they are not included in the table.)
 
 \begin{center}
@@ -61,39 +62,70 @@ $Ra=10^6$ & $V_{rms}$ &  $833.98977  \pm 0.00020 $ & 833.55 \\
 {\small Steady state Nusselt number $Nu$ and $V_{rms}$ measurements as reported in the literature. }
 \end{center}
 
+Food for thought: Looking at the mass, momentum and energy conservation equations, 
+we see that that they are coupled: the temperature enters the rhs of the momentum 
+equation since the density depends on the temperature (Boussinesq approximation)
+while the velocity is present in the advection term of the energy equation.
+One should then solve all three equations with $u,v,p,T$ as unknowns. However
+this is rarely done in practice and often the system is solved in a segregated way:
+first solve for $u,v,p$ assuming $T$ known, then solving for $T$ assuming $u,v,p$ known.
+If small time steps are used this is a reasonable approach, or, like in this case, when 
+one wishes to compute the steady state of the system rather than an accurate time-evolution
+of the system. Better schemes are available and one example thereof is explained in Kronbichler et al (2012) 
+\cite{krhb12}.
+
+Also, the current version of this stone uses a simple time discretisation of the $\partial T/\partial t$ term
+as explained in Section~\ref{sec:diff1D}. A Crank-Nicolson algorithm could easily be 
+implemented as explained in Section~\ref{sec:timediscr}.
+
+Something must be said about how the Nusselt number is computed. 
+Its calculation requires the integral of the temperature gradient along an edge. 
+Because it is much simpler to compute the temperature gradient in the middle of the 
+element alongside other quantities such as pressure, this (elemental) quantity is 
+used in the Nusselt number calculations, which makes it inaccurate and therefore 
+explains the discrepancy between the computed values and those of other publications.
+
+Finally, it is expected that the thickness of the 
+boundary layers decreases with higher Rayleigh number values.
+As a consequence, in order to appropriately capture those, one needs 
+a higher resolution than at low Ra numbers. This explains why 
+acceptable results are obtained for $Ra=10^4$  at low resolution 32x32.
+
+
+\newpage
+\paragraph{Results for $Ra=10^4$}.
+\begin{center}
+\includegraphics[width=16cm]{python_codes/fieldstone_03/results_1e4/48x48/solution.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e4/Tavrg.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e4/vrms.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e4/Nu.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e4/Nu_vrms.pdf}
+\end{center}
+
+\newpage
+\paragraph{Results for $Ra=10^5$}.
+\begin{center}
+\includegraphics[width=16cm]{python_codes/fieldstone_03/results_1e5/48x48/solution.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e5/Tavrg.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e5/vrms.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e5/Nu.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e5/Nu_vrms.pdf}
+\end{center}
+
+\newpage
+\paragraph{Results for $Ra=10^6$}.
+\begin{center}
+\includegraphics[width=16cm]{python_codes/fieldstone_03/results_1e6/48x48/solution.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e6/Tavrg.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e6/vrms.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e6/Nu.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e6/Nu_vrms.pdf}
+\end{center}
+
+
+I have tested the influence of the CFL number (0.5 instead of 1) and it does not change much at all.
 
 
 
 
 
-\fbox{
-\parbox{10cm}{{\bf features}
-\begin{itemize}
-\item $Q_1\times P_0$ element
-\item incompressible flow
-\item penalty formulation
-\item Dirichlet boundary conditions (free-slip)
-\item Boussinesq approximation
-\item direct solver
-\item non-isothermal
-\item buoyancy-driven flow
-\item isoviscous
-\item CFL-condition
-\end{itemize}
-}}
-
-\includegraphics[width=16cm]{python_codes/fieldstone_03/solution_convection_box.pdf}
-
-ToDo:
-
-implement steady state criterion
-
-reach steady state
-
-do Ra=1e4, 1e5, 1e6
-
-plot against blankenbach paper and aspect
-
-look at critical Ra number
-
-This benchmark has been carried out in many scientific papers \cite{bepo10}.

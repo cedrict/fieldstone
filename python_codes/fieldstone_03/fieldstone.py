@@ -1,12 +1,10 @@
 import numpy as np
-import math as math
 import sys as sys
 import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 import time as timing
 import matplotlib.pyplot as plt
-import tkinter
 
 #------------------------------------------------------------------------------
 
@@ -14,7 +12,7 @@ def rho(rho0,alpha,T,T0):
     val=rho0*(1.-alpha*(T-T0))
     return val
 
-def mu(T):
+def eta(T):
     val=1.
     return val
 
@@ -33,7 +31,7 @@ ndofV=2      # number of degrees of freedom per node
 ndofT=1      # number of degrees of freedom per node
 Lx=1.        # horizontal extent of the domain 
 Ly=1.        # vertical extent of the domain 
-Ra=1e5       # Rayleigh number
+Ra=1e6       # Rayleigh number
 alpha=1e-2   # thermal expansion coefficient
 hcond=1.     # thermal conductivity
 hcapa=1.     # heat capacity
@@ -42,15 +40,17 @@ T0=0         # reference temperature
 CFL=1.       # CFL number 
 gy=-Ra/alpha # vertical component of gravity vector
 penalty=1.e7 # penalty coefficient value
-nstep=2000   # maximum number of timestep   
+nstep=15000   # maximum number of timestep   
+
+tol=1e-6
 
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 3):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 64
+   nely = 64
 
 assert (nelx>0.), "nnx should be positive" 
 assert (nely>0.), "nny should be positive" 
@@ -68,6 +68,10 @@ nel=nelx*nely  # number of elements, total
 NfemV=nnp*ndofV  # Total number of degrees of velocity freedom
 NfemT=nnp*ndofT  # Total number of degrees of temperature freedom
 
+Nu_vrms_file=open('Nu_vrms.ascii',"w")
+dt_file=open('dt.ascii',"w")
+Tavrg_file=open('Tavrg.ascii',"w")
+
 #####################################################################
 # grid point setup 
 #####################################################################
@@ -82,6 +86,8 @@ for j in range(0, nny):
         x[counter]=i*hx
         y[counter]=j*hy
         counter += 1
+    #end for
+#end for
 
 #####################################################################
 # connectivity
@@ -98,6 +104,8 @@ for j in range(0, nely):
         icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
         icon[3, counter] = i + (j + 1) * (nelx + 1)
         counter += 1
+    #end for
+#end for
 
 #####################################################################
 # define velocity boundary conditions
@@ -117,6 +125,7 @@ for i in range(0,nnp):
        bc_fixV[i*ndofV+1] = True ; bc_valV[i*ndofV+1] = 0.
     if y[i]>(Ly-eps):
        bc_fixV[i*ndofV+1] = True ; bc_valV[i*ndofV+1] = 0.
+#end for
 
 #####################################################################
 # define temperature boundary conditions
@@ -132,17 +141,22 @@ for i in range(0,nnp):
        bc_fixT[i]=True ; bc_valT[i]=1.
     if y[i]>(Ly-eps):
        bc_fixT[i]=True ; bc_valT[i]=0.
+#end for
 
 #####################################################################
 # initial temperature
 #####################################################################
 
 T = np.zeros(nnp,dtype=np.float64)
+T_prev = np.zeros(nnp,dtype=np.float64)
 
 for i in range(0,nnp):
-    T[i]=1.-y[i]-0.01*math.cos(math.pi*x[i])*math.sin(math.pi*y[i])
+    T[i]=1.-y[i]-0.01*np.cos(np.pi*x[i])*np.sin(np.pi*y[i])
+#end for
 
-np.savetxt('temperature_init.ascii',np.array([x,y,T]).T,header='# x,y,T')
+T_prev[:]=T[:]
+
+#np.savetxt('temperature_init.ascii',np.array([x,y,T]).T,header='# x,y,T')
 
 #####################################################################
 # create necessary arrays 
@@ -155,26 +169,27 @@ dNdr  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
 dNds  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
 u     = np.zeros(nnp,dtype=np.float64)  # x-component velocity
 v     = np.zeros(nnp,dtype=np.float64)  # y-component velocity
+u_prev= np.zeros(nnp,dtype=np.float64)  # x-component velocity
+v_prev= np.zeros(nnp,dtype=np.float64)  # y-component velocity
 Tvect = np.zeros(4,dtype=np.float64)   
 k_mat = np.array([[1.,1.,0.],[1.,1.,0.],[0.,0.,0.]],dtype=np.float64) 
 c_mat = np.array([[2.,0.,0.],[0.,2.,0.],[0.,0.,1.]],dtype=np.float64) 
-vrms=np.zeros(nstep,dtype=np.float64) 
-time=np.zeros(nstep,dtype=np.float64) 
-Nusselt=np.zeros(nstep,dtype=np.float64) 
 
 #==============================================================================
 # time stepping loop
 #==============================================================================
 
+time=0.
+
 for istep in range(0,nstep):
     print("-----------------------------")
     print("istep= ", istep)
-
-#####################################################################
-# build FE matrix
-#####################################################################
-
     print("-----------------------------")
+
+    #################################################################
+    # build FE matrix
+    #################################################################
+
     print("building Stokes matrix and rhs")
 
     A_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # FE matrix 
@@ -215,6 +230,7 @@ for istep in range(0,nstep):
                     jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
                     jcb[1, 0] += dNds[k]*x[icon[k,iel]]
                     jcb[1, 1] += dNds[k]*y[icon[k,iel]]
+                #end for
 
                 # calculate the determinant of the jacobian
                 jcob = np.linalg.det(jcb)
@@ -232,19 +248,25 @@ for istep in range(0,nstep):
                     Tq+=N[k]*T[icon[k,iel]]
                     dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
                     dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+                #end for
 
                 # construct 3x8 B_mat matrix
                 for i in range(0, m):
                     B_mat[0:3, 2*i:2*i+2] = [[dNdx[i],0.     ],
                                              [0.     ,dNdy[i]],
                                              [dNdy[i],dNdx[i]]]
+                #end for
 
                 # compute elemental A_mat matrix
-                a_el += B_mat.T.dot(c_mat.dot(B_mat))*mu(Tq)*wq*jcob
+                a_el += B_mat.T.dot(c_mat.dot(B_mat))*eta(Tq)*wq*jcob
 
                 # compute elemental rhs vector
                 for i in range(0, m):
                     b_el[2*i+1]+=N[i]*jcob*wq*rho(rho0,alpha,Tq,T0)*gy
+                #end for
+
+            #end for
+        #end for
 
         # integrate penalty term at 1 point
         rq=0.
@@ -268,6 +290,7 @@ for istep in range(0,nstep):
             jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
             jcb[1,0]+=dNds[k]*x[icon[k,iel]]
             jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+        #end for
 
         # calculate determinant of the jacobian
         jcob = np.linalg.det(jcb)
@@ -279,12 +302,14 @@ for istep in range(0,nstep):
         for k in range(0,m):
             dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
             dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+        #end for
 
         # compute gradient matrix
         for i in range(0,m):
             B_mat[0:3,2*i:2*i+2]=[[dNdx[i],0.     ],
                                   [0.     ,dNdy[i]],
                                   [dNdy[i],dNdx[i]]]
+        #end for
 
         # compute elemental matrix
         a_el += B_mat.T.dot(k_mat.dot(B_mat))*penalty*wq*jcob
@@ -299,7 +324,13 @@ for istep in range(0,nstep):
                         jkk=ndofV*k2          +i2
                         m2 =ndofV*icon[k2,iel]+i2
                         A_mat[m1,m2]+=a_el[ikk,jkk]
+                    #end for
+                #end for
                 rhs[m1]+=b_el[ikk]
+            #end for
+        #end for
+
+    #end for iel
 
     #################################################################
     # impose boundary conditions
@@ -315,7 +346,10 @@ for istep in range(0,nstep):
                A_mat[i,j]=0.
                A_mat[j,i]=0.
                A_mat[i,i]=A_matref
+           #end for
            rhs[i]=A_matref*bc_valV[i]
+        #end if
+    #end for
 
     #################################################################
     # solve system
@@ -344,20 +378,19 @@ for istep in range(0,nstep):
 
     dt=np.min([dt1,dt2])
 
-    if istep==0:
-       time[istep]=dt
-    else:
-       time[istep]=time[istep-1]+dt
+    time+=dt
 
     print('dt1= %.6f' %dt1)
     print('dt2= %.6f' %dt2)
     print('dt = %.6f' %dt)
 
+    dt_file.write("%10e %10e %10e %10e\n" % (time,dt1,dt2,dt))
+    dt_file.flush()
+
     #################################################################
     # build temperature matrix
     #################################################################
 
-    print("-----------------------------")
     print("building temperature matrix and rhs")
 
     A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
@@ -376,6 +409,7 @@ for istep in range(0,nstep):
 
         for k in range(0,m):
             Tvect[k]=T[icon[k,iel]]
+        #end for
 
         for iq in [-1,1]:
             for jq in [-1,1]:
@@ -398,12 +432,13 @@ for istep in range(0,nstep):
                 dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
                 # calculate jacobian matrix
-                jcb=np.zeros((2, 2),dtype=float)
+                jcb=np.zeros((2, 2),dtype=np.float64)
                 for k in range(0,m):
                     jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
                     jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
                     jcb[1,0]+=dNds[k]*x[icon[k,iel]]
                     jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+                #end for
 
                 # calculate the determinant of the jacobian
                 jcob=np.linalg.det(jcb)
@@ -421,6 +456,7 @@ for istep in range(0,nstep):
                     dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
                     B_mat[0,k]=dNdx[k]
                     B_mat[1,k]=dNdy[k]
+                #end for
 
                 # compute mass matrix
                 MM=N_mat.dot(N_mat.T)*rho0*hcapa*wq*jcob
@@ -441,7 +477,13 @@ for istep in range(0,nstep):
                     for k2 in range(0,m):
                         m2=icon[k2,iel]
                         A_mat[m1,m2]+=a_el[k1,k2]
+                    #end for
                     rhs[m1]+=b_el[k1]
+                #end for
+            #end for
+        #end for
+
+    #end for iel
 
     #################################################################
     # apply boundary conditions
@@ -457,7 +499,10 @@ for istep in range(0,nstep):
                A_mat[i,j]=0.
                A_mat[j,i]=0.
                A_mat[i,i] = A_matref
+           #end for
            rhs[i]=A_matref*bc_valT[i]
+        #end if 
+    #end for
 
     #print("A_mat (m,M) = %.4f %.4f" %(np.min(A_mat),np.max(A_mat)))
     #print("rhs   (m,M) = %.6f %.6f" %(np.min(rhs),np.max(rhs)))
@@ -476,6 +521,8 @@ for istep in range(0,nstep):
     # compute vrms 
     #################################################################
 
+    vrms=0.
+    Tavrg=0.
     for iel in range (0,nel):
         for iq in [-1,1]:
             for jq in [-1,1]:
@@ -496,22 +543,35 @@ for istep in range(0,nstep):
                     jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
                     jcb[1,0]+=dNds[k]*x[icon[k,iel]]
                     jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+                #end for
                 jcob = np.linalg.det(jcb)
                 uq=0.
                 vq=0.
+                Tq=0.
                 for k in range(0,m):
                     uq+=N[k]*u[icon[k,iel]]
                     vq+=N[k]*v[icon[k,iel]]
-                vrms[istep]+=(uq**2+vq**2)*wq*jcob
+                    Tq+=N[k]*T[icon[k,iel]]
+                #end for
+                vrms+=(uq**2+vq**2)*wq*jcob
+                Tavrg+=Tq*wq*jcob
+            #end for
+        #end for
+    #end for
 
-    vrms[istep]=np.sqrt(vrms[istep]/(Lx*Ly))
+    vrms=np.sqrt(vrms/(Lx*Ly))
+    Tavrg/=(Lx*Ly)
 
-    print("time= %.6f ; vrms   = %.6f" %(time[istep],vrms[istep]))
+    Tavrg_file.write("%10e %10e\n" % (time,Tavrg))
+    Tavrg_file.flush()
+
+    print("time= %.6f ; vrms   = %.6f" %(time,vrms))
 
     #################################################################
     # compute Nusselt number at top
     #################################################################
 
+    Nusselt=0
     for iel in range(0,nel):
         qy=0.
         rq=0.
@@ -527,16 +587,48 @@ for istep in range(0,nstep):
             jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
             jcb[1,0]+=dNds[k]*x[icon[k,iel]]
             jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+        #end for
         jcob=np.linalg.det(jcb)
         jcbi=np.linalg.inv(jcb)
         for k in range(0,m):
             dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+        #end for
         for k in range(0,m):
             qy+=-hcond*dNdy[k]*T[icon[k,iel]]
+        #end for
         if y[icon[3,iel]]>Ly-eps:
-           Nusselt[istep]+=qy*hx
+           Nusselt+=qy*hx
+        #end if
+    #end for
 
-    print("time= %.6f ; Nusselt= %.6f" %(time[istep],Nusselt[istep]))
+    Nu_vrms_file.write("%10e %10e %10e\n" % (time,Nusselt,vrms))
+    Nu_vrms_file.flush()
+
+    print("time= %.6f ; Nusselt= %.6f" %(time,Nusselt))
+
+    #############################333
+
+    T_diff=np.sum(abs(T-T_prev))/nnp
+    u_diff=np.sum(abs(u-u_prev))/nnp
+    v_diff=np.sum(abs(v-v_prev))/nnp
+
+    print("time= %.6f ; <T_diff>= %.6f" %(time,T_diff))
+    print("time= %.6f ; <u_diff>= %.6f" %(time,u_diff))
+    print("time= %.6f ; <v_diff>= %.6f" %(time,v_diff))
+
+    print("T conv" , T_diff<tol*Tavrg)
+    print("u conv" , u_diff<tol*vrms)
+    print("v conv" , v_diff<tol*vrms)
+
+    if T_diff<tol*Tavrg and u_diff<tol*vrms and v_diff<tol*vrms:
+       print("convergence reached")
+       break
+
+    T_prev[:]=T[:]
+    u_prev[:]=u[:]
+    v_prev[:]=v[:]
+    
+#end for
 
 #==============================================================================
 # end time stepping loop
@@ -547,7 +639,6 @@ for istep in range(0,nstep):
 # retrieve pressure
 #####################################################################
 
-print("-----------------------------")
 print("compure pressure and field derivatives")
 
 p=np.zeros(nel,dtype=np.float64)  
@@ -582,6 +673,7 @@ for iel in range(0,nel):
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
         jcb[1,0]+=dNds[k]*x[icon[k,iel]]
         jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+    #end for
 
     # calculate determinant of the jacobian
     jcob=np.linalg.det(jcb)
@@ -592,6 +684,7 @@ for iel in range(0,nel):
     for k in range(0,m):
         dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
         dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+    #end for
 
     Tc=0.
     for k in range(0,m):
@@ -603,9 +696,12 @@ for iel in range(0,nel):
         exx[iel]+=dNdx[k]*u[icon[k,iel]]
         eyy[iel]+=dNdy[k]*v[icon[k,iel]]
         exy[iel]+=0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
+    #end for
 
     p[iel]=-penalty*(exx[iel]+eyy[iel])
     dens[iel]=rho(rho0,alpha,Tc,T0)
+    
+#end for
 
 print("p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 print("exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
@@ -615,13 +711,11 @@ print("dens (m,M) %.4f %.4f " %(np.min(dens),np.max(dens)))
 print("qx (m,M) %.4f %.4f " %(np.min(qx),np.max(qx)))
 print("qy (m,M) %.4f %.4f " %(np.min(qy),np.max(qy)))
 
-np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
-np.savetxt('temperature.ascii',np.array([x,y,T]).T,header='# x,y,T')
-np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
-np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
-np.savetxt('heatflux.ascii',np.array([xc,yc,qx,qy]).T,header='# xc,yc,qx,qy')
-np.savetxt('vrms.ascii',np.array([time,vrms]).T,header='# time, vrms')
-np.savetxt('Nusselt.ascii',np.array([time,Nusselt]).T,header='# time, Nu')
+#np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+#np.savetxt('temperature.ascii',np.array([x,y,T]).T,header='# x,y,T')
+#np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
+#np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+#np.savetxt('heatflux.ascii',np.array([xc,yc,qx,qy]).T,header='# xc,yc,qx,qy')
 
 #####################################################################
 # plot of solution
@@ -715,18 +809,9 @@ axes[2][1].set_xlabel('x')
 axes[2][1].set_ylabel('y')
 fig.colorbar(im,ax=axes[2][1])
 
-im = axes[2][2].plot(time,vrms)
-axes[2][2].set_xlabel('time')
-axes[2][2].set_ylabel('$v_{rms}$')
-
-im = axes[2][3].plot(time,Nusselt)
-axes[2][3].set_xlabel('time')
-axes[2][3].set_ylabel('$Nu$')
-
-
 plt.subplots_adjust(hspace=0.5)
 
-plt.savefig('solution_convection_box.pdf', bbox_inches='tight')
+plt.savefig('solution.pdf', bbox_inches='tight')
 plt.show()
 
 print("-----------------------------")
