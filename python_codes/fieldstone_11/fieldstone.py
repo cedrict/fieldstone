@@ -1,5 +1,4 @@
 import numpy as np
-import math as math
 import sys as sys
 import scipy
 import scipy.sparse as sps
@@ -22,6 +21,8 @@ def mu(x,y,z):
     else:
        val=1.
     return val
+
+#------------------------------------------------------------------------------
 
 def NNV(rq,sq,tq):
     N_0=0.125*(1-rq)*(1-sq)*(1-tq)
@@ -70,7 +71,7 @@ def dNNVdt(rq,sq,tq):
 #------------------------------------------------------------------------------
 
 print("-----------------------------")
-print("----------SimpleFEM----------")
+print("--------fieldstone 11--------")
 print("-----------------------------")
 
 m=8      # number of nodes making up an element
@@ -91,13 +92,10 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    nelz = int(sys.argv[3])
 else:
-   nelx =16 
-   nely =16
-   nelz =16
-
-assert (nelx>0.), "nelx should be positive" 
-assert (nely>0.), "nely should be positive" 
-assert (nelz>0.), "nelz should be positive" 
+   nelx =20   # do not exceed 20 
+   nely =nelx
+   nelz =nelx
+#end if
 
 gx=0
 gy=0
@@ -153,6 +151,9 @@ for i in range(0, nnx):
             y[counter]=j*Ly/float(nely)
             z[counter]=k*Lz/float(nelz)
             counter += 1
+        #end for
+    #end for
+#end for
 
 print("grid points setup: %.3f s" % (time.time() - start))
 
@@ -175,6 +176,9 @@ for i in range(0, nelx):
             icon[6,counter]=nny*nnz*(i  +1)+nnz*(j  +1)+k+1
             icon[7,counter]=nny*nnz*(i-1+1)+nnz*(j  +1)+k+1
             counter += 1
+        #end for
+    #end for
+#end for
 
 print("build connectivity: %.3f s" % (time.time() - start))
 
@@ -199,6 +203,7 @@ for i in range(0,nnp):
        bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]=0
     if z[i]>(Lz-eps):
        bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]=0 
+#end for
 
 print("define b.c.: %.3f s" % (time.time() - start))
 
@@ -266,6 +271,7 @@ for iel in range(0, nel):
                     jcb[2, 0] += dNdt[k]*x[icon[k,iel]]
                     jcb[2, 1] += dNdt[k]*y[icon[k,iel]]
                     jcb[2, 2] += dNdt[k]*z[icon[k,iel]]
+                #end for
 
                 # calculate the determinant of the jacobian
                 jcob = np.linalg.det(jcb)
@@ -284,6 +290,7 @@ for iel in range(0, nel):
                     dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
                     dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]+jcbi[1,2]*dNdt[k]
                     dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
+                #end for
 
                 # construct 3x8 b_mat matrix
                 for i in range(0, m):
@@ -293,6 +300,7 @@ for iel in range(0, nel):
                                              [dNdy[i],dNdx[i],0.     ],
                                              [dNdz[i],0.     ,dNdx[i]],
                                              [0.     ,dNdz[i],dNdy[i]]]
+                #end for
 
                 K_el += b_mat.T.dot(c_mat.dot(b_mat))*mu(xq,yq,zq)*wq*jcob
 
@@ -303,6 +311,11 @@ for iel in range(0, nel):
                     G_el[ndofV*i+0,0]-=dNdx[i]*jcob*wq
                     G_el[ndofV*i+1,0]-=dNdy[i]*jcob*wq
                     G_el[ndofV*i+2,0]-=dNdz[i]*jcob*wq
+                #end for
+
+            #end for kq
+        #end for jq
+    #end for iq
 
     # impose b.c. 
     for k1 in range(0,m):
@@ -315,10 +328,14 @@ for iel in range(0, nel):
                    f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
                    K_el[ikk,jkk]=0
                    K_el[jkk,ikk]=0
+               #end for
                K_el[ikk,ikk]=K_ref
                f_el[ikk]=K_ref*bc_val[m1]
                h_el[0]-=G_el[ikk,0]*bc_val[m1]
                G_el[ikk,0]=0
+            #end if
+        #end for
+    #end for
 
     # assemble matrix K_mat and right hand side rhs
     for k1 in range(0,m):
@@ -330,9 +347,15 @@ for iel in range(0, nel):
                     jkk=ndofV*k2          +i2
                     m2 =ndofV*icon[k2,iel]+i2
                     K_mat[m1,m2]+=K_el[ikk,jkk]
+                #end for
+            #end for
             f_rhs[m1]+=f_el[ikk]
             G_mat[m1,iel]+=G_el[ikk,0]
+        #end for
+    #end for
     h_rhs[iel]+=h_el[0]
+
+#end for iel
 
 print("build FE matrix: %.3f s" % (time.time() - start))
 
@@ -355,11 +378,15 @@ else:
    a_mat[0:NfemV,0:NfemV]=K_mat
    a_mat[0:NfemV,NfemV:Nfem]=G_mat
    a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+#end if
 
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
 
 print("assemble blocks: %.3f s" % (time.time() - start))
+
+plt.spy(a_mat)
+plt.savefig('matrix.pdf', bbox_inches='tight')
 
 ######################################################################
 # solve system
@@ -431,6 +458,7 @@ for iel in range(0,nel):
         jcb[2, 0] += dNdt[k]*x[icon[k,iel]]
         jcb[2, 1] += dNdt[k]*y[icon[k,iel]]
         jcb[2, 2] += dNdt[k]*z[icon[k,iel]]
+    #end for
     jcob=np.linalg.det(jcb)
     jcbi=np.linalg.inv(jcb)
 
@@ -438,6 +466,7 @@ for iel in range(0,nel):
         dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
         dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]+jcbi[1,2]*dNdt[k]
         dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
+    #end for
 
     for k in range(0, m):
         xc[iel]+=N[k]*x[icon[k,iel]]
@@ -449,10 +478,13 @@ for iel in range(0,nel):
         exy[iel]+=0.5*dNdy[k]*u[icon[k,iel]]+0.5*dNdx[k]*v[icon[k,iel]]
         exz[iel]+=0.5*dNdz[k]*u[icon[k,iel]]+0.5*dNdx[k]*w[icon[k,iel]]
         eyz[iel]+=0.5*dNdz[k]*v[icon[k,iel]]+0.5*dNdy[k]*w[icon[k,iel]]
+    #end for
 
     visc[iel]=mu(xc[iel],yc[iel],zc[iel])
     sr[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel]+ezz[iel]*ezz[iel])
                     +exy[iel]*exy[iel]+exz[iel]*exz[iel]+eyz[iel]*eyz[iel])
+
+#end for iel
 
 print("exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
 print("eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
@@ -549,10 +581,10 @@ if visu==1:
    vtufile.close()
    print("export to vtu: %.3f s" % (time.time() - start))
 
+
+
+
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")
-
-
-
 
