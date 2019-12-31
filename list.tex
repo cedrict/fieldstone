@@ -66,35 +66,35 @@ Status & better matplotlib interface? & OK & OK & OK & OK & OK & OK & OK \\
 \hline
 feature & 9 & 10 & 11 & 12 & 13 & 14 & \\ 
 \hline
-geometry & Annulus  & Box\\ 
-element type & $Q_1\times P_0$ & $Q_1\times P_0$ & \\ 
-mixed or penalty  & penalty & penalty & \\ 
-matrix storage & 'lil' & 'lil' \\ 
-outer solver & N.A. & N.A. \\ 
+geometry & Annulus  & Box & Box & Box\\ 
+element type & $Q_1\times P_0$ & $Q_1\times P_0$ & $Q_1\times P_0$ & $Q_1\times P_0$ \\ 
+mixed or penalty  & penalty & penalty & mixed  & penalty \\ 
+matrix storage & 'lil' & 'lil' & full & full & \\ 
+outer solver (N.A., direct, SchurComp) & N.A. & N.A. & direct & N.A.& \\ 
 \hline
-3 dimensions & . & Y & \\ 
-compressible (Y/N)  & . & . &\\
-analytical benchmark (Y/N) & Y & . &  \\ 
-numerical benchmark (Y/N) & . & . & \\ 
-error convergence (Y/N) & Y & . & \\
-thermo-mechanically coupled (Y/N) & . & . &\\
-time-stepping (Y/N) & . & . &\\
-external mesher (Y/N) & .& . & \\
-non-linear (Y/N) & .& . &\\
-plasticity (Y/N) & . & .& \\ 
-Buoyancy driven flow & .& Y & \\ 
-Vrms  & . & . & \\ 
-Nusselt nb  & . & .&\\ 
-Pressure norm. & . & .&\\
-Pressure smoothing & . & . &  \\ 
-Computing residual(s) & .& . &\\
-Paraview output & Y & Y & \\
+3 dimensions & . & Y & Y & . &  \\ 
+compressible (Y/N)  & . & . & . & . & \\
+analytical benchmark (Y/N) & Y & . & . & Y &  \\ 
+numerical benchmark (Y/N) & . & . & . & . &\\ 
+error convergence (Y/N) & Y & . & . & Y & \\
+thermo-mechanically coupled (Y/N) & . & . & . & . & \\
+time-stepping (Y/N) & . & . & . & . & \\
+external mesher (Y/N) & .& . & . & . & \\
+non-linear (Y/N) & .& . & . & . & \\
+plasticity (Y/N) & . & .& . &  . & \\ 
+Buoyancy driven flow & .& Y & Y & .&  \\ 
+Vrms  & . & . & . & \\ 
+Nusselt nb  & . & .& . & . &\\ 
+Pressure norm. & . & .& Y & . & \\
+Pressure smoothing & . & . & . &  \\ 
+Computing residual(s) & .& . & . & . & \\
+Paraview output & Y & Y & Y & \\
 \hline
-Add. feature &. &. & & & & & & \\
+Add. feature &. &. & Lagrange multiplier & Consistent press. recovery& & & & \\
 \hline
-Description & Annulus benchmark & 3D Stokes sphere\\
+Description & Annulus benchmark & 3D Stokes sphere & 3D Stokes sphere & "Donea \& Huerta" mms \ref{mms1} & \\
 \hline
-Status & OK & OK & \\ 
+Status & OK & OK & OK & \\ 
 \hline
 \end{tabular}
 }
@@ -197,28 +197,6 @@ non-linear (Y/N) &&&&&&&&&& \\
 & \rotatebox{90}{numerical benchmark} 
 & \rotatebox{90}{elastomechanics} \\
 \hline \hline
-1  & $Q_1 \times P_0$ &              & penalty & analytical benchmark MMS1   &  &       &        & & &\dag  &&\\ 
-\hline
-2  & $Q_1 \times P_0$ &              & penalty & Stokes sphere               &  &       &        & &&&&\\ 
-\hline
-3  & $Q_1 \times P_0$ &              & penalty & Blankenbach et al., 1989    &  & $\dag$& $\dag$ & &&&&\\ 
-\hline
-4  & $Q_1 \times P_0$ &              & penalty & Lid driven cavity           &  &       &        & &&&&\\ 
-\hline
-5  & $Q_1 \times P_0$ &              & penalty & SolCx benchmark             &  &       &        & &&&&\\ 
-\hline
-6  & $Q_1 \times P_0$ &              & penalty & SolKz benchmark             &  &       &        & &&&&\\ 
-\hline
-7  & $Q_1 \times P_0$ &              & penalty & SolVi benchmark             &  &       &        & &&&&\\ 
-\hline
-8  & $Q_1 \times P_0$ &              & penalty & Indentor                    &  &       &        & $\dag$ &&&&\\ 
-\hline
-9  & $Q_1 \times P_0$ &              & penalty & annulus benchmark           &  &       &        & &&&&\\ 
-\hline
-10 & $Q_1 \times P_0$ &              & penalty & Stokes sphere               & $\dag$ &       &        & &&&&\\ 
-\hline
-11 & $Q_1 \times P_0$ & full matrix& mixed   & Stokes sphere               & $\dag$ &       &        & &&&&\\ 
-\hline
 12 & $Q_1 \times P_0$ &              & penalty & analytical benchmark        &  &       &        & &&&&\\
    &                  &              &         & + consistent press recovery &   &       &        & &&&&\\
 \hline

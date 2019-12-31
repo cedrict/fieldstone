@@ -13,7 +13,7 @@ from shape_functionsT import NNT,dNNTdr,dNNTds,dNNTdt
 #------------------------------------------------------------------------------
 
 print("-----------------------------")
-print("----------SimpleFEM----------")
+print("--------fieldstone 20--------")
 print("-----------------------------")
 
 ndim=3   # number of dimensions

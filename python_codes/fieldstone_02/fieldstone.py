@@ -37,7 +37,7 @@ def onePlot(variable, plotX, plotY, title, labelX, labelY, extVal, limitX, limit
 #------------------------------------------------------------------------------
 
 print("-----------------------------")
-print("----------SimpleFEM----------")
+print("--------fieldstone 02--------")
 print("-----------------------------")
 
 # declare variables

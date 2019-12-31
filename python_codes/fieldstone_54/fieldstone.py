@@ -193,6 +193,8 @@ for j in range(0,nely):
         iconV[7,counter]=(i)*2+1+(j)*2*nnx+nnx -1
         iconV[8,counter]=(i)*2+2+(j)*2*nnx+nnx -1
         counter += 1
+    #end for
+#end for
 
 #################################################################
 # build pressure grid and iconP 
