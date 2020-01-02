@@ -51,8 +51,8 @@ condition number is very high so that the use of iterative solvers is precluded.
 Indeed codes such as SOPALE \cite{full95}, DOUAR \cite{brtf08}, or FANTOM \cite{thie11} 
 relying on the penalty formulation all use direct solvers.
 The most popular are BLKFCT\footnote{\url{http://dm.unife.it/blkfclt/}}, 
-MUMPS\footnote{\url{http://mumps.enseeiht.fr/}}
-\cite{amdu89,amdl00,amdk01,amgl06}, 
+MUMPS\footnote{\url{http://mumps.enseeiht.fr/}}\cite{amdu89,amdl00,amdk01,amgl06}, 
+PasTiX \cite{herr02},
 WSMP\footnote{\url{http://www.research.ibm.com/projects/wsmp}} \cite{GUPTA94ieee,GUPTA09sc-long},
 UMFPACK and CHOLMOD\footnote{\url{http://faculty.cse.tamu.edu/davis/suitesparse.html}}
 , SuperLU, PARDISO\footnote{\url{https://www.pardiso-project.org/}}
@@ -262,7 +262,7 @@ For $k=1,2,...$, compute
 
 
 \index{general}{CG} \index{general}{Conjugate Gradient}
-Since $\SSS$ is SPD, the Conjugate Gradient (CG) method is very appropriate to solve this system. 
+Since $\SSS$ is SPD, the Conjugate Gradient (CG) method \cite{hest52} is very appropriate to solve this system. 
 Indeed, looking at the definition of Wikipedia: "{\it In mathematics, the conjugate gradient method is an algorithm for the numerical solution of particular systems of linear equations, namely those whose matrix is symmetric and positive-definite. The conjugate gradient method is often implemented as an iterative algorithm, applicable to sparse systems that are too large to be handled by a direct implementation or other direct methods such as the Cholesky decomposition. Large sparse systems often arise when numerically solving partial differential equations or optimization problems.}"
 
 A simple Google search tells us that the Conjugate Gradient algorithm is as follows:
