@@ -28,6 +28,8 @@
 
 %\RequirePackage{authorindex}
 
+\newtheorem{problem}{problem:}
+\newtheorem{problem-bonus}{problem*}
 
 \hypersetup{
 colorlinks,
@@ -329,7 +331,33 @@ a geodynamical context requires a lot of additional techniques.
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Gravity and co}
-\input{gravity}
+\index{contributors}{A. van den Berg}
+What follows was written by Arie van den Berg and was used as the syllabus for the 
+3rd year geodynamics course at Utrecht University. It is reproduced with Arie's permission
+and has been slightly modified by me.
+
+\subsection{Introduction} %------------------------------------------------------------------------
+\input{gravity_introduction} %---------------------------------------------------------------------
+\subsection{Global internal structure and temperature of the Earth} %------------------------------
+\input{gravity_globalstructure.tex} %--------------------------------------------------------------
+\subsubsection{The moment of inertia of a spherically symmetric density distribution} %------------
+\label{sect_scalarmomint} \input{gravity_momentofinertia.tex} %------------------------------------
+\subsubsection{Density, gravity and pressure in the Earth} %---------------------------------------
+\label{section_Density-gravity-pressure} \input{gravity_dens_grav_pres.tex} %----------------------
+\subsubsection{The gravity and pressure field for parameterized density models with self-gravitation}
+\label{sect_param_densmod} \input{gravity_pres-param-density.tex} %--------------------------------
+\subsubsection{The pressure effect on density} %---------------------------------------------------
+\label{Pressure_density} \input{gravity_pressure_density.tex} %------------------------------------
+\subsubsection{Adiabatic density distribution} %---------------------------------------------------
+\label{Adiabatic density distribution} \input{gravity_W-A-densitymodel.tex} %----------------------
+\subsubsection{Earth's chemical composition} %-----------------------------------------------------
+\label{section-chemical-composition} \input{gravity_chem-composition.tex} %------------------------
+\subsubsection{Phase transitions as anchor points of the geotherm} %-------------------------------
+\label{section-anchor points} \input{gravity_anchorpoints-geotherm.tex} %--------------------------
+
+\newpage
+\subsection{WORK in PROGRESS. DUH.} %--------------------------------------------------------------
+\input{gravity} %----------------------------------------------------------------------------------
 
 
 %%\end{document}

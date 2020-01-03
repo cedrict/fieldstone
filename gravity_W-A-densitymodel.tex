@@ -1,0 +1,273 @@
+
+In the previous section density models were based on 
+assumptions about the parameterization of the bulkmodulus $K$.
+The density model of Williamson and Adams (1923), (Hemley, 2006)
+does not depend on a parameterized $K$. 
+Instead it is defined in terms of the seismic wave velocities
+$v_p$ and $v_s$ that can be determined from inversion of seismological
+traveltime data as $K/\rho = v_p^2 - 4/3 v_s^2$.
+
+The W-A model can be derived from thermodynamic principles
+for a homogeneous self-compressing
+layer which is in an adiabatic state.
+The bulkmodulus applied in this model is expressed in the seismic
+wave velocities which in turn depend on the elasticity parameters
+and the density.
+The elastic deformation proces in seismic wave propagation occurs
+on a relatively short time scale (seconds-minutes) compared to the 
+characteristic time scale of conductive heat transport in solids
+(see \ref{section_energy_budget}).
+Therefore (diffusive) heat exchange can be neglected and adiabatic
+conditions apply in seismic wave propagation.  
+This implies that the elasticity parameters determined from 
+seismic data, including the bulkmodulus $K$ pertain to adiabatic
+conditions (see also Appendix \ref{Appnd_adiabatic_temperature_profile}).
+
+Other processes such as convective mantle flow that occur on
+a much longer time scale may take place under more general
+(non-adiabatic) conditions.
+
+In section \ref{section_thermal-state} on the thermal state of the Earth 
+it is shown that
+adiabatic conditions hold for the interior of a fluid layer when heat 
+transport is dominated by advection and heat diffusion by
+conduction/radiation plays a minor role.
+Assuming the Earth's mantle to be in a state of vigorous thermal
+convection it also follows that the average temperature profile, 
+the geotherm, corresponds to an adiabatic distribution.
+
+In general the density differential can be written as,
+\begin{equation}
+d\rho = \left ( \frac{\partial \rho}{\partial P} \right )_S dP +
+        \left ( \frac{\partial \rho}{\partial S} \right )_P dS
+\label{eqn_density_differential}
+\end{equation}
+where the differential of the entropy $S$ is dropped in case of
+adiabatic conditions and the pressure derivative is written in terms of the
+adiabatic bulkmodulus $K_S$ defined in (\ref{def_incompres}),
+$1/K_s =  \left ( \partial \rho/\partial P \right )_S / \rho$.
+
+
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{problem}
+ {\small \it
+  Derive the Williamson-Adams equation for a homogeneous adiabatic layer
+  from the density differential (\ref{eqn_density_differential}) and
+  assumption of isentropic (adiabatic) conditions with $dS\equiv 0$,
+  \begin{equation}
+        \frac{d\rho}{dr} = - \frac{\rho^2 g}{K_S}
+  \label{AW_density}
+  \end{equation}
+ }
+\end{problem}
+\end{minipage}
+}
+
+\vspace{0.5cm}
+
+~\\
+The density solution of the W-A equation can be expressed in terms
+of the seismic parameter $\Phi = K_S/\rho$ which in turn can be obtained
+from seismic velocity models:
+$\Phi = v_p^2 - \frac{4}{3} v_s^2$ for $P$ and $S$ waves.
+$\sqrt{\Phi}= \sqrt{K_S/\rho}$ is known as the bulkvelocity.
+For a given bulkvelocity profile, 
+obtained from seismic observations,
+the W-A density profile is derived from
+(\ref{AW_density}) as,
+\begin{equation}
+     \ln \left (  \frac{\rho(r)}{\rho(R)} \right ) = 
+        \int_r^R \Phi^{-1}(r^{'}) g(r^{'}) dr^{'}
+\label{W-A_integral}
+\end{equation}
+
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{problem}
+ {\small \it
+  Derive (\ref{W-A_integral}) by integration of the W-A equation
+  (\ref{AW_density}).
+ }
+\end{problem}
+\end{minipage}
+}
+
+\vspace{0.5cm}
+
+In (\ref{W-A_integral}) the gravity acceleration $g$ depends on
+the density distribution $\rho(r)$ in the lefthand side.
+Therefore the density profile can not be simply obtained from 
+a seismologically determined $\Phi(r)$ profile and a single 
+evaluation of the integral in (\ref{W-A_integral}).
+The expression represents an integral equation that can be solved
+iteratively as specified in problem \ref{AW-iteration}.
+
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{problem}
+ {\small \it
+  Assume that a seismic parameter profile for the mantle
+  $\Phi(r)$, obtained from seismic travel times, is available.
+  Investigate how (\ref{W-A_integral}) can be used to compute a 
+  sequence of mantle density profiles $\rho^{(j)}(r), j=1,2,\ldots$ 
+  in an iterative procedure, by succesive substitution.
+  How would you define a starting profile $\rho^{(1)}(r)$ for this
+  iterative procedure?
+  \newline
+  Hint:
+  Substitute the density profile for iteration number $j$ 
+  in the gravity acceleration in the righthand
+  side of (\ref{W-A_integral}) for the computation of an updated
+  profile $j+1$.
+  This is an example of a general solution strategy for non-linear
+  problems known as `succesive substitution' or Picard iteration. 
+\label{AW-iteration}
+ }
+\end{problem}
+\end{minipage}
+}
+
+\vspace{0.5cm}
+
+~\\
+Williamson and Adams (1923) \cite{wiad23} used the iterative scheme 
+in problem \ref{AW-iteration}
+to test the hypothesis
+that the mass concentration towards the Earth's centre is 
+completely explained by 
+compression of a homogeneous self-gravitating sphere.
+They showed that integrating (\ref{W-A_integral}) from a surface value
+of $3.3\cdot 10^3~\mathrm{kg/m^3}$ results in unrealistically 
+high density values for 
+depths greater than the core-mantle boundary.
+This way they concluded that an inhomogeneous earth with a dense,
+compositionally distinct core, probably iron-nickle, was required by
+the observations.
+The necessary multiple integrals in the evaluation of 
+(\ref{W-A_integral})
+had to be computed by means of graphical approximation methods in 1923,
+several decades before the advent of electronic computers.
+
+In a later analysis Bullen (1936) showed that the assumption of 
+a homogeneous selfcompressing mantle described by the 
+W-A equation,
+and a chemically distinct dense core,
+leads to unrealistically high values of the moment of 
+inertia for the core
+$I_c = f M_c R_c^2$, with a prefactor value $f\sim 0.57$ greater
+than the value of a core with uniform density, 0.4.    
+Since this would imply a density decrease towards the centre Bullen
+concluded that the applicability of the W-A model for the whole mantle 
+can not be maintained and that instead a distinct mantle transition layer, 
+labeled C-layer,
+must be included between the upper and lower mantle proper,
+related to transitions in mineral phase and/or composition
+(Bullen, 1975).
+
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{problem}
+\label{problem-WA-temperature}
+~
+\newline
+{\small \it
+\begin{enumerate}
+\item
+  Derive the following equation for the temperature distribution of
+  a W-A layer (see Appendix \ref{Appnd_adiabatic_temperature_profile}),
+  \begin{equation}
+     \frac{dT}{dr} = - \frac{\alpha g}{c_P} T
+  \label{ode-adiabat}
+  \end{equation}
+  where $\alpha$ and $c_P$ are the thermal expansion coefficient and
+  the specific heat at constant pressure.
+  \newline
+  {\it Hint:}
+  Use the differential for the entropy,
+  \begin{equation}
+     dS = \left ( \frac{\partial S}{\partial T} \right )_P dT +
+          \left ( \frac{\partial S}{\partial P} \right )_T dP
+  \end{equation}
+  and the thermodynamic relations:
+  $\left ( \partial S/ \partial T \right )_P = c_P / T$
+  and
+  $\left ( \partial S/ \partial P \right )_T = -\alpha / \rho$. 
+  
+  ~\\
+\item
+  Derive the expression for the temperature profile for an adiabatic
+  layer, sometimes referred to as the `adiabat', by solving equation 
+  (\ref{ode-adiabat}), 
+  \begin{equation}
+     T(r) = T(R) \exp \left (  
+                              \int_r^R \frac{\alpha g}{c_P} ~ dr^{'}
+                     \right )
+  \label{general_adiabat}
+  \end{equation}
+  The temperature extrapolated to the surface, $T_P = T(R)$ is known as
+  the potential temperature of the layer. 
+  The quantity $H_T = ( \alpha g / c_P)^{-1} $ 
+  is known as the thermal scale height of the layer.
+  
+\item
+  Derive an expression from (\ref{general_adiabat})
+  for the special case with a constant value of the scale height
+  parameter.
+\end{enumerate}
+} 
+\end{problem}
+\end{minipage}
+}
+
+\vspace{0.5cm}
+
+The W-A equation for the density of an adiabatic layer can be
+generalized introducing the Bullen parameter $\eta$ which is 
+used as a measure of the departure of the actual density/temperature
+profile from an adiabat. This is done by writing,
+\begin{equation}
+ \eta(r) = - \frac{\Phi}{\rho g} \frac{d \rho}{dr}
+\end{equation}
+where $\eta(r)$ has been substituted for the constant value 
+$(\equiv 1)$
+in the W-A equation.
+
+\subsubsection{Current density models}
+The concept of an adiabatic layer was essential when no independent
+determinations for the density distribution were available and the
+W-A equation was used to compute $\rho(r)$ for given values of the
+seismic parameter $\Phi(r)$ determined from seismological
+observations (Bullen, 1975).
+
+During the 1970s
+a radial density distribution has been obtained for the Earth from
+inversion of seismological observations,
+incorporating spectral analysis of the Earth's eigenvibrations,
+under the constraints of the given values for $M$ and $I$. 
+This, together with seismic velocities determined from bodywave
+traveltimes and surfacewave dispersion, 
+has resulted in the Preliminary Reference Earth Model
+(PREM), (Dziewonski and Anderson, 1981 \cite{dzan81}).
+
+Since $\rho(r)$ can be determined from analysis of the earth's 
+normal modes (radial eigenvibrations) the `adiabaticity' 
+of the mantle is no longer assumed.
+
+The degree of `adiabaticity' is used in numerical modelling experiments
+as a diagnostic for the dynamic state - where a high degree of 
+adiabaticity indicates vigorous thermal convection and predominantly
+convective heat transport
+(van den Berg and Yuen, 1998, \cite{vayu98}
+Matyska and Yuen, 2000, \cite{mayu00}
+Bunge et al., 2001).
+
+Usually the outcome of such experiments shows that the upper and lower
+mantle separately are approximately adiabatic - away from boundary
+layers were conductive transport dominates.
+In recent years models of the deep lower mantle have become
+popular were a compositionally distinct dense layer occupies the bottom
+30\% (roughly) of the lower mantle 
+(Kellog et al. (1999) \cite{kehv99}, Albarede and van der Hilst (2002) \cite{alva02}).
+
+

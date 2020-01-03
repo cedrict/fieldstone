@@ -48,7 +48,7 @@ in order to find all CIG-codes citations go to: https://geodynamics.org/cig/news
 %------------------------------------------------------------------------------
 
 This code is hosted by CIG at \url{https://geodynamics.org/cig/software/aspect/}. 
-It is an open source community code based on the finite element library deal.II \cite{bakh07,arbc19}. 
+It is an open source community code based on the finite element library deal.II \cite{bahk07,arbc19}. 
 It is massively parallel, relies on the p4est library for adaptive mesh refinement,
 uses the Trilinos solver library \cite{hewi12}, and can deal with 2D and 3D geometries. 
 
@@ -858,10 +858,10 @@ For an explanation of nested version of the numerical model, see appendix A of \
 %------------------------------------------------------------------------------
 \item {\codefont SULEC} \index{general}{SULEC code}
 %------------------------------------------------------------------------------
-SULEC is a finite element code that solves the incompressible Navier-Stokes equations 
-for slow creeping flows. The code is developed by Susan Ellis 
-(GNS Sciences, NZ) and Susanne Buiter (NGU). 
+
 \url{http://www.geodynamics.no/buiter/sulec.html}
+
+SULEC is a 2-D/3-D arbitrary Lagrangian Eulerian finite-element code developed by Susanne Buiter and Susan Ellis. It solves the equation for conservation of momentum for an incompressible fluid combined with the heat equation. SULEC has linear and higher-order elements in 2-D, but here only Q1P0 elements are used. Pressure is calculated as mean stress following an Uzawa iterative penalty formulation (Pelletier et al. 1989 \cite{pefc89}). Materials are tracked with tracers which are advected with a 2nd-order Runge-Kutta scheme. Different types of averaging of tracers to elements for viscosity are explored in this study (geometric, harmonic and arithmetic). Density is calculated as arithmetic averaging from tracers to the elements. A true free surface is obtained by a slight vertical stretch of the Eulerian mesh to accommodate surface displacements and the effects of surface processes (Fullsack 1995 \cite{full95}). SULEC includes a stabilization term that suppresses numerical overshoot of isostatic restoring forces at interfaces with strong density contrasts, as Earth's surface (Kaus et al., 2010; Quinquis et al., 2011) \cite{kamm10,qube11}. The mechanical and thermal equations are solved using the direct sparse solver PARDISO (Schenk and Gaertner, 2004). \cite{scga04}
 
 {\small
 \noindent

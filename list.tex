@@ -57,14 +57,13 @@ Status & better matplotlib interface? & OK & OK & OK & OK & OK & OK & OK \\
 
 
 
-
 \vspace{.5cm}
 
 \noindent
 {\tiny
 \begin{tabular}{|l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|} 
 \hline
-feature & 9 & 10 & 11 & 12 & 13 & 14 & \\ 
+feature & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16  \\ 
 \hline
 geometry & Annulus  & Box & Box & Box\\ 
 element type & $Q_1\times P_0$ & $Q_1\times P_0$ & $Q_1\times P_0$ & $Q_1\times P_0$ \\ 
@@ -94,11 +93,51 @@ Add. feature &. &. & Lagrange multiplier & Consistent press. recovery& & & & \\
 \hline
 Description & Annulus benchmark & 3D Stokes sphere & 3D Stokes sphere & "Donea \& Huerta" mms \ref{mms1} & \\
 \hline
-Status & OK & OK & OK & \\ 
+Status & OK & OK & OK & OK & \\ 
 \hline
 \end{tabular}
 }
 
+\vspace{.5cm}
+
+\noindent
+{\tiny
+\begin{tabular}{|l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|} 
+\hline
+feature & 17 & 18 & 19 & 20 & 21 & 22 & 23 & 24 \\ 
+\hline
+geometry & Box & \\ 
+element type & $Q_2\times Q_1$ & \\ 
+mixed or penalty  & mixed & \\ 
+matrix storage & full & \\ 
+outer solver (N.A., direct, SchurComp) & N.A. & \\ 
+\hline
+3 dimensions & Y & \\ 
+compressible (Y/N)  & N &  \\
+analytical benchmark (Y/N) & Y & \\
+numerical benchmark (Y/N) & . & \\
+error convergence (Y/N) & Y & \\
+thermo-mechanically coupled (Y/N) & . & \\
+time-stepping (Y/N) & . & \\
+external mesher (Y/N) & . & \\
+non-linear (Y/N) & . & \\
+plasticity (Y/N) & . & \\
+Buoyancy driven flow & . & \\ 
+Vrms  & . & \\
+Nusselt nb  & . & \\
+Pressure norm. & Y & \\ 
+Pressure smoothing & . & \\
+Computing residual(s) & . & \\ 
+Paraview output & Y & \\
+\hline
+Add. feature & & \\
+\hline
+Description & Burstedde benchmark \ref{mms3} & \\ 
+\hline
+Status & OK & \\ 
+\hline
+\end{tabular}
+}
 
 
 
