@@ -1,5 +1,4 @@
 
-\index{stones}{$Q_2 \times Q_1$ element}
 
 When using $Q_1 \times P_0$ elements, this benchmark fails 
  because of the Dirichlet b.c. on all 6 sides and all three components.
@@ -7,7 +6,7 @@ However, as we will see, it does work well with $Q_2 \times Q_1$ elements.
 
 This benchmark begins by postulating a polynomial solution to the 3D Stokes equation \cite{dobo04}:
 \begin{equation}
-{\bm v}
+\vec{v}
 =
 \left(
 \begin{array}{c}
@@ -24,40 +23,40 @@ p = xyz + x^3 y^3z - 5/32
 \end{equation}
 While it is then trivial to verify that this velocity field is divergence-free,  
 the corresponding body force of the Stokes equation can be computed by 
-inserting this solution into the momentum equation with a given viscosity $\mu$
+inserting this solution into the momentum equation with a given viscosity $\eta$
 (constant or position/velocity/strain rate dependent). 
 The domain is a unit cube and velocity boundary conditions 
 simply use Eq. (\ref{eqbur}). 
 Following \cite{busa13}, the viscosity
 is given by the smoothly varying function
 \begin{equation}
-\mu = \exp(1 - \beta(x(1 - x) + y(1 - y) + z(1 - z)))
+\eta = \exp(1 - \beta(x(1 - x) + y(1 - y) + z(1 - z)))
 \end{equation}
 
-One can easily show that the ratio of viscosities $\mu^\star$
-in the system follows $\mu^\star=\exp(-3\beta/4)$ so that choosing $\beta=10$ yields
-$\mu^\star\simeq 1808$ and $\beta=20$ yields $\mu^\star\simeq 3.269\times10^6$.
+One can easily show that the ratio of viscosities $\eta^\star$
+in the system follows $\eta^\star=\exp(-3\beta/4)$ so that choosing $\beta=10$ yields
+$\eta^\star\simeq 1808$ and $\beta=20$ yields $\eta^\star\simeq 3.269\times10^6$.
 
 
 We start from the momentum conservation equation:
 \[
--{\bm \nabla}p + {\bm \nabla}\cdot (2 \mu \dot{\bm \epsilon}) = {\bm f}
+-{\vec \nabla}p + {\vec \nabla}\cdot (2 \eta \dot{\bm \varepsilon}) = {\vec f}
 \]
 The $x$-component of this equation writes
 \begin{eqnarray}
 f_x 
 &=& -\frac{\partial p}{\partial x} 
-+\frac{\partial}{\partial x} (2\mu \dot{\epsilon}_{xx})
-+\frac{\partial}{\partial y} (2\mu \dot{\epsilon}_{xy})
-+\frac{\partial}{\partial z} (2\mu \dot{\epsilon}_{xz}) \\
++\frac{\partial}{\partial x} (2\eta \dot{\epsilon}_{xx})
++\frac{\partial}{\partial y} (2\eta \dot{\epsilon}_{xy})
++\frac{\partial}{\partial z} (2\eta \dot{\epsilon}_{xz}) \\
 &=& 
 -\frac{\partial p}{\partial x} 
-+2\mu\frac{\partial}{\partial x} \dot{\epsilon}_{xx}
-+2\mu\frac{\partial}{\partial y} \dot{\epsilon}_{xy}
-+2\mu\frac{\partial}{\partial z} \dot{\epsilon}_{xz} 
-+2\frac{\partial \mu}{\partial x} \dot{\epsilon}_{xx}
-+2\frac{\partial \mu}{\partial y} \dot{\epsilon}_{xy}
-+2\frac{\partial \mu}{\partial z} \dot{\epsilon}_{xz} 
++2\eta\frac{\partial}{\partial x} \dot{\epsilon}_{xx}
++2\eta\frac{\partial}{\partial y} \dot{\epsilon}_{xy}
++2\eta\frac{\partial}{\partial z} \dot{\epsilon}_{xz} 
++2\frac{\partial \eta}{\partial x} \dot{\epsilon}_{xx}
++2\frac{\partial \eta}{\partial y} \dot{\epsilon}_{xy}
++2\frac{\partial \eta}{\partial z} \dot{\epsilon}_{xz} 
 \end{eqnarray}
 
 
@@ -86,10 +85,7 @@ We further have
 \frac{\partial}{\partial z} 2\dot{\epsilon}_{yz}&=& -3-5x^2   \nonumber\\
 \frac{\partial}{\partial x} 2\dot{\epsilon}_{xz}&=& -10yz \nonumber\\ 
 \frac{\partial}{\partial y} 2\dot{\epsilon}_{yz}&=& 0  \nonumber\\ 
-\frac{\partial}{\partial z} 2\dot{\epsilon}_{zz}&=& 2( 0 ) \nonumber
-\end{eqnarray}
-
-\begin{eqnarray}
+\frac{\partial}{\partial z} 2\dot{\epsilon}_{zz}&=& 2( 0 ) \nonumber\\
 \frac{\partial p}{\partial x} &=& yz+3x^2y^3z\\
 \frac{\partial p}{\partial y} &=& xz +3x^3y^2z \\
 \frac{\partial p}{\partial z} &=& xy+x^3y^3
@@ -99,7 +95,6 @@ We further have
 %\[
 %\mu(x,y,z) = \exp \left[ 1-\beta ( x(1-x)+y(1-y)+z(1-z) )   \right]
 %\]
-\index{stones}{Pressure Normalisation}
 \paragraph{Pressure normalisation} Here again, because Dirichlet boundary conditions are prescribed on all sides the 
 pressure is known up to an arbitrary constant. This constant can be determined by (arbitrarily) choosing 
 to normalised the pressure field as follows:
@@ -136,59 +131,59 @@ assembled into the vector ${\cal C}$.
 %-----------------------------
 \subsubsection*{Constant viscosity}
 
-Choosing $\beta=0$ yields a constant velocity $\mu(x,y,z) = \exp(1) \simeq 2.718$
+Choosing $\beta=0$ yields a constant velocity $\eta(x,y,z) = \exp(1) \simeq 2.718$
 (and greatly simplifies the right-hand side) so that 
 \begin{eqnarray}
-\frac{\partial }{\partial x} \mu(x,y,z) &=& 0 \\
-\frac{\partial }{\partial y} \mu(x,y,z) &=& 0 \\
-\frac{\partial }{\partial z} \mu(x,y,z) &=& 0
+\frac{\partial }{\partial x} \eta(x,y,z) &=& 0 \\
+\frac{\partial }{\partial y} \eta(x,y,z) &=& 0 \\
+\frac{\partial }{\partial z} \eta(x,y,z) &=& 0
 \end{eqnarray}
 and 
 \begin{eqnarray}
 f_x 
 &=& 
 -\frac{\partial p}{\partial x} 
-+2\mu\frac{\partial}{\partial x} \dot{\epsilon}_{xx}
-+2\mu\frac{\partial}{\partial y} \dot{\epsilon}_{xy}
-+2\mu\frac{\partial}{\partial z} \dot{\epsilon}_{xz} \nonumber\\
++2\eta\frac{\partial}{\partial x} \dot{\epsilon}_{xx}
++2\eta\frac{\partial}{\partial y} \dot{\epsilon}_{xy}
++2\eta\frac{\partial}{\partial z} \dot{\epsilon}_{xz} \nonumber\\
 &=&
 -(yz+3x^2y^3z)
 + 2(2 +6xy) + (1+4xy) + (-3 -10xy)   \nonumber\\
 &=&
 -(yz+3x^2y^3z)
-+\mu(2+6xy ) \nonumber\\
++\eta(2+6xy ) \nonumber\\
 f_y 
 &=&  
 -\frac{\partial p}{\partial y} 
-+2\mu\frac{\partial}{\partial x} \dot{\epsilon}_{xy}
-+2\mu\frac{\partial}{\partial y} \dot{\epsilon}_{yy}
-+2\mu\frac{\partial}{\partial z} \dot{\epsilon}_{yz}  \nonumber\\
++2\eta\frac{\partial}{\partial x} \dot{\epsilon}_{xy}
++2\eta\frac{\partial}{\partial y} \dot{\epsilon}_{yy}
++2\eta\frac{\partial}{\partial z} \dot{\epsilon}_{yz}  \nonumber\\
 &=&
 -(xz +3x^3y^2z)
 +
-\mu(1+2y^2+3x^2)
-+\mu2( 2+2x^2 )  
-+\mu(-3-5x^2) \nonumber\\
+\eta(1+2y^2+3x^2)
++\eta 2( 2+2x^2 )  
++\eta(-3-5x^2) \nonumber\\
 &=&
 -(xz +3x^3y^2z)
-+ \mu ( 2 + 2x^2 +  2y^2)
++ \eta ( 2 + 2x^2 +  2y^2)
 \nonumber\\ 
 f_z 
 &=&
 -\frac{\partial p}{\partial z} 
-+2\mu\frac{\partial}{\partial x} \dot{\epsilon}_{xz}
-+2\mu\frac{\partial}{\partial y} \dot{\epsilon}_{yz}
-+2\mu\frac{\partial}{\partial z} \dot{\epsilon}_{zz}  \nonumber\\
++2\eta\frac{\partial}{\partial x} \dot{\epsilon}_{xz}
++2\eta\frac{\partial}{\partial y} \dot{\epsilon}_{yz}
++2\eta\frac{\partial}{\partial z} \dot{\epsilon}_{zz}  \nonumber\\
 &=&
 -(xy+x^3y^3) 
-+ \mu (-10yz) + 0 + 0 \nonumber\\
++ \eta (-10yz) + 0 + 0 \nonumber\\
 &=&
 -(xy+x^3y^3) 
-+\mu (-10yz) \nonumber
++\eta (-10yz) \nonumber
 \end{eqnarray}
 Finally
-\[
-{\bm f} = 
+\begin{equation}
+\vec{f} = 
 -
 \left(
 \begin{array}{c}
@@ -197,7 +192,7 @@ xz +3x^3y^2z \\
 xy+x^3y^3
 \end{array}
 \right)
-+\mu
++\eta
 \left(
 \begin{array}{c}
 2+6xy  \\
@@ -205,28 +200,42 @@ xy+x^3y^3
 -10yz 
 \end{array}
 \right)
-\]
-Note that there seems to be a 
-sign problem with Eq.(26) in \cite{busa13}.
+\end{equation}
+
+\begin{remark}
+There seems to be a sign problem with Eq.(26) in \cite{busa13}.
+\end{remark}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_17/results_isoviscous/velocity}
-\includegraphics[width=8cm]{python_codes/fieldstone_17/results_isoviscous/pressure}\\
-\includegraphics[width=12cm]{python_codes/fieldstone_17/results_isoviscous/errors.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_17/results_isoviscous/u}
+\includegraphics[width=5cm]{python_codes/fieldstone_17/results_isoviscous/v}
+\includegraphics[width=5cm]{python_codes/fieldstone_17/results_isoviscous/w}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_17/results_isoviscous/pressure}
+\includegraphics[width=5cm]{python_codes/fieldstone_17/results_isoviscous/sr}\\
+{\captionfont Velocity, pressure and strain rate fields on a 6x6x6 grid.}
 \end{center}
 
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_17/results_isoviscous/errors.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_17/results_isoviscous/errors_sr.pdf}
+\end{center}
+Since the strain rate is the spatial derivative of the velocity field we should 
+find that it converges like $h^2$ as expected. However I am quite puzzled as to why the convergence 
+of $\dot{\varepsilon}_{xx}$ is quadratic 
+but at the same time almost 2 orders of magnitude higher than the other 5 components which in turn 
+converge abnormally fast like $h^3$.
 
 %-----------------------------
 \subsubsection*{Variable viscosity}
 The spatial derivatives of the viscosity are then given by
 \begin{eqnarray}
-\frac{\partial }{\partial x} \mu(x,y,z) &=& -(1-2x)\beta \mu(x,y,z) \nonumber\\
-\frac{\partial }{\partial y} \mu(x,y,z) &=& -(1-2y)\beta \mu(x,y,z) \nonumber\\
-\frac{\partial }{\partial z} \mu(x,y,z) &=& -(1-2z)\beta \mu(x,y,z) \nonumber
+\frac{\partial }{\partial x} \eta(x,y,z) &=& -(1-2x)\beta \eta(x,y,z) \nonumber\\
+\frac{\partial }{\partial y} \eta(x,y,z) &=& -(1-2y)\beta \eta(x,y,z) \nonumber\\
+\frac{\partial }{\partial z} \eta(x,y,z) &=& -(1-2z)\beta \eta(x,y,z) \nonumber
 \end{eqnarray}
-and thr right-hand side by
+and the right-hand side by
 \begin{eqnarray}
-{\bm f} 
+\vec{f} 
 &=& 
 -
 \left(
@@ -236,24 +245,24 @@ xz +3x^3y^2z \\
 xy+x^3y^3
 \end{array}
 \right)
-+\mu
++\eta
 \left(
 \begin{array}{c}
 2+6xy  \\
 2 + 2x^2 +  2y^2 \\
 -10yz 
 \end{array}
-\right) \\
-&&
--(1-2x)\beta \mu (x,y,z)
+\right) 
+-(1-2x)\beta \eta (x,y,z)
 \left(
 \begin{array}{c}
 2\dot{\epsilon}_{xx} \\
 2\dot{\epsilon}_{xy} \\
 2\dot{\epsilon}_{xz} \\
 \end{array}
-\right)
--(1-2y)\beta \mu (x,y,z)
+\right) \\
+&&
+-(1-2y)\beta \eta (x,y,z)
 \left(
 \begin{array}{c}
 2\dot{\epsilon}_{xy} \\
@@ -261,7 +270,7 @@ xy+x^3y^3
 2\dot{\epsilon}_{yz} \\
 \end{array}
 \right)
--(1-2z)\beta \mu (x,y,z)
+-(1-2z)\beta \eta (x,y,z)
 \left(
 \begin{array}{c}
 2\dot{\epsilon}_{xz} \\
@@ -278,24 +287,25 @@ xz +3x^3y^2z \\
 xy+x^3y^3
 \end{array}
 \right)
-+\mu
++\eta
 \left(
 \begin{array}{c}
 2+6xy  \\
 2 + 2x^2 +  2y^2 \\
 -10yz 
 \end{array}
-\right) \nonumber\\
-&-&
-(1-2x)\beta \mu 
+\right) 
+-
+(1-2x)\beta \eta 
 \left(
 \begin{array}{c}
 2+4x+2y+6x^2y \\
 x+y+2xy^2+x^3 \\
 -3z -10xyz 
 \end{array}
-\right)
--(1-2y)\beta \mu 
+\right) \nn \\
+&&
+-(1-2y)\beta \eta
 \left(
 \begin{array}{c}
 x+y+2xy^2+x^3 \\
@@ -303,7 +313,7 @@ x+y+2xy^2+x^3 \\
 -3z-5x^2z \\
 \end{array}
 \right)
--(1-2z)\beta \mu
+-(1-2z)\beta \eta
 \left(
 \begin{array}{c}
 -3z -10xyz \\
@@ -313,16 +323,42 @@ x+y+2xy^2+x^3 \\
 \right) \nonumber
 \end{eqnarray}
 
-Note that at $(x,y,z)=(0,0,0)$, $\mu=\exp(1)$, 
-and at $(x,y,z)=(0.5,0.5,0.5)$, $\mu=\exp(1-3\beta/4)$
+Note that at $(x,y,z)=(0,0,0)$, $\eta=\exp(1)$, 
+and at $(x,y,z)=(0.5,0.5,0.5)$, $\eta=\exp(1-3\beta/4)$
 so that the maximum 
 viscosity ratio is given by 
 \[
-\mu^\star = \frac{\exp(1-3\beta/4)}{\exp(1)} = \exp(-3\beta/4)
+\eta^\star = \frac{\exp(1-3\beta/4)}{\exp(1)} = \exp(-3\beta/4)
 \]
 By varying $\beta$ between 1 and 22 we can get up to 7 orders of magnitude viscosity difference.
 
 
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_17/results_beta5/errors.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_17/results_beta5/errors_sr.pdf}\\
+{\captionfont Obtained for $\beta=5$}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_17/results_beta10/errors.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_17/results_beta10/errors_sr.pdf}\\
+{\captionfont Obtained for $\beta=10$}
+\end{center}
+
+We see that with increasing viscosity contrasts higher and higher resolutions are needed to 
+attain the expected convergence rates for velocity and pressure. As for strain rate convergence, 
+as puzzled as before ...
+
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_17/results_beta5/velocity}
+\includegraphics[width=7cm]{python_codes/fieldstone_17/results_beta5/q}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_17/results_beta5/eta}
+\includegraphics[width=7cm]{python_codes/fieldstone_17/results_beta5/sr}\\
+{\captionfont Obtained for a 10x10x10 mesh and $\beta=5$}
+\end{center}
 
 
 
@@ -338,30 +374,6 @@ By varying $\beta$ between 1 and 22 we can get up to 7 orders of magnitude visco
 
 
 
-
-
-
-
-
-
-
-
-
-\fbox{
-\parbox{10cm}{{\bf features}
-\begin{itemize}
-\item $Q_1\times P_0$ element
-\item incompressible flow
-\item saddle point system
-\item Dirichlet boundary conditions (free-slip)
-\item direct solver
-\item isothermal
-\item non-isoviscous
-\item 3D
-\item elemental b.c. 
-\item analytical solution
-\end{itemize}
-}}
 
 
 %\begin{center}
