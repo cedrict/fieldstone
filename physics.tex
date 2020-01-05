@@ -106,7 +106,7 @@ This is an obvious conflict of notations.
 \end{remark}
 
 %------------------------------------------------------------------------
-\subsection{The heat transport equation - energy conservation equation}
+\subsection{The heat transport equation - energy conservation equation \label{ss:hte}}
 
 Let us start from the heat transport equation as shown in Schubert, Turcotte and Olson \cite{scto01}:
 \begin{equation}
@@ -643,12 +643,15 @@ THESE EQUATIONS SHOULD BE CHECKED and RE-CHECKED !!
 
 As nicely explained in Spiegel \& Veronis \cite{spve60}: "In the study of problems of thermal convection it is a frequent practice to simplify the basic equations by introducing certain approximations which are attributed to
 Boussinesq (1903). The Boussinesq approximations can best be summarized by two
-statements: (1) The fluctuations in density which appear with the advent of motion
-result principally from thermal (as opposed to pressure) effects. (2) In the equations
+statements: 
+\begin{enumerate}
+\item The fluctuations in density which appear with the advent of motion
+result principally from thermal (as opposed to pressure) effects. 
+\item In the equations
 for the rate of change of momentum and mass, density variations may be neglected except
 when they are coupled to the gravitational acceleration in the buoyancy force."
+\end{enumerate}
 Note that their paper examines the Boussinesq approximation for compressible fluids.  
-
 
 [from \aspect{} manual]
 The Boussinesq approximation assumes that the density can be
@@ -1210,12 +1213,12 @@ The roots are given by:
 \begin{eqnarray}
 \lambda_\pm 
 &=& \frac{ (\sigma_{xx}+\sigma_{yy}) \pm \sqrt{ (\sigma_{xx}-\sigma_{yy})^2 +4\sigma_{xy}^2 } }{2} \nn\\
-&=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} \pm \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \nn\\
+&=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} \pm \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \nn
 \end{eqnarray}
 The two principal stresses are then:
 \begin{eqnarray}
 \sigma_1 &=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} + \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \nn\\
-\sigma_2 &=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} - \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \nn\\
+\sigma_2 &=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} - \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \nn
 \end{eqnarray}
 with the convention $\sigma_1>\sigma_2$.
 The maximum shear stress is defined as one-half the difference between the two principal 
