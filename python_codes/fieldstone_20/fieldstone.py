@@ -1,5 +1,4 @@
 import numpy as np
-import math as math
 import sys as sys
 import scipy
 import scipy.sparse as sps
@@ -32,9 +31,9 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    nelz = int(sys.argv[3])
 else:
-   nelx =16
-   nely =10
-   nelz =24
+   nelx =20
+   nely =13
+   nelz =20
 
 assert (nelz%4==0), "nelz should be even and multiple of 4" 
 
@@ -82,7 +81,7 @@ sqrt3=np.sqrt(3.)
 
 alphaT=0.5
 
-nstep=1000
+nstep=250
 
 Ra=alpha*abs(gz)*(Temperature1-Temperature2)*Lz**3*rho0**2*hcapa/hcond/eta0
 
@@ -101,7 +100,7 @@ hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
 
-relax=0.5
+relax=1.
 
 #################################################################
 #################################################################
@@ -124,7 +123,6 @@ print("------------------------------")
 
 model_time=np.zeros(nstep,dtype=np.float64) 
 vrms=np.zeros(nstep,dtype=np.float64) 
-#Nu=np.zeros(nstep,dtype=np.float64)
 Tavrg=np.zeros(nstep,dtype=np.float64)
 Tm=np.zeros(nstep,dtype=np.float64)
 u_stats=np.zeros((nstep,2),dtype=np.float64)
@@ -135,7 +133,8 @@ dt_stats=np.zeros(nstep,dtype=np.float64)
 wmid_stats=np.zeros((nstep,4),dtype=np.float64) # velocities at z=Lz/2
 Tmid_stats=np.zeros((nstep,4),dtype=np.float64) # temperatures at z=Lz/2
 hf_stats=np.zeros((nstep,4),dtype=np.float64)
-       
+
+Nu_old=0.       
 Nufile=open('Nu.ascii',"w")
 
 ######################################################################
@@ -384,6 +383,11 @@ for istep in range(0,nstep):
                         G_el[ndofV*i+0,0]-=dNNNVdx[i]*jcob*weightq
                         G_el[ndofV*i+1,0]-=dNNNVdy[i]*jcob*weightq
                         G_el[ndofV*i+2,0]-=dNNNVdz[i]*jcob*weightq
+                    #end for
+
+                #end for kq
+            #end for jq
+        #end for iq
 
         # impose b.c. 
         for k1 in range(0,mV):
@@ -396,10 +400,14 @@ for istep in range(0,nstep):
                        f_el[jkk]-=K_el[jkk,ikk]*bc_valV[m1]
                        K_el[ikk,jkk]=0
                        K_el[jkk,ikk]=0
+                   #end for 
                    K_el[ikk,ikk]=K_ref
                    f_el[ikk]=K_ref*bc_valV[m1]
                    h_el[0]-=G_el[ikk,0]*bc_valV[m1]
                    G_el[ikk,0]=0
+                #end if
+            #end for 
+        #end for 
 
         # assemble matrix K_mat and right hand side rhs
         for k1 in range(0,mV):
@@ -412,10 +420,14 @@ for istep in range(0,nstep):
                         m2 =ndofV*iconV[k2,iel]+i2
                         #K_mat[m1,m2]+=K_el[ikk,jkk]
                         A_sparse[m1,m2]+=K_el[ikk,jkk]
+                    #end for 
+                #end for 
                 rhs[m1]+=f_el[ikk]
                 #G_mat[m1,iel]+=G_el[ikk,0]*scaling_coeff
                 A_sparse[m1,NfemV+iel]+=G_el[ikk,0]*scaling_coeff
                 A_sparse[NfemV+iel,m1]+=G_el[ikk,0]*scaling_coeff
+            #end for 
+        #end for 
         rhs[NfemV+iel]+=h_el[0]*scaling_coeff
 
     #print("K_mat (m,M) = %.6e %.6e" %(np.min(K_mat),np.max(K_mat)))
@@ -498,7 +510,6 @@ for istep in range(0,nstep):
     v=relax*v+(1-relax)*v_old
     w=relax*w+(1-relax)*w_old
 
-
     ######################################################################
     # compute time step value 
     ######################################################################
@@ -523,6 +534,9 @@ for istep in range(0,nstep):
 
     ######################################################################
     # compute vrms 
+    # note that instead of computing jcob by means of the determinant
+    # I instead assign it its value under the assumption that the elements
+    # are cuboids. 
     ######################################################################
     start = timing.time()
 
@@ -538,26 +552,8 @@ for istep in range(0,nstep):
                     tq=kq/sqrt3
                     weightq=1.*1.*1.
 
-                    # calculate shape functions
                     NNNV[0:mV]=NNV(rq,sq,tq)
                     NNNT[0:mV]=NNT(rq,sq,tq)
-                    #dNNNVdr[0:mV]=dNNVdr(rq,sq,tq)
-                    #dNNNVds[0:mV]=dNNVds(rq,sq,tq)
-                    #dNNNVdt[0:mV]=dNNVdt(rq,sq,tq)
-
-                    # calculate jacobian matrix
-                    #jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                    #for k in range(0,mV):
-                    #    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                    #    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                    #    jcb[0,2] += dNNNVdr[k]*zV[iconV[k,iel]]
-                    #    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                    #    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-                    #    jcb[1,2] += dNNNVds[k]*zV[iconV[k,iel]]
-                    #    jcb[2,0] += dNNNVdt[k]*xV[iconV[k,iel]]
-                    #    jcb[2,1] += dNNNVdt[k]*yV[iconV[k,iel]]
-                    #    jcb[2,2] += dNNNVdt[k]*zV[iconV[k,iel]]
-                    #jcob=np.linalg.det(jcb)
 
                     uq=0.
                     vq=0.
@@ -566,11 +562,13 @@ for istep in range(0,nstep):
                        uq+=NNNV[k]*u[iconV[k,iel]]
                        vq+=NNNV[k]*v[iconV[k,iel]]
                        wq+=NNNV[k]*w[iconV[k,iel]]
+                    #end for
                     vrms[istep]+=(uq**2+vq**2+wq**2)*weightq*jcob
 
                     Tq=0.
                     for k in range(0,mT):
                        Tq+=NNNT[k]*T[iconT[k,iel]]
+                    #end for
 
                     Tavrg[istep]+=Tq*weightq*jcob
 
@@ -728,85 +726,11 @@ for istep in range(0,nstep):
 
     print("solve T: %.3f s" % (timing.time() - start))
 
-
     #################################################################
     # relax
     #################################################################
 
     T=relax*T+(1-relax)*T_old
-
-    #####################################################################
-    # compute elemental strainrate  
-    #####################################################################
-    #start = timing.time()
-
-    #xc = np.zeros(nel,dtype=np.float64)  
-    #yc = np.zeros(nel,dtype=np.float64)  
-    #zc = np.zeros(nel,dtype=np.float64)  
-    #exx = np.zeros(nel,dtype=np.float64)  
-    #eyy = np.zeros(nel,dtype=np.float64)  
-    #ezz = np.zeros(nel,dtype=np.float64)  
-    #exy = np.zeros(nel,dtype=np.float64)  
-    #exz = np.zeros(nel,dtype=np.float64)  
-    #eyz = np.zeros(nel,dtype=np.float64)  
-
-    #for iel in range(0,nel):
-
-    #    rq=0.
-    #    sq=0.
-    #    tq=0.
-
-    #    NNNV[0:mV]=NNV(rq,sq,tq)
-    #    dNNNVdr[0:mV]=dNNVdr(rq,sq,tq)
-    #    dNNNVds[0:mV]=dNNVds(rq,sq,tq)
-    #    dNNNVdt[0:mV]=dNNVdt(rq,sq,tq)
-
-    #    # calculate jacobian matrix
-    #    jcb=np.zeros((ndim,ndim),dtype=np.float64)
-    #    for k in range(0,mV):
-    #        jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-    #        jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-    #        jcb[0,2] += dNNNVdr[k]*zV[iconV[k,iel]]
-    #        jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-    #        jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-    #        jcb[1,2] += dNNNVds[k]*zV[iconV[k,iel]]
-    #        jcb[2,0] += dNNNVdt[k]*xV[iconV[k,iel]]
-    #        jcb[2,1] += dNNNVdt[k]*yV[iconV[k,iel]]
-    #        jcb[2,2] += dNNNVdt[k]*zV[iconV[k,iel]]
-    #    jcob=np.linalg.det(jcb)
-    #    jcbi=np.linalg.inv(jcb)
-
-    #    for k in range(0,mV):
-    #        dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]+jcbi[0,2]*dNNNVdt[k]
-    #        dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]+jcbi[1,2]*dNNNVdt[k]
-    #        dNNNVdz[k]=jcbi[2,0]*dNNNVdr[k]+jcbi[2,1]*dNNNVds[k]+jcbi[2,2]*dNNNVdt[k]
-    #    # end for
-
-    #    for k in range(0,mV):
-    #        xc[iel]+=NNNV[k]*xV[iconV[k,iel]]
-    #        yc[iel]+=NNNV[k]*yV[iconV[k,iel]]
-    #        zc[iel]+=NNNV[k]*zV[iconV[k,iel]]
-    #        exx[iel]+=dNNNVdx[k]*u[iconV[k,iel]]
-    #        eyy[iel]+=dNNNVdy[k]*v[iconV[k,iel]]
-    #        ezz[iel]+=dNNNVdz[k]*w[iconV[k,iel]]
-    #        exy[iel]+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+0.5*dNNNVdx[k]*v[iconV[k,iel]]
-    #        exz[iel]+=0.5*dNNNVdz[k]*u[iconV[k,iel]]+0.5*dNNNVdx[k]*w[iconV[k,iel]]
-    #        eyz[iel]+=0.5*dNNNVdz[k]*v[iconV[k,iel]]+0.5*dNNNVdy[k]*w[iconV[k,iel]]
-    #    # end for
-
-    # end for
-
-    #print("     -> exx (m,M) %.6e %.6e " %(np.min(exx),np.max(exx)))
-    #print("     -> eyy (m,M) %.6e %.6e " %(np.min(eyy),np.max(eyy)))
-    #print("     -> ezz (m,M) %.6e %.6e " %(np.min(ezz),np.max(ezz)))
-    #print("     -> exy (m,M) %.6e %.6e " %(np.min(exy),np.max(exy)))
-    #print("     -> exz (m,M) %.6e %.6e " %(np.min(exz),np.max(exz)))
-    #print("     -> eyz (m,M) %.6e %.6e " %(np.min(eyz),np.max(eyz)))
-
-    #np.savetxt('strainrate.ascii',np.array([xc,yc,zc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
-    #np.savetxt('p.ascii',np.array([xc,yc,zc,p]).T,header='# xc,yc,p')
-
-    #print("compute strainrate: %.3f s" % (timing.time() - start))
 
     #####################################################################
     # compute nodal strainrate on velocity grid
@@ -886,7 +810,6 @@ for istep in range(0,nstep):
             c[iconV[i,iel]]+=1.
         # end for i
     # end for iel
-
     exxn/=c
     eyyn/=c
     ezzn/=c
@@ -974,7 +897,6 @@ for istep in range(0,nstep):
     start = timing.time()
 
     ielztarget=3*nelz/4-1
-    print (ielztarget)
  
     T_m=0.
     iel=0
@@ -1049,6 +971,8 @@ for istep in range(0,nstep):
 
     Nufile.write("%.6e\n" % Nu)
     Nufile.flush()
+
+    print("     -> Nu= %.6e  " % Nu)
 
     #####################################################################
     # plot of solution
@@ -1242,11 +1166,17 @@ for istep in range(0,nstep):
 
     #####################################################################
 
+    if np.abs(Nu-Nu_old)<1.e-5:
+       print("Nu converged to 1e-5")
+       break
+
+    #####################################################################
+
     u_old=u
     v_old=v
     w_old=w
     T_old=T
-
+    Nu_old=Nu
 
 print("-----------------------------")
 print("------------the end----------")
