@@ -145,6 +145,14 @@ This difficulty can be circumvented by implementing Bingham fluids as follows \c
 where $\eta_r$ is a pre-yield viscosity and $\eta/\eta_r<<1$ (typically 1\% or less). This is a form of 
 regularisation, and we will see a similar one in the next section.
 
+Note the interesting paper by Barnes and Walter (1985) \cite{bawa85} who argue that 
+"the yield stress concept is an idealization, and that, given accurate
+measurements, no yield stress exists. The simple Cross model is shown to be a
+useful empiricism for many non-Newtonian fluids, including those which have
+hitherto been thought to possess a yield stress." The Cross model is presented 
+in Section~\ref{ss:cross}.
+ 
+
 \Literature: \cite{papa87,blmi97,mizi01,limd02,maky17,syga14,bingham,baru09,been80,svna18}
 
 %------------------------------
@@ -227,7 +235,7 @@ or, when squaring it:
 This modelled has been found to accurately describe the behaviour of synthetic based muds \cite{adlo17}. 
 
 %-------------------------------------------------
-\subsubsection{One model to rule them all?}
+\subsubsection{One model to rule them all? \label{ss:cross}}
 
 Let us consider the base equation
 \[

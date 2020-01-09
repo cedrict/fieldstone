@@ -690,6 +690,18 @@ Note that all terms on the rhs of the temperature equations have disappeared, wi
 of the source term.
 
 
+%---------------------------------
+\subsection{The Extended Boussinesq approximation}
+\index{general}{Extended Boussinesq Approximation}
+
+Yuen et al (2007) \cite{yumc07} state that "the background of the extended Boussinesq 
+equations can be found described in 
+Christensen and Yuen (1985) \cite{chyu85} and more completely in Matyska and Yuen (2007) \cite{mayu07}.
+
+
+
+
+
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 \subsection{Stokes equation for elastic medium}
@@ -1101,6 +1113,14 @@ material response to shear stress.
 
 \item \underline{Young's modulus}: describes the material strain response to uniaxial stress
 in the direction of this stress, usually expressed in GPa.
+
+\item \underline{Average viscosity}: following Christensen (1983) \cite{chri83b}, one can compute the averaged
+viscosity in a domain as follows:
+\begin{equation}
+\langle \eta \rangle = \frac{\int_V \eta \dot{\varepsilon}_e^2 dV}{\int_V  \dot{\varepsilon}_e^2 dV }
+\label{eq:avrgeta}
+\end{equation}
+
 
 \end{itemize}
 

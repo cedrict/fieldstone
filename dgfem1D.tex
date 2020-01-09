@@ -242,61 +242,16 @@ be the shape functions, and in this case for both temperature and flux.
 + \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} ( N_k(x) {\color{blue}T_k^+} + N_{k+1}(x) {\color{blue}T_{k+1}^-}  ) dx \nn
 \end{eqnarray}
 
-If I now rewrite both equations above by taking $\tilde{f}=\{N_k,N_{k+1} \}$ and 
-$\overline{f}=\{N_k,N_{k+1}\}$ then we obtain four equations  
-For each element with the four unknowns ${\color{blue} q_k^+}$, ${\color{blue} q_{k+1}^-}$, 
-${\color{blue}T_k^+}$ and ${\color{blue}T_{k+1}^-}$. 
-All other $q$ and $T$ quantities in the above equations will need to find their way to the rhs. 
 
-We will also use the results obtained in Appendix~\ref{app:mm}:
-\[
-{\bm M}^e
-=\int_{\Omega_e} \vec{N}^T \vec{N} dV
-=\int_{\Omega_e} 
-\left(
-\begin{array}{cc}
-N_k N_k & N_k N_{k+1} \\
-N_{k+1} N_k & N_{k+1}N_{k+1}
-\end{array}
-\right)
-dV 
-= \frac{h}{2} \frac{1}{3} 
-\left(
-\begin{array}{cc}
-2  & 1 \\
-1 & 2
-\end{array}
-\right)
-= 
-\frac{h}{6}
-\left(
-\begin{array}{cc}
-2  & 1 \\
-1 & 2
-\end{array}
-\right)
-\]
 
-and also 
 
-\[
-\int_{\Omega_e} 
-\left(
-\begin{array}{cc}
-\frac{dN_k}{dx} N_k     & \frac{dN_k}{dx} N_{k+1} \\
-\frac{dN_{k+1}}{dx} N_k & \frac{dN_{k+1}}{dx} N_{k+1}
-\end{array}
-\right)
-dV
-=
-\frac{1}{2}
-\left(
-\begin{array}{cc}
--1  & -1 \\
-1 & 1
-\end{array}
-\right)
-\]
+
+
+
+
+
+
+
 
 %----------------------------------------------
 \subsection{Time-dependent diffusion PDE in 1D}
