@@ -1,0 +1,64 @@
+set term pdf enhanced font "times,10pt"
+set grid
+
+set xlabel '#it'
+set output 'convergence.pdf'
+set log y
+plot[][]\
+'convergence.ascii' u 1:2 w lp ps .3 t 'T^-',\
+'convergence.ascii' u 1:3 w lp ps .3 t 'T^+',\
+'convergence.ascii' u 1:4 w lp ps .3 t 'q^-',\
+'convergence.ascii' u 1:5 w lp ps .3 t 'q^+',
+
+set xlabel 'x'
+
+set key outside
+set output 'T_minus_evol.pdf'
+unset log y
+plot[][]\
+'T_minus_0000.ascii' w lp ps 0.1 t 'it=0',\
+'T_minus_0002.ascii' w lp ps 0.1 t 'it=2',\
+'T_minus_0004.ascii' w lp ps 0.1 t 'it=4',\
+'T_minus_0006.ascii' w lp ps 0.1 t 'it=6',\
+'T_minus_0008.ascii' w lp ps 0.1 t 'it=8',\
+'T_minus_0010.ascii' w lp ps 0.1 t 'it=10',\
+'T_minus_0012.ascii' w lp ps 0.1 t 'it=12',\
+'T_minus_0014.ascii' w lp ps 0.1 t 'it=14',\
+'T_minus_0016.ascii' w lp ps 0.1 t 'it=16',\
+'T_minus_0018.ascii' w lp ps 0.1 t 'it=18',\
+'T_minus_0020.ascii' w lp ps 0.1 t 'it=20',\
+'T_minus_0022.ascii' w lp ps 0.1 t 'it=22',\
+'T_minus_0024.ascii' w lp ps 0.1 t 'it=24',\
+'T_minus_0030.ascii' w lp ps 0.1 t 'it=30',\
+'T_minus_0040.ascii' w lp ps 0.1 t 'it=40',\
+'T_minus_0050.ascii' w lp ps 0.1 t 'it=50',\
+
+set key outside
+set output 'q_minus_evol.pdf'
+unset log y
+plot[][]\
+'q_minus_0000.ascii' w lp ps 0.1 t 'it=0',\
+'q_minus_0002.ascii' w lp ps 0.1 t 'it=2',\
+'q_minus_0004.ascii' w lp ps 0.1 t 'it=4',\
+'q_minus_0006.ascii' w lp ps 0.1 t 'it=6',\
+'q_minus_0008.ascii' w lp ps 0.1 t 'it=8',\
+'q_minus_0010.ascii' w lp ps 0.1 t 'it=10',\
+'q_minus_0012.ascii' w lp ps 0.1 t 'it=12',\
+'q_minus_0014.ascii' w lp ps 0.1 t 'it=14',\
+'q_minus_0016.ascii' w lp ps 0.1 t 'it=16',\
+'q_minus_0018.ascii' w lp ps 0.1 t 'it=18',\
+'q_minus_0020.ascii' w lp ps 0.1 t 'it=20',\
+'q_minus_0022.ascii' w lp ps 0.1 t 'it=22',\
+'q_minus_0024.ascii' w lp ps 0.1 t 'it=24',\
+'q_minus_0030.ascii' w lp ps 0.1 t 'it=30',\
+'q_minus_0040.ascii' w lp ps 0.1 t 'it=40',\
+'q_minus_0050.ascii' w lp ps 0.1 t 'it=50',\
+
+
+set output 'error.pdf'
+plot[][-1.5e-7:1.5e-7]\
+'T_minus.ascii' u 1:($2-$1) w lp ps 0.1 t 'err(T^-)',\
+'T_plus.ascii' u 1:($2-$1) w lp ps 0.1 t 'err(T^+)',\
+'q_minus.ascii' u 1:($2-1)  w lp ps 0.1 t 'err(q^-)',\
+'q_plus.ascii' u 1:($2-1)  w lp ps 0.1 t 'err(q^+)',\
+

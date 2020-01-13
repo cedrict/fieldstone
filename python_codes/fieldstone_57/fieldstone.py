@@ -6,38 +6,21 @@ from scipy.sparse.linalg.dsolve import linsolve
 import scipy.sparse as sps
 
 #------------------------------------------------------------------------------
-# Function that calculates the difference between 2 iterations
 
-def SScheck(x,T_m,T_m1,T_p,T_p1,q_m,q_m1,q_p,q_p1):
-    SumT1=np.zeros((x))
-    SumT2=np.zeros((x))
-    Sumq1=np.zeros((x))
-    Sumq2=np.zeros((x))
-    for i in range(0,x):
-        SumT1[i]=(T_m1[i]-T_m[i])**2+(T_p1[i]-T_p[i])**2
-        SumT2[i]=(T_m1[i])**2+(T_p1[i])**2
-        Sumq1[i]=(q_m1[i]-q_m[i])**2+(q_p1[i]-q_p[i])**2
-        Sumq2[i]=(q_m1[i])**2+(q_p1[i])**2
-    SST1=((sum(SumT1))/(sum(SumT2)))**1/2
-    SSq1=((sum(Sumq1))/(sum(Sumq2)))**1/2
-    return SST1,SSq1
-
-#------------------------------------------------------------------------------
-
-nel=10       # Number of elements
-nnx=nel+1   # Number of nodes
-Lx=1        # Horizontal extent of the domain
-niter=130    # Maximum number of timesteps
-hx=Lx/nel   # Size of element  
-tol=1.e-8  # Tolerance
+nel=32       # Number of elements
+nnx=nel+1    # Number of nodes
+Lx=1         # Horizontal extent of the domain
+niter=5000    # Maximum number of timesteps
+hx=Lx/nel    # Size of element  
+abstol=1.e-8 # Tolerance
 
 # Boundary conditions
 T_left=0.
 T_right=1.
 
 # Stablization constants
-C=0
 E=4
+C=0.5
 
 #------------------------------------------------------------------------------
 # Declare arrays
@@ -57,6 +40,9 @@ q_plus_old=np.zeros(nnx,dtype=np.float64)   # Old flux at positive side of node
 # Boundary conditions
 T_min[0]=T_left
 T_plus[nnx-1]=T_right 
+
+
+conv_file=open('convergence.ascii',"w")
 
 ################################################################################################
 ################################################################################################
@@ -131,20 +117,25 @@ for it in range(0,niter):
     #T=(T_min+T_plus)/2
     #q=(q_min+q_plus)/2
 
+    filename = 'T_minus_{:04d}.ascii'.format(it) 
+    np.savetxt(filename,np.array([x,T_min]).T,header='# x,T_min')
+    filename = 'q_minus_{:04d}.ascii'.format(it) 
+    np.savetxt(filename,np.array([x,q_min]).T,header='# x,q_min')
+
+    conv_file.write("%d %e %e %e %e\n" %(it,np.max(T_min-T_min_old),np.max(T_plus-T_plus_old),np.max(q_min-q_min_old),np.max(q_plus-q_plus_old)) ) ; conv_file.flush()
+
     #test convergence
-
-    print (it,np.max(T_min-T_min_old),np.max(T_plus-T_plus_old),np.max(q_min-q_min_old),np.max(q_plus-q_plus_old))
-
-    if np.max(T_min-T_min_old)<tol and\
-       np.max(T_plus-T_plus_old)<tol and\
-       np.max(q_min-q_min_old)<tol and\
-       np.max(q_plus-q_plus_old)<tol:
+    if np.max(T_min-T_min_old)<abstol and\
+       np.max(T_plus-T_plus_old)<abstol and\
+       np.max(q_min-q_min_old)<abstol and\
+       np.max(q_plus-q_plus_old)<abstol:
+       print("iterations have converged after ",it,'iterations')
        break
 
-    np.savetxt('T_min_diff.ascii',np.array([x,T_min-T_min_old]).T,header='# x,T_min')
-    np.savetxt('T_plus_diff.ascii',np.array([x,T_plus-T_plus_old]).T,header='# x,T_plus')
-    np.savetxt('q_min_diff.ascii',np.array([x,q_min-q_min_old]).T,header='# x,q_min')
-    np.savetxt('q_plus_diff.ascii',np.array([x,q_plus-q_plus_old]).T,header='# x,q_plus')
+    #np.savetxt('T_min_diff.ascii',np.array([x,T_min-T_min_old]).T,header='# x,T_min')
+    #np.savetxt('T_plus_diff.ascii',np.array([x,T_plus-T_plus_old]).T,header='# x,T_plus')
+    #np.savetxt('q_min_diff.ascii',np.array([x,q_min-q_min_old]).T,header='# x,q_min')
+    #np.savetxt('q_plus_diff.ascii',np.array([x,q_plus-q_plus_old]).T,header='# x,q_plus')
 
     # Save values of last iteration
     T_min_old[:] =T_min[:]
@@ -154,9 +145,9 @@ for it in range(0,niter):
 
 #end for it
 
-np.savetxt('T_min.ascii',np.array([x,T_min]).T,header='# x,T_min')
+np.savetxt('T_minus.ascii',np.array([x,T_min]).T,header='# x,T_min')
 np.savetxt('T_plus.ascii',np.array([x,T_plus]).T,header='# x,T_plus')
-np.savetxt('q_min.ascii',np.array([x,q_min]).T,header='# x,q_min')
+np.savetxt('q_minus.ascii',np.array([x,q_min]).T,header='# x,q_min')
 np.savetxt('q_plus.ascii',np.array([x,q_plus]).T,header='# x,q_plus')
 
 
