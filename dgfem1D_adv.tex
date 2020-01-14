@@ -1,0 +1,345 @@
+Starting from the pure 1-D conduction equation:
+\begin{equation}
+    \frac{\partial T}{\partial t}+u\frac{\partial T}{\partial x}=0 
+\end{equation}
+As shown before we start by discretizing the domain into a collection of elements. Then the above equation can be integrated over the element which is bounded by nodes $x_k$ and $x_{k+1}$. 
+
+\begin{equation}
+\int_{x_k}^{x_{k+1}}  \left(\frac{\partial T}{\partial t}+u\frac{\partial T}{\partial x}\right) \tilde{f}(x) dx 
+=
+\int_{x_k}^{x_{k+1}} \tilde{f}(x)\frac{\partial T}{\partial t} dx
++\left[ uT \tilde{f}  \right]_{x_k}^{x_{k+1}}
+-\int_{x_k}^{x_{k+1}} \frac{\partial \tilde{f}}{\partial x} uT dx
+=0 \nn
+\end{equation}
+with the test function $\tilde{f}$. 
+Inside the elements the test functions are defined by well defined polynomials. 
+We once again define
+\[
+\tilde{f}_k^+=\tilde{f}(x_k^+)
+\qquad
+\tilde{f}_{k+1}^-=\tilde{f}(x_{k+1}^-)
+\]
+\begin{equation}
+    \int_{x_k}^{x_{k+1}}\left(
+    \tilde{f}(x)\frac{\partial T_h}{\partial t}-
+    \frac{\partial \tilde{f}}{\partial x} uT_h \right) dx
+    +\tilde{f}(x_{k+1})\widehat{uT}(T_{k+1}^-,T_{k+1}^+)
+    -\tilde{f}(x_{k})\widehat{uT}(T_{k}^-,T_{k}^+)=0
+    \label{1Dcond}
+\end{equation}
+For a constant $u$ or a linear problem, an effective numerical flux
+is the Lax-Friedrichs flux:
+\index{general}{Lax-Friedrichs flux}
+\begin{equation}
+\widehat{uT}(a,b)=u \frac{(a+b)}{2}-|u|\frac{(b-a)}{2}
+\end{equation}
+when $u>0$ this flux then simply becomes:
+\begin{equation}
+uT(a,b)=u a
+\end{equation}
+which is in essence an upwinding scheme.
+Filling this into equation \ref{1Dcond} gives:
+\begin{equation}
+\int_{x_k}^{x_{k+1}}\left(
+\tilde{f}(x)\frac{\partial T_h}{\partial t}-
+\frac{\partial \tilde{f}}{\partial x} uT_h \right) dx
++\tilde{f}_{k+1}^-uT_{k+1}^-     -\tilde{f}_{k}^-uT_{k}^-=0
+\end{equation}
+The function $T_h$ inside the element can be approximated 
+as follows:
+\begin{equation}
+T_h(x) = \sum_{i=1}^m N_i(x) T_i = 
+N_k(x) {\color{red}T_k^+} + N_{k+1}(x) {\color{red}T_{k+1}^-}
+\label{eq:dgadv1}) 
+\end{equation}
+In what follows we coin $\dot{T}=\partial T/\partial t$ so
+\begin{equation}
+\dot{T}_h(x) 
+= \sum_{i=1}^m N_i(x) \dot{T}_i 
+= N_k(x) {\color{red}\dot{T}_k^+} + N_{k+1}(x) {\color{red}\dot{T}_{k+1}^-}
+\label{eq:dgadv2}) 
+\end{equation}
+Taking $\tilde{f}=N_k$ and then $\tilde{f}=N_{k+1}$ we arrive at
+
+\begin{eqnarray}
+\int_{x_k}^{x_{k+1}}\left(
+N_k(x) \dot{T}_h -
+\frac{\partial N_k}{\partial x} uT_h \right) dx
++\underbrace{N_k(x_{k+1}^-)}_{=0}u {\color{red}T_{k+1}^-}     - \underbrace{N_k (x_{k}^-)}_{=1}uT_{k}^- &=& 0 \\
+\int_{x_k}^{x_{k+1}}\left(
+N_{k+1}(x) \dot{T}_h -
+\frac{\partial N_{k+1}}{\partial x} uT_h \right) dx
++ \underbrace{N_{k+1}(x_{k+1}^-)}_{1}u {\color{red}T_{k+1}^-}     -\underbrace{N_{k+1}(x_{k}^-)}_{=0}uT_{k}^- &=& 0
+\end{eqnarray}
+i.e.
+\begin{eqnarray}
+\int_{x_k}^{x_{k+1}}\left(
+N_k(x) \dot{T}_h -
+\frac{\partial N_k}{\partial x} uT_h \right) dx
+   -  uT_{k}^- &=& 0 \\
+\int_{x_k}^{x_{k+1}}\left(
+N_{k+1}(x)  \dot{T}_h -
+\frac{\partial N_{k+1}}{\partial x} uT_h \right) dx
++ u{\color{red} T_{k+1}^-}      &=& 0
+\end{eqnarray}
+We now use Eqs.~(\ref{eq:dgadv1}) and (\ref{eq:dgadv2})
+\begin{eqnarray}
+\int_{x_k}^{x_{k+1}}\left(
+N_k
+[N_k {\color{red}\dot{T}_k^+} + N_{k+1} {\color{red}\dot{T}_{k+1}^-}]
+-
+\frac{\partial N_k}{\partial x} u
+[N_k {\color{red}T_k^+} + N_{k+1} {\color{red}T_{k+1}^-}]
+ \right) dx
+   -  uT_{k}^- &=& 0 \\
+\int_{x_k}^{x_{k+1}}\left(
+N_{k+1} 
+[N_k {\color{red}\dot{T}_k^+} + N_{k+1} {\color{red}\dot{T}_{k+1}^-}]
+ -
+\frac{\partial N_{k+1}}{\partial x} u
+[N_k {\color{red}T_k^+} + N_{k+1} {\color{red}T_{k+1}^-}]
+\right) dx
++ u{\color{red} T_{k+1}^-}      &=& 0
+\end{eqnarray}
+Defining
+\[
+{\bm M}_e=
+\int_{x_k}^{x_{k+1}}
+\left(
+\begin{array}{cc}
+N_kN_k & N_k N_{k+1} \\
+N_{k+1}N_k & N_{k+1} N_{k+1} 
+\end{array}
+\right)
+dx
+= 
+\frac{h}{6}
+\left(
+\begin{array}{cc}
+2  & 1 \\
+1 & 2
+\end{array}
+\right)
+\]
+and 
+\[
+{\bm K}^e =
+\int_{\Omega_e} 
+\left(
+\begin{array}{cc}
+\frac{dN_k}{dx} N_k     & \frac{dN_k}{dx} N_{k+1} \\
+\frac{dN_{k+1}}{dx} N_k & \frac{dN_{k+1}}{dx} N_{k+1}
+\end{array}
+\right)
+dV
+=
+\frac{1}{2}
+\left(
+\begin{array}{cc}
+-1  & -1 \\
+1 & 1
+\end{array}
+\right)
+\]
+This results in:
+\begin{eqnarray}
+{\bm M}_e 
+\cdot
+\left(
+\begin{array}{cc}
+{\color{red}\dot T_k^+}  \\
+{\color{red} \dot T_{k+1}^-} 
+\end{array}
+\right) 
+-u {\bm K}_e \cdot \left(
+\begin{array}{cc}
+     {\color{red}T_k^+}  \\
+     {\color{red}T_{k+1}^-} 
+\end{array}
+\right) + 
+u
+\left( 
+\begin{array}{cc}
+0 & 0 \\
+0 & 1 
+\end{array}
+\right)
+\cdot
+\left( 
+\begin{array}{c}
+0   \\
+{\color{red}T_{k+1}^-} 
+\end{array}
+\right)
+-\left(
+\begin{array}{cc}
+     u{T_{k}^-}   \\
+     0 
+\end{array}
+\right)=0
+\end{eqnarray}
+or,
+\begin{eqnarray}
+{\bm M}_e \cdot
+\left(
+\begin{array}{cc}
+{\color{red}\dot T_k^+}  \\
+{\color{red} \dot T_{k+1}^-} 
+\end{array}
+\right) 
+=
+u \left[ {\bm K}_e -
+\left(\begin{array}{cc}
+0 & 0 \\
+0 & 1 
+\end{array}\right)
+\right] \cdot 
+\left( \begin{array}{cc}
+{\color{red}T_k^+}  \\
+{\color{red}T_{k+1}^-} 
+\end{array} \right) 
++u \left( \begin{array}{cc}
+{T_{k}^-}   \\  0 
+\end{array} \right)
+\end{eqnarray}
+
+
+\begin{eqnarray}
+{\bm M}_e \cdot
+\left(
+\begin{array}{cc}
+{\color{red}\dot T_k^+}  \\
+{\color{red} \dot T_{k+1}^-} 
+\end{array}
+\right) 
+=
+u\frac{1}{2}  
+\left(\begin{array}{cc}
+-1 & -1 \\
+1 & -1 
+\end{array}\right)
+ \cdot 
+\left( \begin{array}{cc}
+{\color{red}T_k^+}  \\
+{\color{red}T_{k+1}^-} 
+\end{array} \right) 
++u \left( \begin{array}{cc}
+{T_{k}^-}   \\  0 
+\end{array} \right)
+\end{eqnarray}
+
+\begin{eqnarray}
+\left(
+\begin{array}{cc}
+{\color{red}\dot T_k^+}  \\
+{\color{red} \dot T_{k+1}^-} 
+\end{array}
+\right) 
+=
+u\frac{1}{2}  
+{\bm M}_e^{-1} \cdot
+\left(\begin{array}{cc}
+-1 & -1 \\
+1 & -1 
+\end{array}\right)
+ \cdot 
+\left( \begin{array}{cc}
+{\color{red}T_k^+}  \\
+{\color{red}T_{k+1}^-} 
+\end{array} \right) 
++u 
+{\bm M}_e^{-1} \cdot
+\left( \begin{array}{cc}
+{T_{k}^-}   \\  0 
+\end{array} \right)
+\end{eqnarray}
+We have already established that 
+\[
+{\bm M}_e^{-1} = 
+\frac{2}{h}
+\left( 
+\begin{array}{cc}
+2 & -1 \\
+-1 & 2
+\end{array}
+\right)
+\]
+so 
+
+
+
+
+
+
+ Using the same method as for the 1-D transient diffusion, we can get the elemental 
+temperature values for the time derivative:
+ 
+ 
+\begin{eqnarray}
+\boxed{
+\left(
+\begin{array}{cc}
+{\color{red}\dot T_k^+}  \\
+{\color{red} \dot T_{k+1}^-} 
+\end{array}
+\right)=
+\frac{u}{h} 
+\left(\begin{array}{cc}
+    -3 & -1 \\
+     3 & -1
+\end{array}
+\right)
+\left(
+\begin{array}{cc}
+{\color{red}T_k^+}  \\
+{\color{red}T_{k+1}^-} 
+\end{array}
+\right) + \frac{u}{h} \left(
+\begin{array}{cc}
+4   \\
+-2 
+\end{array}
+\right)T_k^-  
+}
+\end{eqnarray}
+
+Using the same first order Runge-Kutta method as in the previous section, 
+\begin{equation}
+ T^{l+1}_k=T^{l}_k+(\Delta t)\dot{T}^l_k
+\nn
+\end{equation}
+Leads to the element-wise numerical implementation.
+\begin{eqnarray}
+       \left(
+\begin{array}{cc}
+     {\color{blue} T_k^+}  \\
+     {\color{blue}T_{k+1}^-} 
+\end{array}
+\right)^{l+1}=
+ \left(
+\begin{array}{cc}
+     {\color{blue} T_k^+}  \\
+     {\color{blue}T_{k+1}^-} 
+\end{array}
+\right)^{l}+
+\frac{u \Delta t}{h} 
+\left(\begin{array}{cc}
+    -3 & -1 \\
+     3 & -1
+\end{array}
+\right)
+\left(
+\begin{array}{cc}
+     {\color{blue}T_k^+}  \\
+     {\color{blue}T_{k+1}^-} 
+\end{array}
+\right) + \frac{u \Delta t}{h} \left(
+\begin{array}{cc}
+     4   \\
+     -2 
+\end{array}
+\right)T_k^-  =0
+\nn
+\end{eqnarray}
+This problem can be solved starting from the left boundary and sweeping through all the elements. The updated values of adjacent elements are used in the calculation of the next element as soon as this element becomes available.  

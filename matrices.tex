@@ -34,6 +34,22 @@ is {\bf indefinite} (i.e. it has positive as well as negative eigenvalues).
 
 A square matrix that is not invertible is called {\bf singular} or degenerate. A square matrix is singular if and only if its determinant is 0. Singular matrices are rare in the sense that if you pick a random square matrix, it will almost surely not be singular.
 
+%---------------------------------------------------
+\subsection{Eigenvalues of positive definite matrix}
+
+Suppose our matrix ${\bm M}$ has eigenvalue $\lambda$.
+
+If $\lambda=0$, then there is some eigenvector $\vec{x}$ so that 
+${\bm M}\cdot\vec{x}=\lambda \vec{x}=\vec{0}$. 
+But then $\vec{x}^T \cdot {\bm M} \cdot \vec{x}=0$, and so ${\cal M}$ is not positive definite.
+
+If $\lambda<0$, then there is some eigenvector $\vec{x}$ 
+so that ${\bm M}\cdot\vec{x}=\lambda \vec{x}$. 
+But then $\vec{x}^T \cdot {\bm M} \cdot \vec{x}=\lambda |\vec{x}|^2$, 
+which is negative since $|\vec{x}|^2>0$ and $\lambda<0$. Thus ${\bm M}$ is not positive definite.
+
+And so if ${\bm M}$ is positive definite, it only has positive eigenvalues.
+
 %--------------------------------
 \subsection{Schur complement}
 

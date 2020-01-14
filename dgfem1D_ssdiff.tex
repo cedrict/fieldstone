@@ -1,0 +1,717 @@
+
+Let us start simple with the 1D steady state heat conduction problem in 1D, given by the following 
+equation:
+\begin{equation}
+\frac{d^2T}{dx^2}=0 \qquad T(x=0)=0 \qquad T(x=1)=1 \qquad \text{on} \quad x\in[0,1]
+\end{equation}
+Although this equation is usually solved as is with its second-order derivative, it can also 
+be written in a mixed form, using the heat flux $q$ (a scalar in 1D):
+\[
+-\frac{dq}{dx}=0 \qquad q-\frac{dT}{dx}=0 \qquad x\in[0,1]
+\]
+and the boundary conditions remain unchanged. 
+
+We apply the standard approach to establish the weak forms of these two first-order ODEs, and we do so 
+on an element $e$ bound by nodes $k$ and $k+1$ with coordinates $x_k$ and $x_{k+1}$
+\begin{eqnarray}
+-\int_{x_k}^{x_{k+1}} \frac{dq}{dx} \tilde{f}(x) dx = -\left[q \tilde{f} \right]_{x_k}^{x_{k+1}} 
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} q(x) dx &=& 0
+\label{eq:dg1}\\
+\int_{x_k}^{x_{k+1}}  \left( q-\frac{dT}{dx} \right) \overline{f}(x) dx
+=
+\int_{x_k}^{x_{k+1}}  q(x) \overline{f}(x) dx
+-\left[ T \overline{f}  \right]_{x_k}^{x_{k+1}} + \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} T(x) dx 
+&=& 0
+\label{eq:dg2}
+\end{eqnarray}
+where $\tilde{f}$ and $\overline{f}$ are test functions.
+We now must examine the term between square brackets. 
+Inside the element, the test functions $\tilde{f}$ and $\overline{f}$ are well defined polynomials
+and we coin:
+\begin{eqnarray}
+\tilde{f}_k^+&=&\tilde{f}(x_k^+)\\
+\tilde{f}_{k+1}^-&=&\tilde{f}(x_{k+1}^-)\\
+\overline{f}_k^+&=&\overline{f}(x_k^+)\\
+\overline{f}_{k+1}^-&=&\overline{f}(x_{k+1}^-)
+\end{eqnarray}
+Concerning $q$ and $T$, we will for now  give them values $\hat{q}_k$ and $\hat{T}_k$ at node $k$
+and $\hat{q}_{k+1}$ and $\hat{T}_{k+1}$ at node $k+1$, and we will specify the hat quantities as follows:
+
+\begin{eqnarray}
+\hat{T}_k &=&
+\left\{
+\begin{array}{ll}
+T_k^-   & k=1 \\ 
+\frac{1}{2}(T_k^-+T_k^+) + {\cal C} (T_k^- - T_k^+) & k=2,...N-1\\
+T_k^+    & k=N \\ 
+\end{array}
+\right. \nonumber\\
+\hat{q}_k &=&
+\left\{
+\begin{array}{ll}
+q_k^+ -{\cal E} (T_k^--T_k^+)  & k=1 \\ 
+\frac{1}{2}(q_k^+ + q_k^-) - {\cal E} (T_k^- - T_k^+) - {\cal C}(q_k^- - q_k^+) & k=2,...N-1\\
+q_k^- -{\cal E} (T_k^--T_k^+)    & k=N \\ 
+\end{array}
+\right.
+\end{eqnarray}
+where $N$ is the number of nodes and where ${\cal C}$ and ${\cal E}$ are two constants. 
+
+{\color{green} Discuss the meaning/values of these!}
+
+\begin{remark}
+Note that $\hat{T}_k=T_1^-$ on the left boundary is consistent with 
+$\hat{T}_k=\frac{1}{2}(T_k^-+T_k^+) + {\cal C} (T_k^- - T_k^+)$ provided $T_1^-=T_1^+$.
+The same goes for the right boundary, and the same reasoning applies for the heat flux terms $\hat{q}_k$. 
+\end{remark}
+
+Inside an element bounded by nodes $k$ and $k+1$, 
+the temperature $T$ and heat flux $q$ are interpolated over an isoparametric linear element:
+\[
+T_h(x) = N_k(x) T_k^+ + N_{k+1}(x)T_{k+1}^-
+\]
+\[
+q_h(x) = N_k(x) q_k^+ + N_{k+1}(x)q_{k+1}^-
+\]
+As in the (Continuous) Galerkin case of section~\ref{sec:diff1D}, the test functions are taken to 
+be the shape functions, and in this case for both temperature and flux. 
+
+There are four unknowns ${\color{red} q_k^+}$, ${\color{red} q_{k+1}^-}$, 
+${\color{red}T_k^+}$ and ${\color{red}T_{k+1}^-}$ per element. 
+All other $q$ and $T$ quantities in the above/following equations will need to find their way to the rhs. 
+
+\begin{itemize}
+\item Eq.~\ref{eq:dg1} becomes:
+\begin{eqnarray}
+0 &=&
+-\hat{q}_{k+1} \tilde{f}(x_{k+1}^-)
++\hat{q}_k     \tilde{f}(x_k^+)
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} q_h(x) dx  \nonumber\\
+&=&-\hat{q}_{k+1} \tilde{f}_{k+1}^-
++\hat{q}_k     \tilde{f}_k^+
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} ( N_k(x) q_k^+ + N_{k+1}(x)q_{k+1}^- ) dx \nonumber\\
+&=& -\hat{q}_{k+1} \tilde{f}_{k+1}^-
++\hat{q}_k     \tilde{f}_k^+
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} N_k(x) dx \cdot q_k^+ 
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} N_{k+1}(x) dx \cdot q_{k+1}^- 
+\end{eqnarray}
+
+\begin{itemize}
+\item We take $\tilde{f}=N_k$ and by vertue of the properties of shape functions $N$ we have: 
+\begin{eqnarray}
+\tilde{f}_k^+&=&\tilde{f}(x_k^+) = N_k(x_k^+)=1 \nn\\
+\tilde{f}_{k+1}^-&=&\tilde{f}(x_{k+1}^-)   = N_k(x_{k+1}^+)=0 \nn
+\end{eqnarray}
+so that 
+\begin{eqnarray}
+0 
+&=& \hat{q}_k   
++ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_k(x) dx \cdot q_k^+ 
++ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_{k+1}(x) dx \cdot q_{k+1}^- \nn\\ 
+&=& 
+\frac{1}{2}({\color{red}q_k^+} + q_k^-) - {\cal E} (T_k^- - {\color{red}T_k^+}) 
+- {\cal C}(q_k^- - {\color{red}q_k^+}) \nn\\
+&+& \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_k dx \cdot {\color{red}q_k^+ }
++ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_{k+1} dx \cdot {\color{red} q_{k+1}^-} \label{eq:dg4}
+\end{eqnarray}
+
+\item We take $\tilde{f}=N_{k+1}$ and likewise:
+\begin{eqnarray}
+\tilde{f}_k^+&=&\tilde{f}(x_k^+) = N_{k+1}(x_k^+)=0 \nn\\
+\tilde{f}_{k+1}^-&=&\tilde{f}(x_{k+1}^-)   = N_{k+1}(x_{k+1}^+)=1 \nn
+\end{eqnarray}
+so that 
+\begin{eqnarray}
+0 
+&=& -\hat{q}_{k+1} 
++ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_k(x) dx \cdot q_k^+ 
++ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_{k+1}(x) dx \cdot q_{k+1}^- \nn\\ 
+&=& - \left[
+\frac{1}{2}(q_{k+1}^+ + {\color{red}q_{k+1}^-}) - {\cal E} ({\color{red}T_{k+1}^-} 
+- T_{k+1}^+) -{\cal C}({\color{red}q_{k+1}^-} - q_{k+1}^+) 
+\right]\nn\\
+&+& \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_k dx \cdot {\color{red}q_k^+} 
++ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_{k+1}dx \cdot {\color{red}q_{k+1}^-}  \label{eq:dg6}
+\end{eqnarray}
+
+
+
+\end{itemize}
+
+and finally 
+\begin{eqnarray}
+&&\int_{x_k}^{x_{k+1}} 
+\left(
+\begin{array}{cc}
+\frac{dN_k}{dx} N_k     & \frac{dN_k}{dx} N_{k+1} \\
+\frac{dN_{k+1}}{dx} N_k & \frac{dN_{k+1}}{dx} N_{k+1}
+\end{array}
+\right)dx  \cdot
+\left(
+\begin{array}{c}
+    {\color{red}q_k^+}  \\
+    {\color{red}q_{k+1}^-}
+\end{array}
+\right)
++\left(
+\begin{array}{c}
+     ({\cal C}+\frac{1}{2})  {\color{red}q_k^+}  \\
+     ({\cal C}-\frac{1}{2})  {\color{red}q_{k+1}^-} 
+\end{array}
+\right)+\left(
+\begin{array}{c}
+     {\cal E}    {\color{red}T_k^+}  \\
+     {\cal E}    {\color{red}T_{k+1}^-} 
+\end{array}
+\right) \nn \\
+&&= 
+\left(
+\begin{array}{c}
+     ({\cal C}-\frac{1}{2}) q_k^-  \\
+     ({\cal C}+\frac{1}{2}) q_{k+1}^+ 
+\end{array}
+\right)
++ \left(
+\begin{array}{c}
+     {\cal E}   T_k^-  \\
+     {\cal E}   T_{k+1}^+
+\end{array}
+\right)  
+\label{eq:dgq1}
+\end{eqnarray}
+
+
+
+\newpage
+\item Eq.~\ref{eq:dg2} becomes:
+\begin{eqnarray}
+0&=&
+-[ T \overline{f}  ]_{x_k}^{x_{k+1}} 
++ \int_{x_k}^{x_{k+1}}  q_h(x) \overline{f}(x) dx
++ \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} T_h(x) dx  
+\nn\\
+&=&
+-\hat{T}_{k+1} \overline{f}_{k+1}^- 
++\hat{T}_k     \overline{f}_{k}^+ 
++ \int_{x_k}^{x_{k+1}}  q_h(x) \overline{f}(x) dx
++ \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} T_h(x) dx  \nn
+%&=&
+%-\left( \frac{1}{2}({\color{red}T_{k+1}^-}+ T_{k+1}^+) 
+%+ {\cal C} ({\color{red} T_{k+1}^-} - T_{k+1}^+) \right) \overline{f}_{k+1}^-
+%+\left( \frac{1}{2}(T_k^-+{\color{red}T_k^+}) + {\cal C} (T_k^- - {\color{red}T_k^+}) \right) \overline{f}_{k}^+ \nn\\
+%&& + \int_{x_k}^{x_{k+1}} ( N_k(x) {\color{red}q_k^+} + N_{k+1}(x) {\color{red}q_{k+1}^-}    ) \overline{f}(x) dx
+%+ \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} ( N_k(x) {\color{red}T_k^+} + N_{k+1}(x) {\color{red}T_{k+1}^-}  ) dx \nn\
+\end{eqnarray}
+
+
+\begin{itemize}
+\item We take $\overline{f}=N_k$: 
+\begin{eqnarray}
+\overline{f}_k^+&=&\overline{f}(x_k^+)= N_k(x_k^+) =1 \nn\\
+\overline{f}_{k+1}^-&=&\overline{f}(x_{k+1}^-) = N_k(x_{k+1}^-) = 0\nn
+\end{eqnarray}
+so that 
+\begin{eqnarray}
+0
+&=& \hat{T}_k     
++ \int_{x_k}^{x_{k+1}}  q_h(x) N_k dx
++ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} T_h(x) dx  \nn\\
+&=& 
+\frac{1}{2}(T_k^-+{\color{red}T_k^+}) + {\cal C} (T_k^- - {\color{red}T_k^+}) \nn\\
+&+& \int_{x_k}^{x_{k+1}}  (N_k(x) {\color{red}q_k^+} + N_{k+1}(x) {\color{red}q_{k+1}^-}) N_k dx
++ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} (N_k(x) {\color{red}T_k^+} + N_{k+1}(x) {\color{red}T_{k+1}^-})   dx 
+\label{eq:dg5}
+\end{eqnarray}
+
+\item We take $\overline{f}=N_{k+1}$:
+\begin{eqnarray}
+\overline{f}_k^+&=&\overline{f}(x_k^+) = N_{k+1}(x_k^+) = 0 \nn\\
+\overline{f}_{k+1}^-&=&\overline{f}(x_{k+1}^-) = N_{k+1}(x_{k+1}^-) =1 \nn
+\end{eqnarray}
+so that 
+\begin{eqnarray}
+0
+&=& -\hat{T}_{k+1} 
++ \int_{x_k}^{x_{k+1}}  q_h(x) N_{k+1} dx
++ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1} }{dx} T_h(x) dx  \nn\\
+&=&-\left[\frac{1}{2}({\color{red}T_{k+1}^-}+T_{k+1}^+) + {\cal C}({\color{red}T_{k+1}^-} -T_{k+1}^+)\right]\\
+&+& \int_{x_k}^{x_{k+1}} (N_k(x) {\color{red}q_k^+} + N_{k+1}(x) {\color{red}q_{k+1}^-})  N_{k+1} dx
++ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1} }{dx} (N_k(x) {\color{red} T_k^+} + N_{k+1}(x) {\color{red}T_{k+1}^-}) dx 
+\label{eq:dg7}
+\end{eqnarray}
+
+
+
+ 
+\end{itemize}
+
+and finally 
+
+\begin{eqnarray}
+&& \int_{x_k}^{x_{k+1}} 
+\left(
+\begin{array}{cc}
+N_k N_k     & N_k N_{k+1} \\
+N_{k+1} N_k & N_{k+1} N_{k+1}
+\end{array}
+\right)dx
+\left(
+\begin{array}{c}
+    {\color{red}q_k^+}  \\
+    {\color{red}q_{k+1}^-}
+\end{array}
+\right)+
+\int_{x_k}^{x_{k+1}} 
+\left(
+\begin{array}{cc}
+\frac{dN_k}{dx} N_k     & \frac{dN_k}{dx} N_{k+1} \\
+\frac{dN_{k+1}}{dx} N_k & \frac{dN_{k+1}}{dx} N_{k+1}
+\end{array}
+\right)dx
+\left(
+\begin{array}{c}
+ {\color{red}T_k^+}  \\
+{\color{red}T_{k+1}^-} 
+\end{array}
+\right) \nn \\
+&&\qquad+ \left(
+\begin{array}{c}
+     (\frac{1}{2}-{\cal C}) {\color{red}T_k^+}  \\
+     -({\cal C}+\frac{1}{2}){\color{red}T_{k+1}^-} 
+\end{array}
+\right)
+= \left(
+\begin{array}{c}
+     -({\cal C}+\frac{1}{2})  T_k^- \\
+     (\frac{1}{2}-{\cal C})  T_{k+1}^+ 
+\end{array}
+\right) 
+\label{eq:dgT1}
+\end{eqnarray}
+
+
+
+
+
+\end{itemize}
+
+
+\newpage
+We will also use the results obtained in Appendix~\ref{app:mm} for 1D linear elements:
+\[
+{\bm M}^e
+=\int_{\Omega_e} \vec{N}^T \vec{N} dV
+=\int_{\Omega_e} 
+\left(
+\begin{array}{cc}
+N_k N_k & N_k N_{k+1} \\
+N_{k+1} N_k & N_{k+1}N_{k+1}
+\end{array}
+\right)
+dV 
+= \frac{h}{2} \frac{1}{3} 
+\left(
+\begin{array}{cc}
+2  & 1 \\
+1 & 2
+\end{array}
+\right)
+= 
+\frac{h}{6}
+\left(
+\begin{array}{cc}
+2  & 1 \\
+1 & 2
+\end{array}
+\right)
+\]
+and also 
+\[
+{\bm K}^e =
+\int_{\Omega_e} 
+\left(
+\begin{array}{cc}
+\frac{dN_k}{dx} N_k     & \frac{dN_k}{dx} N_{k+1} \\
+\frac{dN_{k+1}}{dx} N_k & \frac{dN_{k+1}}{dx} N_{k+1}
+\end{array}
+\right)
+dV
+=
+\frac{1}{2}
+\left(
+\begin{array}{cc}
+-1  & -1 \\
+1 & 1
+\end{array}
+\right)
+\]
+
+
+
+Filling this into equations (\ref{eq:dgq1}) and (\ref{eq:dgT1}), gives 
+\begin{eqnarray}
+{\bm K}^e \cdot 
+\left( 
+\begin{array}{cc}
+    {\color{red}q_k^+}  \\
+    {\color{red}q_{k+1}^-}
+\end{array}
+\right)+ 
+\left(
+\begin{array}{cc}
+     ({\cal C}+\frac{1}{2})  {\color{red}q_k^+}  \\
+     ({\cal C}-\frac{1}{2})  {\color{red}q_{k+1}^-} 
+\end{array}
+\right)+\left(
+\begin{array}{cc}
+     {\cal E}    {\color{red}T_k^+}  \\
+     {\cal E}    {\color{red}T_{k+1}^-} 
+\end{array}
+\right) 
+&=& 
+\left(
+\begin{array}{cc}
+     ({\cal C}-\frac{1}{2}) q_k^-  \\
+     ({\cal C}+\frac{1}{2}) q_{k+1}^+ 
+\end{array}
+\right)
++ \left(
+\begin{array}{cc}
+     {\cal E}   T_k^-  \\
+     {\cal E}   T_{k+1}^+
+\end{array}
+\right)  
+\nn
+\\
+{\bm M}^e \cdot
+\left(
+\begin{array}{cc}
+    {\color{red}q_k^+}  \\
+    {\color{red}q_{k+1}^-}
+\end{array}
+\right)+
+{\bm K}^e \cdot
+\left(
+\begin{array}{cc}
+ {\color{red}T_k^+}  \\
+{\color{red}T_{k+1}^-} 
+\end{array}
+\right) 
++ \left(
+\begin{array}{cc}
+     (\frac{1}{2}-{\cal C}) {\color{red}T_k^+}  \\
+     -({\cal C}+\frac{1}{2}){\color{red}T_{k+1}^-} 
+\end{array}
+\right)
+&=& \left(
+\begin{array}{cc}
+     -({\cal C}+\frac{1}{2})  T_k^- \\
+     (\frac{1}{2}-{\cal C})  T_{k+1}^+ 
+\end{array}
+\right) 
+\end{eqnarray}
+which becomes
+\begin{eqnarray}
+\left(
+\begin{array}{cc}
+  {\cal C}  &  -\frac{1}{2}\\
+   \frac{1}{2}  &  {\cal C}
+\end{array}
+\right)
+\left(
+\begin{array}{cc}
+     {\color{red}{q_k^+}}  \\
+     {\color{red}{q_{k+1}^-}}
+\end{array}
+\right)
++
+\left(
+\begin{array}{cc}
+  {\cal E} &  0\\
+   0  &  {\cal E}
+\end{array}
+\right)
+\left(
+\begin{array}{cc}
+     {\color{red}{T_k^+}}  \\
+     {\color{red}{T_{k+1}^-}}
+\end{array}
+\right)
+&=&
+\left(
+\begin{array}{cc}
+      ({\cal C}-\frac{1}{2})q_k^-+{\cal{E}} T_k^-  \\
+      ({\cal C}+\frac{1}{2})q_{k+1}^++{\cal{E}} T_{k+1}^+
+\end{array}
+\right)
+\nn 
+\\
+\frac{h}{6}
+\left(
+\begin{array}{cc}
+  2  &  1\\
+   1 & 2
+\end{array}
+\right)
+\left(
+\begin{array}{cc}
+     {\color{red}{q_k^+}}  \\
+     {\color{red}{q_{k+1}^-}}
+\end{array}
+\right)
++
+\left(
+\begin{array}{cc}
+  -{\cal C} &  -\frac{1}{2}\\
+   \frac{1}{2}  &  -{\cal C}
+\end{array}
+\right)
+\left(
+\begin{array}{cc}
+     {\color{red}{T_k^+}}  \\
+     {\color{red}{T_{k+1}^-}}
+\end{array}
+\right)
+&=&
+\left(
+\begin{array}{cc}
+     -(\frac{1}{2}+{\cal{C}}) T_k^-  \\
+      (\frac{1}{2}-{\cal{C}}) T_{k+1}^+
+\end{array}
+\right)\nn \
+\end{eqnarray}
+
+
+
+Combining these equations gives the numerical implementation:
+\begin{eqnarray}
+\boxed{
+\left(
+\begin{array}{cccc}
+\frac{h}{3}    &  \frac{h}{6} & -{\cal C}   &-\frac{1}{2} \\
+\frac{h}{6}    &  \frac{h}{3} & \frac{1}{2} & -{\cal C} \\
+{\cal C}    & -\frac{1}{2} & {\cal E} & 0\\
+\frac{1}{2} & {\cal C} & 0 & {\cal E}
+\end{array}
+\right) \left(
+\begin{array}{c}
+     \color{red}{q_k^+}  \\
+     \color{red}{q_{k+1}^-} \\
+     \color{red}{T_k^+} \\
+     \color{red}{T_{k+1}^-}
+\end{array}
+\right)=\left(
+\begin{array}{c}
+     -(\frac{1}{2}+{\cal{C}}) T_k^-  \\
+      (\frac{1}{2}-{\cal{C}}) T_{k+1}^+ \\
+     -(\frac{1}{2}-{\cal{C}})q_k^-+{\cal{E}} T_k^-  \\
+      (\frac{1}{2}+{\cal{C}})q_{k+1}^++{\cal{E}} T_{k+1}^+
+\end{array}
+\right)
+}  \label{eq:dgsyst1D}
+\end{eqnarray}
+
+\paragraph{Left boundary}
+Special care must be taken for the two elements on the boundaries of the domain. 
+On the left, we have 
+\begin{eqnarray}
+\hat{q}_1 &=& q_1^+ -{\cal E} (T_1^--T_1^+) \nn  \\
+\hat{T}_1 &=& T_1^- \nn
+\end{eqnarray}
+Eq.~(\ref{eq:dg4}) becomes:
+\begin{eqnarray}
+0 
+&=& \hat{q}_k   
++ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_k(x) dx \cdot q_k^+ 
++ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_{k+1}(x) dx \cdot q_{k+1}^- \nn\\ 
+&=& 
+{\color{red}q_1^+} - {\cal E} (T_k^- - {\color{red}T_1^+}) 
++ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_k dx \cdot {\color{red}q_1^+ }
++ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_{k+1} dx \cdot {\color{red} q_{2}^-}
+\end{eqnarray}
+Eq.~(\ref{eq:dg5}) becomes:
+\begin{eqnarray}
+0
+&=& \hat{T}_1     
++ \int_{x_k}^{x_{k+1}}  q_h(x) N_k dx
++ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} T_h(x) dx  \nn\\
+&=& 
+T_1^-  
++ \int_{x_k}^{x_{k+1}}  (N_k(x) {\color{red}q_1^+} + N_{k+1}(x) {\color{red}q_{2}^-}) N_k dx
++ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} (N_k(x) {\color{red}T_1^+} + N_{k+1}(x) {\color{red}T_{2}^-})   dx 
+\end{eqnarray}
+Eq.~(\ref{eq:dgsyst1D}) then becomes:
+\begin{eqnarray}
+\left(
+\begin{array}{cccc}
+\frac{h}{3}    &  \frac{h}{6} & -\frac{1}{2}   &-\frac{1}{2} \\
+\frac{h}{6}    &  \frac{h}{3} & \frac{1}{2} & -{\cal C} \\
+\frac{1}{2}    & -\frac{1}{2} & {\cal E} & 0\\
+\frac{1}{2} & {\cal C} & 0 & {\cal E}
+\end{array}
+\right) \left(
+\begin{array}{c}
+     \color{red}{q_1^+}  \\
+     \color{red}{q_{2}^-} \\
+     \color{red}{T_1^+} \\
+     \color{red}{T_{2}^-}
+\end{array}
+\right)=\left(
+\begin{array}{c}
+     -T_1^-  \\
+      (\frac{1}{2}-{\cal{C}}) T_{k+1}^+ \\
+     {\cal{E}} T_k^-  \\
+      (\frac{1}{2}+{\cal{C}})q_{k+1}^++{\cal{E}} T_{k+1}^+
+\end{array}
+\right)
+\label{eq:dgsyst1Dleft}
+\end{eqnarray}
+
+
+
+
+
+
+
+
+\paragraph{Right boundary} The element is composed of nodes $N-1$ and $N$. The fluxes are 
+\begin{eqnarray}
+\hat{q}_N &=& q_N^+ -{\cal E} (T_N^--T_N^+) \nn  \\
+\hat{T}_N &=& T_N^- \nn
+\end{eqnarray}
+Eq.~(\ref{eq:dg6}) becomes:
+\begin{eqnarray}
+0 
+&=& -\hat{q}_{N} 
++ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_k(x) dx \cdot q_{N-1}^+ 
++ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_{k+1}(x) dx \cdot q_{N}^- \nn\\ 
+&=& - \left[ q_N^+ -{\cal E} (T_N^--T_N^+) \right] 
++ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_k dx \cdot {\color{red}q_{N-1}^+} 
++ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_{k+1}dx \cdot {\color{red}q_{N}^-} 
+\end{eqnarray}
+Eq.~(\ref{eq:dg7}) becomes:
+\begin{eqnarray}
+0
+&=& -\hat{T}_{N} 
++ \int_{x_k}^{x_{k+1}}  q_h(x) N_{k+1} dx
++ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1} }{dx} T_h(x) dx  \nn\\
+&=&-T_N^- + \int_{x_k}^{x_{k+1}} (N_k(x) {\color{red}q_{N-1}^+} + N_{k+1}(x) {\color{red}q_{N}^-})  N_{k+1} dx
++ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1} }{dx} (N_k(x) {\color{red} T_{N-1}^+} + N_{k+1}(x) {\color{red}T_{N}^-}) dx
+\nn 
+\end{eqnarray}
+Eq.~(\ref{eq:dgsyst1D}) then becomes:
+\begin{eqnarray}
+\left(
+\begin{array}{cccc}
+\frac{h}{3}    &  \frac{h}{6} & -{\cal C}   &-\frac{1}{2} \\
+\frac{h}{6}    &  \frac{h}{3} & \frac{1}{2} & \frac{1}{2} \\
+{\cal C}    & -\frac{1}{2} & {\cal E} & 0\\
+\frac{1}{2} & -\frac{1}{2} & 0 & {\cal E}
+\end{array}
+\right) \left(
+\begin{array}{c}
+     \color{red}{q_{N-1}^+}  \\
+     \color{red}{q_{N}^-} \\
+     \color{red}{T_{N-1}^+} \\
+     \color{red}{T_{N}^-}
+\end{array}
+\right)=\left(
+\begin{array}{cc}
+     -(\frac{1}{2}+{\cal{C}}) T_{N-1}^-  \\
+      T_{N}^+ \\
+     -(\frac{1}{2}-{\cal{C}})q_{N-1}^-+{\cal{E}} T_{N-1}^-  \\
+      {\cal{E}} T_{N}^+
+\end{array}
+\right)
+\label{eq:dgsyst1Dright}
+\end{eqnarray}
+
+
+\paragraph{Solving strategies} Following Li \cite{li06}, there are three main strategies:
+\begin{itemize}
+\item Successive substitution: all the variables are initialized to zero. 
+Eq.~(\ref{eq:dgsyst1Dleft}) is solved
+to obtain the data for the first element, where boundary conditions are specified.
+Then Eq.~(\ref{eq:dgsyst1D}) is used for all interior elements.
+Finally Eq.(~\ref{eq:dgsyst1Dright}) is used for the last element.
+This procedure is carried out until all fields have converged.  
+
+\item Global assembly: this approach is identical to the one 
+we have taken so far with the continuous Galerkin Finite Element method. 
+We form a large global matrix and then solve the linear system 
+to obtain the solution. The disadvantage of this approach lies in the size 
+of the generated marix: each node counts 4 dofs so the assembled matrix 
+will be about 4 times as big as in the standard FE case. 
+
+\item Elimination then asssembly: one can first eliminate the variable $q$
+and solve for the temperature $T$ only. This speedis up the
+calculations, but also increases the bandwidth of the element matrix. Li \cite{li06}
+states: "Further comparison shows that the saving in CPU time for solving T alone is less
+significant than the $q-T$ iterative solution, in particular, for 3-D problems."
+
+
+Eq.~(\ref{eq:dgsyst1D}) can be rewritten:
+\begin{equation}
+\left(
+\begin{array}{cc}
+{\bm M}_e & {\bm C}_1 \\
+{\bm C}_2 & {\bm E} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{q} \\ \vec{T} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{f} \\ \vec{g} 
+\end{array}
+\right)
+\end{equation}
+The unknown of the original ODE is temperature so this is the quantity we are after. 
+The first line of the matrix can be written 
+\[
+ {\bm M}_e \cdot \vec{q}+ {\bm C}_1 \cdot \vec{T} = \vec{f} 
+\]
+or,
+\[
+\vec{q} =   {\bm M}_e^{-1} \cdot (\vec{f} -{\bm C}_1 \cdot \vec{T} )
+\]
+The second line of the matrix is 
+\[
+{\bm C}_2 \cdot \vec{q} + {\bm E} \cdot \vec{T} =  \vec{g}
+\]
+and we then replace $\vec{q}$ by the expression above:
+\[
+{\bm C}_2 \cdot [ {\bm M}_e^{-1}\cdot (\vec{f} -{\bm C}_1\cdot  \vec{T} ) ]
+ + {\bm E}\cdot \vec{T} =  \vec{g}
+\]
+or, 
+\[
+- {\bm C}_2\cdot {\bm M}_e^{-1}\cdot {\bm C}_1 \cdot \vec{T}  
+ + {\bm E}\cdot \vec{T} 
+=  \vec{g} - {\bm C}_2\cdot  {\bm M}_e^{-1}\cdot \vec{f}
+\]
+and finally
+\[
+[ {\bm E} -  {\bm C}_2 \cdot {\bm M}_e^{-1} \cdot {\bm C}_1 ]\cdot  \vec{T}
+=  \vec{g} - {\bm C}_2 \cdot {\bm M}_e^{-1} \cdot \vec{f}
+\]
+\end{itemize}
+Note that the matrix will still be twice as big than in the standard FEM case since 
+each node counts two temperature dofs. 
+
+
+\paragraph{Choice of ${\cal C}$ and ${\cal E}$} Li \cite{li06}
+shows satisfying results for ${\cal E}=4$ and ${\cal C}=-1/2,0,1/2$ or 
+${\cal E}=0$ and ${\cal C}=1,4,10$.
+
+
+
+
+
+
+

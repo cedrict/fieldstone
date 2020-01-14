@@ -1,0 +1,63 @@
+Let us start with the dimensionless Stokes system \cite{coks02}:
+\begin{eqnarray}
+- \eta \Delta \vec\upnu + \vec\nabla p &=& \vec{f}  \qquad \textrm{in } \Omega\\
+\vec\nabla\cdot\vec\upnu &=& 0 \qquad \textrm{in } \Omega\\
+\vec{\upnu} &=& \vec{\upnu}_D \qquad \textrm{on } \Gamma
+\end{eqnarray}
+where $\Omega$ is a bounded domain of $\mathbb{R}^d$ and the Dirichlet boundary conditions are
+such that they satisfy the compatibility condition
+\[
+\int_\Gamma \vec\upnu_D \cdot \vec{n} =0
+\]
+where $\vec{n}$ is the outward unit normal. 
+
+In order to obtain the LDG methods we first rewrite this system as the following collection of conservation 
+laws \cite{coks02}:
+\begin{eqnarray}
+{\bm L} &=& \vec\nabla \vec\upnu  \qquad \textrm{in } \Omega\\
+\vec\nabla\cdot (-2\eta {\bm L} + p {\bm 1}) &=& \vec{f}  \qquad \textrm{in } \Omega\\
+\vec\nabla\cdot\vec\upnu &=& 0 \qquad \textrm{in } \Omega\\
+\vec{\upnu} &=& \vec{\upnu}_D \qquad \textrm{on } \Gamma
+\end{eqnarray}
+supplemented by
+\[
+\int_\Omega p =0
+\]
+
+\begin{remark}
+It may appear counter-intuitive at first to define ${\bm L}$ as being the gradient
+of the velocity instead of the strain rate tensor but under the assumption
+of incompressibility $\partial_x u + \partial_y v =0$ (and constant viscosity) we can write:
+\[
+\vec\nabla\cdot (2 \eta {\bm L}) = 
+2\eta
+\left(
+\begin{array}{c}
+\partial_x^2 u + \frac{1}{2}\partial_x\partial_y v + \frac{1}{2}\partial_y^2 u \\
+\frac{1}{2}\partial_x^2 v + \frac{1}{2} \partial_y\partial_x u + \partial_y^2 v
+\end{array}
+\right)
+=
+2\eta
+\left(
+\begin{array}{c}
+\partial_x^2 u + \frac{1}{2}\partial_x(-\partial_x u) + \frac{1}{2}\partial_y^2 u \\
+\frac{1}{2}\partial_x^2 v + \frac{1}{2} \partial_y(-\partial_y v) + \partial_y^2 v
+\end{array}
+\right)
+=
+\eta
+\left(
+\begin{array}{c}
+\partial_x^2 u + \partial_y^2 u \\
+\partial_x^2 v + \partial_y^2 v
+\end{array}
+\right)
+=
+\eta \Delta \vec\upnu
+\]
+\end{remark}
+
+
+RETYPE section 2.1 of \cite{coks02}
+

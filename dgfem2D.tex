@@ -1,0 +1,114 @@
+We start from the steady state (no advection) energy equation:
+\[
+\vec\nabla\cdot (k \vec\nabla T) + Q = 0
+\]
+where $Q$ is a source term.
+As we did in 1D we tranform this equation by reintroducing the heat flux
+\footnote{\url{https://en.wikipedia.org/wiki/Thermal_conduction}} $\vec{q}$ 
+\begin{eqnarray}
+\vec q &=& - k \vec\nabla T \\
+\vec\nabla \cdot \vec q &=& Q
+\end{eqnarray}
+We then multiply these two equations with the test functions $\vec{N}_q$ (this one 
+is vector valued) and 
+$N_T$ respectively and integrate over the element $e$ under consideration:
+\begin{eqnarray}
+\int_{\Omega_e} \vec{N}_q \cdot  \vec q  \; dV &=& - \int_{\Omega_e} \vec{N}_q \cdot k \vec\nabla T\; dV \\
+\int_{\Omega_e} N_T \vec\nabla \cdot \vec q \;  dV &=& \int_{\Omega_e} N_T Q \; dV
+\end{eqnarray}
+We then use integration by parts to make fluxes appear (and assume $k$ is constant within 
+the element). We have
+\begin{eqnarray}
+\int_{\Omega_e} \vec{N}_q \cdot k \vec\nabla T \; dV 
+&=& \int_{\Gamma_e} kT \;  \vec{N}_q \cdot \vec{n} \; dS 
+- \int _{\Omega_e}  kT \;  \vec\nabla\cdot \vec{N}_q  \;  dV \\
+\int_{\Omega_e} N_T \vec\nabla \cdot \vec q \; dV 
+&=& \int_{\Gamma_e} {N}_T \vec{q} \cdot \vec{n}  \; dS
+- \int_{\Omega_e} \vec\nabla N_T \cdot \vec q \; dV 
+\end{eqnarray}
+We then finally obtain the weak forms that are to be discretised:
+\begin{eqnarray}
+\int_{\Omega_e} \vec{N}_q \cdot  \vec q \; dV &=& 
+-\int_{\Gamma_e} kT \;  \vec{N}_q \cdot \vec{n} \; dS 
++ \int _{\Omega_e}  kT \;  \vec\nabla\cdot \vec{N}_q  \;  dV \\
+\int_{\Gamma_e}    {N}_T  \vec{q}\cdot \vec{n}  \; dS
+- \int_{\Omega_e} \vec\nabla N_T \cdot \vec q \; dV 
+&=& \int_{\Omega_e} N_T Q \; dV
+\end{eqnarray}
+
+We seek to approximate the exact solution $(\vec{q},T)$ with functions $(\vec{q}_h,T_h)$ inside the element so we 
+now have 
+\begin{eqnarray}
+\int_{\Omega_e} \vec{N}_q \cdot  \vec q_h \; dV &=& 
+-\int_{\Gamma_e} k \hat{T}_h \;  \vec{N}_q \cdot \vec{n} \; dS 
++ \int _{\Omega_e}  k T_h \;  \vec\nabla\cdot \vec{N}_q  \;  dV \\
+\int_{\Gamma_e}    {N}_T \hat{\vec{q}}_h \cdot \vec{n}  \; dS
+- \int_{\Omega_e} \vec\nabla N_T \cdot \vec{q}_h \; dV 
+&=& \int_{\Omega_e} N_T Q \; dV
+\end{eqnarray}
+where the numerical fluxes are the approximations to $(\vec{q},T)$ on the boundary of element $e$.
+As before we must now specify these fluxes inside the domain and also on the boundaries. These
+can obviously not be chosen at will since they must at least render the discontinuous formulation stable.
+
+The following table is taken from Li \cite{li06} and lists the numerical fluxes 
+that are considered consistent and stable for the solution of the steady state heat conduction 
+problems \cite{arbc02,cacp00}:
+\begin{center}
+\begin{tabular}{lll}
+\hline
+Method & $\hat{\vec{q}}_h$ & $\hat{T}_h$ \\
+\hline
+LDG \cite{cosh98} & $\{ \vec{q}_h \}$  & \\
+DG  \cite{cacp00} & \\
+Brezzi et al (2000) \cite{brmm00} &\\
+IP \cite{dodu76} & \\
+Bassi-Rebay \cite{barm97} &\\
+NIPG \cite{riwg99} & \\
+\hline
+\end{tabular}
+\end{center}
+where the $C$ coefficients are matrices ?!
+
+I NEED a DRAWING HERE
+
+\index{general}{Average Operator}
+\index{general}{Jump Operator}
+The average operator and jump operators in the table are defined as follows:
+let $\Gamma_{12}$ be an interior edge shared by elements $1$ and $2$ and let us 
+define the unit normal vectors $\vec{n}_1$ and $\vec{n}_2$ on $\Gamma_{12}$ 
+pointing exterior to element 1 and 2, respectively.
+
+In what follows we adopt the 'DG' formulation (which seems to be the most versatile one
+since its fluxes can be modified by zeroing some coefficients to obtain other formulations)
+so that:
+\begin{eqnarray}
+\int_{\Omega_e} \vec{N}_q \cdot  \vec q_h dV &=& 
+-\int_{\Gamma_e} k \left[    \right] \;  \vec{N}_q \cdot \vec{n} \; dS 
++ \int _{\Omega_e}  k T_h \;  \vec\nabla\cdot \vec{N}_q  \;  dV \\
+\int_{\Gamma_e}    {N}_T \left[   \right] \cdot \vec{n}  \; dS
+- \int_{\Omega_e} \vec\nabla N_T \cdot \vec{q}_h \; dV 
+&=& \int_{\Omega_e} N_T Q dV
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\{ \vec{q} \} &=& \frac{1}{2} (\vec{q}_1 + \vec{q}_2) \\
+\llbracket \vec{q} \rrbracket  &=& \vec{q}_1 \cdot\vec{n}_1 + \vec{q}_2\cdot\vec{n}_2 \\
+\{ T \} &=& \frac{1}{2} (T_1 + T_2) \\
+\llbracket T \rrbracket &=& T_1\cdot\vec{n}_1 + T_2\cdot\vec{n}_2 
+\end{eqnarray}
+Note that the jump $ \llbracket \vec{q} \rrbracket$ is a scalar while 
+$\llbracket T \rrbracket $ is actually a vector. 
+
+Inside the element the functions $T_h$ and $\vec{q}_h$ are represented by means 
+of the shape functions such that
+\[
+T_h(\vec{r}) = \sum_{k=1}^m N_k(\vec{r}) T_k = \vec{N} \cdot \vec{T}
+\]
+\[
+\vec{q}_x|_h(\vec{r}) = \sum_{k=1}^m N_k(\vec{r}) q_x|k = \vec{N}\cdot\vec{q}_x
+\]
+\[
+\vec{q}_y|_h(\vec{r}) = \sum_{k=1}^m N_k(\vec{r}) q_y|k = \vec{N}\cdot\vec{q}_y
+\]
+

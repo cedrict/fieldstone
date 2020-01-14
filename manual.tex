@@ -26,6 +26,8 @@
 \usepackage{dirtytalk}
 \usetikzlibrary{arrows, arrows.meta}
 
+\usepackage{stmaryrd}
+
 %\RequirePackage{authorindex}
 
 \newtheorem{problem}{problem:}
@@ -229,7 +231,23 @@ doi = "10.23644/uu.9209393.v1"}
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The Discontinuous Galerkin Finite Element Method (DG-FEM) \label{dgfem}} %%%%%%%%%%%%%%%%%
-\input{dgfem1D}
+
+\input{dgintro}
+
+\subsection{First-order advection ODE in 1D} \input{dgfem1D}
+\subsection{Steady state diffusion in 1D \label{ss:dgss1D}} \input{dgfem1D_ssdiff}
+\subsection{Time-dependent diffusion PDE in 1D} \input{dgfem1D_diff}
+
+\newpage
+\subsection{Time-dependent advection PDE in 1D \label{ss:dgfem1D_adv}} \input{dgfem1D_adv} %-------
+
+\newpage
+\subsection{Steady-state diffusion in 2D} \input{dgfem2D}
+\subsection{Time-dependent diffusion PDE in 2D}
+
+\newpage
+\subsection{Stokes equations} \input{dgfem_stokes}
+
 
 
 \newpage

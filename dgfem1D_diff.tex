@@ -1,0 +1,428 @@
+
+Starting from the simple transient 1-D heat conduction problem similar to the 
+steady state heat conduction problem only with added time dependence:
+
+\begin{equation}
+\frac{\partial T}{\partial t}=\frac{\partial^2T}{\partial x^2} \qquad T(x=0)=0 \qquad T(x=1)=1 \qquad \text{on} \quad x\in[0,1]
+\end{equation}
+
+
+Once again we split this system into two seperate first order equations:
+\begin{equation}
+\frac{\partial T}{\partial t}-\frac{\partial q}{\partial x}=0 \quad;\qquad \frac{\partial T}{\partial x} -q =0
+\end{equation}
+
+We apply the standard approach to establish the weak forms of these two first-order PDEs, and we do so 
+on an element $e$ bound by nodes $k$ and $k+1$ with coordinates $x_k$ and $x_{k+1}$
+\begin{eqnarray}
+-\int_{x_k}^{x_{k+1}} \left( \frac{\partial T}{\partial t}- \frac{dq}{dx} \right) \tilde{f}(x) dx =
+\int_{x_k}^{x_{k+1}} \frac{\partial T}{\partial t} \tilde{f}(x)dx
+ -\left[q \tilde{f} \right]_{x_k}^{x_{k+1}} 
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} q(x) dx &=& 0
+\label{eq:dg1}\\
+\int_{x_k}^{x_{k+1}}  \left( q-\frac{dT}{dx} \right) \overline{f}(x) dx
+=
+\int_{x_k}^{x_{k+1}}  q(x) \overline{f}(x) dx
+-\left[ T \overline{f}  \right]_{x_k}^{x_{k+1}} + \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} T(x) dx 
+&=& 0
+\label{eq:dg2}
+\end{eqnarray}
+where $\tilde{f}$ and $\overline{f}$ are test functions.
+
+
+In what follows we coin $\dot{T}=\partial T/\partial t$. 
+We once again recover Equations (\ref{eq:dgq1}) and (\ref{eq:dgT1}), althought with 
+an additional time derivative term: 
+
+
+
+Filling this into equations (\ref{eq:dgq1}) and (\ref{eq:dgT1}), gives 
+\begin{eqnarray}
+{\bm K}^e \cdot 
+\left( 
+\begin{array}{cc}
+    {\color{red}q_k^+}  \\
+    {\color{red}q_{k+1}^-}
+\end{array}
+\right)
++
+{\bm M}^e \cdot 
+\left(
+\begin{array}{c}
+{\color{red}\dot{T}_k^+}  \\
+{\color{red}\dot{T}_{k+1}^-} 
+\end{array}
+\right) 
++ 
+\left(
+\begin{array}{cc}
+     ({\cal C}+\frac{1}{2})  {\color{red}q_k^+}  \\
+     ({\cal C}-\frac{1}{2})  {\color{red}q_{k+1}^-} 
+\end{array}
+\right)+
+\left(
+\begin{array}{c}
+     {\cal E}    {\color{red}T_k^+}  \\
+     {\cal E}    {\color{red}T_{k+1}^-} 
+\end{array}
+\right) 
+&=& 
+\left(
+\begin{array}{cc}
+     ({\cal C}-\frac{1}{2}) q_k^-  \\
+     ({\cal C}+\frac{1}{2}) q_{k+1}^+ 
+\end{array}
+\right)
++ \left(
+\begin{array}{cc}
+     {\cal E}   T_k^-  \\
+     {\cal E}   T_{k+1}^+
+\end{array}
+\right)  
+\nn
+\\
+{\bm M}^e \cdot
+\left(
+\begin{array}{cc}
+    {\color{red}q_k^+}  \\
+    {\color{red}q_{k+1}^-}
+\end{array}
+\right)+
+{\bm K}^e \cdot
+\left(
+\begin{array}{cc}
+ {\color{red}T_k^+}  \\
+{\color{red}T_{k+1}^-} 
+\end{array}
+\right) 
++ \left(
+\begin{array}{cc}
+     (\frac{1}{2}-{\cal C}) {\color{red}T_k^+}  \\
+     -({\cal C}+\frac{1}{2}){\color{red}T_{k+1}^-} 
+\end{array}
+\right)
+&=& \left(
+\begin{array}{cc}
+     -({\cal C}+\frac{1}{2})  T_k^- \\
+     (\frac{1}{2}-{\cal C})  T_{k+1}^+ 
+\end{array}
+\right) 
+\end{eqnarray}
+
+In what follows we set ${\cal E}=0$ so that we have
+\begin{eqnarray}
+{\bm K}^e \cdot 
+\left( 
+\begin{array}{cc}
+    {\color{red}q_k^+}  \\
+    {\color{red}q_{k+1}^-}
+\end{array}
+\right)
++
+{\bm M}^e \cdot 
+\left(
+\begin{array}{c}
+{\color{red}\dot{T}_k^+}  \\
+{\color{red}\dot{T}_{k+1}^-} 
+\end{array}
+\right) 
++ 
+\left(
+\begin{array}{cc}
+     ({\cal C}+\frac{1}{2})  {\color{red}q_k^+}  \\
+     ({\cal C}-\frac{1}{2})  {\color{red}q_{k+1}^-} 
+\end{array}
+\right)
+&=& 
+\left(
+\begin{array}{cc}
+     ({\cal C}-\frac{1}{2}) q_k^-  \\
+     ({\cal C}+\frac{1}{2}) q_{k+1}^+ 
+\end{array}
+\right)
+\nn
+\\
+{\bm M}^e \cdot
+\left(
+\begin{array}{cc}
+    {\color{red}q_k^+}  \\
+    {\color{red}q_{k+1}^-}
+\end{array}
+\right)+
+{\bm K}^e \cdot
+\left(
+\begin{array}{cc}
+ {\color{red}T_k^+}  \\
+{\color{red}T_{k+1}^-} 
+\end{array}
+\right) 
++ \left(
+\begin{array}{cc}
+     (\frac{1}{2}-{\cal C}) {\color{red}T_k^+}  \\
+     -({\cal C}+\frac{1}{2}){\color{red}T_{k+1}^-} 
+\end{array}
+\right)
+&=& \left(
+\begin{array}{cc}
+     -({\cal C}+\frac{1}{2})  T_k^- \\
+     (\frac{1}{2}-{\cal C})  T_{k+1}^+ 
+\end{array}
+\right) 
+\end{eqnarray}
+
+Using the expressions for ${\bm M}^e$ and ${\bm K}^e$ 
+obtained in Appendix~\ref{app:mm} for 1D linear elements we arrive at
+\begin{eqnarray}
+\frac{1}{2}
+\left(
+\begin{array}{cc}
+-1  & -1 \\
+1 & 1
+\end{array}
+\right)
+\cdot 
+\left( 
+\begin{array}{cc}
+    {\color{red}q_k^+}  \\
+    {\color{red}q_{k+1}^-}
+\end{array}
+\right)
++
+\frac{h}{6}
+\left(
+\begin{array}{cc}
+2  & 1 \\
+1 & 2
+\end{array}
+\right)
+\cdot 
+\left(
+\begin{array}{c}
+{\color{red}\dot{T}_k^+}  \\
+{\color{red}\dot{T}_{k+1}^-} 
+\end{array}
+\right) 
++ 
+\left(
+\begin{array}{cc}
+     ({\cal C}+\frac{1}{2})  {\color{red}q_k^+}  \\
+     ({\cal C}-\frac{1}{2})  {\color{red}q_{k+1}^-} 
+\end{array}
+\right)
+&=& 
+\left(
+\begin{array}{cc}
+     ({\cal C}-\frac{1}{2}) q_k^-  \\
+     ({\cal C}+\frac{1}{2}) q_{k+1}^+ 
+\end{array}
+\right)
+\nn
+\\
+\frac{h}{6}
+\left(
+\begin{array}{cc}
+2  & 1 \\
+1 & 2
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+    {\color{red}q_k^+}  \\
+    {\color{red}q_{k+1}^-}
+\end{array}
+\right)+
+\frac{1}{2}
+\left(
+\begin{array}{cc}
+-1  & -1 \\
+1 & 1
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+ {\color{red}T_k^+}  \\
+{\color{red}T_{k+1}^-} 
+\end{array}
+\right) 
++ \left(
+\begin{array}{cc}
+     (\frac{1}{2}-{\cal C}) {\color{red}T_k^+}  \\
+     -({\cal C}+\frac{1}{2}){\color{red}T_{k+1}^-} 
+\end{array}
+\right)
+&=& \left(
+\begin{array}{cc}
+     -({\cal C}+\frac{1}{2})  T_k^- \\
+     (\frac{1}{2}-{\cal C})  T_{k+1}^+ 
+\end{array}
+\right) 
+\end{eqnarray}
+
+which simplifies to 
+\begin{eqnarray}
+\left(
+\begin{array}{cc}
+C  & -1/2 \\
+1/2 & C 
+\end{array}
+\right)
+\cdot 
+\left( 
+\begin{array}{cc}
+    {\color{red}q_k^+}  \\
+    {\color{red}q_{k+1}^-}
+\end{array}
+\right)
++
+\left(
+\begin{array}{cc}
+h/3 & h/6 \\
+h/6 & h/3
+\end{array}
+\right)
+\cdot 
+\left(
+\begin{array}{c}
+{\color{red}\dot{T}_k^+}  \\
+{\color{red}\dot{T}_{k+1}^-} 
+\end{array}
+\right) 
+&=& 
+\left(
+\begin{array}{cc}
+     ({\cal C}-\frac{1}{2}) q_k^-  \\
+     ({\cal C}+\frac{1}{2}) q_{k+1}^+ 
+\end{array}
+\right)
+\nn
+\\
+\left(
+\begin{array}{cc}
+h/3 & h/6 \\
+h/6 & h/3
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+    {\color{red}q_k^+}  \\
+    {\color{red}q_{k+1}^-}
+\end{array}
+\right)+
+\left(
+\begin{array}{cc}
+-C  & -1/2 \\
+1/2 & -C
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+ {\color{red}T_k^+}  \\
+{\color{red}T_{k+1}^-} 
+\end{array}
+\right) 
+&=& \left(
+\begin{array}{cc}
+     -({\cal C}+\frac{1}{2})  T_k^- \\
+     (\frac{1}{2}-{\cal C})  T_{k+1}^+ 
+\end{array}
+\right) 
+\end{eqnarray}
+or, 
+\[
+{\bm C}_1 \vec{q} +  {\bm M} \vec{\dot{T}} = \vec{f}  
+\]
+\[
+{\bm M} \vec{q} + {\bm C}_2 \vec{T} = \vec{g}
+\]
+so 
+\[
+ \vec{q} = {\bm M}^{-1}   (\vec{g} -  {\bm C}_2 \vec{T} )
+\]
+and then 
+\[
+{\bm C}_1 [  {\bm M}^{-1}   (\vec{g} -  {\bm C}_2 \vec{T} )   ]    +  {\bm M} \vec{\dot{T}} = \vec{f}  
+\]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%\end{document}
+
+
