@@ -67,13 +67,15 @@ of $N^3$ points (use $R=6371$km). Please use arrays {\tt x}, {\tt y} and {\tt z}
 These arrays are $N^3$ long.
 \item Compute the associated volume $dV$ of a point as a function of $R$ and N.
 \item For points inside a sphere of radius $R$ assign a density $\rho_0=3000$kg/m$^3$ and zero otherwise, store these values in the {\tt rho} array.
-\item Compute the mass of the system as a function of N. Plot the relative error as a function of $h$.
+\item Compute the mass of the system 
 \item Compute the moment of inertia of the system (use Eq. \ref{mominert_uniform_sphere}).
 \item Compute the gravity potential and vector components $H=10^m$ meters above the north pole 
 with $m=0,1,2,3,..8$. Compute first the position of these points and store them 
 in arrays {\tt xm}, {\tt ym} {\tt zm} before using these for gravity calculations. 
 \item Plot the computed quantities as a function of $H$ and plot on the same graphic the analytical values. 
-\item Repeat the exercise with different values of $N$. Discuss.
+\item Repeat the exercise with different values of $N\in(10,20,30,40,50)$ .
+For the mass and moment of inertia, plot the relative error as a function of $h$.
+Discuss.
 \item Fix $m=4$. Progressively increase $N$ and record the absolute error on the gravity vector norm 
 as a function of $dV^{1/3}$. Plot this in log-log scale. Discuss.
 \item Use the {\tt prem\_density} function to assign the density to the points. Compute the mass of the planet with this new density distribution and compare it with the mass of the Earth. Compute the gravity at the surface.

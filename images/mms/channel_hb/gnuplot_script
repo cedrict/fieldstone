@@ -1,7 +1,7 @@
-set term pdf enhanced
+set term pdf enhanced font "Times,10pt"
 
 
-n=1.
+n=2.
 Pi=-1e6
 eta0=1.e25
 eps0=1e-15
@@ -10,7 +10,6 @@ K=1e24
 
 delta=2*eps0*eta0/abs(Pi)
 
-
 x1=0.5*H-delta
 x2=0.5*H+delta
 
@@ -18,35 +17,57 @@ print(delta)
 print(x1)
 print(x2)
 
-print(Pi/eta0*delta)
+print(-0.5*Pi/eta0*delta)
+
+b=2.*n/(n+1)*K/Pi*( eps0**(n+1) - (eps0**n-Pi/K*x1)**(1+1./n) )- 0.5*Pi/eta0*x1*(x1-H)
+
+print(b)
 
 set xtics 10e3
-exy1(x)=(pi/K*(x-x1)+ (-0.5*Pi/eta0*delta)**n  )**(1./n)
+exy1(x)=(pi/K*(x-x1)+ eps0**n  )**(1./n)
 exy2(x)=0.5*Pi/eta0*(x-H/2)
-exy3(x)=-(-pi/K*(x-x2)+ (-0.5*Pi/eta0*delta)**n  )**(1./n)
+exy3(x)=-(-pi/K*(x-x2)+ eps0**n  ) **(1./n)
 
+
+u1(x)=2.*n/(n+1)*K/Pi*\
+( \
+  ( Pi/K*(x-x1)+ eps0**n )**(1.+1./n)  - ( -Pi/K*x1 + eps0**n )**(1.+1./n)  \
+ )
+
+u2(x)=0.5*Pi/eta0*(x**2-x*H) + b 
+
+u3(x)=2.*n/(n+1)*K/Pi*\
+( \
+ ( -Pi/K*(x-x2)+ eps0**n )**(1.+1./n)  - ( -Pi/K*(H-x2) + eps0**n )**(1.+1./n)  \
+)
+
+velocity(x)= x<x1 ? u1(x) : (x<x2 ? u2(x) : u3(x) )
+
+exy(x)= x<x1 ? exy1(x) : (x<x2 ? exy2(x) : exy3(x) )
+
+set xlabel 'y'
+
+set ylabel 'velocity'
+set output 'velocity.pdf'
+plot[0:H][-1e-9:2e-9]\
+u1(x) lw .4 t 'u_{bot}',\
+u2(x) lw .4 t 'u_{mid}',\
+u3(x) lw .4 t 'u_{top}',\
+velocity(x) lw 3 lt -1 ,\
+0 lt -1
+
+
+set ylabel 'e_{xy}'
 set output 'exy.pdf'
 plot[0:H][]\
-exy1(x) t 'exy_1',\
-exy2(x) t 'exy_2',\
-exy3(x) t 'exy_3'
+exy1(x) lw .4 t 'exy_1',\
+exy2(x) lw .4 t 'exy_2',\
+exy3(x) lw .4 t 'exy_3',\
+exy(x) lw 3 lt -1 
 
-XY= (-0.5*Pi/eta0*delta)**n
 
-u1(x)=2*n/(n+1)*K/Pi*\
-( \
-  ( Pi/K*(x-x1)+ XY**n )**(1.+1./n)  \
-- \
-- ( -Pi/K*x1 + XY**n )**(1.+1./n)  \
- )
-u2(x)=0.5*Pi/eta0*(x**2-x*H) + 0
-u3(x)=0
 
-set output 'velocity.pdf'
-plot[0:H][]\
-u1(x) t 'u_1',\
-u2(x) t 'u_2',\
-u3(x) t 'u_3'
+
 
 
 

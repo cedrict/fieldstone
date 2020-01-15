@@ -870,6 +870,7 @@ continuity or boundary conditions:
 (6)&&\dot{\varepsilon}_{xy}(y_2) \text{ must be continuous}
 \end{eqnarray}
 
+%......................................................
 \paragraph{Using symmetry to compute $a$}
 Because of symmetry, we expect $y_1=H/2-\delta$ and $y_2=H/2+\delta$ with $\delta \neq 0$ 
 (i.e. $y_1\neq y_2$) and we expect $u(y_1)=u(y_2)$ so that 
@@ -920,6 +921,7 @@ Because of the parabola-like flow profile, we expect the strain rate
 to be zero in the middle $y=H/2$, and positive for $z_1<y<H/2$ and 
 negative for $H/2<y<z_2$, which is indeed what we recover ($\Pi<0$).
 
+%......................................................
 \paragraph{Using bottom boundary condition to obtain $d$}
 \[
 u(y=0)|_{bot} = 2 \frac{n}{n+1} \frac{K}{\Pi} \left( \frac{1}{K} ( c -\tau_0 ) \right)^{1+1/n} + d = 0
@@ -938,6 +940,7 @@ u(y)|_{bot} =
 \]
 
 
+%......................................................
 \paragraph{Using top boundary condition to obtain $f$}
 \[
 u(y=H)|_{top} = 2 \frac{n}{n+1} \frac{K}{\Pi} \left( \frac{1}{K} ( -\Pi H +e -\tau_0 ) \right)^{1+1/n} + f =0
@@ -956,76 +959,8 @@ u(y)|_{top} = 2 \frac{n}{n+1} \frac{K}{\Pi}
 }
 \]
 
-\paragraph{Using strain rate continuity at $y_1$ to compute $c$}
-\[
-\left( \frac{1}{K} ( \Pi y_1 +c -\tau_0 ) \right)^{1/n}
-= \frac{1}{2} \frac{\Pi}{\eta_0} \left(y_1  -\frac{H}{2} \right)
-=- \frac{1}{2} \frac{\Pi}{\eta_0} \delta
-\]
-\[
- \Pi y_1 +c -\tau_0 
-= K\left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n}
-\]
-\[
-\boxed{
-c = K\left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n} + \tau_0 -\Pi y_1
-}
-\]
 
-\begin{eqnarray}
-u(y)|_{bot} 
-&=& 
-2 \frac{n}{n+1} \frac{K}{\Pi} \left[ \left( \frac{1}{K} ( \Pi y +c -\tau_0 ) \right)^{1/n+ 1 } 
-- \left( \frac{1}{K} ( c -\tau_0 ) \right)^{1/n+ 1 } \right]
-\nn\\
-&=& 
-2 \frac{n}{n+1} \frac{K}{\Pi} \left[ \left( \frac{1}{K} ( \Pi (y-y_1) +K\left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n}   ) \right)^{1/n+ 1 } 
-- \left( \frac{1}{K} (  K\left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n}  -\Pi y_1    ) \right)^{1/n+ 1 } \right]
-\nn\\
-&=& 
-2 \frac{n}{n+1} \frac{K}{\Pi} \left[ \left( \frac{\Pi}{K} (y-y_1) + \left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n}    \right)^{1/n+ 1 } 
-- \left( \left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n}  - \frac{\Pi}{K}y_1     \right)^{1/n+ 1 } \right]
-\nn\\
-\dot{\varepsilon}_{xy}|_{bot}
-&=& \left( \frac{1}{K} ( \Pi y +c -\tau_0 ) \right)^{1/n} \nn\\
-&=& \left( \frac{\Pi}{K} (y-y_1) + \left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n}   \right)^{1/n} \nn
-\end{eqnarray}
-
-
-
-\paragraph{Using strain rate continuity at $y_2$ to compute $e$}
-\[
--\left( \frac{1}{K} ( \Pi y_2 +e -\tau_0 ) \right)^{1/n}
-= \frac{1}{2} \frac{\Pi}{\eta_0} \left(y_2  -\frac{H}{2} \right)
-= \frac{1}{2} \frac{\Pi}{\eta_0} \delta  
-\]
-\[
-\Pi y_2 +e -\tau_0 
-= K\left(-\frac{1}{2} \frac{\Pi}{\eta_0} \delta  \right)^{n} 
-\]
-\[
-\boxed{
-e = K\left(-\frac{1}{2} \frac{\Pi}{\eta_0} \delta  \right)^{n} + \tau_0 - \Pi y_2 
-}
-\]
-
-
-\begin{eqnarray}
-u(y)|_{top} &=& 2 \frac{n}{n+1} \frac{K}{\Pi}
-\left[
-\left( \frac{1}{K} ( -\Pi y +e -\tau_0 ) \right)^{1/n+ 1 } - 
-\left( \frac{1}{K} ( -\Pi H +e -\tau_0 ) \right)^{1/n+ 1 } \right] \nn\\
-&=& 2 \frac{n}{n+1} \frac{K}{\Pi}
-\left[
-\left( -\frac{\Pi}{K}(y+y_2)+\left(-\frac{1}{2} \frac{\Pi}{\eta_0} \delta \right)^{n}  \right)^{1/n+ 1 } - 
-\left( -\frac{\Pi}{K}(H+y_2)+\left(-\frac{1}{2} \frac{\Pi}{\eta_0} \delta \right)^{n}  \right)^{1/n+ 1 } 
-\right]
-\nn\\
-\dot{\varepsilon}_{xy}|_{top}
-&=&  - \left( \frac{1}{K} (- \Pi y +e - \tau_0 ) \right)^{1/n} \nn\\
-&=&  - \left( - \frac{\Pi}{K} (y+y_2) +  \left(-\frac{1}{2} \frac{\Pi}{\eta_0} \delta  \right)^{n} \right)^{1/n} \nn
-\end{eqnarray}
-
+%......................................................
 \paragraph{computing $\delta$}
 
 The coordinates of the transitions $y_1$ and $y_2$ are the location where the strain rate 
@@ -1047,72 +982,205 @@ Since $\Pi<0$ it adds up and $\delta>0$. We can also write
 \delta = \frac{2 \dot{\varepsilon}_0 \eta_0}{|\Pi|}
 }
 \]
+and we will use throughout what follows:
+\[
+\dot{\varepsilon}_0 = - \frac{1}{2}\frac{\Pi}{\eta_0} \delta
+\]
 
+
+%......................................................
+\paragraph{Using strain rate continuity at $y_1$ to compute $c$}
+\[
+\left( \frac{1}{K} ( \Pi y_1 +c -\tau_0 ) \right)^{1/n}
+= \frac{1}{2} \frac{\Pi}{\eta_0} \left(y_1  -\frac{H}{2} \right)
+=- \frac{1}{2} \frac{\Pi}{\eta_0} \delta
+\]
+\[
+ \Pi y_1 +c -\tau_0 
+= K\left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n}
+\]
+\[
+c = K\left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n} + \tau_0 -\Pi y_1
+\]
+
+\[
+\boxed{
+c = K \dot{\varepsilon}_0^{n} + \tau_0 -\Pi y_1
+}
+\]
+
+
+
+
+\begin{eqnarray}
+u(y)|_{bot} 
+&=& 
+2 \frac{n}{n+1} \frac{K}{\Pi} \left[ \left( \frac{1}{K} ( \Pi y +c -\tau_0 ) \right)^{1/n+ 1 } 
+- \left( \frac{1}{K} ( c -\tau_0 ) \right)^{1/n+ 1 } \right]
+\nn\\
+&=& 
+2 \frac{n}{n+1} \frac{K}{\Pi} 
+\left[ \left( \frac{1}{K} ( \Pi (y-y_1) +K \dot{\varepsilon}_0^{n}   ) \right)^{1/n+ 1 } 
+- \left( \frac{1}{K} (  K  
+\dot{\varepsilon}_0^{n}  -\Pi y_1    ) \right)^{1/n+ 1 } \right]
+\nn\\
+&=& 
+2 \frac{n}{n+1} \frac{K}{\Pi} \left[ \left( \frac{\Pi}{K} (y-y_1) 
++ \dot{\varepsilon}_0^{n}    \right)^{1/n+ 1 } 
+- \left(  \dot{\varepsilon}_0^{n}  - \frac{\Pi}{K}y_1     \right)^{1/n+ 1 } \right]
+\nn\\
+\dot{\varepsilon}_{xy}|_{bot}
+&=& \left( \frac{1}{K} ( \Pi y +c -\tau_0 ) \right)^{1/n} \nn\\
+&=& \left( \frac{\Pi}{K} (y-y_1) + \dot{\varepsilon}_0^{n}   \right)^{1/n} \nn
+\end{eqnarray}
+
+
+
+%......................................................
+\paragraph{Using strain rate continuity at $y_2$ to compute $e$}
+\[
+-\left( \frac{1}{K} ( -\Pi y_2 +e -\tau_0 ) \right)^{1/n}
+= \frac{1}{2} \frac{\Pi}{\eta_0} \left(y_2  -\frac{H}{2} \right)
+= \frac{1}{2} \frac{\Pi}{\eta_0} \delta  
+\]
+\[
+-\Pi y_2 +e -\tau_0 
+= K\left(-\frac{1}{2} \frac{\Pi}{\eta_0} \delta  \right)^{n} 
+\]
+\[
+e = K\left(-\frac{1}{2} \frac{\Pi}{\eta_0} \delta  \right)^{n} + \tau_0 + \Pi y_2 
+\]
+\[
+\boxed{
+e = K \dot{\varepsilon}_0^n + \tau_0 + \Pi y_2 
+}
+\]
+
+
+
+\begin{eqnarray}
+u(y)|_{top} &=& 2 \frac{n}{n+1} \frac{K}{\Pi}
+\left[
+\left( \frac{1}{K} ( -\Pi y +e -\tau_0 ) \right)^{1/n+ 1 } - 
+\left( \frac{1}{K} ( -\Pi H +e -\tau_0 ) \right)^{1/n+ 1 } \right] \nn\\
+&=& 2 \frac{n}{n+1} \frac{K}{\Pi}
+\left[
+\left( -\frac{\Pi}{K}(y+y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } - 
+\left( -\frac{\Pi}{K}(H+y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } 
+\right]
+\nn\\
+\dot{\varepsilon}_{xy}|_{top}
+&=&  - \left( \frac{1}{K} (- \Pi y +e - \tau_0 ) \right)^{1/n} \nn\\
+&=&  - \left( - \frac{\Pi}{K} (y+y_2) +  
+\dot{\varepsilon}_0^{n} \right)^{1/n} \nn
+\end{eqnarray}
+
+
+
+
+%......................................................
+\paragraph{Using velocity continuity to compute $b$} 
+We use $u(y_1)|_{bot}=u(y_1)|_{mid}$: 
+
+\[
+2 \frac{n}{n+1} \frac{K}{\Pi} \left[ \left( \frac{\Pi}{K} (y_1-y_1) 
++ \dot{\varepsilon}_0^{n}    \right)^{1/n+ 1 } 
+- \left( \dot{\varepsilon}_0^{n}  - \frac{\Pi}{K}y_1     \right)^{1/n+ 1 } \right]
+=
+\frac{1}{2}\frac{\Pi}{\eta_0} (y_1^2  -  y_1 H) + b
+\]
+
+\[
+2 \frac{n}{n+1} \frac{K}{\Pi} \left[ 
+\dot{\varepsilon}_0^{n+ 1} 
+- \left( \dot{\varepsilon}_0^{n}  - \frac{\Pi}{K}y_1  \right)^{1/n+ 1 } \right]
+=
+\frac{1}{2}\frac{\Pi}{\eta_0} y_1 (y_1  - H) + b
+\]
+so 
+\[
+b= 
+2 \frac{n}{n+1} \frac{K}{\Pi} \left[ 
+\dot{\varepsilon}_0^{n+ 1} 
+- \left( \dot{\varepsilon}_0^{n}  - \frac{\Pi}{K}y_1  \right)^{1/n+ 1 } \right]
+- \frac{1}{2}\frac{\Pi}{\eta_0} y_1 (y_1  - H) 
+\]
+
+%............................................................
+\paragraph{Using velocity continuity to compute $b$ - AGAIN} 
+This time we use $u(y_2)|_{top}=u(y_2)|_{mid}$: 
+
+\[
+2 \frac{n}{n+1} \frac{K}{\Pi}
+\left[
+\left( -\frac{\Pi}{K}(y_2-y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } - 
+\left( -\frac{\Pi}{K}(H-y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } 
+\right]
+= \frac{1}{2}\frac{\Pi}{\eta_0} (y_2^2  -  y_2 H) + b
+\]
+
+\[
+2 \frac{n}{n+1} \frac{K}{\Pi}
+\left[
+\dot{\varepsilon}_0^{n+1}  - 
+\left( -\frac{\Pi}{K}(H-y_2)+   \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } 
+\right]
+=
+\frac{1}{2}\frac{\Pi}{\eta_0} (y_2^2  -  y_2 H) + b
+\]
+and since $H-y_2 = H- H/2 - \delta = H/2 -\delta = y_1$ and
+\[
+y_2^2-y_2H = y_2(y_2 - H) = (H/2+\delta)(-y_1) 
+= (-H/2-\delta)y_1
+= (-H+H/2-\delta)y_1
+= (-H+y_1)y_1
+\] 
+so that we indeed recover the same $b$ value as above. 
+
+\newpage
 To summarize:
-
-
-
-
 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
 u(y)|_{bot} 
 &=& 
-2 \frac{n}{n+1} \frac{K}{\Pi} \left[ \left( \frac{\Pi}{K} (y-y_1) + \left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n}    \right)^{1/n+ 1 } 
-- \left( \left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n}  - \frac{\Pi}{K}y_1     \right)^{1/n+ 1 } \right]
+2 \frac{n}{n+1} \frac{K}{\Pi} \left[ \left( \frac{\Pi}{K} (y-y_1) +  \dot{\varepsilon}_0^{n}    \right)^{1/n+ 1 } 
+- \left(   \dot{\varepsilon}_0^{n}  - \frac{\Pi}{K}y_1     \right)^{1/n+ 1 } \right]
 \nn\\
 u(y)|_{mid} 
-&=& \frac{1}{2}\frac{\Pi}{\eta_0} (y^2  -  y) + b
+&=& \frac{1}{2}\frac{\Pi}{\eta_0} (y^2  -  y) + 
+2 \frac{n}{n+1} \frac{K}{\Pi} \left[ 
++ \dot{\varepsilon}_0^{n+ 1} 
+- \left( \dot{\varepsilon}_0^{n}  - \frac{\Pi}{K}y_1  \right)^{1/n+ 1 } \right]
+- \frac{1}{2}\frac{\Pi}{\eta_0} y_1 (y_1  - H) 
 \nn\\
 u(y)|_{top} 
 &=& 2 \frac{n}{n+1} \frac{K}{\Pi}
 \left[
-\left(-\frac{\Pi}{K}(y+y_2)+\left(-\frac{1}{2}\frac{\Pi}{\eta_0} \delta \right)^{n}\right)^{\frac{1}{n}+ 1 } - 
-\left(-\frac{\Pi}{K}(H+y_2)+\left(-\frac{1}{2}\frac{\Pi}{\eta_0} \delta \right)^{n}\right)^{\frac{1}{n}+ 1 } 
+\left(-\frac{\Pi}{K}(y+y_2)+ \dot{\varepsilon}_0^{n}\right)^{\frac{1}{n}+ 1 } - 
+\left(-\frac{\Pi}{K}(H+y_2)+ \dot{\varepsilon}_0^{n}\right)^{\frac{1}{n}+ 1 } 
 \right]
 \nn\\
 \dot{\varepsilon}_{xy}|_{bot}
-&=& \left( \frac{\Pi}{K} (y-y_1) + \left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n}   \right)^{1/n} \nn\\
+&=& \left( \frac{\Pi}{K} (y-y_1) + \dot{\varepsilon}_0^{n}   \right)^{1/n} \nn\\
 \dot{\varepsilon}_{xy}|_{mid}
 &=& \frac{1}{2} \frac{\Pi}{\eta_0} (y  -\frac{H}{2} ) \nn\\
 \dot{\varepsilon}_{xy}|_{top}
-&=&  - \left( - \frac{\Pi}{K} (y+y_2) +  \left(-\frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n} \right)^{1/n} \nn
+&=&  - \left( - \frac{\Pi}{K} (y+y_2) +  \dot{\varepsilon}_0^{n} \right)^{1/n} \nn
 \end{eqnarray}
 \end{mdframed}
 
-Let us take $n=1$, then 
+%............................................................
+\paragraph{Let's start simple: $n=1$}
 
-\begin{eqnarray}
-u(y)|_{bot} 
-&=& 
-2 \frac{n}{n+1} \frac{K}{\Pi} \left[ \left( \frac{\Pi}{K} (y-y_1) + \left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n}    \right)^{1/n+ 1 } 
-- \left( \left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n}  - \frac{\Pi}{K}y_1     \right)^{1/n+ 1 } \right]
-\nn\\
-u(y)|_{mid} 
-&=& \frac{1}{2}\frac{\Pi}{\eta_0} (y^2  -  y) + b
-\nn\\
-u(y)|_{top} 
-&=& 2 \frac{n}{n+1} \frac{K}{\Pi}
-\left[
-\left(-\frac{\Pi}{K}(y+y_2)+\left(-\frac{1}{2}\frac{\Pi}{\eta_0} \delta \right)\right)^{2} - 
-\left(-\frac{\Pi}{K}(H+y_2)+\left(-\frac{1}{2}\frac{\Pi}{\eta_0} \delta \right)\right)^{2} 
-\right]
-\nn\\
-\dot{\varepsilon}_{xy}|_{bot}&=&\frac{\Pi}{K}(y-y_1)-\frac{1}{2} \frac{\Pi}{\eta_0} \delta \nn\\
-\dot{\varepsilon}_{xy}|_{mid} &=& \frac{1}{2} \frac{\Pi}{\eta_0} \left(y  -\frac{H}{2} \right) \nn\\
-\dot{\varepsilon}_{xy}|_{top}
-&=&  \frac{\Pi}{K} (y+y_2) + \frac{1}{2} \frac{\Pi}{\eta_0} \delta  \nn
-\end{eqnarray}
+\begin{center}
+\includegraphics[width=7cm]{images/mms/channel_hb/velocity}
+\includegraphics[width=7cm]{images/mms/channel_hb/exy}
+\end{center}
 
 
 
-
-
-
-
-
-
-
+PROBLEM : it does not work for $n>1$ !!!
 
 %\newpage
 %To solve this equation it is necessary to non-dimensionalize the quantities involved. 
@@ -1130,10 +1198,6 @@ u(y)|_{top}
 
 
 
-\begin{center}
-\includegraphics[width=7cm]{images/mms/channel_hb/velocity}
-\includegraphics[width=7cm]{images/mms/channel_hb/exy}
-\end{center}
 
 
 

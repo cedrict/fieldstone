@@ -1,7 +1,8 @@
-Starting from the pure 1-D conduction equation:
+Starting from the 1-D advection equation:
 \begin{equation}
     \frac{\partial T}{\partial t}+u\frac{\partial T}{\partial x}=0 
 \end{equation}
+where $T$ is the temperature and $u$ the velocity. 
 As shown before we start by discretizing the domain into a collection of elements. Then the above equation can be integrated over the element which is bounded by nodes $x_k$ and $x_{k+1}$. 
 
 \begin{equation}
@@ -51,17 +52,16 @@ as follows:
 \begin{equation}
 T_h(x) = \sum_{i=1}^m N_i(x) T_i = 
 N_k(x) {\color{red}T_k^+} + N_{k+1}(x) {\color{red}T_{k+1}^-}
-\label{eq:dgadv1}) 
+\label{eq:dgadv1} 
 \end{equation}
 In what follows we coin $\dot{T}=\partial T/\partial t$ so
 \begin{equation}
 \dot{T}_h(x) 
 = \sum_{i=1}^m N_i(x) \dot{T}_i 
 = N_k(x) {\color{red}\dot{T}_k^+} + N_{k+1}(x) {\color{red}\dot{T}_{k+1}^-}
-\label{eq:dgadv2}) 
+\label{eq:dgadv2} 
 \end{equation}
-Taking $\tilde{f}=N_k$ and then $\tilde{f}=N_{k+1}$ we arrive at
-
+Taking $\tilde{f}(x)=N_k(x)$ and then $\tilde{f}(x)=N_{k+1}(x)$ we arrive at
 \begin{eqnarray}
 \int_{x_k}^{x_{k+1}}\left(
 N_k(x) \dot{T}_h -
@@ -102,7 +102,7 @@ N_{k+1}
 \right) dx
 + u{\color{red} T_{k+1}^-}      &=& 0
 \end{eqnarray}
-Defining
+Defining again (see Appendix~\ref{app:mm})
 \[
 {\bm M}_e=
 \int_{x_k}^{x_{k+1}}
@@ -237,8 +237,8 @@ u\frac{1}{2}
 \end{array}
 \right) 
 =
-u\frac{1}{2}  
-{\bm M}_e^{-1} \cdot
+u
+{\bm M}_e^{-1} \cdot\frac{1}{2}  
 \left(\begin{array}{cc}
 -1 & -1 \\
 1 & -1 
@@ -266,16 +266,6 @@ We have already established that
 \right)
 \]
 so 
-
-
-
-
-
-
- Using the same method as for the 1-D transient diffusion, we can get the elemental 
-temperature values for the time derivative:
- 
- 
 \begin{eqnarray}
 \boxed{
 \left(
@@ -306,24 +296,23 @@ temperature values for the time derivative:
 
 Using the same first order Runge-Kutta method as in the previous section, 
 \begin{equation}
- T^{l+1}_k=T^{l}_k+(\Delta t)\dot{T}^l_k
-\nn
+T^k(t+\delta t)=T_k(t) +\delta t \; \dot{T}_k
 \end{equation}
-Leads to the element-wise numerical implementation.
+we multiply the equation by $\delta t$ and we obtain 
 \begin{eqnarray}
-       \left(
+\left(
 \begin{array}{cc}
-     {\color{blue} T_k^+}  \\
-     {\color{blue}T_{k+1}^-} 
+{\color{blue} T_k^+}(t+\delta t)  \\
+{\color{blue}T_{k+1}^-} (t+\delta t) 
 \end{array}
-\right)^{l+1}=
+\right)=
  \left(
 \begin{array}{cc}
-     {\color{blue} T_k^+}  \\
-     {\color{blue}T_{k+1}^-} 
+{\color{blue} T_k^+} (t) \\
+{\color{blue}T_{k+1}^-} (t) 
 \end{array}
-\right)^{l}+
-\frac{u \Delta t}{h} 
+\right)+
+\frac{u \delta t}{h} 
 \left(\begin{array}{cc}
     -3 & -1 \\
      3 & -1
@@ -331,15 +320,55 @@ Leads to the element-wise numerical implementation.
 \right)
 \left(
 \begin{array}{cc}
-     {\color{blue}T_k^+}  \\
-     {\color{blue}T_{k+1}^-} 
+{\color{blue}T_k^+} (t) \\
+{\color{blue}T_{k+1}^-} (t)
 \end{array}
-\right) + \frac{u \Delta t}{h} \left(
+\right) + 
+\frac{u \delta t}{h} \left(
 \begin{array}{cc}
      4   \\
      -2 
 \end{array}
-\right)T_k^-  =0
-\nn
+\right)T_k^- (t+\delta t) 
 \end{eqnarray}
-This problem can be solved starting from the left boundary and sweeping through all the elements. The updated values of adjacent elements are used in the calculation of the next element as soon as this element becomes available.  
+and finally
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\left(
+\begin{array}{cc}
+{\color{blue} T_k^+}(t+\delta t)  \\
+{\color{blue}T_{k+1}^-} (t+\delta t) 
+\end{array}
+\right)=
+\left[
+{\bm 1} + 
+\frac{u \delta t}{h} 
+\left(\begin{array}{cc}
+    -3 & -1 \\
+     3 & -1
+\end{array}
+\right)
+\right]\cdot
+\left(
+\begin{array}{cc}
+{\color{blue}T_k^+} (t) \\
+{\color{blue}T_{k+1}^-} (t)
+\end{array}
+\right) + 
+\frac{u \delta t}{h} \left(
+\begin{array}{cc}
+     4   \\
+     -2 
+\end{array}
+\right)T_k^- (t+\delta t) 
+\end{eqnarray}
+\end{mdframed}
+
+
+
+
+
+
+
+This problem can be solved starting from the left boundary and sweeping through all the elements. The updated values of adjacent elements are used in the calculation of the next element as soon as this element becomes available which is why 
+the last term $T_k^-$ is taken  at $t+\delta t$.
