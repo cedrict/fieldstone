@@ -1,0 +1,2 @@
+gs -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dPDFSETTINGS=/printer   -sOutputFile=manual_for_github.pdf manual.pdf 
+

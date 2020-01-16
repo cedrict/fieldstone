@@ -384,15 +384,12 @@ with a periodicity in the vertical direction,
 gives an analytical solution to the steady-state Navier-Stokes equations that is similar
 which is a flow-field behind a periodic array of cylinders.
 
-\[
-u(x,y)=1-\exp(\lambda x) \cos (2\pi y)
-\qquad
-\qquad
-v(x,y)=\frac{\lambda}{2\pi} \exp(\lambda x) \sin (2 \pi y)
-\qquad
-\qquad
-\lambda=\frac{Re}{2}-\sqrt{\frac{Re^2}{4}+4\pi^2}
-\]
+\begin{eqnarray}
+u(x,y)&=&1-\exp(\lambda x) \cos (2\pi y)\\
+v(x,y)&=&\frac{\lambda}{2\pi} \exp(\lambda x) \sin (2 \pi y)\\
+p(x,y) &=& \frac{1}{2}(1-\exp (2\lambda x)) \\
+\lambda&=&\frac{Re}{2}-\sqrt{\frac{Re^2}{4}+4\pi^2} 
+\end{eqnarray}
 
 Following step-55 of deal.II \footnote{\url{https://www.dealii.org/current/doxygen/deal.II/step_55.html}}
 we have to 'cheat' here since we are not solving the non-linear Navier-Stokes equations, but the linear Stokes system without convective term. Therefore, to recreate the exact same solution
@@ -400,20 +397,60 @@ we move the convective term into the right-hand side.
 
 The analytical solution is prescribed left and right, while free/no (??) slip is prescribed at top and bottom.
 
-Solution as implemented in step-55:
-\begin{verbatim}
+Velocity and pressure solution as implemented in step-55:
+\begin{lstlisting}
 const double pi2 = pi*pi;
-  u = -exp(x*(-sqrt(25.0 + 4*pi2) + 5.0))*cos(2*y*pi) + 1;
-  v = (1.0L/2.0L)*(-sqrt(25.0 + 4*pi2) + 5.0)*exp(x*(-sqrt(25.0 + 4*pi2) + 5.0))*sin(2*y*pi)/pi;
-  p = -1.0L/2.0L*exp(x*(-2*sqrt(25.0 + 4*pi2) + 10.0)) 
-- 2.0*(-6538034.74494422 + 0.0134758939981709*exp(4*sqrt(25.0 + 4*pi2)))/(-80.0*exp(3*sqrt(25.0 + 4*pi2)) 
-+ 16.0*sqrt(25.0 + 4*pi2)*exp(3*sqrt(25.0 + 4*pi2))) 
-- 1634508.68623606*exp(-3.0*sqrt(25.0 + 4*pi2))/(-10.0 + 2.0*sqrt(25.0 + 4*pi2)) 
-+ (-0.00673794699908547*exp(sqrt(25.0 + 4*pi2)) 
-+ 3269017.37247211*exp(-3*sqrt(25.0 + 4*pi2)))/(-8*sqrt(25.0 + 4*pi2) + 40.0) 
-+ 0.00336897349954273*exp(1.0*sqrt(25.0 + 4*pi2))/(-10.0 + 2.0*sqrt(25.0 + 4*pi2));
-\end{verbatim}
 
+u = -exp(x*(-sqrt(25.0 + 4*pi2) + 5.0))*cos(2*y*pi) + 1
+
+v = (1.0L/2.0L)*(-sqrt(25.0 + 4*pi2) + 5.0)*
+    exp(x*(-sqrt(25.0 + 4*pi2) + 5.0))*sin(2*y*pi)/pi
+
+p = -1.0L/2.0L*exp(x*(-2*sqrt(25.0 + 4*pi2) + 10.0)) - 2.0*(-6538034.74494422 
+  + 0.0134758939981709*exp(4*sqrt(25.0 + 4*pi2)))/(-80.0*exp(3*sqrt(25.0 + 4*pi2)) 
+  + 16.0*sqrt(25.0 + 4*pi2)*exp(3*sqrt(25.0 + 4*pi2))) 
+  - 1634508.68623606*exp(-3.0*sqrt(25.0 + 4*pi2))/(-10.0 + 2.0*sqrt(25.0 + 4*pi2)) 
+  + (-0.00673794699908547*exp(sqrt(25.0 + 4*pi2)) 
+  + 3269017.37247211*exp(-3*sqrt(25.0 + 4*pi2)))/(-8*sqrt(25.0 + 4*pi2) + 40.0) 
+  + 0.00336897349954273*exp(1.0*sqrt(25.0 + 4*pi2))/(-10.0 + 2.0*sqrt(25.0 + 4*pi2))
+\end{lstlisting}
+while the rhs of the PDE is given by
+
+
+\begin{lstlisting}
+const double pi2 = pi * pi;
+
+values[0] = -1.0L / 2.0L * (-2 * sqrt(25.0 + 4 * pi2) + 10.0) *
+            exp(x*(-2*sqrt(25.0 + 4 * pi2) + 10.0)) -
+            0.4 *pi2*exp(x * (-sqrt(25.0 + 4 * pi2) + 5.0)) * cos(2 * y * pi) +
+            0.1 *pow(-sqrt(25.0 + 4 * pi2) + 5.0, 2) *
+            exp(x*(-sqrt(25.0 + 4 * pi2) + 5.0)) * cos(2 * y * pi)
+
+values[1] = 0.2 * pi*(-sqrt(25.0 + 4 * pi2) + 5.0) *
+            exp(x*(-sqrt(25.0 + 4 * pi2) + 5.0)) * sin(2 * y * pi) -
+            0.05 *pow(-sqrt(25.0 + 4 * pi2) + 5.0, 3) *
+            exp(x*(-sqrt(25.0 + 4 * pi2) + 5.0)) * sin(2 * y * pi) / pi
+
+values[2] = 0;
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=5cm]{images/mms/kovasznay/step-55_solution}
+\includegraphics[width=5cm]{images/mms/kovasznay/KF2DCVP8}
+\includegraphics[width=5cm]{images/mms/kovasznay/KF2DCVP8SL}\\
+{\captionfont 
+Left: solution from Step-55. Right:
+Solution obtained with 
+NekTar++\footnote{\url{http://doc.nektar.info/userguide/4.3.4/user-guidese45.html}}}
+\end{center}
+
+
+This benchmark is carried out in many CFD papers: \cite{coks04b}, see also Section 7.4.3
+of Hesthaven \& Warburton \cite{hewa08}.
+
+\todo[inline]{Find analytical expression for pressure. Compute expression for rhs. Make stone}
+
+\bscthesis \index{general}{BSc Thesis}
 
 %-----------------------------------------------------------------------------
 \subsubsection{Analytical benchmark IX \label{mms9} - "VJ2"}
@@ -683,8 +720,9 @@ Note that using the bottom boundary with $\vec{n}=(0,-1)$ yields the same result
 \subsubsection{Channel flow with Herschel-Bulkley rheology}
 
 We start from the following formulation for the Herschel-Bulkley rheology:
+\begin{mdframed}[backgroundcolor=blue!5]
 \[
-\eta_{hb}
+\eta_{HB}
 =
 \left\{
 \begin{array}{lc}
@@ -694,6 +732,7 @@ K  \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e}
 \end{array}
 \right.
 \]
+\end{mdframed}
 and the limiting viscosity $\eta_0$ is such that 
 \[
 \eta_0 = K  \dot{\varepsilon}_0^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_0}  
@@ -703,7 +742,7 @@ We consider a two-dimensional channel in the $x,y$ plane. The walls
 are at $y=0$ and $y=H$ with no-slip boundary conditions. 
 In the absence of gravity, the Stokes equation simplify to 
 \begin{equation}
--\frac{\partial p}{\partial x}  +\frac{\partial }{\partial y} (2\eta_{hb} \dot{\varepsilon}_{xy}) =0
+-\frac{\partial p}{\partial x}  +\frac{\partial }{\partial y} (2\eta_{HB} \dot{\varepsilon}_{xy}) =0
 \qquad
 \text{and}
 \qquad
@@ -736,12 +775,12 @@ We then expect three zones (and we assume that the fluid flows from left to righ
 %..............................
 \item In the middle, where it is expected that $\frac{\partial u}{\partial y}=0$ (at least in one point)
 because of symmetry. We also therefore expect $\dot{\varepsilon}_e\leq \dot{\varepsilon}_0$ in this region
-so that $\eta_{hb}=\eta_0$. How thick this region is will be determined later. 
+so that $\eta_{HB}=\eta_0$. How thick this region is will be determined later. 
 
 Eq.~\eqref{eq:hb1} must then be solved 
 \begin{eqnarray}
 \frac{\partial p}{\partial x}  
-&=&\frac{\partial }{\partial y} \left(2\eta_{hb}  \frac{1}{2}\frac{\partial u}{\partial y} \right) 
+&=&\frac{\partial }{\partial y} \left(2\eta_{HB}  \frac{1}{2}\frac{\partial u}{\partial y} \right) 
 = \eta_0 \frac{\partial^2 u}{\partial y^2}  
 \end{eqnarray}
 
@@ -770,7 +809,7 @@ and $\dot{\varepsilon}_e\geq \dot{\varepsilon}_0 $.
 We solve Eq.~\eqref{eq:hb1} again, this time with the non-linear formulation of the viscosity: 
 \begin{eqnarray}
 \frac{\partial p}{\partial x}  
-&=&\frac{\partial }{\partial y} \left( 2 \eta_{hb}  \frac{1}{2}\frac{\partial u}{\partial y} \right)  \nn\\
+&=&\frac{\partial }{\partial y} \left( 2 \eta_{HB}  \frac{1}{2}\frac{\partial u}{\partial y} \right)  \nn\\
 &=&2 \frac{\partial }{\partial y} \left[  
 \left( K  \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e}  
 \right) \frac{1}{2}\frac{\partial u}{\partial y} \right] \nn\\
@@ -814,7 +853,7 @@ $\dot{\varepsilon}_{e} = -\frac{1}{2}\left( \frac{\partial u}{\partial y}  \righ
 and $\dot{\varepsilon}_e\geq \dot{\varepsilon}_0$. We solve yet again Eq.~\eqref{eq:hb1}:
 \begin{eqnarray}
 \frac{\partial p}{\partial x}  
-&=&\frac{\partial }{\partial y} \left( 2 \eta_{hb}  \frac{1}{2}\frac{\partial u}{\partial y} \right)  \nn\\
+&=&\frac{\partial }{\partial y} \left( 2 \eta_{HB}  \frac{1}{2}\frac{\partial u}{\partial y} \right)  \nn\\
 &=&2 \frac{\partial }{\partial y} \left[  
 \left( K  \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e}  
 \right) \frac{1}{2}\frac{\partial u}{\partial y} \right] \nn\\
@@ -963,10 +1002,11 @@ u(y)|_{top} = 2 \frac{n}{n+1} \frac{K}{\Pi}
 %......................................................
 \paragraph{computing $\delta$}
 
-The coordinates of the transitions $y_1$ and $y_2$ are the location where the strain rate 
-reaches $\dot{\varepsilon}_0$. In other words:
+The coordinates of the transitions $y_1$ and $y_2$ are the location where the strain rate
+$\dot{\varepsilon}_e$ reaches $\dot{\varepsilon}_0$. In other words:
 \[
-\dot{\varepsilon}_{xy}|_{mid}(y=y_1)
+\dot{\varepsilon}_{e}|_{mid}(y=y_1) = 
+\dot{\varepsilon}_{xy}|_{mid}(y=y_1)  
 = \frac{1}{2} \frac{\Pi}{\eta_0} \left(y_1  -\frac{H}{2} \right)
 = \frac{1}{2} \frac{\Pi}{\eta_0} \left(\frac{H}{2}-\delta  -\frac{H}{2} \right)
 = -\frac{1}{2} \frac{\Pi}{\eta_0} \delta
@@ -1065,18 +1105,14 @@ u(y)|_{top} &=& 2 \frac{n}{n+1} \frac{K}{\Pi}
 \left( \frac{1}{K} ( -\Pi H +e -\tau_0 ) \right)^{1/n+ 1 } \right] \nn\\
 &=& 2 \frac{n}{n+1} \frac{K}{\Pi}
 \left[
-\left( -\frac{\Pi}{K}(y+y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } - 
-\left( -\frac{\Pi}{K}(H+y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } 
+\left( -\frac{\Pi}{K}(y-y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } - 
+\left( -\frac{\Pi}{K}(H-y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } 
 \right]
 \nn\\
 \dot{\varepsilon}_{xy}|_{top}
 &=&  - \left( \frac{1}{K} (- \Pi y +e - \tau_0 ) \right)^{1/n} \nn\\
-&=&  - \left( - \frac{\Pi}{K} (y+y_2) +  
-\dot{\varepsilon}_0^{n} \right)^{1/n} \nn
+&=&  - \left( - \frac{\Pi}{K} (y-y_2) +  \dot{\varepsilon}_0^{n} \right)^{1/n} \nn
 \end{eqnarray}
-
-
-
 
 %......................................................
 \paragraph{Using velocity continuity to compute $b$} 
@@ -1170,33 +1206,69 @@ u(y)|_{top}
 \end{eqnarray}
 \end{mdframed}
 
+Rather interestingly we find that $\tau_0$ does not directly enter the equations above.
+This can be explained as follows: since we have the relationship 
+\[
+\eta_0 = K \dot{\varepsilon}_0^{n-1}  + \frac{\tau_0}{\dot{\varepsilon}_0}  
+\]
+the parameters $\eta_0$, $\dot{\varepsilon}_0$, $\tau_0$ and $K$ cannot be all chosen freely.
+The viscosity $\eta_0$ is reached when the strain rate becomes smaller than $\dot{\varepsilon}_0$, 
+so these two parameters have a physical meaning. We set $\eta_0=10^{25}$ and 
+$\dot{\varepsilon}_0=10^{-17}$. When/if $K$ is zero, then $\tau_0$ can be interpreted as a 
+yield value for a rigid plastic material so we arbitrarily set it to $\tau_0 = 10^7$. 
+Having fixed these parameters we can compute 
+\[
+K= \frac{\eta_0 \dot{\varepsilon}_0 - \tau_0}{ \dot{\varepsilon}_0^n}
+\] 
+
+The data used to produce all the following plots is generated by the python program and a gnuplot script 
+to be found in {\tt images/mms/channel\_hb/}.
+
 %............................................................
 \paragraph{Let's start simple: $n=1$}
 
+In this case the viscosity is given by 
+\[
+\eta_{HB}
+=
+\left\{
+\begin{array}{lc}
+\eta_0 & \dot{\varepsilon}_e\leq \dot{\varepsilon}_0 \\
+K+ \frac{\tau_0}{\dot{\varepsilon}_e}   & \dot{\varepsilon}_e\geq \dot{\varepsilon}_0 
+\end{array}
+\right.
+\]
+%and the limiting viscosity $\eta_0$ is such that 
+%\[
+%\eta_0 = K  + \frac{\tau_0}{\dot{\varepsilon}_0}  
+%\]
+Since $\dot{\varepsilon}_e = \left|\frac{1}{2}\frac{\partial u}{\partial y} \right|$
+then 
+\[
+\eta_{HB}
+=
+\left\{
+\begin{array}{lc}
+\eta_0 & \dot{\varepsilon}_e\leq \dot{\varepsilon}_0 \\
+K+ \frac{2\tau_0}{  \left| \frac{\partial u}{\partial y} \right|  }   & \dot{\varepsilon}_e\geq \dot{\varepsilon}_0 
+\end{array}
+\right.
+\]
+
 \begin{center}
 \includegraphics[width=7cm]{images/mms/channel_hb/velocity}
-\includegraphics[width=7cm]{images/mms/channel_hb/exy}
+\includegraphics[width=7cm]{images/mms/channel_hb/exy}\\
+{\captionfont Obtained for $n=1$ and $\tau_0=1e7$. The black lines are the resulting velocity and strain rate profiles obtained by joining the bottom, middle and top functions.}
 \end{center}
 
+In the following I explore the effect of the $\tau_0$ value ($K$ is calculated correspondingly as we have seen before).
 
-
-PROBLEM : it does not work for $n>1$ !!!
-
-%\newpage
-%To solve this equation it is necessary to non-dimensionalize the quantities involved. 
-%The channel depth $H$ is chosen as a length scale, 
-%the mean velocity $V$ is taken as a velocity scale, 
-%and the pressure scale is taken to be 
-%$P_0 =k (V/L_y)^n$. This analysis introduces the non-dimensional pressure gradient 
-%\[
-%\pi_0 = \frac{L_y}{P_0}\frac{\partial p}{\partial x}
-%\]
-%which is negative for flow from left to right, and the Bingham number: 
-%\[
-%B_n = \frac{\tau_0}{k}\left(\frac{L_y}{V}\right)^n
-%\]
-
-
+\begin{center}
+\includegraphics[width=7.5cm]{images/mms/channel_hb/velocity_taus}
+\includegraphics[width=7.5cm]{images/mms/channel_hb/exy_taus}\\
+\includegraphics[width=7.5cm]{images/mms/channel_hb/ee_taus}
+\includegraphics[width=7.5cm]{images/mms/channel_hb/eta_taus}
+\end{center}
 
 
 
