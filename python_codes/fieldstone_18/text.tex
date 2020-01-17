@@ -1,9 +1,5 @@
 
-\index{stones}{$Q_2 \times Q_1$ element}
-\index{stones}{Mixed Formulation}
-\index{stones}{Analytical Solution}
-
-The details of the numerical setup are presented in Section \ref{f1}.
+The details of the numerical setup are presented in Section \ref{mms1}.
 
 Each element has $m_V=9$ vertices so in total $ndof_V\times m_V=18$ velocity dofs and 
 $ndof_P*m_P=4$ pressure dofs. The total number of 
@@ -14,11 +10,15 @@ As a consequence, matrix $\K$ has size $NfemV,NfemV$ and matrix $\G$ has size $N
 Vector $f$ is of size $NfemV$ and vector $h$ is of size $NfemP$.  
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_18/q2q1setup}\\
-{\color{red} renumber all nodes to start at zero!! Also internal numbering does not work here }
+\includegraphics[width=10cm]{python_codes/fieldstone_18/images/q2q1setup}
 \end{center}
 
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_18/results/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_18/results/pressure}\\
+{\captionfont velocity and pressure fields for $32\times 32$ elements grid}
+\end{center}
 
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_18/errors}
+\includegraphics[width=10cm]{python_codes/fieldstone_18/results/errors}
 \end{center}
