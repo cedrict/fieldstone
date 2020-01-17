@@ -1,3 +1,9 @@
+Two relevant papers: 
+\begin{itemize}
+\item Cockburn et al (2002) \cite{coks02} - LDG
+\item Cockburn et al (2010) \cite{conp10} - HDG
+\end{itemize}
+
 Let us start with the dimensionless Stokes system \cite{coks02}:
 \begin{eqnarray}
 - \eta \Delta \vec\upnu + \vec\nabla p &=& \vec{f}  \qquad \textrm{in } \Omega\\
@@ -11,7 +17,8 @@ such that they satisfy the compatibility condition
 \]
 where $\vec{n}$ is the outward unit normal. 
 
-In order to obtain the LDG methods we first rewrite this system as the following collection of conservation 
+\index{general}{Gradient-Based Formulation (DG-FEM)}
+\paragraph{Gradient-based formulation} In order to obtain the LDG methods we first rewrite this system as the following collection of conservation 
 laws \cite{coks02}:
 \begin{eqnarray}
 {\bm L} &=& \vec\nabla \vec\upnu  \qquad \textrm{in } \Omega\\
@@ -23,7 +30,7 @@ supplemented by
 \[
 \int_\Omega p =0
 \]
-
+where ${\bm L}$ is the gradient tensor, ${\bm 1}$ is the unit tensor. \index{general}{Gradient Tensor}
 \begin{remark}
 It may appear counter-intuitive at first to define ${\bm L}$ as being the gradient
 of the velocity instead of the strain rate tensor but under the assumption
@@ -58,6 +65,11 @@ of incompressibility $\partial_x u + \partial_y v =0$ (and constant viscosity) w
 \]
 \end{remark}
 
+
+\begin{remark}
+Cockburn et al (2010) \cite{conp10} also introduce the vorticity-based formulation and the stress-based 
+formulation but we will not explore these in what follows.
+\end{remark}
 
 RETYPE section 2.1 of \cite{coks02}
 

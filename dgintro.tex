@@ -1,5 +1,17 @@
 
-Books:
+\paragraph{What is DG?}
+
+\begin{itemize}
+\item it is a variant of the SG ("Standard Galerkin FEM")\footnote{Some authors use the acronym 
+CG for Continuous Galerkin but since the Conjugate Gradient solver acronym CG is very much present in FE codes it can 
+be confusing so we use here SG instead.}
+\item SG-FEM requires continuity of the solution along element interfaces (edges).
+\item DG-FEM does not require continuity of the solution along edges.
+\item DG methods have more degrees of freedom than SG methods.
+\item DG-FEM shares some properties with FVM
+\end{itemize}
+
+\paragraph{Various books about DG-FEM}
 
 \begin{itemize}
 \item {\it Discontinuous Galerkin Methods. Theory, Computation and Applications} by
@@ -15,10 +27,41 @@ Dolejsi and Feistauer \cite{dolejsi_feistauer15}
 Hesthaven \& Warbuton \cite{hewa08}
 \end{itemize}
 
-
+\paragraph{DG flavors}
 There are many different flavours of the Discontinuous Galerkin Finite Element Method:
 \begin{itemize}
-\item {\bf HDG}: Hybridizable DG \cite{conp10}
-\item {\bf IIPG}: incomplete interior penalty G  \cite{dole08}
-\item {\bf LDG}: Local DG \cite{cacp02}  
+\item {\bf HDG}: Hybridizable DG \cite{cogo09,conp10,ngpc10,ngpc11,ngpe12}
+\item {\bf IPG}: Interior Penalty G  \cite{mofh08,mofp10}
+\item {\bf IIPG}: Incomplete Interior Penalty G  \cite{dole08}
+\item {\bf SIPG}: Symmetric Interior Penalty G  \cite{bodi11,sclu17a}
+\item {\bf LDG}: Local DG \cite{cacp02,coks02,cacs05,coks05}  
 \end{itemize}
+
+\paragraph{Pro and cons for DG-FEM versus SG-FEM}
+
+\begin{itemize}
+\item Assembly of stiffness matrix is easier to implement (ref?).
+\item Refinement of triangles is easier to implement (ref?). 
+\item DG methods can easily handle adaptivity strategies since refinement or
+unrefinement of the grid can be achieved without taking into account
+the continuity restrictions typical of conforming finite element meth-
+ods. Moreover, the degree of the approximating polynomial can be easily
+changed from one element to the other. \cite{coks00}
+\item DG methods can support high order local approximations that can vary nonuniformly over the mesh.
+\item DG methods are readily parallelizable. Since the elements are discontinuous, 
+the mass matrix is block diagonal and since the size of the blocks
+is equal to the number of degrees of freedom inside the corresponding
+elements, the blocks can be inverted by hand once and for all.\cite{coks00}
+\end{itemize}
+
+\paragraph{The DG-FEM in geodynamics} 
+This method has not been used extensively in geodynamics with (so-far) two 
+noticeable exceptions:
+
+\begin{itemize}
+\item Lehmann et al (2015) \cite{lelk15} 
+\item He et al (2017) \cite{hepb17}
+\item Pucket et al (2018) \cite{puth18}
+\end{itemize}
+
+
