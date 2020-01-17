@@ -1,9 +1,6 @@
 
-\index{stones}{$Q_3 \times Q_2$ element}
-\index{stones}{Mixed Formulation}
-\index{stones}{Analytical Solution}
 
-The details of the numerical setup are presented in Section \ref{f1}.
+The details of the numerical setup are presented in Section \ref{mms1}.
 
 Each element has $m_V=16$ vertices so in total $ndof_V\times m_V=32$ 
 velocity dofs and 
@@ -14,75 +11,68 @@ pressure dofs is $NfemP=nel$. The total number of dofs is then $Nfem=NfemV+NfemP
 As a consequence, matrix $\K$ has size $NfemV,NfemV$ and matrix $\G$ has size $NfemV,NfemP$.
 Vector $f$ is of size $NfemV$ and vector $h$ is of size $NfemP$.  
 
-\begin{verbatim}
-
-60===61===62===63===64===65===66===67===68===70
-||             ||             ||             ||
-50   51   52   53   54   55   56   57   58   59
-||             ||             ||             ||
-40   41   42   43   44   45   46   47   48   49
-||             ||             ||             ||
-30===31===32===33===34===35===36===37===38===39
-||             ||             ||             ||
-20   21   22   23   24   25   26   27   28   29
-||             ||             ||             ||
-10   11   12   13   14   15   16   17   18   19
-||             ||             ||             ||
-00===01===02===03===04===05===06===07===08===09
-
-Example of 3x2 mesh. nnx=10, nny=7, nnp=70, nelx=3, nely=2, nel=6
-\end{verbatim}
-
-
-\begin{verbatim}
-12===13===14===15           06=====07=====08
-||   ||   ||   ||           ||     ||     ||
-08===09===10===11           ||     ||     ||
-||   ||   ||   ||           03=====04=====05
-04===05===06===07           ||     ||     ||
-||   ||   ||   ||           ||     ||     ||
-00===01===02===03           00=====01=====02
-
-Velocity (Q3)               Pressure (Q2)
-
-(r,s)_{00}=(-1,-1)          (r,s)_{00}=(-1,-1) 
-(r,s)_{01}=(-1/3,-1)        (r,s)_{01}=(0,-1) 
-(r,s)_{02}=(+1/3,-1)        (r,s)_{02}=(+1,-1) 
-(r,s)_{03}=(+1,-1)          (r,s)_{03}=(-1,0) 
-(r,s)_{04}=(-1,-1/3)        (r,s)_{04}=(0,0) 
-(r,s)_{05}=(-1/3,-1/3)      (r,s)_{05}=(+1,0) 
-(r,s)_{06}=(+1/3,-1/3)      (r,s)_{06}=(-1,+1) 
-(r,s)_{07}=(+1,-1/3)        (r,s)_{07}=(0,+1) 
-(r,s)_{08}=(-1,+1/3)        (r,s)_{08}=(+1,+1) 
-(r,s)_{09}=(-1/3,+1/3)
-(r,s)_{10}=(+1/3,+1/3)
-(r,s)_{11}=(+1,+1/3)
-(r,s)_{12}=(-1,+1)
-(r,s)_{13}=(-1/3,+1)
-(r,s)_{14}=(+1/3,+1)
-(r,s)_{15}=(+1,+1)
-
-\end{verbatim}
-
-
-
-
-
-
-
-{\color{red} Write about 4 point quadrature}.
-
-
-
-
-
-
-
-
-
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_19/errors}
+\begin{verbatim}
+               60===61===62===63===64===65===66===67===68===70
+               ||             ||             ||             ||
+               50   51   52   53   54   55   56   57   58   59
+               ||             ||             ||             ||
+               40   41   42   43   44   45   46   47   48   49
+               ||             ||             ||             ||
+               30===31===32===33===34===35===36===37===38===39
+               ||             ||             ||             ||
+               20   21   22   23   24   25   26   27   28   29
+               ||             ||             ||             ||
+               10   11   12   13   14   15   16   17   18   19
+               ||             ||             ||             ||
+               00===01===02===03===04===05===06===07===08===09
+\end{verbatim}
+{\captionfont Example of 3x2 mesh. nnx=10, nny=7, nnp=70, nelx=3, nely=2, nel=6}
 \end{center}
 
-velocity error rate is cubic, pressure superconvergent since the pressure field
-is quadratic and therefore lies into the Q2 space.
+
+\begin{verbatim}
+               12===13===14===15           06=====07=====08
+               ||   ||   ||   ||           ||     ||     ||
+               08===09===10===11           ||     ||     ||
+               ||   ||   ||   ||           03=====04=====05
+               04===05===06===07           ||     ||     ||
+               ||   ||   ||   ||           ||     ||     ||
+               00===01===02===03           00=====01=====02
+
+               Velocity (Q3)               Pressure (Q2)
+
+               (r,s)_{00}=(-1,-1)          (r,s)_{00}=(-1,-1) 
+               (r,s)_{01}=(-1/3,-1)        (r,s)_{01}=(0,-1) 
+               (r,s)_{02}=(+1/3,-1)        (r,s)_{02}=(+1,-1) 
+               (r,s)_{03}=(+1,-1)          (r,s)_{03}=(-1,0) 
+               (r,s)_{04}=(-1,-1/3)        (r,s)_{04}=(0,0) 
+               (r,s)_{05}=(-1/3,-1/3)      (r,s)_{05}=(+1,0) 
+               (r,s)_{06}=(+1/3,-1/3)      (r,s)_{06}=(-1,+1) 
+               (r,s)_{07}=(+1,-1/3)        (r,s)_{07}=(0,+1) 
+               (r,s)_{08}=(-1,+1/3)        (r,s)_{08}=(+1,+1) 
+               (r,s)_{09}=(-1/3,+1/3)
+               (r,s)_{10}=(+1/3,+1/3)
+               (r,s)_{11}=(+1,+1/3)
+               (r,s)_{12}=(-1,+1)
+               (r,s)_{13}=(-1/3,+1)
+               (r,s)_{14}=(+1/3,+1)
+               (r,s)_{15}=(+1,+1)
+\end{verbatim}
+
+The reduced coordinates of the quadrature points and their weights are to be found in 
+Section~\ref{sec:quad1D}.
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_19/results/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_19/results/pressure}\\
+{\captionfont 8x8 grid. Note that the 16-node $Q_3$ element does not exist in vtk so it is split into 
+9 $Q_1$ elements for visualisation purposes only.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_19/results/errors}\\
+{\captionfont velocity error rate is cubic, pressure superconvergent since the pressure field
+is quadratic and therefore lies into the Q2 space.}
+\end{center}
+

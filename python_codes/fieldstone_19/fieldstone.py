@@ -1,5 +1,4 @@
 import numpy as np
-import math as math
 import sys as sys
 import scipy
 import scipy.sparse as sps
@@ -34,6 +33,8 @@ def vth(x,y):
 def pth(x,y):
     val=x*(1.-x)-1./6.
     return val
+
+#------------------------------------------------------------------------------
 
 def NNV(rq,sq):
     N1r=(-1    +rq +9*rq**2 - 9*rq**3)/16
@@ -154,8 +155,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 6
-   nely = 6
+   nelx = 8
+   nely = 8
    visu = 1
 
 assert (nelx>0.), "nnx should be positive" 
@@ -213,8 +214,10 @@ for j in range(0, nny):
         x[counter]=i*hx/3.
         y[counter]=j*hy/3.
         counter += 1
+    #end for
+#end for
 
-np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
+#np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
 
 print("setup: grid points: %.3f s" % (time.time() - start))
 
@@ -250,6 +253,8 @@ for j in range(0,nely):
         iconV[15,counter]=(i)*3+4+(j)*3*nnx+3*nnx -1
 
         counter += 1
+    #end for
+#end for
 
 #for iel in range (0,nel):
 #    print ("iel=",iel)
@@ -283,6 +288,8 @@ for j in range(0,nely):
         iconP[7,counter]=(i)*2+2+(j)*2*(2*nelx+1)+(2*nelx+1)*2 -1
         iconP[8,counter]=(i)*2+3+(j)*2*(2*nelx+1)+(2*nelx+1)*2 -1
         counter += 1
+    #end for
+#end for
 
 #for iel in range (0,nel):
 #    print ("iel=",iel)
@@ -304,15 +311,20 @@ for i in range(0, nnp):
     if x[i]<eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+    #end if
     if x[i]>(Lx-eps):
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+    #end if
     if y[i]<eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+    #end if
     if y[i]>(Ly-eps):
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+    #end if
+#end for
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
@@ -371,6 +383,7 @@ for iel in range(0,nel):
                 jcb[0,1] += dNVdr[k]*y[iconV[k,iel]]
                 jcb[1,0] += dNVds[k]*x[iconV[k,iel]]
                 jcb[1,1] += dNVds[k]*y[iconV[k,iel]]
+            #end for
             jcob = np.linalg.det(jcb)
             jcbi = np.linalg.inv(jcb)
 
@@ -382,12 +395,14 @@ for iel in range(0,nel):
                 yq+=NV[k]*y[iconV[k,iel]]
                 dNVdx[k]=jcbi[0,0]*dNVdr[k]+jcbi[0,1]*dNVds[k]
                 dNVdy[k]=jcbi[1,0]*dNVdr[k]+jcbi[1,1]*dNVds[k]
+            #end for
 
             # construct 3x8 b_mat matrix
             for i in range(0,mV):
                 b_mat[0:3, 2*i:2*i+2] = [[dNVdx[i],0.     ],
                                          [0.      ,dNVdy[i]],
                                          [dNVdy[i],dNVdx[i]]]
+            #end for
 
             # compute elemental a_mat matrix
             K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity*weightq*jcob
@@ -396,15 +411,20 @@ for iel in range(0,nel):
             for i in range(0,mV):
                 f_el[ndofV*i  ]+=NV[i]*jcob*weightq*bx(xq,yq)
                 f_el[ndofV*i+1]+=NV[i]*jcob*weightq*by(xq,yq)
+            #end for
 
             for i in range(0,mP):
                 N_mat[0,i]=NP[i]
                 N_mat[1,i]=NP[i]
                 N_mat[2,i]=0.
+            #end for
 
             G_el-=b_mat.T.dot(N_mat)*weightq*jcob
 
             NNNP[:]+=NP[:]*jcob*weightq
+
+        #end for jq
+    #end for iq
 
     # impose b.c. 
     for k1 in range(0,mV):
@@ -417,10 +437,14 @@ for iel in range(0,nel):
                    f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
                    K_el[ikk,jkk]=0
                    K_el[jkk,ikk]=0
+               #end for
                K_el[ikk,ikk]=K_ref
                f_el[ikk]=K_ref*bc_val[m1]
                h_el[:]-=G_el[ikk,:]*bc_val[m1]
                G_el[ikk,:]=0
+            #end if
+        #end for
+    #end for 
 
     # assemble matrix K_mat and right hand side rhs
     for k1 in range(0,mV):
@@ -432,15 +456,23 @@ for iel in range(0,nel):
                     jkk=ndofV*k2          +i2
                     m2 =ndofV*iconV[k2,iel]+i2
                     K_mat[m1,m2]+=K_el[ikk,jkk]
+                #end for 
+            #end for 
             for k2 in range(0,mP):
                 jkk=k2
                 m2 =iconP[k2,iel]
                 G_mat[m1,m2]+=G_el[ikk,jkk]
+            #end for 
             f_rhs[m1]+=f_el[ikk]
+        #end for 
+    #end for 
     for k2 in range(0,mP):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
         constr[m2]+=NNNP[k2]
+    #end for 
+
+#end for iel
 
 print("build FE matrix: %.3f s" % (time.time() - start))
 
@@ -490,7 +522,7 @@ print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
-np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+#np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
 print("split vel into u,v: %.3f s" % (time.time() - start))
 
@@ -522,12 +554,14 @@ for iel in range(0,nel):
         jcb[0,1]+=dNVdr[k]*y[iconV[k,iel]]
         jcb[1,0]+=dNVds[k]*x[iconV[k,iel]]
         jcb[1,1]+=dNVds[k]*y[iconV[k,iel]]
+    #end for
     jcob=np.linalg.det(jcb)
     jcbi=np.linalg.inv(jcb)
 
     for k in range(0,mV):
         dNVdx[k]=jcbi[0,0]*dNVdr[k]+jcbi[0,1]*dNVds[k]
         dNVdy[k]=jcbi[1,0]*dNVdr[k]+jcbi[1,1]*dNVds[k]
+    #end for
 
     for k in range(0,mV):
         xc[iel] += NV[k]*x[iconV[k,iel]]
@@ -535,14 +569,17 @@ for iel in range(0,nel):
         exx[iel] += dNVdx[k]*u[iconV[k,iel]]
         eyy[iel] += dNVdy[k]*v[iconV[k,iel]]
         exy[iel] += 0.5*dNVdy[k]*u[iconV[k,iel]]+ 0.5*dNVdx[k]*v[iconV[k,iel]]
+    #end for
 
     e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
+
+#end for
 
 print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 
-np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+#np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
 print("compute press & sr: %.3f s" % (time.time() - start))
 
@@ -572,6 +609,7 @@ for iel in range (0,nel):
                 jcb[0,1]+=dNVdr[k]*y[iconV[k,iel]]
                 jcb[1,0]+=dNVds[k]*x[iconV[k,iel]]
                 jcb[1,1]+=dNVds[k]*y[iconV[k,iel]]
+            #end for
             jcob=np.linalg.det(jcb)
 
             xq=0.0
@@ -583,13 +621,19 @@ for iel in range (0,nel):
                 yq+=NV[k]*y[iconV[k,iel]]
                 uq+=NV[k]*u[iconV[k,iel]]
                 vq+=NV[k]*v[iconV[k,iel]]
+            #end for
             errv+=((uq-uth(xq,yq))**2+\
                    (vq-vth(xq,yq))**2)*weightq*jcob
 
             pq=0.0
             for k in range(0,mP):
                 pq+=NP[k]*p[iconP[k,iel]]
+            #end for
             errp+=(pq-pth(xq,yq))**2*weightq*jcob
+
+        #end for
+    #end for
+#end for
 
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
@@ -674,8 +718,9 @@ for iel in range(0,nel):
     q[iconV[14,iel]]=p[iconP[0:9,iel]].dot(NP[0:9])
     #node 15 ------------------------------------
     q[iconV[15,iel]]=p[iconP[8,iel]]
+#end for
 
-np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
+#np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
 
 #####################################################################
 # plot of solution
@@ -694,6 +739,8 @@ for j in range(0,nny-1):
         iconV2[2,counter]=i+1+(j+1)*nnx
         iconV2[3,counter]=i+(j+1)*nnx
         counter += 1
+    #end for
+#end for
 
 filename = 'solution.vtu'
 vtufile=open(filename,"w")
