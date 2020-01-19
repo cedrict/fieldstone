@@ -1,10 +1,4 @@
 
-\index{stones}{$Q_1 \times P_0$ element}
-\index{stones}{Incompressible Flow}
-\index{stones}{Mixed Formulation}
-\index{stones}{Nonlinear Rheology}
-\index{stones}{Nonlinear Residual}
-
 As in \cite{schm11}, the computational domain is $1000km \times 660km$.
 No-slip boundary conditions are imposed on the sides of the system while free-slip
 boundary conditions are imposed at the top and bottom.
@@ -17,54 +11,192 @@ The mantle has a constant viscosity $\eta_0=10^{21}Pa.s$ and a density $\rho=315
 The slab has a density $\rho=3300kg/m^3$ and is characterised by a power-law flow law so that 
 its effective viscosity depends on the second invariant of the strainrate $I_2$ as follows:
 
-\begin{equation}
+\begin{eqnarray}
 \eta_{eff}
-=\frac{1}{2} A^{-1/n_s} I_2^{1/n_s-1} 
-=\frac{1}{2} [(2 \times 4.75\!\times\! 10^{11})^{-n_s}]^{-1/n_s} I_2^{1/n_s-1} 
-=4.75\!\times\! 10^{11} I_2^{1/n_s-1} 
-= \eta_0 I_2^{1/n_s-1} 
-\end{equation}
+&=&\frac{1}{2} A^{-1/n_s} [{\cal I}_2(\dot{\bm \varepsilon})]^{1/n_s-1}  \\
+&=&\frac{1}{2} [(2 \times 4.75\!\times\! 10^{11})^{-n_s}]^{-1/n_s} [{\cal I}_2(\dot{\bm \varepsilon})]   ^{1/n_s-1} \\
+&=&4.75\!\times\! 10^{11} [{\cal I}_2(\dot{\bm \varepsilon})]^{1/n_s-1}  \\
+&=& \eta_0 [{\cal I}_2(\dot{\bm \varepsilon})]^{1/n_s-1} 
+\end{eqnarray}
 with 
 $n_s=4$ and $A=(2 \times 4.75\!\times\! 10^{11})^{-n_s}$, or $\eta_0=4.75\times 10^{11}$.
 
 
+The mantle rheology can also be characterised by a power-law flow law with 
+$n_m=3$ and $A=(2 \times 4.54\!\times\! 10^{10})^{-n_m}$.
+
+In this example no material advection is implemented so we can only run the experiment for 1
+time step and look at the process of nonlinear convergence and the final converged state.
+I have separated the experiments into four cases:
+\begin{center}
+\begin{tabular}{llll}
+\hline
+case number & lithosphere & mantle & top surface \\
+\hline\hline
+1a & non linear & linear     & free slip  \\
+1b & non linear & linear     & open\\
+2a & non linear & non linear & free slip\\
+2b & non linear & non linear & open \\ 
+\hline
+\end{tabular}
+\end{center}
+
+This experiment is implemented in ASPECT and is available with the code. 
+
+\Literature Bellas et al, 2018 \cite{bezb18}.
+
+\newpage
+%...................................................
+\paragraph{Case 1a - linear mantle - free slip top surface} 
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/horizontal.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/horizontal_zoom.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/vertical.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/residual.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/horizontal_exx.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/horizontal_eyy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/horizontal_exy.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/horizontal_exxn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/horizontal_eyyn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/horizontal_exyn.pdf}\\
+{\captionfont Along the horizontal line}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/vertical_exx.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/vertical_eyy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/vertical_exy.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/vertical_exxn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/vertical_eyyn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1a/vertical_exyn.pdf}\\
+{\captionfont Along the vertical line}
+\end{center}
+
+\newpage
+%...................................................
+\paragraph{Case 1b - linear mantle - open top surface} . 
 
 
 \begin{center}
-\includegraphics[width=5.cm]{python_codes/fieldstone_26/images/151/density}
-\includegraphics[width=5.cm]{python_codes/fieldstone_26/images/151/velocity}
-\includegraphics[width=5.cm]{python_codes/fieldstone_26/images/151/viscosity}\\
-Fields at convergence for 151x99 grid.
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/horizontal.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/horizontal_zoom.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/vertical.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/residual.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/horizontal_exx.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/horizontal_eyy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/horizontal_exy.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/horizontal_exxn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/horizontal_eyyn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/horizontal_exyn.pdf}\\
+{\captionfont Along the horizontal line}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/vertical_exx.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/vertical_eyy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/vertical_exy.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/vertical_exxn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/vertical_eyyn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case1b/vertical_exyn.pdf}\\
+{\captionfont Along the vertical line}
+\end{center}
+
+\newpage
+%...................................................
+\paragraph{Case 2a - nonlinear mantle - free slip top surface} 
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/horizontal.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/horizontal_zoom.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/vertical.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/residual.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/horizontal_exx.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/horizontal_eyy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/horizontal_exy.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/horizontal_exxn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/horizontal_eyyn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/horizontal_exyn.pdf}\\
+{\captionfont Along the horizontal line}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/vertical_exx.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/vertical_eyy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/vertical_exy.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/vertical_exxn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/vertical_eyyn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2a/vertical_exyn.pdf}\\
+{\captionfont Along the vertical line}
 \end{center}
 
 
 
 
+
+
+\newpage
+%...................................................
+\paragraph{Case 2b - nonlinear mantle - open top surface} 
+
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_26/images/horizontal.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_26/images/horizontal_zoom.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_26/images/vertical.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_26/images/residual.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/horizontal.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/horizontal_zoom.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/vertical.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/residual.pdf}
 \end{center}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_26/images/horizontal_exx.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_26/images/horizontal_eyy.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_26/images/horizontal_exy.pdf}\\
-Along the horizontal line
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/horizontal_exx.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/horizontal_eyy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/horizontal_exy.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/horizontal_exxn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/horizontal_eyyn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/horizontal_exyn.pdf}\\
+{\captionfont Along the horizontal line}
 \end{center}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_26/images/vertical_exx.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_26/images/vertical_eyy.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_26/images/vertical_exy.pdf}\\
-Along the vertical line
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/vertical_exx.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/vertical_eyy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/vertical_exy.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/vertical_exxn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/vertical_eyyn.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_26/results/case2b/vertical_exyn.pdf}\\
+{\captionfont Along the vertical line}
+\end{center}
+
+
+\newpage
+%...................................................
+
+\begin{center}
+case 1a $\downarrow$ \hspace{7cm} case 1b $\downarrow$\\
+\includegraphics[width=7cm]{python_codes/fieldstone_26/results/case1a_vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_26/results/case1b_vel}\\
+case 2a $\downarrow$ \hspace{7cm} case 2b $\downarrow$\\
+\includegraphics[width=7cm]{python_codes/fieldstone_26/results/case2a_vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_26/results/case2b_vel}
+\end{center}
+
+\begin{center}
+case 1a $\downarrow$ \hspace{7cm} case 1b $\downarrow$\\
+\includegraphics[width=7cm]{python_codes/fieldstone_26/results/case1a_etaeff}
+\includegraphics[width=7cm]{python_codes/fieldstone_26/results/case1b_etaeff}\\
+case 2a $\downarrow$ \hspace{7cm} case 2b $\downarrow$\\
+\includegraphics[width=7cm]{python_codes/fieldstone_26/results/case2a_etaeff}
+\includegraphics[width=7cm]{python_codes/fieldstone_26/results/case2b_etaeff}
 \end{center}
 
 
 
 
-
-Todo: nonlinear mantle, pressure normalisation 
-
-Also check Bellas et al, 2018 \cite{bezb18}.

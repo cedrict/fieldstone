@@ -1,12 +1,10 @@
 import numpy as np
-import math as math
 import sys as sys
 import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix, lil_matrix, hstack, vstack
+from scipy.sparse import csr_matrix, lil_matrix
 import time as time
-import matplotlib.pyplot as plt
 
 #------------------------------------------------------------------------------
 
@@ -14,19 +12,28 @@ def density(x,y,Lx,Ly):
     val=3150
     if (y>660e3-80e3 and y<=660e3) or (y>660e3-(80e3+250e3) and abs(x-Lx/2)<40e3):
        val=3300
+    #val-=3150
     return val
 
 def viscosity(x,y,Lx,Ly,exx,eyy,exy):
     val=1.e21
+    sr=np.sqrt(0.5*(exx**2+eyy**2)+exy**2)
     if (y>660e3-80e3 and y<=660e3) or (y>660e3-(80e3+250e3) and abs(x-Lx/2)<40e3):
-       sr=np.sqrt(0.5*(exx**2+eyy**2)+exy**2)
        if sr<1e-30:
           sr=1e-30
        n_pow=4 
        val=(4.75e11)*sr**(1./n_pow -1.)
-       val=max(val,1e19)
-       val=min(val,1e25)
+    else:
+       if sr<1e-30:
+          sr=1e-30
+       n_pow=3 
+       if case=='2a' or case=='2b':
+          val=(4.54e10)*sr**(1./n_pow -1.)
+    val=max(val,1e19)
+    val=min(val,1e25)
     return val
+
+#------------------------------------------------------------------------------
 
 def NNV(rq,sq):
     N_0=0.25*(1.-rq)*(1.-sq)
@@ -67,7 +74,7 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 175
+   nelx = 151 
    nely = int(nelx*Ly/Lx)
    visu = 1
 
@@ -76,6 +83,8 @@ gy=-10.
 eta_ref=1e21
 niter=50
 tol=1e-7
+
+case='1a'
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
@@ -114,6 +123,8 @@ for j in range(0, nny):
         x[counter]=i*Lx/float(nelx)
         y[counter]=j*Ly/float(nely)
         counter += 1
+    #end for
+#end for
 
 print("setup: grid points: %.3f s" % (time.time() - start))
 
@@ -131,6 +142,8 @@ for j in range(0, nely):
         icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
         icon[3, counter] = i + (j + 1) * (nelx + 1)
         counter += 1
+    #end for
+#end for
 
 print("setup: connectivity: %.3f s" % (time.time() - start))
 
@@ -145,13 +158,19 @@ for i in range(0,nnp):
     if x[i]/Lx<eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+    #end if
     if x[i]/Lx>(1-eps):
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+    #end if
     if y[i]/Ly<eps:
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if y[i]/Ly>(1-eps):
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+    #end if
+    if case=='1a' or case=='2a':
+       if y[i]/Ly>(1-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       #end if
+#end for
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
@@ -226,11 +245,8 @@ for iter in range(0,niter):
                     jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
                     jcb[1, 0] += dNds[k]*x[icon[k,iel]]
                     jcb[1, 1] += dNds[k]*y[icon[k,iel]]
-    
-                # calculate the determinant of the jacobian
+                #end for 
                 jcob = np.linalg.det(jcb)
-
-                # calculate inverse of the jacobian matrix
                 jcbi = np.linalg.inv(jcb)
 
                 # compute dNdx & dNdy
@@ -248,6 +264,7 @@ for iter in range(0,niter):
                     eyyq += dNdy[k]*v[icon[k,iel]]
                     exyq += 0.5*dNdy[k]*u[icon[k,iel]]+\
                             0.5*dNdx[k]*v[icon[k,iel]]
+                #end for 
 
                 # compute density and viscosity at qpoint
                 rhoq=density(xq,yq,Lx,Ly)
@@ -258,6 +275,7 @@ for iter in range(0,niter):
                     b_mat[0:3, 2*i:2*i+2] = [[dNdx[i],0.     ],
                                              [0.     ,dNdy[i]],
                                              [dNdy[i],dNdx[i]]]
+                #end for 
 
                 # compute elemental a_mat matrix
                 K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq*wq*jcob
@@ -268,6 +286,10 @@ for iter in range(0,niter):
                     f_el[ndofV*i+1]+=N[i]*jcob*wq*rhoq*gy
                     G_el[ndofV*i  ,0]-=dNdx[i]*jcob*wq
                     G_el[ndofV*i+1,0]-=dNdy[i]*jcob*wq
+                #end for 
+
+            #end for jq
+        #end for iq
 
         # impose b.c. 
         for k1 in range(0,m):
@@ -280,10 +302,14 @@ for iter in range(0,niter):
                        f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
                        K_el[ikk,jkk]=0
                        K_el[jkk,ikk]=0
+                   #end for 
                    K_el[ikk,ikk]=K_ref
                    f_el[ikk]=K_ref*bc_val[m1]
                    h_el[0]-=G_el[ikk,0]*bc_val[m1]
                    G_el[ikk,0]=0
+                #end if
+            #end for 
+        #end for 
 
         # assemble matrix K_mat and right hand side rhs
         for k1 in range(0,m):
@@ -295,9 +321,15 @@ for iter in range(0,niter):
                         jkk=ndofV*k2          +i2
                         m2 =ndofV*icon[k2,iel]+i2
                         K_mat[m1,m2]+=K_el[ikk,jkk]
+                    #end for 
+                #end for 
                 f_rhs[m1]+=f_el[ikk]
                 G_mat[m1,iel]+=G_el[ikk,0]
+            #end for 
+        #end for 
         h_rhs[iel]+=h_el[0]
+
+    #end for iel
 
     G_mat*=eta_ref/Lx # scale G matrix
 
@@ -383,27 +415,75 @@ for iter in range(0,niter):
             jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
             jcb[1,0]+=dNds[k]*x[icon[k,iel]]
             jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+        #end for
         jcob=np.linalg.det(jcb)
         jcbi=np.linalg.inv(jcb)
 
         for k in range(0, m):
             dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
             dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
-            xc[iel] += N[k]*x[icon[k,iel]]
-            yc[iel] += N[k]*y[icon[k,iel]]
-            exx[iel] += dNdx[k]*u[icon[k,iel]]
-            eyy[iel] += dNdy[k]*v[icon[k,iel]]
-            exy[iel] += 0.5*dNdy[k]*u[icon[k,iel]]+\
-                        0.5*dNdx[k]*v[icon[k,iel]]
+            xc[iel]+=N[k]*x[icon[k,iel]]
+            yc[iel]+=N[k]*y[icon[k,iel]]
+            exx[iel]+=dNdx[k]*u[icon[k,iel]]
+            eyy[iel]+=dNdy[k]*v[icon[k,iel]]
+            exy[iel]+=0.5*(dNdy[k]*u[icon[k,iel]]+dNdx[k]*v[icon[k,iel]])
+        #end for
 
         rho[iel]=density(xc[iel],yc[iel],Lx,Ly)
         eta[iel]=viscosity(xc[iel],yc[iel],Lx,Ly,exx[iel],eyy[iel],exy[iel])
 
-    print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-    print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-    print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+    #end for
+
+    print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
+    print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
+    print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
 
     print("compute press & sr: %.3f s" % (time.time() - start))
+
+#end for iter
+
+
+#####################################################################
+# project pressure and strain rate onto Q1 grid
+#####################################################################
+
+q=np.zeros(nnp,dtype=np.float64)  
+exxn=np.zeros(nnp,dtype=np.float64)  
+exyn=np.zeros(nnp,dtype=np.float64)  
+eyyn=np.zeros(nnp,dtype=np.float64)  
+count=np.zeros(nnp,dtype=np.float64)  
+
+for iel in range(0,nel):
+    q[icon[0,iel]]+=p[iel]
+    q[icon[1,iel]]+=p[iel]
+    q[icon[2,iel]]+=p[iel]
+    q[icon[3,iel]]+=p[iel]
+    exxn[icon[0,iel]]+=exx[iel]
+    exxn[icon[1,iel]]+=exx[iel]
+    exxn[icon[2,iel]]+=exx[iel]
+    exxn[icon[3,iel]]+=exx[iel]
+    exyn[icon[0,iel]]+=exy[iel]
+    exyn[icon[1,iel]]+=exy[iel]
+    exyn[icon[2,iel]]+=exy[iel]
+    exyn[icon[3,iel]]+=exy[iel]
+    eyyn[icon[0,iel]]+=eyy[iel]
+    eyyn[icon[1,iel]]+=eyy[iel]
+    eyyn[icon[2,iel]]+=eyy[iel]
+    eyyn[icon[3,iel]]+=eyy[iel]
+    count[icon[0,iel]]+=1
+    count[icon[1,iel]]+=1
+    count[icon[2,iel]]+=1
+    count[icon[3,iel]]+=1
+#end for
+
+q/=count
+exxn/=count
+exyn/=count
+eyyn/=count
+    
+print("     -> exxn (m,M) %.4e %.4e " %(np.min(exxn),np.max(exxn)))
+print("     -> eyyn (m,M) %.4e %.4e " %(np.min(eyyn),np.max(eyyn)))
+print("     -> exyn (m,M) %.4e %.4e " %(np.min(exyn),np.max(exyn)))
 
 #####################################################################
 # line measurements 
@@ -423,6 +503,10 @@ etap=np.zeros(npts,dtype=np.float64)
 exxp=np.zeros(npts,dtype=np.float64)  
 eyyp=np.zeros(npts,dtype=np.float64)  
 exyp=np.zeros(npts,dtype=np.float64)  
+exxp2=np.zeros(npts,dtype=np.float64)  
+eyyp2=np.zeros(npts,dtype=np.float64)  
+exyp2=np.zeros(npts,dtype=np.float64)  
+
 for i in range(0,npts):
     xp[i]=i*Lx/(npts-1)
     yp[i]=550e3
@@ -446,6 +530,7 @@ for i in range(0,npts):
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
         jcb[1,0]+=dNds[k]*x[icon[k,iel]]
         jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+    #end for
     jcob=np.linalg.det(jcb)
     jcbi=np.linalg.inv(jcb)
     for k in range(0, m):
@@ -453,12 +538,16 @@ for i in range(0,npts):
         dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
         exxp[i]+=dNdx[k]*u[icon[k,iel]]
         eyyp[i]+=dNdy[k]*v[icon[k,iel]]
-        exyp[i]+=0.5*dNdy[k]*u[icon[k,iel]]+\
-                 0.5*dNdx[k]*v[icon[k,iel]]
+        exyp[i]+=0.5*(dNdy[k]*u[icon[k,iel]]+dNdx[k]*v[icon[k,iel]])
+        exxp2[i]+=N[k]*exxn[icon[k,iel]]
+        exyp2[i]+=N[k]*exyn[icon[k,iel]]
+        eyyp2[i]+=N[k]*eyyn[icon[k,iel]]
+    #end for
     rhop[i]=density(xp[i],yp[i],Lx,Ly)
     etap[i]=viscosity(xp[i],yp[i],Lx,Ly,exxp[i],eyyp[i],exyp[i])
+#end for
      
-np.savetxt('horizontal.ascii',np.array([xp,yp,rhop,etap,exxp,eyyp,exyp]).T,header='# x,y,rho,eta')
+np.savetxt('horizontal.ascii',np.array([xp,yp,rhop,etap,exxp,eyyp,exyp,exxp2,eyyp2,exyp2]).T,header='# x,y,rho,eta')
 
 xp=np.zeros(npts,dtype=np.float64)  
 yp=np.zeros(npts,dtype=np.float64)  
@@ -467,6 +556,10 @@ etap=np.zeros(npts,dtype=np.float64)
 exxp=np.zeros(npts,dtype=np.float64)  
 eyyp=np.zeros(npts,dtype=np.float64)  
 exyp=np.zeros(npts,dtype=np.float64)  
+exxp2=np.zeros(npts,dtype=np.float64)  
+eyyp2=np.zeros(npts,dtype=np.float64)  
+exyp2=np.zeros(npts,dtype=np.float64)  
+
 for i in range(0,npts):
     xp[i]=Lx/2.
     yp[i]=i*Ly/(npts-1)
@@ -490,6 +583,7 @@ for i in range(0,npts):
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
         jcb[1,0]+=dNds[k]*x[icon[k,iel]]
         jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+    #end for
     jcob=np.linalg.det(jcb)
     jcbi=np.linalg.inv(jcb)
     for k in range(0, m):
@@ -497,12 +591,16 @@ for i in range(0,npts):
         dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
         exxp[i]+=dNdx[k]*u[icon[k,iel]]
         eyyp[i]+=dNdy[k]*v[icon[k,iel]]
-        exyp[i]+=0.5*dNdy[k]*u[icon[k,iel]]+\
-                 0.5*dNdx[k]*v[icon[k,iel]]
+        exyp[i]+=0.5*(dNdy[k]*u[icon[k,iel]]+dNdx[k]*v[icon[k,iel]])
+        exxp2[i]+=N[k]*exxn[icon[k,iel]]
+        exyp2[i]+=N[k]*exyn[icon[k,iel]]
+        eyyp2[i]+=N[k]*eyyn[icon[k,iel]]
+    #end for
     rhop[i]=density(xp[i],yp[i],Lx,Ly)
     etap[i]=viscosity(xp[i],yp[i],Lx,Ly,exxp[i],eyyp[i],exyp[i])
+#end for
      
-np.savetxt('vertical.ascii',np.array([xp,yp,rhop,etap,exxp,eyyp,exyp]).T,header='# x,y,rho,eta')
+np.savetxt('vertical.ascii',np.array([xp,yp,rhop,etap,exxp,eyyp,exyp,exxp2,eyyp2,exyp2]).T,header='# x,y,rho,eta')
    
 print("export profiles: %.3fs" % (time.time() - start))
 
