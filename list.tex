@@ -152,38 +152,40 @@ Status & \OK & \OK & \OK & ?&\\
 \hline
 feature & 25 &26 &27 &28 &29 &30 &31 &32 \\ 
 \hline
-geometry & Box & Box & && \\ 
-element type & $Q_1\times P_0$ & $Q_1\times P_0$ & \\ 
-mixed or penalty  & mixed & mixed && \\ 
-matrix storage & full & full &&  \\ 
-outer solver (N.A., direct, SchurComp) & N.A. & N.A.\\ 
+geometry & Box & Box & Box & Box & &&\\ 
+element type & $Q_1\times P_0$ & $Q_1\times P_0$ & & $Q_1\times P_0$ &&&\\ 
+mixed or penalty  & mixed & mixed & & mixed  &&&\\ 
+matrix storage & full & full &  & full  & &&\\ 
+outer solver (N.A., direct, SchurComp) & N.A. & N.A. & N.A. & N.A. & & \\ 
 \hline
-3 dimensions 			& . & . \\ 
-compressible (Y/N)  		& . & . \\ 
-analytical benchmark (Y/N) 	& . & . \\ 
-numerical benchmark (Y/N) 	& Y & Y \\ 
-error convergence (Y/N) 	& . & . \\ 
-thermo-mech. coupled (Y/N) 	& . & . \\ 
-time-stepping (Y/N) 		& . & . \\ 
-external mesher (Y/N) 		& . & . \\ 
-non-linear (Y/N) 		& . & Y \\ 
-plasticity (Y/N) 		& . & . \\ 
-Buoyancy driven flow 		& Y & Y \\ 
-Vrms  				& Y & . \\ 
-Nusselt nb  			& . & . \\ 
-Pressure norm. 			& Y & . \\ 
-Pressure smoothing 		& Y & . \\ 
-Computing residual(s) 		& . & Y \\ 
-Paraview output 		& Y & Y \\ 
+3 dimensions 			& . & . & . & . &\\ 
+compressible (Y/N)  		& . & . & . & . &\\ 
+analytical benchmark (Y/N) 	& . & . & Y & . &\\ 
+numerical benchmark (Y/N) 	& Y & Y & . & Y &\\ 
+error convergence (Y/N) 	& . & . &   & . &\\ 
+thermo-mech. coupled (Y/N) 	& . & . & . & Y &\\ 
+time-stepping (Y/N) 		& . & . & . & Y &\\ 
+external mesher (Y/N) 		& . & . & . & . &\\ 
+non-linear (Y/N) 		& . & Y & . & Y &\\ 
+plasticity (Y/N) 		& . & . & . & . &\\ 
+Buoyancy driven flow 		& Y & Y & Y & Y &\\ 
+Vrms  				& Y & . &   & Y &\\ 
+Nusselt nb  			& . & . & . & Y &\\ 
+Pressure norm. 			& Y & . &   & Y &\\ 
+Pressure smoothing 		& Y & . &   & Y &\\ 
+Computing residual(s) 		& . & Y &   & Y &\\ 
+Paraview output 		& Y & Y & Y & Y &\\ 
 \hline
-Add. feature & Boundary fitted mesh & & & &\\
+Add. feature & Boundary fitted mesh & . & CBF & &\\
 \hline
 Description 
 & R-T instability \cite{vaks97} 
-& Slab detachment 
-&  \\
+& Slab detachment  
+& CBF benchmark \cite{zhgh93} 
+& Tosi et al benchmark \cite{tosn15}
+& \\
 \hline
-Status & \OK &   \\
+Status & \OK & \OK & & \OK & & & & \\
 \hline
 \end{tabular}
 }

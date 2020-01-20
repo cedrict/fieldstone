@@ -1,0 +1,25 @@
+set term pdf enhanced 
+set pm3d
+set xlabel 'k'
+set ylabel 'istep'
+set view map
+set palette rgb 34,35,36
+
+set output 'ps_T.pdf'
+stats 'power_spectrum_T.ascii' u 5 name "T"
+set title 'Temperature Power Spectrum'
+splot 'power_spectrum_T.ascii' u 1:2:($5/T_max) with pm3d notitle
+
+set output 'ps_V.pdf'
+set title 'Velocity Power Spectrum'
+splot 'power_spectrum_V.ascii' u 1:2:5 with pm3d notitle
+
+set output 'ps_vr.pdf'
+set title 'Radial velocity Power Spectrum'
+splot 'power_spectrum_vr.ascii' u 1:2:5 with pm3d notitle
+
+set output 'ps_vt.pdf'
+set title 'Tangential velocity Power Spectrum'
+splot 'power_spectrum_vt.ascii' u 1:2:5 with pm3d notitle
+
+
