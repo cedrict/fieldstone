@@ -31,25 +31,33 @@ plot[][]\
 'vrms_Nu.ascii' u 2:3 w l notitle
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+set key outside
 set output 'T_profile.pdf'
 set xlabel 'T'
 set ylabel 'y'
 plot[][]\
-'T_profile.ascii' u 2:1 w lp notitle
+'T_profile.ascii' u 2:1 w lp ps .4 t '32x32',\
+'../data_tosn15/ggge20762-sup-0004-2015gc005807-ds03.txt' u 2:(1-$1) w l  t 'Tosi et al, 2015'
 
 set output 'V_profile.pdf'
 set xlabel 'velocity'
 set ylabel 'y'
 plot[][]\
-'V_profile.ascii' u 2:1 w lp notitle
+'V_profile.ascii' u 2:1 w lp ps .4 t '32x32',\
+'../data_tosn15/ggge20762-sup-0004-2015gc005807-ds03.txt' u 4:(1-$1) w l  t 'Tosi et al, 2015'
 
 set log x
 set output 'eta_profile.pdf'
 set xlabel 'viscosity'
 set ylabel 'y'
 plot[][0:1]\
-'eta_profile.ascii' u 2:1 w lp notitle
+'eta_profile.ascii' u 2:1 w lp ps .4 t '32x32',\
+'../data_tosn15/ggge20762-sup-0004-2015gc005807-ds03.txt' u 3:(1-$1) w l  t 'Tosi et al, 2015'
+
+
+
+
+
 
 
 
