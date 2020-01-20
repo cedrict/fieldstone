@@ -2,61 +2,82 @@
 
 \Literature \cite{giju98}\cite{scja81}\cite{chyu84}\cite{chri84}\cite{hayu94}\cite{olwh97}
 
-\subsubsection{In Cartesian coordinates}
+
+
 
 The Stream function (commonly denoted by $\Phi$ or $\Psi$) approach is a useful approach in fluid dynamics as it 
 can provide relatively quick solutions to 2D incompressible flow problems.
-Lines of constant $\Phi$ are called stream lines and give a useful representation of the flow.
-The definition of the stream function is such that 
-\begin{eqnarray}
-u &=& -\frac{\partial \Phi}{\partial y} \\
-v &=& \frac{\partial \Phi}{\partial x} 
-\end{eqnarray}
-It then follows that the velocity field based on the above equations 
-automatically fulfills the continuity equation:
-\[
-\vec\nabla\cdot\vec\upnu 
-= \frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}
-= -\frac{\partial^2 \Phi}{\partial x \partial y}+\frac{\partial^2 \Phi}{\partial x\partial y}
-=0
-\]
-The stream function can also be substituted into the (constant viscosity) Stokes equation $-\vec\nabla p + \eta \Delta \vec\upnu=\vec 0$:
-\begin{eqnarray}
--\frac{\partial p}{\partial x} 
-- \eta \left( \frac{\partial^3 \Phi}{\partial^2 x\partial y} + \frac{\partial^3 \Phi}{\partial^3 y} \right) &=& 0 \\
--\frac{\partial p}{\partial y} 
-- \eta \left( 
-\frac{\partial^3 \Phi}{\partial^3 x}
-+ 
-\frac{\partial^3 \Phi}{\partial x\partial^2 y}  \right) &=& 0
-\end{eqnarray}
-We can now eliminate the pressure term by taking the partial derivative of the 
-first equation with respect to $y$ and the partial derivative of the second one 
-with respect to $x$, and substracting both. We get:
-\begin{equation}
-\frac{\partial^4\Phi}{\partial x^4}+
-\frac{\partial^4\Phi}{\partial x^2 \partial y^2}+
-\frac{\partial^4\Phi}{\partial y^4}=0
-\end{equation}
-or, 
-\begin{equation}
-\left(
-\frac{\partial^2}{\partial x^2}+
-\frac{\partial^2}{\partial y^2}
-\right)
-\left(
-\frac{\partial^2}{\partial x^2}+
-\frac{\partial^2}{\partial y^2}
-\right)
-\Phi = 0
-\end{equation}
-or, 
-\[
-\vec\nabla^2 \vec\nabla^2 \Phi = \vec\nabla^4 \Phi = 0
-\]
-which is known as the Biharmonic operator.
+The stream function is a function of coordinates and time of an inviscid liquid.
+It allows to determine the components of velocity by differentiating the stream function 
+with respect to the space coordinates. 
+A family of curves $\Psi = const$ represent {\it streamlines}, i.e. 
+the stream function remains constant along a streamline. 
+Although also valid in 3D, this approach is mostly used in 2D because of its 
+relative simplicity {\color{red} REFERENCES}.
 
+\subsubsection{In Cartesian coordinates}
+
+In two dimensions the velocity is obtained as follows:
+\begin{equation}
+{\vec \upnu} = (u,v) = \left( \frac{\partial \Psi}{\partial y},-\frac{\partial \Psi}{\partial x} \right) 
+\end{equation}
+Provided the function $\Psi$ is a smooth enough function, 
+this automatically insures that the flow is incompressible:
+\begin{equation}
+{\vec \nabla}\cdot {\vec \upnu} = 
+\frac{\partial u}{\partial x} + \frac{\partial v}{\partial y}
+=
+\frac{\partial^2 \Psi}{\partial xy} - \frac{\partial^2 \Psi}{\partial xy} =0 
+\end{equation}
+Assuming constant viscosity, the Stokes equation writes:
+\begin{equation}
+-{\vec \nabla}p + \eta \Delta {\vec \upnu} + \rho {\vec g} = \vec{0}
+\end{equation}
+Let us introduce the vector ${\vec{W}}$ for convenience such that in each dimension:
+\begin{eqnarray}
+W_x&=&-\frac{\partial p}{\partial x} 
++ \eta\left( \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial x^y} \right) \\
+W_y&=&-\frac{\partial p}{\partial y} 
++ \eta \left(\frac{\partial^2 v}{\partial x^2} + \frac{\partial^2 v}{\partial x^y} \right) 
+\end{eqnarray}
+Taking the curl of the vector ${\vec{W}}$ and only considering the component perpendicular to the $xy$-plane:
+\begin{equation}
+\frac{\partial W_y}{\partial x} - \frac{\partial W_x}{\partial y}  = 
+-\frac{\partial \rho g_y}{\partial x} + \frac{\partial \rho g_x}{\partial y}   
+\end{equation}
+The advantage of this approach is that the pressure terms cancel out (the curl of a gradient is always zero), 
+so that:
+\begin{equation}
+\frac{\partial}{\partial x}\eta\left( \frac{\partial^2 v}{\partial x^2} + \frac{\partial^2 v}{\partial x^y}  \right) 
+- \frac{\partial }{\partial y} \eta \left( \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial x^y} \right) = 
+-\frac{\partial \rho g_y}{\partial x} + \frac{\partial \rho g_x}{\partial y}   
+\end{equation}
+and then replacing $u,v$ by the their stream function derivatives yields (for a constant viscosity):
+\begin{equation}
+\eta \left(\frac{\partial^4 \Psi}{\partial x^4} + 
+\frac{\partial^4 \Psi}{\partial y^4} + 
+2\frac{\partial^4 \Psi}{\partial x^2y^2} \right)
+=
+-\frac{\partial \rho g_y}{\partial x} + \frac{\partial \rho g_x}{\partial y}   
+\end{equation}
+or, 
+\begin{equation}
+{\vec \nabla}^4 \Psi 
+=
+\left(\frac{\partial^2 }{\partial x^2} + \frac{\partial^2 }{\partial y^2} \right) 
+\left(\frac{\partial^2 }{\partial x^2} + \frac{\partial^2 }{\partial y^2} \right) \Psi
+=
+-\frac{\partial \rho g_y}{\partial x} + \frac{\partial \rho g_x}{\partial y}   
+\label{eq:sf1}
+\end{equation}
+Note that $\vec\nabla^2 \vec\nabla^2 = \vec\nabla^4 $ is known as the Biharmonic operator.
 \index{general}{Biharmonic Operator} 
+
+These equations are also to be found in the geodynamics literature, 
+see Eq. 1.43 \cite[eq. 1.43]{tack10} or \cite[p 70-71]{gery10}.
+
+
+
 
 
 \subsubsection{In Cylindrical coordinates}

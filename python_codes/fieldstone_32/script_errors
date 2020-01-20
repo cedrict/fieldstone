@@ -1,5 +1,8 @@
 rm -f errors
 python3 fieldstone.py   8   8 0 1 1 | grep nel >> errors
+python3 fieldstone.py   9   9 0 1 1 | grep nel >> errors
+python3 fieldstone.py  10  10 0 1 1 | grep nel >> errors
+python3 fieldstone.py  11  11 0 1 1 | grep nel >> errors
 python3 fieldstone.py  12  12 0 1 1 | grep nel >> errors
 python3 fieldstone.py  16  16 0 1 1 | grep nel >> errors
 python3 fieldstone.py  24  24 0 1 1 | grep nel >> errors
@@ -9,7 +12,12 @@ python3 fieldstone.py  64  64 0 1 1 | grep nel >> errors
 python3 fieldstone.py  96  96 0 1 1 | grep nel >> errors
 python3 fieldstone.py 128 128 0 1 1 | grep nel >> errors
 
+echo " " >> errors
+
 python3 fieldstone.py   8   8 0 1 2 | grep nel >> errors
+python3 fieldstone.py   9   9 0 1 2 | grep nel >> errors
+python3 fieldstone.py  10  10 0 1 2 | grep nel >> errors
+python3 fieldstone.py  11  11 0 1 2 | grep nel >> errors
 python3 fieldstone.py  12  12 0 1 2 | grep nel >> errors
 python3 fieldstone.py  16  16 0 1 2 | grep nel >> errors
 python3 fieldstone.py  24  24 0 1 2 | grep nel >> errors
@@ -19,7 +27,12 @@ python3 fieldstone.py  64  64 0 1 2 | grep nel >> errors
 python3 fieldstone.py  96  96 0 1 2 | grep nel >> errors
 python3 fieldstone.py 128 128 0 1 2 | grep nel >> errors
 
+echo " " >> errors
+
 python3 fieldstone.py   8   8 0 2 1 | grep nel >> errors
+python3 fieldstone.py   9   9 0 2 1 | grep nel >> errors
+python3 fieldstone.py  10  10 0 2 1 | grep nel >> errors
+python3 fieldstone.py  11  11 0 2 1 | grep nel >> errors
 python3 fieldstone.py  12  12 0 2 1 | grep nel >> errors
 python3 fieldstone.py  16  16 0 2 1 | grep nel >> errors
 python3 fieldstone.py  24  24 0 2 1 | grep nel >> errors
@@ -28,8 +41,13 @@ python3 fieldstone.py  48  48 0 2 1 | grep nel >> errors
 python3 fieldstone.py  64  64 0 2 1 | grep nel >> errors
 python3 fieldstone.py  96  96 0 2 1 | grep nel >> errors
 python3 fieldstone.py 128 128 0 2 1 | grep nel >> errors
+
+echo " " >> errors
  
 python3 fieldstone.py   8   8 0 2 2 | grep nel >> errors
+python3 fieldstone.py   9   9 0 2 2 | grep nel >> errors
+python3 fieldstone.py  10  10 0 2 2 | grep nel >> errors
+python3 fieldstone.py  11  11 0 2 2 | grep nel >> errors
 python3 fieldstone.py  12  12 0 2 2 | grep nel >> errors
 python3 fieldstone.py  16  16 0 2 2 | grep nel >> errors
 python3 fieldstone.py  24  24 0 2 2 | grep nel >> errors
