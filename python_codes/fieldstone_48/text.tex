@@ -254,7 +254,7 @@ where X=1,2,3,4. The gnuplot script is to be found in the {\sl images} folder.
 
 The stone implementes two ways of building the FE matrix. When the flag {\sl sparse} 
 is false, the $\K$ and $\G$ matrices are built as full arrays, later assembled in a
-larger full array, and then only converted to Compressed Sparse Row \index{stones}{CSR} before 
+larger full array, and then only converted to Compressed Sparse Row 
 it is passed to the solver. When the flag is true, the global FE matrix 
 is defined as a {\sl lil\_matrix} (a List of Lists) and it grows in size/memory
 every time a new term is added to it. As shown on the following plot, it is about 

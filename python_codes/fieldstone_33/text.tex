@@ -1,10 +1,9 @@
-
-\includegraphics[width=5cm]{images/under_construction}
+%\includegraphics[width=5cm]{images/under_construction}
 
 {\sl This fieldstone was developed in collaboration with Rens Elbertsen}. \index{contributors}{Rens Elbertsen}
 
 This is based on the community benchmark for viscoplastic thermal convection
-in a 2D square box \cite{tosn15} as already carried out in \ref{f_28}.
+in a 2D square box (Tosi et al (2015) \cite{tosn15}) as already carried out in \ref{f_28}.
 
 In this experiment the geometry is an annulus of inner radius 
 $R_1=1.22$ and outer radius $R_2=2.22$. 
@@ -32,7 +31,7 @@ We obtain
 \[
 T_c(r)=\frac{\log (r/R_2)}{\log(R_1/R_2)}
 \]
-Note that this profile differs from the straight line that is used in \cite{tosn15} and in section \ref{f28}.
+Note that this profile differs from the straight line that is used in Tosi et al (2015) \cite{tosn15} and in section \ref{f28}.
 
 \begin{center}
 \includegraphics[width=4cm]{python_codes/fieldstone_33/images/T_N03}
@@ -41,20 +40,54 @@ Note that this profile differs from the straight line that is used in \cite{tosn
 {\small Examples of initial temperature fields for $N_0=3,5,11$}
 \end{center}
 
-Boundary conditions can be either no-slip or free-slip on both inner and outer boundary. However, when free-slip 
+Boundary conditions can be either no-slip or free-slip on both inner and outer boundary. 
+However, when free-slip 
 is used on both a velocity null space exists and must be filtered out. In other words,
 the solver may be able to come up with a solution to the Stokes operator, but 
 that solution plus an arbitrary rotation is also an equally valid solution.
-This additional velocity field can be problematic since it is used for advecting temperature (and/or compositions)
+This additional velocity field can be problematic since it is used for 
+advecting temperature (and/or compositions)
 and it also essentially determines the time step value for a chosen mesh size (CFL condition).
 
+%........................................................
+\paragraph{About the nullspace}
 For these reasons the nullspace must be removed from the obtained solution after every timestep.
 There are two types of nullspace removal: removing net angular momentum, and removing net rotations.
+The technique that we use here is simple:
+\begin{enumerate}
+\item pin the first node which is at position ($x=R_1,y=0$) and set its vertical velocity to zero. This 
+eliminates the nullspace completely. 
+\item compute the angular momentum and correct the velocity field so that it is zero as explained in section \ref{ss_nullspace}.
+
+
+%We calculate at each time step (at each non linear iteration) the average angular velocity ${\vec\omega}$ 
+%of the cylindrical shell:
+%\[
+%<{\vec\omega}> = \frac{1}{V} \int_V \frac{{\vec r}\times {\vec\upnu}}{r^2} dV
+%\]
+%where $V$ is the shell volume and ${\bm r}$ the position vector. 
+%In this case, we have $\vec{r}=(x,y,0)$ and $\upnu=(u,v,0)$ so that 
+%${\vec r}\times {\vec\upnu}=(0,0,xv-uy)$.
+The corrected velocity field $\vec{\upnu}'$ is then given by 
+\[
+\vec{\upnu}' = \vec{\upnu} - <\vec\omega>\times \vec{r}
+\]
+and it is easy to verify that 
+\begin{eqnarray}
+<{\vec\omega}'> 
+&=& \frac{1}{V} \int_V \frac{{\vec r}\times {\vec\upnu}'}{r^2} dV \nn\\
+&=& \frac{1}{V} \int_V \frac{{\vec r}\times (\vec{\upnu} - <\vec\omega>\times \vec{r})   }{r^2} dV\nn\\
+&=& \frac{1}{V} \int_V \frac{{\vec r}\times \vec{\upnu}    }{r^2} dV
+- \frac{1}{V} \int_V \frac{{\vec r}\times  <\vec\omega>\times \vec{r}   }{r^2} dV\nn\\
+&=&  <{\vec\omega}> -  <{\vec\omega}> \frac{1}{V} \int_V dV = 0
+\end{eqnarray}
+
+\end{enumerate}
 
 
 
-
-We calculate the following output parameters: 
+%........................................................
+\paragraph{Measurements} We calculate and monitor the following quantities:
 \begin{itemize}
 \item the average temperature $<T>$
 \begin{equation}
@@ -72,10 +105,134 @@ Q_{inner, outer} = \int_{\Gamma_{i,o}} \boldsymbol{q} \cdot \boldsymbol{{n}} \; 
 \begin{equation}
 PS_n(T) = \left |\int_\Omega T(r, \theta) e^{in\theta} d\Omega \right |^2.
 \end{equation}
+\item the average viscosity $\langle \eta \rangle$(see Eq.~\ref{eq:avrgeta})
 \end{itemize}
 
+%........................................................
+\paragraph{Cases and rheologies}
+In the following Table, we list the benchmark cases according to the parameters used. 
+\begin{center}
+\begin{tabular}{c c c c c c c} 
+\hline
+Case & $Ra$ & $\Delta\mu_T$ & $\Delta\mu_y$ & $\mu^*$ & $\sigma_Y$ & Convective regime \\
+\hline
+1   & $10^2$ & $10^5$    & 1  & -- & --             & Stagnant lid    \\
+2   & $10^2$ & $10^5$    & 1  & $10^{-3}$ & 1       & Mobile lid \\
+3   & $10^2$ & $10^5$    & 10 & --  & --            & Stagnant lid \\
+4   & $10^2$ & $10^5$    & 10 & $10^{-3}$ & 1       & Mobile lid  \\
+5a  & $10^2$ & $10^5$    & 10 & $10^{-3}$ & 4       & Periodic  \\
+5b  & $10^2$ & $10^5$    & 10 & $10^{-3}$ & 3 -- 5  & Mobile lid -- Periodic -- Stagnant lid \\
+\hline
+\end{tabular}\\
+{\small Benchmark cases and corresponding parameters.} 
+\end{center}
 
+%........................................................
+\paragraph{Steady state} As explained in \ref{f20} we use a relaxation technique
+in combination with an energy equation stripped from its time derivative term. 
+The use of this technique is controlled by the {\tt find\_ss} parameter.
+
+The termination criterion is based on the Nusselt number also. 
+\begin{lstlisting}
+if np.abs(Nu_boundary1-Nu_boundary1_old and \
+   np.abs(Nu_boundary2-Nu_boundary2_old) <1.e-5:
+   print("Nu converged to 1e-5")
+   break
+\end{lstlisting}
+
+%........................................................
+\paragraph{Spectral analysis/power spectrum}
 CHECK \cite{brha09} for power spectrum of Nusselt nb.
+check \cite{buri96,mczh05b,puhj95,rozh06,scbg90,wema98,ribr99}
 
+
+
+%==============================================================================================
+\newpage
+\paragraph{test 1}
+
+We here wish to test the boundary conditions. We set $\vec{\upnu}=(y,-x)$ on the outside 
+boundary, and $\vec{\upnu}=(0,0)$ on the inside boundary, set the temperature to zero, 
+and run a single time step (note that the no net rotation/angular momentum algorithm 
+much be turned off then).
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results_test1/vr}
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results_test1/vt}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results_test1/p}
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results_test1/sr}
+\end{center}
+
+The radial velocity is not zero (or machine precision zero) because of the use of the 
+penalty method. 
+
+\paragraph{test 2a}
+This is the same experiment as above but now the inner boundary is free slip. We then 
+expect a constant angular velocity (measured by the code as  -9.999999e-01)  
+and also a velocity on the inner boundary equal (in magnitude) to $R_1=1.22$ which is 
+indeed what we recover:  
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results_test2/vr}
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results_test2/vt}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results_test2/p}
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results_test2/sr}
+\end{center}
+
+Unsurprisingly the pressure and radial velocity fields are unaffected by this 
+change of boundary conditions.
+
+\paragraph{test 3} Same experiment as exp.2, but boundary conditions are switched
+(free slip outside, prescribed inside).
+Results are not shown but the angular velocity has the right value, and so does the 
+velocity field. 
+
+
+\paragraph{test 2b} Same as exp.2 but now the net rotation algorithm is switched on. 
+Since the boundary conditions are such that a constant angular rotation is expected, 
+then the algorithm should yield a tangential velocity that is null, and this is indeed
+what we recover (at least 8 orders of magnitude smaller than before removal):
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results_test2b/vt}
+\end{center}
+
+\paragraph{test 4} We now set free slip boundary conditions on the outside boundary and 
+only a single node at position $(R_1,0)$ is prescribed a velocity $(0,R_1)$. Gravity is set to zero 
+and no net angular velocity removal is applied.
+We recover a (near) zero radial velocity component and a the expected angular velocity 
+$9.999984e-01$. 
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results_test4/vr}
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results_test4/vt}
+\end{center}
+
+
+\paragraph{test 4b} Same as test 4, but now free slip boundary conditions are imposed on both the 
+inner and outer boundaries at the exception of a single node as above. 
+We expect identical results as in test 4 (same physics) and we indeed do recover the same
+$v_t$ velocity field and a similarly negligible $v_r$ field:
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results_test4b/vr}
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results_test4b/vt}
+\end{center}
+
+These tests are convincing: the free-slip and no-slip boundary conditions work as expected 
+and the single node velocity b.c. to remove the nullspace in conjunction with free-slip also 
+works. 
+Let us now turn to resolution and time-discretisation. 
+
+
+
+
+
+\paragraph{Influence of time discretisation of energy equation}.
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results/alpha_study/vrms.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_33/results/alpha_study/Tavrg.pdf}
+\end{center}
 
 

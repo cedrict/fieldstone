@@ -1,10 +1,4 @@
 
-\index{stones}{$Q_1 \times P_0$ element}
-\index{stones}{Compressible Flow}
-\index{stones}{Mixed Formulation}
-\index{stones}{Analytical Solution}
-\index{stones}{Pressure Smoothing} 
-
 
 \begin{mdframed}[backgroundcolor=red!5]
 This work is part of the MSc thesis of T. Weir (2018).
@@ -26,18 +20,18 @@ After linearisation, the density depends on temperature and pressure as follows:
 \rho(T,p) = \rho_0 \left((1 - \alpha(T-T_0) + \beta_T p \right)
 \]
 where $\alpha$ is the coefficient of thermal expansion, also called 
-thermal expansivity: \index{stones}{thermal expansion}
+thermal expansivity: 
 \[
 \alpha=-\frac{1}{\rho}\left( \frac{\partial \rho}{\partial T} \right)_p
 \]
 $\alpha$ is the percentage increase in volume of a material per degree of temperature increase; the
 subscript $p$ means that the pressure is held fixed.
 
-$\beta_T$ is the isothermal compressibility of the fluid, which is given by \index{stones}{compressibility}
+$\beta_T$ is the isothermal compressibility of the fluid, which is given by 
 \[
 \beta_T = \frac{1}{K} = \frac{1}{\rho}\left( \frac{\partial \rho}{\partial P} \right)_T
 \]
-with $K$ the bulk modulus. \index{stones}{bulk modulus}
+with $K$ the bulk modulus. 
 %aspect manual
 Values of $\beta_T=10^{-12}-10^{-11}$ Pa$^{-1}$ are reasonable for Earth's mantle, with values decreasing by about a
 factor of 5 between the shallow lithosphere and core-mantle boundary.
@@ -48,8 +42,8 @@ from the equation of state.
 The full set of equations we wish to solve is given by
 
 \begin{eqnarray}
--\nabla \cdot \left[2\eta \dot{\bm \epsilon}^d({\bm v}) \right] + \nabla p &=& \rho_0 \left((1 - \alpha(T-T_0) + \beta_T p \right) {\bm g} \quad\quad \textrm{in $\Omega$}  \label{eq:stokes-1} \\
-\nabla \cdot {\bm v} + \frac{1}{\rho} {\bm v} \cdot {\bm \nabla}\rho&=&0 \quad\quad  \textrm{in $\Omega$}   \label{eq:stokes-2} \\
+-\nabla \cdot \left[2\eta \dot{\bm \epsilon}^d({\bm v}) \right] + \nabla p &=& \rho_0 \left((1 - \alpha(T-T_0) + \beta_T p \right) {\bm g} \quad\quad \textrm{in $\Omega$}  \label{eq:stokes-1a} \\
+\nabla \cdot {\bm v} + \frac{1}{\rho} {\bm v} \cdot {\bm \nabla}\rho&=&0 \quad\quad  \textrm{in $\Omega$}   \label{eq:stokes-2a} \\
 \rho C_p \left(\frac{\partial T}{\partial t} + \bm v\cdot\nabla T\right) - \nabla\cdot k\nabla T   &=& 
   \rho H  +  2\eta \dot{\bm \epsilon}^d : \dot{\bm \epsilon}^d    +\alpha T \left( \frac{\partial p}{\partial t}+  \bm v \cdot \nabla p \right) 
 \quad\quad   \textrm{in $\Omega$},
@@ -285,7 +279,7 @@ And finally
 \[
 \int_V \rho {\bm g} \cdot {\bm v} dV = W
 \]
-which is the work against gravity. \index{stones}{work against gravity} 
+which is the work against gravity. 
 
 Conclusion for an {\it incompressible} fluid: we should have
 \begin{equation}
