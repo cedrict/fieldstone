@@ -605,7 +605,7 @@ for istep in range(0,nstep):
     print("solve time: %.3f s" % (timing.time() - start))
 
     ######################################################################
-    # compute elemental strainrate 
+    # compute elemental strainrate in the middle
     ######################################################################
     start = timing.time()
 
@@ -615,9 +615,8 @@ for istep in range(0,nstep):
     e   = np.zeros(nel,dtype=np.float64)  
 
     for iel in range(0,nel):
-        rq = 0.0
-        sq = 0.0
-        weightq = 2.0 * 2.0
+        rq = 1./3.
+        sq = 1./3.
         NNNV[0:mV]=NNV(rq,sq)
         dNNNVdr[0:mV]=dNNVdr(rq,sq)
         dNNNVds[0:mV]=dNNVds(rq,sq)
@@ -651,7 +650,94 @@ for istep in range(0,nstep):
 
     #np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
-    print("compute sr and stress: %.3f s" % (timing.time() - start))
+    print("compute elemental sr: %.3f s" % (timing.time() - start))
+
+    ######################################################################
+    # compute nodal strainrate 
+    #
+    #  P_2^+           P_-1
+    #
+    #  02              02
+    #  ||\\            ||\\
+    #  || \\           || \\
+    #  ||  \\          ||  \\
+    #  05   04         ||   \\
+    #  || 06 \\        ||    \\
+    #  ||     \\       ||     \\
+    #  00==03==01      00======01
+    # 
+    ######################################################################
+    start = timing.time()
+
+    exx_n = np.zeros(NV,dtype=np.float64)  
+    eyy_n = np.zeros(NV,dtype=np.float64)  
+    exy_n = np.zeros(NV,dtype=np.float64)  
+    count = np.zeros(NV,dtype=np.int16)  
+
+    for iel in range(0,nel):
+        for kk in range(0,mV):
+            if kk==0:
+               rq = 0.0
+               sq = 0.0
+            if kk==1:
+               rq = 1.0
+               sq = 0.0
+            if kk==2:
+               rq = 0.0
+               sq = 1.0
+            if kk==3:
+               rq = 0.5
+               sq = 0.0
+            if kk==4:
+               rq = 0.5
+               sq = 0.5
+            if kk==5:
+               rq = 0.0
+               sq = 0.5
+            if kk==6:
+               rq = 1./3.
+               sq = 1./3.
+
+            NNNV[0:mV]=NNV(rq,sq)
+            dNNNVdr[0:mV]=dNNVdr(rq,sq)
+            dNNNVds[0:mV]=dNNVds(rq,sq)
+            jcb=np.zeros((2,2),dtype=np.float64)
+            for k in range(0,mV):
+                jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+                jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
+                jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+                jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+            #end for
+            jcbi=np.linalg.inv(jcb)
+            for k in range(0,mV):
+                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+            #end for
+            e_xx=0.
+            e_yy=0.
+            e_xy=0.
+            for k in range(0,mV):
+                e_xx += dNNNVdx[k]*u[iconV[k,iel]]
+                e_yy += dNNNVdy[k]*v[iconV[k,iel]]
+                e_xy += 0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
+            #end for
+            inode=iconV[kk,iel]
+            exx_n[inode]+=e_xx
+            eyy_n[inode]+=e_yy
+            exy_n[inode]+=e_xy
+            count[inode]+=1
+        #end for
+    #end for
+
+    exx_n/=count
+    eyy_n/=count
+    exy_n/=count
+
+    print("     -> exx_n (m,M) %.6e %.6e " %(np.min(exx_n),np.max(exx_n)))
+    print("     -> eyy_n (m,M) %.6e %.6e " %(np.min(eyy_n),np.max(eyy_n)))
+    print("     -> exy_n (m,M) %.6e %.6e " %(np.min(exy_n),np.max(exy_n)))
+
+    print("compute nodal sr : %.3f s" % (timing.time() - start))
 
     #####################################################################
     # interpolate pressure onto velocity grid points
@@ -760,9 +846,6 @@ for istep in range(0,nstep):
     for iel in range (0,nel):
         vtufile.write("%7e\n" % (mat[iel]))
     vtufile.write("</DataArray>\n")
-
-
-
     #--
     vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
     for iel in range (0,nel):
@@ -843,6 +926,21 @@ for istep in range(0,nstep):
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" %exx_n[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" %eyy_n[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" %exy_n[i])
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='p (nod)' Format='ascii'> \n")

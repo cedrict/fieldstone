@@ -1,0 +1,9 @@
+rm *.vtu
+rm mesh.1.ele
+rm mesh.1.node
+rm mesh.1.poly
+rm mesh.poly
+rm mypoints
+rm mysegments
+rm temp
+

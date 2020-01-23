@@ -1,0 +1,10 @@
+python3 generate_nodes.py
+cat mypoints mysegments > mesh.poly
+./triangle -j -q -a100000000 -o2 -pc mesh.poly
+echo "nel="
+head -1 mesh.1.ele 
+head -1 mesh.1.ele > temp
+echo "NV0="
+head -1 mesh.1.node 
+head -1 mesh.1.node >> temp
+python3 fieldstone.py

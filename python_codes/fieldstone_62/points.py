@@ -36,7 +36,7 @@ yH=631/670.*Ly
 xJ=1550e3
 yJ=yE
 
-xK=1550e3
+xK=1650e3
 yK=yI
 
 xL=1700e3
@@ -45,16 +45,16 @@ yL=yG
 xM=1700e3
 yM=Ly
 
-xN=1350e3
+xN=1320e3
 yN=yC
 
-xO=1350e3
+xO=1320e3
 yO=yH
 
-xP=1350e3
+xP=1320e3
 yP=yF
 
-xQ=1350e3
+xQ=1320e3
 yQ=Ly
 
 
