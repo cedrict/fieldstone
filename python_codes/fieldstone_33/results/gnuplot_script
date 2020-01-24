@@ -1,0 +1,11 @@
+set term pdf enhanced
+set grid
+
+set output 'vrms.pdf'
+plot[][]\
+'N09_16_alpha0p5/vrms.ascii' w lp ps .2 t 'nelr=16, {/Symbol a}=0.5',\
+'N09_20_alpha0p5/vrms.ascii' w lp ps .2 t 'nelr=20, {/Symbol a}=0.5',\
+'N09_24_alpha0p5/vrms.ascii' w lp ps .2 t 'nelr=24, {/Symbol a}=0.5',\
+'N09_28_alpha0p5/vrms.ascii' w lp ps .2 t 'nelr=28, {/Symbol a}=0.5',\
+'N09_28_alpha0p0/vrms.ascii' w lp ps .2 t 'nelr=28, {/Symbol a}=0.0',\
+'N09_28_alpha1p0/vrms.ascii' w lp ps .2 t 'nelr=28, {/Symbol a}=1.0',\

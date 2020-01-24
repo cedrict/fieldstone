@@ -24,7 +24,7 @@ computational geodynamics community.
 \item 3D convection at infinite Prandtl number (Busse) \cite{bucc93,trha98,onmm06,krhb12}
 \item Free surface evolution \cite{crsg12,aspectmanual}
 \item Love's problem \cite{bebe04}
-\item Poiseuille flow \cite{fojg94,fuku11,tagm09}
+\item Poiseuille flow \cite{fojg94,fuku11,tagm09} (see Section~\ref{ss:poiseuille})
 \item Couette flow with temperature dependent viscosity \cite{egat10,demh19}
 \item Couette flow with shear heating \cite{egat10}
 \item Poiseuille-Couette flow \cite{fusc13}
@@ -90,6 +90,89 @@ computational geodynamics community.
 \item generalized half-plane and half-space Cerruti \cite{nowi92,zhga15}
 \item Analytical Solutions of Displacements Produced by spherically-shaped Internal Overpressure \cite{gech12}
 \end{itemize}
+
+
+%.......................................................
+\subsubsection{Poiseuille flow} \label{ss:poiseuille}
+
+We consider a two-dimensional channel in the $x,y$ plane. The walls 
+are at $y=0$ and $y=H$ with no-slip boundary conditions. 
+In the absence of gravity, the Stokes equation simplify to 
+\begin{equation}
+-\frac{\partial p}{\partial x}  +\frac{\partial }{\partial y} (2\eta_0 \dot{\varepsilon}_{xy}) =0
+\qquad
+\text{and}
+\qquad
+\dot{\varepsilon}_{xy} = \frac{1}{2} \frac{\partial u}{\partial y} 
+\label{eq:pois1}
+\end{equation}
+where we assume the velocity $\vec\upnu=(u(y),0)$.
+In the case of a Newtonian fluid, the analytical solution is 
+known and the velocity profile is a parabola with zero velocity on the
+walls and maximum velocity in the middle. 
+
+
+Eq.~\eqref{eq:pois1} must then be solved 
+\begin{eqnarray}
+\frac{\partial p}{\partial x}  
+&=&\frac{\partial }{\partial y} \left(2\eta_{0}  \frac{1}{2}\frac{\partial u}{\partial y} \right) 
+= \eta_0 \frac{\partial^2 u}{\partial y^2}  
+\end{eqnarray}
+
+We pose $\Pi=\frac{\partial p}{\partial x}<0$, i.e. 
+there is more pressure applied to the left than to the right of the channel.
+We then must solve:
+\[
+\frac{\partial^2 u}{\partial y^2} = \frac{\Pi}{\eta_0} 
+\]
+The solution is then of the form
+\[
+u(y) = \frac{1}{2}\frac{\Pi}{\eta_0} y^2 + 2a y + b
+\]
+and 
+\[
+\dot{\varepsilon}_{xy}= \frac{1}{2} \frac{\Pi}{\eta_0}y  + a
+\]
+We will now determine $a$ and $b$.
+
+The velocity must be zero at $y=0$ and $y=H$ so 
+\[
+u(y=0)=b=0
+\] 
+and 
+\[
+u(y=H)=\frac{1}{2}\frac{\Pi}{\eta_0} H^2 + 2a H =0
+\]
+or, 
+\[
+2a=-\frac{1}{2}\frac{\Pi}{\eta_0} H
+\]
+so 
+\begin{equation}
+\boxed{
+u(y) = \frac{1}{2}\frac{\Pi}{\eta_0} (y^2 - y H)
+}
+\end{equation}
+and 
+\begin{equation}
+\boxed{
+\dot{\varepsilon}_{xy}= \frac{1}{2} \frac{\Pi}{\eta_0} \left(y  - \frac{H}{2} \right)
+}
+\end{equation}
+ 
+
+
+ 
+
+
+
+
+
+
+
+
+
+
 
 %..................................................
 \subsubsection{Relaxation of sinusoidal topography}

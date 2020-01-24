@@ -112,10 +112,6 @@ for it in range(0,niter):
         T_min [kp1]=sol[3]
 
     #end iel
-    
-    # Calculate average Temperature and flux   
-    #T=(T_min+T_plus)/2
-    #q=(q_min+q_plus)/2
 
     filename = 'T_minus_{:04d}.ascii'.format(it) 
     np.savetxt(filename,np.array([x,T_min]).T,header='# x,T_min')

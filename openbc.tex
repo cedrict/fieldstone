@@ -50,7 +50,7 @@ wishes to implement stress boundary conditions,
 such as the so-called open boundary conditions. 
 
 %.................................................................
-\subsubsection{two-dimensional case - $Q_1 \times P_0$ elements}
+\subsubsection{Two-dimensional case - $Q_1 \times P_0$ elements}
 
 On the following figure two elements are represented, one on the 
 left boundary, one on the right boundary:
@@ -84,9 +84,9 @@ The integral on the side of the element is then
 \[
 \int_\Gamma N_i {\vec t} \; dS
 \]
-for $i=1,2,3,4$, which yields the following elementalrhs vector:
+for $i=1,2,3,4$, which yields the following elemental rhs vector:
 \[
-\vec{F}=
+\vec{F}_{el}=
 \int_{\Gamma_{14}} 
 \left(
 \begin{array}{c}
@@ -102,12 +102,12 @@ N_4(x,y) t_y(x,y)
 \right)
 \; dS
 \]
-It is worth noting that the integral takes place on $\Gamma_{14}$ 
+It is worth noting that the integral takes place on the edge $\Gamma_{14}$ 
 so that $N_2$ and $N_3$ are identically zero on this edge
 and also $t_y=0$ 
 so 
 \[
-\vec{F}=
+\vec{F}_{el}=
 \left(
 \begin{array}{c}
 \int_{\Gamma_{14}}  N_1(x,y) t_x(x,y) dS\\
@@ -121,7 +121,7 @@ so
 If the traction (applied pressure) is constant over the element, 
 then  
 \[
-\vec{F}=
+\vec{F}_{el}=
 t_x
 \left(
 \begin{array}{c}
@@ -159,85 +159,18 @@ where $h_y$ is the height of the element along the segment.
 
 
 
-
-Let us recall the elemental vector for the buoyancy term 
-${\bm B}_{\rho g}^{el}=\int_\Omega N \rho {\bm g}dV$:
+On the right boundary, we have $N_2=0$ and $N_3=0$, and since $t_y=0$ then 
+the corresponding additional elemental right hand side vector writes:
 \[
-{\bm B}_{el}^{\rho g}(r_q,s_q) =
-\left(
-\begin{array}{c}
-N_1(r_q,s_q) \rho(r_q,s_q) gx\\
-N_1(r_q,s_q) \rho(r_q,s_q) gy\\
-N_2(r_q,s_q) \rho(r_q,s_q) gx\\
-N_2(r_q,s_q) \rho(r_q,s_q) gy\\
-N_3(r_q,s_q) \rho(r_q,s_q) gx\\
-N_3(r_q,s_q) \rho(r_q,s_q) gy\\
-N_4(r_q,s_q) \rho(r_q,s_q) gx\\
-N_4(r_q,s_q) \rho(r_q,s_q) gy\\
-\end{array}
-\right)
-\omega_q |J|
-\] 
-It follows that the corresponding additional elemental right hand side vector writes
-for the left open boundary (note that here $r_q,s_q$ are taken on the 1-4 edge):
-\[
-{\bm B}^{\Gamma,left}_{el}(r_q,s_q) =
-h
-\left(
-\begin{array}{c}
-N_1(r_q,s_q) t_x(r_q,s_q) \\
-N_1(r_q,s_q) t_y(r_q,s_q) \\
-N_2(r_q,s_q) t_x(r_q,s_q) \\
-N_2(r_q,s_q) t_y(r_q,s_q) \\
-N_3(r_q,s_q) t_x(r_q,s_q) \\
-N_3(r_q,s_q) t_y(r_q,s_q) \\
-N_4(r_q,s_q) t_x(r_q,s_q) \\
-N_4(r_q,s_q) t_y(r_q,s_q) 
-\end{array}
-\right)
-=
-(y_4-y_1)
-\left(
-\begin{array}{c}
--p(r_q,s_q)/2 \\
-0\\
-0\\
-0\\
-0\\
-0\\
--p(r_q,s_q)/2 \\
-0
-\end{array}
-\right)
-\] 
-The function $p$ in this case is the pre-computed lithostatic pressure.
-
-And for the right boundary, the corresponding additional elemental right hand side vector writes:
-
-\[
-{\bm B}^{\Gamma,right}_{el} =
-h
-\left(
-\begin{array}{c}
-N_1(r_q,s_q) t_x(r_q,s_q) \\
-N_1(r_q,s_q) t_y(r_q,s_q) \\
-N_2(r_q,s_q) t_x(r_q,s_q) \\
-N_2(r_q,s_q) t_y(r_q,s_q) \\
-N_3(r_q,s_q) t_x(r_q,s_q) \\
-N_3(r_q,s_q) t_y(r_q,s_q) \\
-N_4(r_q,s_q) t_x(r_q,s_q) \\
-N_4(r_q,s_q) t_y(r_q,s_q) 
-\end{array}
-\right)
-=
-(y_3-y_2)
+\vec{F}_{el} =
+-\frac{t_x h_y}{2}
 \left(
 \begin{array}{c}
 0\\
 0\\
--p(r_q,s_q)/2 \\
+1 \\
 0\\
--p(r_q,s_q)/2 \\
+1 \\
 0\\
 0\\
 0
@@ -245,33 +178,307 @@ N_4(r_q,s_q) t_y(r_q,s_q)
 \right)
 \] 
 
+In the case where the traction is not constant over the edge, a numerical quadrature rule 
+must be employed to integrate $\int_\Gamma N_i t_x dS$.
 
-\[
-{\bm B}_{el} =
-{\bm B}_{el}^{\rho g} + 
-{\bm B}^{\Gamma,right}_{el} + 
-{\bm B}^{\Gamma,left}_{el} 
-\]
 
-\subsubsection{three-dimensional case}
+
+%....................................................................
+\subsubsection{Three-dimensional case - $Q_1 \times P_0$ elements}
+
+The right hand side is $ndof \times ndim = 8\times 3 = 24$ long. 
 
 \begin{center}
 \includegraphics[width=5.5cm]{images/openbc/drawing3D.png}
 \end{center}
 
-The face xleft is made of nodes 1,4,5,8, so we need 
-to add terms in $B_{el}(1,10,13,22)$. Its surface is 
-$S=(y_4-y_1)((z_5-z_1)+(z_8-z_4))/2$, and the lithostatic pressure 
-at its center is given by $p=(p_1+p_4+p_5+p_8)/4$.
+\begin{itemize}
+\item The face $r=-1$ is made of nodes 1,4,5,8, so $\vec{n}=(-1,0,0)$.
+Since $t_y=0$ and $t_z=0$ and $N_2=N_3=N_6=N_7$ on this face:
+{\tiny
+\[
+\vec{F}_{el}=
+\int_{\Gamma_{1458}} 
+\left(
+\begin{array}{c}
+N_1(x,y,z) t_x(x,y,z)\\
+N_1(x,y,z) t_y(x,y,z)\\
+N_1(x,y,z) t_z(x,y,z)\\
+N_2(x,y,z) t_x(x,y,z)\\
+N_2(x,y,z) t_y(x,y,z)\\
+N_2(x,y,z) t_z(x,y,z)\\
+N_3(x,y,z) t_x(x,y,z)\\
+N_3(x,y,z) t_y(x,y,z)\\
+N_3(x,y,z) t_z(x,y,z)\\
+N_4(x,y,z) t_x(x,y,z)\\
+N_4(x,y,z) t_y(x,y,z)\\
+N_4(x,y,z) t_z(x,y,z)\\
+N_5(x,y,z) t_x(x,y,z)\\
+N_5(x,y,z) t_y(x,y,z)\\
+N_5(x,y,z) t_z(x,y,z)\\
+N_6(x,y,z) t_x(x,y,z)\\
+N_6(x,y,z) t_y(x,y,z)\\
+N_6(x,y,z) t_z(x,y,z)\\
+N_7(x,y,z) t_x(x,y,z)\\
+N_7(x,y,z) t_y(x,y,z)\\
+N_7(x,y,z) t_z(x,y,z)\\
+N_8(x,y,z) t_x(x,y,z)\\
+N_8(x,y,z) t_y(x,y,z)\\
+N_8(x,y,z) t_z(x,y,z)
+\end{array}
+\right)
+\; dS
+=
+\int_{\Gamma_{1458}} 
+\left(
+\begin{array}{c}
+N_1(x,y,z) t_x\\
+0 \\
+0 \\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+N_4(x,y,z) t_x\\
+0\\
+0\\
+N_5(x,y,z) t_x\\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+N_8(x,y,z) t_x\\
+0 \\
+0
+\end{array}
+\right)
+\; dS
+=
+t_x
+\left(
+\begin{array}{c}
+\int_{\Gamma_{1458}} N_1(x,y,z) dS\\ 
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+\int_{\Gamma_{1458}} N_4(x,y,z) dS\\ 
+0\\
+0\\
+\int_{\Gamma_{1458}} N_5(x,y,z) dS\\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+\int_{\Gamma_{1458}}  N_8(x,y,z) dS\\
+0\\
+0
+\end{array}
+\right)
+=
+\frac{h_yh_y t_x}{4}
+\left(
+\begin{array}{c}
+1 \\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+1\\
+0\\
+0\\
+1\\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+0\\
+1\\
+0\\
+0
+\end{array}
+\right)
+\]
+}
 
-The face xright is made of nodes 2,3,6,7, so we need 
-to add terms in $B_{el}(4,7,16,19)$.
 
-The face yleft is made of nodes 1,2,5,6, so we need 
-to add terms in $B_{el}(2,5,14,17)$.
+\item
+The face $r=+1$ is made of nodes 2,3,6,7, so $\vec{n}=(1,0,0)$.
+so the non-zero terms are in positions $(4,7,16,19)$.
 
-The face xright is made of nodes 3,4,7,8, so we need 
-to add terms in $B_{el}(8,11,20,23)$.
+\item
+The face $s=-1$ is made of nodes 1,2,5,6, so $\vec{n}=(0,-1,0)$.
+so the non-zero terms are in positions $(2,5,14,17)$.
+
+\item
+The face $s=+1$ is made of nodes 3,4,7,8, so $\vec{n}=(0,+1,0)$.
+so the non-zero terms are in positions $(8,11,20,23)$.
+
+\end{itemize}
+
+
+%.................................................................
+\subsubsection{Two-dimensional case - $Q_2 \times Q_1$ elements}
+
+It is not fundamentally different, except that the element counts 9 nodes, 
+so the vector is 9x2=18 long. 
+
+The internal numbering of the nodes is as follows:
+\begin{verbatim}
+ velocity    pressure
+ 3---6---2   3-------2
+ |       |   |       |
+ 7   8   5   |       |
+ |       |   |       |
+ 0---4---1   0-------1
+\end{verbatim}
+
+On the left boundary nodes 0,3,7 are involved while on the right 
+boundary nodes 1,2,5 are.
+Assuming once again $t_x$ constant over the edge and $t_y=0$, we
+have on the left side:
+
+\[
+\vec{F}_{el}=
+\int_{\Gamma_{073}} 
+\left(
+\begin{array}{c}
+N_0(x,y) t_x(x,y)\\
+N_0(x,y) t_y(x,y)\\
+N_1(x,y) t_x(x,y)\\
+N_1(x,y) t_y(x,y)\\
+N_2(x,y) t_x(x,y)\\
+N_2(x,y) t_y(x,y)\\
+N_3(x,y) t_x(x,y)\\
+N_3(x,y) t_y(x,y)\\
+N_4(x,y) t_x(x,y)\\
+N_4(x,y) t_y(x,y)\\
+N_5(x,y) t_x(x,y)\\
+N_5(x,y) t_y(x,y)\\
+N_6(x,y) t_x(x,y)\\
+N_6(x,y) t_y(x,y)\\
+N_7(x,y) t_x(x,y)\\
+N_7(x,y) t_y(x,y)\\
+N_8(x,y) t_x(x,y)\\
+N_8(x,y) t_y(x,y)
+\end{array}
+\right)
+dS
+=
+t_x 
+\left(
+\begin{array}{c}
+\int_{\Gamma_{073}} N_0(x,y) dS\\
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+\int_{\Gamma_{073}} N_3(x,y) dS \\
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+\int_{\Gamma_{073}}  N_7(x,y) dS \\
+0 \\
+0 \\
+0
+\end{array}
+\right)
+=
+t_x  \frac{h_y}{2}
+\left(
+\begin{array}{c}
+\int_{-1}^{+1} N_0(r=-1,s) ds\\
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+\int_{-1}^{+1} N_3(r=-1,s) ds \\
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+\int_{-1}^{+1}  N_7(r=-1,s) ds \\
+0 \\
+0 \\
+0
+\end{array}
+\right)
+\]
+We then compute
+\begin{eqnarray}
+\int_{-1}^{+1} N_0(r=-1,s) ds 
+&=& \int_{-1}^{+1} \frac{1}{2}s(s-1) ds = \frac{1}{3} \\
+\int_{-1}^{+1} N_3(r=-1,s) ds 
+&=& \int_{-1}^{+1} \frac{1}{2}s(s+1) ds = \frac{1}{3} \\
+\int_{-1}^{+1} N_7(r=-1,s) ds 
+&=& \int_{-1}^{+1} (1-s^2) ds = \frac{4}{3} 
+\end{eqnarray}
+Note that the sum of the three terms is 2, as expected: on the edge
+we have $N_0+N_3+N_7 =1$ so that the integral of the sum over the 
+interval [-1,1] yields 2. Finally 
+\[
+\vec{F}_{el}
+=
+\frac{t_x  h_y}{6}
+\left(
+\begin{array}{c}
+1 \\
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+1 \\
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+0 \\
+4 \\
+0 \\
+0 \\
+0
+\end{array}
+\right)
+\]
+This is implemented in fieldstone 61.
+
+
+
+
+
 
 %\begin{center}
 %\includegraphics[width=4cm]{FEM/openbc/openbc1.png}
