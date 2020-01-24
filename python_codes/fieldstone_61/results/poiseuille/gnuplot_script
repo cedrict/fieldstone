@@ -1,0 +1,12 @@
+set term pdf enhanced font "Times,10pt"
+set grid
+set xlabel 'y'
+
+set output 'velocity.pdf'
+plot[][]\
+'velocity.ascii' u 2:3 w lp,\
+0.5*(-1e4)/1e25*(x**2-x*1e5) lt -1 t 'analytical'
+
+set output 'exy.pdf'
+plot[][]\
+'sr_avrg.ascii' u 2:5 , 0.5*(-1e4)/1e25*(x-1e5/2) lt -1 t 'analytical' 
