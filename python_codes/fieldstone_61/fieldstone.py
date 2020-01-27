@@ -10,21 +10,60 @@ from scipy.sparse import lil_matrix
 from numpy import linalg as LA
 
 #------------------------------------------------------------------------------
+  
+Lx=1e5 
+Ly=1e5  
+p_left=1e9
+p_right=0.
+Pi=(p_right-p_left)/Lx
+Pi2=Pi/2.
+nnn=1
+eta0=1e25 
+eps0=1e-17
+tau0=9e7
+K=(eta0*eps0-tau0)/eps0**nnn
+delta=2*eps0*eta0/abs(Pi)
+y1=0.5*Ly-delta
+y2=0.5*Ly+delta
 
-def viscosity(exx,eyy,exy,pq,tau0,iter,x,y):
-    val=1e25
-    #if benchmark==1: # pure brick
-    #   if iter==0:
-    #      e2=1e-15
-    #   else:
-    #      e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
-    #   #end if
-    #   Y=pq*np.sin(phi)+c*np.cos(phi)
-    #   val=Y/(2.*e2)
-    #   #print (iter,val)
-    #   val=min(1.e25,val)
-    #   val=max(1.e20,val)
-    #end if
+#------------------------------------------------------------------------------
+
+def viscosity(exx,eyy,exy):
+    if nnn==0:
+       val=1e25
+    if nnn==1:
+       ee=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
+       if ee<eps0:
+          val=1e25
+       else:
+          val=K+tau0/ee
+       #end if
+       #print (iter,val)
+    return val
+
+def velocity_th(x,y):
+    u1=2.*nnn/(nnn+1)*K/Pi2*(( Pi2/K*(y-y1)+ eps0**nnn)**(1.+1./nnn) - (-Pi2/K*y1 + eps0**nnn )**(1.+1./nnn) )
+    u2=Pi2/eta0*(y**2-y*Ly)+2.*nnn/(nnn+1)*K/Pi2*( eps0**(nnn+1)-(eps0**nnn-Pi2/K*y1)**(1+1./nnn) ) \
+      - Pi2/eta0*y1*(y1-Ly)
+    u3=2.*nnn/(nnn+1)*K/Pi2*( (-Pi2/K*(y-y2)+ eps0**nnn )**(1.+1./nnn)- (-Pi2/K*(Ly-y2)+eps0**nnn )**(1.+1./nnn) )
+    if y<y1:
+       val=u1
+    elif y<y2: 
+       val=u2
+    else:
+       val=u3
+    return val
+
+def exy_th(x,y):
+    exy1=(Pi2/K*(y-y1)+ eps0**nnn )**(1./nnn)
+    exy2=0.5*Pi/eta0*(y-Ly/2.)
+    exy3=-(-Pi2/K*(y-y2)+ eps0**nnn ) **(1./nnn)
+    if y<y1:
+       val=exy1
+    elif y<y2: 
+       val=exy2
+    else:
+       val=exy3
     return val
 
 #------------------------------------------------------------------------------
@@ -94,13 +133,10 @@ if int(len(sys.argv) == 6):
    solver = int(sys.argv[4])
    benchmark = int(sys.argv[5])
 else:
-   nelx = 20
-   nely = 20
+   nelx = 16
+   nely = 64
    visu = 1
    solver = 2 
-
-Lx=1e5 
-Ly=1e5  
 
 gx=0.
 gy=0.
@@ -121,15 +157,6 @@ qweights=[5./9.,8./9.,5./9.]
 hx=Lx/nelx
 hy=Ly/nely
 
-nnn=1
-eta0=1e25 
-eps0=1e-17
-tau0=9e7
-
-p_left=1e9
-p_right=0.
-Pi=(p_right-p_left)/Lx
-
 rel_tol_nl=1e-6
 abs_tol_nl=1e-10
 
@@ -141,12 +168,11 @@ if solver==1:
 else:
    use_SchurComplementApproach=False
 
-
 eta_ref=1.e25      # scaling of G blocks
 scaling_coeff=eta_ref/Ly
 
 niter_min=0
-niter=5
+niter=50
 
 if use_SchurComplementApproach:
    ls_conv_file=open("linear_solver_convergence.ascii","w")
@@ -173,6 +199,7 @@ print("sparse",sparse)
 print("hx",hx)
 print("hy",hy)
 print("Pi",Pi)
+#print("K",K)
 print("------------------------------")
 
 #################################################################
@@ -191,8 +218,6 @@ for j in range(0, nny):
         counter += 1
     #end for
 #end for
-
-#np.savetxt('grid.ascii',np.array([xV,yV]).T,header='# x,y')
 
 print("setup: grid points: %.3f s" % (timing.time() - start))
 
@@ -262,6 +287,7 @@ for i in range(0,NV):
     if yV[i]/Ly>1-eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0# 1e-9 
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+#end for
 
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -350,6 +376,7 @@ for iter in range(0,niter):
                    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
                    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
                    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+               #end for
                jcob = np.linalg.det(jcb)
                jcbi = np.linalg.inv(jcb)
 
@@ -365,20 +392,22 @@ for iter in range(0,niter):
                    exxq+=dNNNVdx[k]*u[iconV[k,iel]]
                    eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
                    exyq+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
+               #end for
                 
                # compute pressure
                for k in range(0,mP):
                    pq[counter]+=NNNP[k]*p[iconP[k,iel]]
+               #end for
 
                # construct 3x8 b_mat matrix
                for i in range(0,mV):
                    b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.       ],
                                             [0.        ,dNNNVdy[i]],
                                             [dNNNVdy[i],dNNNVdx[i]]]
+               #end for
 
                # compute effective plastic viscosity
-               etaq[counter]=viscosity(exxq,eyyq,exyq,pq[counter],tau0,\
-                                                   iter,xq[counter],yq[counter])
+               etaq[counter]=viscosity(exxq,eyyq,exyq)
                srq[counter]=np.sqrt(0.5*(exxq*exxq+eyyq*eyyq)+exyq*exyq)
 
                # compute elemental a_mat matrix
@@ -388,12 +417,13 @@ for iter in range(0,niter):
                for i in range(0,mV):
                    f_el[ndofV*i+0]+=NNNV[i]*jcob*weightq*gx*rho
                    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy*rho
-
+               #end for
 
                for i in range(0,mP):
                    N_mat[0,i]=NNNP[i]
                    N_mat[1,i]=NNNP[i]
                    N_mat[2,i]=0.
+               #end for
 
                G_el-=b_mat.T.dot(N_mat)*weightq*jcob
 
@@ -627,6 +657,7 @@ for iter in range(0,niter):
        q[iconV[7,iel]]=(p[iconP[3,iel]]+p[iconP[0,iel]])*0.5
        q[iconV[8,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]]+\
                         p[iconP[2,iel]]+p[iconP[3,iel]])*0.25
+   #end for
 
    for iel in range(0,nel):
        Res_q[iconV[0,iel]]=Res_p[iconP[0,iel]]
@@ -639,8 +670,7 @@ for iter in range(0,niter):
        Res_q[iconV[7,iel]]=(Res_p[iconP[3,iel]]+Res_p[iconP[0,iel]])*0.5
        Res_q[iconV[8,iel]]=(Res_p[iconP[0,iel]]+Res_p[iconP[1,iel]]+\
                             Res_p[iconP[2,iel]]+Res_p[iconP[3,iel]])*0.25
-
-   #np.savetxt('q_{:04d}.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
+   #end for
 
    print("project p(Q1) onto vel(Q2) nodes: %.3f s" % (timing.time() - start))
 
@@ -673,12 +703,14 @@ for iter in range(0,niter):
            jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
            jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
            jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+       #end for
        jcob=np.linalg.det(jcb)
        jcbi=np.linalg.inv(jcb)
 
        for k in range(0,mV):
            dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
            dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+       #end for
 
        for k in range(0,mV):
            xc[iel] += NNNV[k]*xV[iconV[k,iel]]
@@ -686,11 +718,15 @@ for iter in range(0,niter):
            exx[iel] += dNNNVdx[k]*u[iconV[k,iel]]
            eyy[iel] += dNNNVdy[k]*v[iconV[k,iel]]
            exy[iel] += 0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
+       #end for
 
        sr[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
 
        for k in range(0,mP):
            pc[iel] += NNNP[k]*p[iconP[k,iel]]
+       #end for
+
+   #end for
 
    print("     -> exx (m,M) %.5e %.5e " %(np.min(exx),np.max(exx)))
    print("     -> eyy (m,M) %.5e %.5e " %(np.min(eyy),np.max(eyy)))
@@ -902,7 +938,6 @@ print("     -> sr_avrg  (m,M) %.6e %.6e " %(np.min(sr_avrg),np.max(sr_avrg)))
 
 print("compute avrg elemental strain rate: %.3f s" % (timing.time() - start))
 
-np.savetxt('sr_avrg.ascii',np.array([xc,yc,exx_avrg,eyy_avrg,exy_avrg]).T,header='# xc,yc,exx,eyy,exy')
 
 #####################################################################
 # plot of solution
@@ -962,13 +997,13 @@ vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
 for iel in range (0,nel):
-    eta= viscosity(exx[iel],eyy[iel],exy[iel],pc[iel],tau0,iter,xc[iel],yc[iel])
+    eta= viscosity(exx[iel],eyy[iel],exy[iel])
     vtufile.write("%10e\n" %eta) 
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='viscosity (log)' Format='ascii'> \n")
 for iel in range (0,nel):
-    eta= viscosity(exx[iel],eyy[iel],exy[iel],pc[iel],tau0,iter,xc[iel],yc[iel])
+    eta= viscosity(exx[iel],eyy[iel],exy[iel])
     vtufile.write("%10e\n" %(np.log10(eta))) 
 vtufile.write("</DataArray>\n")
 #--
@@ -985,6 +1020,13 @@ vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (
 for i in range(0,NV):
     vtufile.write("%10e %10e %10e \n" %(u[i]*year,v[i]*year,0.))
 vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (analytical)' Format='ascii'> \n")
+for i in range(0,NV):
+    vtufile.write("%10e %10e %10e \n" %(0.,velocity_th(xV[i],yV[i]),0.))
+vtufile.write("</DataArray>\n")
+
+
 #--
 vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
 for i in range(0,NV):
@@ -1020,6 +1062,15 @@ vtufile.write("<DataArray type='Float32' Name='exyn' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%.5e \n" %exyn[i])
 vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='exy (analytical)' Format='ascii'> \n")
+for i in range(0,NV):
+    vtufile.write("%.5e \n" % exy_th(xV[i],yV[i]))
+vtufile.write("</DataArray>\n")
+
+
+
+
 #--
 vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
 for i in range(0,NV):
@@ -1060,7 +1111,21 @@ vtufile.close()
 
 np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,p')
 np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+np.savetxt('etaq.ascii',np.array([xq,yq,etaq]).T,header='# x,y,eta')
+np.savetxt('pq.ascii',np.array([xq,yq,pq]).T,header='# x,y,p')
+np.savetxt('sr.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+np.savetxt('sr_avrg.ascii',np.array([xc,yc,exx_avrg,eyy_avrg,exy_avrg]).T,header='# xc,yc,exx,eyy,exy')
+np.savetxt('srq.ascii',np.array([xq,yq,srq]).T,header='# x,y,sr')
 
+sol_file=open("velocity_th.ascii","w")
+for i in range(0,NV):
+    sol_file.write("%10e %10e %10e %10e \n" %(xV[i],yV[i],velocity_th(xV[i],yV[i]),0.))
+sol_file.close()
+
+sol_file=open("exy_th.ascii","w")
+for i in range(0,NV):
+    sol_file.write("%10e %10e %10e \n" %(xV[i],yV[i],exy_th(xV[i],yV[i])))
+sol_file.close()
 
 print("-----------------------------")
 print("------------the end----------")

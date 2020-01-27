@@ -717,7 +717,7 @@ Note that using the bottom boundary with $\vec{n}=(0,-1)$ yields the same result
 
 \newpage
 %-----------------------------------------------------------------------------
-\subsubsection{Channel flow with Herschel-Bulkley rheology}
+\subsubsection{Channel flow with Herschel-Bulkley rheology \label{ss:HBflow}}
 
 We start from the following formulation for the Herschel-Bulkley rheology:
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -813,39 +813,39 @@ We solve Eq.~\eqref{eq:hb1} again, this time with the non-linear formulation of 
 &=&2 \frac{\partial }{\partial y} \left[  
 \left( K  \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e}  
 \right) \frac{1}{2}\frac{\partial u}{\partial y} \right] \nn\\
-&=&\frac{\partial }{\partial y} \left[  
+&=&2\frac{\partial }{\partial y} \left[  
 \left( K \left|\frac{1}{2}\frac{\partial u}{\partial y}\right|^{n-1} 
 + \tau_0 \left|\frac{1}{2}\frac{\partial u}{\partial y}\right|^{-1} 
 \right) \frac{1}{2}\frac{\partial u}{\partial y} \right]  \nn\\
-&=&  \frac{\partial }{\partial y} \left[  
+&=& 2 \frac{\partial }{\partial y} \left[  
 K \left(\frac{1}{2}\frac{\partial u}{\partial y}\right)^{n} + \tau_0 \right] 
 \end{eqnarray}
 We then must solve:
 \[
 \frac{\partial }{\partial y} \left[  
 K \left(\frac{1}{2}\frac{\partial u}{\partial y}\right)^{n} + \tau_0 \right] 
-= \Pi
+= \frac{\Pi}{2}
 \]
 \[
-K \left(\frac{1}{2}\frac{\partial u}{\partial y}\right)^{n} + \tau_0  = \Pi y +c
+K \left(\frac{1}{2}\frac{\partial u}{\partial y}\right)^{n} + \tau_0  = \frac{\Pi}{2} y +c
 \]
 \[
-\left(\frac{1}{2}\frac{\partial u}{\partial y}\right)^{n}   = \frac{1}{K} ( \Pi y +c -\tau_0 )
+\left(\frac{1}{2}\frac{\partial u}{\partial y}\right)^{n}   = \frac{1}{K} ( \frac{\Pi}{2} y +c -\tau_0 )
 \]
 or, 
 \[
 \boxed{
 \dot{\varepsilon}_{xy}|_{bot}=
-\frac{1}{2}\frac{\partial u}{\partial y}  = \left( \frac{1}{K} ( \Pi y +c -\tau_0 ) \right)^{1/n}
+\frac{1}{2}\frac{\partial u}{\partial y}  = \left( \frac{1}{K} ( \Pi_2 y +c -\tau_0 ) \right)^{1/n}
 }
 \]
 so 
 \[
 \boxed{
-u(y)|_{bot} = 2 \frac{n}{n+1} \frac{K}{\Pi} \left( \frac{1}{K} ( \Pi y +c -\tau_0 ) \right)^{1+1/n} + d
+u(y)|_{bot} = 2 \frac{n}{n+1} \frac{K}{\Pi_2} \left( \frac{1}{K} ( \Pi_2 y +c -\tau_0 ) \right)^{1+1/n} + d
 }
 \]
-
+where $\Pi_2=\Pi/2$
 
 %..............................
 \item Near the top wall, with $\frac{\partial u}{\partial y}<0$ so that 
@@ -857,39 +857,39 @@ and $\dot{\varepsilon}_e\geq \dot{\varepsilon}_0$. We solve yet again Eq.~\eqref
 &=&2 \frac{\partial }{\partial y} \left[  
 \left( K  \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e}  
 \right) \frac{1}{2}\frac{\partial u}{\partial y} \right] \nn\\
-&=&\frac{\partial }{\partial y} \left[  
+&=&2\frac{\partial }{\partial y} \left[  
 \left( K \left|\frac{1}{2}\frac{\partial u}{\partial y}\right|^{n-1} 
 + \tau_0 \left|\frac{1}{2}\frac{\partial u}{\partial y}\right|^{-1} 
 \right) \frac{1}{2}\frac{\partial u}{\partial y} \right]  \nn\\
-&=&-\frac{\partial }{\partial y} \left[  
+&=&-2\frac{\partial }{\partial y} \left[  
 \left( K \left( - \frac{1}{2}\frac{\partial u}{\partial y}\right)^{n-1} 
 + \tau_0 \left( -\frac{1}{2}\frac{\partial u}{\partial y}\right)^{-1} 
 \right) \left(-\frac{1}{2}\frac{\partial u}{\partial y}\right) \right]  \nn\\
-&=& -\frac{\partial }{\partial y} \left[   
+&=& -2\frac{\partial }{\partial y} \left[   
 K \left(-\frac{1}{2}\frac{\partial u}{\partial y}\right)^{n} + \tau_0 \right] 
 \end{eqnarray}
 We then must solve:
 \[
 -\frac{\partial }{\partial y} \left[ 
 K \left(-\frac{1}{2}\frac{\partial u}{\partial y}\right)^{n} + \tau_0 \right] 
-= \Pi
+= \frac{\Pi}{2}
 \]
 \[
-K \left(-\frac{1}{2}\frac{\partial u}{\partial y}\right)^{n} + \tau_0 = - \Pi y + e
+K \left(-\frac{1}{2}\frac{\partial u}{\partial y}\right)^{n} + \tau_0 = - \frac{\Pi}{2} y + e
 \]
 \[
- \left(-\frac{1}{2}\frac{\partial u}{\partial y}\right)^{n}  = \frac{1}{K} (-\Pi y + e - \tau_0)
+ \left(-\frac{1}{2}\frac{\partial u}{\partial y}\right)^{n}  = \frac{1}{K} (-\frac{\Pi}{2} y + e - \tau_0)
 \]
 which yields
 \[
 \boxed{
 \dot{\varepsilon}_{xy}|_{top}
-=  - \left( \frac{1}{K} (- \Pi y +e - \tau_0 ) \right)^{1/n}
+=  - \left( \frac{1}{K} (- \Pi_2 y +e - \tau_0 ) \right)^{1/n}
 }
 \]
 \[
 \boxed{
-u(y)|_{top} = 2 \frac{n}{n+1} \frac{K}{\Pi} \left( \frac{1}{K} ( -\Pi y +e -\tau_0 ) \right)^{1+1/n} + f
+u(y)|_{top} = 2 \frac{n}{n+1} \frac{K}{\Pi_2} \left( \frac{1}{K} ( -\Pi_2 y +e -\tau_0 ) \right)^{1+1/n} + f
 }
 \]
 
@@ -946,6 +946,7 @@ at $y_1$ and $y_2$ are the opposite of one another. It then follows:
 u(y)|_{mid} 
 = \frac{1}{2}\frac{\Pi}{\eta_0} y^2  -2\frac{1}{4} \frac{\Pi}{\eta_0} H y + b
 = \frac{1}{2}\frac{\Pi}{\eta_0} (y^2  -  y H) + b
+= \frac{\Pi_2}{\eta_0} (y^2  -  y H) + b
 }
 \]
 and 
@@ -954,6 +955,7 @@ and
 \dot{\varepsilon}_{xy}|_{mid}
 = \frac{1}{2} \frac{\Pi}{\eta_0}y  -\frac{1}{4} \frac{\Pi}{\eta_0} H
 = \frac{1}{2} \frac{\Pi}{\eta_0} (y  -\frac{H}{2} )
+=  \frac{\Pi_2}{\eta_0} (y  -\frac{H}{2} )
 }
 \]
 Because of the parabola-like flow profile, we expect the strain rate 
@@ -963,17 +965,17 @@ negative for $H/2<y<z_2$, which is indeed what we recover ($\Pi<0$).
 %......................................................
 \paragraph{Using bottom boundary condition to obtain $d$}
 \[
-u(y=0)|_{bot} = 2 \frac{n}{n+1} \frac{K}{\Pi} \left( \frac{1}{K} ( c -\tau_0 ) \right)^{1+1/n} + d = 0
+u(y=0)|_{bot} = 2 \frac{n}{n+1} \frac{K}{\Pi_2} \left( \frac{1}{K} ( c -\tau_0 ) \right)^{1+1/n} + d = 0
 \]
 so 
 \[
-d = -2 \frac{n}{n+1} \frac{K}{\Pi} \left( \frac{1}{K} ( c -\tau_0 ) \right)^{1+1/n} 
+d = -2 \frac{n}{n+1} \frac{K}{\Pi_2} \left( \frac{1}{K} ( c -\tau_0 ) \right)^{1+1/n} 
 \]
 and then
 \[
 \boxed{
 u(y)|_{bot} = 
-2 \frac{n}{n+1} \frac{K}{\Pi} \left[ \left( \frac{1}{K} ( \Pi y +c -\tau_0 ) \right)^{1+1/n} 
+2 \frac{n}{n+1} \frac{K}{\Pi_2} \left[ \left( \frac{1}{K} ( \Pi y +c -\tau_0 ) \right)^{1+1/n} 
 - \left( \frac{1}{K} ( c -\tau_0 ) \right)^{1+1/n} \right]
 }
 \]
@@ -982,19 +984,19 @@ u(y)|_{bot} =
 %......................................................
 \paragraph{Using top boundary condition to obtain $f$}
 \[
-u(y=H)|_{top} = 2 \frac{n}{n+1} \frac{K}{\Pi} \left( \frac{1}{K} ( -\Pi H +e -\tau_0 ) \right)^{1+1/n} + f =0
+u(y=H)|_{top} = 2 \frac{n}{n+1} \frac{K}{\Pi_2} \left( \frac{1}{K} ( -\Pi_2 H +e -\tau_0 ) \right)^{1+1/n} + f =0
 \]
 so 
 \[
-f= -2 \frac{n}{n+1} \frac{K}{\Pi} \left( \frac{1}{K} ( -\Pi H +e -\tau_0 ) \right)^{1+1/n} 
+f= -2 \frac{n}{n+1} \frac{K}{\Pi_2} \left( \frac{1}{K} ( -\Pi_2 H +e -\tau_0 ) \right)^{1+1/n} 
 \]
 and then
 \[
 \boxed{
-u(y)|_{top} = 2 \frac{n}{n+1} \frac{K}{\Pi}
+u(y)|_{top} = 2 \frac{n}{n+1} \frac{K}{\Pi_2}
 \left[
-\left( \frac{1}{K} ( -\Pi y +e -\tau_0 ) \right)^{1+1/n} - 
-\left( \frac{1}{K} ( -\Pi H +e -\tau_0 ) \right)^{1+1/n} \right]
+\left( \frac{1}{K} ( -\Pi_2 y +e -\tau_0 ) \right)^{1+1/n} - 
+\left( \frac{1}{K} ( -\Pi_2 H +e -\tau_0 ) \right)^{1+1/n} \right]
 }
 \]
 
@@ -1031,21 +1033,21 @@ and we will use throughout what follows:
 %......................................................
 \paragraph{Using strain rate continuity at $y_1$ to compute $c$}
 \[
-\left( \frac{1}{K} ( \Pi y_1 +c -\tau_0 ) \right)^{1/n}
+\left( \frac{1}{K} ( \Pi_2 y_1 +c -\tau_0 ) \right)^{1/n}
 = \frac{1}{2} \frac{\Pi}{\eta_0} \left(y_1  -\frac{H}{2} \right)
 =- \frac{1}{2} \frac{\Pi}{\eta_0} \delta
 \]
 \[
- \Pi y_1 +c -\tau_0 
+ \Pi_2 y_1 +c -\tau_0 
 = K\left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n}
 \]
 \[
-c = K\left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n} + \tau_0 -\Pi y_1
+c = K\left( - \frac{1}{2} \frac{\Pi}{\eta_0} \delta\right)^{n} + \tau_0 -\Pi_2 y_1
 \]
 
 \[
 \boxed{
-c = K \dot{\varepsilon}_0^{n} + \tau_0 -\Pi y_1
+c = K \dot{\varepsilon}_0^{n} + \tau_0 -\Pi_2 y_1
 }
 \]
 
@@ -1055,23 +1057,22 @@ c = K \dot{\varepsilon}_0^{n} + \tau_0 -\Pi y_1
 \begin{eqnarray}
 u(y)|_{bot} 
 &=& 
-2 \frac{n}{n+1} \frac{K}{\Pi} \left[ \left( \frac{1}{K} ( \Pi y +c -\tau_0 ) \right)^{1/n+ 1 } 
+2 \frac{n}{n+1} \frac{K}{\Pi_2} \left[ \left( \frac{1}{K} ( \Pi_2 y +c -\tau_0 ) \right)^{1/n+ 1 } 
 - \left( \frac{1}{K} ( c -\tau_0 ) \right)^{1/n+ 1 } \right]
 \nn\\
-&=& 
-2 \frac{n}{n+1} \frac{K}{\Pi} 
-\left[ \left( \frac{1}{K} ( \Pi (y-y_1) +K \dot{\varepsilon}_0^{n}   ) \right)^{1/n+ 1 } 
+&=& 2 \frac{n}{n+1} \frac{K}{\Pi_2} 
+\left[ \left( \frac{1}{K} ( \Pi_2 (y-y_1) +K \dot{\varepsilon}_0^{n}   ) \right)^{1/n+ 1 } 
 - \left( \frac{1}{K} (  K  
-\dot{\varepsilon}_0^{n}  -\Pi y_1    ) \right)^{1/n+ 1 } \right]
+\dot{\varepsilon}_0^{n}  -\Pi_2 y_1    ) \right)^{1/n+ 1 } \right]
 \nn\\
 &=& 
-2 \frac{n}{n+1} \frac{K}{\Pi} \left[ \left( \frac{\Pi}{K} (y-y_1) 
+2 \frac{n}{n+1} \frac{K}{\Pi_2} \left[ \left( \frac{\Pi_2}{K} (y-y_1) 
 + \dot{\varepsilon}_0^{n}    \right)^{1/n+ 1 } 
-- \left(  \dot{\varepsilon}_0^{n}  - \frac{\Pi}{K}y_1     \right)^{1/n+ 1 } \right]
+- \left(  \dot{\varepsilon}_0^{n}  - \frac{\Pi_2}{K}y_1     \right)^{1/n+ 1 } \right]
 \nn\\
 \dot{\varepsilon}_{xy}|_{bot}
-&=& \left( \frac{1}{K} ( \Pi y +c -\tau_0 ) \right)^{1/n} \nn\\
-&=& \left( \frac{\Pi}{K} (y-y_1) + \dot{\varepsilon}_0^{n}   \right)^{1/n} \nn
+&=& \left( \frac{1}{K} ( \Pi_2 y +c -\tau_0 ) \right)^{1/n} \nn\\
+&=& \left( \frac{\Pi_2}{K} (y-y_1) + \dot{\varepsilon}_0^{n}   \right)^{1/n} \nn
 \end{eqnarray}
 
 
@@ -1079,39 +1080,37 @@ u(y)|_{bot}
 %......................................................
 \paragraph{Using strain rate continuity at $y_2$ to compute $e$}
 \[
--\left( \frac{1}{K} ( -\Pi y_2 +e -\tau_0 ) \right)^{1/n}
+-\left( \frac{1}{K} ( -\Pi_2 y_2 +e -\tau_0 ) \right)^{1/n}
 = \frac{1}{2} \frac{\Pi}{\eta_0} \left(y_2  -\frac{H}{2} \right)
 = \frac{1}{2} \frac{\Pi}{\eta_0} \delta  
 \]
 \[
--\Pi y_2 +e -\tau_0 
+-\Pi_2 y_2 +e -\tau_0 
 = K\left(-\frac{1}{2} \frac{\Pi}{\eta_0} \delta  \right)^{n} 
 \]
 \[
-e = K\left(-\frac{1}{2} \frac{\Pi}{\eta_0} \delta  \right)^{n} + \tau_0 + \Pi y_2 
+e = K\left(-\frac{1}{2} \frac{\Pi}{\eta_0} \delta  \right)^{n} + \tau_0 + \Pi_2 y_2 
 \]
 \[
 \boxed{
-e = K \dot{\varepsilon}_0^n + \tau_0 + \Pi y_2 
+e = K \dot{\varepsilon}_0^n + \tau_0 + \Pi_2 y_2 
 }
 \]
 
-
-
 \begin{eqnarray}
-u(y)|_{top} &=& 2 \frac{n}{n+1} \frac{K}{\Pi}
+u(y)|_{top} &=& 2 \frac{n}{n+1} \frac{K}{\Pi_2}
 \left[
-\left( \frac{1}{K} ( -\Pi y +e -\tau_0 ) \right)^{1/n+ 1 } - 
-\left( \frac{1}{K} ( -\Pi H +e -\tau_0 ) \right)^{1/n+ 1 } \right] \nn\\
-&=& 2 \frac{n}{n+1} \frac{K}{\Pi}
+\left( \frac{1}{K} ( -\Pi_2 y +e -\tau_0 ) \right)^{1/n+ 1 } - 
+\left( \frac{1}{K} ( -\Pi_2 H +e -\tau_0 ) \right)^{1/n+ 1 } \right] \nn\\
+&=& 2 \frac{n}{n+1} \frac{K}{\Pi_2}
 \left[
-\left( -\frac{\Pi}{K}(y-y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } - 
-\left( -\frac{\Pi}{K}(H-y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } 
+\left( -\frac{\Pi_2}{K}(y-y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } - 
+\left( -\frac{\Pi_2}{K}(H-y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } 
 \right]
 \nn\\
 \dot{\varepsilon}_{xy}|_{top}
-&=&  - \left( \frac{1}{K} (- \Pi y +e - \tau_0 ) \right)^{1/n} \nn\\
-&=&  - \left( - \frac{\Pi}{K} (y-y_2) +  \dot{\varepsilon}_0^{n} \right)^{1/n} \nn
+&=&  - \left( \frac{1}{K} (- \Pi_2 y +e - \tau_0 ) \right)^{1/n} \nn\\
+&=&  - \left( - \frac{\Pi_2}{K} (y-y_2) +  \dot{\varepsilon}_0^{n} \right)^{1/n} \nn
 \end{eqnarray}
 
 %......................................................
@@ -1119,50 +1118,50 @@ u(y)|_{top} &=& 2 \frac{n}{n+1} \frac{K}{\Pi}
 We use $u(y_1)|_{bot}=u(y_1)|_{mid}$: 
 
 \[
-2 \frac{n}{n+1} \frac{K}{\Pi} \left[ \left( \frac{\Pi}{K} (y_1-y_1) 
+2 \frac{n}{n+1} \frac{K}{\Pi_2} \left[ \left( \frac{\Pi_2}{K} (y_1-y_1) 
 + \dot{\varepsilon}_0^{n}    \right)^{1/n+ 1 } 
-- \left( \dot{\varepsilon}_0^{n}  - \frac{\Pi}{K}y_1     \right)^{1/n+ 1 } \right]
+- \left( \dot{\varepsilon}_0^{n}  - \frac{\Pi_2}{K}y_1     \right)^{1/n+ 1 } \right]
 =
-\frac{1}{2}\frac{\Pi}{\eta_0} (y_1^2  -  y_1 H) + b
+\frac{\Pi_2}{\eta_0} (y_1^2  -  y_1 H) + b
 \]
 
 \[
-2 \frac{n}{n+1} \frac{K}{\Pi} \left[ 
+2 \frac{n}{n+1} \frac{K}{\Pi_2} \left[ 
 \dot{\varepsilon}_0^{n+ 1} 
-- \left( \dot{\varepsilon}_0^{n}  - \frac{\Pi}{K}y_1  \right)^{1/n+ 1 } \right]
+- \left( \dot{\varepsilon}_0^{n}  - \frac{\Pi_2}{K}y_1  \right)^{1/n+ 1 } \right]
 =
-\frac{1}{2}\frac{\Pi}{\eta_0} y_1 (y_1  - H) + b
+\frac{\Pi_2}{\eta_0} y_1 (y_1  - H) + b
 \]
 so 
 \[
 b= 
-2 \frac{n}{n+1} \frac{K}{\Pi} \left[ 
+2 \frac{n}{n+1} \frac{K}{\Pi_2} \left[ 
 \dot{\varepsilon}_0^{n+ 1} 
-- \left( \dot{\varepsilon}_0^{n}  - \frac{\Pi}{K}y_1  \right)^{1/n+ 1 } \right]
-- \frac{1}{2}\frac{\Pi}{\eta_0} y_1 (y_1  - H) 
+- \left( \dot{\varepsilon}_0^{n}  - \frac{\Pi_2}{K}y_1  \right)^{1/n+ 1 } \right]
+- \frac{\Pi_2}{\eta_0} y_1 (y_1  - H) 
 \]
 
-%............................................................
-\paragraph{Using velocity continuity to compute $b$ - AGAIN} 
+%..............................................................
+\paragraph{Using velocity continuity to compute $b$ (again?)} 
 This time we use $u(y_2)|_{top}=u(y_2)|_{mid}$: 
 
 \[
-2 \frac{n}{n+1} \frac{K}{\Pi}
+2 \frac{n}{n+1} \frac{K}{\Pi_2}
 \left[
-\left( -\frac{\Pi}{K}(y_2-y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } - 
-\left( -\frac{\Pi}{K}(H-y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } 
+\left( -\frac{\Pi_2}{K}(y_2-y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } - 
+\left( -\frac{\Pi_2}{K}(H-y_2)+ \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } 
 \right]
-= \frac{1}{2}\frac{\Pi}{\eta_0} (y_2^2  -  y_2 H) + b
+= \frac{\Pi_2}{\eta_0} (y_2^2  -  y_2 H) + b
 \]
 
 \[
-2 \frac{n}{n+1} \frac{K}{\Pi}
+2 \frac{n}{n+1} \frac{K}{\Pi_2}
 \left[
 \dot{\varepsilon}_0^{n+1}  - 
-\left( -\frac{\Pi}{K}(H-y_2)+   \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } 
+\left( -\frac{\Pi_2}{K}(H-y_2)+   \dot{\varepsilon}_0^{n}  \right)^{1/n+ 1 } 
 \right]
 =
-\frac{1}{2}\frac{\Pi}{\eta_0} (y_2^2  -  y_2 H) + b
+\frac{\Pi_2}{\eta_0} (y_2^2  -  y_2 H) + b
 \]
 and since $H-y_2 = H- H/2 - \delta = H/2 -\delta = y_1$ and
 \[
@@ -1180,29 +1179,29 @@ To summarize:
 \begin{eqnarray}
 u(y)|_{bot} 
 &=& 
-2 \frac{n}{n+1} \frac{K}{\Pi} \left[ \left( \frac{\Pi}{K} (y-y_1) +  \dot{\varepsilon}_0^{n}    \right)^{1/n+ 1 } 
-- \left(   \dot{\varepsilon}_0^{n}  - \frac{\Pi}{K}y_1     \right)^{1/n+ 1 } \right]
+2 \frac{n}{n+1} \frac{K}{\Pi_2} \left[ \left( \frac{\Pi_2}{K} (y-y_1) +  \dot{\varepsilon}_0^{n}    \right)^{1/n+ 1 } 
+- \left(   \dot{\varepsilon}_0^{n}  - \frac{\Pi_2}{K}y_1     \right)^{1/n+ 1 } \right]
 \nn\\
 u(y)|_{mid} 
-&=& \frac{1}{2}\frac{\Pi}{\eta_0} (y^2  -  y) + 
-2 \frac{n}{n+1} \frac{K}{\Pi} \left[ 
+&=& \frac{\Pi_2}{\eta_0} (y^2  -  y) + 
+2 \frac{n}{n+1} \frac{K}{\Pi_2} \left[ 
 + \dot{\varepsilon}_0^{n+ 1} 
-- \left( \dot{\varepsilon}_0^{n}  - \frac{\Pi}{K}y_1  \right)^{1/n+ 1 } \right]
-- \frac{1}{2}\frac{\Pi}{\eta_0} y_1 (y_1  - H) 
+- \left( \dot{\varepsilon}_0^{n}  - \frac{\Pi_2}{K}y_1  \right)^{1/n+ 1 } \right]
+- \frac{\Pi_2}{\eta_0} y_1 (y_1  - H) 
 \nn\\
 u(y)|_{top} 
-&=& 2 \frac{n}{n+1} \frac{K}{\Pi}
+&=& 2 \frac{n}{n+1} \frac{K}{\Pi_2}
 \left[
-\left(-\frac{\Pi}{K}(y+y_2)+ \dot{\varepsilon}_0^{n}\right)^{\frac{1}{n}+ 1 } - 
-\left(-\frac{\Pi}{K}(H+y_2)+ \dot{\varepsilon}_0^{n}\right)^{\frac{1}{n}+ 1 } 
+\left(-\frac{\Pi_2}{K}(y+y_2)+ \dot{\varepsilon}_0^{n}\right)^{\frac{1}{n}+ 1 } - 
+\left(-\frac{\Pi_2}{K}(H+y_2)+ \dot{\varepsilon}_0^{n}\right)^{\frac{1}{n}+ 1 } 
 \right]
 \nn\\
 \dot{\varepsilon}_{xy}|_{bot}
-&=& \left( \frac{\Pi}{K} (y-y_1) + \dot{\varepsilon}_0^{n}   \right)^{1/n} \nn\\
+&=& \left( \frac{\Pi_2}{K} (y-y_1) + \dot{\varepsilon}_0^{n}   \right)^{1/n} \nn\\
 \dot{\varepsilon}_{xy}|_{mid}
-&=& \frac{1}{2} \frac{\Pi}{\eta_0} (y  -\frac{H}{2} ) \nn\\
+&=& \frac{\Pi_2}{\eta_0} (y  -\frac{H}{2} ) \nn\\
 \dot{\varepsilon}_{xy}|_{top}
-&=&  - \left( - \frac{\Pi}{K} (y+y_2) +  \dot{\varepsilon}_0^{n} \right)^{1/n} \nn
+&=&  - \left( - \frac{\Pi_2}{K} (y-y_2) +  \dot{\varepsilon}_0^{n} \right)^{1/n} \nn
 \end{eqnarray}
 \end{mdframed}
 
@@ -1258,7 +1257,7 @@ K+ \frac{2\tau_0}{  \left| \frac{\partial u}{\partial y} \right|  }   & \dot{\va
 \begin{center}
 \includegraphics[width=7cm]{images/mms/channel_hb/velocity}
 \includegraphics[width=7cm]{images/mms/channel_hb/exy}\\
-{\captionfont Obtained for $n=1$ and $\tau_0=1e7$. The black lines are the resulting velocity and strain rate profiles obtained by joining the bottom, middle and top functions.}
+{\captionfont Obtained for $n=1$ and $\tau_0=9e7$. The black lines are the resulting velocity and strain rate profiles obtained by joining the bottom, middle and top functions.}
 \end{center}
 
 In the following I explore the effect of the $\tau_0$ value ($K$ is calculated correspondingly as we have seen before).
@@ -1269,6 +1268,10 @@ In the following I explore the effect of the $\tau_0$ value ($K$ is calculated c
 \includegraphics[width=7.5cm]{images/mms/channel_hb/ee_taus}
 \includegraphics[width=7.5cm]{images/mms/channel_hb/eta_taus}
 \end{center}
+
+
+
+
 
 
 \newpage

@@ -5,6 +5,7 @@ cm=0.01
 
 n=1.
 Pi=-1e4
+Pi2=Pi/2.
 eta0=1e25 
 eps0=1e-17
 H=100e3
@@ -36,13 +37,13 @@ for i in range(0,nnx):
 
     x=i*H/(nnx-1)
 
-    exy1=(Pi/K*(x-x1)+ eps0**n )**(1./n)
-    exy2=0.5*Pi/eta0*(x-H/2)
-    exy3=-(-Pi/K*(x-x2)+ eps0**n ) **(1./n)
+    exy1=(Pi2/K*(x-x1)+ eps0**n )**(1./n)
+    exy2=Pi2/eta0*(x-H/2)
+    exy3=-(-Pi2/K*(x-x2)+ eps0**n ) **(1./n)
 
-    u1=2.*n/(n+1)*K/Pi*(( Pi/K*(x-x1)+ eps0**n)**(1.+1./n)  - ( -Pi/K*x1 + eps0**n )**(1.+1./n) )
-    u2=0.5*Pi/eta0*(x**2-x*H) + 2.*n/(n+1)*K/Pi*( eps0**(n+1)-(eps0**n-Pi/K*x1)**(1+1./n) )- 0.5*Pi/eta0*x1*(x1-H)
-    u3=2.*n/(n+1)*K/Pi*( (-Pi/K*(x-x2)+ eps0**n )**(1.+1./n) - ( -Pi/K*(H-x2) + eps0**n )**(1.+1./n) )
+    u1=2.*n/(n+1)*K/Pi2*(( Pi2/K*(x-x1)+ eps0**n)**(1.+1./n)  - ( -Pi2/K*x1 + eps0**n )**(1.+1./n) )
+    u2=Pi2/eta0*(x**2-x*H) + 2.*n/(n+1)*K/Pi2*( eps0**(n+1)-(eps0**n-Pi2/K*x1)**(1+1./n) )- Pi2/eta0*x1*(x1-H)
+    u3=2.*n/(n+1)*K/Pi2*( (-Pi2/K*(x-x2)+ eps0**n )**(1.+1./n) - ( -Pi2/K*(H-x2) + eps0**n )**(1.+1./n) )
 
     if x<x1:
        exy=exy1

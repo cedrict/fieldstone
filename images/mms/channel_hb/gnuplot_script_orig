@@ -8,8 +8,7 @@ Pi=-1e4
 eta0=1e25   #   1.e25
 eps0=1e-17
 H=100e3
-#K=9e23  # 1e24
-tau0=6e7
+tau0=9e7
 
 K=(eta0*eps0-tau0)/eps0**n
 

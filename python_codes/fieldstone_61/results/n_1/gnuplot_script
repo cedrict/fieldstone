@@ -1,0 +1,88 @@
+set term pdf enhanced font "Times,11pt"
+set key outside
+set grid
+set xlabel 'y'
+set xtics 1e4
+
+n=1.
+Pi=-1e4
+Pi2=Pi/2.
+eta0=1e25   #   1.e25
+eps0=1e-17
+H=100e3
+Lx=H
+tau0=9e7
+K=(eta0*eps0-tau0)/eps0**n
+delta=2*eps0*eta0/abs(Pi)
+x1=0.5*H-delta
+x2=0.5*H+delta
+b=2.*n/(n+1)*K/Pi2*( eps0**(n+1) - (eps0**n-Pi2/K*x1)**(1+1./n) )- Pi2/eta0*x1*(x1-H)
+
+exy1(x)=(Pi2/K*(x-x1)+ eps0**n )**(1./n)
+exy2(x)=Pi2/eta0*(x-H/2)
+exy3(x)=-(-Pi2/K*(x-x2)+ eps0**n ) **(1./n)
+exy(x)= x<x1 ? exy1(x) : (x<x2 ? exy2(x) : exy3(x) )
+
+u1(x)=2.*n/(n+1)*K/Pi2*\
+(  ( Pi2/K*(x-x1)+ eps0**n )**(1.+1./n)  - ( -Pi2/K*x1 + eps0**n )**(1.+1./n)   )   
+
+u2(x)=Pi2/eta0*(x**2-x*H) + b   
+
+u3(x)=2.*n/(n+1)*K/Pi2*\
+(  ( -Pi2/K*(x-x2)+ eps0**n )**(1.+1./n)  - ( -Pi2/K*(H-x2) + eps0**n )**(1.+1./n)  )
+
+
+velocity(x)= x<x1 ? u1(x) : (x<x2 ? u2(x) : u3(x) )
+
+
+eta(x)= abs(exy(x))<eps0? eta0: K+tau0/(abs(exy(x)))
+
+###############################################################
+set output 'velocity.pdf'
+set ylabel 'velocity'
+plot[][]\
+velocity(x) lt -1,\
+'velocity.ascii' u 2:3 w p ps .4 t 'nely=64'
+
+###############################################################
+set output 'exy.pdf'
+set ylabel 'e_{xy}'
+plot[][-1.75e-16:1.75e-16]\
+exy(x) lt -1 t 'analytical', \
+'sr_avrg.ascii' u 2:5 w p ps .4 t 'nely=64',\
+1e-17  dashtype 2 lt -1,\
+-1e-17 dashtype 2 lt -1
+
+###############################################################
+set output 'eta.pdf'
+set ylabel 'viscosity'
+plot[][]\
+eta(x) lt -1 t 'analytical' ,\
+'etaq.ascii' u 2:3 w p ps .4 t 'nely=64' 
+
+###############################################################
+set output 'press.pdf'
+set ylabel 'pressure'
+plot[][]\
+1e9-x/Lx*1e9 lt -1 t 'analytical',\
+'q.ascii' u 1:3 w p ps .4 t 'nely=64'
+
+reset
+set grid
+set log y 
+set xlabel 'nonlinear iteration #'
+###############################################################
+set output 'nonlinear_conv.pdf'
+set ylabel '|R_i|_2/|R_0|_2'
+plot[][]\
+'nonlinear_conv_two.ascii' w lp t 'nely=64'
+
+
+
+
+
+
+
+
+
+
