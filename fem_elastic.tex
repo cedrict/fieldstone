@@ -1,0 +1,138 @@
+
+In what follows $\vec\upnu$ now stands for the displacement vector, i.e. 
+with units of length, not velocity. 
+As before, the displacement inside an element is given by 
+\begin{equation}
+{\vec \upnu}^h({\vec r})=\sum_{i=1}^{m_v} N_i({\vec r})\;  {\vec \upnu}_i
+\label{mixed01}
+\end{equation}
+where $N_i$ are the polynomial basis functions for the displacement.
+Pressure does not appear in the equations so this is not a case of 
+mixed FE as for the viscous Stokes flow. 
+
+Other notations are sometimes used for Eqs.(\ref{mixed01}) and (\ref{mixed02}):
+\begin{equation}
+u^h({\vec r}) = \vec{N} \cdot \vec{u}
+\quad\quad\quad\quad
+v^h({\vec r}) = \vec{N} \cdot \vec{v}
+\quad\quad\quad\quad
+w^h({\vec r}) = \vec{N} \cdot \vec{w}
+\end{equation} 
+where ${\vec \upnu}=(u,v,w)$ and $\vec{N}$ 
+is the vector containing all basis functions evaluated at location ${\vec r}$:
+\begin{eqnarray}
+\vec{N}^v &=& \left( N_1({\vec r}),  N_2({\vec r}),  N_3({\vec r}), \dots  N_{m_v}({\vec r}) \right) \\
+\vec{N}^p &=& \left( N_1^p({\vec r}),  N_2^p({\vec r}),  N_3^p({\vec r}), \dots  N_{m_p}^p({\vec r}) \right)
+\end{eqnarray}
+and with 
+\begin{eqnarray}
+\vec{u} &=& \left( u_1,  u_2,  u_3, \dots  u_{m_v} \right) \\
+\vec{v} &=& \left( v_1,  v_2,  v_3, \dots  v_{m_v} \right) \\
+\vec{w} &=& \left( w_1,  w_2,  w_3, \dots  w_{m_v} \right) \\
+\end{eqnarray}
+
+%............................................
+\paragraph{In three dimensions} We start from
+\[
+{\bm \sigma} = \lambda (\vec\nabla\cdot \vec\upnu) {\bm 1}+ 2\mu {\bm \varepsilon}
+\]
+where $\mu$ is the shear modulus and $\lambda$ the Lam{\'e} parameter.
+
+\begin{eqnarray}
+\sigma_{xx} &=& (\lambda+2\mu)  \varepsilon_{xx} + \lambda \varepsilon_{yy} + \lambda \varepsilon_{zz} \nn\\
+\sigma_{yy} &=& \lambda \varepsilon_{xx} + (\lambda+2\mu)  {\varepsilon}_{yy} + \lambda \varepsilon_{zz}\nn\\
+\sigma_{zz} &=& \lambda \varepsilon_{xx} + \lambda \varepsilon_{yy} + (\lambda+2\mu)  {\varepsilon}_{zz} \nn\\
+\sigma_{xy} &=& 2\mu  {\varepsilon}_{xy} \nn\\
+\sigma_{xz} &=& 2\mu  {\varepsilon}_{xz} \nn\\
+\sigma_{yz} &=& 2\mu  {\varepsilon}_{yz} 
+\end{eqnarray}
+or, 
+\[
+\vec\sigma =
+\left(
+\begin{array}{c}
+\sigma_{xx}\\ 
+\sigma_{yy} \\
+\sigma_{zz} \\
+\sigma_{xy} \\
+\sigma_{xz} \\
+\sigma_{yz} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cccccc}
+\lambda+2\mu & \lambda & \lambda & 0 & 0 & 0 \\
+\lambda & \lambda+2\mu & \lambda & 0 & 0 & 0 \\
+\lambda & \lambda & \lambda+2\mu & 0 & 0 & 0 \\
+0 & 0 & 0 & \mu & 0 & 0\\
+0 & 0 & 0 & 0 & \mu & 0\\
+0 & 0 & 0 & 0 & 0 & \mu
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\varepsilon_{xx} \\
+\varepsilon_{yy} \\
+\varepsilon_{zz} \\
+2\varepsilon_{xy} \\
+2\varepsilon_{xz} \\
+2\varepsilon_{yz} 
+\end{array}
+\right)
+=\vec\varepsilon
+\]
+The rest of the procedure is pretty straightforward since it follows the same 
+ideas as for the mixed viscous case, except that we here build the $\K$ matrix 
+only as follows:
+\[
+\K=\int_{\Omega_e} {\bm B}^T \cdot {\bm D} \cdot {\bm B} \; d\Omega 
+\]
+
+
+
+
+%............................................
+\paragraph{In two dimensions} The above relationships simplify to 
+\begin{eqnarray}
+\sigma_{xx} &=& (\lambda+2\mu)  \varepsilon_{xx} + \lambda \varepsilon_{yy} \\
+\sigma_{yy} &=& \lambda \varepsilon_{xx} + (\lambda+2\mu)  \dot{\varepsilon}_{yy} \\
+\sigma_{xy} &=& 2\mu  \dot{\varepsilon}_{xy} 
+\end{eqnarray}
+so 
+
+\[
+\vec\sigma =
+\left(
+\begin{array}{c}
+\sigma_{xx}\\ 
+\sigma_{yy} \\
+\sigma_{xy} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+\lambda+2\mu & \lambda & 0 \\ 
+\lambda & \lambda+2\mu & 0 \\
+0 & 0 & \mu 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\varepsilon_{xx} \\
+\varepsilon_{yy} \\
+2\varepsilon_{xy} 
+\end{array}
+\right)
+=\vec\varepsilon
+\]
+
+
+
+
+
+
+
