@@ -59,12 +59,23 @@ They are also sometimes denoted as Generalized Newtonian Fluid \index{general}{G
 
 One of the simplest non-Newtonian viscosity model is the power-law model:
 \begin{equation}
-\eta = K \dot{\varepsilon}_{e}^{(n-1)/2}
+\eta = K \dot{\varepsilon}_{e}^{n-1}
+\qquad \text{or } \qquad
+\sigma = 2 K \dot{\varepsilon}_e ^n 
 \end{equation}
-where $n$ and $K$ are parameters. $n$ is called the power-law index.
+where $n$ and $K$ are parameters. $n$ is called the power-law index. $\dot{varepsilon}_e$ is defined in 
+ Eq.~(\ref{eq:tauepse}). 
 
 Note that a Newtonian viscosity is recovered when $n=1$. Also $n$ and $K$ may depend on temperature
 \cite[p339]{reddybook2}.
+
+A so-called 'generalised' power law rheology is proposed in \cite{iabu09}:
+\begin{equation}
+\eta = K (\dot{\varepsilon}_{e}+\dot{\varepsilon}_0)^{n-1}
+\end{equation}
+so that in the rigid areas where $\dot{\varepsilon}_e \rightarrow 0$ the rheology 
+uses instead a minimum strain rate value $\dot{\varepsilon}_0$.
+
 
 \Literature \cite{enmo97}
 
