@@ -14,10 +14,10 @@ Here is a quick recap of notations:
 ${\bm \sigma}$ & (full) stress tensor \\
 $\sigma_1$, $\sigma_2$, $\sigma_3$ & principal stresses \\ 
 ${\bm \tau}$   & deviatoric stress tensor \\
-$\tau_1$, $\tau_2$, $\tau_3$ & principal stresses \\ 
-${\cal I}_1({\bm T})$ & first invariant of tensor ${\bm T}$ \\
-${\cal I}_2({\bm T})$ & first invariant of tensor ${\bm T}$ \\
-${\cal I}_3({\bm T})$ & first invariant of tensor ${\bm T}$ \\
+$\tau_1$, $\tau_2$, $\tau_3$ & principal deviatoric stresses \\ 
+${\cal I}_1({\bm T})$ & first moment invariant of tensor ${\bm T}$ \\
+${\cal I}_2({\bm T})$ & second moment invariant of tensor ${\bm T}$ \\
+${\cal I}_3({\bm T})$ & third moment invariant of tensor ${\bm T}$ \\
 ${\tau}_{e}=\sqrt{{\cal I}_2({\bm \tau})}$ & effective deviatoric stress \\
 $\dot{{\varepsilon}}_{e}=\sqrt{{\cal I}_2(\dot{\bm \varepsilon}^d)}$ & effective deviatoric strain rate \\
 \hline
@@ -41,7 +41,7 @@ tensor to the strain rate tensor does not depend on the stress state and velocit
 {\bm \tau}={\bm C} : \dot{\bm \varepsilon}
 \]
 
-One very often make sthe assumption that the fluid is isotropic, i.e. its mechanical properties are the 
+One very often makes the assumption that the fluid is isotropic, i.e. its mechanical properties are the 
 same along any direction. As a consequence the fourth order viscosity tensor 
 ${\bm C}$ is symmetric and will have only two independent real parameters: 
 a bulk viscosity coefficient, that defines the resistance of the medium to gradual uniform compression; 
@@ -176,7 +176,7 @@ a simple plastic model:
 {\bm s} &=& 2 \left(  K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}}\right)\dot{\bm \varepsilon} \qquad \text{ if } {\tau}_{e}>\tau_0 \\
 \dot{\bm \varepsilon} &=& {\bm 0} \qquad\qquad \text{if }{\tau}_{e} \leq \tau_0 
 \end{eqnarray}
-in which $\tau_0$ is the yield stress, $K$ the consistency, and $n$ is the flow index{general} \cite{demj04}.
+in which $\tau_0$ is the yield stress, $K$ the consistency, and $n$ is the flow index \index{general} \cite{demj04}.
 The flow index measures the degree to which the fluid is shear-thinning ($n<1$) or shear-thickening ($n>1$).
 If $n=1$ and $\tau_0=0$ the model reduces to the Newtonian model. 
 
@@ -243,7 +243,7 @@ or, when squaring it:
 \[
 \sigma = \sigma_y + \eta_p \dot{\varepsilon}_e + 2\sqrt{\sigma_p \eta_p \dot{\varepsilon}_e} 
 \]
-This modelled has been found to accurately describe the behaviour of synthetic based muds \cite{adlo17}. 
+This model has been found to accurately describe the behaviour of synthetic based muds \cite{adlo17}. 
 
 
 %-------------------------------------------------
@@ -302,8 +302,8 @@ by means of high pressure/temperature experiments\cite{kawu93}. Unfortunately
 these experiments cannot be run at Earth-like strain rate values ($\sim 10^{-15}\text{s}^{-1}$)
 so that extrapolations must be carried out over several orders of magnitude to 
 arrive at values we can use in our numerical models. 
-The 1/2 factor arises from the relationship between deviatoric stres and strain rate which 
-incolves a factor 2.
+The 1/2 factor arises from the relationship between deviatoric stress and strain rate which 
+involves a factor 2.
 
 The factor $f$ is in fact a tuning parameter used to explore end members (e.g. 'weak crust' 
 vs 'strong crust'), see discussion in the supplementary material in \cite{hube11}. 
@@ -405,7 +405,7 @@ of the lithosphere, the lithostatic pressure is of the order of
 $\rho \cdot g \cdot L \simeq 3000\cdot 10 \cdot 120e3 \simeq 4$GPa. 
 At the bottom of the domain, the pressure has increased by $3300\cdot 10 \cdot 630e3 \simeq21$GPa. 
 
-The viscosity profile is plotted hereunder for three different gran sizes, bottom temperature and 
+The viscosity profile is plotted hereunder for three different grain sizes, bottom temperature and 
 activation volumes (4,5,6 cm$^3$/mol). 
 
 \begin{center}
@@ -458,7 +458,7 @@ it can be cast under the form $f(\tau)=0$
 f(\tau)=
 \dot{\varepsilon}_{T} - A_{df} \tau \exp\left(-\frac{Q_{df}+pV_{df}}{RT}\right) - A_{ds} \tau^n \exp\left(-\frac{Q_{ds}+pV_{ds}}{RT}\right)
 \]
-A Newton method can be used where and the iterations will be of the form:
+A Newton method can be used where the iterations will be of the form:
 \[
 \tau_{n+1} = \tau_n - \frac{f(\tau_n)}{f'(\tau_n)}
 \]
@@ -544,7 +544,7 @@ The temperature and pressure fields are shown hereunder:
 \end{center}
 
 In what follows, the values obtained with Newton iterations are coined 'new'
-and those obtained without are coind 'old'.
+and those obtained without are coined 'old'.
 The diffusion and dislocation creep viscosities can be
 computed for both old and new algorithms and are shown hereunder
 (the diffusion creep viscosity is independent of strain rate so
@@ -641,12 +641,12 @@ the axes are $-\sigma_1$,$-\sigma_2$,$-\sigma_3$}
 Having obtained the equations for the yield functions in the previous sections, we can easily test
 them as follows: in the ($\sigma_1$, $\sigma_2$, $\sigma_3$) space we can look for stress states 
 that fulfill the yield equations. I set $c=20$MPa and $\phi=20$\degree and restrain 
-the search to the space [-100MPa:100Mpa]$^3$.
+the search to the space [-100MPa:100MPa]$^3$.
 The python code and the gnuplot script used to generate the plots hereafter 
 are in {\tt images/rheology/surfaces}. The implemented algorithm is somewhat  
 naive and quite inefficient: discretise the space in $N^3$ points and for each point 
-check whether any of the von Mises, Tresca, Moh-Coulomb and (the three variants of) Drucker-Prager 
-is satisfied and when the point is in the space $\sigma_1+\sigma_2+\sigma_3=10$Mpa 
+check whether any of the von Mises, Tresca, Mohr-Coulomb and (the three variants of) Drucker-Prager 
+criteria is satisfied and when the point is in the space $\sigma_1+\sigma_2+\sigma_3=10$MPa 
 (perpendicular to the $x=y=z$ line) write it to the corresponding file.
 
 The recovered surfaces are similar to those of the figure above but their plot in a 3D space is difficult.
@@ -660,7 +660,7 @@ We see that the von Mises and Tresca envelopes are parallel to the line $\sigma_
 is expected since they do not depend on pressure).
 
 The second plot is in the plane $\sigma_1+\sigma_2+\sigma_3=0$ which is perpendicular to the middle line 
-$\sigma_1=\sigma_2=\sigma_3=0$. To facilitate plotting the envelopes are plotted as a function of $\sigma_1$ only (so that even though their are circles in the chosen plane they appear here as ellipses):
+$\sigma_1=\sigma_2=\sigma_3=0$. To facilitate plotting the envelopes are plotted as a function of $\sigma_1$ only (so that even though they are circles in the chosen plane they appear here as ellipses):
 
 \begin{center}
 \includegraphics[width=12cm]{images/rheology/surfaces/surfaces_plane2.pdf}
@@ -678,8 +678,8 @@ Mohr-Coulomb one.
 \subsubsection{Peierls creep}
 \index{general}{Peierls creep}
 
-Looking at the literature, there seems to be many formulations for the Peierls creep deformation
-mechanism but it it appears that a standard formulation for the Peierls creep writes:
+Looking at the literature, there seem to be many formulations for the Peierls creep deformation
+mechanism, but it it appears that a standard formulation for the Peierls creep writes:
 \[
 \dot{\epsilon} = A \sigma^n \exp \left[ -\frac{Q+pV}{RT} \left(1-(\frac{\sigma}{\sigma_P})^k\right)^q  \right]
 \]
@@ -757,7 +757,7 @@ have used the following (dimensionless) viscosity for the mantle:
 \[
 \eta(T,z) = \eta_r(r) \exp(A(0.5-T))
 \]
-where $\eta_r$ is a depth dependent viscosity profile (usually defined as 
+where $\eta_r$ is a depth-dependent viscosity profile (usually defined as 
 discontinuous linear profiles for various shells)
 
 The non-dimensional activation coefficient is chosen to be $A=9.2103$ in 
@@ -865,7 +865,7 @@ Images taken from \url{https://en.wikipedia.org/wiki/Viscoelasticity}}
 \end{center}
 
 The Kelvin-Voigt model, also known as the Voigt model, 
-consists of a Newtonian damper and Hookean elastic spring connected in parallel
+consists of a Newtonian damper and Hookean elastic spring connected in parallel.
 
 \Literature: \cite{boph12}
 
@@ -912,7 +912,7 @@ In general, for n dampers in series:
 
 
 \item \underline{two viscous dampers in parallel:} 
-each is deforms with the same strain rate $\dot{\varepsilon}_T$
+each is deformed with the same strain rate $\dot{\varepsilon}_T$
 and their stresses add up:
 \[
 \tau = \tau_1 + \tau_2 = 2 \eta_1 \dot{\varepsilon}_T  + 2 \eta_2 \dot{\varepsilon}_T
@@ -948,7 +948,7 @@ The algorithm goes then as follows:
 \item Assume we know $\eta_v$ and $\dot\varepsilon_T$ (from previous iteration), as well as the plasticity parameters $Y$ and $\eta_m$.
 \item if $2 \eta_v \dot\varepsilon_T < Y$ the stress is below the yield stress value and plasticity is not active. Use $\eta_v$ in the material model and $\dot\varepsilon_v=\dot\varepsilon_T$.
 
-\item if $2 \eta_v \dot\varepsilon_T > Y$ the stress is above the yield value, which is not allowed. In this case the plastic element is 'switched on'. In that case the viscous damper is in series with the (visco)plastic element. The former deforms with a strain rate $\dot\epsilon_v$ while the latter with $\dot\epsilon_{vp}$ (both under the same tress $\tau$) and we have  $\dot\varepsilon_T = \dot\varepsilon_v  + \dot\varepsilon_{vp}$. 
+\item if $2 \eta_v \dot\varepsilon_T > Y$ the stress is above the yield value, which is not allowed. In this case the plastic element is 'switched on'. In that case the viscous damper is in series with the (visco)plastic element. The former deforms with a strain rate $\dot\epsilon_v$ while the latter with $\dot\epsilon_{vp}$ (both under the same stress $\tau$) and we have  $\dot\varepsilon_T = \dot\varepsilon_v  + \dot\varepsilon_{vp}$. 
 
 \begin{eqnarray}
 \dot\varepsilon_T 
@@ -981,8 +981,6 @@ we use to compute $\eta_{vp} = Y/2\dot\varepsilon_{vp}+\eta_m$
 \eta_{eff} = \left( \frac{1}{\eta_v}  + \frac{1}{\eta_{vp}}  \right)^{-1}
 \]
 \end{enumerate}
-
-images/rheology/vvp
 
 On the following plots are shown $\tau$, 
 $\dot\varepsilon_{vp}$, $\dot\varepsilon_v$, $\eta_vp$, and $\eta_{eff}$ 
