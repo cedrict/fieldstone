@@ -489,4 +489,73 @@ This is implemented in fieldstone 61.
 %\end{center}
 
 
+%.................................................................
+\subsubsection{Two-dimensional case - Linear triangle elements}
+
+Let us assume we want to apply a stress on the face 13 of the following element:
+\begin{verbatim}
+   1-------------3
+    \           /
+     \         /
+      \       /
+       \     /
+        \   /
+         \ /
+          2
+\end{verbatim}
+
+We also arbitrarily set $y_1=y_3=0$. We have seen in Section~\ref{shpfct2d} that the shape functions are given by:
+\begin{eqnarray}
+N_1(x,y) &=& \frac{1}{D}[(x_2y_3-x_3y_2) + (y_2-y_3)x + (x_3-x_2)y] \nn\\
+N_2(x,y) &=& \frac{1}{D}[(x_3y_1-x_1y_3) + (y_3-y_1)x + (x_1-x_3)y] \nn\\
+N_3(x,y) &=& \frac{1}{D}[(x_1y_2-x_2y_1) + (y_1-y_2)x + (x_2-x_1)y] \nn
+\end{eqnarray}
+with 
+\[
+D = 
+\left|
+\begin{array}{ccc}
+1 & x_1 & y_1 \\
+1 & x_2 & y_2 \\
+1 & x_3 & y_3 
+\end{array}
+\right|
+=
+\left|
+\begin{array}{ccc}
+1 & x_1 & 0 \\
+1 & x_2 & y_2 \\
+1 & x_3 & 0 
+\end{array}
+\right|
+=
+-x_3y_2+x_1y_2
+= y_2(x_1-x_3)
+\]
+
+
+\begin{eqnarray}
+\int_{x_1}^{x_3} N_1(x,y=0) dx 
+&=& \frac{1}{D} \int_{x_1}^{x_3} [(x_2y_3-x_3y_2) + (y_2-y_3)x ] \nn\\
+&=& \frac{1}{D} \int_{x_1}^{x_3} [-x_3y_2 + y_2 x ] \qquad \text{since} y_1=y_3=0 \nn\\
+&=& \frac{y_2}{D} \int_{x_1}^{x_3} (-x_3 +  x ) dx \nn\\
+&=& \frac{y_2}{y_2(x_1-x_3)  } [ -x_3 x + \frac{1}{2}x^2]_{x_1}^{x_3} \nn\\ 
+&=& \frac{1}{x_1-x_3 } [ -x_3 (x_3-x_1) + \frac{1}{2}(x_3^2-x_1^2)] \nn\\
+&=& \frac{1}{x_1-x_3 } [ x_3 (x_1-x_3) + \frac{1}{2}(x_3-x_1)(x_3+x_1)] \nn\\
+&=&  x_3 - \frac{1}{2}(x_3+x_1) \nn\\
+&=&  \frac{1}{2} (x_3-x_1)
+\end{eqnarray}
+
+\begin{eqnarray}
+\int_{x_1}^{x_3} N_3(x,y=0) dx
+&=& \frac{1}{D} \int_{x_1}^{x_3}    [(x_1y_2-x_2y_1) + (y_1-y_2)x ] dx \nn\\
+&=& \frac{1}{D} \int_{x_1}^{x_3}    [x_1y_2 - y_2x ] dx \nn\\
+&=& \frac{y_2}{D} \int_{x_1}^{x_3}    [x_1 - x ] dx \nn\\
+&=& \frac{y_2}{y_2(x_1-x_3) } [x_1 x - \frac{1}{2} x^2]_{x_1}^{x_3}  \nn\\
+&=& \frac{1}{x_1-x_3} [x_1 (x_3-x_1) - \frac{1}{2} (x_3^2-x_1^2)] \nn\\
+&=& -x_1  + \frac{1}{2} (x_3+ x_1) \nn\\
+&=& \frac{1}{2}( x_3 -x_1 )
+\end{eqnarray}
+
+
 
