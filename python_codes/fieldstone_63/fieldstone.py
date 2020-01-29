@@ -93,8 +93,8 @@ GPa=1e9
 #parameters
 ######################################################
 
-nLayers = 301   # must be odd !
-nel_h=70
+nLayers = 201   # must be odd !
+nel_h=50
 
 #grain geometrical properties
 outer_radius=9e-5  #radius (m)  
@@ -122,14 +122,14 @@ gy=0.  # gravity vector y-component
 visu=1
 squarification  = False
     
-p_bc = 1e8  #average sigma_n at contact (Pa)
+t_bc = 1e8  # traction at contact (Pa)
     
 #nb of eighths of disk
 nsection=2
-nel = nsection * nLayers * nLayers                     # number of elements per disk
-nel_minus = nsection * (nLayers-1) * (nLayers-1)                     # number of elements per disk
-NV  = (nLayers+1)**2    # number of mesh nodes per disk
-NV_minus  = nLayers**2   # number of mesh nodes per disk when outer layer is not considered
+nel = nsection * nLayers * nLayers                  # number of elements per disk
+nel_minus = nsection * (nLayers-1) * (nLayers-1)    # number of elements per disk
+NV  = (nLayers+1)**2                         # number of mesh nodes per disk
+NV_minus  = nLayers**2  # number of mesh nodes per disk when outer layer is not considered
 
 qcoords_r=[1./6.,1./6.,2./3.] # coordinates & weights 
 qcoords_s=[2./3.,1./6.,1./6.] # of quadrature points
@@ -143,14 +143,15 @@ ndim=2
 eps=1e-9
 
 ###################################################################
-area_norm = get_area_cement(outer_radius,a_fac,h_fac)
+#area_norm = get_area_cement(outer_radius,a_fac,h_fac)
 
 print ('nLayers  =',nLayers)
 print ('NV       =',NV)
 print ('nel      =',nel)
         
-np.savetxt('info_grain_prop.ascii',np.array([outer_radius,a_fac,h_fac,E1,nu1,rho1,E2,mu2,rho2]).T \
-           ,header='# diameter,a_fac,h_fac,E_qtz,nu_qtz,density_qtz,E_cement,mu_cement,density_cement')
+#np.savetxt('info_grain_prop.ascii',np.array([outer_radius,a_fac,h_fac,E1,nu1,rho1,E2,mu2,rho2]).T \
+#           ,header='# diameter,a_fac,h_fac,E_qtz,nu_qtz,density_qtz,E_cement,mu_cement,density_cement')
+
 print("-----------------------------")
 
 #################################################################
@@ -194,7 +195,6 @@ for iLayer in range(1,nLayers+1):
 contact_iNV = contact_iNV[0:counter_contact]
 contact_iNV = contact_iNV[::-1]
 
-
 #####################
 #apply squarification
 #####################
@@ -229,9 +229,10 @@ if squarification == True:
     ncontactnodes = int(counter)
 #end if
 
-##################
+##############################################
 # grid point setup for cement centered at 0,0
-##################
+##############################################
+
 num = int(counter_contact) #number of nodes that fit within length a
 num_h = nel_h +1
 NV_cement = num * num_h
@@ -312,7 +313,7 @@ y = y_new
 contact_iNV = contact_iNV_new
 outer_node = outer_node_new
 
-np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
+#np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
 
 print("setup: grid points: %.3f s" % (time.time() - start_grid))
 
@@ -360,9 +361,9 @@ for iLayer in range(2,nLayers+1):
         iOuter = iOuter + 1 
     #end for
     
-#####################
+###############################
 #build connectivity for cement
-#####################    
+###############################
 icon_cement=np.zeros((m,nel_cement),dtype=np.int32)
       
 iInner = 0 
@@ -437,7 +438,6 @@ for ip in range(0,NV):
     pointto[ip]=ip
 #end for
 
-
 counter = 0    
 for ip in range(0,len(contact_iNV)):
     num_i = int(contact_iNV[ip])
@@ -453,7 +453,6 @@ for ip in range(0,len(contact_iNV)):
 #end for
 #print (counter,np.count_nonzero(doubble))
 
-
 NV_new=NV-num
 
 xnew=np.zeros(NV_new,dtype=np.float64) # x coordinates
@@ -466,7 +465,8 @@ for ip in range(0,NV):
       counter=counter+1
    #end if
 #end do
-np.savetxt('grid_new.ascii',np.array([xnew,ynew]).T,header='# x,y')
+
+#np.savetxt('grid_new.ascii',np.array([xnew,ynew]).T,header='# x,y')
 
 for iel in range(0,nel):
     for i in range (0,m):
@@ -659,8 +659,8 @@ for iel in range(0, nel):
     inode1=icon[1,iel]
     inode2=icon[2,iel]
     if abs(y[inode0])<eps and abs(y[inode2])<eps:  # nodes 2&3 on top boundary 
-       f_el[1]-=p_bc*(x[inode2]-x[inode0])/2
-       f_el[5]-=p_bc*(x[inode2]-x[inode0])/2
+       f_el[1]-=t_bc*(x[inode2]-x[inode0])/2
+       f_el[5]-=t_bc*(x[inode2]-x[inode0])/2
      #end if 
 
     # assemble matrix a_mat and right hand side rhs
@@ -703,7 +703,7 @@ u,v=np.reshape(sol,(NV,2)).T
 print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
 
-np.savetxt('displacement.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+#np.savetxt('displacement.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
            
 #####################################################################
 # retrieve pressure and compute elemental strain
@@ -767,8 +767,8 @@ print("     -> exx (m,M) %.6e %.6e " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.6e %.6e " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.6e %.6e " %(np.min(exy),np.max(exy)))
 
-np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
-np.savetxt('strain.ascii',np.array([xc,yc,exx,eyy,exy,divv]).T,header='# xc,yc,exx,eyy,exy,divv')
+#np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
+#np.savetxt('strain.ascii',np.array([xc,yc,exx,eyy,exy,divv]).T,header='# xc,yc,exx,eyy,exy,divv')
 
 print("compute press & sr: %.3f s" % (time.time() - start))
 

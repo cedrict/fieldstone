@@ -504,7 +504,41 @@ Let us assume we want to apply a stress on the face 13 of the following element:
           2
 \end{verbatim}
 
-We also arbitrarily set $y_1=y_3=0$. We have seen in Section~\ref{shpfct2d} that the shape functions are given by:
+The integral on the side of the element is $\int_\Gamma N_i {\vec t} \; dS$
+for $i=1,2,3$, which yields the following elemental rhs vector:
+\[
+\vec{F}_{el}=
+\int_{\Gamma_{13}} 
+\left(
+\begin{array}{c}
+N_1(x,y) t_x(x,y)\\
+N_1(x,y) t_y(x,y)\\
+N_2(x,y) t_x(x,y)\\
+N_2(x,y) t_y(x,y)\\
+N_3(x,y) t_x(x,y)\\
+N_3(x,y) t_y(x,y)
+\end{array}
+\right)
+\; dS
+=
+\int_{\Gamma_{13}} 
+\left(
+\begin{array}{c}
+0\\
+N_1(x,y) t_y(x,y)\\
+0\\
+0\\
+0\\
+N_3(x,y) t_y(x,y)
+\end{array}
+\right)
+\; dS
+\]
+since $t_x=0$ and there function $N_2$ will be zero on the edge.
+
+We also arbitrarily set $y_1=y_3=0$. We have seen in Section~\ref{shpfct2d} that 
+the shape functions (expressed as a function of the real coordinates $x,y$) 
+for a linear triangle are given by:
 \begin{eqnarray}
 N_1(x,y) &=& \frac{1}{D}[(x_2y_3-x_3y_2) + (y_2-y_3)x + (x_3-x_2)y] \nn\\
 N_2(x,y) &=& \frac{1}{D}[(x_3y_1-x_1y_3) + (y_3-y_1)x + (x_1-x_3)y] \nn\\
@@ -543,10 +577,7 @@ D =
 &=& \frac{1}{x_1-x_3 } [ -x_3 (x_3-x_1) + \frac{1}{2}(x_3^2-x_1^2)] \nn\\
 &=& \frac{1}{x_1-x_3 } [ x_3 (x_1-x_3) + \frac{1}{2}(x_3-x_1)(x_3+x_1)] \nn\\
 &=&  x_3 - \frac{1}{2}(x_3+x_1) \nn\\
-&=&  \frac{1}{2} (x_3-x_1)
-\end{eqnarray}
-
-\begin{eqnarray}
+&=&  \frac{1}{2} (x_3-x_1) \\
 \int_{x_1}^{x_3} N_3(x,y=0) dx
 &=& \frac{1}{D} \int_{x_1}^{x_3}    [(x_1y_2-x_2y_1) + (y_1-y_2)x ] dx \nn\\
 &=& \frac{1}{D} \int_{x_1}^{x_3}    [x_1y_2 - y_2x ] dx \nn\\
@@ -556,6 +587,23 @@ D =
 &=& -x_1  + \frac{1}{2} (x_3+ x_1) \nn\\
 &=& \frac{1}{2}( x_3 -x_1 )
 \end{eqnarray}
+Finally
+\[
+\vec{F}_{el}=
+\frac{h t_y}{2}
+\left(
+\begin{array}{c}
+0\\
+1 \\
+0\\
+0\\
+0\\
+1 
+\end{array}
+\right)
+\]
+
+
 
 
 
