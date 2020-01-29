@@ -613,42 +613,64 @@ for istep in range(0,nstep):
     eyy = np.zeros(nel,dtype=np.float64)  
     exy = np.zeros(nel,dtype=np.float64)  
     e   = np.zeros(nel,dtype=np.float64)  
+  
+    vrms=0.
+
+    #u[:]=xV[:]
+    #v[:]=yV[:]
 
     for iel in range(0,nel):
-        rq = 1./3.
-        sq = 1./3.
-        NNNV[0:mV]=NNV(rq,sq)
-        dNNNVdr[0:mV]=dNNVdr(rq,sq)
-        dNNNVds[0:mV]=dNNVds(rq,sq)
-        jcb=np.zeros((2,2),dtype=np.float64)
-        for k in range(0,mV):
-            jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-            jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
-            jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-            jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+        for kq in range (0,nqel):
+            # position & weight of quad. point
+            rq=qcoords_r[kq]
+            sq=qcoords_s[kq]
+            weightq=qweights[kq]
+            NNNV[0:mV]=NNV(rq,sq)
+            dNNNVdr[0:mV]=dNNVdr(rq,sq)
+            dNNNVds[0:mV]=dNNVds(rq,sq)
+            NNNP[0:mP]=NNP(rq,sq)
+            jcb=np.zeros((2,2),dtype=np.float64)
+            for k in range(0,mV):
+                jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+                jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
+                jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+                jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+            #end for
+            jcob=np.linalg.det(jcb)
+            jcbi=np.linalg.inv(jcb)
+            for k in range(0,mV):
+                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+            #end for
+            uq=0.0
+            vq=0.0
+            exxq=0.0
+            eyyq=0.0
+            exyq=0.0
+            for k in range(0,mV):
+                uq+=NNNV[k]*u[iconV[k,iel]]
+                vq+=NNNV[k]*v[iconV[k,iel]]
+                exxq+=dNNNVdx[k]*u[iconV[k,iel]]
+                eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
+                exyq+=0.5*(dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]])
+            #end for
+            exx[iel] += exxq*jcob*weightq
+            eyy[iel] += eyyq*jcob*weightq
+            exy[iel] += exyq*jcob*weightq
+            vrms+=(uq**2+vq**2)*jcob*weightq
         #end for
-        jcob=np.linalg.det(jcb)
-        jcbi=np.linalg.inv(jcb)
-        for k in range(0,mV):
-            dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-            dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-        #end for
-        for k in range(0,mV):
-            xc[iel] += NNNV[k]*xV[iconV[k,iel]]
-            yc[iel] += NNNV[k]*yV[iconV[k,iel]]
-            exx[iel] += dNNNVdx[k]*u[iconV[k,iel]]
-            eyy[iel] += dNNNVdy[k]*v[iconV[k,iel]]
-            exy[iel] += 0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
-        #end for
+        exx[iel] /= area[iel] 
+        eyy[iel] /= area[iel] 
+        exy[iel] /= area[iel] 
         e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
     #end for
+
+    vrms=np.sqrt(vrms/(Lx*Ly))
 
     print("     -> exx (m,M) %.6e %.6e " %(np.min(exx),np.max(exx)))
     print("     -> eyy (m,M) %.6e %.6e " %(np.min(eyy),np.max(eyy)))
     print("     -> exy (m,M) %.6e %.6e " %(np.min(exy),np.max(exy)))
-
-
-    #np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+    print("     -> vrms %.6e " %vrms )
 
     print("compute elemental sr: %.3f s" % (timing.time() - start))
 
