@@ -1,0 +1,597 @@
+
+\index{general}{Maxwell Time}
+
+A viscoelastic material can behave both elastically and viscously. Its response to 
+an applied stress is dependent on the material properties and can be found using 
+the Maxwell time ($t_M$) of said material. 
+This material constant is defined as the ratio of the material viscosity and shear modulus
+\[
+t_M = \frac{\eta}{\mu}
+\]
+where $\eta$ is the viscosity and $\mu$ the shear modulus.
+
+The total deviatoric strainrate tensor can be decomposed into an elastic component and a viscous component:
+\[
+\dot{{\bm \varepsilon}}^d(\vec\upnu) = 
+\dot{{\bm \varepsilon}}^d_e(\vec\upnu)  + \dot{{\bm \varepsilon}}^d_v(\vec\upnu)= 
+\frac{\tilde{\dot{\bm \tau}}}{2\mu}
++\frac{\bm \tau}{2 \eta}
+\]
+%\begin{remark}
+%The deviatoric strain rate tensor should be denoted by $\dot{\bm \varepsilon}^d$. However, 
+%because of the time superscripts that enter the equations a bit later one, we temporarily 
+%choose to denote it by $\dot{\underline{\bm \varepsilon}}^d$ in this section. 
+%\end{remark}
+
+[From wikipedia] In continuum mechanics, objective stress rates are time derivatives of 
+stress that do not depend on the frame of reference. 
+Many constitutive equations are designed in the form of a relation between a 
+stress-rate and a strain-rate (or the rate of deformation tensor). i
+The mechanical response of a material should not depend on the frame of reference. 
+In other words, material constitutive equations should be frame indifferent (objective). 
+If the stress and strain measures are material quantities then objectivity is automatically 
+satisfied. However, if the quantities are spatial, then the objectivity of the stress-rate 
+is not guaranteed even if the strain-rate is objective.
+
+There are numerous objective stress rates in continuum mechanics - 
+all of which can be shown to be special forms of Lie derivatives. 
+Some of the widely used objective stress rates are \cite{holm20}:
+a) the Truesdell rate of the Cauchy stress tensor,
+b) the Green–Naghdi rate of the Cauchy stress, and
+c) the Jaumann rate of the Cauchy stress.
+
+The Jaumann rate of the Cauchy stress is a further specialization of 
+the Lie derivative (Truesdell rate). This rate has the form
+\[
+\tilde{\dot{\bm \tau}}^{t+\delta t} 
+= \frac{D {\bm \tau}}{Dt}
+- ( \dot{\bm \omega}(\vec\upnu^t)\cdot {\bm \tau}^t - {\bm \tau}^t \cdot \dot{\bm \omega}(\vec\upnu^t)   )
+= \frac{ {\bm \tau}^{t+\delta t} - {\bm \tau}^t }{ \delta t} 
+- ( \dot{\bm \omega}(\vec\upnu^t)\cdot {\bm \tau}^t - {\bm \tau}^t \cdot \dot{\bm \omega}(\vec\upnu^t)   )
+\]
+where $D/Dt$ is the material derivative and $\dot{\bm \omega}$ is the rotation rate -also called spin tensor- which is anti-symmetric and has zero trace - see Section~\ref{ss:srst}:
+\[
+\dot{\bm \omega}(\vec\upnu) = \frac{1}{2}\left( \vec\nabla\vec \upnu - (\vec\nabla \vec\upnu)^T \right)
+\]
+In the case of a Lagrangian description, we have \cite{vosc15} 
+\[
+\tilde{\dot{\bm \tau}}^{t+\delta t} 
+= \frac{ {\bm \tau}^{t+\delta t} - {\bm \tau}^t }{ \delta t} 
+- ( \dot{\bm \omega}(\vec\upnu^t)\cdot {\bm \tau}^t - {\bm \tau}^t \cdot \dot{\bm \omega}(\vec\upnu^t)   )
+\]
+so that 
+\[
+\dot{{\bm \varepsilon}}^d(\vec\upnu^{t+\delta t}) = 
+\frac{\tilde{\dot{\bm \tau}}^{t+\delta t}}{2\mu}
++\frac{\bm \tau ^{t+\delta t}}{2 \eta}
+=
+\frac{1}{2\mu} \left[ \frac{ {\bm \tau}^{t+\delta t} - {\bm \tau}^t }{ \delta t} 
+- ( \dot{\bm \omega}(\vec\upnu^t) \cdot {\bm \tau}^t - {\bm \tau}^t \cdot \dot{\bm \omega}(\vec\upnu^t)   )  \right]
++\frac{\bm \tau ^{t+\delta t}}{2 \eta}
+\]
+
+Let us multiply this by $2\mu \delta t$ and transform the equations until a satisfying 
+formulation is found:
+
+\[
+2\mu \delta t\dot{\bm \varepsilon}^d(\vec\upnu^{t+\delta t}) 
+=
+{\bm \tau}^{t+\delta t} - {\bm \tau}^t 
+- \delta t ( \dot{\bm \omega}(\vec\upnu^t) \cdot {\bm \tau}^t - {\bm \tau}^t \cdot \dot{\bm \omega}(\vec\upnu^t)   ) 
++
+\frac{\mu \delta t }{ \eta}
+{\bm \tau ^{t+\delta t}}   
+\]
+
+\[
+2\mu \delta t\dot{\bm \varepsilon}^d(\vec\upnu^{t+\delta t}) 
+=
+\left( 1 + \frac{\mu \delta t }{ \eta}   \right) {\bm \tau}^{t+\delta t} - {\bm \tau}^t 
+- \delta t ( \dot{\bm \omega}(\vec\upnu^t) \cdot {\bm \tau}^t - {\bm \tau}^t \cdot \dot{\bm \omega}(\vec\upnu^t)   ) 
+\]
+
+\[
+\left( 1 + \frac{\mu \delta t }{ \eta}   \right) {\bm \tau}^{t+\delta t} 
+=
+2\mu \delta t\dot{\bm \varepsilon}^d(\vec\upnu^{t+\delta t}) 
++ {\bm \tau}^t + \delta t ( \dot{\bm \omega}(\vec\upnu^t) \cdot {\bm \tau}^t - {\bm \tau}^t \cdot 
+\dot{\bm \omega}(\vec\upnu^t)   ) 
+\]
+
+\[
+{\bm \tau}^{t+\delta t} 
+=
+2\frac{\mu \delta t}{\left( 1 + \frac{\mu \delta t }{ \eta}   \right)}  
+\dot{\bm \varepsilon}^d(\vec\upnu^{t+\delta t}) 
++ \frac{1}{\left( 1 + \frac{\mu \delta t }{ \eta}   \right)}{\bm \tau}^t 
++ \frac{\delta t}{\left( 1 + \frac{\mu \delta t }{ \eta}   \right)}
+ ( \dot{\bm \omega}(\vec\upnu^t) \cdot {\bm \tau}^t - {\bm \tau}^t \cdot \dot{\bm \omega}(\vec\upnu^t)   ) 
+\]
+We define:
+\begin{equation}
+\boxed{
+\eta_{eff}=\frac{\mu \delta t}{\left( 1 + \frac{\mu \delta t }{ \eta}   \right)} = 
+\frac{ \eta \delta t}{\delta t + \eta/\mu} =
+ \frac{\eta}{1+ t_M/\delta t}
+}
+\label{eq:evetaeff}
+\end{equation}
+
+\[
+\boxed{
+Z=\frac{\eta_{eff}}{\mu \delta t} = \frac{\eta}{\mu \delta t + \eta}
+}
+\]
+
+\[
+\boxed{
+{\bm J}^t=  \dot{\bm \omega}(\vec\upnu^t) \cdot {\bm \tau}^t - {\bm \tau}^t \cdot \dot{\bm \omega}(\vec\upnu^t)  
+}
+\]
+
+so that we can write 
+\[
+{\bm \tau}^{t+\delta t} 
+=
+2 \eta_{eff}   \dot{\bm \varepsilon}^d(\vec\upnu^{t+\delta t}) 
++ Z {\bm \tau}^t 
++ Z \delta t {\bm J}^t
+\]
+
+or,  
+\[
+{\bm \tau}^{t+\delta t} 
+= 2 \eta_{eff}   \dot{\bm \varepsilon}^d(\vec\upnu^{t+\delta t}) +  \underline{\bm \tau}^{t}
+\qquad
+\text{with}
+\qquad
+\underline{\bm \tau}^{t} = 
+ Z  {\bm \tau}^t + Z \delta t {\bm J}^t 
+\]
+
+
+The total stress tensor is then 
+\begin{equation}
+\boxed{
+{\bm \sigma}^{t+\delta t} 
+= -p^{t+\delta t} {\bm 1} + {\bm \tau}^{t+\delta t} 
+= - p^{t+\delta t} {\bm 1} + 2 \eta_{eff}   \dot{\bm \varepsilon}^d(\vec\upnu^{t+\delta t}) 
++  Z  {\bm \tau}^t + Z \delta t {\bm J}^t
+}
+\label{eq:sigmaev}
+\end{equation}
+
+\begin{remark}
+When $\mu\rightarrow \infty$ we have
+$\eta_{eff} \rightarrow \eta$ and $Z \rightarrow 0$ and 
+we recover the Stokes equation for a purely viscous fluid.
+\end{remark}
+
+%..................................
+\subsubsection{Strong form}
+
+Let us now turn to the momentum conservation equation:
+\begin{eqnarray}
+&&{\vec \nabla}\cdot {\bm \sigma}^{t+\delta t} + \rho^{t+\delta t} {\vec g} = \vec{0} \nn\\
+&\Rightarrow&
+{\vec \nabla}\cdot (-p^{t+\delta t} {\bm 1}+  {\bm \tau}^{t+\delta t})+\rho^{t+\delta t}{\vec g}= \vec{0} \nn\\
+&\Rightarrow&
+- {\vec \nabla}p^{t+\delta t} +  {\vec \nabla}\cdot  {\bm \tau}^{t+\delta t} + \rho^{t+\delta t} {\vec g} = \vec{0} \nn\\
+&\Rightarrow&
+- {\vec \nabla}p^{t+\delta t} +  {\vec \nabla}\cdot  
+\left(
+2 \eta_{eff}   \dot{\bm \varepsilon}^d(\vec\upnu^{t+\delta t}) 
++  \underline{\bm \tau}^{t}
+\right)
++ \rho^{t+\delta t} {\vec g} = \vec{0} \nn
+\end{eqnarray}
+and finally
+\[
+\boxed{
+- {\vec \nabla}p^{t+\delta t} +  {\vec \nabla}\cdot  
+2 \eta_{eff}   \dot{\bm \varepsilon}^d(\vec\upnu^{t+\delta t}) 
+ = - \rho^{t+\delta t} {\vec g}
+-{\vec \nabla}\cdot  \underline{\bm \tau}^{t}
+}
+\]
+
+%..................................
+\subsubsection{Weak form}
+
+The mass conservation equation is still $\vec\nabla\cdot\vec\upnu=0$ so we need not look into 
+it since its weak form is in Section~\ref{sec:mixed}.
+
+For the $N_i^\upnu$'s we can write:
+\begin{eqnarray}
+\int_{\Omega_e} N_i^\upnu {\vec \nabla}\cdot {\bm \sigma}^{t+\delta t} d\Omega 
++ \int_{\Omega_e} N_i^\upnu  \rho {\vec g} \; d\Omega 
+&=& \vec 0 
+\end{eqnarray}
+We can integrate by parts and drop the surface term\footnote{We will come back to this at a later stage}
+REVISIT and use Eq.~(\ref{eq:sigmaev}):
+\begin{eqnarray}
+\int_{\Omega_e} {\vec \nabla } N_i^\upnu \cdot {\bm \sigma}^{t+\delta t} \;  d\Omega 
+&=& \int_{\Omega_e} N_i^\upnu  \rho {\vec g} \; d\Omega \nn\\ 
+\int_{\Omega_e} {\vec \nabla } N_i^\upnu \cdot 
+\left[ - p^{t+\delta t} {\bm 1} + 2 \eta_{eff} \dot{\bm \varepsilon}^d(\vec\upnu^{t+\delta t}) +
+ \underline{\bm \tau}^{t}  \right] \;  d\Omega 
+&=& \int_{\Omega_e} N_i^\upnu   \rho {\vec g}    \; d\Omega  \\
+\int_{\Omega_e} {\vec \nabla } N_i^\upnu \cdot 
+\left[ - p^{t+\delta t} {\bm 1} + 2 \eta_{eff} \dot{\bm \varepsilon}^d(\vec\upnu^{t+\delta t}) 
+\right] \;  d\Omega 
+&=& \int_{\Omega_e} N_i^\upnu   \rho {\vec g} \; d\Omega
+- \int_{\Omega_e}  {\vec \nabla } N_i^\upnu \cdot \underline{\bm \tau}^{t}   \; d\Omega  
+\end{eqnarray}
+We see that the left hand term is virtually identical to the one in Section~\ref{sec:mixed}, although
+the viscosity has been replaced with the effective viscosity of Eq.~(\ref{eq:evetaeff}).
+The headache will come from the right hand side term $ \underline{\bm \tau}^{t}$, as we will see.
+
+\paragraph{In two dimensions - Cartesian coordinates}. 
+The rotation rate tensor is given by:
+\[
+\dot{\bm \omega}(\vec\upnu) = \frac{1}{2}\left( \vec\nabla\vec \upnu - (\vec\nabla \vec\upnu)^T \right)
+= 
+\left( \begin{array}{cc}
+0 & \dot{\omega}_{xy} \\
+-\dot{\omega}_{xy} & 0
+\end{array}\right)
+=\frac{1}{2}
+\left( \begin{array}{cc}
+0 & \frac{\partial v}{\partial x} - \frac{\partial u}{\partial y} \\ 
+\frac{\partial v}{\partial x} - \frac{\partial u}{\partial y} & 0 
+\end{array}\right)
+\]
+so that the tensor ${\bm J}$ can be computed explicitely: 
+\begin{eqnarray}
+{\bm J}^t 
+&=& \dot{\bm \omega}(\vec\upnu^t) \cdot {\bm \tau}^t - {\bm \tau}^t \cdot \dot{\bm \omega}(\vec\upnu^t)  \nn\\
+&=&
+\left( \begin{array}{cc}
+0 & \dot{\omega}_{xy}(\vec\upnu^t) \\
+-\dot{\omega}_{xy}(\vec\upnu^t) & 0
+\end{array}\right)
+\cdot
+\left( \begin{array}{cc}
+\tau^t_{xx} & \tau^t_{xy} \\
+\tau^t_{xy} & \tau^t_{yy}
+\end{array}\right)
+-
+\left( \begin{array}{cc}
+\tau^t_{xx} & \tau^t_{xy} \\
+\tau^t_{xy} & \tau^t_{yy}
+\end{array}\right)
+\cdot
+\left( \begin{array}{cc}
+0 & \dot{\omega}_{xy}(\vec\upnu^t) \\
+-\dot{\omega}_{xy}(\vec\upnu^t) & 0
+\end{array}\right)\nn\\
+&=&
+\dot{\omega}_{xy}(\vec\upnu^t)
+\left( \begin{array}{cc}
+0 & 1\\ 
+-1 & 0
+\end{array}\right)
+\cdot
+\left( \begin{array}{cc}
+\tau^t_{xx} & \tau^t_{xy} \\
+\tau^t_{xy} & \tau^t_{yy}
+\end{array}\right)
+-
+\dot{\omega}_{xy}(\vec\upnu^t)
+\left( \begin{array}{cc}
+\tau^t_{xx} & \tau^t_{xy} \\
+\tau^t_{xy} & \tau^t_{yy}
+\end{array}\right)
+\cdot
+\left( \begin{array}{cc}
+0 & 1 \\ 
+-1 & 0
+\end{array}\right) \nn\\
+&=&
+\dot{\omega}_{xy}(\vec\upnu^t)
+\left( \begin{array}{cc}
+\tau^t_{xy} & \tau^t_{yy} \\
+-\tau^t_{xx} & -\tau^t_{xy}
+\end{array}\right)
+-
+\dot{\omega}_{xy}(\vec\upnu^t)
+\left( \begin{array}{cc}
+-\tau^t_{xy} & \tau^t_{xx} \\
+-\tau^t_{yy} & \tau^t_{xy}
+\end{array}\right) \nn\\
+&=&
+\dot{\omega}_{xy}(\vec\upnu^t)
+\left( \begin{array}{cc}
+2\tau^t_{xy} & \tau_{yy}^t-\tau_{xx}^t \\
+\tau^t_{yy}-\tau_{xx}^t & -2\tau_{xy}^t
+\end{array}\right)
+\end{eqnarray}
+
+so that the tensor equation $\underline{\bm \tau}= Z {\bm \tau} + Z \delta t {\bm J}$ can be 
+reformulated as follows in a vector form: 
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+\underline{\tau}^t_{xx}\\
+\underline{\tau}^t_{yy}\\
+\underline{\tau}^t_{xy}
+\end{array}
+\right)
+=
+Z 
+\left(
+\begin{array}{c}
+{\tau}_{xx}^t\\
+{\tau}_{yy}^t\\
+{\tau}_{xy}^t
+\end{array}
+\right)
++ Z \delta t
+\left(
+\begin{array}{c}
+J^t_{xx}\\
+J^t_{yy}\\
+J^t_{xy}
+\end{array}
+\right)
+=
+Z 
+\left(
+\begin{array}{c}
+{\tau}^t_{xx}\\
+{\tau}^t_{yy}\\
+{\tau}^t_{xy}
+\end{array}
+\right)
++ Z \delta t
+\dot{\omega}^t_{xy}
+\left(
+\begin{array}{c}
+ 2\tau^t_{xy} \\
+-2\tau^t_{xy} \\
+\tau^t_{yy}-\tau^t_{xx} 
+\end{array}
+\right)
+\end{eqnarray}
+
+
+
+
+or, 
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+{ \sigma}_{xx}^{t+\delta t}\\
+{ \sigma}_{yy}^{t+\delta t}\\
+{ \sigma}_{xy}^{t+\delta t}
+\end{array}
+\right)
+&=&
+\left(
+\begin{array}{c}
+-p^{t+\delta t} \\ 
+-p^{t+\delta t} \\ 
+0
+\end{array}
+\right)
++
+2 \eta_{eff}
+\left(
+\begin{array}{c}
+\dot{\varepsilon}_{xx}(\vec\upnu^{t+\delta t})\\
+\dot{\varepsilon}_{yy}(\vec\upnu^{t+\delta t})\\
+\dot{\varepsilon}_{xy}(\vec\upnu^{t+\delta t})
+\end{array}
+\right)
++
+\left(
+\begin{array}{c}
+\underline{ \tau}_{xx}^t\\
+\underline{ \tau}_{yy}^t\\
+\underline{ \tau}_{xy}^t
+\end{array}
+\right) \nn\\
+&=&
+\left(
+\begin{array}{c}
+-p^{t+\delta t} \\ 
+-p^{t+\delta t} \\ 
+0
+\end{array}
+\right)
++
+2 \eta_{eff}
+\left(
+\begin{array}{c}
+\dot{\varepsilon}_{xx}(\vec\upnu^{t+\delta t})\\
+\dot{\varepsilon}_{yy}(\vec\upnu^{t+\delta t})\\
+\dot{\varepsilon}_{xy}(\vec\upnu^{t+\delta t})
+\end{array}
+\right)
++
+Z
+\left(
+\begin{array}{c}
+{\tau}_{xx}^t\\
+{\tau}_{yy}^t\\
+{\tau}_{xy}^t
+\end{array}
+\right)
++
+Z \delta t \dot{\omega}_{xy}
+\left(
+\begin{array}{c}
+ 2\tau_{xy}^t \\
+-2\tau_{xy}^t \\
+\tau_{yy}^t-\tau_{xx}^t 
+\end{array}
+\right)
+\end{eqnarray}
+
+
+
+...
+
+
+\begin{equation}
+\int_{\Omega_e} {\bm B}^T \cdot 
+\left(
+\begin{array}{c}
+\sigma_{xx}^{t+\delta t}\\
+\sigma_{yy}^{t+\delta t}\\
+\sigma_{xy}^{t+\delta t}
+\end{array}
+\right)
+d\Omega
+=
+\int_{\Omega_e} {\vec N}_b d\Omega 
+\end{equation}
+
+
+\begin{equation}
+\int_{\Omega_e} {\bm B}^T \cdot 
+\left[
+\left(
+\begin{array}{c}
+-p^{t+\delta t} \\ -p^{t+\delta t} \\ 0
+\end{array}
+\right)
++
+2 \eta_{eff}
+\left(
+\begin{array}{c}
+\dot{\varepsilon}^d_{xx}(\vec\upnu^{t+\delta t})\\
+\dot{\varepsilon}^d_{yy}(\vec\upnu^{t+\delta t})\\
+\dot{\varepsilon}^d_{xy}(\vec\upnu^{t+\delta t})
+\end{array}
+\right)
+\right]
+d\Omega
+=
+\int_{\Omega_e} {\vec N}_b d\Omega
+-
+\int_{\Omega_e} {\bm B}^T \cdot 
+\left[
+Z
+\left(
+\begin{array}{c}
+{\tau}_{xx}^t\\
+{\tau}_{yy}^t\\
+{\tau}_{xy}^t
+\end{array}
+\right)
++
+Z \delta t \dot{\omega}_{xy}(\vec\upnu^t)
+\left(
+\begin{array}{c}
+ 2\tau_{xy}^t \\
+-2\tau_{xy}^t \\
+\tau_{yy}^t-\tau^t_{xx} 
+\end{array}
+\right)
+\right]
+\; d\Omega \nn 
+\end{equation}
+
+As seen in Section~\ref{sec:mixed} the left hand side terms yield $\K \cdot \vec{V} + \G \cdot \vec{P}$.
+The buoyancy term in the rhs is also standard and yields $\vec{f}$.
+The discretised momentum equation then writes
+\[
+\K \cdot \vec{V} + \G \cdot \vec{P} = \vec{f} + \vec{f}_{el}
+\]
+and the last rhs term is 
+\[
+\boxed{
+\vec{f}_{el} = 
+-
+\int_{\Omega_e} {\bm B}^T \cdot 
+\left[
+Z
+\left(
+\begin{array}{c}
+{\tau}_{xx}^t\\
+{\tau}_{yy}^t\\
+{\tau}_{xy}^t
+\end{array}
+\right)
++
+Z \delta t \dot{\omega}_{xy}(\vec\upnu^t)
+\left(
+\begin{array}{c}
+ 2\tau_{xy}^t \\
+-2\tau_{xy}^t \\
+\tau_{yy}^t-\tau^t_{xx} 
+\end{array}
+\right)
+\right]
+\; d\Omega 
+}
+\]
+with the matrix ${\bm B}$ being given by
+\[
+{\bm B}=
+\left(
+\begin{array}{ccccccccccc}
+\frac{\partial N_1^\upnu}{\partial x} & 0 & 0 &  \cdots  & \frac{\partial N_{m_v}^\upnu}{\partial x} & 0 & 0 \\ \\
+0 & \frac{\partial N_1^\upnu}{\partial y} & 0 & \cdots & 0 & \frac{\partial N_{m_v}^\upnu}{\partial y} & 0 \\ \\
+\frac{\partial N_1^\upnu}{\partial y} &  \frac{\partial N_1^\upnu}{\partial x} &  
+0 & \cdots  &\frac{\partial N_{m_v}^\upnu}{\partial x} 
+& \frac{\partial N_{m_v}^\upnu}{\partial x} & 0 \\ \\
+\end{array}
+\right) 
+\]
+
+
+
+
+
+
+%..........................................................
+\paragraph{In three dimensions - Cartesian coordinates}
+The spin tensor is given by 
+\[
+\dot{\bm \omega}(\vec\upnu) 
+= \frac{1}{2}\left( \vec\nabla\vec \upnu - (\vec\nabla \vec\upnu)^T \right)
+= 
+\left( \begin{array}{ccc}
+0 & \dot{\omega}_{xy} & \dot{\omega}_{xz}\\
+-\dot{\omega}_{xy} & 0 & \dot{\omega}_{yz} \\
+-\dot{\omega}_{xz} & -\dot{\omega}_{yz} & 0
+\end{array}\right)
+\]
+so that 
+\begin{eqnarray}
+{\bm J}^t 
+&=& \dot{\bm \omega}(\vec\upnu^t) \cdot {\bm \tau}^t - {\bm \tau}^t \cdot \dot{\bm \omega}(\vec\upnu^t)  \nn\\
+&=&
+\left( \begin{array}{ccc}
+0 & \dot{\omega}_{xy} & \dot{\omega}_{xz}\\
+-\dot{\omega}_{xy} & 0 & \dot{\omega}_{yz} \\
+-\dot{\omega}_{xz} & -\dot{\omega}_{yz} & 0
+\end{array}\right)
+\cdot
+\left( \begin{array}{ccc}
+\tau_{xx} & \tau_{xy} & \tau_{xz}\\
+\tau_{xy} & \tau_{yy} & \tau_{yz}\\
+\tau_{xz} & \tau_{yz} & \tau_{zz}
+\end{array}\right)
+-
+\left( \begin{array}{ccc}
+\tau_{xx} & \tau_{xy} & \tau_{xz}\\
+\tau_{xy} & \tau_{yy} & \tau_{yz}\\
+\tau_{xz} & \tau_{yz} & \tau_{zz}
+\end{array}\right)
+\cdot
+\left( \begin{array}{ccc}
+0 & \dot{\omega}_{xy} & \dot{\omega}_{xz}\\
+-\dot{\omega}_{xy} & 0 & \dot{\omega}_{yz} \\
+-\dot{\omega}_{xz} & -\dot{\omega}_{yz} & 0
+\end{array}\right)
+\nn\\
+&=&
+\end{eqnarray}
+
+FINISH!!!
+
+
+check appendix A of Loes' GR 
