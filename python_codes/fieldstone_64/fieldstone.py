@@ -53,6 +53,7 @@ def NNP(rq,sq):
 
 #------------------------------------------------------------------------------
 
+cm=0.01
 year=365.*24.*3600.
 
 print("-----------------------------")
@@ -66,8 +67,6 @@ ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 ndofT=1
 
-Lx=1000e3  # horizontal extent of the domain 
-Ly=1000e3  # vertical extent of the domain 
 
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 4):
@@ -79,64 +78,91 @@ else:
    nely = 50
    visu = 1
 
-assert (nelx>0.), "nnx should be positive" 
-assert (nely>0.), "nny should be positive" 
-    
-nnx=2*nelx+1  # number of elements, x direction
-nny=2*nely+1  # number of elements, y direction
-
-NV=nnx*nny  # number of nodes
-
-nel=nelx*nely  # number of elements, total
-
-viscosity=1.  # dynamic viscosity \mu
-
-NfemV=NV*ndofV               # number of velocity dofs
-NfemP=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
-Nfem=NfemV+NfemP              # total number of dofs
-NfemT=NV
-
 eps=1.e-10
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
 
+pnormalise=True
+
+benchmark=1
+
+if benchmark==1:
+   nelx=16
+   nely=16
+   Lx=100e3  
+   Ly=100e3  
+   gx=0.
+   gy=0
+   dt=100*year
+   rho1=0
+   rho2=0
+   mu1=1e10
+   mu2=0
+   eta1=1e21
+   eta2=0
+   etaeff1=eta1*dt/(dt+eta1/mu1)
+   etaeff2=0
+   Z1=etaeff1/mu1/dt
+   Z2=0
+   nstep=100 #200
+   tfinal=0
+   filter_compositions=False
+
+if benchmark==2:
+   Lx=1000e3  # horizontal extent of the domain 
+   Ly=1000e3  # vertical extent of the domain 
+   gx=0.
+   gy=-10
+   dt=200*year
+   rho1=4000
+   rho2=1
+   eta1=1e27
+   eta2=1e21
+   mu1=1e10
+   mu2=1e20
+   etaeff1=eta1*dt/(dt+eta1/mu1)
+   etaeff2=eta2*dt/(dt+eta2/mu2)
+   Z1=etaeff1/mu1/dt
+   Z2=etaeff2/mu2/dt
+   nstep=200
+   tfinal=20e3*year
+   nstep=1
+   filter_compositions=True
+
+nnx=2*nelx+1                  # number of Vnodes, x direction
+nny=2*nely+1                  # number of Vnodes, y direction
+NV=nnx*nny                    # number of Vnodes
+nel=nelx*nely                 # number of elements
+NfemV=NV*ndofV                # number of velocity dofs
+NfemP=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
+Nfem=NfemV+NfemP              # total number of dofs
+NfemT=NV                      # number of field dofs 
 hx=Lx/nelx
 hy=Ly/nely
 
-pnormalise=True
-
-tfinal=20e3*year
-dt=200*year
-
-gx=0.
-gy=-10
-
-rho1=4000
-rho2=1
-
-eta1=1e27
-eta2=1e21
-
-mu1=1e10
-mu2=1e20
-
-etaeff1=eta1*dt/(dt+eta1/mu1)
-etaeff2=eta2*dt/(dt+eta2/mu2)
-
-Z1=etaeff1/mu1/dt
-Z2=etaeff2/mu2/dt
-
 eta_ref=1e25
 scaling_coeff=eta_ref/Ly
-
-nstep=1
    
 rVnodes=[-1,1,1,-1,0,1,0,-1,0]
 sVnodes=[-1,-1,1,1,-1,0,1,0,0]
 
 alpha=0.5
 
-CFL=0.5
+time=0.
+
+#################################################################
+
+stats_exx_file=open('exx.ascii',"w")
+stats_eyy_file=open('eyy.ascii',"w")
+stats_exy_file=open('exy.ascii',"w")
+stats_oxy_file=open('oxy.ascii',"w")
+stats_tauxx_file=open('tauxx.ascii',"w")
+stats_tauyy_file=open('tauyy.ascii',"w")
+stats_tauxy_file=open('tauxy.ascii',"w")
+stats_C1_file=open('C1.ascii',"w")
+stats_C2_file=open('C2.ascii',"w")
+stats_u_file=open('u.ascii',"w")
+stats_v_file=open('v.ascii',"w")
 
 #################################################################
 #################################################################
@@ -147,10 +173,15 @@ print("nel",nel)
 print("nnx=",nnx)
 print("nny=",nny)
 print("NV=",NV)
-print("etaeff1=",etaeff1)
-print("etaeff2=",etaeff2)
-print("Z1=",Z1)
-print("Z2=",Z2)
+if benchmark==1:
+   print("etaeff1=",etaeff1)
+   print("Z1=",Z1)
+
+if benchmark==2:
+   print("etaeff1=",etaeff1)
+   print("etaeff2=",etaeff2)
+   print("Z1=",Z1)
+   print("Z2=",Z2)
 print("------------------------------")
 
 #################################################################
@@ -170,7 +201,7 @@ for j in range(0, nny):
     #end for
 #end for
 
-np.savetxt('grid.ascii',np.array([xV,yV]).T,header='# x,y')
+#np.savetxt('grid.ascii',np.array([xV,yV]).T,header='# x,y')
 
 print("grid points: %.3f s" % (timing.time() - start))
 
@@ -240,21 +271,38 @@ start = timing.time()
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
-for i in range(0,NV):
-    if xV[i]<eps:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    #end if
-    if xV[i]>(Lx-eps):
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-    #end if
-    if yV[i]<eps:
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    #end if
-    if yV[i]>(Ly-eps):
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    #end if
-#end for
+if benchmark==1:
+   for i in range(0,NV):
+       if xV[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = -1*cm/year
+       #end if
+       if xV[i]>(Lx-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = +1*cm/year
+       #end if
+       if yV[i]<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = +1*cm/year
+       #end if
+       if yV[i]>(Ly-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -1*cm/year
+       #end if
+   #end for
+
+if benchmark==2:
+   for i in range(0,NV):
+       if xV[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       #end if
+       if xV[i]>(Lx-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       #end if
+       if yV[i]<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       #end if
+       if yV[i]>(Ly-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       #end if
+   #end for
 
 print("boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -266,15 +314,23 @@ start = timing.time()
 C1=np.zeros(NV,dtype=np.float64)  
 C2=np.zeros(NV,dtype=np.float64)  
 
-for i in range(0,NV):
-    if xV[i]<=800e3 and np.abs(yV[i]-Ly/2)<=300e3:
-       C1[i]=1
-       C2[i]=0
-    else:
-       C1[i]=0
-       C2[i]=1
-    #end if
-#end for
+if benchmark==1:
+   C1[:]=1
+   C2[:]=0
+
+if benchmark==2:
+   for i in range(0,NV):
+       if xV[i]<=800e3 and np.abs(yV[i]-Ly/2)<=300e3:
+          C1[i]=1
+          C2[i]=0
+       else:
+          C1[i]=0
+          C2[i]=1
+       #end if
+   #end for
+    
+stats_C1_file.write("%e %e %e \n" %(time,np.min(C1),np.max(C1))) ; stats_C1_file.flush()
+stats_C2_file.write("%e %e %e \n" %(time,np.min(C2),np.max(C2))) ; stats_C2_file.flush()
 
 print("material layout: %.3f s" % (timing.time() - start))
 
@@ -285,7 +341,7 @@ print("material layout: %.3f s" % (timing.time() - start))
 tauxx=np.zeros(NV,dtype=np.float64)  
 tauyy=np.zeros(NV,dtype=np.float64)  
 tauxy=np.zeros(NV,dtype=np.float64)  
-omegaxy = np.zeros(NV,dtype=np.float64)  
+oxy = np.zeros(NV,dtype=np.float64)  
 
 #==============================================================================
 #==============================================================================
@@ -300,12 +356,14 @@ v = np.zeros(NV,dtype=np.float64)          # y-component velocity
 R = np.zeros(3,dtype=np.float64)           # shape functions V
 c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
-time=0.
 
 for istep in range(0,nstep):
     print("-----------------------------")
     print("istep= ", istep)
     print("-----------------------------")
+
+    #filename = 'quadrature_points_values_{:04d}.ascii'.format(istep)
+    #qpts_file=open(filename,"w")
 
     #################################################################
     # build FE matrix
@@ -364,29 +422,33 @@ for istep in range(0,nstep):
                 jcbi = np.linalg.inv(jcb)
 
                 # compute dNdx & dNdy
+                xq=0.
+                yq=0.
                 C1q=0.
                 C2q=0.
                 tauxxq=0.
                 tauyyq=0.
                 tauxyq=0.
-                omegaxyq=0.
+                oxyq=0.
                 for k in range(0,mV):
+                    xq+=NNNV[k]*xV[iconV[k,iel]]
+                    yq+=NNNV[k]*yV[iconV[k,iel]]
                     C1q+=NNNV[k]*C1[iconV[k,iel]]
                     C2q+=NNNV[k]*C2[iconV[k,iel]]
+                    oxyq+=NNNV[k]*oxy[iconV[k,iel]]
                     tauxxq+=NNNV[k]*tauxx[iconV[k,iel]]
                     tauyyq+=NNNV[k]*tauyy[iconV[k,iel]]
                     tauxyq+=NNNV[k]*tauxy[iconV[k,iel]]
-                    omegaxyq+=NNNV[k]*omegaxy[iconV[k,iel]]
                     dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                     dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
                 #end for 
 
                 rhoq=C1q*rho1+C2q*rho2
-                etaq=C1q*eta1+C2q*eta2
-                muq =C1q*mu1 +C2q*mu2
-                etaeffq=etaq*dt/(dt + etaq/muq)
-                #Zq=etaq/(muq*dt+etaq)
+                etaeffq=C1q*etaeff1+C2q*etaeff2
                 Zq=C1q*Z1+C2q*Z2
+
+                #qpts_file.write("%e %e %e %e %e %e %e %e %e\n"\
+                #                 %(xq,yq,rhoq,etaeffq,Zq,tauxxq,tauyyq,tauxyq,oxyq))
 
                 # construct 3x8 b_mat matrix
                 for i in range(0,mV):
@@ -406,9 +468,9 @@ for istep in range(0,nstep):
 
                 #compute elastic rhs
 
-                R[0]=Zq*(tauxxq+dt*omegaxyq*(2*tauxyq))
-                R[1]=Zq*(tauyyq+dt*omegaxyq*(-2*tauxyq))
-                R[2]=Zq*(tauxyq+dt*omegaxyq*(tauyyq-tauxxq))
+                R[0]=Zq*(tauxxq+dt*oxyq*(2*tauxyq))
+                R[1]=Zq*(tauyyq+dt*oxyq*(-2*tauxyq))
+                R[2]=Zq*(tauxyq+dt*oxyq*(tauyyq-tauxxq))
                 
                 f_el-=b_mat.T.dot(R)*weightq*jcob
 
@@ -526,6 +588,9 @@ for istep in range(0,nstep):
     print("     -> v (m,M) %e %e " %(np.min(v),np.max(v)))
     print("     -> p (m,M) %e %e " %(np.min(p),np.max(p)))
 
+    stats_u_file.write("%e %e %e \n" %(time,np.min(u),np.max(u))) ; stats_u_file.flush()
+    stats_v_file.write("%e %e %e \n" %(time,np.min(v),np.max(v))) ; stats_v_file.flush()
+
     #np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
     print("split vel into u,v: %.3f s" % (timing.time() - start))
@@ -533,10 +598,9 @@ for istep in range(0,nstep):
     #################################################################
     # compute timestep
     #################################################################
+    CFL=0.5
 
     dt_CFL=CFL*(Lx/nelx)/np.max(np.sqrt(u**2+v**2))
-
-    time+=dt
 
     print('dt_CFL= %e year' %(dt_CFL/year))
     print('dt    = %e year' %(dt/year))
@@ -549,10 +613,10 @@ for istep in range(0,nstep):
     count = np.zeros(NV,dtype=np.int16)  
     q=np.zeros(NV,dtype=np.float64)
     c=np.zeros(NV,dtype=np.float64)
-    exx = np.zeros(NV,dtype=np.float64)  
-    eyy = np.zeros(NV,dtype=np.float64)  
-    exy = np.zeros(NV,dtype=np.float64)  
-    omegaxy = np.zeros(NV,dtype=np.float64)  
+    Lxx = np.zeros(NV,dtype=np.float64)  
+    Lxy = np.zeros(NV,dtype=np.float64)  
+    Lyx = np.zeros(NV,dtype=np.float64)  
+    Lyy = np.zeros(NV,dtype=np.float64)  
 
     #u[:]=yV[:]
     #v[:]=xV[:]
@@ -577,47 +641,109 @@ for istep in range(0,nstep):
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
             #end for
-            e_xx=0.
-            e_yy=0.
-            e_xy=0.
-            omega_xy=0.
+            L_xx=0.
+            L_xy=0.
+            L_yx=0.
+            L_yy=0.
             for k in range(0,mV):
-                e_xx += dNNNVdx[k]*u[iconV[k,iel]]
-                e_yy += dNNNVdy[k]*v[iconV[k,iel]]
-                e_xy += 0.5*(dNNNVdy[k]*u[iconV[k,iel]]+dNNNVdx[k]*v[iconV[k,iel]])
-                omega_xy += 0.5*(dNNNVdx[k]*v[iconV[k,iel]]-dNNNVdy[k]*u[iconV[k,iel]])
+                L_xx += dNNNVdx[k]*u[iconV[k,iel]]
+                L_xy += dNNNVdx[k]*v[iconV[k,iel]]
+                L_yx += dNNNVdy[k]*u[iconV[k,iel]]
+                L_yy += dNNNVdy[k]*v[iconV[k,iel]]
             #end for
             inode=iconV[i,iel]
-            exx[inode]+=e_xx
-            eyy[inode]+=e_yy
-            exy[inode]+=e_xy
-            omegaxy[inode]+=omega_xy
+            Lxx[inode]+=L_xx
+            Lxy[inode]+=L_xy
+            Lyx[inode]+=L_yx
+            Lyy[inode]+=L_yy
             q[inode]+=np.dot(p[iconP[0:mP,iel]],NNNP[0:mP])
             count[inode]+=1
         #end for
     #end for
-    
-    exx/=count
-    eyy/=count
-    exy/=count
-    omegaxy/=count
+    Lxx/=count
+    Lxy/=count
+    Lyx/=count
+    Lyy/=count
     q/=count
 
-    print("     -> exx (m,M) %.6e %.6e " %(np.min(exx),np.max(exx)))
-    print("     -> eyy (m,M) %.6e %.6e " %(np.min(eyy),np.max(eyy)))
-    print("     -> exy (m,M) %.6e %.6e " %(np.min(exy),np.max(exy)))
-    print("     -> oxy (m,M) %.6e %.6e " %(np.min(omegaxy),np.max(omegaxy)))
+    print("     -> Lxx (m,M) %.6e %.6e " %(np.min(Lxx),np.max(Lxx)))
+    print("     -> Lxy (m,M) %.6e %.6e " %(np.min(Lxy),np.max(Lxy)))
+    print("     -> Lyx (m,M) %.6e %.6e " %(np.min(Lyx),np.max(Lyx)))
+    print("     -> Lyy (m,M) %.6e %.6e " %(np.min(Lyy),np.max(Lyy)))
 
     #np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
     #np.savetxt('strainrate.ascii',np.array([xV,yV,exx_n,eyy_n,exy_n]).T,header='# x,y,exx,eyy,exy')
 
-    print("compute press & sr: %.3f s" % (timing.time() - start))
+    print("compute nodal p and L: %.3f s" % (timing.time() - start))
+
+    #####################################################################
+    # compute nodal fields
+    #####################################################################
+    start = timing.time()
+
+    exx = np.zeros(NV,dtype=np.float64)  
+    eyy = np.zeros(NV,dtype=np.float64)  
+    exy = np.zeros(NV,dtype=np.float64)  
+    oxy = np.zeros(NV,dtype=np.float64)  
+    Jxx = np.zeros(NV,dtype=np.float64)  
+    Jyy = np.zeros(NV,dtype=np.float64)  
+    Jxy = np.zeros(NV,dtype=np.float64)  
+
+    exx[:]=Lxx[:]
+    eyy[:]=Lyy[:]
+    exy[:]=0.5*(Lxy[:]+Lyx[:])
+    oxy[:]=0.5*(Lxy[:]-Lyx[:])
+
+    Jxx[:]=2*tauxx[:]*oxy[:]
+    Jyy[:]=-2*tauxy[:]*oxy[:]
+    Jxy[:]=(tauyy[:]-tauxx[:])*oxy[:]
+
+    print("     -> exx (m,M) %.6e %.6e " %(np.min(exx),np.max(exx)))
+    print("     -> eyy (m,M) %.6e %.6e " %(np.min(eyy),np.max(eyy)))
+    print("     -> exy (m,M) %.6e %.6e " %(np.min(exy),np.max(exy)))
+    print("     -> oxy (m,M) %.6e %.6e " %(np.min(oxy),np.max(oxy)))
+
+    stats_exx_file.write("%e %e %e \n" %(time,np.min(exx),np.max(exx))) ; stats_exx_file.flush()
+    stats_eyy_file.write("%e %e %e \n" %(time,np.min(eyy),np.max(eyy))) ; stats_eyy_file.flush()
+    stats_exy_file.write("%e %e %e \n" %(time,np.min(exy),np.max(exy))) ; stats_exy_file.flush()
+    stats_oxy_file.write("%e %e %e \n" %(time,np.min(oxy),np.max(oxy))) ; stats_oxy_file.flush()
+
+    print("compute sr, rr and J: %.3f s" % (timing.time() - start))
+
+    #####################################################################
+
+    time+=dt
+
+    #####################################################################
+    # update dev stress fields
+    #####################################################################
+    start = timing.time()
+
+    etaeff = np.zeros(NV,dtype=np.float64)  
+    Z = np.zeros(NV,dtype=np.float64)  
+
+    etaeff[:]=C1[:]*etaeff1+C2[:]*etaeff2
+    Z[:]=C1[:]*Z1+C2[:]*Z2
+
+    tauxx=2*etaeff*exx+Z*tauxx+Z*dt*Jxx
+    tauyy=2*etaeff*eyy+Z*tauyy+Z*dt*Jyy
+    tauxy=2*etaeff*exy+Z*tauxy+Z*dt*Jxy
+
+    print("     -> tauxx (m,M) %.6e %.6e " %(np.min(tauxx),np.max(tauxx)))
+    print("     -> tauyy (m,M) %.6e %.6e " %(np.min(tauyy),np.max(tauyy)))
+    print("     -> tauxy (m,M) %.6e %.6e " %(np.min(tauxy),np.max(tauxy)))
+
+    stats_tauxx_file.write("%e %e %e \n" %(time,np.min(tauxx),np.max(tauxx))) ; stats_tauxx_file.flush()
+    stats_tauyy_file.write("%e %e %e \n" %(time,np.min(tauyy),np.max(tauyy))) ; stats_tauyy_file.flush()
+    stats_tauxy_file.write("%e %e %e \n" %(time,np.min(tauxy),np.max(tauxy))) ; stats_tauxy_file.flush()
+
+    print("compute/update tau: %.3f s" % (timing.time() - start))
 
     #####################################################################
     # advect fields
     #####################################################################
 
-    for ifield in range(0,2):
+    for ifield in range(0,1):
 
         start = timing.time()
 
@@ -690,22 +816,6 @@ for istep in range(0,nstep):
             a_el+=MM+(Ka)*dt*alpha
             b_el=(MM-(Ka)*(1.-alpha)*dt).dot(Tvect)
 
-            # apply boundary conditions
-            #for k1 in range(0,mV):
-            #    m1=iconV[k1,iel]
-            #    if bc_fixT[m1]:
-            #       Aref=a_el[k1,k1]
-            #       for k2 in range(0,mV):
-            #           m2=iconV[k2,iel]
-            #           b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
-            #           a_el[k1,k2]=0
-            #           a_el[k2,k1]=0
-            #       #end for
-            #       a_el[k1,k1]=Aref
-            #       b_el[k1]=Aref*bc_valT[m1]
-            #    #end for
-            #end for
-
             # assemble matrix A_mat and right hand side rhs
             for k1 in range(0,mV):
                 m1=iconV[k1,iel]
@@ -722,30 +832,41 @@ for istep in range(0,nstep):
 
         if ifield==0:
            print("     C1 (m,M) bef. %.4f %.4f " %(np.min(field),np.max(field)))
+           stats_C1_file.write("%e %e %e \n" %(time,np.min(field),np.max(field))) ; stats_C1_file.flush()
         if ifield==1:
            print("     C2 (m,M) bef. %.4f %.4f " %(np.min(field),np.max(field)))
+           stats_C2_file.write("%e %e %e \n" %(time,np.min(field),np.max(field))) ; stats_C2_file.flush()
+        if ifield==2:
+           print("     tauxx (m,M) bef. %.4f %.4f " %(np.min(field),np.max(field)))
+        if ifield==3:
+           print("     tauyy (m,M) bef. %.4f %.4f " %(np.min(field),np.max(field)))
+        if ifield==4:
+           print("     tauxy (m,M) bef. %.4f %.4f " %(np.min(field),np.max(field)))
 
         #filter composition with leka93 algorithm
-        sum0=np.sum(field)
-        minC=np.min(field)
-        maxC=np.max(field)
-        for i in range(0,NV):
-            if field[i]<=np.abs(minC):
-               field[i]=0
-            if field[i]>=2.-maxC:
-               field[i]=1
-        sum1=np.sum(field)
-        num=0
-        for i in range(0,NV):
-            if field[i]>0 and field[i]<1:
-               num+=1 
-            #end if
-        #end for
-        for i in range(0,NV):
-            if C1[i]>0 and C1[i]<1:
-               C1[i]+=(sum0-sum1)/num 
-            #end if
-        #end for
+
+        if filter_compositions:
+           sum0=np.sum(field)
+           minC=np.min(field)
+           maxC=np.max(field)
+           for i in range(0,NV):
+               if field[i]<=np.abs(minC):
+                  field[i]=0
+               if field[i]>=2.-maxC:
+                  field[i]=1
+           sum1=np.sum(field)
+           num=0
+           for i in range(0,NV):
+               if field[i]>0 and field[i]<1:
+                  num+=1 
+               #end if
+           #end for
+           for i in range(0,NV):
+               if C1[i]>0 and C1[i]<1:
+                  C1[i]+=(sum0-sum1)/num 
+               #end if
+           #end for
+        #end if
 
         if ifield==0:
            print("     C1 (m,M) aft. %.4f %.4f " %(np.min(field),np.max(field)))
@@ -755,13 +876,14 @@ for istep in range(0,nstep):
         if ifield==0:
            C1[:]=field[:]
            print("advect C1 time: %.3f s" % (timing.time() - start))
+           stats_C1_file.write("%e %e %e \n" %(time,np.min(C1),np.max(C1))) ; stats_C1_file.flush()
 
         if ifield==1:
            C2[:]=field[:]
            print("advect C2 time: %.3f s" % (timing.time() - start))
+           stats_C2_file.write("%e %e %e \n" %(time,np.min(C2),np.max(C2))) ; stats_C2_file.flush()
 
     #end for ifield
-
 
     #####################################################################
     # plot of solution
@@ -832,46 +954,50 @@ for istep in range(0,nstep):
     #--
     vtufile.write("<DataArray type='Float32' Name='eta_eff' Format='ascii'> \n")
     for i in range(0,NV):
-        etaeffi=C1[i]*etaeff1+C2[i]*etaeff2
-        vtufile.write("%10e \n" %etaeffi)
+        vtufile.write("%10e \n" %etaeff[i])
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='Z' Format='ascii'> \n")
     for i in range(0,NV):
-        etai=C1[i]*eta1+C2[i]*eta2
-        mui=C1[i]*mu1+C2[i]*mu2
-        #Zi=etai/(mui*dt+etai)
-        Zi=C1[i]*Z1+C2[i]*Z2
-        vtufile.write("%10e \n" %Zi)
+        vtufile.write("%10e \n" %Z[i])
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='t_maxwell (year)' Format='ascii'> \n")
-    for i in range(0,NV):
-        etai=C1[i]*eta1+C2[i]*eta2
-        mui=C1[i]*mu1+C2[i]*mu2
-        vtufile.write("%10e \n" %(etai/mui/year))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='e_xx' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%10e \n" %(exx[i]))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='e_yy' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%10e \n" %(eyy[i]))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='e_xy' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%10e \n" %(exy[i]))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='omegaxy' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='omega_xy' Format='ascii'> \n")
     for i in range(0,NV):
-        vtufile.write("%10e \n" %(omegaxy[i]))
+        vtufile.write("%10e \n" %(oxy[i]))
     vtufile.write("</DataArray>\n")
 
+    #--
+    vtufile.write("<DataArray type='Float32' Name='tau_xx' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" %(tauxx[i]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='tau_yy' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" %(tauyy[i]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='tau_xy' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" %(tauxy[i]))
+    vtufile.write("</DataArray>\n")
+    #--
     vtufile.write("</PointData>\n")
     #####
     vtufile.write("<Cells>\n")
@@ -897,8 +1023,6 @@ for istep in range(0,nstep):
     vtufile.write("</UnstructuredGrid>\n")
     vtufile.write("</VTKFile>\n")
     vtufile.close()
-
-
 
 print("-----------------------------")
 print("------------the end----------")

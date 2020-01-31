@@ -1,3 +1,80 @@
+
+%.......................................................
+\paragraph{Stress build-up in viscoelastic Maxwell body}
+
+The first benchmark performed to test the viscoelastic implementation considers the stress 
+build-up present in a viscoelastic Maxwell body. Contrary to stressed viscous materials, 
+viscoelastic materials gradually build-up stress when sheared after which a transition to viscous deformation occurs.  
+
+An unstressed, incompressible viscoelastic Maxwell medium is subjected to a velocity field 
+resulting in pure shear. 
+The increase of the accumulated stress with time is given by an analytical solution:
+\begin{equation}
+{\bm \tau} = 2\eta\ {\dot{\bm \varepsilon}} \left ( 1-e^{\frac{-\mu }{\eta} t } \right )
+\end{equation}
+with $t$ time, $\eta$ the prescribed material viscosity and $\mu$ the prescribed material shear modulus. 
+The domain size is 100$\times 100$km.
+The velocity prescribed at all boundaries equals $v=1$ cm/yr in magnitude yielding a constant 
+background strain rate of $\dot{\varepsilon}=2\text{cm/yr}/100\text{km}\simeq 6.342\times 10^{-15}$. 
+The viscosity is $\eta= 10^{21}\text{Pa.s}$, the shear modulus is 
+$\mu =10^{10}$Pa and the gravity is set to zero. We set $\delta t=100$yr.  
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{python_codes/fieldstone_64/images/stress_buildup_setup.png}\\
+\captionfont{
+The set up of the stress build-up benchmark is shown on the left. a) All domain sides have a free slip
+boundary condition, and pure shear velocity conditions are prescribed. Adapted from Gerya (2010) \cite{gery10}. b) The results of the benchmark. The deviatoric stress $\tau_{xx}$ 
+build-up with time is shown for the analytical and
+numerical solutions. The stress evolution for the purely viscous case is also shown.}
+\end{center}
+
+We have 
+\[
+\eta_{eff} 
+= \frac{\eta \delta t}{\delta t + \eta/\mu} 
+= \frac{10^{21} \cdot 3.154\times 10^{9}}{3.154\times 10^{9} + 10^{21}/10^{10}} 
+\simeq 
+3.057\times 10^{19}\text{Pa.s}
+\qquad
+\text{and}
+\qquad
+Z=\frac{\eta_{eff}}{\mu \delta t} 
+\simeq 
+0.9694
+\]
+The Maxwell time is $t_M = \frac{\eta}{\mu} = 10^{11}\text{s} \simeq 3171\text{yr}$.
+In the absence of elasticity, we have 
+$\dot{\varepsilon}_{xx} = 6.342\times 10^{-15}$ 
+and $\eta=10^{21}$ so the 
+deviatoric stress $\tau_{xx}$ is equal to 
+\[
+\tau_{xx} = 2 \cdot 10^{21} \cdot 6.342\times 10^{-15} \simeq 12.68 \times 10^6 \text{Pa}
+\]
+
+The first time that the Stokes system is solved, there is no stored stress, i.e. the 
+elastic rhs is identically zero, so that the system is solved with a viscosity equal to
+$\eta_{eff}$.
+We can easily compute the analytical solution, and we see that $\dot{\varepsilon}_{xy}=0$
+and $\dot{\omega}_{xy}=0$, which we recover:
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup/init/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup/init/exy}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup/init/oxy}
+\end{center}
+
+The expected stress value for $\tau_{xx}$ is 
+\[
+\tau_{xx} = 2 \eta_{eff} \dot{\varepsilon}_{xx} 
+= 2 \cdot 3.057\times 10^{19} \cdot 6.342\times 10^{-15} 
+\simeq 38.775 \times 10^4 \text{Pa}
+\]
+
+
+
+%........................
+\paragraph{Bending of elastic slab}
+
 The sinking slab benchmark consists of a beam of elastic material which is placed 
 in a weak and viscous surrounding medium. The initially unstressed beam is attached 
 to the left domain boundary through boundary conditions. A stress is then applied to 
@@ -7,7 +84,11 @@ elastic properties of the beam will then force itself to its original position.
 
 \begin{center}
 \includegraphics[width=0.9\textwidth]{python_codes/fieldstone_64/images/poster_benchmark.png}\\
-\captionfont{Set-up and evolution of the benchmark from \cite{gery10}. The properties of the two materials are given on the left, together with the initial configuration of the benchmark. The middle panel shows the position of the beam at $t=20\ kyr$, the moment the gravity is set to zero. The right panel shows the end result of the beam after a recovery period of $9980\ kyr$ during the absence of gravity.   }
+\captionfont{Set-up and evolution of the benchmark from \cite{gery10}. The properties of the 
+two materials are given on the left, together with the initial configuration of the benchmark. 
+The middle panel shows the position of the beam at $t=20\ kyr$, the moment the gravity is set 
+to zero. The right panel shows the end result of the beam after a recovery period of $9980\ kyr$ 
+during the absence of gravity.   }
 \end{center}
 
 
