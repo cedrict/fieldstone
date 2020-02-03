@@ -148,11 +148,12 @@ coordinates,
    =
   \int_0^r 4\pi G \rho_i r'^2 dr'
 \end{equation}
-The radial component of the gravity acceleration becomes,
+The left hand side becomes simply $ r^2 \frac{dU_i}{dr} $ so 
+the radial component of the gravity acceleration becomes
 \begin{equation}
    g_r(r) = - \frac{dU_i}{dr} 
           = - \frac{1}{r^2} \int_0^r 4\pi G \rho_i r'^2 dr'
-          = - \frac{Gm(r)}{r^2}
+%          = - \frac{Gm(r)}{r^2}
 \label{eqn_g_rad_comp}
 \end{equation}
 Furthermore the acceleration field $g_e$ from the external
@@ -187,6 +188,8 @@ numerical quadrature of Eq.~(\ref{eqn_g_rad_comp}):
 of the Earth as a function of the cell size used for the integration.}
 \end{center}
 
+For very high resolutions we do recover the analytical value as
+computed in Section~\ref{ss:prem}.
 
 
 

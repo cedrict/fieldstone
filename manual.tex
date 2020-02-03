@@ -348,7 +348,10 @@ a geodynamical context requires a lot of additional techniques.
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Implementation of an elasto-viscous rheology} \label{ss:evrheo} \input{evrheo.tex} %--
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Implementation of an elasto-visco-plastic rheology} \label{ss:evprheo} 
+\subsection{Implementation of an elasto-visco-plastic rheology} \label{ss:evprheo} %---------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{The PREM model} \label{ss:prem} \input{prem} %----------------------------------------- 
+
 
 
 
@@ -358,7 +361,7 @@ a geodynamical context requires a lot of additional techniques.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Geodynamics GEO3-1313 - Utrecht University}
 \index{contributors}{A. van den Berg}
-What follows was written by Arie van den Berg and was used as the syllabus for the 
+What follows was written by Arie van den Berg and was/is used as the syllabus for the 
 3rd year geodynamics course at Utrecht University. It is reproduced with Arie's permission
 and has been slightly modified by me.
 
@@ -392,6 +395,14 @@ and has been slightly modified by me.
 \section{Mantle Dynamics GEO4-1416 - Utrecht University}
 
 \subsection{Computer practicals} \input{computer_practicals_1416}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Finite Difference Method}
+
+\subsection{FDM basics} \label{ss:fdm_basics} \input{fdm_basics} 
+\subsection{FEM vs FDM?}\label{ss:femvsfdm}   \input{femvsfdm}
 
 
 %%\end{document}
@@ -962,12 +973,22 @@ Stone 63: failure in cemented granular material
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{
-Stone 64: Elastic beam
+Stone 64: Elasto-viscous benchmarks 
 \label{f64}} 
 \addcontentsline{toc}{section}{\protect\numberline{} 
-Stone 64: Elasic beam 
+Stone 64: Elasto-viscous benchmarks 
 }
 \input{python_codes/fieldstone_64/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 65: steady-state 1D advection-diffusion 
+\label{f65}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 65: steady-state 1D advection-diffusion 
+}
+\input{python_codes/fieldstone_65/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 
