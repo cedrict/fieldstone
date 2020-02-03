@@ -176,6 +176,17 @@ A non-singular field requires $A=0,~g_e(r')=0,~r' \le 0$ and,
    \frac{dU_e}{dr'} = 0 ~\rightarrow~ U_e(r') = B,~r' \le r
 \end{equation}
 
+Looking back at the PREM model, it is a radial model $\rho(r)$ so 
+can compute $g_r$ at the surface of the Earth. The code 
+is available in /images/prem/ and uses a somewhat naive 
+numerical quadrature of Eq.~(\ref{eqn_g_rad_comp}):
+
+\begin{center}
+\includegraphics[width=10cm]{images/prem/g.pdf}\\
+{\captionfont Radial gravity component measured at the surface
+of the Earth as a function of the cell size used for the integration.}
+\end{center}
+
 
 
 

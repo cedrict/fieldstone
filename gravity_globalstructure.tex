@@ -1,5 +1,5 @@
 To understand the Earth's internal dynamics and evolution we need
-to know it's internal structure and material properties.
+to know its internal structure and material properties.
 What do we know about Earth's global internal structure?
 
 For a substance of given chemical composition, the material properties
@@ -11,7 +11,7 @@ temperature and pressure as illustrated in the following figure:
 \begin{center}
 \includegraphics[width=10cm]{images/gravity/reg}\\
 {\captionfont
-Illustration of the central roles that pressure, temperature and density play in geophysics. 
+Illustration of the central roles that pressure, temperature and density play in geophysics.\\ 
 Taken from Regenauer-Lieb et al., Phil. Mag., 2006 \cite{rehy06}.
 }
 \end{center}
@@ -20,7 +20,7 @@ The internal pressure distribution is directly linked with the Earth's
 own internal gravity field and density distribution because
 the local pressure gradient equals the local gravity acceleration
 times the density (see problem \ref{problem-pressure}).
-In section \ref{section_Density-gravity-pressure} density, gravity
+In Section~\ref{section_Density-gravity-pressure} density, gravity
 and pressure are treated together in a consistent way. 
 
 If the internal pressure distribution is known we can relate sharp
@@ -56,6 +56,51 @@ the internal distribution of the Earth's chemical composition.
 Such composition models are derived from geological evidence and
 cosmochemical considerations.
 
+
+Table I of (Dziewonski and Anderson (1981) \cite{dzan81}) gives 
+an expression for the density as a function of the radius $r$, which 
+I have turned into a python function:
+\begin{lstlisting}
+def prem_density(radius):
+    x=radius/6371.e3
+    if radius>6371e3:
+       densprem=0
+    elif radius<=1221.5e3:
+       densprem=13.0885-8.8381*x**2
+    elif radius<=3480e3:
+       densprem=12.5815-1.2638*x-3.6426*x**2-5.5281*x**3
+    elif radius<=3630.e3:
+       densprem=7.9565-6.4761*x+5.5283*x**2-3.0807*x**3
+    elif radius<=5600.e3:
+       densprem=7.9565-6.4761*x+5.5283*x**2-3.0807*x**3
+    elif radius<=5701.e3:
+       densprem=7.9565-6.4761*x+5.5283*x**2-3.0807*x**3
+    elif radius<=5771.e3:
+       densprem=5.3197-1.4836*x
+    elif radius<=5971.e3:
+       densprem=11.2494-8.0298*x
+    elif radius<=6151.e3:
+       densprem=7.1089-3.8045*x
+    elif radius<=6291.e3:
+       densprem=2.6910+0.6924*x
+    elif radius<=6346.e3:
+       densprem=2.6910+0.6924*x
+    elif radius<=6356.e3:
+       densprem=2.9
+    elif radius<=6368.e3:
+       densprem=2.6
+    else:
+       densprem=1.020
+    return densprem*1000
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=8cm]{images/prem/rho.pdf}\\
+{\captionfont PREM density as computed with the function above. 
+Code available in /images/prem/} 
+\end{center}
+
+
 %--------------------------------------------------
 \subsubsection{Early models of the Earth's density}
 
@@ -63,7 +108,7 @@ The total Earth mass $M_{\oplus}$ and average density $\left <\rho \right >$
 were not known 
 before independent measurement of Newton's gravitational 
 constant by Cavendish, 
-(see section \ref{section_Density-gravity-pressure}).
+(see Section~\ref{section_Density-gravity-pressure}).
 When the average density had been determined as approximately 
 $5.5 \cdot 10^3~\mathrm{kg\cdot m}^{-3}$ it became clear, 
 from the lower density of surface rocks of around 
@@ -71,7 +116,7 @@ $2.7 \cdot 10^3~\mathrm{kg\cdot m}^{-3}$,
 that the Earth's interior must consist of higher density material.
 
 Besides the mass or average density the (average) 
-moment of inertia $I$ (defined in section \ref{sect_scalarmomint}) 
+moment of inertia $I$ (defined in Section~\ref{sect_scalarmomint}) 
 provides a constraint on the radial distribution of density.
      
 These two integral parameter values have been applied in several 
@@ -80,13 +125,13 @@ At the end of the nineteenth century Wiechert\footnote{Emil Johann
 Wiechert (26 December 1861 – 19 March 1928) was a German physicist 
 and geophysicist who made many contributions to both fields, 
 including presenting the first verifiable model of a layered structure of the 
-Earth and being among the first to discover the electron} assumed that the 
-compressibility of Earth materials would be negligable to first
+Earth and being among the first to discover the electron.} assumed that the 
+compressibility of Earth materials would be negligible to first
 approximation and that Earth's high mean density was due to a dense,
 probably metallic, core.
 He assumed an iron core based on astronomical evidence of high iron
 content of the sun's outer layers 
-(see also section \ref{section-chemical-composition}).
+(see also Section~\ref{section-chemical-composition}).
 
 Wiechert considered in particular layered spherically symmetric 
 models consisting of two uniform layers, core and mantle.
