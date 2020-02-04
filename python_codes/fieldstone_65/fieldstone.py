@@ -16,23 +16,46 @@ print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
 
-Lx=1.        # horizontal extent of the domain 
-Ly=0.1       # vertical extent of the domain 
-nelx = 10
-nely =  4
-hx=Lx/float(nelx)
-hy=Ly/float(nely)
-
 ndim=2       # number of space dimensions
 m=4          # number of nodes making up an element
 ndofT=1      # number of degrees of freedom per node
-hcapa=1.     # heat capacity
-rho0=1       # reference density
-f=1.
-Pe=1
-u0=1.
-hcond=u0*hx*rho0*hcapa/2/Pe     # thermal conductivity
-    
+
+experiment=2
+
+if experiment==1:
+   Lx=1.        # horizontal extent of the domain 
+   Ly=0.1       # vertical extent of the domain 
+   nelx = 10
+   nely =  4
+   hx=Lx/float(nelx)
+   hy=Ly/float(nely)
+   f=1.
+   Pe=1
+   u0=1.
+   hcapa=1.     # heat capacity
+   rho0=1       # reference density
+   hcond=u0*hx*rho0*hcapa/2/Pe     # thermal conductivity
+
+if experiment==2:
+   Lx=1.
+   Ly=1. 
+   nelx = 10
+   nely = 10
+   hx=Lx/float(nelx)
+   hy=Ly/float(nely)
+   f=0.
+   Pe=1e4
+   u0=1.
+   hcapa=1.     # heat capacity
+   rho0=1       # reference density
+   hcond=u0*hx*rho0*hcapa/2/Pe     # thermal conductivity
+
+use_artificial_diffusion=False
+
+use_supg=False
+
+kappa=hcond/rho0/hcapa
+
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
 NV=nnx*nny  # number of nodes
@@ -41,13 +64,36 @@ NfemT=NV*ndofT  # Total number of degrees of temperature freedom
 
 #####################################################################
 
+if use_artificial_diffusion and use_supg:
+   exit("both options together not compatible")
+
+if experiment==1:
+   if use_artificial_diffusion:
+      beta=np.cosh(Pe)/np.sinh(Pe)-1./Pe # coth(Pe)-1/Pe
+   else:
+      beta=0
+   #beta=1
+
+if experiment==2:
+   if use_artificial_diffusion:
+      beta=1.                      # Pe>>1 so coth(Pe)->1 
+   else:
+      beta=0
+
+
+kappatilde=beta*kappa*Pe
+hcondtilde=kappatilde*rho0*hcapa
+
 print("Lx=",Lx)
 print("Ly=",Ly)
 print("hx=",hx)
 print("hy=",hy)
 print("hcond=",hcond)
 print("hcapa=",hcapa)
+print("kappa=",hcond/rho0/hcapa)
 print("Pe=",Pe)
+print("beta=",beta)
+print("kappatilde=",kappatilde)
 
 #####################################################################
 # grid point setup 
@@ -57,19 +103,42 @@ print("grid point setup")
 
 x = np.empty(NV,dtype=np.float64)  # x coordinates
 y = np.empty(NV,dtype=np.float64)  # y coordinates
-u = np.zeros(NV,dtype=np.float64)  # x-component velocity
-v = np.zeros(NV,dtype=np.float64)  # y-component velocity
 
 counter = 0
 for j in range(0, nny):
     for i in range(0, nnx):
         x[counter]=i*hx
         y[counter]=j*hy
-        u[counter]=u0
-        v[counter]=0
         counter += 1
     #end for
 #end for
+
+#####################################################################
+# velocity field 
+#####################################################################
+
+u = np.zeros(NV,dtype=np.float64)  # x-component velocity
+v = np.zeros(NV,dtype=np.float64)  # y-component velocity
+
+if experiment==1:
+   counter = 0
+   for j in range(0, nny):
+       for i in range(0, nnx):
+           u[counter]=u0
+           v[counter]=0
+           counter += 1
+       #end for
+   #end for
+
+if experiment==2:
+   counter = 0
+   for j in range(0, nny):
+       for i in range(0, nnx):
+           u[counter]=u0*np.cos(30./180.*np.pi)
+           v[counter]=u0*np.sin(30./180.*np.pi)
+           counter += 1
+       #end for
+   #end for
 
 #####################################################################
 # connectivity
@@ -98,12 +167,28 @@ print("defining temperature boundary conditions")
 bc_fixT=np.zeros(NfemT,dtype=np.bool)  
 bc_valT=np.zeros(NfemT,dtype=np.float64) 
 
-for i in range(0,NV):
-    if x[i]/Lx<eps:
-       bc_fixT[i]=True ; bc_valT[i]=0.
-    if x[i]/Lx>(1-eps):
-       bc_fixT[i]=True ; bc_valT[i]=0.
-#end for
+if experiment==1:
+   for i in range(0,NV):
+       if x[i]/Lx<eps:
+          bc_fixT[i]=True ; bc_valT[i]=0.
+       if x[i]/Lx>(1-eps):
+          bc_fixT[i]=True ; bc_valT[i]=0.
+   #end for
+
+if experiment==2:
+   for i in range(0,NV):
+       if x[i]/Lx<eps and y[i]<0.2:
+          bc_fixT[i]=True ; bc_valT[i]=0.
+       if x[i]/Lx<eps and y[i]>=0.2:
+          bc_fixT[i]=True ; bc_valT[i]=1.
+       if y[i]<eps:
+          bc_fixT[i]=True ; bc_valT[i]=0.
+
+       #if x[i]/Lx>(1-eps):
+       #   bc_fixT[i]=True ; bc_valT[i]=0.
+       #if y[i]/Ly>(1-eps):
+       #   bc_fixT[i]=True ; bc_valT[i]=0.
+   #end for
 
 #####################################################################
 # compute analytical solution
@@ -111,8 +196,11 @@ for i in range(0,NV):
 
 T_anal  = np.zeros(NV,dtype=np.float64)
 
-for i in range(0,NV):
-    T_anal[i]=(x[i]-(1-np.exp(2*Pe*x[i]/hx))/(1-np.exp(2*Pe/hx)))/u0*f
+if experiment==1:
+   for i in range(0,NV):
+       T_anal[i]=(x[i]-(1-np.exp(2*Pe*x[i]/hx))/(1-np.exp(2*Pe/hx)))/u0*f
+if experiment==2:
+   T_anal[:]=0.
 
 #####################################################################
 # create necessary arrays 
@@ -135,7 +223,6 @@ for iel in range (0,nel):
     a_el=np.zeros((m*ndofT,m*ndofT),dtype=np.float64)
     Ka=np.zeros((m,m),dtype=np.float64)   # elemental advection matrix 
     Kd=np.zeros((m,m),dtype=np.float64)   # elemental diffusion matrix 
-    MM=np.zeros((m,m),dtype=np.float64)   # elemental mass matrix 
     vel=np.zeros((1,ndim),dtype=np.float64)
 
     for iq in [-1,1]:
@@ -165,6 +252,7 @@ for iel in range (0,nel):
                 jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
                 jcb[1,0]+=dNds[k]*x[icon[k,iel]]
                 jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+            # end for
 
             # calculate the determinant of the jacobian
             jcob=np.linalg.det(jcb)
@@ -183,12 +271,14 @@ for iel in range (0,nel):
                 B_mat[0,k]=dNdx[k]
                 B_mat[1,k]=dNdy[k]
                 b_el[k]=N_mat[k,0]*f*jcob*weightq
-
-            # compute mass matrix
-            MM=N_mat.dot(N_mat.T)*rho0*hcapa*weightq*jcob
+            # end for
 
             # compute diffusion matrix
-            Kd=B_mat.T.dot(B_mat)*hcond*weightq*jcob
+            Kd=B_mat.T.dot(B_mat)*(hcond+hcondtilde)*weightq*jcob
+
+            if use_supg:
+               tau=0.5*hx/u0
+               N_mat+=tau*np.transpose(vel.dot(B_mat))
 
             # compute advection matrix
             Ka=N_mat.dot(vel.dot(B_mat))*rho0*hcapa*weightq*jcob
@@ -240,7 +330,7 @@ np.savetxt('Temperature.ascii',np.array([x,y,T,T_anal]).T,header='# x,y,T')
 # visualisation 
 #################################################################
 
-visu=0
+visu=1
 
 if visu==1:
     vtufile=open('solution.vtu',"w")
