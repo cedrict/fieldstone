@@ -1,14 +1,17 @@
 The chosen time step dt used for time integration is chosen to
 comply with the Courant-Friedrichs-Lewy condition \cite{cfd_anderson}.
 \begin{equation}
-\delta t = C \min \left( \frac{h}{\max |{\bm v}|} , \frac{h^2}{\kappa}  \right)
+\delta t = C \min \left( \frac{\min h}{\max |{\vec\upnu}| p} , \frac{h^2}{\kappa}  \right)
 \end{equation}
-where $h$ is a measure of the element size, $\kappa = k/ \rho C_p$ 
+where $h$ is a measure of the element diameter, $p$ is the polynomial order of the element, 
+$\kappa = k/ \rho C_p$ 
 is the thermal diffusivity and C is the so-called CFL number chosen in $[0,1[$.
+$\min h$ is the smallest element diameter in the domain, while $\max |{\vec\upnu}$ is the 
+maximum velocity (norm) in the domain. 
 
 In essence the CFL condition arises when solving hyperbolic PDEs \index{general}{hyperbolic PDE}.
 It limits the time step in many explicit time-marching computer simulations
-so that the simulation does not produce incorrect results. 
+so that the simulation does not produce (too) incorrect results. 
 
 This condition is not needed when solving the Stokes equation but it is mandatory 
 when solving the heat transport equation or any kind of advection-diffusion equation. 

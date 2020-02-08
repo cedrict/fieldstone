@@ -13,17 +13,17 @@ The advection matrix is simply modified and computed as follows:
 \[
 ({\bm K}_a^e)_{SUPG}
 =
-\int_{x_k}^{x_{k+1}}   ({\bm N}^\star)^T \rho C_p \vec\upnu \cdot {\bm B} dx  
+\int_{x_k}^{x_{k+1}}   ({\vec N}^\star)^T \rho C_p \vec\upnu \cdot {\bm B} dx  
 \quad\quad
 {\text with}
 \quad\quad
-{\bm N}^\star= {\bm N} + \tau \vec \upnu \cdot {\bm B}
+{\vec N}^\star= {\vec N} + \tau \vec \upnu \cdot {\bm B}
 \]
 Note that we can also write 
 \[
 ({\bm K}_a^e)_{SUPG}
 =
-\int_{x_k}^{x_{k+1}}   {\bm N}^T \rho C_p \vec\upnu \cdot {\bm B} dx  
+\int_{x_k}^{x_{k+1}}   {\vec N}^T \rho C_p \vec\upnu \cdot {\bm B} dx  
 +
 \int_{x_k}^{x_{k+1}}  \tau (\vec \upnu \cdot {\bm B})^T   \rho C_p (\vec\upnu \cdot {\bm B}) dx  
 \]
@@ -65,8 +65,11 @@ carried out with $\delta t=0.1h/\upnu=0.002$.
 As discussed in \cite{thie11}, using Equation~\ref{tausupg}, 
 one arrives to $\gamma=0.045$, which leads to a desired removal of the oscillations through a small
 amount of numerical diffusion. Braun \cite{brau03} argues for a constant
-$\gamma=1/\sqrt{15}=0.258$ (after \cite{hubr82}), which effect is also shown in the figure above. This 
-value is arguably too large and introduces indesirable diffusion.
+$\gamma=1/\sqrt{15}=0.258$ (citing \cite{hubr82}), which effect is also shown in the figure above. This 
+value is arguably too large and introduces indesirable diffusion. Note that this same value is 
+to be found in Bochev et al (2004) \cite{bogs04}. The authors then state that 
+"for 1D pure advection problems, this choice maximizes the phase accuracy in the semidiscrete
+equation" and cite Raymond \& Gardner (1976) \cite{raga76} as source. 
 
 
 
@@ -98,3 +101,278 @@ It is only during the 6th Hackathon in May 2019 that the SUPG was introduced on 
 Note that the \aspect{} implementation is based on the deal.II step 
 63\footnote{\url{https://www.dealii.org/developer/doxygen/deal.II/step_63.html}}.
 \end{remark}
+
+
+%-----------------------------------------------------
+\subsubsection{Linear elements - artificial diffusion}
+
+We have seen in Section~\ref{ss:femvsfdm} that the discretised advection-diffusion equation 
+in 1D is given by:
+\[
+\frac{u}{2h}
+\left[
+\left(1-\frac{1}{Pe}\right) T_{i+1} + \frac{2}{Pe} T_i - \left(1+\frac{1}{Pe}\right)T_{i-1} 
+\right] = f
+\]
+and we show in Stone~\ref{f65} that the solution is far from accurate for $Pe>1$. Let us ask ourselves the 
+following question: could come up with a modified version of the equation above which 
+guarantees an exact solution on a uniform mesh of linear elements?
+
+Essentially, we are looking for $A$, $B$ and $C$ such that 
+\[
+A T_{i+1} + BT_i + C T_{i-1} = f
+\]
+One can show (see Donea \& Huerta \cite{dohu03}) that a successful candidate formulation 
+is\footnote{$\coth(x)=(\exp(x)-\exp(-x))/(\exp(x)+\exp(-x))$}:
+\[
+\frac{u}{2h}
+\left[
+\left(1-\coth(Pe) \right) T_{i+1} + 2 \coth(Pe) T_i - \left(1+\coth(Pe)\right) T_{i-1} 
+\right] = f
+\]
+which can be arranged into the following form:
+\begin{equation}
+u
+\frac{T_{i+1}-T_{i-1}}{2h_x}
+-
+(\kappa+ \tilde{\kappa})
+\frac{T_{i-1}-2T_i+T_{i+1}}{h_x^2}
+= \frac{f}{\rho_0 C_p}
+\end{equation}
+where 
+$\tilde{\kappa}$ is known as artificial (numerical) diffusion (dissipation) given by
+\[
+\tilde{\kappa}=\beta \frac{u h}{2} = \beta \kappa Pe
+\qquad
+\text{with}
+\qquad
+\beta = \coth (Pe) - \frac{1}{Pe}
+\]
+where $Pe$ is the (dimensionless) Peclet number defined as: \index{general}{Peclet Number}
+\[
+\boxed{
+Pe= \frac{u h }{2 \kappa}
+}
+\]
+If $Pe>1$ we say the problem is advection-dominated, 
+else if $Pe<1$ we say the problem is diffusion-dominated.
+
+One can also define $\tilde{k}=\rho_0 C_p \tilde{\kappa}$ so that 
+the discretised 1D advection-diffusion becomes:
+\begin{equation}
+\rho_0 C_p u \frac{T_{i+1}-T_{i-1}}{2h_x}
+- (k+ \tilde{k}) \frac{T_{i-1}-2T_i+T_{i+1}}{h_x^2}
+= f 
+\end{equation}
+or, in its continuous formulation:
+\[
+\rho_0 C_p u \frac{dT}{dx} - (k+ \tilde{k}) \frac{d^2T}{dx^2} = f
+\]
+
+
+
+
+The $\beta$ factor is shown in the following figure as a function of the Peclet number:
+\begin{center}
+\includegraphics[width=8cm]{images/supg/beta}\\
+{\captionfont Note that the value of $\beta$ is positive only for $Pe>1$.}
+\end{center}
+
+
+%-----------------------------------------------------
+\subsubsection{Linear elements - bubble functions \& Petrov-Galerkin formulation}
+
+Let us assume that $u>0$, i.e. advection goes from left to right. 
+Node $i-1$ is said to be on the upstream side of node $i$, and node $i+1$
+is on the downstream side of node . In Petrov FEM, instead of selecting the weight functions to be the
+same as the standard shape functions, we distort them as shown below.
+
+\index{general}{Bubble Function}
+The distortion is based on so-called bubble functions since they have zero
+values on the nodes and they are nonzero on elements' interiors.
+For instance one can take
+\begin{eqnarray}
+{N}^\star_1(r)&=&\frac{1}{2}(1-r)-\frac{3}{4}\beta(1-r^2) \\
+{N}^\star_2(r)&=&\frac{1}{2}(1+r)+\frac{3}{4}\beta(1-r^2) 
+\end{eqnarray}
+as test/weight functions
+where $\beta$ is a parameter that controls the amount of upwinding. 
+
+
+\begin{center}
+\includegraphics[width=5cm]{images/supg/bubble1}
+\includegraphics[width=5cm]{images/supg/bubble2}\\
+{\captionfont Left: standard $Q_1$ test functions; Right: modified ($Q_1$+bubble) functions
+for $\beta=0.25$}
+\end{center}
+
+
+\begin{eqnarray}
+{\bm K}_a^e 
+&=& \int_{x_k}^{x_{k+1}}   ({\vec N}^\star)^T \rho C_p \vec\upnu \cdot {\bm B} \; dx  \nn\\
+&=& 
+\rho C_p u
+\left(
+\begin{array}{cc}
+-1/2 & 1/2 \\ \\
+-1/2 & 1/2 
+\end{array}
+\right)
++
+\frac{h}{2}
+\int_{-1}^{+1}
+\rho C_p u
+\left(\begin{array}{c}
+-\frac{3}{4}\beta(1-r^2) \\ +\frac{3}{4}\beta(1-r^2) 
+\end{array}\right)
+\left( \frac{dN_1}{dr} \; \frac{dN_2}{dr} \right)  dr \\
+&=&
+\frac{\rho C_p u}{2}
+\left(
+\begin{array}{cc}
+-1 & 1 \\ \\
+-1 & 1 
+\end{array}
+\right)
++
+\frac{u}{2}
+\left(
+\begin{array}{cc}
+\beta & -\beta \\ \\
+-\beta & \beta
+\end{array}
+\right)
+\end{eqnarray}
+VERIFY
+
+We see that this additional matrix is akin to ${\bm K}_d^e$
+so that 
+\[
+{\bm K}^e 
+= {\bm K}_a^e + {\bm K}_d^e 
+= \frac{\rho C_p u}{2}
+\left(
+\begin{array}{cc}
+-1 & 1 \\ \\
+-1 & 1 
+\end{array}
+\right)
++
+(\frac{k}{h} + \frac{u \beta \rho C_p}{2})
+\left(
+\begin{array}{cc}
+1 & -1 \\ \\
+-1 & 1 
+\end{array}
+\right)
+\]
+VERIFY!!
+
+
+%------------------------------
+\subsubsection{The SUPG method}
+
+
+
+%------------------------------
+\subsubsection{About the choice of the parameter $\tau$}
+
+\begin{itemize}
+\item The approach used in step-63 and subsequently in ASPECT is the one in John \& Knobloch \cite{jokn06,knob08}:
+\[
+\tau_1 = \frac{h}{2 |\vec\upnu| p} \left( \coth (Pe) - \frac{1}{Pe} \right)
+\]
+where $\tau$ is computed on each cell, $h$ being its diameter in the direction of $\vec\upnu$, 
+and $p$ is the order of the approximation (i.e. the maximum degree of polynomials).
+Note that Hughes \& Brooks \cite{hubr82} replace the costly 'coth' term by an asymptotic curve:
+
+\begin{center}
+\includegraphics[width=8cm]{images/supg/hubr82}\\
+{\captionfont Taken from \cite{hubr82}. Here $\alpha$ is the Peclet number and the vertical axis
+is the term $ \coth (Pe) -1/Pe$.}
+\end{center}
+
+
+\item
+Codina (2000) (see Eq.39 of \cite{codi00}) defines $\tau$ as follows:
+\[
+\tau_2= \left( \frac{2 |\vec\upnu|}{h} + \frac{4 \kappa}{h^2} + \sigma   \right)^{-1}
+\]
+where $\sigma$ is a reaction term (which we neglect in what follows). This equation 
+can be re-written:
+\[
+\tau_2= \frac{h}{2 |\vec\upnu|} \left( 1 + \frac{1}{Pe} \right)^{-1}
+\]
+
+\item
+Shakib et al (1991) (see Eq. 3.59 of \cite{shhj91}) propose another formula:
+\[
+\tau_3= \frac{h}{2 |\vec\upnu|} \left( 1 + \frac{9}{Pe^2} \right)^{-1}
+\]
+
+\item
+Braun \cite{brau03} uses 
+\[
+\tau_4 = \frac{h}{|\vec\upnu| \sqrt{15}} = \frac{h}{2|\vec\upnu|} \frac{2}{\sqrt{15}} 
+\]
+This formula is independent of $Pe$ and is also in \cite{bogs04}.
+It is also used in Hughes \& Brooks (1982) \cite{hubr82} for pure advection problems in 1D
+and this value is attributed to \cite{raga76}.
+
+
+\item Following \cite{teos00} (see also Appendix A of Thieulot (2011) \cite{thie11}):
+\[
+\tau_5 = \left( \frac{2 |\vec{\upnu}|}{h} + \frac{1}{\theta \delta t} + \frac{\kappa}{h^2} \right)^{-1}  
+\]
+Crank-Nicolson: $\theta=1/2$, CFL condition yields $\delta t = C \frac{h}{|\vec\upnu|}$ so 
+\[
+\tau_5 = \left( \frac{2 |\vec{\upnu}|}{h} + \frac{2}{\delta t}+  \frac{\kappa}{h^2}  \right)^{-1}  
+= \left( \frac{2 |\vec{\upnu}|}{h} + \frac{2 v}{C h} +  \frac{\kappa}{h^2}  \right)^{-1}  
+= \frac{h}{2 |\vec{\upnu}|}  \left( 1 + \frac{1}{C} + \frac{1}{4 Pe} \right)^{-1} \nn 
+\]
+Note that the velocity in the CFL criterion is the maximum velocity in the domain, while 
+in all other expressions above for $\tau_i$ it is the velocity in the cell/element. 
+By doing so, the relationship  for $\tau_5$ is actually only valid for the cell with the 
+highest velocity. 
+Also, this has been used in the context of SUPG methods for the N-S equations, not advection-diffusion
+equations!
+
+\item Franca et al (2004) \cite{frhm04} use the following formula which originates from \cite{frfh92}:
+if $0\le Pe < 1$ then
+$\tau = \frac{h}{2 |\vec\upnu|} Pe$ and if $Pe \ge 1$ then $\tau = \frac{h}{2 |\vec\upnu|}$.
+Note however that their definition of the Peclet number includes a scalar parameter $m$ which is 
+the minimum between 1/3 and and 2$C_k$ where the calculation of this parameter is discussed in 
+Remarks 4 and 5 of \cite{frfh92}. The authors conclude that for linear quadrilaterals the value
+1/3 should be used while for biquadratic elements 1/12 should be preferred. 
+
+\item Knobloch \cite{knob08} discusses other choices of $\tau$.
+
+\end{itemize}
+
+Quoting Donea \& Huerta: "It is obvious that $\tau$ must vanish when the mesh is refined (no stabilisation
+is necessary for a fine enough mesh)" and "Numerical experiments seem to indicate that for 
+finite elements of order $p$ the value of the stabilisation parameter should be approximately 
+$\tau/p$."
+
+Let us define $\gamma=\frac{\tau}{h/2|\vec\upnu|}$ (dimensionless quantity) and 
+plot this quantity against the Peclet number:
+
+\begin{center}
+\includegraphics[width=10cm]{images/supg/gamma} 
+\end{center}
+
+In the case when the equation to be stabilised is a pure advection equation, 
+then $Pe\rightarrow \infty$ so 
+\[
+\gamma_1 \rightarrow 1  \quad
+\gamma_2 \rightarrow 1 \quad
+\gamma_3 \rightarrow 1 \quad
+\gamma_4 \simeq 0.52 \quad
+\gamma_5 \rightarrow (1+C^{-1})^{-1} 
+\]
+
+
+
+
+
+

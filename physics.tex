@@ -28,6 +28,10 @@ The skew-symmetric tensor is called spin tensor (or vorticity tensor):
 \end{equation}
 
 \begin{remark}
+The velocity gradient tensor is sometimes denoted by ${\bm L}=\vec\nabla\vec\upnu$.
+\end{remark}
+
+\begin{remark}
 In the mathematical literature a different notation for the strain rate tensor is often used, i.e. 
 $D(\vec \upnu)$, such as for instance in Fullsack (1995) \cite{full95}.
 \end{remark}
@@ -177,8 +181,10 @@ Using the relationship ${\bm \tau} = 2 \eta \dot{\bm \varepsilon}^d$ we arrive a
 \subsection{The mass conservation equations} 
 \index{general}{Solenoidal Field} 
 \index{general}{Divergence-free}
+\index{general}{Continuity Equation}
+\index{general}{Mass Conservation Equation}
 
-The mass conservation equation is given by
+The mass conservation equation (often called continuity equation) is given by
 \[
 \frac{D\rho}{Dt} + \rho {\vec \nabla}\cdot{\vec \upnu} = 0
 \]
@@ -205,6 +211,37 @@ ${\vec \nabla}\rho=0$, i.e. $D\rho/Dt=0$ and the remaining equation is simply:
 \]
 A vector field that is divergence-free is also called 
 solenoidal\footnote{\url{https://en.wikipedia.org/wiki/Solenoidal_vector_field}}.
+
+
+In cylindrical coordinates $(r,\theta,\phi)$ 
+the continuity equation for an incompressible fluid is :
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+\frac{1}{r} \frac{\partial}{\partial r} (r \upnu_r) 
++
+\frac{1}{r} \frac{\partial \upnu_\theta}{\partial \theta}
++
+\frac{\partial \upnu_z}{\partial z}=0
+\]
+\end{mdframed}
+\index{general}{Mass Conservation Equation (Cylindrical Coordinates)}
+
+
+In spherical coordinates $(r,\theta,\phi)$ 
+the continuity equation for an incompressible fluid is :
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+\frac{1}{r^2} \frac{\partial}{\partial r} (r^2 \upnu_r) 
++
+\frac{1}{r \sin\theta} \frac{\partial}{\partial \theta} (\upnu_\theta \sin\theta)
++
+\frac{1}{r \sin\theta} \frac{\partial \upnu_\phi}{\partial \phi}=0
+\]
+\end{mdframed}
+\index{general}{Mass Conservation Equation (Spherical Coordinates)}
+
 
 
 %------------------------------------------------------------------------------

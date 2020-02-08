@@ -95,13 +95,36 @@ $\tau _{yz}$ the orthogonal shear stresses.
 
 As seen above, the SI units of both stress tensor and traction are $\text{N}/\text{m}^2$.
 
+In Cylindrical coordinates the stress tensor components are given by:
+\begin{eqnarray}
+\sigma_{rr} &=& -p + 2 \eta \frac{\partial \upnu_r}{\partial r}      \\
+\sigma_{\theta\theta} &=& 
+ -p + 2\eta \left( \frac{1}{r} \frac{\partial \upnu_\theta}{\partial\theta} +\frac{\upnu_r}{r} \right)    \\
+\sigma_{zz} &=& -p + 2 \eta \frac{\partial \upnu_z}{\partial z}      \\
+\sigma_{r\theta} &=& \eta \left( \frac{1}{r} \frac{\partial \upnu_r}{\partial \theta} 
++ \frac{\partial \upnu_\theta}{\partial r} - \frac{\upnu_\theta}{r} \right)  \\
+\sigma_{rz} &=& \eta \left( \frac{\partial \upnu_r}{\partial z}  + \frac{\partial \upnu_z}{\partial r}\right) \\
+\sigma_{\theta z} &=&  \eta \left(  \frac{1}{r} \frac{\partial \upnu_z}{\partial \theta}
++\frac{\partial \upnu_\theta}{\partial z}     \right) 
+\end{eqnarray}
+\index{general}{Stress Tensor (Cylindrical Coordinates)}
 
-%......................................................................
-%\subsubsection{Continuity equation}\label{sec:continuityeq}
- 
+In Spherical coordinates the stress tensor components are given by:
+\begin{eqnarray}
+\sigma_{rr} &=& -p + 2 \eta \frac{\partial \upnu_r}{\partial r}      \\
+\sigma_{\theta\theta} &=& 
+ -p + 2\eta \left( \frac{1}{r} \frac{\partial \upnu_\theta}{\partial\theta} +\frac{\upnu_r}{r} \right)    \\
+\sigma_{\phi\phi} &=& 
+-p + 2\eta \left( \frac{1}{r \sin \theta} \frac{\partial \upnu_\phi}{\partial \phi} 
++\frac{\upnu_r}{r}  + \frac{\upnu_\theta \cot \theta}{r} \right) \\
+\sigma_{r\theta} &=& \eta\left(  r \frac{\partial}{\partial r} \frac{\upnu_\theta}{r}  
++\frac{1}{r} \frac{\partial \upnu_r}{\partial\theta}   \right)\\
+\sigma_{r\phi} &=& \eta \left( \frac{1}{r \sin\theta}\frac{\partial \upnu_r}{\partial \phi} 
++ r \frac{\partial}{\partial r} \frac{\upnu_\phi}{r}  \right)\\
+\sigma_{\theta \phi} &=& \eta \left(
+\frac{1}{r \sin\theta} \frac{\partial \upnu_\theta}{\partial\phi}
++\frac{\sin\theta}{r} \frac{\partial}{\partial \theta} \frac{\upnu_\phi}{\sin\theta}
+\right) 
+\end{eqnarray}
+\index{general}{Stress Tensor (Spherical Coordinates)}
 
-
-
-
-
-%\end{document}

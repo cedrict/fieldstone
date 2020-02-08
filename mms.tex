@@ -1374,3 +1374,33 @@ over the domain is zero, i.e. $\int p dV =0$.
 
 
 
+
+%-------------------------------------------------------------------------------
+\subsubsection{One-dimensional advection-diffusion equation \label{ss:advdiff} }
+
+Let us start with the 1D steady advection-diffusion equation:
+\begin{equation}
+\rho C_p u \frac{dT}{dx} - k \frac{d^2T}{dx^2} = f \qquad \text{in} \quad [0,L_x]
+\end{equation}
+with the boundary conditions $T(x=0)=0$ and $T(x=L_x)=0$.
+
+The solution to this problem is:
+\[
+T(x) = \frac{f}{u}\left( x - \frac{1-\exp \frac{ux}{\kappa}}{1-\exp \frac{u}{\kappa} } \right)
+\]
+or 
+\[
+T(x) = \frac{f}{u}\left( x - \frac{1-\exp \frac{2 Pe x}{h}}{1-\exp \frac{2 Pe}{h} } \right)
+\]
+where
+\[
+Pe = \frac{uh}{2 \kappa} = \frac{u h \rho C_p}{2 k}
+\]
+
+
+
+
+
+
+
+
