@@ -214,7 +214,7 @@ doi = "10.23644/uu.9209393.v1"}
 \section{Solving the heat transport equation with linear Finite Elements} %%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The diffusion equation in 1D} \label{sec:diff1D} \input{diff1D} %----------------------
 \subsection{The advection-diffusion equation in 1D} \label{sec:advec-diff1D}\input{adv_diff1D} %---
-\subsection{The advection-diffusion equation in 2D} \input{hte_fem} %-----------------------
+\subsection{The advection-diffusion equation in 2D} \label{ss:hte_fem}\input{hte_fem} %------------
 
 \newpage 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -292,7 +292,7 @@ a geodynamical context requires a lot of additional techniques.
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{The consistent boundary flux (CBF)} \input{CBF} %--------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{The value of the timestep} \input{cfl} %-----------------------------------------------
+\subsection{The value of the timestep}\label{ss:cfl} \input{cfl} %---------------------------------
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Mappings} \input{mappings} %-----------------------------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
@@ -783,10 +783,10 @@ Stone 42: 1D diffusion
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{
-Stone 43: the rotating cone 
+Stone 43: Time-dependent advection problems
 \label{f43}} 
 \addcontentsline{toc}{section}{\protect\numberline{} 
-Stone 43: the rotating cone 
+Stone 43: Time-dependent advection problems
 }
 \input{python_codes/fieldstone_43/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

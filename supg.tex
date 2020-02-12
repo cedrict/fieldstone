@@ -2,105 +2,15 @@ As abondantly documented in the literature advection needs to be stabilised
 as it otherwise showcases non-negligible under- and overshoots.
 A standard approach is the Streamline Upwind Petrov Galerkin (SUPG) method.
 
-\Literature \cite{brhu82,brbf92,teos00,humm86}
-
-%------------------------------
-\subsubsection{Linear elements}
-
-When using linear elements, its implementation is rather trivial, as shown in 
-the DOUAR paper \cite{brtf08} or the FANTOM paper \cite{thie11}. 
-The advection matrix is simply modified and computed as follows:
-\[
-({\bm K}_a^e)_{SUPG}
-=
-\int_{x_k}^{x_{k+1}}   ({\vec N}^\star)^T \rho C_p \vec\upnu \cdot {\bm B} dx  
-\quad\quad
-{\text with}
-\quad\quad
-{\vec N}^\star= {\vec N} + \tau \vec \upnu \cdot {\bm B}
-\]
-Note that we can also write 
-\[
-({\bm K}_a^e)_{SUPG}
-=
-\int_{x_k}^{x_{k+1}}   {\vec N}^T \rho C_p \vec\upnu \cdot {\bm B} dx  
-+
-\int_{x_k}^{x_{k+1}}  \tau (\vec \upnu \cdot {\bm B})^T   \rho C_p (\vec\upnu \cdot {\bm B}) dx  
-\]
-and we see that the SUPG method introduces and additional term that is akin to 
-a diffusion term in the direction of the flow.
-This can be seen by looking at the advection matrix a regular grid of 1D 
-elements of size $h$:
-\[
-({\bm K}_a^e)_{SUPG}=
-{\bm K}_a^e
-+
-\rho C_p
-\frac{\tau u^2}{h}
-\left(
-\begin{array}{cc}
-1 & -1 \\ \\
--1 & 1
-\end{array}
-\right)
-\]
-The additional matrix has the same structure as the 1D diffusion matrix matrix in \ref{sec:diff1D}.
-
-The parameter $\tau$ is chosen as follows:
-\begin{equation}
-\tau=\gamma \frac{h}{\upnu} 
-\label{tausupg}
-\end{equation}
-where $\gamma$ is a user chosen parameter (see Appendix A of \cite{thie11}). 
-
-A typical test case for testing a advection scheme is the step advection benchmark (
-see for instance \cite{dohu03}). At $t=0$, 
-a field $T(x)$ is prescribed in a 1D domain of unit length. For $x\le 1/4$ we have $T(x)=1$ and 
-$T(x)=0$ everywhere else as shown on the following figure:
-\begin{center}
-\includegraphics[width=8cm]{images/supg/fantom3}
-\end{center}
-The prescribed velocity is $\upnu=1$, 50 elements are used and 250 time steps are 
-carried out with $\delta t=0.1h/\upnu=0.002$.
-As discussed in \cite{thie11}, using Equation~\ref{tausupg}, 
-one arrives to $\gamma=0.045$, which leads to a desired removal of the oscillations through a small
-amount of numerical diffusion. Braun \cite{brau03} argues for a constant
-$\gamma=1/\sqrt{15}=0.258$ (citing \cite{hubr82}), which effect is also shown in the figure above. This 
-value is arguably too large and introduces indesirable diffusion. Note that this same value is 
-to be found in Bochev et al (2004) \cite{bogs04}. The authors then state that 
-"for 1D pure advection problems, this choice maximizes the phase accuracy in the semidiscrete
-equation" and cite Raymond \& Gardner (1976) \cite{raga76} as source. 
+A nice overview of upwind techniques and how SUPG came to be is to be found in Chapter 
+2 of Donea \& Huerta \cite{dohu03} or in Brooks and Hughes (1982) \cite{brhu82}.
+Hughes et al (1986) \cite{humm86} present a review of the SUPG method 
+and discuss a additional discontinuity-capturing term. TODO? 
 
 
 
 
 
-
-
-
-Another classic example of advection testing is a 2D problem where (for example) a cylinder, a Gaussian 
-and a cone are prescribed and advected with a velocity field (see for instance \cite{dohu03}). 
-
-\begin{center}
-\includegraphics[width=0.45\textwidth]{images/supg/supg1}
-\includegraphics[width=0.45\textwidth]{images/supg/supg2}\\
-{\captionfont After a $2\pi$ rotation and in the absence of stabilisation we see that the temperature field
-showcases clearly visible ripples.}
-\end{center}
-
-
-
-
-
-
-\begin{remark}
-Note that \aspect{} originally did not rely on the SUPG formulation to stabilise the 
-advection(-diffusion) equations\cite{krhb12}. It instead relied on the Entropy Viscosity
-formulation \cite{gupp10,gupp11}.
-It is only during the 6th Hackathon in May 2019 that the SUPG was introduced on the code.
-Note that the \aspect{} implementation is based on the deal.II step 
-63\footnote{\url{https://www.dealii.org/developer/doxygen/deal.II/step_63.html}}.
-\end{remark}
 
 
 %-----------------------------------------------------
@@ -268,17 +178,158 @@ so that
 \]
 VERIFY!!
 
-
+\newpage
 %------------------------------
 \subsubsection{The SUPG method}
 
+We start from the 'bare-bones' heat transport equation (source terms are omitted): 
+\begin{equation}
+\rho C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec\nabla T} \right)
+= {\vec \nabla} \cdot k \vec\nabla T 
+\end{equation}
+which we once again write 
+\begin{equation}
+\rho C_p \left(\dot{T} + {\vec \upnu}\cdot {\vec\nabla T} \right)
+= {\vec \nabla} \cdot k \vec\nabla T 
+\end{equation}
+
+In what follows we assume that the velocity vield $\vec \upnu$ is known so that temperature is the
+only unknown.
+Let $N^\uptheta_i$ be the temperature basis function at node $i$ so that the temperature inside an element is
+given by\footnote{the $\uptheta$ superscript has been chosen to denote temperature so as to avoid confusion
+with the transpose operator}:
+\begin{equation}
+T^h({\vec r}) = \sum_{i=1}^{m_T} N^\uptheta_i ({\vec r})\;  T_i = \vec N^\uptheta \cdot \vec T
+\end{equation}
+where $\vec T$ and $\vec N^\uptheta$ are vectors of length $m_T$. Also:
+\[
+\vec \nabla \vec N^\uptheta = 
+\left(
+\begin{array}{cccc}
+\partial_x N_1^\uptheta & 
+\partial_x N_2^\uptheta & \dots &
+\partial_x N_{m_T}^\uptheta \\ \\
+\partial_y N_1^\uptheta & 
+\partial_y N_2^\uptheta & \dots &
+\partial_y N_{m_T}^\uptheta 
+\end{array}
+\right)
+\]
+The weak form is then
+\begin{equation}
+\int_{\Omega_e} N^\uptheta_i \left[ 
+\rho C_p \left( \dot{T} + {\vec \upnu}\cdot {\vec\nabla T} \right) \right] d\Omega
+= \int_{\Omega_e}  N^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T  d\Omega
+\end{equation}
+or,
+\[
+\underbrace{\int_{\Omega_e} N^\uptheta_i  \rho C_p \dot{T}^h d\Omega}_{I}
++ \underbrace{\int_{\Omega_e} N^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T^h}   d\Omega}_{II}
+= \underbrace{\int_{\Omega_e}  N^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T^h d\Omega}_{III}
+\quad\quad
+i=1,m_T
+\]
+The streamline upwind Petrov-Galerkin (SUPG) 
+method adds the following stabilisation term to the left hand side of this equation (see Section 2.4 
+in Donea \& Huerta \cite{dohu03}):
+\[
+\int_{\Omega_e} (\vec\upnu\cdot\vec\nabla N_i^\theta ) \tau {\cal R}(\vec\upnu) \; d\Omega
+\]
+where ${\cal R}$ is the residual defined as
+\[
+{\cal R}(T^h) = 
+\rho C_p (\dot{T}^h +  {\vec \upnu}\cdot {\vec\nabla T^h}) - {\vec \nabla} \cdot k \vec\nabla T^h 
+\]
+and $\tau$ is a stabilisation parameter (see Section~\ref{ss:tausupg}).
+
+We have already worked out in Section~\ref{ss:hte_fem} the final forms of $I$, $II$ and 
+$III$, so we here focus on the additional SUPG terms. 
+  
+We then have three terms to deal with:
+\begin{eqnarray}
+IV &=&\int_{\Omega_e} \tau(\vec\upnu\cdot\nabla N_i^\theta) (\rho C_p\dot{T}^h)  d\Omega \\
+V  &=&\int_{\Omega_e} \tau(\vec\upnu\cdot\nabla N_i^\theta)(\rho C_p{\vec \upnu}\cdot{\vec\nabla T^h}) d\Omega \\
+VI &=&\int_{\Omega_e} \tau(\vec\upnu\cdot\nabla N_i^\theta)(-{\vec \nabla} \cdot k \vec\nabla T^h ) d\Omega 
+\end{eqnarray}
+
+We can compute the quantity $I+IV$:
+\begin{eqnarray}
+I+IV 
+&=&
+\int_{\Omega_e} N^\uptheta_i  \rho C_p \dot{T}^h d\Omega 
++
+\int_{\Omega_e}(\vec\upnu\cdot\vec\nabla N_i^\theta)  \tau ( \rho C_p\dot{T}^h)  d\Omega \nn\\
+&=& 
+\int_{\Omega_e} ( N^\uptheta_i + \tau \vec\upnu\cdot\vec\nabla N_i^\theta )  ( \rho C_p\dot{T}^h)  d\Omega 
+\end{eqnarray}
+and also $II+V$:
+\begin{eqnarray}
+II+V 
+&=&
+\int_{\Omega_e} N^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T^h}   d\Omega
++
+\int_{\Omega_e}(\vec\upnu\cdot\vec\nabla N_i^\theta) \tau (\rho C_p {\vec \upnu}\cdot{\vec\nabla T^h}) d\Omega \\
+&=& 
+\int_{\Omega_e} (N^\uptheta_i  + \tau \vec\upnu\cdot\vec\nabla N_i^\theta) (\rho C_p {\vec \upnu}\cdot{\vec\nabla T^h}) d\Omega 
+\end{eqnarray}
+
+\begin{remark} Because of the integration by parts which 
+will be applied to  $III$, the terms $III$ and $VI$ cannot be summed together.
+\end{remark}
 
 
-%------------------------------
-\subsubsection{About the choice of the parameter $\tau$}
+\begin{remark}
+If the equation is a pure advection equation, then $k=0$ so $III=VI=0$. 
+\end{remark}
+
+
+We see that both $I+IV$ and $II+V$ contain the term $N^\uptheta_i  + \tau \vec\upnu\cdot\vec\nabla N_i^\theta$
+which we can interpret as a 'modified' shape function:
+\[
+\boxed{
+\underline{N}^\uptheta_i = N^\uptheta_i  + \tau \vec\upnu\cdot\vec\nabla N_i^\theta
+}
+\]
+This yields the following modified elemental matrices
+\[
+{\bm M}^\uptheta \quad \rightarrow \quad \underline{\bm M}^\uptheta
+= \int \rho C_p \vec{\underline{N}}^\uptheta \vec{N}^\uptheta \; d\Omega
+\]
+
+\[
+{\bm K}_a \quad \rightarrow  \quad \underline{\bm K}_a 
+= \int \rho C_p \vec{\underline{N}}^\uptheta ({\vec \upnu}\cdot \vec\nabla \vec{N}^\uptheta) \; d\Omega
+\]
+
+\begin{remark} 
+The modified mass matrix is not symmetrical anymore.
+\end{remark} 
+
+Under the assumption that $k$ is constant within the element, we have 
+\[
+VI = \int_{\Omega_e} \tau(\vec\upnu\cdot\nabla N_i^\theta)(- k \Delta T^h ) d\Omega 
+\]
+with 
+\[
+\Delta T^h 
+= \Delta \sum_{i=1}^{m_T} N^\uptheta_i ({\vec r}) T_i 
+=  \sum_{i=1}^{m_T} \Delta N^\uptheta_i ({\vec r}) T_i = \Delta \vec N^\uptheta \cdot \vec T
+\]
+
+\begin{remark}
+If the shape functions are first-order ones, then $VI=0$ since $\Delta \vec N^\uptheta = \vec 0$.  
+\end{remark}
+
+The SUPG-stabilised pure advection equation is extensively tested in the Stone \ref{f43}.
+
+
+%---------------------------------------------------------------------------
+\subsubsection{About the choice of the parameter $\tau$}\label{ss:tausupg}
 
 \begin{itemize}
-\item The approach used in step-63 and subsequently in ASPECT is the one in John \& Knobloch \cite{jokn06,knob08}:
+\item The approach used in step-63 and subsequently in ASPECT is the 
+one in John \& Knobloch \cite{jokn06,knob08} which is also to be found in early 
+80's papers \cite{brhu82,hubr82}:
 \[
 \tau_1 = \frac{h}{2 |\vec\upnu| p} \left( \coth (Pe) - \frac{1}{Pe} \right)
 \]
@@ -317,8 +368,7 @@ Braun \cite{brau03} uses
 \]
 This formula is independent of $Pe$ and is also in \cite{bogs04}.
 It is also used in Hughes \& Brooks (1982) \cite{hubr82} for pure advection problems in 1D
-and this value is attributed to \cite{raga76}.
-
+and this value is attributed to Raymond \& Garder (1976)  \cite{raga76}.
 
 \item Following \cite{teos00} (see also Appendix A of Thieulot (2011) \cite{thie11}):
 \[
@@ -335,7 +385,7 @@ in all other expressions above for $\tau_i$ it is the velocity in the cell/eleme
 By doing so, the relationship  for $\tau_5$ is actually only valid for the cell with the 
 highest velocity. 
 Also, this has been used in the context of SUPG methods for the N-S equations, not advection-diffusion
-equations!
+equations! This approach is then not considered further.
 
 \item Franca et al (2004) \cite{frhm04} use the following formula which originates from \cite{frfh92}:
 if $0\le Pe < 1$ then
@@ -343,7 +393,8 @@ $\tau = \frac{h}{2 |\vec\upnu|} Pe$ and if $Pe \ge 1$ then $\tau = \frac{h}{2 |\
 Note however that their definition of the Peclet number includes a scalar parameter $m$ which is 
 the minimum between 1/3 and and 2$C_k$ where the calculation of this parameter is discussed in 
 Remarks 4 and 5 of \cite{frfh92}. The authors conclude that for linear quadrilaterals the value
-1/3 should be used while for biquadratic elements 1/12 should be preferred. 
+1/3 should be used while for biquadratic elements 1/12 should be preferred.
+The same approach is found in \cite{brbh92}. 
 
 \item Knobloch \cite{knob08} discusses other choices of $\tau$.
 
@@ -371,6 +422,96 @@ then $Pe\rightarrow \infty$ so
 \gamma_5 \rightarrow (1+C^{-1})^{-1} 
 \]
 
+
+
+
+
+
+%------------------------------
+\subsubsection{Some remarks about Appendix A of Thieulot (2011) \cite{thie11}}
+
+
+In the DOUAR paper \cite{brtf08} or the FANTOM paper \cite{thie11},
+The advection matrix is simply modified and computed as follows:
+\[
+({\bm K}_a^e)_{SUPG}
+=
+\int_{x_k}^{x_{k+1}}   ({\vec N}^\star)^T \rho C_p \vec\upnu \cdot {\bm B} dx  
+\quad\quad
+{\text with}
+\quad\quad
+{\vec N}^\star= {\vec N} + \tau \vec \upnu \cdot {\bm B}
+\]
+Note that we can also write 
+\[
+({\bm K}_a^e)_{SUPG}
+=
+\int_{x_k}^{x_{k+1}}   {\vec N}^T \rho C_p \vec\upnu \cdot {\bm B} dx  
++
+\int_{x_k}^{x_{k+1}}  \tau (\vec \upnu \cdot {\bm B})^T   \rho C_p (\vec\upnu \cdot {\bm B}) dx  
+\]
+and we see that the SUPG method introduces and additional term that is akin to 
+a diffusion term in the direction of the flow.
+This can be seen by looking at the advection matrix a regular grid of 1D 
+elements of size $h$:
+\[
+({\bm K}_a^e)_{SUPG}=
+{\bm K}_a^e
++
+\rho C_p
+\frac{\tau u^2}{h}
+\left(
+\begin{array}{cc}
+1 & -1 \\ \\
+-1 & 1
+\end{array}
+\right)
+\]
+The additional matrix has the same structure as the 1D diffusion matrix matrix in \ref{sec:diff1D}.
+
+The parameter $\tau$ is chosen as follows:
+\begin{equation}
+\tau=\gamma \frac{h}{\upnu} 
+\label{tausupg}
+\end{equation}
+where $\gamma$ is a user chosen parameter (see Appendix A of \cite{thie11}). 
+
+A typical test case for testing a advection scheme is the step advection benchmark (
+see for instance \cite{dohu03}). At $t=0$, 
+a field $T(x)$ is prescribed in a 1D domain of unit length. For $x\le 1/4$ we have $T(x)=1$ and 
+$T(x)=0$ everywhere else as shown on the following figure:
+\begin{center}
+\includegraphics[width=8cm]{images/supg/fantom3}
+\end{center}
+The prescribed velocity is $\upnu=1$, 50 elements are used and 250 time steps are 
+carried out with $\delta t=0.1h/\upnu=0.002$.
+As discussed in \cite{thie11}, using Equation~\ref{tausupg}, 
+one arrives to $\gamma=0.045$, which leads to a desired removal of the oscillations through a small
+amount of numerical diffusion. Braun \cite{brau03} argues for a constant
+$\gamma=1/\sqrt{15}=0.258$ (citing \cite{hubr82}), which effect is also shown in the figure above. This 
+value is arguably too large and introduces indesirable diffusion. Note that this same value is 
+to be found in Bochev et al (2004) \cite{bogs04}. The authors then state that 
+"for 1D pure advection problems, this choice maximizes the phase accuracy in the semidiscrete
+equation" and cite Raymond \& Gardner (1976) \cite{raga76} as source. 
+
+Another classic example of advection testing is a 2D problem where (for example) a cylinder, a Gaussian 
+and a cone are prescribed and advected with a velocity field (see for instance \cite{dohu03}). 
+
+\begin{center}
+\includegraphics[width=0.45\textwidth]{images/supg/supg1}
+\includegraphics[width=0.45\textwidth]{images/supg/supg2}\\
+{\captionfont After a $2\pi$ rotation and in the absence of stabilisation we see that the temperature field
+showcases clearly visible ripples.}
+\end{center}
+
+\begin{remark}
+Note that \aspect{} originally did not rely on the SUPG formulation to stabilise the 
+advection(-diffusion) equations\cite{krhb12}. It instead relied on the Entropy Viscosity
+formulation \cite{gupp10,gupp11}.
+It is only during the 6th Hackathon in May 2019 that the SUPG was introduced on the code.
+Note that the \aspect{} implementation is based on the deal.II step 
+63\footnote{\url{https://www.dealii.org/developer/doxygen/deal.II/step_63.html}}.
+\end{remark}
 
 
 

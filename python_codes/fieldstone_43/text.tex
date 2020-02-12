@@ -1,3 +1,6 @@
+The following five experiments are pure-advection experiments. As such the Peclet number
+is infinite and the $\gamma$ value of the SUPG algorithm as shown in Section~{ss:supg} tends to 1
+and the $\tau$ parameter is simply $h/2 |\vec\upnu| p$ (where $p$ is the order of the shape function polynomials).
 
 
 
@@ -95,43 +98,60 @@ BDF1,2,3 and Crank-Nicolson after a full rotation.
 \end{center}
 
 I now turn to another aspect of this problem: what is the effect of the SUPG stabilisation 
-scheme on the solution? In what follows Crank-Nicolson is used, only the resolution is increased. 
-We see that using SUPG introduces a lot of diffusion and it smears out the cone, to the 
-point that the maximum Temperature value after a full rotation is below 1/2. Increasing resolution 
-helps mitigating the effect.
-On the other hand the minimum value stays closer to zero when SUPG is used. 
+scheme on the solution? In what follows Crank-Nicolson is used with a resolution 30x30.
 
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_43/results/experiment1/Tmin_supg}
 \includegraphics[width=6cm]{python_codes/fieldstone_43/results/experiment1/Tmax_supg}\\
-\includegraphics[width=15cm]{python_codes/fieldstone_43/results/experiment1/T_supg}\\
-{\captionfont From left to right: 30x30, 40x40, 50x50, 60x60, 80x80. Note the scale from 0 to 0.5}
+%\includegraphics[width=15cm]{python_codes/fieldstone_43/results/experiment1/T_supg}\\
+{\captionfont opla} 
 \end{center}
 
 %...........................................................................................
 \paragraph{Experiment 2}
 
-This setup is inspired by the one in the ASPECT manual. The cone is now replaced by three 
-'objects' : a Zalesak disk \ref{}, a sharp cone and a truncated cosine hill:
+This setup is inspired by the one in the ASPECT manual. The cone of the previous 
+experiment is now replaced by three 'objects': a Zalesak disk \ref{zale79}, a sharp cone and a truncated cosine hill:
 
 \begin{lstlisting}
-   for i in range(0,nnp):
-       T[i]=0.
+   for i in range(0,NV):
        xi=x[i]
        yi=y[i]
-       if np.sqrt((xi-0.5)**2+(yi-0.75)**2)<0.15 and (np.abs(xi-0.5)>=0.025 or yi>=0.85):
+       if np.sqrt(xi**2+(yi-0.5)**2)<0.3 and (np.abs(xi)>=0.05 or yi>=0.7):
           T[i]=1
-       if np.sqrt((x[i]-0.5)**2+(y[i]-0.25)**2)<0.15:
-          T[i]=1-np.sqrt((x[i]-0.5)**2+(y[i]-0.25)**2)/0.15
-       if np.sqrt((x[i]-0.25)**2+(y[i]-0.5)**2)<0.15:
-          T[i]=0.25*(1+np.cos(np.pi*np.sqrt((xi-0.25)**2+(yi-0.5)**2)/0.15))
+       if np.sqrt((x[i])**2+(y[i]+0.5)**2)<0.3:
+          T[i]=1-np.sqrt((x[i])**2+(y[i]+0.5)**2)/0.3
+       if np.sqrt((x[i]+0.5)**2+(y[i])**2)<0.3:
+          T[i]=0.25*(1+np.cos(np.pi*np.sqrt((xi+0.5)**2+yi**2)/0.3))
 \end{lstlisting}
 
+The domain is $2\times2$, centered on the origin. The velocity is $\vec\upnu=(-y,x)$. Temperature 
+is set to zero on all four sides.
+For this experiment the CFL number is set to 0.5
+
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_43/results/buildings}
+\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment2/buildings}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment2/avrg_T}
+\includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment2/stats_T}
 \end{center}
 
-For this experiment the CFL number is set to 0.1
+\begin{center}
+\includegraphics[width=3.2cm]{python_codes/fieldstone_43/results/experiment2/supg/solution_0000.pdf}
+\includegraphics[width=3.2cm]{python_codes/fieldstone_43/results/experiment2/supg/solution_0200.pdf}
+\includegraphics[width=3.2cm]{python_codes/fieldstone_43/results/experiment2/supg/solution_0400.pdf}
+\includegraphics[width=3.2cm]{python_codes/fieldstone_43/results/experiment2/supg/solution_0600.pdf}\\
+\includegraphics[width=3.2cm]{python_codes/fieldstone_43/results/experiment2/supg/solution_0800.pdf}
+\includegraphics[width=3.2cm]{python_codes/fieldstone_43/results/experiment2/supg/solution_1000.pdf}
+\includegraphics[width=3.2cm]{python_codes/fieldstone_43/results/experiment2/supg/solution_1130.pdf}\\
+{\small Time evolution of the temperature field with Crank-Nicolson, with SUPG.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=15cm]{python_codes/fieldstone_43/results/experiment2/Temps}\\
+{\captionfont Left: no SUPG; middle: with SUPG; right: ASPECT with SUPG}
+\end{center}
+
 
 \newpage
 %...........................................................................................
@@ -262,7 +282,7 @@ At the moment, ASPECT steady state solution is identical to mine but not transie
 The domain is a unit square. The velocity field is given by $\vec\upnu=(y,1-x)$. Initial temperature is 
 $T=0$. On left boundary $T=0$ is prescribed while at the bottom $T=0$ is prescribed if $x<1/3$ and $T=1$
 otherwise. Resolution is $32\times32$ and the CFL number is set to $C=10^{-1}$. The model is run up to $t=5$ (steady
-247 state is then reached).
+state is then reached).
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_43/results/experiment5/vel}
@@ -270,6 +290,7 @@ otherwise. Resolution is $32\times32$ and the CFL number is set to $C=10^{-1}$. 
 {\captionfont Left: no supg, Right: supg.}
 \end{center}
 
+\includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment5/Tsupg3D}
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment5/stats_T}
