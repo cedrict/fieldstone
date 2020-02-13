@@ -72,6 +72,8 @@ sqrt3=np.sqrt(3.)
 sqrt2=np.sqrt(2.)
 sqrt15=np.sqrt(15.)
 eps=1.e-10 
+cm=0.01
+year=365.*24.*3600.
 
 print("-----------------------------")
 print("----------fieldstone---------")
@@ -89,7 +91,7 @@ if int(len(sys.argv) == 4):
    order     =int(sys.argv[2])
    supg_type =int(sys.argv[3])
 else:
-   experiment=1
+   experiment=7
    order=2
    supg_type=0
 
@@ -155,6 +157,29 @@ if experiment==5: # quarter circle
    xmin=0.
    ymin=0.
    every=10
+
+if experiment==6: # elastic slab
+   nelx=50
+   nely=50
+   Lx=1e6
+   Ly=1e6
+   tfinal=15e6*year 
+   CFLnb=0.25
+   xmin=0.
+   ymin=0.
+   every=1
+
+if experiment==7: # elastic slab
+   nelx=50
+   nely=50
+   Lx=1e6
+   Ly=1e6
+   tfinal=30e6*year 
+   CFLnb=0.25
+   xmin=0.
+   ymin=0.
+   every=5
+
 
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
@@ -232,6 +257,14 @@ for j in range(0,nny):
         if experiment==5:
            u[counter]=y[counter]
            v[counter]=1-x[counter]
+        if experiment==6:
+           u[counter]=0
+           v[counter]=-x[counter]/Lx*cm/year
+        if experiment==7:
+           xx=x[counter]/Lx
+           yy=y[counter]/Ly
+           u[counter]=(xx*xx*(1.-xx)**2*(2.*yy-6.*yy*yy+4*yy*yy*yy))*cm/year  *100
+           v[counter]=(-yy*yy*(1.-yy)**2*(2.*xx-6.*xx*xx+4*xx*xx*xx))*cm/year *100
         counter += 1
     #end for
 #end for
@@ -338,6 +371,17 @@ if experiment==5:
           bc_fixT[i]=True ; bc_valT[i]=0.
    #end for
 
+if experiment==6 or experiment==7:
+   for i in range(0,NV):
+       if x[i]/Lx<eps and np.abs(y[i]-Ly/2)<=300e3:
+          bc_fixT[i]=True ; bc_valT[i]=1.
+       if x[i]/Lx<eps and np.abs(y[i]-Ly/2)>300e3:
+          bc_fixT[i]=True ; bc_valT[i]=0.
+       if y[i]/Ly<eps:               
+          bc_fixT[i]=True ; bc_valT[i]=0.
+       if y[i]/Ly>(1-eps):
+          bc_fixT[i]=True ; bc_valT[i]=0.
+   #end for
 
 print("boundary conditions (%.3fs)" % (timing.time() - start))
 
@@ -390,6 +434,15 @@ if experiment==4:
 
 if experiment==5:
    T[i]=0.
+
+if experiment==6 or experiment==7:
+   for i in range(0,NV):
+       if x[i]<=800e3 and np.abs(y[i]-Ly/2)<=300e3:
+          T[i]=1
+       else:
+          T[i]=0
+       #end if
+    #end for
 
 Tm1[:]=T[:]
 Tm2[:]=T[:]
@@ -444,7 +497,7 @@ model_time=0.
 
 for istep in range(0,nstep):
     print("-----------------------------")
-    print("istep= ", istep)
+    print("istep= ", istep,'/',nstep-1)
     print("-----------------------------")
 
 
@@ -605,7 +658,7 @@ for istep in range(0,nstep):
 
     #end for iel
     
-    print("     -> tau_supg (m,M) %.6f %.6f " %(np.min(tau_supg),np.max(tau_supg)))
+    print("     -> tau_supg (m,M) %e %e " %(np.min(tau_supg),np.max(tau_supg)))
 
     if istep==0:
        np.savetxt('tau_supg.ascii',np.array(tau_supg).T,header='# x,y,T')
@@ -692,7 +745,7 @@ for istep in range(0,nstep):
        vtufile.write("<Points> \n")
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10f %10f %10f \n" %(x[i],y[i],0.))
+           vtufile.write("%e %e %e \n" %(x[i],y[i],0.))
        vtufile.write("</DataArray>\n")
        vtufile.write("</Points> \n")
        #####
@@ -700,7 +753,7 @@ for istep in range(0,nstep):
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10f %10f %10f \n" %(u[i],v[i],0.))
+           vtufile.write("%e %e %e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
