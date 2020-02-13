@@ -1,8 +1,11 @@
+
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_43}
+
 The following five experiments are pure-advection experiments. As such the Peclet number
-is infinite and the $\gamma$ value of the SUPG algorithm as shown in Section~{ss:supg} tends to 1
+is infinite and the $\gamma$ value of the SUPG algorithm as shown in Section~\ref{ss:supg} tends to 1
 and the $\tau$ parameter is simply $h/2 |\vec\upnu| p$ (where $p$ is the order of the shape function polynomials).
 
-
+Note that although the code can deal with linear elements, all results hereafter are obtained with quadratic elements (unless specified otherwise). 
 
 %...........................................................................................
 \paragraph{Experiment 1}
@@ -22,7 +25,10 @@ T_0(x,y)=
 \end{array}
 \right.
 \end{equation}
-The boundary conditions are $T(x,y)=0$ on all four sides of the unit square domain. In what follows we set $x_c=y_c=1/6$ and $\sigma=0.2$.  The velocity field is analytically prescribed: $\vec\upnu=(-(y-y_c),+(x-x_c))$.
+The boundary conditions are $T(x,y)=0$ on all four sides of the unit square domain. 
+In what follows we set $x_c=y_c=1/6$ and $\sigma=0.2$.  
+The velocity field is analytically prescribed: $\vec\upnu=(-(y-y_c),+(x-x_c))$.
+Resolution is set to $30\times30$ quadratic elements.
 
 In what follows we test the time integration scheme by setting $\alpha_T=1$ (fully implicit formulation), $\alpha=0$ (fully explicit formulation) and $\alpha_T=1/2$ (Crank-Nicolson).  
 In the book Donea \& Huerta set the timestep is set to $\delta t=2\pi/200$ which corresponds to a CFL number of approximately 0.666. If we want to be able to run this experiment at higher 
@@ -38,56 +44,41 @@ E_T=\int_\Omega \rho_0 C_p T dV = \int_\Omega T dV = |\Omega| \langle T \rangle
 \]
 The time evolution of the temperature with the Crank-Nicolson algorithm is shown hereunder:
 \begin{center}
-a)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/velfield}
-b)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/crnitemp0000}
-c)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/crnitemp0050}\\
-d)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/crnitemp0100}
-e)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/crnitemp0050}
-f)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/crnitemp0199}\\
-{\small a) Velocity field and initial temperature; b,c,d,e,f) Temperature field throughout the rotation.} 
+a)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/solution_0000.pdf}
+b)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/solution_0110.pdf}
+c)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/solution_0210.pdf}
+d)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/solution_0320.pdf}
+e)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/solution_0420.pdf}
+f)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/solution_0530.pdf}\\
+{\captionfont a,b,c,d,e,f) Temperature field throughout the rotation.} 
 \end{center}
+
+\vspace{.4cm}
+
 Turning now to the statistics, we plot $\min(T)$, $\max(T)$ and $E_T$ as a function of time:
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_43/results/experiment1/Tmin.pdf}
 \includegraphics[width=5cm]{python_codes/fieldstone_43/results/experiment1/Tmax.pdf}
 \includegraphics[width=5cm]{python_codes/fieldstone_43/results/experiment1/ET.pdf}\\
-{\small Time evolution of the min and max temperature and the total energy}
+{\captionfont Time evolution of the min and max temperature and the total energy}
 \end{center}
 The conclusions are clear: the explicit method diverges quickly and is unusable. The fully implicit and Crank-Nicolson 
-method yield similar energy conservation but the fully-implicit showcases a clear loss in maximum temperature as shown in the following figure:
-\begin{center}
-\includegraphics[width=15cm]{python_codes/fieldstone_43/results/experiment1/temp}\\
-{\small Temperature field after a full rotation with isocontours every 0.1 value.\\ Left: Fully-implicit; Right: Crank-Nicolson}
-\end{center}
+method yield similar energy conservation but the fully-implicit showcases a clear loss in maximum temperature.
 
-Finally we can run the experiment (still a $2\pi$ rotation) 
+$\bigtriangleup$ Finally we can run the experiment (still a $2\pi$ rotation) 
 with three different time steps ($\delta t=2\pi/30,2\pi/60,2\pi/120$) 
 and we recover very similar results to those presented in \cite{dohu03}:
-
 \begin{center}
 \includegraphics[height=8cm]{python_codes/fieldstone_43/results/experiment1/dohu03}
 \includegraphics[height=8cm]{python_codes/fieldstone_43/results/experiment1/temps_30_60_120}\\
-{\small From top to bottom: $\delta t=2\pi/120,2\pi/60,2\pi/30$ with Crank-Nicolson. Left panel is taken from donea \& Huerta \cite{dohu03}}
-\end{center}
-
-\begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_43/results/experiment1/Tmin_CN.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_43/results/experiment1/Tmax_CN.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_43/results/experiment1/ET_CN.pdf}\\
-{\small Time evolution of the min and max temperature and the total energy obtained with the Crank-Nicolson algorithm for 4 values of the timestep as indicated by the number between parenthesis.}
+{\captionfont From top to bottom: $\delta t=2\pi/120,2\pi/60,2\pi/30$ with Crank-Nicolson. Left panel is taken from donea \& Huerta \cite{dohu03}. Results obtained with linear elements.}
 \end{center}
 
 
-\begin{center}
-\includegraphics[width=3cm]{python_codes/fieldstone_43/results/experiment1/solution_0000.pdf}
-\includegraphics[width=3cm]{python_codes/fieldstone_43/results/experiment1/solution_0049.pdf}
-\includegraphics[width=3cm]{python_codes/fieldstone_43/results/experiment1/solution_0099.pdf}
-\includegraphics[width=3cm]{python_codes/fieldstone_43/results/experiment1/solution_0149.pdf}
-\includegraphics[width=3cm]{python_codes/fieldstone_43/results/experiment1/solution_0199.pdf}\\
-{\small Time evolution of the temperature field for $\delta t=2\pi/200$ with Crank-Nicolson.}
-\end{center}
 
-I have also implemented BDF1,2,3,4,5. BDF2 outperforms BDF1 and is comparable to C-N. 
+$\bigtriangleup$ 
+I have also implemented BDF1,2,3,4,5  (see Section~\ref{ss:hte_fem}). 
+BDF2 outperforms BDF1 and is comparable to Crank-Nicolson. 
 For reasons unknown to me, the BDF3 diverges after 100 time steps. So do 
 BDF4 and BDF5 after even less timesteps. In the following picture the temperature is shown for 
 BDF1,2,3 and Crank-Nicolson after a full rotation.
@@ -98,13 +89,12 @@ BDF1,2,3 and Crank-Nicolson after a full rotation.
 \end{center}
 
 I now turn to another aspect of this problem: what is the effect of the SUPG stabilisation 
-scheme on the solution? In what follows Crank-Nicolson is used with a resolution 30x30.
+scheme on the solution? In what follows Crank-Nicolson is used. 
 
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_43/results/experiment1/Tmin_supg}
 \includegraphics[width=6cm]{python_codes/fieldstone_43/results/experiment1/Tmax_supg}\\
-%\includegraphics[width=15cm]{python_codes/fieldstone_43/results/experiment1/T_supg}\\
-{\captionfont opla} 
+{\captionfont Time evolution of min/max temperature with and without SUPG.} 
 \end{center}
 
 %...........................................................................................
@@ -114,15 +104,15 @@ This setup is inspired by the one in the ASPECT manual. The cone of the previous
 experiment is now replaced by three 'objects': a Zalesak disk \ref{zale79}, a sharp cone and a truncated cosine hill:
 
 \begin{lstlisting}
-   for i in range(0,NV):
-       xi=x[i]
-       yi=y[i]
-       if np.sqrt(xi**2+(yi-0.5)**2)<0.3 and (np.abs(xi)>=0.05 or yi>=0.7):
-          T[i]=1
-       if np.sqrt((x[i])**2+(y[i]+0.5)**2)<0.3:
-          T[i]=1-np.sqrt((x[i])**2+(y[i]+0.5)**2)/0.3
-       if np.sqrt((x[i]+0.5)**2+(y[i])**2)<0.3:
-          T[i]=0.25*(1+np.cos(np.pi*np.sqrt((xi+0.5)**2+yi**2)/0.3))
+for i in range(0,NV):
+    xi=x[i]
+    yi=y[i]
+    if np.sqrt(xi**2+(yi-0.5)**2)<0.3 and (np.abs(xi)>=0.05 or yi>=0.7):
+       T[i]=1
+    if np.sqrt((x[i])**2+(y[i]+0.5)**2)<0.3:
+       T[i]=1-np.sqrt((x[i])**2+(y[i]+0.5)**2)/0.3
+    if np.sqrt((x[i]+0.5)**2+(y[i])**2)<0.3:
+       T[i]=0.25*(1+np.cos(np.pi*np.sqrt((xi+0.5)**2+yi**2)/0.3))
 \end{lstlisting}
 
 The domain is $2\times2$, centered on the origin. The velocity is $\vec\upnu=(-y,x)$. Temperature 
@@ -143,7 +133,7 @@ For this experiment the CFL number is set to 0.5
 \includegraphics[width=3.2cm]{python_codes/fieldstone_43/results/experiment2/supg/solution_0800.pdf}
 \includegraphics[width=3.2cm]{python_codes/fieldstone_43/results/experiment2/supg/solution_1000.pdf}
 \includegraphics[width=3.2cm]{python_codes/fieldstone_43/results/experiment2/supg/solution_1130.pdf}\\
-{\small Time evolution of the temperature field with Crank-Nicolson, with SUPG.}
+{\captionfont Time evolution of the temperature field with Crank-Nicolson, with SUPG.}
 \end{center}
 
 
@@ -153,117 +143,52 @@ For this experiment the CFL number is set to 0.5
 \end{center}
 
 
-\newpage
 %...........................................................................................
-\paragraph{Experiment 3}
+\paragraph{Experiment 3 ($Q_2$ elements)}
 
-This experiment is first shown in Appendix A of Thieulot (2011) \cite{thie11}.
-The unit segment is discretised by means of 50 elements, 
-over which a unit velocity field is prescribed. The time step
-is chosen so that $\delta t = 0.1 h/|\vec\upnu|$ = 0.002 (i.e. CFL=0.1). 
+This experiment comes from Appendix A of Thieulot (2011) \cite{thie11}.
+The unit segment is discretised by means of 64 elements, 
+over which a unit velocity field is prescribed.
 The discontinuity is initially
-placed at x = 1/4 and after 250 time steps, it is expected to have
-reached the position x = 3/4.
+placed at x = 1/4 and after a time $t=0.5$, it is expected to have
+reached the position $x=3/4$.
+Temperature boundary conditions are $T=1$ on the left and $T=0$ on the right. 
+Note that the simulation is actually carried out in 2D with a $1\times0.25$ domain 
+discretised by means of $64\times16$ elements.
+CFL number is set to 0.25
+
+%\[
+%\tau_{supg} = \frac{h}{2 d |\vec{\upnu}|} = \frac{\sqrt{2}/50}{2 \cdot 1 \cdot 1} = 0.01414
+%\]
+
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment3/Q1/supg1/T.pdf}
+%\includegraphics[width=6cm]{python_codes/fieldstone_43/results/experiment3/Q1/supg1/solution_0250.pdf}
+%\end{center}
 
 
-\begin{itemize}
-\item Q1 - no supg  %---------------------------------------------------------------------- 
-
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment3/Q1/nosupg/T.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_43/results/experiment3/Q1/nosupg/solution_0250.pdf}
-\end{center}
-
-\item Q1 - supg1. For first order element $d=1$ so
 \[
-\tau_{supg} = \frac{h}{2 d |\vec{\upnu}|} = \frac{\sqrt{2}/50}{2 \cdot 1 \cdot 1} = 0.01414
+\tau_{supg} = \frac{h}{2 d |\vec{\upnu}|} = \frac{\sqrt{2}/64}{2 \cdot 2 \cdot 1} = 0.005524
 \]
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment3/Q1/supg1/T.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_43/results/experiment3/Q1/supg1/solution_0250.pdf}
-\end{center}
-
-
-\item Q1 - supg2 %------------------------------------------------------------------------------
-\[
-\tau_{supg} = \left( \frac{2 d |\vec{\upnu}|}{h} + \frac{1}{\theta \delta t}  \right)^{-1}  
-\]
-Crank-Nicolson: $\theta=1/2$, first order $d=1$ s,CFL condition yields $\delta t = C \frac{h}{v}$ so 
-\[
-\tau_{supg} = \left( \frac{2 |\vec{\upnu}|}{h} + \frac{2}{\delta t}  \right)^{-1}  
-= \left( \frac{2 |\vec{\upnu}|}{h} + \frac{2 v}{C h}  \right)^{-1}  
-= \frac{h}{2 |\vec{\upnu}|}  \left( 1 + \frac{1}{C}  \right)^{-1} \nn 
-\]
-
-So if C=0.1, the term between parenthesis is equal to 1/11. If C=1, the term is equal to 1/2.
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment3/Q1/supg2/T.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_43/results/experiment3/Q1/supg2/solution_0250.pdf}\\
-as obtained with $C=0.1$
-\end{center}
-
-
-\item Q1 - supg3 %------------------------------------------------------------------------------
-
-Following Braun Pecube and eq 18 of \cite{bogs04}:
-\[
-\tau_{supg} = \frac{h}{d |\vec{\upnu}|} \frac{1}{\sqrt{15}} = \frac{\sqrt{2}/50}{2 \cdot 1 \cdot 1} = 0.01414
-\]
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment3/Q1/supg3/T.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_43/results/experiment3/Q1/supg3/solution_0250.pdf}\\
-as obtained with $C=0.1$
-\end{center}
-
-
-\item Q2 - nosupg %--------------------------------------------------------------------------------
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment3/Q2/nosupg/T.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_43/results/experiment3/Q2/nosupg/solution_0500.pdf}
-\end{center}
-
-\item Q2 - supg1 %--------------------------------------------------------------------------------
-
-\[
-\tau_{supg} = \frac{h}{2 d |\vec{\upnu}|} = \frac{\sqrt{2}/50}{2 \cdot 2 \cdot 1} = 0.0071
-\]
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment3/Q2/supg1/T.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_43/results/experiment3/Q2/supg1/solution_0500.pdf}
-\end{center}
-
-\item Q2 - supg2 %--------------------------------------------------------------------------------
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment3/Q2/supg2/T.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_43/results/experiment3/Q2/supg2/solution_0500.pdf}
-\end{center}
-
-\item ASPECT(Q2) - supg %--------------------------------------------------------------------------------
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment3/Q2/ASPECT/T.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_43/results/experiment3/Q2/avrg_T.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_43/results/experiment3/Q2/stats_T.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_43/results/experiment3/Q2/temperature.pdf}
 \end{center}
 
 
 
 
-\end{itemize}
 
 %...........................................................................................
-\paragraph{Experiment 4}
+\paragraph{Experiment 4 ($Q_2$ elements)}
 
 This experiment is somewhat similar to the one in fieldstone \ref{f65}.
 The domain is a unit square, and the velocity is given by $\vec\upnu=(\cos \theta, \sin\theta)$ with $\theta=\pi/6$.
 The temperature is prescribed on the left side only, i.e. $T=1$ for $x=0$, $y=[0,1]$ (corners included), and 
 on the bottom (left corner excluded) with $T=0$. The other two sides are left free. Initial temperature is $T=0$.
-The resolution is $10\times10$ and the CFL number is set to $C=10^{-1}$. The model is run up to $t=5$ (steady 
+The resolution is $10\times10$ and the CFL number is set to $C=10^{-1}$. The model is run up to $t=3$ (steady 
 state is then reached). 
 
 \begin{center}
@@ -274,30 +199,28 @@ state is then reached).
 \includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment4/avrg_T}
 \end{center}
 
-At the moment, ASPECT steady state solution is identical to mine but not transient time steps.  
-
 %...........................................................................................
-\paragraph{Experiment 5}
+\paragraph{Experiment 5 ($Q_2$ elements)}
 
 The domain is a unit square. The velocity field is given by $\vec\upnu=(y,1-x)$. Initial temperature is 
 $T=0$. On left boundary $T=0$ is prescribed while at the bottom $T=0$ is prescribed if $x<1/3$ and $T=1$
-otherwise. Resolution is $32\times32$ and the CFL number is set to $C=10^{-1}$. The model is run up to $t=5$ (steady
+otherwise. Resolution is $16\times16$ and the CFL number is set to $C=10^{-1}$. The model is run up to $t=4$ (steady
 state is then reached).
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_43/results/experiment5/vel}
-\includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment5/T}\\
-{\captionfont Left: no supg, Right: supg.}
+\includegraphics[height=4.cm]{python_codes/fieldstone_43/results/experiment5/vel}
+\includegraphics[height=4.cm]{python_codes/fieldstone_43/results/experiment5/T}
+\includegraphics[height=4.cm]{python_codes/fieldstone_43/results/experiment5/T3D}\\
+{\captionfont Left: no SUPG, Right: SUPG.}
 \end{center}
 
-\includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment5/Tsupg3D}
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment5/stats_T}
 \includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment5/avrg_T}
 \end{center}
 
-
+Note that it is currently not possible to run this experiment with ASPECT.
 
 
 

@@ -82,7 +82,6 @@ ndofT=1      # number of degrees of freedom per node
 hcond=0.     # thermal conductivity
 hcapa=1.     # heat capacity
 rho0=1       # reference density
-every=20
 
 
 if int(len(sys.argv) == 4):
@@ -90,10 +89,9 @@ if int(len(sys.argv) == 4):
    order     =int(sys.argv[2])
    supg_type =int(sys.argv[3])
 else:
-   experiment=5
+   experiment=1
    order=2
    supg_type=0
-
 
 if order==1:
    m=4          # number of nodes making up an element
@@ -103,45 +101,60 @@ if order==2:
 use_bdf=False
 bdf_order=2
 
-if experiment==1:
-   nelx = 32
-   nely = 32
+if experiment==1: # rotating cone
+   nelx = 30
+   nely = 30
    Lx=1.  
    Ly=1.  
    tfinal=2.*np.pi
    CFLnb=0.5
+   xmin=0.
+   ymin=0.
+   every=10
 
-if experiment==2:
-   nelx=50
-   nely=50
-   Lx=1.   
-   Ly=1.   
+if experiment==2: # rotating 3 objects
+   nelx=64
+   nely=64
+   Lx=2.   
+   Ly=2.   
    tfinal=2.*np.pi
    CFLnb=0.5
+   every=10
+   xmin=-1.
+   ymin=-1.
 
-if experiment==3:
+if experiment==3: # front advection
    nelx=64
    nely=16
    Lx=1.  
    Ly=0.25 
    tfinal=0.5
-   CFLnb=0.1
+   CFLnb=0.25
+   xmin=0.
+   ymin=0.
+   every=10
 
-if experiment==4:
+if experiment==4: # skew advection
    nelx=10
    nely=10
    Lx=1.   
    Ly=1.   
-   tfinal=5.
+   tfinal=3.
    CFLnb=0.1
+   xmin=0.
+   ymin=0.
+   every=10
 
-if experiment==5:
+if experiment==5: # quarter circle
    nelx=16
    nely=16
    Lx=1.   
    Ly=1.   
-   tfinal=5.
+   tfinal=4.
    CFLnb=0.1
+   xmin=0.
+   ymin=0.
+   every=10
 
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
@@ -156,7 +169,7 @@ NfemT=NV*ndofT    # Total number of degrees of temperature freedom
 # alphaT=0: explicit
 # alphaT=0.5: Crank-Nicolson
 
-alphaT=0.5
+alphaT=1.
 
 #####################################################################
 
@@ -202,11 +215,14 @@ v = np.zeros(NV,dtype=np.float64)  # y-component velocity
 counter = 0
 for j in range(0,nny):
     for i in range(0,nnx):
-        x[counter]=i*hx/order
-        y[counter]=j*hy/order
-        if experiment==1 or experiment==2:
+        x[counter]=i*hx/order+xmin
+        y[counter]=j*hy/order+ymin
+        if experiment==1:
            u[counter]=-(y[counter]-Ly/2)
            v[counter]=+(x[counter]-Lx/2)
+        if experiment==2:
+           u[counter]=-y[counter]
+           v[counter]=+x[counter]
         if experiment==3:
            u[counter]=1
            v[counter]=0
@@ -269,7 +285,7 @@ start = timing.time()
 bc_fixT=np.zeros(NfemT,dtype=np.bool)  
 bc_valT=np.zeros(NfemT,dtype=np.float64) 
 
-if experiment==1 or experiment==2:
+if experiment==1:
    for i in range(0,NV):
        if x[i]/Lx<eps:
           bc_fixT[i]=True ; bc_valT[i]=0.
@@ -278,6 +294,18 @@ if experiment==1 or experiment==2:
        if y[i]/Ly<eps:
           bc_fixT[i]=True ; bc_valT[i]=0.
        if y[i]/Ly>(1-eps):
+          bc_fixT[i]=True ; bc_valT[i]=0.
+   #end for
+
+if experiment==2:
+   for i in range(0,NV):
+       if (x[i]-xmin)/Lx<eps:
+          bc_fixT[i]=True ; bc_valT[i]=0.
+       if (x[i]-xmin)/Lx>(1-eps):
+          bc_fixT[i]=True ; bc_valT[i]=0.
+       if (y[i]-ymin)/Ly<eps:
+          bc_fixT[i]=True ; bc_valT[i]=0.
+       if (y[i]-ymin)/Ly>(1-eps):
           bc_fixT[i]=True ; bc_valT[i]=0.
    #end for
 
@@ -339,14 +367,14 @@ if experiment==2:
    for i in range(0,NV):
        xi=x[i]
        yi=y[i]
-       if np.sqrt((xi-0.5)**2+(yi-0.75)**2)<0.15 and (np.abs(xi-0.5)>=0.025 or yi>=0.85):
+       if np.sqrt(xi**2+(yi-0.5)**2)<0.3 and (np.abs(xi)>=0.05 or yi>=0.7):
           T[i]=1
        #end if
-       if np.sqrt((x[i]-0.5)**2+(y[i]-0.25)**2)<0.15:
-          T[i]=1-np.sqrt((x[i]-0.5)**2+(y[i]-0.25)**2)/0.15
+       if np.sqrt((x[i])**2+(y[i]+0.5)**2)<0.3:
+          T[i]=1-np.sqrt((x[i])**2+(y[i]+0.5)**2)/0.3
        #end if
-       if np.sqrt((x[i]-0.25)**2+(y[i]-0.5)**2)<0.15:
-          T[i]=0.25*(1+np.cos(np.pi*np.sqrt((xi-0.25)**2+(yi-0.5)**2)/0.15))
+       if np.sqrt((x[i]+0.5)**2+(y[i])**2)<0.3:
+          T[i]=0.25*(1+np.cos(np.pi*np.sqrt((xi+0.5)**2+yi**2)/0.3))
        #end if
    #end for
 
@@ -369,7 +397,7 @@ Tm3[:]=T[:]
 Tm4[:]=T[:]
 Tm5[:]=T[:]
 
-np.savetxt('T_init.ascii',np.array([x,y,T]).T,header='# x,y,T')
+#np.savetxt('T_init.ascii',np.array([x,y,T]).T,header='# x,y,T')
 
 print("initial temperature (%.3fs)" % (timing.time() - start))
 
@@ -400,8 +428,7 @@ Tvectm2 = np.zeros(m,dtype=np.float64)
 Tvectm3 = np.zeros(m,dtype=np.float64)   
 Tvectm4 = np.zeros(m,dtype=np.float64)   
 Tvectm5 = np.zeros(m,dtype=np.float64)   
-
-NNNT    = np.zeros(m,dtype=np.float64)           # shape functions V
+NNNT    = np.zeros(m,dtype=np.float64)           # shape functions 
 dNNNTdx = np.zeros(m,dtype=np.float64)           # shape functions derivatives
 dNNNTdy = np.zeros(m,dtype=np.float64)           # shape functions derivatives
 dNNNTdr = np.zeros(m,dtype=np.float64)           # shape functions derivatives
@@ -430,6 +457,7 @@ for istep in range(0,nstep):
     rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
     B_mat=np.zeros((2,ndofT*m),dtype=np.float64)     # gradient matrix B 
     N_mat = np.zeros((m,1),dtype=np.float64)         # shape functions
+    N_mat_supg = np.zeros((m,1),dtype=np.float64)         # shape functions
     tau_supg = np.zeros(nel*nqperdim**ndim,dtype=np.float64)    
 
     counterq=0
@@ -448,6 +476,7 @@ for istep in range(0,nstep):
             Tvectm3[k]=Tm3[icon[k,iel]]
             Tvectm4[k]=Tm4[icon[k,iel]]
             Tvectm5[k]=Tm5[icon[k,iel]]
+        #end for
 
         for iq in range(0,nqperdim):
             for jq in range(0,nqperdim):
@@ -489,27 +518,25 @@ for istep in range(0,nstep):
                     B_mat[1,k]=dNNNTdy[k]
                 #end for
 
-                # compute mass matrix
-                MM=N_mat.dot(N_mat.T)*rho0*hcapa*weightq*jcob
-
                 if supg_type==0:
                    tau_supg[counterq]=0.
                 elif supg_type==1:
                       tau_supg[counterq]=(hx*sqrt2)/2/order/np.sqrt(vel[0,0]**2+vel[0,1]**2)
                 elif supg_type==2:
-                      tau_supg[counterq]=(hx*sqrt2)/2/order/np.sqrt(vel[0,0]**2+vel[0,1]**2)/(1+1./CFLnb)
-                elif supg_type==3:
                       tau_supg[counterq]=(hx*sqrt2)/order/np.sqrt(vel[0,0]**2+vel[0,1]**2)/sqrt15
                 else:
                    exit("supg_type: wrong value")
                      
-                N_mat+= tau_supg[counterq]*np.transpose(vel.dot(B_mat))
+                N_mat_supg=N_mat+tau_supg[counterq]*np.transpose(vel.dot(B_mat))
+
+                # compute mass matrix
+                MM=N_mat_supg.dot(N_mat.T)*rho0*hcapa*weightq*jcob
 
                 # compute diffusion matrix
                 Kd=B_mat.T.dot(B_mat)*hcond*weightq*jcob
 
                 # compute advection matrix
-                Ka=N_mat.dot(vel.dot(B_mat))*rho0*hcapa*weightq*jcob
+                Ka=N_mat_supg.dot(vel.dot(B_mat))*rho0*hcapa*weightq*jcob
 
                 if use_bdf and istep>bdf_order:
                    if bdf_order==1:
@@ -579,7 +606,9 @@ for istep in range(0,nstep):
     #end for iel
     
     print("     -> tau_supg (m,M) %.6f %.6f " %(np.min(tau_supg),np.max(tau_supg)))
-    np.savetxt('tau_supg.ascii',np.array(tau_supg).T,header='# x,y,T')
+
+    if istep==0:
+       np.savetxt('tau_supg.ascii',np.array(tau_supg).T,header='# x,y,T')
 
     print("build FEM matrix: %.3fs" % (timing.time() - start))
 
@@ -597,8 +626,7 @@ for istep in range(0,nstep):
     print("solve T time: %.3f s" % (timing.time() - start))
 
     #####################################################################
-    # compute average of temperature
-    # using a 4x4 quadrature
+    # compute average of temperature using a 4x4 quadrature
     #####################################################################
     start = timing.time()
 
@@ -637,8 +665,8 @@ for istep in range(0,nstep):
     #end for
     avrg_T/=Lx*Ly
 
-    ET_file.write("%e %e \n" %(model_time,ET))                      ; ET_file.flush()
-    avrg_T_file.write("%e %e \n" %(model_time,avrg_T))              ; avrg_T_file.flush()
+    ET_file.write("%e %.10e \n" %(model_time,ET))         ; ET_file.flush()
+    avrg_T_file.write("%e %.10e \n" %(model_time,avrg_T)) ; avrg_T_file.flush()
 
     print("     -> avrg T= %.6e" % avrg_T)
 
@@ -678,6 +706,15 @@ for istep in range(0,nstep):
        vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%10f \n" %T[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='tau' Format='ascii'> \n")
+       for i in range(0,NV):
+           if np.sqrt(u[i]**2+v[i]**2)<eps:
+              taunode=0
+           else:
+              taunode=(hx*sqrt2)/2/order/np.sqrt(u[i]**2+v[i]**2)
+           vtufile.write("%e \n" %taunode)
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</PointData>\n")
