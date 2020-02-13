@@ -304,6 +304,8 @@ for j in range(0,nnr):
         if j==nnr-1:
            node_outer[counter]=True
         counter += 1
+    #end for
+#end for
 
 counter=0
 for j in range(0,nnr):
@@ -318,6 +320,8 @@ for j in range(0,nnr):
         if theta[counter]<0.:
            theta[counter]+=2.*math.pi
         counter+=1
+    #end for
+#end for
 
 #################################################################
 # connectivity
@@ -356,7 +360,6 @@ for j in range(0, nelr):
 #    print ("node 2",icon[1][iel],"at pos.",x[icon[1][iel]], y[icon[1][iel]])
 #    print ("node 3",icon[2][iel],"at pos.",x[icon[2][iel]], y[icon[2][iel]])
 #    print ("node 4",icon[3][iel],"at pos.",x[icon[3][iel]], y[icon[3][iel]])
-    
 
 print("connectivity (%.3fs)" % (time.time() - start))
 
@@ -384,7 +387,6 @@ for i in range(0,nnp):
 if pin_one_node:
    bc_fixV[0] = True ; bc_valV[0] = 0 
    bc_fixV[1] = True ; bc_valV[1] = 0
-
 
 print("defining V b.c. (%.3fs)" % (time.time() - start))
 
@@ -1097,36 +1099,35 @@ for istep in range(0,nstep):
 
                 b_el=(MM-(Ka+Kd)*(1.-alpha)*dt).dot(Tvect) + f_el*dt
 
-                # apply boundary conditions
-
-                for k1 in range(0,m):
-                    m1=icon[k1,iel]
-                    if bc_fixT[m1]:
-                       Aref=a_el[k1,k1]
-                       for k2 in range(0,m):
-                           m2=icon[k2,iel]
-                           b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
-                           a_el[k1,k2]=0
-                           a_el[k2,k1]=0
-                       a_el[k1,k1]=Aref
-                       b_el[k1]=Aref*bc_valT[m1]
-                    #end if
-                #end for
-
-                # assemble matrix A_mat and right hand side rhs
-                for k1 in range(0,m):
-                    m1=icon[k1,iel]
-                    for k2 in range(0,m):
-                        m2=icon[k2,iel]
-                        A_mat[m1,m2]+=a_el[k1,k2]
-                    #end for
-                    rhs[m1]+=b_el[k1]
-                #end for
-
                 iiq+=1
-
             #end for jq
         #end for iq
+
+        # apply boundary conditions
+        for k1 in range(0,m):
+            m1=icon[k1,iel]
+            if bc_fixT[m1]:
+               Aref=a_el[k1,k1]
+               for k2 in range(0,m):
+                   m2=icon[k2,iel]
+                   b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
+                   a_el[k1,k2]=0
+                   a_el[k2,k1]=0
+               a_el[k1,k1]=Aref
+               b_el[k1]=Aref*bc_valT[m1]
+            #end if
+        #end for
+
+        # assemble matrix A_mat and right hand side rhs
+        for k1 in range(0,m):
+            m1=icon[k1,iel]
+            for k2 in range(0,m):
+                m2=icon[k2,iel]
+                A_mat[m1,m2]+=a_el[k1,k2]
+            #end for
+            rhs[m1]+=b_el[k1]
+        #end for
+
     #end for iel
 
     #print("A_mat (m,M) = %.4f %.4f" %(np.min(A_mat),np.max(A_mat)))
