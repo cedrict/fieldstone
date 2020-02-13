@@ -1,4 +1,10 @@
 
+
+The JuPyTer notebook is to be found at:
+
+\url{https://github.com/ashimrijal/uu_gravity_exercises_2020}
+
+
 \subsubsection{Background}
 
 We have seen that the calculation of the gravity vector and/or the gravity potential 
@@ -55,8 +61,6 @@ we can assign them a corresponding volume and a density when they are in the geo
 and then use the formula above to compute the gravity vector and potential, and finally 
 compare these values with the analytical solutions we derived for simple spherical bodies. 
 
-INSERT HERE FIGURE
-
 
 %........................................
 \subsubsection*{Exercise 1: Full sphere}
@@ -64,12 +68,32 @@ INSERT HERE FIGURE
 \begin{itemize}
 \item In a domain of size $2R\times 2R \times 2R$ centered on the origin compute and store the coordinates 
 of $N^3$ points (use $R=6371$km). Please use arrays {\tt x}, {\tt y} and {\tt z} to store the coordinates.
-These arrays are $N^3$ long.
+These arrays are $N^3$ long.\\
+Help: draw on paper a $3\times3\times3$ grid. Place the axis system on the plot and explicitely write the arrays 
+for all 27 points. Example:
+\begin{verbatim}
+x1=..... y1=..... z1=.....
+x2=..... y2=..... z2=.....
+...
+x27=.... y27=.... z27=....
+\end{verbatim}
+Once you have done so, run your code for $N=3$, print the arrays and compare their content with what you 
+have on paper. \\
+
+\begin{center}
+\includegraphics[width=4cm]{images/gravity/rubik}
+\end{center}
+
+Important remark: the coordinates are those of the center of the cells!
+
+
+
+
 \item Compute the associated volume $dV$ of a point as a function of $R$ and N.
 \item For points inside a sphere of radius $R$ assign a density $\rho_0=3000$kg/m$^3$ and zero otherwise, store these values in the {\tt rho} array.
-\item Compute the mass of the system 
+\item Compute the total mass of the system 
 \item Compute the moment of inertia of the system (use Eq. \ref{mominert_uniform_sphere}).
-\item Compute the gravity potential and vector components $H=10^m$ meters above the north pole 
+\item Compute the gravity potential and vector components at $z=H=10^m$ meters above the north pole 
 with $m=0,1,2,3,..8$. Compute first the position of these points and store them 
 in arrays {\tt xm}, {\tt ym} {\tt zm} before using these for gravity calculations. 
 \item Plot the computed quantities as a function of $H$ and plot on the same graphic the analytical values. 

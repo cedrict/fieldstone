@@ -1,0 +1,158 @@
+
+Let us start with the 1D steady advection-diffusion equation:
+\begin{equation}
+\rho C_p u \frac{dT}{dx} - k \frac{d^2T}{dx^2} = f \qquad \text{in} \quad [0,L_x]
+\label{eq:fdm1Dad}
+\end{equation}
+with the boundary conditions $T(x=0)=0$ and $T(x=L_x)=0$.
+
+We have seen before (see Section~\ref{XXX}) 
+that the elemental matrix ${\bm K}_a$ for the advection and 
+the elemental matrix  ${\bm K}_d$ for the diffusion terms are
+\[
+{\bm K}_a^e = \frac{\rho C_p u}{2} 
+\left(
+\begin{array}{cc}
+-1 & 1 \\
+-1 & 1 
+\end{array}
+\right)
+\qquad
+{\bm K}_d^e=\frac{k}{h_x}
+\left(
+\begin{array}{cc}
+1 & -1 \\ 
+-1 & 1
+\end{array}
+\right)
+\]
+where $h_x$ is the distance between nodes and $e$ denotes the element number. 
+
+Assuming that we have 5 elements (i.e. 6 nodes), the assembled $6\times 6$ 
+advection and diffusion matrices 
+(before boundary conditions are applied) are:
+\[
+{\bm K}_a
+= \frac{\rho C_p u}{2}
+\left(
+\begin{array}{cccccc}
+-1 & 1 & 0 & 0 & 0  &0\\
+-1 & 0 & 1 & 0 & 0  &0\\
+ 0 &-1 & 0 & 1 & 0  &0\\
+ 0 & 0 &-1 & 0 & 1  &0\\
+ 0 & 0 & 0 &-1 & 0  &1\\
+ 0 & 0 & 0 & 0 &-1  &1\\
+\end{array}
+\right)
+\qquad
+{\bm K}_d
+= \frac{k}{h_x}
+\left(
+\begin{array}{cccccc}
+ 1 &-1 & 0 & 0 & 0 &  0\\
+-1 & 2 &-1 & 0 & 0 &  0\\
+ 0 &-1 & 2 &-1 & 0 &  0\\
+ 0 & 0 &-1 & 2 &-1 &  0\\
+ 0 & 0 & 0 &-1 & 2 & -1\\
+ 0 & 0 & 0 & 0 &-1 &  1\\
+\end{array}
+\right)
+\]
+The rhs is zero, so that we would have to solve $({\bm K}_a+{\bm K}_d)\cdot \vec{T}=0$ 
+, or:
+\[
+\left[ 
+\frac{\rho C_p u}{2}
+\left(
+\begin{array}{cccccc}
+-1 & 1 & 0 & 0 & 0  &0\\
+-1 & 0 & 1 & 0 & 0  &0\\
+ 0 &-1 & 0 & 1 & 0  &0\\
+ 0 & 0 &-1 & 0 & 1  &0\\
+ 0 & 0 & 0 &-1 & 0  &1\\
+ 0 & 0 & 0 & 0 &-1  &1\\
+\end{array}
+\right)
++
+\frac{k}{h_x}
+\left(
+\begin{array}{cccccc}
+ 1 &-1 & 0 & 0 & 0 &  0\\
+-1 & 2 &-1 & 0 & 0 &  0\\
+ 0 &-1 & 2 &-1 & 0 &  0\\
+ 0 & 0 &-1 & 2 &-1 &  0\\
+ 0 & 0 & 0 &-1 & 2 & -1\\
+ 0 & 0 & 0 & 0 &-1 &  1\\
+\end{array}
+\right)
+\right]
+\cdot
+\left(
+\begin{array}{c}
+T_1 \\ T_2 \\ T_3 \\ T_4 \\ T_5 \\ T_6
+\end{array}
+\right)
+= \vec{0}
+\]
+Note that boundary conditions are not applied yet. 
+Therefore the algebraic equation for an interior node $i$ is 
+\[
+\rho C_p u
+\frac{T_{i+1}-T_{i-1}}{2}
++
+\frac{k}{h_x}
+(-T_{i-1}+2T_i-T_{i+1}) = 0
+\]
+or, 
+\begin{equation}
+\boxed{
+\rho C_p u
+\frac{T_{i+1}-T_{i-1}}{2h_x}
+-
+\frac{k}{h_x^2}
+(T_{i-1}-2T_i+T_{i+1}) = 0
+} \label{eq:fdm1Ddiscr}
+\end{equation}
+
+However, we have seen in Section~\ref{fdm_basics} that the 
+second order accurate central differencing based approximate first and second
+derivatives written for an interior node $i$ 
+of a finite difference mesh with a constant node spacing of $h$ is 
+\[
+\left. \frac{dT}{dx}\right|_i
+\simeq \frac{T_{i+1}-T_{i-1}}{2 h_x}
+\qquad
+\frac{d^2T}{dx^2} 
+\simeq \frac{T_{i+1}-2T_i+T_{i-1}}{h_x^2}
+\]
+Using these approximations, the discretised formualtion of Eq.~(\ref{eq:fdm1Dad}) is
+exactly the same as Eq.~(\ref{eq:fdm1Ddiscr}).
+This simple example proves that the FEM and the FDM share similarities!
+
+
+It is also useful to introduce the elemental Peclet number
+\[
+Pe = \frac{uh}{2 \kappa} = \frac{u h \rho C_p}{2 k}
+\]
+\index{general}{Peclet Number}
+and Eq.~(\ref{eq:fdm1Dad}) becomes:
+\[
+\frac{u}{2h_x}
+\left[
+\left(1-\frac{1}{Pe}\right) T_{i+1} + \frac{2}{Pe} T_i - \left(1+\frac{1}{Pe}\right)T_{i-1} 
+\right] = f
+\]
+CHECK!!!
+
+
+
+
+
+
+
+
+
+
+
+
+

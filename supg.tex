@@ -5,7 +5,8 @@ A standard approach is the Streamline Upwind Petrov Galerkin (SUPG) method.
 A nice overview of upwind techniques and how SUPG came to be is to be found in Chapter 
 2 of Donea \& Huerta \cite{dohu03} or in Brooks and Hughes (1982) \cite{brhu82}.
 Hughes et al (1986) \cite{humm86} present a review of the SUPG method 
-and discuss a additional discontinuity-capturing term. TODO? 
+and discuss a additional discontinuity-capturing term. So do Tezduyar \& Park \cite{tepa86}.
+TODO? 
 
 
 
@@ -366,7 +367,7 @@ Braun \cite{brau03} uses
 \[
 \tau_4 = \frac{h}{|\vec\upnu| \sqrt{15}} = \frac{h}{2|\vec\upnu|} \frac{2}{\sqrt{15}} 
 \]
-This formula is independent of $Pe$ and is also in \cite{bogs04}.
+This formula is independent of $Pe$ and is also in Bochev et al (2004) \cite{bogs04}.
 It is also used in Hughes \& Brooks (1982) \cite{hubr82} for pure advection problems in 1D
 and this value is attributed to Raymond \& Garder (1976)  \cite{raga76}.
 
@@ -387,14 +388,14 @@ highest velocity.
 Also, this has been used in the context of SUPG methods for the N-S equations, not advection-diffusion
 equations! This approach is then not considered further.
 
-\item Franca et al (2004) \cite{frhm04} use the following formula which originates from \cite{frfh92}:
-if $0\le Pe < 1$ then
+\item Franca et al (2004) \cite{frhm04} use the following formula which originates from 
+Franca et al (1992) \cite{frfh92}: if $0\le Pe < 1$ then
 $\tau = \frac{h}{2 |\vec\upnu|} Pe$ and if $Pe \ge 1$ then $\tau = \frac{h}{2 |\vec\upnu|}$.
 Note however that their definition of the Peclet number includes a scalar parameter $m$ which is 
 the minimum between 1/3 and and 2$C_k$ where the calculation of this parameter is discussed in 
 Remarks 4 and 5 of \cite{frfh92}. The authors conclude that for linear quadrilaterals the value
 1/3 should be used while for biquadratic elements 1/12 should be preferred.
-The same approach is found in \cite{brbh92}. 
+The same approach is found in Brezzi et al (1992) \cite{brbf92}. 
 
 \item Knobloch \cite{knob08} discusses other choices of $\tau$.
 

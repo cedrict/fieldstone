@@ -12,16 +12,16 @@ plot[0:30][0:]\
 coth(x)-1./x
 
 set ylabel '{/Symbol g}'
-set key outside
 set output 'gamma.pdf'
 plot[0:30][0:]\
 (coth(x)-1./x)  t '{/Symbol g}_1' ,\
 1./(1 + 1./x)   t '{/Symbol g}_2' ,\
 1./(1 + 9/x**2) t '{/Symbol g}_3',\
-2./sqrt(15)     t '{/Symbol g}_4',\
-1./(1 + 1/0.1 + 1./x/4) t '{/Symbol g}_5 (C=0.1)',\
-1./(1 + 1/0.5 + 1./x/4) t '{/Symbol g}_5 (C=0.5)',\
-1./(1 + 1/1 + 1./x/4) t '{/Symbol g}_5 (C=1.0)' 
+2./sqrt(15)     t '{/Symbol g}_4'
+
+#1./(1 + 1/0.1 + 1./x/4) t '{/Symbol g}_5 (C=0.1)',\
+#1./(1 + 1/0.5 + 1./x/4) t '{/Symbol g}_5 (C=0.5)',\
+#1./(1 + 1/1 + 1./x/4) t '{/Symbol g}_5 (C=1.0)' 
  
 
 
