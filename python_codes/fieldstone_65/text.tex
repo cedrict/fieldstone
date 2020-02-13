@@ -70,15 +70,17 @@ overly dissipative (i.e. overly diffusive):
 {\captionfont Left to right: $Pe$=0.25, $Pe$=1, $Pe$=5}
 \end{center}
 
+\newpage
 %..................................................................................
 \paragraph{Experiment 2 - advection skew to the mesh}
 
-The domain is a unit square. Resolution is $10\times10$ linear elements.
+The domain is a unit square. Resolution is $10\times10$ linear elements. Initial temperature is 
+irrelevant since we compute the steady state field. 
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_65/images/setup}
 \includegraphics[width=7cm]{python_codes/fieldstone_65/results/exp2/vel}\\
-{\captionfont Left: Taken from \cite{dohu03}. In our code we replace $u$ by the 
+{\captionfont Left: Taken from Donea \& Huerta \cite{dohu03}. In our code we replace $u$ by the 
 temperature $T$. Right: prescribed velocity field.}
 \end{center}
 
@@ -98,13 +100,15 @@ Since the Peclet number is so high, we have
 \frac{h}{2 u_0} 
 \]
 
+We then conduct three experiments: one without stabilisation, one with (isotropic) artifical diffusion, and 
+one with SUPG, from left to right on the following plots:
 
 \begin{center}
 \includegraphics[width=15cm]{python_codes/fieldstone_65/results/exp2/Temps}\\
 \includegraphics[width=15cm]{python_codes/fieldstone_65/results/exp2/Temps2}\\
 \includegraphics[width=15cm]{python_codes/fieldstone_65/images/exp2}\\
 {\captionfont Left to right: Standard Galerkin method, artificial diffusion, SUPG. 
-Bottom row taken from \cite{dohu03}. }
+Bottom row taken from Donea \& Huerta \cite{dohu03}. }
 \end{center}
 
 

@@ -28,6 +28,9 @@ manual.ind
 manual.pdf
 triangle 
 showme
+*.1.poly
+*.1.ele
+*.1.node
 
 # C extensions
 *.so
