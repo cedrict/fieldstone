@@ -277,8 +277,8 @@ for iel in range (0,nel):
             Kd=B_mat.T.dot(B_mat)*(hcond+hcondtilde)*weightq*jcob
 
             if use_supg:
-               tau=0.5*hx/u0
-               N_mat+=tau*np.transpose(vel.dot(B_mat))
+               tau_supg=0.5*hx/u0
+               N_mat+=tau_supg*np.transpose(vel.dot(B_mat))
 
             # compute advection matrix
             Ka=N_mat.dot(vel.dot(B_mat))*rho0*hcapa*weightq*jcob
