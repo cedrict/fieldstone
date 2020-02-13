@@ -583,7 +583,7 @@ sigma_xx[:]=lambdaa*divv[:]+2*mu*exx[:]
 sigma_yy[:]=lambdaa*divv[:]+2*mu*eyy[:]
 sigma_xy[:]=               +2*mu*exy[:]
 
-sigma_angle[:]=np.arctan(sigma_xy[:]/(sigma_xx[:]-sigma_yy[:]))/2. /np.pi*180
+sigma_angle[:]=np.arctan(2.*sigma_xy[:]/(sigma_xx[:]-sigma_yy[:]))/2. /np.pi*180
 
 sigma_1=0.5*(sigma_xx[:]+sigma_yy[:])+np.sqrt( 0.25*(sigma_xx[:]-sigma_yy[:])**2+sigma_xy[:]**2 )
 
@@ -641,7 +641,7 @@ sigma_xx_nodal[:]/=counter[:]
 sigma_yy_nodal[:]/=counter[:]
 sigma_xy_nodal[:]/=counter[:]
 
-sigma_angle_nodal[:]=np.arctan(sigma_xy_nodal[:]/(sigma_xx_nodal[:]-sigma_yy_nodal[:]))/2. /np.pi*180
+sigma_angle_nodal[:]=np.arctan(2.*sigma_xy_nodal[:]/(sigma_xx_nodal[:]-sigma_yy_nodal[:]))/2. /np.pi*180
 
 sigma_1_nodal=0.5*(sigma_xx_nodal[:]+sigma_yy_nodal[:]) \
            +np.sqrt( 0.25*(sigma_xx_nodal[:]-sigma_yy_nodal[:])**2+sigma_xy_nodal[:]**2 )
