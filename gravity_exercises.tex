@@ -92,7 +92,14 @@ Important remark: the coordinates are those of the center of the cells!
 \item Compute the associated volume $dV$ of a point as a function of $R$ and N.
 \item For points inside a sphere of radius $R$ assign a density $\rho_0=3000$kg/m$^3$ and zero otherwise, store these values in the {\tt rho} array.
 \item Compute the total mass of the system 
-\item Compute the moment of inertia of the system (use Eq. \ref{mominert_uniform_sphere}).
+\item Compute the moment of inertia of the system and compare the obtained value with its analytical value 
+(obtained with Eq. \ref{mominert_uniform_sphere}). In order to compute this quantity we will make use of
+the formula for a spherically symmetric body: 
+\[
+I = \int_V \rho d^2 dV \simeq \sum_i \rho_i d_i^2 dV_i
+\]
+where $d_i$ is the distance of point $i$ to the axis.
+
 \item Compute the gravity potential and vector components at $z=H=10^m$ meters above the north pole 
 with $m=0,1,2,3,..8$. Compute first the position of these points and store them 
 in arrays {\tt xm}, {\tt ym} {\tt zm} before using these for gravity calculations. 

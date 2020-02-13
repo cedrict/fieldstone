@@ -84,7 +84,7 @@ qweights=[5./9.,8./9.,5./9.]
 
 pnormalise=True
 
-benchmark=1
+benchmark=2
 
 if benchmark==1:
    nelx=16
@@ -104,11 +104,13 @@ if benchmark==1:
    etaeff2=0
    Z1=etaeff1/mu1/dt
    Z2=0
-   nstep=100 #200
+   nstep=200
    tfinal=0
    filter_compositions=False
 
 if benchmark==2:
+   nelx=50
+   nely=50
    Lx=1000e3  # horizontal extent of the domain 
    Ly=1000e3  # vertical extent of the domain 
    gx=0.
@@ -124,9 +126,8 @@ if benchmark==2:
    etaeff2=eta2*dt/(dt+eta2/mu2)
    Z1=etaeff1/mu1/dt
    Z2=etaeff2/mu2/dt
-   nstep=200
    tfinal=20e3*year
-   nstep=1
+   nstep=20
    filter_compositions=True
 
 nnx=2*nelx+1                  # number of Vnodes, x direction
@@ -163,6 +164,9 @@ stats_C1_file=open('C1.ascii',"w")
 stats_C2_file=open('C2.ascii',"w")
 stats_u_file=open('u.ascii',"w")
 stats_v_file=open('v.ascii',"w")
+stats_Z_file=open('Z.ascii',"w")
+stats_etaeff_file=open('etaeff.ascii',"w")
+stats_C1pC2_file=open('C1+C2.ascii',"w")
 
 #################################################################
 #################################################################
@@ -182,6 +186,8 @@ if benchmark==2:
    print("etaeff2=",etaeff2)
    print("Z1=",Z1)
    print("Z2=",Z2)
+   print("t_M 1=",eta1/mu1/year,"yr")
+   print("t_M 2=",eta2/mu2/year,"yr")
 print("------------------------------")
 
 #################################################################
@@ -342,6 +348,14 @@ tauxx=np.zeros(NV,dtype=np.float64)
 tauyy=np.zeros(NV,dtype=np.float64)  
 tauxy=np.zeros(NV,dtype=np.float64)  
 oxy = np.zeros(NV,dtype=np.float64)  
+etaeff = np.zeros(NV,dtype=np.float64)  
+Z = np.zeros(NV,dtype=np.float64)  
+rho = np.zeros(NV,dtype=np.float64)  
+    
+for i in range(0,NV):
+    etaeff[i]=C1[i]*etaeff1+C2[i]*etaeff2
+    Z[i]     =C1[i]*Z1     +C2[i]*Z2
+    rho[i]   =C1[i]*rho1   +C2[i]*rho2
 
 #==============================================================================
 #==============================================================================
@@ -424,28 +438,34 @@ for istep in range(0,nstep):
                 # compute dNdx & dNdy
                 xq=0.
                 yq=0.
+                Zq=0.
                 C1q=0.
                 C2q=0.
                 tauxxq=0.
                 tauyyq=0.
                 tauxyq=0.
+                etaeffq=0.
                 oxyq=0.
+                rhoq=0.
                 for k in range(0,mV):
                     xq+=NNNV[k]*xV[iconV[k,iel]]
                     yq+=NNNV[k]*yV[iconV[k,iel]]
                     C1q+=NNNV[k]*C1[iconV[k,iel]]
                     C2q+=NNNV[k]*C2[iconV[k,iel]]
+                    Zq+=NNNV[k]*Z[iconV[k,iel]]
                     oxyq+=NNNV[k]*oxy[iconV[k,iel]]
+                    rhoq+=NNNV[k]*rho[iconV[k,iel]]
                     tauxxq+=NNNV[k]*tauxx[iconV[k,iel]]
                     tauyyq+=NNNV[k]*tauyy[iconV[k,iel]]
                     tauxyq+=NNNV[k]*tauxy[iconV[k,iel]]
+                    etaeffq+=NNNV[k]*etaeff[iconV[k,iel]]
                     dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                     dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
                 #end for 
 
-                rhoq=C1q*rho1+C2q*rho2
-                etaeffq=C1q*etaeff1+C2q*etaeff2
-                Zq=C1q*Z1+C2q*Z2
+                #rhoq=C1q*rho1+C2q*rho2
+                #etaeffq=C1q*etaeff1+C2q*etaeff2
+                #Zq=C1q*Z1+C2q*Z2
 
                 #qpts_file.write("%e %e %e %e %e %e %e %e %e\n"\
                 #                 %(xq,yq,rhoq,etaeffq,Zq,tauxxq,tauyyq,tauxyq,oxyq))
@@ -602,8 +622,8 @@ for istep in range(0,nstep):
 
     dt_CFL=CFL*(Lx/nelx)/np.max(np.sqrt(u**2+v**2))
 
-    print('dt_CFL= %e year' %(dt_CFL/year))
-    print('dt    = %e year' %(dt/year))
+    print('     dt_CFL= %e year' %(dt_CFL/year))
+    print('     dt    = %e year' %(dt/year))
 
     #####################################################################
     # compute nodal strainrate and heat flux 
@@ -715,15 +735,40 @@ for istep in range(0,nstep):
     time+=dt
 
     #####################################################################
-    # update dev stress fields
+    # compute Z and J 
     #####################################################################
     start = timing.time()
 
     etaeff = np.zeros(NV,dtype=np.float64)  
     Z = np.zeros(NV,dtype=np.float64)  
+    rho = np.zeros(NV,dtype=np.float64)  
 
-    etaeff[:]=C1[:]*etaeff1+C2[:]*etaeff2
-    Z[:]=C1[:]*Z1+C2[:]*Z2
+    for i in range(0,NV):
+        etaeff[i]=C1[i]*etaeff1+C2[i]*etaeff2
+        Z[i]     =C1[i]*Z1     +C2[i]*Z2
+        rho[i]   =C1[i]*rho1   +C2[i]*rho2
+        if etaeff[i]<=0:
+           print(i,xV[i],yV[i],C1[i],C2[i],etaeff1,etaeff2)
+           exit("eta_eff<=0")
+        if Z[i]<=0:
+           print(i,xV[i],yV[i],C1[i],C2[i],Z1,Z2)
+           exit("Z<=0")
+
+    #etaeff[:]=C1[:]*etaeff1+C2[:]*etaeff2
+    #Z[:]=C1[:]*Z1+C2[:]*Z2
+
+    stats_Z_file.write("%e %e %e \n" %(time,np.min(Z),np.max(Z))) ; stats_Z_file.flush()
+    stats_etaeff_file.write("%e %e %e \n" %(time,np.min(etaeff),np.max(etaeff))) ; stats_etaeff_file.flush()
+
+    print("     -> etaeff (m,M) %.6e %.6e " %(np.min(etaeff),np.max(etaeff)))
+    print("     -> Z      (m,M) %.6e %.6e " %(np.min(Z),np.max(Z)))
+
+    print("compute nodal etaeff, Z: %.3f s" % (timing.time() - start))
+
+    #####################################################################
+    # update dev stress fields
+    #####################################################################
+    start = timing.time()
 
     tauxx=2*etaeff*exx+Z*tauxx+Z*dt*Jxx
     tauyy=2*etaeff*eyy+Z*tauyy+Z*dt*Jyy
@@ -743,7 +788,7 @@ for istep in range(0,nstep):
     # advect fields
     #####################################################################
 
-    for ifield in range(0,1):
+    for ifield in range(0,6): # C1 C2 tauxx tauyy tauxy
 
         start = timing.time()
 
@@ -758,6 +803,12 @@ for istep in range(0,nstep):
            field[:]=C1[:]
         if ifield==1:
            field[:]=C2[:]
+        if ifield==2:
+           field[:]=tauxx[:]
+        if ifield==3:
+           field[:]=tauyy[:]
+        if ifield==4:
+           field[:]=tauxy[:]
 
         for iel in range (0,nel):
 
@@ -830,22 +881,16 @@ for istep in range(0,nstep):
 
         field = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
 
+        #filter composition with leka93 algorithm
+
         if ifield==0:
            print("     C1 (m,M) bef. %.4f %.4f " %(np.min(field),np.max(field)))
            stats_C1_file.write("%e %e %e \n" %(time,np.min(field),np.max(field))) ; stats_C1_file.flush()
         if ifield==1:
            print("     C2 (m,M) bef. %.4f %.4f " %(np.min(field),np.max(field)))
            stats_C2_file.write("%e %e %e \n" %(time,np.min(field),np.max(field))) ; stats_C2_file.flush()
-        if ifield==2:
-           print("     tauxx (m,M) bef. %.4f %.4f " %(np.min(field),np.max(field)))
-        if ifield==3:
-           print("     tauyy (m,M) bef. %.4f %.4f " %(np.min(field),np.max(field)))
-        if ifield==4:
-           print("     tauxy (m,M) bef. %.4f %.4f " %(np.min(field),np.max(field)))
 
-        #filter composition with leka93 algorithm
-
-        if filter_compositions:
+        if filter_compositions and ifield<2:
            sum0=np.sum(field)
            minC=np.min(field)
            maxC=np.max(field)
@@ -873,6 +918,8 @@ for istep in range(0,nstep):
         if ifield==1:
            print("     C2 (m,M) aft. %.4f %.4f " %(np.min(field),np.max(field)))
 
+        #end of filtering
+
         if ifield==0:
            C1[:]=field[:]
            print("advect C1 time: %.3f s" % (timing.time() - start))
@@ -883,7 +930,24 @@ for istep in range(0,nstep):
            print("advect C2 time: %.3f s" % (timing.time() - start))
            stats_C2_file.write("%e %e %e \n" %(time,np.min(C2),np.max(C2))) ; stats_C2_file.flush()
 
+        if ifield==2:
+           tauxx[:]=field[:]
+           print("advect tauxx time: %.3f s" % (timing.time() - start))
+           stats_tauxx_file.write("%e %e %e \n" %(time,np.min(tauxx),np.max(tauxx))) ; stats_tauxx_file.flush()
+
+        if ifield==3:
+           tauyy[:]=field[:]
+           print("advect tauyy time: %.3f s" % (timing.time() - start))
+           stats_tauyy_file.write("%e %e %e \n" %(time,np.min(tauyy),np.max(tauyy))) ; stats_tauyy_file.flush()
+
+        if ifield==4:
+           tauxy[:]=field[:]
+           print("advect tauxy time: %.3f s" % (timing.time() - start))
+           stats_tauxy_file.write("%e %e %e \n" %(time,np.min(tauxy),np.max(tauxy))) ; stats_tauxy_file.flush()
+
     #end for ifield
+
+    stats_C1pC2_file.write("%e %e %e \n" %(time,np.min(C1+C2),np.max(C1+C2))) ; stats_C1pC2_file.flush()
 
     #####################################################################
     # plot of solution
