@@ -1163,6 +1163,7 @@ for istep in range(0,nstep):
             NNNV[0:mV]=NNV(rq,sq,order)
             dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
             dNNNVds[0:mV]=dNNVds(rq,sq,order)
+            NNNP[0:mP]=NNP(rq,sq,order)
             jcb=np.zeros((ndim,ndim),dtype=np.float64)
             for k in range(0,mV):
                 jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
@@ -1208,8 +1209,8 @@ for istep in range(0,nstep):
     print("     -> exx_n (m,M) %.6e %.6e " %(np.min(exx_n),np.max(exx_n)))
     print("     -> eyy_n (m,M) %.6e %.6e " %(np.min(eyy_n),np.max(eyy_n)))
     print("     -> exy_n (m,M) %.6e %.6e " %(np.min(exy_n),np.max(exy_n)))
-    print("     -> exy_n (m,M) %.6e %.6e " %(np.min(qx_n),np.max(qx_n)))
-    print("     -> exy_n (m,M) %.6e %.6e " %(np.min(qy_n),np.max(qy_n)))
+    print("     -> qx_n (m,M) %.6e %.6e " %(np.min(qx_n),np.max(qx_n)))
+    print("     -> qy_n (m,M) %.6e %.6e " %(np.min(qy_n),np.max(qy_n)))
 
     #np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
     #np.savetxt('strainrate.ascii',np.array([xV,yV,exx_n,eyy_n,exy_n]).T,header='# x,y,exx,eyy,exy')
