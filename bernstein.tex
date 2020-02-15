@@ -1,0 +1,130 @@
+
+
+
+The $n+1$ Bernstein basis polynomials of degree $n$ on the interval $[0,1]$
+are defined as \footnote{\url{https://en.wikipedia.org/wiki/Bernstein_polynomial}}
+\index{general}{Bernstein Polynomials}
+\[
+b_{m,n}(x) = \left( \begin{array}{c} n \\ m \end{array}\right) x^m(1-x)^{n-m}
+\qquad m=0,1,...n
+\]
+The first few Bernstein polynomials are 
+\begin{eqnarray}
+b_{0,0}(x) &=& 1 \\
+b_{0,1}(x) &=& 1-x \nn\\
+b_{1,1}(x) &=& x \\
+b_{0,2}(x) &=& (1-x)^2 \nn\\
+b_{1,2}(x) &=& 2x(1-x) \nn\\
+b_{2,2}(x) &=& x^2 
+\end{eqnarray}
+
+\includegraphics[width=5cm]{images/bernstein/b0.pdf}
+\includegraphics[width=5cm]{images/bernstein/b1.pdf}
+\includegraphics[width=5cm]{images/bernstein/b2.pdf}
+
+We see that the zero-th and first order polynomials are the same as the linear shape functions defined in 
+Section~\ref{sec:elts1D}. However the second order polynomials (and higher) differ from the second-order
+shape functions. 
+
+Also, the Bernstein polynomials have a lot of properties, but one that is of importance to us
+is the following: $b_{m,n}(x) \geq 0 \quad  \forall x\in [0,1]$, i.e. the polynomials 
+are positive. This is however not true for shape functions for $n\geq 2$.
+Another important property shared with shape functions is that their sum over the interval is 
+exactly 1, i.e. $\sum_m b_{m,n}(x)=1$.
+
+In order to facilitate the comparison between the 2nd-order shape functions and Bernstein 
+polynomials, I will express the latter as a function of the reduced coordinate
+$r\in[-1,1]=2(x-1/2)$ (or $x=(r+1)/2$). We have then:
+
+\begin{eqnarray}
+b_{0,2}(r) &=& \frac{1}{4}(1-r)^2 \nn\\
+b_{1,2}(r) &=& \frac{1}{2}(1-r^2) \nn\\
+b_{2,2}(r) &=& \frac{1}{4}(1+r)^2
+\end{eqnarray}
+
+Both 2nd-order Bernstein polynomials and shape functions are plotted here under:
+\begin{center}
+\includegraphics[width=7cm]{images/bernstein/b2_.pdf}
+\includegraphics[width=7cm]{images/bernstein/N2_.pdf}\\
+{\captionfont Left: Second-order Bernstein polynomials; right: 2nd-order shape functions.}
+\end{center}
+
+Having reached this point, the burning question is why should we care? 
+In order to answer this question, let us carry out the following 
+experiment: each node $i$ in the element carries a field value $f_i$ and for simplicity, 
+we choose $f_0=f(r=-1)=1$, $f_1=f(r=0)=0$, $f_2=f(r=+1)=0$.
+Then, we can compute the value of the field inside of the element 
+as we usually do in the FE methodology:
+\[
+f^h(r) = \sum_{i=0}^2 f_i N_i(r) = f_0 N_0(r) = N_0(r) = \frac{1}{2}r(r-1)
+\]
+This means that although the field $f$ is always positive (or null) inside the element
+its representation with the shape functions is negative over half (!) of the element
+(see purple curve on the right panel above).
+If we now turn to the Bernstein polynomials:
+\[
+f^h(r) = \sum_{i=0}^2 b_{i,2} = b_{0,2} = \frac{1}{4}(1-r)^2
+\]
+which is {\it always} positive over the interval $[-1,+1]$, 
+and looking at the purple curve on the left panel above, 
+we see that the value decreases monotonously when we go away from node 1, and reaches 
+zero at the other end of the element. 
+
+Let us now explore another aspect of such an interpolation based on the Bernstein polynomials
+and assume that $f(r)=C$. Then 
+\[
+f^h(r) = \sum_{i=0}^2 f_i b_{i,2}(r) = C \sum_{i=0}^2 b_{i,2}(r) = C \cdot 1 = C
+\]
+Such interpolation can exactly represent a constant field. 
+Let us assume that $f(r)=ar+b$. Then 
+\begin{eqnarray}
+f^h(r) 
+&=& \sum_{i=0}^2 f(r_i) b_{i,2}(r)  \nn\\
+&=& \sum_{i=0}^2 (ar_i+b) b_{i,2}(r) \nn\\
+&=& a\sum_{i=0}^2 r_i b_{i,2}(r) + b \sum_{i=1}^3 b_{i,2}(r) \nn\\
+&=& a (-b_{0,2}(r)+b_{2,2}(r)) + b \cdot 1 \nn\\
+&=& ar+b 
+\end{eqnarray}
+Such interpolation can exactly represent a linear field. 
+
+Let us assume that $f(r)=ar^2+br+c$. Then 
+\begin{eqnarray}
+f^h(r) 
+&=& \sum_{i=0}^2 f(r_i) b_{i,2}(r) \nn \\
+&=& \sum_{i=0}^2 (ar^2+br+c) b_{i,2}(r) \nn\\
+&=& \sum_{i=0}^2 r_i^2 b_{i,2}(r) + b \sum_{i=0}^2 r_i b_{i,2}(r) + c \sum_{i=0}^2 b_{i,2}(r) \nn\\
+&=& a\sum_{i=0}^2 r_i^2 b_{i,2}(r) + br + c \nn\\
+&=& a (b_{0,2}(r) + b_{2,2}(r)) + br + c \nn\\
+&=& a\frac{1}{2}(1+r^2)  + br + c 
+\end{eqnarray}
+which is not equal to $f(r)$.
+
+On the other hand it is trivial to show that 
+\begin{eqnarray}
+f^h(r) 
+&=&  \sum_{i=0}^2 f(r_i) N_i(r) \nn \\
+&=&  \sum_{i=0}^2   (ar_i^2+br_i+c)  N_i(r) \nn \\
+&=&  a \sum_{i=0}^2  r_i^2 N_i(r) + b \sum_{i=0}^2 r_i  N_i(r) +  c \sum_{i=0}^2  N_i(r) \nn \\
+&=&  a \sum_{i=0}^2  r_i^2 N_i(r) + b \sum_{i=0}^2 r_i  N_i(r) +  c \nn\\
+&=&  a (N_0(r)+N_2(r)) + b (-N_0(r) +N_2(r)) +  c \nn\\
+&=&  a r^2  + b r+ c 
+\end{eqnarray}
+
+As a conclusion there is a trade-off: 2nd-order Bernstein polynomials always yield positive 
+values when the field is positive (as opposed to 2nd-order shape functions) but they cannot 
+represent exactly a 2nd-order polynomial field (while shape functions can).
+
+The positivity can be really critical in geodynamical simulations: a negative density makes no sense, 
+and a negative viscosity even less!
+
+The 2nd-order Bernstein polynomials are used in Stone \ref{f64}.
+ 
+
+
+
+
+
+
+
+ 
+

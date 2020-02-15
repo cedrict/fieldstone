@@ -1,0 +1,35 @@
+set term pdf enhanced font "Times,10pt"
+set grid
+
+set output 'b0.pdf'
+plot[0:1][0:1.25]\
+1 t 'b_{0,0}'
+
+set output 'b1.pdf'
+plot[0:1][0:1.25]\
+1-x t 'b_{0,1}',\
+x t 'b_{1,1}'
+
+set output 'b2.pdf'
+plot[0:1][0:1.25]\
+(1-x)**2 t 'b_{0,2}',\
+2*x*(1-x) t 'b_{1,2}',\
+x**2 t 'b_{2,2}'
+
+
+set output 'b2_.pdf'
+plot[-1:1][-0.2:1.25]\
+0.25*(1-x)**2 t 'b_{0,2}',\
+0.5*(1-x**2) t 'b_{1,2}',\
+0.25*(1+x)**2 t 'b_{2,2}',\
+0 lt -1
+
+set output 'N2_.pdf'
+plot[-1:1][-0.2:1.25]\
+0.5*x*(x-1) t 'N_0',\
+(1-x**2) t 'N_1',\
+0.5*x*(1+x) t 'N_2',\
+0 lt -1
+
+
+
