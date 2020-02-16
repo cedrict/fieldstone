@@ -1,6 +1,110 @@
 
 Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_64}
 
+
+In the examples here there are only 2 compositions. 
+Each material/composition is characterised by its $\eta_{\{1,2\}}$, $\mu_{\{1,2\}}$. 
+With $\delta t$ chosen, $Z_{\{1,2\}}$ and $\eta_{eff,\{1,2\}}$ can be computed.
+
+C1 and C2 are initialised at startup by looping over Vnodes and assigning a value to $C_1$ 
+and $C_2$ such that $C_1+C_2=1$. 
+
+The quantity $\tau_{xx},\tau_{yy},\tau_{xy},\dot{\omega}_{xy}$ (denoted by oxy in the code) 
+are nodal and initialised at startup
+(they are needed for the Stokes matrix):
+\begin{lstlisting}
+tauxx =np.zeros(NV,dtype=np.float64)  
+tauyy =np.zeros(NV,dtype=np.float64)  
+tauxy =np.zeros(NV,dtype=np.float64)  
+oxy   =np.zeros(NV,dtype=np.float64)  
+etaeff=np.zeros(NV,dtype=np.float64)  
+Z     =np.zeros(NV,dtype=np.float64)  
+rho   =np.zeros(NV,dtype=np.float64)  
+\end{lstlisting}
+
+Structure of the code (the following bulletpoints are inside the time stepping loop):
+
+\begin{itemize}
+\item Nodal $\eta_{eff}$, $Z$ and $\rho$ values are computed as follows:
+\begin{lstlisting}
+for i in range(0,NV):
+    etaeff[i]=C1[i]*etaeff1+C2[i]*etaeff2
+    Z[i]     =C1[i]*Z1     +C2[i]*Z2
+    rho[i]   =C1[i]*rho1   +C2[i]*rho2
+\end{lstlisting}
+
+\item Build Stokes matrix. 
+Loop over elements, loop over integration points inside the element, and for 
+each quadrature point:
+\begin{eqnarray}
+Z(\vec{r}_q) &=& \sum_{i=1}^{m_V} N_i^\upnu(\vec{r}_q) Z_i \\
+\tau_{xx}(\vec{r}_q)&=& \sum_{i=1}^{m_V} N_i^\upnu(\vec{r}_q) \tau_{xx,i} \\
+\tau_{yy}(\vec{r}_q)&=& \sum_{i=1}^{m_V} N_i^\upnu(\vec{r}_q) \tau_{yy,i} \\
+\tau_{xy}(\vec{r}_q)&=& \sum_{i=1}^{m_V} N_i^\upnu(\vec{r}_q) \tau_{xy,i} \\
+\eta_{eff}(\vec{r}_q)&=& \sum_{i=1}^{m_V} N_i^\upnu(\vec{r}_q) \eta_{eff,i} \\
+\dot{\omega}_{xy}(\vec{r}_q) &=& \sum_{i=1}^{m_V} N_i^\upnu(\vec{r}_q)  \dot{\omega}_{xy,i} \\
+\rho(\vec{r}_q) &=& \sum_{i=1}^{m_V} N_i^\upnu(\vec{r}_q) \rho_i 
+\end{eqnarray}
+
+
+The elastic memory rhs term is built following Eq.~(\ref{XXX}):
+\begin{lstlisting}
+R[0]=Zq*(tauxxq+dt*oxyq*(2*tauxyq))
+R[1]=Zq*(tauyyq+dt*oxyq*(-2*tauxyq))
+R[2]=Zq*(tauxyq+dt*oxyq*(tauyyq-tauxxq))
+f_el-=b_mat.T.dot(R)*weightq*jcob
+\end{lstlisting}
+
+\item Solve system and obtain $u,v,p$
+
+\item Compute nodal velocity gradient ${\bm L}=\vec\nabla\vec\upnu$
+
+\item Compute derivated nodal fields 
+
+\begin{lstlisting}
+exx[:]=Lxx[:]
+eyy[:]=Lyy[:]
+exy[:]=0.5*(Lxy[:]+Lyx[:])
+oxy[:]=0.5*(Lxy[:]-Lyx[:])
+Jxx[:]=2*tauxx[:]*oxy[:]
+Jyy[:]=-2*tauxy[:]*oxy[:]
+Jxy[:]=(tauyy[:]-tauxx[:])*oxy[:]
+\end{lstlisting}
+
+\item (re-)build nodal ${\bm \tau}$: 
+\begin{lstlisting}
+tauxx=2*etaeff*exx+Z*tauxx+Z*dt*Jxx
+tauyy=2*etaeff*eyy+Z*tauyy+Z*dt*Jyy
+tauxy=2*etaeff*exy+Z*tauxy+Z*dt*Jxy
+\end{lstlisting}
+
+\item advect $C_1$, $C_2$, $\tau_{xx}$, $\tau_{yy}$ and $\tau_{xy}$ fields
+
+\item produce vtu file
+
+\end{itemize}
+
+
+
+
+
+
+
+
+
+LIMITATIONS:
+
+no RK algo for marker advection. but small timestep so ok ?
+
+
+
+
+
+
+
+
+
+
 %.......................................................
 \paragraph{Stress build-up in viscoelastic Maxwell body}
 
@@ -12,7 +116,7 @@ An unstressed, incompressible viscoelastic Maxwell medium is subjected to a velo
 resulting in pure shear. 
 The increase of the accumulated stress with time is given by an analytical solution:
 \begin{equation}
-{\bm \tau} = 2\eta\ {\dot{\bm \varepsilon}} \left ( 1-e^{\frac{-\mu }{\eta} t } \right )
+{\bm \tau} = 2\eta\ {\dot{\bm \varepsilon}} \left ( 1-e^{-\frac{\mu }{\eta} t } \right )
 \end{equation}
 with $t$ time, $\eta$ the prescribed material viscosity and $\mu$ the prescribed material shear modulus. 
 The domain size is 100$\times 100$km.
@@ -99,10 +203,9 @@ The beam is surrounded by a low-density, low-viscosity and high shear modulus me
 of which the specifications are given in  the following table.
 The boundary conditions of the domain consist of a no slip condition at 
 the left boundary where the slab is attached and free slip boundary conditions along all other sides. 
-The results are calculated on a grid with a resolution of 50x50 elements.
-%The resolution and Courant number will be varied when using compositional fields to see 
-%if the models perform better with a higher resolution/lower time step. 
-The time step is set to $\delta t = 200yr$.
+The results are calculated on a grid with a resolution of 50x50 elements containing 64 randomly 
+distributed markers at startup.
+The time step is set to $\delta t = 200yr$ (i.e. gravity is switched off after 100 time steps).
 
 \begin{center}
 \begin{tabular}{lll}
@@ -121,8 +224,12 @@ visco-elasticity factor $Z$      \ [-]         & 0.9999999369280039      &  1.58
 \end{center}
 
 \begin{center}
-\includegraphics[width=7.6cm]{python_codes/fieldstone_64/images/slabgery10}\\
-{\captionfont Taken from \cite[16.11]{gery10}. 
+\includegraphics[height=4.5cm]{python_codes/fieldstone_64/images/gerya1}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_64/images/gerya2}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_64/images/gerya3}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_64/results/slab/markers0000}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_64/results/slab/markers0100}\\
+{\captionfont Top row taken from \cite[16.11]{gery10}. 
 Results of a numerical experiment for the recovery of the original
 shape of a visco-elastic slab (black, dark grey), 
  embedded in a weak visco-elastic medium (light grey, white). 
@@ -144,22 +251,170 @@ $\eta_{eff,1}$ and $\eta_{eff,2}$ for the slab and mantle respectively:
 \includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/vel}
 \includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/u}
 \includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/v}\\
-\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/C1}
-\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/C2}
-\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/rho}\\
 \includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/exx}
 \includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/eyy}
 \includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/exy}\\
-\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/oxy}
 \includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/q}
 \includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/etaeff}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/rho}
 \end{center}
 
 Note that the Gerya data are obtained with the code from the 2010 version of the book.
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_64/results/slab/velocity_u}
-\includegraphics[width=7cm]{python_codes/fieldstone_64/results/slab/velocity_v}
+\includegraphics[width=7cm]{python_codes/fieldstone_64/results/slab/velocity_v}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_64/results/slab/J}
+\includegraphics[width=7cm]{python_codes/fieldstone_64/results/slab/tau}
 \end{center}
+
+
+\newpage
+%.......................................................
+\paragraph{Stress build-up in viscoelastic Maxwell body}
+
+This benchmark comes from Appendix B of Keller et al (2013) \cite{kemk13}.
+
+The domain is $7.5\times5$km. A dominantly elastic beam is fixed to, and protrudes horizontally 
+from the left wall of the model box. 
+Surrounding the elastic beam is a viscous, but inelastic fluid. 
+All boundaries are free slip, except for the left wall, which is set to no slip in 
+order to keep the bending beam fixed to the wall. The beam has a higher density than the surrounding fluid and
+thus will bend down elastically driven by gravity. After the beam has 
+accumulated some elastic strain through bending down, gravity is switched off. 
+If the stress evolution is implemented accurately, the elastic beam should now, 
+free from the pull of gravity, move upwards again and restore its initial position. 
+
+Material properties are as follows:
+\begin{itemize}
+\item beam: $\rho=1500$, $\eta=10^{24}$, $\mu=10^{10}$
+\item fluid: $\rho=1000$, $\eta=10^{18}$, $\mu=10^{11}$
+\end{itemize}
+
+This choice of parameters leads to a Maxwell time 
+$t_m = 0.32$ yr for the background fluid and Maxwell times of 
+$t_m = 3.2$ Myr for the beam, meaning that the deformation in this benchmark problem, 
+which occurs on a timescale of thousands to a million years, 
+will lead to dominantly viscous deformation in the fluid, 
+and dominantly elastic behaviour of the beam. 
+
+Keller et al set the numerical resolution to $300\times200$ elements, 
+with 16 markers per elements for stress advection. Such a resolution is 
+not feasible with our simple python implementation so the resolution is
+then set to $96\times64$. 
+
+The following plot comes from \cite{kemk13}:
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_64/images/kemk13}
+\end{center}
+
+The elastic timestep is set to $\delta t_e=100$yr and the tectonic timestep is set to the same value.
+This yields $\eta_{eff}=10^{18}$ in the fluid, and $\eta_{eff}\simeq 3.15\times 10^{19}$.
+After 50kyr, the gravity ($|\vec{g}|=10$) is switched off and the model is ran for another 
+500kyr.
+
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/beam/u.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/beam/v.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/beam/vel}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/beam/exx}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/beam/eyy}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/beam/exy}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/beam/q}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/beam/rho}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/beam/Z}\\
+{\captionfont Various fields at the end of the 1st timestep: 
+Velocity, strain rate components, $Z$, $\eta_{eff}$, strain rate components, pressure.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_64/results/beam/u.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_64/results/beam/u_log.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_64/results/beam/v.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_64/results/beam/v_log.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/beam/tauxx.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/beam/tauyy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/beam/tauxy.pdf}
+\end{center}
+
+
+\newpage
+%.......................................................
+\paragraph{Flexure of elastic plate}
+
+This benchmark is presented in Choi et al (2013) \cite{chtl13}. 
+The setup is as follows:
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_64/images/chtl13a}
+\end{center}
+
+\begin{center}
+\begin{tabular}{llll}
+\hline 
+\textit{Material properties}& \textit{elastic plate (1)}  & \textit{elastic block (2)} & \textit{viscous mantle (3)} \\
+\hline 
+\hline 
+Density         $\rho$       \ [kg/m$^{3}$]       & 2700&1890 &2700 \\ 
+Viscosity       $\eta$       \ [Pa$\cdot$ s]      & $10^{35}$& $10^{35}$ & $10^{17}$ \\ 
+Shear modulus   $\mu $       \ [Pa]               & $30\cdot10^9$& $30\cdot10^9$&  $10^{50}$ \\
+Maxwell time    $t_M$        \ [yr]               & 10569930 &  10569930 & 3.1709791983764584e-41 \\ 
+eff. visc.      $\eta_{eff}$ \ [Pa$\cdot$s]       & 4.73039776e+18& 4.73039776e+18&  1e+17\\ 
+Factor          $Z$          \ [-]                & 0.9999995&  0.9999995 &  6.3419583e-42 \\ 
+\hline 
+\end{tabular} 
+\end{center}
+
+The value of $\eta_1=\eta_2=10^{35}$ for the elastic materials was obtained through personal communication. 
+The value of $\mu_3=10^{50}$ for the viscous material ensures that $\eta_{eff}=\eta_3$.
+Note that in the publication the authors test both compressible and incompressible 
+formulations, but we restrict ourselves to incompressible results since our code cannot handle compressible behavior. 
+I also use dt=5year.
+
+The authors report a converged total relief of 306-308m:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_64/images/chtl13b}
+\end{center}
+
+This benchmark requires either a sticky air layer (see Section~\ref{sss:stickyair})
+on top of the plate or a deformable mesh (ALE formulation, see Section~\ref{sss:ale}).
+
+Under are shown the minimum and maximum vertical velocity measurements
+which as expected converge to zero (thereby indicating that a steady state 
+solution is being reached) and the plot of the free surface 
+topography.
+
+DISCLAIMER: there is no ALE formulation implemented yet. I can therefore only run the experiment for 1 time step:
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/u.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/v.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/vel.png}
+\end{center}
+
+
+
+Ultimately I wish to plot my results on top of these:
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/topo.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/v.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/v_log.pdf}
+\end{center}
+
+%The following figure shows the grid at equilibrium and the markers:
+
+%\begin{center}
+%\includegraphics[width=8cm]{FLEXTURE_OF_ELASTIC_PLATE/mats.png}
+%\includegraphics[width=8cm]{FLEXTURE_OF_ELASTIC_PLATE/DevStressInv.png}\\
+%\includegraphics[width=8cm]{FLEXTURE_OF_ELASTIC_PLATE/maxwelltime.png}
+%\includegraphics[width=8cm]{FLEXTURE_OF_ELASTIC_PLATE/mu_ve}\
+%\end{center}
+
+
 
 
