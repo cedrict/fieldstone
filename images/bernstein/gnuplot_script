@@ -31,5 +31,14 @@ plot[-1:1][-0.2:1.25]\
 0.5*x*(1+x) t 'N_2',\
 0 lt -1
 
+set key outside
+fq1(x)=2+x
+fq2(x)=x**2+x+1
+fb2(x)=0.5* (1+x**2)+x+1 
+set output 'hammer.pdf'
+plot[-1:1][0:]\
+fq1(x) t '1st order shape fcts',\
+fq2(x) t '2nd order shape fcts',\
+fb2(x) t '2nd order Bernstein pol'
 
 

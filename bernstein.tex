@@ -110,14 +110,48 @@ f^h(r)
 &=&  a r^2  + b r+ c 
 \end{eqnarray}
 
-As a conclusion there is a trade-off: 2nd-order Bernstein polynomials always yield positive 
+To hammer the point once more: let $f(r)=r^2+r+1$.
+Then 
+\begin{eqnarray}
+f^h_{Q_1} 
+&=& f(-1) \frac{1}{2}(1-r) + f(+1) \frac{1}{2}(1+r) \nn\\
+&=&  \frac{1}{2}(1-r) + 3 \frac{1}{2}(1+r) \nn\\
+&=& 2-r \\
+f^h_{Q_2} &=& r^2+r+1 \\
+f^h_{B_2} &=& \frac{1}{2} (1+r^2)+r+1 
+\end{eqnarray}
+We see on the following figure that although Bernstein polynomials cannot 
+represent $f(r)$ exactly they still do a better job than first order shape functions
+($Q_1$ projection).
+\begin{center}
+\includegraphics[width=7cm]{images/bernstein/hammer.pdf}
+\end{center}
+
+As a conclusion there is a trade-off: 2nd-order Bernstein polynomials {\it always} yield positive 
 values when the field is positive (as opposed to 2nd-order shape functions) but they cannot 
 represent exactly a 2nd-order polynomial field (while shape functions can).
 
 The positivity can be really critical in geodynamical simulations: a negative density makes no sense, 
 and a negative viscosity even less!
 
-The 2nd-order Bernstein polynomials are used in Stone \ref{f64}.
+The 2nd-order Bernstein polynomials are used in Stone \ref{f64}. The actual context of this stone is not 
+important. Fields such as density and viscosity are known on the 
+9 nodes of the $Q_2$ element and need to be projected onto the 9 quadrature points. 
+For instance, these nodal fields are given by:
+\begin{center}
+\includegraphics[width=7cm]{images/bernstein/rhonodal.png}
+\includegraphics[width=7cm]{images/bernstein/etaeffnodal.png}
+\end{center}
+The resulting fields on the quadrature points are shown:
+\begin{center}
+\includegraphics[width=7cm]{images/bernstein/qrho.png}
+\includegraphics[width=7cm]{images/bernstein/qetaeff.png}
+\end{center}
+The bottom row is obtained with the shape functions while the top row is obtained with the Bernstein 
+polynomials as interpolants. The thin blue line actually indicated points with negative viscosity and 
+on the left the colour bar shows densities below the value of 1890 (lowest density in the domain).
+
+
  
 
 
