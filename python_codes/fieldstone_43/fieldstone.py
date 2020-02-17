@@ -91,9 +91,9 @@ if int(len(sys.argv) == 4):
    order     =int(sys.argv[2])
    supg_type =int(sys.argv[3])
 else:
-   experiment=7
+   experiment=6
    order=2
-   supg_type=0
+   supg_type=1
 
 if order==1:
    m=4          # number of nodes making up an element
@@ -180,7 +180,6 @@ if experiment==7: # elastic slab
    ymin=0.
    every=5
 
-
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
     
@@ -194,7 +193,7 @@ NfemT=NV*ndofT    # Total number of degrees of temperature freedom
 # alphaT=0: explicit
 # alphaT=0.5: Crank-Nicolson
 
-alphaT=1.
+alphaT=0.5
 
 #####################################################################
 
@@ -371,7 +370,7 @@ if experiment==5:
           bc_fixT[i]=True ; bc_valT[i]=0.
    #end for
 
-if experiment==6 or experiment==7:
+if experiment==6 or experiment==17:
    for i in range(0,NV):
        if x[i]/Lx<eps and np.abs(y[i]-Ly/2)<=300e3:
           bc_fixT[i]=True ; bc_valT[i]=1.
@@ -658,6 +657,9 @@ for istep in range(0,nstep):
 
     #end for iel
     
+    print("     -> matrix (m,M) %.4e %.4e " %(np.min(A_mat),np.max(A_mat)))
+    print("     -> rhs (m,M) %.4e %.4e " %(np.min(rhs),np.max(rhs)))
+
     print("     -> tau_supg (m,M) %e %e " %(np.min(tau_supg),np.max(tau_supg)))
 
     if istep==0:
@@ -733,8 +735,8 @@ for istep in range(0,nstep):
 
        start = timing.time()
 
-       filename = 'T_{:04d}.ascii'.format(istep) 
-       np.savetxt(filename,np.array([x,y,T]).T,header='# x,y,T')
+       #filename = 'T_{:04d}.ascii'.format(istep) 
+       #np.savetxt(filename,np.array([x,y,T]).T,header='# x,y,T')
 
        filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
