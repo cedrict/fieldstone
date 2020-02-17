@@ -1,0 +1,38 @@
+set term pdf enhanced font "Times,10pt"
+set grid
+set key outside
+year=24*365*3600
+
+set xlabel 'x (km)'
+set ylabel 'surface topography (m)'
+set output 'topo.pdf'
+plot[][-200:200]\
+    'choi/topo_nu0.495_Res120.dat' u ($1/1000):2 w l lw 1  t 'Choi',\
+'choi/topo_nu0.5_Res144_kenni.dat' u ($1/1000):2 w l lw 1 t 'Pedersen',\
+'elefant/topo150.out' u ($1/1000):($3-17500) w l t 'ELEFANT, nelx=150',\
+'elefant/topo250.out' u ($1/1000):($3-17500) w l t 'ELEFANT, nelx=250',\
+0 lt -1 notitle
+
+
+set output 'v.pdf'
+set xlabel 'time (yr)'
+set ylabel 'v (m/yr)'
+plot[:500][]\
+'elefant/w150.out' u 4:2 w l t 'min(v), 150x',\
+'elefant/w150.out' u 4:3 w l t 'max(v), 150x',\
+'elefant/w250.out' u 4:2 w l t 'min(v), 250x',\
+'elefant/w250.out' u 4:3 w l t 'max(v), 250x',\
+'stats_v.ascii' u 1:($2*year) w p pt 5 ps .5 t 'min(v)',\
+'stats_v.ascii' u 1:($3*year) w p pt 5 ps .5 t 'max(v)'
+
+
+set log y
+set output 'v_log.pdf'
+set xlabel 'time (yr)'
+set ylabel 'v (m/yr)'
+plot[][]\
+'elefant/w150.out' u 4:3 w l t 'max(w), 150x',\
+'elefant/w250.out' u 4:3 w l t 'max(w), 250x',\
+'stats_v.ascii' u 1:($3*year) w p pt 5 ps .5 t 'max(v)'
+
+

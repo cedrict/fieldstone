@@ -1,0 +1,92 @@
+set term pdf enhanced
+set xlabel 'time (kyr)'
+set ylabel '|w| (cm/yr)'
+set grid
+year=365*24*3600
+cm=0.01
+set xtics 10
+
+set output 'u.pdf'
+plot [:100][-2:2]\
+'stats_u.ascii' u ($1/year/1e3):($2/cm*year) w l lw 2 lt 1 t 'min(u)',\
+'stats_u.ascii' u ($1/year/1e3):($3/cm*year) w l lw 2 lt 1 t 'max(u)',\
+'elefant/u.out' u ($4/1e3):(($2)*100) w l t 'ELEFANT, min(u)',\
+'elefant/u.out' u ($4/1e3):(($3)*100) w l t 'ELEFANT, max(u)',\
+
+set output 'v.pdf'
+plot [:100][-2:2]\
+'stats_v.ascii' u ($1/year/1e3):($2/cm*year) w l lw 2 lt 1 t 'min(v)',\
+'stats_v.ascii' u ($1/year/1e3):($3/cm*year) w l lw 2 lt 1 t 'max(v)',\
+'elefant/w.out' u ($4/1e3):(($2)*100) w l t 'ELEFANT, min(w)',\
+'elefant/w.out' u ($4/1e3):(($3)*100) w l t 'ELEFANT, max(w)'
+
+ 
+set xtics 50
+set log y
+
+set output 'u_log.pdf'
+plot [][]\
+'stats_u.ascii' u ($1/year/1e3):(abs($2/cm*year)) w l lw 2 lt 1 t '|min(u)|',\
+'stats_u.ascii' u ($1/year/1e3):(abs($3/cm*year)) w l lw 2 lt 1 t '|max(u)|',\
+'elefant/u.out' u ($4/1e3):(abs($2)*100) w l t 'ELEFANT, |min(u)|',\
+'elefant/u.out' u ($4/1e3):(abs($3)*100) w l t 'ELEFANT, |max(u)|',\
+
+set output 'v_log.pdf'
+plot [][]\
+'stats_v.ascii' u ($1/year/1e3):(abs($2/cm*year)) w l lw 2 lt 1 t '|min(v)|',\
+'stats_v.ascii' u ($1/year/1e3):(abs($3/cm*year)) w l lw 2 lt 1 t '|max(v)|',\
+'elefant/w.out' u ($4/1e3):(abs($2)*100) w l t 'ELEFANT, |min(w)|',\
+'elefant/w.out' u ($4/1e3):(abs($3)*100) w l t 'ELEFANT, |max(w)|',\
+
+
+reset
+set grid
+
+set output 'tauxx.pdf'
+plot[:200000][]\
+'stats_tauxx.ascii' u ($1/year):2 w l lw 2 lt 1 t 'min({/Symbol t}_{xx})',\
+'stats_tauxx.ascii' u ($1/year):3 w l lw 2 lt 1 t 'max({/Symbol t}_{xx})',\
+'elefant/grid_elast_dev_stress_xx.out' u 1:2 w l t 'min(s_{xx})',\
+'elefant/grid_elast_dev_stress_xx.out' u 1:3 w l t 'max(s_{xx})',\
+
+set output 'tauyy.pdf'
+plot[:200000][]\
+'stats_tauyy.ascii' u ($1/year):2 w l lw 2 lt 1 t 'min({/Symbol t}_{yy})',\
+'stats_tauyy.ascii' u ($1/year):3 w l lw 2 lt 1 t 'max({/Symbol t}_{yy})',\
+'elefant/grid_elast_dev_stress_zz.out' u 1:2 w l t 'min(s_{yy})',\
+'elefant/grid_elast_dev_stress_zz.out' u 1:3 w l t 'max(s_{yy})',\
+
+set output 'tauxy.pdf'
+plot[:200000][]\
+'stats_tauxy.ascii' u ($1/year):2 w l lw 2 lt 1 t 'min({/Symbol t}_{xy})',\
+'stats_tauxy.ascii' u ($1/year):3 w l lw 2 lt 1 t 'max({/Symbol t}_{xy})',\
+'elefant/grid_elast_dev_stress_xz.out' u 1:2 w l t 'min(s_{xy})',\
+'elefant/grid_elast_dev_stress_xz.out' u 1:3 w l t 'max(s_{xy})'
+
+
+
+
+set output 'wxy.pdf'
+plot[][]\
+'stats_wxy.ascii' u 1:2 w l lw 2 lt 1 t 'min({/Symbol w}_{xy})',\
+'stats_wxy.ascii' u 1:3 w l lw 2 lt 1 t 'max({/Symbol w}_{xy})',\
+
+set output 'exx.pdf'
+plot[][]\
+'stats_exx.ascii' u 1:2 w l lw 2 lt 1 t 'min({/Symbol e}_{xx})',\
+'stats_exx.ascii' u 1:3 w l lw 2 lt 1 t 'max({/Symbol e}_{xx})',\
+'stats_eyy.ascii' u 1:2 w l lw 2 lt 1 t 'min({/Symbol e}_{yy})',\
+'stats_eyy.ascii' u 1:3 w l lw 2 lt 1 t 'max({/Symbol e}_{yy})',\
+'stats_exy.ascii' u 1:2 w l lw 2 lt 1 t 'min({/Symbol e}_{xy})',\
+'stats_exy.ascii' u 1:3 w l lw 2 lt 1 t 'max({/Symbol e}_{xy})',\
+
+
+
+
+
+
+
+
+
+
+

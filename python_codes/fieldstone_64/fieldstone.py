@@ -1192,6 +1192,8 @@ for istep in range(0,nstep):
     print("     -> tauyy (m,M) %.6e %.6e " %(np.min(tauyy),np.max(tauyy)))
     print("     -> tauxy (m,M) %.6e %.6e " %(np.min(tauxy),np.max(tauxy)))
 
+    stats_etaeff_file.write("%e %e %e \n" %(time,np.min(etaeff),np.max(etaeff))) ;stats_etaeff_file.flush()
+
     print("project markers onto nodes: %.3f s" % (timing.time() - start))
 
     #####################################################################
