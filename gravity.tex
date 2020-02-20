@@ -8,16 +8,9 @@
 
 
 
-
-
-
-
-
-
-
 We start from the Poisson equation for the gravity potential:
 \begin{equation}
-\Delta U = 4\pi \rho {\cal G}
+\Delta U = 4\pi {\cal G} \rho(\vec{r})
 \end{equation}
 As a consequence, inside a domain where $\rho=0$, the equation becomes $\Delta U=0$.
 
@@ -235,3 +228,46 @@ Note the absence of the $(-1)^m$ term and the presence of the kronecker delta in
 
 
 \Literature \cite{crms06}
+
+
+\newpage
+%http://mathworld.wolfram.com/GreensFunctionPoissonsEquation.html
+
+Let us start with $u=U/{\cal G}$ so that the Poisson equation becomes:
+\[
+\Delta u = 4 \pi \rho(\vec{r})
+\]
+ we are looking for a Green's function $G(\vec r_1,\vec r_2)$ such that
+\[
+\Delta G (\vec r_1,\vec r_2) = \delta^3 (\vec r_1 - \vec r_2)
+\]
+but it can be shown (REF?) that 
+\[
+\Delta \frac{1}{|\vec r-\vec r'|} = -4 \pi \delta^3 (\vec r - \vec r')
+\]
+so 
+\[
+G (\vec r,\vec r') = - \frac{1}{4 \pi |\vec r - \vec r'|}
+\]
+and the solution is 
+\[
+u(\vec r) = \int G(\vec r,\vec r') 4\pi \rho(\vec r' ) d^3\vec r' = 
+-\int \frac{\rho(\vec r') }{ |\vec r - \vec r'|} d^3\vec r'
+\]
+Expanding $G$ in the spherical harmonics $Y_l^m$ gives:
+\[
+G(\vec r,\vec r')= 
+\sum_{l=0}^\infty \sum_{m=-l}^{+l} 
+\frac{1}{2l+1} \frac{r^l_<}{r^{l+1}_>} Y_l^m (\theta,\phi) \overline{Y}_l^m (\theta',\phi')
+\]
+
+
+See website for Green function in 2D
+
+
+
+
+
+
+
+
