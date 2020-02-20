@@ -594,4 +594,96 @@ so that
 FINISH!!!
 
 
-check appendix A of Loes' GR 
+check appendix A of Loes' GR
+
+\newpage
+%..................................
+\subsubsection{Derivation of JAumann derivative from stress rotation formula}
+
+What follows is taken from Appendix D of Beuchert \& Podlachikov (2001) \cite{bepo10}.
+
+The Jaumann co-rotational derivative is shown to be a truncated Taylor series expansion 
+of simple stress rotation formula. These can be
+obtained from a state of stress analysis based on geometric 
+considerations (Biot 1965; Turcotte \& Schubert 2002). 
+The (deviatoric) stress tensor ${\bm \tau}$ can be transformed according to
+\[
+{\bm \tau}' = {\bm R}\cdot {\bm \tau} \cdot {\bm R}^{T}
+\]
+with prime denoting the transformed stress tensor and ${\bm R}$ 
+denoting the finite solid body rotation matrix. In a 2D Cartesian reference frame,
+counter-clockwise rotation is given by\footnote{the authors got the matrix wrong!}
+\[
+{\bm R} = \left(\begin{array}{cc} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta  \end{array}\right)
+\]
+where $\theta = \int_t \dot{\omega} dt$ is a finite rotation angle (or $\theta=\dot{\omega} \delta t$ 
+for finite time steps).
+As we have seen in Section~\ref{sec:princ_stress}, we obtain 
+\begin{eqnarray}
+{\bm \tau}' 
+&=& \left(
+\begin{array}{cc}
+\cos\theta & -\sin\theta \\
+\sin\theta & \cos\theta
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+\tau_{xx} & \tau_{xy} \\
+\tau_{xy} & \tau_{yy} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+\cos\theta & \sin\theta \\
+-\sin\theta & \cos\theta
+\end{array}
+\right) \nn\\
+&=&
+\left(
+\begin{array}{cc}
+\tau_{xx} \cos^2\theta + \tau_{yy} \sin^2 \theta + \tau_{xy}\sin2\theta &
+\frac{1}{2}(\tau_{yy}-\tau_{xx})\sin2\theta + \tau_{xy} \cos2\theta \\
+\frac{1}{2}(\tau_{yy}-\tau_{xx})\sin2\theta + \tau_{xy} \cos2\theta &
+\tau_{xx} \sin^2\theta + \tau_{yy} \cos^2 \theta - \tau_{xy}\sin2\theta 
+\end{array}
+\right)
+\end{eqnarray}
+\todo[inline]{check for minus sign!!}
+or, 
+\begin{eqnarray}
+\tau_{xx}' &=&  \tau_{xx} \cos^2\theta + \tau_{yy} \sin^2 \theta + \tau_{xy}\sin2\theta \nn\\
+\tau_{yy}' &=&  \tau_{xx} \sin^2\theta + \tau_{yy} \cos^2 \theta - \tau_{xy}\sin2\theta \nn\\
+\tau_{xy}' &=&  \frac{1}{2}(\tau_{yy}-\tau_{xx})\sin2\theta + \tau_{xy} \cos2\theta \nn
+\end{eqnarray}
+For small rotation angles $\theta$ then 
+\[
+\cos \theta \rightarrow 1 
+\qquad
+\cos 2\theta \rightarrow 1 
+\qquad
+\sin \theta \rightarrow \theta 
+\qquad
+\sin 2\theta \rightarrow 2 \theta 
+\]
+and 
+\begin{eqnarray}
+\tau_{xx}' &\simeq&  \tau_{xx}  + 2 \tau_{xy} \theta \nn\\
+\tau_{yy}' &\simeq&  \tau_{yy}  - 2 \tau_{xy} \theta \nn\\
+\tau_{xy}' &\simeq&  (\tau_{yy}-\tau_{xx}) \theta + \tau_{xy} \nn
+\end{eqnarray}
+Given $\theta= \dot{\omega} \delta t$ we obtain 
+\begin{eqnarray}
+\tau_{xx}' &\simeq&  \tau_{xx}  + 2 \tau_{xy} \dot{\omega} \delta t  \nn\\
+\tau_{yy}' &\simeq&  \tau_{yy}  - 2 \tau_{xy}  \dot{\omega} \delta t \nn\\
+\tau_{xy}' &\simeq&  \tau_{xy}  + (\tau_{yy}-\tau_{xx}) \dot{\omega} \delta t \nn
+\end{eqnarray}
+
+
+
+
+
+
+
