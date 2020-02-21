@@ -24,7 +24,9 @@ g_z (x,y,z)
 &=&  {\cal G} \int\int\int \frac{\rho(\vec r') (z-z')}{|\vec r-\vec r'|^3}dx'dy'dz' \nn
 \end{eqnarray}
 
-In order to compute the gravity tensor ${\bm T}=\vec\nabla \vec g$, we need to compute $\frac{\partial^2 U}{\partial \alpha \partial \beta}$ with $\alpha,\beta=x,y,z$
+In order to compute the gravity tensor ${\bm T}=\vec\nabla \vec g$
+(also called Marussi tensor ?), 
+we need to compute $\frac{\partial^2 U}{\partial \alpha \partial \beta}$ with $\alpha,\beta=x,y,z$
 and we obtain (See Arroyo et al (2015) \cite{arct15}):
 \begin{eqnarray}
 T_{xx}(x,y,z)&=& -{\cal G} \int\int\int \frac{3(x-x')^2-({\vec r}-{\vec r}')^2}{|{\vec r}-{\vec r}'|^5} \rho({\vec r}') dx'dy'dz' \\
@@ -143,16 +145,76 @@ is concentrated at its geometrical centre $P_0$:
 U(x,y,z) = {\cal G} \rho_0 \Delta_x \Delta_y \Delta_y \frac{1}{l_0}
 \]
 
+It is also common \cite{duti16} to look at:
+\begin{itemize}
+\item the differential curvature magnitude ($DCM$) 
+which is also known as the horizontal directive tendency, computed by a
+combination of components of tensor $T_{xx}$ , $T_{xy}$ and $T_{yy}$ . 
+It emphasizes greatly the effects of shallower sources (Saad, 2006);
+\[
+DCM=\sqrt{ (T_{xx}-T_{yy})^2+ 2 T_{xy}^2 }
+\]
+\item the horizontal gradient magnitude ($HGM$) of $g_z$ can be computed
+from the horizontal derivative components of $g_z$ and can be used
+as edge detector or to map the body outline as it verifies the prism
+boundaries
+\[
+HGM=\sqrt{T_{zx}^2+T_{zy}^2} 
+=\sqrt{ \left(-\frac{\partial g_z}{\partial x}\right)^2 
++ \left(-\frac{\partial g_z}{\partial y}\right)^2  }
+\]
+
+\item the total gradient magnitude ($TGM$) is
+computed from the three derivatives of vertical component of gravity:
+\[
+TGM=\sqrt{T_{zx}^2+T_{zy}^2+T_{zz}^2}
+=\sqrt{ \left(-\frac{\partial g_z}{\partial x}\right)^2 
++ \left(-\frac{\partial g_z}{\partial y}\right)^2  
++ \left(-\frac{\partial g_z}{\partial z}\right)^2  }
+\]
+
+\end{itemize}
+
+\paragraph{Example 1}
+
 The result of calculating
 the components of a prism measuring 200m$^3$ at a height of 0.01 km, 
 with an observation mesh of 1km$\times$1km, and discretized every 20m is shown hereunder:
-
 \begin{center}
 \includegraphics[width=13cm]{images/gravity/arct15b}\\
-{\captionfont Taken from \cite{arct15}. Gravity gradient response for a prism buried a depth of 100m,\\ 
+{\captionfont Taken from Arroyo et al (2015) \cite{arct15}. 
+Gravity gradient response for a prism buried a depth of 100m,\\ 
 Each side having a length of 200 m and constant density contrast 
 of 100 kg/m$^3$.}
 \end{center}
+
+
+\newpage
+\paragraph{Example 2}. Buried prims of size 8x4x1 km along x, y and z directions respectively. 
+Density is 2700. Mapped gravity field and its gradient on a plane of constant 1000m height.
+
+\begin{center}
+\includegraphics[width=13cm]{images/gravity/duti16a}\\
+{\captionfont (a) A model containing a prism and (b-d): corresponding gravity vector components and 
+(e-j) GGT components with sampling interval of 0.2 km in x and y directions. Taken from \cite{duti16}}
+\end{center}
+
+\begin{center}
+\includegraphics[width=13cm]{images/gravity/duti16b}\\
+{\captionfont A map view of complex behavior of gravity gradients for prism model. Taken from \cite{duti16}}
+\end{center}
+
+\begin{center}
+\includegraphics[width=13cm]{images/gravity/duti16c}\\
+{\captionfont Computed vertical gravity component G z and three invariants map of HGM, DCM and TGM 
+for given prism model. HGM = Horizontal Gradient Magnitude,
+DCM = Differential Curvature Magnitude and TGM = Total Gradient Magnitude. Taken from \cite{duti16}}
+\end{center}
+
+
+
+
+
 
 
 \Literature:
@@ -171,6 +233,26 @@ Gulf of Mexico \cite{naoo16}.
 
 %.........................
 \subsubsection{Tesseroids}
+
+\begin{center}
+\includegraphics[width=7cm]{images/gravity/uibb11}\\
+{\captionfont Taken from \cite{uibb11}}
+\end{center}
+
+
+Optimal forward calculation method of the Marussi tensor due to a geologic structure at GOCE height 
+\cite{uibb11}
+
+%.........................
+\subsubsection{Other shapes}
+
+\Literature
+
+Rapid Gravity Computations for Two-Dimensional Bodies \cite{tawl59}
+
+Rapid Computation of Gravitational Attraction of Three-Dimensional Bodies of Arbitrary Shape
+\cite{taew60}
+
 
 
 
