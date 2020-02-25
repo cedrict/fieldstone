@@ -1,6 +1,10 @@
 
 Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_64}
 
+{\large
+DO NOT READ WHAT FOLLOWS. It was written for Composition based stone, but I am using 
+markers for all benchmarks so far. Jump directly to 'stress build up in maxwell body'! 
+}
 
 In the examples here there are only 2 compositions. 
 Each material/composition is characterised by its $\eta_{\{1,2\}}$, $\mu_{\{1,2\}}$. 
@@ -88,25 +92,59 @@ tauxy=2*etaeff*exy+Z*tauxy+Z*dt*Jxy
 
 
 
+%.......................................................
+\paragraph{About this code}
 
-
-
-
-LIMITATIONS:
-
-no RK algo for marker advection. but small timestep so ok ?
-
-
-
-
-
-
-
-
+This is a fairly complicated code since it features a deformable mesh 
+(by means of a simplified ALE which only allows for the vertical movement 
+of only the top row of mesh nodes), a particle-in-cell technique (only 
+1st order in space)
+to carry out material tracking/advection and of course the elasto-viscous 
+rheology.
 
 
 %.......................................................
-\paragraph{Stress build-up in viscoelastic Maxwell body}
+\paragraph{Stress build-up in viscoelastic Maxwell body - analytical solution}
+
+We start from 
+\[
+\dot{\bm \varepsilon}_T = \dot{\bm \varepsilon}_e +\dot{\bm \varepsilon}_v
+=\frac{1}{2\mu} \dot{\bm \tau} + \frac{1}{2\eta} {\bm \tau} 
+\]
+In the case where there is no rotation then the BLABLA derivative becomes $d/dt$
+and then 
+we have to solve 
+\[
+2 \mu \dot{\bm \varepsilon}_T 
+= \frac{d {\bm \tau}}{dt} + \frac{\mu}{\eta} {\bm \tau}
+= \frac{d {\bm \tau}}{dt} + \frac{{\bm \tau}}{t_M}
+\]
+where $t_M=\eta/mu$ is the Maxwell time. The general solution can be arrived at 
+by means of the Laplace transform (?!) and is given by:
+\[
+{\bm \tau}(t) = {\bm \tau}(t_0) \exp\left( -\frac{t-t_0}{t_M} \right) + \exp \left(-\frac{t}{t_M}\right)
+\int_{t_0}^{t} 2 \mu \dot{\bm \varepsilon}_T  \exp \left(\frac{t'}{t_M}\right) dt'
+\]
+
+If $t_0=$ and ${\bm \tau}(t_0)=0$ then
+\[
+{\bm \tau}(t) =  \exp \left(-\frac{t}{t_M}\right)
+\int_{0}^{t} 2 \mu \dot{\bm \varepsilon}_T  \exp \left( \frac{t'}{t_M} \right) dt'
+\]
+If the strain rate and shear modulus are constant in time, then 
+\begin{eqnarray}
+{\bm \tau}(t) 
+&=&  \exp \left(-\frac{t}{t_M}\right)
+2 \mu \dot{\bm \varepsilon}_T   \int_{0}^{t} \exp \left( \frac{t'}{t_M} \right) dt' \nn\\
+&=&  \exp \left(-\frac{t}{t_M}\right)
+2 \mu \dot{\bm \varepsilon}_T  t_M  \left[ \exp \left( \frac{t}{t_M} \right) -1  \right] \nn\\
+&=& 
+2 \eta \dot{\bm \varepsilon}_T   \left[ 1 - \exp \left( -\frac{t}{t_M} \right)\right] \nn
+\end{eqnarray}
+since $t_M=\eta/\mu$.
+
+%.......................................................
+\paragraph{Stress build-up in viscoelastic Maxwell body under simple shear}
 
 The first benchmark performed to test the viscoelastic implementation considers the stress 
 build-up present in a viscoelastic Maxwell body. Contrary to stressed viscous materials, 
@@ -139,7 +177,7 @@ We have
 = \frac{\eta \delta t}{\delta t + \eta/\mu} 
 = \frac{10^{21} \cdot 3.154\times 10^{9}}{3.154\times 10^{9} + 10^{21}/10^{10}} 
 \simeq 
-3.057\times 10^{19}\text{Pa.s}
+3.0592 \times 10^{19}\text{Pa.s}
 \qquad
 \text{and}
 \qquad
@@ -163,12 +201,12 @@ We can easily compute the analytical solution, and we see that $\dot{\varepsilon
 and $\dot{\omega}_{xy}=0$, which we recover:
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup/init/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup/init/exy}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup/init/oxy}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup_11/init/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup_11/init/exy}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup_11/init/oxy}
 \end{center}
 
-The expected stress value for $\tau_{xx}$ is 
+The expected stress value for $\tau_{xx}$ after the first Stokes solve is 
 \[
 \tau_{xx} = 2 \eta_{eff} \dot{\varepsilon}_{xx} 
 = 2 \cdot 3.057\times 10^{19} \cdot 6.342\times 10^{-15} 
@@ -176,9 +214,47 @@ The expected stress value for $\tau_{xx}$ is
 \]
 
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_64/results/buildup/tauxx}\\
+\includegraphics[width=9cm]{python_codes/fieldstone_64/results/buildup_11/tauxx}\\
 {\captionfont $\tau_{xx}$ as a function of time.}
 \end{center}
+
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup_11/tau}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup_11/strainrate}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup_11/velocity}\\
+
+\begin{remark}
+Because of the outflux boundary conditions it can happen that some markers 
+exit the domain. In order to avoid dealing with these, markers are artificially 
+kept inside the domain (near the boundary).
+\end{remark}
+
+%.......................................................
+\paragraph{Stress build-up in viscoelastic Maxwell body under pure shear}
+
+I have also created a similar problem, although this time simple shear boundary conditions are prescribed.
+$v=0$ on left and right boundary, (-1,0)cm/yr at the bottom, (+1,0)cm/yr at the top.
+
+ANALYTICAL SOLUTION!?!
+$\tau_{xy} \rightarrow 2 \eta \dot{\varepsilon}_xy = 6.342\times 10^{6} Pa$ 
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup_12/vel}
+\end{center}
+
+In simple shear, we have $\dot{\varepsilon}_{xx}=\dot{\varepsilon}_{yy}=0$, and 
+\[
+\dot{\varepsilon}_{xy}=\frac{1}{2} \frac{\Delta u}{L_y} = \frac{1 cm/yr}{100km}
+\]
+
+\begin{center}
+\includegraphics[width=9cm]{python_codes/fieldstone_64/results/buildup_12/tauxy}\\
+{\captionfont $\tau_{xy}$ as a function of time.}
+\end{center}
+
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup_12/tau}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup_12/strainrate}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup_12/velocity}\\
+
 
 
 
@@ -196,7 +272,7 @@ The set-up of the benchmark is given in the following figure:
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_64/images/poster_benchmark.png}\\
 \captionfont{Set-up of the benchmark from \cite{gery10}. The properties of the 
-two materials are given on the left, together with the initial configuration of the benchmark.} 
+two materials are given on the left, together\\ with the initial configuration of the benchmark.} 
 \end{center}
 
 The beam is surrounded by a low-density, low-viscosity and high shear modulus medium 
@@ -268,6 +344,30 @@ Note that the Gerya data are obtained with the code from the 2010 version of the
 \includegraphics[width=7cm]{python_codes/fieldstone_64/results/slab/tau}
 \end{center}
 
+
+\newpage
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/markers_0000_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/stress_0000_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/velocity_0000_Myr}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/markers_0010_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/stress_0010_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/velocity_0010_Myr}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/markers_0020_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/stress_0020_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/velocity_0020_Myr}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/markers_0030_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/stress_0030_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/velocity_0030_Myr}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/markers_0040_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/stress_0040_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/velocity_0040_Myr}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/markers_0100_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/stress_0100_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/velocity_0100_Myr}\\
+{\captionfont Results obtained with the Matlab code provided with Gerya (2019) \cite{gery19book}}
+\end{center}
 
 \newpage
 %.......................................................
@@ -384,27 +484,36 @@ The authors report a converged total relief of 306-308m:
 This benchmark requires either a sticky air layer (see Section~\ref{sss:stickyair})
 on top of the plate or a deformable mesh (ALE formulation, see Section~\ref{sss:ale}).
 
-Under are shown the minimum and maximum vertical velocity measurements
-which as expected converge to zero (thereby indicating that a steady state 
-solution is being reached) and the plot of the free surface 
-topography.
-
-DISCLAIMER: there is no ALE formulation implemented yet. I can therefore only run the experiment for 1 time step:
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/u.png}
 \includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/v.png}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/vel.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/vel.png}\\
+{\captionfont Initial velocity field}
 \end{center}
 
-
-
-Ultimately I wish to plot my results on top of these:
+On the following figures I plot the topography and velocity statistics obtained with 
+a resolution of $100\times35$ elements and 50 markers per element, next to 
+results from Choi et al and/or results with my code ELEFANT \cite{thie14}.  
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/topo.pdf}
 \includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/v.pdf}
 \includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/v_log.pdf}
 \end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/tauxx}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/tauyy}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/flexureplate/tauxy}\\
+{\captionfont accumulated deviatoric stress at time t=500yr on the markers.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=16cm]{python_codes/fieldstone_64/results/flexureplate/grid}\\
+{\captionfont Grid at time t=500yr}
+\end{center}
+
 
 %The following figure shows the grid at equilibrium and the markers:
 
@@ -416,5 +525,37 @@ Ultimately I wish to plot my results on top of these:
 %\end{center}
 
 
+\newpage
+%.......................................................
+\paragraph{Ice load}
+
+The domain is $500\times500$km. Vertical gravity is 9.8, density is 3300, viscosity 
+is $3\cdot10^{20}$, shear modulus is $10^{10}$, free slip on left, right and bottom. 
+A normal stress is imposed on the top for $0<x<100$km. It corresponds to 
+an ice sheet of density $\rho_i=900$ of 1000m height. 
+The timestep is set to 100yr. Resolution is set to $50\times50$ elements.
+Stress/traction b.c. are explained in Section~\ref{ss:openbc}.
+
+Analytical solution is provided in Nakiboglu and Lambeck (1982) \cite{nala82}. 
+Note however that this is a 2D setup while the original solution is for a 
+cylindrical load and also for a semi-infinite domain.
+
+\[
+\eta_{eff} = \frac{\eta \delta t}{\delta t + \eta/\mu}
+= 2.85362675546547e+19
+\]
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_64/results/icesheetload/vel}\\
+{\captionfont Left: ASPECT; Right: stone 64}
+\end{center}
 
 
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_64/results/icesheetload/topo3}
+\includegraphics[width=6cm]{python_codes/fieldstone_64/results/icesheetload/vel_stats}
+\end{center}
+
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/icesheetload/tauxx}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/icesheetload/tauyy}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/icesheetload/tauxy}
