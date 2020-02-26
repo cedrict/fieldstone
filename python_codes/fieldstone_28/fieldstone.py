@@ -691,7 +691,7 @@ for istep in range(0,nstep):
                 # position & weight of quad. point
                 rq=iq/sqrt3
                 sq=jq/sqrt3
-                weghtq=1.*1.
+                weightq=1.*1.
 
                 # calculate shape functions
                 N_mat[0:m,0]=NNV(rq,sq)
