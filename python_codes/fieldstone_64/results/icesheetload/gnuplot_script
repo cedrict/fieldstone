@@ -1,0 +1,124 @@
+set term pdf enhanced font "Times,10pt"
+set key outside
+set pointsize .2 
+year=365.25*24*3600.
+
+#set ytics 10
+set output 'topo3.pdf'
+plot[:2000][]\
+'aspect_dt1/statistics'  u 2:28 w lp lt 1 t 'ASPECT, dt=1, min topo',\
+'aspect_dt1/statistics'  u 2:29 w lp lt 1 t 'ASPECT, dt=1, max topo',\
+'aspect_50x50_dt10/statistics'  u 2:28 w lp lt 0 t 'ASPECT, 50x50 dt=10, min topo',\
+'aspect_50x50_dt10/statistics'  u 2:29 w lp lt 0 t 'ASPECT, 50x50 dt=10, max topo',\
+'aspect_dt100/statistics' u 2:28 w lp lt 3 t 'ASPECT, dt=100, min topo',\
+'aspect_dt100/statistics' u 2:29 w lp lt 3 t 'ASPECT, dt=100, max topo',\
+'dt5/stats_topo.ascii'   u ($1/year):2 w lp lt 4 t 'dt=5yr, min topo',\
+'dt5/stats_topo.ascii'   u ($1/year):3 w lp lt 4 t 'dt=5yr, max topo',\
+'dt10/stats_topo.ascii'  u ($1/year):2 w lp lt 5 t 'dt=10yr, min topo',\
+'dt10/stats_topo.ascii'  u ($1/year):3 w lp lt 5 t 'dt=10yr, max topo',\
+'dt50/stats_topo.ascii'  u ($1/year):2 w lp lt 6 t 'dt=50yr, min topo',\
+'dt50/stats_topo.ascii'  u ($1/year):3 w lp lt 6 t 'dt=50yr, max topo',\
+'dt100/stats_topo.ascii' u ($1/year):2 w lp lt 7 t 'dt=100yr, min topo',\
+'dt100/stats_topo.ascii' u ($1/year):3 w lp lt 7 t 'dt=100yr, max topo',\
+0 lt -1 lw 2 notitle
+
+set output 'tauxx.pdf'
+plot[:2000][]\
+'aspect_dt1/statistics'   u 2:15 w l lt 1 t 'ASPECT, min(tau xx)',\
+'aspect_dt1/statistics'   u 2:16 w l lt 1 t 'ASPECT, max(tau xx)',\
+'aspect_dt10/statistics'  u 2:15 w l lt 2 t 'ASPECT, min(tau xx)',\
+'aspect_dt10/statistics'  u 2:16 w l lt 2 t 'ASPECT, max(tau xx)',\
+'aspect_dt100/statistics' u 2:15 w l lt 3 t 'ASPECT, min(tau xx)',\
+'aspect_dt100/statistics' u 2:16 w l lt 3 t 'ASPECT, max(tau xx)',\
+'dt5/stats_tauxx.ascii'   u ($1/year):2 w lp lt 3 t 'dt=5yr',\
+'dt5/stats_tauxx.ascii'   u ($1/year):3 w lp lt 3 notitle,\
+'dt10/stats_tauxx.ascii'  u ($1/year):2 w lp lt 4 t 'dt=10yr',\
+'dt10/stats_tauxx.ascii'  u ($1/year):3 w lp lt 4 notitle,\
+'dt50/stats_tauxx.ascii'  u ($1/year):2 w lp lt 5 t 'dt=50yr',\
+'dt50/stats_tauxx.ascii'  u ($1/year):3 w lp lt 5 notitle,\
+'dt100/stats_tauxx.ascii' u ($1/year):2 w lp lt 6 t 'dt=100yr',\
+'dt100/stats_tauxx.ascii' u ($1/year):3 w lp lt 6 notitle
+
+set output 'tauyy.pdf'
+plot[:2000][]\
+'aspect_dt10/statistics'  u 2:18 w l lt 1 t 'ASPECT, min(tau yy)',\
+'aspect_dt10/statistics'  u 2:19 w l lt 1 t 'ASPECT, max(tau yy)',\
+'aspect_dt100/statistics' u 2:18 w l lt 2 t 'ASPECT, min(tau yy)',\
+'aspect_dt100/statistics' u 2:19 w l lt 2 t 'ASPECT, max(tau yy)',\
+'dt5/stats_tauyy.ascii'   u ($1/year):2 w lp lt 3 ,\
+'dt5/stats_tauyy.ascii'   u ($1/year):3 w lp lt 3 ,\
+'dt10/stats_tauyy.ascii'  u ($1/year):2 w lp lt 4 ,\
+'dt10/stats_tauyy.ascii'  u ($1/year):3 w lp lt 4 ,\
+'dt50/stats_tauyy.ascii'  u ($1/year):2 w lp lt 5 ,\
+'dt50/stats_tauyy.ascii'  u ($1/year):3 w lp lt 5 ,\
+'dt100/stats_tauyy.ascii' u ($1/year):2 w lp lt 6 ,\
+'dt100/stats_tauyy.ascii' u ($1/year):3 w lp lt 6  
+
+
+
+set output 'tauxy.pdf'
+plot[][:2000]\
+'aspect_dt1/statistics'   u 2:21 w l lt 1 t 'ASPECT, min(tau xy)',\
+'aspect_dt1/statistics'   u 2:22 w l lt 1 t 'ASPECT, max(tau xy)',\
+'aspect_dt10/statistics'  u 2:21 w l lt 2 t 'ASPECT, min(tau xy)',\
+'aspect_dt10/statistics'  u 2:22 w l lt 2 t 'ASPECT, max(tau xy)',\
+'aspect_dt100/statistics' u 2:21 w l lt 3 t 'ASPECT, min(tau xy)',\
+'aspect_dt100/statistics' u 2:22 w l lt 3 t 'ASPECT, max(tau xy)',\
+'dt5/stats_tauxy.ascii'   u ($1/year):2 w lp lt 3 t 'dt=5yr',\
+'dt5/stats_tauxy.ascii'   u ($1/year):3 w lp lt 3 notitle,\
+'dt10/stats_tauxy.ascii'  u ($1/year):2 w lp lt 4 t 'dt=10yr',\
+'dt10/stats_tauxy.ascii'  u ($1/year):3 w lp lt 4 notitle,\
+'dt50/stats_tauxy.ascii'  u ($1/year):2 w lp lt 5 t 'dt=50yr',\
+'dt50/stats_tauxy.ascii'  u ($1/year):3 w lp lt 5 notitle,\
+'dt100/stats_tauxy.ascii' u ($1/year):2 w lp lt 6 t 'dt=100yr',\
+'dt100/stats_tauxy.ascii' u ($1/year):3 w lp lt 6 notitle
+
+
+set output 'surface.pdf'
+plot[][]\
+'aspect_50x50_dt10/topography.00001' u 1:($2-5e5) w p lt 1 t 'ASPECT, t=10',\
+'dt10/surface_0000.ascii' w l lt 1 ,\
+'aspect_50x50_dt10/topography.00002' u 1:($2-5e5) w p lt 2 t 'ASPECT, t=10',\
+'dt10/surface_0001.ascii' w l lt 2 ,\
+'aspect_50x50_dt10/topography.00003' u 1:($2-5e5) w p lt 3 t 'ASPECT, t=10',\
+'dt10/surface_0002.ascii' w l lt 3 ,\
+'aspect_50x50_dt10/topography.00004' u 1:($2-5e5) w p lt 4 t 'ASPECT, t=10',\
+'dt10/surface_0003.ascii' w l lt 4 ,\
+0 lt -1 
+
+
+set log x
+set log y
+set output 'vel_stats.pdf'
+plot[:1500]\
+'dt5/stats_vel.ascii'   u ($1/year):($3*year) w lp t 'dt=5, max(|v|)',\
+'dt10/stats_vel.ascii'  u ($1/year):($3*year) w lp t 'dt=10, max(|v|)',\
+'dt50/stats_vel.ascii'  u ($1/year):($3*year) w lp t 'dt=50, max(|v|)',\
+'dt100/stats_vel.ascii' u ($1/year):($3*year) w lp t 'dt=100, max(|v|)',\
+'aspect_dt10/statistics' u 2:31 w lp t 'ASPECT, dt=10yr',\
+'aspect_dt100/statistics' u 2:31 w lp t 'ASPECT, dt=100yr'
+
+unset log x
+set output 'u_stats.pdf'
+plot[][]\
+'dt5/stats_u.ascii'  u ($1/year):($2*year) w lp t 'min(u)',\
+'dt5/stats_u.ascii'  u ($1/year):($3*year) w lp t 'max(u)',\
+'dt10/stats_u.ascii'  u ($1/year):($2*year) w lp t 'min(u)',\
+'dt10/stats_u.ascii'  u ($1/year):($3*year) w lp t 'max(u)',\
+'dt50/stats_u.ascii'  u ($1/year):($2*year) w lp t 'min(u)',\
+'dt50/stats_u.ascii'  u ($1/year):($3*year) w lp t 'max(u)',\
+'dt100/stats_u.ascii' u ($1/year):($2*year) w lp t 'min(u)',\
+'dt100/stats_u.ascii' u ($1/year):($3*year) w lp t 'max(u)',\
+
+set output 'v_stats.pdf'
+plot[][]\
+'dt5/stats_v.ascii' u ($1/year):($2*year) w lp t 'min(v)',\
+'dt5/stats_v.ascii' u ($1/year):($3*year) w lp t 'max(v)',\
+'dt10/stats_v.ascii' u ($1/year):($2*year) w lp t 'min(v)',\
+'dt10/stats_v.ascii' u ($1/year):($3*year) w lp t 'max(v)',\
+'dt50/stats_v.ascii' u ($1/year):($2*year) w lp t 'min(v)',\
+'dt50/stats_v.ascii' u ($1/year):($3*year) w lp t 'max(v)',\
+'dt100/stats_v.ascii' u ($1/year):($2*year) w lp t 'min(v)',\
+'dt100/stats_v.ascii' u ($1/year):($3*year) w lp t 'max(v)',\
+
+
