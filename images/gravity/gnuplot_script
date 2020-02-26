@@ -1,0 +1,20 @@
+set term pdf enhanced
+set output 'buriedsphere.pdf'
+set grid
+
+depth=100
+rho0=2000
+a=50
+vol=1.3333*pi*a**3
+Ms=vol*rho0
+Ggrav=6.67408e-11
+mgal=1e-5
+
+fct(x,y)=Ggrav*Ms*y/(x**2+y**2)**1.5 /mgal
+
+plot[-150:150][]\
+fct(x,90) t 'depth=90m',\
+fct(x,100) t 'depth=100m',\
+fct(x,110) t 'depth=110m'
+
+
