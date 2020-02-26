@@ -1,6 +1,11 @@
 
+There are many analytical solutions for buried bodies of simple shape.
+Hereafter are the most common ones:
+
 %............................
 \paragraph{Buried sphere (3D)}
+
+salt domes can be approximated by spheres; 
 
 To calculate the pull of gravity, we can use the fact that a sphere has the same
 gravitational pull as a point mass located at its centre. The distance between 
@@ -9,13 +14,33 @@ the measurement point and the center of the sphere is $\sqrt{x^2+d^2}$, so
 g_z = \frac{{\cal G} M_{sphere} d }{(x^2 + d^2)^{3/2}}
 \]
 
-radius a=50m, $\Delta \rho=2000$, depth d=100m
+Let us take the following example: 
+radius a=50m, $\Delta \rho=2000$, variable depth d=100m
 
-$g_z$ has its maximum value directly above the sphere at x=0 m.
+\begin{center}
+\includegraphics[width=6cm]{images/gravity/buriedsphere}
+\end{center}
+
+$g_z$ has its maximum value directly above the sphere at $x=0$m and is 
+given by 
+\[
+g_{z}^{max}
+= \frac{{\cal G} M_{sphere} d }{(d^2)^{3/2}}
+= \frac{{\cal G} M_{sphere}  }{d^2}
+\]
+We can then find the half width of the curve by finding $x_{1/2}$ such that 
+\[
+\frac{{\cal G} M_{sphere} d }{(x_{1/2}^2 + d^2)^{3/2}} =
+\frac{g_{z}^{max}}{2} = \frac{ {\cal G} M_{sphere} }{2 d^2}
+\]
+or, 
+FINISH , derive $x_{1/2}$
+
 
 %............................
-\paragraph{Buried cylinder ()} 
+\paragraph{Buried horizontal cylinder (3D)} 
 
+anticline can be approximated by a horizontal cylinder
 \[
 g_z=\frac{2 {\cal G} \pi a^2 d \Delta \rho}{x^2+d^2}
 \]
