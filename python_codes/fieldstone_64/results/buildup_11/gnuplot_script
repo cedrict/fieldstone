@@ -1,0 +1,54 @@
+set term pdf enhanced font "Times,10pt"
+set grid
+set key bottom
+set key outside
+
+year=3600.*24.*365.25
+eta=1e21
+mu=1e10
+epsxx=6.342e-15
+set xtics 2000
+
+set xlabel 'time'
+set ylabel '{/Symbol t}_{xx} (MPa)'
+set output 'tauxx.pdf'
+plot[0:][]\
+'stats_tauxx.ascii' u ($1/year):2 w p pt 5 ps .2 t 'min({/Symbol t}_{xx})',\
+'stats_tauxx.ascii' u ($1/year):3 w p pt 5 ps .1 t 'max({/Symbol t}_{xx})',\
+2*eta*epsxx*(1-exp(-mu/eta*x*year)) lt -1 t 'analytical',\
+2*eta*epsxx lt -1 dashtype 4 t 'purely viscous'
+
+set ylabel 'strain rate components'
+set output 'strainrate.pdf'
+plot[][]\
+'stats_exx.ascii' u ($1/year):2 w l lt 1 t '{/Symbol e}_{xx}',\
+'stats_exx.ascii' u ($1/year):3 w l lt 1 t '{/Symbol e}_{xx}',\
+'stats_eyy.ascii' u ($1/year):2 w l lt 2 t '{/Symbol e}_{yy}',\
+'stats_eyy.ascii' u ($1/year):3 w l lt 2 t '{/Symbol e}_{yy}',\
+'stats_exy.ascii' u ($1/year):2 w l lt 3 t '{/Symbol e}_{xy}',\
+'stats_exy.ascii' u ($1/year):3 w l lt 3 t '{/Symbol e}_{xy}',\
+'stats_wxy.ascii' u ($1/year):2 w l lt 4 t '{/Symbol w}_{xy}',\
+'stats_wxy.ascii' u ($1/year):3 w l lt 4 t '{/Symbol w}_{xy}',\
+
+set ylabel 'dev stress components'
+set output 'tau.pdf'
+plot[][]\
+'stats_tauxx.ascii' u ($1/year):2 w l lt 1 t 'tau_{xx}',\
+'stats_tauxx.ascii' u ($1/year):3 w l lt 1 t 'tau_{xx}',\
+'stats_tauyy.ascii' u ($1/year):2 w l lt 2 t 'tau_{yy}',\
+'stats_tauyy.ascii' u ($1/year):3 w l lt 2 t 'tau_{yy}',\
+'stats_tauxy.ascii' u ($1/year):2 w l lt 3 t 'tau_{xy}',\
+'stats_tauxy.ascii' u ($1/year):3 w l lt 3 t 'tau_{xy}',\
+
+set ylabel 'velocity'
+set output 'velocity.pdf'
+plot[][]\
+'stats_u.ascii' u ($1/year):2 w l lt 1 t 'min(u)',\
+'stats_u.ascii' u ($1/year):3 w l lt 1 t 'max(u)',\
+'stats_v.ascii' u ($1/year):2 w l lt 2 t 'min(v)',\
+'stats_v.ascii' u ($1/year):3 w l lt 2 t 'max(v)',\
+
+
+
+
+
