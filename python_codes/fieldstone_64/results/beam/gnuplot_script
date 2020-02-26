@@ -18,8 +18,7 @@ plot [:100][-2:2]\
 'stats_v.ascii' u ($1/year/1e3):($2/cm*year) w l lw 2 lt 1 t 'min(v)',\
 'stats_v.ascii' u ($1/year/1e3):($3/cm*year) w l lw 2 lt 1 t 'max(v)',\
 'elefant/w.out' u ($4/1e3):(($2)*100) w l t 'ELEFANT, min(w)',\
-'elefant/w.out' u ($4/1e3):(($3)*100) w l t 'ELEFANT, max(w)'
-
+'elefant/w.out' u ($4/1e3):(($3)*100) w l t 'ELEFANT, max(w)',\
  
 set xtics 50
 set log y
