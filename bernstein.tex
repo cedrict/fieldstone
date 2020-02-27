@@ -49,7 +49,9 @@ Both 2nd-order Bernstein polynomials and shape functions are plotted here under:
 {\captionfont Left: Second-order Bernstein polynomials; right: 2nd-order shape functions.}
 \end{center}
 
-Having reached this point, the burning question is why should we care? 
+Having reached this point, the burning question is why should we care?
+
+\paragraph{Example 1}
 In order to answer this question, let us carry out the following 
 experiment: each node $i$ in the element carries a field value $f_i$ and for simplicity, 
 we choose $f_0=f(r=-1)=1$, $f_1=f(r=0)=0$, $f_2=f(r=+1)=0$.
@@ -70,6 +72,40 @@ and looking at the purple curve on the left panel above,
 we see that the value decreases monotonously when we go away from node 1, and reaches 
 zero at the other end of the element. 
 
+Also:
+\[
+\text{Shape function: } \int_{-1}^{+1} f^h(r)dr = \int_{-1}^{+1} \frac{1}{2}r(r-1) dr = \frac{1}{3}  
+\]
+\[
+\text{Bernstein polynomial: } \int_{-1}^{+1} f^h(r)dr =  \int_{-1}^{+1} \frac{1}{4}(1-r)^2 dr=  \frac{2}{3}  
+\]
+Analytical value for the integral can be obtained by splitting the integral as $\int_{-1}^0 + \int_0^{+1}$.
+The left part can be represented by a line of equation $-r$ and the right part simply by 0, so that the 
+integral is equal to 1/2. We then see that the Shape function-based interpolation underestimates
+the integral while the Bernstein polynomial-based interpolation overestimates it.
+
+
+\paragraph{Example 2}
+
+We now choose $f_0=f(r=-1)=1$, $f_1=f(r=1)=0$, $f_2=f(r=+1)=0$. Then 
+\[
+f^h(r) = \sum_{i=0}^2 f_i N_i(r) = f_0 N_0(r) f(1) N_1(r) 
+= N_0(r) + N_1(r) = \frac{1}{2}r(r-1) + 1-r^2 = -\frac{1}{2}r^2 -\frac{1}{2}r +1  
+\]
+Looking now at the Bernstein polynomials:
+\[
+f^h(r) = \sum_{i=0}^2 b_{i,2} = b_{0,2} + b_{1,2} = \frac{1}{4}(1-r)^2 + \frac{1}{2}(1-r^2)
+= -\frac{1}{4}r^2-\frac{1}{2}r+\frac{3}{4}
+\]
+If we now plot both approximations:
+\begin{center}
+\includegraphics[width=7cm]{images/bernstein/N2__.pdf}
+\end{center}
+We see that in this case the shape function-based approximation yields values 
+above 1 over half of the element while the Bernstein polynomial-based 
+approximation remains between 0 and 1 as expected.
+
+\paragraph{Approximation of polynomials}
 Let us now explore another aspect of such an interpolation based on the Bernstein polynomials
 and assume that $f(r)=C$. Then 
 \[

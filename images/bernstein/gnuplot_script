@@ -41,4 +41,8 @@ fq1(x) t '1st order shape fcts',\
 fq2(x) t '2nd order shape fcts',\
 fb2(x) t '2nd order Bernstein pol'
 
-
+set output 'N2__.pdf'
+plot[-1:1][-0.2:1.25]\
+0.5*x*(x-1) + (1-x**2) t 'N_0+N_1',\
+-0.25*x**2-0.5*x+0.75 t 'b_{0,1}+b_{1,2}',\
+1 lt -1, 0 lt -1
