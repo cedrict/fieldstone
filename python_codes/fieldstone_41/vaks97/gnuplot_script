@@ -1,0 +1,10 @@
+set term pdf enhanced
+
+set xlabel 'time'
+set ylabel 'vrms'
+set output 'vrms.pdf'
+
+plot[][]\
+'fig3/pvk80_001.vrms.dat' w l t 'pvk dataset',\
+
+#'vrms.out' w l t '64x64'

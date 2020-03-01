@@ -1,48 +1,52 @@
 
-This benchmark is carried out in \cite{deka08,gery10,thie11} and is 
-based on the analytical solution by Ramberg (1968). 
-It consists of a two-layer system driven by gravity. 
-Free slip are imposed on the sides while no-slip boundary conditions are imposed on the
-top and the bottom of the box.
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_41/images/setup}
+\end{center}
 
-Fluid 1 $(\rho_1,\eta_1)$ of thickness $h_1$ overlays 
-fluid 2 $(\rho_2,\eta_2)$ of thickness $h_2$ (with $h_1+h_2=L_y$).
-An initial sinusoidal disturbance of the interface between these
-layers is introduced and is characterised by an amplitude $\Delta$ and a
-wavelength $\lambda=L_x/2$ as shown in Figure~\ref{fig:RTi_setup}.
+Original experiment: domain is $0.9142\times1$, viscosity is $\eta=100$, 
+densities are 1000 and 1010 (i.e. $\delta \rho=10$).
+Our domaini is $9142\times10000$m, our viscosity is $\eta=10^{19}$,
+our densities are 2150 and 2600, i.e. $\delta\rho = 450$.
+In both we set g=10.
+
+In the original paper, 
+length=1, viscosity=100, gravity =10, density contrast =10 and time unit =1,
+so the dimensionless quantity
+\[
+\frac{\eta}{\delta\rho \cdot g \; length \cdot time} = \frac{100}{10 \cdot 10 \cdot 1 \cdot 1} =1
+\]
+If we now run a geometrically similar experiment with 
+length=10km, viscosity=$10^{19}$, gravity=10, density contrast=450 and time unit = $t$
+then we should also have 
+\[
+\frac{\eta}{\delta\rho \cdot g \; length \cdot time} = \frac{10^{19}}{450 \cdot 10 \cdot 10^4 \cdot t} =1
+\]
+i.e.,
+\[
+t = \frac{10^{14}}{450} \simeq 2.222 \cdot 10^{11}\text{s}
+\]
+This means that in order to plot our results against those in van Keken et al, their results
+must be scaled: times must be multiplied by $t$ and velocities divided/multiplied (??) by 
+$t/length = 2.222 \cdot 10^{7}\text{m/s}$  
+
+Describe here marker to node projection. Q1 projection onto nodes, then 
+shape functions used to bring density to quadrature points. 
+
+
+Simulations end when an element does not contain any particle.
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_41/results/vrms.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_41/results/mass.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_41/results/nmarker.pdf}
+\end{center}
 
 \begin{center}
-a) \includegraphics[width=0.4\textwidth]{python_codes/fieldstone_40/setup}
-b) \includegraphics[width=0.5\textwidth]{python_codes/fieldstone_40/grid}\\
-{\small  a) Setup of the experiment, taken from \cite{thie11}; b) grid setup.} 
+\includegraphics[width=5cm]{python_codes/fieldstone_41/results/64x64_10_RK3/markers0000}
+\includegraphics[width=5cm]{python_codes/fieldstone_41/results/64x64_10_RK3/markers0143}
+\includegraphics[width=5cm]{python_codes/fieldstone_41/results/64x64_10_RK3/rho_nodal_0143}\\
+{\captionfont 64x64 simulation right before crash}
 \end{center}
 
 
-Under this condition, the velocity of the diapiric growth
-$v_y$ is given by the relation
-\[
-\frac{v_y}{\Delta} = - K \frac{\rho_1-\rho_2}{2 \eta_2} h_2 g
-\]
-with the dimensionless growth factor $K$ being
-\[
-K=\frac{-d_{12}}{c_{11}j_{22}-d_{12}i_{21}}
-\]
-and 
-\begin{eqnarray}
-c_{11} &=& \frac{\eta_1 2 \phi_1^2}{\eta_2(\cosh 2\phi_1 - 1 - 2\phi_1^2)} - \frac{2\phi_2^2}{\cosh 2\phi_2 - 1 - 2 \phi_2^2}\\
-d_{12} &=& \frac{\eta_1(\sinh 2\phi_1 -2\phi_1)}{\eta_2(\cosh 2\phi_1 -1 -2\phi_1^2)} + \frac{\sinh 2\phi_2 - 2\phi_2}{\cosh 2\phi_2 -1 -2\phi_2^2} \\
-i_{21} &=& \frac{\eta_1\phi_2 (\sinh 2 \phi_1 + 2 \phi_1)}{\eta_2(\cosh 2\phi_1 -1 -2\phi_1^2)} 
-+ \frac{\phi_2 (\sinh 2\phi_2 + 2\phi_2)}{\cosh 2\phi_2 -1 -2\phi_2^2} \\
-j_{22} &=& \frac{\eta_1 2 \phi_1^2 \phi_2}{\eta_2(\cosh 2\phi_1 -1-2\phi_1^2)} - \frac{2\phi_2^3}{ \cosh 2\phi_2 -1 -2\phi_2^2}\\
-\phi_1&=&\frac{2\pi h_1}{\lambda}\\
-\phi_2&=&\frac{2\pi h_2}{\lambda}
-\end{eqnarray}
-
-
-\begin{center}
-  \includegraphics[width=0.8\textwidth]{python_codes/fieldstone_40/plot}\\
-  {\small  Note that in \cite{thie11} I fixed $\lambda=L_x/2$ and varied $L_x$. Here I keep $L_x$ fixed
-  and vary $\lambda=L_x/2,L_x,4,L_x/8$. Each line corresponds to a different value of the viscosity $\eta_2$.} 
-\end{center}
 
 

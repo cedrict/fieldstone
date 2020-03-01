@@ -1,0 +1,19 @@
+set terminal pdf enhanced
+set output 'vrms.pdf'
+set grid
+
+plot[0:0.015] 'HSvrms1200.dat' w l t 'HSvrms1200',\
+              'HSvrms2400.dat' w l t 'HSvrms2400',\
+              'HSvrms4800.dat' w l t 'HSvrms4800',\
+              'SK160.vrms.dat'    w l t 'SK160',\
+              'SK160_C6.vrms.dat' w l t 'SK160C6',\
+              'URC125x40_240k.vrms.dat' w l ,\
+              'URC125x40_40k.vrms.dat' w l,\
+              'URCchain.vrms.dat' w l ,\
+              'pvk.vrms.dat' w l ,\
+              'pvk120_003.vrms.dat' w l t 'pvk120',\
+              'pvk150_001.vrms.dat' w l t 'pvk150',\
+              'ELEFANT/vrms.dat'  u ($2/1000):($3*1000) w lp ,\
+              'ASPECT/statistics' u ($2/1000):($19*1000) w lp 
+
+
