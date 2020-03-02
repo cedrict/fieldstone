@@ -70,6 +70,9 @@ model=1
 
 #------------------------------------------------------------------------------
 
+year=3600.*24.*365.
+eps=1.e-10
+
 print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
@@ -102,7 +105,6 @@ nq=9*nel
 NfemV=NV*ndofV               # number of velocity dofs
 NfemP=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
 Nfem=NfemV+NfemP              # total number of dofs
-eps=1.e-10
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
 hx=Lx/nelx
@@ -118,7 +120,7 @@ if model==1:
    salt_thickness=2000
    amplitude=200
    mass0=Lx*salt_thickness*rho_mat[0]+Lx*(Ly-salt_thickness)*rho_mat[1]
-   nmarker_per_dim=5
+   nmarker_per_dim=10
 
 if model==2:
    #material 1: eta_salt=1e17, rho_salt=2200
@@ -131,13 +133,14 @@ if model==2:
 
 avrg=3
 nstep_change=2500
-nstep=200
-CFL_nb=0.5
+nstep=500
+CFL_nb=0.1
 rk=3
 
 nmarker_per_element=nmarker_per_dim**2
 nmarker=nmarker_per_element*nel
-year=3600.*24.*365.
+
+every=10
 
 debug=False
 
@@ -880,148 +883,150 @@ for istep in range(0,nstep):
     #####################################################################
     start = time.time()
 
-    filename = 'solution_{:04d}.vtu'.format(istep) 
-    vtufile=open(filename,"w")
-    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-    vtufile.write("<UnstructuredGrid> \n")
-    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
-    #####
-    vtufile.write("<Points> \n")
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</Points> \n")
-    #####
-    vtufile.write("<CellData Scalars='scalars'>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % exx[iel])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % exy[iel])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % eyy[iel])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='sr' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % e[iel])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (eta_elemental[iel]))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='nmarker' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (nmarker_in_element[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</CellData>\n")
-    #####
-    vtufile.write("<PointData Scalars='scalars'>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e %10e %10e \n" %(u[i]*year,v[i]*year,0.))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e \n" %q[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e \n" %qq[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("</PointData>\n")
-    #####
-    vtufile.write("<Cells>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],\
-                                       iconV[3,iel],iconV[4,iel],iconV[5,iel],iconV[6,iel],iconV[7,iel]))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d \n" %((iel+1)*8))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-    for iel in range (0,nel):
-        vtufile.write("%d \n" %23)
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("</Cells>\n")
-    #####
-    vtufile.write("</Piece>\n")
-    vtufile.write("</UnstructuredGrid>\n")
-    vtufile.write("</VTKFile>\n")
-    vtufile.close()
+    
+    if istep%every==0:
+       filename = 'solution_{:04d}.vtu'.format(istep) 
+       vtufile=open(filename,"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+       #####
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
+       #####
+       vtufile.write("<CellData Scalars='scalars'>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % exx[iel])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % exy[iel])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % eyy[iel])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sr' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % e[iel])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (eta_elemental[iel]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='nmarker' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (nmarker_in_element[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</CellData>\n")
+       #####
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e %10e %10e \n" %(u[i]*year,v[i]*year,0.))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e \n" %q[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e \n" %qq[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</PointData>\n")
+       #####
+       vtufile.write("<Cells>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],\
+                                          iconV[3,iel],iconV[4,iel],iconV[5,iel],iconV[6,iel],iconV[7,iel]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %((iel+1)*8))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %23)
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</Cells>\n")
+       #####
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
 
-    filename = 'markers_{:04d}.vtu'.format(istep) 
-    vtufile=open(filename,"w")
-    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-    vtufile.write("<UnstructuredGrid> \n")
-    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nmarker,nmarker))
-    vtufile.write("<PointData Scalars='scalars'>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='mat' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_mat[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='paint' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_paint[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='displacement' NumberOfComponents='3' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%5e %5e %5e \n" %(swarm_x[i]-swarm_x0[i],swarm_y[i]-swarm_y0[i],0.))
-    vtufile.write("</DataArray>\n")
+       filename = 'markers_{:04d}.vtu'.format(istep) 
+       vtufile=open(filename,"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nmarker,nmarker))
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='mat' Format='ascii'>\n")
+       for i in range(0,nmarker):
+           vtufile.write("%3e \n" %swarm_mat[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='paint' Format='ascii'>\n")
+       for i in range(0,nmarker):
+           vtufile.write("%3e \n" %swarm_paint[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='displacement' NumberOfComponents='3' Format='ascii'>\n")
+       for i in range(0,nmarker):
+           vtufile.write("%5e %5e %5e \n" %(swarm_x[i]-swarm_x0[i],swarm_y[i]-swarm_y0[i],0.))
+       vtufile.write("</DataArray>\n")
 
-    vtufile.write("</PointData>\n")
-    vtufile.write("<Points> \n")
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%10e %10e %10e \n" %(swarm_x[i],swarm_y[i],0.))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</Points> \n")
-    vtufile.write("<Cells>\n")
-    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-    for i in range(0,nmarker):
-        vtufile.write("%d " % i)
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-    for i in range(0,nmarker):
-        vtufile.write("%d " % (i+1))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%d " % 1)
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</Cells>\n")
-    vtufile.write("</Piece>\n")
-    vtufile.write("</UnstructuredGrid>\n")
-    vtufile.write("</VTKFile>\n")
-    vtufile.close()
+       vtufile.write("</PointData>\n")
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+       for i in range(0,nmarker):
+           vtufile.write("%10e %10e %10e \n" %(swarm_x[i],swarm_y[i],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
+       vtufile.write("<Cells>\n")
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       for i in range(0,nmarker):
+           vtufile.write("%d " % i)
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       for i in range(0,nmarker):
+           vtufile.write("%d " % (i+1))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       for i in range(0,nmarker):
+           vtufile.write("%d " % 1)
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Cells>\n")
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
 
     print("write vtu files: %.3f s" % (time.time() - start))
 
