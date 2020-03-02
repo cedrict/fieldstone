@@ -200,7 +200,7 @@ Status & \OK & \OK & & \OK & & & & \\
 {\tiny
 \begin{tabular}{|l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|} 
 \hline
-feature & 33 & \\ 
+feature & 33 & 34 & 35 & 36 & 37 & 38 & 39 & 40 \\ 
 \hline
 geometry & Annulus & & \\ 
 element type & $Q_1\times P_0$ 
@@ -231,6 +231,46 @@ Add. feature & & & & &\\
 Description & Convection  in annulus & \\ 
 \hline
 Status &  &   \\
+\hline
+\end{tabular}
+}
+
+
+\noindent
+{\tiny
+\begin{tabular}{|l|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|} 
+\hline
+feature & 41 & 42 & 43 & 44 & 45 & 46 & 47 & 48 \\
+\hline
+geometry &  & & \\ 
+element type & $Q_2\times Q_1$ \\ 
+mixed or penalty  &  &  \\ 
+matrix storage &  &  \\ 
+outer solver (N.A., direct, SchurComp) &  & \\ 
+\hline
+3 dimensions 			& . &  \\ 
+compressible (Y/N)  		& . &  \\ 
+analytical benchmark (Y/N) 	& . &  \\ 
+numerical benchmark (Y/N) 	& Y &  \\ 
+error convergence (Y/N) 	& . &  \\ 
+thermo-mech. coupled (Y/N) 	& . &  \\ 
+time-stepping (Y/N) 		& Y &  \\ 
+external mesher (Y/N) 		& . &  \\ 
+non-linear (Y/N) 		& . &  \\ 
+plasticity (Y/N) 		& . &  \\ 
+Buoyancy driven flow 		& Y &  \\ 
+Vrms  				& Y &  \\ 
+Nusselt nb  			& . &  \\ 
+Pressure norm. 			& . &  \\ 
+Pressure smoothing 		& . &  \\ 
+Computing residual(s) 		& . &  \\ 
+Paraview output 		& Y &  \\ 
+\hline
+Add. feature & & & & &\\
+\hline
+Description & Rayleigh-Taylor inst \cite{vaks97} & \\ 
+\hline
+Status & \OK &   \\
 \hline
 \end{tabular}
 }

@@ -1,0 +1,202 @@
+
+
+The system is a layer of fluid between $y=0$ and $y=h$, with boundary conditions $T(x,y=0)=T_b$ 
+and $T(x,y=h)=0$, characterized by $\rho_0$, $C_p$, $k$, $\eta_0$. 
+
+The Rayleigh number of the system is 
+\[
+\text{Ra}= \frac{\rho_0 g_0 \alpha \Delta T h^3}{\eta_0 \kappa}
+\]
+
+The Stokes equation is $\vec \nabla \cdot \bm \sigma + \vec b = \vec 0$ with $\vec b=\rho \vec g$. 
+The components of the this equation on the $x$- and $y-$axis are:
+\begin{eqnarray}
+(\vec \nabla \cdot \bm \sigma)_x &=& - \rho \vec g \cdot \vec e_x = 0\\ 
+(\vec \nabla \cdot \bm \sigma)_y &=& - \rho \vec g \cdot \vec e_y = \rho g_0
+\end{eqnarray}
+since $\vec g$ and $\vec e_y$ are in opposite directions ($\vec g = - g_0 \vec e_y$, with $g_0>0$, 
+or $g_y=-g_0$).
+
+The stream function formulation of the incompressible isoviscous Stokes equation is then
+\[
+\eta_0 \nabla^4 \Psi
+= -\frac{\partial \rho g_y}{\partial x} + \frac{\partial \rho g_x}{\partial y}   
+= -\frac{\partial \rho g_y}{\partial x} 
+=  g_0 \frac{\partial \rho}{\partial x} 
+\]
+since $g_x=0$. 
+
+Assuming a linearised density field with regards to temperature $\rho(T)=\rho_0 (1-\alpha T)$
+we have 
+\[
+\frac{\partial \rho}{\partial x} 
+=
+-\rho_0 \alpha \frac{\partial T}{\partial x} 
+\]
+and then 
+\begin{equation}
+\boxed{
+\nabla^4 \Psi= -\frac{\rho_0 g_0 \alpha}{\eta_0} \frac{\partial T}{\partial x} 
+%= -Ra \frac{\partial T}{\partial x} 
+}
+\end{equation}
+For small perturbations of the conductive state $T_c(y)=(1-y/h)T_b$ 
+we define the temperature perturbation $\tilde{T}(x,y)$ such that 
+\[
+T(x,y)=T_c(y)+\tilde{T}(x,y)
+\]
+Note that the temperature perturbation $\tilde{T}$ must satisfy the homogeneous boundary 
+conditions $\tilde{T}(x,y=0)=0$ and $\tilde{T}(x,y=h)=0$.
+
+The temperature equation is
+\[
+\rho C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T \right) 
+=\rho C_p \left( \frac{\partial (T_c+\tilde{T})}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} 
+(T_c+\tilde{T}) \right) 
+= k \Delta (T_c+\tilde{T})
+\]
+and can be simplified as follows:
+\[
+\rho C_p \left( \frac{\partial \tilde{T}}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T_c \right) 
+= k \Delta \tilde{T}
+\]
+since a) $T_c$ does not depend on time, b) $\Delta T_c=0$, c) we assume the nonlinear 
+term ${\vec \upnu}\cdot {\vec \nabla} \tilde{T} $ to be second order (temperature perturbations and 
+coupled velocity changes are assumed to be small).
+
+Using the relationship between velocity and stream function
+$v=-\partial_x \Psi$
+and since $\vec\nabla T_c = - T_b/h \vec{e}_y$ then
+\[
+{\vec \upnu}\cdot {\vec \nabla} T_c =  \frac{T_b}{h}   \frac{\partial \Psi}{\partial x} 
+\]
+Since $\kappa =k/\rho_0 C_p=1$ we get 
+\begin{equation}
+\boxed{
+\frac{\partial \tilde{T}}{\partial t} - \kappa \Delta \tilde{T} 
+= -  \frac{T_b}{h}   \frac{\partial \Psi}{\partial x}
+}
+\end{equation}
+%We also have [{\color{red} prove}]
+%\[
+%{\bm \nabla}^4 \Psi = -Ra \frac{\partial T_1}{\partial %x}
+%\]
+Looking at these equations, we immediately think about a separation of variables approach to solve these
+equations. Both equations showcase the Laplace operator $\Delta$, and the eigenfunctions of the biharmonic operator and the Laplace operator are the same. 
+We then pose that $\Psi$ and $\tilde{T}$ can be written:
+\begin{eqnarray}
+\Psi(x,y,t) &=& \Psi_0 \exp(pt)\exp(\pm i k_x x) \exp(\pm i k_y y) \\ %= \Psi_0 E_\psi(x,y,t) \\
+\tilde{T}(x,y,t) &=& \tilde{T}_0 \exp(pt) \exp(\pm i k_x x) \exp(\pm i k_y y) %=\tilde{T}_0 E_T(x,y,t) 
+\end{eqnarray}
+where $C_\Psi$ and $C_T$ are constants.
+%where $k_x=2\pi/L_x$ and $k_y=2\pi/L_y$ are the horizontal and vertical wave number respectively.
+Note that we then have
+\[
+\nabla^2 \Psi = -(k_x^2+k_y^2) \Psi
+\quad\quad
+\nabla^2 \tilde{T} = -(k_x^2+k_y^2) \tilde{T}
+\]
+The boundary conditions on $\tilde{T}$, 
+coupled with a choice of a real function for the $x$ dependence 
+yields\footnote{We assume here that temperature is a real quantity, not a complex one.}:
+\[
+\tilde{T}(x,y,t) = \tilde{T}_0 \exp(pt) \cos (k_x x) \sin (n\pi y).
+\]
+where $n$ is an integer number. 
+
+The velocity vector is given by:
+\begin{eqnarray}
+%u &=& \frac{\partial \Psi}{\partial y} \\
+%  &=& \frac{\partial }{\partial y} \left[ A_\Psi \exp(pt)\exp(\pm i k_x x) \exp(\pm i k_y y) \right]  \\
+%  &=& A_\Psi \exp(pt)\exp(\pm i k_x x) (\pm i k_y) \exp(\pm i k_y y)   \\
+v &=& -\frac{\partial \Psi}{\partial x}  \\
+  &=& -\frac{\partial }{\partial x} \left[  \Psi_0 \exp(pt)\exp(\pm i k_x x) \exp(\pm i k_y y) \right] \\
+  &=& - \Psi_0 \exp(pt) (\pm i k_x) \exp(\pm i k_x x) \exp(\pm i k_y y)
+\end{eqnarray}
+The velocity boundary conditions are $v(x,y=0)=0$ and $v(x,y=h)=0$ 
+which imposes conditions on $\partial \Psi/\partial x$ and we find that we 
+can use the same $y$ dependence as for $\tilde{T}$. 
+Choosing again for a real function for the $x$ dependence yields:
+\[
+\Psi(x,y,t) = \Psi_0 \exp(pt) \sin(k_x x) \sin(n\pi z)
+\]
+We then have
+\begin{eqnarray}
+\Psi(x,y,t) &=& \Psi_0 \exp(pt)  \sin(k_x x) \sin(n\pi y)  \\
+\tilde{T}(x,y,t)  &=& \tilde{T}_0 \exp(pt)  \cos(k_x x) \sin(n\pi y)   
+\end{eqnarray}
+In what follows we simplify notations: $k=k_x$. Then the two framed PDEs above become:
+
+
+\begin{eqnarray}
+&& \nabla^4 \Psi= -\frac{\rho_0 g_0 \alpha}{\eta_0} \frac{\partial \tilde{T}}{\partial x} \\
+&\Rightarrow& 
+(k^2 + n \pi^2)^2 \Psi_0 \exp(pt)  \sin(k x) \sin(n\pi y) = -\frac{\rho_0 g_0 \alpha}{\eta_0} 
+ k \tilde{T}_0 \exp(pt)  \cos(k x) \sin(n\pi y)  \\ 
+&\Rightarrow& 
+(k^2 + n \pi^2)^2 \Psi_0     = \frac{\rho_0 g_0 \alpha}{\eta_0} 
+ k \tilde{T}_0   
+\end{eqnarray}
+
+
+\begin{eqnarray}
+&& \frac{\partial \tilde{T}}{\partial t} - \kappa \Delta \tilde{T} 
+= -  \frac{T_b}{h}   \frac{\partial \Psi}{\partial x} \\
+&\Rightarrow & p \tilde{T} - \kappa (k^2 + n^2\pi^2) \tilde{T}   
+= -  \frac{T_b}{h} k \Psi_0 \exp(pt)  \cos(k x) \sin(n\pi y) \\
+&\Rightarrow & p + \kappa (k^2 + n^2\pi^2) \tilde{T}   
+= -  \frac{T_b}{h} k \Psi_0  \\
+\end{eqnarray}
+
+ 
+These equations must then be verified for all $\Psi_0$ and $\tilde{T}_0$, 
+which leads to write:
+\[
+\left(
+\begin{array}{cc}
+p + (k^2+n^2\pi^2) & -k \\
+-Ra \; k & (k^2+n^2\pi^2)^2 
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+\tilde{T}_0 \\ \Psi_0
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+0 \\ 0
+\end{array}
+\right)
+\]
+The determinant of such system must be nul otherwise there is only a trivial solution to the problem, i.e. $A_\theta=0$ and $A_\Psi=0$ which is not helpful. CHECK/REPHRASE
+\[
+D= [p + (k^2+n^2\pi^2)](k^2+n^2\pi^2)^2 - Ra \; k^2 =0
+\]
+or, 
+\[
+p = \frac{Ra \; k^2 -(k^2+n^2\pi^2)^3 }{ (k^2+n^2\pi^2)^2}
+\]
+
+The coefficient $p$ determines the stability of the system: if it is negative, 
+the system is stable and both $\Psi$ and $\tilde{T}$ will decay to zero (return to conductive state). 
+If $p=0$, then the system is meta-stable, and if $p>0$ then the system is unstable and 
+the perturbations will grow. 
+
+The threshold is then $p=0$ and the corresponding critical Rayleigh number $\text{Ra}_c$ is:
+\[
+Ra_c=\frac{(k^2+n^2\pi^2)^3}{k^2}
+\]
+
+The minimum critical Rayleigh number is given by 
+\[
+\left. \frac{\partial Ra_c}{\partial k}\right|_{n=1}=0
+\]
+or, 
+\[
+Ra_c = \frac{27}{4}\pi^4 \simeq 657.4839
+\]
+
+
+

@@ -298,7 +298,7 @@ a geodynamical context requires a lot of additional techniques.
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Exporting data to vtk format} \input{exporting_to_vtk} %-------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Runge-Kutta methods} \input{rungekutta} %----------------------------------------------
+\subsection{Runge-Kutta methods}\label{ss:rkm} \input{rungekutta} %----------------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Am I in or not? - finding reduced coordinates}\label{sec:amiin}\input{amiin} %---------
 \newpage %-----------------------------------------------------------------------------------------
@@ -353,6 +353,9 @@ a geodynamical context requires a lot of additional techniques.
 \subsection{The PREM model} \label{ss:prem} \input{prem} %----------------------------------------- 
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Interpolation inside an element} \label{ss:bern} \input{bernstein} %------------------- 
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Stability analysis for Rayleigh-B\'enard convection} \label{ss:sarb} \input{sarb} %---- 
+
 
 
 
@@ -772,14 +775,24 @@ Stone 39: chpe15
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{
-Stone 40: Rayleigh-Taylor instability 
+Stone 40: Rayleigh-Taylor instability (instantaneous) 
 \label{f40}} 
 \addcontentsline{toc}{section}{\protect\numberline{} 
-Stone 40: Rayleigh-Taylor instability 
+Stone 40: Rayleigh-Taylor instability (instantaneous) 
 }
 \input{python_codes/fieldstone_40/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%41 melchior
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 41: Rayleigh-Taylor instability (van Keken et al, 1997) 
+\label{f41}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 41: Rayleigh-Taylor instability (van Keken et al, 1997) 
+}
+\input{python_codes/fieldstone_41/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{
@@ -997,6 +1010,16 @@ Stone 65: steady-state advection-diffusion
 Stone 65: steady-state advection-diffusion 
 }
 \input{python_codes/fieldstone_65/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 66: something about sph 
+\label{f66}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 66: something about sph 
+}
+\input{python_codes/fieldstone_66/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 
