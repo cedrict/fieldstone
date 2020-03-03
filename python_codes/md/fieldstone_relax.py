@@ -352,12 +352,12 @@ if int(len(sys.argv) == 7):
    Ra    = float(sys.argv[5])
    nstep = int(sys.argv[6])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 12
+   nely = 12
    visu = 1
    order= 2
-   Ra = 1e4
-   nstep=1000
+   Ra = 200
+   nstep=500
 
 nel=nelx*nely
 nnx=order*nelx+1  # number of elements, x direction
@@ -419,7 +419,7 @@ hcond=1.     # thermal conductivity
 hcapa=1.     # heat capacity
 rho0=1       # reference density
 T0=0         # reference temperature
-CFL=0.95     # CFL number 
+relax=0.2 
 gx=0.
 gy=-Ra/alphaT # vertical component of gravity vector
 tol_ss = 1e-6
@@ -477,8 +477,10 @@ if nqperdim==6:
 alpha=0.5
 
 Nu_vrms_file=open('Nu_vrms.ascii',"w")
+Nu_vrms_file.write("#time,Nusselt,vrms\n")
 dt_file=open('dt.ascii',"w")
 Tavrg_file=open('Tavrg.ascii',"w")
+conv_file=open('conv.ascii',"w")
 
 #################################################################
 
@@ -749,8 +751,6 @@ dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 Tvect   = np.zeros(mV,dtype=np.float64)   
 c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
-time=0.
-
 for istep in range(0,nstep):
     print("-----------------------------")
     print("istep= ", istep)
@@ -963,24 +963,12 @@ for istep in range(0,nstep):
 
     print("split vel into u,v: %.3f s" % (timing.time() - start))
 
-    #################################################################
-    # compute timestep
-    #################################################################
+    #####################################################################
+    # relaxation step
+    #####################################################################
 
-    dt1=CFL*(Lx/nelx)/np.max(np.sqrt(u**2+v**2))
-
-    dt2=CFL*(Lx/nelx)**2/(hcond/hcapa/rho0)
-
-    dt=np.min([dt1,dt2])
-
-    time+=dt
-
-    print('dt1= %.6f' %dt1)
-    print('dt2= %.6f' %dt2)
-    print('dt = %.6f' %dt)
-
-    dt_file.write("%10e %10e %10e %10e\n" % (time,dt1,dt2,dt))
-    dt_file.flush()
+    u=relax*u+(1-relax)*u_prev
+    v=relax*v+(1-relax)*v_prev
 
     #################################################################
     # build temperature matrix
@@ -1050,8 +1038,7 @@ for istep in range(0,nstep):
             #end for
         #end for
 
-        a_el+=MM+(Ka+Kd)*dt*alpha
-        b_el=(MM-(Ka+Kd)*(1.-alpha)*dt).dot(Tvect)
+        a_el=Ka+Kd
 
         # apply boundary conditions
         for k1 in range(0,mV):
@@ -1095,6 +1082,12 @@ for istep in range(0,nstep):
     print("solve T time: %.3f s" % (timing.time() - start))
 
     #################################################################
+    # relax
+    #################################################################
+
+    T=relax*T+(1-relax)*T_prev
+
+    #################################################################
     # compute vrms 
     #################################################################
     start = timing.time()
@@ -1135,10 +1128,10 @@ for istep in range(0,nstep):
     vrms=np.sqrt(vrms/(Lx*Ly))
     Tavrg/=(Lx*Ly)
 
-    Tavrg_file.write("%10e %10e\n" % (time,Tavrg))
+    Tavrg_file.write("%10e %10e\n" % (istep,Tavrg))
     Tavrg_file.flush()
 
-    print("     time= %.6f ; vrms   = %.6f" %(time,vrms))
+    print("     istep= %.6d ; vrms   = %.6f" %(istep,vrms))
 
     print("compute vrms: %.3f s" % (timing.time() - start))
 
@@ -1245,10 +1238,10 @@ for istep in range(0,nstep):
 
     Nusselt=np.abs(Nusselt)
 
-    Nu_vrms_file.write("%10e %10e %10e\n" % (time,Nusselt,vrms))
+    Nu_vrms_file.write("%10e %.10f %.10f\n" % (istep,Nusselt,vrms))
     Nu_vrms_file.flush()
 
-    print("     time= %e ; Nusselt= %e ; Ra= %e " %(time,Nusselt,Ra))
+    print("     istep= %d ; Nusselt= %e ; Ra= %e " %(istep,Nusselt,Ra))
 
     print("compute Nu: %.3f s" % (timing.time() - start))
 
@@ -1357,17 +1350,20 @@ for istep in range(0,nstep):
 
        print("export to vtu file: %.3f s" % (timing.time() - start))
 
-    #############################333
+    #############################
 
     T_diff=np.sum(abs(T-T_prev))/NV
     u_diff=np.sum(abs(u-u_prev))/NV
     v_diff=np.sum(abs(v-v_prev))/NV
 
     print("T conv, T_diff, <T>: " , T_diff<tol_ss*Tavrg,T_diff,Tavrg)
-    print("u conv, u_diff, <u>: " , u_diff<tol_ss*vrms,u_diff,vrms)
-    print("v conv, v_diff, <v>: " , v_diff<tol_ss*vrms,v_diff,vrms)
+    #print("u conv, u_diff, <u>: " , u_diff<tol_ss*vrms,u_diff,vrms)
+    #print("v conv, v_diff, <v>: " , v_diff<tol_ss*vrms,v_diff,vrms)
 
-    if T_diff<tol_ss*Tavrg and u_diff<tol_ss*vrms and v_diff<tol_ss*vrms:
+    conv_file.write("%10e %10e %10e\n" % (istep,T_diff/Tavrg,tol_ss))
+    conv_file.flush()
+
+    if T_diff<tol_ss*Tavrg: # and u_diff<tol_ss*vrms and v_diff<tol_ss*vrms:
        print("convergence reached")
        break
 
