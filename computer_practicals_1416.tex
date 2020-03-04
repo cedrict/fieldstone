@@ -227,17 +227,23 @@ wget https://raw.githubusercontent.com/cedrict/fieldstone/master/python_codes/md
 \begin{itemize}
 \item Determine the Nusselt number at steady state for a range of Rayleigh numbers, 
 starting from a subcritical value. 
-Produce a plot of Nu against Ra using double logarithmic axes.
+Produce a plot of Nu against Ra using double logarithmic axes. Determine the critical Rayleigh number. 
+
+\item The modelling program produces data files containing ‘snapshots’ of the resulting numerical solution 
+of the temperature and velocity fields in a suitable format ({\tt .vtu}) for visualization with graphics program {\sl paraview}. 
+Produce colorplots with paraview of the temperature field, for three contrasting Rayleigh number cases, and discuss them.
+
 \item Determine the logarithmic slope or powerlaw index $\beta$ defined in the introduction.
 
-\item produce such a curve for various grid resolutions. How can you explain the differences in the results ? Produce a plot 
-of $Nu$ as a function of the grid spacing. Discuss.
+\item Produce such a curve for various grid resolutions. How can you explain the differences in the results ? Produce a plot 
+of $Nu$ as a function of the grid spacing. 
 
 \item Look at how the $\upnu_{rms}$ values at steady state depend on $Ra$. 
 
-\item For three contrasting $Ra$ values, plot the temperature profiles (data to be found in {\tt T\_profile.ascii}) on a single plot and discuss the obtained figure.
+\item For three contrasting $Ra$ values, plot the temperature profiles (data to be found in {\tt T\_profile.ascii}) 
+on a single plot and discuss the obtained figure.
 
-\item Set the number of points in the horizontal directions to 25. Choose $Ra=10^5$ and progressively increase the number 
+\item Set the number of points in the horizontal directions to 16. Choose $Ra=10^5$ and progressively increase the number 
 of points in the vertical direction. Report on the variation of the $Nu$ number at steady state as a function of the vertical
 resolution.
 
@@ -245,15 +251,11 @@ resolution.
 difference with the value found in Rayleigh's linear stability analysis for a layer of depth $h$ and infinite horizontal extent, 
 $Ra_C = (27/4)  \pi^4$.
 
-\item The modelling program produces data files containing ‘snapshots’ of the resulting numerical solution 
-of the temperature and velocity fields in a suitable format ({\tt .vtu}) for visualization with graphics program {\sl paraview}. 
-Produce colorplots with paraview of the temperature field, for three contrasting Rayleigh number cases, and discuss them.
-
 \item Explore the effect of the aspect ratio of the domain on $Ra_c$ and the slope $\beta$.
 
 \item Change the initial temperature profile to something more random, repeat some of these experiments. What can you conclude ?
 
-\item change free-slip to no-slip boundary conditions at the top and bottom. Changes to $Ra_c$ ?
+\item change the top and bottom boundary conditions from free-slip to no-slip. How does this influence $Ra_c$ ?
 
 \end{itemize}
 

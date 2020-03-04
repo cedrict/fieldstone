@@ -105,8 +105,6 @@ else:
 
 relax=0.2
 
-CFL_nb=.5
-
 rVnodes=[0.,1.,0.,1./3.]
 sVnodes=[0.,0.,1.,1./3.]
 
