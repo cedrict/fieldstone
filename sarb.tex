@@ -48,25 +48,25 @@ T(x,y)=T_c(y)+\tilde{T}(x,y)
 Note that the temperature perturbation $\tilde{T}$ must satisfy the homogeneous boundary 
 conditions $\tilde{T}(x,y=0)=0$ and $\tilde{T}(x,y=h)=0$.
 
-The temperature equation is
-\[
-\rho C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T \right) 
-=\rho C_p \left( \frac{\partial (T_c+\tilde{T})}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} 
+In the absence of heat production, the temperature equation is 
+\begin{eqnarray}
+&& \rho_0 C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T \right) 
+= k \Delta T \nn\\
+&\Rightarrow&
+\rho_0 C_p \left( \frac{\partial (T_c+\tilde{T})}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} 
 (T_c+\tilde{T}) \right) 
 = k \Delta (T_c+\tilde{T})
-\]
-and can be simplified as follows:
+\end{eqnarray}
+Since a) $T_c$ does not depend on time, b) $\Delta T_c=0$, c) we assume the nonlinear 
+term ${\vec \upnu}\cdot {\vec \nabla} \tilde{T} $ to be second order (temperature perturbations and 
+coupled velocity changes are assumed to be small), it can be simplified as follows:
 \[
-\rho C_p \left( \frac{\partial \tilde{T}}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T_c \right) 
+\rho_0 C_p \left( \frac{\partial \tilde{T}}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T_c \right) 
 = k \Delta \tilde{T}
 \]
-since a) $T_c$ does not depend on time, b) $\Delta T_c=0$, c) we assume the nonlinear 
-term ${\vec \upnu}\cdot {\vec \nabla} \tilde{T} $ to be second order (temperature perturbations and 
-coupled velocity changes are assumed to be small).
-
 Using the relationship between velocity and stream function
 $v=-\partial_x \Psi$
-and since $\vec\nabla T_c = - T_b/h \vec{e}_y$ then
+and since $\vec\nabla T_c = - (T_b/h) \vec{e}_y$ then
 \[
 {\vec \upnu}\cdot {\vec \nabla} T_c =  \frac{T_b}{h}   \frac{\partial \Psi}{\partial x} 
 \]
@@ -88,23 +88,29 @@ We then pose that $\Psi$ and $\tilde{T}$ can be written:
 \Psi(x,y,t) &=& \Psi_0 \exp(pt)\exp(\pm i k_x x) \exp(\pm i k_y y) \\ %= \Psi_0 E_\psi(x,y,t) \\
 \tilde{T}(x,y,t) &=& \tilde{T}_0 \exp(pt) \exp(\pm i k_x x) \exp(\pm i k_y y) %=\tilde{T}_0 E_T(x,y,t) 
 \end{eqnarray}
-where $C_\Psi$ and $C_T$ are constants.
+where $\Psi_0$ and $\tilde{T}_0$ are constants and with the notation
+\[
+\exp (\pm i k x) = a_k \exp (i k_x x) + b_k \exp (-i k_x x )
+\]
+
 %where $k_x=2\pi/L_x$ and $k_y=2\pi/L_y$ are the horizontal and vertical wave number respectively.
-Note that we then have
+\begin{remark} We have
 \[
 \nabla^2 \Psi = -(k_x^2+k_y^2) \Psi
 \quad\quad
 \nabla^2 \tilde{T} = -(k_x^2+k_y^2) \tilde{T}
 \]
+\end{remark}
+
 The boundary conditions on $\tilde{T}$, 
 coupled with a choice of a real function for the $x$ dependence 
 yields\footnote{We assume here that temperature is a real quantity, not a complex one.}:
 \[
-\tilde{T}(x,y,t) = \tilde{T}_0 \exp(pt) \cos (k_x x) \sin (n\pi y).
+\tilde{T}(x,y,t) = \tilde{T}_0 \exp(pt) \cos (k_x x) \sin \left(n\pi \frac{y}{h} \right).
 \]
-where $n$ is an integer number. 
+where $n$ is an integer number and $k_y=n \pi = 2 \pi/ \lambda_y$. 
 
-The velocity vector is given by:
+The vertical velocity component is given by:
 \begin{eqnarray}
 %u &=& \frac{\partial \Psi}{\partial y} \\
 %  &=& \frac{\partial }{\partial y} \left[ A_\Psi \exp(pt)\exp(\pm i k_x x) \exp(\pm i k_y y) \right]  \\
@@ -120,42 +126,37 @@ Choosing again for a real function for the $x$ dependence yields:
 \[
 \Psi(x,y,t) = \Psi_0 \exp(pt) \sin(k_x x) \sin(n\pi z)
 \]
-We then have
+We then have (we simplify notations: $k=k_x$):
 \begin{eqnarray}
 \Psi(x,y,t) &=& \Psi_0 \exp(pt)  \sin(k_x x) \sin(n\pi y)  \\
 \tilde{T}(x,y,t)  &=& \tilde{T}_0 \exp(pt)  \cos(k_x x) \sin(n\pi y)   
 \end{eqnarray}
-In what follows we simplify notations: $k=k_x$. Then the two framed PDEs above become:
-
-
+Then the two framed PDEs above become:
 \begin{eqnarray}
-&& \nabla^4 \Psi= -\frac{\rho_0 g_0 \alpha}{\eta_0} \frac{\partial \tilde{T}}{\partial x} \\
+&& \nabla^4 \Psi= -\frac{\rho_0 g_0 \alpha}{\eta_0} \frac{\partial T}{\partial x} \nn \\
+&\Rightarrow& \nabla^4 \Psi= -\frac{\rho_0 g_0 \alpha}{\eta_0} 
+\frac{\partial (T_c(y)+\tilde{T}(x,y))}{\partial x} \nn \\
+&\Rightarrow& \nabla^4 \Psi= -\frac{\rho_0 g_0 \alpha}{\eta_0} \frac{\partial \tilde{T}}{\partial x} \nn \\
 &\Rightarrow& 
-(k^2 + n \pi^2)^2 \Psi_0 \exp(pt)  \sin(k x) \sin(n\pi y) = -\frac{\rho_0 g_0 \alpha}{\eta_0} 
- k \tilde{T}_0 \exp(pt)  \cos(k x) \sin(n\pi y)  \\ 
-&\Rightarrow& 
-(k^2 + n \pi^2)^2 \Psi_0     = \frac{\rho_0 g_0 \alpha}{\eta_0} 
- k \tilde{T}_0   
-\end{eqnarray}
-
-
-\begin{eqnarray}
+(k^2 + n^2 \pi^2/h^2)^2 \Psi_0 \exp(pt)  \sin(k x) \sin(n\pi y) = -\frac{\rho_0 g_0 \alpha}{\eta_0} 
+ k \tilde{T}_0 \exp(pt)  \sin(k x) \sin(n\pi y) \nn \\ 
+&\Rightarrow& (k^2 + n^2 \pi^2/h^2)^2 \Psi_0     = -\frac{\rho_0 g_0 \alpha}{\eta_0}  k \tilde{T}_0  
+\nn\\ 
 && \frac{\partial \tilde{T}}{\partial t} - \kappa \Delta \tilde{T} 
-= -  \frac{T_b}{h}   \frac{\partial \Psi}{\partial x} \\
-&\Rightarrow & p \tilde{T} - \kappa (k^2 + n^2\pi^2) \tilde{T}   
-= -  \frac{T_b}{h} k \Psi_0 \exp(pt)  \cos(k x) \sin(n\pi y) \\
-&\Rightarrow & p + \kappa (k^2 + n^2\pi^2) \tilde{T}   
-= -  \frac{T_b}{h} k \Psi_0  \\
+= -  \frac{T_b}{h}   \frac{\partial \Psi}{\partial x} \nn\\
+&\Rightarrow & p \tilde{T} - \kappa (k^2 + n^2\pi^2/h^2) \tilde{T}   
+= -  \frac{T_b}{h} k \Psi_0 \exp(pt)  \cos(k x) \sin(n\pi y)\nn \\
+&\Rightarrow & [ p + \kappa (k^2 + n^2\pi^2/h^2) ] \tilde{T}_0   
+= -  \frac{T_b}{h} k \Psi_0 \nn
 \end{eqnarray}
-
  
 These equations must then be verified for all $\Psi_0$ and $\tilde{T}_0$, 
 which leads to write:
 \[
 \left(
 \begin{array}{cc}
-p + (k^2+n^2\pi^2) & -k \\
--Ra \; k & (k^2+n^2\pi^2)^2 
+p + \kappa (k^2+n^2\pi^2/h^2) & -\frac{T_b}{h} k \\
+-\frac{\rho_0 g_0 \alpha}{\eta_0}  k  & (k^2+n^2\pi^2/h^2)^2 
 \end{array}
 \right)
 \left(
@@ -170,14 +171,23 @@ p + (k^2+n^2\pi^2) & -k \\
 \end{array}
 \right)
 \]
-The determinant of such system must be nul otherwise there is only a trivial solution to the problem, i.e. $A_\theta=0$ and $A_\Psi=0$ which is not helpful. CHECK/REPHRASE
-\[
-D= [p + (k^2+n^2\pi^2)](k^2+n^2\pi^2)^2 - Ra \; k^2 =0
-\]
+The determinant of the matrix should be zero to have non-trivial solutions for
+the amplitude factors (i.e. $\tilde{T}_0=0$ and $\Psi_0=0$ which is not helpful).
+This leads to the condition: 
+\begin{eqnarray}
+Det 
+&=& [p + \kappa (k^2+n^2\pi^2/h^2)](k^2+n^2\pi^2/h^2)^2 - \frac{\rho_0 g_0 \alpha T_b }{\eta_0 h}  k^2 \nn\\
+&=& p (k^2+n^2\pi^2/h^2)^2 + \kappa (k^2+n^2\pi^2/h^2)^3 - \frac{\rho_0 g_0 \alpha T_b }{\eta_0 h}  k^2 \nn\\
+&=& 0
+\end{eqnarray}
 or, 
-\[
-p = \frac{Ra \; k^2 -(k^2+n^2\pi^2)^3 }{ (k^2+n^2\pi^2)^2}
-\]
+\begin{eqnarray}
+p 
+&=&\frac{\frac{\rho_0 g_0 \alpha T_b }{\eta_0 h }  \; k^2 
+- \kappa (k^2+n^2\pi^2/h^2)^3 }{ (k^2+n^2\pi^2/h^2)^2} \nn\\
+&=& \kappa \frac{  \frac{\rho_0 g_0 \alpha T_b h^3}{ \kappa \eta_0}\; k^2 - h^4 (k^2+n^2\pi^2/h^2)^3 }{h^4 (k^2+n^2\pi^2/h^2)^2} \nn\\
+&=& \frac{\kappa}{h^2}   \frac{Ra \; k^2 -(k^2+n^2\pi^2/h^2)^3 }{ (k^2+n^2\pi^2/h^2)^2}
+\end{eqnarray}
 
 The coefficient $p$ determines the stability of the system: if it is negative, 
 the system is stable and both $\Psi$ and $\tilde{T}$ will decay to zero (return to conductive state). 
@@ -186,7 +196,7 @@ the perturbations will grow.
 
 The threshold is then $p=0$ and the corresponding critical Rayleigh number $\text{Ra}_c$ is:
 \[
-Ra_c=\frac{(k^2+n^2\pi^2)^3}{k^2}
+Ra_c=\frac{(k^2+n^2\pi^2/h^2)^3}{k^2}
 \]
 
 The minimum critical Rayleigh number is given by 
@@ -199,4 +209,6 @@ Ra_c = \frac{27}{4}\pi^4 \simeq 657.4839
 \]
 
 
-
+This solves the linearised onset of convection problem in the sense that an
+unstable layering (cold above hot) only starts convecting after a critical
+Rayleigh number has been overcome, e.g., by an increased Δ T

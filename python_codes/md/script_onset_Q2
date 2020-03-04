@@ -4,9 +4,7 @@ rm onset*.ascii
 
 nstep=500
 
-for R in 200 400 600 650 675 700 725 750 770 775 780 785 800 850 900 1000 2000 4000 8000 10000 50000 100000; do
-
-    ### Q2Q1 ###
+for R in 400 600 700 725 750 770 775 780 785 800 1000 2000 4000 8000 16000 32000 64000 128000 256000 512000 1024000; do
 
     echo Ra= $R - resolution 12x12 
     python3 fieldstone_relax.py  12 12 0 2  $R $nstep | grep script >> onset_12x12.ascii
@@ -32,19 +30,3 @@ for R in 200 400 600 650 675 700 725 750 770 775 780 785 800 850 900 1000 2000 4
 done
 
 
-
-
-#python3 fieldstone.py  16 16 0 2   200 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2   300 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2   400 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2   500 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2   600 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2   700 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2   800 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2   900 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2  1000 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2  2000 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2  3000 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2  4000 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2  5000 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2 10000 15 | grep script >> onset.ascii

@@ -1,0 +1,7 @@
+     script ; Nusselt= 4.587053e+00 ; Ra= 8.000000e+03 ; order= 2
+     script ; Nusselt= 5.886707e+00 ; Ra= 1.600000e+04 ; order= 2
+     script ; Nusselt= 7.520170e+00 ; Ra= 3.200000e+04 ; order= 2
+     script ; Nusselt= 9.592355e+00 ; Ra= 6.400000e+04 ; order= 2
+     script ; Nusselt= 1.220491e+01 ; Ra= 1.280000e+05 ; order= 2
+     script ; Nusselt= 1.541040e+01 ; Ra= 2.560000e+05 ; order= 2
+     script ; Nusselt= 1.915910e+01 ; Ra= 5.120000e+05 ; order= 2

@@ -1,6 +1,4 @@
 
-{\Large Work in Progress - 28 january 2020}
-
 \subsubsection{Introduction}
 
 In parameterized convection models for planetary thermal evolution the heat transport characteristics 
@@ -10,7 +8,6 @@ through the non-dimensional Nusselt number $Nu$.
 $Nu$ is usually expressed in terms of the 
 Rayleigh number $Ra$ as $Nu \sim C\, Ra^\beta$, where $C$ is a constant depending on the domain geometry
 (please do read section 1 of \cite{wodd09} for more information).
-
 
 In this lab exercise you will investigate the characteristics of steady-state Rayleigh-Benard convection 
 and determine the relation between the Nusselt and Rayleigh number experimentally, 
@@ -35,18 +32,18 @@ A Boussinesq approximation is applied, neglecting density variations in the equa
 \begin{eqnarray}
 {\vec \nabla}\cdot {\bm \sigma} + \rho(T) {\vec g} &=& {\vec 0} \label{eq_moce}\\
 {\vec \nabla}\cdot {\vec \upnu} &=& 0 \label{eq_mace}\\
-{\bm \sigma} &=& -p {\bm 1} + {\bm s} \label{steq}\\
+{\bm \sigma} &=& -p {\bm 1} + {\bm \tau} \label{steq}\\
 {\bm s} &=& 2 \mu \dot{\bm \varepsilon} \label{stwomu}\\
 \dot{\bm \varepsilon}  &=& \frac{1}{2} \left( {\vec \nabla}{\vec \upnu} 
 + ({\vec \nabla}{\vec \upnu})^T  \right) \label{epsdot} \\
-\rho_0 c_p \left( \frac{\partial T}{\partial t}  + {\vec \upnu}\cdot {\vec \nabla} T\right) 
+\rho_0 C_p \left( \frac{\partial T}{\partial t}  + {\vec \upnu}\cdot {\vec \nabla} T\right) 
 &=& {\vec \nabla}\cdot (k {\vec \nabla}T)  \label{eqhte} \\
 \rho(T) &=& \rho_0 (1 - \alpha (T-T_0)) 
 \end{eqnarray}
 
 Equation (\ref{eq_moce}) is the momentum conservation equation and 
 Eq. (\ref{eq_mace}) is the mass conservation equation for incompressible fluids.
-One can resolve the stress tensor ${\bm \sigma}$ into its spherical part $-p{\bm 1}$ and its stress deviation ${\bm s}$ (see Eq. (\ref{steq})), where the deviatoric stress tensor is proportional to the strain rate tensor $\dot{\bm \varepsilon}$ (see Eq.(\ref{stwomu})) through the dynamic viscosity $\mu$. Finally Eq. (\ref{epsdot}) relates the strain rate tensor to the velocity field.
+One can resolve the stress tensor ${\bm \sigma}$ into its spherical part $-p{\bm 1}$ and its stress deviation ${\bm \tau}$ (see Eq. (\ref{steq})), where the deviatoric stress tensor is proportional to the strain rate tensor $\dot{\bm \varepsilon}$ (see Eq.(\ref{stwomu})) through the dynamic viscosity $\mu$. Finally Eq. (\ref{epsdot}) relates the strain rate tensor to the velocity field.
 
 Equations (\ref{eq_moce}), (\ref{eq_mace}), (\ref{steq}), (\ref{stwomu}) and (\ref{epsdot}) all together lead to the following form of the Stokes equations:
 \begin{eqnarray}
@@ -57,30 +54,28 @@ Equations (\ref{eq_moce}), (\ref{eq_mace}), (\ref{steq}), (\ref{stwomu}) and (\r
 Equation (\ref{mce2}) is an elliptic equation characterized by the 
 fact that changes in buoyancy and constitutive relationships anywhere in the domain have an immediate influence on the entire domain.
 
-\begin{table}
-\centering
+\begin{center}
 \begin{tabular}{ll}
 \hline
 symbol & meaning and dimension \\
 \hline
 \hline
-${\bm g}$ & gravity acceleration vector $(m.s^{-2})$ \\
+${\vec g}$ & gravity acceleration vector $(m.s^{-2})$ \\
 $L_x$, $L_y$ & domain size $(m)$ \\
 $p$ & pressure $(Pa)$ \\
-${\bm s}$ & deviatoric stress vector $(Pa)$ \\
-${\bm v}=(u,v,w)$ & velocity $(m.s^{-1})$ \\
+${\bm \tau}$ & deviatoric stress vector $(Pa)$ \\
+${\vec \upnu}=(u,v,w)$ & velocity $(m.s^{-1})$ \\
 $\dot{\bm \varepsilon}$ & strain-rate tensor $(s^{-1})$ \\
-$\lambda$ & penalty coefficient $(Pa.s)$ \\
 $\mu$ & viscosity $(Pa.s)$ \\
 $\rho,\rho_0$ & mass density $(kg.m^{-3})$ \\
 ${\bm \sigma}$ & stress tensor $(Pa)$ \\
-$k$ & heat conductivity \\
-$c_p$ & heat capacity\\
-$\alpha$ & thermal expansion \\
+$k$ & heat conductivity $W/(m\cdot K)$\\
+$C_p$ & heat capacity $(J/K)$\\
+$\alpha$ & thermal expansion $(K^{-1})$\\
 \hline
-\end{tabular}
-\caption{Nomenclature \label{table_nomenc}}
-\end{table}
+\end{tabular}\\
+{\captionfont Nomenclature}
+\end{center}
 
 
 %........................................................
@@ -89,92 +84,39 @@ $\alpha$ & thermal expansion \\
 Introduced in the late 1950s, the finite element method (FEM) \cite{hugh,zita1,zita2,zita3} 
 has emerged as one of the most powerful numerical methods so far devised. 
 
-Quadrilateral/hexahedral $Q_1P_0$ elements (bi/tri-linear velocity, piecewise constant pressure) are used in this code.
-Despite the fact that they violate the Ladyzhenskaya, Babouska and Brezzi (LBB) stability condition \cite{dohu03}, they remain a popular practical choice in mixed finite 
-element approximation of incompressible materials. 
-
-This popularity can be explained by factors such as a) local mass conservation ; b) simple and uniform data structures and algebraic problems 
-with manageable sizes and small bandwidths. The latter are of paramount importance for problems 
-where geometry resolution requires very fine meshes and higher order elements can quickly lead to intractable algebraic problems in three space dimensions.
-
-
-The physical domain $\Omega$ is broken up into elements, and a set of finite element basis functions is defined for each element so that functional 
-representations of the independent variables can be constructed.
-
 A thorough mathematical treatment of the finite element formulation of the equations gouverning the physics of the system is beyond the scope of this 
-work, and has been exposed rigorously in some key references: the reader is referred to \cite{dohu03} or \cite{gunz89} for details on the theory and implementation of viscous incompressible flows, and to \cite{lens04} for details on the theory and implementation of the heat transport equation. The FEM formulation of Eqs. (\ref{peneq}) and (\ref{eqhte}) is presented succinctly in the next section.
+computer practical, and has been exposed rigorously in Section~\ref{XXX} and in various textbooks such as \cite{dohu03} or \cite{gunz89}.
 
-Even though Eqs. (\ref{peneq}) and (\ref{eqhte}) are coupled through the viscosity and density dependences on temperature and/or velocity, these equations are traditionally not solved in a coupled manner. The obtention of a new set of variables $({\bm v},p,T)$ at a given time is the product of a three-stage process:
+
+We wish to study the system at steady state, which means that it no more changes in time. 
+In practice, only he heat transport equation contains a time (derivative) term so we actually wish 
+to solve these three (coupled) equations:
+
+\begin{eqnarray}
+{\vec \nabla}\cdot [\mu ({\vec\nabla} {\color{red}{\vec \upnu}} 
++ {\vec \nabla} {\color{red}{\vec \upnu}}^T ) ] 
+- {\vec \nabla}p + \rho({\color{blue}T}) {\vec g} &=& {\vec 0}   \\
+{\vec \nabla}\cdot {\color{red} {\vec \upnu}} &=& 0 \\
+\rho_0 C_p {\color{red} {\vec \upnu}}\cdot {\vec \nabla} {\color{blue}T} &=& k \Delta {\color{blue}T} 
+\end{eqnarray} 
+
+The main problem is clearly visible in the third one: with respect to the velocity and 
+temperature unknowns this is a nonlinear equation! 
+We therefore have to design a strategy (an algorithm) which will allow us to solve these 
+equations. 
+
+One simple approach is as follows: the equations are not solved in a coupled manner. 
+The obtention of a new set of variables $({\bm v},p,T)$ is the product of a two-stage process:
 \begin{enumerate}
-\item solve for velocity field
-\item recover pressure field from velocity field 
-\item solve for temperature
+\item assume temperature known, solve for velocity (and pressure) field (the first two equations)
+\item assume velocity known, solve for temperature (the last equation).
 \end{enumerate}
-
-The size of the assembled FE matrix grows like the square of the total number of nodes, but this matrix is very sparse. Contrarily to 
-optimised FE codes, no appropriate sparse storage scheme (lower triangular compressed sparse column, or CSC) is used in the code
-you are going to use. This 
-strongly limits the number of elements/nodes which a grid can count.
-
-%, as this allows for a substantial reduction of memory usage.
-
-The Galerkin finite element equation corresponding to Eq. (\ref{peneq}) is 
-\[
-( {\bm K}_\mu + {\bm K}_\lambda)\cdot {\bm v} = {\bm B}
-\]
-with
-\[
-{\bm K}_\mu =\int_\Omega {\bm B}^T \cdot {\bm D}_{\mu } \cdot {\bm B} \; d\Omega
-\]
-\[
-{\bm K}_\lambda =\int_\Omega {\bm B}^T \cdot {\bm D}_{\lambda} \cdot {\bm B} \; d\Omega
-\]
-\[
-{\bm B}=\int_\Omega {\bm N}^T \rho {\bm g} \; d\Omega
-\]
-
-\[
-{\bm D}_\mu^{2D} = \mu 
-\left(
-\begin{array}{ccc}
-2& 0& 0 \\ 
-0& 2& 0 \\
-0& 0& 1 
-\end{array}
-\right)
-\quad\quad
-{\bm D}_\lambda^{2D} = 
-\lambda 
-\left(
-\begin{array}{ccc}
-1 & 1& 0\\
-1 & 1& 0\\
-0 & 0& 1
-\end{array}
-\right)
-\]
-and where ${\bm N}$ is the vector of shape functions, and ${\bm B}$ is the matrix of spatial derivatives of the shape functions. 
+These two steps need to be repeated as long as the system has not converged to a steady solution. 
+The code therefore implements iterations and these iterations stop when either the maximum number 
+of iterations nstep is reached or convergence has been reached (i.e. temperature does not change 
+substantially between two consecutive iterations).
 
 
-The finite element equation corresponding to the heat transfer equation is
-\[
-{\bm M}_c\cdot \frac{\partial {\bm T}}{\partial t} + ({\bm K}_a  + {\bm K}_d)\cdot {\bm T} = {\bm F} 
-\]
-where
-\[
-{\bm M}_c=\int_\Omega {\bm N}^T \rho c_P {\bm N} \; d\Omega
-\] 
-\begin{equation}
-{\bm K}_a=\int_\Omega ({\bm N}^\star)^T \rho c_P  {\bm v}\cdot{\bm B} \; d\Omega \label{advmat}
-\end{equation}
-\[
-{\bm K}_d=\int_\Omega {\bm B}^T k {\bm B} \; d\Omega
-\] 
-\[
-{\bm F}=\int_\Omega {\bm N}^T  H \; d\Omega
-\]
-
-where ${\bm T}$ is the vector of the nodal temperatures and ${\bm v}$ is the vector of nodal velocities.
 
 
 
@@ -194,11 +136,11 @@ Free-slip conditions are implemented on all boundaries.
 The Rayleigh number is given by
 \begin{equation}
 Ra = \frac{\alpha g_y \rho_0 \Delta T h^3 }{\kappa \nu}
-=\frac{\alpha g_y \Delta T h^3 \rho^2 c_p}{k \mu}
+=\frac{\alpha g_y \Delta T h^3 \rho^2 C_p}{k \eta}
 \end{equation}
 
 In what follows, I use the following parameter values:  
-$L_x=L_y=1$,$\rho_0=c_P=k=\mu=1$, $T_0=0$, $\alpha=10^{-4}$, $g=10^{4}Ra$.
+$L_x=L_y=1$,$\rho_0=C_P=k=\eta=1$, $T_0=0$, $\alpha=10^{-4}$, $g=10^{4}Ra$.
 %and I run the model with $Ra=10^4,10^{5}$ and $10^6$.
 
 The initial temperature field is given by 
@@ -215,7 +157,10 @@ steady state after some time.
 The root mean square of the velocity field in the whole domain is defined as 
 follows:
 \begin{equation}
-v_{rms}= \left( \frac{1}{V_\Omega} \int_\Omega |{\bm v}|^2 \; dV \right)^{1/2} \label{eq_vrms}
+\upnu_{rms}
+= \left( \frac{1}{V_\Omega} \int_\Omega |{\vec \upnu}|^2 \; dV \right)^{1/2} 
+= \left( \frac{1}{V_\Omega} \int_\Omega (u^2+v^2)^2 \; dV \right)^{1/2} 
+\label{eq_vrms}
 \end{equation}
 
 %was measured for a $100\times100$ grid resolution for all three cases
@@ -246,38 +191,22 @@ are indicated in Table \ref{tab_bl} alongside those of \cite{blbc89} and \cite{t
 other publications \cite{trha98,albe00,gery10,dawk11,lezh11} but since they did not provide  a complete set 
 of measurement values, they are not included in the table.)
 
-%The results obtained with {\sc elefant} compare favourably to those 
-%initially published by \cite{blbc89} and fall within $1\%$ of the expected values. 
-
-
-
-%Finally, the steady state root mean square velocity and Nusselt number measurements
-%of Blankenbach et al, and those obtained with Aspect are indicated in Table (\ref{tab_bl}).
-%(Note that this benchmark was also carried out an published in 
-%other publications \cite{trha98, gery10, dawk11} but since they did not provide  a complete set 
-%of measurement values, they were not included in the table.)
-
-\begin{table}
-\centering
+\begin{center} 
 \begin{tabular}{llcc}
 \hline
           &           & Blankenbach et al & Tackley \cite{tack94}    \\
 \hline
 \hline
-$Ra=10^4$ & $V_{rms}$ &  $42.864947  \pm 0.000020$ & 42.775 \\
+$Ra=10^4$ & $\upnu_{rms}$ &  $42.864947  \pm 0.000020$ & 42.775 \\
           & $Nu$      &  $4.884409   \pm 0.000010$ & 4.878  \\
-$Ra=10^5$ & $V_{rms}$ &  $193.21454  \pm 0.00010 $ & 193.11 \\
+$Ra=10^5$ & $\upnu_{rms}$ &  $193.21454  \pm 0.00010 $ & 193.11 \\
           & $Nu$      &  $10.534095  \pm 0.000010$ & 10.531 \\
-$Ra=10^6$ & $V_{rms}$ &  $833.98977  \pm 0.00020 $ & 833.55 \\
+$Ra=10^6$ & $\upnu_{rms}$ &  $833.98977  \pm 0.00020 $ & 833.55 \\
           & $Nu$      &  $21.972465  \pm 0.000020$ & 21.998 \\
 \hline
-\end{tabular} 
-\caption{Steady state Nusselt number $Nu$ and $V_{rms}$ measurements as reported in the literature.  \label{tab_bl}}
-\end{table}
-
-
-
-
+\end{tabular}\\ 
+{\captionfont Steady state Nusselt number $Nu$ and $\upnu_{rms}$ measurements as reported in the literature.} 
+\end{center} 
 
 
 
@@ -290,22 +219,23 @@ $Ra=10^6$ & $V_{rms}$ &  $833.98977  \pm 0.00020 $ & 833.55 \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Experiments}
 
-The code is to be downloaded there {\tt http://cedricthieulot.net/mantledynamics.html} . 
-
+The code is to be downloaded as follows in a terminal:
+\begin{verbatim}
+wget https://raw.githubusercontent.com/cedrict/fieldstone/master/python_codes/md/fieldstone_relax.py
+\end{verbatim}
 
 \begin{itemize}
 \item Determine the Nusselt number at steady state for a range of Rayleigh numbers, 
 starting from a subcritical value. 
-Collect the Rayleigh and Nusselt numbers in a 2-column ascii file and produce a plot of Nu against Ra using double logarithmic axes with
-gnuplot.
+Produce a plot of Nu against Ra using double logarithmic axes.
 \item Determine the logarithmic slope or powerlaw index $\beta$ defined in the introduction.
 
 \item produce such a curve for various grid resolutions. How can you explain the differences in the results ? Produce a plot 
 of $Nu$ as a function of the grid spacing. Discuss.
 
-\item Look at how the $v_{rms}$ values at steady state depend on $Ra$. 
+\item Look at how the $\upnu_{rms}$ values at steady state depend on $Ra$. 
 
-\item For three contrasting $Ra$ values, plot the temperature profiles (data to be found in {\tt Tavrg.dat}) on a single plot and discuss the obtained figure.
+\item For three contrasting $Ra$ values, plot the temperature profiles (data to be found in {\tt T\_profile.ascii}) on a single plot and discuss the obtained figure.
 
 \item Set the number of points in the horizontal directions to 25. Choose $Ra=10^5$ and progressively increase the number 
 of points in the vertical direction. Report on the variation of the $Nu$ number at steady state as a function of the vertical
@@ -322,6 +252,8 @@ Produce colorplots with paraview of the temperature field, for three contrasting
 \item Explore the effect of the aspect ratio of the domain on $Ra_c$ and the slope $\beta$.
 
 \item Change the initial temperature profile to something more random, repeat some of these experiments. What can you conclude ?
+
+\item change free-slip to no-slip boundary conditions at the top and bottom. Changes to $Ra_c$ ?
 
 \end{itemize}
 

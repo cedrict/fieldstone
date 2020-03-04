@@ -1,22 +1,21 @@
-     script ; Nusselt= 1.000000e+00 ; Ra= 2.000000e+02 ; order= 2
      script ; Nusselt= 1.000000e+00 ; Ra= 4.000000e+02 ; order= 2
      script ; Nusselt= 1.000000e+00 ; Ra= 6.000000e+02 ; order= 2
-     script ; Nusselt= 1.000000e+00 ; Ra= 6.500000e+02 ; order= 2
-     script ; Nusselt= 1.000000e+00 ; Ra= 6.750000e+02 ; order= 2
      script ; Nusselt= 1.000000e+00 ; Ra= 7.000000e+02 ; order= 2
      script ; Nusselt= 1.000000e+00 ; Ra= 7.250000e+02 ; order= 2
-     script ; Nusselt= 1.000002e+00 ; Ra= 7.500000e+02 ; order= 2
-     script ; Nusselt= 1.000041e+00 ; Ra= 7.700000e+02 ; order= 2
-     script ; Nusselt= 1.000084e+00 ; Ra= 7.750000e+02 ; order= 2
-     script ; Nusselt= 1.000148e+00 ; Ra= 7.800000e+02 ; order= 2
-     script ; Nusselt= 1.000143e+00 ; Ra= 7.850000e+02 ; order= 2
-     script ; Nusselt= 1.002788e+00 ; Ra= 8.000000e+02 ; order= 2
-     script ; Nusselt= 1.163009e+00 ; Ra= 8.500000e+02 ; order= 2
-     script ; Nusselt= 1.283603e+00 ; Ra= 9.000000e+02 ; order= 2
-     script ; Nusselt= 1.478993e+00 ; Ra= 1.000000e+03 ; order= 2
-     script ; Nusselt= 2.596522e+00 ; Ra= 2.000000e+03 ; order= 2
-     script ; Nusselt= 3.612221e+00 ; Ra= 4.000000e+03 ; order= 2
-     script ; Nusselt= 4.748667e+00 ; Ra= 8.000000e+03 ; order= 2
-     script ; Nusselt= 5.166488e+00 ; Ra= 1.000000e+04 ; order= 2
-     script ; Nusselt= 9.141979e+00 ; Ra= 5.000000e+04 ; order= 2
-     script ; Nusselt= 1.130905e+01 ; Ra= 1.000000e+05 ; order= 2
+     script ; Nusselt= 1.000000e+00 ; Ra= 7.500000e+02 ; order= 2
+     script ; Nusselt= 1.000000e+00 ; Ra= 7.700000e+02 ; order= 2
+     script ; Nusselt= 1.000003e+00 ; Ra= 7.750000e+02 ; order= 2
+     script ; Nusselt= 1.000797e+00 ; Ra= 7.800000e+02 ; order= 2
+     script ; Nusselt= 1.014305e+00 ; Ra= 7.850000e+02 ; order= 2
+     script ; Nusselt= 1.053242e+00 ; Ra= 8.000000e+02 ; order= 2
+     script ; Nusselt= 1.479073e+00 ; Ra= 1.000000e+03 ; order= 2
+     script ; Nusselt= 2.596563e+00 ; Ra= 2.000000e+03 ; order= 2
+     script ; Nusselt= 3.612226e+00 ; Ra= 4.000000e+03 ; order= 2
+     script ; Nusselt= 4.748644e+00 ; Ra= 8.000000e+03 ; order= 2
+     script ; Nusselt= 6.148904e+00 ; Ra= 1.600000e+04 ; order= 2
+     script ; Nusselt= 7.869298e+00 ; Ra= 3.200000e+04 ; order= 2
+     script ; Nusselt= 9.892118e+00 ; Ra= 6.400000e+04 ; order= 2
+     script ; Nusselt= 1.211435e+01 ; Ra= 1.280000e+05 ; order= 2
+     script ; Nusselt= 1.440423e+01 ; Ra= 2.560000e+05 ; order= 2
+     script ; Nusselt= 1.670186e+01 ; Ra= 5.120000e+05 ; order= 2
+     script ; Nusselt= 1.904806e+01 ; Ra= 1.024000e+06 ; order= 2

@@ -352,12 +352,15 @@ if int(len(sys.argv) == 7):
    Ra    = float(sys.argv[5])
    nstep = int(sys.argv[6])
 else:
-   nelx = 12
-   nely = 12
+   nelx = 32
+   nely = 32
    visu = 1
    order= 2
-   Ra = 200
-   nstep=500
+   Ra = 1e6
+   nstep=100
+
+top_bc_noslip=False
+bot_bc_noslip=False
 
 nel=nelx*nely
 nnx=order*nelx+1  # number of elements, x direction
@@ -414,15 +417,16 @@ sparse=False
 
 #################################################################
 
-alphaT=1e-2   # thermal expansion coefficient
-hcond=1.     # thermal conductivity
-hcapa=1.     # heat capacity
-rho0=1       # reference density
-T0=0         # reference temperature
-relax=0.2 
-gx=0.
+alphaT=1e-4   # thermal expansion coefficient
+hcond=1.      # thermal conductivity
+hcapa=1.      # heat capacity
+rho0=1        # reference density
+T0=0          # reference temperature
+relax=0.95    # relaxation coefficient (0,1)
+gx=0.         # gravity vector component
 gy=-Ra/alphaT # vertical component of gravity vector
-tol_ss = 1e-6
+tol_ss=1e-6   # tolerance for steady state 
+
 #################################################################
 
 if order==1:
@@ -654,13 +658,17 @@ bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
 for i in range(0,NV):
     if xV[i]<eps:
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+       bc_fix[i*ndofV] = True ; bc_val[i*ndofV]   = 0.
     if xV[i]>(Lx-eps):
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+       bc_fix[i*ndofV] = True ; bc_val[i*ndofV]   = 0.
     if yV[i]<eps:
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if bot_bc_noslip:
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV]   = 0.
     if yV[i]>(Ly-eps):
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if top_bc_noslip:
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV]   = 0.
 
 print("velocity b.c.: %.3f s" % (timing.time() - start))
 
@@ -689,7 +697,7 @@ T = np.zeros(NV,dtype=np.float64)
 T_prev = np.zeros(NV,dtype=np.float64)
 
 for i in range(0,NV):
-    T[i]=1.-yV[i]-0.01*np.cos(np.pi*xV[i])*np.sin(np.pi*yV[i])
+    T[i]=1.-yV[i]-0.01*np.cos(np.pi*xV[i]/Lx)*np.sin(np.pi*yV[i]/Ly)
 #end for
 
 T_prev[:]=T[:]
@@ -750,6 +758,8 @@ dNNNVdr = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 Tvect   = np.zeros(mV,dtype=np.float64)   
 c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+
+Nusselt_prev=1.
 
 for istep in range(0,nstep):
     print("-----------------------------")
@@ -1236,7 +1246,7 @@ for istep in range(0,nstep):
         #end if
     #end for
 
-    Nusselt=np.abs(Nusselt)
+    Nusselt=np.abs(Nusselt)/Lx
 
     Nu_vrms_file.write("%10e %.10f %.10f\n" % (istep,Nusselt,vrms))
     Nu_vrms_file.flush()
@@ -1292,7 +1302,7 @@ for istep in range(0,nstep):
            vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='press' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%10e \n" %q[i])
        vtufile.write("</DataArray>\n")
@@ -1353,17 +1363,16 @@ for istep in range(0,nstep):
     #############################
 
     T_diff=np.sum(abs(T-T_prev))/NV
-    u_diff=np.sum(abs(u-u_prev))/NV
-    v_diff=np.sum(abs(v-v_prev))/NV
+    Nu_diff=np.abs(Nusselt-Nusselt_prev)/Nusselt
 
-    print("T conv, T_diff, <T>: " , T_diff<tol_ss*Tavrg,T_diff,Tavrg)
+    print("T conv, T_diff, Nu_diff: " , T_diff<tol_ss,T_diff,Nu_diff)
     #print("u conv, u_diff, <u>: " , u_diff<tol_ss*vrms,u_diff,vrms)
     #print("v conv, v_diff, <v>: " , v_diff<tol_ss*vrms,v_diff,vrms)
 
-    conv_file.write("%10e %10e %10e\n" % (istep,T_diff/Tavrg,tol_ss))
+    conv_file.write("%10e %10e %10e %10e\n" % (istep,T_diff,Nu_diff,tol_ss))
     conv_file.flush()
 
-    if T_diff<tol_ss*Tavrg: # and u_diff<tol_ss*vrms and v_diff<tol_ss*vrms:
+    if T_diff<tol_ss and Nu_diff<tol_ss:
        print("convergence reached")
        break
 
@@ -1371,6 +1380,8 @@ for istep in range(0,nstep):
     u_prev[:]=u[:]
     v_prev[:]=v[:]
     
+    Nusselt_prev=Nusselt
+
 #end istep
     
 print("     script ; Nusselt= %e ; Ra= %e ; order= %d" %(Nusselt,Ra,order))

@@ -414,7 +414,7 @@ sparse=False
 
 #################################################################
 
-alphaT=1e-2   # thermal expansion coefficient
+alphaT=1e-4   # thermal expansion coefficient
 hcond=1.     # thermal conductivity
 hcapa=1.     # heat capacity
 rho0=1       # reference density
