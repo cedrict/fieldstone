@@ -7,6 +7,9 @@ from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import lil_matrix
 import time as timing
 
+import matplotlib.pyplot as plt
+import matplotlib.tri as mtri
+from matplotlib import ticker, cm
 #------------------------------------------------------------------------------
 
 def NNV(rq,sq):
@@ -52,6 +55,12 @@ def gy(xq,yq,grav):
     return -yq/np.sqrt(xq**2+yq**2)*grav
 
 #------------------------------------------------------------------------------
+
+cm=0.01
+year=365.25*3600.*24.
+
+#------------------------------------------------------------------------------
+
 print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
@@ -79,6 +88,8 @@ print ('Nfem ', Nfem)
 
 pressure_scaling=1e22/6371e3
 
+grav=9.81
+
 #---------------------------------------
 # 6 point integration coeffs and weights 
 
@@ -88,14 +99,37 @@ nb1=0.816847572980459
 nb2=0.091576213509771
 nb3=0.108103018168070
 nb4=0.445948490915965
-nb5=0.109951743655322
-nb6=0.223381589678011
+nb5=0.109951743655322/2.
+nb6=0.223381589678011/2.
 
 qcoords_r=[nb1,nb2,nb2,nb4,nb3,nb4]
 qcoords_s=[nb2,nb1,nb2,nb3,nb4,nb4]
 qweights=[nb5,nb5,nb5,nb6,nb6,nb6]
 
-grav=9.81
+#---------------------------------------------------------------
+# Because of the format of the files containing the connectivity
+# the internal numbering of the nodes for this stone is as follows:
+#
+#  P_2^+           P_-1
+#
+#  02          #  02
+#  ||\\        #  ||\\
+#  || \\       #  || \\
+#  ||  \\      #  ||  \\
+#  04   03     #  ||   \\
+#  || 06 \\    #  ||    \\
+#  ||     \\   #  ||     \\
+#  00==05==01  #  00======01
+#
+
+rVnodes=[0,1,0,0.5,0.0,0.5,1./3.]
+sVnodes=[0,0,1,0.5,0.5,0.0,1./3.]
+
+#################################################################
+# checking that all velocity shape functions are 1 on their node 
+# and  zero elsewhere
+#for i in range(0,mV):
+#   print ('node',i,':',NNV(rVnodes[i],sVnodes[i]))
 
 #################################################################
 # grid point setup
@@ -107,7 +141,7 @@ y=np.empty(nnp,dtype=np.float64)     # y coordinates
 r=np.empty(nnp,dtype=np.float64)     # cylindrical coordinate r
 theta=np.empty(nnp,dtype=np.float64) # cylindrical coordinate theta 
 
-f = open('GCOORD_lowres.txt', 'r')
+f = open('lowres/GCOORD_lowres.txt', 'r')
 counter=0
 for line in f:
     line = line.strip()
@@ -120,8 +154,8 @@ for line in f:
            y[i]=columns[i]
     counter+=1
 
-x[:]*=1000
-y[:]*=1000
+x[:]*=1e6
+y[:]*=1e6
 
 for i in range(0,nnp):
     r[i]=np.sqrt(x[i]**2+y[i]**2)
@@ -132,30 +166,70 @@ print("y (min/max): %.4f %.4f" %(np.min(y),np.max(y)))
 print("r (min/max): %.4f %.4f" %(np.min(r),np.max(r)))
 print("theta (min/max): %.4f %.4f" %(np.min(theta)/np.pi*180,np.max(theta)/np.pi*180))
 
-np.savetxt('gridV.ascii',np.array([x,y]).T,header='# x,y')
+#np.savetxt('gridV.ascii',np.array([x,y]).T,header='# x,y')
 
 print("setup: grid points: %.3f s" % (timing.time() - start))
 
 #################################################################
-# connectivity
-#################################################################
-#
-#  P_2^+           P_-1
-#
-#  02              02
-#  ||\\            ||\\
-#  || \\           || \\
-#  ||  \\          ||  \\
-#  05   04         ||   \\
-#  || 06 \\        ||    \\
-#  ||     \\       ||     \\
-#  00==03==01      00======01
-#
+# define boundary conditions
 #################################################################
 start = timing.time()
-iconV=np.zeros((mV,nel),dtype=np.int32)
 
-f = open('ELEM2NODE_lowres.txt', 'r')
+bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
+boundary_bottom=np.zeros(nnp,dtype=np.bool) 
+boundary_top=np.zeros(nnp,dtype=np.bool)  
+boundary_left=np.zeros(nnp,dtype=np.bool) 
+boundary_right=np.zeros(nnp,dtype=np.bool)
+
+for i in range(0, nnp):
+    if r[i]<4875e3:
+       boundary_bottom[i]=True
+       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       r[i]=4871e3
+       x[i]=r[i]*np.cos(theta[i])
+       y[i]=r[i]*np.sin(theta[i])
+    if r[i]>6370.85e3:
+       boundary_top[i]=True
+       #bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+       #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       #put points on perfect radius
+       #r[i]=6371e3
+       #x[i]=r[i]*np.cos(theta[i])
+       #y[i]=r[i]*np.sin(theta[i])
+    if theta[i]<0.5237:
+       boundary_right[i]=True
+       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       theta[i]=0.52359877559
+       x[i]=r[i]*np.cos(theta[i])
+       y[i]=r[i]*np.sin(theta[i])
+
+    if theta[i]>2.3561:
+       boundary_left[i]=True
+       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       x[i]=-r[i]*np.sqrt(2.)/2.
+       y[i]= r[i]*np.sqrt(2.)/2.
+
+print("x (min/max): %.4f %.4f" %(np.min(x),np.max(x)))
+print("y (min/max): %.4f %.4f" %(np.min(y),np.max(y)))
+print("r (min/max): %.4f %.4f" %(np.min(r),np.max(r)))
+print("theta (min/max): %.4f %.4f" %(np.min(theta)/np.pi*180,np.max(theta)/np.pi*180))
+
+print("define boundary conditions: %.3f s" % (timing.time() - start))
+
+#np.savetxt('gridV2.ascii',np.array([x,y]).T,header='# x,y')
+
+#################################################################
+# connectivity
+#################################################################
+start = timing.time()
+
+iconV=np.zeros((mV,nel),dtype=np.int64)
+
+f = open('lowres/ELEM2NODE_lowres.txt', 'r')
 counter=0
 for line in f:
     line = line.strip()
@@ -166,14 +240,15 @@ for line in f:
     #print (counter)
     counter+=1
 
-#for iel in range (0,nel):
+#for iel in range (0,1):
 #    print ("iel=",iel)
-#    print ("node 1",iconV[0][iel],"at pos.",x[iconV[0][iel]], y[iconV[0][iel]])
-#    print ("node 2",iconV[1][iel],"at pos.",x[iconV[1][iel]], y[iconV[1][iel]])
-#    print ("node 3",iconV[2][iel],"at pos.",x[iconV[2][iel]], y[iconV[2][iel]])
-#    print ("node 4",iconV[3][iel],"at pos.",x[iconV[3][iel]], y[iconV[3][iel]])
-#    print ("node 5",iconV[4][iel],"at pos.",x[iconV[4][iel]], y[iconV[4][iel]])
-#    print ("node 6",iconV[5][iel],"at pos.",x[iconV[5][iel]], y[iconV[5][iel]])
+#    print ("node 0",iconV[0][iel],"at pos.",x[iconV[0][iel]], y[iconV[0][iel]])
+#    print ("node 1",iconV[1][iel],"at pos.",x[iconV[1][iel]], y[iconV[1][iel]])
+#    print ("node 2",iconV[2][iel],"at pos.",x[iconV[2][iel]], y[iconV[2][iel]])
+#    print ("node 3",iconV[3][iel],"at pos.",x[iconV[3][iel]], y[iconV[3][iel]])
+#    print ("node 4",iconV[4][iel],"at pos.",x[iconV[4][iel]], y[iconV[4][iel]])
+#    print ("node 5",iconV[5][iel],"at pos.",x[iconV[5][iel]], y[iconV[5][iel]])
+#    print ("node 6",iconV[6][iel],"at pos.",x[iconV[6][iel]], y[iconV[6][iel]])
 
 #print("iconV (min/max): %d %d" %(np.min(iconV[0,:]),np.max(iconV[0,:])))
 #print("iconV (min/max): %d %d" %(np.min(iconV[1,:]),np.max(iconV[1,:])))
@@ -194,7 +269,7 @@ print("setup: connectivity V: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-iconP=np.zeros((mP,nel),dtype=np.int32)
+iconP=np.zeros((mP,nel),dtype=np.int64)
 xP=np.empty(NfemP,dtype=np.float64)     # x coordinates
 yP=np.empty(NfemP,dtype=np.float64)     # y coordinates
 
@@ -213,7 +288,7 @@ for iel in range(0,nel):
     iconP[2,iel]=counter
     counter+=1
 
-np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
 
 #for iel in range (0,nel):
 #    print ("iel=",iel)
@@ -231,17 +306,19 @@ start = timing.time()
 rho=np.zeros(nel,dtype=np.float64)  # boundary condition, value
 eta=np.zeros(nel,dtype=np.float64)  # boundary condition, value
 
-f = open('Rho_lowres.txt', 'r')
+f = open('lowres/Rho_lowres.txt', 'r')
 counter=0
 for line in f:
     line = line.strip()
     columns = line.split()
-    rho[counter]=float(columns[0])*1e21
+    rho[counter]=float(columns[0])*1e21*1e3
     counter+=1
+
+#rho[:]=2500
 
 print("     -> rho (m,M) %.6e %.6e " %(np.min(rho),np.max(rho)))
 
-f = open('Eta_lowres.txt', 'r')
+f = open('lowres/Eta_lowres.txt', 'r')
 counter=0
 for line in f:
     line = line.strip()
@@ -249,49 +326,13 @@ for line in f:
     eta[counter]=float(columns[0])*1e21
     counter+=1
 
-eta[:]=1e22
+#eta[:]=1e22
 
 print("     -> eta (m,M) %.6e %.6e " %(np.min(eta),np.max(eta)))
 
 print("read in density, viscosity: %.3f s" % (timing.time() - start))
 
-#################################################################
-# define boundary conditions
-#################################################################
-start = timing.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
-bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
-boundary_bottom=np.zeros(nnp,dtype=np.bool) 
-boundary_top=np.zeros(nnp,dtype=np.bool)  
-boundary_left=np.zeros(nnp,dtype=np.bool) 
-boundary_right=np.zeros(nnp,dtype=np.bool)
-
-for i in range(0, nnp):
-    if r[i]<4875:
-       boundary_bottom[i]=True
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
-       #r[i]=4871
-       #x[i]=r[i]*np.cos(theta[i])
-       #y[i]=r[i]*np.sin(theta[i])
-    if r[i]>6370.85:
-       boundary_top[i]=True
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
-       #r[i]=6371
-       #x[i]=r[i]*np.cos(theta[i])
-       #y[i]=r[i]*np.sin(theta[i])
-    if theta[i]<0.5237:
-       boundary_right[i]=True
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
-    if theta[i]>2.3561:
-       boundary_left[i]=True
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
-
-print("define boundary conditions: %.3f s" % (timing.time() - start))
 
 #################################################################
 # compute area of elements
@@ -361,8 +402,8 @@ c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64)
 
 for iel in range(0,nel):
 
-    if iel%250==0:
-       print(iel)
+    if iel%5000==0:
+       print('iel=',iel)
 
     # set arrays to 0 every loop
     f_el =np.zeros((mV*ndofV),dtype=np.float64)
@@ -478,10 +519,11 @@ start = timing.time()
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
 
-A_sparse[Nfem-1,:]=0
-A_sparse[:,Nfem-1]=0
-A_sparse[Nfem-1,Nfem-1]=1e20
-rhs[Nfem-1]=0
+#for i in range(0,Nfem):
+#    A_sparse[Nfem-1,i]=0
+#    A_sparse[i,Nfem-1]=0
+#A_sparse[Nfem-1,Nfem-1]=1e20
+#rhs[Nfem-1]=0
 
 print("assemble blocks: %.3f s" % (timing.time() - start))
 
@@ -490,7 +532,7 @@ print("assemble blocks: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-#sol = np.zeros(Nfem,dtype=np.float64) 
+sol = np.zeros(Nfem,dtype=np.float64) 
 
 sparse_matrix=A_sparse.tocsr()
 sol=sps.linalg.spsolve(sparse_matrix,rhs)
@@ -505,11 +547,11 @@ start = timing.time()
 u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
 p=sol[NfemV:Nfem]*pressure_scaling
 
-print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
-print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+print("     -> u (m,M) %.6e %.6e (cm/yr)" %(np.min(u)/cm*year,np.max(u)/cm*year))
+print("     -> v (m,M) %.6e %.6e (cm/yr)" %(np.min(v)/cm*year,np.max(v)/cm*year))
+print("     -> p (m,M) %.6e %.6e (MPa)" %(np.min(p)/1e6,np.max(p)/1e6))
 
-np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+#np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))
 
@@ -518,44 +560,63 @@ print("split vel into u,v: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-xc = np.zeros(nel,dtype=np.float64)  
-yc = np.zeros(nel,dtype=np.float64)  
-exx = np.zeros(nel,dtype=np.float64)  
-eyy = np.zeros(nel,dtype=np.float64)  
-exy = np.zeros(nel,dtype=np.float64)  
-e   = np.zeros(nel,dtype=np.float64)  
+exx_n = np.zeros(nnp,dtype=np.float64)  
+eyy_n = np.zeros(nnp,dtype=np.float64)  
+exy_n = np.zeros(nnp,dtype=np.float64)  
+count = np.zeros(nnp,dtype=np.int16)  
+NNNV = np.zeros(mV,dtype=np.float64) 
+dNNNVdr = np.zeros(mV,dtype=np.float64) 
+dNNNVds = np.zeros(mV,dtype=np.float64) 
+dNNNVdx = np.zeros(mV,dtype=np.float64) 
+dNNNVdy = np.zeros(mV,dtype=np.float64) 
+NNNP = np.zeros(mP,dtype=np.float64) 
+q=np.zeros(nnp,dtype=np.float64)
+
+#p=xP
+#u[:]=x[:]
+#v[:]=y[:]
 
 for iel in range(0,nel):
-    rq = 0.0
-    sq = 0.0
-    weightq = 2.0 * 2.0
-    NV[0:mV]=NNV(rq,sq)
-    dNVdr[0:mV]=dNNVdr(rq,sq)
-    dNVds[0:mV]=dNNVds(rq,sq)
-    jcb=np.zeros((2,2),dtype=np.float64)
-    for k in range(0,mV):
-        jcb[0,0]+=dNVdr[k]*x[iconV[k,iel]]
-        jcb[0,1]+=dNVdr[k]*y[iconV[k,iel]]
-        jcb[1,0]+=dNVds[k]*x[iconV[k,iel]]
-        jcb[1,1]+=dNVds[k]*y[iconV[k,iel]]
-    jcob=np.linalg.det(jcb)
-    jcbi=np.linalg.inv(jcb)
-    for k in range(0,mV):
-        dNVdx[k]=jcbi[0,0]*dNVdr[k]+jcbi[0,1]*dNVds[k]
-        dNVdy[k]=jcbi[1,0]*dNVdr[k]+jcbi[1,1]*dNVds[k]
-    for k in range(0,mV):
-        xc[iel] += NV[k]*x[iconV[k,iel]]
-        yc[iel] += NV[k]*y[iconV[k,iel]]
-        exx[iel] += dNVdx[k]*u[iconV[k,iel]]
-        eyy[iel] += dNVdy[k]*v[iconV[k,iel]]
-        exy[iel] += 0.5*dNVdy[k]*u[iconV[k,iel]]+ 0.5*dNVdx[k]*v[iconV[k,iel]]
-    e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
+    for i in range(0,mV):
+        rq=rVnodes[i]
+        sq=sVnodes[i]
+        NNNV[0:mV]=NNV(rq,sq)
+        dNNNVdr[0:mV]=dNNVdr(rq,sq)
+        dNNNVds[0:mV]=dNNVds(rq,sq)
+        NNNP[0:mP]=NNP(rq,sq)
+        jcb=np.zeros((2,2),dtype=np.float64)
+        for k in range(0,mV):
+            jcb[0,0]+=dNNNVdr[k]*x[iconV[k,iel]]
+            jcb[0,1]+=dNNNVdr[k]*y[iconV[k,iel]]
+            jcb[1,0]+=dNNNVds[k]*x[iconV[k,iel]]
+            jcb[1,1]+=dNNNVds[k]*y[iconV[k,iel]]
+        #end for
+        jcbi=np.linalg.inv(jcb)
+        for k in range(0,mV):
+            dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+            dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+        #end for
+        inode=iconV[i,iel]
+        q[inode]+=np.dot(p[iconP[0:mP,iel]],NNNP[0:mP])
+        exx_n[inode]+=np.dot(dNNNVdx[0:mV],u[iconV[0:mV,iel]])
+        eyy_n[inode]+=np.dot(dNNNVdy[0:mV],v[iconV[0:mV,iel]])
+        exy_n[inode]+=0.5*np.dot(dNNNVdx[0:mV],v[iconV[0:mV,iel]])+\
+                      0.5*np.dot(dNNNVdy[0:mV],u[iconV[0:mV,iel]])
+        count[inode]+=1
+    #end for
+#end for
+ 
+exx_n/=count
+eyy_n/=count
+exy_n/=count
+q/=count
 
-print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+print("     -> exx_n (m,M) %.6e %.6e " %(np.min(exx_n),np.max(exx_n)))
+print("     -> eyy_n (m,M) %.6e %.6e " %(np.min(eyy_n),np.max(eyy_n)))
+print("     -> exy_n (m,M) %.6e %.6e " %(np.min(exy_n),np.max(exy_n)))
+print("     -> q (m,M) %.6e %.6e (MPa)" %(np.min(q)/1e6,np.max(q)/1e6))
 
-np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+#np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
 print("compute press & sr: %.3f s" % (timing.time() - start))
 
@@ -574,17 +635,16 @@ print("compute press & sr: %.3f s" % (timing.time() - start))
 #
 #####################################################################
 
-q=np.zeros(nnp,dtype=np.float64)
 
-for iel in range(0,nel):
-    q[iconV[0,iel]]=p[iconP[0,iel]]
-    q[iconV[1,iel]]=p[iconP[1,iel]]
-    q[iconV[2,iel]]=p[iconP[2,iel]]
-    q[iconV[3,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
-    q[iconV[4,iel]]=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
-    q[iconV[5,iel]]=(p[iconP[0,iel]]+p[iconP[2,iel]])*0.5
+#for iel in range(0,nel):
+#    q[iconV[0,iel]]=p[iconP[0,iel]]
+#    q[iconV[1,iel]]=p[iconP[1,iel]]
+#    q[iconV[2,iel]]=p[iconP[2,iel]]
+#    q[iconV[3,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
+#    q[iconV[4,iel]]=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
+#    q[iconV[5,iel]]=(p[iconP[0,iel]]+p[iconP[2,iel]])*0.5
 
-np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
+#np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
 
 #####################################################################
 # plot of solution
@@ -622,26 +682,13 @@ if True:
         vtufile.write("%10e\n" % (eta[iel]))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (exx[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (eyy[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (exy[iel]))
-    vtufile.write("</DataArray>\n")
-
     vtufile.write("</CellData>\n")
     #####
     vtufile.write("<PointData Scalars='scalars'>\n")
     #--
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (cm/yr)' Format='ascii'> \n")
     for i in range(0,nnp):
-        vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+        vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='gravity' Format='ascii'> \n")
@@ -649,11 +696,25 @@ if True:
         vtufile.write("%10e %10e %10e \n" %(gx(x[i],y[i],grav),gy(x[i],y[i],grav),0.))
     vtufile.write("</DataArray>\n")
 
-
     #--
     vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
     for i in range(0,nnp):
         vtufile.write("%10e \n" %q[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+    for i in range(0,nnp):
+        vtufile.write("%10e \n" %exx_n[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
+    for i in range(0,nnp):
+        vtufile.write("%10e \n" %eyy_n[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+    for i in range(0,nnp):
+        vtufile.write("%10e \n" %exy_n[i])
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='r' Format='ascii'> \n")
@@ -710,6 +771,55 @@ if True:
     vtufile.write("</VTKFile>\n")
     vtufile.close()
 
+##############################################################
+# naive matplotlib-based visualisation
+##############################################################
+
+triangles = np.zeros( (nel,3) ) 
+for iel in range(0,nel):
+    for i in range(0,mP):
+        triangles[iel,i]=iconV[i,iel]
+
+fig = plt.figure(figsize=(10,3))
+#fig = plt.figure(figsize=(10,10))
+# Set the frame box 'aspect' - defined from axis scaling as ratio y-unit/x-unit.
+frame_h_over_w = 1.0 
+cb_shrink = 0.40
+cb_pad    = 0.04
+cb_aspect = 10
+
+triang = mtri.Triangulation(x, y, triangles)
+frame = fig.add_subplot(131,adjustable='box',aspect=frame_h_over_w)  # nrows,ncols,index
+#frame = fig.add_subplot(131)  # nrows,ncols,index
+frame.contour=plt.tricontourf(triang, theta, cmap='rainbow')
+#frame.triplot(triang, 'ko-')
+frame.set_title('theta')
+frame.set_ylabel('y coordinate')
+cbar = plt.colorbar(frame.contour,ax=frame,shrink=cb_shrink,pad=cb_pad,aspect=cb_aspect)
+
+triang = mtri.Triangulation(x, y, triangles)
+frame = fig.add_subplot(132,adjustable='box',aspect=frame_h_over_w)  # nrows,ncols,index
+# viscosity with reversed color map
+frame.contour=plt.tricontourf(triang, r, locator=ticker.LogLocator(),cmap='rainbow_r')
+#frame.contour=plt.tricontourf(triang, r, locator=ticker.LogLocator())
+#frame.triplot(triang, 'ko-')
+frame.set_title('radius')
+frame.set_yticks([]) # no y-ticks
+frame.set_xlabel('x coordinate')
+cbar = plt.colorbar(frame.contour,ax=frame,shrink=cb_shrink,pad=cb_pad,aspect=cb_aspect)
+
+triang = mtri.Triangulation(x, y, triangles)
+frame = fig.add_subplot(133,adjustable='box',aspect=frame_h_over_w)  # nrows,ncols,index
+#frame = fig.add_subplot(133)  # nrows,ncols,index
+frame.contour=plt.tricontourf(triang, q)
+#frame.triplot(triang, 'ko-')
+frame.set_title('pressure')
+frame.set_yticks([]) # no y-ticks
+cbar = plt.colorbar(frame.contour,ax=frame,shrink=cb_shrink,pad=cb_pad,aspect=cb_aspect)
+
+plt.tight_layout()
+plt.savefig('plot.png')
+plt.show()
 
 
 print("-----------------------------")
