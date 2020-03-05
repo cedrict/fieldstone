@@ -242,33 +242,42 @@ Status &  &   \\
 \hline
 feature & 41 & 42 & 43 & 44 & 45 & 46 & 47 & 48 \\
 \hline
-geometry &  & & \\ 
-element type & $Q_2\times Q_1$ \\ 
+geometry     &                 & & & Annulus chunk    & & Box              & \\ 
+element type & $Q_2\times Q_1$ & & & Crouzeix-Raviart & & Crouzeix-Raviart & \\ 
 mixed or penalty  &  &  \\ 
 matrix storage &  &  \\ 
 outer solver (N.A., direct, SchurComp) &  & \\ 
 \hline
-3 dimensions 			& . &  \\ 
-compressible (Y/N)  		& . &  \\ 
-analytical benchmark (Y/N) 	& . &  \\ 
-numerical benchmark (Y/N) 	& Y &  \\ 
-error convergence (Y/N) 	& . &  \\ 
-thermo-mech. coupled (Y/N) 	& . &  \\ 
-time-stepping (Y/N) 		& Y &  \\ 
-external mesher (Y/N) 		& . &  \\ 
-non-linear (Y/N) 		& . &  \\ 
-plasticity (Y/N) 		& . &  \\ 
-Buoyancy driven flow 		& Y &  \\ 
-Vrms  				& Y &  \\ 
-Nusselt nb  			& . &  \\ 
-Pressure norm. 			& . &  \\ 
-Pressure smoothing 		& . &  \\ 
-Computing residual(s) 		& . &  \\ 
-Paraview output 		& Y &  \\ 
+3 dimensions 			& . &  &\\ 
+compressible (Y/N)  		& . &  &\\ 
+analytical benchmark (Y/N) 	& . &  &\\ 
+numerical benchmark (Y/N) 	& Y &  &\\ 
+error convergence (Y/N) 	& . &  &\\ 
+thermo-mech. coupled (Y/N) 	& . &  &\\ 
+time-stepping (Y/N) 		& Y &  &\\ 
+external mesher (Y/N) 		& . &  &\\ 
+non-linear (Y/N) 		& . &  &\\ 
+plasticity (Y/N) 		& . &  &\\ 
+Buoyancy driven flow 		& Y &  &\\ 
+Vrms  				& Y &  &\\ 
+Nusselt nb  			& . &  &\\ 
+Pressure norm. 			& . &  &\\ 
+Pressure smoothing 		& . &  &\\ 
+Computing residual(s) 		& . &  &\\ 
+Paraview output 		& Y &  &\\ 
 \hline
-Add. feature & & & & &\\
+Add. feature & & & & & & & \\
 \hline
-Description & Rayleigh-Taylor inst \cite{vaks97} & \\ 
+Description & 
+Rayleigh-Taylor inst \cite{vaks97} & 
+XX & 
+Advection + SUPG & 
+flat slab &
+corner flow &
+Crouzeix-Raviart element 2D &
+Mini element 2D &
+Q1P0,Q2Q1,Q3Q2,Q4Q3
+\\ 
 \hline
 Status & \OK &   \\
 \hline
