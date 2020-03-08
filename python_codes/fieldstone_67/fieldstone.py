@@ -33,7 +33,6 @@ def strpt_top(x,L,stretch_beta1,stretch_beta2):
        val=(1-stretch_beta2)/(1-stretch_beta1)*(x-stretch_beta1*L)+stretch_beta2*L
     return val
 
-
 #------------------------------------------------------------------------------
 
 def NNV(rq,sq):
@@ -96,8 +95,8 @@ ndofP=1  # number of pressure degrees of freedom
 
 Lx=3000e3  # horizontal extent of the domain 
 Ly=670e3      # vertical extent of the domain 
-nelx=120
-nely=30
+nelx=150
+nely=int(nelx*Ly/Lx)
 grav=10
 
 nnx=2*nelx+1  # number of elements, x direction
@@ -116,22 +115,21 @@ hy=Ly/nely
 pnormalise=True
 eta_ref=1e21      # scaling of G blocks
 
-#material 1: eta=1e19, rho=2350
-#material 2: eta=1e19, rho=2375
-#material 3: eta=1e19, rho=2375
-#material 4: eta=1e19, rho=2375
-#material 5: eta=1e19, rho=2375
-#material 6: eta=1e19, rho=2375
-#material 7: eta=1e19, rho=2375
+#material 1: OBSC   eta=1e19, rho=3300
+#material 2: SHB    eta=1e23, rho=3250
+#material 3: 40Myr  eta=1e22, rho=3240
+#material 4: OBSC   eta=1e19, rho=3300
+#material 5: SHB    eta=1e23, rho=3250
+#material 6: 70Myr  eta=1e22, rho=3250
+#material 7: mantle eta=1e20, rho=3200
 nmat=7
-rho_mat = np.array([2150,2600,2350,2500,2240,2560,2800],dtype=np.float64) 
-eta_mat = np.array([1e19,1.e19,1e19,1e19,1e19,1e19,1e19],dtype=np.float64) 
-nmarker_per_dim=7
+rho_mat = np.array([3300,3250,3240,3300,3250,3250,3200],dtype=np.float64) 
+eta_mat = np.array([1e19,1.e23,1e22,1e19,1e23,1e22,1e20],dtype=np.float64) 
+nmarker_per_dim=10
 
-avrg=3
 nstep=1
-CFL_nb=0.1
-rk=3
+CFL_nb=0.
+rk=1
 
 mass0=4
 
@@ -139,8 +137,6 @@ nmarker_per_element=nmarker_per_dim**2
 nmarker=nmarker_per_element*nel
 
 every=10
-
-debug=False
 
 #################################################################
 #################################################################
@@ -156,8 +152,11 @@ print("------------------------------")
 vrms_file=open('vrms.ascii',"w")
 mass_file=open('mass.ascii',"w")
 nmarker_file=open('nmarker_per_element.ascii',"w")
-marker3333_file=open('marker3333.ascii',"w")
 dt_file=open('dt.ascii',"w")
+mat4_file=open('mat4.ascii',"w")
+mat5_file=open('mat5.ascii',"w")
+mat6_file=open('mat6.ascii',"w")
+points_file=open('points.ascii',"w")
 
 #################################################################
 # grid point setup
@@ -184,19 +183,18 @@ print("grid setup: %.3f s" % (time.time() - start))
 # mesh stretching
 #################################################################
 
-
 stretch_beta1=0.25
 stretch_beta2=0.375
 
 for i in range(0,NV):
     xi=x[i]
-    x[i]=strpt_center(xi,Lx,stretch_beta1,stretch_beta2)
+    #x[i]=strpt_center(xi,Lx,stretch_beta1,stretch_beta2)
 
 for i in range(0,NV):
     yi=y[i]
-    y[i]=strpt_top(yi,Ly,stretch_beta1,stretch_beta2)
+    #y[i]=strpt_top(yi,Ly,stretch_beta1,stretch_beta2)
 
-np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
+#np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
 
 #################################################################
 # connectivity
@@ -302,7 +300,6 @@ for iel in range(0,nel):
 swarm_x0[0:nmarker]=swarm_x[0:nmarker]
 swarm_y0[0:nmarker]=swarm_y[0:nmarker]
 
-marker3333_file.write("%d %e %e\n" %(0,swarm_x[3333],swarm_y[3333]))
 
 print("     -> swarm_x (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))
 print("     -> swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
@@ -341,44 +338,77 @@ for im in range (0,nmarker):
     #end if
 #end for 
 
-#round part
+#round part 
 xc=Lx/2
 yc=Ly-200e3
 for im in range (0,nmarker):
     if swarm_x[im]<Lx/2 and swarm_y[im]>yc:
        if (swarm_x[im]-xc)**2+(swarm_y[im]-yc)**2<200e3**2 and\
-          (swarm_x[im]-xc)**2+(swarm_y[im]-yc)**2>192e3**2:
+          (swarm_x[im]-xc)**2+(swarm_y[im]-yc)**2>192e3**2 and\
+          swarm_y[im]>-(swarm_x[im]-xc)+yc:
           swarm_mat[im]=4
        if (swarm_x[im]-xc)**2+(swarm_y[im]-yc)**2<192e3**2 and\
-          (swarm_x[im]-xc)**2+(swarm_y[im]-yc)**2>160e3**2:
+          (swarm_x[im]-xc)**2+(swarm_y[im]-yc)**2>160e3**2 and\
+          swarm_y[im]>-(swarm_x[im]-xc)+yc:
           swarm_mat[im]=5
        if (swarm_x[im]-xc)**2+(swarm_y[im]-yc)**2<160e3**2 and\
-          (swarm_x[im]-xc)**2+(swarm_y[im]-yc)**2>90e3**2:
+          (swarm_x[im]-xc)**2+(swarm_y[im]-yc)**2>90e3**2 and\
+          swarm_y[im]>-(swarm_x[im]-xc)+yc:
           swarm_mat[im]=6
+       #if swarm_mat[im]==4:
+       #   mat4_file.write("%e %e\n" %(swarm_x[im],swarm_y[im]))
+       #if swarm_mat[im]==5:
+       #   mat5_file.write("%e %e\n" %(swarm_x[im],swarm_y[im]))
+       #if swarm_mat[im]==6:
+       #   mat6_file.write("%e %e\n" %(swarm_x[im],swarm_y[im]))
     #end if
 #end for
 
 #subducted slab
 
-xH=1358.6e3   ; yH=Ly-58.5e3
-xI=1364.3e3   ; yI=Ly-64.1e3
-xJ=1386.9e3   ; yJ=Ly-86.8e3
-xK=1436.25e3  ; yK=Ly-136.22e3
-xL=1266e3     ; yL=Ly-150e3 
-xM=1271.7e3   ; yM=Ly-155.6e3 
-xN=1294.3e3   ; yN=Ly-178.3e3 
-xO=1344.93e3  ; yO=Ly-228.46e3 
-xQ=1500e3     ; yQ=Ly-200e3
+xH=Lx/2-np.sqrt(2.)/2.*200e3 ; yH=Ly-200e3+np.sqrt(2.)/2.*200e3
+xI=Lx/2-np.sqrt(2.)/2.*192e3 ; yI=Ly-200e3+np.sqrt(2.)/2.*192e3
+xJ=Lx/2-np.sqrt(2.)/2.*160e3 ; yJ=Ly-200e3+np.sqrt(2.)/2.*160e3
+xK=Lx/2-np.sqrt(2.)/2.*90e3  ; yK=Ly-200e3+np.sqrt(2.)/2.*90e3
 
-print (np.sqrt((xH-xL)**2+(yH-yL)**2))
-print (np.sqrt((xI-xM)**2+(yI-yM)**2))
-print (np.sqrt((xJ-xN)**2+(yJ-yN)**2))
-print (np.sqrt((xK-xO)**2+(yK-yO)**2))
+xL=xH-130e3*np.sqrt(2.)/2. ; yL=yH-130e3*np.sqrt(2.)/2.
+xM=xI-130e3*np.sqrt(2.)/2. ; yM=yI-130e3*np.sqrt(2.)/2.
+xN=xJ-130e3*np.sqrt(2.)/2. ; yN=yJ-130e3*np.sqrt(2.)/2.
+xO=xK-130e3*np.sqrt(2.)/2. ; yO=yK-130e3*np.sqrt(2.)/2.
 
-angle=np.arccos( ((xA-xQ)*(xH-xQ)+(yA-yQ)*(yH-yQ))/200e3/200e3)
+points_file.write("%e %e\n" %(xH,yH))
+points_file.write("%e %e\n" %(xI,yI))
+points_file.write("%e %e\n" %(xJ,yJ))
+points_file.write("%e %e\n" %(xK,yK))
+points_file.write("%e %e\n" %(xL,yL))
+points_file.write("%e %e\n" %(xM,yM))
+points_file.write("%e %e\n" %(xN,yN))
+points_file.write("%e %e\n" %(xO,yO))
 
-print (angle/np.pi*180)
-
+for im in range(0,nmarker):
+    xi=swarm_x[im]
+    yi=swarm_y[im]
+    if yi< (xi-xL)+yL and yi> (xi-xM)+yM and yi<= -(xi-xH)+yH and yi>= -(xi-xL)+yL:
+       swarm_mat[im]=4
+    if yi< (xi-xM)+yM and yi> (xi-xN)+yN and yi<= -(xi-xH)+yH and yi>= -(xi-xL)+yL:
+       swarm_mat[im]=5
+    if yi< (xi-xN)+yN and yi> (xi-xO)+yO and yi<= -(xi-xH)+yH and yi>= -(xi-xL)+yL:
+       swarm_mat[im]=6
+    #if swarm_mat[im]==4:
+    #   mat4_file.write("%e %e\n" %(swarm_x[im],swarm_y[im]))
+    #if swarm_mat[im]==5:
+    #   mat5_file.write("%e %e\n" %(swarm_x[im],swarm_y[im]))
+    #if swarm_mat[im]==6:
+    #   mat6_file.write("%e %e\n" %(swarm_x[im],swarm_y[im]))
+#end for
+    
+#for im in range(0,nmarker):
+#    if swarm_mat[im]==4:
+#       mat4_file.write("%e %e\n" %(swarm_x[im],swarm_y[im]))
+#    if swarm_mat[im]==5:
+#       mat5_file.write("%e %e\n" %(swarm_x[im],swarm_y[im]))
+#    if swarm_mat[im]==6:
+#       mat6_file.write("%e %e\n" %(swarm_x[im],swarm_y[im]))
 
 print("marker layout: %.3f s" % (time.time() - start))
 
@@ -441,7 +471,6 @@ for istep in range(0,nstep):
     for im in range(0,nmarker):
 
         imat=swarm_mat[im]-1
-
         iel=swarm_iel[im]
 
         #ielx=int(swarm_x[im]/Lx*nelx)
@@ -500,6 +529,9 @@ for istep in range(0,nstep):
     print("markers onto grid: %.3f s" % (time.time() - start))
 
     #################################################################
+    # compute rho and eta on P nodes
+    #################################################################
+    start = time.time()
 
     rho_nodal=np.zeros(NP,dtype=np.float64) 
     eta_nodal=np.zeros(NP,dtype=np.float64) 
@@ -509,6 +541,10 @@ for istep in range(0,nstep):
             rho_nodal[i]+=mat_nodal[imat,i]*rho_mat[imat]
             eta_nodal[i]+=mat_nodal[imat,i]*eta_mat[imat]
 
+    print("     -> rho_nodal     (m,M) %.5e %.5e " %(np.min(rho_nodal),np.max(rho_nodal)))
+    print("     -> eta_nodal     (m,M) %.5e %.5e " %(np.min(eta_nodal),np.max(eta_nodal)))
+
+    print("compute rho,eta on P nodes: %.3f s" % (time.time() - start))
 
     #################################################################
     # build FE matrix
@@ -662,8 +698,8 @@ for istep in range(0,nstep):
     print("     -> f (m,M) %.5e %.5e " %(np.min(f_rhs),np.max(f_rhs)))
     print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
 
-    #np.savetxt('rhoq.ascii',np.array([xq,yq,rhoq]).T,header='# x,y,rho')
-    #np.savetxt('etaq.ascii',np.array([xq,yq,etaq]).T,header='# x,y,eta')
+    np.savetxt('rhoq.ascii',np.array([xq,yq,rhoq]).T,header='# x,y,rho')
+    np.savetxt('etaq.ascii',np.array([xq,yq,etaq]).T,header='# x,y,eta')
 
     print("build FE matrix: %.3f s" % (time.time() - start))
 
@@ -880,9 +916,6 @@ for istep in range(0,nstep):
 
     #end if
 
-    marker3333_file.write("%d %e %e\n" %(istep,swarm_x[3333],swarm_y[3333]))
-    marker3333_file.flush()
-
     print("advect markers: %.3f s" % (time.time() - start))
 
     ######################################################################
@@ -941,6 +974,7 @@ for istep in range(0,nstep):
 
     q=np.zeros(NV,dtype=np.float64)
     qq=np.zeros(NV,dtype=np.float64)
+    qqq=np.zeros(NV,dtype=np.float64)
 
     for iel in range(0,nel):
         q[iconV[0,iel]]=p[iconP[0,iel]]
@@ -962,10 +996,21 @@ for istep in range(0,nstep):
         qq[iconV[7,iel]]=(rho_nodal[iconP[3,iel]]+rho_nodal[iconP[0,iel]])*0.5
         qq[iconV[8,iel]]=(rho_nodal[iconP[0,iel]]+rho_nodal[iconP[1,iel]]+\
                           rho_nodal[iconP[2,iel]]+rho_nodal[iconP[3,iel]])*0.25
+        qqq[iconV[0,iel]]=eta_nodal[iconP[0,iel]]
+        qqq[iconV[1,iel]]=eta_nodal[iconP[1,iel]]
+        qqq[iconV[2,iel]]=eta_nodal[iconP[2,iel]]
+        qqq[iconV[3,iel]]=eta_nodal[iconP[3,iel]]
+        qqq[iconV[4,iel]]=(eta_nodal[iconP[0,iel]]+eta_nodal[iconP[1,iel]])*0.5
+        qqq[iconV[5,iel]]=(eta_nodal[iconP[1,iel]]+eta_nodal[iconP[2,iel]])*0.5
+        qqq[iconV[6,iel]]=(eta_nodal[iconP[2,iel]]+eta_nodal[iconP[3,iel]])*0.5
+        qqq[iconV[7,iel]]=(eta_nodal[iconP[3,iel]]+eta_nodal[iconP[0,iel]])*0.5
+        qqq[iconV[8,iel]]=(eta_nodal[iconP[0,iel]]+eta_nodal[iconP[1,iel]]+\
+                           eta_nodal[iconP[2,iel]]+eta_nodal[iconP[3,iel]])*0.25
     #end for
 
     print("     -> press nodal (m,M) %.5e %.5e " %(np.min(q),np.max(q)))
     print("     -> rho nodal (m,M) %.5e %.5e " %(np.min(qq),np.max(qq)))
+    print("     -> eta nodal (m,M) %.5e %.5e " %(np.min(qqq),np.max(qqq)))
 
     #np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
 
@@ -1040,6 +1085,11 @@ for istep in range(0,nstep):
        vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%10e \n" %qq[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e \n" %qqq[i])
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</PointData>\n")
