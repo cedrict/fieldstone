@@ -1,0 +1,25 @@
+set terminal pdf enhanced font "Times,11pt"
+set grid
+set key left
+
+Lx=1.e3
+
+set output 'stretch_towards_center.pdf'
+set size square
+
+beta1=0.25
+beta2=0.375
+set xtics 100
+
+plot[0:1.e3][]\
+ (x<beta1*Lx  ?  beta2/beta1*x : ( x<(1-beta1)*Lx) ?  (1.-2.*beta2)/(1.-2.*beta1)*(x-beta1*Lx)+beta2*Lx  : beta2/beta1*(x-(1.-beta1)*Lx)+(1.-beta2)*Lx  )  t '{/Symbol b}_1=0.25, {/Symbol b}_2=0.375'
+
+#(x<L/4. ?  x*3./2. : ( x<0.75*L ?  x/2.+L/4.  : 3./2.*x-0.5*L )) 
+
+
+beta1=0.25
+beta2=0.5
+set output 'stretch_towards_top.pdf'
+plot[0:1.e3][]\
+ (x<beta1*Lx  ?  beta2/beta1*x : (1-beta2)/(1-beta1)*(x-beta1*Lx)+beta2*Lx )  t '{/Symbol b}_1=0.25, {/Symbol b}_2=0.5'
+

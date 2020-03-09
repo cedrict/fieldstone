@@ -360,6 +360,92 @@ From left to right: \cite{vaks15}; \cite{depl96}; \cite{habo04}; \cite{kott05}; 
 \Literature: \cite{gari09,habo04,anbo09,nifo13,nifo13b}
 
 %.......................................
+\subsubsection{Stretching the mesh}
+
+In some cases the topology of the mesh can be regular but one can for instance stretch 
+the mesh such that (for instance) the vertical resolution is higher at the top than at the bottom, 
+or higher in the middle than on the sides.
+
+The idea behind the transformation is a piecewise-linear function which maps [0,L] to [0,L] where 
+$L$ is the length of the domain in the $x$-direction. For instance, this transformation can take the following form:
+
+\begin{center}
+\includegraphics[width=8cm]{images/meshes/stretching/stretch_towards_center}\\
+{\captionfont Parameters $\beta_1$ and $\beta_2$ control the shape of the lines.\\ 
+The kinks in the line occur at $\beta_1 L$ and $(1-\beta_1)L$ (see code here under).}
+\end{center}
+
+The (minimal) code to transform the mesh is as follows:
+\begin{lstlisting}
+def stretch_towards_center(x,L,beta1,beta2):
+    if x<beta1*L: 
+       val = beta2/beta1*x
+    elif x<(1.-beta1)*L: 
+       val = (1-2*beta2)/(1-2*beta1)*(x-beta1*L)+beta2*L
+    else:
+       val=beta2/beta1*(x-(1-beta1)*L)+(1-beta2)*L
+    return val
+
+[...]
+
+beta1=0.25
+beta2=0.375
+
+for i in range(0,NV):
+    x[i]=stretch_towards_center(x[i],Lx,beta1,beta2)
+\end{lstlisting}
+
+The following meshes count 64x16 elements. The top one is a regular mesh, with square elements, 
+while the second one has been stretched by means of the transformation above:
+
+\begin{center}
+\includegraphics[width=8cm]{images/meshes/stretching/stretch_x}
+\end{center}
+
+Concerning the stretching towards the top of the model domain, the transformation line is as follows:
+
+\begin{center}
+\includegraphics[width=8cm]{images/meshes/stretching/stretch_towards_top}\\
+{\captionfont Parameters $\beta_1$ and $\beta_2$ control the shape of the lines. The kinks in the 
+line occur at $\beta_1 L$ and $(1-\beta_1)L$.\\ The slope of the left line is $\beta_2/\beta_1 x$.}
+\end{center}
+
+The (minimal) code to transform the mesh is as follows:
+\begin{lstlisting}
+def stretch_towards_top(x,L,beta1,beta2):
+    if x<beta1*L: 
+       val=beta2/beta1*x
+    else:
+       val=(1-beta2)/(1-beta1)*(x-beta1*L)+beta2*L
+    return val
+
+[...]
+
+beta1=0.25
+beta2=0.5
+for i in range(0,NV):
+    y[i]=stretch_towards_top(y[i],Ly,beta1,beta2)
+\end{lstlisting}
+
+
+The following meshes count 64x16 elements. The top one is a regular mesh, with square elements, 
+while the second one has been stretched by means of the transformation above.
+\begin{center}
+\includegraphics[width=8cm]{images/meshes/stretching/stretch_y}
+\end{center}
+
+Finally both transformations can be applied to the same mesh:
+\begin{center}
+\includegraphics[width=8cm]{images/meshes/stretching/stretch_xy}
+\end{center}
+
+This approach is used in Stone 67 (\ref{f67}).
+
+
+
+
+
+%.......................................
 \subsubsection{Meshes in an annulus}
 
 

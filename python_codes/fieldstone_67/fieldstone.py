@@ -4,7 +4,7 @@ import sys as sys
 import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix, lil_matrix, hstack, vstack
+from scipy.sparse import csr_matrix, lil_matrix
 import time as time
 
 #------------------------------------------------------------------------------
@@ -17,20 +17,20 @@ def gy(x,y):
 
 #------------------------------------------------------------------------------
 
-def strpt_center(x,L,stretch_beta1,stretch_beta2):
-    if x<stretch_beta1*L: 
-       val = stretch_beta2/stretch_beta1*x
-    elif x<(1.-stretch_beta1)*L: 
-       val = (1-2*stretch_beta2)/(1-2*stretch_beta1)*(x-stretch_beta1*L)+stretch_beta2*L
+def stretch_towards_center(x,L,beta1,beta2):
+    if x<beta1*L: 
+       val = beta2/beta1*x
+    elif x<(1.-beta1)*L: 
+       val = (1-2*beta2)/(1-2*beta1)*(x-beta1*L)+beta2*L
     else:
-       val=stretch_beta2/stretch_beta1*(x-(1-stretch_beta1)*L)+(1-stretch_beta2)*L
+       val=beta2/beta1*(x-(1-beta1)*L)+(1-beta2)*L
     return val
 
-def strpt_top(x,L,stretch_beta1,stretch_beta2):
-    if x<stretch_beta1*L: 
-       val=stretch_beta2/stretch_beta1*x
+def stretch_towards_top(x,L,beta1,beta2):
+    if x<beta1*L: 
+       val=beta2/beta1*x
     else:
-       val=(1-stretch_beta2)/(1-stretch_beta1)*(x-stretch_beta1*L)+stretch_beta2*L
+       val=(1-beta2)/(1-beta1)*(x-beta1*L)+beta2*L
     return val
 
 #------------------------------------------------------------------------------
@@ -81,6 +81,7 @@ def NNP(rq,sq):
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
+cm=0.01
 year=3600.*24.*365.
 eps=1.e-10
 
@@ -93,11 +94,11 @@ mP=4     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-Lx=3000e3  # horizontal extent of the domain 
+Lx=2680e3  # horizontal extent of the domain 
 Ly=670e3      # vertical extent of the domain 
-nelx=150
+nelx=64
 nely=int(nelx*Ly/Lx)
-grav=10
+grav=9.81
 
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
@@ -112,7 +113,6 @@ qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
 hx=Lx/nelx
 hy=Ly/nely
-pnormalise=True
 eta_ref=1e21      # scaling of G blocks
 
 #material 1: OBSC   eta=1e19, rho=3300
@@ -123,13 +123,14 @@ eta_ref=1e21      # scaling of G blocks
 #material 6: 70Myr  eta=1e22, rho=3250
 #material 7: mantle eta=1e20, rho=3200
 nmat=7
-rho_mat = np.array([3300,3250,3240,3300,3250,3250,3200],dtype=np.float64) 
+rho_mat = np.array([3300,3250,3240,3300,3250,3250,3200],dtype=np.float64)   ; rho_mat-=np.min(rho_mat)
 eta_mat = np.array([1e19,1.e23,1e22,1e19,1e23,1e22,1e20],dtype=np.float64) 
-nmarker_per_dim=10
+nmarker_per_dim=5
 
 nstep=1
 CFL_nb=0.
 rk=1
+avrg=2
 
 mass0=4
 
@@ -138,9 +139,13 @@ nmarker=nmarker_per_element*nel
 
 every=10
 
+sparse=True
+
 #################################################################
 #################################################################
 
+print("Lx",Lx)
+print("Ly",Ly)
 print("nelx",nelx)
 print("nely",nely)
 print("nel",nel)
@@ -153,10 +158,10 @@ vrms_file=open('vrms.ascii',"w")
 mass_file=open('mass.ascii',"w")
 nmarker_file=open('nmarker_per_element.ascii',"w")
 dt_file=open('dt.ascii',"w")
-mat4_file=open('mat4.ascii',"w")
-mat5_file=open('mat5.ascii',"w")
-mat6_file=open('mat6.ascii',"w")
-points_file=open('points.ascii',"w")
+#mat4_file=open('mat4.ascii',"w")
+#mat5_file=open('mat5.ascii',"w")
+#mat6_file=open('mat6.ascii',"w")
+#points_file=open('points.ascii',"w")
 
 #################################################################
 # grid point setup
@@ -183,16 +188,16 @@ print("grid setup: %.3f s" % (time.time() - start))
 # mesh stretching
 #################################################################
 
-stretch_beta1=0.25
-stretch_beta2=0.375
+beta1=0.25
+beta2=0.375
 
 for i in range(0,NV):
-    xi=x[i]
-    #x[i]=strpt_center(xi,Lx,stretch_beta1,stretch_beta2)
+    x[i]=stretch_towards_center(x[i],Lx,beta1,beta2)
 
+beta1=0.25
+beta2=0.5
 for i in range(0,NV):
-    yi=y[i]
-    #y[i]=strpt_top(yi,Ly,stretch_beta1,stretch_beta2)
+    y[i]=stretch_towards_top(y[i],Ly,beta1,beta2)
 
 #np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
 
@@ -376,14 +381,14 @@ xM=xI-130e3*np.sqrt(2.)/2. ; yM=yI-130e3*np.sqrt(2.)/2.
 xN=xJ-130e3*np.sqrt(2.)/2. ; yN=yJ-130e3*np.sqrt(2.)/2.
 xO=xK-130e3*np.sqrt(2.)/2. ; yO=yK-130e3*np.sqrt(2.)/2.
 
-points_file.write("%e %e\n" %(xH,yH))
-points_file.write("%e %e\n" %(xI,yI))
-points_file.write("%e %e\n" %(xJ,yJ))
-points_file.write("%e %e\n" %(xK,yK))
-points_file.write("%e %e\n" %(xL,yL))
-points_file.write("%e %e\n" %(xM,yM))
-points_file.write("%e %e\n" %(xN,yN))
-points_file.write("%e %e\n" %(xO,yO))
+#points_file.write("%e %e\n" %(xH,yH))
+#points_file.write("%e %e\n" %(xI,yI))
+#points_file.write("%e %e\n" %(xJ,yJ))
+#points_file.write("%e %e\n" %(xK,yK))
+#points_file.write("%e %e\n" %(xL,yL))
+#points_file.write("%e %e\n" %(xM,yM))
+#points_file.write("%e %e\n" %(xN,yN))
+#points_file.write("%e %e\n" %(xO,yO))
 
 for im in range(0,nmarker):
     xi=swarm_x[im]
@@ -432,13 +437,24 @@ start = time.time()
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
+u_in=-5*cm/year
+y_in=Ly-128e3
+y_out=Ly-160e3
+u_out=-u_in * (Ly-0.5*(y_in+y_out)) / (0.5*(y_in+y_out))
+
 for i in range(0,NV):
     if x[i]/Lx<eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
     if x[i]/Lx>(1-eps):
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
+       if y[i]<=y_out:
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = u_out
+       elif y[i]<y_in:
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = (u_in-u_out)/(y_in-y_out)*(y[i]-y_out)+u_out
+       else:
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = u_in
+       #end if
+
     if y[i]/Ly<eps:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. 
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
     if y[i]/Ly>(1-eps):
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. 
@@ -515,13 +531,13 @@ for istep in range(0,nstep):
     if np.min(nmarker_in_element)==0:
        exit('no marker left in an element')
 
-    np.savetxt('mat_nodal0.ascii',np.array([xP,yP,mat_nodal[0,:]]).T)
-    np.savetxt('mat_nodal1.ascii',np.array([xP,yP,mat_nodal[1,:]]).T)
-    np.savetxt('mat_nodal2.ascii',np.array([xP,yP,mat_nodal[2,:]]).T)
-    np.savetxt('mat_nodal3.ascii',np.array([xP,yP,mat_nodal[3,:]]).T)
-    np.savetxt('mat_nodal4.ascii',np.array([xP,yP,mat_nodal[4,:]]).T)
-    np.savetxt('mat_nodal5.ascii',np.array([xP,yP,mat_nodal[5,:]]).T)
-    np.savetxt('mat_nodal6.ascii',np.array([xP,yP,mat_nodal[6,:]]).T)
+    #np.savetxt('mat_nodal0.ascii',np.array([xP,yP,mat_nodal[0,:]]).T)
+    #np.savetxt('mat_nodal1.ascii',np.array([xP,yP,mat_nodal[1,:]]).T)
+    #np.savetxt('mat_nodal2.ascii',np.array([xP,yP,mat_nodal[2,:]]).T)
+    #np.savetxt('mat_nodal3.ascii',np.array([xP,yP,mat_nodal[3,:]]).T)
+    #np.savetxt('mat_nodal4.ascii',np.array([xP,yP,mat_nodal[4,:]]).T)
+    #np.savetxt('mat_nodal5.ascii',np.array([xP,yP,mat_nodal[5,:]]).T)
+    #np.savetxt('mat_nodal6.ascii',np.array([xP,yP,mat_nodal[6,:]]).T)
 
     print("     -> nmarker_in_elt(m,M) %.5e %.5e " %(np.min(nmarker_in_element),np.max(nmarker_in_element)))
     print("     -> mat_nodal     (m,M) %.5e %.5e " %(np.min(mat_nodal),np.max(mat_nodal)))
@@ -539,7 +555,23 @@ for istep in range(0,nstep):
     for i in range(0,NP):
         for imat in range(0,nmat):
             rho_nodal[i]+=mat_nodal[imat,i]*rho_mat[imat]
-            eta_nodal[i]+=mat_nodal[imat,i]*eta_mat[imat]
+
+    if avrg==1:
+       for i in range(0,NP):
+           for imat in range(0,nmat):
+               eta_nodal[i]+=mat_nodal[imat,i]*eta_mat[imat]
+
+    if avrg==2:
+       for i in range(0,NP):
+           for imat in range(0,nmat):
+               eta_nodal[i]+=mat_nodal[imat,i]*np.log10(eta_mat[imat])
+           eta_nodal[i]=10.**eta_nodal[i]
+
+    if avrg==3:
+       for i in range(0,NP):
+           for imat in range(0,nmat):
+               eta_nodal[i]+=mat_nodal[imat,i]/eta_mat[imat]
+           eta_nodal[i]=1./eta_nodal[i]
 
     print("     -> rho_nodal     (m,M) %.5e %.5e " %(np.min(rho_nodal),np.max(rho_nodal)))
     print("     -> eta_nodal     (m,M) %.5e %.5e " %(np.min(eta_nodal),np.max(eta_nodal)))
@@ -553,8 +585,12 @@ for istep in range(0,nstep):
     #################################################################
     start = time.time()
 
-    K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-    G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
+    if sparse:
+       A_sparse = lil_matrix((Nfem+1,Nfem+1),dtype=np.float64)
+    else:   
+       K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
+       G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
+
     f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
     h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
     constr= np.zeros(NfemP,dtype=np.float64)         # constraint matrix/vector
@@ -661,6 +697,9 @@ for istep in range(0,nstep):
             #end for
         #end for
 
+        G_el*=eta_ref/Ly
+        h_el*=eta_ref/Ly
+
         # assemble matrix K_mat and right hand side rhs
         for k1 in range(0,mV):
             for i1 in range(0,ndofV):
@@ -670,13 +709,24 @@ for istep in range(0,nstep):
                     for i2 in range(0,ndofV):
                         jkk=ndofV*k2          +i2
                         m2 =ndofV*iconV[k2,iel]+i2
-                        K_mat[m1,m2]+=K_el[ikk,jkk]
+                        if sparse:
+                           A_sparse[m1,m2] += K_el[ikk,jkk]
+                        else:
+                           K_mat[m1,m2]+=K_el[ikk,jkk]
+                        #end if
+                        #K_mat[m1,m2]+=K_el[ikk,jkk] OLD
                     #end for
                 #end for
                 for k2 in range(0,mP):
                     jkk=k2
                     m2 =iconP[k2,iel]
-                    G_mat[m1,m2]+=G_el[ikk,jkk]
+                    if sparse:
+                       A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
+                       A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
+                    else:
+                       G_mat[m1,m2]+=G_el[ikk,jkk]
+                    #end if
+                    #G_mat[m1,m2]+=G_el[ikk,jkk] old
                 #end for
                 f_rhs[m1]+=f_el[ikk]
             #end for
@@ -690,16 +740,17 @@ for istep in range(0,nstep):
 
     #end for
 
-    G_mat*=eta_ref/Ly
-    h_rhs*=eta_ref/Ly
+    #G_mat*=eta_ref/Ly
+    #h_rhs*=eta_ref/Ly
 
-    print("     -> K (m,M) %.5e %.5e " %(np.min(K_mat),np.max(K_mat)))
-    print("     -> G (m,M) %.5e %.5e " %(np.min(G_mat),np.max(G_mat)))
+    if not sparse:
+       print("     -> K (m,M) %.5e %.5e " %(np.min(K_mat),np.max(K_mat)))
+       print("     -> G (m,M) %.5e %.5e " %(np.min(G_mat),np.max(G_mat)))
     print("     -> f (m,M) %.5e %.5e " %(np.min(f_rhs),np.max(f_rhs)))
     print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
 
-    np.savetxt('rhoq.ascii',np.array([xq,yq,rhoq]).T,header='# x,y,rho')
-    np.savetxt('etaq.ascii',np.array([xq,yq,etaq]).T,header='# x,y,eta')
+    #np.savetxt('rhoq.ascii',np.array([xq,yq,rhoq]).T,header='# x,y,rho')
+    #np.savetxt('etaq.ascii',np.array([xq,yq,etaq]).T,header='# x,y,eta')
 
     print("build FE matrix: %.3f s" % (time.time() - start))
 
@@ -708,20 +759,19 @@ for istep in range(0,nstep):
     ######################################################################
     start = time.time()
 
-    if pnormalise:
+    rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
+
+    if not sparse:
        a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
-       rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
        a_mat[0:NfemV,0:NfemV]=K_mat
        a_mat[0:NfemV,NfemV:Nfem]=G_mat
        a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
        a_mat[Nfem,NfemV:Nfem]=constr
        a_mat[NfemV:Nfem,Nfem]=constr
     else:
-       a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-       rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-       a_mat[0:NfemV,0:NfemV]=K_mat
-       a_mat[0:NfemV,NfemV:Nfem]=G_mat
-       a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+       for i in range(0,NfemP):
+           A_sparse[Nfem,NfemV+i]=constr[i]
+           A_sparse[NfemV+i,Nfem]=constr[i]
 
     rhs[0:NfemV]=f_rhs
     rhs[NfemV:Nfem]=h_rhs
@@ -733,7 +783,12 @@ for istep in range(0,nstep):
     ######################################################################
     start = time.time()
 
-    sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+    if sparse:
+       sparse_matrix=A_sparse.tocsr()
+    else:
+       sparse_matrix=sps.csr_matrix(a_mat)
+
+    sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
     print("solve time: %.3f s" % (time.time() - start))
 
