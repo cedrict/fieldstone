@@ -1,0 +1,15 @@
+set term pdf enhanced font "Times,10pt"
+set grid
+set ytics 200
+set output 'xi.pdf'
+set key outside
+set size square
+set xlabel 'd ln {/Symbol r}/d ln V_s'
+set style rect fc lt -1 fs solid 0.15 noborder
+set obj rect from 0.2, graph 0 to 0.3, graph 1
+
+plot[-0.1:0.5][]\
+'xi_STCA06.dat' u 1:(2890-$2) w l lw 1.4 t 'Steingerger & Calderwood, 2006',\
+'moek16.dat' u 5:(2890-$1) w l t 'Moulik & Ekstrom, 2016',\
+2890 lt -1 t '2890',\
+2890-670 lt -1 dashtype 2  

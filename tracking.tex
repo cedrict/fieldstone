@@ -112,10 +112,9 @@ Finally, in both FDM and FEM bi/trilinear shape functions are used for the inter
 functions. Higher order shape functions could also be used but the standard $Q_2$ shape functions (Section~\ref{sec:shpfct2d})
 are 2-nd order polynomials which can take negative values (as opposed to the $Q_1$ shape functions which are strictly positive)
 and this can pose problems: in some cases, although all values to be averaged are positive, their weighed average can be negative.
+See Section~\ref{ss:bern} for concrete examples.
 
-Q1 projection PUCKETT
-
-\todo[inline]{it would be nice to have a Q1 and Q2 drawing of a 1D element and show that indeed negative values arise}   
+\todo[inline]{Q1 projection PUCKETT}
 
 Assuming that we have established a list of particles, all tracking a field $f(\vec r)$ and that each particle has an 
 associated weight $N_i$ (function of the location where the average is to be computed or not), 
@@ -187,6 +186,7 @@ If all weights are equal, then $N_i=1/n$ and the averagings become:
 
 There are many papers which have looked at particle averagings and projections. 
 I will for now simply point to the following ones:
+\cite{taki03}
 \cite{scbe08}
 \cite{deka08}
 \cite{dumg11}
@@ -199,8 +199,12 @@ Also check the multiscale PIC in \cite{asmo12}
 
 \todo[inline]{write more about particle averaging and projection}
 
-\Literature: \cite{taki03}
+See Stone~67 for a concrete example of Particle-In-Cell use and a detailed 
+explanation of its implementation.
 
+
+
+%.....................................................................
 \paragraph{Interpolation of the velocity onto particles}.
 
 Once the particle $i$ has been localised inside a given element (Section~\ref{sec:amiin}) 
