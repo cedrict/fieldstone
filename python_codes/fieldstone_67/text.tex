@@ -1,6 +1,66 @@
 
-This setup is based on a poster by Quinquis et al, presented at EGU 2010. 
 
+%----------------------------------------------
+\subsubsection{Setup1: Sinking block} 
+
+
+
+
+%----------------------------------------------
+\subsubsection{Setup2: Schmeling et al, 2008}
+
+The setup originates in Schmeling et al (2008) \cite{scbe08}. It consists of three linear viscous
+materials with a very simple layout placed in a 2D Cartesian domain with free slip boundary conditions 
+on all sides. 
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_67/images/scbe08}
+\end{center}
+
+\begin{center}
+\includegraphics[height=8cm]{python_codes/fieldstone_67/images/scbe08b}
+\includegraphics[height=8cm]{python_codes/fieldstone_67/images/scbe08c}
+\includegraphics[height=8cm]{python_codes/fieldstone_67/images/scbe08d}\\
+{\captionfont Left: Typical behaviour of the model (as obtained with FDCON-4 code). 
+Streamlines are also shown.
+Middle: Shapes of different case 1 models at similar stages: FDCON: 40 Myears,
+I2ELVIS: 34.7 Myears, CITCOM: 38.1 Myears. Viscosity averaging: geometric mean
+in all cases.
+Right: Comparison of the shapes of the slabs for different viscosity averaging methods 
+using I2VIS. Note that the snapshots are taken at different times (59.6, 24.4,
+37.8 Myears from top to bottom), so that the slab tips have reached comparable
+levels.}
+\end{center}
+
+\begin{center}
+\includegraphics[height=8cm]{python_codes/fieldstone_67/images/scbe08e}\\
+{\captionfont 
+Temporal behaviour modelled by different codes with highest resolutions each. 
+Each curve shows the position of the deepest part of the slab (slab tip) as
+a function of time below the initial surface of the lithosphere. 
+See the legends for the used codes and grid resolution. 
+Note that the codes I2VIS and I2ELVIS also use local
+refinement at the trench area (given in parentheses in the legend). 
+Outside the trench area the resolution decreases to 10$\times$46 km at model sides. 
+At the lower boundary the vertical resolution was 1 km. 
+The rheological means are denoted as geom for geometric, harm for harmonic 
+and arith for arithmetic, respectively. }
+\end{center}
+
+The total mass of the system is given by
+\[
+M_0 = [3000x50x\rho_s + (100x100+ 2000x100)\rho_l + (1000x700 + 100x500 + 1900x600)\rho_m] 10^6
+=210,000 \rho_l + 1,890,000 \rho_m
+=6.741000e+15 \text{kg}
+\]
+
+%----------------------------------------------
+\subsubsection{Setup3: Quinquis et al, 2010}
+
+This setup is based on a poster by Quinquis et al, presented at EGU 2010, but it
+was never published in any journal.
+
+The code relies on $Q_2\times Q_1$ elements. 
 The domain is 2680$\times$670km, i.e. the aspect ratio is exactly 4.
 Boundary conditions are free slip on the left, bottom and top boundaries. 
 
@@ -30,10 +90,10 @@ xH=Lx/2-np.sqrt(2.)/2.*200e3 ; yH=Ly-200e3+np.sqrt(2.)/2.*200e3
 xI=Lx/2-np.sqrt(2.)/2.*192e3 ; yI=Ly-200e3+np.sqrt(2.)/2.*192e3
 xJ=Lx/2-np.sqrt(2.)/2.*160e3 ; yJ=Ly-200e3+np.sqrt(2.)/2.*160e3
 xK=Lx/2-np.sqrt(2.)/2.*90e3  ; yK=Ly-200e3+np.sqrt(2.)/2.*90e3
-xL=xH-130e3*np.sqrt(2.)/2. ; yL=yH-130e3*np.sqrt(2.)/2.
-xM=xI-130e3*np.sqrt(2.)/2. ; yM=yI-130e3*np.sqrt(2.)/2.
-xN=xJ-130e3*np.sqrt(2.)/2. ; yN=yJ-130e3*np.sqrt(2.)/2.
-xO=xK-130e3*np.sqrt(2.)/2. ; yO=yK-130e3*np.sqrt(2.)/2.
+xL=xH-130e3*np.sqrt(2.)/2.   ; yL=yH-130e3*np.sqrt(2.)/2.
+xM=xI-130e3*np.sqrt(2.)/2.   ; yM=yI-130e3*np.sqrt(2.)/2.
+xN=xJ-130e3*np.sqrt(2.)/2.   ; yN=yJ-130e3*np.sqrt(2.)/2.
+xO=xK-130e3*np.sqrt(2.)/2.   ; yO=yK-130e3*np.sqrt(2.)/2.
 \end{lstlisting}
 
 A horizontal velocity profile is prescribed on the right boundary, but 
@@ -132,6 +192,7 @@ for k in range(0,mP):
 \item advect markers (Runge-Kutta 1,2,3)
 \item compute nodal strain rate fields
 \item interpolate $Q_1$ fields onto $Q_2$ mesh
+\item produce vtu files of the mesh and markers
 \end{itemize}
 
 
@@ -152,5 +213,7 @@ for k in range(0,mP):
 {\captionfont 256x64 elements. Top, middle, bottom: arithmetic, geometric, harmonic respectively.}
 \end{center}
 
+
+marker localisation by inverse stretching?
 
 COMPUTE ANALYTICAL MASS ?!
