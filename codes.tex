@@ -122,7 +122,7 @@ and \url{https://geodynamics.org/cig/software/citcoms/}.
 2002: \cite{tagh02}\cite{somo02}\\
 2003: \cite{vazh03}\cite{cogu03}\cite{bigu03}\cite{lemm03}\cite{lemo03}\cite{bigs03}\cite{vesh03}\\
 2004: \cite{solo04}\cite{frmm04}\cite{lenm04}\cite{colm04}\cite{mczh04}\\
-2005: \cite{bihi05}\cite{mczh05a}\cite{mczh05b}\cite{lemj05}\\
+2005: \cite{bihi05}\cite{mczh05a}\cite{mczh05b}\cite{lemj05}\cite{zhon05}\\
 2006: \cite{beck06}\cite{pibf06}\cite{tact06}\cite{besb06}\cite{coli06}\cite{frmm06}\cite{colm06}
       \cite{zhon06}\cite{keso06}\cite{rozh06}\cite{zhpy06}\\
 2007: \cite{bihi07}\cite{zhzl07}\cite{magu07}\cite{bavi07}\cite{rimb07}\cite{mofm07}\cite{cobs07}
@@ -169,6 +169,7 @@ and \url{https://geodynamics.org/cig/software/citcoms/}.
 %------------------------------------------------------------------------------
 
 \cite{ronb12}
+\cite{cuwi14}
 \cite{paml14b}
 
 %------------------------------------------------------------------------------
@@ -260,6 +261,23 @@ This code is hosted by CIG at \url{https://geodynamics.org/cig/software/conman/}
 \cite{chtl13}
 \cite{jalr15}
 \cite{lolc17}
+}
+
+%------------------------------------------------------------------------------
+\item {\codefont GeoFEST} \index{general}{GeoFEST code}
+%------------------------------------------------------------------------------
+GeoFEST (Geophysical Finite Element Simulation Tool) is a two- and three-dimensional finite
+element software package for the modeling of solid stress and strain in geophysical and 
+other continuum domain applications.
+The physics models supported include isotropic linear elasticity and both Newtonian and power-law
+viscoelasticity, via implicit quasi-static time stepping. In addition to triangular, 
+quadrilateral, tetrahedral and hexahedral continuum elements, GeoFEST supports split-node 
+faulting, body forces, and surface tractions.
+
+
+{\small
+\noindent
+\cite{paln08}
 }
 
 %------------------------------------------------------------------------------
@@ -637,11 +655,20 @@ MILAMIN is a finite element method implementation in native MATLAB that is capab
 %------------------------------------------------------------------------------
 There are tons of papers with PyLith. 
 
-
 {\small
 \noindent
 \cite{aakw13}
 }
+
+%------------------------------------------------------------------------------
+\item PyGmod \index{general}{PyGmod}
+%------------------------------------------------------------------------------
+
+{\small
+\noindent
+\cite{crvs15}
+}
+
 
 %------------------------------------------------------------------------------
 \item RHEA \index{general}{RHEA}
@@ -698,7 +725,7 @@ and compressible viscous media.
 2003: \cite{vavd03}\cite{vabh03}\\
 2004: \cite{vavv04}\cite{vavv04b}\cite{vavv04c}\cite{vayr04}\cite{vavv04d}\\
 2005: \cite{vavv05}\cite{sepr05}\cite{vary05}\\
-2006: \cite{liva06a}\cite{liva06b}\\
+2006: \cite{liva06a}\cite{liva06b}\cite{abvk06}\\
 2007: \cite{vant07}\cite{civv07}\cite{brva07a}\cite{brva07b}\cite{knvk07}\\
 2008: \cite{plva08}\cite{brhv08}\cite{knva08}\cite{vava08}\\
 2009: \cite{vavl09}\cite{vavv09}\\
@@ -712,6 +739,16 @@ and compressible viscous media.
 2018: \cite{spcv18}\cite{chss18}\\
 2019: \cite{zhdv19}\cite{vayu19}\cite{casv19}\cite{vaws19}\cite{cibi19}
 }
+
+
+
+%------------------------------------------------------------------------------
+\item {\codefont SHELLS} \index{general}{SHELLS code}
+%------------------------------------------------------------------------------
+It is a thin-shell program for modeling neotectonics of
+regional or global lithosphere with faults
+
+\cite{kobi95}
 
 %------------------------------------------------------------------------------
 \item {\codefont SISTER} \index{general}{SISTER code}
@@ -908,6 +945,8 @@ the direct sparse solver PARDISO (Schenk and Gaertner (2004) \cite{scga04}).
 The computational grid is based on a projection of the regular icosahedron onto a 
 sphere and successive dyadic refinements \cite{bafr85}.  Concentric copies of such  
 spherical layers of nodes build the domain in radial direction.
+The first main improvement was being parallelised \cite{buba95}.
+Particles were added in \cite{strb02}.
 
 {\small
 \noindent
@@ -921,7 +960,7 @@ spherical layers of nodes build the domain in radial direction.
 1998: \cite{burl98}\\
 1999: \cite{tabg99}\cite{ribr99}\\
 2001: \cite{buda01}\cite{burm01}\cite{dabu01}\\
-2002: \cite{burb02}\\
+2002: \cite{burb02}\cite{strb02}\\
 2005: \cite{phbu05}\\
 2006: \cite{dabu06}\\
 2007: \cite{phbu07}\\
@@ -934,7 +973,7 @@ spherical layers of nodes build the domain in radial direction.
 2013: \cite{dadb13}\cite{oflb13}\\
 2014: \cite{butm14}\\
 2015: \cite{amsb15}\cite{cobs15}\\
-2016: \cite{vade16}\cite{necg16}\\
+2016: \cite{vade16}\cite{necg16}\cite{pric16}\\
 2017: \cite{woda17}\\
 2018: \cite{ghbu18}\cite{cogb18}
 }

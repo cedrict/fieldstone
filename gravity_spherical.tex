@@ -1,0 +1,67 @@
+
+Starting from the Poisson equation, 
+\[
+\Delta U = 4 \pi {\cal G} \rho
+\]
+and using Gauss' theorem (noting that $\Delta U=\vec\nabla\cdot \vec\nabla U$):
+\[
+\int_V \Delta U dV = \int_V \vec\nabla\cdot \vec\nabla U dV = 
+\int_\Gamma \vec\nabla U \cdot \vec{n} \; dS
+= \int_V 4 \pi {\cal G} \rho \; dV
+= 4 \pi {\cal G} \int_V \rho \; dV
+\]
+where $\vec{n}$ is the outward pointing normal vector.
+
+A uniform sphere of mass $M$ and radius $a$ (and therefore density $\rho=M/(4\pi a^3/3)$) 
+has the potential
+\[
+U(r) =
+\left\{
+\begin{array}{cc}
+-2\pi {\cal G} \rho (a^2-r^2/3) & r \le a \\
+-{\cal G} M/r & r\ge a
+\end{array}
+\right.
+\]
+VERIFY!
+
+Outside the sphere the potential is Keplerian, while inside it has the form of a parabola; 
+both the potential and its derivative are continuous at the surface of the sphere.
+
+A sphere with density profile 
+\[
+\rho(r) = \rho_0 (r/r_0)^{-2}
+\]
+has the potential 
+\[
+U(r) = 4\pi {\cal G} \rho_0 r_0^2 \ln (r/r_0)
+\]
+VERIFY!
+
+As it turns out, pairs of functions related by Poisson's equation provide 
+convenient building-blocks for galaxy models. 
+Three such functions often used in the literature are listed here; all describe models characterized
+by a total mass M and a length scale a:
+
+\begin{itemize}
+\item Plummer (1905) \cite{dejo87} 
+\[
+\rho(r)= \frac{3M}{4\pi a^3 }\left(1+\frac{r^2}{a^2} \right)^{-5/2}
+\qquad
+U(r)=-\frac{{\cal G}M}{\sqrt{r^2+a^2}}
+\]
+\item Hernquist (1990)
+\[
+\rho(r)=\frac{M}{2\pi} \frac{a}{r(r+a)^3} 
+\qquad
+U(r)=-\frac{{\cal G}M}{r+a}
+\]
+\item Jaffe (1983)
+\[
+\rho(r)=\frac{M}{4\pi} \frac{a}{r^2(r+a)^2} 
+\qquad
+U(r)=\frac{{\cal G}M}{a} \ln \frac{a}{r+a}
+\]
+\end{itemize}
+VERIFY!
+
