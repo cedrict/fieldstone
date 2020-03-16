@@ -792,7 +792,7 @@ triang = mtri.Triangulation(x, y, triangles)
 frame = fig.add_subplot(131,adjustable='box',aspect=frame_h_over_w)  # nrows,ncols,index
 #frame = fig.add_subplot(131)  # nrows,ncols,index
 frame.contour=plt.tricontourf(triang, theta, cmap='rainbow')
-#frame.triplot(triang, 'ko-')
+frame.triplot(triang, 'k-',linewidth=0.1)
 frame.set_title('theta')
 frame.set_ylabel('y coordinate')
 cbar = plt.colorbar(frame.contour,ax=frame,shrink=cb_shrink,pad=cb_pad,aspect=cb_aspect)
@@ -802,7 +802,7 @@ frame = fig.add_subplot(132,adjustable='box',aspect=frame_h_over_w)  # nrows,nco
 # viscosity with reversed color map
 frame.contour=plt.tricontourf(triang, r, locator=ticker.LogLocator(),cmap='rainbow_r')
 #frame.contour=plt.tricontourf(triang, r, locator=ticker.LogLocator())
-#frame.triplot(triang, 'ko-')
+frame.triplot(triang, 'k-',linewidth=0.1)
 frame.set_title('radius')
 frame.set_yticks([]) # no y-ticks
 frame.set_xlabel('x coordinate')
@@ -812,13 +812,13 @@ triang = mtri.Triangulation(x, y, triangles)
 frame = fig.add_subplot(133,adjustable='box',aspect=frame_h_over_w)  # nrows,ncols,index
 #frame = fig.add_subplot(133)  # nrows,ncols,index
 frame.contour=plt.tricontourf(triang, q)
-#frame.triplot(triang, 'ko-')
+frame.triplot(triang, 'k-',linewidth=0.1)
 frame.set_title('pressure')
 frame.set_yticks([]) # no y-ticks
 cbar = plt.colorbar(frame.contour,ax=frame,shrink=cb_shrink,pad=cb_pad,aspect=cb_aspect)
 
 plt.tight_layout()
-plt.savefig('plot.png')
+plt.savefig('plot.pdf')
 plt.show()
 
 
