@@ -8,15 +8,23 @@ from scipy.sparse import lil_matrix
 import time as timing
 
 #------------------------------------------------------------------------------
+# density function
+#------------------------------------------------------------------------------
 
 def rho(rho0,alphaT,T,T0):
     val=rho0*(1.-alphaT*(T-T0))-rho0
     return val
 
+#------------------------------------------------------------------------------
+# viscosity function
+#------------------------------------------------------------------------------
+
 def eta(T):
     val=1.
     return val
 
+#------------------------------------------------------------------------------
+# velocity shape functions
 #------------------------------------------------------------------------------
 
 def NNV(r,s,order):
@@ -105,6 +113,10 @@ def NNV(r,s,order):
               N_10,N_11,N_12,N_13,N_14,\
               N_15,N_16,N_17,N_18,N_19,\
               N_20,N_21,N_22,N_23,N_24
+
+#------------------------------------------------------------------------------
+# velocity shape functions derivatives
+#------------------------------------------------------------------------------
 
 def dNNVdr(r,s,order):
     if order==1:
@@ -280,6 +292,9 @@ def dNNVds(r,s,order):
               dNds_15,dNds_16,dNds_17,dNds_18,dNds_19,\
               dNds_20,dNds_21,dNds_22,dNds_23,dNds_24
 
+#------------------------------------------------------------------------------
+# pressure shape functions 
+#------------------------------------------------------------------------------
 
 def NNP(r,s,order):
     if order==1:
@@ -331,15 +346,20 @@ def NNP(r,s,order):
               N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15
 
 #------------------------------------------------------------------------------
+# constants
+
+eps=1e-9
+
+#------------------------------------------------------------------------------
 
 print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
 
-ndim=2
+ndim=2   # number of dimensions
 ndofV=2  # number of velocity degrees of freedom per node
-ndofP=1  # number of pressure degrees of freedom 
-ndofT=1  # number of pressure degrees of freedom 
+ndofP=1  # number of pressure degrees of freedom per node
+ndofT=1  # number of temperature degrees of freedom per node
 
 Lx=1.
 Ly=1.
@@ -352,12 +372,17 @@ if int(len(sys.argv) == 7):
    Ra    = float(sys.argv[5])
    nstep = int(sys.argv[6])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 32
+   nely = 32
    visu = 1
    order= 2
-   Ra = 1e4
+   Ra = 1e6
    nstep=1000
+
+tol_ss=1e-6   # tolerance for steady state 
+
+top_bc_noslip=False
+bot_bc_noslip=False
 
 nel=nelx*nely
 nnx=order*nelx+1  # number of elements, x direction
@@ -397,42 +422,30 @@ if order==4:
    rPnodes=[-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1]
    sPnodes=[-1,-1,-1,-1,-1./3.,-1./3.,-1./3.,-1./3.,+1./3.,+1./3.,+1./3.,+1./3.,+1,+1,+1,+1]
 
-ndofV=2
-ndofP=1
-
 NfemV=NV*ndofV       # number of velocity dofs
 NfemP=NP*ndofP       # number of pressure dofs
 Nfem=NfemV+NfemP     # total nb of dofs
 NfemT=NV*ndofT       # nb of temperature dofs
 
-eps=1e-9
+hx=Lx/nelx # element size in x direction
+hy=Ly/nely # element size in y direction
 
-hx=Lx/nelx
-hy=Ly/nely
-
-sparse=False
+sparse=False # storage of FEM matrix 
 
 #################################################################
 
 alphaT=1e-4   # thermal expansion coefficient
-hcond=1.     # thermal conductivity
-hcapa=1.     # heat capacity
-rho0=1       # reference density
-T0=0         # reference temperature
-CFL=0.95     # CFL number 
-gx=0.
+hcond=1.      # thermal conductivity
+hcapa=1.      # heat capacity
+rho0=1        # reference density
+T0=0          # reference temperature
+relax=0.95    # relaxation coefficient (0,1)
+gx=0.         # gravity vector component
 gy=-Ra/alphaT # vertical component of gravity vector
-tol_ss = 1e-6
+
 #################################################################
 
-if order==1:
-   nqperdim=2
-if order==2:
-   nqperdim=3
-if order==3:
-   nqperdim=4
-if order==4:
-   nqperdim=5
+nqperdim=order+1
 
 if nqperdim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
@@ -474,11 +487,14 @@ if nqperdim==6:
              0.360761573048139,\
              0.171324492379170]
 
-alpha=0.5
+#################################################################
+# open output files
 
 Nu_vrms_file=open('Nu_vrms.ascii',"w")
+Nu_vrms_file.write("#time,Nusselt,vrms\n")
 dt_file=open('dt.ascii',"w")
 Tavrg_file=open('Tavrg.ascii',"w")
+conv_file=open('conv.ascii',"w")
 
 #################################################################
 
@@ -549,13 +565,8 @@ for j in range(0,nely):
     #end for
 #end for
 
-#print("-------iconV--------")
-#for iel in range (0,nel):
-#    print ("iel=",iel)
-#    for i in range (0,mV):
-#        print ("node ",i,':',iconV[i,iel],"at pos.",xV[iconV[i,iel]], yV[iconV[i,iel]])
-
 # creating a dedicated connectivity array to plot the solution on Q1 space
+# different icon array but same velocity nodes.
 
 nel2=(nnx-1)*(nny-1)
 iconQ1 =np.zeros((4,nel2),dtype=np.int16)
@@ -634,12 +645,6 @@ if order>1:
        #end for
    #end for
 
-#print("-------iconP--------")
-#for iel in range (0,nel):
-#    print ("iel=",iel)
-#    for i in range(0,mP):
-#        print ("node ",i,':',iconP[i,iel],"at pos.",xP[iconP[i,iel]], yP[iconP[i,iel]])
-
 print("build iconP: %.3f s" % (timing.time() - start))
 
 #################################################################
@@ -652,13 +657,17 @@ bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
 for i in range(0,NV):
     if xV[i]<eps:
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+       bc_fix[i*ndofV] = True ; bc_val[i*ndofV]   = 0.
     if xV[i]>(Lx-eps):
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+       bc_fix[i*ndofV] = True ; bc_val[i*ndofV]   = 0.
     if yV[i]<eps:
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if bot_bc_noslip:
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV]   = 0.
     if yV[i]>(Ly-eps):
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if top_bc_noslip:
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV]   = 0.
 
 print("velocity b.c.: %.3f s" % (timing.time() - start))
 
@@ -687,7 +696,7 @@ T = np.zeros(NV,dtype=np.float64)
 T_prev = np.zeros(NV,dtype=np.float64)
 
 for i in range(0,NV):
-    T[i]=1.-yV[i]-0.01*np.cos(np.pi*xV[i])*np.sin(np.pi*yV[i])
+    T[i]=1.-yV[i]-0.01*np.cos(np.pi*xV[i]/Lx)*np.sin(np.pi*yV[i]/Ly)
 #end for
 
 T_prev[:]=T[:]
@@ -749,7 +758,7 @@ dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 Tvect   = np.zeros(mV,dtype=np.float64)   
 c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
-time=0.
+Nusselt_prev=1.
 
 for istep in range(0,nstep):
     print("-----------------------------")
@@ -853,10 +862,14 @@ for istep in range(0,nstep):
                        f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
                        K_el[ikk,jkk]=0
                        K_el[jkk,ikk]=0
+                   #end for
                    K_el[ikk,ikk]=K_ref
                    f_el[ikk]=K_ref*bc_val[m1]
                    h_el[:]-=G_el[ikk,:]*bc_val[m1]
                    G_el[ikk,:]=0
+                #end if
+            #end for
+        #end for
 
         # assemble matrix K_mat and right hand side rhs
         for k1 in range(0,mV):
@@ -963,24 +976,12 @@ for istep in range(0,nstep):
 
     print("split vel into u,v: %.3f s" % (timing.time() - start))
 
-    #################################################################
-    # compute timestep
-    #################################################################
+    #####################################################################
+    # relaxation step
+    #####################################################################
 
-    dt1=CFL*(Lx/nelx)/np.max(np.sqrt(u**2+v**2))
-
-    dt2=CFL*(Lx/nelx)**2/(hcond/hcapa/rho0)
-
-    dt=np.min([dt1,dt2])
-
-    time+=dt
-
-    print('dt1= %.6f' %dt1)
-    print('dt2= %.6f' %dt2)
-    print('dt = %.6f' %dt)
-
-    dt_file.write("%10e %10e %10e %10e\n" % (time,dt1,dt2,dt))
-    dt_file.flush()
+    u=relax*u+(1-relax)*u_prev
+    v=relax*v+(1-relax)*v_prev
 
     #################################################################
     # build temperature matrix
@@ -1050,8 +1051,7 @@ for istep in range(0,nstep):
             #end for
         #end for
 
-        a_el+=MM+(Ka+Kd)*dt*alpha
-        b_el=(MM-(Ka+Kd)*(1.-alpha)*dt).dot(Tvect)
+        a_el=Ka+Kd
 
         # apply boundary conditions
         for k1 in range(0,mV):
@@ -1095,6 +1095,12 @@ for istep in range(0,nstep):
     print("solve T time: %.3f s" % (timing.time() - start))
 
     #################################################################
+    # relax
+    #################################################################
+
+    T=relax*T+(1-relax)*T_prev
+
+    #################################################################
     # compute vrms 
     #################################################################
     start = timing.time()
@@ -1110,7 +1116,6 @@ for istep in range(0,nstep):
                 NNNV[0:mV]=NNV(rq,sq,order)
                 dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
                 dNNNVds[0:mV]=dNNVds(rq,sq,order)
-                # calculate jacobian matrix
                 jcb=np.zeros((ndim,ndim),dtype=np.float64)
                 for k in range(0,mV):
                     jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
@@ -1135,10 +1140,10 @@ for istep in range(0,nstep):
     vrms=np.sqrt(vrms/(Lx*Ly))
     Tavrg/=(Lx*Ly)
 
-    Tavrg_file.write("%10e %10e\n" % (time,Tavrg))
+    Tavrg_file.write("%10e %10e\n" % (istep,Tavrg))
     Tavrg_file.flush()
 
-    print("     time= %.6f ; vrms   = %.6f" %(time,vrms))
+    print("     istep= %.6d ; vrms   = %.6f" %(istep,vrms))
 
     print("compute vrms: %.3f s" % (timing.time() - start))
 
@@ -1243,12 +1248,12 @@ for istep in range(0,nstep):
         #end if
     #end for
 
-    Nusselt=np.abs(Nusselt)
+    Nusselt=np.abs(Nusselt)/Lx
 
-    Nu_vrms_file.write("%10e %10e %10e\n" % (time,Nusselt,vrms))
+    Nu_vrms_file.write("%10e %.10f %.10f\n" % (istep,Nusselt,vrms))
     Nu_vrms_file.flush()
 
-    print("     time= %e ; Nusselt= %e ; Ra= %e " %(time,Nusselt,Ra))
+    print("     istep= %d ; Nusselt= %e ; Ra= %e " %(istep,Nusselt,Ra))
 
     print("compute Nu: %.3f s" % (timing.time() - start))
 
@@ -1299,7 +1304,7 @@ for istep in range(0,nstep):
            vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='press' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%10e \n" %q[i])
        vtufile.write("</DataArray>\n")
@@ -1357,31 +1362,29 @@ for istep in range(0,nstep):
 
        print("export to vtu file: %.3f s" % (timing.time() - start))
 
-    #############################333
+    ###################################
+    # assess convergence of iterations
 
     T_diff=np.sum(abs(T-T_prev))/NV
-    u_diff=np.sum(abs(u-u_prev))/NV
-    v_diff=np.sum(abs(v-v_prev))/NV
+    Nu_diff=np.abs(Nusselt-Nusselt_prev)/Nusselt
 
-    print("T conv, T_diff, <T>: " , T_diff<tol_ss*Tavrg,T_diff,Tavrg)
-    print("u conv, u_diff, <u>: " , u_diff<tol_ss*vrms,u_diff,vrms)
-    print("v conv, v_diff, <v>: " , v_diff<tol_ss*vrms,v_diff,vrms)
+    print("T conv, T_diff, Nu_diff: " , T_diff<tol_ss,T_diff,Nu_diff)
 
-    if T_diff<tol_ss*Tavrg and u_diff<tol_ss*vrms and v_diff<tol_ss*vrms:
+    conv_file.write("%10e %10e %10e %10e\n" % (istep,T_diff,Nu_diff,tol_ss))
+    conv_file.flush()
+
+    if T_diff<tol_ss and Nu_diff<tol_ss:
        print("convergence reached")
        break
 
     T_prev[:]=T[:]
     u_prev[:]=u[:]
     v_prev[:]=v[:]
-    
-#end istep
+    Nusselt_prev=Nusselt
+
+#end for istep
     
 print("     script ; Nusselt= %e ; Ra= %e ; order= %d" %(Nusselt,Ra,order))
-
-#==============================================================================
-# end time stepping loop
-#==============================================================================
 
 print("-----------------------------")
 print("------------the end----------")
