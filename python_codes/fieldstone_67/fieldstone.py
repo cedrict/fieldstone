@@ -97,7 +97,7 @@ ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
 #model=1 # quinquis et al, EGU 2010
-#model=2 # schmeling et al,PEPI 2008
+model=2 # schmeling et al,PEPI 2008
 model=3 # falling block 
 
 if model==1:
@@ -108,26 +108,97 @@ if model==1:
    grav=9.81
    use_stretching_x=True
    use_stretching_y=True
+   #material 1: OBSC   eta=1e19, rho=3300
+   #material 2: SHB    eta=1e23, rho=3250
+   #material 3: 40Myr  eta=1e22, rho=3240
+   #material 4: OBSC   eta=1e19, rho=3300
+   #material 5: SHB    eta=1e23, rho=3250
+   #material 6: 70Myr  eta=1e22, rho=3250
+   #material 7: mantle eta=1e20, rho=3200
+   nmat=7
+   rho_mat = np.array([3300,3250,3240,3300,3250,3250,3200],dtype=np.float64)   ; rho_mat-=np.min(rho_mat)
+   eta_mat = np.array([1e19,1.e23,1e22,1e19,1e23,1e22,1e20],dtype=np.float64) 
+   mass0=4
+   rk=2
+   nmarker_per_dim=10
+   marker_random=True
 
 if model==2:
    Lx=3000e3
    Ly=750e3
-   nelx=300
+   nelx=256
    nely=int(nelx*Ly/Lx)
    grav=10
    use_stretching_x=False
    use_stretching_y=False
+   #material 1: sediments/air rho=0 eta=1e19
+   #material 2: lithosphere rho=3300 eta=1e23
+   #material 3: mantle rho=3200 eta=1e21
+   nmat=3
+   rho_mat = np.array([0,3300,3200],dtype=np.float64)   
+   eta_mat = np.array([1e19,1e23,1e21],dtype=np.float64) 
+   #eta_mat = np.array([1e21,1e21,1e21],dtype=np.float64) 
+   #rho_mat = np.array([3300,3300,3300],dtype=np.float64) 
+   mass0=Lx*50e3*rho_mat[0]+\
+         (100e3*100e3+2000e3*100e3)*rho_mat[1]+\
+         (1000e3*700e3+100e3*500e3+1900e3*600e3)*rho_mat[2]
+   rk=2
+   nmarker_per_dim=20
+   marker_random=True
 
 if model==3: # falling block
    Lx=500e3
    Ly=500e3
-   nelx=50
-   nely=50
+   nelx=48
+   nely=48
    grav=9.81
    use_stretching_x=False
    use_stretching_y=False
+   #material 1: mantle 
+   #material 2: block
+   nmat=2
+   rho_mat = np.array([3200,6400],dtype=np.float64) ; rho_mat-=np.min(rho_mat)
+   eta_mat = np.array([1e21,1e23],dtype=np.float64) 
+   mass0=100e3*100e3*rho_mat[1] + (Lx*Ly-100e3*100e3)*rho_mat[0]
+   rk=2
+   nmarker_per_dim=8
+   marker_random=True
 
 nq_per_dim=4
+
+nnx=2*nelx+1  # number of elements, x direction
+nny=2*nely+1  # number of elements, y direction
+NV=nnx*nny  # number of nodes
+NP=(nelx+1)*(nely+1)
+nel=nelx*nely  # number of elements, total
+nq=nq_per_dim**2*nel
+NfemV=NV*ndofV               # number of velocity dofs
+NfemP=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
+Nfem=NfemV+NfemP              # total number of dofs
+hx=Lx/nelx
+hy=Ly/nely
+eta_ref=1e21      # scaling of G blocks
+
+nstep=1000
+
+CFL_nb=0.1
+
+nmarker_per_element=nmarker_per_dim**2
+nmarker=nmarker_per_element*nel
+
+#1: use elemental values for all q points
+#2: use nodal values + P shape functions to interp on q points
+#3: use avrg nodal values to assign to all q points
+#4: nodal rho, elemental eta
+particle_projection=1
+
+avrg=2
+
+every=1
+
+sparse=True
+
+#################################################################
 
 if nq_per_dim==3:
    qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
@@ -151,77 +222,6 @@ if nq_per_dim==5:
    qcoords=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
    qweights=[qw5a,qw5b,qw5c,qw5b,qw5a]
 
-
-nnx=2*nelx+1  # number of elements, x direction
-nny=2*nely+1  # number of elements, y direction
-NV=nnx*nny  # number of nodes
-NP=(nelx+1)*(nely+1)
-nel=nelx*nely  # number of elements, total
-nq=nq_per_dim**2*nel
-NfemV=NV*ndofV               # number of velocity dofs
-NfemP=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
-Nfem=NfemV+NfemP              # total number of dofs
-hx=Lx/nelx
-hy=Ly/nely
-eta_ref=1e21      # scaling of G blocks
-
-if model==1:
-   #material 1: OBSC   eta=1e19, rho=3300
-   #material 2: SHB    eta=1e23, rho=3250
-   #material 3: 40Myr  eta=1e22, rho=3240
-   #material 4: OBSC   eta=1e19, rho=3300
-   #material 5: SHB    eta=1e23, rho=3250
-   #material 6: 70Myr  eta=1e22, rho=3250
-   #material 7: mantle eta=1e20, rho=3200
-   nmat=7
-   rho_mat = np.array([3300,3250,3240,3300,3250,3250,3200],dtype=np.float64)   ; rho_mat-=np.min(rho_mat)
-   eta_mat = np.array([1e19,1.e23,1e22,1e19,1e23,1e22,1e20],dtype=np.float64) 
-   mass0=4
-
-if model==2:
-   #material 1: sediments/air rho=0 eta=1e19
-   #material 2: lithosphere rho=3300 eta=1e23
-   #material 3: mantle rho=3200 eta=1e21
-   nmat=3
-   rho_mat = np.array([3000,3300,3200],dtype=np.float64)   
-   eta_mat = np.array([1e19,1e23,1e21],dtype=np.float64) 
-   #eta_mat = np.array([1e21,1e21,1e21],dtype=np.float64) 
-   #rho_mat = np.array([3300,3300,3300],dtype=np.float64) 
-   mass0=Lx*50e3*rho_mat[0]+\
-         (100e3*100e3+2000e3*100e3)*rho_mat[1]+\
-         (1000e3*700e3+100e3*500e3+1900e3*600e3)*rho_mat[2]
-
-if model==3:
-   #material 1: mantle 
-   #material 2: block
-   nmat=2
-   rho_mat = np.array([3200,6400],dtype=np.float64) ; rho_mat-=np.min(rho_mat)
-   eta_mat = np.array([1e21,1e23],dtype=np.float64) 
-   mass0=100e3*100e3*rho_mat[1] + (Lx*Ly-100e3*100e3)*rho_mat[0]
-
-nstep=250
-CFL_nb=0.1
-rk=2
-
-nmarker_per_dim=10
-
-marker_random=True
-
-nmarker_per_element=nmarker_per_dim**2
-nmarker=nmarker_per_element*nel
-
-#1: use elemental values for all q points
-#2: use nodal values + P shape functions to interp on q points
-#3: use avrg nodal values to assign to all q points
-#4: nodal rho, elemental eta
-particle_projection=4
-
-avrg=3
-
-every=1
-
-sparse=True
-
 #################################################################
 #################################################################
 
@@ -244,9 +244,6 @@ vrms_file=open('vrms.ascii',"w")
 mass_file=open('mass.ascii',"w")
 nmarker_file=open('nmarker_per_element.ascii',"w")
 dt_file=open('dt.ascii',"w")
-#mat4_file=open('mat4.ascii',"w")
-#mat5_file=open('mat5.ascii',"w")
-#mat6_file=open('mat6.ascii',"w")
 #points_file=open('points.ascii',"w")
 
 #################################################################
@@ -388,8 +385,10 @@ for iel in range(0,nel):
     if marker_random:
        for j in range(0,nmarker_per_dim):
            for i in range(0,nmarker_per_dim):
-               r=random.uniform(-1,+1)
-               s=random.uniform(-1,+1)
+               r=-1.+i*2./nmarker_per_dim + 1./nmarker_per_dim
+               s=-1.+j*2./nmarker_per_dim + 1./nmarker_per_dim
+               r+=random.uniform(-1,+1)/nmarker_per_dim/4.
+               s+=random.uniform(-1,+1)/nmarker_per_dim/4.
                swarm_r[counter]=r
                swarm_s[counter]=s
                N1=0.25*(1-r)*(1-s)
@@ -663,6 +662,24 @@ for istep in range(0,nstep):
         mat_nodal_counter[iconP[1,iel]]+=N2
         mat_nodal_counter[iconP[2,iel]]+=N3
         mat_nodal_counter[iconP[3,iel]]+=N4
+
+        #if swarm_r[im]<0:
+        #   if swarm_s[im]<0:
+        #      mat_nodal[imat,iconP[0,iel]]+=1
+        #      mat_nodal_counter[iconP[0,iel]]+=1
+        #   else:
+        #      mat_nodal[imat,iconP[3,iel]]+=1
+        #      mat_nodal_counter[iconP[3,iel]]+=1
+        #   #end if
+        #else:
+        #   if swarm_s[im]<0:
+        #      mat_nodal[imat,iconP[1,iel]]+=1
+        #      mat_nodal_counter[iconP[1,iel]]+=1
+        #   else:
+        #      mat_nodal[imat,iconP[2,iel]]+=1
+        #      mat_nodal_counter[iconP[2,iel]]+=1
+        #   #end if
+        #end if
         nmarker_in_element[iel]+=1
     #end for
     mat_nodal/=mat_nodal_counter
@@ -1016,7 +1033,7 @@ for istep in range(0,nstep):
     print("     -> v (m,M) %.5e %.5e " %(np.min(v),np.max(v)))
     print("     -> p (m,M) %.5e %.5e " %(np.min(p),np.max(p)))
 
-    #np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+    np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
     print("split vel into u,v: %.3f s" % (time.time() - start))
 
@@ -1083,7 +1100,7 @@ for istep in range(0,nstep):
 
     vrms=np.sqrt(vrms/(Lx*Ly))
 
-    vrms_file.write("%e %e \n" %(Time/year,vrms)) ; vrms_file.flush()
+    vrms_file.write("%e %e \n" %(Time/year,vrms*year)) ; vrms_file.flush()
     mass_file.write("%e %e %e %e\n" %(Time/year,mass,mass0,mass/mass0-1.)) ; mass_file.flush()
 
     print("     -> vrms %.5e " %vrms)
@@ -1286,14 +1303,22 @@ for istep in range(0,nstep):
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
-       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NP,nel))
        #####
        vtufile.write("<Points> \n")
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-       for i in range(0,NV):
-           vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
+       for i in range(0,NP):
+           vtufile.write("%10e %10e %10e \n" %(xP[i],yP[i],0.))
        vtufile.write("</DataArray>\n")
        vtufile.write("</Points> \n")
+       #####
+       if particle_projection > 1:
+          vtufile.write("<PointData Scalars='scalars'>\n")
+          vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
+          for i in range(0,NP):
+              vtufile.write("%10e \n" %rho_nodal[i])
+          vtufile.write("</DataArray>\n")
+          vtufile.write("</PointData>\n")
        #####
        vtufile.write("<CellData Scalars='scalars'>\n")
        vtufile.write("<DataArray type='Float32' Name='nmarker' Format='ascii'> \n")
@@ -1301,18 +1326,23 @@ for istep in range(0,nstep):
            vtufile.write("%10e\n" % (nmarker_in_element[iel]))
        vtufile.write("</DataArray>\n")
 
+  
        vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
        for iel in range (0,nel):
            vtufile.write("%10e\n" % (eta_elemental[iel]))
        vtufile.write("</DataArray>\n")
-
+       if particle_projection == 1:
+          vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
+          for iel in range (0,nel):
+              vtufile.write("%10e\n" % (rho_elemental[iel]))
+          vtufile.write("</DataArray>\n")
 
        vtufile.write("</CellData>\n")
        #####
        vtufile.write("<Cells>\n")
        vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
        for iel in range (0,nel):
-           vtufile.write("%d %d %d %d \n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel]))
+           vtufile.write("%d %d %d %d \n" %(iconP[0,iel],iconP[1,iel],iconP[2,iel],iconP[3,iel]))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
@@ -1369,11 +1399,11 @@ for istep in range(0,nstep):
               vtufile.write("%10e \n" %eta_Q2[i])
           vtufile.write("</DataArray>\n")
           #--
-          for imat in range(0,nmat):
-              vtufile.write("<DataArray type='Float32' Name='mat %d' Format='ascii'> \n" %imat)
-              for i in range(0,NV):
-                  vtufile.write("%10e \n" %mats_Q2[imat,i])
-              vtufile.write("</DataArray>\n")
+       for imat in range(0,nmat):
+           vtufile.write("<DataArray type='Float32' Name='mat %d' Format='ascii'> \n" %imat)
+           for i in range(0,NV):
+               vtufile.write("%10e \n" %mats_Q2[imat,i])
+           vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
        for i in range(0,NV):

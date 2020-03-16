@@ -3,6 +3,40 @@
 %----------------------------------------------
 \subsubsection{Setup1: Sinking block} 
 
+This simple benchark provides challenging numerical experiments dealing with large viscosity variations 
+within the simulation domain. It appears in \cite{gery10,thie11} 
+and consists of a bulk of fluid 1 ($\rho_1,\mu_1$)
+in which a block of fluid 2 ($\rho_2,\mu_2$) falls under its own weight.
+The domain is a square of size $L_x=L_y=500km$ and the block is initially centered at point ($x=250km,y=400km$) with size $100\times100km$. 
+
+The simulation is carried out on a $64\times64$ elements grid and each element contains $n^3$ markers
+at startup. Free slip boundary conditions are imposed on all sides of the domain. 
+
+The density of the surrounding fluid is $\rho_1=3200kg/m^3$
+and its viscosity $\mu_1=10^{20}$ Pa.s.
+The viscosity and density of the block is varied. We define
+\[
+\mu^\star=\mu_2/\mu_1
+\quad\quad
+\rho_2=\rho_1 (1 + d\rho)
+\]
+In Earth sciences, $\mu^\star$ can typically take values between $10^{-2}$ and $10^6$,
+while $d\rho$ between 0.001 and 0.5 (in this context we need $d\rho>0$ so that the cube 
+goes down).
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_67/sinking/vel0}\\
+{\captionfont velocity field at $t=0$ for $\eta_2=10^{23}$.}
+\end{center}
+
+Run 
+
+- various viscosity ratios , density differences
+- rk1,rk2, rk3
+- nmarker\_per\_el
+- reg vs random
+- projections
+
 
 
 
@@ -53,6 +87,15 @@ M_0 = [3000x50x\rho_s + (100x100+ 2000x100)\rho_l + (1000x700 + 100x500 + 1900x6
 =210,000 \rho_l + 1,890,000 \rho_m
 =6.741000e+15 \text{kg}
 \]
+
+Note that all published results are obtained with high resolutions (compared to what is 
+feasible with our code). On the following figure there seems to be 5 elements in the air layer, 
+i.e. a resolution of 10km, i.e. 300x75 elements (if mesh stretching was not used).
+\begin{center}
+\includegraphics[width=9cm]{python_codes/fieldstone_67/images/scbe08f}\\
+{\captionfont Details of the entrainment and lubrication of the soft surface layer.}
+\end{center}
+
 
 %----------------------------------------------
 \subsubsection{Setup3: Quinquis et al, 2010}
