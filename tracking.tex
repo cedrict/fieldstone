@@ -55,6 +55,16 @@ and early adoption \cite{popo92}  in non-parallel codes such as SOPALE \cite{ful
 I2VIS \cite{geyu03} or CITCOM \cite{mczh04} (Appendix~\ref{app:codes}).
 It has been implemented in ASPECT \cite{galh18} and the inherent load balancing issues arising from the parallel implementation as well as from the use of Adaptive Mesh Refinement are discussed. It has also been implemented in the MILAMIN code \cite{daks08} to study LLSVPs \cite{musd15}.
 
+\begin{center}
+\includegraphics[width=8cm]{images/tracking/crsg12}\\
+{\captionfont One of the main problems of the PIC method is the fact that the interface 
+between the fluid is not tracked explicitely, and if one uses a random distribution of 
+particles the black dotted line reprensents the 'real' interface between the fluids 
+while the red line is liekly to be the interface one would obtain based on the 
+distribution of particles. Taken from Crameri et al (2012) \cite{crsg12}}
+\end{center}
+
+
 The basic methodology goes as follows:
 \begin{enumerate}
 \item distribute particles in the domain
@@ -183,6 +193,8 @@ If all weights are equal, then $N_i=1/n$ and the averagings become:
 \qquad
 \langle f\rangle_{hm} = \left( \frac{1}{n}\sum_i^n \frac{1}{\phi_i} \right)^{-1}
 \end{equation}
+
+
 
 There are many papers which have looked at particle averagings and projections. 
 I will for now simply point to the following ones:
