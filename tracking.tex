@@ -33,11 +33,6 @@ Note that the Zalesak disc is often supplemented with a cone and a Gaussian feat
 {\tiny Taken from \cite{leve96}. Initial data for solid rotation tests}
 \end{center}
 
-
-
-
-
-
 %..............................................
 \subsubsection{The Particle-in-cell technique}\label{ss:pic}
 \index{general}{Particle-in-Cell}  
@@ -46,14 +41,16 @@ Note that the Zalesak disc is often supplemented with a cone and a Gaussian feat
 \index{general}{MAC}
 
 \begin{remark}
-The terms 'particle' and 'marker' are commonly (and unfortunately) interchangeably used in the literature in the context of the particle-in-cell technique. However, one should be aware that the marker-and-cell (MAC) technique is something different: it was invented in the early 60's at the Los Alamos Laboratories by Harlow and Welch \cite{hawe65}. For more information on MAC see the review paper by McKee et al \cite{mctf08}.
+The terms 'particle' and 'marker' are commonly (and unfortunately) interchangeably used in the literature in the context of the particle-in-cell technique. However, one should be aware that the marker-and-cell (MAC) technique is something different: it was invented in the early 60's at the Los Alamos Laboratories by Harlow and Welch \cite{hawe65}. For more information on MAC see the review paper by McKee et al \cite{mctf08}. Also, Tackley and King (2003) \cite{taki03} talk about the tracer-ratio method in the context of PIC... 
 \end{remark}
 
 The Particle-in-cell method is by far the most widely used in computational geodynamics. 
 In its most basic form it is a rather simple method to implement and this probably owes to its success
 and early adoption \cite{popo92}  in non-parallel codes such as SOPALE \cite{full95}, 
 I2VIS \cite{geyu03} or CITCOM \cite{mczh04} (Appendix~\ref{app:codes}).
-It has been implemented in ASPECT \cite{galh18} and the inherent load balancing issues arising from the parallel implementation as well as from the use of Adaptive Mesh Refinement are discussed. It has also been implemented in the MILAMIN code \cite{daks08} to study LLSVPs \cite{musd15}.
+It has been implemented in ASPECT \cite{galh18} and the inherent load balancing issues arising from the 
+parallel implementation as well as from the use of Adaptive Mesh Refinement are discussed. 
+It has also been implemented in the MILAMIN code \cite{daks08} to study LLSVPs \cite{musd15}.
 
 \begin{center}
 \includegraphics[width=8cm]{images/tracking/crsg12}\\
@@ -61,8 +58,44 @@ It has been implemented in ASPECT \cite{galh18} and the inherent load balancing 
 between the fluid is not tracked explicitely, and if one uses a random distribution of 
 particles the black dotted line reprensents the 'real' interface between the fluids 
 while the red line is liekly to be the interface one would obtain based on the 
-distribution of particles. Taken from Crameri et al (2012) \cite{crsg12}}
+distribution of particles. Taken from Crameri et al (2012) \cite{crsg12}.}
 \end{center}
+
+Samuel (2018) \cite{samu18} does a great job at explaining 
+the core problem with PIC: {\it the method requires the method requires particle-mesh 
+and mesh-particle mappings to be specified. These critical operations constitute a
+major source of inaccuracy in the PIC solution \cite{mona85,dumg11,thmk14}. 
+Indeed, while the Lagrangian advection alone is not prone
+to significant numerical diffusion, particle–mesh mappings can introduce 
+important amounts of dissipation. This is particularly true
+when the spatial distribution of particles is not homogeneous, leading 
+to areas in the vicinity of gridpoints that are not sufficiently
+well sampled by particles, and other regions where the domain is
+oversampled by particles. This recurrent sampling problem develops 
+in regions characterized by strong deformation, and concerns
+both compressible and incompressible flow \cite{waav15,pukp16}. 
+The non-homogeneous sampling has two main
+origins. \\
+- The first one corresponds to inaccuracies in advecting the
+Lagrangian particles \cite{meje04}. This aspect has drawn
+the attention of a few recent studies \cite{waav15,pukp16}, 
+which have proposed the use of conservative schemes to
+map velocity components from the Eulerian grid to the Lagrangian
+particles during their advection. Such schemes have shown to significantly 
+improve the accuracy of the interpolation, and result in
+a considerably more homogeneous spatial sampling. \\
+- The second origin, which has received less attention, is related to the deforming
+nature of the flow \cite{modm03}, and is completely independent 
+of the accuracy of the numerical methods for interpolating
+the velocities at particles’ locations. In fact, for a given velocity
+field, particles should travel along their characteristics, and even in
+the case of incompressible flows, the distance between characteristics 
+can vary in general, and can strongly diverge or converge in
+regions characterized by strong deformation. This naturally leads to
+the development of a non-homogeneous spatial distribution of the
+Lagrangian particles, even if the particles locations are perfectly
+known.}
+
 
 
 The basic methodology goes as follows:
@@ -88,79 +121,106 @@ How many particles (per element/cell) will be enough?
 Also, should the particles be randomly distributed in the domain or on some kind of regular grid? 
 See fieldstone 13 (Section~\ref{f13}).
 
+Taken from Tackley and King (2003) \cite{taki03}: "Tracers are initialized on a regular grid 
+with each tracer perturbed from its grid position by a random amount of up to
+$\pm$ half a grid spacing, in order to eliminate artifacts due to tracer alignment."
+
+
 \paragraph{Averaging and projection}. This is a very critical step. Unfortunately, there is no community-wide
-agreed-upon method. The problem at hand boils down to: at a given location $(\vec r)$ in space I need a 
-quantity which is carried by the particles. 
+agreed-upon method. The problem at hand boils down to: at a given location $(\vec r)$ in space I need a
+the value of a field which is carried by the particles. 
 The first step is to find the particle(s) close to this point. If done naively, this is a very costly affair, 
 and begs the question what 'close' means. Finding all particles within a radius $R$ of point $\vec r$ can 
-be done very efficiently (e.g. with linked lists, Verlet lists, ...) but the choice of $R$ proves to be critical:
+be done very efficiently (e.g. with linked lists, Verlet lists, ...) but the choice 
+of $R$ proves to be critical:
 if too small, there may not be any particle inside the circle, and if too large there may be many particles 
 inside the circle and the averaging over so many particles in space will prove to be over diffusive. 
-In practice, the FD or FE mesh is used to provide an indication of $R$. In FDM, the four cells (or quarter cells) around
+In practice, the FD or FE mesh is used to provide an indication of $R$. 
+In FDM, the four cells (or quarter cells) around
 a node represent the volume of space containing the particles whose properties are to be averaged \cite{dumg11} 
 as illustrated in the following figure:
 
 \begin{center}
 \includegraphics[width=12cm]{images/dumg11}\\
-{\captionfont Taken from \cite{dumg11}. The "4-cell" and "1-cell" schemes for projecting properties defined on the 
-markers (denoted by stars) onto
-a node (denoted by the solid circle). (A) The 4-cell scheme. The support of the interpolating function $N_i$ associated
-with node $i$ is indicated by the shaded region. Only markers within the support of node $i$ contribute to the projection
-operation used to define the nodal value at $i$. The shape of the bilinear interpolation function for node $i$ is indicated in
-the lower frame. (B) The 1-cell scheme. The thick lines in the lower frame indicate the grid used to discretize the
-Stokes equations, while the thin lines indicate the grid onto which marker properties are projected. The 1-cell scheme
-utilizes a compact support of size $\Delta x \times  \Delta y$. The support for nodes $r$, $s$, $t$ are indicated by 
-the shaded regions. Only
-markers within the nodal support contribute to the projection operation for that node.}
+{\captionfont Taken from \cite{dumg11}. The "4-cell" and "1-cell" schemes for projecting 
+properties defined on the markers (denoted by stars) onto a node (denoted by the solid circle). 
+(A) The 4-cell scheme. The support of the interpolating function $N_i$ associated
+with node $i$ is indicated by the shaded region. Only markers within the support of node $i$ 
+contribute to the projection operation used to define the nodal value at $i$. The shape of 
+the bilinear interpolation function for node $i$ is indicated in the lower frame. 
+(B) The 1-cell scheme. The thick lines in the lower frame indicate the grid used to discretize the
+Stokes equations, while the thin lines indicate the grid onto which marker properties are projected. 
+The 1-cell scheme utilizes a compact support of size $\Delta x \times  \Delta y$. The support 
+for nodes $r$, $s$, $t$ are indicated by the shaded regions. Only markers within the nodal 
+support contribute to the projection operation for that node.}
 \end{center}
 
-Given that the FEM requires to compute integrals over each element, only the particles inside the element will contribute 
-to the average values assigned to the quadrature points. However, one could also decide to first average the properties onto the nodes
-before using these nodal values to assign values to the quadrature points. In this case the FDM approach applies. 
+Given that the FEM requires to compute integrals over each element, one could assume that 
+only the particles inside the element will contribute 
+to the average values assigned to the quadrature points (which I coin 'elemental approach'). 
 
-Finally, in both FDM and FEM bi/trilinear shape functions are used for the interpolation as they can be interpreted as weighing 
-functions. Higher order shape functions could also be used but the standard $Q_2$ shape functions (Section~\ref{sec:shpfct2d})
-are 2-nd order polynomials which can take negative values (as opposed to the $Q_1$ shape functions which are strictly positive)
-and this can pose problems: in some cases, although all values to be averaged are positive, their weighed average can be negative.
+However, one could also decide to first average the properties onto the nodes
+before using these nodal values to assign values to the quadrature points (which I coin 'nodal approach'). 
+In this case the FDM approach seen above could apply. 
+
+Finally, in both FDM and FEM bi/trilinear shape functions are used for the interpolation as 
+they can be interpreted as weighing functions. Higher order shape functions could also be used 
+but the standard $Q_2$ shape functions (Section~\ref{sec:shpfct2d})
+are 2-nd order polynomials which can take negative values (as opposed to the $Q_1$ 
+shape functions which are strictly positive)
+and this can pose problems: in some cases, although all values to be averaged are positive, 
+their weighed average can be negative.
 See Section~\ref{ss:bern} for concrete examples.
 
-\todo[inline]{Q1 projection PUCKETT}
+\underline{nodal approach}
 
-Assuming that we have established a list of particles, all tracking a field $f(\vec r)$ and that each particle has an 
-associated weight $N_i$ (function of the location where the average is to be computed or not), 
+\underline{elemental approach (1) - piece-wise constant interpolation} 
+
+What follows is written with simplicity in mind, although more mathematical formulations 
+can be found in the literature \cite{galh18}.
+
+Assuming that we have established a list of particles tracking a field $f(\vec r)$ inside the 
+element 
+%and that each particle has an 
+%associated weight $w_i$ (function of the location where the average is to be computed or not), 
 we must now compute their average value $<f>$. 
-The simplest approach which comes to mind is the (weighed) arithmetic mean ($am$):
+The simplest approach which comes to mind is the arithmetic mean ($am$):
 \[
-\langle f\rangle_{am} = \frac{\sum\limits_{i=1}^n N_i f_i}{\sum\limits_{i=1}^n N_i}
+\langle f\rangle_{am} = \frac{\sum\limits_{i=1}^n f_i}{n}
 \]  
+where $n$ is the number of particles inside the element.
 In the case where $f$ is the (mass) density $\rho$, it is indeed what should be used. 
 However, turning now to viscosity $\eta$, we know that its value can vary by many orders of magnitude 
 over very short distances.
-It is then likely that the average runs over values spanning values between $10^{18}\text{Pa s}$ and $10^{25} \text{Pa s}$.
-As explained in \cite{scbe08} the arithmetic averaging tends to 'favour' large values: if the sum runs over 
-10 particles, 9 carrying the value $10^{25}$ and 1 carrying the value $10^{19}$, the average value (assuming $N_i=1$ for simplicity)
-is then
+It is then likely that the average runs over values spanning values between 
+$10^{18}\text{Pa s}$ and $10^{25} \text{Pa s}$.
+As explained in \cite{scbe08} the arithmetic averaging tends to 'favour' large values: 
+if the sum runs over 
+10 particles, 9 carrying the value $10^{25}$ and 1 carrying the value $10^{19}$, 
+the average value is then
 \[
 \langle\eta\rangle = \frac{9\cdot 10^{25}+1\cdot 10^{19}}{10} \simeq 0.9\cdot 10^{25}
 \]
 which is much much closer to $10^{25}$ than to $10^{19}$.
-Other averagings are then commonly used, namely the geometric mean ($gm$)  and the harmonic mean ($hm$), defined as follows:
+Other averagings are then commonly used, namely the geometric mean ($gm$)  and the 
+harmonic mean ($hm$), defined as follows:
 \[
-\langle f\rangle_{gm} = \left( \prod_i f_i^{N_i} \right)^{1/\sum\limits_i N_i} 
+\langle f\rangle_{gm} = \left( \prod_i f_i \right)^{1/n} 
 \qquad
 \text{or, }
 \qquad
-\log_{10} \langle f \rangle_{gm} = \frac{\sum_i N_i \log_{10} f_i }{\sum\limits_i N_i}  
+\log_{10} \langle f \rangle_{gm} = \frac{\sum\limits_{i=1}^{n} \log_{10} f_i }{n}  
 \]
 and 
 \[
-\langle f\rangle_{hm} = \left( \frac{\sum_{i=1}^n N_i \frac{1}{f_i} }{\sum_i N_i}  \right)^{-1}
+\langle f\rangle_{hm} = \left( \frac{\sum\limits_{i=1}^n \frac{1}{f_i} }{n}  \right)^{-1}
 \qquad
 \text{or, }
 \qquad
-\frac{1}{\langle f\rangle_{hm} } = \frac{\sum_{i=1}^n N_i \frac{1}{f_i} }{\sum_i N_i}  
+\frac{1}{\langle f\rangle_{hm} } = \frac{\sum\limits_{i=1}^n  \frac{1}{f_i} }{n}  
 \]
-The geometric mean can be seen as a form of arithmetic mean of $\log_{10}$ values, while the harmonic mean can be seen as 
+The geometric mean can be seen as a form of arithmetic mean of $\log_{10}$ values, 
+while the harmonic mean can be seen as 
 a form of arithmetic mean of the inverse values.
 
 Looking back at the above example, the geometric mean of the viscosities is given by 
@@ -180,36 +240,155 @@ We see that the harmonic mean tends to favour the small values. Also we recover 
 \langle f \rangle_{hm} 
 \end{equation}
 
+%When all $f_i$ are equal to $f_0$ their computed average should also be equal to $f_0$. As a consequence the 
+%weights $N_i$ should fulfill the condition $\sum\limits_{i=1}^n N_i=1$.
+%If all weights are equal, then $N_i=1/n$ and the averagings become:
+
+%\begin{equation}
+%\langle f\rangle_{am} = \frac{1}{n} \sum\limits_{i=1}^n f_i
+%\qquad
+%\langle f\rangle_{gm} = \prod_i f_i^{1/n} 
+%\qquad
+%\langle f\rangle_{hm} = \left( \frac{1}{n}\sum_i^n \frac{1}{\phi_i} \right)^{-1}
+%\end{equation}
+
+Once a single average value has been computed for the whole element, then 
+all quadrature points are assigned this value. 
 
 
-When all $f_i$ are equal to $f_0$ their computed average should also be equal to $f_0$. As a consequence the 
-weights $N_i$ should fulfill the condition $\sum\limits_{i=1}^n N_i=1$.
-If all weights are equal, then $N_i=1/n$ and the averagings become:
+\underline{elemental approach (2) - Least Squares Interpolation } 
+One can revisit this topic on the grounds that 
+with high(er) order elements optimal convergence is unlikely to be reached 
+if viscosity (and density) are assumed to be constant inside each element (see  
+\cite{galb19}). One could therefore use the least-square method to arrive at 
+a functional representation of the field inside the element which is as 
+close as possible (in the least-squares sense, then) to the particle-based field. 
 
-\begin{equation}
-\langle f\rangle_{am} = \frac{1}{n} \sum\limits_{i=1}^n f_i
-\qquad
-\langle f\rangle_{gm} = \prod_i f_i^{1/n} 
-\qquad
-\langle f\rangle_{hm} = \left( \frac{1}{n}\sum_i^n \frac{1}{\phi_i} \right)^{-1}
-\end{equation}
+Thielmann et al (2014) \cite{thmk14} use the $Q_2P_{-1}$ element and introduce an element-wise interpolation
+scheme based on a least squares fitting of the particle properties and choose the functional to 
+be a linear function to match the pressure space. 
+They define the error $\epsilon$ such that 
+\[
+\epsilon^2 = \sum_{i=1}^n ( \tilde{f}(x_i,y_i)-f_i)^2
+\]
+with $\tilde{f}(x,y)=a+bx+cy$. 
+We then look for the minimum of $\epsilon^2$, i.e. $\vec\nabla(\epsilon^2)=0$ in the $\{a,b,c\}$ space.
+So 
+\begin{eqnarray}
+0=\frac{\partial \epsilon^2}{\partial a} 
+&=& 2\sum\limits_i ( \tilde{f}(x_i,y_i)-f_i) \nn\\
+&=& 2\sum\limits_i ( a + bx_i +cy_i -f_i) \nn\\
+&=& 2 \left[ a \sum\limits_i 1 + b \sum\limits_i x_i + c \sum y_i - \sum\limits_i f_i \right] \nn\\
+0=\frac{\partial \epsilon^2}{\partial b} &=& 2\sum\limits_i ( \tilde{f}(x_i,y_i)-f_i) x_i \nn\\
+&=& 2\sum\limits_i ( a + bx_i +cy_i -f_i) x_i \nn\\
+&=& 2 \left[ a \sum\limits_i x_i  + b \sum\limits_i x_i^2 + c \sum x_i y_i - \sum\limits_i x_i f_i \right]\nn\\
+0=\frac{\partial \epsilon^2}{\partial c} &=& 2\sum\limits_i ( \tilde{f}(x_i,y_i)-f_i) y_i \nn\\ 
+&=& 2\sum\limits_i ( a + bx_i +cy_i -f_i) y_i \nn\\
+&=& 2 \left[ a \sum\limits_i y_i + b \sum\limits_i x_i y_i + c \sum y_i^2 - \sum\limits_i y_if_i \right] \nn
+\end{eqnarray}
+so 
+\[
+\left( 
+\begin{array}{ccc}
+\sum\limits_i 1 & \sum\limits_i x_i & \sum\limits_i y_i \\
+\sum\limits_i x_i & \sum\limits_i x_i^2 & \sum\limits_i x_iy_i \\
+\sum\limits_i y_i & \sum\limits_i x_i y_i & \sum\limits_i y_i^2 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+a\\
+b\\
+c
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\sum\limits_i f_i \\
+\sum\limits_i x_i f_i \\
+\sum\limits_i y_i f_i 
+\end{array}
+\right)
+\]
+
+We could also then decide to use a bi-linear function $\tilde{f}$, i.e.
+\[
+\tilde{f}(x,y)=a+bx+cy+dxy
+\]
+which lies in the $Q_1$ space of Taylor-Hood quadrilateral elements. In this case the error is 
+\[
+\epsilon^2 
+= \sum_{i=1}^n ( \tilde{f}(x_i,y_i)-f_i)^2
+= \sum_{i=1}^n (a+bx_i+cy_i + dx_iy_i -f_i)^2
+\]
+and one has to solve a $4\times 4$ system this time:
+\[
+\left( 
+\begin{array}{cccc}
+\sum\limits_i 1 & \sum\limits_i x_i & \sum\limits_i y_i & \sum\limits_i x_iy_i\\
+\sum\limits_i x_i & \sum\limits_i x_i^2 & \sum\limits_i x_iy_i & \sum\limits_i x_i^2 y_i\\
+\sum\limits_i y_i & \sum\limits_i x_i y_i & \sum\limits_i y_i^2 & \sum\limits_i x_iy_i^2\\ 
+\sum\limits_i x_iy_i & \sum\limits_i x_i y_i & \sum\limits_i y_i^2 & \sum\limits_i x_i^2y_i^2  
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+a\\
+b\\
+c\\
+d
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\sum\limits_i f_i \\
+\sum\limits_i x_i f_i \\
+\sum\limits_i y_i f_i \\
+\sum\limits_i x_i y_i f_i 
+\end{array}
+\right)
+\]
+
+
+Once this linear system (or the previous one) has been solved we have obtained the coefficients $a,b,c(,d)$ 
+which allow us to compute $\tilde{f}$ anywhere inside the element, and especially 
+at the quadrature points. 
+
+\begin{remark}
+Using a different (bi)linear function $\tilde{f}$ for each element 
+means that it is likely to be discontinuous 
+from one element to another in regions of high gradients. 
+\end{remark}
+
+There is however one drawback with this approach (linear or bi-linear alike):
+in the areas of steep gradients the computed coefficients can be such that 
+the function $\tilde{f}$ evaluated on a quadrature point 
+is negative  which 1) would be wrong but not numerically 
+dramatic for density, 2) would be wrong and physically and numerically 
+problematic for viscosity (a viscosity cannot be negative, and this would 
+automatically destroy the SPD nature of the viscous block of the Stokes matrix).
+
+This problem is discussed in Thielmann et al (2014) in Section 3.2.1 and they 
+call this "Over- and Under-shooting". A simple (iteratuve) 
+fix is then designed which insures that the computed value is within user-defined 
+acceptable bounds. This is also mentioned in \cite{galb19} but the authors 
+explain that this problem was not encountered in the context of the publication.
 
 
 
-There are many papers which have looked at particle averagings and projections. 
-I will for now simply point to the following ones:
-\cite{taki03}
-\cite{scbe08}
-\cite{deka08}
-\cite{dumg11}
-\cite{modm03}
-\cite{poso08}
-\cite{thmk14}
-\cite{galh18}\cite{samu18}
-\cite{galb19}.
-Also check the multiscale PIC in \cite{asmo12}
 
-\todo[inline]{write more about particle averaging and projection}
+
+\begin{remark}
+Two variants of the PIC methods have been proposed: the Deformable PIC (DPIC) 
+by Samuel (2018) \cite{samu18}, and the multiscale PIC in \cite{asmo12}.
+\end{remark}
+
+
+
 
 See Stone~67 for a concrete example of Particle-In-Cell use and a detailed 
 explanation of its implementation.
@@ -232,6 +411,7 @@ is not necessarily divergence-free! In order to remedy this, a
 Conservative Velocity Interpolation (CVI) has been proposed in \cite{waav15}.
 
 
+%.....................................................................
 \paragraph{Moving the particles}
 
 This is discussed in the context of the Runge-Kutta Methods, see Section~\ref{sec:rkparticles}.
@@ -358,6 +538,32 @@ One rather old and popular filtering approach is the so-called Lenardic and Kaul
 {\captionfont From FENICS book}
 \end{center}
 
+
+\begin{center}
+\includegraphics[width=8cm]{images/compositions/plth13}\\
+{\captionfont 
+Filtering approach proposed by Lenardic and Kaula (1993). 
+The composition field $C$ is assumed to vary between 0 and 1. Grid points with $C$-values 
+lower than 0 and greater than 1 are set to 0 and 1, respectively (red). 
+$C_{min}$ and $C_{max}$ are the minimum and maximum spurious values observed. 
+Grid points whose $C$-value is lower than $|C_{min}|$ or greater than ($2-C_{max}$) 
+are also set to 0 and 1, respectively (blue). 
+The $C$-value of all grid points that do not exhibit spurious oscillations (green) is then corrected
+according to the difference between the original average composition and that computed after the reset-
+ting of the spurious values.
+Taken from Plesa et al (2013) \cite{plth13}.}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
 \Literature: \cite{vyrc13}
 
 Entropy viscosity method \cite{gupa11}
@@ -373,6 +579,15 @@ Entropy viscosity method \cite{gupa11}
 \subsubsection{The Volume-of-Fluid method} 
 \index{general}{Volume-of-Fluid Method}
 \index{general}{VOF}
+
+%from Napoleon et al
+The Volume-Of-Fluid (VOF) method is a fixed-grid approach based on the one-fluid model and considers that the various immiscible fluids (or `phases') can be described as a single fluid whose local physical properties, namely density and viscosity, vary in space and time depending on the volume fraction $C_i$ of each phase $i$ 
+\cite{hini81,youn82}. 
+
+The volume fraction of each fluid intrinsically obeys $\sum \limits_{{i=1}}^n C_i = 1$ where $n$ is the number of phases. 
+Typically, $C_i=1$ in grid cells filled only with fluid $i$, and $0<C_i<1$ in grid cells cross--cut by an interface. 
+There are two main classes of VOF methods: methods that try to reconstruct exactly the interface between fluids (e.g. \cite{puth18}), which requires significant computational time, and methods that do not, such as in JADIM and OpenFOAM. 
+With no interface reconstruction, the thickness of the interfacial region is defined by $0<C_i<1$, and typically occupies two to three grid cells. 
 
 \cite{hini81}\cite{ropu19}
 
