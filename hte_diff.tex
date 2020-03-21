@@ -1,0 +1,221 @@
+
+As we have seen above, one usually solves the heat transport equation (i.e. 
+an advection-diffusion equation) in this form (source terms are neglected):
+\begin{equation}
+\rho C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec\nabla T} \right)
+= {\vec \nabla} \cdot k \vec\nabla T 
+\end{equation}
+As we have seen in Section~{XXX}, the diffusion term is actually the divergence of the heat flux
+$\vec{q}=-k \vec \nabla T$. We could then choose to keep the heat flux as an unknown and 
+solve a coupled system of equations instead:
+\begin{eqnarray}
+\rho C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec\nabla T} \right)
+&=& - {\vec \nabla} \cdot \vec{q} \\ 
+\vec{q} &=& - k \vec \nabla T
+\end{eqnarray}
+or, 
+\begin{eqnarray}
+\rho C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec\nabla T} \right)
++ {\vec \nabla} \cdot \vec{q} &=& \vec{0} \label{eq:htediff1}\\ 
+\vec{q} + k \vec \nabla T &=& \vec{0} \label{eq:htediff2}
+\end{eqnarray}
+
+We have seen that the two left hand side terms of the first equation become 
+${\bm M}^\uptheta \cdot \dot{\vec{T}}$ and ${\bm K}_a \cdot \vec{T}$.
+
+Let $N^\uptheta$ be the temperature basis functions so that the temperature inside an element is 
+given by
+\begin{equation}
+T^h({\vec r}) = \sum_{i=1}^{m_T} N^\uptheta_i ({\vec r}) T_i = \vec N^\uptheta \cdot \vec T
+\end{equation}
+where $\vec T$ is a vector of length $m_T$.
+Let $N^q$ be the heat flux basis functions, and let us We define (in 2D): $\vec{q}=(\qx,\qy)$ so that 
+\begin{eqnarray}
+\qx^h({\vec r}) &=& \sum_{i=1}^{m_q} N^q_i ({\vec r}) \qx_i = \vec{N}^q \cdot \vec{\qx} \\
+\qy^h({\vec r}) &=& \sum_{i=1}^{m_q} N^q_i ({\vec r}) \qy_i = \vec{N}^q \cdot \vec{\qy} 
+\end{eqnarray}
+where $\vec{N}^q$, $\vec{\qx}$ and $\vec{\qy}$ are vectors of length $m_q$.
+The weak form of the third term of Eq.~(\ref{eq:htediff1}) is then
+\begin{eqnarray}
+\int_\Omega N_i^\theta  \nabla \cdot \vec{q} \;  d\Omega
+&=& -\int_\Omega N_i^\theta  
+\left(  \frac{\partial }{\partial x}\qx + \frac{\partial }{\partial y}\qy \right) d\Omega \nn\\
+&=& \int_\Omega N_i^\theta  \left(  \frac{\partial \vec{N}^q}{\partial x}\cdot \vec{\qx}
++  \frac{\partial \vec{N}^q}{\partial y}\cdot \vec{\qy} \right) d\Omega \nn\\
+&=& \int_\Omega N_i^\theta  \frac{\partial \vec{N}^q}{\partial x}\cdot  \vec{\qx} \;  d\Omega + 
+\int_\Omega  N_i^\uptheta \frac{\partial \vec{N}^q}{\partial y} \cdot \vec{\qy} \;  d\Omega \nn
+\end{eqnarray}
+Writing this last equation for $i=1,...m_T$ yields
+\[
+\underbrace{\left( \int_\Omega \vec{N}^\theta  \frac{\partial \vec{N}^q}{\partial x} \; d\Omega \right)}_{{\bm H}_x} \cdot\vec{\qx}+ 
+\underbrace{\left( \int_\Omega  \vec{N}^\uptheta \frac{\partial \vec{N}^q}{\partial y}  \;  d\Omega\right)}_{{\bm H}_y} \cdot \vec{\qy}
+\]
+In the end, we obtain:
+\begin{equation}
+{\bm M}^\uptheta \cdot \dot{\vec{T}} + {\bm K}_a \cdot \vec{T} 
++ {\bm H}_x \cdot \vec{\qx}
++ {\bm H}_y \cdot \vec{\qy}
+=\vec{0} \label{eq:htediff3}
+\end{equation}
+Turning now to the Eq.~(\ref{eq:htediff2}), its weak form is
+\[
+\int_\Omega N_i^q \left( \vec{q} + k \vec \nabla T \right) d\Omega = \vec{0}
+\]
+and we can decompose in its $x$ and $y$ components:
+\begin{eqnarray}
+\int_\Omega N_i^q \left( \qx + k  \frac{\partial T}{\partial x} \right) d\Omega &=& 0 \nn\\
+\int_\Omega N_i^q \left( \qy + k  \frac{\partial T}{\partial y} \right) d\Omega &=& 0 \nn
+\end{eqnarray}
+We process these further as follows:
+\begin{eqnarray}
+0&=&\int_\Omega N_i^q \left( \qx^h + k  \frac{\partial T^h}{\partial x} \right) \; d\Omega  \nn\\
+&=& \int_\Omega N_i^q \left( \vec{N}^q \cdot \vec{\qx} 
++ k  \frac{\partial \vec{N}^\uptheta}{\partial x} \cdot \vec{T} \right) \; d\Omega \nn\\ 
+&=& \int_\Omega N_i^q \vec{N}^q \cdot \vec{\qx} \; d\Omega  
++ \int _\Omega k N_i^q   \frac{\partial \vec{N}^\uptheta}{\partial x}\cdot \vec{T} \;  d\Omega \nn\\ 
+0&=&\int_\Omega N_i^q \left( \qy^h + k  \frac{\partial T^h}{\partial y} \right) \;  d\Omega \nn\\
+&=& \int_\Omega N_i^q \left( \vec{N}^q \cdot \vec{\qy} 
++ k  \frac{\partial \vec{N}^\uptheta}{\partial y} \cdot \vec{T} \right) \;  d\Omega \nn\\ 
+&=& \int_\Omega N_i^q \vec{N}^q \cdot \vec{\qy} \; d\Omega
++ \int _\Omega k N_i^q   \frac{\partial \vec{N}^\uptheta}{\partial y} \cdot \vec{T} \;  d\Omega 
+\end{eqnarray}
+Writing these equations for $i=1,...m_q$ yields:
+\begin{eqnarray}
+0&=& \int_\Omega \vec{N}^q \vec{N}^q \cdot \vec{\qx} \; d\Omega
++ \int _\Omega k \vec{N}^q   \frac{\partial \vec{N}^\uptheta}{\partial x}\cdot \vec{T} \; d\Omega \nn\\ 
+&=& \underbrace{\left( \int_\Omega \vec{N}^q \vec{N}^q d\Omega \right)}_{{\bm M}^q}  \cdot \vec{\qx} 
++ \underbrace{\left(\int _\Omega k \vec{N}^q  \frac{\partial \vec{N}^\uptheta}{\partial x}\; d\Omega\right)}_{{\bm G}_x} \cdot \vec{T} \label{eq:htediff4}\\ 
+0&=& \int_\Omega \vec{N}^q \vec{N}^q \cdot \vec{\qy} \; d\Omega
++ \int _\Omega k \vec{N}^q   \frac{\partial \vec{N}^\uptheta}{\partial y} \cdot \vec{T} \;  d\Omega \nn\\ 
+&=& \underbrace{\left( \int_\Omega \vec{N}^q \vec{N}^q d\Omega \right)}_{{\bm M}^q}  \cdot \vec{\qy} 
++ \underbrace{\left(\int _\Omega k \vec{N}^q  \frac{\partial \vec{N}^\uptheta}{\partial y} \; d\Omega\right)}_{{\bm G}_y} \cdot \vec{T} \label{eq:htediff5}
+\end{eqnarray}
+
+Finally Eqs.~(\ref{eq:htediff3},\ref{eq:htediff4},\ref{eq:htediff5}) 
+can be combined and yield the following system (assuming an implicit backward 
+Euler time scheme):
+\[
+\left(
+\begin{array}{ccc}
+{\bm M}^\uptheta + {\bm K}_a \delta t & {\bm H}_x & {\bm H}_y \\
+{\bm G}_x & {\bm M}^q & 0 \\
+{\bm G}_y & 0 & {\bm M}^q 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{T}^{n+1}\\
+\vec{\qx}^{n+1}\\
+\vec{\qy}^{n+1}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+{\bm M}^\uptheta \cdot \vec{T}^n\\
+\vec{0} \\
+\vec{0}
+\end{array}
+\right)
+\]
+If we choose $m_q=m_T$ and $N^q=N^\uptheta$ then
+%then ${\bm H}_x = {\bm G}_x$,  ${\bm H}_y = {\bm G}_y$  and 
+${\bm M}^\uptheta = {\bm M}^q = {\bm M}$ 
+so that 
+\[
+\left(
+\begin{array}{ccc}
+{\bm M} + {\bm K}_a \delta t & {\bm H}_x & {\bm H}_y \\
+{\bm G}_x & {\bm M} & 0 \\
+{\bm G}_y & 0 & {\bm M}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{T}^{n+1}\\
+\vec{\qx}^{n+1}\\
+\vec{\qy}^{n+1}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+{\bm M} \cdot \vec{T}^n\\
+\vec{0} \\
+\vec{0}
+\end{array}
+\right)
+\]
+Also, if $k$ is constant in space then ${\bm G}_{x,y}=k {\bm H}_{x,y}$, 
+so that
+\[
+\left(
+\begin{array}{ccc}
+{\bm M} + {\bm K}_a \delta t & {\bm H}_x & {\bm H}_y \\
+{\bm H}_x & {\bm M}/k & 0 \\
+{\bm H}_y & 0 & {\bm M}/k
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{T}^{n+1}\\
+\vec{\qx}^{n+1}\\
+\vec{\qy}^{n+1}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+{\bm M} \cdot \vec{T}^n\\
+\vec{0} \\
+\vec{0}
+\end{array}
+\right)
+\]
+
+Rather interestingly, one could write Eqs.~(\ref{eq:htediff4},\ref{eq:htediff5}) 
+as
+\[
+\vec{\qx}^{n+1} = - ({\bm M}^q)^{-1} \cdot {\bm G}_x \cdot \vec{T}^{n+1}
+\]
+\[
+\vec{\qy}^{n+1} = - ({\bm M}^q)^{-1} \cdot {\bm G}_y \cdot \vec{T}^{n+1}
+\]
+and inject it in Eq.~(\ref{eq:htediff3}) to yield:
+\begin{equation}
+{\bm M}^\uptheta \cdot \dot{\vec{T}} + [ {\bm K}_a 
+- {\bm H}_x \cdot ({\bm M}^q)^{-1} \cdot {\bm G}_x 
+- {\bm H}_y \cdot ({\bm M}^q)^{-1} \cdot {\bm G}_y ] \cdot \vec{T}^{n+1}
+=\vec{0} 
+\end{equation}
+which means that we can directly solve for temperature! 
+Rather interestingly, it is not equivalent to 
+Eq.~(\ref{eq:hte_ibe}). Food for thought ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
