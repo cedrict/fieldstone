@@ -5,13 +5,13 @@ an advection-diffusion equation) in this form (source terms are neglected):
 \rho C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec\nabla T} \right)
 = {\vec \nabla} \cdot k \vec\nabla T 
 \end{equation}
-As we have seen in Section~{XXX}, the diffusion term is actually the divergence of the heat flux
+As we have seen in Section~\ref{ss:hte}, the diffusion term is actually the divergence of the heat flux
 $\vec{q}=-k \vec \nabla T$. We could then choose to keep the heat flux as an unknown and 
 solve a coupled system of equations instead:
 \begin{eqnarray}
 \rho C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec\nabla T} \right)
-&=& - {\vec \nabla} \cdot \vec{q} \\ 
-\vec{q} &=& - k \vec \nabla T
+&=& - {\vec \nabla} \cdot \vec{q} \nn\\ 
+\vec{q} &=& - k \vec \nabla T \nn
 \end{eqnarray}
 or, 
 \begin{eqnarray}
@@ -19,17 +19,15 @@ or,
 + {\vec \nabla} \cdot \vec{q} &=& \vec{0} \label{eq:htediff1}\\ 
 \vec{q} + k \vec \nabla T &=& \vec{0} \label{eq:htediff2}
 \end{eqnarray}
-
 We have seen that the two left hand side terms of the first equation become 
 ${\bm M}^\uptheta \cdot \dot{\vec{T}}$ and ${\bm K}_a \cdot \vec{T}$.
-
 Let $N^\uptheta$ be the temperature basis functions so that the temperature inside an element is 
 given by
 \begin{equation}
 T^h({\vec r}) = \sum_{i=1}^{m_T} N^\uptheta_i ({\vec r}) T_i = \vec N^\uptheta \cdot \vec T
 \end{equation}
 where $\vec T$ is a vector of length $m_T$.
-Let $N^q$ be the heat flux basis functions, and let us We define (in 2D): $\vec{q}=(\qx,\qy)$ so that 
+Let $N^q$ be the heat flux basis functions, and let us define (in 2D) $\vec{q}=(\qx,\qy)$ so that 
 \begin{eqnarray}
 \qx^h({\vec r}) &=& \sum_{i=1}^{m_q} N^q_i ({\vec r}) \qx_i = \vec{N}^q \cdot \vec{\qx} \\
 \qy^h({\vec r}) &=& \sum_{i=1}^{m_q} N^q_i ({\vec r}) \qy_i = \vec{N}^q \cdot \vec{\qy} 
@@ -57,16 +55,16 @@ In the end, we obtain:
 + {\bm H}_y \cdot \vec{\qy}
 =\vec{0} \label{eq:htediff3}
 \end{equation}
-Turning now to the Eq.~(\ref{eq:htediff2}), its weak form is
+Turning now to Eq.~(\ref{eq:htediff2}), its weak form is
 \[
 \int_\Omega N_i^q \left( \vec{q} + k \vec \nabla T \right) d\Omega = \vec{0}
 \]
-and we can decompose in its $x$ and $y$ components:
-\begin{eqnarray}
-\int_\Omega N_i^q \left( \qx + k  \frac{\partial T}{\partial x} \right) d\Omega &=& 0 \nn\\
-\int_\Omega N_i^q \left( \qy + k  \frac{\partial T}{\partial y} \right) d\Omega &=& 0 \nn
-\end{eqnarray}
-We process these further as follows:
+and we can decompose it in its $x$ and $y$ components:
+%\begin{eqnarray}
+%\int_\Omega N_i^q \left( \qx + k  \frac{\partial T}{\partial x} \right) d\Omega &=& 0 \nn\\
+%\int_\Omega N_i^q \left( \qy + k  \frac{\partial T}{\partial y} \right) d\Omega &=& 0 \nn
+%\end{eqnarray}
+%We process these further as follows:
 \begin{eqnarray}
 0&=&\int_\Omega N_i^q \left( \qx^h + k  \frac{\partial T^h}{\partial x} \right) \; d\Omega  \nn\\
 &=& \int_\Omega N_i^q \left( \vec{N}^q \cdot \vec{\qx} 
@@ -97,7 +95,7 @@ Euler time scheme):
 \[
 \left(
 \begin{array}{ccc}
-{\bm M}^\uptheta + {\bm K}_a \delta t & {\bm H}_x & {\bm H}_y \\
+{\bm M}^\uptheta + {\bm K}_a \delta t & {\bm H}_x \delta t  & {\bm H}_y \delta t \\
 {\bm G}_x & {\bm M}^q & 0 \\
 {\bm G}_y & 0 & {\bm M}^q 
 \end{array}
@@ -126,7 +124,7 @@ so that
 \[
 \left(
 \begin{array}{ccc}
-{\bm M} + {\bm K}_a \delta t & {\bm H}_x & {\bm H}_y \\
+{\bm M} + {\bm K}_a \delta t & {\bm H}_x \delta t & {\bm H}_y \delta t\\
 {\bm G}_x & {\bm M} & 0 \\
 {\bm G}_y & 0 & {\bm M}
 \end{array}
@@ -148,42 +146,13 @@ so that
 \end{array}
 \right)
 \]
-Also, if $k$ is constant in space then ${\bm G}_{x,y}=k {\bm H}_{x,y}$, 
-so that
-\[
-\left(
-\begin{array}{ccc}
-{\bm M} + {\bm K}_a \delta t & {\bm H}_x & {\bm H}_y \\
-{\bm H}_x & {\bm M}/k & 0 \\
-{\bm H}_y & 0 & {\bm M}/k
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{c}
-\vec{T}^{n+1}\\
-\vec{\qx}^{n+1}\\
-\vec{\qy}^{n+1}
-\end{array}
-\right)
-=
-\left(
-\begin{array}{c}
-{\bm M} \cdot \vec{T}^n\\
-\vec{0} \\
-\vec{0}
-\end{array}
-\right)
-\]
-
+Also, if $k$ is constant in space then ${\bm G}_{x,y}=k {\bm H}_{x,y}$. 
 Rather interestingly, one could write Eqs.~(\ref{eq:htediff4},\ref{eq:htediff5}) 
 as
-\[
-\vec{\qx}^{n+1} = - ({\bm M}^q)^{-1} \cdot {\bm G}_x \cdot \vec{T}^{n+1}
-\]
-\[
-\vec{\qy}^{n+1} = - ({\bm M}^q)^{-1} \cdot {\bm G}_y \cdot \vec{T}^{n+1}
-\]
+\begin{eqnarray}
+\vec{\qx}^{n+1} &=& - ({\bm M}^q)^{-1} \cdot {\bm G}_x \cdot \vec{T}^{n+1} \\
+\vec{\qy}^{n+1} &=& - ({\bm M}^q)^{-1} \cdot {\bm G}_y \cdot \vec{T}^{n+1}
+\end{eqnarray}
 and inject it in Eq.~(\ref{eq:htediff3}) to yield:
 \begin{equation}
 {\bm M}^\uptheta \cdot \dot{\vec{T}} + [ {\bm K}_a 
@@ -194,6 +163,10 @@ and inject it in Eq.~(\ref{eq:htediff3}) to yield:
 which means that we can directly solve for temperature! 
 Rather interestingly, it is not equivalent to 
 Eq.~(\ref{eq:hte_ibe}). Food for thought ...
+
+We will see that this approach bears a lot of resemblance to the one taken in the context 
+of Discontinuous Galerkin methods. 
+
 
 
 
