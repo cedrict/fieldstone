@@ -123,7 +123,8 @@ ndofT=1  # number of temperature degrees of freedom
 ##########################################################
 # input parameters
 
-filename='subduction_mesh_high_res2.msh'
+#filename='subduction_mesh_high_res2.msh'
+filename='subduction_mesh_flags.msh'
 Lx=650e3
 Ly=250.7e3
 eta0=1e22
@@ -388,7 +389,7 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-interface=np.zeros(NV,dtype=np.bool)  
+interface=np.zeros(NV,dtype=np.int32)  
 
 f = open(filename,'r')
 counter=0
@@ -398,11 +399,9 @@ for line in f:
     if counter>NVold+7 and counter<NVold+8+nel:
        l=len(columns)
        if l==8:
-          #print ('opla',columns[5],columns[6],columns[7])
-          #print ('opla',columns[:])
-          interface[np.int64(columns[5])-1]=True
-          interface[np.int64(columns[6])-1]=True
-          interface[np.int64(columns[7])-1]=True
+          interface[np.int64(columns[5])-1]=columns[3]
+          interface[np.int64(columns[6])-1]=columns[3]
+          interface[np.int64(columns[7])-1]=columns[3]
        #end if
     #end if
     counter+=1
@@ -431,7 +430,7 @@ for iel in range(0,nel):
     y0=yV[inode0]
     y1=yV[inode1]
     y2=yV[inode2]
-    if interface[inode0] and interface[inode1]: 
+    if interface[inode0]==101 and interface[inode1]==101: 
        vx=abs(x1-x0)
        vy=abs(y1-y0)
        vnorm=np.sqrt(vx**2+vy**2)
@@ -444,7 +443,7 @@ for iel in range(0,nel):
        nx[inode1]+=ax
        ny[inode1]+=ay
     #end if
-    if interface[inode0] and interface[inode2]: 
+    if interface[inode0]==101 and interface[inode2]==101: 
        vx=abs(x2-x0)
        vy=abs(y2-y0)
        vnorm=np.sqrt(vx**2+vy**2)
@@ -457,7 +456,7 @@ for iel in range(0,nel):
        nx[inode2]+=ax
        ny[inode2]+=ay
     #end if
-    if interface[inode1] and interface[inode2]: 
+    if interface[inode1]==101 and interface[inode2]==101: 
        vx=abs(x2-x1)
        vy=abs(y2-y1)
        vnorm=np.sqrt(vx**2+vy**2)
@@ -495,43 +494,29 @@ start = timing.time()
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
-for iel in range(0,nel):
-    if mat[iel]==3: # over-riding plate
-       skip_element=False
-       if interface[iconV[0,iel]]:
-          skip_element=True
-       if interface[iconV[1,iel]]:
-          skip_element=True
-       if interface[iconV[2,iel]]:
-          skip_element=True
-       if interface[iconV[3,iel]]:
-          skip_element=True
-       if interface[iconV[4,iel]]:
-          skip_element=True
-       if interface[iconV[5,iel]]:
-          skip_element=True
-       if interface[iconV[6,iel]]:
-          skip_element=True
-       if not skip_element:
-          for k in range(0,4):
-              inode=iconV[k,iel]
-              bc_fix[inode*ndofV  ] = True ; bc_val[inode*ndofV  ] = 0
-              bc_fix[inode*ndofV+1] = True ; bc_val[inode*ndofV+1] = 0
-
 for i in range(0,NV):
-    if yV[i]>-1:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
-    # right lithosphere
-    if abs(xV[i]-Lx)/Lx<1e-6:
-    #   bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
-
-    if abs(yV[i]+50e3)<1 and xV[i]>251e3:
+ 
+    #top
+    if interface[i]==111:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
 
-    if interface[i]:
+    #right
+    if interface[i]==112:
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+
+    # bottom overriding plate
+    if interface[i]==104: 
+       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+
+    # plate contact
+    if interface[i]==102:
+       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+
+    #top of slab
+    if interface[i]==101:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ny[i]*vel 
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[i]*vel
 
@@ -539,8 +524,8 @@ print("setup boundary conditions: %.3f s" % (timing.time() - start))
 
 #################################################################
 # build FE matrix
-# [ K G ][u]=[f]
-# [GT 0 ][p] [h]
+# [ K   G ][u]=[f]
+# [ G^T 0 ][p] [h]
 #################################################################
 start = timing.time()
 
@@ -720,7 +705,7 @@ yT=np.zeros(NT,dtype=np.float64)     # y coordinates
 xT[0:NT]=xV[0:NT]
 yT[0:NT]=yV[0:NT]
 
-np.savetxt('gridT.ascii',np.array([xT,yT]).T,header='# x,y')
+#np.savetxt('gridT.ascii',np.array([xT,yT]).T,header='# x,y')
 
 iconT=np.zeros((mT,nel),dtype=np.int64)
 
@@ -1050,11 +1035,7 @@ if True:
     #--
     vtufile.write("<DataArray type='Float32' Name='interface' Format='ascii'> \n")
     for i in range(0,NV):
-        #if i<=counter2: 
-        if interface[i]: 
-           vtufile.write("%10e \n" %1.)
-        else:
-           vtufile.write("%10e \n" %0.)
+        vtufile.write("%d \n" %interface[i])
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='fix_u (bool)' Format='ascii'> \n")
