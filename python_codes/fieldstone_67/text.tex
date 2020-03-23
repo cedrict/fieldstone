@@ -260,3 +260,66 @@ for k in range(0,mP):
 marker localisation by inverse stretching?
 
 COMPUTE ANALYTICAL MASS ?!
+
+\newpage
+%----------------------------------------------
+\subsubsection{Setup4: Samuel, 2018}
+
+This setup is propsed by Samuel (2018) \cite{samu18} in the context of his paper on the deformable particle-in-cell method (DPIC).
+The domain has dimensions $2 \times 1$, free slip on the sides, no slip on the top and bottom. Gravity acceleration is set to 1, 
+and the geometry is as follows:
+
+\begin{center}
+\includegraphics[width=3cm]{python_codes/fieldstone_67/images/samu18a}
+\includegraphics[width=12cm]{python_codes/fieldstone_67/images/samu18b}\\
+{\captionfont Taken from \cite{samu18}. Note that the red area also has a unit viscosity.}
+\end{center}
+
+Samuel states that the $[0,1] \times [0,2]$ domain was discretized using either 50$\times$100 
+or 100$\times$200 square cells and that the incompressible Stokes equations are solved by means 
+of a finite volume code \cite{saev10,samu12}
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_67/dripping/vrms.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_67/dripping/vel.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_67/dripping/mass.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_67/dripping/nmarker_per_element.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0000.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0001.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0002.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0003.jpg}\\
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0004.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0005.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0006.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0007.jpg}\\
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0008.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0009.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0010.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0011.jpg}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0012.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0013.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0014.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0015.jpg}\\
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0016.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0017.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0018.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0019.jpg}\\
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0020.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0021.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0022.jpg}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_67/dripping/converted_0023.jpg}
+\end{center}
+
+
+
+
+
+

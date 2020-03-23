@@ -97,8 +97,9 @@ ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
 #model=1 # quinquis et al, EGU 2010
-model=2 # schmeling et al,PEPI 2008
+#model=2 # schmeling et al,PEPI 2008
 model=3 # falling block 
+#model=4 # dripping instability
 
 if model==1:
    Lx=2680e3  # horizontal extent of the domain 
@@ -120,13 +121,14 @@ if model==1:
    eta_mat = np.array([1e19,1.e23,1e22,1e19,1e23,1e22,1e20],dtype=np.float64) 
    mass0=4
    rk=2
-   nmarker_per_dim=10
+   nparticle_per_dim=10
    marker_random=True
+   eta_ref=1e21      # scaling of G blocks
 
 if model==2:
    Lx=3000e3
    Ly=750e3
-   nelx=256
+   nelx=128
    nely=int(nelx*Ly/Lx)
    grav=10
    use_stretching_x=False
@@ -143,8 +145,9 @@ if model==2:
          (100e3*100e3+2000e3*100e3)*rho_mat[1]+\
          (1000e3*700e3+100e3*500e3+1900e3*600e3)*rho_mat[2]
    rk=2
-   nmarker_per_dim=20
+   nparticle_per_dim=20
    marker_random=True
+   eta_ref=1e21      # scaling of G blocks
 
 if model==3: # falling block
    Lx=500e3
@@ -157,15 +160,35 @@ if model==3: # falling block
    #material 1: mantle 
    #material 2: block
    nmat=2
-   rho_mat = np.array([3200,6400],dtype=np.float64) ; rho_mat-=np.min(rho_mat)
-   eta_mat = np.array([1e21,1e23],dtype=np.float64) 
+   rho_mat = np.array([3200,3300],dtype=np.float64) #; rho_mat-=np.min(rho_mat)
+   eta_mat = np.array([1e21,1e22],dtype=np.float64) 
    mass0=100e3*100e3*rho_mat[1] + (Lx*Ly-100e3*100e3)*rho_mat[0]
    rk=2
-   nmarker_per_dim=8
+   nparticle_per_dim=10
    marker_random=True
+   eta_ref=1e21      # scaling of G blocks
 
-nq_per_dim=4
-
+if model==4: # dripping instability 
+   Lx=1
+   Ly=2
+   nelx=33
+   nely=65
+   grav=1
+   use_stretching_x=False
+   use_stretching_y=False
+   #material 1: drip 
+   #material 2: upper mantle
+   #material 3: lower mantle
+   nmat=3
+   rho_mat = np.array([1,0,0],dtype=np.float64) 
+   eta_mat = np.array([1,1,200],dtype=np.float64) 
+   mass0=0.2*0.1*rho_mat[0]+(1-0.2*0.1)*rho_mat[1]+1*rho_mat[2]
+   rk=3
+   nparticle_per_dim=10
+   marker_random=True
+   eta_ref=10      # scaling of G blocks
+   
+nq_per_dim=3
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
 NV=nnx*nny  # number of nodes
@@ -177,20 +200,19 @@ NfemP=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
 Nfem=NfemV+NfemP              # total number of dofs
 hx=Lx/nelx
 hy=Ly/nely
-eta_ref=1e21      # scaling of G blocks
 
-nstep=1000
+nstep=20
 
-CFL_nb=0.1
+CFL_nb=0.25
 
-nmarker_per_element=nmarker_per_dim**2
-nmarker=nmarker_per_element*nel
+nparticle_per_element=nparticle_per_dim**2
+nparticle=nparticle_per_element*nel
 
 #1: use elemental values for all q points
 #2: use nodal values + P shape functions to interp on q points
-#3: use avrg nodal values to assign to all q points
+#3: use avrg nodal values to assign to all q points (elemental avrg)
 #4: nodal rho, elemental eta
-particle_projection=1
+particle_projection=2
 
 avrg=2
 
@@ -240,9 +262,10 @@ print("avrg=",avrg)
 print("particle_projection=",particle_projection)
 print("------------------------------")
 
+vel_file=open('vel.ascii',"w")
 vrms_file=open('vrms.ascii',"w")
 mass_file=open('mass.ascii',"w")
-nmarker_file=open('nmarker_per_element.ascii',"w")
+nparticle_file=open('nparticle_per_element.ascii',"w")
 dt_file=open('dt.ascii',"w")
 #points_file=open('points.ascii',"w")
 
@@ -368,13 +391,13 @@ for iel in range(0,nel):
 #################################################################
 start = time.time()
 
-swarm_x=np.empty(nmarker,dtype=np.float64) 
-swarm_y=np.empty(nmarker,dtype=np.float64) 
-swarm_mat=np.empty(nmarker,dtype=np.int8)  
-swarm_paint=np.empty(nmarker,dtype=np.float64) 
-swarm_r=np.empty(nmarker,dtype=np.float64) 
-swarm_s=np.empty(nmarker,dtype=np.float64) 
-swarm_iel=np.empty(nmarker,dtype=np.int32) 
+swarm_x=np.empty(nparticle,dtype=np.float64) 
+swarm_y=np.empty(nparticle,dtype=np.float64) 
+swarm_mat=np.empty(nparticle,dtype=np.int8)  
+swarm_paint=np.empty(nparticle,dtype=np.float64) 
+swarm_r=np.empty(nparticle,dtype=np.float64) 
+swarm_s=np.empty(nparticle,dtype=np.float64) 
+swarm_iel=np.empty(nparticle,dtype=np.int32) 
 
 counter=0
 for iel in range(0,nel):
@@ -383,12 +406,12 @@ for iel in range(0,nel):
     x3=x[iconV[2,iel]] ; y3=y[iconV[2,iel]]
     x4=x[iconV[3,iel]] ; y4=y[iconV[3,iel]]
     if marker_random:
-       for j in range(0,nmarker_per_dim):
-           for i in range(0,nmarker_per_dim):
-               r=-1.+i*2./nmarker_per_dim + 1./nmarker_per_dim
-               s=-1.+j*2./nmarker_per_dim + 1./nmarker_per_dim
-               r+=random.uniform(-1,+1)/nmarker_per_dim/4.
-               s+=random.uniform(-1,+1)/nmarker_per_dim/4.
+       for j in range(0,nparticle_per_dim):
+           for i in range(0,nparticle_per_dim):
+               r=-1.+i*2./nparticle_per_dim + 1./nparticle_per_dim
+               s=-1.+j*2./nparticle_per_dim + 1./nparticle_per_dim
+               r+=random.uniform(-1,+1)/nparticle_per_dim/4.
+               s+=random.uniform(-1,+1)/nparticle_per_dim/4.
                swarm_r[counter]=r
                swarm_s[counter]=s
                N1=0.25*(1-r)*(1-s)
@@ -402,10 +425,10 @@ for iel in range(0,nel):
            #end for 
        #end for 
     else:
-       for j in range(0,nmarker_per_dim):
-           for i in range(0,nmarker_per_dim):
-               r=-1.+i*2./nmarker_per_dim + 1./nmarker_per_dim
-               s=-1.+j*2./nmarker_per_dim + 1./nmarker_per_dim
+       for j in range(0,nparticle_per_dim):
+           for i in range(0,nparticle_per_dim):
+               r=-1.+i*2./nparticle_per_dim + 1./nparticle_per_dim
+               s=-1.+j*2./nparticle_per_dim + 1./nparticle_per_dim
                swarm_r[counter]=r
                swarm_s[counter]=s
                N1=0.25*(1-r)*(1-s)
@@ -441,7 +464,7 @@ if model==1:
    xF=Lx/2 ; yF=Ly-82e3
    xG=Lx/2 ; yG=Ly-110e3
 
-   for im in range (0,nmarker):
+   for im in range (0,nparticle):
        swarm_mat[im]=7
        if swarm_x[im]<Lx/2:
           if swarm_y[im]>yB:
@@ -463,7 +486,7 @@ if model==1:
    #round part 
    xc=Lx/2
    yc=Ly-200e3
-   for im in range (0,nmarker):
+   for im in range (0,nparticle):
        if swarm_x[im]<Lx/2 and swarm_y[im]>yc:
           if (swarm_x[im]-xc)**2+(swarm_y[im]-yc)**2<200e3**2 and\
              (swarm_x[im]-xc)**2+(swarm_y[im]-yc)**2>192e3**2 and\
@@ -507,7 +530,7 @@ if model==1:
    #points_file.write("%e %e\n" %(xN,yN))
    #points_file.write("%e %e\n" %(xO,yO))
 
-   for im in range(0,nmarker):
+   for im in range(0,nparticle):
        xi=swarm_x[im]
        yi=swarm_y[im]
        if yi< (xi-xL)+yL and yi> (xi-xM)+yM and yi<= -(xi-xH)+yH and yi>= -(xi-xL)+yL:
@@ -524,7 +547,7 @@ if model==1:
        #   mat6_file.write("%e %e\n" %(swarm_x[im],swarm_y[im]))
    #end for
     
-   #for im in range(0,nmarker):
+   #for im in range(0,nparticle):
    #    if swarm_mat[im]==4:
    #       mat4_file.write("%e %e\n" %(swarm_x[im],swarm_y[im]))
    #    if swarm_mat[im]==5:
@@ -533,7 +556,7 @@ if model==1:
    #       mat6_file.write("%e %e\n" %(swarm_x[im],swarm_y[im]))
 
 if model==2:
-   for im in range(0,nmarker):
+   for im in range(0,nparticle):
        xi=swarm_x[im]
        yi=swarm_y[im]
        swarm_mat[im]=3
@@ -545,26 +568,39 @@ if model==2:
           swarm_mat[im]=2
 
 if model==3:
-   for im in range(0,nmarker):
+   for im in range(0,nparticle):
        xi=swarm_x[im]
        yi=swarm_y[im]
        swarm_mat[im]=1
        if abs(xi-Lx/2)<50e3 and abs(yi-400e3)<50e3:
           swarm_mat[im]=2
 
+if model==4:
+   for im in range(0,nparticle):
+       xi=swarm_x[im]
+       yi=swarm_y[im]
+       if yi>1:
+          if abs(xi-0.5)<0.1 and yi>1.9: 
+             swarm_mat[im]=1
+          else:          
+             swarm_mat[im]=2
+       else:
+          swarm_mat[im]=3
+
+
 print("marker layout: %.3f s" % (time.time() - start))
 
 #################################################################
-# paint markers 
+# paint particles 
 #################################################################
 start = time.time()
 
-for im in range (0,nmarker):
+for im in range (0,nparticle):
     swarm_paint[im]=(np.sin(2*np.pi*swarm_x[im]/Lx*4)*\
                      np.sin(2*np.pi*swarm_y[im]/Ly*4))
 #end for 
 
-#np.savetxt('markers.ascii',np.array([swarm_x,swarm_y,swarm_mat]).T,header='# x,y,mat')
+#np.savetxt('particles.ascii',np.array([swarm_x,swarm_y,swarm_mat]).T,header='# x,y,mat')
 
 #################################################################
 # define boundary conditions
@@ -611,7 +647,95 @@ if model==2 or model==3:
    #end for
 #end if
 
+if model==4:
+   for i in range(0,NV):
+       if x[i]/Lx<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
+       if x[i]/Lx>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
+       if y[i]/Ly<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. 
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. # no slip
+       if y[i]/Ly>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. 
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. # no slip
+   #end for
+#end if
+
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
+
+#################################################################
+# layout interface markers
+#################################################################
+start = time.time()
+
+if model==3:
+   hh=1e3
+   nmarker1=np.int(100e3/hh)
+   nmarker2=np.int(100e3/hh)
+   nmarker3=np.int(100e3/hh)
+   nmarker4=np.int(100e3/hh)
+   nmarker=nmarker1+nmarker2+nmarker3+nmarker4
+   print('     -> nmarker=',nmarker)
+
+   m_x=np.empty(nmarker,dtype=np.float64) 
+   m_y=np.empty(nmarker,dtype=np.float64) 
+   m_r=np.empty(nmarker,dtype=np.float64) 
+   m_s=np.empty(nmarker,dtype=np.float64) 
+   m_u=np.empty(nmarker,dtype=np.float64) 
+   m_v=np.empty(nmarker,dtype=np.float64) 
+
+   counter=0
+   for i in range(0,nmarker1):
+       m_x[counter]=200e3
+       m_y[counter]=450e3-i*hh
+       counter+=1
+   for i in range(0,nmarker2):
+       m_x[counter]=200e3+i*hh
+       m_y[counter]=350e3
+       counter+=1
+   for i in range(0,nmarker3):
+       m_x[counter]=300e3
+       m_y[counter]=350e3+i*hh
+       counter+=1
+   for i in range(0,nmarker4):
+       m_x[counter]=300e3-i*hh
+       m_y[counter]=450e3
+       counter+=1
+
+if model==4:
+   hh=0.001
+   nmarker1=np.int(0.1/hh)
+   nmarker2=np.int(0.2/hh)
+   nmarker3=np.int(0.1/hh)
+   nmarker=nmarker1+nmarker2+nmarker3+1
+   print('     -> nmarker=',nmarker)
+
+   m_x=np.empty(nmarker,dtype=np.float64) 
+   m_y=np.empty(nmarker,dtype=np.float64) 
+   m_r=np.empty(nmarker,dtype=np.float64) 
+   m_s=np.empty(nmarker,dtype=np.float64) 
+   m_u=np.empty(nmarker,dtype=np.float64) 
+   m_v=np.empty(nmarker,dtype=np.float64) 
+
+   counter=0
+   for i in range(0,nmarker1):
+       m_x[counter]=0.4+eps
+       m_y[counter]=2-i*hh-eps 
+       counter+=1
+   for i in range(0,nmarker2):
+       m_x[counter]=0.4+i*hh  
+       m_y[counter]=1.9+eps
+       counter+=1
+   for i in range(0,nmarker3+1):
+       m_x[counter]=0.6-eps
+       m_y[counter]=1.9+i*hh -eps
+       counter+=1
+    #end for
+
+#np.savetxt('markers.ascii',np.array([m_x,m_y]).T,header='# x,y')
+
+print("marker setup: %.3f s" % (time.time() - start))
 
 #--------------------------------------------------------------------------------------------------
 # time stepping loop
@@ -630,7 +754,7 @@ for istep in range(0,nstep):
     #################################################################
     start = time.time()
 
-    for im in range(0,nmarker):
+    for im in range(0,nparticle):
         ielx=int(swarm_x[im]/Lx*nelx)
         iely=int(swarm_y[im]/Ly*nely)
         swarm_iel[im]=nelx*(iely)+ielx
@@ -639,15 +763,16 @@ for istep in range(0,nstep):
     print("locate particles: %.3f s" % (time.time() - start))
 
     #################################################################
-    # compute nodal averagings 
+    # compute nodal averagings
+    # with the tracer ratio method \cite{taki03}  
     #################################################################
     start = time.time()
 
     mat_nodal=np.zeros((nmat,NP),dtype=np.float64) 
     mat_nodal_counter=np.zeros(NP,dtype=np.float64) 
-    nmarker_in_element=np.zeros(nel,dtype=np.float64) 
+    nparticle_in_element=np.zeros(nel,dtype=np.float64) 
 
-    for im in range(0,nmarker):
+    for im in range(0,nparticle):
         imat=swarm_mat[im]-1
         iel=swarm_iel[im]
         N1=0.25*(1-swarm_r[im])*(1-swarm_s[im])
@@ -680,14 +805,14 @@ for istep in range(0,nstep):
         #      mat_nodal_counter[iconP[2,iel]]+=1
         #   #end if
         #end if
-        nmarker_in_element[iel]+=1
+        nparticle_in_element[iel]+=1
     #end for
     mat_nodal/=mat_nodal_counter
 
-    nmarker_file.write("%d %e %e\n" %(istep,np.min(nmarker_in_element),np.max(nmarker_in_element))) 
-    nmarker_file.flush()
+    nparticle_file.write("%d %e %e\n" %(istep,np.min(nparticle_in_element),np.max(nparticle_in_element))) 
+    nparticle_file.flush()
 
-    if np.min(nmarker_in_element)==0:
+    if np.min(nparticle_in_element)==0:
        exit('no particle left in an element')
 
     #np.savetxt('mat_nodal0.ascii',np.array([xP,yP,mat_nodal[0,:]]).T)
@@ -700,7 +825,7 @@ for istep in range(0,nstep):
 
     #np.savetxt('rho_nodal0.ascii',np.array([xP,yP,rho_nodal]).T,header='# x,y,rho')
 
-    print("     -> nmarker_in_elt(m,M) %.5e %.5e " %(np.min(nmarker_in_element),np.max(nmarker_in_element)))
+    print("     -> nparticle_in_elt(m,M) %.5e %.5e " %(np.min(nparticle_in_element),np.max(nparticle_in_element)))
     print("     -> mat_nodal     (m,M) %.5e %.5e " %(np.min(mat_nodal),np.max(mat_nodal)))
 
     print("particles onto Q1 grid: %.3f s" % (time.time() - start))
@@ -737,8 +862,8 @@ for istep in range(0,nstep):
     print("     -> rho_nodal     (m,M) %.5e %.5e " %(np.min(rho_nodal),np.max(rho_nodal)))
     print("     -> eta_nodal     (m,M) %.5e %.5e " %(np.min(eta_nodal),np.max(eta_nodal)))
 
-    np.savetxt('rho_nodal.ascii',np.array([xP,yP,rho_nodal]).T,header='# x,y,rho')
-    np.savetxt('eta_nodal.ascii',np.array([xP,yP,eta_nodal]).T,header='# x,y,eta')
+    #np.savetxt('rho_nodal.ascii',np.array([xP,yP,rho_nodal]).T,header='# x,y,rho')
+    #np.savetxt('eta_nodal.ascii',np.array([xP,yP,eta_nodal]).T,header='# x,y,eta')
 
     print("compute rho,eta on P nodes: %.3f s" % (time.time() - start))
 
@@ -751,7 +876,7 @@ for istep in range(0,nstep):
     eta_elemental=np.zeros(nel,dtype=np.float64) 
     c=np.zeros(nel,dtype=np.float64)
 
-    for im in range(0,nmarker):
+    for im in range(0,nparticle):
         iel=swarm_iel[im]
         imat=swarm_mat[im]-1
         rho_elemental[iel]+=rho_mat[imat]
@@ -761,7 +886,7 @@ for istep in range(0,nstep):
     c=np.zeros(nel,dtype=np.float64)
 
     if avrg==1:
-       for im in range(0,nmarker):
+       for im in range(0,nparticle):
            iel=swarm_iel[im]
            imat=swarm_mat[im]-1
            eta_elemental[iel]+=eta_mat[imat]
@@ -769,7 +894,7 @@ for istep in range(0,nstep):
        eta_elemental/=c
 
     if avrg==2:
-       for im in range(0,nmarker):
+       for im in range(0,nparticle):
            iel=swarm_iel[im]
            imat=swarm_mat[im]-1
            eta_elemental[iel]+=np.log10(eta_mat[imat])
@@ -778,7 +903,7 @@ for istep in range(0,nstep):
        eta_elemental=10.**eta_elemental
 
     if avrg==3:
-       for im in range(0,nmarker):
+       for im in range(0,nparticle):
            iel=swarm_iel[im]
            imat=swarm_mat[im]-1
            eta_elemental[iel]+=1./eta_mat[imat]
@@ -975,8 +1100,8 @@ for istep in range(0,nstep):
     print("     -> f (m,M) %.5e %.5e " %(np.min(f_rhs),np.max(f_rhs)))
     print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
 
-    np.savetxt('rhoq.ascii',np.array([xq,yq,rhoq]).T,header='# x,y,rho')
-    np.savetxt('etaq.ascii',np.array([xq,yq,etaq]).T,header='# x,y,eta')
+    #np.savetxt('rhoq.ascii',np.array([xq,yq,rhoq]).T,header='# x,y,rho')
+    #np.savetxt('etaq.ascii',np.array([xq,yq,etaq]).T,header='# x,y,eta')
 
     print("build FE matrix: %.3f s" % (time.time() - start))
 
@@ -1005,7 +1130,7 @@ for istep in range(0,nstep):
     print("assemble blocks: %.3f s" % (time.time() - start))
 
     ######################################################################
-    # solve system
+    # convert to csr
     ######################################################################
     start = time.time()
 
@@ -1013,6 +1138,13 @@ for istep in range(0,nstep):
        sparse_matrix=A_sparse.tocsr()
     else:
        sparse_matrix=sps.csr_matrix(a_mat)
+
+    print("convert to csr format: %.3f s" % (time.time() - start))
+
+    ######################################################################
+    # solve system
+    ######################################################################
+    start = time.time()
 
     sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
@@ -1026,12 +1158,11 @@ for istep in range(0,nstep):
     u,v=np.reshape(sol[0:NfemV],(NV,2)).T
     p=sol[NfemV:Nfem]*(eta_ref/Ly)
 
-    #u[:]=x[:]
-    #v[:]=y[:]
-
     print("     -> u (m,M) %.5e %.5e " %(np.min(u),np.max(u)))
     print("     -> v (m,M) %.5e %.5e " %(np.min(v),np.max(v)))
     print("     -> p (m,M) %.5e %.5e " %(np.min(p),np.max(p)))
+    
+    vel_file.write("%e %e %e %e %e\n" %(Time,np.min(u),np.max(u),np.min(v),np.max(v))) ; vel_file.flush()
 
     np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
@@ -1100,8 +1231,8 @@ for istep in range(0,nstep):
 
     vrms=np.sqrt(vrms/(Lx*Ly))
 
-    vrms_file.write("%e %e \n" %(Time/year,vrms*year)) ; vrms_file.flush()
-    mass_file.write("%e %e %e %e\n" %(Time/year,mass,mass0,mass/mass0-1.)) ; mass_file.flush()
+    vrms_file.write("%e %e %e %e\n" %(Time,vrms,Time/year,vrms/cm*year)) ; vrms_file.flush()
+    mass_file.write("%e %e %e %e %e\n" %(Time,mass,mass0,mass/mass0-1.,Time/year)) ; mass_file.flush()
 
     print("     -> vrms %.5e " %vrms)
     print("     -> mass %.5e " %mass)
@@ -1109,12 +1240,12 @@ for istep in range(0,nstep):
     print("compute vrms & mass: %.3f s" % (time.time() - start))
 
     ######################################################################
-    # advect markers 
+    # advect particles 
     ######################################################################
     start = time.time()
 
     if rk==1:
-       for im in range(0,nmarker):
+       for im in range(0,nparticle):
            ielx=int(swarm_x[im]/Lx*nelx)
            iely=int(swarm_y[im]/Ly*nely)
            iel=nelx*(iely)+ielx
@@ -1130,7 +1261,7 @@ for istep in range(0,nstep):
        #end for
 
     elif rk==2:
-       for im in range(0,nmarker):
+       for im in range(0,nparticle):
            ielx=int(swarm_x[im]/Lx*nelx)
            iely=int(swarm_y[im]/Ly*nely)
            iel=nelx*(iely)+ielx
@@ -1159,7 +1290,7 @@ for istep in range(0,nstep):
        #end for
 
     elif rk==3:
-       for im in range(0,nmarker):
+       for im in range(0,nparticle):
            ielx=int(swarm_x[im]/Lx*nelx)
            iely=int(swarm_y[im]/Ly*nely)
            iel=nelx*(iely)+ielx
@@ -1202,7 +1333,107 @@ for istep in range(0,nstep):
 
     #end if
 
-    print("advect markers: %.3f s" % (time.time() - start))
+    print("advect particles: %.3f s" % (time.time() - start))
+
+    ######################################################################
+    # advect markers
+    ######################################################################
+    start = time.time()
+
+    if rk==1:
+       for im in range(0,nmarker):
+           ielx=int(m_x[im]/Lx*nelx)
+           iely=int(m_y[im]/Ly*nely)
+           iel=nelx*(iely)+ielx
+           #print (ielx,iely,iel)
+           x0=x[iconV[0,iel]]
+           y0=y[iconV[0,iel]]
+           rm=-1.+2*(m_x[im]-x0)/hx
+           sm=-1.+2*(m_y[im]-y0)/hy
+           m_r[im]=rm
+           m_s[im]=sm
+           NNNV[0:mV]=NNV(rm,sm)
+           m_u[im]=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+           m_v[im]=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+           m_x[im]+=m_u[im]*dt
+           m_y[im]+=m_v[im]*dt
+       #end for
+
+    elif rk==2:
+       for im in range(0,nmarker):
+           ielx=int(m_x[im]/Lx*nelx)
+           iely=int(m_y[im]/Ly*nely)
+           iel=nelx*(iely)+ielx
+           x0=x[iconV[0,iel]]
+           y0=y[iconV[0,iel]]
+           rm=-1.+2*(m_x[im]-x0)/hx
+           sm=-1.+2*(m_y[im]-y0)/hy
+           NNNV[0:mV]=NNV(rm,sm)
+           um=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+           vm=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+           xm=m_x[im]+um*dt/2
+           ym=m_y[im]+vm*dt/2
+
+           ielx=int(xm/Lx*nelx)
+           iely=int(ym/Ly*nely)
+           iel=nelx*(iely)+ielx
+           x0=x[iconV[0,iel]]
+           y0=y[iconV[0,iel]]
+           m_r[im]=-1+2*(xm-x0)/hx
+           m_s[im]=-1+2*(ym-y0)/hy
+           NNNV[0:mV]=NNV(m_r[im],m_s[im])
+           m_u[im]=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+           m_v[im]=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+           m_x[im]+=m_u[im]*dt
+           m_y[im]+=m_v[im]*dt
+       #end for
+
+    elif rk==3:
+       for im in range(0,nmarker):
+           ielx=int(m_x[im]/Lx*nelx)
+           iely=int(m_y[im]/Ly*nely)
+           iel=nelx*(iely)+ielx
+           x0=x[iconV[0,iel]]
+           y0=y[iconV[0,iel]]
+           rm=-1.+2*(m_x[im]-x0)/hx
+           sm=-1.+2*(m_y[im]-y0)/hy
+           NNNV[0:mV]=NNV(rm,sm)
+           uA=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+           vA=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+           xB=m_x[im]+uA*dt/2
+           yB=m_y[im]+vA*dt/2
+
+           ielx=int(xB/Lx*nelx)
+           iely=int(yB/Ly*nely)
+           iel=nelx*(iely)+ielx
+           x0=x[iconV[0,iel]]
+           y0=y[iconV[0,iel]]
+           r=-1+2*(xB-x0)/hx
+           s=-1+2*(yB-y0)/hy
+           NNNV[0:mV]=NNV(r,s)
+           uB=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+           vB=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+           xC=m_x[im]+(2*uB-uA)*dt/2
+           yC=m_y[im]+(2*vB-vA)*dt/2
+
+           ielx=int(xC/Lx*nelx)
+           iely=int(yC/Ly*nely)
+           iel=nelx*(iely)+ielx
+           x0=x[iconV[0,iel]]
+           y0=y[iconV[0,iel]]
+           m_r[im]=-1+2*(xC-x0)/hx
+           m_s[im]=-1+2*(yC-y0)/hy
+           NNNV[0:mV]=NNV(m_r[im],m_s[im])
+           uC=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+           vC=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+           m_u[im]=uC
+           m_v[im]=vC
+           m_x[im]+=(uA+4*uB+uC)*dt/6
+           m_y[im]+=(vA+4*vB+vC)*dt/6
+       #end for
+
+    filename = 'markers_{:04d}.ascii'.format(istep) 
+    np.savetxt(filename,np.array([m_x,m_y,m_u,m_v]).T,header='# x,y')
 
     #####################################################################
     # compute nodal strainrate and heat flux 
@@ -1321,22 +1552,22 @@ for istep in range(0,nstep):
           vtufile.write("</PointData>\n")
        #####
        vtufile.write("<CellData Scalars='scalars'>\n")
-       vtufile.write("<DataArray type='Float32' Name='nmarker' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='nparticle' Format='ascii'> \n")
        for iel in range (0,nel):
-           vtufile.write("%10e\n" % (nmarker_in_element[iel]))
+           vtufile.write("%10e\n" % (nparticle_in_element[iel]))
        vtufile.write("</DataArray>\n")
-
-  
+       #--
        vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
        for iel in range (0,nel):
            vtufile.write("%10e\n" % (eta_elemental[iel]))
        vtufile.write("</DataArray>\n")
+       #--
        if particle_projection == 1:
           vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
           for iel in range (0,nel):
               vtufile.write("%10e\n" % (rho_elemental[iel]))
           vtufile.write("</DataArray>\n")
-
+       #--
        vtufile.write("</CellData>\n")
        #####
        vtufile.write("<Cells>\n")
@@ -1362,8 +1593,6 @@ for istep in range(0,nstep):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
-
-
        filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -1378,9 +1607,14 @@ for istep in range(0,nstep):
        vtufile.write("</Points> \n")
        vtufile.write("<PointData Scalars='scalars'>\n")
        #--
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/s)' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10e %10e %10e \n" %(u[i]*year,v[i]*year,0.))
+           vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (cm/year)' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
@@ -1451,42 +1685,76 @@ for istep in range(0,nstep):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
-       filename = 'markers_{:04d}.vtu'.format(istep) 
+       filename = 'particles_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
-       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nmarker,nmarker))
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nparticle,nparticle))
        vtufile.write("<PointData Scalars='scalars'>\n")
-       #--
        vtufile.write("<DataArray type='Float32' Name='mat' Format='ascii'>\n")
-       for i in range(0,nmarker):
+       for i in range(0,nparticle):
            vtufile.write("%3e \n" %swarm_mat[i])
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='paint' Format='ascii'>\n")
-       for i in range(0,nmarker):
+       for i in range(0,nparticle):
            vtufile.write("%3e \n" %swarm_paint[i])
        vtufile.write("</DataArray>\n")
-
        vtufile.write("</PointData>\n")
        vtufile.write("<Points> \n")
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
-       for i in range(0,nmarker):
+       for i in range(0,nparticle):
            vtufile.write("%10e %10e %10e \n" %(swarm_x[i],swarm_y[i],0.))
        vtufile.write("</DataArray>\n")
        vtufile.write("</Points> \n")
        vtufile.write("<Cells>\n")
        vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-       for i in range(0,nmarker):
+       for i in range(0,nparticle):
            vtufile.write("%d " % i)
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-       for i in range(0,nmarker):
+       for i in range(0,nparticle):
            vtufile.write("%d " % (i+1))
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-       for i in range(0,nmarker):
+       for i in range(0,nparticle):
            vtufile.write("%d " % 1)
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Cells>\n")
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
+
+       filename = 'markers_{:04d}.vtu'.format(istep) 
+       vtufile=open(filename,"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nmarker,nmarker-1))
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+       for i in range(0,nmarker):
+           vtufile.write("%.10e %.10e %.10e \n" %(m_x[i],m_y[i],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/s)' Format='ascii'> \n")
+       for i in range(0,nmarker):
+           vtufile.write("%10e %10e %10e \n" %(m_u[i],m_v[i],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</PointData>\n")
+       vtufile.write("<Cells>\n")
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       for i in range(0,nmarker-1):
+           vtufile.write("%d %d " % (i,i+1))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       for i in range(0,nmarker):
+           vtufile.write("%d " % ((i+1)*2))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       for i in range(0,nmarker):
+           vtufile.write("%d " % 3)
        vtufile.write("</DataArray>\n")
        vtufile.write("</Cells>\n")
        vtufile.write("</Piece>\n")
