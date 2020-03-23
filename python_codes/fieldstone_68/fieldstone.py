@@ -4,9 +4,9 @@ from scipy.sparse import lil_matrix
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 
-##########################################################
+#------------------------------------------------------------------------------
 # defining velocity and pressure shape functions
-##########################################################
+#------------------------------------------------------------------------------
 
 def NNV(rq,sq):
     NV_0= (1.-rq-sq)*(1.-2.*rq-2.*sq+ 3.*rq*sq)
@@ -79,32 +79,38 @@ def dNNTds(r,s):
     dNds_4=4-4*r-8*s
     return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5
 
-##########################################################
+#------------------------------------------------------------------------------
 # Crouzeix-Raviart elements for Stokes, P_2 for Temp.
 # the internal numbering of the nodes is as follows:
 #
-#  P_2^+           P_-1           P_2 
+#  P_2^+            P_-1             P_2 
 #
-#  02          #  02          #  02
-#  ||\\        #  ||\\        #  ||\\
-#  || \\       #  || \\       #  || \\
-#  ||  \\      #  ||  \\      #  ||  \\
-#  04   03     #  ||   \\     #  04   03
-#  || 06 \\    #  ||    \\    #  ||    \\
-#  ||     \\   #  ||     \\   #  ||     \\
-#  00==05==01  #  00======01  #  00==05==01
-#
-##########################################################
-# useful constants
-##########################################################
+#  02           #   02           #   02
+#  ||\\         #   ||\\         #   ||\\
+#  || \\        #   || \\        #   || \\
+#  ||  \\       #   ||  \\       #   ||  \\
+#  04   03      #   ||   \\      #   04   03
+#  || 06 \\     #   ||    \\     #   ||    \\
+#  ||     \\    #   ||     \\    #   ||     \\
+#  00==05==01   #   00======01   #   00==05==01
 
-print("-----------------------------")
-print("----------fieldstone---------")
-print("-----------------------------")
+rVnodes=[0,1,0,0.5,0.0,0.5,1./3.]
+sVnodes=[0,0,1,0.5,0.5,0.0,1./3.]
+
+rTnodes=[0,1,0,0.5,0.0,0.5]
+sTnodes=[0,0,1,0.5,0.5,0.0]
+
+#------------------------------------------------------------------------------
+# useful constants
+#------------------------------------------------------------------------------
 
 cm=0.01
 year=365.25*3600.*24.
 Kelvin=273
+
+print("-----------------------------")
+print("----------fieldstone---------")
+print("-----------------------------")
 
 ndim=2   # number of physical dimensions
 mV=7     # number of velocity nodes making up an element
@@ -117,7 +123,6 @@ ndofT=1  # number of temperature degrees of freedom
 ##########################################################
 # input parameters
 
-#filename='subduction_mesh.msh'
 filename='subduction_mesh_high_res2.msh'
 Lx=650e3
 Ly=250.7e3
@@ -128,23 +133,16 @@ hcapa=1250
 rho0=3300
 
 ##########################################################
-
-rVnodes=[0,1,0,0.5,0.0,0.5,1./3.]
-sVnodes=[0,0,1,0.5,0.5,0.0,1./3.]
-
-# checking that all velocity shape functions are 1 on their node 
-# and  zero elsewhere
+# checking that all velocity shape functions are 1 on 
+# their node and zero elsewhere
 #for i in range(0,mV):
 #   print ('node',i,':',NNV(rVnodes[i],sVnodes[i]))
 #exit()
-
-rTnodes=[0,1,0,0.5,0.0,0.5]
-sTnodes=[0,0,1,0.5,0.5,0.0]
-
+# checking that all velocity temperature functions are 1 on 
+# their node and zero elsewhere
 #for i in range(0,mT):
 #   print ('node',i,':',NNT(rTnodes[i],sTnodes[i]))
 #exit()
-
 ##########################################################
 #find NV and nel as indicated in msh file
 ##########################################################
@@ -156,7 +154,7 @@ for line in f:
     columns=line.split()
     if counter==4:
        NV=int(columns[0])
-       print ('NV=',NV)
+       print ('read: NV=',NV)
     counter+=1
 #end for
 
@@ -167,7 +165,7 @@ for line in f:
     columns=line.split()
     if counter==NV+7:
        nel=int(columns[0])
-       print ('nel=',nel)
+       print ('read: nel=',nel)
     counter+=1
 #end for
 
@@ -195,7 +193,7 @@ for line in f:
     counter+=1
 #end for
 
-print('nb of interface lines:',counter2)
+print('nb of interface lines in msh file:',counter2)
 
 nel-=counter2
 
@@ -378,6 +376,7 @@ for iel in range(0,nel):
        for k in range(0,mV):
            print (xV[iconV[k,iel]],yV[iconV[k,iel]])
    #    print(iel,iconV[:,iel])
+#end for
 
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area %.6f " %(area.sum()))
@@ -404,7 +403,10 @@ for line in f:
           interface[np.int64(columns[5])-1]=True
           interface[np.int64(columns[6])-1]=True
           interface[np.int64(columns[7])-1]=True
+       #end if
+    #end if
     counter+=1
+#end for
 
 print("read in slab interface: %.3f s" % (timing.time() - start))
 
@@ -441,6 +443,7 @@ for iel in range(0,nel):
        ny[iconV[5,iel]]=ay
        nx[inode1]+=ax
        ny[inode1]+=ay
+    #end if
     if interface[inode0] and interface[inode2]: 
        vx=abs(x2-x0)
        vy=abs(y2-y0)
@@ -453,6 +456,7 @@ for iel in range(0,nel):
        ny[iconV[4,iel]]=ay
        nx[inode2]+=ax
        ny[inode2]+=ay
+    #end if
     if interface[inode1] and interface[inode2]: 
        vx=abs(x2-x1)
        vy=abs(y2-y1)
@@ -465,12 +469,16 @@ for iel in range(0,nel):
        ny[iconV[3,iel]]=ay
        nx[inode2]+=ax
        ny[inode2]+=ay
+    #end if
+#end for
     
 for i in range(0,NV):
     norm=np.sqrt(nx[i]**2+ny[i]**2)
     if norm>1e-6:
        nx[i]/=norm
        ny[i]/=norm
+    #end if
+#end for
 
 print("compute normals: %.3f s" % (timing.time() - start))
 
@@ -479,8 +487,8 @@ print("compute normals: %.3f s" % (timing.time() - start))
 # should be perpendicular to normal.
 # We wish to fix both components of the velocity in the over-riding 
 # plate. Through trial and error, I found out that one cannot 
-# fix the bubble dof, so I leave it free, which is not important since 
-# all 6 nodes around are constrained to vel=0.
+# fix all dofs, so I leave some free, which is not too important since 
+# these elements are pretty much bound by no slip b.c. all around 
 #################################################################
 start = timing.time()
 
@@ -876,10 +884,6 @@ exy_n = np.zeros(NV,dtype=np.float64)
 count = np.zeros(NV,dtype=np.int16)  
 q=np.zeros(NV,dtype=np.float64)
 
-#p=xP
-#u[:]=x[:]
-#v[:]=y[:]
-
 for iel in range(0,nel):
     for i in range(0,mV):
         rq=rVnodes[i]
@@ -1043,7 +1047,6 @@ if True:
     for i in range(0,NV):
         vtufile.write("%10e \n" %exy_n[i])
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' Name='interface' Format='ascii'> \n")
     for i in range(0,NV):
@@ -1053,7 +1056,6 @@ if True:
         else:
            vtufile.write("%10e \n" %0.)
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' Name='fix_u (bool)' Format='ascii'> \n")
     for i in range(0,NV):
@@ -1072,7 +1074,6 @@ if True:
            val=0
         vtufile.write("%10e \n" %val)
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' Name='fix_u (value)' Format='ascii'> \n")
     for i in range(0,NV):
@@ -1082,7 +1083,6 @@ if True:
            val=0
         vtufile.write("%10e \n" %val)
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' Name='fix_v (value)' Format='ascii'> \n")
     for i in range(0,NV):
@@ -1092,7 +1092,6 @@ if True:
            val=0
         vtufile.write("%10e \n" %val)
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' Name='fix_T (bool)' Format='ascii'> \n")
     for i in range(0,NT):
@@ -1102,10 +1101,16 @@ if True:
            val=0
         vtufile.write("%10e \n" %val)
     vtufile.write("</DataArray>\n")
-
-
-
-
+    #--
+    vtufile.write("<DataArray type='Float32' Name='fix_T (value)' Format='ascii'> \n")
+    for i in range(0,NT):
+        if bc_fixT[i]:
+           val=bc_valT[i]-Kelvin
+        else:
+           val=0
+        vtufile.write("%10e \n" %val)
+    vtufile.write("</DataArray>\n")
+    #--
     vtufile.write("</PointData>\n")
     #####
     vtufile.write("<Cells>\n")
