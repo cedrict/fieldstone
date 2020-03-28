@@ -1,0 +1,9 @@
+set term pdf enhanced
+set grid
+set xlabel 'r/R'
+set ylabel '{/Symbol r}/{/Symbol r}_0'
+set output 'rho.pdf'
+set xtics 0.25
+set ytics 0.25
+plot[0:1]\
+1-x**2 notitle
