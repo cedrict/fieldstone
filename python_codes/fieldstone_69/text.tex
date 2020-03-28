@@ -1,0 +1,38 @@
+\lstinputlisting[language=bash,basicstyle=\tiny]{python_codes/fieldstone_69/keywords}
+
+I have re-implemented most parts of the GHOST code \cite{thie18} in python. 
+This stone only generates a spherical shells (so no hollow sphere mesh), 
+i.e. all nodes are on the same radius. 
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_69/images/shells}\\
+{\captionfont Left: cubed sphere; Middle: Citcom mesh; Right: Icosahedral mesh. 
+All three at level=10.}
+\end{center}
+
+
+
+There are three python codes: {\sl rivers.py}, {\sl coastlines.py} and {\sl plate\_boundaries.py} which allow the user to choose 
+a radius on which the data will projected. There are 3 folders {\sl rivers}, {\sl coastlines} and {\sl plate\_boundaries} which contain the relevant data per 'continent', i.e. 
+Africa, Asia, Europe, North America and South America in this case. 
+I have downloaded these data off the internet some 15 years ago and I can unfortunately not assign these references.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_69/images/01}
+\includegraphics[width=7cm]{python_codes/fieldstone_69/images/02}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_69/images/03}
+\includegraphics[width=7cm]{python_codes/fieldstone_69/images/04}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_69/topo/topo.png}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_69/topo/topo2.png}
+\includegraphics[width=7cm]{python_codes/fieldstone_69/topo/topo3.png}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_69/topo/topo3D_1.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_69/topo/topo3D_2.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_69/topo/topo3D_3.png}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_69/topo/topo3D_4.png}
+\includegraphics[width=7cm]{python_codes/fieldstone_69/topo/topo3D_5.png}\\
+{\captionfont Icosahedral mesh, level=100. Vertical exaggeration=20.}
+\end{center}
