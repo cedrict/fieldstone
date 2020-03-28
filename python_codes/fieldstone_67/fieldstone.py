@@ -101,6 +101,7 @@ ndofP=1  # number of pressure degrees of freedom
 model=3 # falling block 
 #model=4 # dripping instability
 
+#...........
 if model==1:
    Lx=2680e3  # horizontal extent of the domain 
    Ly=670e3      # vertical extent of the domain 
@@ -125,6 +126,7 @@ if model==1:
    marker_random=True
    eta_ref=1e21      # scaling of G blocks
 
+#...........
 if model==2:
    Lx=3000e3
    Ly=750e3
@@ -149,11 +151,12 @@ if model==2:
    marker_random=True
    eta_ref=1e21      # scaling of G blocks
 
+#...........
 if model==3: # falling block
    Lx=500e3
    Ly=500e3
-   nelx=48
-   nely=48
+   nelx=64
+   nely=64
    grav=9.81
    use_stretching_x=False
    use_stretching_y=False
@@ -168,6 +171,7 @@ if model==3: # falling block
    marker_random=True
    eta_ref=1e21      # scaling of G blocks
 
+#...........
 if model==4: # dripping instability 
    Lx=1
    Ly=2
@@ -188,22 +192,25 @@ if model==4: # dripping instability
    marker_random=True
    eta_ref=10      # scaling of G blocks
    
-nq_per_dim=3
-nnx=2*nelx+1  # number of elements, x direction
-nny=2*nely+1  # number of elements, y direction
-NV=nnx*nny  # number of nodes
-NP=(nelx+1)*(nely+1)
-nel=nelx*nely  # number of elements, total
-nq=nq_per_dim**2*nel
-NfemV=NV*ndofV               # number of velocity dofs
+
+nnx=2*nelx+1                  # number of V nodes, x direction
+nny=2*nely+1                  # number of V nodes, y direction
+NV=nnx*nny                    # total number of nodes
+NP=(nelx+1)*(nely+1)          # total number of P nodes
+nel=nelx*nely                 # number of elements, total
+NfemV=NV*ndofV                # number of velocity dofs
 NfemP=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
 Nfem=NfemV+NfemP              # total number of dofs
-hx=Lx/nelx
-hy=Ly/nely
 
-nstep=20
+hx=Lx/nelx                    # mesh spacing in x direction
+hy=Ly/nely                    # mesh spacing in y direction
+
+nstep=200
 
 CFL_nb=0.25
+
+nq_per_dim=3                  # number of quad points per dimension
+nq=nq_per_dim**2*nel          # number of quadrature points
 
 nparticle_per_element=nparticle_per_dim**2
 nparticle=nparticle_per_element*nel
@@ -267,7 +274,6 @@ vrms_file=open('vrms.ascii',"w")
 mass_file=open('mass.ascii',"w")
 nparticle_file=open('nparticle_per_element.ascii',"w")
 dt_file=open('dt.ascii',"w")
-#points_file=open('points.ascii',"w")
 
 #################################################################
 # grid point setup
@@ -455,6 +461,8 @@ print("marker setup: %.3f s" % (time.time() - start))
 start = time.time()
 
 if model==1:
+
+   #points_file=open('points.ascii',"w")
 
    xA=Lx/2 ; yA=Ly
    xB=Lx/2 ; yB=Ly-7e3

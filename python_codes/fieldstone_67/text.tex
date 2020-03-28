@@ -1,26 +1,26 @@
-
+\index{stoneslist}{PIC}
 
 %----------------------------------------------
 \subsubsection{Setup1: Sinking block} 
 
 This simple benchark provides challenging numerical experiments dealing with large viscosity variations 
 within the simulation domain. It appears in \cite{gery10,thie11} 
-and consists of a bulk of fluid 1 ($\rho_1,\mu_1$)
-in which a block of fluid 2 ($\rho_2,\mu_2$) falls under its own weight.
+and consists of a bulk of fluid 1 ($\rho_1,\eta_1$)
+in which a block of fluid 2 ($\rho_2,\eta_2$) falls under its own weight.
 The domain is a square of size $L_x=L_y=500km$ and the block is initially centered at point ($x=250km,y=400km$) with size $100\times100km$. 
 
 The simulation is carried out on a $64\times64$ elements grid and each element contains $n^3$ markers
 at startup. Free slip boundary conditions are imposed on all sides of the domain. 
 
 The density of the surrounding fluid is $\rho_1=3200kg/m^3$
-and its viscosity $\mu_1=10^{20}$ Pa.s.
+and its viscosity $\eta_1=10^{20}$ Pa.s.
 The viscosity and density of the block is varied. We define
 \[
-\mu^\star=\mu_2/\mu_1
+\eta^\star=\eta_2/\eta_1
 \quad\quad
 \rho_2=\rho_1 (1 + d\rho)
 \]
-In Earth sciences, $\mu^\star$ can typically take values between $10^{-2}$ and $10^6$,
+In Earth sciences, $\eta^\star$ can typically take values between $10^{-2}$ and $10^6$,
 while $d\rho$ between 0.001 and 0.5 (in this context we need $d\rho>0$ so that the cube 
 goes down).
 
@@ -28,6 +28,27 @@ goes down).
 \includegraphics[width=7cm]{python_codes/fieldstone_67/sinking/vel0}\\
 {\captionfont velocity field at $t=0$ for $\eta_2=10^{23}$.}
 \end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_67/sinking/vrms.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_67/sinking/vel.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_67/sinking/mass.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_67/sinking/nparticle_per_element.pdf}\\
+{\captionfont resolution 48x48. 100 random particles per element. rk=2. $\eta*=10$. CFL=0.25. 
+projection=2}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_67/sinking/mat0_0000.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_67/sinking/mat0_0070.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_67/sinking/mat0_0144.png}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_67/sinking/vel1}
+\includegraphics[width=5cm]{python_codes/fieldstone_67/sinking/vel2}
+\includegraphics[width=5cm]{python_codes/fieldstone_67/sinking/vel3}
+\end{center}
+
+
 
 Run 
 
