@@ -1,7 +1,9 @@
+2D
 box
 annulus
 hollow_sphere
 spherical_shell
+chunk
 Q1P0
 Q2Q1
 Q2Pm1

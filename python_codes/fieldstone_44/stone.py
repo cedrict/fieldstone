@@ -556,7 +556,7 @@ print("     -> p (m,M) %.6e %.6e (MPa)" %(np.min(p)/1e6,np.max(p)/1e6))
 print("split vel into u,v: %.3f s" % (timing.time() - start))
 
 ######################################################################
-# compute elemental strainrate 
+# compute nodal strainrate and pressure  
 ######################################################################
 start = timing.time()
 
