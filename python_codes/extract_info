@@ -1,0 +1,69 @@
+#geometry
+grep -r --include="keywords" box .
+grep -r --include="keywords" annulus .
+grep -r --include="keywords" hollow_sphere .
+grep -r --include="keywords" spherical_shell .
+grep -r --include="keywords" 2D .
+grep -r --include="keywords" 3D .
+
+
+#element type
+grep -r --include="keywords" Q1P0 .
+grep -r --include="keywords" Q2Q1 .
+grep -r --include="keywords" Q3Q2 .
+grep -r --include="keywords" Q4Q3 .
+grep -r --include="keywords" MINI .
+grep -r --include="keywords" Q2Pm1 .
+grep -r --include="keywords" P2P1 .
+grep -r --include="keywords" P2pPm1 .
+
+#physics
+grep -r --include="keywords" stokes_equation .
+grep -r --include="keywords" energy_equation .
+grep -r --include="keywords" thermo_mechanical .
+
+
+#fem stuff
+grep -r --include="keywords" penalty .
+grep -r --include="keywords" sparse_matrix .
+grep -r --include="keywords" analytical_benchmark .
+grep -r --include="keywords" numerical_benchmark .
+grep -r --include="keywords" time_stepping .
+grep -r --include="keywords" use_mesher .
+grep -r --include="keywords" nonlinear .
+grep -r --include="keywords" matplotlib .
+
+Q1P0
+Q2Q1
+Q2Pm1
+Q3Q2
+Q4Q3
+MINI
+P2pPm1
+Q1Q1stab
+Q1P0RT
+penalty
+sparse_matrix
+3D
+compressible
+analytical_benchmark
+numerical_benchmark
+error_convergence
+stokes_equation
+energy_equation
+thermo-mechanical
+time_stepping
+use_mesher
+nonlinear
+elastic_rheology
+viscous_rheology
+plastic_rheology
+buoyancy_driven
+vrms
+nusselt_number
+rayleigh_number
+residual
+paraview_output
+stream_function
+displacement_code
+matplotlib
