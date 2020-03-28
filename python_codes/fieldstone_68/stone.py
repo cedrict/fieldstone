@@ -124,7 +124,7 @@ ndofT=1  # number of temperature degrees of freedom
 # input parameters
 
 #filename='subduction_mesh_high_res2.msh'
-filename='subduction_mesh_flags.msh'
+filename='subduction_mesh_vel_ramp_sub_channel.msh'
 Lx=650e3
 Ly=250.7e3
 eta0=1e22
@@ -420,6 +420,32 @@ start = timing.time()
 nx=np.zeros(NV,dtype=np.float64) 
 ny=np.zeros(NV,dtype=np.float64) 
 
+interfaces=np.zeros(NV,dtype=np.int32)  
+
+for iel in range(0,nel):
+    inode0=iconV[0,iel]
+    inode1=iconV[1,iel]
+    inode2=iconV[2,iel]
+    if interface[inode0]==101:
+       interfaces[inode0]=1
+    #if interface[inode0]==103:
+    #   interfaces[inode0]=1
+    #if interface[inode0]==104:
+    #   interfaces[inode0]=1
+    if interface[inode1]==101:
+       interfaces[inode1]=1
+    #if interface[inode1]==103:
+    #   interfaces[inode1]=1
+    #if interface[inode1]==104:
+    #   interfaces[inode1]=1
+    if interface[inode2]==101:
+       interfaces[inode2]=1
+    #if interface[inode2]==103:
+    #   interfaces[inode2]=1
+    #if interface[inode2]==104:
+    #   interfaces[inode2]=1
+
+
 for iel in range(0,nel):
     inode0=iconV[0,iel]
     inode1=iconV[1,iel]
@@ -430,7 +456,7 @@ for iel in range(0,nel):
     y0=yV[inode0]
     y1=yV[inode1]
     y2=yV[inode2]
-    if interface[inode0]==101 and interface[inode1]==101: 
+    if (interfaces[inode0]==1 and interfaces[inode1]==1):
        vx=abs(x1-x0)
        vy=abs(y1-y0)
        vnorm=np.sqrt(vx**2+vy**2)
@@ -443,7 +469,7 @@ for iel in range(0,nel):
        nx[inode1]+=ax
        ny[inode1]+=ay
     #end if
-    if interface[inode0]==101 and interface[inode2]==101: 
+    if (interface[inode0]==1 and interface[inode2]==1):
        vx=abs(x2-x0)
        vy=abs(y2-y0)
        vnorm=np.sqrt(vx**2+vy**2)
@@ -456,7 +482,7 @@ for iel in range(0,nel):
        nx[inode2]+=ax
        ny[inode2]+=ay
     #end if
-    if interface[inode1]==101 and interface[inode2]==101: 
+    if (interface[inode1]==1 and interface[inode2]==1):
        vx=abs(x2-x1)
        vy=abs(y2-y1)
        vnorm=np.sqrt(vx**2+vy**2)
@@ -506,7 +532,7 @@ for i in range(0,NV):
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
 
     # bottom overriding plate
-    if interface[i]==104: 
+    if interface[i]==105: 
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
 
@@ -515,10 +541,24 @@ for i in range(0,NV):
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
 
-    #top of slab
+    #top of slab ramp
+    #if interface[i]==103:
+    #   bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ny[i]*vel 
+    #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[i]*vel
+
+    #top of slab 
+    #if interface[i]==104:
+    #   bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ny[i]*vel 
+    #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[i]*vel
+
+    #inner slab ramp
     if interface[i]==101:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ny[i]*vel 
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[i]*vel
+
+    if i==22608:
+       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
 
 print("setup boundary conditions: %.3f s" % (timing.time() - start))
 

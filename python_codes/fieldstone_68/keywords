@@ -1,0 +1,14 @@
+2D
+box
+P2+Pm1
+sparse_matrix
+stokes_equation
+energy_equation
+thermo-mechanical
+time_stepping
+use_mesher
+nonlinear
+viscous_rheology
+paraview_output
+pressure_scaling
+
