@@ -5,8 +5,12 @@
 
 
 
-The Stream function (commonly denoted by $\Phi$ or $\Psi$) approach is a useful approach in fluid dynamics as it 
+The Stream function (commonly denoted by $\Phi$ or $\Psi$) approach is a useful approach in 
+fluid dynamics as it 
 can provide relatively quick solutions to 2D incompressible flow problems.
+Using a stream function
+formulation is numerically convenient because velocity information is contained in a single scalar equation
+and pressure vanishes from the solution process.
 The stream function is a function of coordinates and time of an inviscid liquid.
 It allows to determine the components of velocity by differentiating the stream function 
 with respect to the space coordinates. 
@@ -15,6 +19,7 @@ the stream function remains constant along a streamline.
 Although also valid in 3D, this approach is mostly used in 2D because of its 
 relative simplicity {\color{red} REFERENCES}.
 
+%........................................
 \subsubsection{In Cartesian coordinates}
 
 In two dimensions the velocity is obtained as follows:
@@ -76,10 +81,34 @@ Note that $\vec\nabla^2 \vec\nabla^2 = \vec\nabla^4 $ is known as the Biharmonic
 These equations are also to be found in the geodynamics literature, 
 see Eq. 1.43 \cite[eq. 1.43]{tack10} or \cite[p 70-71]{gery10}.
 
+In the presence of temperature variations and multiple compositions, 
+Trim et al (2020) \cite{trlb20}  use the  following nondimensional 
+equation:
+\[
+\left(
+\frac{\partial^2 }{\partial x^2} - 
+\frac{\partial^2 }{\partial y^2}  
+\right)
+\left[ \eta
+\left(
+\frac{\partial^2 \Psi}{\partial x^2} - 
+\frac{\partial^2 \Psi}{\partial y^2}  
+\right)
+\right]
++4
+\frac{\partial^2 }{\partial xy} 
+\left[
+\eta 
+\frac{\partial^2 \Psi}{\partial xy} 
+\right]
+=
+Ra_T \frac{\partial T}{\partial x}-
+Ra_C \frac{\partial C}{\partial x}
+\]
+\todo[inline]{check/rederive this formula!}
 
 
-
-
+%........................................
 \subsubsection{In Cylindrical coordinates}
 
 TODO

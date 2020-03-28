@@ -1145,7 +1145,9 @@ root mean square averages:
 \item \underline{Stress tensor} ${\bm \sigma}$ (Pa): \index{general}{Stress Tensor}
 \item \underline{Strain tensor} ${\bm \varepsilon}$ (dimensionless): \index{general}{Strain Tensor}
 \item \underline{Strain rate tensor} $ \dot{\bm \varepsilon} (\text{s}^{-1}$): \index{general}{Strain Rate Tensor}
-\item \underline{Rayleigh number} $Ra$ (X): \index{general}{Rayleigh Number}
+
+%..........................................
+\item \underline{(Thermal) Rayleigh number} $Ra$ (or $Ra_T$) (X): \index{general}{Rayleigh Number}
 It is a dimensionless number that expresses the	ratio of the driving forces to the opposing forces.
 The buoyancy force comes from the volumetric thermal expansion while the viscous forces and 
 the heat diffusivity oppose convection (the latter one smoothes out thermal gradients). 
@@ -1175,7 +1177,16 @@ Rayleigh number, which ranges from 600 to 3000 (it depends on the boundary condi
 geometry).
 \index{general}{Critical Rayleigh Number}
 
+%.........................................
+\item \underline{Compositional Rayleigh Number} $Ra_C$: \index{general}{Compositional Rayleigh Number} 
+\[
+Ra_C= \frac{\Delta \rho_C  g  D^3}{\kappa \eta_0}
+\]
+where $\Delta_C$ is the difference in density between the distinct material compositions
+(when compared at identical temperatures). See for instance Trim et al (2020) \cite{trlb20}.
 
+
+%.........................................
 \item \underline{Prandtl number} $Pr$ (X): \index{general}{Prandtl Number} It is named after the German physicist 
 Ludwig Prandtl and is defined as the ratio of momentum diffusivity to thermal diffusivity. It is given as: 
 \[
