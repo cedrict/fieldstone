@@ -30,8 +30,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="151.91042"
-     inkscape:cy="589.75593"
+     inkscape:cx="-98.803866"
+     inkscape:cy="584.04164"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -88,11 +88,11 @@
     <image
        sodipodi:absref="/home/cedrict/Desktop/FIELDSTONE/V2/fieldstone/images/frontpage/front3.png"
        xlink:href="front3.png"
-       width="222.01564"
-       height="156.05305"
-       preserveAspectRatio="none"
+       y="109.49374"
+       x="7.8466711"
        id="image1063"
-       x="-6.8321905"
-       y="98.080574" />
+       preserveAspectRatio="none"
+       height="136.70241"
+       width="194.48558" />
   </g>
 </svg>
