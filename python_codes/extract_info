@@ -1,3 +1,8 @@
+#this script greps all keywords files present in the 
+#stone folders and makes a list of stones per keyword. 
+#It outputs the results in the "features" file which 
+#in turn is included at the end of the manual.
+
 rm features
 
 echo "---------------------" >> features
@@ -46,200 +51,208 @@ echo " " >> features
 echo "---------------------" >> features
 echo "---Q2Q1---" >> features
 echo "---------------------" >> features
-grep -r --include="keywords" Q2Q1 . | cut -c1- | cut -f1 -d"/" >> features
+grep Q2Q1 */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
 echo "---Q3Q2---" >> features
 echo "---------------------" >> features
-grep -r --include="keywords" Q3Q2 . | cut -c1- | cut -f1 -d"/" >> features
+grep Q3Q2 */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
 echo "---Q4Q3---" >> features
 echo "---------------------" >> features
-grep -r --include="keywords" Q4Q3 . | cut -c3- | cut -f1 -d"/" >> features
+grep Q4Q3 */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
 echo "---MINI---" >> features
 echo "---------------------" >> features
-grep -r --include="keywords" MINI . | cut -c3- | cut -f1 -d"/" >> features
+grep MINI */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
 echo "---Q2Pm1---" >> features
 echo "---------------------" >> features
-grep -r --include="keywords" Q2Pm1 . | cut -c3- | cut -f1 -d"/" >> features
+grep Q2Pm1 */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
 echo "---P2P1---" >> features
 echo "---------------------" >> features
-grep -r --include="keywords" P2P1 . | cut -c3- | cut -f1 -d"/" >> features
+grep P2P1 */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
 echo "---P2pPm1---" >> features
 echo "---------------------" >> features
-grep P2pPm1 */keywords | cut -c3- | cut -f1 -d"/" >> features
+grep P2pPm1 */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
 echo "---Q1Q1stab---" >> features
 echo "---------------------" >> features
-grep Q1Q1stab */keywords | cut -c3- | cut -f1 -d"/" >> features
+grep Q1Q1stab */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
 echo "---Q1P0RT---" >> features
 echo "---------------------" >> features
-grep -r --include="keywords" Q1P0RT . | cut -c3- | cut -f1 -d"/" >> features
+grep -r --include="keywords" Q1P0RT . | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
 echo "---stokes_equation---" >> features
 echo "---------------------" >> features
-grep stokes_equation */keywords | cut -c3- | cut -f1 -d"/" >> features
+grep stokes_equation */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
 echo "---energy_equation---" >> features
 echo "---------------------" >> features
-grep energy_equation */keywords | cut -c3- | cut -f1 -d"/" >> features
+grep energy_equation */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
 echo "---thermo mechanical-" >> features
 echo "---------------------" >> features
-grep thermo_mechanical */keywords | cut -c3- | cut -f1 -d"/" >> features
+grep thermo_mechanical */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
 echo "---compressible------" >> features
 echo "---------------------" >> features
-grep -r --include="keywords" compressible . | cut -c3- | cut -f1 -d"/" >> features
+grep compressible */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
 echo "---penalty-----------" >> features
 echo "---------------------" >> features
-grep -r --include="keywords" penalty . | cut -c3- | cut -f1 -d"/" >> features
+grep penalty */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
 echo "---sparse matrix-----" >> features
 echo "---------------------" >> features
-grep -r --include="keywords" sparse_matrix . | cut -c3- | cut -f1 -d"/" >> features
+grep sparse_matrix */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "--------------------------" >> features
 echo "---analytical benchmark---" >> features
 echo "--------------------------" >> features
-grep -r --include="keywords" analytical_benchmark . | cut -c3- | cut -f1 -d"/" >> features
+grep analytical_benchmark */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "-------------------------" >> features
-echo "---numerical benchmark---" >> features
-echo "-------------------------" >> features
-grep -r --include="keywords" numerical_benchmark . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---numerical benchmark----" >> features
+echo "--------------------------" >> features
+grep numerical_benchmark */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---time_stepping-------" >> features
-echo "---------------------" >> features
-grep -r --include="keywords" time_stepping . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---time_stepping----------" >> features
+echo "--------------------------" >> features
+grep time_stepping */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---use_mesher--------" >> features
-echo "---------------------" >> features
-grep -r --include="keywords" use_mesher . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---use_mesher-------------" >> features
+echo "--------------------------" >> features
+grep use_mesher */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---nonlinear--------" >> features
-echo "---------------------" >> features
-grep -r --include="keywords" nonlinear . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---nonlinear--------------" >> features
+echo "--------------------------" >> features
+grep nonlinear */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---matplotlib--------" >> features
-echo "---------------------" >> features
-grep -r --include="keywords" matplotlib . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---matplotlib-------------" >> features
+echo "--------------------------" >> features
+grep matplotlib */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "-----------------------" >> features
-echo "---error convergence---" >> features
-echo "-----------------------" >> features
-grep -r --include="keywords" error_convergence . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---error convergence------" >> features
+echo "--------------------------" >> features
+grep error_convergence */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---elastic rheology---" >> features
-echo "---------------------" >> features
-grep -r --include="keywords" elastic_rheology . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---elastic rheology-------" >> features
+echo "--------------------------" >> features
+grep elastic_rheology */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---viscous rheology---" >> features
-echo "---------------------" >> features
-grep -r --include="keywords" viscous_rheology . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---viscous rheology-------" >> features
+echo "--------------------------" >> features
+grep viscous_rheology */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "----------------------" >> features
-echo "---plastic rheology---" >> features
-echo "----------------------" >> features
-grep -r --include="keywords" plastic_rheology . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---plastic rheology-------" >> features
+echo "--------------------------" >> features
+grep plastic_rheology */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---buoyancy driven---" >> features
-echo "---------------------" >> features
-grep -r --include="keywords" buoyancy_driven . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---buoyancy driven--------" >> features
+echo "--------------------------" >> features
+grep buoyancy_driven */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---vrms--------------" >> features
-echo "---------------------" >> features
-grep -r --include="keywords" vrms . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---vrms-------------------" >> features
+echo "--------------------------" >> features
+grep vrms */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---nusselt number----" >> features
-echo "---------------------" >> features
-grep -r --include="keywords" nusselt_number . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---nusselt number---------" >> features
+echo "--------------------------" >> features
+grep nusselt_number */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---rayleigh number---" >> features
-echo "---------------------" >> features
-grep -r --include="keywords" rayleigh_number . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---rayleigh number--------" >> features
+echo "--------------------------" >> features
+grep rayleigh_number */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---residual----------" >> features
-echo "---------------------" >> features
-grep -r --include="keywords" residual . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---residual---------------" >> features
+echo "--------------------------" >> features
+grep residual */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---paraview output--" >> features
-echo "---------------------" >> features
-grep -r --include="keywords" paraview_output . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---paraview output--------" >> features
+echo "--------------------------" >> features
+grep paraview_output */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---stream function---" >> features
-echo "---------------------" >> features
-grep -r --include="keywords" stream_function . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---stream function--------" >> features
+echo "--------------------------" >> features
+grep stream_function */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---displacement code-" >> features
-echo "---------------------" >> features
-grep -r --include="keywords" displacement_code . | cut -c3- | cut -f1 -d"/" >> features
+echo "--------------------------" >> features
+echo "---displacement code------" >> features
+echo "--------------------------" >> features
+grep displacement_code */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
+echo "--------------------------" >> features
+echo "---steady_state-----------" >> features
+echo "--------------------------" >> features
+grep steady_state */keywords | cut -c1- | cut -f1 -d"/" >> features
+echo " " >> features
+
+
+###sed 's/keywords//g' features > features2
 
 ###sed 's/keywords//g' features > features2
