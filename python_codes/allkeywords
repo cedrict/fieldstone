@@ -41,3 +41,4 @@ matplotlib
 PIC
 pressure_scaling
 pressure_normalisation
+steady_state
