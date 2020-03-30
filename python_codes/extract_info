@@ -11,6 +11,11 @@ echo "---------------------" >> features
 grep  box */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
+echo "---------------------" >> features
+echo "---disc--------------" >> features
+echo "---------------------" >> features
+grep  disc */keywords | cut -c1- | cut -f1 -d"/" >> features
+echo " " >> features
 
 echo "---------------------" >> features
 echo "---annulus-----------" >> features
@@ -40,6 +45,18 @@ echo "---------------------" >> features
 echo "---3D----------------" >> features
 echo "---------------------" >> features
 grep 3D */keywords | cut -c1- | cut -f1 -d"/" >> features
+echo " " >> features
+
+echo "---------------------" >> features
+echo "---P1----------------" >> features
+echo "---------------------" >> features
+grep P1 */keywords | cut -c1- | cut -f1 -d"/" >> features
+echo " " >> features
+
+echo "---------------------" >> features
+echo "---P2----------------" >> features
+echo "---------------------" >> features
+grep P2 */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features

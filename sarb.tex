@@ -14,8 +14,7 @@ The components of the this equation on the $x$- and $y-$axis are:
 (\vec \nabla \cdot \bm \sigma)_x &=& - \rho \vec g \cdot \vec e_x = 0\\ 
 (\vec \nabla \cdot \bm \sigma)_y &=& - \rho \vec g \cdot \vec e_y = \rho g_0
 \end{eqnarray}
-since $\vec g$ and $\vec e_y$ are in opposite directions ($\vec g = - g_0 \vec e_y$, with $g_0>0$, 
-or $g_y=-g_0$).
+since $\vec g$ and $\vec e_y$ are in opposite directions ($\vec g = - g_0 \vec e_y$, with $g_0>0$).
 
 The stream function formulation of the incompressible isoviscous Stokes equation is then
 \[
@@ -24,7 +23,7 @@ The stream function formulation of the incompressible isoviscous Stokes equation
 = -\frac{\partial \rho g_y}{\partial x} 
 =  g_0 \frac{\partial \rho}{\partial x} 
 \]
-since $g_x=0$. 
+since $g_x=0$ and $g_y=\vec{g}\cdot\vec{e}_y=-g_0$.
 
 Assuming a linearised density field with regards to temperature $\rho(T)=\rho_0 (1-\alpha T)$
 we have 
@@ -63,14 +62,21 @@ coupled velocity changes are assumed to be small), it can be simplified as follo
 \[
 \rho_0 C_p \left( \frac{\partial \tilde{T}}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T_c \right) 
 = k \Delta \tilde{T}
+\qquad
+\Rightarrow
+\qquad
+\frac{\partial \tilde{T}}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T_c 
+= \kappa \Delta \tilde{T}
 \]
+since $\kappa =k/\rho_0 C_p$.
+
 Using the relationship between velocity and stream function
 $v=-\partial_x \Psi$
 and since $\vec\nabla T_c = - (T_b/h) \vec{e}_y$ then
 \[
 {\vec \upnu}\cdot {\vec \nabla} T_c =  \frac{T_b}{h}   \frac{\partial \Psi}{\partial x} 
 \]
-Since $\kappa =k/\rho_0 C_p=1$ we get 
+and finally:
 \begin{equation}
 \boxed{
 \frac{\partial \tilde{T}}{\partial t} - \kappa \Delta \tilde{T} 
@@ -94,13 +100,12 @@ where $\Psi_0$ and $\tilde{T}_0$ are constants and with the notation
 \]
 
 %where $k_x=2\pi/L_x$ and $k_y=2\pi/L_y$ are the horizontal and vertical wave number respectively.
-\begin{remark} We have
+iT follows that
 \[
 \nabla^2 \Psi = -(k_x^2+k_y^2) \Psi
 \quad\quad
 \nabla^2 \tilde{T} = -(k_x^2+k_y^2) \tilde{T}
 \]
-\end{remark}
 
 The boundary conditions on $\tilde{T}$, 
 coupled with a choice of a real function for the $x$ dependence 
@@ -124,13 +129,24 @@ which imposes conditions on $\partial \Psi/\partial x$ and we find that we
 can use the same $y$ dependence as for $\tilde{T}$. 
 Choosing again for a real function for the $x$ dependence yields:
 \[
-\Psi(x,y,t) = \Psi_0 \exp(pt) \sin(k_x x) \sin(n\pi z)
+\Psi(x,y,t) = \Psi_0 \exp(pt) \sin(k_x x) \sin(n\pi y/h)
 \]
 We then have (we simplify notations: $k=k_x$):
 \begin{eqnarray}
-\Psi(x,y,t) &=& \Psi_0 \exp(pt)  \sin(k_x x) \sin(n\pi y)  \\
-\tilde{T}(x,y,t)  &=& \tilde{T}_0 \exp(pt)  \cos(k_x x) \sin(n\pi y)   
+\Psi(x,y,t) 
+&=& \Psi_0 \exp(pt)  \sin(k x) \sin(\frac{n\pi y}{h})   
+= \Psi_0 \exp(pt)  \sin(\frac{2\pi}{\lambda} x) \sin(\frac{n\pi y}{h})  \\ 
+\tilde{T}(x,y,t)  
+&=& \tilde{T}_0 \exp(pt)  \cos(k x) \sin(\frac{n\pi y}{h})   
+= \tilde{T}_0 \exp(pt)  \cos(\frac{2\pi}{\lambda} x) \sin(\frac{n\pi y}{h})   
 \end{eqnarray}
+\begin{remark}
+Taking $n=1$ and remembering that Turcotte \& Schubert have the domain between 
+$y-h/2$ and $y=h/2$, these expressions are identical to Eqs. 6.311 and 6.312 
+of the book. 
+\end{remark}
+
+
 Then the two framed PDEs above become:
 \begin{eqnarray}
 && \nabla^4 \Psi= -\frac{\rho_0 g_0 \alpha}{\eta_0} \frac{\partial T}{\partial x} \nn \\
@@ -138,25 +154,27 @@ Then the two framed PDEs above become:
 \frac{\partial (T_c(y)+\tilde{T}(x,y))}{\partial x} \nn \\
 &\Rightarrow& \nabla^4 \Psi= -\frac{\rho_0 g_0 \alpha}{\eta_0} \frac{\partial \tilde{T}}{\partial x} \nn \\
 &\Rightarrow& 
-(k^2 + n^2 \pi^2/h^2)^2 \Psi_0 \exp(pt)  \sin(k x) \sin(n\pi y) = -\frac{\rho_0 g_0 \alpha}{\eta_0} 
- k \tilde{T}_0 \exp(pt)  \sin(k x) \sin(n\pi y) \nn \\ 
-&\Rightarrow& (k^2 + n^2 \pi^2/h^2)^2 \Psi_0     = -\frac{\rho_0 g_0 \alpha}{\eta_0}  k \tilde{T}_0  
+(k^2 + n^2 \pi^2/h^2)^2 \Psi_0 \exp(pt)  \sin(k x) \sin(n\pi y/h) = \frac{\rho_0 g_0 \alpha}{\eta_0} 
+ k \tilde{T}_0 \exp(pt)  \sin(k x) \sin(n\pi y/h) \nn \\ 
+&\Rightarrow&
+\boxed{ (k^2 + n^2 \pi^2/h^2)^2 \Psi_0     = +\frac{\rho_0 g_0 \alpha}{\eta_0}  k \tilde{T}_0 } 
 \nn\\ 
 && \frac{\partial \tilde{T}}{\partial t} - \kappa \Delta \tilde{T} 
 = -  \frac{T_b}{h}   \frac{\partial \Psi}{\partial x} \nn\\
-&\Rightarrow & p \tilde{T} - \kappa (k^2 + n^2\pi^2/h^2) \tilde{T}   
-= -  \frac{T_b}{h} k \Psi_0 \exp(pt)  \cos(k x) \sin(n\pi y)\nn \\
-&\Rightarrow & [ p + \kappa (k^2 + n^2\pi^2/h^2) ] \tilde{T}_0   
-= -  \frac{T_b}{h} k \Psi_0 \nn
+&\Rightarrow & p \tilde{T} + \kappa (k^2 + n^2\pi^2/h^2) \tilde{T}   
+= -  \frac{T_b}{h} k \Psi_0 \exp(pt)  \cos(k x) \sin(n\pi y/h)\nn \\
+&\Rightarrow & 
+\boxed{ [ p + \kappa (k^2 + n^2\pi^2/h^2) ] \tilde{T}_0  = -  \frac{T_b}{h} k \Psi_0 } \nn
 \end{eqnarray}
- 
+NOTE the minus sign difference with Arie's notes in the first box of the above equations.
+
 These equations must then be verified for all $\Psi_0$ and $\tilde{T}_0$, 
 which leads to write:
 \[
 \left(
 \begin{array}{cc}
-p + \kappa (k^2+n^2\pi^2/h^2) & -\frac{T_b}{h} k \\
--\frac{\rho_0 g_0 \alpha}{\eta_0}  k  & (k^2+n^2\pi^2/h^2)^2 
+p + \kappa (k^2+n^2\pi^2/h^2) & \frac{T_b}{h} k \\
+\frac{\rho_0 g_0 \alpha}{\eta_0}  k  & -(k^2+n^2\pi^2/h^2)^2 
 \end{array}
 \right)
 \left(
@@ -176,17 +194,18 @@ the amplitude factors (i.e. $\tilde{T}_0=0$ and $\Psi_0=0$ which is not helpful)
 This leads to the condition: 
 \begin{eqnarray}
 Det 
-&=& [p + \kappa (k^2+n^2\pi^2/h^2)](k^2+n^2\pi^2/h^2)^2 - \frac{\rho_0 g_0 \alpha T_b }{\eta_0 h}  k^2 \nn\\
-&=& p (k^2+n^2\pi^2/h^2)^2 + \kappa (k^2+n^2\pi^2/h^2)^3 - \frac{\rho_0 g_0 \alpha T_b }{\eta_0 h}  k^2 \nn\\
+&=& -[p + \kappa (k^2+n^2\pi^2/h^2)](k^2+n^2\pi^2/h^2)^2 - \frac{\rho_0 g_0 \alpha T_b }{\eta_0 h}  k^2 \nn\\
+&=& -p (k^2+n^2\pi^2/h^2)^2 - \kappa (k^2+n^2\pi^2/h^2)^3 - \frac{\rho_0 g_0 \alpha T_b }{\eta_0 h}  k^2 \nn\\
 &=& 0
 \end{eqnarray}
+{\color{red}At this stage it is obvious There is a minus sign problem somewhere !!!}
 or, 
 \begin{eqnarray}
 p 
 &=&\frac{\frac{\rho_0 g_0 \alpha T_b }{\eta_0 h }  \; k^2 
 - \kappa (k^2+n^2\pi^2/h^2)^3 }{ (k^2+n^2\pi^2/h^2)^2} \nn\\
 &=& \kappa \frac{  \frac{\rho_0 g_0 \alpha T_b h^3}{ \kappa \eta_0}\; k^2 - h^4 (k^2+n^2\pi^2/h^2)^3 }{h^4 (k^2+n^2\pi^2/h^2)^2} \nn\\
-&=& \frac{\kappa}{h^2}   \frac{Ra \; k^2 -(k^2+n^2\pi^2/h^2)^3 }{ (k^2+n^2\pi^2/h^2)^2}
+&=& \frac{\kappa}{h^4}   \frac{Ra \; k^2 -(k^2+n^2\pi^2/h^2)^3 }{ (k^2+n^2\pi^2/h^2)^2}
 \end{eqnarray}
 
 The coefficient $p$ determines the stability of the system: if it is negative, 
