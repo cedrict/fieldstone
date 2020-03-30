@@ -61,7 +61,9 @@ def NNP(r,s):
 #experiment=8: pure advection + pyramid bump
 #experiment=9: rayleigh-taylor 
 
-experiment=8
+experiment=9
+
+#------------------------------------------------------------------------------
 
 ndim=2
 ndofV=2
@@ -146,10 +148,10 @@ cm=0.01
 km=1e3
 year=3600.*24.*365.
 Myear=1e6*year
-dt=2.5e3*year
-nstep=2
+dt=5e3*year
+nstep=200
 
-method=3
+method=1
 vertical_only=False
 
 #################################################################
@@ -167,7 +169,7 @@ for j in range(0,2*nely+1):
         yV[counter]=j*hy/2.
         counter += 1
 
-np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
+#np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
 
 print("setup: grid points: %.3f s" % (timing.time() - start))
 
@@ -221,7 +223,7 @@ for j in range(0,nely+1):
         yP[counter]=j*hy
         counter += 1
 
-np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
 
 print("build P grid: %.3f s" % (timing.time() - start))
 
@@ -352,7 +354,7 @@ if experiment==9:
 #==============================================================================
 #==============================================================================
 
-elevation=np.zeros((nstep,3),dtype=np.float64)
+elevation=np.zeros((nstep,4),dtype=np.float64)
 vrms=np.zeros((nstep,2),dtype=np.float64) 
 volume=np.zeros((nstep,3),dtype=np.float64) 
 
@@ -763,6 +765,7 @@ for istep in range(0,nstep):
    elevation[istep,0]=istep*dt/Myear
    elevation[istep,1]=np.min(yV[NV-(2*nelx+1):NV])-Ly
    elevation[istep,2]=np.max(yV[NV-(2*nelx+1):NV])-Ly
+   elevation[istep,3]=yV[NV-1]-Ly
                  
    bcsurffile.close()
 
@@ -1108,7 +1111,8 @@ for istep in range(0,nstep):
 
    print("export to vtu: %.3f s" % (timing.time() - start))
 
-   np.savetxt('elevation.ascii',np.array([elevation[0:istep,0],elevation[0:istep,1],elevation[0:istep,2]]).T)
+   np.savetxt('elevation.ascii',np.array([elevation[0:istep,0],elevation[0:istep,1],\
+                                          elevation[0:istep,2],elevation[0:istep,3]]).T)
    np.savetxt('vrms.ascii',np.array([vrms[0:istep,0],vrms[0:istep,1]]).T)
    np.savetxt('volume.ascii',np.array([volume[0:istep,0],volume[0:istep,1],volume[0:istep,2]]).T)
 
