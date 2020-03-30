@@ -28,10 +28,26 @@ def by(x,y,case):
     if case==2:
        val=-(1-3*x-2*x**3*y)
     if case==3:
-       if abs(x-256e3)<64e3 and abs(y-384e3)<64e3:
-          val=10*rho2
-       else:
-          val=10*rho1
+       if subcase==1:
+          if abs(x-256e3)<64e3 and abs(y-384e3)<64e3:
+             val=-10*rho2
+          else:
+             val=-10*rho1
+       if subcase==2:
+          if abs(x-256e3)<64e3 and abs(y-384e3)<64e3:
+             val=10*(rho2-rho1)
+          else:
+             val=0
+       if subcase==3:
+          drho=rho2-rho1
+          if y>384e3+64e3 or y<384e3-64e3:
+             val=0
+          else:
+             if abs(x-256e3)<64e3 and abs(y-384e3)<64e3:
+                val=3*drho/4*10
+             else:
+                val=-drho/4*10
+
     return val
 
 def viscosity(x,y,case):
@@ -109,17 +125,19 @@ if int(len(sys.argv) == 8):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
    rho1 = float(sys.argv[4])
-   rho2 = float(sys.argv[5])
+   drho = float(sys.argv[5])
    eta1 = float(sys.argv[6])
    eta2 = float(sys.argv[7])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 96
+   nely = 96
    visu = 1
-   rho1 = 0
-   rho2 = 32
+   rho1 = 3200
+   drho = 32
    eta1 = 1e21
    eta2 = 1e23
+
+rho2=rho1+drho
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
@@ -132,6 +150,8 @@ Nfem=NfemV+NfemP # total number of dofs
 # case 1: analytical benchmark, Donea & Huerta, 2003
 # case 2: analytical benchmark, Dohrmann & Bochev, 2004
 # case 3: falling block, method 1, see Thieulot and Bangerth, 2019.
+# case 4: solcx
+# case 5: solvi
 
 case=3
 
@@ -149,7 +169,8 @@ if case==3:
    Lx=512e3 
    Ly=512e3
    eta_ref=1e21
-   year=31536000
+   year=365.25*24*3600
+   subcase=3
 
 pnormalise=True
 

@@ -3,8 +3,35 @@ set log xy
 set pointsize .5
 set xlabel '{/Symbol h}_2/{/Symbol h}_1'
 set ylabel '|v_z| {/Symbol h}_1/{/Symbol d}{/Symbol r}'
-set output 'fallingblock.pdf'
-plot[][]\
-'measurements.dat' u ($4/$3):($7*$3/($6-$5)) w lp notitle,\
+
+
+set output 'fallingblock_sub1.pdf'
+plot[][:1e21]\
+'measurements16_sub1.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '16x16',\
+'measurements32_sub1.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '32x32',\
+'measurements48_sub1.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '48x48',\
+'measurements64_sub1.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '64x64',\
+'measurements80_sub1.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '80x80',\
+'measurements96_sub1.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '96x96',\
+
+
+set output 'fallingblock_sub2.pdf'
+plot[][:1e21]\
+'measurements16_sub2.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '16x16',\
+'measurements32_sub2.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '32x32',\
+'measurements48_sub2.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '48x48',\
+'measurements64_sub2.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '64x64',\
+'measurements80_sub2.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '80x80',\
+'measurements96_sub2.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '96x96',\
+
+
+set output 'fallingblock_sub3.pdf'
+plot[][:1e21]\
+'measurements16_sub3.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '16x16',\
+'measurements32_sub3.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '32x32',\
+'measurements48_sub3.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '48x48',\
+'measurements64_sub3.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '64x64',\
+'measurements80_sub3.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '80x80',\
+'measurements96_sub3.dat' u ($4/$3):($7*$3/($6-$5)) w lp t '96x96',\
 
 

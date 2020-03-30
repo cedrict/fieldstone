@@ -1,4 +1,5 @@
-The details of the numerical setup are presented in Section \ref{mms}.
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_22/keywords}
+
 
 We wish to use $Q_1 \times Q_1$ element, which, unless stabilised,
 violates  the LBB stability condition and therefore is unusable. 
@@ -139,53 +140,13 @@ for k1 in range(0,m):
         C_mat[icon[k1,iel],icon[k2,iel]]+=C_el[k1,k2] 
 \end{lstlisting}
 
-\noindent
-\underline{Non-zero pattern of the $\G$ matrix}: Let us take a simple example: a 3x2 element grid.
 
-\begin{center}
-\begin{tikzpicture}
-%\draw[step=0.5cm,gray,very thin] (0,0) grid (8,6); %background grid
-\draw[thick] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;  
-\draw[thick] (3,1) -- (5,1) -- (5,3) -- (3,3) -- cycle; 
-\draw[thick] (5,1) -- (7,1) -- (7,3) -- (5,3) -- cycle; 
-\draw[thick] (1,3) -- (3,3) -- (3,5) -- (1,5) -- cycle;  
-\draw[thick] (3,3) -- (5,3) -- (5,5) -- (3,5) -- cycle; 
-\draw[thick] (5,3) -- (7,3) -- (7,5) -- (5,5) -- cycle; 
-\node[draw] at (2,2) {0};
-\node[draw] at (4,2) {1};
-\node[draw] at (6,2) {2};
-\node[draw] at (2,4) {3};
-\node[draw] at (4,4) {4};
-\node[draw] at (6,4) {5};
-%pressure dofs
-\node at (0.9,0.9) {\tiny 0};
-\node at (2.9,0.9) {\tiny 1};
-\node at (4.9,0.9) {\tiny 2};
-\node at (6.9,0.9) {\tiny 3};
-\node at (0.9,2.9) {\tiny 4};
-\node at (2.9,2.9) {\tiny 5};
-\node at (4.9,2.9) {\tiny 6};
-\node at (6.9,2.9) {\tiny 7};
-\node at (0.9,4.9) {\tiny 8};
-\node at (2.9,4.9) {\tiny 9};
-\node at (4.9,4.9) {\tiny 10};
-\node at (6.9,4.9) {\tiny 11};
-%velocity dofs
-\node[red] at (1.2,1.1) {\tiny 0,1};
-\node[red] at (3.2,1.1) {\tiny 2,3};
-\node[red] at (5.2,1.1) {\tiny 4,5};
-\node[red] at (7.2,1.1) {\tiny 6,7};
-\node[red] at (1.2,3.1) {\tiny 8,9};
-\node[red] at (3.2,3.1) {\tiny 10,11};
-\node[red] at (5.2,3.1) {\tiny 12,13};
-\node[red] at (7.2,3.1) {\tiny 14,15};
-\node[red] at (1.2,5.1) {\tiny 16,17};
-\node[red] at (3.2,5.1) {\tiny 18,19};
-\node[red] at (5.2,5.1) {\tiny 20,21};
-\node[red] at (7.2,5.1) {\tiny 22,23};
+%----------------------------------------------------------------------------------------------------
+\subsection*{Non-zero pattern of the $\G$ matrix} 
 
-\end{tikzpicture}
-\end{center}
+Let us take a simple example: a 3x2 element grid.
+
+\input{python_codes/fieldstone_22/fig1}
 
 The $\K$ matrix is of size $NfemV \times NfemV$ with $NfemV=ndofV \times nnp = 2\times 12=24$.
 The $\G$ matrix is of size $NfemV \times NfemP$ with $NfemP=ndofP \times nnp = 1\times 12=12$.
@@ -208,222 +169,30 @@ Concretely,
 \item pdof $\#5$ sees vdofs 0,1,2,3,4,5,8,9,10,11,12,13,16,17,18,19,20,21
 \end{itemize}
 so that the $\G^T$ matrix non-zero structure then is as follows:
-\begin{center}
-\begin{tikzpicture}
-\draw[step=0.5cm,gray,very thin] (0,0) grid (14,8); %background grid
-\draw (1,1) -- (13,1) -- (13,7) -- (1,7) -- cycle;    %matrix
-%first top line
-\fill[blue!40!white] (1.0,6.5) rectangle (1.5,7);
-\fill[blue!40!white] (1.5,6.5) rectangle (2.0,7);
-\fill[blue!40!white] (2.0,6.5) rectangle (2.5,7);
-\fill[blue!40!white] (2.5,6.5) rectangle (3.0,7);
-\fill[blue!40!white] (5.0,6.5) rectangle (5.5,7);
-\fill[blue!40!white] (5.5,6.5) rectangle (6.0,7);
-\fill[blue!40!white] (6.0,6.5) rectangle (6.5,7);
-\fill[blue!40!white] (6.5,6.5) rectangle (7.0,7);
-%second line
-\fill[blue!40!white] (1.0,6.) rectangle (1.5,6.5);
-\fill[blue!40!white] (1.5,6.) rectangle (2.0,6.5);
-\fill[blue!40!white] (2.0,6.) rectangle (2.5,6.5);
-\fill[blue!40!white] (2.5,6.) rectangle (3.0,6.5);
-\fill[blue!40!white] (3.0,6.) rectangle (3.5,6.5);
-\fill[blue!40!white] (3.5,6.) rectangle (4.0,6.5);
-\fill[blue!40!white] (5.0,6.) rectangle (5.5,6.5);
-\fill[blue!40!white] (5.5,6.) rectangle (6.0,6.5);
-\fill[blue!40!white] (6.0,6.) rectangle (6.5,6.5);
-\fill[blue!40!white] (6.5,6.) rectangle (7.0,6.5);
-\fill[blue!40!white] (7.0,6.) rectangle (7.5,6.5);
-\fill[blue!40!white] (7.5,6.) rectangle (8.0,6.5);
-%third line
-\fill[blue!40!white] (2.0,5.5) rectangle (2.5,6.0);
-\fill[blue!40!white] (2.5,5.5) rectangle (3.0,6.0);
-\fill[blue!40!white] (3.0,5.5) rectangle (3.5,6.0);
-\fill[blue!40!white] (3.5,5.5) rectangle (4.0,6.0);
-\fill[blue!40!white] (4.0,5.5) rectangle (4.5,6.0);
-\fill[blue!40!white] (4.5,5.5) rectangle (5.0,6.0);
-\fill[blue!40!white] (6.0,5.5) rectangle (6.5,6.0);
-\fill[blue!40!white] (6.5,5.5) rectangle (7.0,6.0);
-\fill[blue!40!white] (7.0,5.5) rectangle (7.5,6.0);
-\fill[blue!40!white] (7.5,5.5) rectangle (8.0,6.0);
-\fill[blue!40!white] (8.0,5.5) rectangle (8.5,6.0);
-\fill[blue!40!white] (8.5,5.5) rectangle (9.0,6.0);
-%fourth line
-\fill[blue!40!white] (3.0,5.) rectangle (3.5,5.5);
-\fill[blue!40!white] (3.5,5.) rectangle (4.0,5.5);
-\fill[blue!40!white] (4.0,5.) rectangle (4.5,5.5);
-\fill[blue!40!white] (4.5,5.) rectangle (5.0,5.5);
-\fill[blue!40!white] (7.0,5.) rectangle (7.5,5.5);
-\fill[blue!40!white] (7.5,5.) rectangle (8.0,5.5);
-\fill[blue!40!white] (8.0,5.) rectangle (8.5,5.5);
-\fill[blue!40!white] (8.5,5.) rectangle (9.0,5.5);
-%fifth line
-\fill[blue!40!white] (1.0,4.5) rectangle (1.5,5);
-\fill[blue!40!white] (1.5,4.5) rectangle (2.0,5);
-\fill[blue!40!white] (2.0,4.5) rectangle (2.5,5);
-\fill[blue!40!white] (2.5,4.5) rectangle (3.0,5);
-\fill[blue!40!white] (5.0,4.5) rectangle (5.5,5);
-\fill[blue!40!white] (5.5,4.5) rectangle (6.0,5);
-\fill[blue!40!white] (6.0,4.5) rectangle (6.5,5);
-\fill[blue!40!white] (6.5,4.5) rectangle (7.0,5);
-\fill[blue!40!white] (9.0,4.5) rectangle (9.5,5);
-\fill[blue!40!white] (9.5,4.5) rectangle (10.0,5);
-\fill[blue!40!white] (10.0,4.5) rectangle (10.5,5);
-\fill[blue!40!white] (10.5,4.5) rectangle (11.0,5);
 
-%sixth line
-\fill[blue!40!white] (1.0,4) rectangle (1.5,4.50);
-\fill[blue!40!white] (1.5,4) rectangle (2.0,4.50);
-\fill[blue!40!white] (2.0,4) rectangle (2.5,4.50);
-\fill[blue!40!white] (2.5,4) rectangle (3.0,4.50);
-\fill[blue!40!white] (3.0,4) rectangle (3.5,4.50);
-\fill[blue!40!white] (3.5,4) rectangle (4.0,4.50);
-
-
-\fill[blue!40!white] (5.0,4) rectangle (5.5,4.50);
-\fill[blue!40!white] (5.5,4) rectangle (6.0,4.50);
-\fill[blue!40!white] (6.0,4) rectangle (6.5,4.50);
-\fill[blue!40!white] (6.5,4) rectangle (7.0,4.50);
-\fill[blue!40!white] (7.0,4) rectangle (7.5,4.50);
-\fill[blue!40!white] (7.5,4) rectangle (8.0,4.50);
-
-\fill[blue!40!white] (9.0,4) rectangle (9.5,4.50);
-\fill[blue!40!white] (9.5,4) rectangle (10.0,4.50);
-\fill[blue!40!white] (10.0,4) rectangle (10.5,4.50);
-\fill[blue!40!white] (10.5,4) rectangle (11.0,4.50);
-\fill[blue!40!white] (11.0,4) rectangle (11.5,4.50);
-\fill[blue!40!white] (11.5,4) rectangle (12.0,4.50);
-
-
-
-
-%seventh line
-\fill[blue!40!white] (2.0,3.5) rectangle (2.5,4.0);
-\fill[blue!40!white] (2.5,3.5) rectangle (3.0,4.0);
-\fill[blue!40!white] (3.0,3.5) rectangle (3.5,4.0);
-\fill[blue!40!white] (3.5,3.5) rectangle (4.0,4.0);
-\fill[blue!40!white] (4.0,3.5) rectangle (4.5,4.0);
-\fill[blue!40!white] (4.5,3.5) rectangle (5.0,4.0);
-\fill[blue!40!white] (6.0,3.5) rectangle (6.5,4.0);
-\fill[blue!40!white] (6.5,3.5) rectangle (7.0,4.0);
-\fill[blue!40!white] (7.0,3.5) rectangle (7.5,4.0);
-\fill[blue!40!white] (7.5,3.5) rectangle (8.0,4.0);
-\fill[blue!40!white] (8.0,3.5) rectangle (8.5,4.0);
-\fill[blue!40!white] (8.5,3.5) rectangle (9.0,4.0);
-\fill[blue!40!white] (10.0,3.5) rectangle (10.5,4.0);
-\fill[blue!40!white] (10.5,3.5) rectangle (11.0,4.0);
-\fill[blue!40!white] (11.0,3.5) rectangle (11.5,4.0);
-\fill[blue!40!white] (11.5,3.5) rectangle (12.0,4.0);
-\fill[blue!40!white] (12.0,3.5) rectangle (12.5,4.0);
-\fill[blue!40!white] (12.5,3.5) rectangle (13.0,4.0);
-%eighth line
-\fill[blue!40!white] (3.0,3.) rectangle (3.5,3.5);
-\fill[blue!40!white] (3.5,3.) rectangle (4.0,3.5);
-\fill[blue!40!white] (4.0,3.) rectangle (4.5,3.5);
-\fill[blue!40!white] (4.5,3.) rectangle (5.0,3.5);
-\fill[blue!40!white] (7.0,3.) rectangle (7.5,3.5);
-\fill[blue!40!white] (7.5,3.) rectangle (8.0,3.5);
-\fill[blue!40!white] (8.0,3.) rectangle (8.5,3.5);
-\fill[blue!40!white] (8.5,3.) rectangle (9.0,3.5);
-\fill[blue!40!white] (11.0,3.) rectangle (11.5,3.5);
-\fill[blue!40!white] (11.5,3.) rectangle (12.0,3.5);
-\fill[blue!40!white] (12.0,3.) rectangle (12.5,3.5);
-\fill[blue!40!white] (12.5,3.) rectangle (13.0,3.5);
-%9th line
-\fill[blue!40!white] (5.0,2.5) rectangle (5.5,3);
-\fill[blue!40!white] (5.5,2.5) rectangle (6.0,3);
-\fill[blue!40!white] (6.0,2.5) rectangle (6.5,3);
-\fill[blue!40!white] (6.5,2.5) rectangle (7.0,3);
-\fill[blue!40!white] (9.0,2.5) rectangle (9.5,3);
-\fill[blue!40!white] (9.5,2.5) rectangle (10.0,3);
-\fill[blue!40!white] (10.0,2.5) rectangle (10.5,3);
-\fill[blue!40!white] (10.5,2.5) rectangle (11.0,3);
-%10th line
-\fill[blue!40!white] (5.0,2) rectangle (5.5,2.5);
-\fill[blue!40!white] (5.5,2) rectangle (6.0,2.5);
-\fill[blue!40!white] (6.0,2) rectangle (6.5,2.5);
-\fill[blue!40!white] (6.5,2) rectangle (7.0,2.5);
-\fill[blue!40!white] (7.0,2) rectangle (7.5,2.5);
-\fill[blue!40!white] (7.5,2) rectangle (8.0,2.5);
-\fill[blue!40!white] (9.0,2) rectangle (9.5,2.5);
-\fill[blue!40!white] (9.5,2) rectangle (10.0,2.5);
-\fill[blue!40!white] (10.0,2) rectangle (10.5,2.5);
-\fill[blue!40!white] (10.5,2) rectangle (11.0,2.5);
-\fill[blue!40!white] (11.0,2) rectangle (11.5,2.5);
-\fill[blue!40!white] (11.5,2) rectangle (12.0,2.5);
-%11th line
-\fill[blue!40!white] (6.0,1.5) rectangle (6.5,2);
-\fill[blue!40!white] (6.5,1.5) rectangle (8,2);
-\fill[blue!40!white] (7.0,1.5) rectangle (7.5,2);
-\fill[blue!40!white] (7.5,1.5) rectangle (8.0,2);
-\fill[blue!40!white] (8.0,1.5) rectangle (8.5,2);
-\fill[blue!40!white] (8.5,1.5) rectangle (9.0,2);
-\fill[blue!40!white] (10.0,1.5) rectangle (10.5,2);
-\fill[blue!40!white] (10.5,1.5) rectangle (11.0,2);
-\fill[blue!40!white] (11.0,1.5) rectangle (11.5,2);
-\fill[blue!40!white] (11.5,1.5) rectangle (12.0,2);
-\fill[blue!40!white] (12.0,1.5) rectangle (12.5,2);
-\fill[blue!40!white] (12.5,1.5) rectangle (13.0,2);
-%12th line
-\fill[blue!40!white] (7.0,1.0) rectangle (7.5,1.5);
-\fill[blue!40!white] (7.5,1.0) rectangle (8.0,1.5);
-\fill[blue!40!white] (8.0,1.0) rectangle (8.5,1.5);
-\fill[blue!40!white] (8.5,1.0) rectangle (9.0,1.5);
-\fill[blue!40!white] (11.0,1.0) rectangle (11.5,1.5);
-\fill[blue!40!white] (11.5,1.0) rectangle (12.0,1.5);
-\fill[blue!40!white] (12.0,1.0) rectangle (12.5,1.5);
-\fill[blue!40!white] (12.5,1.0) rectangle (13.0,1.5);
-%vertical
-\node at (0.75,6.75) {\tiny 0};
-\node at (0.75,6.25) {\tiny 1};
-\node at (0.75,5.75) {\tiny 2};
-\node at (0.75,5.25) {\tiny 3};
-\node at (0.75,4.75) {\tiny 4};
-\node at (0.75,4.25) {\tiny 5};
-\node at (0.75,3.75) {\tiny 6};
-\node at (0.75,3.25) {\tiny 7};
-\node at (0.75,2.75) {\tiny 8};
-\node at (0.75,2.25) {\tiny 9};
-\node at (0.75,1.75) {\tiny 10};
-\node at (0.75,1.25) {\tiny 11};
-%horizontal
-\node[red] at (1.25,7.25) {\tiny 0};
-\node[red] at (1.75,7.25) {\tiny 1};
-\node[red] at (2.25,7.25) {\tiny 2};
-\node[red] at (2.75,7.25) {\tiny 3};
-\node[red] at (3.25,7.25) {\tiny 4};
-\node[red] at (3.75,7.25) {\tiny 5};
-\node[red] at (4.25,7.25) {\tiny 6};
-\node[red] at (4.75,7.25) {\tiny 7};
-\node[red] at (5.25,7.25) {\tiny 8};
-\node[red] at (5.75,7.25) {\tiny 9};
-\node[red] at (6.25,7.25) {\tiny 10};
-\node[red] at (6.75,7.25) {\tiny 11};
-\node[red] at (7.25,7.25) {\tiny 12};
-\node[red] at (7.75,7.25) {\tiny 13};
-\node[red] at (8.25,7.25) {\tiny 14};
-\node[red] at (8.75,7.25) {\tiny 15};
-\node[red] at (9.25,7.25) {\tiny 16};
-\node[red] at (9.75,7.25) {\tiny 17};
-\node[red] at (10.25,7.25) {\tiny 18};
-\node[red] at (10.75,7.25) {\tiny 19};
-\node[red] at (11.25,7.25) {\tiny 20};
-\node[red] at (11.75,7.25) {\tiny 21};
-\node[red] at (12.25,7.25) {\tiny 22};
-\node[red] at (12.75,7.25) {\tiny 23};
-\draw[step=0.5cm,black,thick] (1,1) grid (13,7); %background grid
-\end{tikzpicture}
-\end{center}
-
-\noindent
-\underline{Non-zero pattern of the $\C$ matrix}: Let us take a simple example: a 3x2 element grid.
-
-\todo[inline]{finish structure of C matrix for q1q1}
+\input{python_codes/fieldstone_22/fig2}
 
 
 
 
 
 
+%-------------------------------------------------------------
+\subsection*{Non-zero pattern of the $\C$ matrix}
+
+Concretely, 
+\begin{itemize}
+\item pdof $\#0$ sees vdofs 0,1,4,5
+\item pdof $\#1$ sees vdofs 0,1,2,4,5,6
+\item pdof $\#5$ sees vdofs 0,1,2,4,5,6,8,9,10
+\end{itemize}
+so that the $\C$ matrix non-zero structure is as follows:
+
+\input{python_codes/fieldstone_22/fig3}
+
+
+%-------------------------------------------------------------
+\subsection*{Constraining the pressure field to zero average}
 
 We impose $\int p dV=0$ which means that the following constraint is added 
 to the Stokes matrix:
@@ -459,15 +228,15 @@ to the Stokes matrix:
 
 
 
-%-----------------------------------------
-\subsection*{The Donea \& Huerta benchmark}
+%---------------------------------------------------
+\subsection*{The Donea \& Huerta benchmark (case 1)}
 
 As in \cite{dohu03} we solve the benchmark problem presented in section \ref{mms1}.
 
 \includegraphics[width=10cm]{python_codes/fieldstone_22/results/case1/errors.pdf}
 
-%-----------------------------------------
-\subsection*{The Dohrmann \& Bochev benchmark} 
+%------------------------------------------------------
+\subsection*{The Dohrmann \& Bochev benchmark (case 2)} 
 
 As in \cite{dobo04} we solve the benchmark problem presented in section \ref{mms2}.
 
@@ -479,15 +248,50 @@ As in \cite{dobo04} we solve the benchmark problem presented in section \ref{mms
 %\includegraphics[width=5cm]{python_codes/fieldstone_22/results/vth}
 %\includegraphics[width=5cm]{python_codes/fieldstone_22/results/pth}
 
+%--------------------------------------------------
+\subsection*{The sinking block experiment (case 3)} 
+
+The setup is described in \cite{thba19}. 
+It consists of a two-dimensional $512\times 512$km domain filled with a fluid (the "mantle") 
+of density $\rho_1=3200$kg/m$^3$ and viscosity $\eta_1$. A square block of 
+size $128\times 128$km is placed in the domain and is centered at location 
+($x_c,y_c$)=(256km,384km) so as to insure that its sides align with cell boundaries at 
+all resolutions. It is filled with a fluid of density $\rho_2=\rho_1+\delta \rho$ 
+and viscosity $\eta_2$. The gravity vector points downwards with $|\vec{g}|=10$m/s$^2$. 
+Boundary conditions are free slip on all sides. Only one time step is carried out and 
+we measure the velocity $|v_z|$ in the middle of the block. 
+
+\begin{center}
+\includegraphics[width=13cm]{python_codes/fieldstone_22/results/case3/blocks}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_22/results/case3/fallingblock_sub1.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_22/results/case3/fallingblock_sub2.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_22/results/case3/fallingblock_sub3.pdf}\\
+{\captionfont From left to right: subcase=1,2,3.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_22/results/case3/u123}
+\includegraphics[width=12cm]{python_codes/fieldstone_22/results/case3/v123}\\
+{\captionfont From left to right: subcase=1,2,3. 
+Resolution 96x96, $\delta \rho=32$, $\eta_2=10^{23}$}
+\end{center}
+
+
+
+
+
 %-----------------------------------------
-\subsection*{The falling block experiment} 
+\subsection*{SolCx (case 4)} 
 
-The setup is desscribed in \cite{thba19}.
+This benchmark is described in Section~\ref{mms:solcx}.
 
-\includegraphics[width=10cm]{python_codes/fieldstone_22/results/case3/fallingblock.pdf}
+%-----------------------------------------
+\subsection*{SolVi (case 5)} 
 
-
-
+This benchmark is described in Section~\ref{mms:solvi}.
 
 
 

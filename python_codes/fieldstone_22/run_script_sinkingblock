@@ -1,0 +1,28 @@
+#
+rm opla*
+rm measurements*.dat
+
+rho1=3200
+
+for l in 16 32 48 64 80 96; do   
+    for visc1 in 1e21 ; do  
+        for visc2 in 1e17 1e18 1e19 5e19 1e20 5e20 1e21 5e21 1e22 5e22 1e23 1e24 1e25 1e26 1e27; do
+            for drho in 8 16 32 64 128; do 
+
+            echo nelx= $l visc1= $visc1 visc2= $visc2 rho1=$rho1 drho= $drho
+
+            python3 stone.py $l $l 0 $rho1 $drho $visc1 $visc2 > opla
+
+            grep FallingBlock opla >> measurements.dat
+
+            mv opla opla$l
+
+            done
+        done
+        echo ' ' >> measurements.dat
+    done
+    mv measurements.dat measurements$l.dat
+done
+
+
+

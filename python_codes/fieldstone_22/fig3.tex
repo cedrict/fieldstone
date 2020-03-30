@@ -1,0 +1,128 @@
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (9,9); %background grid
+\draw (1,1) -- (7,1) -- (7,7) -- (1,7) -- cycle;    %matrix
+
+%vertical
+\node at (0.75,6.75) {\tiny 0};
+\node at (0.75,6.25) {\tiny 1};
+\node at (0.75,5.75) {\tiny 2};
+\node at (0.75,5.25) {\tiny 3};
+\node at (0.75,4.75) {\tiny 4};
+\node at (0.75,4.25) {\tiny 5};
+\node at (0.75,3.75) {\tiny 6};
+\node at (0.75,3.25) {\tiny 7};
+\node at (0.75,2.75) {\tiny 8};
+\node at (0.75,2.25) {\tiny 9};
+\node at (0.75,1.75) {\tiny 10};
+\node at (0.75,1.25) {\tiny 11};
+
+%horizontal
+\node[red] at (1.25,7.25) {\tiny 0};
+\node[red] at (1.75,7.25) {\tiny 1};
+\node[red] at (2.25,7.25) {\tiny 2};
+\node[red] at (2.75,7.25) {\tiny 3};
+\node[red] at (3.25,7.25) {\tiny 4};
+\node[red] at (3.75,7.25) {\tiny 5};
+\node[red] at (4.25,7.25) {\tiny 6};
+\node[red] at (4.75,7.25) {\tiny 7};
+\node[red] at (5.25,7.25) {\tiny 8};
+\node[red] at (5.75,7.25) {\tiny 9};
+\node[red] at (6.25,7.25) {\tiny 10};
+\node[red] at (6.75,7.25) {\tiny 11};
+
+%first top line
+\fill[blue!40!white] (1.0,6.5) rectangle (1.5,7);
+\fill[blue!40!white] (1.5,6.5) rectangle (2.0,7);
+\fill[blue!40!white] (3.0,6.5) rectangle (3.5,7);
+\fill[blue!40!white] (3.5,6.5) rectangle (4.0,7);
+%second line
+\fill[blue!40!white] (1.0,6.) rectangle (1.5,6.5);
+\fill[blue!40!white] (1.5,6.) rectangle (2.0,6.5);
+\fill[blue!40!white] (2.0,6.) rectangle (2.5,6.5);
+\fill[blue!40!white] (3.0,6.) rectangle (3.5,6.5);
+\fill[blue!40!white] (3.5,6.) rectangle (4.0,6.5);
+\fill[blue!40!white] (4.0,6.) rectangle (4.5,6.5);
+%third line
+\fill[blue!40!white] (1.5,5.5) rectangle (2.0,6.);
+\fill[blue!40!white] (2.0,5.5) rectangle (2.5,6.);
+\fill[blue!40!white] (2.5,5.5) rectangle (3.0,6.);
+\fill[blue!40!white] (3.5,5.5) rectangle (4.0,6.);
+\fill[blue!40!white] (4.0,5.5) rectangle (4.5,6.);
+\fill[blue!40!white] (4.5,5.5) rectangle (5.0,6.);
+%fourth line
+\fill[blue!40!white] (2.0,5.) rectangle (2.5,5.5);
+\fill[blue!40!white] (2.5,5.) rectangle (3.0,5.5);
+\fill[blue!40!white] (4.0,5.) rectangle (4.5,5.5);
+\fill[blue!40!white] (4.5,5.) rectangle (5.0,5.5);
+%fifth line
+\fill[blue!40!white] (1.0,4.5) rectangle (1.5,5.);
+\fill[blue!40!white] (1.5,4.5) rectangle (2.0,5.);
+\fill[blue!40!white] (3.0,4.5) rectangle (3.5,5.);
+\fill[blue!40!white] (3.5,4.5) rectangle (4.0,5.);
+\fill[blue!40!white] (5.0,4.5) rectangle (5.5,5.);
+\fill[blue!40!white] (5.5,4.5) rectangle (6.0,5.);
+%sixth line
+\fill[blue!40!white] (1.0,4.) rectangle (1.5,4.5);
+\fill[blue!40!white] (1.5,4.) rectangle (2.0,4.5);
+\fill[blue!40!white] (2.0,4.) rectangle (2.5,4.5);
+\fill[blue!40!white] (3.0,4.) rectangle (3.5,4.5);
+\fill[blue!40!white] (3.5,4.) rectangle (4.0,4.5);
+\fill[blue!40!white] (4.0,4.) rectangle (4.5,4.5);
+\fill[blue!40!white] (5.0,4.) rectangle (5.5,4.5);
+\fill[blue!40!white] (5.5,4.) rectangle (6.0,4.5);
+\fill[blue!40!white] (6.0,4.) rectangle (6.5,4.5);
+%seventh line
+\fill[blue!40!white] (1.5,3.5) rectangle (2.0,4.);
+\fill[blue!40!white] (2.0,3.5) rectangle (2.5,4.);
+\fill[blue!40!white] (2.5,3.5) rectangle (3.0,4.);
+\fill[blue!40!white] (3.5,3.5) rectangle (4.0,4.);
+\fill[blue!40!white] (4.0,3.5) rectangle (4.5,4.);
+\fill[blue!40!white] (4.5,3.5) rectangle (5.0,4.);
+\fill[blue!40!white] (5.5,3.5) rectangle (6.0,4.);
+\fill[blue!40!white] (6.0,3.5) rectangle (6.5,4.);
+\fill[blue!40!white] (6.5,3.5) rectangle (7.0,4.);
+%eighth line
+\fill[blue!40!white] (2.0,3.) rectangle (2.5,3.5);
+\fill[blue!40!white] (2.5,3.) rectangle (3.0,3.5);
+\fill[blue!40!white] (4.0,3.) rectangle (4.5,3.5);
+\fill[blue!40!white] (4.5,3.) rectangle (5.0,3.5);
+\fill[blue!40!white] (6.0,3.) rectangle (6.5,3.5);
+\fill[blue!40!white] (6.5,3.) rectangle (7.0,3.5);
+%ninth line
+\fill[blue!40!white] (3.0,2.5) rectangle (3.5,3.);
+\fill[blue!40!white] (3.5,2.5) rectangle (4.0,3.);
+\fill[blue!40!white] (5.0,2.5) rectangle (5.5,3.);
+\fill[blue!40!white] (5.5,2.5) rectangle (6.0,3.);
+%tenth line
+\fill[blue!40!white] (3.0,2.) rectangle (3.5,2.5);
+\fill[blue!40!white] (3.5,2.) rectangle (4.0,2.5);
+\fill[blue!40!white] (4.0,2.) rectangle (4.5,2.5);
+\fill[blue!40!white] (5.0,2.) rectangle (5.5,2.5);
+\fill[blue!40!white] (5.5,2.) rectangle (6.0,2.5);
+\fill[blue!40!white] (6.0,2.) rectangle (6.5,2.5);
+%eleventh line
+\fill[blue!40!white] (3.5,1.5) rectangle (4.0,2.);
+\fill[blue!40!white] (4.0,1.5) rectangle (4.5,2.);
+\fill[blue!40!white] (4.5,1.5) rectangle (5.0,2.);
+\fill[blue!40!white] (5.5,1.5) rectangle (6.0,2.);
+\fill[blue!40!white] (6.0,1.5) rectangle (6.5,2.);
+\fill[blue!40!white] (6.5,1.5) rectangle (7.0,2.);
+%twelfth line
+\fill[blue!40!white] (4.0,1.) rectangle (4.5,1.5);
+\fill[blue!40!white] (4.5,1.) rectangle (5.0,1.5);
+\fill[blue!40!white] (6.0,1.) rectangle (6.5,1.5);
+\fill[blue!40!white] (6.5,1.) rectangle (7.0,1.5);
+
+
+\draw[step=0.5cm,black,thick] (1,1) grid (7,7); %background grid
+
+
+
+
+
+\end{tikzpicture}
+\end{center}
+
+
