@@ -221,26 +221,23 @@ to the Stokes matrix:
 
 
 
-
-
-
-
-
-
-
 %---------------------------------------------------
 \subsection*{The Donea \& Huerta benchmark (case 1)}
 
 As in \cite{dohu03} we solve the benchmark problem presented in section \ref{mms1}.
 
+\begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_22/results/case1/errors.pdf}
+\end{center}
 
 %------------------------------------------------------
 \subsection*{The Dohrmann \& Bochev benchmark (case 2)} 
 
 As in \cite{dobo04} we solve the benchmark problem presented in section \ref{mms2}.
 
+\begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_22/results/case2/errors.pdf}
+\end{center}
 
 \todo[inline]{compare my rates with original paper!}
 
@@ -288,10 +285,35 @@ Resolution 96x96, $\delta \rho=32$, $\eta_2=10^{23}$}
 
 This benchmark is described in Section~\ref{mms:solcx}.
 
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_22/results/case4/errors.pdf}\\
+{\captionfont Resolutions 8x8 to 96x96. Even resolutions converge ${\cal O}(h^2)$ 
+for velocity while \\ even resolutions converge ${\cal O}(h^1)$. In both cases the \\
+pressure converges ${\cal O}(h^{1/2})$.}
+\end{center}
+
+
 %-----------------------------------------
 \subsection*{SolVi (case 5)} 
 
 This benchmark is described in Section~\ref{mms:solvi}.
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_22/results/case5/errors.pdf}\\
+{\captionfont Resolutions 8x8 to 96x96.} 
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_22/results/case5/veldiag}
+\includegraphics[width=7cm]{python_codes/fieldstone_22/results/case5/pressbottom}\\
+{\captionfont Velocity and pressure on the diagonal $y=x$, at resolution 96x96.} 
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_22/results/case5/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_22/results/case5/vel2}
+\includegraphics[width=5cm]{python_codes/fieldstone_22/results/case5/p}\\
+\end{center}
 
 
 

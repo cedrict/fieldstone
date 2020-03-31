@@ -4,6 +4,8 @@ import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix 
 import time as time
+import solcx 
+import solvi 
 
 #------------------------------------------------------------------------------
 
@@ -17,7 +19,13 @@ def bx(x,y,case):
        val=-(1+y-3*x**2*y**2)
     if case==3:
        val=0.
+    if case==4:
+       val=0.
+    if case==5:
+       val=0.
     return val
+
+#------------------------------------------------------------------------------
 
 def by(x,y,case):
     if case==1:
@@ -47,8 +55,13 @@ def by(x,y,case):
                 val=3*drho/4*10
              else:
                 val=-drho/4*10
-
+    if case==4:
+       val=np.sin(np.pi*y)*np.cos(np.pi*x)
+    if case==5:
+       val=0.
     return val
+
+#------------------------------------------------------------------------------
 
 def viscosity(x,y,case):
     if case==1:
@@ -60,7 +73,19 @@ def viscosity(x,y,case):
           val=eta2
        else:
           val=eta1
+    if case==4:
+       if x<0.5:
+          val=1.
+       else:
+          val=1.e6
+    if case==5:
+       if (np.sqrt(x*x+y*y) < 0.2):
+          val=1e3
+       else:
+          val=1.
     return val
+
+#------------------------------------------------------------------------------
 
 def velocity_x(x,y,case):
     if case==1:
@@ -69,6 +94,12 @@ def velocity_x(x,y,case):
        val=x + x**2 - 2*x*y + x**3 -3*x*y**2 + x**2*y
     if case==3:
        val=0.
+    if case==4:
+       ui,vi,pi=solcx.SolCxSolution(x,y) 
+       val=ui
+    if case==5:
+       ui,vi,pi=solvi.solution(x,y) 
+       val=ui
     return val
 
 def velocity_y(x,y,case):
@@ -78,6 +109,12 @@ def velocity_y(x,y,case):
        val = -y - 2*x*y +y**2 - 3*x**2*y + y**3 -x*y**2
     if case==3:
        val=0.
+    if case==4:
+       ui,vi,pi=solcx.SolCxSolution(x,y) 
+       val=vi
+    if case==5:
+       ui,vi,pi=solvi.solution(x,y) 
+       val=vi
     return val
 
 def pressure(x,y,case):
@@ -87,7 +124,15 @@ def pressure(x,y,case):
        val = x*y+x+y+x**3*y**2 -4./3.
     if case==3:
        val=0.
+    if case==4:
+       ui,vi,pi=solcx.SolCxSolution(x,y) 
+       val=pi
+    if case==5:
+       ui,vi,pi=solvi.solution(x,y) 
+       val=pi
     return val
+
+#------------------------------------------------------------------------------
 
 def NNV(rq,sq):
     N_0=0.25*(1.-rq)*(1.-sq)
@@ -153,7 +198,7 @@ Nfem=NfemV+NfemP # total number of dofs
 # case 4: solcx
 # case 5: solvi
 
-case=3
+case=5
 
 if case==1:
    Lx=1. 
@@ -171,6 +216,12 @@ if case==3:
    eta_ref=1e21
    year=365.25*24*3600
    subcase=3
+if case==4 or case==5:
+   Lx=1.
+   Ly=1.
+   eta_ref=1
+   year=1
+
 
 pnormalise=True
 
@@ -233,9 +284,8 @@ start = time.time()
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
-if case==1 or case==2:
+if case==1 or case==2 or case==5:
    # prescribing analytical velocity on boundaries
-
    for i in range(0,nnp):
        if x[i]/Lx<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(x[i],y[i],case)
@@ -250,9 +300,8 @@ if case==1 or case==2:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(x[i],y[i],case)
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(x[i],y[i],case)
 
-if case==3: 
+if case==3 or case==4: 
    # prescribing free slip
-
    for i in range(0,nnp):
        if x[i]/Lx<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
@@ -571,7 +620,7 @@ for iel in range (0,nel):
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 
-if case==1 or case==2:
+if case==1 or case==2 or case==4 or case==5:
    print("     -> Errors: nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
 
 print("compute errors: %.3f s" % (time.time() - start))
@@ -585,6 +634,46 @@ if case==3:
    for i in range(0,nnp):
        if abs(x[i]-256e3)/Lx<eps and abs(y[i]-384e3)/Ly<eps :
           print("FallingBlock %6d %.4e %.4e %.4e %.4e %.6e " % (nelx,eta1,eta2,rho1,rho2,abs(v[i])*year) )
+
+
+#####################################################################
+# extract velocity field at domain bottom and on diagonal
+#####################################################################
+
+if case==5:
+   xdiag=np.zeros(nnx,dtype=np.float64)  
+   udiag=np.zeros(nnx,dtype=np.float64)  
+   udiagth=np.zeros(nnx,dtype=np.float64)  
+
+   counter=0
+   for i in range(0,nnp):
+       if abs(x[i]-y[i])<eps:
+          xdiag[counter]=x[i]
+          ui,vi,pi=solvi.solution(x[i],y[i]) 
+          udiag[counter]=u[i]
+          udiagth[counter]=ui
+          counter+=1
+       #end if
+   #end for
+
+   xbot=np.zeros(nnx,dtype=np.float64)  
+   pbotth=np.zeros(nnx,dtype=np.float64)  
+   pbot=np.zeros(nnx,dtype=np.float64)  
+
+   counter=0
+   for i in range(0,nnp):
+       if abs(y[i])<eps:
+          xbot[counter]=x[i]
+          ui,vi,pi=solvi.solution(x[i],y[i]) 
+          pbot[counter]=p[i]
+          pbotth[counter]=pi
+          counter+=1
+      #end if
+   #end for
+
+   np.savetxt('bottom.ascii',np.array([xbot,pbot,pbotth]).T,header='# x,p')
+   np.savetxt('diag.ascii',np.array([xdiag,udiag,udiagth]).T,header='# x,u')
+
 
 #####################################################################
 # plot of solution

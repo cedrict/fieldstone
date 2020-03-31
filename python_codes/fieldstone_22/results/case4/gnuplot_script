@@ -1,0 +1,14 @@
+set term pdf enhanced
+set output 'errors.pdf'
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+set pointsize .5
+set key outside
+plot[][]\
+'errors.dat' u (1./sqrt($4)):7 w p t 'velocity',\
+'errors.dat' u (1./sqrt($4)):10 w p t 'pressure',\
+x**2/25. w l t 'x^2',\
+x**1/100 w l t 'x^{1}',\
+x**0.5/20 w l t 'x^{0.5}'
+

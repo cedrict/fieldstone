@@ -1,6 +1,6 @@
 rm -f errors.dat
 
-for n in {8..64} ; do
+for n in {8..96} ; do
     echo mesh $n X $n
     python3 stone.py  $n $n 0 0 0 0 0 | grep Errors >> errors.dat
 done
