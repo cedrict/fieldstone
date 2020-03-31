@@ -1,3 +1,4 @@
+1D
 2D
 3D
 box
@@ -45,3 +46,7 @@ PIC
 pressure_scaling
 pressure_normalisation
 steady_state
+free_surface
+discontinuous_galerkin
+
+

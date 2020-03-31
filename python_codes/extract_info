@@ -36,6 +36,12 @@ grep spherical_shell */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 echo "---------------------" >> features
+echo "---1D----------------" >> features
+echo "---------------------" >> features
+grep 1D */keywords | cut -c1- | cut -f1 -d"/" >> features
+echo " " >> features
+
+echo "---------------------" >> features
 echo "---2D----------------" >> features
 echo "---------------------" >> features
 grep 2D */keywords | cut -c1- | cut -f1 -d"/" >> features
@@ -268,6 +274,29 @@ echo "---steady_state-----------" >> features
 echo "--------------------------" >> features
 grep steady_state */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
+
+echo "--------------------------" >> features
+echo "---free_surface-----------" >> features
+echo "--------------------------" >> features
+grep free_surface */keywords | cut -c1- | cut -f1 -d"/" >> features
+echo " " >> features
+
+echo "--------------------------" >> features
+echo "---discontinuous_galerkin-" >> features
+echo "--------------------------" >> features
+grep discontinuous_galerkin */keywords | cut -c1- | cut -f1 -d"/" >> features
+echo " " >> features
+
+
+
+
+
+
+
+
+
+
+
 
 
 ###sed 's/keywords//g' features > features2

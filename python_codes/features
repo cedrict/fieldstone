@@ -5,9 +5,13 @@ fieldstone_01
 fieldstone_02
 fieldstone_03
 fieldstone_04
+fieldstone_05
+fieldstone_06
+fieldstone_07
 fieldstone_08
 fieldstone_10
 fieldstone_11
+fieldstone_12
 fieldstone_17
 fieldstone_18
 fieldstone_19
@@ -16,16 +20,22 @@ fieldstone_22
 fieldstone_25
 fieldstone_28
 fieldstone_48
+fieldstone_54
+fieldstone_55
+fieldstone_59
 fieldstone_67
 fieldstone_68
  
 ---------------------
 ---disc--------------
 ---------------------
+fieldstone_57
+fieldstone_60
  
 ---------------------
 ---annulus-----------
 ---------------------
+fieldstone_09
 fieldstone_33
  
 ---------------------
@@ -38,13 +48,24 @@ fieldstone_33
 fieldstone_69
  
 ---------------------
+---1D----------------
+---------------------
+fieldstone_57
+fieldstone_60
+ 
+---------------------
 ---2D----------------
 ---------------------
 fieldstone_01
 fieldstone_02
 fieldstone_03
 fieldstone_04
+fieldstone_05
+fieldstone_06
+fieldstone_07
 fieldstone_08
+fieldstone_09
+fieldstone_12
 fieldstone_18
 fieldstone_19
 fieldstone_22
@@ -54,7 +75,10 @@ fieldstone_33
 fieldstone_44
 fieldstone_48
 fieldstone_51
+fieldstone_54
+fieldstone_55
 fieldstone_58
+fieldstone_59
 fieldstone_63
 fieldstone_67
 fieldstone_68
@@ -78,6 +102,7 @@ fieldstone_63
 ---P2----------------
 ---------------------
 fieldstone_44
+fieldstone_55
 fieldstone_68
  
 ---------------------
@@ -87,7 +112,11 @@ fieldstone_01
 fieldstone_02
 fieldstone_03
 fieldstone_04
+fieldstone_05
+fieldstone_06
+fieldstone_07
 fieldstone_08
+fieldstone_09
 fieldstone_10
 fieldstone_11
 fieldstone_20
@@ -103,6 +132,8 @@ fieldstone_17
 fieldstone_18
 fieldstone_25
 fieldstone_48
+fieldstone_54
+fieldstone_59
 fieldstone_67
  
 ---------------------
@@ -133,6 +164,7 @@ fieldstone_51
 ---P2pPm1---
 ---------------------
 fieldstone_44
+fieldstone_55
 fieldstone_68
  
 ---------------------
@@ -150,9 +182,14 @@ fieldstone_22
 fieldstone_02
 fieldstone_03
 fieldstone_04
+fieldstone_05
+fieldstone_06
+fieldstone_07
 fieldstone_08
+fieldstone_09
 fieldstone_10
 fieldstone_11
+fieldstone_12
 fieldstone_17
 fieldstone_18
 fieldstone_19
@@ -164,7 +201,10 @@ fieldstone_33
 fieldstone_44
 fieldstone_48
 fieldstone_51
+fieldstone_54
+fieldstone_55
 fieldstone_58
+fieldstone_59
 fieldstone_63
 fieldstone_67
 fieldstone_68
@@ -177,6 +217,8 @@ fieldstone_20
 fieldstone_28
 fieldstone_33
 fieldstone_51
+fieldstone_57
+fieldstone_60
 fieldstone_67
 fieldstone_68
  
@@ -200,14 +242,21 @@ fieldstone_63
 fieldstone_01
 fieldstone_02
 fieldstone_03
+fieldstone_05
+fieldstone_06
+fieldstone_07
 fieldstone_08
+fieldstone_09
 fieldstone_10
+fieldstone_12
 fieldstone_33
  
 ---------------------
 ---sparse matrix-----
 ---------------------
+fieldstone_09
 fieldstone_10
+fieldstone_12
 fieldstone_18
 fieldstone_19
 fieldstone_20
@@ -215,7 +264,10 @@ fieldstone_22
 fieldstone_28
 fieldstone_44
 fieldstone_48
+fieldstone_54
+fieldstone_55
 fieldstone_58
+fieldstone_59
 fieldstone_63
 fieldstone_67
 fieldstone_68
@@ -224,13 +276,20 @@ fieldstone_68
 ---analytical benchmark---
 --------------------------
 fieldstone_01
+fieldstone_05
+fieldstone_06
+fieldstone_07
 fieldstone_08
+fieldstone_09
+fieldstone_12
 fieldstone_17
 fieldstone_18
 fieldstone_19
 fieldstone_22
 fieldstone_33
 fieldstone_48
+fieldstone_54
+fieldstone_57
 fieldstone_58
  
 --------------------------
@@ -244,6 +303,9 @@ fieldstone_22
 fieldstone_25
 fieldstone_28
 fieldstone_51
+fieldstone_54
+fieldstone_55
+fieldstone_59
 fieldstone_63
 fieldstone_67
  
@@ -254,6 +316,8 @@ fieldstone_03
 fieldstone_20
 fieldstone_28
 fieldstone_33
+fieldstone_54
+fieldstone_55
 fieldstone_67
 fieldstone_68
  
@@ -261,6 +325,7 @@ fieldstone_68
 ---use_mesher-------------
 --------------------------
 fieldstone_44
+fieldstone_55
 fieldstone_68
  
 --------------------------
@@ -269,6 +334,7 @@ fieldstone_68
 fieldstone_08
 fieldstone_28
 fieldstone_33
+fieldstone_59
  
 --------------------------
 ---matplotlib-------------
@@ -276,12 +342,20 @@ fieldstone_33
 fieldstone_01
 fieldstone_02
 fieldstone_03
+fieldstone_05
+fieldstone_06
+fieldstone_07
 fieldstone_44
  
 --------------------------
 ---error convergence------
 --------------------------
 fieldstone_01
+fieldstone_05
+fieldstone_06
+fieldstone_07
+fieldstone_09
+fieldstone_12
 fieldstone_17
 fieldstone_18
 fieldstone_19
@@ -309,6 +383,9 @@ fieldstone_28
 fieldstone_33
 fieldstone_44
 fieldstone_51
+fieldstone_54
+fieldstone_55
+fieldstone_59
 fieldstone_67
 fieldstone_68
  
@@ -317,6 +394,7 @@ fieldstone_68
 --------------------------
 fieldstone_08
 fieldstone_28
+fieldstone_59
  
 --------------------------
 ---buoyancy driven--------
@@ -331,18 +409,26 @@ fieldstone_28
 fieldstone_33
 fieldstone_44
 fieldstone_51
+fieldstone_54
+fieldstone_55
 fieldstone_67
  
 --------------------------
 ---vrms-------------------
 --------------------------
 fieldstone_03
+fieldstone_05
+fieldstone_06
+fieldstone_07
+fieldstone_12
 fieldstone_20
 fieldstone_22
 fieldstone_25
 fieldstone_28
 fieldstone_33
 fieldstone_51
+fieldstone_54
+fieldstone_55
 fieldstone_58
  
 --------------------------
@@ -367,6 +453,7 @@ fieldstone_51
 ---residual---------------
 --------------------------
 fieldstone_08
+fieldstone_12
 fieldstone_28
 fieldstone_33
 fieldstone_58
@@ -376,8 +463,10 @@ fieldstone_63
 ---paraview output--------
 --------------------------
 fieldstone_04
+fieldstone_09
 fieldstone_10
 fieldstone_11
+fieldstone_12
 fieldstone_17
 fieldstone_18
 fieldstone_19
@@ -389,7 +478,10 @@ fieldstone_33
 fieldstone_44
 fieldstone_48
 fieldstone_51
+fieldstone_54
+fieldstone_55
 fieldstone_58
+fieldstone_59
 fieldstone_63
 fieldstone_67
 fieldstone_68
@@ -412,4 +504,15 @@ fieldstone_03
 fieldstone_20
 fieldstone_28
 fieldstone_51
+ 
+--------------------------
+---free_surface-----------
+--------------------------
+fieldstone_54
+ 
+--------------------------
+---discontinuous_galerkin-
+--------------------------
+fieldstone_57
+fieldstone_60
  
