@@ -45,6 +45,29 @@ This leads to $a=-1$ and $b=0$ so
 \rho(r) = \rho_0 \left[ 1 - \left(\frac{r}{R}\right)^2  \right]
 \]
 
+The total mass is given by 
+\begin{eqnarray}
+M 
+&=& \int_V \rho(r) dV \nn\\
+&=&  4\pi \int_0^R  \rho(r) r^2 dr \nn\\
+&=&  4\pi \int_0^R   \rho_0 \left[ 1 - \left(\frac{r}{R}\right)^2  \right]  r^2 dr \nn\\
+&=&  4\pi \rho_0  \int_0^R   \left[ r^2 - \frac{r^4}{R^2}  \right]  dr \nn\\
+&=& \frac{8 \pi}{15} \rho_0 R^3
+\end{eqnarray}
+
+The moment of inertia $I$ is 
+\begin{eqnarray}
+I 
+&=&  \frac{8\pi}{3} \int_0^R  \rho(r) r^4 dr \nn\\
+&=& \frac{16 \pi}{105} \rho_0 R^5
+\end{eqnarray}
+
+Finally, 
+\[
+I = \frac{16 \pi}{105} \rho_0 R^5 = \frac{2}{7} (\frac{8 \pi}{15} \rho_0 R^3) R^2
+\]
+so $f=2/7$.
+
 
 %-----------------------
 \subsection*{Exercise 2}
@@ -75,7 +98,7 @@ Inside the sphere Eq.(\ref{exam2020:eqlap}) is
 
 \begin{equation}
 \frac{1}{r^2} \frac{\partial}{\partial r} \left( r^2 \frac{\partial U}{\partial r} \right) = 4 \pi {\cal G} 
-\rho_0 \left[ a \left(\frac{r}{R}\right)^2+ b \left(\frac{r}{R}\right) + c \right]
+\rho_0 \left[ a \left(\frac{r}{R}\right)^2+ b \left(\frac{r}{R}\right) + c \right]  \nn
 \end{equation}
 
 We could use the values of $a$, $b$ and $c$ obtained above but I here choose not to, in order to show that 
@@ -83,57 +106,57 @@ this exercise can be carried out independently from the first one. Then:
 
 \begin{equation}
 \frac{\partial}{\partial r} \left( r^2 \frac{\partial U}{\partial r} \right) = 4 \pi {\cal G} 
-\rho_0 \left[ a \frac{r^4}{R^2}+ b \frac{r^3}{R} + c r^2 \right]
+\rho_0 \left[ a \frac{r^4}{R^2}+ b \frac{r^3}{R} + c r^2 \right] \nn
 \end{equation}
 
 \begin{equation}
-r^2 \frac{\partial U}{\partial r} = 4 \pi {\cal G} \rho_0 \left[ a \frac{r^5}{5R^2}+ b \frac{r^4}{4R} + c \frac{r^3}{3} \right] + A
+r^2 \frac{\partial U}{\partial r} = 4 \pi {\cal G} \rho_0 \left[ a \frac{r^5}{5R^2}+ b \frac{r^4}{4R} + c \frac{r^3}{3} \right] + A  \nn
 \end{equation}
 
 \begin{equation}
-\frac{\partial U}{\partial r} = 4 \pi {\cal G} \rho_0 \left[ a \frac{r^3}{5R^2}+ b \frac{r^2}{4R} + c \frac{r}{3} \right] + \frac{A}{r^2}
+\frac{\partial U}{\partial r} = 4 \pi {\cal G} \rho_0 \left[ a \frac{r^3}{5R^2}+ b \frac{r^2}{4R} + c \frac{r}{3} \right] + \frac{A}{r^2} \nn
 \end{equation}
 so that 
 \begin{equation}
-g(r)=-\frac{\partial U}{\partial r} = -4 \pi {\cal G} \rho_0 \left[ a \frac{r^3}{5R^2}+ b \frac{r^2}{4R} + c \frac{r}{3} \right] + \frac{A}{r^2}
+g(r)=-\frac{\partial U}{\partial r} = -4 \pi {\cal G} \rho_0 \left[ a \frac{r^3}{5R^2}+ b \frac{r^2}{4R} + c \frac{r}{3} \right] + \frac{A}{r^2} \nn
 \end{equation}
 We use $\lim_{r\rightarrow 0} g(r) \neq \infty$ to arrive at $A=0$.
 Finally 
 
 \begin{equation}
-U_{in}(r) = 4 \pi {\cal G} \rho_0 \left[ a \frac{r^4}{20R^2}+ b \frac{r^3}{12R} + c \frac{r^2}{6} \right] + B
+U_{in}(r) = 4 \pi {\cal G} \rho_0 \left[ a \frac{r^4}{20R^2}+ b \frac{r^3}{12R} + c \frac{r^2}{6} \right] + B \nn
 \end{equation}
 
 With $a=-1$, $b=0$ and $c=1$:
 \begin{eqnarray}
-g_{in}(r) &=&  -4 \pi {\cal G} \rho_0 \left[ - \frac{r^3}{5R^2}+   \frac{r}{3} \right]  \\
-U_{in}(r) &=& 4 \pi {\cal G} \rho_0 \left[ - \frac{r^4}{20R^2} +  \frac{r^2}{6} \right] + B
+g_{in}(r) &=&  -4 \pi {\cal G} \rho_0 \left[ - \frac{r^3}{5R^2}+   \frac{r}{3} \right]  \nn\\
+U_{in}(r) &=& 4 \pi {\cal G} \rho_0 \left[ - \frac{r^4}{20R^2} +  \frac{r^2}{6} \right] + B  \nn
 \end{eqnarray}
 
 Outside the sphere we must solve 
 \begin{equation}
-\frac{1}{r^2} \frac{\partial}{\partial r} \left( r^2 \frac{\partial U}{\partial r} \right) = 0 
+\frac{1}{r^2} \frac{\partial}{\partial r} \left( r^2 \frac{\partial U}{\partial r} \right) = 0 \nn
 \end{equation}
 
 \begin{equation}
-r^2 \frac{\partial U}{\partial r}  = C 
+r^2 \frac{\partial U}{\partial r}  = C \nn 
 \end{equation}
 \begin{equation}
-\frac{\partial U}{\partial r}  = \frac{C}{r^2}
+\frac{\partial U}{\partial r}  = \frac{C}{r^2} \nn
 \end{equation}
 \begin{equation}
-U_{out}(r) = -\frac{C}{r} + D
+U_{out}(r) = -\frac{C}{r} + D  \nn
 \end{equation}
 We use $\lim_{r\rightarrow\infty}U(r)=0$ to arrive at $D=0$ so that 
 \begin{eqnarray}
-g_{out}(r) &=& -\frac{C}{r^2}  \\
-U_{out}(r) &=& -\frac{C}{r} 
+g_{out}(r) &=& -\frac{C}{r^2}  \nn\\
+U_{out}(r) &=& -\frac{C}{r} \nn
 \end{eqnarray}
 
 Both fields should match at $r=R$:
 \begin{eqnarray}
-g_{in}(r=R) &=& g_{out}(r=R) \\
-U_{in}(r=R) &=& U_{out}(r=R) 
+g_{in}(r=R) &=& g_{out}(r=R) \nn\\
+U_{in}(r=R) &=& U_{out}(r=R) \nn
 \end{eqnarray}
 i.e.
 \[
@@ -176,13 +199,20 @@ C = \frac{8\pi}{15} {\cal G} \rho_0 R^3
 Finally
 
 \begin{eqnarray}
-g_{in}(r) &=&  -4 \pi {\cal G} \rho_0 \left[ - \frac{r^3}{5R^2}+   \frac{r}{3} \right]  \\
+g_{in}(r) &=&  -4 \pi {\cal G} \rho_0 \left[ - \frac{r^3}{5R^2}+   \frac{r}{3} \right] \nn \\
 U_{in}(r) &=& 4 \pi {\cal G} \rho_0 \left[ - \frac{r^4}{20R^2} +  \frac{r^2}{6} \right] 
- - \pi {\cal G} \rho_0 R^2  \\
-g_{out}(r) &=& - \frac{8\pi}{15} {\cal G} \rho_0 R^3 \frac{1}{r^2} \\ 
-U_{out}(r) &=& -\frac{8\pi}{15} {\cal G} \rho_0 R^3 \frac{1}{r}  
+ - \pi {\cal G} \rho_0 R^2  \nn\\
+g_{out}(r) &=& - \frac{8\pi}{15} {\cal G} \rho_0 R^3 \frac{1}{r^2} \nn\\ 
+U_{out}(r) &=& -\frac{8\pi}{15} {\cal G} \rho_0 R^3 \frac{1}{r}  \nn
 \end{eqnarray}
 
+Also, remembering that the mass of the planet is  $M=\frac{8 \pi}{15} \rho_0 R^3$
+so that 
+\begin{eqnarray}
+g_{out}(r) &=& - \frac{ {\cal G} M}{r^2} \nn\\ 
+U_{out}(r) &=& -  \frac{ {\cal G} M}{r} \nn 
+\end{eqnarray}
+No surprise there...
 
 
 
