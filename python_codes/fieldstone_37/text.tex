@@ -1,15 +1,41 @@
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_37/keywords}
 
-\includegraphics[width=5cm]{images/under_construction}
+\begin{center}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_37}
+\end{center}
 
-The domain is a unit square. The Stokes equations are not solved, the velocity is prescribed everywhere 
-in the domain as follows:
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The domain is a unit square. The Stokes equations are not solved, the velocity is prescribed 
+everywhere in the domain as follows:
 \begin{eqnarray}
-u&=&-(z-0.5)\\
-v&=&0\\
-w&=&(x-0.5)
+u(x,y)&=&-(y-0.5)\nn\\
+v(x,y)&=&(x-0.5) \nn
 \end{eqnarray}
 
-At the moment, velocity is computed on the marker itself (rk0 algorithm).
-When markers are advected outside, they are arbitrarily placed at location (-0.0123,-0.0123).
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_37/vel}
+\end{center}
 
-in construction. 
+If {\tt RKorder} is zero, then velocity is computed on the particle itself via the equation above. 
+If {\tt RKorder} is 1,2,3,4,5 then the corresponding Runge-Kutta algorithm (in space) is used and basis functions are
+used to interpolate the velocity from the nodes onto the particles.. 
+Particles can be placed on a regular grid or randomly inside each element at the beginning.
+The timestep is controlled via a CFL condition.    
+When particles are advected outside the domain, they are arbitrarily placed at location (-0.0123,-0.0123).
+
+\begin{center}
+\includegraphics[width=3cm]{python_codes/fieldstone_37/particles0000}
+\includegraphics[width=3cm]{python_codes/fieldstone_37/particles0005}
+\includegraphics[width=3cm]{python_codes/fieldstone_37/particles0010}
+\includegraphics[width=3cm]{python_codes/fieldstone_37/particles0015}
+\includegraphics[width=3cm]{python_codes/fieldstone_37/particles0019}\\
+{\captionfont Example with 32x32 $Q_1$ elements, $7^2$ particles, CFL=0.1, RKorder=2, regular distribution.}
+\end{center}
+
+Note that $Q_2$ elements have not been tested yet.
+
+Also, I will some day add a population control algorithm to replenish elements with not enough particles.
+

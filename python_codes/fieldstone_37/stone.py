@@ -74,6 +74,15 @@ def dNQ2ds(rq,sq):
 def interpolate_vel_on_pt(xm,ym,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q):
     ielx=int(xm/Lx*nelx)
     iely=int(ym/Ly*nely)
+    if ielx<0:
+       exit('ielx<0')
+    if iely<0:
+       exit('iely<0')
+    if ielx>=nelx:
+       exit('ielx>nelx')
+    if iely>=nely:
+       exit('iely>nely')
+
     iel=nelx*(iely)+ielx
     xmin=x[icon[0,iel]] ; xmax=x[icon[2,iel]]
     ymin=y[icon[0,iel]] ; ymax=y[icon[2,iel]]
@@ -115,10 +124,10 @@ else:
    nelx = 32
    nely = 32
    visu = 1
-   nmarker_per_dim=6 
-   random_markers=1
+   nmarker_per_dim=7 
+   random_markers=0
    CFL_nb=0.1
-   RKorder=0 # do not change
+   RKorder=2 
    Q=1 # do not change
     
 if Q==1:
@@ -209,7 +218,7 @@ if Q==2:
            counter += 1
 
 #################################################################
-# connectivity
+# connectivity for Q2
 #
 #  04===07===03
 #  ||   ||   ||
@@ -377,15 +386,8 @@ for istep in range (0,nstep):
               swarm_v[im]=velocity_y(swarm_x[im],swarm_y[im]) 
               swarm_x[im]+=swarm_u[im]*dt
               swarm_y[im]+=swarm_v[im]*dt
-              if swarm_x[im]<0:
+              if swarm_x[im]<0 or swarm_x[im]>Lx or swarm_y[im]<0 or swarm_y[im]>Ly:
                  swarm_active[im]=False
-              if swarm_x[im]>Lx:
-                 swarm_active[im]=False
-              if swarm_y[im]<0:
-                 swarm_active[im]=False
-              if swarm_y[im]>Ly:
-                 swarm_active[im]=False
-              if not swarm_active[im]:
                  swarm_x[im]=-0.0123
                  swarm_y[im]=-0.0123
            # end if active
@@ -399,138 +401,166 @@ for istep in range (0,nstep):
                                                                        x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
               swarm_x[im]+=swarm_u[im]*dt
               swarm_y[im]+=swarm_v[im]*dt
-              if swarm_x[im]<0:
+              if swarm_x[im]<0 or swarm_x[im]>Lx or swarm_y[im]<0 or swarm_y[im]>Ly:
                  swarm_active[im]=False
-              if swarm_x[im]>Lx:
-                 swarm_active[im]=False
-              if swarm_y[im]<0:
-                 swarm_active[im]=False
-              if swarm_y[im]>Ly:
-                 swarm_active[im]=False
+                 swarm_x[im]=-0.0123
+                 swarm_y[im]=-0.0123
            # end if active
        # end for im
 
     elif RKorder==2:
 
        for im in range(0,nmarker):
-           #--------------
-           xA=swarm_x[im]
-           yA=swarm_y[im]
-           uA,vA,rm,sm,iel = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uA+=uAcorr
-           vA+=vAcorr
-           #--------------
-           xB=xA+uA*dt/2.
-           yB=yA+vA*dt/2.
-           uB,vB,rm,sm,iel = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uB+=uBcorr
-           vB+=vBcorr
-           #--------------
-           swarm_x[im]=xA+uB*dt
-           swarm_y[im]=yA+vB*dt
+           if swarm_active[im]:
+              xA=swarm_x[im]
+              yA=swarm_y[im]
+              uA,vA,rm,sm,iel = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+              xB=xA+uA*dt/2.
+              yB=yA+vA*dt/2.
+              if xB<0 or xB>Lx or yB<0 or yB>Ly:
+                 swarm_active[im]=False
+              else: 
+                 uB,vB,rm,sm,iel = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+                 swarm_x[im]=xA+uB*dt
+                 swarm_y[im]=yA+vB*dt
+                 if swarm_x[im]<0 or swarm_x[im]>Lx or swarm_y[im]<0 or swarm_y[im]>Ly:
+                    swarm_active[im]=False
+                 #end if 
+              #end if 
+              if not swarm_active[im]:
+                 swarm_x[im]=-0.0123
+                 swarm_y[im]=-0.0123
+              #end if 
+           # end if active
        # end for im
 
     elif RKorder==3:
 
        for im in range(0,nmarker):
-           #--------------
-           xA=swarm_x[im]
-           yA=swarm_y[im]
-           uA,vA,rm,sm,iel = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uA+=uAcorr
-           vA+=vAcorr
-           #--------------
-           xB=xA+uA*dt/2.
-           yB=yA+vA*dt/2.
-           uB,vB,rm,sm,iel = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uB+=uBcorr
-           vB+=vBcorr
-           #--------------
-           xC=xA+(2*uB-uA)*dt/2.
-           yC=yA+(2*vB-vA)*dt/2.
-           uC,vC,rm,sm,iel = interpolate_vel_on_pt(xC,yC,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uC+=uCcorr
-           vC+=vCcorr
-           #--------------
-           swarm_x[im]=xA+(uA+4*uB+uC)*dt/6.
-           swarm_y[im]=yA+(vA+4*vB+vC)*dt/6.
+           if swarm_active[im]:
+              xA=swarm_x[im]
+              yA=swarm_y[im]
+              uA,vA,rm,sm,iel = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+              xB=xA+uA*dt/2.
+              yB=yA+vA*dt/2.
+              if xB<0 or xB>Lx or yB<0 or yB>Ly:
+                 swarm_active[im]=False
+              else: 
+                 uB,vB,rm,sm,iel = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+                 xC=xA+(2*uB-uA)*dt/2.
+                 yC=yA+(2*vB-vA)*dt/2.
+                 if xC<0 or xC>Lx or yC<0 or yC>Ly:
+                    swarm_active[im]=False
+                 else: 
+                    uC,vC,rm,sm,iel = interpolate_vel_on_pt(xC,yC,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+                    swarm_x[im]=xA+(uA+4*uB+uC)*dt/6.
+                    swarm_y[im]=yA+(vA+4*vB+vC)*dt/6.
+                    if swarm_x[im]<0 or swarm_x[im]>Lx or swarm_y[im]<0 or swarm_y[im]>Ly:
+                       swarm_active[im]=False
+                    #end if 
+                 #end if 
+              #end if 
+              if not swarm_active[im]:
+                 swarm_x[im]=-0.0123
+                 swarm_y[im]=-0.0123
+              #end if 
+           #end if 
        # end for im
 
     elif RKorder==4:
 
        for im in range(0,nmarker):
-           #--------------
-           xA=swarm_x[im]
-           yA=swarm_y[im]
-           uA,vA,rm,sm,iel = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uA+=uAcorr
-           vA+=vAcorr
-           #--------------
-           xB=xA+uA*dt/2.
-           yB=yA+vA*dt/2.
-           uB,vB,rm,sm,iel = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uB+=uBcorr
-           vB+=vBcorr
-           #--------------
-           xC=xA+(2*uB-uA)*dt/2.
-           yC=yA+(2*vB-vA)*dt/2.
-           uC,vC,rm,sm,iel = interpolate_vel_on_pt(xC,yC,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uC+=uCcorr
-           vC+=vCcorr
-           #--------------
-           xD=xA+uC*dt
-           yD=yA+vC*dt
-           uD,vD,rm,sm,iel = interpolate_vel_on_pt(xD,yD,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uD+=uDcorr
-           vD+=vDcorr
-           #--------------
-           swarm_x[im]=xA+(uA+2*uB+2*uC+uD)*dt/6.
-           swarm_y[im]=yA+(vA+2*vB+2*vC+vD)*dt/6.
+           if swarm_active[im]:
+              xA=swarm_x[im]
+              yA=swarm_y[im]
+              uA,vA,rm,sm,iel = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+              xB=xA+uA*dt/2.
+              yB=yA+vA*dt/2.
+              if xB<0 or xB>Lx or yB<0 or yB>Ly:
+                 swarm_active[im]=False
+              else: 
+                 uB,vB,rm,sm,iel = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+                 xC=xA+(2*uB-uA)*dt/2.
+                 yC=yA+(2*vB-vA)*dt/2.
+                 if xC<0 or xC>Lx or yC<0 or yC>Ly:
+                    swarm_active[im]=False
+                 else: 
+                    uC,vC,rm,sm,iel = interpolate_vel_on_pt(xC,yC,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+                    xD=xA+uC*dt
+                    yD=yA+vC*dt
+                    if xD<0 or xD>Lx or yD<0 or yD>Ly:
+                       swarm_active[im]=False
+                    else: 
+                       uD,vD,rm,sm,iel = interpolate_vel_on_pt(xD,yD,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+                       swarm_x[im]=xA+(uA+2*uB+2*uC+uD)*dt/6.
+                       swarm_y[im]=yA+(vA+2*vB+2*vC+vD)*dt/6.
+                       if swarm_x[im]<0 or swarm_x[im]>Lx or swarm_y[im]<0 or swarm_y[im]>Ly:
+                          swarm_active[im]=False
+                       #end if 
+                    #end if 
+                 #end if 
+              #end if 
+              if not swarm_active[im]:
+                 swarm_x[im]=-0.0123
+                 swarm_y[im]=-0.0123
+              #end if 
+           #end if 
        # end for im
 
     elif RKorder==5: # Runge-Kutta Fehlberg method
 
        for im in range(0,nmarker):
-           #--------------
-           xA=swarm_x[im]
-           yA=swarm_y[im]
-           uA,vA,rm,sm,iel = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uA+=uAcorr
-           vA+=vAcorr
-           #--------------
-           xB=xA+(uA*rkf_a21)*dt
-           yB=yA+(vA*rkf_a21)*dt
-           uB,vB,rm,sm,iel = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uB+=uBcorr
-           vB+=vBcorr
-           #--------------
-           xC=xA+(uA*rkf_a31+uB*rkf_a32)*dt
-           yC=yA+(vA*rkf_a31+vB*rkf_a32)*dt
-           uC,vC,rm,sm,iel = interpolate_vel_on_pt(xC,yC,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uC+=uCcorr
-           vC+=vCcorr
-           #--------------
-           xD=xA+(uA*rkf_a41+uB*rkf_a42+uC*rkf_a43)*dt
-           yD=yA+(vA*rkf_a41+vB*rkf_a42+vC*rkf_a43)*dt
-           uD,vD,rm,sm,iel = interpolate_vel_on_pt(xD,yD,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uD+=uDcorr
-           vD+=vDcorr
-           #--------------
-           xE=xA+(uA*rkf_a51+uB*rkf_a52+uC*rkf_a53+uD*rkf_a54)*dt
-           yE=yA+(vA*rkf_a51+vB*rkf_a52+vC*rkf_a53+vD*rkf_a54)*dt
-           uE,vE,rm,sm,iel = interpolate_vel_on_pt(xE,yE,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uE+=uEcorr
-           vE+=vEcorr
-           #--------------
-           xF=xA+(uA*rkf_a61+uB*rkf_a62+uC*rkf_a63+uD*rkf_a64+uE*rkf_a65)*dt
-           yF=yA+(vA*rkf_a61+vB*rkf_a62+vC*rkf_a63+vD*rkf_a64+vE*rkf_a65)*dt
-           uF,vF,rm,sm,iel = interpolate_vel_on_pt(xF,yF,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
-           uF+=uFcorr
-           vF+=vFcorr
-           #--------------
-           swarm_x[im]=xA+(uA*rkf_b1+uC*rkf_b3+uD*rkf_b4+uE*rkf_b5+uF*rkf_b6)*dt
-           swarm_y[im]=yA+(vA*rkf_b1+vC*rkf_b3+vD*rkf_b4+vE*rkf_b5+vF*rkf_b6)*dt
-
+           if swarm_active[im]:
+              xA=swarm_x[im]
+              yA=swarm_y[im]
+              uA,vA,rm,sm,iel = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+              #--------------
+              xB=xA+(uA*rkf_a21)*dt
+              yB=yA+(vA*rkf_a21)*dt
+              if xB<0 or xB>Lx or yB<0 or yB>Ly:
+                 swarm_active[im]=False
+              else: 
+                 uB,vB,rm,sm,iel = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+                 #--------------
+                 xC=xA+(uA*rkf_a31+uB*rkf_a32)*dt
+                 yC=yA+(vA*rkf_a31+vB*rkf_a32)*dt
+                 if xC<0 or xC>Lx or yC<0 or yC>Ly:
+                    swarm_active[im]=False
+                 else: 
+                    uC,vC,rm,sm,iel = interpolate_vel_on_pt(xC,yC,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+                    #--------------
+                    xD=xA+(uA*rkf_a41+uB*rkf_a42+uC*rkf_a43)*dt
+                    yD=yA+(vA*rkf_a41+vB*rkf_a42+vC*rkf_a43)*dt
+                    if xD<0 or xD>Lx or yD<0 or yD>Ly:
+                       swarm_active[im]=False
+                    else: 
+                       uD,vD,rm,sm,iel = interpolate_vel_on_pt(xD,yD,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+                       #--------------
+                       xE=xA+(uA*rkf_a51+uB*rkf_a52+uC*rkf_a53+uD*rkf_a54)*dt
+                       yE=yA+(vA*rkf_a51+vB*rkf_a52+vC*rkf_a53+vD*rkf_a54)*dt
+                       if xE<0 or xE>Lx or yE<0 or yE>Ly:
+                          swarm_active[im]=False
+                       else: 
+                          uE,vE,rm,sm,iel = interpolate_vel_on_pt(xE,yE,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+                          #--------------
+                          xF=xA+(uA*rkf_a61+uB*rkf_a62+uC*rkf_a63+uD*rkf_a64+uE*rkf_a65)*dt
+                          yF=yA+(vA*rkf_a61+vB*rkf_a62+vC*rkf_a63+vD*rkf_a64+vE*rkf_a65)*dt
+                          if xF<0 or xF>Lx or yF<0 or yF>Ly:
+                             swarm_active[im]=False
+                          else: 
+                             uF,vF,rm,sm,iel = interpolate_vel_on_pt(xF,yF,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+                             swarm_x[im]=xA+(uA*rkf_b1+uC*rkf_b3+uD*rkf_b4+uE*rkf_b5+uF*rkf_b6)*dt
+                             swarm_y[im]=yA+(vA*rkf_b1+vC*rkf_b3+vD*rkf_b4+vE*rkf_b5+vF*rkf_b6)*dt
+                          #end if
+                       #end if
+                    #end if
+                 #end if
+              #end if
+              if not swarm_active[im]:
+                 swarm_x[im]=-0.0123
+                 swarm_y[im]=-0.0123
+              #end if 
+           #end if 
        # end for im
 
     #endif

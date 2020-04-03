@@ -1,3 +1,7 @@
+#--------------------------
+REVISIT THIS SCRIPT !!!!
+#-------------------------- 3 april 2020
+
 
 #changing polynomial order
 python3 fieldstone.py  32 32  1 5 1  0.5 1 0 2
@@ -43,10 +47,3 @@ python3 fieldstone.py  32 32  1 5 1  0.5 5 0 1
 mv markercount*.ascii results/
 
 
-# using cvi
-python3 fieldstone.py  32 32  1 5 1  0.5 1 1 1
-python3 fieldstone.py  32 32  1 5 1  0.5 2 1 1
-python3 fieldstone.py  32 32  1 5 1  0.5 3 1 1
-python3 fieldstone.py  32 32  1 5 1  0.5 4 1 1
-python3 fieldstone.py  32 32  1 5 1  0.5 5 1 1
-mv markercount*.ascii results/
