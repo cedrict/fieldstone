@@ -14,26 +14,14 @@ def velocity_y(x,y):
     val=+(x-0.5)
     return val
 
+#------------------------------------------------------------------------------
+
 def NQ1(rq,sq):
     N_0=0.25*(1.-rq)*(1.-sq)
     N_1=0.25*(1.+rq)*(1.-sq)
     N_2=0.25*(1.+rq)*(1.+sq)
     N_3=0.25*(1.-rq)*(1.+sq)
     return N_0,N_1,N_2,N_3
-
-def dNQ1dr(rq,sq):
-    dNdr_0=-0.25*(1.-sq) 
-    dNdr_1=+0.25*(1.-sq) 
-    dNdr_2=+0.25*(1.+sq) 
-    dNdr_3=-0.25*(1.+sq) 
-    return dNdr_0,dNdr_1,dNdr_2,dNdr_3
-
-def dNQ1ds(rq,sq):
-    dNds_0=-0.25*(1.-rq)
-    dNds_1=-0.25*(1.+rq)
-    dNds_2=+0.25*(1.+rq)
-    dNds_3=+0.25*(1.-rq)
-    return dNds_0,dNds_1,dNds_2,dNds_3
 
 def NQ2(rq,sq):
     N_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
@@ -47,42 +35,19 @@ def NQ2(rq,sq):
     N_8=     (1.-rq**2) *     (1.-sq**2)
     return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8
 
-def dNQ2dr(rq,sq):
-    dNdr_0= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
-    dNdr_1= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
-    dNdr_2= 0.5*(2.*rq+1.) * 0.5*sq*(sq+1)
-    dNdr_3= 0.5*(2.*rq-1.) * 0.5*sq*(sq+1)
-    dNdr_4=       (-2.*rq) * 0.5*sq*(sq-1)
-    dNdr_5= 0.5*(2.*rq+1.) *    (1.-sq**2)
-    dNdr_6=       (-2.*rq) * 0.5*sq*(sq+1)
-    dNdr_7= 0.5*(2.*rq-1.) *    (1.-sq**2)
-    dNdr_8=       (-2.*rq) *    (1.-sq**2)
-    return dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8
-
-def dNQ2ds(rq,sq):
-    dNds_0= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
-    dNds_1= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
-    dNds_2= 0.5*rq*(rq+1.) * 0.5*(2.*sq+1.)
-    dNds_3= 0.5*rq*(rq-1.) * 0.5*(2.*sq+1.)
-    dNds_4=     (1.-rq**2) * 0.5*(2.*sq-1.)
-    dNds_5= 0.5*rq*(rq+1.) *       (-2.*sq)
-    dNds_6=     (1.-rq**2) * 0.5*(2.*sq+1.)
-    dNds_7= 0.5*rq*(rq-1.) *       (-2.*sq)
-    dNds_8=     (1.-rq**2) *       (-2.*sq)
-    return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8
+#------------------------------------------------------------------------------
 
 def interpolate_vel_on_pt(xm,ym,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q):
     ielx=int(xm/Lx*nelx)
     iely=int(ym/Ly*nely)
-    if ielx<0:
-       exit('ielx<0')
-    if iely<0:
-       exit('iely<0')
-    if ielx>=nelx:
-       exit('ielx>nelx')
-    if iely>=nely:
-       exit('iely>nely')
-
+    #if ielx<0:
+    #   exit('ielx<0')
+    #if iely<0:
+    #   exit('iely<0')
+    #if ielx>=nelx:
+    #   exit('ielx>nelx')
+    #if iely>=nely:
+    #   exit('iely>nely')
     iel=nelx*(iely)+ielx
     xmin=x[icon[0,iel]] ; xmax=x[icon[2,iel]]
     ymin=y[icon[0,iel]] ; ymax=y[icon[2,iel]]
@@ -127,8 +92,8 @@ else:
    nmarker_per_dim=7 
    random_markers=0
    CFL_nb=0.1
-   RKorder=2 
-   Q=1 # do not change
+   RKorder=1 
+   Q=2 
     
 if Q==1:
    nnx=nelx+1    # number of elements, x direction
@@ -145,7 +110,7 @@ nel=nelx*nely    # number of elements, total
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
 
-nstep=100
+nstep=250
 every=5      # vtu output frequency
 
 rkf_c2=1./4.      
@@ -220,11 +185,11 @@ if Q==2:
 #################################################################
 # connectivity for Q2
 #
-#  04===07===03
-#  ||   ||   ||
-#  08===09===06
-#  ||   ||   ||
-#  01===05===02
+#  04========03        04===07===03
+#  ||        ||        ||   ||   ||
+#  ||        ||        08===09===06
+#  ||        ||        ||   ||   ||
+#  01========02        01===05===02
 #
 #################################################################
 print("connectivity")
@@ -604,15 +569,6 @@ for istep in range (0,nstep):
 
     if visu==1 and istep%every==0:
 
-       #velfile=open("velocity.ascii","w")
-       #for im in range(0,nmarker):
-       #    if swarm_x[im]<0.5:
-       #       ui,vi,pi=solcx.SolCxSolution(swarm_x[im],swarm_y[im]) 
-       #       velfile.write("%e %e %e %e %e %e %e %e\n " % (swarm_x[im],swarm_y[im],\
-       #                                                     swarm_u[im],swarm_u_corr[im],ui,\
-       #                                                     swarm_v[im],swarm_v_corr[im],vi))
-       #velfile.close()
-
        filename = 'markers_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -634,12 +590,6 @@ for istep in range (0,nstep):
        for im in range(0,nmarker):
            vtufile.write("%10e %10e %10e \n" %(swarm_u[im],swarm_v[im],0.))
        vtufile.write("</DataArray>\n")
-       #--
-#       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (analytical)' Format='ascii'> \n")
-#       for im in range(0,nmarker):
-#           ui,vi,pi=solcx.SolCxSolution(swarm_x[im],swarm_y[im]) 
-#           vtufile.write("%10e %10e %10e \n" %(ui,vi,0.))
-#       vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='error' Format='ascii'> \n")
        for im in range(0,nmarker):
@@ -758,7 +708,4 @@ countfile.close()
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")
-
-
-
 
