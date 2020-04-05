@@ -1,0 +1,37 @@
+set term pdf enhanced font "Times,10pt"
+set log x
+set xlabel '{/Symbol h}_1/{/Symbol h}_2'
+set ylabel '|v_b| {/Symbol h}_1/({/Symbol r}_2-{/Symbol r}_1)'
+set key bottom 
+
+year=365.25*24*3600
+
+set output 'results_v.pdf'
+plot[][]\
+'aspect/my_point_values_6.dat' u (1e21/$2):(-$8*1e21/($3)/year) w l lt -1 dashtype 2 t 'ASPECT, 64^2',\
+'aspect/my_point_values_7.dat' u (1e21/$2):(-$8*1e21/($3)/year) w l lt -1 dashtype 3 t 'ASPECT, 128^2',\
+'aspect/my_point_values_8.dat' u (1e21/$2):(-$8*1e21/($3)/year) w l lt -1 dashtype 4 t 'ASPECT, 256^2',\
+'results_v_8_32' u 2:3 w lp lt 1 ps .3 t '32^2',\
+'results_v_8_48' u 2:3 w lp lt 2 ps .3 t '48^2',\
+'results_v_8_64' u 2:3 w lp lt 3 ps .3 t '64^2',\
+
+#'results_v_8_32x32' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3208, 32^2',\
+#'results_v_32_32x32' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3232, 32^2',\
+#'results_v_128_32x32' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3328, 32^2',\
+#'results_v_8_48x48' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3208, 48^2',\
+#'results_v_32_48x48' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3232, 48^2',\
+#'results_v_128_48x48' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3328, 48^2',\
+#'results_v_8_64x64' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3208, 64^2',\
+#'results_v_32_64x64' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3232, 64^2',\
+#'results_v_128_64x64' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3328, 64^2',\
+
+set key top
+set ylabel 'p/{/Symbol d}{/Symbol r}gL_b'
+set output 'results_p.pdf'
+plot[][]\
+'aspect/my_point_values_6.dat' u (1e21/$2):($9/$3/10/128e3) w l lt -1 dashtype 2  t 'ASPECT, 64^2',\
+'aspect/my_point_values_7.dat' u (1e21/$2):($9/$3/10/128e3) w l lt -1 dashtype 3  t 'ASPECT, 128^2',\
+'aspect/my_point_values_8.dat' u (1e21/$2):($9/$3/10/128e3) w l lt -1 dashtype 4 t 'ASPECT, 256^2',\
+'results_p_8_32' u 2:3 w lp lt 1 ps .3 t '32^2',\
+'results_p_8_48' u 2:3 w lp lt 2 ps .3 t '48^2',\
+'results_p_8_64' u 2:3 w lp lt 3 ps .3 t '64^2',\

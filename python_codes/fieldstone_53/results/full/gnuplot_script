@@ -1,0 +1,31 @@
+set term pdf enhanced
+set log x
+set xlabel '{/Symbol h}_1/{/Symbol h}_2'
+set ylabel '|v_b| {/Symbol h}_1/({/Symbol r}_2-{/Symbol r}_1)'
+set key bottom 
+
+set output 'results_v.pdf'
+plot[][]\
+'results_v_8_16' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 16^2',\
+'results_v_8_32' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 32^2',\
+'results_v_8_48' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 48^2',\
+'results_v_8_64' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 64^2',\
+
+#'results_v_8_32x32' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3208, 32^2',\
+#'results_v_32_32x32' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3232, 32^2',\
+#'results_v_128_32x32' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3328, 32^2',\
+#'results_v_8_48x48' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3208, 48^2',\
+#'results_v_32_48x48' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3232, 48^2',\
+#'results_v_128_48x48' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3328, 48^2',\
+#'results_v_8_64x64' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3208, 64^2',\
+#'results_v_32_64x64' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3232, 64^2',\
+#'results_v_128_64x64' u 4:(abs($5)) ps .3 t '{/Symbol r}_2=3328, 64^2',\
+
+set ylabel 'p/{/Symbol d}{/Symbol r}gL_b'
+set output 'results_p.pdf'
+plot[][]\
+'results_p_8_16' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 16^2',\
+'results_p_8_32' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 32^2',\
+'results_p_8_48' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 48^2',\
+'results_p_8_64' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 64^2',\
+

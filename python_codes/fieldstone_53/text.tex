@@ -1,6 +1,17 @@
-\url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_53}
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_53/keywords}
 
-\vspace{1cm}
+\begin{center}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_53}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+problem: sparse matrix \& pressure nullspace removal not done available.
+
+
+\par\noindent\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 This simple benchmark provides challenging numerical experiments 
 dealing with large viscosity variations within the simulation
@@ -8,12 +19,12 @@ domain. It appears in \cite{gery10} and consists of a bulk of fluid 1 ($\rho_1,\
 in which a block of fluid 2 $(\rho_2,\eta_2)$ falls under its own
 weight. The domain is a square of size $L_x=L_y=512$km and the
 block is initially centred at point ($x=$256 km, $y=$ 384 km) with size
-$128\times 128$ km:
+$L_b\times L_b = 128\times 128$ km:
 
 \begin{center}
 \includegraphics[height=5cm]{python_codes/fieldstone_53/images/setup}
 \includegraphics[height=5cm]{python_codes/fieldstone_53/images/vel}\\
-{\small Left: setup. Right: velocity field for $\rho_2=3208$, $\eta_1=10^{21}$
+{\captionfont Left: setup. Right: velocity field for $\rho_2=3208$, $\eta_1=10^{21}$
 and $\eta_2=10^{22}$.}
 \end{center}
 
@@ -29,14 +40,19 @@ of the surrounding medium $\eta_1$ increases; (b) increase with the
 density contrast $\rho_2-\rho_1$. 
 The quantity $v_b \eta_1/(\rho_2-\rho_1)$ is therefore monitored and shown hereunder as a function of 
 the viscosity ratio.
+We also then plot $p^\star=p/(\delta \rho g L_b)$ measured in the block center 
+as function of $\eta_1/\eta_2$. 
 
+%..........................
+\paragraph{full density}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_53/images/results.pdf}\\
-{\small
-Series of experiments have been conducted with $\rho_2=3208,3232,3328$, 
-$\log_{10}(\eta_1)=20,21,22$ and $\log_{10}(\eta_2)=18,18.5,19,...22.5,23,23.5,24$, 
-all with 3 mesh resolutions.}
+\includegraphics[width=7cm]{python_codes/fieldstone_53/results/full/results_v.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_53/results/full/results_p.pdf}\\
+{\captionfont
+Series of experiments have been conducted with $\rho_2=3208,3216$, 
+$\log_{10}(\eta_1)=21$ and $\log_{10}(\eta_2)=17,18,...23,23.5,24,25$, 
+all with 4 mesh resolutions.}
  \end{center}
 
 All experimental points line up on a single curve which further
@@ -44,6 +60,20 @@ indicates that the code can deal with gravity driven simulations in the presence
 of large viscosity contrasts. These results have been succesfully compared with 
 those obtained with ASPECT with the same setup.
 
+%..........................
+\paragraph{reduced density}
 
+Following the approach in Thieulot \& Bangerth (in prep.) \ref{thba}, 
+we set $\rho_1=0$ and $\rho_2=8$ so that we are only solving for the dydnamic 
+pressure, the lithostatic pressure having been removed.
 
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_53/results/reduced/results_v.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_53/results/reduced/results_p.pdf}\\
+{\captionfont
+Series of experiments have been conducted with $\rho_2=8$, 
+$\log_{10}(\eta_1)=21$ and $\log_{10}(\eta_2)=17,17.5,18,..22.5,23,23.5,24$, 
+all with multiple mesh resolutions.}
+ \end{center}
 
+We see that resolution $64\times 64$ is close but not quite {\sl the} solution of this experiment. 

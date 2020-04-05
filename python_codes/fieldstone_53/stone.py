@@ -90,12 +90,14 @@ def eta(x,y):
 
 def rho(x,y):
     if abs(x-xc_block)<d_block and abs(y-yc_block)<d_block:
-       val=rho2
+       val=rho2 -rho1
     else:
-       val=rho1
+       val=rho1 -rho1
     return val
 
 #------------------------------------------------------------------------------
+
+year=365.25*24*3600
 
 ndim=2
 ndofV=2
@@ -109,17 +111,19 @@ if int(len(sys.argv) == 8):
    nely=int(sys.argv[2])
    visu=int(sys.argv[3])
    serendipity = int(sys.argv[4])
-   rho2=float(sys.argv[5])
+   drho=float(sys.argv[5])
    eta1=10.**(float(sys.argv[6]))
    eta2=10.**(float(sys.argv[7]))
 else:
-   nelx = 32
-   nely = 32
+   nelx = 48
+   nely = 48
    visu = 1
    serendipity=0
-   rho2 = 3208
+   drho = 8
    eta1 = 1e21
    eta2 = 1e22
+
+print(sys.argv)
 
 nel=nelx*nely
 
@@ -156,7 +160,8 @@ eps=1e-8
 
 gy=-10.
 rho1=3200.
-eta_ref=1e23      # scaling of G blocks
+rho2=rho1+drho
+eta_ref=1e21      # scaling of G blocks
 
 xc_block=256e3
 yc_block=384e3
@@ -168,6 +173,7 @@ print('eta1=',eta1)
 print('eta2=',eta2)
 
 sparse=False
+pnormalise=True
 
 if serendipity==1:
    rVnodes=[-1,1,1,-1,0,1,0,-1]
@@ -216,7 +222,7 @@ else:
            yV[counter]=j*hy/2.
            counter += 1
 
-np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
+#np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
 
 print("setup: grid points: %.3f s" % (timing.time() - start))
 
@@ -286,7 +292,7 @@ else:
            yP[counter]=j*hy
            counter += 1
 
-np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
 
 print("build P grid: %.3f s" % (timing.time() - start))
 
@@ -323,6 +329,7 @@ else:
    K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
    G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
 
+constr  = np.zeros(NfemP,dtype=np.float64)         # constraint matrix/vector
 f_rhs   = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
 h_rhs   = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
 b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
@@ -344,6 +351,7 @@ for iel in range(0,nel):
     K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
     G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
     h_el=np.zeros((mP*ndofP),dtype=np.float64)
+    NNNNP= np.zeros(mP*ndofP,dtype=np.float64)           # int of shape functions P
 
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
@@ -395,6 +403,8 @@ for iel in range(0,nel):
 
             G_el-=b_mat.T.dot(N_mat)*weightq*jcob
 
+            NNNNP[:]+=NNNP[:]*jcob*weightq
+
         # end for jq
     # end for iq
 
@@ -442,6 +452,7 @@ for iel in range(0,nel):
     for k2 in range(0,mP):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
+        constr[m2]+=NNNNP[k2]
 
 if not sparse:
    print("     -> K_mat (m,M) %.4e %.4e " %(np.min(K_mat),np.max(K_mat)))
@@ -449,37 +460,34 @@ if not sparse:
 
 print("build FE matrix: %.3fs - %d elts" % (timing.time()-start, nel))
 
+
 ######################################################################
 # assemble K, G, GT, f, h into A and rhs
 ######################################################################
 start = timing.time()
 
-rhs = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+if not sparse:
+   if pnormalise:
+      a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
+      rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
+      a_mat[0:NfemV,0:NfemV]=K_mat
+      a_mat[0:NfemV,NfemV:Nfem]=G_mat
+      a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+      a_mat[Nfem,NfemV:Nfem]=constr
+      a_mat[NfemV:Nfem,Nfem]=constr
+   else:
+      a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+      rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+      a_mat[0:NfemV,0:NfemV]=K_mat
+      a_mat[0:NfemV,NfemV:Nfem]=G_mat
+      a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+   #end if
+#else:
+
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
 
-if not sparse:
-   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64) 
-   a_mat[0:NfemV,0:NfemV]=K_mat
-   a_mat[0:NfemV,NfemV:Nfem]=G_mat
-   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-
 print("assemble blocks: %.3f s" % (timing.time() - start))
-
-######################################################################
-# assign extra pressure b.c. to remove null space
-######################################################################
-
-if sparse:
-   A_sparse[Nfem-1,:]=0
-   A_sparse[:,Nfem-1]=0
-   A_sparse[Nfem-1,Nfem-1]=1
-   rhs[Nfem-1]=0
-else:
-   a_mat[Nfem-1,:]=0
-   a_mat[:,Nfem-1]=0
-   a_mat[Nfem-1,Nfem-1]=1
-   rhs[Nfem-1]=0
 
 ######################################################################
 # solve system
@@ -490,7 +498,6 @@ if sparse:
    sparse_matrix=A_sparse.tocsr()
 else:
    sparse_matrix=sps.csr_matrix(a_mat)
-
 
 sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
@@ -508,8 +515,11 @@ print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
-np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
-np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+if pnormalise:
+   print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
+
+#np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+#np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))
 
@@ -531,7 +541,7 @@ for iel in range(0,nel):
 
 q=q/c
 
-np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
+#np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
 
 print("project p onto Vnodes: %.3f s" % (timing.time() - start))
 
@@ -541,7 +551,11 @@ print("project p onto Vnodes: %.3f s" % (timing.time() - start))
 
 for i in range(0,NV):
     if abs(xV[i]-xc_block)<1 and abs(yV[i]-yc_block)<1:
-       print('vblock=',u[i],v[i],eta1/eta2,v[i]*eta1/(rho2-rho1),xV[i],yV[i])
+       print('vblock=',eta1/eta2,np.abs(v[i])*eta1/drho,u[i]*year,v[i]*year)
+
+for i in range(0,NP):
+    if abs(xP[i]-xc_block)<1 and abs(yP[i]-yc_block)<1:
+       print('pblock=',eta1/eta2,p[i]/drho/np.abs(gy)/128e3)
 
 #####################################################################
 # plot of solution
