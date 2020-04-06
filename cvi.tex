@@ -1,0 +1,336 @@
+%-------------------------------------------------------------
+\subsection{In 2D with $Q_1$ basis functions - Naive approach}
+
+Let us start directly in reduced coordinates $(r,s)\in [-1:1]^2$:
+\[
+u(r,s)=\sum_i N_i(r,s) u_i
+\quad
+\quad
+v(r,s)=\sum_i N_i(r,s) v_i
+\]
+with 
+\begin{eqnarray}
+N_1&=& \frac{1}{4}(1-r)(1-s)  \nonumber\\ 
+N_2&=& \frac{1}{4}(1+r)(1-s)  \nonumber\\ 
+N_3&=& \frac{1}{4}(1+r)(1+s)  \nonumber\\ 
+N_4&=& \frac{1}{4}(1-r)(1+s)  \nonumber
+\end{eqnarray}
+The incompressibility constraint imposes:
+\[
+\frac{\partial u}{\partial r}+
+\frac{\partial v}{\partial s}=0
+\]
+i.e.
+\[
+\sum_i \left(  
+\frac{\partial N_i}{\partial r} u_i+
+\frac{\partial N_i}{\partial s} v_i
+\right)
+=0
+\]
+However, it is trivial to verify that the incompressibility 
+condition is not and can not be verified for all values of  
+$r,s \in [-1,1]^2$.
+It would then make sense to think of a corrective term to the interpolation
+which would add just enough degrees of freedoms so as to insure an exact
+incompressibility in the element. 
+Let us then write:
+\begin{eqnarray}
+u(r,s)&=&\sum_i N_i(r,s) u_i + (a s + b)(1-r)(1+r) \nn\\
+v(r,s)&=&\sum_i N_i(r,s) v_i + (c r + d)(1-s)(1+s) \nn
+\end{eqnarray}
+In this case,
+\begin{eqnarray}
+\frac{\partial u}{\partial r}&=&\sum_i \frac{\partial N_i}{\partial r} u_i + (a s + b) (-2r) \nn\\
+\frac{\partial v}{\partial s}&=&\sum_i \frac{\partial N_i}{\partial s} v_i + (c r + d)(-2s) \nn
+\end{eqnarray}
+We have introduced 4 coefficients  $(a,b,c,d)$ which remain to be determined. 
+We start with:
+\begin{eqnarray}
+\sum_i \frac{\partial N_i}{\partial r} u_i 
+&=& -\frac{1}{4} (1-s) u_1 + \frac{1}{4} (1-s) u_2 +\frac{1}{4} (1+s) u_3 -\frac{1}{4} (1+s) u_4 \nn\\
+&=& (1-s) \frac{u_2-u_1}{4} + (1+s) \frac{u_3-u_4}{4} \nn\\
+&=& (1-s) u_{21} + (1+s) u_{34} \nn\\
+\nn\\
+\sum_i \frac{\partial N_i}{\partial s} v_i 
+&=& -\frac{1}{4} (1-r) v_1 - \frac{1}{4} (1+r) v_2 +\frac{1}{4} (1+r) v_3 +\frac{1}{4} (1-r) v_4 \nn\\
+&=& (1-r) \frac{v_4-v_1}{4} + (1+r)\frac{v_3-v_2}{4} \nn\\
+&=& (1-r) v_{41} + (1+r) v_{32} \nn
+\end{eqnarray}
+where $u_{ij}=(u_i-u_j)/4$ and $v_{ij}=(v_i-v_j)/4$, so that
+\[
+\frac{\partial u}{\partial r}=
+(1-s) u_{21} + (1+s) u_{34} 
++ (a s + b) (-2r)
+\]
+
+\[
+\frac{\partial v}{\partial s}=
+(1-r) v_{41} + (1+r) v_{32}
++ (c r + d)(-2s)
+\]
+
+
+The incompressibility condition is now:
+\[
+(1-s) u_{21} + (1+s) u_{34} 
++ (a s + b) (-2r) +
+(1-r) v_{41} + (1+r) v_{32}
++ (c r + d)(-2s)
+=0
+\]
+
+This can be rewritten as
+\[
+C_0  + C_1 r + C_2 s + C_3 rs = 0
+\]
+where the four $C_i$ coefficients are functions of the velocities and the other coefficients.
+In order for this expression to be exactly zero {\it everywhere}, each $C$ coefficient has
+to be independently zero.
+
+\begin{eqnarray}
+C_0   &(.)  &  u_{21} + u_{34} + v_{41} + v_{32} =0\nn\\ 
+C_1   &(r)  &  -v_{41} + v_{32} -2b =0\nn\\ 
+C_2   &(s)  &  -u_{21} + u_{34} -2d =0 \nn\\ 
+C_3   &(rs) &  -2a -2c =0\nn 
+\end{eqnarray}
+
+The first line is simply the incompressibility condition
+expressed in the center of the element (i.e. $r=s=0$),
+so we can neglect it and focus on the remaining three.
+We obtain
+\[
+c=-a
+\quad
+b=\frac{1}{2}(-v_{41} + v_{32})
+\quad
+d=\frac{1}{2} (-u_{21} + u_{34})
+\]
+Since $a$ and $c$ and not otherwise constrained, we can set them to zero, and we then have:
+\[
+b=\frac{1}{2}(v_{14} + v_{32})
+\quad\quad
+d=\frac{1}{2} (u_{12} + u_{34})
+\]
+and finally
+\begin{eqnarray}
+u(r,s)
+&=&\sum_i N_i(r,s) u_i + b(1-r)(1+r) \nn\\
+&=&\sum_i N_i(r,s) u_i + \frac{1}{2}(v_{14} + v_{32})(1-r)(1+r) \nn\\
+v(r,s)
+&=&\sum_i N_i(r,s) v_i + d(1-s)(1+s) \nn\\
+&=&\sum_i N_i(r,s) v_i + \frac{1}{2} (u_{12} + u_{34})(1-s)(1+s) \nn
+\end{eqnarray}
+
+\[
+\boxed{
+u(r,s)=\sum_i N_i(r,s) u_i + \frac{1}{2}(v_{14} + v_{32})(1-r)(1+r) 
+}
+\]
+\[
+\boxed{
+v(r,s)
+=\sum_i N_i(r,s) v_i + \frac{1}{2} (u_{12} + u_{34})(1-s)(1+s) 
+}
+\]
+
+
+%-----------------------------------------------------------------
+\subsection{In 3D with $Q_1$ basis functions - Naive approach}
+
+Let us start directly in reduced coordinates $(r,s,t)\in [-1:1]^3$:
+\[
+u^h(r,s,t)=\sum_i N_i(r,s,t) u_i
+\quad
+\quad
+v^h(r,s,t)=\sum_i N_i(r,s,t) v_i
+\quad
+\quad
+w^h(r,s,t)=\sum_i N_i(r,s,t) w_i
+\]
+with
+\begin{eqnarray}
+N_1&=&0.125(1-r)(1-s)(1-t) \nonumber\\ 
+N_2&=&0.125(1+r)(1-s)(1-t)  \nonumber\\ 
+N_3&=&0.125(1+r)(1+s)(1-t)  \nonumber\\ 
+N_4&=&0.125(1-r)(1+s)(1-t)  \nonumber\\ 
+N_5&=&0.125(1-r)(1-s)(1+t)  \nonumber\\ 
+N_6&=&0.125(1+r)(1-s)(1+t)  \nonumber\\ 
+N_7&=&0.125(1+r)(1+s)(1+t)  \nonumber\\ 
+N_8&=&0.125(1-r)(1+s)(1+t)  \nn
+\end{eqnarray}
+The incompressibility constraint imposes:
+\[
+\frac{\partial u^h}{\partial r}+
+\frac{\partial v^h}{\partial s}+
+\frac{\partial w^h}{\partial t}=0
+\]
+i.e.
+\[
+\sum_i \left(  
+\frac{\partial N_i}{\partial r} u_i+
+\frac{\partial N_i}{\partial s} v_i+
+\frac{\partial N_i}{\partial t} w_i
+\right)
+=0
+\]
+However, once again it is trivial to verify that the incompressibility
+condition is not and can not be verified for all values of
+$r,s,t \in [-1,1]^3$.
+
+
+It would then make sense to think of a corrective term to the interpolation
+which would add just enough degrees of freedoms so as to insure an exact
+incompressibility in the element.
+Let us then write:
+\begin{eqnarray}
+u(r,s,t)&=&\sum_i N_i(r,s,t) u_i + (a s + b t +c)(1-r)(1+r) \nn\\
+v(r,s,t)&=&\sum_i N_i(r,s,t) v_i + (d r + e t +f)(1-s)(1+s) \nn\\
+w(r,s,t)&=&\sum_i N_i(r,s,t) w_i + (g r + h s +i)(1-t)(1+t) \nn
+\end{eqnarray}
+In this case,
+\begin{eqnarray}
+\frac{\partial u}{\partial r}&=&\sum_i \frac{\partial N_i}{\partial r} u_i + (a s + b t +c)(-2r)\nn\\
+\frac{\partial v}{\partial s}&=&\sum_i \frac{\partial N_i}{\partial s} v_i + (d r + e t +f)(-2s)\nn\\
+\frac{\partial w}{\partial t}&=&\sum_i \frac{\partial N_i}{\partial t} w_i + (g r + h s +i)(-2t)\nn
+\end{eqnarray}
+We have introduced 9 coefficients  $(a,b,c,d,e,f,g,h,i)$ which remain to be determined.
+The incompressibility condition is now:
+\[
+\sum_i \left(  
+\frac{\partial N_i}{\partial r} u_i+
+\frac{\partial N_i}{\partial s} v_i+
+\frac{\partial N_i}{\partial t} w_i
+\right)
++ (a s + b t +c) (-2r) + (d r + e t +f)(-2s) + (g r + h s +i)(-2t) 
+=0
+\]
+This can be rewritten as
+\[
+C_0  + C_1 r + C_2 s + C_3 t + C_4 rs + C_5 st + C_6 rt = 0
+\]
+where the seven $C_i$ coefficients are functions of the velocities and the other coefficients.
+In order for this expression to be exactly zero {\it everywhere}, each $C$ coefficient has
+to be independently zero.
+
+We start with:
+\begin{eqnarray}
+\sum_i 8\frac{\partial N_i}{\partial r} u_i 
+&=& (1-s)(1-t)(u_2-u_1)
++ (1+s)(1-t)(u_3-u_4)
++ (1-s)(1+t)(u_6-u_5)
++ (1+s)(1+t)(u_7-u_8) \nn\\
+\sum_i 8\frac{\partial N_i}{\partial s} v_i 
+&=& (1-r)(1-t)(v_4-v_1)
++ (1+r)(1-t)(v_3-v_2)
++ (1-r)(1+t)(v_8-v_5)
++ (1+r)(1+t)(v_7-v_6) \nn\\
+\sum_i 8\frac{\partial N_i}{\partial t} w_i 
+&=& (1-r)(1-s)(w_5-w_1)
++ (1+r)(1-s)(w_6-w_2)
++ (1+r)(1+s)(w_7-w_3)
++ (1-r)(1+s)(w_8-w_4) \nn
+\end{eqnarray}
+
+Let us denote $u_{ij}=(u_i-v_j)/8$ (same for $v$, $w$), so that:
+\begin{eqnarray}
+\sum_i \frac{\partial N_i}{\partial r} u_i 
+&=& (1-s)(1-t)u_{21}
++ (1+s)(1-t)u_{34}
++ (1-s)(1+t)u_{65}
++ (1+s)(1+t)u_{78} \nn\\
+\sum_i \frac{\partial N_i}{\partial s} v_i 
+&=& (1-r)(1-t)v_{41}
++ (1+r)(1-t)v_{32}
++ (1-r)(1+t)v_{85}
++ (1+r)(1+t)v_{76} \nn\\
+\sum_i \frac{\partial N_i}{\partial t} w_i 
+&=& 
+  (1-r)(1-s)w_{51}
++ (1+r)(1-s)w_{62}
++ (1+r)(1+s)w_{73}
++ (1-r)(1+s)w_{84} \nn
+\end{eqnarray}
+We finally arrive at:
+\begin{eqnarray}
+C_0   &(.)  &  u_{21} + u_{34} + u_{65} + u_{78} + v_{41} + v_{32} + v_{85} + v_{76} + w_{51} + w_{62} + w_{73} + w_{84} =0  \nn\\
+C_1   &(r)  &  -v_{41} +v_{32} -v_{85} + v_{76} - w_{51} + w_{62} + w_{73} -w_{84} -2c =0\nn\\ 
+C_2   &(s)  &  -u_{21} +u_{34} -u_{65} + u_{78} - w_{51} - w_{62} + w_{73} +w_{84} -2f =0 \nn\\ 
+C_3   &(t)  &  -u_{21} -u_{34} +u_{65} + u_{78} - v_{41} - v_{32} + v_{85} +v_{76} -2i =0 \nn\\ 
+C_4   &(rs) &  w_{51} -w_{62} +w_{73} - w_{84}  -2a -2d =0  \nn\\
+C_5   &(st) &  u_{21} -u_{34} -u_{65} + u_{78}  -2e -2h =0  \nn\\
+C_6   &(rt) &  v_{41} -v_{32} -v_{85} + v_{76}  -2b -2g =0  \nn
+\end{eqnarray}
+
+I unfortunately end up with 6 equations and 9 unknowns $a,b,c,d,e,f,g,h$.
+Coming up with additional constraints is not trivial, so I will instead further assume 
+$\alpha_r=b=a$, $\alpha_s=e=d$ and $\alpha_t=h=g$, and rename 
+$\beta_r=c$, $\beta_s=f$ and $\beta_t=i$ so that
+I have now six unknowns $\alpha_r,\alpha_s,\alpha_t,\beta_r,\beta_s,\beta_t$ for six equations
+\begin{eqnarray}
+C_1   &(r)  &  -v_{41} +v_{32} -v_{85} + v_{76} - w_{51} + w_{62} + w_{73} -w_{84} -2\beta_r \nn\\ 
+C_2   &(s)  &  -u_{21} +u_{34} -u_{65} + u_{78} - w_{51} - w_{62} + w_{73} +w_{84} -2\beta_s \nn\\ 
+C_3   &(t)  &  -u_{21} -u_{34} +u_{65} + u_{78} - v_{41} - v_{32} + v_{85} +v_{76} -2\beta_t \nn\\ 
+C_4   &(rs) &  w_{51} -w_{62} +w_{73} - w_{84}  -2\alpha_r -2\alpha_s   \nn\\
+C_5   &(st) &  u_{21} -u_{34} -u_{65} + u_{78}  -2\alpha_s -2\alpha_t   \nn\\
+C_6   &(rt) &  v_{41} -v_{32} -v_{85} + v_{76}  -2\alpha_r -2\alpha_t   \nn
+\end{eqnarray}
+
+
+This naturally yields:
+\begin{eqnarray}
+\beta_r
+&=& \frac{1}{2} ( -v_{41} +v_{32} -v_{85} + v_{76} - w_{51} + w_{62} + w_{73} -w_{84}  ) \nn\\
+&=& \frac{1}{16} (v_1-v_2+v_3-v_4+v_5-v_6+v_7-v_8  +w_1-w_2 - w_3 + w_4 - w_5 + w_6 +w_7  - w_8    )  \nn\\
+\beta_s&=& \frac{1}{2} ( -u_{21} +u_{34} -u_{65} + u_{78} - w_{51} - w_{62} + w_{73} +w_{84}  ) \nn\\
+&=& \frac{1}{16} (u_1-u_2+u_3-u_4+u_5-u_6+u_7-u_8  +w_1 + w_2 - w_3 - w_4 - w_5 - w_6 +w_7 + w_8   )  \nn\\
+\beta_t&=& \frac{1}{2} ( -u_{21} -u_{34} +u_{65} + u_{78} - v_{41} - v_{32} + v_{85} +v_{76}   ) \nn\\
+&=& \frac{1}{16} ( u_1-u_2-u_3+u_4 -u_5 + u_6 + u_7 - u_8 +v_1 +v_2 - v_3 - v_4 - v_5 - v_6 + v_7 + v_8  )  \nn
+\end{eqnarray}
+and we need to solve
+\begin{eqnarray}
+\tilde{w} -2\alpha_r -2\alpha_s&=&0\nn\\
+\tilde{u} -2\alpha_s -2\alpha_t&=&0\nn\\
+\tilde{v} -2\alpha_r -2\alpha_t&=&0\nn
+\end{eqnarray}
+where
+\begin{eqnarray}
+\tilde{u} 
+&=& u_{21} -u_{34} -u_{65} + u_{78} 
+=\frac{1}{8}(-u_1 + u_2-u_3+u_4 + u_5-u_6 + u_7-u_8  )
+\nn\\
+\tilde{v} 
+&=& v_{41} -v_{32} -v_{85} + v_{76}
+= \frac{1}{8} (-v_1 + v_2 - v_3 + v_4 + v_5 - v_6 + v_7 - v_8    )
+  \nn\\ 
+\tilde{w} 
+&=&  w_{51} -w_{62} +w_{73} - w_{84} 
+=\frac{1}{8} (-w_1+w_2-w_3+w_4 + w_5 - w_6 + w_7 -w_8  )
+\nn
+\end{eqnarray}
+which yields:
+\[
+\alpha_r=\frac{1}{4} ( -\tilde{u} + \tilde{v} + \tilde{w} ) 
+\quad\quad
+\alpha_s=\frac{1}{4} ( \tilde{u} - \tilde{v} + \tilde{w} ) 
+\quad\quad
+\alpha_t=\frac{1}{4} ( \tilde{u} + \tilde{v} - \tilde{w} ) 
+\]
+
+So finally:
+
+\begin{eqnarray}
+u(r,s,t)&=&\sum_i N_i(r,s,t) u_i + [\alpha_r (s+t) +\beta_r](1-r)(1+r) \nn\\
+v(r,s,t)&=&\sum_i N_i(r,s,t) v_i + [\alpha_s (r+t) +\beta_s](1-s)(1+s) \nn\\
+w(r,s,t)&=&\sum_i N_i(r,s,t) w_i + [\alpha_t (r+s) +\beta_t](1-t)(1+t) \nn
+\end{eqnarray}
+
+
+
+
+
+
+
+
+
+
