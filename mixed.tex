@@ -744,6 +744,64 @@ u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3 \\ \dots \\ u_{m_v} \\ v_{m_v}
 %-----------------------------------------------------------------------------------
 \paragraph{On the 'forgotten' surface terms}
 
+to finish
+
+%-----------------------------------------------------------------------------------
+\paragraph{Revisiting the penalty method}
+\index{general}{Penalty Formulation}
+\index{general}{Pressure Mass Matrix}
+
+We have just seen that the discretised Stokes equation yield the 
+following saddle point system:
+
+%From \cite{segal}. In the discrete penalty function method,
+%the (Navier-)stokes equations are discretized before applying
+%the penalty function method. So we start with the formulation
+
+\[
+\left( \begin{array}{cc}
+\K & \G  \\ 
+\G^T & 0 
+\end{array} \right) \cdot
+\left( \begin{array}{c}  \vec{V} \\ \vec{P}  \end{array} \right) = 
+\left( \begin{array}{c}  \vec{f} \\ \vec{0}  \end{array} \right) 
+\]
+One can perturb the continuity equation 
+by a term $\C_\epsilon = \epsilon \mathbb{M}_p$
+where $\mathbb{M}_p$ is the pressure mass matrix.
+This yields
+\[
+\left( \begin{array}{cc}
+\K & \G  \\ \G^T & -\mathbb{C}_\epsilon
+\end{array} \right) \cdot
+\left( \begin{array}{c}  \vec{V} \\ \vec{P}  \end{array} \right) = 
+\left( \begin{array}{c}  \vec{f} \\ \vec{0}  \end{array} \right) 
+\]
+or,
+\[
+\vec{P}= \frac{1}{\epsilon} \mathbb{M}_p^{-1} \cdot  \G^T \cdot \vec{V}
+\]
+Substituting pressure in the first equation yields:
+\begin{equation}
+(\K + \frac{1}{\epsilon} \G \cdot \mathbb{M}_p^{-1} \cdot \G^T ) \cdot \vec{V} = \vec{f} 
+\label{eqdpf}
+\end{equation}
+
+If we want to solve these equations, it is necessary that the matrix $\mathbb{M}_p^{-1}$
+can be computed easily.
+This is for example the case if $\mathbb{M}_p$
+is a lumped mass matrix (often done for Taylor-Hood elements). 
+When discontinuous pressure elements are used,
+$\mathbb{M}_p$ is in a block diagonal matrix, i.e. a diagonal matrix consisting of small matrices as diagonal elements. One can easily verify that these small matrices have the size of the number of pressure unknowns per element. Note that this is all carried out at the elemental level.
+
+%Another practical aspect is that the building of the matrix $\mathbb{G} \mathbb{M}^{-1} \mathbb{G}^T$
+%must be easy. Moreover, it would be very nice if this matrix could be built
+%per element by element matrices. In that case the structures of ${\bm K}$
+%and $\mathbb{G} \mathbb{M}^{-1} \mathbb{G}^T$ are identical and the solution of (\ref{eqdpf})
+%is as simple as
+%the solution of $\mathbb{K} {\bm u}={\bm f} $.
+
+
 
 
 

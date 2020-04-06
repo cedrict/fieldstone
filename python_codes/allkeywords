@@ -9,6 +9,7 @@ chunk
 disk
 Q1P0
 Q2Q1
+Q2(8)Q1
 Q2Pm1
 Q3Q2
 Q4Q3
@@ -48,5 +49,5 @@ pressure_normalisation
 steady_state
 free_surface
 discontinuous_galerkin
-
+schur_complement
 
