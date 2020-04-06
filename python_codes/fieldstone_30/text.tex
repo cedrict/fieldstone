@@ -1,33 +1,96 @@
 
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_30/keywords}
+
+\begin{center}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_30}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 
 In this the Stokes equations are not solved. It is a 2D implementation of the cvi algorithm 
-as introduced in \cite{waav15} which deals with the advection of markers. 
-$Q_1$ and $Q_2$ basis functions are
-used and in both cases the cvi algorithm can be toggled on/off. 
-Markers can be distributed regularly or randomly at startup.
+as introduced in \cite{waav15} which deals with the advection of particles. 
+$Q_1$ and $Q_2$ basis functions are used and in both cases the cvi algorithm can be toggled on/off. 
+Particles can be distributed regularly or randomly at startup.
 
 Three velocity fields are prescribed on the mesh:
 \begin{itemize}
 \item the so-called Couette flow of \cite{waav15} 
-\item the SolCx solution %\cite{XX}
+\item the SolCx solution (see Section~\ref{sec:geobench}, and  other stones too)
 \item a flow created by means of a stream line function (see fieldstone 32)
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \subsection*{Couette flow}
 
+
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \subsection*{SolCx}
 
+Reference model: 32x32 resolution, CFL nb=0.5, $5^2$ particles randomly distributed, RKorder=2,
+$Q_1$ interpolation, no cvi.
+We look at the min/max number of particles per element as a function of time (normalised 
+by the initial number). Total of 250 time steps.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_30/results_solcx/vel}\\
+{\captionfont 32x32 $Q_1$ mesh}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_30/results_solcx/markercount_rk12345}
+\includegraphics[width=7cm]{python_codes/fieldstone_30/results_solcx/markercount_q12}\\
+{\captionfont Left: Ref model + varying RKorder (the star means that velocity 
+is directly computed on the particle, no interp.). Right: Ref model + $Q_1$ vs $Q_2$. }
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_30/results_solcx/markercount_npd}
+\includegraphics[width=7cm]{python_codes/fieldstone_30/results_solcx/markercount_cflnb}\\
+{\captionfont Left: Ref model + initial nparticle per element between 4 and 8. Right: Ref model + CFL nb}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_30/results_solcx/markercount_reg}
+\includegraphics[width=7cm]{python_codes/fieldstone_30/results_solcx/markercount_res}\\
+{\captionfont Left: Ref model + random vs regular. Right: Ref model + different resolutions}
+\end{center}
+
+Conclusion: nothing really helps, it is a matter of time before an element is fully depleted of particles. 
+A regular distribution of markers makes things worse. Only using $Q_2$ interpolation seems to really do 
+something. Using a small CFL number will improve things, but at the expense of the calculation walltime. 
+
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \subsection*{Streamline flow}
 
-\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/markercount_rk1}
-\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/markercount_rk2345}
 
-In this case RK order seems to be more important that cvi. 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/vel}\\
+{\captionfont 32x32 $Q_1$ mesh, 3x2 cells}
+\end{center}
 
-Explore why ?! 
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_30/results_streamline/markercount_rk12345}
+\includegraphics[width=7cm]{python_codes/fieldstone_30/results_streamline/markercount_q12}\\
+{\captionfont Left: Ref model + varying RKorder (the star means that velocity 
+is directly computed on the particle, no interpolation). Right: Ref model + $Q_1$ vas $Q_2$. }
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_30/results_streamline/markercount_npd}
+\includegraphics[width=7cm]{python_codes/fieldstone_30/results_streamline/markercount_cflnb}\\
+{\captionfont Left: Ref model + initial nparticle per element between 4 and 8. Right: Ref model + CFL nb}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_30/results_streamline/markercount_reg}
+\includegraphics[width=7cm]{python_codes/fieldstone_30/results_streamline/markercount_res}\\
+{\captionfont Left: Ref model + random vs regular. Right: Ref model + different resolutions}
+\end{center}
 
 
 
