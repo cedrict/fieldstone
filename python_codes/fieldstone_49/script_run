@@ -9,7 +9,7 @@ for m in 2 3 4 ; do
 for n in 0 1 ; do
     echo res: $l X $l - Q: $m - lumped: $n
 
-        python3 fieldstone.py $l $l 0 $m $n > opla
+        python3 stone.py $l $l 0 $m $n > opla
         mv sigmayy_top.ascii sigmayy_top_${l}x${l}_${m}_${n}.ascii 
         mv sigmaxy_top.ascii sigmaxy_top_${l}x${l}_${m}_${n}.ascii 
 

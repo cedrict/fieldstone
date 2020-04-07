@@ -1,7 +1,12 @@
 2D
 box
-MINI
+Q1P0
+Q2Q1
+Q3Q2
+Q4Q3
+sparse_matrix
 analytical_benchmark
 error_convergence
 stokes_equation
 paraview_output
+
