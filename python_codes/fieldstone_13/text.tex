@@ -1,3 +1,5 @@
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_13/keywords}
+
 {\sl This fieldstone was developed in collaboration with BSc student Eric Hoogen}. 
 \index{contributors}{E. Hoogen}
 
@@ -108,8 +110,9 @@ where $N_p$ is the $Q_1$ basis function corresponding to node $p$ defined on eac
 functions are 1 on node $k$ and then linearly decrease and become zero on the neighbouring nodes, this
 effectively gives more weight to those markers closest to node $k$.
 
-This strategy is adopted in \cite{mabl14,mabl15} (although it is used to interpolate onto the nodes of $Q_2P_{-1}$
-elements. It is formulated as follows:\\
+This strategy is adopted in May et al (2014,2015) \cite{mabl14,mabl15} 
+(although it is used to interpolate onto the nodes of $Q_2P_{-1}$ elements). 
+It is formulated as follows:\\
 "We assume that an arbitrary material point property $f$, is discretized via 
 $f(\bm x)\simeq \delta(\bm x - \bm x_p) f_p$. We then utilize an approximate local $L_2$ projection
 of $f_p$ onto a continuous $Q_1$ finite element space. The corner vertices of

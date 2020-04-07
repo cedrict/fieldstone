@@ -4,8 +4,8 @@ import sys as sys
 import time as time
 import random
 #import solcx as solcx
-import streamlines as solcx
-#import couette as solcx
+#import streamlines as solcx
+import couette as solcx
 
 #------------------------------------------------------------------------------
 #def viscosity(x,y):
@@ -218,10 +218,10 @@ else:
    nmarker_per_dim=5
    random_markers=0
    CFL_nb=0.5
-   RKorder=2
+   RKorder=1
    use_cvi=0
    Q=1
-   nstep=101
+   nstep=501
     
 if Q==1:
    nnx=nelx+1    # number of elements, x direction
@@ -477,6 +477,8 @@ for istep in range (0,nstep):
            swarm_u[im],swarm_v[im],ptemp=solcx.Solution(swarm_x[im],swarm_y[im]) 
            swarm_x[im]+=swarm_u[im]*dt
            swarm_y[im]+=swarm_v[im]*dt
+
+           swarm_x[im],swarm_y[im]= stay_in (swarm_x[im],swarm_y[im])
 
     if RKorder==1:
 

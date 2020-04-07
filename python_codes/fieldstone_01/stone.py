@@ -1,5 +1,4 @@
 import numpy as np
-import math as math
 import sys as sys
 import scipy
 import scipy.sparse as sps
@@ -9,18 +8,24 @@ import time as time
 import matplotlib.pyplot as plt
 
 #------------------------------------------------------------------------------
+# bx and by are the body force components
+
 def bx(x, y):
     val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
          (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
          (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
          1.-4.*y+12.*y*y-8.*y*y*y)
     return val
+
 def by(x, y):
     val=((8.-48.*y+48.*y*y)*x*x*x+
          (-12.+72.*y-72.*y*y)*x*x+
          (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
          12.*y*y+24.*y*y*y-12.*y**4)
     return val
+
+#------------------------------------------------------------------------------
+# analytical solution
 
 def velocity_x(x,y):
     val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
@@ -33,6 +38,8 @@ def velocity_y(x,y):
 def pressure(x,y):
     val=x*(1.-x)-1./6.
     return val
+
+#------------------------------------------------------------------------------
 
 def onePlot(variable, plotX, plotY, title, labelX, labelY, extVal, limitX, limitY, colorMap):
     im = axes[plotX][plotY].imshow(np.flipud(variable),extent=extVal, cmap=colorMap, interpolation="nearest")
@@ -89,7 +96,7 @@ nel=nelx*nely  # number of elements, total
 
 penalty=1.e7  # penalty coefficient value
 
-viscosity=1.  # dynamic viscosity \mu
+viscosity=1.  # dynamic viscosity \eta
 
 Nfem=nnp*ndof  # Total number of degrees of freedom
 
@@ -97,16 +104,13 @@ eps=1.e-10
 
 sqrt3=np.sqrt(3.)
 
-# declare arrays
-print("declaring arrays")
-
 #################################################################
 # grid point setup
 #################################################################
 start = time.time()
 
-x = np.empty(nnp, dtype=np.float64)  # x coordinates
-y = np.empty(nnp, dtype=np.float64)  # y coordinates
+x = np.empty(nnp,dtype=np.float64)  # x coordinates
+y = np.empty(nnp,dtype=np.float64)  # y coordinates
 
 counter = 0
 for j in range(0, nny):
@@ -118,7 +122,7 @@ for j in range(0, nny):
 print("setup: grid points: %.3f s" % (time.time() - start))
 
 #################################################################
-# connectivity
+# build connectivity array
 #################################################################
 start = time.time()
 
@@ -143,6 +147,7 @@ print("setup: connectivity: %.3f s" % (time.time() - start))
 
 #################################################################
 # define boundary conditions
+# for this benchmark: no slip. 
 #################################################################
 start = time.time()
 
@@ -166,6 +171,7 @@ print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
 #################################################################
 # build FE matrix
+# r,s are the reduced coordinates in the [-1:1]x[-1:1] ref elt
 #################################################################
 start = time.time()
 
@@ -197,7 +203,7 @@ for iel in range(0, nel):
             # position & weight of quad. point
             rq=iq/sqrt3
             sq=jq/sqrt3
-            wq=1.*1.
+            weightq=1.*1.
 
             # calculate shape functions
             N[0]=0.25*(1.-rq)*(1.-sq)
@@ -241,17 +247,17 @@ for iel in range(0, nel):
                                          [dNdy[i],dNdx[i]]]
 
             # compute elemental a_mat matrix
-            a_el += b_mat.T.dot(c_mat.dot(b_mat))*viscosity*wq*jcob
+            a_el += b_mat.T.dot(c_mat.dot(b_mat))*viscosity*weightq*jcob
 
             # compute elemental rhs vector
             for i in range(0, m):
-                b_el[2*i  ]+=N[i]*jcob*wq*bx(xq,yq)
-                b_el[2*i+1]+=N[i]*jcob*wq*by(xq,yq)
+                b_el[2*i  ]+=N[i]*jcob*weightq*bx(xq,yq)
+                b_el[2*i+1]+=N[i]*jcob*weightq*by(xq,yq)
 
     # integrate penalty term at 1 point
     rq=0.
     sq=0.
-    wq=2.*2.
+    weightq=2.*2.
 
     N[0]=0.25*(1.-rq)*(1.-sq)
     N[1]=0.25*(1.+rq)*(1.-sq)
@@ -264,7 +270,7 @@ for iel in range(0, nel):
     dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
     # compute the jacobian
-    jcb=np.zeros((2,2),dtype=float)
+    jcb=np.zeros((2,2),dtype=np.float64)
     for k in range(0, m):
         jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
@@ -289,7 +295,7 @@ for iel in range(0, nel):
                               [dNdy[i],dNdx[i]]]
 
     # compute elemental matrix
-    a_el += b_mat.T.dot(k_mat.dot(b_mat))*penalty*wq*jcob
+    a_el += b_mat.T.dot(k_mat.dot(b_mat))*penalty*weightq*jcob
 
     # assemble matrix a_mat and right hand side rhs
     for k1 in range(0,m):
@@ -307,6 +313,8 @@ print("build FE matrix: %.3f s" % (time.time() - start))
 
 #################################################################
 # impose boundary conditions
+# for now it is done outside of the previous loop, we will see
+# later in the course how it can be incorporated seamlessly in it.
 #################################################################
 start = time.time()
 
@@ -350,6 +358,8 @@ print("split vel into u,v: %.3f s" % (time.time() - start))
 
 #####################################################################
 # retrieve pressure
+# we compute the pressure and strain rate components in the middle 
+# of the elements.
 #####################################################################
 start = time.time()
 
@@ -364,7 +374,7 @@ for iel in range(0,nel):
 
     rq = 0.0
     sq = 0.0
-    wq = 2.0 * 2.0
+    weightq = 2.0 * 2.0
 
     N[0]=0.25*(1.-rq)*(1.-sq)
     N[1]=0.25*(1.+rq)*(1.-sq)
@@ -376,7 +386,7 @@ for iel in range(0,nel):
     dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
     dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
-    jcb=np.zeros((2,2),dtype=float)
+    jcb=np.zeros((2,2),dtype=np.float64)
     for k in range(0, m):
         jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
@@ -429,6 +439,13 @@ for i in range(0,nnp):
 for i in range(0,nel): 
     error_p[i]=p[i]-pressure(xc[i],yc[i])
 
+print("compute nodal error for plot: %.3f s" % (time.time() - start))
+
+#################################################################
+# compute error in L2 norm
+#################################################################
+start = time.time()
+
 errv=0.
 errp=0.
 for iel in range (0,nel):
@@ -436,7 +453,7 @@ for iel in range (0,nel):
         for jq in [-1,1]:
             rq=iq/sqrt3
             sq=jq/sqrt3
-            wq=1.*1.
+            weightq=1.*1.
             N[0]=0.25*(1.-rq)*(1.-sq)
             N[1]=0.25*(1.+rq)*(1.-sq)
             N[2]=0.25*(1.+rq)*(1.+sq)
@@ -461,12 +478,11 @@ for iel in range (0,nel):
                 yq+=N[k]*y[icon[k,iel]]
                 uq+=N[k]*u[icon[k,iel]]
                 vq+=N[k]*v[icon[k,iel]]
-            errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*wq*jcob
-            errp+=(p[iel]-pressure(xq,yq))**2*wq*jcob
+            errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
+            errp+=(p[iel]-pressure(xq,yq))**2*weightq*jcob
 
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
-
 
 print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
 

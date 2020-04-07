@@ -12,25 +12,37 @@ fieldstone_08
 fieldstone_10
 fieldstone_11
 fieldstone_12
+fieldstone_13
+fieldstone_14
+fieldstone_16
 fieldstone_17
 fieldstone_18
 fieldstone_19
 fieldstone_20
 fieldstone_22
+fieldstone_23
 fieldstone_25
 fieldstone_28
+fieldstone_37
+fieldstone_39
+fieldstone_46
 fieldstone_48
+fieldstone_50
+fieldstone_52
+fieldstone_53
 fieldstone_54
 fieldstone_55
 fieldstone_59
 fieldstone_67
 fieldstone_68
+fieldstone_70
  
 ---------------------
 ---disc--------------
 ---------------------
 fieldstone_57
 fieldstone_60
+fieldstone_70
  
 ---------------------
 ---annulus-----------
@@ -66,15 +78,25 @@ fieldstone_07
 fieldstone_08
 fieldstone_09
 fieldstone_12
+fieldstone_13
+fieldstone_14
+fieldstone_16
 fieldstone_18
 fieldstone_19
 fieldstone_22
+fieldstone_23
 fieldstone_25
 fieldstone_28
 fieldstone_33
+fieldstone_37
+fieldstone_39
 fieldstone_44
+fieldstone_46
 fieldstone_48
+fieldstone_50
 fieldstone_51
+fieldstone_52
+fieldstone_53
 fieldstone_54
 fieldstone_55
 fieldstone_58
@@ -82,6 +104,7 @@ fieldstone_59
 fieldstone_63
 fieldstone_67
 fieldstone_68
+fieldstone_70
  
 ---------------------
 ---3D----------------
@@ -102,8 +125,10 @@ fieldstone_63
 ---P2----------------
 ---------------------
 fieldstone_44
+fieldstone_46
 fieldstone_55
 fieldstone_68
+fieldstone_70
  
 ---------------------
 ---Q1P0---
@@ -119,7 +144,11 @@ fieldstone_08
 fieldstone_09
 fieldstone_10
 fieldstone_11
+fieldstone_13
+fieldstone_14
+fieldstone_16
 fieldstone_20
+fieldstone_23
 fieldstone_25
 fieldstone_28
 fieldstone_33
@@ -131,7 +160,11 @@ fieldstone_48
 fieldstone_17
 fieldstone_18
 fieldstone_25
+fieldstone_39
 fieldstone_48
+fieldstone_50
+fieldstone_52
+fieldstone_53
 fieldstone_54
 fieldstone_59
 fieldstone_67
@@ -164,8 +197,10 @@ fieldstone_51
 ---P2pPm1---
 ---------------------
 fieldstone_44
+fieldstone_46
 fieldstone_55
 fieldstone_68
+fieldstone_70
  
 ---------------------
 ---Q1Q1stab---
@@ -190,17 +225,26 @@ fieldstone_09
 fieldstone_10
 fieldstone_11
 fieldstone_12
+fieldstone_13
+fieldstone_14
+fieldstone_16
 fieldstone_17
 fieldstone_18
 fieldstone_19
 fieldstone_20
 fieldstone_22
+fieldstone_23
 fieldstone_25
 fieldstone_28
 fieldstone_33
+fieldstone_39
 fieldstone_44
+fieldstone_46
 fieldstone_48
+fieldstone_50
 fieldstone_51
+fieldstone_52
+fieldstone_53
 fieldstone_54
 fieldstone_55
 fieldstone_58
@@ -208,6 +252,7 @@ fieldstone_59
 fieldstone_63
 fieldstone_67
 fieldstone_68
+fieldstone_70
  
 ---------------------
 ---energy_equation---
@@ -216,11 +261,13 @@ fieldstone_03
 fieldstone_20
 fieldstone_28
 fieldstone_33
+fieldstone_50
 fieldstone_51
 fieldstone_57
 fieldstone_60
 fieldstone_67
 fieldstone_68
+fieldstone_70
  
 ---------------------
 ---thermo mechanical-
@@ -228,11 +275,14 @@ fieldstone_68
 fieldstone_20
 fieldstone_28
 fieldstone_33
+fieldstone_50
 fieldstone_51
+fieldstone_70
  
 ---------------------
 ---compressible------
 ---------------------
+fieldstone_23
 fieldstone_58
 fieldstone_63
  
@@ -249,21 +299,28 @@ fieldstone_08
 fieldstone_09
 fieldstone_10
 fieldstone_12
+fieldstone_13
 fieldstone_33
+fieldstone_53
  
 ---------------------
 ---sparse matrix-----
 ---------------------
 fieldstone_09
 fieldstone_10
-fieldstone_12
+fieldstone_14
 fieldstone_18
 fieldstone_19
 fieldstone_20
 fieldstone_22
 fieldstone_28
+fieldstone_39
 fieldstone_44
+fieldstone_46
 fieldstone_48
+fieldstone_50
+fieldstone_52
+fieldstone_53
 fieldstone_54
 fieldstone_55
 fieldstone_58
@@ -271,6 +328,7 @@ fieldstone_59
 fieldstone_63
 fieldstone_67
 fieldstone_68
+fieldstone_70
  
 --------------------------
 ---analytical benchmark---
@@ -282,12 +340,17 @@ fieldstone_07
 fieldstone_08
 fieldstone_09
 fieldstone_12
+fieldstone_14
+fieldstone_16
 fieldstone_17
 fieldstone_18
 fieldstone_19
 fieldstone_22
+fieldstone_23
 fieldstone_33
+fieldstone_37
 fieldstone_48
+fieldstone_52
 fieldstone_54
 fieldstone_57
 fieldstone_58
@@ -298,16 +361,21 @@ fieldstone_58
 fieldstone_03
 fieldstone_10
 fieldstone_11
+fieldstone_13
 fieldstone_20
 fieldstone_22
 fieldstone_25
 fieldstone_28
+fieldstone_39
+fieldstone_46
 fieldstone_51
+fieldstone_53
 fieldstone_54
 fieldstone_55
 fieldstone_59
 fieldstone_63
 fieldstone_67
+fieldstone_70
  
 --------------------------
 ---time_stepping----------
@@ -316,10 +384,13 @@ fieldstone_03
 fieldstone_20
 fieldstone_28
 fieldstone_33
+fieldstone_37
+fieldstone_50
 fieldstone_54
 fieldstone_55
 fieldstone_67
 fieldstone_68
+fieldstone_70
  
 --------------------------
 ---use_mesher-------------
@@ -327,14 +398,19 @@ fieldstone_68
 fieldstone_44
 fieldstone_55
 fieldstone_68
+fieldstone_70
  
 --------------------------
 ---nonlinear--------------
 --------------------------
 fieldstone_08
+fieldstone_16
 fieldstone_28
 fieldstone_33
+fieldstone_39
+fieldstone_50
 fieldstone_59
+fieldstone_70
  
 --------------------------
 ---matplotlib-------------
@@ -345,7 +421,13 @@ fieldstone_03
 fieldstone_05
 fieldstone_06
 fieldstone_07
+fieldstone_13
+fieldstone_14
+fieldstone_16
+fieldstone_23
 fieldstone_44
+fieldstone_50
+fieldstone_70
  
 --------------------------
 ---error convergence------
@@ -356,17 +438,24 @@ fieldstone_06
 fieldstone_07
 fieldstone_09
 fieldstone_12
+fieldstone_13
 fieldstone_17
 fieldstone_18
 fieldstone_19
 fieldstone_22
+fieldstone_23
+fieldstone_46
 fieldstone_48
+fieldstone_52
+fieldstone_53
+fieldstone_70
  
 --------------------------
 ---elastic rheology-------
 --------------------------
 fieldstone_58
 fieldstone_63
+fieldstone_70
  
 --------------------------
 ---viscous rheology-------
@@ -376,25 +465,34 @@ fieldstone_03
 fieldstone_08
 fieldstone_10
 fieldstone_11
+fieldstone_13
+fieldstone_16
 fieldstone_20
 fieldstone_22
 fieldstone_25
 fieldstone_28
 fieldstone_33
+fieldstone_39
 fieldstone_44
+fieldstone_50
 fieldstone_51
+fieldstone_53
 fieldstone_54
 fieldstone_55
 fieldstone_59
 fieldstone_67
 fieldstone_68
+fieldstone_70
  
 --------------------------
 ---plastic rheology-------
 --------------------------
 fieldstone_08
 fieldstone_28
+fieldstone_39
+fieldstone_50
 fieldstone_59
+fieldstone_70
  
 --------------------------
 ---buoyancy driven--------
@@ -403,15 +501,19 @@ fieldstone_02
 fieldstone_03
 fieldstone_10
 fieldstone_11
+fieldstone_13
+fieldstone_16
 fieldstone_20
 fieldstone_25
 fieldstone_28
 fieldstone_33
 fieldstone_44
 fieldstone_51
+fieldstone_53
 fieldstone_54
 fieldstone_55
 fieldstone_67
+fieldstone_70
  
 --------------------------
 ---vrms-------------------
@@ -420,16 +522,18 @@ fieldstone_03
 fieldstone_05
 fieldstone_06
 fieldstone_07
-fieldstone_12
+fieldstone_13
 fieldstone_20
 fieldstone_22
 fieldstone_25
 fieldstone_28
 fieldstone_33
 fieldstone_51
+fieldstone_53
 fieldstone_54
 fieldstone_55
 fieldstone_58
+fieldstone_70
  
 --------------------------
 ---nusselt number---------
@@ -439,6 +543,7 @@ fieldstone_20
 fieldstone_28
 fieldstone_33
 fieldstone_51
+fieldstone_70
  
 --------------------------
 ---rayleigh number--------
@@ -448,16 +553,18 @@ fieldstone_20
 fieldstone_28
 fieldstone_33
 fieldstone_51
+fieldstone_70
  
 --------------------------
 ---residual---------------
 --------------------------
 fieldstone_08
-fieldstone_12
 fieldstone_28
 fieldstone_33
+fieldstone_39
 fieldstone_58
 fieldstone_63
+fieldstone_70
  
 --------------------------
 ---paraview output--------
@@ -467,6 +574,8 @@ fieldstone_09
 fieldstone_10
 fieldstone_11
 fieldstone_12
+fieldstone_13
+fieldstone_16
 fieldstone_17
 fieldstone_18
 fieldstone_19
@@ -475,9 +584,15 @@ fieldstone_22
 fieldstone_25
 fieldstone_28
 fieldstone_33
+fieldstone_37
+fieldstone_39
 fieldstone_44
+fieldstone_46
 fieldstone_48
+fieldstone_50
 fieldstone_51
+fieldstone_52
+fieldstone_53
 fieldstone_54
 fieldstone_55
 fieldstone_58
@@ -486,16 +601,19 @@ fieldstone_63
 fieldstone_67
 fieldstone_68
 fieldstone_69
+fieldstone_70
  
 --------------------------
 ---stream function--------
 --------------------------
+fieldstone_70
  
 --------------------------
 ---displacement code------
 --------------------------
 fieldstone_58
 fieldstone_63
+fieldstone_70
  
 --------------------------
 ---steady_state-----------
@@ -504,15 +622,18 @@ fieldstone_03
 fieldstone_20
 fieldstone_28
 fieldstone_51
+fieldstone_70
  
 --------------------------
 ---free_surface-----------
 --------------------------
 fieldstone_54
+fieldstone_70
  
 --------------------------
 ---discontinuous_galerkin-
 --------------------------
 fieldstone_57
 fieldstone_60
+fieldstone_70
  

@@ -1,8 +1,17 @@
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_52/keywords}
+
+\begin{center}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_52}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 In order to test the grid point and connectivity algorithms, 
 we use this simple $4\times 3$ element mesh:
 
 \begin{verbatim}
-
       Q_2 X Q1 (serendipity)                    Q_2 X Q_1 (regular)
 
 15--47--16--48--17--49--18--50--19      54--55--56--57--58--59--60--61--62
@@ -39,7 +48,9 @@ as a function of $nelx$, as shown hereunder:
 
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_52/images/NV.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_52/images/NV_ratio.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_52/images/NV_ratio.pdf}\\
+{\captionfont Left: NV for both elements as a function of nelx. Right: ratio of the 
+two.}
 \end{center}
 Looking at the ratio between both, we see that ultimately 
 at high resolution, a mesh composed of serendipity elements 
@@ -53,7 +64,8 @@ Although the vtk format does not understand the $Q_2$ element in 2D or 3D, it su
 understand the serendipity element in 2D (type=23) and 3D (type=25).
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_52/images/errors.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_52/images/errors.pdf}\\
+{\captionfont 'TH' is Taylor-Hood. 'S' is serendipity.}
 \end{center}
 
 It looks like the serendipity element yields the same errors and error convergence 
@@ -80,7 +92,7 @@ print('eigenvalues:',nel,eigvals.min(),eigvals.max())
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_52/images/eigenvalues.pdf}
 \includegraphics[width=6cm]{python_codes/fieldstone_52/images/eigenvalues_ratio.pdf}\\
-{\small Left: min and max eigenvalues for both types of elements as a function of $h$; 
+{\captionfont Left: min and max eigenvalues for both types of elements as a function of $h$; 
 Right: condition number}
 \end{center}
 As it turns out, the condition number is twice as high for the serendipity element, 
