@@ -11,6 +11,7 @@ plot[][-200:200]\
 'choi/topo_nu0.5_Res144_kenni.dat' u ($1/1000):2 w l lw 1 t 'Pedersen',\
 'elefant/topo150.out' u ($1/1000):($3-17500) w l t 'ELEFANT, nelx=150',\
 'elefant/topo250.out' u ($1/1000):($3-17500) w l t 'ELEFANT, nelx=250',\
+'aspect/topography.00200' u ($1/1000):($3) w l t 'ASPECT, nelx=200',\
 'surface_0099.ascii' u ($1/1000):2 w l lw  2 lt -1  t '100x35',\
 0 lt -1 notitle
 
