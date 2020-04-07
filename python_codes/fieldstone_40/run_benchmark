@@ -5,7 +5,7 @@ for visc2 in 1.25e20 2.5e20 5e20 1e21 2e21 4e21 8e21 16e21 32e21 64e21 128e21 25
 
         echo lambda= $lambda visc2= ${visc2}
 
-        python3 fieldstone.py 80 80  0 $lambda 3000 $visc2 > opla
+        python3 stone.py 80 80  0 $lambda 3000 $visc2 > opla
 
         echo -n $lambda >> vy.dat 
         echo -n ' ' >> vy.dat 
