@@ -7,5 +7,5 @@ set key bottom
 plot[][]\
 'errors' u (1./sqrt($3)):6 w lp t 'velocity',\
 'errors' u (1./sqrt($3)):9 w lp t 'pressure',\
-x**3/11. w l t 'x^3',\
-x**2*4 w l t 'x^1'
+x**3/11. w l lt -1 dashtype 2 t 'x^3',\
+x**1.9*7   w l lt -1 dashtype 3 t 'x^{1.9}'

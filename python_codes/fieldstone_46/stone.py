@@ -4,7 +4,6 @@ import scipy
 import math as math
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import lil_matrix
 import time as timing
 
 #------------------------------------------------------------------------------
@@ -238,7 +237,7 @@ for iel in range(0,nel):
     iconP[2,iel]=counter
     counter+=1
 
-np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
 
 #for iel in range (0,nel):
 #    print ("iel=",iel)
@@ -312,11 +311,6 @@ start = timing.time()
 a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)
 K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
 G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
-
-#a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)
-#K_mat = lil_matrix((NfemV,NfemV),dtype=np.float64) # matrix K 
-#G_mat = lil_matrix((NfemV,NfemP),dtype=np.float64) # matrix GT
-
 f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
 h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
 
@@ -475,8 +469,8 @@ print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
-np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
-np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+#np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+#np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))
 
@@ -523,7 +517,7 @@ print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 
-np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+#np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
 print("compute press & sr: %.3f s" % (timing.time() - start))
 
@@ -565,7 +559,7 @@ for iel in range(0,nel):
 
 q=q/temp
 
-np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
+#np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
 
 
 #################################################################
