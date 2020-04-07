@@ -233,7 +233,7 @@ this equation essentially becomes an advection equation.
 %------------------------------------------------------------------------
 \subsection{The momentum conservation equations} 
 
-Because the Prandlt number is virtually zero in Earth science applications the Navier-Stokes 
+As explained in Section~\ref{ss:nondim}, in Earth science applications the Navier-Stokes 
 equations reduce to the Stokes equation:
 \begin{equation}
 {\vec \nabla}\cdot {\bm \sigma} + \rho {\vec g} = \vec{0}
@@ -563,61 +563,147 @@ with
 \todo[inline]{VERIFY all this !}
 
 %------------------------------------------------------------------------------
-\subsection{Non-dimensionalisation of the Navier-Stokes equations}
-We start from 
-\[
-\frac{\partial \vec\upnu}{\partial t} + (\vec\upnu \cdot \vec\nabla)\vec\upnu 
-=
--\frac{1}{\rho}\vec\nabla p + \nu \Delta \vec \upnu + \vec g
-\]
-where $\nu$ is the kinematic viscosity. \index{general}{Kinematic Viscosity}
+\subsection{Non-dimensionalisation of the Navier-Stokes equations}\label{ss:nondim}
+%We start from the following form of the momentum conservation equation: 
+%\[
+%\frac{\partial \vec\upnu}{\partial t} + (\vec\upnu \cdot \vec\nabla)\vec\upnu 
+%=
+%-\frac{1}{\rho}\vec\nabla p + \nu \Delta \vec \upnu + \vec g
+%\]
+%where $\nu$ is the kinematic viscosity. \index{general}{Kinematic Viscosity}
 
+We define (see for instance Massimi et al (2006) \cite{maqs06}) four reference 
+quantities which are relevant for geodynamics\footnote{Note that in the paper 
+the authors conflate $\rho$ and $\tilde{\rho}$ which prevents them from non-dimensionalising
+all terms as we do here.}:
+\begin{itemize}
+\item a reference viscosity value $\underline{\eta}=10^{20}\text{Pa}\cdot\text{s}$
+\item a reference mass density $\underline{\rho}=1000\text{kg/m}^3$
+\item a reference time $\underline{t}=1\text{Myr}\simeq 3.15\cdot 10^{13} \text{s}$
+\item a reference length $\underline{l}=1000\text{m} $
+\item a reference gravity $\underline{g}=9.81\text{m}/\text{s}^2$
+\end{itemize}
+It follows that a reference pressure can be obtained:
+\[
+\underline{p}=\underline{\rho} \underline{g} \underline{l} = 9.81\cdot 10^6\text{Pa}
+\]
+Note that there is unfortunately no natural selection for the pressure scale. 
+We could also have used $\underline{p}=\underline{\rho}\underline{\upnu}^2$ 
+where dynamic effects are dominant i.e. high velocity flows,
+or $\underline{p}=\underline{\eta}\underline{\upnu}/\underline{l}$ 
+where viscous effects are dominant i.e. creeping flows (which 
+is the case in geodynamics).
+The definition of a reference velocity is more straightforward:
+\[
+\underline{\upnu} = \frac{\underline{l}}{\underline{t}} = 1 \text{mm}/\text{year}
+\]
 We define dimensionless variables through:
 \[
-x' = \frac{x}{L}
-\quad
-y' = \frac{y}{L}
-\quad
-z' = \frac{z}{L}
-\quad
-\vec\upnu' = \frac{\vec\upnu}{U}
-\quad
-t' = \frac{t}{L/U}
+{\color{teal}x} = \frac{x}{\underline{l}}
+\qquad
+{\color{teal}y} = \frac{y}{\underline{l}}
+\qquad
+{\color{teal}z} = \frac{z}{\underline{l}}
+\qquad
+{\color{teal}\vec\upnu'} = \frac{\vec\upnu}{\underline{\upnu}}
+\qquad
+{\color{teal}t} = \frac{t}{\underline{t}}
+\qquad
+{\color{teal} \eta} = \frac{\eta}{\underline{\eta}}
+\qquad
+{\color{teal} g} =\frac{g}{\underline{g}}
 \]
-Here $L$ is a characteristic length scale, say the radius of the
-Earth or the depth of laboratory tank. It is assumed to be
-constant. $U$ is a characteristic velocity, also assumed to be
-constant. This could be the mean velocity of a tectonic plate or
-the average flow velocity in a convective tank experiment.
+where the teal color indicates dimensionless values.
 
-There is unfortunately no natural selection for the pressure scale. 
-One can use $p'=p/\rho U^2$ where dynamic effects are dominant i.e. high velocity flows,
-or $p'=pL/\eta U$ where viscous effects are dominant i.e. creeping flows (which 
-is the case in geodynamics).
-
-Note also that the dimensionless gradient operator becomes $\vec\nabla' = L \vec\nabla$. 
-Using this scaling relation the Navier-Stokes equation become:
+Consequently, time and space derivatives will be rescaled as follows:
 \[
-Re \left( \frac{\partial \vec\upnu'}{\partial t'} + (\vec\upnu' \cdot \vec\nabla')\vec\upnu' \right)
-= -\vec\nabla' p' + \Delta' \vec \upnu'
+{\color{teal} \vec\nabla} = \underline{l}\; \vec\nabla
+\qquad
+{\color{teal} \partial_t} = \underline{t}\; \partial_t 
 \]
-VERIFY! 
-where $Re$ is the Reynolds number defined as the ratio of inertial forces 
-to viscous forces.
-
-Using $U=3$cm/yr, the speed of an average tectonic plate,
-$L=3\times10^6$ m, the size of an average tectonic plate, $\eta=10^{21}$ Pa s,
-the dynamic viscosity of the Earth’s mantle which can be estimated
-from studies of post-glacial rebound, and $\rho = 3300 kg/m^3$ , the
-average density of upper mantle rock, we obtain the exceedingly
-small value of $Re \simeq 10^{-20}$.
+Using this scaling relations the Navier-Stokes equation become:
+\[
+\frac{\rho \underline{l}}{\underline{t}^2} {\color{teal} \frac{\partial \vec\upnu}{\partial t}}
++
+\frac{\rho \underline{l}}{\underline{t}^2} {\color{teal} (\vec\upnu \cdot\vec\nabla) \vec\upnu} 
+=
+- \underline{\rho} \underline{g} {\color{teal} \vec\nabla p}
++
+\frac{\underline{\eta}}{\underline{l}\underline{t}} 
+{\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
++ \rho \vec{g}
+\]
+I make ${\color{teal}\rho}= \rho/\underline{\rho}$ appear in the left hand side:
+\[
+\frac{\underline{\rho} \underline{l}}{\underline{t}^2}
+{\color{teal}\rho}
+ {\color{teal} \frac{\partial \vec\upnu}{\partial t}}
++
+\frac{\underline{\rho} \underline{l}}{\underline{t}^2} 
+{\color{teal}\rho}
+{\color{teal} (\vec\upnu \cdot\vec\nabla) \vec\upnu} 
+=
+- \underline{\rho} g {\color{teal} \vec\nabla p}
++
+\frac{\underline{\eta}}{\underline{l}\underline{t}} 
+{\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
++ \rho \vec{g}
+\]
+which we can divide by $\underline{\rho} \underline{l}/\underline{t}^2$ to obtain:
+\[
+ {\color{teal}\rho} \left(
+{\color{teal} \frac{\partial \vec\upnu}{\partial t}}
++
+{\color{teal} (\vec\upnu \cdot\vec\nabla) \vec\upnu} 
+\right)
+=
+- \frac{ \underline{g} \underline{t}^2 }{\underline{l}} {\color{teal} \vec\nabla p}
++
+\frac{\underline{\eta} \underline{t}}{\underline{\rho} \underline{l}^2 } 
+{\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
++ \frac{\underline{t}^2}{ \underline{l}}  {\color{teal} \rho} \vec{g}
+\]
+One can recognise in this equation the Reynolds and Froude 
+non-dimensional numbers (the ratio between the inertial and viscous forces, and the 
+ratio between buoyancy and inertial forces respectively). 
+\[
+Re = \frac{\underline{\rho} \underline{l}^2}{\underline{\eta} \underline{t} }
+\qquad
+Fr= \frac{\underline{l}}{\underline{g}\underline{t}^2 }
+\]
 From this we conclude that inertial forces in the Earth’s mantle
 are small compared to viscous forces.
-
-In this case the above equation simply becomes the Stokes equation:
+We can then write:
 \[
--\vec\nabla' p' + \Delta' \vec \upnu'= \vec{0}
+{\color{teal}\rho} \left(
+{\color{teal} \frac{\partial \vec\upnu}{\partial t}}
++
+{\color{teal} (\vec\upnu \cdot\vec\nabla) \vec\upnu}  \right)
+=
+- \frac{1}{Fr} {\color{teal} \vec\nabla p}
++
+\frac{1}{Re}
+{\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
++ \frac{1}{Fr} {\color{teal} \vec{g}}
 \]
+In our case, given the definitions taken above, we have:
+\[
+Re \simeq 3.174 \cdot 10^{-24}
+\qquad
+Fr \simeq 1.027 \cdot 10^{-25}
+\]
+so that the inertial terms can be dropped from the momentum equation (thereby yielding the 
+dimensionless Stokes equations):
+\[
+{\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
+- \frac{Re}{Fr} {\color{teal} \vec\nabla p}
++ \frac{Re}{Fr}  {\color{teal} \vec{g} }
+=0
+\]
+Note that in our case $Re/Fr\simeq 30.5$. 
+
+
+
 
 
 %------------------------------------------------------------------------------
