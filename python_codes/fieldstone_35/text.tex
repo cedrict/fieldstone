@@ -1,3 +1,11 @@
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_35/keywords}
+
+\begin{center}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_35}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \includegraphics[width=5cm]{images/under_construction}
 
@@ -7,32 +15,36 @@
 %+  \frac{1}{r^2} \frac{\partial^2 f}{\partial \theta^2} 
 %\]
 
-We seek an exact solution to the incompressible Stokes equations for an isoviscous, isothermal fluid in an  annulus.Given the geometry of the problem, we work in polar coordinates.
-We denote the orthonormal basis vectors by $\mathbf{ e}_r$ and $\mathbf{ e}_\theta$, the inner radius of the annulus by $R_1$ and the outer radius by $R_2$.
-Further, we assume that the viscosity $\mu$ is constant, which we set to $\mu = 1$ we set the gravity vector to $\mathbf{g} = -g_r \, \mathbf{e}_r$ with $g_r = 1$. 
+We seek an exact solution to the incompressible Stokes equations for an isoviscous, 
+isothermal fluid in an  annulus.
+Given the geometry of the problem, we work in polar coordinates.
+We denote the orthonormal basis vectors by $\vec{e}_r$ and $\vec{e}_\theta$, 
+the inner radius of the annulus by $R_1$ and the outer radius by $R_2$.
+Further, we assume that the viscosity $\eta$ is constant, 
+which we set to $\eta = 1$, we set the gravity vector to $\vec{g} = -g_r \, \vec{e}_r$ with $g_r = 1$. 
 
-Given these assumptions, the incompressible Stokes equations in the annulus are~\cite{scto01}
+Given these assumptions, the incompressible Stokes equations in the annulus are~\cite{scto01}:
 \begin{eqnarray}
-A_r =     \frac{\partial^2 v_r}{\partial r^2} + \frac{1}{r} \frac{\partial v_r}{\partial r} +   
-      \frac{1}{r^2} \frac{\partial^2 v_r}{\partial \theta^2}
-    - \frac{v_r}{r^2} - \frac{2}{r^2} \frac{\partial u_\theta}{\partial \theta} 
--\frac{\partial p}{\partial r}  &=& \rho g_r \label{eq1} \\
+A_r =     \frac{\partial^2 \upnu_r}{\partial r^2} + \frac{1}{r} \frac{\partial \upnu_r}{\partial r} +   
+      \frac{1}{r^2} \frac{\partial^2 \upnu_r}{\partial \theta^2}
+    - \frac{\upnu_r}{r^2} - \frac{2}{r^2} \frac{\partial u_\theta}{\partial \theta} 
+-\frac{\partial p}{\partial r}  &=& \rho g_r \label{f35:eq1} \\
 A_\theta=
 \frac{\partial^2 v_\theta}{\partial r^2} + \frac{1}{r} \frac{\partial v_\theta}{\partial r} + \frac{1}{r^2} \frac{\partial^2 v_\theta}{\partial \theta^2}
-+\frac{2}{r^2} \frac{\partial v_r}{\partial \theta} - \frac{v_\theta}{r^2} 
++\frac{2}{r^2} \frac{\partial \upnu_r}{\partial \theta} - \frac{v_\theta}{r^2} 
 -\frac{1}{r}\frac{\partial p}{\partial \theta} &=& 0
-\label{eq2} \\
-\frac{1}{r} \frac{\partial (rv_r)}{\partial r} + \frac{1}{r} \frac{\partial v_\theta}{\partial \theta} &=&0 \label{eq3}
+\label{f35:eq2} \\
+\frac{1}{r} \frac{\partial (r\upnu_r)}{\partial r} + \frac{1}{r} \frac{\partial v_\theta}{\partial \theta} &=&0 \label{f35:eq3}
 \end{eqnarray}
-Equations (\ref{eq1}) and (\ref{eq2}) are the momentum equations in polar coordinates while
-Equation (\ref{eq3}) is the incompressibility constraint. 
-The components of the velocity are obtained from the stream function as follows:
+Equations (\ref{f35:eq1}) and (\ref{f35:eq2}) are the momentum equations in polar coordinates while
+Equation (\ref{f35:eq3}) is the mass conservation equation.
+The components of the velocity are obtained from the stream function $\Psi$ as follows:
 \[
-v_r = \frac{1}{r}\frac{\partial \Psi}{\partial \theta}
+\upnu_r = \frac{1}{r}\frac{\partial \Psi}{\partial \theta}
 \quad\quad
 v_\theta = - \frac{\partial \Psi}{\partial r}
 \]
-where $v_r$ is the radial component and $v_\theta$ is the tangential component of the velocity vector.
+where $\upnu_r$ is the radial component and $v_\theta$ is the tangential component of the velocity vector.
 
 The stream function is defined for incompressible (divergence-free) 
 flows in 2D (as well as in 3D with axisymmetry).
@@ -40,24 +52,20 @@ The stream function can be used to plot streamlines,
 which represent the trajectories of particles in a steady flow.
 From calculus it is known that the gradient vector $\nabla \Psi$
 is normal to the curve $\Psi =C$. 
-It can be shown that everywhere ${\boldsymbol {u}}\cdot \nabla \Psi =0$ 
-using the formula for $\boldsymbol{u}$ in terms of 
+It can be shown that everywhere ${\vec{\upnu}}\cdot \nabla \Psi =0$ 
+using the formula for $\vec{u}$ in terms of 
 $\Psi$ which proves that level curves of $\Psi$ are streamlines:
 \[
-{\bm u}\cdot \nabla \Psi 
-= v_r \frac{\partial \Psi}{\partial r} + v_\theta \frac{1}{r} \frac{\partial \Psi}{\partial \theta} 
+{\vec \upnu}\cdot \nabla \Psi 
+= \upnu_r \frac{\partial \Psi}{\partial r} + v_\theta \frac{1}{r} \frac{\partial \Psi}{\partial \theta} 
 = \frac{1}{r}\frac{\partial \Psi}{\partial \theta} \frac{\partial \Psi}{\partial r} 
 - \frac{\partial \Psi}{\partial r} \frac{1}{r} \frac{\partial \Psi}{\partial \theta} 
 =0
 \] 
 
-
-
-
-
-In polar coordinates the curl of a vector ${\bm A}$ is:
+In polar coordinates the curl of a vector ${\vec A}$ is:
 \[
-{\bm \nabla}\times {\bm A}
+{\vec \nabla}\times {\vec A}
 =
 \frac{1}{r}\left(  
 \frac{\partial (r A_\theta)}{\partial r}
@@ -65,7 +73,7 @@ In polar coordinates the curl of a vector ${\bm A}$ is:
 \frac{\partial A_r}{\partial \theta}
 \right)
 \]
-Taking the curl of vector ${\bm A}$ yields:
+Taking the curl of vector ${\bm A}$ yields (see Eqs.~\eqref{f35:eq1} and \eqref{f35:eq2}):
 \[
 \frac{1}{r}\left(  
 \frac{\partial (r A_\theta)}{\partial r}
@@ -102,7 +110,7 @@ and assuming the viscosity and the gravity vector to be constant we get:
 Let us assume the following separation of variables $\boxed{\Psi(r,\theta)=\phi(r)\xi(\theta)}$.
 Then 
 \[
-v_r = \frac{1}{r}\frac{\partial \Psi}{\partial \theta} = \frac{\phi \xi'}{r}
+\upnu_r = \frac{1}{r}\frac{\partial \Psi}{\partial \theta} = \frac{\phi \xi'}{r}
 \quad\quad
 v_\theta = - \frac{\partial \Psi}{\partial r} = -\phi' \xi
 \]
@@ -113,46 +121,47 @@ and
 \begin{eqnarray}
 A_r 
 &=& 
-\frac{\partial^2 v_r}{\partial r^2} 
-+ \frac{1}{r} \frac{\partial v_r}{\partial r} +   
-\frac{1}{r^2} \frac{\partial^2 v_r}{\partial \theta^2}
-- \frac{v_r}{r^2} 
-- \frac{2}{r^2} \frac{\partial u_\theta}{\partial \theta} \\ 
+\frac{\partial^2 \upnu_r}{\partial r^2} 
++ \frac{1}{r} \frac{\partial \upnu_r}{\partial r} +   
+\frac{1}{r^2} \frac{\partial^2 \upnu_r}{\partial \theta^2}
+- \frac{\upnu_r}{r^2} 
+- \frac{2}{r^2} \frac{\partial u_\theta}{\partial \theta} \nn\\ 
 &=& 
 \frac{\partial^2 }{\partial r^2}  (\frac{\phi \xi'}{r})
 + \frac{1}{r} \frac{\partial }{\partial r}  (\frac{\phi \xi'}{r})  
 +\frac{1}{r^2} \frac{\partial^2 }{\partial \theta^2}(\frac{\phi \xi'}{r})
 - \frac{1}{r^2} (\frac{\phi \xi'}{r})
-- \frac{2}{r^2} \frac{\partial }{\partial \theta} (-\phi' \xi) \\
+- \frac{2}{r^2} \frac{\partial }{\partial \theta} (-\phi' \xi) \nn\\
 &=& 
 (\frac{\phi''}{r} - 2\frac{\phi'}{r^2} +  2\frac{\phi}{r^3} )\xi'
 + (\frac{\phi'}{r^2} - \frac{\phi}{r^3} )  \xi' 
 +\frac{\phi }{r^3} \xi'''  
 -  \frac{\phi \xi'}{r^3}
-+ \frac{2}{r^2} \phi' \xi' \\
++ \frac{2}{r^2} \phi' \xi' \nn\\
 &=&
-\frac{\phi'' \xi'}{r} + \frac{\phi' \xi'}{r^2} + \frac{\phi\xi''' }{r^3} \\
+\frac{\phi'' \xi'}{r} + \frac{\phi' \xi'}{r^2} + \frac{\phi\xi''' }{r^3} \nn\\
 \frac{\partial A_r}{\partial \theta} &=& 
-\frac{\phi'' \xi''}{r} + \frac{\phi' \xi''}{r^2} + \frac{\phi\xi'''' }{r^3} \\
-\\
+\frac{\phi'' \xi''}{r} + \frac{\phi' \xi''}{r^2} + \frac{\phi\xi'''' }{r^3} \nn\\
+\nn\\
+\nn\\
 A_\theta 
 &=&
 \frac{\partial^2 v_\theta}{\partial r^2} 
 + \frac{1}{r} \frac{\partial v_\theta}{\partial r} 
 + \frac{1}{r^2} \frac{\partial^2 v_\theta}{\partial \theta^2}
-+\frac{2}{r^2} \frac{\partial v_r}{\partial \theta} 
-- \frac{v_\theta}{r^2} \\
++\frac{2}{r^2} \frac{\partial \upnu_r}{\partial \theta} 
+- \frac{v_\theta}{r^2} \nn\\
 &=&
 \frac{\partial^2 }{\partial r^2}(-\phi' \xi) 
 + \frac{1}{r} \frac{\partial }{\partial r} (-\phi' \xi)
 + \frac{1}{r^2} \frac{\partial^2 }{\partial \theta^2}(-\phi' \xi)
 +\frac{2}{r^2} \frac{\partial }{\partial \theta} (\frac{\phi \xi'}{r})
-- \frac{1}{r^2} (-\phi' \xi) \\
+- \frac{1}{r^2} (-\phi' \xi) \nn\\
 &=& - \phi''' \xi 
 - \frac{\phi'' \xi}{r} 
 - \frac{\phi' \xi''}{r^2} 
 +\frac{2 \phi \xi''}{r^2} 
-+  \frac{\phi' \xi}{r^2} \\
++  \frac{\phi' \xi}{r^2} \nn\\
 \frac{\partial (r A_\theta)}{\partial r} &=& 
 \end{eqnarray}
 
