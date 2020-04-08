@@ -1,14 +1,25 @@
-{\sl This fieldstone was developed in collaboration with Lukas van de Wiel}.
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_36/keywords}
 
+\begin{center}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_36}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+{\sl This stone was developed in collaboration with Lukas van de Wiel}.
 \index{contributors}{L. van de Wiel}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 The domain is an annulus with inner radius $R_1$ and outer radius $R_2$. It is filled with a 
 single elastic material characterised by a Young's modulus $E$ and a Poisson ratio $\nu$, a
-density $\rho_0$. The gravity ${\bm g}=-g_0 {\bm e}_r$ is pointing towards the center of the domain.
+density $\rho_0$. The gravity ${\vec g}=-g_0 {\vec e}_r$ is pointing towards the center of the domain.
 
 The problem at hand is axisymmetric so that the tangential component of the displacement
 vector $v_\theta$ is assumed to be zero as well as all terms containing $\partial_\theta$.
-The components of the strain tensor are 
+The components of the strain tensor ${\bm\varepsilon}(\vec\upnu)$ are 
 \begin{eqnarray}
 \varepsilon_{rr} &=& \frac{\partial v_r}{\partial r} \\
 \varepsilon_{\theta\theta} &=& \frac{v_r}{r} + \frac{1}{r} \frac{\partial v_\theta}{\partial \theta}
@@ -19,7 +30,7 @@ The components of the strain tensor are
 \end{eqnarray}
 so that the tensor simply is
 \begin{equation}
-{\bm \varepsilon} =
+{\bm \varepsilon}(\vec\upnu) =
 \left(
 \begin{array}{cc}
 \varepsilon_{rr} & \varepsilon_{r\theta} \\ 
@@ -36,7 +47,7 @@ so that the tensor simply is
 \end{equation}
 The pressure is
 \begin{equation}
-p=-\lambda {\bm \nabla}\cdot {\bm v}
+p=-\lambda {\vec \nabla}\cdot {\vec\upnu}
 = -\lambda \left( \frac{1}{r} \frac{\partial (r v_r)}{\partial r} \right)
 \end{equation}
 and finally the stress tensor:
@@ -53,7 +64,7 @@ and finally the stress tensor:
 \end{equation}
 The divergence of the stress tensor is given by \cite{scto01}:
 \begin{equation}
-{\bm \nabla}\cdot {\bm \sigma} 
+{\vec \nabla}\cdot {\bm \sigma} 
 =
 \left(
 \begin{array}{c}
@@ -65,7 +76,7 @@ The divergence of the stress tensor is given by \cite{scto01}:
 \end{equation}
 Given the diagonal nature of the stress tensor this simplifies to (also remember that $\partial_\theta =0$):
 \begin{equation}
-{\bm \nabla}\cdot {\bm \sigma} 
+{\vec \nabla}\cdot {\bm \sigma} 
 =
 \left(
 \begin{array}{c}
@@ -76,7 +87,7 @@ Given the diagonal nature of the stress tensor this simplifies to (also remember
 \end{equation}
 Focusing on the $r$-component of the stress divergence:
 \begin{eqnarray}
-({\bm \nabla}\cdot {\bm \sigma})_r 
+({\vec \nabla}\cdot {\bm \sigma})_r 
 &=& 
 \frac{\partial \sigma_{rr}}{\partial r} + \frac{\sigma_{rr}-\sigma_{\theta\theta}}{r} \\
 &=& 
@@ -108,7 +119,7 @@ Focusing on the $r$-component of the stress divergence:
 \end{eqnarray}
 So the momentum conservation in the $r$ direction is
 \begin{equation}
-({\bm \nabla}\cdot {\bm \sigma} + \rho_0 {\bm g})_r 
+({\vec \nabla}\cdot {\bm \sigma} + \rho_0 {\vec g})_r 
 = 
 -(2\mu+\lambda)\frac{v_r}{r^2} 
 +(2\mu+\lambda)\frac{1}{r}\frac{\partial v_r}{\partial r}  
@@ -125,7 +136,7 @@ or,
 }
 \end{equation}
 We now look at the boundary conditions. On the inner boundary we prescribe $v_r(r=R_1)=0$ while free
-surface boundary conditions are prescribed on the outer boundary, i.e. ${\bm \sigma}\cdot{\bm n}=0$
+surface boundary conditions are prescribed on the outer boundary, i.e. ${\bm \sigma}\cdot{\vec n}=\vec{0}$
 (i.e. there is no force applied on the surface).
 
 The general form of the solution can then be obtained:
@@ -155,7 +166,7 @@ k_2 = \lambda  C_1 (R_1^2  R_2^3 - R_1^3  R_2^2)
 
 Pressure can then be computed as follows: 
 \begin{equation}
-p=-\lambda {\bm \nabla}\cdot {\bm v}
+p=-\lambda {\vec \nabla}\cdot {\vec \upnu}
 = -\lambda \left( \frac{1}{r} \frac{\partial (r v_r)}{\partial r} \right)
 = -\lambda \left( \frac{1}{r} ( 3C_1r^2 + 2C_2r  )\right)
 = -\lambda ( 3C_1r + 2C_2  )
@@ -165,18 +176,18 @@ We choose $R_1=2890$km, $R_2=6371$km, $g_0=9.81$ms$^{-2}$, $\rho_0=3300$,
 $E=6\cdot10^{10}$, $\nu=0.49$.
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_36/displacement_rtheta.pdf}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_36/pressure_rtheta.pdf}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_36/results/displacement_rtheta.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_36/results/pressure_rtheta.pdf}\\
 {\small radial profiles of the displacement and pressure fields}
 \end{center}
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_36/disp}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_36/p}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_36/results/disp}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_36/results/p}\\
 {\small displacement and pressure fields in the domain}
 \end{center}
 
 \begin{center}
-\includegraphics[width=16cm]{python_codes/fieldstone_36/errors}
+\includegraphics[width=16cm]{python_codes/fieldstone_36/results/errors}
 \end{center}
 
