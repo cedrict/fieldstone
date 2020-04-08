@@ -1,10 +1,9 @@
 import numpy as np
-import math as math
 import sys as sys
 import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix, lil_matrix, hstack, vstack
+from scipy.sparse import csr_matrix
 import time as time
 
 #------------------------------------------------------------------------------
@@ -70,7 +69,7 @@ model=1
 
 #------------------------------------------------------------------------------
 
-year=3600.*24.*365.
+year=3600.*24.*365.25
 eps=1.e-10
 
 print("-----------------------------")
@@ -383,7 +382,7 @@ for istep in range(0,nstep):
         if avrg==1: # arithmetic
            eta_elemental[iel]+=eta_mat[swarm_mat[im]-1]
         if avrg==2: # geometric
-           eta_elemental[iel]+=math.log(eta_mat[swarm_mat[im]-1],10)
+           eta_elemental[iel]+=np.log(eta_mat[swarm_mat[im]-1],10)
         if avrg==3: # harmonic
            eta_elemental[iel]+=1./eta_mat[swarm_mat[im]-1]
     #end for

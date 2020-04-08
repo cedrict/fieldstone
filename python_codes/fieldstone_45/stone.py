@@ -125,7 +125,6 @@ def compute_corner_flow_velocity(x,y,l1,l2,l3,angle,v0,Lx,Ly):
     return u,v
 
 #------------------------------------------------------------------------------
-# Crouzeix-Raviart for Stokes
 # P2 elements for temperature
 
 print("-----------------------------")
