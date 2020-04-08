@@ -4,7 +4,6 @@ import sys as sys
 import scipy
 import time as time
 import random
-import solcxREAL as solcx
 
 #------------------------------------------------------------------------------
 
@@ -448,7 +447,7 @@ hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
 
-nstep=100
+nstep=1
 every=1      # vtu output frequency
 
 tijd=0.
@@ -588,10 +587,6 @@ for i in range(0,nnp):
     u[i]=u_th(x[i],y[i],z[i]) 
     v[i]=v_th(x[i],y[i],z[i]) 
     w[i]=w_th(x[i],y[i],z[i]) 
-
-#for i in range(0,nnp):
-#    u[i],v[i],w[i]=solcx.SolCxSolution(x[i],y[i]) 
-
 
 #################################################################
 
