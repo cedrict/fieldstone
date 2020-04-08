@@ -7,4 +7,4 @@ head -1 mesh.1.ele > temp
 echo "NV0="
 head -1 mesh.1.node 
 head -1 mesh.1.node >> temp
-python3 fieldstone.py
+python3 stone.py
