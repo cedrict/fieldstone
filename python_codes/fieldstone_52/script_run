@@ -20,8 +20,8 @@ for e in 0 1 2; do
         python3 stone.py $l $l 0 $e > opla
 
         grep errq opla >> errors_$e
-        grep eigen opla >> eigen_$e
-        grep number opla >> condnb_$e
+        #grep eigen opla >> eigen_$e
+        #grep number opla >> condnb_$e
 
 done
 done

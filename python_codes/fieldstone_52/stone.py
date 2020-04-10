@@ -21,16 +21,17 @@ def NNV(r,s,A,mx,my):
        NV_7=(1-r**2)*(1+s)*0.5
        NV_8=(1-r)*(1-s**2)*0.5
        if serendipity==2:
-          E=0.25*(1-r**2)*(1-s**2)
-          denom=4*A**2+mx**2+my**2
-          NV_3+=A*(mx**2-mx*my+my**2)/denom*E
-          NV_4+=A*(mx**2+mx*my+my**2)/denom*E
-          NV_1+=A*(mx**2-mx*my+my**2)/denom*E
-          NV_2+=A*(mx**2+mx*my+my**2)/denom*E
-          NV_7-=mx*A*( 2*mx+my**2)/denom*E
-          NV_8-=my*A*( 2*my+mx**2)/denom*E
-          NV_5+=mx*A*(-2*mx+my**2)/denom*E
-          NV_6+=my*A*(-2*my+mx**2)/denom*E
+          E=(1-r**2)*(1-s**2)
+          denom=4*(4*A**2+mx**2+my**2)
+          NV_3+=(mx**2-mx*my+my**2)/denom*E
+          NV_4+=(mx**2+mx*my+my**2)/denom*E
+          NV_1+=(mx**2-mx*my+my**2)/denom*E
+          NV_2+=(mx**2+mx*my+my**2)/denom*E
+          denom=4*A*(4*A**2+mx**2+my**2)
+          NV_7-=mx*( 2*A*mx+my**2)/denom*E
+          NV_8-=my*( 2*A*my+mx**2)/denom*E
+          NV_5+=mx*(-2*A*mx+my**2)/denom*E
+          NV_6+=my*(-2*A*my+mx**2)/denom*E
        return NV_1,NV_2,NV_3,NV_4,NV_5,NV_6,NV_7,NV_8
     else:
        NV_0= 0.5*r*(r-1) * 0.5*s*(s-1)
@@ -55,14 +56,15 @@ def dNNVdr(r,s,A,mx,my):
        dNVdr_7= -r*(s+1)           
        dNVdr_8= -0.5*(1-s**2)
        if serendipity==2:
-          dEdr=-0.5*r*(1-s**2)
-          denom=4*A**2+mx**2+my**2
-          dNVdr_3+=A*(mx**2-mx*my+my**2)/denom*dEdr
-          dNVdr_4+=A*(mx**2+mx*my+my**2)/denom*dEdr
-          dNVdr_1+=A*(mx**2-mx*my+my**2)/denom*dEdr
-          dNVdr_2+=A*(mx**2+mx*my+my**2)/denom*dEdr
+          dEdr=-2*r*(1-s**2)
+          denom=4*(4*A**2+mx**2+my**2)
+          dNVdr_3+=(mx**2-mx*my+my**2)/denom*dEdr
+          dNVdr_4+=(mx**2+mx*my+my**2)/denom*dEdr
+          dNVdr_1+=(mx**2-mx*my+my**2)/denom*dEdr
+          dNVdr_2+=(mx**2+mx*my+my**2)/denom*dEdr
+          denom=4*A*(4*A**2+mx**2+my**2)
           dNVdr_7-=mx*( 2*A*mx+my**2)/denom*dEdr
-          dNVdr_8-=mx*( 2*A*my+mx**2)/denom*dEdr
+          dNVdr_8-=my*( 2*A*my+mx**2)/denom*dEdr
           dNVdr_5+=mx*(-2*A*mx+my**2)/denom*dEdr
           dNVdr_6+=my*(-2*A*my+mx**2)/denom*dEdr
        return dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,dNVdr_6,dNVdr_7,dNVdr_8
@@ -89,14 +91,15 @@ def dNNVds(r,s,A,mx,my):
        dNVds_7= 0.5*(1-r**2)
        dNVds_8= (r-1)*s
        if serendipity==2:
-          dEds=-0.5*(1-r**2)*s
-          denom=4*A**2+mx**2+my**2
-          dNVds_3+=A*(mx**2-mx*my+my**2)/denom*dEds
-          dNVds_4+=A*(mx**2+mx*my+my**2)/denom*dEds
-          dNVds_1+=A*(mx**2-mx*my+my**2)/denom*dEds
-          dNVds_2+=A*(mx**2+mx*my+my**2)/denom*dEds
+          dEds=-2*s*(1-r**2)
+          denom=4*(4*A**2+mx**2+my**2)
+          dNVds_3+=(mx**2-mx*my+my**2)/denom*dEds
+          dNVds_4+=(mx**2+mx*my+my**2)/denom*dEds
+          dNVds_1+=(mx**2-mx*my+my**2)/denom*dEds
+          dNVds_2+=(mx**2+mx*my+my**2)/denom*dEds
+          denom=4*A*(4*A**2+mx**2+my**2)
           dNVds_7-=mx*( 2*A*mx+my**2)/denom*dEds
-          dNVds_8-=mx*( 2*A*my+mx**2)/denom*dEds
+          dNVds_8-=my*( 2*A*my+mx**2)/denom*dEds
           dNVds_5+=mx*(-2*A*mx+my**2)/denom*dEds
           dNVds_6+=my*(-2*A*my+mx**2)/denom*dEds
        return dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8
@@ -133,8 +136,8 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    serendipity = int(sys.argv[4])
 else:
-   nelx = 49 
-   nely = 49
+   nelx = 24 
+   nely = 24
    visu = 1
    serendipity=2
 
@@ -705,20 +708,18 @@ print("project p onto Vnodes: %.3f s" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
-#u[:]=xV[:]#**2
-#v[:]=yV[:]#**2
+#u[:]=xV[:]**3
+#v[:]=yV[:]**3
 
 errv=0.
 errp=0.
 errq=0.
 for iel in range (0,nel):
-
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
-
             NNNV[0:mV]=NNV(rq,sq,A[iel],mx[iel],my[iel])
             dNNNVdr[0:mV]=dNNVdr(rq,sq,A[iel],mx[iel],my[iel])
             dNNNVds[0:mV]=dNNVds(rq,sq,A[iel],mx[iel],my[iel])
