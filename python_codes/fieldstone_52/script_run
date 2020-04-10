@@ -2,19 +2,22 @@
 
 rm errors_0
 rm errors_1
+rm errors_2
 rm eigen_0
 rm eigen_1
 rm condnb_0
 rm condnb_1
 rm *.ascii
 
-for l in 8 10 12 14 16 20 24 28 32 40; do # 48 56 64 ; do
+#for l in 7 8 9 10 11 12 13 14 15 16 18 20 22 24 28 32 36 38 40 41 42 43 44 48 56 64 80; do # 48 56 64 ; do
 
-for e in 0 1; do
+for l in {7..70}; do
+
+for e in 0 1 2; do
 
     echo res: $l X $l element $e
 
-        python3 fieldstone.py $l $l 0 $e > opla
+        python3 stone.py $l $l 0 $e > opla
 
         grep errq opla >> errors_$e
         grep eigen opla >> eigen_$e

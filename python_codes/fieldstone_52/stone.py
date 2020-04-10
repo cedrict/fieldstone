@@ -4,76 +4,112 @@ import time as timing
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import lil_matrix
-#from dh import bx,by,u_th,v_th,p_th
 from vj3 import bx,by,u_th,v_th,p_th,exx_th,eyy_th,exy_th
 from numpy import linalg 
+import random 
 
 #------------------------------------------------------------------------------
 
-def NNV(r,s):
-    if serendipity==1:
-       return (1-r)*(1-s)*(-r-s-1)*0.25,\
-              (1+r)*(1-s)*(r-s-1) *0.25,\
-              (1+r)*(1+s)*(r+s-1) *0.25,\
-              (1-r)*(1+s)*(-r+s-1)*0.25,\
-              (1-r**2)*(1-s)  *0.5,\
-              (1+r)*(1-s**2)*0.5,\
-              (1-r**2)*(1+s)  *0.5,\
-              (1-r)*(1-s**2)*0.5
+def NNV(r,s,A,mx,my):
+    if serendipity>0:
+       NV_1=(1-r)*(1-s)*(-r-s-1)*0.25
+       NV_2=(1+r)*(1-s)*(r-s-1) *0.25
+       NV_3=(1+r)*(1+s)*(r+s-1) *0.25
+       NV_4=(1-r)*(1+s)*(-r+s-1)*0.25
+       NV_5=(1-r**2)*(1-s)*0.5
+       NV_6=(1+r)*(1-s**2)*0.5
+       NV_7=(1-r**2)*(1+s)*0.5
+       NV_8=(1-r)*(1-s**2)*0.5
+       if serendipity==2:
+          E=0.25*(1-r**2)*(1-s**2)
+          denom=4*A**2+mx**2+my**2
+          NV_3+=A*(mx**2-mx*my+my**2)/denom*E
+          NV_4+=A*(mx**2+mx*my+my**2)/denom*E
+          NV_1+=A*(mx**2-mx*my+my**2)/denom*E
+          NV_2+=A*(mx**2+mx*my+my**2)/denom*E
+          NV_7-=mx*A*( 2*mx+my**2)/denom*E
+          NV_8-=my*A*( 2*my+mx**2)/denom*E
+          NV_5+=mx*A*(-2*mx+my**2)/denom*E
+          NV_6+=my*A*(-2*my+mx**2)/denom*E
+       return NV_1,NV_2,NV_3,NV_4,NV_5,NV_6,NV_7,NV_8
     else:
-       NV_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
-       NV_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
-       NV_2= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.)
-       NV_3= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.)
-       NV_4=     (1.-rq**2) * 0.5*sq*(sq-1.)
-       NV_5= 0.5*rq*(rq+1.) *     (1.-sq**2)
-       NV_6=     (1.-rq**2) * 0.5*sq*(sq+1.)
-       NV_7= 0.5*rq*(rq-1.) *     (1.-sq**2)
-       NV_8=     (1.-rq**2) *     (1.-sq**2)
+       NV_0= 0.5*r*(r-1) * 0.5*s*(s-1)
+       NV_1= 0.5*r*(r+1) * 0.5*s*(s-1)
+       NV_2= 0.5*r*(r+1) * 0.5*s*(s+1)
+       NV_3= 0.5*r*(r-1) * 0.5*s*(s+1)
+       NV_4=    (1-r**2) * 0.5*s*(s-1)
+       NV_5= 0.5*r*(r+1) *    (1-s**2)
+       NV_6=    (1-r**2) * 0.5*s*(s+1)
+       NV_7= 0.5*r*(r-1) *    (1-s**2)
+       NV_8=    (1-r**2) *    (1-s**2)
        return NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,NV_6,NV_7,NV_8
 
-def dNNVdr(r,s):
-    if serendipity==1:
-       return -0.25*(s-1)*(2*r+s), \
-              -0.25*(s-1)*(2*r-s), \
-              0.25*(s+1)*(2*r+s),  \
-              0.25*(s+1)*(2*r-s),  \
-              r*(s-1),             \
-              0.5*(1-s**2),        \
-              -r*(s+1),            \
-              -0.5*(1-s**2)
+def dNNVdr(r,s,A,mx,my):
+    if serendipity>0:
+       dNVdr_1= -0.25*(s-1)*(2*r+s)
+       dNVdr_2= -0.25*(s-1)*(2*r-s)
+       dNVdr_3= 0.25*(s+1)*(2*r+s)
+       dNVdr_4= 0.25*(s+1)*(2*r-s)
+       dNVdr_5= r*(s-1)
+       dNVdr_6= 0.5*(1-s**2)
+       dNVdr_7= -r*(s+1)           
+       dNVdr_8= -0.5*(1-s**2)
+       if serendipity==2:
+          dEdr=-0.5*r*(1-s**2)
+          denom=4*A**2+mx**2+my**2
+          dNVdr_3+=A*(mx**2-mx*my+my**2)/denom*dEdr
+          dNVdr_4+=A*(mx**2+mx*my+my**2)/denom*dEdr
+          dNVdr_1+=A*(mx**2-mx*my+my**2)/denom*dEdr
+          dNVdr_2+=A*(mx**2+mx*my+my**2)/denom*dEdr
+          dNVdr_7-=mx*( 2*A*mx+my**2)/denom*dEdr
+          dNVdr_8-=mx*( 2*A*my+mx**2)/denom*dEdr
+          dNVdr_5+=mx*(-2*A*mx+my**2)/denom*dEdr
+          dNVdr_6+=my*(-2*A*my+mx**2)/denom*dEdr
+       return dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,dNVdr_6,dNVdr_7,dNVdr_8
     else:
-       dNVdr_0= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
-       dNVdr_1= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
-       dNVdr_2= 0.5*(2.*rq+1.) * 0.5*sq*(sq+1)
-       dNVdr_3= 0.5*(2.*rq-1.) * 0.5*sq*(sq+1)
-       dNVdr_4=       (-2.*rq) * 0.5*sq*(sq-1)
-       dNVdr_5= 0.5*(2.*rq+1.) *    (1.-sq**2)
-       dNVdr_6=       (-2.*rq) * 0.5*sq*(sq+1)
-       dNVdr_7= 0.5*(2.*rq-1.) *    (1.-sq**2)
-       dNVdr_8=       (-2.*rq) *    (1.-sq**2)
+       dNVdr_0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
+       dNVdr_1= 0.5*(2.*r+1.) * 0.5*s*(s-1)
+       dNVdr_2= 0.5*(2.*r+1.) * 0.5*s*(s+1)
+       dNVdr_3= 0.5*(2.*r-1.) * 0.5*s*(s+1)
+       dNVdr_4=       (-2.*r) * 0.5*s*(s-1)
+       dNVdr_5= 0.5*(2.*r+1.) *   (1.-s**2)
+       dNVdr_6=       (-2.*r) * 0.5*s*(s+1)
+       dNVdr_7= 0.5*(2.*r-1.) *   (1.-s**2)
+       dNVdr_8=       (-2.*r) *   (1.-s**2)
        return dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,dNVdr_6,dNVdr_7,dNVdr_8
 
-def dNNVds(r,s):
-    if serendipity==1:
-       return -0.25*(r-1)*(r+2*s), \
-              -0.25*(r+1)*(r-2*s), \
-              0.25*(r+1)*(r+2*s),  \
-              0.25*(r-1)*(r-2*s),  \
-              -0.5*(1-r**2),      \
-              -(r+1)*s,           \
-              0.5*(1-r**2),       \
-              (r-1)*s
+def dNNVds(r,s,A,mx,my):
+    if serendipity>0:
+       dNVds_1= -0.25*(r-1)*(r+2*s)
+       dNVds_2= -0.25*(r+1)*(r-2*s)
+       dNVds_3= 0.25*(r+1)*(r+2*s)
+       dNVds_4= 0.25*(r-1)*(r-2*s)
+       dNVds_5= -0.5*(1-r**2)
+       dNVds_6= -(r+1)*s
+       dNVds_7= 0.5*(1-r**2)
+       dNVds_8= (r-1)*s
+       if serendipity==2:
+          dEds=-0.5*(1-r**2)*s
+          denom=4*A**2+mx**2+my**2
+          dNVds_3+=A*(mx**2-mx*my+my**2)/denom*dEds
+          dNVds_4+=A*(mx**2+mx*my+my**2)/denom*dEds
+          dNVds_1+=A*(mx**2-mx*my+my**2)/denom*dEds
+          dNVds_2+=A*(mx**2+mx*my+my**2)/denom*dEds
+          dNVds_7-=mx*( 2*A*mx+my**2)/denom*dEds
+          dNVds_8-=mx*( 2*A*my+mx**2)/denom*dEds
+          dNVds_5+=mx*(-2*A*mx+my**2)/denom*dEds
+          dNVds_6+=my*(-2*A*my+mx**2)/denom*dEds
+       return dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8
     else:
-       dNVds_0= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
-       dNVds_1= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
-       dNVds_2= 0.5*rq*(rq+1.) * 0.5*(2.*sq+1.)
-       dNVds_3= 0.5*rq*(rq-1.) * 0.5*(2.*sq+1.)
-       dNVds_4=     (1.-rq**2) * 0.5*(2.*sq-1.)
-       dNVds_5= 0.5*rq*(rq+1.) *       (-2.*sq)
-       dNVds_6=     (1.-rq**2) * 0.5*(2.*sq+1.)
-       dNVds_7= 0.5*rq*(rq-1.) *       (-2.*sq)
-       dNVds_8=     (1.-rq**2) *       (-2.*sq)
+       dNVds_0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
+       dNVds_1= 0.5*r*(r+1.) * 0.5*(2.*s-1.)
+       dNVds_2= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
+       dNVds_3= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
+       dNVds_4=    (1.-r**2) * 0.5*(2.*s-1.)
+       dNVds_5= 0.5*r*(r+1.) *       (-2.*s)
+       dNVds_6=    (1.-r**2) * 0.5*(2.*s+1.)
+       dNVds_7= 0.5*r*(r-1.) *       (-2.*s)
+       dNVds_8=    (1.-r**2) *       (-2.*s)
        return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8
 
 def NNP(r,s):
@@ -97,14 +133,14 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    serendipity = int(sys.argv[4])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 49 
+   nely = 49
    visu = 1
-   serendipity=0
+   serendipity=2
 
 nel=nelx*nely
 
-if serendipity==1:
+if serendipity>0:
    NV=(nelx+1)*(nely+1)+nelx*(nely+1)+ (nelx+1)*nely
    mV=8
    mP=4
@@ -121,6 +157,14 @@ Nfem=NfemV+NfemP
 hx=Lx/nelx
 hy=Ly/nely
 
+use_random=True
+xi=0.1 # controls level of mesh randomness (between 0 and 0.5 max)
+
+compute_eigenv=False
+
+print("-----------------------------")
+print("----------fieldstone---------")
+print("-----------------------------")
 print('nelx =',nelx)
 print('nely =',nely)
 print('nel  =',nel)
@@ -128,17 +172,29 @@ print('NV   =',NV)
 print('NP   =',NP)
 print('NfemV=',NfemV)
 print('NfemP=',NfemP)
+print('serendipity=',serendipity)
+print('use_random=',use_random)
+print("-----------------------------")
 
 nqperdim=3
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
+
+#4 qpoints rule does not change anything
+#nqperdim=4
+#qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
+#qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
+#qw4a=(18-np.sqrt(30.))/36.
+#qw4b=(18+np.sqrt(30.))/36.
+#qcoords=[-qc4a,-qc4b,qc4b,qc4a]
+#qweights=[qw4a,qw4b,qw4b,qw4a]
 
 eps=1e-8
 eta=1.
 
 sparse=False
 
-if serendipity==1:
+if serendipity>0:
    rVnodes=[-1,1,1,-1,0,1,0,-1]
    sVnodes=[-1,-1,1,1,-1,0,1,0]
 else:
@@ -153,7 +209,7 @@ start = timing.time()
 xV = np.empty(NV,dtype=np.float64)  # x coordinates
 yV = np.empty(NV,dtype=np.float64)  # y coordinates
 
-if serendipity==1:
+if serendipity>0:
    counter = 0
    for j in range(0,nely+1):
        for i in range(0,nelx+1):
@@ -196,7 +252,7 @@ start = timing.time()
 
 iconV=np.zeros((mV,nel),dtype=np.int32)
 
-if serendipity==1:
+if serendipity>0:
    counter = 0
    for j in range(0,nely):
        for i in range(0,nelx):
@@ -231,6 +287,35 @@ else:
 #     for i in range(0,mV):
 #         print ("node ",i,':',iconV[i,iel],"at pos.",xV[iconV[i,iel]], yV[iconV[i,iel]])
 
+#################################################################
+# add random perturbation
+#################################################################
+
+if use_random:
+
+   for i in range(0,NV):
+       if xV[i]>0 and xV[i]<Lx-eps and yV[i]>0 and yV[i]<Ly-eps:
+          xV[i]+=random.uniform(-1.,+1)*hx*xi
+          yV[i]+=random.uniform(-1.,+1)*hy*xi
+       #end if
+   #end for
+
+   for iel in range(0,nel):
+       xV[iconV[4,iel]]=0.5*(xV[iconV[0,iel]]+xV[iconV[1,iel]])
+       yV[iconV[4,iel]]=0.5*(yV[iconV[0,iel]]+yV[iconV[1,iel]])
+       xV[iconV[5,iel]]=0.5*(xV[iconV[1,iel]]+xV[iconV[2,iel]])
+       yV[iconV[5,iel]]=0.5*(yV[iconV[1,iel]]+yV[iconV[2,iel]])
+       xV[iconV[6,iel]]=0.5*(xV[iconV[2,iel]]+xV[iconV[3,iel]])
+       yV[iconV[6,iel]]=0.5*(yV[iconV[2,iel]]+yV[iconV[3,iel]])
+       xV[iconV[7,iel]]=0.5*(xV[iconV[3,iel]]+xV[iconV[0,iel]])
+       yV[iconV[7,iel]]=0.5*(yV[iconV[3,iel]]+yV[iconV[0,iel]])
+       if serendipity==0:
+          xV[iconV[8,iel]]=0.25*(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]]+xV[iconV[3,iel]])
+          yV[iconV[8,iel]]=0.25*(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]]+yV[iconV[3,iel]])
+       #end if
+   #end for
+
+np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
 
 #################################################################
 # build pressure grid and iconP 
@@ -241,8 +326,7 @@ xP=np.empty(NP,dtype=np.float64)     # x coordinates
 yP=np.empty(NP,dtype=np.float64)     # y coordinates
 iconP=np.zeros((mP,nel),dtype=np.int32)
 
-
-if serendipity:
+if serendipity>0:
    iconP[0:mP,0:nel]=iconV[0:mP,0:nel]
    xP[0:NP]=xV[0:NP]
    yP[0:NP]=yV[0:NP]
@@ -255,12 +339,16 @@ else:
            iconP[2,counter]=i+1+(j+1)*(nelx+1)
            iconP[3,counter]=i+(j+1)*(nelx+1)
            counter += 1
-   counter = 0
-   for j in range(0,nely+1):
-       for i in range(0,nelx+1):
-           xP[counter]=i*hx
-           yP[counter]=j*hy
-           counter += 1
+   for iel in range(0,nel):
+       xP[iconP[0,iel]]=xV[iconV[0,iel]]
+       xP[iconP[1,iel]]=xV[iconV[1,iel]]
+       xP[iconP[2,iel]]=xV[iconV[2,iel]]
+       xP[iconP[3,iel]]=xV[iconV[3,iel]]
+       yP[iconP[0,iel]]=yV[iconV[0,iel]]
+       yP[iconP[1,iel]]=yV[iconV[1,iel]]
+       yP[iconP[2,iel]]=yV[iconV[2,iel]]
+       yP[iconP[3,iel]]=yV[iconV[3,iel]]
+
 
 
 np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
@@ -273,17 +361,28 @@ print("build P grid: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 area    = np.zeros(nel,dtype=np.float64) 
+A       = np.zeros(nel,dtype=np.float64) 
+mx      = np.zeros(nel,dtype=np.float64) 
+my      = np.zeros(nel,dtype=np.float64) 
 dNNNVdr = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
 dNNNVds = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
 
 for iel in range(0,nel):
+    x1=xV[iconV[2,iel]] ; y1=yV[iconV[2,iel]]
+    x2=xV[iconV[3,iel]] ; y2=yV[iconV[3,iel]]
+    x3=xV[iconV[0,iel]] ; y3=yV[iconV[0,iel]]
+    x4=xV[iconV[1,iel]] ; y4=yV[iconV[1,iel]]
+
+    A[iel]=0.5*((x1-x3)*(y2-y4)-(x2-x4)*(y1-y3))
+    mx[iel]=(x1-x4)*(y2-y3)-(x2-x3)*(y1-y4)
+    my[iel]=(x3-x4)*(y1-y2)-(x1-x2)*(y3-y4)
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
-            dNNNVdr[0:mV]=dNNVdr(rq,sq)
-            dNNNVds[0:mV]=dNNVds(rq,sq)
+            dNNNVdr[0:mV]=dNNVdr(rq,sq,A[iel],mx[iel],my[iel])
+            dNNNVds[0:mV]=dNNVds(rq,sq,A[iel],mx[iel],my[iel])
             jcb=np.zeros((ndim,ndim),dtype=np.float64)
             for k in range(0,mV):
                 jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
@@ -363,9 +462,9 @@ for iel in range(0,nel):
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
 
-            NNNV[0:mV]=NNV(rq,sq)
-            dNNNVdr[0:mV]=dNNVdr(rq,sq)
-            dNNNVds[0:mV]=dNNVds(rq,sq)
+            NNNV[0:mV]=NNV(rq,sq,A[iel],mx[iel],my[iel])
+            dNNNVdr[0:mV]=dNNVdr(rq,sq,A[iel],mx[iel],my[iel])
+            dNNNVds[0:mV]=dNNVds(rq,sq,A[iel],mx[iel],my[iel])
             NNNP[0:mP]=NNP(rq,sq)
 
             # calculate jacobian matrix
@@ -464,10 +563,10 @@ print("build FE matrix: %.3fs - %d elts" % (timing.time()-start, nel))
 ######################################################################
 start = timing.time()
 
-eigvals, eigvecs = linalg.eig(K_mat)
-print('eigenvalues:',nel,eigvals.min(),eigvals.max())
-
-#print('condition number:', nel,linalg.cond(K_mat))
+if compute_eigenv:
+   eigvals, eigvecs = linalg.eig(K_mat)
+   print('eigenvalues:',nel,eigvals.min(),eigvals.max())
+   print('condition number:', nel,linalg.cond(K_mat))
 
 print("eigenvalues and cond nb: %.3f s" % (timing.time() - start))
 
@@ -498,10 +597,12 @@ if sparse:
    A_sparse[Nfem-1,Nfem-1]=1
    rhs[Nfem-1]=0
 else:
-   a_mat[Nfem-1,:]=0
-   a_mat[:,Nfem-1]=0
-   a_mat[Nfem-1,Nfem-1]=1
-   rhs[Nfem-1]=0
+   idof=NfemV+iconP[2,nel-1] #Nfem-1
+   #print (idof)
+   a_mat[idof,:]=0
+   a_mat[:,idof]=0
+   a_mat[idof,idof]=1
+   rhs[idof]=0
 
 ######################################################################
 # solve system
@@ -546,11 +647,17 @@ for iel in range(0,nel):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
+            dNNNVdr[0:mV]=dNNVdr(rq,sq,A[iel],mx[iel],my[iel])
+            dNNNVds[0:mV]=dNNVds(rq,sq,A[iel],mx[iel],my[iel])
             NNNP[0:mP]=NNP(rq,sq)
 
             # compure pressure at q point
+            xq=0.
+            yq=0.
             pq=0.
             for k in range(0,mP):
+                xq+=NNNP[k]*xP[iconP[k,iel]]
+                yq+=NNNP[k]*yP[iconP[k,iel]]
                 pq+=NNNP[k]*p[iconP[k,iel]]
 
             # calculate jacobian matrix
@@ -561,14 +668,15 @@ for iel in range(0,nel):
                 jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
                 jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
             jcob = np.linalg.det(jcb)
+            #print(xq,yq,pq,jcob)
 
             avrg_p+=pq*jcob*weightq
 
-print('avrg pressure',avrg_p)
+print('avrg pressure',avrg_p, 'exact value: -1.25')
 
-p[:]-=avrg_p/Lx/Ly
+#p[:]-=avrg_p/Lx/Ly
 
-np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+#np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
 #####################################################################
 # project pressure onto velocity grid
@@ -597,6 +705,9 @@ print("project p onto Vnodes: %.3f s" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
+#u[:]=xV[:]#**2
+#v[:]=yV[:]#**2
+
 errv=0.
 errp=0.
 errq=0.
@@ -608,9 +719,9 @@ for iel in range (0,nel):
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
 
-            NNNV[0:mV]=NNV(rq,sq)
-            dNNNVdr[0:mV]=dNNVdr(rq,sq)
-            dNNNVds[0:mV]=dNNVds(rq,sq)
+            NNNV[0:mV]=NNV(rq,sq,A[iel],mx[iel],my[iel])
+            dNNNVdr[0:mV]=dNNVdr(rq,sq,A[iel],mx[iel],my[iel])
+            dNNNVds[0:mV]=dNNVds(rq,sq,A[iel],mx[iel],my[iel])
             NNNP[0:mP]=NNP(rq,sq)
 
             jcb=np.zeros((ndim,ndim),dtype=np.float64)
@@ -635,6 +746,7 @@ for iel in range (0,nel):
                 qq+=NNNV[k]*q[iconV[k,iel]]
             errv+=((uq-u_th(xq,yq))**2+(vq-v_th(xq,yq))**2)*weightq*jcob
             errq+=(qq-p_th(xq,yq))**2*weightq*jcob
+            #print(xq,yq,uq,vq)
 
             xq=0.
             yq=0.
@@ -674,13 +786,37 @@ if visu==1:
     vtufile.write("</DataArray>\n")
     vtufile.write("</Points> \n")
     #####
-    #vtufile.write("<CellData Scalars='scalars'>\n")
+    vtufile.write("<CellData Scalars='scalars'>\n")
     #--
-    #vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
-    #for iel in range (0,nel):
-    #    vtufile.write("%10e\n" % (area[iel]))
-    #vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (area[iel]))
+    vtufile.write("</DataArray>\n")
     #--
+    vtufile.write("<DataArray type='Float32' Name='A' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (A[iel]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='mx' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (mx[iel]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='my' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (my[iel]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='denom' Format='ascii'> \n")
+    for iel in range (0,nel):
+        denom=4*A[iel]**2+mx[iel]**2+my[iel]**2
+        vtufile.write("%10e\n" % (denom))
+    vtufile.write("</DataArray>\n")
+
+
+
+
     #vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
     #for iel in range (0,nel):
     #    vtufile.write("%10e\n" % (exx[iel]))
@@ -693,7 +829,7 @@ if visu==1:
     #for iel in range (0,nel):
     #    vtufile.write("%10e\n" % (exy[iel]))
     #vtufile.write("</DataArray>\n")
-    #vtufile.write("</CellData>\n")
+    vtufile.write("</CellData>\n")
     #####
     vtufile.write("<PointData Scalars='scalars'>\n")
     #--

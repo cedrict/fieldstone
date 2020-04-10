@@ -8,8 +8,29 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In order to test the grid point and connectivity algorithms, 
-we use this simple $4\times 3$ element mesh:
+The domain is a unit square and we solve the mms problem 'VJ3' (see Section~ \ref{mms10}):
+\begin{eqnarray}
+u(x,y) &=& 200x^2(1-x)^2y(1-y)(1-2y) \nn\\
+v(x,y) &=& -200x(1-x)(1-2x)y^2(1-y)^2 \nn\\
+p(x,y) &=& 10\left[(x-1/2)^3y^2+(1-x)^3(y-1/2)^3 \right] -5/4 \nn
+\end{eqnarray}
+The 5/4 term in the pressure equation insures that the pressure is exactly zero in the 
+upper right corner (this boundary condition is implemented to get rid of 
+the pressure nullspace). It is also the value of the average pressure over the domain.
+
+
+
+We will look at three second order elements:
+\begin{itemize}
+\item The Taylor-Hood $Q_2\times Q_1$ 
+\item The serendipity element $Q_2^{(8)}\times Q_1$. The shape functions 
+and their derivatives are in Section~\ref{sec:serendipity2D}.
+\item A modified serendipity element by 
+Zhang \& Xiang (2020) \cite{zhxi20}, the $QH8-C1 \times Q_2$.
+\end{itemize}
+
+The global numbering of nodes for both types of elements is shown  
+in this simple $4\times 3$ element mesh:
 
 \begin{verbatim}
       Q_2 X Q1 (serendipity)                    Q_2 X Q_1 (regular)
@@ -42,7 +63,6 @@ node  7 : 24 at pos. 0.0 0.5             node  7 : 9 at pos. 0.0 0.5
 
 We see that the serendipity element-based mesh counts only 51 nodes, as
 opposed to 63 for its counterpart.
-
 Setting $nelx=nely$, we can look at the number of velocity nodes for each 
 as a function of $nelx$, as shown hereunder:
 
@@ -58,17 +78,35 @@ will count 25\% less nodes than a mesh with Taylor-Hood elements.
 Since there is not free lunch, what is the price paid in terms of accuracy when using 
 the cheaper serendipity? 
 
-The shape functions and their derivatives are in Section~\ref{sec:serendipity2D}.
+Although the vtk format does not support the $Q_2$ element in 2D or 3D, it surprisingly does
+support the serendipity element in 2D (type=23) and 3D (type=25).
 
-Although the vtk format does not understand the $Q_2$ element in 2D or 3D, it surprisingly does
-understand the serendipity element in 2D (type=23) and 3D (type=25).
+Two types of grids are generated. The first one is a mesh composed of square (or rectangular)
+elements. The second one has random noise added to the first one: the position of each corner 
+node (with the exception of those on the domain boundaries) is perturbed by a randomly computed 
+(positive or negative) distance equal to $0.1h$ at the maximum. Note that the nodes
+on the edges between corner nodes are relocated to the middle of the edge so as to generate
+straight-side quadrilaterals.
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_52/images/errors.pdf}\\
-{\captionfont 'TH' is Taylor-Hood. 'S' is serendipity.}
+\includegraphics[width=7cm]{python_codes/fieldstone_52/images/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_52/images/press}
 \end{center}
 
-It looks like the serendipity element yields the same errors and error convergence 
+
+We then compute the velocity and pressure error as a function of resolution $h$:
+
+\begin{center}
+\includegraphics[width=7.8cm]{python_codes/fieldstone_52/images/errors_reg.pdf}
+\includegraphics[width=7.8cm]{python_codes/fieldstone_52/images/errors_rand.pdf}\\
+{\captionfont 'TH' is Taylor-Hood, 'S1' is serendipity $Q_2^{(8)}\times Q_1$, 'S2' is $QH8C1\times Q_1$ element.}
+\end{center}
+
+Note that the $QH8C1\times Q_1$ element is identical to the regular $Q_2^{(8)}\times Q_1$ element 
+in the case of regular meshes since in this case $m_x=m_y=0$, so that its results are the same as those 
+of the regular serendipity element. 
+
+For regular grids the serendipity element yields the same errors and error convergence 
 rates as its Taylor-Hood counterpart. Since it is cheaper in terms of dofs, 
 one could think that it should be preferred. However, most modern codes 
 use an iterative solver approach to solve the discretised Stokes problem, and 
@@ -87,8 +125,6 @@ eigvals, eigvecs = linalg.eig(K_mat)
 print('eigenvalues:',nel,eigvals.min(),eigvals.max())
 \end{lstlisting}
 
-
-
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_52/images/eigenvalues.pdf}
 \includegraphics[width=6cm]{python_codes/fieldstone_52/images/eigenvalues_ratio.pdf}\\
@@ -99,7 +135,11 @@ As it turns out, the condition number is twice as high for the serendipity eleme
 which means that the CG would have to iterate more to arrive at the solution, 
 thereby offsetting the benefit of less dofs.
 
-
+Looking back at the error rates for the randomised grids we see that the error 
+velocity is virtually unchanged. Even though the pressure error still decreases 
+quadratically with the mesh size, it does now do so in a much more erratic way. 
+Also the Taylor-Hood element outperforms the serendipity elements by about an 
+order of magnitude. 
 
 
 
