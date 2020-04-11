@@ -1,0 +1,42 @@
+Before we start with the basics of the Finite Difference method, we should quickly recall the definition 
+of the derivative of a function. 
+
+\begin{center}
+{\sl 
+The derivative of a function $y=f(x)$ of a variable $x$ is a measure of the rate at which the value $y$ 
+of the function changes with respect to the change of the variable $x$. It is called the derivative of $f$ 
+with respect to $x$. If $x$ and $y$ are real numbers, and if the graph of $f$ is plotted against $x$, the derivative 
+is the \underline{slope} of this graph at each point. 
+}
+\end{center}
+
+\noindent There are two standard notations:
+\[
+\frac{df}{dx}(x) \qquad \text{and} \qquad f'(x)
+\]
+The mathematical definition is\footnote{if the limit exists}:
+\[
+\boxed{
+f'(x)
+=\lim_{h\rightarrow 0} \frac{f(x+h)-f(x)}{(x+h)-x} 
+=\lim_{h\rightarrow 0} \frac{f(x+h)-f(x)}{h} 
+}
+\]
+
+\begin{center}
+\includegraphics[width=7.4cm]{images/derivative/der2}
+\includegraphics[width=7.4cm]{images/derivative/der1}\\
+{\captionfont Taken from Wikipedia \url{https://en.wikipedia.org/wiki/Derivative}}
+\end{center}
+
+Also, one can rewrite the formula above as
+\[
+f(x+h) \simeq f(x) +  f'(x) h
+\]
+which is in fact the beginning of the Taylor expansion of the function:
+\[
+f(x+h) \simeq f(x) +  f'(x) h + \frac{1}{2!} f''(x) h^2 + \dots 
+\]
+We will see in what follows that the Taylor expansion and the concept of derivative lies 
+central in the Finite Difference method. 
+

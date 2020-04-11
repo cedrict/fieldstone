@@ -564,6 +564,9 @@ with
 
 %------------------------------------------------------------------------------
 \subsection{Non-dimensionalisation of the Navier-Stokes equations}\label{ss:nondim}
+
+%______________________________________________
+\subsubsection{Approach \# 1 - isothermal flow}
 %We start from the following form of the momentum conservation equation: 
 %\[
 %\frac{\partial \vec\upnu}{\partial t} + (\vec\upnu \cdot \vec\nabla)\vec\upnu 
@@ -675,6 +678,7 @@ From this we conclude that inertial forces in the Earth’s mantle
 are small compared to viscous forces.
 We can then write:
 \[
+\boxed{
 {\color{teal}\rho} \left(
 {\color{teal} \frac{\partial \vec\upnu}{\partial t}}
 +
@@ -685,6 +689,7 @@ We can then write:
 \frac{1}{Re}
 {\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
 + \frac{1}{Fr} {\color{teal} \vec{g}}
+}
 \]
 In our case, given the definitions taken above, we have:
 \[
@@ -701,6 +706,157 @@ dimensionless Stokes equations):
 =0
 \]
 Note that in our case $Re/Fr\simeq 30.5$. 
+
+%___________________________
+\subsubsection{Approach \# 2 - Temperature dependent}
+
+Let us now consider a box of size $\underline{l}$ heated from below and cooled from above, with a
+temperature difference $\Delta T$. This time we choose the reference time as the diffusion time:
+\[
+\underline{t}=\frac{\underline{l}^2}{\underline{\kappa}}
+\]
+where $\underline{\kappa}$ is the thermal diffusivity.
+We then choose the following reference values
+
+\begin{itemize}
+\item a reference length $\underline{l}$
+\item a reference velocity $\underline{\upnu} = \underline{l}/\underline{t}$ 
+\item a reference strainrate $\underline{\dot{\varepsilon}}
+=\underline{\upnu}/\underline{l}= 1/\underline{t}$
+\item a reference viscosity $\underline{\eta}$
+\item a reference stress 
+$\underline{\tau}=\underline{\eta}\underline{\dot{\varepsilon}} = \underline{\eta}/\underline{t} 
+= \underline{\eta} \kappa / l^2 $
+\item a reference gravity $\underline{g} = g_0$ 
+\item a reference temperature $\underline{T}=\Delta T$
+\item a reference mass density $\underline{\rho}=\rho_0$
+\end{itemize}
+Here again we have 
+
+\[
+{\color{teal}x} = \frac{x}{\underline{l}}
+\qquad
+{\color{teal}y} = \frac{y}{\underline{l}}
+\qquad
+{\color{teal}z} = \frac{z}{\underline{l}}
+\qquad
+{\color{teal}\vec\upnu'} = \frac{\vec\upnu}{\underline{\upnu}}
+\qquad
+{\color{teal}t} = \frac{t}{\underline{t}}
+\qquad
+{\color{teal} \eta} = \frac{\eta}{\underline{\eta}}
+\qquad
+{\color{teal} g} =\frac{g}{\underline{g}}
+\qquad
+{\color{teal} \vec\nabla} = \underline{l}\; \vec\nabla
+\qquad
+{\color{teal} \partial_t} = \underline{t}\; \partial_t 
+\qquad
+{\color{teal} T} = \frac{T}{\underline{T}}
+\]
+
+
+\[
+\frac{\rho_0 \underline{l}}{\underline{t}^2} 
+\left( {\color{teal} \frac{\partial \vec\upnu}{\partial t}}
++{\color{teal} (\vec\upnu \cdot\vec\nabla) \vec\upnu} 
+\right)
+=
+\frac{\underline{\tau}}{\underline{l}}
+\left( - \ {\color{teal} \vec\nabla p}
++ {\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
+\right)
++ \rho_0(1 - \alpha T) \vec{g}
+\]
+
+
+\[
+\frac{\rho_0 \underline{\kappa}^2}{\underline{l}^3}
+\left( {\color{teal} \frac{\partial \vec\upnu}{\partial t}}
++{\color{teal} (\vec\upnu \cdot\vec\nabla) \vec\upnu} 
+\right)
+=
+\frac{\underline{\eta}\kappa}{\underline{l}^3}
+\left( - \ {\color{teal} \vec\nabla p}
++ {\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
+\right)
++ \rho_0(1 - \alpha T) \vec{g}
+\]
+Removing the lithostatic pressure which verifies $\vec\nabla p = \rho_0 \vec{g} $, then 
+only the dynamic pressure $p'$ remains in the equation above:
+\[
+\frac{\rho_0 \underline{\kappa}^2}{\underline{l}^3}
+\left( {\color{teal} \frac{\partial \vec\upnu}{\partial t}}
++{\color{teal} (\vec\upnu \cdot\vec\nabla) \vec\upnu} 
+\right)
+=
+\frac{\underline{\eta}\kappa}{\underline{l}^3}
+\left( - \ {\color{teal} \vec\nabla p}'
++ {\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
+\right)
+- \rho_0 \alpha \underline{T} {\color{teal}T} g_0 {\color{teal}\vec{g}}
+\]
+\[
+\frac{\rho_0 \underline{\kappa}^2}{\underline{l}^3}
+\left( {\color{teal} \frac{\partial \vec\upnu}{\partial t}}
++{\color{teal} (\vec\upnu \cdot\vec\nabla) \vec\upnu} 
+\right)
+=
+\frac{\underline{\eta}\kappa}{\underline{l}^3}
+\left( - \ {\color{teal} \vec\nabla p}'
++ {\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
+\right)
+- \rho_0 \alpha \underline{T} {\color{teal}T} g_0 {\color{teal}\vec{g}}
+\]
+and finally:
+\[
+\frac{\rho_0 \underline{\kappa}}{\underline{\eta}}
+\left( {\color{teal} \frac{\partial \vec\upnu}{\partial t}}
++{\color{teal} (\vec\upnu \cdot\vec\nabla) \vec\upnu} 
+\right)
+=
+- \ {\color{teal} \vec\nabla p}'
++ {\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
+- \frac{ \rho_0 \alpha \Delta T  g_0  l^3}{\kappa \eta} {\color{teal}T}  {\color{teal}\vec{g}}
+\]
+We recognise the Prandlt number 
+\[
+Pr=\frac{\eta}{\rho \kappa}
+\]
+and of course the Rayleigh number
+\[
+Ra= \frac{ \rho_0 \alpha \Delta T  g_0  l^3}{\kappa \eta}
+\]
+so that the dimensionless Navier-Stokes become simply:
+\[
+\boxed{
+\frac{1}{Pr}
+\left( {\color{teal} \frac{\partial \vec\upnu}{\partial t}}
++{\color{teal} (\vec\upnu \cdot\vec\nabla) \vec\upnu} 
+\right)
+=
+ - \ {\color{teal} \vec\nabla p}'
++ {\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
+- Ra  {\color{teal}T}  {\color{teal}\vec{g}}
+}
+\]
+
+Here again we can estimate the dimensionless number before the inertial term for Earth 
+geodynamics:
+\[
+Pr \simeq \frac{10^{20}}{1000 \cdot 10^{-6}} = 10^{23}
+\]
+Its inverse is then extremely small and this is why we neglect the inertial terms
+in mantle modelling.
+
+
+
+
+
+
+
+
+
 
 
 
