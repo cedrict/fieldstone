@@ -1,0 +1,233 @@
+Consider the one-dimensional, transient (i.e. time-dependent) 
+heat conduction equation without heat generating sources
+
+\[
+\rho C_p \frac{\partial T}{\partial t} 
+= \frac{\partial }{\partial x} \left(  k  \frac{\partial T}{\partial x} \right)
+\]
+where $\rho$ is density, $C_p$ heat capacity, $k$ thermal conductivity, $T$ temperature, 
+$x$ distance, and $t$ time. 
+
+If the thermal conductivity, density and heat capacity are constant over the model domain, 
+the equation can be simplified to a diffusion equation:
+\[
+\frac{\partial T}{\partial t} =  \kappa \frac{\partial^2 T}{\partial x^2} 
+\]
+where $\kappa=k/\rho c_p$ is the heat diffusivity.
+
+We wish to solve this PDE in time and space (provided the appropriate 
+boundary conditions have been given). 
+
+\begin{verbatim}
+
+ |----------------------------------------------------------------------|-------> x
+x=0                                                                    x=Lx
+
+                 h
+            <---------->
+ 
+ |----------+----------+ - - - - - - +---------+---------+- - - - - - - | 
+ 0          1          2            i-1        i        i+1            nnx
+
+\end{verbatim}
+
+The derivative of temperature with regards to time can be approximated
+with a forward finite difference approximation as
+\[
+\frac{\partial T}{\partial t} 
+\simeq \frac{T_{i}^{n+1}-T_i^n}{t^{n+1}-t^n} 
+= \frac{T_{i}^{n+1}-T_i^n}{\delta t} 
+\]
+where $\delta t$ is the time step, i.e. the time between two consecutive 
+measurements (the equivalent of $h$ in space).
+
+$n$ represents the temperature at the current time step whereas $n+1$
+represents the new (future) temperature. The subscript $i$ refers to the location in space.
+
+Both $n$ and $i$ are integers; $n$ varies from 1 to nstep (total number of time steps)
+and $i$ varies from 1 to nnx (total number of grid points in $x$-direction).
+
+The spatial derivative is replaced by a central FD approximation
+\[
+\frac{\partial^2 T}{\partial x^2} 
+\simeq \frac{T_{i+1}^n - 2T_i^n + T_{i-1}^n}{h^2}
+\]
+We obtain
+\[
+\frac{T_{i}^{n+1}-T_i^n}{\delta t} 
+= \kappa \frac{T_{i+1}^n - 2T_i^n + T_{i-1}^n}{h^2}
+\]
+and finally
+\[
+T_i^{n+1}=T_i^n + \delta t \; \kappa \frac{T_{i+1}^n - 2T_i^n + T_{i-1}^n}{h^2}
+\]
+
+Because the temperature at the current time step $n$ is known,
+we can compute the new temperature without solving any additional equations.
+Such a scheme is an {\bf explicit} finite difference method and
+was made possible by the choice to evaluate the temporal derivative with forward differences.
+
+In order to solve the original PDE equation we need to
+\begin{itemize}
+\item prescribe an initial temperature field
+\item prescribe two boundary conditions 
+\end{itemize}
+Such requirements hold also in the discrete world. 
+
+We know that this numerical scheme will converge to the exact solution for
+small $h$ and $\delta t$ because it has been shown to be {\color{olive}consistent} - 
+that its discretization process
+can be reversed, through a Taylor series expansion, to recover the governing partial differential equation -
+and because it is {\color{olive}stable} for certain values of
+$h$ and $\delta t$: any spontaneous perturbations in the solution (such as round-off error) 
+will either be bounded or will decay.
+
+Concretely, we will prescribe an initial temperature field $T_i^0$ for $i=1,nnx$.
+For example:
+\begin{verbatim}
+
+        T
+         |                                         o..........o
+         o.........o                             .
+         |           .                         . 
+         |             .                     .
+         |               .                 .
+         |                 .             .
+         |                   o..........o 
+         |
+         +----------------------------------------------------+----> x
+         0                                                    Lx
+         |                    
+         |---------+---------+----------+----------+----------| 
+         0         1         2          3          4          5       (nnx=6)
+
+\end{verbatim}
+Then, we will be able to compute the new temperature of (for example) 
+node 3 at time $t=1\cdot \delta t$ 
+(i.e. $T_3^1$) with 
+\[
+T_3^{1}=T_3^0 + \delta t \; \kappa \frac{T_{4}^0 - 2T_3^0 + T_{2}^0}{h^2}
+\]
+Note that $T_0$ and $T_5$ cannot be computed by means of the above equation, 
+which is not a problem because both these values are actually the chosen 
+boundary conditions. 
+
+
+The main drawback of the explicit approach is that stable solutions are
+obtained {\it only} when
+\[
+0 < \frac{2\kappa \delta t}{h^2} \leq1
+\]
+or,
+\[
+\delta t \leq \frac{h^2}{2 \kappa}
+\]
+If this condition is not satisfied, the solution becomes {\color{olive} unstable}, starts to
+wildly oscillate and ultimately 'blows up'. We will observe this during the practicals. 
+
+The stability condition means that the maximum time step needs to be smaller than the time it
+takes for an anomaly to diffuse across the grid (nodal) spacing $h$.
+The explicit solution is an example of a {\color{olive} conditionally stable method}
+that only leads to well behaved solutions if a criterion like the one above is satisfied.
+
+An alternative approach is an {\bf implicit} finite difference scheme, where the spatial derivatives
+of the Laplacian are evaluated (at least partially) at the new time step.
+
+We then use the backward difference for the time derivative:
+\[
+\frac{\partial T}{\partial t} 
+= \frac{T_{i}^{n}-T_i^{n-1}}{\delta t} 
+\]
+so that
+\[
+\frac{T_{i}^{n}-T_i^{n-1}}{\delta t} 
+= \kappa \frac{T_{i+1}^n - 2T_i^n + T_{i-1}^n}{h^2}
+\]
+It is a fully implicit scheme where the time derivative is taken backward.
+Let us define the dimensionless parameter $s$ as follows:
+\[
+s=\frac{\kappa \delta t}{h^2}
+\]
+The previous equation can be rearranged as follows:
+\[
+-s T_{i+1}^{n} + (1+2s) T_{i}^{n} - s T_{i-1}^{n} = T_i^{n-1}
+\]
+Note that in this case we no longer have an explicit relationship for 
+$T^{n+1}_{i-1}$, $T^{n+1}_i$ and $T^{n+1}_{i+1}$.
+Instead, we have to solve a {\color{olive}linear system of equations}, which is discussed further below.
+
+The main advantage of implicit methods is that there are no restrictions on the time step,
+the fully implicit scheme is {\bf unconditionally stable}.
+This does not mean that it is accurate. 
+Taking large time steps may result in an inaccurate solution for features with
+small spatial scales!
+
+For any application, it is therefore always a good idea to check the 
+results by decreasing the time step
+until the solution does not change anymore (this is called a {\color{olive}convergence check}), and 
+to ensure the
+method can deal with small and large scale features robustly at the same time.
+
+Once again let us look at things with a very concrete approach. Let us discretise the 
+domain of length $L_x$ with 7 cells, i.e. $i=0,\dots 6$ ($nnx=6$).
+We also prescribe the following boundary conditions (remember it is a 2nd order derivative in space, 
+so we need two of them): $T(x=0)=T_0=0$ and $T(x=L_x)=T_6=100$ (we assume that they 
+do not change with time for simplicity). Finally we assume that we 
+know $T_i^0$ for all $i$ and we wish to compute $T_i^1$.
+
+We then have:
+\begin{eqnarray}
+T_0^1 &=& 0 \nn\\
+-s T_{2}^{1} + (1+2s) T_{1}^{1} - s T_{0}^{1} &=& T_1^{0} \nn\\
+-s T_{3}^{1} + (1+2s) T_{2}^{1} - s T_{1}^{1} &=& T_2^{0} \nn\\
+-s T_{4}^{1} + (1+2s) T_{3}^{1} - s T_{2}^{1} &=& T_3^{0} \nn\\
+-s T_{5}^{1} + (1+2s) T_{4}^{1} - s T_{3}^{1} &=& T_4^{0} \nn\\
+-s T_{6}^{1} + (1+2s) T_{5}^{1} - s T_{4}^{1} &=& T_5^{0} \nn\\
+T_6^1 &=& 100\nn
+\end{eqnarray}
+or, 
+\[
+\underbrace{
+\left(
+\begin{array}{ccccccc}
+1 & 0 & 0 & 0 & 0 & 0 & 0  \\
+-s & 1+2s & -s & 0 & 0 & 0 & 0 \\
+0 & -s & 1+2s & -s & 0 & 0 & 0 \\
+0 & 0 & -s & 1+2s & -s & 0 & 0 \\
+0 & 0 & 0 & -s & 1+2s & -s & 0 \\
+0 & 0 & 0 & 0 & -s & 1+2s & -s \\
+0 & 0 & 0 & 0 & 0 & 0 & 1
+\end{array}
+\right)
+}_{\bm A}
+\cdot
+\underbrace{
+\left(
+\begin{array}{ccccccc}
+T_0^1 \\ T_1^1 \\ T_2^1 \\ T_3^1 \\ T_4^1 \\ T_5^1 \\ T_6^1  
+\end{array}
+\right)
+}_{\vec{T}}
+=
+\underbrace{
+\left(
+\begin{array}{ccccccc}
+0 \\ T_1^0\\ T_2^0\\ T_3^0\\ T_4^0\\ T_5^0 \\ 100
+\end{array}
+\right)
+}_{\vec{b}}
+\]
+
+As opposed to the explicit approach we must solve a linear system which size is given 
+by the total number of nodes/points $nnx$ in order to compute a new temperature field.
+
+In summary, an implicit method requires us to solve ${\bm A}\cdot\vec{T} = \vec{b}$ with
+\begin{itemize}
+\item ${\bm A}$ is a $nnx \times nnx$  sparse matrix,
+\item ${\vec b}$ is a known vector of size $nnx$ (often called the 'right-hand side', or {\color{olive} rhs})
+\item ${\vec T}$ the vector of unknowns.
+\end{itemize}
+
+
+
+

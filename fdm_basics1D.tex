@@ -1,4 +1,5 @@
-Suppose we have a function $f(x)$, which is continuous and differentiable over the range of interest. 
+In what follows we suppose that we have a function $f(x)$, 
+which is continuous and differentiable over the range of interest. 
 Let us also assume that we know the value $f(x_0)$ and all the derivatives at $x = x_0$. 
 
 %.......................................
@@ -23,14 +24,20 @@ We can substract $f(x_0)$ to each side of the equation and divide by $h$:
 and we can then express the first derivative of $f$ as follows:
 \[
 \frac{\partial f}{\partial x}(x_0) = \frac{f(x_0+h)-f(x_0)}{h} - 
-\frac{h}{2!} \frac{\partial^2 f}{\partial x^2}(x_0) - \dots
+\frac{h}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  \dots
 \]
-In other words, the derivative of a function $f$ at a point $x$ 
-is defined by the limit:
+or, replacing the term in $h$ by ${\cal O}(h)$:
 \[
-f'(x)=\lim_{h\rightarrow 0} \frac{f(x+h)-f(x)}{h}
+\boxed{
+\frac{\partial f}{\partial x}(x_0) = \frac{f(x_0+h)-f(x_0)}{h} + {\cal O}(h)
+}
 \]
+${\cal O}(h)$ indicates that the full solution would require additional terms of order $h$, $h^2$, 
+and so on. ${\cal O}$ is called the {\color{olive}truncation error}: if the distance $h$ 
+is made smaller and smaller, the (numerical approximation) error decreases $\propto$ $h$ in this case.
 
+In the context of a discrete calculation on a set of discrete points $x_i$
+we can compute the first order derivative of $f$ as an approximation:
 
 \begin{verbatim}
 
@@ -41,20 +48,20 @@ f'(x)=\lim_{h\rightarrow 0} \frac{f(x+h)-f(x)}{h}
 
 \end{verbatim}
 
-In the context of a discrete calculation on a set of discrete points $x_i$
-we can compute the first order derivative of $f$ as an approximation:
-\begin{mdframed}[backgroundcolor=blue!5]
+
 \[
+\boxed{
 \frac{\partial f}{\partial x}(x_i) = \frac{f_{i+1}-f_i}{h} + {\cal O}(h) 
+}
+\qquad
+\qquad
+\text{(forward difference)} 
 \]
-\end{mdframed}
 where functions $f_i = f (x_i)$ are evaluated at discretely spaced $x_i$ with $x_{i+1} = x_i + h$ 
 (i.e. $h=x_{i+1}-x_i$), where the node spacing, or resolution, $h$ is assumed constant.
+We also introduce the notation $f_i'=f'(x_i)=\frac{\partial f}{\partial x} (x_i)$. 
 
 
-${\cal O}(h)$ indicates that the full solution would require additional terms of order $h$, $h^2$, 
-and so on. ${\cal O}$ is called the {\color{olive}truncation error}: if the distance $h$ is made smaller and smaller,
-the (numerical approximation) error decreases $\propto$ $h$ in this case.
 
 The {\bf forward FD derivative} as expressed above is called {\bf first order accurate},
 and this means that very small $h$ is required for an accurate solution.
@@ -70,51 +77,75 @@ h \frac{\partial f}{\partial x}(x_0)  +
 \]
 The {\bf backward FD derivative} then writes:
 \[
+\boxed{
 \frac{\partial f}{\partial x}(x_i) = \frac{f_{i}-f_{i-1}}{h} + {\cal O}(h) 
+}
+\qquad
+\qquad
+\text{(backward difference)} 
 \]
+
 \index{general}{Backward FD Derivative}
 
-Introducing the notations:
+
+
+Alternatively, we can substract the backward formula from the forward one 
+and divide by two. Concretely, we start from 
 \[
-f_i'=f'(x_i)=\frac{\partial f}{\partial x} (x_i)
+f(x_0+h)=f(x_0)+ 
+h \frac{\partial f}{\partial x}(x_0)  + 
+\frac{h^2}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  + \dots  
 \]
-
-
-
-
-Alternatively, we can form the average of the first order accurate forward and backward schemes,
-and dividing by two.
-The result is the {\bf central difference} approximation,
-{\bf second order accurate} of the first derivative
+and substract the following from it
 \[
-f_i' = \frac{f_{i+1}-f_{i-1}}{2h} + {\cal O}(h^3)
+f(x_0-h)=f(x_0)-
+h \frac{\partial f}{\partial x}(x_0)  + 
+\frac{h^2}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  + \dots 
 \]
-The denominator is $2h$ because it is the distance between point $x_{i-1}$ and $x_{i+1}$.
+to obtain:
+\[
+f(x_0+h)-f(x_0-h) = 2h \frac{\partial f}{\partial x}(x_0)  +{\cal O}(h^3) 
+\]
+or, 
+\[
+\frac{\partial f}{\partial x}(x_0)  = \frac{ f(x_0+h)-f(x_0-h)}{2h} +{\cal O}(h^2) 
+\]
+We see that the resulting {\bf central difference} approximation is 
+{\bf second order accurate}. In the discrete world one then write
+\[
+\boxed{
+f_i' = \frac{f_{i+1}-f_{i-1}}{2h} + {\cal O}(h^2)
+}
+\qquad
+\qquad
+\text{(central difference)} 
+\]
+Simply put, the denominator is $2h$ because it is the distance between point $x_{i-1}$ and $x_{i+1}$.
+
+
+\begin{center}
+\includegraphics[width=7cm]{images/fdm/fd1}\\
+{\captionfont 
+3 types of the finite difference method. Central gives the best approximation of the derivative.
+Taken from Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Finite_difference}}
+}
+\end{center}
 
 %.......................................
 \subsubsection{Second order derivatives}
 
-We define 
-\[
-f_i''=f''(x_i) = \frac{\partial^2 f}{\partial x^2} (x_i)
-\]
-
-\begin{center}
-\includegraphics[width=6cm]{images/fdm/fd1}\\
-Stolen from wikipedia - REDO
-\end{center}
-
+Many PDEs contain second order derivatives so we now turn to these and 
+define $f_i''=f''(x_i) = \frac{\partial^2 f}{\partial x^2} (x_i)$. 
 
 %______________________________
-\paragraph{Second order forward}. 
-
-Let us define $g=f'$. Then 
+\paragraph{Second order forward} 
+Let us define a function $g(x)$ such that $g=f'$. Then we have seen that  
 \[
 g_i' = \frac{g_{i+1}-g_{i}}{h}
 \]
 On the one hand, we have $g_i'=g'(x_i)=f''(x_i)=f_i''$ and on the other hand
 \[
-g_i' = \frac{f_{i+1}'-f_{i}'}{h}
+\frac{g_{i+1}-g_{i}}{h} = \frac{f_{i+1}'-f_{i}'}{h}
 \]
 so we can use the forward derivative formula twice for $f_{i+1}'$ and $f_{i}'$ and 
 obtain the following second order derivatives of $f$:
@@ -133,8 +164,7 @@ which is the {\bf first order accurate}, {\bf forward difference} approximation 
 second order derivatives at $x_{i}$.
 
 %______________________________
-\paragraph{Second order backward}. 
-
+\paragraph{Second order backward}
 Likewise, we obtain the following formula when using the backward derivative twice:
 
 \[
@@ -157,22 +187,21 @@ By adding the taylor expansions (with $+h$ and $-h$)
 a {\bf second order accurate}  approximation of the second derivative is obtained.
 We start from 
 
-\[
-f(x_0+h)=f(x_0)+ 
+\begin{eqnarray}
+f(x_0+h)&=&f(x_0)+ 
 h \frac{\partial f}{\partial x}(x_0)  + 
 \frac{h^2}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  +
 \dots  +
 \frac{h^n}{n!} \frac{\partial^n f}{\partial x^n}(x_0)  
-+ {\cal O}(h^{n+1})
-\]
-\[
-f(x_0-h)=f(x_0)+ 
++ {\cal O}(h^{n+1}) \nn
+\\
+f(x_0-h)&=&f(x_0) 
 -h \frac{\partial f}{\partial x}(x_0)  + 
 \frac{h^2}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  +
 \dots  +
-\frac{h^n}{n!} \frac{\partial^n f}{\partial x^n}(x_0)  
+\frac{(-h)^n}{n!} \frac{\partial^n f}{\partial x^n}(x_0)  
 + {\cal O}(h^{n+1})
-\]
+\end{eqnarray}
 and we see that adding the first equation to the second yields
 
 \[
@@ -180,10 +209,8 @@ f(x_0+h) + f(x_0-h) =2 f(x_0)+
 \underbrace{h \frac{\partial f}{\partial x}(x_0)   
 -h \frac{\partial f}{\partial x}(x_0)}_{=0}  + 
 \frac{h^2}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  +
-\frac{h^2}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  +
-\dots  +
-\frac{h^n}{n!} \frac{\partial^n f}{\partial x^n}(x_0)  
-+ {\cal O}(h^{n+1})
+\frac{h^2}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  
++ {\cal O}(h^{3})
 \]
 or, 
 \[
@@ -193,33 +220,36 @@ or,
 \] 
 which translates into
 \[
-f_{i}''=\frac{f_{i+1}-2f_i+f_{i-1}}{h^2} 
+\boxed{
+f_{i}''=\frac{f_{i+1}-2f_i+f_{i-1}}{h^2} + {\cal O}(h)
+}
+\qquad
+\qquad
+\text{second order central difference}
 \]
 
-
+Another way to arrive at the same expression is to write the expansion at $x_0 \pm h/2$, 
+i.e. at the (convenient, yet inexistant) half points $i\pm 1/2$:
 \begin{verbatim}
-
-                         x_{i-1/2)           x_{i+1/2}
-          --------|----------+----------|---------+----------|-------------> x
-                x_{i-1}                x_i                x_{i+1}
-
+     
+                              x_{i-1/2)           x_{i+1/2}
+               --------|----------+----------|---------+----------|-------------> x
+                     x_{i-1}                x_i                x_{i+1}
 
 \end{verbatim}
-Another way to arrive at the same expression is to write the expansion at $x_0 \pm h/2$, 
-i.e. at the (convenient yet inexistant) half points $i\pm 1/2$:
+
 \[
 f_{i+1/2}'=\frac{f_{i+1}-f_i}{h}
 \quad\quad
 \quad\quad
 f_{i-1/2}'=\frac{f_{i}-f_{i-1}}{h}
 \]
-\begin{mdframed}[backgroundcolor=blue!5]
 \[
 f_i''=\frac{f_{i+1/2}'-f_{i-1/2}'}{h} = 
 \frac{f_{i+1}-2f_i+f_{i-1}}{h^2} 
 \]
-\end{mdframed}
-Note that derivatives of the form (see Heat Transport Equation) 
+
+Note that derivatives of the form (see heat transport equation in Section~\ref{ss:hte}) 
 \[
 \frac{\partial }{\partial x} \left(  k  \frac{\partial f}{\partial x} \right)
 \]
@@ -231,19 +261,10 @@ where $k$ is a function of space, should be formed as follows
 \]
 where $k_{i\pm 1/2}$ is evaluated between the points to maintain the second order accuracy.
 
-{\tiny
-Note: If $k$ has strong jumps from one grid point to another that are not aligned with
-the grid-nodes, most second-order methods will show first order accuracy at best.}
-
-
-
-
-
-
-
-
-
-
+\begin{remark}
+If the heat conductivity $k$ shows strong jumps from one grid point to another that are not aligned with
+the grid-nodes, most second-order methods will show first order accuracy at best.
+\end{remark}
 
 
 
