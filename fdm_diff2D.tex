@@ -1,0 +1,302 @@
+We now revisit the transient heat equation, this time with sources/sinks for 2D problems.
+The heat equation is 
+\[
+\rho C_p \frac{\partial T}{\partial t} =
+\vec\nabla \cdot k \vec\nabla T + Q 
+\]
+which simply writes as follows when Cartesian coordinates are used:
+\[
+\rho C_p \frac{\partial T}{\partial t} = 
+\frac{\partial }{\partial x} \left(  k  \frac{\partial T}{\partial x} \right)+
+\frac{\partial }{\partial y} \left(  k  \frac{\partial T}{\partial y} \right)+
+Q
+\]
+where $Q$ is the radiogenic heat production.
+
+If the heat conductivity is constant, it writes:
+\[
+\frac{\partial T}{\partial t} =
+\kappa \left(  \frac{\partial^2 T}{\partial x^2} +   \frac{\partial^2 T}{\partial y^2} \right)+
+\frac{Q}{\rho C_p}
+\]
+
+In order to solve this equation over the Cartesian domain of size $L_x \times L_y$
+we need to generate a mesh as shown hereunder:
+\begin{center}
+\includegraphics[width=8cm]{images/fdm/fdgrid}
+\end{center}
+The spacing between the nodes in the $x$-direction is $h_x$ and $h_y$ is the spacing
+between the nodes in the vertical direction. There are now $np=nnx\times nny$ nodes in total.
+
+In one dimension, the subscript indicated the node $i$. In two dimensions we therefore 
+need two indices ${\color{brown}i}$ and ${\color{brown}j}$ 
+to identify a node, so that the temperature at node ${\color{brown}i},{\color{brown}j}$ 
+at time $n$ is denoted $T_{{\color{brown}i,j}}^n$.
+
+%The vector $\vec{T}$ contains all the temperature unknowns, so it is a vector that is $np$-long. 
+%But how should this vector be organised ? In other words, 
+One question remains: should we number nodes 
+row by row ? column by column ? randomly ? 
+These three approaches are shown hereunder: 
+
+\vspace{.5cm}
+
+\begin{minipage}[t]{\textwidth}
+\input{tikz_fdm5x4meshes}\\
+\begin{center}
+{\captionfont Left: row-wise numbering; middle: column-wise ordering; Right: random numbering.
+$nnx=5$, $nny=4$ and therefore $np=20$.
+}
+\end{center}
+\end{minipage}
+
+\vspace{.5cm}
+
+This is a critical point because the discretised PDE is formulated as a function of $T_{{\color{brown} i,j}}$ 
+with ${\color{brown}i}=0,\dot nnx-1$ and ${\color{brown}j}=0,\dots nny-1$ 
+but the vector $\vec{T}$ containing all these values
+is indexed by a single index ${\color{teal}k}=0,\dots np-1$. The numbering strategy determines how easy
+it is to go from $({\color{brown}i},{\color{brown}j})$ to ${\color{teal}k}$ and vice versa. 
+Very concretely again, where does $T_{\color{brown}3,4}$ should be placed in the global 
+vector of unknowns $\vec{T}$?
+
+We then need a (preferably simple/straightforward) 'function' 
+which associates to every $(i,j)$ a global index $k$. 
+For the first grid with row-wise numbering, we have 
+$0\leq {\color{brown}i} \leq 4$ , $0 \leq {\color{brown}j} \leq 3$ 
+so that $0 \leq {\color{teal}k} \leq 19$
+and it follows that 
+\[
+{\color{teal} k}={\color{brown}j}*nnx+{\color{brown}i}
+\]
+This is easy to verify: ${\color{brown}i}=3$ and ${\color{brown}j}=2$ 
+does correspond to the $13^{th} node$, 
+${\color{brown}i}=4$ and ${\color{brown}j}=1$ does correspond to the $9^{th} node$, etc ...
+
+\begin{minipage}[t]{\textwidth}
+\begin{center}
+\input{tikz_fdm5x4mesh}
+\end{center}
+\end{minipage}
+
+
+
+
+
+
+
+%.............................
+\paragraph{Explicit scheme} The simplest approach is an {\color{olive} FTCS} 
+(forward time, centered space) explicit method like in 1D:
+\[
+\frac{T_{{\color{brown}i,j}}^{n+1}-T_{{\color{brown}i,j}}^n}{\delta t}
+= \kappa
+\left(
+\frac{ T_{{\color{brown}i-1,j}}^{n}-2T_{{\color{brown}i,j}}^{n}+T_{{\color{brown}i+1,j}}^{n}  }{h_x^2} + 
+\frac{ T_{{\color{brown}i,j-1}}^{n}-2T_{{\color{brown}i,j}}^{n}+T_{{\color{brown}i,j+1}}^{n}  }{h_y^2}
+\right)
++\frac{Q_{{\color{brown}i,j}}^n}{\rho C_p}
+\]
+where we have assumed that the source term $Q$ can depend of space coordinates and therefore 
+appears as $Q_{i,j}$ in the equation.
+We define $s_x$ and $s_y$ as follows:
+\[
+s_x = \frac{\kappa \delta t}{h_x^2}
+\quad\quad
+s_y = \frac{\kappa \delta t}{h_y^2}
+\]
+so that
+\[
+T_{{\color{brown}i,j}}^{n+1} = T_{{\color{brown}i,j}}^n 
++ s_x ( T_{{\color{brown}i-1,j}}^{n}
+-2T_{{\color{brown}i,j}}^{n}+T_{i+1,j}^{n} ) 
++s_y ( T_{{\color{brown}i,j-1}}^{n}
+-2T_{{\color{brown}i,j}}^{n}
++T_{{\color{brown}i,j+1}}^{n} ) + 
+\frac{Q_{{\color{brown}i,j}}^n \delta t}{\rho C_p}
+\]
+The scheme is stable for  
+\[
+\delta t \leq \frac{\min(h_x^2,h_y^2)}{2 \kappa}
+\]
+Boundary conditions can be set the usual way. A constant (Dirichlet) temperature 
+at node $(i,j)$ is given by
+\[
+T_{i,j}=T_{bc} 
+\]
+where $T_{bc}$ is the prescribed temperature. 
+
+%...........................
+\paragraph{Implicit scheme} 
+If we now employ a fully implicit, unconditionally stable discretization scheme, the discretised 
+PDE becomes:
+\[
+\frac{T_{i,j}^{n+1}-T_{i,j}^n}{\delta t}
+= \kappa
+\left(
+\frac{ T_{i-1,j}^{n+1}-2T_{i,j}^{n+1}+T_{i+1,j}^{n+1}  }{h_x^2} + 
+\frac{ T_{i,j-1}^{n+1}-2T_{i,j}^{n+1}+T_{i,j+1}^{n+1}  }{h_y^2}
+\right)
++\frac{Q_{i,j}^n}{\rho C_p}
+\]
+
+Rearranging terms with $n+1$ on the left and terms with $n$ on the right hand side gives
+\[
+-s_x T_{i+1,j}^{n+1}-s_y T_{i,j+1}^{n+1} +(1+2s_x+2s_y)T_{i,j}^{n+1} -s_x T_{i-1,j}^{n+1} -s_y T_{i,j-1}^{n+1} 
+=
+T_{i,j}^n
++\frac{Q_{i,j}^n \delta t}{\rho C_p}
+\]
+which here again yields a linear system of equations written ${\bm A}\cdot {\vec T} = {\vec b}$
+where ${\bm A}$ is a $(np \times np)$ matrix.
+
+
+
+Boundary conditions are $T(x,y)=0$ on all sides, so all nodes 
+on the boundary have a prescribed zero temperature\footnote{We assume
+here again that these boundary conditions do not change with time.}:
+\begin{eqnarray}
+T_{\color{brown}0,0} = T_{\color{teal} 0} &=& 0 \nn\\
+T_{\color{brown}1,0} = T_{\color{teal} 1} &=& 0 \nn\\
+T_{\color{brown}2,0} = T_{\color{teal} 2} &=& 0 \nn\\
+T_{\color{brown}3,0} = T_{\color{teal} 3} &=& 0 \nn\\
+T_{\color{brown}4,0} = T_{\color{teal} 4} &=& 0 \nn\\
+T_{\color{brown}0,1} = T_{\color{teal} 5} &=& 0 \nn\\
+T_{\color{brown}4,1} = T_{\color{teal} 9} &=& 0 \nn\\
+T_{\color{brown}0,2} = T_{\color{teal} 10} &=& 0 \nn\\
+T_{\color{brown}4,2} = T_{\color{teal} 14} &=& 0 \nn\\
+T_{\color{brown}0,3} = T_{\color{teal} 15} &=& 0 \nn\\
+T_{\color{brown}1,3} = T_{\color{teal} 16} &=& 0 \nn\\
+T_{\color{brown}2,3} = T_{\color{teal} 17} &=& 0 \nn\\
+T_{\color{brown}3,3} = T_{\color{teal} 18} &=& 0 \nn\\
+T_{\color{brown}4,3} = T_{\color{teal} 19} &=& 0 \nn
+\end{eqnarray}
+In what follows we assume for simplicity and conciseness of notation that 
+$h_x=h_y=h$ so that $s_x=s_y=s$ and we will use the notationa $\tilde{Q}=Q \delta t/\rho C_p$
+The discretised PDE equation will now be applied to the interior nodes:
+\[
+-s T_{{\color{brown} i+1,j}}^{n+1}
+-s T_{{\color{brown}i,j+1}}^{n+1} 
++(1+4s)T_{{\color{brown}i,j}}^{n+1} 
+-s T_{{\color{brown}i-1,j}}^{n+1} 
+-s T_{{\color{brown}i,j-1}}^{n+1} 
+= T_{{\color{brown}i,j}}^n 
++\tilde{Q}_{{\color{brown}i,j}}^n
+\]
+
+\begin{itemize}
+\item For node ${\color{teal}k}=6$ (${\color{brown}i}=1,{\color{brown}j}=1$):
+\[
+-s T_{{\color{brown}2,1}}^{n+1}
+-s T_{{\color{brown}1,2}}^{n+1} 
++(1+4s)T_{{\color{brown}1,1}}^{n+1} 
+-s T_{{\color{brown}0,1}}^{n+1} 
+-s T_{{\color{brown}1,0}}^{n+1} 
+= T_{{\color{brown}1,1}}^n +\tilde{Q}_{{\color{brown}1,1}}^n
+\]
+or, 
+\[
+-s T_{\color{teal} 7}^{n+1}-s T_{\color{teal} 11}^{n+1} +(1+4s)T_{\color{teal} 6}^{n+1} -s T_{\color{teal} 5}^{n+1} -s T_{\color{teal} 1}^{n+1} 
+= T_{\color{teal} 6}^n +\tilde{Q}_{\color{teal} 6}^n
+\]
+
+\item For node $k=7$ ($i=2,j=1$):
+\item For node $k=8$ ($i=3,j=1$):
+\item For node $k=11$ ($i=1,j=2$):
+\item For node $k=12$ ($i=2,j=2$):
+\item For node $k=13$ ($i=3,j=2$):
+\end{itemize}
+
+
+
+\begin{landscape}
+\[
+\left(
+\begin{array}{cccccccccccccccccccc}
+1 & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\ %#0
+. & 1 & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\ %#1
+. & . & 1 & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\ %#2
+. & . & . & 1 & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\ %#3
+. & . & . & . & 1 & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\ %#4
+. & . & . & . & . & 1 & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\ %#5
+. & -s& . & . & . & -s& {1+4s} & -s& . & . & . & -s & . & . & . & . & . & . & . & . \\ %#6
+. & . & -s& . & . & . & -s& {1+4s} & -s& . & . & . & -s & . & . & . & . & . & . & .\\ %#7
+. & . & . & -s& . & . & . & -s & {1+4s} & -s & . & . & . & -s & . & . & . & . & . & . \\ %#8
+. & . & . & . & . & . & . & . & . & 1 & . & . & . & . & . & . & . & . & . & . \\ %#9
+. & . & . & . & . & . & . & . & . & . & 1 & . & . & . & . & . & . & . & . & . \\ %#10
+. & . & . & . & . & . &-s & . & . & . & -s& {1+4s} & -s& . & . & .  & -s& . & . & .\\ %#11
+. & . & . & . & . & . & . &-s & . & . & . & -s& {1+4s} & -s& . & . & .  & -s& . & .\\ %#12
+. & . & . & . & . & . & . & . &-s & . & . & . & -s& {1+4s} & -s& . & . & .  & -s & .\\ %#13
+. & . & . & . & . & . & . & . & . & . & . & . & . & . & 1 & . & . & . & . & . \\ %#14
+. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 1 & . & . & . & . \\ %#15
+. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 1 & . & . & . \\ %#16
+. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 1 & . & . \\ %#17
+. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 1 & . \\ %#18
+. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 1    %#19
+\end{array}
+\right)
+\cdot
+\underbrace{
+\left(
+\begin{array}{c}
+T_{\color{teal}0} \\ 
+T_{\color{teal}1} \\ 
+T_{\color{teal}2} \\ 
+T_{\color{teal}3} \\ 
+T_{\color{teal}4} \\ 
+T_{\color{teal}5} \\ 
+T_{\color{teal}6} \\ 
+T_{\color{teal}7} \\ 
+T_{\color{teal}8} \\ 
+T_{\color{teal}9} \\ 
+T_{\color{teal}10} \\ 
+T_{\color{teal}11} \\ 
+T_{\color{teal}12} \\ 
+T_{\color{teal}13} \\ 
+T_{\color{teal}14} \\ 
+T_{\color{teal}15} \\ 
+T_{\color{teal}16} \\ 
+T_{\color{teal}17} \\ 
+T_{\color{teal}18} \\ 
+T_{\color{teal}19} 
+\end{array}
+\right)
+}_{\vec T}
+=
+\underbrace{
+\left(
+\begin{array}{c}
+0\\ 
+0\\ 
+0\\ 
+0\\ 
+0\\ 
+0\\ 
+T_{{\color{teal}6}}^n + \tilde{Q}_{\color{teal}6} \\ 
+T_{{\color{teal}7}}^n + \tilde{Q}_{\color{teal}7} \\ 
+T_{{\color{teal}8}}^n + \tilde{Q}_{\color{teal}8} \\ 
+0\\ 
+0\\ 
+T_{{\color{teal}11}}^n + \tilde{Q}_{\color{teal}11} \\ 
+T_{{\color{teal}12}}^n + \tilde{Q}_{\color{teal}12} \\ 
+T_{{\color{teal}13}}^n + \tilde{Q}_{\color{teal}13} \\ 
+0\\ 
+0\\ 
+0\\ 
+0\\ 
+0\\ 
+0 
+\end{array}
+\right)
+}_{\vec b}
+\]
+\end{landscape}
+
+
+Note that we now have five diagonals filled with non-zero entries as opposed to three
+diagonals in the 1D case.
+
+
+
+
+

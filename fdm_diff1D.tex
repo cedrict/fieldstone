@@ -59,7 +59,9 @@ We obtain
 \]
 and finally
 \[
+\boxed{
 T_i^{n+1}=T_i^n + \delta t \; \kappa \frac{T_{i+1}^n - 2T_i^n + T_{i-1}^n}{h^2}
+}
 \]
 
 Because the temperature at the current time step $n$ is known,
@@ -143,6 +145,12 @@ so that
 \frac{T_{i}^{n}-T_i^{n-1}}{\delta t} 
 = \kappa \frac{T_{i+1}^n - 2T_i^n + T_{i-1}^n}{h^2}
 \]
+Note that this is often rewritten as follows in order to keep the unknwowns at time $n+1$:
+\[
+\frac{T_{i}^{n+1}-T_i^{n}}{\delta t} 
+= \kappa \frac{T_{i+1}^{n+1} - 2T_i^{n+1} + T_{i-1}^{n+1}}{h^2}
+\]
+
 It is a fully implicit scheme where the time derivative is taken backward.
 Let us define the dimensionless parameter $s$ as follows:
 \[
@@ -150,7 +158,9 @@ s=\frac{\kappa \delta t}{h^2}
 \]
 The previous equation can be rearranged as follows:
 \[
--s T_{i+1}^{n} + (1+2s) T_{i}^{n} - s T_{i-1}^{n} = T_i^{n-1}
+\boxed{
+-s T_{i+1}^{n+1} + (1+2s) T_{i}^{n+1} - s T_{i-1}^{n+1} = T_i^{n}
+}
 \]
 Note that in this case we no longer have an explicit relationship for 
 $T^{n+1}_{i-1}$, $T^{n+1}_i$ and $T^{n+1}_{i+1}$.
@@ -223,10 +233,74 @@ by the total number of nodes/points $nnx$ in order to compute a new temperature 
 
 In summary, an implicit method requires us to solve ${\bm A}\cdot\vec{T} = \vec{b}$ with
 \begin{itemize}
-\item ${\bm A}$ is a $nnx \times nnx$  sparse matrix,
+\item ${\bm A}$ is a $nnx \times nnx$  {\color{olive}sparse} matrix,
 \item ${\vec b}$ is a known vector of size $nnx$ (often called the 'right-hand side', or {\color{olive} rhs})
 \item ${\vec T}$ the vector of unknowns.
 \end{itemize}
+
+\begin{center}
+\includegraphics[width=13cm]{images/fdm/impexpl}\\
+Explicit FD discretisation
+\hspace{1cm}
+Implicit FD discretisation\\
+REDO THIS FIGURE!!
+\end{center}
+
+Looking at
+\[
+-s T_{i+1}^{n+1} + (1+2s) T_{i}^{n+1} - s T_{i-1}^{n+1} = T_i^{n}
+\]
+and dividing by $-s$ and letting $\delta t \rightarrow \infty$, we obtain:
+\[
+T_{i+1}^{n+1} -2 T_{i}^{n+1} + T_{i-1}^{n+1} = 0
+\]
+which is a central difference approximation of the steady state solution
+\[
+\frac{\partial^2 T }{\partial x^2}=0
+\]
+Therefore, the fully implicit scheme will always yield the right equilibrium solution 
+but may not capture small scale, transient features.
+
+
+\paragraph{Crank-Nicolson scheme} 
+It turns out that this fully implicit method is second order accurate in space but 
+only first order accurate in time,
+i.e. the error goes as ${\cal O}(h^3,\delta t^2)$.   VERIFY !!!!
+
+It is possible to write down a scheme which is second order accurate both in time and in space
+(i.e. ${\cal O}(h^3, \delta t^3))$, e.g. the {\color{olive}Crank-Nicolson} scheme 
+which is unconditionally stable (The method was developed by John Crank and Phyllis Nicolson 
+in the mid 20th century\footnote{\url{https://en.wikipedia.org/wiki/Crank-Nicolson_method}}).
+
+The Crank-Nicolson method is the time analog of central spatial differences and is given by
+
+\[
+\frac{T_{i}^{n+1}-T_i^n}{\delta t} 
+= \frac{\kappa}{2} \left[
+\frac{T_{i+1}^{n} - 2T_i^{n} + T_{i-1}^{n}}{h^2}
++
+\frac{T_{i+1}^{n+1} - 2T_i^{n+1} + T_{i-1}^{n+1}}{h^2}
+\right]
+\]
+We define $s=\kappa \delta t/ 2h^2$ so that the equation above can be rearranged as follows :
+\[
+-s T_{i+1}^{n+1} + (1+2s) T_{i}^{n+1} - s T_{i-1}^{n+1} = 
+s T_{i+1}^{n} + (1-2s) T_{i}^{n} + s T_{i-1}^{n} 
+\]
+
+
+Any partially implicit method is more tricky to compute as we need to infer the future solution 
+at time $n+1$ by solution (inversion) of a system of linear equations based on the known solution at time $n$. 
+
+\begin{center}
+\includegraphics[width=5cm]{images/fdm/cn}\\
+Crank-Nicolson stencil
+\end{center}
+
+
+
+
+
 
 
 
