@@ -1,5 +1,5 @@
 We now revisit the transient heat equation, this time with sources/sinks for 2D problems.
-The heat equation is 
+In the absence of advective heat transport, the heat equation is 
 \[
 \rho C_p \frac{\partial T}{\partial t} =
 \vec\nabla \cdot k \vec\nabla T + Q 
@@ -22,9 +22,14 @@ If the heat conductivity is constant, it writes:
 
 In order to solve this equation over the Cartesian domain of size $L_x \times L_y$
 we need to generate a mesh as shown hereunder:
+
+
+\begin{minipage}[t]{\textwidth}
 \begin{center}
-\includegraphics[width=8cm]{images/fdm/fdgrid}
+\input{tikz_fdm5x4mesh1}
 \end{center}
+\end{minipage}
+
 The spacing between the nodes in the $x$-direction is $h_x$ and $h_y$ is the spacing
 between the nodes in the vertical direction. There are now $np=nnx\times nny$ nodes in total.
 
@@ -43,11 +48,6 @@ These three approaches are shown hereunder:
 
 \begin{minipage}[t]{\textwidth}
 \input{tikz_fdm5x4meshes}\\
-\begin{center}
-{\captionfont Left: row-wise numbering; middle: column-wise ordering; Right: random numbering.
-$nnx=5$, $nny=4$ and therefore $np=20$.
-}
-\end{center}
 \end{minipage}
 
 \vspace{.5cm}
@@ -70,16 +70,14 @@ and it follows that
 {\color{teal} k}={\color{brown}j}*nnx+{\color{brown}i}
 \]
 This is easy to verify: ${\color{brown}i}=3$ and ${\color{brown}j}=2$ 
-does correspond to the $13^{th} node$, 
-${\color{brown}i}=4$ and ${\color{brown}j}=1$ does correspond to the $9^{th} node$, etc ...
+indeed corresponds to node \# 13, 
+${\color{brown}i}=4$ and ${\color{brown}j}=1$ corresponds to node \# 9, etc ...
 
 \begin{minipage}[t]{\textwidth}
 \begin{center}
-\input{tikz_fdm5x4mesh}
+\input{tikz_fdm5x4mesh2}
 \end{center}
 \end{minipage}
-
-
 
 
 
@@ -98,7 +96,7 @@ ${\color{brown}i}=4$ and ${\color{brown}j}=1$ does correspond to the $9^{th} nod
 +\frac{Q_{{\color{brown}i,j}}^n}{\rho C_p}
 \]
 where we have assumed that the source term $Q$ can depend of space coordinates and therefore 
-appears as $Q_{i,j}$ in the equation.
+appears as $Q_{{\color{brown}i},{\color{brown}j}}$ in the equation.
 We define $s_x$ and $s_y$ as follows:
 \[
 s_x = \frac{\kappa \delta t}{h_x^2}
@@ -109,7 +107,8 @@ so that
 \[
 T_{{\color{brown}i,j}}^{n+1} = T_{{\color{brown}i,j}}^n 
 + s_x ( T_{{\color{brown}i-1,j}}^{n}
--2T_{{\color{brown}i,j}}^{n}+T_{i+1,j}^{n} ) 
+-2T_{{\color{brown}i,j}}^{n}
++T_{{\color{brown}i+1,j}}^{n} ) 
 +s_y ( T_{{\color{brown}i,j-1}}^{n}
 -2T_{{\color{brown}i,j}}^{n}
 +T_{{\color{brown}i,j+1}}^{n} ) + 
@@ -119,33 +118,65 @@ The scheme is stable for
 \[
 \delta t \leq \frac{\min(h_x^2,h_y^2)}{2 \kappa}
 \]
-Boundary conditions can be set the usual way. A constant (Dirichlet) temperature 
-at node $(i,j)$ is given by
+Boundary conditions can be set the usual way: for example a constant (Dirichlet) temperature 
+at node $({\color{brown}i},{\color{brown}j})$ is given by
 \[
-T_{i,j}=T_{bc} 
+T_{{\color{brown}i},{\color{brown}j}}=T_{bc} 
 \]
 where $T_{bc}$ is the prescribed temperature. 
+
+
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+\begin{center}
+\includegraphics[width=0.8cm]{images/garftr} \\
+{\color{orange}Exercise 5}
+\end{center}
+
+The domain is $L_x \times L_y = 10\times 5$km. 
+Its initial temperature is $T=111\degree$C for $y<x$
+and $T=222\degree$C otherwise.
+Boundary conditions $T=150$ are prescribed on all four sides.
+Physical parameters are $\kappa=10^{-6}$.
+Compute the steady state temperature in the domain.
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+
+
+
+
+
+
+
+
+
+
 
 %...........................
 \paragraph{Implicit scheme} 
 If we now employ a fully implicit, unconditionally stable discretization scheme, the discretised 
 PDE becomes:
 \[
-\frac{T_{i,j}^{n+1}-T_{i,j}^n}{\delta t}
+\frac{T_{{\color{brown}i},{\color{brown}j}}^{n+1}-T_{i,j}^n}{\delta t}
 = \kappa
 \left(
-\frac{ T_{i-1,j}^{n+1}-2T_{i,j}^{n+1}+T_{i+1,j}^{n+1}  }{h_x^2} + 
-\frac{ T_{i,j-1}^{n+1}-2T_{i,j}^{n+1}+T_{i,j+1}^{n+1}  }{h_y^2}
+\frac{ T_{{\color{brown}i-1,j}}^{n+1}-2T_{{\color{brown}i,j}}^{n+1}+T_{{\color{brown}i+1,j}}^{n+1} }{h_x^2} + 
+\frac{ T_{{\color{brown}i,j-1}}^{n+1}-2T_{{\color{brown}i,j}}^{n+1}+T_{{\color{brown}i,j+1}}^{n+1} }{h_y^2}
 \right)
-+\frac{Q_{i,j}^n}{\rho C_p}
++\frac{Q_{{\color{brown}i,j}}^n}{\rho C_p}
 \]
-
 Rearranging terms with $n+1$ on the left and terms with $n$ on the right hand side gives
 \[
--s_x T_{i+1,j}^{n+1}-s_y T_{i,j+1}^{n+1} +(1+2s_x+2s_y)T_{i,j}^{n+1} -s_x T_{i-1,j}^{n+1} -s_y T_{i,j-1}^{n+1} 
+-s_x T_{{\color{brown}i+1,j}}^{n+1}
+-s_y T_{{\color{brown}i,j+1}}^{n+1} 
++(1+2s_x+2s_y)T_{{\color{brown}i,j}}^{n+1} 
+-s_x T_{{\color{brown}i-1,j}}^{n+1} 
+-s_y T_{{\color{brown}i,j-1}}^{n+1} 
 =
-T_{i,j}^n
-+\frac{Q_{i,j}^n \delta t}{\rho C_p}
+T_{{\color{brown}i,j}}^n
++\frac{Q_{{\color{brown}i,j}}^n \delta t}{\rho C_p}
 \]
 which here again yields a linear system of equations written ${\bm A}\cdot {\vec T} = {\vec b}$
 where ${\bm A}$ is a $(np \times np)$ matrix.
@@ -172,7 +203,7 @@ T_{\color{brown}3,3} = T_{\color{teal} 18} &=& 0 \nn\\
 T_{\color{brown}4,3} = T_{\color{teal} 19} &=& 0 \nn
 \end{eqnarray}
 In what follows we assume for simplicity and conciseness of notation that 
-$h_x=h_y=h$ so that $s_x=s_y=s$ and we will use the notationa $\tilde{Q}=Q \delta t/\rho C_p$
+$h_x=h_y=h$ so that $s_x=s_y=s$ and we will use the notation $\tilde{Q}=Q \delta t/\rho C_p$.
 The discretised PDE equation will now be applied to the interior nodes:
 \[
 -s T_{{\color{brown} i+1,j}}^{n+1}
@@ -200,17 +231,89 @@ or,
 = T_{\color{teal} 6}^n +\tilde{Q}_{\color{teal} 6}^n
 \]
 
-\item For node $k=7$ ($i=2,j=1$):
-\item For node $k=8$ ($i=3,j=1$):
-\item For node $k=11$ ($i=1,j=2$):
-\item For node $k=12$ ($i=2,j=2$):
-\item For node $k=13$ ($i=3,j=2$):
+\item For node ${\color{teal}k}=7$ (${\color{brown}i}=2,{\color{brown}j}=1$):
+\[
+-s T_{{\color{brown} 3,1}}^{n+1}
+-s T_{{\color{brown}2,2}}^{n+1} 
++(1+4s)T_{{\color{brown}2,1}}^{n+1} 
+-s T_{{\color{brown}1,1}}^{n+1} 
+-s T_{{\color{brown}2,0}}^{n+1} 
+= T_{{\color{brown}2,1}}^n 
++\tilde{Q}_{{\color{brown}2,1}}^n
+\]
+or,
+
+\item For node ${\color{teal}k}=8$ (${\color{brown}i}=3,{\color{brown}j}=1$):
+\[
+-s T_{{\color{brown} 4,1}}^{n+1}
+-s T_{{\color{brown}3,2}}^{n+1} 
++(1+4s)T_{{\color{brown}3,1}}^{n+1} 
+-s T_{{\color{brown}2,1}}^{n+1} 
+-s T_{{\color{brown}3,0}}^{n+1} 
+= T_{{\color{brown}3,1}}^n 
++\tilde{Q}_{{\color{brown}3,1}}^n
+\]
+or,
+\item For node ${\color{teal}k}=11$ (${\color{brown}i}=1,{\color{brown}j}=2$):
+\[
+-s T_{{\color{brown} i+1,j}}^{n+1}
+-s T_{{\color{brown}i,j+1}}^{n+1} 
++(1+4s)T_{{\color{brown}1,2}}^{n+1} 
+-s T_{{\color{brown}i-1,j}}^{n+1} 
+-s T_{{\color{brown}i,j-1}}^{n+1} 
+= T_{{\color{brown}1,2}}^n 
++\tilde{Q}_{{\color{brown}1,2}}^n
+\]
+or,
+\item For node ${\color{teal}k}=12$ (${\color{brown}i}=2,{\color{brown}j}=2$):
+\[
+-s T_{{\color{brown} 3,2}}^{n+1}
+-s T_{{\color{brown}2,3}}^{n+1} 
++(1+4s)T_{{\color{brown}2,2}}^{n+1} 
+-s T_{{\color{brown}1,2}}^{n+1} 
+-s T_{{\color{brown}2,1}}^{n+1} 
+= T_{{\color{brown}2,2}}^n 
++\tilde{Q}_{{\color{brown}2,2}}^n
+\]
+or,
+\[
+-s T_{{\color{teal} 13}}^{n+1}
+-s T_{{\color{teal} 17}}^{n+1} 
++(1+4s)T_{{\color{teal}12}}^{n+1} 
+-s T_{{\color{teal}11}}^{n+1} 
+-s T_{{\color{teal}7}}^{n+1} 
+= T_{{\color{teal}12}}^n 
++\tilde{Q}_{{\color{teal}12}}^n
+\]
+
+
+\item For node ${\color{teal}k}=13$ (${\color{brown}i}=3,{\color{brown}j}=2$):
+\begin{eqnarray}
+-s T_{{\color{brown} 4,2}}^{n+1}
+-s T_{{\color{brown}3,3}}^{n+1} 
++(1+4s)T_{{\color{brown}3,2}}^{n+1} 
+-s T_{{\color{brown}2,2}}^{n+1} 
+-s T_{{\color{brown}3,1}}^{n+1} 
+&=& T_{{\color{brown}3,2}}^n 
++\tilde{Q}_{{\color{brown}3,2}}^n \nn\\
+\Rightarrow \qquad
+-s T_{{\color{teal} 14}}^{n+1}
+-s T_{{\color{teal} 18}}^{n+1} 
++(1+4s)T_{{\color{teal}13}}^{n+1} 
+-s T_{{\color{teal}12}}^{n+1} 
+-s T_{{\color{teal}8}}^{n+1} 
+&=& T_{{\color{teal}13}}^n 
++\tilde{Q}_{{\color{teal}13}}^n \nn
+\end{eqnarray}
+
+
 \end{itemize}
 
 
 
 \begin{landscape}
 \[
+\underbrace{
 \left(
 \begin{array}{cccccccccccccccccccc}
 1 & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\ %#0
@@ -235,30 +338,31 @@ or,
 . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 1    %#19
 \end{array}
 \right)
+}_{\bm A}
 \cdot
 \underbrace{
 \left(
 \begin{array}{c}
-T_{\color{teal}0} \\ 
-T_{\color{teal}1} \\ 
-T_{\color{teal}2} \\ 
-T_{\color{teal}3} \\ 
-T_{\color{teal}4} \\ 
-T_{\color{teal}5} \\ 
-T_{\color{teal}6} \\ 
-T_{\color{teal}7} \\ 
-T_{\color{teal}8} \\ 
-T_{\color{teal}9} \\ 
-T_{\color{teal}10} \\ 
-T_{\color{teal}11} \\ 
-T_{\color{teal}12} \\ 
-T_{\color{teal}13} \\ 
-T_{\color{teal}14} \\ 
-T_{\color{teal}15} \\ 
-T_{\color{teal}16} \\ 
-T_{\color{teal}17} \\ 
-T_{\color{teal}18} \\ 
-T_{\color{teal}19} 
+T_{{\color{teal}0}}^{n+1} \\ 
+T_{{\color{teal}1}}^{n+1} \\ 
+T_{{\color{teal}2}}^{n+1} \\ 
+T_{{\color{teal}3}}^{n+1} \\ 
+T_{{\color{teal}4}}^{n+1} \\ 
+T_{{\color{teal}5}}^{n+1} \\ 
+T_{{\color{teal}6}}^{n+1} \\ 
+T_{{\color{teal}7}}^{n+1} \\ 
+T_{{\color{teal}8}}^{n+1} \\ 
+T_{{\color{teal}9}}^{n+1} \\ 
+T_{{\color{teal}10}}^{n+1} \\ 
+T_{{\color{teal}11}}^{n+1} \\ 
+T_{{\color{teal}12}}^{n+1} \\ 
+T_{{\color{teal}13}}^{n+1} \\ 
+T_{{\color{teal}14}}^{n+1} \\ 
+T_{{\color{teal}15}}^{n+1} \\ 
+T_{{\color{teal}16}}^{n+1} \\ 
+T_{{\color{teal}17}}^{n+1} \\ 
+T_{{\color{teal}18}}^{n+1} \\ 
+T_{{\color{teal}19}}^{n+1} 
 \end{array}
 \right)
 }_{\vec T}
@@ -290,13 +394,89 @@ T_{{\color{teal}13}}^n + \tilde{Q}_{\color{teal}13} \\
 \right)
 }_{\vec b}
 \]
+Note that we now have five diagonals filled with non-zero entries as opposed to three
+diagonals in the 1D case.
 \end{landscape}
 
 
-Note that we now have five diagonals filled with non-zero entries as opposed to three
-diagonals in the 1D case.
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+\begin{center}
+\includegraphics[width=0.8cm]{images/garftr} \\
+{\color{orange}Exercise 6}
+\end{center}
+
+Same exercise as exercise 5, but now with implicit method.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
 
 
 
 
 
+
+Looking at this matrix, it is clear that this approach is sub-optimal: for such a small grid counting
+20 nodes, the boundary conditions enforce the temperature on 14 of them, so that these
+temperatures should/could be removed from the list of unknowns, leaving a vector 
+of unknowns $\vec{T}$ of size 6 (the number of nodes which are not on the boundary).
+As a consequence, we would have to solve a $6\times 6$ linear system, as opposed to a $20\times 20$ one!
+
+In this case, we focus again on nodes 6,7,8,11,12,13.
+we start from 
+\[
+-s T_{\color{teal} 7}^{n+1}-s T_{\color{teal} 11}^{n+1} +(1+4s)T_{\color{teal} 6}^{n+1} -s T_{\color{teal} 5}^{n+1} -s T_{\color{teal} 1}^{n+1} 
+= T_{\color{teal} 6}^n +\tilde{Q}_{\color{teal} 6}^n
+\]
+but we know that the boundary conditions impose that $T_1=0$ and $T_5=0$ so that the equation above simplifies to:
+\[
+-s T_{\color{teal} 7}^{n+1}-s T_{\color{teal} 11}^{n+1} +(1+4s)T_{\color{teal} 6}^{n+1} 
+= T_{\color{teal} 6}^n +\tilde{Q}_{\color{teal} 6}^n
+\]
+
+These 6 equations can finally be combined in the expected smaller linear system:
+\[
+\underbrace{
+\left(
+\begin{array}{cccccc}
+1+4s & -s & . & . & . & -s \\
+-s & 1+4s & -s & . & -s & . \\
+. & -s & 1+4s & . & . & -s \\ 
+-s & . & -s & 1+4s & -s & . \\
+. & -s & . & -s & 1+4s & -s \\
+. & . & -s & . & -s & 1+4s 
+\end{array}
+\right)
+}_{\bm A}
+\cdot
+\underbrace{
+\left(
+\begin{array}{c}
+T_{{\color{teal}6}}^{n+1} \\ 
+T_{{\color{teal}7}}^{n+1} \\ 
+T_{{\color{teal}8}}^{n+1} \\ 
+T_{{\color{teal}11}}^{n+1} \\ 
+T_{{\color{teal}12}}^{n+1} \\ 
+T_{{\color{teal}13}}^{n+1} 
+\end{array}
+\right)
+}_{\vec T}
+=
+\underbrace{
+\left(
+\begin{array}{c}
+T_{{\color{teal}6}}^n + \tilde{Q}_{\color{teal}6} \\ 
+T_{{\color{teal}7}}^n + \tilde{Q}_{\color{teal}7} \\ 
+T_{{\color{teal}8}}^n + \tilde{Q}_{\color{teal}8} \\ 
+T_{{\color{teal}11}}^n + \tilde{Q}_{\color{teal}11} \\ 
+T_{{\color{teal}12}}^n + \tilde{Q}_{\color{teal}12} \\ 
+T_{{\color{teal}13}}^n + \tilde{Q}_{\color{teal}13} 
+\end{array}
+\right)
+}_{\vec b}
+\]
+
+
+STENCILS in 2D? 
