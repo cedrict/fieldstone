@@ -3,6 +3,8 @@ import time as timing
 from scipy.sparse import lil_matrix
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
+from scipy.special import erf
+import velocity
 
 #------------------------------------------------------------------------------
 # defining velocity and pressure shape functions
@@ -107,6 +109,7 @@ sTnodes=[0,0,1,0.5,0.5,0.0]
 cm=0.01
 year=365.25*3600.*24.
 Kelvin=273
+R=8.3145
 
 print("-----------------------------")
 print("----------fieldstone---------")
@@ -124,14 +127,39 @@ ndofT=1  # number of temperature degrees of freedom
 # input parameters
 
 #filename='subduction_mesh_high_res2.msh'
-filename='subduction_mesh_vel_ramp_sub_channel.msh'
-Lx=650e3
-Ly=250.7e3
-eta0=1e22
-vel=3*cm/year
-hcond=2.5
-hcapa=1250
-rho0=3300
+#filename='subduction_mesh.msh'
+#filename='subduction_mesh_channel_750.msh'
+filename='vankeken_channel_2km.msh'
+#filename='vankeken.msh'
+
+Lx=660e3
+Ly=600e3
+
+eta0=1e21  # vack08
+
+hcapa=1250 # vack08
+hcond=3    # vack08
+rho0=3300  # vack08
+kappa=hcond/rho0/hcapa
+
+eps=1e-9
+
+l1=1000.e3
+l2=50.e3
+l3=0.e3
+vel=5*cm/year
+angle=45./180.*np.pi  
+
+Q_diff=335e3
+Q_disl=540e3
+n_disl=3.5
+A_diff=1.32043e9
+A_disl=28968.6
+eta_max=1e26
+
+case='1a'
+#case='1b'
+#case='1c'
 
 ##########################################################
 # checking that all velocity shape functions are 1 on 
@@ -189,7 +217,7 @@ for line in f:
     columns=line.split()
     if counter>NV+7 and counter<NV+8+nel:
        l=len(columns)
-       if l==8:
+       if l<11:
           counter2+=1
     counter+=1
 #end for
@@ -223,7 +251,7 @@ for line in f:
     counter+=1
 #end for
 
-#np.savetxt('gridV.ascii',np.array([xV,yV]).T)
+np.savetxt('gridV.ascii',np.array([xV,yV]).T)
 
 ##########################################################
 # read in connectivity array
@@ -231,6 +259,8 @@ for line in f:
 
 iconV=np.zeros((mV,nel),dtype=np.int64)
 mat=np.zeros(nel,dtype=np.int64)
+    
+print (NVold+7+counter2,NVold+8+nel+counter2)
 
 f = open(filename,'r')
 counter=0
@@ -249,6 +279,9 @@ for line in f:
     #end if
     counter+=1
 #end for
+
+#print (iconV[:,0])
+#exit()
 
 ##########################################################
 # compute coordinate of middle node
@@ -420,26 +453,25 @@ start = timing.time()
 nx=np.zeros(NV,dtype=np.float64) 
 ny=np.zeros(NV,dtype=np.float64) 
 
-interfaces=np.zeros(NV,dtype=np.int32)  
-
-for iel in range(0,nel):
-    inode0=iconV[0,iel]
-    inode1=iconV[1,iel]
-    inode2=iconV[2,iel]
-    if interface[inode0]==101:
-       interfaces[inode0]=1
+#interfaces=np.zeros(NV,dtype=np.int32)  
+#for iel in range(0,nel):
+#    inode0=iconV[0,iel]
+#    inode1=iconV[1,iel]
+#    inode2=iconV[2,iel]
+#    if interface[inode0]==101:
+#       interfaces[inode0]=1
     #if interface[inode0]==103:
     #   interfaces[inode0]=1
     #if interface[inode0]==104:
     #   interfaces[inode0]=1
-    if interface[inode1]==101:
-       interfaces[inode1]=1
+#    if interface[inode1]==101:
+#       interfaces[inode1]=1
     #if interface[inode1]==103:
     #   interfaces[inode1]=1
     #if interface[inode1]==104:
     #   interfaces[inode1]=1
-    if interface[inode2]==101:
-       interfaces[inode2]=1
+#    if interface[inode2]==101:
+#       interfaces[inode2]=1
     #if interface[inode2]==103:
     #   interfaces[inode2]=1
     #if interface[inode2]==104:
@@ -456,7 +488,7 @@ for iel in range(0,nel):
     y0=yV[inode0]
     y1=yV[inode1]
     y2=yV[inode2]
-    if (interfaces[inode0]==1 and interfaces[inode1]==1):
+    if (interface[inode0]==101 and interface[inode1]==101):
        vx=abs(x1-x0)
        vy=abs(y1-y0)
        vnorm=np.sqrt(vx**2+vy**2)
@@ -469,7 +501,7 @@ for iel in range(0,nel):
        nx[inode1]+=ax
        ny[inode1]+=ay
     #end if
-    if (interface[inode0]==1 and interface[inode2]==1):
+    if (interface[inode0]==101 and interface[inode2]==101):
        vx=abs(x2-x0)
        vy=abs(y2-y0)
        vnorm=np.sqrt(vx**2+vy**2)
@@ -482,7 +514,7 @@ for iel in range(0,nel):
        nx[inode2]+=ax
        ny[inode2]+=ay
     #end if
-    if (interface[inode1]==1 and interface[inode2]==1):
+    if (interface[inode1]==101 and interface[inode2]==101):
        vx=abs(x2-x1)
        vy=abs(y2-y1)
        vnorm=np.sqrt(vx**2+vy**2)
@@ -526,39 +558,56 @@ for i in range(0,NV):
     if interface[i]==111:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+    #end if   
 
     #right
     if interface[i]==112:
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if yV[i]>-l2:
+          bc_fix[i*ndofV+0] = True ; bc_val[i*ndofV+0] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       elif case=='1b':
+          ui,vi=velocity.compute_corner_flow_velocity(xV[i],yV[i]+Ly,l1,l2,l3,angle,vel,Lx,Ly)
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ui
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vi
+       #end if   
+    #end if   
+
+    #bottom right
+    if case=='1b' and interface[i]==113 and xV[i]>602e3:
+       ui,vi=velocity.compute_corner_flow_velocity(xV[i],yV[i]+Ly,l1,l2,l3,angle,vel,Lx,Ly)
+       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ui
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vi
+    #end if   
 
     # bottom overriding plate
-    if interface[i]==105: 
+    if interface[i]==104: 
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+    #end if   
 
     # plate contact
     if interface[i]==102:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+    #end if   
 
     #top of slab ramp
-    #if interface[i]==103:
-    #   bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ny[i]*vel 
-    #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[i]*vel
-
-    #top of slab 
-    #if interface[i]==104:
-    #   bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ny[i]*vel 
-    #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[i]*vel
-
-    #inner slab ramp
     if interface[i]==101:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ny[i]*vel 
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[i]*vel
+    #end if   
 
-    if i==22608:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+#for iel in range(0,nel):
+#    if interface[iconV[0,iel]]==101 and interface[iconV[1,iel]]==104:
+#       print('AAA') 
+#       i=iconV[5,iel]
+#       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+#       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+#    if interface[iconV[1,iel]]==101 and interface[iconV[2,iel]]==104:
+#       print('BBB') 
+#    if interface[iconV[2,iel]]==101 and interface[iconV[0,iel]]==104:
+#       print('CCC') 
+
 
 print("setup boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -584,6 +633,7 @@ dNNNVdr= np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVds= np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 u      = np.zeros(NV,dtype=np.float64)           # x-component velocity
 v      = np.zeros(NV,dtype=np.float64)           # y-component velocity
+p      = np.zeros(NfemP,dtype=np.float64)        # pressure 
 
 for iel in range(0,nel):
 
@@ -648,6 +698,8 @@ for iel in range(0,nel):
 
         G_el-=b_mat.T.dot(N_mat)*weightq*jcob
 
+    #end for kq
+
     # impose b.c. 
     for k1 in range(0,mV):
         for i1 in range(0,ndofV):
@@ -708,28 +760,23 @@ print("build FE matrix: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-sol = np.zeros(Nfem,dtype=np.float64) 
-
-sparse_matrix=A_sparse.tocsr()
-sol=sps.linalg.spsolve(sparse_matrix,rhs)
-
-print("solve time: %.3f s" % (timing.time() - start))
-
-######################################################################
-# put solution into separate x,y velocity arrays
-######################################################################
-start = timing.time()
-
-u,v=np.reshape(sol[0:NfemV],(NV,2)).T
-p=sol[NfemV:Nfem]*pressure_scaling
+if case=='1a':
+   for i in range(0,NV):
+       u[i],v[i]=velocity.compute_corner_flow_velocity(xV[i],yV[i]+Ly,l1,l2,l3,angle,vel,Lx,Ly)
+   #end for
+else:
+   sol = np.zeros(Nfem,dtype=np.float64) 
+   sparse_matrix=A_sparse.tocsr()
+   sol=sps.linalg.spsolve(sparse_matrix,rhs)
+   u,v=np.reshape(sol[0:NfemV],(NV,2)).T
+   p=sol[NfemV:Nfem]*pressure_scaling
 
 print("     -> u (m,M) %.6e %.6e (cm/yr)" %(np.min(u)/cm*year,np.max(u)/cm*year))
 print("     -> v (m,M) %.6e %.6e (cm/yr)" %(np.min(v)/cm*year,np.max(v)/cm*year))
 print("     -> p (m,M) %.6e %.6e (MPa)" %(np.min(p)/1e6,np.max(p)/1e6))
-
 #np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
-print("split vel into u,v: %.3f s" % (timing.time() - start))
+print("solve time: %.3f s" % (timing.time() - start))
 
 ######################################################################
 # temperature nodes and connectivity 
@@ -764,25 +811,41 @@ iconT[0:mT,0:nel]=iconV[0:mT,0:nel]
 bc_fixT=np.zeros(NfemT,dtype=np.bool)  # boundary condition, yes/no
 bc_valT=np.zeros(NfemT,dtype=np.float64)  # boundary condition, value
 
-for i in range(0,NT):
-    #top boundary 
-    if yT[i]>-1:
-       bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = 0 + Kelvin
-    if xT[i]<1:
-       if yT[i]>-120e3:
-          bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = -yT[i]/120e3*1300+Kelvin 
-       else:
-          bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = 1300+Kelvin 
-       #end if
-    #end if
-    if xT[i]>Lx-1:
-       if yT[i]>-50e3:
-          bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = -yT[i]/50e3*1300+Kelvin 
-       elif u[i]<0:
-          bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = 1300+Kelvin 
-       #end if
-    #end if
+#for i in range(0,NT):
+#    #top boundary 
+#    if yT[i]>-1:
+#       bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = 0 + Kelvin
+#    if xT[i]<1:
+#       if yT[i]>-120e3:
+#          bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = -yT[i]/120e3*1300+Kelvin 
+#       else:
+#          bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = 1300+Kelvin 
+#       #end if
+#    #end if
+#    if xT[i]>Lx-1:
+#       if yT[i]>-50e3:
+#          bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = -yT[i]/50e3*1300+Kelvin 
+#       elif u[i]<0:
+#          bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = 1300+Kelvin 
+#       #end if
+#    #end if
 #end for
+
+
+for i in range(0,NT):
+    # top boundary - vack08
+    if yT[i]/Ly>-eps: #
+       bc_fixT[i]=True ; bc_valT[i]=273
+    # left boundary 
+    if xT[i]/Lx<eps:
+       bc_fixT[i]=True ; bc_valT[i]=273+(1573-273)*erf((-yT[i])/(2*np.sqrt(kappa*50e6*year)))
+    # right boundary 
+    if xT[i]/Lx>1-eps:
+       if yT[i]>-l2:
+          bc_fixT[i]=True ; bc_valT[i]=(-yT[i])/l2*1300+273
+       elif u[i]<0:
+          bc_fixT[i]=True ; bc_valT[i]=1300.+273 
+
 
 ######################################################################
 # build FE matrix  
@@ -994,6 +1057,137 @@ print("     -> qx_n (m,M) %.6e %.6e " %(np.min(qx_n),np.max(qx_n)))
 print("     -> qy_n (m,M) %.6e %.6e " %(np.min(qy_n),np.max(qy_n)))
 
 print("compute nodal heat flux: %.3f s" % (timing.time() - start))
+
+#################################################################
+# post-processing
+#################################################################
+
+#measuring T_{11,11}
+for i in range(0,NT):
+    if abs(xT[i]-60e3)<1 and abs(yT[i]+Ly-540e3)<1:
+       print ('result1:',xT[i],yT[i]+Ly,T[i]-273)
+
+diagfile=open('tempdiag.ascii',"w")
+for i in range(0,NT):
+    if abs(xT[i] + yT[i] ) <1: 
+       diagfile.write("%10e %10e %10e \n " %(xT[i],yT[i],T[i]-273))
+diagfile.close()
+
+# compute average temperature
+
+Tavrg=0.
+for iel in range(0,nel):
+    for kq in range(0,nqel):
+        rq=qcoords_r[kq]
+        sq=qcoords_s[kq]
+        weightq=qweights[kq]
+        N_mat[0:mT,0]=NNT(rq,sq)
+        dNNNdr[0:mT]=dNNTdr(rq,sq)
+        dNNNds[0:mT]=dNNTds(rq,sq)
+        # calculate jacobian matrix
+        jcb=np.zeros((ndim,ndim),dtype=np.float64)
+        for k in range(0,mT):
+            jcb[0,0]+=dNNNdr[k]*xT[iconT[k,iel]]
+            jcb[0,1]+=dNNNdr[k]*yT[iconT[k,iel]]
+            jcb[1,0]+=dNNNds[k]*xT[iconT[k,iel]]
+            jcb[1,1]+=dNNNds[k]*yT[iconT[k,iel]]
+        jcob=np.linalg.det(jcb)
+        Tq=0.
+        for k in range(0,mT):
+            Tq+=N_mat[k,0]*T[iconT[k,iel]]
+        Tavrg+=Tq*weightq*jcob
+    #end for
+#end for
+Tavrg/=(Lx*Ly)
+
+print ('Tavrg=',Tavrg)
+
+#################################################################
+#equidistant grid with 6 km spacing, which is a 111 × 101 matrix
+#stored row-wise starting in the top left corner.
+#We need to localise every point of this processing grid in the 
+#FE mesh, which is now done not so efficiently at all.
+#################################################################
+start = timing.time()
+
+nnnx=111
+nnny=101
+M=nnnx*nnny
+x = np.empty(M,dtype=np.float64)  # x coordinates
+y = np.empty(M,dtype=np.float64)  # y coordinates
+Tgrid1 = np.empty(M,dtype=np.float64)  # y coordinates
+Tgrid2 = np.empty(M,dtype=np.float64)  # y coordinates
+
+counter = 0
+for j in range(0,nnny):
+    for i in range(0,nnnx):
+        x[counter]=i*Lx/float(nnnx-1)
+        y[counter]=-j*Ly/float(nnny-1)
+        x[counter]=min(x[counter],(1-eps)*Lx)
+        x[counter]=max(x[counter],eps*Lx)
+        y[counter]=min(y[counter],-eps*Ly)
+        y[counter]=max(y[counter],-(1-eps)*Ly)
+        counter += 1
+    #end for
+#end for
+
+for i in range(0,M):
+    #print ('grid point ',i,x[i],y[i])
+    for iel in range(0,nel):
+        x1=xT[iconT[0,iel]] ; y1=yT[iconT[0,iel]]
+        x2=xT[iconT[1,iel]] ; y2=yT[iconT[1,iel]]
+        x3=xT[iconT[2,iel]] ; y3=yT[iconT[2,iel]]
+        denom=((y2-y3)*(x1-x3) + (x3-x2)*(y1-y3))
+        N0 = ((y2-y3)*(x[i]-x3) + (x3-x2)*(y[i]-y3)) / denom 
+        N1 = ((y3-y1)*(x[i]-x3) + (x1-x3)*(y[i]-y3)) / denom
+        N2 = 1-N0-N1
+        r=N1
+        s=N2
+        if 0<=N0 and N0<=1 and 0<=N1 and N1<=1 and 0<=N2 and N2<=1: #inside test 
+           N_mat[0:mT,0]=NNT(r,s)
+           Tgrid2[i]=np.sum(N_mat[0:mT,0]*T[iconT[0:mT,iel]])
+           Tgrid1[i]=N0*T[iconT[0,iel]] + N1*T[iconT[1,iel]] + N2*T[iconT[2,iel]]
+           #print('     -> iel=',iel,'T=',Tgrid1[i],Tgrid2[i])
+           break
+        #end if
+    #end for
+#end for
+
+np.savetxt('grid.ascii',np.array([x,y,Tgrid1,Tgrid2,Tgrid1-Tgrid2]).T,header='# x,y')
+
+#temperature $T(11,11)$ which is the 111+11=122th point
+inode=111*10+11-1
+print('     -> Tcorner=',Tgrid1[inode]-273,Tgrid2[inode]-273,x[inode],y[inode])
+
+#equation 17 in vack08
+Tslab=0.
+counter = 0
+for j in range(0,nnny):
+    for i in range(0,nnnx):
+        if i==j and i<=35:
+           Tslab+=Tgrid2[counter]**2
+        counter += 1
+    #end for
+#end for
+Tslab=np.sqrt(Tslab/36)
+print('     -> Tslab=',Tslab-273)
+
+#equation 18 in vack08
+Twedge=0.
+counter = 0
+for j in range(0,nnny):
+    for i in range(0,nnnx):
+        if  9<=i and i<=20:
+            if 9<=j and j<=i:
+               Twedge+=Tgrid2[counter]**2
+        counter += 1
+#    #end for
+#end for
+Twedge=np.sqrt(Twedge/78)
+print('     -> Twedge=',Twedge-273)
+
+
+print("post processing on grid: %.3f s" % (timing.time() - start))
 
 #################################################################
 start = timing.time()
