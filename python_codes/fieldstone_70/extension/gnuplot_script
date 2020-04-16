@@ -1,0 +1,25 @@
+set term pdf enhanced font "times,10pt"
+set grid
+set output 'conv.pdf'
+set log y
+set xlabel '#iter'
+set pointsize .5
+
+plot[][]\
+'conv.ascii' u 1:2 w lp t 'u',\
+'conv.ascii' u 1:3 w lp t 'v',\
+'conv.ascii' u 1:4 w lp t 'p',\
+
+set pointsize .25
+unset log y
+set xlabel 'p'
+set ylabel 'y'
+set output 'pressure.pdf'
+plot[][]\
+'pressure.ascii' u 3:2 pt 5 notitle
+
+set output 'tau.pdf'
+set xlabel 'tau'
+plot[][]\
+'tau.ascii' u 3:2 pt 5 notitle
+

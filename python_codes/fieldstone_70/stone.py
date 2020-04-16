@@ -70,8 +70,8 @@ def eta(xq,yq,exx,eyy,exy,p,T):
     #-------------------
     E2=max(1e-25,E2)
     eta_v = A**(-1./nnn)*np.exp(Q/nnn/Rgas/T)*E2**(1./nnn-1.)
-    sigmayield= p*np.sin(phi) + c*np.cos(phi) + eta_vp*E2
-    etaeff = sigmayield /(2.*E2)
+    sigmayield= p*np.sin(phi) + c*np.cos(phi) 
+    etaeff = sigmayield /(2.*E2)+ eta_vp
     etaeff=1./(1./eta_v+1./etaeff)
     if (xq-Lx/2)**2+(yq-Ly/2)**2 < 4e6:
        etaeff=1e20
@@ -98,16 +98,18 @@ Lx=100e3  # horizontal extent of the domain
 Ly= 30e3  # vertical extent of the domain 
 
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 5):
+if int(len(sys.argv) == 6):
    nelx  = int(sys.argv[1])
    nely  = int(sys.argv[2])
    visu  = int(sys.argv[3])
    niter = int(sys.argv[4])
+   bc    = int(sys.argv[5])
 else:
-   nelx = 120
-   nely = 40
+   nelx = 150
+   nely = 45
    visu = 1
-   niter= 25
+   niter= 100
+   bc   = +1
     
 nnx=2*nelx+1         # number of elements, x direction
 nny=2*nely+1         # number of elements, y direction
@@ -130,7 +132,7 @@ hy=Ly/nely
 gx=0.
 gy=-10
 
-velbc=-1e-15*Lx/2
+velbc=bc*1e-15*Lx/2
 
 eta_ref=1e23      # scaling of G blocks
 
@@ -406,7 +408,7 @@ for iter in range(0,niter):
             m2=iconP[k2,iel]
             rhs[NfemV+m2]+=h_el[k2]*eta_ref/Ly
 
-    print("build FE matrix: %.5f s nel= %d time/elt %.5f" % (time.time() - start, nel, (time.time()-start)/ nel,))
+    print("build FE matrix: %.5f s" % (time.time()-start))
 
     ######################################################################
     # solve system
@@ -430,7 +432,6 @@ for iter in range(0,niter):
     print("     -> p (m,M) %.4e %.4e Mpa  " %(np.min(p)/1e6,np.max(p)/1e6))
 
     #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
-    #np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
     print("split vel into u,v: %.3f s" % (time.time() - start))
 
@@ -439,6 +440,7 @@ for iter in range(0,niter):
     #pressure is Q1 so I need a single quad point in the middle of the 
     #face to carry out integration on edge.
     ######################################################################
+    start = time.time()
 
     intp=0
     for iel in range(0,nel):
@@ -448,8 +450,11 @@ for iter in range(0,niter):
     intp/=Lx
     p-=intp
 
+
     print('     -> intp=',intp)
     print("     -> p (m,M) %.4e %.4e Mpa  " %(np.min(p)/1e6,np.max(p)/1e6))
+
+    print("normalise pressure: %.3f s" % (time.time() - start))
 
     ######################################################################
 
@@ -470,7 +475,7 @@ for iter in range(0,niter):
 #========================================================================================
 
 ######################################################################
-# compute strainrate 
+# compute elemental strainrate 
 ######################################################################
 start = time.time()
 
@@ -522,23 +527,88 @@ print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
 print("compute press & sr: %.3f s" % (time.time() - start))
 
 #####################################################################
-# interpolate pressure onto velocity grid points
+# compute nodal strainrate and pressure on V grid. 
+#
+# 3--6--2
+# |  |  |
+# 7--8--5
+# |  |  |
+# 0--4--1
 #####################################################################
+start = time.time()
 
+rVnodes=[-1,+1,+1,-1,0,+1,0,-1,0]
+sVnodes=[-1,-1,+1,+1,-1,0,+1,0,0]
+    
+exx_n = np.zeros(NV,dtype=np.float64)  
+eyy_n = np.zeros(NV,dtype=np.float64)  
+exy_n = np.zeros(NV,dtype=np.float64)  
+count = np.zeros(NV,dtype=np.int16)  
 q=np.zeros(NV,dtype=np.float64)
 
 for iel in range(0,nel):
-    q[iconV[0,iel]]=p[iconP[0,iel]]
-    q[iconV[1,iel]]=p[iconP[1,iel]]
-    q[iconV[2,iel]]=p[iconP[2,iel]]
-    q[iconV[3,iel]]=p[iconP[3,iel]]
-    q[iconV[4,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
-    q[iconV[5,iel]]=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
-    q[iconV[6,iel]]=(p[iconP[2,iel]]+p[iconP[3,iel]])*0.5
-    q[iconV[7,iel]]=(p[iconP[3,iel]]+p[iconP[0,iel]])*0.5
-    q[iconV[8,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]]+p[iconP[3,iel]])*0.25
+        for i in range(0,mV):
+            rq=rVnodes[i]
+            sq=sVnodes[i]
+            NNNV[0:mV]=NNV(rq,sq)
+            dNNNVdr[0:mV]=dNNVdr(rq,sq)
+            dNNNVds[0:mV]=dNNVds(rq,sq)
+            NNNP[0:mP]=NNP(rq,sq)
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,mV):
+                jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+                jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
+                jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+                jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+            #end for
+            jcbi=np.linalg.inv(jcb)
+            for k in range(0,mV):
+                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+            #end for
+            e_xx=0.
+            e_yy=0.
+            e_xy=0.
+            for k in range(0,mV):
+                e_xx += dNNNVdx[k]*u[iconV[k,iel]]
+                e_yy += dNNNVdy[k]*v[iconV[k,iel]]
+                e_xy += 0.5*(dNNNVdy[k]*u[iconV[k,iel]]+dNNNVdx[k]*v[iconV[k,iel]])
+            #end for
+            inode=iconV[i,iel]
+            exx_n[inode]+=e_xx
+            eyy_n[inode]+=e_yy
+            exy_n[inode]+=e_xy
+            q[inode]+=np.dot(p[iconP[0:mP,iel]],NNNP[0:mP])
+            count[inode]+=1
+        #end for
+#end for
+    
+exx_n/=count
+eyy_n/=count
+exy_n/=count
+q/=count
 
-#np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
+print("     -> exx nodal (m,M) %.6e %.6e " %(np.min(exx_n),np.max(exx_n)))
+print("     -> eyy nodal (m,M) %.6e %.6e " %(np.min(eyy_n),np.max(eyy_n)))
+print("     -> exy nodal (m,M) %.6e %.6e " %(np.min(exy_n),np.max(exy_n)))
+print("     -> press nodal (m,M) %.5e %.5e " %(np.min(q),np.max(q)))
+
+#np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
+#np.savetxt('strainrate.ascii',np.array([xV,yV,exx_n,eyy_n,exy_n]).T,header='# x,y,exx,eyy,exy')
+
+print("compute nodal press & sr: %.3f s" % (time.time() - start))
+
+#####################################################################
+
+eta_n = np.zeros(NV,dtype=np.float64)  
+tau_n = np.zeros(NV,dtype=np.float64)  
+
+for i in range(0,NV):
+    eta_n[i]=eta(xV[i],yV[i],exx_n[i],eyy_n[i],exy_n[i],q[i],T[i])
+    e=np.sqrt(0.5*(exx_n[i]*exx_n[i]+eyy_n[i]*eyy_n[i])+exy_n[i]*exy_n[i])
+    tau_n[i]=2.*eta_n[i]*e
+
+np.savetxt('tau.ascii',np.array([xV,yV,tau_n]).T,header='# x,y,tau')
 
 #####################################################################
 # plot of solution
@@ -547,6 +617,9 @@ for iel in range(0,nel):
 # does, i.e. type=23. 
 
 if visu:
+
+   np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+
    filename = 'solution.vtu'
    vtufile=open(filename,"w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -605,7 +678,6 @@ if visu:
    for i in range(0,NV):
        vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
    vtufile.write("</DataArray>\n")
-
    #--
    vtufile.write("<DataArray type='Float32' Name='bc_fix u' Format='ascii'> \n")
    for i in range(0,NV):
@@ -621,12 +693,44 @@ if visu:
        else:
           vtufile.write("%10e \n" % 0.)
    vtufile.write("</DataArray>\n")
-
    #--
    vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
    for i in range(0,NV):
        vtufile.write("%10e \n" %q[i])
    vtufile.write("</DataArray>\n")
+
+   #--
+   vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10e \n" %exx_n[i])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10e \n" %eyy_n[i])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10e \n" %exy_n[i])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
+   for i in range(0,NV):
+       e=np.sqrt(0.5*(exx_n[i]*exx_n[i]+eyy_n[i]*eyy_n[i])+exy_n[i]*exy_n[i])
+       vtufile.write("%10e \n" %e)
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10e \n" %eta_n[i])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='tau' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10e \n" %tau_n[i])
+   vtufile.write("</DataArray>\n")
+
    #--
    vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
    for i in range(0,NV):

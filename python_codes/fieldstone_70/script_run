@@ -1,0 +1,15 @@
+#   nelx    nely    visu    niter   bc    
+
+python3 stone.py 100 30 1 15  1 
+mkdir results_compression
+mv *.ascii results_compression
+mv *.vtu results_compression
+
+python3 stone.py 100 30 1 15 -1 
+mkdir results_extension
+mv *.ascii results_extension
+mv *.vtu results_extension
+
+
+
+

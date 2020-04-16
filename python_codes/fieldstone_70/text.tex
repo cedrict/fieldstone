@@ -16,7 +16,8 @@ The model consists of a $100\times 30$km slice of Westerly Granite (Hansen \& Ca
 which comprises an imperfection at the center of the domain.
 This weak inclusion with a 2 km radius serves to initiate
 localized deformations. The model configuration is thus perfectly symmetric. 
-The model includes a vertical temperature gradient ($-15\degree$C/km), 
+The model includes a vertical temperature gradient ($-15\degree$C/km) (starting 
+at $20\degree$C at the surface), 
 a constant density (2700 kg/m$^3$), and the acceleration of gravity ($g_y=-10$m/s$^2$).
 The inclusion is characterrised by $\eta=10^{20}\text{Pa}\cdot \text{s}$.
 The domain is subjected to kinematic boundary conditions, which cause a pure shear stress
@@ -31,8 +32,8 @@ All boundaries are free slip. The material can behave in a ductile manner in the
 part of the domain (displaying temperature-dependent power law creep), and in a viscoplastic 
 manner in the upper, cold part of the domain. 
 The parameters are 
-$A=3.1623\cdot 10^{-26}Pa^{-n}s^{-1}$, $Q=186.5\cdot 10^3 J/mol$, $n=3.3$, $c=50MPa$, 
-$\phi=arctan(0.6)\simeq 31\degree$ and $\eta^{vp}=10^{21}$. 
+$A=3.1623\cdot 10^{-26}\text{Pa}^{-n}\cdot\text{s}^{-1}$, $Q=186.5\cdot 10^3 \text{J/mol}$, 
+$n=3.3$, $c=50$MPa, $\phi=arctan(0.6)\simeq 31\degree$ and $\eta^{vp}=10^{21}\text{Pa}\cdot\text{s}$. 
 
 The background strainrate is set such that $\dot{\varepsilon}_{bc}=10^{-15}s^{-1}$, i.e. 
 $v_{bc}=\pm \dot{\varepsilon}_{bc} L_x/2 $ on the sides and $v=\pm \dot{\varepsilon}_{bc} L_y/2 $
@@ -47,26 +48,57 @@ The effective viscosity at every quadrature point is computed as follows:
 with 
 \[
 \eta_{eff,v} = A^{-1/n} \dot{\varepsilon}^{-1+1/n} \exp \frac{Q}{nRT}
-\]
-and 
-\[
+\qquad
+\text{and}
+\qquad
 \eta_{eff,vp} = \frac{p \sin \phi + c \cos \phi}{2 \dot{\varepsilon}}  + \eta_{vp}
 \]
 For the first nonlinear iteration there is no pre-existing velocity or pressure field so 
 I then set $\dot{\varepsilon}=10^{-25}$, just so that the rheological model does not explode. 
-The viscosity is also maintained between $\eta_{min}=10^{19}$ and $\eta_{max}=10^{25}$.
+The viscosity is also maintained between $\eta_{min}=10^{19}\text{Pa}\cdot\text{s}$ 
+and $\eta_{max}=10^{25}\text{Pa}\cdot\text{s}$.
 
 TODO: a) compute nonlinear residual b) remove p nullspace from matrix directly c) plot visc/plast regimes
 
+\begin{center}
+\includegraphics[width=13cm]{python_codes/fieldstone_70/images/fig2}\\
+{\captionfont Figure taken from \cite{dudy20}}
+\end{center}
+
+explain tau plots
+
+\newpage
+%......................
+\paragraph{Extension}.
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_70/u}
-\includegraphics[width=7cm]{python_codes/fieldstone_70/v}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_70/vel}
-\includegraphics[width=7cm]{python_codes/fieldstone_70/q}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_70/e}
-\includegraphics[width=7cm]{python_codes/fieldstone_70/etaeff}\\
-extension, resolution 120x40, 25 nl iterations only.
+\includegraphics[width=7cm]{python_codes/fieldstone_70/extension/u}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/extension/v}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_70/extension/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/extension/q}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_70/extension/e}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/extension/etaeff}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_70/extension/conv.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_70/extension/pressure.pdf}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_70/extension/tau.pdf}\\
+extension, resolution 150x45, 100 nl iterations only.
+\end{center}
+
+\newpage
+%......................
+\paragraph{Compression}.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/compression/u}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/compression/v}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_70/compression/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/compression/q}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_70/compression/e}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/compression/etaeff}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_70/compression/conv.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_70/compression/pressure.pdf}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_70/compression/tau.pdf}\\
+extension, resolution 150x45, 100 nl iterations only.
 \end{center}
 
 
