@@ -8,3 +8,67 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+The setup is borrowed from Duretz et al (2020) \cite{dudy20}. One major difference is 1) no elasticity,
+2) no Newton solver.
+
+
+The model consists of a $100\times 30$km slice of Westerly Granite (Hansen \& Carter, 1983), 
+which comprises an imperfection at the center of the domain.
+This weak inclusion with a 2 km radius serves to initiate
+localized deformations. The model configuration is thus perfectly symmetric. 
+The model includes a vertical temperature gradient ($-15\degree$C/km), 
+a constant density (2700 kg/m$^3$), and the acceleration of gravity ($g_y=-10$m/s$^2$).
+The inclusion is characterrised by $\eta=10^{20}\text{Pa}\cdot \text{s}$.
+The domain is subjected to kinematic boundary conditions, which cause a pure shear stress
+state:
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_70/images/fig1}\\
+{\captionfont Figure taken from \cite{dudy20}}
+\end{center}
+
+All boundaries are free slip. The material can behave in a ductile manner in the lower, hot
+part of the domain (displaying temperature-dependent power law creep), and in a viscoplastic 
+manner in the upper, cold part of the domain. 
+The parameters are 
+$A=3.1623\cdot 10^{-26}Pa^{-n}s^{-1}$, $Q=186.5\cdot 10^3 J/mol$, $n=3.3$, $c=50MPa$, 
+$\phi=arctan(0.6)\simeq 31\degree$ and $\eta^{vp}=10^{21}$. 
+
+The background strainrate is set such that $\dot{\varepsilon}_{bc}=10^{-15}s^{-1}$, i.e. 
+$v_{bc}=\pm \dot{\varepsilon}_{bc} L_x/2 $ on the sides and $v=\pm \dot{\varepsilon}_{bc} L_y/2 $
+on the top and bottom boundaries.
+Pressure is normalised such that it is on average zero on the top boundary. 
+Picard iterarions are used. 
+
+The effective viscosity at every quadrature point is computed as follows:
+\[
+\eta_{eff} = \left( \frac{1}{\eta_{eff,v}}  + \frac{1}{\eta_{eff,vp}}  \right)^{-1}
+\]
+with 
+\[
+\eta_{eff,v} = A^{-1/n} \dot{\varepsilon}^{-1+1/n} \exp \frac{Q}{nRT}
+\]
+and 
+\[
+\eta_{eff,vp} = \frac{p \sin \phi + c \cos \phi}{2 \dot{\varepsilon}}  + \eta_{vp}
+\]
+For the first nonlinear iteration there is no pre-existing velocity or pressure field so 
+I then set $\dot{\varepsilon}=10^{-25}$, just so that the rheological model does not explode. 
+The viscosity is also maintained between $\eta_{min}=10^{19}$ and $\eta_{max}=10^{25}$.
+
+TODO: a) compute nonlinear residual b) remove p nullspace from matrix directly c) plot visc/plast regimes
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/u}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/v}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_70/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/q}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_70/e}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/etaeff}\\
+extension, resolution 120x40, 25 nl iterations only.
+\end{center}
+
+
+
+
