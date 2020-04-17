@@ -17,7 +17,7 @@ h \frac{\partial f}{\partial x}(x_0)  +
 \]
 We can substract $f(x_0)$ to each side of the equation and divide by $h$:
 \[
-\frac{1}{h} (f(x_0+h)-f(x_0)) = 
+\frac{1}{h} \left(f(x_0+h)-f(x_0)\right) = 
  \frac{\partial f}{\partial x}(x_0)  + 
 \frac{h}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  + \dots 
 \]
@@ -36,14 +36,17 @@ ${\cal O}(h)$ indicates that the full solution would require additional terms of
 and so on. ${\cal O}$ is called the {\color{olive}truncation error}: if the distance $h$ 
 is made smaller and smaller, the (numerical approximation) error decreases $\propto$ $h$ in this case.
 
+\index{general}{Truncation Error}
+
+Let us assume that the 1D domain on which a given ODE/PDE is to be solved has been discretised
+and let us zoom in on three consecutive points:
+
 \begin{center}
 \input{tikz_fdm1Da}
 \end{center}
 
-
-In the context of a discrete calculation on a set of discrete points $x_i$
-we can compute the first order derivative of $f$ as an approximation:
-
+\noindent In the context of a discrete calculation on a set of discrete points $x_i$
+we can compute the first order derivative of $f$ at point $x_i$ as an approximation:
 
 \[
 \boxed{
@@ -66,7 +69,7 @@ and this means that very small $h$ is required for an accurate solution.
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
-{\color{orange}Example:} Before we go any further with the theory, let us look at a very simple example. 
+{\color{blue}Example:} Before we go any further with the theory, let us look at a very simple example. 
 Let us consider the Stokes equations in the absence of fluid motion (i.e. $\vec\upnu=\vec 0$).
 Then the strain rate tensor components are identically zero and the equation simply is 
 \[
@@ -99,14 +102,33 @@ or, $p_1= \rho g h + p_2 = \rho g 2h$. And finally we obtain as expected
 p_0 = \rho g \; 3h = \rho g L_y.
 \]
 
+
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+
+This brings us to our first exercise:
+
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
 {\color{orange}Exercise 1}
 \end{center}
 
+We will now put the previous example into practice and write a 
+python code which uses forward differences to compute the 1D pressure
+field inside the crust.
+
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
+
+
+
+
 
 
 
@@ -156,7 +178,8 @@ We see that the resulting {\bf central difference} approximation is
 {\bf second order accurate}. In the discrete world one then write
 \[
 \boxed{
-f_i' = \frac{f_{i+1}-f_{i-1}}{2h} + {\cal O}(h^2)
+\frac{\partial f}{\partial x}(x_i) 
+= \frac{f_{i+1}-f_{i-1}}{2h} + {\cal O}(h^2)
 }
 \qquad
 \qquad
@@ -166,7 +189,7 @@ Simply put, the denominator is $2h$ because it is the distance between point $x_
 
 
 \begin{center}
-\includegraphics[width=7cm]{images/fdm/fd1}\\
+\includegraphics[width=7.7cm]{images/fdm/fd1}\\
 {\captionfont 
 3 types of the finite difference method. Central gives the best approximation of the derivative.
 Taken from Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Finite_difference}}
@@ -176,12 +199,14 @@ Taken from Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Finite_differen
 %.......................................
 \subsubsection{Second order derivatives}
 
-Many PDEs contain second order derivatives so we now turn to these and 
+Many PDEs contain second order derivatives (typically diffusion equations but not only)
+so we now turn to these and 
 define $f_i''=f''(x_i) = \frac{\partial^2 f}{\partial x^2} (x_i)$. 
 
 %______________________________
 \paragraph{Second order forward} 
-Let us define a function $g(x)$ such that $g=f'$. Then we have seen that  
+Let us define a function $g(x)$ such that $g=f'$. Then we have seen that the forward 
+difference formula leads to write: 
 \[
 g_i' = \frac{g_{i+1}-g_{i}}{h}
 \]
@@ -189,7 +214,7 @@ On the one hand, we have $g_i'=g'(x_i)=f''(x_i)=f_i''$ and on the other hand
 \[
 \frac{g_{i+1}-g_{i}}{h} = \frac{f_{i+1}'-f_{i}'}{h}
 \]
-so we can use the forward derivative formula twice for $f_{i+1}'$ and $f_{i}'$ and 
+We can then use the forward derivative formula for $f_{i+1}'$ and $f_{i}'$ and 
 obtain the following second order derivatives of $f$:
 \[
 f_{i}'' 
@@ -204,6 +229,8 @@ f_{i}''
 \]
 which is the {\bf first order accurate}, {\bf forward difference} approximation for
 second order derivatives at $x_{i}$.
+In order to compute $f''(x_i)$ we need the value of $f$ at $x_i$ but also at two 
+other locations right of this location.
 
 %______________________________
 \paragraph{Second order backward}
@@ -218,9 +245,8 @@ f_{i}''
 = \frac{f_{i}-2f_{i-1}+f_{i-2}}{h^2} 
 %+ {\cal O}(h^2)
 \]
-
-
-
+This time we  we need the value of $f$ at $x_i$ but also at two 
+other locations left of this location.
 
 
 %______________________________
@@ -267,8 +293,10 @@ f_{i}''=\frac{f_{i+1}-2f_i+f_{i-1}}{h^2} + {\cal O}(h)
 }
 \qquad
 \qquad
-\text{second order central difference}
+\text{(second order central difference)}
 \]
+Note that this formula requires one value left and one value right of the point 
+under consideration. 
 
 Another way to arrive at the same expression is to write the expansion at $x_0 \pm h/2$, 
 i.e. at the (convenient, yet inexistant) half points $i\pm 1/2$:

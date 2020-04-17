@@ -13,30 +13,31 @@ the equation can be simplified to a diffusion equation:
 \[
 \frac{\partial T}{\partial t} =  \kappa \frac{\partial^2 T}{\partial x^2} 
 \]
-where $\kappa=k/\rho c_p$ is the heat diffusivity.
+where $\kappa=k/\rho c_p$ is the heat diffusivity. \index{general}{Heat Diffusivity}
 
 We wish to solve this PDE in time and space (provided the appropriate 
-boundary conditions have been given). 
-
+boundary conditions have been given). The domain is $[0,L_x]$
+and it is discretised by means of $nnx$ points as depicted hereunder:
 
 \begin{center}
 \input{tikz_fdm1Dc}
 \end{center}
 
 The derivative of temperature with regards to time can be approximated
-with a forward finite difference approximation as
+with a forward finite difference approximation {\it in time} as
 \[
 \frac{\partial T}{\partial t} 
 \simeq \frac{T_{i}^{n+1}-T_i^n}{t^{n+1}-t^n} 
 = \frac{T_{i}^{n+1}-T_i^n}{\delta t} 
 \]
 where $\delta t$ is the time step, i.e. the time between two consecutive 
-measurements (the equivalent of $h$ in space).
+measurements (the equivalent of $h$ in space). 
+In all what follows the subscript will always refer to space indices 
+while the superscript will always refer to time indices.
+To be clear: $n$ represents the temperature at the current time step whereas $n+1$
+represents the new (future) temperature. %The subscript $i$ refers to the location in space.
 
-$n$ represents the temperature at the current time step whereas $n+1$
-represents the new (future) temperature. The subscript $i$ refers to the location in space.
-
-Both $n$ and $i$ are integers; $n$ varies from 1 to nstep (total number of time steps)
+Both $n$ and $i$ are integers; $n$ varies from 1 to $nstep$ (total number of time steps)
 and $i$ varies from 0 to $nnx-1$ (where $nnx$ is the total number of grid points in $x$-direction).
 
 The spatial derivative is replaced by a central FD approximation
@@ -65,8 +66,7 @@ was made possible by the choice to evaluate the temporal derivative with forward
 \input{tikz_fdmExpl}
 \end{center}
 
-
-In order to solve the original PDE equation we need to
+\noindent In order to solve the original PDE equation we need to
 \begin{itemize}
 \item prescribe an initial temperature field
 \item prescribe two boundary conditions 
@@ -81,7 +81,12 @@ and because it is {\color{olive}stable} for certain values of
 $h$ and $\delta t$: any spontaneous perturbations in the solution (such as round-off error) 
 will either be bounded or will decay.
 
-Concretely, we will prescribe an initial temperature field $T_i^0$ for $i=0,nnx-1$.
+
+
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+{\color{blue} Example}: let us prescribe an initial temperature field $T_i^0$ for $i=0,nnx-1$.
 For example:
 
 \begin{center}
@@ -95,17 +100,21 @@ node 3 at time $t=1\cdot \delta t$
 T_3^{1}=T_3^0 + \delta t \; \kappa \frac{T_{4}^0 - 2T_3^0 + T_{2}^0}{h^2}
 \]
 Note that $T_0$ and $T_5$ cannot be computed by means of the above equation, 
-which is not a problem because both these values are actually the chosen 
+which is not a problem because both these values are actually the prescribed 
 boundary conditions. 
 
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
 
-The main drawback of the explicit approach is that stable solutions are
+
+\noindent The main drawback of the explicit approach is that stable solutions are
 obtained {\it only} when
 \[
 0 < \frac{2\kappa \delta t}{h^2} \leq1
-\]
-or,
-\[
+\qquad
+\text{or,}
+\qquad
 \delta t \leq \frac{h^2}{2 \kappa}
 \]
 If this condition is not satisfied, the solution becomes {\color{olive} unstable}, starts to
@@ -136,9 +145,8 @@ Time stepping will be carried out until steady state is reached.
 \end{minipage}
 \end{center}
 
-An alternative approach is an {\bf implicit} finite difference scheme, where the spatial derivatives
+\noindent An alternative approach is an {\bf implicit} finite difference scheme, where the spatial derivatives
 of the Laplacian are evaluated (at least partially) at the new time step.
-
 We then use the backward difference for the time derivative:
 \[
 \frac{\partial T}{\partial t} 
@@ -158,12 +166,12 @@ Note that this is often rewritten as follows in order to keep the unknwowns at t
 It is a fully implicit scheme where the time derivative is taken backward.
 Let us define the dimensionless parameter $s$ as follows:
 \[
-s=\frac{\kappa \delta t}{h^2}
+s=\frac{\kappa \; \delta t}{h^2}
 \]
 The previous equation can be rearranged as follows:
 \[
 \boxed{
--s T_{i+1}^{n+1} + (1+2s) T_{i}^{n+1} - s T_{i-1}^{n+1} = T_i^{n}
+-s \; T_{i+1}^{n+1} + (1+2s)\; T_{i}^{n+1} - s\; T_{i-1}^{n+1} = T_i^{n}
 }
 \]
 
@@ -189,6 +197,11 @@ until the solution does not change anymore (this is called a {\color{olive}conve
 to ensure the
 method can deal with small and large scale features robustly at the same time.
 
+
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+{\color{blue} Example}: 
 Once again let us look at things with a very concrete approach. Let us discretise the 
 domain of length $L_x$ with 6 cells, i.e. $i=0,\dots 6$ ($nnx=7$).
 We also prescribe the following boundary conditions (remember it is a 2nd order derivative in space, 
@@ -242,6 +255,11 @@ T_0^1 \\ T_1^1 \\ T_2^1 \\ T_3^1 \\ T_4^1 \\ T_5^1 \\ T_6^1
 As opposed to the explicit approach we must solve a linear system which size is given 
 by the total number of nodes/points $nnx$ in order to compute a new temperature field.
 
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+
+
 In summary, an implicit method requires us to solve ${\bm A}\cdot\vec{T} = \vec{b}$ with
 \begin{itemize}
 \item ${\bm A}$ is a $nnx \times nnx$  {\color{olive}sparse} matrix,
@@ -285,10 +303,12 @@ this time.
 \end{center}
 
 
-\paragraph{Crank-Nicolson scheme} 
+\paragraph{Crank-Nicolson scheme} \index{general}{Crank-Nicolson}
 It turns out that this fully implicit method is second order accurate in space but 
 only first order accurate in time,
-i.e. the error goes as ${\cal O}(h^3,\delta t^2)$.   VERIFY !!!!
+i.e. the error goes as ${\cal O}(h^3,\delta t^2)$.   
+
+\todo[inline]{VERIFY !!!!}
 
 It is possible to write down a scheme which is second order accurate both in time and in space
 (i.e. ${\cal O}(h^3, \delta t^3))$, e.g. the {\color{olive}Crank-Nicolson} scheme 
@@ -308,13 +328,13 @@ The Crank-Nicolson method is the time analog of central spatial differences and 
 We define $s=\kappa \delta t/ 2h^2$ so that the equation above can be rearranged as follows :
 \[
 \boxed{
--s T_{i+1}^{n+1} + (1+2s) T_{i}^{n+1} - s T_{i-1}^{n+1} = 
-s T_{i+1}^{n} + (1-2s) T_{i}^{n} + s T_{i-1}^{n} 
+-s\; T_{i+1}^{n+1} + (1+2s)\;  T_{i}^{n+1} 
+-s\;  T_{i-1}^{n+1} = 
+s\; T_{i+1}^{n} + (1-2s)\; T_{i}^{n} + s\; T_{i-1}^{n} 
 }
 \]
 
-
-Any partially implicit method is more tricky to compute as we need to infer the future solution 
+Any partially implicit method is more complicated to compute as we need to infer the future solution 
 at time $n+1$ by solution (inversion) of a system of linear equations based on the known solution at time $n$. 
 
 \begin{center}

@@ -4,8 +4,8 @@ of the derivative of a function.
 \begin{center}
 {\sl 
 The derivative of a function $y=f(x)$ of a variable $x$ is a measure of the rate at which the value $y$ 
-of the function changes with respect to the change of the variable $x$. It is called the derivative of $f$ 
-with respect to $x$. If $x$ and $y$ are real numbers, and if the graph of $f$ is plotted against $x$, the derivative 
+of the function changes with respect to the change of the variable $x$. It is called "the derivative of $f$ 
+with respect to $x$". If $x$ and $y$ are real numbers, and if the graph of $f$ is plotted against $x$, the derivative 
 is the \underline{slope} of this graph at each point. 
 }
 \end{center}
@@ -22,6 +22,11 @@ f'(x)
 =\lim_{h\rightarrow 0} \frac{f(x+h)-f(x)}{h} 
 }
 \]
+i.e., how much does the function grows between $x$ and $x+h$, divided by the length $h$.
+On the following left plot the function is in green while the line joining the points
+$x,f(x)$ and $x+h,f(x+h)$ is hown in purple. On the right figure we see that 
+when $h$ becomes smaller and smaller this line does indeed get closer and closer 
+to the real tangent line in brown.
 
 \begin{center}
 \includegraphics[width=7.4cm]{images/derivative/der2}
@@ -33,7 +38,7 @@ Taken from Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Derivative}}.
 }
 \end{center}
 
-Also, one can rewrite the formula above as
+\noindent Also, one can rewrite the formula above as
 \[
 f(x+h) \simeq f(x) +  f'(x) h
 \]
