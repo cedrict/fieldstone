@@ -8,9 +8,8 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The setup is borrowed from Duretz et al (2020) \cite{dudy20}. One major difference is 1) no elasticity,
-2) no Newton solver.
-
+The setup is borrowed from Duretz et al (2020) \cite{dudy20}. 
+Two major differences with the paper: 1) no elasticity and 2) no Newton solver.
 
 The model consists of a $100\times 30$km slice of Westerly Granite (Hansen \& Carter, 1983), 
 which comprises an imperfection at the center of the domain.
@@ -33,13 +32,24 @@ part of the domain (displaying temperature-dependent power law creep), and in a 
 manner in the upper, cold part of the domain. 
 The parameters are 
 $A=3.1623\cdot 10^{-26}\text{Pa}^{-n}\cdot\text{s}^{-1}$, $Q=186.5\cdot 10^3 \text{J/mol}$, 
-$n=3.3$, $c=50$MPa, $\phi=arctan(0.6)\simeq 31\degree$ and $\eta^{vp}=10^{21}\text{Pa}\cdot\text{s}$. 
+$n=3.3$, $c=50$MPa, $\phi=\arctan(0.6)\simeq 31\degree$ and $\eta^{vp}=10^{21}\text{Pa}\cdot\text{s}$. 
 
 The background strainrate is set such that $\dot{\varepsilon}_{bc}=10^{-15}s^{-1}$, i.e. 
 $v_{bc}=\pm \dot{\varepsilon}_{bc} L_x/2 $ on the sides and $v=\pm \dot{\varepsilon}_{bc} L_y/2 $
 on the top and bottom boundaries.
 Pressure is normalised such that it is on average zero on the top boundary. 
-Picard iterarions are used. 
+Picard iterarions are used. The 2-norm of the non-linear residual 
+is monitored, as well as the following quantities ($i$ and $i-1$ are two consecutive nonlinear iterations):
+\[
+\xi_u = \frac{\|u^i-u^{i-1}\|_2}{ \|u^i+u^{i-1}\|_2}
+\qquad
+\qquad
+\xi_v = \frac{\|v^i-v^{i-1}\|_2}{ \|v^i+v^{i-1}\|_2}
+\qquad
+\qquad
+\xi_p = \frac{\|p^i-p^{i-1}\|_2}{ \|p^i+p^{i-1}\|_2}
+\] 
+ 
 
 The effective viscosity at every quadrature point is computed as follows:
 \[
@@ -54,11 +64,11 @@ with
 \eta_{eff,vp} = \frac{p \sin \phi + c \cos \phi}{2 \dot{\varepsilon}}  + \eta_{vp}
 \]
 For the first nonlinear iteration there is no pre-existing velocity or pressure field so 
-I then set $\dot{\varepsilon}=10^{-25}$, just so that the rheological model does not explode. 
+I set $\dot{\varepsilon}=10^{-15}$ in the viscosity function, 
+just so that the rheological model does not explode. 
 The viscosity is also maintained between $\eta_{min}=10^{19}\text{Pa}\cdot\text{s}$ 
 and $\eta_{max}=10^{25}\text{Pa}\cdot\text{s}$.
 
-TODO: a) compute nonlinear residual b) remove p nullspace from matrix directly c) plot visc/plast regimes
 
 \begin{center}
 \includegraphics[width=13cm]{python_codes/fieldstone_70/images/fig2}\\
@@ -99,6 +109,18 @@ extension, resolution 150x45, 100 nl iterations only.
 \includegraphics[width=6cm]{python_codes/fieldstone_70/compression/pressure.pdf}\\
 \includegraphics[width=6cm]{python_codes/fieldstone_70/compression/tau.pdf}\\
 extension, resolution 150x45, 100 nl iterations only.
+\end{center}
+
+\newpage
+Study of $\eta_{vp}$. 
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/results_vpstudy/conv_extension.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/results_vpstudy/conv_compression.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_70/results_vpstudy/pressure_extension.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/results_vpstudy/pressure_compression.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_70/results_vpstudy/exy_extension.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/results_vpstudy/exy_compression.pdf}\\
 \end{center}
 
 

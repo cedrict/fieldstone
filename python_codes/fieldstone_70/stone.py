@@ -6,6 +6,7 @@ from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix
 from scipy.sparse import lil_matrix
 import time as time
+from numpy import linalg as LA
 
 #------------------------------------------------------------------------------
 
@@ -66,9 +67,11 @@ def eta(xq,yq,exx,eyy,exy,p,T):
     phi=31./180.*np.pi #(atan(0.6) in paper)
     c=5e7
     E2=np.sqrt( 0.5*(exx**2+eyy**2)+exy**2 )
-    eta_vp=1e21
     #-------------------
-    E2=max(1e-25,E2)
+    if iter==0:
+       E2=1e-15
+    #E2=max(1e-25,E2)
+
     eta_v = A**(-1./nnn)*np.exp(Q/nnn/Rgas/T)*E2**(1./nnn-1.)
     sigmayield= p*np.sin(phi) + c*np.cos(phi) 
     etaeff = sigmayield /(2.*E2)+ eta_vp
@@ -77,6 +80,9 @@ def eta(xq,yq,exx,eyy,exy,p,T):
        etaeff=1e20
     etaeff=min(etaeff,eta_max)
     etaeff=max(etaeff,eta_min)
+
+    #if iter==0:
+    #   etaeff=1e20
     return etaeff
 
 #------------------------------------------------------------------------------
@@ -98,19 +104,23 @@ Lx=100e3  # horizontal extent of the domain
 Ly= 30e3  # vertical extent of the domain 
 
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 6):
+if int(len(sys.argv) == 7):
    nelx  = int(sys.argv[1])
    nely  = int(sys.argv[2])
    visu  = int(sys.argv[3])
    niter = int(sys.argv[4])
    bc    = int(sys.argv[5])
+   vp    = int(sys.argv[6])
 else:
-   nelx = 150
-   nely = 45
+   nelx = 100
+   nely = 30
    visu = 1
-   niter= 100
+   niter= 10
    bc   = +1
+   vp   = 0
     
+eta_vp=10.**vp
+
 nnx=2*nelx+1         # number of elements, x direction
 nny=2*nely+1         # number of elements, y direction
 NV=nnx*nny           # number of V nodes
@@ -145,6 +155,8 @@ print("nel",nel)
 print("nnx=",nnx)
 print("nny=",nny)
 print("NV=",NV)
+print("niter=",niter)
+print("eta_vp=",eta_vp)
 print("------------------------------")
 
 #################################################################
@@ -256,6 +268,7 @@ p      = np.zeros(NP,dtype=np.float64)            # y-component velocity
 u_old  = np.zeros(NV,dtype=np.float64)            # x-component velocity
 v_old  = np.zeros(NV,dtype=np.float64)            # y-component velocity
 p_old  = np.zeros(NP,dtype=np.float64)            # y-component velocity
+sol    = np.zeros(Nfem,dtype=np.float64)         # solution vector 
     
 c_mat   = np.array([[2,0,0],\
                     [0,2,0],\
@@ -287,8 +300,6 @@ for iter in range(0,niter):
     dNNNVdy = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
     dNNNVdr = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
     dNNNVds = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
-    eta_el  = np.zeros(nel,dtype=np.float64)  
-    rho_el  = np.zeros(nel,dtype=np.float64)  
 
     for iel in range(0,nel):
 
@@ -352,10 +363,8 @@ for iter in range(0,niter):
                                              [dNNNVdy[i],dNNNVdx[i]]]
 
                 etaq=eta(xq,yq,exxq,eyyq,exyq,pq,Tq)
-                eta_el[iel]+=etaq/nqel
 
                 rhoq=rho(xq,yq,Tq)
-                rho_el[iel]+=rhoq/nqel
 
                 # compute elemental a_mat matrix
                 K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq*weightq*jcob
@@ -415,9 +424,25 @@ for iter in range(0,niter):
     ######################################################################
     start = time.time()
 
-    sol=sps.linalg.spsolve(A_sparse.tocsr(),rhs)
+    #a_mat[Nfem,NfemV:Nfem]=constr
+    #a_mat[NfemV:Nfem,Nfem]=constr
+
+    #simple p boundary condition
+    for i in range(0,Nfem):
+        A_sparse[Nfem-1,i]=0
+    A_sparse[Nfem-1,Nfem-1]=1
+    rhs[Nfem-1]=0.
+
+    sparse_matrix=A_sparse.tocsr()
+    Res=sparse_matrix.dot(sol)-rhs
+    sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
     print("solve time: %.3f s" % (time.time() - start))
+
+    if iter==0:
+      Res0_two=LA.norm(Res,2)
+    Res_two=LA.norm(Res,2)
+    print("     -> Nonl. res. (2-norm) %.7e" % (Res_two/Res0_two))
 
     ######################################################################
     # put solution into separate x,y velocity arrays
@@ -442,6 +467,8 @@ for iter in range(0,niter):
     ######################################################################
     start = time.time()
 
+    np.savetxt('pressure_bef_normalisation.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+
     intp=0
     for iel in range(0,nel):
         inode=iconV[6,iel]       #top middle node 
@@ -450,9 +477,10 @@ for iter in range(0,niter):
     intp/=Lx
     p-=intp
 
-
     print('     -> intp=',intp)
     print("     -> p (m,M) %.4e %.4e Mpa  " %(np.min(p)/1e6,np.max(p)/1e6))
+
+    np.savetxt('pressure_aft_normalisation.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
     print("normalise pressure: %.3f s" % (time.time() - start))
 
@@ -464,7 +492,8 @@ for iter in range(0,niter):
 
     print("conv: u,v,p: %.6f %.6f %.6f" %(xi_u,xi_v,xi_p))
 
-    convfile.write("%3d %10e %10e %10e \n" %(iter,xi_u,xi_v,xi_p)) ; convfile.flush()
+    convfile.write("%3d %10e %10e %10e %10e\n" %(iter,xi_u,xi_v,xi_p,Res_two/Res0_two)) 
+    convfile.flush()
 
     u_old=u
     v_old=v
@@ -599,6 +628,13 @@ print("     -> press nodal (m,M) %.5e %.5e " %(np.min(q),np.max(q)))
 print("compute nodal press & sr: %.3f s" % (time.time() - start))
 
 #####################################################################
+pfile=open('profile.ascii',"w")
+
+for i in range(0,NV):
+    if abs(yV[i]-2*Ly/3)<eps*Ly:
+       pfile.write("%10e %10e %10e %10e %10e \n" %(xV[i],q[i],exx_n[i],eyy_n[i],exy_n[i]))
+
+#####################################################################
 
 eta_n = np.zeros(NV,dtype=np.float64)  
 tau_n = np.zeros(NV,dtype=np.float64)  
@@ -618,7 +654,7 @@ np.savetxt('tau.ascii',np.array([xV,yV,tau_n]).T,header='# x,y,tau')
 
 if visu:
 
-   np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+   #np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
    filename = 'solution.vtu'
    vtufile=open(filename,"w")
@@ -633,44 +669,43 @@ if visu:
    vtufile.write("</DataArray>\n")
    vtufile.write("</Points> \n")
    #####
-   vtufile.write("<CellData Scalars='scalars'>\n")
+   #vtufile.write("<CellData Scalars='scalars'>\n")
    #--
-   vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % eta_el[iel])
-   vtufile.write("</DataArray>\n")
+   #vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+   #for iel in range (0,nel):
+   #    vtufile.write("%10e\n" % eta_el[iel])
+   #vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % rho_el[iel])
-   vtufile.write("</DataArray>\n")
+   #vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
+   #for iel in range (0,nel):
+   #    vtufile.write("%10e\n" % rho_el[iel])
+   #vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % exx[iel])
-   vtufile.write("</DataArray>\n")
+   #vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+   #for iel in range (0,nel):
+   #    vtufile.write("%10e\n" % exx[iel])
+   #vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % eyy[iel])
-   vtufile.write("</DataArray>\n")
+   #vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
+   #for iel in range (0,nel):
+   #    vtufile.write("%10e\n" % eyy[iel])
+   #vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % exy[iel])
-   vtufile.write("</DataArray>\n")
+   #vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+   #for iel in range (0,nel):
+   #    vtufile.write("%10e\n" % exy[iel])
+   #vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % np.sqrt(0.5*(exx[iel]**2+eyy[iel]**2)+exy[iel]**2) )
-   vtufile.write("</DataArray>\n")
+   #vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
+   #for iel in range (0,nel):
+   #    vtufile.write("%10e\n" % np.sqrt(0.5*(exx[iel]**2+eyy[iel]**2)+exy[iel]**2) )
+   #vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
-   vtufile.write("</DataArray>\n")
-
-   vtufile.write("</CellData>\n")
+   #vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
+   #for iel in range (0,nel):
+   #    vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
+   #vtufile.write("</DataArray>\n")
+   #vtufile.write("</CellData>\n")
    #####
    vtufile.write("<PointData Scalars='scalars'>\n")
    #--

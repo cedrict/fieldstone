@@ -1,14 +1,49 @@
-#   nelx    nely    visu    niter   bc    
+#   nelx    nely    visu    niter   bc   vp 
 
-python3 stone.py 100 30 1 15  1 
-mkdir results_compression
-mv *.ascii results_compression
-mv *.vtu results_compression
+niter=25
 
-python3 stone.py 100 30 1 15 -1 
-mkdir results_extension
-mv *.ascii results_extension
-mv *.vtu results_extension
+#python3 stone.py 100 30 1 $niter  1  19
+#mkdir results_compression_19
+#mv *.ascii results_compression_19
+#mv *.vtu results_compression_19
+
+python3 stone.py 100 30 1 $niter  1  20
+mkdir results_compression_20
+mv *.ascii results_compression_20
+mv *.vtu results_compression_20
+
+python3 stone.py 100 30 1 $niter  1  21
+mkdir results_compression_21
+mv *.ascii results_compression_21
+mv *.vtu results_compression_21
+
+python3 stone.py 100 30 1 $niter  1  22
+mkdir results_compression_22
+mv *.ascii results_compression_22
+mv *.vtu results_compression_22
+
+##############################################3
+
+#python3 stone.py 100 30 1 $niter -1  19
+#mkdir results_extension_19
+#mv *.ascii results_extension_19
+#mv *.vtu results_extension_19
+
+python3 stone.py 100 30 1 $niter -1  20
+mkdir results_extension_20
+mv *.ascii results_extension_20
+mv *.vtu results_extension_20
+
+python3 stone.py 100 30 1 $niter -1  21
+mkdir results_extension_21
+mv *.ascii results_extension_21
+mv *.vtu results_extension_21
+
+python3 stone.py 100 30 1 $niter -1  22
+mkdir results_extension_22
+mv *.ascii results_extension_22
+mv *.vtu results_extension_22
+
 
 
 
