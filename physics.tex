@@ -112,62 +112,97 @@ This is an obvious conflict of notations.
 %------------------------------------------------------------------------
 \subsection{The heat transport equation - energy conservation equation \label{ss:hte}}
 
-The heat contained within a volume $dV$ is $\rho C_p T dV$ where 
-$C_p$ is the specific heat. The total heat ${\cal H}$ contained
-by $V$ is the sum ( or integral) of all the elements within $V$:
-\[
-{\cal H}=\int_V \rho C_p T dV
-\]
-Changes in ${\cal H}$ can only occur if heat flows across the surface $S$. 
-If $Q$ is the rate at which heat flows outward, then the rate of change of ${\cal H}$ 
-must equal $Q$, or
-\[
--\frac{\partial {\cal H}}{\partial t} = Q
-\]
-The negative sign is required because the volume cools if $Q$ is positive. 
-The heat flux depends on the temperature gradient $\vec\nabla T$ , 
-and heat always flows down the temperature gradient. Hence the heat
-flux across the surface element $dS$, $dQ$, is
-\[
-dQ= - k \vec\nabla T \cdot \vec{n} \; dS
-\]
-where $k$ is the thermal conductivity. The dot product between $\vec\nabla T$ and $\vec{n}dS$ 
-takes the direction of the temperature gradient into account.
-We can then write:
-\[
--\frac{\partial }{\partial t} \int_V \rho C_p T dV = - \int_S  k \vec\nabla T \cdot \vec{n} \; dS
-\]
-Using Gauss' theorem th right hand side becomes:
-\[
-\int_S  k \vec\nabla T \cdot \vec{n} \; dS
-= 
-\int_V \vec\nabla \cdot ( k \vec\nabla T \cdot ) dV
-\]
-so that:
-\[
-\int_V \left[ \frac{\partial }{\partial t} (\rho C_p T) - \vec\nabla \cdot( k \vec\nabla T ) \right] dV 
-\]
-Since $V$ can be any volume enclosed by an arbitrary surface, this 
-equation can only be true if the term in square brackets is zero everywhere, or:
-\[
-\rho C_p \frac{\partial T}{\partial t}  =  \vec\nabla \cdot( k \vec\nabla T ) 
-\]
-assuming density and specific heat to be constant in time.
-In a fluid which moves, the heat transport must include a term
-\[
-\int_S \rho C_p T \vec\upnu\cdot \vec{n} \; dS
-\]
-to take account of the heat carried by the fluid moving with velocity $\vec\upnu$. 
-This term is called the advection term in the equations, and we then have:
-\[
-\rho C_p \left( 
-\frac{\partial T}{\partial t} + (\vec\upnu \cdot \vec\nabla) T \right) =  \vec\nabla \cdot( k \vec\nabla T ) 
-\]
-
-\todo[inline]{join what is above to what comes after this}
+%The heat contained within a volume $dV$ is $\rho C_p T dV$ where 
+%$C_p$ is the specific heat. The total heat ${\cal H}$ contained
+%by $V$ is the sum ( or integral) of all the elements within $V$:
+%\[
+%{\cal H}=\int_V \rho C_p T dV
+%\]
+%Changes in ${\cal H}$ can only occur if heat flows across the surface $S$. 
+%If $Q$ is the rate at which heat flows outward, then the rate of change of ${\cal H}$ 
+%must equal $Q$, or
+%\[
+%-\frac{\partial {\cal H}}{\partial t} = Q
+%\]
+%The negative sign is required because the volume cools if $Q$ is positive. 
+%The heat flux depends on the temperature gradient $\vec\nabla T$ , 
+%and heat always flows down the temperature gradient. Hence the heat
+%flux across the surface element $dS$, $dQ$, is
+%\[
+%dQ= - k \vec\nabla T \cdot \vec{n} \; dS
+%\]
+%where $k$ is the thermal conductivity. The dot product between $\vec\nabla T$ and $\vec{n}dS$ 
+%takes the direction of the temperature gradient into account.
+%We can then write:
+%\[
+%-\frac{\partial }{\partial t} \int_V \rho C_p T dV = - \int_S  k \vec\nabla T \cdot \vec{n} \; dS
+%\]
+%Using Gauss' theorem the right hand side becomes:
+%\[
+%\int_S  k \vec\nabla T \cdot \vec{n} \; dS
+%= 
+%\int_V \vec\nabla \cdot ( k \vec\nabla T ) dV
+%\]
+%so that:
+%\[
+%\int_V \left[ \frac{\partial }{\partial t} (\rho C_p T) - \vec\nabla \cdot( k \vec\nabla T ) \right] dV 
+%\]
+%Since $V$ can be any volume enclosed by an arbitrary surface, this 
+%equation can only be true if the term in square brackets is zero everywhere, or:
+%\[
+%\rho C_p \frac{\partial T}{\partial t}  =  \vec\nabla \cdot( k \vec\nabla T ) 
+%\]
+%assuming density and specific heat to be constant in time.
+%In a fluid which moves, the heat transport must include a term
+%\[
+%\int_S \rho C_p T \vec\upnu\cdot \vec{n} \; dS
+%\]
+%to take account of the heat carried by the fluid moving with velocity $\vec\upnu$. 
+%This term is called the advection term in the equations, and we then have:
+%\[
+%\rho C_p \left( 
+%\frac{\partial T}{\partial t} + (\vec\upnu \cdot \vec\nabla) T \right) =  \vec\nabla \cdot( k \vec\nabla T ) 
+%\]
 
 
-Let us start from the heat transport equation as shown in Schubert, Turcotte and Olson \cite{scto01}:
+
+Let us start from the heat transport equation as shown in Eq.(6.9.1)
+of Schubert, Turcotte and Olson \cite{scto01}:
+\begin{equation}
+\rho T \frac{Ds}{Dt} = {\vec \nabla} \cdot k {\vec \nabla} T + \Phi + \rho H  
+\end{equation}
+where $s$ is the specific entropy and $H$ is the rate of internal heat production
+per unit mass. The terms on the right side of the equation are respectively
+thermal conduction, volumetric heat production rates
+due to viscous dissipation and internal heat generation.
+We have 
+\[
+\frac{Ds}{Dt} = 
+\left( \frac{\partial s}{\partial T} \right)_p \frac{DT}{Dt}
++
+\left( \frac{\partial s}{\partial p} \right)_T \frac{Dp}{Dt}
+\]
+The thermal expansion coefficient is
+$\alpha = -\frac{1}{\rho} \left(\frac{\partial \rho}{\partial T} \right)_p$
+and the specific heat is 
+$C_p = T \left( \frac{\partial s}{\partial T} \right)_p$
+and we also have the thermodynamical relationship
+$
+\left( \frac{\partial s}{\partial p}  \right)_T
+=
+-\left( \frac{\partial (1/\rho)}{\partial T}  \right)_p
+$. 
+Altogether we can further transform the $Ds/Dt$ term as follows:
+\begin{eqnarray}
+\frac{Ds}{Dt} 
+&=& 
+\frac{C_p}{T}\frac{DT}{Dt}-\left( \frac{\partial (1/\rho)}{\partial T}  \right)_p \frac{Dp}{Dt} \nn\\
+&=& 
+\frac{C_p}{T}\frac{DT}{Dt}+\frac{1}{\rho^2} \left( \frac{\partial \rho}{\partial T}\right)_p\frac{Dp}{Dt}\nn\\
+&=& 
+\frac{C_p}{T}\frac{DT}{Dt} - \frac{\alpha}{\rho} \frac{Dp}{Dt}\nn
+\end{eqnarray}
+so that we can now write
 \begin{equation}
 \rho C_p \frac{DT}{Dt} - \alpha T \frac{Dp}{Dt} = {\vec \nabla} \cdot k {\vec \nabla} T + \Phi + \rho H  
 \end{equation}
@@ -206,25 +241,25 @@ In what follows I use the index notation as it makes for easier derivations:
 Finally
 \begin{equation}
 \Phi = {\bm \tau}:{\vec \nabla}{\vec \upnu} = 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d
-= 2 \eta \left( (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + 2(\dot{\varepsilon}_{xy}^d)^2 \right)
+= 2 \eta \left( (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + 2(\dot{\varepsilon}_{xy}^d)^2 \right) \nn
 \end{equation}
 
-\paragraph{Non-dimensionalisation}
-We can scale the equations as follows:
-\[
-T =T_0 T'
-\qquad 
-t =\frac{a^2}{\kappa \; Ra} t'
-\qquad
-\vec\upnu = \frac{\kappa \; Ra}{a} \vec\upnu'
-\]
-where $a$ is a characteristic length, giving:
-\[
-Ra \left( \frac{\partial T'}{\partial t'}  + \vec\upnu'\cdot\vec\nabla' T' \right)
-=\Delta' T'
-\]
-$Ra$ is is the only parameter which affects the convection. When it becomes very large 
-this equation essentially becomes an advection equation. 
+%\paragraph{Non-dimensionalisation}
+%We can scale the equations as follows:
+%\[
+%T =T_0 T'
+%\qquad 
+%t =\frac{a^2}{\kappa \; Ra} t'
+%\qquad
+%\vec\upnu = \frac{\kappa \; Ra}{a} \vec\upnu'
+%\]
+%where $a$ is a characteristic length, giving:
+%\[
+%Ra \left( \frac{\partial T'}{\partial t'}  + \vec\upnu'\cdot\vec\nabla' T' \right)
+%=\Delta' T'
+%\]
+%$Ra$ is is the only parameter which affects the convection. When it becomes very large 
+%this equation essentially becomes an advection equation. 
 
 
 
