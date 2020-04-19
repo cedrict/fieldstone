@@ -53,9 +53,6 @@ def NNP(rq,sq):
     NP_3=0.25*(1-rq)*(1+sq)
     return NP_0,NP_1,NP_2,NP_3
 
-def rho(xq,yq,Tq):
-    return 2700.
-
 def eta(xq,yq,exx,eyy,exy,p,T):
     #-------------------
     A=3.1623e-26
@@ -117,7 +114,7 @@ else:
    visu = 1
    niter= 10
    bc   = +1
-   vp   = 0
+   vp   = 21
     
 eta_vp=10.**vp
 
@@ -275,6 +272,7 @@ c_mat   = np.array([[2,0,0],\
                     [0,0,1]],dtype=np.float64) 
     
 convfile=open('conv.ascii',"w")
+time_build_matrix=np.zeros(niter,dtype=np.float64)  
 
 for iter in range(0,niter):
 
@@ -333,28 +331,19 @@ for iter in range(0,niter):
                 jcob = np.linalg.det(jcb)
                 jcbi = np.linalg.inv(jcb)
 
-                # compure pressure at q point
-                pq=0.
-                for k in range(0,mP):
-                    pq+=NNNP[k]*p[iconP[k,iel]]
-
-                # compute dNdx & dNdy
-                xq=0.0
-                yq=0.0
-                Tq=0.0
-                exxq=0.
-                eyyq=0.
-                exyq=0.
                 for k in range(0,mV):
-                    xq+=NNNV[k]*xV[iconV[k,iel]]
-                    yq+=NNNV[k]*yV[iconV[k,iel]]
-                    Tq+=NNNV[k]*T[iconV[k,iel]]
                     dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                     dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-                    exxq += dNNNVdx[k]*u[iconV[k,iel]]
-                    eyyq += dNNNVdy[k]*v[iconV[k,iel]]
-                    exyq += 0.5*dNNNVdy[k]*u[iconV[k,iel]]+\
-                            0.5*dNNNVdx[k]*v[iconV[k,iel]]
+
+                # compute dNdx & dNdy
+                xq=np.sum(NNNV[:]*xV[iconV[:,iel]])
+                yq=np.sum(NNNV[:]*yV[iconV[:,iel]])
+                Tq=np.sum(NNNV[:]*T[iconV[:,iel]])
+                pq=np.sum(NNNP[:]*p[iconP[:,iel]])
+                exxq=np.sum(dNNNVdx[:]*u[iconV[:,iel]])
+                eyyq=np.sum(dNNNVdy[:]*v[iconV[:,iel]])
+                exyq=0.5*np.sum(dNNNVdx[:]*v[iconV[:,iel]])+\
+                     0.5*np.sum(dNNNVdy[:]*u[iconV[:,iel]])
 
                 # construct 3x8 b_mat matrix
                 for i in range(0,mV):
@@ -363,15 +352,13 @@ for iter in range(0,niter):
                                              [dNNNVdy[i],dNNNVdx[i]]]
 
                 etaq=eta(xq,yq,exxq,eyyq,exyq,pq,Tq)
-
-                rhoq=rho(xq,yq,Tq)
+                rhoq=2700
 
                 # compute elemental a_mat matrix
                 K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq*weightq*jcob
 
                 # compute elemental rhs vector
                 for i in range(0,mV):
-                    f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*rhoq*gx
                     f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*rhoq*gy
 
                 for i in range(0,mP):
@@ -418,6 +405,8 @@ for iter in range(0,niter):
             rhs[NfemV+m2]+=h_el[k2]*eta_ref/Ly
 
     print("build FE matrix: %.5f s" % (time.time()-start))
+
+    time_build_matrix[iter]=time.time()-start
 
     ######################################################################
     # solve system
@@ -485,12 +474,13 @@ for iter in range(0,niter):
     print("normalise pressure: %.3f s" % (time.time() - start))
 
     ######################################################################
+    start = time.time()
 
     xi_u=np.linalg.norm(u-u_old,2)/np.linalg.norm(u+u_old,2)
     xi_v=np.linalg.norm(v-v_old,2)/np.linalg.norm(v+v_old,2)
     xi_p=np.linalg.norm(p-p_old,2)/np.linalg.norm(p+p_old,2)
 
-    print("conv: u,v,p: %.6f %.6f %.6f" %(xi_u,xi_v,xi_p))
+    print("     -> conv: u,v,p,Res: %.6f %.6f %.6f %.6f" %(xi_u,xi_v,xi_p,Res_two/Res0_two))
 
     convfile.write("%3d %10e %10e %10e %10e\n" %(iter,xi_u,xi_v,xi_p,Res_two/Res0_two)) 
     convfile.flush()
@@ -499,6 +489,7 @@ for iter in range(0,niter):
     v_old=v
     p_old=p
 
+    print("compute convergence: %.3f s" % (time.time() - start))
 
 #========================================================================================
 #========================================================================================
@@ -628,13 +619,18 @@ print("     -> press nodal (m,M) %.5e %.5e " %(np.min(q),np.max(q)))
 print("compute nodal press & sr: %.3f s" % (time.time() - start))
 
 #####################################################################
+start = time.time()
+
 pfile=open('profile.ascii',"w")
 
 for i in range(0,NV):
     if abs(yV[i]-2*Ly/3)<eps*Ly:
        pfile.write("%10e %10e %10e %10e %10e \n" %(xV[i],q[i],exx_n[i],eyy_n[i],exy_n[i]))
 
+print("write out profile: %.3f s" % (time.time() - start))
+
 #####################################################################
+start = time.time()
 
 eta_n = np.zeros(NV,dtype=np.float64)  
 tau_n = np.zeros(NV,dtype=np.float64)  
@@ -646,11 +642,14 @@ for i in range(0,NV):
 
 np.savetxt('tau.ascii',np.array([xV,yV,tau_n]).T,header='# x,y,tau')
 
+print("write out eta: %.3f s" % (time.time() - start))
+
 #####################################################################
 # plot of solution
-#####################################################################
 # the 9-node Q2 element does not exist in vtk, but the 8-node one 
 # does, i.e. type=23. 
+#####################################################################
+start = time.time()
 
 if visu:
 
@@ -797,9 +796,14 @@ if visu:
    vtufile.write("</VTKFile>\n")
    vtufile.close()
 
+print("write vtu file: %.3f s" % (time.time() - start))
+
 #==============================================================================
 # end time stepping loop
 
+print("-----------------------------")
+
+print("avrg time build FEM matrix=",np.sum(time_build_matrix)/niter)
 
 print("-----------------------------")
 print("------------the end----------")

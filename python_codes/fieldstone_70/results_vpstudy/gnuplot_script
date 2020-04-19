@@ -1,0 +1,63 @@
+set term pdf enhanced font "times,10pt"
+set grid
+set log y
+set xlabel '#iter'
+set pointsize .5
+
+#################################################################
+set ylabel 'convergence'
+
+set title 'compression'
+set output 'conv_compression.pdf'
+plot[][]\
+'results_compression_20/conv.ascii' u 1:5 w lp t '20',\
+'results_compression_21/conv.ascii' u 1:5 w lp t '21',\
+'results_compression_22/conv.ascii' u 1:5 w lp t '22',\
+
+set title 'extension'
+set output 'conv_extension.pdf'
+plot[][]\
+'results_extension_20/conv.ascii' u 1:5 w lp t '20',\
+'results_extension_21/conv.ascii' u 1:5 w lp t '21',\
+'results_extension_22/conv.ascii' u 1:5 w lp t '22',\
+
+#################################################################
+
+
+
+set pointsize .25
+unset log y
+set ylabel 'p'
+set xlabel 'x'
+
+set title 'compression - at y=20km'
+set output 'pressure_compression.pdf'
+plot[][]\
+'results_compression_20/profile.ascii' u 1:2 w lp t '20',\
+'results_compression_21/profile.ascii' u 1:2 w lp t '21',\
+'results_compression_22/profile.ascii' u 1:2 w lp t '22',\
+
+set title 'extension - at y=20km'
+set output 'pressure_extension.pdf'
+plot[][]\
+'results_extension_20/profile.ascii' u 1:2 w lp t '20' ,\
+'results_extension_21/profile.ascii' u 1:2 w lp t '21' ,\
+'results_extension_22/profile.ascii' u 1:2 w lp t '22' ,\
+
+#################################################################
+
+set title 'compression - at y=20km'
+set output 'exy_compression.pdf'
+plot[][]\
+'results_compression_20/profile.ascii' u 1:5 w lp t '20',\
+'results_compression_21/profile.ascii' u 1:5 w lp t '21',\
+'results_compression_22/profile.ascii' u 1:5 w lp t '22',\
+
+set title 'extension - at y=20km'
+set output 'exy_extension.pdf'
+plot[][]\
+'results_extension_20/profile.ascii' u 1:5 w lp t '20',\
+'results_extension_21/profile.ascii' u 1:5 w lp t '21',\
+'results_extension_22/profile.ascii' u 1:5 w lp t '22',\
+
+

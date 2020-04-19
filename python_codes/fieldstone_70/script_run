@@ -1,6 +1,6 @@
 #   nelx    nely    visu    niter   bc   vp 
 
-niter=25
+niter=50
 
 #python3 stone.py 100 30 1 $niter  1  19
 #mkdir results_compression_19
