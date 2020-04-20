@@ -75,7 +75,7 @@ Then the strain rate tensor components are identically zero and the equation sim
 \[
 -\vec\nabla p + \rho \vec{g} = \vec 0.
 \]
-where we assume that 1) density is constant is space for simplicity and 2)
+where we assume that 1) density is constant in space for simplicity and 2)
 the domain is infinite in the $x$-direction.
 The gravity vector is $\vec{g}=-g \vec{e}_z$ so that the above equation 
 becomes:
@@ -86,8 +86,6 @@ This is a first-order PDE. It needs to be supplemented by a single boundary cond
 which in this case constrains the pressure to be zero at the surface, i.e. $p(y=L_y)=0$.
 
 \input{tikz_fdm1De}
-
-DESCRIBE FIGURE
 
 We can write the discretised PDE at node 2 (since we know $p_3=0$):
 \[
@@ -101,7 +99,6 @@ or, $p_1= \rho g h + p_2 = \rho g 2h$. And finally we obtain as expected
 \[
 p_0 = \rho g \; 3h = \rho g L_y.
 \]
-
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
@@ -121,6 +118,8 @@ This brings us to our first exercise:
 We will now put the previous example into practice and write a 
 python code which uses forward differences to compute the 1D pressure
 field inside the crust.
+
+$\rightarrow$ {\tt Exercise\_1\_FDM.ipynb}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
@@ -199,7 +198,7 @@ Taken from Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Finite_differen
 %.......................................
 \subsubsection{Second order derivatives}
 
-Many PDEs contain second order derivatives (typically diffusion equations but not only)
+Many PDEs contain second order derivatives (typically diffusion equations)
 so we now turn to these and 
 define $f_i''=f''(x_i) = \frac{\partial^2 f}{\partial x^2} (x_i)$. 
 

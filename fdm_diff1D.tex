@@ -32,10 +32,10 @@ with a forward finite difference approximation {\it in time} as
 \]
 where $\delta t$ is the time step, i.e. the time between two consecutive 
 measurements (the equivalent of $h$ in space). 
-In all what follows the subscript will always refer to space indices 
+In all that follows the subscript will always refer to space indices 
 while the superscript will always refer to time indices.
-To be clear: $n$ represents the temperature at the current time step whereas $n+1$
-represents the new (future) temperature. %The subscript $i$ refers to the location in space.
+To be clear: $n$ represents the current time step whereas $n+1$
+represents the next time step. 
 
 Both $n$ and $i$ are integers; $n$ varies from 1 to $nstep$ (total number of time steps)
 and $i$ varies from 0 to $nnx-1$ (where $nnx$ is the total number of grid points in $x$-direction).
@@ -140,6 +140,9 @@ it is maintained at a temperature $T=100\degree$C at $x=0$ and at a temperature
 $T=200\degree$C at $x=L_x$. The initial temperature is $T(x,t=0)=123$
 and $\kappa=10^{-6}$. 
 Time stepping will be carried out until steady state is reached.
+
+
+$\rightarrow$ {\tt Exercise\_2\_FDM.ipynb}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
@@ -267,9 +270,149 @@ In summary, an implicit method requires us to solve ${\bm A}\cdot\vec{T} = \vec{
 \item ${\vec T}$ the vector of unknowns.
 \end{itemize}
 
+\paragraph{A word about solvers}
+There are two main approaches to solving such a linear system: one can use a {\color{olive} direct}
+approach or an {\color{olive} iterative} approach. 
+In a nutshell, a direct solver will 'manipulate' the matrix lines and columns 
+so as to arrive at the solution. A simple example of such an approach is the 
+technique of elemination of variables:
 
 
-Looking at
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+{\color{blue} Example}\footnote{Taken from \url{https://en.wikipedia.org/wiki/System_of_linear_equations}}: 
+Consider the following system:
+\[
+\left(
+\begin{array}{ccc}
+1 & 3 & -2 \\
+3 & 5 & 6 \\
+2 & 4 & 3
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+x \\ y \\ z
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+5 \\ 7 \\ 8
+\end{array}
+\right)
+\]
+Solving the first equation for $x$ gives $x = 5 + 2z - 3y$, 
+and plugging this into the second and third equation yields
+\[
+\left(
+\begin{array}{ccc}
+1 & 3 & -2 \\
+0 & -4 & 12 \\
+0 & -2 & 7
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+x \\ y \\ z
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+5 \\ -8 \\ -2 
+\end{array}
+\right)
+\]
+Solving the second line for $y$ yields $y = 2 + 3z$, 
+and plugging this into the second equation yields $z = 2$. We now have: 
+\[
+\left(
+\begin{array}{ccc}
+1 & 3 & -2 \\
+0 & -4 & 12 \\
+0 & 0 & 2
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+x \\ y \\ z
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+5 \\ -8 \\ 4
+\end{array}
+\right)
+\]
+Substituting $z = 2$ into the second equation gives $y = 8$, 
+and substituting $z = 2$ and $y = 8$ into the first equation yields $x = -15$. 
+Therefore, the solution set is the single point $(x, y, z) = (-15, 8, 2)$.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+
+This example is of course very naive and direct solvers are often very large 
+numerical libraries which have been highly optimised to take advantage of the 
+sparsity of hte matrix in order to arrive at the solution in the lowest 
+number of operations possible. 
+In reality techniques such as LU-decomposition or Cholesky decomposition are used. 
+
+
+Iterative solvers on the other hand compute the solution of the system 
+by first postulating an initial guess for the solution and then by 
+improving this guess iteratively until the {\color{olive} termination criterion}
+is met. There are two classes of iteratives methods in this context: 
+{\color{olive} stationary iterative methods} and 
+{\color{olive} Krylov subspace methods}.
+At this stage things get real complicated and the details of iterative solvers 
+are vastly out of scope.  
+
+
+
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+{\color{blue} Example}: the stationary Jacobi method. 
+We decompose the matrix ${\bm A}$ as follows:
+\[
+{\bm A} = {\bm D} + {\bm L} + {\bm U} 
+\] 
+where ${\bm D}$ is the diagonal of the matrix ${\bm A}$, ${\bm L}$ is the 
+strict lower triangular part of ${\bm A}$ and 
+${\bm U}$ is the strict upper triangular part of ${\bm A}$.
+The iterative method is defined by:
+\[
+{\bm D} \cdot \vec{T}^{k+1} = -({\bm L} + {\bm U}) \cdot \vec{T}^k + \vec{b}
+\]
+This method is trivial to implement since solving the system on the 
+left side of the equal sign involves a diagonal matrix.
+This can also be written 
+\[
+T_i^{k+1} = \frac{1}{A_{ii}} \left(b_i - \sum_{j\neq i} A_{ij} T_j^k \right)
+\qquad
+i=1,2,...nnx
+\]
+
+
+
+ 
+
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+
+
+
+
+
+Finally, looking at
 \[
 -s T_{i+1}^{n+1} + (1+2s) T_{i}^{n+1} - s T_{i-1}^{n+1} = T_i^{n}
 \]
@@ -296,7 +439,10 @@ but may not capture small scale, transient features.
 
 This is exactly the same exercise as Exercise 2 but we 
 are going to solve the 1D diffusion equation with the implicit method
-this time. 
+this time. First use the provided solver in the notebook, then 
+implement your own Jacobi solver. 
+
+$\rightarrow$ {\tt Exercise\_3\_FDM.ipynb}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}

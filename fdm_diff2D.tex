@@ -134,12 +134,29 @@ where $T_{bc}$ is the prescribed temperature.
 {\color{orange}Exercise 5}
 \end{center}
 
-The domain is $L_x \times L_y = 10\times 5$km. 
-Its initial temperature is $T=111\degree$C for $y<x$
-and $T=222\degree$C otherwise.
-Boundary conditions $T=150$ are prescribed on all four sides.
-Physical parameters are $\kappa=10^{-6}$.
-Compute the steady state temperature in the domain.
+
+A simple (time-dependent) analytical solution for the temperature equation exists for 
+the case that the initial temperature distribution is
+\[
+T(x,y,t=0) = T_{max} \exp \left[ -\frac{x^2+y^2}{\sigma^2}   \right]
+\]
+where $T_{max}$ is the maximum amplitude of the temperature perturbation 
+at $(x,y) = (0, 0)$ and $\sigma$ its half-width. The solution is
+\[
+T(x,y,t)=\frac{T_{max}}{1+4t\kappa/\sigma^2 } \exp \left[ -\frac{x^2+y^2}{\sigma^2 + 4t\kappa}   \right]
+\]
+Program the analytical solution and compare it with the explicit 
+numerical solution with the same initial conditions at each time step. 
+Comment on the accuracy of both methods for different values of dt.
+
+REVISIT AFTER notebook is built.
+
+%The domain is $L_x \times L_y = 10\times 5$km. 
+%Its initial temperature is $T=111\degree$C for $y<x$
+%and $T=222\degree$C otherwise.
+%Boundary conditions $T=150$ are prescribed on all four sides.
+%Physical parameters are $\kappa=10^{-6}$.
+%Compute the steady state temperature in the domain.
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
@@ -480,4 +497,19 @@ T_{{\color{teal}13}}^n + \tilde{Q}_{\color{teal}13}
 Note that is the boundary values had not been zero they would have found their way to the right hand side 
 vector.
 
-%STENCILS in 2D? 
+%STENCILS in 2D?
+
+
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+\begin{center}
+\includegraphics[width=0.8cm]{images/garftr} \\
+{\color{orange}Exercise 7}
+\end{center}
+
+
+ 
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}

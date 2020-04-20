@@ -1,0 +1,65 @@
+
+So far, we have mainly focused on the diffusion equation in a non-moving domain 
+(relevant for the case of a dike intrusion cooling off 
+or for a lithosphere which remains undeformed). 
+
+We now want to consider problems where material moves during the time period under 
+consideration and takes temperature anomalies with it (e.g. a plume rising 
+through a convecting mantle). 
+If the numerical grid remains fixed in the background, the hot temperatures should 
+be moved to different grid points at each time step. 
+
+We start again from the heat transport equation of section XXX 
+\[
+\rho C_p \left( \frac{\partial T}{\partial t} + \vec\upnu \cdot \vec\nabla T  \right)=
+\vec\nabla \cdot k \vec\nabla T + Q 
+\]
+In one-dimensional Cartesian coordinates:
+\[
+\rho C_p \left( \frac{\partial T}{\partial t}  
++ u \frac{\partial T}{\partial x} \right)= 
+\frac{\partial }{\partial x} \left(  k  \frac{\partial T}{\partial x} \right)+ Q
+\]
+and in 2D
+\[
+\rho C_p \left( \frac{\partial T}{\partial t}   
++ u \frac{\partial T}{\partial x}  
++ v \frac{\partial T}{\partial y} \right) 
+=
+\frac{\partial }{\partial x} \left(  k  \frac{\partial T}{\partial x} \right)
++
+\frac{\partial }{\partial y} \left(  k  \frac{\partial T}{\partial y} \right)
++Q
+\]
+and in the case where $k$ is constant in space:
+\[
+\frac{\partial T}{\partial t}   
++ u \frac{\partial T}{\partial x}  
++ v \frac{\partial T}{\partial y} 
+=
+\kappa \left( 
+\frac{\partial^2 T}{\partial x^2} 
++
+\frac{\partial^2 T}{\partial y^2} \right)
++Q
+\]
+Since we have already seen how to deal with 'pure' diffusion equations in the 
+previous section, let us now turn to 'pure' advection equations:
+
+\[
+\frac{\partial T}{\partial t}  + u \frac{\partial T}{\partial x} = 0
+\]
+or
+\[
+\frac{\partial T}{\partial t}  + u \frac{\partial T}{\partial x} + v \frac{\partial T}{\partial y}= 0
+\]
+where we assume $\vec\upnu=(u,v)$ known. 
+
+Even though the equations appear simple, it is quite tricky to solve them accurately, 
+more so than for the diffusion problem. 
+This is particularly the case if there are large gradients in the quantity that is to be advected. 
+
+
+
+
+
