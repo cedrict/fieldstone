@@ -1,0 +1,77 @@
+The 1D avdection equation is:
+\begin{equation}
+\rho C_p \left( \frac{\partial T}{\partial t}  
++ u \frac{\partial T}{\partial x} \right)=0 
+\end{equation}
+or simply
+\begin{equation}
+\frac{\partial T}{\partial t} + u \frac{\partial T}{\partial x}=0 
+\end{equation}
+We have seen how to deal with the time derivative (explicit, implicit) 
+and with the first order space derivative (forward, backward or central).
+Let us consider the FTCS scheme (Forward in Time, Central in Space).
+\[
+\frac{T_{\color{teal}i}^{k+1}-T^k_{\color{teal}i}}{\delta t} 
++ u_i \frac{T^k_{\color{teal}i+1} - T^k_{{\color{teal}i-1}}}{2h} =0 
+\]
+Note that although the velocity $u$ is prescribed, it can vary in space, hence
+the subscript $i$. 
+
+There is however a major problem: 
+the FTCS method is {\bf unconditionally} unstable, i.e., it blows up for any $\delta t$.
+The instability is related to the fact that this scheme produces negative diffusion, 
+which is numerically unstable.
+
+
+
+
+{\color{olive} Lax method}. The Lax approach consists of replacing the $T_i^n$ in the time-derivative with
+$(T_{i+1}^n + T_{i-1}^n)/2$. The resulting equation is
+\[
+\frac{T_i^{n+1}-  (T_{i+1}^n + T_{i-1}^n)/2   }{\delta t} = - u_i \frac{T^n_{i+1}-T^n_{i-1}}{2 h_x}
+\]
+
+{\color{olive}Streamline upwind scheme}. A popular scheme is the so-called (streamline) upwind approach. 
+Here, the spatial finite difference scheme depends on the sign of the velocity:
+\[
+\frac{T_i^{n+1}-  (T_{i+1}^n + T_{i-1}^n)/2   }{\delta t} =
+\left\{
+\begin{array}{l}
+ - u_i \frac{T^n_{i}-T^n_{i-1}}{h_x}  \quad\quad  {\rm if} \quad u_i<0\\ \\
+ - u_i \frac{T^n_{i+1}-T^n_{i}}{h_x}  \quad\quad  {\rm if} \quad u_i>0
+\end{array}
+\right.
+\]
+We have replaced central with forward or backward derivatives, depending on the flow direction. 
+
+
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\includegraphics[width=0.8cm]{images/garftr} \\
+{\color{orange}Exercise XX}
+\end{center}
+
+Let us consider the domain $[0,1]$. The temperature field at $t=0$ is 
+given by $T=1$ for $x<0.25$ and $T=0$ otherwise. The prescribed 
+velocity is $u=1$ and we set $nnx=51$.
+Boundary conditions are $T=1$ at $x=0$ and $T=0$ at $x=1$.
+
+\begin{center}
+\input{tikz_fdm1Df}
+\end{center}
+
+Program the above FTCS method. Run the model for 250 time steps with $\delta t=0.002$. 
+Program the Lax method by modifying the previous code
+BONUS: Program the upwind scheme method. 
+
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+
+
+

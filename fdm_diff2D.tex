@@ -1,34 +1,33 @@
 We now revisit the transient heat equation, this time with sources/sinks for 2D problems.
 In the absence of advective heat transport, the heat equation is 
-\[
+\begin{equation}
 \rho C_p \frac{\partial T}{\partial t} =
 \vec\nabla \cdot k \vec\nabla T + Q 
-\]
+\end{equation}
 which simply writes as follows when Cartesian coordinates are used:
-\[
+\begin{equation}
 \rho C_p \frac{\partial T}{\partial t} = 
 \frac{\partial }{\partial x} \left(  k  \frac{\partial T}{\partial x} \right)+
-\frac{\partial }{\partial y} \left(  k  \frac{\partial T}{\partial y} \right)+
-Q
-\]
+\frac{\partial }{\partial y} \left(  k  \frac{\partial T}{\partial y} \right)+ Q
+\end{equation}
 where $Q$ is the radiogenic heat production.
 
 If the heat conductivity is constant, it writes:
-\[
+\begin{equation}
 \frac{\partial T}{\partial t} =
-\kappa \left(  \frac{\partial^2 T}{\partial x^2} +   \frac{\partial^2 T}{\partial y^2} \right)+
+\kappa \left(  \frac{\partial^2 T}{\partial x^2} + \frac{\partial^2 T}{\partial y^2} \right)+
 \frac{Q}{\rho C_p}
-\]
-
+\end{equation}
 In order to solve this equation over the Cartesian domain of size $L_x \times L_y$
 we need to generate a mesh as shown hereunder:
 
-
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 \begin{minipage}[t]{\textwidth}
 \begin{center}
 \input{tikz_fdm5x4mesh1}
 \end{center}
 \end{minipage}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 The spacing between the nodes in the $x$-direction is $h_x$ and $h_y$ is the spacing
 between the nodes in the vertical direction. There are now $nnp=nnx\times nny$ nodes in total.
@@ -46,9 +45,11 @@ These three approaches are shown hereunder:
 
 \vspace{.5cm}
 
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 \begin{minipage}[t]{\textwidth}
 \input{tikz_fdm5x4meshes}\\
 \end{minipage}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 \vspace{.5cm}
 
@@ -66,18 +67,20 @@ For the first grid with row-wise numbering, we have
 $0\leq {\color{brown}i} \leq 4$ , $0 \leq {\color{brown}j} \leq 3$ 
 so that $0 \leq {\color{teal}k} \leq 19$
 and it follows that 
-\[
+\begin{equation}
 {\color{teal} k}={\color{brown}j}*nnx+{\color{brown}i}
-\]
+\end{equation}
 This is easy to verify: ${\color{brown}i}=3$ and ${\color{brown}j}=2$ 
 indeed corresponds to node \# 13, 
 ${\color{brown}i}=4$ and ${\color{brown}j}=1$ corresponds to node \# 9, etc ...
 
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 \begin{minipage}[t]{\textwidth}
 \begin{center}
 \input{tikz_fdm5x4mesh2}
 \end{center}
 \end{minipage}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 
 
@@ -86,7 +89,7 @@ ${\color{brown}i}=4$ and ${\color{brown}j}=1$ corresponds to node \# 9, etc ...
 %.............................
 \paragraph{Explicit scheme} The simplest approach is an {\color{olive} FTCS} 
 (forward time, centered space) explicit method like in 1D:
-\[
+\begin{equation}
 \frac{T_{{\color{brown}i,j}}^{n+1}-T_{{\color{brown}i,j}}^n}{\delta t}
 = \kappa
 \left(
@@ -94,17 +97,17 @@ ${\color{brown}i}=4$ and ${\color{brown}j}=1$ corresponds to node \# 9, etc ...
 \frac{ T_{{\color{brown}i,j-1}}^{n}-2T_{{\color{brown}i,j}}^{n}+T_{{\color{brown}i,j+1}}^{n}  }{h_y^2}
 \right)
 +\frac{Q_{{\color{brown}i,j}}^n}{\rho C_p}
-\]
+\end{equation}
 where we have assumed that the source term $Q$ can depend of space coordinates and therefore 
 appears as $Q_{{\color{brown}i},{\color{brown}j}}$ in the equation.
 We define $s_x$ and $s_y$ as follows:
-\[
+\begin{equation}
 s_x = \frac{\kappa \delta t}{h_x^2}
 \quad\quad
 s_y = \frac{\kappa \delta t}{h_y^2}
-\]
+\end{equation}
 so that
-\[
+\begin{equation}
 T_{{\color{brown}i,j}}^{n+1} = T_{{\color{brown}i,j}}^n 
 + s_x ( T_{{\color{brown}i-1,j}}^{n}
 -2T_{{\color{brown}i,j}}^{n}
@@ -113,19 +116,19 @@ T_{{\color{brown}i,j}}^{n+1} = T_{{\color{brown}i,j}}^n
 -2T_{{\color{brown}i,j}}^{n}
 +T_{{\color{brown}i,j+1}}^{n} ) + 
 \frac{Q_{{\color{brown}i,j}}^n \delta t}{\rho C_p}
-\]
+\end{equation}
 The scheme is stable for  
-\[
+\begin{equation}
 \delta t \leq \frac{\min(h_x^2,h_y^2)}{2 \kappa}
-\]
+\end{equation}
 Boundary conditions can be set the usual way: for example a constant (Dirichlet) temperature 
 at node $({\color{brown}i},{\color{brown}j})$ is given by
-\[
+\begin{equation}
 T_{{\color{brown}i},{\color{brown}j}}=T_{bc} 
-\]
+\end{equation}
 where $T_{bc}$ is the prescribed temperature. 
 
-
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -133,18 +136,19 @@ where $T_{bc}$ is the prescribed temperature.
 \includegraphics[width=0.8cm]{images/garftr} \\
 {\color{orange}Exercise 5}
 \end{center}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 
 A simple (time-dependent) analytical solution for the temperature equation exists for 
 the case that the initial temperature distribution is
-\[
+\begin{equation}
 T(x,y,t=0) = T_{max} \exp \left[ -\frac{x^2+y^2}{\sigma^2}   \right]
-\]
+\end{equation}
 where $T_{max}$ is the maximum amplitude of the temperature perturbation 
 at $(x,y) = (0, 0)$ and $\sigma$ its half-width. The solution is
-\[
+\begin{equation}
 T(x,y,t)=\frac{T_{max}}{1+4t\kappa/\sigma^2 } \exp \left[ -\frac{x^2+y^2}{\sigma^2 + 4t\kappa}   \right]
-\]
+\end{equation}
 Program the analytical solution and compare it with the explicit 
 numerical solution with the same initial conditions at each time step. 
 Comment on the accuracy of both methods for different values of dt.
@@ -163,19 +167,11 @@ REVISIT AFTER notebook is built.
 
 
 
-
-
-
-
-
-
-
-
 %...........................
 \paragraph{Implicit scheme} 
 If we now employ a fully implicit, unconditionally stable discretization scheme, the discretised 
 PDE becomes:
-\[
+\begin{equation}
 \frac{T_{{\color{brown}i},{\color{brown}j}}^{n+1}-T_{\color{brown}i,j}^n}{\delta t}
 = \kappa
 \left(
@@ -183,9 +179,9 @@ PDE becomes:
 \frac{ T_{{\color{brown}i,j-1}}^{n+1}-2T_{{\color{brown}i,j}}^{n+1}+T_{{\color{brown}i,j+1}}^{n+1} }{h_y^2}
 \right)
 +\frac{Q_{{\color{brown}i,j}}^n}{\rho C_p}
-\]
+\end{equation}
 Rearranging terms with $n+1$ on the left and terms with $n$ on the right hand side gives
-\[
+\begin{equation}
 -s_x\; T_{{\color{brown}i+1,j}}^{n+1}
 -s_y\; T_{{\color{brown}i,j+1}}^{n+1} 
 +(1+2s_x+2s_y)\; T_{{\color{brown}i,j}}^{n+1} 
@@ -194,11 +190,9 @@ Rearranging terms with $n+1$ on the left and terms with $n$ on the right hand si
 =
 T_{{\color{brown}i,j}}^n
 +\frac{Q_{{\color{brown}i,j}}^n \delta t}{\rho C_p}
-\]
+\end{equation}
 which here again yields a linear system of equations written ${\bm A}\cdot {\vec T} = {\vec b}$
 where ${\bm A}$ is a $(nnp \times nnp)$ matrix.
-
-
 
 Boundary conditions are $T(x,y)=0$ on all sides, so all nodes 
 on the boundary have a prescribed zero temperature\footnote{We assume
@@ -222,7 +216,7 @@ T_{\color{brown}4,3} = T_{\color{teal} 19} &=& 0 \nn
 In what follows we assume for simplicity and conciseness of notation that 
 $h_x=h_y=h$ so that $s_x=s_y=s$ and we will use the notation $\tilde{Q}=Q \delta t/\rho C_p$.
 The discretised PDE equation will now be applied to the interior nodes:
-\[
+\begin{eqnarray}
 -s T_{{\color{brown} i+1,j}}^{n+1}
 -s T_{{\color{brown}i,j+1}}^{n+1} 
 +(1+4s)T_{{\color{brown}i,j}}^{n+1} 
@@ -230,26 +224,26 @@ The discretised PDE equation will now be applied to the interior nodes:
 -s T_{{\color{brown}i,j-1}}^{n+1} 
 = T_{{\color{brown}i,j}}^n 
 +\tilde{Q}_{{\color{brown}i,j}}^n
-\]
+\end{eqnarray}
 
 \begin{itemize}
 \item For node ${\color{teal}k}=6$ (${\color{brown}i}=1,{\color{brown}j}=1$):
-\[
+\begin{equation}
 -s T_{{\color{brown}2,1}}^{n+1}
 -s T_{{\color{brown}1,2}}^{n+1} 
 +(1+4s)T_{{\color{brown}1,1}}^{n+1} 
 -s T_{{\color{brown}0,1}}^{n+1} 
 -s T_{{\color{brown}1,0}}^{n+1} 
 = T_{{\color{brown}1,1}}^n +\tilde{Q}_{{\color{brown}1,1}}^n
-\]
+\end{equation}
 or, 
-\[
+\begin{equation}
 -s T_{\color{teal} 7}^{n+1}-s T_{\color{teal} 11}^{n+1} +(1+4s)T_{\color{teal} 6}^{n+1} -s T_{\color{teal} 5}^{n+1} -s T_{\color{teal} 1}^{n+1} 
 = T_{\color{teal} 6}^n +\tilde{Q}_{\color{teal} 6}^n
-\]
+\end{equation}
 
 \item For node ${\color{teal}k}=7$ (${\color{brown}i}=2,{\color{brown}j}=1$):
-\[
+\begin{equation}
 -s T_{{\color{brown} 3,1}}^{n+1}
 -s T_{{\color{brown}2,2}}^{n+1} 
 +(1+4s)T_{{\color{brown}2,1}}^{n+1} 
@@ -257,8 +251,9 @@ or,
 -s T_{{\color{brown}2,0}}^{n+1} 
 = T_{{\color{brown}2,1}}^n 
 +\tilde{Q}_{{\color{brown}2,1}}^n
-\]
+\end{equation}
 or,
+
 
 \item For node ${\color{teal}k}=8$ (${\color{brown}i}=3,{\color{brown}j}=1$):
 \[
@@ -415,7 +410,7 @@ Note that we now have five diagonals filled with non-zero entries as opposed to 
 diagonals in the 1D case.
 \end{landscape}
 
-
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -429,10 +424,7 @@ Same exercise as exercise 5, but now with implicit method.
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
-
-
-
-
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 
 Looking at this matrix, it is clear that this approach is sub-optimal: for such a small grid counting
@@ -443,18 +435,26 @@ As a consequence, we would have to solve a $6\times 6$ linear system, as opposed
 
 In this case, we focus again on nodes 6,7,8,11,12,13.
 we start from 
-\[
--s T_{\color{teal} 7}^{n+1}-s T_{\color{teal} 11}^{n+1} +(1+4s)T_{\color{teal} 6}^{n+1} -s T_{\color{teal} 5}^{n+1} -s T_{\color{teal} 1}^{n+1} 
-= T_{\color{teal} 6}^n +\tilde{Q}_{\color{teal} 6}^n
-\]
+\begin{equation}
+-s T_{{\color{teal} 7}}^{n+1}
+-s T_{{\color{teal} 11}}^{n+1} 
++(1+4s)T_{{\color{teal} 6}}^{n+1} 
+-s T_{{\color{teal} 5}}^{n+1} 
+-s T_{{\color{teal} 1}}^{n+1} 
+= T_{{\color{teal} 6}}^n 
++\tilde{Q}_{{\color{teal} 6}}^n
+\end{equation}
 but we know that the boundary conditions impose that $T_1=0$ and $T_5=0$ so that the equation above simplifies to:
-\[
--s T_{\color{teal} 7}^{n+1}-s T_{\color{teal} 11}^{n+1} +(1+4s)T_{\color{teal} 6}^{n+1} 
-= T_{\color{teal} 6}^n +\tilde{Q}_{\color{teal} 6}^n
-\]
+\begin{equation}
+-s T_{{\color{teal} 7}}^{n+1}
+-s T_{{\color{teal} 11}}^{n+1} 
++(1+4s)T_{{\color{teal} 6}}^{n+1} 
+= T_{{\color{teal} 6}}^n 
++\tilde{Q}_{{\color{teal} 6}}^n
+\end{equation}
 
 These 6 equations can finally be combined in the expected smaller linear system:
-\[
+\begin{equation}
 \underbrace{
 \left(
 \begin{array}{cccccc}
@@ -493,13 +493,13 @@ T_{{\color{teal}13}}^n + \tilde{Q}_{\color{teal}13}
 \end{array}
 \right)
 }_{\vec b}
-\]
+\end{equation}
 Note that is the boundary values had not been zero they would have found their way to the right hand side 
 vector.
 
 %STENCILS in 2D?
 
-
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -508,8 +508,10 @@ vector.
 {\color{orange}Exercise 7}
 \end{center}
 
-
- 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+
+
+

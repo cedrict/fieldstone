@@ -1,18 +1,17 @@
 Consider the one-dimensional, transient (i.e. time-dependent) 
 heat conduction equation without heat generating sources
-
-\[
+\begin{equation}
 \rho C_p \frac{\partial T}{\partial t} 
 = \frac{\partial }{\partial x} \left(  k  \frac{\partial T}{\partial x} \right)
-\]
+\end{equation}
 where $\rho$ is density, $C_p$ heat capacity, $k$ thermal conductivity, $T$ temperature, 
 $x$ distance, and $t$ time. 
 
 If the thermal conductivity, density and heat capacity are constant over the model domain, 
 the equation can be simplified to a diffusion equation:
-\[
+\begin{equation}
 \frac{\partial T}{\partial t} =  \kappa \frac{\partial^2 T}{\partial x^2} 
-\]
+\end{equation}
 where $\kappa=k/\rho c_p$ is the heat diffusivity. \index{general}{Heat Diffusivity}
 
 We wish to solve this PDE in time and space (provided the appropriate 
@@ -25,11 +24,11 @@ and it is discretised by means of $nnx$ points as depicted hereunder:
 
 The derivative of temperature with regards to time can be approximated
 with a forward finite difference approximation {\it in time} as
-\[
+\begin{equation}
 \frac{\partial T}{\partial t} 
 \simeq \frac{T_{i}^{n+1}-T_i^n}{t^{n+1}-t^n} 
 = \frac{T_{i}^{n+1}-T_i^n}{\delta t} 
-\]
+\end{equation}
 where $\delta t$ is the time step, i.e. the time between two consecutive 
 measurements (the equivalent of $h$ in space). 
 In all that follows the subscript will always refer to space indices 
@@ -41,21 +40,21 @@ Both $n$ and $i$ are integers; $n$ varies from 1 to $nstep$ (total number of tim
 and $i$ varies from 0 to $nnx-1$ (where $nnx$ is the total number of grid points in $x$-direction).
 
 The spatial derivative is replaced by a central FD approximation
-\[
+\begin{eqnarray}
 \frac{\partial^2 T}{\partial x^2} 
 \simeq \frac{T_{i+1}^n - 2T_i^n + T_{i-1}^n}{h^2}
-\]
+\end{eqnarray}
 We obtain
-\[
+\begin{eqnarray}
 \frac{T_{i}^{n+1}-T_i^n}{\delta t} 
 = \kappa \frac{T_{i+1}^n - 2T_i^n + T_{i-1}^n}{h^2}
-\]
+\end{eqnarray}
 and finally
-\[
+\begin{eqnarray}
 \boxed{
 T_i^{n+1}=T_i^n + \delta t \; \kappa \frac{T_{i+1}^n - 2T_i^n + T_{i-1}^n}{h^2}
 }
-\]
+\end{eqnarray}
 
 Because the temperature at the current time step $n$ is known,
 we can compute the new temperature without solving any additional equations.
@@ -81,8 +80,7 @@ and because it is {\color{olive}stable} for certain values of
 $h$ and $\delta t$: any spontaneous perturbations in the solution (such as round-off error) 
 will either be bounded or will decay.
 
-
-
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -96,9 +94,9 @@ For example:
 Then, we will be able to compute the new temperature of (for example) 
 node 3 at time $t=1\cdot \delta t$ 
 (i.e. $T_3^1$) with 
-\[
+\begin{equation}
 T_3^{1}=T_3^0 + \delta t \; \kappa \frac{T_{4}^0 - 2T_3^0 + T_{2}^0}{h^2}
-\]
+\end{equation}
 Note that $T_0$ and $T_5$ cannot be computed by means of the above equation, 
 which is not a problem because both these values are actually the prescribed 
 boundary conditions. 
@@ -106,17 +104,17 @@ boundary conditions.
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
-
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 \noindent The main drawback of the explicit approach is that stable solutions are
 obtained {\it only} when
-\[
+\begin{equation}
 0 < \frac{2\kappa \delta t}{h^2} \leq1
 \qquad
 \text{or,}
 \qquad
 \delta t \leq \frac{h^2}{2 \kappa}
-\]
+\end{equation}
 If this condition is not satisfied, the solution becomes {\color{olive} unstable}, starts to
 wildly oscillate and ultimately 'blows up'. We will observe this during the practicals. 
 
@@ -125,6 +123,7 @@ takes for an anomaly to diffuse across the grid (nodal) spacing $h$.
 The explicit solution is an example of a {\color{olive} conditionally stable method}
 that only leads to well behaved solutions if a criterion like the one above is satisfied.
 
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -147,36 +146,34 @@ $\rightarrow$ {\tt Exercise\_2\_FDM.ipynb}
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 \noindent An alternative approach is an {\bf implicit} finite difference scheme, where the spatial derivatives
 of the Laplacian are evaluated (at least partially) at the new time step.
 We then use the backward difference for the time derivative:
-\[
-\frac{\partial T}{\partial t} 
-= \frac{T_{i}^{n}-T_i^{n-1}}{\delta t} 
-\]
+\begin{equation}
+\frac{\partial T}{\partial t} = \frac{T_{i}^{n}-T_i^{n-1}}{\delta t} 
+\end{equation}
 so that
-\[
-\frac{T_{i}^{n}-T_i^{n-1}}{\delta t} 
-= \kappa \frac{T_{i+1}^n - 2T_i^n + T_{i-1}^n}{h^2}
-\]
+\begin{equation}
+\frac{T_{i}^{n}-T_i^{n-1}}{\delta t} = \kappa \frac{T_{i+1}^n - 2T_i^n + T_{i-1}^n}{h^2}
+\end{equation}
 Note that this is often rewritten as follows in order to keep the unknwowns at time $n+1$:
-\[
-\frac{T_{i}^{n+1}-T_i^{n}}{\delta t} 
-= \kappa \frac{T_{i+1}^{n+1} - 2T_i^{n+1} + T_{i-1}^{n+1}}{h^2}
-\]
+\begin{equation}
+\frac{T_{i}^{n+1}-T_i^{n}}{\delta t} = \kappa \frac{T_{i+1}^{n+1} - 2T_i^{n+1} + T_{i-1}^{n+1}}{h^2}
+\end{equation}
 
 It is a fully implicit scheme where the time derivative is taken backward.
 Let us define the dimensionless parameter $s$ as follows:
-\[
+\begin{equation}
 s=\frac{\kappa \; \delta t}{h^2}
-\]
+\end{equation}
 The previous equation can be rearranged as follows:
-\[
+\begin{equation}
 \boxed{
 -s \; T_{i+1}^{n+1} + (1+2s)\; T_{i}^{n+1} - s\; T_{i-1}^{n+1} = T_i^{n}
 }
-\]
+\end{equation}
 
 \begin{center}
 \input{tikz_fdmImpl}
@@ -201,6 +198,7 @@ to ensure the
 method can deal with small and large scale features robustly at the same time.
 
 
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -220,10 +218,10 @@ T_0^1 &=& 0 \nn\\
 -s T_{4}^{1} + (1+2s) T_{3}^{1} - s T_{2}^{1} &=& T_3^{0} \nn\\
 -s T_{5}^{1} + (1+2s) T_{4}^{1} - s T_{3}^{1} &=& T_4^{0} \nn\\
 -s T_{6}^{1} + (1+2s) T_{5}^{1} - s T_{4}^{1} &=& T_5^{0} \nn\\
-T_6^1 &=& 100\nn
+T_6^1 &=& 100
 \end{eqnarray}
 or, 
-\[
+\begin{equation}
 \underbrace{
 \left(
 \begin{array}{ccccccc}
@@ -252,8 +250,8 @@ T_0^1 \\ T_1^1 \\ T_2^1 \\ T_3^1 \\ T_4^1 \\ T_5^1 \\ T_6^1
 0 \\ T_1^0\\ T_2^0\\ T_3^0\\ T_4^0\\ T_5^0 \\ 100
 \end{array}
 \right)
-}_{\vec{b}}
-\]
+}_{\vec{b}} \nn
+\end{equation}
 
 As opposed to the explicit approach we must solve a linear system which size is given 
 by the total number of nodes/points $nnx$ in order to compute a new temperature field.
@@ -261,29 +259,29 @@ by the total number of nodes/points $nnx$ in order to compute a new temperature 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-
 
-
-In summary, an implicit method requires us to solve ${\bm A}\cdot\vec{T} = \vec{b}$ with
+\noindent In summary, an implicit method requires us to solve ${\bm A}\cdot\vec{T} = \vec{b}$ with
 \begin{itemize}
-\item ${\bm A}$ is a $nnx \times nnx$  {\color{olive}sparse} matrix,
+\item ${\bm A}$ is a $nnx \times nnx$  {\color{olive}sparse} matrix (i.e. mostly empty),
 \item ${\vec b}$ is a known vector of size $nnx$ (often called the 'right-hand side', or {\color{olive} rhs})
 \item ${\vec T}$ the vector of unknowns.
 \end{itemize}
 
+%..................................
 \paragraph{A word about solvers}
 There are two main approaches to solving such a linear system: one can use a {\color{olive} direct}
 approach or an {\color{olive} iterative} approach. 
 In a nutshell, a direct solver will 'manipulate' the matrix lines and columns 
 so as to arrive at the solution. A simple example of such an approach is the 
-technique of elemination of variables:
-
+technique of elimination of variables:
 
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
-{\color{blue} Example}\footnote{Taken from \url{https://en.wikipedia.org/wiki/System_of_linear_equations}}: 
+{\color{blue} Example}:
 Consider the following system:
-\[
+\begin{equation}
 \left(
 \begin{array}{ccc}
 1 & 3 & -2 \\
@@ -303,10 +301,16 @@ x \\ y \\ z
 5 \\ 7 \\ 8
 \end{array}
 \right)
-\]
+\end{equation}
+which is of course equivalent to
+\begin{eqnarray}
+x+3y-2z &=& 5 \nn\\
+3x+5y+6z &=& 7 \nn\\
+2x+4y+3z &=& 8 
+\end{eqnarray}
 Solving the first equation for $x$ gives $x = 5 + 2z - 3y$, 
 and plugging this into the second and third equation yields
-\[
+\begin{equation}
 \left(
 \begin{array}{ccc}
 1 & 3 & -2 \\
@@ -326,10 +330,10 @@ x \\ y \\ z
 5 \\ -8 \\ -2 
 \end{array}
 \right)
-\]
+\end{equation}
 Solving the second line for $y$ yields $y = 2 + 3z$, 
 and plugging this into the second equation yields $z = 2$. We now have: 
-\[
+\begin{equation}
 \left(
 \begin{array}{ccc}
 1 & 3 & -2 \\
@@ -349,85 +353,162 @@ x \\ y \\ z
 5 \\ -8 \\ 4
 \end{array}
 \right)
-\]
+\end{equation}
 Substituting $z = 2$ into the second equation gives $y = 8$, 
 and substituting $z = 2$ and $y = 8$ into the first equation yields $x = -15$. 
 Therefore, the solution set is the single point $(x, y, z) = (-15, 8, 2)$.
 
+{\tiny Taken from \url{https://en.wikipedia.org/wiki/System_of_linear_equations}} 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
 
 This example is of course very naive and direct solvers are often very large 
 numerical libraries which have been highly optimised to take advantage of the 
-sparsity of hte matrix in order to arrive at the solution in the lowest 
+sparsity of the matrix in order to arrive at the solution in the lowest 
 number of operations possible. 
-In reality techniques such as LU-decomposition or Cholesky decomposition are used. 
-
+In reality techniques such as LU decomposition or Cholesky decomposition are used. 
+\index{general}{LU decomposition}
+\index{general}{Cholesky decomposition}
 
 Iterative solvers on the other hand compute the solution of the system 
 by first postulating an initial guess for the solution and then by 
 improving this guess iteratively until the {\color{olive} termination criterion}
 is met. There are two classes of iteratives methods in this context: 
-{\color{olive} stationary iterative methods} and 
-{\color{olive} Krylov subspace methods}.
+{\color{olive} stationary iterative methods} (e.g. Jacobi, Gauss-Seidel, SSOR) and 
+{\color{olive} Krylov subspace methods} (e.g. CG, GMRES, BiCG).
 At this stage things get real complicated and the details of iterative solvers 
-are vastly out of scope.  
+are vastly out of the scope of this course \cite{saad}.     
 
 
-
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
 {\color{blue} Example}: the stationary Jacobi method. 
-We decompose the matrix ${\bm A}$ as follows:
-\[
+the matrix ${\bm A}$ is decomposed as follows:
+\begin{equation}
 {\bm A} = {\bm D} + {\bm L} + {\bm U} 
-\] 
+\end{equation}
 where ${\bm D}$ is the diagonal of the matrix ${\bm A}$, ${\bm L}$ is the 
 strict lower triangular part of ${\bm A}$ and 
 ${\bm U}$ is the strict upper triangular part of ${\bm A}$.
 The iterative method is defined by:
-\[
+\begin{equation}
 {\bm D} \cdot \vec{T}^{k+1} = -({\bm L} + {\bm U}) \cdot \vec{T}^k + \vec{b}
-\]
-This method is trivial to implement since solving the system on the 
+\qquad k=0,1,\dots
+\end{equation}
+where $\vec{T}^k$ is the initial guess (often taken to be zero).
+This method is trivial to implement since the linear system on the 
 left side of the equal sign involves a diagonal matrix.
 This can also be written 
-\[
+\begin{equation}
 T_i^{k+1} = \frac{1}{A_{ii}} \left(b_i - \sum_{j\neq i} A_{ij} T_j^k \right)
 \qquad
 i=1,2,...nnx
-\]
+\end{equation}
+Looking at the previous example, we have 
+\begin{equation}
+{\bm D}=
+\left(
+\begin{array}{ccc}
+1 & 0 & 0 \\
+0 & 5 & 0 \\
+0 & 0 & 3
+\end{array}
+\right)
+\qquad
+{\bm L}+{\bm U}= 
+\left(
+\begin{array}{ccc}
+0 & 3 & -2 \\
+3 & 0 & 6 \\
+2 & 4 & 0
+\end{array}
+\right)
+\end{equation}
+We then start with the guess $\vec{T}^0=\vec{0}$, so that for $k=1$:
+\begin{equation}
+\vec{T}^1 = {\bm D}^{-1}\cdot \vec{b} = 
+\left(
+\begin{array}{ccc}
+1 & 0 & 0 \\
+0 & 1/5 & 0 \\
+0 & 0 & 1/3
+\end{array}
+\right)
+\cdot 
+\left(
+\begin{array}{c}
+5 \\ 7 \\ 8
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+5 \\ 7/5 \\ 8/3
+\end{array}
+\right)
+\end{equation}
+and then we obtain $\vec{T}^2$ by solving 
+\begin{eqnarray}
+\vec{T}^2 
+&=& {\bm D}^{-1} \cdot \left[-({\bm L} + {\bm U}) \cdot \vec{T}^1 + \vec{b} \right] \nn\\
+&=&
+\left(
+\begin{array}{ccc}
+1 & 0 & 0 \\
+0 & 1/5 & 0 \\
+0 & 0 & 1/3
+\end{array}
+\right)
+\cdot 
+\left[
+-
+\left(
+\begin{array}{ccc}
+0 & 3 & -2 \\
+3 & 0 & 6 \\
+2 & 4 & 0
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+5 \\ 7/5 \\ 8/3
+\end{array}
+\right)
++
+\left(
+\begin{array}{c}
+5 \\ 7 \\ 8
+\end{array}
+\right)
+\right] \nn\\
+&=&
+\dots  
+\end{eqnarray}
+We keep iterating until two consecutively obtained 
+temperature vectors are nearly identical, or, 
+\begin{equation}
+\| \vec{T}^{k+1}-\vec{T}^k \| < \epsilon
+\end{equation}
+where $\epsilon$ is a carefully chosen small enough number. 
 
-
-
- 
+A sufficient (but not necessary) condition for the method to converge is that 
+the matrix ${\bm A}$ is strictly or irreducibly diagonally dominant. 
+Strict row diagonal dominance means that for each row, the absolute value of 
+the diagonal term is greater than the sum of absolute values of other 
+terms $|a_{ii}|>\sum_{j\neq i} |a_{ij}| $.
+Also, this algorithm will fail if one or more diagonal terms of ${\bm A}$ is nul.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 
-
-
-
-Finally, looking at
-\[
--s T_{i+1}^{n+1} + (1+2s) T_{i}^{n+1} - s T_{i-1}^{n+1} = T_i^{n}
-\]
-and dividing by $-s$ and letting $\delta t \rightarrow \infty$, we obtain:
-\[
-T_{i+1}^{n+1} -2 T_{i}^{n+1} + T_{i-1}^{n+1} = 0
-\]
-which is a central difference approximation of the steady state solution
-\[
-\frac{\partial^2 T }{\partial x^2}=0
-\]
-Therefore, the fully implicit scheme will always yield the right equilibrium solution 
-but may not capture small scale, transient features.
-
-
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -437,16 +518,52 @@ but may not capture small scale, transient features.
 {\color{orange}Exercise 3}
 \end{center}
 
+Implement the above example from scratch in a new notebook.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+
+
+\noindent
+Finally, looking at
+\begin{equation}
+-s\;  T_{i+1}^{n+1} + (1+2s)\;  T_{i}^{n+1} - s\;  T_{i-1}^{n+1} = T_i^{n}
+\end{equation}
+and dividing by $-s$ and letting $\delta t \rightarrow \infty$, we obtain:
+\begin{equation}
+T_{i+1}^{n+1} -2 T_{i}^{n+1} + T_{i-1}^{n+1} = 0
+\end{equation}
+which is a central difference approximation of the steady state solution
+\begin{equation}
+\frac{\partial^2 T }{\partial x^2}=0
+\end{equation}
+Therefore, the fully implicit scheme will always yield the right equilibrium solution 
+but may not capture small scale, transient features.
+
+
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\includegraphics[width=0.8cm]{images/garftr} \\
+{\color{orange}Exercise 4}
+\end{center}
+
 This is exactly the same exercise as Exercise 2 but we 
 are going to solve the 1D diffusion equation with the implicit method
 this time. First use the provided solver in the notebook, then 
 implement your own Jacobi solver. 
 
-$\rightarrow$ {\tt Exercise\_3\_FDM.ipynb}
+$\rightarrow$ {\tt Exercise\_4\_FDM.ipynb}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 
 \paragraph{Crank-Nicolson scheme} \index{general}{Crank-Nicolson}
@@ -462,23 +579,22 @@ which is unconditionally stable (The method was developed by John Crank and Phyl
 in the mid 20th century\footnote{\url{https://en.wikipedia.org/wiki/Crank-Nicolson_method}}).
 
 The Crank-Nicolson method is the time analog of central spatial differences and is given by
-
-\[
+\begin{equation}
 \frac{T_{i}^{n+1}-T_i^n}{\delta t} 
-= \frac{\kappa}{2} \left[
-\frac{T_{i+1}^{n} - 2T_i^{n} + T_{i-1}^{n}}{h^2}
+= \kappa  \frac{1}{2} \left[
+\underbrace{\frac{T_{i+1}^{n} - 2T_i^{n} + T_{i-1}^{n}}{h^2}}_{\text{at time } n}
 +
-\frac{T_{i+1}^{n+1} - 2T_i^{n+1} + T_{i-1}^{n+1}}{h^2}
+\underbrace{\frac{T_{i+1}^{n+1} - 2T_i^{n+1} + T_{i-1}^{n+1}}{h^2}}_{\text{at time } n+1}
 \right]
-\]
+\end{equation}
 We define $s=\kappa \delta t/ 2h^2$ so that the equation above can be rearranged as follows :
-\[
+\begin{equation}
 \boxed{
 -s\; T_{i+1}^{n+1} + (1+2s)\;  T_{i}^{n+1} 
 -s\;  T_{i-1}^{n+1} = 
 s\; T_{i+1}^{n} + (1-2s)\; T_{i}^{n} + s\; T_{i-1}^{n} 
 }
-\]
+\end{equation}
 
 Any partially implicit method is more complicated to compute as we need to infer the future solution 
 at time $n+1$ by solution (inversion) of a system of linear equations based on the known solution at time $n$. 
@@ -487,19 +603,22 @@ at time $n+1$ by solution (inversion) of a system of linear equations based on t
 \input{tikz_fdmCN}
 \end{center}
 
-
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
 
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise 4}
+{\color{orange}Exercise 5}
 \end{center}
+
+Modify the code of exercise 4 to implement the Crank-Nicolson method.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 
 

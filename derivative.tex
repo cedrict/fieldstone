@@ -11,17 +11,17 @@ is the \underline{slope} of this graph at each point.
 \end{center}
 
 \noindent There are two standard notations:
-\[
+\begin{equation}
 \frac{df}{dx}(x) \qquad \text{and} \qquad f'(x)
-\]
+\end{equation}
 The mathematical definition is\footnote{if the limit exists}:
-\[
+\begin{equation}
 \boxed{
 f'(x)
 =\lim_{h\rightarrow 0} \frac{f(x+h)-f(x)}{(x+h)-x} 
 =\lim_{h\rightarrow 0} \frac{f(x+h)-f(x)}{h} 
 }
-\]
+\end{equation}
 i.e., how much does the function grow between $x$ and $x+h$, divided by the length $h$.
 On the following left plot the function is in green while the line joining the points
 $x,f(x)$ and $x+h,f(x+h)$ is shown in purple. On the right figure we see that 
@@ -39,13 +39,13 @@ Taken from Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Derivative}}.
 \end{center}
 
 \noindent Also, one can rewrite the formula above as
-\[
+\begin{equation}
 f(x+h) \simeq f(x) +  f'(x) h
-\]
+\end{equation}
 which is in fact the beginning of the Taylor expansion of the function:
-\[
+\begin{equation}
 f(x+h) \simeq f(x) +  f'(x) h + \frac{1}{2!} f''(x) h^2 + \dots 
-\]
+\end{equation}
 We will see in what follows that the Taylor expansion and the concept of derivation is 
 central in the Finite Difference method. 
 

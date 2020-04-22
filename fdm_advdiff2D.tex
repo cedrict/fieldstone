@@ -9,19 +9,19 @@ through a convecting mantle).
 If the numerical grid remains fixed in the background, the hot temperatures should 
 be moved to different grid points at each time step. 
 
-We start again from the heat transport equation of section XXX 
-\[
+We start again from the heat transport equation of Section~\ref{ss:hte}:
+\begin{equation}
 \rho C_p \left( \frac{\partial T}{\partial t} + \vec\upnu \cdot \vec\nabla T  \right)=
 \vec\nabla \cdot k \vec\nabla T + Q 
-\]
+\end{equation}
 In one-dimensional Cartesian coordinates:
-\[
+\begin{equation}
 \rho C_p \left( \frac{\partial T}{\partial t}  
 + u \frac{\partial T}{\partial x} \right)= 
 \frac{\partial }{\partial x} \left(  k  \frac{\partial T}{\partial x} \right)+ Q
-\]
+\end{equation}
 and in 2D
-\[
+\begin{equation}
 \rho C_p \left( \frac{\partial T}{\partial t}   
 + u \frac{\partial T}{\partial x}  
 + v \frac{\partial T}{\partial y} \right) 
@@ -30,29 +30,27 @@ and in 2D
 +
 \frac{\partial }{\partial y} \left(  k  \frac{\partial T}{\partial y} \right)
 +Q
-\]
+\end{equation}
 and in the case where $k$ is constant in space:
-\[
+\begin{equation}
 \frac{\partial T}{\partial t}   
 + u \frac{\partial T}{\partial x}  
 + v \frac{\partial T}{\partial y} 
 =
 \kappa \left( 
 \frac{\partial^2 T}{\partial x^2} 
-+
-\frac{\partial^2 T}{\partial y^2} \right)
-+Q
-\]
++ \frac{\partial^2 T}{\partial y^2} \right) +Q
+\end{equation}
 Since we have already seen how to deal with 'pure' diffusion equations in the 
 previous section, let us now turn to 'pure' advection equations:
 
-\[
+\begin{equation}
 \frac{\partial T}{\partial t}  + u \frac{\partial T}{\partial x} = 0
-\]
+\end{equation}
 or
-\[
+\begin{equation}
 \frac{\partial T}{\partial t}  + u \frac{\partial T}{\partial x} + v \frac{\partial T}{\partial y}= 0
-\]
+\end{equation}
 where we assume $\vec\upnu=(u,v)$ known. 
 
 Even though the equations appear simple, it is quite tricky to solve them accurately, 
