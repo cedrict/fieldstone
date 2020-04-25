@@ -141,7 +141,7 @@ if int(len(sys.argv) == 3):
    nelr = int(sys.argv[1])
    visu = int(sys.argv[2])
 else:
-   nelr = 32
+   nelr = 64
    visu = 1
 
 R1=1.
@@ -166,6 +166,8 @@ qweights=[5./9.,8./9.,5./9.]
 
 rVnodes=[-1,1,1,-1,0,1,0,-1,0]
 sVnodes=[-1,-1,1,1,-1,0,1,0,0]
+
+sparse=True
 
 #################################################################
 # grid point setup
@@ -383,8 +385,11 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
+if sparse:
+   A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
+else:   
+   K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
+   G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
 f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
 h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
 constr= np.zeros(NfemP,dtype=np.float64)         # constraint matrix/vector
@@ -503,11 +508,18 @@ for iel in range(0,nel):
                 for i2 in range(0,ndofV):
                     jkk=ndofV*k2          +i2
                     m2 =ndofV*iconV[k2,iel]+i2
-                    K_mat[m1,m2]+=K_el[ikk,jkk]
+                    if sparse:
+                       A_sparse[m1,m2] += K_el[ikk,jkk]
+                    else:
+                       K_mat[m1,m2]+=K_el[ikk,jkk]
             for k2 in range(0,mP):
                 jkk=k2
                 m2 =iconP[k2,iel]
-                G_mat[m1,m2]+=G_el[ikk,jkk]
+                if sparse:
+                   A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
+                   A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
+                else:
+                   G_mat[m1,m2]+=G_el[ikk,jkk]
             #end for 
             f_rhs[m1]+=f_el[ikk]
         #end for 
@@ -520,8 +532,9 @@ for iel in range(0,nel):
 
 #end for iel
 
-print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
-print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
+if not sparse:
+   print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
+   print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
 
 #exit()
 
@@ -532,16 +545,22 @@ print("build FE matrixs & rhs (%.3fs)" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)
-a_mat[0:NfemV,0:NfemV]=K_mat
-a_mat[0:NfemV,NfemV:Nfem]=G_mat
-a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+if not sparse:
+   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)
+   a_mat[0:NfemV,0:NfemV]=K_mat
+   a_mat[0:NfemV,NfemV:Nfem]=G_mat
+   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
 
 rhs=np.zeros(Nfem,dtype=np.float64)
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
+    
+if sparse:
+   sparse_matrix=A_sparse.tocsr()
+else:
+   sparse_matrix=sps.csr_matrix(a_mat)
 
-sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
 print("solving system (%.3fs)" % (timing.time() - start))
 
