@@ -1,0 +1,13 @@
+rm -f errors
+rm -f vrms 
+
+for l in 4 6 8 10 12 14 16 20 24 32 40; do
+
+   python3 stone.py $l 0 > opla  
+   grep errv opla >> errors 
+   grep vrms opla >> vrms 
+
+done
+
+rm opla
+

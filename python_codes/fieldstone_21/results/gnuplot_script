@@ -1,0 +1,60 @@
+set term pdf enhanced
+set output 'errors.pdf'
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+set key bottom 
+plot[][]\
+'errors' u (1./($3)):6 w lp ps .45 t 'velocity',\
+'errors' u (1./($3)):9 w lp ps .35 t 'pressure (p)',\
+'errors' u (1./($3)):12 w lp ps .35 t 'pressure (q)',\
+'aspect_k4_q2q1.dat' u (1./$6):4 w lp ps .4 t 'ASPECT, v' ,\
+'aspect_k4_q2q1.dat' u (1./$6):5 w lp ps .4 t 'ASPECT, p',\
+x**3. w l lt -1 dashtype 4 t 'x^3',\
+x**2.*3. w l lt -1 dashtype 2 t 'x^2'
+
+set pointsize .5
+
+set key top left
+set ylabel 'v_{rms}'
+unset log y
+set output 'vrms.pdf'
+plot[:][]\
+'vrms' u (1./($3)):5 w lp notitle,\
+1.083554613 lt -1 dashtype 2 t 'analytical'
+
+
+
+
+
+
+
+set xlabel 'x'
+set ylabel 'pressure'
+set key outside
+unset log
+
+##########################################################3
+
+
+R1=1.
+R2=2.
+A=2.*(log(R1)-log(R2))/(R2**2*log(R1)-R1**2*log(R2) )
+B=(R2**2-R1**2)/(R2**2*log(R1)-R1**2*log(R2) )
+f(x)=A*x+B/x
+g(x)=A/2.*x+B/x*log(x)-1./x
+h(x)=(2*g(x)-f(x))/x
+
+
+set output 'pressure_R1.pdf'
+plot[][]\
+4*h(R1)*sin(4*x) lt -1 lw 2 t 'analyt.',\
+'p_R1.ascii' u (atan2($2,$1)):3 w p lt 1 t 'p',\
+'q_R1.ascii' u (atan2($2,$1)):3 w p lt 2 t 'q'
+
+set output 'pressure_R2.pdf'
+plot[][]\
+4*h(R2)*sin(4*x) lt -1 lw 2 t 'analyt.',\
+'p_R2.ascii' u (atan2($2,$1)):3 w p lt 1 t 'p',\
+'q_R2.ascii' u (atan2($2,$1)):3 w p lt 2 t 'q'
+
