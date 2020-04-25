@@ -437,6 +437,7 @@ and has been slightly modified by me.
 \subsection{FDM basics in 1D} \label{ss:fdm_basics1D} \input{fdm_basics1D} 
 \subsection{Solving the 1D diffusion equation} \label{ss:fdm_diff1D} \input{fdm_diff1D}
 \subsection{Solving the 1D advection equation} \label{ss:fdm_adv1D} \input{fdm_adv1D}
+\subsection{FDM basics in 2D} \label{ss:fdm_basics2D} \input{fdm_basics2D} 
 \subsection{Solving the 2D diffusion equation} \label{ss:fdm_diff2D} \input{fdm_diff2D}
 \subsection{Solving the 2D advection-diffusion equation} \label{ss:fdm_advdiff2D} \input{fdm_advdiff2D}
 
@@ -523,10 +524,10 @@ Stone 08: the indentor benchmark
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{
-Stone 09: the annulus benchmark 
+Stone 09: the annulus benchmark with $Q_1\times P_0$ elements
 \label{f09}}
 \addcontentsline{toc}{section}{\protect\numberline{} 
-Stone 09: the annulus benchmark 
+Stone 09: the annulus benchmark with $Q_1\times P_0$ elements
 }
 \input{python_codes/fieldstone_09/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -629,14 +630,15 @@ Stone 20: the Busse benchmark
 }
 \input{python_codes/fieldstone_20/text}
 
-%\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section*{
-%Stone 21: The non-conforming $Q_1 \times P_0$ element 
-%\label{f21}}
-%\addcontentsline{toc}{section}{\protect\numberline{} 
-%Stone 21: The non-conforming $Q_1 \times P_0$ element 
-%}
-%\input{python_codes/fieldstone_21/text}
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 21: the annulus benchmark with $Q_2\times Q_1$ elements
+\label{f21}}
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 21: the annulus benchmark  with $Q_2\times Q_1$ elements
+}
+\input{python_codes/fieldstone_21/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{
@@ -1079,6 +1081,16 @@ Stone 70: V-VP frictional plasticity
 Stone 70: V-VP frictional plasticity
 }
 \input{python_codes/fieldstone_70/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Stone 71: S40RTS stuff 
+\label{f71}} 
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Stone 71: S40RTS stuff
+}
+\input{python_codes/fieldstone_71/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 

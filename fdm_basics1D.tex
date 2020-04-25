@@ -78,21 +78,21 @@ Then the strain rate tensor components are identically zero and the equation sim
 \end{equation}
 where we assume that 1) density is constant in space for simplicity and 2)
 the domain is infinite in the $x$-direction.
-The gravity vector is $\vec{g}=-g \vec{e}_z$ so that the above equation 
+The gravity vector is $\vec{g}=-g \vec{e}_y$ so that the above equation 
 becomes:
 \begin{equation}
 -\frac{dp}{dy} - \rho g = 0
 \end{equation}
-This is a first-order PDE. It needs to be supplemented by a single boundary condition, 
+This is a first-order ODE. It needs to be supplemented by a single boundary condition, 
 which in this case constrains the pressure to be zero at the surface, i.e. $p(y=L_y)=0$.
 
 \input{tikz_fdm1De}
 
-We can write the discretised PDE at node 2 (since we know $p_3=0$):
+We can write the discretised ODE at node 2 (since we know $p_3=0$):
 \begin{equation}
 \frac{dp}{dy}(x_2) \simeq \frac{p_3-p_2}{h} = -\rho g
 \end{equation}
-or, $p_2=\rho g h$. Having obtained $p_2$, we write the PDE at node 1:
+or, $p_2=\rho g h$. Having obtained $p_2$, we write the ODE at node 1:
 \begin{equation}
 \frac{dp}{dy}(x_1) \simeq \frac{p_2-p_1}{h} = -\rho g
 \end{equation}
@@ -120,7 +120,9 @@ We will now put the previous example into practice and write a
 python code which uses forward differences to compute the 1D pressure
 field inside the crust.
 
-$\rightarrow$ {\tt Exercise\_1\_FDM.ipynb}
+$\rightarrow$ 
+\href{http://cedricthieulot.net/images/compgeo/Exercise_1_FDM.ipynb}
+{\tt Exercise\_1\_FDM.ipynb}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
@@ -190,15 +192,39 @@ Simply put, the denominator is $2h$ because it is the distance between point $x_
 
 
 \begin{center}
-\includegraphics[width=7.7cm]{images/fdm/fd1}\\
+\includegraphics[width=8cm]{images/fdm/fd1}\\
 {\captionfont 
 3 types of the finite difference method. Central gives the best approximation of the derivative.
 Taken from Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Finite_difference}}
 }
 \end{center}
 
+Can we do better than ${\cal O}(h^2)$? The answer is yes, and I list hereunder the 
+formula:
+\begin{equation}
+f_i' = \frac{2 f_{i+1} + 3 f_i - 6 f_{i-1} + f_{i-2}}{6 h} + {\cal O}(h^3)
+\qquad
+\text{backward difference}
+\end{equation}
+
+\begin{equation}
+f_i' = \frac{-  f_{i+2} +6 f_{i+1} - 3 f_{i} -2 f_{i-1}}{6 h} + {\cal O}(h^3)
+\qquad
+\text{forward difference}
+\end{equation}
+
+\begin{equation}
+f_i' = \frac{-  f_{i+2} +8 f_{i+1} - 8 f_{i-1} + f_{i-2}}{12 h} + {\cal O}(h^4)
+\qquad
+\text{central difference}
+\end{equation}
+Looking at these formula it is obvious that the cost of forming the derivative 
+is larger than before (more multiplications, additions, ...) which translates
+to longer calculations and, in the case of implicit methods, much denser matrices. 
+
+
 %.......................................
-\subsubsection{Second order derivatives}
+\subsubsection{Second-order derivatives}
 
 Many PDEs contain second order derivatives (typically diffusion equations)
 so we now turn to these and 
@@ -259,36 +285,42 @@ We start from
 f(x_0+h)&=&f(x_0)+ 
 h \frac{\partial f}{\partial x}(x_0)  + 
 \frac{h^2}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  +
+\frac{h^3}{3!} \frac{\partial^3 f}{\partial x^3}(x_0)  +
 \dots  +
 \frac{h^n}{n!} \frac{\partial^n f}{\partial x^n}(x_0)  
 + {\cal O}(h^{n+1}) 
-\\
+\nn\\
 f(x_0-h)&=&f(x_0) 
 -h \frac{\partial f}{\partial x}(x_0)  + 
-\frac{h^2}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  +
+\frac{h^2}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  -
+\frac{h^3}{3!} \frac{\partial^3 f}{\partial x^3}(x_0)  +
 \dots  +
 \frac{(-h)^n}{n!} \frac{\partial^n f}{\partial x^n}(x_0)  
-+ {\cal O}(h^{n+1}) 
++ {\cal O}(h^{n+1}) \nn
 \end{eqnarray}
 and we see that adding the first equation to the second yields
 \begin{equation}
 f(x_0+h) + f(x_0-h) =2 f(x_0)+ 
 \underbrace{h \frac{\partial f}{\partial x}(x_0)   
 -h \frac{\partial f}{\partial x}(x_0)}_{=0}  + 
-\frac{h^2}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  +
-\frac{h^2}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  
-+ {\cal O}(h^{3})
+2\frac{h^2}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  
++
+\underbrace{
+\frac{h^3}{3!} \frac{\partial^3 f}{\partial x^3}(x_0)  
+-\frac{h^3}{3!} \frac{\partial^3 f}{\partial x^3}(x_0)  
+}_{=0}
++ {\cal O}(h^{4})
 \end{equation}
 or, 
 \begin{equation}
 \frac{\partial^2 f}{\partial x^2}(x_0)  =
 \frac{f(x_0+h) -2f(x_0) + f(x_0-h) }{h^2}
-+ {\cal O}(h)
++ {\cal O}(h^2)
 \end{equation}
 which translates into
 \begin{equation}
 \boxed{
-f_{i}''=\frac{f_{i+1}-2f_i+f_{i-1}}{h^2} + {\cal O}(h)
+f_{i}''=\frac{f_{i+1}-2f_i+f_{i-1}}{h^2} + {\cal O}(h^2)
 }
 \qquad
 \qquad
@@ -332,7 +364,7 @@ where $k$ is a function of space, should be formed as follows
 \begin{equation}
 \left. \frac{\partial }{\partial x} \left(  k  \frac{\partial f}{\partial x} \right) \right|_i
 =
-\frac{ k_{i+1/2} \frac{f_{i+1}-f_i}{h} - k_{i-1/2}\frac{f_i-f_{i-1}}{h}    }{h} + {\cal O}(h^3)
+\frac{ k_{i+1/2} \frac{f_{i+1}-f_i}{h} - k_{i-1/2}\frac{f_i-f_{i-1}}{h}    }{h} + {\cal O}(h^2)
 \end{equation}
 where $k_{i\pm 1/2}$ is evaluated between the points to maintain the second order accuracy.
 
@@ -342,7 +374,16 @@ the grid-nodes, most second-order methods will show first order accuracy at best
 \end{remark}
 
 
+\noindent Can we do better than ${\cal O}(h^2)$? The answer is yes again:
+\[
+f_i'' = \frac{-f_{i+2} + 16 f_{i+1} -30 f_i + 16 f_{i-1} - f_{i-2} }{12 h^2} + {\cal O}(h^4)
+\]
 
+
+
+\vspace{1cm}
+
+\todo[inline]{write about one-sided FD, useful on boundaries}
 
 
 

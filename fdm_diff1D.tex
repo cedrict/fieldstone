@@ -12,7 +12,7 @@ the equation can be simplified to a diffusion equation:
 \begin{equation}
 \frac{\partial T}{\partial t} =  \kappa \frac{\partial^2 T}{\partial x^2} 
 \end{equation}
-where $\kappa=k/\rho c_p$ is the heat diffusivity. \index{general}{Heat Diffusivity}
+where $\kappa=k/\rho C_p$ is the heat diffusivity. \index{general}{Heat Diffusivity}
 
 We wish to solve this PDE in time and space (provided the appropriate 
 boundary conditions have been given). The domain is $[0,L_x]$
@@ -36,7 +36,7 @@ while the superscript will always refer to time indices.
 To be clear: $n$ represents the current time step whereas $n+1$
 represents the next time step. 
 
-Both $n$ and $i$ are integers; $n$ varies from 1 to $nstep$ (total number of time steps)
+Both $n$ and $i$ are integers; $n$ varies from 0 to $nstep-1$ (total number of time steps)
 and $i$ varies from 0 to $nnx-1$ (where $nnx$ is the total number of grid points in $x$-direction).
 
 The spatial derivative is replaced by a central FD approximation
@@ -140,8 +140,9 @@ $T=200\degree$C at $x=L_x$. The initial temperature is $T(x,t=0)=123$
 and $\kappa=10^{-6}$. 
 Time stepping will be carried out until steady state is reached.
 
-
-$\rightarrow$ {\tt Exercise\_2\_FDM.ipynb}
+$\rightarrow$ 
+\href{http://cedricthieulot.net/images/compgeo/Exercise_2_FDM.ipynb}
+{\tt Exercise\_2\_FDM.ipynb}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
@@ -310,6 +311,8 @@ x+3y-2z &=& 5 \nn\\
 \end{eqnarray}
 Solving the first equation for $x$ gives $x = 5 + 2z - 3y$, 
 and plugging this into the second and third equation yields
+(or take the second line of the matrix and remove 3 times the 
+first line from it, etc ...)
 \begin{equation}
 \left(
 \begin{array}{ccc}
@@ -363,8 +366,8 @@ Therefore, the solution set is the single point $(x, y, z) = (-15, 8, 2)$.
 \end{minipage}
 \end{center}
 
-This example is of course very naive and direct solvers are often very large 
-numerical libraries which have been highly optimised to take advantage of the 
+This example is of course very naive and direct solvers often come in 
+the form of very large numerical libraries which have been highly optimised to take advantage of the 
 sparsity of the matrix in order to arrive at the solution in the lowest 
 number of operations possible. 
 In reality techniques such as LU decomposition or Cholesky decomposition are used. 
@@ -378,7 +381,14 @@ is met. There are two classes of iteratives methods in this context:
 {\color{olive} stationary iterative methods} (e.g. Jacobi, Gauss-Seidel, SSOR) and 
 {\color{olive} Krylov subspace methods} (e.g. CG, GMRES, BiCG).
 At this stage things get real complicated and the details of iterative solvers 
-are vastly out of the scope of this course \cite{saad}.     
+are vastly out of the scope of this 
+course\footnote{\url{https://en.wikipedia.org/wiki/Iterative_method}} \cite{saad}.     
+\index{general}{BiCG solver}
+\index{general}{Jacobi solver}
+\index{general}{Gauss-Seidel solver}
+\index{general}{GMRES solver}
+\index{general}{CG solver}
+\index{general}{SSOR solver}
 
 
 %-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -386,7 +396,7 @@ are vastly out of the scope of this course \cite{saad}.
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
 {\color{blue} Example}: the stationary Jacobi method. 
-the matrix ${\bm A}$ is decomposed as follows:
+The matrix ${\bm A}$ is decomposed as follows:
 \begin{equation}
 {\bm A} = {\bm D} + {\bm L} + {\bm U} 
 \end{equation}
@@ -395,15 +405,19 @@ strict lower triangular part of ${\bm A}$ and
 ${\bm U}$ is the strict upper triangular part of ${\bm A}$.
 The iterative method is defined by:
 \begin{equation}
-{\bm D} \cdot \vec{T}^{k+1} = -({\bm L} + {\bm U}) \cdot \vec{T}^k + \vec{b}
+{\bm D} \cdot \vec{T}^{{\color{Fuchsia}k+1}} = -({\bm L} + {\bm U}) \cdot \vec{T}^{\color{Fuchsia}k} 
++ \vec{b}
 \qquad k=0,1,\dots
 \end{equation}
-where $\vec{T}^k$ is the initial guess (often taken to be zero).
+where $\vec{T}^{\color{Fuchsia}0}$ is the initial guess (often taken to be zero).
+Note that the superscript denotes the iteration number and has nothing to 
+do with the time step.
 This method is trivial to implement since the linear system on the 
 left side of the equal sign involves a diagonal matrix.
 This can also be written 
 \begin{equation}
-T_i^{k+1} = \frac{1}{A_{ii}} \left(b_i - \sum_{j\neq i} A_{ij} T_j^k \right)
+T_i^{{\color{Fuchsia} k+1}} = \frac{1}{A_{ii}} \left(b_i - 
+\sum_{j\neq i} A_{ij} T_j^{{\color{Fuchsia}k}} \right)
 \qquad
 i=1,2,...nnx
 \end{equation}
@@ -418,6 +432,8 @@ Looking at the previous example, we have
 \end{array}
 \right)
 \qquad
+\text{and}
+\qquad
 {\bm L}+{\bm U}= 
 \left(
 \begin{array}{ccc}
@@ -427,9 +443,9 @@ Looking at the previous example, we have
 \end{array}
 \right)
 \end{equation}
-We then start with the guess $\vec{T}^0=\vec{0}$, so that for $k=1$:
+We then start with the guess $\vec{T}^{\color{Fuchsia}0}=\vec{0}$, so that for ${\color{Fuchsia}k}=1$:
 \begin{equation}
-\vec{T}^1 = {\bm D}^{-1}\cdot \vec{b} = 
+\vec{T}^{\color{Fuchsia}1} = {\bm D}^{-1}\cdot \vec{b} = 
 \left(
 \begin{array}{ccc}
 1 & 0 & 0 \\
@@ -450,10 +466,11 @@ We then start with the guess $\vec{T}^0=\vec{0}$, so that for $k=1$:
 \end{array}
 \right)
 \end{equation}
-and then we obtain $\vec{T}^2$ by solving 
+and then we obtain $\vec{T}^{\color{Fuchsia}2}$ by solving 
 \begin{eqnarray}
-\vec{T}^2 
-&=& {\bm D}^{-1} \cdot \left[-({\bm L} + {\bm U}) \cdot \vec{T}^1 + \vec{b} \right] \nn\\
+\vec{T}^{\color{Fuchsia}2} 
+&=& {\bm D}^{-1} \cdot \left[-({\bm L} + {\bm U}) 
+\cdot \vec{T}^{\color{Fuchsia}1} + \vec{b} \right] \nn\\
 &=&
 \left(
 \begin{array}{ccc}
@@ -491,7 +508,7 @@ and then we obtain $\vec{T}^2$ by solving
 We keep iterating until two consecutively obtained 
 temperature vectors are nearly identical, or, 
 \begin{equation}
-\| \vec{T}^{k+1}-\vec{T}^k \| < \epsilon
+\| \vec{T}^{\color{Fuchsia}k+1}-\vec{T}^{\color{Fuchsia}k} \| < \epsilon
 \end{equation}
 where $\epsilon$ is a carefully chosen small enough number. 
 
@@ -519,7 +536,14 @@ Also, this algorithm will fail if one or more diagonal terms of ${\bm A}$ is nul
 \end{center}
 
 Implement the above example from scratch in a new notebook.
+What do you observe ? why does it explode? 
+Multiply all diagonal values by 10 and re-run it. 
+What do you observe now? 
 
+
+Bonus: implement the Gauss-Seidel method\footnote{
+\url{https://en.wikipedia.org/wiki/Iterative_method}}. 
+Which of the two methods converges the fastest?
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
@@ -555,10 +579,16 @@ but may not capture small scale, transient features.
 
 This is exactly the same exercise as Exercise 2 but we 
 are going to solve the 1D diffusion equation with the implicit method
-this time. First use the provided solver in the notebook, then 
+this time. First use a solver from scipy to solve the system, then 
 implement your own Jacobi solver. 
 
-$\rightarrow$ {\tt Exercise\_4\_FDM.ipynb}
+In your notebook use an if statement which allows to choose between 
+explicit and implicit, and another if statement which allows to choose 
+between scipy solver and iterative solver. 
+
+Bonus: implement the SSOR method\footnote{
+\url{https://en.wikipedia.org/wiki/Iterative_method}}
+and compare Jacobi, Gauss-Seidel and SSOR.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
@@ -569,14 +599,15 @@ $\rightarrow$ {\tt Exercise\_4\_FDM.ipynb}
 \paragraph{Crank-Nicolson scheme} \index{general}{Crank-Nicolson}
 It turns out that this fully implicit method is second order accurate in space but 
 only first order accurate in time,
-i.e. the error goes as ${\cal O}(h^3,\delta t^2)$.   
-
-\todo[inline]{VERIFY !!!!}
+i.e. the error goes as ${\cal O}(h^2,\delta t)$.   
 
 It is possible to write down a scheme which is second order accurate both in time and in space
-(i.e. ${\cal O}(h^3, \delta t^3))$, e.g. the {\color{olive}Crank-Nicolson} scheme 
-which is unconditionally stable (The method was developed by John Crank and Phyllis Nicolson 
-in the mid 20th century\footnote{\url{https://en.wikipedia.org/wiki/Crank-Nicolson_method}}).
+(i.e. ${\cal O}(h^2, \delta t^2))$, e.g. the {\color{olive}Crank-Nicolson}
+\footnote{
+The method was developed by John Crank and Phyllis Nicolson 
+in the mid 20th century. \url{https://en.wikipedia.org/wiki/Crank-Nicolson_method}
+}
+scheme which is unconditionally stable. 
 
 The Crank-Nicolson method is the time analog of central spatial differences and is given by
 \begin{equation}

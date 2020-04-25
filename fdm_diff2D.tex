@@ -54,7 +54,7 @@ These three approaches are shown hereunder:
 \vspace{.5cm}
 
 This is a critical point because the discretised PDE is formulated as a function of $T_{{\color{brown} i,j}}$ 
-with ${\color{brown}i}=0,\dot nnx-1$ and ${\color{brown}j}=0,\dots nny-1$ 
+with ${\color{brown}i}=0,\dots nnx-1$ and ${\color{brown}j}=0,\dots nny-1$ 
 but the vector $\vec{T}$ containing all these values
 is indexed by a single index ${\color{teal}k}=0,\dots nnp-1$. The numbering strategy determines how easy
 it is to go from $({\color{brown}i},{\color{brown}j})$ to ${\color{teal}k}$ and vice versa. 
@@ -68,7 +68,7 @@ $0\leq {\color{brown}i} \leq 4$ , $0 \leq {\color{brown}j} \leq 3$
 so that $0 \leq {\color{teal}k} \leq 19$
 and it follows that 
 \begin{equation}
-{\color{teal} k}={\color{brown}j}*nnx+{\color{brown}i}
+{\color{teal} k}={\color{brown}j} \cdot nnx+{\color{brown}i}
 \end{equation}
 This is easy to verify: ${\color{brown}i}=3$ and ${\color{brown}j}=2$ 
 indeed corresponds to node \# 13, 
