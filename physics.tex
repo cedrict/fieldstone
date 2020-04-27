@@ -1342,6 +1342,61 @@ The strain rate tensor $\dot{\bm\varepsilon}$ is given by
 \end{eqnarray}
 
 
+%...............................................................................
+\subsubsection{Relationship between Cartesian and polar coordinates expressions}
+
+We can go from Cartesian to polar coordinates  via the $2\times 2$ transformation matrix:
+\begin{equation}
+{\cal P}=
+\left(
+\begin{array}{ccc}
+\cos\theta & \sin\theta \\
+-\sin\theta & \cos\theta
+\end{array}
+\right)
+\end{equation}
+The rows correspond to the components of $\vec{e}_r$ and $\vec{e}_\theta$ in the Cartesian basis.
+A vector $\vec{\upnu}$ transforms from one orthonormal basis to another by multiplying it by 
+the matrix ${\cal P}$. As we have seen before, this yields
+\begin{eqnarray}
+\upnu_r &=& u \cos\theta + v \sin\theta \\
+\upnu_\theta &=& -u \sin\theta + v \cos\theta
+\end{eqnarray}
+
+A second-order tensor ${\bm a}$ is Cartesian coordinates transforms into ${\bm a}^\star$
+in polar coordinates by 
+\[
+{\bm a}^\star = {\cal P} \cdot {\bm a} \cdot {\cal P}^T
+\]
+and obviously 
+\[
+{\bm a} = {\cal P}^T \cdot {\bm a}^\star \cdot {\cal P}
+\]
+We obtain for the strain rate tensor (or the stress tensor):
+
+\begin{eqnarray}
+\dot{\varepsilon}_{rr} 
+&=& \dot{\varepsilon}_{xx} \cos^2\theta + \dot{\varepsilon}_{yy} \sin^2\theta 
++ 2 \dot{\varepsilon}_{xy} \sin\theta\cos\theta \\
+\dot{\varepsilon}_{\theta\theta}
+&=& \dot{\varepsilon}_{xx} \sin^2\theta + \dot{\varepsilon}_{yy} \cos^2\theta 
+- 2 \dot{\varepsilon}_{xy} \sin\theta\cos\theta \\
+\dot{\varepsilon}_{r\theta} 
+&=& \dot{\varepsilon}_{xy} (\cos^2\theta-\sin^2\theta) + 
+(\dot{\varepsilon}_{yy} - \dot{\varepsilon}_{xx})\sin\theta \cos\theta
+\end{eqnarray}
+and likewise:
+\begin{eqnarray}
+\dot{\varepsilon}_{xx} 
+&=& \dot{\varepsilon}_{rr} \cos^2\theta + \dot{\varepsilon}_{\theta\theta} \sin^2\theta - 2 \dot{\varepsilon}_{r\theta} \sin\theta\cos\theta \\
+\dot{\varepsilon}_{yy}
+&=& \dot{\varepsilon}_{rr} \sin^2\theta + \dot{\varepsilon}_{\theta\theta} \cos^2\theta + 2 \dot{\varepsilon}_{r\theta} \sin\theta\cos\theta \\
+\dot{\varepsilon}_{xy} 
+&=& \dot{\varepsilon}_{r\theta} (\cos^2\theta-\sin^2\theta) + 
+(\dot{\varepsilon}_{rr} - \dot{\varepsilon}_{\theta\theta})\sin\theta \cos\theta \label{ss:srboth}
+\end{eqnarray}
+
+
 
 \newpage
 %-------------------------------
