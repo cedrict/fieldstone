@@ -65,6 +65,20 @@ echo "---------------------" >> features
 grep P2 */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
+
+echo "---------------------" >> features
+echo "---Q1----------------" >> features
+echo "---------------------" >> features
+grep Q1 */keywords | cut -c1- | cut -f1 -d"/" >> features
+echo " " >> features
+
+echo "---------------------" >> features
+echo "---Q2----------------" >> features
+echo "---------------------" >> features
+grep Q2 */keywords | cut -c1- | cut -f1 -d"/" >> features
+echo " " >> features
+
+
 echo "---------------------" >> features
 echo "---Q1P0---" >> features
 echo "---------------------" >> features
@@ -76,6 +90,14 @@ echo "---Q2Q1---" >> features
 echo "---------------------" >> features
 grep Q2Q1 */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
+
+
+echo "---------------------" >> features
+echo "---Q2(8)Q1---" >> features
+echo "---------------------" >> features
+grep 'Q2(8)Q1' */keywords | cut -c1- | cut -f1 -d"/" >> features
+echo " " >> features
+
 
 echo "---------------------" >> features
 echo "---Q3Q2---" >> features
@@ -288,6 +310,11 @@ grep discontinuous_galerkin */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
 
+echo "--------------------------" >> features
+echo "---schur_complement-------" >> features
+echo "--------------------------" >> features
+grep "schur_complement" */keywords | cut -c1- | cut -f1 -d"/" >> features
+echo " " >> features
 
 
 
