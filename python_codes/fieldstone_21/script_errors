@@ -1,11 +1,18 @@
 rm -f errors
+rm -f errors_sr1
+rm -f errors_sr2
+rm -f errors_sr3
 rm -f vrms 
 
 for l in 4 6 8 10 12 14 16 20 24 32 40 48 64 80; do
+#for l in 4 6 8 10 12 14 16 20 24 ; do
 
    python3 stone.py $l 0 > opla  
    grep errv opla >> errors 
    grep vrms opla >> vrms 
+   grep errexx1 opla >> errors_sr1 
+   grep errexx2 opla >> errors_sr2 
+   grep errexx3 opla >> errors_sr3 
 
 done
 

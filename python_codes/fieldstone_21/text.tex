@@ -13,7 +13,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The benchmark is described fully in Stone 9. 
+The benchmark is described fully in Section~\ref{ss:anconv}. 
 The following results have been obtained with $k=4$.
 Taylor-Hood $Q_2\times Q_1$ elements are used with an isoparametric mapping. 
 
@@ -44,6 +44,17 @@ in this case $h=(R_2-R_1)/nelr=1/nelr$):
 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_21/results/errors.pdf}
+\end{center}
+
+I also computed the error convergence of the strain rate components obtained with 
+the three different methods presented in Section~\ref{ss:nodderiv}
+and we recover a quadratic convergence for methods 2 and 3 while method 1 
+shows an exponent of 1.5:
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_21/results/errors_sr1.pdf}\\
+\includegraphics[width=10cm]{python_codes/fieldstone_21/results/errors_sr2.pdf}\\
+\includegraphics[width=10cm]{python_codes/fieldstone_21/results/errors_sr3.pdf}
 \end{center}
 
 Also the root mean square velocity is logically found to converge to its 

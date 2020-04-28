@@ -12,8 +12,9 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-An analytical solution to the
-isoviscous incompressible Stokes equations is derived in an annulus geometry.
+The benchmark is described fully in Section~\ref{ss:anconv} in which 
+an analytical solution to the isoviscous incompressible Stokes equations 
+is derived in an annulus geometry.
 The velocity and pressure fields are as follows:
 
 \begin{eqnarray}
@@ -22,20 +23,12 @@ v_\theta(r,\theta)&=&  f(r) \cos(k \theta), \\
 p(r,\theta)       &=&  k h(r) \sin(k \theta), \\
 \rho (r,\theta)   &=& \aleph(r) k \sin (k \theta), 
 \end{eqnarray}
-with
-\begin{eqnarray}
-f(r)&=&Ar+B/r, \\
-g(r) &=& \frac{A}{2}r  +  \frac{B}{r} \ln r + \frac{C}{r}, \\
-h(r)&=& \frac{2g(r)-f(r)}{r},  \\
-\aleph(r) &=& g'' - \frac{g'}{r}  - \frac{g}{r^2} (k^2 - 1)  + \frac{f}{r^2}   + \frac{f'}{r}, \\
-A &=& -C\frac{2(\ln R_1 - \ln R_2)} { R_2^2 \ln R_1  - R_1^2 \ln R_2}, \\
-B &=& -C \frac{R_2^2-R_1^2}{R_2^2 \ln R_1 - R_1^2 \ln R_2}.
-\end{eqnarray}
-
+with $f(r)$, $g(r)$, $h(r)$ given in Section~\ref{ss:anconv}.
 The parameters $A$ and $B$ are chosen so that $v_r(R_1)=v_r(R_2)=0$, i.e.
 the velocity is tangential to both inner and outer surfaces.
 The gravity vector is radial and of unit length.
-In the present case, we set $R_1=1$, $R_2=2$ and $C=-1$. 
+In the present case, we set $R_1=1$, $R_2=2$ and $C=-1$.
+The parameter $k$ can take values 0,1,2,3,... 
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_09/velocity}

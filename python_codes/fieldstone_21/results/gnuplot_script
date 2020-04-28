@@ -13,6 +13,32 @@ plot[][]\
 x**3. w l lt -1 dashtype 4 t 'x^3',\
 x**2.*3. w l lt -1 dashtype 2 t 'x^2'
 
+set title 'method 1'
+set output 'errors_sr1.pdf'
+plot[][0.0001:4]\
+'errors_sr1' u (1./($3)):6  w lp lt 1 pt 1 ps .45 t 'e_{xx}' ,\
+'errors_sr1' u (1./($3)):9  w lp lt 2 pt 2 ps .45 t 'e_{yy}' ,\
+'errors_sr1' u (1./($3)):12 w lp lt 3 pt 3 ps .45 t 'e_{xy}' ,\
+x**1.5*20 lt -1 dashtype 3 t 'h^{1.5}' 
+
+set title 'method 2'
+set output 'errors_sr2.pdf'
+plot[][:4]\
+'errors_sr2' u (1./($3)):6  w lp lt 1 pt 1 ps .45 t 'e_{xx}' ,\
+'errors_sr2' u (1./($3)):9  w lp lt 2 pt 2 ps .45 t 'e_{yy}' ,\
+'errors_sr2' u (1./($3)):12 w lp lt 3 pt 3 ps .45 t 'e_{xy}' ,\
+x**2 lt -1 dashtype 2 t 'h^2' 
+
+set title 'method 3'
+set output 'errors_sr3.pdf'
+plot[][:4]\
+'errors_sr3' u (1./($3)):6  w lp lt 1 pt 1 ps .45 t 'e_{xx}' ,\
+'errors_sr3' u (1./($3)):9  w lp lt 2 pt 2 ps .45 t 'e_{yy}' ,\
+'errors_sr3' u (1./($3)):12 w lp lt 3 pt 3 ps .45 t 'e_{xy}' ,\
+x**2 lt -1 dashtype 2 t 'h^2' 
+
+unset title
+
 set pointsize .5
 
 set key top left
