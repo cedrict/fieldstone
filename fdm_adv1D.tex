@@ -1,3 +1,9 @@
+
+%TODO to improve notes:
+%use http://farside.ph.utexas.edu/teaching/329/lectures/node91.html
+%
+
+
 The 1D avdection equation is:
 \begin{equation}
 \rho C_p \left( \frac{\partial T}{\partial t}  
@@ -11,38 +17,55 @@ We have seen how to deal with the time derivative (explicit, implicit)
 and with the first order space derivative (forward, backward or central).
 Let us consider the FTCS scheme (Forward in Time, Central in Space).
 \[
-\frac{T_{\color{teal}i}^{k+1}-T^k_{\color{teal}i}}{\delta t} 
-+ u_i \frac{T^k_{\color{teal}i+1} - T^k_{{\color{teal}i-1}}}{2h} =0 
+\frac{T_{\color{teal}i}^{n+1}-T^n_{\color{teal}i}}{\delta t} 
++ u_i \frac{T^n_{\color{teal}i+1} - T^n_{{\color{teal}i-1}}}{2h} =0 
 \]
 Note that although the velocity $u$ is prescribed, it can vary in space, hence
 the subscript $i$. 
 
 There is however a major problem: 
-the FTCS method is {\bf unconditionally} unstable, i.e., it blows up for any $\delta t$.
+the FTCS method is in this case {\bf unconditionally} unstable, i.e., it blows up for any $\delta t$.
 The instability is related to the fact that this scheme produces negative diffusion, 
 which is numerically unstable.
 
+We will now look at to methods which alleviate this problem: the Lax method and the Streamline Upwind method.
 
-
-
-{\color{olive} Lax method}. The Lax approach consists of replacing the $T_i^n$ in the time-derivative with
-$(T_{i+1}^n + T_{i-1}^n)/2$. The resulting equation is
+The {\color{olive} Lax method} consists of replacing the $T_{\color{teal}i}^n$ 
+in the time derivative term with $(T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)/2$. 
+The resulting equation is
 \[
-\frac{T_i^{n+1}-  (T_{i+1}^n + T_{i-1}^n)/2   }{\delta t} = - u_i \frac{T^n_{i+1}-T^n_{i-1}}{2 h_x}
+\frac{T_{\color{teal}i}^{n+1}-  (T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)/2 }{\delta t} 
+= - u_i \frac{T^n_{{\color{teal}i+1}}-T^n_{{\color{teal}i-1}}}{2 h_x}
+\]
+or, 
+\[
+T_{\color{teal}i}^{n+1} = \frac{1}{2} (T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)  
+- \frac{u_i \delta t}{h}  \frac{1}{2} (T^n_{{\color{teal}i+1}}-T^n_{{\color{teal}i-1}})
 \]
 
-{\color{olive}Streamline upwind scheme}. A popular scheme is the so-called (streamline) upwind approach. 
-Here, the spatial finite difference scheme depends on the sign of the velocity:
+
+
+In the {\color{olive}Streamline upwind} method the spatial finite difference scheme 
+depends on the sign of the velocity:
 \[
-\frac{T_i^{n+1}-  (T_{i+1}^n + T_{i-1}^n)/2   }{\delta t} =
+\frac{T_{\color{teal}i}^{n+1}-  (T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)/2   }{\delta t} =
 \left\{
 \begin{array}{l}
- - u_i \frac{T^n_{i}-T^n_{i-1}}{h_x}  \quad\quad  {\rm if} \quad u_i<0\\ \\
- - u_i \frac{T^n_{i+1}-T^n_{i}}{h_x}  \quad\quad  {\rm if} \quad u_i>0
+ - u_i \frac{T^n_{{\color{teal}i}}-T^n_{{\color{teal}i-1}}}{h_x}  \quad\quad  {\rm if} \quad u_i<0\\ \\
+ - u_i \frac{T^n_{{\color{teal}i+1}}-T^n_{{\color{teal}i}}}{h_x}  \quad\quad  {\rm if} \quad u_i>0
 \end{array}
 \right.
 \]
-We have replaced central with forward or backward derivatives, depending on the flow direction. 
+In fact, we have replaced central with forward or backward derivatives, depending on the flow direction. 
+
+
+Finally, The Crank-Nicolson implicit scheme for solving the diffusion equation 
+can be adapted to solve the advection equation:
+\[
+T_{\color{teal}i}^{n+1} + \frac{u \delta t}{4h} (T_{{\color{teal}i+1}}^{n+1}-T_{{\color{teal}i-1}}^{n+1}) 
+= T_{\color{teal}i}^n - \frac{u \delta t}{4h} (T_{{\color{teal}i+1}}^{n}-T_{{\color{teal}i-1}}^{n}) 
+\]
+TODO: write about how we obtain this.
 
 
 %-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -52,7 +75,7 @@ We have replaced central with forward or backward derivatives, depending on the 
 
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise XX}
+{\color{orange}Exercise FDM-6}
 \end{center}
 
 Let us consider the domain $[0,1]$. The temperature field at $t=0$ is 
@@ -65,8 +88,8 @@ Boundary conditions are $T=1$ at $x=0$ and $T=0$ at $x=1$.
 \end{center}
 
 Program the above FTCS method. Run the model for 250 time steps with $\delta t=0.002$. 
-Program the Lax method by modifying the previous code
-BONUS: Program the upwind scheme method. 
+Program the Lax method by modifying the previous code.\\
+Bonus: Program the upwind method and/or the Crank-Nicolson method. 
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}

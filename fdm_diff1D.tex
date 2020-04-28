@@ -84,7 +84,7 @@ will either be bounded or will decay.
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
-{\color{blue} Example}: let us prescribe an initial temperature field $T_i^0$ for $i=0,nnx-1$.
+{\color{blue} Example FDM-2}: let us prescribe an initial temperature field $T_i^0$ for $i=0,nnx-1$.
 For example:
 
 \begin{center}
@@ -130,7 +130,7 @@ that only leads to well behaved solutions if a criterion like the one above is s
 
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise 2}
+{\color{orange}Exercise FDM-2}
 \end{center}
 
 We are going to solve the 1D diffusion equation with the explicit method
@@ -203,7 +203,7 @@ method can deal with small and large scale features robustly at the same time.
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
-{\color{blue} Example}: 
+{\color{blue} Example FDM-3}: 
 Once again let us look at things with a very concrete approach. Let us discretise the 
 domain of length $L_x$ with 6 cells, i.e. $i=0,\dots 6$ ($nnx=7$).
 We also prescribe the following boundary conditions (remember it is a 2nd order derivative in space, 
@@ -280,7 +280,7 @@ technique of elimination of variables:
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
-{\color{blue} Example}:
+{\color{blue} Example FDM-4}:
 Consider the following system:
 \begin{equation}
 \left(
@@ -377,7 +377,7 @@ In reality techniques such as LU decomposition or Cholesky decomposition are use
 Iterative solvers on the other hand compute the solution of the system 
 by first postulating an initial guess for the solution and then by 
 improving this guess iteratively until the {\color{olive} termination criterion}
-is met. There are two classes of iteratives methods in this context: 
+is met (see Section~\ref{ss:itsolvers}). There are two classes of iteratives methods in this context: 
 {\color{olive} stationary iterative methods} (e.g. Jacobi, Gauss-Seidel, SSOR) and 
 {\color{olive} Krylov subspace methods} (e.g. CG, GMRES, BiCG).
 At this stage things get real complicated and the details of iterative solvers 
@@ -395,7 +395,7 @@ course\footnote{\url{https://en.wikipedia.org/wiki/Iterative_method}} \cite{saad
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
 \par\noindent\rule{\textwidth}{0.4pt}
-{\color{blue} Example}: the stationary Jacobi method. 
+{\color{blue} Example FDM-5}: the stationary Jacobi method. 
 The matrix ${\bm A}$ is decomposed as follows:
 \begin{equation}
 {\bm A} = {\bm D} + {\bm L} + {\bm U} 
@@ -532,18 +532,18 @@ Also, this algorithm will fail if one or more diagonal terms of ${\bm A}$ is nul
 
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise 3}
+{\color{orange}Exercise FDM-3}
 \end{center}
 
-Implement the above example from scratch in a new notebook.
+Implement example FDM-5 from scratch in a new notebook.
 What do you observe ? why does it explode? 
 Multiply all diagonal values by 10 and re-run it. 
 What do you observe now? 
 
 
-Bonus: implement the Gauss-Seidel method\footnote{
-\url{https://en.wikipedia.org/wiki/Iterative_method}}. 
-Which of the two methods converges the fastest?
+Bonus: implement the Gauss-Seidel method.
+Which of the two methods converges the fastest?\\
+$\rightarrow$\url{https://en.wikipedia.org/wiki/Iterative_method}. 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
@@ -574,7 +574,7 @@ but may not capture small scale, transient features.
 
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise 4}
+{\color{orange}Exercise FDM-4}
 \end{center}
 
 This is exactly the same exercise as Exercise 2 but we 
@@ -586,9 +586,8 @@ In your notebook use an if statement which allows to choose between
 explicit and implicit, and another if statement which allows to choose 
 between scipy solver and iterative solver. 
 
-Bonus: implement the SSOR method\footnote{
-\url{https://en.wikipedia.org/wiki/Iterative_method}}
-and compare Jacobi, Gauss-Seidel and SSOR.
+Bonus: implement the SSOR method and compare Jacobi, Gauss-Seidel and SSOR.\\
+$\rightarrow$\url{https://en.wikipedia.org/wiki/Iterative_method}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
@@ -641,10 +640,10 @@ at time $n+1$ by solution (inversion) of a system of linear equations based on t
 
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise 5}
+{\color{orange}Exercise FDM-5}
 \end{center}
 
-Modify the code of exercise 4 to implement the Crank-Nicolson method.
+Modify the code of Exercise FDM-4 to implement the Crank-Nicolson method.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}

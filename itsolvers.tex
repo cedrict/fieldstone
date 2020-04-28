@@ -1,0 +1,103 @@
+
+\url{https://en.wikipedia.org/wiki/Iterative_method}
+
+%........................................
+\subsubsection{Stationary iterative methods}
+
+Basic examples of stationary iterative methods use a splitting of the matrix ${\bm A}$ such as
+\[
+{\bm A}={\bm D}+{\bm L}+{\bm U}
+\]
+where D is only the diagonal part of A, L is the strict lower triangular part of A and
+U is the strict upper triangular part of A.
+
+For instance:
+\[
+{\bm A}=
+\left(
+\begin{array}{ccc}
+1 & 5 & 8 \\
+6 & 4 & 2 \\
+-1 & 7 & 5
+\end{array}
+\right)
+\qquad
+\Rightarrow
+\qquad
+{\bm D}=
+\left(
+\begin{array}{ccc}
+1 & 0 & 0 \\
+0 & 4 & 0 \\
+0 & 0 & 5
+\end{array}
+\right)
+\quad
+{\bm L}=
+\left(
+\begin{array}{ccc}
+0 & 0 & 0 \\
+6 & 0 & 0 \\
+-1 & 7 & 0
+\end{array}
+\right)
+\quad
+{\bm U}=
+\left(
+\begin{array}{ccc}
+0 & 5 & 8 \\
+0 & 0 & 2 \\
+0 & 0 & 0
+\end{array}
+\right)
+\]
+
+
+CHANGE with M and N
+The iterative method is defined by:
+\begin{equation}
+{\bm D} \cdot \vec{T}^{{\color{Fuchsia}k+1}} = -({\bm L} + {\bm U}) \cdot \vec{T}^{\color{Fuchsia}k} 
++ \vec{b}
+\qquad k=0,1,\dots
+\end{equation}
+where $\vec{T}^{\color{Fuchsia}0}$ is the initial guess (often taken to be zero).
+Note that the superscript denotes the iteration number and has nothing to 
+do with the time step.
+
+
+\begin{itemize}
+\item Richardson method: 
+\item Jacobi method: 
+\item Damped Jacobi method: 
+\item Gauss–Seidel method: 
+\item Successive over-relaxation method (SOR):
+\item Symmetric successive over-relaxation (SSOR):
+\end{itemize}
+
+\index{general}{BiCG solver}
+\index{general}{Jacobi solver}
+\index{general}{Gauss-Seidel solver}
+\index{general}{GMRES solver}
+\index{general}{CG solver}
+\index{general}{SSOR solver}
+
+
+%........................................
+\subsubsection{Krylov subspace methods}
+
+\begin{itemize}
+\item Conjugate Gradient
+\footnote{\url{https://en.wikipedia.org/wiki/Conjugate_gradient_method}} 
+\item Biconjugate Gradient method
+\footnote{\url{https://en.wikipedia.org/wiki/Biconjugate_gradient_method}}
+\item Biconjugate Gradient stabilised method
+\footnote{\url{https://en.wikipedia.org/wiki/Biconjugate_gradient_stabilized_method}}
+\item MINRES
+\item Generalized minimal residual method (GMRES)
+\footnote{\url{https://en.wikipedia.org/wiki/Generalized_minimal_residual_method}}
+\end{itemize}
+
+
+
+
+
