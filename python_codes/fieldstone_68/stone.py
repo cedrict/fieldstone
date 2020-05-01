@@ -103,13 +103,34 @@ rTnodes=[0,1,0,0.5,0.0,0.5]
 sTnodes=[0,0,1,0.5,0.5,0.0]
 
 #------------------------------------------------------------------------------
+# material model
+#------------------------------------------------------------------------------
+
+def viscosity(exx,eyy,exy,T,imat):
+    if case=='1a' or case=='1b' or case=='1c':
+       val=1e21
+    elif case=='2a': #diffusion creep 
+       if imat==4 and iter>0:
+          eta_diff=A_diff*np.exp(Q_diff/Rgas/T)
+          val=1/(1/eta_max+1/eta_diff)
+       else:
+          val=1e21
+    else: #dislocation creep 
+       if imat==4 and iter>0:
+          e=np.sqrt(0.5*(exx**2+eyy**2)+exy**2)
+          eta_disl=A_disl*np.exp(Q_disl/n_disl/Rgas/T)*e**(-1+1./n)
+          val=1/(1/eta_max+1/eta_disl)
+       else:
+          val=1e21
+    return val
+
+#------------------------------------------------------------------------------
 # useful constants
 #------------------------------------------------------------------------------
 
 cm=0.01
 year=365.25*3600.*24.
 Kelvin=273
-R=8.3145
 
 print("-----------------------------")
 print("----------fieldstone---------")
@@ -126,16 +147,11 @@ ndofT=1  # number of temperature degrees of freedom
 ##########################################################
 # input parameters
 
-#filename='subduction_mesh_high_res2.msh'
-#filename='subduction_mesh.msh'
-#filename='subduction_mesh_channel_750.msh'
 filename='vankeken_channel_2km.msh'
 #filename='vankeken.msh'
 
 Lx=660e3
 Ly=600e3
-
-eta0=1e21  # vack08
 
 hcapa=1250 # vack08
 hcond=3    # vack08
@@ -150,6 +166,7 @@ l3=0.e3
 vel=5*cm/year
 angle=45./180.*np.pi  
 
+Rgas=8.3145
 Q_diff=335e3
 Q_disl=540e3
 n_disl=3.5
@@ -157,9 +174,19 @@ A_diff=1.32043e9
 A_disl=28968.6
 eta_max=1e26
 
-case='1a'
+niter=10
+
+#case='1a'
 #case='1b'
 #case='1c'
+case='2a'
+
+if case=='1a':
+   niter=1
+
+do_post_processing=False
+
+relax=0.5
 
 ##########################################################
 # checking that all velocity shape functions are 1 on 
@@ -251,7 +278,7 @@ for line in f:
     counter+=1
 #end for
 
-np.savetxt('gridV.ascii',np.array([xV,yV]).T)
+#np.savetxt('gridV.ascii',np.array([xV,yV]).T)
 
 ##########################################################
 # read in connectivity array
@@ -260,7 +287,7 @@ np.savetxt('gridV.ascii',np.array([xV,yV]).T)
 iconV=np.zeros((mV,nel),dtype=np.int64)
 mat=np.zeros(nel,dtype=np.int64)
     
-print (NVold+7+counter2,NVold+8+nel+counter2)
+#print (NVold+7+counter2,NVold+8+nel+counter2)
 
 f = open(filename,'r')
 counter=0
@@ -453,31 +480,6 @@ start = timing.time()
 nx=np.zeros(NV,dtype=np.float64) 
 ny=np.zeros(NV,dtype=np.float64) 
 
-#interfaces=np.zeros(NV,dtype=np.int32)  
-#for iel in range(0,nel):
-#    inode0=iconV[0,iel]
-#    inode1=iconV[1,iel]
-#    inode2=iconV[2,iel]
-#    if interface[inode0]==101:
-#       interfaces[inode0]=1
-    #if interface[inode0]==103:
-    #   interfaces[inode0]=1
-    #if interface[inode0]==104:
-    #   interfaces[inode0]=1
-#    if interface[inode1]==101:
-#       interfaces[inode1]=1
-    #if interface[inode1]==103:
-    #   interfaces[inode1]=1
-    #if interface[inode1]==104:
-    #   interfaces[inode1]=1
-#    if interface[inode2]==101:
-#       interfaces[inode2]=1
-    #if interface[inode2]==103:
-    #   interfaces[inode2]=1
-    #if interface[inode2]==104:
-    #   interfaces[inode2]=1
-
-
 for iel in range(0,nel):
     inode0=iconV[0,iel]
     inode1=iconV[1,iel]
@@ -611,179 +613,11 @@ for i in range(0,NV):
 
 print("setup boundary conditions: %.3f s" % (timing.time() - start))
 
-#################################################################
-# build FE matrix
-# [ K   G ][u]=[f]
-# [ G^T 0 ][p] [h]
-#################################################################
-start = timing.time()
-
-c_mat  = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
-A_sparse=lil_matrix((Nfem,Nfem),dtype=np.float64)
-rhs    = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-f_rhs  = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
-h_rhs  = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
-b_mat  = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
-N_mat  = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix to build G_el 
-NNNV   = np.zeros(mV,dtype=np.float64)           # shape functions V
-NNNP   = np.zeros(mP,dtype=np.float64)           # shape functions P
-dNNNVdx= np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVdy= np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVdr= np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVds= np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-u      = np.zeros(NV,dtype=np.float64)           # x-component velocity
-v      = np.zeros(NV,dtype=np.float64)           # y-component velocity
-p      = np.zeros(NfemP,dtype=np.float64)        # pressure 
-
-for iel in range(0,nel):
-
-    if iel%2000==0:
-       print('iel=',iel)
-
-    # set arrays to 0 every loop
-    f_el =np.zeros((mV*ndofV),dtype=np.float64)
-    K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
-    G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
-    h_el=np.zeros((mP*ndofP),dtype=np.float64)
-
-    for kq in range (0,nqel):
-
-        # position & weight of quad. point
-        rq=qcoords_r[kq]
-        sq=qcoords_s[kq]
-        weightq=qweights[kq]
-
-        NNNV[0:mV]=NNV(rq,sq)
-        dNNNVdr[0:mV]=dNNVdr(rq,sq)
-        dNNNVds[0:mV]=dNNVds(rq,sq)
-        NNNP[0:4]=NNP(rq,sq)
-
-        # calculate jacobian matrix
-        jcb=np.zeros((ndim,ndim),dtype=np.float64)
-        for k in range(0,mV):
-            jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-            jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-            jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-            jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-        jcob = np.linalg.det(jcb)
-        jcbi = np.linalg.inv(jcb)
-
-        # compute dNdx & dNdy
-        xq=0.0
-        yq=0.0
-        for k in range(0,mV):
-            xq+=NNNV[k]*xV[iconV[k,iel]]
-            yq+=NNNV[k]*yV[iconV[k,iel]]
-            dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-            dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-
-        # construct 3x8 b_mat matrix
-        for i in range(0,mV):
-            b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.     ],
-                                     [0.        ,dNNNVdy[i]],
-                                     [dNNNVdy[i],dNNNVdx[i]]]
-
-        # compute elemental a_mat matrix
-        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta0*weightq*jcob
-
-        # compute elemental rhs vector
-        #for i in range(0,mV):
-        #    f_el[ndofV*i  ]+=NV[i]*jcob*weightq*gx(xq,yq,grav)*rhoq
-        #    f_el[ndofV*i+1]+=NV[i]*jcob*weightq*gy(xq,yq,grav)*rhoq
-
-        for i in range(0,mP):
-            N_mat[0,i]=NNNP[i]
-            N_mat[1,i]=NNNP[i]
-            N_mat[2,i]=0.
-
-        G_el-=b_mat.T.dot(N_mat)*weightq*jcob
-
-    #end for kq
-
-    # impose b.c. 
-    for k1 in range(0,mV):
-        for i1 in range(0,ndofV):
-            ikk=ndofV*k1          +i1
-            m1 =ndofV*iconV[k1,iel]+i1
-            if bc_fix[m1]:
-               K_ref=K_el[ikk,ikk] 
-               for jkk in range(0,mV*ndofV):
-                   f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
-                   K_el[ikk,jkk]=0
-                   K_el[jkk,ikk]=0
-               #end for
-               K_el[ikk,ikk]=K_ref
-               f_el[ikk]=K_ref*bc_val[m1]
-               h_el[:]-=G_el[ikk,:]*bc_val[m1]
-               G_el[ikk,:]=0
-            #end if
-        #end for
-    #end for
-
-    # assemble matrix K_mat and right hand side rhs
-    for k1 in range(0,mV):
-        for i1 in range(0,ndofV):
-            ikk=ndofV*k1          +i1
-            m1 =ndofV*iconV[k1,iel]+i1
-            for k2 in range(0,mV):
-                for i2 in range(0,ndofV):
-                    jkk=ndofV*k2          +i2
-                    m2 =ndofV*iconV[k2,iel]+i2
-                    #K_mat[m1,m2]+=K_el[ikk,jkk]
-                    A_sparse[m1,m2] += K_el[ikk,jkk]
-                #end for
-            #end for
-            for k2 in range(0,mP):
-                jkk=k2
-                m2 =iconP[k2,iel]
-                #G_mat[m1,m2]+=G_el[ikk,jkk]
-                A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]*pressure_scaling
-                A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]*pressure_scaling
-            #end for
-            f_rhs[m1]+=f_el[ikk]
-        #end for
-    #end for
-    for k2 in range(0,mP):
-        m2=iconP[k2,iel]
-        h_rhs[m2]+=h_el[k2]*pressure_scaling
-    #end for
-
-#end for
-
-rhs[0:NfemV]=f_rhs
-rhs[NfemV:Nfem]=h_rhs
-
-print("build FE matrix: %.3f s" % (timing.time() - start))
-
-######################################################################
-# solve system
-######################################################################
-start = timing.time()
-
-if case=='1a':
-   for i in range(0,NV):
-       u[i],v[i]=velocity.compute_corner_flow_velocity(xV[i],yV[i]+Ly,l1,l2,l3,angle,vel,Lx,Ly)
-   #end for
-else:
-   sol = np.zeros(Nfem,dtype=np.float64) 
-   sparse_matrix=A_sparse.tocsr()
-   sol=sps.linalg.spsolve(sparse_matrix,rhs)
-   u,v=np.reshape(sol[0:NfemV],(NV,2)).T
-   p=sol[NfemV:Nfem]*pressure_scaling
-
-print("     -> u (m,M) %.6e %.6e (cm/yr)" %(np.min(u)/cm*year,np.max(u)/cm*year))
-print("     -> v (m,M) %.6e %.6e (cm/yr)" %(np.min(v)/cm*year,np.max(v)/cm*year))
-print("     -> p (m,M) %.6e %.6e (MPa)" %(np.min(p)/1e6,np.max(p)/1e6))
-#np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
-
-print("solve time: %.3f s" % (timing.time() - start))
-
 ######################################################################
 # temperature nodes and connectivity 
 ######################################################################
 
 NT=NVold
-ndofT=1
 NfemT=NT*ndofT
 
 xT=np.zeros(NT,dtype=np.float64)     # x coordinates
@@ -798,163 +632,374 @@ iconT=np.zeros((mT,nel),dtype=np.int64)
 
 iconT[0:mT,0:nel]=iconV[0:mT,0:nel]
 
+#################################################################
+
+u      = np.zeros(NV,dtype=np.float64)           # x-component velocity
+v      = np.zeros(NV,dtype=np.float64)           # y-component velocity
+p      = np.zeros(NfemP,dtype=np.float64)        # pressure field
+T      = np.zeros(NT,dtype=np.float64)           # temperature field 
+NNNV   = np.zeros(mV,dtype=np.float64)           # shape functions V
+NNNP   = np.zeros(mP,dtype=np.float64)           # shape functions P
+NNNT   = np.zeros(mT,dtype=np.float64)           # shape functions T 
+dNNNVdx= np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVdy= np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVdr= np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVds= np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNTdx= np.zeros(mT,dtype=np.float64)           # shape functions derivatives
+dNNNTdy= np.zeros(mT,dtype=np.float64)           # shape functions derivatives
+dNNNTdr= np.zeros(mT,dtype=np.float64)           # shape functions derivatives
+dNNNTds= np.zeros(mT,dtype=np.float64)           # shape functions derivatives
+u_old  = np.zeros(NV,dtype=np.float64)           # x-component velocity
+v_old  = np.zeros(NV,dtype=np.float64)           # y-component velocity
+T_old  = np.zeros(NT,dtype=np.float64)           # temperature field 
+c_mat  = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+
 ################################################################################################
 ################################################################################################
-# TIME STEPPING for temperature
+# ITERATIONS
 ################################################################################################
 ################################################################################################
+convfile=open('conv.ascii',"w")
 
-######################################################################
-# temperature boundary conditions 
-######################################################################
+for iter in range(0,niter):
 
-bc_fixT=np.zeros(NfemT,dtype=np.bool)  # boundary condition, yes/no
-bc_valT=np.zeros(NfemT,dtype=np.float64)  # boundary condition, value
+    print('*******************')
+    print('***** iter=',iter,'*****')
+    print('*******************')
 
-#for i in range(0,NT):
-#    #top boundary 
-#    if yT[i]>-1:
-#       bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = 0 + Kelvin
-#    if xT[i]<1:
-#       if yT[i]>-120e3:
-#          bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = -yT[i]/120e3*1300+Kelvin 
-#       else:
-#          bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = 1300+Kelvin 
-#       #end if
-#    #end if
-#    if xT[i]>Lx-1:
-#       if yT[i]>-50e3:
-#          bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = -yT[i]/50e3*1300+Kelvin 
-#       elif u[i]<0:
-#          bc_fixT[i*ndofT]=True ; bc_valT[i*ndofT] = 1300+Kelvin 
-#       #end if
-#    #end if
-#end for
+    #################################################################
+    # build FE matrix
+    # [ K   G ][u]=[f]
+    # [ G^T 0 ][p] [h]
+    #################################################################
+    start = timing.time()
+
+    A_sparse=lil_matrix((Nfem,Nfem),dtype=np.float64)
+    rhs    = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+    f_rhs  = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
+    h_rhs  = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
+    b_mat  = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
+    N_mat  = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix to build G_el 
+
+    for iel in range(0,nel):
+
+        if iel%2000==0:
+           print('iel=',iel)
+
+        # set arrays to 0 every loop
+        f_el =np.zeros((mV*ndofV),dtype=np.float64)
+        K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
+        G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
+        h_el=np.zeros((mP*ndofP),dtype=np.float64)
+
+        for kq in range (0,nqel):
+
+            # position & weight of quad. point
+            rq=qcoords_r[kq]
+            sq=qcoords_s[kq]
+            weightq=qweights[kq]
+
+            NNNV[0:mV]=NNV(rq,sq)
+            dNNNVdr[0:mV]=dNNVdr(rq,sq)
+            dNNNVds[0:mV]=dNNVds(rq,sq)
+            NNNP[0:4]=NNP(rq,sq)
+            NNNT[0:mT]=NNT(rq,sq)
+
+            # calculate jacobian matrix
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,mV):
+                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+            jcob = np.linalg.det(jcb)
+            jcbi = np.linalg.inv(jcb)
+
+            # compute dNdx & dNdy
+            xq=0.0
+            yq=0.0
+            exxq=0.0
+            eyyq=0.0
+            exyq=0.0
+            for k in range(0,mV):
+                xq+=NNNV[k]*xV[iconV[k,iel]]
+                yq+=NNNV[k]*yV[iconV[k,iel]]
+                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                exxq+=dNNNVdx[k]*u[iconV[k,iel]]
+                eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
+                exyq+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
+
+            Tq=0.
+            for k in range(0,mT):
+                Tq+=NNNT[k]*T[iconT[k,iel]]
 
 
-for i in range(0,NT):
-    # top boundary - vack08
-    if yT[i]/Ly>-eps: #
-       bc_fixT[i]=True ; bc_valT[i]=273
-    # left boundary 
-    if xT[i]/Lx<eps:
-       bc_fixT[i]=True ; bc_valT[i]=273+(1573-273)*erf((-yT[i])/(2*np.sqrt(kappa*50e6*year)))
-    # right boundary 
-    if xT[i]/Lx>1-eps:
-       if yT[i]>-l2:
-          bc_fixT[i]=True ; bc_valT[i]=(-yT[i])/l2*1300+273
-       elif u[i]<0:
-          bc_fixT[i]=True ; bc_valT[i]=1300.+273 
+            # construct 3x8 b_mat matrix
+            for i in range(0,mV):
+                b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.     ],
+                                         [0.        ,dNNNVdy[i]],
+                                         [dNNNVdy[i],dNNNVdx[i]]]
 
+            # compute elemental a_mat matrix
+            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*weightq*jcob*viscosity(exxq,eyyq,exyq,Tq,mat[iel])
 
-######################################################################
-# build FE matrix  
-######################################################################
-start = timing.time()
+            # compute elemental rhs vector
+            #for i in range(0,mV):
+            #    f_el[ndofV*i  ]+=NV[i]*jcob*weightq*gx(xq,yq,grav)*rhoq
+            #    f_el[ndofV*i+1]+=NV[i]*jcob*weightq*gy(xq,yq,grav)*rhoq
 
-A_mat = lil_matrix((NfemT,NfemT),dtype=np.float64)# FE matrix
-rhs   = np.zeros(NfemT,dtype=np.float64)          # FE rhs 
-B_mat = np.zeros((ndim,ndofT*mT),dtype=np.float64)# gradient matrix B 
-N_mat = np.zeros((mT,1),dtype=np.float64)         # shape functions
-dNNNdx= np.zeros(mT,dtype=np.float64)             # shape functions derivatives
-dNNNdy= np.zeros(mT,dtype=np.float64)             # shape functions derivatives
-dNNNdr= np.zeros(mT,dtype=np.float64)             # shape functions derivatives
-dNNNds= np.zeros(mT,dtype=np.float64)             # shape functions derivatives
+            for i in range(0,mP):
+                N_mat[0,i]=NNNP[i]
+                N_mat[1,i]=NNNP[i]
+                N_mat[2,i]=0.
 
-for iel in range (0,nel):
+            G_el-=b_mat.T.dot(N_mat)*weightq*jcob
 
-    b_el=np.zeros(mT*ndofT,dtype=np.float64)
-    a_el=np.zeros((mT*ndofT,mT*ndofT),dtype=np.float64)
-    Ka=np.zeros((mT,mT),dtype=np.float64)   # elemental advection matrix 
-    Kd=np.zeros((mT,mT),dtype=np.float64)   # elemental diffusion matrix 
-    vel=np.zeros((1,ndim),dtype=np.float64)
+        #end for kq
 
-    for kq in range(0,nqel):
+        # impose b.c. 
+        for k1 in range(0,mV):
+            for i1 in range(0,ndofV):
+                ikk=ndofV*k1          +i1
+                m1 =ndofV*iconV[k1,iel]+i1
+                if bc_fix[m1]:
+                   K_ref=K_el[ikk,ikk] 
+                   for jkk in range(0,mV*ndofV):
+                       f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
+                       K_el[ikk,jkk]=0
+                       K_el[jkk,ikk]=0
+                   #end for
+                   K_el[ikk,ikk]=K_ref
+                   f_el[ikk]=K_ref*bc_val[m1]
+                   h_el[:]-=G_el[ikk,:]*bc_val[m1]
+                   G_el[ikk,:]=0
+                #end if
+            #end for
+        #end for
 
-        rq=qcoords_r[kq]
-        sq=qcoords_s[kq]
-        weightq=qweights[kq]
+        # assemble matrix K_mat and right hand side rhs
+        for k1 in range(0,mV):
+            for i1 in range(0,ndofV):
+                ikk=ndofV*k1          +i1
+                m1 =ndofV*iconV[k1,iel]+i1
+                for k2 in range(0,mV):
+                    for i2 in range(0,ndofV):
+                        jkk=ndofV*k2          +i2
+                        m2 =ndofV*iconV[k2,iel]+i2
+                        #K_mat[m1,m2]+=K_el[ikk,jkk]
+                        A_sparse[m1,m2] += K_el[ikk,jkk]
+                    #end for
+                #end for
+                for k2 in range(0,mP):
+                    jkk=k2
+                    m2 =iconP[k2,iel]
+                    #G_mat[m1,m2]+=G_el[ikk,jkk]
+                    A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]*pressure_scaling
+                    A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]*pressure_scaling
+                #end for
+                f_rhs[m1]+=f_el[ikk]
+            #end for
+        #end for
+        for k2 in range(0,mP):
+            m2=iconP[k2,iel]
+            h_rhs[m2]+=h_el[k2]*pressure_scaling
+        #end for
 
-        N_mat[0:mT,0]=NNT(rq,sq)
-        dNNNdr[0:mT]=dNNTdr(rq,sq)
-        dNNNds[0:mT]=dNNTds(rq,sq)
+    #end for
 
-        # calculate jacobian matrix
-        jcb=np.zeros((ndim,ndim),dtype=np.float64)
-        for k in range(0,mT):
-            jcb[0,0]+=dNNNdr[k]*xT[iconT[k,iel]]
-            jcb[0,1]+=dNNNdr[k]*yT[iconT[k,iel]]
-            jcb[1,0]+=dNNNds[k]*xT[iconT[k,iel]]
-            jcb[1,1]+=dNNNds[k]*yT[iconT[k,iel]]
+    rhs[0:NfemV]=f_rhs
+    rhs[NfemV:Nfem]=h_rhs
 
-        jcob=np.linalg.det(jcb)
-        jcbi=np.linalg.inv(jcb)
+    print("build FE matrix: %.3f s" % (timing.time() - start))
 
-        # compute dNdx & dNdy
-        vel[0,0]=0.
-        vel[0,1]=0.
-        xq=0.
-        yq=0.
-        for k in range(0,mT):
-            vel[0,0]+=N_mat[k,0]*u[iconT[k,iel]]
-            vel[0,1]+=N_mat[k,0]*v[iconT[k,iel]]
-            xq+=N_mat[k,0]*xT[iconT[k,iel]]
-            yq+=N_mat[k,0]*yT[iconT[k,iel]]
-            dNNNdx[k]=jcbi[0,0]*dNNNdr[k]+jcbi[0,1]*dNNNds[k]
-            dNNNdy[k]=jcbi[1,0]*dNNNdr[k]+jcbi[1,1]*dNNNds[k]
-            B_mat[0,k]=dNNNdx[k]
-            B_mat[1,k]=dNNNdy[k]
+    ######################################################################
+    # solve system
+    ######################################################################
+    start = timing.time()
 
-        # compute diffusion matrix
-        Kd+=B_mat.T.dot(B_mat)*hcond*weightq*jcob
+    if case=='1a':
+       for i in range(0,NV):
+           u[i],v[i]=velocity.compute_corner_flow_velocity(xV[i],yV[i]+Ly,l1,l2,l3,angle,vel,Lx,Ly)
+       #end for
+    else:
+       sol = np.zeros(Nfem,dtype=np.float64) 
+       sparse_matrix=A_sparse.tocsr()
+       sol=sps.linalg.spsolve(sparse_matrix,rhs)
+       u,v=np.reshape(sol[0:NfemV],(NV,2)).T
+       p=sol[NfemV:Nfem]*pressure_scaling
 
-        # compute advection matrix
-        Ka+=N_mat.dot(vel.dot(B_mat))*rho0*hcapa*weightq*jcob
+    print("     -> u (m,M) %.6e %.6e (cm/yr)" %(np.min(u)/cm*year,np.max(u)/cm*year))
+    print("     -> v (m,M) %.6e %.6e (cm/yr)" %(np.min(v)/cm*year,np.max(v)/cm*year))
+    print("     -> p (m,M) %.6e %.6e (MPa)" %(np.min(p)/1e6,np.max(p)/1e6))
+    #np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
-    # end for kq
+    print("solve time: %.3f s" % (timing.time() - start))
 
-    a_el=Ka+Kd
+    #####################################################################
+    # relaxation step
+    #####################################################################
 
-    # apply boundary conditions
+    if iter>0:
+       u=relax*u+(1-relax)*u_old
+       v=relax*v+(1-relax)*v_old
 
-    for k1 in range(0,mT):
-        m1=iconT[k1,iel]
-        if bc_fixT[m1]:
-           Aref=a_el[k1,k1]
-           for k2 in range(0,mT):
-               m2=iconT[k2,iel]
-               b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
-               a_el[k1,k2]=0
-               a_el[k2,k1]=0
-           a_el[k1,k1]=Aref
-           b_el[k1]=Aref*bc_valT[m1]
-    # end for
+    ######################################################################
+    # temperature boundary conditions
+    # which depend on velocity 
+    ######################################################################
 
-    # assemble matrix A_mat and right hand side rhs
-    for k1 in range(0,mT):
-        m1=iconT[k1,iel]
-        for k2 in range(0,mT):
-            m2=iconT[k2,iel]
-            A_mat[m1,m2]+=a_el[k1,k2]
-        rhs[m1]+=b_el[k1]
-    # end for
+    bc_fixT=np.zeros(NfemT,dtype=np.bool)  # boundary condition, yes/no
+    bc_valT=np.zeros(NfemT,dtype=np.float64)  # boundary condition, value
 
-# end for iel
+    for i in range(0,NT):
+        # top boundary - vack08
+        if yT[i]/Ly>-eps: #
+           bc_fixT[i]=True ; bc_valT[i]=Kelvin
+        # left boundary 
+        if xT[i]/Lx<eps:
+           bc_fixT[i]=True ; bc_valT[i]=Kelvin+(1573-Kelvin)*erf((-yT[i])/(2*np.sqrt(kappa*50e6*year)))
+        # right boundary 
+        if xT[i]/Lx>1-eps:
+           if yT[i]>-l2:
+              bc_fixT[i]=True ; bc_valT[i]=(-yT[i])/l2*1300+Kelvin
+           elif u[i]<0:
+              bc_fixT[i]=True ; bc_valT[i]=1300.+Kelvin
 
-print("build FEM matrix T: %.3f s" % (timing.time() - start))
+    ######################################################################
+    # build FE matrix for temperature 
+    ######################################################################
+    start = timing.time()
 
-######################################################################
-# solve system 
-######################################################################
-start = timing.time()
+    A_mat = lil_matrix((NfemT,NfemT),dtype=np.float64)# FE matrix
+    rhs   = np.zeros(NfemT,dtype=np.float64)          # FE rhs 
+    B_mat = np.zeros((ndim,ndofT*mT),dtype=np.float64)# gradient matrix B 
+    N_mat = np.zeros((mT,1),dtype=np.float64)         # shape functions
 
-T = np.zeros(NT,dtype=np.float64)  
+    for iel in range (0,nel):
 
-T = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
+        b_el=np.zeros(mT*ndofT,dtype=np.float64)
+        a_el=np.zeros((mT*ndofT,mT*ndofT),dtype=np.float64)
+        Ka=np.zeros((mT,mT),dtype=np.float64)   # elemental advection matrix 
+        Kd=np.zeros((mT,mT),dtype=np.float64)   # elemental diffusion matrix 
+        vel=np.zeros((1,ndim),dtype=np.float64)
 
-print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
+        for kq in range(0,nqel):
 
-print("solve T: %.3f s" % (timing.time() - start))
+            rq=qcoords_r[kq]
+            sq=qcoords_s[kq]
+            weightq=qweights[kq]
+
+            N_mat[0:mT,0]=NNT(rq,sq)
+            dNNNTdr[0:mT]=dNNTdr(rq,sq)
+            dNNNTds[0:mT]=dNNTds(rq,sq)
+
+            # calculate jacobian matrix
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,mT):
+                jcb[0,0]+=dNNNTdr[k]*xT[iconT[k,iel]]
+                jcb[0,1]+=dNNNTdr[k]*yT[iconT[k,iel]]
+                jcb[1,0]+=dNNNTds[k]*xT[iconT[k,iel]]
+                jcb[1,1]+=dNNNTds[k]*yT[iconT[k,iel]]
+
+            jcob=np.linalg.det(jcb)
+            jcbi=np.linalg.inv(jcb)
+
+            # compute dNdx & dNdy
+            vel[0,0]=0.
+            vel[0,1]=0.
+            xq=0.
+            yq=0.
+            for k in range(0,mT):
+                vel[0,0]+=N_mat[k,0]*u[iconT[k,iel]]
+                vel[0,1]+=N_mat[k,0]*v[iconT[k,iel]]
+                xq+=N_mat[k,0]*xT[iconT[k,iel]]
+                yq+=N_mat[k,0]*yT[iconT[k,iel]]
+                dNNNTdx[k]=jcbi[0,0]*dNNNTdr[k]+jcbi[0,1]*dNNNTds[k]
+                dNNNTdy[k]=jcbi[1,0]*dNNNTdr[k]+jcbi[1,1]*dNNNTds[k]
+                B_mat[0,k]=dNNNTdx[k]
+                B_mat[1,k]=dNNNTdy[k]
+
+            # compute diffusion matrix
+            Kd+=B_mat.T.dot(B_mat)*hcond*weightq*jcob
+
+            # compute advection matrix
+            Ka+=N_mat.dot(vel.dot(B_mat))*rho0*hcapa*weightq*jcob
+
+        # end for kq
+
+        a_el=Ka+Kd
+
+        # apply boundary conditions
+
+        for k1 in range(0,mT):
+            m1=iconT[k1,iel]
+            if bc_fixT[m1]:
+               Aref=a_el[k1,k1]
+               for k2 in range(0,mT):
+                   m2=iconT[k2,iel]
+                   b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
+                   a_el[k1,k2]=0
+                   a_el[k2,k1]=0
+               a_el[k1,k1]=Aref
+               b_el[k1]=Aref*bc_valT[m1]
+        # end for
+
+        # assemble matrix A_mat and right hand side rhs
+        for k1 in range(0,mT):
+            m1=iconT[k1,iel]
+            for k2 in range(0,mT):
+                m2=iconT[k2,iel]
+                A_mat[m1,m2]+=a_el[k1,k2]
+            rhs[m1]+=b_el[k1]
+        # end for
+
+    # end for iel
+
+    print("build FEM matrix T: %.3f s" % (timing.time() - start))
+
+    ######################################################################
+    # solve system 
+    ######################################################################
+    start = timing.time()
+
+    T = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
+
+    print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
+
+    print("solve T: %.3f s" % (timing.time() - start))
+
+    #################################################################
+    # relax
+    #################################################################
+
+    if iter>0:
+       T=relax*T+(1-relax)*T_old
+
+    ######################################################################
+    # checking for convergence
+    ######################################################################
+
+    xi_u=np.linalg.norm(u-u_old,2)/np.linalg.norm(u+u_old,2)
+    xi_v=np.linalg.norm(v-v_old,2)/np.linalg.norm(v+v_old,2)
+    xi_T=np.linalg.norm(T-T_old,2)/np.linalg.norm(T+T_old,2)
+
+    print("conv: u,v,T: %.6f %.6f %.6f" %(xi_u,xi_v,xi_T))
+
+    convfile.write("%3d %10e %10e %10e \n" %(iter,xi_u,xi_v,xi_T)) 
+    convfile.flush()
+
+    u_old[:]=u[:]
+    v_old[:]=v[:]
+    T_old[:]=T[:]
+
+    if xi_u<1e-3 and xi_v<1e-3 and xi_T<1e-3:
+       break
+
+# end for iter
+
+################################################################################################
+################################################################################################
 
 ######################################################################
 # compute nodal strainrate and pressure  
@@ -1029,23 +1074,23 @@ for iel in range(0,nel):
     for i in range(0,mT):
         rq=rTnodes[i]
         sq=sTnodes[i]
-        dNNNdr[0:mT]=dNNTdr(rq,sq)
-        dNNNds[0:mT]=dNNTds(rq,sq)
+        dNNNTdr[0:mT]=dNNTdr(rq,sq)
+        dNNNTds[0:mT]=dNNTds(rq,sq)
         jcb=np.zeros((ndim,ndim),dtype=np.float64)
         for k in range(0,mT):
-            jcb[0,0]+=dNNNdr[k]*xT[iconT[k,iel]]
-            jcb[0,1]+=dNNNdr[k]*yT[iconT[k,iel]]
-            jcb[1,0]+=dNNNds[k]*xT[iconT[k,iel]]
-            jcb[1,1]+=dNNNds[k]*yT[iconT[k,iel]]
+            jcb[0,0]+=dNNNTdr[k]*xT[iconT[k,iel]]
+            jcb[0,1]+=dNNNTdr[k]*yT[iconT[k,iel]]
+            jcb[1,0]+=dNNNTds[k]*xT[iconT[k,iel]]
+            jcb[1,1]+=dNNNTds[k]*yT[iconT[k,iel]]
         #end for
         jcbi=np.linalg.inv(jcb)
         for k in range(0,mT):
-            dNNNdx[k]=jcbi[0,0]*dNNNdr[k]+jcbi[0,1]*dNNNds[k]
-            dNNNdy[k]=jcbi[1,0]*dNNNdr[k]+jcbi[1,1]*dNNNds[k]
+            dNNNTdx[k]=jcbi[0,0]*dNNNTdr[k]+jcbi[0,1]*dNNNTds[k]
+            dNNNTdy[k]=jcbi[1,0]*dNNNTdr[k]+jcbi[1,1]*dNNNTds[k]
         #end for
         inode=iconT[i,iel]
-        qx_n[inode]+=np.dot(dNNNdx[0:mT],T[iconT[0:mT,iel]])
-        qy_n[inode]+=np.dot(dNNNdy[0:mT],T[iconT[0:mT,iel]])
+        qx_n[inode]+=np.dot(dNNNTdx[0:mT],T[iconT[0:mT,iel]])
+        qy_n[inode]+=np.dot(dNNNTdy[0:mT],T[iconT[0:mT,iel]])
         count[inode]+=1
     #end for
 #end for
@@ -1065,12 +1110,12 @@ print("compute nodal heat flux: %.3f s" % (timing.time() - start))
 #measuring T_{11,11}
 for i in range(0,NT):
     if abs(xT[i]-60e3)<1 and abs(yT[i]+Ly-540e3)<1:
-       print ('result1:',xT[i],yT[i]+Ly,T[i]-273)
+       print ('result1:',xT[i],yT[i]+Ly,T[i]-Kelvin)
 
 diagfile=open('tempdiag.ascii',"w")
 for i in range(0,NT):
     if abs(xT[i] + yT[i] ) <1: 
-       diagfile.write("%10e %10e %10e \n " %(xT[i],yT[i],T[i]-273))
+       diagfile.write("%10e %10e %10e \n " %(xT[i],yT[i],T[i]-Kelvin))
 diagfile.close()
 
 # compute average temperature
@@ -1082,15 +1127,15 @@ for iel in range(0,nel):
         sq=qcoords_s[kq]
         weightq=qweights[kq]
         N_mat[0:mT,0]=NNT(rq,sq)
-        dNNNdr[0:mT]=dNNTdr(rq,sq)
-        dNNNds[0:mT]=dNNTds(rq,sq)
+        dNNNTdr[0:mT]=dNNTdr(rq,sq)
+        dNNNTds[0:mT]=dNNTds(rq,sq)
         # calculate jacobian matrix
         jcb=np.zeros((ndim,ndim),dtype=np.float64)
         for k in range(0,mT):
-            jcb[0,0]+=dNNNdr[k]*xT[iconT[k,iel]]
-            jcb[0,1]+=dNNNdr[k]*yT[iconT[k,iel]]
-            jcb[1,0]+=dNNNds[k]*xT[iconT[k,iel]]
-            jcb[1,1]+=dNNNds[k]*yT[iconT[k,iel]]
+            jcb[0,0]+=dNNNTdr[k]*xT[iconT[k,iel]]
+            jcb[0,1]+=dNNNTdr[k]*yT[iconT[k,iel]]
+            jcb[1,0]+=dNNNTds[k]*xT[iconT[k,iel]]
+            jcb[1,1]+=dNNNTds[k]*yT[iconT[k,iel]]
         jcob=np.linalg.det(jcb)
         Tq=0.
         for k in range(0,mT):
@@ -1107,87 +1152,100 @@ print ('Tavrg=',Tavrg)
 #stored row-wise starting in the top left corner.
 #We need to localise every point of this processing grid in the 
 #FE mesh, which is now done not so efficiently at all.
+#grid_T1 is the temperature obtained from P1 shape functions 
+#while grid_T2 is the temperature obtained from P2 shape functions. 
 #################################################################
 start = timing.time()
 
-nnnx=111
-nnny=101
-M=nnnx*nnny
-x = np.empty(M,dtype=np.float64)  # x coordinates
-y = np.empty(M,dtype=np.float64)  # y coordinates
-Tgrid1 = np.empty(M,dtype=np.float64)  # y coordinates
-Tgrid2 = np.empty(M,dtype=np.float64)  # y coordinates
+if do_post_processing:
 
-counter = 0
-for j in range(0,nnny):
-    for i in range(0,nnnx):
-        x[counter]=i*Lx/float(nnnx-1)
-        y[counter]=-j*Ly/float(nnny-1)
-        x[counter]=min(x[counter],(1-eps)*Lx)
-        x[counter]=max(x[counter],eps*Lx)
-        y[counter]=min(y[counter],-eps*Ly)
-        y[counter]=max(y[counter],-(1-eps)*Ly)
-        counter += 1
-    #end for
-#end for
+   nnnx=111
+   nnny=101
+   M=nnnx*nnny
+   grid_x = np.empty(M,dtype=np.float64) 
+   grid_y = np.empty(M,dtype=np.float64) 
+   grid_T1 = np.empty(M,dtype=np.float64)  
+   grid_T2 = np.empty(M,dtype=np.float64)  
+   grid_corner = np.zeros(M,dtype=np.int)  
+   grid_slab = np.zeros(M,dtype=np.int)  
+   grid_wedge = np.zeros(M,dtype=np.int)  
 
-for i in range(0,M):
-    #print ('grid point ',i,x[i],y[i])
-    for iel in range(0,nel):
-        x1=xT[iconT[0,iel]] ; y1=yT[iconT[0,iel]]
-        x2=xT[iconT[1,iel]] ; y2=yT[iconT[1,iel]]
-        x3=xT[iconT[2,iel]] ; y3=yT[iconT[2,iel]]
-        denom=((y2-y3)*(x1-x3) + (x3-x2)*(y1-y3))
-        N0 = ((y2-y3)*(x[i]-x3) + (x3-x2)*(y[i]-y3)) / denom 
-        N1 = ((y3-y1)*(x[i]-x3) + (x1-x3)*(y[i]-y3)) / denom
-        N2 = 1-N0-N1
-        r=N1
-        s=N2
-        if 0<=N0 and N0<=1 and 0<=N1 and N1<=1 and 0<=N2 and N2<=1: #inside test 
-           N_mat[0:mT,0]=NNT(r,s)
-           Tgrid2[i]=np.sum(N_mat[0:mT,0]*T[iconT[0:mT,iel]])
-           Tgrid1[i]=N0*T[iconT[0,iel]] + N1*T[iconT[1,iel]] + N2*T[iconT[2,iel]]
-           #print('     -> iel=',iel,'T=',Tgrid1[i],Tgrid2[i])
-           break
-        #end if
-    #end for
-#end for
+   counter = 0
+   for j in range(0,nnny):
+       for i in range(0,nnnx):
+           grid_x[counter]=i*Lx/float(nnnx-1)
+           grid_y[counter]=-j*Ly/float(nnny-1)
+           #making sure nodes are stricly in the domain
+           grid_x[counter]=min(grid_x[counter],(1-eps)*Lx)
+           grid_x[counter]=max(grid_x[counter],eps*Lx)
+           grid_y[counter]=min(grid_y[counter],-eps*Ly)
+           grid_y[counter]=max(grid_y[counter],-(1-eps)*Ly)
+           counter += 1
+       #end for
+   #end for
 
-np.savetxt('grid.ascii',np.array([x,y,Tgrid1,Tgrid2,Tgrid1-Tgrid2]).T,header='# x,y')
+   for i in range(0,M):
+       #print ('grid point ',i,x[i],y[i])
+       for iel in range(0,nel):
+           x1=xT[iconT[0,iel]] ; y1=yT[iconT[0,iel]]
+           x2=xT[iconT[1,iel]] ; y2=yT[iconT[1,iel]]
+           x3=xT[iconT[2,iel]] ; y3=yT[iconT[2,iel]]
+           denom=((y2-y3)*(x1-x3) + (x3-x2)*(y1-y3))
+           N0 = ((y2-y3)*(grid_x[i]-x3) + (x3-x2)*(grid_y[i]-y3)) / denom 
+           N1 = ((y3-y1)*(grid_x[i]-x3) + (x1-x3)*(grid_y[i]-y3)) / denom
+           N2 = 1-N0-N1
+           if 0<=N0 and N0<=1 and 0<=N1 and N1<=1 and 0<=N2 and N2<=1: #inside test 
+              r=N1
+              s=N2
+              N_mat[0:mT,0]=NNT(r,s)
+              grid_T1[i]=N0*T[iconT[0,iel]]+N1*T[iconT[1,iel]]+N2*T[iconT[2,iel]]
+              grid_T2[i]=np.sum(N_mat[0:mT,0]*T[iconT[0:mT,iel]])
+              #print('     -> iel=',iel,'T=',grid_T1[i],grid_T2[i])
+              break
+           #end if
+       #end for
+   #end for
 
-#temperature $T(11,11)$ which is the 111+11=122th point
-inode=111*10+11-1
-print('     -> Tcorner=',Tgrid1[inode]-273,Tgrid2[inode]-273,x[inode],y[inode])
+   grid_T1-=Kelvin
+   grid_T2-=Kelvin
 
-#equation 17 in vack08
-Tslab=0.
-counter = 0
-for j in range(0,nnny):
-    for i in range(0,nnnx):
-        if i==j and i<=35:
-           Tslab+=Tgrid2[counter]**2
-        counter += 1
-    #end for
-#end for
-Tslab=np.sqrt(Tslab/36)
-print('     -> Tslab=',Tslab-273)
+   #temperature $T(11,11)$ which is the 111+11=122th point
+   inode=111*10+11-1
+   grid_corner[inode]=1
+   print('     -> Tcorner=',grid_T1[inode],grid_T2[inode],grid_x[inode],grid_y[inode])
 
-#equation 18 in vack08
-Twedge=0.
-counter = 0
-for j in range(0,nnny):
-    for i in range(0,nnnx):
-        if  9<=i and i<=20:
-            if 9<=j and j<=i:
-               Twedge+=Tgrid2[counter]**2
-        counter += 1
-#    #end for
-#end for
-Twedge=np.sqrt(Twedge/78)
-print('     -> Twedge=',Twedge-273)
+   #equation 17 in vack08
+   Tslab=0.
+   counter = 0
+   for j in range(0,nnny):
+       for i in range(0,nnnx):
+           if i==j and i<=35:
+              Tslab+=grid_T2[counter]**2
+              grid_slab[counter]=1
+           counter += 1
+       #end for
+   #end for
+   Tslab=np.sqrt(Tslab/36)
+   print('     -> Tslab=',Tslab)
 
+   #equation 18 in vack08
+   Twedge=0.
+   counter = 0
+   for j in range(0,nnny):
+       for i in range(0,nnnx):
+           if  9<=i and i<=20:
+               if 9<=j and j<=i:
+                  Twedge+=grid_T2[counter]**2
+                  grid_wedge[counter]=1
+           counter += 1
+   #    #end for
+   #end for
+   Twedge=np.sqrt(Twedge/78)
+   print('     -> Twedge=',Twedge)
 
-print("post processing on grid: %.3f s" % (timing.time() - start))
+   np.savetxt('grid.ascii',np.array([grid_x,grid_y,grid_T1,grid_T2,grid_corner,grid_slab,grid_wedge]).T)
+
+   print("post processing on grid: %.3f s" % (timing.time() - start))
 
 #################################################################
 start = timing.time()
@@ -1249,6 +1307,12 @@ if True:
     vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
     for i in range(0,NT):
         vtufile.write("%10e \n" %(T[i]-Kelvin))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+    for i in range(0,NT):
+        eta=viscosity(exx_n[i],eyy_n[i],exy_n[i],T[i],mat[iel])
+        vtufile.write("%10e \n" %eta)
     vtufile.write("</DataArray>\n")
 
     #--
