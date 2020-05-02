@@ -1,0 +1,26 @@
+#! /bin/bash
+
+rm results_*
+rm *.ascii
+
+for rs in 16 32 48; do
+
+for drho in 8 16 ; do  
+
+for eta1 in   21   ; do
+
+for eta2 in 17 17.5 18 18.5 19 19.5 20 20.5 20.7 21 21.2 21.5 22 22.5 23 23.5 24 25; do
+
+    echo $rs $drho $eta1 $eta2
+
+    python3 stone.py $rs $rs 0 $drho $eta1 $eta2 2 > opla
+
+    grep vblock opla >> results_v_${drho}_$rs
+    grep pblock opla >> results_p_${drho}_$rs
+
+done
+done
+done
+done
+
+rm opla
