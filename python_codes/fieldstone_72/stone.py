@@ -62,16 +62,16 @@ def pressure(x,y):
 #------------------------------------------------------------------------------
 
 def B(r,s):
-    return (1-r**2)*(1-s**2)*(1-r)*(1-s)
-    #return (1-r**2)*(1-s**2)*(1+0.25*r+0.25*s)
+    #return (1-r**2)*(1-s**2)*(1-r)*(1-s)
+    return (1-r**2)*(1-s**2)*(1+0.25*r+0.25*s)
 
 def dBdr(r,s):
-    return (1-s**2)*(1-s)*(-1-2*r+3*r**2)
-    #return 0.25*(1-s**2)*(1-8*r-3*r**2-2*r*s)
+    #return (1-s**2)*(1-s)*(-1-2*r+3*r**2)
+    return 0.25*(1-s**2)*(1-8*r-3*r**2-2*r*s)
 
 def dBds(r,s):
-    return (1-r**2)*(1-r)*(-1-2*s+3*s**2) 
-    #return 0.25*(1-r**2)*(1-8*s-3*s**2-2*r*s)
+    #return (1-r**2)*(1-r)*(-1-2*s+3*s**2) 
+    return 0.25*(1-r**2)*(1-8*s-3*s**2-2*r*s)
 
 #------------------------------------------------------------------------------
 
@@ -127,6 +127,7 @@ def rho(x,y):
 
 #------------------------------------------------------------------------------
 
+cm=0.01
 year=365.25*24*3600
 
 ndim=2
@@ -154,8 +155,8 @@ if int(len(sys.argv) == 8):
    eta2=10.**(float(sys.argv[6]))
    nqperdim=int(sys.argv[7])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 96
+   nely = 96
    visu = 1
    drho = 8
    eta1 = 1e21
@@ -609,6 +610,12 @@ if bench>1:
        if abs(xP[i]-xc_block)<1 and abs(yP[i]-yc_block)<1:
           print('pblock=',eta1/eta2,p[i]/drho/np.abs(gy)/128e3)
 
+   pline_file=open('pline.ascii',"w")
+   for i in range(0,NP):
+       if abs(xP[i]-xc_block)<1:
+          pline_file.write("%10e %10e \n" %(yP[i],p[i]))
+   pline_file.close()
+          
 
 ######################################################################
 # compute vrms 
@@ -645,6 +652,9 @@ for iel in range (0,nel):
 # end for iel
 
 vrms=np.sqrt(vrms/(Lx*Ly))
+
+if bench>1:
+   vrms/=(cm/year)
 
 print("     -> nel= %6d ; vrms= %.8f" %(nel,vrms))
 
@@ -761,8 +771,12 @@ if visu==1:
     vtufile.write("<PointData Scalars='scalars'>\n")
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel' Format='ascii'> \n")
-    for i in range(0,NP):
-        vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+    if bench==1:
+       for i in range(0,NP):
+           vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+    if bench>1:
+       for i in range(0,NP):
+           vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")

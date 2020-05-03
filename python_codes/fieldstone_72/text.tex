@@ -42,5 +42,67 @@ As above we see that $b_2$ performs better than $b_1$:
 \includegraphics[width=10cm]{python_codes/fieldstone_72/results/mms/vrms}
 \end{center}
 
+%_____________________________________
+\subsubsection*{Sinking block}
+
+This is the very same experiment as in Stone 53.
+
+%............................
+\underline{Full density} 
+Results indicate that the element performs adequately, especially the 
+pressure field which looks smooth.  
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/full/density}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/full/viscosity}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/full/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/full/p}\\
+{\captionfont $64\times 64$. Viscosity ratio is 10, $\delta \rho=8$, bubble 1.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_72/results/block/full/plines}\\
+{\captionfont Pressure profile measured at $x=L_x/2$ for various resolutions. Same parameters
+as previous figure.}
+\end{center}
+
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/full/results_v}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/full/results_p}
+
+%............................
+\underline{Reduced density} 
+This is the same experiment as above but $\rho_1$ has been removed from the density
+everywhere in the domain, so that the surrounding material has zero density 
+and the block has a density $\delta \rho$.
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/p}\\
+{\captionfont $64\times 64$. Viscosity ratio is 10, $\delta \rho=8$. bubble 1}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/plines_b1}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/plines_b2}\\
+{\captionfont Pressure profile measured at $x=L_x/2$ for various resolutions and for both bubble functions.
+Left is bubble 1, right is bubble 2.}
+\end{center}
+
+I hereafter plot the pressure profiles for both bubble functions at the highest resolution, i.e. $96\times 96$.
+We see that differences are somewhat minimal, although bubble 2 yields a pressure above the block which 
+showcases worrying oscillations:
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/plines_b12}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/plines_b12_zoom}
+\end{center}
+
+
+
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/results_v}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/results_p}
+
 
 
