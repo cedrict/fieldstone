@@ -1738,10 +1738,38 @@ are:
 \end{eqnarray}
 Their counterparts in Cartesian coordinates are obtained with Eqs.~\eqref{ss:srboth}.
 
+\paragraph{Could we find a steady state temperature field that goes along?}
+We can start from the pure advection equation:
+\[
+\rho C_p \left(\frac{\partial T}{\partial t} + \vec\upnu\cdot \vec\nabla T \right) = 0
+\]
+At steady state we are left with 
+\[
+\vec\upnu\cdot \vec\nabla T = 0
+\]
+I postulate then 
+\[
+T(r,\theta) = l(r) (\alpha \cos k\theta + \beta \sin k\theta)
+\]
+Inserting this into the equation above I arrive at the conclusion that $\beta \neq 0$ is a dead end. 
+It then simply follows that 
+\[
+T(r,\theta) = l(r) \cos k\theta 
+\]
+which yields $T(r,\theta)=r g(r) \cos(k\theta)$. 
+and 
+\[
+\vec\nabla T = ( f(r) \cos k\theta ; - g(r) k \sin k\theta)
+\]
+I can then plot the temperature gradient (in black) next to the velocity field in red (right figure)
+and show that these are indeed always perpendicular:
 
+\includegraphics[height=5cm]{images/benchmark_annulus_conv/T}
+\includegraphics[height=5cm]{images/benchmark_annulus_conv/arrows}\\
 
-
-
+However, what is deeply puzzling is the fact that the temperature is exactly zero on both 
+boundaries (beacuse $g(r)$ is by construction) 
+and yet the temperature field is not zero in the middle, in the absence of heat source ... ?
 
 
 

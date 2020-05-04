@@ -2,8 +2,8 @@
 
 The idea behind static condensation is quite simple: in some cases, there are dofs 
 belonging to an element which only belong to that element. For instance, the so-called MINI 
-element ($P_1^+ \times P_1$) showcases a bubble function in the middle (see section \ref{pair}). 
-In the following, $\vec{V}^\star$ corresponds to the list of such dofs inside an element.
+element ($P_1^+ \times P_1$) showcases a bubble function in the middle (see section \ref{ss:pair}). 
+In the following, $\vec{\cal V}^\star$ corresponds to the list of such dofs inside an element.
 The discretised Stokes equations on any element looks like:
 
 \begin{equation}
@@ -36,7 +36,7 @@ This can also be re-written in non-matrix form:
 L^T V + K^\star \cdot  \vec{\cal V}^\star + H \cdot \vec{\cal P} &=& \vec{f}^\star \\
 \G^T \cdot \vec{\cal V} + H^T \vec{\cal V}^\star &=& \vec{h}
 \end{eqnarray}
-The $V^\star$ in the second equation can be isolated:
+The $\vec{\cal V}^\star$ in the second equation can be isolated:
 \[
 \vec{\cal V}^\star = \K^{-\star} \cdot ( \vec{f}^\star - L^T \cdot \vec{\cal V} - H \cdot \vec{\cal P})
 \]
@@ -68,7 +68,8 @@ Note that $\underline{\K}$ is symmetric, and so is the Stokes matrix.
 
 
 For instance, in the case of the MINI element, the dofs corresponding to the bubble 
-could be eliminated at the elemental level, which would make the Stokes matrix smaller. 
+could be eliminated at the elemental level, which would make the Stokes matrix smaller
+(see book by Braess \cite{braess}). 
 However, it is then important to note that static condensation introduces a 
 pressure-pressure term which was not there in the original formulation.
 

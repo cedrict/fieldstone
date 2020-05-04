@@ -31,7 +31,7 @@ we need to generate a mesh as shown hereunder:
 %-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 The spacing between the nodes in the $x$-direction is $h_x$ and $h_y$ is the spacing
-between the nodes in the vertical direction. There are now $nnp=nnx\times nny$ nodes in total.
+between the nodes in the $y$ direction. There are now $nnp=nnx\times nny$ nodes in total.
 The above grid is characterised by $i=0,1,2,3,4$ and $j=0,1,2,3$ and counts in total 
 20 nodes.
 
@@ -98,7 +98,7 @@ ${\color{brown}i}=4$ and ${\color{brown}j}=1$ corresponds to node \# 9, etc ...
 
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise FDM-6}
+{\color{orange}Exercise FDM-7}
 \end{center}
 
 In a new notebook declare and assign values to 
@@ -189,10 +189,8 @@ where $T_{bc}$ is the prescribed temperature.
 \par\noindent\rule{\textwidth}{0.4pt}
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise FDM-7}
+{\color{orange}Exercise FDM-8}
 \end{center}
-%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
-
 
 A simple (time-dependent) analytical solution for the temperature equation exists for 
 the case that the initial temperature distribution is
@@ -202,7 +200,7 @@ T(x,y,t=0) = T_0+ T_{max} \exp \left[ -\frac{x^2+y^2}{\sigma^2}   \right]
 where $T_{max}$ is the maximum amplitude of the temperature perturbation 
 at $(x,y) = (0, 0)$ and $\sigma$ its half-width. The solution is
 \begin{equation}
-T(x,y,t)=T_0\frac{T_{max}}{1+4t\kappa/\sigma^2 } \exp \left[ -\frac{x^2+y^2}{\sigma^2 + 4t\kappa}   \right]
+T(x,y,t)=T_0 + \frac{T_{max}}{1+4t\kappa/\sigma^2 } \exp \left[ -\frac{x^2+y^2}{\sigma^2 + 4t\kappa}   \right]
 \end{equation}
 
 Set $L_x$=100km and $L_y=80$km, $\kappa=10^{-6}$, $\tilde{Q}=0$, $T_{max}=100\degree$, $T_0=200\degree$, 
@@ -211,15 +209,16 @@ and $\sigma=10^4$m.
 Use the previous exercise to generate a $nnx\times nny$ grid 
 in the $[-L_x/2,L_x/2]\times[-L_y/2,L_y/2]$ domain.
 
-Write a function which takes $x$, $y$, $t$, $T_{max}$, $\kappa$ and $\sigma$ as argument 
+Write a function which takes $x$, $y$, $t$, $T_0$, $T_{max}$, $\kappa$ and $\sigma$ as argument 
 and returns the analytical temperature value.
 
 Write a an explicit FDM code which solves the 2D diffusion equation. At each time step 
-presecribe on the boundary the analytical solution.  
+prescribe on the boundary the analytical solution.  
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 
 
@@ -301,11 +300,11 @@ The discretised PDE equation will now be applied to the interior nodes:
 +(1+4s)T_{{\color{brown}1,1}}^{n+1} 
 -s T_{{\color{brown}0,1}}^{n+1} 
 -s T_{{\color{brown}1,0}}^{n+1} 
-&=& T_{{\color{brown}1,1}}^n +\tilde{Q}_{{\color{brown}1,1}}^n \nn\\
+&=& T_{{\color{brown}1,1}}^n +\tilde{Q}_{{\color{brown}1,1}}^n \delta t\nn\\
 \Rightarrow \qquad
 -s T_{{\color{teal} 7}}^{n+1}-s T_{{\color{teal} 11}}^{n+1} +(1+4s)T_{{\color{teal} 6}}^{n+1} 
 -s T_{{\color{teal} 5}}^{n+1} -s T_{{\color{teal} 1}}^{n+1} 
-&=& T_{{\color{teal} 6}}^n +\tilde{Q}_{{\color{teal} 6}}^n
+&=& T_{{\color{teal} 6}}^n +\tilde{Q}_{{\color{teal} 6}}^n\delta t
 \end{eqnarray}
 
 \item For node ${\color{teal}k}=7$ (${\color{brown}i}=2,{\color{brown}j}=1$):
@@ -316,7 +315,7 @@ The discretised PDE equation will now be applied to the interior nodes:
 -s T_{{\color{brown}1,1}}^{n+1} 
 -s T_{{\color{brown}2,0}}^{n+1} 
 &=& T_{{\color{brown}2,1}}^n 
-+\tilde{Q}_{{\color{brown}2,1}}^n \nn\\
++\tilde{Q}_{{\color{brown}2,1}}^n \delta t\nn\\
 \Rightarrow \qquad
 -s T_{{\color{teal} 8}}^{n+1}
 -s T_{{\color{teal} 12}}^{n+1} 
@@ -324,7 +323,7 @@ The discretised PDE equation will now be applied to the interior nodes:
 -s T_{{\color{teal}6}}^{n+1} 
 -s T_{{\color{teal}2}}^{n+1} 
 &=& T_{{\color{teal}7}}^n 
-+\tilde{Q}_{{\color{teal}7}}^n 
++\tilde{Q}_{{\color{teal}7}}^n \delta t
 \end{eqnarray}
 
 \item For node ${\color{teal}k}=8$ (${\color{brown}i}=3,{\color{brown}j}=1$):
@@ -335,7 +334,7 @@ The discretised PDE equation will now be applied to the interior nodes:
 -s T_{{\color{brown}2,1}}^{n+1} 
 -s T_{{\color{brown}3,0}}^{n+1} 
 &=& T_{{\color{brown}3,1}}^n 
-+\tilde{Q}_{{\color{brown}3,1}}^n \nn\\
++\tilde{Q}_{{\color{brown}3,1}}^n \delta t\nn\\
 \Rightarrow \qquad
 -s T_{{\color{teal} 9}}^{n+1}
 -s T_{{\color{teal} 13}}^{n+1} 
@@ -343,18 +342,18 @@ The discretised PDE equation will now be applied to the interior nodes:
 -s T_{{\color{teal}7}}^{n+1} 
 -s T_{{\color{teal}3}}^{n+1} 
 &=& T_{{\color{teal}8}}^n 
-+\tilde{Q}_{{\color{teal}8}}^n 
++\tilde{Q}_{{\color{teal}8}}^n \delta t
 \end{eqnarray}
 
 \item For node ${\color{teal}k}=11$ (${\color{brown}i}=1,{\color{brown}j}=2$):
 \begin{eqnarray}
--s T_{{\color{brown} i+1,j}}^{n+1}
--s T_{{\color{brown}i,j+1}}^{n+1} 
+-s T_{{\color{brown} 2,2}}^{n+1}
+-s T_{{\color{brown}1,3}}^{n+1} 
 +(1+4s)T_{{\color{brown}1,2}}^{n+1} 
--s T_{{\color{brown}i-1,j}}^{n+1} 
--s T_{{\color{brown}i,j-1}}^{n+1} 
+-s T_{{\color{brown}0,2}}^{n+1} 
+-s T_{{\color{brown}2,1}}^{n+1} 
 &=& T_{{\color{brown}1,2}}^n 
-+\tilde{Q}_{{\color{brown}1,2}}^n \nn\\
++\tilde{Q}_{{\color{brown}1,2}}^n \delta t\nn\\
 \Rightarrow \qquad
 -s T_{{\color{teal} 12}}^{n+1}
 -s T_{{\color{teal} 16}}^{n+1} 
@@ -362,7 +361,7 @@ The discretised PDE equation will now be applied to the interior nodes:
 -s T_{{\color{teal}10}}^{n+1} 
 -s T_{{\color{teal}6}}^{n+1} 
 &=& T_{{\color{teal}11}}^n 
-+\tilde{Q}_{{\color{teal}11}}^n
++\tilde{Q}_{{\color{teal}11}}^n\delta t
 \end{eqnarray}
 
 \item For node ${\color{teal}k}=12$ (${\color{brown}i}=2,{\color{brown}j}=2$):
@@ -373,7 +372,7 @@ The discretised PDE equation will now be applied to the interior nodes:
 -s T_{{\color{brown}1,2}}^{n+1} 
 -s T_{{\color{brown}2,1}}^{n+1} 
 &=& T_{{\color{brown}2,2}}^n 
-+\tilde{Q}_{{\color{brown}2,2}}^n  \nn\\
++\tilde{Q}_{{\color{brown}2,2}}^n \delta t \nn\\
 \Rightarrow \qquad
 -s T_{{\color{teal} 13}}^{n+1}
 -s T_{{\color{teal} 17}}^{n+1} 
@@ -381,7 +380,7 @@ The discretised PDE equation will now be applied to the interior nodes:
 -s T_{{\color{teal}11}}^{n+1} 
 -s T_{{\color{teal}7}}^{n+1} 
 &=& T_{{\color{teal}12}}^n 
-+\tilde{Q}_{{\color{teal}12}}^n
++\tilde{Q}_{{\color{teal}12}}^n\delta t
 \end{eqnarray}
 
 
@@ -393,7 +392,7 @@ The discretised PDE equation will now be applied to the interior nodes:
 -s T_{{\color{brown}2,2}}^{n+1} 
 -s T_{{\color{brown}3,1}}^{n+1} 
 &=& T_{{\color{brown}3,2}}^n 
-+\tilde{Q}_{{\color{brown}3,2}}^n \nn\\
++\tilde{Q}_{{\color{brown}3,2}}^n \delta t\nn\\
 \Rightarrow \qquad
 -s T_{{\color{teal} 14}}^{n+1}
 -s T_{{\color{teal} 18}}^{n+1} 
@@ -401,7 +400,7 @@ The discretised PDE equation will now be applied to the interior nodes:
 -s T_{{\color{teal}12}}^{n+1} 
 -s T_{{\color{teal}8}}^{n+1} 
 &=& T_{{\color{teal}13}}^n 
-+\tilde{Q}_{{\color{teal}13}}^n 
++\tilde{Q}_{{\color{teal}13}}^n \delta t
 \end{eqnarray}
 
 
@@ -474,14 +473,14 @@ T_{{\color{teal}19}}^{n+1}
 0\\ 
 0\\ 
 0\\ 
-T_{{\color{teal}6}}^n + \tilde{Q}_{\color{teal}6} \\ 
-T_{{\color{teal}7}}^n + \tilde{Q}_{\color{teal}7} \\ 
-T_{{\color{teal}8}}^n + \tilde{Q}_{\color{teal}8} \\ 
+T_{{\color{teal}6}}^n + \tilde{Q}_{\color{teal}6} \delta t\\ 
+T_{{\color{teal}7}}^n + \tilde{Q}_{\color{teal}7} \delta t\\ 
+T_{{\color{teal}8}}^n + \tilde{Q}_{\color{teal}8} \delta t\\ 
 0\\ 
 0\\ 
-T_{{\color{teal}11}}^n + \tilde{Q}_{\color{teal}11} \\ 
-T_{{\color{teal}12}}^n + \tilde{Q}_{\color{teal}12} \\ 
-T_{{\color{teal}13}}^n + \tilde{Q}_{\color{teal}13} \\ 
+T_{{\color{teal}11}}^n + \tilde{Q}_{\color{teal}11} \delta t\\ 
+T_{{\color{teal}12}}^n + \tilde{Q}_{\color{teal}12} \delta t\\ 
+T_{{\color{teal}13}}^n + \tilde{Q}_{\color{teal}13} \delta t\\ 
 0\\ 
 0\\ 
 0\\ 
@@ -502,10 +501,10 @@ diagonals in the 1D case.
 \par\noindent\rule{\textwidth}{0.4pt}
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise FDM-8}
+{\color{orange}Exercise FDM-9}
 \end{center}
 
-Same exercise as exercise FDM-7, but now with implicit method.
+Same exercise as exercise FDM-8, but now with implicit method.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
@@ -528,7 +527,7 @@ we start from
 -s T_{{\color{teal} 5}}^{n+1} 
 -s T_{{\color{teal} 1}}^{n+1} 
 = T_{{\color{teal} 6}}^n 
-+\tilde{Q}_{{\color{teal} 6}}^n
++\tilde{Q}_{{\color{teal} 6}}^n \delta t
 \end{equation}
 but we know that the boundary conditions impose that $T_{\color{teal}1}=0$ 
 and $T_{\color{teal}5}=0$ so that the equation above simplifies to:
@@ -537,7 +536,7 @@ and $T_{\color{teal}5}=0$ so that the equation above simplifies to:
 -s T_{{\color{teal} 11}}^{n+1} 
 +(1+4s)T_{{\color{teal} 6}}^{n+1} 
 = T_{{\color{teal} 6}}^n 
-+\tilde{Q}_{{\color{teal} 6}}^n
++\tilde{Q}_{{\color{teal} 6}}^n\delta t
 \end{equation}
 
 These 6 equations can finally be combined in the expected smaller linear system:
@@ -545,7 +544,7 @@ These 6 equations can finally be combined in the expected smaller linear system:
 \underbrace{
 \left(
 \begin{array}{cccccc}
-1+4s & -s & . & . & . & -s \\
+1+4s & -s & . & -s & . & . \\
 -s & 1+4s & -s & . & -s & . \\
 . & -s & 1+4s & . & . & -s \\ 
 -s & . & -s & 1+4s & -s & . \\
@@ -571,12 +570,12 @@ T_{{\color{teal}13}}^{n+1}
 \underbrace{
 \left(
 \begin{array}{c}
-T_{{\color{teal}6}}^n + \tilde{Q}_{\color{teal}6} \\ 
-T_{{\color{teal}7}}^n + \tilde{Q}_{\color{teal}7} \\ 
-T_{{\color{teal}8}}^n + \tilde{Q}_{\color{teal}8} \\ 
-T_{{\color{teal}11}}^n + \tilde{Q}_{\color{teal}11} \\ 
-T_{{\color{teal}12}}^n + \tilde{Q}_{\color{teal}12} \\ 
-T_{{\color{teal}13}}^n + \tilde{Q}_{\color{teal}13} 
+T_{{\color{teal}6}}^n + \tilde{Q}_{\color{teal}6}\delta t \\ 
+T_{{\color{teal}7}}^n + \tilde{Q}_{\color{teal}7} \delta t\\ 
+T_{{\color{teal}8}}^n + \tilde{Q}_{\color{teal}8} \delta t\\ 
+T_{{\color{teal}11}}^n + \tilde{Q}_{\color{teal}11} \delta t\\ 
+T_{{\color{teal}12}}^n + \tilde{Q}_{\color{teal}12} \delta t\\ 
+T_{{\color{teal}13}}^n + \tilde{Q}_{\color{teal}13} \delta t
 \end{array}
 \right)
 }_{\vec b}

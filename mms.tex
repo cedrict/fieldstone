@@ -86,6 +86,22 @@ All the necessary functions to do this benchmark are in {\tt mms/dh.py}:
 
 This benchmark is implemented in ASPECT \cite{aspectmanual} and in {\tt Stones 01}.
 
+We have
+\[
+\int_0^1 \int_0^1 u^2 dxdy=
+int_0^1 \int_0^1 ( x^2(1- x)^2 (2y - 6y^2 + 4y^3)  )^2 dx dy = \frac{1}{33075}
+\]
+\[
+\int_0^1 \int_0^1 v^2 dxdy=
+int_0^1 \int_0^1 ( -y^2 (1 - y)^2 (2x - 6x^2 + 4x^3) )^2 dx dy = \frac{1}{33075}
+\]
+so 
+\[
+v_{rms} = \sqrt{ \frac{1}{L_x L_y}  \int_0^1 \int_0^1 (u^2+v^2) dx dy } \simeq 0.00777615791
+\]
+
+
+
 %-----------------------------------------------------------------------------
 \subsubsection{Analytical benchmark II \label{mms2} - "DB2D"}
 
@@ -537,13 +553,116 @@ All the necessary functions to do this benchmark are in {\tt mms/vj3.py}:
 \end{center}
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark XI \label{mms11} - "PPC1"}
+%\subsubsection{Analytical benchmark XI \label{mms11} - "PPC1"}
 
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark XII \label{mms11} - "PPC2"}
+%\subsubsection{Analytical benchmark XII \label{mms12} - "PPC2"}
 
+
+%-----------------------------------------------------------------------------
+\subsubsection{Analytical benchmark XI \label{ss:mms11} - "LAMI"}
+
+Taken from Lamichhane (2015) \cite{lami15}.
+
+\begin{eqnarray}
+u(x,y)&=&-2x^2y(2y-1)(x-1)^2(y-1) = a(x)b(y)\\
+v(x,y)&=& 2xy^2(2x-1)(x-1)(y-1)^2 = c(x)d(y)\\
+p(x,y)&=& x(1-x)(1-2y)
+\end{eqnarray}
+with
+\begin{eqnarray}
+a(x)&=&-2x^2(x-1)^2  \\
+b(y)&=& y(2y-1)(y-1) \\ 
+c(x)&=& x(2x-1)(x-1) \\
+d(y)&=& 2y^2(y-1)^2
+\end{eqnarray}
+and 
+\begin{eqnarray}
+a'(x) &=&  -4x(2x^2-3x+1)\\
+a''(x)&=&  -4(6x^2-6x+1) \\
+b'(y) &=&  6y^2-6y+1 \\
+b''(y)&=&  12y-6 \\
+c'(x) &=& 6x^2-6x+1 \\
+c''(x)&=& 12x-6  \\
+d'(y) &=& 4y(2y^2-3y+1)  \\
+d''(y)&=&  4(6y^2-6y+1)  
+\end{eqnarray}
+
+
+
+It then follows:
+\begin{eqnarray}
+{L}_{xx} &=& \frac{\partial u}{\partial x} =a'(x) b(y)\\ 
+{L}_{xy} &=& \frac{\partial v}{\partial x} =c'(x) d(y)\\
+{L}_{yx} &=& \frac{\partial u}{\partial y} =a(x) b'(y)\\
+{L}_{yy} &=& \frac{\partial v}{\partial y} =c(x) d'(y)
+\end{eqnarray}
+
+It then follows:
+\begin{eqnarray}
+\dot{\varepsilon}_{xx} &=& L_{xx} = a'(x) b(y) \\
+\dot{\varepsilon}_{yy} &=& L_{yy} = c(x) d'(y) \\
+\dot{\varepsilon}_{xy} 
+&=& \frac{1}{2} (L_{xy}+L_{yx}) \\
+&=& \frac{1}{2} ( a(x) b'(y) +  c'(x) d(y)   ) 
+\end{eqnarray}
+
+We easily verify that $\dot{\varepsilon}_{xx}+\dot{\varepsilon}_{yy}=0$.
+
+\begin{eqnarray}
+\frac{\partial p}{\partial x} &=& (1-2x)(1-2y)\\
+\frac{\partial p}{\partial y} &=& -2 x(1-x) 
+\end{eqnarray}
+
+We will also need:
+\begin{eqnarray}
+\frac{\partial \dot{\varepsilon}_{xx}}{\partial x}  &=& a''(x) b(y) \\
+\frac{\partial \dot{\varepsilon}_{xy}}{\partial y}  &=& \frac{1}{2} ( a(x) b''(y) +  c'(x) d'(y)   )\\
+\frac{\partial \dot{\varepsilon}_{xy}}{\partial x}  &=& \frac{1}{2} ( a'(x) b'(y) +  c''(x) d(y)   ) \\
+\frac{\partial \dot{\varepsilon}_{yy}}{\partial x}  &=& c(x) d''(y)
+\end{eqnarray}
+
+Assuming $\eta=1$ we arrive at:
+\begin{eqnarray}
+b_x 
+&=&  \frac{\partial p}{\partial x} 
+-2\frac{\partial \dot{\varepsilon}_{xx}}{\partial x}  
+-2\frac{\partial \dot{\varepsilon}_{xy}}{\partial y}  \\
+&=&  (1-2x)(1-2y) - 2a''(x) b(y) - ( a(x) b''(y) +  c'(x) d'(y)   ) \\
+b_y 
+&=&  \frac{\partial p}{\partial y}  
+-2\frac{\partial \dot{\varepsilon}_{xy}}{\partial x} 
+-2\frac{\partial \dot{\varepsilon}_{yy}}{\partial y} \\
+&=& -2 x(1-x) - ( a'(x) b'(y) +  c''(x) d(y)   ) -2  c(x) d''(y)
+\end{eqnarray}
+
+We have (thank you WolframAlpha\footnote{\url{https://www.wolframalpha.com/}}):
+\[
+\int_{0}^{1}\int_{0}^{1} u^2 dxdy= 
+\int_{0}^{1}\int_{0}^{1} 
+( -2x^2y(2y-1)(x-1)^2(y-1) )^2 
+dxdy = \frac{1}{33075}
+\]
+\[
+\int_{0}^{1}\int_{0}^{1} v^2 dxdy= 
+\int_{0}^{1}\int_{0}^{1} 
+( 2xy^2(2x-1)(x-1)(y-1)^2 )^2
+dxdy = \frac{1}{33075}
+\]
+so that
+\[
+v_{rms} = \sqrt{\frac{1}{L_xL_y} \frac{2}{33075}  }
+\simeq 0.00777615791
+\]
+
+Finally we can verify that the pressure has zero average:
+\[
+\int_0^1 \int_0^1 p(x,y) dx dy = 
+\int_0^1 \int_0^1  x(1-x)(1-2y) dxdy= 
+\int_0^1  x(1-x) dx \int_0^1  (1-2y) dy=0 
+\]
 
 
 %-----------------------------------------------------------------------------

@@ -1107,3 +1107,221 @@ N_9(r,s) &=& 27 rs(1-r-s)
 
 
 
+%..........................................................................
+\subsubsection{Enriched linear basis functions in triangles ($Q_1^+$) -WIP} \label{ss:quadmini}
+\index{general}{$Q_1^+$}
+
+\begin{verbatim}
+4===========3
+|           |   (r_1,s_1)=(-1,-1)
+|           |   (r_2,s_2)=(1,-1)
+|     5     |   (r_3,s_3)=(1,1)
+|           |   (r_4,s_4)=(-1,1)
+|           |   (r_5,s_5)=(0,0)
+1===========2
+\end{verbatim}
+
+In Bai (1997) \cite{bai97}: "It is well known that the equal-order bilinear velocity-bilinear 
+continuous pressure element - the $Q_1\times Q_1$, element - exhibits a certain spurious pressure mode.
+In the paper we propose a new stabilized Q1Q1 combination for the velocity and
+pressure with three internal degrees of freedom added to the velocity space, that is, one degree of
+freedom for each component of the velocity and one degree of freedom shared by both components of
+the velocity."
+
+Two versions are proposed, if I understand it correctly.
+The first one is given in Eq.7 (three extra dofs: $u_5$, $v_5$, $w$):
+\begin{eqnarray}
+u(r,t) &=& \sum_{i=1}^4 N_i (r,t) u_i + \left[ u_5 - \frac{w}{4}(1-t) \right] (1-r^2)(1-t^2) \nonumber\\
+v(r,t) &=& \sum_{i=1}^4 N_i (r,t) v_i + \left[ v_5 - \frac{w}{4}(1-r) \right] (1-r^2)(1-t^2) 
+\end{eqnarray}
+The second one in Eq.23 (four extra dofs: $u_5$, $v_5$, $u_6$, $v_6$):
+\begin{eqnarray}
+u(r,t) &=& \sum_{i=1}^4 N_i (r,t) u_i + \left[ u_5 +u_6(r+t) \right] (1-r^2)(1-t^2) \nonumber\\
+v(r,t) &=& \sum_{i=1}^4 N_i (r,t) v_i + \left[ v_5 +v_6(r+t) \right] (1-r^2)(1-t^2) 
+\end{eqnarray}
+
+In Franca et al (2007) \cite{fros07}: 
+stabilized finite element method for Stokes equations with piecewise continuous 
+bilinear approximations for both velocity and pressure variables. The velocity
+field is enriched with piecewise polynomial bubble functions with null average at element
+edges.
+
+In Lamichhane (2015) \cite{lami15}: "We consider a quadrilateral MINI
+finite element for approximating the solution
+of Stokes equations using a quadrilateral mesh. We use the standard bilinear finite
+element space enriched with element-wise defined bubble functions for the velocity
+and the standard bilinear finite element space for the pressure space. With a simple
+modification of the standard bubble function we show that a single bubble function is
+sufficient to ensure the inf-sup condition.
+This is a refinement of \cite{bai97} where the author enriches the velocity space with
+more than a single vector bubble function per element. In this article we show that with a small modification of the standard bubble function we can get the stability just by using a single vector bubble function per element."
+
+The two bubble functions are defined on the reference element $[0,1]\times [0,1]$:
+\begin{eqnarray}
+b^{(1)}(x,y) &=& 64(1-x)^2(1-y)^2 xy \\
+b^{(2)}(x,y) &=& 8(1+x+y)xy(1-x)(1-y)
+\end{eqnarray}
+
+In Kwon \& Park \cite{kwpa14}: 
+"We introduce a new stable MINI-element pair for incompressible Stokes equations on
+quadrilateral meshes, which uses the smallest number of bubbles for the velocity. The pressure is 
+discretized with the $P_1$ -midpoint-edge-continuous elements and each component of the velocity field is
+done with the standard $Q_1$ -conforming elements enriched by one bubble a quadrilateral."
+
+
+In what follows I focus on the two bubble functions $b^{(1)}$ and $b^{(2)}$ in \cite{lami15}.
+When I rewrite these for the reference element $[-1,1]\times[-1,1]$, then $x=(r+1)/2$, $y=(s+1)/2$
+and $1-x=(1-r)/2$ and $1-y=(1-s)/2$.
+\begin{eqnarray}
+b^{(1)}(r,s) 
+&=& 64 \frac{1}{4} (1-r)^2 \frac{1}{4}(1-s)^2 \frac{1}{2} (r+1) \frac{1}{2} (s+1)  \\
+&=&  (1-r)^2 (1-s)^2 (r+1)  (s+1) \\
+&=& (1-r)(1-s) (1-r^2) (1-s^2) \\ \nn\\ 
+b^{(2)}(r,s) 
+&=& 8[1+(r+1)/2+(s+1)/2]\frac{1}{2}(r+1)\frac{1}{2}(s+1)\frac{1}{2}(1-r)\frac{1}{2}(1-s) \\
+&=& \frac{1}{2} [1+(r+1)/2+(s+1)/2] (r+1) (s+1) (1-r) (1-s) \\
+&=& \left(1+\frac{r+s}{4}\right) (1-r^2) (1-s^2) 
+\end{eqnarray}
+Both bubble functions are exactly one in the middle of the element and exactly zero on the edges
+of the element as expected from shape functions.
+
+We then have
+\begin{eqnarray}
+\frac{\partial b^{(1)}}{\partial r}(r,s) 
+&=& (1-s)^2(1+s)[-2(1-r)(1+r)+(1-r)^2]\\
+&=& (1-s)^2(1+s)[-2+2r^2 + 1-2r+r^2]\\
+&=& (1-s)^2(1+s)[-1-2r+3r^2]\\
+\frac{\partial b^{(1)}}{\partial s}(r,s) 
+&=& (1-r)^2(1+r)[-1-2s+3s^2 ] \\
+\frac{\partial b^{(2)}}{\partial r}(r,s) 
+&=& \frac{1}{4} (1-s^2) (1-r^2 + (4+r+s) (-2r)) \\
+&=& \frac{1}{4} (1-s^2) (1-8r-3r^2 -2rs) \\
+\frac{\partial b^{(2)}}{\partial s}(r,s) 
+&=& \frac{1}{4} (1-r^2) (1-s^2 + (4+r+s) (-2s)) \\
+&=& \frac{1}{4} (1-r^2) (1-8s-3s^2 -2rs) 
+\end{eqnarray}
+We postulate that the function $f$ has the following representation 
+in the element:
+\[
+f^h(r,s)=a+br+cs+drs+e b(r,s) 
+\]
+where $b(r,s)$ stands for the bubble function which is of the form $b(r,s)=(1-r^2)(1-s^2)\phi(r,s)$
+and $\phi$ is a (bi)-linear function of $r,s$.
+
+We need
+\begin{eqnarray}
+f^h(r_1,s_1) &=& a-b-c+d  =f_1 \\
+f^h(r_2,s_2) &=& a+b-c-d  =f_2 \\
+f^h(r_3,s_3) &=& a+b+c+d  =f_3 \\
+f^h(r_4,s_4) &=& a-b+c-d  =f_4 \\
+f^h(r_5,s_5) &=& a      +e=f_5 
+\end{eqnarray}
+This can be written as a linear system: 
+\[
+\left(
+\begin{array}{ccccc}
+1 &-1 &-1 & 1 &0 \\
+1 & 1 &-1 &-1 &0 \\
+1 & 1 & 1 & 1 &0 \\
+1 &-1 & 1 &-1 &0 \\
+1 & 0 & 0 & 0 &1 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+a \\ b \\ c \\ d \\ e
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+f_1 \\ f_2 \\ f_3 \\ f_4 \\ f_5
+\end{array}
+\right)
+\]
+and the solution is then:
+\[
+\left(
+\begin{array}{c}
+a \\ b \\ c \\ d \\ e
+\end{array}
+\right)
+=
+\frac{1}{4}
+\left(
+\begin{array}{ccccc}
+ 1 & 1 &  1 & 1 &0\\
+-1 & 1 &  1 &-1 &0\\
+-1 &-1 &  1 & 1 &0\\
+ 1 &-1 &  1 &-1 &0\\
+-1 &-1 & -1 &-1 &4
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+f_1 \\ f_2 \\ f_3 \\ f_4 \\ f_5
+\end{array}
+\right)
+\]
+or, 
+\begin{eqnarray}
+a &=& \frac{1}{4}( f_1 + f_2 +f_3 +f_4) \\
+b &=& \frac{1}{4}(-f_1 + f_2 +f_3 -f_4) \\
+c &=& \frac{1}{4}(-f_1 - f_2 +f_3 +f_4) \\
+d &=& \frac{1}{4}( f_1 - f_2 +f_3 -f_4) \\
+e &=& \frac{1}{4}(-f_1 - f_2 -f_3 -f_4 + 4f_5) 
+\end{eqnarray}
+Then 
+\begin{eqnarray}
+4f^h(r,s)
+&=&4 [a+br+cs+drs+e (1-r^2) (1-s^2) \phi(r,s)] \\
+&=&  (f_1 + f_2 +f_3 +f_4) \\
+&+& (-f_1 + f_2 +f_3 -f_4)r \\
+&+&(-f_1 - f_2 +f_3 +f_4)s \\
+&+& (f_1 - f_2 +f_3 -f_4)rs \\
+&+& (-f_1 - f_2 -f_3 -f_4 + 4f_5) (1-r^2) (1-s^2) \phi(r,s) \\
+&=& (1-r-s+rs - b(r,s))f_1 \\
+&+& (1+r-s-rs-b(r,s))f_2 \\
+&+& (1+r+s+rs-b(r,s))f_3 \\
+&+& (1-r+s-rs- b(r,s))f_4 \\
+&+& 4b(r,s) f_5
+\end{eqnarray}
+or, 
+
+\begin{eqnarray}
+f^h(r,s)&=&
+\underbrace{\left(\frac{1}{4}(1-r)(1-s)-\frac{1}{4}b(r,s)\right)}_{N_1} f_1 + 
+\underbrace{\left(\frac{1}{4}(1+r)(1-s)-\frac{1}{4}b(r,s)\right)}_{N_2} f_2\\
+&+& 
+\underbrace{\left(\frac{1}{4}(1+r)(1+s)-\frac{1}{4}b(r,s)\right)}_{N_3} f_3 +
+\underbrace{\left(\frac{1}{4}(1-r)(1+s)-\frac{1}{4}b(r,s)\right)}_{N_4} f_4 \\
+&+& \underbrace{b(r,s)}_{N_5} f_5
+\end{eqnarray}
+
+As in the $P_1^+$ case the resulting shape functions are a combination 
+of the regular $Q_1$ shape functions and the bubble.
+
+
+Consistency check $f(r,s)=C$:
+\begin{eqnarray}
+f^h(r,s) 
+&=& \sum_{i=1}^5 N_i(r,s) f_i \\
+&=& C \sum_{i=1}^5 N_i(r,s)  \\
+&=& C
+\end{eqnarray}
+
+Consistency check $f(r,s)=r$ (or $f(r,s)=s)$:
+\begin{eqnarray}
+f^h(r,s) 
+&=& \sum_{i=1}^5 N_i(r,s) f_i \\
+&=& N_1 (-1) + N_2 (+1) + N_3 (+1) + N_4 (-1) + N_5 (0) \\
+&=& -N_1+N_2+N_3-N_4 \\
+&=& r
+\end{eqnarray}
+
+
+
+
+
