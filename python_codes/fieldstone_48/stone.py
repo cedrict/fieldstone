@@ -981,7 +981,6 @@ for iel in range (0,nel):
                 jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
                 jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
             jcob = np.linalg.det(jcb)
-            jcbi = np.linalg.inv(jcb)
 
             xq=0.
             yq=0.
