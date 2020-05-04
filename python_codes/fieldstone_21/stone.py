@@ -122,8 +122,6 @@ def sr_xy(x,y,R1,R2,k):
        +(err-ett)*math.cos(theta)*math.sin(theta)
     return val
 
-
-
 def gx(x,y,g0):
     val=-x/np.sqrt(x*x+y*y)*g0
     return val
@@ -131,6 +129,28 @@ def gx(x,y,g0):
 def gy(x,y,g0):
     val=-y/np.sqrt(x*x+y*y)*g0
     return val
+
+def temperature(x,y,R1,R2,k):
+    r=np.sqrt(x*x+y*y)
+    theta=math.atan2(y,x)
+    A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
+    B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
+    rgr=A/2.*r**2 + B*math.log(r) - 1.
+    val=rgr*math.cos(k*theta)
+    return val
+
+def temperature_grad(x,y,R1,R2,k):
+    r=np.sqrt(x*x+y*y)
+    theta=math.atan2(y,x)
+    A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
+    B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
+    gr=A/2.*r + B/r*math.log(r) - 1./r
+    fr=A*r+B/r
+    dTdr=fr*math.cos(k*theta)
+    dTdt=-gr*k*math.sin(k*theta)
+    valx=dTdr*math.cos(theta)-dTdt*math.sin(theta)
+    valy=dTdr*math.sin(theta)+dTdt*math.cos(theta)
+    return valx,valy,0.
 
 #------------------------------------------------------------------------------
 
@@ -193,7 +213,7 @@ if int(len(sys.argv) == 3):
    nelr = int(sys.argv[1])
    visu = int(sys.argv[2])
 else:
-   nelr = 40
+   nelr = 20
    visu = 1
 
 R1=1.
@@ -1083,7 +1103,7 @@ if visu==1:
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(th)' Format='ascii'> \n")
    for i in range(0,nnp):
-       vtufile.write("%10f %10f %10f \n" %(velocity_x(xV[i],yV[i],R1,R2,kk,rho0,g0),\
+       vtufile.write("%13e %13e %13e \n" %(velocity_x(xV[i],yV[i],R1,R2,kk,rho0,g0),\
                                            velocity_y(xV[i],yV[i],R1,R2,kk,rho0,g0),0.))
    vtufile.write("</DataArray>\n")
    #--
@@ -1213,6 +1233,18 @@ if visu==1:
        vtufile.write("%10f \n" %exy3[i])
    vtufile.write("</DataArray>\n")
 
+
+   #--
+   vtufile.write("<DataArray type='Float32' Name='T (th)' Format='ascii'> \n")
+   for i in range(0,nnp):
+       vtufile.write("%10f \n" %(temperature(xV[i],yV[i],R1,R2,kk)))
+   vtufile.write("</DataArray>\n")
+
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='T grad' Format='ascii'> \n")
+   for i in range(0,nnp):
+       vtufile.write("%13e %13e %13e \n" %(temperature_grad(xV[i],yV[i],R1,R2,kk)))
+   vtufile.write("</DataArray>\n")
 
 
 
