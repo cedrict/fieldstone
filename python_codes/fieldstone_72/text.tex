@@ -23,11 +23,11 @@ The velocity and pressure fields are shown hereunder:
 \end{center}
 
 During the debugging process I ended up 
-implementing various quadratures, from $2^2$ to $6^2$ points. 
+implementing various quadratures, from $2^2$ to $6^2$ points but the results
+show that $2^2$ quadrature points per element are sufficient. 
 The results from the article are different than mine but I suspect that what the 
 author measured could be different than what I measure. 
-The trends are similar with $b_2$ performing better than $b_1$ (and 
-we also observe that the quadrature scheme does not alter results at all): 
+The trends are similar though, with $b_2$ performing better than $b_1$:
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms/errors_v}
@@ -39,13 +39,13 @@ Resolutions from $8\times8$ until $80\times80$.}
 The root mean square velocity is also measured for both bubble functions.
 As above we see that $b_2$ performs better than $b_1$:
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_72/results/mms/vrms}
+\includegraphics[width=11cm]{python_codes/fieldstone_72/results/mms/vrms}
 \end{center}
 
 %_____________________________________
 \subsubsection*{Sinking block}
-
-This is the very same experiment as in Stone 53.
+This is the very same experiment as in Stone 53. It consists of a negatively buoyant 
+square object falling in a fluid in a square domain. 
 
 %............................
 \underline{Full density} 
@@ -60,6 +60,9 @@ pressure field which looks smooth.
 {\captionfont $64\times 64$. Viscosity ratio is 10, $\delta \rho=8$, bubble 1.}
 \end{center}
 
+We see that the element is capable of reprensenting a linear pressure profile
+(the overpressure signal due to the block is negligible compared to the 
+hydrostatic pressure).
 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_72/results/block/full/plines}\\
@@ -67,21 +70,31 @@ pressure field which looks smooth.
 as previous figure.}
 \end{center}
 
+As before we produce the characteristic figures of the velocity and pressure in the middle of the 
+block as a function of the viscosity ratio and the density difference. The results obtained 
+with the quadrilateral MINI element agree nicely with those obtained with the $Q_2\times Q_1$ element:
+ 
+\begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/full/results_v}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/full/results_p}
+\end{center}
+
 
 %............................
 \underline{Reduced density} 
 This is the same experiment as above but $\rho_1$ has been removed from the density
 everywhere in the domain, so that the surrounding material has zero density 
 and the block has a density $\delta \rho$.
-
+The velocity and pressure field are then:
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/vel}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/p}\\
 {\captionfont $64\times 64$. Viscosity ratio is 10, $\delta \rho=8$. bubble 1}
 \end{center}
+
+We then turn to the pressure along the vertical line $x=L_x/2$ as obtained with 
+both bubble functions and find that both yield visually similar profiles:
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/plines_b1}
@@ -92,17 +105,21 @@ Left is bubble 1, right is bubble 2.}
 
 I hereafter plot the pressure profiles for both bubble functions at the highest resolution, i.e. $96\times 96$.
 We see that differences are somewhat minimal, although bubble 2 yields a pressure above the block which 
-showcases worrying oscillations:
+showcases worrying oscillations. Also the results are remarquably similar to those obtained with the Taylor-Hood
+$Q_2\times Q_1$ element:
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/plines_b12}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/plines_b12_zoom}
 \end{center}
 
+Finally the velocity and pressure inside the block unsurprisingly match nicely with those obtained with the Taylor-Hood
+$Q_2\times Q_1$ element:
 
-
+\begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/results_v}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/results_p}
+\end{center}
 
 
 
