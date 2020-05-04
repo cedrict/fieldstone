@@ -6,13 +6,6 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-problem: sparse matrix \& pressure nullspace removal not done available.
-
-
-\par\noindent\rule{\textwidth}{0.4pt}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 This simple benchmark provides challenging numerical experiments 
 dealing with large viscosity variations within the simulation
 domain. It appears in \cite{gery10} and consists of a bulk of fluid 1 ($\rho_1,\eta_1$)
@@ -76,4 +69,13 @@ $\log_{10}(\eta_1)=21$ and $\log_{10}(\eta_2)=17,17.5,18,..22.5,23,23.5,24$,
 all with multiple mesh resolutions.}
  \end{center}
 
-We see that resolution $64\times 64$ is close but not quite {\sl the} solution of this experiment. 
+We see that resolution $64\times 64$ is close but not quite {\sl the} solution of this experiment.
+
+The pressure along the line $x=L_x/2$ was measured for 4 resolutions and both elements:
+ 
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_53/results/reduced/plines_q2q1.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_53/results/reduced/plines_ser.pdf}\\
+{\captionfont Left: $Q_2\times Q_1$ element; Right: $Q_2^{(8)}\times Q_1$ element.}  
+\end{center}
+

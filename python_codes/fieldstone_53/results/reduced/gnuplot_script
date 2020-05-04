@@ -35,3 +35,30 @@ plot[][]\
 'results_p_8_32' u 2:3 w lp lt 1 ps .3 t '32^2',\
 'results_p_8_48' u 2:3 w lp lt 2 ps .3 t '48^2',\
 'results_p_8_64' u 2:3 w lp lt 3 ps .3 t '64^2',\
+
+set key outside
+set xlabel 'p'
+set ylabel 'y'
+unset log xy
+set pointsize .2
+
+set output 'plines_q2q1.pdf'
+plot[-1e7:1e7][0:512e3]\
+'plines_q2q1/pline16.ascii' u 2:1 w lp t 'Q_2xQ_1, 16x16',\
+'plines_q2q1/pline32.ascii' u 2:1 w lp t 'Q_2xQ_1, 32x32',\
+'plines_q2q1/pline48.ascii' u 2:1 w lp t 'Q_2xQ_1, 48x48',\
+'plines_q2q1/pline64.ascii' u 2:1 w lp t 'Q_2xQ_1, 64x64',\
+384e3+64e3 lt -1 dashtype 4 notitle,\
+384e3-64e3 lt -1 dashtype 4 notitle
+
+set output 'plines_ser.pdf'
+plot[-1e7:1e7][0:512e3]\
+'plines_ser/pline16.ascii' u 2:1 w lp t 'Q_2xQ_1, 16x16',\
+'plines_ser/pline32.ascii' u 2:1 w lp t 'Q_2xQ_1, 32x32',\
+'plines_ser/pline48.ascii' u 2:1 w lp t 'Q_2xQ_1, 48x48',\
+'plines_ser/pline64.ascii' u 2:1 w lp t 'Q_2xQ_1, 64x64',\
+384e3+64e3 lt -1 dashtype 4 notitle,\
+384e3-64e3 lt -1 dashtype 4 notitle
+
+
+

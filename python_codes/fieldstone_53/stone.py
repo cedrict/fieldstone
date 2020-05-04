@@ -115,10 +115,10 @@ if int(len(sys.argv) == 8):
    eta1=10.**(float(sys.argv[6]))
    eta2=10.**(float(sys.argv[7]))
 else:
-   nelx = 48
-   nely = 48
+   nelx = 16
+   nely = 16
    visu = 1
-   serendipity=0
+   serendipity=1
    drho = 8
    eta1 = 1e21
    eta2 = 1e22
@@ -556,6 +556,12 @@ for i in range(0,NV):
 for i in range(0,NP):
     if abs(xP[i]-xc_block)<1 and abs(yP[i]-yc_block)<1:
        print('pblock=',eta1/eta2,p[i]/drho/np.abs(gy)/128e3)
+
+pline_file=open('pline.ascii',"w")
+for i in range(0,NP):
+    if abs(xP[i]-xc_block)<1:
+       pline_file.write("%10e %10e \n" %(yP[i],p[i]))
+pline_file.close()
 
 #####################################################################
 # plot of solution
