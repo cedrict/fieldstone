@@ -1,0 +1,8 @@
+set term pdf enhanced 
+set grid
+set output 'xi.pdf'
+set xlabel 'xi'
+set ylabel 'depth (km)'
+plot[][:2891]\
+'xi_stca06.ascii' w l t 'stca06',\
+'xi_moek16.ascii' u 5:1 w l t 'moek16'  
