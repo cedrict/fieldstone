@@ -9,9 +9,9 @@ import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix
 from scipy.sparse import lil_matrix
 from shape_functions import NNV,NNP,dNNVdr,dNNVds
+from prem_density import prem_density
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 # This code relies on the sph_models code written by Ross Ronan Maguire
 # Code available (sph_models.py in this folder) at 
 # https://github.com/romaguir/sph_models
@@ -21,8 +21,8 @@ from shape_functions import NNV,NNP,dNNVdr,dNNVds
 
 from sph_models import read_splines,read_sph,find_spl_vals
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
+###############################################################################
 
 def gx(x,y,g0):
     val=-x/np.sqrt(x*x+y*y)*g0
@@ -34,7 +34,7 @@ def gy(x,y,g0):
 
 print("-----------------------------")
 
-#------------------------------------------------------------------------------
+###############################################################################
 # reading data from Steinberger & Calderwood 2006
 # first column is xi, second column is depth
 # original file counted 2822 lines and 2 columns, with
@@ -43,17 +43,19 @@ print("-----------------------------")
 # it now counts 2892 lines
 
 xi_stca06 = np.empty(2892,dtype=np.float64)
+depths_stca06 = np.empty(2892,dtype=np.float64)
 f = open('data/xi/xi_stca06.ascii','r')
 counter=0
 for line in f:
     line=line.strip()
     columns=line.split()
     xi_stca06[counter]=columns[0]
+    depths_stca06[counter]=float(columns[1])*1e3
     counter+=1
 
 print('     -> read stca06 ok') 
 
-#------------------------------------------------------------------------------
+###############################################################################
 # reading data from Steinberger & Calderwood 2006
 # original files counts 22 lines but starts at 66km depth
 # and ends at 2800km depth.
@@ -62,17 +64,19 @@ print('     -> read stca06 ok')
 # the file counts then 24 lines
 
 xi_moek16 = np.empty(24,dtype=np.float64)
+depths_moek16 = np.empty(24,dtype=np.float64)
 f = open('data/xi/xi_moek16.ascii','r')
 counter=0
 for line in f:
     line=line.strip()
     columns=line.split()
+    depths_moek16[counter]=float(columns[0])*1e3
     xi_moek16[counter]=columns[4]
     counter+=1
 
 print('     -> read moek16 ok') 
 
-#------------------------------------------------------------------------------
+###############################################################################
 # reading data from Civs12
 # file is 153 lines long 
 # first 51 lines are viscA, then 51 lines are viscB 
@@ -96,9 +100,15 @@ for line in f:
        depths_civs12[counter-102]=columns[0]
     counter+=1
 
+depths_civs12[:]=np.flip(depths_civs12)
+viscA_civs12[:]=np.flip(viscA_civs12)
+viscB_civs12[:]=np.flip(viscB_civs12)
+
+#np.savetxt('civs12.ascii',np.array([depths_civs12,viscA_civs12,viscB_civs12]).T)
+
 print('     -> read civs12 ok') 
 
-#------------------------------------------------------------------------------
+###############################################################################
 # reading data from  Steinberger & Holmes 2008
 # file counts 22 lines
 # first column is number between 0 and 1 (normalised radii)
@@ -118,9 +128,12 @@ for line in f:
 
 depths_stho08[:]=6371e3*(1-depths_stho08[:])
 
+depths_stho08[:]=np.flip(depths_stho08)
+visc_stho08[:]=np.flip(visc_stho08)
+
 print('     -> read stho08 ok') 
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def xi_coeff(depth,xi_case):
     #------------------
@@ -132,35 +145,83 @@ def xi_coeff(depth,xi_case):
     # case 1: stca06
     #------------------
     elif xi_case == 1:
-        val = 0 
+       cell_index=2890
+       for kk in range(0,2891):
+           if depth<depths_stca06[kk+1]:
+              cell_index=kk
+              break
+           #end if
+       #end for
+       val=(depth-depths_stca06[cell_index])/(depths_stca06[cell_index+1]-depths_stca06[cell_index])\
+          *(xi_stca06[cell_index+1]-xi_stca06[cell_index])+xi_stca06[cell_index]
+
     #------------------
     # case 2: moek16
     #------------------
     elif xi_case == 2:
-        val = 0
-     
+       cell_index=22
+       for kk in range(0,23):
+           if depth<depths_moek16[kk+1]:
+              cell_index=kk
+              break
+           #end if
+       #end for
+       val=(depth-depths_moek16[cell_index])/(depths_moek16[cell_index+1]-depths_moek16[cell_index])\
+          *(xi_moek16[cell_index+1]-xi_moek16[cell_index])+xi_moek16[cell_index]
+
     return val
+
+###############################################################################
 
 def viscosity(depth,visc_case):
     # visc_case=0: constant viscosity
     if visc_case==0:
-       val=1e21  
+       val=1e22  
     # visc_case=1: yoshida et al 2001
     elif visc_case==1:
-       val = 3.0e20
+       val = 3.0e21
        if depth < 150e3:
           val *= 1.e3 
        elif depth > 670.e3:
           val *= 70.
     # visc_case=2: Steinberg & Holmes
     elif visc_case==2:
-       val=0
+       cell_index=21
+       for kk in range(0,22):
+           if depth<depths_stho08[kk+1]:
+              cell_index=kk
+              break
+           #end if
+       #end for
+       val=(depth-depths_stho08[cell_index])/(depths_stho08[cell_index+1]-depths_stho08[cell_index])\
+          *(visc_stho08[cell_index+1]-visc_stho08[cell_index])+visc_stho08[cell_index]
+
     # visc_case=3: Ciskova 2012 A 
     elif visc_case==3:
-       val=0
+       cell_index=49
+       for kk in range(0,50):
+           if depth<depths_civs12[kk+1]:
+              cell_index=kk
+              break
+           #end if
+       #end for
+       val=(depth-depths_civs12[cell_index])/(depths_civs12[cell_index+1]-depths_civs12[cell_index])\
+          *(viscA_civs12[cell_index+1]-viscA_civs12[cell_index])+viscA_civs12[cell_index]
+       val=10**val
+
     # visc_case=4: Ciskova 2012 B
     elif visc_case==4:
-       val=0
+       cell_index=49
+       for kk in range(0,50):
+           if depth<depths_civs12[kk+1]:
+              cell_index=kk
+              break
+           #end if
+       #end for
+       val=(depth-depths_civs12[cell_index])/(depths_civs12[cell_index+1]-depths_civs12[cell_index])\
+          *(viscB_civs12[cell_index+1]-viscB_civs12[cell_index])+viscB_civs12[cell_index]
+       val=10**val
+
     return val
 
 #------------------------------------------------------------------------------
@@ -179,7 +240,7 @@ if int(len(sys.argv) == 3):
    nelr = int(sys.argv[1])
    visu = int(sys.argv[2])
 else:
-   nelr = 24
+   nelr = 30
    visu = 1
 
 R1=3480e3
@@ -196,9 +257,10 @@ eta_ref=1e21      # scaling of G blocks
 L_ref=(R1+R2)/2
 
 eps=1.e-10
-
 sqrt3=np.sqrt(3.)
+cm_per_year=0.01/3600./365.25/24.
 
+nqel=9
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
 
@@ -206,12 +268,13 @@ rVnodes=[-1,1,1,-1,0,1,0,-1,0]
 sVnodes=[-1,-1,1,1,-1,0,1,0,0]
 
 sparse=True
+use_fancy_sr=False
 
 # case 0: constant
 # case 1: stca06
 # case 2: moek16
     
-xi_case=0
+xi_case=2
 
 # visc_case=0: constant viscosity
 # visc_case=1: yoshida et al 2001
@@ -219,7 +282,7 @@ xi_case=0
 # visc_case=3: Ciskova 2012 A 
 # visc_case=4: Ciskova 2012 B
 
-visc_case=0
+visc_case=1
 
 #################################################################
 # grid point setup
@@ -236,6 +299,7 @@ r=np.empty(nnp,dtype=np.float64)
 theta=np.empty(nnp,dtype=np.float64) 
 longitude=np.zeros(nnp,dtype=np.float64) 
 latitude=np.zeros(nnp,dtype=np.float64) 
+depth=np.empty(nnp,dtype=np.float64)  
 
 Louter=2.*math.pi*R2
 Lr=R2-R1
@@ -262,6 +326,7 @@ for j in range(0,nnr):
         if theta[counter]<0.:
            theta[counter]+=2.*math.pi
         longitude[counter]=theta[counter]/2./np.pi*360.
+        depth[counter]=R2-r[counter]
         counter+=1
 
 #np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y,u,v')
@@ -304,11 +369,15 @@ NfemV=nnp*ndofV           # Total number of degrees of V freedom
 NfemP=nelt*(nelr+1)*ndofP # Total number of degrees of P freedom
 Nfem=NfemV+NfemP          # total number of dofs
 
+nq=nqel*nel
+
 print('nelr=',nelr)
 print('nelr=',nelt)
 print('nel=',nel)
 print('NfemV=',NfemV)
 print('NfemP=',NfemP)
+print('dr=',(R2-R1)/nelr/1000,'km')
+print('nq=',nq)
 
 #################################################################
 # connectivity
@@ -439,10 +508,11 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 
 #################################################################
 # use spherical harmonics tools to assign density to nodes
-#################################################################
 # note that find_spl_vals expects values in kilometers
 # longitudes between 0 and 360
 # latitudes between -90 and 90
+#################################################################
+start = timing.time()
 
 lmin=0
 lmax=40
@@ -454,20 +524,17 @@ d_ln_vs=np.zeros(nnp,dtype=np.float64)
 
 counter=0
 for j in range(0,nnr):
-    print('layer=',j)
+    #print('layer=',j)
     for i in range(0,nnt):
-        #xi=xV[counter]
-        #yi=yV[counter]
-        #t=xi/Louter*2.*math.pi    
-        #theta[counter]=math.atan2(yV[counter],xV[counter])
         if i==0:
            # find_spl_vals takes a long time and we only need it per layer/depth
            ri=r[counter]
            ri=min(ri,R2-1.)
            ri=max(ri,R1+1.)
-           depth=(R2-ri)/1000.
+           depthi=(R2-ri)/1000.
            #print(depth,r[counter])
-           spl_vals = find_spl_vals(depth)
+           spl_vals = find_spl_vals(depthi)
+        #end if
 
         mylat=latitude[counter]
         mylon=longitude[counter]
@@ -480,9 +547,56 @@ for j in range(0,nnr):
 
         counter+=1
 
+    #end for
+#end for
+
 #np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y,u,v')
 
+print("assign d_ln_vs: %.3f s" % (timing.time() - start))
 
+#################################################################
+# assign PREM densities to rho_prem array
+#################################################################
+start = timing.time()
+
+rho_prem=np.zeros(nnp,dtype=np.float64)
+
+for i in range(0,nnp):
+    rho_prem[i]=prem_density(r[i])
+
+print("assign rho prem: %.3f s" % (timing.time() - start))
+
+#################################################################
+# convert d_ln_vs into d_ln_rho
+#################################################################
+start = timing.time()
+
+d_ln_rho=np.zeros(nnp,dtype=np.float64) 
+
+for i in range(0,nnp):        
+    d_ln_rho[i] = d_ln_vs[i]*xi_coeff(depth[i],xi_case)
+
+print("compute d_ln_rho: %.3f s" % (timing.time() - start))
+
+#################################################################
+# convert d_ln_rho into d_rho using PREM bckground
+#################################################################
+start = timing.time()
+
+d_rho=np.zeros(nnp,dtype=np.float64) 
+
+for i in range(0,nnp):
+    d_rho[i] = d_ln_rho[i] * rho_prem[i]
+
+print("compute d_rho: %.3f s" % (timing.time() - start))
+
+#################################################################
+# convert d_rho into rho
+#################################################################
+
+rho=np.zeros(nnp,dtype=np.float64) 
+
+rho[:] = d_rho[:] 
 
 
 #################################################################
@@ -507,10 +621,14 @@ dNNNVdx  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 dNNNVdy  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 dNNNVdr  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 dNNNVds  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-u     = np.zeros(nnp,dtype=np.float64)          # x-component velocity
-v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
+u     = np.zeros(nnp,dtype=np.float64)            # x-component velocity
+v     = np.zeros(nnp,dtype=np.float64)            # y-component velocity
+xq=np.zeros(nq,dtype=np.float64)                  # x coordinates of qpoints
+yq=np.zeros(nq,dtype=np.float64)                  # y coordinates of qpoints
+etaq=np.zeros(nq,dtype=np.float64)                # visc at qpoints
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
+counterq=0
 for iel in range(0,nel):
 
     # set arrays to 0 every loop
@@ -546,15 +664,15 @@ for iel in range(0,nel):
             jcbi = np.linalg.inv(jcb)
 
             # compute dNdx & dNdy
-            xq=0.0
-            yq=0.0
+            rhoq=0.0
             for k in range(0,mV):
-                xq+=NNNV[k]*xV[iconV[k,iel]]
-                yq+=NNNV[k]*yV[iconV[k,iel]]
+                xq[counterq]+=NNNV[k]*xV[iconV[k,iel]]
+                yq[counterq]+=NNNV[k]*yV[iconV[k,iel]]
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                rhoq+=NNNV[k]*rho[iconV[k,iel]]
             #end for 
-            depthq=R2-np.sqrt(xq*xq+yq*yq)
+            depthq=R2-np.sqrt(xq[counterq]**2+yq[counterq]**2)
 
             # construct 3x8 b_mat matrix
             for i in range(0,mV):
@@ -564,12 +682,13 @@ for iel in range(0,nel):
             #end for 
 
             # compute elemental a_mat matrix
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(depthq,visc_case)*weightq*jcob
+            etaq[counterq]=viscosity(depthq,visc_case)
+            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq[counterq]*weightq*jcob
 
             # compute elemental rhs vector
             for i in range(0,mV):
-                f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*gx(xq,yq,g0)*rho0
-                f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy(xq,yq,g0)*rho0
+                f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*gx(xq[counterq],yq[counterq],g0)*rhoq
+                f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy(xq[counterq],yq[counterq],g0)*rhoq
             #end for 
 
             for i in range(0,mP):
@@ -581,6 +700,8 @@ for iel in range(0,nel):
             G_el-=b_mat.T.dot(N_mat)*weightq*jcob
 
             NNNNP[:]+=NNNP[:]*jcob*weightq
+
+            counterq+=1
 
         #end for jq
     #end for iq
@@ -645,7 +766,7 @@ if not sparse:
    print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
    print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
 
-#exit()
+np.savetxt('etaq.ascii',np.array([xq,yq,etaq]).T,header='# x,y,eta')
 
 print("build FE matrixs & rhs (%.3fs)" % (timing.time() - start))
 
@@ -681,8 +802,8 @@ start = timing.time()
 u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
 p=sol[NfemV:Nfem]*(eta_ref/L_ref)
 
-print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
-print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
+print("     -> u (m,M) %.4e %.4e " %(np.min(u/cm_per_year),np.max(u/cm_per_year)))
+print("     -> v (m,M) %.4e %.4e " %(np.min(v/cm_per_year),np.max(v/cm_per_year)))
 
 #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 np.savetxt('p.ascii',np.array([xP,yP,p]).T,header='# x,y,u,v')
@@ -690,8 +811,8 @@ np.savetxt('p.ascii',np.array([xP,yP,p]).T,header='# x,y,u,v')
 vr= np.cos(theta)*u+np.sin(theta)*v
 vt=-np.sin(theta)*u+np.cos(theta)*v
     
-print("     -> vr (m,M) %.4e %.4e " %(np.min(vr),np.max(vr)))
-print("     -> vt (m,M) %.4e %.4e " %(np.min(vt),np.max(vt)))
+print("     -> vr (m,M) %.4e %.4e " %(np.min(vr/cm_per_year),np.max(vr/cm_per_year)))
+print("     -> vt (m,M) %.4e %.4e " %(np.min(vt/cm_per_year),np.max(vt/cm_per_year)))
 
 print("reshape solution (%.3fs)" % (timing.time() - start))
 
@@ -777,105 +898,105 @@ exy2[:]=0.5*(Lxy2[:]+Lyx2[:])
 #################################################################
 start = timing.time()
 
-M_mat= np.zeros((nnp,nnp),dtype=np.float64)
-rhsLxx=np.zeros(nnp,dtype=np.float64)
-rhsLyy=np.zeros(nnp,dtype=np.float64)
-rhsLxy=np.zeros(nnp,dtype=np.float64)
-rhsLyx=np.zeros(nnp,dtype=np.float64)
+if use_fancy_sr:
 
-for iel in range(0,nel):
+   M_mat = lil_matrix((nnp,nnp),dtype=np.float64)
+   rhsLxx=np.zeros(nnp,dtype=np.float64)
+   rhsLyy=np.zeros(nnp,dtype=np.float64)
+   rhsLxy=np.zeros(nnp,dtype=np.float64)
+   rhsLyx=np.zeros(nnp,dtype=np.float64)
 
-    M_el =np.zeros((mV,mV),dtype=np.float64)
-    fLxx_el=np.zeros(mV,dtype=np.float64)
-    fLyy_el=np.zeros(mV,dtype=np.float64)
-    fLxy_el=np.zeros(mV,dtype=np.float64)
-    fLyx_el=np.zeros(mV,dtype=np.float64)
-    NNNV =np.zeros((mV,1),dtype=np.float64) 
+   for iel in range(0,nel):
 
-    # integrate viscous term at 4 quadrature points
-    for iq in [0,1,2]:
-        for jq in [0,1,2]:
+       M_el =np.zeros((mV,mV),dtype=np.float64)
+       fLxx_el=np.zeros(mV,dtype=np.float64)
+       fLyy_el=np.zeros(mV,dtype=np.float64)
+       fLxy_el=np.zeros(mV,dtype=np.float64)
+       fLyx_el=np.zeros(mV,dtype=np.float64)
+       NNNV =np.zeros((mV,1),dtype=np.float64) 
 
-            # position & weight of quad. point
-            rq=qcoords[iq]
-            sq=qcoords[jq]
-            weightq=qweights[iq]*qweights[jq]
+       # integrate viscous term at 4 quadrature points
+       for iq in [0,1,2]:
+           for jq in [0,1,2]:
 
-            NNNV[0:mV,0]=NNV(rq,sq)
-            dNNNVdr[0:mV]=dNNVdr(rq,sq)
-            dNNNVds[0:mV]=dNNVds(rq,sq)
+               # position & weight of quad. point
+               rq=qcoords[iq]
+               sq=qcoords[jq]
+               weightq=qweights[iq]*qweights[jq]
 
-            # calculate jacobian matrix
-            jcb=np.zeros((2,2),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-            #end for 
-            jcob = np.linalg.det(jcb)
-            jcbi = np.linalg.inv(jcb)
+               NNNV[0:mV,0]=NNV(rq,sq)
+               dNNNVdr[0:mV]=dNNVdr(rq,sq)
+               dNNNVds[0:mV]=dNNVds(rq,sq)
 
-            # compute dNdx & dNdy
-            Lxxq=0.
-            Lyyq=0.
-            Lxyq=0.
-            Lyxq=0.
-            for k in range(0,mV):
-                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-                Lxxq+=dNNNVdx[k]*u[iconV[k,iel]]
-                Lyyq+=dNNNVdy[k]*v[iconV[k,iel]]
-                Lxyq+=dNNNVdx[k]*v[iconV[k,iel]]
-                Lyxq+=dNNNVdy[k]*u[iconV[k,iel]]
-            #end for 
+               # calculate jacobian matrix
+               jcb=np.zeros((2,2),dtype=np.float64)
+               for k in range(0,mV):
+                   jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                   jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                   jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                   jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+               #end for 
+               jcob = np.linalg.det(jcb)
+               jcbi = np.linalg.inv(jcb)
 
-            M_el +=NNNV.dot(NNNV.T)*weightq*jcob
+               # compute dNdx & dNdy
+               Lxxq=0.
+               Lyyq=0.
+               Lxyq=0.
+               Lyxq=0.
+               for k in range(0,mV):
+                   dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                   dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                   Lxxq+=dNNNVdx[k]*u[iconV[k,iel]]
+                   Lyyq+=dNNNVdy[k]*v[iconV[k,iel]]
+                   Lxyq+=dNNNVdx[k]*v[iconV[k,iel]]
+                   Lyxq+=dNNNVdy[k]*u[iconV[k,iel]]
+               #end for 
 
-            fLxx_el[:]+=NNNV[:,0]*Lxxq*jcob*weightq
-            fLyy_el[:]+=NNNV[:,0]*Lyyq*jcob*weightq
-            fLxy_el[:]+=NNNV[:,0]*Lxyq*jcob*weightq
-            fLyx_el[:]+=NNNV[:,0]*Lyxq*jcob*weightq
+               M_el +=NNNV.dot(NNNV.T)*weightq*jcob
 
-        #end for
-    #end for
+               fLxx_el[:]+=NNNV[:,0]*Lxxq*jcob*weightq
+               fLyy_el[:]+=NNNV[:,0]*Lyyq*jcob*weightq
+               fLxy_el[:]+=NNNV[:,0]*Lxyq*jcob*weightq
+               fLyx_el[:]+=NNNV[:,0]*Lyxq*jcob*weightq
 
-    for k1 in range(0,mV):
-        m1=iconV[k1,iel]
-        for k2 in range(0,mV):
-            m2=iconV[k2,iel]
-            M_mat[m1,m2]+=M_el[k1,k2]
-        #end for
-        rhsLxx[m1]+=fLxx_el[k1]
-        rhsLyy[m1]+=fLyy_el[k1]
-        rhsLxy[m1]+=fLxy_el[k1]
-        rhsLyx[m1]+=fLyx_el[k1]
-    #end for
+           #end for
+       #end for
 
-#end for
+       for k1 in range(0,mV):
+           m1=iconV[k1,iel]
+           for k2 in range(0,mV):
+               m2=iconV[k2,iel]
+               M_mat[m1,m2]+=M_el[k1,k2]
+           #end for
+           rhsLxx[m1]+=fLxx_el[k1]
+           rhsLyy[m1]+=fLyy_el[k1]
+           rhsLxy[m1]+=fLxy_el[k1]
+           rhsLyx[m1]+=fLyx_el[k1]
+       #end for
 
-Lxx3 = sps.linalg.spsolve(sps.csr_matrix(M_mat),rhsLxx)
-Lyy3 = sps.linalg.spsolve(sps.csr_matrix(M_mat),rhsLyy)
-Lxy3 = sps.linalg.spsolve(sps.csr_matrix(M_mat),rhsLxy)
-Lyx3 = sps.linalg.spsolve(sps.csr_matrix(M_mat),rhsLyx)
+   #end for
 
-print("     -> Lxx3 (m,M) %.4e %.4e " %(np.min(Lxx3),np.max(Lxx3)))
-print("     -> Lyy3 (m,M) %.4e %.4e " %(np.min(Lyy3),np.max(Lyy3)))
-print("     -> Lxy3 (m,M) %.4e %.4e " %(np.min(Lxy3),np.max(Lxy3)))
-print("     -> Lxy3 (m,M) %.4e %.4e " %(np.min(Lyx3),np.max(Lyx3)))
+   Lxx3 = sps.linalg.spsolve(sps.csr_matrix(M_mat),rhsLxx)
+   Lyy3 = sps.linalg.spsolve(sps.csr_matrix(M_mat),rhsLyy)
+   Lxy3 = sps.linalg.spsolve(sps.csr_matrix(M_mat),rhsLxy)
+   Lyx3 = sps.linalg.spsolve(sps.csr_matrix(M_mat),rhsLyx)
 
-print("compute vel gradient meth-3 (%.3fs)" % (timing.time() - start))
+   print("     -> Lxx3 (m,M) %.4e %.4e " %(np.min(Lxx3),np.max(Lxx3)))
+   print("     -> Lyy3 (m,M) %.4e %.4e " %(np.min(Lyy3),np.max(Lyy3)))
+   print("     -> Lxy3 (m,M) %.4e %.4e " %(np.min(Lxy3),np.max(Lxy3)))
+   print("     -> Lxy3 (m,M) %.4e %.4e " %(np.min(Lyx3),np.max(Lyx3)))
 
-#################################################################
-#################################################################
+   exx3 = np.zeros(nnp,dtype=np.float64)  
+   eyy3 = np.zeros(nnp,dtype=np.float64)  
+   exy3 = np.zeros(nnp,dtype=np.float64)  
 
-exx3 = np.zeros(nnp,dtype=np.float64)  
-eyy3 = np.zeros(nnp,dtype=np.float64)  
-exy3 = np.zeros(nnp,dtype=np.float64)  
+   exx3[:]=Lxx3[:]
+   eyy3[:]=Lyy3[:]
+   exy3[:]=0.5*(Lxy3[:]+Lyx3[:])
 
-exx3[:]=Lxx3[:]
-eyy3[:]=Lyy3[:]
-exy3[:]=0.5*(Lxy3[:]+Lyx3[:])
+   print("compute vel gradient meth-3 (%.3fs)" % (timing.time() - start))
+
 
 #################################################################
 # normalise pressure
@@ -939,14 +1060,14 @@ if visu==1:
        vtufile.write("%10e %10e %10e \n" %(gx(xV[i],yV[i],g0),gy(xV[i],yV[i],g0),0.))
    vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(x,y)' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(x,y) cm/yr' Format='ascii'> \n")
    for i in range(0,nnp):
-       vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+       vtufile.write("%10e %10e %10e \n" %(u[i]/cm_per_year,v[i]/cm_per_year,0.))
    vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(r,theta)' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(r,theta) cm/yr' Format='ascii'> \n")
    for i in range(0,nnp):
-       vtufile.write("%10e %10e %10e \n" %(vr[i],vt[i],0.))
+       vtufile.write("%10e %10e %10e \n" %(vr[i]/cm_per_year,vt[i]/cm_per_year,0.))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='r' Format='ascii'> \n")
@@ -968,6 +1089,37 @@ if visu==1:
    for i in range(0,nnp):
        vtufile.write("%10e \n" %d_ln_vs[i])
    vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='rho PREM' Format='ascii'> \n")
+   for i in range(0,nnp):
+       vtufile.write("%10e \n" %rho_prem[i])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='d_ln_rho' Format='ascii'> \n")
+   for i in range(0,nnp):
+       vtufile.write("%10e \n" %d_ln_rho[i])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='d_rho' Format='ascii'> \n")
+   for i in range(0,nnp):
+       vtufile.write("%10e \n" %d_rho[i])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='viscosity' Format='ascii'> \n")
+   for i in range(0,nnp):
+       vtufile.write("%10e \n" %(viscosity(depth[i],visc_case)))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='depth' Format='ascii'> \n")
+   for i in range(0,nnp):
+       vtufile.write("%10e \n" %depth[i])
+   vtufile.write("</DataArray>\n")
+
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='xi' Format='ascii'> \n")
+   for i in range(0,nnp):
+       vtufile.write("%10e \n" %(xi_coeff(depth[i],xi_case)))
+   vtufile.write("</DataArray>\n")
 
 
    #--
@@ -986,20 +1138,22 @@ if visu==1:
        vtufile.write("%10e \n" %exy2[i])
    vtufile.write("</DataArray>\n")
 
-   vtufile.write("<DataArray type='Float32' Name='exx3' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10e \n" %exx3[i])
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='eyy3' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10e \n" %eyy3[i])
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='exy3' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10e \n" %exy3[i])
-   vtufile.write("</DataArray>\n")
+   if use_fancy_sr:
+      vtufile.write("<DataArray type='Float32' Name='exx3' Format='ascii'> \n")
+      for i in range(0,nnp):
+          vtufile.write("%10e \n" %exx3[i])
+      vtufile.write("</DataArray>\n")
+      #--
+      vtufile.write("<DataArray type='Float32' Name='eyy3' Format='ascii'> \n")
+      for i in range(0,nnp):
+          vtufile.write("%10e \n" %eyy3[i])
+      vtufile.write("</DataArray>\n")
+      #--
+      vtufile.write("<DataArray type='Float32' Name='exy3' Format='ascii'> \n")
+      for i in range(0,nnp):
+          vtufile.write("%10e \n" %exy3[i])
+      vtufile.write("</DataArray>\n")
+
    #--
    vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
    for i in range(0,nnp):
