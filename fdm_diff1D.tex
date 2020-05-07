@@ -536,10 +536,10 @@ Also, this algorithm will fail if one or more diagonal terms of ${\bm A}$ is nul
 \end{center}
 
 Implement example FDM-5 from scratch in a new notebook.
+Write a separate function for the Jacobi solver.
 What do you observe ? why does it explode? 
 Multiply all diagonal values by 10 and re-run it. 
 What do you observe now? 
-
 
 Bonus: implement the Gauss-Seidel method.
 Which of the two methods converges the fastest?\\
@@ -580,13 +580,14 @@ but may not capture small scale, transient features.
 This is exactly the same exercise as Exercise 2 but we 
 are going to solve the 1D diffusion equation with the implicit method
 this time. First use a solver from scipy to solve the system, then 
-implement your own Jacobi solver. 
+implement your own Jacobi solver. Note that the Jacobi solver must be 
+implemented as a function which is to be called inside the time loop.
 
 In your notebook use an if statement which allows to choose between 
 explicit and implicit, and another if statement which allows to choose 
 between scipy solver and iterative solver. 
 
-Bonus: implement the SSOR method and compare Jacobi, Gauss-Seidel and SSOR.\\
+Bonus: implement the SSOR method in another function and compare Jacobi, Gauss-Seidel and SSOR.\\
 $\rightarrow$\url{https://en.wikipedia.org/wiki/Iterative_method}
 
 \par\noindent\rule{\textwidth}{0.4pt}

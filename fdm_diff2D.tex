@@ -63,7 +63,7 @@ but the vector $\vec{T}$ containing all these values (encountered in
 implicit methods)
 is indexed by a single index ${\color{teal}k}=0,\dots nnp-1$. The numbering strategy determines how easy
 it is to go from $({\color{brown}i},{\color{brown}j})$ to ${\color{teal}k}$ and vice versa. 
-Very concretely again, where does $T_{\color{brown}3,4}$ should be placed in the global 
+Very concretely again, where should $T_{\color{brown}3,4}$ be placed in the global 
 vector of unknowns $\vec{T}$?
 
 At the same time we cannot do away with ${\color{brown}i,j}$ indices because these are 
@@ -193,12 +193,19 @@ where $T_{bc}$ is the prescribed temperature.
 \end{center}
 
 A simple (time-dependent) analytical solution for the temperature equation exists for 
-the case that the initial temperature distribution is
+the case that the initial temperature field is
 \begin{equation}
 T(x,y,t=0) = T_0+ T_{max} \exp \left[ -\frac{x^2+y^2}{\sigma^2}   \right]
 \end{equation}
 where $T_{max}$ is the maximum amplitude of the temperature perturbation 
-at $(x,y) = (0, 0)$ and $\sigma$ its half-width. The solution is
+at $(x,y) = (0, 0)$ and $\sigma$ its half-width. 
+
+\begin{center}
+\includegraphics[width=5cm]{images/fdm/gaussian}\\
+{\captionfont initial temperature field}
+\end{center}
+
+The solution of the time-dependent PDE is
 \begin{equation}
 T(x,y,t)=T_0 + \frac{T_{max}}{1+4t\kappa/\sigma^2 } \exp \left[ -\frac{x^2+y^2}{\sigma^2 + 4t\kappa}   \right]
 \end{equation}

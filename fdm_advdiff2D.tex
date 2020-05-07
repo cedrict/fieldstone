@@ -1,5 +1,5 @@
 
-So far, we have mainly focused on the diffusion equation in a non-moving domain 
+So far, we have mainly focused on the diffusion equation in a non-moving flow 
 (relevant for the case of a dike intrusion cooling off 
 or for a lithosphere which remains undeformed). 
 
@@ -14,13 +14,13 @@ We start again from the heat transport equation of Section~\ref{ss:hte}:
 \rho C_p \left( \frac{\partial T}{\partial t} + \vec\upnu \cdot \vec\nabla T  \right)=
 \vec\nabla \cdot k \vec\nabla T + Q 
 \end{equation}
-In one-dimensional Cartesian coordinates:
+We have previously dealt with the one-dimensional Cartesian coordinates equation:
 \begin{equation}
 \rho C_p \left( \frac{\partial T}{\partial t}  
 + u \frac{\partial T}{\partial x} \right)= 
 \frac{\partial }{\partial x} \left(  k  \frac{\partial T}{\partial x} \right)+ Q
 \end{equation}
-and in 2D
+and we now turn to the two-dimensional equation:
 \begin{equation}
 \rho C_p \left( \frac{\partial T}{\partial t}   
 + u \frac{\partial T}{\partial x}  
@@ -31,7 +31,8 @@ and in 2D
 \frac{\partial }{\partial y} \left(  k  \frac{\partial T}{\partial y} \right)
 +Q
 \end{equation}
-and in the case where $k$ is constant in space:
+As before, asumming that $k$ is constant in space we can rewrite the equation as 
+a function of the heat diffusivity $\kappa$:
 \begin{equation}
 \frac{\partial T}{\partial t}   
 + u \frac{\partial T}{\partial x}  
@@ -56,6 +57,101 @@ where we assume $\vec\upnu=(u,v)$ known.
 Even though the equations appear simple, it is quite tricky to solve them accurately, 
 more so than for the diffusion problem. 
 This is particularly the case if there are large gradients in the quantity that is to be advected. 
+
+We have seen how to deal with the time derivative (explicit, implicit) 
+and with the first order space derivative (forward, backward or central).
+Let us consider again the FTCS scheme (Forward in Time, Central in Space).
+\[
+\frac{T_{\color{teal}i,j}^{n+1}-T^n_{\color{teal}i,j}}{\delta t} 
++ u_{i,j} \frac{T^n_{\color{teal}i+1,j} - T^n_{{\color{teal}i-1,j}}}{2h_x} 
++ v_{i,j} \frac{T^n_{\color{teal}i,j+1} - T^n_{{\color{teal}i,j-1}}}{2h_y} =0 
+\]
+
+
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+\begin{center}
+\includegraphics[width=0.8cm]{images/garftr} \\
+{\color{orange} Bonus Exercise FDM-10}
+\end{center}
+
+We wish to compute the advection of a product-cosine hill
+in a prescribed velocity field. The initial temperature is:
+\[
+T_0(x,y)=
+\left\{
+\begin{array}{cc}
+\frac{1}{4}
+\left(1+\cos \pi\frac{x-x_c}{\sigma}\right)
+\left(1+\cos \pi\frac{y-y_c}{\sigma}\right)
+& \text{if } (x-x_c)^2+(y-y_c)^2\leq \sigma^2 \\
+0 & \text{otherwise}
+\end{array} 
+\right.
+\]
+The boundary conditions are $T(x,y)=0$ on all four sides of the unit square domain. 
+In what follows we set $x_c=y_c=2/3$ and $\sigma=0.2$.  
+The velocity field is analytically prescribed: $\vec\upnu=(-(y-L_y/2),+(x-L_x/2))$.
+Resolution is set to $31\times31$ nodes.
+
+The timestep is set to $\delta t=2\pi/200$ and we wish to carry out 200
+timesteps so that the cone does a $2\pi$ rotation.
+
+See Stone 43 for results/figures of this experiment obtained 
+with Finite Elements.
+
+Implement this with the FTCS method. What do you observe? What happens when you decrease 
+the value of $\delta t$? 
+
+Bonus: Lax method, Crank-Nicolson method.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+
+\vspace{1cm}
+
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\includegraphics[width=0.8cm]{images/garftr} \\
+{\color{orange}Exercise FDM-11}
+\end{center}
+
+NOT FOR 2020! 
+
+Redo exercise FDM-6 in a unit square domain. 
+The temperature field at $t=0$ is 
+given by $T(x,y)=1$ for $x<0.25$ and $T(x,y)=0$ otherwise. The prescribed 
+velocity is $\vec\upnu=(1,0)$ and we set $nnx=nny=51$.
+Boundary conditions are $T=1$ at $x=0$ and $T=0$ at $x=1$.
+
+Program the above FTCS method. Run the model for 250 time steps with $\delta t=0.002$. 
+Compare the 2D solution with the previously obtained 1D solution of exercise FDM-6.
+
+Make sure the code works in the $y$-direction too by rotating the initial temperature 
+by $90\degree$ anti-clockwise, set $\vec{\upnu}=(0,1)$ and change boundary conditions accordingly. 
+
+Bonus: Lax method, Crank-Nicolson method.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+
+Note to self:
+- CFL missing still
+- stensils next to boundaries missing too
+- add many more visual aids
+
+
+
+
+
 
 
 
