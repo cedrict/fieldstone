@@ -4,7 +4,8 @@ rm errors_*
 rm vrms_*
 rm *.ascii
 
-for nq in 2 3 4 5 6; do
+#for nq in 2 3 4 5 6; do
+for nq in 2 3; do
 
     for rs in 8 9 10 11 12 13 14 15 16 17 18 19 20 22 25 32 37 42 48 53 64 80; do
 

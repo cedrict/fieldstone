@@ -10,23 +10,32 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 \subsubsection*{Manufactured solution}
 
-The analytical solution originates in Lamichhane (2015) \cite{lami15} and is 
+The analytical solution originates in Lamichhane (2017) \cite{lami17} and is 
 presented in Section~\ref{ss:mms11}. 
 The quadrilateral MINI element used here also originates in the same article 
 and comes in two flavours with two different bubble functions $b_1$ and $b_2$
 as explained in Section~\ref{ss:quadmini}.
-The velocity and pressure fields are shown hereunder:
+The two bubble functions are:
+\begin{eqnarray}
+b_1(r,s) &=& (1-r^2)(1-s^2)(1-r)(1-s)\\
+b_2(r,s) &=& (1-r^2)(1-s^2)(1+\beta(r+s))
+\end{eqnarray}
+The common term to both bubbles insures that the bubble is exactly zero on all four edges of the 
+element. What differentiates them is the remaining term, which is bilinear ($b_1$) or linear ($b_2$). 
+Both also satisfy $b_1(0,0)=b_2(0,0)=1$. The paper uses $\beta=1/4$.
 
+The velocity and pressure fields for the benchmark are shown hereunder:
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms/vel}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms/p}
 \end{center}
 
 During the debugging process I ended up 
-implementing various quadratures, from $2^2$ to $6^2$ points but the results
-show that $2^2$ quadrature points per element are sufficient. 
+implementing various Gauss quadratures schemes, from $2^2$ to $6^2$ points but the results
+show that $2^2$ quadrature points per element are sufficient since the more expensive ones
+yield identical results. 
 The results from the article are different than mine but I suspect that what the 
-author measured could be different than what I measure. 
+author measured could be different than what I measure (see Table 1,2 in \cite{lami17}). 
 The trends are similar though, with $b_2$ performing better than $b_1$:
 
 \begin{center}
@@ -39,9 +48,69 @@ Resolutions from $8\times8$ until $80\times80$.}
 The root mean square velocity is also measured for both bubble functions.
 As above we see that $b_2$ performs better than $b_1$:
 \begin{center}
-\includegraphics[width=11cm]{python_codes/fieldstone_72/results/mms/vrms}
+\includegraphics[width=9cm]{python_codes/fieldstone_72/results/mms/vrms}
 \end{center}
 
+\vspace{.5cm}
+
+\underline{Influence of mesh nodes position:} I have also repeated these 
+experiments with a mesh whose internal nodes have been 
+randomly moved by up to $\pm$20\% of $h_x$ or $h_y$ around the initial position. 
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/area16}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/area32}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/area64}\\
+{\captionfont area of elements for randomized meshes. Left to right: 16x16, 32x32, 64x64}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/errors_v_rand}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/errors_p_rand}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/vrms_rand}
+\end{center}
+
+We find that the error convergence rate is unchanged for velocities but is now less 
+for pressure (higher than 1, lower than 1.5). 
+
+\vspace{.5cm}
+\underline{Another bubble?} 
+To make a point, I have created a third bubble function which is simply $b_3(r,s)=(1-r^2)(1-s^2)$.
+Technically it is zero on the sides and 1 in the middle so it fulfills the 
+same requirements as the other 2 bubble functions. 
+However, we see that this function is not sufficient to stabilise the element as the pressure 
+showcases a typical error mode:
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms/p_b3}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms/p_error_b3}
+\end{center}
+
+\vspace{.5cm}
+\underline{influence of $\beta$:} Finally, I use a $2\times 2$ quadrature and look at 
+the errors and the vrms for various values of $\beta$:
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/errors_v_beta}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/errors_p_beta}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/vrms_beta}
+\end{center}
+It looks like $\beta\in[0.0001,0.01]$ does better than all other higher values. Also, looking at the 
+field in Paraview, no trace of the error modes as we just saw above.
+The difference between 0.01 and 0.25 is somewhat small, but values of $\beta$ above 0.5 
+clearly yield less accurate results. 
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
 %_____________________________________
 \subsubsection*{Sinking block}
 This is the very same experiment as in Stone 53. It consists of a negatively buoyant 

@@ -4,6 +4,7 @@ import time as timing
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import lil_matrix
+import random
 
 #------------------------------------------------------------------------------
 # bx and by are the body force components
@@ -62,16 +63,32 @@ def pressure(x,y):
 #------------------------------------------------------------------------------
 
 def B(r,s):
-    #return (1-r**2)*(1-s**2)*(1-r)*(1-s)
-    return (1-r**2)*(1-s**2)*(1+0.25*r+0.25*s)
+    if bubble==1:
+       return (1-r**2)*(1-s**2)*(1-r)*(1-s)
+    elif bubble==2:
+       #return (1-r**2)*(1-s**2)*(1+0.25*r+0.25*s)
+       return (1-r**2)*(1-s**2)*(1+beta*(r+s))
+    else:
+       return (1-r**2)*(1-s**2)
+
 
 def dBdr(r,s):
-    #return (1-s**2)*(1-s)*(-1-2*r+3*r**2)
-    return 0.25*(1-s**2)*(1-8*r-3*r**2-2*r*s)
+    if bubble==1:
+       return (1-s**2)*(1-s)*(-1-2*r+3*r**2)
+    elif bubble==2:
+       #return 0.25*(1-s**2)*(1-8*r-3*r**2-2*r*s)
+       return (s**2-1)*(-beta+3*beta*r**2+2*r*(beta*s+1))
+    else:
+       return (-2*r)*(1-s**2)
 
 def dBds(r,s):
-    #return (1-r**2)*(1-r)*(-1-2*s+3*s**2) 
-    return 0.25*(1-r**2)*(1-8*s-3*s**2-2*r*s)
+    if bubble==1:
+       return (1-r**2)*(1-r)*(-1-2*s+3*s**2) 
+    elif bubble==2:
+       #return 0.25*(1-r**2)*(1-8*s-3*s**2-2*r*s)
+       return (r**2-1)*(-beta+2*s*(beta*r+1)+3*beta*s**2)
+    else:
+       return (1-r**2)*(-2*s)
 
 #------------------------------------------------------------------------------
 
@@ -136,7 +153,7 @@ ndofP=1
 mV=5
 mP=4
 
-bench=2
+bench=1
 
 if bench==1:
    Lx=1
@@ -145,6 +162,8 @@ else:
    Lx=512e3
    Ly=512e3
 
+bubble=2
+beta=1e-5
 
 if int(len(sys.argv) == 8):
    nelx=int(sys.argv[1])
@@ -155,8 +174,8 @@ if int(len(sys.argv) == 8):
    eta2=10.**(float(sys.argv[6]))
    nqperdim=int(sys.argv[7])
 else:
-   nelx = 96
-   nely = 96
+   nelx = 64
+   nely = 64
    visu = 1
    drho = 8
    eta1 = 1e21
@@ -247,6 +266,8 @@ pnormalise=True
 rVnodes=[-1,1,1,-1,0]
 sVnodes=[-1,-1,1,1,0]
 
+xi=0.0 # controls level of mesh randomness (between 0 and 0.5 max)
+
 #################################################################
 # grid point setup
 #################################################################
@@ -288,6 +309,29 @@ for j in range(0, nely):
         iconV[3, counter] = i + (j + 1) * (nelx + 1)
         iconV[4, counter] = (nelx+1)*(nely+1)+counter
         counter += 1
+
+#################################################################
+# add random noise to node positions
+#################################################################
+
+for i in range(0,NV):
+    if xV[i]>0 and xV[i]<Lx and yV[i]>0 and yV[i]<Ly:
+       xV[i]+=random.uniform(-1.,+1)*hx*xi
+       yV[i]+=random.uniform(-1.,+1)*hy*xi
+    #end if
+#end for
+
+for iel in range(0,nel):
+    xV[iconV[4,iel]]=0.25*xV[iconV[0,iel]]+\
+                    +0.25*xV[iconV[1,iel]]+\
+                    +0.25*xV[iconV[2,iel]]+\
+                    +0.25*xV[iconV[3,iel]]
+    yV[iconV[4,iel]]=0.25*yV[iconV[0,iel]]+\
+                    +0.25*yV[iconV[1,iel]]+\
+                    +0.25*yV[iconV[2,iel]]+\
+                    +0.25*yV[iconV[3,iel]]
+
+
 
 #################################################################
 # build pressure grid and iconP 
@@ -742,7 +786,7 @@ if bench==1:
    errv=np.sqrt(errv)
    errp=np.sqrt(errp)
 
-   print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
+   print("     -> nel= %6d ; errv= %.10f ; errp= %.10f" %(nel,errv,errp))
 
    print("compute errors: %.3f s" % (timing.time() - start))
 
@@ -765,8 +809,14 @@ if visu==1:
     vtufile.write("</DataArray>\n")
     vtufile.write("</Points> \n")
     #####
-    #vtufile.write("<CellData Scalars='scalars'>\n")
-    #vtufile.write("</CellData>\n")
+    vtufile.write("<CellData Scalars='scalars'>\n")
+    vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
+    for iel in range(0,nel):
+        vtufile.write("%10e \n" %(area[iel]))
+    vtufile.write("</DataArray>\n")
+
+
+    vtufile.write("</CellData>\n")
     #####
     vtufile.write("<PointData Scalars='scalars'>\n")
     #--

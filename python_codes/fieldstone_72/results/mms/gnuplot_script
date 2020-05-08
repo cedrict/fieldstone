@@ -3,7 +3,7 @@ set key outside
 set log xy
 set xlabel 'h'
 set ylabel 'error'
-set pointsize 0.6
+set pointsize 0.5
 
 set output 'errors_v.pdf'
 plot[][]\
@@ -17,8 +17,8 @@ plot[][]\
 'b2/errors_nq4' u (1./sqrt($3)):6 w lp lt 3 pt 2 t 'nq=4^2,b_2',\
 'b2/errors_nq5' u (1./sqrt($3)):6 w lp lt 4 pt 2 t 'nq=5^2,b_2',\
 'b2/errors_nq6' u (1./sqrt($3)):6 w lp lt 6 pt 2 t 'nq=6^2,b_2',\
-'lamichhane_b1.ascii' u (1./sqrt($1)):2 w lp pt 5 t 'b_1',\
-'lamichhane_b2.ascii' u (1./sqrt($1)):2 w lp pt 5 t 'b_2',\
+'lamichhane_b1.ascii' u (1./sqrt($1)):2 w lp pt 5 t 'Lamichhane, b_1',\
+'lamichhane_b2.ascii' u (1./sqrt($1)):2 w lp pt 5 t 'Lamichhane, b_2',\
 x**2/50 w l lt -1 dashtype 3 t 'x^2'
 
 set output 'errors_p.pdf'
@@ -33,8 +33,8 @@ plot[][]\
 'b2/errors_nq4' u (1./sqrt($3)):9 w lp lt 3 pt 2 t 'nq=4^2,b_2',\
 'b2/errors_nq5' u (1./sqrt($3)):9 w lp lt 4 pt 2 t 'nq=5^2,b_2',\
 'b2/errors_nq6' u (1./sqrt($3)):9 w lp lt 6 pt 2 t 'nq=6^2,b_2',\
-'lamichhane_b1.ascii' u (1./sqrt($1)):3 w lp pt 5 t 'b_1',\
-'lamichhane_b2.ascii' u (1./sqrt($1)):3 w lp pt 5 t 'b_2',\
+'lamichhane_b1.ascii' u (1./sqrt($1)):3 w lp pt 5 t 'Lamichhane, b_1',\
+'lamichhane_b2.ascii' u (1./sqrt($1)):3 w lp pt 5 t 'Lamichhane, b_2',\
 x**1.5/5 w l lt -1 dashtype 2 t 'x^{1.5}'
 
 set ylabel 'vrms'
@@ -52,3 +52,54 @@ plot[0.01:]\
 'b2/vrms_nq5' u (1./sqrt($3)):6 w lp lt 4 pt 2 t 'nq=5^2,b_2',\
 'b2/vrms_nq6' u (1./sqrt($3)):6 w lp lt 6 pt 2 t 'nq=6^2,b_2',\
 0.00777615791 lt -1 t 'analytical'
+
+########################################################################################
+
+set pointsize .12
+
+set output 'vrms_beta.pdf'
+plot[0.01:0.1]\
+'b1/vrms_nq2'           u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'b_1',\
+'b2/vrms_nq2'           u (1./sqrt($3)):6 w lp lt 2 pt 2 t 'b_2,{/Symbol b}=0.25',\
+'b2_beta0p5/vrms_nq2'   u (1./sqrt($3)):6 w lp lt 3 pt 3 t 'b_2,{/Symbol b}=0.5',\
+'b2_beta0p125/vrms_nq2' u (1./sqrt($3)):6 w lp lt 4 pt 4 t 'b_2,{/Symbol b}=0.125',\
+'b2_beta0p1/vrms_nq2'   u (1./sqrt($3)):6 w lp lt 5 pt 5 t 'b_2,{/Symbol b}=0.1',\
+'b2_beta0p01/vrms_nq2'  u (1./sqrt($3)):6 w lp lt 6 pt 6 t 'b_2,{/Symbol b}=0.01',\
+'b2_beta1p0/vrms_nq2'   u (1./sqrt($3)):6 w lp lt 7 pt 7 t 'b_2,{/Symbol b}=1.0',\
+'b2_beta0p00001/vrms_nq2'   u (1./sqrt($3)):6 w lp lt 8 pt 8 t 'b_2,{/Symbol b}=0.00001',\
+
+set log xy
+set output 'errors_v_beta.pdf'
+plot[][:0.001]\
+'b1/errors_nq2'           u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'b_1',\
+'b2/errors_nq2'           u (1./sqrt($3)):6 w lp lt 2 pt 2 t 'b_2,{/Symbol b}=0.25',\
+'b2_beta0p5/errors_nq2'   u (1./sqrt($3)):6 w lp lt 3 pt 3 t 'b_2,{/Symbol b}=0.5',\
+'b2_beta0p125/errors_nq2' u (1./sqrt($3)):6 w lp lt 4 pt 4 t 'b_2,{/Symbol b}=0.125',\
+'b2_beta0p1/errors_nq2'   u (1./sqrt($3)):6 w lp lt 5 pt 5 t 'b_2,{/Symbol b}=0.1',\
+'b2_beta0p01/errors_nq2'  u (1./sqrt($3)):6 w lp lt 6 pt 6 t 'b_2,{/Symbol b}=0.01',\
+'b2_beta1p0/errors_nq2'   u (1./sqrt($3)):6 w lp lt 7 pt 7 t 'b_2,{/Symbol b}=1.0',\
+'b2_beta0p00001/errors_nq2'  u (1./sqrt($3)):6 w lp lt 8 pt 8 t 'b_2,{/Symbol b}=0.00001',\
+'lamichhane_b1.ascii' u (1./sqrt($1)):2 w lp pt 5 t 'Lamichhane, b_1',\
+'lamichhane_b2.ascii' u (1./sqrt($1)):2 w lp pt 5 t 'Lamichhane, b_2',\
+x**2/50 w l lt -1 dashtype 3 t 'x^2'
+
+
+set output 'errors_p_beta.pdf'
+plot[][]\
+'b1/errors_nq2'           u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'b_1',\
+'b2/errors_nq2'           u (1./sqrt($3)):9 w lp lt 2 pt 2 t 'b_2,{/Symbol b}=0.25',\
+'b2_beta0p5/errors_nq2'   u (1./sqrt($3)):9 w lp lt 3 pt 3 t 'b_2,{/Symbol b}=0.5',\
+'b2_beta0p125/errors_nq2' u (1./sqrt($3)):9 w lp lt 4 pt 4 t 'b_2,{/Symbol b}=0.125',\
+'b2_beta0p1/errors_nq2'   u (1./sqrt($3)):9 w lp lt 5 pt 5 t 'b_2,{/Symbol b}=0.1',\
+'b2_beta0p01/errors_nq2'  u (1./sqrt($3)):9 w lp lt 6 pt 6 t 'b_2,{/Symbol b}=0.01',\
+'b2_beta1p0/errors_nq2'      u (1./sqrt($3)):9 w lp lt 7 pt 7 t 'b_2,{/Symbol b}=1.0',\
+'b2_beta0p00001/errors_nq2'  u (1./sqrt($3)):9 w lp lt 8 pt 8 t 'b_2,{/Symbol b}=0.00001',\
+'lamichhane_b1.ascii' u (1./sqrt($1)):3 w lp pt 5 t 'Lamichhane, b_1',\
+'lamichhane_b2.ascii' u (1./sqrt($1)):3 w lp pt 5 t 'Lamichhane, b_2',\
+x**1.5/5 w l lt -1 dashtype 2 t 'x^{1.5}'
+
+
+
+
+
+
