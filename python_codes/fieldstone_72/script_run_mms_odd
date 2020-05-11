@@ -1,0 +1,22 @@
+#! /bin/bash
+
+rm errors_*
+rm vrms_*
+rm *.ascii
+
+for nq in 2; do
+
+    for rs in 7 9 11 13 15 17 19 21 23 25 27 29 31 33 37 41 45 49 57 65 73 81 89 97; do 
+
+        echo $rs 
+
+        python3 stone.py $rs $rs 0 0 0 0 $nq 0.25 > opla
+
+        grep errv opla >> errors_nq${nq}_odd
+        grep vrms opla >> vrms_nq${nq}_odd
+
+    done
+
+done
+
+rm opla

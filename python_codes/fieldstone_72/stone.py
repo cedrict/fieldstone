@@ -5,6 +5,10 @@ import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import lil_matrix
 import random
+from numpy import linalg 
+import solcx 
+import solkz 
+import solvi 
 
 #------------------------------------------------------------------------------
 # bx and by are the body force components
@@ -48,17 +52,66 @@ def dpdx_th(x,y):
 def dpdy_th(x,y):
     return -2*x*(1-x)
 
+#------------------------------------------------------------------------------
+
 def bx(x,y):
-    return dpdx_th(x,y)-2*app(x)*b(y) -(a(x)*bpp(y)+cp(x)*dp(y))
+    if bench==1:
+       return dpdx_th(x,y)-2*app(x)*b(y) -(a(x)*bpp(y)+cp(x)*dp(y))
+    if bench==9:
+       return 3*x**2*y**2-y-1
+
 def by(x,y):
-    return dpdy_th(x,y)-(ap(x)*bp(y)+cpp(x)*d(y)) -2*c(x)*dpp(y) 
+    if bench==1:
+       return dpdy_th(x,y)-(ap(x)*bp(y)+cpp(x)*d(y)) -2*c(x)*dpp(y) 
+    if bench==9:
+       return 2*x**3*y+3*x-1
+
+#------------------------------------------------------------------------------
 
 def velocity_x(x,y):
-    return a(x)*b(y)
+    if bench==1:
+       return a(x)*b(y)
+    if bench==4:
+       ui,vi,pi=solcx.SolCxSolution(x,y) 
+       return ui
+    if bench==5:
+       ui,vi,pi=solkz.SolKzSolution(x,y) 
+       return ui
+    if bench==6:
+       ui,vi,pi=solvi.solution(x,y) 
+       return ui
+    if bench==9:
+       return x+x**2-2*x*y+x**3-3*x*y**2+x**2*y
+
 def velocity_y(x,y):
-    return c(x)*d(y)
+    if bench==1:
+       return c(x)*d(y)
+    if bench==4:
+       ui,vi,pi=solcx.SolCxSolution(x,y) 
+       return vi
+    if bench==5:
+       ui,vi,pi=solkz.SolKzSolution(x,y) 
+       return vi
+    if bench==6:
+       ui,vi,pi=solvi.solution(x,y) 
+       return vi
+    if bench==9:
+       return -y-2*x*y+y**2-3*x**2*y+y**3-x*y**2
+
 def pressure(x,y):
-    return x*(1-x)*(1-2*y)
+    if bench==1:
+       return x*(1-x)*(1-2*y)
+    if bench==4:
+       ui,vi,pi=solcx.SolCxSolution(x,y) 
+       return pi
+    if bench==5:
+       ui,vi,pi=solkz.SolKzSolution(x,y) 
+       return pi
+    if bench==6:
+       ui,vi,pi=solvi.solution(x,y) 
+       return pi
+    if bench==9:
+       return x*y+x+y+x**3*y**2-4/3
 
 #------------------------------------------------------------------------------
 
@@ -66,17 +119,14 @@ def B(r,s):
     if bubble==1:
        return (1-r**2)*(1-s**2)*(1-r)*(1-s)
     elif bubble==2:
-       #return (1-r**2)*(1-s**2)*(1+0.25*r+0.25*s)
        return (1-r**2)*(1-s**2)*(1+beta*(r+s))
     else:
        return (1-r**2)*(1-s**2)
-
 
 def dBdr(r,s):
     if bubble==1:
        return (1-s**2)*(1-s)*(-1-2*r+3*r**2)
     elif bubble==2:
-       #return 0.25*(1-s**2)*(1-8*r-3*r**2-2*r*s)
        return (s**2-1)*(-beta+3*beta*r**2+2*r*(beta*s+1))
     else:
        return (-2*r)*(1-s**2)
@@ -85,7 +135,6 @@ def dBds(r,s):
     if bubble==1:
        return (1-r**2)*(1-r)*(-1-2*s+3*s**2) 
     elif bubble==2:
-       #return 0.25*(1-r**2)*(1-8*s-3*s**2-2*r*s)
        return (r**2-1)*(-beta+2*s*(beta*r+1)+3*beta*s**2)
     else:
        return (1-r**2)*(-2*s)
@@ -128,18 +177,77 @@ def NNP(r,s):
 def eta(x,y):
     if bench==1:
        val=1.
-    else:
+    if bench==2 or bench==3:
        if abs(x-xc_block)<d_block and abs(y-yc_block)<d_block:
           val=eta2
        else:
           val=eta1
+    if bench==4:
+       if x<0.5:
+          val=1.
+       else:
+          val=1.e6
+    if bench==5:
+       val= np.exp(13.8155*y) 
+    if bench==6:
+       if (np.sqrt(x*x+y*y) < 0.2):
+          val=1e3
+       else:
+          val=1.
+    if bench==7:
+       if ((x-0.5)**2+(y-0.5)**2 < 0.123**2):
+          val=100.
+       else:
+          val=1.
+    if bench==8:
+       if y>256e3+amplitude*np.cos(2*np.pi*x/llambda):
+          val=eta1
+       else:
+          val=eta2
+    if bench==9:
+       val=1
     return val
 
+#------------------------------------------------------------------------------
+
 def rho(x,y):
-    if abs(x-xc_block)<d_block and abs(y-yc_block)<d_block:
-       val=rho2 -rho1
-    else:
-       val=rho1 -rho1
+    if bench==2:
+       if abs(x-xc_block)<d_block and abs(y-yc_block)<d_block:
+          val=rho2 
+       else:
+          val=rho1 
+    if bench==3:
+       if abs(x-xc_block)<d_block and abs(y-yc_block)<d_block:
+          val=rho2-rho1
+       else:
+          val=rho1-rho1
+    if bench==4:
+       val=np.sin(np.pi*y)*np.cos(np.pi*x)
+    if bench==5:
+       val=np.sin(2.*y)*np.cos(3.*np.pi*x)
+    if bench==6:
+       val=0.
+    if bench==7:
+       if ((x-0.5)**2+(y-0.5)**2 < 0.123**2):
+          val=2.
+       else:
+          val=1.
+    if bench==8:
+       if y>256e3+amplitude*np.cos(2*np.pi*x/llambda):
+          val=3300
+       else:
+          val=3000
+    return val
+
+#------------------------------------------------------------------------------
+
+def vy_th(phi1,phi2,rho1,rho2):
+    c11 = (eta1*2*phi1**2)/(eta2*(np.cosh(2*phi1)-1-2*phi1**2)) - (2*phi2**2)/(np.cosh(2*phi2)-1-2*phi2**2)
+    d12 = (eta1*(np.sinh(2*phi1) -2*phi1))/(eta2*(np.cosh(2*phi1)-1-2*phi1**2)) + (np.sinh(2*phi2)-2*phi2)/(np.cosh(2*phi2)-1-2*phi2**2)
+    i21 = (eta1*phi2*(np.sinh(2*phi1)+2*phi1))/(eta2*(np.cosh(2*phi1)-1-2*phi1**2)) + (phi2*(np.sinh(2*phi2)+2*phi2))/(np.cosh(2*phi2)-1-2*phi2**2) 
+    j22 = (eta1*2*phi1**2*phi2)/(eta2*(np.cosh(2*phi1)-1-2*phi1**2))-(2*phi2**3)/(np.cosh(2*phi2)-1-2*phi2**2 )
+    K=-d12/(c11*j22-d12*i21)
+    val=K*(rho1-rho2)/2/eta2*(Ly/2.)*abs(gy)*amplitude
     return val
 
 #------------------------------------------------------------------------------
@@ -153,19 +261,28 @@ ndofP=1
 mV=5
 mP=4
 
-bench=1
+# bench=1 : mms (lami17)
+# bench=2 : block full density
+# bench=3 : block reduced density
+# bench=4 : solcx
+# bench=5 : solkz
+# bench=6 : solvi
+# bench=7 : Stokes sphere
+# bench=8 : RT-instability
+# bench=9 : mms (lami17)
 
-if bench==1:
+bench=9
+
+if bench==1 or bench==4 or bench==5 or bench==6 or bench==7 or bench==9:
    Lx=1
    Ly=1
-else:   
+if bench==2 or bench==3 or bench==8:
    Lx=512e3
    Ly=512e3
 
-bubble=2
-beta=1e-5
+bubble=1
 
-if int(len(sys.argv) == 8):
+if int(len(sys.argv) == 9):
    nelx=int(sys.argv[1])
    nely=int(sys.argv[2])
    visu=int(sys.argv[3])
@@ -173,15 +290,18 @@ if int(len(sys.argv) == 8):
    eta1=10.**(float(sys.argv[5]))
    eta2=10.**(float(sys.argv[6]))
    nqperdim=int(sys.argv[7])
+   beta=float(sys.argv[8])
 else:
-   nelx = 64
-   nely = 64
+   nelx = 32
+   nely = 32
    visu = 1
    drho = 8
    eta1 = 1e21
    eta2 = 1e22
    nqperdim=2
+   beta=0.25
 
+compute_eigenvalues=False
 
 nel=nelx*nely
 NV=(nelx+1)*(nely+1)+nel
@@ -192,6 +312,7 @@ Nfem=NfemV+NfemP
 hx=Lx/nelx
 hy=Ly/nely
 
+print('bench=',bench)
 print('nelx =',nelx)
 print('nely =',nely)
 print('nel  =',nel)
@@ -199,6 +320,8 @@ print('NV   =',NV)
 print('NP   =',NP)
 print('NfemV=',NfemV)
 print('NfemP=',NfemP)
+print('bubble=',bubble)
+print('beta=',beta)
 
 nqperdim=2
 
@@ -245,9 +368,9 @@ if nqperdim==6:
 
 eps=1e-8
 
-if bench==1:
+if bench==1 or bench==9:
    eta_ref=1.
-else:
+if bench==2 or bench==3:
    gy=-10.
    rho1=3200.
    rho2=rho1+drho
@@ -259,6 +382,17 @@ else:
    print('rho2=',rho2)
    print('eta1=',eta1)
    print('eta2=',eta2)
+if bench==4 or bench==5 or bench==6 or bench==7:
+   eta_ref=1.
+   gy=1
+if bench==8:
+   llambda=256e3
+   amplitude=2000
+   eta_ref=1e21      # scaling of G blocks
+   gy=-10
+   phi1=2.*np.pi*(Ly/2.)/llambda
+   phi2=2.*np.pi*(Ly/2.)/llambda
+
 
 sparse=False
 pnormalise=True
@@ -331,7 +465,36 @@ for iel in range(0,nel):
                     +0.25*yV[iconV[2,iel]]+\
                     +0.25*yV[iconV[3,iel]]
 
+#################################################################
+# add sine perturbation for RT-instability
+#################################################################
 
+if bench==8: 
+   for i in range(0,NV):
+       if abs(yV[i]-Ly/2.)/Ly<eps:
+          yV[i]+=amplitude*np.cos(2*np.pi*xV[i]/llambda)
+
+   for j in range(0,nely+1):
+       for i in range(0,nelx+1):
+           k=j*(nelx+1)+i
+           ya=256e3+amplitude*np.cos(2*np.pi*xV[k]/llambda)
+           if j<(nely+1)/2:
+              dy=ya/(nely/2)
+              yV[k]=j*dy
+           else:
+              dy=(Ly-ya)/(nely/2)
+              yV[k]=ya+(j-nely/2)*dy
+              
+
+   for iel in range(0,nel):
+       xV[iconV[4,iel]]=0.25*xV[iconV[0,iel]]+\
+                       +0.25*xV[iconV[1,iel]]+\
+                       +0.25*xV[iconV[2,iel]]+\
+                       +0.25*xV[iconV[3,iel]]
+       yV[iconV[4,iel]]=0.25*yV[iconV[0,iel]]+\
+                       +0.25*yV[iconV[1,iel]]+\
+                       +0.25*yV[iconV[2,iel]]+\
+                       +0.25*yV[iconV[3,iel]]
 
 #################################################################
 # build pressure grid and iconP 
@@ -407,18 +570,47 @@ bc_val = np.zeros(NfemV, dtype=np.float64)  # boundary condition, value
 if bench==1:
    for i in range(0,NV):
        if xV[i]/Lx<eps:
-          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV]   = 0.
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
        if xV[i]/Lx>(1-eps):
-          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV]   = 0.
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
        if yV[i]/Ly<eps:
-          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV]   = 0.
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
        if yV[i]/Ly>(1-eps):
-          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV]   = 0.
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-else:
+
+elif (bench==6 or bench==9):
+   for i in range(0,NV):
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+       if yV[i]/Ly<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+       if yV[i]/Ly>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+
+elif bench==8:
+   for i in range(0,NV):
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV  ] = 0 
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV  ] = 0
+       if yV[i]/Ly<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0 
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if yV[i]/Ly>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0 
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+
+else: # free slip 
    for i in range(0,NV):
        if xV[i]/Lx<eps:
           bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
@@ -439,7 +631,10 @@ print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 if sparse:
-   A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
+   if pnormalise:
+      A_sparse = lil_matrix((Nfem+1,Nfem+1),dtype=np.float64)
+   else:
+      A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
 else:   
    K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
    G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
@@ -508,7 +703,7 @@ for iel in range(0,nel):
             K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(xq,yq)*weightq*jcob
 
             # compute elemental rhs vector
-            if bench==1:
+            if bench==1 or bench==9:
                for i in range(0,mV):
                    f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*bx(xq,yq)
                    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*by(xq,yq)
@@ -573,6 +768,9 @@ for iel in range(0,nel):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
         constr[m2]+=NNNNP[k2]
+    if sparse:
+       A_sparse[Nfem,NfemV+m2]=constr[m2]
+       A_sparse[NfemV+m2,Nfem]=constr[m2]
 
 if not sparse:
    print("     -> K_mat (m,M) %.4e %.4e " %(np.min(K_mat),np.max(K_mat)))
@@ -601,6 +799,13 @@ if not sparse:
       a_mat[0:NfemV,NfemV:Nfem]=G_mat
       a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
    #end if
+else:
+   #A_sparse[Nfem,NfemV:Nfem]=constr
+   #A_sparse[NfemV:Nfem,Nfem]=constr
+   if pnormalise:
+      rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
+   else:
+      rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
 #else:
 
 rhs[0:NfemV]=f_rhs
@@ -643,10 +848,20 @@ if pnormalise:
 print("split vel into u,v: %.3f s" % (timing.time() - start))
 
 #####################################################################
+# look at eigenvalues of K_mat
+#####################################################################
+
+if compute_eigenvalues:
+   eigvals = np.linalg.eigvals(K_mat)
+   #np.savetxt('eigenvals.ascii',np.array([eigvals.real,eigvals.imag]).T)
+   #eigvals, eigvecs = linalg.eig(K_mat)
+   print('eig.vals:',nel,eigvals.min(),eigvals.max(),linalg.cond(K_mat))
+
+#####################################################################
 # measure vel at center of block
 #####################################################################
 
-if bench>1:
+if bench==2 or bench==3:
    for i in range(0,NV):
        if abs(xV[i]-xc_block)<1 and abs(yV[i]-yc_block)<1:
           print('vblock=',eta1/eta2,np.abs(v[i])*eta1/drho,u[i]*year,v[i]*year)
@@ -659,7 +874,12 @@ if bench>1:
        if abs(xP[i]-xc_block)<1:
           pline_file.write("%10e %10e \n" %(yP[i],p[i]))
    pline_file.close()
-          
+         
+if bench==7:
+   print(" pstats %d %.4e %.4e " %(nel,np.min(p),np.max(p)))
+
+if bench==8:
+   print(" RT %.8e %.8e %.8e %.8e" %(np.max(abs(v)),phi1,vy_th(phi1,phi2,3300,3000),eta2))
 
 ######################################################################
 # compute vrms 
@@ -697,17 +917,17 @@ for iel in range (0,nel):
 
 vrms=np.sqrt(vrms/(Lx*Ly))
 
-if bench>1:
+if bench==2 or bench==3:
    vrms/=(cm/year)
 
-print("     -> nel= %6d ; vrms= %.8f" %(nel,vrms))
+print("     -> nel= %6d ; vrms= %.8f ; beta= %4e" %(nel,vrms,beta))
 
 print("compute v_rms : %.3f s" % (timing.time() - start))
 
 #####################################################################
 # compute error
 #####################################################################
-if bench==1:
+if bench==1 or bench==4 or bench==5 or bench==6 or bench==9:
 
    start = timing.time()
 
@@ -727,7 +947,7 @@ if bench==1:
 #################################################################
 # compute error in L2 norm
 #################################################################
-if bench==1:
+if bench==1 or bench==4 or bench==5 or bench==6 or bench==9:
 
    start = timing.time()
 
@@ -786,7 +1006,7 @@ if bench==1:
    errv=np.sqrt(errv)
    errp=np.sqrt(errp)
 
-   print("     -> nel= %6d ; errv= %.10f ; errp= %.10f" %(nel,errv,errp))
+   print("     -> nel= %6d ; errv= %.10f ; errp= %.10f; beta= %4e" %(nel,errv,errp,beta))
 
    print("compute errors: %.3f s" % (timing.time() - start))
 
@@ -821,10 +1041,10 @@ if visu==1:
     vtufile.write("<PointData Scalars='scalars'>\n")
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel' Format='ascii'> \n")
-    if bench==1:
+    if bench==1 or bench==4 or bench==5 or bench==6 or bench==7 or bench==9:
        for i in range(0,NP):
            vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
-    if bench>1:
+    if bench==2 or bench==3 or bench==8:
        for i in range(0,NP):
            vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
     vtufile.write("</DataArray>\n")
@@ -835,7 +1055,7 @@ if visu==1:
     vtufile.write("</DataArray>\n")
 
     #--
-    if bench==1:
+    if bench==1 or bench==4 or bench==5 or bench==6 or bench==9:
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='error vel' Format='ascii'> \n")
        for i in range(0,NP):
            vtufile.write("%10e %10e %10e \n" %(error_u[i],error_v[i],0.))

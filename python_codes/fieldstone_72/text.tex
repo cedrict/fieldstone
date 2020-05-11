@@ -8,7 +8,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection*{Manufactured solution}
+\subsection*{Manufactured solution \#1}
 
 The analytical solution originates in Lamichhane (2017) \cite{lami17} and is 
 presented in Section~\ref{ss:mms11}. 
@@ -99,10 +99,38 @@ field in Paraview, no trace of the error modes as we just saw above.
 The difference between 0.01 and 0.25 is somewhat small, but values of $\beta$ above 0.5 
 clearly yield less accurate results. 
 
+I can also plot these same results in a different way, i.e. placing $\beta$ on the $x-$axis:
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/errors_v_beta2}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/errors_p_beta2}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/vrms_beta2}\\
+{\captionfont The dotted line corresponds to $\beta=1/4$ as used in \cite{lami17}.}
+\end{center}
+
+one could conclude that $\beta=10^{-4}-10^{-2}$ 
+would be a better choice but the question remains whether these
+conclusions hold for other benchmarks.
 
 
+\underline{Looking at the condition number of the $\K$ matrix}
+I have computed the condition number of the $\K$ matrix for both bubbles and for various mesh resolutions. 
+We see that the bubble 1 yields condition numbers substantially higher than bubble 2, both increasing 
+quadratically with $h$. 
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_72/results/mms/eigenvalues/e}
+\end{center}
 
 
+%_____________________________________
+\subsection*{Manufactured solution \#2}
+
+This is the second mms mentioned in Lamichhane \cite{lami17}. 
+
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms2/errors_v}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms2/errors_p}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms2/vrms}
 
 
 
@@ -112,12 +140,106 @@ clearly yield less accurate results.
 
 \newpage
 %_____________________________________
-\subsubsection*{Sinking block}
+\subsection*{The SolCx benchmark}
+
+Because of the viscosity jump at $x=L_x/2$, it has been widely reported that 
+error convergence rates depend on wheter the number of element in the $x-$direction 
+is even or odd.
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solcx/errors_v_even}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solcx/errors_p_even}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solcx/vrms_even}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solcx/errors_v_odd}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solcx/errors_p_odd}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solcx/vrms_odd}
+\end{center}
+
+Velocity error convergence rates are 2 for even numbers of elements and 1 for odd numbers, 
+such as for the Q1Q1 stab. 
+Pressure error convergence rate seems to be 0.5 for odd numbers of elements and
+0.65 for even numbers ... 
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solcx/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solcx/p}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solcx/p_error}
+\end{center}
+
+We see that the pressure showcases an strong error (even at high resolution)
+alobg the interface. 
+
+
+%_____________________________________
+\subsection*{The SolKz benchmark}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solkz/errors_v}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solkz/errors_p}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solkz/vrms}
+\end{center}
+
+%_____________________________________
+\subsection*{The SolVi benchmark}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solvi/errors_v}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solvi/errors_p}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/solvi/vrms}
+\end{center}
+
+
+
+%_____________________________________
+\subsection*{The Stokes Sphere}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/sphere/pstats}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/sphere/vrms}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/sphere/vel_b1}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/sphere/vel_b2}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/sphere/p_b1}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/sphere/p_b2}\\
+{\captionfont Left is b1, Right is b2.}
+\end{center}
+
+It looks like b2 yields more anomalous pressure modes inside the sphere. 
+
+
+
+\newpage
+%_____________________________________
+\subsection*{Rayleight-Taylor instability}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/RT/vy_b1}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/RT/vy_b2}
+\end{center}
+
+Bubble 2 does better than bubble 1. $\beta$ does not seem to play a role.
+
+
+
+
+
+\newpage
+%_____________________________________
+\subsection*{Sinking block}
 This is the very same experiment as in Stone 53. It consists of a negatively buoyant 
 square object falling in a fluid in a square domain. 
+This particular experiment proved to be the 'downfall' of the Q1Q1-stab element
+since the stabilisation term is akin to a pressure diffusion and therefore
+acts on the lithostatic pressure and also tends to smooth the effect of small 
+density variations (Thieulot \& Bangerth, in prep.). 
+
+Unless specified otherwise bubble 2 has $\beta=0.25$ by default.
 
 %............................
-\underline{Full density} 
+\subsubsection*{Full density} 
 Results indicate that the element performs adequately, especially the 
 pressure field which looks smooth.  
 
@@ -149,8 +271,18 @@ with the quadrilateral MINI element agree nicely with those obtained with the $Q
 \end{center}
 
 
+\underline{Influence of $\beta$ parameter for bubble 2:} I set $\delta\rho=8$, resolution 64x64, $\eta^\star=10$,
+and record the pressure profile 
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_72/results/block/full/betastudy/plines}
+\end{center}
+
+We can conclude that the bubble type and the value of $\beta$ do not seem to significantly affect 
+the pressure profile in this case.
+
 %............................
-\underline{Reduced density} 
+\subsubsection*{Reduced density} 
 This is the same experiment as above but $\rho_1$ has been removed from the density
 everywhere in the domain, so that the surrounding material has zero density 
 and the block has a density $\delta \rho$.
@@ -191,4 +323,15 @@ $Q_2\times Q_1$ element:
 \end{center}
 
 
+\underline{Influence of $\beta$ parameter for bubble 2:} I set $\delta\rho=8$, resolution 64x64, $\eta^\star=10$,
+and record the pressure profile 
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/betastudy/plines}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/block/reduced/betastudy/plines_zoom}
+\end{center}
+
+It is here very obvious that low values of $\beta$ yield problematic pressure oscillations. 
+It looks like $\beta \geq 0.25$ actually yield near identical results to those obtained with bubble 1,
+but $\beta=1$ or $\beta=2$ also yields unwanted oscillations.
 

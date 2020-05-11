@@ -1,0 +1,16 @@
+#! /bin/bash
+
+rm eigenvalues.ascii
+
+for rs in 8 9 10 11 12 13 14 15 16 18 20 22 24 32; do
+
+    echo $rs
+
+    python3 stone.py $rs $rs 0 0 0 0 2 0.25 > opla 
+
+    grep eig opla >> eigenvalues.ascii
+
+done
+
+rm opla
+ 
