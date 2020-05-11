@@ -7,11 +7,10 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The domain is a unit cube. Free slip boundary conditions 
-
 This benchmark is carried out in \cite{deka08,gery10,thie11} and is 
-based on the analytical solution by Ramberg (1968). 
+based on the analytical solution by Ramberg (1968) \cite{ramb68}. 
 It consists of a two-layer system driven by gravity. 
+The domain is a square of size $512\times512$km. 
 Free slip are imposed on the sides while no-slip boundary conditions are imposed on the
 top and the bottom of the box.
 
@@ -19,14 +18,13 @@ Fluid 1 $(\rho_1,\eta_1)$ of thickness $h_1$ overlays
 fluid 2 $(\rho_2,\eta_2)$ of thickness $h_2$ (with $h_1+h_2=L_y$).
 An initial sinusoidal disturbance of the interface between these
 layers is introduced and is characterised by an amplitude $\Delta$ and a
-wavelength $\lambda=L_x/2$ as shown in Figure~\ref{fig:RTi_setup}.
+wavelength $\lambda=L_x/2$ as shown here: 
 
 \begin{center}
-a) \includegraphics[width=0.4\textwidth]{python_codes/fieldstone_40/images/setup}
-b) \includegraphics[width=0.5\textwidth]{python_codes/fieldstone_40/images/grid}\\
-{\small  a) Setup of the experiment, taken from \cite{thie11}; b) grid setup.} 
+a) \includegraphics[width=0.38\textwidth]{python_codes/fieldstone_40/images/setup}
+b) \includegraphics[width=0.55\textwidth]{python_codes/fieldstone_40/images/dens}\\
+{\captionfont  a) Setup of the experiment, taken from \cite{thie11}; b) grid setup for 24$\times$24 grid.} 
 \end{center}
-
 
 Under this condition, the velocity of the diapiric growth
 $v_y$ is given by the relation
@@ -50,9 +48,20 @@ j_{22} &=& \frac{\eta_1 2 \phi_1^2 \phi_2}{\eta_2(\cosh 2\phi_1 -1-2\phi_1^2)} -
 
 
 \begin{center}
-  \includegraphics[width=0.8\textwidth]{python_codes/fieldstone_40/images/plot}\\
-  {\small  Note that in \cite{thie11} I fixed $\lambda=L_x/2$ and varied $L_x$. Here I keep $L_x$ fixed
-  and vary $\lambda=L_x/2,L_x,4,L_x/8$. Each line corresponds to a different value of the viscosity $\eta_2$.} 
+\includegraphics[width=7cm]{python_codes/fieldstone_40/images/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_40/images/p}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_40/images/plot24x24}
+\includegraphics[width=5cm]{python_codes/fieldstone_40/images/plot32x32}
+\includegraphics[width=5cm]{python_codes/fieldstone_40/images/plot48x48}\\
+{\captionfont  Left: 24$\times$24 elements, middle: 32$\times$32; right: 48$\times$48. We see that 
+increasing resolution yields more accurate results in the cases of short wavelength 
+perturbations (points on the right on the plots).\\  
+Note that in \cite{thie11} I fixed $\lambda=L_x/2$ and varied $L_x$. Here I keep $L_x$ fixed
+and vary $\lambda=L_x/2,L_x,4,L_x/8$. Each line corresponds to a different value of the viscosity $\eta_2$.} 
 \end{center}
 
 

@@ -3,6 +3,7 @@ set output 'plot.pdf'
 set xlabel '{/Symbol f}_1'
 set ylabel 'max(v_y)'
 set log y 
+set pointsize .5
 plot[][]\
 'vy.dat' u 7:6 w lp t 'measured',\
 'vy.dat' u 7:8 w p t 'analytical'

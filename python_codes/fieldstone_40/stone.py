@@ -8,11 +8,14 @@ from scipy.sparse import csr_matrix
 import time as time
 
 #------------------------------------------------------------------------------
+
 def gx(x,y):
     return 0
 
 def gy(x,y):
-    return grav
+    return -grav
+
+#------------------------------------------------------------------------------
 
 def density(x,y):
     if y>256e3+amplitude*np.cos(2*np.pi*x/llambda):
@@ -28,14 +31,22 @@ def viscosity(x,y,eta1,eta2):
        val=eta2
     return val
 
+#------------------------------------------------------------------------------
+
 def vy_th(phi1,phi2,rho1,rho2):
-    c11 = (eta1*2*phi1**2)/(eta2*(np.cosh(2*phi1)-1-2*phi1**2)) - (2*phi2**2)/(np.cosh(2*phi2)-1-2*phi2**2)
-    d12 = (eta1*(np.sinh(2*phi1) -2*phi1))/(eta2*(np.cosh(2*phi1)-1-2*phi1**2)) + (np.sinh(2*phi2)-2*phi2)/(np.cosh(2*phi2)-1-2*phi2**2)
-    i21 = (eta1*phi2*(np.sinh(2*phi1)+2*phi1))/(eta2*(np.cosh(2*phi1)-1-2*phi1**2)) + (phi2*(np.sinh(2*phi2)+2*phi2))/(np.cosh(2*phi2)-1-2*phi2**2) 
-    j22 = (eta1*2*phi1**2*phi2)/(eta2*(np.cosh(2*phi1)-1-2*phi1**2))-(2*phi2**3)/(np.cosh(2*phi2)-1-2*phi2**2 )
+    c11 = (eta1*2*phi1**2)/(eta2*(np.cosh(2*phi1)-1-2*phi1**2)) \
+        - (2*phi2**2)/(np.cosh(2*phi2)-1-2*phi2**2)
+    d12 = (eta1*(np.sinh(2*phi1) -2*phi1))/(eta2*(np.cosh(2*phi1)-1-2*phi1**2)) \
+        + (np.sinh(2*phi2)-2*phi2)/(np.cosh(2*phi2)-1-2*phi2**2)
+    i21 = (eta1*phi2*(np.sinh(2*phi1)+2*phi1))/(eta2*(np.cosh(2*phi1)-1-2*phi1**2)) \
+        + (phi2*(np.sinh(2*phi2)+2*phi2))/(np.cosh(2*phi2)-1-2*phi2**2) 
+    j22 = (eta1*2*phi1**2*phi2)/(eta2*(np.cosh(2*phi1)-1-2*phi1**2))\
+        - (2*phi2**3)/(np.cosh(2*phi2)-1-2*phi2**2)
     K=-d12/(c11*j22-d12*i21)
     val=K*(rho1-rho2)/2/eta2*(Ly/2.)*grav*amplitude
     return val
+
+#------------------------------------------------------------------------------
 
 def NNV(rq,sq):
     NV_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
@@ -94,10 +105,6 @@ ndofP=1  # number of pressure degrees of freedom
 Lx=512e3  # horizontal extent of the domain 
 Ly=512e3  # vertical extent of the domain 
 
-assert (Lx>0.), "Lx should be positive" 
-assert (Ly>0.), "Ly should be positive" 
-
-# allowing for argument parsing through command line
 if int(len(sys.argv) == 7):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
@@ -106,16 +113,13 @@ if int(len(sys.argv) == 7):
    amplitude = float(sys.argv[5])
    eta2 = float(sys.argv[6])
 else:
-   nelx = 48
-   nely = 48
+   nelx = 24
+   nely = 24
    visu = 1
    llambda=256e3
    amplitude=4000
    eta2=1e21
 
-assert (nelx>0.), "nnx should be positive" 
-assert (nely>0.), "nny should be positive" 
-    
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
 
@@ -147,8 +151,6 @@ eta1=1e21
 rho1=3300
 rho2=3000
 
-year=1#3600.*24.*365.
-
 #################################################################
 #################################################################
 
@@ -175,7 +177,7 @@ for j in range(0, nny):
         y[counter]=j*hy/2.
         counter += 1
 
-np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
+#np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
 
 print("setup: grid points: %.3f s" % (time.time() - start))
 
@@ -189,8 +191,6 @@ print("setup: grid points: %.3f s" % (time.time() - start))
 # |       |   |       |
 # 0---4---1   0-------1
 #################################################################
-
-
 start = time.time()
 
 iconV=np.zeros((mV,nel),dtype=np.int32)
@@ -209,18 +209,8 @@ for j in range(0,nely):
         iconV[7,counter]=(i)*2+1+(j)*2*nnx+nnx -1
         iconV[8,counter]=(i)*2+2+(j)*2*nnx+nnx -1
         counter += 1
-
-#for iel in range (0,nel):
-#    print ("iel=",iel)
-#    print ("node 1",icon[0][iel],"at pos.",x[icon[0][iel]], y[icon[0][iel]])
-#    print ("node 2",icon[1][iel],"at pos.",x[icon[1][iel]], y[icon[1][iel]])
-#    print ("node 3",icon[2][iel],"at pos.",x[icon[2][iel]], y[icon[2][iel]])
-#    print ("node 4",icon[3][iel],"at pos.",x[icon[3][iel]], y[icon[3][iel]])
-#    print ("node 2",icon[4][iel],"at pos.",x[icon[4][iel]], y[icon[4][iel]])
-#    print ("node 2",icon[5][iel],"at pos.",x[icon[5][iel]], y[icon[5][iel]])
-#    print ("node 2",icon[6][iel],"at pos.",x[icon[6][iel]], y[icon[6][iel]])
-#    print ("node 2",icon[7][iel],"at pos.",x[icon[7][iel]], y[icon[7][iel]])
-#    print ("node 2",icon[8][iel],"at pos.",x[icon[8][iel]], y[icon[8][iel]])
+    #end for
+#end for
 
 counter = 0
 for j in range(0,nely):
@@ -230,13 +220,8 @@ for j in range(0,nely):
         iconP[2,counter]=i+1+(j+1)*(nelx+1)
         iconP[3,counter]=i+(j+1)*(nelx+1)
         counter += 1
-
-# for iel in range (0,nel):
-#     print ("iel=",iel)
-#     print ("node 1",icon[0][iel],"at pos.",x[icon[0][iel]], y[icon[0][iel]])
-#     print ("node 2",icon[1][iel],"at pos.",x[icon[1][iel]], y[icon[1][iel]])
-#     print ("node 3",icon[2][iel],"at pos.",x[icon[2][iel]], y[icon[2][iel]])
-#     print ("node 4",icon[3][iel],"at pos.",x[icon[3][iel]], y[icon[3][iel]])
+    #end for
+#end for
 
 print("setup: connectivity: %.3f s" % (time.time() - start))
 
@@ -254,13 +239,28 @@ print("setup: connectivity: %.3f s" % (time.time() - start))
 for i in range(0, nnp):
     if abs(y[i]-Ly/2.)/Ly<eps:
        y[i]+=amplitude*np.cos(2*np.pi*x[i]/llambda)
+    #end if
+#end for
+
+counter=0
+for j in range(0,nny):
+    for i in range(0,nnx):
+        ya=256e3+amplitude*np.cos(2*np.pi*x[counter]/llambda)
+        if j<nny/2:
+           dy=ya/(nely/2)/2
+           y[counter]=j*dy
+        else:
+           dy=(Ly-ya)/(nely/2)/2
+           y[counter]=ya+(j-2*nely/2)*dy
+        counter+=1
 
 for iel in range(0,nel):
-        y[iconV[7,iel]]=(y[iconV[0,iel]]+y[iconV[3,iel]])/2.
-        y[iconV[5,iel]]=(y[iconV[1,iel]]+y[iconV[2,iel]])/2.
-        y[iconV[8,iel]]=(y[iconV[4,iel]]+y[iconV[6,iel]])/2.
+    y[iconV[7,iel]]=(y[iconV[0,iel]]+y[iconV[3,iel]])/2.
+    y[iconV[5,iel]]=(y[iconV[1,iel]]+y[iconV[2,iel]])/2.
+    y[iconV[8,iel]]=(y[iconV[4,iel]]+y[iconV[6,iel]])/2.
+#end for
 
-np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
+#np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
 
 #################################################################
 # define boundary conditions
@@ -269,19 +269,20 @@ start = time.time()
 
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
+
 for i in range(0, nnp):
     if x[i]/Lx<eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
-       #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
     if x[i]/Lx>(1-eps):
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
-       #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
     if y[i]/Ly<eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # no slip
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
     if y[i]/Ly>(1-eps):
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # no slip
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+    #end if
+#end for
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
@@ -421,11 +422,13 @@ for iel in range(0,nel):
         h_rhs[m2]+=h_el[k2]
         constr[m2]+=NNNP[k2]
 
+#end for iel
+
 G_mat*=eta_ref/Ly
 h_rhs*=eta_ref/Ly
 
-np.savetxt('rhoq.ascii',np.array([xq,yq,rhoq]).T,header='# x,y,rho')
-np.savetxt('etaq.ascii',np.array([xq,yq,etaq]).T,header='# x,y,eta')
+#np.savetxt('rhoq.ascii',np.array([xq,yq,rhoq]).T,header='# x,y,rho')
+#np.savetxt('etaq.ascii',np.array([xq,yq,etaq]).T,header='# x,y,eta')
 
 print("build FE matrix: %.3f s" % (time.time() - start))
 
@@ -477,7 +480,7 @@ print("     -> p (m,M) %.5e %.5e " %(np.min(p),np.max(p)))
 
 print("     -> vy/ampl, phi1 %.5e %.5e %.5e" %(np.max(abs(v)),phi1,vy_th(phi1,phi2,rho1,rho2)))
 
-np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+#np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
 print("split vel into u,v: %.3f s" % (time.time() - start))
 
@@ -531,7 +534,7 @@ print("     -> exx (m,M) %.5e %.5e " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.5e %.5e " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.5e %.5e " %(np.min(exy),np.max(exy)))
 
-np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+#np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
 print("compute press & sr: %.3f s" % (time.time() - start))
 
@@ -552,7 +555,7 @@ for iel in range(0,nel):
     q[iconV[7,iel]]=(p[iconP[3,iel]]+p[iconP[0,iel]])*0.5
     q[iconV[8,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]]+p[iconP[3,iel]])*0.25
 
-np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
+#np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
 
 #####################################################################
 # plot of solution
@@ -584,15 +587,14 @@ vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % (rho[iel]))
 vtufile.write("</DataArray>\n")
-
-
+#--
 vtufile.write("</CellData>\n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")
 #--
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
 for i in range(0,nnp):
-    vtufile.write("%10e %10e %10e \n" %(u[i]*year,v[i]*year,0.))
+    vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
