@@ -1,0 +1,17 @@
+set term pdf enhanced font "Times,11pt"
+
+set pointsize .1
+set key outside 
+
+set output 'plines.pdf'
+plot[][0:512e3]\
+'pline64_bub1.ascii'       u 2:1 w l lw .4 t 'b_1',\
+'pline64_bub2_0p001.ascii' u 2:1 w l lw .4 t 'b_2, {/Symbol b}=0.001',\
+'pline64_bub2_0p01.ascii'  u 2:1 w l lw .4 t 'b_2, {/Symbol b}=0.01',\
+'pline64_bub2_0p1.ascii'   u 2:1 w l lw .4 t 'b_2, {/Symbol b}=0.1',\
+'pline64_bub2_0p25.ascii'   u 2:1 w l lw .4 t 'b_2, {/Symbol b}=0.25',\
+'pline64_bub2_0p5.ascii'   u 2:1 w l lw .4 t 'b_2, {/Symbol b}=0.5',\
+'pline64_bub2_1p0.ascii'   u 2:1 w l lw .4 t 'b_2, {/Symbol b}=1',\
+384e3+64e3 lt -1 dashtype 4 notitle,\
+384e3-64e3 lt -1 dashtype 4 notitle
+

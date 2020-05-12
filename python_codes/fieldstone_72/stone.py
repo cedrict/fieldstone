@@ -271,7 +271,7 @@ mP=4
 # bench=8 : RT-instability
 # bench=9 : mms (lami17)
 
-bench=9
+bench=8
 
 if bench==1 or bench==4 or bench==5 or bench==6 or bench==7 or bench==9:
    Lx=1
@@ -292,8 +292,8 @@ if int(len(sys.argv) == 9):
    nqperdim=int(sys.argv[7])
    beta=float(sys.argv[8])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 64
+   nely = 64
    visu = 1
    drho = 8
    eta1 = 1e21
@@ -382,9 +382,12 @@ if bench==2 or bench==3:
    print('rho2=',rho2)
    print('eta1=',eta1)
    print('eta2=',eta2)
-if bench==4 or bench==5 or bench==6 or bench==7:
+if bench==4 or bench==5 or bench==6:
    eta_ref=1.
    gy=1
+if bench==7:
+   eta_ref=1.
+   gy=-1
 if bench==8:
    llambda=256e3
    amplitude=2000
@@ -394,7 +397,7 @@ if bench==8:
    phi2=2.*np.pi*(Ly/2.)/llambda
 
 
-sparse=False
+sparse=True
 pnormalise=True
 
 rVnodes=[-1,1,1,-1,0]
@@ -768,7 +771,7 @@ for iel in range(0,nel):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
         constr[m2]+=NNNNP[k2]
-    if sparse:
+    if sparse and pnormalise:
        A_sparse[Nfem,NfemV+m2]=constr[m2]
        A_sparse[NfemV+m2,Nfem]=constr[m2]
 
@@ -869,9 +872,10 @@ if bench==2 or bench==3:
        if abs(xP[i]-xc_block)<1 and abs(yP[i]-yc_block)<1:
           print('pblock=',eta1/eta2,p[i]/drho/np.abs(gy)/128e3)
 
+if bench==2 or bench==3 or bench==7:
    pline_file=open('pline.ascii',"w")
    for i in range(0,NP):
-       if abs(xP[i]-xc_block)<1:
+       if abs(xP[i]-Lx/2)<Lx/10000:
           pline_file.write("%10e %10e \n" %(yP[i],p[i]))
    pline_file.close()
          

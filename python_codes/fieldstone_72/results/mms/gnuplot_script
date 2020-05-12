@@ -1,4 +1,4 @@
-set term pdf enhanced
+set term pdf enhanced font "Times,11pt"
 set key outside
 set log xy
 set xlabel 'h'
@@ -67,8 +67,10 @@ plot[0.01:0.1]\
 'b2_beta0p01/vrms_nq2'  u (1./sqrt($3)):6 w lp lt 6 pt 6 t 'b_2,{/Symbol b}=0.01',\
 'b2_beta1p0/vrms_nq2'   u (1./sqrt($3)):6 w lp lt 7 pt 7 t 'b_2,{/Symbol b}=1.0',\
 'b2_beta0p00001/vrms_nq2'   u (1./sqrt($3)):6 w lp lt 8 pt 8 t 'b_2,{/Symbol b}=0.00001',\
+0.00777615791 lt -1 t 'analytical'
 
 set log xy
+set ylabel 'velocity error'
 set output 'errors_v_beta.pdf'
 plot[][:0.001]\
 'b1/errors_nq2'           u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'b_1',\
@@ -84,6 +86,7 @@ plot[][:0.001]\
 x**2/50 w l lt -1 dashtype 3 t 'x^2'
 
 
+set ylabel 'pressure error'
 set output 'errors_p_beta.pdf'
 plot[][]\
 'b1/errors_nq2'           u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'b_1',\
@@ -100,6 +103,40 @@ x**1.5/5 w l lt -1 dashtype 2 t 'x^{1.5}'
 
 
 
+#-------------------------------------------
+set format x "10^{%T}"
+set xlabel '{/Symbol b}'
+set ylabel 'vrms'
+unset log y
+set output 'vrms_beta2.pdf'
+
+set arrow from 0.25, graph 0 to 0.25, graph 1 nohead lt 6 dashtype 5
+
+plot[:0.6]\
+'betastudy/vrms_beta32'   u 9:6 w lp t '32^2',\
+'betastudy/vrms_beta48'   u 9:6 w lp t '48^2',\
+'betastudy/vrms_beta64'   u 9:6 w lp t '64^2',\
+'betastudy/vrms_beta80'   u 9:6 w lp t '80^2',\
+'betastudy/vrms_beta96'   u 9:6 w lp t '96^2',\
+0.00777615791 lt -1 t 'analytical'
+
+set ylabel 'error'
+set output 'errors_v_beta2.pdf'
+plot[:0.6][]\
+'betastudy/errors_beta32'   u 11:6 w lp t '32^2',\
+'betastudy/errors_beta48'   u 11:6 w lp t '48^2',\
+'betastudy/errors_beta64'   u 11:6 w lp t '64^2',\
+'betastudy/errors_beta80'   u 11:6 w lp t '80^2',\
+'betastudy/errors_beta96'   u 11:6 w lp t '96^2',\
+
+set ylabel 'error'
+set output 'errors_p_beta2.pdf'
+plot[:0.6][:0.001]\
+'betastudy/errors_beta32'   u 11:9 w lp t '32^2',\
+'betastudy/errors_beta48'   u 11:9 w lp t '48^2',\
+'betastudy/errors_beta64'   u 11:9 w lp t '64^2',\
+'betastudy/errors_beta80'   u 11:9 w lp t '80^2',\
+'betastudy/errors_beta96'   u 11:9 w lp t '96^2',\
 
 
 

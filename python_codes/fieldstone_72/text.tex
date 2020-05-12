@@ -8,14 +8,24 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 \subsection*{Manufactured solution \#1}
 
-The analytical solution originates in Lamichhane (2017) \cite{lami17} and is 
-presented in Section~\ref{ss:mms11}. 
+The analytical solution originates in Lamichhane (2017) \cite{lami17}.
+The velocity and pressure are given by
+\begin{eqnarray}
+u(x,y)&=&-2x^2y(2y-1)(x-1)^2(y-1) \\
+v(x,y)&=& 2xy^2(2x-1)(x-1)(y-1)^2 \\
+p(x,y)&=& x(1-x)(1-2y)
+\end{eqnarray}
+Boundary conditions are no-slip on all sides of the unit square. 
+The corresponding body force terms are derived in Section~\ref{ss:mms11}. 
+
+
 The quadrilateral MINI element used here also originates in the same article 
 and comes in two flavours with two different bubble functions $b_1$ and $b_2$
 as explained in Section~\ref{ss:quadmini}.
-The two bubble functions are:
+The two bubble functions are (in reduced coordinates $-1 \leq r,s \leq 1$):
 \begin{eqnarray}
 b_1(r,s) &=& (1-r^2)(1-s^2)(1-r)(1-s)\\
 b_2(r,s) &=& (1-r^2)(1-s^2)(1+\beta(r+s))
@@ -32,16 +42,16 @@ The velocity and pressure fields for the benchmark are shown hereunder:
 
 During the debugging process I ended up 
 implementing various Gauss quadratures schemes, from $2^2$ to $6^2$ points but the results
-show that $2^2$ quadrature points per element are sufficient since the more expensive ones
+show that $2^2$ quadrature points per element are sufficient since the more expensive quadratures
 yield identical results. 
-The results from the article are different than mine but I suspect that what the 
+The results from the article are somewhat different than mine but I suspect that what the 
 author measured could be different than what I measure (see Table 1,2 in \cite{lami17}). 
 The trends are similar though, with $b_2$ performing better than $b_1$:
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms/errors_v}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms/errors_p}\\
-{\captionfont Left: velocity error in $L_2$ norm; Right: pressure error in $L_2$ norm.\\
+{\captionfont Left: velocity error in $L_2$ norm; Right: pressure error in $L_2$ norm.
 Resolutions from $8\times8$ until $80\times80$.}
 \end{center}
 
@@ -76,17 +86,20 @@ for pressure (higher than 1, lower than 1.5).
 
 \vspace{.5cm}
 \underline{Another bubble?} 
-To make a point, I have created a third bubble function which is simply $b_3(r,s)=(1-r^2)(1-s^2)$.
+To make the point that the bubble function must contain the (bi-)linear term, 
+I have created a third bubble function which is simply $b_3(r,s)=(1-r^2)(1-s^2)$.
 Technically it is zero on the sides and 1 in the middle so it fulfills the 
 same requirements as the other 2 bubble functions. 
 However, we see that this function is not sufficient to stabilise the element as the pressure 
 showcases a typical error mode:
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms/p_b3}
-\includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms/p_error_b3}
+\includegraphics[width=6cm]{python_codes/fieldstone_72/results/mms/p_b3}
+\includegraphics[width=6cm]{python_codes/fieldstone_72/results/mms/p_error_b3}\\
+{\captionfont Left: pressure field as obtained with $b_3$; right: pressure error.}
 \end{center}
 
 \vspace{.5cm}
+
 \underline{influence of $\beta$:} Finally, I use a $2\times 2$ quadrature and look at 
 the errors and the vrms for various values of $\beta$:
 \begin{center}
@@ -99,46 +112,107 @@ field in Paraview, no trace of the error modes as we just saw above.
 The difference between 0.01 and 0.25 is somewhat small, but values of $\beta$ above 0.5 
 clearly yield less accurate results. 
 
-I can also plot these same results in a different way, i.e. placing $\beta$ on the $x-$axis:
+I can also plot these same results in a different way, i.e. placing $\beta$ on the horizontal axis:
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/errors_v_beta2}
 \includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/errors_p_beta2}
 \includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/vrms_beta2}\\
-{\captionfont The dotted line corresponds to $\beta=1/4$ as used in \cite{lami17}.}
+{\captionfont From left to right: velocity error, pressure error and vrms as a function 
+of the parameter $\beta$, for 5 different resolutions. The dotted line corresponds to $\beta=1/4$ as used in \cite{lami17}.}
 \end{center}
 
-one could conclude that $\beta=10^{-4}-10^{-2}$ 
+One could conclude that $\beta=10^{-4}-10^{-2}$ 
 would be a better choice but the question remains whether these
-conclusions hold for other benchmarks.
+conclusions hold for other benchmarks. We will see later 
+that $\beta=1/4$ is actually preferable to these very low values.
 
+\vspace{.4cm}
 
-\underline{Looking at the condition number of the $\K$ matrix}
+\underline{Looking at the condition number of the $\K$ matrix} (remember: $\K$ is the 1,1 block of the
+Stokes matrix). 
 I have computed the condition number of the $\K$ matrix for both bubbles and for various mesh resolutions. 
 We see that the bubble 1 yields condition numbers substantially higher than bubble 2, both increasing 
-quadratically with $h$. 
+quadratically with $h$. This is rather critical is (for instance) a conjugate gradient solver is used 
+is used on this matrix.
 
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_72/results/mms/eigenvalues/e}
 \end{center}
 
-
 %_____________________________________
 \subsection*{Manufactured solution \#2}
 
-This is the second mms mentioned in Lamichhane \cite{lami17}. 
+This is the second manufactured solution 
+mentioned in Lamichhane \cite{lami17}. It is presented in Section~\ref{ss:mms2}.
+It is for a unit square with $\eta=1$ and the smooth exact solution is
+\begin{eqnarray}
+u(x,y) &=& x+x^2 - 2xy+x^3 - 3xy^2 + x^2y \\
+v(x,y) &=& -y-2xy+y^2 -3x^2y + y^3 - xy^2 \\
+p(x,y) &=& xy+x+y+x^3y^2 - 4/3
+\end{eqnarray}
+Note that the pressure obeys $\int_{\Omega} p \; d\Omega = 0$. The analytical 
+velocity is prescribed on the boundary of the domain. 
+The corresponding body force is:
+\begin{eqnarray}
+b_x &=& 3x^2y^2 -y-1   \\
+b_y &=& 2x^3y+3x-1 
+\end{eqnarray}
 
-\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms2/errors_v}
-\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms2/errors_p}
-\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms2/vrms}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms2/errors_v}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms2/errors_p}\\
+{\captionfont Velocity and pressure error convergence as a function of the mesh size $h$ for
+meshes $8\times 8$ up to $128\times 128$.}
+\end{center}
+
+
+The root mean square velocity is also measured for both bubble functions.
+As above we see that $b_2$ performs better than $b_1$:
+\begin{center}
+\includegraphics[width=9cm]{python_codes/fieldstone_72/results/mms2/vrms}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms2/u}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms2/v}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms2/vel}\\
+{\captionfont Velocity field as obtained on $32\times 32$ grid. Left: $x-$component,
+middle: $y-$component, right: velocity vector magnitude.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms2/error_v1}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms2/error_v2}\\
+{\captionfont Velocity error for bubble function 1 (left) and bubble function 2 (right). 
+$b_2$ maximum error is about half of $b_1$ error.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms2/p1}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms2/p2}\\
+{\captionfont Pressure field obtained with bubble function 1 (left) and bubble function 2 (right).
+Scale has been voluntarily set to analytical values scale for both.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms2/error_p1}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms2/error_p2}\\
+{\captionfont Pressure error field obtained with bubble function 1 (left) and bubble function 2 (right). Notice the 
+different error magnitudes between both!}
+\end{center}
+
+The conclusions are identical to those obtained with the first manufactured solution. 
+The second bubble function (here with $\beta=1/4$) performs better. While velocity error
+convergence rates are quadratic for both bubbles, the pressure error is substantially lower
+for bubble 2 (although its rate is slightly lower than bubble 1 -- both are still 
+superconvergent). This is illustrated above where we see that the pressure field obtained 
+with bubble 1 showcases strong ripples in the upper right corner.     
 
 
 
-
-
-
-
-\newpage
 %_____________________________________
 \subsection*{The SolCx benchmark}
 
@@ -179,8 +253,20 @@ alobg the interface.
 \includegraphics[width=5cm]{python_codes/fieldstone_72/results/solkz/vrms}
 \end{center}
 
+We find that velocity and pressure errors converge quadratically, with 
+once again $b_2$ better than $b_1$.
+
+
 %_____________________________________
 \subsection*{The SolVi benchmark}
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/solvi/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/solvi/p}\\
+{\captionfont Resolution $128\times128$ - bubble 1 }
+\end{center}
+
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_72/results/solvi/errors_v}
@@ -193,11 +279,19 @@ alobg the interface.
 %_____________________________________
 \subsection*{The Stokes Sphere}
 
+This experiment is not a benchmark. The density is assigned directly to the 
+quadrature point by means of a function. Inside the disc of radius 0.123 centered in the domain 
+the density is set to 2 while it is set to 1 outside (viscosities are respectively 100 and 1). The density is $|g_y|=1$ and 
+free-slip boundary conditions are implemented on all sides. 
+
+On the following figures the min/max of the pressure in the domain and the vrms 
+are shown for both bubble functions. We see that at low resolution the reported 
+values show some variations but with increasing resolution the quantities converge to a single value:
+
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/sphere/pstats}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/sphere/vrms}
 \end{center}
-
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/sphere/vel_b1}
@@ -207,13 +301,48 @@ alobg the interface.
 {\captionfont Left is b1, Right is b2.}
 \end{center}
 
-It looks like b2 yields more anomalous pressure modes inside the sphere. 
+It looks like $b_2$ yields more anomalous pressure modes inside the sphere, 
+which is corroborated by the following figures which show the pressure 
+at $x=L_x/2$ in both cases. However we also see that at high resolution both 
+bubbles yield nearly identical pressure profiles and that the ripples have vanished. 
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/sphere/pline_b1_closed}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/sphere/pline_b2_closed}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/sphere/pline_b12_closed}\\
+{\captionfont pressure profile for b1 (left) and b2 (middle) for different resolutions.}
+\end{center}
+
+One can also prescribe an open boundary condition at the top:
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/sphere/open/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/sphere/open/p}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/sphere/pline_b1_open}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/sphere/pline_b2_open}
+\includegraphics[width=5cm]{python_codes/fieldstone_72/results/sphere/pline_b12_open}\\
+{\captionfont pressure profile for b1 (left) and b2 (middle) for different resolutions.}
+\end{center}
 
 
 
-\newpage
+
+
 %_____________________________________
-\subsection*{Rayleight-Taylor instability}
+\subsection*{Rayleigh-Taylor instability}
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/RT/area}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/RT/eta}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/RT/rho}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/RT/vel}
+\end{center}
+
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/RT/vy_b1}
@@ -226,7 +355,7 @@ Bubble 2 does better than bubble 1. $\beta$ does not seem to play a role.
 
 
 
-\newpage
+
 %_____________________________________
 \subsection*{Sinking block}
 This is the very same experiment as in Stone 53. It consists of a negatively buoyant 

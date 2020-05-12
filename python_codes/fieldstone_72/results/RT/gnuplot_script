@@ -1,0 +1,29 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set xlabel '{/Symbol h}_2'
+set ylabel 'max(|v_y|) '
+set log xy
+set pointsize .25
+
+set title 'bubble function #1'
+set output 'vy_b1.pdf'
+plot[][]\
+'b1/vy_16.ascii' u 5:2 w lp t '16^2',\
+'b1/vy_32.ascii' u 5:2 w lp t '32^2',\
+'b1/vy_48.ascii' u 5:2 w lp t '48^2',\
+'b1/vy_64.ascii' u 5:2 w lp t '64^2',\
+'b1/vy_80.ascii' u 5:2 w lp t '80^2',\
+'b1/vy_64.ascii' u 5:4 w l lt -1 t 'analytical'
+
+set title 'bubble function #2'
+set output 'vy_b2.pdf'
+plot[][]\
+'b2/vy_16.ascii' u 5:2 w lp t '16^2',\
+'b2/vy_32.ascii' u 5:2 w lp t '32^2',\
+'b2/vy_48.ascii' u 5:2 w lp t '48^2',\
+'b2/vy_64.ascii' u 5:2 w lp t '64^2',\
+'b2/vy_80.ascii' u 5:2 w lp t '80^2',\
+'b2/vy_96.ascii' u 5:2 w lp t '96^2',\
+'b2/vy_64.ascii' u 5:4 w l lt -1 t 'analytical'
+
+

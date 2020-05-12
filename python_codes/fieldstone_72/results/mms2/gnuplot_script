@@ -1,0 +1,38 @@
+set term pdf enhanced font 'Times,11pt'
+set key outside
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+set pointsize 0.5
+
+set title 'velocity error'
+set output 'errors_v.pdf'
+plot[][]\
+'b1/errors_nq2' u (1./sqrt($3)):6 w lp pt 1  t 'b_1',\
+'b2/errors_nq2' u (1./sqrt($3)):6 w lp pt 2 t 'b_2',\
+'lamichhane_b1.ascii' u (1./sqrt($1)):2 w lp pt 1 t 'Lamichhane, b_1',\
+'lamichhane_b2.ascii' u (1./sqrt($1)):2 w lp pt 2 t 'Lamichhane, b_2',\
+x**2/5 w l lt -1 dashtype 3 t 'x^2'
+
+
+set title 'pressure error'
+set output 'errors_p.pdf'
+plot[][]\
+'b1/errors_nq2' u (1./sqrt($3)):9 w lp pt 1  t 'b_1',\
+'b2/errors_nq2' u (1./sqrt($3)):9 w lp pt 2 t 'b_2',\
+'lamichhane_b1.ascii' u (1./sqrt($1)):3 w lp pt 1 t 'Lamichhane, b_1',\
+'lamichhane_b2.ascii' u (1./sqrt($1)):3 w lp pt 2 t 'Lamichhane, b_2',\
+x**1.8*28 w l lt -1 dashtype 2 t 'x^{1.8}',\
+x**1.95*85 w l lt -1 dashtype 4 t 'x^{1.95}',\
+x**1.5*2.4 w l lt -1 dashtype 3 t 'x^{1.5}'
+
+
+unset title 
+set ylabel 'vrms'
+unset log y
+set output 'vrms.pdf'
+plot[]\
+'b1/vrms_nq2' u (1./sqrt($3)):6 w lp t 'b_1',\
+'b2/vrms_nq2' u (1./sqrt($3)):6 w lp t 'b_2',\
+1.77236278 lt -1 t 'analytical'
+

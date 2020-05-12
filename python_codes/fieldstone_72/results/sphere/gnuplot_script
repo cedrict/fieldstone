@@ -1,0 +1,108 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set log x
+set key outside
+set pointsize .4 
+
+set xlabel 'h'
+
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
+plot[][]\
+'b1/vrms' u (1/sqrt($3)):6 w lp t 'b_1',\
+'b2/vrms' u (1/sqrt($3)):6 w lp t 'b_2'
+
+set ylabel 'pressure'
+set output 'pstats.pdf'
+plot[][]\
+'b1/pstats' u (1/sqrt($2)):3 w lp t 'b_1, min(p)',\
+'b1/pstats' u (1/sqrt($2)):4 w lp t 'b_1, max(p)',\
+'b2/pstats' u (1/sqrt($2)):3 w lp t 'b_2, min(p)',\
+'b2/pstats' u (1/sqrt($2)):4 w lp t 'b_2, max(p)',\
+-0.5 lt -1 dashtype 4 notitle,\
+0.5 lt -1 dashtype 4 notitle
+
+##############################################################3
+
+unset log xy
+set xlabel 'p'
+set ylabel 'y'
+
+set output 'pline_b1_closed.pdf'
+plot[][]\
+'closed/pline_b1_32.ascii' u 2:1 w l t '32^2',\
+'closed/pline_b1_48.ascii' u 2:1 w l t '48^2',\
+'closed/pline_b1_64.ascii' u 2:1 w l t '64^2',\
+'closed/pline_b1_80.ascii' u 2:1 w l t '80^2',\
+'closed/pline_b1_96.ascii' u 2:1 w l t '96^2',\
+'closed/pline_b1_112.ascii' u 2:1 w l t '112^2',\
+'closed/pline_b1_128.ascii' u 2:1 w l t '128^2',\
+0.5-0.123 lt -1 lw .5 dashtype 2 notitle,\
+0.5+0.123 lt -1 lw .5 dashtype 2 notitle
+
+set output 'pline_b2_closed.pdf'
+plot[][]\
+'closed/pline_b2_32.ascii' u 2:1 w l t '32^2',\
+'closed/pline_b2_48.ascii' u 2:1 w l t '48^2',\
+'closed/pline_b2_64.ascii' u 2:1 w l t '64^2',\
+'closed/pline_b2_80.ascii' u 2:1 w l t '80^2',\
+'closed/pline_b2_96.ascii' u 2:1 w l t '96^2',\
+'closed/pline_b2_112.ascii' u 2:1 w l t '112^2',\
+'closed/pline_b2_128.ascii' u 2:1 w l t '128^2',\
+0.5-0.123 lt -1 lw .5 dashtype 2 notitle,\
+0.5+0.123 lt -1 lw .5 dashtype 2 notitle
+
+set output 'pline_b12_closed.pdf'
+plot[][]\
+'closed/pline_b1_128.ascii' u 2:1 w l t 'b_1, 128^2',\
+'closed/pline_b2_128.ascii' u 2:1 w l t 'b_2, 128^2',\
+0.5-0.123 lt -1 lw .5 dashtype 2 notitle,\
+0.5+0.123 lt -1 lw .5 dashtype 2 notitle
+
+
+##############################################################3
+
+unset log xy
+set xlabel 'p'
+set ylabel 'y'
+
+set output 'pline_b1_open.pdf'
+plot[][]\
+'open/pline_b1_32.ascii' u 2:1 w l t '32^2',\
+'open/pline_b1_48.ascii' u 2:1 w l t '48^2',\
+'open/pline_b1_64.ascii' u 2:1 w l t '64^2',\
+'open/pline_b1_80.ascii' u 2:1 w l t '80^2',\
+'open/pline_b1_96.ascii' u 2:1 w l t '96^2',\
+'open/pline_b1_112.ascii' u 2:1 w l t '112^2',\
+'open/pline_b1_128.ascii' u 2:1 w l t '128^2',\
+0.5-0.123 lt -1 lw .5 dashtype 2 notitle,\
+0.5+0.123 lt -1 lw .5 dashtype 2 notitle
+
+set output 'pline_b2_open.pdf'
+plot[][]\
+'open/pline_b2_32.ascii' u 2:1 w l t '32^2',\
+'open/pline_b2_48.ascii' u 2:1 w l t '48^2',\
+'open/pline_b2_64.ascii' u 2:1 w l t '64^2',\
+'open/pline_b2_80.ascii' u 2:1 w l t '80^2',\
+'open/pline_b2_96.ascii' u 2:1 w l t '96^2',\
+'open/pline_b2_112.ascii' u 2:1 w l t '112^2',\
+'open/pline_b2_128.ascii' u 2:1 w l t '128^2',\
+0.5-0.123 lt -1 lw .5 dashtype 2 notitle,\
+0.5+0.123 lt -1 lw .5 dashtype 2 notitle
+
+set output 'pline_b12_open.pdf'
+plot[][]\
+'open/pline_b1_128.ascii' u 2:1 w l t 'b_1, 128^2',\
+'open/pline_b2_128.ascii' u 2:1 w l t 'b_2, 128^2',\
+0.5-0.123 lt -1 lw .5 dashtype 2 notitle,\
+0.5+0.123 lt -1 lw .5 dashtype 2 notitle
+
+
+
+
+
+
+
+
+
+

@@ -43,6 +43,7 @@ plot[-1e7:1e7][0:512e3]\
 'plines_b1/pline64.ascii' u 2:1 w lp t '64x64',\
 'plines_b1/pline80.ascii' u 2:1 w lp t '80x80',\
 'plines_b1/pline96.ascii' u 2:1 w lp t '96x96',\
+'plines_b1/pline128.ascii' u 2:1 w lp t '128x128',\
 384e3+64e3 lt -1 dashtype 4 notitle,\
 384e3-64e3 lt -1 dashtype 4 notitle
 
@@ -53,21 +54,22 @@ plot[-1e7:1e7][0:512e3]\
 'plines_b2/pline64.ascii' u 2:1 w lp t '64x64',\
 'plines_b2/pline80.ascii' u 2:1 w lp t '80x80',\
 'plines_b2/pline96.ascii' u 2:1 w lp t '96x96',\
+'plines_b2/pline128.ascii' u 2:1 w lp t '128x128',\
 384e3+64e3 lt -1 dashtype 4 notitle,\
 384e3-64e3 lt -1 dashtype 4 notitle
 
 set output 'plines_b12.pdf'
 plot[][0:512e3]\
-'plines_b1/pline96.ascii' u 2:1 w l lw .4 t '96x96, b_1',\
-'plines_b2/pline96.ascii' u 2:1 w l lw .4 t '96x96, b_2',\
+'plines_b1/pline128.ascii' u 2:1 w l lw .4 t '96x96, b_1',\
+'plines_b2/pline128.ascii' u 2:1 w l lw .4 t '96x96, b_2',\
 '../../../../fieldstone_53/results/reduced/plines_q2q1/pline64.ascii' u 2:1 w lp t 'Q_2xQ_1, 64x64',\
 384e3+64e3 lt -1 dashtype 4 notitle,\
 384e3-64e3 lt -1 dashtype 4 notitle
 
 set output 'plines_b12_zoom.pdf'
 plot[][384e3:512e3]\
-'plines_b1/pline96.ascii' u 2:1 w l lw .4 t '96x96, b_1',\
-'plines_b2/pline96.ascii' u 2:1 w l lw .4 t '96x96, b_2',\
+'plines_b1/pline128.ascii' u 2:1 w l lw .4 t '96x96, b_1',\
+'plines_b2/pline128.ascii' u 2:1 w l lw .4 t '96x96, b_2',\
 '../../../../fieldstone_53/results/reduced/plines_q2q1/pline64.ascii' u 2:1 w lp t 'Q_2xQ_1, 64x64',\
 384e3+64e3 lt -1 dashtype 4 notitle
 

@@ -1,10 +1,10 @@
-set term pdf enhanced
+set term pdf enhanced font "Times,11pt"
 set key outside
 set log xy
 set xlabel 'h'
-set ylabel 'error'
 set pointsize 0.5
 
+set ylabel 'velocity error'
 set output 'errors_v_rand.pdf'
 plot[][]\
 'b1_rand/errors_nq2' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'nq=2^2,b_1',\
@@ -19,6 +19,7 @@ plot[][]\
 'b2_rand/errors_nq6' u (1./sqrt($3)):6 w lp lt 6 pt 2 t 'nq=6^2,b_2',\
 x**2/50 w l lt -1 dashtype 3 t 'x^2'
 
+set ylabel 'pressure error'
 set output 'errors_p_rand.pdf'
 plot[][]\
 'b1_rand/errors_nq2' u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'nq=2^2,b_1',\

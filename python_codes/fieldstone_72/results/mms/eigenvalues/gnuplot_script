@@ -1,0 +1,13 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set xlabel 'h'
+set ylabel 'Cond. Nb.'
+set log xy
+set output 'e.pdf'
+set pointsize .4
+plot[][]\
+'eigenvalues_b1.ascii'       u (1./sqrt($2)):5 w lp t 'b_1',\
+'eigenvalues_b2_0p01.ascii'  u (1./sqrt($2)):5 w lp t 'b_2, {/Symbol b}=0.01',\
+'eigenvalues_b2_0p1.ascii'   u (1./sqrt($2)):5 w lp t 'b_2, {/Symbol b}=0.1',\
+'eigenvalues_b2_0p25.ascii'  u (1./sqrt($2)):5 w lp t 'b_2, {/Symbol b}=0.25',\
+x**(-2)/2 lt -1 dashtype 2 t 'h^{-2}'
