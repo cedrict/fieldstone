@@ -1108,7 +1108,7 @@ N_9(r,s) &=& 27 rs(1-r-s)
 
 
 %..........................................................................
-\subsubsection{Enriched linear basis functions in triangles ($Q_1^+$) -WIP} \label{ss:quadmini}
+\subsubsection{Enriched linear basis functions in quadrilaterals ($Q_1^+$) -WIP} \label{ss:quadmini}
 \index{general}{$Q_1^+$}
 
 \begin{verbatim}
@@ -1146,7 +1146,14 @@ bilinear approximations for both velocity and pressure variables. The velocity
 field is enriched with piecewise polynomial bubble functions with null average at element
 edges.
 
-In Lamichhane (2015) \cite{lami15}: "We consider a quadrilateral MINI
+In Kwon \& Park \cite{kwpa14}: 
+"We introduce a new stable MINI-element pair for incompressible Stokes equations on
+quadrilateral meshes, which uses the smallest number of bubbles for the velocity. The pressure is 
+discretized with the $P_1$ -midpoint-edge-continuous elements and each component of the velocity field is
+done with the standard $Q_1$ -conforming elements enriched by one bubble a quadrilateral."
+
+
+In Lamichhane (2017) \cite{lami17}: "We consider a quadrilateral MINI
 finite element for approximating the solution
 of Stokes equations using a quadrilateral mesh. We use the standard bilinear finite
 element space enriched with element-wise defined bubble functions for the velocity
@@ -1156,34 +1163,28 @@ sufficient to ensure the inf-sup condition.
 This is a refinement of \cite{bai97} where the author enriches the velocity space with
 more than a single vector bubble function per element. In this article we show that with a small modification of the standard bubble function we can get the stability just by using a single vector bubble function per element."
 
-The two bubble functions are defined on the reference element $[0,1]\times [0,1]$:
+The two bubble functions are defined on the reference element $[-1,1]\times [-1,1]$:
 \begin{eqnarray}
-b^{(1)}(x,y) &=& 64(1-x)^2(1-y)^2 xy \\
-b^{(2)}(x,y) &=& 8(1+x+y)xy(1-x)(1-y)
-\end{eqnarray}
-
-In Kwon \& Park \cite{kwpa14}: 
-"We introduce a new stable MINI-element pair for incompressible Stokes equations on
-quadrilateral meshes, which uses the smallest number of bubbles for the velocity. The pressure is 
-discretized with the $P_1$ -midpoint-edge-continuous elements and each component of the velocity field is
-done with the standard $Q_1$ -conforming elements enriched by one bubble a quadrilateral."
-
-
-In what follows I focus on the two bubble functions $b^{(1)}$ and $b^{(2)}$ in \cite{lami15}.
-When I rewrite these for the reference element $[-1,1]\times[-1,1]$, then $x=(r+1)/2$, $y=(s+1)/2$
-and $1-x=(1-r)/2$ and $1-y=(1-s)/2$.
-\begin{eqnarray}
-b^{(1)}(r,s) 
-&=& 64 \frac{1}{4} (1-r)^2 \frac{1}{4}(1-s)^2 \frac{1}{2} (r+1) \frac{1}{2} (s+1)  \\
-&=&  (1-r)^2 (1-s)^2 (r+1)  (s+1) \\
-&=& (1-r)(1-s) (1-r^2) (1-s^2) \\ \nn\\ 
-b^{(2)}(r,s) 
-&=& 8[1+(r+1)/2+(s+1)/2]\frac{1}{2}(r+1)\frac{1}{2}(s+1)\frac{1}{2}(1-r)\frac{1}{2}(1-s) \\
-&=& \frac{1}{2} [1+(r+1)/2+(s+1)/2] (r+1) (s+1) (1-r) (1-s) \\
-&=& \left(1+\frac{r+s}{4}\right) (1-r^2) (1-s^2) 
+b^{(1)}(x,y) &=&  (1-r)(1-s) (1-r^2) (1-s^2) \\  
+b^{(2)}(x,y) &=&  \left(1+\frac{r+s}{4}\right) (1-r^2) (1-s^2) 
 \end{eqnarray}
 Both bubble functions are exactly one in the middle of the element and exactly zero on the edges
 of the element as expected from shape functions.
+
+
+%In what follows I focus on the two bubble functions $b^{(1)}$ and $b^{(2)}$ in \cite{lami17}.
+%When I rewrite these for the reference element $[-1,1]\times[-1,1]$, then $x=(r+1)/2$, $y=(s+1)/2$
+%and $1-x=(1-r)/2$ and $1-y=(1-s)/2$.
+%\begin{eqnarray}
+%b^{(1)}(r,s) 
+%&=& 64 \frac{1}{4} (1-r)^2 \frac{1}{4}(1-s)^2 \frac{1}{2} (r+1) \frac{1}{2} (s+1)  \\
+%&=&  (1-r)^2 (1-s)^2 (r+1)  (s+1) \\
+%&=& (1-r)(1-s) (1-r^2) (1-s^2) \\ \nn\\ 
+%b^{(2)}(r,s) 
+%&=& 8[1+(r+1)/2+(s+1)/2]\frac{1}{2}(r+1)\frac{1}{2}(s+1)\frac{1}{2}(1-r)\frac{1}{2}(1-s) \\
+%&=& \frac{1}{2} [1+(r+1)/2+(s+1)/2] (r+1) (s+1) (1-r) (1-s) \\
+%&=& \left(1+\frac{r+s}{4}\right) (1-r^2) (1-s^2) 
+%\end{eqnarray}
 
 We then have
 \begin{eqnarray}
@@ -1200,7 +1201,7 @@ We then have
 &=& \frac{1}{4} (1-r^2) (1-s^2 + (4+r+s) (-2s)) \\
 &=& \frac{1}{4} (1-r^2) (1-8s-3s^2 -2rs) 
 \end{eqnarray}
-We postulate that the function $f$ has the following representation 
+We postulate that a function $f$ has the following representation 
 in the element:
 \[
 f^h(r,s)=a+br+cs+drs+e b(r,s) 
@@ -1320,6 +1321,118 @@ f^h(r,s)
 &=& -N_1+N_2+N_3-N_4 \\
 &=& r
 \end{eqnarray}
+
+Consistency check $f(r,s)=rs$ ($f_1=(-1)(-1)=1$, $f_2=(+1)(-1)=-1$, etc ...)
+\begin{eqnarray}
+f^h(r,s) 
+&=& \sum_{i=1}^5 N_i(r,s) f_i \nn\\
+&=& N_1 (+1) + N_2 (-1) + N_3 (+1) + N_4 (-1) + N_5 (0) \nn\\
+&=& N_1-N_2+N_3-N_4 \nn\\
+&=& 
+\left(\frac{1}{4}(1-r)(1-s)-\frac{1}{4}b(r,s)\right)
+-\left(\frac{1}{4}(1+r)(1-s)-\frac{1}{4}b(r,s)\right) \nn\\
+&+& 
+\left(\frac{1}{4}(1+r)(1+s)-\frac{1}{4}b(r,s)\right)
+-\left(\frac{1}{4}(1-r)(1+s)-\frac{1}{4}b(r,s)\right) \nn\\
+&=& 
+ \frac{1}{4}(1-r)(1-s)
+-\frac{1}{4}(1+r)(1-s)
++\frac{1}{4}(1+r)(1+s)
+-\frac{1}{4}(1-r)(1+s) \nn\\
+&=&
+ \frac{1}{2}(-r)(1-s)
++\frac{1}{2}(+r)(1+s) \nn\\
+&=& rs
+\end{eqnarray}
+
+We find that the shape functions can represent  a bilinear field exactly. 
+Let us now turn to quadratic terms:
+
+Consistency check $f(r,s)=r^2$ (or $f(r,s)=s^2$): 
+\begin{eqnarray}
+f^h(r,s) 
+&=& \sum_{i=1}^5 N_i(r,s) f_i \nn\\
+&=& N_1(r,s)\cdot (+1) + N_2(r,s)\cdot (+1) + N_3(r,s)\cdot (+1) + N_4(r,s)\cdot (+1) + N_5(r,s)\cdot (0) \nn\\
+&=& 
+\left(\frac{1}{4}(1-r)(1-s)-\frac{1}{4}b(r,s)\right)
++\left(\frac{1}{4}(1+r)(1-s)-\frac{1}{4}b(r,s)\right) \nn\\
+&+& 
+\left(\frac{1}{4}(1+r)(1+s)-\frac{1}{4}b(r,s)\right)
++\left(\frac{1}{4}(1-r)(1+s)-\frac{1}{4}b(r,s)\right) \nn\\
+&=&
+\frac{1}{2}(1-s) + \frac{1}{2}(1+s) -b(r,s) \nn\\
+&=& 
+1 - b(r,s) 
+\end{eqnarray}
+
+We have 
+\begin{eqnarray}
+\int_{-1}^{+1} \int_{-1}^{+1} (1-b_1(r,s)) dr ds  
+&=& \int_{-1}^{+1} \int_{-1}^{+1} [1 - (1-r^2)(1-s^2)(1-r)(1-s) ] dr ds = 20/9 \simeq 2.2222 \nn\\
+\int_{-1}^{+1} \int_{-1}^{+1} (1-b_2(r,s,\beta)) dr ds  
+&=& \int_{-1}^{+1} \int_{-1}^{+1} [1 - (1-r^2)(1-s^2)(1+\beta(r+s)) ] dr ds = 20/9  \qquad \forall \beta \nn 
+\end{eqnarray}
+Both bubbles yield the same average. This is not helpful. 
+
+Let us now look at the (root) mean square:
+\begin{eqnarray}
+\int_{-1}^{+1} \int_{-1}^{+1} (1-b_1(r,s))^2 dr ds &=& 21284/11025 \simeq 1.93052 \nn\\
+\int_{-1}^{+1} \int_{-1}^{+1} (1-b_2(r,s,\beta))^2 dr ds &=& \frac{4}{1575} (128 \beta^2  + 623) 
+\end{eqnarray}
+The problem is that the minimum is reached for $\beta=0$ which is not allowed so 
+we cannot choose $\beta$ so as to minimise the error.
+For $\beta=0.25$ as used in the paper:
+\[
+\int_{-1}^{+1} \int_{-1}^{+1} (1-b_2(r,s))^2 dr ds = 2524/1575 \simeq 1.60254 
+\]
+On the other hand, this means that using the second bubble function does a better job  
+at representing square terms ($r^2$, $s^2$) than using the first one. 
+
+
+
+
+
+
+
+
+
+
+\newpage
+One can also revisit the second bubble function: in Lamichhane (2017) \cite{lami17}
+it is postulated to be defined by 
+\begin{eqnarray}
+b^{(2)}(r,s) &=& (a+br+cs)(1-r^2)(1-s^2) \qquad abc\neq 0
+\end{eqnarray}
+on the reference element $[-1,1]\times [-1,1]$. Then the author 
+states that 'for simplicity we choose':
+\begin{eqnarray}
+b^{(2)}(r,s) &=& \frac{1}{4} (4+r+s)(1-r^2)(1-s^2) 
+\end{eqnarray}
+and that 'the factor 1/4 is used to force the value of the bubble function at
+the centroid of the square to be 1'.
+
+Looking closer, we see that forcing the bubble to be 1 in $(r,s)=(0,0)$ does impose
+$a=1$ but leaves $b,c$ free, i.e. the bubble is then:
+\begin{eqnarray}
+b^{(2)}(r,s) &=& (1+br+cs)(1-r^2)(1-s^2) \qquad bc\neq 0
+\end{eqnarray}
+
+For symmetry reasons I would be tempted to indeed take $b=c$ but I am then left with 
+\begin{eqnarray}
+b^{(2)}(r,s) &=&  [1+b(r+s)](1-r^2)(1-s^2) \qquad b\neq 0
+\end{eqnarray}
+which means that you set $b=c=1/4$ in your paper. 
+
+\underline{Question}: We know that $b=0$ is not allowed, but could it not be 
+possible to design an analytical or numerical test or a 
+theory to choose an 'optimal' value (in some sense) for $b$?  
+
+
+
+
+
+
+
 
 
 
