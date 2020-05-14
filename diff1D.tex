@@ -732,7 +732,7 @@ Before we solve the system, we need to take care of boundary conditions.
 Let us assume that we wish to fix the temperature at node 2, or in other words 
 we wish to set 
 \[
-T_2 = T^{bc}
+T_2 = T^{o}
 \]
 This equation can be cast as
 \[
@@ -750,7 +750,7 @@ T_1 \\ T_2 \\ T_3 \\ T_4 \\ T_5
 \left(
 \begin{array}{c}
 0 \\
-T^{bc} \\
+T^{o} \\
 0 \\
 0 \\
 0
@@ -762,11 +762,11 @@ This replaces the second line in the previous matrix equation:
 \[
 \left(
 \begin{array}{ccccc}
-A_{11} & A_{12} & 0& 0& 0\\ \\
+{\cal A}_{11} & {\cal A}_{12} & 0& 0& 0\\ \\
 0 & 1 & 0 & 0 & 0 \\ \\
-0 & A_{32} & A_{33}&  A_{34} & 0 \\\\
-0&0&   A_{43} & A_{44}&  A_{45} \\\\
-0&0&0   & A_{54}&  A_{55} \\\\
+0 & {\cal A}_{32} & {\cal A}_{33}&  {\cal A}_{34} & 0 \\\\
+0&0&   {\cal A}_{43} & {\cal A}_{44}&  {\cal A}_{45} \\\\
+0&0&0   & {\cal A}_{54}&  {\cal A}_{55} \\\\
 \end{array}
 \right)
 \left(
@@ -778,7 +778,7 @@ T_1 \\\\ T_2 \\\\ T_3 \\\\ T_4 \\\\ T_5
 \left(
 \begin{array}{c}
 b_{1} \\ \\
-T^{bc} \\ \\
+T^{o} \\ \\
 b_{3}\\\\
 b_{4}\\\\
 b_{5}
@@ -791,4 +791,44 @@ That's it, we have a linear system of equations which can be solved!
 
 
 
+
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\includegraphics[width=0.8cm]{images/garftr} \\
+{\color{orange}Exercise FEM-01}
+\end{center}
+
+Write a code which solves the 1D diffusion equation in time. 
+The initial temperature field is as follows:
+\begin{center}
+\includegraphics[width=6cm]{images/fem_exercises/tempinit}
+\end{center}
+\[
+T(x,t=0)=200 \quad x<L_x/2
+\quad\quad\quad
+T(x,t=0)=100 \quad x\geq L_x/2
+\]
+
+The domain is $L_x=100$km and the properties of the material are 
+$\rho=3000$, $k=3$, $C_p=1000$.
+Boundary conditions are:
+\[
+T(t,x=0)=200^\circ C
+\quad\quad
+T(t,x=L_x)=100^\circ C
+\]
+There are {\tt nelx} elements and {\tt nnx} nodes.
+All elements are {\tt hx} long.
+The code will carry out {\tt nstep} timesteps of length {\tt dt}
+with 
+$\delta t = 0.5 \frac{h^2_x}{\kappa}$.
+
+
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
 
