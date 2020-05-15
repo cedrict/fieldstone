@@ -1,0 +1,25 @@
+#! /bin/bash
+
+rm -f errors
+rm -f errors_sr1
+rm -f errors_sr2
+rm -f errors_sr3
+rm -f vrms 
+
+for nq in  3   ; do
+    for l in 4 8 16 24 32 40; do
+
+        echo nq= $nq nelr= $l
+
+        python3 stone.py $l 0 $nq > opla  
+        grep errv opla >> errors_nq$nq 
+        grep vrms opla >> vrms_nq$nq 
+        #grep errexx1 opla >> errors_sr1 
+        #grep errexx2 opla >> errors_sr2 
+        #grep errexx3 opla >> errors_sr3 
+
+    done
+done
+
+rm opla
+

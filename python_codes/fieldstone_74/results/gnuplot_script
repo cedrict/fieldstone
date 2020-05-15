@@ -1,0 +1,37 @@
+set term pdf enhanced font "Times,11pt"
+set log xy
+set xlabel 'h'
+set key bottom 
+set pointsize .5
+
+set ylabel 'velocity error'
+set output 'errors_v.pdf'
+plot[0.02:][]\
+'bubble2/errors_nq3'     u (1./($3)):6 w lp ps .45 t '{/Symbol b}=0.25',\
+'bubble2_0p1/errors_nq3' u (1./($3)):6 w lp ps .45 t '{/Symbol b}=0.1',\
+'bubble2_0p5/errors_nq3' u (1./($3)):6 w lp ps .45 t '{/Symbol b}=0.5',\
+'bubble2_0p01/errors_nq3' u (1./($3)):6 w lp ps .45 t '{/Symbol b}=0.01',\
+x**2*3  w l lt -1 dashtype 4 t 'x^{2}'
+
+set ylabel 'pressure error'
+set output 'errors_p.pdf'
+plot[0.02:][]\
+'bubble2/errors_nq3'     u (1./($3)):9 w lp ps .35 t '{/Symbol b}=0.25',\
+'bubble2_0p1/errors_nq3' u (1./($3)):9 w lp ps .35 t '{/Symbol b}=0.1',\
+'bubble2_0p5/errors_nq3' u (1./($3)):9 w lp ps .35 t '{/Symbol b}=0.5',\
+'bubble2_0p01/errors_nq3' u (1./($3)):9 w lp ps .35 t '{/Symbol b}=0.01',\
+x**1.5*100  w l lt -1 dashtype 2 t 'x^{1.5}'
+
+set key top left
+set ylabel 'v_{rms}'
+unset log y
+set output 'vrms.pdf'
+plot[:][:1.093]\
+'bubble2/vrms_nq3'     u (1./($3)):5 w lp t '{/Symbol b}=0.25',\
+'bubble2_0p1/vrms_nq3' u (1./($3)):5 w lp t '{/Symbol b}=0.1',\
+'bubble2_0p5/vrms_nq3' u (1./($3)):5 w lp t '{/Symbol b}=0.5',\
+'bubble2_0p01/vrms_nq3' u (1./($3)):5 w lp t '{/Symbol b}=0.01',\
+1.083554613 lt -1 dashtype 2 t 'analytical'
+
+
+
