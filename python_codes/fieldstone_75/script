@@ -1,0 +1,53 @@
+#! /bin/bash
+
+rm exx_stats*
+rm eyy_stats*
+rm ezz_stats*
+rm exy_stats*
+rm exz_stats*
+rm eyz_stats*
+rm u_stats*
+rm v_stats*
+rm w_stats*
+rm p_stats*
+
+#python3 stone.py 8 8 8 2 > opla
+#grep exx opla >> exx_stats
+#grep eyy opla >> eyy_stats
+#python3 stone.py 8 8 8 3 > opla
+#grep exx opla >> exx_stats
+#grep eyy opla >> eyy_stats
+#python3 stone.py 8 8 8 4 > opla
+#grep exx opla >> exx_stats
+#grep eyy opla >> eyy_stats
+#python3 stone.py 8 8 8 5 > opla
+#grep exx opla >> exx_stats
+#grep eyy opla >> eyy_stats
+#python3 stone.py 8 8 8 6 > opla
+#grep exx opla >> exx_stats
+#grep eyy opla >> eyy_stats
+
+
+for bb in 1 2; do
+    for nq in 3 4 5; do
+        for rs in 4 5 6 7 8 9 10 11 12 ; do
+            echo $rs
+
+            python3 stone.py $rs $rs $rs $nq $bb > opla
+            grep exx opla >> exx_stats_bb${bb}_nq$nq
+            grep eyy opla >> eyy_stats_bb${bb}_nq$nq
+            grep ezz opla >> ezz_stats_bb${bb}_nq$nq
+            grep exy opla >> exy_stats_bb${bb}_nq$nq
+            grep exz opla >> exz_stats_bb${bb}_nq$nq
+            grep eyz opla >> eyz_stats_bb${bb}_nq$nq
+            grep uu opla  >> u_stats_bb${bb}_nq$nq
+            grep vv opla  >> v_stats_bb${bb}_nq$nq
+            grep ww opla  >> w_stats_bb${bb}_nq$nq
+            grep pp opla  >> p_stats_bb${bb}_nq$nq
+
+        done
+    done
+done
+
+
+

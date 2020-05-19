@@ -32,7 +32,7 @@ the \LaTeX code directly into the website prompt area and obtain the value of th
 
 
 %-------------------------------------------------------------------
-\subsection{$Q_1\times P_0$ element}
+\subsection{$Q_1\times P_0$ element - 2D}
 
 For this element, $m_\upnu=4$ and $m_p=1$ so $\G_{el}$ is
 a $8\times 1$ matrix:
@@ -182,6 +182,162 @@ In the book the authors proceed to show that any such macroelement
 made of rectangles has a spurious mode. 
 
 See code {\tt python\_codes/Gel/macro\_element\_q1p0.py}
+
+%-------------------------------------------------------------------
+\subsection{$Q_1\times P_0$ element - 3D}
+
+For this element, $m_\upnu=8$ and $m_p=1$ so $\G_{el}$ is
+a $3*8\times 1$ matrix:
+\[
+\G_{el} = -\int_{\Omega_e} {\bm B}^T \cdot {\bm N} d\Omega
+= -\int_{\Omega_e}
+\left(
+\begin{array}{cccccc}
+\partial_r N_1^\upnu & 0 & 0 & \partial_s N_1^\upnu  & \partial_t N_1^\upnu & 0 \\
+0 & \partial_s N_1^\upnu  & 0 & \partial_r N_1^\upnu  & 0 & \partial_t N_1^\upnu \\
+0 & 0 & \partial_t N_1^\upnu  & 0 & \partial_r N_1^\upnu  & \partial_s N_1^\upnu \\
+\dots  & \dots & \dots  & \dots & \dots  & \dots \\
+\dots  & \dots & \dots  & \dots & \dots  & \dots \\
+\dots  & \dots & \dots  & \dots & \dots  & \dots \\
+\partial_r N_8^\upnu & 0 & 0 & \partial_s N_8^\upnu  & \partial_t N_8^\upnu & 0 \\
+0 & \partial_s N_8^\upnu  & 0 & \partial_r N_8^\upnu  & 0 & \partial_t N_8^\upnu \\
+0 & 0 & \partial_t N_8^\upnu  & 0 & \partial_r N_8^\upnu  & \partial_s N_8^\upnu 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+N_1^p  \\ 
+N_1^p  \\ 
+N_1^p  \\ 
+0 \\
+0 \\
+0 
+\end{array}
+\right)
+d\Omega
+\]
+also, since $N_1^p=1$ then 
+\[
+\G_{el} = -\int_{\Omega_e} {\bm B}^T \cdot {\bm N} d\Omega
+= -\int_{\Omega_e}
+\left(
+\begin{array}{ccc}
+\partial_r N_1^\upnu  \\
+\partial_s N_1^\upnu  \\
+\partial_t N_1^\upnu  \\
+\partial_r N_2^\upnu  \\
+\partial_s N_2^\upnu  \\
+\partial_t N_2^\upnu  \\
+\partial_r N_3^\upnu  \\
+\partial_s N_3^\upnu  \\
+\partial_t N_3^\upnu  \\
+\partial_r N_4^\upnu  \\
+\partial_s N_4^\upnu  \\
+\partial_t N_4^\upnu  \\
+\partial_r N_5^\upnu  \\
+\partial_s N_5^\upnu  \\
+\partial_t N_5^\upnu  \\
+\partial_r N_6^\upnu  \\
+\partial_s N_6^\upnu  \\
+\partial_t N_6^\upnu  \\
+\partial_r N_7^\upnu  \\
+\partial_s N_7^\upnu  \\
+\partial_t N_7^\upnu  \\
+\partial_r N_8^\upnu  \\
+\partial_s N_8^\upnu  \\
+\partial_t N_8^\upnu  
+\end{array}
+\right)
+d\Omega
+=
+-
+\left(
+\begin{array}{c}
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(-1)(1-s)(1-t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1-r)(-1)(1-t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1-r)(1-s)(-1) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(+1)(1-s)(1-t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1+r)(-1)(1-t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1+r)(1-s)(-1) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(+1)(1+s)(1-t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1+r)(+1)(1-t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1+r)(1+s)(-1) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(-1)(1+s)(1-t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1-r)(+1)(1-t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1-r)(1+s)(-1) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(-1)(1-s)(1+t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1-r)(-1)(1+t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1-r)(1-s)(+1) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(+1)(1-s)(1+t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1+r)(-1)(1+t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1+r)(1-s)(+1) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(+1)(1+s)(1+t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1+r)(+1)(1+t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1+r)(1+s)(+1) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(-1)(1+s)(1+t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1-r)(+1)(1+t) dr ds dt \\
+\int_{-1}^{+1}\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{8}(1-r)(1+s)(+1) dr ds dt 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+ 1\\
+ 1\\
+ 1\\
+-1\\
+ 1\\
+ 1\\
+-1\\
+-1\\
+ 1\\
+ 1\\
+-1\\
+ 1\\
+ 1\\
+ 1\\
+-1\\
+-1\\
+ 1\\
+-1\\
+-1\\
+-1\\
+-1\\
+ 1\\
+-1\\
+-1
+\end{array}
+\right)
+\]
+
+If we consider a macro-element 2x2x2 of size Lx=Ly=Lz=4, apply velocity b.c on the all sides
+we are left with 
+\[
+\tilde{G} = 
+\left(
+\begin{array}{cccccc}
+-1. -1. -1. -1.  1.  1.  1.  1.\\
+-1. -1.  1.  1. -1. -1.  1.  1.\\
+-1.  1. -1.  1. -1.  1. -1.  1.
+\end{array}
+\right)
+\]
+
+Null space has dimension 5:
+\begin{verbatim}
+[[-0.35355339  0.35355339  0.35355339  0.35355339  0.35355339]
+ [ 0.35355339 -0.35355339 -0.35355339  0.35355339  0.35355339]
+ [ 0.35355339 -0.35355339  0.35355339 -0.35355339  0.35355339]
+ [ 0.41990569  0.58009431  0.19336477  0.19336477 -0.19336477]
+ [ 0.58009431  0.41990569 -0.19336477 -0.19336477  0.19336477]
+ [ 0.19336477 -0.19336477  0.74028293  0.03317615 -0.03317615]
+ [ 0.19336477 -0.19336477  0.03317615  0.74028293 -0.03317615]
+ [-0.19336477  0.19336477 -0.03317615 -0.03317615  0.74028293]]
+\end{verbatim}
+
+
+
 
 
 %-------------------------------------------------------------------
@@ -658,6 +814,10 @@ velocity      pressure
 
 I am here following the approach by Lamichhane \cite{lami17}
 but I am not sure why he did not use a single element macro-element?
+Probably because when applying bc on all four nodes of a single element, 
+the left over matrix $\tilde{G}_{el}$ is composed of the last two rows of $\G_{el}$
+and this has a nullspace of dimension 2.
+
 
 After assembly we have $\G$ is a $ndofV*NV\times ndofP*NP=26*9$ matrix:
 \[
