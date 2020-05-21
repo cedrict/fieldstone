@@ -8,7 +8,7 @@
 \begin{verbatim}
 (r_0,s_0) = (0,0,0)
 (r_1,s_1) = (1,0,0)
-(r_2,s_2) = (0,2,0)
+(r_2,s_2) = (0,1,0)
 (r_3,s_3) = (0,0,1)
 \end{verbatim}
 
@@ -227,11 +227,10 @@ The velocity shape functions are:
 \todo[inline]{REFS ??? better definition of functions !}
 
 %.....................................................................
-\subsubsection{Linear basis functions for tetrahedra ($P_1$)}
+\subsubsection{Linear basis functions for hexahedra ($P_1$)} \label{ss:lbfh3D}
 \index{general}{$P_1$}
 
 This is essentially in the $Q_2\times P_{-1}$ element. 
-
 I choose the reduced coordinates of the pressure nodes to be :
 
 \begin{tabular}{cccc}
@@ -336,6 +335,57 @@ N_3(r,s,t) &=& \frac{1}{4}(1-2r-2s+2t)\nonumber\\
 N_4(r,s,t) &=& \frac{1}{4}(1+2r+2s+2t)\nonumber
 \end{eqnarray}
 
+\vspace{.6cm}
+
+I could also have chosen 
+
+\begin{tabular}{cccc}
+\hline
+point & r & s & t \\
+\hline
+1& 0 & 0 &0 \\
+2& 1 & 0 &0 \\
+3& 0 & 1 &0 \\
+4& 0 & 0 &1 \\
+\hline
+\end{tabular}
+
+This expression must exactly interpolate the pressure at all four pressure nodes:
+\begin{eqnarray}
+p_1  &=& p(r_1,s_1,t_1) = a+br_1+cs_1+dt_1 = a\nonumber\\
+p_2  &=& p(r_2,s_2,t_2) = a+br_2+cs_2+dt_2 = a+b\nonumber\\
+p_3  &=& p(r_3,s_3,t_3) = a+br_3+cs_3+dt_3 = a+c\nonumber\\
+p_4  &=& p(r_4,s_4,t_4) = a+br_4+cs_4+dt_4 = a+d\nonumber
+\end{eqnarray}
+i.e.
+\[
+a=p_1
+\qquad
+b=p_2-p1
+\qquad
+c=p_3-p1
+\qquad
+d=p_4-p1
+\]
+or, 
+\[
+p^h(r,s)=a+br+cs+dt=p_1 + (p_2-p_1)r + (p_3-p_1)r + (p_4-p_1)t  = p_1(1-r-s-t) + r p_2 + s p_3 + t p_4
+\]
+so 
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+N_1(r,s,t) &=& 1-r-s-t \\ 
+N_2(r,s,t) &=& r \\
+N_3(r,s,t) &=& s \\
+N_4(r,s,t) &=& t
+\end{eqnarray}
+\end{mdframed}
+
+
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{20-node serendipity basis functions in 3D ($Q_2^{(20)}$)}
 \index{general}{$Q_2^{(20)}$} \index{general}{Serendipity element}
@@ -384,7 +434,7 @@ In both cases the bubble is identically zero on the edges of the reference eleme
 in its middle.
 
 \begin{eqnarray}
-\frac{\partial b^{(1)}}{\partial r}(r,s,t) &=& (3r^2-2r-1)(1-y)(1-y^2)(1-t)(1-t^2) \\ 
+\frac{\partial b^{(1)}}{\partial r}(r,s,t) &=& (3r^2-2r-1)(1-s)(1-s^2)(1-t)(1-t^2) \\ 
 \frac{\partial b^{(1)}}{\partial s}(r,s,t) &=& (3s^2-2s-1)(1-r)(1-r^2)(1-t)(1-t^2) \\ 
 \frac{\partial b^{(1)}}{\partial t}(r,s,t) &=& (3t^2-2t-1)(1-r)(1-r^2)(1-s)(1-s^2)  
 \end{eqnarray}

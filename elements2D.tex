@@ -204,7 +204,7 @@ $\frac{\partial \hat{v}}{\partial r} = \frac{\partial v}{\partial r}$.
 However, following the same methodology as above, one can easily prove that this is no more true for polynomials of degree strivtly higher than 1. This fact has serious consequences: if the solution to the problem at hand is for instance a parabola, the $Q_1$ shape functions cannot represent the solution properly, but only by approximating the parabola in each element by a line. As we will see later, $Q_2$ basis functions can remedy this problem by containing themselves quadratic terms.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Biquadratic basis functions in 2D ($Q_2$)}
+\subsubsection{Biquadratic basis functions in 2D ($Q_2$)}\label{ss:q22d}
 \index{general}{$Q_2$}
 
 This element is part of the so-called LAgrange family. 
@@ -669,7 +669,7 @@ N_2(r,s) &=& s
 \end{mdframed}
 
 %.....................................................................
-\subsubsection{Linear basis functions for quadrilaterals in 2D ($P_1$)}
+\subsubsection{Linear basis functions for quadrilaterals in 2D ($P_1$)}\label{ss:lbfq2D}
 \index{general}{$P_1$}
 
 \begin{verbatim}
@@ -721,6 +721,26 @@ N_3(r) &=& 2s
 \end{eqnarray}
 \end{mdframed}
 
+Note that we could also have set 
+\begin{verbatim}
+.=====3=====.
+|     |     |
+|     |     |   (r_1,s_1)=(0,0)
+|     |     |   (r_2,s_2)=(1,0)
+.=====1=====2   (r_3,s_3)=(0,1)
+|     |     |
+|     |     |
+|     |     |
+.=====.=====.
+\end{verbatim}
+and we would then have
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+N_1(r) &=& 1-r-s  \nonumber\\
+N_2(r) &=& r   \nonumber\\
+N_3(r) &=& s
+\end{eqnarray}
+\end{mdframed}
 
 
 
@@ -1165,8 +1185,8 @@ more than a single vector bubble function per element. In this article we show t
 
 The two bubble functions are defined on the reference element $[-1,1]\times [-1,1]$:
 \begin{eqnarray}
-b^{(1)}(x,y) &=&  (1-r)(1-s) (1-r^2) (1-s^2) \\  
-b^{(2)}(x,y) &=&  \left(1+\frac{r+s}{4}\right) (1-r^2) (1-s^2) 
+b^{(1)}(x,y) &=&  (1-r)(1-s)\cdot (1-r^2) (1-s^2) \\  
+b^{(2)}(x,y) &=&  \left(1+\frac{r+s}{4}\right) \cdot (1-r^2) (1-s^2) 
 \end{eqnarray}
 Both bubble functions are exactly one in the middle of the element and exactly zero on the edges
 of the element as expected from shape functions.

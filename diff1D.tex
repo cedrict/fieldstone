@@ -409,7 +409,7 @@ M_{21} & M_{22}
 \]
 with 
 \[
-{\vec N}^T = 
+{\vec {\color{Violet}N}}^T = 
 \left(
 \begin{array}{c}
 {\color{Violet}N}_k^\theta(x)  \\ \\  {\color{Violet}N}_{k+1}^\theta(x)
@@ -517,7 +517,7 @@ Also,
 \]
 so that 
 \[
-{\vec B}^T=
+{\vec {\color{Violet}B}}^T=
 \left(
 \begin{array}{cc}
  \frac{\partial {\color{Violet}N}_k^\theta}{\partial x}   \\ \\
@@ -532,7 +532,7 @@ so that
 \end{array}
 \right)
 \]
-We here also assume that $k$ is constant within the element:
+We here also assume that the heat conductivity $k$ is constant within the element:
 \[
 {\bm K}_d^e =
 \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}B}}^T k {\vec {\color{Violet}B}} dx 
@@ -566,7 +566,9 @@ and then
 %.........................................................................
 \subsubsection{In practice}
 
-Let us consider this very simple grid consisting of 4 elements/5 nodes:
+Let us consider this very simple grid consisting of 4 elements/5 nodes\footnote{I have here adopted the illogical 
+numbering of python -- the language used by my students-- 
+so that python programmers can benchmark their code against this simple example}:
 \begin{center}
 \includegraphics[width=10cm]{images/oneD/grid5}
 \end{center}
@@ -640,8 +642,8 @@ T_1^{new} \\ T_2^{new}
 \qquad
 \left\{ 
 \begin{array}{l}
-A_{00}^{{\color{red}\tt 2}} T_1^{new} + A_{01}^{{\color{red}\tt 2}} T_2^{new} = b^{{\color{red} \tt 2}}_0 \\
-A_{10}^{{\color{red}\tt 2}} T_1^{new} + A_{11}^{{\color{red}\tt 2}} T_2^{new} = b^{{\color{red} \tt 2}}_1
+A_{00}^{{\color{red}\tt 1}} T_1^{new} + A_{01}^{{\color{red}\tt 1}} T_2^{new} = b^{{\color{red} \tt 1}}_0 \\
+A_{10}^{{\color{red}\tt 1}} T_1^{new} + A_{11}^{{\color{red}\tt 1}} T_2^{new} = b^{{\color{red} \tt 1}}_1
 \end{array}
 \right.
 \]
@@ -670,7 +672,7 @@ T_0^{new} \\ T_1^{new} \\ T_2^{new} \\ T_3^{new} \\ T_4^{new}
 {\bm A}^{\color{red} \tt 2}  \cdot 
 \left(
 \begin{array}{c}
-T_3^{new} \\ T_4^{new}
+T_2^{new} \\ T_3^{new}
 \end{array}
 \right)
  =  {\vec b}^{\color{red} \tt 2}
@@ -679,12 +681,34 @@ T_3^{new} \\ T_4^{new}
 \qquad
 \left\{ 
 \begin{array}{l}
-A_{00}^{{\color{red}\tt 2}} T_3^{new} + A_{01}^{{\color{red} \tt 2}} T_4^{new} = b^{{\color{red} \tt 2}}_0 \\
-A_{10}^{{\color{red}\tt 2}} T_3^{new} + A_{11}^{{\color{red} \tt 2}} T_4^{new} = b^{{\color{red} \tt 2}}_1
+A_{00}^{{\color{red}\tt 2}} T_2^{new} + A_{01}^{{\color{red} \tt 2}} T_3^{new} = b^{{\color{red} \tt 2}}_0 \\
+A_{10}^{{\color{red}\tt 2}} T_2^{new} + A_{11}^{{\color{red} \tt 2}} T_3^{new} = b^{{\color{red} \tt 2}}_1
 \end{array}
 \right.
 \]
 Element {\color{red}\tt 2} is made of nodes 2 and 3, so it will contributes to lines and columns 2,3 of the FE matrix:
+
+\[
+\left( \begin{array}{ccccc}
+0 & 0 & 0 & 0 & 0 \\ 
+0 & 0 & 0 & 0 & 0 \\ 
+0 & 0 & A_{00}^{{\color{red}\tt 2}} &  A_{01}^{{\color{red}\tt 2}} &0 \\ 
+0 & 0 & A_{10}^{{\color{red}\tt 2}} &  A_{11}^{{\color{red}\tt 2}} &0 \\
+0 & 0 & 0 & 0 & 0 
+\end{array} \right) \cdot
+\left(\begin{array}{c}
+T_0^{new} \\ T_1^{new} \\ T_2^{new} \\ T_3^{new} \\ T_4^{new}
+\end{array} \right)
+=
+\left(\begin{array}{c}
+0 \\ 0 \\ b_{0}^{{\color{red}\tt 2}} \\  b_{1}^{{\color{red}\tt 2}} \\  0  
+\end{array}\right)
+\]
+
+
+
+
+
 
 
 \item \underline{element {\color{red}\tt 3}} 
@@ -692,7 +716,7 @@ Element {\color{red}\tt 2} is made of nodes 2 and 3, so it will contributes to l
 {\bm A}^{\color{red} \tt 3}  \cdot 
 \left(
 \begin{array}{c}
-T_4^{new} \\ T_5^{new}
+T_3^{new} \\ T_4^{new}
 \end{array}
 \right)
  =  {\vec b}^{\color{red} \tt 3}
@@ -707,6 +731,27 @@ A_{10}^{{\color{red}\tt 3}} T_3^{new} + A_{11}^{{\color{red}\tt 3}} T_4^{new} = 
 \right.
 \]
 Element {\color{red}\tt 3} is made of nodes 3 and 4, so it will contributes to lines and columns 3,4 of the FE matrix:
+
+\[
+\left( \begin{array}{ccccc}
+0 & 0 & 0 & 0 & 0 \\ 
+0 & 0 & 0 & 0 & 0 \\ 
+0 & 0 & 0 & 0 & 0 \\ 
+0 & 0 & 0 & A_{00}^{{\color{red}\tt 3}} &  A_{01}^{{\color{red}\tt 3}}  \\ 
+0 & 0 & 0 & A_{10}^{{\color{red}\tt 3}} &  A_{11}^{{\color{red}\tt 3}}  \\
+\end{array} \right) \cdot
+\left(\begin{array}{c}
+T_0^{new} \\ T_1^{new} \\ T_2^{new} \\ T_3^{new} \\ T_4^{new}
+\end{array} \right)
+=
+\left(\begin{array}{c}
+0 \\ 0 \\ 0 \\ b_{0}^{{\color{red}\tt 3}} \\  b_{1}^{{\color{red}\tt 3}} 
+\end{array}\right)
+\]
+
+
+
+
 \end{itemize}
 
 

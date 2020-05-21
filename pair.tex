@@ -132,17 +132,27 @@ These can be filtered out \cite{chpc95}. Smoothing techniques are also discussed
 %----------------------------------------------------------------------
 \subsubsection{The bi/tri-quadratic velocity - discontinuous linear pressure element ($Q_2 \times P_{-1}$)}
 
-This element is crowned "probably the most accurate 2D element" in \cite{grsa}.
+This element is crowned "probably the most accurate 2D element" in Gresho \& Sani's book \cite{grsa}.
 
-Piecewise Biquadratic velocities, piecewise linear discontinuous polynomial pressure. 
-The element satisfies the inf-sup condition \cite{hugh}p211.
-It is used in \cite{vssj89}. 
-See \cite{boga02} over the two possible choices for the definition of the pressure space..
-It is mentioned in \cite{kaus10}, \cite{boga02}, \cite{pefc89}. It is used in \cite{freh14}
-to study 3D fold growth rates (see online supplementary material) and in \cite{schm08}.
+It is characterised by piecewise Biquadratic velocities, 
+and piecewise linear discontinuous polynomial pressure. 
+The element satisfies the inf-sup condition, see page 211 of Hughes \cite{hugh}, or p138 of Elman et al
+\cite{elsw}.
+It is used in van de Vosse et al (1989) \cite{vavs89}. 
+See Boffi \& Gastaldi (2002) \cite{boga02} 
+for the two possible choices for the definition of the pressure space..
+This element is mentioned in Kaus (2010) \cite{kaus10} and Pelletier et al (1989) \cite{pefc89} 
+and it is  used in Frehner (2014) \cite{freh14} to study 3D fold growth rates 
+(see online supplementary material) and in Schmalholtz (2008) \cite{schm08}.
 
 Note that the serendipity version of this pair, i.e. $Q_2^{(20)}\times P_{-1}$ is also LBB stable
-\cite[p180]{reddybook2}.
+as shown in p180 of Reddy \cite{reddybook2}.
+
+This element is implemented in Stone 76. 
+
+\begin{center}
+\includegraphics[width=6cm]{images/q2pm1/q2pm1}
+\end{center}
 
 
 %----------------------------------------------------------------------

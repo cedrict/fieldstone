@@ -59,38 +59,39 @@ We then use the additive property of the integral $\int_\Omega \dots = \sum_{elt
 In the element, we have seen that the temperature can be written:
 
 \[
-T(x) 
-= N^\theta_{k}(x) T_k + N^\theta_{k+1}(x) T_{k+1}  
+T^h(x) 
+= {\color{Violet}N}^\theta_{k}(x) T_k + {\color{Violet}N}^\theta_{k+1}(x) T_{k+1}  
 \]
 In the previous presentation we have computed  ${\Lambda}_f^e$ and ${\Upsilon}_f^e$.
 Let us now turn to ${\Sigma}_f^e$ and ${\Omega}_f^e$.
 
 \begin{eqnarray}
 {\Sigma}_f^e 
-&=&\int_{x_k}^{x_{k+1}} f(x) \rho C_p u\frac{\partial T}{\partial x} dx \nn\\
-&=&\int_{x_k}^{x_{k+1}} f(x) \rho C_p u\frac{\partial [ N_{k}^\theta(x) {T}_k + N_{k+1}^\theta(x) {T}_{k+1} ] }{\partial x} dx \nn\\
-&=&\int_{x_k}^{x_{k+1}} f(x) \rho C_p u\frac{\partial  N_{k}^\theta }{\partial x} T_k dx 
-+  \int_{x_k}^{x_{k+1}} f(x) \rho C_p u\frac{\partial  N_{k+1}^\theta }{\partial x} T_{k+1} dx \nn\\
-&=& \left(  \int_{x_k}^{x_{k+1}} f(x) \rho C_p u\frac{\partial  N_{k}^\theta }{\partial x} dx \right) T_k 
-+ \left( \int_{x_k}^{x_{k+1}} f(x) \rho C_p u\frac{\partial  N_{k+1}^\theta }{\partial x} dx \right)T_{k+1}  \nn
+&=&\int_{x_k}^{x_{k+1}} f(x) \rho C_p u\frac{\partial T^h}{\partial x} dx \nn\\
+&=&\int_{x_k}^{x_{k+1}} f(x) \rho C_p u\frac{\partial 
+[ {\color{Violet}N}_{k}^\theta(x) {T}_k + {\color{Violet}N}_{k+1}^\theta(x) {T}_{k+1} ] }{\partial x} dx \nn\\
+&=&\int_{x_k}^{x_{k+1}} f(x) \rho C_p u\frac{\partial  {\color{Violet}N}_{k}^\theta }{\partial x} T_k dx 
++  \int_{x_k}^{x_{k+1}} f(x) \rho C_p u\frac{\partial  {\color{Violet}N}_{k+1}^\theta }{\partial x} T_{k+1} dx \nn\\
+&=& \left(  \int_{x_k}^{x_{k+1}} f(x) \rho C_p u\frac{\partial  {\color{Violet}N}_{k}^\theta }{\partial x} dx \right) T_k 
++ \left( \int_{x_k}^{x_{k+1}} f(x) \rho C_p u\frac{\partial  {\color{Violet}N}_{k+1}^\theta }{\partial x} dx \right)T_{k+1}  \nn
 %&=&  \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho C_p \;\;  [ {\color{blue}N}_{k}(x) \dot{T}_k + {\color{blue}N}_{k+1}(x) \dot{T}_{k+1} ] \;\; dx  \nn\\
 %&=&  \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho C_p {\color{blue}N}_{k}(x) \dot{T}_k  dx  + \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho C_p {\color{blue}N}_{k+1}(x) \dot{T}_{k+1}   dx \nn\\
 %&=&  \left( \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho C_p  {\color{blue}N}_{k}(x) dx \right) \dot{T}_k  
 %+ \left( \int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho C_p {\color{blue}N}_{k+1}(x) dx \right)  \dot{T}_{k+1}  \nn
 \end{eqnarray}
 
-Taking $f(x)=N_k^\theta(x)$ and omitting '$(x)$' in the rhs:
+Taking ${\color{Violet}f}(x)={\color{Violet}N}_k^\theta(x)$ and omitting '$(x)$' in the rhs:
 \[
 {\Sigma}_{N_k^\theta}^e=
-\left( \int_{x_k}^{x_{k+1}} \rho C_p u N_k^\theta \frac{\partial  N_{k}^\theta }{\partial x} dx \right) T_k 
+\left( \int_{x_k}^{x_{k+1}} \rho C_p u {\color{Violet}N}_k^\theta \frac{\partial  {\color{Violet}N}_{k}^\theta }{\partial x} dx \right) T_k 
 + 
-\left( \int_{x_k}^{x_{k+1}} \rho C_p u N_k^\theta \frac{\partial  N_{k+1}^\theta }{\partial x} dx \right)T_{k+1}  \nn
+\left( \int_{x_k}^{x_{k+1}} \rho C_p u {\color{Violet}N}_k^\theta \frac{\partial  {\color{Violet}N}_{k+1}^\theta }{\partial x} dx \right)T_{k+1}  \nn
 \]
-Taking $f(x)=N_{k+1}^\theta(x)$ and omitting '$(x)$' in the rhs:
+Taking ${\color{Violet}f}(x)={\color{Violet}N}_{k+1}^\theta(x)$ and omitting '$(x)$' in the rhs:
 \[
 {\Sigma}_{N_{k+1}^\theta}^e=
-\left( \int_{x_k}^{x_{k+1}} \rho C_p u N_{k+1}^\theta \frac{\partial  N_{k}^\theta }{\partial x} dx \right) T_k + 
-\left( \int_{x_k}^{x_{k+1}} \rho C_p u N_{k+1}^\theta \frac{\partial  N_{k+1}^\theta }{\partial x} dx \right)T_{k+1}  \nn
+\left( \int_{x_k}^{x_{k+1}} \rho C_p u {\color{Violet}N}_{k+1}^\theta \frac{\partial  {\color{Violet}N}_{k}^\theta }{\partial x} dx \right) T_k + 
+\left( \int_{x_k}^{x_{k+1}} \rho C_p u {\color{Violet}N}_{k+1}^\theta \frac{\partial  {\color{Violet}N}_{k+1}^\theta }{\partial x} dx \right)T_{k+1}  \nn
 \]
 
 
@@ -104,10 +105,10 @@ Taking $f(x)=N_{k+1}^\theta(x)$ and omitting '$(x)$' in the rhs:
 \!=\!
 \left(
 \begin{array}{cc}
-\int_{x_k}^{x_{k+1}} \rho C_p u N_k^\theta \frac{\partial  N_{k}^\theta }{\partial x} dx  & 
-\int_{x_k}^{x_{k+1}} \rho C_p u N_k^\theta \frac{\partial  N_{k+1}^\theta }{\partial x} dx \\ \\
-\int_{x_k}^{x_{k+1}} \rho C_p u N_{k+1}^\theta \frac{\partial  N_{k}^\theta }{\partial x} dx  & 
-\int_{x_k}^{x_{k+1}} \rho C_p u N_{k+1}^\theta \frac{\partial  N_{k+1}^\theta }{\partial x} dx 
+\int_{x_k}^{x_{k+1}} \rho C_p u {\color{Violet}N}_k^\theta \frac{\partial      {\color{Violet}N}_{k}^\theta }{\partial x} dx  & 
+\int_{x_k}^{x_{k+1}} \rho C_p u {\color{Violet}N}_k^\theta \frac{\partial      {\color{Violet}N}_{k+1}^\theta }{\partial x} dx \\ \\
+\int_{x_k}^{x_{k+1}} \rho C_p u {\color{Violet}N}_{k+1}^\theta \frac{\partial  {\color{Violet}N}_{k}^\theta }{\partial x} dx  & 
+\int_{x_k}^{x_{k+1}} \rho C_p u {\color{Violet}N}_{k+1}^\theta \frac{\partial  {\color{Violet}N}_{k+1}^\theta }{\partial x} dx 
 \end{array}
 \right)
 \!\cdot\!
@@ -131,10 +132,10 @@ or,
 \rho C_p u
 \left(
 \begin{array}{cc}
-N_k^\theta \frac{\partial     N_{k}^\theta }{\partial x}   & 
-N_k^\theta \frac{\partial     N_{k+1}^\theta }{\partial x}  \\ \\
-N_{k+1}^\theta \frac{\partial N_{k}^\theta }{\partial x}   & 
-N_{k+1}^\theta \frac{\partial N_{k+1}^\theta }{\partial x} 
+{\color{Violet}N}_k^\theta \frac{\partial     {\color{Violet}N}_{k}^\theta }{\partial x}   & 
+{\color{Violet}N}_k^\theta \frac{\partial     {\color{Violet}N}_{k+1}^\theta }{\partial x}  \\ \\
+{\color{Violet}N}_{k+1}^\theta \frac{\partial {\color{Violet}N}_{k}^\theta }{\partial x}   & 
+{\color{Violet}N}_{k+1}^\theta \frac{\partial {\color{Violet}N}_{k+1}^\theta }{\partial x} 
 \end{array}
 \right)
 dx
@@ -153,15 +154,15 @@ Finally, we have already defined the vectors
 {\vec N}^T = 
 \left(
 \begin{array}{c}
-N_k^\theta(x)  \\ \\  N_{k+1}^\theta (x)
+{\color{Violet}N}_k^\theta(x)  \\ \\  {\color{Violet}N}_{k+1}^\theta (x)
 \end{array}
 \right)
 \quad\quad
 {\vec B}^T=
 \left(
 \begin{array}{cc}
- \frac{\partial N_k^\theta}{\partial x}   \\ \\
- \frac{\partial N_{k+1}^\theta}{\partial x}
+ \frac{\partial {\color{Violet}N}_k^\theta}{\partial x}   \\ \\
+ \frac{\partial {\color{Violet}N}_{k+1}^\theta}{\partial x}
 \end{array}
 \right)
 \quad
@@ -181,7 +182,7 @@ so that
 \end{array}
 \right)
 =
-\left( \int_{x_k}^{x_{k+1}}   {\vec N}^T \rho C_p u {\vec B} dx  \right) \cdot {\vec T}^e
+\left( \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}N}}^T \rho C_p u {\vec {\color{Violet}B}} dx  \right) \cdot {\vec T}^e
 = {\bm K}_a \cdot \vec T^e
 \]
 One can easily show that 
@@ -202,15 +203,15 @@ Let us now look at the source term:
 {\Omega}_f^e &=&
 \int_{x_k}^{x^{k+1}} f(x) H(x) dx \nn
 \end{eqnarray}
-Taking $f(x)=N_k^\theta(x)$: 
+Taking ${\color{Violet}f}(x)={\color{Violet}N}_k^\theta(x)$: 
 \[
 {\Omega}_{N_k^\theta}=
-\int_{x_k}^{x^{k+1}} N_k^\theta(x) H(x) dx \nn
+\int_{x_k}^{x^{k+1}} {\color{Violet}N}_k^\theta(x) H(x) dx \nn
 \]
-Taking $f(x)=N_{k+1}^\theta(x)$: 
+Taking ${\color{Violet}f}(x)={\color{Violet}N}_{k+1}^\theta(x)$: 
 \[
 {\Omega}_{N_{k+1}^\theta}=
-\int_{x_k}^{x^{k+1}} N_{k+1}^\theta(x) H(x) dx \nn
+\int_{x_k}^{x^{k+1}} {\color{Violet}N}_{k+1}^\theta(x) H(x) dx \nn
 \]
 We can rearrange both equations as follows:
 \[
@@ -222,8 +223,8 @@ We can rearrange both equations as follows:
 =
 \left(
 \begin{array}{cc}
-\int_{x_k}^{x^{k+1}} N_k^\theta(x) H(x) dx \nn \\ \\ 
-\int_{x_k}^{x^{k+1}} N_{k+1}^\theta(x) H(x) dx \nn
+\int_{x_k}^{x^{k+1}} {\color{Violet}N}_k^\theta(x) H(x) dx \nn \\ \\ 
+\int_{x_k}^{x^{k+1}} {\color{Violet}N}_{k+1}^\theta(x) H(x) dx \nn
 \end{array}
 \right)
 \]
@@ -235,40 +236,31 @@ or,
 \end{array}
 \right)
 =
-\left[
 \int_{x_k}^{x^{k+1}}
 \left(
 \begin{array}{cc}
-N_k^\theta(x)  H(x)  \nn \\ \\ 
-N_{k+1}^\theta(x) H(x)  \nn
+{\color{Violet}N}_k^\theta(x)  H(x)  \nn \\ \\ 
+{\color{Violet}N}_{k+1}^\theta(x) H(x)  \nn
 \end{array}
 \right)
 dx
-\right]
-\]
-so that 
-\[
-\left(
-\begin{array}{cc}
- {\Omega}_{N_k^\theta} \\ \\ {\Omega}_{N_{k+1}^\theta}
-\end{array}
-\right)
 =
 \left(
 \int_{x_k}^{x^{k+1}}
-{\vec N}^T H(x) dx
+{\vec {\color{Violet}N}}^T H(x) dx
 \right)
 \]
 
+
 The weak form discretised over 1 element becomes
 \begin{eqnarray}
-&&\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec N}^T \rho C_p {\bm N} dx  \right) }_{\bm M^e} \cdot \dot{\vec T}^e
+&&\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}N}}^T \rho C_p {\vec {\color{Violet}N}} dx  \right) }_{\bm M^e} \cdot \dot{\vec T}^e
 +
-\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec N}^T \rho C_p u {\bm B} dx  \right)}_{{\bm K}_a^e} \cdot {\vec T}^e 
+\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}N}}^T \rho C_p u {\vec {\color{Violet}B}} dx  \right)}_{{\bm K}_a^e} \cdot {\vec T}^e 
  +
-\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec B}^T k {\bm B} dx  \right)}_{{\bm K}_d^e} \cdot {\vec T}^e 
+\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}B}}^T k {\vec {\color{Violet}B}} dx  \right)}_{{\bm K}_d^e} \cdot {\vec T}^e 
 =
-\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec N}^T H(x) dx \right)}_{{\vec F}^e} \nn 
+\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}N}}^T H(x) dx \right)}_{{\vec F}^e} \nn 
 \end{eqnarray}
 or,
 \[
@@ -282,6 +274,82 @@ or,
 {\bm M}^e \cdot \frac{\partial {\vec T}^e}{\partial t} + ({\bm K}_a^e + {\bm K}_d^e) \cdot {\vec T}^e = {\vec F}^e
 }
 \]
+
+As in the diffusion case of the previous section these matrices and vectors will need to be 
+assembled into ${\bm M}$, ${\bm K}_a$, ${\bm K}_d$, $\vec{T}$ and $\vec{F}$:
+\[
+{\bm M} \cdot \frac{\partial {\vec T}}{\partial t} + ({\bm K}_a + {\bm K}_d) \cdot {\vec T} = {\vec F}
+\]
+
+We can revisit the time discretisation again, assuming for simplicity that the coefficients of the PDE are not time-dependent.
+Choosing a fully explicit approach would have us write
+\[
+{\bm M} \cdot \frac{{\vec T}^{n+1}-{\vec T}^n}{\delta t} + ({\bm K}_a + {\bm K}_d) \cdot {\vec T}^{n} = {\vec F}
+\quad
+\Rightarrow
+\quad
+{\bm M} \cdot {\vec T}^{n+1} = [{\bm M} - ({\bm K}_a + {\bm K}_d) \delta t] \cdot {\vec T}^{n} = {\vec F}
+\]
+while choosing a fully implicit approach would have us write
+\[
+{\bm M} \cdot \frac{{\vec T}^{n+1}-{\vec T}^n}{\delta t} + ({\bm K}_a + {\bm K}_d) \cdot {\vec T}^{n+1} = {\vec F}
+\quad
+\Rightarrow
+\quad
+[{\bm M} +  ({\bm K}_a + {\bm K}_d) \delta t] \cdot {\vec T}^{n+1}
+={\bm M}\cdot {\vec T}^n+ {\vec F} \delta t
+\]
+We can also consider a more generic approach and write:
+\[
+{\bm M} \cdot \frac{{\vec T}^{n+1}-{\vec T}^n}{\delta t} + ({\bm K}_a + {\bm K}_d) \cdot (\alpha {\vec T}^{n+1}+(1-\alpha)\vec{T}^{n}) = {\vec F}
+\]
+\[
+[{\bm M} +  \alpha({\bm K}_a + {\bm K}_d) \delta t] \cdot {\vec T}^{n+1}
+=
+[{\bm M} - (1-\alpha)({\bm K}_a + {\bm K}_d) \delta t] \cdot {\vec T}^{n} + {\vec F}\delta t
+\]
+When $\alpha=0$ we recover the explicit scheme, when $\alpha=1$ we recover the implicit one, and when $\alpha=1/2$ we get a so-called 
+mid-point algorithm (Crank-Nicolson).
+
+Write about SUPG!!!
+
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\includegraphics[width=0.8cm]{images/garftr} \\
+{\color{orange}Exercise FEM-2}
+\end{center}
+
+Let us consider the domain $[0,1]$. The temperature field at $t=0$ is 
+given by $T=1$ for $x<0.25$ and $T=0$ otherwise. The prescribed 
+velocity is $u=1$ and we set $nnx=51$.
+Boundary conditions are $T=1$ at $x=0$ and $T=0$ at $x=1$.
+
+\begin{center}
+\input{tikz_fdm1Df}
+\end{center}
+
+Set $\rho=C_p=1$.
+Run the model for 250 time steps with $\delta t=0.002$.
+Implement a fully implicit, explicit and Crank-Nicolson 
+time discretisation. 
+
+When using Crank-Nicolson, you should then be able to recover the green line of the 
+following figure:
+\begin{center}
+\includegraphics[width=8cm]{images/fem_exercises/fantom3.png} \\
+{\captionfont Taken from Thieulot (2011) \cite{thie11}. Note that $\tau=\gamma h/u$.}
+\end{center}
+
+Finally, implement the SUPG method and recover the red and turquoise lines.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 
 

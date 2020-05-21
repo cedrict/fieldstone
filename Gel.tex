@@ -1109,18 +1109,198 @@ i.e. the null space has dimension 2, so that the element is then not stable.
 
 
 
-
-
 See code {\tt python\_codes/Gel/macro\_element\_q1pq1.py}
 
 
 
+%-------------------------------------------------------------------
+\subsection{$Q_1^+\times Q_1$ element in 3D}
+
+
+
+For the quadrilateral MINI element, $m_\upnu=9$ and $m_p=8$ so $\G_{el}$ is
+a $27\times 8$ matrix (obtained with $10^3$ quadrature points, no difference
+with $6^3$ points).
+
+\[
+\G_{el} = -\int_{\Omega_e} {\bm B}^T \cdot {\bm N} d\Omega
+= -\int_{\Omega_e}
+\left(
+\begin{array}{cccccc}
+\partial_r N_1^\upnu & 0 & 0 & \partial_s N_1^\upnu  & \partial_t N_1^\upnu & 0 \\
+0 & \partial_s N_1^\upnu  & 0 & \partial_r N_1^\upnu  & 0 & \partial_t N_1^\upnu \\
+0 & 0 & \partial_t N_1^\upnu  & 0 & \partial_r N_1^\upnu  & \partial_s N_1^\upnu \\
+\dots  & \dots & \dots  & \dots & \dots  & \dots \\
+\dots  & \dots & \dots  & \dots & \dots  & \dots \\
+\dots  & \dots & \dots  & \dots & \dots  & \dots \\
+\partial_r N_{27}^\upnu & 0 & 0 & \partial_s N_{27}^\upnu  & \partial_t N_{27}^\upnu & 0 \\
+0 & \partial_s N_{27}^\upnu  & 0 & \partial_r N_{27}^\upnu  & 0 & \partial_t N_{27}^\upnu \\
+0 & 0 & \partial_t N_{27}^\upnu  & 0 & \partial_r N_{27}^\upnu  & \partial_s N_{27}^\upnu 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cccc}
+N_1^p & N_2^p & \dots & N_{8}^p \\ 
+N_1^p & N_2^p & \dots & N_{8}^p \\ 
+N_1^p & N_2^p & \dots & N_{8}^p \\ 
+0 & 0 & \dots & 0 \\ 
+0 & 0 & \dots & 0 \\ 
+0 & 0 & \dots & 0 
+\end{array}
+\right)
+d\Omega
+\]
+
+
+\begin{tiny}
+
+\[
+\G_{el}=
+-\int_{\Omega_e}
+\left(
+\begin{array}{cccccccc}
+N_1^p\partial_r N_1^\upnu & N_2^p\partial_r N_1^\upnu & N_3^p\partial_r N_1^\upnu & N_4^p\partial_r N_1^\upnu & 
+N_5^p\partial_r N_6^\upnu & N_2^p\partial_r N_1^\upnu & N_7^p\partial_r N_1^\upnu & N_8^p\partial_r N_1^\upnu \\ \\ 
+N_1^p\partial_s N_1^\upnu & N_2^p\partial_s N_1^\upnu & N_3^p\partial_s N_1^\upnu & N_4^p\partial_s N_1^\upnu & 
+N_5^p\partial_s N_6^\upnu & N_2^p\partial_s N_1^\upnu & N_7^p\partial_s N_1^\upnu & N_8^p\partial_s N_1^\upnu \\ \\
+N_1^p\partial_t N_1^\upnu & N_2^p\partial_t N_1^\upnu & N_3^p\partial_t N_1^\upnu & N_4^p\partial_t N_1^\upnu &
+N_5^p\partial_t N_6^\upnu & N_2^p\partial_t N_1^\upnu & N_7^p\partial_t N_1^\upnu & N_8^p\partial_t N_1^\upnu \\ 
+\\
+N_1^p\partial_r N_2^\upnu & N_2^p\partial_r N_2^\upnu & N_3^p\partial_r N_2^\upnu & N_4^p\partial_r N_2^\upnu &
+N_5^p\partial_r N_2^\upnu & N_6^p\partial_r N_2^\upnu & N_7^p\partial_r N_2^\upnu & N_8^p\partial_r N_2^\upnu \\ \\
+N_1^p\partial_s N_2^\upnu & N_2^p\partial_s N_2^\upnu & N_3^p\partial_s N_2^\upnu & N_4^p\partial_s N_2^\upnu &
+N_5^p\partial_s N_2^\upnu & N_6^p\partial_s N_2^\upnu & N_7^p\partial_s N_2^\upnu & N_8^p\partial_s N_2^\upnu \\ \\
+N_1^p\partial_t N_2^\upnu & N_2^p\partial_t N_2^\upnu & N_3^p\partial_t N_2^\upnu & N_4^p\partial_t N_2^\upnu &
+N_5^p\partial_t N_2^\upnu & N_6^p\partial_t N_2^\upnu & N_7^p\partial_t N_2^\upnu & N_8^p\partial_t N_2^\upnu \\ 
+\\
+N_1^p\partial_r N_3^\upnu & N_2^p\partial_r N_3^\upnu & N_3^p\partial_r N_3^\upnu & N_4^p\partial_r N_3^\upnu &
+N_5^p\partial_r N_3^\upnu & N_6^p\partial_r N_3^\upnu & N_7^p\partial_r N_3^\upnu & N_8^p\partial_r N_3^\upnu \\ \\
+N_1^p\partial_s N_3^\upnu & N_2^p\partial_s N_3^\upnu & N_3^p\partial_s N_3^\upnu & N_4^p\partial_s N_3^\upnu &
+N_5^p\partial_s N_3^\upnu & N_6^p\partial_s N_3^\upnu & N_7^p\partial_s N_3^\upnu & N_8^p\partial_s N_3^\upnu \\ \\
+N_1^p\partial_t N_3^\upnu & N_2^p\partial_t N_3^\upnu & N_3^p\partial_t N_3^\upnu & N_4^p\partial_t N_3^\upnu &
+N_5^p\partial_t N_3^\upnu & N_6^p\partial_t N_3^\upnu & N_7^p\partial_t N_3^\upnu & N_8^p\partial_t N_3^\upnu \\
+\\
+N_1^p\partial_r N_4^\upnu & N_2^p\partial_r N_4^\upnu & N_3^p\partial_r N_4^\upnu & N_4^p\partial_r N_4^\upnu &
+N_5^p\partial_r N_4^\upnu & N_6^p\partial_r N_4^\upnu & N_7^p\partial_r N_4^\upnu & N_8^p\partial_r N_4^\upnu \\ \\
+N_1^p\partial_s N_4^\upnu & N_2^p\partial_s N_4^\upnu & N_3^p\partial_s N_4^\upnu & N_4^p\partial_s N_4^\upnu &
+N_5^p\partial_s N_4^\upnu & N_6^p\partial_s N_4^\upnu & N_7^p\partial_s N_4^\upnu & N_8^p\partial_s N_4^\upnu \\ \\
+N_1^p\partial_t N_4^\upnu & N_2^p\partial_t N_4^\upnu & N_3^p\partial_t N_4^\upnu & N_4^p\partial_t N_4^\upnu &
+N_5^p\partial_t N_4^\upnu & N_6^p\partial_t N_4^\upnu & N_7^p\partial_t N_4^\upnu & N_8^p\partial_t N_4^\upnu \\
+\\
+N_1^p\partial_r N_5^\upnu & N_2^p\partial_r N_5^\upnu & N_3^p\partial_r N_5^\upnu & N_4^p\partial_r N_5^\upnu \\
+N_1^p\partial_s N_5^\upnu & N_2^p\partial_s N_5^\upnu & N_3^p\partial_s N_5^\upnu & N_4^p\partial_s N_5^\upnu \\
+N_1^p\partial_t N_5^\upnu & N_2^p\partial_t N_5^\upnu & N_3^p\partial_t N_5^\upnu & N_4^p\partial_t N_5^\upnu \\
+N_1^p\partial_r N_6^\upnu & N_2^p\partial_r N_6^\upnu & N_3^p\partial_r N_6^\upnu & N_4^p\partial_r N_6^\upnu \\
+N_1^p\partial_s N_6^\upnu & N_2^p\partial_s N_6^\upnu & N_3^p\partial_s N_6^\upnu & N_4^p\partial_s N_6^\upnu \\
+N_1^p\partial_t N_6^\upnu & N_2^p\partial_t N_6^\upnu & N_3^p\partial_t N_6^\upnu & N_4^p\partial_t N_6^\upnu \\
+N_1^p\partial_r N_7^\upnu & N_2^p\partial_r N_7^\upnu & N_3^p\partial_r N_7^\upnu & N_4^p\partial_r N_7^\upnu \\
+N_1^p\partial_s N_7^\upnu & N_2^p\partial_s N_7^\upnu & N_3^p\partial_s N_7^\upnu & N_4^p\partial_s N_7^\upnu \\
+N_1^p\partial_t N_7^\upnu & N_2^p\partial_t N_7^\upnu & N_3^p\partial_t N_7^\upnu & N_4^p\partial_t N_7^\upnu \\
+N_1^p\partial_r N_8^\upnu & N_2^p\partial_r N_8^\upnu & N_3^p\partial_r N_8^\upnu & N_4^p\partial_r N_8^\upnu \\
+N_1^p\partial_s N_8^\upnu & N_2^p\partial_s N_8^\upnu & N_3^p\partial_s N_8^\upnu & N_4^p\partial_s N_8^\upnu \\
+N_1^p\partial_t N_8^\upnu & N_2^p\partial_t N_8^\upnu & N_3^p\partial_t N_8^\upnu & N_4^p\partial_t N_8^\upnu \\
+N_1^p\partial_r N_9^\upnu & N_2^p\partial_r N_9^\upnu & N_3^p\partial_r N_9^\upnu & N_4^p\partial_r N_9^\upnu \\
+N_1^p\partial_s N_9^\upnu & N_2^p\partial_s N_9^\upnu & N_3^p\partial_s N_9^\upnu & N_4^p\partial_s N_9^\upnu \\
+N_1^p\partial_t N_9^\upnu & N_2^p\partial_t N_9^\upnu & N_3^p\partial_t N_9^\upnu & N_4^p\partial_t N_9^\upnu 
+\end{array}
+\right)
+d\Omega 
+=- \G_{el}^{Q_1\times Q_1} + 
+\]
+
+\end{tiny}
+
+\begin{eqnarray}
+\int\int\int N_1^p\partial_r N_1^\upnu drdsdt &=&   
+\int\int\int N_1\partial_r N_1 drdsdt -\frac{1}{8}  \int\int\int N_1\partial_r b\; drdsdt  \\ 
+&=& \frac{8}{27} - \frac{1}{8} \frac{4}{75} = \frac{1}{1350}( 400 - 9 ) =  \frac{372}{1350} \\ 
+\int\int\int N_2^p\partial_r N_1^\upnu drdsdt &=&   
+\int\int\int N_2\partial_r N_1 drdsdt -\frac{1}{8}  \int\int\int N_2\partial_r b\; drdsdt  \\  
+&=& \frac{4}{27} - \frac{1}{8} \\
+\int\int\int N_3^p\partial_r N_1^\upnu drdsdt &=&   
+\int\int\int N_3\partial_r N_1 drdsdt -\frac{1}{8}  \int\int\int N_3\partial_r b\; drdsdt  \\  
+&=& \frac{2}{27} -\frac{1}{8} \\
+\int\int\int N_4^p\partial_r N_1^\upnu drdsdt &=&   
+\int\int\int N_4\partial_r N_1 drdsdt -\frac{1}{8}  \int\int\int N_4\partial_r b\; drdsdt  \\  
+&=& \frac{4}{27} \\
+\int\int\int N_5^p\partial_r N_1^\upnu drdsdt &=&   
+\int\int\int N_5\partial_r N_1 drdsdt -\frac{1}{8}  \int\int\int N_5\partial_r b\; drdsdt  \\  
+&=& \frac{4}{27} \\
+\int\int\int N_6^p\partial_r N_1^\upnu drdsdt &=&   
+\int\int\int N_6\partial_r N_1 drdsdt -\frac{1}{8}  \int\int\int N_6\partial_r b\; drdsdt  \\  
+&=& \frac{2}{27} \\
+\int\int\int N_7^p\partial_r N_1^\upnu drdsdt &=&   
+\int\int\int N_7\partial_r N_1 drdsdt -\frac{1}{8}  \int\int\int N_7\partial_r b\; drdsdt  \\  
+&=& \frac{1}{27} \\
+\int\int\int N_8^p\partial_r N_1^\upnu drdsdt &=&   
+\int\int\int N_8\partial_r N_1 drdsdt -\frac{1}{8}  \int\int\int N_8\partial_r b\; drdsdt  \\  
+&=& \frac{2}{27} \\
+\end{eqnarray}
 
 
 
 
+For bubble function \#1:
+\[
+\G_{el}=
+\frac{1}{1350}
+\left(
+\begin{array}{ccccccccc}
+ 372&  228&  102&  198&  198&  102&   43&  107\\
+ 372&  198&  102&  228&  198&  107&   43&  102\\
+ 372&  198&  107&  198&  228&  102&   43&  102\\
+-228& -372& -198& -102& -102& -198& -107&  -43\\
+ 222&  348&  252&   78&  123&  182&  118&   27\\
+ 222&  348&  182&  123&   78&  252&  118&   27\\
+ -78& -222& -348& -252&  -27& -123& -182& -118\\
+ -78& -252& -348& -222&  -27& -118& -182& -123\\
+ 147&  198&  332&  198&    3&  102&  268&  102\\
+ 222&   78&  252&  348&  123&   27&  118&  182\\
+-228& -102& -198& -372& -102&  -43& -107& -198\\
+ 222&  123&  182&  348&   78&   27&  118&  252\\
+ 222&   78&   27&  123&  348&  252&  118&  182\\
+ 222&  123&   27&   78&  348&  182&  118&  252\\
+-228& -102&  -43& -102& -372& -198& -107& -198\\
+ -78& -222& -123&  -27& -252& -348& -182& -118\\
+ 147&  198&  102&    3&  198&  332&  268&  102\\
+ -78& -252& -118&  -27& -222& -348& -182& -123\\
+  -3& -147& -198& -102& -102& -198& -332& -268\\
+  -3& -102& -198& -147& -102& -268& -332& -198\\
+  -3& -102& -268& -102& -147& -198& -332& -198\\
+ 147&    3&  102&  198&  198&  102&  268&  332\\
+ -78&  -27& -123& -222& -252& -118& -182& -348\\
+ -78&  -27& -118& -252& -222& -123& -182& -348\\
+-576&  576&  384& -384& -384&  384&  256& -256\\
+-576& -384&  384&  576& -384& -256&  256&  384\\
+-576& -384& -256& -384&  576&  384&  256&  384
+\end{array}
+\right)
+\]
 
+Considering a 2x2x2 macroelement of size 4x4x4. 
+Then NV=3*3*3+8=35, NP=3*3*3=27
+Matrix $\G$ is 3*35x27=105*27
 
+After bc are imposed on all nodes on the boundary, 
+9 Vnodes are still free (8 bubble nodes and the node in the 
+middle), i.e. 9*3 dofs = 27 and there are
+3x3x3=27 pressure nodes. So $\tilde{G}$ is 27*27. no less. 
+
+We get 
+\[
+\tilde{G} =
+\frac{1}{1350}
+\left(
+\begin{array}{ccccccccccccccccccccccccccc}
+jfg ljh hg l
+\end{array}
+\right)
+\]
+
+I have tried all kinds of bubbles but I usually arrive at a
+null space of dimension 3 to 5... typically for bubble 1, dim=5, 
+while for bubble=2 dim=3. 
 
 
 %-------------------------------------------------------------------
