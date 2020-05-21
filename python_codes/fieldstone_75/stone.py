@@ -6,6 +6,7 @@ from scipy.sparse.linalg.dsolve import linsolve
 import time as timing
 import matplotlib.pyplot as plt
 from scipy.sparse import lil_matrix
+from scipy.linalg import null_space
 
 #------------------------------------------------------------------------------
 
@@ -14,31 +15,78 @@ def B(r,s,t):
        return (1-r**2)*(1-s**2)*(1-t**2) * (1-r)*(1-s)*(1-t)
     if bubble==2:
        return (1-r**2)*(1-s**2)*(1-t**2) * (1+beta*(r+s+t))
+    if bubble==3:
+       return (1-r**2)*(1-s**2)*(1-t**2) 
+    if bubble==4:
+       return (1-r**2)*(1-s**2)*(1-t**2)*(1+aa*r+bb*s+cc*t) 
+    if bubble==5:
+       return (1-r**2)*(1-s**2)*(1-t**2)*(1-aa*r)*(1-bb*s)*(1-cc*t)
+    if bubble==6:
+       return (1-r**2)**2*(1-s**2)**2*(1-t**2)**2
+    if bubble==7:
+       return (1-r**2)**3*(1-s**2)**3*(1-t**2)**3
+    if bubble==8:
+       return (1-r**2)*(1-s**2)*(1-t**2) * (1+r+s+t+r*s+r*t+s*t+r*s*t)
 
 def dBdr(r,s,t):
     if bubble==1:
        return (1-s**2)*(1-t**2)*(1-s)*(1-t)*(-1-2*r+3*r**2)
     if bubble==2:
        return (1-s**2)*(1-t**2)*(-beta*(3*r**2+2*r*(s+t)-1)+2*r) 
+    if bubble==3:
+       return (-2*r)*(1-s**2)*(1-t**2) 
+    if bubble==4:
+       return -(1-s**2)*(1-t**2)*(aa*(3*r**2-1)+2*r*(bb*s+cc*t+1))
+    if bubble==5:
+       return (1-s**2)*(1-t**2)*(aa*(3*r**2-1)-2*r)*(1-bb*s)*(1-cc*t) 
+    if bubble==6:
+       return -4*r*(1-r**2)*(1-s**2)**2*(1-t**2)**2
+    if bubble==7:
+       return -6*r*(1-r**2)**2*(1-s**2)**3*(1-t**2)**3
+    if bubble==8:
+       return (1-s**2)*(1-t**2) * (-3*r**2*(s+t+1)-2*r*(s+1)*(t+1)+s+t+1)
 
 def dBds(r,s,t):
     if bubble==1:
        return (1-r**2)*(1-t**2)*(1-r)*(1-t)*(-1-2*s+3*s**2) 
     if bubble==2:
        return (1-r**2)*(1-t**2)*(-beta*(3*s**2+2*s*(r+t)-1)+2*s) 
+    if bubble==3:
+       return (1-r**2)*(-2*s)*(1-t**2) 
+    if bubble==4:
+       return -(1-r**2)*(1-t**2)*(bb*(3*s**2-1)+2*s*(aa*r+cc*t+1))
+    if bubble==5:
+       return (1-r**2)*(1-t**2)*(bb*(3*s**2-1)-2*s)*(1-aa*r)*(1-cc*t) 
+    if bubble==6:
+       return -4*s*(1-s**2)*(1-r**2)**2*(1-t**2)**2
+    if bubble==7:
+       return -6*s*(1-r**2)**3*(1-s**2)**2*(1-t**2)**3
+    if bubble==8:
+       return (1-r**2)*(1-t**2)*(-(s**2-1)*(r+t+1)-2*s*(r*(s+t+1)+(s+1)*(t+1))  )
 
 def dBdt(r,s,t):
     if bubble==1:
        return (1-r**2)*(1-s**2)*(1-r)*(1-s)*(-1-2*t+3*t**2) 
     if bubble==2:
        return (1-r**2)*(1-s**2)*(-beta*(3*t**2+2*t*(r+s)-1)+2*t) 
+    if bubble==3:
+       return (1-r**2)*(1-s**2)*(-2*t) 
+    if bubble==4:
+       return -(1-r**2)*(1-s**2)*(cc*(3*t**2-1)+2*t*(aa*r+bb*s+1))
+    if bubble==5:
+       return (1-r**2)*(1-s**2)*(cc*(3*t**2-1)-2*t)*(1-aa*r)*(1-bb*s) 
+    if bubble==6:
+       return -4*t*(1-t**2)*(1-r**2)**2*(1-s**2)**2
+    if bubble==7:
+       return -6*t*(1-r**2)**3*(1-s**2)**3*(1-t**2)**2
+    if bubble==8:
+       return (1-r**2)*(1-s**2)*( (t**2-1)*(-(r+s+1))-2*t*(r*(s+t+1)+(s+1)*(t+1)))
+
 
 #------------------------------------------------------------------------------
 
 def rho(x,y,z):
     if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123**2:
-    #if abs(x-.5)<2*hx and abs(y-0.5)<2*hy and abs(z-0.5)<2*hz:
-    #if abs(x-.5)<0.25 and abs(y-0.5)<0.25 and abs(z-0.5)<0.25:
        val=2.
     else:
        val=1.
@@ -46,8 +94,6 @@ def rho(x,y,z):
 
 def eta(x,y,z):
     if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123**2:
-    #if abs(x-.5)<2*hx and abs(y-0.5)<2*hy and abs(z-0.5)<2*hz:
-    #if abs(x-.5)<0.25 and abs(y-0.5)<0.25 and abs(z-0.5)<0.25:
        val=10.
     else:
        val=1.
@@ -125,9 +171,9 @@ mP=8     # number of P nodes making up an element
 ndofV=3  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-Lx=1.  # x- extent of the domain 
-Ly=1.  # y- extent of the domain 
-Lz=1.  # z- extent of the domain 
+Lx=4.  # x- extent of the domain 
+Ly=4.  # y- extent of the domain 
+Lz=4.  # z- extent of the domain 
 
 if int(len(sys.argv) == 6):
    nelx = int(sys.argv[1])
@@ -136,10 +182,10 @@ if int(len(sys.argv) == 6):
    nqperdim=int(sys.argv[4])
    bubble=int(sys.argv[5])
 else:
-   nelx =8   # do not exceed 20 
+   nelx =2  # do not exceed 20 
    nely =nelx
    nelz =nelx
-   nqperdim=4
+   nqperdim=10
    bubble=1
 #end if
 
@@ -173,8 +219,11 @@ eps=1.e-6
 sqrt3=np.sqrt(3.)
 
 beta=0.25
+aa=0.1
+bb=-0.2
+cc=0.6
 
-sparse=True
+sparse=False
 
 if nqperdim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
@@ -216,11 +265,32 @@ if nqperdim==6:
              0.360761573048139,\
              0.171324492379170]
 
+if nqperdim==10:
+   qcoords=[-0.973906528517172,\
+            -0.865063366688985,\
+            -0.679409568299024,\
+            -0.433395394129247,\
+            -0.148874338981631,\
+             0.148874338981631,\
+             0.433395394129247,\
+             0.679409568299024,\
+             0.865063366688985,\
+             0.973906528517172]
+   qweights=[0.066671344308688,\
+             0.149451349150581,\
+             0.219086362515982,\
+             0.269266719309996,\
+             0.295524224714753,\
+             0.295524224714753,\
+             0.269266719309996,\
+             0.219086362515982,\
+             0.149451349150581,\
+             0.066671344308688]
+
 
 rVnodes=[-1,+1,+1,-1,-1,+1,+1,-1,0]
 sVnodes=[-1,-1,+1,+1,-1,-1,+1,+1,0]
 tVnodes=[-1,-1,-1,-1,+1,+1,+1,+1,0]
-
 
 #################################################################
 #################################################################
@@ -234,6 +304,8 @@ print("nny=",nny)
 print("nnz=",nnz)
 print("NV=",NV)
 print("NP=",NP)
+print("NfemV=",NfemV)
+print("NfemP=",NfemP)
 print("------------------------------")
 
 ######################################################################
@@ -383,15 +455,27 @@ bc_val=np.zeros(Nfem,dtype=np.float64) # boundary condition, value
 for i in range(0,NV):
     if xV[i]/Lx<eps:
        bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]=0
+       bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]=0
+       bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]=0 
     if xV[i]/Lx>(1-eps):
        bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]=0
+       bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]=0
+       bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]=0 
     if yV[i]/Ly<eps:
+       bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]=0
        bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]=0
+       bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]=0 
     if yV[i]/Ly>(1-eps):
+       bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]=0
        bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]=0
+       bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]=0 
     if zV[i]/Lz<eps:
-       bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]=0
+       bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]=0
+       bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]=0
+       bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]=0 
     if zV[i]/Lz>(1-eps):
+       bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]=0
+       bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]=0
        bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]=0 
 #end for
 
@@ -411,17 +495,16 @@ else:
    K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
    G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
 
-constr  = np.zeros(NfemP,dtype=np.float64)         # constraint matrix/vector
-f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
-h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
+constr  = np.zeros(NfemP,dtype=np.float64)        # constraint matrix/vector
+f_rhs = np.zeros(NfemV,dtype=np.float64)          # right hand side f 
+h_rhs = np.zeros(NfemP,dtype=np.float64)          # right hand side h 
 b_mat = np.zeros((6,ndofV*mV),dtype=np.float64)   # gradient matrix B 
-u     = np.zeros(NV,dtype=np.float64)          # x-component velocity
-v     = np.zeros(NV,dtype=np.float64)          # y-component velocity
-w     = np.zeros(NV,dtype=np.float64)          # y-component velocity
-p     = np.zeros(nel,dtype=np.float64)          # y-component velocity
-c_mat = np.zeros((6,6),dtype=np.float64) 
+u     = np.zeros(NV,dtype=np.float64)             # x-component velocity
+v     = np.zeros(NV,dtype=np.float64)             # y-component velocity
+w     = np.zeros(NV,dtype=np.float64)             # z-component velocity
+p     = np.zeros(nel,dtype=np.float64)            # pressure 
+c_mat = np.zeros((6,6),dtype=np.float64)          # C matrix 
 N_mat   = np.zeros((6,ndofP*mP),dtype=np.float64) # matrix  
-
 NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
 NNNP    = np.zeros(mP,dtype=np.float64)           # shape functions P
 dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
@@ -522,6 +605,11 @@ for iel in range(0, nel):
         #end for jq
     #end for iq
 
+    G_el*=1350
+    #for i in range(27):
+    #    print(" %7f %7f %f %f %.7f %.7f %.7f %.7f" %(G_el[i,0],G_el[i,1],G_el[i,2],G_el[i,3],G_el[i,4],G_el[i,5],G_el[i,6],G_el[i,7]))
+    #print(G_el)
+
     # impose b.c. 
     for k1 in range(0,mV):
         for i1 in range(0,ndofV):
@@ -577,6 +665,39 @@ for iel in range(0, nel):
 #end for iel
 
 print("build FE matrix: %.3f s" % (timing.time() - start))
+
+
+print ("------------------------------------------------------")
+#for i in range(NfemV):
+#    print(i,G_mat[i,0:NfemP])
+
+G2 = np.zeros((27,NfemP),dtype=np.float64) 
+G2[0:3,:]=np.round(G_mat[39:42,:], decimals=0)
+G2[3:,:]=np.round(G_mat[81:,:], decimals=0)
+
+print('=========================G2=')
+#print(G2)
+ns = null_space(G2)
+print(np.round(ns,decimals=4))
+print(ns.shape)
+
+
+G3 = np.zeros((27,NfemP),dtype=np.int32) 
+for i in range(27):
+    for j in range(NfemP):
+        G3[i,j]=int(round(G2[i,j]))
+
+print('=========================G3=')
+#print(G3)
+ns = null_space(G3)
+print(np.round(ns,decimals=4))
+print(ns.shape)
+
+
+
+exit()
+
+
 
 ######################################################################
 # assemble K, G, GT, f, h into A and rhs
@@ -684,6 +805,10 @@ exz = np.zeros(NV,dtype=np.float64)
 eyz = np.zeros(NV,dtype=np.float64)  
 sr = np.zeros(NV,dtype=np.float64)  
 
+#u[:]=xV[:]
+#v[:]=yV[:]
+#w[:]=zV[:]
+
 for iel in range(0,nel):
     for i in range(0,mV):
         inode=iconV[i,iel]
@@ -739,14 +864,12 @@ eyz/=count
 #sr[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel]+ezz[iel]*ezz[iel])
 #               +exy[iel]*exy[iel]+exz[iel]*exz[iel]+eyz[iel]*eyz[iel])
 
-print("exx (m,M) %.5f %.5f " %(np.min(exx),np.max(exx)))
-print("eyy (m,M) %.5f %.5f " %(np.min(eyy),np.max(eyy)))
-print("ezz (m,M) %.5f %.5f " %(np.min(ezz),np.max(ezz)))
-print("exy (m,M) %.5f %.5f " %(np.min(exy),np.max(exy)))
-print("exz (m,M) %.5f %.5f " %(np.min(exz),np.max(exz)))
-print("eyz (m,M) %.5f %.5f " %(np.min(eyz),np.max(eyz)))
-
-#np.savetxt('strainrate.ascii',np.array([xc,yc,zc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+print("exx (m,M) %.5f %.5f %.5f" %(np.min(exx),np.max(exx),hx))
+print("eyy (m,M) %.5f %.5f %.5f" %(np.min(eyy),np.max(eyy),hx))
+print("ezz (m,M) %.5f %.5f %.5f" %(np.min(ezz),np.max(ezz),hx))
+print("exy (m,M) %.5f %.5f %.5f" %(np.min(exy),np.max(exy),hx))
+print("exz (m,M) %.5f %.5f %.5f" %(np.min(exz),np.max(exz),hx))
+print("eyz (m,M) %.5f %.5f %.5f" %(np.min(eyz),np.max(eyz),hx))
 
 print("compute strainrate: %.3f s" % (timing.time() - start))
 
