@@ -1,32 +1,19 @@
-rm -f errors
+#! /bin/bash
+rm niterations*.ascii
+rm solve_time*.ascii
+rm solver_convergence*
 
-python3 fieldstone.py   8   8 0 | grep nel >> errors
-mv solver_convergence.ascii solver_convergence_008.ascii
+for ps in 0 1 2 3 4; do 
+    for rs in 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 24 28 29 32 33 40 41 48 49 56 57 64 65 80 81 96; do
+    #for rs in 6 7 8 9 10 11 12 ; do
+        echo precond $ps res $rs
+        python3 stone.py  $rs $rs 0 $ps > opla 
+        grep after opla >> niterations_ps${ps}.ascii 
+        grep solve opla >> solve_time_ps${ps}.ascii
+        mv solver_convergence.ascii solver_convergence_rs${rs}_ps${ps}.ascii 
+    done
+done
 
-python3 fieldstone.py  12  12 0 | grep nel >> errors
-mv solver_convergence.ascii solver_convergence_012.ascii
-
-python3 fieldstone.py  16  16 0 | grep nel >> errors
-mv solver_convergence.ascii solver_convergence_016.ascii
-
-python3 fieldstone.py  24  24 0 | grep nel >> errors
-mv solver_convergence.ascii solver_convergence_024.ascii
-
-python3 fieldstone.py  32  32 0 | grep nel >> errors
-mv solver_convergence.ascii solver_convergence_032.ascii
-
-python3 fieldstone.py  48  48 0 | grep nel >> errors
-mv solver_convergence.ascii solver_convergence_048.ascii
-
-python3 fieldstone.py  64  64 0 | grep nel >> errors
-mv solver_convergence.ascii solver_convergence_064.ascii
-
-python3 fieldstone.py  96  96 0 | grep nel >> errors
-mv solver_convergence.ascii solver_convergence_096.ascii
-
-python3 fieldstone.py 128 128 0 | grep nel >> errors
-mv solver_convergence.ascii solver_convergence_128.ascii
-
-
+rm opla
 
 

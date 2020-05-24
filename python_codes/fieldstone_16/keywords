@@ -1,14 +1,9 @@
 2D
 box
 Q1P0
-analytical_benchmark
 stokes_equation
-nonlinear
 viscous_rheology
 buoyancy_driven
 paraview_output
-matplotlib
 pressure_scaling
-pressure_normalisation
 schur_complement
-

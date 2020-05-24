@@ -1,0 +1,62 @@
+set term pdf enhanced font "Times,11pt"
+set log y
+set pointsize 0.5
+set grid
+
+set xlabel 'h'
+set ylabel '# iterations'
+set log xy 
+set output 'niterations.pdf'
+plot[][]\
+'niterations_ps0.ascii' u (1/sqrt($7)):4 w lp pt 5 t 'no prec.',\
+'niterations_ps1.ascii' u (1/sqrt($7)):4 w lp pt 5 t 'prec. #1',\
+'niterations_ps2.ascii' u (1/sqrt($7)):4 w lp pt 5 t 'prec. #2',\
+'niterations_ps3.ascii' u (1/sqrt($7)):4 w lp pt 5 t 'prec. #3',\
+'niterations_ps4.ascii' u (1/sqrt($7)):4 w lp pt 5 t 'prec. #4',\
+3/(x) lt -1 dashtype 3 t 'x^{-1}' 
+
+#unset log y
+set output 'solve_time.pdf'
+plot[][]\
+'solve_time_ps0.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'no prec.',\
+'solve_time_ps1.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'prec. #1',\
+'solve_time_ps2.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'prec. #2',\
+'solve_time_ps3.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'prec. #3',\
+'solve_time_ps4.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'prec. #4',\
+x**(-3)/10000 lt -1 dashtype 3 t 'x^{-1}' 
+
+
+unset log x
+set xlabel '# iteration'
+set ylabel 'normalised residual'
+set output 'residual_32x32.pdf'
+plot[][]\
+'solver_convergence_rs32_ps0.ascii'    w l lt 1  t 'no prec.',\
+'solver_convergence_rs32_ps1.ascii'    w l lt 2  t 'prec. #1',\
+'solver_convergence_rs32_ps2.ascii'    w l lt 3  t 'prec. #2',\
+'solver_convergence_rs32_ps3.ascii'    w l lt 4  t 'prec. #3',\
+'solver_convergence_rs32_ps4.ascii'    w l lt 5  t 'prec. #4',\
+1e-8 lt -1 lw 2 
+
+set output 'residual_64x64.pdf'
+plot[][]\
+'solver_convergence_rs64_ps0.ascii'    w l lt 1  t 'no prec.',\
+'solver_convergence_rs64_ps1.ascii'    w l lt 2  t 'prec. #1',\
+'solver_convergence_rs64_ps2.ascii'    w l lt 3  t 'prec. #2',\
+'solver_convergence_rs64_ps3.ascii'    w l lt 4  t 'prec. #3',\
+'solver_convergence_rs64_ps4.ascii'    w l lt 5  t 'prec. #4',\
+1e-8 lt -1 lw 2 
+
+set output 'residual_96x96.pdf'
+plot[][]\
+'solver_convergence_rs96_ps0.ascii'    w l lt 1  t 'no prec.',\
+'solver_convergence_rs96_ps1.ascii'    w l lt 2  t 'prec. #1',\
+'solver_convergence_rs96_ps2.ascii'    w l lt 3  t 'prec. #2',\
+'solver_convergence_rs96_ps3.ascii'    w l lt 4  t 'prec. #3',\
+'solver_convergence_rs96_ps4.ascii'    w l lt 5  t 'prec. #4',\
+1e-8 lt -1 lw 2 
+
+
+
+
+
