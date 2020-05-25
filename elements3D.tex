@@ -449,6 +449,44 @@ in its middle.
 
 
 
+%-----------------------------------------------------------------
+\subsubsection{The rotated $Q_1$} \label{ss:rq1}
+\index{general}{$\tilde{Q}_1$}
+
+The nodes are not on the corners of the element but in the middle of the
+element faces:
+
+\begin{center}
+\includegraphics[width=4cm]{images/rannacherturek/elt3D}\\
+{\captionfont Node numbering and connectivity pattern of the reference element. Taken from \cite{gekm08}}
+\end{center}
+
+We have $\tilde{Q}_1=span \{1,r,s,t,r^2-s^2,s^2-t^2\}$.
+
+%.............................................
+\paragraph{The Middle Point (MP) variant}. 
+
+The shape functions are given by (see Georgiev et al (2008) \cite{gekm08}):
+\begin{eqnarray}
+N_1(r,s,t) &=& \frac{1}{6}(1-3r+2r^2-s^2-t^2 ) \\
+N_2(r,s,t) &=& \frac{1}{6}(1+3r+2r^2-s^2-t^2 ) \\
+N_3(r,s,t) &=& \frac{1}{6}(1-r^2-3s+2s^2-t^2 ) \\
+N_4(r,s,t) &=& \frac{1}{6}(1-r^2+3s+2s^2-t^2 ) \\
+N_5(r,s,t) &=& \frac{1}{6}(1-r^2-s^2-3t+2t^2 ) \\
+N_6(r,s,t) &=& \frac{1}{6}(1-r^2-s^2+3t+2t^2 ) 
+\end{eqnarray}
+
+%......................................
+\paragraph{The Mid Value (MV) variant}. 
+
+\begin{eqnarray}
+N_1(r,s,t) &=& \frac{1}{12}(2-6x+6x^2-3y^2-3z^2) \\
+N_2(r,s,t) &=& \frac{1}{12}(2+6x+6x^2-3y^2-3z^2) \\
+N_3(r,s,t) &=& \frac{1}{12}(2-3x^2-6y+6y^2-3z^2) \\
+N_4(r,s,t) &=& \frac{1}{12}(2-3x^2+6y+6y^2-3z^2) \\
+N_5(r,s,t) &=& \frac{1}{12}(2-3x^2-3y^2-6z+6z^2) \\
+N_6(r,s,t) &=& \frac{1}{12}(2-3x^2-3y^2+6z+6z^2)
+\end{eqnarray}
 
 
 

@@ -63,6 +63,20 @@ of the solving strategies of Section \ref{sec:solvers}.
 %..................................................
 \subsubsection{Implementation -- the real deal}
 
+Here is what Bochev and Gunzburger \cite[Section 7.6.4]{bogu09} have to say about this:
+"[...] practical implementations cheat by substituting enforcement of the true zero mean constraint by using
+procedures collectively known as setting the pressure datum. These procedures essentially 
+amount to removing one degree of freedom from the pressure space.
+Setting the pressure datum can be accomplished in many different ways, ranging
+from specifying a pressure value at a grid node to more complicated approaches in
+which a boundary traction is specified at a single node in lieu of the velocity condition; 
+see [16, 24, 191] and the references cited therein for more details. Not surprisingly, 
+in practice, the simplest approach of fixing the pressure value at a node also
+happens to be the most widely used in practice."
+
+
+
+
 The idea is actually quite simple and requires two steps:
 \begin{enumerate}
 \item remove the null space by prescribing the pressure at one location and solve the system;

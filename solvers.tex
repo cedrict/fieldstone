@@ -37,7 +37,7 @@ In what follow I cover:
 Preconditioners \Literature: \cite{seuv10}
 
 %...................................................
-\subsubsection{when using the penalty formulation}
+\subsubsection{When using the penalty formulation}
 
 In this case we are only solving for 
 velocity since pressure is recovered in a post-processing step:
@@ -45,10 +45,10 @@ velocity since pressure is recovered in a post-processing step:
 (\K_\eta+\K_\lambda) \cdot \vec {\cal V} = \vec f
 \]
  We also know that 
-the penalty factor is many orders of magnitude higher than the viscosity and 
+the penalty factor $\lambda$ is many orders of magnitude higher than the viscosity and 
 in combination with the use of the $Q_1 \times P_0$ element the resulting matrix 
 condition number is very high so that the use of iterative solvers is precluded. 
-Indeed codes such as SOPALE \cite{full95}, DOUAR \cite{brtf08}, or FANTOM \cite{thie11} 
+Indeed codes such as SOPALE \cite{full95}, DOUAR \cite{brtf08}, FANTOM \cite{thie11} or SULEC \cite{qube11}
 relying on the penalty formulation all use direct solvers.
 The most popular are BLKFCT\footnote{\url{http://dm.unife.it/blkfclt/}}, 
 MUMPS\footnote{\url{http://mumps.enseeiht.fr/}}\cite{amdu89,amdl00,amdk01,amgl06}, 
@@ -56,10 +56,10 @@ PasTiX \cite{herr02},
 WSMP\footnote{\url{http://www.research.ibm.com/projects/wsmp}} \cite{GUPTA94ieee,GUPTA09sc-long},
 UMFPACK and CHOLMOD\footnote{\url{http://faculty.cse.tamu.edu/davis/suitesparse.html}}
 , SuperLU, PARDISO\footnote{\url{https://www.pardiso-project.org/}}
-\cite{pardiso-6.0a,pardiso-6.0b,pardiso-6.0c}, or those inside PETSc
-\ref{petsc-web-page,petsc-efficient}.
+\cite{pardiso-6.0a,pardiso-6.0b,pardiso-6.0c}, or those inside 
+PETSc\footnote{\url{https://www.mcs.anl.gov/petsc/}} \ref{petsc-user-ref}.
 
-Braun et al \cite{brtf08} list the following features of such solvers:
+Braun et al (2008) \cite{brtf08} list the following features of direct solvers:
 \begin{itemize}
 \item Robust
 \item Black-box operation
@@ -75,13 +75,8 @@ to the point that even modern computers with tens of Gb of RAM cannot deal with 
 This explains why direct solvers are often used for 2D problems and rarely in 3D with noticeable 
 exceptions \cite{thfb08,yahb09,brya10,lobh10,alht11,alht12,alhf13,whbb14,neew18}. 
 
-
 %...................................................
 \subsubsection{Conjugate gradient and the Schur complement approach }
-
-
-
-
 
 
 Let us write the above system as two equations:
@@ -104,13 +99,15 @@ The matrix $\SSS= \G^T \cdot \K^{-1} \cdot \G $ is called the Schur complement.
 It is Symmetric (since $\K$ is symmetric) and  Positive-Definite\footnote{$M$ 
 positive definite $\iff$ $x^TMx>0$ $\forall \; x\in \mathbb{R}^n \setminus {\bm 0}$ }
 (SPD) \index{general}{SPD} if $Ker({\G})=0$. 
-{\color{red} look in donea-huerta book for details}
 Having solved this equation (we have obtained $\vec{\cal P}$), the velocity can be recovered by solving 
 $\K\cdot \vec{\cal V} =\vec{f}- \G \cdot \vec{\cal P}$. 
 
 For now, let us assume that we have built the $\SSS$ matrix and the right hand 
 side $\underline{\vec{f}}=\G^T \cdot \K^{-1} \cdot \vec{f} - \vec{h}$.
 We must solve $\SSS\cdot \vec{\cal P} = \underline{\vec{f}}$.
+It is easy to see that $\SSS$ is actually a full matrix (i.e. not sparse) and 
+aside from the costs of building it explicitely using a direct solver would require {\it way}
+too much memory. We then turn to iterative methods. 
 
 \index{general}{Richardson Iterations}
 One can resort to so-called Richardson iterations, defined as follows (e.g., see \cite{varga}, p141):
@@ -142,7 +139,7 @@ is commonly called the Uzawa algorithm \cite[p221]{braess}.
 \underline{\bf Uzawa algorithm (1)}:
 \begin{eqnarray}
 \text{solve} \qquad \mathbb{K} \cdot \vec{\cal V}_k &=& \vec f - \mathbb{G}\cdot \vec {\cal P}_{k-1} \\
-{\cal P}_k &=& {\cal P}_{k-1}  + \alpha (\mathbb{G}^T\cdot \vec{\cal V}_k -\vec h)
+{\cal P}_k &=& {\cal P}_{k-1}  + \alpha_k (\mathbb{G}^T\cdot \vec{\cal V}_k -\vec h)
 \quad
 \quad
 \quad
@@ -170,7 +167,7 @@ which is the definition of a stationary method.
 
 Since the $\alpha$ parameter is the key to a succesful Uzawa algorithm, 
 this issue has of course been looked into. What follows is 
-presented in \cite[p221]{braess}.
+presented in p221 of Braess \cite{braess}.
 For the analysis of the Uzawa algorithm, we define the residue
 \[
 \vec {\cal R}_k = \vec h - \mathbb{G}^T \cdot \vec{\cal V}_k
@@ -185,7 +182,7 @@ Now substituting the iteration formula for ${\cal V}_k$, we get
 &=& \mathbb{G}^T \cdot \mathbb{K}^{-1} \cdot \mathbb{G}\cdot (\vec {\cal P}_{k-1} - \vec{\cal P}^\star) 
 \end{eqnarray}
 
-From Eq. \ref{uzaa2} it follows that:
+From Eq.~\eqref{uzaa2} it follows that:
 \begin{eqnarray}
 {\cal P}_k - {\cal P}_{k-1}  
 &=& \alpha (\mathbb{G}^T\cdot \vec{\cal V}_k -\vec h) \\
@@ -210,15 +207,14 @@ need an additional multiplication by $\K^{-1}$ in every step
 of the iteration. This can be avoided by storing an 
 auxiliary vector. 
 
-Note that in \cite{glow} it is stated: the convergence of this algorithm is proved for 
-$\alpha \in (0,2\mu/d)$ (where $d$ is the number of dimensions).
-\todo[inline]{check this, and report page number}
+%Note that in \cite{glow} it is stated: the convergence of this algorithm is proved for 
+%$\alpha \in (0,2\mu/d)$ (where $d$ is the number of dimensions).
+%\todo[inline]{check this, and report page number}
 Note that this algorithm is presented in \cite{zivt85} in the context of viscosplastic flow.
-
 
 As mentioned above, there is a way to rework the original Uzawa algorithm 
 to include Eq. (\ref{uzaa3}). It is yields a modified 
-Uzawa algorithm \cite[p221]{braess}:
+Uzawa algorithm (see p221 of Braess \cite{braess}):
 
 
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -236,22 +232,7 @@ For $k=1,2,...$, compute
 \end{mdframed}
 
 
-
-
-
 \Literature \cite{cach88,cao03}
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -262,17 +243,22 @@ For $k=1,2,...$, compute
 
 
 \index{general}{CG} \index{general}{Conjugate Gradient}
-Since $\SSS$ is SPD, the Conjugate Gradient (CG) method \cite{hest52} is very appropriate to solve this system. 
-Indeed, looking at the definition of Wikipedia: "{\it In mathematics, the conjugate gradient method is an algorithm for the numerical solution of particular systems of linear equations, namely those whose matrix is symmetric and positive-definite. The conjugate gradient method is often implemented as an iterative algorithm, applicable to sparse systems that are too large to be handled by a direct implementation or other direct methods such as the Cholesky decomposition. Large sparse systems often arise when numerically solving partial differential equations or optimization problems.}"
+Since the Schur matrix $\SSS$ is Symmetric Positive Definite, 
+the Conjugate Gradient (CG) method\footnote{\url{https://en.wikipedia.org/wiki/Conjugate_gradient_method}} \cite{hest52} 
+is very appropriate to solve this system. 
+
+Indeed, looking at the definition of Wikipedia: "{\it In mathematics, the conjugate gradient method is an algorithm 
+for the numerical solution of particular systems of linear equations, namely those whose matrix is symmetric and positive-definite. 
+The conjugate gradient method is often implemented as an iterative algorithm, applicable to sparse systems that are too large 
+to be handled by a direct implementation or other direct methods such as the Cholesky decomposition. 
+Large sparse systems often arise when numerically solving partial differential equations or optimization problems.}"
 
 A simple Google search tells us that the Conjugate Gradient algorithm is as follows:
 \begin{center}
-\frame{
-\includegraphics[width=7cm]{images/solvers/cgwiki}
-}\\
-Algorithm as obtained from Wikipedia \footnote{\url{https://en.wikipedia.org/wiki/Conjugate\_gradient\_method}}
+\frame{\includegraphics[width=7cm]{images/solvers/cgwiki}}\\
+{\captionfont Algorithm as obtained from Wikipedia.}
 \end{center}
-This algorithm is of course explained in detail in many textbooks such as \cite{saad}\todo[inline]{add biblio}.
+This algorithm is of course explained in detail in many textbooks such as Saad \cite{saad}.
 
 Let us look at this algorithm up close. The parts which may prove to be somewhat tricky 
 are those involving the matrix inverse (in our case the Schur complement).
@@ -374,24 +360,23 @@ will have a negative impact on the convergence.
 
 \begin{remark} 
 This algorithm requires one solve with matrix $\K$ per iteration 
-but says nothing about the method employed to do so (direct solver, iterative solver, ...)
+but says nothing about the method employed to do so (direct or iterative solver)
+nor the corrsponding preconditioner.
 \end{remark} 
 
 \index{general}{Preconditioned Conjugate Gradient}  
 One thing we know improves the convergence of any iterative solver is the use of a 
 preconditioner matrix and therefore now focus on the Preconditioned Conjugate Gradient (PCG) method.
-Once again a quick Google search yields:
+Once again we turn to Wikipedia:
 \begin{center}
-\frame{
-\includegraphics[width=6.5cm]{images/solvers/pcgwiki}
-}\\
-Algorithm obtained from Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Conjugate\_gradient\_method}}.
+\frame{\includegraphics[width=6.5cm]{images/solvers/pcgwiki}}\\
+{\captionfont Algorithm obtained from Wikipedia}
 \end{center}
 
-Note that in the algorithm above the preconditioner matrix $M$ 
+Note that in the algorithm above the preconditioner matrix ${\bm M}$ 
 has to be symmetric positive-definite and fixed, i.e., cannot change from iteration to iteration. 
 We see that this algorithm introduces an additional vector $\vec{z}$ and a solve with the 
-matrix $M$ at each iteration, which means that $M$ must be such that solving $M\cdot \vec{x}= \vec{f}$ 
+matrix ${\bm M}$ at each iteration, which means that ${\bm M}$ must be such that solving ${\bm M}\cdot \vec{x}= \vec{f}$ 
 where $\vec{f}$ is a given rhs vector must be cheap. Ultimately, the PCG algorithm applied to 
 the Schur complement equation takes the form:
 
@@ -422,17 +407,25 @@ the Schur complement equation takes the form:
 \end{itemize}
 \end{mdframed}
 
-Following \cite{zhym12} one can define the following matrix as preconditioner:
+Following Zhong et al \cite{zhym12} one can define the following matrix as preconditioner:
 \[
-M = diag \left[ \G^T (diag [\K]  )^{-1} \G \right]
+{\bm M} = diag \left[ \G^T (diag [\K]  )^{-1} \G \right]
 \]
-which is the preconditioner used for the Citcom codes (see appendix \ref{codes}). It 
+which is the preconditioner used for the Citcom codes (see appendix \ref{app:codes}). It 
 can be constructed while the FEM matrix is being built/assembled
-and it is trivial to invert.
+and it is trivial to invert. The entries in
+$diag[\K]$ are the average viscosity in the elements associated
+with a given degree of freedom.
 
+Another very cheap way of building ${\bm M}$ is to realise that the matrix $\SSS$ has dimensions element surface/volume 
+divided by viscosity. We can then postulate 
+\[
+M_{e,e} = \frac{|\Omega|_e}{\eta_e} 
+\]
+where $e$ is an element and $\eta_e$ is the (average viscosity) inside the element.
 
+These two preconditioners and two other variants are implement in Stone 16.
 
-\improvement[inline]{how to compute $M$ for the Schur complement ?}
 
 
 
