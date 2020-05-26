@@ -332,8 +332,67 @@ It is the element used in LaCoDe \cite{demh19}.
 %-----------------------------------------------------------------
 \subsubsection{The Rannacher-Turek element - rotated $Q_1\times P_0$} \label{ss:RTq1p0}
 \index{general}{$\tilde{Q}_1\times P_0$}
+\index{general}{Korn's inequality}
+\index{general}{Rannacher-Turek element}
+\index{general}{Nonconforming element}
 
-\Literature p. 722 of \cite{john16} \cite{ratu92,horg95,knob00,lisi12,maky17,bufm19}
+This element is the natural quadrilateral analogue
+of the well–known triangular Stokes element of Crouzeix-Raviart \cite{crra73}.
+This element is sometimes called $Q_1^{rot} \times Q_0$ or the Rannacher-Turek element 
+\cite[Section 3.6.5]{john16}.
+This rectangular nonconforming \cite{crfa89} element is termed the rotated $Q_1$ element 
+because of the fact that $r^2-s^2$ can be generated from $rs$ (occurring in the bilinear $Q_1$ 
+element) by a rotation of 45$\degree$ \cite[p93]{chen}.
+The velocity approximation is achieved by rotated dim-linear functions that have 
+continuous degrees of freedom on
+the faces of the mesh cells as we have seen in Section~\ref{ss:rq1}.
+This element was introduced in Rannacher \& Turek (1992) \cite{ratu92} 
+has been proven to satisfy the inf-sup condition. It has been studied comprehensively in Schieweck 
+(1997)\footnote{Habilitation thesis in German}, \cite{shzh06} and in Turek \cite{ture94,ture96}.
+Superconvergence properties have also been reported \cite{misx06,misx07}.
+It has been used in 2D \cite{maky17} and 3D \cite{klll96,gekm08} and forms the basis of the FeatFlow 
+software\footnote{\url{http://www.featflow.de/en/index.html}}. 
+It is used in the PhD thesis of Gastaldo \cite{gast07}.
+It has been 
+successfully coupled to multigrid solvers \cite{chos98,tuos02}.
+This element has been compared to the stabilised $Q_1\times P_0$ element \cite{lisi12}.
+It is mentioned in \cite{hans11}
+
+It essentially comes in two flavours, the Middle Point (MP) and the Mid Value (MV) one.
+
+\begin{remark} 
+John \cite{john16} explains that: "For the point-value-oriented non-conforming finite element spaces (MP), 
+the value of the Dirichlet boundary
+condition in the barycenter of the faces at the boundary is taken. Using the mean-
+value-oriented spaces (MV), one computes the integrals of the boundary condition on
+these faces and normalizes with the area of the faces to set the boundary values.
+In the case of homogeneous Dirichlet boundary conditions, the boundary values
+computed in both ways are zero."
+\end{remark}
+
+\begin{remark} 
+John also makes a very important point: "There are also unmapped (non-parametric) versions of 
+these finite element spaces, which define the polynomials directly on the mesh cell K. It is shown in Rannacher
+and Turek (1992) \cite{ratu92} that these versions are inf-sup stable on more general meshes than
+the mapped (parametric) version of the $Q_1^{rot}\times Q_0$ finite element, e.g., on strongly
+nonuniform meshes. Considering all four types of $Q_1^{rot}\times Q_0$ finite elements, the
+optimal order of convergence on perturbed meshes is achieved only by the mean-
+value-oriented version of the unmapped $Q_1^{rot}\times Q_0$   finite element.
+\end{remark}
+
+Mahmood et al \cite{maky17} mention a very important fact: "The chosen nonconforming element requires
+additional stabilization for handling the deformation tensor formulation due to missing Korn’s inequality 
+\cite{horg95,knob00}.
+To this end we employ the standard edge oriented stabilization \cite{tuos02,tuou07} in our simulations."
+This is a rather unfortunate fact that although LBB stable this element needs an additional 
+term in the weak form (see Turek et al (2002) \cite{tuos02}) 
+so as to suppress parasitic velocity modes when the div-grad formulation 
+of the Stokes equation is used (as opposed to the Laplace formulation -- see \cite[Section 6.5.2]{dohu03}).
+
+
+
+
+%\Literature 
 
 
 
@@ -354,9 +413,10 @@ Quadratic velocities, constant pressure. The element satisfies the inf-sup condi
 
 \item Q2Q2: This element is never used, probably because a) it is unstable, b) it is very costly. 
 There is one reference to it in \cite{hufb86}.
-\item P2P2
-\item the MINI quadrilateral element $Q_1^+\times Q_1$. \index{general}{$Q_1^+ \times Q_1$} \cite{bai97,kwpa14,lami17}
 \item Q1P-1 Bilinear velocities,  piecewise linear discontinuous polynomial pressure.
+\item See Fortin \cite{fort81} for various stable low order elements
+\item Stable cheapest nonconforming finite elements for the Stokes equations \cite{kiys16}
+
 \end{itemize}
 
 %.........................................................................
