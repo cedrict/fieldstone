@@ -1,0 +1,29 @@
+set term pdf enhanced
+set log xy
+set xlabel 'h'
+set key outside
+set pointsize .4
+
+set ylabel 'error'
+set output 'errors.pdf'
+plot[][]\
+'errors_sft1_form1.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'v, sft1, form 1',\
+'errors_sft1_form1.ascii' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'p, sft1, form 1',\
+'errors_sft1_form2.ascii' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'v, sft1, form 2',\
+'errors_sft1_form2.ascii' u (1./sqrt($3)):9 w lp lt 2 pt 2 t 'p, sft1, form 2',\
+'errors_sft2_form1.ascii' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'v, sft2, form 1',\
+'errors_sft2_form1.ascii' u (1./sqrt($3)):9 w lp lt 3 pt 2 t 'p, sft2, form 1',\
+'errors_sft2_form2.ascii' u (1./sqrt($3)):6 w lp lt 4 pt 1 t 'v, sft2, form 2',\
+'errors_sft2_form2.ascii' u (1./sqrt($3)):9 w lp lt 4 pt 2 t 'p, sft2, form 2',\
+x**2/50. w l lt -1 dashtype 2 t 'x^2',\
+x**1/10. w l lt -1 dashtype 3 t 'x^1'
+
+unset log y
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
+plot[][]\
+'vrms_sft1_form1.ascii' u (1./sqrt($3)):7 w lp lt 1 pt 1 t 'sft1, form 1',\
+'vrms_sft1_form2.ascii' u (1./sqrt($3)):7 w lp lt 2 pt 1 t 'sft1, form 2',\
+'vrms_sft2_form1.ascii' u (1./sqrt($3)):7 w lp lt 3 pt 1 t 'sft2, form 1',\
+'vrms_sft2_form2.ascii' u (1./sqrt($3)):7 w lp lt 4 pt 1 t 'sft2, form 2',\
+0.777615791 lt -1 
