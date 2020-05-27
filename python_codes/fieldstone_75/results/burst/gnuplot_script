@@ -1,0 +1,240 @@
+set term pdf enhanced font "Times,11pt"
+set key outside
+set log xy
+set xlabel 'h'
+set pointsize 0.5
+
+set ylabel 'error vel'
+set output 'errors_v.pdf'
+plot[][]\
+'errors_bb1_nq2.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'nq=2^2',\
+'errors_bb1_nq3.ascii' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'nq=3^2',\
+'errors_bb1_nq4.ascii' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'nq=4^2',\
+'errors_bb2_nq2.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'nq=2^2',\
+'errors_bb2_nq3.ascii' u (1./sqrt($3)):6 w lp lt 2 pt 2 t 'nq=3^2',\
+'errors_bb2_nq4.ascii' u (1./sqrt($3)):6 w lp lt 3 pt 2 t 'nq=4^2',\
+x**1.5/5 w l lt -1 dashtype 3 t 'x^2'
+
+set ylabel 'error p'
+set output 'errors_p.pdf'
+plot[][]\
+'errors_bb1_nq2.ascii' u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'nq=2^2',\
+'errors_bb1_nq3.ascii' u (1./sqrt($3)):9 w lp lt 2 pt 1 t 'nq=3^2',\
+'errors_bb1_nq4.ascii' u (1./sqrt($3)):9 w lp lt 3 pt 1 t 'nq=4^2',\
+'errors_bb2_nq2.ascii' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'nq=2^2',\
+'errors_bb2_nq3.ascii' u (1./sqrt($3)):9 w lp lt 2 pt 2 t 'nq=3^2',\
+'errors_bb2_nq4.ascii' u (1./sqrt($3)):9 w lp lt 3 pt 2 t 'nq=4^2',\
+#x**2/5 w l lt -1 dashtype 2 t 'x^{2}'
+
+set ylabel 'vrms'
+unset log y
+set output 'vrms.pdf'
+plot[:]\
+'vrms_bb1_nq2.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'nq=2^2',\
+'vrms_bb1_nq3.ascii' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'nq=3^2',\
+'vrms_bb1_nq4.ascii' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'nq=4^2',\
+'vrms_bb2_nq2.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'nq=2^2',\
+'vrms_bb2_nq3.ascii' u (1./sqrt($3)):6 w lp lt 2 pt 2 t 'nq=3^2',\
+'vrms_bb2_nq4.ascii' u (1./sqrt($3)):6 w lp lt 3 pt 2 t 'nq=4^2',\
+4.1628459 lt -1 t 'analytical'
+
+set ylabel 'min/max pressure'
+set output 'p_stats.pdf'
+plot[][-1000:1000]\
+'p_stats_bb1_nq2.ascii' u 6:4 w lp lt 1 pt 1 t 'min(p), bb1, nq=2^2',\
+'p_stats_bb1_nq2.ascii' u 6:5 w lp lt 1 pt 1 t 'max(p), bb1, nq=2^2',\
+'p_stats_bb1_nq3.ascii' u 6:4 w lp lt 2 pt 1 t 'min(p), bb1, nq=2^3',\
+'p_stats_bb1_nq3.ascii' u 6:5 w lp lt 2 pt 1 t 'max(p), bb1, nq=2^3',\
+'p_stats_bb1_nq4.ascii' u 6:4 w lp lt 3 pt 1 t 'min(p), bb1, nq=2^4',\
+'p_stats_bb1_nq4.ascii' u 6:5 w lp lt 3 pt 1 t 'max(p), bb1, nq=2^4',\
+'p_stats_bb2_nq2.ascii' u 6:4 w lp lt 1 pt 2 t 'min(p), bb2, nq=2^2',\
+'p_stats_bb2_nq2.ascii' u 6:5 w lp lt 1 pt 2 t 'max(p), bb2, nq=2^2',\
+'p_stats_bb2_nq3.ascii' u 6:4 w lp lt 2 pt 2 t 'min(p), bb2, nq=2^3',\
+'p_stats_bb2_nq3.ascii' u 6:5 w lp lt 2 pt 2 t 'max(p), bb2, nq=2^3',\
+'p_stats_bb2_nq4.ascii' u 6:4 w lp lt 3 pt 2 t 'min(p), bb2, nq=2^4',\
+'p_stats_bb2_nq4.ascii' u 6:5 w lp lt 3 pt 2 t 'max(p), bb2, nq=2^4',\
+-5/32 lt -1 dashtype 2 t 'min(p)',\
+2-5/32 lt -1 dashtype 2 t 'max(p)'
+
+set ylabel 'min/max exx'
+set output 'exx_stats.pdf'
+plot[][]\
+'exx_stats_bb1_nq2.ascii' u 5:3 w lp lt 1 pt 1 t 'min, bb1, nq=2^2',\
+'exx_stats_bb1_nq2.ascii' u 5:4 w lp lt 1 pt 1 t 'max, bb1, nq=2^2',\
+'exx_stats_bb1_nq3.ascii' u 5:3 w lp lt 2 pt 1 t 'min, bb1, nq=2^3',\
+'exx_stats_bb1_nq3.ascii' u 5:4 w lp lt 2 pt 1 t 'max, bb1, nq=2^3',\
+'exx_stats_bb1_nq4.ascii' u 5:3 w lp lt 3 pt 1 t 'min, bb1, nq=2^4',\
+'exx_stats_bb1_nq4.ascii' u 5:4 w lp lt 3 pt 1 t 'max, bb1, nq=2^4',\
+'exx_stats_bb2_nq2.ascii' u 5:3 w lp lt 1 pt 2 t 'min, bb2, nq=2^2',\
+'exx_stats_bb2_nq2.ascii' u 5:4 w lp lt 1 pt 2 t 'max, bb2, nq=2^2',\
+'exx_stats_bb2_nq3.ascii' u 5:3 w lp lt 2 pt 2 t 'min, bb2, nq=2^3',\
+'exx_stats_bb2_nq3.ascii' u 5:4 w lp lt 2 pt 2 t 'max, bb2, nq=2^3',\
+'exx_stats_bb2_nq4.ascii' u 5:3 w lp lt 3 pt 2 t 'min, bb2, nq=2^4',\
+'exx_stats_bb2_nq4.ascii' u 5:4 w lp lt 3 pt 2 t 'max, bb2, nq=2^4',\
+
+set ylabel 'min/max eyy'
+set output 'eyy_stats.pdf'
+plot[][]\
+'eyy_stats_bb1_nq2.ascii' u 5:3 w lp lt 1 pt 1 t 'min, bb1, nq=2^2',\
+'eyy_stats_bb1_nq2.ascii' u 5:4 w lp lt 1 pt 1 t 'max, bb1, nq=2^2',\
+'eyy_stats_bb1_nq3.ascii' u 5:3 w lp lt 2 pt 1 t 'min, bb1, nq=2^3',\
+'eyy_stats_bb1_nq3.ascii' u 5:4 w lp lt 2 pt 1 t 'max, bb1, nq=2^3',\
+'eyy_stats_bb1_nq4.ascii' u 5:3 w lp lt 3 pt 1 t 'min, bb1, nq=2^4',\
+'eyy_stats_bb1_nq4.ascii' u 5:4 w lp lt 3 pt 1 t 'max, bb1, nq=2^4',\
+'eyy_stats_bb2_nq2.ascii' u 5:3 w lp lt 1 pt 2 t 'min, bb1, nq=2^2',\
+'eyy_stats_bb2_nq2.ascii' u 5:4 w lp lt 1 pt 2 t 'max, bb1, nq=2^2',\
+'eyy_stats_bb2_nq3.ascii' u 5:3 w lp lt 2 pt 2 t 'min, bb1, nq=2^3',\
+'eyy_stats_bb2_nq3.ascii' u 5:4 w lp lt 2 pt 2 t 'max, bb1, nq=2^3',\
+'eyy_stats_bb2_nq4.ascii' u 5:3 w lp lt 3 pt 2 t 'min, bb1, nq=2^4',\
+'eyy_stats_bb2_nq4.ascii' u 5:4 w lp lt 3 pt 2 t 'max, bb1, nq=2^4',\
+
+set ylabel 'min/max ezz'
+set output 'ezz_stats.pdf'
+plot[][]\
+'ezz_stats_bb1_nq2.ascii' u 5:3 w lp lt 1 pt 1 t 'min, bb1, nq=2^2',\
+'ezz_stats_bb1_nq2.ascii' u 5:4 w lp lt 1 pt 1 t 'max, bb1, nq=2^2',\
+'ezz_stats_bb1_nq3.ascii' u 5:3 w lp lt 2 pt 1 t 'min, bb1, nq=2^3',\
+'ezz_stats_bb1_nq3.ascii' u 5:4 w lp lt 2 pt 1 t 'max, bb1, nq=2^3',\
+'ezz_stats_bb1_nq4.ascii' u 5:3 w lp lt 3 pt 1 t 'min, bb1, nq=2^4',\
+'ezz_stats_bb1_nq4.ascii' u 5:4 w lp lt 3 pt 1 t 'max, bb1, nq=2^4',\
+'ezz_stats_bb2_nq2.ascii' u 5:3 w lp lt 1 pt 2 t 'min, bb1, nq=2^2',\
+'ezz_stats_bb2_nq2.ascii' u 5:4 w lp lt 1 pt 2 t 'max, bb1, nq=2^2',\
+'ezz_stats_bb2_nq3.ascii' u 5:3 w lp lt 2 pt 2 t 'min, bb1, nq=2^3',\
+'ezz_stats_bb2_nq3.ascii' u 5:4 w lp lt 2 pt 2 t 'max, bb1, nq=2^3',\
+'ezz_stats_bb2_nq4.ascii' u 5:3 w lp lt 3 pt 2 t 'min, bb1, nq=2^4',\
+'ezz_stats_bb2_nq4.ascii' u 5:4 w lp lt 3 pt 2 t 'max, bb1, nq=2^4',\
+
+set ylabel 'min/max exx'
+set output 'exy_stats.pdf'
+plot[][]\
+'exy_stats_bb1_nq2.ascii' u 5:3 w lp lt 1 pt 1 t 'min, bb1, nq=2^2',\
+'exy_stats_bb1_nq2.ascii' u 5:4 w lp lt 1 pt 1 t 'max, bb1, nq=2^2',\
+'exy_stats_bb1_nq3.ascii' u 5:3 w lp lt 2 pt 1 t 'min, bb1, nq=2^3',\
+'exy_stats_bb1_nq3.ascii' u 5:4 w lp lt 2 pt 1 t 'max, bb1, nq=2^3',\
+'exy_stats_bb1_nq4.ascii' u 5:3 w lp lt 3 pt 1 t 'min, bb1, nq=2^4',\
+'exy_stats_bb1_nq4.ascii' u 5:4 w lp lt 3 pt 1 t 'max, bb1, nq=2^4',\
+'exy_stats_bb2_nq2.ascii' u 5:3 w lp lt 1 pt 2 t 'min, bb2, nq=2^2',\
+'exy_stats_bb2_nq2.ascii' u 5:4 w lp lt 1 pt 2 t 'max, bb2, nq=2^2',\
+'exy_stats_bb2_nq3.ascii' u 5:3 w lp lt 2 pt 2 t 'min, bb2, nq=2^3',\
+'exy_stats_bb2_nq3.ascii' u 5:4 w lp lt 2 pt 2 t 'max, bb2, nq=2^3',\
+'exy_stats_bb2_nq4.ascii' u 5:3 w lp lt 3 pt 2 t 'min, bb2, nq=2^4',\
+'exy_stats_bb2_nq4.ascii' u 5:4 w lp lt 3 pt 2 t 'max, bb2, nq=2^4',\
+
+set ylabel 'min/max exz'
+set output 'exz_stats.pdf'
+plot[][]\
+'exz_stats_bb1_nq2.ascii' u 5:3 w lp lt 1 pt 1 t 'min, bb1, nq=2^2',\
+'exz_stats_bb1_nq2.ascii' u 5:4 w lp lt 1 pt 1 t 'max, bb1, nq=2^2',\
+'exz_stats_bb1_nq3.ascii' u 5:3 w lp lt 2 pt 1 t 'min, bb1, nq=2^3',\
+'exz_stats_bb1_nq3.ascii' u 5:4 w lp lt 2 pt 1 t 'max, bb1, nq=2^3',\
+'exz_stats_bb1_nq4.ascii' u 5:3 w lp lt 3 pt 1 t 'min, bb1, nq=2^4',\
+'exz_stats_bb1_nq4.ascii' u 5:4 w lp lt 3 pt 1 t 'max, bb1, nq=2^4',\
+'exz_stats_bb2_nq2.ascii' u 5:3 w lp lt 1 pt 2 t 'min, bb2, nq=2^2',\
+'exz_stats_bb2_nq2.ascii' u 5:4 w lp lt 1 pt 2 t 'max, bb2, nq=2^2',\
+'exz_stats_bb2_nq3.ascii' u 5:3 w lp lt 2 pt 2 t 'min, bb2, nq=2^3',\
+'exz_stats_bb2_nq3.ascii' u 5:4 w lp lt 2 pt 2 t 'max, bb2, nq=2^3',\
+'exz_stats_bb2_nq4.ascii' u 5:3 w lp lt 3 pt 2 t 'min, bb2, nq=2^4',\
+'exz_stats_bb2_nq4.ascii' u 5:4 w lp lt 3 pt 2 t 'max, bb2, nq=2^4',\
+
+set ylabel 'min/max eyz'
+set output 'eyz_stats.pdf'
+plot[][]\
+'eyz_stats_bb1_nq2.ascii' u 5:3 w lp lt 1 pt 1 t 'min, bb1, nq=2^2',\
+'eyz_stats_bb1_nq2.ascii' u 5:4 w lp lt 1 pt 1 t 'max, bb1, nq=2^2',\
+'eyz_stats_bb1_nq3.ascii' u 5:3 w lp lt 2 pt 1 t 'min, bb1, nq=2^3',\
+'eyz_stats_bb1_nq3.ascii' u 5:4 w lp lt 2 pt 1 t 'max, bb1, nq=2^3',\
+'eyz_stats_bb1_nq4.ascii' u 5:3 w lp lt 3 pt 1 t 'min, bb1, nq=2^4',\
+'eyz_stats_bb1_nq4.ascii' u 5:4 w lp lt 3 pt 1 t 'max, bb1, nq=2^4',\
+'eyz_stats_bb2_nq2.ascii' u 5:3 w lp lt 1 pt 2 t 'min, bb2, nq=2^2',\
+'eyz_stats_bb2_nq2.ascii' u 5:4 w lp lt 1 pt 2 t 'max, bb2, nq=2^2',\
+'eyz_stats_bb2_nq3.ascii' u 5:3 w lp lt 2 pt 2 t 'min, bb2, nq=2^3',\
+'eyz_stats_bb2_nq3.ascii' u 5:4 w lp lt 2 pt 2 t 'max, bb2, nq=2^3',\
+'eyz_stats_bb2_nq4.ascii' u 5:3 w lp lt 3 pt 2 t 'min, bb2, nq=2^4',\
+'eyz_stats_bb2_nq4.ascii' u 5:4 w lp lt 3 pt 2 t 'max, bb2, nq=2^4',\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+set log y
+
+set ylabel 'error e_{xx}'
+set output 'errors_exx.pdf'
+plot[][]\
+'errors_bb1_nq2.ascii' u (1./sqrt($3)):12 w lp lt 1 pt 1 t 'nq=2^2',\
+'errors_bb1_nq3.ascii' u (1./sqrt($3)):12 w lp lt 2 pt 1 t 'nq=3^2',\
+'errors_bb1_nq4.ascii' u (1./sqrt($3)):12 w lp lt 3 pt 1 t 'nq=4^2',\
+'errors_bb2_nq2.ascii' u (1./sqrt($3)):12 w lp lt 1 pt 2 t 'nq=2^2',\
+'errors_bb2_nq3.ascii' u (1./sqrt($3)):12 w lp lt 2 pt 2 t 'nq=3^2',\
+'errors_bb2_nq4.ascii' u (1./sqrt($3)):12 w lp lt 3 pt 2 t 'nq=4^2',\
+
+set ylabel 'error e_{yy}'
+set output 'errors_eyy.pdf'
+plot[][]\
+'errors_bb1_nq2.ascii' u (1./sqrt($3)):13 w lp lt 1 pt 1 t 'nq=2^2',\
+'errors_bb1_nq3.ascii' u (1./sqrt($3)):13 w lp lt 2 pt 1 t 'nq=3^2',\
+'errors_bb1_nq4.ascii' u (1./sqrt($3)):13 w lp lt 3 pt 1 t 'nq=4^2',\
+'errors_bb2_nq2.ascii' u (1./sqrt($3)):13 w lp lt 1 pt 2 t 'nq=2^2',\
+'errors_bb2_nq3.ascii' u (1./sqrt($3)):13 w lp lt 2 pt 2 t 'nq=3^2',\
+'errors_bb2_nq4.ascii' u (1./sqrt($3)):13 w lp lt 3 pt 2 t 'nq=4^2',\
+
+set ylabel 'error e_{zz}'
+set output 'errors_ezz.pdf'
+plot[][]\
+'errors_bb1_nq2.ascii' u (1./sqrt($3)):14 w lp lt 1 pt 1 t 'nq=2^2',\
+'errors_bb1_nq3.ascii' u (1./sqrt($3)):14 w lp lt 2 pt 1 t 'nq=3^2',\
+'errors_bb1_nq4.ascii' u (1./sqrt($3)):14 w lp lt 3 pt 1 t 'nq=4^2',\
+'errors_bb2_nq2.ascii' u (1./sqrt($3)):14 w lp lt 1 pt 2 t 'nq=2^2',\
+'errors_bb2_nq3.ascii' u (1./sqrt($3)):14 w lp lt 2 pt 2 t 'nq=3^2',\
+'errors_bb2_nq4.ascii' u (1./sqrt($3)):14 w lp lt 3 pt 2 t 'nq=4^2',\
+
+set ylabel 'error e_{xy}'
+set output 'errors_exy.pdf'
+plot[][]\
+'errors_bb1_nq2.ascii' u (1./sqrt($3)):15 w lp lt 1 pt 1 t 'nq=2^2',\
+'errors_bb1_nq3.ascii' u (1./sqrt($3)):15 w lp lt 2 pt 1 t 'nq=3^2',\
+'errors_bb1_nq4.ascii' u (1./sqrt($3)):15 w lp lt 3 pt 1 t 'nq=4^2',\
+'errors_bb2_nq2.ascii' u (1./sqrt($3)):15 w lp lt 1 pt 2 t 'nq=2^2',\
+'errors_bb2_nq3.ascii' u (1./sqrt($3)):15 w lp lt 2 pt 2 t 'nq=3^2',\
+'errors_bb2_nq4.ascii' u (1./sqrt($3)):15 w lp lt 3 pt 2 t 'nq=4^2',\
+
+set ylabel 'error e_{xz}'
+set output 'errors_exz.pdf'
+plot[][]\
+'errors_bb1_nq2.ascii' u (1./sqrt($3)):16 w lp lt 1 pt 1 t 'nq=2^2',\
+'errors_bb1_nq3.ascii' u (1./sqrt($3)):16 w lp lt 2 pt 1 t 'nq=3^2',\
+'errors_bb1_nq4.ascii' u (1./sqrt($3)):16 w lp lt 3 pt 1 t 'nq=4^2',\
+'errors_bb2_nq2.ascii' u (1./sqrt($3)):16 w lp lt 1 pt 2 t 'nq=2^2',\
+'errors_bb2_nq3.ascii' u (1./sqrt($3)):16 w lp lt 2 pt 2 t 'nq=3^2',\
+'errors_bb2_nq4.ascii' u (1./sqrt($3)):16 w lp lt 3 pt 2 t 'nq=4^2',\
+
+set ylabel 'error e_{yz}'
+set output 'errors_eyz.pdf'
+plot[][]\
+'errors_bb1_nq2.ascii' u (1./sqrt($3)):17 w lp lt 1 pt 1 t 'nq=2^2',\
+'errors_bb1_nq3.ascii' u (1./sqrt($3)):17 w lp lt 2 pt 1 t 'nq=3^2',\
+'errors_bb1_nq4.ascii' u (1./sqrt($3)):17 w lp lt 3 pt 1 t 'nq=4^2',\
+'errors_bb2_nq2.ascii' u (1./sqrt($3)):17 w lp lt 1 pt 2 t 'nq=2^2',\
+'errors_bb2_nq3.ascii' u (1./sqrt($3)):17 w lp lt 2 pt 2 t 'nq=3^2',\
+'errors_bb2_nq4.ascii' u (1./sqrt($3)):17 w lp lt 3 pt 2 t 'nq=4^2',\
+
+
+
+
+
+
+
+
+
+

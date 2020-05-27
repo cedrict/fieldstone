@@ -6,31 +6,30 @@ rm ezz_stats*.ascii
 rm exy_stats*.ascii
 rm exz_stats*.ascii
 rm eyz_stats*.ascii
-rm u_stats*.ascii
-rm v_stats*.ascii
-rm w_stats*.ascii
 rm p_stats*.ascii
+rm errors*.ascii
+rm vrms*.ascii
 
 for bb in 1 2; do
-    for nq in 3 4 5; do
-        for rs in 4 5 6 7 8 9 10 11 12; do
+    for nq in  3 4 ; do
+        for rs in 4 5 6 7 8 9 10 11 12 13 14 15 16; do
             echo bb=$bb nq=$nq rs=$rs
 
-            python3 stone.py $rs $rs $rs $nq $bb > opla
-            grep exx opla >> exx_stats_bb${bb}_nq${nq}.ascii
-            grep eyy opla >> eyy_stats_bb${bb}_nq${nq}.ascii
-            grep ezz opla >> ezz_stats_bb${bb}_nq${nq}.ascii
-            grep exy opla >> exy_stats_bb${bb}_nq${nq}.ascii
-            grep exz opla >> exz_stats_bb${bb}_nq${nq}.ascii
-            grep eyz opla >> eyz_stats_bb${bb}_nq${nq}.ascii
-            grep uu opla  >> u_stats_bb${bb}_nq${nq}.ascii
-            grep vv opla  >> v_stats_bb${bb}_nq${nq}.ascii
-            grep ww opla  >> w_stats_bb${bb}_nq${nq}.ascii
-            grep pp opla  >> p_stats_bb${bb}_nq${nq}.ascii
+            python3 stone_mms3.py $rs $rs $rs $nq $bb > opla
+            grep exx opla | grep M >> exx_stats_bb${bb}_nq${nq}.ascii
+            grep eyy opla | grep M >> eyy_stats_bb${bb}_nq${nq}.ascii
+            grep ezz opla | grep M >> ezz_stats_bb${bb}_nq${nq}.ascii
+            grep exy opla | grep M >> exy_stats_bb${bb}_nq${nq}.ascii
+            grep exz opla | grep M >> exz_stats_bb${bb}_nq${nq}.ascii
+            grep eyz opla | grep M >> eyz_stats_bb${bb}_nq${nq}.ascii
+            grep pp opla   >> p_stats_bb${bb}_nq${nq}.ascii
+            grep errv opla >> errors_bb${bb}_nq${nq}.ascii
+            grep vrms opla >> vrms_bb${bb}_nq${nq}.ascii
 
         done
     done
 done
 
+rm opla
 
 
