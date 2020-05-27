@@ -27,8 +27,8 @@ and comes in two flavours with two different bubble functions $b_1$ and $b_2$
 as explained in Section~\ref{ss:quadmini}.
 The two bubble functions are (in reduced coordinates $-1 \leq r,s \leq 1$):
 \begin{eqnarray}
-b_1(r,s) &=& (1-r^2)(1-s^2)(1-r)(1-s)\\
-b_2(r,s) &=& (1-r^2)(1-s^2)(1+\beta(r+s))
+b_1(r,s) &=& (1-r^2)(1-s^2)\cdot (1-r)(1-s)\\
+b_2(r,s) &=& (1-r^2)(1-s^2)\cdot (1+\beta(r+s))
 \end{eqnarray}
 The common term to both bubbles insures that the bubble is exactly zero on all four edges of the 
 element. What differentiates them is the remaining term, which is bilinear ($b_1$) or linear ($b_2$). 
@@ -241,7 +241,7 @@ Pressure error convergence rate seems to be 0.5 for odd numbers of elements and
 \end{center}
 
 We see that the pressure showcases an strong error (even at high resolution)
-alobg the interface. 
+along the interface. 
 
 
 %_____________________________________
@@ -335,6 +335,10 @@ One can also prescribe an open boundary condition at the top:
 %_____________________________________
 \subsection*{Rayleigh-Taylor instability}
 
+This benchmark is carried out in Appendix D of Thieulot (2011) \cite{thie11}.
+It consists of a two-layer system driven by gravity.
+The mesh is modified so as to align with the sinusoidal perturbation.
+Resolution and $\eta_2$ are varied on the following figures:
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/RT/area}
@@ -349,18 +353,13 @@ One can also prescribe an open boundary condition at the top:
 \includegraphics[width=7cm]{python_codes/fieldstone_72/results/RT/vy_b2}
 \end{center}
 
-Bubble 2 does better than bubble 1. $\beta$ does not seem to play a role.
-
-
-
-
-
+Bubble 2 does better than bubble 1. Also, $\beta$ does not seem to play a role.
 
 %_____________________________________
 \subsection*{Sinking block}
 This is the very same experiment as in Stone 53. It consists of a negatively buoyant 
 square object falling in a fluid in a square domain. 
-This particular experiment proved to be the 'downfall' of the Q1Q1-stab element
+This particular experiment proved to be the 'downfall' of the $Q_1\times Q_1-stab$ element
 since the stabilisation term is akin to a pressure diffusion and therefore
 acts on the lithostatic pressure and also tends to smooth the effect of small 
 density variations (Thieulot \& Bangerth, in prep.). 
@@ -463,4 +462,33 @@ and record the pressure profile
 It is here very obvious that low values of $\beta$ yield problematic pressure oscillations. 
 It looks like $\beta \geq 0.25$ actually yield near identical results to those obtained with bubble 1,
 but $\beta=1$ or $\beta=2$ also yields unwanted oscillations.
+
+%_____________________________________
+\subsection*{Free surface benchmark}
+
+The setup originates in Crameri et al (2012) \cite{crsg12}. It consists of 
+a cosine-shaped layer of homogeneous lithosphere overlaying a homogeneous layer of mantle.
+The domain is 2800x700 km. The amplitude of the surface perturbation is 7km. 
+Free slip boundary conditions are prescribed on the sides and no-slip at the bottom. 
+The lithosphere is characterised by $\eta=10^{23}$Pa.s and the mantle by $\eta=10^{21}$Pa.s, 
+while both have a density of 3330kg/m3.
+
+\begin{center}
+\includegraphics[width=13cm]{python_codes/fieldstone_72/results/crsg12/area}\\
+{\captionfont Setup of the mesh. Area of the elements.}
+\end{center}
+
+I do not wish to implement a mesh evolution algorithm nor timestepping so
+I only report the velocity field at $t=0$:
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/crsg12/u}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/crsg12/v}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/crsg12/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_72/results/crsg12/p}
+\end{center}
+
+It is clear that the velocity is (visually) what we expect. The presence of the free surface 
+does not seem to introduce any kind of abnormal behaviour. 
+
 

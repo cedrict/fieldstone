@@ -206,6 +206,11 @@ def eta(x,y):
           val=eta2
     if bench==9:
        val=1
+    if bench==10:
+       if y>600e3:
+          val=1e23
+       else:
+          val=1e21
     return val
 
 #------------------------------------------------------------------------------
@@ -237,6 +242,8 @@ def rho(x,y):
           val=3300
        else:
           val=3000
+    if bench==10:
+       val=3300
     return val
 
 #------------------------------------------------------------------------------
@@ -270,8 +277,9 @@ mP=4
 # bench=7 : Stokes sphere
 # bench=8 : RT-instability
 # bench=9 : mms (lami17)
+# bench=10: free surf. crsg12
 
-bench=8
+bench=1
 
 if bench==1 or bench==4 or bench==5 or bench==6 or bench==7 or bench==9:
    Lx=1
@@ -279,8 +287,11 @@ if bench==1 or bench==4 or bench==5 or bench==6 or bench==7 or bench==9:
 if bench==2 or bench==3 or bench==8:
    Lx=512e3
    Ly=512e3
+if bench==10:
+   Lx=2800e3
+   Ly=700e3
 
-bubble=1
+bubble=2
 
 if int(len(sys.argv) == 9):
    nelx=int(sys.argv[1])
@@ -292,8 +303,8 @@ if int(len(sys.argv) == 9):
    nqperdim=int(sys.argv[7])
    beta=float(sys.argv[8])
 else:
-   nelx = 64
-   nely = 64
+   nelx = 2
+   nely = 2
    visu = 1
    drho = 8
    eta1 = 1e21
@@ -370,6 +381,7 @@ eps=1e-8
 
 if bench==1 or bench==9:
    eta_ref=1.
+   pnormalise=True
 if bench==2 or bench==3:
    gy=-10.
    rho1=3200.
@@ -382,12 +394,15 @@ if bench==2 or bench==3:
    print('rho2=',rho2)
    print('eta1=',eta1)
    print('eta2=',eta2)
+   pnormalise=True
 if bench==4 or bench==5 or bench==6:
    eta_ref=1.
    gy=1
+   pnormalise=True
 if bench==7:
    eta_ref=1.
    gy=-1
+   pnormalise=True
 if bench==8:
    llambda=256e3
    amplitude=2000
@@ -395,13 +410,14 @@ if bench==8:
    gy=-10
    phi1=2.*np.pi*(Ly/2.)/llambda
    phi2=2.*np.pi*(Ly/2.)/llambda
-
+   pnormalise=True
+if bench==10:
+   gy=-10
+   eta_ref=1e22
+   amplitude=7e3
+   pnormalise=False
 
 sparse=True
-pnormalise=True
-
-rVnodes=[-1,1,1,-1,0]
-sVnodes=[-1,-1,1,1,0]
 
 xi=0.0 # controls level of mesh randomness (between 0 and 0.5 max)
 
@@ -487,7 +503,33 @@ if bench==8:
            else:
               dy=(Ly-ya)/(nely/2)
               yV[k]=ya+(j-nely/2)*dy
-              
+
+   for iel in range(0,nel):
+       xV[iconV[4,iel]]=0.25*xV[iconV[0,iel]]+\
+                       +0.25*xV[iconV[1,iel]]+\
+                       +0.25*xV[iconV[2,iel]]+\
+                       +0.25*xV[iconV[3,iel]]
+       yV[iconV[4,iel]]=0.25*yV[iconV[0,iel]]+\
+                       +0.25*yV[iconV[1,iel]]+\
+                       +0.25*yV[iconV[2,iel]]+\
+                       +0.25*yV[iconV[3,iel]]
+
+#################################################################
+# add sine perturbation for free surface benchmark 
+#################################################################
+
+if bench==10:
+   for i in range(0,NV):
+       if abs(yV[i]-Ly)/Ly<eps:
+          yV[i]+=amplitude*np.cos(2*np.pi*xV[i]/Lx)
+
+   for j in range(0,nely+1):
+       for i in range(0,nelx+1):
+           k=j*(nelx+1)+i
+           ymax=Ly+amplitude*np.cos(2*np.pi*xV[k]/Lx)-600e3
+           dy=ymax/10
+           if yV[k]>600e3:
+              yV[k]=600e3+(j-60)*dy
 
    for iel in range(0,nel):
        xV[iconV[4,iel]]=0.25*xV[iconV[0,iel]]+\
@@ -612,6 +654,16 @@ elif bench==8:
        if yV[i]/Ly>(1-eps):
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0 
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+
+elif bench==10:
+   for i in range(0,NV):
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV]   = 0.
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV]   = 0.
+       if yV[i]/Ly<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV]   = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
 
 else: # free slip 
    for i in range(0,NV):
@@ -771,9 +823,9 @@ for iel in range(0,nel):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
         constr[m2]+=NNNNP[k2]
-    if sparse and pnormalise:
-       A_sparse[Nfem,NfemV+m2]=constr[m2]
-       A_sparse[NfemV+m2,Nfem]=constr[m2]
+        if sparse and pnormalise:
+           A_sparse[Nfem,NfemV+m2]=constr[m2]
+           A_sparse[NfemV+m2,Nfem]=constr[m2]
 
 if not sparse:
    print("     -> K_mat (m,M) %.4e %.4e " %(np.min(K_mat),np.max(K_mat)))
@@ -803,8 +855,6 @@ if not sparse:
       a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
    #end if
 else:
-   #A_sparse[Nfem,NfemV:Nfem]=constr
-   #A_sparse[NfemV:Nfem,Nfem]=constr
    if pnormalise:
       rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
    else:
@@ -885,6 +935,9 @@ if bench==7:
 if bench==8:
    print(" RT %.8e %.8e %.8e %.8e" %(np.max(abs(v)),phi1,vy_th(phi1,phi2,3300,3000),eta2))
 
+if bench==10:
+   print("     -> elevation: %.8e" %  yV[(nelx+1)*(nely+1)-1] )
+
 ######################################################################
 # compute vrms 
 ######################################################################
@@ -921,7 +974,7 @@ for iel in range (0,nel):
 
 vrms=np.sqrt(vrms/(Lx*Ly))
 
-if bench==2 or bench==3:
+if bench==2 or bench==3 or bench==10:
    vrms/=(cm/year)
 
 print("     -> nel= %6d ; vrms= %.8f ; beta= %4e" %(nel,vrms,beta))
@@ -1048,7 +1101,7 @@ if visu==1:
     if bench==1 or bench==4 or bench==5 or bench==6 or bench==7 or bench==9:
        for i in range(0,NP):
            vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
-    if bench==2 or bench==3 or bench==8:
+    if bench==2 or bench==3 or bench==8 or bench==10:
        for i in range(0,NP):
            vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
     vtufile.write("</DataArray>\n")
