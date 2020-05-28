@@ -1,0 +1,4 @@
+simply do
+python3 make_mesh.py
+it should generate the file vankeken.geo
+

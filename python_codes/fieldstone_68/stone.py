@@ -110,15 +110,15 @@ def viscosity(exx,eyy,exy,T,imat):
     if case=='1a' or case=='1b' or case=='1c':
        val=1e21
     elif case=='2a': #diffusion creep 
-       if imat==4 and iter>0:
+       if (imat==4 or imat==2) and iter>0:
           eta_diff=A_diff*np.exp(Q_diff/Rgas/T)
           val=1/(1/eta_max+1/eta_diff)
        else:
           val=1e21
     else: #dislocation creep 
-       if imat==4 and iter>0:
+       if (imat==4 or imat==2) and iter>0:
           e=np.sqrt(0.5*(exx**2+eyy**2)+exy**2)
-          eta_disl=A_disl*np.exp(Q_disl/n_disl/Rgas/T)*e**(-1+1./n)
+          eta_disl=A_disl*np.exp(Q_disl/n_disl/Rgas/T)*e**(-1+1./n_disl)
           val=1/(1/eta_max+1/eta_disl)
        else:
           val=1e21
@@ -147,8 +147,7 @@ ndofT=1  # number of temperature degrees of freedom
 ##########################################################
 # input parameters
 
-filename='vankeken_channel_2km.msh'
-#filename='vankeken.msh'
+filename='vankeken2_4_0.msh'
 
 Lx=660e3
 Ly=600e3
@@ -174,7 +173,7 @@ A_diff=1.32043e9
 A_disl=28968.6
 eta_max=1e26
 
-niter=10
+niter=100
 
 #case='1a'
 #case='1b'
@@ -186,7 +185,12 @@ if case=='1a':
 
 do_post_processing=False
 
-relax=0.5
+relax=0.75
+
+tol=1e-4
+
+print('case=',case)
+print('relax=',relax)
 
 ##########################################################
 # checking that all velocity shape functions are 1 on 
@@ -364,6 +368,10 @@ nb6=0.223381589678011/2.
 qcoords_r=[nb1,nb2,nb2,nb4,nb3,nb4]
 qcoords_s=[nb2,nb1,nb2,nb3,nb4,nb4]
 qweights=[nb5,nb5,nb5,nb6,nb6,nb6]
+
+nq=nqel*nel
+print ('nq=', nq)
+print("-----------------------------")
 
 #################################################################
 # build pressure grid (nodes and icon)
@@ -599,16 +607,53 @@ for i in range(0,NV):
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[i]*vel
     #end if   
 
-#for iel in range(0,nel):
-#    if interface[iconV[0,iel]]==101 and interface[iconV[1,iel]]==104:
-#       print('AAA') 
+#fixing nodes in thin zone between 101 and 111
+for iel in range(0,nel):
+    if interface[iconV[0,iel]]==101 and interface[iconV[1,iel]]==104:
+       print('101--104a') 
+       i=iconV[5,iel]
+       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] =  ny[iconV[0,iel]]*vel/2 
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[iconV[0,iel]]*vel/2
+    if interface[iconV[1,iel]]==101 and interface[iconV[2,iel]]==104:
+       print('101--104b') 
+       i=iconV[3,iel]
+       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] =  ny[iconV[0,iel]]*vel/2 
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[iconV[0,iel]]*vel/2
+    if interface[iconV[2,iel]]==101 and interface[iconV[0,iel]]==104:
+       print('101--104c') 
+       i=iconV[4,iel]
+       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] =  ny[iconV[0,iel]]*vel/2 
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[iconV[0,iel]]*vel/2
+
+    if interface[iconV[0,iel]]==101 and interface[iconV[1,iel]]==102:
+       print('101--102a') 
+       i=iconV[5,iel]
+       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] =  ny[iconV[0,iel]]*vel/2 
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[iconV[0,iel]]*vel/2
+#    if interface[iconV[1,iel]]==101 and interface[iconV[2,iel]]==102:
+#       print('101--102b') 
+#       i=iconV[3,iel]
+#       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] =  ny[iconV[1,iel]]*vel/2 
+#       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[iconV[1,iel]]*vel/2
+#    if interface[iconV[2,iel]]==101 and interface[iconV[0,iel]]==102:
+#       print('101--102c') 
+#       i=iconV[4,iel]
+#       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] =  ny[iconV[2,iel]]*vel/2 
+#       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[iconV[2,iel]]*vel/2
+
+#    if interface[iconV[0,iel]]==101 and interface[iconV[1,iel]]==111:
+#       print('101--111') 
 #       i=iconV[5,iel]
-#       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
-#       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
-#    if interface[iconV[1,iel]]==101 and interface[iconV[2,iel]]==104:
-#       print('BBB') 
-#    if interface[iconV[2,iel]]==101 and interface[iconV[0,iel]]==104:
-#       print('CCC') 
+#       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] =  ny[iconV[0,iel]]*vel/2 
+#       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -nx[iconV[0,iel]]*vel/2
+
+#unfixing a few nodes top left
+for i in range(0,NV):
+    if xV[i]>0 and xV[i]<5e3 and yV[i]>-1:
+       print('CCC') 
+       bc_fix[i*ndofV  ] = False 
+       bc_fix[i*ndofV+1] = False 
+
 
 
 print("setup boundary conditions: %.3f s" % (timing.time() - start))
@@ -653,6 +698,13 @@ u_old  = np.zeros(NV,dtype=np.float64)           # x-component velocity
 v_old  = np.zeros(NV,dtype=np.float64)           # y-component velocity
 T_old  = np.zeros(NT,dtype=np.float64)           # temperature field 
 c_mat  = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+x_q    = np.zeros(nq,dtype=np.float64)           # x-component velocity
+y_q    = np.zeros(nq,dtype=np.float64)           # y-component velocity
+eta_q  = np.zeros(nq,dtype=np.float64)           # y-component velocity
+T_q    = np.zeros(nq,dtype=np.float64)           # y-component velocity
+exx_q  = np.zeros(nq,dtype=np.float64)           # y-component velocity
+eyy_q  = np.zeros(nq,dtype=np.float64)           # y-component velocity
+exy_q  = np.zeros(nq,dtype=np.float64)           # y-component velocity
 
 ################################################################################################
 ################################################################################################
@@ -680,6 +732,8 @@ for iter in range(0,niter):
     h_rhs  = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
     b_mat  = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
     N_mat  = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix to build G_el 
+
+    counterq=0
 
     for iel in range(0,nel):
 
@@ -729,11 +783,16 @@ for iter in range(0,niter):
                 exxq+=dNNNVdx[k]*u[iconV[k,iel]]
                 eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
                 exyq+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
+            x_q[counterq]=xq 
+            y_q[counterq]=yq 
+            exx_q[counterq]=exxq 
+            eyy_q[counterq]=eyyq 
+            exy_q[counterq]=exyq 
 
             Tq=0.
             for k in range(0,mT):
                 Tq+=NNNT[k]*T[iconT[k,iel]]
-
+            T_q[counterq]=Tq
 
             # construct 3x8 b_mat matrix
             for i in range(0,mV):
@@ -742,7 +801,8 @@ for iter in range(0,niter):
                                          [dNNNVdy[i],dNNNVdx[i]]]
 
             # compute elemental a_mat matrix
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*weightq*jcob*viscosity(exxq,eyyq,exyq,Tq,mat[iel])
+            eta_q[counterq]=viscosity(exxq,eyyq,exyq,Tq,mat[iel])
+            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*weightq*jcob*eta_q[counterq]
 
             # compute elemental rhs vector
             #for i in range(0,mV):
@@ -755,6 +815,8 @@ for iter in range(0,niter):
                 N_mat[2,i]=0.
 
             G_el-=b_mat.T.dot(N_mat)*weightq*jcob
+
+            counterq+=1
 
         #end for kq
 
@@ -832,7 +894,7 @@ for iter in range(0,niter):
     print("     -> u (m,M) %.6e %.6e (cm/yr)" %(np.min(u)/cm*year,np.max(u)/cm*year))
     print("     -> v (m,M) %.6e %.6e (cm/yr)" %(np.min(v)/cm*year,np.max(v)/cm*year))
     print("     -> p (m,M) %.6e %.6e (MPa)" %(np.min(p)/1e6,np.max(p)/1e6))
-    #np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+    #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 
     print("solve time: %.3f s" % (timing.time() - start))
 
@@ -984,17 +1046,127 @@ for iter in range(0,niter):
     xi_v=np.linalg.norm(v-v_old,2)/np.linalg.norm(v+v_old,2)
     xi_T=np.linalg.norm(T-T_old,2)/np.linalg.norm(T+T_old,2)
 
-    print("conv: u,v,T: %.6f %.6f %.6f" %(xi_u,xi_v,xi_T))
+    print("conv: u,v,T: %.6f %.6f %.6f | tol= %.6f" %(xi_u,xi_v,xi_T,tol))
 
-    convfile.write("%3d %10e %10e %10e \n" %(iter,xi_u,xi_v,xi_T)) 
+    convfile.write("%3d %10e %10e %10e %10e \n" %(iter,xi_u,xi_v,xi_T,tol)) 
     convfile.flush()
 
-    u_old[:]=u[:]
-    v_old[:]=v[:]
-    T_old[:]=T[:]
-
-    if xi_u<1e-3 and xi_v<1e-3 and xi_T<1e-3:
+    if xi_u<tol and xi_v<tol and xi_T<tol:
        break
+    else:
+       u_old[:]=u[:]
+       v_old[:]=v[:]
+       T_old[:]=T[:]
+
+    ######################################################################
+    ######################################################################
+
+    filename = 'Vnodes_{:04d}.vtu'.format(iter)
+    vtufile=open(filename,"w")
+    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+    vtufile.write("<UnstructuredGrid> \n")
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,NV))
+    vtufile.write("<PointData Scalars='scalars'>\n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3'  Name='vel' Format='ascii'>\n")
+    for i in range(0,NV):
+        vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+    vtufile.write("</DataArray>\n")
+
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3'  Name='fix' Format='ascii'>\n")
+    for i in range(0,NV):
+        if bc_fix[i*ndofV]:
+           vtufile.write("%10e %10e %10e \n" %(bc_val[i*ndofV],bc_val[i*ndofV+1],0.))
+        else:
+           vtufile.write("%10e %10e %10e \n" %(0,0.,0.))
+    vtufile.write("</DataArray>\n")
+
+    vtufile.write("</PointData>\n")
+
+
+    vtufile.write("<Points> \n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+    for i in range(0,NV):
+        vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Points> \n")
+    vtufile.write("<Cells>\n")
+    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%d " % i)
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%d " % (i+1))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+    for i in range(0,NV):
+        vtufile.write("%d " % 1)
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Cells>\n")
+    vtufile.write("</Piece>\n")
+    vtufile.write("</UnstructuredGrid>\n")
+    vtufile.write("</VTKFile>\n")
+    vtufile.close()
+
+    ######################################################################
+    ######################################################################
+
+    filename = 'qpoints_{:04d}.vtu'.format(iter)
+    vtufile=open(filename,"w")
+    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+    vtufile.write("<UnstructuredGrid> \n")
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nq,nq))
+    vtufile.write("<PointData Scalars='scalars'>\n")
+    vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'>\n")
+    for i in range(0,nq):
+        vtufile.write("%10e \n" %eta_q[i])
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'>\n")
+    for i in range(0,nq):
+        vtufile.write("%10e \n" %T_q[i])
+    vtufile.write("</DataArray>\n")
+
+    vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'>\n")
+    for i in range(0,nq):
+        vtufile.write("%10e \n" %exx_q[i])
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'>\n")
+    for i in range(0,nq):
+        vtufile.write("%10e \n" %eyy_q[i])
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'>\n")
+    for i in range(0,nq):
+        vtufile.write("%10e \n" %exy_q[i])
+    vtufile.write("</DataArray>\n")
+
+
+    vtufile.write("</PointData>\n")
+    vtufile.write("<Points> \n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+    for i in range(0,nq):
+        vtufile.write("%10e %10e %10e \n" %(x_q[i],y_q[i],0.))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Points> \n")
+    vtufile.write("<Cells>\n")
+    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+    for i in range(0,nq):
+        vtufile.write("%d " % i)
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+    for i in range(0,nq):
+        vtufile.write("%d " % (i+1))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+    for i in range(0,nq):
+        vtufile.write("%d " % 1)
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Cells>\n")
+    vtufile.write("</Piece>\n")
+    vtufile.write("</UnstructuredGrid>\n")
+    vtufile.write("</VTKFile>\n")
+    vtufile.close()
+
+
 
 # end for iter
 
@@ -1014,7 +1186,7 @@ start = timing.time()
 exx_n = np.zeros(NV,dtype=np.float64)  
 eyy_n = np.zeros(NV,dtype=np.float64)  
 exy_n = np.zeros(NV,dtype=np.float64)  
-count = np.zeros(NV,dtype=np.int16)  
+count = np.zeros(NV,dtype=np.int32)  
 q=np.zeros(NV,dtype=np.float64)
 
 for iel in range(0,nel):
@@ -1068,7 +1240,7 @@ start = timing.time()
 
 qx_n=np.zeros(NT,dtype=np.float64)
 qy_n=np.zeros(NT,dtype=np.float64)
-count=np.zeros(NT,dtype=np.int16)  
+count=np.zeros(NT,dtype=np.int32)  
 
 for iel in range(0,nel):
     for i in range(0,mT):
@@ -1280,6 +1452,36 @@ if True:
         vtufile.write("%10e\n" % iel)
     vtufile.write("</DataArray>\n")
     #--
+    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+    for iel in range (0,nel):
+        if mat[iel]==4:
+           vtufile.write("%10e\n" % ((p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3.))
+        else:
+           vtufile.write("%10e\n" % 0.) 
+    vtufile.write("</DataArray>\n")
+
+    #--
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='tau' Format='ascii'> \n")
+    for iel in range (0,nel):
+        if mat[iel]==4:
+           exx_c=(exx_n[iconV[0,iel]]+exx_n[iconV[1,iel]]+exx_n[iconV[2,iel]])/3.
+           eyy_c=(eyy_n[iconV[0,iel]]+eyy_n[iconV[1,iel]]+eyy_n[iconV[2,iel]])/3.
+           exy_c=(exy_n[iconV[0,iel]]+exy_n[iconV[1,iel]]+exy_n[iconV[2,iel]])/3.
+           T_c  =(    T[iconT[0,iel]]+    T[iconT[1,iel]]+    T[iconT[2,iel]])/3.
+           eta_c=viscosity(exx_c,eyy_c,exy_c,T_c,mat[iel])
+           tau_xx=2.*eta_c*exx_c 
+           tau_yy=2.*eta_c*eyy_c 
+           tau_xy=2.*eta_c*exy_c 
+           vtufile.write("%10e %10e %10e\n" % (tau_xx,tau_yy,tau_xy))
+        else:
+           vtufile.write("%10e %10e %10e\n" % (0.,0.,0.)) 
+    vtufile.write("</DataArray>\n")
+
+
+
+
+
+    #--
     vtufile.write("</CellData>\n")
     #####
     vtufile.write("<PointData Scalars='scalars'>\n")
@@ -1293,6 +1495,13 @@ if True:
     for i in range(0,NT):
         vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
     vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (diff)' Format='ascii'> \n")
+    for i in range(0,NT):
+        vtufile.write("%10e %10e %10e \n" %((u[i]-u_old[i])/cm*year,(v[i]-v_old[i])/cm*year,0.))
+    vtufile.write("</DataArray>\n")
+
+
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux' Format='ascii'> \n")
     for i in range(0,NT):
@@ -1308,6 +1517,12 @@ if True:
     for i in range(0,NT):
         vtufile.write("%10e \n" %(T[i]-Kelvin))
     vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='T (diff)' Format='ascii'> \n")
+    for i in range(0,NT):
+        vtufile.write("%10e \n" %(T[i]-T_old[i]))
+    vtufile.write("</DataArray>\n")
+
     #--
     vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
     for i in range(0,NT):
@@ -1330,6 +1545,12 @@ if True:
     for i in range(0,NV):
         vtufile.write("%10e \n" %exy_n[i])
     vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" % (np.sqrt(0.5*(exx_n[i]**2+eyy_n[i]**2)+exy_n[i]**2)))
+    vtufile.write("</DataArray>\n")
+
     #--
     vtufile.write("<DataArray type='Float32' Name='interface' Format='ascii'> \n")
     for i in range(0,NV):
