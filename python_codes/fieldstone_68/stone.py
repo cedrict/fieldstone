@@ -173,7 +173,7 @@ A_diff=1.32043e9
 A_disl=28968.6
 eta_max=1e26
 
-niter=100
+niter=1
 
 #case='1a'
 #case='1b'
@@ -183,7 +183,7 @@ case='2a'
 if case=='1a':
    niter=1
 
-do_post_processing=False
+do_post_processing=True
 
 relax=0.75
 
@@ -1139,7 +1139,6 @@ for iter in range(0,niter):
         vtufile.write("%10e \n" %exy_q[i])
     vtufile.write("</DataArray>\n")
 
-
     vtufile.write("</PointData>\n")
     vtufile.write("<Points> \n")
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
@@ -1416,6 +1415,77 @@ if do_post_processing:
    print('     -> Twedge=',Twedge)
 
    np.savetxt('grid.ascii',np.array([grid_x,grid_y,grid_T1,grid_T2,grid_corner,grid_slab,grid_wedge]).T)
+
+
+   filename = 'meas_grid.vtu'
+   vtufile=open(filename,"w")
+   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+   vtufile.write("<UnstructuredGrid> \n")
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(M,M))
+   vtufile.write("<PointData Scalars='scalars'>\n")
+   vtufile.write("<DataArray type='Float32' Name='T1' Format='ascii'>\n")
+   for i in range(0,M):
+        vtufile.write("%10e \n" %grid_T1[i])
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='T2' Format='ascii'>\n")
+   for i in range(0,M):
+       vtufile.write("%10e \n" %grid_T2[i])
+   vtufile.write("</DataArray>\n")
+
+   vtufile.write("<DataArray type='Float32' Name='corner' Format='ascii'>\n")
+   for i in range(0,M):
+       vtufile.write("%10e \n" %grid_corner[i])
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='slab' Format='ascii'>\n")
+   for i in range(0,M):
+       vtufile.write("%10e \n" %grid_slab[i])
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='wedge' Format='ascii'>\n")
+   for i in range(0,M):
+       vtufile.write("%10e \n" %grid_wedge[i])
+   vtufile.write("</DataArray>\n")
+
+
+   vtufile.write("</PointData>\n")
+   vtufile.write("<Points> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+   for i in range(0,M):
+       vtufile.write("%10e %10e %10e \n" %(grid_x[i],grid_y[i],0.))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Points> \n")
+   vtufile.write("<Cells>\n")
+   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+   for i in range(0,nq):
+       vtufile.write("%d " % i)
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+   for i in range(0,M):
+       vtufile.write("%d " % (i+1))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+   for i in range(0,M):
+       vtufile.write("%d " % 1)
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Cells>\n")
+   vtufile.write("</Piece>\n")
+   vtufile.write("</UnstructuredGrid>\n")
+   vtufile.write("</VTKFile>\n")
+   vtufile.close()
+
+
+
+# end for iter
+
+
+
+
+
+
+
+
+
+
+   
 
    print("post processing on grid: %.3f s" % (timing.time() - start))
 
