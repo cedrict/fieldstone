@@ -37,7 +37,7 @@ as listed in Boffi et al (2008) \cite{bobf08}.
 %p129
 Elman et al \cite{elsw} state that "The inf-sup condition is a sufficient condition for the pressure to be unique up
 to  constant in the case of an enclosed flow." This can also be proven for other boundary conditions.
-This approacg, based on the macro-element technique is explored in Appendix \ref{app:Gel}.
+This approach, based on the macro-element technique \cite{sten90} is explored in Appendix \ref{app:Gel}.
 
 
 It can be shown that, provided the kernel (null space) of matrix $\G$ is zero,
@@ -138,7 +138,7 @@ It is characterised by piecewise Biquadratic velocities,
 and piecewise linear discontinuous polynomial pressure. 
 The element satisfies the inf-sup condition, see page 211 of Hughes \cite{hugh}, or p138 of Elman et al
 \cite{elsw}.
-It is used in van de Vosse et al (1989) \cite{vavs89}. 
+It is used in van de Vosse et al (1989) \cite{vavs89} for steady laminar flowin a curved tube. 
 See Boffi \& Gastaldi (2002) \cite{boga02} 
 for the two possible choices for the definition of the pressure space..
 This element is mentioned in Kaus (2010) \cite{kaus10} and Pelletier et al (1989) \cite{pefc89} 
@@ -205,6 +205,8 @@ $Q_1\times Q_1$-stab. Pro: easier to implement than $Q_1\times P_0$-stab, stabil
 for a review of local projection stabilisation for incompressible flow problems. 
 
 This unstable pair is also used in ice sheet modelling \cite{heah18,zhjg11,zwgg07}
+A $P_1\times P_1$ version of it is used in \cite{kahp20}.
+
 
 %----------------------------------------------------------------------
 \subsubsection{The MINI triangular element ($P_1^+\times P_1$) in 2D}
@@ -416,6 +418,8 @@ There is one reference to it in \cite{hufb86}.
 \item Q1P-1 Bilinear velocities,  piecewise linear discontinuous polynomial pressure.
 \item See Fortin \cite{fort81} for various stable low order elements
 \item Stable cheapest nonconforming finite elements for the Stokes equations \cite{kiys16}
+
+\item P3-P2 mentioned in \cite{sten90}   \index{general}{$P_3\times P_2 element$}
 
 \end{itemize}
 
