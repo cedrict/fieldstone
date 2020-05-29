@@ -166,14 +166,35 @@ vel=5*cm/year
 angle=45./180.*np.pi  
 
 Rgas=8.3145
-Q_diff=335e3
-Q_disl=540e3
-n_disl=3.5
-A_diff=1.32043e9
-A_disl=28968.6
+
 eta_max=1e26
 
-niter=1
+rheology=1
+
+if rheology==1: #vack08
+   Q_diff=335e3
+   A_diff=1.32043e9
+   Q_disl=540e3
+   A_disl=28968.6
+   n_disl=3.5
+
+if rheology==2: #hiko03 wet
+   n_disl=3.5
+   Q_diff=375e3
+   Q_disl=520e3
+   A_diff=0
+   A_disl=0
+   
+if rheology==2: #hiko03 disl
+   n_disl=3.5
+   Q_diff=375e3
+   Q_disl=520e3
+   A_diff=0
+   A_disl=0
+
+
+
+niter=100
 
 #case='1a'
 #case='1b'
@@ -185,7 +206,7 @@ if case=='1a':
 
 do_post_processing=True
 
-relax=0.75
+relax=0.99
 
 tol=1e-4
 
@@ -1071,7 +1092,6 @@ for iter in range(0,niter):
     for i in range(0,NV):
         vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
     vtufile.write("</DataArray>\n")
-
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3'  Name='fix' Format='ascii'>\n")
     for i in range(0,NV):
         if bc_fix[i*ndofV]:
@@ -1079,10 +1099,7 @@ for iter in range(0,niter):
         else:
            vtufile.write("%10e %10e %10e \n" %(0,0.,0.))
     vtufile.write("</DataArray>\n")
-
     vtufile.write("</PointData>\n")
-
-
     vtufile.write("<Points> \n")
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
     for i in range(0,NV):
@@ -1125,7 +1142,6 @@ for iter in range(0,niter):
     for i in range(0,nq):
         vtufile.write("%10e \n" %T_q[i])
     vtufile.write("</DataArray>\n")
-
     vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'>\n")
     for i in range(0,nq):
         vtufile.write("%10e \n" %exx_q[i])
@@ -1138,7 +1154,6 @@ for iter in range(0,niter):
     for i in range(0,nq):
         vtufile.write("%10e \n" %exy_q[i])
     vtufile.write("</DataArray>\n")
-
     vtufile.write("</PointData>\n")
     vtufile.write("<Points> \n")
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
@@ -1164,8 +1179,6 @@ for iter in range(0,niter):
     vtufile.write("</UnstructuredGrid>\n")
     vtufile.write("</VTKFile>\n")
     vtufile.close()
-
-
 
 # end for iter
 
@@ -1431,7 +1444,6 @@ if do_post_processing:
    for i in range(0,M):
        vtufile.write("%10e \n" %grid_T2[i])
    vtufile.write("</DataArray>\n")
-
    vtufile.write("<DataArray type='Float32' Name='corner' Format='ascii'>\n")
    for i in range(0,M):
        vtufile.write("%10e \n" %grid_corner[i])
@@ -1444,8 +1456,6 @@ if do_post_processing:
    for i in range(0,M):
        vtufile.write("%10e \n" %grid_wedge[i])
    vtufile.write("</DataArray>\n")
-
-
    vtufile.write("</PointData>\n")
    vtufile.write("<Points> \n")
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
@@ -1471,21 +1481,6 @@ if do_post_processing:
    vtufile.write("</UnstructuredGrid>\n")
    vtufile.write("</VTKFile>\n")
    vtufile.close()
-
-
-
-# end for iter
-
-
-
-
-
-
-
-
-
-
-   
 
    print("post processing on grid: %.3f s" % (timing.time() - start))
 
@@ -1529,7 +1524,6 @@ if True:
         else:
            vtufile.write("%10e\n" % 0.) 
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='tau' Format='ascii'> \n")
     for iel in range (0,nel):
@@ -1546,11 +1540,6 @@ if True:
         else:
            vtufile.write("%10e %10e %10e\n" % (0.,0.,0.)) 
     vtufile.write("</DataArray>\n")
-
-
-
-
-
     #--
     vtufile.write("</CellData>\n")
     #####
@@ -1570,8 +1559,6 @@ if True:
     for i in range(0,NT):
         vtufile.write("%10e %10e %10e \n" %((u[i]-u_old[i])/cm*year,(v[i]-v_old[i])/cm*year,0.))
     vtufile.write("</DataArray>\n")
-
-
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux' Format='ascii'> \n")
     for i in range(0,NT):
@@ -1592,14 +1579,12 @@ if True:
     for i in range(0,NT):
         vtufile.write("%10e \n" %(T[i]-T_old[i]))
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
     for i in range(0,NT):
         eta=viscosity(exx_n[i],eyy_n[i],exy_n[i],T[i],mat[iel])
         vtufile.write("%10e \n" %eta)
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
     for i in range(0,NV):
@@ -1708,6 +1693,7 @@ if True:
     vtufile.write("</VTKFile>\n")
     vtufile.close()
 
+    #############################################
 
     vtufile=open('gridP.vtu',"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")

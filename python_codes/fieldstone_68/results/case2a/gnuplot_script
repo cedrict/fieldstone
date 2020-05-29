@@ -1,0 +1,13 @@
+set term pdf enhanced
+set grid
+set output 'conv.pdf'
+set xlabel '#it'
+set ylabel '{/Symbol X}'
+set pointsize 0.5
+
+set log y
+ plot[][]\
+'conv.ascii' u 1:2 w lp t 'u',\
+'conv.ascii' u 1:3 w lp t 'v',\
+'conv.ascii' u 1:4 w lp t 'T',\
+'conv.ascii' u 1:5 w l lw 2 lt -1 t 'tol'

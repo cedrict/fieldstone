@@ -158,7 +158,7 @@ You can open this .geo file in Gmsh version 4.5.6 or later (earlier versions wil
 last line in the .geo script describing the one-element wide area). To produce the mesh in 
 the Gmsh GUI, click on `mesh', and then `2D'. To increase the order of the 
 elements (as needed by fieldstone), click `Set order 2'. To save the mesh in the 
-format that fieldstone can handle, click on `File > Export' and choose extension `Mesh - Gmsh MSH (*.msh)'. 
+format that fieldstone can handle, click on `File $>$ Export' and choose extension `Mesh - Gmsh MSH (*.msh)'. 
 In the little pop-up box with options, choose `Version 2 ASCII' and click `OK'. This will then 
 produce a .msh file that can be read in and used by fieldstone. 
 
@@ -185,8 +185,12 @@ produce a .msh file that can be read in and used by fieldstone.
 Crouzeix-Raviart elements are used for the Stokes equations (see Section~\ref{sec:crouzeix-raviart}) 
 and $P_2$ elements are used for the temperature. 
 
-
-
+The origin of the coordinate system $(x,y)$ is at the top left, i.e. $y$ is negative. The boundary conditions for the
+wedge are no-slip below the overriding plate and constant velocity along the top of the slab. 
+The velocity boundary conditions for the boundaries of the wedge are either provided by the Batchelor 
+cornerflow solution (cases 1a and 1b) or based on free inflow/outflow boundaries. 
+The velocity field is discontinuous between the slab and the overriding plate which effectively mimics the fault 
+representative of the seismogenic zone in subduction zones.
 
 For cases 1a,b,c the Stokes equations and the energy equation are not really coupled: the gravity is set to zero, the 
 model is driven by the kinematical boundary conditions and the viscosity is constant, so that temperature does not 
@@ -208,24 +212,18 @@ $\|T-T_{old}\|_2 < tol \| T + T_{old}  \|_2$ then exit, otherwise: $T_{old} \lef
 
 The $relax$ parameter should obviously be between 0 and 1. 
 
-
-The original papers requires specific measurements at specific locations.
-\begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_68/images/grid1}
-\includegraphics[width=5cm]{python_codes/fieldstone_68/images/grid2}\\
-{\captionfont Measuring grid made of 110x100 points.}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_68/images/grid3}
-\includegraphics[width=5cm]{python_codes/fieldstone_68/images/grid4}
-\includegraphics[width=5cm]{python_codes/fieldstone_68/images/grid5}\\
-{\captionfont The blck dots indicate the different types of reported quantities in the paper.}
-\end{center}
-
-
 To compare model results each
 group contributed the temperature field as discreted values $T_{ij}$ on
 an equidistant grid with 6 km spacing, which is a 111x101 matrix
-stored row-wise starting in the top left corner. From this grid we
-have extracted the following measurements for direct comparison:
+stored row-wise starting in the top left corner. 
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_68/images/grid1}
+\includegraphics[width=5cm]{python_codes/fieldstone_68/images/grid2}\\
+{\captionfont Measuring grid made of 110x100 points.}
+\end{center}
+
+From this grid we have extracted the following measurements for direct comparison:
 \begin{itemize}
 \item the temperature $T_{11,11}$ which is at coordinates (60, 60 km) and
 just down-stream from the corner point.
@@ -242,7 +240,15 @@ T_{wedge} = \sqrt{ \frac{1}{78} \sum_{i=10}^{21} \sum_{j=10}^i T_{ij}^2   }
 \]
 \end{itemize}
 
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_68/images/grid3}
+\includegraphics[width=5cm]{python_codes/fieldstone_68/images/grid4}
+\includegraphics[width=5cm]{python_codes/fieldstone_68/images/grid5}\\
+{\captionfont The black dots indicate the different types of reported quantities in the paper.}
+\end{center}
 
+In order to interpolate temperature on this grid, we need to find out in which 
+triangle each point of the grid lies. This is a rather costly algorithm for now. 
 In order to determine whether a point is inside a triangle, we assume that 
 the reduced coordinates $r,s$ exist and satisfy the following 
 relationships:
