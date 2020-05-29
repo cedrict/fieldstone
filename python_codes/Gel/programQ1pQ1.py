@@ -167,8 +167,9 @@ for iq in range(0,nqperdim):
 print (G_el*9*5*2)
 print (G_el)
 
-ns = null_space(G_el)
-
+G2=G_el[8:10,0:4]
+print(G2)
+ns = null_space(G2)
 print(ns)
 
 

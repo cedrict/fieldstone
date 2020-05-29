@@ -7,7 +7,6 @@ from scipy.sparse.linalg.dsolve import linsolve
 import time as time
 from scipy.linalg import null_space
 
-
 #------------------------------------------------------------------------------
 
 def NNV(rq,sq):
