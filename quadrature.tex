@@ -17,7 +17,7 @@ There are several reasons for carrying out numerical integration.
 \end{itemize}
 
 %-----------------------------
-\subsubsection{in 1D - theory \label{sec:quad1D}}
+\subsubsection{in 1D - Midpoint and Trepezoidal rules  \label{sec:quad1D}}
 
 The simplest method of this type is to let the interpolating function be a constant function (a polynomial of degree zero) that passes through the point $((a+b)/2, f((a+b)/2))$.
 
@@ -62,6 +62,10 @@ simply 'quadrature') \index{general}{Quadrature}.
 Interpolation with polynomials evaluated at equally spaced points in $[a,b]$
 yields the Newton-Cotes formulas, of which the rectangle rule and the trapezoidal rule are examples. 
 \index{general}{Newton-Cotes}
+
+%-----------------------------
+\subsubsection{in 1D - Gauss-Legendre quadrature  \label{sec:quad1Dglq}}
+
 If we allow the intervals between interpolation points to vary, we find another group of quadrature formulas, such as 
 the Gauss(ian) quadrature formulas. \index{general}{Gauss-Legendre Quadrature}
 A Gaussian quadrature rule is typically more accurate than a Newton–Cotes rule, 
@@ -168,6 +172,92 @@ and then
 \int_a^b f(x) dx  = \frac{b-a}{2} \int_{-1}^{+1} f(r) dr \simeq 
 \frac{b-a}{2} \sum_{i_q=1}^n w_{i_q} f(r_{i_q})
 \]
+
+%--------------------
+\subsubsection{A probably naive way of finding the quadrature points coordinates and weights}
+
+
+
+We start from the assumption that the quadrature must be exact for polynomials $f(x)$, that it is 
+written
+\[
+I= \int_{-1}^{+1} f(x) dx = \sum_{i_q=1}^{n_q} w_{iq} f(x_{i_q}) 
+\]
+and that $n_q>0$, $w_{i_q}\neq 0$ and $x_{i_q}\in [-1,1]$.
+
+Let us start with zero-th order polynomials, i.e. $f(x)=C$. Then $I=2C$ and we must then 
+have 
+\[
+2C = \sum_{i_q=1}^{n_q} w_{iq} f(x_{i_q})  =  \sum_{i_q=1}^{n_q} w_{iq} C   
+\]
+which imposes 
+\begin{equation}
+\boxed{
+\sum_{i_q=1}^{n_q} w_{iq} = 2 \qquad \forall n_q>0
+}
+\label{eq:glqone}
+\end{equation}
+As long as the sum of the weights is equal to 2, any $n_q$-point based quadrature can 
+integrate exactly a zero-th order polynomial. 
+
+Let us move on with first-order polynomials. Since we have covered the constant term hereabove, we
+set $f(x)=ax$ where $a\neq 0$. We have $I=0$ so
+\begin{equation}
+0 = \sum_{i_q=1}^{n_q} w_{iq} f(x_{i_q})  = \sum_{i_q=1}^{n_q} w_{iq} x_{i_q}
+\qquad
+\boxed{
+\sum_{i_q=1}^{n_q} w_{iq} x_{i_q} = 0\qquad \forall n_q>0
+}
+ \label{eq:glqtwo}
+\end{equation}
+In order to integrate exactly first-order polynomials an $n_q$-point based quadrature must 
+fulfill Eqs.\eqref{eq:glqone} and \eqref{eq:glqtwo}.
+\begin{itemize}
+\item
+If $n_q=1$, then we automatically have $w_1=2$ and $w_1 x_1 =0 $, i.e. $x_1=0$.
+\item
+If $n_q=2$, then $w_1+w_2=2$ and $a(w_1x_1+w_2x_2) = 0$. There are many solutions $w_1,w_2,x_1,x_2$ which 
+can fulfill these two equations, so this is not enough to determine a unique set of coordinates and weights.
+\end{itemize}
+
+Let us now turn to second-order polynomials: as before, I choose $f(x)=a x^2$. We have 
+$I=2a/3$ and 
+\begin{equation}
+\frac{2a}{3} = \sum_{i_q=1}^{n_q} w_{iq} f(x_{i_q})  = a \sum_{i_q=1}^{n_q} w_{iq} x_{i_q}^2 
+\qquad
+\boxed{
+\sum_{i_q=1}^{n_q} w_{iq} x^2_{i_q} = \frac{2}{3}\qquad \forall n_q>0
+}
+\label{eq:glqthree}
+\end{equation}
+\begin{itemize}
+\item
+If $n_q=1$,  we know that $w_1=2$ and $x_1=0$. This means that 1-point quadrature cannot exactly integrate polynomials 
+higher than 1.
+\item
+If $n_q=2$, then $w_1+w_2=2$, $w_1x_1+w_2x_2 =0$ and now $w_1x_1^2+w_2x_2^2 =2/3$. We have three equations but still four unknowns. At this stage, we can do a simple additional assumption: common sense would have us realise that there is no 
+reason why the (in this case) 2 quadrature point coorinates should be both negative or both positive. In light thereof we require that quadrature point coordinates are symmetric with respect with the origin $x=0$, i.e. $x_1=-x_2$ in this case.
+This yields to write:  $w_1x_1+w_2x_2 = w_1x_1+w_2(-x_1)=x_1(w_1-w_2)=0$. If $x_1=0$ then $x_2=0$ too and we do not 
+have a 2-point quadrature. It must then follows that $w_1=w_2$. And finally 
+$w_1x_1^2+w_2x_2^2 = w_1 x_1^2 + w_1 (-x_1)^2=2/3$, i.e. $x_1=-1/\sqrt{3}$ and $x_2=1/\sqrt{3}$ since $x_1<x_2$.
+\end{itemize}
+
+If we now turn to third-order polynomials, i.e. $f(x)=ax^3$, then $I=0$ again. We then must have
+\begin{equation}
+\boxed{
+\sum_{i_q=1}^{n_q} w_{iq} x^3_{i_q} =  0  \qquad \forall n_q>0
+}
+\end{equation}
+We see that the coordinates and weights obtained for a 2-point quadrature verify this equation, i.e. 
+a 2-point quadrature can also exactly integrate a 3rd-order polynomial.
+However, it is equally easy to verify that the 2-point quadrature cannot exactly integrate a 4th-order polynomial
+since 
+\[
+I= \int_{-1}^{+1} x^4 dx = \frac{2}{5} \neq  \sum_{i_q=1}^{2} w_{iq} x_{i_q}^4
+\]
+A three-point quadrature will then be needed for those. Because of the symmetry, we know that the middle
+point will be at $x=0$.
+
 
 %--------------------
 \subsubsection{in 1D - examples}
