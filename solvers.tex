@@ -102,6 +102,40 @@ positive definite $\iff$ $x^TMx>0$ $\forall \; x\in \mathbb{R}^n \setminus {\bm 
 Having solved this equation (we have obtained $\vec{\cal P}$), the velocity can be recovered by solving 
 $\K\cdot \vec{\cal V} =\vec{f}- \G \cdot \vec{\cal P}$. 
 
+\begin{remark}
+The Schur complement matrix naturally occurs when the Stokes matrix is decompused using 
+a LDU block-factorisation. Indeed, we have 
+\[
+\left(
+\begin{array}{cc}
+\K & \G \\ 
+\G^T & 0
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+{\bm I} & 0 \\ 
+\G^T \cdot \K^{-1} & {\bm I}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+\K & 0 \\ 
+0 & -\SSS
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+{\bm I} & \K^{-1} \cdot \G \\ 
+0 & {\bm I}
+\end{array}
+\right)
+\]
+\end{remark}
+
 For now, let us assume that we have built the $\SSS$ matrix and the right hand 
 side $\underline{\vec{f}}=\G^T \cdot \K^{-1} \cdot \vec{f} - \vec{h}$.
 We must solve $\SSS\cdot \vec{\cal P} = \underline{\vec{f}}$.
