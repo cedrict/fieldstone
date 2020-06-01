@@ -27,9 +27,9 @@ def by(x, y):
             12.*y*y+24.*y*y*y-12.*y**4)
     if experiment==2:
        if np.abs(x-Lx/2)<0.125 and np.abs(y-Ly/2)<0.125:
-          val=-1
+          val=-1.+1
        else:
-          val=0
+          val=-1
     if experiment==3:
        if (x-Lx/2)**2+(y-Ly/2)**2<0.125**2:
           val=-1
@@ -92,13 +92,13 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 32
+   nely = 32
    visu = 1
 
 pnormalise=False # using int p dV=0 constrain
 
-experiment=3
+experiment=1
 viscosity=1
 
 NV=nely*(5*nelx+2)+2*nelx+1
@@ -461,7 +461,7 @@ p=sol[NfemV:Nfem]
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
-np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+#np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))
 
@@ -505,59 +505,67 @@ q/=count
 ###############################################################################
 start = timing.time()
 
-error_u = np.empty(NV,dtype=np.float64)
-error_v = np.empty(NV,dtype=np.float64)
-error_q = np.empty(NV,dtype=np.float64)
-error_p = np.empty(nel,dtype=np.float64)
 
-for i in range(0,NV): 
-    error_u[i]=u[i]-velocity_x(xV[i],yV[i])
-    error_v[i]=v[i]-velocity_y(xV[i],yV[i])
-    error_q[i]=q[i]-pressure(xV[i],yV[i])
+error_u = np.zeros(NV,dtype=np.float64)
+error_v = np.zeros(NV,dtype=np.float64)
+error_q = np.zeros(NV,dtype=np.float64)
+error_p = np.zeros(nel,dtype=np.float64)
 
-for i in range(0,nel): 
-    error_p[i]=p[i]-pressure(xc[i],yc[i])
+if experiment==1:
 
-errv=0.
-errp=0.
-vrms=0.
-for iel in range (0,nel):
-    for iq in range(0,nqperdim):
-        for jq in range(0,nqperdim):
-            rq=qcoords[iq]
-            sq=qcoords[jq]
-            weightq=qweights[iq]*qweights[jq]
-            NNNV[0:mV]=NNV(rq,sq)
-            dNNNVdr[0:mV]=dNNVdr(rq,sq)
-            dNNNVds[0:mV]=dNNVds(rq,sq)
-            jcb=np.zeros((2,2),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-            jcob = np.linalg.det(jcb)
-            xq=0.0
-            yq=0.0
-            uq=0.0
-            vq=0.0
-            for k in range(0,mV):
-                xq+=NNNV[k]*xV[iconV[k,iel]]
-                yq+=NNNV[k]*yV[iconV[k,iel]]
-                uq+=NNNV[k]*u[iconV[k,iel]]
-                vq+=NNNV[k]*v[iconV[k,iel]]
-            errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
-            errp+=(p[iel]-pressure(xq,yq))**2*weightq*jcob
-            vrms+=(uq**2+vq**2)*weightq*jcob
-        #end for
-    #end for
-#end for
-errv=np.sqrt(errv)
-errp=np.sqrt(errp)
-vrms=np.sqrt(vrms/(Lx*Ly))
+   for i in range(0,NV): 
+       error_u[i]=u[i]-velocity_x(xV[i],yV[i])
+       error_v[i]=v[i]-velocity_y(xV[i],yV[i])
+       error_q[i]=q[i]-pressure(xV[i],yV[i])
 
-print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
-print("     -> nel= %6d ; vrms= %.8f " %(nel,vrms))
+   for i in range(0,nel): 
+       error_p[i]=p[i]-pressure(xc[i],yc[i])
+
+   errv=0.
+   errp=0.
+   errq=0.
+   vrms=0.
+   for iel in range (0,nel):
+       for iq in range(0,nqperdim):
+           for jq in range(0,nqperdim):
+               rq=qcoords[iq]
+               sq=qcoords[jq]
+               weightq=qweights[iq]*qweights[jq]
+               NNNV[0:mV]=NNV(rq,sq)
+               dNNNVdr[0:mV]=dNNVdr(rq,sq)
+               dNNNVds[0:mV]=dNNVds(rq,sq)
+               jcb=np.zeros((2,2),dtype=np.float64)
+               for k in range(0,mV):
+                   jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                   jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                   jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                   jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+               jcob = np.linalg.det(jcb)
+               xq=0.0
+               yq=0.0
+               uq=0.0
+               vq=0.0
+               qq=0.0
+               for k in range(0,mV):
+                   xq+=NNNV[k]*xV[iconV[k,iel]]
+                   yq+=NNNV[k]*yV[iconV[k,iel]]
+                   uq+=NNNV[k]*u[iconV[k,iel]]
+                   vq+=NNNV[k]*v[iconV[k,iel]]
+                   qq+=NNNV[k]*q[iconV[k,iel]]
+               errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
+               errp+=(p[iel]-pressure(xq,yq))**2*weightq*jcob
+               errq+=(qq-pressure(xq,yq))**2*weightq*jcob
+               vrms+=(uq**2+vq**2)*weightq*jcob
+           #end for
+       #end for
+   #end for
+   errv=np.sqrt(errv)
+   errp=np.sqrt(errp)
+   errq=np.sqrt(errq)
+   vrms=np.sqrt(vrms/(Lx*Ly))
+
+   print("     -> nel= %6d ; errv= %.8f ; errp= %.8f ; errq= %.8f" %(nel,errv,errp,errq))
+   print("     -> nel= %6d ; vrms= %.8f " %(nel,vrms))
 
 print("compute errors: %.3f s" % (timing.time() - start))
 
@@ -583,10 +591,11 @@ if visu:
    for iel in range(0,nel):
            vtufile.write("%10e \n" %(p[iel]))
    vtufile.write("</DataArray>\n")
-   vtufile.write("<DataArray type='Float32' Name='p (error)' Format='ascii'> \n")
-   for iel in range(0,nel):
-           vtufile.write("%10e \n" %(error_p[iel]))
-   vtufile.write("</DataArray>\n")
+   if experiment==1:
+      vtufile.write("<DataArray type='Float32' Name='p (error)' Format='ascii'> \n")
+      for iel in range(0,nel):
+              vtufile.write("%10e \n" %(error_p[iel]))
+      vtufile.write("</DataArray>\n")
 
    vtufile.write("<DataArray type='Float32' Name='bx' Format='ascii'> \n")
    for iel in range(0,nel):

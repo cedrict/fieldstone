@@ -1,0 +1,49 @@
+set term pdf enhanced font "Times,11pt"
+set key outside
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+set pointsize 0.3
+
+set output 'errors.pdf'
+plot[][]\
+'errors' u (1./sqrt($3)):6 w lp lt 1 pt 5 t 'velocity',\
+'errors' u (1./sqrt($3)):9 w lp lt 2 pt 5 t 'p',\
+'errors' u (1./sqrt($3)):12 w lp lt 3 pt 5 t 'q',\
+x**2/50 w l lt -1 dashtype 3 t 'x^2',\
+x**1/5 w l lt -1 dashtype 2 t 'x^{1}',\
+x**1.5/5 w l lt -1 dashtype 4 t 'x^{1.5}'
+
+set xlabel 'x'
+set ylabel 'pressure'
+
+unset log xy
+set output 'pressure16.pdf'
+plot[][]\
+'pressure16.ascii' u 1:3 w d t '16x16',\
+x*(1-x)-1./6. lt -1 t 'analytical'
+
+set output 'pressure32.pdf'
+plot[][]\
+'pressure32.ascii' u 1:3 w d t '32x32',\
+x*(1-x)-1./6. lt -1 t 'analytical'
+
+set output 'pressure64.pdf'
+plot[][]\
+'pressure64.ascii' u 1:3 w d t '64x64',\
+x*(1-x)-1./6. lt -1 t 'analytical'
+
+#set output 'pressure96.pdf'
+#plot[][]\
+#'pressure96.ascii' u 1:3 w d t '96x96',\
+#x*(1-x)-1./6. lt -1 t 'analytical'
+
+
+set xlabel 'h'
+set ylabel 'v_{rms}'
+set log x
+set output 'vrms.pdf'
+plot[:]\
+'vrms' u (1./sqrt($3)):6 w lp lt 1 pt 1 notitle,\
+0.00777615791 lt -1 t 'analytical'
+
