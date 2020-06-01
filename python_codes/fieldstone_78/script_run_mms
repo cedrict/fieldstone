@@ -4,15 +4,41 @@ rm errors_*
 rm vrms_*
 rm *.ascii
 
-for rs in 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 40 48 56 64 80 96 128; do
 
+for rs in 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 40 48 56 64; do
     echo $rs 
+    python3 stone.py $rs $rs 0 3 > opla
+    grep errv opla >> errors_qinzhang
+    grep vrms opla >> vrms_qinzhang
+done
 
-    python3 stone.py $rs $rs 0 > opla
+stop
+exit
 
-    grep errv opla >> errors
-    grep vrms opla >> vrms
 
+
+for rs in 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 40 48 56 64 80 96 128; do
+    echo $rs 
+    python3 stone.py $rs $rs 0  0 > opla
+    grep errv opla >> errors_regular
+    grep vrms opla >> vrms_regular
+done
+
+
+
+for rs in 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 40 48 56 64 80 96 128; do
+    echo $rs 
+    python3 stone.py $rs $rs 0  1 > opla
+    grep errv opla >> errors_stenberg
+    grep vrms opla >> vrms_stenberg
+done
+
+
+for rs in 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 40 48 56 64; do
+    echo $rs 
+    python3 stone.py $rs $rs 0 2 > opla
+    grep errv opla >> errors_letallec
+    grep vrms opla >> vrms_letallec
 done
 
 rm opla

@@ -5,14 +5,64 @@ set xlabel 'h'
 set ylabel 'error'
 set pointsize 0.3
 
-set output 'errors.pdf'
+set output 'errors_stenberg.pdf'
 plot[][]\
-'errors' u (1./sqrt($3)):6 w lp lt 1 pt 5 t 'velocity',\
-'errors' u (1./sqrt($3)):9 w lp lt 2 pt 5 t 'p',\
-'errors' u (1./sqrt($3)):12 w lp lt 3 pt 5 t 'q',\
+'errors_stenberg' u (1./sqrt($3)):6 w lp lt 1 pt 5 t 'velocity',\
+'errors_stenberg' u (1./sqrt($3)):9 w lp lt 2 pt 5 t 'p',\
+'errors_stenberg' u (1./sqrt($3)):12 w lp lt 3 pt 5 t 'q',\
 x**2/50 w l lt -1 dashtype 3 t 'x^2',\
 x**1/5 w l lt -1 dashtype 2 t 'x^{1}',\
 x**1.5/5 w l lt -1 dashtype 4 t 'x^{1.5}'
+
+set output 'errors_letallec.pdf'
+plot[][]\
+'errors_letallec' u (1./sqrt($3)):6 w lp lt 1 pt 5 t 'velocity',\
+'errors_letallec' u (1./sqrt($3)):9 w lp lt 2 pt 5 t 'p',\
+'errors_letallec' u (1./sqrt($3)):12 w lp lt 3 pt 5 t 'q',\
+x**2/50 w l lt -1 dashtype 3 t 'x^2',\
+x**1/5 w l lt -1 dashtype 2 t 'x^{1}',\
+x**1.5/5 w l lt -1 dashtype 4 t 'x^{1.5}'
+
+set output 'errors_regular.pdf'
+plot[][]\
+'errors_regular' u (1./sqrt($3)):6 w lp lt 1 pt 5 t 'velocity',\
+'errors_regular' u (1./sqrt($3)):9 w lp lt 2 pt 5 t 'p',\
+'errors_regular' u (1./sqrt($3)):12 w lp lt 3 pt 5 t 'q',\
+x**2/50 w l lt -1 dashtype 3 t 'x^2',\
+x**1/5 w l lt -1 dashtype 2 t 'x^{1}',\
+x**1.5/5 w l lt -1 dashtype 4 t 'x^{1.5}'
+
+set output 'errors_qinzhang.pdf'
+plot[][]\
+'errors_qinzhang' u (1./sqrt($3)):6 w lp lt 1 pt 5 t 'velocity',\
+'errors_qinzhang' u (1./sqrt($3)):9 w lp lt 2 pt 5 t 'p',\
+'errors_qinzhang' u (1./sqrt($3)):12 w lp lt 3 pt 5 t 'q',\
+x**2/50 w l lt -1 dashtype 3 t 'x^2',\
+x**1/5 w l lt -1 dashtype 2 t 'x^{1}',\
+x**1.5/5 w l lt -1 dashtype 4 t 'x^{1.5}'
+
+
+
+
+
+
+
+unset log y
+set xlabel 'h'
+set ylabel 'v_{rms}'
+set log x
+set output 'vrms.pdf'
+plot[:]\
+'vrms_regular'  u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'regular',\
+'vrms_stenberg' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'Stenberg',\
+'vrms_letallec' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'Le Tallec',\
+'vrms_qinzhang' u (1./sqrt($3)):6 w lp lt 4 pt 1 t 'qinzhang',\
+0.00777615791 lt -1 t 'analytical'
+
+
+
+
+
 
 set xlabel 'x'
 set ylabel 'pressure'
@@ -38,12 +88,4 @@ x*(1-x)-1./6. lt -1 t 'analytical'
 #'pressure96.ascii' u 1:3 w d t '96x96',\
 #x*(1-x)-1./6. lt -1 t 'analytical'
 
-
-set xlabel 'h'
-set ylabel 'v_{rms}'
-set log x
-set output 'vrms.pdf'
-plot[:]\
-'vrms' u (1./sqrt($3)):6 w lp lt 1 pt 1 notitle,\
-0.00777615791 lt -1 t 'analytical'
 

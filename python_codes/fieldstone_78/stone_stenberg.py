@@ -4,10 +4,6 @@ import time as timing
 from scipy.sparse import csr_matrix, lil_matrix
 from scipy.sparse.linalg.dsolve import linsolve
 import scipy.sparse as sps
-import letallec
-import stenberg
-import qinzhang
-import regular
 
 ###############################################################################
 
@@ -91,39 +87,22 @@ ndofP=1  # number of pressure degrees of freedom
 Lx=1.  # horizontal extent of the domain 
 Ly=1.  # vertical extent of the domain 
 
-if int(len(sys.argv) == 5):
+if int(len(sys.argv) == 4):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
-   topo = int(sys.argv[4])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 32
+   nely = 32
    visu = 1
-   topo = 3
 
 pnormalise=False # using int p dV=0 constrain
 
 experiment=1
 viscosity=1
 
-if topo==0: #regular
-   NV=(nelx+1)*(nely+1)
-   nel=nelx*nely
-
-if topo==1: #stenberg 
-   NV=nely*(5*nelx+2)+2*nelx+1
-   nel=5*nelx*nely
-
-if topo==2: #le tallec
-   NV=(2*nelx+1)*(2*nely+1)+nely*nelx*8
-   nel=12*nelx*nely
-
-if topo==3: # qizh07
-   nel=nelx*nely*12
-   NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +9*nelx*nely
-
-
+NV=nely*(5*nelx+2)+2*nelx+1
+nel=5*nelx*nely
 NfemV=NV*ndofV   # number of velocity dofs
 NfemP=nel*ndofP   # number of pressure dofs
 Nfem=NfemV+NfemP # total number of dofs
@@ -134,7 +113,6 @@ print('NV=',NV)
 print('nel=',nel)
 print('NfemV=',NfemV)
 print('NfemP=',NfemP)
-print('topo=',topo)
 
 eps=1.e-10
 
@@ -147,22 +125,116 @@ if nqperdim==2:
 rVnodes=[-1,+1,+1,-1]
 sVnodes=[-1,-1,+1,+1]
 
+###############################################################################
+# computing grid nodes coordinates
+# This was lifted off my fortran code ELEFANT 
+###############################################################################
+
+xV = np.zeros(NV,dtype=np.float64)  # x coordinates
+yV = np.zeros(NV,dtype=np.float64)  # y coordinates
+iconV =np.zeros((mV,nel),dtype=np.int32)
+
+dx=Lx/nelx
+dy=Ly/nely
+dx2=Lx/nelx*0.3
+dy2=Ly/2./nely
+
+counter=0
+for irow in range(0,nely):
+    #-------------
+    # first line
+    for icol in range(0,nelx):
+        xV[counter]=icol*dx
+        yV[counter]=0 + irow*dy
+        counter=counter+1
+        xV[counter]=icol*dx+dx/2
+        yV[counter]=0+ irow*dy
+        counter=counter+1
+    #end do
+    xV[counter]=Lx
+    yV[counter]=0+ irow*dy
+    counter=counter+1
+    #-------------
+    # second line
+    for icol in range(0,nelx):
+        xV[counter]=icol*dx
+        yV[counter]=irow*dy+dy2
+        counter=counter+1
+        xV[counter]=icol*dx+dx2
+        yV[counter]=irow*dy+dy2
+        counter=counter+1
+        xV[counter]=icol*dx+(dx-dx2)
+        yV[counter]=irow*dy+dy2
+        counter=counter+1
+    #end do
+    xV[counter]=Lx
+    yV[counter]=irow*dy+dy2
+    counter=counter+1
+#end for
+
+# top line
+
+for icol in range(0,nelx):
+   xV[counter]=icol*dx
+   yV[counter]=Ly
+   counter=counter+1
+   xV[counter]=icol*dx+dx/2.
+   yV[counter]=Ly
+   counter=counter+1
+#end for
+xV[counter]=Lx
+yV[counter]=Ly
+counter=counter+1
+
 
 ###############################################################################
-# computing nodes coordinates and their connectivity
+# computing grid connectivity 
+# This was lifted off my fortran code ELEFANT and porrly translated to python 
 ###############################################################################
 
-if topo==0:
-   xV,yV,iconV=regular.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+counter=0
+for irowf in range(0,nely):
+    for icolf in range(0,nelx):
+        icol=icolf+1
+        irow=irowf+1
 
-if topo==1:
-   xV,yV,iconV=stenberg.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+        #elt1
+        iconV[0,counter]=(2*icol-1)                + (irow-1)*(5*nelx+2)  -1
+        iconV[1,counter]=(2*icol)                  + (irow-1)*(5*nelx+2)  -1
+        iconV[2,counter]=(2*nelx+1)+(icol-1)*3+2 + (irow-1)*(5*nelx+2)  -1
+        iconV[3,counter]=(2*nelx+1)+(icol-1)*3+1 + (irow-1)*(5*nelx+2)  -1
+        counter=counter+1
 
-if topo==2:
-   xV,yV,iconV=letallec.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+        #elt2
+        iconV[0,counter]=(2*icol)   + (irow-1)*(5*nelx+2) -1
+        iconV[1,counter]=(2*icol+1)   + (irow-1)*(5*nelx+2) -1
+        iconV[2,counter]=(2*nelx+1)+(icol-1)*3+4   + (irow-1)*(5*nelx+2) -1
+        iconV[3,counter]=(2*nelx+1)+(icol-1)*3+3   + (irow-1)*(5*nelx+2) -1
+        counter=counter+1
 
-if topo==3:
-   xV,yV,iconV=qinzhang.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+        #elt3
+        iconV[0,counter]=(2*icol)                   + (irow-1)*(5*nelx+2) -1
+        iconV[1,counter]=(2*nelx+1)+(icol-1)*3+3  + (irow-1)*(5*nelx+2) -1
+        iconV[2,counter]=(2*icol)                   + (irow)*(5*nelx+2) -1
+        iconV[3,counter]=(2*nelx+1)+(icol-1)*3+2  + (irow-1)*(5*nelx+2) -1
+        counter=counter+1
+
+        #elt4
+        iconV[0,counter]=(2*nelx+1)+(icol-1)*3+1     + (irow-1)*(5*nelx+2) -1
+        iconV[1,counter]=(2*nelx+1)+(icol-1)*3+2     + (irow-1)*(5*nelx+2) -1
+        iconV[2,counter]=(2*icol) + irow*(5*nelx+2)   -1
+        iconV[3,counter]=(2*icol) + irow*(5*nelx+2)-1 -1
+        counter=counter+1
+
+        #elt5
+        iconV[0,counter]=(2*nelx+1)+(icol-1)*3+3 + (irow-1)*(5*nelx+2) -1
+        iconV[1,counter]=(2*nelx+1)+(icol-1)*3+4 + (irow-1)*(5*nelx+2) -1
+        iconV[2,counter]=(2*icol) + irow*(5*nelx+2)+1 -1
+        iconV[3,counter]=(2*icol) + irow*(5*nelx+2) -1
+        counter=counter+1
+
+     #end do
+#end do
 
 ###############################################################################
 # compute coordinates of center of elements
@@ -395,22 +467,26 @@ print("split vel into u,v: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 ###############################################################################
-start = timing.time()
 
-avrg_p=np.sum(p[:]*area[:])/Lx/Ly
+avrg_p=np.sum(p)/nel
 
 print('avrg p=',avrg_p)
 
 p[:]-=avrg_p
 
-np.savetxt('pressure.ascii',np.array([xc,yc,p]).T)
+np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# x,y,u,v')
 
-print("normalise pressure: %.3f s" % (timing.time() - start))
+###############################################################################
+# compute strainrate 
+###############################################################################
+start = timing.time()
+
+
+print("compute press & sr: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 # compute nodal pressure
 ###############################################################################
-start = timing.time()
 
 q=np.zeros(NV,dtype=np.float64)  
 count = np.zeros(NV,dtype=np.int32) 
@@ -423,9 +499,6 @@ for iel in range(0,nel):
 
 q/=count
 
-np.savetxt('q.ascii',np.array([xV,yV,q]).T)
-
-print("compute nodal pressure: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 # compute error
