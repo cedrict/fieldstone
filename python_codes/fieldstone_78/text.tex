@@ -61,10 +61,15 @@ Rather interestingly the pressure error is the largest next to the boundaries:
 \includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/p_error_1}
 \includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/p_error_2}
 \includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/p_error_3}\\
+\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/pressure0}
+\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/pressure1}
+\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/pressure2}
+\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/pressure3}\\
 {\captionfont Meshes count about the same number of elements, i.e. 4800. 
 Left to right: regular, Stenberg, Le Tallec, Qin \& Zhang. Top row is pressure, 
-bottom row is pressure error.} 
+middle row is pressure error. Bottom row is pressure profile.} 
 \end{center}
+
 
 
 Discussion: what is the real advantage of such a macro-element? it is LBB stable, so 
@@ -74,58 +79,153 @@ On the other hand it is anisotropic since the 'diamonds are vertical'.
 Also if one would consider a macro-element as an element, it counts 10 velocity nodes and 5 pressures, 
 which makes it much more expensive than a $Q_2\times Q_1$ element of the same size...
 
+
+
+
+
+
+\newpage
 %..................................
-\paragraph{Results - sinking block}
+\paragraph{Results - Aquarium}
+
+\begin{center}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/aquarium/vel0}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/aquarium/vel1}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/aquarium/vel2}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/aquarium/vel3}\\
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/aquarium/p0}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/aquarium/p1}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/aquarium/p2}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/aquarium/p3}\\
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/aquarium/p_error_0}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/aquarium/p_error_1}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/aquarium/p_error_2}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/aquarium/p_error_3}\\
+{\captionfont velocity, pressure and pressure error 
+fields for regular, Stenberg, Le Tallec, Qin \& Zhang.} 
+\end{center}
+
+\begin{center}
+\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/aquarium/errors_regular.pdf}
+\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/aquarium/errors_stenberg.pdf}
+\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/aquarium/errors_letallec.pdf}
+\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/aquarium/errors_qinzhang.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_78/results/aquarium/vrms.pdf}
+\end{center}
+
+
+
+Stenberg is better: lower velocity error and pressure error.
+
+
+\newpage
+%.....................................................
+\paragraph{Results - sinking block - reduced density}
 
 The block has size 0.25x0.25, centered in the domain. No-slip boundary conditions are imposed on all 
 sides. The buoyancy force $\rho g_y$ is -1 in the block and zero elsewhere. Viscosity is constant and 
 equal to 1 everywhere. 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_78/results/block/by}
-\includegraphics[width=7cm]{python_codes/fieldstone_78/results/block/p32}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_78/results/block/p64}
-\includegraphics[width=7cm]{python_codes/fieldstone_78/results/block/p96}\\
-{\captionfont buoyancy term $b_y$; pressure at resolutions 32x32, 64x64 and 96x96}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/by0}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/by1}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/by2}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/by3}\\
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/p0}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/p1}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/p2}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/p3}\\
+{\captionfont buoyancy term $b_y$; pressure field for regular, Stenberg, Le Tallec, Qin \& Zhang.} 
 \end{center}
 
+
+%.....................................................
+\paragraph{Results - sinking block - full density}
+
 We then proceed with $\rho g_y=-1$ in the surrounding fluid and $\rho g_y=-1+\delta$ in the block.
+
+\begin{center}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/full/vel0}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/full/vel1}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/full/vel2}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/full/vel3}\\
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/full/p0}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/full/p1}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/full/p2}
+\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/full/p3}\\
+{\captionfont buoyancy term $b_y$; pressure field for regular, Stenberg, Le Tallec, Qin \& Zhang.} 
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
 The velocity and presure fields are shown in the following figure for various values of $\delta$.
 We see that when the density of the block approaches the one of the surrounding fluid the 
 velocity field shows abnormal stripes while the pressure field looks hydrostatic.   
 
-\begin{center}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/p_delta0p001}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/p_delta0p01}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/p_delta0p1}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/p_delta1}\\
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/vel_delta0p001}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/vel_delta0p01}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/vel_delta0p1}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/vel_delta1}\\
-{\captionfont Resolution 64x64. From left to right: $\delta=0.001,0.01,0.01,1$}
-\end{center}
+%\begin{center}
+%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/p_delta0p001}
+%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/p_delta0p01}
+%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/p_delta0p1}
+%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/p_delta1}\\
+%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/vel_delta0p001}
+%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/vel_delta0p01}
+%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/vel_delta0p1}
+%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/vel_delta1}\\
+%{\captionfont Resolution 64x64. From left to right: $\delta=0.001,0.01,0.01,1$}
+%\end{center}
 
+\newpage
 %..................................
-\paragraph{Results - sinking block}
+\paragraph{Results - Stokes sphere}
 
 This is the same experiment as above, except for the geometry of the object 
-which is now a sphere of radius 0.125.
+which is now a sphere of radius 0.125. Its density is 2 while the surrounding is 1.  
+Its viscosity is $10^4$ while the surrounding is 1.
 
 \begin{center}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/by16}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/by32}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/by64}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/by128}\\
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/p16}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/p32}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/p64}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/p128}\\
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/vel16}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/vel32}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/vel64}
-\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/vel128}\\
-{\captionfont From left to right: 16x16, 32x32, 64x64, 128x128, $\delta=1$}
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/eta0}
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/eta1}
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/eta2}
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/eta3}\\
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/vel0}
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/vel1}
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/vel2}
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/vel3}\\
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/p0}
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/p1}
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/p2}
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/p3}\\
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/q0}
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/q1}
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/q2}
+\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/sphere/q3}\\
+{\captionfont From top to bottom: viscosity, velocity, elemental and nodal pressure fields. 
+From left to right: regular, Stenberg, Le Tallec, Qin \& Zhang. Meshes with 5000 elements.}
 \end{center}
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_78/results/sphere/vrms}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_78/results/sphere/ustats}
+\includegraphics[width=7cm]{python_codes/fieldstone_78/results/sphere/vstats}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_78/results/sphere/pstats}
+\includegraphics[width=7cm]{python_codes/fieldstone_78/results/sphere/qstats}
+\end{center}
+
+All (macro-)elements converge to the same vrms and show very similar velocity and pressure statistics.
+Stenberg is undeniably the best in terms of pressure under/over shoot. 
+
 
 

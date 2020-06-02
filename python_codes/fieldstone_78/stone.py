@@ -21,6 +21,8 @@ def bx(x, y):
        val=0.
     if experiment==3:
        val=0.
+    if experiment==4:
+       val=0.
     return val
 
 def by(x, y):
@@ -31,28 +33,65 @@ def by(x, y):
             12.*y*y+24.*y*y*y-12.*y**4)
     if experiment==2:
        if np.abs(x-Lx/2)<0.125 and np.abs(y-Ly/2)<0.125:
-          val=-1.+1
+          val=-2
        else:
-          val=-1
+          val= -1
     if experiment==3:
        if (x-Lx/2)**2+(y-Ly/2)**2<0.125**2:
           val=-1
        else:
           val=0
+    if experiment==4:
+       val=-1
+    return val
+
+def viscosity(x,y):
+    if experiment==1:
+       val=1
+    if experiment==2:
+       val=1
+    if experiment==3:
+       if (x-Lx/2)**2+(y-Ly/2)**2<0.125**2:
+          val=1e4
+       else:
+          val=1
+    if experiment==4:
+       val=1
     return val
 
 ###############################################################################
 
 def velocity_x(x,y):
-    val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+    if experiment==1:
+       val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+    if experiment==2:
+       val=0.
+    if experiment==3:
+       val=0.
+    if experiment==4:
+       val=0
     return val
 
 def velocity_y(x,y):
-    val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    if experiment==1:
+       val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    if experiment==2:
+       val=0.
+    if experiment==3:
+       val=0.
+    if experiment==4:
+       val=0
     return val
 
 def pressure(x,y):
-    val=x*(1.-x)-1./6.
+    if experiment==1:
+       val=x*(1.-x)-1./6.
+    if experiment==2:
+       val=0.
+    if experiment==3:
+       val=0.
+    if experiment==4:
+       val=0.5-y
     return val
 
 ###############################################################################
@@ -104,8 +143,12 @@ else:
 
 pnormalise=False # using int p dV=0 constrain
 
-experiment=1
-viscosity=1
+#exp1: mms
+#exp2: block
+#exp3: sphere
+#exp4: aquarium
+
+experiment=3
 
 if topo==0: #regular
    NV=(nelx+1)*(nely+1)
@@ -146,7 +189,6 @@ if nqperdim==2:
 
 rVnodes=[-1,+1,+1,-1]
 sVnodes=[-1,-1,+1,+1]
-
 
 ###############################################################################
 # computing nodes coordinates and their connectivity
@@ -313,7 +355,7 @@ for iel in range(0,nel):
                                          [dNNNVdy[i],dNNNVdx[i]]]
 
             # compute elemental a_mat matrix
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity*weightq*jcob
+            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xc[iel],yc[iel])*weightq*jcob
 
             # compute elemental rhs vector
             for i in range(0,mV):
@@ -386,8 +428,8 @@ start = timing.time()
 u,v=np.reshape(sol[0:NfemV],(NV,2)).T
 p=sol[NfemV:Nfem]
 
-print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
+print("     -> u (m,M) %.6f %.6f nel= %d" %(np.min(u),np.max(u),nel))
+print("     -> v (m,M) %.6f %.6f nel= %d" %(np.min(v),np.max(v),nel))
 
 #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 
@@ -403,7 +445,9 @@ print('avrg p=',avrg_p)
 
 p[:]-=avrg_p
 
-np.savetxt('pressure.ascii',np.array([xc,yc,p]).T)
+np.savetxt('p.ascii',np.array([xc,yc,p]).T)
+
+print("     -> p (m,M) %.6f %.6f nel= %d" %(np.min(p),np.max(p),nel))
 
 print("normalise pressure: %.3f s" % (timing.time() - start))
 
@@ -423,7 +467,9 @@ for iel in range(0,nel):
 
 q/=count
 
-np.savetxt('q.ascii',np.array([xV,yV,q]).T)
+#np.savetxt('q.ascii',np.array([xV,yV,q]).T)
+
+print("     -> q (m,M) %.6f %.6f nel= %d" %(np.min(q),np.max(q),nel))
 
 print("compute nodal pressure: %.3f s" % (timing.time() - start))
 
@@ -432,13 +478,12 @@ print("compute nodal pressure: %.3f s" % (timing.time() - start))
 ###############################################################################
 start = timing.time()
 
-
 error_u = np.zeros(NV,dtype=np.float64)
 error_v = np.zeros(NV,dtype=np.float64)
 error_q = np.zeros(NV,dtype=np.float64)
 error_p = np.zeros(nel,dtype=np.float64)
 
-if experiment==1:
+if True: 
 
    for i in range(0,NV): 
        error_u[i]=u[i]-velocity_x(xV[i],yV[i])
@@ -516,13 +561,19 @@ if visu:
    vtufile.write("<CellData Scalars='scalars'>\n")
    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
    for iel in range(0,nel):
-           vtufile.write("%10e \n" %(p[iel]))
+       vtufile.write("%10e \n" %(p[iel]))
    vtufile.write("</DataArray>\n")
-   if experiment==1:
+   if experiment==1 or experiment==4:
       vtufile.write("<DataArray type='Float32' Name='p (error)' Format='ascii'> \n")
       for iel in range(0,nel):
-              vtufile.write("%10e \n" %(error_p[iel]))
+          vtufile.write("%10e \n" %(error_p[iel]))
       vtufile.write("</DataArray>\n")
+   if experiment==3:
+      vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
+      for iel in range(0,nel):
+           vtufile.write("%10e \n" %(viscosity(xc[iel],yc[iel])))
+      vtufile.write("</DataArray>\n")
+
 
    vtufile.write("<DataArray type='Float32' Name='bx' Format='ascii'> \n")
    for iel in range(0,nel):
@@ -540,7 +591,6 @@ if visu:
 
    vtufile.write("</CellData>\n")
    #####
-
    vtufile.write("<PointData Scalars='scalars'>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel' Format='ascii'> \n")

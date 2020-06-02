@@ -1,0 +1,80 @@
+set term pdf enhanced font "Times,11pt"
+set key outside
+set pointsize 0.3
+
+
+set xlabel 'h'
+set ylabel 'v_{rms}'
+set log x
+set output 'vrms.pdf'
+plot[:][:]\
+'vrms_regular'  u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'regular',\
+'vrms_stenberg' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'Stenberg',\
+'vrms_letallec' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'Le Tallec',\
+'vrms_qinzhang' u (1./sqrt($3)):6 w lp lt 4 pt 1 t 'qinzhang',\
+
+set ylabel 'elemental pressure'
+set output 'pstats.pdf'
+plot[:][:]\
+'pstats_regular'   u (1./sqrt($7)):4 w lp lt 1 pt 1 t 'regular',\
+'pstats_regular'   u (1./sqrt($7)):5 w lp lt 1 pt 1 notitle,\
+'pstats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 pt 1 lw 2 t 'Stenberg',\
+'pstats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 pt 1 lw 2 notitle,\
+'pstats_letallec'  u (1./sqrt($7)):4 w lp lt 3 pt 1 t 'Le Tallec',\
+'pstats_letallec'  u (1./sqrt($7)):5 w lp lt 3 pt 1 notitle,\
+'pstats_qinzhang'  u (1./sqrt($7)):4 w lp lt 4 pt 1 t 'Qin \& Zhang',\
+'pstats_qinzhang'  u (1./sqrt($7)):5 w lp lt 4 pt 1 notitle,\
+
+set ylabel 'nodal pressure'
+set output 'qstats.pdf'
+plot[:][:]\
+'qstats_regular'   u (1./sqrt($7)):4 w lp lt 1 pt 1 t 'regular',\
+'qstats_regular'   u (1./sqrt($7)):5 w lp lt 1 pt 1 notitle,\
+'qstats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 lw 2 pt 1 t 'Stenberg',\
+'qstats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 lw 2 pt 1 notitle,\
+'qstats_letallec'  u (1./sqrt($7)):4 w lp lt 3 pt 1 t 'Le Tallec',\
+'qstats_letallec'  u (1./sqrt($7)):5 w lp lt 3 pt 1 notitle,\
+'qstats_qinzhang'  u (1./sqrt($7)):4 w lp lt 4 pt 1 t 'Qin \& Zhang',\
+'qstats_qinzhang'  u (1./sqrt($7)):5 w lp lt 4 pt 1 notitle,\
+
+set ylabel 'horizontal velocity'
+set output 'ustats.pdf'
+plot[:][:]\
+'ustats_regular'   u (1./sqrt($7)):4 w lp lt 1 pt 1 t 'regular',\
+'ustats_regular'   u (1./sqrt($7)):5 w lp lt 1 pt 1 notitle,\
+'ustats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 lw 2 pt 1 t 'Stenberg',\
+'ustats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 lw 2 pt 1 notitle,\
+'ustats_letallec'  u (1./sqrt($7)):4 w lp lt 3 pt 1 t 'Le Tallec',\
+'ustats_letallec'  u (1./sqrt($7)):5 w lp lt 3 pt 1 notitle,\
+'ustats_qinzhang'  u (1./sqrt($7)):4 w lp lt 4 pt 1 t 'Qin \& Zhang',\
+'ustats_qinzhang'  u (1./sqrt($7)):5 w lp lt 4 pt 1 notitle
+
+set ylabel 'vertical velocity'
+set output 'vstats.pdf'
+plot[:][:]\
+'vstats_regular'   u (1./sqrt($7)):4 w lp lt 1 pt 1 t 'regular',\
+'vstats_regular'   u (1./sqrt($7)):5 w lp lt 1 pt 1 notitle,\
+'vstats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 lw 2 pt 1 t 'Stenberg',\
+'vstats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 lw 2 pt 1 notitle,\
+'vstats_letallec'  u (1./sqrt($7)):4 w lp lt 3 pt 1 t 'Le Tallec',\
+'vstats_letallec'  u (1./sqrt($7)):5 w lp lt 3 pt 1 notitle,\
+'vstats_qinzhang'  u (1./sqrt($7)):4 w lp lt 4 pt 1 t 'Qin \& Zhang',\
+'vstats_qinzhang'  u (1./sqrt($7)):5 w lp lt 4 pt 1 notitle
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

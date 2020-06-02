@@ -1,0 +1,27 @@
+-----------------------------
+----------fieldstone---------
+-----------------------------
+nelx= 20
+nely= 20
+NV= 4881
+nel= 4800
+NfemV= 9762
+NfemP= 4800
+topo= 2
+     -> area (m,M) 1.562500e-04 2.343750e-04 
+     -> total area meas 1.000000 
+     -> total area anal 1.000000 
+compute elements areas: 0.556 s
+setup: boundary conditions: 0.005 s
+build FE matrix: 5.812 s
+solve time: 0.355 s
+     -> u (m,M) -0.0015 0.0015 
+     -> v (m,M) -0.0043 0.0020 
+split vel into u,v: 0.000 s
+avrg p= 0.03805992441188328
+normalise pressure: 0.015 s
+compute nodal pressure: 0.070 s
+compute errors: 0.000 s
+-----------------------------
+------------the end----------
+-----------------------------
