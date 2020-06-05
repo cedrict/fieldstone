@@ -384,9 +384,113 @@ Example:
 
 
 %---------------------------
-\subsection{Quadrilaterals: rectangular elements}
+\subsection{Quadrilaterals: rectangular linear elements}
 
-We here assume that each element is a rectangle of size $h_x \times h_y$. 
+We assume that each element is a rectangle of size $h_x \times h_y$. 
+We start from the linear shape functions in the reference element as a function of $r,s$:
+\begin{eqnarray}
+N_1(r,s) &=& \frac{1}{4}(1-r)(1-s) \\ 
+N_2(r,s) &=& \frac{1}{4}(1+r)(1-s) \\ 
+N_3(r,s) &=& \frac{1}{4}(1+r)(1+s) \\ 
+N_3(r,s) &=& \frac{1}{4}(1-r)(1+s) 
+\end{eqnarray}
+and their derivatives:
+and their derivatives:
+\begin{eqnarray}
+\partial_r N_1(r,s) &=& -\frac{1}{4}(1-s) \nn\\
+\partial_r N_2(r,s) &=& \frac{1}{4}(1-s) \nn\\
+\partial_r N_3(r,s) &=& \frac{1}{4}(1+s) \nn\\
+\partial_r N_4(r,s) &=& -\frac{1}{4}(1+s) \nn\\
+\partial_s N_1(r,s) &=& -\frac{1}{4}(1-r) \nn\\
+\partial_s N_2(r,s) &=& -\frac{1}{4}(1+r) \nn\\
+\partial_s N_3(r,s) &=& \frac{1}{4}(1+r) \nn\\
+\partial_s N_4(r,s) &=& \frac{1}{4}(1-r) \nn
+\end{eqnarray}
+We wish to compute the integral of a function $f(x,y)$ over the rectangular element:
+\begin{eqnarray}
+\iint f(x,y) dx dy 
+&=& \iint f(x(r,s),y(r,s)) \left| \frac{\partial (x,y)}{\partial (r,s) } \right|  dr ds \\
+&=& \iint f(x(r,s),y(r,s)) 
+\left| 
+\begin{array}{cc}
+\partial x/\partial r & \partial x/\partial s \\ \\
+\partial y/\partial r & \partial y/\partial s 
+\end{array}
+\right|  dr ds 
+\end{eqnarray}
+From 
+\[
+x(r,s)=\sum_{i=1}^4 N_i(r,s) x_i 
+\qquad \text{andd} \qquad 
+y(r,s)=\sum_{i=1}^4 N_i(r,s) y_i 
+\]
+we can write
+\begin{eqnarray}
+\frac{\partial x}{\partial r}(r,s)
+&=&\frac{\partial N_1}{\partial r} x_1+\frac{\partial N_2}{\partial r} x_2
++\frac{\partial N_3}{\partial r} x_3+\frac{\partial N_4}{\partial r} x_4 \nn\\
+&=& -\frac{1}{4}(1-s) x_1 + \frac{1}{4}(1-s) x_2 + \frac{1}{4}(1+s) x_3 - \frac{1}{4}(1+s) x_4 \nn\\
+&=& \frac{1}{4} ( -x_1 +x_2 +x_3 -x_4  +s (x_1 -x_2 +x_3 -x_4)   )  \nn\\
+&=& \frac{1}{4} ( h_x+h_x  +s (x_1 -x_2 +x_2 -x_1)   )  \nn\\
+&=& \frac{1}{2} h_x \nn\\
+\frac{\partial x}{\partial s}(r,s)
+&=&\frac{\partial N_1}{\partial s} x_1+\frac{\partial N_2}{\partial s} x_2
++\frac{\partial N_3}{\partial s} x_3+\frac{\partial N_4}{\partial s} x_4 \nn\\
+&=& -\frac{1}{4}(1-r)x_1 - \frac{1}{4}(1+r)x_2 +\frac{1}{4}(1+r)x_3 +\frac{1}{4}(1-r)x_4 \nn\\
+&=& \frac{1}{4} ( -x_1 -x_2 +x_3+x_4 + r(x_1-x_2+x_3-x_4) ) \nn\\ 
+&=& \frac{1}{4} ( -x_1 -x_2 +x_2+x_1 + r(x_1-x_2+x_2-x_1) ) \nn\\
+&=& 0 \nn\\ 
+\frac{\partial y}{\partial r}(r,s)
+&=& 0 \nn\\
+\frac{\partial y}{\partial s}(r,s)
+&=& \frac{1}{2} h_y
+\end{eqnarray}
+Then 
+\[
+\left| 
+\begin{array}{cc}
+\partial x/\partial r & \partial x/\partial s \\ \\
+\partial y/\partial r & \partial y/\partial s 
+\end{array}
+\right|  
+=
+\left| 
+\begin{array}{cc}
+h_x & 0 \\
+0 & h_y 
+\end{array}
+\right|  
+= \frac{h_xh_y}{4}
+\]
+Then 
+\begin{eqnarray}
+\iint_\square f(x,y) dx dy &=&  \frac{h_xh_y}{4} \int_{-1}^{1} \int_{-1}^{1} f(x(r,s),y(r,s)) dr ds
+\end{eqnarray}
+Then the mass matrix is given by
+\begin{eqnarray}
+{\bm M}_e 
+&=&   \frac{h_xh_y}{4} \int_{-1}^1 \int_{-1}^{1}
+\left(
+\begin{array}{cccc}
+N_1(r,s)N_1(r,s) &  N_1(r,s)N_2(r,s) &  N_1(r,s)N_3(r,s) & N_1(r,s)N_4(r,s) \\
+N_2(r,s)N_1(r,s) &  N_2(r,s)N_2(r,s) &  N_2(r,s)N_3(r,s) & N_2(r,s)N_4(r,s) \\
+N_3(r,s)N_1(r,s) &  N_3(r,s)N_2(r,s) &  N_3(r,s)N_3(r,s) & N_3(r,s)N_4(r,s) \\
+N_4(r,s)N_1(r,s) &  N_4(r,s)N_2(r,s) &  N_4(r,s)N_3(r,s) & N_4(r,s)N_4(r,s) 
+\end{array}
+\right)
+dr ds\nn\\
+&=&
+\frac{h_x h_y}{9}
+\left(
+\begin{array}{cccc}
+1 & 1/2 & 1/4 & 1/2 \\ \\ 
+1/2 & 1   & 1/2 & 1/4 \\ \\
+1/4 & 1/2 & 1 & 1/2 \\ \\
+1/2 & 1/4 & 1/2 & 1  
+\end{array}
+\right)
+\end{eqnarray}
+
 
 
 
@@ -396,6 +500,140 @@ We here assume that each element is a rectangle of size $h_x \times h_y$.
 
 We here assume that each element is a cuboid\footnote{\url{https://en.wikipedia.org/wiki/Cuboid}} 
 of size $h_x \times h_y \times h_z$. 
+
+
+
+%---------------------------------------
+\subsection{Triangles: linear elements}
+
+We start from the linear shape functions in the reference triangle given as a function of $r,s$:
+\begin{eqnarray}
+N_1(r,s) &=& 1-r-s \\
+N_2(r,s) &=& r \\
+N_3(r,s) &=& s
+\end{eqnarray}
+and their derivatives:
+\begin{eqnarray}
+\partial_r N_1(r,s) &=& -1 \\
+\partial_r N_2(r,s) &=& 1 \\
+\partial_r N_3(r,s) &=& 0 \\
+\partial_s N_1(r,s) &=& -1 \\
+\partial_s N_2(r,s) &=& 0\\
+\partial_s N_3(r,s) &=& -1
+\end{eqnarray}
+We wish to compute the integral of a function $f(x,y)$ over the triangle:
+\begin{eqnarray}
+\iint f(x,y) dx dy 
+&=& \iint f(x(r,s),y(r,s)) \left| \frac{\partial (x,y)}{\partial (r,s) } \right|  dr ds \\
+&=& \iint f(x(r,s),y(r,s)) 
+\left| 
+\begin{array}{cc}
+\partial x/\partial r & \partial x/\partial s \\ \\
+\partial y/\partial r & \partial y/\partial s 
+\end{array}
+\right|  dr ds 
+\end{eqnarray}
+From 
+\[
+x(r,s)=\sum_{i=1}^3 N_i(r,s) x_i 
+\qquad \text{andd} \qquad 
+y(r,s)=\sum_{i=1}^3 N_i(r,s) y_i 
+\]
+we can write
+\begin{eqnarray}
+\frac{\partial x}{\partial r}(r,s)
+&=&\sum_{i=1}^3 \frac{\partial N_i}{\partial r} x_i
+=\frac{\partial N_1}{\partial r} x_1+\frac{\partial N_2}{\partial r} x_2+\frac{\partial N_3}{\partial r} x_3
+=- x_1+ x_2 \nonumber\\
+\frac{\partial x}{\partial s}(r,s)
+&=&\sum_{i=1}^3 \frac{\partial N_i}{\partial s} x_i
+=\frac{\partial N_1}{\partial s} x_1+\frac{\partial N_2}{\partial s} x_2+\frac{\partial N_3}{\partial s} x_3
+=- x_1+ x_3
+\nonumber\\
+\frac{\partial y}{\partial r}(r,s)
+&=&\sum_{i=1}^3 \frac{\partial N_i}{\partial r} y_i
+=\frac{\partial N_1}{\partial r} x_1+\frac{\partial N_2}{\partial r} x_2+\frac{\partial N_3}{\partial r} y_3
+=- y_1+ y_2
+\nonumber\\
+\frac{\partial y}{\partial s}(r,s)
+&=&\sum_{i=1}^3 \frac{\partial N_i}{\partial s} y_i
+=\frac{\partial N_1}{\partial s} y_1+\frac{\partial N_2}{\partial s} y_2+\frac{\partial N_3}{\partial s} y_3
+=- y_1+ y_3
+\end{eqnarray}
+Then 
+\[
+\left| 
+\begin{array}{cc}
+\partial x/\partial r & \partial x/\partial s \\ \\
+\partial y/\partial r & \partial y/\partial s 
+\end{array}
+\right|  
+=
+\left| 
+\begin{array}{cc}
+- x_1+ x_2 & - x_1+ x_3 \\
+- y_1+ y_2 & - y_1+ y_3 
+\end{array}
+\right|  
+=
+(x_2-x_1)(y_3-y_1)-(y_2-y_1)(x_3-x_1)
+= 2S
+\]
+where $S$ is the area of the triangle and which is independent of $(r,s)$.
+\begin{center}
+\includegraphics[width=4cm]{images/elemental_mat/triangle} \\
+{\captionfont When $r$ goes from 0 to 1, $s$ can only take values between 0 and $1-r$.}
+\end{center}
+
+Then 
+\begin{eqnarray}
+\iint_\triangle f(x,y) dx dy &=& 2S \int_0^{1} \left(\int_0^{1-r} f(x(r,s),y(r,s))  ds \right) dr 
+\end{eqnarray}
+Then the mass matrix is given by
+\begin{eqnarray}
+{\bm M}_e 
+&=& 2S \int_{0}^1 \left[ \int_{0}^{1-r}
+\left(
+\begin{array}{ccc}
+(1-r-s)^2 & (1-r-s)r & (1-r-s)s \\
+(1-r-s)r & r^2 & rs \\
+(1-r-s)s & rs & s^2 
+\end{array}
+\right)
+ ds \right] dr \\
+&=& 
+2S \int_{0}^1 
+\left(
+\begin{array}{ccc}
+\int_0^{1-r} (1-r-s)^2 ds &\int_0^{1-r} (1-r-s)r ds& \int_0^{1-r} (1-r-s)s ds \\ \\
+\int_0^{1-r} (1-r-s)r ds  &\int_0^{1-r} r^2 ds     & \int_0^{1-r} rs ds \\ \\
+\int_0^{1-r} (1-r-s)s ds  &\int_0^{1-r} rs ds      & \int_0^{1-r} s^2 ds
+\end{array}
+\right)
+ dr \\
+&=& 
+2S
+\left(
+\begin{array}{ccc}
+1/12 & 1/24 & 1/24 \\
+1/24 & 1/12 & 1/24 \\
+1/24 & 1/24 & 1/12
+\end{array}
+\right)
+\\
+&=&
+\frac{S}{12}
+\left(
+\begin{array}{ccc}
+2 & 1 & 1 \\
+1 & 2 & 1 \\
+1 & 1 & 2
+\end{array}
+\right)
+\end{eqnarray}
+This is Eq.(4.10e) of Li \cite{li06}.
+
+
 
 
 

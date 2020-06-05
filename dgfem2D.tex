@@ -11,12 +11,13 @@ Let $N^\uptheta_i$ be the temperature basis functions so that the temperature in
 \begin{equation}
 T_h (\vec{r}) = \sum_{i=1}^m N_i^\uptheta (\vec{r}) \; T_i = \vec{N^\uptheta}\cdot \vec{T}
 \end{equation}
-where $\vec{T}$ is a vector of length $m$, the number of nodes per element. Similarly we let the basis function for the heat flux be
+where $\vec{T}$ is a vector of length $m$, the number of nodes per element. 
+Similarly we let the basis function for the heat flux be such that 
 \begin{equation}
-\qhx(x,y) = \sum_{i=1}^m N_i^q (x,y) \qix = \vec{N^q}\cdot \vec{\qx}
+\qhx(\vec{r}) = \sum_{i=1}^m N_i^q (\vec r) \qix = \vec{N^q}\cdot \vec{\qx}
 \end{equation}
 \begin{equation}
-\qhy(x,y) = \sum_{i=1}^m N_i^q (x,y) \qiy = \vec{N^q}\cdot \vec{\qy}
+\qhy(\vec{r}) = \sum_{i=1}^m N_i^q (\vec r) \qiy = \vec{N^q}\cdot \vec{\qy}
 \end{equation}
 where $\vec{\qx}$, $\vec{\qy}$ and $\vec{N}^q$ 
 are vectors of length $m$ too. Implicitly if $m$ is the same for temperature and heat flux, then $N^\uptheta = N^q$.
@@ -41,8 +42,8 @@ Using the product rule which states:
 \]
 which we insert in Eq.~(\ref{eq:SSD2D}) results in 
 \begin{equation}
-\int_{\Omega} \vec{\nabla} \cdot ({N^\uptheta_i} \vec{q}) dV - 
-\int_{\Omega} \vec{\nabla} {N^\uptheta_i} \cdot \vec{q} dV = \int_{\Omega} {N^\uptheta_i} H dV
+\int_{\Omega} \vec{\nabla} \cdot ({N^\uptheta_i} \vec{q}) \; dV - 
+\int_{\Omega} \vec{\nabla} {N^\uptheta_i} \cdot \vec{q} \; dV = \int_{\Omega} {N^\uptheta_i} H \; dV
 \label{eq:SSD2D1}
 \end{equation}
 Using the divergence theorem 
@@ -70,24 +71,25 @@ The exact solution $\vec{q}=(\qx,\qy)$ can be approximated with $\vec{q}_h$ in a
 %\int_{\Omega} {N^\theta} H dV
 %\label{eq:q2dss}
 %\end{equation}
-The middle and right terms are explained in Section~\ref{ss:hte_diff}, 
-so we will focus on the left term only (i.e. the one with the fluxes).
+Note that terms $B$ and $C$ are explained in Section~\ref{ss:hte_diff}.
 In all what follows blue symbols belong the the element under consideration 
 and brown symbols belong to its neighbour(s).
 
-\includegraphics[width=5cm,angle=90]{images/dgfem/elts}
+\begin{center}
+\includegraphics[width=7cm]{images/dgfem/dgelts}
+\end{center}
+
 %Here the blue color (before: $el$ superscript) indicates that it belongs to the element of interest and brown color (before: the $nb$ superscript) 
 %denotes the values belonging to the neighbouring element. 
 $\vec{n}^+$ indicates the outward vector at the boundary and $\vec{n}^-$ is 
 the outward vector of the neighbouring element.
 
-Let us turn to the book for useful definitions:
+Let us turn to Li's book for useful definitions:
 \begin{itemize}
 \item
 \underline{Definition of jump operators} The square brackets denote the jump operator:
 \begin{eqnarray}
-[\vec{q}_h] &=& \vec{\color{blue}q}_h \cdot \vec{n}^+ 
-+ \vec{\color{brown} q}_h \cdot \vec{n}^- 
+[\vec{q}_h] &=& \vec{\color{blue}q}_h \cdot \vec{n}^+ + \vec{\color{brown} q}_h \cdot \vec{n}^- 
 \qquad \text{or} \qquad 
 [\vec{q}_h]= (\vec{\color{blue}q}_h - \vec{\color{brown}q}_h) \cdot \vec{n}^+    \nn\\
 \left[T_h\right] &=& \blueT_h \vec{n}^+ + {\brownT}_h \vec{n}^-  \qquad \text{or} \qquad 
@@ -115,11 +117,12 @@ $\{T_h\}$ is a scalar.
 \item
 \underline{Definitions of fluxes} In the LDG method the boundary flux $\vec{\hat{q}}$ is defined as 
 \[
-\vec{\hat{q_h}} = \{ \vec{q_h} \} -{\cal{E}} [T_h]- \vec{\cal{C}}  [\vec{q_h}] 
+\vec{\hat{q_h}} = \{ \vec{q_h} \} -{\cal{E}} [T_h]- \vec{\cal{C}}\;  [\vec{q_h}] 
 \]
 where ${\cal{E}}$ is a scalar (since $[T_h]$ is a vector)
 and $\vec{\cal C}$ is a vector (since $[\vec{q}_h]$ is a scalar).
-To be once again very explicit:
+To be once again very explicit, the above equation writes as follows for a 
+2D Cartesian space:
 \begin{eqnarray}
 \hat{\qhx} 
 &=& \{\qhx\} -{\cal{E}} [T_h]_x- {\cal{C}}_x  [\vec{q}_h] \nn\\
@@ -135,14 +138,14 @@ To be once again very explicit:
 \end{eqnarray}
 
 \begin{remark}
-Note that in the the book the note under table 4.1 states that the $C_{ij}$ 
+In the book the note under table 4.1 states that the $C_{ij}$ 
 coefficients are constant matrices, which is quite misleading since some are actually scalars and others vectors.
 \end{remark}
 
 \end{itemize}
 
 
-Filling Eqs.~(\ref{flux2Da},\ref{flux2Db}) into Eq.~(\ref{eq:q2dss}) leads to
+Filling Eqs.~(\ref{flux2Da},\ref{flux2Db}) into $A$ of Eq.~(\ref{eq:q2dss}) leads to
 %(note that I have introduced the upperscript + on the normal components 
 %because the integration is on the boundary of the element - does that make sense?)
 
@@ -226,12 +229,12 @@ C &=& \int_{\Omega} {N_i} H  \;dV \nn \\
 
 The expressions above find their equivalent in the book (NB stands for neighbour):
 \begin{center}
-\includegraphics[width=11cm]{images/dgfem/li_01}\\
+\includegraphics[width=10cm]{images/dgfem/li_01}\\
 {\captionfont Note that in the book we have: $C_{12}={\bm C}_{12}\cdot {\bm n}^+ \rightarrow \vec{\cal C}\cdot\vec{n}^+$;
 $C_{11} \rightarrow {\cal E}$}
 \end{center}
 
-
+\todo[inline]{check minus signs}
 
 
 
@@ -243,32 +246,31 @@ $C_{11} \rightarrow {\cal E}$}
 \int_\Omega N_i^q (\vec{q} + k\vec{\nabla } T ) dV = 0
 \]
 or, (once again we drop the superscript on the shape functions and the $h$):
-\[
-\int_\Omega N_i \vec{q} \;  dV + \int_\Omega N_i k\vec{\nabla } T \; dV = 0
-\]
+\begin{eqnarray}
+0 &=& \int_\Omega N_i \vec{q} \;  dV + \int_\Omega N_i k\vec{\nabla } T \; dV \nn\\
+ &=& \int_\Omega N_i \vec{q} \;  dV + \int_\Omega \vec\nabla (N_i k  T) \; dV - \int_\Omega \vec\nabla (k N_i) T \; dV
+\end{eqnarray}
 We then use $\int_\Omega \vec\nabla f \; dV = \int_{\partial\Omega} f \vec{dS}$
 and as before the temperature on the edge integral should be $\hat{T}$:
 \[
 \int_\Omega N_i \vec{q} \;  dV + \int_{\partial\Omega}  k N_i \hat{T} \; \vec{n}^+  dS - \int_\Omega \vec\nabla (k N_i)   T \; dV = 0
 \]
-
-
 or, if decomposed in a 2D Cartesian axis system 
 \begin{eqnarray}
 0
 %&=&\int_\Omega N_i \left( \qx + k  \frac{\partial T}{\partial x} \right) \; dV \nn\\
 %&=&\int_\Omega N_i  \qx^h dV
 %+ \int_\Omega N_i k  \frac{\partial T^h}{\partial x}  \; d\Omega \nn\\
-&=&\int_\Omega N_i  \qx dV 
-+\int_{\partial\Omega} N_i k \hat{T} \; n^+_x dS
--\int_\Omega \partial_x ( k N_i) \;  T \; dV \nn\\
+&=& \underbrace{ \int_\Omega N_i  \qx \; dV }_{D}
++\underbrace{\int_{\partial\Omega} k N_i \hat{T} \; n^+_x \; dS}_{E}
+-\underbrace{\int_\Omega \partial_x ( k N_i) \;  T \; dV}_{F} \qquad\qquad  (0=D+E-F)\nn\\
 0
 %&=&\int_\Omega N_i \left( \qy^h + k  \frac{\partial T^h}{\partial y} \right) \; dV \nn\\
 %&=&\int_\Omega N_i  \qy^h dV
 %+ \int_\Omega N_i k  \frac{\partial T^h}{\partial y}  \; d\Omega \nn\\
-&=&\int_\Omega N_i  \qy^h dV 
-+\int_{\partial\Omega} N_i k \hat{T} \; n^+_y dS
--\int_\Omega \partial_y (k N_i) \;  T \; dV \nn
+&=&\underbrace{\int_\Omega N_i  \qy \; dV}_G 
++\underbrace{\int_{\partial\Omega} k N_i  \hat{T} \; n^+_y \; dS }_{H}
+-\underbrace{\int_\Omega \partial_y (k N_i) \;  T \; dV}_I \qquad\qquad  (0=G+H-I)
 \end{eqnarray}
 %Both can be summed together and creating the vector $\vec{N}=(N_i,N_i)= N_i(\vec{e}_x+\vec{e}_y)$ then we get 
 %\[
@@ -284,40 +286,196 @@ which (aside from a minus sign coming from a different definition of the heat fl
 \end{center}
 
 
+The temperature flux $\hat{T}$ is chosen to be (table 4.1 in book):
 \begin{eqnarray}
-D &=&  \\
-E &=&  \\
-F &=&  \\
-G &=&  \\
-H &=&  \\
-I &=&  \\
+\hat{T}_h 
+&=& \{ T_h \} + \vec{\cal C} [T_h] - {\cal F} [\vec{q}_h] \\
+&=& \frac{1}{2}(\blueT_h + \brownT_h)   
++ \vec{\cal C} (\blueT_h \vec{n}^+ + {\brownT}_h \vec{n}^-) 
+- {\cal F}   (\vec{\color{blue}q}_h \cdot \vec{n}^+ + \vec{\color{brown} q}_h \cdot \vec{n}^-) \\
+&=& \frac{1}{2}(\blueT_h + \brownT_h)   
++  (\blueT_h  - \brownT_h ) \; \vec{\cal C}\cdot\vec{n}^+  
+- {\cal F} (\vec{\color{blue}q}_h - \vec{\color{brown}q}_h) \cdot \vec{n}^+ \\
+&=& \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) \blueT_h 
++ \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) \brownT_h 
+- {\cal F} (\vec{\color{blue}q}_h - \vec{\color{brown}q}_h) \cdot \vec{n}^+ 
 \end{eqnarray}
 
 
 
+In what follows we assume $k$ to be constant within each element so that $\partial_x (k N_i)= k \partial_x N_i$.
+
+\begin{eqnarray}
+D &=& \int_\Omega N_i  \qx\;  dV 
+\qquad \Rightarrow \qquad  \vec{D} = \left( \int_\Omega \vec{N}^T \vec{N} dV \right) \cdot {\color{blue}\vec{\qx}} \\ 
+F &=& \int_\Omega k \partial_x N_i \;  T \; dV 
+\qquad \Rightarrow \qquad \vec{F} = \left( \int_\Omega k \partial_x \vec{N}^T \vec{N} \; dV \right) \cdot \vec{\color{blue} T} \\
+G &=&  \int_\Omega N_i  \qy^h \; dV
+\qquad \Rightarrow \qquad \vec{G} = \left( \int_\Omega \vec{N}^T \vec{N} dV \right) \cdot {\color{blue}\vec{\qy}} \\ 
+I &=&  \int_\Omega k \partial_y N_i \;  T \; dV 
+\qquad \Rightarrow \qquad \vec{I} = \left( \int_\Omega k \partial_y \vec{N}^T \vec{N} \; dV \right) \cdot \vec{\color{blue} T} \\
+E &=&  \int_{\partial\Omega} k N_i \hat{T} \; n^+_x dS \nn\\
+ &=&  
+\int_{\partial\Omega} k N_i 
+\left[  \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) \blueT_h 
++ \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) \brownT_h 
+- {\cal F} (\vec{\color{blue}q}_h - \vec{\color{brown}q}_h) \cdot \vec{n}^+ 
+\right] n^+_x dS \nn\\
+ &=&  
+\int_{\partial\Omega} k N_i \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) \blueT_h  n^+_x dS 
++\int_{\partial\Omega} k N_i \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) \brownT_h   n^+_x dS \nn\\
+&&-
+\int_{\partial\Omega} k N_i  {\cal F} (\vec{\color{blue}q}_h \cdot \vec{n}^+ )  n^+_x dS 
++
+\int_{\partial\Omega} k N_i  {\cal F} (\vec{\color{brown}q}_h \cdot \vec{n}^+ )  n^+_x dS \nn\\
+&=& E_1  + E_2 + E_3 + E_4 \nn\\
+H &=& 
+\int_{\partial\Omega} k N_i  \hat{T} \; n^+_y dS \nn\\
+&=& H_1+H_2+H_3+H_4
+\end{eqnarray}
+
+Then 
+\begin{eqnarray}
+E_1 &=&
+\int_{\partial\Omega} k N_i \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) \blueT_h  n^+_x dS 
+\qquad \Rightarrow \qquad
+\left(\int_{\partial\Omega} k \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS \right)\cdot \vec{\color{blue}T} \nn\\
+E_2 &=& 
+\int_{\partial\Omega} k N_i \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) \brownT_h   n^+_x dS
+\qquad \Rightarrow \qquad
+\left(\int_{\partial\Omega} k \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS \right)\cdot \vec{\color{brown}T} \nn\\
+E_3 
+&=& -\int_{\partial\Omega} k N_i  {\cal F} (\vec{\color{blue}q}_h \cdot \vec{n}^+ )  n^+_x dS \nn\\ 
+&=& -\int_{\partial\Omega} k N_i  {\cal F} ({\color{blue}q}_x {n}^+_x + {\color{blue}q}_y {n}^+_y )  n^+_x dS \nn\\ 
+&=& -\int_{\partial\Omega} k N_i  {\cal F} {\color{blue}q}_x {n}^+_x   n^+_x dS 
+   -\int_{\partial\Omega} k N_i  {\cal F} {\color{blue}q}_y {n}^+_y   n^+_x dS \nn\\
+&\Rightarrow&  
+ -\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS \right)\cdot \vec{\blueqx} 
+-\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS \right)\cdot \vec{\blueqy} \nn\\
+E_4 
+&=& \int_{\partial\Omega} k N_i  {\cal F} (\vec{\color{brown}q}_h \cdot \vec{n}^+ )  n^+_x dS \nn\\
+&=& \int_{\partial\Omega} k N_i  {\cal F} ({\color{brown}q}_x  {n}^+_x + {\color{brown}q}_y  {n}^+_y )  n^+_x dS \nn\\
+&=& \int_{\partial\Omega} k N_i  {\cal F} {\color{brown}q}_x  {n}^+_x   n^+_x dS 
+  + \int_{\partial\Omega} k N_i  {\cal F} {\color{brown}q}_y  {n}^+_y   n^+_x dS \nn\\
+&\Rightarrow&  
+ \left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS \right)\cdot \vec{\brownqx} 
++\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS \right)\cdot \vec{\brownqy} 
+\end{eqnarray}
+
+The $H_i$ terms are so similar to the $E_i$ terms that there is not need to write them out explicitely.
+
+
+\begin{landscape}
+\noindent We have seen that ODE \#1 and \#2 write
+\begin{eqnarray}
+A-B = A_1 + A_2 + A_3 + A_4 - B &=& \vec{C}\\
+D+E-F = D+E_1+E_2+E_3+E_4-F &=&0\\
+G+H-I = G+H_1+H_2+H_3+H_4-I &=&0
+\end{eqnarray}
+
+so that 
+\begin{eqnarray}
+ \left( \int_{\partial\Omega}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_x  \; dS  \right) \cdot {\color{blue}\vec{\qx}}  
++ \left( \int_{\partial\Omega}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_y  \; dS  \right) \cdot {\color{blue}\vec{\qy}}  
+ - \left( \int_{\partial\Omega}   {\cal{E}}   \vec{N}^T \vec{N} dS \right) \cdot \vec{\blueT}  && \nn\\
++  \left(\int_{\partial\Omega} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_x^+    \; dS \right) \cdot  {\color{brown}\vec{\qx}}
++ \left(\int_{\partial\Omega} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_y^+    \; dS \right) \cdot  {\color{brown}\vec{\qy}} 
++  \left( \int_{\partial\Omega}   {\cal{E}}   \vec{N}^T \vec{N} dS \right) \cdot \vec{\brownT} 
+- \left(\int_{\Omega} \partial_x \vec{N}^T \vec{N}   \; dV \right)\cdot {\color{blue}\vec{\qx}}  
+- \left(\int_{\Omega} \partial_y \vec{N}^T \vec{N}   \; dV \right)\cdot {\color{blue}\vec{\qy}}  
+&=&
+\int_{\Omega} \vec{N}^T H  \;dV 
+\nn\\ 
+\nn\\ 
+\left( \int_\Omega \vec{N}^T \vec{N} dV \right) \cdot {\color{blue}\vec{\qx}} 
++ \left(\int_{\partial\Omega} k \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS \right)\cdot \vec{\color{blue}T} 
++ \left(\int_{\partial\Omega} k \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS \right)\cdot \vec{\color{brown}T} && \nn\\
+-\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS \right)\cdot \vec{\blueqx} 
+-\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS \right)\cdot \vec{\blueqy} 
++ \left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS \right)\cdot \vec{\brownqx} 
++\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS \right)\cdot \vec{\brownqy} 
+- \left( \int_\Omega k \partial_x \vec{N}^T \vec{N} \; dV \right) \cdot \vec{\color{blue} T} &=& \vec{0} 
+\nn\\
+\nn\\
+\left( \int_\Omega \vec{N}^T \vec{N} dV \right) \cdot {\color{blue}\vec{\qy}} 
++ \left(\int_{\partial\Omega} k \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_y dS \right)\cdot \vec{\color{blue}T} 
++ \left(\int_{\partial\Omega} k \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_y dS \right)\cdot \vec{\color{brown}T} && \nn\\
+-\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS \right)\cdot \vec{\blueqx} 
+-\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS \right)\cdot \vec{\blueqy} 
++ \left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS \right)\cdot \vec{\brownqx} 
++\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS \right)\cdot \vec{\brownqy} 
+- \left( \int_\Omega k \partial_y \vec{N}^T \vec{N} \; dV \right) \cdot \vec{\color{blue} T} &=& \vec{0} \nn
+\end{eqnarray}
+
+
+Finally
+
+{\footnotesize
+\[
+\left[
+\underbrace{
+\left(
+\begin{array}{ccc}
+0 & - \int_{\Omega} \partial_x \vec{N}^T \vec{N}   \; dV  & - \int_{\Omega} \partial_y \vec{N}^T \vec{N}   \; dV  \\ \\
+-\int_\Omega k \partial_x \vec{N}^T \vec{N} \; dV & \int_\Omega \vec{N}^T\vec{N} dV & 0 \\  \\
+-\int_\Omega k \partial_y \vec{N}^T \vec{N} \; dV & 0 & \int_\Omega \vec{N}^T\vec{N} dV  
+\end{array}
+\right)}_{{\cal A}_\Omega}
++
+\underbrace{
+\left(
+\begin{array}{ccc}
+-  \int_{\partial\Omega}   {\cal{E}}   \vec{N}^T \vec{N} dS   & \int_{\partial\Omega}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_x  \; dS &  \int_{\partial\Omega}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_y  \; dS \\ \\
+\int_{\partial\Omega} k \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS & 
+-\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS  
+& -\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS    \\ \\
+\int_{\partial\Omega} k \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_y dS & 
+-\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS  
+& -\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS    
+\end{array}
+\right)}_{{\cal A}_{\partial\Omega}}
+\right]
+\cdot
+\left(
+\begin{array}{c} 
+\vec{\color{blue}T} \\ \\ \vec{\blueqx} \\ \\ \vec{\blueqy}
+\end{array}
+\right)
+\]
+\[
+=
+\left(
+\begin{array}{c}
+-  \left( \int_{\partial\Omega}   {\cal{E}}   \vec{N}^T \vec{N} dS \right) \cdot \vec{\brownT} 
+-  \left(\int_{\partial\Omega} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_x^+    \; dS \right) \cdot  {\color{brown}\vec{\qx}}
+- \left(\int_{\partial\Omega} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_y^+    \; dS \right) \cdot  {\color{brown}\vec{\qy}} 
+\\ \\
+- \left(\int_{\partial\Omega} k \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS \right)\cdot \vec{\color{brown}T} 
+- \left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS \right)\cdot \vec{\brownqx} 
+-\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS \right)\cdot \vec{\brownqy} 
+\\ \\
+- \left(\int_{\partial\Omega} k \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_y dS \right)\cdot \vec{\color{brown}T} 
+- \left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS \right)\cdot \vec{\brownqx} 
+-\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS \right)\cdot \vec{\brownqy} 
+\end{array}
+\right)
++
+\left(
+\begin{array}{c}
+\int_{\Omega} \vec{N}^T H  \;dV  \\ \\ 0 \\ \\ 0 
+\end{array}
+\right)
+\]
+}
+
+\end{landscape}
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \par\noindent\rule{\textwidth}{0.4pt}
-
+DISCARD THIS PAGE
 
 We start from the steady state (no advection) energy equation:
 \[
@@ -396,12 +554,7 @@ where the $C$ coefficients are matrices ?!
 
 \index{general}{Average Operator}
 \index{general}{Jump Operator}
-The average operator and jump operators in the table are defined as follows:
-let $\Gamma_{12}$ be an interior edge shared by elements $1$ and $2$ and let us 
-define the unit normal vectors $\vec{n}_1$ and $\vec{n}_2$ on $\Gamma_{12}$ 
-pointing exterior to element 1 and 2, respectively.
 
 
 
-\end{document}
 

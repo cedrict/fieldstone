@@ -177,7 +177,6 @@ and then
 \subsubsection{A probably naive way of finding the quadrature points coordinates and weights}
 
 
-
 We start from the assumption that the quadrature must be exact for polynomials $f(x)$, that it is 
 written
 \[
@@ -257,6 +256,11 @@ I= \int_{-1}^{+1} x^4 dx = \frac{2}{5} \neq  \sum_{i_q=1}^{2} w_{iq} x_{i_q}^4
 \]
 A three-point quadrature will then be needed for those. Because of the symmetry, we know that the middle
 point will be at $x=0$.
+
+\begin{remark} 
+This approach unfortunately does not shed any light on why the method is calle Gauss-Legendre quadrature
+nor why the quadrature points are the zeros of the Legendre polynomials...
+\end{remark}
 
 
 %--------------------
