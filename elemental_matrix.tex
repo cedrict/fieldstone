@@ -504,7 +504,7 @@ of size $h_x \times h_y \times h_z$.
 
 
 %---------------------------------------
-\subsection{Triangles: linear elements}
+\subsection{Triangles: linear elements} \label{ss:tle}
 
 We start from the linear shape functions in the reference triangle given as a function of $r,s$:
 \begin{eqnarray}
@@ -634,10 +634,253 @@ Then the mass matrix is given by
 This is Eq.(4.10e) of Li \cite{li06}.
 
 
+We start from the shape functions:
+\begin{eqnarray}
+N_1(x,y) &=& \frac{1}{2S} ( x_2y_3-x_3y_2+(y_2-y_3)x+(x_3-x_2)y   ) \nn\\
+N_2(x,y) &=& \frac{1}{2S} ( x_3y_1-x_1y_3+(y_3-y_1)x+(x_1-x_3)y   ) \nn\\
+N_3(x,y) &=& \frac{1}{2S} ( x_1y_2-x_2y_1+(y_1-y_2)x+(x_2-x_1)y   ) \nn
+\end{eqnarray}
+where $S$ is the area of the element.
+We then have 
+\begin{eqnarray}
+\partial_x N_1(x,y) &=& \frac{1}{2S}  (y_2-y_3) \nn\\
+\partial_x N_2(x,y) &=& \frac{1}{2S}  (y_3-y_1) \nn\\
+\partial_x N_3(x,y) &=& \frac{1}{2S}  (y_1-y_2) \nn
+\end{eqnarray}
+and
+\begin{eqnarray}
+\partial_y N_1(x,y) &=& \frac{1}{2S}  (x_3-x_2) \nn\\
+\partial_y N_2(x,y) &=& \frac{1}{2S}  (x_1-x_3) \nn\\
+\partial_y N_3(x,y) &=& \frac{1}{2S}  (x_2-x_1) \nn
+\end{eqnarray}
 
 
 
+\begin{eqnarray}
+J_x
+&=& \iint_\triangle  \partial_x \vec{N}^T \vec{N} dV \nn\\
+&=&  \iint_\triangle 
+\left(
+\begin{array}{c}
+\frac{1}{2S}(y_2-y_3) \\
+\frac{1}{2S}(y_3-y_1) \\
+\frac{1}{2S}(y_1-y_2)
+\end{array}
+\right)
+\left(
+\begin{array}{ccc}
+N_1(x,y) & N_2(x,y) & N_3(x,y) 
+\end{array}
+\right) dx dy \nn\\
+&=& \frac{1}{2S} 
+\left(
+\begin{array}{ccc}
+y_{23} \iint_\triangle N_1 dx dy & y_{23} \iint_\triangle N_2 dx dy & y_{23} \iint_\triangle N_3 dx dy \\
+y_{31} \iint_\triangle N_1 dx dy & y_{31} \iint_\triangle N_2 dx dy & y_{31} \iint_\triangle N_3 dx dy \\
+y_{12} \iint_\triangle N_1 dx dy & y_{12} \iint_\triangle N_2 dx dy & y_{12} \iint_\triangle N_3 dx dy 
+\end{array}
+\right) 
+\end{eqnarray}
+We then need to compute
 
+\begin{eqnarray}
+\iint_\triangle N_1(x,y) dx dy 
+&=& 2S \int_0^{1} \left(\int_0^{1-r} N_1(x(r,s),y(r,s))  ds \right) dr \\ 
+&=& 2S \int_0^{1} \left(\int_0^{1-r} (1-r-s)  ds \right) dr \\ 
+&=& 2S \frac{1}{6} \\ 
+\iint_\triangle N_2(x,y) dx dy 
+&=& 2S \int_0^{1} \left(\int_0^{1-r} N_2(x(r,s),y(r,s))  ds \right) dr \\ 
+&=& 2S \int_0^{1} \left(\int_0^{1-r} r  ds \right) dr \\ 
+&=& 2S \frac{1}{6} \\ 
+\iint_\triangle N_3(x,y) dx dy 
+&=& 2S \int_0^{1} \left(\int_0^{1-r} N_3(x(r,s),y(r,s))  ds \right) dr \\ 
+&=& 2S \int_0^{1} \left(\int_0^{1-r} s  ds \right) dr \\ 
+&=& 2S \frac{1}{6} 
+\end{eqnarray}
+Finally:
+\[
+{\bm J}_x
+=
+\frac{1}{6}
+\left(
+\begin{array}{ccc}
+y_{23} & y_{23} & y_{23} \\ 
+y_{31} & y_{31} & y_{31} \\ 
+y_{12} & y_{12} & y_{12}  
+\end{array}
+\right) 
+\]
+
+Likewise
+\begin{eqnarray}
+{\bm J}_y
+&=& \iint_\triangle  \partial_y \vec{N}^T \vec{N} dV \nn\\
+&=&  \iint_\triangle 
+\left(
+\begin{array}{c}
+\frac{1}{2S}(x_3-x_2) \\
+\frac{1}{2S}(x_1-x_3) \\
+\frac{1}{2S}(x_2-x_1)
+\end{array}
+\right)
+\left(
+\begin{array}{ccc}
+N_1(x,y) & N_2(x,y) & N_3(x,y) 
+\end{array}
+\right) dx dy \nn\\
+&=&
+\frac{1}{6}
+\left(
+\begin{array}{ccc}
+x_{32} & x_{32} & x_{32} \\ 
+x_{13} & x_{13} & x_{13} \\ 
+x_{21} & x_{21} & x_{21}  
+\end{array}
+\right) 
+\end{eqnarray}
+
+
+\newpage
+\[
+{\bm C}_1
+=\int_{\partial\Omega_1} \vec{N}^T(x,y) \vec{N}(x,y) d\Gamma
+\]
+The edge $\partial\Omega_1$ is bounded by the coordinates of nodes $x_1,y_1$
+and $x_2,y_2$. This segment can be parameterised by $t\in[0,1]$:
+\[
+\vec{r}(t) = (1-t)\left(\begin{array}{c} x_1 \\ y_1 \end{array} \right) + 
+t \left(\begin{array}{c} x_2 \\ y_2 \end{array} \right)
+=
+\left(\begin{array}{c} (x_2-x_1)t +x_1 \\ (y_2-y_1)t+y_1 \end{array} \right) 
+\]
+
+Let us assume that $C$ is a smooth curve and that it is given by the 
+parametric equations $x=h(t)$, $y=g(t)$ and $a\leq t \leq b$. The line integral 
+of a function $f(x,y)$ over $C$ is computed as follows. 
+\[
+\int_C f(x,y) ds = \int_a^b f(h(t),g(t)) \sqrt{\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2} dt
+\]
+In our case $dx/dt=x_2-x_1$ and $dy/dt=y_2-y_1$ so 
+\[
+\sqrt{\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2}
+=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2} = L_1
+\]
+Then 
+\begin{eqnarray}
+{\bm C}_1
+&=&\int_{\partial\Omega_1} \vec{N}^T(x,y) \vec{N}(x,y) d\Gamma \nn\\
+&=&
+\left(
+\begin{array}{ccc}
+\int_{\partial\Omega_1} N_1(x,y)N_1(x,y) d\Gamma & 
+\int_{\partial\Omega_1} N_1(x,y)N_2(x,y) d\Gamma &
+\int_{\partial\Omega_1} N_1(x,y)N_3(x,y) d\Gamma \\
+\int_{\partial\Omega_1} N_2(x,y)N_1(x,y) d\Gamma & 
+\int_{\partial\Omega_1} N_2(x,y)N_2(x,y) d\Gamma &
+\int_{\partial\Omega_1} N_2(x,y)N_3(x,y) d\Gamma \\
+\int_{\partial\Omega_1} N_3(x,y)N_1(x,y) d\Gamma & 
+\int_{\partial\Omega_1} N_3(x,y)N_2(x,y) d\Gamma &
+\int_{\partial\Omega_1} N_3(x,y)N_3(x,y) d\Gamma 
+\end{array}
+\right) \nn\\
+&=&
+L_1
+\left(
+\begin{array}{ccc}
+\int_{0}^1 N_1(x(t),y(t))N_1(x(t),y(t)) dt & 
+\int_{0}^1 N_1(x(t),y(t))N_2(x(t),y(t)) dt &
+\int_{0}^1 N_1(x(t),y(t))N_3(x(t),y(t)) dt \\\\
+\int_{0}^1 N_2(x(t),y(t))N_1(x(t),y(t)) dt & 
+\int_{0}^1 N_2(x(t),y(t))N_2(x(t),y(t)) dt &
+\int_{0}^1 N_2(x(t),y(t))N_3(x(t),y(t)) dt \\\\
+\int_{0}^1 N_3(x(t),y(t))N_1(x(t),y(t)) dt & 
+\int_{0}^1 N_3(x(t),y(t))N_2(x(t),y(t)) dt &
+\int_{0}^1 N_3(x(t),y(t))N_3(x(t),y(t)) dt
+\end{array}
+\right) \nn\\
+\end{eqnarray}
+
+We are about to compute the individual terms of the matrix
+one by one but we will need:
+\begin{eqnarray}
+S
+&=& \frac{1}{2} [(x_1-x_3)(y_2-y_3)-(x_2-x_3)(y_1-y_3)]  \nn\\
+&=&  \frac{1}{2} [x_1y_2 -x_1y_3 -x_3y_2 + x_3y_3 -x_2y_1 + x_2y_3 + x_3y_1 - x_3y_3] \nn\\
+&=&  \frac{1}{2} [x_1y_2 -x_1y_3 -x_3y_2 -x_2y_1 + x_2y_3 + x_3y_1 ] \nn\\
+\end{eqnarray}
+and 
+\begin{eqnarray}
+N_1(x(t),y(t)) 
+&=&\frac{1}{2S} [  x_2y_3-x_3y_2+(y_2-y_3)x(t)+(x_3-x_2)y(t) ] \nn\\
+&=&\frac{1}{2S} [  x_2y_3-x_3y_2+y_{23}(x_{21} t +x_1)  +x_{32}  (y_{21} t+y_1) ] \nn\\
+&=&\frac{1}{2S} [ x_2y_3-x_3y_2 +y_{23}x_1+x_{32}y_1 + (y_{23}x_{21}+x_{32}y_{21}) t  ] \nn\\
+&=&\frac{1}{2S} [ \underbrace{x_2y_3-x_3y_2 +x_1y_2-x_1y_3 +x_{3}y_1-x_2y_1}_{2S} \\ 
+&& + (x_2y_2-x_1y_2-x_2y_3+x_1y_3 + x_3y_2 - x_3y_1 - x_2y_2 + x_2y_1  ) t  ]  \nn\\
+&=&\frac{1}{2S} [ 2S - (\underbrace{x_1y_2+x_2y_3-x_1y_3 - x_3y_2 + x_3y_1 - x_2y_1}_{2S}  ) t  ]  \nn\\
+&=&\frac{1}{2S} [ 2S - 2S  t  ] \nn\\
+&=&1-t \\
+N_2(x(t),y(t)) 
+&=& \frac{1}{2S} [ x_3y_1-x_1y_3+(y_3-y_1)(x_{21} t +x_1)+(x_1-x_3)(y_{21} t+y_1)  ] \nn\\
+&=& \frac{1}{2S} [ x_3y_1-x_1y_3+(y_3-y_1)x_1+(x_1-x_3)y_1 + (y_{31}x_{21}+x_{13}y_{21}) t ] \nn\\
+&=& \frac{1}{2S} [ x_3y_1-x_1y_3+x_1y_3 -x_1y_1+ x_1y_1 -x_3y_1 + (y_{31}x_{21}+x_{13}y_{21}) t ] \nn\\
+&=& \frac{1}{2S}   (y_{31}x_{21}+x_{13}y_{21}) t  \nn\\
+&=& t \\ 
+N_3(x(t),y(t)) 
+&=& \frac{1}{2S} ( x_1y_2-x_2y_1+(y_1-y_2)x(t)+(x_2-x_1)y(t)   ) \nn\\
+&=& \frac{1}{2S} ( x_1y_2-x_2y_1+(y_1-y_2)( x_{21} t +x_1 )+(x_2-x_1)(y_{21} t+y_1 )   ) \nn\\
+&=& \frac{1}{2S} ( x_1y_2-x_2y_1+(y_1-y_2)x_1 +(x_2-x_1)y_1 + (y_{12}x_{21}+x_{21}y_{21})t  ) \nn\\
+&=& \frac{1}{2S} ( x_1y_2-x_2y_1+x_1y_1-x_1y_2 +x_2y_1-x_1y_1 + (y_{12}x_{21}-x_{21}y_{12})t     ) \nn\\
+&=& 0
+\end{eqnarray}
+
+
+then 
+
+\begin{eqnarray}
+\int_{0}^1 N_1(x(t),y(t))N_1(x(t),y(t)) dt 
+&=& \int_{0}^1 (1-t)^2 dt = 1/3 \\ 
+\int_{0}^1 N_1(x(t),y(t))N_2(x(t),y(t)) dt 
+&=& \int_{0}^1 (1-t)t dt = 1/6 \\ 
+\int_{0}^1 N_1(x(t),y(t))N_3(x(t),y(t)) dt
+&=& 0 \\
+\int_{0}^1 N_2(x(t),y(t))N_2(x(t),y(t)) dt 
+&=& \int_{0}^1 t^2 dt = 1/3 \\ 
+\int_{0}^1 N_2(x(t),y(t))N_3(x(t),y(t)) dt
+&=& 0 \\
+\int_{0}^1 N_3(x(t),y(t))N_3(x(t),y(t)) dt
+&=& 0 
+\end{eqnarray}
+and finally 
+\begin{eqnarray}
+{\bm C}_1
+&=&\int_{\partial\Omega_1} \vec{N}^T(x,y) \vec{N}(x,y) d\Gamma 
+= \frac{L_1}{6}
+\left(
+\begin{array}{ccc}
+2 & 1 & 0 \\
+1 & 2 & 0 \\
+0 & 0 & 0 
+\end{array}
+\right) \\
+{\bm C}_2 &=&\int_{\partial\Omega_2} \vec{N}^T(x,y) \vec{N}(x,y) d\Gamma 
+= \frac{L_2}{6}
+\left(
+\begin{array}{ccc}
+0 & 0 & 0 \\
+0 & 2 & 1 \\
+0 & 1 & 2 
+\end{array}
+\right) \\
+{\bm C}_3 &=&\int_{\partial\Omega_3} \vec{N}^T(x,y) \vec{N}(x,y) d\Gamma 
+= \frac{L_3}{6}
+\left(
+\begin{array}{ccc}
+2 & 0 & 1 \\
+0 & 0 & 0 \\
+1 & 0 & 2 
+\end{array}
+\right) 
+\end{eqnarray}
 
 
 

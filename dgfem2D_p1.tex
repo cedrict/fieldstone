@@ -26,7 +26,8 @@ and
 \partial_y N_3(x,y) &=& \frac{1}{2S}  (x_2-x_1) \nn
 \end{eqnarray}
 
-Then 
+Then, as shown in Section~\ref{ss:tle}, the mass matrix\footnote{The mass matrix is commonly called ${\bm M}$ 
+but I use here the same notations as in Li's book.} is:
 \[
 {\bm E} = \int_\Omega \vec{N}^T \vec{N} dV 
 =\frac{S}{12} 
@@ -38,10 +39,9 @@ Then
 \end{array}
 \right)
 \]
-\todo[inline]{prove this !}
 
-\[
-{\bm J}_x = - \int_{\Omega} \partial_x \vec{N}^T \vec{N}   \; dV 
+\begin{eqnarray}
+{\bm J}_x &=& - \int_{\Omega} \partial_x \vec{N}^T \vec{N}   \; dV 
 =-\frac{1}{6}
 \left(
 \begin{array}{ccc}
@@ -49,10 +49,8 @@ y_2-y_3 & y_2-y_3 & y_2-y_3 \\
 y_3-y_1 & y_3-y_1 & y_3-y_1 \\
 y_1-y_2 & y_1-y_2 & y_1-y_2 
 \end{array}
-\right)
-\]
-\[
-{\bm J}_y =  - \int_{\Omega} \partial_y \vec{N}^T \vec{N}   \; dV  
+\right) \nn\\
+{\bm J}_y &=&  - \int_{\Omega} \partial_y \vec{N}^T \vec{N}   \; dV  
 =-\frac{1}{6} 
 \left(
 \begin{array}{ccc}
@@ -61,8 +59,9 @@ x_1-x_3 & x_1-x_3 & x_1-x_3 \\
 x_2-x_1 & x_2-x_1 & x_2-x_1 
 \end{array}
 \right)
-\]
+\end{eqnarray}
 
+\todo[inline]{prove these !}
 
 
 
