@@ -3,16 +3,38 @@ import random
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix, lil_matrix
+import sys
+###############################################################################
+
+def Tbc(x,y):
+
+    #Tleft
+    if x<1e-6:
+       val=x+y 
+
+    #Tright
+    if abs(x-Lx)<1e-6:
+       val=x+y
+
+    #Tbottom
+    if y<1e-6:
+       val=x+y
+
+    #Ttop
+    if abs(y-Ly)<1e-6:
+       val=x+y
+
+    return val
 
 ###############################################################################
 
 Lx=1.
 Ly=1.
 
-nelx=4
-nely=4
+nelx=20
+nely=20
 
-m=3
+m=4
 nedge=m
 
 if m==3:
@@ -29,28 +51,37 @@ hy=Ly/nely
 C12_inside=0.5
 C11=50   #????
 
+niter=200
+
 print('m=',m)
 print('nel=',nel)
 print('NT=',NT)
 
 visu=True
 
-replace=False
+replace=True
+
+debug=False
 
 #########################
 #physical pb 
 
-Tleft =1
+Tleft =0
 Ttop =1
 Tbottom =1
 Tright=1
+
 Tinit =0
+
 hcond=1
 
 ###############################################################################
 # fill icon array
 ###############################################################################
 icon =np.zeros((m,nel),dtype=np.int32)
+
+if debug:
+   print('filling icon array')
 
 if m==3:
    counter = 0
@@ -59,12 +90,14 @@ if m==3:
            icon[0, counter] = m*counter+0
            icon[1, counter] = m*counter+1
            icon[2, counter] = m*counter+2
-           #print(counter,icon[:,counter]+1)
+           if debug:
+              print(counter,icon[:,counter]+1)
            counter += 1
            icon[0, counter] = m*counter+0
            icon[1, counter] = m*counter+1
            icon[2, counter] = m*counter+2
-           #print(counter,icon[:,counter]+1)
+           if debug:
+              print(counter,icon[:,counter]+1)
            counter += 1
        #end for
    #end for
@@ -437,6 +470,22 @@ if m==4:
    edge3_yc = np.zeros(nel) # y coord of edge3 midpoint
    edge4_xc = np.zeros(nel) # x coord of edge4 midpoint
    edge4_yc = np.zeros(nel) # y coord of edge4 midpoint
+   edge1_boundary_indicator = np.zeros(nel,dtype=np.int32) # if edge1 on a boundary then contains its boundary indicator (1-4)
+   edge2_boundary_indicator = np.zeros(nel,dtype=np.int32) # is edge2 on a boundary then contains its boundary indicator (1-4)
+   edge3_boundary_indicator = np.zeros(nel,dtype=np.int32) # is edge3 on a boundary then contains its boundary indicator (1-4)
+   edge4_boundary_indicator = np.zeros(nel,dtype=np.int32) # is edge4 on a boundary then contains its boundary indicator (1-4)
+   edge1_neighb = np.zeros(nel,dtype=np.int32) # neighbour element on the other side of edge 1 
+   edge2_neighb = np.zeros(nel,dtype=np.int32) # neighbour element on the other side of edge 2 
+   edge3_neighb = np.zeros(nel,dtype=np.int32) # neighbour element on the other side of edge 3 
+   edge4_neighb = np.zeros(nel,dtype=np.int32) # neighbour element on the other side of edge 4 
+   edge1_neighb.fill(-1)
+   edge2_neighb.fill(-1)
+   edge3_neighb.fill(-1)
+   edge4_neighb.fill(-1)
+   edge1_neighbedge = np.zeros(nel,dtype=np.int32) # neighbour element edge number on the other side of edge 1 
+   edge2_neighbedge = np.zeros(nel,dtype=np.int32) # neighbour element edge number on the other side of edge 2 
+   edge3_neighbedge = np.zeros(nel,dtype=np.int32) # neighbour element edge number on the other side of edge 3 
+   edge4_neighbedge = np.zeros(nel,dtype=np.int32) # neighbour element edge number on the other side of edge 4
 
    for iel in range(0,nel):
        edge1_nx[iel]=0
@@ -455,7 +504,55 @@ if m==4:
        edge3_yc[iel]=(yT[icon[2,iel]]+yT[icon[3,iel]])/2.
        edge4_xc[iel]=(xT[icon[3,iel]]+xT[icon[0,iel]])/2.
        edge4_yc[iel]=(yT[icon[3,iel]]+yT[icon[0,iel]])/2.
+       edge1_L=hx
+       edge2_L=hy
+       edge3_L=hx
+       edge4_L=hy
        area[iel]=hx*hy
+       if edge1_xc[iel]<1e-6:
+           edge1_boundary_indicator[iel]=1
+       if edge2_xc[iel]<1e-6:
+           edge2_boundary_indicator[iel]=1
+       if edge3_xc[iel]<1e-6:
+           edge3_boundary_indicator[iel]=1       
+       if edge4_xc[iel]<1e-6:
+           edge4_boundary_indicator[iel]=1
+           
+       if abs(edge1_xc[iel]-Lx)<1e-6:
+           edge1_boundary_indicator[iel]=2
+       if abs(edge2_xc[iel]-Lx)<1e-6:
+           edge2_boundary_indicator[iel]=2
+       if abs(edge3_xc[iel]-Lx)<1e-6:
+           edge3_boundary_indicator[iel]=2       
+       if abs(edge4_xc[iel]-Lx)<1e-6:
+           edge4_boundary_indicator[iel]=2
+           
+       if edge1_yc[iel]<1e-6:
+           edge1_boundary_indicator[iel]=3
+       if edge2_yc[iel]<1e-6:
+           edge2_boundary_indicator[iel]=3
+       if edge3_yc[iel]<1e-6:
+           edge3_boundary_indicator[iel]=3       
+       if edge4_yc[iel]<1e-6:
+           edge4_boundary_indicator[iel]=3
+                
+       if abs(edge1_yc[iel]-Ly)<1e-6:
+           edge1_boundary_indicator[iel]=4
+       if abs(edge2_yc[iel]-Ly)<1e-6:
+           edge2_boundary_indicator[iel]=4
+       if abs(edge3_yc[iel]-Ly)<1e-6:
+           edge3_boundary_indicator[iel]=4       
+       if abs(edge4_yc[iel]-Ly)<1e-6:
+           edge4_boundary_indicator[iel]=4
+           
+       if edge1_boundary_indicator[iel]==0: 
+          edge1_neighb[iel]=iel-nelx
+       if edge2_boundary_indicator[iel]==0: 
+          edge2_neighb[iel]=iel+1
+       if edge3_boundary_indicator[iel]==0: 
+          edge3_neighb[iel]=iel+nelx
+       if edge4_boundary_indicator[iel]==0: 
+          edge4_neighb[iel]=iel-1
    #end for
 
    np.savetxt('edge1.ascii',np.array([edge1_xc,edge1_yc,edge1_nx/10,edge1_ny/10]).T)
@@ -463,321 +560,677 @@ if m==4:
    np.savetxt('edge3.ascii',np.array([edge3_xc,edge3_yc,edge3_nx/10,edge3_ny/10]).T)
    np.savetxt('edge4.ascii',np.array([edge4_xc,edge4_yc,edge4_nx/10,edge4_ny/10]).T)
 
-   #TODO fill neighbour arrays and edges ...
+   for iel in range(0,nel):
+       x0=xT[icon[0,iel]]
+       x1=xT[icon[1,iel]]
+       x2=xT[icon[2,iel]]
+       x3=xT[icon[3,iel]]
+       y0=yT[icon[0,iel]]
+       y1=yT[icon[1,iel]]
+       y2=yT[icon[2,iel]]             
+       y3=yT[icon[3,iel]]
+       if edge1_neighb[iel]!=-1:
+           jel=edge1_neighb[iel]
+           if (x0-xT[icon[1,jel]])<1e-6 and abs(y0-yT[icon[1,jel]])<1e-6 and\
+                 abs(x1-xT[icon[0,jel]])<1e-6 and abs(y1-yT[icon[0,jel]])<1e-6:
+                 edge1_neighbedge[iel] = 1
+                 if debug:
+                    print ('elt',iel,'looking at neighbour',jel,'through edge1')
+                    print('corresponding edge of neighbour is edge',edge1_neighbedge[iel])                  
+           if abs(x0-xT[icon[2,jel]])<1e-6 and abs(y0-yT[icon[2,jel]])<1e-6 and\
+                 abs(x1-xT[icon[1,jel]])<1e-6 and abs(y1-yT[icon[1,jel]])<1e-6:
+                 edge1_neighbedge[iel] = 2 
+                 if debug:
+                    print('elt',iel,'looking at neighbour',jel,'through edge1')
+                    print('corresponding edge of neighbour is edge',edge1_neighbedge[iel])
+          # case3: is it edge 3 of neighbour element?
+           if abs(x0-xT[icon[3,jel]])<1e-6 and abs(y0-yT[icon[3,jel]])<1e-6 and\
+                 abs(x1-xT[icon[2,jel]])<1e-6 and abs(y1-yT[icon[2,jel]])<1e-6:
+                 edge1_neighbedge[iel] = 3 
+                 if debug:
+                    print ('elt',iel,'looking at neighbour',jel,'through edge1')
+                    print('corresponding edg1 of neighbour is edge',edge1_neighbedge[iel])
+           if abs(x0-xT[icon[0,jel]])<1e-6 and abs(y0-yT[icon[0,jel]])<1e-6 and\
+                 abs(x1-xT[icon[3,jel]])<1e-6 and abs(y1-yT[icon[3,jel]])<1e-6:
+                 edge1_neighbedge[iel] = 4
+                 if debug:
+                    print ('elt',iel,'looking at neighbour',jel,'through edge1')
+                    print('corresponding edge of neighbour is edge',edge1_neighbedge[iel])
+                 
+       if edge2_neighb[iel]!=-1:
+           jel=edge2_neighb[iel]
+           if (x1-xT[icon[1,jel]])<1e-6 and abs(y1-yT[icon[1,jel]])<1e-6 and\
+                 abs(x2-xT[icon[0,jel]])<1e-6 and abs(y2-yT[icon[0,jel]])<1e-6:
+                 edge2_neighbedge[iel] = 1
+                 if debug:
+                    print ('elt',iel,'looking at neighbour',jel,'through edge2')
+                    print('corresponding edge of neighbour is edge',edge2_neighbedge[iel])                  
+           if abs(x1-xT[icon[2,jel]])<1e-6 and abs(y1-yT[icon[2,jel]])<1e-6 and\
+                 abs(x2-xT[icon[1,jel]])<1e-6 and abs(y2-yT[icon[1,jel]])<1e-6:
+                 edge2_neighbedge[iel] = 2 
+                 if debug:
+                    print('elt',iel,'looking at neighbour',jel,'through edge2')
+                    print('corresponding edge of neighbour is edge',edge2_neighbedge[iel])
+          # case3: is it edge 3 of neighbour element?
+           if abs(x1-xT[icon[3,jel]])<1e-6 and abs(y1-yT[icon[3,jel]])<1e-6 and\
+                 abs(x2-xT[icon[2,jel]])<1e-6 and abs(y2-yT[icon[2,jel]])<1e-6:
+                 edge2_neighbedge[iel] = 3 
+                 if debug:
+                    print ('elt',iel,'looking at neighbour',jel,'through edge2')
+                    print('corresponding edg1 of neighbour is edge',edge2_neighbedge[iel])
+           if abs(x1-xT[icon[0,jel]])<1e-6 and abs(y1-yT[icon[0,jel]])<1e-6 and\
+                 abs(x2-xT[icon[3,jel]])<1e-6 and abs(y2-yT[icon[3,jel]])<1e-6:
+                 edge2_neighbedge[iel] = 4
+                 if debug:
+                    print ('elt',iel,'looking at neighbour',jel,'through edge2')
+                    print('corresponding edge of neighbour is edge',edge2_neighbedge[iel])
 
+       if edge3_neighb[iel]!=-1:
+           jel=edge3_neighb[iel]
+           if (x2-xT[icon[1,jel]])<1e-6 and abs(y2-yT[icon[1,jel]])<1e-6 and\
+                 abs(x3-xT[icon[0,jel]])<1e-6 and abs(y3-yT[icon[0,jel]])<1e-6:
+                 edge3_neighbedge[iel] = 1
+                 if debug:
+                    print ('elt',iel,'looking at neighbour',jel,'through edge3')
+                    print('corresponding edge of neighbour is edge',edge3_neighbedge[iel])                  
+           if abs(x2-xT[icon[2,jel]])<1e-6 and abs(y2-yT[icon[2,jel]])<1e-6 and\
+                 abs(x3-xT[icon[1,jel]])<1e-6 and abs(y3-yT[icon[1,jel]])<1e-6:
+                 edge3_neighbedge[iel] = 2 
+                 if debug:
+                    print('elt',iel,'looking at neighbour',jel,'through edge3')
+                    print('corresponding edge of neighbour is edge',edge3_neighbedge[iel])
+          # case3: is it edge 3 of neighbour element?
+           if abs(x2-xT[icon[3,jel]])<1e-6 and abs(y2-yT[icon[3,jel]])<1e-6 and\
+                 abs(x3-xT[icon[2,jel]])<1e-6 and abs(y3-yT[icon[2,jel]])<1e-6:
+                 edge3_neighbedge[iel] = 3 
+                 if debug:
+                    print ('elt',iel,'looking at neighbour',jel,'through edge3')
+                    print('corresponding edg1 of neighbour is edge',edge3_neighbedge[iel])
+           if abs(x2-xT[icon[0,jel]])<1e-6 and abs(y2-yT[icon[0,jel]])<1e-6 and\
+                 abs(x3-xT[icon[3,jel]])<1e-6 and abs(y3-yT[icon[3,jel]])<1e-6:
+                 edge3_neighbedge[iel] = 4
+                 if debug:
+                    print ('elt',iel,'looking at neighbour',jel,'through edge4')
+                    print('corresponding edge of neighbour is edge',edge3_neighbedge[iel])
+                 
+       if edge4_neighb[iel]!=-1:
+           jel=edge4_neighb[iel]
+           if (x3-xT[icon[1,jel]])<1e-6 and abs(y3-yT[icon[1,jel]])<1e-6 and\
+                 abs(x0-xT[icon[0,jel]])<1e-6 and abs(y0-yT[icon[0,jel]])<1e-6:
+                 edge4_neighbedge[iel] = 1
+                 if debug:
+                    print ('elt',iel,'looking at neighbour',jel,'through edge3')
+                    print('corresponding edge of neighbour is edge',edge4_neighbedge[iel])                  
+           if abs(x3-xT[icon[2,jel]])<1e-6 and abs(y3-yT[icon[2,jel]])<1e-6 and\
+                 abs(x0-xT[icon[1,jel]])<1e-6 and abs(y0-yT[icon[1,jel]])<1e-6:
+                 edge4_neighbedge[iel] = 2 
+                 if debug:
+                    print('elt',iel,'looking at neighbour',jel,'through edge3')
+                    print('corresponding edge of neighbour is edge',edge4_neighbedge[iel])
+          # case3: is it edge 3 of neighbour element?
+           if abs(x3-xT[icon[3,jel]])<1e-6 and abs(y3-yT[icon[3,jel]])<1e-6 and\
+                 abs(x0-xT[icon[2,jel]])<1e-6 and abs(y0-yT[icon[2,jel]])<1e-6:
+                 edge4_neighbedge[iel] = 3 
+                 if debug:
+                    print ('elt',iel,'looking at neighbour',jel,'through edge3')
+                    print('corresponding edg1 of neighbour is edge',edge4_neighbedge[iel])
+           if abs(x3-xT[icon[0,jel]])<1e-6 and abs(y3-yT[icon[0,jel]])<1e-6 and\
+                 abs(x0-xT[icon[3,jel]])<1e-6 and abs(y0-yT[icon[3,jel]])<1e-6:
+                 edge4_neighbedge[iel] = 4
+                 if debug:
+                    print ('elt',iel,'looking at neighbour',jel,'through edge4')
+                    print('corresponding edge of neighbour is edge',edge4_neighbedge[iel])
 #end if
 
-###############################################################################
-# loop over elements
-###############################################################################
+#==============================================================================
+#==============================================================================
+#==============================================================================
+# steady state loop iterations / sweeping through elements 
+#==============================================================================
+#==============================================================================
+#==============================================================================
 
-for iel in range(0,nel):
+for iter in range(0,niter):
 
-    if m==3:
-       x1=xT[icon[0,iel]]
-       x2=xT[icon[1,iel]]
-       x3=xT[icon[2,iel]]
-       y1=yT[icon[0,iel]]
-       y2=yT[icon[1,iel]]
-       y3=yT[icon[2,iel]]
-       #volume terms (E,H,J)
-       E=area[iel]/12*np.array([[2,1,1],[1,2,1],[1,1,2]],dtype=np.float64) 
-       Jx= 1/6*np.array([[y2-y3,y2-y3,y2-y3],[y3-y1,y3-y1,y3-y1],[y1-y2,y1-y2,y1-y2]],dtype=np.float64) 
-       Jy= 1/6*np.array([[x3-x2,x3-x2,x3-x2],[x1-x3,x1-x3,x1-x3],[x2-x1,x2-x1,x2-x1]],dtype=np.float64) 
-       Hx=hcond*Jx
-       Hy=hcond*Jy
+    ###############################################################################
+    # loop over elements
+    ###############################################################################
+    for iel in range(0,nel):
+    
+        #**********************************************************************
 
-       #precomputed C matrices
-       C1=edge1_L[iel]/6*np.array([[2,1,0],[1,2,0],[0,0,0]],dtype=np.float64) 
-       C2=edge2_L[iel]/6*np.array([[0,0,0],[0,2,1],[0,1,2]],dtype=np.float64) 
-       C3=edge3_L[iel]/6*np.array([[2,0,1],[0,0,0],[1,0,2]],dtype=np.float64) 
+        if m==3:
+           x1=xT[icon[0,iel]]
+           x2=xT[icon[1,iel]]
+           x3=xT[icon[2,iel]]
+           y1=yT[icon[0,iel]]
+           y2=yT[icon[1,iel]]
+           y3=yT[icon[2,iel]]
+           #volume terms (E,H,J)
+           E=area[iel]/12*np.array([[2,1,1],[1,2,1],[1,1,2]],dtype=np.float64) 
+           Jx= 1/6*np.array([[y2-y3,y2-y3,y2-y3],[y3-y1,y3-y1,y3-y1],[y1-y2,y1-y2,y1-y2]],dtype=np.float64) 
+           Jy= 1/6*np.array([[x3-x2,x3-x2,x3-x2],[x1-x3,x1-x3,x1-x3],[x2-x1,x2-x1,x2-x1]],dtype=np.float64) 
+           Hx=hcond*Jx
+           Hy=hcond*Jy
+   
+           #precomputed C matrices
+           C1=edge1_L[iel]/6*np.array([[2,1,0],[1,2,0],[0,0,0]],dtype=np.float64) 
+           C2=edge2_L[iel]/6*np.array([[0,0,0],[0,2,1],[0,1,2]],dtype=np.float64) 
+           C3=edge3_L[iel]/6*np.array([[2,0,1],[0,0,0],[1,0,2]],dtype=np.float64) 
+     
+           #edge matrices
+           if edge1_boundary_indicator[iel]!=0: # eq 4.6e
+              C12=-0.5
+           else:
+              C12=C12_inside
+           edge1_Hx=-(0.5+C12)*edge1_nx[iel]*C1 # eq 4.14e
+           edge1_Hy=-(0.5+C12)*edge1_ny[iel]*C1
+           edge1_JBx=edge1_Hx # eq 4.14e
+           edge1_JBy=edge1_Hy
+           edge1_HBx=-(0.5-C12)*edge1_nx[iel]*C1 # eq 4.15e
+           edge1_HBy=-(0.5-C12)*edge1_ny[iel]*C1
+           edge1_Jx=edge1_HBx # eq 4.15e
+           edge1_Jy=edge1_HBy
+           edge1_GT=C11*C1 # eq 4.16e
+           edge1_GTB=-C11*C1 # eq 4.16e
+    
+           if edge2_boundary_indicator[iel]!=0:
+              C12=-0.5
+           else:
+              C12=C12_inside
+           edge2_Hx=-(0.5+C12)*edge2_nx[iel]*C2
+           edge2_Hy=-(0.5+C12)*edge2_ny[iel]*C2
+           edge2_JBx=edge2_Hx
+           edge2_JBy=edge2_Hy
+           edge2_HBx=-(0.5-C12)*edge2_nx[iel]*C2
+           edge2_HBy=-(0.5-C12)*edge2_ny[iel]*C2
+           edge2_Jx=edge2_HBx
+           edge2_Jy=edge2_HBy
+           edge2_GT=C11*C2
+           edge2_GTB=-C11*C2
+    
+           if edge3_boundary_indicator[iel]!=0:
+              C12=-0.5
+           else:
+              C12=C12_inside
+           edge3_Hx=-(0.5+C12)*edge3_nx[iel]*C3
+           edge3_Hy=-(0.5+C12)*edge3_ny[iel]*C3
+           edge3_JBx=edge3_Hx
+           edge3_JBy=edge3_Hy
+           edge3_HBx=-(0.5-C12)*edge3_nx[iel]*C3
+           edge3_HBy=-(0.5-C12)*edge3_ny[iel]*C3
+           edge3_Jx=edge3_HBx
+           edge3_Jy=edge3_HBy
+           edge3_GT=C11*C3
+           edge3_GTB=-C11*C3
+           #hcond ?!!
 
-       #edge matrices
-       if edge1_boundary_indicator[iel]!=0: # eq 4.6e
-          C12=-0.5
-       else:
-          C12=C12_inside
-       edge1_Hx=-(0.5+C12)*edge1_nx[iel]*C1 # eq 4.14e
-       edge1_Hy=-(0.5+C12)*edge1_ny[iel]*C1
-       edge1_JBx=edge1_Hx # eq 4.14e
-       edge1_JBy=edge1_Hy
-       edge1_HBx=-(0.5-C12)*edge1_nx[iel]*C1 # eq 4.15e
-       edge1_HBy=-(0.5-C12)*edge1_ny[iel]*C1
-       edge1_Jx=edge1_HBx # eq 4.15e
-       edge1_Jy=edge1_HBy
-       edge1_GT=C11*C1 # eq 4.16e
-       edge1_GTB=-C11*C1 # eq 4.16e
+           #build A_{\partial\Omega_e}
+           A_pOmegae=np.zeros((3*m,3*m),dtype=np.float64)
+           A_pOmegae[0:m    ,2*m:3*m]=edge1_Hx[:,:]+ edge2_Hx[:,:]+ edge3_Hx[:,:] 
+           A_pOmegae[m:2*m  ,2*m:3*m]=edge1_Hy[:,:]+ edge2_Hy[:,:]+ edge3_Hy[:,:] 
+           A_pOmegae[2*m:3*m,0:m    ]=edge1_Jx[:,:]+ edge2_Jx[:,:]+ edge3_Jx[:,:] 
+           A_pOmegae[2*m:3*m,m:2*m  ]=edge1_Jy[:,:]+ edge2_Jy[:,:]+ edge3_Jy[:,:] 
+           A_pOmegae[2*m:3*m,2*m:3*m]=edge1_GT+edge2_GT+edge3_GT
+           
+           #edge1 contribution: computing qx_edge1,qy_edge1,T_edge1 vectors of length m
+           if edge1_boundary_indicator[iel]!=0:
+               if edge1_boundary_indicator[iel]==1:  
+                  T_edge1=[Tleft,Tleft,Tleft]
+                  qx_edge1=[0,0,0]
+                  qy_edge1=[0,0,0]
+               if edge1_boundary_indicator[iel]==2:  
+                  T_edge1=[Tright,Tright,Tright]
+                  qx_edge1=[0,0,0]
+                  qy_edge1=[0,0,0]
+               if edge1_boundary_indicator[iel]==3:  
+                  T_edge1=[Tbottom,Tbottom,Tbottom]
+                  qx_edge1=[0,0,0]
+                  qy_edge1=[0,0,0]
+               if edge1_boundary_indicator[iel]==4:  
+                  T_edge1=[Ttop,Ttop,Ttop]
+                  qx_edge1=[0,0,0]
+                  qy_edge1=[0,0,0]
+           else:
+               #edge 1 is nodes 0 -> 1
+               jel=edge1_neighb[iel] # identity of neighbour 
+               ed=edge1_neighbedge[iel] 
+               if ed==1:
+                  nodeA=icon[0,jel]
+                  nodeB=icon[1,jel]
+               if ed==2:
+                  nodeA=icon[1,jel]
+                  nodeB=icon[2,jel]
+               if ed==3:
+                  nodeA=icon[2,jel]
+                  nodeB=icon[0,jel]
+               T_edge1 =[ T[nodeB], T[nodeA],0]
+               qx_edge1=[qx[nodeB],qx[nodeA],0]
+               qy_edge1=[qy[nodeB],qy[nodeA],0]
+        
+           #edge2 contribution: computing qx_edge2,qy_edge2,T_edge2 vectors of length m
+           if edge2_boundary_indicator[iel]!=0:
+               if edge2_boundary_indicator[iel]==1:  
+                  T_edge2=[Tleft,Tleft,Tleft]
+                  qx_edge2=[0,0,0]
+                  qy_edge2=[0,0,0]
+               if edge2_boundary_indicator[iel]==2:  
+                  T_edge2=[Tright,Tright,Tright]
+                  qx_edge2=[0,0,0]
+                  qy_edge2=[0,0,0]
+               if edge2_boundary_indicator[iel]==3:  
+                  T_edge2=[Tbottom,Tbottom,Tbottom]
+                  qx_edge2=[0,0,0]
+                  qy_edge2=[0,0,0]
+               if edge2_boundary_indicator[iel]==4:  
+                  T_edge2=[Ttop,Ttop,Ttop]
+                  qx_edge2=[0,0,0]
+                  qy_edge2=[0,0,0]
+           else:
+               #edge 2 is nodes 1 -> 2
+               jel=edge2_neighb[iel] # identity of neighbour 
+               ed=edge2_neighbedge[iel] 
+               if ed==1:
+                  nodeA=icon[0,jel]
+                  nodeB=icon[1,jel]
+               if ed==2:
+                  nodeA=icon[1,jel]
+                  nodeB=icon[2,jel]
+               if ed==3:
+                  nodeA=icon[2,jel]
+                  nodeB=icon[0,jel]
+               T_edge2 =[ 0,  T[nodeB], T[nodeA] ]
+               qx_edge2=[ 0, qx[nodeB],qx[nodeA] ]
+               qy_edge2=[ 0, qy[nodeB],qy[nodeA] ]
+        
+           #edge3 contribution: computing qx_edge3,qy_edge3,T_edge3 vectors of length m
+           if edge3_boundary_indicator[iel]!=0:
+               if edge3_boundary_indicator[iel]==1:  
+                  T_edge3=[Tleft,Tleft,Tleft]
+                  qx_edge3=[0,0,0]
+                  qy_edge3=[0,0,0]
+               if edge3_boundary_indicator[iel]==2:  
+                  T_edge3=[Tright,Tright,Tright]
+                  qx_edge3=[0,0,0]
+                  qy_edge3=[0,0,0]
+               if edge3_boundary_indicator[iel]==3:  
+                  T_edge3=[Tbottom,Tbottom,Tbottom]
+                  qx_edge3=[0,0,0]
+                  qy_edge3=[0,0,0]
+               if edge3_boundary_indicator[iel]==4:  
+                  T_edge3=[Ttop,Ttop,Ttop]
+                  qx_edge3=[0,0,0]
+                  qy_edge3=[0,0,0]
+           else:
+               #edge 3 is nodes 2 -> 0
+               jel=edge3_neighb[iel] # identity of neighbour 
+               ed=edge3_neighbedge[iel] 
+               if ed==1:
+                  nodeA=icon[0,jel]
+                  nodeB=icon[1,jel]
+               if ed==2:
+                  nodeA=icon[1,jel]
+                  nodeB=icon[2,jel]
+               if ed==3:
+                  nodeA=icon[2,jel]
+                  nodeB=icon[0,jel]
+               T_edge3 =[ T[nodeA],0, T[nodeB] ]
+               qx_edge3=[qx[nodeA],0,qx[nodeB] ]
+               qy_edge3=[qy[nodeA],0,qy[nodeB] ]
 
-       if edge2_boundary_indicator[iel]!=0:
-          C12=-0.5
-       else:
-          C12=C12_inside
-       edge2_Hx=-(0.5+C12)*edge2_nx[iel]*C2
-       edge2_Hy=-(0.5+C12)*edge2_ny[iel]*C2
-       edge2_JBx=edge2_Hx
-       edge2_JBy=edge2_Hy
-       edge2_HBx=-(0.5-C12)*edge2_nx[iel]*C2
-       edge2_HBy=-(0.5-C12)*edge2_ny[iel]*C2
-       edge2_Jx=edge2_HBx
-       edge2_Jy=edge2_HBy
-       edge2_GT=C11*C2
-       edge2_GTB=-C11*C2
+           bel=np.zeros(3*m,dtype=np.float64)
+           bel[0  :m  ]=edge1_HBx.dot(T_edge1)+edge2_HBx.dot(T_edge2)+edge3_HBx.dot(T_edge3)
+           bel[m  :2*m]=edge1_HBy.dot(T_edge1)+edge2_HBy.dot(T_edge2)+edge3_HBy.dot(T_edge3)
+           bel[2*m:3*m]=edge1_JBx.dot(qx_edge1)+edge1_JBy.dot(qy_edge1)+edge1_GTB.dot(T_edge1)+\
+                        edge2_JBx.dot(qx_edge2)+edge2_JBy.dot(qy_edge2)+edge2_GTB.dot(T_edge2)+\
+                        edge3_JBx.dot(qx_edge3)+edge3_JBy.dot(qy_edge3)+edge3_GTB.dot(T_edge3)
 
-       if edge3_boundary_indicator[iel]!=0:
-          C12=-0.5
-       else:
-          C12=C12_inside
-       edge3_Hx=-(0.5+C12)*edge3_nx[iel]*C3
-       edge3_Hy=-(0.5+C12)*edge3_ny[iel]*C3
-       edge3_JBx=edge3_Hx
-       edge3_JBy=edge3_Hy
-       edge3_HBx=-(0.5-C12)*edge3_nx[iel]*C3
-       edge3_HBy=-(0.5-C12)*edge3_ny[iel]*C3
-       edge3_Jx=edge3_HBx
-       edge3_Jy=edge3_HBy
-       edge3_GT=C11*C3
-       edge3_GTB=-C11*C3
-       #hcond ?!!
+        #end if m=3    
 
-    #end if m
+        #**********************************************************************
 
-    #build A_{\Omega_e}
-    A_Omegae=np.zeros((3*m,3*m),dtype=np.float64)
-    A_Omegae[0:m    ,0:m    ]=E[:,:] 
-    A_Omegae[m:2*m  ,m:2*m  ]=E[:,:] 
-    A_Omegae[0:m    ,2*m:3*m]=Hx[:,:] 
-    A_Omegae[m:2*m  ,2*m:3*m]=Hy[:,:] 
-    A_Omegae[2*m:3*m,0:m    ]=Jx[:,:] 
-    A_Omegae[2*m:3*m,m:2*m  ]=Jy[:,:] 
+        if m==4:
+           x1=xT[icon[0,iel]]
+           x2=xT[icon[1,iel]]
+           x3=xT[icon[2,iel]]
+           x4=xT[icon[3,iel]]
+           y1=yT[icon[0,iel]]
+           y2=yT[icon[1,iel]]
+           y3=yT[icon[2,iel]]            
+           y4=yT[icon[3,iel]]
+           #volume terms (E,H,J)
+           E=hx*hy/9*np.array([[1,0.5,0.25,0.5],[0.5,1,0.5,0.25],[0.25,0.5,1,0.5],[0.5,0.25,0.5,1]])
+           Jx=hy/12*np.array([[-2,-2,-1,-1],[2,2,1,1],[1,1,2,2],[-1,-1,-2,-2]])
+           Jy=hx/12*np.array([[-2,-1,-1,-2],[-1,-2,-2,-1],[1,2,2,1],[2,1,1,2]])
+           Hx=hcond*Jx
+           Hy=hcond*Jy
+           #precomputed C matrices
+           C1=hx/6*np.array([[2,1,0,0],[1,2,0,0],[0,0,0,0],[0,0,0,0]])
+           C2=hy/6*np.array([[0,0,0,0],[0,2,1,0],[0,1,2,0],[0,0,0,0]])
+           C3=hx/6*np.array([[0,0,0,0],[0,0,0,0],[0,0,2,1],[0,0,1,2]])
+           C4=hy/6*np.array([[2,0,0,1],[0,0,0,0],[0,0,0,0],[1,0,0,2]])
+           
+           if edge1_boundary_indicator[iel]!=0: # eq 4.6e
+              C12=-0.5
+           else:
+              C12=C12_inside
+           edge1_Hx=-(0.5+C12)*edge1_nx[iel]*C1 # eq 4.14e
+           edge1_Hy=-(0.5+C12)*edge1_ny[iel]*C1
+           edge1_JBx=edge1_Hx # eq 4.14e
+           edge1_JBy=edge1_Hy
+           edge1_HBx=-(0.5-C12)*edge1_nx[iel]*C1 # eq 4.15e
+           edge1_HBy=-(0.5-C12)*edge1_ny[iel]*C1
+           edge1_Jx=edge1_HBx # eq 4.15e
+           edge1_Jy=edge1_HBy
+           edge1_GT=C11*C1 # eq 4.16e
+           edge1_GTB=-C11*C1 # eq 4.16e
+           
+           if edge2_boundary_indicator[iel]!=0:
+              C12=-0.5
+           else:
+              C12=C12_inside
+           edge2_Hx=-(0.5+C12)*edge2_nx[iel]*C2
+           edge2_Hy=-(0.5+C12)*edge2_ny[iel]*C2
+           edge2_JBx=edge2_Hx
+           edge2_JBy=edge2_Hy
+           edge2_HBx=-(0.5-C12)*edge2_nx[iel]*C2
+           edge2_HBy=-(0.5-C12)*edge2_ny[iel]*C2
+           edge2_Jx=edge2_HBx
+           edge2_Jy=edge2_HBy
+           edge2_GT=C11*C2
+           edge2_GTB=-C11*C2
 
-    #build A_{\partial\Omega_e}
-    A_pOmegae=np.zeros((3*m,3*m),dtype=np.float64)
-    A_pOmegae[0:m    ,2*m:3*m]=edge1_Hx[:,:]+ edge2_Hx[:,:]+ edge3_Hx[:,:] 
-    A_pOmegae[m:2*m  ,2*m:3*m]=edge1_Hy[:,:]+ edge2_Hy[:,:]+ edge3_Hy[:,:] 
-    A_pOmegae[2*m:3*m,0:m    ]=edge1_Jx[:,:]+ edge2_Jx[:,:]+ edge3_Jx[:,:] 
-    A_pOmegae[2*m:3*m,m:2*m  ]=edge1_Jy[:,:]+ edge2_Jy[:,:]+ edge3_Jy[:,:] 
-    A_pOmegae[2*m:3*m,2*m:3*m]=edge1_GT+edge2_GT+edge3_GT
+           if edge3_boundary_indicator[iel]!=0:
+              C12=-0.5
+           else:
+              C12=C12_inside
+           edge3_Hx=-(0.5+C12)*edge3_nx[iel]*C3
+           edge3_Hy=-(0.5+C12)*edge3_ny[iel]*C3
+           edge3_JBx=edge3_Hx
+           edge3_JBy=edge3_Hy
+           edge3_HBx=-(0.5-C12)*edge3_nx[iel]*C3
+           edge3_HBy=-(0.5-C12)*edge3_ny[iel]*C3
+           edge3_Jx=edge3_HBx
+           edge3_Jy=edge3_HBy
+           edge3_GT=C11*C3
+           edge3_GTB=-C11*C3     
+           
+           if edge4_boundary_indicator[iel]!=0:
+              C12=-0.5
+           else:
+              C12=C12_inside
+           edge4_Hx=-(0.5+C12)*edge4_nx[iel]*C4
+           edge4_Hy=-(0.5+C12)*edge4_ny[iel]*C4
+           edge4_JBx=edge4_Hx
+           edge4_JBy=edge4_Hy
+           edge4_HBx=-(0.5-C12)*edge4_nx[iel]*C4
+           edge4_HBy=-(0.5-C12)*edge4_ny[iel]*C4
+           edge4_Jx=edge4_HBx
+           edge4_Jy=edge4_HBy
+           edge4_GT=C11*C4
+           edge4_GTB=-C11*C4
 
-    #edge1 contribution: computing qx_edge1,qy_edge1,T_edge1 vectors of length m
-    if edge1_boundary_indicator[iel]!=0:
-       if edge1_boundary_indicator[iel]==1:  
-          T_edge1=[Tleft,Tleft,Tleft]
-          qx_edge1=[0,0,0]
-          qy_edge1=[0,0,0]
-       if edge1_boundary_indicator[iel]==2:  
-          T_edge1=[Tright,Tright,Tright]
-          qx_edge1=[0,0,0]
-          qy_edge1=[0,0,0]
-       if edge1_boundary_indicator[iel]==3:  
-          T_edge1=[Tbottom,Tbottom,Tbottom]
-          qx_edge1=[0,0,0]
-          qy_edge1=[0,0,0]
-       if edge1_boundary_indicator[iel]==4:  
-          T_edge1=[Ttop,Ttop,Ttop]
-          qx_edge1=[0,0,0]
-          qy_edge1=[0,0,0]
-    else:
-       #edge 1 is nodes 0 -> 1
-       jel=edge1_neighb[iel] # identity of neighbour 
-       ed=edge1_neighbedge[iel] 
-       if ed==1:
-          nodeA=icon[0,jel]
-          nodeB=icon[1,jel]
-       if ed==2:
-          nodeA=icon[1,jel]
-          nodeB=icon[2,jel]
-          print(nodeA,nodeB)
-       if ed==3:
-          nodeA=icon[2,jel]
-          nodeB=icon[0,jel]
-       T_edge1 =[ T[nodeB], T[nodeA],0]
-       qx_edge1=[qx[nodeB],qx[nodeA],0]
-       qy_edge1=[qy[nodeB],qy[nodeA],0]
-       #T_edge1=T[icon[:,jel]]
-       #qx_edge1=qx[icon[:,jel]]
-       #qy_edge1=qy[icon[:,jel]]
+           A_pOmegae=np.zeros((3*m,3*m),dtype=np.float64)
+           A_pOmegae[0:m    ,2*m:3*m]=edge1_Hx[:,:]+ edge2_Hx[:,:]+ edge3_Hx[:,:] + edge4_Hx[:,:] 
+           A_pOmegae[m:2*m  ,2*m:3*m]=edge1_Hy[:,:]+ edge2_Hy[:,:]+ edge3_Hy[:,:] + edge4_Hy[:,:] 
+           A_pOmegae[2*m:3*m,0:m    ]=edge1_Jx[:,:]+ edge2_Jx[:,:]+ edge3_Jx[:,:] + edge4_Jx[:,:] 
+           A_pOmegae[2*m:3*m,m:2*m  ]=edge1_Jy[:,:]+ edge2_Jy[:,:]+ edge3_Jy[:,:] + edge4_Jy[:,:] 
+           A_pOmegae[2*m:3*m,2*m:3*m]=edge1_GT+edge2_GT+edge3_GT+edge4_GT
+            
+           if edge1_boundary_indicator[iel]!=0:
+               if edge1_boundary_indicator[iel]==3: #bottom boundary  
+                  T_edge1=[Tbc(xT[icon[1,iel]],yT[icon[1,iel]]),Tbc(xT[icon[0,iel]],yT[icon[0,iel]]),0,0]
+                  qx_edge1=[0,0,0,0]
+                  qy_edge1=[0,0,0,0]
+           else:
+               #edge 1 is nodes 0 -> 1
+               jel=edge1_neighb[iel] # identity of neighbour 
+               ed=edge1_neighbedge[iel] 
+               if ed==1:
+                  nodeA=icon[0,jel]
+                  nodeB=icon[1,jel]
+               if ed==2:
+                  nodeA=icon[1,jel]
+                  nodeB=icon[2,jel]
+               if ed==3:
+                  nodeA=icon[2,jel]
+                  nodeB=icon[3,jel]
+               if ed==4:
+                   nodeA=icon[3,jel]
+                   nodeb=icon[0,jel]
+               T_edge1 =[ T[nodeB], T[nodeA],0,0]
+               qx_edge1=[qx[nodeB],qx[nodeA],0,0]
+               qy_edge1=[qy[nodeB],qy[nodeA],0,0]
+        
+           #edge2 contribution: computing qx_edge2,qy_edge2,T_edge2 vectors of length m
+           if edge2_boundary_indicator[iel]!=0:
+               if edge2_boundary_indicator[iel]==1:  
+                  T_edge2=[Tleft,Tleft,Tleft,Tleft]
+                  qx_edge2=[0,0,0,0]
+                  qy_edge2=[0,0,0,0]
+               if edge2_boundary_indicator[iel]==2:   #right boundary  
+                  #T_edge2=[Tright,Tright,Tright,Tright]
+                  T_edge2=[0,Tbc(xT[icon[2,iel]],yT[icon[2,iel]]),Tbc(xT[icon[1,iel]],yT[icon[1,iel]]),0]
+                  qx_edge2=[0,0,0,0]
+                  qy_edge2=[0,0,0,0]
+               if edge2_boundary_indicator[iel]==3:  
+                  T_edge2=[Tbottom,Tbottom,Tbottom,Tbottom]
+                  qx_edge2=[0,0,0,0]
+                  qy_edge2=[0,0,0,0]
+               if edge2_boundary_indicator[iel]==4:  
+                  T_edge2=[Ttop,Ttop,Ttop,Ttop]
+                  qx_edge2=[0,0,0,0]
+                  qy_edge2=[0,0,0,0]
+           else:
+               #edge 2 is nodes 1 -> 2
+               jel=edge2_neighb[iel] # identity of neighbour 
+               ed=edge2_neighbedge[iel] 
+               if ed==1:
+                  nodeA=icon[0,jel]
+                  nodeB=icon[1,jel]
+               if ed==2:
+                  nodeA=icon[1,jel]
+                  nodeB=icon[2,jel]
+               if ed==3:
+                  nodeA=icon[2,jel]
+                  nodeB=icon[3,jel]
+               if ed==4:
+                   nodeA=icon[3,jel]
+                   nodeB=icon[0,jel]
+               T_edge2 =[ 0,  T[nodeB], T[nodeA],0 ]
+               qx_edge2=[ 0, qx[nodeB],qx[nodeA],0 ]
+               qy_edge2=[ 0, qy[nodeB],qy[nodeA],0 ]
+        
+           #edge3 contribution: computing qx_edge3,qy_edge3,T_edge3 vectors of length m
+           if edge3_boundary_indicator[iel]!=0:
+               #if edge3_boundary_indicator[iel]==1:  
+               #   T_edge3=[Tleft,Tleft,Tleft,Tleft]
+               #   qx_edge3=[0,0,0,0]
+               #   qy_edge3=[0,0,0,0]
+               #if edge3_boundary_indicator[iel]==2:  
+               #   T_edge3=[Tright,Tright,Tright,Tright]
+               #   qx_edge3=[0,0,0,0]
+               #   qy_edge3=[0,0,0,0]
+               #if edge3_boundary_indicator[iel]==3:  
+               #   T_edge3=[Tbottom,Tbottom,Tbottom,Tbottom]
+               #   qx_edge3=[0,0,0,0]
+               #   qy_edge3=[0,0,0,0]
+               if edge3_boundary_indicator[iel]==4:    #top boundary  
+                  T_edge3=[0,0,Tbc(xT[icon[3,iel]],yT[icon[3,iel]]),Tbc(xT[icon[2,iel]],yT[icon[2,iel]])]
+                  qx_edge3=[0,0,0,0]
+                  qy_edge3=[0,0,0,0]
+           else:
+               #edge 3 is nodes 2 -> 3
+               jel=edge3_neighb[iel] # identity of neighbour 
+               ed=edge3_neighbedge[iel] 
+               if ed==1:
+                  nodeA=icon[0,jel]
+                  nodeB=icon[1,jel]
+               if ed==2:
+                  nodeA=icon[1,jel]
+                  nodeB=icon[2,jel]
+               if ed==3:
+                  nodeA=icon[2,jel]
+                  nodeB=icon[3,jel]
+               if ed==4:
+                   nodeA=icon[3,jel]
+                   nodeb=icon[0,jel]
+               T_edge3 =[0,0, T[nodeB], T[nodeA] ]
+               qx_edge3=[0,0,qx[nodeB],qx[nodeA] ]
+               qy_edge3=[0,0,qy[nodeB],qy[nodeA] ]
+               
+           #edge4 contribution: computing qx_edge4,qy_edge4,T_edge4 vectors of length m
+           if edge4_boundary_indicator[iel]!=0:
+               if edge4_boundary_indicator[iel]==1:     #left boundary  
+                  T_edge4=[Tbc(xT[icon[0,iel]],yT[icon[0,iel]]),0,0,Tbc(xT[icon[3,iel]],yT[icon[3,iel]])]
+                  qx_edge4=[0,0,0,0]
+                  qy_edge4=[0,0,0,0]
+           else:
+               #edge 4 is nodes 2 -> 0
+               jel=edge4_neighb[iel] # identity of neighbour 
+               ed=edge4_neighbedge[iel] 
+               if ed==1:
+                  nodeA=icon[0,jel]
+                  nodeB=icon[1,jel]
+               if ed==2:
+                  nodeA=icon[1,jel]
+                  nodeB=icon[2,jel]
+               if ed==3:
+                  nodeA=icon[2,jel]
+                  nodeB=icon[3,jel]
+               if ed==4:
+                  nodeA=icon[3,jel]
+                  nodeB=icon[0,jel]
+               T_edge4 =[ T[nodeA],0,0, T[nodeB] ]
+               qx_edge4=[qx[nodeA],0,0,qx[nodeB] ]
+               qy_edge4=[qy[nodeA],0,0,qy[nodeB] ]
 
-    #edge2 contribution: computing qx_edge2,qy_edge2,T_edge2 vectors of length m
-    if edge2_boundary_indicator[iel]!=0:
-       if edge2_boundary_indicator[iel]==1:  
-          T_edge2=[Tleft,Tleft,Tleft]
-          qx_edge2=[0,0,0]
-          qy_edge2=[0,0,0]
-       if edge2_boundary_indicator[iel]==2:  
-          T_edge2=[Tright,Tright,Tright]
-          qx_edge2=[0,0,0]
-          qy_edge2=[0,0,0]
-       if edge2_boundary_indicator[iel]==3:  
-          T_edge2=[Tbottom,Tbottom,Tbottom]
-          qx_edge2=[0,0,0]
-          qy_edge2=[0,0,0]
-       if edge2_boundary_indicator[iel]==4:  
-          T_edge2=[Ttop,Ttop,Ttop]
-          qx_edge2=[0,0,0]
-          qy_edge2=[0,0,0]
-    else:
-       #edge 2 is nodes 1 -> 2
-       jel=edge2_neighb[iel] # identity of neighbour 
-       ed=edge2_neighbedge[iel] 
-       if ed==1:
-          nodeA=icon[0,jel]
-          nodeB=icon[1,jel]
-       if ed==2:
-          nodeA=icon[1,jel]
-          nodeB=icon[2,jel]
-       if ed==3:
-          nodeA=icon[2,jel]
-          nodeB=icon[0,jel]
-          print(nodeA,nodeB)
-       T_edge2 =[ 0,  T[nodeB], T[nodeA] ]
-       qx_edge2=[ 0, qx[nodeB],qx[nodeA] ]
-       qy_edge2=[ 0, qy[nodeB],qy[nodeA] ]
-       #T_edge2=T[icon[:,jel]]
-       #qx_edge2=qx[icon[:,jel]]
-       #qy_edge2=qy[icon[:,jel]]
+           bel=np.zeros(3*m,dtype=np.float64)
+           bel[0  :m  ]=edge1_HBx.dot(T_edge1)+edge2_HBx.dot(T_edge2)+edge3_HBx.dot(T_edge3)+edge4_HBx.dot(T_edge4)
+           bel[m  :2*m]=edge1_HBy.dot(T_edge1)+edge2_HBy.dot(T_edge2)+edge3_HBy.dot(T_edge3)+edge4_HBy.dot(T_edge4)
+           bel[2*m:3*m]=edge1_JBx.dot(qx_edge1)+edge1_JBy.dot(qy_edge1)+edge1_GTB.dot(T_edge1)+\
+                        edge2_JBx.dot(qx_edge2)+edge2_JBy.dot(qy_edge2)+edge2_GTB.dot(T_edge2)+\
+                        edge3_JBx.dot(qx_edge3)+edge3_JBy.dot(qy_edge3)+edge3_GTB.dot(T_edge3)+\
+                        edge4_JBx.dot(qx_edge4)+edge4_JBy.dot(qy_edge4)+edge4_GTB.dot(T_edge4)
 
-    #edge3 contribution: computing qx_edge3,qy_edge3,T_edge3 vectors of length m
-    if edge3_boundary_indicator[iel]!=0:
-       if edge3_boundary_indicator[iel]==1:  
-          T_edge3=[Tleft,Tleft,Tleft]
-          qx_edge3=[0,0,0]
-          qy_edge3=[0,0,0]
-       if edge3_boundary_indicator[iel]==2:  
-          T_edge3=[Tright,Tright,Tright]
-          qx_edge3=[0,0,0]
-          qy_edge3=[0,0,0]
-       if edge3_boundary_indicator[iel]==3:  
-          T_edge3=[Tbottom,Tbottom,Tbottom]
-          qx_edge3=[0,0,0]
-          qy_edge3=[0,0,0]
-       if edge3_boundary_indicator[iel]==4:  
-          T_edge3=[Ttop,Ttop,Ttop]
-          qx_edge3=[0,0,0]
-          qy_edge3=[0,0,0]
-    else:
-       #edge 3 is nodes 2 -> 0
-       jel=edge3_neighb[iel] # identity of neighbour 
-       ed=edge3_neighbedge[iel] 
-       if ed==1:
-          nodeA=icon[0,jel]
-          nodeB=icon[1,jel]
-          print(nodeA,nodeB)
-       if ed==2:
-          nodeA=icon[1,jel]
-          nodeB=icon[2,jel]
-       if ed==3:
-          nodeA=icon[2,jel]
-          nodeB=icon[0,jel]
-       T_edge3 =[ T[nodeA],0, T[nodeB] ]
-       qx_edge3=[qx[nodeA],0,qx[nodeB] ]
-       qy_edge3=[qy[nodeA],0,qy[nodeB] ]
+        #end if m=4
 
-    #print(T_edge1,qx_edge1,qx_edge2,qx_edge3)
-    #print(T_edge2,qy_edge1,qy_edge2,qy_edge3)
-    #print(T_edge3)
-    #qx_edge1=[1,1,1]
-    #qy_edge1=[0,0,0]
-    #T_edge2 =[1,1,1]
-    #qx_edge2=[1,1,1]
-    #qy_edge2=[0,0,0]
-    #T_edge3 =[1,1,1]
-    #qx_edge3=[1,1,1]
+        #**********************************************************************
 
-    #qy_edge1=[1,1,1]
-    #qy_edge2=[1,1,1]
-    #qy_edge3=[1,1,1]
+        #build A_{\Omega_e} (independent of m)
+        A_Omegae=np.zeros((3*m,3*m),dtype=np.float64)
+        A_Omegae[0:m    ,0:m    ]=E[:,:] 
+        A_Omegae[m:2*m  ,m:2*m  ]=E[:,:] 
+        A_Omegae[0:m    ,2*m:3*m]=Hx[:,:] 
+        A_Omegae[m:2*m  ,2*m:3*m]=Hy[:,:] 
+        A_Omegae[2*m:3*m,0:m    ]=Jx[:,:] 
+        A_Omegae[2*m:3*m,m:2*m  ]=Jy[:,:] 
 
-    #temproray residual debug
-    #T_el =[xT[icon[0,iel]],xT[icon[1,iel]],xT[icon[2,iel]]]
-    #qx_el =[1,1,1]
-    #qy_el =[0,0,0]
-    #T_el =[yT[icon[0,iel]],yT[icon[1,iel]],yT[icon[2,iel]]]
-    #qx_el =[0,0,0]
-    #qy_el =[1,1,1]
+        #print(T_edge1,qx_edge1,qx_edge2,qx_edge3)
+        #print(T_edge2,qy_edge1,qy_edge2,qy_edge3)
+        #print(T_edge4)
+        #qx_edge1=[1,1,1]
+        #qy_edge1=[0,0,0]
+        #T_edge2 =[1,1,1]
+        #qx_edge2=[1,1,1]
+        #qy_edge2=[0,0,0]
+        #T_edge3 =[1,1,1]
+        #qx_edge3=[1,1,1]
+    
+        #qy_edge1=[1,1,1]
+        #qy_edge2=[1,1,1]
+        #qy_edge3=[1,1,1]
+    
+        #temporary residual debug
+        #T_el =[1,1,1,1]
+        #qx_el =[0,0,0,0]
+        #qy_el =[0,0,0,0]
 
-    #opla=Hx+edge1_Hx+edge2_Hx+edge3_Hx  +edge1_HBx+edge2_HBx+edge3_HBx
-    #print('A->',opla)
-    #opla=Hy+edge1_Hy+edge2_Hy+edge3_Hy  +edge1_HBy+edge2_HBy+edge3_HBy
-    #print('A->',opla)
+        #T_el =[xT[icon[0,iel]],xT[icon[1,iel]],xT[icon[2,iel]],xT[icon[3,iel]]]
+        #qx_el =[1,1,1,1]
+        #qy_el =[0,0,0,0]
 
-    #oplax=E.dot(qx_el)+Hx.dot(T_el)+edge1_Hx.dot(T_el)+edge2_Hx.dot(T_el)+edge3_Hx.dot(T_el)\
-    #     +edge1_HBx.dot(T_edge1)+edge2_HBx.dot(T_edge2)+edge3_HBx.dot(T_edge3) 
-    #print('residual qx->',oplax)
+        #T_el =[yT[icon[0,iel]],yT[icon[1,iel]],yT[icon[2,iel]],yT[icon[3,iel]]]
+        #qx_el =[0,0,0,0]
+        #qy_el =[1,1,1,1]
 
-    #oplay=E.dot(qy_el)+Hy.dot(T_el)+edge1_Hy.dot(T_el)+edge2_Hy.dot(T_el)+edge3_Hy.dot(T_el)\
-    #     +edge1_HBy.dot(T_edge1)+edge2_HBy.dot(T_edge2)+edge3_HBy.dot(T_edge3) 
-    #print('residual qy->',oplay)
+        T_el=[0,0,0,0]
+        qx_el =[0,0,0,0]
+        qy_el =[0,0,0,0]
+    
+        #opla=Hx+edge1_Hx+edge2_Hx+edge3_Hx  +edge1_HBx+edge2_HBx+edge3_HBx
+        #print('A->',opla)
+        #opla=Hy+edge1_Hy+edge2_Hy+edge3_Hy  +edge1_HBy+edge2_HBy+edge3_HBy
+        #print('A->',opla)
 
-    #oplaT=Jx.dot(qx_el)+Jy.dot(qy_el)\
-    #     +edge1_Jx.dot(qx_el)+edge2_Jx.dot(qx_el)+edge3_Jx.dot(qx_el)\
-    #     +edge1_Jy.dot(qy_el)+edge2_Jy.dot(qy_el)+edge3_Jy.dot(qy_el)\
-    #     +edge1_GT.dot(T_el)+edge2_GT.dot(T_el)+edge3_GT.dot(T_el)\
-    #     +edge1_JBx.dot(qx_edge1)+edge2_JBx.dot(qx_edge2)+edge3_JBx.dot(qx_edge3)\
-    #     +edge1_JBy.dot(qy_edge1)+edge2_JBy.dot(qy_edge2)+edge3_JBy.dot(qy_edge3)\
-    #     +edge1_GTB.dot(T_edge1)+edge2_GTB.dot(T_edge2)+edge3_GTB.dot(T_edge3)
+        if m==4:    
+           res_qx=E.dot(qx_el)\
+                 +Hx.dot(T_el)+edge1_Hx.dot(T_el)+edge2_Hx.dot(T_el)+edge3_Hx.dot(T_el)+edge4_Hx.dot(T_el)\
+                 +edge1_HBx.dot(T_edge1)+edge2_HBx.dot(T_edge2)+edge3_HBx.dot(T_edge3) +edge4_HBx.dot(T_edge4) 
+        if debug:
+           print('residual qx->',res_qx)
+    
+        if m==4:    
+           res_qy=E.dot(qy_el)\
+                 +Hy.dot(T_el)+edge1_Hy.dot(T_el)+edge2_Hy.dot(T_el)+edge3_Hy.dot(T_el)+edge4_Hy.dot(T_el)\
+                 +edge1_HBy.dot(T_edge1)+edge2_HBy.dot(T_edge2)+edge3_HBy.dot(T_edge3) +edge4_HBy.dot(T_edge4) 
+        if debug:
+           print('residual qy->',res_qy)
+    
+        if m==4:    
+           res_T=Jx.dot(qx_el)+Jy.dot(qy_el)\
+                +edge1_Jx.dot(qx_el)+edge2_Jx.dot(qx_el)+edge3_Jx.dot(qx_el)+edge4_Jx.dot(qx_el)\
+                +edge1_Jy.dot(qy_el)+edge2_Jy.dot(qy_el)+edge3_Jy.dot(qy_el)+edge4_Jy.dot(qy_el)\
+                +edge1_GT.dot(T_el)+edge2_GT.dot(T_el)+edge3_GT.dot(T_el)+edge4_GT.dot(T_el)\
+                +edge1_JBx.dot(qx_edge1)+edge2_JBx.dot(qx_edge2)+edge3_JBx.dot(qx_edge3)+edge4_JBx.dot(qx_edge4)\
+                +edge1_JBy.dot(qy_edge1)+edge2_JBy.dot(qy_edge2)+edge3_JBy.dot(qy_edge3)+edge4_JBy.dot(qy_edge4)\
+                +edge1_GTB.dot(T_edge1)+edge2_GTB.dot(T_edge2)+edge3_GTB.dot(T_edge3)+edge4_GTB.dot(T_edge4)
+   
+        if debug:
+           print('residual T->',res_T)
+        #exit()
+    
+        #print('nnnnnnnnnnnnnnnnnnnnnn')
+        #print(edge1_JBx)
+        #print(edge2_JBx)
+        #print(edge3_JBx)
+        #print(edge1_JBy)
+        #print(edge2_JBy)
+        #print(edge3_JBy)
+        #print('nnnnnnnnnnnnnnnnnnnnnn')
+    
+        sol = sps.linalg.spsolve(sps.csr_matrix(A_Omegae+A_pOmegae),-bel)
+#        print(iel,'qx=',sol[0:m])
+#        print(iel,'qy=',sol[m:2*m])
+#        print(iel,'T =',sol[2*m:3*m],yT[icon[:,iel]])
 
-    #print('residual T->',oplaT)
-    #exit()
+        if replace:
+           qx[icon[0:m,iel]]=sol[0:m]
+           qy[icon[0:m,iel]]=sol[m+0:m+m]
+           T[icon[0:m,iel]]=sol[2*m+0:2*m+m]
+        else:
+           qxnew[icon[0:m,iel]]=sol[0:m]
+           qynew[icon[0:m,iel]]=sol[m+0:m+m]
+           Tnew[icon[0:m,iel]]=sol[2*m+0:2*m+m]
+           
 
-    #print('nnnnnnnnnnnnnnnnnnnnnn')
-    #print(edge1_JBx)
-    #print(edge2_JBx)
-    #print(edge3_JBx)
-    #print(edge1_JBy)
-    #print(edge2_JBy)
-    #print(edge3_JBy)
-    #print('nnnnnnnnnnnnnnnnnnnnnn')
-
-    bel=np.zeros(3*m,dtype=np.float64)
-    bel[0  :m  ]=edge1_HBx.dot(T_edge1)+edge2_HBx.dot(T_edge2)+edge3_HBx.dot(T_edge3)
-    bel[m  :2*m]=edge1_HBy.dot(T_edge1)+edge2_HBy.dot(T_edge2)+edge3_HBy.dot(T_edge3)
-    bel[2*m:3*m]=edge1_JBx.dot(qx_edge1)+edge1_JBy.dot(qy_edge1)+edge1_GTB.dot(T_edge1)+\
-                 edge2_JBx.dot(qx_edge2)+edge2_JBy.dot(qy_edge2)+edge2_GTB.dot(T_edge2)+\
-                 edge3_JBx.dot(qx_edge3)+edge3_JBy.dot(qy_edge3)+edge3_GTB.dot(T_edge3)
+    
+#        break
+#    qxnew=qx
+#    qynew=qy
+#    Tnew=T
 
 
-    rhs=-bel[:]
-
-    #print(iel,bel)
-
-    sol = sps.linalg.spsolve(A_Omegae+A_pOmegae,rhs)
-    print(iel,'qx=',sol[0:m])
-    print(iel,'qy=',sol[m:2*m])
-    print(iel,'T =',sol[2*m:3*m],yT[icon[:,iel]])
+    #end for iel
 
     if replace:
-       qx[icon[0,iel]]=sol[0]
-       qx[icon[1,iel]]=sol[1]
-       qx[icon[2,iel]]=sol[2]
-
-       qy[icon[0,iel]]=sol[m+0]
-       qy[icon[1,iel]]=sol[m+1]
-       qy[icon[2,iel]]=sol[m+2]
-
-       T[icon[0,iel]]=sol[2*m+0]
-       T[icon[1,iel]]=sol[2*m+1]
-       T[icon[2,iel]]=sol[2*m+2]
+       print('iter=',iter,'T,qx,qy (m/M)=',min(T),max(T),'|',min(qx),max(qx),'|',min(qy),max(qy))
     else:
-       qxnew[icon[0,iel]]=sol[0]
-       qxnew[icon[1,iel]]=sol[1]
-       qxnew[icon[2,iel]]=sol[2]
+       print('iter=',iter,'T (m/M)=',min(Tnew),max(Tnew))
 
-       qynew[icon[0,iel]]=sol[m+0]
-       qynew[icon[1,iel]]=sol[m+1]
-       qynew[icon[2,iel]]=sol[m+2]
+#end for iter
 
-       Tnew[icon[0,iel]]=sol[2*m+0]
-       Tnew[icon[1,iel]]=sol[2*m+1]
-       Tnew[icon[2,iel]]=sol[2*m+2]
-
-#end for iel
-
-if replace:
-   Tvisu=T
-else:
-   Tvisu= Tnew
-
-
+np.savetxt('T.ascii',np.array([xT,yT,T]).T,header='# x,y')
 
 ###############################################################################
 # plot of solution
@@ -816,17 +1269,17 @@ if visu:
    #--
    vtufile.write("<DataArray type='Float32'  Name='T' Format='ascii'> \n")
    for i in range(0,NT):
-       vtufile.write("%10e  \n" %(Tvisu[i]))
+       vtufile.write("%10e  \n" %(T[i]))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32'  Name='qx' Format='ascii'> \n")
    for i in range(0,NT):
-       vtufile.write("%10e  \n" %(qxnew[i]))
+       vtufile.write("%10e  \n" %(qx[i]))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32'  Name='qy' Format='ascii'> \n")
    for i in range(0,NT):
-       vtufile.write("%10e  \n" %(qynew[i]))
+       vtufile.write("%10e  \n" %(qy[i]))
    vtufile.write("</DataArray>\n")
 
 
@@ -884,25 +1337,5 @@ print("-----------------------------")
 
 
 
-#    if m==4:
-#       x1=xT[icon[0,iel]]
-#       x2=xT[icon[1,iel]]
-#       x3=xT[icon[2,iel]]
-#       x4=yT[icon[3,iel]]
-#       y1=yT[icon[0,iel]]
-#       y2=yT[icon[1,iel]]
-#       y3=yT[icon[2,iel]]
-#       y4=yT[icon[3,iel]]
-#       #volume terms (E,H,J)
-#       E=hx*hy/9*np.array([[1,0.5,0.25,0.5],[0.5,1,0.5,0.25],[0.25,0.5,1,0.5],[0.5,0.25,0.5,1]])
-#       Jx=hy/12*np.array([[-2,2,1,-1],[-2,2,1,-1],[-1,1,2,-2],[-1,1,2,-2]])
-#       Jy=hx/12*np.array([[-2,-1,1,2],[-1,-2,2,1],[-1,-2,2,1],[-2,-1,1,2]])
-#       Hx=hcond*Jx
-#       Hy=hcond*Jy
-#       #precomputed C matrices
-#       C1=hx/6*np.array([[2,1,0,0],[1,2,0,0],[0,0,0,0],[0,0,0,0]])
-#       C2=hy/6*np.array([[0,0,0,0],[0,2,1,0],[0,1,2,0],[0,0,0,0]])
-#       C3=hx/6*np.array([[0,0,0,0],[0,0,0,0],[0,0,2,1],[0,0,1,2]])
-#       C4=hy/6*np.array([[2,0,0,1],[0,0,0,0],[0,0,0,0],[1,0,0,2]])
 
     #end if m
