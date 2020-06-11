@@ -4,35 +4,46 @@ import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix, lil_matrix
 import sys
+
 ###############################################################################
 
 def Tbc(x,y):
-
     #Tleft
     if x<1e-6:
        val=x+y 
-
     #Tright
     if abs(x-Lx)<1e-6:
-       val=x+y
-
+       val=x+y 
     #Tbottom
     if y<1e-6:
-       val=x+y
-
+       val=x+y 
     #Ttop
     if abs(y-Ly)<1e-6:
        val=x+y
-
     return val
 
+def T_analytical(x,y):
+    return x+y
+
+def qx_analytical(x,y):
+    return 1
+
+def qy_analytical(x,y):
+    return 1
+
 ###############################################################################
+
+# allowing for argument parsing through command line
+if int(len(sys.argv) == 3):
+   nelx = int(sys.argv[1])
+   nely = int(sys.argv[2])
+else:
+   nelx=20
+   nely=20
 
 Lx=1.
 Ly=1.
 
-nelx=20
-nely=20
 
 m=4
 nedge=m
@@ -61,7 +72,9 @@ visu=True
 
 debug=False
 
-tol=1e-8
+tol=1e-9
+    
+visualise_all=True
 
 #########################
 #physical pb 
@@ -485,10 +498,6 @@ if m==4:
    edge2_neighb.fill(-1)
    edge3_neighb.fill(-1)
    edge4_neighb.fill(-1)
-   edge1_neighbedge = np.zeros(nel,dtype=np.int32) # neighbour element edge number on the other side of edge 1 
-   edge2_neighbedge = np.zeros(nel,dtype=np.int32) # neighbour element edge number on the other side of edge 2 
-   edge3_neighbedge = np.zeros(nel,dtype=np.int32) # neighbour element edge number on the other side of edge 3 
-   edge4_neighbedge = np.zeros(nel,dtype=np.int32) # neighbour element edge number on the other side of edge 4
 
    for iel in range(0,nel):
        edge1_nx[iel]=0
@@ -563,126 +572,6 @@ if m==4:
    np.savetxt('edge3.ascii',np.array([edge3_xc,edge3_yc,edge3_nx/10,edge3_ny/10]).T)
    np.savetxt('edge4.ascii',np.array([edge4_xc,edge4_yc,edge4_nx/10,edge4_ny/10]).T)
 
-   for iel in range(0,nel):
-       x0=xT[icon[0,iel]]
-       x1=xT[icon[1,iel]]
-       x2=xT[icon[2,iel]]
-       x3=xT[icon[3,iel]]
-       y0=yT[icon[0,iel]]
-       y1=yT[icon[1,iel]]
-       y2=yT[icon[2,iel]]             
-       y3=yT[icon[3,iel]]
-       if edge1_neighb[iel]!=-1:
-           jel=edge1_neighb[iel]
-           if (x0-xT[icon[1,jel]])<1e-6 and abs(y0-yT[icon[1,jel]])<1e-6 and\
-                 abs(x1-xT[icon[0,jel]])<1e-6 and abs(y1-yT[icon[0,jel]])<1e-6:
-                 edge1_neighbedge[iel] = 1
-                 if debug:
-                    print ('elt',iel,'looking at neighbour',jel,'through edge1')
-                    print('corresponding edge of neighbour is edge',edge1_neighbedge[iel])                  
-           if abs(x0-xT[icon[2,jel]])<1e-6 and abs(y0-yT[icon[2,jel]])<1e-6 and\
-                 abs(x1-xT[icon[1,jel]])<1e-6 and abs(y1-yT[icon[1,jel]])<1e-6:
-                 edge1_neighbedge[iel] = 2 
-                 if debug:
-                    print('elt',iel,'looking at neighbour',jel,'through edge1')
-                    print('corresponding edge of neighbour is edge',edge1_neighbedge[iel])
-          # case3: is it edge 3 of neighbour element?
-           if abs(x0-xT[icon[3,jel]])<1e-6 and abs(y0-yT[icon[3,jel]])<1e-6 and\
-                 abs(x1-xT[icon[2,jel]])<1e-6 and abs(y1-yT[icon[2,jel]])<1e-6:
-                 edge1_neighbedge[iel] = 3 
-                 if debug:
-                    print ('elt',iel,'looking at neighbour',jel,'through edge1')
-                    print('corresponding edg1 of neighbour is edge',edge1_neighbedge[iel])
-           if abs(x0-xT[icon[0,jel]])<1e-6 and abs(y0-yT[icon[0,jel]])<1e-6 and\
-                 abs(x1-xT[icon[3,jel]])<1e-6 and abs(y1-yT[icon[3,jel]])<1e-6:
-                 edge1_neighbedge[iel] = 4
-                 if debug:
-                    print ('elt',iel,'looking at neighbour',jel,'through edge1')
-                    print('corresponding edge of neighbour is edge',edge1_neighbedge[iel])
-                 
-       if edge2_neighb[iel]!=-1:
-           jel=edge2_neighb[iel]
-           if (x1-xT[icon[1,jel]])<1e-6 and abs(y1-yT[icon[1,jel]])<1e-6 and\
-                 abs(x2-xT[icon[0,jel]])<1e-6 and abs(y2-yT[icon[0,jel]])<1e-6:
-                 edge2_neighbedge[iel] = 1
-                 if debug:
-                    print ('elt',iel,'looking at neighbour',jel,'through edge2')
-                    print('corresponding edge of neighbour is edge',edge2_neighbedge[iel])                  
-           if abs(x1-xT[icon[2,jel]])<1e-6 and abs(y1-yT[icon[2,jel]])<1e-6 and\
-                 abs(x2-xT[icon[1,jel]])<1e-6 and abs(y2-yT[icon[1,jel]])<1e-6:
-                 edge2_neighbedge[iel] = 2 
-                 if debug:
-                    print('elt',iel,'looking at neighbour',jel,'through edge2')
-                    print('corresponding edge of neighbour is edge',edge2_neighbedge[iel])
-          # case3: is it edge 3 of neighbour element?
-           if abs(x1-xT[icon[3,jel]])<1e-6 and abs(y1-yT[icon[3,jel]])<1e-6 and\
-                 abs(x2-xT[icon[2,jel]])<1e-6 and abs(y2-yT[icon[2,jel]])<1e-6:
-                 edge2_neighbedge[iel] = 3 
-                 if debug:
-                    print ('elt',iel,'looking at neighbour',jel,'through edge2')
-                    print('corresponding edg1 of neighbour is edge',edge2_neighbedge[iel])
-           if abs(x1-xT[icon[0,jel]])<1e-6 and abs(y1-yT[icon[0,jel]])<1e-6 and\
-                 abs(x2-xT[icon[3,jel]])<1e-6 and abs(y2-yT[icon[3,jel]])<1e-6:
-                 edge2_neighbedge[iel] = 4
-                 if debug:
-                    print ('elt',iel,'looking at neighbour',jel,'through edge2')
-                    print('corresponding edge of neighbour is edge',edge2_neighbedge[iel])
-
-       if edge3_neighb[iel]!=-1:
-           jel=edge3_neighb[iel]
-           if (x2-xT[icon[1,jel]])<1e-6 and abs(y2-yT[icon[1,jel]])<1e-6 and\
-                 abs(x3-xT[icon[0,jel]])<1e-6 and abs(y3-yT[icon[0,jel]])<1e-6:
-                 edge3_neighbedge[iel] = 1
-                 if debug:
-                    print ('elt',iel,'looking at neighbour',jel,'through edge3')
-                    print('corresponding edge of neighbour is edge',edge3_neighbedge[iel])                  
-           if abs(x2-xT[icon[2,jel]])<1e-6 and abs(y2-yT[icon[2,jel]])<1e-6 and\
-                 abs(x3-xT[icon[1,jel]])<1e-6 and abs(y3-yT[icon[1,jel]])<1e-6:
-                 edge3_neighbedge[iel] = 2 
-                 if debug:
-                    print('elt',iel,'looking at neighbour',jel,'through edge3')
-                    print('corresponding edge of neighbour is edge',edge3_neighbedge[iel])
-          # case3: is it edge 3 of neighbour element?
-           if abs(x2-xT[icon[3,jel]])<1e-6 and abs(y2-yT[icon[3,jel]])<1e-6 and\
-                 abs(x3-xT[icon[2,jel]])<1e-6 and abs(y3-yT[icon[2,jel]])<1e-6:
-                 edge3_neighbedge[iel] = 3 
-                 if debug:
-                    print ('elt',iel,'looking at neighbour',jel,'through edge3')
-                    print('corresponding edg1 of neighbour is edge',edge3_neighbedge[iel])
-           if abs(x2-xT[icon[0,jel]])<1e-6 and abs(y2-yT[icon[0,jel]])<1e-6 and\
-                 abs(x3-xT[icon[3,jel]])<1e-6 and abs(y3-yT[icon[3,jel]])<1e-6:
-                 edge3_neighbedge[iel] = 4
-                 if debug:
-                    print ('elt',iel,'looking at neighbour',jel,'through edge4')
-                    print('corresponding edge of neighbour is edge',edge3_neighbedge[iel])
-                 
-       if edge4_neighb[iel]!=-1:
-           jel=edge4_neighb[iel]
-           if (x3-xT[icon[1,jel]])<1e-6 and abs(y3-yT[icon[1,jel]])<1e-6 and\
-                 abs(x0-xT[icon[0,jel]])<1e-6 and abs(y0-yT[icon[0,jel]])<1e-6:
-                 edge4_neighbedge[iel] = 1
-                 if debug:
-                    print ('elt',iel,'looking at neighbour',jel,'through edge3')
-                    print('corresponding edge of neighbour is edge',edge4_neighbedge[iel])                  
-           if abs(x3-xT[icon[2,jel]])<1e-6 and abs(y3-yT[icon[2,jel]])<1e-6 and\
-                 abs(x0-xT[icon[1,jel]])<1e-6 and abs(y0-yT[icon[1,jel]])<1e-6:
-                 edge4_neighbedge[iel] = 2 
-                 if debug:
-                    print('elt',iel,'looking at neighbour',jel,'through edge3')
-                    print('corresponding edge of neighbour is edge',edge4_neighbedge[iel])
-          # case3: is it edge 3 of neighbour element?
-           if abs(x3-xT[icon[3,jel]])<1e-6 and abs(y3-yT[icon[3,jel]])<1e-6 and\
-                 abs(x0-xT[icon[2,jel]])<1e-6 and abs(y0-yT[icon[2,jel]])<1e-6:
-                 edge4_neighbedge[iel] = 3 
-                 if debug:
-                    print ('elt',iel,'looking at neighbour',jel,'through edge3')
-                    print('corresponding edg1 of neighbour is edge',edge4_neighbedge[iel])
-           if abs(x3-xT[icon[0,jel]])<1e-6 and abs(y3-yT[icon[0,jel]])<1e-6 and\
-                 abs(x0-xT[icon[3,jel]])<1e-6 and abs(y0-yT[icon[3,jel]])<1e-6:
-                 edge4_neighbedge[iel] = 4
-                 if debug:
-                    print ('elt',iel,'looking at neighbour',jel,'through edge4')
-                    print('corresponding edge of neighbour is edge',edge4_neighbedge[iel])
 #end if
 
 #==============================================================================
@@ -697,6 +586,7 @@ for iter in range(0,niter):
 
     ###############################################################################
     # loop over elements
+    # forward then backward element sweep
     ###############################################################################
 
     if iter%2==0:
@@ -865,14 +755,6 @@ for iter in range(0,niter):
         #**********************************************************************
 
         if m==4:
-           x1=xT[icon[0,iel]]
-           x2=xT[icon[1,iel]]
-           x3=xT[icon[2,iel]]
-           x4=xT[icon[3,iel]]
-           y1=yT[icon[0,iel]]
-           y2=yT[icon[1,iel]]
-           y3=yT[icon[2,iel]]            
-           y4=yT[icon[3,iel]]
            #volume terms (E,H,J)
            E=hx*hy/9*np.array([[1,0.5,0.25,0.5],[0.5,1,0.5,0.25],[0.25,0.5,1,0.5],[0.5,0.25,0.5,1]])
            Jx=hy/12*np.array([[-2,-2,-1,-1],[2,2,1,1],[1,1,2,2],[-1,-1,-2,-2]])
@@ -965,7 +847,6 @@ for iter in range(0,niter):
               qx_edge1=[qx[nodeB],qx[nodeA],0,0]
               qy_edge1=[qy[nodeB],qy[nodeA],0,0]
         
-           #edge2 contribution: computing qx_edge2,qy_edge2,T_edge2 vectors of length m
            if edge2_boundary_indicator[iel]!=0: # must be on right boundary
               T_edge2=[0,Tbc(xT[icon[1,iel]],yT[icon[1,iel]]),Tbc(xT[icon[2,iel]],yT[icon[2,iel]]),0]
               qx_edge2=[0,0,0,0]
@@ -979,7 +860,6 @@ for iter in range(0,niter):
               qx_edge2=[ 0, qx[nodeB],qx[nodeA],0 ]
               qy_edge2=[ 0, qy[nodeB],qy[nodeA],0 ]
         
-           #edge3 contribution: computing qx_edge3,qy_edge3,T_edge3 vectors of length m
            if edge3_boundary_indicator[iel]!=0: # must be on top boundary
               T_edge3=[0,0,Tbc(xT[icon[2,iel]],yT[icon[2,iel]]),Tbc(xT[icon[3,iel]],yT[icon[3,iel]])]
               qx_edge3=[0,0,0,0]
@@ -993,7 +873,6 @@ for iter in range(0,niter):
                qx_edge3=[0,0,qx[nodeB],qx[nodeA] ]
                qy_edge3=[0,0,qy[nodeB],qy[nodeA] ]
                
-           #edge4 contribution: computing qx_edge4,qy_edge4,T_edge4 vectors of length m
            if edge4_boundary_indicator[iel]!=0: # must be on left boundary 
               T_edge4=[Tbc(xT[icon[0,iel]],yT[icon[0,iel]]),0,0,Tbc(xT[icon[3,iel]],yT[icon[3,iel]])]
               qx_edge4=[0,0,0,0]
@@ -1029,21 +908,18 @@ for iter in range(0,niter):
         A_Omegae[2*m:3*m,m:2*m  ]=Jy[:,:] 
 
         #temporary residual debug
+        #constant temp
         #T_el =[1,1,1,1]
         #qx_el =[0,0,0,0]
         #qy_el =[0,0,0,0]
-
+        #linear x temp
         #T_el =[xT[icon[0,iel]],xT[icon[1,iel]],xT[icon[2,iel]],xT[icon[3,iel]]]
         #qx_el =[1,1,1,1]
         #qy_el =[0,0,0,0]
-
+        #linear y temp
         #T_el =[yT[icon[0,iel]],yT[icon[1,iel]],yT[icon[2,iel]],yT[icon[3,iel]]]
         #qx_el =[0,0,0,0]
         #qy_el =[1,1,1,1]
-
-        #T_el  =[0,0,0,0]
-        #qx_el =[0,0,0,0]
-        #qy_el =[0,0,0,0]
 
         T_el  =T[icon[0:m,iel]]
         qx_el =qx[icon[0:m,iel]]
@@ -1072,7 +948,6 @@ for iter in range(0,niter):
                  +edge1_HBy.dot(T_edge1)+edge2_HBy.dot(T_edge2)+edge3_HBy.dot(T_edge3) +edge4_HBy.dot(T_edge4) 
         if debug:
            print('residual qy->',res_qy)
-    
 
         #compute residual T
         if m==3:    
@@ -1093,7 +968,8 @@ for iter in range(0,niter):
                 +edge1_GTB.dot(T_edge1)+edge2_GTB.dot(T_edge2)+edge3_GTB.dot(T_edge3)+edge4_GTB.dot(T_edge4)
         if debug:
            print('residual T->',res_T)
-    
+
+        # solve system for element iel    
     
         sol = sps.linalg.spsolve(sps.csr_matrix(A_Omegae+A_pOmegae),-bel)
         if debug:
@@ -1101,6 +977,7 @@ for iter in range(0,niter):
            print(iel,'qy=',sol[m:2*m])
            print(iel,'T =',sol[2*m:3*m],yT[icon[:,iel]])
 
+        #export elemental quantities (solution & residual) to global arrays
         qx[icon[0:m,iel]]=sol[0:m]
         qy[icon[0:m,iel]]=sol[m+0:m+m]
         T[icon[0:m,iel]]=sol[2*m+0:2*m+m]
@@ -1110,7 +987,7 @@ for iter in range(0,niter):
 
     #end for iel
 
-    print("iter= %3d : T,qx,qy (m/M)= %.4e %.4e | %.4e %.4e | %.4e %.4e | max(resT)= %.4e (tol= %.2e)"\
+    print("iter= %3d : T,qx,qy (m/M)= %.3e %.3e | %.3e %.3e | %.3e %.3e | max(resT)= %.3e (tol= %.1e)"\
              %(iter,min(T),max(T),min(qx),max(qx),min(qy),max(qy),np.max(np.abs(residual_T)),tol))
 
     T_stats_file.write("%d %e %e \n" %(iter,np.min(T),np.max(T))) ; T_stats_file.flush()
@@ -1120,133 +997,175 @@ for iter in range(0,niter):
     residual_qx_stats_file.write("%d %e %e \n" %(iter,np.min(residual_qx),np.max(residual_qy))) ; residual_qx_stats_file.flush()
     residual_qy_stats_file.write("%d %e %e \n" %(iter,np.min(residual_qx),np.max(residual_qy))) ; residual_qy_stats_file.flush()
 
-    if np.max(np.abs(residual_T))<tol and np.max(np.abs(residual_qx))<tol and np.max(np.abs(residual_qy))<tol:
+    convergence = np.max(np.abs(residual_T))<tol and np.max(np.abs(residual_qx))<tol and np.max(np.abs(residual_qy))<tol
+
+    ###############################################################################
+    # plot of solution
+    ###############################################################################
+
+    if visualise_all or convergence:
+
+       if visualise_all:
+          filename = 'solution_{:04d}.vtu'.format(iter) 
+       else:
+          filename = 'solution.vtu'.format(iter) 
+
+       vtufile=open(filename,"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NT,nel))
+       #####
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+       for i in range(0,NT):
+        vtufile.write("%10e %10e %10e \n" %(xT[i],yT[i],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
+ 
+       vtufile.write("<CellData Scalars='scalars'>\n")
+       vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
+       for iel in range(0,nel):
+               vtufile.write("%10e \n" %(area[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</CellData>\n")
+       #####
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='q' Format='ascii'> \n")
+       for i in range(0,NT):
+           vtufile.write("%10e %10e %10e \n" %(qx[i],qy[i],0.))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32'  Name='T' Format='ascii'> \n")
+       for i in range(0,NT):
+           vtufile.write("%10e  \n" %(T[i]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32'  Name='qx' Format='ascii'> \n")
+       for i in range(0,NT):
+           vtufile.write("%10e  \n" %(qx[i]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32'  Name='qy' Format='ascii'> \n")
+       for i in range(0,NT):
+           vtufile.write("%10e  \n" %(qy[i]))
+       vtufile.write("</DataArray>\n")
+ 
+       vtufile.write("<DataArray type='Float32'  Name='T (res)' Format='ascii'> \n")
+       for i in range(0,NT):
+           vtufile.write("%10e  \n" %(residual_T[i]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32'  Name='qx (res)' Format='ascii'> \n")
+       for i in range(0,NT):
+           vtufile.write("%10e  \n" %(residual_qx[i]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32'  Name='qy (res)' Format='ascii'> \n")
+       for i in range(0,NT):
+           vtufile.write("%10e  \n" %(residual_qy[i]))
+       vtufile.write("</DataArray>\n")
+ 
+       vtufile.write("</PointData>\n")
+
+       #####
+       vtufile.write("<Cells>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       if m==3:
+          for iel in range (0,nel):
+              vtufile.write("%d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel]))
+       if m==4:
+          for iel in range (0,nel):
+              vtufile.write("%d %d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %((iel+1)*m))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       if m==3:
+          for iel in range (0,nel):
+              vtufile.write("%d \n" %5) 
+       if m==4:
+          for iel in range (0,nel):
+              vtufile.write("%d \n" %9) 
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</Cells>\n")
+       #####
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
+
+    if convergence:
        break
 
 #end for iter
 
-np.savetxt('T.ascii',np.array([xT,yT,T]).T,header='# x,y')
+np.savetxt('T.ascii',np.array([xT,yT,T]).T,header='# x,y,T')
+np.savetxt('qx.ascii',np.array([xT,yT,qx]).T,header='# x,y,qx')
+np.savetxt('qy.ascii',np.array([xT,yT,qy]).T,header='# x,y,qy')
 
-###############################################################################
-# plot of solution
-###############################################################################
+###################################################################3
+#compute errors
+###################################################################3
 
-if visu:
-   vtufile=open('solution.vtu',"w")
-   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-   vtufile.write("<UnstructuredGrid> \n")
-   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NT,nel))
-   #####
-   vtufile.write("<Points> \n")
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-   for i in range(0,NT):
-       vtufile.write("%10e %10e %10e \n" %(xT[i],yT[i],0.))
-   vtufile.write("</DataArray>\n")
-   vtufile.write("</Points> \n")
+N     = np.zeros(m,dtype=np.float64)            # shape functions
+dNdr  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
+dNds  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
+errT=0.
+errqx=0.
+errqy=0.
+for iel in range (0,nel):
+    for iq in [-1,1]:
+        for jq in [-1,1]:
+            rq=iq/np.sqrt(3)
+            sq=jq/np.sqrt(3)
+            weightq=1.*1.
+            N[0]=0.25*(1.-rq)*(1.-sq)
+            N[1]=0.25*(1.+rq)*(1.-sq)
+            N[2]=0.25*(1.+rq)*(1.+sq)
+            N[3]=0.25*(1.-rq)*(1.+sq)
+            dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
+            dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
+            dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
+            dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
+            jcb=np.zeros((2,2),dtype=np.float64)
+            for k in range(0,m):
+                jcb[0,0]+=dNdr[k]*xT[icon[k,iel]]
+                jcb[0,1]+=dNdr[k]*yT[icon[k,iel]]
+                jcb[1,0]+=dNds[k]*xT[icon[k,iel]]
+                jcb[1,1]+=dNds[k]*yT[icon[k,iel]]
+            jcob=np.linalg.det(jcb)
+            xq=0.0
+            yq=0.0
+            Tq=0.0
+            qxq=0.0
+            qyq=0.0
+            for k in range(0,m):
+                xq+=N[k]*xT[icon[k,iel]]
+                yq+=N[k]*yT[icon[k,iel]]
+                Tq+=N[k]*T[icon[k,iel]]
+                qxq+=N[k]*qx[icon[k,iel]]
+                qyq+=N[k]*qy[icon[k,iel]]
+            errT+=(Tq-T_analytical(xq,yq))**2*weightq*jcob
+            errqx+=(qxq-qx_analytical(xq,yq))**2*weightq*jcob
+            errqy+=(qyq-qy_analytical(xq,yq))**2*weightq*jcob
 
-   vtufile.write("<CellData Scalars='scalars'>\n")
-   #vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
-   #for iel in range(0,nel):
-   #    vtufile.write("%10e \n" %(p[iel]))
-   #vtufile.write("</DataArray>\n")
-   vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
-   for iel in range(0,nel):
-           vtufile.write("%10e \n" %(area[iel]))
-   vtufile.write("</DataArray>\n")
-   vtufile.write("</CellData>\n")
-   #####
-   vtufile.write("<PointData Scalars='scalars'>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='q' Format='ascii'> \n")
-   for i in range(0,NT):
-       vtufile.write("%10e %10e %10e \n" %(qx[i],qy[i],0.))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32'  Name='T' Format='ascii'> \n")
-   for i in range(0,NT):
-       vtufile.write("%10e  \n" %(T[i]))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32'  Name='qx' Format='ascii'> \n")
-   for i in range(0,NT):
-       vtufile.write("%10e  \n" %(qx[i]))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32'  Name='qy' Format='ascii'> \n")
-   for i in range(0,NT):
-       vtufile.write("%10e  \n" %(qy[i]))
-   vtufile.write("</DataArray>\n")
+errT=np.sqrt(errT)
+errqx=np.sqrt(errqx)
+errqy=np.sqrt(errqy)
 
-   vtufile.write("<DataArray type='Float32'  Name='T (res)' Format='ascii'> \n")
-   for i in range(0,NT):
-       vtufile.write("%10e  \n" %(residual_T[i]))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32'  Name='qx (res)' Format='ascii'> \n")
-   for i in range(0,NT):
-       vtufile.write("%10e  \n" %(residual_qx[i]))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32'  Name='qy (res)' Format='ascii'> \n")
-   for i in range(0,NT):
-       vtufile.write("%10e  \n" %(residual_qy[i]))
-   vtufile.write("</DataArray>\n")
+print("nel= %6d ; errT= %.8e ; errqx,errqy= %.8e %.8e" %(nel,errT,errqx,errqy))
 
 
-
-   vtufile.write("</PointData>\n")
-
-   #####
-   vtufile.write("<Cells>\n")
-   #--
-   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-   if m==3:
-      for iel in range (0,nel):
-          vtufile.write("%d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel]))
-   if m==4:
-      for iel in range (0,nel):
-          vtufile.write("%d %d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel]))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%d \n" %((iel+1)*m))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-   if m==3:
-      for iel in range (0,nel):
-          vtufile.write("%d \n" %5) 
-   if m==4:
-      for iel in range (0,nel):
-          vtufile.write("%d \n" %9) 
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("</Cells>\n")
-   #####
-   vtufile.write("</Piece>\n")
-   vtufile.write("</UnstructuredGrid>\n")
-   vtufile.write("</VTKFile>\n")
-   vtufile.close()
 
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    #end if m

@@ -1,0 +1,13 @@
+#! /bin/bash
+
+rm -f errors
+
+#for rs in 8 9 10 11 12; do
+for rs in {8..13}; do
+    echo res= $rs
+    python3 stone.py   $rs   $rs | grep errT >> errors
+done
+
+
+
+
