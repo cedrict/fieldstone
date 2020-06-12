@@ -1,7 +1,15 @@
 
 Let us start with ${\cal A}_e$ where we assume that $k$ is constant within an element:
 \begin{eqnarray}
-{\cal A}_{\Omega_e}
+{\cal A}_{\Omega_e}&=&
+\left(
+\begin{array}{ccc}
+\int_\Omega \vec{N}^T \vec{N} dV & 0 & -\int_\Omega k \partial_x \vec{N}^T \vec{N} \; dV \\ \\
+0 & \int_\Omega \vec{N}^T \vec{N} dV & -\int_\Omega k \partial_y \vec{N}^T \vec{N} \; dV \\ \\
+- \int_{\Omega} \partial_x \vec{N}^T \vec{N}   \; dV & 
+- \int_{\Omega} \partial_y \vec{N}^T \vec{N}   \; dV & 0 
+\end{array}
+\right) \\
 &=&
 \left(
 \begin{array}{ccc}

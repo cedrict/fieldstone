@@ -27,9 +27,9 @@ and
 \end{eqnarray}
 
 Then, as shown in Section~\ref{ss:tle}, the mass matrix\footnote{The mass matrix is commonly called ${\bm M}$ 
-but I use here the same notations as in Li's book.} is:
-\[
-{\bm E} = \int_\Omega \vec{N}^T \vec{N} dV 
+but I use here the same notations as in Li's book.}  and the ${\bm J}_x$ and ${\bm J}_y$ matrices are:
+\begin{eqnarray}
+{\bm E} &=& \int_\Omega \vec{N}^T \vec{N} dV 
 =\frac{S}{12} 
 \left(
 \begin{array}{ccc}
@@ -37,10 +37,7 @@ but I use here the same notations as in Li's book.} is:
 1 &2 &1\\
 1 &1 &2
 \end{array}
-\right)
-\]
-
-\begin{eqnarray}
+\right) \\
 {\bm J}_x &=& - \int_{\Omega} \partial_x \vec{N}^T \vec{N}   \; dV 
 =-\frac{1}{6}
 \left(
@@ -60,14 +57,20 @@ x_2-x_1 & x_2-x_1 & x_2-x_1
 \end{array}
 \right)
 \end{eqnarray}
-
-\todo[inline]{prove these !}
-
-
-
+\todo[inline]{reconcile all with minus signs}
+In the same appendix we show that 
 \begin{eqnarray}
-{\bm C}_1 &=& \int_{\partial\Omega_1} \vec{N}^T\vec{N} dS 
+{\bm C}_1 &=& \int_{\partial\Omega_3} \vec{N}^T\vec{N} dS 
 = \frac{L_1}{6}
+\left(
+\begin{array}{ccc}
+2 &1 &0\\
+1 &2 &0\\
+0 &0 &0
+\end{array}
+\right) \\ 
+{\bm C}_2 &=& \int_{\partial\Omega_1} \vec{N}^T\vec{N} dS 
+= \frac{L_2}{6}
 \left(
 \begin{array}{ccc}
 0 &0 &0\\
@@ -75,26 +78,36 @@ x_2-x_1 & x_2-x_1 & x_2-x_1
 0 &1 &2
 \end{array}
 \right) \\
-{\bm C}_2 &=& \int_{\partial\Omega_2} \vec{N}^T\vec{N} dS 
-= \frac{L_2}{6}
+{\bm C}_3 &=& \int_{\partial\Omega_2} \vec{N}^T\vec{N} dS 
+= \frac{L_3}{6}
 \left(
 \begin{array}{ccc}
 2 &0 &1\\
 0 &0 &0\\
 1 &0 &2
 \end{array}
-\right) \\
-{\bm C}_3 &=& \int_{\partial\Omega_3} \vec{N}^T\vec{N} dS 
-= \frac{L_3}{6}
-\left(
-\begin{array}{ccc}
-2 &1 &0\\
-1 &2 &0\\
-0 &0 &0
-\end{array}
 \right) 
 \end{eqnarray}
 
 
+%----------------------------------------------------------------
+\subsubsection{Testing the waters - constant temperature field}
+
+Let us assume that the temperature is constant in space. It then follows that the heat flux is identically zero. 
 
 
+
+
+%----------------------------------------------------------------
+\subsubsection{Testing the waters - linear temperature field}
+
+If the temperature field is given by $T(x,y)=T_0 -a x- by$
+then $q_x=a$ and $q_y=b$.
+
+
+
+
+
+
+
+\newpage

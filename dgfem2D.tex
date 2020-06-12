@@ -366,27 +366,16 @@ The $H_i$ terms are so similar to the $E_i$ terms that there is not need to writ
 
 
 \begin{landscape}
-\noindent We have seen that ODE \#1 and \#2 write
+
+\noindent We have seen that ODE \#2 and \#1 write
 \begin{eqnarray}
-A-B = A_1 + A_2 + A_3 + A_4 - B &=& \vec{C}\\
 D+E-F = D+E_1+E_2+E_3+E_4-F &=&0\\
-G+H-I = G+H_1+H_2+H_3+H_4-I &=&0
+G+H-I = G+H_1+H_2+H_3+H_4-I &=&0\\
+A-B = A_1 + A_2 + A_3 + A_4 - B &=& \vec{C}
 \end{eqnarray}
 
 so that 
 \begin{eqnarray}
- \left( \int_{\partial\Omega}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_x  \; dS  \right) \cdot {\color{blue}\vec{\qx}}  
-+ \left( \int_{\partial\Omega}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_y  \; dS  \right) \cdot {\color{blue}\vec{\qy}}  
- - \left( \int_{\partial\Omega}   {\cal{E}}   \vec{N}^T \vec{N} dS \right) \cdot \vec{\blueT}  && \nn\\
-+  \left(\int_{\partial\Omega} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_x^+    \; dS \right) \cdot  {\color{brown}\vec{\qx}}
-+ \left(\int_{\partial\Omega} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_y^+    \; dS \right) \cdot  {\color{brown}\vec{\qy}} 
-+  \left( \int_{\partial\Omega}   {\cal{E}}   \vec{N}^T \vec{N} dS \right) \cdot \vec{\brownT} 
-- \left(\int_{\Omega} \partial_x \vec{N}^T \vec{N}   \; dV \right)\cdot {\color{blue}\vec{\qx}}  
-- \left(\int_{\Omega} \partial_y \vec{N}^T \vec{N}   \; dV \right)\cdot {\color{blue}\vec{\qy}}  
-&=&
-\int_{\Omega} \vec{N}^T H  \;dV 
-\nn\\ 
-\nn\\ 
 \left( \int_\Omega \vec{N}^T \vec{N} dV \right) \cdot {\color{blue}\vec{\qx}} 
 + \left(\int_{\partial\Omega} k \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS \right)\cdot \vec{\color{blue}T} 
 + \left(\int_{\partial\Omega} k \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS \right)\cdot \vec{\color{brown}T} && \nn\\
@@ -404,75 +393,274 @@ so that
 -\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS \right)\cdot \vec{\blueqy} 
 + \left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS \right)\cdot \vec{\brownqx} 
 +\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS \right)\cdot \vec{\brownqy} 
-- \left( \int_\Omega k \partial_y \vec{N}^T \vec{N} \; dV \right) \cdot \vec{\color{blue} T} &=& \vec{0} \nn
+- \left( \int_\Omega k \partial_y \vec{N}^T \vec{N} \; dV \right) \cdot \vec{\color{blue} T} &=& \vec{0} 
+\nn \\
+\nn \\
+ \left( \int_{\partial\Omega}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_x  \; dS  \right) \cdot {\color{blue}\vec{\qx}}  
++ \left( \int_{\partial\Omega}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_y  \; dS  \right) \cdot {\color{blue}\vec{\qy}}  
+ - \left( \int_{\partial\Omega}   {\cal{E}}   \vec{N}^T \vec{N} dS \right) \cdot \vec{\blueT}  && \nn\\
++  \left(\int_{\partial\Omega} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_x^+    \; dS \right) \cdot  {\color{brown}\vec{\qx}}
++ \left(\int_{\partial\Omega} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_y^+    \; dS \right) \cdot  {\color{brown}\vec{\qy}} 
++  \left( \int_{\partial\Omega}   {\cal{E}}   \vec{N}^T \vec{N} dS \right) \cdot \vec{\brownT} 
+- \left(\int_{\Omega} \partial_x \vec{N}^T \vec{N}   \; dV \right)\cdot {\color{blue}\vec{\qx}}  
+- \left(\int_{\Omega} \partial_y \vec{N}^T \vec{N}   \; dV \right)\cdot {\color{blue}\vec{\qy}}  
+&=&
+\int_{\Omega} \vec{N}^T H  \;dV \nn 
 \end{eqnarray}
 
 
-Finally
 
-{\footnotesize
+
+
+
+
+
+
+
+\begin{footnotesize}
 \[
 \left[
 \underbrace{
 \left(
 \begin{array}{ccc}
-0 & - \int_{\Omega} \partial_x \vec{N}^T \vec{N}   \; dV  & - \int_{\Omega} \partial_y \vec{N}^T \vec{N}   \; dV  \\ \\
--\int_\Omega k \partial_x \vec{N}^T \vec{N} \; dV & \int_\Omega \vec{N}^T\vec{N} dV & 0 \\  \\
--\int_\Omega k \partial_y \vec{N}^T \vec{N} \; dV & 0 & \int_\Omega \vec{N}^T\vec{N} dV  
+\int_\Omega \vec{N}^T \vec{N} dV & 0 & -\int_\Omega k \partial_x \vec{N}^T \vec{N} \; dV \\ \\
+0 & \int_\Omega \vec{N}^T \vec{N} dV & -\int_\Omega k \partial_y \vec{N}^T \vec{N} \; dV \\ \\
+- \int_{\Omega} \partial_x \vec{N}^T \vec{N}   \; dV & 
+- \int_{\Omega} \partial_y \vec{N}^T \vec{N}   \; dV & 0 
 \end{array}
 \right)}_{{\cal A}_\Omega}
 +
 \underbrace{
 \left(
 \begin{array}{ccc}
--  \int_{\partial\Omega}   {\cal{E}}   \vec{N}^T \vec{N} dS   & \int_{\partial\Omega}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_x  \; dS &  \int_{\partial\Omega}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_y  \; dS \\ \\
-\int_{\partial\Omega} k \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS & 
--\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS  
-& -\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS    \\ \\
-\int_{\partial\Omega} k \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_y dS & 
--\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS  
-& -\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS    
+-\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS &  
+-\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS & 
+\int_{\partial\Omega} k \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS 
+\\ \\ 
+-\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS & 
+-\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS &
+\int_{\partial\Omega} k \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_y dS 
+\\ \\
+ \int_{\partial\Omega}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_x  \; dS & 
+ \int_{\partial\Omega}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_y  \; dS &
+-  \int_{\partial\Omega}   {\cal{E}}   \vec{N}^T \vec{N} dS 
 \end{array}
 \right)}_{{\cal A}_{\partial\Omega}}
 \right]
 \cdot
 \left(
 \begin{array}{c} 
-\vec{\color{blue}T} \\ \\ \vec{\blueqx} \\ \\ \vec{\blueqy}
+\vec{\blueqx} \\ \\ \vec{\blueqy} \\ \\ \vec{\color{blue}T} 
 \end{array}
 \right)
 \]
 \[
 =
 \left(
-\begin{array}{c}
--  \left( \int_{\partial\Omega}   {\cal{E}}   \vec{N}^T \vec{N} dS \right) \cdot \vec{\brownT} 
--  \left(\int_{\partial\Omega} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_x^+    \; dS \right) \cdot  {\color{brown}\vec{\qx}}
-- \left(\int_{\partial\Omega} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_y^+    \; dS \right) \cdot  {\color{brown}\vec{\qy}} 
+\begin{array}{ccc}
+-\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS & 
+-\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS & 
+-\int_{\partial\Omega} k \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS 
 \\ \\
-- \left(\int_{\partial\Omega} k \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS \right)\cdot \vec{\color{brown}T} 
-- \left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS \right)\cdot \vec{\brownqx} 
--\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS \right)\cdot \vec{\brownqy} 
+-\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS &
+-\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS & 
+-\int_{\partial\Omega} k \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_y dS 
 \\ \\
-- \left(\int_{\partial\Omega} k \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_y dS \right)\cdot \vec{\color{brown}T} 
-- \left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS \right)\cdot \vec{\brownqx} 
--\left(\int_{\partial\Omega} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS \right)\cdot \vec{\brownqy} 
+-\int_{\partial\Omega} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_x^+    \; dS & 
+-\int_{\partial\Omega} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_y^+    \; dS &
+-\int_{\partial\Omega}   {\cal{E}}   \vec{N}^T \vec{N} dS 
 \end{array}
 \right)
+\cdot 
+\left( \begin{array}{c}  \vec{\brownqx} \\ \\ \vec{\brownqy} \\ \\ \vec{\color{brown}T}  \end{array} \right)
 +
+\left( \begin{array}{c} 0 \\ \\ 0  \\ \\ \int_{\Omega} \vec{N}^T H  \;dV   \end{array} \right)
+\]
+\end{footnotesize}
+
+\begin{footnotesize}
+\[
+\left[
+\underbrace{
 \left(
-\begin{array}{c}
-\int_{\Omega} \vec{N}^T H  \;dV  \\ \\ 0 \\ \\ 0 
+\begin{array}{ccc}
+\int_\Omega \vec{N}^T \vec{N} dV & 0 & -\int_\Omega k \partial_x \vec{N}^T \vec{N} \; dV \\ \\
+0 & \int_\Omega \vec{N}^T \vec{N} dV & -\int_\Omega k \partial_y \vec{N}^T \vec{N} \; dV \\ \\
+- \int_{\Omega} \partial_x \vec{N}^T \vec{N}   \; dV & 
+- \int_{\Omega} \partial_y \vec{N}^T \vec{N}   \; dV & 0 
+\end{array}
+\right)}_{{\cal A}_\Omega}
++
+\underbrace{
+\sum_{i=1}^{nedges}
+\left(
+\begin{array}{ccc}
+-\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS &  
+-\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS & 
+ \int_{\partial\Omega_i} k \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS 
+\\ \\ 
+-\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS & 
+-\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS &
+ \int_{\partial\Omega_i} k \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_y dS 
+\\ \\
+ \int_{\partial\Omega_i}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_x  \; dS & 
+ \int_{\partial\Omega_i}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_y  \; dS &
+-\int_{\partial\Omega_i}   {\cal{E}}   \vec{N}^T \vec{N} dS 
+\end{array}
+\right)}_{{\cal A}_{\partial\Omega}}
+\right]
+\cdot
+\left(
+\begin{array}{c} 
+\vec{\blueqx} \\ \\ \vec{\blueqy} \\ \\ \vec{\color{blue}T} 
 \end{array}
 \right)
 \]
-}
+\[
+=
+\sum_{i=1}^{nedges}
+\left(
+\begin{array}{ccc}
+-\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS & 
+-\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS & 
+-\int_{\partial\Omega_i} k \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS 
+\\ \\
+-\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS &
+-\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS & 
+-\int_{\partial\Omega_i} k \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_y dS 
+\\ \\
+-\int_{\partial\Omega_i} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_x^+    \; dS & 
+-\int_{\partial\Omega_i} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_y^+    \; dS &
+-\int_{\partial\Omega_i}   {\cal{E}}   \vec{N}^T \vec{N} dS 
+\end{array}
+\right)
+\cdot 
+\left( \begin{array}{c}  \vec{\brownqx} \\ \\ \vec{\brownqy} \\ \\ \vec{\color{brown}T}  \end{array} \right)_i
++
+\left( \begin{array}{c} 0 \\ \\ 0  \\ \\ \int_{\Omega} \vec{N}^T H  \;dV   \end{array} \right)
+\]
+\end{footnotesize}
 
+
+\[
+\left[
+\left(
+\begin{array}{ccc}
+{\bm E} & {\bm 0} & {\bm H}_x \\
+{\bm 0} & {\bm E} & {\bm H}_y \\
+{\bm J}_x & {\bm J}_y & {\bm 0}
+\end{array}
+\right)
++
+\sum_{i=1}^{nedges}
+\left(
+\begin{array}{ccc}
+{\bm E}_{xx,i} & {\bm E}_{xy,i} & {\bm H}_{x,i} \\
+{\bm E}_{yx,i} & {\bm E}_{yy,i} & {\bm H}_{y,i} \\
+{\bm J}_{x,i} & {\bm J}_{y,i} & {\bm G}_{T,i}
+\end{array}
+\right)
+\right]
+\cdot
+\left(
+\begin{array}{c} 
+\vec{\blueqx} \\  \vec{\blueqy} \\  \vec{\color{blue}T} 
+\end{array}
+\right)
+=
+\]
+
+
+
+
+which is identical to the equation 4.24 in Li's book (if the terms related to the third dimension are disregarded):
+\begin{center}
+\includegraphics[width=8cm]{images/dgfem/li_04}+
+\includegraphics[width=8cm]{images/dgfem/li_05}
+\end{center}
 \end{landscape}
 
+\begin{footnotesize}
+\begin{eqnarray}
+{\bm E} &=& \int_\Omega \vec{N}^T \vec{N} dV \\
+{\bm H}_x &=&   -\int_\Omega k \partial_x \vec{N}^T \vec{N} \; dV     \\ 
+{\bm H}_y &=&   -\int_\Omega k \partial_y \vec{N}^T \vec{N} \; dV     \\ 
+{\bm J}_x &=&   -\int_\Omega  \partial_x \vec{N}^T \vec{N} \; dV     \\ 
+{\bm J}_y &=&   -\int_\Omega  \partial_y \vec{N}^T \vec{N} \; dV     \\ 
+{\bm E}_{xx,i} &=&   -\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS  \\
+{\bm E}_{xy,i} &=&   -\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS  \\
+{\bm E}_{yx,i} &=&    -\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS  \\
+{\bm E}_{yy,i} &=&    -\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS  \\
+{\bm H}_{x,i} &=&       \int_{\partial\Omega_i} k \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS \\
+{\bm H}_{y,i} &=&      \int_{\partial\Omega_i} k \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_y dS \\
+{\bm J}_{x,i} &=&    \int_{\partial\Omega_i}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_x  \; dS  \\
+{\bm J}_{y,i} &=&    \int_{\partial\Omega_i}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_y  \; dS  \\
+{\bm G}_{T,i} &=&   -\int_{\partial\Omega_i}   {\cal{E}}   \vec{N}^T \vec{N} dS  \\
+{\bm E}_{xx,B,i} &=&     -\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS \\
+{\bm E}_{xy,B,i} &=&     -\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS \\
+{\bm E}_{yx,B,i} &=&      -\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS \\
+{\bm E}_{yy,B,i} &=&      -\int_{\partial\Omega_i} k \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS \\
+{\bm H}_{x,B,i} &=&     -\int_{\partial\Omega_i} k \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS \\
+{\bm H}_{y,B,i} &=&     -\int_{\partial\Omega_i} k \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_y dS \\
+{\bm J}_{x,B,i} &=&     -\int_{\partial\Omega_i} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_x^+    \; dS \\
+{\bm J}_{y,B,i} &=&     -\int_{\partial\Omega_i} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_y^+    \; dS \\
+{\bm G}_{T,B,i} &=&   -\int_{\partial\Omega_i}   {\cal{E}}   \vec{N}^T \vec{N} dS  \\
+{\bm S}_{T} &=&        \int_{\Omega} \vec{N}^T H  \;dV  
+\end{eqnarray}
+\end{footnotesize}
+
+Note that ${\cal E}=C_{11}$ and ${\cal F}=C_{22}$ in the book.
+
+
+\newpage
+If $k$ is constant per element, then:
+
+\begin{footnotesize}
+\begin{eqnarray}
+{\bm E} &=& \int_\Omega \vec{N}^T \vec{N} dV \\
+{\bm H}_x &=&   -k\int_\Omega  \partial_x \vec{N}^T \vec{N} \; dV     \\ 
+{\bm H}_y &=&   -k\int_\Omega  \partial_y \vec{N}^T \vec{N} \; dV     \\ 
+{\bm J}_x &=&   -\int_\Omega  \partial_x \vec{N}^T \vec{N} \; dV     \\ 
+{\bm J}_y &=&   -\int_\Omega  \partial_y \vec{N}^T \vec{N} \; dV     \\ 
+{\bm E}_{xx,i} &=&   -k\int_{\partial\Omega_i}  \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS  \\
+{\bm E}_{xy,i} &=&   -k\int_{\partial\Omega_i}  \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS  \\
+{\bm E}_{yx,i} &=&   -k\int_{\partial\Omega_i}  \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS  \\
+{\bm E}_{yy,i} &=&   -k\int_{\partial\Omega_i}  \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS  \\
+{\bm H}_{x,i} &=&     k\int_{\partial\Omega_i}  \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS = -k {\bm J}_{x,B,i}\\
+{\bm H}_{y,i} &=&     k\int_{\partial\Omega_i}  \left( \frac{1}{2} + \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_y dS = -k {\bm J}_{y,B,i}\\
+{\bm J}_{x,i} &=&    \int_{\partial\Omega_i}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_x  \; dS  \\
+{\bm J}_{y,i} &=&    \int_{\partial\Omega_i}  \left(\frac{1}{2} - \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} n^+_y  \; dS  \\
+{\bm G}_{T,i} &=&   -\int_{\partial\Omega_i}   {\cal{E}}   \vec{N}^T \vec{N} dS  \\
+{\bm E}_{xx,B,i} &=&    -k\int_{\partial\Omega_i}  \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_x dS = {\bm E}_{xx,i} \\
+{\bm E}_{xy,B,i} &=&    -k\int_{\partial\Omega_i}  \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_x dS = {\bm E}_{xy,i} \\
+{\bm E}_{yx,B,i} &=&    -k\int_{\partial\Omega_i}  \vec{N}^T\vec{N}  {\cal F} {n}^+_x   n^+_y dS = {\bm E}_{yx,i} \\
+{\bm E}_{yy,B,i} &=&    -k\int_{\partial\Omega_i}  \vec{N}^T\vec{N}  {\cal F} {n}^+_y   n^+_y dS = {\bm E}_{yy,i} \\
+{\bm H}_{x,B,i} &=&     -k\int_{\partial\Omega_i}  \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_x dS = -k {\bm J}_{x,i}\\
+{\bm H}_{y,B,i} &=&     -k\int_{\partial\Omega_i}  \left( \frac{1}{2} - \vec{\cal C} \cdot \vec{n}^+ \right) {N}^T \vec{N} n^+_y dS = -k {\bm J}_{y,i}\\
+{\bm J}_{x,B,i} &=&     -\int_{\partial\Omega_i} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_x^+    \; dS \\
+{\bm J}_{y,B,i} &=&     -\int_{\partial\Omega_i} \left(\frac{1}{2} + \vec{\cal{C}} \cdot \vec{n}^+ \right) \vec{N}^T \vec{N} {n}_y^+    \; dS \\
+{\bm G}_{T,B,i} &=&   -\int_{\partial\Omega_i}   {\cal{E}}   \vec{N}^T \vec{N} dS  = {\bm G}_{T,i}\\
+{\bm S}_{T} &=&        \int_{\Omega} \vec{N}^T H  \;dV  
+\end{eqnarray}
+\end{footnotesize}
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \par\noindent\rule{\textwidth}{0.4pt}
 DISCARD THIS PAGE
