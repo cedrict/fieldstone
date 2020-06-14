@@ -1,0 +1,73 @@
+
+
+\subsection{Convection in a box *}
+
+Scale up the benchmark described in Section~\ref{sec:ldc_anal} so that 
+it runs in a 1000x1000 km domain with Earth-like parameters and velocities.
+(the maximum velocity is denoted by $\upnu_{conv}$ and will be varied).
+Start with an initial zero temperature field and Earth-like boundary conditions 
+on the top and bottom. 
+
+Run the code to steady state. Implement an algorithm which computes the average 
+temperature $<T>$ in the domain and plot it as a function of time, with 
+\[
+<T> = \frac{1}{L_xL_y} \iint T(x,y) dx dy
+\]
+Also compute the root mean square velocity in the domain:
+\[
+\upnu_{rms} = \sqrt{   \frac{1}{L_xL_y} \iint (u^2+v^2) dx dy  }
+\]
+Plot the steady state $<T>$ and $\upnu_{rms} $ as a function of the resolution $h$. 
+Compute and plot the heat flux $\vec{q}=-\vec\nabla T$ in the center of the elements.
+Plot the temperature and heat flux on the $x=L_x/2$ line for different values 
+of $\upnu_{conv}$.
+When possible, make a link with the Mantle Dynamics practical. 
+
+%-------------------------------------------
+\subsection{Triangular linear elements */**}
+
+Redo the 2D advection-diffusion exercises with triangular elements.
+You will need to make a new icon array, and recompute the mass matrix 
+and other matrices. The triangular elements are constructed by splitting 
+square elements along the diagonal.
+See Section~\ref{sec:shpfct2d} for the shape functions and their derivatives. 
+
+%------------------------------------
+\subsection{Triangular linear elements ***}
+
+Same exercise as above, with an additional task: run the benchmark
+presented in Section~\ref{sec:hfcyl}.
+For this you will need to generate a mesh 
+such that nodes are placed on the perimeter of the cylinder. You can build it 
+by hand, or you can use an external mesher library.
+Vary the heat conduction coefficient to show the effect of diffusion on the obtained
+steady state temperature field.  
+
+%---------------------------------------
+\subsection{Diffusion of topography ****}
+
+In a 2D plane assign each node an initial topography $h(x,y,t=0)$ given by 
+\[
+h(x,y,t=0)= h_0 \sin(\pi x/L_x) + \xi(x,y) \delta h
+\]
+where $L_x$ and $L_y$ are the dimensions of the domain, $h_0$ is the 
+height of the orogen, $xi(x,y)$ is a random perturbation in $[-1,1]$
+and $\delta h$ is the amplitude of the perturbation.
+
+We wish to 'erode' the topography by means of a (nonlinear) diffusion law
+as in section 2.1.1 of Burov \& Cloetingh \cite{bucl97}.
+
+\begin{enumerate}
+\item What are the physical parameters needed to carry out this experiment? 
+What are the appropriate boundary conditions? 
+What is the steady state? What are the relevant time scales? How should we choose the time step?
+\item Write a code which solves the linear diffusion equation until steady state is reached.
+Explore the effect of $\delta h$. Compute the slope $\vec\nabla h$ inside each element and plot 
+its time evolution. 
+\item Implement the nonlinear diffusion law and run the model once again. 
+\item If a source term is added to the diffusion equation it is in fact a vertical velocity
+$\partial h/\partial t$ has the dimensions of a velocity). Add a source term which generates 
+uplift in a symmetric and asymmetric manner.  
+\end{enumerate}
+
+\Literature  \cite{thsh14} \cite{ster20}  

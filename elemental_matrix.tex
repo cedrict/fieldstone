@@ -384,7 +384,7 @@ Example:
 
 
 %---------------------------
-\subsection{Quadrilaterals: rectangular linear elements}
+\subsection{Quadrilaterals: rectangular linear elements} \label{app:qrle}
 
 We assume that each element is a rectangle of size $h_x \times h_y$. 
 We start from the linear shape functions in the reference element as a function of $r,s$:
@@ -394,7 +394,6 @@ N_2(r,s) &=& \frac{1}{4}(1+r)(1-s) \\
 N_3(r,s) &=& \frac{1}{4}(1+r)(1+s) \\ 
 N_3(r,s) &=& \frac{1}{4}(1-r)(1+s) 
 \end{eqnarray}
-and their derivatives:
 and their derivatives:
 \begin{eqnarray}
 \partial_r N_1(r,s) &=& -\frac{1}{4}(1-s) \nn\\
@@ -462,9 +461,11 @@ h_x & 0 \\
 \right|  
 = \frac{h_xh_y}{4}
 \]
-Then 
+and finally  
 \begin{eqnarray}
-\iint_\square f(x,y) dx dy &=&  \frac{h_xh_y}{4} \int_{-1}^{1} \int_{-1}^{1} f(x(r,s),y(r,s)) dr ds
+\boxed{
+\iint_\square f(x,y) dx dy =  \frac{h_xh_y}{4} \int_{-1}^{1} \int_{-1}^{1} f(x(r,s),y(r,s)) dr ds
+}
 \end{eqnarray}
 Then the mass matrix is given by
 \begin{eqnarray}
@@ -496,8 +497,37 @@ In the context of Discontinuous Galerkin methods we will need
 \begin{eqnarray}
 {\bm J}_x 
 &=& \int_\square \partial_x \vec{N}^T (x,y) \vec{N}(x,y) dxdy \nn\\
-&=& \frac{h_xh_y}{4} \int_{-1}^{+1}\int_{-1}^{+1} \partial_r \vec{N}^T(r,s)\vec{N}(r,s) drds \nn\\
-&=& \frac{h_xh_y}{4} \int_{-1}^{+1}\int_{-1}^{+1} 
+{\bm J}_y 
+&=& \int_\square \partial_y \vec{N}^T (x,y) \vec{N}(x,y) dxdy \nn\\
+\end{eqnarray}
+We have 
+\[
+\partial_x N_i(x,y) = \frac{\partial N_i}{\partial r}\frac{\partial r}{\partial x}
+\qquad
+\text{and}
+\qquad
+\partial_y N_i(x,y) = \frac{\partial N_i}{\partial s}\frac{\partial s}{\partial y}
+\]
+Since 
+\[
+r=\frac{2}{h_x}(x-x_0)-1 
+\qquad
+\text{and}
+\qquad
+s=\frac{2}{h_y}(y-y_0)-1 
+\]
+then 
+\[
+\frac{\partial r}{\partial x} = \frac{2}{h_x}
+\qquad
+\frac{\partial s}{\partial y} = \frac{2}{h_y}
+\]
+so 
+\begin{eqnarray}
+{\bm J}_x 
+&=& \int_\square \partial_x \vec{N}^T (x,y) \vec{N}(x,y) dxdy \nn\\
+&=& \frac{2}{h_x}\frac{h_xh_y}{4} \int_{-1}^{+1}\int_{-1}^{+1} \partial_r \vec{N}^T(r,s)\vec{N}(r,s) drds \nn\\
+&=& \frac{h_y}{2} \int_{-1}^{+1}\int_{-1}^{+1} 
 \left(
 \begin{array}{cccc}
 -\frac{1}{4} (1-s) \\
@@ -516,7 +546,7 @@ In the context of Discontinuous Galerkin methods we will need
 \right)
  drds \nn\\
 &=& 
-\frac{h_xh_y}{64} \int_{-1}^{+1}\int_{-1}^{+1} 
+\frac{h_y}{32} \int_{-1}^{+1}\int_{-1}^{+1} 
 \left(
 \begin{array}{cccc}
 -(1-r) (1-s)^2 & -(1+r) (1-s)^2 & -(1+r) (1-s^2) & -(1-r) (1-s^2) \\
@@ -527,7 +557,7 @@ In the context of Discontinuous Galerkin methods we will need
 \right)
  drds \nn\\
 &=&
-\frac{h_xh_y}{64} 
+\frac{h_y}{32} 
 \left(
 \begin{array}{cccc}
 -16/3 & -16/3 & -8/3 & -8/3 \\
@@ -538,7 +568,7 @@ In the context of Discontinuous Galerkin methods we will need
 \right)
 \nn\\
 &=&
-\frac{h_xh_y}{24} 
+\frac{h_y}{12} 
 \left(
 \begin{array}{cccc}
 -2 & -2 & -1 & -1 \\
@@ -550,7 +580,7 @@ In the context of Discontinuous Galerkin methods we will need
 \nn\\
 {\bm J}_y 
 &=& \int_\square \partial_y \vec{N}^T (x,y) \vec{N}(x,y) dxdy \nn\\
-&=& \frac{h_xh_y}{4} \int_{-1}^{+1}\int_{-1}^{+1} 
+&=& \frac{2}{h_y}\frac{h_xh_y}{4} \int_{-1}^{+1}\int_{-1}^{+1} 
 \left( \begin{array}{cccc}
 -\frac{1}{4} (1-r) \\
 -\frac{1}{4} (1+r) \\
@@ -566,7 +596,7 @@ In the context of Discontinuous Galerkin methods we will need
 \end{array}
 \right)
  drds \nn\\
-&=& \frac{h_xh_y}{64} \int_{-1}^{+1}\int_{-1}^{+1} 
+&=& \frac{h_x}{32} \int_{-1}^{+1}\int_{-1}^{+1} 
 \left(
 \begin{array}{cccc}
 -(1-r)^2 (1-s) & -(1-r^2) (1-s) & -(1-r^2) (1+s) & -(1-r)^2 (1+s)  \\
@@ -576,7 +606,7 @@ In the context of Discontinuous Galerkin methods we will need
 \end{array}
 \right)
 dr ds \nn\\
-&=& \frac{h_xh_y}{64} 
+&=& \frac{h_x}{32} 
 \left(
 \begin{array}{cccc}
 -16/3 & -8/3 & -8/3 & -16/3 \\
@@ -585,7 +615,7 @@ dr ds \nn\\
 16/3 & 8/3 & 8/3 & 16/3 
 \end{array}
 \right) \nn\\
-&=& \frac{h_xh_y}{24} 
+&=& \frac{h_x}{12} 
 \left(
 \begin{array}{cccc}
 -2 & -1 & -1 & -2 \\
