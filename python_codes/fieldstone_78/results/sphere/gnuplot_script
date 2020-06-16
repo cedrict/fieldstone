@@ -18,8 +18,8 @@ set output 'pstats.pdf'
 plot[:][:]\
 'pstats_regular'   u (1./sqrt($7)):4 w lp lt 1 pt 1 t 'regular',\
 'pstats_regular'   u (1./sqrt($7)):5 w lp lt 1 pt 1 notitle,\
-'pstats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 pt 1 lw 2 t 'Stenberg',\
-'pstats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 pt 1 lw 2 notitle,\
+'pstats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 pt 1 lw 3 t 'Stenberg',\
+'pstats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 pt 1 lw 3 notitle,\
 'pstats_letallec'  u (1./sqrt($7)):4 w lp lt 3 pt 1 t 'Le Tallec',\
 'pstats_letallec'  u (1./sqrt($7)):5 w lp lt 3 pt 1 notitle,\
 'pstats_qinzhang'  u (1./sqrt($7)):4 w lp lt 4 pt 1 t 'Qin \& Zhang',\
@@ -30,8 +30,8 @@ set output 'qstats.pdf'
 plot[:][:]\
 'qstats_regular'   u (1./sqrt($7)):4 w lp lt 1 pt 1 t 'regular',\
 'qstats_regular'   u (1./sqrt($7)):5 w lp lt 1 pt 1 notitle,\
-'qstats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 lw 2 pt 1 t 'Stenberg',\
-'qstats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 lw 2 pt 1 notitle,\
+'qstats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 lw 3 pt 1 t 'Stenberg',\
+'qstats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 lw 3 pt 1 notitle,\
 'qstats_letallec'  u (1./sqrt($7)):4 w lp lt 3 pt 1 t 'Le Tallec',\
 'qstats_letallec'  u (1./sqrt($7)):5 w lp lt 3 pt 1 notitle,\
 'qstats_qinzhang'  u (1./sqrt($7)):4 w lp lt 4 pt 1 t 'Qin \& Zhang',\
@@ -42,8 +42,8 @@ set output 'ustats.pdf'
 plot[:][:]\
 'ustats_regular'   u (1./sqrt($7)):4 w lp lt 1 pt 1 t 'regular',\
 'ustats_regular'   u (1./sqrt($7)):5 w lp lt 1 pt 1 notitle,\
-'ustats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 lw 2 pt 1 t 'Stenberg',\
-'ustats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 lw 2 pt 1 notitle,\
+'ustats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 lw 3 pt 1 t 'Stenberg',\
+'ustats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 lw 3 pt 1 notitle,\
 'ustats_letallec'  u (1./sqrt($7)):4 w lp lt 3 pt 1 t 'Le Tallec',\
 'ustats_letallec'  u (1./sqrt($7)):5 w lp lt 3 pt 1 notitle,\
 'ustats_qinzhang'  u (1./sqrt($7)):4 w lp lt 4 pt 1 t 'Qin \& Zhang',\
@@ -54,8 +54,8 @@ set output 'vstats.pdf'
 plot[:][:]\
 'vstats_regular'   u (1./sqrt($7)):4 w lp lt 1 pt 1 t 'regular',\
 'vstats_regular'   u (1./sqrt($7)):5 w lp lt 1 pt 1 notitle,\
-'vstats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 lw 2 pt 1 t 'Stenberg',\
-'vstats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 lw 2 pt 1 notitle,\
+'vstats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 lw 3 pt 1 t 'Stenberg',\
+'vstats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 lw 3 pt 1 notitle,\
 'vstats_letallec'  u (1./sqrt($7)):4 w lp lt 3 pt 1 t 'Le Tallec',\
 'vstats_letallec'  u (1./sqrt($7)):5 w lp lt 3 pt 1 notitle,\
 'vstats_qinzhang'  u (1./sqrt($7)):4 w lp lt 4 pt 1 t 'Qin \& Zhang',\

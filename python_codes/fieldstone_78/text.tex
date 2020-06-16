@@ -23,8 +23,32 @@ d)\includegraphics[width=7cm]{python_codes/fieldstone_78/results/mms/grid3}\\
 c) Le Tallec macro-element; d) Qin \& Zhang macro-element.}
 \end{center}
 
+The meshes are created by importing the corresponding files:
+\begin{lstlisting} 
+import letallec
+import stenberg
+import qinzhang
+import regular
+\end{lstlisting} 
+Inside each of these files a function called {\sl mesher} is defined: 
+\begin{lstlisting} 
+def mesher(Lx,Ly,nelx,nely,nel,NV,mV):
+\end{lstlisting} 
+The arguments are the domain size $L_x$ and $L_y$, the number of macroelements
+in each direction $nelx$ and $nely$, the precomputed total number of $Q_1\times P_0$ 
+elements $nel$ and nodes $NV$ and the number of nodes per element $m_\upnu$.  
+
 Pressure normalisation is achieved by setting $p=0$ on the last element and then 
-renormalising the pressure field so that $\int p dV=0$.
+renormalising the pressure field so that $\int p dV=0$. In what follows $p$ is the 'raw' pressure
+field while $q$ denotes its projection onto the nodes. 
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_78/images/nel}
+\includegraphics[width=7cm]{python_codes/fieldstone_78/images/NV}\\
+{\captionfont Total number of elements (left) and V nodes (right) as a function of the number
+of macro-elements in the $x$-direction (assuming $nelx=nely$.}
+\end{center}
+
 
 %........................
 \paragraph{Results - mms}
@@ -113,16 +137,14 @@ fields for regular, Stenberg, Le Tallec, Qin \& Zhang.}
 \includegraphics[width=8cm]{python_codes/fieldstone_78/results/aquarium/vrms.pdf}
 \end{center}
 
-
-
-Stenberg is better: lower velocity error and pressure error.
+We see that the Stenberg macro-element is the best, with the lowest velocity and pressure errors.
 
 
 \newpage
 %.....................................................
 \paragraph{Results - sinking block - reduced density}
 
-The block has size 0.25x0.25, centered in the domain. No-slip boundary conditions are imposed on all 
+The block has size $0.25\times 0.25$, centered in the domain. No-slip boundary conditions are imposed on all 
 sides. The buoyancy force $\rho g_y$ is -1 in the block and zero elsewhere. Viscosity is constant and 
 equal to 1 everywhere. 
 
@@ -135,14 +157,15 @@ equal to 1 everywhere.
 \includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/p1}
 \includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/p2}
 \includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/p3}\\
-{\captionfont buoyancy term $b_y$; pressure field for regular, Stenberg, Le Tallec, Qin \& Zhang.} 
+{\captionfont Velocity field (top row) and pressure field (bottom row) 
+for regular, Stenberg, Le Tallec, Qin \& Zhang.} 
 \end{center}
 
 
 %.....................................................
 \paragraph{Results - sinking block - full density}
 
-We then proceed with $\rho g_y=-1$ in the surrounding fluid and $\rho g_y=-1+\delta$ in the block.
+We then proceed with $\rho g_y=-1$ in the surrounding fluid and $\rho g_y=-(1+\delta)$ in the block.
 
 \begin{center}
 \includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/full/vel0}
@@ -157,39 +180,13 @@ We then proceed with $\rho g_y=-1$ in the surrounding fluid and $\rho g_y=-1+\de
 \end{center}
 
 
-
-
-
-
-
-
-
-
-
-
-
-The velocity and presure fields are shown in the following figure for various values of $\delta$.
-We see that when the density of the block approaches the one of the surrounding fluid the 
-velocity field shows abnormal stripes while the pressure field looks hydrostatic.   
-
-%\begin{center}
-%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/p_delta0p001}
-%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/p_delta0p01}
-%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/p_delta0p1}
-%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/p_delta1}\\
-%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/vel_delta0p001}
-%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/vel_delta0p01}
-%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/vel_delta0p1}
-%\includegraphics[width=3.84cm]{python_codes/fieldstone_78/results/block/vel_delta1}\\
-%{\captionfont Resolution 64x64. From left to right: $\delta=0.001,0.01,0.01,1$}
-%\end{center}
-
 \newpage
 %..................................
 \paragraph{Results - Stokes sphere}
 
 This is the same experiment as above, except for the geometry of the object 
-which is now a sphere of radius 0.125. Its density is 2 while the surrounding is 1.  
+which is now a sphere of radius 0.125 so that the interface between both fluids 
+is never aligned with the mesh/element edges. The sphere has density is 1 while the surrounding is 0.
 Its viscosity is $10^4$ while the surrounding is 1.
 
 \begin{center}

@@ -33,7 +33,7 @@ def by(x, y):
             12.*y*y+24.*y*y*y-12.*y**4)
     if experiment==2:
        if np.abs(x-Lx/2)<0.125 and np.abs(y-Ly/2)<0.125:
-          val=-2
+          val=-1.02
        else:
           val= -1
     if experiment==3:
@@ -136,10 +136,10 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    topo = int(sys.argv[4])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 32
+   nely = 32
    visu = 1
-   topo = 3
+   topo = 2
 
 pnormalise=False # using int p dV=0 constrain
 
@@ -148,7 +148,7 @@ pnormalise=False # using int p dV=0 constrain
 #exp3: sphere
 #exp4: aquarium
 
-experiment=3
+experiment=2
 
 if topo==0: #regular
    NV=(nelx+1)*(nely+1)
@@ -165,7 +165,6 @@ if topo==2: #le tallec
 if topo==3: # qizh07
    nel=nelx*nely*12
    NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +9*nelx*nely
-
 
 NfemV=NV*ndofV   # number of velocity dofs
 NfemP=nel*ndofP   # number of pressure dofs
@@ -445,7 +444,7 @@ print('avrg p=',avrg_p)
 
 p[:]-=avrg_p
 
-np.savetxt('p.ascii',np.array([xc,yc,p]).T)
+#np.savetxt('p.ascii',np.array([xc,yc,p]).T)
 
 print("     -> p (m,M) %.6f %.6f nel= %d" %(np.min(p),np.max(p),nel))
 
@@ -632,7 +631,3 @@ if visu:
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")
-
-
-
-

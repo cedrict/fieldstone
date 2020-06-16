@@ -1,0 +1,21 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set output "NV.pdf"
+set xlabel 'nelx'
+set ylabel 'NV'
+set key left
+plot[0:100][]\
+(x+1)*(x+1) t 'regular',\
+x*(5*x+2)+2*x+1  t 'stenberg' ,\
+(2*x+1)*(2*x+1)+x*x*8 t 'le tallec',\
+(x+1)*(x+1) +x*(x+1) +x*(x+1) +9*x*x dashtype 2  t 'qizh07'
+
+set output "nel.pdf"
+set ylabel 'nel'
+plot[0:128][]\
+x*x t 'regular',\
+5*x*x t 'stenberg' ,\
+12*x*x t 'le tallec',\
+x*x*12 dashtype 2  t 'qizh07'
+
+
