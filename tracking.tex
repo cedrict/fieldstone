@@ -623,7 +623,7 @@ to answer the question: "at this location, am I above or below this interface" o
 outside this domain" (in the case that the interface does not reach any of the boundaries).
 
 This method becomes somewhat impractical when large deformation occurs or, for example, 
-when a domain splits into two (think: slab break off). One interface must then become two, 
+when a domain splits into two (e.g. slab break off). One interface must then become two, 
 and it requires an algorithm capable of detecting the breakup of the surface and capable 
 of rebuilding/patching the new ones so that they can still be used further. 
 Note that in case of large deformation some markers may get further and further apart 
@@ -650,8 +650,7 @@ More recently, it is used to track the free surface position in a FDM code \cite
 
 Finally, Christensen \cite{chri92} makes the following interesting comment:  
 "One might assume that different methods 
-of representing the discontinuity, for example, by a tracer 
-chain \cite{chyu84} or a cloud of 
+of representing the discontinuity, for example, by a tracer chain \cite{chyu84} or a cloud of 
 tracers, would solve these problems. However, the difficulties 
 arise not only from the way in which material boundaries are 
 represented. Physically, the rate of shear strain parallel to a 
@@ -663,7 +662,7 @@ imated by a continuous variation, and effectively, the rheolog-
 ical properties on both sides of the discontinuity will be 
 averaged in some way within the element."
 
-
+Literature: Lin \& van Keken (2006) \cite{liva05,liva06a,liva06b,kaus05,mulyukova}
 
 %..............................................
 \subsubsection{Hybrid methods}
