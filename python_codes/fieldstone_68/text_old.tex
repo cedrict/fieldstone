@@ -11,6 +11,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 \Literature: \cite{vack08}\cite{syva10}\cite{vakn12}
 
+
 %------------------------------------------------------------
 \subsubsection*{Description of the setup and benchmark cases}
 
@@ -59,9 +60,13 @@ for the wedge flow is determined by solving the Stokes equations while the Batch
 imposed on the inflow and outflow boundaries. This case tests the ability of the numerical method
 to accurately reproduce the corner flow solution.
 
+
+
 %___________________
 \paragraph{Case 1c - dynamical flow in isoviscous wedge II} 
 Same as case 1b, but with stress-free boundary conditions on the mantle wedge.
+
+
 
 %___________________
 \paragraph{Case 2a}
@@ -95,39 +100,83 @@ with $Q_{\text{disl}}=540kJ/mol$, $n=3.5$ and $A_{\text{disl}}=28968.6Pa\cdot s^
 $\eta_{\text{max}}=10^{26}$Pa.s
 
 
+
+
+
 %------------------------------------------------------------
-\subsubsection*{Mesh and boundary conditions}
+\subsubsection*{Building a mesh}
 
-The mesh is composed of square elements which are subdivided in two, as shown here:
+The mesh is built using Gmsh \cite{gere09}. Here, we briefly describe the steps required 
+to make a generic subduction geometry mesh. This workflow can be easily adapted to any 
+complex subduction geometry desired. 
+
+The first step towards building a mesh with Gmsh is to make a .geo file, which sets up the 
+entire mesh. Here, we provide a meshing script {\sl make\_mesh.py} that makes a .geo file for you. 
+To get the {\sl make\_mesh.py} script to work, all you need is a file with a predefined 
+subduction geometry with the first column indicating all the $x$-coordinates in km 
+with the convention that the positive $x$-axis is towards the right and the 
+second column indicating the $y$-coordinates in km with the convention that the $y$-axis 
+is positive downwards. In the file {\sl geometry\_van\_keken.txt}, 
+the simple geometry required for the \cite{vack08} benchmark is provided, but any subduction geometry will do.
+
+
+In the input section of {\sl make\_mesh.py}, the model dimensions and resolution of different 
+sections of the mesh can be changed. After that, the script dives into writing the .geo 
+file. The .geo file starts by defining the different resolutions that will be used throughout the mesh. 
+Then, all the points in the mesh (i.e., those setting up the model domain and the subduction geometry) 
+are written including the desired resolution at each point. This way, we can easily define a high 
+resolution at the subduction interface and a lower resolution in parts of the mantle (i.e., lower left corner). 
+
+We add additional points in the mesh to form a subduction channel (its width can be specified 
+in the input parameters) to deal with the discontinuity in kinematically described velocities 
+on the downgoing plate interface and the overriding plate at the interface between the two. 
+
+After describing all the points in the mesh, we define the relevant lines in the mesh by connecting 
+two points. We add flags (i.e., specific numbers) to certain lines to simplify setting the boundary 
+conditions in fieldstone. For example, we give the 101 flag to all lines that together create the 
+top of the subducting plate, so that we know that we have to impose a velocity to all element edges 
+with a 101 flag.
+
+We then create a closed loop of the lines (a line loop) for each area in the mesh. Note that all the line loops are created counterclockwise. Consistency in the direction of the lines loops is important to preserve sign consistency of all areas across the mesh. This is handy when setting up the surfaces later. Correct signs of line loops become increasingly important when going towards three-dimensional meshes. Also note that to set up line loops correctly, the individual lines need to have the correct direction as well. For example, line number 1 which might be defined as the line from point 1 to point 2, should be called line number -1 when the line from point 2 to point 1 is required in the line loop. 
+
+After making the line loops, each line loop is made into a plane surface. Combining these separate plane surfaces into a physical surface completes the mesh setup. 
+
+We add one additional line to the mesh for the plane surface of the subduction channel:
+
+MeshAlgorithm Surface\{2000000\} = 3;
+
+This ensures that the width of the channel is always one element, which reduces the amount of miniconvection cells in the channel in the vicinity of contrasting kinematic boundary conditions at the interface between the subducting slab and the overriding plate. 
+
+So, now you can run
+(make sure that {\sl geometry\_van\_keken.txt} is in the same folder as {\sl make\_mesh.py})
+\begin{verbatim}
+> python3 make_mesh.py
+\end{verbatim}
+and the script produces the {\sl vankeken.geo} file. 
+
+You can open this .geo file in Gmsh version 4.5.6 or later (earlier versions will not support the 
+last line in the .geo script describing the one-element wide area). To produce the mesh in 
+the Gmsh GUI, click on `mesh', and then `2D'. To increase the order of the 
+elements (as needed by fieldstone), click `Set order 2'. To save the mesh in the 
+format that fieldstone can handle, click on `File $>$ Export' and choose extension `Mesh - Gmsh MSH (*.msh)'. 
+In the little pop-up box with options, choose `Version 2 ASCII' and click `OK'. This will then 
+produce a .msh file that can be read in and used by fieldstone. 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_68/results/case1a/mesh}
-\includegraphics[width=5cm]{python_codes/fieldstone_68/results/case1a/fix_uv}
-\includegraphics[width=5cm]{python_codes/fieldstone_68/results/case1a/fix_T}\\
-{\captionfont Left: mesh composed of 66x60 square elements; 
-Middle: where velocity boundary conditions are prescribed;
-Right: where temperature boundary conditions are prescribed.}
+\includegraphics[width=13cm]{python_codes/fieldstone_68/images/gmsh}\\
+{\captionfont Screen capture of the Gmesh interface}
 \end{center}
-
-Except for case 1a, the Stokes equation is solved. It is solved on the whole domain 
-but we only care about the solution inside the wedge. The velocity field outside the wedge 
-is overwritten by the desired velocity field before the temperature equation is solved.
 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_68/results/case1a/vel_zoom}\\
-{\captionfont The paper mentions a velocity ramp in section 2.3. While it is not 
-always clear how long it is nor why it should or should not be used in combination
-with resolution, it nevertheless makes sure that the point at the 'triple junction'
-has a zero velocity. Through trial an error I was able to arrive to the conclusion that 
-all nodes upstream of this point should too have a zero velocity.} 
+\includegraphics[width=7cm]{python_codes/fieldstone_68/images/mesh1}
+\includegraphics[width=7cm]{python_codes/fieldstone_68/images/mesh2}\\
+{\captionfont Details of the mesh as seen in Paraview.}
 \end{center}
 
-The domain is 660x600km. We can easily generate a mesh made of square elements at any resolution 
-but we need the bottom of the lithosphere to align with a row of nodes, which limits the 
-used resolutions to 66x60 (10km resolution), 132x120 (5km resolution), 264x240 (2.5km resolution)
-and 330x300 (2km resolution). Higher resolutions require too much memory. The 330x300 mesh was not 
-used for cases 2a and 2b because of the total run time required.
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_68/images/interfaces}
+\end{center}
 
 %..........................................
 \subsubsection*{Description of the code}
@@ -136,19 +185,17 @@ used for cases 2a and 2b because of the total run time required.
 Crouzeix-Raviart elements are used for the Stokes equations (see Section~\ref{sec:crouzeix-raviart}) 
 and $P_2$ elements are used for the temperature. 
 
-The origin of the coordinate system $(x,y)$ is at the bottom left. 
-The boundary conditions for the
+The origin of the coordinate system $(x,y)$ is at the top left, i.e. $y$ is negative. The boundary conditions for the
 wedge are no-slip below the overriding plate and constant velocity along the top of the slab. 
 The velocity boundary conditions for the boundaries of the wedge are either provided by the Batchelor 
-cornerflow solution (case 1b) or based on free inflow/outflow boundaries. 
-The velocity field is discontinuous between the slab and the overriding plate which 
-effectively mimics the fault representative of the seismogenic zone in subduction zones.
+cornerflow solution (cases 1a and 1b) or based on free inflow/outflow boundaries. 
+The velocity field is discontinuous between the slab and the overriding plate which effectively mimics the fault 
+representative of the seismogenic zone in subduction zones.
 
-For cases 1a,b,c the Stokes equations and the energy equation are not really coupled: 
-the gravity is set to zero, the model is driven by the kinematical boundary conditions 
-and the viscosity is constant, so that temperature does not 
-influence the Stokes solve. Once the velocity field is obtained it is used 
-in the energy equation to compute the steady state temperature field. 
+For cases 1a,b,c the Stokes equations and the energy equation are not really coupled: the gravity is set to zero, the 
+model is driven by the kinematical boundary conditions and the viscosity is constant, so that temperature does not 
+influence the Stokes solve. Once the velocity field is obtained it is used in the energy equation to compute the 
+steady state temperature field. 
 
 For cases 2a,b the viscosity of the mantle 
 wedge is temperature (and strain rate) dependent so that the coupling of the PDEs 
@@ -159,14 +206,14 @@ requires nonlinear iterations. These are as follows:
 \item Relax the velocity solution: $\vec\upnu = relax \cdot \vec{\upnu} + (1-relax)\cdot \vec{\upnu}_{old}$
 \item Solve for temperature 
 \item Relax the temperature solution: $T=relax \cdot T + (1-relax) \cdot T_{old}$
-\item Check for convergence. If $\|\vec\upnu-\vec\upnu_{old}\|_2 < tol \| \vec\upnu + \vec\upnu_{old}  \|_2$ i
-and $\|T-T_{old}\|_2 < tol \| T + T_{old}  \|_2$ then exit, 
-otherwise: $T_{old} \leftarrow T$, $ \vec\upnu \leftarrow \vec\upnu_{old} $. iter+=1. Go back to 2. 
+\item Check for convergence. If $\|\vec\upnu-\vec\upnu_{old}\|_2 < tol \| \vec\upnu + \vec\upnu_{old}  \|_2$ and 
+$\|T-T_{old}\|_2 < tol \| T + T_{old}  \|_2$ then exit, otherwise: $T_{old} \leftarrow T$, $ \vec\upnu \leftarrow \vec\upnu_{old} $. iter+=1. Go back to 2. 
 \end{enumerate}
 
-The $relax$ parameter should obviously be between 0 and 1 and set to 0.8. 
+The $relax$ parameter should obviously be between 0 and 1. 
+
 To compare model results each
-group contributed the temperature field as discrete values $T_{ij}$ on
+group contributed the temperature field as discreted values $T_{ij}$ on
 an equidistant grid with 6 km spacing, which is a 111x101 matrix
 stored row-wise starting in the top left corner. 
 
@@ -200,14 +247,9 @@ T_{wedge} = \sqrt{ \frac{1}{78} \sum_{i=10}^{21} \sum_{j=10}^i T_{ij}^2   }
 {\captionfont The black dots indicate the different types of reported quantities in the paper.}
 \end{center}
 
-
 In order to interpolate temperature on this grid, we need to find out in which 
-triangle each point of the grid lies. When the mesh is made of irregular triangles, 
-it is a rather costly algorithm. When the mesh is as described above, we first 
-determine in which square element  a point lies and then in which of the 
-two triangles. 
-
-In general, in order to determine whether a point is inside a triangle, we assume that 
+triangle each point of the grid lies. This is a rather costly algorithm for now. 
+In order to determine whether a point is inside a triangle, we assume that 
 the reduced coordinates $r,s$ exist and satisfy the following 
 relationships:
 \begin{eqnarray}
@@ -235,19 +277,7 @@ N_3=1-a-b
 \]
 and then $r=N_2$ and $s=N_3$
 
-To these measurements I have also added the average temperature over the domain 
-\[
-T_{avrg} = \frac{1}{L_xL_y}\iint T(x,y) dx dy,
-\]
-the root mean square velocity in the wedge
-\[
-v_{rms} = \sqrt{  \frac{1}{A_{wedge}} \iint_{wedge} (u^2+v^2) dx dy    },
-\]
-and the temperature at the top of the slab (line $y=L_y-x$).
 
-
-
-\newpage
 %------------------------------------------------------------
 \subsubsection*{Results - Case 1a} 
 
@@ -310,10 +340,8 @@ Lines correspond to values communicated to us by P. van Keken.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_68/results/case1c/vel}
-\includegraphics[width=7cm]{python_codes/fieldstone_68/results/case1c/p}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_68/results/case1c/T}
-\includegraphics[width=7cm]{python_codes/fieldstone_68/results/case1c/T_zoom}
+\includegraphics[width=7cm]{python_codes/fieldstone_68/results/case1c/vel_1c}
+\includegraphics[width=7cm]{python_codes/fieldstone_68/results/case1c/T_1c}
 \end{center}
 
 
