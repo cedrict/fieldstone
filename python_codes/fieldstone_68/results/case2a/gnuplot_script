@@ -1,13 +1,126 @@
-set term pdf enhanced
+set term pdf enhanced font "Times,11pt"
 set grid
 set output 'conv.pdf'
 set xlabel '#it'
-set ylabel '{/Symbol X}'
-set pointsize 0.5
+set ylabel '{/Symbol x}'
+set pointsize .5
 
 set log y
  plot[][]\
-'conv.ascii' u 1:2 w lp t 'u',\
-'conv.ascii' u 1:3 w lp t 'v',\
-'conv.ascii' u 1:4 w lp t 'T',\
-'conv.ascii' u 1:5 w l lw 2 lt -1 t 'tol'
+'conv_066.ascii' u 1:2 w lp t 'u (66x60)',\
+'conv_066.ascii' u 1:3 w lp t 'v (66x60)',\
+'conv_066.ascii' u 1:4 w lp t 'T (66x60)',\
+'conv_132.ascii' u 1:2 w lp t 'u (132x120)',\
+'conv_132.ascii' u 1:3 w lp t 'v (132x120)',\
+'conv_132.ascii' u 1:4 w lp t 'T (132x120)',\
+'conv_264.ascii' u 1:2 w lp t 'u (264x240)',\
+'conv_264.ascii' u 1:3 w lp t 'v (264x240)',\
+'conv_264.ascii' u 1:4 w lp t 'T (264x240)',\
+'conv_066.ascii' u 1:5 w l lw 2 lt -1 t 'tol'
+
+set key outside
+set xlabel 'iter'
+set ylabel 'T_{corner}'
+unset log
+set output 'stats_Tcorner.pdf'
+plot[][]\
+'stats_Tcorner_066.ascii' w lp ps .4 t '66x60',\
+'stats_Tcorner_132.ascii' w lp ps .4 t '132x120',\
+'stats_Tcorner_264.ascii' w lp ps .4 t '264x240',\
+
+set ylabel 'vel'
+unset log
+set output 'stats_uv.pdf'
+plot[][]\
+'stats_u_066.ascii' u 1:2 w lp t 'min(u), 66x60',\
+'stats_u_066.ascii' u 1:3 w lp t 'max(u), 66x60',\
+'stats_v_066.ascii' u 1:2 w lp t 'min(v), 66x60',\
+'stats_v_066.ascii' u 1:3 w lp t 'max(v), 66x60',\
+'stats_u_132.ascii' u 1:2 w lp t 'min(u), 132x120',\
+'stats_u_132.ascii' u 1:3 w lp t 'max(u), 132x120',\
+'stats_v_132.ascii' u 1:2 w lp t 'min(v), 132x120',\
+'stats_v_132.ascii' u 1:3 w lp t 'max(v), 132x120',\
+'stats_u_264.ascii' u 1:2 w lp t 'min(u), 264x240',\
+'stats_u_264.ascii' u 1:3 w lp t 'max(u), 264x240',\
+'stats_v_264.ascii' u 1:2 w lp t 'min(v), 264x240',\
+'stats_v_264.ascii' u 1:3 w lp t 'max(v), 264x240',\
+
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
+plot[][]\
+'vrms_066.ascii' w l t '66x60',\
+'vrms_132.ascii' w l t '132x120',\
+'vrms_264.ascii' w l t '264x240',\
+
+
+#----------------------------------------------------------------------------
+set xlabel 'h (km)'
+set log x 
+set key outside
+
+hsize=1.
+
+set ylabel 'L2 norm of wedge T'
+set output 'Twedge.pdf'
+plot[][]\
+'Twedge.ascii' u (660/$4*hsize):3 w lp lw 2 pt 6 t 'fieldstone',\
+'../data_fig3_5_data_vack08/LDEO/2a_L2w' u ($1):2  w lp lt 3 t 'LDEO',\
+'../data_fig3_5_data_vack08/NTU/2a_L2w'  u ($1):2  w lp lt 4 t 'NTU',\
+'../data_fig3_5_data_vack08/PGC/2a_L2w'  u ($1):2  w lp lt 5 t 'PGC',\
+'../data_fig3_5_data_vack08/PU/2a_L2w'   u ($1):2  w lp lt 6 t 'PU',\
+'../data_fig3_5_data_vack08/WHOI/2a_L2w' u ($1):2  w lp lt 8 t 'WHOI',\
+1007.31 dashtype 2 lt 4 t 'NTU',\
+1002.85 dashtype 2 lt 5 t 'PGC',\
+1002.15 dashtype 2 lt 6 t 'PU',\
+1003.20 dashtype 2 lt 7 t 'UM',\
+1003.35 dashtype 2 lt 8 t 'WHOI'
+
+set ylabel 'slab T at 60km depth'
+set output 'Tcorner.pdf'
+plot[][]\
+'Tcorner.ascii'  u (660/$7*hsize):3 w lp lt 1 lw 2 pt 6  t 'fieldstone',\
+'../data_fig3_5_data_vack08/LDEO/2a_T60'  u ($1):2 lt 3 w lp t 'LDEO',\
+'../data_fig3_5_data_vack08/NTU/2a_T60'   u ($1):2 lt 4 w lp t 'NTU',\
+'../data_fig3_5_data_vack08/PGC/2a_T60'   u ($1):2 lt 5 w lp t 'PGC',\
+'../data_fig3_5_data_vack08/PU/2a_T60'    u ($1):2 lt 6 w lp t 'PU',\
+'../data_fig3_5_data_vack08/UM/2a_T60'    u ($1):2 lt 7 w lp t 'UM',\
+'../data_fig3_5_data_vack08/WHOI/2a_T60'  u ($1):2 lt 8 w lp t 'WHOI',\
+570.30 dashtype 2 lt 4 t 'NTU',\
+580.52 dashtype 2 lt 5 t 'PGC',\
+577.59 dashtype 2 lt 6 t 'PU',\
+580.66 dashtype 2 lt 7 t 'UM',\
+581.30 dashtype 2 lt 8 t 'WHOI'
+
+set ylabel 'L2 norm of slab T'
+set output 'Tslab.pdf'
+plot[][]\
+'Tslab.ascii' u (660/$4*hsize):3 w lp lw 2 pt 6 t 'fieldstone',\
+'../data_fig3_5_data_vack08/LDEO/2a_L2'  u ($1):2 lt 3 w lp t 'LDEO',\
+'../data_fig3_5_data_vack08/NTU/2a_L2'   u ($1):2 lt 4 w lp t 'NTU',\
+'../data_fig3_5_data_vack08/PGC/2a_L2'   u ($1):2 lt 5 w lp t 'PGC',\
+'../data_fig3_5_data_vack08/PU/2a_L2'    u ($1):2 lt 6 w lp t 'PU',\
+'../data_fig3_5_data_vack08/WHOI/2a_L2'  u ($1):2 lt 8 w lp t 'WHOI',\
+614.09 dashtype 2 lt 4 t 'NTU',\
+606.94 dashtype 2 lt 5 t 'PGC',\
+607.52 dashtype 2 lt 6 t 'PU',\
+607.11 dashtype 2 lt 7 t 'UM',\
+607.26 dashtype 2 lt 8 t 'WHOI'
+
+
+
+set ylabel '<T>'
+set output 'Tavrg.pdf'
+plot[][]\
+'Tavrg.ascii' u (660/$4*hsize):3 w lp notitle 
+
+unset log
+set xlabel 'x'
+set output 'tempdiag.pdf'
+set ylabel 'T on slab interface'
+plot[][]\
+'tempdiag_066.ascii' u 1:3 w l t 'nelx=66',\
+'tempdiag_132.ascii' u 1:3 w l t 'nelx=132',\
+'tempdiag_264.ascii' u 1:3 w l t 'nelx=264',\
+
+#'tempdiag_330.ascii' u 1:3 w l t 'nelx=330',\
+
