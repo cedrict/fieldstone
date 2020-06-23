@@ -125,6 +125,15 @@ def viscosity(exx,eyy,exy,T,imat):
           val=1e21
     return val
 
+def heat_conductivity(T,p,imat):
+    return 3.    # vack08
+
+def heat_capacity(T,p,imat):
+    return 1250. # vack08
+
+def density(T,p,imat):
+    return 3300.  # vack08
+
 #------------------------------------------------------------------------------
 # useful constants
 #------------------------------------------------------------------------------
@@ -151,19 +160,17 @@ ndofT=1  # number of temperature degrees of freedom
 Lx=660e3
 Ly=600e3
    
-if int(len(sys.argv) == 4):
+if int(len(sys.argv) == 5):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
+   slope= float(sys.argv[4])
 else:
    nelx = 66 #264
    nely = 60 #240
    visu = 1 
+   slope= 1 # between 0.4 and 1
 
-hcapa=1250 # vack08
-hcond=3    # vack08
-rho0=3300  # vack08
-kappa=hcond/rho0/hcapa
 
 eps=1e-9
 
@@ -204,9 +211,9 @@ niter=50
 
 #case='1a'
 #case='1b'
-#case='1c'
+case='1c'
 #case='2a'
-case='2b'
+#case='2b'
 
 if case=='1a' or case=='1b' or case=='1c':
    niter=1
@@ -219,6 +226,7 @@ tol=1e-5
 
 print('case=',case)
 print('relax=',relax)
+print('slope=',slope)
 
 ##########################################################
 # checking that all velocity shape functions are 1 on 
@@ -244,9 +252,8 @@ hy=Ly/nely
 print('nelx=',nelx)
 print('nely=',nely)
 print('nel=',nel)
-print('hx=',hx)
-print('hy=',hy)
-
+#print('hx=',hx)
+#print('hy=',hy)
 
 #################################################################
 # build velocity nodes coordinates and connectivity array 
@@ -287,6 +294,40 @@ for j in range(0,nely):
              counter=counter+1
 
 #np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
+
+#################################################################
+# stretch mesh
+#################################################################
+
+length=130e3
+
+#xS=length
+#yS=50e3+slope*(xS-50e3)
+yS=length
+xS=(yS-50e3)/slope+50e3
+
+for i in range(0,NV):
+    if xV[i]>50e3 and xV[i]<=xS:
+       xV[i]=slope*(xV[i]-50e3)+50e3
+    elif xV[i]>=xS and xV[i]<=600e3:
+       xV[i]=(xV[i]-xS)*(600e3-yS)/(600e3-xS) + yS 
+
+#xS=600e3-length
+#yS=slope*(xS-550e3)+550e3
+
+yS=600e3-length
+xS=(yS-550e3)/slope+550e3
+
+for i in range(0,NV):
+    if yV[i]>=xS and yV[i]<=550e3:
+       yV[i]=slope*(yV[i]-550e3)+550e3
+    elif yV[i]<=xS:
+       yV[i]=yV[i]*(yS)/(xS) 
+
+
+np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
+#exit()
+
 
 ##########################################################
 # compute coordinate of middle node
@@ -746,6 +787,8 @@ for iter in range(0,niter):
     bc_fixT=np.zeros(NfemT,dtype=np.bool)  # boundary condition, yes/no
     bc_valT=np.zeros(NfemT,dtype=np.float64)  # boundary condition, value
 
+    kappa=3./3300./1250. #hcond/rho/hcapa
+
     for i in range(0,NT):
         # top boundary - vack08
         if abs(yT[i]-Ly)<1: #
@@ -804,21 +847,25 @@ for iter in range(0,niter):
             velq[0,1]=0.
             xq=0.
             yq=0.
+            Tq=0.
             for k in range(0,mT):
                 velq[0,0]+=N_mat[k,0]*u[iconT[k,iel]]
                 velq[0,1]+=N_mat[k,0]*v[iconT[k,iel]]
                 xq+=N_mat[k,0]*xT[iconT[k,iel]]
                 yq+=N_mat[k,0]*yT[iconT[k,iel]]
+                Tq+=N_mat[k,0]*T[iconT[k,iel]]
                 dNNNTdx[k]=jcbi[0,0]*dNNNTdr[k]+jcbi[0,1]*dNNNTds[k]
                 dNNNTdy[k]=jcbi[1,0]*dNNNTdr[k]+jcbi[1,1]*dNNNTds[k]
                 B_mat[0,k]=dNNNTdx[k]
                 B_mat[1,k]=dNNNTdy[k]
 
+            pq=0 #ask me if you wish to use pressure at q point
+
             # compute diffusion matrix
-            Kd+=B_mat.T.dot(B_mat)*hcond*weightq*jcob
+            Kd+=B_mat.T.dot(B_mat)*heat_conductivity(Tq,pq,mat[iel])*weightq*jcob
 
             # compute advection matrix
-            Ka+=N_mat.dot(velq.dot(B_mat))*rho0*hcapa*weightq*jcob
+            Ka+=N_mat.dot(velq.dot(B_mat))*density(Tq,pq,mat[iel])*heat_capacity(Tq,pq,mat[iel])*weightq*jcob
 
         # end for kq
 
@@ -861,6 +908,8 @@ for iter in range(0,niter):
 
     Tfile.write("%3d %10e %10e \n" %(iter,np.min(T),np.max(T)))
     Tfile.flush()
+
+    np.savetxt('T.ascii',np.array([xT,yT,T]).T,header='# x,y')
 
     print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
 
@@ -1034,7 +1083,7 @@ for iter in range(0,niter):
 
     vrms_file.write("%3d %e \n" %(iter,vrms)) ; vrms_file.flush()
 
-    print('     -> vrms=',vrms)
+    print('     -> vrms=',vrms,nelx,np.sqrt(2*np.min(area)))
 
 # end for iter
 
@@ -1184,7 +1233,7 @@ for iel in range(0,nel):
 #end for
 Tavrg/=(Lx*Ly)
 
-print ('     -> Tavrg=',Tavrg,nelx)
+print ('     -> Tavrg=',Tavrg,nelx,np.sqrt(2*np.min(area)))
 
 print("compute avrg temperature: %.3f s" % (timing.time() - start))
 
@@ -1226,27 +1275,30 @@ if do_post_processing:
    #end for
 
    for i in range(0,M):
-       ielx=int(grid_x[i]/Lx*nelx)
-       iely=int(grid_y[i]/Ly*nely)
-       #if ielx<0:
-       #   exit('pb1')
-       #if iely<0:
-       #   exit('pb2')
-       #if ielx>nelx-1:
-       #   exit('pb3')
-       #if iely>nely-1:
-       #   exit('pb4')
-       iel1=2*(iely*nelx+ielx)
-       iel2=2*(iely*nelx+ielx)+1
-       #if iel1>nel-1:
-       #   exit('pb5')
-       #if iel2>nel-1:
-       #   exit('pb6')
-
-       #local coords between 0,1 in square cell
-       r=(grid_x[i]-xT[iconT[0,iel1]])/hx
-       s=(grid_y[i]-yT[iconT[0,iel1]])/hy
-       #print('r,s=',r,s)
+       if slope==1:
+          ielx=int(grid_x[i]/Lx*nelx)
+          iely=int(grid_y[i]/Ly*nely)
+          iel1=2*(iely*nelx+ielx)
+          iel2=2*(iely*nelx+ielx)+1
+          #local coords between 0,1 in square cell
+          r=(grid_x[i]-xT[iconT[0,iel1]])/hx
+          s=(grid_y[i]-yT[iconT[0,iel1]])/hy
+       else:
+          for ielx in range(0,nelx):
+              if grid_x[i]>=xV[iconV[0,2*ielx]] and grid_x[i]<=xV[iconV[1,2*ielx]]:
+                 break
+          for iely in range(0,nely):
+              if grid_y[i]>=yV[iconV[0,2*iely*nelx]] and grid_y[i]<=yV[iconV[2,2*iely*nelx]]:
+                 break
+          #print(counter,ielx,iely)        
+          iel1=2*(iely*nelx+ielx)
+          iel2=2*(iely*nelx+ielx)+1
+          hhx=xT[iconT[1,iel1]]-xT[iconT[0,iel1]]
+          hhy=yT[iconT[2,iel1]]-yT[iconT[0,iel1]]
+          #local coords between 0,1 in square cell
+          r=(grid_x[i]-xT[iconT[0,iel1]])/hhx
+          s=(grid_y[i]-yT[iconT[0,iel1]])/hhy
+          #print('r,s=',r,s)
 
        if s<=1-r:
           iel=iel1
@@ -1313,7 +1365,7 @@ if do_post_processing:
    #temperature $T(11,11)$ which is the 111+11=122th point
    inode=111*10+11-1
    grid_corner[inode]=1
-   print('     -> Tcorner=',grid_T1[inode],grid_T2[inode],grid_x[inode],grid_y[inode],nelx)
+   print('     -> Tcorner=',grid_T1[inode],grid_T2[inode],grid_x[inode],grid_y[inode],nelx,np.sqrt(2*np.min(area)))
 
    #Tcorner_file.write("%3d %10e \n " %(iter,grid_T1[inode]))
    #Tcorner.flush()
@@ -1330,7 +1382,7 @@ if do_post_processing:
        #end for
    #end for
    Tslab=np.sqrt(Tslab/36)
-   print('     -> Tslab=',Tslab,nelx)
+   print('     -> Tslab=',Tslab,nelx,np.sqrt(2*np.min(area)))
 
    #Tslab_file.write("%3d %10e \n " %(iter,Tslab))
    #Tslab_file.flush()
@@ -1348,7 +1400,7 @@ if do_post_processing:
    #    #end for
    #end for
    Twedge=np.sqrt(Twedge/78)
-   print('     -> Twedge=',Twedge,nelx)
+   print('     -> Twedge=',Twedge,nelx,np.sqrt(2*np.min(area)))
 
    #Twedge_file.write("%3d %10e \n " %(iter,Twedge))
    #Twedge_file.flush()

@@ -129,6 +129,14 @@ used resolutions to 66x60 (10km resolution), 132x120 (5km resolution), 264x240 (
 and 330x300 (2km resolution). Higher resolutions require too much memory. The 330x300 mesh was not 
 used for cases 2a and 2b because of the total run time required.
 
+The mesh can be stretched so as to achieve a high(er) resolution in the part of the wedge 
+where some measurements are taken:
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_68/images/mesh_stretch}
+\includegraphics[width=7cm]{python_codes/fieldstone_68/images/mesh_stretch_zoom}
+\end{center}
+
+
 %..........................................
 \subsubsection*{Description of the code}
 
@@ -316,7 +324,8 @@ Lines correspond to values communicated to us by P. van Keken.}
 \includegraphics[width=7cm]{python_codes/fieldstone_68/results/case1c/T_zoom}
 \end{center}
 
-
+We see that stretching the mesh does not really work since it makes the mesh coarser in the rest of the wedge and therefore 
+alter the global solution.
 
 \newpage
 %----------------------------

@@ -1,0 +1,52 @@
+#! /bin/bash
+
+# h=10km
+echo 66x60
+python3 stone.py 66 60 1 > opla066
+grep Twedge opla066 >> Twedge.ascii
+grep Tavrg opla066 >> Tavrg.ascii
+grep Tslab opla066 >> Tslab.ascii
+grep Tcorner opla066 >> Tcorner.ascii
+mv tempdiag.ascii tempdiag_066.ascii
+mv solution.vtu solution_066.vtu
+
+# h=5km
+echo 132x120
+python3 stone.py 132 120 1 > opla132
+grep Twedge opla132 >> Twedge.ascii
+grep Tavrg opla132 >> Tavrg.ascii
+grep Tslab opla132 >> Tslab.ascii
+grep Tcorner opla132 >> Tcorner.ascii
+mv tempdiag.ascii tempdiag_132.ascii
+mv solution.vtu solution_132.vtu
+
+# h=2.5km
+echo 264x240
+python3 stone.py 264 240 1 > opla264
+grep Twedge opla264 >> Twedge.ascii
+grep Tavrg opla264 >> Tavrg.ascii
+grep Tslab opla264 >> Tslab.ascii
+grep Tcorner opla264 >> Tcorner.ascii
+mv tempdiag.ascii tempdiag_264.ascii
+mv solution.vtu solution_264.vtu
+
+# h=2km
+echo 330x300
+python3 stone.py 330 300 1 > opla330
+grep Twedge opla330 >> Twedge.ascii
+grep Tavrg opla330 >> Tavrg.ascii
+grep Tslab opla330 >> Tslab.ascii
+grep Tcorner opla330 >> Tcorner.ascii
+mv tempdiag.ascii tempdiag_330.ascii
+mv solution.vtu solution_330.vtu
+
+
+
+
+
+
+
+
+
+
+
