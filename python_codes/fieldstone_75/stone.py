@@ -95,20 +95,25 @@ def eyz_th(x,y,z):
 #------------------------------------------------------------------------------
 
 def BB(r,s,t):
-    return a0 + a1*r + b1*s + c1*t +\
-           a2* r**2 + b2* s**2 + c2* t**2 + \
-           d2* r*s + e2*s*t + f2*r*t +\
-           a3* r**3 + b3* s**3 + c3* t**3 + d3* r**2 *s + e3* r**2 *t + f3* r* s**2 + g3* s**2 *t +\
-           h3* r*t**2 + i3* s*t**2 + j3* r*s*t 
+    #return a0 + a1*r + b1*s + c1*t +\
+    #       a2* r**2 + b2* s**2 + c2* t**2 + \
+    #       d2* r*s + e2*s*t + f2*r*t +\
+    #       a3* r**3 + b3* s**3 + c3* t**3 + d3* r**2 *s + e3* r**2 *t + f3* r* s**2 + g3* s**2 *t +\
+    #       h3* r*t**2 + i3* s*t**2 + j3* r*s*t 
+    return np.cos(0.5*np.pi*r)*np.cos(0.5*np.pi*s)*np.cos(0.5*np.pi*t)
+   
 
 def dBBdr(r,s,t):
-    return a1 + 2*a2*r + d2*s  + f2*t + 3*a3*r**2 + 2*d3*r*s + 2*e3*r*t + f3*s**2 + h3*t**2 + j3*s*t
+    #return a1 + 2*a2*r + d2*s + f2*t + 3*a3*r**2 + 2*d3*r*s + 2*e3*r*t + f3*s**2 + h3*t**2 + j3*s*t
+    return -0.5*np.pi*np.sin(0.5*np.pi*r)*np.cos(0.5*np.pi*s)*np.cos(0.5*np.pi*t)
 
 def dBBds(r,s,t):
-    return b1  + 2*b2*s  + d2*r + e2*t +  3*b3*s**2  + d3*r**2  +  2*f3*r*s + 2*g3*s*t  + i3*t**2 + j3*r*t  
+    #return b1 + 2*b2*s + d2*r + e2*t + 3*b3*s**2 + d3*r**2 + 2*f3*r*s + 2*g3*s*t  + i3*t**2 + j3*r*t  
+    return -0.5*np.pi*np.cos(0.5*np.pi*r)*np.sin(0.5*np.pi*s)*np.cos(0.5*np.pi*t)
 
 def dBBdt(r,s,t):
-    return c1  + 2*c2*t +  e2*s + f2*r + 3*c3*t**2 + e3*r**2  + g3*s**2  + 2*h3*r*t + 2*i3*s*t + j3*r*s
+    #return c1 + 2*c2*t + e2*s + f2*r + 3*c3*t**2 + e3*r**2  + g3*s**2  + 2*h3*r*t + 2*i3*s*t + j3*r*s
+    return -0.5*np.pi*np.cos(0.5*np.pi*r)*np.cos(0.5*np.pi*s)*np.sin(0.5*np.pi*t)
 
 #------------------------------------------------------------------------------
 
@@ -135,6 +140,8 @@ def B(r,s,t):
        return (1-r**2)*(1-s**2)*(1-t**2) * (aa*r*s + bb*s*t + cc*r*t)
     if bubble==11:
        return (1-r**2)*(1-s**2)*(1-t**2) * BB(r,s,t) 
+    if bubble==12:
+       return np.cos(0.5*np.pi*r)*np.cos(0.5*np.pi*s)*np.cos(0.5*np.pi*t)
 
 def dBdr(r,s,t):
     if bubble==1:
@@ -158,7 +165,9 @@ def dBdr(r,s,t):
     if bubble==10:
        return -(1-s**2)*(1-t**2)*(aa*(3*r**2-1)*s+2*bb*r*s*t+cc*(3*r**2-1)*t)
     if bubble==11:
-       return (1-s**2)*(1-t**2)*(-2*r*BB(r,s,t)+(1-r**2)*dBBdr )
+       return (1-s**2)*(1-t**2)*(-2*r*BB(r,s,t)+(1-r**2)*dBBdr(r,s,t) )
+    if bubble==12:
+       return -0.5*np.pi*np.sin(0.5*np.pi*r)*np.cos(0.5*np.pi*s)*np.cos(0.5*np.pi*t)
 
 def dBds(r,s,t):
     if bubble==1:
@@ -182,7 +191,9 @@ def dBds(r,s,t):
     if bubble==10:
        return -(1-r**2)*(1-t**2)*(aa*(3*s**2-1)*r+bb*(3*s**2-1)*t+2*cc*r*s*t)
     if bubble==11:
-       return (1-r**2)*(1-t**2)*(-2*s*BB(r,s,t)+(1-s**2)*dBBds )
+       return (1-r**2)*(1-t**2)*(-2*s*BB(r,s,t)+(1-s**2)*dBBds(r,s,t) )
+    if bubble==12:
+       return -0.5*np.pi*np.cos(0.5*np.pi*r)*np.sin(0.5*np.pi*s)*np.cos(0.5*np.pi*t)
 
 def dBdt(r,s,t):
     if bubble==1:
@@ -206,7 +217,9 @@ def dBdt(r,s,t):
     if bubble==10:
        return -(1-r**2)*(1-s**2)*(2*aa*r*s*t+bb*(3*t**2-1)*s+cc*(3*t**2-1)*r)
     if bubble==11:
-       return (1-r**2)*(1-s**2)*(-2*t*BB(r,s,t)+(1-t**2)*dBBdt )
+       return (1-r**2)*(1-s**2)*(-2*t*BB(r,s,t)+(1-t**2)*dBBdt(r,s,t) )
+    if bubble==12:
+       return -0.5*np.pi*np.cos(0.5*np.pi*r)*np.cos(0.5*np.pi*s)*np.sin(0.5*np.pi*t)
 
 #------------------------------------------------------------------------------
 
@@ -284,19 +297,39 @@ Lx=1.  # x- extent of the domain
 Ly=1.  # y- extent of the domain 
 Lz=1.  # z- extent of the domain 
 
-if int(len(sys.argv) == 6):
-   nelx = int(sys.argv[1])
-   nely = int(sys.argv[2])
-   nelz = int(sys.argv[3])
-   nqperdim=int(sys.argv[4])
-   bubble=int(sys.argv[5])
-else:
-   nelx =2  # do not exceed 20 
-   nely =nelx
-   nelz =nelx
-   nqperdim=3
-   bubble=9
-#end if
+a0=1
+j3=0
+
+if int(len(sys.argv) == 19):
+   a1=float(sys.argv[1])
+   b1=float(sys.argv[2])
+   c1=float(sys.argv[3])
+   a2=float(sys.argv[4])
+   b2=float(sys.argv[5])
+   c2=float(sys.argv[6])
+   d2=float(sys.argv[7])
+   e2=float(sys.argv[8])
+   f2=float(sys.argv[9])
+   a3=float(sys.argv[10])
+   b3=float(sys.argv[11])
+   c3=float(sys.argv[12])
+   d3=float(sys.argv[13])
+   e3=float(sys.argv[14])
+   f3=float(sys.argv[15])
+   g3=float(sys.argv[16])
+   h3=float(sys.argv[17])
+   i3=float(sys.argv[18])
+   #print(a1,b1,c1)
+   #print(a2,b2,c2,d2,e2,f2)
+   #print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+
+
+nelx =2  # do not exceed 20 
+nely =nelx
+nelz =nelx
+nqperdim=4
+
+bubble=11
 
 gx=0
 gy=0
@@ -522,41 +555,41 @@ dNNNVdr = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 dNNNVds = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 dNNNVdt = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 
-for iel in range(0,nel):
-    for iq in range(0,nqperdim):
-        for jq in range(0,nqperdim):
-            for kq in range(0,nqperdim):
-                rq=qcoords[iq]
-                sq=qcoords[jq]
-                tq=qcoords[jq]
-                weightq=qweights[iq]*qweights[jq]*qweights[kq]
-                NNNV[0:mV]=NNV(rq,sq,tq)
-                dNNNVdr[0:mV]=dNNVdr(rq,sq,tq)
-                dNNNVds[0:mV]=dNNVds(rq,sq,tq)
-                dNNNVdt[0:mV]=dNNVdt(rq,sq,tq)
-                jcb=np.zeros((3,3),dtype=np.float64)
-                for k in range(0,mV):
-                    jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-                    jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
-                    jcb[0,2]+=dNNNVdr[k]*zV[iconV[k,iel]]
-                    jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-                    jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
-                    jcb[1,2]+=dNNNVds[k]*zV[iconV[k,iel]]
-                    jcb[2,0]+=dNNNVdt[k]*xV[iconV[k,iel]]
-                    jcb[2,1]+=dNNNVdt[k]*yV[iconV[k,iel]]
-                    jcb[2,2]+=dNNNVdt[k]*zV[iconV[k,iel]]
-                jcob = np.linalg.det(jcb)
-                volume[iel]+=jcob*weightq
+#for iel in range(0,nel):
+#    for iq in range(0,nqperdim):
+#        for jq in range(0,nqperdim):
+#            for kq in range(0,nqperdim):
+#                rq=qcoords[iq]
+#                sq=qcoords[jq]
+#                tq=qcoords[jq]
+#                weightq=qweights[iq]*qweights[jq]*qweights[kq]
+#                NNNV[0:mV]=NNV(rq,sq,tq)
+#                dNNNVdr[0:mV]=dNNVdr(rq,sq,tq)
+#                dNNNVds[0:mV]=dNNVds(rq,sq,tq)
+#                dNNNVdt[0:mV]=dNNVdt(rq,sq,tq)
+#                jcb=np.zeros((3,3),dtype=np.float64)
+#                for k in range(0,mV):
+#                    jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+#                    jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
+#                    jcb[0,2]+=dNNNVdr[k]*zV[iconV[k,iel]]
+#                    jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+#                    jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+#                    jcb[1,2]+=dNNNVds[k]*zV[iconV[k,iel]]
+#                    jcb[2,0]+=dNNNVdt[k]*xV[iconV[k,iel]]
+#                    jcb[2,1]+=dNNNVdt[k]*yV[iconV[k,iel]]
+#                    jcb[2,2]+=dNNNVdt[k]*zV[iconV[k,iel]]
+#                jcob = np.linalg.det(jcb)
+#                volume[iel]+=jcob*weightq
             #end for
         #end for
     #end for
 #end for
 
-print("     -> vol  (m,M) %.6e %.6e " %(np.min(volume),np.max(volume)))
-print("     -> total vol meas %.6f " %(volume.sum()))
-print("     -> total vol anal %.6f " %(Lx*Ly*Lz))
+#print("     -> vol  (m,M) %.6e %.6e " %(np.min(volume),np.max(volume)))
+#print("     -> total vol meas %.6f " %(volume.sum()))
+#print("     -> total vol anal %.6f " %(Lx*Ly*Lz))
 
-print("compute elements volumes: %.3f s" % (timing.time() - start))
+#print("compute elements volumes: %.3f s" % (timing.time() - start))
 
 ######################################################################
 # define boundary conditions
@@ -568,17 +601,17 @@ bc_val=np.zeros(Nfem,dtype=np.float64) # boundary condition, value
 
 for i in range(0,NV):
     if xV[i]/Lx<eps or xV[i]/Lx>(1-eps):
-       bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(xV[i],yV[i],zV[i])
-       bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= vth(xV[i],yV[i],zV[i])
-       bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= wth(xV[i],yV[i],zV[i])
+       bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0#uth(xV[i],yV[i],zV[i])
+       bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0#vth(xV[i],yV[i],zV[i])
+       bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0#wth(xV[i],yV[i],zV[i])
     if yV[i]/Ly<eps or yV[i]/Ly>(1-eps):
-       bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(xV[i],yV[i],zV[i])
-       bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= vth(xV[i],yV[i],zV[i])
-       bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= wth(xV[i],yV[i],zV[i])
+       bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0#uth(xV[i],yV[i],zV[i])
+       bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0#vth(xV[i],yV[i],zV[i])
+       bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0#wth(xV[i],yV[i],zV[i])
     if zV[i]/Lz<eps or zV[i]/Lz>(1-eps):
-       bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(xV[i],yV[i],zV[i])
-       bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= vth(xV[i],yV[i],zV[i])
-       bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= wth(xV[i],yV[i],zV[i])
+       bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0#uth(xV[i],yV[i],zV[i])
+       bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0#vth(xV[i],yV[i],zV[i])
+       bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0#wth(xV[i],yV[i],zV[i])
 #end for
 
 print("define b.c.: %.3f s" % (timing.time() - start))
@@ -783,10 +816,10 @@ G2[3:,:]=G_mat[81:,:]
 ns = null_space(G2)
 
 
-print('===============================================bubble = ',bubble,'================')
-G2[0:3,:]=np.round(G_mat[39:42,:], decimals=4)
-G2[3:,:]=np.round(G_mat[81:,:], decimals=4)
-print(G2)
+#print('===============================================bubble = ',bubble,'================')
+#G2[0:3,:]=np.round(G_mat[39:42,:], decimals=4)
+#G2[3:,:]=np.round(G_mat[81:,:], decimals=4)
+#print(G2)
 opla=ns.shape
 #print(ns.shape)
 print('size of nullspace=',opla[1])
