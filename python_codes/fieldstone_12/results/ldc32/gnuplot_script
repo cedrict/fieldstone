@@ -1,0 +1,15 @@
+set term pdf enhanced font "font,11pt"
+set output 'p_top.pdf'
+set key outside
+set xlabel 'x'
+set ylabel 'pressure'
+
+plot[][]\
+'p_top.ascii' w l t 'elemental',\
+'q1_top.ascii' w l t 'scheme 1',\
+'q2_top.ascii' w l t 'scheme 2',\
+'q3_top.ascii' w l t 'scheme 3',\
+'q4_top.ascii' w l t 'scheme 4',\
+'q6_top.ascii' w l t 'scheme 6',\
+'q7_top.ascii' w l t 'scheme 7',\
+'q8_top.ascii' w l t 'scheme 8'

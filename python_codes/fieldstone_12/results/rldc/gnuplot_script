@@ -1,0 +1,52 @@
+set term pdf enhanced font "Times,11pt"
+
+set key outside
+set ylabel 'min/max elemental pressure'
+unset log 
+set log x
+set output 'rawp_nofilter.pdf'
+plot[][]\
+'rawp_nofilter' u (1/sqrt($7)):4 w l t 'min(p)',\
+'rawp_nofilter' u (1/sqrt($7)):5 w l t 'max(p)',\
+
+set output 'rawp_filter.pdf'
+plot[][]\
+'rawp_filter' u (1/sqrt($7)):4 w l t 'min(p)',\
+'rawp_filter' u (1/sqrt($7)):5 w l t 'max(p)',\
+
+
+
+
+
+
+set output 'prms_nofilter.pdf'
+set log xy
+set xlabel 'h'
+set ylabel 'p_{rms}'
+plot[][:30]\
+'errors_nofilter' u (1./sqrt($2)):8  w lp ps 0.5 t 'pressure (el)',\
+'errors_nofilter' u (1./sqrt($2)):11 w lp ps 0.6 t 'pressure (q1)',\
+'errors_nofilter' u (1./sqrt($2)):14 w lp ps 0.5 t 'pressure (q2)',\
+'errors_nofilter' u (1./sqrt($2)):17 w lp ps 0.4 t 'pressure (q3)',\
+'errors_nofilter' u (1./sqrt($2)):20 w lp ps 0.4 t 'pressure (q4)',\
+'errors_nofilter' u (1./sqrt($2)):23 w lp ps 0.4 t 'pressure (q6)',\
+'errors_nofilter' u (1./sqrt($2)):26 w lp ps 0.4 t 'pressure (q7)',\
+'errors_nofilter' u (1./sqrt($2)):29 w lp ps 0.4 t 'pressure (q8)',\
+
+unset log y
+set output 'prms_filter.pdf'
+set xlabel 'h'
+set ylabel 'p_{rms}'
+set key outside
+plot[][:]\
+'errors_filter' u (1./sqrt($2)):8  w lp ps 0.5 t 'pressure (el)',\
+'errors_filter' u (1./sqrt($2)):11 w lp ps 0.6 t 'pressure (q1)',\
+'errors_filter' u (1./sqrt($2)):14 w lp ps 0.5 t 'pressure (q2)',\
+'errors_filter' u (1./sqrt($2)):17 w lp ps 0.4 t 'pressure (q3)',\
+'errors_filter' u (1./sqrt($2)):20 w lp ps 0.4 t 'pressure (q4)',\
+'errors_filter' u (1./sqrt($2)):23 w lp ps 0.4 t 'pressure (q6)',\
+'errors_filter' u (1./sqrt($2)):26 w lp ps 0.4 t 'pressure (q7)',\
+'errors_filter' u (1./sqrt($2)):29 w lp ps 0.4 t 'pressure (q8)',\
+
+
+

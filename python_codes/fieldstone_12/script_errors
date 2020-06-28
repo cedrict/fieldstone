@@ -1,30 +1,21 @@
+#! /bin/bash
+
 rm -f errors
-python3 fieldstone.py   8   8 0 | grep nel >> errors
-python3 fieldstone.py   9   9 0 | grep nel >> errors
-python3 fieldstone.py  10  10 0 | grep nel >> errors
-python3 fieldstone.py  11  11 0 | grep nel >> errors
-python3 fieldstone.py  12  12 0 | grep nel >> errors
-python3 fieldstone.py  14  14 0 | grep nel >> errors
-python3 fieldstone.py  16  16 0 | grep nel >> errors
-python3 fieldstone.py  20  20 0 | grep nel >> errors
-python3 fieldstone.py  24  24 0 | grep nel >> errors
-python3 fieldstone.py  28  28 0 | grep nel >> errors
-python3 fieldstone.py  32  32 0 | grep nel >> errors
-python3 fieldstone.py  40  40 0 | grep nel >> errors
-python3 fieldstone.py  43  43 0 | grep nel >> errors
-python3 fieldstone.py  48  48 0 | grep nel >> errors
-python3 fieldstone.py  64  64 0 | grep nel >> errors
-python3 fieldstone.py  71  71 0 | grep nel >> errors
-python3 fieldstone.py  80  80 0 | grep nel >> errors
-python3 fieldstone.py  85  85 0 | grep nel >> errors
-python3 fieldstone.py  96  96 0 | grep nel >> errors
-python3 fieldstone.py 105 105 0 | grep nel >> errors
-python3 fieldstone.py 112 112 0 | grep nel >> errors
-python3 fieldstone.py 121 121 0 | grep nel >> errors
-python3 fieldstone.py 128 128 0 | grep nel >> errors
-python3 fieldstone.py 144 144 0 | grep nel >> errors
-python3 fieldstone.py 160 160 0 | grep nel >> errors
+rm -f rawp
+rm -f rawp2
 
+for rs in 8 9 10 11 12 13 14 15 16 17 18 19 20 22 24 25 27 29 30 31 33 35 36 38 40 42 45 47 50 52 55 57 59 60 62 65 68 70 72 75 77 80 90 100 105 110 120 130 141 150 161 180 201; do
 
+    echo $rs X $rs
 
+    python3 stone.py $rs $rs 0 > opla 
+
+    grep nel opla >> errors
+    grep rawp opla >> rawp
+    grep raw2 opla >> rawp2
+
+done
+
+rm opla
+ 
 
