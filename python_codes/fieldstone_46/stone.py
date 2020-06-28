@@ -100,7 +100,7 @@ nel=nelx*nely*2
 nnx=2*nelx+1
 nny=2*nely+1
 NV=nnx*nny+nel
-NP=(nelx+1)*(nely+1)
+NP=nel*mP
 
 ndofV=2
 ndofP=1

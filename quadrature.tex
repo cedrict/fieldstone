@@ -528,6 +528,55 @@ n & $x_{iq}$ & $w_{iq}$ & $x_{iq}$ (approx) & $w_{iq}$ (approx) \\
 \end{center}
 
  
+%-------------------------------------------------------------------------
+\subsubsection{Computing the 'real' coordinates of the quadrature points and other considerations}
+
+The quadrature point coordinates are always given in (what I call) reduced coordinates, i.e. between 
+-1 and 1 in 1D (for example).
+However, one sometimes need their equivalent in the $x,y,z$ Cartesian space. 
+This is trivial once one remembers that within an element, a field $f$ in reprensented 
+as follow:
+\[
+f(r,s) = \sum_{i=1}^{m} N_{i}(r,s) f_i
+\]
+where $m$ is the number of nodes and $N_i$ are the shape functions. 
+The value of $f$ at a quadrature point is then simply
+\[
+f(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) f_i
+\]
+If we now take $f=x$, then
+\[
+x_q =x(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) x_i
+\]
+Likewise in 2D and 3D:
+\[
+y_q =y(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) y_i
+\]
+\[
+z_q =z(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) z_i
+\]
+or, 
+\[
+\vec{r}_q =\vec{r}(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) \vec{r}_i
+\]
+This also applies to other fields such as velocity, temperature, or even strain rate components 
+(if the strain rate values have been previously computed on the nodes): 
+\[
+\vec{\upnu}_q =\vec{\upnu}(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) \vec{\upnu}_i
+\]
+\[
+T_q =T(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) T_i
+\]
+\[
+\dot{\varepsilon}_{xy,q} =   \dot{\varepsilon}_{xy} (r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q)  \dot{\varepsilon}_{xy,i}
+\]
+
+
+
+
+
+
+
 
 
 
