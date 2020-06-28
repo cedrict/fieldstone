@@ -1,31 +1,48 @@
 
-It has been widely documented that the use of the $Q_1 \times P_0$ element is not without problems. Aside from the 
+It has been widely documented that the use of the $Q_1 \times P_0$ element is 
+not without problems. Aside from the 
 consequences it has on the FE matrix properties, we will here focus on another unavoidable side effect: 
 the spurious pressure checkerboard modes. 
 \index{general}{Pressure Smoothing} 
 \index{general}{Checkerboard mode}
 
-These modes have been thoroughly analysed \cite{grsi94,chpc95,sagl81a,sagl81b}.
-They can be filtered out \cite{chpc95} or simply smoothed \cite{legs79}.
+These modes have been thoroughly analysed decades ago, see for instance
+Hughes et al (1979)\cite{hulb79}, 
+Sani et al (1981) \cite{sagl81a,sagl81b},
+Griffiths \& Silvester (1994) \cite{grsi94}.
+They can be filtered out(Chen (1995)  \cite{chpc95}) 
+or simply smoothed (Lee et al (1979) \cite{legs79}), as we will see later.
+Nodes on edges and corners may need special treatment as documented in Sani et al \cite{sagl81a} or
+Lee et al (1979) \cite{legs79}.
+The list of 8 schemes is not exhaustive with regards to the above mentioned publications. 
+There has been considerable amount of work on the topic and this section is 
+unfortunately not representing the literature appropriately.
+
+\mscthesis: Get all relevant literature, digest it, implement all variants in fieldstone 12.
+ \index{general}{MSc Thesis} 
+
 
 On the following figure (a,b), pressure fields for the lid driven cavity experiment 
 are presented for both an even and un-even number of elements. We see that 
-the amplitude of the modes can sometimes be so large that the 'real' pressure is 
-not visible and that something as simple as the number of elements in the 
+the amplitude of the modes can sometimes be so large that the 'real' pressure signal is 
+not visible under the checkerboard and that something as simple as the number of elements in the 
 domain can trigger those or not at all.
 
 \begin{center}
-a)\includegraphics[width=3cm]{images/checkerboard/p_el}
-\includegraphics[width=3cm]{images/checkerboard/p_el_33x33}
+a)\includegraphics[width=4cm]{images/checkerboard/p_el}
+\includegraphics[width=4cm]{images/checkerboard/p_el_33x33}
 b)\includegraphics[width=5cm]{images/checkerboard/press_doneahuerta}
-c)\includegraphics[width=5cm]{images/checkerboard/douarpunch}\\
+c)\includegraphics[width=7cm]{images/checkerboard/douarpunch}\\
 {\captionfont a) element pressure for a 32x32 grid and for a 33x33 grid;\\ 
-b) image from \cite[p307]{dohu03} for a manufactured solution;\\ 
+b) image from \cite[p307]{dohu03} for a manufactured solution;
 c) elemental pressure and smoothed pressure for the punch experiment \cite{thfb08}}
 \end{center}
 
+%----------------------------------------------------------------------
+\paragraph{Scheme 1}.
+
 The easiest post-processing step that can be used (especially when a regular grid is used) 
-is explained in \cite{thfb08}: "The element-to-node interpolation is performed by
+is explained in Thieulot et al (2008) \cite{thfb08}: "The element-to-node interpolation is performed by
 averaging the elemental values from elements common to each node; 
 the node-to-element interpolation is performed
 by averaging the nodal values element-by-element. This
@@ -34,19 +51,48 @@ of the pressure that is adapted to the local density of the
 octree. Note that these two steps can be repeated until a
 satisfying level of smoothness (and diffusion) of the pressure field is attained."
 
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[fill=gray!5,gray!5](0,0) rectangle (9,7);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (9,7); %background grid
+\draw[thick](1.5,1.5) -- (4.5,1) -- (6.5,1) -- (7.5,3) -- (7,5.5) -- (4.5,6) --(1.5,5.5) -- (1,3.5) -- cycle;  
+\draw[thick](4.5,1)--(4,3.5)--(4.5,6);
+\draw[thick](1,3.5)--(4,3.5)--(7.5,3);
+\draw[black,fill=black] (1.5,1.5) circle (2pt); \node[] at (1.2,1.2){1}; %1
+\draw[black,fill=black] (4.5,1)   circle (2pt); \node[] at (4.5,0.75){2}; %2
+\draw[black,fill=black] (6.5,1)   circle (2pt); \node[] at (6.75,0.75){3}; %3
+\draw[black,fill=black] (1,3.5)   circle (2pt); \node[] at (0.75,3.5){4}; %4
+\draw[black,fill=black] (4,3.5)   circle (2pt); \node[] at (3.75,3.25){5}; %5
+\draw[black,fill=black] (7.5,3)   circle (2pt); \node[] at (7.75,3){6}; %6
+\draw[black,fill=black] (1.5,5.5) circle (2pt); \node[] at (1.25,5.5){7}; %7
+\draw[black,fill=black] (4.5,6)   circle (2pt); \node[] at (4.5,6.3){8}; %8
+\draw[black,fill=black] (7,5.5)   circle (2pt); \node[] at (7.25,5.75){9}; %9
+%\draw[thin,dashed](1,3.5)--(4.5,1)--(7.5,3)--(4.5,6)--cycle;
+\node[] at (3,2.7){$A_1$}; %8
+\node[] at (5.25,2.7){$A_2$}; %8
+\node[] at (5,4.25){$A_4$}; %8
+\node[] at (3,4.2){$A_3$}; %8
+\end{tikzpicture}
+\end{center}
+\[
+q_5^{(1)} = \frac{1}{4}\sum_{e=1}^4 p_e
+\] 
+
 In the codes which rely on the $Q_1 \times P_0$ element, the (elemental) pressure
 is simply defined as 
 \begin{lstlisting}
 p=np.zeros(nel,dtype=np.float64)  
 \end{lstlisting}
-while the nodal pressure is then defined as 
+while the nodal pressure is then defined as\footnote{In virtually all stones $p$
+stands for the 'raw' pressure and $q$ stands for its projection onto the velocity mesh.} 
 \begin{lstlisting}
 q=np.zeros(nnp,dtype=np.float64)  
 \end{lstlisting}
 The element-to-node algorithm is then simply (in 2D):
 
 \begin{lstlisting}
-count=np.zeros(nnp,dtype=np.int16)  
+count=np.zeros(nnp,dtype=np.int32)  
 for iel in range(0,nel):
     q[icon[0,iel]]+=p[iel]
     q[icon[1,iel]]+=p[iel]
@@ -59,15 +105,561 @@ for iel in range(0,nel):
 q=q/count
 \end{lstlisting}
 
-Pressure smoothing is further discussed in \cite{hulb79}.
-
-\improvement[inline]{produce figure to explain this}
-
-\improvement[inline]{link to proto paper }
-
-\improvement[inline]{link to least square and nodal derivatives}
 
 
+%----------------------------------------------------------------------
+\paragraph{Schemes 2,3}.
+
+{\sl Schemes 2,3} are very similar and are presented in Sani et al (1981) \cite{sagl81a,sagl81b}.
+Scheme 2 uses the areas of the surrounding elements as weights for the arithmetic averaging
+while scheme 3 uses the area of the triangles:
+
+\begin{multicols}{2}
+
+\begin{tikzpicture}
+%\draw[fill=gray!5,gray!5](0,0) rectangle (9,7);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (9,7); %background grid
+\draw[thick](1.5,1.5) -- (4.5,1) -- (6.5,1) -- (7.5,3) -- (7,5.5) -- (4.5,6) --(1.5,5.5) -- (1,3.5) -- cycle;  
+\draw[thick](4.5,1)--(4,3.5)--(4.5,6);
+\draw[thick](1,3.5)--(4,3.5)--(7.5,3);
+\draw[black,fill=black] (1.5,1.5) circle (2pt); \node[] at (1.2,1.2){1}; %1
+\draw[black,fill=black] (4.5,1)   circle (2pt); \node[] at (4.5,0.75){2}; %2
+\draw[black,fill=black] (6.5,1)   circle (2pt); \node[] at (6.75,0.75){3}; %3
+\draw[black,fill=black] (1,3.5)   circle (2pt); \node[] at (0.75,3.5){4}; %4
+\draw[black,fill=black] (4,3.5)   circle (2pt); \node[] at (3.75,3.25){5}; %5
+\draw[black,fill=black] (7.5,3)   circle (2pt); \node[] at (7.75,3){6}; %6
+\draw[black,fill=black] (1.5,5.5) circle (2pt); \node[] at (1.25,5.5){7}; %7
+\draw[black,fill=black] (4.5,6)   circle (2pt); \node[] at (4.5,6.3){8}; %8
+\draw[black,fill=black] (7,5.5)   circle (2pt); \node[] at (7.25,5.75){9}; %9
+\node[] at (2.6,2.2){$A_1$}; %8
+\node[] at (5.5,2.3){$A_2$}; %8
+\node[] at (2.6,4.4){$A_3$}; %8
+\node[] at (5.5,4.5){$A_4$}; %8
+\end{tikzpicture}
+
+\begin{tikzpicture}
+%\draw[fill=gray!5,gray!5](0,0) rectangle (9,7);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (9,7); %background grid
+\draw[thick](1.5,1.5) -- (4.5,1) -- (6.5,1) -- (7.5,3) -- (7,5.5) -- (4.5,6) --(1.5,5.5) -- (1,3.5) -- cycle;  
+\draw[thick](4.5,1)--(4,3.5)--(4.5,6);
+\draw[thick](1,3.5)--(4,3.5)--(7.5,3);
+\draw[black,fill=black] (1.5,1.5) circle (2pt); \node[] at (1.2,1.2){1}; %1
+\draw[black,fill=black] (4.5,1)   circle (2pt); \node[] at (4.5,0.75){2}; %2
+\draw[black,fill=black] (6.5,1)   circle (2pt); \node[] at (6.75,0.75){3}; %3
+\draw[black,fill=black] (1,3.5)   circle (2pt); \node[] at (0.75,3.5){4}; %4
+\draw[black,fill=black] (4,3.5)   circle (2pt); \node[] at (3.75,3.25){5}; %5
+\draw[black,fill=black] (7.5,3)   circle (2pt); \node[] at (7.75,3){6}; %6
+\draw[black,fill=black] (1.5,5.5) circle (2pt); \node[] at (1.25,5.5){7}; %7
+\draw[black,fill=black] (4.5,6)   circle (2pt); \node[] at (4.5,6.3){8}; %8
+\draw[black,fill=black] (7,5.5)   circle (2pt); \node[] at (7.25,5.75){9}; %9
+\draw[thin,dashed](1,3.5)--(4.5,1)--(7.5,3)--(4.5,6)--cycle;
+\node[] at (3,2.7){$A_1^T$}; %8
+\node[] at (5.25,2.7){$A_2^T$}; %8
+\node[] at (5,4.25){$A_4^T$}; %8
+\node[] at (3,4.2){$A_3^T$}; %8
+\end{tikzpicture}
+
+\end{multicols}
+
+
+
+
+\[
+q_5^{(2)} = \frac{\sum\limits_{e=1}^4 A_e p_e}{\sum\limits_{e=1}^4 A_e}
+\qquad
+\qquad
+q_5^{(3)} = \frac{\sum\limits_{e=1}^4 A_e^T p_e}{\sum\limits_{e=1}^4 A_e^T}
+\] 
+
+
+\begin{remark} Although Schemes 1,2,3 are similar, scheme 1 is the simplest and fastest
+to implement since the areas of neighbouring elements/triangles are not needed.
+\end{remark}
+
+\begin{remark} 
+Schemes 1,2,3 are identical if all elements are rectangles of identical dimensions.
+\end{remark}
+
+
+
+
+%----------------------------------------------------------------------
+\paragraph{Scheme 4} This scheme has been designed by me. 
+It resembles the last three ones, but the weighing is in this case different.
+
+Let us consider a 1D problem:
+\begin{center}
+\includegraphics[width=0.5\linewidth]{images/pressure_smoothing/newalgo.png}
+\end{center}
+
+Elemental pressures $p_1$ and $p_2$ corresponding to elements 1 and 2 respectively are known at
+locations $x_1$ and $x_2$. The two elements have a different size, characterised in this case
+by the distances $d_1$ and $d_2$ to their common edge.
+
+The equation of the line passing through points $(x_1,p_1)$ and $(x_2,p_2)$ is 
+\[
+p(x)=\frac{p_2-p_1}{x_2-x_1}(x-x_1)+p_1
+\]
+The $x$ coordinate of the common edge is given by $x=x_1+d_1/2$, 
+and since $x_2-x_1=(d_1+d_2)/2$, the 
+pressure at this location writes:
+\[
+p(x_M)= \frac{p_2-p_1}{d_1+d_2}d_1+p_1 = \frac{\frac{p_1}{d_1} + \frac{p_2}{d_2}}{\frac{1}{d_1} + \frac{1}{d_2}}
+\]
+Extrapolating this formula to 2D, $d_1$ and $d_2$ are in fact the element volumes, so that
+\[
+q_5^{(4)} = 
+\frac{\sum\limits_{j=1}^4 \frac{p_j^e}{A_j^e}}{\sum\limits_{j=1}^4 \frac{1}{A_j^e}}
+=
+\frac{
+\frac{p_1^e}{A_1^e}+
+\frac{p_2^e}{A_2^e}+
+\frac{p_3^e}{A_3^e}+
+\frac{p_4^e}{A_4^e}
+}{
+\frac{1}{A_1^e}+
+\frac{1}{A_2^e}+
+\frac{1}{A_3^e}+
+\frac{1}{A_4^e}
+}\]
+
+There remains a problem, due to the presence of the boundary nodes for which 
+the sums present in the above equation do not run up to 4. A boundary
+node only has three neighbours and a corner node only two. Additional measures
+are required for these nodes. 
+
+\begin{center}
+\includegraphics[width=0.5\linewidth]{images/pressure_smoothing/newalgo_corner.png}
+\end{center}
+
+The pressure value $p_N$ is obtained as follows:
+\[
+q_N = \frac{ 
+ \frac{p_2^e}   {A_2^e}
++\frac{p_3^e}   {A_3^e}
++\frac{p_{2'}^e}{A_{2'}^e}
++\frac{p_{3'}^e}{A_{3'}^e}
+}{
+ \frac{1}{A_2^e}
++\frac{1}{A_3^e}
++\frac{1}{A_{2'}^e}
++\frac{1}{A_{3'}^e}
+}
+\]
+The areas and pressures of the mirrored elements 2' and 3' are extrapolated from the areas of elements 2 and 6, and 3 and 7 respectively. 
+Likewise the pressure $p_M$ at the corner node is obtained through the pressures of its surrounding elements.
+
+
+%------------------------------------------------------------------------------
+\paragraph{Scheme 5 - Least squares} This scheme is presented (among other places) in Lee et al (1979)
+\cite{legs79}. 
+Let us start from the patch of 4 $Q_1$ elements counting 9 nodes: 
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[fill=gray!5,gray!5](0,0) rectangle (9,7);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (9,7); %background grid
+\draw[thick](1.5,1.5) -- (4.5,1) -- (6.5,1) -- (7.5,3) -- (7,5.5) -- (4.5,6) --(1.5,5.5) -- (1,3.5) -- cycle;  
+\draw[thick](4.5,1)--(4,3.5)--(4.5,6);
+\draw[thick](1,3.5)--(4,3.5)--(7.5,3);
+
+\node[] at (2.75,2.5) {\color{blue}1};
+\node[] at (5.5,2) {\color{blue}2};
+\node[] at (2.5,4.5) {\color{blue}3};
+\node[] at (5.75,4.5) {\color{blue}4};
+
+\draw[black,fill=black] (1.5,1.5) circle (2pt); \node[] at (1.2,1.2){1}; %1
+\draw[black,fill=black] (4.5,1)   circle (2pt); \node[] at (4.5,0.75){2}; %2
+\draw[black,fill=black] (6.5,1)   circle (2pt); \node[] at (6.75,0.75){3}; %3
+\draw[black,fill=black] (1,3.5)   circle (2pt); \node[] at (0.75,3.5){4}; %4
+\draw[black,fill=black] (4,3.5)   circle (2pt); \node[] at (3.75,3.25){5}; %5
+\draw[black,fill=black] (7.5,3)   circle (2pt); \node[] at (7.75,3){6}; %6
+\draw[black,fill=black] (1.5,5.5) circle (2pt); \node[] at (1.25,5.5){7}; %7
+\draw[black,fill=black] (4.5,6)   circle (2pt); \node[] at (4.5,6.3){8}; %8
+\draw[black,fill=black] (7,5.5)   circle (2pt); \node[] at (7.25,5.75){9}; %9
+
+\end{tikzpicture}
+\end{center}
+
+
+
+We are looking for a field $q$ living on the nodes.
+We build the quantity
+\[
+J=\iint_\Omega (q-p)^2 dV
+\]
+where $p$ is the elemental field. To make things clearer we split the integral into 
+the sum of elemental integrals:
+\[
+J=
+\iint_{\Omega_1} (q(x,y)-p_1)^2 dV+
+\iint_{\Omega_2} (q(x,y)-p_2)^2 dV+
+\iint_{\Omega_3} (q(x,y)-p_3)^2 dV+
+\iint_{\Omega_4} (q(x,y)-p_4)^2 dV
+\]
+Inside each element the field $q(x,y)$ is given by a bilinear interpolation so that:
+\begin{eqnarray}
+J
+&=& \iint_{\Omega_1} (N_1(x,y) q_1 + N_2(x,y)q_2 + N_5(x,y)q_5 + N_4(x,y)q_4 -p_1)^2 dV \nn\\
+&+& \iint_{\Omega_2} (N_2(x,y) q_2 + N_3(x,y)q_3 + N_6(x,y)q_6 + N_5(x,y)q_5 -p_2)^2 dV \nn\\
+&+& \iint_{\Omega_3} (N_4(x,y) q_4 + N_5(x,y)q_5 + N_8(x,y)q_8 + N_7(x,y)q_7 -p_3)^2 dV \nn\\
+&+& \iint_{\Omega_4} (N_5(x,y) q_5 + N_6(x,y)q_6 + N_9(x,y)q_9 + N_8(x,y)q_8 -p_4)^2 dV 
+\end{eqnarray}
+where the $N_i$ functions are the shape functions (unusually expressed in $x,y$ coordinates).
+The least square procedure looks for the set of $q_i$ such that 
+\[
+\frac{\partial J}{\partial q_i} =0 \qquad \forall i=1,...9
+\]
+and this yields 9 equations/constraints for 9 unknowns.
+\begin{eqnarray}
+\frac{\partial J}{\partial q_1} 
+&=& \iint_{\Omega_1} 2 (N_1(x,y) q_1 + N_2(x,y)q_2 + N_5(x,y)q_5 + N_4(x,y)q_4 -p_1) N_1(x,y) dV \nn\\
+\frac{\partial J}{\partial q_2}
+&=& \iint_{\Omega_1} 2(N_1(x,y) q_1 + N_2(x,y)q_2 + N_5(x,y)q_5 + N_4(x,y)q_4 -p_1) N_2(x,y) dV \nn\\
+&+& \iint_{\Omega_2} 2(N_2(x,y) q_2 + N_3(x,y)q_3 + N_6(x,y)q_6 + N_5(x,y)q_5 -p_2) N_2(x,y) dV \nn\\
+\frac{\partial J}{\partial q_3}
+&=& \iint_{\Omega_2} 2(N_2(x,y) q_2 + N_3(x,y)q_3 + N_6(x,y)q_6 + N_5(x,y)q_5 -p_2) N_3(x,y) dV \nn\\
+\frac{\partial J}{\partial q_4}
+&=& \iint_{\Omega_1} 2(N_1(x,y) q_1 + N_2(x,y)q_2 + N_5(x,y)q_5 + N_4(x,y)q_4 -p_1) N_4(x,y) dV \nn\\
+&+& \iint_{\Omega_3} 2(N_4(x,y) q_4 + N_5(x,y)q_5 + N_8(x,y)q_8 + N_7(x,y)q_7 -p_3) N_4(x,y) dV \nn\\
+\frac{\partial J}{\partial q_5}
+&=& \iint_{\Omega_1} 2(N_1(x,y) q_1 + N_2(x,y)q_2 + N_5(x,y)q_5 + N_4(x,y)q_4 -p_1) N_5(x,y) dV \nn\\
+&+& \iint_{\Omega_2} 2(N_2(x,y) q_2 + N_3(x,y)q_3 + N_6(x,y)q_6 + N_5(x,y)q_5 -p_2) N_5(x,y) dV \nn\\
+&+& \iint_{\Omega_3} 2(N_4(x,y) q_4 + N_5(x,y)q_5 + N_8(x,y)q_8 + N_7(x,y)q_7 -p_3) N_5(x,y) dV \nn\\
+&+& \iint_{\Omega_4} 2(N_5(x,y) q_5 + N_6(x,y)q_6 + N_9(x,y)q_9 + N_8(x,y)q_8 -p_4) N_5(x,y) dV \nn\\
+\frac{\partial J}{\partial q_6}
+&=& \iint_{\Omega_2} 2(N_2(x,y) q_2 + N_3(x,y)q_3 + N_6(x,y)q_6 + N_5(x,y)q_5 -p_2) N_6(x,y) dV \nn\\
+&+& \iint_{\Omega_4} 2(N_5(x,y) q_5 + N_6(x,y)q_6 + N_9(x,y)q_9 + N_8(x,y)q_8 -p_4) N_6(x,y) dV \nn\\
+\frac{\partial J}{\partial q_7}
+&=& \iint_{\Omega_3} 2(N_4(x,y) q_4 + N_5(x,y)q_5 + N_8(x,y)q_8 + N_7(x,y)q_7 -p_3) N_7(x,y) dV \nn\\
+\frac{\partial J}{\partial q_8}
+&=& \iint_{\Omega_3} 2(N_4(x,y) q_4 + N_5(x,y)q_5 + N_8(x,y)q_8 + N_7(x,y)q_7 -p_3) N_8(x,y)dV \nn\\
+&+& \iint_{\Omega_4} 2(N_5(x,y) q_5 + N_6(x,y)q_6 + N_9(x,y)q_9 + N_8(x,y)q_8 -p_4) N_8(x,y)dV \nn\\ 
+\frac{\partial J}{\partial q_9}
+&=& \iint_{\Omega_4} 2(N_5(x,y) q_5 + N_6(x,y)q_6 + N_9(x,y)q_9 + N_8(x,y)q_8 -p_4) N_9(x,y)dV 
+\end{eqnarray}
+The factor 2 are removed and the terms $\int p_i N_j $ are known so they end up in the right hand side.
+
+\begin{eqnarray}
+ \iint_{\Omega_1} (N_1N_1 q_1 + N_1N_2 q_2 + N_1N_5q_5 + N_1N_4q_4) dV &=& \iint_{\Omega_1} p_1 N_1 dV \nn\\
+ \iint_{\Omega_1} (N_2 N_1  q_1 + N_2 N_2q_2 + N_2 N_5q_5 + N_2 N_4q_4)  dV \nn\\
++\iint_{\Omega_2} (N_2 N_2 q_2 + N_3 N_2 q_3 + N_6 N_2 q_6 + N_5 N_2 q_5) dV 
+&=& \iint_{\Omega_1} p_1N_2 dV + \iint_{\Omega_2}  p_2 N_2 dV \nn\\
+\nn\\
+\dots &=& \dots \nn\\
+\nn\\
+ \iint_{\Omega_4} (N_9N_5 q_5 + N_9N_6q_6 + N_9N_9q_9 + N_9N_8q_8) dV &=&  \iint_{\Omega_4} p_4 N_9 dV 
+\end{eqnarray}
+
+The mass matrices corresponding to the four elements are 
+\[
+{\bm M}_1 = \int_{\Omega_1} \left( \begin{array}{cccc}
+N_1 N_1 & N_1 N_2 & N_1 N_5 & N_1 N_4 \\
+N_2 N_1 & N_2 N_2 & N_2 N_5 & N_2 N_4 \\
+N_5 N_1 & N_5 N_2 & N_5 N_5 & N_5 N_4 \\
+N_4 N_1 & N_4 N_2 & N_4 N_5 & N_4 N_4 
+\end{array}\right) dV
+\qquad
+{\bm M}_2 = \int_{\Omega_2} \left( \begin{array}{cccc}
+N_2 N_2 & N_2 N_3 & N_2 N_6 & N_2 N_5 \\
+N_3 N_2 & N_3 N_3 & N_3 N_6 & N_3 N_5 \\
+N_6 N_2 & N_6 N_3 & N_6 N_6 & N_6 N_5 \\
+N_5 N_2 & N_5 N_3 & N_5 N_6 & N_5 N_5 
+\end{array}\right) dV
+\]
+\[
+{\bm M}_3 = \int_{\Omega_3} \left( \begin{array}{cccc}
+N_4 N_4 & N_4 N_5 & N_4 N_8 & N_4 N_7 \\
+N_5 N_4 & N_5 N_5 & N_5 N_8 & N_5 N_7 \\
+N_8 N_4 & N_8 N_5 & N_8 N_8 & N_8 N_7 \\
+N_7 N_4 & N_7 N_5 & N_7 N_8 & N_7 N_7 
+\end{array}\right) dV
+\qquad
+{\bm M}_4 = \int_{\Omega_4} \left( \begin{array}{cccc}
+N_5 N_5 & N_5 N_6 & N_5 N_9 & N_5 N_8 \\
+N_6 N_5 & N_6 N_6 & N_6 N_9 & N_6 N_8 \\
+N_9 N_5 & N_9 N_6 & N_9 N_9 & N_9 N_8 \\
+N_8 N_5 & N_8 N_6 & N_8 N_9 & N_8 N_8 
+\end{array}\right) dV
+\]
+so that the 9 equations above are actually the result of the assembly process of these four 
+elemental systems:
+\[
+\left( \iint_{\Omega_e} \vec{N}^T\vec{N} dV \right) \cdot \vec{q}_e = \iint_{\Omega_i} \vec{N}^T p_e dV 
+\qquad\qquad e=1,2,3,4
+\]
+
+
+%------------------------------------------------------------------------------
+\paragraph{Scheme 6 - Consistent pressure recovery}
+
+The is the method presented in Zienkiewicz \& Nakazawa (1982) \cite{zina82}. In the second part 
+of this publication the authors wish to establish a simple and effective numerical method to calculate 
+variables eliminated by the penalisation process. 
+The method involves an additional finite element solution for the nodal pressures using 
+the same finite element basis and numerical quadrature as used for the velocity.
+
+Let us start with\footnote{I here voluntarily use $q$ instead of $p$}:
+\[
+q = -\lambda \vec\nabla\cdot \vec\upnu
+\]
+We are going to treat this equation as any other PDE in the context of the FE method, i.e. 
+we are going to establish its weak form. 
+We assume that the pressure is given inside an element by
+\[
+q(x,y) = \sum_{i=1}^4 N_i(x,y) q_i = \vec{N} \cdot \vec{q}
+\]
+and the velocity:
+\[
+\vec\upnu = (u,v) 
+\qquad 
+\qquad 
+u(x,y)  = \sum_{i=1}^4 N_i(x,y) u_i
+\qquad 
+\qquad 
+v(x,y)  = \sum_{i=1}^4 N_i(x,y) v_i
+\]
+where the $N_i$ are the $Q_1$ shape functions and $q_i$ are the sought after nodal values. 
+We multiply the equation above by a $Q_1$ shape function $N_i$ and integrate over the whole domain:
+\[
+\iint_\Omega N_i(x,y) q(x,y) \; dxdy = -\lambda \iint_\Omega N_i \vec\nabla\cdot \vec\upnu  \; dx dy
+\]
+As before we now focus on the above expression inside a single element $e$:
+\[
+\iint_{\Omega_e} N_i(x,y) q(x,y) \; dxdy = -\lambda \iint_{\Omega_e} N_i \vec\nabla\cdot \vec\upnu \; dx dy
+\]
+After $N_i \rightarrow \vec{N}=(N_1,N_2,N_3,N_4)^T$, the left hand side term becomes:
+\[
+\iint _{\Omega_e} \vec{N}^T q(x,y) \; dxdy 
+=
+\iint _{\Omega_e} \vec{N}^T \vec{N} \cdot \vec{q} \; dxdy 
+=
+\left(\underbrace{\iint _{\Omega_e} \vec{N}^T \vec{N} dxdy}_{{\bm M}_e} \right) \cdot \vec{q}  
+\]
+where ${\bm M}_e$ is the elemental mass matrix.
+We now turn to the right hand side. We have
+\[
+\vec\nabla\cdot \vec\upnu
+= \frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}
+= \sum_i \frac{\partial N_i}{\partial x} u_i + \sum_i \frac{\partial N_i}{\partial y} v_i 
+\]
+We here too define $\vec{V}_e=(u_1,v_1,u_2,v_2,u_3,v_3,u_4,v_4)^T$ so that 
+
+\begin{eqnarray}
+&& \iint_{\Omega_e} \vec{N} {\vec \nabla}\cdot {\vec \upnu} \; d\Omega \nn\\
+&=& \iint_{\Omega_e} \vec{N}^T \sum_{i=1}^{4} 
+\left( \frac{\partial N_i}{\partial x} u_i + \frac{\partial N_i}{\partial y} v_i 
+\right)  
+d\Omega \nonumber\\
+&=& 
+\iint_{\Omega_e} 
+\left(
+\begin{array}{c}
+N_1 \left(
+\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial x} u_i +
+\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial y} v_i \right) \\
+N_2 \left(
+\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial x} u_i +
+\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial y} v_i \right) \\
+N_3 \left(
+\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial x} u_i +
+\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial y} v_i \right) \\
+N_4 \left(
+\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial x} u_i +
+\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial y} v_i \right) 
+\end{array}
+\right) d \Omega \nonumber \\  %%%%%%%%%%%%%%%%%%%%%%%%%%
+&=& 
+\int_{\Omega_e} 
+\left(
+\begin{array}{ccc}
+{N}_1& {N}_1 &  0 \\\\
+{N}_2& {N}_2 &  0 \\\\
+{N}_3& {N}_3 &  0 \\\\
+{N}_4& {N}_4 &  0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\sum\limits_i \frac{\partial N_i}{\partial x} u_i \\ \\
+\sum\limits_i \frac{\partial N_i}{\partial y} v_i \\ \\
+\sum\limits_i (\frac{\partial N_i}{\partial y} u_i\! +\! \frac{\partial N_i}{\partial x} v_i) 
+\end{array}
+\right)
+\; d\Omega \nonumber\\ %%%%%%%%%%%%%%%%%%%%%%%%%%
+&=& 
+\int_{\Omega_e} 
+\underbrace{
+\left(
+\begin{array}{cccccc}
+{N}_1 & {N}_1 &  0 \\
+{N}_2 & {N}_2 &  0 \\
+{N}_3 & {N}_3 &  0 \\
+{N}_4 & {N}_4 &  0 
+\end{array}
+\right)
+}_{{\bm N}}
+\cdot
+\underbrace{
+\left(\begin{array}{cccccccc}
+\partial_x N_1 & 0 &  
+\partial_x N_2 & 0 &  
+\partial_x N_3 & 0 &  
+\partial_x N_4 & 0 \\ \\
+0 & \partial_y N_1 &   
+0 & \partial_y N_2 &   
+0 & \partial_y N_3 &   
+0 & \partial_y N_4 \\ \\
+\partial_y N_1 & \partial_x N_1 &  
+\partial_y N_2 & \partial_x N_2 &  
+\partial_y N_3 & \partial_x N_3 &  
+\partial_y N_4 & \partial_x N_4 
+\end{array}\right)}_{{\bm B}}
+\cdot \vec{V}_e
+\; d\Omega  \nonumber \\
+&=& 
+\left(\int_{\Omega_e} {\bm N} \cdot {\bm B} \; d\Omega \right) \cdot \vec{V}_e \nonumber\\
+&=& -\G_e^T \cdot {\vec V}_e
+\end{eqnarray}
+
+After assembly we arrive at
+\[
+{\bm M} \cdot \vec{q} = \lambda \G^T \cdot {\vec V} 
+\qquad
+\text{with}
+\qquad
+\G_e = -\int_{\Omega_e} {\bm N} \cdot {\bm B} \; d\Omega
+\]
+where ${\bm M}$ is the global mass matrix, $\vec{q}$ the vector of all 
+nodal pressures, $\G$ the discrete gradient matrix and $\vec{V}$
+the (velocity) solution vector. 
+The system can be easily solved since the mass matrix is a friendly matrix.
+The vector ${\vec q}$ contains the nodal pressure values directly, with 
+no need for a smoothing scheme! 
+
+\begin{remark}
+Very importantly, the mass matrix ${\bm M}$ is to be evaluated at the full integration points, 
+while the constraint part (the right hand side of the equation) is to be evaluated at 
+the reduced integration point, i.e. in the middle of the element.  
+\end{remark}
+
+\begin{remark}
+As noted in \cite{zina82}, it is interesting to note that when linear elements are used 
+and the lumped matrices are used for the ${\bm M}$ the resulting algebraic equation is identical 
+to the smoothing scheme 1 only if a uniform square finite element 
+mesh is used. In this respect this method is expected to yield different results when elements 
+are not square or even rectangular.
+\end{remark}
+
+\begin{remark}
+The third column of the matrix ${\bm N}$
+and the last line of the ${\bm B}$ matrix could be removed altogether.
+If your code is based on the mixed formulation, then you already 
+have built matrix $\G$ so you can easily re-use this piece of code 
+to compute $\G$ again, this time with a reduced integration quadrature.
+If you are using the penalty formulation then you need to program 
+all from scratch and then simply do away with these unnecessary terms, or 
+you can direcly build the rhs as $\int_{\Omega_e} \vec{N}^T p_e$ (assuming
+you have previously computed the pressure in the middle of each element 
+by means of $p=-\lambda\vec\nabla\cdot\vec\upnu$).
+\end{remark}
+
+\begin{remark}
+This  scheme is identical to the least square scheme!
+\end{remark}
+
+
+%--------------------------------------------------------------
+\paragraph{Scheme 7}
+
+Same as scheme 6, but with lumped mass matrix.  
+
+
+%--------------------------------------------------------------
+\paragraph{Scheme 8 - bilinear interpolation} Let us assume that the centers of the 
+four elements make a $Q_1$ quadrilateral element, as shown on this figure:
+
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[fill=gray!5,gray!5](0,0) rectangle (9,7);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (9,7); %background grid
+\draw[thick](1.5,1.5) -- (4.5,1) -- (6.5,1) -- (7.5,3) -- (7,5.5) -- (4.5,6) --(1.5,5.5) -- (1,3.5) -- cycle;  
+\draw[thick](4.5,1)--(4,3.5)--(4.5,6);
+\draw[thick](1,3.5)--(4,3.5)--(7.5,3);
+
+\draw[black,fill=blue] (2.75,2.375) circle (2pt); 
+\node[] at (2.5,2.5) {\color{blue}1};
+\draw[black,fill=blue] (5.625,2.125) circle (2pt); 
+\node[] at (5.9,2) {\color{blue}2};
+\draw[black,fill=blue] (5.75,4.5) circle (2pt); 
+\node[] at (2.5,4.6) {\color{blue}3};
+\draw[black,fill=blue] (2.75,4.625) circle (2pt); 
+\node[] at (6,4.5) {\color{blue}4};
+
+\draw[black,fill=black] (1.5,1.5) circle (2pt); \node[] at (1.2,1.2){1}; %1
+\draw[black,fill=black] (4.5,1)   circle (2pt); \node[] at (4.5,0.75){2}; %2
+\draw[black,fill=black] (6.5,1)   circle (2pt); \node[] at (6.75,0.75){3}; %3
+\draw[black,fill=black] (1,3.5)   circle (2pt); \node[] at (0.75,3.5){4}; %4
+\draw[black,fill=black] (4,3.5)   circle (2pt); \node[] at (3.75,3.25){5}; %5
+\draw[black,fill=black] (7.5,3)   circle (2pt); \node[] at (7.75,3){6}; %6
+\draw[black,fill=black] (1.5,5.5) circle (2pt); \node[] at (1.25,5.5){7}; %7
+\draw[black,fill=black] (4.5,6)   circle (2pt); \node[] at (4.5,6.3){8}; %8
+\draw[black,fill=black] (7,5.5)   circle (2pt); \node[] at (7.25,5.75){9}; %9
+
+\draw[blue](2.75,2.375)--(5.625,2.125)--(5.75,4.5)--(2.75,4.625)--cycle;
+\end{tikzpicture}
+\end{center}
+
+
+
+
+The values at the corners are $p_1$,
+$p_2$, $p_3$ and $p_4$. Assuming that the pressure inside this element can be represented 
+by a bilinear field, we have 
+\[
+p(x,y)= a+ bx +cy +dxy
+\]
+where the coefficients will be determined by ensuring that $p(x_i,y_i)=p_i$ for $i=1,2,3,4$, or:
+\begin{eqnarray}
+a+bx_1+cy_1+dx_1y_1 &=& p_1 \\
+a+bx_2+cy_2+dx_2y_2 &=& p_2 \\
+a+bx_3+cy_3+dx_3y_3 &=& p_3 \\
+a+bx_4+cy_4+dx_4y_4 &=& p_4 
+\end{eqnarray}
+i.e.
+\[
+\left(
+\begin{array}{cccc}
+1 & x_1 & y_1 & x_1y_1 \\
+1 & x_2 & y_2 & x_2y_2 \\
+1 & x_3 & y_3 & x_3y_3 \\
+1 & x_4 & y_4 & x_4y_4
+\end{array}
+\right)\cdot
+\left(
+\begin{array}{c}
+a \\b\\c\\d
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+p_1\\p_2\\p_3\\p_4
+\end{array}
+\right)
+\]
+
+There remains an issue with nodes which are on the boundaries of the domain. These are of course not 
+'surrounded' by four pressure values so the above algorithm does not apply directly. However, looking 
+at the above figure, and assuming that node 1 is a lower left corner of a 2D domain, we can use the 
+bilinear interpolation based on elements 1,2,3,4 to extrapolate a nodal pressure value at node 1. 
+The same would apply for nodes 2 and 4 for example. 
+
+\begin{remark}
+This scheme is not applicable to quadtree-based meshed.
+\end{remark}
 
 
 

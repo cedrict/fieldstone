@@ -34,7 +34,8 @@ Redo the 2D advection-diffusion exercises with triangular elements.
 You will need to make a new icon array, and recompute the mass matrix 
 and other matrices. The triangular elements are constructed by splitting 
 square elements along the diagonal.
-See Section~\ref{ss:p1} for the shape functions and their derivatives. 
+See Section~\ref{ss:p1} for the shape functions and their derivatives.
+See Appendix~\ref{ss:tle} for the calculations of the matrices.  
 
 %------------------------------------
 \subsection{Triangular linear elements ***}
@@ -270,3 +271,17 @@ icon(3,{\color{blue}19})={\color{orange}16}\\
 
 The labelling of nodes and elements above is done by a human so it starts at 1. When 
 implementing this in python, you know what to do ...
+
+
+%-----------------------------------------------
+\subsection{How to visualise data on a triangular mesh with Paraview}
+
+If arrays {\tt x,y} contain the coordinates of the nodes, your connectivity array is called {\tt icon},
+and your mesh consistes of {\tt nel} elements and comprises {\tt nnp} nodes, you can use the following code
+to generate a vtu file to be opened with Paraview. You also need a temperature array {\tt T}.
+
+\begin{center}
+Code at \url{https://raw.githubusercontent.com/cedrict/fieldstone/master/images/compgeo/mesh_visu.py}
+\end{center}
+
+\lstinputlisting[language=python]{images/compgeo/mesh_visu.py}
