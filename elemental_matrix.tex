@@ -875,7 +875,7 @@ and their derivatives:
 \partial_r N_3(r,s) &=& 0 \\
 \partial_s N_1(r,s) &=& -1 \\
 \partial_s N_2(r,s) &=& 0\\
-\partial_s N_3(r,s) &=& -1
+\partial_s N_3(r,s) &=& 1
 \end{eqnarray}
 We wish to compute the integral of a function $f(x,y)$ over the triangle:
 \begin{eqnarray}
@@ -892,7 +892,7 @@ We wish to compute the integral of a function $f(x,y)$ over the triangle:
 From 
 \[
 x(r,s)=\sum_{i=1}^3 N_i(r,s) x_i 
-\qquad \text{andd} \qquad 
+\qquad \text{and} \qquad 
 y(r,s)=\sum_{i=1}^3 N_i(r,s) y_i 
 \]
 we can write
@@ -1094,6 +1094,105 @@ x_{21} & x_{21} & x_{21}
 \end{array}
 \right) 
 \end{eqnarray}
+
+The gradient matrix ${\bm B}$ is given by 
+\[
+{\bm B} = 
+\left(
+\begin{array}{ccc}
+\partial_x N_1 & \partial_x N_2 & \partial_x N_3 \\
+\partial_y N_1 & \partial_y N_2 & \partial_y N_3 \\
+\end{array}
+\right)
+=
+\frac{1}{2S}
+\left(
+\begin{array}{ccc}
+y_{23} & y_{31} & y_{12} \\
+x_{32} & x_{13} & x_{21}
+\end{array}
+\right)
+\]
+then 
+\[
+{\bm K}_d 
+= \iint_\triangle {\bm B}^T k {\bm B} \; dV
+= \iint_\triangle \frac{k}{4S^2}
+\left(
+\begin{array}{cc}
+y_{23} & x_{32} \\ 
+y_{31} & x_{13} \\
+y_{12} & x_{21}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+y_{23} & y_{31} & y_{12} \\
+x_{32} & x_{13} & x_{21}
+\end{array}
+\right)
+\; dV
+\]
+If $k$ is constant within the element, then 
+\[
+{\bm K}_d 
+= \frac{k}{4S}
+\left(
+\begin{array}{cc}
+y_{23} & x_{32} \\ 
+y_{31} & x_{13} \\
+y_{12} & x_{21}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+y_{23} & y_{31} & y_{12} \\
+x_{32} & x_{13} & x_{21}
+\end{array}
+\right)
+\]
+Turning now to the advection matrix
+\begin{eqnarray}
+{\bm K}_a 
+&=& \iint_\triangle \vec{N}^T \vec{\upnu}\cdot {\bm B} \; dV \nn\\
+&=& \iint_\triangle \vec{N}^T(x,y) \vec{\upnu}(x,y)\cdot {\bm B}(x,y) \; dx dy \nn\\
+&=& 2S \iint_\triangle \vec{N}^T(x(r,s),y(r,s)) \vec{\upnu}(x(r,s),y(r,s))\cdot {\bm B}(x(r,s),y(r,s)) \; dr ds \nn\\
+&=& 2S \iint_\triangle 
+\left(
+\begin{array}{c} 
+1-r-s \\ r \\ s 
+\end{array}
+\right)
+\vec{\upnu}(x(r,s),y(r,s))\cdot 
+\frac{1}{2S}
+\left(
+\begin{array}{ccc}
+y_{23} & y_{31} & y_{12} \\
+x_{32} & x_{13} & x_{21}
+\end{array}
+\right)
+\; dr ds \nn\\
+&=&  \iint_\triangle 
+\left(
+\begin{array}{c} 
+1-r-s \\ r \\ s 
+\end{array}
+\right)
+\vec{\upnu}(x(r,s),y(r,s))\cdot 
+\left(
+\begin{array}{ccc}
+y_{23} & y_{31} & y_{12} \\
+x_{32} & x_{13} & x_{21}
+\end{array}
+\right)
+\; dr ds \nn
+\end{eqnarray}
+If the velocity is constant within the element (rather rare case) then this can be integrated exactly.
+If not, a quadrature rule must be used. 
+
+
 
 
 \newpage
