@@ -1,0 +1,21 @@
+rm -f errors
+python3 stone2D.py   8   8 0 | grep errv >> errors
+python3 stone2D.py   9   9 0 | grep errv >> errors
+python3 stone2D.py  10  10 0 | grep errv >> errors
+python3 stone2D.py  11  11 0 | grep errv >> errors
+python3 stone2D.py  12  12 0 | grep errv >> errors
+python3 stone2D.py  14  14 0 | grep errv >> errors
+python3 stone2D.py  16  16 0 | grep errv >> errors
+python3 stone2D.py  21  21 0 | grep errv >> errors
+python3 stone2D.py  24  24 0 | grep errv >> errors
+python3 stone2D.py  29  29 0 | grep errv >> errors
+python3 stone2D.py  32  32 0 | grep errv >> errors
+python3 stone2D.py  41  41 0 | grep errv >> errors
+python3 stone2D.py  48  48 0 | grep errv >> errors
+python3 stone2D.py  57  57 0 | grep errv >> errors
+python3 stone2D.py  64  64 0 | grep errv >> errors
+python3 stone2D.py  73  73 0 | grep errv >> errors
+python3 stone2D.py  80  80 0 | grep errv >> errors
+python3 stone2D.py  89  89 0 | grep errv >> errors
+python3 stone2D.py  96  96 0 | grep errv >> errors
+
