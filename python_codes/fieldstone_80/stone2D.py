@@ -8,36 +8,79 @@ from scipy.sparse import csr_matrix
 
 #------------------------------------------------------------------------------
 
-def bx(x, y):
-    val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
-         (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
-         (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
-         1.-4.*y+12.*y*y-8.*y*y*y)
+def bx(x,y):
+    if benchmark==1:
+       val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
+            (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
+            (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
+            1.-4.*y+12.*y*y-8.*y*y*y)
+    if benchmark==2:
+       val=0
+    if benchmark==3:
+       val=0
+    if benchmark==4:
+       val= 3*x**2*y**2-y-1
+    if benchmark==5:
+       val=0
     return val
 
-def by(x, y):
-    val=((8.-48.*y+48.*y*y)*x*x*x+
-         (-12.+72.*y-72.*y*y)*x*x+
-         (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
-         12.*y*y+24.*y*y*y-12.*y**4)
+def by(x,y):
+    if benchmark==1:
+       val=((8.-48.*y+48.*y*y)*x*x*x+
+            (-12.+72.*y-72.*y*y)*x*x+
+            (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
+            12.*y*y+24.*y*y*y-12.*y**4)
+    if benchmark==2:
+       val=-1
+    if benchmark==3:
+       val=0
+    if benchmark==4:
+       val= 2*x**3*y+3*x-1
+    if benchmark==5:
+       if ((x-0.5)**2+(y-0.5)**2 < 0.123**2):
+          val=-1.001+1
+       else:
+          val=-1.+1
     return val
 
 def eta(x,y):
-    return 1
+    if benchmark==5:
+       if ((x-0.5)**2+(y-0.5)**2 < 0.123**2):
+          val=1e6
+       else:
+          val=1
+       return val
+    else: 
+       return 1
 
 #------------------------------------------------------------------------------
 # analytical solution
 
 def velocity_x(x,y):
-    val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+    if benchmark==1:
+       val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+    if benchmark==4:
+       val=x+x**2-2*x*y+x**3-3*x*y**2+x**2*y
+    if benchmark==5:
+       val=0
     return val
 
 def velocity_y(x,y):
-    val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    if benchmark==1:
+       val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    if benchmark==4:
+       val= -y-2*x*y+y**2-3*x**2*y+y**3-x*y**2
+    if benchmark==5:
+       val=0
     return val
 
 def pressure(x,y):
-    val=x*(1.-x)-1./6.
+    if benchmark==1:
+       val=x*(1.-x)-1./6.
+    if benchmark==4:
+       val= x*y+x+y+x**3*y**2-4/3
+    if benchmark==5:
+       val=0
     return val
 
 #------------------------------------------------------------------------------
@@ -154,8 +197,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 23
-   nely = 23
+   nelx = 32
+   nely = 32
    visu = 1
     
 nnx=nelx+1  # number of elements, x direction
@@ -175,7 +218,7 @@ hy=Ly/nely
 
 eps=1.e-10
 
-nqperdim=2
+nqperdim=5
 
 if nqperdim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
@@ -193,7 +236,26 @@ if nqperdim==4:
    qcoords=[-qc4a,-qc4b,qc4b,qc4a]
    qweights=[qw4a,qw4b,qw4b,qw4a]
 
+if nqperdim==5:
+   qc5a=np.sqrt(5.+2.*np.sqrt(10./7.))/3.
+   qc5b=np.sqrt(5.-2.*np.sqrt(10./7.))/3.
+   qc5c=0.
+   qw5a=(322.-13.*np.sqrt(70.))/900.
+   qw5b=(322.+13.*np.sqrt(70.))/900.
+   qw5c=128./225.
+   qcoords=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
+   qweights=[qw5a,qw5b,qw5c,qw5b,qw5a]
+
+
 pnormalise=True
+
+#1: d&h
+#2: aquarium
+#3: ldc
+#4: lamichhane
+#5: stokes sphere
+
+benchmark=5
 
 #################################################################
 #################################################################
@@ -312,33 +374,35 @@ for iel in range(0,nel):
     inode0=iconu[0,iel] 
     inode2=iconu[2,iel]
 
-    if xV[inode0]<eps: #element is on face x=0
-       bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= 0.
-       bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= 0.
-       bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= 0.
-       bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= 0.
-       bc_fix[        8,iel]=True ; bc_val[        8,iel]= 0.
-
-    if xV[inode2]>Lx-eps: #element is on face x=Lx
-       bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= 0.
-       bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= 0.
-       bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= 0.
-       bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= 0.
-       bc_fix[       10,iel]=True ; bc_val[       10,iel]= 0.
-
     if yV[inode0]<eps: #element is on face y=0
-       bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= 0.
-       bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= 0.
-       bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= 0.
-       bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= 0.
-       bc_fix[        9,iel]=True ; bc_val[        9,iel]= 0.
+       bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= velocity_x(xV[iconu[0,iel]],yV[iconu[0,iel]])
+       bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= velocity_y(xV[iconv[0,iel]],yV[iconv[0,iel]])
+       bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= velocity_x(xV[iconu[1,iel]],yV[iconu[1,iel]])
+       bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= velocity_y(xV[iconv[1,iel]],yV[iconv[1,iel]])
+       bc_fix[        9,iel]=True ; bc_val[        9,iel]= velocity_y(xV[iconv[4,iel]],yV[iconv[4,iel]])
+          
 
     if yV[inode2]>Ly-eps: #element is on face y=Ly
-       bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= 0.
-       bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= 0.
-       bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= 0.
-       bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= 0.
-       bc_fix[       11,iel]=True ; bc_val[       11,iel]= 0.
+       bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= velocity_x(xV[iconu[2,iel]],yV[iconu[2,iel]])
+       bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= velocity_y(xV[iconv[2,iel]],yV[iconv[2,iel]])
+       bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= velocity_x(xV[iconu[3,iel]],yV[iconu[3,iel]])
+       bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= velocity_y(xV[iconv[3,iel]],yV[iconv[3,iel]])
+       bc_fix[       11,iel]=True ; bc_val[       11,iel]= velocity_y(xV[iconv[5,iel]],yV[iconv[5,iel]])
+
+    if xV[inode0]<eps: #element is on face x=0
+       bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= velocity_x(xV[iconu[0,iel]],yV[iconu[0,iel]])
+       bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= velocity_y(xV[iconv[0,iel]],yV[iconv[0,iel]])
+       bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= velocity_x(xV[iconu[3,iel]],yV[iconu[3,iel]])
+       bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= velocity_y(xV[iconv[3,iel]],yV[iconv[3,iel]])
+       bc_fix[        8,iel]=True ; bc_val[        8,iel]= velocity_x(xV[iconu[4,iel]],yV[iconu[4,iel]])
+
+    if xV[inode2]>Lx-eps: #element is on face x=Lx
+       bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= velocity_x(xV[iconu[1,iel]],yV[iconu[1,iel]])
+       bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= velocity_y(xV[iconv[1,iel]],yV[iconv[1,iel]])
+       bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= velocity_x(xV[iconu[2,iel]],yV[iconu[2,iel]])
+       bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= velocity_y(xV[iconv[2,iel]],yV[iconv[2,iel]])
+       bc_fix[       10,iel]=True ; bc_val[       10,iel]= velocity_x(xV[iconu[5,iel]],yV[iconu[5,iel]])
+
 
 #end for
 
@@ -642,6 +706,8 @@ if pnormalise:
 #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# x,y,p')
 
+np.savetxt('pressure_top.ascii',np.array([xc[nel-nelx:nel],yc[nel-nelx:nel],p[nel-nelx:nel]]).T,header='# x,y,p')
+
 print("transfer solution: %.3f s" % (time.time() - start))
 
 #################################################################
@@ -651,6 +717,7 @@ start = time.time()
 
 errv=0.
 errp=0.
+vrms=0.
 for iel in range (0,nel):
 
     for iq in range(0,nqperdim):
@@ -689,6 +756,8 @@ for iel in range (0,nel):
                 errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
                 errp+=(p[iel]-pressure(xq,yq))**2*weightq*jcob
 
+                vrms+=(uq**2+vq**2)*weightq*jcob
+
         #end for
     #end for
 #end for
@@ -696,7 +765,9 @@ for iel in range (0,nel):
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 
-print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
+vrms=np.sqrt(1/Lx/Ly*vrms)
+
+print("     -> nel= %6d ; errv= %e ; errp= %e ; vrms= %e" %(nel,errv,errp,vrms))
 
 print("compute errors: %.3f s" % (time.time() - start))
 
@@ -828,19 +899,40 @@ if visu==1:
        vtufile.write("%f\n" % p[iel])
    vtufile.write("</DataArray>\n")
    #--
+   vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%f\n" % (pressure(xc[iel],yc[iel])))
+   vtufile.write("</DataArray>\n")
+
+
+   #--
    vtufile.write("</CellData>\n")
    #####
    vtufile.write("<PointData Scalars='scalars'>\n")
    #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='body force' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%e %e %e \n" %(bx(xV[i],yV[i]),by(xV[i],yV[i]),0))
+   vtufile.write("</DataArray>\n")
+   #--
+
+
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
    for i in range(0,NV):
-       vtufile.write("%10f %10f %10f \n" %(u[i],v[i],0))
+       vtufile.write("%e %e %e \n" %(u[i],v[i],0))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity error' Format='ascii'> \n")
    for i in range(0,NV):
        vtufile.write("%e %e %e \n" %(u[i]-velocity_x(xV[i],yV[i]),v[i]-velocity_y(xV[i],yV[i])   ,0))
    vtufile.write("</DataArray>\n")
+
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (th)' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%e %e %e \n" %(velocity_x(xV[i],yV[i]),velocity_y(xV[i],yV[i])   ,0))
+   vtufile.write("</DataArray>\n")
+
    #--
    vtufile.write("</PointData>\n")
    #####

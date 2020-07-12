@@ -224,39 +224,119 @@ elt
 \end{verbatim}
 \end{itemize}
 
+The pressure field is normalised by imposing $\int_\Omega p dV=0 $ so that there is no nullspace.
+
+%---------------------------------------------------------------
+\subsubsection*{Donea \& Huerta manufactured solution benchmark}
+
 The Donea \& huerta benchmark of Section~\ref{mms1} is implemented. It requires 
 no-slip boundary conditions on all sides. This means that $u=0$ must be 
 prescribed on the lateral boundaries, while $v=0$ is prescribed at the top and bottom, 
 i.e. boundary conditions are imposed on the bubble nodes too.
 
-The pressure field is normalised by imposing $\int_\Omega p dV=0 $ so that there is no nullspace.
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_80/results/pressure}
-\includegraphics[width=7cm]{python_codes/fieldstone_80/results/pressure_error}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_80/results/dh/pressure}
+\includegraphics[width=7cm]{python_codes/fieldstone_80/results/dh/pressure_error}\\
 {\captionfont  opla}
 \end{center}
-
-
-
 
 
 Looking at the velocity and pressure error convergence, we see that the number of quadrature
 points does not matter much, but surprisingly the lowest number of quad points seems to yield slightly
 better results...
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_80/results/errors}\\
+\includegraphics[width=9cm]{python_codes/fieldstone_80/results/dh/errors}\\
 {\captionfont Velocity and pressure error convergence as a function of resolution for 
 different quadrature rules.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_80/results/vel}
-\includegraphics[width=7cm]{python_codes/fieldstone_80/results/vel_error}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_80/results/u_dofs}
-\includegraphics[width=7cm]{python_codes/fieldstone_80/results/v_dofs}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_80/results/dh/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_80/results/dh/vel_error}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_80/results/dh/u_dofs}
+\includegraphics[width=7cm]{python_codes/fieldstone_80/results/dh/v_dofs}\\
 {\captionfont Top row: velocity and velocity error. Bottom row: $u$ and 
 $v$ plotted on their respective meshes.}
 \end{center}
+
+%---------------------------------------------------------------
+\subsubsection*{The aquarium}
+
+No-slip boundary conditions are prescribed on all sides. Density and viscosity are 1.
+Gravity is $\vec{g}=-\vec{e}_y$. 
+
+We recover a linear pressure profile as expected, that is very accurate:
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/aquarium/p}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/aquarium/p_error}\\
+{\captionfont Left: pressure profile; Right: pressure profile error}
+\end{center}
+
+We can also record the root mean square velocity as a function of the resolution $h$
+and we find that the velocity is (as expected) zero (down to machine precision):
+\begin{center}
+\includegraphics[width=9cm]{python_codes/fieldstone_80/results/aquarium/vrms}
+\end{center}
+
+
+%---------------------------------------------------------------
+\subsubsection*{The lid driven cavity}
+
+This is the non leaky lid driven cavity, i.e. the velocity at the top left and right corner 
+is set to zero. No slip are imposed on all three other boundaries. 
+The pressure field does not showcase any checkerboard mode. 
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc/vel}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc/p}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc/u_dofs}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc/v_dofs}\\
+{\captionfont 64x64}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc/p_top}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc/vrms}
+\end{center}
+
+
+%---------------------------------------------------------------
+\subsubsection*{Manufactured solution}
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/lamich/errors}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/lamich/vrms}\\
+{\captionfont Left: Velocity and pressure error convergence; Right: root mean square velocity
+as a function of mesh size.}
+\end{center}
+
+
+%---------------------------------------------------------------
+\subsubsection*{Stokes sphere}
+
+Sphere is placed in the middle with radius 0.123, no slip boundary conditions on all sides. 
+Viscosity is constant in the domain.
+
+\begin{center}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_80/results/sphere1p000/bodyforce}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_80/results/sphere1p000/vel}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_80/results/sphere1p000/p}\\
+{\caption velocity and pressure fields for $\delta \rho=1$}
+\end{center}
+
+\begin{center}
+\includegraphics[width=9cm]{python_codes/fieldstone_80/results/sphere1p000/vrms}\\
+{\captionfont Root mean square velocity for $\delta \rho=1$}
+\end{center}
+
+
+
+
+
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
