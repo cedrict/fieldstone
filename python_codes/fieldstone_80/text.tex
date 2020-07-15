@@ -11,9 +11,6 @@ We here consider the enriched $Q_1\times P_0$ element introduced first by Fortin
 The shape functions in 2D and 3D are in derived in Section~\ref{ss:Q1pP02D} and Section~\ref{ss:Q1pP03D} respectively.
 
 
-%-----------------------------------------------
-\subsection*{in 2D}
-
 Per element:
 \[
 \vec{V} = (u_1,v_1,u_2,v_2,u_3,v_3,u_4,v_4,u_5,v_5,u_6,v_6)
@@ -227,7 +224,7 @@ elt
 The pressure field is normalised by imposing $\int_\Omega p dV=0 $ so that there is no nullspace.
 
 %---------------------------------------------------------------
-\subsubsection*{Donea \& Huerta manufactured solution benchmark}
+\subsection*{Donea \& Huerta manufactured solution benchmark}
 
 The Donea \& huerta benchmark of Section~\ref{mms1} is implemented. It requires 
 no-slip boundary conditions on all sides. This means that $u=0$ must be 
@@ -260,7 +257,7 @@ $v$ plotted on their respective meshes.}
 \end{center}
 
 %---------------------------------------------------------------
-\subsubsection*{The aquarium}
+\subsection*{The aquarium}
 
 No-slip boundary conditions are prescribed on all sides. Density and viscosity are 1.
 Gravity is $\vec{g}=-\vec{e}_y$. 
@@ -281,7 +278,7 @@ and we find that the velocity is (as expected) zero (down to machine precision):
 
 
 %---------------------------------------------------------------
-\subsubsection*{The lid driven cavity}
+\subsection*{The lid driven cavity}
 
 This is the non leaky lid driven cavity, i.e. the velocity at the top left and right corner 
 is set to zero. No slip are imposed on all three other boundaries. 
@@ -302,7 +299,7 @@ The pressure field does not showcase any checkerboard mode.
 
 
 %---------------------------------------------------------------
-\subsubsection*{Manufactured solution}
+\subsection*{Manufactured solution}
 
 \begin{center}
 \includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/lamich/errors}
@@ -313,21 +310,24 @@ as a function of mesh size.}
 
 
 %---------------------------------------------------------------
-\subsubsection*{Stokes sphere}
+\subsection*{Stokes sphere}
 
-Sphere is placed in the middle with radius 0.123, no slip boundary conditions on all sides. 
-Viscosity is constant in the domain.
+Sphere is placed in the middle with radius 0.123, free slip boundary conditions on all sides. 
+Viscosity is constant in the domain. 
 
 \begin{center}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_80/results/sphere1p000/bodyforce}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_80/results/sphere1p000/vel}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_80/results/sphere1p000/p}\\
-{\caption velocity and pressure fields for $\delta \rho=1$}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_80/results/sphere/rho_g}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_80/results/sphere/vel}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_80/results/sphere/p}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_80/results/sphere/u_dofs}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_80/results/sphere/v_dofs}\\
+{\captionfont velocity and pressure fields for $\delta \rho=0.001$. 96x96 elements.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_80/results/sphere1p000/vrms}\\
-{\captionfont Root mean square velocity for $\delta \rho=1$}
+\includegraphics[width=9cm]{python_codes/fieldstone_80/results/sphere/vrms}\\
+{\captionfont Root mean square velocity for $\delta \rho=0.001$, for both full density and reduced 
+density models.}
 \end{center}
 
 
@@ -337,9 +337,5 @@ Viscosity is constant in the domain.
 
 
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
-\subsection*{in 3D}
 
 

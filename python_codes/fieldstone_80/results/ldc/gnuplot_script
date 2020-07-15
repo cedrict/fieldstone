@@ -1,0 +1,22 @@
+set term pdf enhanced font "Times,12pt"
+set output "p_top.pdf"
+set grid
+set pointsize .4
+set xlabel 'x'
+set ylabel 'p'
+set key outside
+
+plot[][]\
+'pressure_top16.ascii' u 1:3 w lp t '16x16',\
+'pressure_top32.ascii' u 1:3 w lp t '32x32',\
+'pressure_top48.ascii' u 1:3 w lp t '48x48',\
+'pressure_top64.ascii' u 1:3 w lp t '64x64',\
+
+
+set log x
+set xlabel 'h'
+set ylabel 'v_{rms}'
+set output 'vrms.pdf' 
+plot[][]\
+'errors' u (1./sqrt($3)):12 w lp t 'velocity (nq=3)',\
+

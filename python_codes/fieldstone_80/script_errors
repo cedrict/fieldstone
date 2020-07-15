@@ -1,37 +1,9 @@
+#! /bin/bash
+
 rm -f errors
-python3 stone2D.py   8   8 0 | grep errv >> errors
-python3 stone2D.py   9   9 0 | grep errv >> errors
-python3 stone2D.py  10  10 0 | grep errv >> errors
-python3 stone2D.py  11  11 0 | grep errv >> errors
-python3 stone2D.py  12  12 0 | grep errv >> errors
-python3 stone2D.py  13  13 0 | grep errv >> errors
-python3 stone2D.py  14  14 0 | grep errv >> errors
-python3 stone2D.py  15  15 0 | grep errv >> errors
-python3 stone2D.py  16  16 0 | grep errv >> errors
-python3 stone2D.py  17  17 0 | grep errv >> errors
-python3 stone2D.py  18  18 0 | grep errv >> errors
-python3 stone2D.py  19  19 0 | grep errv >> errors
-python3 stone2D.py  20  20 0 | grep errv >> errors
-python3 stone2D.py  21  21 0 | grep errv >> errors
-python3 stone2D.py  22  22 0 | grep errv >> errors
-python3 stone2D.py  23  23 0 | grep errv >> errors
-python3 stone2D.py  24  24 0 | grep errv >> errors
-python3 stone2D.py  29  29 0 | grep errv >> errors
-python3 stone2D.py  32  32 0 | grep errv >> errors
-python3 stone2D.py  36  36 0 | grep errv >> errors
-python3 stone2D.py  41  41 0 | grep errv >> errors
-python3 stone2D.py  48  48 0 | grep errv >> errors
-python3 stone2D.py  52  52 0 | grep errv >> errors
-python3 stone2D.py  57  57 0 | grep errv >> errors
-python3 stone2D.py  64  64 0 | grep errv >> errors
-python3 stone2D.py  73  73 0 | grep errv >> errors
-python3 stone2D.py  75  75 0 | grep errv >> errors
-python3 stone2D.py  77  77 0 | grep errv >> errors
-python3 stone2D.py  80  80 0 | grep errv >> errors
-python3 stone2D.py  82  82 0 | grep errv >> errors
-python3 stone2D.py  84  84 0 | grep errv >> errors
-python3 stone2D.py  86  86 0 | grep errv >> errors
-python3 stone2D.py  89  89 0 | grep errv >> errors
-python3 stone2D.py  92  92 0 | grep errv >> errors
-python3 stone2D.py  96  96 0 | grep errv >> errors
+
+for res in {8..80}; do
+    echo $res X $res
+    python3 stone2D.py $res $res 0 | grep errv >> errors
+done
 

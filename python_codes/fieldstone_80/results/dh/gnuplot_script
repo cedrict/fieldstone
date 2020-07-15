@@ -1,0 +1,38 @@
+set term pdf enhanced font "Times,11pt"
+set output 'errors.pdf'
+set key outside
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+set pointsize .3 
+plot[][]\
+'errors_nq2' u (1./sqrt($3)):6 w lp t 'velocity (nq=2)',\
+'errors_nq3' u (1./sqrt($3)):6 w lp t 'velocity (nq=3)',\
+'errors_nq4' u (1./sqrt($3)):6 w lp t 'velocity (nq=4)',\
+'errors_nq2' u (1./sqrt($3)):9 w lp t 'pressure (nq=2)',\
+'errors_nq3' u (1./sqrt($3)):9 w lp t 'pressure (nq=3)',\
+'errors_nq4' u (1./sqrt($3)):9 w lp t 'pressure (nq=4)',\
+x**2/100. w l lt -1 dashtype 2 t 'x^2',\
+x**1/10. w l lt -1 dashtype 3 t 'x^1'
+
+
+set xlabel 'x'
+set output 'pressure.pdf'
+unset log xy
+plot[][]\
+'pressure16.ascii' u 1:3 t '16x16',\
+'pressure23.ascii' u 1:3 t '23x23',\
+'pressure32.ascii' u 1:3 t '32x32',\
+'pressure45.ascii' u 1:3 t '45x45',\
+'pressure80.ascii' u 1:3 t '80x80',\
+x*(1-x)-1./6. lt -1 lw 0.5 t 'analytical'
+ 
+set output 'pressure_error.pdf'
+plot[][]\
+'pressure16.ascii' u 1:($3-$1*(1-$1)+1./6.) t '16x16',\
+'pressure23.ascii' u 1:($3-$1*(1-$1)+1./6.) t '23x23',\
+'pressure32.ascii' u 1:($3-$1*(1-$1)+1./6.) t '32x32',\
+'pressure45.ascii' u 1:($3-$1*(1-$1)+1./6.) t '45x45',\
+'pressure80.ascii' u 1:($3-$1*(1-$1)+1./6.) t '80x80',\
+
+ 

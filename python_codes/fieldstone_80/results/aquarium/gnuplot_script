@@ -1,0 +1,28 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set pointsize .3 
+set xlabel 'y'
+set ylabel 'p'
+
+set output 'p.pdf'
+plot[][]\
+'pressure23.ascii'  u 3:2  w lp t '23x23',\
+'pressure32.ascii'  u 3:2  w lp t '32x32',\
+'pressure55.ascii'  u 3:2  w lp t '55x55',\
+0.5-x lt -1 lw .5 
+
+set output 'p_error.pdf'
+plot[][]\
+'pressure23.ascii'  u 3:($2-0.5+$3)  w lp t '23x23',\
+'pressure32.ascii'  u 3:($2-0.5+$3)  w lp t '32x32',\
+'pressure55.ascii'  u 3:($2-0.5+$3)  w lp t '55x55',\
+
+
+set log x
+set xlabel 'h'
+set ylabel 'v_{rms}'
+set output 'vrms.pdf' 
+plot[][]\
+'errors_nq2' u (1./sqrt($3)):12 w lp t 'velocity (nq=2)',\
+'errors_nq3' u (1./sqrt($3)):12 w lp t 'velocity (nq=3)',\
+

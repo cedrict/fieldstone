@@ -1,0 +1,19 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set log x
+set key outside
+set pointsize .23 
+set xlabel 'h'
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
+plot[0.01:][0.0000015:0.0000018]\
+'errors_nq2_full' u (1./sqrt($3)):12 w p lt 1 t 'nq=2, full',\
+'errors_nq3_full' u (1./sqrt($3)):12 w p lt 2 t 'nq=3, full',\
+'errors_nq4_full' u (1./sqrt($3)):12 w p lt 3 t 'nq=4, full',\
+'errors_nq5_full' u (1./sqrt($3)):12 w p lt 4 t 'nq=5, full',\
+'errors_nq6_full' u (1./sqrt($3)):12 w p lt 5 t 'nq=6, full',\
+'errors_nq2' u (1./sqrt($3)):12 w l lt 1 lw .5 t 'nq=2, red.',\
+'errors_nq3' u (1./sqrt($3)):12 w l lt 2 lw .5 t 'nq=3, red.',\
+'errors_nq4' u (1./sqrt($3)):12 w l lt 3 lw .5 t 'nq=4, red.',\
+'errors_nq5' u (1./sqrt($3)):12 w l lt 4 lw .5 t 'nq=5, red.',\
+'errors_nq6' u (1./sqrt($3)):12 w l lt 5 lw .5 t 'nq=6, red.',\

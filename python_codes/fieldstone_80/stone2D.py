@@ -46,7 +46,7 @@ def by(x,y):
 def eta(x,y):
     if benchmark==5:
        if ((x-0.5)**2+(y-0.5)**2 < 0.123**2):
-          val=1e6
+          val=1#e6
        else:
           val=1
        return val
@@ -197,8 +197,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 96
+   nely = nelx
    visu = 1
     
 nnx=nelx+1  # number of elements, x direction
@@ -218,7 +218,7 @@ hy=Ly/nely
 
 eps=1.e-10
 
-nqperdim=5
+nqperdim=3
 
 if nqperdim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
@@ -246,6 +246,19 @@ if nqperdim==5:
    qcoords=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
    qweights=[qw5a,qw5b,qw5c,qw5b,qw5a]
 
+if nqperdim==6:
+   qcoords=[-0.932469514203152,\
+            -0.661209386466265,\
+            -0.238619186083197,\
+            +0.238619186083197,\
+            +0.661209386466265,\
+            +0.932469514203152]
+   qweights=[0.171324492379170,\
+             0.360761573048139,\
+             0.467913934572691,\
+             0.467913934572691,\
+             0.360761573048139,\
+             0.171324492379170]
 
 pnormalise=True
 
@@ -273,6 +286,7 @@ print("NfemV=",NfemV)
 print("NfemP=",NfemP)
 print("hx",hx)
 print("hy",hy)
+print("nqperdim",nqperdim)
 print("------------------------------")
 
 #################################################################
@@ -369,42 +383,70 @@ start = time.time()
 bc_fix=np.zeros((mV*ndofV,nel),dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros((mV*ndofV,nel),dtype=np.float64)  # boundary condition, value
 
-for iel in range(0,nel):
+if benchmark==5:
+   for iel in range(0,nel):
+       inode0=iconu[0,iel] 
+       inode2=iconu[2,iel]
+       if yV[inode0]<eps: #element is on face y=0
+          #bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= velocity_x(xV[iconu[0,iel]],yV[iconu[0,iel]])
+          bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= velocity_y(xV[iconv[0,iel]],yV[iconv[0,iel]])
+          #bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= velocity_x(xV[iconu[1,iel]],yV[iconu[1,iel]])
+          bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= velocity_y(xV[iconv[1,iel]],yV[iconv[1,iel]])
+          bc_fix[        9,iel]=True ; bc_val[        9,iel]= velocity_y(xV[iconv[4,iel]],yV[iconv[4,iel]])
+       if yV[inode2]>Ly-eps: #element is on face y=Ly
+          #bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= velocity_x(xV[iconu[2,iel]],yV[iconu[2,iel]])
+          bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= velocity_y(xV[iconv[2,iel]],yV[iconv[2,iel]])
+          #bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= velocity_x(xV[iconu[3,iel]],yV[iconu[3,iel]])
+          bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= velocity_y(xV[iconv[3,iel]],yV[iconv[3,iel]])
+          bc_fix[       11,iel]=True ; bc_val[       11,iel]= velocity_y(xV[iconv[5,iel]],yV[iconv[5,iel]])
+       if xV[inode0]<eps: #element is on face x=0
+          bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= velocity_x(xV[iconu[0,iel]],yV[iconu[0,iel]])
+          #bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= velocity_y(xV[iconv[0,iel]],yV[iconv[0,iel]])
+          bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= velocity_x(xV[iconu[3,iel]],yV[iconu[3,iel]])
+          #bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= velocity_y(xV[iconv[3,iel]],yV[iconv[3,iel]])
+          bc_fix[        8,iel]=True ; bc_val[        8,iel]= velocity_x(xV[iconu[4,iel]],yV[iconu[4,iel]])
+       if xV[inode2]>Lx-eps: #element is on face x=Lx
+          bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= velocity_x(xV[iconu[1,iel]],yV[iconu[1,iel]])
+          #bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= velocity_y(xV[iconv[1,iel]],yV[iconv[1,iel]])
+          bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= velocity_x(xV[iconu[2,iel]],yV[iconu[2,iel]])
+          #bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= velocity_y(xV[iconv[2,iel]],yV[iconv[2,iel]])
+          bc_fix[       10,iel]=True ; bc_val[       10,iel]= velocity_x(xV[iconu[5,iel]],yV[iconu[5,iel]])
+   #end for
+else:
+   for iel in range(0,nel):
+       inode0=iconu[0,iel] 
+       inode2=iconu[2,iel]
+       if yV[inode0]<eps: #element is on face y=0
+          bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= velocity_x(xV[iconu[0,iel]],yV[iconu[0,iel]])
+          bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= velocity_y(xV[iconv[0,iel]],yV[iconv[0,iel]])
+          bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= velocity_x(xV[iconu[1,iel]],yV[iconu[1,iel]])
+          bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= velocity_y(xV[iconv[1,iel]],yV[iconv[1,iel]])
+          bc_fix[        9,iel]=True ; bc_val[        9,iel]= velocity_y(xV[iconv[4,iel]],yV[iconv[4,iel]])
+       if yV[inode2]>Ly-eps: #element is on face y=Ly
+          bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= velocity_x(xV[iconu[2,iel]],yV[iconu[2,iel]])
+          bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= velocity_y(xV[iconv[2,iel]],yV[iconv[2,iel]])
+          bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= velocity_x(xV[iconu[3,iel]],yV[iconu[3,iel]])
+          bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= velocity_y(xV[iconv[3,iel]],yV[iconv[3,iel]])
+          bc_fix[       11,iel]=True ; bc_val[       11,iel]= velocity_y(xV[iconv[5,iel]],yV[iconv[5,iel]])
+       if xV[inode0]<eps: #element is on face x=0
+          bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= velocity_x(xV[iconu[0,iel]],yV[iconu[0,iel]])
+          bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= velocity_y(xV[iconv[0,iel]],yV[iconv[0,iel]])
+          bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= velocity_x(xV[iconu[3,iel]],yV[iconu[3,iel]])
+          bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= velocity_y(xV[iconv[3,iel]],yV[iconv[3,iel]])
+          bc_fix[        8,iel]=True ; bc_val[        8,iel]= velocity_x(xV[iconu[4,iel]],yV[iconu[4,iel]])
+       if xV[inode2]>Lx-eps: #element is on face x=Lx
+          bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= velocity_x(xV[iconu[1,iel]],yV[iconu[1,iel]])
+          bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= velocity_y(xV[iconv[1,iel]],yV[iconv[1,iel]])
+          bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= velocity_x(xV[iconu[2,iel]],yV[iconu[2,iel]])
+          bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= velocity_y(xV[iconv[2,iel]],yV[iconv[2,iel]])
+          bc_fix[       10,iel]=True ; bc_val[       10,iel]= velocity_x(xV[iconu[5,iel]],yV[iconu[5,iel]])
+   #end for
+#end if
 
-    inode0=iconu[0,iel] 
-    inode2=iconu[2,iel]
-
-    if yV[inode0]<eps: #element is on face y=0
-       bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= velocity_x(xV[iconu[0,iel]],yV[iconu[0,iel]])
-       bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= velocity_y(xV[iconv[0,iel]],yV[iconv[0,iel]])
-       bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= velocity_x(xV[iconu[1,iel]],yV[iconu[1,iel]])
-       bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= velocity_y(xV[iconv[1,iel]],yV[iconv[1,iel]])
-       bc_fix[        9,iel]=True ; bc_val[        9,iel]= velocity_y(xV[iconv[4,iel]],yV[iconv[4,iel]])
-          
-
-    if yV[inode2]>Ly-eps: #element is on face y=Ly
-       bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= velocity_x(xV[iconu[2,iel]],yV[iconu[2,iel]])
-       bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= velocity_y(xV[iconv[2,iel]],yV[iconv[2,iel]])
-       bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= velocity_x(xV[iconu[3,iel]],yV[iconu[3,iel]])
-       bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= velocity_y(xV[iconv[3,iel]],yV[iconv[3,iel]])
-       bc_fix[       11,iel]=True ; bc_val[       11,iel]= velocity_y(xV[iconv[5,iel]],yV[iconv[5,iel]])
-
-    if xV[inode0]<eps: #element is on face x=0
-       bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= velocity_x(xV[iconu[0,iel]],yV[iconu[0,iel]])
-       bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= velocity_y(xV[iconv[0,iel]],yV[iconv[0,iel]])
-       bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= velocity_x(xV[iconu[3,iel]],yV[iconu[3,iel]])
-       bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= velocity_y(xV[iconv[3,iel]],yV[iconv[3,iel]])
-       bc_fix[        8,iel]=True ; bc_val[        8,iel]= velocity_x(xV[iconu[4,iel]],yV[iconu[4,iel]])
-
-    if xV[inode2]>Lx-eps: #element is on face x=Lx
-       bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= velocity_x(xV[iconu[1,iel]],yV[iconu[1,iel]])
-       bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= velocity_y(xV[iconv[1,iel]],yV[iconv[1,iel]])
-       bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= velocity_x(xV[iconu[2,iel]],yV[iconu[2,iel]])
-       bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= velocity_y(xV[iconv[2,iel]],yV[iconv[2,iel]])
-       bc_fix[       10,iel]=True ; bc_val[       10,iel]= velocity_x(xV[iconu[5,iel]],yV[iconu[5,iel]])
 
 
-#end for
+
+
 
 print("define b.c.: %.3f s" % (time.time() - start))
 
