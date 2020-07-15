@@ -242,9 +242,10 @@ Looking at the velocity and pressure error convergence, we see that the number o
 points does not matter much, but surprisingly the lowest number of quad points seems to yield slightly
 better results...
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_80/results/dh/errors}\\
-{\captionfont Velocity and pressure error convergence as a function of resolution for 
-different quadrature rules.}
+\includegraphics[width=7.4cm]{python_codes/fieldstone_80/results/dh/errors}
+\includegraphics[width=7.4cm]{python_codes/fieldstone_80/results/dh/vrms}\\
+{\captionfont Left: Velocity and pressure error convergence as a function of resolution for 
+different quadrature rules. Right: root mean square velocity.}
 \end{center}
 
 \begin{center}
@@ -299,11 +300,19 @@ The pressure field does not showcase any checkerboard mode.
 
 
 %---------------------------------------------------------------
-\subsection*{Manufactured solution}
+\subsection*{Dohrmann \& Bochev manufactured solution}
+
+This benchmark is defined in Section~\ref{ss:mms2}.
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/lamich/errors}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/lamich/vrms}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/db2d/vel}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/db2d/p}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/db2d/errors}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/db2d/vrms}\\
 {\captionfont Left: Velocity and pressure error convergence; Right: root mean square velocity
 as a function of mesh size.}
 \end{center}
@@ -338,4 +347,4 @@ density models.}
 
 
 
-
+\todo[inline]{theory and code for non-square elements}

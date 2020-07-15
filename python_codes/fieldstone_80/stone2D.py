@@ -192,14 +192,16 @@ Lx=1.  # x- extent of the domain
 Ly=1.  # y- extent of the domain 
 
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 4):
+if int(len(sys.argv) == 5):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
+   nqperdim=int(sys.argv[4])
 else:
-   nelx = 96
+   nelx = 32
    nely = nelx
    visu = 1
+   nqperdim = 2
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
@@ -217,8 +219,6 @@ hx=Lx/nelx
 hy=Ly/nely
 
 eps=1.e-10
-
-nqperdim=3
 
 if nqperdim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
@@ -262,13 +262,13 @@ if nqperdim==6:
 
 pnormalise=True
 
-#1: d&h
+#1: Donea & Huerta "dh"
 #2: aquarium
 #3: ldc
-#4: lamichhane
+#4: Dohrmann & Bochev "db2d" 
 #5: stokes sphere
 
-benchmark=5
+benchmark=4
 
 #################################################################
 #################################################################

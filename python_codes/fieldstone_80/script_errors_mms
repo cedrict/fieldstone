@@ -1,0 +1,11 @@
+#! /bin/bash
+
+rm -f errors*
+
+for nq in 2 3 4 5 6 ; do
+    for res in {8..64}; do
+        echo $res X $res
+        python3 stone2D.py $res $res 0 $nq | grep errv >> errors_nq$nq
+    done
+done
+
