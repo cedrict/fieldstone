@@ -1,0 +1,34 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set log x
+set key inside left top
+set pointsize .5
+set output 'v.pdf'
+set xlabel 'h'
+
+year=365.25*24*3600
+eta1=1e21
+
+
+set title '{/Symbol h}_1/{/Symbol h}_2=1000'
+
+set ylabel 'v{/Symbol h}_1/{/Symbol d}{/Symbol r}'
+plot[][:]\
+'aspect_q2p1' u (512e3/$1):(abs($5)*eta1/8/year) w lp t 'ASPECT (Q_2xP_{-1})',\
+'aspect_q2q1' u (512e3/$1):(abs($5)*eta1/8/year) w lp t 'ASPECT (Q_2xQ_{1})',\
+'aspect_q1p0' u (512e3/$1):(abs($5)*eta1/8/year) w lp t 'ASPECT (Q_1xP_0)',\
+'q2q1'  u (512e3/$1):(abs($5)*eta1/8/year) w lp t 'Q_2xQ_1 (stone53)',\
+'q1pq1' u (512e3/$1):(abs($5)*eta1/8/year) w lp t 'Q_1^+xQ_1 (stone72)',\
+'q1pp0' u (512e3/$1):(abs($5)*eta1/8/year) w lp t 'Q_1^+xP_0 (stone80)',\
+
+set ylabel 'p/{/Symbol d}{/Symbol r}/g_y/L_b'
+set output 'p.pdf'
+plot[][:-0.0772]\
+'aspect_q2p1' u (512e3/$1):($6/8/10/128e3) w lp t 'ASPECT (Q_2xP_{-1})',\
+'aspect_q2q1' u (512e3/$1):($6/8/10/128e3) w lp t 'ASPECT (Q_2xQ_{1})',\
+'aspect_q1p0' u (512e3/$1):($6/8/10/128e3) w lp t 'ASPECT (Q_1xP_0)',\
+'q2q1' u (512e3/$1):7 w lp t 'Q_2xQ_1 (stone53)',\
+'q1pq1' u (512e3/$1):7 w lp t 'Q_1^+xQ_1 (stone72)',\
+'q1pp0' u (512e3/$1):7 w lp t 'Q_1^+xP_0 (stone80)',\
+
+

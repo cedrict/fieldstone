@@ -1,0 +1,27 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+eta1=1e21
+rho1=3200
+year=365.25*24*3600
+set log x
+set key left
+set pointsize .3
+set xlabel '{/Symbol h}_1/{/Symbol h}_2'
+set ylabel '|v_z| {/Symbol h}_1/{/Symbol d}{/Symbol r}'
+set output 'v.pdf'
+plot[][]\
+'q2q1/my_point_values_4.dat' u (eta1/$2):(-$8*eta1/($3-rho1)/year) w lp lt 1 t 'Q_2xQ_1,16x16',\
+'q2q1/my_point_values_5.dat' u (eta1/$2):(-$8*eta1/($3-rho1)/year) w lp lt 2 t 'Q_2xQ_1,32x32',\
+'q2q1/my_point_values_6.dat' u (eta1/$2):(-$8*eta1/($3-rho1)/year) w lp lt 3 t 'Q_2xQ_1,64x64',\
+'q2q1/my_point_values_7.dat' u (eta1/$2):(-$8*eta1/($3-rho1)/year) w lp lt 4 t 'Q_2xQ_1,128x128',\
+'q2q1/my_point_values_8.dat' u (eta1/$2):(-$8*eta1/($3-rho1)/year) w lp lt 5 t 'Q_2xQ_1,256x256',\
+'q2p1/my_point_values_4.dat' u (eta1/$2):(-$8*eta1/($3-rho1)/year) w lp lt 1 t 'Q_2xP_{-1},16x16',\
+'q2p1/my_point_values_5.dat' u (eta1/$2):(-$8*eta1/($3-rho1)/year) w lp lt 2 t 'Q_2xP_{-1},32x32',\
+'q2p1/my_point_values_6.dat' u (eta1/$2):(-$8*eta1/($3-rho1)/year) w lp lt 3 t 'Q_2xP_{-1},64x64',\
+'q2p1/my_point_values_7.dat' u (eta1/$2):(-$8*eta1/($3-rho1)/year) w lp lt 4 t 'Q_2xP_{-1},128x128',\
+'q2p1/my_point_values_8.dat' u (eta1/$2):(-$8*eta1/($3-rho1)/year) w lp lt 5 t 'Q_2xP_{-1},256x256'
+
+#set output 'p.pdf'
+#plot[][]\
+#'q2q1/my_point_values_4.dat' u (eta1/$2):(-$9/($3-rho1)) w lp lt 1 t 'Q_2xQ_1,16x16',\
+#plot[][4e9:2.5e10]\

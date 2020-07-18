@@ -547,6 +547,37 @@ Taken from \cite{fumt11}}
 \end{center}
 
 
+%.......................................................
+\paragraph{Sinking block results for multiple elements}
+
+The setup is slightly altered: the domain is 512x512km. The block has size $L_b\times L_b=128\times 128$km, and is centered
+on ($L_x/2,3L_y/4$). Free slip on all sides. Pressure is volume normalised. $|g_y|=10$.
+This benchmark is part of ASPECT, and can therefore be run with $Q_2\times Q_1$, $Q_2\times P_{-1}$ and $Q_1\times P_0$ elements (although the solver does not converge for the latter at high resolutions).
+Velocity and pressure are measured in the middle of the block (in the case of the $Q_1^+\times P_0$ element the 
+projected pressure $q$ on the $Q_1$ is used).
+
+As above, the quantity $|v|\eta_1/\delta\rho$velocity is considered, but this time plotted as a function 
+of the resolution for a fixed $\eta_2$ and for various element types. The quantity $p/\delta\rho/L_b$
+is also plotted:
+
+\begin{center}
+\includegraphics[width=7.9cm]{images/benchmark_sinkingblock/eta2_1e18/v.pdf}
+\includegraphics[width=7.9cm]{images/benchmark_sinkingblock/eta2_1e18/p.pdf}\\
+{\captionfont Results for $\rho_1=0$, $\rho_2=\delta\rho=8$, $\eta_1=10^{21}$ and $\eta_2=10^{18}$}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7.9cm]{images/benchmark_sinkingblock/eta2_1e22/v.pdf}
+\includegraphics[width=7.9cm]{images/benchmark_sinkingblock/eta2_1e22/p.pdf}\\
+{\captionfont Results for $\rho_1=0$, $\rho_2=\delta\rho=8$, $\eta_1=10^{21}$ and $\eta_2=10^{22}$}
+\end{center}
+
+Results obtained with ASPECT with $\rho_1=3200$ and $\rho_2=\rho_1+\delta\rho$ are shown here:
+
+\begin{center}
+\includegraphics[width=12cm]{images/benchmark_sinkingblock/aspect/v.pdf}
+\end{center}
+
 
 %......................................................
 \subsubsection{The hot blob problem}\label{sec:hotblob}
