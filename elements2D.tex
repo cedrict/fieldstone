@@ -1605,6 +1605,41 @@ These shape functions are used in \cite{shzh06} and mentioned in John \cite[p.72
 
 
 
+%-----------------------------------------------------------------------------
+\subsubsection{The 2D enriched $Q_1^+\times P_0$ of Fortin} \label{ss:Q1pP02D}
+
+\input{tikz_q1pp02D}
+
+\[
+u^h(r,s,t) = aN_1 + b N_2 + cN_3 +dN_4 + d b_5(r,s) + e b_{6}(r,s)
+\]
+with 
+\[
+b_5^u(r,s) = \frac{1}{2}(1-r)(1-s^2)
+\qquad
+b_6^u(r,s) = \frac{1}{2}(1+r)(1-s^2)
+\]
+and
+\[
+b_5^v(r,s) = \frac{1}{2}(1-r^2)(1-s)
+\qquad
+b_6^v(r,s) = \frac{1}{2}(1-r^2)(1+s)
+\]
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+{N}_1^u(r,s) &=&  N_1(r,s) - \frac{1}{2} b_5^u(r,s)\nn\\
+{N}_2^u(r,s) &=&  N_2(r,s) - \frac{1}{2} b_{6}^u(r,s)\nn\\
+{N}_3^u(r,s) &=&  N_3(r,s) - \frac{1}{2} b_{6}^u(r,s)\nn\\
+{N}_4^u(r,s) &=&  N_4(r,s) - \frac{1}{2} b_5^u(r,s)\nn\\
+{N}_5^u(r,s) &=&  b_5^u(r,s)\nn\\
+{N}_{6}^u(r,s) &=&  b_{6}^u(r,s) \nn
+\end{eqnarray}
+\end{mdframed}
+
+
+
+
 
 
 

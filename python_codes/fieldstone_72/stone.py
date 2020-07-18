@@ -279,7 +279,7 @@ mP=4
 # bench=9 : mms (lami17)
 # bench=10: free surf. crsg12
 
-bench=1
+bench=3
 
 if bench==1 or bench==4 or bench==5 or bench==6 or bench==7 or bench==9:
    Lx=1
@@ -291,7 +291,7 @@ if bench==10:
    Lx=2800e3
    Ly=700e3
 
-bubble=2
+bubble=1
 
 if int(len(sys.argv) == 9):
    nelx=int(sys.argv[1])
@@ -303,8 +303,8 @@ if int(len(sys.argv) == 9):
    nqperdim=int(sys.argv[7])
    beta=float(sys.argv[8])
 else:
-   nelx = 2
-   nely = 2
+   nelx = 16
+   nely = nelx
    visu = 1
    drho = 8
    eta1 = 1e21
@@ -748,6 +748,7 @@ for iel in range(0,nel):
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
 
+
             # construct 3x8 b_mat matrix
             for i in range(0,mV):
                 b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.     ],
@@ -765,6 +766,8 @@ for iel in range(0,nel):
             else:
                for i in range(0,mV):
                    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*rho(xq,yq)*gy
+
+            #print(xq,yq,eta(xq,yq),rho(xq,yq)*gy)
 
             for i in range(0,mP):
                 N_mat[0,i]=NNNP[i]
@@ -895,7 +898,7 @@ print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 if pnormalise:
    print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
 
-#np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 #np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))

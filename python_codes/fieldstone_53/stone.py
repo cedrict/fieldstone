@@ -116,9 +116,9 @@ if int(len(sys.argv) == 8):
    eta2=10.**(float(sys.argv[7]))
 else:
    nelx = 16
-   nely = 16
+   nely = nelx
    visu = 1
-   serendipity=1
+   serendipity=0
    drho = 8
    eta1 = 1e21
    eta2 = 1e22

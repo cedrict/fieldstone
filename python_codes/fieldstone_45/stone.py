@@ -51,7 +51,7 @@ hy=Ly/nely
 nel=2*nelx*nely
 NT=(nelx+1)*(nely+1)
 
-nstep=1001
+nstep=1
 dt=2*np.pi/200
 
 eps=1e-8
@@ -73,7 +73,7 @@ hcapa = 1
 hcond = 0
 rho0 = 1   
 
-theta=0.5 # time discretisation
+theta=1 # time discretisation
 
 xi=0. # controls level of mesh randomness (between 0 and 0.5 max)
 
@@ -137,6 +137,9 @@ for j in range(0, nely):
         icon[1, counter] = i + 1 + (j + 1) * (nelx + 1)
         icon[2, counter] = i + (j + 1) * (nelx + 1)
         counter += 1
+
+print(icon[:,10])
+print(icon[:,11])
 
 print("connectivity: %.3f s" % (time.time() - start))
 
@@ -293,6 +296,10 @@ for istep in range(0,nstep):
                 B_mat[0,k]=dNNNTdx[k]
                 B_mat[1,k]=dNNNTdy[k]
             #end for
+            velq[0,0]=-yq+Ly/2
+            velq[0,1]= xq-Lx/2
+            #print(xq,yq)
+            #print(velq[0,0],velq[0,1])
 
             MM+=N_mat.dot(N_mat.T)*rho0*hcapa*weightq*jcob
 
@@ -303,6 +310,9 @@ for istep in range(0,nstep):
             Ka+=N_mat.dot(velq.dot(B_mat))*rho0*hcapa*weightq*jcob
 
         # end for kq
+
+        #print(Ka)
+        #exit()
 
         a_el=MM+(Ka+Kd)*dt*theta
         b_el=(MM -(Ka+Kd)*dt*(1-theta)).dot(Tvect)
