@@ -5,6 +5,8 @@ from scipy.sparse.linalg.dsolve import linsolve
 import time as time
 import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix
+import solvi 
+import solcx 
 
 #------------------------------------------------------------------------------
 
@@ -21,6 +23,12 @@ def bx(x,y):
     if benchmark==4:
        val= 3*x**2*y**2-y-1
     if benchmark==5:
+       val=0
+    if benchmark==6:
+       val=0
+    if benchmark==7:
+       val=0
+    if benchmark==8:
        val=0
     return val
 
@@ -41,14 +49,41 @@ def by(x,y):
           val=-1.001+1
        else:
           val=-1.+1
+    if benchmark==6:
+       val=0
+    if benchmark==7:
+       val=np.sin(np.pi*y)*np.cos(np.pi*x)
+    if benchmark==8:
+       if abs(x-xc_block)<d_block and abs(y-yc_block)<d_block:
+          val=rho2*gy 
+       else:
+          val=rho1*gy 
     return val
 
 def eta(x,y):
-    if benchmark==5:
+    if benchmark==5: #stokes sphere
        if ((x-0.5)**2+(y-0.5)**2 < 0.123**2):
           val=1#e6
        else:
           val=1
+       return val
+    elif benchmark==6: #solvi
+       if (np.sqrt(x*x+y*y) < 0.2):
+          val=1e3
+       else:
+          val=1.
+       return val
+    if benchmark==7: #solcx
+       if x<0.5:
+          val=1.
+       else:
+          val=1.e6
+       return val
+    if benchmark==8: #sinking block
+       if abs(x-xc_block)<d_block and abs(y-yc_block)<d_block:
+          val=eta2
+       else:
+          val=eta1
        return val
     else: 
        return 1
@@ -57,30 +92,45 @@ def eta(x,y):
 # analytical solution
 
 def velocity_x(x,y):
+    val=0
     if benchmark==1:
        val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
     if benchmark==4:
        val=x+x**2-2*x*y+x**3-3*x*y**2+x**2*y
     if benchmark==5:
        val=0
+    if benchmark==6:
+       val,vi,pi=solvi.solution(x,y) 
+    if benchmark==7:
+       val,vi,pi=solcx.SolCxSolution(x,y) 
     return val
 
 def velocity_y(x,y):
+    val=0
     if benchmark==1:
        val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
     if benchmark==4:
        val= -y-2*x*y+y**2-3*x**2*y+y**3-x*y**2
     if benchmark==5:
        val=0
+    if benchmark==6:
+       ui,val,pi=solvi.solution(x,y) 
+    if benchmark==7:
+       ui,val,pi=solcx.SolCxSolution(x,y) 
     return val
 
 def pressure(x,y):
+    val=0
     if benchmark==1:
        val=x*(1.-x)-1./6.
     if benchmark==4:
        val= x*y+x+y+x**3*y**2-4/3
     if benchmark==5:
        val=0
+    if benchmark==6:
+       ui,vi,val=solvi.solution(x,y) 
+    if benchmark==7:
+       ui,vi,val=solcx.SolCxSolution(x,y) 
     return val
 
 #------------------------------------------------------------------------------
@@ -191,18 +241,56 @@ mP=1
 Lx=1.  # x- extent of the domain 
 Ly=1.  # y- extent of the domain 
 
+
+eta_ref=1.
+
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 5):
+if int(len(sys.argv) == 8):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
    nqperdim=int(sys.argv[4])
+   drho=float(sys.argv[5])
+   eta1=10.**(float(sys.argv[6]))
+   eta2=10.**(float(sys.argv[7]))
 else:
-   nelx = 32
+   nelx = 128 
    nely = nelx
    visu = 1
    nqperdim = 2
-    
+   drho=8
+   eta1=1e21
+   eta2=1e22
+
+#1: Donea & Huerta "dh"
+#2: aquarium
+#3: ldc
+#4: Dohrmann & Bochev "db2d" 
+#5: stokes sphere
+#6: solvi
+#7: solcx
+#8: sinking block
+
+benchmark=8
+
+if benchmark==8:
+   Lx=512e3
+   Ly=512e3
+   gy=-10
+   xc_block=256e3
+   yc_block=384e3
+   d_block=64e3
+   eta_ref=1e21      # scaling of G blocks
+   year=365.25*24*3600
+   cm=0.01
+else:
+   year=1.   
+   cm=1
+
+
+rho1=0#3200
+rho2=rho1+drho
+ 
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
 
@@ -262,13 +350,6 @@ if nqperdim==6:
 
 pnormalise=True
 
-#1: Donea & Huerta "dh"
-#2: aquarium
-#3: ldc
-#4: Dohrmann & Bochev "db2d" 
-#5: stokes sphere
-
-benchmark=4
 
 #################################################################
 #################################################################
@@ -383,33 +464,25 @@ start = time.time()
 bc_fix=np.zeros((mV*ndofV,nel),dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros((mV*ndofV,nel),dtype=np.float64)  # boundary condition, value
 
-if benchmark==5:
+if benchmark==5 or benchmark==8: #free slip
    for iel in range(0,nel):
        inode0=iconu[0,iel] 
        inode2=iconu[2,iel]
        if yV[inode0]<eps: #element is on face y=0
-          #bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= velocity_x(xV[iconu[0,iel]],yV[iconu[0,iel]])
           bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= velocity_y(xV[iconv[0,iel]],yV[iconv[0,iel]])
-          #bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= velocity_x(xV[iconu[1,iel]],yV[iconu[1,iel]])
           bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= velocity_y(xV[iconv[1,iel]],yV[iconv[1,iel]])
           bc_fix[        9,iel]=True ; bc_val[        9,iel]= velocity_y(xV[iconv[4,iel]],yV[iconv[4,iel]])
        if yV[inode2]>Ly-eps: #element is on face y=Ly
-          #bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= velocity_x(xV[iconu[2,iel]],yV[iconu[2,iel]])
           bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= velocity_y(xV[iconv[2,iel]],yV[iconv[2,iel]])
-          #bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= velocity_x(xV[iconu[3,iel]],yV[iconu[3,iel]])
           bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= velocity_y(xV[iconv[3,iel]],yV[iconv[3,iel]])
           bc_fix[       11,iel]=True ; bc_val[       11,iel]= velocity_y(xV[iconv[5,iel]],yV[iconv[5,iel]])
        if xV[inode0]<eps: #element is on face x=0
           bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= velocity_x(xV[iconu[0,iel]],yV[iconu[0,iel]])
-          #bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= velocity_y(xV[iconv[0,iel]],yV[iconv[0,iel]])
           bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= velocity_x(xV[iconu[3,iel]],yV[iconu[3,iel]])
-          #bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= velocity_y(xV[iconv[3,iel]],yV[iconv[3,iel]])
           bc_fix[        8,iel]=True ; bc_val[        8,iel]= velocity_x(xV[iconu[4,iel]],yV[iconu[4,iel]])
        if xV[inode2]>Lx-eps: #element is on face x=Lx
           bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= velocity_x(xV[iconu[1,iel]],yV[iconu[1,iel]])
-          #bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= velocity_y(xV[iconv[1,iel]],yV[iconv[1,iel]])
           bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= velocity_x(xV[iconu[2,iel]],yV[iconu[2,iel]])
-          #bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= velocity_y(xV[iconv[2,iel]],yV[iconv[2,iel]])
           bc_fix[       10,iel]=True ; bc_val[       10,iel]= velocity_x(xV[iconu[5,iel]],yV[iconu[5,iel]])
    #end for
 else:
@@ -594,7 +667,6 @@ for iel in range(0, nel):
                     xq+=N[k]*xV[iconu[k,iel]]
                     yq+=N[k]*yV[iconu[k,iel]]
                 #end for
-                #print(xq,yq)
 
                 # compute dNdx, dNdy
                 for k in range(0,mV):
@@ -617,6 +689,7 @@ for iel in range(0, nel):
                     f_el[ndofV*i+0]+=NNNVu[i]*jcob*weightq*bx(xq,yq)
                     f_el[ndofV*i+1]+=NNNVv[i]*jcob*weightq*by(xq,yq)
                 #end for
+                #print(xq,yq,eta(xq,yq),by(xq,yq))
 
                 for i in range(0,mP):
                     N_mat[0,i]=NNNP[i]
@@ -646,6 +719,9 @@ for iel in range(0, nel):
            G_el[ikk,0]=0
         #end if
     #end for
+
+    G_el*=eta_ref/Ly
+    h_el*=eta_ref/Ly
 
     # assemble matrix K_mat and right hand side rhs
 
@@ -736,21 +812,59 @@ u[nnx*nny:nnx*nny+nnx*nely]=sol[nnx*nny*ndofV:nnx*nny*ndofV+nnx*nely]
 
 v[nnx*nny+nnx*nely:nnx*nny+nnx*nely+nny*nelx]= sol[nnx*nny*ndofV+nnx*nely:nnx*nny*ndofV+nnx*nely+nny*nelx]
 
-p=sol[NfemV:Nfem]
+p=sol[NfemV:Nfem]*(eta_ref/Ly)
 
 print("     -> u (m,M) %6f %6f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %6f %6f " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %6f %6f " %(np.min(p),np.max(p)))
 
 if pnormalise:
-   print("     -> Lagrange multiplier: %.4es" % sol[Nfem])
+   print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
 
-#np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
-np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# x,y,p')
+print("stats: ",nel,np.min(u),np.max(u),np.min(v),np.max(v),np.min(p),np.max(p))
 
-np.savetxt('pressure_top.ascii',np.array([xc[nel-nelx:nel],yc[nel-nelx:nel],p[nel-nelx:nel]]).T,header='# x,y,p')
+#np.savetxt('velocity.ascii',np.array([xV[0:nnx*nny],yV[0:nnx*nny],u[0:nnx*nny],v[0:nnx*nny]]).T,header='# x,y,u,v')
+#np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# x,y,p')
+
+#np.savetxt('pressure_top.ascii',np.array([xc[nel-nelx:nel],yc[nel-nelx:nel],p[nel-nelx:nel]]).T,header='# x,y,p')
 
 print("transfer solution: %.3f s" % (time.time() - start))
+
+#####################################################################
+# project p onto Q1 mesh 
+#####################################################################
+
+q = np.zeros(nnx*nny,dtype=np.float64)  # x coordinates
+c = np.zeros(nnx*nny,dtype=np.float64)  # x coordinates
+
+for iel in range(0,nel):
+    q[iconu[0,iel]]+=p[iel]
+    q[iconu[1,iel]]+=p[iel]
+    q[iconu[2,iel]]+=p[iel]
+    q[iconu[3,iel]]+=p[iel]
+    c[iconu[0,iel]]+=1
+    c[iconu[1,iel]]+=1
+    c[iconu[2,iel]]+=1
+    c[iconu[3,iel]]+=1
+
+q[:]/=c[:]
+
+
+#####################################################################
+# measure vel at center of block
+#####################################################################
+
+if benchmark==8:
+   for i in range(0,nnx*nny):
+       if abs(xV[i]-xc_block)<1 and abs(yV[i]-yc_block)<1:
+          print('vblock=',eta1/eta2,np.abs(v[i])*eta1/drho,u[i]*year,v[i]*year,nelx)
+          print('pblock=',eta1/eta2,q[i]/drho/np.abs(gy)/128e3,q[i],nelx)
+
+   pline_file=open('pline.ascii',"w")
+   for i in range(0,nnx*nny):
+       if abs(xV[i]-Lx/2)<Lx/10000:
+          pline_file.write("%10e %10e \n" %(yV[i],q[i]))
+   pline_file.close()
 
 #################################################################
 # compute error in L2 norm
@@ -938,14 +1052,18 @@ if visu==1:
    #--
    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
    for iel in range (0,nel):
-       vtufile.write("%f\n" % p[iel])
+       vtufile.write("%e\n" % p[iel])
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
    for iel in range (0,nel):
-       vtufile.write("%f\n" % (pressure(xc[iel],yc[iel])))
+       vtufile.write("%e\n" % (pressure(xc[iel],yc[iel])))
    vtufile.write("</DataArray>\n")
-
+   #--
+   vtufile.write("<DataArray type='Float32' Name='p (error)' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % (p[iel]-pressure(xc[iel],yc[iel])))
+   vtufile.write("</DataArray>\n")
 
    #--
    vtufile.write("</CellData>\n")
@@ -957,14 +1075,23 @@ if visu==1:
        vtufile.write("%e %e %e \n" %(bx(xV[i],yV[i]),by(xV[i],yV[i]),0))
    vtufile.write("</DataArray>\n")
    #--
-
-
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
    for i in range(0,NV):
-       vtufile.write("%e %e %e \n" %(u[i],v[i],0))
+       vtufile.write("%e  \n" %(eta(xV[i],yV[i])))
    vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity error' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
+   for i in range(0,nnx*nny):
+       vtufile.write("%e  \n" %(q[i]))
+   vtufile.write("</DataArray>\n")
+
+
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%e %e %e \n" %(u[i]/cm*year,v[i]/cm*year,0))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (error)' Format='ascii'> \n")
    for i in range(0,NV):
        vtufile.write("%e %e %e \n" %(u[i]-velocity_x(xV[i],yV[i]),v[i]-velocity_y(xV[i],yV[i])   ,0))
    vtufile.write("</DataArray>\n")

@@ -1,0 +1,74 @@
+set term pdf enhanced font "Times,11pt"
+set log x
+set xlabel '{/Symbol h}_1/{/Symbol h}_2'
+set ylabel '|v_b| {/Symbol h}_1/({/Symbol r}_2-{/Symbol r}_1)'
+set key bottom 
+
+eta1=1e21
+year=365.25*3600*24
+rho1=3200
+
+#set key outside
+set output 'results_v.pdf'
+plot[:][]\
+'results_v_8_16' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 16^2',\
+'results_v_8_32' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 32^2',\
+'results_v_8_48' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 48^2',\
+'results_v_8_64' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 64^2',\
+'results_v_8_80' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 80^2',\
+'../../../../images/benchmark_sinkingblock/aspect/q2q1/my_point_values_8.dat' u (eta1/$2):(-$8*eta1/($3-rho1)/year) w l dashtype 2 lt -1  t 'Q_2xQ_1,256x256',\
+'../../../../images/benchmark_sinkingblock/aspect/q2p1/my_point_values_8.dat' u (eta1/$2):(-$8*eta1/($3-rho1)/year) w l dashtype 3 lt -1  t 'Q_2xP_{-1},256x256',\
+
+set xlabel 'p'
+unset title
+set ylabel 'y'
+set pointsize .2
+unset log x
+set output 'pline.pdf'
+plot[-5e6:2e6][0:512e3]\
+'pline16.ascii'  u 2:1 w p t '16^2',\
+'pline32.ascii'  u 2:1 w p t '32^2',\
+'pline48.ascii'  u 2:1 w p t '48^2',\
+'pline64.ascii'  u 2:1 w p t '64^2',\
+'pline80.ascii'  u 2:1 w p t '80^2',\
+'pline96.ascii'  u 2:1 w p t '96^2',\
+'pline112.ascii' u 2:1 w p t '112^2',\
+'pline128.ascii' u 2:1 w lp t '128^2',\
+384e3-64e3 lt -1 dashtype 2 lw .5 notitle,\
+384e3+64e3 lt -1 dashtype 2 lw .5 notitle
+ 
+
+
+
+#'results_v_16_16' u 2:3 w lp ps .3 t 'd{/Symbol r}=16, 16^2',\
+#'results_v_16_32' u 2:3 w lp ps .3 t 'd{/Symbol r}=16, 32^2',\
+#'results_v_16_48' u 2:3 w lp ps .3 t 'd{/Symbol r}=16, 48^2',\
+#'results_v_16_64' u 2:3 w lp ps .3 t 'd{/Symbol r}=16, 64^2',\
+#'results_v_32_16' u 2:3 w lp ps .3 t 'd{/Symbol r}=32, 16^2',\
+#'results_v_32_32' u 2:3 w lp ps .3 t 'd{/Symbol r}=32, 32^2',\
+#'results_v_32_48' u 2:3 w lp ps .3 t 'd{/Symbol r}=32, 48^2',\
+#'results_v_32_64' u 2:3 w lp ps .3 t 'd{/Symbol r}=32, 64^2',\
+
+
+#set ylabel 'p/{/Symbol d}{/Symbol r}gL_b'
+#set output 'results_p.pdf'
+#plot[][]\
+#'results_p_8_16' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 16^2',\
+#'results_p_8_32' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 32^2',\
+#'results_p_8_48' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 48^2',\
+#'results_p_8_64' u 2:3 w lp ps .3 t 'd{/Symbol r}=8, 64^2',\
+#'../../../../fieldstone_53/results/full/results_p_8_64' u 2:3 w p lt -1 pt 5 ps .3 t 'Q_2xQ_1, d{/Symbol r}=8, 64^2',\
+
+#set key outside
+#unset log xy
+#set xlabel 'p'
+#set ylabel 'y'
+#set pointsize .125
+#set output 'plines.pdf'
+#plot[][0:512e3]\
+#'plines/pline32.ascii' u 2:1 w lp t '32x32',\
+#'plines/pline48.ascii' u 2:1 w lp t '48x48',\
+#'plines/pline64.ascii' u 2:1 w lp t '64x64',\
+#'plines/pline80.ascii' u 2:1 w lp t '80x80',\
+#'plines/pline96.ascii' u 2:1 w lp t '96x96',\
+#256e3 lt -1 dashtype 4 notitle

@@ -1,0 +1,76 @@
+set term pdf enhanced font "Times,11pt"
+set output 'errors.pdf'
+set key outside
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+set pointsize .23 
+plot[0.01:][]\
+'errors_nq2' u (1./sqrt($3)):6 w lp lw .5 lt 1 t 'velocity (nq=2)',\
+'errors_nq3' u (1./sqrt($3)):6 w lp lw .5 lt 2 t 'velocity (nq=3)',\
+'errors_nq4' u (1./sqrt($3)):6 w lp lw .5 lt 3 t 'velocity (nq=4)',\
+'errors_nq5' u (1./sqrt($3)):6 w lp lw .5 lt 4 t 'velocity (nq=5)',\
+'errors_nq6' u (1./sqrt($3)):6 w lp lw .5 lt 5 t 'velocity (nq=6)',\
+'errors_nq2' u (1./sqrt($3)):9 w lp lw .5 lt 1 t 'pressure (nq=2)',\
+'errors_nq3' u (1./sqrt($3)):9 w lp lw .5 lt 2 t 'pressure (nq=3)',\
+'errors_nq4' u (1./sqrt($3)):9 w lp lw .5 lt 3 t 'pressure (nq=4)',\
+'errors_nq5' u (1./sqrt($3)):9 w lp lw .5 lt 4 t 'pressure (nq=5)',\
+'errors_nq6' u (1./sqrt($3)):9 w lp lw .5 lt 5 t 'pressure (nq=6)',\
+x/5. w l lt -1 dashtype 2 t 'x^1',\
+5*x**0.5 w l lt -1 dashtype 3 t 'x^{1/2}'
+
+unset log y
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
+plot[0.01:][]\
+'errors_nq2' u (1./sqrt($3)):12 w lp lw .5 lt 1 t 'nq=2',\
+'errors_nq3' u (1./sqrt($3)):12 w lp lw .5 lt 2 t 'nq=3',\
+'errors_nq4' u (1./sqrt($3)):12 w lp lw .5 lt 3 t 'nq=4',\
+'errors_nq5' u (1./sqrt($3)):12 w lp lw .5 lt 4 t 'nq=5',\
+'errors_nq6' u (1./sqrt($3)):12 w lp lw .5 lt 5 t 'nq=6',\
+
+set output 'stats_u.pdf'
+plot[][-0.2:1.2]\
+'stats_nq2' u (1./sqrt($2)):3 w lp lt 1 t 'nq=2',\
+'stats_nq2' u (1./sqrt($2)):4 w lp lt 1 notitle,\
+'stats_nq3' u (1./sqrt($2)):3 w lp lt 2 t 'nq=3',\
+'stats_nq3' u (1./sqrt($2)):4 w lp lt 2 notitle,\
+'stats_nq4' u (1./sqrt($2)):3 w lp lt 3 t 'nq=4',\
+'stats_nq4' u (1./sqrt($2)):4 w lp lt 3 notitle,\
+'stats_nq5' u (1./sqrt($2)):3 w lp lt 4 t 'nq=5',\
+'stats_nq5' u (1./sqrt($2)):4 w lp lt 4 notitle,\
+'stats_nq6' u (1./sqrt($2)):3 w lp lt 5 t 'nq=6',\
+'stats_nq6' u (1./sqrt($2)):4 w lp lt 5 notitle,\
+
+set output 'stats_v.pdf'
+plot[][-1.2:0.2]\
+'stats_nq2' u (1./sqrt($2)):5 w lp lt 1 lw 0.5 t 'nq=2',\
+'stats_nq2' u (1./sqrt($2)):6 w lp lt 1 lw 0.5 notitle,\
+'stats_nq3' u (1./sqrt($2)):5 w lp lt 2 t 'nq=3',\
+'stats_nq3' u (1./sqrt($2)):6 w lp lt 2 notitle,\
+'stats_nq4' u (1./sqrt($2)):5 w lp lt 3 t 'nq=4',\
+'stats_nq4' u (1./sqrt($2)):6 w lp lt 3 notitle,\
+'stats_nq5' u (1./sqrt($2)):5 w lp lt 4 t 'nq=5',\
+'stats_nq5' u (1./sqrt($2)):6 w lp lt 4 notitle,\
+'stats_nq6' u (1./sqrt($2)):5 w lp lt 5 t 'nq=6',\
+'stats_nq6' u (1./sqrt($2)):6 w lp lt 5 notitle,\
+
+set ylabel 'pressure min/max'
+set output 'stats_p.pdf'
+plot[0.01:][-40:40]\
+'stats_nq2' u (1./sqrt($2)):7 w lp lw .5 lt 1 t 'nq=2',\
+'stats_nq2' u (1./sqrt($2)):8 w lp lw .5 lt 1 notitle,\
+'stats_nq3' u (1./sqrt($2)):7 w lp lw .5 lt 2 t 'nq=3',\
+'stats_nq3' u (1./sqrt($2)):8 w lp lw .5 lt 2 notitle,\
+'stats_nq4' u (1./sqrt($2)):7 w lp lw .5 lt 3 t 'nq=4',\
+'stats_nq4' u (1./sqrt($2)):8 w lp lw .5 lt 3 notitle,\
+'stats_nq5' u (1./sqrt($2)):7 w lp lw .5 lt 4 t 'nq=5',\
+'stats_nq5' u (1./sqrt($2)):8 w lp lw .5 lt 4 notitle,\
+'stats_nq6' u (1./sqrt($2)):7 w lp lw .5 lt 5 t 'nq=6',\
+'stats_nq6' u (1./sqrt($2)):8 w lp lw .5 lt 5 notitle,\
+
+
+
+
+
+

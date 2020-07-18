@@ -340,11 +340,81 @@ density models.}
 \end{center}
 
 
+%---------------------------------------------------------------
+\subsection*{SolVi}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_80/results/solvi/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_80/results/solvi/vel_th}
+\includegraphics[width=5cm]{python_codes/fieldstone_80/results/solvi/vel_error}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_80/results/solvi/p}
+\includegraphics[width=5cm]{python_codes/fieldstone_80/results/solvi/p_th}
+\includegraphics[width=5cm]{python_codes/fieldstone_80/results/solvi/p_error}\\
+{\captionfont 96x96 elements, nqperdim=5. Left to right: computed field, analytical solution, error between both.
+Top row field is velocity, bottom row field is pressure.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_80/results/solvi/vrms}
+\includegraphics[width=7cm]{python_codes/fieldstone_80/results/solvi/errors}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_80/results/solvi/stats_u}
+\includegraphics[width=5cm]{python_codes/fieldstone_80/results/solvi/stats_v}
+\includegraphics[width=5cm]{python_codes/fieldstone_80/results/solvi/stats_p}\\
+\end{center}
+
+What is surprising is the fact that L2-norm pressure error is best for nq=2 but the min/max values of pressure
+are best for $nq>2$.
 
 
 
+%---------------------------------------------------------------
+\subsection*{SolCx}
 
+See Stone 5 and Section~\ref{sec:geobench}.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_80/results/solcx/vrms}
+\includegraphics[width=7cm]{python_codes/fieldstone_80/results/solcx/errors}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_80/results/solcx/stats_u}
+\includegraphics[width=5cm]{python_codes/fieldstone_80/results/solcx/stats_v}
+\includegraphics[width=5cm]{python_codes/fieldstone_80/results/solcx/stats_p}\\
+\end{center}
+
+
+%---------------------------------------------------------------
+\subsection*{Sinking block}
+
+This experiment is fully described in Section~\ref{sec:sinker}.
+It is run at resolutions such that the boundaries of the elements are aligned with the sides of the block.
+
+\begin{center}
+\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/results_v}
+\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/pline}\\
+{\captionfont Left: normalised velocity as a function of the viscosity ratio. Right: 
+nodal pressure profile on the $x=L_x/2$ line.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/rhog}
+\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/vel}\\
+\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/u}
+\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/v}\\
+\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/p}
+\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/q}
+\end{center}
+The elemental pressure does not showcase any sign of checkerboard and converges to a unique solution. 
+
+
+%---------------------------------------------------------------
+\subsection*{Conclusion}
+
+This element is very much usable: it is accurate for both buoyancy-driven problems and 
+analytical solutions. 
 
 
 
 \todo[inline]{theory and code for non-square elements}
+
+\todo[inline]{Compute nullspace size for macroelement}
