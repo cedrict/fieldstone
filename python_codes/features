@@ -62,6 +62,7 @@ fieldstone_76
 fieldstone_77
 fieldstone_78
 fieldstone_79
+fieldstone_80
  
 ---------------------
 ---disc--------------
@@ -169,6 +170,7 @@ fieldstone_76
 fieldstone_77
 fieldstone_78
 fieldstone_79
+fieldstone_80
  
 ---------------------
 ---3D----------------
@@ -181,6 +183,7 @@ fieldstone_31
 fieldstone_69
 fieldstone_75
 fieldstone_79
+fieldstone_80
  
 ---------------------
 ---P1----------------
@@ -267,6 +270,7 @@ fieldstone_79
 fieldstone_79
 fieldstone_79
 fieldstone_79
+fieldstone_80
  
 ---------------------
 ---Q2----------------
@@ -339,6 +343,7 @@ fieldstone_77
 fieldstone_78
 fieldstone_79
 fieldstone_79
+fieldstone_80
  
 ---------------------
 ---Q2Q1---
@@ -496,6 +501,7 @@ fieldstone_76
 fieldstone_77
 fieldstone_78
 fieldstone_79
+fieldstone_80
  
 ---------------------
 ---energy_equation---
@@ -608,6 +614,7 @@ fieldstone_76
 fieldstone_77
 fieldstone_78
 fieldstone_79
+fieldstone_80
  
 --------------------------
 ---analytical benchmark---
@@ -655,6 +662,7 @@ fieldstone_76
 fieldstone_77
 fieldstone_78
 fieldstone_79
+fieldstone_80
  
 --------------------------
 ---numerical benchmark----
@@ -792,6 +800,7 @@ fieldstone_76
 fieldstone_77
 fieldstone_78
 fieldstone_79
+fieldstone_80
  
 --------------------------
 ---elastic rheology-------
@@ -922,6 +931,7 @@ fieldstone_76
 fieldstone_77
 fieldstone_78
 fieldstone_79
+fieldstone_80
  
 --------------------------
 ---nusselt number---------
@@ -1023,6 +1033,7 @@ fieldstone_76
 fieldstone_77
 fieldstone_78
 fieldstone_79
+fieldstone_80
  
 --------------------------
 ---stream function--------
@@ -1071,5 +1082,7 @@ fieldstone_79
 fieldstone_15
 fieldstone_16
 fieldstone_39
+fieldstone_59
+fieldstone_61
 fieldstone_79
  

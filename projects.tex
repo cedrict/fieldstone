@@ -1,54 +1,78 @@
-{\large Write About:}
 
-\begin{itemize}
-\item harminc spectrum , see \cite{ribr99}
-\item write about impose bc on el matrix
-\item write about stream functions 
-\item write section in features about thermo mechanical simulations and how/why we solve vp, then T.
-\item write Scott about matching compressible2 setup with his paper
-\item write about vorticity-velocity method: \cite{gats91,gust93,dehu95,ergq99,amct04,spez87}
-\item write/draw the whole FEM process for a 4x3 grid for compgeo
-\item write about flexural isostasy \cite{maie12}, bottom Sopale
-\item write about splines as shape functions \cite{chri92}. second or third order shape functions , using extra nodes instead of using more nodes per element. Smaller matrix than Q2 or Q3 but: spline coeffs on nodes are no more unknowns. Plus bc are complicated. Does it work well with visc contrasts ?
-\end{itemize}
-
-
-\begin{itemize}
-%..............................
-\item Bsc thesis
+%----------------------------------
+\subsection{BSc thesis topics}
 \begin{itemize} 
 \item Darcy flow. redo WAFLE (see http://cedricthieulot.net/wafle.html)
 \item chunk grid
+\item compute gravity based on tetrahedra
 \end{itemize}
-%..............................
-\item MSc guided research/thesis
+
+%----------------------------------
+\subsection{GR thesis topics}
 \begin{itemize} 
+\item create stone for layeredflow 
+\end{itemize}
+
+%----------------------------------
+\subsection{MSc thesis topics}
+\begin{itemize} 
+\item implement Newton solver in a stone for power-law rheologies. Use existing fortran code. Test it thoroughly.
+\item write surface processes code
 \item surface tension see \cite{reddybook2}p28-29 - see ibuprofem 
 \item elasticity with markers
 \item navier-stokes ? (LUKAS) use dohu matlab code
 \item pure shear deformation of inclusions \cite{trla00}
 \item redo Buck and Sokoutis benchmark for continental convergence \cite{buso94}
 \item redo topo and geoid calculations a la \cite{king09}
-\item redo Travis study \cite{trab90} which is close to Blankenbach \cite{blbc89}. Note that \cite{maie12} looks at kinetic energy for \cite{trab90} 
-\item propagator matrix ? what is it ? \cite{ribe18} \mscthesis \index{general}{MSc Thesis}  
+\item propagator matrix ? what is it ? \cite{ribe18} 
 \Literature \cite{haoc78,haoc81,riha84,zhon96,como97,mohc98,zhzu00,lezh08,leha08,mofm07,mibb09,fope91,lizh13,bugo94} 
-\item redo early compressional orogen study by Beaumont \cite{bequ94}
-\item redo erosion solutions by \cite{cull60} \mscthesis \index{general}{MSc Thesis} 
-\item redo extension 3D Allken papers + \cite{poay84,katl95} 
+\item redo erosion solutions by \cite{cull60} 
 \item redo convection at high Ra 2D \cite{scan85}
 \item redo very early FE paper 1971 \cite{stbe71}
 \item redo early 3D subd \cite{zhgu96}
 \item redo improved method of Nusselt number calculation \cite{hohr87}
-\item create stone for layeredflow 
 \item redo magma chamber studies \cite{cuwi14,gehn18}
 \end{itemize}
-%..............................
-\item Miscellaneous /to do
+
+with ASPECT:
+
+\begin{itemize}
+\item redo early compressional orogen study by Beaumont \cite{bequ94}
+\item redo extension 3D Allken papers + \cite{poay84,katl95} 
+\item redo Travis study \cite{trab90} which is close to Blankenbach \cite{blbc89}. Note that \cite{maie12} looks at kinetic energy for \cite{trab90} 
+\end{itemize}
+
+
+
+
+%-------------------------------
+\subsection{Write about}
+
+\begin{itemize}
+\item harmonic spectrum , see \cite{ribr99}
+\item write about impose bc on el matrix
+\item write about stream functions 
+\item write section in features about thermo mechanical simulations and how/why we solve vp, then T.
+\item write Scott about matching compressible2 setup with his paper
+\item write about vorticity-velocity method: \cite{gats91,gust93,dehu95,ergq99,amct04,spez87}
+\item write about flexural isostasy \cite{maie12}, bottom Sopale
+\item write about splines as shape functions \cite{chri92}. second or third order shape functions , using extra nodes instead of using more nodes per element. Smaller matrix than Q2 or Q3 but: spline coeffs on nodes are no more unknowns. Plus bc are complicated. Does it work well with visc contrasts ?
+\item write about jacobian tensor and norm for Q1 rectangles. and more ?
+\end{itemize}
+
+
+
+%-------------------------------
+\subsection{Open questions}
+
+what does it mean to have a negative pressure ? should we threshold it when computing yield strength ? 
+
+
+
 \begin{itemize} 
 \item free-slip bc on annulus and sphere . See for example p540 Gresho and Sani book. find book \cite{deab72}.
 also check \cite{ensg82} !!
 \item constraints \cite{absh79}
-\item formatting of code style
 \item Finish nonlinear cavity case5.
 \item in the context of mesh generation on sphere cite \cite{moma19}
 \item illustrate early boundary fitted static meshes with \cite{thar85}
@@ -58,9 +82,9 @@ also check \cite{ensg82} !!
 \item redo/explore dyn topo bench of \cite{bore19}
 \end{itemize}
 
+\begin{itemize} 
 \item Indentor/punch with stress b.c. ?
 \item read in crust 1.0 in 2D on chunk
-\item compute gravity based on tetrahedra
 \item NS a la http://ww2.lacan.upc.edu/huerta/exercises/Incompressible/Incompressible\_Ex2.htm
 \item including phase changes (w. R. Myhill)
 \item GEO1442 indenter setup in plane ?
@@ -76,7 +100,7 @@ also check \cite{ensg82} !!
 \item check the BASIL code by Houseman et al \url{http://homepages.see.leeds.ac.uk/~eargah/basil/}
 on which the ELLE code is based \url{http://elle.ws/} 
 \item try Anderson acceleration for Uzawa \cite{hoow17} with m=1
-\item $Q_1^+ \times P_0$ Look at fort81 , rota87b and vadv03
+\item $Q_1^+ \times P_0$ Look at fort81 , rota87b and vadv03 , begt92
 \item check \cite{bufm19} for RT0 element use
 \item deformation around rigid particles \cite{ilma93}
 \item mesh containing both quadrilaterals and triangles \cite{anbr80}
@@ -84,29 +108,15 @@ on which the ELLE code is based \url{http://elle.ws/}
 \item implementation of fault in FEM codes \cite{zhgu94,zhgu95}
 \item van keken instantane MINI elt
 \item check $Q_2 \times Q_{-1}$ element, \cite{grsa} p 697. pressure basis function based at the four 2x2 gauss points.
-\item look at condition number of $\K$ block for Q1P0 and Q2Q1 as a function of resolution. Insert results in section about why q1p0 should not be used. 
-
-
-
 \end{itemize}
 
- <Cells>
-      <DataArray type=”Int32” Name=”connectivity” .../>
-      <DataArray type=”Int32” Name=”offsets” .../>
-      <DataArray type=”UInt8” Name=”types” .../>
-    </Cells>
 
 
-open questions:
-what does it mean to have a negative pressure ? should we threshold it when computing yield strength ? 
+<Cells>
+<DataArray type=”Int32” Name=”connectivity” .../>
+<DataArray type=”Int32” Name=”offsets” .../>
+<DataArray type=”UInt8” Name=”types” .../>
+</Cells>
 
-
-velocity-based
-
-displacement-based stones
-
-stream function stones 
-
-other stones
 
 
