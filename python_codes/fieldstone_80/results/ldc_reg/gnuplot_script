@@ -1,0 +1,12 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set xlabel 'x'
+set ylabel 'p'
+set pointsize 0.2
+set output 'p_top.pdf'
+set key bottom 
+plot[0:1][]\
+'p_top32.ascii' w lp t '32^2',\
+'p_top64.ascii' w lp t '64^2',\
+'p_top96.ascii' w lp t '96^2',\
+'p_top128.ascii' w lp t '128^2'

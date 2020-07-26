@@ -298,6 +298,24 @@ The pressure field does not showcase any checkerboard mode.
 \includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc/vrms}
 \end{center}
 
+%---------------------------------------------------------------
+\subsection*{The regularised lid driven cavity}
+
+The velocity at the top is $u(x,y)=16x^2(1-x)^2$. 
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc_reg/vel}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc_reg/p}\\
+{\captionfont Resolution 96x96}
+\end{center}
+
+The pressure field converges to a unique solution and no visible checkerboard signal.
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_80/results/ldc_reg/p_top.pdf}\\
+{\captionfont Elemental pressure at the top of the domain.}
+\end{center}
+
+
 
 %---------------------------------------------------------------
 \subsection*{Dohrmann \& Bochev manufactured solution}
@@ -402,7 +420,8 @@ nodal pressure profile on the $x=L_x/2$ line.}
 \includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/u}
 \includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/v}\\
 \includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/p}
-\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/q}
+\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/q}\\
+{\captionfont Resolution 128x128}
 \end{center}
 The elemental pressure does not showcase any sign of checkerboard and converges to a unique solution. 
 

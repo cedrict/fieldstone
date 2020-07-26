@@ -30,6 +30,8 @@ def bx(x,y):
        val=0
     if benchmark==8:
        val=0
+    if benchmark==9:
+       val=0
     return val
 
 def by(x,y):
@@ -58,6 +60,8 @@ def by(x,y):
           val=rho2*gy 
        else:
           val=rho1*gy 
+    if benchmark==9:
+       val=0
     return val
 
 def eta(x,y):
@@ -103,6 +107,8 @@ def velocity_x(x,y):
        val,vi,pi=solvi.solution(x,y) 
     if benchmark==7:
        val,vi,pi=solcx.SolCxSolution(x,y) 
+    if benchmark==9 and y>0.5:
+       val=16*x**2*(1-x)**2
     return val
 
 def velocity_y(x,y):
@@ -117,6 +123,8 @@ def velocity_y(x,y):
        ui,val,pi=solvi.solution(x,y) 
     if benchmark==7:
        ui,val,pi=solcx.SolCxSolution(x,y) 
+    if benchmark==9:
+       val=0
     return val
 
 def pressure(x,y):
@@ -254,7 +262,7 @@ if int(len(sys.argv) == 8):
    eta1=10.**(float(sys.argv[6]))
    eta2=10.**(float(sys.argv[7]))
 else:
-   nelx = 128 
+   nelx = 96
    nely = nelx
    visu = 1
    nqperdim = 2
@@ -270,8 +278,9 @@ else:
 #6: solvi
 #7: solcx
 #8: sinking block
+#9: ldc regularised
 
-benchmark=8
+benchmark=9
 
 if benchmark==8:
    Lx=512e3
@@ -286,7 +295,6 @@ if benchmark==8:
 else:
    year=1.   
    cm=1
-
 
 rho1=0#3200
 rho2=rho1+drho
@@ -865,6 +873,9 @@ if benchmark==8:
        if abs(xV[i]-Lx/2)<Lx/10000:
           pline_file.write("%10e %10e \n" %(yV[i],q[i]))
    pline_file.close()
+
+if benchmark==9:
+   np.savetxt('p_top.ascii',np.array([xc[nel-nelx:nel],p[nel-nelx:nel]]).T,header='# x,p')
 
 #################################################################
 # compute error in L2 norm

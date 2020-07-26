@@ -4,6 +4,6 @@ rm -f errors
 
 for res in {8..80}; do
     echo $res X $res
-    python3 stone2D.py $res $res 0 | grep errv >> errors
+    python3 stone.py $res $res 0 | grep errv >> errors
 done
 
