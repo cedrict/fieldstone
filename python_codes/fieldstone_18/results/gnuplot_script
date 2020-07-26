@@ -5,7 +5,9 @@ set log xy
 set xlabel 'h'
 set ylabel 'error'
 plot[][]\
-'errors' u (1./sqrt($3)):6 w lp ps .4 t 'velocity',\
-'errors' u (1./sqrt($3)):9 w lp ps .4 t 'pressure',\
-x**3/50. w l dashtype 1 lt -1 t 'x^3',\
-x**2/10. w l dashtype 2 lt -1 t 'x^2'
+'errors_pnorm' u (1./sqrt($3)):6 w lp ps .4 t 'vel (norm.)',\
+'errors_pbc'   u (1./sqrt($3)):6 w lp ps .4 t 'vel (b.c.)',\
+'errors_pnorm' u (1./sqrt($3)):9 w lp ps .4 t 'p (norm.)',\
+'errors_pbc'   u (1./sqrt($3)):9 w lp ps .4 t 'p (b.c.)',\
+x**3/50. w l dashtype 2 lt -1 t 'x^3',\
+x**2/10. w l dashtype 3 lt -1 t 'x^2'
