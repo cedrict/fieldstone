@@ -1460,7 +1460,7 @@ for istep in range(0,nstep):
     exx_n = np.zeros(NV,dtype=np.float64)  
     eyy_n = np.zeros(NV,dtype=np.float64)  
     exy_n = np.zeros(NV,dtype=np.float64)  
-    count = np.zeros(NV,dtype=np.int16)  
+    count = np.zeros(NV,dtype=np.int32)  
     q=np.zeros(NV,dtype=np.float64)
     rho_Q2=np.zeros(NV,dtype=np.float64)
     eta_Q2=np.zeros(NV,dtype=np.float64)

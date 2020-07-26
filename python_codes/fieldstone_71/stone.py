@@ -821,7 +821,7 @@ print("reshape solution (%.3fs)" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
-count = np.zeros(nnp,dtype=np.int16)  
+count = np.zeros(nnp,dtype=np.int32)  
 q=np.zeros(nnp,dtype=np.float64)
 Lxx2 = np.zeros(nnp,dtype=np.float64)  
 Lxy2 = np.zeros(nnp,dtype=np.float64)  

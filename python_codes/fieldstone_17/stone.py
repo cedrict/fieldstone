@@ -325,7 +325,7 @@ print("grid points setup: %.3f s" % (time.time() - start))
 ######################################################################
 start = time.time()
 
-iconV=np.zeros((mV,nel),dtype=np.int16)
+iconV=np.zeros((mV,nel),dtype=np.int32)
 counter = 0
 for i in range(0,nelx):
     for j in range(0,nely):
@@ -368,7 +368,7 @@ for i in range(0,nelx):
 #    for i in range(0,27):
 #        print ("node",i,iconV[i,iel],"at pos.",x[iconV[i,iel]],y[iconV[i,iel]],z[iconV[i,iel]])
 
-iconP =np.zeros((mP,nel),dtype=np.int16)
+iconP =np.zeros((mP,nel),dtype=np.int32)
 counter = 0
 for i in range(0,nelx):
     for j in range(0,nely):

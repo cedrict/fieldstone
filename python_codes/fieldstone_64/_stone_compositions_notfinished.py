@@ -238,8 +238,8 @@ print("grid points: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-iconV=np.zeros((mV,nel),dtype=np.int16)
-iconP=np.zeros((mP,nel),dtype=np.int16)
+iconV=np.zeros((mV,nel),dtype=np.int32)
+iconP=np.zeros((mP,nel),dtype=np.int32)
 
 counter = 0
 for j in range(0,nely):
@@ -270,7 +270,7 @@ for j in range(0,nely):
 
 #connectivity array for plotting
 nel2=(nnx-1)*(nny-1)
-iconQ1 =np.zeros((4,nel2),dtype=np.int16)
+iconQ1 =np.zeros((4,nel2),dtype=np.int32)
 counter = 0
 for j in range(0,nny-1):
     for i in range(0,nnx-1):
@@ -679,7 +679,7 @@ for istep in range(0,nstep):
     #####################################################################
     start = timing.time()
     
-    count = np.zeros(NV,dtype=np.int16)  
+    count = np.zeros(NV,dtype=np.int32)  
     q=np.zeros(NV,dtype=np.float64)
     Lxx = np.zeros(NV,dtype=np.float64)  
     Lxy = np.zeros(NV,dtype=np.float64)  

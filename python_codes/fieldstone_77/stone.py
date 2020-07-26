@@ -296,7 +296,7 @@ print("setup: grid points: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-iconV =np.zeros((mV,nel),dtype=np.int16)
+iconV =np.zeros((mV,nel),dtype=np.int32)
 counter = 0
 for j in range(0,nely):
     for i in range(0,nelx):
@@ -856,7 +856,7 @@ if visu==1:
 
    xV_2=np.empty(nnp2,dtype=np.float64)  # x coordinates
    yV_2=np.empty(nnp2,dtype=np.float64)  # y coordinates
-   iconV_2 =np.zeros((mV,nel),dtype=np.int16)
+   iconV_2 =np.zeros((mV,nel),dtype=np.int32)
    u_2 = np.zeros(nnp2,dtype=np.float64)  
    v_2 = np.zeros(nnp2,dtype=np.float64)  
    counter_2 = np.zeros(nnp2,dtype=np.float64)  

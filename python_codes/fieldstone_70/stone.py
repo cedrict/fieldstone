@@ -563,7 +563,7 @@ sVnodes=[-1,-1,+1,+1,-1,0,+1,0,0]
 exx_n = np.zeros(NV,dtype=np.float64)  
 eyy_n = np.zeros(NV,dtype=np.float64)  
 exy_n = np.zeros(NV,dtype=np.float64)  
-count = np.zeros(NV,dtype=np.int16)  
+count = np.zeros(NV,dtype=np.int32)  
 q=np.zeros(NV,dtype=np.float64)
 
 for iel in range(0,nel):

@@ -3,7 +3,7 @@ import sys as sys
 import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix, lil_matrix, hstack, vstack
+from scipy.sparse import csr_matrix
 import time as time
 
 #------------------------------------------------------------------------------
@@ -226,8 +226,8 @@ print("setup: grid points: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-iconV=np.zeros((mV,nel),dtype=np.int16)
-iconP=np.zeros((mP,nel),dtype=np.int16)
+iconV=np.zeros((mV,nel),dtype=np.int32)
+iconP=np.zeros((mP,nel),dtype=np.int32)
 
 counter = 0
 for j in range(0,nely):
@@ -729,7 +729,7 @@ for iel in range(0,nel):
 # 9 Q1 elements for visualisation purposes only.
 
 nel2=(nnx-1)*(nny-1)
-iconV2=np.zeros((4,nel2),dtype=np.int16)
+iconV2=np.zeros((4,nel2),dtype=np.int32)
 
 counter = 0
 for j in range(0,nny-1):

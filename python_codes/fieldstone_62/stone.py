@@ -263,7 +263,7 @@ for iel in range(0,nel):
 #################################################################
 # material layout
 #################################################################
-mat= np.zeros(nel,dtype=np.int16)  
+mat= np.zeros(nel,dtype=np.int32)  
 rho=np.zeros(nel,dtype=np.float64) 
 eta=np.zeros(nel,dtype=np.float64) 
 
@@ -694,7 +694,7 @@ for istep in range(0,nstep):
     exx_n = np.zeros(NV,dtype=np.float64)  
     eyy_n = np.zeros(NV,dtype=np.float64)  
     exy_n = np.zeros(NV,dtype=np.float64)  
-    count = np.zeros(NV,dtype=np.int16)  
+    count = np.zeros(NV,dtype=np.int32)  
 
     for iel in range(0,nel):
         for kk in range(0,mV):

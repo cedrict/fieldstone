@@ -295,7 +295,7 @@ for j in range(0,nely):
 
 #connectivity array for plotting
 nel2=(nnx-1)*(nny-1)
-iconQ1 =np.zeros((4,nel2),dtype=np.int16)
+iconQ1 =np.zeros((4,nel2),dtype=np.int32)
 counter = 0
 for j in range(0,nny-1):
     for i in range(0,nnx-1):

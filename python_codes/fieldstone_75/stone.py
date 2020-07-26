@@ -933,7 +933,7 @@ print("compute eta,rho in elt center: %.3f s" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
-count = np.zeros(NV,dtype=np.int16)  
+count = np.zeros(NV,dtype=np.int32)  
 exx = np.zeros(NV,dtype=np.float64)  
 eyy = np.zeros(NV,dtype=np.float64)  
 ezz = np.zeros(NV,dtype=np.float64)  

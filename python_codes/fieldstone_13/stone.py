@@ -172,7 +172,7 @@ if mdistribution==1: # pure random
    nmarker=nel*nmarker_per_element
    swarm_x=np.empty(nmarker,dtype=np.float64)  
    swarm_y=np.empty(nmarker,dtype=np.float64)  
-   swarm_mat=np.empty(nmarker,dtype=np.int16)  
+   swarm_mat=np.empty(nmarker,dtype=np.int32)  
    counter=0
    for iel in range(0,nel):
        x1=x[icon[0,iel]] ; y1=y[icon[0,iel]]
@@ -195,7 +195,7 @@ elif mdistribution==2: # regular
    nmarker=nel*nmarker_per_element
    swarm_x=np.empty(nmarker,dtype=np.float64)  
    swarm_y=np.empty(nmarker,dtype=np.float64)  
-   swarm_mat=np.empty(nmarker,dtype=np.int16)  
+   swarm_mat=np.empty(nmarker,dtype=np.int32)  
    counter=0
    for iel in range(0,nel):
        x1=x[icon[0,iel]] ; y1=y[icon[0,iel]]
@@ -221,7 +221,7 @@ else: # Poisson disc
    avrgdist=np.sqrt(Lx*Ly/nmarker_wish)/1.25
    #print (avrgdist)
    nmarker,swarm_x,swarm_y = jatten.PoissonDisc(kpoisson,avrgdist,Lx,Ly)
-   swarm_mat=np.empty(nmarker,dtype=np.int16)  
+   swarm_mat=np.empty(nmarker,dtype=np.int32)  
    print ('nmarker_wish, nmarker, ratio: %d %d %e ' % (nmarker_wish,nmarker,nmarker/nmarker_wish) )
 
 print("     -> swarm_x (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))

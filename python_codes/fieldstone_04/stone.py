@@ -3,9 +3,8 @@ import sys as sys
 import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix, lil_matrix, hstack, vstack
+from scipy.sparse import csr_matrix
 import time as time
-import matplotlib.pyplot as plt
 
 #------------------------------------------------------------------------------
 
@@ -49,8 +48,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 100
-   nely = 100
+   nelx = 64
+   nely = nelx
    visu = 1
 
 assert (nelx>0.), "nnx should be positive" 
@@ -72,7 +71,7 @@ Nfem=nnp*ndof  # Total number of degrees of freedom
 gx=0.
 gy=0.
 
-ldc=0
+ldc=1
 
 eps=1.e-10
 sqrt3=np.sqrt(3.)
@@ -91,6 +90,8 @@ for j in range(0, nny):
         x[counter]=i*Lx/float(nelx)
         y[counter]=j*Ly/float(nely)
         counter += 1
+    #end for
+#end for
 
 print("setup: grid points: %.3f s" % (time.time() - start))
 
@@ -99,7 +100,7 @@ print("setup: grid points: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-icon =np.zeros((m, nel),dtype=np.int16)
+icon =np.zeros((m, nel),dtype=np.int32)
 counter = 0
 for j in range(0, nely):
     for i in range(0, nelx):
@@ -108,6 +109,8 @@ for j in range(0, nely):
         icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
         icon[3, counter] = i + (j + 1) * (nelx + 1)
         counter += 1
+    #end for
+#end for
 
 print("setup: connectivity: %.3f s" % (time.time() - start))
 
@@ -132,6 +135,7 @@ for i in range(0, nnp):
     if y[i]>(Ly-eps):
        bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = ubc(x[i],y[i],ldc)
        bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = vbc(x[i],y[i])
+#end for
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
@@ -156,8 +160,8 @@ c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64)
 for iel in range(0, nel):
 
     # set 2 arrays to 0 every loop
-    b_el = np.zeros(m * ndof)
-    a_el = np.zeros((m * ndof, m * ndof), dtype=float)
+    b_el = np.zeros(m*ndof)
+    a_el = np.zeros((m*ndof,m*ndof), dtype=np.float64)
 
     # integrate viscous term at 4 quadrature points
     for iq in [-1, 1]:
@@ -181,7 +185,7 @@ for iel in range(0, nel):
             dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
             # calculate jacobian matrix
-            jcb = np.zeros((2, 2),dtype=float)
+            jcb=np.zeros((2,2),dtype=np.float64)
             for k in range(0,m):
                 jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
                 jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
@@ -237,7 +241,7 @@ for iel in range(0, nel):
     dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
     # compute the jacobian
-    jcb=np.zeros((2,2),dtype=float)
+    jcb=np.zeros((2,2),dtype=np.float64)
     for k in range(0, m):
         jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
@@ -361,7 +365,7 @@ for iel in range(0,nel):
     dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
     dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
-    jcb=np.zeros((2,2),dtype=float)
+    jcb=np.zeros((2,2),dtype=np.float64)
     for k in range(0, m):
         jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]

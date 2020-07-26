@@ -567,7 +567,7 @@ for j in range(0,nely):
 # creating a dedicated connectivity array to plot the solution on Q1 space
 
 nel2=(nnx-1)*(nny-1)
-iconQ1 =np.zeros((4,nel2),dtype=np.int16)
+iconQ1 =np.zeros((4,nel2),dtype=np.int32)
 counter = 0
 for j in range(0,nny-1):
     for i in range(0,nnx-1):
@@ -1158,7 +1158,7 @@ for istep in range(0,nstep):
     exx_n = np.zeros(NV,dtype=np.float64)  
     eyy_n = np.zeros(NV,dtype=np.float64)  
     exy_n = np.zeros(NV,dtype=np.float64)  
-    count = np.zeros(NV,dtype=np.int16)  
+    count = np.zeros(NV,dtype=np.int32)  
     qx_n = np.zeros(NV,dtype=np.float64)  
     qy_n = np.zeros(NV,dtype=np.float64)  
     q=np.zeros(NV,dtype=np.float64)

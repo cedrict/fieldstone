@@ -9,3 +9,4 @@ viscous_rheology
 plastic_rheology
 paraview_output
 pressure_scaling
+schur_complement

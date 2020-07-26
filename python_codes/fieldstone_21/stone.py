@@ -661,7 +661,7 @@ print("reshape solution (%.3fs)" % (timing.time() - start))
 # compute strain rate - center to nodes - method 1
 #####################################################################
 
-count = np.zeros(nnp,dtype=np.int16)  
+count = np.zeros(nnp,dtype=np.int32)  
 Lxx1 = np.zeros(nnp,dtype=np.float64)  
 Lxy1 = np.zeros(nnp,dtype=np.float64)  
 Lyx1 = np.zeros(nnp,dtype=np.float64)  
@@ -732,7 +732,7 @@ exy1[:]=0.5*(Lxy1[:]+Lyx1[:])
 #####################################################################
 start = timing.time()
 
-count = np.zeros(nnp,dtype=np.int16)  
+count = np.zeros(nnp,dtype=np.int32)  
 q=np.zeros(nnp,dtype=np.float64)
 Lxx2 = np.zeros(nnp,dtype=np.float64)  
 Lxy2 = np.zeros(nnp,dtype=np.float64)  

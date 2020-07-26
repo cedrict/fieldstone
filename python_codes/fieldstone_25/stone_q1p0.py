@@ -138,7 +138,7 @@ print("setup: grid points: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-icon =np.zeros((mV,nel),dtype=np.int16)
+icon =np.zeros((mV,nel),dtype=np.int32)
 counter = 0
 for j in range(0, nely):
     for i in range(0, nelx):

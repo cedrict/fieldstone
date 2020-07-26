@@ -26,7 +26,7 @@ The integral above becomes:
 where the sum runs over all elements $e$ of area $A_e$.
 This can be rewritten 
 \[
-\LLL^T \cdot \vec{\cal P}=0
+\vec{L} \cdot \vec{\cal P}=0
 \] 
 and it is a constraint on the pressure solution which couples {\it all} pressure dofs. 
 We can associate to it a Lagrange multiplier $\lambda$ so that we must solve the modified Stokes system:
@@ -34,8 +34,8 @@ We can associate to it a Lagrange multiplier $\lambda$ so that we must solve the
 \left(
 \begin{array}{ccc}
 \K & \G & 0\\ 
-\G^T & 0 & \LLL \\
-0 & \LLL^T & 0
+\G^T & 0 & \vec{L}^T \\
+0 & \vec{L} & 0
 \end{array}
 \right)
 \cdot
@@ -88,6 +88,14 @@ add or delete any value to the pressure field without consequence. As such I can
 the pressure at a given node/element is zero. All other computed pressures are then relative to that one. 
 The post-processing step will redistribute a constant value to all pressures (it will shift them up or down)
 so that the normalising condition is respected. 
+
+
+\Literature
+
+\url{https://scicomp.stackexchange.com/questions/27645/pressure-boundary-condition-in-lid-driven-cavity-using-finite-element-method}
+
+\url{
+https://scicomp.stackexchange.com/questions/25134/mixed-finite-element-method-for-the-stokes-system-some-implementation-details}
 
 
 

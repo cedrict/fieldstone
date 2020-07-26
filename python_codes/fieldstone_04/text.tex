@@ -36,10 +36,10 @@ the absence of inertia renders this problem instantaneous so that only one time 
 We avoid the top corner nodes issue altogether by  
 prescribing the horizontal velocity of the lid as follows: 
 \begin{equation}
-u(x)=x^2(1-x)^2.
+u(x)=16x^2(1-x)^2.
 \end{equation}
-In this case the velocity and its first derivative is continuous at the corners. This is the so-called regularised lid-driven cavity problem \cite{piva94}.
-
+In this case the velocity and its first derivative is continuous at the corners. This is the so-called regularised lid-driven cavity problem \cite{piva94}. The factor 16 ensures that $\max\limits_{[0,1]}(u)=1$.
+ 
 %---------------------------------------------------------
 \subsection*{The lid driven cavity problem - regularisation II ({\tt ldc=2})}
 

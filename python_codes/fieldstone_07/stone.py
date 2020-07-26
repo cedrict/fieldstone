@@ -121,7 +121,7 @@ for j in range(0, nny):
 
 print("connectivity")
 
-icon =np.zeros((m, nel),dtype=np.int16)
+icon =np.zeros((m, nel),dtype=np.int32)
 counter = 0
 for j in range(0, nely):
     for i in range(0, nelx):

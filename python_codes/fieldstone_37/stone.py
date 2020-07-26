@@ -300,7 +300,7 @@ print("     -> swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
 # compute population stats
 #################################################################
 
-count=np.zeros(nel,dtype=np.int16)
+count=np.zeros(nel,dtype=np.int32)
 for im in range (0,nmarker):
     ielx=int(swarm_x[im]/Lx*nelx)
     iely=int(swarm_y[im]/Ly*nely)
@@ -316,7 +316,7 @@ countfile.write(" %e %d %d %e %e\n" % (tijd, np.min(count),np.max(count),\
 #################################################################
 # marker paint
 #################################################################
-swarm_mat=np.zeros(nmarker,dtype=np.int16)  
+swarm_mat=np.zeros(nmarker,dtype=np.int32)  
 
 for i in [0,2,4,6,8,10,12,14]:
     dx=Lx/16
@@ -536,7 +536,7 @@ for istep in range (0,nstep):
     # compute population stats
     #############################
 
-    count=np.zeros(nel,dtype=np.int16)
+    count=np.zeros(nel,dtype=np.int32)
     for im in range (0,nmarker):
         if swarm_active[im]:
            ielx=int(swarm_x[im]/Lx*nelx)
