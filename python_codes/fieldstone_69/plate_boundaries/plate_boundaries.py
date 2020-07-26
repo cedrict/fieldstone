@@ -3,13 +3,13 @@ from vtu_tools import *
 
 #------------------------------------------------
 
-np_pb=6048
+#np_pb=6048
+np_pb=5974
 
 radius=6371e3
 
 #------------------------------------------------
-filename='plate_boundaries.txt'
-
+filename='bird2003/pb2002_boundaries_copy.dig'
 
 lon=np.zeros(np_pb,dtype=np.float64)   
 lat=np.zeros(np_pb,dtype=np.float64)    

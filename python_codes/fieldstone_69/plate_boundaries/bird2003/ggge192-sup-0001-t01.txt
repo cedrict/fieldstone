@@ -1,0 +1,61 @@
+Table 1. Plate Identifiers, Areas, and Euler Polesa
+
+
+Identifier	Plate Name	Area, Steradian		Pole Latitude,		Pole Longitude,		Rotation Rate,		Reference
+							deg. N.			deg. E.			deg./Ma
+
+AF		Africa		1.44065			59.160			-73.174			0.9270			DeMets et al. [1994]
+AM		Amur		0.13066			57.645			-83.736			0.9309			Heki et al. [1999]
+AN		Antarctica	1.43268			64.315			-83.984			0.8695			DeMets et al. [1994]
+AP		Altiplano	0.02050			33.639			-81.177			0.9160			Lamb [2000]
+AR		Arabia		0.12082			59.658			-33.193			1.1616			DeMets et al. [1994]
+AS		Aegean Sea	0.00793			74.275			-87.237			0.6497			McClusky et al. [2000]
+AT		Anatolia	0.01418			56.283			8.932			1.6400			McClusky et al. [2000]
+AU		Australia	1.13294			60.080			1.742			1.0744			DeMets et al. [1994]
+BH		Birds Head	0.01295			12.559			87.957			0.3029			this paper
+BR		Balmoral Reef	0.00481			45.900			-111.000		0.2000			this paper
+BS		Banda Sea	0.01715			16.007			122.442			2.1250			Rangin et al. [1999]
+BU		Burma		0.01270			8.894			-75.511			2.6670			Circum-Pacific Map Project [1986]
+CA		Caribbean	0.07304			54.313			-79.431			0.9040			Weber et al. [2001]
+CL		Caroline	0.03765			10.130			-45.570			0.3090			Seno et al. [1993]
+CO		Cocos		0.07223			36.823			-108.629		1.9975			DeMets et al. [1994]
+CR		Conway Reef	0.00356			-12.628			175.127			3.6050			this paper
+EA		Easter		0.00411			28.300			66.400			11.4000			Engeln and Stein [1984]
+EU		Eurasia		1.19630			61.066			-85.819			0.8591			DeMets et al. [1994]
+FT		Futuna		0.00079			-10.158			-178.305		4.8480			this paper
+GP		Galapagos	0.00036			9.399			79.690			5.2750			Lonsdale [1988]
+IN		India		0.30637			60.494			-30.403			1.1034			DeMets et al. [1994]
+JF		Juan de Fuca	0.00632			35.000			26.000			0.5068			Wilson [1988]
+JZ		Juan Fernandez	0.00241			35.910			70.166			22.5200			Anderson-Fontana et al. [1986]
+KE		Kermadec	0.01245			47.521			-3.115			2.8310			this paper
+MA		Mariana		0.01037			43.777			149.205			1.2780			this paper
+MN		Manus		0.00020			-3.037			150.456			51.3000			Martinez and Taylor [1996]
+MO		Maoke		0.00284			59.589			78.880			0.8927			this paper
+MS		Molucca Sea	0.01030			11.103			-56.746			4.0700			Rangin et al. [1999]
+NA		North America	1.36559			48.709			-78.167			0.7486			DeMets et al. [1994]
+NB		North Bismarck	0.00956			-4.000			139.000			0.3300			Tregoning et al. [1998]
+ND		North Andes	0.02394			58.664			-89.003			0.7009			Trenkamp et al. [1996]
+NH		New Hebrides	0.01585			13.000			-12.000			2.7000			this paper
+NI		Niuafo'ou	0.00306			6.868			-168.868		3.2550			Zellmer and Taylor [2001]
+NZ		Nazca		0.39669			55.578			-90.096			1.3599			DeMets et al. [1994]
+OK		Okhotsk		0.07482			55.421			-82.859			0.8450			Cook et al. [1986]
+ON		Okinawa		0.00802			48.351			142.415			2.8530			this paper
+PA		Pacific		2.57685			0.000			0.000			0.0000			(abritrary choice of reference frame)
+PM		Panama		0.00674			54.058			-90.247			0.9069			Kellogg et al. [1995]
+PS		Philippine Sea	0.13409			-1.200			-45.800			1.0000			Seno et al. [1993]; Kato et al. [1998]
+RI		Rivera		0.00249			26.700			-105.200		4.6923			DeMets and Traylen [2000]
+SA		South America	1.03045			54.999			-85.752			0.6365			DeMets et al. [1994]
+SB		South Bismarck	0.00762			10.610			-32.990			8.4400			Tregoning et al. [1999]
+SC		Scotia		0.04190			48.625			-81.454			0.6516			Pelayo and Wiens [1989]
+SL		Shetland	0.00178			63.121			-97.084			0.8558			(hypothetical; see text)
+SO		Somalia		0.47192			58.789			-81.637			0.9783			Chu and Gordon [1999]
+SS		Solomon Sea	0.00317			19.529			135.017			1.4780			this paper
+SU		Sunda		0.21967			55.442			-72.955			1.1030			Rangin et al. [1999]
+SW		Sandwich	0.00454			-19.019			-39.640			1.8400			Pelayo and Wiens [1989]
+TI		Timor		0.00870			19.524			112.175			1.5140			this paper
+TO		Tonga		0.00625			28.807			2.263			9.3000			Zellmer and Taylor [2001]
+WL		Woodlark	0.01116			22.134			132.330			1.5460			Tregoning et al. [1998]
+YA		Yangtze		0.05425			69.067			-97.718			0.9983			Heki et al. [1999]
+
+a All poles are expressed in the Pacific-plate reference frame.  Rotation about each pole is counterclockwise when seen from outside the Earth. All Euler vectors are stated
+with high precision to avoid round-off error in differencing, but accuracy is much less.

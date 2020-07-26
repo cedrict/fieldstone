@@ -1,0 +1,11 @@
+Table 3. Collective Properties of Plate Boundaries by Class
+
+		Class			Total Length, km	Mean Velocity, mm/a	Area production, m2/s
+Continental Convergent Boundary		23,003   (8.8%)			26.2	 	 -0.013616 (-12.6%)
+  Continental Transform Fault		26,132  (10.0%)			24.7		  -0.000599 (-0.5%)
+   Continental Rift Boundary		27,472  (10.5%)			17.6		 +0.011502 (+10.7%)
+    Oceanic Spreading Ridge		67,338  (25.8%)			46.6		 +0.095348 (+88.4%)
+    Oceanic Transform Fault		47,783  (18.3%)			40.5		  +0.001022 (+1.0%)
+  Oceanic Convergent Boundary		17,449   (6.7%)			17.6		  -0.007141 (-6.7%)
+        Subduction Zone			51,310  (19.7%)			62.3		 -0.086516 (-80.1%)
+            Totals			260,487  (100%)			39.6	 	0.10787-0.10787 = 0
