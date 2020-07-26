@@ -1,0 +1,8 @@
+#! /bin/bash
+
+rm -f errors
+
+for res in {19..22}; do
+    echo $res X $res X $res
+    python3 stone.py $res $res $res 0 | grep errv >> errors
+done
