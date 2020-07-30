@@ -9,23 +9,77 @@ from scipy.sparse import lil_matrix
 from scipy.linalg import null_space
 
 #------------------------------------------------------------------------------
+    
+aa=8/27
+bb=10/21
+cc=4/21
+dd=64/63
+ee=8/63
 
-def NNV(rq,sq,tq):
-    N_0=0.125*(1-rq)*(1-sq)*(1-tq) - 
-    N_1=0.125*(1+rq)*(1-sq)*(1-tq) -
-    N_2=0.125*(1+rq)*(1+sq)*(1-tq) -
-    N_3=0.125*(1-rq)*(1+sq)*(1-tq) -
-    N_4=0.125*(1-rq)*(1-sq)*(1+tq) -
-    N_5=0.125*(1+rq)*(1-sq)*(1+tq) -
-    N_6=0.125*(1+rq)*(1+sq)*(1+tq) -
-    N_7=0.125*(1-rq)*(1+sq)*(1+tq) -
-    N_8=(27/32)**3*(1-rq**2)*(1-sq**2)*(1-tq**2)*(1-rq)*(1-sq)*(1-tq)  
-    N_9=(27/32)**3*(1-rq**2)*(1-sq**2)*(1-tq**2)*(1+rq)*(1+sq)*(1+tq)  
+def NNV(r,s,t):
+    b8=(27/32)**3*(1-r**2)*(1-s**2)*(1-t**2)*(1-r)*(1-s)*(1-t)  
+    b9=(27/32)**3*(1-r**2)*(1-s**2)*(1-t**2)*(1+r)*(1+s)*(1+t)  
+
+    N_0=0.125*(1-r)*(1-s)*(1-t) -aa*b8  
+    N_1=0.125*(1+r)*(1-s)*(1-t) -aa*bb*b8-aa*cc*b9
+    N_2=0.125*(1+r)*(1+s)*(1-t) -aa*cc*b8-aa*bb*b9
+    N_3=0.125*(1-r)*(1+s)*(1-t) -aa*bb*b8-aa*cc*b9
+    N_4=0.125*(1-r)*(1-s)*(1+t) -aa*bb*b8-aa*cc*b9
+    N_5=0.125*(1+r)*(1-s)*(1+t) -aa*cc*b8-aa*bb*b9
+    N_6=0.125*(1+r)*(1+s)*(1+t) -aa*b9
+    N_7=0.125*(1-r)*(1+s)*(1+t) -aa*cc*b8-aa*bb*b9
+    N_8= dd*b8-ee*b9
+    N_9=-ee*b8+dd*b9
+ 
     return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8,N_9
 
+def dNNVdr(r,s,t):
+    db8dr=(27/32)**3*(1-s**2)*(1-t**2)*(1-s)*(1-t)*(-1-2*r+3*r**2) 
+    db9dr=(27/32)**3*(1-s**2)*(1-t**2)*(1+s)*(1+t)*( 1-2*r-3*r**2)
 
+    dNdr_0=-0.125*(1-s)*(1-t) -aa*db8dr  
+    dNdr_1=+0.125*(1-s)*(1-t) -aa*bb*db8dr-aa*cc*db9dr
+    dNdr_2=+0.125*(1+s)*(1-t) -aa*cc*db8dr-aa*bb*db9dr
+    dNdr_3=-0.125*(1+s)*(1-t) -aa*bb*db8dr-aa*cc*db9dr
+    dNdr_4=-0.125*(1-s)*(1+t) -aa*bb*db8dr-aa*cc*db9dr
+    dNdr_5=+0.125*(1-s)*(1+t) -aa*cc*db8dr-aa*bb*db9dr
+    dNdr_6=+0.125*(1+s)*(1+t) -aa*db9dr
+    dNdr_7=-0.125*(1+s)*(1+t) -aa*cc*db8dr-aa*bb*db9dr
+    dNdr_8= dd*db8dr-ee*db9dr
+    dNdr_9=-ee*db8dr+dd*db9dr
+    return dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8,dNdr_9
 
+def dNNVds(r,s,t):
+    db8ds=(27/32)**3*(1-r**2)*(1-t**2)*(1-r)*(1-t)*(-1-2*s+3*s**2) 
+    db9ds=(27/32)**3*(1-r**2)*(1-t**2)*(1+r)*(1+t)*( 1-2*s-3*s**2)
 
+    dNds_0=-0.125*(1-r)*(1-t) -aa*db8ds   
+    dNds_1=-0.125*(1+r)*(1-t) -aa*bb*db8ds-aa*cc*db9ds 
+    dNds_2=+0.125*(1+r)*(1-t) -aa*cc*db8ds-aa*bb*db9ds 
+    dNds_3=+0.125*(1-r)*(1-t) -aa*bb*db8ds-aa*cc*db9ds
+    dNds_4=-0.125*(1-r)*(1+t) -aa*bb*db8ds-aa*cc*db9ds
+    dNds_5=-0.125*(1+r)*(1+t) -aa*cc*db8ds-aa*bb*db9ds
+    dNds_6=+0.125*(1+r)*(1+t) -aa*db9ds
+    dNds_7=+0.125*(1-r)*(1+t) -aa*cc*db8ds-aa*bb*db9ds
+    dNds_8= dd*db8ds-ee*db9ds
+    dNds_9=-ee*db8ds+dd*db9ds
+    return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8,dNds_9
+
+def dNNVdt(r,s,t):
+    db8dt=(27/32)**3*(1-r**2)*(1-s**2)*(1-r)*(1-s)*(-1-2*t+3*t**2) 
+    db9dt=(27/32)**3*(1-r**2)*(1-s**2)*(1+r)*(1+s)*( 1-2*t-3*t**2)
+
+    dNdt_0=-0.125*(1-r)*(1-s) -aa*db8dt   
+    dNdt_1=-0.125*(1+r)*(1-s) -aa*bb*db8dt-aa*cc*db9dt 
+    dNdt_2=-0.125*(1+r)*(1+s) -aa*cc*db8dt-aa*bb*db9dt 
+    dNdt_3=-0.125*(1-r)*(1+s) -aa*bb*db8dt-aa*cc*db9dt
+    dNdt_4=+0.125*(1-r)*(1-s) -aa*bb*db8dt-aa*cc*db9dt
+    dNdt_5=+0.125*(1+r)*(1-s) -aa*cc*db8dt-aa*bb*db9dt
+    dNdt_6=+0.125*(1+r)*(1+s) -aa*db9dt
+    dNdt_7=+0.125*(1-r)*(1+s) -aa*cc*db8dt-aa*bb*db9dt
+    dNdt_8= dd*db8dt-ee*db9dt
+    dNdt_9=-ee*db8dt+dd*db9dt
+    return dNdt_0,dNdt_1,dNdt_2,dNdt_3,dNdt_4,dNdt_5,dNdt_6,dNdt_7,dNdt_8,dNdt_9
 
 #------------------------------------------------------------------------------
 
@@ -93,6 +147,32 @@ Nfem=NfemV+NfemP # total number of dofs
 eps=1.e-10
 
 sqrt3=np.sqrt(3.)
+
+nqperdim=2
+
+if nqperdim==2:
+   qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
+   qweights=[1.,1.]
+
+if nqperdim==3:
+   qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
+   qweights=[5./9.,8./9.,5./9.]
+
+if nqperdim==4:
+   qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
+   qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
+   qw4a=(18-np.sqrt(30.))/36.
+   qw4b=(18+np.sqrt(30.))/36.
+   qcoords=[-qc4a,-qc4b,qc4b,qc4a]
+   qweights=[qw4a,qw4b,qw4b,qw4a]
+
+
+
+
+
+
+
+
 
 #################################################################
 #################################################################
@@ -179,18 +259,18 @@ for iel in range(0,nel):
 
 np.savetxt('gridV.ascii',np.array([xV,yV,zV]).T,header='# x,y,z,u,v,w')
 
-for iel in range (0,nel):
-    print ("iel=",iel)
-    print ("node 0",iconV[0,iel],"at pos.",xV[iconV[0,iel]],yV[iconV[0,iel]],zV[iconV[0,iel]])
-    print ("node 1",iconV[1,iel],"at pos.",xV[iconV[1,iel]],yV[iconV[1,iel]],zV[iconV[1,iel]])
-    print ("node 2",iconV[2,iel],"at pos.",xV[iconV[2,iel]],yV[iconV[2,iel]],zV[iconV[2,iel]])
-    print ("node 3",iconV[3,iel],"at pos.",xV[iconV[3,iel]],yV[iconV[3,iel]],zV[iconV[3,iel]])
-    print ("node 4",iconV[4,iel],"at pos.",xV[iconV[4,iel]],yV[iconV[4,iel]],zV[iconV[4,iel]])
-    print ("node 5",iconV[5,iel],"at pos.",xV[iconV[5,iel]],yV[iconV[5,iel]],zV[iconV[5,iel]])
-    print ("node 6",iconV[6,iel],"at pos.",xV[iconV[6,iel]],yV[iconV[6,iel]],zV[iconV[6,iel]])
-    print ("node 7",iconV[7,iel],"at pos.",xV[iconV[7,iel]],yV[iconV[7,iel]],zV[iconV[7,iel]])
-    print ("node 8",iconV[8,iel],"at pos.",xV[iconV[8,iel]],yV[iconV[8,iel]],zV[iconV[8,iel]])
-    print ("node 9",iconV[9,iel],"at pos.",xV[iconV[9,iel]],yV[iconV[9,iel]],zV[iconV[9,iel]])
+#for iel in range (0,nel):
+#    print ("iel=",iel)
+#    print ("node 0",iconV[0,iel],"at pos.",xV[iconV[0,iel]],yV[iconV[0,iel]],zV[iconV[0,iel]])
+#    print ("node 1",iconV[1,iel],"at pos.",xV[iconV[1,iel]],yV[iconV[1,iel]],zV[iconV[1,iel]])
+#    print ("node 2",iconV[2,iel],"at pos.",xV[iconV[2,iel]],yV[iconV[2,iel]],zV[iconV[2,iel]])
+#    print ("node 3",iconV[3,iel],"at pos.",xV[iconV[3,iel]],yV[iconV[3,iel]],zV[iconV[3,iel]])
+#    print ("node 4",iconV[4,iel],"at pos.",xV[iconV[4,iel]],yV[iconV[4,iel]],zV[iconV[4,iel]])
+#    print ("node 5",iconV[5,iel],"at pos.",xV[iconV[5,iel]],yV[iconV[5,iel]],zV[iconV[5,iel]])
+#    print ("node 6",iconV[6,iel],"at pos.",xV[iconV[6,iel]],yV[iconV[6,iel]],zV[iconV[6,iel]])
+#    print ("node 7",iconV[7,iel],"at pos.",xV[iconV[7,iel]],yV[iconV[7,iel]],zV[iconV[7,iel]])
+#    print ("node 8",iconV[8,iel],"at pos.",xV[iconV[8,iel]],yV[iconV[8,iel]],zV[iconV[8,iel]])
+#    print ("node 9",iconV[9,iel],"at pos.",xV[iconV[9,iel]],yV[iconV[9,iel]],zV[iconV[9,iel]])
 
 #################################################################
 # build pressure grid and iconP 
@@ -216,7 +296,80 @@ print("build P grid: %.3f s" % (timing.time() - start))
 # compute volume of elements
 #################################################################
 
+N     = np.zeros(8,dtype=np.float64)           # z-component velocity
+NNNV  = np.zeros(mV,dtype=np.float64)           # shape functions u
+field = np.zeros(NV,dtype=np.float64)
+jcbi=np.zeros((3,3),dtype=np.float64)
 
+dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVdz = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVdr = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVdt = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+
+field[:]=zV[:]
+
+for iel in range(0,nel):
+    for iq in range(0,nqperdim):
+        for jq in range(0,nqperdim):
+            for kq in range(0,nqperdim):
+                rq=qcoords[iq]
+                sq=qcoords[jq]
+                tq=qcoords[kq]
+                weightq=qweights[iq]*qweights[jq]*qweights[kq]
+
+                # compute xq,yq,zq 
+                N[0]=0.125*(1.-rq)*(1.-sq)*(1.-tq)
+                N[1]=0.125*(1.+rq)*(1.-sq)*(1.-tq)
+                N[2]=0.125*(1.+rq)*(1.+sq)*(1.-tq)
+                N[3]=0.125*(1.-rq)*(1.+sq)*(1.-tq)
+                N[4]=0.125*(1.-rq)*(1.-sq)*(1.+tq)
+                N[5]=0.125*(1.+rq)*(1.-sq)*(1.+tq)
+                N[6]=0.125*(1.+rq)*(1.+sq)*(1.+tq)
+                N[7]=0.125*(1.-rq)*(1.+sq)*(1.+tq)
+                xq=0.0
+                yq=0.0
+                zq=0.0
+                for k in range(0,8):
+                    xq+=N[k]*xV[iconV[k,iel]]
+                    yq+=N[k]*yV[iconV[k,iel]]
+                    zq+=N[k]*zV[iconV[k,iel]]
+                #end for
+
+                NNNV[0:mV]=NNV(rq,sq,tq)
+                dNNNVdr[0:mV]=dNNVdr(rq,sq,tq)
+                dNNNVds[0:mV]=dNNVds(rq,sq,tq)
+                dNNNVdt[0:mV]=dNNVdt(rq,sq,tq)
+
+                jcob=hx*hy*hz/8
+                jcbi[0,0]=2/hx ; jcbi[0,1]=0    ; jcbi[0,2]=0
+                jcbi[1,0]=0    ; jcbi[1,1]=2/hy ; jcbi[1,2]=0
+                jcbi[2,0]=0    ; jcbi[2,1]=0    ; jcbi[2,2]=2/hz
+
+                for k in range(0,mV):
+                    dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]
+                    dNNNVdy[k]=jcbi[1,1]*dNNNVds[k]
+                    dNNNVdz[k]=jcbi[2,2]*dNNNVdt[k]
+
+                dfdxq=0
+                dfdyq=0
+                dfdzq=0
+                for k in range(0,mV):
+                    dfdxq+=dNNNVdx[k]*field[iconV[k,iel]]
+                    dfdyq+=dNNNVdy[k]*field[iconV[k,iel]]
+                    dfdzq+=dNNNVdz[k]*field[iconV[k,iel]]
+
+                fq=0.0
+                for k in range(0,mV):
+                    fq+=NNNV[k]*field[iconV[k,iel]]
+
+                print(xq,yq,zq,fq,dfdxq,dfdyq,dfdzq)
+
+            #end kq
+        #end jq
+    #end iq
+#end iel
 
 
 
