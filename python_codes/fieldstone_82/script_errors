@@ -1,0 +1,11 @@
+#! /bin/bash
+
+rm -f errors
+rm -f vrms
+
+for res in {4..20}; do
+    echo $res X $res X $res
+    python3 stone.py $res $res $res 0 > opla
+    grep errv opla >> errors
+    grep vrms opla >> vrms
+done
