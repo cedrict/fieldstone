@@ -1,0 +1,65 @@
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[fill=gray!23,gray!23](0,0) rectangle (7,5);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (12,5); %background grid
+
+\node[] at (0.1,2.7) {$\tau$};
+\draw[line width=1mm] (0.5,1.5) -- (0.5,3.5) ;  
+\draw [->] (0,2.5) -- (0.45,2.5);
+\draw [->] (0,2) -- (0.45,2);
+\draw [->] (0,3) -- (0.45,3);
+
+%linear viscous
+
+\draw[thick] (1.,3) -- (2.,3) -- (2.,2) -- (1.,2);  
+\draw[thick] (0.5,2.5) -- (1.5,2.5) ;  
+\draw[>=triangle 45, <->] (0.5,0.95) -- (2.5,0.95);
+\node[] at (1.7,0.75) {$\dot\varepsilon_{v}$};
+\node[] at (1.5,1.6) {$\eta_{m}$};
+
+
+%dislocation creep
+\draw[thick] (2.,2.5) -- (4,2.5) ;  
+\draw[thick] (4.5,2.5) -- (6.5,2.5) ;  
+\draw[thick] (3.5,3) -- (4.5,3) -- (4.5,2) -- (3.5,2);  
+\node[] at (4,1.6) {$\eta_{ds}$};
+\draw[>=triangle 45, <->] (2.5,0.95) -- (5,0.95);
+\node[] at (4,0.75)   {$\dot\varepsilon_{ds}$};
+
+%diffusion creep
+\draw[thick] (6.,3) -- (7.,3) -- (7.,2) -- (6.,2);  
+\node[] at (6.5,1.6) {$\eta_{df}$};
+\draw[thick] (7,2.5) -- (8.5,2.5) ;  
+\draw[>=triangle 45, <->] (5,0.95) -- (7.5,0.95);
+\node[] at (6.5,0.75)   {$\dot\varepsilon_{df}$};
+
+%viscoplastic element
+\draw[thick] (9.5,4) -- (10.5,4) -- (10.5,3) -- (9.5,3);  
+\node[] at (10,4.3) {$\eta_m$};
+\node[] at (10,1.9) {$Y$};
+\draw[thick] (10,3.5) -- (8.5,3.5) -- (8.5,1.5) -- (9,1.5);  
+\draw[thick] (10.5,3.5) -- (11.5,3.5) -- (11.5,1.5) -- (11,1.5);  
+\draw[thick] (9,1.5) -- (9.5,1.4) -- (10.5,1.4) ;  
+\draw[thick] (9.5,1.6) -- (10.5,1.6) -- (11,1.5) ;  
+\draw[thick] (11.5,2.5) -- (13,2.5) ;  
+\draw[>=triangle 45, <->] (7.5,0.95) -- (13,0.95);
+\node[] at (10.2,0.75) {$\dot\varepsilon_{vp}$};
+
+%wall
+\draw[line width=2mm] (13,1.5) -- (13,3.5) ;  
+\draw[thick] (13,1.5)  -- (13.25,1.75) ;  
+\draw[thick] (13,1.75) -- (13.25,2) ;  
+\draw[thick] (13,2)    -- (13.25,2.25) ;  
+\draw[thick] (13,2.25) -- (13.25,2.5) ;  
+\draw[thick] (13,2.5)  -- (13.25,2.75) ;  
+\draw[thick] (13,2.75) -- (13.25,3) ;  
+\draw[thick] (13,3)    -- (13.25,3.25) ;  
+\draw[thick] (13,3.25) -- (13.25,3.5) ;  
+
+
+
+
+
+\end{tikzpicture}\\
+\end{center}
