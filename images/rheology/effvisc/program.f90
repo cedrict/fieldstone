@@ -33,7 +33,7 @@ rho=3300.
 gz=9.81
 
 !================================
-open(unit=123,file='setup.dat')
+open(unit=123,file='setup.ascii')
 
 !zA=Lz        ; TA=  20.d0+Tkelvin
 zB=Lz       ; TB= 550.d0+Tkelvin
@@ -58,7 +58,7 @@ end do
 ! old method
 !================================
 
-open(unit=100,file='old.dat',action='write')
+open(unit=100,file='old.ascii',action='write')
 
 do i=1,nnz
    mu_df=0.5d0 / A_df * exp((Q_df+p(i)*V_df)/Rgas/T(i)) 
@@ -73,8 +73,8 @@ end do
 ! new method
 !================================
 
-open(unit=200,file='new.dat',action='write')
-open(unit=201,file='NR.dat',action='write')
+open(unit=200,file='new.ascii',action='write')
+open(unit=201,file='NR.ascii',action='write')
 
 do i=1,nnz
 

@@ -1,23 +1,27 @@
 \begin{tikzpicture}
-%\draw[fill=gray!23,gray!23](0,0) rectangle (6,4.5);
-%\draw[step=0.5cm,gray,very thin] (0,0) grid (6,4.5); %background grid
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (6.5,5); %background grid
 
-%left wall
 \node[] at (0.1,2.7) {$\tau$};
 \draw[line width=1mm] (0.5,1.5) -- (0.5,3.5) ;   
 \draw [->] (0,2.5) -- (0.45,2.5);
 \draw [->] (0,2) -- (0.45,2);
 \draw [->] (0,3) -- (0.45,3);
 
-%dashpots
-\draw[thick] (0.5,2.5) -- (2,2.5) ;   
-\draw[thick] (2.5,2.5) -- (4,2.5) ;   
+%horizontal lines
+\draw[thick] (.5,2.5) -- (1.5,2.5) ;   
 \draw[thick] (4.5,2.5) -- (5.5,2.5) ;   
-\draw[thick] (1.5,3) -- (2.5,3) -- (2.5,2) -- (1.5,2);  
-\draw[thick] (3.5,3) -- (4.5,3) -- (4.5,2) -- (3.5,2);  
 
-\node[] at (2,1.5) {$\eta_1$};
-\node[] at (4,1.5) {$\eta_2$};
+%dashpot
+\draw[thick] (2.5,4) -- (3.5,4) -- (3.5,3) -- (2.5,3);  
+\node[] at (3,4.4) {$\eta_m$};
+
+\draw[thick] (3,3.5) -- (1.5,3.5) -- (1.5,1.5) -- (2,1.5);  
+\draw[thick] (3.5,3.5) -- (4.5,3.5) -- (4.5,1.5) -- (4,1.5);  
+
+%plastic elt
+\draw[thick] (2,1.5) -- (2.5,1.4) -- (3.5,1.4) ;   
+\draw[thick] (2.5,1.6) -- (3.5,1.6) -- (4,1.5) ;   
+\node[] at (3,1.92) {$Y$};
 
 %wall
 \draw[line width=2mm] (5.5,1.5) -- (5.5,3.5) ;   
@@ -30,9 +34,7 @@
 \draw[thick] (5.5,3)    -- (5.75,3.25) ;   
 \draw[thick] (5.5,3.25) -- (5.75,3.5) ;
 
-\draw[>=triangle 45, <->] (0.5,0.95) -- (3.,0.95);
-\draw[>=triangle 45, <->] (3.,0.95) -- (5.5,0.95);
-\node[] at (2,0.65)   {$\dot\varepsilon_{1}$};
-\node[] at (4.25,0.65)   {$\dot\varepsilon_{2}$};
+\draw[>=triangle 45, <->] (0.5,0.95) -- (5.5,0.95);
+\node[] at (3.,0.45)   {$\dot\varepsilon_{T}$};
 
 \end{tikzpicture}

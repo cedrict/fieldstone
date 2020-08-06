@@ -1,0 +1,80 @@
+set terminal pdf enhanced font "Times,11pt"
+set grid
+
+set ylabel 'depth (km)'
+set yrange [:] reverse
+
+set xlabel 'temperature (C)'
+set output 'temperature.pdf'
+plot 'setup.ascii' u 2:1  w l notitle
+
+set xlabel 'pressure (MPa)'
+set output 'pressure.pdf'
+plot 'setup.ascii' u ($3/1e6):1  w l notitle
+
+
+set yrange [:] reverse
+#set xlabel 'strain rate dislocation' 
+#set output 'new_sr_ds.pdf'
+#plot 'new.ascii' u 5:1 w l notitle
+
+#set xlabel 'strain rate diffusion' 
+#set output 'new_sr_df.pdf'
+#plot 'new.ascii' u 6:1 w l notitle
+
+
+set key outside
+set xlabel 'strain rate' 
+set output 'both_sr.pdf'
+plot[:1.2e-15][]\
+ 'new.ascii' u 5:1 w l t 'dislocation',\
+ 'new.ascii' u 6:1 w l t 'diffusion',\
+ 'new.ascii' u ($5+$6):1 w l t 'disl+diff',\
+
+
+
+
+
+set log x
+#set xlabel 'dislocation viscosity' 
+#set output 'new_mu_ds.pdf'
+#plot[1e20:1e28] 'new.ascii' u 3:1 w l notitle
+
+#set xlabel 'diffusion viscosity' 
+#set output 'new_mu_df.pdf'
+#plot[1e20:1e28] 'new.ascii' u 2:1 w l notitle
+
+#set xlabel 'diffusion viscosity' 
+#set output 'new_mueff.pdf'
+#plot[1e20:1e28] 'new.ascii' u 4:1 w l notitle
+
+#set xlabel 'tau' 
+#set output 'new_tau.pdf'
+#plot[1e5:] 'new.ascii' u 8:1 w l notitle
+
+
+
+set key bottom
+set xlabel 'effective viscosity' 
+set output 'both_mueff.pdf'
+plot[1e20:1e24] 'new.ascii' u 4:1 w l t 'NR',\
+                'old.ascii' u 4:1 w l t 'CHEAP'
+
+set xlabel 'dislocation creep viscosity' 
+set output 'both_mu_ds.pdf'
+plot[1e20:1e26] 'new.ascii' u 3:1 w l t 'NR',\
+                'old.ascii' u 3:1 w l t 'CHEAP'
+
+set xlabel 'diffusion creep viscosity' 
+set output 'both_mu_df.pdf'
+plot[1e20:1e26] 'new.ascii' u 2:1 w l t 'NR',\
+                'old.ascii' u 2:1 w l t 'CHEAP'
+
+
+
+
+
+
+
+
+
