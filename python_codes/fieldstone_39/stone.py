@@ -14,7 +14,10 @@ def gx(x,y):
     return 0
 
 def gy(x,y):
-    return -10
+    if benchmark==4:
+       return 0
+    else:
+       return -10
 
 #------------------------------------------------------------------------------
 
@@ -25,6 +28,8 @@ def ubc(x,y):
        vaal=0.0025/year
     if benchmark==3:
        vaal=-1.e-15*(Lx/2.0)
+    if benchmark==4:
+       vaal=5e-9
 
     if x<Lx/2:
        val=vaal
@@ -35,7 +40,17 @@ def ubc(x,y):
     return val
 
 def vbc(x,y):
-    return 0
+    if benchmark==4:
+       vaal=5e-9
+       if y<Ly/2:
+          val=-vaal
+       elif y>Ly/2:
+          val=+vaal
+       else:
+          val=0
+       return val 
+    else:    
+       return 0
 
 def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
     if benchmark==1: # pure brick
@@ -92,6 +107,45 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
           val=max(1.e20,val)
        #end if
     #end if
+    if benchmark==4: # shortening block
+
+       if abs(x-Lx/2)<6.25e3 and abs(y-Ly/2)<6.25e3:
+          val=1e17
+          two_sin_psi=0.
+       elif y<25e3 or y>75e3:
+          val=1e17
+          two_sin_psi=0.
+       else:
+          if iter==0:
+             e2=1e-13
+             two_sin_psi=0.
+          else:
+             e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
+             two_sin_psi=2.*np.sin(psi)
+          #end if
+
+          #old
+          #Y=pq*np.sin(phi)+c*np.cos(phi)
+          #etap=Y/(2.*e2)
+          #val=1./(1./etap+1./1e23)
+          ##print (iter,val)
+          #val=min(1.e23,val)
+          #val=max(1.e17,val)
+
+          #new
+          eta_v=1e23
+          eta_m=1e19
+          Y=pq*np.sin(phi)+c*np.cos(phi)
+          if 2*eta_v*e2<Y:
+             val=eta_v
+          else:
+             tau=(Y+2*eta_m*e2)/(1+eta_m/eta_v)
+             eps_v=tau/2/eta_v
+             eps_vp=e2-eps_v
+             eta_vp=Y/(2.*eps_vp)+eta_m
+             val=1./(1./eta_v + 1/eta_vp)
+          #end if
+
     return val,two_sin_psi
 
 #------------------------------------------------------------------------------
@@ -161,11 +215,11 @@ if int(len(sys.argv) == 6):
    solver = int(sys.argv[4])
    benchmark = int(sys.argv[5])
 else:
-   nelx = 100
-   nely = 25
+   nelx = 64
+   nely = nelx
    visu = 1
    solver = 2 
-   benchmark=3
+   benchmark=4
 
 if benchmark==1:
    Lx=100000. 
@@ -178,6 +232,11 @@ if benchmark==2:
 if benchmark==3:
    Lx=40e3
    Ly=10e3
+
+if benchmark==4:
+   Lx=100e3
+   Ly=100e3
+
  
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
@@ -212,6 +271,12 @@ if benchmark==3:   #----kaus10----
    phi=30./180*np.pi
    psi=30./180*np.pi
 
+if benchmark==4: # shortening block
+   rho=0
+   cohesion=1e8
+   phi=0./180*np.pi
+   psi=0./180*np.pi
+
 tol_nl=1e-6
 
 if solver==1:
@@ -222,22 +287,18 @@ if solver==1:
 else:
    use_SchurComplementApproach=False
 
-method=2
+method=1
 
 eta_ref=1.e23      # scaling of G blocks
 scaling_coeff=eta_ref/Ly
 
 niter_min=1
-niter=500
+niter=200
 
 if use_SchurComplementApproach:
    ls_conv_file=open("linear_solver_convergence.ascii","w")
    ls_niter_file=open("linear_solver_niter.ascii","w")
    
-shear_band_L_file_1=open("shear_band_L_elt.ascii","w")
-shear_band_R_file_1=open("shear_band_R_elt.ascii","w")
-shear_band_L_file_2=open("shear_band_L_nod.ascii","w")
-shear_band_R_file_2=open("shear_band_R_nod.ascii","w")
 
 sparse=True
 
@@ -360,6 +421,19 @@ if benchmark==2 or benchmark==3: # spmw16 & kaus10
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
           v[i] = vbc(xV[i],yV[i])
 
+if benchmark==4:
+   for i in range(0,NV):
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
+       if yV[i]/Ly<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
+       if yV[i]/Ly>1-eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
+
+
+
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
@@ -389,7 +463,7 @@ conv_inf_Rv = np.zeros(niter,dtype=np.float64)
 conv_inf_Rp = np.zeros(niter,dtype=np.float64)        
 solP    = np.zeros(NfemP,dtype=np.float64)  
 solV    = np.zeros(NfemV,dtype=np.float64)  
-a_mat   = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+#a_mat   = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
 rhs     = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
 
 for iter in range(0,niter):
@@ -444,14 +518,20 @@ for iter in range(0,niter):
                NNNP[0:4]=NNP(rq,sq)
 
                # calculate jacobian matrix
-               jcb=np.zeros((ndim,ndim),dtype=np.float64)
-               for k in range(0,mV):
-                   jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                   jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                   jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                   jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-               jcob = np.linalg.det(jcb)
-               jcbi = np.linalg.inv(jcb)
+               #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+               #for k in range(0,mV):
+               #    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+               #    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+               #    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+               #    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+               #jcob = np.linalg.det(jcb)
+               #jcbi = np.linalg.inv(jcb)
+
+               #only valid for rectangular elements!
+               jcbi=np.zeros((ndim,ndim),dtype=np.float64)
+               jcob=hx*hy/4
+               jcbi[0,0] = 2/hx 
+               jcbi[1,1] = 2/hy
 
                # compute dNdx & dNdy & strainrate
                exxq=0.0
@@ -460,8 +540,10 @@ for iter in range(0,niter):
                for k in range(0,mV):
                    xq[counter]+=NNNV[k]*xV[iconV[k,iel]]
                    yq[counter]+=NNNV[k]*yV[iconV[k,iel]]
-                   dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                   dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                   #dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                   #dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                   dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]
+                   dNNNVdy[k]=jcbi[1,1]*dNNNVds[k]
                    exxq+=dNNNVdx[k]*u[iconV[k,iel]]
                    eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
                    exyq+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
@@ -581,7 +663,19 @@ for iter in range(0,niter):
    print("     -> f (m,M) %.5e %.5e " %(np.min(f_rhs),np.max(f_rhs)))
    print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
 
+   print("     -> etaq (m,M) %.5e %.5e " %(np.min(etaq),np.max(etaq)))
+
    print("build FE matrix: %.3f s" % (timing.time() - start))
+
+   ######################################################################
+
+   if benchmark==4: #shortening block has p nullspace
+      for i in range(0,Nfem):
+          A_sparse[Nfem-1,i]=0
+          A_sparse[i,Nfem-1]=0
+          A_sparse[Nfem-1,Nfem-1]=1
+          h_rhs[NfemP-1]=0
+
 
    ######################################################################
    # assemble K, G, GT, f, h into A and rhs
@@ -662,6 +756,33 @@ for iter in range(0,niter):
    print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
    print("solve system: %.3f s - Nfem %d" % (timing.time() - start, Nfem))
+
+   #################################################################
+   #normalise pressure
+
+   int_p=0
+   for iel in range(0,nel):
+       for jq in [0,1,2]:
+           for iq in [0,1,2]:
+               rq=qcoords[iq]
+               sq=qcoords[jq]
+               weightq=qweights[iq]*qweights[jq]
+               NNNP[0:4]=NNP(rq,sq)
+               jcob=hx*hy/4
+               pq=NNNP[0:mP].dot(p[iconP[0:mP,iel]])
+               int_p+=pq*weightq*jcob
+           #end for
+       #end for
+   #end for
+
+   avrg_p=int_p/Lx/Ly
+
+   print("     -> int_p %e " %(int_p))
+   print("     -> avrg_p %e " %(avrg_p))
+
+   p[:]-=avrg_p
+
+   print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
    #################################################################
    # compute non-linear residual
@@ -876,10 +997,16 @@ for iter in range(0,niter):
    vtufile.write("</Points> \n")
    #####
    vtufile.write("<CellData Scalars='scalars'>\n")
-   vtufile.write("<DataArray type='Float32' Name='sr (middle) (x10^-15)' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' Name='sr (middle)' Format='ascii'> \n")
    for iel in range (0,nel):
-       vtufile.write("%10e\n" % (sr[iel]*1e15))
+       vtufile.write("%e\n" % (sr[iel]))
    vtufile.write("</DataArray>\n")
+
+   vtufile.write("<DataArray type='Float32' Name='etaq (middle)' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%10e\n" % (etaq[iel*9+4]))
+   vtufile.write("</DataArray>\n")
+
    vtufile.write("</CellData>\n")
    #####
    vtufile.write("<PointData Scalars='scalars'>\n")
@@ -935,43 +1062,65 @@ np.savetxt('sr_middle.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx
 # extracting shear bands 
 #####################################################################
 
-counter = 0
-for j in range(0,nely):
-    srmaxL=0.
-    srmaxR=0.
-    for i in range(0,nelx):
-        if i<=nelx/2 and sr[counter]>srmaxL:
-           srmaxL=sr[counter]
-           ilocL=counter
-        # end if
-        if i>=nelx/2 and sr[counter]>srmaxR:
-           srmaxR=sr[counter]
-           ilocR=counter
-        # end if
-        counter += 1
-    # end for i
-    shear_band_L_file_1.write("%6e %6e %6e \n"  % (xc[ilocL],yc[ilocL],sr[ilocL]) )
-    shear_band_R_file_1.write("%6e %6e %6e \n"  % (xc[ilocR],yc[ilocR],sr[ilocR]) )
-# end for j
+if benchmark !=4:
 
-counter = 0
-for j in range(0,nny):
-    srmaxL=0.
-    srmaxR=0.
-    for i in range(0,nnx):
-        if i<=nnx/2 and srn[counter]>srmaxL:
-           srmaxL=srn[counter]
-           ilocL=counter
-        # end if
-        if i>=nnx/2 and srn[counter]>srmaxR:
-           srmaxR=srn[counter]
-           ilocR=counter
-        # end if
-        counter += 1
-    # end for i
-    shear_band_L_file_2.write("%6e %6e %6e \n"  % (xV[ilocL],yV[ilocL],srn[ilocL]) )
-    shear_band_R_file_2.write("%6e %6e %6e \n"  % (xV[ilocR],yV[ilocR],srn[ilocR]) )
-# end for j
+   shear_band_L_file_1=open("shear_band_L_elt.ascii","w")
+   shear_band_R_file_1=open("shear_band_R_elt.ascii","w")
+   shear_band_L_file_2=open("shear_band_L_nod.ascii","w")
+   shear_band_R_file_2=open("shear_band_R_nod.ascii","w")
+
+   counter = 0
+   for j in range(0,nely):
+       srmaxL=0.
+       srmaxR=0.
+       for i in range(0,nelx):
+           if i<=nelx/2 and sr[counter]>srmaxL:
+              srmaxL=sr[counter]
+              ilocL=counter
+           # end if
+           if i>=nelx/2 and sr[counter]>srmaxR:
+              srmaxR=sr[counter]
+              ilocR=counter
+           # end if
+           counter += 1
+       # end for i
+       shear_band_L_file_1.write("%6e %6e %6e \n"  % (xc[ilocL],yc[ilocL],sr[ilocL]) )
+       shear_band_R_file_1.write("%6e %6e %6e \n"  % (xc[ilocR],yc[ilocR],sr[ilocR]) )
+   # end for j
+
+   counter = 0
+   for j in range(0,nny):
+       srmaxL=0.
+       srmaxR=0.
+       for i in range(0,nnx):
+           if i<=nnx/2 and srn[counter]>srmaxL:
+              srmaxL=srn[counter]
+              ilocL=counter
+           # end if
+           if i>=nnx/2 and srn[counter]>srmaxR:
+              srmaxR=srn[counter]
+              ilocR=counter
+           # end if
+           counter += 1
+       # end for i
+       shear_band_L_file_2.write("%6e %6e %6e \n"  % (xV[ilocL],yV[ilocL],srn[ilocL]) )
+       shear_band_R_file_2.write("%6e %6e %6e \n"  % (xV[ilocR],yV[ilocR],srn[ilocR]) )
+   # end for j
+
+else:
+
+   sr_file=open("sr_line.ascii","w")
+   counter=0
+   for j in range(0,nny):
+       for i in range(0,nnx):
+           if abs(yV[counter]-11*Ly/16)<1:
+              sr_file.write("%6e %6e %6e \n"  % (xV[counter],yV[counter],srn[counter]))
+           counter += 1
+       # end for i
+   # end for i
+   sr_file.close()
+
+#end if
 
 ######################################################################
 # compute averaged elemental strainrate 

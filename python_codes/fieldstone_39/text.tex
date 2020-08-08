@@ -212,7 +212,7 @@ velocity field $\underline{\vec\upnu}=(x,y,z)$ (with $\vec\nabla\cdot\underline{
 to an existing analytical problem, e.g. the Burstedde benchamrk.
 
 %..........................................................
-\subsubsection*{The 2016 brick}
+\subsection*{The 2016 brick}
 
 The setup is similar to the one in \cite{spmw16}. It is a 2D Cartesian domain filled with an 
 isoviscous layer at the bottom and a visco-plastic material on top, as shown here:  
@@ -253,4 +253,104 @@ and in order for my results to look like theirs I had to change it for VM, DDM a
 %\includegraphics[width=5cm]{python_codes/fieldstone_39/poster/shear_bands_DP30.pdf}
 
 %\includegraphics[width=7cm]{python_codes/fieldstone_39/poster/nonlinear_conv.pdf}
+
+
+\newpage
+%..............................................
+\subsection*{Shortening of a visco-plastic bloc}
+
+This benchmark originates in the book of Gerya. In the first edition the domain is 1000x1000km, 
+while it is 100x100km in the second. We keep the second edition as a guideline. The benchmark
+is actually elasto-visco-plastic but in this stone we neglect the elastic deformation. The 
+boundary conditions are shown here:
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_39/results_shortening_block/setup}\\
+{\captionfont Taken from \cite{gery19book}.}
+\end{center}
+
+The velocity on the boundaries is $\upnu_{bc}=5\cdot 10^{-9}$ \si{\metre\per\second} so that the background strain rate is 
+$2 \upnu_{bc}/L = 10^{-13}\si{\per\second}$.
+The weak medium and the weak inclusion have a viscosity $\eta=10^{17}\si{\pascal\second}$ while 
+the block is visco-plastic, with $\eta=10^{23}\si{\pascal\second}$, $c=10^8\si{\pascal}$ 
+and $\phi=37\degree$. 
+Pressure is set to zero in the top right corner and later post-processed so as to insure a zero 
+volume average.
+
+In the case of von Mises ($\phi=0$) we expect the shear bands at $45\degree$. When $\phi>0$, as mentioned above
+we expect:
+\[
+\frac{\pi}{4}-\frac{\phi}{2}=26.5\degree
+\qquad
+\frac{\pi}{4}-\frac{\phi}{4}=35.75\degree
+\]
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/line}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/angles}\\
+{\captionfont a) Line on which strain rate is measured. b) possible shear band angles:
+green is $45\degree$, blue is $35.75\degree$ and red is $26.5\degree$.}
+\end{center}
+
+
+I have adapted slightly the dimensions inside the domain such that resolutions 16x16, 32x32, etc...
+all showcase elements whose sides exactly align with the material interfaces. The size of the inclusion is 
+$L/8=12.5$km and the block has a thickness of 50km:
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_39/results_shortening_block/geometry}\\
+{\captionfont Material geometry for resolutions 16x16, 32x32 and 64x64.}
+\end{center}
+
+
+\newpage
+\underline{No viscous damper, no dilation rate, von Mises:}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/u}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/v}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/etaeff}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/p}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/sr}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/sr_elt}\\
+{\captionfont From left to right: resolutions are 16x16, 32x32, 64x64 and 96x96. 100 nonlinear Picard iterations.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/conv_vM.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/sr_line_vM.pdf}
+\end{center}
+
+
+
+
+\newpage
+\underline{No viscous damper, no dilation rate, Drucker-Prager:}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/conv_DP.pdf}
+\end{center}
+
+
+
+
+
+
+\newpage
+To explore:
+
+- associative and non-associative drucker-prage
+
+- visco-plastic vs visco-viscoplastic
+
+
+
+
+
+
+
+
+
+
 
