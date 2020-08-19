@@ -14,7 +14,7 @@ def gx(x,y):
     return 0
 
 def gy(x,y):
-    if benchmark==4:
+    if benchmark==4 or benchmark==5:
        return 0
     else:
        return -10
@@ -26,10 +26,12 @@ def ubc(x,y):
        vaal=-1.e-15*(Lx/2.0)
     if benchmark==2:
        vaal=0.0025/year
-    if benchmark==3:
+    if benchmark==3: #kaus10
        vaal=-1.e-15*(Lx/2.0)
     if benchmark==4:
        vaal=5e-9
+    if benchmark==5:
+       vaal=5.e-15*(Lx/2.0)
 
     if x<Lx/2:
        val=vaal
@@ -49,16 +51,25 @@ def vbc(x,y):
        else:
           val=0
        return val 
+    if benchmark==5:
+       vaal=5.e-15*(Ly/2.0)
+       if y<Ly/2:
+          val=-vaal
+       elif y>Ly/2:
+          val=+vaal
+       else:
+          val=0
+       return val 
     else:    
        return 0
 
-def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
+def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y,eta_m,eta_v):
+    e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
     if benchmark==1: # pure brick
        if iter==0:
           e2=1e-15
           two_sin_psi=0.
        else:
-          e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
           two_sin_psi=2.*np.sin(psi)
        #end if
        Y=pq*np.sin(phi)+c*np.cos(phi)
@@ -67,27 +78,38 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
        val=min(1.e25,val)
        val=max(1.e20,val)
     #end if
+
+    #-------------------------------------------------
     if benchmark==2: # spmw16
-       if y<7.5e3 or (abs(x-60e3)<2.5e3 and y<10e3):
+    #-------------------------------------------------
+
+       if y<8e3 or (abs(x-64e3)<2e3 and y<10e3):
           val=1e21
           two_sin_psi=0.
        else:
           if iter==0:
-             val=1e21
+             e2=1.32e-15
              two_sin_psi=0.
           else:
-             eta1=1e24
-             e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
-             e2=max(1e-25,e2)
-             etap=((pq+2700*9.81*(Ly-y))*np.sin(phi)+c*np.cos(phi))/(2*e2)
-             val=1./(1./etap+1./eta1)
-             val=min(1.e25,val)
-             val=max(1.e20,val)
              two_sin_psi=2.*np.sin(psi)
           #end if
+          Y=pq*np.sin(phi)+c*np.cos(phi)
+          if 2*eta_v*e2<Y:
+             val=eta_v
+          else:
+             tau=(Y+2*eta_m*e2)/(1+eta_m/eta_v)
+             eps_v=tau/2/eta_v
+             eps_vp=e2-eps_v
+             eta_vp=Y/(2.*eps_vp)+eta_m
+             val=1./(1./eta_v + 1/eta_vp)
+          #end if
+          val=max(1e21,val)
        #end if
-    #end if
+
+    #-------------------------------------------------
     if benchmark==3: # brick with seed
+    #-------------------------------------------------
+
        if abs(x-20e3)<400 and y<400:
           val=1e20
           two_sin_psi=0.
@@ -96,7 +118,6 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
              e2=1e-15
              two_sin_psi=0.
           else:
-             e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
              two_sin_psi=2.*np.sin(psi)
           #end if
           etap=(pq*np.sin(phi)+c*np.cos(phi))/(2*e2)
@@ -107,7 +128,10 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
           val=max(1.e20,val)
        #end if
     #end if
+
+    #-------------------------------------------------
     if benchmark==4: # shortening block
+    #-------------------------------------------------
 
        if abs(x-Lx/2)<6.25e3 and abs(y-Ly/2)<6.25e3:
           val=1e17
@@ -120,21 +144,11 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
              e2=1e-13
              two_sin_psi=0.
           else:
-             e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
              two_sin_psi=2.*np.sin(psi)
           #end if
 
-          #old
-          #Y=pq*np.sin(phi)+c*np.cos(phi)
-          #etap=Y/(2.*e2)
-          #val=1./(1./etap+1./1e23)
-          ##print (iter,val)
-          #val=min(1.e23,val)
-          #val=max(1.e17,val)
-
-          #new
           eta_v=1e23
-          eta_m=1e19
+          eta_m=0
           Y=pq*np.sin(phi)+c*np.cos(phi)
           if 2*eta_v*e2<Y:
              val=eta_v
@@ -145,6 +159,38 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y):
              eta_vp=Y/(2.*eps_vp)+eta_m
              val=1./(1./eta_v + 1/eta_vp)
           #end if
+
+    #-------------------------------------------------
+    if benchmark==5: # shortening block 2 (dusd18)
+    #-------------------------------------------------
+
+       if (x-Lx/2)**2 + (y-Ly/2)**2 < 100**2:
+          val=1e17
+          two_sin_psi=0.
+       else:
+          if iter==0:
+             e2=1e-15
+             two_sin_psi=0.
+          else:
+             two_sin_psi=2.*np.sin(psi)
+          #end if
+
+          #new
+          eta_v=1e24
+          eta_m=0
+          Y=pq*np.sin(phi)+c*np.cos(phi)
+          if 2*eta_v*e2<Y:
+             val=eta_v
+          else:
+             tau=(Y+2*eta_m*e2)/(1+eta_m/eta_v)
+             eps_v=tau/2/eta_v
+             eps_vp=e2-eps_v
+             eta_vp=Y/(2.*eps_vp)+eta_m
+             val=1./(1./eta_v + 1/eta_vp)
+          #end if
+
+          if iter==0:
+             val=1e21
 
     return val,two_sin_psi
 
@@ -194,6 +240,12 @@ def NNP(rq,sq):
     return NP_0,NP_1,NP_2,NP_3
 
 #------------------------------------------------------------------------------
+# benchmark=1: brick with velocity discontonuity at bottom
+# benchmark=2: Spiegelman et al, 2016. 
+# benchmark=3: brick with seed
+# benchmark=4: shortening block with sticky air - square inclusion
+# benchmark=5: shortening block - round inclusion
+#------------------------------------------------------------------------------
 
 cm=0.01
 year=3600*24*365.
@@ -208,36 +260,66 @@ mP=4     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-if int(len(sys.argv) == 6):
+if int(len(sys.argv) == 10):
+   print("reading arguments")
    nelx = int(sys.argv[1])
-   nely = int(sys.argv[2])
-   visu = int(sys.argv[3])
-   solver = int(sys.argv[4])
-   benchmark = int(sys.argv[5])
+   visu = int(sys.argv[2])
+   benchmark = int(sys.argv[3])
+   phi = float(sys.argv[4])
+   psi =  float(sys.argv[5])
+   niter =  int(sys.argv[6])
+   tol_nl =  float(sys.argv[7])
+   eta_v =  float(sys.argv[8])
+   eta_m =  float(sys.argv[9])
+   eta_v=10**eta_v
+   eta_m=10**eta_m
 else:
    nelx = 64
-   nely = nelx
    visu = 1
-   solver = 2 
-   benchmark=4
+   benchmark=2
+   phi=0
+   psi=0
+   niter=250
+   tol_nl=1e-6
+   eta_v=1e24
+   eta_m=1e21
+
+phi=phi/180*np.pi
+psi=psi/180*np.pi
+
 
 if benchmark==1:
    Lx=100000. 
    Ly=10000.  
+   rho=2800
+   cohesion=1e7
 
-if benchmark==2:
-   Lx=120000. 
-   Ly=30000.  
+if benchmark==2:  #----spmw16----
+   Lx=128000. 
+   Ly=32000.  
+   rho=2700.
+   cohesion=1e8
 
-if benchmark==3:
+if benchmark==3:   #----kaus10----
    Lx=40e3
    Ly=10e3
+   rho=2700.
+   cohesion=40e6
 
-if benchmark==4:
+if benchmark==4:  #----geryabook----
    Lx=100e3
    Ly=100e3
+   rho=0
+   cohesion=1e8
 
- 
+if benchmark==5: #----dusd18----
+   Lx=4e3
+   Ly=2e3
+   rho=0
+   cohesion=30e6
+
+
+nely = int(nelx*Ly/Lx)
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
 NV=nnx*nny  # number of nodes
@@ -245,40 +327,18 @@ nel=nelx*nely  # number of elements, total
 NfemV=NV*ndofV               # number of velocity dofs
 NfemP=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
 Nfem=NfemV+NfemP              # total number of dofs
+hx=Lx/nelx
+hy=Ly/nely
 
 eps=1.e-10
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
+nq=9*nel
 
-hx=Lx/nelx
-hy=Ly/nely
-
-if benchmark==1:
-   rho=2800
-   cohesion=1e7
-   phi=30./180*np.pi
-   psi=30./180*np.pi
-
-if benchmark==2:   #----spmw16----
-   rho=2700.-2700.
-   cohesion=1e8
-   phi=0./180*np.pi
-   psi=0./180*np.pi
-
-if benchmark==3:   #----kaus10----
-   rho=2700.
-   cohesion=40e6
-   phi=30./180*np.pi
-   psi=30./180*np.pi
-
-if benchmark==4: # shortening block
-   rho=0
-   cohesion=1e8
-   phi=0./180*np.pi
-   psi=0./180*np.pi
-
-tol_nl=1e-6
-
+eta_ref=1.e23      # scaling of G blocks
+scaling_coeff=eta_ref/Ly
+sparse=True
+solver = 2 
 if solver==1:
    use_SchurComplementApproach=True
    use_preconditioner=True
@@ -286,24 +346,30 @@ if solver==1:
    solver_tolerance=1e-6
 else:
    use_SchurComplementApproach=False
-
-method=1
-
-eta_ref=1.e23      # scaling of G blocks
-scaling_coeff=eta_ref/Ly
-
-niter_min=1
-niter=200
-
 if use_SchurComplementApproach:
    ls_conv_file=open("linear_solver_convergence.ascii","w")
    ls_niter_file=open("linear_solver_niter.ascii","w")
-   
 
-sparse=True
+
+method=1 #use of dilation rate term
+
+
+niter_min=1
+
+   
+use_srn_diff=False
+
 
 rVnodes=[-1,+1,1,-1, 0,1,0,-1,0]
 sVnodes=[-1,-1,1,+1,-1,0,1, 0,0]
+
+if benchmark==5:
+   evol1_file=open("evol1.ascii","w")
+   evol2_file=open("evol2.ascii","w")
+   
+ustats_file=open("ustats.ascii","w")
+vstats_file=open("vstats.ascii","w")
+pstats_file=open("pstats.ascii","w")
 
 #################################################################
 #################################################################
@@ -321,6 +387,9 @@ print("method=",method)
 print("sparse",sparse)
 print("hx",hx)
 print("hy",hy)
+print("niter",niter)
+print("eta_m",eta_m)
+print("eta_v",eta_v)
 print("------------------------------")
 
 #################################################################
@@ -406,8 +475,6 @@ if benchmark==1:
        if yV[i]/Ly<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
-#          u[i] = ubc(xV[i],yV[i])
-#          v[i] = vbc(xV[i],yV[i])
 
 if benchmark==2 or benchmark==3: # spmw16 & kaus10
    for i in range(0,NV):
@@ -421,7 +488,7 @@ if benchmark==2 or benchmark==3: # spmw16 & kaus10
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
           v[i] = vbc(xV[i],yV[i])
 
-if benchmark==4:
+if benchmark==4 or benchmark==5: # shortening blocks
    for i in range(0,NV):
        if xV[i]/Lx<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
@@ -431,8 +498,7 @@ if benchmark==4:
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
        if yV[i]/Ly>1-eps:
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
-
-
+       
 
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -449,11 +515,9 @@ dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVdr = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 p       = np.zeros(NfemP,dtype=np.float64)        # pressure field 
-pold    = np.zeros(NfemP,dtype=np.float64)        # pressure field 
 Res     = np.zeros(Nfem,dtype=np.float64)         # non-linear residual 
 sol     = np.zeros(Nfem,dtype=np.float64)         # solution vector 
 b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
-N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
 NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
 NNNP    = np.zeros(mP,dtype=np.float64)           # shape functions P
 conv_inf= np.zeros(niter,dtype=np.float64)        
@@ -463,8 +527,15 @@ conv_inf_Rv = np.zeros(niter,dtype=np.float64)
 conv_inf_Rp = np.zeros(niter,dtype=np.float64)        
 solP    = np.zeros(NfemP,dtype=np.float64)  
 solV    = np.zeros(NfemV,dtype=np.float64)  
-#a_mat   = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-rhs     = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+etaq_mem = np.zeros(9*nel,dtype=np.float64)        # viscosity of q points 
+exxn=np.zeros(NV,dtype=np.float64)
+eyyn=np.zeros(NV,dtype=np.float64)
+exyn=np.zeros(NV,dtype=np.float64)
+srn=np.zeros(NV,dtype=np.float64)
+
+u_mem=np.zeros(NV,dtype=np.float64)
+v_mem=np.zeros(NV,dtype=np.float64)
+p_mem=np.zeros(NfemP,dtype=np.float64)
 
 for iter in range(0,niter):
 
@@ -484,14 +555,16 @@ for iter in range(0,niter):
       K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
       G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
 
-   M_mat = np.zeros((NfemP,NfemP),dtype=np.float64) # schur precond
-   f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
-   h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
-   xq    = np.zeros(9*nel,dtype=np.float64)        # x coords of q points 
-   yq    = np.zeros(9*nel,dtype=np.float64)        # y coords of q points 
-   etaq  = np.zeros(9*nel,dtype=np.float64)        # viscosity of q points 
-   pq    = np.zeros(9*nel,dtype=np.float64)        # pressure of q points 
-   srq   = np.zeros(9*nel,dtype=np.float64)        # strain rate of q points 
+   rhs     = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+   N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
+   M_mat    = np.zeros((NfemP,NfemP),dtype=np.float64) # schur precond
+   f_rhs    = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
+   h_rhs    = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
+   xq       = np.zeros(9*nel,dtype=np.float64)        # x coords of q points 
+   yq       = np.zeros(9*nel,dtype=np.float64)        # y coords of q points 
+   etaq     = np.zeros(9*nel,dtype=np.float64)        # viscosity of q points 
+   pq       = np.zeros(9*nel,dtype=np.float64)        # pressure of q points 
+   srq      = np.zeros(9*nel,dtype=np.float64)        # strain rate of q points 
 
    counter=0
    for iel in range(0,nel):
@@ -547,6 +620,16 @@ for iter in range(0,niter):
                    exxq+=dNNNVdx[k]*u[iconV[k,iel]]
                    eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
                    exyq+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
+
+               if use_srn_diff:
+                  exxq=0.0
+                  eyyq=0.0
+                  exyq=0.0
+                  for k in range(0,mV):
+                      exxq+=NNNV[k]*exxn[iconV[k,iel]]
+                      eyyq+=NNNV[k]*eyyn[iconV[k,iel]]
+                      exyq+=NNNV[k]*exyn[iconV[k,iel]]
+
                 
                # compute pressure
                for k in range(0,mP):
@@ -560,7 +643,8 @@ for iter in range(0,niter):
 
                # compute effective plastic viscosity
                etaq[counter],two_sin_psi=viscosity(exxq,eyyq,exyq,pq[counter],cohesion,phi,\
-                                                   iter,xq[counter],yq[counter])
+                                                   iter,xq[counter],yq[counter],eta_m,eta_v)
+
                srq[counter]=np.sqrt(0.5*(exxq*exxq+eyyq*eyyq)+exyq*exyq)
                dilation_rate=two_sin_psi*srq[counter]
 
@@ -669,13 +753,12 @@ for iter in range(0,niter):
 
    ######################################################################
 
-   if benchmark==4: #shortening block has p nullspace
+   if benchmark==4 or benchmark==5: #shortening block has p nullspace
       for i in range(0,Nfem):
           A_sparse[Nfem-1,i]=0
           A_sparse[i,Nfem-1]=0
           A_sparse[Nfem-1,Nfem-1]=1
           h_rhs[NfemP-1]=0
-
 
    ######################################################################
    # assemble K, G, GT, f, h into A and rhs
@@ -755,6 +838,13 @@ for iter in range(0,niter):
    print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
    print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
+   ustats_file.write("%d %8e %8e \n" %(iter,np.min(u),np.max(u)))
+   vstats_file.write("%d %8e %8e \n" %(iter,np.min(v),np.max(v)))
+   pstats_file.write("%d %8e %8e \n" %(iter,np.min(p),np.max(p)))
+   ustats_file.flush()
+   vstats_file.flush()
+   pstats_file.flush()
+
    print("solve system: %.3f s - Nfem %d" % (timing.time() - start, Nfem))
 
    #################################################################
@@ -769,8 +859,8 @@ for iter in range(0,niter):
                weightq=qweights[iq]*qweights[jq]
                NNNP[0:4]=NNP(rq,sq)
                jcob=hx*hy/4
-               pq=NNNP[0:mP].dot(p[iconP[0:mP,iel]])
-               int_p+=pq*weightq*jcob
+               p_q=NNNP[0:mP].dot(p[iconP[0:mP,iel]])
+               int_p+=p_q*weightq*jcob
            #end for
        #end for
    #end for
@@ -877,13 +967,13 @@ for iter in range(0,niter):
 
    for iel in range(0,nel):
 
-       rq = 0.0
-       sq = 0.0
-       weightq = 2.0 * 2.0
+       rq = 0.
+       sq = 0.
+       weightq = 2.*2.
 
-       NNNV[0:9]=NNV(rq,sq)
-       dNNNVdr[0:9]=dNNVdr(rq,sq)
-       dNNNVds[0:9]=dNNVds(rq,sq)
+       NNNV[0:mV]=NNV(rq,sq)
+       dNNNVdr[0:mV]=dNNVdr(rq,sq)
+       dNNNVds[0:mV]=dNNVds(rq,sq)
 
        jcb=np.zeros((ndim,ndim),dtype=np.float64)
        for k in range(0,mV):
@@ -909,6 +999,8 @@ for iter in range(0,niter):
 
        for k in range(0,mP):
            pc[iel] += NNNP[k]*p[iconP[k,iel]]
+
+   #end if
 
    print("     -> exx (m,M) %.5e %.5e " %(np.min(exx),np.max(exx)))
    print("     -> eyy (m,M) %.5e %.5e " %(np.min(eyy),np.max(eyy)))
@@ -972,97 +1064,242 @@ for iter in range(0,niter):
 
    srn[:]=np.sqrt(0.5*(exxn[:]*exxn[:]+eyyn[:]*eyyn[:])+exyn[:]*exyn[:])
 
-   print("     -> exx (m,M) %.6e %.6e " %(np.min(exxn),np.max(exxn)))
-   print("     -> eyy (m,M) %.6e %.6e " %(np.min(eyyn),np.max(eyyn)))
-   print("     -> exy (m,M) %.6e %.6e " %(np.min(exyn),np.max(exyn)))
-   print("     -> sr  (m,M) %.6e %.6e " %(np.min(srn),np.max(srn)))
+   print("     -> exxn (m,M) %.6e %.6e " %(np.min(exxn),np.max(exxn)))
+   print("     -> eyyn (m,M) %.6e %.6e " %(np.min(eyyn),np.max(eyyn)))
+   print("     -> exyn (m,M) %.6e %.6e " %(np.min(exyn),np.max(exyn)))
+   print("     -> srn  (m,M) %.6e %.6e " %(np.min(srn),np.max(srn)))
 
    print("compute nod strain rate: %.3f s" % (timing.time() - start))
 
    ######################################################################
+   # diffuse nodal strain rate
+   ######################################################################
+   start = timing.time()
+
+   NfemT=NV
+   dt=1
+   alphaT=0.5
+   diffcoeff=250
+   ndofT=1
+
+   A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
+   rhs_xx = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
+   rhs_yy = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
+   rhs_xy = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
+   B_mat=np.zeros((2,ndofT*mV),dtype=np.float64)     # gradient matrix B 
+   N_mat = np.zeros((mV,1),dtype=np.float64)         # shape functions
+
+   counterq=0
+   for iel in range (0,nel):
+
+       exx_prev=np.zeros(mV,dtype=np.float64)
+       eyy_prev=np.zeros(mV,dtype=np.float64)
+       exy_prev=np.zeros(mV,dtype=np.float64)
+       b_el_xx=np.zeros(mV*ndofT,dtype=np.float64)
+       b_el_yy=np.zeros(mV*ndofT,dtype=np.float64)
+       b_el_xy=np.zeros(mV*ndofT,dtype=np.float64)
+       a_el=np.zeros((mV*ndofT,mV*ndofT),dtype=np.float64)
+       Kd=np.zeros((mV,mV),dtype=np.float64)   # elemental diffusion matrix 
+       MM=np.zeros((mV,mV),dtype=np.float64)   # elemental mass matrix 
+
+       for k in range(0,mV):
+            exx_prev[k]=exxn[iconV[k,iel]]
+            eyy_prev[k]=eyyn[iconV[k,iel]]
+            exy_prev[k]=exyn[iconV[k,iel]]
+       #end for
+
+       for iq in range(0,3):
+           for jq in range(0,3):
+
+               # position & weight of quad. point
+               rq=qcoords[iq]
+               sq=qcoords[jq]
+               weightq=qweights[iq]*qweights[jq]
+
+               NNNV[0:mV]=NNV(rq,sq)
+               dNNNVdr[0:mV]=dNNVdr(rq,sq)
+               dNNNVds[0:mV]=dNNVds(rq,sq)
+               N_mat[0:mV,0]=NNV(rq,sq)
+
+               #only valid for rectangular elements!
+               jcbi=np.zeros((ndim,ndim),dtype=np.float64)
+               jcob=hx*hy/4
+               jcbi[0,0] = 2/hx 
+               jcbi[1,1] = 2/hy
+ 
+               # compute dNdx & dNdy
+               for k in range(0,mV):
+                   dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                   dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                   B_mat[0,k]=dNNNVdx[k]
+                   B_mat[1,k]=dNNNVdy[k]
+               #end for
+
+               # compute mass matrix
+               MM=N_mat.dot(N_mat.T)*weightq*jcob
+
+               # compute diffusion matrix
+               Kd=B_mat.T.dot(B_mat)*diffcoeff*weightq*jcob
+
+               a_el+=MM+alphaT*Kd*dt
+               b_el_xx+=(MM-(1-alphaT)*Kd*dt).dot(exx_prev)
+               b_el_yy+=(MM-(1-alphaT)*Kd*dt).dot(eyy_prev)
+               b_el_xy+=(MM-(1-alphaT)*Kd*dt).dot(exy_prev)
+
+               counterq+=1
+           #end for jq
+       #end for iq
+
+       # assemble matrix A_mat and right hand side rhs
+       for k1 in range(0,mV):
+           m1=iconV[k1,iel]
+           for k2 in range(0,mV):
+               m2=iconV[k2,iel]
+               A_mat[m1,m2]+=a_el[k1,k2]
+           #end for
+           rhs_xx[m1]+=b_el_xx[k1]
+           rhs_yy[m1]+=b_el_yy[k1]
+           rhs_xy[m1]+=b_el_xy[k1]
+       #end for
+
+    #end for iel
+    
+   print("     -> matrix (m,M) %.4e %.4e " %(np.min(A_mat),np.max(A_mat)))
+   print("     -> rhs (m,M) %.4e %.4e " %(np.min(rhs),np.max(rhs)))
+
+   Txx = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_xx)
+   Tyy = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_yy)
+   Txy = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_xy)
+
+   if use_srn_diff:
+      exxn[:]=Txx[:]
+      eyyn[:]=Tyy[:]
+      exyn[:]=Txy[:]
+
+   srn[:]=np.sqrt(0.5*(exxn[:]*exxn[:]+eyyn[:]*eyyn[:])+exyn[:]*exyn[:])
+
+   print("     -> exxn (m,M) %.6e %.6e " %(np.min(exxn),np.max(exxn)))
+   print("     -> eyyn (m,M) %.6e %.6e " %(np.min(eyyn),np.max(eyyn)))
+   print("     -> exyn (m,M) %.6e %.6e " %(np.min(exyn),np.max(exyn)))
+   print("     -> srn  (m,M) %.6e %.6e " %(np.min(srn),np.max(srn)))
+
+   print("strain rate diffusion time: %.3f s" % (timing.time() - start))
+
+   ######################################################################
    # generate vtu output at every nonlinear iteration
    ######################################################################
+   start = timing.time()
 
-   filename = 'solution_nl_{:04d}.vtu'.format(iter)
-   vtufile=open(filename,"w")
-   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-   vtufile.write("<UnstructuredGrid> \n")
-   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
-   #####
-   vtufile.write("<Points> \n")
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-   for i in range(0,NV):
-       vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
-   vtufile.write("</DataArray>\n")
-   vtufile.write("</Points> \n")
-   #####
-   vtufile.write("<CellData Scalars='scalars'>\n")
-   vtufile.write("<DataArray type='Float32' Name='sr (middle)' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%e\n" % (sr[iel]))
-   vtufile.write("</DataArray>\n")
+   if iter%10==0:
+      filename = 'solution_nl_{:04d}.vtu'.format(iter)
+      vtufile=open(filename,"w")
+      vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+      vtufile.write("<UnstructuredGrid> \n")
+      vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+      #####
+      vtufile.write("<Points> \n")
+      vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+      for i in range(0,NV):
+          vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
+      vtufile.write("</DataArray>\n")
+      vtufile.write("</Points> \n")
+      #####
+      vtufile.write("<CellData Scalars='scalars'>\n")
+      vtufile.write("<DataArray type='Float32' Name='sr (middle)' Format='ascii'> \n")
+      for iel in range (0,nel):
+          vtufile.write("%e\n" % (sr[iel]))
+      vtufile.write("</DataArray>\n")
 
-   vtufile.write("<DataArray type='Float32' Name='etaq (middle)' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % (etaq[iel*9+4]))
-   vtufile.write("</DataArray>\n")
+      vtufile.write("<DataArray type='Float32' Name='etaq (middle)' Format='ascii'> \n")
+      for iel in range (0,nel):
+          vtufile.write("%10e\n" % (etaq[iel*9+4]))
+      vtufile.write("</DataArray>\n")
 
-   vtufile.write("</CellData>\n")
-   #####
-   vtufile.write("<PointData Scalars='scalars'>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='Res (u)' Format='ascii'> \n")
-   for i in range(0,NV):
-       vtufile.write("%10e \n" %Res_u[i])
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='Res (v)' Format='ascii'> \n")
-   for i in range(0,NV):
-       vtufile.write("%10e \n" %Res_v[i])
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='Res (p)' Format='ascii'> \n")
-   for i in range(0,NV):
-       vtufile.write("%10e \n" %Res_q[i])
-   vtufile.write("</DataArray>\n")
-   vtufile.write("</PointData>\n")
-   #####
-   vtufile.write("<Cells>\n")
-   #--
-   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel],\
-                                                   iconV[4,iel],iconV[5,iel],iconV[6,iel],iconV[7,iel]))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%d \n" %((iel+1)*8))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-   for iel in range (0,nel):
-       vtufile.write("%d \n" %23)
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("</Cells>\n")
-   #####
-   vtufile.write("</Piece>\n")
-   vtufile.write("</UnstructuredGrid>\n")
-   vtufile.write("</VTKFile>\n")
-   vtufile.close()
+      vtufile.write("<DataArray type='Float32' Name='etaq diff (middle)' Format='ascii'> \n")
+      for iel in range (0,nel):
+          vtufile.write("%10e\n" % (abs(etaq[iel*9+4]-etaq_mem[iel*9+4])/etaq[iel*9+4] ))
+      vtufile.write("</DataArray>\n")
+
+      vtufile.write("</CellData>\n")
+      #####
+      vtufile.write("<PointData Scalars='scalars'>\n")
+      #--
+      vtufile.write("<DataArray type='Float32' Name='Res (u)' Format='ascii'> \n")
+      for i in range(0,NV):
+          vtufile.write("%10e \n" %Res_u[i])
+      vtufile.write("</DataArray>\n")
+      #--
+      vtufile.write("<DataArray type='Float32' Name='Res (v)' Format='ascii'> \n")
+      for i in range(0,NV):
+          vtufile.write("%10e \n" %Res_v[i])
+      vtufile.write("</DataArray>\n")
+      #--
+      vtufile.write("<DataArray type='Float32' Name='Res (p)' Format='ascii'> \n")
+      for i in range(0,NV):
+          vtufile.write("%10e \n" %Res_q[i])
+      vtufile.write("</DataArray>\n")
+      #--
+      vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
+      for i in range(0,NV):
+          vtufile.write("%10e \n" %q[i])
+      vtufile.write("</DataArray>\n")
+
+      vtufile.write("</PointData>\n")
+      #####
+      vtufile.write("<Cells>\n")
+      #--
+      vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+      for iel in range (0,nel):
+          vtufile.write("%d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel],\
+                                                      iconV[4,iel],iconV[5,iel],iconV[6,iel],iconV[7,iel]))
+      vtufile.write("</DataArray>\n")
+      #--
+      vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+      for iel in range (0,nel):
+          vtufile.write("%d \n" %((iel+1)*8))
+      vtufile.write("</DataArray>\n")
+      #--
+      vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+      for iel in range (0,nel):
+          vtufile.write("%d \n" %23)
+      vtufile.write("</DataArray>\n")
+      #--
+      vtufile.write("</Cells>\n")
+      #####
+      vtufile.write("</Piece>\n")
+      vtufile.write("</UnstructuredGrid>\n")
+      vtufile.write("</VTKFile>\n")
+      vtufile.close()
+
+   print("write nl iter vtu file: %.3f s" % (timing.time() - start))
+
+   if benchmark==5:
+      evol1_file.write("%8e %8e %8e %8e %8e \n" %(etaq[0],etaq[int(nq/5)],etaq[int(nq/4)],etaq[int(nq/3)],etaq[int(nq/2)]))
+      evol2_file.write("%8e %8e %8e %8e %8e \n" %(abs(etaq[0]-etaq_mem[0]),\
+                                                  abs(etaq[int(nq/5)]-etaq_mem[nq//5]),\
+                                                  abs(etaq[int(nq/4)]-etaq_mem[nq//4]),\
+                                                  abs(etaq[int(nq/3)]-etaq_mem[nq//3]),\
+                                                  abs(etaq[int(nq/2)]-etaq_mem[nq//2])))
+      evol1_file.flush()
+      evol2_file.flush()
+
+
+   u_mem[:]=u[:]
+   v_mem[:]=v[:]
+   p_mem[:]=p[:]
+   etaq_mem[:]=etaq[:]
 
 #------------------------------------------------------------------------------
 # end of non-linear iterations
 #------------------------------------------------------------------------------
 
-np.savetxt('sr_middle.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+#np.savetxt('sr_middle.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
 #####################################################################
 # extracting shear bands 
 #####################################################################
 
-if benchmark !=4:
+if benchmark ==1 or benchmark==2 or benchmark==3:
 
    shear_band_L_file_1=open("shear_band_L_elt.ascii","w")
    shear_band_R_file_1=open("shear_band_R_elt.ascii","w")
@@ -1107,20 +1344,19 @@ if benchmark !=4:
        shear_band_R_file_2.write("%6e %6e %6e \n"  % (xV[ilocR],yV[ilocR],srn[ilocR]) )
    # end for j
 
-else:
+#else:
 
-   sr_file=open("sr_line.ascii","w")
-   counter=0
-   for j in range(0,nny):
-       for i in range(0,nnx):
-           if abs(yV[counter]-11*Ly/16)<1:
-              sr_file.write("%6e %6e %6e \n"  % (xV[counter],yV[counter],srn[counter]))
-           counter += 1
-       # end for i
-   # end for i
-   sr_file.close()
+sr_file=open("sr_line.ascii","w")
+counter=0
+for j in range(0,nny):
+    for i in range(0,nnx):
+        if abs(yV[counter]-11*Ly/16)<1:
+           sr_file.write("%6e %6e %6e \n"  % (xV[counter],srn[counter],yV[counter]))
+        counter += 1
+    # end for i
+# end for i
+sr_file.close()
 
-#end if
 
 ######################################################################
 # compute averaged elemental strainrate 
@@ -1192,7 +1428,7 @@ print("     -> sr_avrg  (m,M) %.6e %.6e " %(np.min(sr_avrg),np.max(sr_avrg)))
 
 print("compute avrg elemental strain rate: %.3f s" % (timing.time() - start))
 
-np.savetxt('sr_avrg.ascii',np.array([xc,yc,exx_avrg,eyy_avrg,exy_avrg]).T,header='# xc,yc,exx,eyy,exy')
+#np.savetxt('sr_avrg.ascii',np.array([xc,yc,exx_avrg,eyy_avrg,exy_avrg]).T,header='# xc,yc,exx,eyy,exy')
 
 #####################################################################
 # plot of solution
@@ -1240,25 +1476,25 @@ for iel in range (0,nel):
     vtufile.write("%10e\n" % exy_avrg[iel])
 vtufile.write("</DataArray>\n")
 #--
-vtufile.write("<DataArray type='Float32' Name='strain rate (middle)(x10^-15)' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' Name='strain rate (middle)' Format='ascii'> \n")
 for iel in range (0,nel):
-    vtufile.write("%10e\n" % (sr[iel]*1e15))
+    vtufile.write("%10e\n" % (sr[iel]))
 vtufile.write("</DataArray>\n")
 #--
-vtufile.write("<DataArray type='Float32' Name='strain rate (avrg)(x10^-15)' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' Name='strain rate (avrg)' Format='ascii'> \n")
 for iel in range (0,nel):
-    vtufile.write("%10e\n" % (sr_avrg[iel]*1e15))
+    vtufile.write("%10e\n" % (sr_avrg[iel]))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
 for iel in range (0,nel):
-    eta,dummy= viscosity(exx[iel],eyy[iel],exy[iel],pc[iel],cohesion,phi,iter,xc[iel],yc[iel])
+    eta,dummy= viscosity(exx[iel],eyy[iel],exy[iel],pc[iel],cohesion,phi,iter,xc[iel],yc[iel],eta_m,eta_v)
     vtufile.write("%10e\n" %eta) 
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='viscosity (log)' Format='ascii'> \n")
 for iel in range (0,nel):
-    eta,dummy= viscosity(exx[iel],eyy[iel],exy[iel],pc[iel],cohesion,phi,iter,xc[iel],yc[iel])
+    eta,dummy= viscosity(exx[iel],eyy[iel],exy[iel],pc[iel],cohesion,phi,iter,xc[iel],yc[iel],eta_m,eta_v)
     vtufile.write("%10e\n" %(np.log10(eta))) 
 vtufile.write("</DataArray>\n")
 #--
@@ -1321,9 +1557,24 @@ for i in range(0,NV):
     vtufile.write("%.5e \n" %srn[i])
 vtufile.write("</DataArray>\n")
 #--
-vtufile.write("<DataArray type='Float32' Name='strain rate (x10^-15)' Format='ascii'> \n")
+#vtufile.write("<DataArray type='Float32' Name='strain rate (x10^-15)' Format='ascii'> \n")
+#for i in range(0,NV):
+#    vtufile.write("%.5e \n" %(srn[i]*1e15))
+#vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='Txx' Format='ascii'> \n")
 for i in range(0,NV):
-    vtufile.write("%.5e \n" %(srn[i]*1e15))
+    vtufile.write("%.5e \n" %(Txx[i]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='Tyy' Format='ascii'> \n")
+for i in range(0,NV):
+    vtufile.write("%.5e \n" %(Tyy[i]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='Txy' Format='ascii'> \n")
+for i in range(0,NV):
+    vtufile.write("%.5e \n" %(Txy[i]))
 vtufile.write("</DataArray>\n")
 
 vtufile.write("</PointData>\n")
