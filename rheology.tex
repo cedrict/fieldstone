@@ -581,14 +581,28 @@ Review article from 1966: Guyot \& Dorn \cite{gudo67}
 %-------------------------------------------------
 \subsubsection{Stress limiting rheology}
 
-Taken from \cite{vavv02}:
-
+Taken from van Hunen et al (2002) \cite{vavv02}:
 \[
-\eta_y = \tau_y \dot{\epsilon}_y^{-1/n_y} \dot{\epsilon}^{(1/n_y) -1 } 
+\eta_y = \tau_y \dot{\varepsilon}_y^{-1/n_y} \dot{\varepsilon}_e^{(1/n_y) -1 } 
 \]
-where the yield stress $\tau_y$, the yield strain rate $\epsilon_y$ and the yield exponent $n_y$ are
-prescribed parameters. In this article, $n_y=10$, $\dot{\epsilon}_y=10^{-15}s^{-1}$
-When $n_y=1$ the viscosity is constant and given by $\tau_y \dot{\epsilon}_y^{-1/n_y}$.
+where the yield stress $\tau_y$, the yield strain rate $\dot{\varepsilon}_y$ and the yield exponent $n_y$ are
+prescribed parameters. In this article, $n_y=10$, $\dot{\varepsilon}_y=10^{-15}\si{\per\second}$
+When $n_y=1$ the viscosity is constant and given by $\eta_{eff} = \tau_y / \dot{\epsilon}_y$.
+
+This rheology has also been coined pseudo-plastic in Zhong et al (1998) \cite{zhgm98}. 
+Their equation is simply  
+\[
+\eta_{eff} = A^{1/n} \dot{\varepsilon}_e^{-1+1/n}
+\]
+where $A$ is the preexponent which depends on temperature, pressure, and composition.
+\begin{center}
+\includegraphics[width=5.5cm]{images/rheology/zhgm98}
+\includegraphics[width=5.8cm]{images/rheology/pseudoplastic/stress}
+\includegraphics[width=5.8cm]{images/rheology/pseudoplastic/eta_eff}\\
+{\captionfont Left figure is taken from \cite{zhgm98}. Authors report $A=7.9\cdot 10^{-8} \si{\pascal^3\second}$ 
+for the $n=3$ case, which makes no sense. See gnuplot script for actual values of $A$.}
+\end{center}
+
 
 
 
@@ -639,6 +653,7 @@ This is also called the Frank-Kamenetskii flow rule, as used in \cite{stha13,lem
 \eta' = \eta_0 \exp(-\theta T)
 \]
 where the the parameters $\eta_0$, $\theta$ account for the local chemical composition of the rock.
+Note that the Frank-Kamenetskii approximation takes many forms in the literature \cite{nobr13}.
 \index{general}{Frank-Kamenetskii}
 
 Another temperature-dependent common expression is as follows \cite{flyu84}:
@@ -710,7 +725,7 @@ Note that $A$ is also affected by the water content and the presence of impuriti
 Finally, Glen's law is the standard rheology used for ice-sheet modelling 
 but it does not account for the complex evolution of fabric and resulting anisotropy.
 
-\Literature \cite{grev97,krab16,grbl09,issg15,heah18}
+\Literature \cite{grev97,krab16,grbl09,issg15,jidb17,heah18}
 
 %...........................................
 \subsubsection{Viscoelasticity} \index{general}{Viscoelasticity}
@@ -738,6 +753,15 @@ The Kelvin-Voigt model, also known as the Voigt model,
 consists of a Newtonian damper and Hookean elastic spring connected in parallel.
 
 \Literature: \cite{boph12}
+
+%...........................................
+\subsubsection{Elastoplasticity} 
+\index{general}{Elastoplasticity}
+\index{general}{Consistent Tangent Operator}
+
+Consistent tangent operator \cite{sita85,degr94,szjo95}
+
+
 
 %...........................................
 \subsubsection{Strain rate partitioning across deformation mechanisms}

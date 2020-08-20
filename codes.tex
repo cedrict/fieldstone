@@ -1,8 +1,8 @@
 
 In what follows I make a quick inventory of the main codes of computational geodynamics, 
 for crust, lithosphere and/or mantle modelling.
-
-in order to find all CIG-codes citations go to: https://geodynamics.org/cig/news/publications-refbase/
+In order to find all CIG-codes citations go to: 
+\url{https://geodynamics.org/cig/news/publications-refbase/}
 
 \begin{itemize}
 
@@ -47,6 +47,8 @@ A multigrid-based mantle convection simulation code
 \item {\codefont ADELI} \index{general}{ADELI code}
 %------------------------------------------------------------------------------
 
+\begin{scriptsize}
+\noindent
 \nineteenninetyseven: \cite{hajc97}\\
 \twothousandone: \cite{chzh01}\\
 \twothousandfour: \cite{gocl04}\\
@@ -57,6 +59,7 @@ A multigrid-based mantle convection simulation code
 \twothousandfourteen: \cite{cehg14}\\
 \twothousandfifteen: \cite{ceag15}\\
 \twothousandeighteen: \cite{cegm18}\cite{gehn18}
+\end{scriptsize}
 
 %------------------------------------------------------------------------------
 \item {\codefont ASPECT} \index{general}{ASPECT code}
@@ -67,8 +70,8 @@ It is an open source community code based on the finite element library deal.II 
 It is massively parallel, relies on the p4est library for adaptive mesh refinement,
 uses the Trilinos solver library \cite{hewi12}, and can deal with 2D and 3D geometries. 
 
+\begin{scriptsize}
 \noindent
-{\small
 \twothousandtwelve:
 Kronbichler et al \cite{krhb12}\\
 \twothousandfifteen:
@@ -94,7 +97,7 @@ Fraters et al \cite{frtv19}, Fraters et al \cite{frbt19}\\
 Gassmoeller et al \cite{gadb20}, Farangitakis et al \cite{fahm20}, 
 Louis-Napoleon et al \cite{logb20}, Heyn et al \cite{hect20}, Glerum et al \cite{glbs20},
 Clevenger \& Heister \cite{clhe20}
-}
+\end{scriptsize}
 
 %------------------------------------------------------------------------------
 \item {\codefont BASIL/ELLE} \url{http://elle.ws/}
@@ -141,14 +144,15 @@ include mobile integration points. The code became a particle-in-cell finite-ele
 CIItcom , which was able to track and evolve material properties on particles. This work at
 CSIRO resulted in a new generation of the software, named Ellipsis.
 
-These codes are hosted by CIG at \url{https://geodynamics.org/cig/software/citcomcu/}
-and \url{https://geodynamics.org/cig/software/citcoms/}.
+These codes are hosted by CIG at\\
+\url{https://geodynamics.org/cig/software/citcomcu/} and \\
+\url{https://geodynamics.org/cig/software/citcoms/}.
 
 \begin{scriptsize}
 \nineteenninetyfive: Moresi \& Solomatov \cite{moso95}, Moresi \& Parsons \cite{mopa95}\\
-\nineteenninetysix: \cite{somo96}\cite{mogu96}\cite{zhgu96}\\
-\nineteenninetyseven: \cite{mole97}\cite{bugm97}\cite{somo97}\\
-\nineteenninetyeight: \cite{moso98}\cite{zhgm98}\cite{gumm98}\cite{resm98}\\
+\nineteenninetysix: Solomatov \& Moresi \cite{somo96}, Moresi \& Gurnis \cite{mogu96}, Zhong \& Gurnis \cite{zhgu96}\\
+\nineteenninetyseven: Moresi \& Lenardic \cite{mole97}, Burgess et al \cite{bugm97}, Solomatov \& Moresi \cite{somo97}\\
+\nineteenninetyeight: Moresi \& Solomatov \cite{moso98}, Zhong et al \cite{zhgm98}, Gurnis et al \cite{gumm98}, Reese et al \cite{resm98}\\
 \nineteenninetynine: \cite{mole99}\cite{bumo99}\cite{vazh99}\cite{lemo99}\cite{resm99}\\
 \twothousand: \cite{zhzm00}\cite{gumr00}\cite{lemm00}\cite{gumm00}\cite{somo00}\\
 \twothousandone: \cite{bigu01}\cite{lemo01}\cite{zhon01}\\
@@ -364,9 +368,10 @@ by the Finite Element Method (FEM). \url{https://www.csc.fi/web/elmer}
 \item {\codefont LaCoDe} \index{general}{LaCoDe code} 
 %------------------------------------------------------------------------------
 
-{\small
-\cite{demh19}
-}
+\begin{scriptsize}
+\noindent
+\twothousandnineteen: de Montserrat et al \cite{demh19}
+\end{scriptsize}
 
 %------------------------------------------------------------------------------
 \item {\codefont MDoodz}, Duretz code
@@ -385,19 +390,24 @@ by the Finite Element Method (FEM). \url{https://www.csc.fi/web/elmer}
 \item {\codefont FENICS} \index{general}{FENICS code}
 %------------------------------------------------------------------------------
 
-\cite{alrk14}
+\begin{scriptsize}
+\noindent
+\twothousandfourteen: Alisic et al \cite{alrk14}\\
+\twothousandseventeen: Jimenez et al \cite{jidb17}
+\end{scriptsize}
+
 
 %------------------------------------------------------------------------------
 \item {\codefont GAIA} \index{general}{GAIA}
 %------------------------------------------------------------------------------
 
-{\small
+\begin{scriptsize}
 \noindent
-\cite{toyu11}
-\cite{hutm13}
-\cite{plth13}
-\cite{neum19}
-}
+\twothousandeight: H{\"u}ttig \& Stemmer \cite{hust08b} \\
+\twothousandeleven: Tosi \& Yuen \cite{toyu11} \\
+\twothousandthirteen: H{\"u}ttig et al \cite{hutm13}, Pleas et al \cite{plth13}, Noack \& Breuer \cite{nobr13} \\
+\twothousandnineteen: Neumann \cite{neum19}
+\end{scriptsize}
 
 %------------------------------------------------------------------------------
 \item {\codefont GALE} \index{general}{GALE}
@@ -560,7 +570,7 @@ Erdos et al \cite{erhv19}, Theunissen \& Huismans \cite{thhu19}, Wolf \& Huisman
 \twothousandseventeen: \cite{mauw17}\cite{kocb17}\cite{vomc17}\cite{shwl17}\\
 \twothousandeighteen: \cite{zhlg18}\cite{masg18}\cite{gebu18}\cite{hegv18}\\
 \twothousandnineteen: \cite{kobg19}\cite{ligc19}\cite{sihf19}\cite{meag19}\cite{gubg19}\cite{vawg19}\cite{zhli19}\\
-\twothousandtwenty: \cite{basg20}\cite{zhlg20}\cite{dawl20}\cite{chcg20}\cite{meag20}\cite{chlc20}\cite{mugu20}, Tang et al \cite{tacm20}, G{\"u}lcher et al \cite{gugm20}
+\twothousandtwenty: \cite{basg20}\cite{zhlg20}\cite{dawl20}\cite{chcg20}\cite{meag20}\cite{chlc20}\cite{mugu20}, Tang et al \cite{tacm20}, G{\"u}lcher et al \cite{gugm20}, Brizzi et al \cite{brvf20}
 \end{scriptsize}
 
 

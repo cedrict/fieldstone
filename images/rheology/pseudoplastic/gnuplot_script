@@ -1,0 +1,21 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set xlabel 'strain rate'
+set ylabel 'stress'
+
+n=3.
+A=1.e36
+A20=1e155
+
+
+
+set output 'stress.pdf' 
+plot[5e-16:1e-14][1e6:50e6]\
+2 * A**(1./n) *x**(1./n) t 'n=3',\
+2 * A20**(1./20.) * x**(1./20.) t 'n=20' 
+
+set ylabel 'eff. viscosity'
+set output 'eta_eff.pdf' 
+plot[1e-15:1e-14][]\
+A**(1./n) * x**(-1+1./n) t 'n=3',\
+A20**(1./20) * x**(-1+1./20) t 'n=20'
