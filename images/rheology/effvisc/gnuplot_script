@@ -57,17 +57,17 @@ set log x
 set key bottom
 set xlabel 'effective viscosity' 
 set output 'both_mueff.pdf'
-plot[1e20:1e24] 'new.ascii' u 4:1 w l t 'NR',\
+plot[1e20:1e24] 'new.ascii' u 4:1 w l t 'NIS',\
                 'old.ascii' u 4:1 w l t 'CHEAP'
 
 set xlabel 'dislocation creep viscosity' 
 set output 'both_mu_ds.pdf'
-plot[1e20:1e26] 'new.ascii' u 3:1 w l t 'NR',\
+plot[1e20:1e26] 'new.ascii' u 3:1 w l t 'NIS',\
                 'old.ascii' u 3:1 w l t 'CHEAP'
 
 set xlabel 'diffusion creep viscosity' 
 set output 'both_mu_df.pdf'
-plot[1e20:1e26] 'new.ascii' u 2:1 w l t 'NR',\
+plot[1e20:1e26] 'new.ascii' u 2:1 w l t 'NIS',\
                 'old.ascii' u 2:1 w l t 'CHEAP'
 
 
