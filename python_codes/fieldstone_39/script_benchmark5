@@ -1,0 +1,23 @@
+#! /bin/bash
+
+visu=0
+bench=5
+tol_nl=0.000001
+psi=0 
+niter=3 
+eta_v=24
+
+for nelx in 32 64 128 ; do
+    for phi in 0 10 20 30 ; do
+        for eta_m in 0 19 ; do
+            echo ${nelx}_${phi} 
+            python3 stone.py $nelx $visu $bench $phi $psi $niter $tol_nl $eta_v $eta_m > opla
+            mkdir benchmark5_${nelx}_${phi}_${eta_m}
+            mv *.ascii benchmark5_${nelx}_${phi}_${eta_m}
+            mv *.vtu benchmark5_${nelx}_${phi}_${eta_m}
+        done
+    done
+done
+
+rm opla
+

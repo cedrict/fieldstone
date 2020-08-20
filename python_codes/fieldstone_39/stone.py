@@ -1,15 +1,13 @@
 import numpy as np
-import math as math
 import sys as sys
-import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix, lil_matrix, hstack, vstack
+from scipy.sparse import csr_matrix, lil_matrix
 import time as timing
-from scipy.sparse import lil_matrix
 from numpy import linalg as LA
 
 #------------------------------------------------------------------------------
+
 def gx(x,y):
     return 0
 
@@ -64,8 +62,13 @@ def vbc(x,y):
        return 0
 
 def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y,eta_m,eta_v):
+
     e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
+
+    #-------------------------------------------------
     if benchmark==1: # pure brick
+    #-------------------------------------------------
+
        if iter==0:
           e2=1e-15
           two_sin_psi=0.
@@ -147,8 +150,6 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y,eta_m,eta_v):
              two_sin_psi=2.*np.sin(psi)
           #end if
 
-          eta_v=1e23
-          eta_m=0
           Y=pq*np.sin(phi)+c*np.cos(phi)
           if 2*eta_v*e2<Y:
              val=eta_v
@@ -175,9 +176,6 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y,eta_m,eta_v):
              two_sin_psi=2.*np.sin(psi)
           #end if
 
-          #new
-          eta_v=1e24
-          eta_m=0
           Y=pq*np.sin(phi)+c*np.cos(phi)
           if 2*eta_v*e2<Y:
              val=eta_v
@@ -188,9 +186,7 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y,eta_m,eta_v):
              eta_vp=Y/(2.*eps_vp)+eta_m
              val=1./(1./eta_v + 1/eta_vp)
           #end if
-
-          if iter==0:
-             val=1e21
+          val=max(1e21,val)
 
     return val,two_sin_psi
 
@@ -274,15 +270,15 @@ if int(len(sys.argv) == 10):
    eta_v=10**eta_v
    eta_m=10**eta_m
 else:
-   nelx = 64
+   nelx = 32
    visu = 1
-   benchmark=2
+   benchmark=4
    phi=0
    psi=0
-   niter=250
+   niter=2
    tol_nl=1e-6
-   eta_v=1e24
-   eta_m=1e21
+   eta_v=1e23
+   eta_m=0
 
 phi=phi/180*np.pi
 psi=psi/180*np.pi
@@ -367,9 +363,9 @@ if benchmark==5:
    evol1_file=open("evol1.ascii","w")
    evol2_file=open("evol2.ascii","w")
    
-ustats_file=open("ustats.ascii","w")
-vstats_file=open("vstats.ascii","w")
-pstats_file=open("pstats.ascii","w")
+ustats_file=open("stats_u.ascii","w")
+vstats_file=open("stats_v.ascii","w")
+pstats_file=open("stats_p.ascii","w")
 
 #################################################################
 #################################################################
@@ -1011,12 +1007,6 @@ for iter in range(0,niter):
    print("compute press & sr: %.3f s" % (timing.time() - start))
 
    #####################################################################
-
-   avrg_press=np.sum(pc)/nel
-
-   print ("     -> avrg press. %.5e" % avrg_press)
-
-   #####################################################################
    # project strainrate onto velocity grid
    #####################################################################
    start = timing.time()
@@ -1076,121 +1066,125 @@ for iter in range(0,niter):
    ######################################################################
    start = timing.time()
 
-   NfemT=NV
-   dt=1
-   alphaT=0.5
-   diffcoeff=250
-   ndofT=1
-
-   A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
-   rhs_xx = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
-   rhs_yy = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
-   rhs_xy = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
-   B_mat=np.zeros((2,ndofT*mV),dtype=np.float64)     # gradient matrix B 
-   N_mat = np.zeros((mV,1),dtype=np.float64)         # shape functions
-
-   counterq=0
-   for iel in range (0,nel):
-
-       exx_prev=np.zeros(mV,dtype=np.float64)
-       eyy_prev=np.zeros(mV,dtype=np.float64)
-       exy_prev=np.zeros(mV,dtype=np.float64)
-       b_el_xx=np.zeros(mV*ndofT,dtype=np.float64)
-       b_el_yy=np.zeros(mV*ndofT,dtype=np.float64)
-       b_el_xy=np.zeros(mV*ndofT,dtype=np.float64)
-       a_el=np.zeros((mV*ndofT,mV*ndofT),dtype=np.float64)
-       Kd=np.zeros((mV,mV),dtype=np.float64)   # elemental diffusion matrix 
-       MM=np.zeros((mV,mV),dtype=np.float64)   # elemental mass matrix 
-
-       for k in range(0,mV):
-            exx_prev[k]=exxn[iconV[k,iel]]
-            eyy_prev[k]=eyyn[iconV[k,iel]]
-            exy_prev[k]=exyn[iconV[k,iel]]
-       #end for
-
-       for iq in range(0,3):
-           for jq in range(0,3):
-
-               # position & weight of quad. point
-               rq=qcoords[iq]
-               sq=qcoords[jq]
-               weightq=qweights[iq]*qweights[jq]
-
-               NNNV[0:mV]=NNV(rq,sq)
-               dNNNVdr[0:mV]=dNNVdr(rq,sq)
-               dNNNVds[0:mV]=dNNVds(rq,sq)
-               N_mat[0:mV,0]=NNV(rq,sq)
-
-               #only valid for rectangular elements!
-               jcbi=np.zeros((ndim,ndim),dtype=np.float64)
-               jcob=hx*hy/4
-               jcbi[0,0] = 2/hx 
-               jcbi[1,1] = 2/hy
- 
-               # compute dNdx & dNdy
-               for k in range(0,mV):
-                   dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                   dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-                   B_mat[0,k]=dNNNVdx[k]
-                   B_mat[1,k]=dNNNVdy[k]
-               #end for
-
-               # compute mass matrix
-               MM=N_mat.dot(N_mat.T)*weightq*jcob
-
-               # compute diffusion matrix
-               Kd=B_mat.T.dot(B_mat)*diffcoeff*weightq*jcob
-
-               a_el+=MM+alphaT*Kd*dt
-               b_el_xx+=(MM-(1-alphaT)*Kd*dt).dot(exx_prev)
-               b_el_yy+=(MM-(1-alphaT)*Kd*dt).dot(eyy_prev)
-               b_el_xy+=(MM-(1-alphaT)*Kd*dt).dot(exy_prev)
-
-               counterq+=1
-           #end for jq
-       #end for iq
-
-       # assemble matrix A_mat and right hand side rhs
-       for k1 in range(0,mV):
-           m1=iconV[k1,iel]
-           for k2 in range(0,mV):
-               m2=iconV[k2,iel]
-               A_mat[m1,m2]+=a_el[k1,k2]
-           #end for
-           rhs_xx[m1]+=b_el_xx[k1]
-           rhs_yy[m1]+=b_el_yy[k1]
-           rhs_xy[m1]+=b_el_xy[k1]
-       #end for
-
-    #end for iel
-    
-   print("     -> matrix (m,M) %.4e %.4e " %(np.min(A_mat),np.max(A_mat)))
-   print("     -> rhs (m,M) %.4e %.4e " %(np.min(rhs),np.max(rhs)))
-
-   Txx = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_xx)
-   Tyy = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_yy)
-   Txy = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_xy)
-
    if use_srn_diff:
-      exxn[:]=Txx[:]
-      eyyn[:]=Tyy[:]
-      exyn[:]=Txy[:]
 
-   srn[:]=np.sqrt(0.5*(exxn[:]*exxn[:]+eyyn[:]*eyyn[:])+exyn[:]*exyn[:])
+      NfemT=NV
+      dt=1
+      alphaT=0.5
+      diffcoeff=250
+      ndofT=1
 
-   print("     -> exxn (m,M) %.6e %.6e " %(np.min(exxn),np.max(exxn)))
-   print("     -> eyyn (m,M) %.6e %.6e " %(np.min(eyyn),np.max(eyyn)))
-   print("     -> exyn (m,M) %.6e %.6e " %(np.min(exyn),np.max(exyn)))
-   print("     -> srn  (m,M) %.6e %.6e " %(np.min(srn),np.max(srn)))
+      A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
+      rhs_xx = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
+      rhs_yy = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
+      rhs_xy = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
+      B_mat=np.zeros((2,ndofT*mV),dtype=np.float64)     # gradient matrix B 
+      N_mat = np.zeros((mV,1),dtype=np.float64)         # shape functions
 
-   print("strain rate diffusion time: %.3f s" % (timing.time() - start))
+      counterq=0
+      for iel in range (0,nel):
+
+          exx_prev=np.zeros(mV,dtype=np.float64)
+          eyy_prev=np.zeros(mV,dtype=np.float64)
+          exy_prev=np.zeros(mV,dtype=np.float64)
+          b_el_xx=np.zeros(mV*ndofT,dtype=np.float64)
+          b_el_yy=np.zeros(mV*ndofT,dtype=np.float64)
+          b_el_xy=np.zeros(mV*ndofT,dtype=np.float64)
+          a_el=np.zeros((mV*ndofT,mV*ndofT),dtype=np.float64)
+          Kd=np.zeros((mV,mV),dtype=np.float64)   # elemental diffusion matrix 
+          MM=np.zeros((mV,mV),dtype=np.float64)   # elemental mass matrix 
+
+          for k in range(0,mV):
+               exx_prev[k]=exxn[iconV[k,iel]]
+               eyy_prev[k]=eyyn[iconV[k,iel]]
+               exy_prev[k]=exyn[iconV[k,iel]]
+          #end for
+
+          for iq in [0,1,2]:
+              for jq in [0,1,2]:
+
+                  # position & weight of quad. point
+                  rq=qcoords[iq]
+                  sq=qcoords[jq]
+                  weightq=qweights[iq]*qweights[jq]
+
+                  NNNV[0:mV]=NNV(rq,sq)
+                  dNNNVdr[0:mV]=dNNVdr(rq,sq)
+                  dNNNVds[0:mV]=dNNVds(rq,sq)
+                  N_mat[0:mV,0]=NNV(rq,sq)
+
+                  #only valid for rectangular elements!
+                  jcbi=np.zeros((ndim,ndim),dtype=np.float64)
+                  jcob=hx*hy/4
+                  jcbi[0,0] = 2/hx 
+                  jcbi[1,1] = 2/hy
+ 
+                  # compute dNdx & dNdy
+                  for k in range(0,mV):
+                      dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                      dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                      B_mat[0,k]=dNNNVdx[k]
+                      B_mat[1,k]=dNNNVdy[k]
+                  #end for
+
+                  # compute mass matrix
+                  MM=N_mat.dot(N_mat.T)*weightq*jcob
+
+                  # compute diffusion matrix
+                  Kd=B_mat.T.dot(B_mat)*diffcoeff*weightq*jcob
+
+                  a_el+=MM+alphaT*Kd*dt
+                  b_el_xx+=(MM-(1-alphaT)*Kd*dt).dot(exx_prev)
+                  b_el_yy+=(MM-(1-alphaT)*Kd*dt).dot(eyy_prev)
+                  b_el_xy+=(MM-(1-alphaT)*Kd*dt).dot(exy_prev)
+
+                  counterq+=1
+              #end for jq
+          #end for iq
+
+          # assemble matrix A_mat and right hand side rhs
+          for k1 in range(0,mV):
+              m1=iconV[k1,iel]
+              for k2 in range(0,mV):
+                  m2=iconV[k2,iel]
+                  A_mat[m1,m2]+=a_el[k1,k2]
+              #end for
+              rhs_xx[m1]+=b_el_xx[k1]
+              rhs_yy[m1]+=b_el_yy[k1]
+              rhs_xy[m1]+=b_el_xy[k1]
+          #end for
+
+      #end for iel
+    
+      print("     -> matrix (m,M) %.4e %.4e " %(np.min(A_mat),np.max(A_mat)))
+      print("     -> rhs (m,M) %.4e %.4e " %(np.min(rhs),np.max(rhs)))
+
+      Txx = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_xx)
+      Tyy = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_yy)
+      Txy = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_xy)
+
+      if use_srn_diff:
+         exxn[:]=Txx[:]
+         eyyn[:]=Tyy[:]
+         exyn[:]=Txy[:]
+
+      srn[:]=np.sqrt(0.5*(exxn[:]*exxn[:]+eyyn[:]*eyyn[:])+exyn[:]*exyn[:])
+
+      print("     -> exxn (m,M) %.6e %.6e " %(np.min(exxn),np.max(exxn)))
+      print("     -> eyyn (m,M) %.6e %.6e " %(np.min(eyyn),np.max(eyyn)))
+      print("     -> exyn (m,M) %.6e %.6e " %(np.min(exyn),np.max(exyn)))
+      print("     -> srn  (m,M) %.6e %.6e " %(np.min(srn),np.max(srn)))
+
+      print("strain rate diffusion time: %.3f s" % (timing.time() - start))
+
+   #end if use_srn_diff
 
    ######################################################################
    # generate vtu output at every nonlinear iteration
    ######################################################################
    start = timing.time()
 
-   if iter%10==0:
+   if iter%25==0:
       filename = 'solution_nl_{:04d}.vtu'.format(iter)
       vtufile=open(filename,"w")
       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -1274,7 +1268,8 @@ for iter in range(0,niter):
    print("write nl iter vtu file: %.3f s" % (timing.time() - start))
 
    if benchmark==5:
-      evol1_file.write("%8e %8e %8e %8e %8e \n" %(etaq[0],etaq[int(nq/5)],etaq[int(nq/4)],etaq[int(nq/3)],etaq[int(nq/2)]))
+      evol1_file.write("%8e %8e %8e %8e %8e \n" %(etaq[0],etaq[int(nq/5)],etaq[int(nq/4)],\
+                                                  etaq[int(nq/3)],etaq[int(nq/2)]))
       evol2_file.write("%8e %8e %8e %8e %8e \n" %(abs(etaq[0]-etaq_mem[0]),\
                                                   abs(etaq[int(nq/5)]-etaq_mem[nq//5]),\
                                                   abs(etaq[int(nq/4)]-etaq_mem[nq//4]),\
@@ -1557,25 +1552,6 @@ for i in range(0,NV):
     vtufile.write("%.5e \n" %srn[i])
 vtufile.write("</DataArray>\n")
 #--
-#vtufile.write("<DataArray type='Float32' Name='strain rate (x10^-15)' Format='ascii'> \n")
-#for i in range(0,NV):
-#    vtufile.write("%.5e \n" %(srn[i]*1e15))
-#vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='Txx' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%.5e \n" %(Txx[i]))
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='Tyy' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%.5e \n" %(Tyy[i]))
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='Txy' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%.5e \n" %(Txy[i]))
-vtufile.write("</DataArray>\n")
 
 vtufile.write("</PointData>\n")
 #####

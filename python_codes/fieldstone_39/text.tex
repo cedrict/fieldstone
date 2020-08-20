@@ -133,7 +133,7 @@ in the case of multiple deformation mechanisms one should be careful about this 
 %..........................................................
 \subsubsection*{The 2010 brick}
 
-The setup is similar to the one in \cite{kaus10}. It is a 2D Cartesian domain filled with a 
+The setup is similar to the one in Kaus (2010) \cite{kaus10}. It is a 2D Cartesian domain filled with a 
 single rigid-plastic material characterised by a cohesion $c=10\text{MPa}$, an 
 angle of friction $\phi$, a dilation angle $\psi$ and a density $\rho=2800\text{kg/m}^3$.
 Extensional boundary conditions are as follows: 
@@ -211,53 +211,41 @@ Note that benchmarking this in not easy. One solution Timo and I found was to ad
 velocity field $\underline{\vec\upnu}=(x,y,z)$ (with $\vec\nabla\cdot\underline{\vec\upnu}=3$)
 to an existing analytical problem, e.g. the Burstedde benchamrk.
 
-%..........................................................
-\subsection*{The 2016 brick}
+\newpage
+%...........................................................
+\subsection*{Benchmark \#2 - Spiegelman et al (2016) brick}
 
-The setup is similar to the one in \cite{spmw16}. It is a 2D Cartesian domain filled with an 
+The setup is {\sl similar} to the one in Spiegelman et al (2016) \cite{spmw16}. 
+It is a 2D Cartesian domain filled with an 
 isoviscous layer at the bottom and a visco-plastic material on top, as shown here:  
 
-%\begin{center}
-%\includegraphics[width=6cm]{python_codes/fieldstone_39/images/spmw_1.png}
-%\includegraphics[width=8cm]{python_codes/fieldstone_39/images/spmw_2.png}
-%\end{center}
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_39/images/spmw_1.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/images/spmw_2.png}
+\end{center}
 
+The domain has dimensions $L_x=128\si{\kilo\metre}$, $L_y=Lx/4$. 
+The lower layer depth is $L_y/4$. The notch has dimensions $w=4\si{\kilo\metre}$
+and $h=2\si{\kilo\metre}$. 
 
 In what follows the nonlinear tolerance is set to $10^{-6}$. Due to a lack of resolution, I do not
-implement the rounded edges of the seed. $U_0$ is set to 25mm/yr and the background viscosity of the brittle layer
-is set to $\eta_0=10^{24}$Pa.s. Note that the effective viscosity of the brittle layer is computed as follows:
-\[
-\eta_{eff}
-=\left( \frac{1}{\eta_0} + \frac{1}{\eta_p}  \right)^{-1}
-=\left( \frac{1}{\eta_0} + \frac{2 \dot{\epsilon}_{ii}}{Y}  \right)^{-1}
-\]
-with $Y=p \sin \phi + c \cos \phi$. 
-Note that the pressure colour bars in Fig(6) of \cite{spmw16} are most likely not correct at all, 
-and in order for my results to look like theirs I had to change it for VM, DDM and DP. 
+implement the rounded edges of the seed. $U_0$ is set to $25\si{\mm\per\year}$ 
+and the background viscosity of the brittle layer
+is set to $\eta_v=10^{24}\si{\pascal\second}$. 
 
-%\begin{center}
-%\includegraphics[width=12cm]{python_codes/fieldstone_39/images/spmw_3.png}\\
-%{\small Results from Spiegelman et al \cite{spmw16}}
-%\end{center}
-
-%\begin{center}
-%\includegraphics[width=5cm]{python_codes/fieldstone_39/poster/new_spmw16_lvl3_vM/sr}
-%\includegraphics[width=5cm]{python_codes/fieldstone_39/poster/new_spmw16_lvl3_vM/mueff}
-%\includegraphics[width=5cm]{python_codes/fieldstone_39/poster/new_spmw16_lvl3_vM/p}\\
-%{\small von Mises case, results with fieldstone, lvl 3}
-%\end{center}
+Note that the pressure colour bars in Fig(6) of \cite{spmw16} are most likely not correct at all: 
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_39/images/spmw_3.png}\\
+{\captionfont Fig.(6) from Spiegelman et al (2016) \cite{spmw16}.}
+\end{center}
 
 
-%\includegraphics[width=5cm]{python_codes/fieldstone_39/poster/shear_bands_vM.pdf}
-%\includegraphics[width=5cm]{python_codes/fieldstone_39/poster/shear_bands_DP20.pdf}
-%\includegraphics[width=5cm]{python_codes/fieldstone_39/poster/shear_bands_DP30.pdf}
 
-%\includegraphics[width=7cm]{python_codes/fieldstone_39/poster/nonlinear_conv.pdf}
 
 
 \newpage
-%..............................................
-\subsection*{Shortening of a visco-plastic bloc}
+%........................................................
+\subsection*{Benchmark \#4: Shortening of a visco-plastic bloc - part 1}
 
 This benchmark originates in the book of Gerya. In the first edition the domain is 1000x1000km, 
 while it is 100x100km in the second. We keep the second edition as a guideline. The benchmark
@@ -304,36 +292,60 @@ $L/8=12.5$km and the block has a thickness of 50km:
 
 
 \newpage
-\underline{No viscous damper, no dilation rate, von Mises:}
+\underline{von Mises (no dilation rate):}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/u}
-\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/v}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_39/results_shortening_block/u}
+\includegraphics[width=5cm]{python_codes/fieldstone_39/results_shortening_block/v}
+\includegraphics[width=5cm]{python_codes/fieldstone_39/results_shortening_block/vel}\\
+{\captionfont Velocity field for 128x128, $\eta_m=1e19$}
+\end{center}
+
+\begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/etaeff}
 \includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/p}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/sr}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/sr_elt_log}
 \includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/sr_elt}\\
 {\captionfont From left to right: resolutions are 16x16, 32x32, 64x64 and 96x96. 100 nonlinear Picard iterations.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/conv_vM.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/sr_line_vM.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_39/results_shortening_block/conv_vM.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_39/results_shortening_block/sr_line_vM.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_39/results_shortening_block/sr_line_vM_reg.pdf}\\
+{\captionfont $\eta_m=1e19$}
 \end{center}
 
 
 
 
 \newpage
-\underline{No viscous damper, no dilation rate, Drucker-Prager:}
+\underline{viscous damper, no dilation rate, Drucker-Prager, phi=37:}
 
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/conv_DP.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/conv_DP_1e19.pdf}\\
+{\captionfont Left: $\eta_m=0$, right: $\eta_m=10^{19}$}
 \end{center}
 
 
-
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block/32x32_phi37_1e19/sr}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block/32x32_phi37_1e19/sr_log}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block/32x32_phi37_1e19/p}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block/32x32_phi37_1e19/eta}\\
+{\captionfont Fieldstone 32x32}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block/aspect_32x32_1e19_phi37/sr}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block/aspect_32x32_1e19_phi37/sr_log}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block/aspect_32x32_1e19_phi37/p}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block/aspect_32x32_1e19_phi37/eta}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block/aspect_64x64_1e19_phi37/sr}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block/aspect_64x64_1e19_phi37/sr_log}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block/aspect_64x64_1e19_phi37/p}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block/aspect_64x64_1e19_phi37/eta}\\
+{\captionfont ASPECT 32x32, 64x64} 
+\end{center}
 
 
 
@@ -350,7 +362,172 @@ To explore:
 
 
 
+\newpage
+%..............................................
+\subsection*{Benchmark \#5: Shortening of a visco-plastic bloc - part 2}
+
+The setup originates in Duretz et al (2018) \cite{dusd18} and is also carried out 
+in Jacquey \& Cacace (2020) \cite{jaca20a}. We here again neglect the elastic 
+deformation. 
+The domain is 4x2 km. There is a linear viscous inclusion in the middle of radius 100\si{\metre} and 
+viscosity $\eta_{inc}=10^{17}\si{\pascal\second}$. The material around is characterised by 
+$\eta_v=10^{24}\si{pascal\second}$, $c=3e7\si{pascal}$, $\phi=30\degree$, $psi=10\degree$.
+Boundary conditions are as follows: 
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_39/results_shortening_block2/jaca20a}
+\end{center}
+
+In the papers they prescribe $\Delta \varepsilon = 5\cdot 10^{-5}$ over a 
+time step of $\Delta t=10^{10}\si{second}$, 
+i.e. the background strain rate is $\dot\varepsilon=5\cdot 10^{-15}\si{\per\second}$.
+Given $L_x$ and $L_y$ we can easily arrive at the velocity values to be prescribed:
+\[
+|u_{bc}|=\dot{\varepsilon}_{bc} L_x/2
+\qquad
+|v_{bc}|=\dot{\varepsilon}_{bc} L_y/2
+\]
+ 
+The inclusion is circular, i.e. no amount of mesh refinement will be such that the mesh 
+edges align with it, as opposed to the previous experiment. 
 
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block2/dusd18}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block2/jaca20b}\\
+{\captionfont Left: taken from Duretz et al (2018) \cite{dusd18}; Right: taken from Jacquey \& Cacace (2020) \cite{jaca20a}.
+Note that these simulations have been run with elasto-visco-plastic rheologies 
+for a certain amount of time so that the propagation of the shear bands is not final/complete, as
+opposed to the converged visco-plastic solutions shown hereafter.}
+\end{center}
+
+As before, pressure is set to zero in the top right corner, and further post processed to insure that its volume 
+average is zero.
+
+
+\clearpage
+\subsubsection*{von Mises rheology}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block2/conv_vM}\\
+{\captionfont Nonlinear convergence, fieldstone and aspect, 128x64, 200 nonlinear iterations, $\eta_m=10^{19}$.}
+\end{center}
+\begin{center}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_39/results_shortening_block2/128x64_1e19/u}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_39/results_shortening_block2/128x64_1e19/v}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_39/results_shortening_block2/128x64_1e19/vel}\\
+\includegraphics[width=5.8cm]{python_codes/fieldstone_39/results_shortening_block2/128x64_1e19/eta}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_39/results_shortening_block2/128x64_1e19/sr}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_39/results_shortening_block2/128x64_1e19/p}\\
+{\captionfont 128x64, 200 nonlinear iterations, $\eta_m=10^{19}$}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_39/results_shortening_block2/aspect_128x64_1e19/u}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_39/results_shortening_block2/aspect_128x64_1e19/v}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_39/results_shortening_block2/aspect_128x64_1e19/vel}\\
+\includegraphics[width=5.8cm]{python_codes/fieldstone_39/results_shortening_block2/aspect_128x64_1e19/eta}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_39/results_shortening_block2/aspect_128x64_1e19/sr}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_39/results_shortening_block2/aspect_128x64_1e19/p}\\
+{\captionfont ASPECT: 128x64, 200 nonlinear iterations, $\eta_m=10^{19}$}
+\end{center}
+
+\newpage
+In order to help the comparison, I plot the effective viscosity and the strain rate for both next to one another:
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block2/eta_both}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block2/sr_both}\\
+{\captionfont Left half is fieldstone, Right half is aspect.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_39/results_shortening_block2/sr_line_vM.pdf}\\
+{\captionfont Strain rate cross section at $y=11L_y/16$.}
+\end{center}
+
+
+\clearpage
+\subsubsection*{Drucker-Prager rheology ($\phi=30\degree$)}
+
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block2/conv_DP}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block2/sr_line_DP.pdf}
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/32x16_1e19_phi30/vel}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/32x16_1e19_phi30/p}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/32x16_1e19_phi30/sr}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/32x16_1e19_phi30/eta}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/48x24_1e19_phi30/vel}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/48x24_1e19_phi30/p}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/48x24_1e19_phi30/sr}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/48x24_1e19_phi30/eta}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/64x32_1e19_phi30/vel}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/64x32_1e19_phi30/p}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/64x32_1e19_phi30/sr}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/64x32_1e19_phi30/eta}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/128x64_1e19_phi30/vel}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/128x64_1e19_phi30/p}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/128x64_1e19_phi30/sr}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/128x64_1e19_phi30/eta}\\
+{\captionfont Fielstone. Top to bottom: 32x16, 48x24, 64x32, 128x64, etam=1e19, phi=30}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/aspect_32x16_1e19_phi30/vel}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/aspect_32x16_1e19_phi30/p}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/aspect_32x16_1e19_phi30/sr}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/aspect_32x16_1e19_phi30/eta}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/aspect_64x32_1e19_phi30/vel}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/aspect_64x32_1e19_phi30/p}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/aspect_64x32_1e19_phi30/sr}
+\includegraphics[width=4cm]{python_codes/fieldstone_39/results_shortening_block2/aspect_64x32_1e19_phi30/eta}\\
+{\captionfont ASPECT, 64x32, etam=1e19, phi=30}\\
+\end{center}
+
+Note that ASPECT does not use the proper partitioning of strain rates, and uses total strain rate 
+in plastic element. This could explain the difference?
+
+
+
+\clearpage
+\subsubsection*{A very different approach: diffusion plasticity}
+
+The idea is to solve a diffusion equation for each component of the strain rate tensor. In 
+order to do so, we need nodal values of this tensor and these values must then also be used in 
+the rheology: the shape functions are used to interpolate these values onto the quadrature points
+(as opposed to the standard way of using the shape function derivatives to interpolate the velocity). 
+
+After each nonlinear iteration the nodal fields $\dot{\varepsilon}_{xx}$, $\dot{\varepsilon}_{yy}$ 
+and $\dot{\varepsilon}_{xy}$ are diffused. The diffusion coefficient $D$ value is not straightforward
+to choose. Also, boundary conditions are unknown so we resort to doing nothing, i.e. zero Neumann 
+boundary conditions.
+
+Note that in this case we have $\eta_m=0$ and that it is tTriggered in the code 
+by {\sl use\_srn\_diff=True}.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block2/diffusion/srn}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block2/diffusion/eta}\\
+{\captionfont resolution 32x16, from top to bottom $D=0,2h_x,8h_x$.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block2/diffusion/conv.pdf}
+\end{center}
+
+The diffusion helps with convergence. Rather importantly, it requires the use of nodal strainrate 
+in the rheology, as opposed to before where strain rate at the quadrature point was computed using 
+the derivatives of the shape functions. 
+
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_39/results_shortening_block2/diffusion/sr_lots}
+\includegraphics[width=5cm]{python_codes/fieldstone_39/results_shortening_block2/diffusion/eta_lots}
+\includegraphics[width=5cm]{python_codes/fieldstone_39/results_shortening_block2/diffusion/p_lots}\\
+{\captionfont D=1km, 32x16, 48x24, 64x32, 80x40, 96x48}
+\end{center}
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_39/results_shortening_block/diffusion/sr_line.pdf}\\
+{\captionfont Strain rate cross section at $y=11L_y/16$.}
+\end{center}
 
 
