@@ -1,0 +1,210 @@
+set term pdf enhanced font "Times,14pt"
+set pm3d
+set xlabel 'sr'
+set ylabel 'y'
+set view map
+set size ratio 0.5
+set palette rgb 33,13,10 #rainbow 
+set palette maxcolors 16
+set grid
+set log zcb
+
+##############################################################################################
+# old
+
+set title '{/Symbol h}_{df}|_{old}'
+set output 'map_eta_df_old.pdf'
+splot[-18:-12][][:1e25] 'maps_old_visc.ascii'  u (log10($1)):2:(($3)) with pm3d notitle 
+
+set title '{/Symbol h}_{ds}|_{old}'
+set output 'map_eta_ds_old.pdf'
+splot[-18:-12][][:1e25] 'maps_old_visc.ascii'  u (log10($1)):2:(($4)) with pm3d notitle 
+
+set title '{/Symbol h}_{eff}|_{old}'
+set output 'map_etaeff_old.pdf'
+splot[-18:-12][][:1e25] 'maps_old_visc.ascii'  u (log10($1)):2:(($5)) with pm3d notitle 
+
+set title '{/Symbol t}|_{old}'
+set output 'map_tau_old.pdf'
+splot[-18:-12][][:1e14] 'maps_old_visc.ascii'  u (log10($1)):2:(($6)) with pm3d notitle 
+
+set title '~{/Symbol e}{1.1.}_{df}|_{old}'
+set output 'map_sr_df_old.pdf'
+splot[-18:-12][][1e-18:1e-12] 'maps_old_visc.ascii'  u (log10($1)):2:(($7)) with pm3d notitle 
+
+set title '~{/Symbol e}{1.1.}_{ds}|_{old}'
+set output 'map_sr_ds_old.pdf'
+splot[-18:-12][][1e-18:1e-12] 'maps_old_visc.ascii'  u (log10($1)):2:(($8)) with pm3d notitle 
+
+set title '~{/Symbol e}{1.1.}_{v}|_{old}'
+set output 'map_sr_v_old.pdf'
+splot[-18:-12][][1e-18:1e-12] 'maps_old_visc.ascii'  u (log10($1)):2:(($9)) with pm3d notitle 
+
+unset logscale
+set title 'above yield value Y'
+set output 'map_isplast_old.pdf'
+splot[-18:-12][][] 'maps_old_visc.ascii'  u (log10($1)):2:10 with pm3d notitle 
+set log zcb
+
+#---- with plasticity
+
+set title '{/Symbol h}_{eff}|_{old}'
+set output 'map_etaeff_old_pl.pdf'
+splot[-18:-12][][1e18:1e25] 'maps_old_viscpl.ascii'  u (log10($1)):2:(($5)) with pm3d notitle 
+
+set title '{/Symbol t}|_{old}'
+set output 'map_tau_old_pl.pdf'
+splot[-18:-12][][:1e14] 'maps_old_viscpl.ascii'  u (log10($1)):2:(($6)) with pm3d notitle 
+
+##############################################################################################
+# new
+
+set title '{/Symbol h}_{df}_{new}'
+set output 'map_eta_df_new.pdf'
+splot[-18:-12][][:1e25] 'maps_new_visc.ascii'  u (log10($1)):2:(($3)) with pm3d notitle 
+
+set title '{/Symbol h}_{ds}|_{new}'
+set output 'map_eta_ds_new.pdf'
+splot[-18:-12][][:1e25] 'maps_new_visc.ascii'  u (log10($1)):2:(($4)) with pm3d notitle 
+
+set title '{/Symbol h}_{eff}|_{new}'
+set output 'map_etaeff_new.pdf'
+splot[-18:-12][][:1e25] 'maps_new_visc.ascii'  u (log10($1)):2:(($5)) with pm3d notitle 
+
+set title '{/Symbol t}|_{new}'
+set output 'map_tau_new.pdf'
+splot[-18:-12][][] 'maps_new_visc.ascii'  u (log10($1)):2:(($6)) with pm3d notitle 
+
+set title '~{/Symbol e}{1.1.}_{df}|_{new}'
+set output 'map_sr_df_new.pdf'
+splot[-18:-12][][1e-18:1e-12] 'maps_new_visc.ascii'  u (log10($1)):2:(($7)) with pm3d notitle 
+
+set title '~{/Symbol e}{1.1.}_{ds}|_{new}'
+set output 'map_sr_ds_new.pdf'
+splot[-18:-12][][1e-18:1e-12] 'maps_new_visc.ascii'  u (log10($1)):2:(($8)) with pm3d notitle 
+
+set title '~{/Symbol e}{1.1.}_{v}|_{new}'
+set output 'map_sr_v_new.pdf'
+splot[-18:-12][][1e-18:1e-12] 'maps_new_visc.ascii'  u (log10($1)):2:(($9)) with pm3d notitle 
+
+unset logscale
+set title 'above yield value Y'
+set output 'map_isplast_new.pdf'
+splot[-18:-12][][] 'maps_new_visc.ascii'  u (log10($1)):2:10 with pm3d notitle 
+set log zcb
+
+#---- with plasticity
+
+set title '{/Symbol h}_{eff}|_{new}'
+set output 'map_etaeff_new_pl.pdf'
+splot[-18:-12][][:1e25] 'maps_new_viscpl.ascii'  u (log10($1)):2:(($5)) with pm3d notitle 
+
+set title '{/Symbol t}|_{new}'
+set output 'map_tau_new_pl.pdf'
+splot[-18:-12][][] 'maps_new_viscpl.ascii'  u (log10($1)):2:(($6)) with pm3d notitle 
+
+##############################################################################################
+# diff 
+unset logscale
+set palette gray 
+set palette maxcolors 100 
+
+set title '({/Symbol h}_{eff}|_{new}  - {/Symbol h}_{eff}|_{old})/ {/Symbol h}_{eff}|_{new}   '
+set output 'map_etaeff_diff.pdf'
+splot[-18:-12][][:] 'maps_diff_visc.ascii'  u (log10($1)):2:(($5)) with pm3d notitle
+
+set title '({/Symbol t}|{new}-{/Symbol t}|{old})/{/Symbol t}|{new}'
+set output 'map_tau_diff.pdf'
+splot[-18:-12][][] 'maps_diff_visc.ascii'  u (log10($1)):2:(($6)) with pm3d notitle 
+
+set title '({/Symbol h}_{eff}|_{new}  - {/Symbol h}_{eff}|_{old})/ {/Symbol h}_{eff}|_{new}   '
+set output 'map_etaeff_diff_pl.pdf'
+splot[-18:-12][][:] 'maps_diff_viscpl.ascii'  u (log10($1)):2:(($5)) with pm3d notitle
+
+set title '({/Symbol t}|{new}-{/Symbol t}|{old})/{/Symbol t}|{new}'
+set output 'map_tau_diff_pl.pdf'
+splot[-18:-12][][] 'maps_diff_viscpl.ascii'  u (log10($1)):2:(($6)) with pm3d notitle 
+
+set title '~{/Symbol e}{1.1.}_{df} diff'
+set output 'map_sr_df_diff.pdf'
+splot[-18:-12][][-18:-12] 'maps_diff_visc.ascii'  u (log10($1)):2:(log10($7)) with pm3d notitle 
+
+set title '~{/Symbol e}{1.1.}_{ds} diff'
+set output 'map_sr_ds_diff.pdf'
+splot[-18:-12][][-18:-12] 'maps_diff_visc.ascii'  u (log10($1)):2:(log10($8)) with pm3d notitle 
+
+set title '~{/Symbol e}{1.1.}_{v} diff'
+set output 'map_sr_v_diff.pdf'
+splot[-18:-12][][-18:12] 'maps_diff_visc.ascii'  u (log10($1)):2:(log10($9)) with pm3d notitle 
+
+#################################################################################
+#################################################################################
+#################################################################################
+reset session
+
+set xlabel 'y'
+set key outside
+set term pdf enhanced font "Times,12pt"
+set log y
+
+set title 'for ~{/Symbol e}{1.1.}_{T}=10^{-15}'
+
+set ylabel '{/Symbol h}_{eff}'
+set output 'profile_etaeff.pdf'
+plot[:660e3][1e19:1e26]\
+ 'profile_old_visc.ascii' u 2:5 w l  t 'old',\
+ 'profile_new_visc.ascii' u 2:5 w l  t 'new',\
+
+set ylabel '{/Symbol h}_{eff}'
+set output 'profile_etaeff_pl.pdf'
+plot[:660e3][1e19:1e26]\
+ 'profile_old_viscpl.ascii' u 2:5 w l  t 'old',\
+ 'profile_new_viscpl.ascii' u 2:5 w l  t 'new',\
+
+
+set ylabel '{/Symbol t}'
+set output 'profile_tau.pdf'
+plot[:660e3][1e5:]\
+ 'profile_old_visc.ascii' u 2:6 w l t 'old',\
+ 'profile_new_visc.ascii' u 2:6 w l t 'new',\
+
+set ylabel '{/Symbol t}'
+set output 'profile_tau_pl.pdf'
+plot[:660e3][1e5:]\
+ 'profile_old_viscpl.ascii' u 2:6 w l t 'old',\
+ 'profile_new_viscpl.ascii' u 2:6 w l t 'new',\
+
+
+
+set ylabel '~{/Symbol e}{1.1.}'
+set output 'profile_sr.pdf'
+plot[:660e3][1e-21:]\
+ 'profile_old_visc.ascii' u 2:7 w l t 'df, old',\
+ 'profile_new_visc.ascii' u 2:7 w l t 'df, new',\
+ 'profile_old_visc.ascii' u 2:8 w l t 'ds, old',\
+ 'profile_new_visc.ascii' u 2:8 w l t 'ds, new',\
+ 'profile_old_visc.ascii' u 2:9 w l t 'v, old',\
+ 'profile_new_visc.ascii' u 2:9 w l t 'v, new',\
+
+set ylabel '~{/Symbol e}{1.1.}'
+set output 'profile_sr_pl.pdf'
+plot[:660e3][1e-21:]\
+ 'profile_old_viscpl.ascii' u 2:7 w l t 'df, old',\
+ 'profile_new_viscpl.ascii' u 2:7 w l t 'df, new',\
+ 'profile_old_viscpl.ascii' u 2:8 w l t 'ds, old',\
+ 'profile_new_viscpl.ascii' u 2:8 w l t 'ds, new',\
+ 'profile_old_viscpl.ascii' u 2:9 w l t 'v, old',\
+ 'profile_new_viscpl.ascii' u 2:9 w l t 'v, new',\
+
+
+
+
+
+
+
+
+
+
+
+
+

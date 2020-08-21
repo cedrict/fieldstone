@@ -354,22 +354,33 @@ factor of the next remark.
 \end{remark}
 
 \begin{remark}
-uniaxial stuff 
-An additional coefficient is added to the effective viscosity formula(s ??) \cite{grpy12,grpy13}.
+uniaxial stuff. An additional coefficient is added to the effective viscosity formula(s ??) \cite{grpy12,grpy13,ranalli}
 \[
 3^{-(1+n)/2n}2^{(1-n)/n}
 \] 
-\cite{ranalli}
 \end{remark}
 
 \begin{center}
-\includegraphics[width=13cm]{images/rheology/defmap}\\
-{\captionfont Fig-$\mathds{B}$: Deformation mechanism map calculated for grain size $a=0.1mm$. The lightly shaded area indicates 
+\includegraphics[width=7cm]{images/rheology/defmap}
+\includegraphics[width=9cm]{images/rheology/elme18}\\
+{\captionfont 
+Fig-$\mathds{B}$: Left: Taken from Kameyama et al (1999) \cite{kayk99}.
+Deformation mechanism map calculated for grain size $a=0.1mm$. The lightly shaded area indicates 
 that deformation mainly occurs by diffusion creep. The densely shaded area indicates that 
 deformation mainly occurs by power-law creep. 
 The white region indicates that deformation mainly occurs by the Peierls mechanism. The 
 solid curves are lines of constant strain rate. The numbers attached to each contour indicate the 
-logarithm of the strain rate in the unit of $s^{-1}$ \cite{kayk99}.}
+logarithm of the strain rate in the unit of $\si{\per\second}$.
+Right: Taken from Elbeshausen \& Melosh (1998) \cite{elme18}. 
+Strain rate as a function of stress and temperature. The parameter space dominated by each of 
+the terms is denoted by different hues, depending on strain rate. Note that the original equations 
+implicitly include a pressure dependence in the enthalpy term, which is not strong and 
+therefore neglected here. The diffusion regime is highly temperature dependent and 
+important for small strain rates only. Dislocation creep occurs for intermediate 
+stresses and higher temperatures, while the Peierls mechanism dominates at higher stresses 
+($\ge 500\si{\mega\pascal})$ and shows a strong stress dependence for low temperatures. 
+The dashed contours are strain rate in units of $\si{\per\second}$. 
+}
 \end{center}
 
 
@@ -551,12 +562,17 @@ Mohr-Coulomb one.
 Looking at the literature, there seem to be many formulations for the Peierls creep deformation
 mechanism, but it it appears that a standard formulation for the Peierls creep writes:
 \[
-\dot{\epsilon} = A \sigma^n \exp \left[ -\frac{Q+pV}{RT} \left(1-(\frac{\sigma}{\sigma_P})^k\right)^q  \right]
+\dot{\varepsilon} = A \sigma^n \exp \left[ -\frac{Q+pV}{RT} \left(1-(\frac{\sigma}{\sigma_P})^k\right)^q  \right]
 \]
 and it seems common to take $k=1$, and $n=2$ \cite{gery10,kaka08}
 \[
-\dot{\epsilon} = A \sigma^2 \exp \left[ -\frac{Q+pV}{RT} \left(1-\frac{\sigma}{\sigma_P}\right)^q  \right]
+\dot{\varepsilon} = A \sigma^2 \exp \left[ -\frac{Q+pV}{RT} \left(1-\frac{\sigma}{\sigma_P}\right)^q  \right]
 \]
+Elbeshausen \& Melosh (2018) \cite{elme18} use 
+\[
+\dot{\varepsilon} = A  \exp \left[ -\frac{Q}{RT} \left(1-\frac{\sigma}{\sigma_P}\right)^q  \right]
+\]
+
 In Chenin et al. (2019) \cite{chmd19} the authors state that their Peierls creep implementation
 relies on parameters from Evans and Goetze (1979) \cite{evgo79} using the approach of 
 Kameyama et al (1999) \cite{kayk99}:
@@ -1234,6 +1250,67 @@ Although this approach is probably the most consistent in terms of physics, the 
 of the Newton-Raphson iterations makes it very expensive since this procedure is to be repeated 
 for every quadrature point or every particle.
 
+Let us consider a concrete example: we set $Y=20\si{\mega\pascal}$, $\eta_v=10^{25}\si{pascal}$, 
+$\eta_m=10^{20}\si{pascal}$. The domain is one-dimensional of depth $660\si{km}$. The density is
+assumed to be constant at $3300\si{\kg\per\cubic\metre}$. Dislocation and diffusion creep parameters
+are taken from Karato \& Wu (1993) \cite{kawu93}. The temperature is linear is $20\si{\celsius}$ 
+at the surface, $550\si{\celsius}$ at $30\si{km}$ depth, $1330\si{celsius}$ at $90\si{\km}$ depth 
+and $1380\si{\celsius}$ at the bottom. Pressure is assumed to be lithostatic. 
+The python program and the gnuplot script are in {\sl images/rheology/example}.
+
+In the code I consider two cases: 'old' and 'new'. The latter is described above. 
+'old' goes as follows: loop over total strain rate values. 
+Compute dislocation and diffusion creep viscosities with it. Compute harmonic 
+average of these with linear viscosity. Compute deviatoric stress value. 
+use it in dislocation and diffusion formulae to arrive at respective strainrates. 
+
+\newpage
+\begin{center}
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_df_old-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_df_new-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_df_diff-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_ds_old-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_ds_new-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_ds_diff-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_v_old-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_v_new-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_v_diff-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/map_etaeff_old-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_etaeff_new-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_etaeff_diff-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/map_tau_old-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_tau_new-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_tau_diff-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/profile_sr-1}
+\includegraphics[width=5.5cm]{images/rheology/example/profile_tau-1}
+\includegraphics[width=5.5cm]{images/rheology/example/profile_etaeff-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/map_isplast_old-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_isplast_new-1}\\
+{\captionfont Viscous branch: (ds+df+v) 'old' stands 
+for the old approach when $\dot{\varepsilon}_T$
+was used for all mechanisms. 'new' stands for the new approach and the right strain rate 
+decomposition.}
+\end{center}
+
+
+
+\newpage
+\begin{center}
+\includegraphics[width=5.5cm]{images/rheology/example/map_etaeff_old_pl-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_etaeff_new_pl-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_etaeff_diff_pl-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/map_tau_old_pl-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_tau_new_pl-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_tau_diff_pl-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/profile_sr_pl-1}
+\includegraphics[width=5.5cm]{images/rheology/example/profile_tau_pl-1}
+\includegraphics[width=5.5cm]{images/rheology/example/profile_etaeff_pl-1}\\
+{\captionfont Visco-viscoplastic rheology: (ds+df+v+vp)} 
+\end{center}
+
+
+
+
 \end{itemize}
 
 
@@ -1260,8 +1337,40 @@ and solved locally on cell centroids and vertices in order to define the current
 and stress \cite{poso08}."
 \end{remark}
 
-
 \Literature: \cite{hoor89,lopr90,homo90,scps01,lova01,anpa19,egat10}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 %...........................................
 \subsubsection{Anisotropic viscosity}
