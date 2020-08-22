@@ -1386,22 +1386,35 @@ where $\eta_N$ is the normal viscosity and $\eta_S$ is the shear viscosity.
 The fourth order tensor $\Lambda$ reflects the orientation of the directors in space, 
 denoted by $\vec{n}$:
 \[
-\Lambda_{ijkl}=\frac{1}{2} (n_i n_k \delta_{lj} + n_j n_k \delta_{il} + n_i n_l \delta{kj} n_j n_l \delta_{ik} )
+\Lambda_{ijkl}=\frac{1}{2} (n_i n_k \delta_{lj} + n_j n_k \delta_{il} 
++ n_i n_l \delta_{kj} n_j n_l \delta_{ik} )
 - 2 n_i n_j n_k n_l 
 \]
 Following \cite{modm03,mumh02}, the 'directors' are advected through the model and are 
 analogous to particles. The directors are
 vector-particles pointing normal to the easy-glide plane or layer,
 thus defining the directions associated with $\eta_N$ and $\eta_S$. 
-In each time
-step of the calculation, the directors are advected and rotated by the
+In each time step of the calculation, the directors are advected and rotated by the
 flow, and in return determine the viscosity structure for the next time
 step \cite{mumc04}.
+
+\begin{center}
+\includegraphics[width=10cm]{images/rheology/leha08}\\
+{\captionfont Taken from Lev \& Hager (2008) \cite{leha08}.}
+\end{center}
 
 \mscthesis\index{general}{MSc Thesis}: redo the Rayleigh-Taylor instabilities with anisotropic lithospheric viscosity.
 experiments of Lev \& Hager (2008) \cite{leha08}. 
 
-\Literature: \cite{mumh02,vatb98,mumc04,mumh02,mima04,rida78,saab84}
+\Literature: 
+Richter \& Daly (1978) \cite{rida78},
+Saito \& Abe (1984) \cite{saab84},
+Vauchez et al (1998) \cite{vatb98},
+M{\"u}lhaus et al (2002) \cite{mumh02},
+M{\"u}lhaus et al (2003) \cite{mumc03},
+M{\"u}lhaus et al (2004) \cite{mumc04},
+Michibayashi \& D. Mainprice (2004) \cite{mima04},
+Moresi \& M{\"u}lhaus (2006) \cite{momu06}.
 
 %...........................................
 \subsubsection{Rheology of the lithosphere}
