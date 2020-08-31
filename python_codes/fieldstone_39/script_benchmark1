@@ -1,0 +1,28 @@
+#! /bin/bash
+
+#   nelx = int(sys.argv[1])
+#   benchmark = int(sys.argv[2])
+#   phi = float(sys.argv[3])
+#   psi =  float(sys.argv[4])
+#   niter =  int(sys.argv[5])
+#   eta_m =  float(sys.argv[6])
+#   eta_v =  float(sys.argv[7])
+
+niter=250
+
+for nelx in 64 96 128 160 ; do
+
+    nohup python3 stone.py $nelx 1  0  0 $niter 0 25  
+    nohup python3 stone.py $nelx 1 30  0 $niter 0 25  
+    nohup python3 stone.py $nelx 1 30 30 $niter 0 25  
+
+    nohup python3 stone.py $nelx 1  0  0 $niter 19 25  
+    nohup python3 stone.py $nelx 1 30  0 $niter 19 25  
+    nohup python3 stone.py $nelx 1 30 30 $niter 19 25  
+
+    nohup python3 stone.py $nelx 1  0  0 $niter 20 25  
+    nohup python3 stone.py $nelx 1 30  0 $niter 20 25  
+    nohup python3 stone.py $nelx 1 30 30 $niter 20 25  
+
+done
+
