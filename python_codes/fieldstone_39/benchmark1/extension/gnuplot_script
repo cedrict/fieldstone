@@ -1,0 +1,513 @@
+set term pdf enhanced font "Times,10pt"
+set grid
+
+#linetype=resolution
+#dashtype=angles 
+set key outside
+set xlabel '# iterations'
+set ylabel 'nonlinear convergence'
+set log y
+
+set title '{/Symbol h}_m=0'
+set output 'conv_etam0.pdf'
+plot[][]\
+'conv_nelx64_phi0_psi0_etam0.ascii'     u 1:2 w l lt 1 dashtype 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'conv_nelx64_phi30_psi0_etam0.ascii'    u 1:2 w l lt 1 dashtype 2 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'conv_nelx64_phi30_psi30_etam0.ascii'   u 1:2 w l lt 1 dashtype 4 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'conv_nelx96_phi0_psi0_etam0.ascii'     u 1:2 w l lt 2 dashtype 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'conv_nelx96_phi30_psi0_etam0.ascii'    u 1:2 w l lt 2 dashtype 2 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'conv_nelx96_phi30_psi30_etam0.ascii'   u 1:2 w l lt 2 dashtype 4 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'conv_nelx128_phi0_psi0_etam0.ascii'    u 1:2 w l lt 3 dashtype 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'conv_nelx128_phi30_psi0_etam0.ascii'   u 1:2 w l lt 3 dashtype 2 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'conv_nelx128_phi30_psi30_etam0.ascii'  u 1:2 w l lt 3 dashtype 4 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'conv_nelx160_phi0_psi0_etam0.ascii'    u 1:2 w l lt 4 dashtype 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'conv_nelx160_phi30_psi0_etam0.ascii'   u 1:2 w l lt 4 dashtype 2 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'conv_nelx160_phi30_psi30_etam0.ascii'  u 1:2 w l lt 4 dashtype 4 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+
+
+set title '{/Symbol h}_m=10^{19}'
+set output 'conv_etam19.pdf'
+plot[][]\
+'conv_nelx64_phi0_psi0_etam19.ascii'    u 1:2 w l lt 1 dashtype 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'conv_nelx64_phi30_psi0_etam19.ascii'   u 1:2 w l lt 1 dashtype 2 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'conv_nelx64_phi30_psi30_etam19.ascii'  u 1:2 w l lt 1 dashtype 4 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'conv_nelx96_phi0_psi0_etam19.ascii'    u 1:2 w l lt 2 dashtype 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'conv_nelx96_phi30_psi0_etam19.ascii'   u 1:2 w l lt 2 dashtype 2 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'conv_nelx96_phi30_psi30_etam19.ascii'  u 1:2 w l lt 2 dashtype 4 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'conv_nelx128_phi0_psi0_etam19.ascii'   u 1:2 w l lt 3 dashtype 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'conv_nelx128_phi30_psi0_etam19.ascii'  u 1:2 w l lt 3 dashtype 2 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'conv_nelx128_phi30_psi30_etam19.ascii' u 1:2 w l lt 3 dashtype 4 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'conv_nelx160_phi0_psi0_etam19.ascii'   u 1:2 w l lt 4 dashtype 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'conv_nelx160_phi30_psi0_etam19.ascii'  u 1:2 w l lt 4 dashtype 2 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'conv_nelx160_phi30_psi30_etam19.ascii' u 1:2 w l lt 4 dashtype 4 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+
+set title '{/Symbol h}_m=10^{20}'
+set output 'conv_etam20.pdf'
+plot[][]\
+'conv_nelx64_phi0_psi0_etam20.ascii'    u 1:2 w l lt 1 dashtype 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'conv_nelx64_phi30_psi0_etam20.ascii'   u 1:2 w l lt 1 dashtype 2 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'conv_nelx64_phi30_psi30_etam20.ascii'  u 1:2 w l lt 1 dashtype 4 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'conv_nelx96_phi0_psi0_etam20.ascii'    u 1:2 w l lt 2 dashtype 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'conv_nelx96_phi30_psi0_etam20.ascii'   u 1:2 w l lt 2 dashtype 2 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'conv_nelx96_phi30_psi30_etam20.ascii'  u 1:2 w l lt 2 dashtype 4 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'conv_nelx128_phi0_psi0_etam20.ascii'   u 1:2 w l lt 3 dashtype 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'conv_nelx128_phi30_psi0_etam20.ascii'  u 1:2 w l lt 3 dashtype 2 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'conv_nelx128_phi30_psi30_etam20.ascii' u 1:2 w l lt 3 dashtype 4 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'conv_nelx160_phi0_psi0_etam20.ascii'   u 1:2 w l lt 4 dashtype 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'conv_nelx160_phi30_psi0_etam20.ascii'  u 1:2 w l lt 4 dashtype 2 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'conv_nelx160_phi30_psi30_etam20.ascii' u 1:2 w l lt 4 dashtype 4 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+
+
+
+
+unset log y
+set ylabel 'v_{rms}'
+
+set title '{/Symbol h}_m=0'
+set output 'vrms_etam0.pdf'
+plot[][]\
+'vrms_nelx64_phi0_psi0_etam0.ascii'     u 1:2 w l lt 1 dashtype 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'vrms_nelx64_phi30_psi0_etam0.ascii'    u 1:2 w l lt 1 dashtype 2 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'vrms_nelx64_phi30_psi30_etam0.ascii'   u 1:2 w l lt 1 dashtype 4 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'vrms_nelx96_phi0_psi0_etam0.ascii'     u 1:2 w l lt 2 dashtype 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'vrms_nelx96_phi30_psi0_etam0.ascii'    u 1:2 w l lt 2 dashtype 2 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'vrms_nelx96_phi30_psi30_etam0.ascii'   u 1:2 w l lt 2 dashtype 4 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'vrms_nelx128_phi0_psi0_etam0.ascii'    u 1:2 w l lt 3 dashtype 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'vrms_nelx128_phi30_psi0_etam0.ascii'   u 1:2 w l lt 3 dashtype 2 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'vrms_nelx128_phi30_psi30_etam0.ascii'  u 1:2 w l lt 3 dashtype 4 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'vrms_nelx160_phi0_psi0_etam0.ascii'    u 1:2 w l lt 4 dashtype 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'vrms_nelx160_phi30_psi0_etam0.ascii'   u 1:2 w l lt 4 dashtype 2 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'vrms_nelx160_phi30_psi30_etam0.ascii'  u 1:2 w l lt 4 dashtype 4 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+
+
+set title '{/Symbol h}_m=10^{19}'
+set output 'vrms_etam19.pdf'
+plot[][]\
+'vrms_nelx64_phi0_psi0_etam19.ascii'    u 1:2 w l lt 1 dashtype 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'vrms_nelx64_phi30_psi0_etam19.ascii'   u 1:2 w l lt 1 dashtype 2 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'vrms_nelx64_phi30_psi30_etam19.ascii'  u 1:2 w l lt 1 dashtype 4 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'vrms_nelx96_phi0_psi0_etam19.ascii'    u 1:2 w l lt 2 dashtype 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'vrms_nelx96_phi30_psi0_etam19.ascii'   u 1:2 w l lt 2 dashtype 2 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'vrms_nelx96_phi30_psi30_etam19.ascii'  u 1:2 w l lt 2 dashtype 4 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'vrms_nelx128_phi0_psi0_etam19.ascii'   u 1:2 w l lt 3 dashtype 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'vrms_nelx128_phi30_psi0_etam19.ascii'  u 1:2 w l lt 3 dashtype 2 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'vrms_nelx128_phi30_psi30_etam19.ascii' u 1:2 w l lt 3 dashtype 4 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'vrms_nelx160_phi0_psi0_etam19.ascii'   u 1:2 w l lt 4 dashtype 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'vrms_nelx160_phi30_psi0_etam19.ascii'  u 1:2 w l lt 4 dashtype 2 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'vrms_nelx160_phi30_psi30_etam19.ascii' u 1:2 w l lt 4 dashtype 4 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+
+set title '{/Symbol h}_m=10^{20}'
+set output 'vrms_etam20.pdf'
+plot[][]\
+'vrms_nelx64_phi0_psi0_etam20.ascii'    u 1:2 w l lt 1 dashtype 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'vrms_nelx64_phi30_psi0_etam20.ascii'   u 1:2 w l lt 1 dashtype 2 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'vrms_nelx64_phi30_psi30_etam20.ascii'  u 1:2 w l lt 1 dashtype 4 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'vrms_nelx96_phi0_psi0_etam20.ascii'    u 1:2 w l lt 2 dashtype 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'vrms_nelx96_phi30_psi0_etam20.ascii'   u 1:2 w l lt 2 dashtype 2 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'vrms_nelx96_phi30_psi30_etam20.ascii'  u 1:2 w l lt 2 dashtype 4 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'vrms_nelx128_phi0_psi0_etam20.ascii'   u 1:2 w l lt 3 dashtype 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'vrms_nelx128_phi30_psi0_etam20.ascii'  u 1:2 w l lt 3 dashtype 2 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'vrms_nelx128_phi30_psi30_etam20.ascii' u 1:2 w l lt 3 dashtype 4 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'vrms_nelx160_phi0_psi0_etam20.ascii'   u 1:2 w l lt 4 dashtype 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'vrms_nelx160_phi30_psi0_etam20.ascii'  u 1:2 w l lt 4 dashtype 2 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'vrms_nelx160_phi30_psi30_etam20.ascii' u 1:2 w l lt 4 dashtype 4 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+
+
+
+set title '{/Symbol h}_m=0'
+set ylabel 'strain rate'
+set output 'line_sr_etam0.pdf'
+plot[25e3:55e3][]\
+'line_nelx64_phi0_psi0_etam0.ascii'     u 1:2 w l lt 1 dashtype 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx64_phi30_psi0_etam0.ascii'    u 1:2 w l lt 1 dashtype 2 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx64_phi30_psi30_etam0.ascii'   u 1:2 w l lt 1 dashtype 4 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx96_phi0_psi0_etam0.ascii'     u 1:2 w l lt 2 dashtype 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx96_phi30_psi0_etam0.ascii'    u 1:2 w l lt 2 dashtype 2 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx96_phi30_psi30_etam0.ascii'   u 1:2 w l lt 2 dashtype 4 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx128_phi0_psi0_etam0.ascii'    u 1:2 w l lt 3 dashtype 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx128_phi30_psi0_etam0.ascii'   u 1:2 w l lt 3 dashtype 2 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx128_phi30_psi30_etam0.ascii'  u 1:2 w l lt 3 dashtype 4 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx160_phi0_psi0_etam0.ascii'    u 1:2 w l lt 4 dashtype 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx160_phi30_psi0_etam0.ascii'   u 1:2 w l lt 4 dashtype 2 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx160_phi30_psi30_etam0.ascii'  u 1:2 w l lt 4 dashtype 4 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+
+set title '{/Symbol h}_m=19'
+set output 'line_sr_etam19.pdf'
+plot[25e3:55e3][]\
+'line_nelx64_phi0_psi0_etam19.ascii'    u 1:2 w l lt 1 dashtype 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx64_phi30_psi0_etam19.ascii'   u 1:2 w l lt 1 dashtype 2 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx64_phi30_psi30_etam19.ascii'  u 1:2 w l lt 1 dashtype 4 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx96_phi0_psi0_etam19.ascii'    u 1:2 w l lt 2 dashtype 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx96_phi30_psi0_etam19.ascii'   u 1:2 w l lt 2 dashtype 2 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx96_phi30_psi30_etam19.ascii'  u 1:2 w l lt 2 dashtype 4 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx128_phi0_psi0_etam19.ascii'   u 1:2 w l lt 3 dashtype 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx128_phi30_psi0_etam19.ascii'  u 1:2 w l lt 3 dashtype 2 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx128_phi30_psi30_etam19.ascii' u 1:2 w l lt 3 dashtype 4 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx160_phi0_psi0_etam19.ascii'   u 1:2 w l lt 4 dashtype 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx160_phi30_psi0_etam19.ascii'  u 1:2 w l lt 4 dashtype 2 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx160_phi30_psi30_etam19.ascii' u 1:2 w l lt 4 dashtype 4 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+
+set title '{/Symbol h}_m=20'
+set output 'line_sr_etam20.pdf'
+plot[25e3:55e3][:4e-14]\
+'line_nelx64_phi0_psi0_etam20.ascii'    u 1:2 w l lt 1 dashtype 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx64_phi30_psi0_etam20.ascii'   u 1:2 w l lt 1 dashtype 2 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx64_phi30_psi30_etam20.ascii'  u 1:2 w l lt 1 dashtype 4 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx96_phi0_psi0_etam20.ascii'    u 1:2 w l lt 2 dashtype 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx96_phi30_psi0_etam20.ascii'   u 1:2 w l lt 2 dashtype 2 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx96_phi30_psi30_etam20.ascii'  u 1:2 w l lt 2 dashtype 4 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx128_phi0_psi0_etam20.ascii'   u 1:2 w l lt 3 dashtype 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx128_phi30_psi0_etam20.ascii'  u 1:2 w l lt 3 dashtype 2 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx128_phi30_psi30_etam20.ascii' u 1:2 w l lt 3 dashtype 4 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx160_phi0_psi0_etam20.ascii'   u 1:2 w l lt 4 dashtype 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx160_phi30_psi0_etam20.ascii'  u 1:2 w l lt 4 dashtype 2 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx160_phi30_psi30_etam20.ascii' u 1:2 w l lt 4 dashtype 4 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+
+
+set ylabel 'viscosity'
+set log y
+set title '{/Symbol h}_m=0'
+set output 'line_eta_etam0.pdf'
+plot[25e3:55e3][]\
+'line_nelx64_phi0_psi0_etam0.ascii'     u 1:3 w l lt 1 dashtype 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx64_phi30_psi0_etam0.ascii'    u 1:3 w l lt 1 dashtype 2 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx64_phi30_psi30_etam0.ascii'   u 1:3 w l lt 1 dashtype 4 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx96_phi0_psi0_etam0.ascii'     u 1:3 w l lt 2 dashtype 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx96_phi30_psi0_etam0.ascii'    u 1:3 w l lt 2 dashtype 2 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx96_phi30_psi30_etam0.ascii'   u 1:3 w l lt 2 dashtype 4 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx128_phi0_psi0_etam0.ascii'    u 1:3 w l lt 3 dashtype 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx128_phi30_psi0_etam0.ascii'   u 1:3 w l lt 3 dashtype 2 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx128_phi30_psi30_etam0.ascii'  u 1:3 w l lt 3 dashtype 4 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx160_phi0_psi0_etam0.ascii'    u 1:3 w l lt 4 dashtype 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx160_phi30_psi0_etam0.ascii'   u 1:3 w l lt 4 dashtype 2 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx160_phi30_psi30_etam0.ascii'  u 1:3 w l lt 4 dashtype 4 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+
+set title '{/Symbol h}_m=19'
+set output 'line_eta_etam19.pdf'
+plot[25e3:55e3][]\
+'line_nelx64_phi0_psi0_etam19.ascii'    u 1:3 w l lt 1 dashtype 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx64_phi30_psi0_etam19.ascii'   u 1:3 w l lt 1 dashtype 2 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx64_phi30_psi30_etam19.ascii'  u 1:3 w l lt 1 dashtype 4 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx96_phi0_psi0_etam19.ascii'    u 1:3 w l lt 2 dashtype 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx96_phi30_psi0_etam19.ascii'   u 1:3 w l lt 2 dashtype 2 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx96_phi30_psi30_etam19.ascii'  u 1:3 w l lt 2 dashtype 4 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx128_phi0_psi0_etam19.ascii'   u 1:3 w l lt 3 dashtype 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx128_phi30_psi0_etam19.ascii'  u 1:3 w l lt 3 dashtype 2 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx128_phi30_psi30_etam19.ascii' u 1:3 w l lt 3 dashtype 4 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx160_phi0_psi0_etam19.ascii'   u 1:3 w l lt 4 dashtype 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx160_phi30_psi0_etam19.ascii'  u 1:3 w l lt 4 dashtype 2 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx160_phi30_psi30_etam19.ascii' u 1:3 w l lt 4 dashtype 4 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+
+set title '{/Symbol h}_m=20'
+set output 'line_eta_etam20.pdf'
+plot[25e3:55e3][]\
+'line_nelx64_phi0_psi0_etam20.ascii'    u 1:3 w l lt 1 dashtype 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx64_phi30_psi0_etam20.ascii'   u 1:3 w l lt 1 dashtype 2 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx64_phi30_psi30_etam20.ascii'  u 1:3 w l lt 1 dashtype 4 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx96_phi0_psi0_etam20.ascii'    u 1:3 w l lt 2 dashtype 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx96_phi30_psi0_etam20.ascii'   u 1:3 w l lt 2 dashtype 2 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx96_phi30_psi30_etam20.ascii'  u 1:3 w l lt 2 dashtype 4 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx128_phi0_psi0_etam20.ascii'   u 1:3 w l lt 3 dashtype 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx128_phi30_psi0_etam20.ascii'  u 1:3 w l lt 3 dashtype 2 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx128_phi30_psi30_etam20.ascii' u 1:3 w l lt 3 dashtype 4 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'line_nelx160_phi0_psi0_etam20.ascii'   u 1:3 w l lt 4 dashtype 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'line_nelx160_phi30_psi0_etam20.ascii'  u 1:3 w l lt 4 dashtype 2 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'line_nelx160_phi30_psi30_etam20.ascii' u 1:3 w l lt 4 dashtype 4 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+
+
+
+
+
+#########################################################################3
+set style rect fc lt -1 fs solid 0.15 noborder
+set obj rect from 1, graph 0 to 8e4, graph 0.25
+
+set xlabel 'x'
+set ylabel 'y'
+set pointsize .1
+unset log y
+
+set title '{/Symbol h}_m=0'
+set output 'shear_band_phi0_psi0_etam0.pdf'
+set size square
+plot[2e4:6e4][0:4e4]\
+'shear_band_L_qpt_nelx64_phi0_psi0_etam0.ascii'  lt 1 pt 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx64_phi0_psi0_etam0.ascii'  lt 1 pt 1 notitle,\
+'shear_band_L_nod_nelx64_phi0_psi0_etam0.ascii'  lt 1 pt 2 notitle,\
+'shear_band_R_nod_nelx64_phi0_psi0_etam0.ascii'  lt 1 pt 2 notitle,\
+'shear_band_L_qpt_nelx64_phi0_psi0_etam0.ascii'  lt 1 pt 3 notitle,\
+'shear_band_R_qpt_nelx64_phi0_psi0_etam0.ascii'  lt 1 pt 3 notitle,\
+'shear_band_L_qpt_nelx96_phi0_psi0_etam0.ascii'  lt 2 pt 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx96_phi0_psi0_etam0.ascii'  lt 2 pt 1 notitle,\
+'shear_band_L_nod_nelx96_phi0_psi0_etam0.ascii'  lt 2 pt 2 notitle,\
+'shear_band_R_nod_nelx96_phi0_psi0_etam0.ascii'  lt 2 pt 2 notitle,\
+'shear_band_L_qpt_nelx96_phi0_psi0_etam0.ascii'  lt 2 pt 3 notitle,\
+'shear_band_R_qpt_nelx96_phi0_psi0_etam0.ascii'  lt 2 pt 3 notitle,\
+'shear_band_L_qpt_nelx128_phi0_psi0_etam0.ascii' lt 3 pt 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx128_phi0_psi0_etam0.ascii' lt 3 pt 1 notitle,\
+'shear_band_L_nod_nelx128_phi0_psi0_etam0.ascii' lt 3 pt 2 notitle,\
+'shear_band_R_nod_nelx128_phi0_psi0_etam0.ascii' lt 3 pt 2 notitle,\
+'shear_band_L_qpt_nelx128_phi0_psi0_etam0.ascii' lt 3 pt 3 notitle,\
+'shear_band_R_qpt_nelx128_phi0_psi0_etam0.ascii' lt 3 pt 3 notitle,\
+'shear_band_L_qpt_nelx160_phi0_psi0_etam0.ascii' lt 3 pt 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx160_phi0_psi0_etam0.ascii' lt 3 pt 1 notitle,\
+'shear_band_L_nod_nelx160_phi0_psi0_etam0.ascii' lt 3 pt 2 notitle,\
+'shear_band_R_nod_nelx160_phi0_psi0_etam0.ascii' lt 3 pt 2 notitle,\
+'shear_band_L_qpt_nelx160_phi0_psi0_etam0.ascii' lt 3 pt 3 notitle,\
+'shear_band_R_qpt_nelx160_phi0_psi0_etam0.ascii' lt 3 pt 3 notitle,\
+(x-4e4)*tan(45./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o' 
+
+set title '{/Symbol h}_m=0'
+set output 'shear_band_phi30_psi0_etam0.pdf'
+set size square
+plot[2e4:6e4][0:4e4]\
+'shear_band_L_qpt_nelx64_phi30_psi0_etam0.ascii' lt 1 pt 1 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx64_phi30_psi0_etam0.ascii' lt 1 pt 1 notitle,\
+'shear_band_L_nod_nelx64_phi30_psi0_etam0.ascii' lt 1 pt 2 notitle,\
+'shear_band_R_nod_nelx64_phi30_psi0_etam0.ascii' lt 1 pt 2 notitle,\
+'shear_band_L_qpt_nelx64_phi30_psi0_etam0.ascii' lt 1 pt 3 notitle,\
+'shear_band_R_qpt_nelx64_phi30_psi0_etam0.ascii' lt 1 pt 3 notitle,\
+'shear_band_L_qpt_nelx96_phi30_psi0_etam0.ascii' lt 2 pt 1 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx96_phi30_psi0_etam0.ascii' lt 2 pt 1 notitle,\
+'shear_band_L_nod_nelx96_phi30_psi0_etam0.ascii' lt 2 pt 2 notitle,\
+'shear_band_R_nod_nelx96_phi30_psi0_etam0.ascii' lt 2 pt 2 notitle,\
+'shear_band_L_qpt_nelx96_phi30_psi0_etam0.ascii' lt 2 pt 3 notitle,\
+'shear_band_R_qpt_nelx96_phi30_psi0_etam0.ascii' lt 2 pt 3 notitle,\
+'shear_band_L_qpt_nelx128_phi30_psi0_etam0.ascii' lt 3 pt 1 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx128_phi30_psi0_etam0.ascii' lt 3 pt 1 notitle,\
+'shear_band_L_nod_nelx128_phi30_psi0_etam0.ascii' lt 3 pt 2 notitle,\
+'shear_band_R_nod_nelx128_phi30_psi0_etam0.ascii' lt 3 pt 2 notitle,\
+'shear_band_L_qpt_nelx128_phi30_psi0_etam0.ascii' lt 3 pt 3 notitle,\
+'shear_band_R_qpt_nelx128_phi30_psi0_etam0.ascii' lt 3 pt 3 notitle,\
+'shear_band_L_qpt_nelx160_phi30_psi0_etam0.ascii' lt 3 pt 1 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx160_phi30_psi0_etam0.ascii' lt 3 pt 1 notitle,\
+'shear_band_L_nod_nelx160_phi30_psi0_etam0.ascii' lt 3 pt 2 notitle,\
+'shear_band_R_nod_nelx160_phi30_psi0_etam0.ascii' lt 3 pt 2 notitle,\
+'shear_band_L_qpt_nelx160_phi30_psi0_etam0.ascii' lt 3 pt 3 notitle,\
+'shear_band_R_qpt_nelx160_phi30_psi0_etam0.ascii' lt 3 pt 3 notitle,\
+(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o' 
+
+set title '{/Symbol h}_m=0'
+set output 'shear_band_phi30_psi30_etam0.pdf'
+set size square
+plot[2e4:6e4][0:4e4]\
+'shear_band_L_qpt_nelx64_phi30_psi30_etam0.ascii' lt 1 pt 1 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'shear_band_R_qpt_nelx64_phi30_psi30_etam0.ascii' lt 1 pt 1 notitle,\
+'shear_band_L_nod_nelx64_phi30_psi30_etam0.ascii' lt 1 pt 2 notitle,\
+'shear_band_R_nod_nelx64_phi30_psi30_etam0.ascii' lt 1 pt 2 notitle,\
+'shear_band_L_qpt_nelx64_phi30_psi30_etam0.ascii' lt 1 pt 3 notitle,\
+'shear_band_R_qpt_nelx64_phi30_psi30_etam0.ascii' lt 1 pt 3 notitle,\
+'shear_band_L_qpt_nelx96_phi30_psi30_etam0.ascii' lt 2 pt 1 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'shear_band_R_qpt_nelx96_phi30_psi30_etam0.ascii' lt 2 pt 1 notitle,\
+'shear_band_L_nod_nelx96_phi30_psi30_etam0.ascii' lt 2 pt 2 notitle,\
+'shear_band_R_nod_nelx96_phi30_psi30_etam0.ascii' lt 2 pt 2 notitle,\
+'shear_band_L_qpt_nelx96_phi30_psi30_etam0.ascii' lt 2 pt 3 notitle,\
+'shear_band_R_qpt_nelx96_phi30_psi30_etam0.ascii' lt 2 pt 3 notitle,\
+'shear_band_L_qpt_nelx128_phi30_psi30_etam0.ascii' lt 3 pt 1 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'shear_band_R_qpt_nelx128_phi30_psi30_etam0.ascii' lt 3 pt 1 notitle,\
+'shear_band_L_nod_nelx128_phi30_psi30_etam0.ascii' lt 3 pt 2 notitle,\
+'shear_band_R_nod_nelx128_phi30_psi30_etam0.ascii' lt 3 pt 2 notitle,\
+'shear_band_L_qpt_nelx128_phi30_psi30_etam0.ascii' lt 3 pt 3 notitle,\
+'shear_band_R_qpt_nelx128_phi30_psi30_etam0.ascii' lt 3 pt 3 notitle,\
+'shear_band_L_qpt_nelx160_phi30_psi30_etam0.ascii' lt 3 pt 1 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+'shear_band_R_qpt_nelx160_phi30_psi30_etam0.ascii' lt 3 pt 1 notitle,\
+'shear_band_L_nod_nelx160_phi30_psi30_etam0.ascii' lt 3 pt 2 notitle,\
+'shear_band_R_nod_nelx160_phi30_psi30_etam0.ascii' lt 3 pt 2 notitle,\
+'shear_band_L_qpt_nelx160_phi30_psi30_etam0.ascii' lt 3 pt 3 notitle,\
+'shear_band_R_qpt_nelx160_phi30_psi30_etam0.ascii' lt 3 pt 3 notitle,\
+(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o' 
+
+
+set title '{/Symbol h}_m=10^{19}'
+set output 'shear_band_phi0_psi0_etam19.pdf'
+set size square
+plot[2e4:6e4][0:4e4]\
+'shear_band_L_qpt_nelx64_phi0_psi0_etam19.ascii'  lt 1 pt 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx64_phi0_psi0_etam19.ascii'  lt 1 pt 1 notitle,\
+'shear_band_L_nod_nelx64_phi0_psi0_etam19.ascii'  lt 1 pt 2 notitle,\
+'shear_band_R_nod_nelx64_phi0_psi0_etam19.ascii'  lt 1 pt 2 notitle,\
+'shear_band_L_qpt_nelx64_phi0_psi0_etam19.ascii'  lt 1 pt 3 notitle,\
+'shear_band_R_qpt_nelx64_phi0_psi0_etam19.ascii'  lt 1 pt 3 notitle,\
+'shear_band_L_qpt_nelx96_phi0_psi0_etam19.ascii'  lt 2 pt 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx96_phi0_psi0_etam19.ascii'  lt 2 pt 1 notitle,\
+'shear_band_L_nod_nelx96_phi0_psi0_etam19.ascii'  lt 2 pt 2 notitle,\
+'shear_band_R_nod_nelx96_phi0_psi0_etam19.ascii'  lt 2 pt 2 notitle,\
+'shear_band_L_qpt_nelx96_phi0_psi0_etam19.ascii'  lt 2 pt 3 notitle,\
+'shear_band_R_qpt_nelx96_phi0_psi0_etam19.ascii'  lt 2 pt 3 notitle,\
+'shear_band_L_qpt_nelx128_phi0_psi0_etam19.ascii' lt 3 pt 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx128_phi0_psi0_etam19.ascii' lt 3 pt 1 notitle,\
+'shear_band_L_nod_nelx128_phi0_psi0_etam19.ascii' lt 3 pt 2 notitle,\
+'shear_band_R_nod_nelx128_phi0_psi0_etam19.ascii' lt 3 pt 2 notitle,\
+'shear_band_L_qpt_nelx128_phi0_psi0_etam19.ascii' lt 3 pt 3 notitle,\
+'shear_band_R_qpt_nelx128_phi0_psi0_etam19.ascii' lt 3 pt 3 notitle,\
+'shear_band_L_qpt_nelx160_phi0_psi0_etam19.ascii' lt 3 pt 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx160_phi0_psi0_etam19.ascii' lt 3 pt 1 notitle,\
+'shear_band_L_nod_nelx160_phi0_psi0_etam19.ascii' lt 3 pt 2 notitle,\
+'shear_band_R_nod_nelx160_phi0_psi0_etam19.ascii' lt 3 pt 2 notitle,\
+'shear_band_L_qpt_nelx160_phi0_psi0_etam19.ascii' lt 3 pt 3 notitle,\
+'shear_band_R_qpt_nelx160_phi0_psi0_etam19.ascii' lt 3 pt 3 notitle,\
+(x-4e4)*tan(45./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o' 
+
+
+set title '{/Symbol h}_m=10^{19}'
+set output 'shear_band_phi30_psi0_etam19.pdf'
+set size square
+plot[2e4:6e4][0:4e4]\
+'shear_band_L_qpt_nelx64_phi30_psi0_etam19.ascii' lt 1 pt 1 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx64_phi30_psi0_etam19.ascii' lt 1 pt 1 notitle,\
+'shear_band_L_nod_nelx64_phi30_psi0_etam19.ascii' lt 1 pt 2 notitle,\
+'shear_band_R_nod_nelx64_phi30_psi0_etam19.ascii' lt 1 pt 2 notitle,\
+'shear_band_L_qpt_nelx64_phi30_psi0_etam19.ascii' lt 1 pt 3 notitle,\
+'shear_band_R_qpt_nelx64_phi30_psi0_etam19.ascii' lt 1 pt 3 notitle,\
+'shear_band_L_qpt_nelx96_phi30_psi0_etam19.ascii' lt 2 pt 1 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx96_phi30_psi0_etam19.ascii' lt 2 pt 1 notitle,\
+'shear_band_L_nod_nelx96_phi30_psi0_etam19.ascii' lt 2 pt 2 notitle,\
+'shear_band_R_nod_nelx96_phi30_psi0_etam19.ascii' lt 2 pt 2 notitle,\
+'shear_band_L_qpt_nelx96_phi30_psi0_etam19.ascii' lt 2 pt 3 notitle,\
+'shear_band_R_qpt_nelx96_phi30_psi0_etam19.ascii' lt 2 pt 3 notitle,\
+'shear_band_L_qpt_nelx128_phi30_psi0_etam19.ascii' lt 3 pt 1 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx128_phi30_psi0_etam19.ascii' lt 3 pt 1 notitle,\
+'shear_band_L_nod_nelx128_phi30_psi0_etam19.ascii' lt 3 pt 2 notitle,\
+'shear_band_R_nod_nelx128_phi30_psi0_etam19.ascii' lt 3 pt 2 notitle,\
+'shear_band_L_qpt_nelx128_phi30_psi0_etam19.ascii' lt 3 pt 3 notitle,\
+'shear_band_R_qpt_nelx128_phi30_psi0_etam19.ascii' lt 3 pt 3 notitle,\
+'shear_band_L_qpt_nelx160_phi30_psi0_etam19.ascii' lt 3 pt 1 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx160_phi30_psi0_etam19.ascii' lt 3 pt 1 notitle,\
+'shear_band_L_nod_nelx160_phi30_psi0_etam19.ascii' lt 3 pt 2 notitle,\
+'shear_band_R_nod_nelx160_phi30_psi0_etam19.ascii' lt 3 pt 2 notitle,\
+'shear_band_L_qpt_nelx160_phi30_psi0_etam19.ascii' lt 3 pt 3 notitle,\
+'shear_band_R_qpt_nelx160_phi30_psi0_etam19.ascii' lt 3 pt 3 notitle,\
+(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o' 
+
+set title '{/Symbol h}_m=10^{19}'
+set output 'shear_band_phi30_psi30_etam19.pdf'
+set size square
+plot[2e4:6e4][0:4e4]\
+'shear_band_L_qpt_nelx64_phi30_psi30_etam19.ascii' lt 1 pt 1 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'shear_band_R_qpt_nelx64_phi30_psi30_etam19.ascii' lt 1 pt 1 notitle,\
+'shear_band_L_nod_nelx64_phi30_psi30_etam19.ascii' lt 1 pt 2 notitle,\
+'shear_band_R_nod_nelx64_phi30_psi30_etam19.ascii' lt 1 pt 2 notitle,\
+'shear_band_L_qpt_nelx64_phi30_psi30_etam19.ascii' lt 1 pt 3 notitle,\
+'shear_band_R_qpt_nelx64_phi30_psi30_etam19.ascii' lt 1 pt 3 notitle,\
+'shear_band_L_qpt_nelx96_phi30_psi30_etam19.ascii' lt 2 pt 1 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'shear_band_R_qpt_nelx96_phi30_psi30_etam19.ascii' lt 2 pt 1 notitle,\
+'shear_band_L_nod_nelx96_phi30_psi30_etam19.ascii' lt 2 pt 2 notitle,\
+'shear_band_R_nod_nelx96_phi30_psi30_etam19.ascii' lt 2 pt 2 notitle,\
+'shear_band_L_qpt_nelx96_phi30_psi30_etam19.ascii' lt 2 pt 3 notitle,\
+'shear_band_R_qpt_nelx96_phi30_psi30_etam19.ascii' lt 2 pt 3 notitle,\
+'shear_band_L_qpt_nelx128_phi30_psi30_etam19.ascii' lt 3 pt 1 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'shear_band_R_qpt_nelx128_phi30_psi30_etam19.ascii' lt 3 pt 1 notitle,\
+'shear_band_L_nod_nelx128_phi30_psi30_etam19.ascii' lt 3 pt 2 notitle,\
+'shear_band_R_nod_nelx128_phi30_psi30_etam19.ascii' lt 3 pt 2 notitle,\
+'shear_band_L_qpt_nelx128_phi30_psi30_etam19.ascii' lt 3 pt 3 notitle,\
+'shear_band_R_qpt_nelx128_phi30_psi30_etam19.ascii' lt 3 pt 3 notitle,\
+'shear_band_L_qpt_nelx160_phi30_psi30_etam19.ascii' lt 4 pt 1 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+'shear_band_R_qpt_nelx160_phi30_psi30_etam19.ascii' lt 4 pt 1 notitle,\
+'shear_band_L_nod_nelx160_phi30_psi30_etam19.ascii' lt 4 pt 2 notitle,\
+'shear_band_R_nod_nelx160_phi30_psi30_etam19.ascii' lt 4 pt 2 notitle,\
+'shear_band_L_qpt_nelx160_phi30_psi30_etam19.ascii' lt 4 pt 3 notitle,\
+'shear_band_R_qpt_nelx160_phi30_psi30_etam19.ascii' lt 4 pt 3 notitle,\
+(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o'
+
+
+set title '{/Symbol h}_m=10^{20}'
+set output 'shear_band_phi0_psi0_etam20.pdf'
+set size square
+plot[2e4:6e4][0:4e4]\
+'shear_band_L_qpt_nelx64_phi0_psi0_etam20.ascii'  lt 1 pt 1 t 'nelx=64, {/Symbol=f}=0,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx64_phi0_psi0_etam20.ascii'  lt 1 pt 1 notitle,\
+'shear_band_L_nod_nelx64_phi0_psi0_etam20.ascii'  lt 1 pt 2 notitle,\
+'shear_band_R_nod_nelx64_phi0_psi0_etam20.ascii'  lt 1 pt 2 notitle,\
+'shear_band_L_qpt_nelx64_phi0_psi0_etam20.ascii'  lt 1 pt 3 notitle,\
+'shear_band_R_qpt_nelx64_phi0_psi0_etam20.ascii'  lt 1 pt 3 notitle,\
+'shear_band_L_qpt_nelx96_phi0_psi0_etam20.ascii'  lt 2 pt 1 t 'nelx=96, {/Symbol=f}=0,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx96_phi0_psi0_etam20.ascii'  lt 2 pt 1 notitle,\
+'shear_band_L_nod_nelx96_phi0_psi0_etam20.ascii'  lt 2 pt 2 notitle,\
+'shear_band_R_nod_nelx96_phi0_psi0_etam20.ascii'  lt 2 pt 2 notitle,\
+'shear_band_L_qpt_nelx96_phi0_psi0_etam20.ascii'  lt 2 pt 3 notitle,\
+'shear_band_R_qpt_nelx96_phi0_psi0_etam20.ascii'  lt 2 pt 3 notitle,\
+'shear_band_L_qpt_nelx128_phi0_psi0_etam20.ascii' lt 3 pt 1 t 'nelx=128, {/Symbol=f}=0,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx128_phi0_psi0_etam20.ascii' lt 3 pt 1 notitle,\
+'shear_band_L_nod_nelx128_phi0_psi0_etam20.ascii' lt 3 pt 2 notitle,\
+'shear_band_R_nod_nelx128_phi0_psi0_etam20.ascii' lt 3 pt 2 notitle,\
+'shear_band_L_qpt_nelx128_phi0_psi0_etam20.ascii' lt 3 pt 3 notitle,\
+'shear_band_R_qpt_nelx128_phi0_psi0_etam20.ascii' lt 3 pt 3 notitle,\
+'shear_band_L_qpt_nelx160_phi0_psi0_etam20.ascii' lt 4 pt 1 t 'nelx=160, {/Symbol=f}=0,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx160_phi0_psi0_etam20.ascii' lt 4 pt 1 notitle,\
+'shear_band_L_nod_nelx160_phi0_psi0_etam20.ascii' lt 4 pt 2 notitle,\
+'shear_band_R_nod_nelx160_phi0_psi0_etam20.ascii' lt 4 pt 2 notitle,\
+'shear_band_L_qpt_nelx160_phi0_psi0_etam20.ascii' lt 4 pt 3 notitle,\
+'shear_band_R_qpt_nelx160_phi0_psi0_etam20.ascii' lt 4 pt 3 notitle,\
+(x-4e4)*tan(45./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o' 
+
+
+set title '{/Symbol h}_m=10^{20}'
+set output 'shear_band_phi30_psi0_etam20.pdf'
+set size square
+plot[2e4:6e4][0:4e4]\
+'shear_band_L_qpt_nelx64_phi30_psi0_etam20.ascii' lt 1 pt 1 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx64_phi30_psi0_etam20.ascii' lt 1 pt 1 notitle,\
+'shear_band_L_nod_nelx64_phi30_psi0_etam20.ascii' lt 1 pt 2 notitle,\
+'shear_band_R_nod_nelx64_phi30_psi0_etam20.ascii' lt 1 pt 2 notitle,\
+'shear_band_L_qpt_nelx64_phi30_psi0_etam20.ascii' lt 1 pt 3 notitle,\
+'shear_band_R_qpt_nelx64_phi30_psi0_etam20.ascii' lt 1 pt 3 notitle,\
+'shear_band_L_qpt_nelx96_phi30_psi0_etam20.ascii' lt 2 pt 1 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx96_phi30_psi0_etam20.ascii' lt 2 pt 1 notitle,\
+'shear_band_L_nod_nelx96_phi30_psi0_etam20.ascii' lt 2 pt 2 notitle,\
+'shear_band_R_nod_nelx96_phi30_psi0_etam20.ascii' lt 2 pt 2 notitle,\
+'shear_band_L_qpt_nelx96_phi30_psi0_etam20.ascii' lt 2 pt 3 notitle,\
+'shear_band_R_qpt_nelx96_phi30_psi0_etam20.ascii' lt 2 pt 3 notitle,\
+'shear_band_L_qpt_nelx128_phi30_psi0_etam20.ascii' lt 3 pt 1 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx128_phi30_psi0_etam20.ascii' lt 3 pt 1 notitle,\
+'shear_band_L_nod_nelx128_phi30_psi0_etam20.ascii' lt 3 pt 2 notitle,\
+'shear_band_R_nod_nelx128_phi30_psi0_etam20.ascii' lt 3 pt 2 notitle,\
+'shear_band_L_qpt_nelx128_phi30_psi0_etam20.ascii' lt 3 pt 3 notitle,\
+'shear_band_R_qpt_nelx128_phi30_psi0_etam20.ascii' lt 3 pt 3 notitle,\
+'shear_band_L_qpt_nelx160_phi30_psi0_etam20.ascii' lt 4 pt 1 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=0',\
+'shear_band_R_qpt_nelx160_phi30_psi0_etam20.ascii' lt 4 pt 1 notitle,\
+'shear_band_L_nod_nelx160_phi30_psi0_etam20.ascii' lt 4 pt 2 notitle,\
+'shear_band_R_nod_nelx160_phi30_psi0_etam20.ascii' lt 4 pt 2 notitle,\
+'shear_band_L_qpt_nelx160_phi30_psi0_etam20.ascii' lt 4 pt 3 notitle,\
+'shear_band_R_qpt_nelx160_phi30_psi0_etam20.ascii' lt 4 pt 3 notitle,\
+(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o' 
+
+set title '{/Symbol h}_m=10^{20}'
+set output 'shear_band_phi30_psi30_etam20.pdf'
+set size square
+plot[2e4:6e4][0:4e4]\
+'shear_band_L_qpt_nelx64_phi30_psi30_etam20.ascii' lt 1 pt 1 t 'nelx=64, {/Symbol=f}=30,{/Symbol y}=30',\
+'shear_band_R_qpt_nelx64_phi30_psi30_etam20.ascii' lt 1 pt 1 notitle,\
+'shear_band_L_nod_nelx64_phi30_psi30_etam20.ascii' lt 1 pt 2 notitle,\
+'shear_band_R_nod_nelx64_phi30_psi30_etam20.ascii' lt 1 pt 2 notitle,\
+'shear_band_L_qpt_nelx64_phi30_psi30_etam20.ascii' lt 1 pt 3 notitle,\
+'shear_band_R_qpt_nelx64_phi30_psi30_etam20.ascii' lt 1 pt 3 notitle,\
+'shear_band_L_qpt_nelx96_phi30_psi30_etam20.ascii' lt 2 pt 1 t 'nelx=96, {/Symbol=f}=30,{/Symbol y}=30',\
+'shear_band_R_qpt_nelx96_phi30_psi30_etam20.ascii' lt 2 pt 1 notitle,\
+'shear_band_L_nod_nelx96_phi30_psi30_etam20.ascii' lt 2 pt 2 notitle,\
+'shear_band_R_nod_nelx96_phi30_psi30_etam20.ascii' lt 2 pt 2 notitle,\
+'shear_band_L_qpt_nelx96_phi30_psi30_etam20.ascii' lt 2 pt 3 notitle,\
+'shear_band_R_qpt_nelx96_phi30_psi30_etam20.ascii' lt 2 pt 3 notitle,\
+'shear_band_L_qpt_nelx128_phi30_psi30_etam20.ascii' lt 3 pt 1 t 'nelx=128, {/Symbol=f}=30,{/Symbol y}=30',\
+'shear_band_R_qpt_nelx128_phi30_psi30_etam20.ascii' lt 3 pt 1 notitle,\
+'shear_band_L_nod_nelx128_phi30_psi30_etam20.ascii' lt 3 pt 2 notitle,\
+'shear_band_R_nod_nelx128_phi30_psi30_etam20.ascii' lt 3 pt 2 notitle,\
+'shear_band_L_qpt_nelx128_phi30_psi30_etam20.ascii' lt 3 pt 3 notitle,\
+'shear_band_R_qpt_nelx128_phi30_psi30_etam20.ascii' lt 3 pt 3 notitle,\
+'shear_band_L_qpt_nelx160_phi30_psi30_etam20.ascii' lt 4 pt 1 t 'nelx=160, {/Symbol=f}=30,{/Symbol y}=30',\
+'shear_band_R_qpt_nelx160_phi30_psi30_etam20.ascii' lt 4 pt 1 notitle,\
+'shear_band_L_nod_nelx160_phi30_psi30_etam20.ascii' lt 4 pt 2 notitle,\
+'shear_band_R_nod_nelx160_phi30_psi30_etam20.ascii' lt 4 pt 2 notitle,\
+'shear_band_L_qpt_nelx160_phi30_psi30_etam20.ascii' lt 4 pt 3 notitle,\
+'shear_band_R_qpt_nelx160_phi30_psi30_etam20.ascii' lt 4 pt 3 notitle,\
+(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o' 
+
+
+
+
+
+
+
+
+
+
+
