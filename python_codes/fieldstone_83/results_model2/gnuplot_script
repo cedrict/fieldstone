@@ -1,0 +1,42 @@
+#gnuplot script 
+
+set term pdf enhanced font "Times,11pt"
+set grid
+
+set xlabel 'T'
+
+set output 'rho.pdf'
+set ylabel 'density'
+plot[][]\
+'rho.ascii' u ($1-273):2 w l lw 2  notitle
+
+set output 'hcapa.pdf'
+set ylabel 'heat capacity'
+plot[][]\
+'hcapa.ascii' u ($1-273):2 w l lw 2  notitle
+
+set output 'hcond.pdf'
+set ylabel 'heat conductivity'
+plot[][]\
+'hcond.ascii' u ($1-273):2 w l lw 2  notitle
+
+set key outside
+
+
+#dt=10kyr
+set ylabel 'T'
+set xlabel 'y'
+set output 'Tprofiles.pdf'
+plot[][]\
+'T_000000.ascii' w l t 't=0Myr',\
+'T_002000.ascii' w l t 't=20Myr',\
+'T_004000.ascii' w l t 't=40Myr',\
+'T_006000.ascii' w l t 't=60Myr',\
+'T_008000.ascii' w l t 't=80Myr',\
+'T_010000.ascii' w l t 't=100Myr',\
+'T_012000.ascii' w l t 't=120Myr',\
+'T_014000.ascii' w l t 't=140Myr',\
+'T_016000.ascii' w l t 't=160Myr',\
+
+
+

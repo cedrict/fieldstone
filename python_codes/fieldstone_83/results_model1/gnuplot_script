@@ -1,0 +1,31 @@
+#gnuplot script 
+
+set term pdf enhanced font "Times,11pt"
+set grid
+set key outside
+
+year=365.25*3600*24
+time=20e6*year
+k=3.138
+rho=3330
+Cp=1171.52
+Ly=125e3
+f(x)=erf((Ly-x)/2/sqrt(k*time/rho/Cp))*1350
+
+#dt=10kyr
+set ylabel 'T'
+set xlabel 'y'
+set output 'Tprofiles.pdf'
+plot[][]\
+'T_000000.ascii' u 1:($2-273) w l t 't=0Myr',\
+'T_002000.ascii' u 1:($2-273) w l t 't=20Myr',\
+'T_004000.ascii' u 1:($2-273) w l t 't=40Myr',\
+'T_006000.ascii' u 1:($2-273) w l t 't=60Myr',\
+'T_008000.ascii' u 1:($2-273) w l t 't=80Myr',\
+'T_010000.ascii' u 1:($2-273) w l t 't=100Myr',\
+'T_012000.ascii' u 1:($2-273) w l t 't=120Myr',\
+'T_014000.ascii' u 1:($2-273) w l t 't=140Myr',\
+'T_016000.ascii' u 1:($2-273) w l t 't=160Myr',\
+f(x) lt -1 dashtype 2 t 'analytical' 
+
+
