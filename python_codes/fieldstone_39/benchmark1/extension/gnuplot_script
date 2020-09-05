@@ -285,7 +285,7 @@ plot[2e4:6e4][0:4e4]\
 'shear_band_R_nod_nelx160_phi30_psi0_etam0.ascii' lt 3 pt 2 notitle,\
 'shear_band_L_qpt_nelx160_phi30_psi0_etam0.ascii' lt 3 pt 3 notitle,\
 'shear_band_R_qpt_nelx160_phi30_psi0_etam0.ascii' lt 3 pt 3 notitle,\
-(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o' 
+(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=60^o' 
 
 set title '{/Symbol h}_m=0'
 set output 'shear_band_phi30_psi30_etam0.pdf'
@@ -315,7 +315,7 @@ plot[2e4:6e4][0:4e4]\
 'shear_band_R_nod_nelx160_phi30_psi30_etam0.ascii' lt 3 pt 2 notitle,\
 'shear_band_L_qpt_nelx160_phi30_psi30_etam0.ascii' lt 3 pt 3 notitle,\
 'shear_band_R_qpt_nelx160_phi30_psi30_etam0.ascii' lt 3 pt 3 notitle,\
-(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o' 
+(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=60^o' 
 
 
 set title '{/Symbol h}_m=10^{19}'
@@ -377,7 +377,7 @@ plot[2e4:6e4][0:4e4]\
 'shear_band_R_nod_nelx160_phi30_psi0_etam19.ascii' lt 3 pt 2 notitle,\
 'shear_band_L_qpt_nelx160_phi30_psi0_etam19.ascii' lt 3 pt 3 notitle,\
 'shear_band_R_qpt_nelx160_phi30_psi0_etam19.ascii' lt 3 pt 3 notitle,\
-(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o' 
+(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=60^o' 
 
 set title '{/Symbol h}_m=10^{19}'
 set output 'shear_band_phi30_psi30_etam19.pdf'
@@ -407,7 +407,7 @@ plot[2e4:6e4][0:4e4]\
 'shear_band_R_nod_nelx160_phi30_psi30_etam19.ascii' lt 4 pt 2 notitle,\
 'shear_band_L_qpt_nelx160_phi30_psi30_etam19.ascii' lt 4 pt 3 notitle,\
 'shear_band_R_qpt_nelx160_phi30_psi30_etam19.ascii' lt 4 pt 3 notitle,\
-(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o'
+(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=60^o'
 
 
 set title '{/Symbol h}_m=10^{20}'
@@ -469,7 +469,7 @@ plot[2e4:6e4][0:4e4]\
 'shear_band_R_nod_nelx160_phi30_psi0_etam20.ascii' lt 4 pt 2 notitle,\
 'shear_band_L_qpt_nelx160_phi30_psi0_etam20.ascii' lt 4 pt 3 notitle,\
 'shear_band_R_qpt_nelx160_phi30_psi0_etam20.ascii' lt 4 pt 3 notitle,\
-(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o' 
+(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=60^o' 
 
 set title '{/Symbol h}_m=10^{20}'
 set output 'shear_band_phi30_psi30_etam20.pdf'
@@ -499,7 +499,7 @@ plot[2e4:6e4][0:4e4]\
 'shear_band_R_nod_nelx160_phi30_psi30_etam20.ascii' lt 4 pt 2 notitle,\
 'shear_band_L_qpt_nelx160_phi30_psi30_etam20.ascii' lt 4 pt 3 notitle,\
 'shear_band_R_qpt_nelx160_phi30_psi30_etam20.ascii' lt 4 pt 3 notitle,\
-(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=45^o' 
+(x-4e4)*tan(60./180.*pi) lt -1 dashtype 2 lw .5 t '{/Symbol q}=60^o' 
 
 
 

@@ -68,7 +68,13 @@ def vbc(x,y):
 
 def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y,eta_m,eta_v):
 
-    e2=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
+    # deviatoric tensor E
+    Exx=exx-(exx+eyy)/3
+    Eyy=eyy-(exx+eyy)/3
+    Ezz=   -(exx+eyy)/3
+
+    #compute effective strain rate (sqrt of 2nd inv)
+    e2=np.sqrt(0.5*(Exx**2+Eyy**2+Ezz**2)+exy**2)
 
     #-------------------------------------------------
     if benchmark==1: # simple brick
@@ -88,12 +94,15 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y,eta_m,eta_v):
           tau=(Y+2*eta_m*e2)/(1+eta_m/eta_v)
           eps_v=tau/2/eta_v
           eps_vp=e2-eps_v
-          if eps_vp<0:
-             exit("pb bench 1")
           eta_vp=Y/(2.*eps_vp)+eta_m
           val=1./(1./eta_v + 1/eta_vp)
           mech=2
        #end if
+
+       #regularised approximation
+       #e2c=Y/2/eta_v
+       #val=(1-np.exp(-e2/e2c))*(Y/(2.*e2)+eta_m)
+
     #end if
 
     #-------------------------------------------------
@@ -259,6 +268,7 @@ def NNP(rq,sq):
 
 cm=0.01
 year=3600*24*365.
+eps=1.e-10
 
 print("-----------------------------")
 print("----------fieldstone---------")
@@ -283,19 +293,21 @@ if int(len(sys.argv) == 8):
    eta_m=10**eta_m
    produce_nl_vtu=False
    name='_nelx'+sys.argv[1]+'_phi'+sys.argv[3]+'_psi'+sys.argv[4]+'_etam'+sys.argv[6]
+   every=1000000
 else:
    produce_nl_vtu=True
    benchmark=1
+   every=1
    if benchmark==1:
-      nelx = 144
+      nelx = 240
       phi=30
       psi=30
-      niter=200
+      niter=250
       eta_v=1e25
-      eta_m=1e19
+      eta_m=1e20
       name=''
 
-tol_nl=1e-6
+tol_nl=1e-6 # nonlinear tolerance
 
 phi=phi/180*np.pi
 psi=psi/180*np.pi
@@ -330,22 +342,27 @@ if benchmark==5: #----dusd18----
    rho=0
    cohesion=30e6
 
+#################################################################
 
-nely = int(nelx*Ly/Lx)
-nnx=2*nelx+1  # number of elements, x direction
-nny=2*nely+1  # number of elements, y direction
-NV=nnx*nny  # number of nodes
-nel=nelx*nely  # number of elements, total
-NfemV=NV*ndofV               # number of velocity dofs
+nely = int(nelx*Ly/Lx)        # number of elements y direction
+nnx=2*nelx+1                  # number of nodes, x direction
+nny=2*nely+1                  # number of nodes, y direction
+NV=nnx*nny                    # total number of nodes
+nel=nelx*nely                 # total number of elements
+NfemV=NV*ndofV                # number of velocity dofs
 NfemP=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
 Nfem=NfemV+NfemP              # total number of dofs
-hx=Lx/nelx
-hy=Ly/nely
+hx=Lx/nelx                    # mesh size in x direction
+hy=Ly/nely                    # mesh size in y direction
 
-eps=1.e-10
+#################################################################
+# quadrature parameters
+
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
 nq=9*nel
+
+#################################################################
 
 eta_ref=1.e23      # scaling of G blocks
 scaling_coeff=eta_ref/Ly
@@ -361,20 +378,14 @@ else:
 if use_SchurComplementApproach:
    ls_conv_file=open("linear_solver_convergence.ascii","w")
    ls_niter_file=open("linear_solver_niter.ascii","w")
-
-method=2 #use of dilation rate term
-
-niter_min=1
    
-use_srn_diff=False
+use_srn_diff=True
 
-rVnodes=[-1,+1,1,-1, 0,1,0,-1,0]
-sVnodes=[-1,-1,1,+1,-1,0,1, 0,0]
+#################################################################
 
 ustats_file=open("stats_u"+name+".ascii","w")
 vstats_file=open("stats_v"+name+".ascii","w")
 pstats_file=open("stats_p"+name+".ascii","w")
-
 
 #################################################################
 #################################################################
@@ -388,7 +399,6 @@ print("NV=",NV)
 print("NfemV=",NfemV)
 print("NfemP=",NfemP)
 print("Nfem=",Nfem)
-print("method=",method)
 print("sparse",sparse)
 print("hx",hx)
 print("hy",hy)
@@ -417,7 +427,7 @@ for j in range(0, nny):
 print("setup: grid points: %.3f s" % (timing.time() - start))
 
 #################################################################
-# connectivity
+# build connectivity arrays for velocity and pressure
 #################################################################
 # velocity    pressure
 # 3---6---2   3-------2
@@ -426,7 +436,6 @@ print("setup: grid points: %.3f s" % (timing.time() - start))
 # |       |   |       |
 # 0---4---1   0-------1
 #################################################################
-
 start = timing.time()
 
 iconV=np.zeros((mV,nel),dtype=np.int32)
@@ -507,10 +516,7 @@ print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 #------------------------------------------------------------------------------
 # non-linear iterations
 #------------------------------------------------------------------------------
-if method==1:
-   c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
-elif method==2:
-   c_mat = np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64) 
+c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
@@ -568,7 +574,7 @@ for iter in range(0,niter):
    counter=0
    for iel in range(0,nel):
 
-       # set arrays to 0 every loop
+       # set arrays to 0 for each element 
        f_el =np.zeros((mV*ndofV),dtype=np.float64)
        K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
        G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
@@ -584,10 +590,10 @@ for iter in range(0,niter):
                sq=qcoords[jq]
                weightq=qweights[iq]*qweights[jq]
 
-               NNNV[0:9]=NNV(rq,sq)
-               dNNNVdr[0:9]=dNNVdr(rq,sq)
-               dNNNVds[0:9]=dNNVds(rq,sq)
-               NNNP[0:4]=NNP(rq,sq)
+               NNNV[0:mV]=NNV(rq,sq)
+               dNNNVdr[0:mV]=dNNVdr(rq,sq)
+               dNNNVds[0:mV]=dNNVds(rq,sq)
+               NNNP[0:mP]=NNP(rq,sq)
 
                # calculate jacobian matrix
                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
@@ -647,7 +653,7 @@ for iter in range(0,niter):
                    viscosity(exxq,eyyq,exyq,pq[counter],cohesion,phi,\
                    iter,xq[counter],yq[counter],eta_m,eta_v)
 
-               dilation_rate=two_sin_psi*srq_vp[counter]
+               dilation_rate=two_sin_psi*srq_vp[counter]*0.5
 
                # compute elemental a_mat matrix
                K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq[counter]*weightq*jcob
@@ -657,10 +663,10 @@ for iter in range(0,niter):
                    f_el[ndofV*i+0]+=NNNV[i]*jcob*weightq*gx(xq,yq)*rho
                    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy(xq,yq)*rho
 
-               if method==1:
-                  for i in range(0,mV):
-                      f_el[ndofV*i+0]-=2./3.*dNNNVdx[i]*jcob*weightq*etaq[counter]*dilation_rate
-                      f_el[ndofV*i+1]-=2./3.*dNNNVdy[i]*jcob*weightq*etaq[counter]*dilation_rate
+               #add to it dilation term
+               for i in range(0,mV):
+                   f_el[ndofV*i+0]-=2./3.*dNNNVdx[i]*jcob*weightq*etaq[counter]*dilation_rate
+                   f_el[ndofV*i+1]-=2./3.*dNNNVdy[i]*jcob*weightq*etaq[counter]*dilation_rate
 
                for i in range(0,mP):
                    N_mat[0,i]=NNNP[i]
@@ -753,8 +759,10 @@ for iter in range(0,niter):
    print("build FE matrix: %.3f s" % (timing.time() - start))
 
    ######################################################################
+   # pressure nullspace removal
+   ######################################################################
 
-   if benchmark==4 or benchmark==5: #shortening block has p nullspace
+   if benchmark==4 or benchmark==5: 
       for i in range(0,Nfem):
           A_sparse[Nfem-1,i]=0
           A_sparse[i,Nfem-1]=0
@@ -862,7 +870,7 @@ for iter in range(0,niter):
                   rq=qcoords[iq]
                   sq=qcoords[jq]
                   weightq=qweights[iq]*qweights[jq]
-                  NNNP[0:4]=NNP(rq,sq)
+                  NNNP[0:mP]=NNP(rq,sq)
                   jcob=hx*hy/4
                   p_q=NNNP[0:mP].dot(p[iconP[0:mP,iel]])
                   int_p+=p_q*weightq*jcob
@@ -898,7 +906,7 @@ for iter in range(0,niter):
 
    print("     -> Nonlinear res. (2-norm) %7e" % (conv_two))
 
-   if conv_two<tol_nl and iter>niter_min:
+   if conv_two<tol_nl:
       break
 
    Res_u,Res_v=np.reshape(Res[0:NfemV],(NV,2)).T
@@ -917,8 +925,15 @@ for iter in range(0,niter):
    print("computing res norms: %.3f s" % (timing.time() - start))
 
    #####################################################################
-   # interpolate pressure onto velocity grid points
+   # interpolate pressure onto velocity grid points (for plotting)
    #####################################################################
+   # velocity    pressure
+   # 3---6---2   3-------2
+   # |       |   |       |
+   # 7   8   5   |       |
+   # |       |   |       |
+   # 0---4---1   0-------1
+   #################################################################
    start = timing.time()
 
    q=np.zeros(NV,dtype=np.float64)
@@ -953,7 +968,7 @@ for iter in range(0,niter):
    print("project p(Q1) onto vel(Q2) nodes: %.3f s" % (timing.time() - start))
 
    ######################################################################
-   # compute strainrate 
+   # compute strainrate at center of element 
    ######################################################################
    start = timing.time()
 
@@ -969,11 +984,11 @@ for iter in range(0,niter):
 
        rq = 0.
        sq = 0.
-       weightq = 2.*2.
 
        NNNV[0:mV]=NNV(rq,sq)
        dNNNVdr[0:mV]=dNNVdr(rq,sq)
        dNNNVds[0:mV]=dNNVds(rq,sq)
+       NNNP[0:mP]=NNP(rq,sq)
 
        jcb=np.zeros((ndim,ndim),dtype=np.float64)
        for k in range(0,mV):
@@ -1011,7 +1026,7 @@ for iter in range(0,niter):
    print("compute press & sr: %.3f s" % (timing.time() - start))
 
    #####################################################################
-   # compute strainrate onto velocity grid
+   # compute strainrate on velocity grid
    #####################################################################
    start = timing.time()
 
@@ -1020,6 +1035,9 @@ for iter in range(0,niter):
    exyn=np.zeros(NV,dtype=np.float64)
    srn=np.zeros(NV,dtype=np.float64)
    c=np.zeros(NV,dtype=np.float64)
+
+   rVnodes=[-1,+1,1,-1, 0,1,0,-1,0]
+   sVnodes=[-1,-1,1,+1,-1,0,1, 0,0]
 
    for iel in range(0,nel):
        for i in range(0,mV):
@@ -1070,7 +1088,7 @@ for iter in range(0,niter):
    ######################################################################
    start = timing.time()
 
-   if use_srn_diff:
+   if False: 
 
       NfemT=NV
       dt=1
@@ -1189,7 +1207,8 @@ for iter in range(0,niter):
    start = timing.time()
 
    for i in range(0,NV):
-       etan[i],dum,dum,dum=viscosity(exxn[i],eyyn[i],exyn[i],q[i],cohesion,phi,iter,xV[i],yV[i],eta_m,eta_v)
+       etan[i],dum,dum,dum=viscosity(exxn[i],eyyn[i],exyn[i],q[i],cohesion,phi,\
+                                     iter,xV[i],yV[i],eta_m,eta_v)
 
    print("     -> etan (m,M) %.6e %.6e " %(np.min(etan),np.max(etan)))
 
@@ -1245,7 +1264,7 @@ for iter in range(0,niter):
    ######################################################################
    start = timing.time()
 
-   if iter%1==0 and produce_nl_vtu:
+   if iter%every==0 and produce_nl_vtu:
 
       filename = 'solution_q_nl_{:04d}'.format(iter)+name+'.vtu'
       vtufile=open(filename,"w")
@@ -1261,6 +1280,7 @@ for iter in range(0,niter):
       vtufile.write("</Points> \n")
       #####
       vtufile.write("<PointData Scalars='scalars'>\n")
+
       vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
       for iq in range(0,nq):
           vtufile.write("%10e \n" % etaq[iq])
@@ -1321,6 +1341,17 @@ for iter in range(0,niter):
       #vtufile.write("</CellData>\n")
       #####
       vtufile.write("<PointData Scalars='scalars'>\n")
+
+      vtufile.write("<DataArray type='Float32' Name='Angle' Format='ascii'> \n")
+      for i in range(0,NV):
+          if np.abs(xV[i]-Lx/2)>hx/10:
+             theta=np.arctan(yV[i]/np.abs(xV[i]-Lx/2))/np.pi*180
+          else:
+             theta=90.
+          vtufile.write("%10e \n" % theta)
+      vtufile.write("</DataArray>\n")
+
+
       #--
       vtufile.write("<DataArray type='Float32' Name='Res (u)' Format='ascii'> \n")
       for i in range(0,NV):
@@ -1661,6 +1692,15 @@ vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/year)' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%10e %10e %10e \n" %(u[i]*year,v[i]*year,0.))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='Angle' Format='ascii'> \n")
+for i in range(0,NV):
+    if np.abs(xV[i]-Lx/2)>hx/10:
+       theta=np.arctan(yV[i]/np.abs(xV[i]-Lx/2))/np.pi*180
+    else:
+       theta=90.
+    vtufile.write("%10e \n" % theta)
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")

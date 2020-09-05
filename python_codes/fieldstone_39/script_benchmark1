@@ -8,7 +8,7 @@
 #   eta_m =  float(sys.argv[6])
 #   eta_v =  float(sys.argv[7])
 
-niter=250
+niter=1000
 
 for nelx in 64 96 128 160 ; do
 
