@@ -1,0 +1,14 @@
+#! /bin/bash
+
+rm -f single_point_g.ascii
+rm -f single_point_U.ascii
+
+for l in {8..80} ; do
+    echo nelr= $l
+    python3 stone.py  $l > opla 
+    grep grav_at_pt opla >> single_point_g.ascii
+    grep U_at_pt opla >> single_point_U.ascii
+
+done
+
+

@@ -1,0 +1,56 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set xlabel 'r'
+set key outside
+
+
+set log x
+
+set ylabel 'U'
+set output 'gravpot.pdf'
+plot[][]\
+'gravity_on_line_masspoint.ascii' u 1:2 w l t 'mass point',\
+'gravity_on_line_prism.ascii' u 1:2 w l t 'prism',\
+'gravity_on_line_prism.ascii' u 1:13 w l dashtype 2 lt -1 t 'analytical'
+
+#set ylabel 'U-U_{th}'
+#set output 'gravpot_error.pdf'
+#plot[][]\
+#'gravity_on_line_masspoint.ascii' u 1:($2-$13) w l t 'mass point',\
+#'gravity_on_line_prism.ascii' u 1:($2-$13) w l t 'prism'
+
+
+set ylabel '|g|'
+set output 'gravnorm.pdf'
+plot[][1e-8:]\
+'gravity_on_line_masspoint.ascii' u 1:6 w l t 'mass point',\
+'gravity_on_line_prism.ascii' u 1:6 w l t 'prism',\
+'gravity_on_line_prism.ascii' u 1:14 w l dashtype 2 lt -1 t 'analytical',\
+
+#set ylabel 'g-g_{th}'
+#set output 'gravnorm_error.pdf'
+#plot[][]\
+#'gravity_on_line_masspoint.ascii' u 1:($6-$14) w l t 'mass point',\
+#'gravity_on_line_prism.ascii' u 1:($6-$14) w l t 'prism'
+
+set xlabel 'h'
+set pointsize .3
+set output 'single_point_g.pdf'
+plot[][]\
+'single_point_g_masspoint.ascii' u (1./$3):4 w lp pt 1  t 'g_x, mass point',\
+'single_point_g_prism.ascii' u (1./$3):4 w lp pt 2  t 'g_x, prism',\
+'single_point_g_masspoint.ascii' u (1./$3):7 w l lt -1 dashtype 2 t 'g_x, analytical',\
+'single_point_g_masspoint.ascii' u (1./$3):5 w lp pt 2 t 'g_y',\
+'single_point_g_masspoint.ascii' u (1./$3):8 w l lt -1 dashtype 3 t 'g_y, analytical',\
+'single_point_g_masspoint.ascii' u (1./$3):6 w lp pt 3 t 'g_z',\
+'single_point_g_masspoint.ascii' u (1./$3):9 w l lt -1 dashtype 4 t 'g_z, analytical',\
+
+set output 'single_point_U.pdf'
+plot[][]\
+'single_point_U_masspoint.ascii' u (1/$3):4 w lp pt 1 t 'U',\
+'single_point_U_prism.ascii' u (1/$3):4 w lp t 'U, prism',\
+'single_point_U_masspoint.ascii' u (1/$3):5 w l lt -1 dashtype 2 t 'U, analytical',\
+
+
+
+
