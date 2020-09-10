@@ -1,0 +1,636 @@
+
+{\sl This appendix was written by Sverre Hassing as part of his Bachelor thesis.} \index{contributors}{S. Hassing}
+Although the final formula are definitely correct, the derivations below may still contain a typo. 
+
+\vspace{.4cm}
+
+The derivations for prisms have been published in the early 50's \cite{made51}. 
+However, to the best of our knowledge the full derivation has not been carried out in English in full detail. 
+The derivations are based on those of Mader (1951) \cite{made51} and of Nagy et al. (2000) \cite{napb00,napb02}. 
+Mader provided the derivations in some detail, while Nagy et al. interpreted the results in a more modern style. 
+
+
+%----------------------------
+\subsection{Basic formulas}
+
+The derivations for prisms are a lot more complicated than that for the point masses. 
+We start with the following two integral equations which are integral part of the derivations:
+
+\begin{eqnarray}
+\int \frac{x^2 dx}{x^2 + z^2} &=& x - z  \arctan{\frac{x}{z}} \label{eq:basic1} \\
+\int \frac{dx}{\sqrt{x^2+y^2+z^2}} &=& \ln{\left( x + \sqrt{x^2+y^2+z^2} \right)} \label{eq:basic2}
+\end{eqnarray}
+Another equation that will come back multiple times is of the form:
+\begin{equation}
+\int \frac{du}{(v^2+w^2)\sqrt{u^2+v^2+w^2}}
+\end{equation}
+This can be solved with a trigonometric substitution, where $u = \sqrt{v^2+w^2} \tan{\phi}$. This means that $du = \frac{\sqrt{v^2+w^2}}{cos^2{\phi}} d\phi$.
+\begin{eqnarray}
+\int \frac{du}{(v^2+w^2)\sqrt{u^2+v^2+w^2}} 
+&=& 
+\int \frac{\sqrt{v^2+w^2}}{cos^2{\phi}} 
+\frac{1}{(v^2+w^2)\tan^2{\phi}+v^2} 
+\frac{d\phi}{\sqrt{v^2+w^2+(v^2+w^2)\tan^2{\phi})}} \nonumber\\
+&=& 
+\int \frac{\sqrt{v^2+w^2}}{cos{\phi}^2} 
+\frac{1}{v^2(\tan^2{\phi}+1) + w^2 \tan^2{\phi}} 
+\frac{d\phi}{\sqrt{(v^2+w^2)(\tan^2{\phi}+1)}} \nonumber\\
+&=&
+\int \frac{\sqrt{v^2+w^2}}{cos{\phi}^2} 
+\frac{1}{\frac{v^2+w^2 \sin^2{\phi}}{cos^2{\phi}}} 
+\frac{d\phi}{\frac{\sqrt{v^2+w^2}}{cos{\phi}}} \nonumber\\
+&=& 
+\int \frac{\cos{\phi} d\phi}{v^2+w^2\sin^2{\phi}}
+\end{eqnarray}
+A second substitution is needed where $t = \frac{w}{v}\sin{\phi}$ and $dt = \frac{v}{w} \cos{\phi} d\phi$:
+\begin{eqnarray}
+\int \frac{\cos{\phi} d\phi}{v^2+w^2\sin^2{\phi}} 
+&=& \int \frac{v dt}{w (v^2+v^2t^2)} \nonumber\\
+&=& \frac{1}{vw} \int \frac{dt}{1+t^2} \nonumber\\
+&=& \frac{1}{vw} \arctan{t} \nonumber\\
+&=& \frac{1}{vw} \arctan{\frac{w \sin{\phi}}{v}} \label{eq:prismbe1}
+\end{eqnarray}
+Now the $\sin{\phi}$ needs to be converted back to $u,v,w$. If it is known that $\tan{\phi} = \frac{u}{\sqrt{v^2+w^2}}$, then it follows that $\sin{\phi}=\frac{u}{\sqrt{u^2+v^2+w^2}}$.
+Eq.\eqref{eq:prismbe1} then becomes
+\begin{equation}
+{\frac{1}{vw} \arctan \frac{w \sin{\phi}}{v}} = \frac{1}{vw} \arctan{\frac{u w}{v \sqrt{u^2+v^2+w^2}}}
+\end{equation}
+and finally 
+\begin{equation}
+\boxed{
+\int \frac{du}{(v^2+w^2)\sqrt{u^2+v^2+w^2}} = \frac{1}{vw} \arctan{\frac{u w}{v \sqrt{u^2+v^2+w^2}}} \label{eq:basic3}
+}
+\end{equation}
+
+\subsection{The gravitational potential}
+
+Each prism is assumed to have constant density $\rho$. The gravitational potential is integrated over the whole volume of the prism:
+\begin{equation}
+U(P) =  -{\cal G}  \rho \underbrace{\int_{x_1}^{x_2} \int_{y_1}^{y_2} \int_{z_1}^{z_2} \frac{dx dy dz}{\sqrt{x^2+y^2+z^2}}}_{I} \label{eq:der_U_1}
+\end{equation}
+
+In what follows we work out the exact form for the triple integral term. Elementary Eq.~\eqref{eq:basic2} can be applied to the integral for $dx$ 
+in Eq.~\eqref{eq:der_U_1}.
+\begin{eqnarray}
+I
+&=& \iiint \frac{dx dy dz}{\sqrt{x^2+y^2+z^2}}  \nn\\
+&=& \iint \left(\int \frac{dx}{\sqrt{x^2+y^2+z^2}} \right) dydz \nonumber\\
+&=& \iint \ln{\left( x+\sqrt{x^2+y^2+z^2} \right)} dy dz
+\end{eqnarray}
+We further proceed with the integration with respect to $y$. We define
+\[
+\begin{array}{c|c}
+  f = \int \ln{\left( x+\sqrt{x^2+y^2+z^2} \right)} dz 
+  & g' = dy \\ 
+  \hline
+  f' = \frac{y}{\left( x+\sqrt{x^2+y^2+z^2} \right) \sqrt{x^2+y^2+z^2}} 
+  & g=y
+ \end{array}
+\]
+and using $\int f g'  = f g - \int f g'$ we have 
+\begin{equation}
+I= 
+\underbrace{y \int \ln{ \left( x + \sqrt{x^2+y^2+z^2} \right) } dz}_{A} 
+\underbrace{- \iint  \frac{y^2 dz}{\left( x+\sqrt{x^2+y^2+z^2}\right) \sqrt{x^2+y^2+z^2}} dy}_{B} 
+\end{equation}
+
+The calculation of $I$ is then split into two large integrals denoted
+$A$ and $B$, calculated in the following subsections.
+Note that we have not made use of the integral bounds yet.  
+
+%..................................................................
+\subsubsection{The calculation of $A$} \label{subsection:calc_A}
+
+The first step in calculating $A$ is to carry out a similar partial integration as seen before. 
+
+\[
+\begin{array}{c|c}
+  f=\ln{ \left( x + \sqrt{x^2+y^2+z^2} \right)} & 
+  g'=dz \\ 
+  \hline
+  f' = \frac{\partial f}{\partial z} = \frac{z}{\left( x+\sqrt{x^2+y^2+z^2} \right) \sqrt{x^2+y^2+z^2}} 
+  & g = z
+ \end{array}
+\]
+
+\begin{eqnarray}
+A 
+&=& 
+y \left(z \ln{ \left( x + \sqrt{x^2+y^2+z^2} \right)} - 
+\int \frac{z^2 dz}{\left( x+\sqrt{x^2+y^2+z^2} \right) \sqrt{x^2+y^2+z^2}} \right) \nonumber\\
+&=& 
+\underbrace{yz \ln{ \left( x + \sqrt{x^2+y^2+z^2} \right)} }_{A_0} 
+- 
+\underbrace{y\int \frac{z^2 dz}{\left( x+\sqrt{x^2+y^2+z^2} \right) \sqrt{x^2+y^2+z^2}}  }_{A_1}
+\end{eqnarray}
+
+We now focus on the $A_1$ integral. 
+We first multiply the numerator and denominator by $-x+\sqrt{x^2+y^2+z^2} $. The last step uses Eqs.~\eqref{eq:basic2}, \eqref{eq:basic3} and \eqref{eq:basic1} respectively for each term.
+\begin{eqnarray}
+A_1 
+&=& \int \frac{z^2 dz}{\left( x+\sqrt{x^2+y^2+z^2} \right) \sqrt{x^2+y^2+z^2}}
+\frac{-x+\sqrt{x^2+y^2+z^2}}{-x+\sqrt{x^2+y^2+z^2}} \nonumber\\
+&=& \int \frac{(-x z^2 + z^2 \sqrt{x^2+y^2+z^2} )dz}{\left( x^2+y^2+z^2 - x^2 \right) \sqrt{x^2+y^2+z^2}} \label{eq:der_U_2} \nonumber\\
+&=& 
+\int \frac{-x z^2 dz}{\left( y^2+z^2  \right) \sqrt{x^2+y^2+z^2}}  
++ \int \frac{z^2 \sqrt{x^2+y^2+z^2} dz}{\left( y^2+z^2  \right) \sqrt{x^2+y^2+z^2}} \nonumber\\
+&=& \int \frac{-x \left( z^2 + y^2 -y^2 \right) dz}{(y^2+z^2)\sqrt{x^2+y^2+z^2}} + 
+\int \frac{z^2dz}{y^2+z^2} \nonumber\\
+&=& \int \frac{-x dz}{\sqrt{x^2+y^2+z^2}} + 
+\int \frac{x y^2 dz}{(y^2+z^2)\sqrt{x^2+y^2+z^2}} + 
+\int \frac{z^2dz}{y^2+z^2} \nonumber\\
+&=& -x \int \frac{ dz}{\sqrt{x^2+y^2+z^2}} + 
+x y^2 \int \frac{ dz}{(y^2+z^2)\sqrt{x^2+y^2+z^2}} + 
+\int \frac{z^2dz}{y^2+z^2} \nonumber\\
+&=& -x \ln{ \left( z + \sqrt{x^2+y^2+z^2} \right)} + 
+y \arctan{\frac{x z}{y \sqrt{x^2+y^2+z^2}}} + 
+z -  y \arctan{\frac{z}{y}}
+\end{eqnarray}
+This can be combined to get the final expression for A:
+\begin{equation}
+A = 
+y \left( z \ln{ \left( x + \sqrt{x^2+y^2+z^2} \right)} + 
+x \ln{ \left( z + \sqrt{x^2+y^2+z^2} \right)} -  
+y \arctan{\frac{x z}{y \sqrt{x^2+y^2+z^2}}} - 
+z + 
+y \arctan{\frac{z}{y}} \right)
+\end{equation}
+The last two terms can be left out because they will cancel out when computing the integration boundaries from $x_1$ to $x_2$, because these terms do not contain the variable $x$. 
+Finally we arrive at the following expression for $A$:
+\begin{equation}
+A = 
+yz \ln{\left( x + \sqrt{x^2+y^2+z^2} \right)} + 
+xy \ln{\left( z + \sqrt{x^2+y^2+z^2} \right)} - 
+y^2 \arctan{\frac{xz}{y\sqrt{x^2+y^2+z^2}}}
+\end{equation}
+
+
+
+%.......................................
+\subsubsection{The calculation of $B$}
+
+The inner integral can be simplified similarly to how $A_1$ was simplified in Eq.~\eqref{eq:der_U_2}, 
+by multiplying both numerator and denominator with $-x+\sqrt{x^2+y^2+z^2}$. The last step uses Eqs.~\eqref{eq:basic3} and \eqref{eq:basic1}:
+\begin{eqnarray}
+B 
+&=& 
+-\int y^2 \int \frac{dz}{\left( x + \sqrt{x^2+y^2+z^2} \right) \sqrt{x^2+y^2+z^2}} 
+\frac{-x + \sqrt{x^2+y^2+z^2}}{-x + \sqrt{x^2+y^2+z^2}} dy \nonumber\\
+&=& - \int y^2 \int \frac{-x + \sqrt{x^2+y^2+z^2} }{\left( x^2 + y^2+z^2 -x^2 \right) \sqrt{x^2+y^2+z^2}}dz dy \nonumber\\
+&=& - \int y^2 \left( 
+- \int \frac{x dz}{(y^2+z^2)\sqrt{x^2+y^2+z^2}} +
+\int \frac{dz}{y^2+z^2} 
+\right) dy \nonumber\\
+&=& - \int y^2 \left( -\frac{1}{y} \arctan{\frac{xz}{y\sqrt{x^2+y^2+z^2}}} + \frac{1}{y} \arctan{\frac{z}{y}}\right) dy \nn\\
+&=& \int y \arctan{\frac{xz}{y\sqrt{x^2+y^2+z^2}}} dy
+\end{eqnarray}
+Again the second term can be left out, because it does not contain the variable $x$. The next step is to apply a partial integration to $B$.  
+
+\[
+\begin{array}{c|c}
+  f=\arctan{\frac{xz}{y\sqrt{x^2+y^2+z^2}}} & g'=y \\ 
+  \hline
+  f' = -xz \frac{\frac{1}{y^2 \sqrt{x^2+y^2+z^2}}+\frac{1}{(x^2+y^2+z^2)^\frac{3}{2}}}{\frac{x^2z^2}{y^2(x^2+y^2+z^2)}+1} & g = \frac{y^2}{2}
+ \end{array}
+\]
+
+\begin{equation}
+B = 
+\frac{y^2}{2} \arctan{\frac{xz}{y\sqrt{x^2+y^2+z^2}}} +
+\underbrace{
+\frac{xz}{2} \int y^2 \frac{\frac{1}{y^2\sqrt{x^2+y^2+z^2}}+\frac{1}{(x^2+y^2+z^2)^\frac{3}{2}}}{\frac{x^2z^2}{y^2(x^2+y^2+z^2)}+1}}_{B_1}
+\end{equation}
+
+Let us finish by calculating the integral $B_1$:
+
+\begin{eqnarray}
+B_1 
+&=& 
+\frac{xz}{2} \int y^2 
+\frac{\frac{1}{y^2\sqrt{x^2+y^2+z^2}}+\frac{1}{(x^2+y^2+z^2)^{3/2}}}{\frac{x^2z^2}{y^2(x^2+y^2+z^2)}+1} 
+dy \nonumber\\
+&=& 
+\frac{xz}{2} \int y^2 
+\frac{\frac{x^2+y^2+z^2}{y^2(x^2+y^2+z^2)^{3/2}}+\frac{y^2}{y^2(x^2+y^2+z^2)^{3/2}}}{\frac{x^2z^2+y^2(x^2+y^2+z^2)}{y^2(x^2+y^2+z^2)}} 
+dy \nonumber\\
+&=& 
+\frac{xz}{2} \int y^2 
+\frac{\frac{x^2+2y^2+z^2}{y^2(x^2+y^2+z^2)^{3/2}}}{\frac{x^2z^2+y^2(x^2+y^2+z^2)}{y^2(x^2+y^2+z^2)}} 
+dy \nonumber\\
+&=& 
+\frac{xz}{2} \int y^2 
+\frac{x^2+2y^2+z^2}{\sqrt{x^2+y^2+z^2}(x^2z^2+y^2(x^2+y^2+z^2))} 
+dy \nonumber\\
+&=& 
+\frac{xz}{2} 
+\int y^2 \frac{x^2+2y^2+z^2}{\sqrt{x^2+y^2+z^2}(x^2+y^2)(z^2+y^2)} 
+dy \nonumber\\
+&=& 
+\frac{xz}{2} 
+\left( 
+\int \frac{2dy}{\sqrt{x^2+y^2+z^2}} + 
+\int \frac{-(x^2+z^2)y^2-2x^2z^2}{(x^2+y^2)(y^2+z^2)\sqrt{x^2+y^2+z^2}} 
+dy \right) \nonumber\\
+&=& 
+xz \ln{\left( y + \sqrt{x^2+y^2+z^2} \right)} - 
+\frac{xz}{2} 
+\int \frac{(x^2+z^2)y^2+2x^2z^2}{(x^2+y^2)(y^2+z^2)\sqrt{x^2+y^2+z^2}} 
+dy \nonumber\\
+&=& 
+xz \ln{\left( y + \sqrt{x^2+y^2+z^2} \right)} - 
+\frac{xz}{2} \int \frac{x^2y^2+y^2z^2+2x^2z^2}{(x^2+y^2)(y^2+z^2)\sqrt{x^2+y^2+z^2}} 
+dy \nonumber\\
+&=& 
+xz \ln{\left( y + \sqrt{x^2+y^2+z^2} \right)} - 
+\frac{xz}{2} \int \frac{x^2(y^2+z^2)+z^2(x^2+y^2)}{(x^2+y^2)(y^2+z^2)\sqrt{x^2+y^2+z^2}} 
+dy \nonumber\\
+&=& 
+xz \ln{\left( y + \sqrt{x^2+y^2+z^2} \right)} - 
+\frac{xz}{2} \int \frac{x^2}{(x^2+y^2)\sqrt{x^2+y^2+z^2}} dy - 
+\frac{xz}{2} \int \frac{z^2}{(y^2+z^2)\sqrt{x^2+y^2+z^2}} 
+dy \nonumber\\
+&=& 
+xz \ln{\left( y + \sqrt{x^2+y^2+z^2} \right)} - 
+\frac{xz}{2} \frac{x^2\arctan{\frac{yz}{x\sqrt{x^2+y^2+z^2}}}}{xz} - 
+\frac{xz}{2} \frac{z^2\arctan{\frac{xy}{z\sqrt{x^2+y^2+z^2}}}}{xz} 
+\nonumber\\
+&=& 
+xz \ln{\left( y + \sqrt{x^2+y^2+z^2} \right)} - 
+\frac{x^2}{2} \arctan{\frac{yz}{x\sqrt{x^2+y^2+z^2}}} - 
+\frac{z^2}{2} \arctan{\frac{xy}{z\sqrt{x^2+y^2+z^2}}}
+\end{eqnarray}
+This can be combined to get the full expression for $B$:
+\[
+B = 
+xz \ln{\left( \sqrt{x^2+y^2+z^2}+y \right)} - 
+\frac{x^2}{2} \arctan{\frac{zy}{x\sqrt{x^2+y^2+z^2}}} + 
+\frac{y^2}{2} \arctan{\frac{xz}{y\sqrt{x^2+y^2+z^2}}} - 
+\frac{z^2}{2} \arctan{\frac{xy}{x\sqrt{z^2+y^2+z^2}}}
+\]
+
+%..............................................
+\subsubsection{Combining $A$ and $B$}
+Now A and B can be combined to get the expression of $I$ 
+
+\begin{eqnarray}
+I&=& A + B \nonumber\\
+&=& yz \ln{\left( x + \sqrt{x^2+y^2+z^2} \right)} + 
+xy \ln{\left( z + \sqrt{x^2+y^2+z^2} \right)} - 
+y^2 \arctan{\frac{xz}{y\sqrt{x^2+y^2+z^2}}} \nonumber\\ 
+&+& 
+xz \ln{\left( \sqrt{x^2+y^2+z^2}+y \right)} - 
+\frac{x^2}{2} \arctan{\frac{zy}{x\sqrt{x^2+y^2+z^2}}} + 
+\frac{y^2}{2} \arctan{\frac{xz}{y\sqrt{x^2+y^2+z^2}}} - 
+\frac{z^2}{2} \arctan{\frac{xy}{x\sqrt{z^2+y^2+z^2}}} \nonumber\\
+&=&
+yz \ln{\left( x + \sqrt{x^2+y^2+z^2} \right)} + 
+xy \ln{\left( z + \sqrt{x^2+y^2+z^2} \right)} + 
+xz \ln{\left( y+\sqrt{x^2+y^2+z^2} \right)} \nonumber\\ 
+&-& 
+\frac{x^2}{2} \arctan{\frac{zy}{x\sqrt{x^2+y^2+z^2}}} - 
+\frac{y^2}{2} \arctan{\frac{xz}{y\sqrt{x^2+y^2+z^2}}} - 
+\frac{z^2}{2} \arctan{\frac{xy}{x\sqrt{z^2+y^2+z^2}}} 
+\end{eqnarray}
+
+The boundaries for the volume from Eq.~\eqref{eq:def_points} need to be applied to the result of the integration. 
+The boundary conditions are computed by plugging the upper value into the equation and subtracting the equation with the lower 
+value plugged in. When the upper and lower values are respectively $x_2$ and $x_1$ for some function $f(x)$, this is $f(x_2) - f(x_1)$. 
+This can be represented more efficiently with a summation over the subscript. Something needs to be added to still keep the subtraction in there. 
+This can be done by adding a factor of $-1^i$, where i is the summation index. This will be positive when $i$ is even and negative when $i$ is odd. 
+The new way of showing the result would be $\displaystyle\sum_{i=1}^{2} -1^i f(x_i)$. This is especially useful when there are three different 
+integration boundaries to resolve. $r$ will be used instead of $\sqrt{x^2+y^2+z^2}$. 
+
+\begin{eqnarray}
+I
+&=& \left| \left| \left| 
+yz \ln{\left( x + r \right)} + 
+xy \ln{\left( z + r \right)} + 
+xz \ln{\left( y + r \right)} - 
+\frac{x^2}{2} \arctan{\frac{zy}{xr}} - 
+\frac{y^2}{2} \arctan{\frac{xz}{yr}} - 
+\frac{z^2}{2} \arctan{\frac{xy}{xr}} 
+\right|_{x_1}^{x_2} \right|_{y_1}^{y_2} \right|_{z_1}^{z_2} 
+\nonumber\\
+&=& \sum_{i=1}^{2} \sum_{j=1}^{2} \sum_{k=1}^{2} (-1)^{i+j+k} 
+\Bigg(
+y_j z_k \ln{\left( x_i + r_{ijk} \right)} + 
+x_i y_j \ln{\left( z_k + r_{ijk} \right)} + 
+x_i z_k \ln{\left( y_j+r_{ijk} \right)}  \nonumber\\
+&& \qquad\qquad\qquad\qquad\qquad \left. - 
+\frac{x_i^2}{2} \arctan{\frac{z_k y_j}{x_i r_{ijk}}} - 
+\frac{y_j^2}{2} \arctan{\frac{x_i z_k}{y_j r_{ijk}}} - 
+\frac{z_k ^2}{2} \arctan{\frac{x_i y_j}{x_i r_{ijk}}} 
+\right)
+\end{eqnarray} 
+
+
+Finally,
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+U(\vec{r}) &=& {\cal G}  \rho 
+\sum_{i=1}^{2} \sum_{j=1}^{2} \sum_{k=1}^{2} (-1)^{i+j+k} \Bigg( 
+y_j z_k \ln{\left( x_i + r_{ijk} \right)} + 
+x_i y_j \ln{\left( z_k + r_{ijk} \right)} + 
+x_i z_k \ln{\left( y_j+r_{ijk} \right)}   \nn\\ 
+&&  \qquad \qquad - 
+\frac{x_i^2}{2} \arctan{\frac{z_k y_j}{x_i r_{ijk}}} - 
+\frac{y_j^2}{2} \arctan{\frac{x_i z_k}{y_j r_{ijk}}} - 
+\frac{z_k^2}{2} \arctan{\frac{x_i y_j}{x_i r_{ijk}}} 
+\Bigg) 
+\end{eqnarray}
+\end{mdframed}
+
+
+
+
+
+
+
+
+%------------------------------------------
+\subsection{The gravity vector $\vec{g}$}
+
+In 3D Cartesian coordinates the gravity vector is expressed as
+\begin{equation}
+\vec{g} = -\vec\nabla U  = 
+\left( 
+\begin{array}{c} 
+-\frac{\partial U}{\partial x} \\ \\
+-\frac{\partial U}{\partial y} \\ \\
+-\frac{\partial U}{\partial z} 
+\end{array} \right)
+\end{equation}
+The easiest way to calculate this is by including the partial derivatives in the original integral \eqref{eq:der_U_1}.
+\begin{eqnarray}
+I_x(\vec{r}) 
+&=& \iiint \frac{\partial}{\partial x} \frac{dx dy dz}{\sqrt{x^2+y^2+z^2}} \nonumber\\
+&=& -\iiint \frac{x dx dy dz}{(\sqrt{x^2+y^2+z^2})^3} \nonumber\\
+&=& \iint \frac{dy dz}{\sqrt{x^2+y^2+z^2}}
+\end{eqnarray}
+
+The integral \eqref{eq:basic2} can be used, followed by the calculation of $A$ as seen in Section~\ref{subsection:calc_A} 
+without the multiplication with $y$:
+\begin{eqnarray}
+I_x(\vec{r})
+&=& \int \ln{\left( x + \sqrt{x^2+y^2+z^2} \right)} dz \nonumber\\
+&=& 
+z \ln{\left( y + \sqrt{x^2+y^2+z^2} \right)} + 
+y \ln{\left( z + \sqrt{x^2+y^2+z^2} \right)} - 
+x \arctan{\frac{yz}{x \sqrt{x^2+y^2+z^2}}}
+\end{eqnarray}
+The integration boundaries can be applied. Multiplication with ${\cal G}$ and $\rho$ is the final step in deriving the element of 
+the gravity vector component ($g_x$). 
+
+\begin{eqnarray}
+g_x = 
+{\cal G}  \rho \sum_{i,j,k=1}^{2} (-1)^{i+j+k}  \left( 
+z_k \ln{\left( y_j + \sqrt{x_i^2+y_j^2+z_k^2} \right)} + 
+y_j \ln{\left( z_j + \sqrt{x_i^2+y_j^2+z_k^2} \right)} - 
+x_i \arctan{\frac{y_j z_k}{x_i \sqrt{x_i^2+y_j^2+z_k^2}}} \right) \nn
+\end{eqnarray}
+
+The same can be done for the $y-$ and $z-$components and in the end we obtain
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+g_x &=& {\cal G}  \rho \displaystyle\sum_{i=1}^{2} \displaystyle\sum_{j=1}^{2} \displaystyle\sum_{k=1}^{2} (-1)^{i+j+k} 
+\left( 
+z_k \ln{\left( y_j + r_{ijk} \right)} + 
+y_j \ln{\left( z_j + r_{ijk} \right)} - 
+x_i \arctan{\frac{y_j z_k}{x_i r_{ijk}}} 
+\right) \nonumber\\
+g_y &=& 
+{\cal G}  \rho \displaystyle\sum_{i=1}^{2} \displaystyle\sum_{j=1}^{2} \displaystyle\sum_{k=1}^{2} (-1)^{i+j+k} 
+\left( 
+z_k \ln{\left( x_i + r_{ijk} \right)} + 
+x_i \ln{\left( z_j + r_{ijk} \right)} - 
+y_j \arctan{\frac{x_i z_k}{y_j r_{ijk}}} 
+\right) \nonumber\\
+g_z &=& 
+{\cal G}  \rho \displaystyle\sum_{i=1}^{2} \displaystyle\sum_{j=1}^{2} \displaystyle\sum_{k=1}^{2} (-1)^{i+j+k} 
+\left( 
+x_i \ln{\left( y_j + r_{ijk} \right)} + 
+y_j \ln{\left( x_i + r_{ijk} \right)} - 
+z_k \arctan{\frac{x_i y_j}{z_k r_{ijk}}} 
+\right) \nonumber
+\end{eqnarray}
+\end{mdframed}
+
+These equations can be found in various other papers such as Eq.~(6) in Heck and Seitz, 2007 \cite{hese07}, Eqs.~(8,11,12) in Nagy et al., 2000 \cite{napb00} 
+(note that there is a mistake there that is later fixed in \cite{napb02}), appendix A in Couder-Castaneda et al., 2015 \cite{cooo15} 
+and the derivation between (14) and (15) in Mader, 1951 \cite{made51}.
+
+%-------------------------------------------------------
+\subsection{The gravity gradient tensor} % (${\bm T}$)}
+
+The different elements of the gravity gradient tensor can be determined by partially differentiating each component of the 
+gravity vector with respect to each space coordinate. As will be shown later, ${\bm T}$ should be a symmetric matrix and its trace should equal zero.
+
+%...............................
+\subsubsection{The diagonal terms}
+
+\begin{eqnarray}
+T_{xx} 
+&=& \frac{\partial}{\partial x} g_x 
+= -\frac{\partial^2}{\partial x^2} U(\vec{r}) 
+= {\cal G} \rho \frac{\partial^2}{\partial x^2} \left( -I(\vec{r}) \right)
+\end{eqnarray}
+
+\begin{eqnarray}
+I_{xx}(\vec{r}) 
+&=& \iiint \frac{\partial^2}{\partial x^2} \frac{dx dy dz}{\sqrt{x^2+y^2+z^2}} \nonumber\\
+&=& \iint \frac{\partial}{\partial x} \frac{dy dz}{\sqrt{x^2+y^2+z^2}} \nonumber\\
+&=& - \iint \frac{x dy dz}{\sqrt{x^2+y^2+z^2}^3}
+\end{eqnarray}
+
+A trigonometric substitution is applied to solve this integral. 
+This uses $y = \sqrt{x^2+z^2}\tan{\phi}$ and $dy = \frac{\sqrt{x^2+y^2}}{\cos^2{\phi}}d\phi$.
+
+\begin{eqnarray}
+I_{xx} 
+&=& -x \iint \frac{\sqrt{x^2+y^2}}{\cos^2{\phi}} 
+\frac{d\phi dz}{\sqrt{(x^2+z^2)\tan^2{\phi}+x^2+z^2}^3} \nonumber\\
+&=& -x \iint \frac{\sqrt{x^2+y^2}}{\cos^2{\phi}} 
+\frac{d\phi dz}{\sqrt{(x^2+z^2)(\tan^2{\phi}+1)}^3} \nonumber\\
+&=& -x \iint \frac{\sqrt{x^2+y^2}}{\cos^2{\phi}} 
+\frac{d\phi dz}{\left( \frac{\sqrt{(x^2+z^2)}}{\cos{\phi}} \right)^3} \nonumber\\
+&=& -x \int \frac{1}{x^2+z^2} \int \cos{\phi} \; d\phi dz \nonumber\\
+&=& -x \int \frac{1}{x^2+z^2} \sin{\phi} dz
+\end{eqnarray}
+Now the substitution needs to be undone. If $\tan{\phi} = \frac{y}{\sqrt{x^2+z^2}}$, then $\sin{\phi} = \frac{y}{\sqrt{x^2+y^2+z^2}}$ and then
+\begin{equation}
+I_{xx} = -xy \int \frac{dz}{(x^2+z^2)\sqrt{x^2+y^2+z^2}}
+\end{equation}
+This can be solved by applying equation \eqref{eq:basic3}.
+\begin{eqnarray}
+I_{xx} 
+&=& -\frac{xy}{xy} \arctan{\frac{yz}{x\sqrt{x^2+y^2+z^2}}} \nonumber\\
+&=& -\arctan{\frac{y z}{x \sqrt{x^2+y^2+z^2}}} \nn
+\end{eqnarray}
+
+The tensor element $T_{xx}$ is then formulated as follows 
+(the other elements of the diagonal are found by cyclic permutation of $x$, $y$ and $z$):
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+T_{xx} &=& {\cal G} \rho \sum_{i=1}^{2} \sum_{j=1}^{2} \sum_{k=1}^{2} (-1)^{i+j+k} 
+\left( - \arctan{\frac{y_j z_k}{x_i r_{ijk}}} \right) \nonumber\\
+T_{yy} &=& {\cal G} \rho \sum_{i=1}^{2} \sum_{j=1}^{2} \sum_{k=1}^{2} (-1)^{i+j+k} 
+\left( - \arctan{\frac{x_i z_k}{y_j r_{ijk}}} \right) \nonumber\\
+T_{zz} &=& {\cal G} \rho \sum_{i=1}^{2} \sum_{j=1}^{2} \sum_{k=1}^{2} (-1)^{i+j+k} 
+\left( - \arctan{\frac{x_i y_j}{z_k r_{ijk}}} \right) \nonumber
+\end{eqnarray}
+\end{mdframed}
+
+%....................................................
+\subsubsection{The off-diagonal terms of the tensor}
+
+The other elements are easier to calculate, because the partial derivatives cancel out the integrals:
+
+\begin{eqnarray}
+I_{xy} 
+&=& \iiint \frac{\partial^2}{\partial x \partial y} \frac{dx dy dz}{\sqrt{x^2+y^2+z^2}} \nonumber\\
+&=& \iint \frac{\partial}{\partial y} \frac{dy dz}{\sqrt{x^2+y^2+z^2}} \nonumber\\
+&=& \int \frac{dz}{\sqrt{x^2+y^2+z^2}} \nonumber\\
+&=& \ln{\left(z + \sqrt{x^2+y^2+z^2} \right)}
+\end{eqnarray}
+
+\begin{eqnarray}
+I_{xz} 
+&=& \iiint \frac{\partial^2}{\partial x \partial z} \frac{dx dy dz}{\sqrt{x^2+y^2+z^2}} \nonumber\\
+&=& \iint \frac{\partial}{\partial z} \frac{dy dz}{\sqrt{x^2+y^2+z^2}} \nonumber\\
+&=& \int \frac{dy}{\sqrt{x^2+y^2+z^2}} \nonumber\\
+&=& \ln{\left(y + \sqrt{x^2+y^2+z^2} \right)}
+\end{eqnarray}
+
+\begin{eqnarray}
+I_{yz} 
+&=& \iiint \frac{\partial^2}{\partial y \partial z} \frac{dx dy dz}{\sqrt{x^2+y^2+z^2}} \nonumber\\
+&=& \iint \frac{\partial}{\partial z} \frac{dx dz}{\sqrt{x^2+y^2+z^2}} \nonumber\\
+&=& \int \frac{dx}{\sqrt{x^2+y^2+z^2}} \nonumber\\
+&=& \ln{\left(x + \sqrt{x^2+y^2+z^2} \right)}
+\end{eqnarray}
+
+From these calculations it should be obvious why ${\bm T}$ is a symmetric tensor. 
+When applying the second partial derivatives, their order does not matter: 
+\begin{equation}
+I_{xy} 
+=\iiint \frac{\partial^2}{\partial x \partial y} \frac{dx dy dz}{\sqrt{x^2+y^2+z^2}} 
+=\iiint \frac{\partial^2}{\partial y \partial x} \frac{dx dy dz}{\sqrt{x^2+y^2+z^2}} 
+= I_{yx}
+\end{equation}
+
+The tensor elements following from this are:
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+T_{xy} = T_{yx} 
+&=& 
+{\cal G}  \rho \sum_{i=1}^{2} \sum_{j=1}^{2} \sum_{k=1}^{2} (-1)^{i+j+k} 
+\left( \ln{\left( z_k + r_{ijk} \right)} \right) \nonumber\\
+T_{xz} = T_{zx} 
+&=& 
+{\cal G}  \rho \sum_{i=1}^{2} \sum_{j=1}^{2} \sum_{k=1}^{2} (-1)^{i+j+k} 
+\left( \ln{\left( y_j + r_{ijk} \right)} \right) \nonumber\\
+T_{yz} = T_{zy} 
+&=& 
+{\cal G}  \rho \sum_{i=1}^{2} \sum_{j=1}^{2} \sum_{k=1}^{2} (-1)^{i+j+k} 
+\left(\ln{\left( x_i + r_{ijk} \right)} \right) \nonumber
+\end{eqnarray}
+\end{mdframed}
+
+
+%-------------------------------------------
+\subsection{Revisiting Poisson's equation}
+
+The gravitational potential Poisson equation is $\nabla^2 U = 4\pi {\cal G} \rho$. 
+This can and should be verified for the derived equations for prisms. 
+Inside the prism, the density has an assigned constant value. 
+Outside of the prism, the density is zero, so the result is $\nabla^2 U = 0$. 
+These cases will be treated separately.
+
+%................................
+\subsubsection{Outside the prism}  
+
+$\nabla^2 U = 0$ can be written 
+$\frac{\partial^2 U}{\partial x^2} + \frac{\partial^2 U}{\partial y^2}+\frac{\partial^2 U}{\partial z^2}=0$. 
+which is the trace of ${\bm T}$. 
+We first add the terms and then the boundary conditions are applied.
+
+We will need the formula to add arctangents together:
+
+\begin{equation}
+\arctan{a} + \arctan{b} = \arctan{\frac{a+b}{1-ab}}
+\end{equation}
+We start by adding the terms $T_{xx}$ and $T_{yy}$ together:
+\begin{eqnarray}
+T_{xx} + T_{yy} 
+&=& (-1)^{i+j+k} \arctan{\frac{y z}{x r}} + (-1)^{i+j+k} \arctan{\frac{x z}{y r}} \nonumber\\
+&=& (-1)^{i+j+k} \arctan{\frac{\frac{yz}{xr}+\frac{xz}{yr}}{1-\frac{yz}{xr}\frac{xz}{yr}}} \nonumber\\
+&=& (-1)^{i+j+k} \arctan{\frac{\frac{y^2z}{xyr}+\frac{x^2z}{xyr}}{1-\frac{xyz^2}{xyr^2}}} \nonumber\\
+&=& (-1)^{i+j+k} \arctan{\frac{\frac{z(x^2+y^2)}{xyr}}{\frac{xy(r^2-z^2)}{xyr^2}}} \nonumber\\
+&=& (-1)^{i+j+k} \arctan{\frac{xyzr^2(x^2+y^2)}{x^2y^2r(r^2-z^2)}} \nonumber\\
+&=& (-1)^{i+j+k} \arctan{\frac{zr(x^2+y^2)}{xy(x^2+y^2+z^2-z^2)}} \nonumber\\
+&=& (-1)^{i+j+k} \arctan{\frac{zr}{xy}}
+\end{eqnarray}
+By considering a right triangle with sides 1 and $x$, it easy to prove that:
+\begin{equation}
+\arctan{x} + \arctan{\frac{1}{x}} = \frac\pi2
+\end{equation}
+This can be used to transform the $\arctan$ to one that is similar to $T_{zz}$.
+
+\begin{equation}
+T_{xx} + T_{yy} 
+= (-1)^{i+j+k} \arctan{\frac{zr}{xy}} 
+= (-1)^{i+j+k} \left( \frac{\pi}{2} - \arctan{\frac{xy}{zr}} \right)
+\end{equation}
+The last step is to add the term $T_{zz}$:
+\begin{equation}
+\nabla^2 U 
+= T_{xx} + T_{yy} + T_{zz} 
+= (-1)^{i+j+k} \left( \frac{\pi}{2} - \arctan{\frac{xy}{zr}} + \arctan{\frac{xy}{zr}}\right) 
+= (-1)^{i+j+k} \frac{\pi}{2}
+\end{equation}
+The end result is a single value. 
+When the boundary conditions are applied this single value will be 
+subtracted from itself resulting in zero, so $\nabla^2 U(\vec{r})=0$.
+
+%.................................
+\subsubsection{Inside the prism}
+
+We can simply put the observation point at the centre of the prism. The coordinates of the prism are now such that $-x_1 = x_2$, $-y_1 = y_2$ and $-z_1 = z_2$.
+All eight terms for these conditions results give $\frac{\pi}{2}$, so the result is:
+\begin{equation}
+    \nabla^2U={\cal G} \rho8\frac{\pi}{2} = 4\pi {\cal G} \rho 
+\end{equation}
+
+%--------------------------------------
+\subsection{Better numerical stability}
+
+Heck and Seitz (2007) \cite{hese07} modify the standard formulae for 
+the prism to get a better numerical stability in the logarithms. 
+This is done by dividing the inside of the logs by an extra factor:
+\[
+\ln{\left( z_k + r_{ijk} \right)} \to \ln{\frac{z_k + r_{ijk}}{\sqrt{x_i^2+y_j^2}}}
+\]
+
+This extra factor disappears when applying the boundary conditions in the $z$ direction, 
+so that the results remain identical: 
+
+\begin{eqnarray}
+\left| 
+\ln{\frac{z_k + r_{ijk}}{\sqrt{x_i^2+y_j^2}}} 
+\right|^{z_2}_{z_1} 
+&=& 
+\left| 
+\ln{\left(z_k + r_{ijk}\right)} - 
+\ln{\sqrt{x_i^2+y_j^2}} 
+\right|^{z_2}_{z_1} \nonumber\\
+&=& 
+\ln{\left(z_2 + r_{ijk}\right)} - 
+\ln{\sqrt{x_i^2+y_j^2}} - 
+\ln{\left(z_1 + r_{ijk}\right)} + 
+\ln{\sqrt{x_i^2+y_j^2}} \nonumber\\
+&=& 
+\ln{\left(z_2 + r_{ijk}\right)} - 
+\ln{\left(z_1 + r_{ijk}\right)}
+\end{eqnarray}
+

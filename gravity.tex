@@ -6,7 +6,8 @@
 
 
 
-
+What follows on this page is an unfinished attempt to link spherical harmonics with 
+my 2018 paper. 
 
 We start from the Poisson equation for the gravity potential:
 \begin{equation}
@@ -54,8 +55,13 @@ and then
 \Delta_r U_r - U_r \frac{2}{r^2}=0
 \]
 make a link with my 2018 paper. 
-\newpage
 
+
+
+
+
+
+\newpage
 In spherical coordinates, the Laplacian is given by
 \[
 \Delta = 
@@ -81,16 +87,11 @@ We can insert this decomposition into the Laplace equation and multiply it by $r
 0
 \]
 For reasons that will become clear later, the separation constant  is taken to be $-m^2$:
-\begin{equation}
-\frac{1}{\Phi} \frac{d^2\Phi}{d\phi^2} = -m^2
-\label{eq:spha2}
-\end{equation}
-and 
-\begin{equation}
+\begin{eqnarray}
+\frac{1}{\Phi} \frac{d^2\Phi}{d\phi^2} &=& -m^2  \label{eq:spha2} \\
 -\frac{\sin\theta}{\Theta} \frac{d}{d\theta} \left( \sin \theta \frac{d\Theta}{d\theta} \right)
-- \frac{\sin^2\theta}{R} \frac{d}{dr} \left( r^2 \frac{dR}{dr} \right) = -m^2
-\label{eq:spha2}
-\end{equation}
+- \frac{\sin^2\theta}{R} \frac{d}{dr} \left( r^2 \frac{dR}{dr} \right) &=& -m^2  \label{eq:spha2}
+\end{eqnarray}
 The first equation yields
 \[
 \Phi(\phi) = 
@@ -107,12 +108,12 @@ In the case of $m=0$, the general solution is $\Phi(\phi) = a\phi + b$, but we m
 be consistent with $\Phi(\phi + 2\pi) = \Phi(\phi)$. Hence in the case of $m = 0$, only one solution is
 allowed.
 
-Equation \ref{eq:spha2} can now be recast in the following form:
+Eq.~\eqref{eq:spha2} can now be recast in the following form:
 \begin{equation}
  \frac{1}{R} \frac{d}{dr} \left( r^2 \frac{dR}{dr} \right) 
 = 
 -\frac{1}{\Theta}\frac{1}{\sin\theta} \frac{d}{d\theta} \left( \sin \theta \frac{d\Theta}{d\theta} \right) 
-+\frac{m^2}{\sin^2\theta} = l(l+1) \label{eq:spha3}
++\frac{m^2}{\sin^2\theta} \label{eq:spha3}
 \end{equation}
 where the separation variable at this step is denoted by $l(l + 1)$ for reasons that will shortly
 become clear.
@@ -138,7 +139,7 @@ r^l \\ r^{-(l+1)}
 \end{array}
 \right.
 \]
-Eq. (\ref{eq:spha3}) also yields:
+Eq.~\eqref{eq:spha3} also yields:
 \[
 \frac{1}{\sin\theta} \frac{d}{d\theta} \left( \sin\theta \frac{d\Theta}{d\theta} \right) 
 +
@@ -201,19 +202,42 @@ Y_l^m(\theta,\phi) = (-1)^m \sqrt{\frac{2l+1}{4\pi} \frac{(l-m)!}{(l+m)!}} P_l^m
 \label{eq:spha5}
 \end{equation}
 The phase factor ($-1$) , introduced originally by Condon and Shortley, is convenient for
-applications in quantum mechanics. Note that eq. (\ref{eq:spha4}) implies that
+applications in quantum mechanics. Note that Eq.~\eqref{eq:spha4} implies that
 \[
 Y_l^{-m} (\theta, \phi) = (-1)^m Y_l^m (\theta,\phi)^* 
 \]
 where the star means complex conjugation.
 
-The normalization factor in eq. (\ref{eq:spha5}) has been
+The normalization factor in Eq.~\eqref{eq:spha5} has been
 chosen such that the spherical harmonics are normalized to one. In particular, these func-
 tions are orthonormal and complete. The orthonormality relation is given by:
 \[
 \int Y_l^m(\theta,\phi) Y_{l'}^{m'}(\theta,\phi) d\Omega = \delta_{ll'} \delta_{mm'}
 \]
 where $d\Omega = \sin\theta d\theta d\phi$ is the differential solid angle in spherical coordinates.
+
+It is important to note that there are different normalisations for spherical harmonics.
+In acoustics, we have (REF?) 
+\begin{equation}
+Y_l^m(\theta,\phi) = \sqrt{\frac{2l+1}{4\pi} \frac{(l-m)!}{(l+m)!}} P_l^m(\cos\theta) e^{im\phi}
+\qquad 
+\textrm{for} \; l=0,1,2,3,... \; \textrm{and} \; m=-l,-l+1,...,l-1,l
+\label{eq:spha6}
+\end{equation}
+while in geodesy  (REF?) 
+\begin{equation}
+Y_l^m(\theta,\phi) = \sqrt{(2l+1) \frac{(l-m)!}{(l+m)!}} P_l^m(\cos\theta) e^{im\phi}
+\qquad 
+\textrm{for} \; l=0,1,2,3,... \; \textrm{and} \; m=-l,-l+1,...,l-1,l
+\label{eq:spha6}
+\end{equation}
+with
+\[
+\frac{1}{4\pi}
+\int Y_l^m(\theta,\phi) Y_{l'}^{m'}(\theta,\phi) d\Omega = \delta_{ll'} \delta_{mm'}
+\]
+
+
 
 
 
@@ -225,48 +249,6 @@ p_{lm}(\theta,\phi) = \sqrt{\frac{2l+1}{2\pi(1+\delta_{m0})} \frac{(l-m)!}{(l+m)
 \]
 Note the absence of the $(-1)^m$ term and the presence of the kronecker delta in the denominator.
 \end{remark}
-
-
-\Literature \cite{crms06}
-
-
-\newpage
-%http://mathworld.wolfram.com/GreensFunctionPoissonsEquation.html
-
-Let us start with $u=U/{\cal G}$ so that the Poisson equation becomes:
-\[
-\Delta u = 4 \pi \rho(\vec{r})
-\]
- we are looking for a Green's function $G(\vec r_1,\vec r_2)$ such that
-\[
-\Delta G (\vec r_1,\vec r_2) = \delta^3 (\vec r_1 - \vec r_2)
-\]
-but it can be shown (REF?) that 
-\[
-\Delta \frac{1}{|\vec r-\vec r'|} = -4 \pi \delta^3 (\vec r - \vec r')
-\]
-so 
-\[
-G (\vec r,\vec r') = - \frac{1}{4 \pi |\vec r - \vec r'|}
-\]
-and the solution is 
-\[
-u(\vec r) = \int G(\vec r,\vec r') 4\pi \rho(\vec r' ) d^3\vec r' = 
--\int \frac{\rho(\vec r') }{ |\vec r - \vec r'|} d^3\vec r'
-\]
-Expanding $G$ in the spherical harmonics $Y_l^m$ gives:
-\[
-G(\vec r,\vec r')= 
-\sum_{l=0}^\infty \sum_{m=-l}^{+l} 
-\frac{1}{2l+1} \frac{r^l_<}{r^{l+1}_>} Y_l^m (\theta,\phi) \overline{Y}_l^m (\theta',\phi')
-\]
-
-
-See website for Green function in 2D
-
-
-
-
 
 
 

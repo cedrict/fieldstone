@@ -2369,7 +2369,7 @@ and also the second invariant of the deviatoric strain rate is:
 &=& \frac{1}{6} \left[ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{yy})^2 
 + (\dot{\varepsilon}_{yy}-\dot{\varepsilon}_{zz})^2 
 + (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{zz})^2 \right] 
-+ \dot{\varepsilon}_{xy}^2 + \dot{\varepsilon}_{xz}^2 + \dot{\varepsilon}_{yz}^2  \\
++ \dot{\varepsilon}_{xy}^2 + \dot{\varepsilon}_{xz}^2 + \dot{\varepsilon}_{yz}^2 \label{eq:I2epsd} 
 \end{eqnarray}
 
 \begin{remark}
@@ -2484,12 +2484,27 @@ NOT SURE AT ALL. One can prove that (REF?)\footnote{Near identical equations are
 \index{general}{Plain Strain}
 \paragraph{Two-dimensional plane strain calculations} 
 
+
+
+We start from the 3D strain rate tensor 
+\[
+\dot{\bm \varepsilon} = 
+\left(
+\begin{array}{ccc}
+\dot{\varepsilon}_{xx} & \dot{\varepsilon}_{xy} & \dot{\varepsilon}_{xz} \\
+\dot{\varepsilon}_{yx} & \dot{\varepsilon}_{yy} & \dot{\varepsilon}_{yz} \\
+\dot{\varepsilon}_{zx} & \dot{\varepsilon}_{zy} & \dot{\varepsilon}_{zz} 
+\end{array}
+\right)
+\]
+
 The plane strain assumption is such that the problem at hand is assumed to be infinite in a given direction. 
 In the case of computational geodynamics, most 2D modelling is a vertical section of the crust-lithosphere-mantle
 and the underlying implicit assumption is then that the orogen/rift/subduction/etc ... is infinite in the 
-direction perpendicular to the screen/paper. 
+direction perpendicular to the screen/paper.  
 
-For example, let us assume that the deformation takes place in the $x,y$-plane. 
+For example, let us assume that the deformation takes place in the $x,y$-plane,
+so that $w=0$ (velocity in the $z$ direction is zero) and $\partial_z \rightarrow 0$ (no change in the $z$ direction).
 We then have $\dot{\varepsilon}_{zz}=0$ as well as $\dot{\varepsilon}_{xz}=0$ and $\dot{\varepsilon}_{yz}=0$, so
 that the strain rate tensor is 
 \[
@@ -2528,7 +2543,109 @@ equations of Section~\ref{sec:stress_invariants} and we obtain:
 &=& \frac{1}{3}(  \tau_{xx}^3 +  \tau_{yy}^3 )  \qquad \text{since } \tau_{ii}=0 
 \end{eqnarray}
 
-\todo[inline]{What of all this if the flow is compressible?}
+Let us now think about compressible flow in this context. 
+The deviatoric strain rate tensor is defined as 
+\[
+\dot{\bm \varepsilon}^d 
+= \dot{\bm \varepsilon} -\frac{1}{3} Tr[\dot{\bm \varepsilon}]   {\bm 1} 
+= \dot{\bm \varepsilon} -\frac{1}{3} (\dot{\varepsilon}_{xx} +\dot{\varepsilon}_{yy}   )  {\bm 1} 
+\]
+or,
+\[
+\dot{\bm \varepsilon}^d = 
+\left(
+\begin{array}{ccc}
+\frac{2}{3}\dot{\varepsilon}_{xx} -\frac{1}{3}\dot{\varepsilon}_{yy} & \dot{\varepsilon}_{xy} & 0 \\
+\dot{\varepsilon}_{yx} & -\frac{1}{3}\dot{\varepsilon}_{xx} +\frac{2}{3} \dot{\varepsilon}_{yy} & 0 \\
+0 & 0 & -\frac{1}{3} \dot{\varepsilon}_{xx} -\frac{1}{3}\dot{\varepsilon}_{yy}
+\end{array}
+\right)
+\]
+which is the equation in Section 2.1.3 in ASPECT manual. 
+
+Let us now turn to the second invariant of the deviatoric strain rate 
+(see Eq.~\eqref{eq:I2epsd}):
+\begin{eqnarray}
+{\cal I}_2(\dot{\bm{\varepsilon}}^d)
+&=& \frac{1}{2} \dot{\bm{\varepsilon}}^d:\dot{\bm{\varepsilon}}^d \\
+&=& \frac{1}{2} \left[ (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + (\dot{\varepsilon}_{zz}^d)^2   \right] 
++ (\dot{\varepsilon}_{xy}^d)^2  
++ (\dot{\varepsilon}_{xz}^d)^2  
++ (\dot{\varepsilon}_{yz}^d)^2  
+\end{eqnarray}
+But there is also an expression for ${\cal I}_2(\dot{\bm{\varepsilon}}^d)$ directly as a function of the $\dot{\bm\varepsilon}_{ij}$ components 
+(see Eq.~\eqref{eq:I2epsd}):
+\begin{eqnarray}
+{\cal I}_2(\dot{\bm{\varepsilon}}^d)
+&=& \frac{1}{6} \left[ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{yy})^2 
++ (\dot{\varepsilon}_{yy}-\dot{\varepsilon}_{zz})^2 
++ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{zz})^2 \right] 
++ \dot{\varepsilon}_{xy}^2 + \dot{\varepsilon}_{xz}^2 + \dot{\varepsilon}_{yz}^2 \\
+&=& 
+\frac{1}{6} \left[ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{yy})^2 
++ (\dot{\varepsilon}_{yy})^2 
++ (\dot{\varepsilon}_{xx})^2 \right] 
++ \dot{\varepsilon}_{xy}^2 \\
+&=& \frac{1}{6} \left[ \dot{\varepsilon}_{xx}^2 
+-2\dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy}
++\dot{\varepsilon}_{yy}^2 
++ \dot{\varepsilon}_{yy}^2 
++ \dot{\varepsilon}_{xx}^2 \right] 
++ \dot{\varepsilon}_{xy}^2 \\
+&=& \frac{1}{6} \left[ 
+2\dot{\varepsilon}_{xx}^2 
+-2\dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy}
++2\dot{\varepsilon}_{yy}^2 
+\right] 
++ \dot{\varepsilon}_{xy}^2 \\
+&=& 
+\frac{1}{3} \left[ 
+\dot{\varepsilon}_{xx}^2 
+-\dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy}
++\dot{\varepsilon}_{yy}^2 
+\right] 
++ \dot{\varepsilon}_{xy}^2 
+\end{eqnarray}
+If we now do things the old/wrong(?) way, one would start directly from the 2D strain rate tensor 
+\[
+\dot{\bm \varepsilon} = 
+\left(
+\begin{array}{cc}
+\dot{\varepsilon}_{xx} & \dot{\varepsilon}_{xy}  \\
+\dot{\varepsilon}_{yx} & \dot{\varepsilon}_{yy}  
+\end{array}
+\right)
+\]
+The deviatoric strain rate tensor is then logically defined as 
+\[
+\dot{\bm \varepsilon}^d 
+= \dot{\bm \varepsilon} -\frac{1}{2} Tr[\dot{\bm \varepsilon}]   {\bm 1} 
+= \dot{\bm \varepsilon} -\frac{1}{2} (\dot{\varepsilon}_{xx} +\dot{\varepsilon}_{yy}   )  {\bm 1} 
+\]
+or,
+\[
+\dot{\bm \varepsilon}^d = 
+\left(
+\begin{array}{cc}
+\frac{1}{2}\dot{\varepsilon}_{xx} -\frac{1}{2}\dot{\varepsilon}_{yy} & \dot{\varepsilon}_{xy}  \\
+\dot{\varepsilon}_{yx} & -\frac{1}{2}\dot{\varepsilon}_{xx} +\frac{1}{2} \dot{\varepsilon}_{yy}  \\
+\end{array}
+\right)
+\]
+Let us now turn to the second invariant of the deviatoric strain rate 
+(see Section 3.21 in fieldstone)
+\begin{eqnarray}
+{\cal I}_2(\dot{\bm{\varepsilon}}^d)
+&=& \frac{1}{2} \dot{\bm{\varepsilon}}^d:\dot{\bm{\varepsilon}}^d \\
+&=& \frac{1}{2}[ (\frac{1}{2}\dot{\varepsilon}_{xx} -\frac{1}{2}\dot{\varepsilon}_{yy})^2 + (-\frac{1}{2}\dot{\varepsilon}_{xx} +\frac{1}{2} \dot{\varepsilon}_{yy})^2  ] + \dot{\varepsilon}_{xy}^2 \\
+&=& \frac12 [ \frac14 (2\dot{\varepsilon}_{xx}^2  -4 \dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy} +2\dot{\varepsilon}_{yy}^2 )  ] + \dot{\varepsilon}_{xy}^2 \\
+&=& \frac14 [ \dot{\varepsilon}_{xx}^2  -2 \dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy} +\dot{\varepsilon}_{yy}^2   ] + \dot{\varepsilon}_{xy}^2 
+\end{eqnarray}
+which is not the same as the previous expression! 
+
+
+
+
 
 
 

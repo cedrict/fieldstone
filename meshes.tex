@@ -227,6 +227,12 @@ boundary conditions to study the effects of ice-cap unloading
 on shallow volcanic systems \cite{bafl16}}
 \end{center}
 
+\begin{center}
+\includegraphics[width=13cm]{images/meshes/fegh14}\\
+{\captionfont Taken from \cite{fegh14}. Modelling of slow
+landslides. Finite element mesh in the initial and excavated configuration.}
+\end{center}
+
 Although it is rarely used in practice it is possible to produce meshes which contain 
 both quadrilateral and triangular elements:
 \begin{center}
@@ -234,7 +240,6 @@ both quadrilateral and triangular elements:
 {\captionfont Mesh used to analayse the stress distribution around a pressurized crack in a layered 
 elastic medium \cite{fige95}}
 \end{center}
-
 
 \Literature \cite{musd15}\cite{vemm09}
 
@@ -355,26 +360,31 @@ For further reading I suggest you read the review by May, Schellart \& Moresi on
 
 %.......................................
 \subsubsection{Conformal Mesh Refinement}
+\index[general]{Conformal Mesh Refinement}
 
 The quadtree/octree mesh refinement presented above is one option
 when it comes to mesh refinement (or $h$-refinement). However their 
 massive drawback is the presence of hanging notes which require 
 special attention. 
-
-Another approach to mesh refinement is conformal mesh refinement, 
-which 
+Another approach to mesh refinement is conformal mesh refinement
+as best exemplified on the following figures: 
 
 \begin{center}
-\includegraphics[height=5cm]{images/meshes/vaks15}
-\includegraphics[height=5cm]{images/meshes/depl96}
-\includegraphics[height=5cm]{images/meshes/habo04}\\
-\includegraphics[height=5cm]{images/meshes/kott05}
-\includegraphics[height=5cm]{images/meshes/specfem}
+\includegraphics[height=4.5cm]{images/meshes/vaks15}
+\includegraphics[height=4.5cm]{images/meshes/depl96}
+\includegraphics[height=4.5cm]{images/meshes/habo04}\\
+\includegraphics[height=4.5cm]{images/meshes/kott05}
+\includegraphics[height=4.5cm]{images/meshes/specfem}\\
 {\captionfont 
 From left to right: \cite{vaks15}; \cite{depl96}; \cite{habo04}; \cite{kott05}; Specfem manual}
 \end{center}
 
-\Literature: \cite{gari09,habo04,anbo09,nifo13,nifo13b}
+\Literature: 
+D{\"u}ster \& Rank \cite{dura01},
+Harris et al (2004) \cite{habo04},
+Anderson et al (2009) \cite{anbo09},
+Garimella (2009) \cite{gari09},
+Nicolas \& Fouquet (2013) \cite{nifo13,nifo13b}.
 
 %.......................................
 \subsubsection{Stretching the mesh}

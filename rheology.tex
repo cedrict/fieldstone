@@ -48,7 +48,7 @@ a bulk viscosity coefficient, that defines the resistance of the medium to gradu
 and a dynamic viscosity coefficient $\eta$ that expresses its resistance to gradual shearing, 
 (we here neglect the so-called rotational viscosity coefficient which results from a coupling between the fluid flow and the rotation of the individual particles). %wiki
 
-Rather logically we denote by non-Newtonian fluids with are not Newtonian, i.e. their viscosity (tensor)
+Rather logically we denote by non-Newtonian fluids which are not Newtonian, i.e. their viscosity (tensor)
 depends on stress. Such fluids are part of our daily life, e.g. honey, toothpaste, paint, blood, and shampoo.
 They are also sometimes denoted as Generalized Newtonian Fluid \index{general}{Generalized Newtonian Fluid}. 
  
@@ -780,7 +780,7 @@ Consistent tangent operator \cite{sita85,degr94,szjo95}
 
 
 %...........................................
-\subsubsection{Strain rate partitioning across deformation mechanisms}
+\subsubsection{Strain rate partitioning across deformation mechanisms}\label{ss:srpart}
 \index{general}{Strain rate partitioning}
 
 When multiple viscous deformation mechanisms are present, one needs more dashpots, and 
@@ -808,7 +808,7 @@ with its own strain rate $\dot{\varepsilon}_1$ and $\dot{\varepsilon}_2$ and we 
 The effective viscosity of this combination is denoted $\eta_{eff}$ and is such that 
 $\eta_{eff}=\tau/2\dot{\varepsilon}_T$, which means that 
 \[
-\frac{\tau}{2\dot{\varepsilon}_T} = \frac{\tau}{2\eta_1} + \frac{\tau}{2\eta_2}
+\frac{\tau}{2\eta_{eff}} = \frac{\tau}{2\eta_1} + \frac{\tau}{2\eta_2}
 \]
 or, 
 \[
@@ -897,7 +897,18 @@ Note that this solution exists even when $\eta_m=0$, and then rather logically $
 \item Once we have $\tau$, we can easily compute $\dot\epsilon_v = \frac{\tau}{2\eta_v}$
 
 \item We then compute $\dot\varepsilon_{vp} = \dot\varepsilon_T- \dot\varepsilon_v$ which 
-we use to compute $\eta_{vp} = Y/2\dot\varepsilon_{vp}+\eta_m$
+we use to compute $\eta_{vp}$:
+
+\begin{eqnarray}
+\eta_{vp} 
+&=& \frac{Y}{2\dot\varepsilon_{vp}}+\eta_m \nn\\
+&=& \frac{Y}{2(\dot\varepsilon_{T}-\dot\varepsilon_{v})}+\eta_m \nn\\
+&=& \frac{Y}{2(\dot\varepsilon_{T}-\frac{\tau}{2\eta_v})}+\eta_m \nn\\
+&=& \frac{Y}{2(\dot\varepsilon_{T}- \frac{Y + 2 \eta_m \dot\varepsilon_T} {1+ \frac{\eta_m}{\eta_v} }   
+\frac{1}{2\eta_v})}+\eta_m \nn\\
+&=& \frac{Y}{2\dot\varepsilon_{T}- \frac{Y + 2 \eta_m \dot\varepsilon_T} {\eta_v + \eta_m}     }+\eta_m 
+\end{eqnarray}
+
 
 \item Having obtained $\eta_{vp}$ we can compute the final effective viscosity
 \[
@@ -941,6 +952,42 @@ The viscous dashpot $\eta_v$ also acts as a maximum viscosity cutoff: if $\eta_{
 Conversely, if $\eta_p=Y/2\dot\varepsilon_{vp}$ becomes (very) small, i.e. $\eta_p \ll \eta_m$ then $\eta_m$ acts as a minimum viscosity limiter, i.e. $\eta_{vp} \rightarrow \eta_m$. 
 Since $\eta_m \ll \eta_v$ then $\eta_{eff} \rightarrow \eta_m$.
 \end{remark}
+
+\underline{A simple regularisation} This idea originates in Massmeyer et al (2013) \cite{madd13}. We postulate
+\[
+\tilde{\eta}_{eff} = \left(  1 - \exp (- \frac{\dot\varepsilon_T}{\dot\varepsilon_{T}^c}) \right)
+\left( \frac{Y}{2 \dot\varepsilon_T} + \eta_m \right)
+\]
+where $\dot\varepsilon_{T}^c$ is the critical strain  rate at which the transition viscous to 
+viscous-viscoplastic occues given by $\dot\varepsilon_{T}^c=Y/2\eta_v$.
+When $\dot\varepsilon_{T} \ll \dot\varepsilon_{T}^c$ then the exponential term tends to zero and 
+\[
+\tilde{\eta}_{eff} \rightarrow  \frac{Y}{2 \dot\varepsilon_T} + \eta_m 
+\]
+and if $\dot\varepsilon_{T} \rightarrow \infty$ then $\tilde{\eta}_{eff}\rightarrow \eta_m$.
+Conversely if $\dot\varepsilon_T \rightarrow 0$ then we can carry out a Taylor expansion of the exponential 
+term ($\exp x \sim 1 + x$ when $x$ is small).
+\[
+\tilde{\eta}_{eff} \sim \left(  \frac{\dot\varepsilon_T}{\dot\varepsilon_{T}^c} \right)
+\left( \frac{Y}{2 \dot\varepsilon_T} + \eta_m \right)
+\rightarrow 
+\frac{\dot\varepsilon_T}{\dot\varepsilon_{T}^c}  \frac{Y}{2 \dot\varepsilon_T}  = \eta_v
+\]
+At low strain rates the viscosity does not 'explode' but actually converges to the background viscosity $\eta_v$.
+The stress $\tau$ corresponding to this viscosity is simply $\tilde{\tau} = 2 \tilde{\eta}_{eff}$. 
+Both $\tilde{\tau}$ and $ \tilde{\eta}_{eff}$ are plotted hereunder:
+
+
+\begin{center}
+\includegraphics[width=7.5cm]{images/rheology/vvp/tau_reg.pdf}
+\includegraphics[width=7.5cm]{images/rheology/vvp/viscosities_reg.pdf}\\
+{\captionfont Obtained for $\eta_m=10^{21}$, $Y=20$MPa and $\eta_v=10^{25}$. Python code 
+in images/rheology/vvp/}
+\end{center}
+
+
+\includegraphics[width=7.5cm]{images/rheology/vvp/ratio_visc.pdf}
+
 
 
 %which, if  yields the following effective viscosity:
@@ -1152,7 +1199,7 @@ or, we must find the zero of the function ${\cal F}$:
 This equation can be solved with a Newton-Raphson algorithm
 and the iterations will be of the form:
 \[
-\tau_{n+1} = \tau_n - \frac{f(\tau_n)}{f'(\tau_n)}
+\tau_{n+1} = \tau_n - \frac{{\cal F}(\tau_n)}{{\cal F}'(\tau_n)}
 \]
 where the derivative of the function ${\cal F}$ with respect to $\tau$ reads:
 \[
@@ -1414,7 +1461,11 @@ M{\"u}lhaus et al (2002) \cite{mumh02},
 M{\"u}lhaus et al (2003) \cite{mumc03},
 M{\"u}lhaus et al (2004) \cite{mumc04},
 Michibayashi \& D. Mainprice (2004) \cite{mima04},
-Moresi \& M{\"u}lhaus (2006) \cite{momu06}.
+Moresi \& M{\"u}lhaus (2006) \cite{momu06},
+M{\"u}lhaus et al (2010) \cite{mumg10},
+M{\"u}lhaus et al (2011) \cite{muso11},
+Sharples et al (2016) \cite{shmv16}.
+
 
 %...........................................
 \subsubsection{Rheology of the lithosphere}

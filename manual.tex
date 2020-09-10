@@ -29,7 +29,6 @@
 \numberwithin{equation}{section}
 \usepackage{stmaryrd}
 \usepackage{dsfont}
-\usepackage{siunitx}
 \DeclareSIUnit\year{yr}
 
 %\RequirePackage{authorindex}
@@ -86,6 +85,7 @@ urlcolor=black}
 \definecolor{carrotorange}{rgb}{0.93, 0.57, 0.13}
 \definecolor{chestnut}{rgb}{0.8, 0.36, 0.36}
 
+\newcommand{\nineteensixtyseven}{{\color{chestnut}\bf 1967}}
 \newcommand{\nineteensixtyeight}{{\color{chestnut}\bf 1968}}
 \newcommand{\nineteensixtynine}{{\color{chestnut}\bf 1969}}
 
@@ -200,10 +200,13 @@ urlcolor=black}
 \thispagestyle{empty}
 \includegraphics[width=0.9\linewidth]{images/frontpage/frontpage.png}
 
-{\scriptsize With (direct or indirect) contributions from: 
+{\scriptsize With (direct or indirect) contributions from (in alphabetical order): 
 Wolfgang Bangerth, 
 Rens Elbertsen,
+Riad Hassani,
+Sverre Hassing,
 Jort Jansen,
+Gilles Mercier,
 Job Mos, 
 Bob Myhill,
 Taka Shinohara, 
@@ -371,6 +374,8 @@ doi = "10.23644/uu.9209393.v1"}
 \section{Analytical expressions for $\G_{el}$} \label{app:Gel} \input{Gel}%%%%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Computational Geophysics GEO4-1427 - projects} \input{compgeo}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Using prisms in forward gravity modelling \label{app:prisms}} \input{app_prisms}
 
 %==================================================================================================
 %\begin{multicols}{2}

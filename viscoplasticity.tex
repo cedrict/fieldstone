@@ -1,37 +1,62 @@
 
-\Literature: \cite{mumc03,chpe15,momu06,muso11}
+\Literature: 
+Zienkiewicz \& Cormeau (1974) \cite{zico74,zico74b},
+Zienkiewicz \& Godbole (1974) \cite{zigo74},
+Zienkiewicz (1975) \cite{zien75},
+Cormeau (1975) \cite{corm75},
+Zienkiewicz \& Godbole (1975) \cite{zigo75},
+Zienkiewicz et al (1975) \cite{zihl75},
+Zienkiewicz et al (1978) \cite{zijo78},
+Vilotte et al (1982) \cite{vidm82},
+Hughes (1983) \cite{hugh83},
+Vilotte et al (1984) \cite{vidm84},
+Vermeer \& de Borst (1984) \cite{vede84},
+Zienkiewicz et al (1985) \cite{zivt85},
+Vilotte et al (1986) \cite{vimd86},
+de Borst (1988) \cite{debo88},
+Leroy \& Ortiz (1989) \cite{leor89},
+de Borst (1991) \cite{debo91},
+de Borst \& M{\"u}lhaus (1992) \cite{demu92},
+Sluys \& de Borst (1992) \cite{slde92},
+de Borst et al (1993) \cite{desm93},
+Wang et al (1996) \cite{wasd96},
+Wang et al (1997) \cite{wasd97},
+van der Veen et al (1999) \cite{vavd99},
+Huh et al (1999) \cite{huhy99},
+Ju \& Im (2000) \cite{juim00},
+de Borst (2001) \cite{debo01},
+Moresi et al (2001) \cite{modm01},
+Moresi et al (2002) \cite{modm02},
+Heeres et al (2002) \cite{hesd02},
+Kaus et al (2004) \cite{kaps04},
+Dias da Silva et al (2004) \cite{dias04},
+Bazant \& Jirasek (2002) \cite{baji02},
+Sch{\"o}pfer et al (2013) \cite{sccm13},
+Le Pourhiet (2013) \cite{lepo13},
+Miehe et al (2013) \cite{miam13},
+Choi \& Pedersen (2015) \cite{chpe15},
+Frohne et al (2016) \cite{frhb16},
+Duretz et al (2018) \cite{dusd18},
+Duretz et al (2019) \cite{dudl19},
+Duretz et al (2020) \cite{dudy20}.
+
+
+\Literature: 
+Fractal distribution of shear bands in \cite{pohp94,pohe94}.
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-IMPLEMENTATION of plasticity ... WORK IN PROGRESS
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Scalar viscoplasticity}
+\subsubsection{A quick and dirty implementation}
 
 This formulation is quite easy to implement. It is widely used, e.g. \cite{will92,thfb08,spmw16}, and relies on the assumption that 
 a scalar quantity $\eta_p$ (the 'effective plastic viscosity') exists such that the deviatoric stress tensor 
 \begin{equation}
 {\bm \tau}=2\eta_p \dot{\bm\varepsilon} \label{eqscpl1}
 \end{equation}
-is bounded by some yield stress value $Y$.
+is bounded by some yield stress value $Y$. No other spring or dashpot is present, the deformation is purely plastic no 
+matter what.
 From Eq. (\ref{eqscpl1}) it follows that ${\tau}_{e}= 2\eta_p \dot{\varepsilon}_{e}=Y$ which yields
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
@@ -40,8 +65,6 @@ From Eq. (\ref{eqscpl1}) it follows that ${\tau}_{e}= 2\eta_p \dot{\varepsilon}_
 \end{mdframed}
 This approach has also been coined the Viscosity Rescaling Method (VRM) \cite{kacha04}. 
 \index{general}{VRM} \index{general}{Viscosity Rescaling Method}
-
-\improvement[inline]{insert here the rederivation 2.1.1 of spmw16}
 
 It is at this stage important to realise that (i) in areas where the strainrate is low, the resulting effective viscosity will be large, and 
 (ii) in areas where the strainrate is high, the resulting effective viscosity will be low. This is not without consequences since 
@@ -53,28 +76,8 @@ In order to contain these viscosity contrasts one usually resorts to viscosity l
 \]
 Caution must be taken when choosing both values as they may influence the final results.
 
+However, this approach is problematic for many reasons and represents an overly simplified end-member. 
 
-%-------------------------------------------------
-{Work in progress}
-
-\Literature \cite{zico74,zigo74,zico74b,zien75,corm75,zigo75,zihl75,zijo78,vidm82,vidm84,vede84,zivt85,vimd86}
-\cite{wasd97,debo88,debo01,hesd02,bewv11,mumg10,leor89,sccm13,desm93,demu92,debo91,shmv16}\cite{dusp15}
-\cite{modm01}\cite{baji02}\cite{slde92}\cite{lepo13}\cite{dias04}\cite{dura01}\cite{dusd18}
-\cite{modm02}\cite{vavd99}\cite{miam13}\cite{huhy99}\cite{hugh83}\cite{frhb16}
-\cite{juim00}\cite{kaps04}
-
-Note that \cite{vidm82,vidm84,vimd86,zivt85} use the following formulation which they attribute to \cite{zijo78}:
-\[
-\eta_{eff} = \frac{c + (\dot{\varepsilon}_e / \gamma)^{1/n}}{ \dot{\varepsilon}_e }
-\] 
-For a perfectly plastic flow law, $\gamma \rightarrow \infty$ and then 
-\[
-\eta_{eff} = \frac{c}{ \dot{\varepsilon}_e }
-\] 
-and when when $c=0$ then the effective viscosity is essentially of the power law type.
-Also, when $n=1$ the formulation becomes identical to the v-vp formulation (when the max viscosity is infinite) and with $1/\gamma=\eta_{min}$.
-
-fractal distribution of shear bands in \cite{pohp94}
 
 
 
