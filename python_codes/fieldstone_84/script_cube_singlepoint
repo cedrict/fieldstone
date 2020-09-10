@@ -1,0 +1,23 @@
+#! /bin/bash
+
+rm -f single_point_g_*.ascii
+rm -f single_point_U_*.ascii
+
+for l in {8..80} ; do
+    echo nelr= $l pointmass
+
+    python3 stone.py  $l cube pointmass > opla 
+    grep grav_at_pt opla >> single_point_g_pointmass.ascii
+    grep U_at_pt opla >> single_point_U_pointmass.ascii
+
+    echo nelr= $l prism
+    python3 stone.py  $l cube prism > opla 
+    grep grav_at_pt opla >> single_point_g_prism.ascii
+    grep U_at_pt opla >> single_point_U_prism.ascii
+
+    echo nelr= $l quadrature
+    python3 stone.py  $l cube quadrature > opla 
+    grep grav_at_pt opla >> single_point_g_quadrature.ascii
+    grep U_at_pt opla >> single_point_U_quadrature.ascii
+
+done

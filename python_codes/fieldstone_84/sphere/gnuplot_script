@@ -41,30 +41,33 @@ unset obj
 set xlabel 'h'
 set pointsize .3
 
+
+set xlabel 'h'
+set pointsize .3
 set output 'single_point_g.pdf'
-plot[][:0.00005]\
-'single_point_g_masspoint.ascii' u (1./$3):4 w lp pt 1  t 'g, mass point',\
-'single_point_g_prism.ascii' u (1./$3):4 w lp pt 2  t 'g, prism',\
-'single_point_g_quadrature.ascii' u (1./$3):4 w lp pt 2  t 'g, quadrature',\
-'single_point_g_masspoint.ascii' u (1./$3):5 w l lt -1 dashtype 4 t 'g_z, analytical'
+plot[][]\
+'single_point_g_pointmass.ascii'  u (1./$3):4 w lp t 'point mass',\
+'single_point_g_prism.ascii'      u (1./$3):4 w lp t 'prism',\
+'single_point_g_quadrature.ascii' u (1./$3):4 w lp t 'quadrature',\
+'single_point_g_pointmass.ascii'  u (1./$3):5 w l lt -1 dashtype 2 t 'analytical',\
 
 set output 'single_point_U.pdf'
 plot[][]\
-'single_point_U_masspoint.ascii'  u (1/$3):4 w lp t 'U',\
-'single_point_U_prism.ascii'      u (1/$3):4 w lp t 'U, prism',\
-'single_point_U_quadrature.ascii' u (1/$3):4 w lp t 'U, quadrature',\
-'single_point_U_masspoint.ascii' u (1/$3):5 w l lt -1 dashtype 2 t 'U, analytical',\
+'single_point_U_pointmass.ascii'  u (1/$3):4 w lp t 'point mass',\
+'single_point_U_prism.ascii'      u (1/$3):4 w lp t 'prism',\
+'single_point_U_quadrature.ascii' u (1/$3):4 w lp t 'quadrature',\
+'single_point_U_pointmass.ascii' u (1/$3):5 w l lt -1 dashtype 2 t 'U, analytical',\
 
 set log y
 set output 'single_point_g_error.pdf'
 plot[][]\
-'single_point_g_masspoint.ascii'  u (1./$3):(abs($4-$5)) w lp t 'g, mass point',\
+'single_point_g_pointmass.ascii'  u (1./$3):(abs($4-$5)) w lp t 'g, mass point',\
 'single_point_g_prism.ascii'      u (1./$3):(abs($4-$5)) w lp t 'g, prism',\
 'single_point_g_quadrature.ascii' u (1./$3):(abs($4-$5)) w lp t 'g, quadrature',\
 
 set output 'single_point_U_error.pdf'
 plot[][]\
-'single_point_U_masspoint.ascii'  u (1./$3):(abs($4-$5)) w lp t 'g, mass point',\
+'single_point_U_pointmass.ascii'  u (1./$3):(abs($4-$5)) w lp t 'g, mass point',\
 'single_point_U_prism.ascii'      u (1./$3):(abs($4-$5)) w lp t 'g, prism',\
 'single_point_U_quadrature.ascii' u (1./$3):(abs($4-$5)) w lp t 'g, quadrature',\
 

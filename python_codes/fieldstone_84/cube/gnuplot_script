@@ -9,9 +9,10 @@ set log x
 set ylabel 'U'
 set output 'gravpot.pdf'
 plot[][]\
-'gravity_on_line_masspoint.ascii' u 1:2 w l t 'mass point',\
-'gravity_on_line_prism.ascii' u 1:2 w l t 'prism',\
-'gravity_on_line_prism.ascii' u 1:13 w l dashtype 2 lt -1 t 'analytical'
+'line_pointmass.ascii'   u 1:2 w l t 'point mass',\
+'line_prism.ascii'       u 1:2 w l t 'prism',\
+'line_quadrature.ascii'  u 1:2 w l t 'quadrature',\
+'line_prism.ascii'       u 1:13 w l dashtype 2 lt -1 t 'analytical'
 
 #set ylabel 'U-U_{th}'
 #set output 'gravpot_error.pdf'
@@ -23,9 +24,10 @@ plot[][]\
 set ylabel '|g|'
 set output 'gravnorm.pdf'
 plot[][1e-8:]\
-'gravity_on_line_masspoint.ascii' u 1:6 w l t 'mass point',\
-'gravity_on_line_prism.ascii' u 1:6 w l t 'prism',\
-'gravity_on_line_prism.ascii' u 1:14 w l dashtype 2 lt -1 t 'analytical',\
+'line_pointmass.ascii'   u 1:6  w l t 'point mass',\
+'line_prism.ascii'       u 1:6  w l t 'prism',\
+'line_quadrature.ascii'  u 1:6 w l t 'quadrature',\
+'line_prism.ascii'     u 1:14 w l dashtype 2 lt -1 t 'analytical',\
 
 #set ylabel 'g-g_{th}'
 #set output 'gravnorm_error.pdf'
@@ -33,23 +35,106 @@ plot[][1e-8:]\
 #'gravity_on_line_masspoint.ascii' u 1:($6-$14) w l t 'mass point',\
 #'gravity_on_line_prism.ascii' u 1:($6-$14) w l t 'prism'
 
+set ylabel 'T_{xx}'
+set output 'tensor_xx.pdf'
+plot[][-5e-8:5e-8]\
+'line_pointmass.ascii'  u 1:7  w l t 'pointmass',\
+'line_prism.ascii'      u 1:7  w l t 'prism',\
+'line_quadrature.ascii' u 1:7 w l t 'quadrature',\
+'line_prism.ascii'  u 1:15 w l dashtype 2 lt -1 t 'analytical',\
+
+set ylabel 'T_{yy}'
+set output 'tensor_yy.pdf'
+plot[][-5e-8:5e-8]\
+'line_pointmass.ascii'  u 1:8  w l t 'pointmass',\
+'line_prism.ascii'      u 1:8  w l t 'prism',\
+'line_quadrature.ascii' u 1:8  w l t 'quadrature',\
+'line_prism.ascii'  u 1:16 w l dashtype 2 lt -1 t 'analytical',\
+
+set ylabel 'T_{zz}'
+set output 'tensor_zz.pdf'
+plot[][-5e-8:5e-8]\
+'line_pointmass.ascii'  u 1:9  w l t 'pointmass',\
+'line_prism.ascii'      u 1:9  w l t 'prism',\
+'line_quadrature.ascii' u 1:9  w l t 'quadrature',\
+'line_prism.ascii'      u 1:17 w l dashtype 2 lt -1 t 'analytical',\
+
+set ylabel 'T_{xy}'
+set output 'tensor_xy.pdf'
+plot[][-1e-8:1e-8]\
+'line_pointmass.ascii'  u 1:10  w l t 'pointmass',\
+'line_prism.ascii'      u 1:10  w l t 'prism',\
+'line_quadrature.ascii' u 1:10 w l t 'quadrature',\
+'line_prism.ascii'  u 1:18 w l dashtype 2 lt -1 t 'analytical',\
+
+set ylabel 'T_{xz}'
+set output 'tensor_xz.pdf'
+plot[][-1e-8:1e-8]\
+'line_pointmass.ascii'  u 1:11  w l t 'pointmass',\
+'line_prism.ascii'      u 1:11  w l t 'prism',\
+'line_quadrature.ascii' u 1:11 w l t 'quadrature',\
+'line_prism.ascii'  u 1:19 w l dashtype 2 lt -1 t 'analytical',\
+
+set ylabel 'T_{yz}'
+set output 'tensor_yz.pdf'
+plot[][-1e-8:1e-8]\
+'line_pointmass.ascii'  u 1:12  w l t 'pointmass',\
+'line_prism.ascii'      u 1:12  w l t 'prism',\
+'line_quadrature.ascii' u 1:12 w l t 'quadrature',\
+'line_prism.ascii'  u 1:20 w l dashtype 2 lt -1 t 'analytical',\
+
+
+
+
+
+exit
+stop
+
+
+'line_pointmass.ascii'  u 1:10  w l t 'pointmass',\
+'line_prism.ascii'      u 1:10  w l t 'prism',\
+'line_pointmass.ascii'  u 1:11 w l t 'pointmass',\
+'line_prism.ascii'      u 1:11  w l t 'prism',\
+'line_pointmass.ascii'  u 1:12  w l t 'pointmass',\
+'line_prism.ascii'      u 1:12  w l t 'prism',\
+'line_prism.ascii'  u 1:18 w l dashtype 2 lt -1 t 'analytical',\
+'line_prism.ascii'  u 1:19 w l dashtype 2 lt -1 t 'analytical',\
+'line_prism.ascii'  u 1:20 w l dashtype 2 lt -1 t 'analytical',\
+
+
+
+#################################################################################
+
 set xlabel 'h'
 set pointsize .3
 set output 'single_point_g.pdf'
 plot[][]\
-'single_point_g_masspoint.ascii' u (1./$3):4 w lp pt 1  t 'g_x, mass point',\
-'single_point_g_prism.ascii' u (1./$3):4 w lp pt 2  t 'g_x, prism',\
-'single_point_g_masspoint.ascii' u (1./$3):7 w l lt -1 dashtype 2 t 'g_x, analytical',\
-'single_point_g_masspoint.ascii' u (1./$3):5 w lp pt 2 t 'g_y',\
-'single_point_g_masspoint.ascii' u (1./$3):8 w l lt -1 dashtype 3 t 'g_y, analytical',\
-'single_point_g_masspoint.ascii' u (1./$3):6 w lp pt 3 t 'g_z',\
-'single_point_g_masspoint.ascii' u (1./$3):9 w l lt -1 dashtype 4 t 'g_z, analytical',\
+'single_point_g_pointmass.ascii'  u (1.e3/$3):4 w lp t 'point mass',\
+'single_point_g_prism.ascii'      u (1.e3/$3):4 w lp t 'prism',\
+'single_point_g_quadrature.ascii' u (1.e3/$3):4 w lp t 'quadrature',\
+'single_point_g_pointmass.ascii'  u (1.e3/$3):5 w l lt -1 dashtype 2 t 'analytical',\
 
 set output 'single_point_U.pdf'
 plot[][]\
-'single_point_U_masspoint.ascii' u (1/$3):4 w lp pt 1 t 'U',\
-'single_point_U_prism.ascii' u (1/$3):4 w lp t 'U, prism',\
-'single_point_U_masspoint.ascii' u (1/$3):5 w l lt -1 dashtype 2 t 'U, analytical',\
+'single_point_U_pointmass.ascii'  u (1e3/$3):4 w lp t 'point mass',\
+'single_point_U_prism.ascii'      u (1e3/$3):4 w lp t 'prism',\
+'single_point_U_quadrature.ascii' u (1e3/$3):4 w lp t 'quadrature',\
+'single_point_U_pointmass.ascii'  u (1e3/$3):5 w l lt -1 dashtype 2 t 'U, analytical',\
+
+
+set log y
+set output 'single_point_g_error.pdf'
+plot[][]\
+'single_point_g_pointmass.ascii'  u (1e3/$3):(abs($4-$5)) w lp t 'g, mass point',\
+'single_point_g_prism.ascii'      u (1e3/$3):(abs($4-$5)) w lp t 'g, prism',\
+'single_point_g_quadrature.ascii' u (1e3/$3):(abs($4-$5)) w lp t 'g, quadrature',\
+
+set output 'single_point_U_error.pdf'
+plot[][]\
+'single_point_U_pointmass.ascii'  u (1e3/$3):(abs($4-$5)) w lp t 'g, mass point',\
+'single_point_U_prism.ascii'      u (1e3/$3):(abs($4-$5)) w lp t 'g, prism',\
+'single_point_U_quadrature.ascii' u (1e3/$3):(abs($4-$5)) w lp t 'g, quadrature',\
+
 
 
 

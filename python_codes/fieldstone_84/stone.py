@@ -4,7 +4,7 @@ import sys as sys
 
 G = 6.6738480e-11 # gravitational constant [m^3 s^-2 kg^-1]
 
-def grav_calc(prism,obs_point,method,rho,hx,hy,hz,xx,yy,zz):
+def grav_calc(prism,obs_point,method,rho,hx,hy,hz,xx=None,yy=None,zz=None):
     #The gravity calculations of a single cell on one observation point according to a chosen method. 
     # The cell always has a constant density. 
     # For the point mass method all of the mass of the cell is assumed to be concentrated in the centre of the cell. 
@@ -33,7 +33,7 @@ def grav_calc(prism,obs_point,method,rho,hx,hy,hz,xx,yy,zz):
     g_calc = np.zeros(3,dtype=np.float64)
     T_calc = np.zeros([3,3],dtype=np.float64)
     
-    if method == "point":
+    if method == "pointmass":
 
         if rho==0:
            return U_calc, g_calc, T_calc
@@ -264,20 +264,36 @@ def grav_calc(prism,obs_point,method,rho,hx,hy,hz,xx,yy,zz):
         # end for
         U_calc *= G*rho
         g_calc *= G*rho
-        T_calc *= G*rho
+        T_calc *= -G*rho
     
     # The results are returned
     return U_calc, g_calc, T_calc
 
 ##############################################################################################################
+# read parameters from command line
 ##############################################################################################################
 
+if int(len(sys.argv) == 4):
+   nelx = int(sys.argv[1])
+   buried_object= sys.argv[2]
+   method = sys.argv[3]
+else:
+   nelx = 32
+   #buried_object = 'sphere'
+   buried_object = 'cube'
+   #buried_object = 'diapir'
+   #method='pointmass'
+   #method='prism'
+   method='quadrature'
+
+nely=nelx
+nelz=nelx
 
 #################################################################
 # experiment setup parameters
 #################################################################
 
-buried_object = 'sphere'
+do_arct15=False
 
 rho0=0 
 
@@ -290,7 +306,15 @@ if buried_object == 'cube':
    zc_object=0.75*Lz
    cube_size=Lx/8
    rho_cube=100
-
+   if do_arct15:
+      xc_object=0.5*Lx
+      yc_object=0.5*Ly
+      zc_object=Lz-100
+      cube_size=200
+      rho_cube=100
+      nelx=10
+      nely=10
+      nelz=10
 
 if buried_object == 'sphere':
    Lx=1.e3  
@@ -302,23 +326,30 @@ if buried_object == 'sphere':
    radius_sphere=Lx/2
    rho_sphere=100
 
+if buried_object == 'diapir':
+   Lx=2940.
+   Ly=2100.
+   Lz=3060.
+   nelx=98
+   nely=70
+   nelz=153
+   xc_object=0
+   yc_object=0
+   zc_object=0
+
 #################################################################
 # gravity calculations parameters
 #################################################################
 
-method='point'
-#method='prism'
-#method='quadrature'
-
-nqperdim=2
+nqperdim=4
 
 compute_gravity_on_plane=False
-nnx_m=15
-nny_m=15
-z_plane=Lz+100
+nnx_m=25
+nny_m=25
+z_plane=Lz+10
 
-compute_gravity_on_line=False
-nnp_line=133
+compute_gravity_on_line=True
+nnp_line=101
 x_begin=xc_object
 y_begin=yc_object
 z_begin=zc_object
@@ -326,20 +357,17 @@ x_end=1.11e3
 y_end=2.22e3
 z_end=5.55e3
 
-compute_gravity_at_single_point=True
-xpt=123
-ypt=234
-zpt=345
+compute_gravity_at_single_point=False
+if buried_object == 'sphere':
+   xpt=123
+   ypt=234
+   zpt=345
+if buried_object == 'cube':
+   xpt=12
+   ypt=23
+   zpt=34
 
 #################################################################
-
-if int(len(sys.argv) == 2):
-   nelx = int(sys.argv[1])
-else:
-   nelx = 32
-
-nely=nelx
-nelz=nelx
 
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
@@ -358,9 +386,11 @@ hz=Lz/nelz
 #################################################################
 
 print('-------------------------------')
-print('nelx= ',nelx)
-print('method= ',method)
+print('Lx,Ly,Lz=',Lx,Ly,Lz)
+print('nelx,nely,nelz= ',nelx,nely,nelz)
 print('buried_object= ',buried_object)
+print('method= ',method)
+print('hx,hy,hz=',hx,hy,hz)
 print('compute_gravity_on_plane=',compute_gravity_on_plane)
 print('compute_gravity_on_line=',compute_gravity_on_line)
 print('compute_gravity_at_single_point=',compute_gravity_at_single_point)
@@ -493,6 +523,48 @@ elif buried_object == 'sphere':
        #end if
    #end for
 
+elif buried_object == 'diapir':
+
+    rho_salt = 2200 
+    rho_rock = 2600 
+
+    # in the data file, Xx, Yy, Zz are the coordinates 
+    # of the lower left corner of the cell
+    Xx = np.zeros(nel,dtype=np.float64) 
+    Yy = np.zeros(nel,dtype=np.float64) 
+    Zz = np.zeros(nel,dtype=np.float64) 
+    salt = np.zeros(nel,dtype=np.float64) 
+
+    f = open('salt_dome.data', 'r')
+    counter=0
+    for line in f:
+        line = line.strip()
+        columns = line.split()
+        Xx[counter]=float(columns[1])
+        Yy[counter]=float(columns[2])
+        Zz[counter]=float(columns[3])
+        salt[counter]=float(columns[4])
+        counter+=1
+
+    # because the data set is organised in depth 
+    # I find it easier to find the center of a cell, 
+    # localise this center in my mesh and assign
+    # the density value.
+
+    for iel in range(0,nel):
+        xc=Xx[iel]+15
+        yc=Yy[iel]+15
+        zc=Lz-(Zz[iel]+10)
+        ielx=int(xc/Lx*nelx)
+        iely=int(yc/Ly*nely)
+        ielz=int(zc/Lz*nelz)
+        iell=nely*nelz*(ielx)+nelz*(iely)+ielz
+        rho[iell]=salt[iel]*(rho_salt-rho_rock)
+        # top rows contain some salt. gone.
+        if ielz==nelz-1 or ielz==nelz-2:
+           rho[iell]=0
+
+
 else:
 
    exit("buried_object does not exist")
@@ -511,8 +583,12 @@ if buried_object=='sphere':
 if buried_object=='cube':
    Massth=cube_size**3*rho_cube
 
+if buried_object=='diapir':
+   Massth=0
+
 print("     -> Total mass %d %e " %(nel,Mass))
-print("     -> Total mass error %d %e " %(nel,(Mass-Massth)/Massth))
+if Massth != 0:
+   print("     -> Total mass error %d %e " %(nel,(Mass-Massth)/Massth))
 
 #################################################################
 # measurement plane grid point setup
@@ -594,7 +670,7 @@ if compute_gravity_on_plane:
    # export measurement grid
    gnorm=np.sqrt(gx**2+gy**2+gz**2)
 
-   filename = 'gravity.vtu'
+   filename = 'plane.vtu'
    vtufile=open(filename,"w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
    vtufile.write("<UnstructuredGrid> \n")
@@ -636,6 +712,12 @@ if compute_gravity_on_plane:
    for i in range(0,nnp_m):
        vtufile.write("%10e \n" %(Tyz[i]))
    vtufile.write("</DataArray>\n")
+
+   vtufile.write("<DataArray type='Float32' Name='Hor. grad. magn.' Format='ascii'> \n")
+   for i in range(0,nnp_m):
+       vtufile.write("%10e \n" %(np.sqrt(Txz[i]**2+Tyz[i]**2)))
+   vtufile.write("</DataArray>\n")
+
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='gravity vector g' Format='ascii'> \n")
    for i in range(0,nnp_m):
        vtufile.write("%10e %10e %10e \n" %(gx[i],gy[i],gz[i]))
@@ -672,7 +754,7 @@ if compute_gravity_on_plane:
    vtufile.close()
 
 #################################################################
-# line gravity 
+# compute gravity on line
 #################################################################
 
 if compute_gravity_on_line:
@@ -711,7 +793,8 @@ if compute_gravity_on_line:
           ll_corner[0]=x[icon[0,iel]]
           ll_corner[1]=y[icon[0,iel]]
           ll_corner[2]=z[icon[0,iel]]
-          UU,g,T=grav_calc(ll_corner,meas_point,method,rho[iel],hx,hy,hz)
+          UU,g,T=grav_calc(ll_corner,meas_point,method,rho[iel],hx,hy,hz,\
+                           x[icon[:,iel]],y[icon[:,iel]],z[icon[:,iel]])
           U[i]+=UU
           gx[i]+=g[0]
           gy[i]+=g[1]
@@ -730,22 +813,47 @@ if compute_gravity_on_line:
    for i in range(0,nnp_line):
        r_line[i]=np.sqrt((x_line[i]-xc_object)**2+(y_line[i]-yc_object)**2+(z_line[i]-zc_object)**2)
 
+   gnorm=np.sqrt(gx**2+gy**2+gz**2)
+
    # compute analytical solution 
    U_th = np.zeros(nnp_line,dtype=np.float64)
-   g_th = np.zeros(nnp_line,dtype=np.float64)
+   gnorm_th = np.zeros(nnp_line,dtype=np.float64)
+   Txx_th = np.zeros(nnp_line,dtype=np.float64)
+   Tyy_th = np.zeros(nnp_line,dtype=np.float64)
+   Tzz_th = np.zeros(nnp_line,dtype=np.float64)
+   Txy_th = np.zeros(nnp_line,dtype=np.float64)
+   Txz_th = np.zeros(nnp_line,dtype=np.float64)
+   Tyz_th = np.zeros(nnp_line,dtype=np.float64)
 
    if buried_object=='sphere':
       for i in range(0,nnp_line):
           if r_line[i]>radius_sphere:
-             g_th[i]=G*Massth/r_line[i]**2
+             gnorm_th[i]=G*Massth/r_line[i]**2
              U_th[i]=-G*Massth/r_line[i]
           else:
-             g_th[i]=G*4/3*np.pi*r_line[i]*rho_sphere
+             gnorm_th[i]=G*4/3*np.pi*r_line[i]*rho_sphere
              U_th[i]=-2*np.pi*G*rho_sphere*(radius_sphere**2-r_line[i]**2/3)
 
 
-   gnorm=np.sqrt(gx**2+gy**2+gz**2)
-   np.savetxt('gravity_on_line.ascii',np.array([r_line,U,gx,gy,gz,gnorm,Txx,Tyy,Tzz,Txy,Txz,Tyz,U_th,g_th]).T)
+   if buried_object=='cube':
+      ll_corner[0]=xc_object-cube_size/2
+      ll_corner[1]=yc_object-cube_size/2
+      ll_corner[2]=zc_object-cube_size/2
+      for i in range(0,nnp_line):
+          meas_point[0]=x_begin+(x_end-x_begin)/(nnp_line-1)*i
+          meas_point[1]=y_begin+(y_end-y_begin)/(nnp_line-1)*i
+          meas_point[2]=z_begin+(z_end-z_begin)/(nnp_line-1)*i
+          a,b,c=grav_calc(ll_corner,meas_point,'prism',rho_cube,cube_size,cube_size,cube_size)
+          U_th[i]=a
+          gnorm_th[i]=np.sqrt(b[0]**2+b[1]**2+b[2]**2)
+          Txx_th[i]=c[0,0]
+          Tyy_th[i]=c[1,1]
+          Tzz_th[i]=c[2,2]
+          Txy_th[i]=c[0,1]
+          Txz_th[i]=c[0,2]
+          Tyz_th[i]=c[1,2]
+
+   np.savetxt('line.ascii',np.array([r_line,U,gx,gy,gz,gnorm,Txx,Tyy,Tzz,Txy,Txz,Tyz,U_th,gnorm_th,Txx_th,Tyy_th,Tzz_th,Txy_th,Txz_th,Tyz_th]).T)
 
    vtufile=open("line.vtu","w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -779,7 +887,9 @@ if compute_gravity_on_line:
    vtufile.write("</VTKFile>\n")
    vtufile.close()
 
-#################################################################
+###############################################################################
+# compute gravity at single point
+###############################################################################
 
 if compute_gravity_at_single_point:
 
@@ -826,16 +936,16 @@ if compute_gravity_at_single_point:
          g_th=G*4/3*np.pi* np.sqrt(xpt**2+ypt**2+zpt**2) *rho_sphere
          U_th=-2*np.pi*G*rho_sphere*(radius_sphere**2-(xpt**2+ypt**2+zpt**2)/3)
       
-      print("     -> U_at_pt %d %10e %10e " %(nel,U,U_th))
+      print("     -> U_at_pt %d %10e %10e " %(nelx,U,U_th))
       print("     -> grav_at_pt %d %.10e %.10e" %(nelx,np.sqrt(gx[0]**2+gy[0]**2+gz[0]**2),g_th))
 
    if buried_object=='cube':
       ll_corner[0]=xc_object-cube_size/2
       ll_corner[1]=yc_object-cube_size/2
       ll_corner[2]=zc_object-cube_size/2
-      U_th,g_th,T=grav_calc(ll_corner,meas_point,method,rho_cube,cube_size,cube_size,cube_size)
-      print("     -> U_at_pt %d %e %e " %(nel,U[0],U_th))
-      print("     -> grav_at_pt %d %e %e %e %e %e %e" %(nelx,gx[0],gy[0],gz[0],g_th[0],g_th[1],g_th[2]))
+      U_th,g_th,T=grav_calc(ll_corner,meas_point,'prism',rho_cube,cube_size,cube_size,cube_size)
+      print("     -> U_at_pt %d %e %e " %(nelx,U[0],U_th))
+      print("     -> grav_at_pt %d %.10e %.10e" %(nelx,np.sqrt(gx[0]**2+gy[0]**2+gz[0]**2),np.sqrt(g_th[0]**2+g_th[1]**2+g_th[2]**2)))
 
    print("compute gravity at single pt: %.3f s" % (time.time() - start))
 

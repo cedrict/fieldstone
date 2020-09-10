@@ -37,7 +37,10 @@ What about the Gauss quadrature approach ?
 The domain is a cuboid of size $L_x\times L_y \times L_z$ cut into $nel_x \times nel_y \times nel_z=nel$ cells.
 Note that in all what follows a cell has a constant density. 
 
-TODO: write read in salt. re-run all at high-ish resolution.
+The function {\tt grav\_calc} computes $u$, $\vec{g}$ and ${\bm T}$ using one of the three methods hilighted above. 
+
+
+
 
 
 
@@ -70,6 +73,11 @@ U(r)
 \end{eqnarray}
 
 \begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_84/sphere/setup}
+\end{center}
+
+
+\begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_84/sphere/gravnorm}
 \includegraphics[width=8cm]{python_codes/fieldstone_84/sphere/gravpot}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_84/sphere/gravnorm_error}
@@ -77,7 +85,7 @@ U(r)
 {\captionfont  The grey area indicates the sphere. Mesh resolution?}
 \end{center}
 
-The gravity was also measured at location $(132,234,345)\si{\metre}$ counted from the center of the sphere
+The gravity was also measured at location $(123,234,345)\si{\metre}$ counted from the center of the sphere
 for increasing resolutions. 
 
 \begin{center}
@@ -90,7 +98,7 @@ for increasing resolutions.
 
 \newpage
 %-------------------------------
-\subsection*{Buried prism}
+\subsection*{Buried cube}
 
 The domain is a cube of $L=1\si{\km}$ size. All elements inside a cube of size $d=L/8$ are assigned
 $\rho_s=100\si{\kg\per\cubic\metre}$.
@@ -101,14 +109,31 @@ M_c = \rho d^3 = 1.95312500\cdot 10^8 \si{\kg}
 Far away from the cube $g(r) \rightarrow {\cal G}M_c \rho/r^2$ and $U(r) \rightarrow -{\cal G} M_c/r$.
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_84/cube/gravnorm}
-\includegraphics[width=8cm]{python_codes/fieldstone_84/cube/gravpot}\\
-{\captionfont  The grey area indicates the sphere. resolution?}
+\includegraphics[width=6cm]{python_codes/fieldstone_84/cube/setup}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_84/cube/gravnorm}
+\includegraphics[width=7cm]{python_codes/fieldstone_84/cube/gravpot}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_84/cube/tensor_xx}
+\includegraphics[width=5cm]{python_codes/fieldstone_84/cube/tensor_yy}
+\includegraphics[width=5cm]{python_codes/fieldstone_84/cube/tensor_zz}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_84/cube/tensor_xy}
+\includegraphics[width=5cm]{python_codes/fieldstone_84/cube/tensor_xz}
+\includegraphics[width=5cm]{python_codes/fieldstone_84/cube/tensor_yz}\\
+{\captionfont  The grey area indicates the sphere. resolution  32x32x32}
+\end{center}
+
+
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_84/cube/g}
+\includegraphics[width=5cm]{python_codes/fieldstone_84/cube/U}
+\includegraphics[width=5cm]{python_codes/fieldstone_84/cube/horgrad}
 \end{center}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_84/cube/g}
-\includegraphics[width=8cm]{python_codes/fieldstone_84/cube/U}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_84/cube/Txx}
 \includegraphics[width=5cm]{python_codes/fieldstone_84/cube/Tyy}
 \includegraphics[width=5cm]{python_codes/fieldstone_84/cube/Tzz}\\
@@ -118,15 +143,65 @@ Far away from the cube $g(r) \rightarrow {\cal G}M_c \rho/r^2$ and $U(r) \righta
 {\captionfont  xxx}
 \end{center}
 
+The gravity was also measured at location $(12,23,34)\si{\metre}$ counted from the center of the cube
+for increasing resolutions. 
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_84/cube/single_point_g.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_84/cube/single_point_U.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_84/cube/single_point_g_error.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_84/cube/single_point_U_error.pdf}\\
 \end{center}
 
 
 \newpage
 %-------------------------------
 \subsection*{Salt diapir}
+
+
+The domain has dimensions $L_x=2940$, $L_y=2100$, $L_z=3060$ and the data set makes that  
+nelx=98, nely=70 and nelz=153. The data is
+synthetically generated using methods described in 
+Clausolles et al (2019) \cite{clcc19}
+and the file containing the data is {\sl salt\_dome.data}.
+The salt has a relative density of $-400\si{\kg\per\cubic\metre}$.
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_84/diapir/diapir.png}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_84/diapir/g.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_84/diapir/U.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_84/diapir/horgrad.png}\\
+{\captionfont gravity vector norm, gravity potential, and horizontal gradient}
+\end{center}
+
+
+\newpage
+%------------------------------------------
+\subsection*{Prism of Arroyo et al (2015)}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_84/arct15/setup}
+\includegraphics[width=8cm]{python_codes/fieldstone_84/arct15/arct15.png}\\
+{\captionfont Left: setup. Right: taken from \cite{arct15}}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_84/arct15/g.png}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_84/arct15/U.png}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_84/arct15/horgrad.png}\\
+\includegraphics[width=5.3cm]{python_codes/fieldstone_84/arct15/Txx}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_84/arct15/Tyy}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_84/arct15/Tzz}\\
+\includegraphics[width=5.3cm]{python_codes/fieldstone_84/arct15/Txy}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_84/arct15/Txz}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_84/arct15/Tyz}\\
+{\captionfont gravity vector norm, gravity potential, horizontal gradient,
+and 6 components of ${\bm T}$.}
+\end{center}
 
 
