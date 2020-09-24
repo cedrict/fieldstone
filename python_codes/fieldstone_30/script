@@ -27,9 +27,9 @@ python3 stone.py  32 32  0 5 1  0.1 2 0 1  301
 python3 stone.py  32 32  0 5 0  0.5 2 0 1  301
 
 # changing resolution
-python3 stone.py  48 48  0 5 1  0.5 2 0 1  301
-python3 stone.py  64 64  0 5 1  0.5 2 0 1  301
-python3 stone.py  80 80  0 5 1  0.5 2 0 1  301
+python3 stone.py  48 48  0 5 1  0.5 2 0 1  401
+python3 stone.py  64 64  0 5 1  0.5 2 0 1  501
+python3 stone.py  80 80  0 5 1  0.5 2 0 1  601
 
 # using cvi
 #python3 stone.py  32 32  1 5 1  0.5 1 1 1

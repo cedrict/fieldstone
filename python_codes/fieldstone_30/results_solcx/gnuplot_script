@@ -1,7 +1,8 @@
-set term pdf enhanced
+set term pdf enhanced font "Times,11pt"
 set xlabel 'time'
 set ylabel 'n(t)/n(0) - min/max'
 set key left
+set log x
 
 npel=25
 

@@ -4,8 +4,8 @@ import sys as sys
 import time as time
 import random
 #import solcx as solcx
-#import streamlines as solcx
-import couette as solcx
+import streamlines as solcx
+#import couette as solcx
 
 #------------------------------------------------------------------------------
 #def viscosity(x,y):
@@ -221,7 +221,7 @@ else:
    RKorder=1
    use_cvi=0
    Q=1
-   nstep=501
+   nstep=251
     
 if Q==1:
    nnx=nelx+1    # number of elements, x direction
@@ -238,7 +238,7 @@ nel=nelx*nely    # number of elements, total
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
 
-every=10      # vtu output frequency
+every=1      # vtu output frequency
 
 rkf_c2=1./4.      
 rkf_c3=3./8.    
@@ -285,6 +285,17 @@ countfile=open("markercount_stats_nelx"+str(nelx)+\
                                   "_rk"+str(RKorder)+\
                                  "_cvi"+str(use_cvi)+\
                                    "_Q"+str(Q)+".ascii","w")
+
+distrfile=open("markerdistr_stats_nelx"+str(nelx)+\
+                                  '_nm'+str(nmarker_per_dim)+\
+                                "_rand"+str(random_markers)+\
+                                "_CFL_"+str(CFL_nb)+\
+                                  "_rk"+str(RKorder)+\
+                                 "_cvi"+str(use_cvi)+\
+                                   "_Q"+str(Q)+".ascii","w")
+
+
+#################################################################
 
 #################################################################
 # grid point setup
@@ -428,6 +439,7 @@ print("     -> swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
 #################################################################
 
 count=np.zeros(nel,dtype=np.int32)
+
 for im in range (0,nmarker):
     ielx=int(swarm_x[im]/Lx*nelx)
     iely=int(swarm_y[im]/Ly*nely)
@@ -657,13 +669,50 @@ for istep in range (0,nstep):
         iel=nelx*(iely)+ielx
         count[iel]+=1
 
-    print("     -> count (m,M) %.5d %.5d " %(np.min(count),np.max(count)))
+    avrg=np.sum(count)/nel
 
-    countfile.write(" %e %d %d %e %e\n" % (tijd, np.min(count),np.max(count),\
+    standard_deviation=np.std(count,dtype=np.float64)
+
+    print("     -> count (m,M) %.5d %.5d " %(np.min(count),np.max(count)))
+    print("     -> count (avrg) %f " % avrg)
+    print("     -> count (stdev) %f " % standard_deviation)
+
+    countfile.write(" %e %d %d %e %e %e \n" % (tijd, np.min(count),np.max(count),\
                                                  np.min(count)/nmarker_per_dim**2,\
-                                                 np.max(count)/nmarker_per_dim**2 ))
+                                                 np.max(count)/nmarker_per_dim**2,\
+                                                 standard_deviation))
 
     countfile.flush()
+
+
+    distrcount=np.zeros(10,dtype=np.int32)
+    maxx=2*nmarker_per_dim**2
+    for iel in range(0,nel):
+        if count[iel]<0.1*maxx:
+           distrcount[0]+=1
+        elif count[iel]<0.2*maxx:
+           distrcount[1]+=1
+        elif count[iel]<0.3*maxx:
+           distrcount[2]+=1
+        elif count[iel]<0.4*maxx:
+           distrcount[3]+=1
+        elif count[iel]<0.5*maxx:
+           distrcount[4]+=1
+        elif count[iel]<0.6*maxx:
+           distrcount[5]+=1
+        elif count[iel]<0.7*maxx:
+           distrcount[6]+=1
+        elif count[iel]<0.8*maxx:
+           distrcount[7]+=1
+        elif count[iel]<0.9*maxx:
+           distrcount[8]+=1
+        else:
+           distrcount[9]+=1
+
+    for i in range(0,10):
+        distrfile.write("%e %d %d\n" % (tijd,i,distrcount[i]))
+    distrfile.write(" \n")
+    distrfile.flush()
 
     #############################
     # export markers to vtk file

@@ -43,8 +43,8 @@ Only works with RKorder=1
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \subsection*{SolCx}
 
-Reference model: 32x32 resolution, CFL nb=0.5, $5^2$ particles randomly distributed, RKorder=2,
-$Q_1$ interpolation, no cvi.
+Reference model: 32x32 resolution, CFL nb=0.5, $5^2$ particles randomly distributed inside each 
+element, RKorder=2, $Q_1$ interpolation, no cvi.
 We look at the min/max number of particles per element as a function of time (normalised 
 by the initial number). Total of 250 time steps.
 
@@ -87,24 +87,49 @@ something. Using a small CFL number will improve things, but at the expense of t
 {\captionfont 32x32 $Q_1$ mesh, 3x2 cells}
 \end{center}
 
+The reference model is as follows: 32x32 $Q_1$ elements, initial $5^2$ particles per element placed at random, 
+CFL number of 0.5, RK order of 2, no CVI.
+The {\tt count} array of length {\tt nel} is used to keep track of the number of particles per element. 
+Its min/max values over time are recorded. The standard deviation of the {\tt count} array is also 
+computed at each time step, normalised by the 
+initial number of particles in the element at $t=0$ and plotted as a function of time. 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_30/results_streamline/markercount_rk12345}
-\includegraphics[width=7cm]{python_codes/fieldstone_30/results_streamline/markercount_q12}\\
-{\captionfont Left: Ref model + varying RKorder (the star means that velocity 
-is directly computed on the particle, no interpolation). Right: Ref model + $Q_1$ vas $Q_2$. }
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/markercount_rk12345}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/stdev_rk12345}\\
+{\captionfont Ref model + varying RKorder (the star means that velocity 
+is directly computed on the particle, no interpolation).}
+\end{center} 
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/markercount_q12}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/stdev_q12}\\
+{\captionfont Ref model + $Q_1$ vs $Q_2$. }
 \end{center}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_30/results_streamline/markercount_npd}
-\includegraphics[width=7cm]{python_codes/fieldstone_30/results_streamline/markercount_cflnb}\\
-{\captionfont Left: Ref model + initial nparticle per element between 4 and 8. Right: Ref model + CFL nb}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/markercount_npd}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/stdev_npd}\\
+{\captionfont Ref model + initial nparticle per element between 4 and 8.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_30/results_streamline/markercount_reg}
-\includegraphics[width=7cm]{python_codes/fieldstone_30/results_streamline/markercount_res}\\
-{\captionfont Left: Ref model + random vs regular. Right: Ref model + different resolutions}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/markercount_cflnb}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/stdev_cflnb}\\
+{\captionfont Ref model + CFL nb}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/markercount_reg}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/stdev_reg}\\
+{\captionfont Ref model + random vs regular.} 
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/markercount_res}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_streamline/stdev_res}\\
+{\captionfont Ref model + different resolutions}
 \end{center}
 
 
