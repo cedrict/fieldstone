@@ -4,13 +4,29 @@ import scipy
 from scipy import special
 from scipy import interpolate
 
-nspline=21 # do not change
+###############################################################################
+# do not change
+###############################################################################
 
-degree=40 # or 40, nothing else
-use_degree=40
+nspline=21 
+nlat=179
+nlon=360
 
-nlat=100
-nlon=200
+###############################################################################
+
+degree=40 # 20 or 40, nothing else
+use_degree=40 # less or equal to degree
+
+#depth=24.381e3
+#depth=1500e3 # ok
+#depth=2891e3
+#depth=1251164.934145
+#depth=600e3 #ok 
+#depth=2500e3 
+#depth=2584716.092945
+#depth=100e3 
+#depth=2800e3 
+depth=25e3
 
 ###############################################################################
 # read dataset in data[l,2l+1,npline] array
@@ -25,6 +41,7 @@ if degree==20:
    f = open('S20RTS.sph', 'r')
 else:
    print('using S40RTS.sph file')
+   #f = open('S40_utrecht.sph', 'r')
    f = open('S40RTS.sph', 'r')
 lines = f.readlines()
 f.close
@@ -296,13 +313,49 @@ for ispline in range(0,nspline):
 
 print('read coefficients off .sph file')
 
+#########################################################################################
+# generating grid and connectivity for paraview output
+#########################################################################################
+
+lons = np.empty(nlat*nlon, dtype=np.float64)
+lats = np.empty(nlat*nlon, dtype=np.float64)
+
+counter = 0
+for ilat in range(0,nlat):
+    for ilon in range(0,nlon):
+        lons[counter]=    ilon*360/float(nlon)  #starts at 0 then goes to 360
+        lats[counter]=-89+ilat*179/float(nlat)   #starts at -90 then goes to +90
+        counter += 1
+    #end for
+#end for
+
+icon =np.zeros((4,(nlat-1)*(nlon-1)),dtype=np.int32)
+
+counter = 0
+for ilat in range(0, nlat-1):
+    for ilon in range(0, nlon-1):
+        icon[0, counter] = ilon + ilat * (nlon)
+        icon[1, counter] = ilon + 1 + ilat * (nlon)
+        icon[2, counter] = ilon + 1 + (ilat + 1) * (nlon)
+        icon[3, counter] = ilon + (ilat + 1) * (nlon)
+        counter += 1
+    #end for
+#end for
+
+print('min/max lats:',np.min(lats),np.max(lats))
+print('min/max lons:',np.min(lons),np.max(lons))
+
+print('generate grid for paraview output')
+
 ###############################################################################
 # define 21 knots of the splines anc onvert them to depths
 ###############################################################################
+#This numbering corresponds to the data in the .sph file. 
+#The first pyramid of coefficients corresponds to the moho spline. 
 
-spline_knots= np.empty(21,dtype=np.float64)  
+spline_knots= np.empty(nspline,dtype=np.float64)  
 
-spline_knots[20]=-1.00000
+spline_knots[20]=-1.00000 #cmb
 spline_knots[19]=-0.78631
 spline_knots[18]=-0.59207
 spline_knots[17]=-0.41550
@@ -322,140 +375,432 @@ spline_knots[4]=0.83810
 spline_knots[3]=0.88454 
 spline_knots[2]=0.92675 
 spline_knots[1]=0.96512 
-spline_knots[0]=1.00000
-print('raw spline knots=',spline_knots)
+spline_knots[0]=1.00000 #moho
 
-spline_knots+=1
-spline_knots/=2
-spline_knots*=2891
+rcmb=3480e3
+rmoho=6346.619e3
+spline_knots[:]=rcmb+(rmoho-rcmb)*(spline_knots[:]+1)*0.5
 print('radii=',spline_knots)
 
-spline_knots*=-1
-spline_knots+=2891
-print('depths=',spline_knots)
+spline_depths=6371e3-spline_knots
+print('depths=',spline_depths)
 
 print('compute position of spline knots')
 
 ###############################################################################
-# use spline functions to compute the value of flm at given depth
 ###############################################################################
-newflm = np.empty((degree+1,2*degree+1),dtype=np.float64)  
-
-depth=2800
-
-for l in range(0,degree+1):  #line of the pyramid
-    for m in range(0,2*l+1): #column
-        #print('======',l,m)
-        yyy=flm[l,m,:]
-        #print(yyy)
-        tck = interpolate.splrep(spline_knots, yyy, s=0)
-        newflm[l,m] = interpolate.splev(depth, tck, der=0)
-        #newflm[l,m] = flm[l,m,0]
-
-print('use splines to compute coeffs at desired depth')
-
-#########################################################################################
-# generating grid and connectivity for paraview output
-#########################################################################################
-
-lons = np.empty(nlat*nlon, dtype=np.float64)
-lats = np.empty(nlat*nlon, dtype=np.float64)
-counter = 0
-for ilat in range(0,nlat):
-    for ilon in range(0,nlon):
-        lons[counter]=    ilon*360/float(nlon)
-        lats[counter]=90-ilat*180/float(nlat)
-        counter += 1
-    #end for
-#end for
-np.savetxt('grid.ascii',np.array([lons,lats]).T)
-
-icon =np.zeros((4,(nlat-1)*(nlon-1)),dtype=np.int32)
-counter = 0
-for ilat in range(0, nlat-1):
-    for ilon in range(0, nlon-1):
-        icon[0, counter] = ilon + ilat * (nlon)
-        icon[1, counter] = ilon + 1 + ilat * (nlon)
-        icon[2, counter] = ilon + 1 + (ilat + 1) * (nlon)
-        icon[3, counter] = ilon + (ilat + 1) * (nlon)
-        counter += 1
-    #end for
-#end for
-
-print('generate grid for paraview output')
-
-###############################################################################
-# use this new flm array to compute dlnvs at location theta, phi
-###############################################################################
-
-dv   = np.zeros(nlat*nlon, dtype=np.float64)  
 phis = np.empty(nlat*nlon, dtype=np.float64)
 thetas = np.empty(nlat*nlon, dtype=np.float64)
+dv   = np.zeros(nlat*nlon, dtype=np.float64)  
 
+a_coeffs   = np.zeros((use_degree+1,use_degree+1), dtype=np.float64)  
+b_coeffs   = np.zeros((use_degree+1,use_degree+1), dtype=np.float64)  
 
 counter = 0
-for ilat in range(0,nlat):
-    for ilon in range(0,nlon):
+for ilat in range(0,nlat): #179
+        for ilon in range(0,nlon): #360
 
-        phi=ilon*2*np.pi/(nlon-1)
-        theta=ilat*np.pi/(nlat-1)
+            if counter%180==0:
+               print(counter,'/',nlat*nlon)
 
-        phis[counter]=phi
-        thetas[counter]=theta
+            phi=lons[counter]*np.pi/180.
+            theta=np.pi-(90.+lats[counter])*np.pi/180.
 
-        val=0
-        for l in range(0,use_degree+1):
-            for m in range(-l,l+1):
-                #print('phi=',phi,'theta=',theta,'l=',l,'m=',m,'Ylm=',Ylm.real)
+            #puts africa in the middle of map
+            #to compare with submachine
+            #phi+=np.pi      
+            #if phi>2*np.pi:
+            #   phi-=2*np.pi
 
-                if m<0:
-                   Ylm=scipy.special.sph_harm(abs(m), l, phi, theta) 
-                   Y_lm=(-1)**m*Ylm.imag
-                   val+=newflm[l,2*abs(m)]*Y_lm
-                   #print('l=',l,m,2*abs(m))
-                elif m==0:
-                   #in this case Ylm is actually real since e^im\phi=1
-                   Ylm=scipy.special.sph_harm(0, l, phi, theta)
-                   Y_lm=Ylm.real
-                   val+=newflm[l,0]*Y_lm
-                else:
-                   Ylm=scipy.special.sph_harm(m, l, phi, theta) 
-                   Y_lm=(-1)**m*Ylm.real
-                   val+=newflm[l,2*m-1]*Y_lm
-                   #print('l=',l,m,2*m-1)
+            phis[counter]=phi
+            thetas[counter]=theta
 
+            #evaluate coeffs in front of alm and blm
+            #these do not depend on ispline 
+            #store these for further re-use
+            for l in range(0,use_degree+1):
+                m=0
+                x=np.cos(theta)
+                Xlm=np.sqrt( (2*l+1)/4./np.pi ) * scipy.special.lpmv(m,l,x) 
+                a_coeffs[l,0]=Xlm
+                for m in range(1,l+1):
+                    A=math.factorial(l-m)
+                    B=math.factorial(l+m)
+                    x=np.cos(theta)
+                    Xlm=np.sqrt( (2*l+1)/4./np.pi*float(A)/float(B) ) * scipy.special.lpmv(m,l,x) 
+                    a_coeffs[l,m]=Xlm*np.cos(m*phi)
+                    b_coeffs[l,m]=Xlm*np.sin(m*phi)
+                #end for
             #end for
+
+            #now go through 21 spline shells and compute 21 values of dv at this depth
+            shell_values=np.zeros(nspline,dtype=np.float64)  
+
+            for ispline in range(0,nspline):
+                for l in range(0,use_degree+1):
+                    shell_values[ispline]+=flm[l,0,ispline]*a_coeffs[l,0]
+                    for m in range(1,l+1):
+                        alm=flm[l,2*m-1,ispline]
+                        blm=flm[l,2*m,ispline]
+                        shell_values[ispline]+=a_coeffs[l,m]*alm+b_coeffs[l,m]*blm
+                    #end for
+                #end for
+            #end for
+
+            #use spline coeffs to interpolate dv at right depth
+            tck=interpolate.splrep(spline_depths, shell_values)
+            dv[counter]=100*interpolate.splev(depth,tck)
+
+            counter+=1
+
         #end for
-
-        dv[counter] = val 
-
-        counter+=1
     #end for
 #end for
 
-np.savetxt('grid.ascii',np.array([phis,thetas,dv]).T)
+print (np.sum(dv)/(nlat*nlon))
+
+np.savetxt('seismic_velocity_anomaly.ascii',np.array([lons,lats,dv,phis,thetas]).T)
+
+print('compute seismic anomaly on grid')
+
+#########################################################################################
+
+S20RTS_dvRmoho = np.zeros(nlat*nlon,dtype=np.float64)  
+S20RTS_dvR100  = np.zeros(nlat*nlon,dtype=np.float64)  
+S20RTS_dvR600  = np.zeros(nlat*nlon,dtype=np.float64)  
+S20RTS_dvR1500 = np.zeros(nlat*nlon,dtype=np.float64)  
+S20RTS_dvR2800 = np.zeros(nlat*nlon,dtype=np.float64)  
+S20RTS_dvRcmb  = np.zeros(nlat*nlon,dtype=np.float64)  
+
+S40RTS_dvRmoho = np.zeros(nlat*nlon,dtype=np.float64)  
+S40RTS_dvR100  = np.zeros(nlat*nlon,dtype=np.float64)  
+S40RTS_dvR600  = np.zeros(nlat*nlon,dtype=np.float64)  
+S40RTS_dvR1500 = np.zeros(nlat*nlon,dtype=np.float64)  
+S40RTS_dvR2800 = np.zeros(nlat*nlon,dtype=np.float64)  
+S40RTS_dvRcmb  = np.zeros(nlat*nlon,dtype=np.float64)  
+
+if True:
+
+   #----S20RTS----
+
+   f = open('S20RTS_plotting/bin/mapS20RTS_moho.xyz','r')
+   lines = f.readlines()
+   f.close
+   counter=0
+   for ilon in range(0,360):
+       for ilat in range(0,179):
+           vals=lines[counter].strip().split()
+           S20RTS_dvRmoho[nlon*ilat+ilon]=vals[2]  
+           counter+=1
+
+   f = open('S20RTS_plotting/bin/mapS20RTS_100.xyz','r')
+   lines = f.readlines()
+   f.close
+   counter=0
+   for ilon in range(0,360):
+       for ilat in range(0,179):
+           vals=lines[counter].strip().split()
+           S20RTS_dvR100[nlon*ilat+ilon]=vals[2]  
+           counter+=1
+
+   f = open('S20RTS_plotting/bin/mapS20RTS_600.xyz','r')
+   lines = f.readlines()
+   f.close
+   counter=0
+   for ilon in range(0,360):
+       for ilat in range(0,179):
+           vals=lines[counter].strip().split()
+           S20RTS_dvR600[nlon*ilat+ilon]=vals[2]            
+           counter+=1
+
+   f = open('S20RTS_plotting/bin/mapS20RTS_1500.xyz','r')
+   lines = f.readlines()
+   f.close
+   counter=0
+   for ilon in range(0,360):
+       for ilat in range(0,179):
+           vals=lines[counter].strip().split()
+           S20RTS_dvR1500[nlon*ilat+ilon]=vals[2]            
+           counter+=1
+
+   f = open('S20RTS_plotting/bin/mapS20RTS_2800.xyz','r')
+   lines = f.readlines()
+   f.close
+   counter=0
+   for ilon in range(0,360):
+       for ilat in range(0,179):
+           vals=lines[counter].strip().split()
+           S20RTS_dvR2800[nlon*ilat+ilon]=vals[2]            
+           counter+=1
+
+   f = open('S20RTS_plotting/bin/mapS20RTS_cmb.xyz','r')
+   lines = f.readlines()
+   f.close
+   counter=0
+   for ilon in range(0,360):
+       for ilat in range(0,179):
+           vals=lines[counter].strip().split()
+           S20RTS_dvRcmb[nlon*ilat+ilon]=vals[2]            
+           counter+=1
+
+
+
+   #----S40RTS----
+
+   f = open('S20RTS_plotting/bin/mapS40RTS_moho.xyz','r')
+   lines = f.readlines()
+   f.close
+   counter=0
+   for ilon in range(0,360):
+       for ilat in range(0,179):
+           vals=lines[counter].strip().split()
+           S40RTS_dvRmoho[nlon*ilat+ilon]=vals[2]  
+           counter+=1
+
+   f = open('S20RTS_plotting/bin/mapS40RTS_100.xyz','r')
+   lines = f.readlines()
+   f.close
+   counter=0
+   for ilon in range(0,360):
+       for ilat in range(0,179):
+           vals=lines[counter].strip().split()
+           S40RTS_dvR100[nlon*ilat+ilon]=vals[2]  
+           counter+=1
+
+   f = open('S20RTS_plotting/bin/mapS40RTS_600.xyz','r')
+   lines = f.readlines()
+   f.close
+   counter=0
+   for ilon in range(0,360):
+       for ilat in range(0,179):
+           vals=lines[counter].strip().split()
+           S40RTS_dvR600[nlon*ilat+ilon]=vals[2]            
+           counter+=1
+
+   f = open('S20RTS_plotting/bin/mapS40RTS_1500.xyz','r')
+   lines = f.readlines()
+   f.close
+   counter=0
+   for ilon in range(0,360):
+       for ilat in range(0,179):
+           vals=lines[counter].strip().split()
+           S40RTS_dvR1500[nlon*ilat+ilon]=vals[2]            
+           counter+=1
+
+   f = open('S20RTS_plotting/bin/mapS40RTS_2800.xyz','r')
+   lines = f.readlines()
+   f.close
+   counter=0
+   for ilon in range(0,360):
+       for ilat in range(0,179):
+           vals=lines[counter].strip().split()
+           S40RTS_dvR2800[nlon*ilat+ilon]=vals[2]            
+           counter+=1
+
+   f = open('S20RTS_plotting/bin/mapS40RTS_cmb.xyz','r')
+   lines = f.readlines()
+   f.close
+   counter=0
+   for ilon in range(0,360):
+       for ilat in range(0,179):
+           vals=lines[counter].strip().split()
+           S40RTS_dvRcmb[nlon*ilat+ilon]=vals[2]            
+           counter+=1
+
+
+
+print('read Ritsema data')
+
+#########################################################################################
+# export map to vtu 
+#########################################################################################
+
+nel=(nlat-1)*(nlon-1)
+NV=nlat*nlon
+
+vtufile=open("map.vtu","w")
+vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+vtufile.write("<UnstructuredGrid> \n")
+vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+#####
+vtufile.write("<Points> \n")
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+for i in range(0,NV):
+    vtufile.write("%10f %10f %10f \n" %(lons[i],lats[i],0.))
+vtufile.write("</DataArray>\n")
+vtufile.write("</Points> \n")
+#####
+vtufile.write("<PointData Scalars='scalars'>\n")
+
+vtufile.write("<DataArray type='Float32' Name='lons' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (lons[i]))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='lats' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (lats[i]))
+vtufile.write("</DataArray>\n")
+
+vtufile.write("<DataArray type='Float32' Name='dv/v (%)' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (dv[i]))
+vtufile.write("</DataArray>\n")
+
+vtufile.write("<DataArray type='Float32' Name='dv/v (%), S20RTS, moho' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (S20RTS_dvRmoho[i]))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='dv/v (%), S20RTS, 100km' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (S20RTS_dvR100[i]))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='dv/v (%), S20RTS, 600km' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (S20RTS_dvR600[i]))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='dv/v (%), S20RTS, 1500km' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (S20RTS_dvR1500[i]))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='dv/v (%), S20RTS, 2800km' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (S20RTS_dvR2800[i]))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='dv/v (%), S20RTS, cmb' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (S20RTS_dvRcmb[i]))
+vtufile.write("</DataArray>\n")
+
+vtufile.write("<DataArray type='Float32' Name='dv/v (%), S40RTS, moho' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (S40RTS_dvRmoho[i]))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='dv/v (%), S40RTS, 100km' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (S40RTS_dvR100[i]))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='dv/v (%), S40RTS, 600km' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (S40RTS_dvR600[i]))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='dv/v (%), S40RTS, 1500km' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (S40RTS_dvR1500[i]))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='dv/v (%), S40RTS, 2800km' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (S40RTS_dvR2800[i]))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='dv/v (%), S40RTS, cmb' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (S40RTS_dvRcmb[i]))
+vtufile.write("</DataArray>\n")
+
+if degree==20 and int(depth)==24381: 
+   vtufile.write("<DataArray type='Float32' Name='diff' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%f\n" % (dv[i]-S20RTS_dvRmoho[i]))
+   vtufile.write("</DataArray>\n")
+if degree==20 and depth==100e3: 
+   vtufile.write("<DataArray type='Float32' Name='diff' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%f\n" % (dv[i]-S20RTS_dvR100[i]))
+   vtufile.write("</DataArray>\n")
+if degree==20 and depth==600e3: 
+   vtufile.write("<DataArray type='Float32' Name='diff' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%f\n" % (dv[i]-S20RTS_dvR600[i]))
+   vtufile.write("</DataArray>\n")
+
+if degree==20 and depth==1500e3: 
+   vtufile.write("<DataArray type='Float32' Name='diff' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%f\n" % (dv[i]-S20RTS_dvR1500[i]))
+   vtufile.write("</DataArray>\n")
+if degree==20 and depth==2800e3: 
+   vtufile.write("<DataArray type='Float32' Name='diff' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%f\n" % (dv[i]-S20RTS_dvR2800[i]))
+   vtufile.write("</DataArray>\n")
+if degree==20 and depth==2891e3: 
+   vtufile.write("<DataArray type='Float32' Name='diff' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%f\n" % (dv[i]-S20RTS_dvRcmb[i]))
+   vtufile.write("</DataArray>\n")
+
+vtufile.write("</PointData>\n")
+#####
+vtufile.write("<Cells>\n")
+vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+for iel in range (0,nel):
+   vtufile.write("%d %d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel]))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%d \n" %((iel+1)*4))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+for iel in range (0,nel):
+    vtufile.write("%d \n" %9)
+vtufile.write("</DataArray>\n")
+vtufile.write("</Cells>\n")
+#####
+vtufile.write("</Piece>\n")
+vtufile.write("</UnstructuredGrid>\n")
+vtufile.write("</VTKFile>\n")
+vtufile.close()
+
+print('produced map.vtu')
 
 ###############################################################################
-#benchmarking results for l=0,1,2:
+# produce sphere.vtu 
 ###############################################################################
-#sol = np.zeros(nlat*nlon, dtype=np.float64)
-#if use_degree==0:
-#   sol[:]=np.sqrt(1./4./np.pi)*newflm[0,0]
-#if use_degree==1:
-#   sol[:]=np.sqrt(1./4./np.pi)*newflm[0,0]\
-#         +np.sqrt(3./8./np.pi)*np.cos(phis[:])*np.sin(thetas[:])*newflm[1,-1+1]\
-#         +np.sqrt(3./4./np.pi)*np.cos(thetas[:])*newflm[1,0+1]\
-#         -np.sqrt(3./8./np.pi)*np.cos(phis[:])*np.sin(thetas[:])*newflm[1,1+1]
-#if use_degree==2:
-#   sol[:]=np.sqrt(1./4./np.pi)*newflm[0,0]\
-#         +np.sqrt(3./8./np.pi)*np.cos(phis[:])*np.sin(thetas[:])*newflm[1,-1+1]\
-#         +np.sqrt(3./4./np.pi)*np.cos(thetas[:])                *newflm[1,0+1]\
-#         -np.sqrt(3./8./np.pi)*np.cos(phis[:])*np.sin(thetas[:])*newflm[1,1+1]\
-#         +np.sqrt(15./32./np.pi)*np.cos(2*phis[:])*(np.sin(thetas[:]))**2           *newflm[2,-2+2]\
-#         +np.sqrt(15./8./np.pi) *np.cos(phis[:])*np.sin(thetas[:])*np.cos(thetas[:])*newflm[2,-1+2]\
-#         +np.sqrt(5./16./np.pi) *(3*np.cos(thetas[:])**2-1)                         *newflm[2,0+2]\
-#         -np.sqrt(15./8./np.pi) *np.cos(phis[:])*np.sin(thetas[:])*np.cos(thetas[:])*newflm[2,1+2]\
-#         +np.sqrt(15./32./np.pi)*np.cos(2*phis[:])*(np.sin(thetas[:]))**2           *newflm[2,2+2]
+
+radius=6371e3
+
+vtufile=open("sphere.vtu","w")
+vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+vtufile.write("<UnstructuredGrid> \n")
+vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+#####
+vtufile.write("<Points> \n")
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+for i in range(0,NV):
+    vtufile.write("%10f %10f %10f \n" %(radius*np.sin(thetas[i])*np.cos(phis[i]-np.pi),\
+                                        radius*np.sin(thetas[i])*np.sin(phis[i]-np.pi),\
+                                        radius*np.cos(thetas[i])))
+vtufile.write("</DataArray>\n")
+vtufile.write("</Points> \n")
+#####
+vtufile.write("<PointData Scalars='scalars'>\n")
+vtufile.write("<DataArray type='Float32' Name='dv/v (%)' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (dv[i]))
+vtufile.write("</DataArray>\n")
+
+vtufile.write("</PointData>\n")
+#####
+vtufile.write("<Cells>\n")
+vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+for iel in range (0,nel):
+   vtufile.write("%d %d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel]))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%d \n" %((iel+1)*4))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+for iel in range (0,nel):
+    vtufile.write("%d \n" %9)
+vtufile.write("</DataArray>\n")
+vtufile.write("</Cells>\n")
+#####
+vtufile.write("</Piece>\n")
+vtufile.write("</UnstructuredGrid>\n")
+vtufile.write("</VTKFile>\n")
+vtufile.close()
+
+print('produced sphere.vtu')
 
 #########################################################################################
 # trying splines
@@ -497,117 +842,78 @@ np.savetxt('grid.ascii',np.array([phis,thetas,dv]).T)
 #    print(np.sum(spline_functions[i,0:21])-1)
 # gives 1 with accuracy of about 1e-7
 
-
-#########################################################################################
-# export map to vtu 
-#########################################################################################
-
-nel=(nlat-1)*(nlon-1)
-NV=nlat*nlon
-
-vtufile=open("map.vtu","w")
-vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-vtufile.write("<UnstructuredGrid> \n")
-vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
-#####
-vtufile.write("<Points> \n")
-vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%10f %10f %10f \n" %(lons[i]-180.,lats[i],0.))
-vtufile.write("</DataArray>\n")
-vtufile.write("</Points> \n")
-#####
-vtufile.write("<PointData Scalars='scalars'>\n")
-
-vtufile.write("<DataArray type='Float32' Name='dv/v (%)' Format='ascii'> \n")
-for i in range (0,NV):
-    vtufile.write("%f\n" % (dv[i]*100))
-vtufile.write("</DataArray>\n")
-#vtufile.write("<DataArray type='Float32' Name='sol' Format='ascii'> \n")
-#for i in range (0,NV):
-#    vtufile.write("%f\n" % sol[i])
-#vtufile.write("</DataArray>\n")
-
-vtufile.write("</PointData>\n")
-#####
-vtufile.write("<Cells>\n")
-#--
-vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-for iel in range (0,nel):
-   vtufile.write("%d %d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel]))
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%d \n" %((iel+1)*4))
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-for iel in range (0,nel):
-    vtufile.write("%d \n" %9)
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("</Cells>\n")
-#####
-vtufile.write("</Piece>\n")
-vtufile.write("</UnstructuredGrid>\n")
-vtufile.write("</VTKFile>\n")
-vtufile.close()
-
-print('produced map.vtu')
+exit()
 
 ###############################################################################
-# produce sphere.vtu 
+# use this new flm array to compute dlnvs at location theta, phi
 ###############################################################################
 
-radius=6370e3
+#dv   = np.zeros(nlat*nlon, dtype=np.float64)  
+phis = np.empty(nlat*nlon, dtype=np.float64)
+thetas = np.empty(nlat*nlon, dtype=np.float64)
 
-vtufile=open("sphere.vtu","w")
-vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-vtufile.write("<UnstructuredGrid> \n")
-vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
-#####
-vtufile.write("<Points> \n")
-vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%10f %10f %10f \n" %(radius*np.sin(thetas[i])*np.cos(phis[i]-np.pi),\
-                                        radius*np.sin(thetas[i])*np.sin(phis[i]-np.pi),\
-                                        radius*np.cos(thetas[i])))
-vtufile.write("</DataArray>\n")
-vtufile.write("</Points> \n")
-#####
-vtufile.write("<PointData Scalars='scalars'>\n")
+ispline=0
 
-vtufile.write("<DataArray type='Float32' Name='dv/v (%)' Format='ascii'> \n")
-for i in range (0,NV):
-    vtufile.write("%f\n" % (dv[i]*100))
-vtufile.write("</DataArray>\n")
+print(spline_knots[ispline])
+print(6371e3-spline_knots[ispline])
 
-vtufile.write("</PointData>\n")
-#####
-vtufile.write("<Cells>\n")
-#--
-vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-for iel in range (0,nel):
-   vtufile.write("%d %d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel]))
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%d \n" %((iel+1)*4))
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-for iel in range (0,nel):
-    vtufile.write("%d \n" %9)
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("</Cells>\n")
-#####
-vtufile.write("</Piece>\n")
-vtufile.write("</UnstructuredGrid>\n")
-vtufile.write("</VTKFile>\n")
-vtufile.close()
+counter = 0
+for ilat in range(0,nlat):
+    for ilon in range(0,nlon):
 
-print('produced sphere.vtu')
+        phi=ilon*2*np.pi/(nlon-1)   
 
+        #phi+=np.pi      #puts africa in the middle 
+        #if phi>2*np.pi:
+        #   phi-=2*np.pi
+
+        theta=np.pi-ilat*np.pi/(nlat-1)
+
+        phis[counter]=phi
+        thetas[counter]=theta
+
+        val=0
+        for l in range(0,use_degree+1):
+            m=0
+            x=np.cos(theta)
+            Xlm=np.sqrt( (2*l+1)/4./np.pi ) * scipy.special.lpmv(m, l, x) 
+            val+=flm[l,0,ispline]*Xlm
+            for m in range(1,l+1):
+                #(-1)^m is in lpmv already
+                A=math.factorial(l-m)
+                B=math.factorial(l+m)
+                x=np.cos(theta)
+                Xlm=np.sqrt( (2*l+1)/4./np.pi*float(A)/float(B) ) * scipy.special.lpmv(m, l, x) 
+                alm=flm[l,2*m-1,ispline]
+                blm=flm[l,2*m,ispline]
+                #print('l,m=',l,m,'| alm=',alm,'blm=',blm)
+                #val+=np.sqrt(2.)*Xlm*( alm*np.cos(m*phi) + blm*np.sin(m*phi) )
+                val+=Xlm*( alm*np.cos(m*phi) + blm*np.sin(m*phi) )
+            #end for
+        #end for
+
+        #dv[counter] = val * 100 
+
+        counter+=1
+
+    #end for
+#end for
+
+print (np.sum(dv)/(nlat*nlon))
+
+#np.savetxt('seismic_velocity_anomaly.ascii',np.array([phis,thetas,dv]).T)
+np.savetxt('seismic_velocity_anomaly.ascii',np.array([lons,lats,dv]).T)
+
+
+###############################################################################
+# use spline functions to compute the value of flm at given depth
+###############################################################################
+#newflm = np.empty((degree+1,2*degree+1),dtype=np.float64)  
+#for l in range(0,degree+1):  #line of the pyramid
+#    for m in range(0,2*l+1): #column
+#        #print('======',l,m)
+#        yyy=flm[l,m,:]
+#        tck = interpolate.splrep(spline_knots, yyy, s=0)
+#        newflm[l,m] = interpolate.splev(depth, tck, der=0)
+#        #newflm[l,m] = flm[l,m,0]
+#print('use splines to compute coeffs at desired depth')

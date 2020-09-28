@@ -1,0 +1,66 @@
+set term pdf enhanced font "Times,8pt"
+set grid
+set xlabel 'depth'
+set output 'splines.pdf'
+#set xtics (   0.        ,308.888895  ,589.662815  ,844.89475   ,1076.911955 ,1287.810405,\
+# 1479.512615 ,1653.782095 ,1812.179985 ,1956.180695 ,2087.07072  ,2206.049825,\
+# 2314.202135 ,2412.525045 ,2501.885855 ,2583.122955 ,2656.97355  ,2724.10257,\
+# 2785.117125 ,2840.58096  ,2891. )
+
+set xtics(   0.         ,50.41904    ,105.882875  ,166.89743   ,234.02645   ,307.877045,\
+  389.114145  ,478.474955  ,576.797865  ,684.950175  ,803.92928   ,934.819305,\
+ 1078.820015 ,1237.217905 ,1411.487385 ,1603.189595 ,1814.088045 ,2046.10525,\
+ 2301.337185 ,2582.111105 ,2891.  )
+
+
+set key outside above 
+
+#set arrow from 2582.111105   , graph 0 to 2582.111105   , graph 1 nohead lw .3 dashtype 2  
+#set arrow from 2301.337185   , graph 0 to 2301.337185   , graph 1 nohead lw .3 dashtype 2  
+#set arrow from    , graph 0 to    , graph 1 nohead lw .3 dashtype 2  
+
+#2046.10525  
+#1814.088045 
+#1603.189595
+#1411.487385 
+#1237.217905 
+#1078.820015  
+#934.819305  
+#803.92928   
+#684.950175
+#576.797865  
+#478.474955  
+#389.114145  
+#307.877045  
+#234.02645   
+#166.89743
+#105.882875   
+#50.41904     
+
+
+plot[0:2891][]\
+'spline01.dat' w l lw .5 t 'spline 1',\
+'spline02.dat' w l lw .5 t 'spline 2',\
+'spline03.dat' w l lw .5 t 'spline 3',\
+'spline04.dat' w l lw .5 t 'spline 4',\
+'spline05.dat' w l lw .5 t 'spline 5',\
+'spline06.dat' w l lw .5 t 'spline 6',\
+'spline07.dat' w l lw .5 t 'spline 7',\
+'spline08.dat' w l lw .5 t 'spline 8',\
+'spline09.dat' w l lw .5 t 'spline 9',\
+'spline10.dat' w l lw .5 t 'spline 10',\
+'spline11.dat' w l lw .5 t 'spline 11',\
+'spline12.dat' w l lw .5 t 'spline 12',\
+'spline13.dat' w l lw .5 t 'spline 13',\
+'spline14.dat' w l lw .5 t 'spline 14',\
+'spline15.dat' w l lw .5 t 'spline 15',\
+'spline16.dat' w l lw .5 t 'spline 16',\
+'spline17.dat' w l lw .5 t 'spline 17',\
+'spline18.dat' w l lw .5 t 'spline 18',\
+'spline19.dat' w l lw .5 t 'spline 19',\
+'spline20.dat' w l lw .5 t 'spline 20',\
+'spline21.dat' w l lw .5 t 'spline 21'
+
+
+
+
