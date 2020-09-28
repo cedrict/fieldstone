@@ -1,0 +1,2 @@
+./depmaphj_jr < dep_in > dep_out
+./raw2xyz_jr < input

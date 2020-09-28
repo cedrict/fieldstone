@@ -1,0 +1,9 @@
+To compile these codes, run:
+
+prompt> make all
+
+This puts execuatbles in the "bin" directory
+
+Important:
+Make sure that the library libS20.a is created first
+(in ../lib/libS20)
