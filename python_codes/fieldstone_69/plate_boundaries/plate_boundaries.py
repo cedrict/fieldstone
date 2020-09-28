@@ -24,8 +24,8 @@ for line in f:
     counter+=1
 #end for
 
-export_to_vtu_flat('plate_boundaries_map.vtu',np_pb,lon,lat)
-export_to_vtu_sphere('plate_boundaries.vtu',np_pb,lon,lat,radius)
+export_to_vtu_flat('plate_boundaries_map1.vtu',np_pb,lon,lat)
+export_to_vtu_sphere('plate_boundaries1.vtu',np_pb,lon,lat,radius)
 
 
 for i in range(0,np_pb):

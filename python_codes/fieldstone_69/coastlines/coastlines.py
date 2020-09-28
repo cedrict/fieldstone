@@ -27,8 +27,8 @@ for line in f:
     counter+=1
 #end for
 
-export_to_vtu_flat('europe_coastlines_map.vtu',np_europe,lon,lat)
-export_to_vtu_sphere('europe_coastlines_sphere.vtu',np_europe,lon,lat,radius)
+export_to_vtu_flat('europe_coastlines_map1.vtu',np_europe,lon,lat)
+export_to_vtu_sphere('europe_coastlines_sphere1.vtu',np_europe,lon,lat,radius)
 
 for i in range(0,np_europe):
     if lon[i]<0:
@@ -58,8 +58,8 @@ for line in f:
     counter+=1
 #end for
 
-export_to_vtu_flat('asia_coastlines_map.vtu',np_asia,lon,lat)
-export_to_vtu_sphere('asia_coastlines_sphere.vtu',np_asia,lon,lat,radius)
+export_to_vtu_flat('asia_coastlines_map1.vtu',np_asia,lon,lat)
+export_to_vtu_sphere('asia_coastlines_sphere1.vtu',np_asia,lon,lat,radius)
 
 for i in range(0,np_asia):
     if lon[i]<0:
@@ -90,8 +90,8 @@ for line in f:
     counter+=1
 #end for
 
-export_to_vtu_flat('africa_coastlines_map.vtu',np_africa,lon,lat)
-export_to_vtu_sphere('africa_coastlines_sphere.vtu',np_africa,lon,lat,radius)
+export_to_vtu_flat('africa_coastlines_map1.vtu',np_africa,lon,lat)
+export_to_vtu_sphere('africa_coastlines_sphere1.vtu',np_africa,lon,lat,radius)
 
 for i in range(0,np_africa):
     if lon[i]<0:
@@ -122,8 +122,8 @@ for line in f:
     counter+=1
 #end for
 
-export_to_vtu_flat('namer_coastlines_map.vtu',np_namer,lon,lat)
-export_to_vtu_sphere('namer_coastlines_sphere.vtu',np_namer,lon,lat,radius)
+export_to_vtu_flat('namer_coastlines_map1.vtu',np_namer,lon,lat)
+export_to_vtu_sphere('namer_coastlines_sphere1.vtu',np_namer,lon,lat,radius)
 
 for i in range(0,np_namer):
     if lon[i]<0:
@@ -154,8 +154,8 @@ for line in f:
     counter+=1
 #end for
 
-export_to_vtu_flat('samer_coastlines_map.vtu',np_samer,lon,lat)
-export_to_vtu_sphere('samer_coastlines_sphere.vtu',np_samer,lon,lat,radius)
+export_to_vtu_flat('samer_coastlines_map1.vtu',np_samer,lon,lat)
+export_to_vtu_sphere('samer_coastlines_sphere1.vtu',np_samer,lon,lat,radius)
 
 for i in range(0,np_samer):
     if lon[i]<0:
