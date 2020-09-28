@@ -1,0 +1,36 @@
+set term pdf enhanced font "Times,10pt"
+set grid
+
+set xlabel 'lon'
+set ylabel 'lat'
+set zlabel 'dv/v (%)'
+set xtics 45
+set ytics 45
+
+set output 'both3D.pdf'
+splot[0:360][-90:90]\
+'both.ascii' u 1:2:3 w d t 'Fieldstone',\
+'both.ascii' u 1:2:4 w d t 'Ritsema',\
+
+reset
+
+set term pdf enhanced font "Times,10pt"
+set grid
+
+set xlabel 'lat'
+set ylabel 'dv/v (%)'
+set xtics 15
+
+set output 'both2D.pdf'
+plot[-90:90]\
+'both.ascii' u 2:3 w d t 'Fieldstone',\
+'both.ascii' u 2:4 w d t 'Ritsema',\
+'both.ascii' u 2:5 w lp ps .2 t 'difference'
+
+set log y
+set output 'both2Dlog.pdf'
+plot[-90:90][1e-10:]\
+'both.ascii' u 2:(abs($5))  w d lt 3  notitle
+
+
+

@@ -1,0 +1,3 @@
+convert -trim -density 256 both3D.pdf both3D.png
+convert -trim -density 256 both2D.pdf both2D.png
+convert -trim -density 256 both2Dlog.pdf both2Dlog.png
