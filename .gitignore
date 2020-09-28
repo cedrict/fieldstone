@@ -55,6 +55,16 @@ wheels/
 *.egg
 MANIFEST
 
+#S40rts execs
+calc
+colgrep
+depmaphj_jr
+distaz2latlon
+mdlwellln_jr
+mkcut_jr
+mkrb_jr
+raw2xyz_jr
+
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.

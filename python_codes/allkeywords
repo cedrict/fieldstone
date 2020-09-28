@@ -48,6 +48,7 @@ matplotlib
 PIC
 pressure_scaling
 pressure_normalisation
+pressure_bc
 steady_state
 free_surface
 discontinuous_galerkin

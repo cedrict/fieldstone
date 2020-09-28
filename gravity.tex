@@ -164,6 +164,22 @@ P_l^m(x)= \frac{(-1)^m}{2^l \; l!} (1-x^2)^{m/2}
 \frac{d^{l+m}}{dx^{l+m}} (x^2-1)^l
 \]
 with $m \geq 0$ and $l\geq 0$.
+The first few polynomials are
+\begin{eqnarray}
+P_0^0(\cos\theta)    &=& 1 \nn\\ \nn\\ 
+P_1^{-1}(\cos\theta) &=& \frac12 \sin\theta \nn\\ 
+P_1^{0}(\cos\theta)  &=&  \cos\theta \nn\\ 
+P_1^{+1}(\cos\theta) &=& -\sin\theta \nn\\ \nn\\
+P_2^{-2}(\cos\theta) &=& \frac18 \sin^2\theta \nn\\
+P_2^{-1}(\cos\theta) &=& \frac12\sin\theta\cos\theta \nn\\
+P_2^{0}(\cos\theta)  &=& \frac12(3\cos^2\theta -1) \nn\\
+P_2^{+1}(\cos\theta) &=& -3 \sin\theta\cos\theta \nn\\
+P_2^{+2}(\cos\theta) &=& 3\sin^2\theta \nn
+\end{eqnarray}
+
+
+
+
 
 In our case the differential equation for the associated Legendre polynomials, given above, depends
 on $m^2$ and is therefore not sensitive to the sign of $m$.
@@ -217,14 +233,29 @@ tions are orthonormal and complete. The orthonormality relation is given by:
 where $d\Omega = \sin\theta d\theta d\phi$ is the differential solid angle in spherical coordinates.
 
 It is important to note that there are different normalisations for spherical harmonics.
-In acoustics, we have (REF?) 
+In this document we choose:
 \begin{equation}
 Y_l^m(\theta,\phi) = \sqrt{\frac{2l+1}{4\pi} \frac{(l-m)!}{(l+m)!}} P_l^m(\cos\theta) e^{im\phi}
 \qquad 
 \textrm{for} \; l=0,1,2,3,... \; \textrm{and} \; m=-l,-l+1,...,l-1,l
 \label{eq:spha6}
 \end{equation}
-while in geodesy  (REF?) 
+The first few spherical harmonics are shown below in the real representation (i.e. using $\cos m\phi$  instead of $e^{i m \phi}$) \footnote{\url{https://en.wikipedia.org/wiki/Table_of_spherical_harmonics}} \footnote{\url{https://mathworld.wolfram.com/SphericalHarmonic.html}}:
+\begin{eqnarray}
+Y_0^0(\theta,\phi)    &=& \sqrt{\frac{1}{4\pi}} \nn\\ \nn\\
+Y_1^{-1}(\theta,\phi) &=& \sqrt{\frac{3}{8\pi}} \cos\phi\sin\theta\nn\\
+Y_1^{0 }(\theta,\phi) &=& \sqrt{\frac{3}{4\pi}} \cos\theta \nn\\
+Y_1^{+1}(\theta,\phi) &=& -\sqrt{\frac{3}{8\pi}} \cos\phi\sin\theta \nn\\ \nn\\
+Y_2^{-2}(\theta,\phi) &=& \sqrt{\frac{15}{32\pi}} \cos(2\phi) \sin^2\theta \nn\\ 
+Y_2^{-1}(\theta,\phi) &=& \sqrt{\frac{15}{8\pi}} \cos\phi \sin\theta\cos\theta \nn\\ 
+Y_2^{ 0}(\theta,\phi) &=& \sqrt{\frac{5}{16\pi}} (3\cos^2\theta -1) \nn\\
+Y_2^{+1}(\theta,\phi) &=& -\sqrt{\frac{15}{8\pi}} \cos\phi \sin\theta\cos\theta \nn\\
+Y_2^{+2}(\theta,\phi) &=& \sqrt{\frac{15}{32\pi}} \cos(2\phi) \sin^2\theta \nn
+\end{eqnarray}
+\todo[inline]{replace those my complex ones !}
+
+
+Another normalisation is sometimes used:  
 \begin{equation}
 Y_l^m(\theta,\phi) = \sqrt{(2l+1) \frac{(l-m)!}{(l+m)!}} P_l^m(\cos\theta) e^{im\phi}
 \qquad 
@@ -252,4 +283,4 @@ Note the absence of the $(-1)^m$ term and the presence of the kronecker delta in
 
 
 
-
+\Literature: SHTools: Tools for Working with Spherical Harmonics \cite{wime18}

@@ -309,7 +309,6 @@ echo "--------------------------" >> features
 grep discontinuous_galerkin */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-
 echo "--------------------------" >> features
 echo "---schur_complement-------" >> features
 echo "--------------------------" >> features
