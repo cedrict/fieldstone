@@ -18,15 +18,15 @@ degree=40 # 20 or 40, nothing else
 use_degree=40 # less or equal to degree
 
 #depth=24.381e3
-#depth=1500e3 # ok
-#depth=2891e3
 #depth=1251164.934145
-#depth=600e3 #ok 
 #depth=2500e3 
 #depth=2584716.092945
 #depth=100e3 
+#depth=100e3
 #depth=2800e3 
-depth=25e3
+#depth=2891e3
+#depth=1500e3 # ok
+depth=600e3 #ok 
 
 ###############################################################################
 # read dataset in data[l,2l+1,npline] array
@@ -696,37 +696,10 @@ for i in range (0,NV):
     vtufile.write("%f\n" % (S40RTS_dvRcmb[i]))
 vtufile.write("</DataArray>\n")
 
-if degree==20 and int(depth)==24381: 
-   vtufile.write("<DataArray type='Float32' Name='diff' Format='ascii'> \n")
-   for i in range (0,NV):
-       vtufile.write("%f\n" % (dv[i]-S20RTS_dvRmoho[i]))
-   vtufile.write("</DataArray>\n")
-if degree==20 and depth==100e3: 
-   vtufile.write("<DataArray type='Float32' Name='diff' Format='ascii'> \n")
-   for i in range (0,NV):
-       vtufile.write("%f\n" % (dv[i]-S20RTS_dvR100[i]))
-   vtufile.write("</DataArray>\n")
-if degree==20 and depth==600e3: 
-   vtufile.write("<DataArray type='Float32' Name='diff' Format='ascii'> \n")
-   for i in range (0,NV):
-       vtufile.write("%f\n" % (dv[i]-S20RTS_dvR600[i]))
-   vtufile.write("</DataArray>\n")
-
-if degree==20 and depth==1500e3: 
-   vtufile.write("<DataArray type='Float32' Name='diff' Format='ascii'> \n")
-   for i in range (0,NV):
-       vtufile.write("%f\n" % (dv[i]-S20RTS_dvR1500[i]))
-   vtufile.write("</DataArray>\n")
-if degree==20 and depth==2800e3: 
-   vtufile.write("<DataArray type='Float32' Name='diff' Format='ascii'> \n")
-   for i in range (0,NV):
-       vtufile.write("%f\n" % (dv[i]-S20RTS_dvR2800[i]))
-   vtufile.write("</DataArray>\n")
-if degree==20 and depth==2891e3: 
-   vtufile.write("<DataArray type='Float32' Name='diff' Format='ascii'> \n")
-   for i in range (0,NV):
-       vtufile.write("%f\n" % (dv[i]-S20RTS_dvRcmb[i]))
-   vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='diff' Format='ascii'> \n")
+for i in range (0,NV):
+    vtufile.write("%f\n" % (dv[i]-S40RTS_dvR600[i]))
+vtufile.write("</DataArray>\n")
 
 vtufile.write("</PointData>\n")
 #####
@@ -803,117 +776,3 @@ vtufile.close()
 print('produced sphere.vtu')
 
 #########################################################################################
-# trying splines
-#########################################################################################
-#x = np.arange(0, 2*np.pi+np.pi/4, 2*np.pi/8)
-#y = np.sin(x)
-#tck = interpolate.splrep(x, y, s=0)
-#print(x,y)
-#print(tck)
-#y= np.zeros(21,dtype=np.float64)  
-#y[:]=1
-#print(spline_knots)
-#print(y)
-#produce array of depths going from 0 to 2891km:
-#depths=np.zeros(2892,dtype=np.float64)
-#for i in range(0,2892):
-#    depths[i]=i
-#print(depths)
-#tck = interpolate.splrep(spline_knots, y, s=0)
-#ynew = interpolate.splev(depths, tck, der=0)
-#print(ynew)
-#exit()
-
-#########################################################################################
-# read spline files by maguire
-#########################################################################################
-
-#spline_functions= np.empty((2891,21),dtype=np.float64)  
-#for spl_nb in range(0,21):
-#    f = open('splines/spline{:02d}'.format(spl_nb+1)+'.dat')
-#    lines = f.readlines()
-#    f.close
-#    for i in range(0,2891):
-#        vals=lines[i].strip().split()
-#        spline_functions[i,spl_nb]=vals[1]
-    #end for
-#end for
-#for i in range(0,2891):
-#    print(np.sum(spline_functions[i,0:21])-1)
-# gives 1 with accuracy of about 1e-7
-
-exit()
-
-###############################################################################
-# use this new flm array to compute dlnvs at location theta, phi
-###############################################################################
-
-#dv   = np.zeros(nlat*nlon, dtype=np.float64)  
-phis = np.empty(nlat*nlon, dtype=np.float64)
-thetas = np.empty(nlat*nlon, dtype=np.float64)
-
-ispline=0
-
-print(spline_knots[ispline])
-print(6371e3-spline_knots[ispline])
-
-counter = 0
-for ilat in range(0,nlat):
-    for ilon in range(0,nlon):
-
-        phi=ilon*2*np.pi/(nlon-1)   
-
-        #phi+=np.pi      #puts africa in the middle 
-        #if phi>2*np.pi:
-        #   phi-=2*np.pi
-
-        theta=np.pi-ilat*np.pi/(nlat-1)
-
-        phis[counter]=phi
-        thetas[counter]=theta
-
-        val=0
-        for l in range(0,use_degree+1):
-            m=0
-            x=np.cos(theta)
-            Xlm=np.sqrt( (2*l+1)/4./np.pi ) * scipy.special.lpmv(m, l, x) 
-            val+=flm[l,0,ispline]*Xlm
-            for m in range(1,l+1):
-                #(-1)^m is in lpmv already
-                A=math.factorial(l-m)
-                B=math.factorial(l+m)
-                x=np.cos(theta)
-                Xlm=np.sqrt( (2*l+1)/4./np.pi*float(A)/float(B) ) * scipy.special.lpmv(m, l, x) 
-                alm=flm[l,2*m-1,ispline]
-                blm=flm[l,2*m,ispline]
-                #print('l,m=',l,m,'| alm=',alm,'blm=',blm)
-                #val+=np.sqrt(2.)*Xlm*( alm*np.cos(m*phi) + blm*np.sin(m*phi) )
-                val+=Xlm*( alm*np.cos(m*phi) + blm*np.sin(m*phi) )
-            #end for
-        #end for
-
-        #dv[counter] = val * 100 
-
-        counter+=1
-
-    #end for
-#end for
-
-print (np.sum(dv)/(nlat*nlon))
-
-#np.savetxt('seismic_velocity_anomaly.ascii',np.array([phis,thetas,dv]).T)
-np.savetxt('seismic_velocity_anomaly.ascii',np.array([lons,lats,dv]).T)
-
-
-###############################################################################
-# use spline functions to compute the value of flm at given depth
-###############################################################################
-#newflm = np.empty((degree+1,2*degree+1),dtype=np.float64)  
-#for l in range(0,degree+1):  #line of the pyramid
-#    for m in range(0,2*l+1): #column
-#        #print('======',l,m)
-#        yyy=flm[l,m,:]
-#        tck = interpolate.splrep(spline_knots, yyy, s=0)
-#        newflm[l,m] = interpolate.splev(depth, tck, der=0)
-#        #newflm[l,m] = flm[l,m,0]
-#print('use splines to compute coeffs at desired depth')
