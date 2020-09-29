@@ -14,19 +14,19 @@ nlon=360
 
 ###############################################################################
 
-degree=40 # 20 or 40, nothing else
-use_degree=40 # less or equal to degree
+degree=20 # 20 or 40, nothing else
+use_degree=20 # less or equal to degree
 
 #depth=24.381e3
 #depth=1251164.934145
 #depth=2500e3 
-#depth=2584716.092945
 #depth=100e3 
-#depth=100e3
 #depth=2800e3 
 #depth=2891e3
 #depth=1500e3 # ok
-depth=600e3 #ok 
+#depth=600e3 #ok 
+#depth=2584716.092945
+depth=100e3
 
 ###############################################################################
 # read dataset in data[l,2l+1,npline] array

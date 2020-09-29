@@ -58,7 +58,7 @@ Unfortunately only 11 numbers are stored on a single line so the 81 coeffs corre
 are spread across many lines, which makes read in the file a bit of nightmare. 
 Both S20RTS and S40RTS models are composed of 21 concentric layers (from the moho down to the core-mantle boundary) 
 so the above structure is repeated 21 times in the files. 
-The structure of the file is explained in the ASPECT manual (but it remains a mystery 
+The structure of the file is explained in the \aspect manual (but it remains a mystery 
 as to where this information comes from since it is not explained in the papers) 
 in a cookbook authored by Jacqueline Austermann: \index{contributors}{J. Austermann} 
 {\color{brown}
@@ -95,7 +95,7 @@ with $X_{lm}(\theta)$ given by Eq.(B.58) of  \cite{datr98}:
 X_{lm} = (-1)^m \sqrt{ \frac{2l+1}{4\pi} \frac{(l-m)!}{(l+m)!} } P_l^m(\cos\theta)
 }
 \]
-and note that in this equation $P_{lm}$ does not contain the $(-1)^m$ term.
+and note that in this equation $P_l^m$ does not contain the $(-1)^m$ term.
 
 \begin{center}
 \includegraphics[width=3cm]{images/sphcoord}\\
@@ -108,7 +108,7 @@ is the longitude ($0\le\phi\le 2\pi$) and $P_l^m$ are associated Legendre polyno
 
 This stone uses the {\tt scipy.special.lpmv} function for the product $(-1)^m P_l^m(x)$:
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_85/images/lpmv}
+\includegraphics[width=11cm]{python_codes/fieldstone_85/images/lpmv}
 \end{center}
 
 In Ritsema et al (2011) \cite{ridv11}, one reads: "We use the same 
@@ -168,11 +168,6 @@ indicated by the tics on the x axis, and that
 they are 1 on their respective node, i.e. $B_i(d_j)=\delta_{ij}$}
 \end{center}
 
-The algorithm goes as follows: we wish to compute the seismic velocity anomaly at location $r,\theta,\phi$.
-We then compute $X_l(\cos \theta)$, $\cos m\phi$, and $\sin m\phi$ for all the existing/relevant $(l,m)$ 
-combinations. For each spline shell we use the corresponding $a_{lm}$ and $b_{lm}$ coefficients to compute the 
-anomaly at $\theta,\phi$. We end up with 21 values stored in the array {\tt shell\_values} 
-which are then combined with the radial spline functions to obtain the anomaly at the desired depth.
 
 The structure of the code is as follows: the user chooses the value of three parameters:
 \begin{itemize}
@@ -181,20 +176,70 @@ The structure of the code is as follows: the user chooses the value of three par
 \item {\codefont depth}: depth in \si{m}.
 \end{itemize}
 Based on the value of {\codefont degree}, either {\filenamefont S20RTS.sph} or {\filenamefont S40RTS.sph} is read,
-and the coefficients are stored in athe array
+and the coefficients are stored in the array
 \begin{verbatim}
 flm = np.empty((degree+1,2*degree+1,nspline),dtype=np.float64)
 \end{verbatim}
-The first dimension is $l$, the second runs over $2l+1$ values, and this structure is necessary for all 21 splines (third dimension).
-A regular grid of $360\times 179$ longitude-latitude points is then generated (as well as their connectivity, required for vtu output).
+The first dimension is $l$, the second runs over $m$ (i.e. $2l+1$ values), 
+and this structure is necessary for all 21 splines (third dimension).
+A regular grid of $360\times 179$ longitude-latitude points is then generated (as well as their connectivity, required for vtu output). This choice is to match the default output of the Ritsema code.
 Spline knots locations are then read, and converted to depths and radii between the CMB and the Moho.
 A double for loop then runs over all points of the longitude-latitude plane and computes $dv/v$ as defined by the equations above 
 for each spline depth, and the 21 values are then averaged/interpolated so as to return the value at the desired depth. 
+
+The core algorithm goes as follows: we wish to compute the seismic velocity anomaly 
+at location $r,\theta,\phi$.
+We then compute $X_{lm}(\cos \theta)$, $\cos (m\phi)$, and $\sin (m\phi)$ 
+for all the existing/relevant $(l,m)$ combinations. 
+These are then combined to store the terms multiplying the $a_{lm}$ and $b_{lm}$ coefficients 
+in the arrays {\codefont a\_coeffs} and {\codefont b\_coeffs}
+(remember that the $(-1)^m$ term is inside the \texttt{lpmv} function).
+
+\begin{lstlisting}
+a_coeffs   = np.zeros((use_degree+1,use_degree+1), dtype=np.float64)
+b_coeffs   = np.zeros((use_degree+1,use_degree+1), dtype=np.float64)
+for ilat in range(0,nlat): 
+    for ilon in range(0,nlon): 
+        for l in range(0,use_degree+1):
+            m=0
+            x=np.cos(theta)
+            Xlm=np.sqrt( (2*l+1)/4./np.pi ) * scipy.special.lpmv(m,l,x) 
+            a_coeffs[l,0]=Xlm
+            for m in range(1,l+1):
+                A=math.factorial(l-m)
+                B=math.factorial(l+m)
+                x=np.cos(theta)
+                Xlm=np.sqrt( (2*l+1)/4./np.pi*float(A)/float(B) ) * scipy.special.lpmv(m,l,x) 
+                a_coeffs[l,m]=Xlm*np.cos(m*phi)
+                b_coeffs[l,m]=Xlm*np.sin(m*phi)
+\end{lstlisting}
+
+For each spline shell we use the corresponding $a_{lm}$ and $b_{lm}$ coefficients to compute the 
+anomaly at $(\theta,\phi)$. We end up with 21 values stored in the array {\tt shell\_values} 
+which are then combined with the radial spline functions to obtain the anomaly at the desired depth:
+
+\begin{lstlisting}
+for ilat in range(0,nlat): 
+    for ilon in range(0,nlon): 
+        [...code snippet above...]
+        shell_values=np.zeros(nspline,dtype=np.float64)  
+        for ispline in range(0,nspline):
+            for l in range(0,use_degree+1):
+                shell_values[ispline]+=flm[l,0,ispline]*a_coeffs[l,0]
+                for m in range(1,l+1):
+                    alm=flm[l,2*m-1,ispline]
+                    blm=flm[l,2*m,ispline]
+                    shell_values[ispline]+=a_coeffs[l,m]*alm+b_coeffs[l,m]*blm
+        tck=interpolate.splrep(spline_depths, shell_values)
+        dv[counter]=100*interpolate.splev(depth,tck)
+\end{lstlisting}
+
 As per usual we see that the python code is ridiculously slow...
+
 
 \paragraph{How to use the provided S20/S40RTS tools}:
 \begin{itemize}
-\item   Download {\filenamefont S20RTS\_plotting.tar.gz} at https://jritsema.earth.lsa.umich.edu/Research.html
+\item   Download {\filenamefont S20RTS\_plotting.tar.gz} at \url{https://jritsema.earth.lsa.umich.edu/Research.html}
 \item   Compile everything as described in the {\filenamefont readme} file
 \item   Copy the desired {\filenamefont SX0RTS.sph} file to be used in the bin directory
 \item   Move to the bin directory
@@ -219,6 +264,11 @@ As per usual we see that the python code is ridiculously slow...
 \item   Run {\sl ./raw2xyz\_jr $<$ input} this creates a {\filenamefont file.xyz} as chosen in the input file containing lon, 
         lat and dlnvs in \%
 \end{itemize}
+
+The Ritsema code is in the {\sl S20RTS\_plotting} folder. In the {\sl bin} subfolder you will 
+find my script {\filenamefont make\_map} which generates .xyz file (i.e. all the values at
+the desired depth). Simply edit {\filenamefont dep\_in} and {\filenamefont input} and adjust the 
+parameters.
 
 It is worth noticing that these tools are assembled from exisiting tools and libraries (e.g. 
 Numerical Recipes) and that double precision floats are not used everywhere, which, given the
@@ -292,7 +342,7 @@ Based on these indications we can run the code and compare the obtained results
 with those obtained with Ritsema's and/or SubMachine \cite{homs18}.
 
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_85/images/ridv11}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_85/images/ridv11}\\
 {\captionfont Taken from Ritsema et al (2011) \cite{ridv11}}
 \end{center}
 
@@ -362,5 +412,40 @@ with those obtained with Ritsema's and/or SubMachine \cite{homs18}.
 \includegraphics[width=5.5cm]{python_codes/fieldstone_85/images/fieldstone/diff_600km_S40RTS.png}\\
 {\captionfont Difference between Ritsema's code results and fieldstone results at 600\si{km} depth.}
 \end{center}
+
+\newpage
+%-------------------------------------------------------------------------
+\paragraph{A look at S40RTS in \aspect} As mentioned earlier \aspect{} uses 
+the same {\filenamefont SX0RTS.sph} files to arrive at $dv/v$ but it goes and extra 
+step and converts this quantity first to $d\rho/\rho$ and then to a temperature 
+anomaly, which is then added to a background temperature.
+This is all happening in {\filenamefont /source/initial\_temperature/S40RTS\_perturbation.cc}.
+In order to be able to visualise the temperature anomaly, I 
+edited the \texttt{initial\_temperature} function so that it returns only the 
+\texttt{temperature\_perturbation} quantity and not \texttt{background\_temperature + temperature\_perturbation}.
+I then proceed to run the {\filenamefont S20RTS.prm} cookbook with \texttt{Initial global refinement} set to 4
+and look at the temperature field which is then 
+the temperature anomaly (I have also switched the Stokes and advection solvers off).
+
+In the file \texttt{Vs to density scaling} is set to a constant value of 0.15 while 
+the \texttt{Thermal expansion coefficient} is set to 3e-5, so that $\delta T$ must be 
+divided by 0.15/3e-5=5000 to obtain the original $dv/v$. This means that the 
+range $[-7:7]$ for $dv/v$ becomes $[-350:350]$ for $T$:
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_85/aspect/aspect1}
+\includegraphics[width=7cm]{python_codes/fieldstone_85/aspect/aspect2}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_85/aspect/fieldstone1}
+\includegraphics[width=7cm]{python_codes/fieldstone_85/aspect/fieldstone2}\\
+{\captionfont Top row is \aspect{}, bottom row is fieldstone, depth of 100km.}
+\end{center}
+
+
+
+
+
+
+
 
 
