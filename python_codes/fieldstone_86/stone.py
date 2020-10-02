@@ -1,7 +1,8 @@
 import numpy as np
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix
+from scipy.sparse import csr_matrix, lil_matrix
+import matplotlib.pyplot as plt
 import time
 
 ###################################################################################################
@@ -28,6 +29,25 @@ def dNNVds(rq,sq):
     dNds_2=+0.25*(1.+rq)
     dNds_3=+0.25*(1.-rq)
     return dNds_0,dNds_1,dNds_2,dNds_3
+
+###################################################################################################
+
+def plot_T_field(Tnew, xcoords, ycoords, nnx, nny, Title, savename):
+    Tplot = Tnew.reshape(nny, nnx)
+    xplot = xcoords.reshape(nny, nnx)
+    yplot = ycoords.reshape(nny, nnx)
+    plt.subplot(Lx/Ly,1,2)
+    plt.title(Title,fontsize=7)
+    plt.xlabel('x [km]',fontsize=7)
+    plt.ylabel('y [km]',fontsize=7)
+    a = plt.contourf(xplot/1000, yplot/1000, Tplot, 21,  cmap = plt.cm.coolwarm)
+    cbar = plt.colorbar()
+    cbar.ax.tick_params(labelsize=5)
+    cbar.set_label('Temperature [K]',fontsize=5)
+    plt.savefig(savename, dpi=600,bbox_inches='tight')
+    #plt.show()
+    plt.close()
+    return None
 
 ###################################################################################################
 # geometrical parameters
@@ -75,11 +95,11 @@ T_lab = 1330
 ###################################################################################################
 
 nelx=200
-nely=120
+nely=60
 
-nstep=100
+nstep=1000
 
-dt=1e5*3.154e7
+dt=2e5*3.154e7
 
 ###################################################################################################
 
@@ -98,6 +118,10 @@ sqrt3=np.sqrt(3.)
 hcond=[hcond_sediments,hcond_crust,hcond_lithosphere,hcond_asthenosphere]
 hcapa=[hcapa_sediments,hcapa_crust,hcapa_lithosphere,hcapa_asthenosphere]
 rho=[rho_sediments,rho_crust,rho_lithosphere,rho_asthenosphere]
+
+print("-----------------------------")
+print("----------fieldstone---------")
+print("-----------------------------")
 
 ###################################################################################################
 
@@ -284,6 +308,8 @@ for i in range(0,NT):
 
 #end for
 
+plot_T_field(T, xT, yT, nnx, nny, 'Initial temperature field', 'T_init.pdf')
+
 np.savetxt('T_init.ascii',np.array([xT,yT,T]).T,header='#x,y,T')
 
 print("initial temperature: %.3f s" % (time.time() - start))
@@ -305,11 +331,12 @@ for i in range(0,NT):
     #end if
 #end for
 
-print("setup: boundary conditions: %.3f s" % (time.time() - start))
+print("boundary conditions: %.3f s" % (time.time() - start))
 
 ###################################################################################################
 # material layout
 ###################################################################################################
+start = time.time()
 
 xc  = np.zeros(nel,dtype=np.float64)  
 yc  = np.zeros(nel,dtype=np.float64)  
@@ -344,6 +371,8 @@ for iel in range(0,nel):
        mat[iel]=4
 
 #np.savetxt('mat.ascii',np.array([xc,yc,mat]).T,header='#x,y,mat')
+
+print("material layout: %.3f s" % (time.time() - start))
     
 ###################################################################################################
 # BEGINNING OF TIMESTEPPING
@@ -352,7 +381,8 @@ for iel in range(0,nel):
 
 for istep in range(0,nstep):
 
-    print('istep=',istep)
+    print('-----------------------------')
+    print('istep=',istep,'/',nstep)
 
     ######################################################################
     # build FE matrix for Temperature 
@@ -365,7 +395,7 @@ for istep in range(0,nstep):
     dNdy  = np.zeros(mT,dtype=np.float64)             # shape functions derivatives
     dNdr  = np.zeros(mT,dtype=np.float64)             # shape functions derivatives
     dNds  = np.zeros(mT,dtype=np.float64)             # shape functions derivatives
-    A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
+    A_mat = lil_matrix((NfemT,NfemT),dtype=np.float64) # FE matrix 
     rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
     B_mat=np.zeros((2,ndofT*mT),dtype=np.float64)     # gradient matrix B 
     N_mat = np.zeros((mT,1),dtype=np.float64)         # shape functions
@@ -422,10 +452,10 @@ for istep in range(0,nstep):
                 hcapaq=hcapa[mat[iel]-1]
 
                 # compute mass matrix
-                MM+=N_mat.dot(N_mat.T)*rhoq*hcapa*weightq*jcob
+                MM+=N_mat.dot(N_mat.T)*rhoq*hcapaq*weightq*jcob
 
                 # compute diffusion matrix
-                Kd+=B_mat.T.dot(B_mat)*hcond*weightq*jcob
+                Kd+=B_mat.T.dot(B_mat)*hcondq*weightq*jcob
 
                 iiq+=1
 
@@ -475,9 +505,22 @@ for istep in range(0,nstep):
 
     print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
 
-    np.savetxt('T.ascii',np.array([xT,yT,T]).T,header='#x,y,T')
+    filename = 'T_{:04d}'.format(istep) 
+    np.savetxt(filename+'.ascii',np.array([xT,yT,T]).T,header='#x,y,T')
+    plot_T_field(T, xT, yT, nnx, nny, 'temperature field', filename+'.pdf')
 
     print("solve T: %.3f s" % (time.time() - start))
+
+    #################################################################
+    # profiles
+    #################################################################
+
+    filename = 'profile_{:04d}.ascii'.format(istep) 
+    profile=open(filename,"w")
+    for i in range(0,NT):
+        if abs(xT[i]-Lx/2)/Lx<eps:
+           profile.write("%10e %10e \n" %(yT[i],T[i]))
+    profile.close()
 
     #################################################################
     # export to vtu
