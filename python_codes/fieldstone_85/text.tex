@@ -24,7 +24,10 @@ The dataset are widely available and used (in Specfem, in Aspect, ...) and come 
 files {\sl S20RTS.sph} and {\sl S40RTS.sph} (supplemented by a file with the location of the knots of the 21 splines
 used for the radial interpolation). 
 Each {\sl .sph} file has a 1 line header, and the first number on this line indicates the maximum degree number $l$ 
-(20 or 40, then). The rest of these files consists of many rows and colums of numbers.
+(20 or 40, then)\footnote{
+"The header lines in the sph file includes a 24 followed by 3 zeroes and 21 ones. 
+This indicates that the first three splines, which apply to the crust, have been turned off."
+J. Ritsema, pers. comm.}. The rest of these files consists of many rows and colums of numbers.
 
 Let us recall that for a given value of the degree $l$ the order $m$ is such that $-l \le m \le +l$, i.e. 
 there are $2l+1$ values of $m$ for a single value of $l$. Concretely:
@@ -54,9 +57,11 @@ per se in that order -- see what follows). The third line contains 5
 coefficients, the fourth 7, etc ... 
 In the case of S20RTS this goes on until $l=20$ and the line therefore contains 41 coefficients.
 In the case of S40RTS this goes on until $l=40$ and the line contains 81 coefficients.
-Unfortunately only 11 numbers are stored on a single line so the 81 coeffs corresponding to $l=40$ (for instance)
+Unfortunately only 11 numbers are stored on a single line so the 81 coeffs corresponding 
+to $l=40$ (for instance)
 are spread across many lines, which makes read in the file a bit of nightmare. 
-Both S20RTS and S40RTS models are composed of 21 concentric layers (from the moho down to the core-mantle boundary) 
+Both S20RTS and S40RTS models are composed of 21 concentric layers (from the moho down 
+to the core-mantle boundary) 
 so the above structure is repeated 21 times in the files. 
 The structure of the file is explained in the \aspect manual (but it remains a mystery 
 as to where this information comes from since it is not explained in the papers) 
@@ -71,6 +76,11 @@ $a_{20}$ $a_{21}$ $b_{21}$ $a_{22}$ $b_{22}$ \\
 ... \\
 $a_{lm}$ is the cosine coefficient of degree $l$ and order $m$; $b_{lm}$ is
 the sine coefficient of degree $l$ and order $m$."}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_85/images/fun}
+\end{center}
+
 
 In the file {\sl aspect/source/initial\_temperature/S40RTS\_perturbation.cc} it is 
 indicated that the implementation is based on Eq.~(B.99) of Dahlen \& Tromp \cite{datr98}, 
@@ -340,6 +350,9 @@ synthetised  signal.
 
 Based on these indications we can run the code and compare the obtained results 
 with those obtained with Ritsema's and/or SubMachine \cite{homs18}.
+Note that the data used in SubMachine are based on files (lat, lon, dvs) that 
+Paula Koelemeijer provided to the lead author, 
+and then interpolated between 25 km depths (pers. comm.).
 
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_85/images/ridv11}\\
@@ -423,24 +436,24 @@ This is all happening in {\filenamefont /source/initial\_temperature/S40RTS\_per
 In order to be able to visualise the temperature anomaly, I 
 edited the \texttt{initial\_temperature} function so that it returns only the 
 \texttt{temperature\_perturbation} quantity and not \texttt{background\_temperature + temperature\_perturbation}.
-I then proceed to run the {\filenamefont S20RTS.prm} cookbook with \texttt{Initial global refinement} set to 4
-and look at the temperature field which is then 
+I then proceeded to run the {\filenamefont S20RTS.prm} cookbook with \texttt{Initial global refinement} set to 4
+and looked at the temperature field which is then 
 the temperature anomaly (I have also switched the Stokes and advection solvers off).
 
-In the file \texttt{Vs to density scaling} is set to a constant value of 0.15 while 
+In the input file \texttt{Vs to density scaling} is set to a constant value of 0.15 while 
 the \texttt{Thermal expansion coefficient} is set to 3e-5, so that $\delta T$ must be 
 divided by 0.15/3e-5=5000 to obtain the original $dv/v$. This means that the 
 range $[-7:7]$ for $dv/v$ becomes $[-350:350]$ for $T$:
 
-
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_85/aspect/aspect1}
-\includegraphics[width=7cm]{python_codes/fieldstone_85/aspect/aspect2}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_85/aspect/fieldstone1}
-\includegraphics[width=7cm]{python_codes/fieldstone_85/aspect/fieldstone2}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_85/aspect/aspect1}
+\includegraphics[width=8cm]{python_codes/fieldstone_85/aspect/aspect2}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_85/aspect/fieldstone1}
+\includegraphics[width=8cm]{python_codes/fieldstone_85/aspect/fieldstone2}\\
 {\captionfont Top row is \aspect{}, bottom row is fieldstone, depth of 100km.}
 \end{center}
 
+There is a good (but not perfect) agreement between \aspect{} and fieldstone...
 
 
 
