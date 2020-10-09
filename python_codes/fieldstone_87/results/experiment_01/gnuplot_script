@@ -1,0 +1,76 @@
+set term pdf enhanced font 'Times,11pt'
+set grid
+set xlabel '# iteration'
+set log y
+set key outside
+
+set ylabel '||R||_2'
+set output 'conv.pdf'
+plot[][]\
+'n_02/conv.ascii' w lp ps .4 t 'n=2',\
+'n_03/conv.ascii' w lp ps .4 t 'n=3',\
+'n_04/conv.ascii' w lp ps .4 t 'n=4',\
+'n_05/conv.ascii' w lp ps .4 t 'n=5',\
+
+
+
+set ylabel 'u'
+unset log y 
+set output 'u.pdf'
+plot[][]\
+'n_02/stats_u.ascii' u 1:2 w lp lt 1 ps .4 t 'n=2',\
+'n_02/stats_u.ascii' u 1:3 w lp lt 1 ps .4 notitle ,\
+'n_03/stats_u.ascii' u 1:2 w lp lt 2 ps .4 t 'n=3',\
+'n_03/stats_u.ascii' u 1:3 w lp lt 2 ps .4 notitle  ,\
+'n_04/stats_u.ascii' u 1:2 w lp lt 3 ps .4 t 'n=4',\
+'n_04/stats_u.ascii' u 1:3 w lp lt 3 ps .4 notitle  ,\
+'n_05/stats_u.ascii' u 1:2 w lp lt 4 ps .4 t 'n=5',\
+'n_05/stats_u.ascii' u 1:3 w lp lt 4 ps .4 notitle  ,\
+
+set ylabel 'v'
+set output 'v.pdf'
+plot[][]\
+'n_02/stats_v.ascii' u 1:2 w lp lt 1 ps .4 t 'n=2',\
+'n_02/stats_v.ascii' u 1:3 w lp lt 1 ps .4 notitle ,\
+'n_03/stats_v.ascii' u 1:2 w lp lt 2 ps .4 t 'n=3',\
+'n_03/stats_v.ascii' u 1:3 w lp lt 2 ps .4 notitle  ,\
+'n_04/stats_v.ascii' u 1:2 w lp lt 3 ps .4 t 'n=4',\
+'n_04/stats_v.ascii' u 1:3 w lp lt 3 ps .4 notitle  ,\
+'n_05/stats_v.ascii' u 1:2 w lp lt 4 ps .4 t 'n=5',\
+'n_05/stats_v.ascii' u 1:3 w lp lt 4 ps .4 notitle  ,\
+
+set ylabel 'p'
+set output 'p.pdf'
+plot[][-1e2:1e2]\
+'n_02/stats_p.ascii' u 1:2 w lp lt 1 ps .4 t 'n=2',\
+'n_02/stats_p.ascii' u 1:3 w lp lt 1 ps .4 notitle ,\
+'n_03/stats_p.ascii' u 1:2 w lp lt 2 ps .4 t 'n=3',\
+'n_03/stats_p.ascii' u 1:3 w lp lt 2 ps .4 notitle  ,\
+'n_04/stats_p.ascii' u 1:2 w lp lt 3 ps .4 t 'n=4',\
+'n_04/stats_p.ascii' u 1:3 w lp lt 3 ps .4 notitle  ,\
+'n_05/stats_p.ascii' u 1:2 w lp lt 4 ps .4 t 'n=5',\
+'n_05/stats_p.ascii' u 1:3 w lp lt 4 ps .4 notitle  ,\
+
+set ylabel '{/Symbol d}u'
+set output 'du.pdf'
+plot[][]\
+'n_02/stats_du.ascii' u 1:2 w lp lt 1 ps .4 t 'n=2',\
+'n_02/stats_du.ascii' u 1:3 w lp lt 1 ps .4 notitle ,\
+'n_03/stats_du.ascii' u 1:2 w lp lt 2 ps .4 t 'n=3',\
+'n_03/stats_du.ascii' u 1:3 w lp lt 2 ps .4 notitle  ,\
+'n_04/stats_du.ascii' u 1:2 w lp lt 3 ps .4 t 'n=4',\
+'n_04/stats_du.ascii' u 1:3 w lp lt 3 ps .4 notitle  ,\
+'n_05/stats_du.ascii' u 1:2 w lp lt 4 ps .4 t 'n=5',\
+'n_05/stats_du.ascii' u 1:3 w lp lt 4 ps .4 notitle  ,\
+
+set ylabel '{/Symbol d}p'
+set output 'dp.pdf'
+plot[][-1:1]\
+'n_02/stats_dp.ascii' u 1:2 w lp lt 1 ps .4 t 'n=2',\
+'n_02/stats_dp.ascii' u 1:3 w lp lt 1 ps .4 notitle ,\
+'n_03/stats_dp.ascii' u 1:2 w lp lt 2 ps .4 t 'n=3',\
+'n_03/stats_dp.ascii' u 1:3 w lp lt 2 ps .4 notitle  ,\
+'n_04/stats_dp.ascii' u 1:2 w lp lt 3 ps .4 t 'n=4',\
+'n_04/stats_dp.ascii' u 1:3 w lp lt 3 ps .4 notitle  ,\
+'n_05/stats_dp.ascii' u 1:2 w lp lt 4 ps .4 t 'n=5',\
+'n_05/stats_dp.ascii' u 1:3 w lp lt 4 ps .4 notitle  ,\

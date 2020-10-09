@@ -8,34 +8,60 @@ from numpy import linalg as LA
 
 #------------------------------------------------------------------------------
 
-def gx(x,y):
-    return 0
-
-def gy(x,y):
-    return 0
-
-#------------------------------------------------------------------------------
-# experiment=0: linear cavity
-# experiment=1: cavity
-# experiment=2: poiseuille
-# experiment=3: brick
-# experiment=4: punch
-# experiment=5: slab detach (case 1a)
-# experiment=6: slab detach (case 1b)
-# experiment=7: spmw16 brick 
-# experiment=8: Stokes sphere 
-
-def viscosity(exx,eyy,exy,iiter,x,y):
+def viscosity_density(exx,eyy,exy,iiter,x,y):
 
     #compute effective strain rate (sqrt of 2nd inv)
     varepsilon_e=np.sqrt(0.5*(exx**2+eyy**2)+exy**2 + reg**2)
 
-    val=beta*varepsilon_e**alpha
-
+    # linear cavity
     if experiment==0:
-       val=1.
+       alpha=0
+       beta=1
+       rho=0
 
-    return val
+    # cavity
+    if experiment==1:
+       beta=1
+       alpha=1./5.-1
+       rho=0
+
+    # brick
+    if experiment==2:
+       expo=50
+       alpha=1./expo-1
+       beta=40.e6/2./1e-15/1.e-15**(1./expo-1.)
+       rho=0
+
+    # slab detach (case 1a)
+    if experiment==3:
+       if y>580e3 or  (y>Ly-(80e3+250e3) and abs(x-Lx/2)<40e3) : 
+          #n=4 
+          alpha=0.25-1
+          beta=4.75e11
+          rho=3300-3150
+       else:
+          #n=1 
+          alpha=0
+          beta=1.e21
+          rho=3150-3150
+
+    # slab detach (case 1b)
+    if experiment==4:
+       if y>580e3 or  (y>Ly-(80e3+250e3) and abs(x-Lx/2)<40e3) : 
+          #n=4 
+          alpha=0.25-1
+          beta=4.75e11
+          rho=3300-3150
+       else:
+          #n=3 
+          alpha=1./3.-1
+          beta=4.54e10
+          rho=3150-3150
+
+    # compute effective power law viscosity
+    eta=beta*varepsilon_e**alpha
+
+    return eta,rho,alpha
 
 #------------------------------------------------------------------------------
 
@@ -99,7 +125,7 @@ mP=4     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-experiment=1
+experiment=2
 
 if experiment==0 or experiment==1: # cavity
    Lx=1.
@@ -110,13 +136,35 @@ if experiment==0 or experiment==1: # cavity
    adapt_theta=False
    eta_ref=1. 
    reg=1e-8  
-   rho=0
-   beta=1
-   expo=2
-   alpha=1./expo-1
+   gx=0
+   gy=0
 
-tol_nl=1e-6 # nonlinear tolerance
+if experiment==2: # brick
+   Lx=40e3
+   Ly=10e3
+   nelx=64
+   niter=50
+   Npicard=100
+   adapt_theta=False
+   eta_ref=1e22 
+   reg=1e-20  
+   gx=0
+   gy=0
 
+if experiment==3 or experiment==4: # slab detachment
+   Lx=1000e3
+   Ly=660e3
+   nelx=100
+   niter=50
+   Npicard=100
+   adapt_theta=False
+   eta_ref=1e22 
+   reg=1e-20  
+   gx=0
+   gy=-10
+
+
+tol_nl=1e-8 # nonlinear tolerance
 every=1
 produce_nl_vtu=True
 use_srn=False
@@ -143,7 +191,7 @@ nq=9*nel
 
 #################################################################
 
-scaling_coeff=1 #eta_ref/Ly
+scaling_coeff=eta_ref/Ly
 
 #################################################################
 
@@ -249,25 +297,52 @@ bc_val=np.zeros(NfemV,dtype=np.float64) # boundary condition, value
 
 if experiment==0 or experiment==1: # cavity 
    for i in range(0,NV):
-
        if yV[i]/Ly>(1-eps):
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = xV[i]*(Lx-xV[i]) 
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
-
        if xV[i]/Lx<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
-
        if xV[i]/Lx>(1-eps):
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
-
        if yV[i]/Ly<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
-
     #end for
+#end if
 
+if experiment==2: # brick
+   velbc=1e-15*(Lx/2)
+   for i in range(0,NV):
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = -velbc
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = +velbc
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if yV[i]/Ly<eps:
+          if xV[i]<Lx/2:
+             bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = -velbc
+          if xV[i]>Lx/2:
+             bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = +velbc
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+    #end for
+#end if
+
+if experiment==3 or experiment==4: # slab detachment
+   for i in range(0,NV):
+       if yV[i]/Ly>(1-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if yV[i]/Ly<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+    #end for
 #end if
 
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
@@ -329,8 +404,8 @@ for iiter in range(0,niter):
    # [GT 0 ][p] [h]
    #################################################################
 
-   #A_sparse= lil_matrix((Nfem,Nfem),dtype=np.float64) # FEM stokes matrix 
-   A_sparse= np.zeros((Nfem,Nfem),dtype=np.float64) # FEM stokes matrix 
+   A_sparse= lil_matrix((Nfem,Nfem),dtype=np.float64) # FEM stokes matrix 
+   #A_sparse= np.zeros((Nfem,Nfem),dtype=np.float64) # FEM stokes matrix 
    rhs     = np.zeros(Nfem,dtype=np.float64)          # right hand side of Ax=b
    N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64)  # N matrix  
    f_rhs   = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
@@ -338,6 +413,7 @@ for iiter in range(0,niter):
    xq      = np.zeros(9*nel,dtype=np.float64)         # x coords of q points 
    yq      = np.zeros(9*nel,dtype=np.float64)         # y coords of q points 
    etaq    = np.zeros(9*nel,dtype=np.float64)         # viscosity of q points 
+   rhoq    = np.zeros(9*nel,dtype=np.float64)         # density of q points 
    pq      = np.zeros(9*nel,dtype=np.float64)         # pressure of q points 
    srq     = np.zeros(9*nel,dtype=np.float64)         # total strain rate of q points 
 
@@ -418,15 +494,10 @@ for iiter in range(0,niter):
                # effective strain rate at qpoint                
                srq[counter]=np.sqrt(0.5*(exxq*exxq+eyyq*eyyq)+exyq*exyq + reg**2)
 
-               D_mat = np.array([[exxq*exxq,exxq*eyyq,exxq*exyq],\
-                                 [eyyq*exxq,eyyq*eyyq,eyyq*exyq],\
-                                 [exyq*exxq,exyq*eyyq,exyq*exyq]],dtype=np.float64) 
-
-               coef=2*etaq[counter]*alpha/srq[counter]**2
 
                # compute pressure at qpoint
-               #for k in range(0,mP):
-               #    pq[counter]+=NNNP[k]*p[iconP[k,iel]]
+               for k in range(0,mP):
+                   pq[counter]+=NNNP[k]*p[iconP[k,iel]]
 
                # construct 3x8 b_mat matrix
                for i in range(0,mV):
@@ -435,16 +506,22 @@ for iiter in range(0,niter):
                                             [dNNNVdy[i],dNNNVdx[i]]]
 
                # compute effective plastic viscosity
-               etaq[counter]=viscosity(exxq,eyyq,exyq,iiter,xq[counter],yq[counter])
+               etaq[counter],rhoq[counter],alpha=viscosity_density(exxq,eyyq,exyq,iiter,\
+                                                                   xq[counter],yq[counter])
 
+               D_mat = np.array([[exxq*exxq,exxq*eyyq,exxq*exyq],\
+                                 [eyyq*exxq,eyyq*eyyq,eyyq*exyq],\
+                                 [exyq*exxq,exyq*eyyq,exyq*exyq]],dtype=np.float64) 
+
+               coef=2*etaq[counter]*alpha/srq[counter]**2
                # compute elemental a_mat matrix
                K_el0+=b_mat.T.dot(C_mat.dot(b_mat))*etaq[counter]*weightq*jcob
                K_el1+=b_mat.T.dot(D_mat.dot(b_mat))*coef*weightq*jcob
 
                # compute elemental rhs vector
                for i in range(0,mV):
-                   f_el[ndofV*i+0]+=NNNV[i]*jcob*weightq*gx(xq,yq)*rho
-                   f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy(xq,yq)*rho
+                   f_el[ndofV*i+0]+=NNNV[i]*jcob*weightq*gx*rhoq[counter]
+                   f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy*rhoq[counter]
 
                for i in range(0,mP):
                    N_mat[0,i]=NNNP[i]
@@ -457,8 +534,9 @@ for iiter in range(0,niter):
            # end for iq 
        # end for jq 
 
-       f_el-=K_el0.dot(V_el)+G_el.dot(P_el) # rhs is -residual = b - A.x = b - K V - G P 
-       h_el-=G_el.T.dot(V_el)               #                  = h - G^T . V 
+       # finish building rhs which is -residual
+       f_el-=K_el0.dot(V_el)+G_el.dot(P_el) # b - K.V - G.P 
+       h_el-=G_el.T.dot(V_el)               # h - G^T.V 
 
        K_el=K_el0+theta*K_el1
 
@@ -518,14 +596,16 @@ for iiter in range(0,niter):
    print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
 
    print("     -> etaq (m,M) %.5e %.5e " %(np.min(etaq),np.max(etaq)))
+   print("     -> rhoq (m,M) %.5e %.5e " %(np.min(rhoq),np.max(rhoq)))
 
    print("build FE matrix: %.3f s" % (timing.time() - start))
 
    ######################################################################
    # pressure nullspace removal
+   # requires last pressure dof to be at p=0
    ######################################################################
 
-   if experiment==0 or experiment==1: 
+   if experiment==0 or experiment==1 or experiment==3 or experiment==4: 
       for i in range(0,Nfem):
           A_sparse[Nfem-1,i]=0
           A_sparse[i,Nfem-1]=0
@@ -548,16 +628,21 @@ for iiter in range(0,niter):
    if iiter==0:
       Rnorm0=Rnorm
 
-   convfile.write("%3d %10e %10e %10e \n" %(iiter,Rnorm/Rnorm0,RVnorm,RPnorm)) 
+   convfile.write("%3d %10e %10e %10e %10e\n" %(iiter,Rnorm/Rnorm0,\
+                                                      RVnorm,\
+                                                      RPnorm,tol_nl)) 
    convfile.flush()
+
+   converged=(Rnorm/Rnorm0<tol_nl)
 
    ######################################################################
    # solving system
    ######################################################################
 
-   #sparse_matrix=A_sparse.tocsr()
-   sparse_matrix=sps.csr_matrix(A_sparse)
+   sparse_matrix=A_sparse.tocsr()
+   #sparse_matrix=sps.csr_matrix(A_sparse)
    sol=sps.linalg.spsolve(sparse_matrix,rhs)
+
    du,dv=np.reshape(sol[0:NfemV],(NV,2)).T
    dp=sol[NfemV:Nfem]*scaling_coeff
 
@@ -594,11 +679,11 @@ for iiter in range(0,niter):
    print("solve system: %.3f s - Nfem %d" % (timing.time() - start, Nfem))
 
    #################################################################
-   #normalise pressure
+   #normalise pressure (for experiments with p nullspace)
    #################################################################
    start = timing.time()
 
-   if experiment==0 or experiment==1:
+   if experiment==0 or experiment==1 or experiment==3 or experiment==4:
 
       int_p=0
       for iel in range(0,nel):
@@ -680,10 +765,10 @@ for iiter in range(0,niter):
    xc = np.zeros(nel,dtype=np.float64)  
    yc = np.zeros(nel,dtype=np.float64)  
    pc = np.zeros(nel,dtype=np.float64)  
-   exx = np.zeros(nel,dtype=np.float64)  
-   eyy = np.zeros(nel,dtype=np.float64)  
-   exy = np.zeros(nel,dtype=np.float64)  
-   sr  = np.zeros(nel,dtype=np.float64)  
+   exxc = np.zeros(nel,dtype=np.float64)  
+   eyyc = np.zeros(nel,dtype=np.float64)  
+   exyc = np.zeros(nel,dtype=np.float64)  
+   src  = np.zeros(nel,dtype=np.float64)  
 
    for iel in range(0,nel):
 
@@ -711,22 +796,22 @@ for iiter in range(0,niter):
        for k in range(0,mV):
            xc[iel] += NNNV[k]*xV[iconV[k,iel]]
            yc[iel] += NNNV[k]*yV[iconV[k,iel]]
-           exx[iel] += dNNNVdx[k]*u[iconV[k,iel]]
-           eyy[iel] += dNNNVdy[k]*v[iconV[k,iel]]
-           exy[iel] += 0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
+           exxc[iel] += dNNNVdx[k]*u[iconV[k,iel]]
+           eyyc[iel] += dNNNVdy[k]*v[iconV[k,iel]]
+           exyc[iel] += 0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
 
-       sr[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
+       src[iel]=np.sqrt(0.5*(exxc[iel]*exxc[iel]+eyyc[iel]*eyyc[iel])+exyc[iel]*exyc[iel])
 
        for k in range(0,mP):
            pc[iel] += NNNP[k]*p[iconP[k,iel]]
 
    #end if
 
-   print("     -> exx (m,M) %.5e %.5e " %(np.min(exx),np.max(exx)))
-   print("     -> eyy (m,M) %.5e %.5e " %(np.min(eyy),np.max(eyy)))
-   print("     -> exy (m,M) %.5e %.5e " %(np.min(exy),np.max(exy)))
-   print("     -> sr  (m,M) %.5e %.5e " %(np.min(sr),np.max(sr)))
-   print("     -> pc  (m,M) %.5e %.5e " %(np.min(pc),np.max(pc)))
+   print("     -> exxc (m,M) %.5e %.5e " %(np.min(exxc),np.max(exxc)))
+   print("     -> eyyc (m,M) %.5e %.5e " %(np.min(eyyc),np.max(eyyc)))
+   print("     -> exyc (m,M) %.5e %.5e " %(np.min(exyc),np.max(exyc)))
+   print("     -> src  (m,M) %.5e %.5e " %(np.min(src),np.max(src)))
+   print("     -> pc   (m,M) %.5e %.5e " %(np.min(pc),np.max(pc)))
 
    print("compute press & sr: %.3f s" % (timing.time() - start))
 
@@ -793,16 +878,18 @@ for iiter in range(0,niter):
    ######################################################################
    start = timing.time()
 
-   etan    = np.zeros(NV,dtype=np.float64)
+   etan=np.zeros(NV,dtype=np.float64)
+   rhon=np.zeros(NV,dtype=np.float64)
 
    for i in range(0,NV):
-       etan[i]=viscosity(exxn[i],eyyn[i],exyn[i],iiter,xV[i],yV[i])
+       etan[i],rhon[i],alpha=viscosity_density(exxn[i],eyyn[i],exyn[i],iiter,xV[i],yV[i])
 
    print("     -> etan (m,M) %.6e %.6e " %(np.min(etan),np.max(etan)))
 
    #np.savetxt('etan_{:04d}.ascii'.format(iter),np.array([xV,yV,etan]).T,header='# x,y,eta')
 
    print("compute nodal viscosity: %.3f s" % (timing.time() - start))
+
 
    ######################################################################
    # compute vrms
@@ -864,6 +951,10 @@ for iiter in range(0,niter):
       vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
       for iq in range(0,nq):
           vtufile.write("%10e \n" % etaq[iq])
+      vtufile.write("</DataArray>\n")
+      vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
+      for iq in range(0,nq):
+          vtufile.write("%10e \n" % rhoq[iq])
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='strain_rate (T)' Format='ascii'> \n")
       for iq in range(0,nq):
@@ -933,6 +1024,11 @@ for iiter in range(0,niter):
       for i in range (0,NV):
           vtufile.write("%10e\n" % (etan[i]))
       vtufile.write("</DataArray>\n")
+      vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
+      for i in range (0,NV):
+          vtufile.write("%10e\n" % (rhon[i]))
+      vtufile.write("</DataArray>\n")
+
       vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
       for i in range (0,NV):
           vtufile.write("%e\n" % (srn[i]))
@@ -963,9 +1059,31 @@ for iiter in range(0,niter):
 
    print("write nl iter vtu file: %.3f s" % (timing.time() - start))
 
+
+   if converged:
+      print('##### converged #####')
+      break
+
 #------------------------------------------------------------------------------
 # end of non-linear iterations
 #------------------------------------------------------------------------------
+   
+######################################################################
+# export measurements for slab detachment
+######################################################################
+
+if experiment==3 or experiment==4:
+   vert_file=open('vertical_profile.ascii',"w")
+   for i in range(0,NV):
+       if abs(xV[i]-Lx/2)/Lx<eps:
+          vert_file.write("%e %e %e %e %e %e\n" %(yV[i],etan[i],srn[i],u[i],v[i],q[i]))
+   vert_file.close()
+   hor_file=open('horizontal_profile.ascii',"w")
+   for i in range(0,NV):
+       if abs(yV[i]-550e3)/Lx<eps:
+          hor_file.write("%e %e %e %e %e %e\n" %(xV[i],etan[i],srn[i],u[i],v[i],q[i]))
+   hor_file.close()
+
 
 #####################################################################
 # plot of solution
@@ -989,11 +1107,11 @@ vtufile.write("</Points> \n")
 vtufile.write("<CellData Scalars='scalars'>\n")
 vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
 for iel in range (0,nel):
-    vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
+    vtufile.write("%10e\n" % (exxc[iel]+eyyc[iel]))
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
 for iel in range (0,nel):
-    eta=viscosity(exx[iel],eyy[iel],exy[iel],iiter,xc[iel],yc[iel])
+    eta,dum,dum=viscosity_density(exxc[iel],eyyc[iel],exyc[iel],iiter,xc[iel],yc[iel])
     vtufile.write("%10e\n" %eta) 
 vtufile.write("</DataArray>\n")
 vtufile.write("</CellData>\n")

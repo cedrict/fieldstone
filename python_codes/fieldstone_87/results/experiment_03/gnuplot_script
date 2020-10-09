@@ -1,0 +1,105 @@
+set term pdf enhanced font 'Times,11pt'
+set grid
+set xlabel '# iteration'
+set log y
+set key outside
+
+set ylabel '||R||_2'
+set output 'conv.pdf'
+plot[][]\
+'50x33/conv.ascii' w lp ps .4 t '50x33',\
+'100x66/conv.ascii' w lp ps .4 t '100x66',\
+
+#########################################################
+
+set ylabel 'viscosity'
+set output 'horizontal_profile_eta.pdf'
+set xlabel 'x (km)'
+plot[][]\
+'50x33/horizontal_profile.ascii' u ($1/1000):2 w lp ps .4 t '50x33',\
+'100x66/horizontal_profile.ascii' u ($1/1000):2 w lp ps .4 t '100x66',\
+
+set output 'vertical_profile_eta.pdf'
+set xlabel 'y (km)'
+plot[][]\
+'50x33/vertical_profile.ascii' u ($1/1000):2 w lp ps .4 t '50x33',\
+'100x66/vertical_profile.ascii' u ($1/1000):2 w lp ps .4 t '100x66',\
+
+set ylabel 'strain rate (s^{-1})'
+set output 'horizontal_profile_srn.pdf'
+set xlabel 'x (km)'
+plot[][]\
+'50x33/horizontal_profile.ascii' u ($1/1000):3 w lp ps .4 t '50x33',\
+'100x66/horizontal_profile.ascii' u ($1/1000):3 w lp ps .4 t '100x66',\
+
+set output 'vertical_profile_srn.pdf'
+set xlabel 'y (km)'
+plot[][]\
+'50x33/vertical_profile.ascii' u ($1/1000):3 w lp ps .4 t '55x33',\
+'100x66/vertical_profile.ascii' u ($1/1000):3 w lp ps .4 t '100x66',\
+
+unset log y 
+set ylabel 'pressure (MPa)'
+set output 'horizontal_profile_p.pdf'
+set xlabel 'x (km)'
+plot[][]\
+'50x33/horizontal_profile.ascii' u ($1/1000):($6/1e6) w lp ps .4 t '50x33',\
+'100x66/horizontal_profile.ascii' u ($1/1000):($6/1e6) w lp ps .4 t '100x66',\
+
+set output 'vertical_profile_p.pdf'
+set xlabel 'y (km)'
+plot[][]\
+'50x33/vertical_profile.ascii' u ($1/1000):($6/1e6) w lp ps .4 t '50x33',\
+'100x66/vertical_profile.ascii' u ($1/1000):($6/1e6) w lp ps .4 t '100x66',\
+
+
+
+#########################################################
+
+cm=0.01
+year=31557600
+set xlabel '# iteration'
+
+set ylabel 'u (cm/yr)'
+unset log y 
+set output 'u.pdf'
+plot[][]\
+'50x33/stats_u.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t '50x33',\
+'50x33/stats_u.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
+'100x66/stats_u.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t '100x66',\
+'100x66/stats_u.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
+
+set ylabel 'v (cm/yr)'
+set output 'v.pdf'
+plot[][]\
+'50x33/stats_v.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t '50x33',\
+'50x33/stats_v.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
+'100x66/stats_v.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t '100x66',\
+'100x66/stats_v.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
+
+set ylabel 'p'
+set output 'p.pdf'
+plot[][]\
+'50x33/stats_p.ascii' u 1:2 w lp lt 1 ps .4 t '50x33',\
+'50x33/stats_p.ascii' u 1:3 w lp lt 1 ps .4 notitle ,\
+'100x66/stats_p.ascii' u 1:2 w lp lt 2 ps .4 t '100x66',\
+'100x66/stats_p.ascii' u 1:3 w lp lt 2 ps .4 notitle ,\
+
+set ylabel '{/Symbol d}u (cm/yr)'
+set output 'du.pdf'
+plot[][]\
+'50x33/stats_du.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t '50x33',\
+'50x33/stats_du.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
+'100x66/stats_du.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t '100x66',\
+'100x66/stats_du.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
+
+set ylabel '{/Symbol d}p'
+set output 'dp.pdf'
+plot[][]\
+'50x33/stats_dp.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t '50x33',\
+'50x33/stats_dp.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
+'100x66/stats_dp.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t '100x66',\
+'100x66/stats_dp.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
+
+
+
