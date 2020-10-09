@@ -1,0 +1,19 @@
+data from:
+
+https://www.evl.uic.edu/pape/data/WDB/
+
+I have removed the occurrences of the 'segment' lines with sed:
+
+sed '/segment/d' ./europe-cil.txt  > europe_coastlines.txt
+sed '/segment/d' ./asia-cil.txt  > asia_coastlines.txt
+sed '/segment/d' ./namer-cil.txt  > namer_coastlines.txt
+sed '/segment/d' ./samer-cil.txt  > samer_coastlines.txt
+
+sed '/segment/d' ./africa-riv.txt  > africa_rivers.txt
+sed '/segment/d' ./europe-riv.txt  > europe_rivers.txt
+sed '/segment/d' ./asia-riv.txt  > asia_rivers.txt
+sed '/segment/d' ./namer-riv.txt  > namer_rivers.txt
+
+
+
+
