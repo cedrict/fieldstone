@@ -343,13 +343,14 @@ In spherical coordinates $(r,\theta,\phi)$
 the continuity equation for an incompressible fluid is :
 
 \begin{mdframed}[backgroundcolor=blue!5]
-\[
+\begin{equation}
 \frac{1}{r^2} \frac{\partial}{\partial r} (r^2 \upnu_r) 
 +
 \frac{1}{r \sin\theta} \frac{\partial}{\partial \theta} (\upnu_\theta \sin\theta)
 +
 \frac{1}{r \sin\theta} \frac{\partial \upnu_\phi}{\partial \phi}=0
-\]
+\label{eq:divsc}
+\end{equation}
 \end{mdframed}
 \index{general}{Mass Conservation Equation (Spherical Coordinates)}
 
@@ -1477,6 +1478,8 @@ root mean square averages:
 \item \underline{Stress tensor} ${\bm \sigma}$ (Pa): \index{general}{Stress Tensor}
 \item \underline{Strain tensor} ${\bm \varepsilon}$ (dimensionless): \index{general}{Strain Tensor}
 \item \underline{Strain rate tensor} $ \dot{\bm \varepsilon} (\text{s}^{-1}$): \index{general}{Strain Rate Tensor}
+
+\item \underline{Argand Number}: see England \& McKenzie \cite{enmc82}, Houseman \& England \cite{hoen86a}
 
 %..........................................
 \item \underline{(Thermal) Rayleigh number} $Ra$ (or $Ra_T$) (X): \index{general}{Rayleigh Number}

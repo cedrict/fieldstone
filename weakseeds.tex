@@ -1,0 +1,129 @@
+
+{\sl This section was mostly written by I. van Zelst with some input by S. Buiter}. 
+\index{contributors}{I. van Zelst}
+
+Numerical models that investigate dynamics of the lithosphere and upper mantle always
+start from an initial geometry with a set of prescribed mechanical and thermal conditions. 
+This initial setup is usually a more-or-less standard representation of the
+lithosphere and asthenosphere, as defined from compilations of geological and geophysical 
+observations and laboratory measurements. Deformation is driven by internal buoyancy
+forces and/or velocity or stress boundary conditions. However, unless an 
+intrinsically unstable setup is defined or boundary conditions are discontinuous, 
+deformation may take long model time to localise (up to millions of years). 
+This is because these models need to build up numerical disturbance to create starting 
+points for the deformation. In such models, deformation may in the first stages be
+accommodated by pure shear extension or shortening \cite{pybf00,moql07}. 
+
+To avoid this long starting phase and, in addition, exert some control 
+over the initial location of deformation (preferably away from the boundaries), modellers 
+use different approaches to initiate and localise deformation.
+
+One manner to localise deformation is by discontinuous boundary conditions, such 
+as the so-called S-point velocity discontinuity at the bottom of the system 
+(or the tip of a basal sheet) which is used in both numerical 
+\cite{brbe95,elfb95,will99a,bemh00,bube06,thfb08,brya10}
+and analogue studies \cite{bube06,mime00}.
+These models are usually on the scale of the (upper-) crust. 
+S-point models are less flexible than upper-mantle scale models as they do not include
+feedback relations between deformation and the basal velocity field.
+Models of extension of continental lithosphere often use 'seeds' to initiate
+extension. Such seeds are usually small regions that are weaker than the surrounding crust
+and lithosphere. The use of seeds can be justified by considering the fact that in
+nature continental lithosphere is hardly ever (if at all) homogeneous in composition 
+and stratification. In addition, extension often occurs in regions of former
+convergence, such as the opening of the North Atlantic Ocean that largely followed the old 
+sutures of the Iapetus and Rheic Oceans \cite{wils66}. Analogues for numerical seeds 
+can therefore be found in inherited faults, inherited crustal thickness changes, and/or 
+plumes impacting the lithosphere. However, this immediately points out a problem with 
+single-seed models as orogenic inheritance and mantle upwellings may be expected to 
+occur over larger areas than a seed of some hundreds of meters to a few kilometres 
+in width and height.
+
+A literature survey shows that seeds in previous numerical studies differ in shape, size, 
+orientation, mechanical and thermal properties, and depth in the models. 
+Three types of weak seeds can be identified that have been 
+used in previous models of (continental) extension:
+
+%.................................................
+\paragraph{Seeding through thermal effects}
+A weak region can be achieved by a temperature anomaly in the crust or lithosphere,
+which is created by directly imposing a temperature difference, by assigning high radiogenic 
+heat production, or modelling a thermal upwelling in the mantle below.
+The elevated temperature reduces viscosity values for models with a temperature-dependent 
+viscosity.
+An advantage of using an imposed temperature anomaly is that it will dissipate with time, 
+thus reducing the impact on later model stages \cite{hani03}.
+Examples of thermal anomalies used to initiate extension are
+an elevated temperature at the base of the crust \cite{hani03},
+an elevated temperature at the base of the lithosphere 
+(100$\rm^\circ$ in \cite{bupo01}, 
+up to 200$\rm^\circ$ in \cite{brau13}),
+a temperature anomaly imposed from the base of the lithosphere to the middle
+crust \cite{chld92},
+and a 10\si{\milli\watt\per\square\metre} perturbation in basal heat flow \cite{frbr01}.
+In \cite{bupo01} the rifting is initiated by means of 
+a thermal perturbation placed at the bottom of the mantle lithosphere with a maximum temperature $T_{2}$ 
+exponentially which decays from the center to $T_{1}$ on the left and $T_{3}$ on the right. 
+
+%.................................................
+\paragraph{Seeding by mechanical inhomogeneity} 
+A seed may be composed of a material with a lower rheological strength than the 
+surroundings.
+A weak seed may, for example, have a lower imposed viscosity 
+\cite{lemm08,kaus10,mishin11}, 
+a lower value for angle of internal friction 
+\cite{pybf02,kapo06,thie11,grpy13,chbe13}, 
+a lower value for cohesion \cite{alht11}, or a lower value for density \cite{tibb08}. 
+
+The seed may also be assigned different material properties, as, for example,
+a Von Mises seed in a frictional plastic material \cite{hube07}.
+A frequently used approach is to assume that a region has already accummulated
+strain, leading to strain-weakening 
+\cite{labp00,hubb05,peso08,alht11,alht12,knak13,alhf13}. 
+Previous studies have used a variety of shapes and sizes for weak seeds. 
+Examples are square seeds, fault-shaped weak inclusions, and rectangular seeds with different 
+aspect ratios: \cite{hubb05} use a $6\times 3$ km seed, while the weak seed 
+of \cite{hube07} has a size of $12\times 10$ km. 
+
+Instead on confining the seed to a geometrically simple region, randomly distributed seeds 
+have also been used \cite{thie11}, \cite{thsh14}, albeit for compression. 
+
+\paragraph{Seeding through geometrical discontinuity} 
+A seed is created by an abrupt variation in the thickness of the crust and/or lithosphere.
+A locally thinned crust could be throught to be caused by a previous rifting phase,
+whereas a thickner crust could represent preceding mountain building.
+Such crustal thickness variations effect not only mechanical strength, but may also
+impose a thermal anomaly.
+\cite{busc08} implemented a gaussian shaped mohorovi\v{c}i\'c discontinuity of 250m 
+height as a representation of the weak zone resulting in a slightly thinner crust.
+A step change in crustal thickness alters the symmetry of the domain. 
+Chenin et al \cite{chsm20} implement a sinusoidal perturbation of the moho.
+
+%\paragraph{Seeding through numerical noise}
+%include initiation on numerical noise (models of Moresi, Tirel) 
+
+Only few studies have investigated how different methods of implementing a weak zone 
+can affect the results of a model. 
+\cite{dyrm07} found that a single seed produces a symmetric narrow rift, an initial shear
+zone tends to produce an asymmetric rift, and multipe seeds promote a wide rift. 
+Note however that this behaviour will be affected by rheological stratification, as not
+all systems can evolve in a wide rift mode \cite{hubb05,buhb08}.
+\cite{dyrm07} found that a seed needs to be 10 times weaker than 
+the surrounding material in order to localise strain. 
+To initiate shear bands with a Coulomb dip angle (45 $\pm\phi$/2, where $\phi$ is the
+angle of internal friction), seeds need to be well resolved (5-10 elements, \cite{kaus10}). 
+
+This variety in the shape, size, orientation, mechanical and thermal properties, 
+and depth of the seed(s) begs the question if these different approaches to
+initiate extension could have an effect on model evolution? 
+As such variations might not be
+removed by subsequent deformation stages, the initiation effects could propagate into
+later model evolution. 
+In addition, weak seeds introduce a weakness into the extensional system that may 
+potentially be long-lasting. 
+For instance, seeds with a weakness defined by material or strain-weakened properties 
+stay in the model and may control deformation also in later model stages. 
+The heat associated with thermal seeds will diffuse away, but additional 
+heat has been introduced into the initial system and the setup will therefore differ from 
+models with mechanically weak seeds. 
+

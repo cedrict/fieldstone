@@ -59,7 +59,7 @@ is non-singular and delivers uniquely defined velocity and pressure fields. If t
 stable and convergent velocity field might be obtained, but the pressure field is likely
 to present spurious and oscillatory results." 
 Note that in the case of the $Q_1 \times P_0$ element it has been shown that the multiple families of 
-checkboard pressure modes actually lie in the kernel of $\G$. \cite{XXXXsani}
+checkboard pressure modes actually lie in the kernel of $\G$. \cite{sagl81a,sagl81b}
 
 One could then also numerically compute the Ker of G?
 
@@ -395,8 +395,12 @@ of the Stokes equation is used (as opposed to the Laplace formulation -- see \ci
 
 
 
+%------------------------------------------------------------------
+\subsubsection{The (stabilised) $P_1\times P_1$} \label{ss:P1P1stab}
 
-
+Like its quadrilateral counterpart $Q_1\times Q_1$, the 
+$P_1\times P_1$ pair is not stable and needs to be stabilised \cite{nosi98,tasu00}.
+TerraNeo code uses stabilised with PSPG \cite{babd20}.
 
 
 
@@ -407,7 +411,6 @@ of the Stokes equation is used (as opposed to the Laplace formulation -- see \ci
 
 \begin{itemize}
 \item $P_1\times P_0$: example 3.70 in \cite{john16}, also \cite{john98}. \index{general}{$P_1\times P_0$}
-\item $P_1\times P_1$ stabilised \cite{nosi98,tasu00}
 \item Q2P0: \index{general}{$Q_2 \times P_0$}: 
 Quadratic velocities, constant pressure. The element satisfies the inf-sup condition, but the constant pressure assumption may require fine discretisation.
 

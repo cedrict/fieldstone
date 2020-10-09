@@ -85,11 +85,45 @@ a point and its spherical coordinates $r,\theta,\phi$:
 In this case $\theta\in[0:\pi]$ and $\phi\in]-\pi:\pi]$ and we have the following relationships:
 \begin{eqnarray}
 r &=& \sqrt{x^2+y^2+z^2} \\
-\theta &=& acos (z/r) \\
-\phi &=& atan (y/x) 
+\theta &=& \arccos (z/r) \\
+\phi &=& \arctan (y/x) \\
+x &=& r \sin \theta \cos \phi \\
+y &=& r \sin\theta \sin\phi \\
+z &=& r \cos\theta 
 \end{eqnarray}
-The inverse tangent used to compute $\phi$ must be suitably defined, taking into account the correct quadrant of $(x,y)$,
+The inverse tangent used to compute $\phi$ must be suitably defined, 
+taking into account the correct quadrant of $(x,y)$,
 which is why the atan2 intrinsic function is used in fortran for example.    
+This is often written as follows:
+\begin{eqnarray}
+\theta &=& \arctan \left(\sqrt{x^2+y^2},z\right) \\
+\phi &=& \arctan (y,x) 
+\end{eqnarray}
+where we formally take advantage of the two argument arctan
+function to eliminate quadrant confusion.
+
+The path increment is expressed as:
+\[
+d\vec{r} = dr \; \vec{e}_r + r d\theta \; \vec{e}_\theta + r \sin\theta d\phi \; \vec{e}_\phi
+\]
+The gradient is 
+\[
+\vec\nabla = \frac{\partial}{\partial r} \; \vec{e}_r
++ \frac{1}{r} \frac{\partial}{\partial \theta} \; \vec{e}_\theta 
++ \frac{1}{r \; \sin\theta} \frac{\partial}{\partial \phi} \;  \vec{e}_\phi
+\]
+The divergence of a vector $\vec{V}$ is given in Eq.~\eqref{eq:divsc}. \index{general}{Divergence}
+The Laplacian is given by: \index{general}{Laplacian}
+\[
+\Delta = \vec\nabla \cdot\vec\nabla = \vec\nabla^2
+=
+\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial}{\partial r} \right)
++\frac{1}{r^2 \sin\theta} \frac{\partial}{\partial \theta} \left( \sin\theta \frac{\partial}{\partial \theta} \right)
++\frac{1}{r^2 \sin^2\theta}  \frac{\partial^2}{\partial \phi^2}
+\]
+
+
+
 
 In geography one uses latitude and longitude, represented hereunder:
 \begin{center}
