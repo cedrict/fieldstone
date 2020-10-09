@@ -61,11 +61,12 @@ def material_model(xq,yq,exx,eyy,exy,p,T):
     nnn=3.3
     Q=186.5e3
     Rgas=8.314
-    eta_min=1.e19
-    eta_max=1.e25
+    #eta_min=1.e19
+    #eta_max=1.e25
     phi=31./180.*np.pi #(atan(0.6) in paper)
     c=5e7
-    eta_m=1e20
+    eta_m=0#1e21
+    eta_v=1e25
     #-------------------
     if iter==0:
        E2=1e-15
@@ -73,28 +74,60 @@ def material_model(xq,yq,exx,eyy,exy,p,T):
        E2=np.sqrt( 0.5*(exx**2+eyy**2)+exy**2 )
     #-------------------
 
-    if (xq-Lx/2)**2+(yq-Ly/2)**2 < 4e6:
+    if (xq-Lx/2)**2+(yq-Ly/2)**2 < 4e6: # inclusion
        etaeff=1e20
        tau=2*etaeff*E2
        rh=0
+       eps_v=E2
+       eps_ds=0
+       eps_vp=0
     else:
-       #old
-       #eta_v = A**(-1./nnn)*np.exp(Q/nnn/Rgas/T)*E2**(1./nnn-1.)
-       #sigmayield= p*np.sin(phi) + c*np.cos(phi) 
-       #etaeff = sigmayield /(2.*E2)+ eta_vp
-       #etaeff=1./(1./eta_v+1./etaeff)
 
-       #new
-       eta_ds = 0.5*A**(-1./nnn)*np.exp(Q/nnn/Rgas/T)*E2**(1./nnn-1.)
+       #yield strength
        Y= max(p,0)*np.sin(phi) + c*np.cos(phi) 
-       if 2*eta_ds*E2 <= Y: #-------viscous branch
-          etaeff=eta_ds
+
+       #initial guess for tau using E2/2 for both mechanisms
+       eta_ds = 0.5*A**(-1./nnn)*np.exp(Q/nnn/Rgas/T)*(E2/2)**(1./nnn-1.)
+       etaeff=1./(1./eta_v+1./eta_ds)
+       tau=2*etaeff*E2
+
+       #compute strain rate partitioning between linear viscous and dislocation creep
+       it=0
+       func=1
+       taus=np.zeros(31,dtype=np.float64) 
+       #print('---------------------------')
+       while abs(func)>1e-20:
+             eps_ds=A*tau**nnn*np.exp(-Q/Rgas/T)
+             eps_v=tau/2/eta_v
+             func=E2-eps_ds-eps_v
+             funcp=-nnn*A*tau**(nnn-1)*np.exp(-Q/Rgas/T)-0.5/eta_v
+             tau-=func/funcp
+             if tau<0:
+                print('visc branch',iter,it,tau)
+                exit("tau<0")
+             #print('->',iter,it,tau,eps_ds,func)
+             taus[it]=tau
+             it+=1
+             if it>30:
+                rh=3
+                print('visc branch: iter=',iter,'tau=',tau)
+                print('visc branch: not converged')
+                print('visc branch: F=',func)
+                for i in range(0,30):
+                    print(i,taus[i])
+                break
+       #end while
+
+       if tau <= Y: #-------viscous branch
+          eta_ds = 0.5*A**(-1./nnn)*np.exp(Q/nnn/Rgas/T)*eps_ds**(1./nnn-1.)
+          etaeff=1./(1./eta_v+1./eta_ds)
           rh=1
-          tau=2*etaeff*E2
+          eps_v=tau/2/eta_v
+          eps_vp=0
        else: #----------------------visco-viscoplastic branch
 
           #guess assumes 90% ds, 1% vp
-          tau = A**(-1./nnn)*np.exp(Q/nnn/Rgas/T)*(0.9*E2)**(1./nnn)
+          #tau = A**(-1./nnn)*np.exp(Q/nnn/Rgas/T)*(0.9*E2)**(1./nnn)
           #tau=1e6
 
           rh=2
@@ -104,8 +137,9 @@ def material_model(xq,yq,exx,eyy,exy,p,T):
           taus=np.zeros(31,dtype=np.float64) 
           while abs(func)>1e-6:
              eps_ds=A*tau**nnn*np.exp(-Q/Rgas/T)
-             func=Y + 2*(E2-eps_ds)*eta_m - tau
-             funcp=-2*eta_m*nnn*A*tau**(nnn-1)*np.exp(-Q/Rgas/T)-1
+             eps_v=tau/2/eta_v
+             func=Y + 2*(E2-eps_ds-eps_v)*eta_m - tau
+             funcp=-eta_m/eta_v -2*eta_m*nnn*A*tau**(nnn-1)*np.exp(-Q/Rgas/T)-1
              tau-=func/funcp
              if tau<0:
                 print(iter,it,tau,eps_ds,func,Y)
@@ -115,31 +149,33 @@ def material_model(xq,yq,exx,eyy,exy,p,T):
              it+=1
              if it>30:
                 rh=3
-                print('iter=',iter,'tau=',tau)
-                print('not converged')
-                print('F=',Y+2*(E2-eps_ds)*eta_m-tau,func)
+                print('vp branch: iter=',iter,'tau=',tau)
+                print('vp branch: not converged')
+                print('vp branch: F=',func)
                 for i in range(0,30):
                     print(i,taus[i])
                 break
           #end while
 
+          #now that we have tau we can use it to compute the 
+          #viscosities and strain rates of v, ds and vp element
           eps_ds=A*tau**nnn*np.exp(-Q/Rgas/T)
-          if eps_ds>E2:
-             tau=Y
-             print('eps_ds>E2')
           eta_ds = 0.5*A**(-1./nnn)*np.exp(Q/nnn/Rgas/T)*eps_ds**(1./nnn-1.)
 
-          eps_vp=E2-eps_ds
+          eps_v=tau/2/eta_v
+
+          eps_vp=E2-eps_ds-eps_v
           if eps_vp<0:
              print("eps_vp<0",E2,eps_ds)
-
           eta_vp=Y/2/eps_vp+eta_m
-          etaeff=1./(1./eta_ds+1./eta_vp)
+
+          etaeff=1./(1/eta_v+1./eta_ds+1./eta_vp)
+
        #end if
-       etaeff=min(etaeff,eta_max)
-       etaeff=max(etaeff,eta_min)
+       #etaeff=min(etaeff,eta_max)
+       #etaeff=max(etaeff,eta_min)
     #end if
-    return etaeff,rh,tau
+    return etaeff,rh,tau,eps_v,eps_ds,eps_vp
 
 #------------------------------------------------------------------------------
 
@@ -172,7 +208,7 @@ else:
    nely = 30
    visu = 1
    niter= 500
-   bc   = +1
+   bc   = 1
    vp   = 21
 
 nnx=2*nelx+1         # number of elements, x direction
@@ -199,6 +235,8 @@ gy=-10
 velbc=bc*1e-15*Lx/2
 
 eta_ref=1e23      # scaling of G blocks
+    
+p_has_nullspace=False
 
 #################################################################
 #################################################################
@@ -295,9 +333,9 @@ for i in range(0,NV):
     if xV[i]/Lx>(1-eps):
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = -velbc 
     if yV[i]/Ly<eps:
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -velbc*Ly/Lx 
-    if yV[i]/Ly>(1-eps):
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = +velbc*Ly/Lx 
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0#-velbc*Ly/Lx 
+    #if yV[i]/Ly>(1-eps):
+    #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = +velbc*Ly/Lx 
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
@@ -332,9 +370,9 @@ time_build_matrix=np.zeros(niter,dtype=np.float64)
 
 for iter in range(0,niter):
 
-    print('=======================')
+    print('=========================')
     print('======= iter ',iter,'=======')
-    print('=======================')
+    print('=========================')
 
     #################################################################
     # build FE matrix
@@ -362,6 +400,9 @@ for iter in range(0,niter):
     pq    = np.zeros(nel*9,dtype=np.float64)         
     rhq   = np.zeros(nel*9,dtype=np.float64)         
     srq   = np.zeros(nel*9,dtype=np.float64)         
+    srq_ds = np.zeros(nel*9,dtype=np.float64)         
+    srq_vp = np.zeros(nel*9,dtype=np.float64)         
+    srq_v  = np.zeros(nel*9,dtype=np.float64)         
 
     counterq=0
     for iel in range(0,nel):
@@ -417,7 +458,7 @@ for iter in range(0,niter):
                                              [0.        ,dNNNVdy[i]],
                                              [dNNNVdy[i],dNNNVdx[i]]]
 
-                etaq[counterq],rhq[counterq],tauq[counterq]=\
+                etaq[counterq],rhq[counterq],tauq[counterq],srq_v[counterq],srq_ds[counterq],srq_vp[counterq]=\
                 material_model(xq[counterq],yq[counterq],exxq,eyyq,exyq,pq[counterq],Tq)
 
                 rhoq=2700
@@ -490,11 +531,12 @@ for iter in range(0,niter):
     #a_mat[Nfem,NfemV:Nfem]=constr
     #a_mat[NfemV:Nfem,Nfem]=constr
 
-    #simple p boundary condition
-    for i in range(0,Nfem):
-        A_sparse[Nfem-1,i]=0
-    A_sparse[Nfem-1,Nfem-1]=1
-    rhs[Nfem-1]=0.
+    if p_has_nullspace:
+       #simple p boundary condition
+       for i in range(0,Nfem):
+           A_sparse[Nfem-1,i]=0
+       A_sparse[Nfem-1,Nfem-1]=1
+       rhs[Nfem-1]=0.
 
     sparse_matrix=A_sparse.tocsr()
     Res=sparse_matrix.dot(sol)-rhs
@@ -530,22 +572,24 @@ for iter in range(0,niter):
     ######################################################################
     start = time.time()
 
-    np.savetxt('pressure_bef_normalisation.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+    if p_has_nullspace:
 
-    intp=0
-    for iel in range(0,nel):
-        inode=iconV[6,iel]       #top middle node 
-        if yV[inode]/Ly>(1-eps): #if on top boundary
-           intp+=hx*(p[iconP[2,iel]]+p[iconP[3,iel]])/2
-    intp/=Lx
-    p-=intp
+       np.savetxt('pressure_bef_normalisation.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
-    print('     -> intp=',intp)
-    print("     -> p (m,M) %.4e %.4e Mpa  " %(np.min(p)/1e6,np.max(p)/1e6))
+       intp=0
+       for iel in range(0,nel):
+           inode=iconV[6,iel]       #top middle node 
+           if yV[inode]/Ly>(1-eps): #if on top boundary
+              intp+=hx*(p[iconP[2,iel]]+p[iconP[3,iel]])/2
+       intp/=Lx
+       p-=intp
 
-    np.savetxt('pressure_aft_normalisation.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+       print('     -> intp=',intp)
+       print("     -> p (m,M) %.4e %.4e Mpa  " %(np.min(p)/1e6,np.max(p)/1e6))
 
-    print("normalise pressure: %.3f s" % (time.time() - start))
+       np.savetxt('pressure_aft_normalisation.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+
+       print("normalise pressure: %.3f s" % (time.time() - start))
 
     ######################################################################
     start = time.time()
@@ -566,64 +610,76 @@ for iter in range(0,niter):
     ######################################################################
     start = time.time()
 
-    #if iter%1==0:
-    nq=9*nel
-    filename = 'qpts_{:04d}.vtu'.format(iter) 
-    vtufile=open(filename,"w")
-    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-    vtufile.write("<UnstructuredGrid> \n")
-    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nq,nq))
-    #####
-    vtufile.write("<Points> \n")
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-    for iq in range(0,nq):
-        vtufile.write("%10e %10e %10e \n" %(xq[iq],yq[iq],0.))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</Points> \n")
-    #####
-    vtufile.write("<PointData Scalars='scalars'>\n")
-    vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
-    for iq in range(0,nq):
-        vtufile.write("%10e \n" % etaq[iq])
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='tau' Format='ascii'> \n")
-    for iq in range(0,nq):
-        vtufile.write("%10e \n" % tauq[iq])
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
-    for iq in range(0,nq):
-        vtufile.write("%10e \n" % pq[iq])
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='rh' Format='ascii'> \n")
-    for iq in range(0,nq):
-        vtufile.write("%10e \n" % rhq[iq])
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sr' Format='ascii'> \n")
-    for iq in range(0,nq):
-        vtufile.write("%10e \n" % srq[iq])
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</PointData>\n")
-    #####
-    vtufile.write("<Cells>\n")
-    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-    for iq in range (0,nq):
-        vtufile.write("%d\n" % iq ) 
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-    for iq in range (0,nq):
-        vtufile.write("%d \n" % (iq+1) )
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-    for iq in range (0,nq):
-        vtufile.write("%d \n" % 1)
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("</Cells>\n")
-    #####
-    vtufile.write("</Piece>\n")
-    vtufile.write("</UnstructuredGrid>\n")
-    vtufile.write("</VTKFile>\n")
-    vtufile.close()
+    if iter%1==0:
+       nq=9*nel
+       filename = 'qpts_{:04d}.vtu'.format(iter) 
+       vtufile=open(filename,"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nq,nq))
+       #####
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+       for iq in range(0,nq):
+           vtufile.write("%10e %10e %10e \n" %(xq[iq],yq[iq],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
+       #####
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+       for iq in range(0,nq):
+           vtufile.write("%10e \n" % etaq[iq])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='tau' Format='ascii'> \n")
+       for iq in range(0,nq):
+           vtufile.write("%10e \n" % tauq[iq])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+       for iq in range(0,nq):
+           vtufile.write("%10e \n" % pq[iq])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='rh' Format='ascii'> \n")
+       for iq in range(0,nq):
+           vtufile.write("%10e \n" % rhq[iq])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='sr' Format='ascii'> \n")
+       for iq in range(0,nq):
+           vtufile.write("%10e \n" % srq[iq])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='sr_v' Format='ascii'> \n")
+       for iq in range(0,nq):
+           vtufile.write("%10e \n" % srq_v[iq])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='sr_vp' Format='ascii'> \n")
+       for iq in range(0,nq):
+           vtufile.write("%10e \n" % srq_vp[iq])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='sr_ds' Format='ascii'> \n")
+       for iq in range(0,nq):
+           vtufile.write("%10e \n" % srq_ds[iq])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</PointData>\n")
+       #####
+       vtufile.write("<Cells>\n")
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       for iq in range (0,nq):
+           vtufile.write("%d\n" % iq ) 
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       for iq in range (0,nq):
+           vtufile.write("%d \n" % (iq+1) )
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       for iq in range (0,nq):
+           vtufile.write("%d \n" % 1)
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</Cells>\n")
+       #####
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
 
     print("produce nonlinear it vtu file: %.3f s" % (time.time() - start))
 
