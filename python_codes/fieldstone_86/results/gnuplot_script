@@ -1,0 +1,39 @@
+set term pdf enhanced font "Times,10pt"
+set grid
+set xlabel 'T (C)'
+set ylabel 'y (km)'
+set key outside
+set ytics 5
+set xtics 100
+
+set output 'profile_T.pdf'
+plot[][]\
+'profile_left_0000.ascii'   u 2:($1/1000) w l t 'x=0',\
+'profile_middle_0000.ascii' u 2:($1/1000) w l t 'x=L_x/2'
+
+set xtics 25
+set output 'profile_T_top.pdf'
+plot[0:550][]\
+'profile_left_0000.ascii'   u 2:($1/1000) w l t 'x=0',\
+'profile_middle_0000.ascii' u 2:($1/1000) w l t 'x=L_x/2'
+
+#####################################3
+set xtics auto
+
+set xlabel 'dTdy (C/km)'
+set output 'profile_dTdy.pdf'
+plot[][]\
+'profile_left_0000.ascii'   u ($3*1000):($1/1000) w l t 'x=0',\
+'profile_middle_0000.ascii' u ($3*1000):($1/1000) w l t 'x=L_x/2'
+
+set xlabel 'q_y'
+set output 'profile_qy.pdf'
+plot[][]\
+'profile_left_0000.ascii'   u ($4):($1/1000) w l t 'x=0',\
+'profile_middle_0000.ascii' u ($4):($1/1000) w l t 'x=L_x/2'
+
+
+
+
+
+

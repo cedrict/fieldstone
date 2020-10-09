@@ -55,32 +55,40 @@ def plot_T_field(Tnew, xcoords, ycoords, nnx, nny, Title, savename):
 
 Lx=800e3
 Ly=120e3
-W=400e3
-delta=50e3
+WR=400e3
+w=50e3
 
-sediments_thickness=5e3
-crust_thickness=40e3
-thinned_crust_thickness=20e3
-thinned_lithosphere_thickness=40e3
+d_S=5e3
+d_UC=20e3
+d_LC=20e3
+d_LM=Ly-d_UC-d_LC
+
+beta_UC=2
+beta_LC=2.2
+beta_LM=2.75
 
 ###################################################################################################
 # material properties
 ###################################################################################################
 
 rho_sediments=2100
-hcapa_sediments=1250
-hcond_sediments=3
+hcapa_sediments=790
+hcond_sediments=2
 
-rho_crust=2800
-hcapa_crust=1250
-hcond_crust=3
+rho_uppercrust=2900
+hcapa_uppercrust=1100
+hcond_uppercrust=2.6
 
-rho_lithosphere=3000
-hcapa_lithosphere=1250
+rho_lowercrust=2900
+hcapa_lowercrust=1100
+hcond_lowercrust=2.6
+
+rho_lithosphere=3400
+hcapa_lithosphere=1260
 hcond_lithosphere=3
 
-rho_asthenosphere=3000
-hcapa_asthenosphere=1250
+rho_asthenosphere=3400
+hcapa_asthenosphere=1260
 hcond_asthenosphere=3
 
 ###################################################################################################
@@ -89,17 +97,20 @@ hcond_asthenosphere=3
 
 T_surface = 0
 T_sediments_base = 200
+T_uppercrust_base = 310
 T_moho = 550
 T_lab = 1330
 
 ###################################################################################################
 
-nelx=200
-nely=60
+nelx=800
+nely=240
 
-nstep=1000
+nstep=1
 
-dt=2e5*3.154e7
+dt=2e3*3.154e7
+
+compute_ss=True
 
 ###################################################################################################
 
@@ -115,30 +126,48 @@ mT=4
 eps=1.e-10
 sqrt3=np.sqrt(3.)
 
-hcond=[hcond_sediments,hcond_crust,hcond_lithosphere,hcond_asthenosphere]
-hcapa=[hcapa_sediments,hcapa_crust,hcapa_lithosphere,hcapa_asthenosphere]
-rho=[rho_sediments,rho_crust,rho_lithosphere,rho_asthenosphere]
+hcond=[hcond_sediments,\
+       hcond_uppercrust,\
+       hcond_lowercrust,\
+       hcond_lithosphere,\
+       hcond_asthenosphere]
+hcapa=[hcapa_sediments,\
+       hcapa_uppercrust,\
+       hcapa_lowercrust,\
+       hcapa_lithosphere,\
+       hcapa_asthenosphere]
+rho=[rho_sediments,\
+     rho_uppercrust,\
+     rho_lowercrust,\
+     rho_lithosphere,\
+     rho_asthenosphere]
 
 print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
 
 ###################################################################################################
+# geometry parameters 
+###################################################################################################
 
-x1=Lx/2-W/2-delta
-x2=Lx/2-W/2
-x3=Lx/2+W/2
-x4=Lx/2+W/2+delta
+x1=Lx/2-WR/2-w
+x2=Lx/2-WR/2
+x3=Lx/2+WR/2
+x4=Lx/2+WR/2+w
 
-y1=Ly-sediments_thickness-thinned_crust_thickness-thinned_lithosphere_thickness
-y2=Ly-crust_thickness
-y3=Ly-sediments_thickness-thinned_crust_thickness
-y4=Ly-sediments_thickness
+y4=Ly-d_S
+y6=y4-d_UC/beta_UC
+y5=Ly-d_UC
+y3=y6-d_LC/beta_LC
+y2=Ly-d_UC-d_LC
+y1=y3-d_LM/beta_LM
 
 print('y1=',y1)
 print('y2=',y2)
 print('y3=',y3)
 print('y4=',y4)
+print('y5=',y5)
+print('y6=',y6)
 
 xA=x1
 yA=Ly
@@ -187,6 +216,24 @@ TK=T_lab
 xL=x4
 yL=0
 TL=T_lab
+
+xM=x1
+yM=y5
+TM=T_uppercrust_base 
+
+xN=x2
+yN=y6
+TN=T_uppercrust_base 
+
+xO=x3
+yO=y6
+TO=T_uppercrust_base 
+
+xP=x4
+yP=y5
+TP=T_uppercrust_base 
+
+
 
 ###################################################################################################
 # grid point setup
@@ -237,26 +284,34 @@ for i in range(0,NT):
 
     #-----left-----
     if xT[i] < x1:
-       if yT[i]>y2:
-          T[i]=(TA-TE)/(yA-yE)*(yT[i]-yE)+TE
+       if yT[i]>y5:
+          T[i]=(TA-TM)/(yA-yM)*(yT[i]-yM)+TM
+       elif yT[i]>y2:
+          T[i]=(TM-TE)/(yM-yE)*(yT[i]-yE)+TE
        else:
           T[i]=(TE-TI)/(yE-yI)*(yT[i]-yI)+TI
 
     #-----taper-----
     elif xT[i] < x2:
-       if yT[i]>(yB-yA)/(xB-xA)*(xT[i]-xA)+yA:
+       if yT[i]>(yB-yA)/(xB-xA)*(xT[i]-xA)+yA: #line AB
           ytop=Ly
           Ttop=T_surface
           ybot=(yB-yA)/(xB-xA)*(xT[i]-xA)+yA
           Tbot=(TB-TA)/(xB-xA)*(xT[i]-xA)+TA
           T[i]=(Ttop-Tbot)/(ytop-ybot)*(yT[i]-ybot)+Tbot
-       elif yT[i]>(yF-yE)/(xF-xE)*(xT[i]-xE)+yE:
+       elif yT[i]>(yN-yM)/(xN-xM)*(xT[i]-xM)+yM: # line MN
           ytop=(yB-yA)/(xB-xA)*(xT[i]-xA)+yA
           Ttop=(TB-TA)/(xB-xA)*(xT[i]-xA)+TA
+          ybot=(yN-yM)/(xN-xM)*(xT[i]-xM)+yM
+          Tbot=(TN-TM)/(xN-xM)*(xT[i]-xM)+TM
+          T[i]=(Ttop-Tbot)/(ytop-ybot)*(yT[i]-ybot)+Tbot
+       elif yT[i]>(yF-yE)/(xF-xE)*(xT[i]-xE)+yE: # line EF
+          ytop=(yN-yM)/(xN-xM)*(xT[i]-xM)+yM
+          Ttop=(TN-TM)/(xN-xM)*(xT[i]-xM)+TM
           ybot=(yF-yE)/(xF-xE)*(xT[i]-xE)+yE
           Tbot=(TF-TE)/(xF-xE)*(xT[i]-xE)+TE
           T[i]=(Ttop-Tbot)/(ytop-ybot)*(yT[i]-ybot)+Tbot
-       elif yT[i]>(yJ-yI)/(xJ-xI)*(xT[i]-xI)+yI:
+       elif yT[i]>(yJ-yI)/(xJ-xI)*(xT[i]-xI)+yI: # line IJ
           ytop=(yF-yE)/(xF-xE)*(xT[i]-xE)+yE
           Ttop=(TF-TE)/(xF-xE)*(xT[i]-xE)+TE
           ybot=(yJ-yI)/(xJ-xI)*(xT[i]-xI)+yI
@@ -269,8 +324,10 @@ for i in range(0,NT):
     elif xT[i] < x3:
        if yT[i]>y4:
           T[i]=(TA-TB)/(yA-yB)*(yT[i]-yB)+TB
+       elif yT[i]>y6:
+          T[i]=(TB-TN)/(yB-yN)*(yT[i]-yN)+TN
        elif yT[i]>y3:
-          T[i]=(TB-TF)/(yB-yF)*(yT[i]-yF)+TF
+          T[i]=(TN-TF)/(yN-yF)*(yT[i]-yF)+TF
        elif yT[i]>y1:
           T[i]=(TF-TJ)/(yF-yJ)*(yT[i]-yJ)+TJ
        else:
@@ -284,13 +341,22 @@ for i in range(0,NT):
           ybot=(yD-yC)/(xD-xC)*(xT[i]-xC)+yC
           Tbot=(TD-TC)/(xD-xC)*(xT[i]-xC)+TC
           T[i]=(Ttop-Tbot)/(ytop-ybot)*(yT[i]-ybot)+Tbot
-       elif yT[i]>(yH-yG)/(xH-xG)*(xT[i]-xG)+yG:
+
+       elif yT[i]>(yP-yO)/(xP-xO)*(xT[i]-xO)+yO: # line OP
           ytop=(yD-yC)/(xD-xC)*(xT[i]-xC)+yC
           Ttop=(TD-TC)/(xD-xC)*(xT[i]-xC)+TC
+          ybot=(yP-yO)/(xP-xO)*(xT[i]-xO)+yO
+          Tbot=(TP-TO)/(xP-xO)*(xT[i]-xO)+TO
+          T[i]=(Ttop-Tbot)/(ytop-ybot)*(yT[i]-ybot)+Tbot
+
+       elif yT[i]>(yH-yG)/(xH-xG)*(xT[i]-xG)+yG: # line GH
+          ytop=(yP-yO)/(xP-xO)*(xT[i]-xO)+yO
+          Ttop=(TP-TO)/(xP-xO)*(xT[i]-xO)+TO
           ybot=(yH-yG)/(xH-xG)*(xT[i]-xG)+yG
           Tbot=(TH-TG)/(xH-xG)*(xT[i]-xG)+TG
           T[i]=(Ttop-Tbot)/(ytop-ybot)*(yT[i]-ybot)+Tbot
-       elif yT[i]>(yK-yL)/(xK-xL)*(xT[i]-xL)+yL:
+
+       elif yT[i]>(yK-yL)/(xK-xL)*(xT[i]-xL)+yL: # line KL
           ytop=(yH-yG)/(xH-xG)*(xT[i]-xG)+yG
           Ttop=(TH-TG)/(xH-xG)*(xT[i]-xG)+TG
           ybot=(yK-yL)/(xK-xL)*(xT[i]-xL)+yL
@@ -301,8 +367,10 @@ for i in range(0,NT):
 
     #-----right-----
     else:
-       if yT[i]>y2:
-          T[i]=(TD-TH)/(yD-yH)*(yT[i]-yH)+TH
+       if yT[i]>y5:
+          T[i]=(TD-TP)/(yD-yP)*(yT[i]-yP)+TP
+       elif yT[i]>y2:
+          T[i]=(TP-TH)/(yP-yH)*(yT[i]-yH)+TH
        else:
           T[i]=(TH-TL)/(yH-yL)*(yT[i]-yL)+TL
 
@@ -347,28 +415,36 @@ for iel in range(0,nel):
     xc[iel]=xT[icon[0,iel]]+hx/2
     yc[iel]=yT[icon[0,iel]]+hy/2
 
-    if yc[iel]>y2:
+    if yc[iel]>y5:
        mat[iel]=2
-    else:
+    elif yc[iel]>y2:
        mat[iel]=3
+    else:
+       mat[iel]=4
 
-    #paint sediments
+    #paint sediments (ABCD)
     if yc[iel]>(yB-yA)/(xB-xA)*(xc[iel]-xA)+yA and \
        yc[iel]>(yD-yC)/(xD-xC)*(xc[iel]-xC)+yC and \
        yc[iel]>y4:
        mat[iel]=1 
 
-    #paint crust thinning
+    #paint upper crust thinning (MNOP)
+    if yc[iel]<(yN-yM)/(xN-xM)*(xc[iel]-xM)+yM and \
+       yc[iel]<(yP-yO)/(xP-xO)*(xc[iel]-xO)+yO and \
+       yc[iel]<y6 and xc[iel]>x1 and xc[iel]<x4:
+       mat[iel]=3
+
+    #paint lower crust thinning (EFGH)
     if yc[iel]<(yF-yE)/(xF-xE)*(xc[iel]-xE)+yE and \
        yc[iel]<(yH-yG)/(xH-xG)*(xc[iel]-xG)+yG and \
        yc[iel]<y3 and xc[iel]>x1 and xc[iel]<x4:
-       mat[iel]=3
+       mat[iel]=4
 
-    #paint asthenosphere
+    #paint asthenosphere (IJKL)
     if yc[iel]<(yJ-yI)/(xJ-xI)*(xc[iel]-xI)+yI and \
        yc[iel]<(yK-yL)/(xK-xL)*(xc[iel]-xL)+yL and \
        yc[iel]<y1:
-       mat[iel]=4
+       mat[iel]=5
 
 #np.savetxt('mat.ascii',np.array([xc,yc,mat]).T,header='#x,y,mat')
 
@@ -404,10 +480,10 @@ for istep in range(0,nstep):
     iiq=0
     for iel in range (0,nel):
 
-        b_el=np.zeros(mT*ndofT,dtype=np.float64)
-        a_el=np.zeros((mT*ndofT,mT*ndofT),dtype=np.float64)
-        Kd=np.zeros((mT,mT),dtype=np.float64)   # elemental diffusion matrix 
-        MM=np.zeros((mT,mT),dtype=np.float64)   # elemental mass matrix 
+        b_el=np.zeros(mT*ndofT,dtype=np.float64) # elemental rhs
+        A_el=np.zeros((mT*ndofT,mT*ndofT),dtype=np.float64) # elemental FE matrix
+        Kd_el=np.zeros((mT,mT),dtype=np.float64)   # elemental diffusion matrix 
+        M_el=np.zeros((mT,mT),dtype=np.float64) # elemental mass matrix 
 
         for k in range(0,mT):
             Tvect[k]=T[icon[k,iel]]
@@ -452,32 +528,34 @@ for istep in range(0,nstep):
                 hcapaq=hcapa[mat[iel]-1]
 
                 # compute mass matrix
-                MM+=N_mat.dot(N_mat.T)*rhoq*hcapaq*weightq*jcob
+                M_el+=N_mat.dot(N_mat.T)*rhoq*hcapaq*weightq*jcob
 
                 # compute diffusion matrix
-                Kd+=B_mat.T.dot(B_mat)*hcondq*weightq*jcob
+                Kd_el+=B_mat.T.dot(B_mat)*hcondq*weightq*jcob
 
                 iiq+=1
 
             # end for jq
         # end for iq
 
-        a_el=MM+Kd*dt
-        b_el=MM.dot(Tvect)
+        if compute_ss:
+           A_el=Kd_el
+        else:
+           A_el=M_el+Kd_el*dt
+           b_el=M_el.dot(Tvect)
 
         # apply boundary conditions
-
         for k1 in range(0,mT):
             m1=icon[k1,iel]
             if bc_fixT[m1]:
-               Aref=a_el[k1,k1]
+               Aref=A_el[k1,k1]
                for k2 in range(0,mT):
                    m2=icon[k2,iel]
-                   b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
-                   a_el[k1,k2]=0
-                   a_el[k2,k1]=0
+                   b_el[k2]-=A_el[k2,k1]*bc_valT[m1]
+                   A_el[k1,k2]=0
+                   A_el[k2,k1]=0
                #end for
-               a_el[k1,k1]=Aref
+               A_el[k1,k1]=Aref
                b_el[k1]=Aref*bc_valT[m1]
             #end for
         #end for
@@ -487,7 +565,7 @@ for istep in range(0,nstep):
             m1=icon[k1,iel]
             for k2 in range(0,mT):
                 m2=icon[k2,iel]
-                A_mat[m1,m2]+=a_el[k1,k2]
+                A_mat[m1,m2]+=A_el[k1,k2]
             #end for
             rhs[m1]+=b_el[k1]
         #end for
@@ -505,29 +583,119 @@ for istep in range(0,nstep):
 
     print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
 
-    filename = 'T_{:04d}'.format(istep) 
-    np.savetxt(filename+'.ascii',np.array([xT,yT,T]).T,header='#x,y,T')
-    plot_T_field(T, xT, yT, nnx, nny, 'temperature field', filename+'.pdf')
-
     print("solve T: %.3f s" % (time.time() - start))
+
+
+    #################################################################
+    # compute (nodal) temperature gradient
+    #################################################################
+    start = time.time()
+    
+    count = np.zeros(NT,dtype=np.int32)  
+    qx_n = np.zeros(NT,dtype=np.float64)  
+    qy_n = np.zeros(NT,dtype=np.float64)  
+    dTdy_n=np.zeros(NT,dtype=np.float64)  
+    rVnodes=[-1,0,+1,-1,0,+1,-1,0,+1]
+    sVnodes=[-1,-1,-1,0,0,0,+1,+1,+1]
+
+    for iel in range(0,nel):
+        hcond_el=hcond[mat[iel]-1]
+        for i in range(0,mT):
+            rq=rVnodes[i]
+            sq=sVnodes[i]
+
+            # calculate shape functions
+            N_mat[0:mT,0]=NNV(rq,sq)
+            dNdr[0:mT]=dNNVdr(rq,sq)
+            dNds[0:mT]=dNNVds(rq,sq)
+
+            # calculate jacobian matrix
+            jcb=np.zeros((2,2),dtype=np.float64)
+            for k in range(0,mT):
+                    jcb[0,0]+=dNdr[k]*xT[icon[k,iel]]
+                    jcb[0,1]+=dNdr[k]*yT[icon[k,iel]]
+                    jcb[1,0]+=dNds[k]*xT[icon[k,iel]]
+                    jcb[1,1]+=dNds[k]*yT[icon[k,iel]]
+            #end for
+            jcob=np.linalg.det(jcb)
+            jcbi=np.linalg.inv(jcb)
+
+            for k in range(0,mT):
+                dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+                dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+            #end for
+            q_x=0.
+            q_y=0.
+            dTdy=0.
+            for k in range(0,mT):
+                q_x-=hcond_el*dNdx[k]*T[icon[k,iel]]
+                q_y-=hcond_el*dNdy[k]*T[icon[k,iel]]
+                dTdy-=dNdy[k]*T[icon[k,iel]]
+            #end for
+            inode=icon[i,iel]
+            qx_n[inode]+=q_x
+            qy_n[inode]+=q_y
+            dTdy_n[inode]+=dTdy
+            count[inode]+=1
+        #end for
+    #end for
+    
+    qx_n/=count
+    qy_n/=count
+    dTdy_n/=count
+
+    print("     -> qx_n (m,M) %.6e %.6e " %(np.min(qx_n),np.max(qx_n)))
+    print("     -> qy_n (m,M) %.6e %.6e " %(np.min(qy_n),np.max(qy_n)))
+    print("     -> dTdy_n (m,M) %.6e %.6e " %(np.min(dTdy_n),np.max(dTdy_n)))
+
+    print("compute heat flux: %.3f s" % (time.time() - start))
 
     #################################################################
     # profiles
     #################################################################
+    start = time.time()
 
-    filename = 'profile_{:04d}.ascii'.format(istep) 
+    filename = 'profile_middle_{:04d}.ascii'.format(istep) 
     profile=open(filename,"w")
     for i in range(0,NT):
         if abs(xT[i]-Lx/2)/Lx<eps:
-           profile.write("%10e %10e \n" %(yT[i],T[i]))
+           profile.write("%10e %10e %10e %10e\n" %(yT[i],T[i],dTdy_n[i],qy_n[i]))
     profile.close()
+
+    filename = 'profile_left_{:04d}.ascii'.format(istep) 
+    profile=open(filename,"w")
+    for i in range(0,NT):
+        if abs(xT[i])/Lx<eps:
+           profile.write("%10e %10e %10e %10e\n" %(yT[i],T[i],dTdy_n[i],qy_n[i]))
+    profile.close()
+
+    print("export profiles: %.3f s" % (time.time() - start))
+
+    #################################################################
+    #################################################################
+    start = time.time()
+
+    if compute_ss:
+       filename = 'T_final' 
+       np.savetxt(filename+'.ascii',np.array([xT,yT,T]).T,header='#x,y,T')
+       plot_T_field(T, xT, yT, nnx, nny, 'temperature field', filename+'.pdf')
+    else:
+       filename = 'T_{:04d}'.format(istep) 
+       np.savetxt(filename+'.ascii',np.array([xT,yT,T]).T,header='#x,y,T')
+       plot_T_field(T, xT, yT, nnx, nny, 'temperature field', filename+'.pdf')
+
+    print("export via matplotlib: %.3f s" % (time.time() - start))
 
     #################################################################
     # export to vtu
     #################################################################
 
     if True:
-       filename = 'solution_{:04d}.vtu'.format(istep) 
+       if compute_ss:
+          filename = 'solution.vtu'
+       else:
+          filename = 'solution_{:04d}.vtu'.format(istep) 
+
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
@@ -553,6 +721,16 @@ for istep in range(0,nstep):
        vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
        for i in range(0,NT):
            vtufile.write("%10e \n" % (T[i]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='dTdy (C/km)' Format='ascii'> \n")
+       for i in range(0,NT):
+           vtufile.write("%10e \n" % (dTdy_n[i]*1000))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux' Format='ascii'> \n")
+       for i in range(0,NT):
+           vtufile.write("%10e %10e %10e \n" % (qx_n[i],qy_n[i],0.))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</PointData>\n")
