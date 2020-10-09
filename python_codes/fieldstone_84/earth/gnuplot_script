@@ -1,0 +1,21 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+
+set style rect fc lt -1 fs solid 0.15 noborder
+set obj rect from 0, graph 0 to 6371000, graph 1 
+
+set ylabel 'U'
+set output 'gravpot.pdf'
+plot[][]\
+'line_pointmass.ascii'   u 1:2 w l t 'point mass',\
+'line_prism.ascii'       u 1:2 w l t 'prism',\
+'line_quadrature.ascii'  u 1:2 w l t 'quadrature',\
+
+set ylabel '|g|'
+set output 'gravnorm.pdf'
+plot[][:12]\
+'prem.txt'               u (6371e3-$1):2 w lp lt 0 ps .3 pt 2 t 'prem data',\
+'line_pointmass.ascii'   u 1:6 w l lt 1 t 'point mass',\
+'line_prism.ascii'       u 1:6 w l lt 2 t 'prism',\
+'line_quadrature.ascii'  u 1:6 w l lt 3 t 'quadrature',\
+9.81 lt -1 dashtype 2

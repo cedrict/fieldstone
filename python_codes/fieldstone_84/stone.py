@@ -270,6 +270,40 @@ def grav_calc(prism,obs_point,method,rho,hx,hy,hz,xx=None,yy=None,zz=None):
     return U_calc, g_calc, T_calc
 
 ##############################################################################################################
+
+def prem_density(radius):
+    x=radius/6371.e3
+    if radius>6371e3:
+       densprem=0
+    elif radius<=1221.5e3:
+       densprem=13.0885-8.8381*x**2
+    elif radius<=3480e3:
+       densprem=12.5815-1.2638*x-3.6426*x**2-5.5281*x**3
+    elif radius<=3630.e3:
+       densprem=7.9565-6.4761*x+5.5283*x**2-3.0807*x**3
+    elif radius<=5600.e3:
+       densprem=7.9565-6.4761*x+5.5283*x**2-3.0807*x**3
+    elif radius<=5701.e3:
+       densprem=7.9565-6.4761*x+5.5283*x**2-3.0807*x**3
+    elif radius<=5771.e3:
+       densprem=5.3197-1.4836*x
+    elif radius<=5971.e3:
+       densprem=11.2494-8.0298*x
+    elif radius<=6151.e3:
+       densprem=7.1089-3.8045*x
+    elif radius<=6291.e3:
+       densprem=2.6910+0.6924*x
+    elif radius<=6346.e3:
+       densprem=2.6910+0.6924*x
+    elif radius<=6356.e3:
+       densprem=2.9
+    elif radius<=6368.e3:
+       densprem=2.6
+    else:
+       densprem=1.020
+    return densprem*1000
+
+##############################################################################################################
 # read parameters from command line
 ##############################################################################################################
 
@@ -278,13 +312,15 @@ if int(len(sys.argv) == 4):
    buried_object= sys.argv[2]
    method = sys.argv[3]
 else:
-   nelx = 32
+   nelx = 16
    #buried_object = 'sphere'
-   buried_object = 'cube'
+   #buried_object = 'cube'
    #buried_object = 'diapir'
-   #method='pointmass'
+   buried_object = 'earth'
+   #buried_object = 'hollow_earth'
+   method='pointmass'
    #method='prism'
-   method='quadrature'
+   #method='quadrature'
 
 nely=nelx
 nelz=nelx
@@ -293,9 +329,11 @@ nelz=nelx
 # experiment setup parameters
 #################################################################
 
-do_arct15=False
 
 rho0=0 
+
+#--------------------------------------
+do_arct15=False
 
 if buried_object == 'cube':
    Lx=1.e3  
@@ -316,6 +354,7 @@ if buried_object == 'cube':
       nely=10
       nelz=10
 
+#--------------------------------------
 if buried_object == 'sphere':
    Lx=1.e3  
    Ly=1.e3  
@@ -326,6 +365,7 @@ if buried_object == 'sphere':
    radius_sphere=Lx/2
    rho_sphere=100
 
+#--------------------------------------
 if buried_object == 'diapir':
    Lx=2940.
    Ly=2100.
@@ -337,18 +377,36 @@ if buried_object == 'diapir':
    yc_object=0
    zc_object=0
 
+#--------------------------------------
+if buried_object == 'earth' or buried_object == 'hollow_earth':
+   inner_radius_earth=3480e3
+   outer_radius_earth=6371e3
+   Lx=outer_radius_earth*2
+   Ly=outer_radius_earth*2
+   Lz=outer_radius_earth*2
+   nelx=64
+   nely=64
+   nelz=64
+   xc_object=outer_radius_earth
+   yc_object=outer_radius_earth
+   zc_object=outer_radius_earth
+   rho_earth=4000
+
+
 #################################################################
 # gravity calculations parameters
 #################################################################
 
 nqperdim=4
 
+#--------------------------------------
 compute_gravity_on_plane=False
 nnx_m=25
 nny_m=25
 z_plane=Lz+10
 
-compute_gravity_on_line=True
+#--------------------------------------
+compute_gravity_on_line=False
 nnp_line=101
 x_begin=xc_object
 y_begin=yc_object
@@ -356,7 +414,13 @@ z_begin=zc_object
 x_end=1.11e3
 y_end=2.22e3
 z_end=5.55e3
+if buried_object=='earth':
+   nnp_line=123
+   x_end=4*outer_radius_earth
+   y_end=11e3
+   z_end=7e3
 
+#--------------------------------------
 compute_gravity_at_single_point=False
 if buried_object == 'sphere':
    xpt=123
@@ -366,6 +430,14 @@ if buried_object == 'cube':
    xpt=12
    ypt=23
    zpt=34
+
+#--------------------------------------
+compute_gravity_on_spiral=True
+if buried_object=='earth':
+   nnp_spiral=500
+   radius_spiral=outer_radius_earth+250e3
+
+
 
 #################################################################
 
@@ -394,6 +466,7 @@ print('hx,hy,hz=',hx,hy,hz)
 print('compute_gravity_on_plane=',compute_gravity_on_plane)
 print('compute_gravity_on_line=',compute_gravity_on_line)
 print('compute_gravity_at_single_point=',compute_gravity_at_single_point)
+print('compute_gravity_on_spiral=',compute_gravity_on_spiral)
 print('-------------------------------')
 
 #################################################################
@@ -564,6 +637,28 @@ elif buried_object == 'diapir':
         if ielz==nelz-1 or ielz==nelz-2:
            rho[iell]=0
 
+elif buried_object == 'earth':
+
+   for iel in range(0,nel):
+       xc=x[icon[0,iel]]+hx/2
+       yc=y[icon[0,iel]]+hy/2
+       zc=z[icon[0,iel]]+hz/2
+       rho[iel]=prem_density(np.sqrt( (xc-xc_object)**2+(yc-yc_object)**2+(zc-zc_object)**2 ))
+       #end if
+   #end for
+
+elif buried_object == 'hollow_earth':
+
+   for iel in range(0,nel):
+       xc=x[icon[0,iel]]+hx/2
+       yc=y[icon[0,iel]]+hy/2
+       zc=z[icon[0,iel]]+hz/2
+       if (xc-xc_object)**2+(yc-yc_object)**2+(zc-zc_object)**2<outer_radius_earth**2 and\
+          (xc-xc_object)**2+(yc-yc_object)**2+(zc-zc_object)**2>inner_radius_earth**2:
+          rho[iel]=rho_earth
+       else:
+          rho[iel]=0
+   #end for
 
 else:
 
@@ -585,6 +680,12 @@ if buried_object=='cube':
 
 if buried_object=='diapir':
    Massth=0
+
+if buried_object=='earth':
+   Massth=0
+
+if buried_object=='hollow_earth':
+   Massth=4/3*np.pi*(outer_radius_earth**3-inner_radius_earth**3)*rho_earth
 
 print("     -> Total mass %d %e " %(nel,Mass))
 if Massth != 0:
@@ -833,7 +934,12 @@ if compute_gravity_on_line:
           else:
              gnorm_th[i]=G*4/3*np.pi*r_line[i]*rho_sphere
              U_th[i]=-2*np.pi*G*rho_sphere*(radius_sphere**2-r_line[i]**2/3)
-
+          Txx_th[i]=0
+          Tyy_th[i]=0
+          Tzz_th[i]=0
+          Txy_th[i]=0
+          Txz_th[i]=0
+          Tyz_th[i]=0
 
    if buried_object=='cube':
       ll_corner[0]=xc_object-cube_size/2
@@ -853,7 +959,8 @@ if compute_gravity_on_line:
           Txz_th[i]=c[0,2]
           Tyz_th[i]=c[1,2]
 
-   np.savetxt('line.ascii',np.array([r_line,U,gx,gy,gz,gnorm,Txx,Tyy,Tzz,Txy,Txz,Tyz,U_th,gnorm_th,Txx_th,Tyy_th,Tzz_th,Txy_th,Txz_th,Tyz_th]).T)
+   np.savetxt('line.ascii',np.array([r_line,U,gx,gy,gz,gnorm,Txx,Tyy,Tzz,Txy,Txz,Tyz,U_th,gnorm_th,\
+                                     Txx_th,Tyy_th,Tzz_th,Txy_th,Txz_th,Tyz_th]).T)
 
    vtufile=open("line.vtu","w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -916,7 +1023,8 @@ if compute_gravity_at_single_point:
        ll_corner[0]=x[icon[0,iel]]
        ll_corner[1]=y[icon[0,iel]]
        ll_corner[2]=z[icon[0,iel]]
-       UU,g,T=grav_calc(ll_corner,meas_point,method,rho[iel],hx,hy,hz,x[icon[:,iel]],y[icon[:,iel]],z[icon[:,iel]])
+       UU,g,T=grav_calc(ll_corner,meas_point,method,rho[iel],hx,hy,hz,\
+                        x[icon[:,iel]],y[icon[:,iel]],z[icon[:,iel]])
        U[0]+=UU
        gx[0]+=g[0]
        gy[0]+=g[1]
@@ -945,9 +1053,151 @@ if compute_gravity_at_single_point:
       ll_corner[2]=zc_object-cube_size/2
       U_th,g_th,T=grav_calc(ll_corner,meas_point,'prism',rho_cube,cube_size,cube_size,cube_size)
       print("     -> U_at_pt %d %e %e " %(nelx,U[0],U_th))
-      print("     -> grav_at_pt %d %.10e %.10e" %(nelx,np.sqrt(gx[0]**2+gy[0]**2+gz[0]**2),np.sqrt(g_th[0]**2+g_th[1]**2+g_th[2]**2)))
+      print("     -> grav_at_pt %d %.10e %.10e" %(nelx,np.sqrt(gx[0]**2+gy[0]**2+gz[0]**2),\
+                                                  np.sqrt(g_th[0]**2+g_th[1]**2+g_th[2]**2)))
 
    print("compute gravity at single pt: %.3f s" % (time.time() - start))
+
+###############################################################################
+# compute gravity on spiral 
+###############################################################################
+
+if compute_gravity_on_spiral:
+
+   x_spiral = np.zeros(nnp_spiral,dtype=np.float64)  
+   y_spiral = np.zeros(nnp_spiral,dtype=np.float64)  
+   z_spiral = np.zeros(nnp_spiral,dtype=np.float64)  
+   r_spiral = np.zeros(nnp_spiral,dtype=np.float64)  
+   theta_spiral = np.zeros(nnp_spiral,dtype=np.float64)  
+   phi_spiral = np.zeros(nnp_spiral,dtype=np.float64)  
+   gx = np.zeros(nnp_spiral,dtype=np.float64)
+   gy = np.zeros(nnp_spiral,dtype=np.float64)
+   gz = np.zeros(nnp_spiral,dtype=np.float64)
+   U = np.zeros(nnp_spiral,dtype=np.float64)
+   Txx = np.zeros(nnp_spiral,dtype=np.float64)
+   Tyy = np.zeros(nnp_spiral,dtype=np.float64)
+   Tzz = np.zeros(nnp_spiral,dtype=np.float64)
+   Txy = np.zeros(nnp_spiral,dtype=np.float64)
+   Txz = np.zeros(nnp_spiral,dtype=np.float64)
+   Tyz = np.zeros(nnp_spiral,dtype=np.float64)
+
+   meas_point = np.zeros(3,dtype=np.float64)
+   ll_corner = np.zeros(3,dtype=np.float64)
+
+   golden_ratio = (1. + np.sqrt(5.))/2.
+   golden_angle = 2. * np.pi * (1. - 1./golden_ratio)
+
+   for i in range(0,nnp_spiral):
+       r_spiral[i] = radius_spiral
+       theta_spiral[i] = np.arccos(1. - 2. * i / (nnp_spiral - 1.))
+       phi_spiral[i] = np.fmod((i*golden_angle), 2.*np.pi)
+
+   x_spiral[:]=r_spiral[:]*np.sin(theta_spiral[:])*np.cos(phi_spiral[:])+xc_object
+   y_spiral[:]=r_spiral[:]*np.sin(theta_spiral[:])*np.sin(phi_spiral[:])+yc_object
+   z_spiral[:]=r_spiral[:]*np.cos(theta_spiral[:])+zc_object
+
+   start = time.time()
+
+   for i in range(0,nnp_spiral):
+       if i%10==0:
+          print('point=',i,'out of ',nnp_spiral)
+       meas_point[0]=x_spiral[i]
+       meas_point[1]=y_spiral[i]
+       meas_point[2]=z_spiral[i]
+       for iel in range(0,nel):
+          ll_corner[0]=x[icon[0,iel]]
+          ll_corner[1]=y[icon[0,iel]]
+          ll_corner[2]=z[icon[0,iel]]
+          UU,g,T=grav_calc(ll_corner,meas_point,method,rho[iel],hx,hy,hz,\
+                           x[icon[:,iel]],y[icon[:,iel]],z[icon[:,iel]])
+          U[i]+=UU
+          gx[i]+=g[0]
+          gy[i]+=g[1]
+          gz[i]+=g[2]
+          Txx[i]+=T[0,0]
+          Tyy[i]+=T[1,1]
+          Tzz[i]+=T[2,2]
+          Txy[i]+=T[0,1]
+          Txz[i]+=T[0,2]
+          Tyz[i]+=T[1,2]
+       #end for
+   #end for
+
+   gnorm=np.sqrt(gx**2+gy**2+gz**2)
+
+   vtufile=open("spiral.vtu","w")
+   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+   vtufile.write("<UnstructuredGrid> \n")
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnp_spiral,nnp_spiral))
+   #####
+   vtufile.write("<Points> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+   for i in range(0,nnp_spiral):
+       vtufile.write("%10f %10f %10f \n" %(x_spiral[i],y_spiral[i],z_spiral[i]))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Points> \n")
+   #####
+   vtufile.write("<PointData>\n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='gravity vector g' Format='ascii'> \n")
+   for i in range(0,nnp_spiral):
+       vtufile.write("%10e %10e %10e \n" %(gx[i],gy[i],gz[i]))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='|g|' Format='ascii'> \n")
+   for i in range(0,nnp_spiral):
+       vtufile.write("%10e \n" %(gnorm[i]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("</PointData>\n")
+   #####
+   vtufile.write("<Cells>\n")
+   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+   for i in range (0,nnp_spiral):
+       vtufile.write("%d \n" % i)
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+   for i in range (0,nnp_spiral):
+       vtufile.write("%d \n" %(i+1))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+   for iel in range (0,nnp_spiral):
+       vtufile.write("%d \n" % 1)
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Cells>\n")
+   #####
+   vtufile.write("</Piece>\n")
+   vtufile.write("</UnstructuredGrid>\n")
+   vtufile.write("</VTKFile>\n")
+   vtufile.close()
+
+   # compute analytical solution 
+   U_th = np.zeros(nnp_spiral,dtype=np.float64)
+   gnorm_th = np.zeros(nnp_spiral,dtype=np.float64)
+   Txx_th = np.zeros(nnp_spiral,dtype=np.float64)
+   Tyy_th = np.zeros(nnp_spiral,dtype=np.float64)
+   Tzz_th = np.zeros(nnp_spiral,dtype=np.float64)
+   Txy_th = np.zeros(nnp_spiral,dtype=np.float64)
+   Txz_th = np.zeros(nnp_spiral,dtype=np.float64)
+   Tyz_th = np.zeros(nnp_spiral,dtype=np.float64)
+
+   if buried_object=='sphere':
+      for i in range(0,nnp_spiral):
+          if r_spiral[i]>radius_sphere:
+             gnorm_th[i]=G*Massth/r_spiral[i]**2
+             U_th[i]=-G*Massth/r_spiral[i]
+          else:
+             gnorm_th[i]=G*4/3*np.pi*r_spiral[i]*rho_sphere
+             U_th[i]=-2*np.pi*G*rho_sphere*(radius_sphere**2-r_spiral[i]**2/3)
+          Txx_th[i]=0
+          Tyy_th[i]=0
+          Tzz_th[i]=0
+          Txy_th[i]=0
+          Txz_th[i]=0
+          Tyz_th[i]=0
+
+
+   np.savetxt('spiral.ascii',np.array([r_spiral,U,gx,gy,gz,gnorm,Txx,Tyy,Tzz,Txy,Txz,Tyz,U_th,gnorm_th,\
+                                       Txx_th,Tyy_th,Tzz_th,Txy_th,Txz_th,Tyz_th]).T)
+
 
 #################################################################
 # export volume

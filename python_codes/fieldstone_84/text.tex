@@ -6,7 +6,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-{\sl This stone was developed in collaboration Sverre Hassing}. \index{contributors}{S. Hassing}
+{\sl This stone was developed in collaboration wth Sverre Hassing}. \index{contributors}{S. Hassing}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -25,8 +25,11 @@ Three types of gravity measurements are implemented:
 \item on a plane, defined by z=z\_{plane}, of size $Lx \times Ly$, counting nnx\_plane X nny\_plane points
 \item on a line, starting at point (x\_begin,y\_begin,z\_begin) and ending at point (x\_end,y\_end,z\_end)
 \item at a single point, atcoordinates xpt,ypt,zpt from the center of the object
+\item on a 3D spiral starting at the north pole and going to the south pole, parameterised only 
+by the total number of points and the distance to the center/radius of all spiral points.
+This is called the Fibonacci spiral, or lattice on a sphere. The code is borrowed from the 
+one in the gravity post-processor of ASPECT.
 \end{itemize}
-
 
 We will try to answer those questions:
 Is it worth using prisms instead of mass points ?  
@@ -38,10 +41,6 @@ The domain is a cuboid of size $L_x\times L_y \times L_z$ cut into $nel_x \times
 Note that in all what follows a cell has a constant density. 
 
 The function {\tt grav\_calc} computes $u$, $\vec{g}$ and ${\bm T}$ using one of the three methods hilighted above. 
-
-
-
-
 
 
 \newpage
@@ -179,7 +178,7 @@ The salt has a relative density of $-400\si{\kg\per\cubic\metre}$.
 \end{center}
 
 
-\newpage
+
 %------------------------------------------
 \subsection*{Prism of Arroyo et al (2015)}
 
@@ -203,5 +202,57 @@ The salt has a relative density of $-400\si{\kg\per\cubic\metre}$.
 {\captionfont gravity vector norm, gravity potential, horizontal gradient,
 and 6 components of ${\bm T}$.}
 \end{center}
+
+
+%------------------------------------------
+\subsection*{Whole Earth with PREM density}
+
+\index{general}{P.R.E.M.}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_84/earth/setup}
+\includegraphics[width=8cm]{python_codes/fieldstone_84/earth/rho}\\
+{\captionfont resolution 150x150x150. Density is obtained from the PREM model \cite{dzan81}.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_84/earth/gravnorm}
+\includegraphics[width=7cm]{python_codes/fieldstone_84/earth/gravpot}\\
+{\captionfont resolution 64x64x64}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_84/earth/spiral.png}\\
+{\captionfont Spiral of 500 points at height 250km above the Earth surface. 
+Earth is ased on 64x64x64 resolution.}
+\end{center}
+
+
+%------------------------------------------
+\subsection*{Hollow Earth with constant density}
+
+The density is constant and set to $\rho=4000\si{\kg\per\cubic\metre}$. Outer radius is 6371km and inner
+radius is 3480km.
+
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_84/hollow_earth/setup}
+%\includegraphics[width=8cm]{python_codes/fieldstone_84/hollow_earth/rho}\\
+%{\captionfont resolution 150x150x150. }
+%\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_84/hollow_earth/gravnorm}
+\includegraphics[width=7cm]{python_codes/fieldstone_84/hollow_earth/gravpot}\\
+{\captionfont resolution 64x64x64}
+\end{center}
+
+
+
+
+
+
+
+
 
 
