@@ -1,4 +1,14 @@
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_87/keywords}
 
+\begin{center}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_87}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+{\sl This stone was developed in collaboration with Riad Hassani}. \index{contributors}{R. Hassani}
+
+\par\noindent\rule{\textwidth}{0.4pt}
 
 %--------------------------------------------------------
 \subsubsection*{The power law rheology}
@@ -614,35 +624,106 @@ Gravity is vertical and set to $-10\si{\metre\per\square\second}$.
 \end{center}
 
 
+\newpage
+%-----------------------------------------------------------------------------
+\subsubsection*{Experiment 5 - inclusion in linear matrix under simple shear}
+
+The setup originates in Tenczer et al (2001) \cite{tesb01}. 
+The domain is a unit square. In its middle a circular inclusion of radius $R=0.1$
+is present. While the matrix is a Newtonian fluid, the inclusion is characterised
+by a power law rheology. 
+Boundary conditions are $\vec\upnu=(0.5,0)$ at the top, $\vec\upnu=(-0.5,0)$
+at the bottom, and $v=0$ on the sides.
+The background strain rate $\dot\varepsilon_{xy}$ is then given by
+\[
+\dot\varepsilon_{xy} = \frac{1}{2}\left( \frac{\partial u}{\partial y}+ \frac{\partial v}{\partial x} \right)
+\simeq \frac{1}{2} \frac{\Delta u}{\Delta y}
+= \frac{1}{2} \frac{0.5-(-0.5)}{1} = 0.5
+\]
+The authors use the BASIL finite element code (see Section~\ref{app:codes})
+with a mesh based on triangles. We here however 
+keep relying on quadrilateral elements so that the edges of the elements cannot be 
+aligned with the material discontinuity. 
+The material model is called at every quadrature point.  
+
+In what follows we use a 100x100 element mesh. We set $\beta=1$ and $n=1$ for the matrix, so that its 
+viscosity is simply 1. The inclusion is characterised by $\beta=5$ and $n\in[1,5]$.
+Pressure is volume averaged normalised. The regularisation parameter is set to $10^{-5}$. 
+
+\begin{center}
+\includegraphics[width=8.4cm]{python_codes/fieldstone_87/results/experiment_05/v.png}
+\includegraphics[width=8.4cm]{python_codes/fieldstone_87/results/experiment_05/sr.png}\\
+\includegraphics[width=8.4cm]{python_codes/fieldstone_87/results/experiment_05/press.png}
+\includegraphics[width=8.4cm]{python_codes/fieldstone_87/results/experiment_05/eta.png}\\
+{\captionfont From left to right: $n=1,2,3,4,5$}
+\end{center}
+
+We see that when $n$ increases so does the effective viscosity in the inclusion. When 
+$n$ becomes very large this experiment becomes very similar to the SolVi (see 
+Section~\ref{sec:geobench}) benchmark.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/diag_eta}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/diag_sr}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/diag_p}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/diag_u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/diag_v}\\
+{\captionfont Effective viscosity, strain rate and pressure along the diagonal in the 
+upper right quadrant (i.e. $x\ge 0.5$ and $y\ge 0.5$)}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/conv}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/du}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/dp}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/p}
+\end{center}
 
 
 
-
-
-
-
-
-
-%\newpage
+\newpage
 %--------------------------------------------------------------------------
-%\subsubsection*{Experiment 4 - the Stokes sphere}
+\subsubsection*{Experiment 6 - the Stokes sphere}
 
+This is a simple two-dimensional experiment in which a Stokes sphere is placed at coordinates 
+$(L_x/2,L_y/2)$ and has a radius of 100\si{\kilo\metre}. 
+The domain is $600\times600$\si{\kilo\metre}, 
+gravity is set to $g_z=-9.81\si{\metre\per\square\second}$.
+The temperature is a linear gradient between  $T=550^oC$ at the surface and $T=1330^oC$ at the bottom,
+except in the sphere where it is set to a constant $T=550^oC$.
+The density of the surrounding mantle is $\rho_0=3000$ and the sphere reference density 
+is $\rho_0=3300$. The thermal expansion 
+coefficient is set to $\alpha=3.10^{-5} K^{-1}$ and the reference temperature to $T_0=0^oC$.
+The density is given by: 
+\[
+\rho(T)=\rho_0(1-\alpha(T-T_0))
+\]
+Boundary conditions are free slip at the bottom and the sides, open at the top (free surface).
 
+The rheology is of the dislocation creep type:
+\[
+\eta 
+= \frac{1}{2} A^{-\frac1n} \dot\varepsilon_e^{\frac1n-1}  \exp \frac{Q}{nRT} 
+= \underbrace{ \frac{1}{2} A^{-\frac1n} \exp \frac{Q}{nRT} }_{\beta} \dot\varepsilon_e^{\alpha}  
+\]
+Note that we still use a regularrisation parameter set to $10^{-18}$.
 
-%This is a simple two-dimensional experiment in which a Stokes sphere is placed at coordinates 
-%$(L_x/2,L_y/2)$ and has a radius of 100\si{\kilo\metre}. 
-%The domain is $600\times600$\si{\kilo\metre}, 
-%gravity is set to $g_z=-9.81\si{\metre\per\square\second}$.
-%The temperature is a linear gradient between  $T=550^oC$ at the surface and $T=1300^oC$ at the bottom,
-%except in the sphere where it is set to a constant $T=400^oC$.
-%The density of the surrounding mantle is $\rho_0=3000$ and the sphere reference density 
-%is $\rho_0=3300$. The thermal expansion 
-%coefficient is set to $\alpha=3.10^{-5} K^{-1}$ and the reference temperature to $T_0=0^oC$.
-%The density is given by: 
-%\[
-%\rho(T)=\rho_0(1-\alpha(T-T_0))
-%\]
-%Boundary conditions are free slip at the bottom and the sides, open at the top (free surface).
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_06/vel.png}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_06/sr.png}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_06/eta.png}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_06/p.png}
+\end{center}
 
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/conv}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/du}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/dp}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/p}
+\end{center}
 
 

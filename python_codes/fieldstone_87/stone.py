@@ -58,8 +58,38 @@ def viscosity_density(exx,eyy,exy,iiter,x,y):
           beta=4.54e10
           rho=3150-3150
 
+    # porphyroclast
+    if experiment==5:
+       if (x-Lx/2)**2+(y-Ly/2)**2<0.01:
+          nnn=5
+          alpha=1./nnn-1
+          beta=5
+          rho=0
+       else:
+          #n=1
+          alpha=0
+          beta=1
+          rho=0
+
+    if experiment==6:
+       alphaT=3e-5
+       Q=540e3
+       Rgas=8.314
+       A=2.417e-16
+       nnn=3.5
+
+       if (x-Lx/2)**2+(y-Ly/2)**2<100e3**2:
+          T=550+273
+       else:
+          T=(-1330+550)*(y)/Ly +1330 + 273
+       alpha=1./nnn-1
+       beta=0.5 * A**(-1./nnn) * np.exp ( Q / nnn / Rgas / T )
+       rho=3300*(1-alphaT*(T-273))
+
     # compute effective power law viscosity
     eta=beta*varepsilon_e**alpha
+
+    #print(beta,eta,rho)
 
     return eta,rho,alpha
 
@@ -125,7 +155,7 @@ mP=4     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-experiment=2
+experiment=6
 
 if experiment==0 or experiment==1: # cavity
    Lx=1.
@@ -162,6 +192,30 @@ if experiment==3 or experiment==4: # slab detachment
    reg=1e-20  
    gx=0
    gy=-10
+
+if experiment==5:
+   Lx=1
+   Ly=1
+   nelx=100
+   niter=25
+   Npicard=200
+   adapt_theta=False
+   eta_ref=100
+   reg=1e-5
+   gx=0
+   gy=0
+
+if experiment==6:
+   Lx=600e3
+   Ly=600e3
+   nelx=96
+   niter=25
+   Npicard=200
+   adapt_theta=False
+   eta_ref=1e22
+   reg=1e-18
+   gx=0
+   gy=-9.81
 
 
 tol_nl=1e-8 # nonlinear tolerance
@@ -208,6 +262,7 @@ vrmsfile=open('vrms.ascii',"w")
 #################################################################
 #################################################################
 
+print("experiment=",experiment)
 print("nelx",nelx)
 print("nely",nely)
 print("nel",nel)
@@ -344,6 +399,33 @@ if experiment==3 or experiment==4: # slab detachment
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
     #end for
 #end if
+
+if experiment==5:
+   for i in range(0,NV):
+       if yV[i]/Ly>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = +0.5
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+       if yV[i]/Ly<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = -0.5
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+    #end for
+#end if
+
+if experiment==6:
+   for i in range(0,NV):
+       if yV[i]/Ly<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+    #end for
+#end if
+
 
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -605,7 +687,8 @@ for iiter in range(0,niter):
    # requires last pressure dof to be at p=0
    ######################################################################
 
-   if experiment==0 or experiment==1 or experiment==3 or experiment==4: 
+   if experiment==0 or experiment==1 or experiment==3 or \
+      experiment==4 or experiment==5: 
       for i in range(0,Nfem):
           A_sparse[Nfem-1,i]=0
           A_sparse[i,Nfem-1]=0
@@ -683,7 +766,8 @@ for iiter in range(0,niter):
    #################################################################
    start = timing.time()
 
-   if experiment==0 or experiment==1 or experiment==3 or experiment==4:
+   if experiment==0 or experiment==1 or experiment==3 or \
+      experiment==4 or experiment==5:
 
       int_p=0
       for iel in range(0,nel):
@@ -1083,6 +1167,18 @@ if experiment==3 or experiment==4:
        if abs(yV[i]-550e3)/Lx<eps:
           hor_file.write("%e %e %e %e %e %e\n" %(xV[i],etan[i],srn[i],u[i],v[i],q[i]))
    hor_file.close()
+
+######################################################################
+# export measurements for inclusion 
+######################################################################
+
+if experiment==5:
+   diag_file=open('diagonal_profile.ascii',"w")
+   for i in range(0,NV):
+       if abs(xV[i]-yV[i])<1e-6 and xV[i]>0.4999999:
+          r_i=np.sqrt((xV[i]-0.5)**2+(yV[i]-0.5)**2)
+          diag_file.write("%e %e %e %e %e %e\n" %(r_i,etan[i],srn[i],u[i],v[i],q[i]))
+   diag_file.close()
 
 
 #####################################################################

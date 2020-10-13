@@ -1,0 +1,62 @@
+set term pdf enhanced font 'Times,11pt'
+set grid
+set key outside
+
+
+set log y
+set xlabel '# iteration'
+set ylabel '||R||_2'
+set output 'conv.pdf'
+plot[][1e-8:]\
+'48x48/conv.ascii' w lp ps .4 t '48x48',\
+'96x96/conv.ascii' w lp ps .4 t '96x96',\
+
+#########################################################
+
+cm=1
+year=1
+set xlabel '# iteration'
+
+set ylabel 'u'
+unset log y 
+set output 'u.pdf'
+plot[][]\
+'48x48/stats_u.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t '48x48',\
+'48x48/stats_u.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
+'96x96/stats_u.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t '96x96',\
+'96x96/stats_u.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
+
+set ylabel 'v (cm/yr)'
+set output 'v.pdf'
+plot[][]\
+'48x48/stats_v.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t '48x48',\
+'48x48/stats_v.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
+'96x96/stats_v.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t '96x96',\
+'96x96/stats_v.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
+
+set ylabel 'p'
+set output 'p.pdf'
+plot[][]\
+'48x48/stats_p.ascii' u 1:2 w lp lt 1 ps .4 t '48x48',\
+'48x48/stats_p.ascii' u 1:3 w lp lt 1 ps .4 notitle ,\
+'96x96/stats_p.ascii' u 1:2 w lp lt 2 ps .4 t '96x96',\
+'96x96/stats_p.ascii' u 1:3 w lp lt 2 ps .4 notitle ,\
+
+set ylabel '{/Symbol d}u (cm/yr)'
+set output 'du.pdf'
+plot[][]\
+'48x48/stats_du.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t '48x48',\
+'48x48/stats_du.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
+'96x96/stats_du.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t '96x96',\
+'96x96/stats_du.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
+
+set ylabel '{/Symbol d}p'
+set output 'dp.pdf'
+plot[][]\
+'48x48/stats_dp.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t '48x48',\
+'48x48/stats_dp.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
+'96x96/stats_dp.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t '96x96',\
+'96x96/stats_dp.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
+
+
+
