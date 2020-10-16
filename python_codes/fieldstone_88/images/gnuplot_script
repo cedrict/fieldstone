@@ -1,0 +1,16 @@
+set term pdf
+
+set output 'visc.pdf'
+f1(x)=10*exp(-6.9*x)
+f2(x)=0.8*exp(-6.9*x)
+f3(x)=50*exp(-6.9*x)
+set log y 
+set xlabel 'T'
+set ylabel '{/Symbol h}'
+
+plot[0:1][]\
+f1(x) t 'lithosphere rheology',\
+f2(x) t 'upper mantle rheology',\
+f3(x) t 'lower mantle rheology' 
+
+#plot[0:1][] x<0.77? f3(x) : (x<0.9? f2(x) : f1(x)) notitle
