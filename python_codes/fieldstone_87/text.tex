@@ -448,7 +448,7 @@ one can use the following relationship to include a form of plasticity through s
 \]
 where $\tau_{lim}$ is the yield stress and $n$ is the power-law index defining the 'brittleness'
 of the material.
-In Ciskova et al. \cite{civv02}, 
+In Ciskova et al. (2002) \cite{civv02}, 
 the authors use $n=5$, $\dot{\varepsilon}_{lim}=10^{-15}\si{\per\second}$, 
 and $\tau_{lim}=10^{9}\si{\pascal}$. 
 
@@ -456,7 +456,8 @@ In this experiment the domain is 40x10\si{\kilo\metre} and the resolution is $64
 The regularisation parameter is set to $\dot{\gamma}=10^{-20}\si{\per\second}$.
 Because we here consider a shallow upper-crustal 
 layer, the material is characterised by a cohesion of $c=40\si{\mega\pascal}=\tau_{lim}$.
-Extensional boundary conditions are applied so that the background strain rate is also $10^{-15}$.
+Extensional boundary conditions are applied so that the background strain rate is 
+also $10^{-15}\si{\per\second}$.
 
 One can also look at the effective viscosity by 
 setting $\tau = 2 \eta_{eff} \dot{\varepsilon}$ so that
@@ -490,8 +491,6 @@ In the present context, we then define
 Boundary conditions are as follows: $\vec{\upnu}=(-u_{bc},0)$ is imposed on the left and the left half 
 of the bottom side, and $\vec{\upnu}=(+u_{bc},0)$ is imposed on the right and the right half
 of the bottom side. The top is left free.  
-
-
 
 \begin{center}
 \includegraphics[width=7.5cm]{python_codes/fieldstone_87/results/experiment_02/vel.png}
@@ -691,30 +690,34 @@ This is a simple two-dimensional experiment in which a Stokes sphere is placed a
 $(L_x/2,L_y/2)$ and has a radius of 100\si{\kilo\metre}. 
 The domain is $600\times600$\si{\kilo\metre}, 
 gravity is set to $g_z=-9.81\si{\metre\per\square\second}$.
-The temperature is a linear gradient between  $T=550^oC$ at the surface and $T=1330^oC$ at the bottom,
-except in the sphere where it is set to a constant $T=550^oC$.
-The density of the surrounding mantle is $\rho_0=3000$ and the sphere reference density 
-is $\rho_0=3300$. The thermal expansion 
-coefficient is set to $\alpha=3.10^{-5} K^{-1}$ and the reference temperature to $T_0=0^oC$.
+The temperature is a linear gradient between  $T=550\si{\celsius}$ 
+at the surface and $T=1330\si{\celsius}$ at the bottom,
+except in the sphere where it is set to a constant $T=550\si{\celsius}$.
+The density of the surrounding mantle is $\rho_0=3000\si{\kilogram\per\cubic\meter}$ 
+and the sphere reference density is $\rho_0=3300\si{\kilogram\per\cubic\meter}$. The thermal expansion 
+coefficient is set to $\alpha=3\cdot 10^{-5} \si{\per\kelvin}$ and the reference temperature to $T_0=0\si{\celsius}$.
 The density is given by: 
 \[
 \rho(T)=\rho_0(1-\alpha(T-T_0))
 \]
 Boundary conditions are free slip at the bottom and the sides, open at the top (free surface).
 
-The rheology is of the dislocation creep type:
+The rheology is of the dislocation creep type and the effective viscosity is then computed as follows:
 \[
 \eta 
 = \frac{1}{2} A^{-\frac1n} \dot\varepsilon_e^{\frac1n-1}  \exp \frac{Q}{nRT} 
 = \underbrace{ \frac{1}{2} A^{-\frac1n} \exp \frac{Q}{nRT} }_{\beta} \dot\varepsilon_e^{\alpha}  
 \]
-Note that we still use a regularrisation parameter set to $10^{-18}$.
+Note that we still use a regularisation parameter set to $\dot\gamma=10^{-18}\si{\per\second}$, 
+and that no viscosity cutoff is needed here. 
+
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_06/vel.png}
 \includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_06/sr.png}\\
 \includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_06/eta.png}
-\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_06/p.png}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_06/p.png}\\
+{\captionfont Velocity, strain rate, viscosity and pressure fields. 128x128 mesh.}
 \end{center}
 
 \begin{center}
@@ -725,5 +728,121 @@ Note that we still use a regularrisation parameter set to $10^{-18}$.
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/v}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/p}
 \end{center}
+
+
+\newpage
+%--------------------------------------------------------------------------
+\subsubsection*{Experiment 7 - Deformation around a Fault that cuts a Block of Viscous Material}
+
+The idea for this experiment comes from Barr \& houseman \cite{baho92,baho96}.
+
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_87/images/baho}\\
+{\captionfont Taken from 
+\url{http://homepages.see.leeds.ac.uk/~eargah/basil/exa_fault.html}. 
+Here we show the calculated deformation field around a fault that cuts the right 
+hand boundary of the block as far as the centre of the block.  The deformation field 
+includes a singularity in the stress components at the fault tip.  For that reason, 
+we concentrate mesh points around the fault-tip as shown in the upper left diagram, 
+but the accuracy with which the deformation field is computed can be checked against 
+an analytic solution for the crack tip.  The fault permits a displacement discontinuity 
+parallel to its direction, but requires continuity in the perpendicular directions, 
+as for a buried geological fault which separates distinct sliding blocks of rock.  
+If the rock is hot enough (deep in the crust) it creeps like a viscous fluid. 
+The two diagrams in the middle row show the variation of the two components of displacement rate: 
+Ux and Uy.  In Ux, we see the transition between a distributed shear flow on the left to the 
+discontinuous displacement on the right.  To balance the horizontal flow, there is also a minor 
+component of vertical flow as shown with Uy.  With elapsed time finite deformation of the block 
+is shown on the lower right diagram.  The variation of displacement and deformation along the fault 
+is diagnostic of the stress vs strain-rate exponent of the viscous material. 
+}
+\end{center}
+
+We do not necessarily wish to reproduce the results in these papers, but since the authors use a 
+power-law rheology their setup is interesting to us here. 
+Their fault is defined by the following boundary conditions:
+(1) the normal stress across the fault is continuous;
+(2) the velocity normal to the fault is continuous but
+otherwise unconstrained;
+(3) the shear stress on the fault is equal to some constant,
+which is set to be zero.
+This would require a bespoke mesh where the points on the fault would need to be represented by 2 sets
+of velocity dofs. 
+In order not to implement such a feature, we resort to a very thin sliver of weak Newtonian material 
+at the fault, with a thickness $\delta_F$.
+Given the geometry, we also implement a form of mesh adaptivity which consists in 
+stretching the elements in both $x$ and $y$ directions so as to yield smaller 
+elements towards the tip of the fault:
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_87/images/mesh}\\
+{\captionfont Stretched mesh.} 
+\end{center}
+For example, a mesh of 102x51 elements would have square elements of size 196m. After stretching, 
+elements in the middle of the domain have a dimension of about 127m, while near the boundaries the
+elements have a dimension of about 610m.
+
+For $n=1$ the matrix around the fault is Newtonian and the authors specify its viscosity
+to be $\eta_0=10^{20}\si{\pascal\second}$. For $n>1$ the authors do not specify the 
+value of $\beta$ but rather resort to an indirect and unpractical way. We therefore postulate
+\[
+\beta =  \eta_0 \dot\varepsilon_0^{-\alpha}
+\]
+so that the viscosity is then 
+\[
+\eta =  \eta_0 \left(\frac{\dot\varepsilon_e}{\dot\varepsilon_0}\right) ^\alpha
+\]
+where the reference strain rate $\dot\varepsilon_0$ is defined by the slip rate of the fault 
+(i.e. $u_0=10\si{\milli\metre\per\year}$) divided by $L_y$.
+Ideally the fault should have no viscosity but due to machine precision considerations 
+we set it to $\eta_=10^{16}\si{\pascal\second}$.
+
+The fault has a length $R_0$ and the domain is then $2R_0 \times R_0$. 
+Boundary conditions are as follows:
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_87/images/baho92}\\
+{\captionfont Taken from \cite{baho92}, in which the domain is square.
+$+u_0/2$ is prescribed at the top, and $-u_0/2$ is prescribed at the bottom.
+}
+\end{center}
+
+
+\note{
+So the flaw here in a way is that when resolution increases the fault becomes thinner and 
+thinner, so that the problem is not resolution independent. 
+Assess convergence with vrms ? 
+}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_07/conv.pdf}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/vel_n01}
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/vel_n02}
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/vel_n03}
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/vel_n10}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/sr_n01}
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/sr_n02}
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/sr_n03}
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/sr_n10}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/eta_n01}
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/eta_n02}
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/eta_n03}
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/eta_n10}\\
+{\captionfont Left to right: n=1,2,3,10.}
+\end{center}
+
+
+
+
+
+
+
+
 
 

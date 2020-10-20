@@ -1,0 +1,13 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set xlabel '# iter'
+set ylabel '||R||_2'
+set log y 
+set output 'conv.pdf'
+set pointsize .3
+plot[][]\
+'n_01/conv.ascii' w lp t 'n=1',\
+'n_02/conv.ascii' w lp t 'n=2',\
+'n_03/conv.ascii' w lp t 'n=3',\
+'n_10/conv.ascii' w lp t 'n=10',\
+

@@ -8,6 +8,15 @@ from numpy import linalg as LA
 
 #------------------------------------------------------------------------------
 
+def strpt(x,L,stretch_alpha,stretch_beta1,stretch_beta2):
+    if x<L/2: 
+       val = (2*x/L)**stretch_alpha * L/2
+    else:
+       val = L- (2*(L-x)/L)**stretch_alpha * L/2
+    return val
+
+#------------------------------------------------------------------------------
+
 def viscosity_density(exx,eyy,exy,iiter,x,y):
 
     #compute effective strain rate (sqrt of 2nd inv)
@@ -71,6 +80,7 @@ def viscosity_density(exx,eyy,exy,iiter,x,y):
           beta=1
           rho=0
 
+    # Stokes sphere
     if experiment==6:
        alphaT=3e-5
        Q=540e3
@@ -85,6 +95,17 @@ def viscosity_density(exx,eyy,exy,iiter,x,y):
        alpha=1./nnn-1
        beta=0.5 * A**(-1./nnn) * np.exp ( Q / nnn / Rgas / T )
        rho=3300*(1-alphaT*(T-273))
+
+    if experiment==7:
+
+       nnn=1
+       alpha=1./nnn-1
+       eps0=0.01/year/Ly
+       beta=1e20*eps0**-alpha
+       if x>Lx/2 and abs(y-Ly/2)<hy_min:
+          beta=1e16
+          alpha=0
+       rho=0
 
     # compute effective power law viscosity
     eta=beta*varepsilon_e**alpha
@@ -155,7 +176,7 @@ mP=4     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-experiment=6
+experiment=7
 
 if experiment==0 or experiment==1: # cavity
    Lx=1.
@@ -205,10 +226,10 @@ if experiment==5:
    gx=0
    gy=0
 
-if experiment==6:
+if experiment==6: # Stokes sphere
    Lx=600e3
    Ly=600e3
-   nelx=96
+   nelx=128
    niter=25
    Npicard=200
    adapt_theta=False
@@ -217,8 +238,26 @@ if experiment==6:
    gx=0
    gy=-9.81
 
+if experiment==7: # def around fault
+   R0=10e3
+   Lx=2*R0
+   Ly=R0
+   nelx=102
+   niter=25
+   Npicard=200
+   adapt_theta=False
+   eta_ref=1e19
+   reg=1e-16
+   gx=0
+   gy=0
+   grid_stretch=True
 
-tol_nl=1e-8 # nonlinear tolerance
+
+
+
+
+
+tol_nl=1e-7 # nonlinear tolerance
 every=1
 produce_nl_vtu=True
 use_srn=False
@@ -296,6 +335,9 @@ for j in range(0, nny):
 
 print("setup: grid points: %.3f s" % (timing.time() - start))
 
+
+
+
 ###################################################################################################
 # build connectivity arrays for velocity and pressure
 ###################################################################################################
@@ -339,6 +381,52 @@ for j in range(0,nely):
 #end for
 
 print("setup: connectivity: %.3f s" % (timing.time() - start))
+
+###################################################################################################
+# stretching of mesh
+###################################################################################################
+# velocity    pressure
+# 3---6---2   3-------2
+# |       |   |       |
+# 7   8   5   |       |
+# |       |   |       |
+# 0---4---1   0-------1
+
+if grid_stretch:
+   stretch_alpha_y=0.65
+   stretch_beta1_y=0.25
+   stretch_beta2_y=0.375
+   for i in range(0,NV):
+       xV[i]=strpt (xV[i],Lx,stretch_alpha_y,stretch_beta1_y,stretch_beta2_y)
+       yV[i]=strpt (yV[i],Ly,stretch_alpha_y,stretch_beta1_y,stretch_beta2_y)
+
+   # now there is a pb since nodes 4,5,6,7,8 are no more in the middle 
+   # of the edges/element. We need to remedy this:
+
+   for iel in range(0,nel):
+       xV[iconV[4,iel]]=(xV[iconV[0,iel]]+xV[iconV[1,iel]])*0.5
+       xV[iconV[5,iel]]=(xV[iconV[1,iel]]+xV[iconV[2,iel]])*0.5
+       xV[iconV[6,iel]]=(xV[iconV[2,iel]]+xV[iconV[3,iel]])*0.5
+       xV[iconV[7,iel]]=(xV[iconV[3,iel]]+xV[iconV[0,iel]])*0.5
+       xV[iconV[8,iel]]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+\
+                         xV[iconV[2,iel]]+xV[iconV[3,iel]])*0.25
+       yV[iconV[4,iel]]=(yV[iconV[0,iel]]+yV[iconV[1,iel]])*0.5
+       yV[iconV[5,iel]]=(yV[iconV[1,iel]]+yV[iconV[2,iel]])*0.5
+       yV[iconV[6,iel]]=(yV[iconV[2,iel]]+yV[iconV[3,iel]])*0.5
+       yV[iconV[7,iel]]=(yV[iconV[3,iel]]+yV[iconV[0,iel]])*0.5
+       yV[iconV[8,iel]]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+\
+                         yV[iconV[2,iel]]+yV[iconV[3,iel]])*0.25
+       
+   #np.savetxt('grid.ascii',np.array([xV,yV]).T)
+
+hy_min=Ly
+hy_max=0
+for iel in range(0,nel):
+    hy_min=min(hy_min,yV[iconV[2,iel]]-yV[iconV[0,iel]])
+    hy_max=max(hy_max,yV[iconV[2,iel]]-yV[iconV[0,iel]])
+          
+print('     -> h_min=',hy_min)
+print('     -> h_max=',hy_max)
 
 ###################################################################################################
 # define boundary conditions
@@ -426,6 +514,31 @@ if experiment==6:
     #end for
 #end if
 
+if experiment==7:
+   for i in range(0,NV):
+       if yV[i]/Ly<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = -5e-3/year
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+       if yV[i]/Ly>1-eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 5e-3/year
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       #if abs(yV[i]-Ly/2)/Ly<eps:
+       #   bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 5e-3/year*(yV[i]-Ly/2)/(Ly/2)
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if xV[i]/Lx>(1-eps):
+          if yV[i]>Ly/2+0.9*hy_min:
+             bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 5e-3/year
+          if yV[i]<Ly/2-0.9*hy_min:
+             bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = -5e-3/year
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+
+
+
+    #end for
+#end if
 
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -688,7 +801,7 @@ for iiter in range(0,niter):
    ######################################################################
 
    if experiment==0 or experiment==1 or experiment==3 or \
-      experiment==4 or experiment==5: 
+      experiment==4 or experiment==5 : 
       for i in range(0,Nfem):
           A_sparse[Nfem-1,i]=0
           A_sparse[i,Nfem-1]=0
@@ -767,7 +880,7 @@ for iiter in range(0,niter):
    start = timing.time()
 
    if experiment==0 or experiment==1 or experiment==3 or \
-      experiment==4 or experiment==5:
+      experiment==4 or experiment==5 or experiment==7:
 
       int_p=0
       for iel in range(0,nel):
