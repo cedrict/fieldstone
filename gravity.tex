@@ -160,8 +160,10 @@ y=P_l^m(x) \qquad \text{for} \; l=0,1,2,3,... \quad \text{and} \; m=-l,-l+1,...0
 \]
 and 
 \[
+\boxed{
 P_l^m(x)= \frac{(-1)^m}{2^l \; l!} (1-x^2)^{m/2}
 \frac{d^{l+m}}{dx^{l+m}} (x^2-1)^l
+}
 \]
 with $m \geq 0$ and $l\geq 0$.
 The first few polynomials are
@@ -235,12 +237,16 @@ where $d\Omega = \sin\theta d\theta d\phi$ is the differential solid angle in sp
 It is important to note that there are different normalisations for spherical harmonics.
 In this document we choose:
 \begin{equation}
+\boxed{
 Y_l^m(\theta,\phi) = \sqrt{\frac{2l+1}{4\pi} \frac{(l-m)!}{(l+m)!}} P_l^m(\cos\theta) e^{im\phi}
+}
 \qquad 
 \textrm{for} \; l=0,1,2,3,... \; \textrm{and} \; m=-l,-l+1,...,l-1,l
 \label{eq:spha6}
 \end{equation}
-The first few spherical harmonics are shown below in the real representation (i.e. using $\cos m\phi$  instead of $e^{i m \phi}$) \footnote{\url{https://en.wikipedia.org/wiki/Table_of_spherical_harmonics}} \footnote{\url{https://mathworld.wolfram.com/SphericalHarmonic.html}}:
+which is Eq.(7.8.1) in the Schubert, Turcotte \& Olson book \cite{scto01}. 
+In this case the $(-1)^m$ is inside the $P_m^m$.
+The first few spherical harmonics are shown below in the real representation (i.e.cusing $\cos m\phi$  instead of $e^{i m \phi}$) \footnote{\url{https://en.wikipedia.org/wiki/Table_of_spherical_harmonics}} \footnote{\url{https://mathworld.wolfram.com/SphericalHarmonic.html}}:
 \begin{eqnarray}
 Y_0^0(\theta,\phi)    &=& \sqrt{\frac{1}{4\pi}} \nn\\ \nn\\
 Y_1^{-1}(\theta,\phi) &=& \sqrt{\frac{3}{8\pi}} \cos\phi\sin\theta\nn\\

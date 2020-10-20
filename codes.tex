@@ -101,10 +101,37 @@ Heron et al \cite{hemn20}, O'Neill et al \cite{onlw20}
 \end{scriptsize}
 
 %------------------------------------------------------------------------------
-\item {\codefont BASIL/ELLE} \url{http://elle.ws/}
+\item {\codefont BASIL \& ELLE} 
 %------------------------------------------------------------------------------
 
+From \url{http://homepages.see.leeds.ac.uk/~eargah/basil/}:
+Basil is a finite element program which calculates quantities which describe  stress  and strain in non-linear viscous materials, for strains up to the of order 100\%.   
+The calculations  describe  very  viscous  Earth materials which undergo irreversible large-strain 
+deformation at  high  temperature  and over long time periods, under the influence of body 
+forces and surface tractions.  Sybil  is the post-processing program that permits basil 
+solutions to be examined in detail using an interactive graphical user interface.
+
+The program permits a spatially variable Newtonian  or  non-Newtonian  viscosity  in a 2-D 
+geometry with boundary conditions on traction and/or velocity.  It is also  possible  
+to include  a single fault or discontinuity in the problem in a dynamically self consistent way.  
+The 2-D deformation  field represents  either plane-strain deformation, or it permits 
+a specified distribution of normal stress in the third  direction.   The  latter is referred 
+to as the thin viscous sheet formulation when the normal force is due to  gravity  acting on 
+variations of the layer thickness.  Plane-stress calculations are a specific case of 
+the thin viscous sheet formulation.
+
+The programs basil and sybil have been developed  mainly  at Monash  University  since  1988,  
+and before that at ANU and Harvard.  The present set of  programs  has  been  developed mainly  by  
+Greg  Houseman, Terence  Barr  and  Lynn Evans.
+
+ELLE is an open-source multi-process and multi-scale software for the simulation of geologic processes, especially (but not only) during deformation and metamorphism. It is coupled to/based on BASIL. See \url{http://elle.ws/} for a complete list of publications.
+
 \begin{scriptsize}
+Barr \& Houseman \cite{baho92}(?)
+Barr \& Houseman \cite{baho96}, Houseman \& England \cite{hoen96}
+\cite{hogu97},\cite{homo97},\cite{bobt97},\cite{neho97}
+\cite{honk00}
+\cite{tesb01}
 \cite{bokj08}
 \cite{llor19}
 \end{scriptsize}
@@ -172,7 +199,7 @@ These codes are hosted by CIG at\\
 \twothousandeight: \cite{dihf08}\cite{gamc08}\cite{zhmt08}\cite{hole08}\cite{lejm08}\cite{lisg08}\cite{chzy08}
       \cite{beke08}\cite{beck08}\cite{slee08}\cite{lezh08}\cite{king08}\cite{ligu08}\cite{meco08}
       \cite{roni08}\cite{splg08}\cite{divf08}\cite{vavg08}\\
-\twothousandnine: \cite{lizh09}\cite{arhm09}\cite{zhzm09}\cite{anbi09}\cite{fobe09}\cite{bubi09}\cite{befa09}
+\twothousandnine: Bull et al \cite{bumr09}, \cite{lizh09}\cite{arhm09}\cite{zhzm09}\cite{anbi09}\cite{fobe09}\cite{bubi09}\cite{befa09}
       \cite{bavi09}\cite{lezh09}\cite{bogj09}\cite{zhon09}\cite{cohu09}\cite{coco09}\cite{keso09}
       \cite{maml09}\cite{nacl09}\cite{rolm09}\cite{splg09}\\
 \twothousandten: \cite{bumb10}\cite{vabv10}\cite{baiv10}\cite{bubi10}\cite{zhzl10}\cite{bill10}\cite{cobe10}
@@ -263,8 +290,8 @@ This code is hosted by CIG at \url{https://geodynamics.org/cig/software/conman/}
 \cite{nake07}\cite{dadh07}\cite{copb07}\cite{elki07}\cite{lohd07}\cite{nake07}\cite{reki07}\\
 \twothousandeight:
 \cite{hash08}\\
-\twothousandnine:
-\cite{faho09}\cite{heaa09}\cite{king09}\cite{leki09}\cite{wazh09}\\
+\twothousandnine: Farnetani \& Hofmann \cite{faho09}, Hebert et al \cite{heaa09}, King \cite{king09}, 
+                  Lee \& King \cite{leki09}, Watters et al \cite{wazh09}\\
 \twothousandten:
 \cite{kilv10}\cite{cows10}\cite{hash10}\cite{leki10}\\
 \twothousandeleven:
@@ -323,18 +350,45 @@ Yoshida et al \cite{yosy20}
 \item MC3D \index{general}{MC3D code}
 %------------------------------------------------------------------------------
 
+MC3D utilises a hybrid spectral finite difference scheme flow
+solver and a finite volume scheme for the solution of the energy equation.
+It was originally developed at Los Alamos in the late 1980’s for Cray/Vector architecture. 
+and later parallelized (MPI) to run on clusters (1999).
+MC3D is second-order accurate in time and space.
+
 \begin{scriptsize}
-\cite{stfl11}
+\nineteenninetyone:  Gable et al \cite{gaot91}\\
+\nineteenninetynine:  Lowman \& Gable \cite{loga99}\\
+\twothousandone:  Lowman et al \cite{lokg01}\\
+\twothousandthree:  Lowman et al \cite{lokg03}\\
+\twothousandfour:  Thomas et al \cite{thkl04} , Lowman et al \cite{lokg04} \\
+\twothousandfive:  Koglin et al \cite{kogk05} \\
+\twothousandseven: Gait \& Lowman \cite{galo07,galo07b}, Nettelfield \& Lowman \cite{nelo07},
+                   Jarvis \& Lowman \cite{jalo07}, Lowman et al \cite{lopk07}\\
+\twothousandeight: Gait et al \cite{galg08}, Lowman et al \cite{logg08}\\
+\twothousandten: Heron \& Lowman \cite{helo10}, O'Farrell \& Lowman \cite{oflo10}\\
+\twothousandeleven: Stein et al \cite{stfl11}, Heron \& Lowman \cite{helo11}, Lowman et al \cite{lokt11}\\
+\twothousandfourteen: Trim et al \cite{trhs14}\\
+\twothousandfifteen: Tosi et al \cite{tosn15}, Heron et al \cite{hels15}\\
+\twothousandsixteen: Trim \& Lowman \cite{trlo16}
 \end{scriptsize} 
 
 %------------------------------------------------------------------------------
 \item {\codefont DYNEARTHSOL} \index{general}{DYNEARTHSOL code}
 %------------------------------------------------------------------------------
 
+By critically evaluating the strengths and weaknesses of the
+FLAC algorithm, Choi et al. (2013) created a new code, DynEarthSol2D, 
+and Tan et al. (2013) [AGU abstract] further extended it to three
+dimensions, DynEarthSol3D. DynEarthSol3D (Dynamic Earth Solver
+in three Dimensions) is a robust, flexible, open source finite
+element code for modeling non-linear responses of continuous
+media and thus suitable for long-term tectonic modeling.
+
 \begin{scriptsize} 
-\cite{chtl13}
-\cite{jalr15}
-\cite{lolc17}
+\twothousandthirteen: Choi et al \cite{chtl13}\\
+\twothousandfifteen: Jammes et al \cite{jalr15}, Ta et al \cite{tact15}\\
+\twothousandseventeen: Logan et al \cite{lolc17}
 \end{scriptsize} 
 
 %------------------------------------------------------------------------------
@@ -663,8 +717,8 @@ MILAMIN is a finite element method implementation in native MATLAB that is capab
 \twothousandfifteen: \cite{lukz15}\cite{gehm15}\cite{thkp15}\cite{musd15}\\
 \twothousandsixteen: \cite{jads16}\cite{maka16}\cite{cakp16}\\
 \twothousandeighteen: \cite{dusd18}\cite{jasc18}\cite{jadg18}\cite{comj18}\cite{jens18}\cite{rabw18}\cite{chsm18}\\
-\twothousandnineteen: \cite{anpa19}\cite{sifg19}\cite{baba19}\cite{sogh19}
-\twothousandtwenty: Humair et al \cite{hube20}
+\twothousandnineteen: \cite{sifg19}\cite{baba19}\cite{sogh19}, Andres-Martinez et al \cite{anpa19}\\
+\twothousandtwenty: Humair et al \cite{hube20},
 \end{scriptsize}
 
 %------------------------------------------------------------------------------
@@ -940,7 +994,7 @@ Huismans \& Beaumont \cite{hube11}, Jamieson \& Beaumont \cite{jabe11}\\
 \twothousandsixteen: Liu \& Currie \cite{licu16}, Allen \& Beaumont \cite{albe16}, Kelly et al \cite{kebb16}, Heron et al \cite{heps16}\\
 \twothousandseventeen: Butler \& Beaumont \cite{bube17}, Gradmann \& Beaumont \cite{grbe17}\\
 \twothousandeighteen: Wenker \& Beaumont \cite{webe18,webe18b}\\
-\twothousandtwenty: Li et al \cite{lial20}
+\twothousandtwenty: Li et al \cite{lial20}, Beucher \& Huismans \cite{behu20}
 \end{scriptsize}
 
 %------------------------------------------------------------------------------
@@ -973,9 +1027,13 @@ Huismans \& Beaumont \cite{hube11}, Jamieson \& Beaumont \cite{jabe11}\\
 \twothousandsixteen: \cite{sisc16}\cite{crta16}\\
 \twothousandseventeen: Coltice et al \cite{cogu17}, \cite{pest17}, \cite{bahh17}, \cite{pact17}, 
 Crameri et al \cite{crlt17}\\
-\twothousandeighteen: Coltice \& Sheppard \cite{cosh18}, Bocher et al \cite{bofc18}, Coltice et al \cite{cold18}, Arnould et al \cite{arcf18}, Crameri \cite{cram18}, Crameri \& Lithgow-Bertelloni \cite{crli18}, Langemeyer et al \cite{lalt18}, Deschamps et al \cite{dert18}\\
+\twothousandeighteen: Guerrero et al \cite{guld18},Coltice \& Sheppard \cite{cosh18}, 
+                      Bocher et al \cite{bofc18}, Coltice et al \cite{cold18}, 
+                      Arnould et al \cite{arcf18}, Crameri \cite{cram18}, 
+                      Crameri \& Lithgow-Bertelloni \cite{crli18}, Langemeyer et al \cite{lalt18}, 
+                      Deschamps et al \cite{dert18}\\
 \twothousandnineteen: \cite{gult19}\cite{argc19}\cite{deli19}\cite{pact19}\cite{cohf19}\cite{crcm19}\cite{ulcw19}\\
-\twothousandtwenty: \cite{lalt20}\cite{gugb20}\cite{yabt20}, Arnould et al \cite{arcf20}, Ribe et al \cite{rits20}, Grima et al \cite{grlc20}, Schierjott et al \cite{scrt20}, Bolrao et al \cite{bobm20}
+\twothousandtwenty: \cite{lalt20}\cite{gugb20}\cite{yabt20}, Arnould et al \cite{arcf20}, Ribe et al \cite{rits20}, Grima et al \cite{grlc20}, Schierjott et al \cite{scrt20}, Bolrao et al \cite{bobm20}, Karlsson et al \cite{kacc20}
 \end{scriptsize}
 
 %------------------------------------------------------------------------------

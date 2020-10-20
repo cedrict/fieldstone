@@ -31,6 +31,20 @@
 \usepackage{dsfont}
 \DeclareSIUnit\year{yr}
 
+% be able to use \note environments with a box around the text
+\usepackage{fancybox}
+\newcommand{\note}[1]{
+{\parindent0pt
+  \begin{center}
+    \shadowbox{
+      \begin{minipage}[c]{0.9\linewidth}
+        \textbf{Note:} #1
+      \end{minipage}
+    }
+  \end{center}
+}}
+
+
 %\RequirePackage{authorindex}
 
 \newtheorem{problem}{problem:}

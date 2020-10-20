@@ -494,12 +494,36 @@ p = p_0(r) + p_1(r,\theta,\phi)
 The equation of state relates the density perturbations to the temperature and pressure perturbations 
 as follows
 \[
-\rho_1 = \rho_0[1-\alpha(T-T_0(r))+K^{-1} (p-p_0(r))] 
+\rho_1 = \rho_0[1-\alpha(T-T_0(r))+K_T^{-1} (p-p_0(r))] 
 \]
-where $K$ is the bulk modulus and the term $T_0(r)$ represents the horizontally averaged temperature (i.e.
-the geotherm) which varies with radius only. The effects of compressibility on the density are found to be at least two orders of magnitude
+where $K_T$ is the bulk modulus and the term $T_0(r)$ represents the horizontally averaged temperature (i.e.
+the geotherm) which varies with radius only. 
+The effects of compressibility on the density are found to be at least two orders of magnitude
 smaller than the effects of temperature variations. Therefore, the last term 
 of this equation is often neglected.
+Note that this expression is a first order expansion of any Equation of State. \index{general}{Equation of State}
+
+Also, this equation can be misleading if one forgets that the parameters $\alpha$ and $K_T$
+cannot be constant but must be related through Maxwell relations (for example,
+their definitions 
+\[
+\alpha = \frac{1}{V} \left( \frac{\partial V}{\partial T} \right)_P 
+= -\frac{1}{\rho} \left( \frac{\partial \rho}{\partial T} \right)_P
+\]
+and 
+\[
+K_T 
+= - V \left( \frac{\partial P}{\partial V} \right)_T
+= \rho \left( \frac{\partial P}{\partial \rho} \right)_T
+\]
+imply that 
+\[
+\frac{\partial (\alpha\rho)}{\partial P}
+= 
+-\frac{\partial (\rho/K_T)}{\partial T}
+\]
+Some models can be found in the geophysical literature in which assumptions made inconsistently
+about thermodynamic parameters (either constant or depth-dependent) violate the Maxwell rules.
 
 \index{general}{ALA}
 \index{general}{Anelastic Liquid Approximation}

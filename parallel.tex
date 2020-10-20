@@ -1,5 +1,8 @@
 \index{general}{Domain Decomposition}
 
+%---------------------------
+\subsubsection{Rationale}
+
 Let us assume that we want ro run a simulation of the whole Earth mantle
 with a constant resolution of $5\text{km}$. The volume of the mantle is
 \[
@@ -38,9 +41,11 @@ An example of such a large parallel calculation of 3D convection with
 domain decomposition in a spherical shell can be found in \cite{krhb12}:
 
 \begin{center}
-a)\includegraphics[width=7cm]{images/krhb2}
-b)\includegraphics[width=7cm]{images/krhb1} \\
-{\captionfont a)Isocontours of the temperature field; b) Partitioning of the domain onto 512 proc. The mesh counts 1,424,176 cells. The solution has approximately 54 million unknowns (39 million vel., 1.7 million press., and 13 million temp.)
+a)\includegraphics[width=7cm]{images/parallel/krhb2}
+b)\includegraphics[width=7cm]{images/parallel/krhb1} \\
+{\captionfont a)Isocontours of the temperature field; b) Partitioning of the domain onto 512 proc. 
+The mesh counts 1,424,176 cells. The solution has approximately 54 million unknowns 
+(39 million vel., 1.7 million press., and 13 million temp.)
 }
 \end{center}
 
@@ -49,5 +54,15 @@ b)\includegraphics[width=7cm]{images/krhb1} \\
 \begin{itemize}
 \item Three parallel iterative solvers for the Stokes system, discretized by low order 
 tetrahedral elements, are compared with respect to their numerical efficiency and their 
-scalability running on up to 786,432 parallel threads \cite{gmhj15}
+scalability running on up to 786,432 parallel threads. Gmeiner et al (2016) \cite{gmhj16}
 \end{itemize}
+
+
+%----------------------------------------------
+\subsubsection{Strong scaling vs weak scaling}
+
+\begin{center}
+\includegraphics[width=16cm]{images/parallel/fig}
+\end{center}
+
+
