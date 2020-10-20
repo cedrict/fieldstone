@@ -32,7 +32,7 @@ def dNNVds(rq,sq):
 
 ###################################################################################################
 
-def plot_T_field(Tnew, xcoords, ycoords, nnx, nny, Title, savename):
+def plot_T_field(Tnew, xcoords, ycoords, nnx, nny, Title, savename, option):
     Tplot = Tnew.reshape(nny, nnx)
     xplot = xcoords.reshape(nny, nnx)
     yplot = ycoords.reshape(nny, nnx)
@@ -43,7 +43,11 @@ def plot_T_field(Tnew, xcoords, ycoords, nnx, nny, Title, savename):
     a = plt.contourf(xplot/1000, yplot/1000, Tplot, 21,  cmap = plt.cm.coolwarm)
     cbar = plt.colorbar()
     cbar.ax.tick_params(labelsize=5)
-    cbar.set_label('Temperature [K]',fontsize=5)
+    if option==0:
+       cbar.set_label('Temperature [K]',fontsize=5)
+    if option==1:
+       cbar.set_label('material id',fontsize=5)
+       plt.grid(linestyle='--', linewidth=0.25)
     plt.savefig(savename, dpi=600,bbox_inches='tight')
     #plt.show()
     plt.close()
@@ -106,11 +110,11 @@ T_lab = 1330
 nelx=800
 nely=240
 
-nstep=1
+nstep=100
 
 dt=2e3*3.154e7
 
-compute_ss=True
+compute_ss=False
 
 ###################################################################################################
 
@@ -376,7 +380,7 @@ for i in range(0,NT):
 
 #end for
 
-plot_T_field(T, xT, yT, nnx, nny, 'Initial temperature field', 'T_init.pdf')
+plot_T_field(T, xT, yT, nnx, nny, 'Initial temperature field', 'T_init.pdf',0)
 
 np.savetxt('T_init.ascii',np.array([xT,yT,T]).T,header='#x,y,T')
 
@@ -447,6 +451,8 @@ for iel in range(0,nel):
        mat[iel]=5
 
 #np.savetxt('mat.ascii',np.array([xc,yc,mat]).T,header='#x,y,mat')
+
+plot_T_field(mat, xc, yc, nelx, nely, 'material layout', 'mat.pdf', 1)
 
 print("material layout: %.3f s" % (time.time() - start))
     
@@ -678,11 +684,11 @@ for istep in range(0,nstep):
     if compute_ss:
        filename = 'T_final' 
        np.savetxt(filename+'.ascii',np.array([xT,yT,T]).T,header='#x,y,T')
-       plot_T_field(T, xT, yT, nnx, nny, 'temperature field', filename+'.pdf')
+       plot_T_field(T, xT, yT, nnx, nny, 'temperature field', filename+'.pdf',0)
     else:
        filename = 'T_{:04d}'.format(istep) 
        np.savetxt(filename+'.ascii',np.array([xT,yT,T]).T,header='#x,y,T')
-       plot_T_field(T, xT, yT, nnx, nny, 'temperature field', filename+'.pdf')
+       plot_T_field(T, xT, yT, nnx, nny, 'temperature field', filename+'.pdf',0)
 
     print("export via matplotlib: %.3f s" % (time.time() - start))
 
