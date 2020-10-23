@@ -740,7 +740,7 @@ The idea for this experiment comes from Barr \& houseman \cite{baho92,baho96}.
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_87/images/baho}\\
 {\captionfont Taken from 
-\url{http://homepages.see.leeds.ac.uk/~eargah/basil/exa_fault.html}. 
+\url{http://homepages.see.leeds.ac.uk/~eargah/basil/exa_fault.html}: 
 Here we show the calculated deformation field around a fault that cuts the right 
 hand boundary of the block as far as the centre of the block.  The deformation field 
 includes a singularity in the stress components at the fault tip.  For that reason, 
@@ -777,11 +777,12 @@ elements towards the tip of the fault:
 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_87/images/mesh}\\
-{\captionfont Stretched mesh.} 
-\end{center}
-For example, a mesh of 102x51 elements would have square elements of size 196m. After stretching, 
+{\captionfont Stretched mesh of 120$\times$51 elements. 
+This unstretched mesh would have square elements of size 196m. After stretching, 
 elements in the middle of the domain have a dimension of about 127m, while near the boundaries the
-elements have a dimension of about 610m.
+elements have a dimension of about 610m.}
+\end{center}
+
 
 For $n=1$ the matrix around the fault is Newtonian and the authors specify its viscosity
 to be $\eta_0=10^{20}\si{\pascal\second}$. For $n>1$ the authors do not specify the 
@@ -796,23 +797,23 @@ so that the viscosity is then
 where the reference strain rate $\dot\varepsilon_0$ is defined by the slip rate of the fault 
 (i.e. $u_0=10\si{\milli\metre\per\year}$) divided by $L_y$.
 Ideally the fault should have no viscosity but due to machine precision considerations 
-we set it to $\eta_=10^{16}\si{\pascal\second}$.
+we set it to $\eta_F=10^{16}\si{\pascal\second}$.
 
-The fault has a length $R_0$ and the domain is then $2R_0 \times R_0$. 
+The fault has a length $R_0=10\si{\kilo\metre}$ and the domain is then $2R_0 \times R_0$. 
 Boundary conditions are as follows:
 
 \begin{center}
 \includegraphics[width=4cm]{python_codes/fieldstone_87/images/baho92}\\
-{\captionfont Taken from \cite{baho92}, in which the domain is square.
+{\captionfont Boundary conditions. Taken from \cite{baho92}, in which the domain is square.
 $+u_0/2$ is prescribed at the top, and $-u_0/2$ is prescribed at the bottom.
 }
 \end{center}
 
 
 \note{
-So the flaw here in a way is that when resolution increases the fault becomes thinner and 
-thinner, so that the problem is not resolution independent. 
-Assess convergence with vrms ? 
+When resolution increases the fault becomes thinner and 
+thinner, so that the problem is not resolution independent.
+Good or bad thing? Assess convergence with vrms ? 
 }
 
 
@@ -822,18 +823,18 @@ Assess convergence with vrms ?
 
 
 \begin{center}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/vel_n01}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/vel_n02}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/vel_n03}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/vel_n10}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/sr_n01}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/sr_n02}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/sr_n03}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/sr_n10}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/eta_n01}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/eta_n02}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/eta_n03}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_07/eta_n10}\\
+\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/vel_n01}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/vel_n02}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/vel_n03}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/vel_n10}\\
+\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/sr_n01}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/sr_n02}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/sr_n03}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/sr_n10}\\
+\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/eta_n01}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/eta_n02}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/eta_n03}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/eta_n10}\\
 {\captionfont Left to right: n=1,2,3,10.}
 \end{center}
 

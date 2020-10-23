@@ -96,9 +96,9 @@ def viscosity_density(exx,eyy,exy,iiter,x,y):
        beta=0.5 * A**(-1./nnn) * np.exp ( Q / nnn / Rgas / T )
        rho=3300*(1-alphaT*(T-273))
 
+    # Barr & houseman
     if experiment==7:
-
-       nnn=1
+       nnn=3
        alpha=1./nnn-1
        eps0=0.01/year/Ly
        beta=1e20*eps0**-alpha
@@ -534,9 +534,6 @@ if experiment==7:
           if yV[i]<Ly/2-0.9*hy_min:
              bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = -5e-3/year
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
-
-
-
     #end for
 #end if
 
