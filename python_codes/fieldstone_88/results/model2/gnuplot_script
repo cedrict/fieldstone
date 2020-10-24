@@ -1,0 +1,34 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set xlabel '<T>'
+set ylabel  'y'
+
+set output 'profile_T.pdf'
+plot[][]\
+'profile_T_000000.ascii' u 2:1 w l t 'step=0',\
+'profile_T_000400.ascii' u 2:1 w l t 'step=400',\
+'profile_T_000900.ascii' u 2:1 w l t 'step=900',\
+'profile_T_001400.ascii' u 2:1 w l t 'step=1400',\
+'profile_T_001900.ascii' u 2:1 w l t 'step=1900',\
+'profile_T_002400.ascii' u 2:1 w l t 'step=2400',\
+
+set log x
+set output 'profile_eta.pdf'
+plot[][]\
+'profile_eta_000000.ascii' u 2:1 w l t 'step=0',\
+'profile_eta_000400.ascii' u 2:1 w l t 'step=400',\
+'profile_eta_000900.ascii' u 2:1 w l t 'step=900',\
+'profile_eta_001400.ascii' u 2:1 w l t 'step=1400',\
+'profile_eta_001900.ascii' u 2:1 w l t 'step=1900',\
+'profile_eta_002400.ascii' u 2:1 w l t 'step=2400',\
+
+set ylabel 'v_{rms}'
+unset log x
+set output 'vrms.pdf'
+plot[][]\
+'vrms.ascii' w l notitle
+
+set ylabel '<T>'
+set output 'Tavrg.pdf'
+plot[][]\
+'Tavrg.ascii' w l notitle 

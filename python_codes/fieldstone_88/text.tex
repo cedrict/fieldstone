@@ -78,17 +78,17 @@ We then apply the Lenardic \& Kaula (1993) \cite{leka93} filter, as explained in
 The filter is designed to prevent under- and overshoot but it cannot remove the oscillations between 0 and 1.
 It therefore cannot 'cure' alone the poor quality of the solution within these bounds.
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_88/results/without}\\
-\includegraphics[width=9cm]{python_codes/fieldstone_88/results/with}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_88/results/without}
+\includegraphics[width=7cm]{python_codes/fieldstone_88/results/with}\\
 {\captionfont Top: no filter, bottom: with filter. 64x16, CFL=0.5\\ Notice the different scales.}
 \end{center}
 
 We now switch the filter off implement the SUPG method (see Section~\ref{ss:supg}). 
 The resolution is set to 200x50:
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_88/results/200x50/vel}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_88/results/200x50/eta}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_88/results/200x50/T}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_88/results/200x50/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_88/results/200x50/eta}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_88/results/200x50/T}\\
 {\captionfont Velocity, viscosity and temperature fields at time $t\sim 0.00015$, CFL=0.5} 
 \end{center}
 We see that a combination of high-resolution and SUPG stabilisation keeps the 
@@ -123,16 +123,52 @@ for i in range(0,NV):
 In what follows we set CFL=0.5 and SUPG is used.
 We see that the behaviour of the system is very different. The perturbation generates 
 much smaller buoyancy forces. The huge upwelling is gone and rather plumes form. 
-
-INCLUDE PICS
-
-
 Also, in order to better visusalise the flow, we add passive markers which are 
 advected with the computed velocity at each time step (see fieldstone 37).
 These are painted with a checkerboard pattern.
 
+\newpage
+
+\begin{center}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0000.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0001.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0002.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0003.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0004.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0005.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0006.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0007.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0008.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0009.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0010.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0011.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0012.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0013.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0014.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0015.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0016.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0017.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0018.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/T0019.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/m0000.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/m0004.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/m0009.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/m0014.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/m0019.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/v0000.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/v0004.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/v0009.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/v0014.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/v0019.png}\\
+\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model1/profile_T.pdf}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model1/profile_eta.pdf}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model1/vrms.pdf}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model1/Tavrg.pdf}\\
+{\captionfont viscosity model 1. Temperature, makers and velocity fields. Resolution 200x50.}
+\end{center}
 
 
+\newpage
 %------------------------------------------------------
 \begin{center}
 $----------------------------------$\\
@@ -156,6 +192,57 @@ with
 \]
 and $b=\ln 1000$.
 
+\begin{center}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0000.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0001.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0002.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0003.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0004.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0005.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0006.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0007.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0008.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0009.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0010.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0011.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0012.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0013.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0014.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0015.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0016.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0017.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0018.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/T0019.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/m0000.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/m0004.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/m0009.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/m0014.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/m0019.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/v0000.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/v0004.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/v0009.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/v0014.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model2/v0019.png}\\
+\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model2/profile_T.pdf}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model2/profile_eta.pdf}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model2/vrms.pdf}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model2/Tavrg.pdf}\\
+{\captionfont viscosity model 1. Temperature, makers and velocity fields. Resolution 200x50.}
+\end{center} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
 %------------------------------------------------------
 \begin{center}
 $----------------------------------$\\
@@ -194,6 +281,44 @@ is
 \]
 
 \begin{center}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0000.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0001.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0002.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0003.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0004.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0005.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0006.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0007.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0008.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0009.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0010.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0011.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0012.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0013.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0014.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0015.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0016.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0017.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0018.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/T0019.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/m0000.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/m0004.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/m0009.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/m0014.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/m0019.png}\\
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/v0000.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/v0004.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/v0009.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/v0014.png}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/v0019.png}\\
+\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model3/profile_T.pdf}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model3/profile_eta.pdf}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model3/vrms.pdf}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model3/Tavrg.pdf}\\
+{\captionfont viscosity model 1. Temperature, makers and velocity fields. Resolution 200x50.}
+\end{center} 
+
+\begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_88/images/zhzl10a}
 \includegraphics[width=7cm]{python_codes/fieldstone_88/images/zhzl10b}\\
 {\captionfont Taken from Zhang et al (2010) \cite{zhzl10}.
@@ -202,8 +327,6 @@ Depth dependences of horizontally averaged
 and FS8 and (b) mantle temperatures for cases FS1 and FS8.}
 \end{center}
 
-
- 
 
 
 

@@ -1487,8 +1487,6 @@ for istep in range(0,nstep):
 
     print("compute press & sr: %.3f s" % (timing.time() - start))
 
-
-
     #####################################################################
     # compute temperature & visc profile
     #####################################################################
@@ -1580,6 +1578,14 @@ for istep in range(0,nstep):
        vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%10e \n" %T[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='delta T' Format='ascii'> \n")
+       counter=0    
+       for j in range(0,nny):
+           for i in range(0,nnx):
+               vtufile.write("%10e \n" %(T[counter]-T_profile[j]))
+               counter+=1
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
