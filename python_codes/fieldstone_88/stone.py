@@ -42,6 +42,7 @@ def interpolate_vel_on_pt(xm,ym):
 def eta(T,e,y):
     TT=min(T,1)
     TT=max(T,0)
+
     if viscosity_model==1: # bugg08
        if y <= 0.77:
           val=50*np.exp(-6.9*TT) # lower mantle
@@ -58,6 +59,7 @@ def eta(T,e,y):
           else:
              val=eta_p
              rh=2
+
     if viscosity_model==2: # brhv08
        bcoeff=np.log(1000)
        rh=0
@@ -67,6 +69,7 @@ def eta(T,e,y):
           val=np.exp(-bcoeff*TT)
        else:
           val=30*np.exp(-bcoeff*TT)
+
     if viscosity_model==3: # budt14
        rh=0
        if y>0.9585:
@@ -75,6 +78,22 @@ def eta(T,e,y):
           val=1./30.*np.exp(9.2103*(0.5-TT))
        else:
           val=(-6.24837*y + 6.8)*np.exp(9.2103*(0.5-TT))
+
+    if viscosity_model==4: #mayv11
+       rh=0
+       etaref=0.01
+       z=Ly-y
+       if z<=0.23:
+          G=1.
+       elif z<=0.42:
+          G=1+0.2*(z-0.23)/0.19
+       elif z<=0.55:
+          G=1.2-0.1*(z-0.42)/0.13
+       else:
+          G=1.1+0.7*(z-0.55)/0.45
+       val=min(1e4,etaref*np.exp(12.66*(G/(0.15+1.7*TT)-1)))
+
+       #print (y,z,TT,G,val)
 
     return val,rh
 
@@ -444,7 +463,7 @@ nmarker_per_dim=4
 random_markers=1
 RKorder=1 # cheap!
 
-viscosity_model=3
+viscosity_model=4
 sigma_y=1.5e5
 tfinal=1.5e-2
 

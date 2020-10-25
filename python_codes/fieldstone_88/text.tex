@@ -1,5 +1,10 @@
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_88/keywords}
 
+\begin{center}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_88}
+\end{center}
 
+\par\noindent\rule{\textwidth}{0.4pt}
 
 The motivation for this stone is based on Burstedde et al (2008) \cite{bugg08}:
 
@@ -326,6 +331,32 @@ Depth dependences of horizontally averaged
 (a) mantle viscosities for cases FS1, FS2, FS3, FS4, FS5,
 and FS8 and (b) mantle temperatures for cases FS1 and FS8.}
 \end{center}
+
+\newpage
+%------------------------------------------------------
+\begin{center}
+$----------------------------------$\\
+$\smile \frown \bullet \circ \bullet \subset ( {\tt viscosity\_model=4} ) \supset \circ \bullet \smile \frown$\\
+$----------------------------------$
+\end{center}
+
+From Matyska et al \cite{mayw11}: 
+\[
+\eta = \eta_{ref}\left[  \exp 12.66\left(   \frac{G(z)}{0.15+1.7T}-1  \right) \right]
+\]
+where $T$ is the dimensionless temperature equal to $0$ at the surface
+$z=0$ and equal to $1$ at the CMB $z=1$.
+The non-monotonic depth-dependence of the activation energy
+is approximated by a simple piece-wise linear function
+\begin{align}
+G(z)&=1                    & \text{ for }  &0.00\leq &z \leq 0.23 \\
+G(z)&=1.0+0.2(z-0.23)/0.19 & \text{ for }  &0.23\leq &z \leq 0.42 \\
+G(z)&=1.2-0.1(z-0.42)/0.13 & \text{ for }  &0.42\leq &z \leq 0.55 \\
+G(z)&=1.1+0.7(z-0.55)/0.45 & \text{ for }  &0.55\leq &z \leq 1.00 
+\end{align}
+
+
+
 
 
 
