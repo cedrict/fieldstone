@@ -5,6 +5,28 @@ from scipy import special
 
 #------------------------------------------------------------------------------
 
+
+def NQ1(r,s):
+    N_0=0.25*(1.-r)*(1.-s)
+    N_1=0.25*(1.+r)*(1.-s)
+    N_2=0.25*(1.+r)*(1.+s)
+    N_3=0.25*(1.-r)*(1.+s)
+    return N_0,N_1,N_2,N_3
+
+def dNQ1dr(r,s):
+    dNdr_0=-0.25*(1.-s) 
+    dNdr_1=+0.25*(1.-s) 
+    dNdr_2=+0.25*(1.+s) 
+    dNdr_3=-0.25*(1.+s) 
+    return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+
+def dNQ1ds(r,s):
+    dNds_0=-0.25*(1.-r)
+    dNds_1=-0.25*(1.+r)
+    dNds_2=+0.25*(1.+r)
+    dNds_3=+0.25*(1.-r)
+    return dNds_0,dNds_1,dNds_2,dNds_3
+
 def NNV(rq,sq):
     NV_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
     NV_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
@@ -93,17 +115,17 @@ ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
 Lx=8     # x extent of domain
-Ly=12    # y extent of domain
+Ly=8    # y extent of domain
 nelx=40  # number of elements in x direction
-nely=60  # number of elements in y direction 
+nely=40  # number of elements in y direction 
 
 delta_u=0.5 # amplitude of velocity field
 
-nstep=151 # number of time steps
+nstep=10 # number of time steps
 
 CFL_nb=0.1 # CFL number
 
-every=10 # how often vtu/ascii output is generated
+every=5 # how often vtu/ascii output is generated
 
 #################################################################
 
@@ -192,6 +214,7 @@ v =np.zeros(NV,dtype=np.float64)    # y-component velocity
 for i in range(0,NV):
     u[i] = 0 
     v[i]=delta_u*special.erf(xV[i]-Lx/2)
+    #v[i]=(xV[i]-Lx/2)
 
 ######################################################################
 # compute strainrate at center of element 
@@ -222,7 +245,6 @@ for iel in range(0,nel):
         jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
         jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
         jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
-    jcob=np.linalg.det(jcb)
     jcbi=np.linalg.inv(jcb)
     for k in range(0,mV):
         dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
@@ -329,6 +351,8 @@ swarm_active_cell=np.zeros(swarm_nel,dtype=np.bool)
 swarm_exy_cell=np.zeros(swarm_nel,dtype=np.float64)  
 swarm_xc=np.zeros(swarm_nel,dtype=np.float64)  
 swarm_yc=np.zeros(swarm_nel,dtype=np.float64)  
+swarm_x0=np.empty(nmarker,dtype=np.float64)  
+swarm_y0=np.empty(nmarker,dtype=np.float64)  
 
 counter = 0
 for j in range(0, swarm_nny):
@@ -352,6 +376,9 @@ for j in range(0, swarm_nely):
 
 swarm_active[:]=True
 swarm_active_cell[:]=True
+
+swarm_x0[:]=swarm_x
+swarm_y0[:]=swarm_y
 
 print("     -> nmarker %d " % nmarker)
 print("     -> swarm_x (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))
@@ -476,6 +503,106 @@ for istep in range(0,nstep):
     #end for
 
     #####################################################################
+    # computing deformation gradient tensor F for each cell of the swarm
+    # F=I+(d_x d_y)^T (x(t)-x0,y(t)-y0) evaluated at center of cell
+    # this tensor is not symmetric
+    #####################################################################
+    # note that because of so far obscure reasons, the deformation 
+    # tensor in the literature is stored as the transpose of what I compute
+    # we follow here the conventions of this website: 
+    # https://www.continuummechanics.org/deformationgradient.html
+    #####################################################################
+
+    swarm_Fxx=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_Fxy=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_Fyx=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_Fyy=np.zeros(swarm_nel,dtype=np.float64)  
+
+    for iel in range(0,swarm_nel):
+        if swarm_active_cell[iel]:
+           rq=0
+           sq=0
+           NNNV[0:4]=NQ1(rq,sq)
+           dNNNVdr[0:4]=dNQ1dr(rq,sq)
+           dNNNVds[0:4]=dNQ1ds(rq,sq)
+           jcb=np.zeros((ndim,ndim),dtype=np.float64)
+           for k in range(0,4):
+               jcb[0,0]+=dNNNVdr[k]*swarm_x[swarm_icon[k,iel]]
+               jcb[0,1]+=dNNNVdr[k]*swarm_y[swarm_icon[k,iel]]
+               jcb[1,0]+=dNNNVds[k]*swarm_x[swarm_icon[k,iel]]
+               jcb[1,1]+=dNNNVds[k]*swarm_y[swarm_icon[k,iel]]
+           jcbi=np.linalg.inv(jcb)
+           for k in range(0,4):
+               dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+               dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+           for k in range(0,4):
+               swarm_Fxx[iel]+=dNNNVdx[k]*(swarm_x[swarm_icon[k,iel]]-swarm_x0[swarm_icon[k,iel]])
+               swarm_Fxy[iel]+=dNNNVdy[k]*(swarm_x[swarm_icon[k,iel]]-swarm_x0[swarm_icon[k,iel]])
+               swarm_Fyx[iel]+=dNNNVdx[k]*(swarm_y[swarm_icon[k,iel]]-swarm_y0[swarm_icon[k,iel]])
+               swarm_Fyy[iel]+=dNNNVdy[k]*(swarm_y[swarm_icon[k,iel]]-swarm_y0[swarm_icon[k,iel]])
+
+           swarm_Fxx[iel]+=1
+           swarm_Fyy[iel]+=1
+        #end if
+    #end for
+
+    print("     -> Fxx (m,M) %.5e %.5e " %(np.min(swarm_Fxx),np.max(swarm_Fxx)))
+    print("     -> Fxy (m,M) %.5e %.5e " %(np.min(swarm_Fxy),np.max(swarm_Fxy)))
+    print("     -> Fyx (m,M) %.5e %.5e " %(np.min(swarm_Fyx),np.max(swarm_Fyx)))
+    print("     -> Fyy (m,M) %.5e %.5e " %(np.min(swarm_Fyy),np.max(swarm_Fyy)))
+
+    #####################################################################
+    # polar decomposition of F
+    #####################################################################
+    # describe briefly what it is
+
+
+
+    #####################################################################
+    # compute rotation tensor R and stretch tensor V
+    #####################################################################
+
+    swarm_Rxx=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_Rxy=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_Ryx=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_Ryy=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_Vxx=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_Vxy=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_Vyx=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_Vyy=np.zeros(swarm_nel,dtype=np.float64)  
+
+    Re=np.zeros((2,2),dtype=np.float64) # cell rotation tensor 
+    Ve=np.zeros((2,2),dtype=np.float64) # cell stretch tensor 
+
+    for iel in range(0,swarm_nel):
+
+        Re[0,0]=swarm_Rxx[iel]
+        Re[0,1]=swarm_Rxy[iel]
+        Re[1,0]=swarm_Ryx[iel]
+        Re[1,1]=swarm_Ryy[iel]
+
+        Ve[0,0]=swarm_Vxx[iel]
+        Ve[0,1]=swarm_Vxy[iel]
+        Ve[1,0]=swarm_Vyx[iel]
+        Ve[1,1]=swarm_Vyy[iel]
+
+
+
+
+
+    #####################################################################
+    # compute eigenvalues of V
+    #####################################################################
+    
+    swarm_lambda1=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_lambda2=np.zeros(swarm_nel,dtype=np.float64)  
+
+
+
+
+
+
+    #####################################################################
     # export swarm to vtu 
     #####################################################################
 
@@ -560,10 +687,83 @@ for istep in range(0,nstep):
        vtufile.write("</Points> \n")
        #####
        vtufile.write("<CellData Scalars='scalars'>\n")
+
        vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
        for iel in range (0,swarm_nel):
            vtufile.write("%e\n" % swarm_exy_cell[iel])
        vtufile.write("</DataArray>\n")
+
+       vtufile.write("<DataArray type='Float32' Name='Fxx' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % swarm_Fxx[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='Fxy' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % swarm_Fxy[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='Fyx' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % swarm_Fyx[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='Fyy' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % swarm_Fyy[iel])
+       vtufile.write("</DataArray>\n")
+
+       vtufile.write("<DataArray type='Float32' Name='Rxx' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % swarm_Rxx[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='Rxy' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % swarm_Rxy[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='Ryx' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % swarm_Ryx[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='Ryy' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % swarm_Ryy[iel])
+       vtufile.write("</DataArray>\n")
+
+       vtufile.write("<DataArray type='Float32' Name='Vxx' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % swarm_Vxx[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='Vxy' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % swarm_Vxy[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='Vyx' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % swarm_Vyx[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='Vyy' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % swarm_Vyy[iel])
+       vtufile.write("</DataArray>\n")
+
+       vtufile.write("<DataArray type='Float32' Name='lambda1' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % swarm_lambda1[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='lambda2' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % swarm_lambda2[iel])
+       vtufile.write("</DataArray>\n")
+
+
+
+
+
+
+
+
+
+
+
+
        vtufile.write("</CellData>\n")
        #####
        vtufile.write("<PointData Scalars='scalars'>\n")
