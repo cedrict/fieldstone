@@ -5,6 +5,18 @@ from scipy import special
 
 #------------------------------------------------------------------------------
 
+def compute_area_of_triangle(x1,y1,x2,y2,x3,y3):
+    ABx=x2-x1
+    ABy=y2-y1
+    ACx=x3-x1
+    ACy=y3-y1
+    nz=ABx*ACy-ABy*ACx
+    norm=abs(nz)
+    area=0.5*norm
+    return area
+
+#------------------------------------------------------------------------------
+
 def NQ1(r,s):
     N_0=0.25*(1.-r)*(1.-s)
     N_1=0.25*(1.+r)*(1.-s)
@@ -103,25 +115,27 @@ mP=4     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-Lx=8     # x extent of domain
-Ly=8     # y extent of domain
-nelx=40  # number of elements in x direction
-nely=40  # number of elements in y direction 
+Lx=1     # x extent of domain
+Ly=1     # y extent of domain
+nelx=20  # number of elements in x direction
+nely=20  # number of elements in y direction 
 
-delta_u=0.5 # amplitude of velocity field
-
-nstep=6 # number of time steps
+nstep=151 # number of time steps
 
 CFL_nb=0.1 # CFL number
 
-every=5 # how often vtu/ascii output is generated
+every=10 # how often vtu/ascii output is generated
 
 #1: shear band
-#2: vertical stretch
+#2: vertical extension
 #3: pure shear
-#4: stretching 
+#4: biaxial extension 
 
-experiment=1
+experiment=4
+
+oldfile=open('old.ascii',"w")
+newfile=open('new.ascii',"w")
+areafile=open('area.ascii',"w")
 
 #################################################################
 
@@ -210,17 +224,17 @@ v =np.zeros(NV,dtype=np.float64)    # y-component velocity
 if experiment==1:
    for i in range(0,NV):
        u[i]= 0 
-       v[i]=delta_u*special.erf(xV[i]-Lx/2)
+       v[i]=special.erf((xV[i]-Lx/2)*5)
 
 if experiment==2:
    for i in range(0,NV):
-       u[i]= 0 
-       v[i]=delta_u*yV[i]
+       u[i]=0 
+       v[i]=yV[i]
 
 if experiment==3:
    for i in range(0,NV):
-       u[i]=delta_u*yV[i]
-       v[i]=delta_u*xV[i]
+       u[i]=yV[i]
+       v[i]=xV[i]
 
 if experiment==4:
    for i in range(0,NV):
@@ -293,8 +307,8 @@ print("compute press & sr: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-swarm_nelx=3*nelx
-swarm_nely=3*nely
+swarm_nelx=2*nelx
+swarm_nely=2*nely
 swarm_nel=swarm_nelx*swarm_nely
 
 swarm_nnx=swarm_nelx+1
@@ -349,6 +363,7 @@ print("     -> nmarker %d " % swarm_nmarker)
 print("     -> swarm_x (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))
 print("     -> swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
 
+target_cell=int(swarm_nel/2+swarm_nelx/2) #; print(target_cell) 
 print("markers setup: %.3f s" % (timing.time() - start))
 
 #################################################################
@@ -478,7 +493,15 @@ for istep in range(0,nstep):
             swarm_princp_e2[iel] = 0.5*(swarm_exx_cell[iel]+swarm_eyy_cell[iel]) - \
                    np.sqrt(swarm_exy_cell[iel]**2 + 0.25*(swarm_exx_cell[iel]-swarm_eyy_cell[iel])**2)
 
-            swarm_old_angle[iel]=np.arctan(2*swarm_exy_cell[iel]/(swarm_exx_cell[iel]-swarm_eyy_cell[iel]))/2. /np.pi*180
+            swarm_old_angle[iel]=np.arctan2(2*swarm_exy_cell[iel],\
+                                 (swarm_exx_cell[iel]-swarm_eyy_cell[iel]))/2. /np.pi*180
+    
+    oldfile.write("%d %e %e %e %e\n" %(istep,\
+                                       swarm_old_angle[target_cell],\
+                                       swarm_princp_e1[target_cell],\
+                                       swarm_princp_e2[target_cell],\
+                                       (swarm_princp_e1[target_cell]+1)*(swarm_princp_e2[target_cell]+1)))
+
 
     #####################################################################
     # computing deformation gradient tensor F for each cell of the swarm
@@ -560,12 +583,13 @@ for istep in range(0,nstep):
             swarm_epsyy[iel]=eps[1,1]
             
             # compute eigen values
-            swarm_princp_eps1[iel] = 0.5*(swarm_epsxx[iel]+swarm_epsyy[iel]) + \
-                   np.sqrt(swarm_epsxy[iel]**2 + 0.25*(swarm_epsxx[iel]-swarm_epsyy[iel])**2) 
-            swarm_princp_eps2[iel] = 0.5*(swarm_epsxx[iel]+swarm_epsyy[iel]) - \
-                   np.sqrt(swarm_epsxy[iel]**2 + 0.25*(swarm_epsxx[iel]-swarm_epsyy[iel])**2) 
+            #swarm_princp_eps1[iel] = 0.5*(swarm_epsxx[iel]+swarm_epsyy[iel]) + \
+            #       np.sqrt(swarm_epsxy[iel]**2 + 0.25*(swarm_epsxx[iel]-swarm_epsyy[iel])**2) 
+            #swarm_princp_eps2[iel] = 0.5*(swarm_epsxx[iel]+swarm_epsyy[iel]) - \
+            #       np.sqrt(swarm_epsxy[iel]**2 + 0.25*(swarm_epsxx[iel]-swarm_epsyy[iel])**2) 
 
-            swarm_new_angle[iel]=np.arctan(2*swarm_epsxy[iel]/(swarm_epsxx[iel]-swarm_epsyy[iel]))/2. /np.pi*180
+        #end if
+    #end for
 
     #####################################################################
     # polar decomposition of F = V R
@@ -583,6 +607,7 @@ for istep in range(0,nstep):
     
     swarm_lambda1=np.zeros(swarm_nel,dtype=np.float64) # eigenvalues of V
     swarm_lambda2=np.zeros(swarm_nel,dtype=np.float64)
+    swarm_lambda12=np.zeros(swarm_nel,dtype=np.float64)
 
     Re=np.zeros((2,2),dtype=np.float64) # cell rotation tensor 
     Ve=np.zeros((2,2),dtype=np.float64) # cell stretch tensor 
@@ -639,9 +664,49 @@ for istep in range(0,nstep):
             # eigenvalues of V, which are the square roots of those of C
             swarm_lambda1[iel]=np.sqrt(mu1)
             swarm_lambda2[iel]=np.sqrt(mu2)
+            swarm_lambda12[iel]=swarm_lambda1[iel]*swarm_lambda2[iel]
 
+            swarm_new_angle[iel]=np.arctan2(2*swarm_Vxy[iel],\
+                                            (swarm_Vxx[iel]-swarm_Vyy[iel]))/2. /np.pi*180
         #end if
     #end for
+
+
+    #####################################################################
+    # write out data for target cell
+    #####################################################################
+
+    area_triangle1=compute_area_of_triangle(swarm_x[swarm_icon[0,target_cell]],\
+                                            swarm_y[swarm_icon[0,target_cell]],\
+                                            swarm_x[swarm_icon[1,target_cell]],\
+                                            swarm_y[swarm_icon[1,target_cell]],\
+                                            swarm_x[swarm_icon[3,target_cell]],\
+                                            swarm_y[swarm_icon[3,target_cell]])
+
+    area_triangle2=compute_area_of_triangle(swarm_x[swarm_icon[1,target_cell]],\
+                                            swarm_y[swarm_icon[1,target_cell]],\
+                                            swarm_x[swarm_icon[2,target_cell]],\
+                                            swarm_y[swarm_icon[2,target_cell]],\
+                                            swarm_x[swarm_icon[3,target_cell]],\
+                                            swarm_y[swarm_icon[3,target_cell]])
+
+    area=area_triangle1+area_triangle2
+
+    areafile.write("%d %e\n" %(istep,area/swarm_hx/swarm_hy))
+
+    newfile.write("%d %e %e %e %e %e %e %e %e %e %e %e %e\n" %(istep,\
+                                          swarm_new_angle[target_cell],\
+                                          swarm_lambda1[target_cell]-1,\
+                                          swarm_lambda2[target_cell]-1,\
+                                          swarm_Rxx[target_cell],\
+                                          swarm_Rxy[target_cell],\
+                                          swarm_Ryx[target_cell],\
+                                          swarm_Ryy[target_cell],\
+                                          swarm_Vxx[target_cell],\
+                                          swarm_Vxy[target_cell],\
+                                          swarm_Vyx[target_cell],\
+                                          swarm_Vyy[target_cell],\
+                                          swarm_lambda12[target_cell]))
 
     #####################################################################
     # export swarm to vtu 
@@ -663,6 +728,14 @@ for istep in range(0,nstep):
        vtufile.write("</Points> \n")
        #####
        vtufile.write("<CellData Scalars='scalars'>\n")
+
+       vtufile.write("<DataArray type='Float32' Name='target' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           if iel==target_cell:
+              vtufile.write("%e\n" % 1)
+           else:
+              vtufile.write("%e\n" % 0)
+       vtufile.write("</DataArray>\n")
 
        #----------old----------
        vtufile.write("<DataArray type='Float32' Name='old: exx' Format='ascii'> \n")
@@ -689,6 +762,19 @@ for istep in range(0,nstep):
        for iel in range (0,swarm_nel):
            vtufile.write("%e\n" % swarm_old_angle[iel])
        vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' \
+                       Name='old: strain princ. 1 dir' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%10e %10e %10e \n" % (np.cos(swarm_old_angle[iel]/180*np.pi),
+                                                np.sin(swarm_old_angle[iel]/180*np.pi), 0.)   )
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' \
+                       Name='old: strain princ. 2 dir' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%10e %10e %10e \n" % (np.cos(swarm_old_angle[iel]/180*np.pi+np.pi/2),
+                                                np.sin(swarm_old_angle[iel]/180*np.pi+np.pi/2), 0.)   )
+       vtufile.write("</DataArray>\n")
+
        
        #----------new----------
        vtufile.write("<DataArray type='Float32' Name='new: exx' Format='ascii'> \n")
@@ -704,17 +790,30 @@ for istep in range(0,nstep):
            vtufile.write("%e\n" % swarm_epsyy[iel])
        vtufile.write("</DataArray>\n")
        
-       vtufile.write("<DataArray type='Float32' Name='new: e1' Format='ascii'> \n")
-       for iel in range (0,swarm_nel):
-           vtufile.write("%e\n" % swarm_princp_eps1[iel])
-       vtufile.write("</DataArray>\n")
-       vtufile.write("<DataArray type='Float32' Name='new: e2' Format='ascii'> \n")
-       for iel in range (0,swarm_nel):
-           vtufile.write("%e\n" % swarm_princp_eps2[iel])
-       vtufile.write("</DataArray>\n")
+       #vtufile.write("<DataArray type='Float32' Name='new: e1' Format='ascii'> \n")
+       #for iel in range (0,swarm_nel):
+       #    vtufile.write("%e\n" % swarm_princp_eps1[iel])
+       #vtufile.write("</DataArray>\n")
+       #vtufile.write("<DataArray type='Float32' Name='new: e2' Format='ascii'> \n")
+       #for iel in range (0,swarm_nel):
+       #    vtufile.write("%e\n" % swarm_princp_eps2[iel])
+       #vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Float32' Name='new: angle' Format='ascii'> \n")
        for iel in range (0,swarm_nel):
            vtufile.write("%e\n" % swarm_new_angle[iel])
+       vtufile.write("</DataArray>\n")
+
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' \
+                       Name='new: strain princ. 1 dir' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%10e %10e %10e \n" % (np.cos(swarm_new_angle[iel]/180*np.pi),
+                                                np.sin(swarm_new_angle[iel]/180*np.pi), 0.)   )
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' \
+                       Name='new: strain princ. 2 dir' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%10e %10e %10e \n" % (np.cos(swarm_new_angle[iel]/180*np.pi+np.pi/2),
+                                                np.sin(swarm_new_angle[iel]/180*np.pi+np.pi/2), 0.)   )
        vtufile.write("</DataArray>\n")
 
        vtufile.write("<DataArray type='Float32' Name='Fxx' Format='ascii'> \n")
@@ -823,6 +922,8 @@ for istep in range(0,nstep):
        #np.savetxt('markers_{:04d}.ascii'.format(istep),np.array([swarm_xc,swarm_exy_cell]).T)
 
        print("export to vtu file: %.3f s" % (timing.time() - start))
+
+
 
 #end timestepping istep
 
