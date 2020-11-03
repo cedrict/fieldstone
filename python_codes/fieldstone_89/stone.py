@@ -131,7 +131,7 @@ every=10 # how often vtu/ascii output is generated
 #3: pure shear
 #4: biaxial extension 
 
-experiment=4
+experiment=3
 
 oldfile=open('old.ascii',"w")
 newfile=open('new.ascii',"w")
@@ -363,7 +363,16 @@ print("     -> nmarker %d " % swarm_nmarker)
 print("     -> swarm_x (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))
 print("     -> swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
 
-target_cell=int(swarm_nel/2+swarm_nelx/2) #; print(target_cell) 
+if experiment==1:
+   target_cell=int(swarm_nel/2+swarm_nelx/2) #; print(target_cell) 
+if experiment==2:
+   target_cell=int(swarm_nel/4+swarm_nelx/2) #; print(target_cell) 
+if experiment==3:
+   target_cell=int(swarm_nel/2+swarm_nelx/2) #; print(target_cell) 
+if experiment==4:
+   target_cell=int(swarm_nel/2+swarm_nelx/2) #; print(target_cell) 
+
+
 print("markers setup: %.3f s" % (timing.time() - start))
 
 #################################################################
@@ -478,9 +487,14 @@ for istep in range(0,nstep):
         #end if
     #end for
 
+    print("     -> old: swarm_exx_cell (m,M) %.5e %.5e " %(np.min(swarm_exx_cell),np.max(swarm_exx_cell)))
+    print("     -> old: swarm_eyy_cell (m,M) %.5e %.5e " %(np.min(swarm_eyy_cell),np.max(swarm_eyy_cell)))
+    print("     -> old: swarm_exy_cell (m,M) %.5e %.5e " %(np.min(swarm_exy_cell),np.max(swarm_exy_cell)))
+
     #####################################################################
     # compute eigen values of integrated strain tensor
     # later well lambda 1,2 to be compared with these
+    # We use here arctan2, which returns angles in rads in [-pi,pi] range
     #####################################################################
     swarm_princp_e1=np.zeros(swarm_nel,dtype=np.float64)
     swarm_princp_e2=np.zeros(swarm_nel,dtype=np.float64)
@@ -496,6 +510,13 @@ for istep in range(0,nstep):
             swarm_old_angle[iel]=np.arctan2(2*swarm_exy_cell[iel],\
                                  (swarm_exx_cell[iel]-swarm_eyy_cell[iel]))/2. /np.pi*180
     
+    print("     -> old: swarm_exx_cell[target_cell] %.8e " % swarm_exx_cell[target_cell] )
+    print("     -> old: swarm_eyy_cell[target_cell] %.8e " % swarm_eyy_cell[target_cell] )
+    print("     -> old: swarm_exy_cell[target_cell] %.8e " % swarm_exy_cell[target_cell] )
+    print("     -> old: swarm_princp_e1[target_cell] %.8e " % swarm_princp_e1[target_cell] )
+    print("     -> old: swarm_princp_e2[target_cell] %.8e " % swarm_princp_e2[target_cell] )
+    print("     -> old: swarm_old_angle[target_cell] %.8e " % swarm_old_angle[target_cell] )
+
     oldfile.write("%d %e %e %e %e\n" %(istep,\
                                        swarm_old_angle[target_cell],\
                                        swarm_princp_e1[target_cell],\
@@ -627,8 +648,8 @@ for istep in range(0,nstep):
             
             # step 2 find eigenvalues of C
 
-            mu1 = 0.5 * (C[0,0] + C[1,1] + np.sqrt(4*C[0,1]*C[1,0] + np.square(C[0,0] - C[1,1])) )
-            mu2 = 0.5 * (C[0,0] + C[1,1] - np.sqrt(4*C[0,1]*C[1,0] + np.square(C[0,0] - C[1,1])) )
+            mu1 = 0.5 * (C[0,0] + C[1,1] + np.sqrt(4*C[0,1]*C[1,0] + (C[0,0] - C[1,1])**2) )
+            mu2 = 0.5 * (C[0,0] + C[1,1] - np.sqrt(4*C[0,1]*C[1,0] + (C[0,0] - C[1,1])**2) )
 
             # step 3 compute invariants of Cauchy Green tensor C. eq 5.1 from Hoger & Carlson
             IC = mu1 + mu2
@@ -707,6 +728,11 @@ for istep in range(0,nstep):
                                           swarm_Vyx[target_cell],\
                                           swarm_Vyy[target_cell],\
                                           swarm_lambda12[target_cell]))
+
+    print("     -> swarm_Rxx[target_cell] %.8e " % swarm_Rxx[target_cell] )
+    print("     -> swarm_Rxy[target_cell] %.8e " % swarm_Rxy[target_cell] )
+    print("     -> swarm_Ryx[target_cell] %.8e " % swarm_Ryx[target_cell] )
+    print("     -> swarm_Ryy[target_cell] %.8e " % swarm_Ryy[target_cell] )
 
     #####################################################################
     # export swarm to vtu 
@@ -848,6 +874,10 @@ for istep in range(0,nstep):
        vtufile.write("<DataArray type='Float32' Name='Ryy' Format='ascii'> \n")
        for iel in range (0,swarm_nel):
            vtufile.write("%e\n" % swarm_Ryy[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='arccos(Rxx)' Format='ascii'> \n")
+       for iel in range (0,swarm_nel):
+           vtufile.write("%e\n" % (np.arccos(swarm_Rxx[iel])))
        vtufile.write("</DataArray>\n")
 
        vtufile.write("<DataArray type='Float32' Name='Vxx' Format='ascii'> \n")
