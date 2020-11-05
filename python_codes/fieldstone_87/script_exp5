@@ -1,0 +1,48 @@
+#! /bin/bash
+
+Npicard=3
+niter=30
+
+nnn=1
+python3 stone.py $nnn $Npicard $niter > opla
+mkdir n_01
+mv opla n_01/
+mv *.ascii n_01/
+mv *.vtu n_01/
+
+nnn=2
+python3 stone.py $nnn $Npicard $niter > opla
+mkdir n_02
+mv opla n_02/
+mv *.ascii n_02/
+mv *.vtu n_02/
+
+nnn=3
+python3 stone.py $nnn $Npicard $niter > opla
+mkdir n_03
+mv opla n_03/
+mv *.ascii n_03/
+mv *.vtu n_03/
+
+nnn=4
+python3 stone.py $nnn $Npicard $niter > opla
+mkdir n_04
+mv opla n_04/
+mv *.ascii n_04/
+mv *.vtu n_04/
+
+nnn=5
+python3 stone.py $nnn $Npicard $niter > opla
+mkdir n_05
+mv opla n_05/
+mv *.ascii n_05/
+mv *.vtu n_05/
+
+nnn=10
+python3 stone.py $nnn $Npicard $niter > opla
+mkdir n_10
+mv opla n_10/
+mv *.ascii n_10/
+mv *.vtu n_10/
+
+

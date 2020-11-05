@@ -8,114 +8,6 @@ from numpy import linalg as LA
 
 #------------------------------------------------------------------------------
 
-def strpt(x,L,stretch_alpha,stretch_beta1,stretch_beta2):
-    if x<L/2: 
-       val = (2*x/L)**stretch_alpha * L/2
-    else:
-       val = L- (2*(L-x)/L)**stretch_alpha * L/2
-    return val
-
-#------------------------------------------------------------------------------
-
-def viscosity_density(exx,eyy,exy,iiter,x,y):
-
-    #compute effective strain rate (sqrt of 2nd inv)
-    varepsilon_e=np.sqrt(0.5*(exx**2+eyy**2)+exy**2 + reg**2)
-
-    # linear cavity
-    if experiment==0:
-       alpha=0
-       beta=1
-       rho=0
-
-    # cavity
-    if experiment==1:
-       beta=1
-       alpha=1./5.-1
-       rho=0
-
-    # brick
-    if experiment==2:
-       expo=50
-       alpha=1./expo-1
-       beta=40.e6/2./1e-15/1.e-15**(1./expo-1.)
-       rho=0
-
-    # slab detach (case 1a)
-    if experiment==3:
-       if y>580e3 or  (y>Ly-(80e3+250e3) and abs(x-Lx/2)<40e3) : 
-          #n=4 
-          alpha=0.25-1
-          beta=4.75e11
-          rho=3300-3150
-       else:
-          #n=1 
-          alpha=0
-          beta=1.e21
-          rho=3150-3150
-
-    # slab detach (case 1b)
-    if experiment==4:
-       if y>580e3 or  (y>Ly-(80e3+250e3) and abs(x-Lx/2)<40e3) : 
-          #n=4 
-          alpha=0.25-1
-          beta=4.75e11
-          rho=3300-3150
-       else:
-          #n=3 
-          alpha=1./3.-1
-          beta=4.54e10
-          rho=3150-3150
-
-    # porphyroclast
-    if experiment==5:
-       if (x-Lx/2)**2+(y-Ly/2)**2<0.01:
-          nnn=5
-          alpha=1./nnn-1
-          beta=5
-          rho=0
-       else:
-          #n=1
-          alpha=0
-          beta=1
-          rho=0
-
-    # Stokes sphere
-    if experiment==6:
-       alphaT=3e-5
-       Q=540e3
-       Rgas=8.314
-       A=2.417e-16
-       nnn=3.5
-
-       if (x-Lx/2)**2+(y-Ly/2)**2<100e3**2:
-          T=550+273
-       else:
-          T=(-1330+550)*(y)/Ly +1330 + 273
-       alpha=1./nnn-1
-       beta=0.5 * A**(-1./nnn) * np.exp ( Q / nnn / Rgas / T )
-       rho=3300*(1-alphaT*(T-273))
-
-    # Barr & houseman
-    if experiment==7:
-       nnn=3
-       alpha=1./nnn-1
-       eps0=0.01/year/Ly
-       beta=1e20*eps0**-alpha
-       if x>Lx/2 and abs(y-Ly/2)<hy_min:
-          beta=1e16
-          alpha=0
-       rho=0
-
-    # compute effective power law viscosity
-    eta=beta*varepsilon_e**alpha
-
-    #print(beta,eta,rho)
-
-    return eta,rho,alpha
-
-#------------------------------------------------------------------------------
-
 def NNV(rq,sq):
     NV_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
     NV_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
@@ -160,6 +52,111 @@ def NNP(rq,sq):
     return NP_0,NP_1,NP_2,NP_3
 
 #------------------------------------------------------------------------------
+
+def strpt(x,L,stretch_alpha,stretch_beta1,stretch_beta2):
+    if x<L/2: 
+       val = (2*x/L)**stretch_alpha * L/2
+    else:
+       val = L- (2*(L-x)/L)**stretch_alpha * L/2
+    return val
+
+#------------------------------------------------------------------------------
+
+def viscosity_density(exx,eyy,exy,iiter,x,y,nnn):
+
+    #varepsilon_reg=np.sqrt(exx**2+eyy**2+2*exy**2 + reg**2)
+    varepsilon_reg=np.sqrt(0.5*(exx**2+eyy**2+2*exy**2) + reg**2)
+
+    # linear cavity
+    if experiment==0:
+       alpha=0
+       beta=1
+       rho=0
+
+    #-----[cavity]-----
+    if experiment==1:
+       beta=1
+       alpha=1./nnn-1
+       rho=0
+
+    #-----[brick]-----
+    if experiment==2:
+       alpha=1./nnn-1
+       B=40.e6/2./1e-15/1.e-15**alpha
+       beta=B*2**(-alpha/2)
+       rho=0
+
+    #-----[slab detach (case 1a)]-----
+    if experiment==3:
+       if y>580e3 or  (y>Ly-(80e3+250e3) and abs(x-Lx/2)<40e3) : 
+          #n=4 
+          alpha=0.25-1
+          beta=4.75e11
+          rho=3300-3150
+       else:
+          #n=1 
+          alpha=0
+          beta=1.e21
+          rho=3150-3150
+
+    #-----[slab detach (case 1b)]-----
+    if experiment==4:
+       if y>580e3 or  (y>Ly-(80e3+250e3) and abs(x-Lx/2)<40e3) : 
+          #n=4 
+          alpha=0.25-1
+          beta=4.75e11
+          rho=3300-3150
+       else:
+          #n=3 
+          alpha=1./3.-1
+          beta=4.54e10
+          rho=3150-3150
+
+    # porphyroclast
+    if experiment==5:
+       if (x-Lx/2)**2+(y-Ly/2)**2<0.01:
+          alpha=1./nnn-1
+          beta=5
+          rho=0
+       else:
+          #n=1
+          alpha=0
+          beta=1
+          rho=0
+
+    # Stokes sphere
+    if experiment==6:
+       alphaT=3e-5
+       Q=540e3
+       Rgas=8.314
+       A=2.417e-16
+       nnn=3.5
+       if (x-Lx/2)**2+(y-Ly/2)**2<100e3**2:
+          T=550+273
+       else:
+          T=(-1330+550)*(y)/Ly +1330 + 273
+       alpha=1./nnn-1
+       beta=0.5 * A**(-1./nnn) * np.exp ( Q / nnn / Rgas / T )
+       rho=3300*(1-alphaT*(T-273))
+
+    # Barr & houseman
+    if experiment==7:
+       alpha=1./nnn-1
+       eps0=0.01/year/Ly
+       beta=1e20*eps0**-alpha
+       if x>Lx/2 and abs(y-Ly/2)<hy_min:
+          beta=1e16
+          alpha=0
+       rho=0
+
+    # compute effective power law viscosity
+    eta=beta*varepsilon_reg**alpha
+
+    #print(beta,eta,rho)
+
+    return eta,rho,alpha
+
+#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
 cm=0.01
@@ -178,74 +175,83 @@ ndofP=1  # number of pressure degrees of freedom
 
 experiment=7
 
+# allowing for argument parsing through command line
+if int(len(sys.argv) == 4):
+   nnn     = int(sys.argv[1])
+   Npicard = int(sys.argv[2])
+   niter   = int(sys.argv[3])
+else:
+   nnn=5
+   Npicard=30
+   niter=30
+
+#...........................................
 if experiment==0 or experiment==1: # cavity
    Lx=1.
    Ly=1.
    nelx=32
-   niter=25
-   Npicard=100
-   adapt_theta=False
+   adapt_theta=True
    eta_ref=1. 
-   reg=1e-8  
+   reg=1e-6  
    gx=0
    gy=0
+   grid_stretch=False
 
+#...........................................
 if experiment==2: # brick
    Lx=40e3
    Ly=10e3
    nelx=64
-   niter=50
-   Npicard=100
-   adapt_theta=False
+   adapt_theta=True
    eta_ref=1e22 
    reg=1e-20  
    gx=0
    gy=0
+   grid_stretch=False
 
+#...........................................
 if experiment==3 or experiment==4: # slab detachment
    Lx=1000e3
    Ly=660e3
    nelx=100
-   niter=50
-   Npicard=100
-   adapt_theta=False
+   adapt_theta=True
    eta_ref=1e22 
    reg=1e-20  
    gx=0
    gy=-10
+   grid_stretch=False
 
+#...........................................
 if experiment==5:
    Lx=1
    Ly=1
-   nelx=100
-   niter=25
-   Npicard=200
-   adapt_theta=False
+   nelx=64
+   adapt_theta=True
    eta_ref=100
    reg=1e-5
    gx=0
    gy=0
+   grid_stretch=False
 
+#...........................................
 if experiment==6: # Stokes sphere
    Lx=600e3
    Ly=600e3
    nelx=128
-   niter=25
-   Npicard=200
-   adapt_theta=False
+   adapt_theta=True
    eta_ref=1e22
    reg=1e-18
    gx=0
    gy=-9.81
+   grid_stretch=False
 
+#...........................................
 if experiment==7: # def around fault
    R0=10e3
    Lx=2*R0
    Ly=R0
    nelx=102
-   niter=25
-   Npicard=200
-   adapt_theta=False
+   adapt_theta=True
    eta_ref=1e19
    reg=1e-16
    gx=0
@@ -253,13 +259,9 @@ if experiment==7: # def around fault
    grid_stretch=True
 
 
-
-
-
-
-tol_nl=1e-7 # nonlinear tolerance
+tol_nl=1e-12 # nonlinear tolerance
 every=1
-produce_nl_vtu=True
+produce_nl_vtu=False
 use_srn=False
 
 #################################################################
@@ -295,6 +297,9 @@ dustats_file=open("stats_du.ascii","w")
 dvstats_file=open("stats_dv.ascii","w")
 dpstats_file=open("stats_dp.ascii","w")
 theta_file=open("stats_theta.ascii","w")
+srcstats_file=open("stats_src.ascii","w")
+srqstats_file=open("stats_srq.ascii","w")
+etaqstats_file=open("stats_etaq.ascii","w")
 convfile=open('conv.ascii',"w")
 vrmsfile=open('vrms.ascii',"w")
 
@@ -550,7 +555,7 @@ solution[0:NfemV]=bc_val[0:NfemV]
 ###################################################################################################
 # non-linear iterations
 ###################################################################################################
-C_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+J_mat = np.array([[1,0,0],[0,1,0],[0,0,0.5]],dtype=np.float64) 
 
 dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
@@ -567,6 +572,8 @@ exxn    = np.zeros(NV,dtype=np.float64)           # nodal exx
 eyyn    = np.zeros(NV,dtype=np.float64)           # nodal eyy
 exyn    = np.zeros(NV,dtype=np.float64)           # nodal exy
 
+Rnorm=0
+Rnorm0=1
 
 for iiter in range(0,niter):
 
@@ -578,17 +585,20 @@ for iiter in range(0,niter):
    # compute theta
    #################################################################
 
-   if iiter<Npicard:
+   if iiter<=Npicard: 
+      # use Picard iteration
       theta=0.
-   else:
+   else: 
+      # use Newton iteration
       if adapt_theta:
-         theta = max(1-Rnorm/Rnorm1,0)
+         theta = max(1-Rnorm/RnormN,0)
       else:
          theta = 1
 
    print('     -> theta=',theta)
 
    theta_file.write("%3d %10e \n" %(iiter,theta)) 
+   theta_file.flush()
 
    #################################################################
    # build FE matrix A and rhs 
@@ -644,20 +654,20 @@ for iiter in range(0,niter):
                NNNP[0:mP]=NNP(rq,sq)
 
                # calculate jacobian matrix
-               #jcb=np.zeros((ndim,ndim),dtype=np.float64)
-               #for k in range(0,mV):
-               #    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-               #    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-               #    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-               #    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-               #jcob = np.linalg.det(jcb)
-               #jcbi = np.linalg.inv(jcb)
+               jcb=np.zeros((ndim,ndim),dtype=np.float64)
+               for k in range(0,mV):
+                   jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                   jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                   jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                   jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+               jcob = np.linalg.det(jcb)
+               jcbi = np.linalg.inv(jcb)
 
                #only valid for rectangular elements!
-               jcbi=np.zeros((ndim,ndim),dtype=np.float64)
-               jcob=hx*hy/4
-               jcbi[0,0] = 2/hx 
-               jcbi[1,1] = 2/hy
+               #jcbi=np.zeros((ndim,ndim),dtype=np.float64)
+               #jcob=hx*hy/4
+               #jcbi[0,0] = 2/hx 
+               #jcbi[1,1] = 2/hy
 
                # compute dNdx & dNdy & strainrate
                exxq=0.0
@@ -666,10 +676,10 @@ for iiter in range(0,niter):
                for k in range(0,mV):
                    xq[counter]+=NNNV[k]*xV[iconV[k,iel]]
                    yq[counter]+=NNNV[k]*yV[iconV[k,iel]]
-                   #dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                   #dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-                   dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]
-                   dNNNVdy[k]=jcbi[1,1]*dNNNVds[k]
+                   dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                   dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                   #dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]
+                   #dNNNVdy[k]=jcbi[1,1]*dNNNVds[k]
                    exxq+=dNNNVdx[k]*u[iconV[k,iel]]
                    eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
                    exyq+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
@@ -684,12 +694,13 @@ for iiter in range(0,niter):
                       exyq+=NNNV[k]*exyn[iconV[k,iel]]
 
                # effective strain rate at qpoint                
-               srq[counter]=np.sqrt(0.5*(exxq*exxq+eyyq*eyyq)+exyq*exyq + reg**2)
-
+               #ee=exxq**2+eyyq**2+2*exyq**2 + reg**2
+               ee=0.5*(exxq**2+eyyq**2+2*exyq**2) + reg**2
+               srq[counter]=np.sqrt(ee)
 
                # compute pressure at qpoint
-               for k in range(0,mP):
-                   pq[counter]+=NNNP[k]*p[iconP[k,iel]]
+               #for k in range(0,mP):
+               #    pq[counter]+=NNNP[k]*p[iconP[k,iel]]
 
                # construct 3x8 b_mat matrix
                for i in range(0,mV):
@@ -699,15 +710,15 @@ for iiter in range(0,niter):
 
                # compute effective plastic viscosity
                etaq[counter],rhoq[counter],alpha=viscosity_density(exxq,eyyq,exyq,iiter,\
-                                                                   xq[counter],yq[counter])
+                                                                   xq[counter],yq[counter],nnn)
 
                D_mat = np.array([[exxq*exxq,exxq*eyyq,exxq*exyq],\
                                  [eyyq*exxq,eyyq*eyyq,eyyq*exyq],\
                                  [exyq*exxq,exyq*eyyq,exyq*exyq]],dtype=np.float64) 
 
-               coef=2*etaq[counter]*alpha/srq[counter]**2
+               coef=2*etaq[counter]*alpha/ee / 2
                # compute elemental a_mat matrix
-               K_el0+=b_mat.T.dot(C_mat.dot(b_mat))*etaq[counter]*weightq*jcob
+               K_el0+=b_mat.T.dot(J_mat.dot(b_mat))*2*etaq[counter]*weightq*jcob
                K_el1+=b_mat.T.dot(D_mat.dot(b_mat))*coef*weightq*jcob
 
                # compute elemental rhs vector
@@ -781,6 +792,12 @@ for iiter in range(0,niter):
 
    # end for iel 
 
+   srqstats_file.write("%3d %e %e \n" %(iiter,np.min(srq),np.max(srq)))
+   srqstats_file.flush()
+
+   etaqstats_file.write("%3d %e %e \n" %(iiter,np.min(etaq),np.max(etaq)))
+   etaqstats_file.flush()
+
    #np.savetxt('etaq_{:04d}.ascii'.format(iter),np.array([xq,yq,etaq]).T,header='# x,y,eta')
    #np.savetxt('pq_{:04d}.ascii'.format(iter),np.array([xq,yq,pq]).T,header='# x,y,p')
 
@@ -820,10 +837,14 @@ for iiter in range(0,niter):
 
    if iiter==0:
       Rnorm0=Rnorm
+      RVnorm0=RVnorm
+      RPnorm0=RPnorm
+   if iiter==Npicard:
+      RnormN=Rnorm
 
    convfile.write("%3d %10e %10e %10e %10e\n" %(iiter,Rnorm/Rnorm0,\
-                                                      RVnorm,\
-                                                      RPnorm,tol_nl)) 
+                                                      RVnorm/RVnorm0,\
+                                                      RPnorm/RPnorm0,tol_nl)) 
    convfile.flush()
 
    converged=(Rnorm/Rnorm0<tol_nl)
@@ -1007,6 +1028,9 @@ for iiter in range(0,niter):
    print("     -> src  (m,M) %.5e %.5e " %(np.min(src),np.max(src)))
    print("     -> pc   (m,M) %.5e %.5e " %(np.min(pc),np.max(pc)))
 
+   srcstats_file.write("%3d %e %e \n" %(iiter,np.min(src),np.max(src)))
+   srcstats_file.flush()
+
    print("compute press & sr: %.3f s" % (timing.time() - start))
 
    #####################################################################
@@ -1076,7 +1100,7 @@ for iiter in range(0,niter):
    rhon=np.zeros(NV,dtype=np.float64)
 
    for i in range(0,NV):
-       etan[i],rhon[i],alpha=viscosity_density(exxn[i],eyyn[i],exyn[i],iiter,xV[i],yV[i])
+       etan[i],rhon[i],alpha=viscosity_density(exxn[i],eyyn[i],exyn[i],iiter,xV[i],yV[i],nnn)
 
    print("     -> etan (m,M) %.6e %.6e " %(np.min(etan),np.max(etan)))
 
@@ -1154,10 +1178,10 @@ for iiter in range(0,niter):
       for iq in range(0,nq):
           vtufile.write("%10e \n" % srq[iq])
       vtufile.write("</DataArray>\n")
-      vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
-      for iq in range(0,nq):
-          vtufile.write("%10e \n" % pq[iq])
-      vtufile.write("</DataArray>\n")
+      #vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+      #for iq in range(0,nq):
+      #    vtufile.write("%10e \n" % pq[iq])
+      #vtufile.write("</DataArray>\n")
       vtufile.write("</PointData>\n")
       #####
       vtufile.write("<Cells>\n")
@@ -1317,7 +1341,7 @@ for iel in range (0,nel):
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
 for iel in range (0,nel):
-    eta,dum,dum=viscosity_density(exxc[iel],eyyc[iel],exyc[iel],iiter,xc[iel],yc[iel])
+    eta,dum,dum=viscosity_density(exxc[iel],eyyc[iel],exyc[iel],iiter,xc[iel],yc[iel],nnn)
     vtufile.write("%10e\n" %eta) 
 vtufile.write("</DataArray>\n")
 vtufile.write("</CellData>\n")

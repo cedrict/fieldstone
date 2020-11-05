@@ -415,7 +415,7 @@ are essentially zero, as expected.}
 \subsubsection*{Experiment 1 - the (regularised) lid driven cavity}
 
 This is the same experiment as above but the viscosity is now of the 
-power law type with $\beta=1$ and $n>1$. Also, no-slip boundary conditions 
+power law type with $B=1$ and $n>1$. Also, no-slip boundary conditions 
 are prescribed on the left, right and bottom sides. 
 The regularisation parameter $\dot{\gamma}$ is set to $10^{-8}$.
 
@@ -434,8 +434,19 @@ of $n$ (from left to right: 2,3,4,5).}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/dp}\\
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/u}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/v}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/p}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/p}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/theta}
 \end{center}
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_01/conv_n5}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_01/conv_n10}\\
+{\captionfont Influence of the number of Picard iterations before wtiching to Newton ones
+for $n=5$ (left) and $n=10$ (right).}
+\end{center}
+
+
 
 \newpage
 %--------------------------------------------------------------------------
@@ -444,49 +455,52 @@ of $n$ (from left to right: 2,3,4,5).}
 Following Christensen (1992) \cite{chri92} and Ciskova et al (2002) \cite{civv02} 
 one can use the following relationship to include a form of plasticity through stress limiting:
 \[
-\frac{\tau}{\tau_{lim}} = \left( \frac{ \dot{\epsilon}  }{ \dot{\epsilon}_{lim}  }  \right)^{1/n}
+\frac{\tau}{\tau_{lim}} = \left( \frac{ \dot{\varepsilon}_e  }{ \dot{\varepsilon}_{lim}  }  \right)^{1/n}
 \]
 where $\tau_{lim}$ is the yield stress and $n$ is the power-law index defining the 'brittleness'
-of the material.
-In Ciskova et al. (2002) \cite{civv02}, 
+of the material. In Ciskova et al. (2002), 
 the authors use $n=5$, $\dot{\varepsilon}_{lim}=10^{-15}\si{\per\second}$, 
 and $\tau_{lim}=10^{9}\si{\pascal}$. 
 
 In this experiment the domain is 40x10\si{\kilo\metre} and the resolution is $64\times 16$ elements. 
-The regularisation parameter is set to $\dot{\gamma}=10^{-20}\si{\per\second}$.
+The regularisation parameter is set to $\dot{e}=10^{-20}\si{\per\second}$.
 Because we here consider a shallow upper-crustal 
 layer, the material is characterised by a cohesion of $c=40\si{\mega\pascal}=\tau_{lim}$.
 Extensional boundary conditions are applied so that the background strain rate is 
 also $10^{-15}\si{\per\second}$.
 
 One can also look at the effective viscosity by 
-setting $\tau = 2 \eta_{eff} \dot{\varepsilon}$ so that
+setting $\tau = 2 \eta_{eff} \dot{\varepsilon}_e$ so that
 \[
-\frac{2 \eta_{eff}\dot{\varepsilon} }{\tau_{lim}} = 
-\left( \frac{ \dot{\varepsilon}  }{ \dot{\varepsilon}_{lim}  }  \right)^{1/n}
+\frac{2 \eta_{eff}\dot{\varepsilon}_e }{\tau_{lim}} = 
+\left( \frac{ \dot{\varepsilon}_e  }{ \dot{\varepsilon}_{lim}  }  \right)^{1/n}
 \]
 which yields
 \[
-\eta_{eff} = \left( \frac{ \dot{\varepsilon}  }{ \dot{\varepsilon}_{lim} } \right)^{1/n}   
-\frac{1}{ 2\dot{\varepsilon}} \tau_{lim}
+\eta_{eff} = \left( \frac{ \dot{\varepsilon}_e  }{ \dot{\varepsilon}_{lim} } \right)^{1/n}   
+\frac{1}{ 2\dot{\varepsilon}_e} \tau_{lim}
 =
-\left( \frac{ \dot{\varepsilon}  }{ \dot{\varepsilon}_{lim}  }  \right)^{1/n} 
-\frac{\dot{\varepsilon}_{lim} }{\dot{\varepsilon}} \frac{\tau_{lim}   }{2 \dot{\varepsilon}_{lim}} 
+\left( \frac{ \dot{\varepsilon}_e  }{ \dot{\varepsilon}_{lim}  }  \right)^{1/n} 
+\frac{\dot{\varepsilon}_{lim} }{\dot{\varepsilon}_e} \frac{\tau_{lim}   }{2 \dot{\varepsilon}_{lim}} 
 =
-\left( \frac{ \dot{\varepsilon}  }{ \dot{\varepsilon}_{lim}  }  \right)^{\frac{1}{n}-1}  
+\left( \frac{ \dot{\varepsilon}_e  }{ \dot{\varepsilon}_{lim}  }  \right)^{\frac{1}{n}-1}  
 \frac{\tau_{lim}   }{2 \dot{\varepsilon}_{lim}} 
 \]
 Defining $\eta_{lim}=\tau_{lim} /  2 \dot{\varepsilon}_{lim}$, then
 \[
-\eta_{eff} = \eta_{lim} \left( \frac{ \dot{\varepsilon}  }{ \dot{\varepsilon}_{lim}  }  
-\right)^{\frac{1}{n}-1}
+\eta_{eff} = \eta_{lim} \left( \frac{ \dot{\varepsilon}_e  }{ \dot{\varepsilon}_{lim}  }  
+\right)^{\alpha}
 \]
 In our case, $\eta_{lim}= 4\time 10^7/2/10^{-15}=2\times10^{22}$. 
 In the present context, we then define
 \[
-\beta 
-= \frac{c}{2 \dot{\varepsilon}_{lim}} \frac{1}{\dot{\varepsilon}_{lim}^{\alpha}}
+B
+%= \frac{c}{2 \dot{\varepsilon}_{lim}} \frac{1}{\dot{\varepsilon}_{lim}^{\alpha}}
 = \frac{ \eta_{lim} }{\dot{\varepsilon}_{lim}^{\alpha}}
+\]
+and finally 
+\[
+\eta_{eff} = B \dot{\varepsilon}_e^\alpha \rightarrow B (\dot{\varepsilon}_e^2 + \dot{e}^2 )^{\alpha/2}
 \]
 Boundary conditions are as follows: $\vec{\upnu}=(-u_{bc},0)$ is imposed on the left and the left half 
 of the bottom side, and $\vec{\upnu}=(+u_{bc},0)$ is imposed on the right and the right half
@@ -512,6 +526,19 @@ of $n$ (from top to bottom: 2,5,10,20).}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_02/p}\\
 \end{center}
 
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_02/conv_n5}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_02/conv_n10}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_02/theta_n5}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_02/theta_n10}\\
+{\captionfont Influence of the number of Picard iterations before wtiching to Newton ones
+for $n=5$ (left) and $n=10$ (right).}
+\end{center}
+
+
+
+
+
 \newpage
 %--------------------------------------------------------------------------
 \subsubsection*{Experiments 3 \& 4 - Slab detachment benchmark}
@@ -523,10 +550,11 @@ Two materials are present in the domain: the lithosphere (mat.1) and the mantle 
 {\captionfont the top layer may or may not be there, depending on the chosen case, see below.}
 \end{center}
 
-The overriding plate (mat \#1) is $80\si{\kilo\metre}$ thick and is placed at the top of the domain. 
-An already subducted slab (also mat \#1) of $250\si{\kilo\metre}$ length hangs vertically under this plate.
+The overriding plate is $80\si{\kilo\metre}$ thick and is placed at the top of the domain. 
+An already subducted slab (also mat 1) of $250\si{\kilo\metre}$ length hangs vertically under this plate.
 The mantle occupies the rest of the domain.
-Several experiments with increasing levels of complexity are detailed hereafter:
+Several experiments with increasing levels of complexity have been designed 
+and the first two ones are carried out for now.
 
 \begin{itemize}
 \item case 1a: 
@@ -541,13 +569,13 @@ We set $n_s=4$ and $A=(2 \times 4.75\!\times\! 10^{11})^{-n_s}$ so that
 =\frac{1}{2} A^{-1/n_s} \dot\varepsilon_e^{1/n_s-1} 
 =\frac{1}{2} [(2 \times 4.75\!\times\! 10^{11})^{-n_s}]^{-1/n_s} \dot\varepsilon_e^{1/n_s-1} 
 =4.75\!\times\! 10^{11} \dot\varepsilon_e^{1/n_s-1} 
-= \beta \dot\varepsilon_e^\alpha
+= B \dot\varepsilon_e^\alpha
 \end{equation}
 
 \item case 1b: 
 Both mantle and slab are have a power law rheology. 
 The slab is the same as in case 1a, but the mantle rheology is now 
-characterised by $A=(2 \times 4.54 \!\times\! 10^{10})^{-n_m}$ or $\beta=4.54 \times 10^{10}$ 
+characterised by $A=(2 \times 4.54 \!\times\! 10^{10})^{-n_m}$ or $B=4.54 \times 10^{10}$ 
 and $n_m=3$.
 
 \item case 2a: same as case 1a, but the system now has a free surface. Depending on the code 
@@ -567,25 +595,21 @@ The regularisation parameter is set to $\dot{\gamma}=10^{-20}\si{\per\second}$.
 Gravity is vertical and set to $-10\si{\metre\per\square\second}$.
 
 \newpage
-\underline{Case 1a}
+\underline{Case 1a (Experiment \#3)}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/vel.png}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/p.png}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/sr.png}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/eta.png}\\
-\end{center}
-
-\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/100x66_N/vel.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/100x66_N/p.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/100x66_N/sr.png}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/100x66_N/eta.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/100x66_N/etan.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/theta}\\
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/conv}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/du}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/dp}\\
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/u}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/v}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/p}\\
-\end{center}
-
-\begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/horizontal_profile_eta.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/vertical_profile_eta.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/horizontal_profile_srn.pdf}\\
@@ -594,26 +618,23 @@ Gravity is vertical and set to $-10\si{\metre\per\square\second}$.
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_03/vertical_profile_p.pdf}\\
 \end{center}
 
+
 \newpage
-\underline{Case 1b}
+\underline{Case 1b (Experiment \#4)}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/100x66/vel.png}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/100x66/p.png}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/100x66/sr.png}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/100x66/eta.png}
-\end{center}
-
-\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/100x66_N/vel.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/100x66_N/p.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/100x66_N/sr.png}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/100x66_N/eta.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/100x66_N/etan.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/theta}\\
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/conv}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/du}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/dp}\\
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/u}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/v}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/p}
-\end{center}
-
-\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/p}\\
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/horizontal_profile_eta.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/vertical_profile_eta.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_04/horizontal_profile_srn.pdf}\\
@@ -645,16 +666,17 @@ keep relying on quadrilateral elements so that the edges of the elements cannot 
 aligned with the material discontinuity. 
 The material model is called at every quadrature point.  
 
-In what follows we use a 100x100 element mesh. We set $\beta=1$ and $n=1$ for the matrix, so that its 
-viscosity is simply 1. The inclusion is characterised by $\beta=5$ and $n\in[1,5]$.
-Pressure is volume averaged normalised. The regularisation parameter is set to $10^{-5}$. 
+In what follows we use a $64\times 64$ element mesh. 
+We set $B=1$ and $n=1$ (i.e. $\alpha=0$) for the matrix, 
+so that its viscosity is simply 1. The inclusion is characterised by $B=5$ and $n=\{1,2,3,4,5,10\}$.
+Pressure is volume-average normalised. The regularisation parameter is set to $\dot{e}=10^{-5}$. 
 
 \begin{center}
-\includegraphics[width=8.4cm]{python_codes/fieldstone_87/results/experiment_05/v.png}
-\includegraphics[width=8.4cm]{python_codes/fieldstone_87/results/experiment_05/sr.png}\\
-\includegraphics[width=8.4cm]{python_codes/fieldstone_87/results/experiment_05/press.png}
-\includegraphics[width=8.4cm]{python_codes/fieldstone_87/results/experiment_05/eta.png}\\
-{\captionfont From left to right: $n=1,2,3,4,5$}
+\includegraphics[width=12cm]{python_codes/fieldstone_87/results/experiment_05/v.png}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_87/results/experiment_05/sr.png}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_87/results/experiment_05/press.png}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_87/results/experiment_05/eta.png}\\
+{\captionfont From left to right: $n=1,2,3,4,5,10$. resolution 64x64. Newton.}
 \end{center}
 
 We see that when $n$ increases so does the effective viscosity in the inclusion. When 
@@ -675,9 +697,9 @@ upper right quadrant (i.e. $x\ge 0.5$ and $y\ge 0.5$)}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/conv}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/du}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/dp}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/u}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/v}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/p}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/theta}
 \end{center}
 
 
@@ -706,9 +728,9 @@ The rheology is of the dislocation creep type and the effective viscosity is the
 \[
 \eta 
 = \frac{1}{2} A^{-\frac1n} \dot\varepsilon_e^{\frac1n-1}  \exp \frac{Q}{nRT} 
-= \underbrace{ \frac{1}{2} A^{-\frac1n} \exp \frac{Q}{nRT} }_{\beta} \dot\varepsilon_e^{\alpha}  
+= \underbrace{ \frac{1}{2} A^{-\frac1n} \exp \frac{Q}{nRT} }_{B} \dot\varepsilon_e^{\alpha}  
 \]
-Note that we still use a regularisation parameter set to $\dot\gamma=10^{-18}\si{\per\second}$, 
+Note that we still use a regularisation parameter set to $\dot{e}=10^{-18}\si{\per\second}$, 
 and that no viscosity cutoff is needed here. 
 
 
@@ -786,9 +808,9 @@ elements have a dimension of about 610m.}
 
 For $n=1$ the matrix around the fault is Newtonian and the authors specify its viscosity
 to be $\eta_0=10^{20}\si{\pascal\second}$. For $n>1$ the authors do not specify the 
-value of $\beta$ but rather resort to an indirect and unpractical way. We therefore postulate
+value of $B$ but rather resort to an indirect and unpractical way. We therefore postulate
 \[
-\beta =  \eta_0 \dot\varepsilon_0^{-\alpha}
+B =  \eta_0 \dot\varepsilon_0^{-\alpha}
 \]
 so that the viscosity is then 
 \[
@@ -810,11 +832,11 @@ $+u_0/2$ is prescribed at the top, and $-u_0/2$ is prescribed at the bottom.
 \end{center}
 
 
-\note{
-When resolution increases the fault becomes thinner and 
-thinner, so that the problem is not resolution independent.
-Good or bad thing? Assess convergence with vrms ? 
-}
+%\note{
+%When resolution increases the fault becomes thinner and 
+%thinner, so that the problem is not resolution independent.
+%Good or bad thing? Assess convergence with vrms ? 
+%}
 
 
 \begin{center}
@@ -823,19 +845,13 @@ Good or bad thing? Assess convergence with vrms ?
 
 
 \begin{center}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/vel_n01}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/vel_n02}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/vel_n03}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/vel_n10}\\
-\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/sr_n01}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/sr_n02}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/sr_n03}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/sr_n10}\\
-\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/eta_n01}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/eta_n02}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/eta_n03}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_87/results/experiment_07/eta_n10}\\
-{\captionfont Left to right: n=1,2,3,10.}
+\includegraphics[width=4.52cm]{python_codes/fieldstone_87/results/experiment_07/u}
+\includegraphics[width=4.52cm]{python_codes/fieldstone_87/results/experiment_07/v}
+\includegraphics[width=4.52cm]{python_codes/fieldstone_87/results/experiment_07/vel}\\
+\includegraphics[width=4.52cm]{python_codes/fieldstone_87/results/experiment_07/eta}
+\includegraphics[width=4.52cm]{python_codes/fieldstone_87/results/experiment_07/sr}
+\includegraphics[width=4.52cm]{python_codes/fieldstone_87/results/experiment_07/press}\\
+{\captionfont From top to bottom: n=1,2,3,5,10. Mesh 102x51}
 \end{center}
 
 
