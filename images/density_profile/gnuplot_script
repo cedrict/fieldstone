@@ -1,0 +1,14 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+
+set xlabel 'density (kg/m^3)'
+set ylabel 'r (km)'
+set key outside
+set output 'density_profile.pdf'
+
+plot[:6000][3480:6400]\
+'rho.ascii' u 2:($1/1000) w lp lw .5 ps .1 t 'PREM', \
+'winterc_density.txt' u 2:(6371-$1) w lp lw .5 ps .1 t 'rad. avrg. WINTERC',\
+6371-400  lt -1 lw .5 dashtype 2 t '400km depth',\
+6371-670  lt -1 lw .5 dashtype 3 t '670km depth'
+
