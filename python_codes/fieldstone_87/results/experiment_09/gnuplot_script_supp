@@ -1,0 +1,98 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set log y
+set xtics 5
+
+########################################################3
+
+set title 'Newton - theta method 3'
+set ylabel 'viscosity on quad. points'
+set output 'stats_etaq_meth3.pdf'
+plot[:50][]\
+'meth3/n_02/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 2 t 'n=2',\
+'meth3/n_02/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 2 notitle,\
+'meth3/n_05/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 5 t 'n=5',\
+'meth3/n_05/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 5 notitle,\
+'meth3/n_10/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 6 t 'n=10',\
+'meth3/n_10/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 6 notitle,\
+'meth3/n_20/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 7 t 'n=20',\
+'meth3/n_20/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 7 notitle,\
+'meth3/n_50/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 8 t 'n=50',\
+'meth3/n_50/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 8 notitle,\
+'meth3/n_100/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 9 t 'n=100',\
+'meth3/n_100/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 9 notitle,\
+
+unset log y
+set ylabel 'v_{rms}'
+set title 'Newton - theta method 3'
+set output 'vrms_meth3.pdf'
+plot[:50][]\
+'meth3/n_02/vrms.ascii' w lp ps .2 lw .5 t 'n=2',\
+'meth3/n_05/vrms.ascii' w lp ps .2 lw .5 t 'n=5',\
+'meth3/n_10/vrms.ascii' w lp ps .2 lw .5 t 'n=10',\
+'meth3/n_20/vrms.ascii' w lp ps .2 lw .5 t 'n=20',\
+'meth3/n_50/vrms.ascii' w lp ps .2 lw .5 t 'n=50',\
+'meth3/n_100/vrms.ascii' w lp ps .2 lw .5 t 'n=100',\
+
+set xtics 0.1
+set log y
+set key outside
+set xlabel 'x'
+
+set ylabel 'viscosity'
+set output 'surface_profile_eta_meth3.pdf'
+plot[][]\
+'meth3/n_02/surface_profile.ascii' w lp ps .2 lw .5 t 'n=2',\
+'meth3/n_05/surface_profile.ascii' w lp ps .2 lw .5 t 'n=5',\
+'meth3/n_10/surface_profile.ascii' w lp ps .2 lw .5 t 'n=10',\
+'meth3/n_20/surface_profile.ascii' w lp ps .2 lw .5 t 'n=20',\
+'meth3/n_50/surface_profile.ascii' w lp ps .2 lw .5 t 'n=50',\
+'meth3/n_100/surface_profile.ascii' w lp ps .2 lw .5 t 'n=100',\
+
+set ylabel 'strain rate'
+set output 'surface_profile_sr_meth3.pdf'
+plot[][]\
+'meth3/n_02/surface_profile.ascii' u 1:3 w lp ps .2 lw .5 t 'n=2',\
+'meth3/n_05/surface_profile.ascii' u 1:3 w lp ps .2 lw .5 t 'n=5',\
+'meth3/n_10/surface_profile.ascii' u 1:3 w lp ps .2 lw .5 t 'n=10',\
+'meth3/n_20/surface_profile.ascii' u 1:3 w lp ps .2 lw .5 t 'n=20',\
+'meth3/n_50/surface_profile.ascii' u 1:3 w lp ps .2 lw .5 t 'n=50',\
+'meth3/n_100/surface_profile.ascii' u 1:3 w lp ps .2 lw .5 t 'n=100',\
+
+unset log y 
+set ylabel 'velocity u'
+set output 'surface_profile_u_meth3.pdf'
+plot[][]\
+'meth3/n_02/surface_profile.ascii' u 1:4 w lp ps .2 lw .5 t 'n=2',\
+'meth3/n_05/surface_profile.ascii' u 1:4 w lp ps .2 lw .5 t 'n=5',\
+'meth3/n_10/surface_profile.ascii' u 1:4 w lp ps .2 lw .5 t 'n=10',\
+'meth3/n_20/surface_profile.ascii' u 1:4 w lp ps .2 lw .5 t 'n=20',\
+'meth3/n_50/surface_profile.ascii' u 1:4 w lp ps .2 lw .5 t 'n=50',\
+'meth3/n_100/surface_profile.ascii' u 1:4 w lp ps .2 lw .5 t 'n=100',\
+
+set ylabel 'velocity v'
+set output 'surface_profile_v_meth3.pdf'
+plot[][-1.1:]\
+'meth3/n_02/surface_profile.ascii' u 1:5 w lp ps .2 lw .5 t 'n=2',\
+'meth3/n_05/surface_profile.ascii' u 1:5 w lp ps .2 lw .5 t 'n=5',\
+'meth3/n_10/surface_profile.ascii' u 1:5 w lp ps .2 lw .5 t 'n=10',\
+'meth3/n_20/surface_profile.ascii' u 1:5 w lp ps .2 lw .5 t 'n=20',\
+'meth3/n_50/surface_profile.ascii' u 1:5 w lp ps .2 lw .5 t 'n=50',\
+'meth3/n_100/surface_profile.ascii' u 1:5 w lp ps .2 lw .5 t 'n=100',\
+
+set ylabel 'pressure'
+set output 'surface_profile_p_meth3.pdf'
+plot[][]\
+'meth3/n_02/surface_profile.ascii' u 1:6 w lp ps .2 lw .5 t 'n=2',\
+'meth3/n_05/surface_profile.ascii' u 1:6 w lp ps .2 lw .5 t 'n=5',\
+'meth3/n_10/surface_profile.ascii' u 1:6 w lp ps .2 lw .5 t 'n=10',\
+'meth3/n_20/surface_profile.ascii' u 1:6 w lp ps .2 lw .5 t 'n=20',\
+'meth3/n_50/surface_profile.ascii' u 1:6 w lp ps .2 lw .5 t 'n=50',\
+'meth3/n_100/surface_profile.ascii' u 1:6 w lp ps .2 lw .5 t 'n=100',\
+
+
+
+
+
+
+
