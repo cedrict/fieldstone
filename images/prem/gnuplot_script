@@ -1,13 +1,17 @@
 set term pdf enhanced font "Times,10pt"
 set grid
-
-set xtics 500
-set ytics 1000
-set xlabel 'r (km)'
-set ylabel 'density'
+set key outside
+set xtics 1000
+#set ytics 1000
+set ylabel 'r (km)'
+set xlabel 'density'
 set output 'rho.pdf'
 plot[][0:]\
-'rho.ascii' u ($1/1000):2 w l notitle
+'rho.ascii' u 2:($1/1000) w l lw 2 t 'PREM',\
+6371 lt -1 lw .5 dashtype 2 t '6371km',\
+6371-400 lt -1 lw .5 dashtype 3 t '400km depth',\
+6371-670 lt -1 lw .5 dashtype 4 t '670km depth',\
+6371-2891 lt -1 lw .5 dashtype 4 t 'CMB'
 
 
 reset

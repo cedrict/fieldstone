@@ -1,7 +1,8 @@
 \documentclass[a4paper]{article}
-\usepackage{graphicx}
 
-%\usepackage[  margin=2.5cm,  includefoot,  footskip=30pt,]{geometry}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{graphicx}
 \usepackage{pdflscape}
 \usepackage[cm]{fullpage}
 \usepackage{bm}
@@ -9,7 +10,6 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{hyperref}
-%\usepackage{xcolor}
 \usepackage{mdframed}
 \usepackage{makeidx} 
 \usepackage{multicol}
@@ -190,18 +190,6 @@ urlcolor=black}
 \newcommandx{\improvement}[2][1=]{\todo[inline,linecolor=Plum,backgroundcolor=Plum!15,bordercolor=Plum,#1]{#2}}
 \newcommandx{\thiswillnotshow}[2][1=]{\todo[disable,#1]{#2}}
 
-%\def\theaipage{\string\hyperpage{\thepage}} 
-%\newcommand{\listofauthorsname}{List of Authors}%
-%\newcommand{\listofauthors}{%
-%\chapter*{\listofauthorsname}%
-%\phantomsection%
-%\addcontentsline{toc}{chapter}{\listofauthorsname}%
-%\noindent%
-%\printauthorindex%
-%}%
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -222,6 +210,7 @@ urlcolor=black}
 
 {\scriptsize With (direct or indirect) contributions from (in alphabetical order): 
 Wolfgang Bangerth, 
+Taco Broerse,
 Rens Elbertsen,
 Riad Hassani,
 Sverre Hassing,
@@ -280,12 +269,12 @@ doi = "10.23644/uu.9209393.v1"}
 \maketitle
 \tableofcontents
 
-%\newpage
 %\begin{center}
 %{\color{red} \huge WARNING: this is work in progress}
 %\end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 \section{Introduction} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{chapter1} 
 

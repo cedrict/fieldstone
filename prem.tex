@@ -1,14 +1,14 @@
 
-Let us define $x=r/R$.
-Following table I of Dziewonski \& Anderson (1981) \cite{dzan81} \index{general}{P.R.E.M.}
-we have 
+\paragraph{The density profile} Let us define $x=r/R$.
+Following table I of Dziewonski \& Anderson (1981) \cite{dzan81} 
+we have \index{general}{P.R.E.M.}
 
 \begin{itemize}
-\item for the inner core $0<r<1221.5\si{\km}$:
+\item for the inner core $0<r<1221.5\si{\km}$ (or $ 0<x<0.19172814314$):
 \[
 \rho(x) =13.0885-8.8381 x^2
 \]
-\item for the outer core $1221.5<r<3480$km:
+\item for the outer core $1221.5<r<3480$km (or  $ 0.19172814314  <x< 0.5462250824$:
 \[
 \rho(x)=12.5815-1.2638x-3.6426x^2-5.5281x^3
 \]
@@ -55,10 +55,10 @@ units of kg/m$^3$.
 
 One can verify that the functions above yield the familiar PREM density profile:
 \begin{center}
-\includegraphics[width=6cm]{images/prem/rho.pdf}
+\includegraphics[width=8cm]{images/prem/rho.pdf}
 \end{center}
 
-Following Eq.~(\ref{eqn_g_rad_comp}), the radial component of the gravitational 
+\paragraph{Corresponding gravity field} Following Eq.~(\ref{eqn_g_rad_comp}), the radial component of the gravitational 
 acceleration at a position $r$ outside of the Earth is given by:
 
 \begin{equation}
@@ -69,17 +69,67 @@ g_r(r)
  
 This integral can be broken up into layer integrals and we can compute the contribution 
 of each layer to the gravity value $g_r(r)$.
+A layer is characterised by $r_{in}$ and $r_{out}$. Inside $r_{in}$ the gravity is zero. 
+Between $r_{in}$ and $r_{out}$ the integral runs from $r_{in}$ to $r\leq r_{out}$. 
+Anout outside the layer the integral runs from $r_{in}$ to $r_{out}$.
 
-Let us remember that $x=r/R$ so $dr = R dx$. 
+For simplicity the following integrals are computed for $x\in[0,1]$:
+
+\begin{itemize}
+\item inner core 
+
 \begin{eqnarray}
-g_{ic}(r)
-&=&  \frac{4 \pi {\cal G}}{r^2} \int_0^{1221.5} (13.0885-8.8381 (r/R)^2) r^2 dr \nn\\
-&=&  \frac{4 \pi {\cal G} R^3}{r^2}  \int_0^{1221.5/6371} (13.0885-8.8381 x^2) x^2 dx \nn\\
-&\simeq& 0.0302907  \frac{4 \pi {\cal G} R^3}{r^2}\nn\\
-g_{oc}(r)
-&=&  \frac{4 \pi {\cal G} R^3}{r^2} 
-\int_{1221.5/6371}^{3480/6371} (12.5815-1.2638x-3.6426x^2-5.5281x^3)x^2 dx 
-\simeq 0.56663  \frac{4 \pi {\cal G} R^3}{r^2}\nn\\
+inside \qquad g_{ic}(x)
+&=& \frac{4 \pi {\cal G}}{x^2} \int_0^{x} (13.0885-8.8381 x'^2) x'^2 dx' \nn\\
+&=& \frac{4 \pi {\cal G}}{x^2} (4.36283x^3-1.76762x^5) \nn\\
+&=& 4 \pi {\cal G} (4.36283x-1.76762x^3) \\
+outside \qquad g_{ic}(x)
+&=&  \frac{4 \pi {\cal G}}{x^2} \int_0^{0.19172814314} (13.0885-8.8381 x'^2) x'^2 dx' \nn\\
+&\simeq& 0.0302907  \frac{4 \pi {\cal G}}{x^2}
+\end{eqnarray}
+
+
+
+\item outer core 
+\begin{eqnarray}
+inside \qquad g_{oc}(x) 
+&=& \frac{4 \pi {\cal G}}{x^2} \int_{0.19172814314}^{x} ( 12.5815-1.2638x'-3.6426x'^2-5.5281x'^3) x'^2 dx' \nn\\
+&=& 4 \pi {\cal G} (-0.92135x^4 - 0.72852x^3 - 0.31595x^2+4.19383x-0.0288961/x^2) \\
+outside \qquad g_{oc}(x)
+&=&  \frac{4 \pi {\cal G} R^3}{x^2} 
+\int_{0.19172814314}^{0.5462250824} (12.5815-1.2638x'-3.6426x'^2-5.5281x'^3)x'^2 dx'  \nn\\
+&\simeq& 0.56663  \frac{4 \pi {\cal G}}{x^2}
+\end{eqnarray}
+
+\item lower mantle 
+\begin{eqnarray}
+inside \qquad g_{lm}(x)  &=& \frac{4 \pi {\cal G}}{x^2} \int_{}^{x} () x'^2 dx' \nn\\ 
+outside \qquad g_{lm}(x) &=&  \frac{4 \pi {\cal G}}{x^2} \int_{}^{} () x'^2 dx' \nn\\  
+\end{eqnarray}
+
+\item transition zone 1 
+\begin{eqnarray}
+inside \qquad g_{lm}(x)  &=& \frac{4 \pi {\cal G}}{x^2} \int_{}^{x} () x'^2 dx' \nn\\ 
+outside \qquad g_{lm}(x) &=&  \frac{4 \pi {\cal G}}{x^2} \int_{}^{} () x'^2 dx' \nn\\  
+\end{eqnarray}
+
+\item transition zone 2 
+\begin{eqnarray}
+inside \qquad g_{lm}(x)  &=& \frac{4 \pi {\cal G}}{x^2} \int_{}^{x} () x'^2 dx' \nn\\ 
+outside \qquad g_{lm}(x) &=&  \frac{4 \pi {\cal G}}{x^2} \int_{}^{} () x'^2 dx' \nn\\  
+\end{eqnarray}
+
+\item transition zone 3 
+\begin{eqnarray}
+inside \qquad g_{lm}(x)  &=& \frac{4 \pi {\cal G}}{x^2} \int_{}^{x} () x'^2 dx' \nn\\ 
+outside \qquad g_{lm}(x) &=&  \frac{4 \pi {\cal G}}{x^2} \int_{}^{} () x'^2 dx' \nn\\  
+\end{eqnarray}
+
+
+\end{itemize}
+
+
+\begin{eqnarray}
 g_{lm}(r) 
 &=& \int_{3480/6371}^{5701/6371} (7.9565-6.4761x+5.5283x^2-3.0807x^3)x^2 dx 
 \simeq 0.904793 \frac{4 \pi {\cal G} R^3}{r^2}\nn\\

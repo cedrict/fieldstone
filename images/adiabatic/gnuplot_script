@@ -1,0 +1,63 @@
+set term pdf enhanced font "Times,10pt"
+set grid
+set xlabel 'T (^oC)'
+set ylabel 'r (km)'
+set key left bottom 
+set ytics 250
+set xtics 250
+
+set output 'Tprofile.pdf'
+plot[0:][3400:6371]\
+'stacey_davis.ascii' u ($2-273):($1)  w lp ps .3 lw .5  t 'Stacey \& Davis',\
+'javier.ascii'             u 2:(6371-$1) w l lt 2  lw .5  t 'WINTERC 1D ',\
+'winterc_temperature.txt' u 2:(6371-$1) w l lt 2 lw .5  dashtype 2 t 'WINTERC avrg',\
+'verh80.ascii' u ($2-273):(6371-$1)  lt 3 pt 4 ps .3  t 'Verhoogen (1980)',\
+'brsh81.ascii' u ($2-273):(6371-$1)  lt 3 pt 5 ps .3  t 'Brown \& Shankland (1981)',\
+'ande82.ascii' u ($2-273):(6371-$1)  lt 3 pt 6 ps .3  t 'Anderson (1982)',\
+'kayy10.ascii'  u ($2-273):(6371-$1) w lp lt 4 ps .1 lw .5  t 'Katsura et al  (2010)',\
+'stac77.ascii' u ($2-545):1          w lp lt 5 ps .1 lw .5  t 'Stacey (1977)',\
+'stac77.ascii' u ($3-545):1          w lp lt 5 ps .1 lw .5  notitle,\
+'daso15.ascii' u ($1):($2+3480)      w lp lt 7 ps .1 lw .5  t 'Dannberg \& Sobolev (2015)',\
+'steinberger/t1.d' u ($1-273):(6371+$2) w l lw .5 t 'Steinberger \& C. (2006) - T1',\
+'steinberger/t3.d' u ($1-273):(6371+$2) w l lw .5 t 'Steinberger \& C. (2006) - T3',\
+'steinberger/t4.d' u ($1-273):(6371+$2) w l lw .5 t 'Steinberger \& C. (2006) - T4',\
+'daef17.ascii' u ($1-273):(6371-$2) w lp ps .3 lw .5 t 'Dannberg et al (2017)' ,\
+6371-400  lt -1 lw .25 dashtype 2 t '400km depth',\
+6371-670  lt -1 lw .25 dashtype 4 t '670km depth',\
+-3.*(x-2250) + 5000 dashtype 3 t '0.33K/km' 
+
+set xtics 100
+set ytics 50 
+set output 'Tprofile_upper.pdf'
+plot[0:1800][5690:6371]\
+'stacey_davis.ascii' u ($2-273):($1)  w lp ps .3 lw .5   t 'Stacey \& Davis',\
+'javier.ascii'             u 2:(6371-$1) w l lt 2 lw .5  t 'WINTERC 1D ',\
+'winterc_temperature.txt'  u 2:(6371-$1) w l lt 2 dashtype 2 lw .5 t 'WINTERC avrg',\
+'verh80.ascii' u ($2-273):(6371-$1) lt 3 pt 4 ps .3  t 'Verhoogen (1980)',\
+'brsh81.ascii' u ($2-273):(6371-$1) lt 3 pt 5 ps .3  t 'Brown \& Shankland (1981)',\
+'ande82.ascii' u ($2-273):(6371-$1) lt 3 pt 6 ps .3  t 'Anderson (1982)',\
+'kayy10.ascii'  u ($2-273):(6371-$1) w lp lt 4 ps .2 lw .5  t 'Katsura et al  (2010)',\
+'stac77.ascii' u ($2-545):1 w lp lt 5 ps .2 lw .5 t 'Stacey (1977)',\
+'stac77.ascii' u ($3-545):1 w lp lt 5 ps .2 lw .5 notitle,\
+'itka89.ascii' u 2:(6371-$1) w l lt 6 lw .5  t 'Ito \& Katsura (1989)',\
+'stca06.ascii' u ($1-273):(6371-$2) w lp lt 6 ps .1 lw .5 t 'Steinberger \& Calderwood (2006)',\
+'daso15.ascii' u ($1):($2+3480)      w lp lt 7 ps .1 lw .5  t 'Dannberg \& Sobolev (2015)',\
+'steinberger/t1.d' u ($1-273):(6371+$2) w l lw .5 t 'Steinberger \& C. (2006) - T1',\
+'steinberger/t3.d' u ($1-273):(6371+$2) w l lw .5 t 'Steinberger \& C. (2006) - T3',\
+'steinberger/t4.d' u ($1-273):(6371+$2) w l lw .5 t 'Steinberger \& C. (2006) - T4',\
+6371-400  lt -1 lw .5 dashtype 2 t '400km depth',\
+6371-670  lt -1 lw .5 dashtype 3 t '670km depth'
+
+
+
+
+
+
+
+
+
+
+
+
+###Refs in table 7.1 of Poirier book ###
+

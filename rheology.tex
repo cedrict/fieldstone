@@ -164,7 +164,13 @@ hitherto been thought to possess a yield stress." The Cross model is presented
 in Section~\ref{ss:cross}.
  
 
-\Literature: \cite{papa87,blmi97,mizi01,limd02,maky17,syga14,bingham,baru09,grol09,been80,svna18}
+\Literature: 
+
+Papanastasiou (1987) \cite{papa87},
+Blackery \& Mitsoulis (1997) \cite{blmi97},
+\cite{mizi01,maky17,syga14,bingham,baru09,grol09,svna18}
+FE method for incompressible non-Newtonian flow (Bercovier \& Engelman (1980) \cite{been80});
+Flow around a rigid sphere (Liu et al (2002) \cite{limd02})
 
 %------------------------------
 \subsubsection{Herschel-Bulkley visco-plastic model}
@@ -173,17 +179,19 @@ in Section~\ref{ss:cross}.
 The Herschel-Bulkley model is effectively a combination of the power-law model and 
 a simple plastic model:
 \begin{eqnarray}
-{\bm s} &=& 2 \left(  K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}}\right)\dot{\bm \varepsilon} \qquad \text{ if } {\tau}_{e}>\tau_0 \\
+{\bm \tau} &=& 2 \left(  K \dot{\varepsilon}_e^{n-1} 
++ \frac{\tau_0}{\dot{\varepsilon}}\right)\dot{\bm \varepsilon} \qquad \text{ if } {\tau}_{e}>\tau_0 \\
 \dot{\bm \varepsilon} &=& {\bm 0} \qquad\qquad \text{if }{\tau}_{e} \leq \tau_0 
 \end{eqnarray}
 in which $\tau_0$ is the yield stress, $K$ the consistency, and $n$ is the flow index \index{general}{Flow Index} \cite{demj04}.
 The flow index measures the degree to which the fluid is shear-thinning ($n<1$) or shear-thickening ($n>1$).
 If $n=1$ and $\tau_0=0$ the model reduces to the Newtonian model. 
 
-The term between parenthesis above is the nonlinear effective viscosity. Concretely, the implementation goes as 
+The term between parenthesis above is the nonlinear effective viscosity. 
+Concretely, the implementation goes as 
 follows\footnote{\url{https://en.wikipedia.org/wiki/Herschel-Bulkley_fluid}}:
 \[
-\eta_{eff} = 
+\eta_{eff}(\dot{\bm \varepsilon}) = 
 \left\{
 \begin{array}{cc}
 \eta_0 & \dot{\varepsilon}_e\leq \dot{\varepsilon}_0 \\ 
@@ -201,36 +209,53 @@ Note that when strain rates are large, the power-law behavior dominates.
 As we have seen for Bingham fluids, the equations above are not easily amenable to implementation so that 
 one usually resorts to regularisation, which is a modification of the 
 equations by introducing a new material parameter which controls the exponential 
-growth of stress. This way the equation is valid for both yielded and unyielded areas
-\cite{blmi97,papa87,zifr07,svna18}:
+growth of stress. This way the equation is valid for both yielded 
+and unyielded areas (Blackery \& Mitsoulis (1997) \cite{blmi97},
+Papanastasiou (1987) \cite{papa87}, Zinani \& Frey (2007) \cite{zifr07}, 
+Sverdrup et al (2018) \cite{svna18}):
 \begin{equation}
 \eta_{eff} = K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e} [1 - \exp(-m \dot{\varepsilon}_e)] 
 \end{equation}
 When the strain rate becomes (very) small a Taylor expansion of the regularisation 
 term yields $1- \exp(-m \dot{\varepsilon}) \sim m \dot{\varepsilon} $ so that 
 $\eta_{eff} \rightarrow m \tau_0$.
-However, it seems more physically meaningful to replace $m$ by a reference strain rate value $\dot{\varepsilon}_0$ so that 
+However, it seems more physically meaningful to replace $m$ by a reference strain 
+rate value $\dot{\varepsilon}_0$ so that 
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-\eta_{eff} = K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e} \left[1 - \exp\left(-\frac{\dot{\varepsilon}_e}{\dot{\varepsilon}_0} \right) \right] 
+\eta_{eff}(\dot{\bm \varepsilon}) 
+= K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e} 
+\left[1 - \exp\left(-\frac{\dot{\varepsilon}_e}{\dot{\varepsilon}_0} \right) \right]
 \end{equation}
+\end{mdframed}
 In this case, when strain rate becomes (very) small a Taylor expansion of the regularisation
 term yields
 \begin{equation}
-\frac{\tau_0}{\dot{\varepsilon}_e} \left[1 - \exp\left(-\frac{\dot{\varepsilon}_e}{\dot{\varepsilon}_0} \right) \right]
+\frac{\tau_0}{\dot{\varepsilon}_e} \left[1 - 
+\exp\left(-\frac{\dot{\varepsilon}_e}{\dot{\varepsilon}_0} \right) \right]
 \simeq 
 \frac{\tau_0}{\dot{\varepsilon}_e} \frac{\dot{\varepsilon}_e}{\dot{\varepsilon}_0}
-=
-\frac{\tau_0}{\dot{\varepsilon}_0} 
+=\frac{\tau_0}{\dot{\varepsilon}_0} 
 \end{equation}
-This has the dimensions of a viscosity and this is effectively the definition of a maximum viscosity $\eta_{max}$.
+This has the dimensions of a viscosity and this is effectively the definition 
+of a maximum viscosity $\eta_{max}$.
 
+\Literature: 
+\begin{itemize}
+\item Numerical simulation of thermal plumes (Massmeyer et al \cite{madd13}); 
+\item Flows Through a Sudden Axisymmetric Expansion (Machado et al \cite{mazf}, 
+      Jay et al (2001) \cite{jamp01}); 
+\item Dam break problem (Ancey \& Cochard (2009) \cite{anco09}, 
+      Cochard \& Ancey (2009) \cite{coan09}, Balmforth et al \cite{bafp09};
+\item Weakly compressible Poiseuille flow (Taliadorou (2009) \cite{tagm09});
+\item Flow past cylinders in tubes (Mitsoulis \& Galazoulas (2009) \cite{miga09});
+\item Determination of yield surfaces (Burgos \& Alexandrou (1999) \cite{buae99});
+\item Carbopol hydrogel rheology for experimental
+      tectonics and geodynamics (Di Giuseppe et al (2015) \cite{dicf15}).
+\item Flow past a sphere(disc) (Deglo de Besses et al (2004) \cite{demj04}, 
+      Gavrilov et al (2017) \cite{gafp17}). \mscthesis\index{general}{MSc Thesis} 
+\end{itemize}
 
-\Literature: \cite{madd13,mazf}. Check dam break problem of \cite{anco09,coan09,bafp09,tagm09,miga09}.
-Also flow through a sudden axisymmetric expansion \cite{jamp01}. H-B Yield surface \cite{buae99}.
-Carbopol, used in analogue models is also a H-B fluid \cite{dicf15}.
-
-
-\mscthesis\index{general}{MSc Thesis}: redo the sinking sphere in Bingham or herschel-Bulkley fluid experiment \cite{demj04,gafp17}. 
 
 %...........................................................
 \subsubsection{The Casson model}
@@ -263,10 +288,12 @@ and $m$ is a large number.
 \subsubsection{One model to rule them all? \label{ss:cross}}
 
 Let us consider the base equation
-\[
+\begin{equation}
+\boxed{
 \frac{\eta-\eta_\infty}{\eta_0-\eta_\infty} = 
 \left[ 1+(K \dot{\varepsilon}_e)^a  \right]^{-(1-n)/a}
-\]
+}
+\end{equation}
 This equation is purposefully generic and specific parameter combination choices 
 allow to recover any of the above models (and more) \cite{osru14}.
 See also an early paper by Cross \cite{cros65} for a somewhat similar equation. 
@@ -289,26 +316,31 @@ Similar conclusions are reached in the following video:
 \index{general}{Diffusion creep}
 
 The standard dislocation creep effective viscosity is given by:
+\begin{mdframed}[backgroundcolor=blue!5]
 \[
-\eta_{eff}^{ds} = \frac{1}{2} f A^{-1/n} \dot{\varepsilon}_{e}^{(1-n)/n} \exp \left( \frac{Q+pV}{nRT}  \right)
+\eta_{eff}^{ds}(p,T,\dot{\bm \varepsilon}) 
+= \frac{1}{2} f A^{-1/n} \dot{\varepsilon}_{e}^{(1-n)/n} \exp \left( \frac{Q+pV}{nRT}  \right)
 \] 
+\end{mdframed}
 where $A$ is the pre-exponential scaling factor, $f$ is a scaling factor
 representing viscous weakening or strengthening, $Q$ is the activation energy, 
 $V$ is the activation volume, $T$ is the absolute temperature, $n$ is the power-law 
 exponent, $R$ is the universal gas constant. 
 
 The coefficients $A,n,Q,V$ are material parameters and are obtained in the laboratory 
-by means of high pressure/temperature experiments\cite{kawu93}. Unfortunately 
-these experiments cannot be run at Earth-like strain rate values ($\sim 10^{-15}\text{s}^{-1}$)
+by means of high pressure/temperature experiments (see for instance Karato \& Wu (1993) \cite{kawu93}). 
+Unfortunately these experiments cannot be run at Earth-like strain rate 
+values ($\sim 10^{-15}\si{\per\second}$)
 so that extrapolations must be carried out over several orders of magnitude to 
 arrive at values we can use in our numerical models. 
 The 1/2 factor arises from the relationship between deviatoric stress and strain rate which 
 involves a factor 2.
 
 The factor $f$ is in fact a tuning parameter used to explore end members (e.g. 'weak crust' 
-vs 'strong crust'), see discussion in the supplementary material in \cite{hube11}. 
+vs 'strong crust'), see discussion in the supplementary material in 
+Huismans \& Beaumont (2011) \cite{hube11}. 
 This approach has been extensively used by the SOPALE users community, see 
-for instance \cite{wabj08,wabj08b,wabj08c,grpy12}.
+for instance Warren et al (2008) \cite{wabj08,wabj08b,wabj08c} or Gray \& Pysklywec (2012) \cite{grpy12}.
 
 Furthermore, we know that several other factors will strongly affect the rheology:
 \begin{itemize}
@@ -907,7 +939,10 @@ we use to compute $\eta_{vp}$:
 &=& \frac{Y}{2(\dot\varepsilon_{T}-\frac{\tau}{2\eta_v})}+\eta_m \nn\\
 &=& \frac{Y}{2(\dot\varepsilon_{T}- \frac{Y + 2 \eta_m \dot\varepsilon_T} {1+ \frac{\eta_m}{\eta_v} }   
 \frac{1}{2\eta_v})}+\eta_m \nn\\
-&=& \frac{Y}{2\dot\varepsilon_{T}- \frac{Y + 2 \eta_m \dot\varepsilon_T} {\eta_v + \eta_m}     }+\eta_m 
+&=& \frac{Y}{2\dot\varepsilon_{T}- \frac{Y + 2 \eta_m \dot\varepsilon_T} {\eta_v + \eta_m}     }+\eta_m \\
+&=& \frac{Y(\eta_v+\eta_m)}{2(\eta_v+\eta_m) \dot\varepsilon_{T}- (Y + 2 \eta_m \dot\varepsilon_T) }+\eta_m \\
+&=& \frac{Y(\eta_v+\eta_m)}{2 \eta_v \dot\varepsilon_{T}- Y  }+\eta_m \\
+&=& \frac{Y(\eta_v+\eta_m)/2\eta_v}{ \dot\varepsilon_{T}- Y/2\eta_v  }+\eta_m 
 \end{eqnarray}
 
 

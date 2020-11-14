@@ -47,18 +47,35 @@ A multigrid-based mantle convection simulation code
 \item {\codefont ADELI} \index{general}{ADELI code}
 %------------------------------------------------------------------------------
 
+Belonging to the same family as the FLAC [Fast Lagrangian Analysis of Continua; Cundall and Board, 
+1988 \cite{cubo88}] and Parovoz codes [Poliakov and Podladchikov, 1992 \cite{popo92}; 
+Gerbault et al., 2009 \cite{gecm09}], ADELI is based on an explicit temporal
+finite difference approach associated with the dynamic relaxation method [Underwood, 1983]. 
+Numerical and mechanical aspects of this code in a 2-D or 3-D context can be 
+found in Hassani et al. (1997) \cite{hajc97} and Ch\'ery et al. (2001) \cite{chzh01}.
+
+\url{https://code.google.com/archive/p/adeli/}
+
+\url{https://code.google.com/archive/p/adeli/wikis/Publications.wiki}
+
 \begin{scriptsize}
 \noindent
-\nineteenninetyseven: \cite{hajc97}\\
-\twothousandone: \cite{chzh01}\\
-\twothousandfour: \cite{gocl04}\\
-\twothousandsix: \cite{vech06}\cite{golc06}\\
-\twothousandeight: \cite{boht08a}\cite{boht08b}\\
-\twothousandtwelve: \cite{gech12}\cite{gigh12}\\
-\twothousandthirteen: \cite{wahd13}\\
-\twothousandfourteen: \cite{cehg14}\\
-\twothousandfifteen: \cite{ceag15}\\
-\twothousandeighteen: \cite{cegm18}\cite{gehn18}
+\nineteenninetysix: Hassani \& Ch\'ery \cite{hach96b}\\
+\nineteenninetyseven: Hassani et al\cite{hajc97}\\
+\nineteenninetyeight: Huc et al \cite{huhc98}
+\nineteenninetynine: Vanbrabant et al \cite{vajh99}\\
+\twothousand: Lesne et al \cite{lecd00}\\
+\twothousandone: Ch\'ery et al \cite{chzh01}\\
+\twothousandthree: Provost et al \cite{prch03}\\
+\twothousandfour: Godard et al \cite{gocl04}, Berger et al \cite{bejh04}\\
+\twothousandsix: Vernant \& Chery \cite{vech06}, Godard et al \cite{golc06}\\
+\twothousandeight: Bonnardot et al \cite{boht08a,boht08b}, Got et al \cite{gomm08},
+                   Neves et al \cite{netv08}\\
+\twothousandtwelve: Gerbault et al \cite{gech12}, Gibert et al \cite{gigh12}\\
+\twothousandthirteen: Wang et al \cite{wahd13}\\
+\twothousandfourteen: Cerpa et al \cite{cehg14}, Messager et al \cite{mehn14}\\
+\twothousandfifteen: Cerpa et al \cite{ceag15}\\
+\twothousandeighteen: Cerpa et al \cite{cegm18}, Gerbault et al \cite{gehn18}
 \end{scriptsize}
 
 %------------------------------------------------------------------------------
@@ -97,7 +114,7 @@ Fraters et al \cite{frtv19}, Fraters et al \cite{frbt19}\\
 Gassmoeller et al \cite{gadb20}, Farangitakis et al \cite{fahm20}, 
 Louis-Napoleon et al \cite{logb20}, Heyn et al \cite{hect20}, Glerum et al \cite{glbs20},
 Clevenger \& Heister \cite{clhe20}, Naliboff et al \cite{nagb20}, Citron et al \cite{cilw20},
-Heron et al \cite{hemn20}, O'Neill et al \cite{onlw20}
+Heron et al \cite{hemn20}, O'Neill et al \cite{onlw20}, Assanelli et al \cite{aslr20}
 \end{scriptsize}
 
 %------------------------------------------------------------------------------
@@ -144,14 +161,14 @@ Barr \& Houseman \cite{baho96}, Houseman \& England \cite{hoen96}
 %------------------------------------------------------------------------------
 
 \begin{scriptsize}
-\cite{crsr83}
-\cite{katl95}
-\cite{moct07}
-\cite{moct09}
+\cite{crsr83}\\
+Katzman et al \cite{katl95}\\
+Morra et al \cite{moct07}\\
+Morra et al \cite{moct09}\\
 Morra et al \cite{moyb10}\\
-\cite{qumm12}\cite{buqm12}
-\cite{quhm13}
-\cite{gert19}
+Quevedo et al \cite{qumm12}, Butterworth et al \cite{buqm12}\\
+Quevedo et al \cite{quhm13}\\
+Gerardi et al \cite{gert19}
 \end{scriptsize}
 
 %------------------------------------------------------------------------------
@@ -181,57 +198,90 @@ These codes are hosted by CIG at\\
 
 \begin{scriptsize}
 \nineteenninetyfive: Moresi \& Solomatov \cite{moso95}, Moresi \& Parsons \cite{mopa95}\\
-\nineteenninetysix: Solomatov \& Moresi \cite{somo96}, Moresi \& Gurnis \cite{mogu96}, Zhong \& Gurnis \cite{zhgu96}\\
-\nineteenninetyseven: Moresi \& Lenardic \cite{mole97}, Burgess et al \cite{bugm97}, Solomatov \& Moresi \cite{somo97}\\
-\nineteenninetyeight: Moresi \& Solomatov \cite{moso98}, Zhong et al \cite{zhgm98}, Gurnis et al \cite{gumm98}, Reese et al \cite{resm98}\\
-\nineteenninetynine: Moresi \& Lenardic \cite{mole99}, Burgess \& Moresi \cite{bumo99}, van Keken \& Zhong \cite{vazh99},
-                     Lenardic \& Moresi \cite{lemo99}, Reese et al \cite{resm99}\\
+\nineteenninetysix: Solomatov \& Moresi \cite{somo96}, Moresi \& Gurnis \cite{mogu96}, 
+                    Zhong \& Gurnis \cite{zhgu96}\\
+\nineteenninetyseven: Moresi \& Lenardic \cite{mole97}, Burgess et al \cite{bugm97}, 
+                      Solomatov \& Moresi \cite{somo97}\\
+\nineteenninetyeight: Moresi \& Solomatov \cite{moso98}, Zhong et al \cite{zhgm98}, 
+                      Gurnis et al \cite{gumm98}, Reese et al \cite{resm98}\\
+\nineteenninetynine: Moresi \& Lenardic \cite{mole99}, Burgess \& Moresi \cite{bumo99}, 
+                     van Keken \& Zhong \cite{vazh99}, Lenardic \& Moresi \cite{lemo99}, 
+                     Reese et al \cite{resm99}\\
 \twothousand: \cite{zhzm00}\cite{gumr00}\cite{lemm00}\cite{gumm00}\cite{somo00}\\
 \twothousandone: \cite{bigu01}\cite{lemo01}\cite{zhon01}\\
-\twothousandtwo: \cite{tagh02}\cite{somo02}\\
-\twothousandthree: \cite{vazh03}\cite{cogu03}\cite{bigu03}\cite{lemm03}\cite{lemo03}\cite{bigs03}\cite{vesh03}\\
-\twothousandfour: \cite{solo04}\cite{frmm04}\cite{lenm04}\cite{colm04}\cite{mczh04}\\
-\twothousandfive: \cite{bihi05}\cite{mczh05a}\cite{mczh05b}\cite{lemj05}\cite{zhon05}\\
-\twothousandsix: \cite{beck06}\cite{pibf06}\cite{tact06}\cite{besb06}\cite{coli06}\cite{frmm06}\cite{colm06}
+\twothousandtwo: Tan et al \cite{tagh02}, Solomatov \& Moresi \cite{somo02}\\
+\twothousandthree: \cite{vazh03}\cite{cogu03}
+                   \cite{bigu03}\cite{lemm03}
+                   \cite{lemo03}\cite{bigs03}, Vezolainen et al \cite{vesh03}\\
+\twothousandfour: Ke \& Solomatov \cite{keso04}, \cite{solo04}\cite{frmm04},
+                  \cite{lenm04}\cite{colm04},
+                  \cite{mczh04}, Vezolainen et al \cite{vesb04}\\
+\twothousandfive: van Hunen et al \cite{vazs05}, Billen \& Hirth \cite{bihi05},
+                  McNamara \& Zhong \cite{mczh05a}\cite{mczh05b},
+                  Lenardic et al \cite{lemj05}, Zhong \cite{zhon05}\\
+\twothousandsix: Solomatov \& Barr \cite{soba06}, \cite{beck06}\cite{pibf06}\cite{tact06}\cite{besb06}\cite{coli06}\cite{frmm06}\cite{colm06}
       \cite{zhon06}\cite{keso06}\cite{rozh06}\cite{zhpy06}\\
-\twothousandseven: \cite{bihi07}\cite{zhzl07}\cite{magu07}\cite{bavi07}\cite{rimb07}\cite{mofm07}\cite{cobs07}
+\twothousandseven: Solomatov \& Barr \cite{soba07}, \cite{bihi07}\cite{zhzl07}\cite{magu07}\cite{bavi07}\cite{rimb07}\cite{mofm07}\cite{cobs07}
       \cite{qums07}\cite{huda07}\cite{rozh07}\\
 \twothousandeight: \cite{dihf08}\cite{gamc08}\cite{zhmt08}\cite{hole08}\cite{lejm08}\cite{lisg08}\cite{chzy08}
       \cite{beke08}\cite{beck08}\cite{slee08}\cite{lezh08}\cite{king08}\cite{ligu08}\cite{meco08}
       \cite{roni08}\cite{splg08}\cite{divf08}\cite{vavg08}\\
-\twothousandnine: Bull et al \cite{bumr09}, \cite{lizh09}\cite{arhm09}\cite{zhzm09}\cite{anbi09}\cite{fobe09}\cite{bubi09}\cite{befa09}
-      \cite{bavi09}\cite{lezh09}\cite{bogj09}\cite{zhon09}\cite{cohu09}\cite{coco09}\cite{keso09}
-      \cite{maml09}\cite{nacl09}\cite{rolm09}\cite{splg09}\\
-\twothousandten: \cite{bumb10}\cite{vabv10}\cite{baiv10}\cite{bubi10}\cite{zhzl10}\cite{bill10}\cite{cobe10}
-      \cite{jabi10}\cite{zhst10}\cite{bofb10}\cite{hole10}\cite{hazs10}\cite{fabl10}\cite{dimg10}
-      \cite{fabe10}\cite{ghbz10}\cite{lamg10}\cite{mcgr10}\cite{shml10}\cite{spgs10a,spgs10b}
-      \cite{srzh10}\\
+\twothousandnine: Ke \& Solomatov \cite{keso09}, Bull et al \cite{bumr09}, 
+                  \cite{lizh09}\cite{arhm09}
+                  \cite{zhzm09}\cite{anbi09}
+                  \cite{fobe09}\cite{bubi09}
+                  \cite{befa09}\cite{bavi09}
+                  \cite{lezh09}\cite{bogj09}
+                  \cite{zhon09}\cite{cohu09}
+                  \cite{coco09}
+                  \cite{maml09}\cite{nacl09}
+                  \cite{rolm09}\cite{splg09}\\
+\twothousandten: Leng \& Zhong \cite{lezh10}, Bull et al \cite{bumb10}, van Wijk et al \cite{vabv10},
+                 \cite{baiv10}\cite{bubi10}\cite{zhzl10}\cite{bill10}\cite{cobe10}
+                 \cite{jabi10}\cite{zhst10}\cite{bofb10}\cite{hole10}\cite{hazs10}\cite{fabl10}\cite{dimg10}
+                 \cite{fabe10}\cite{ghbz10}\cite{lamg10}\cite{mcgr10}\cite{shml10}\cite{spgs10a,spgs10b}
+                 \cite{srzh10}\\
 \twothousandeleven: \cite{befa11}\cite{lemj11}\cite{vaal11}\cite{legu11}\cite{list11}\cite{baiv11}\cite{bowg11}
-      \cite{tree11}\cite{obbh11}\cite{bics11}\cite{zhxy11}\cite{digm11}\cite{orso11}\cite{mahg11}
+      \cite{tree11}\cite{obbh11}\cite{bics11}\cite{zhxy11}\cite{digm11}, Orth \& Solomatov \cite{orso11}\cite{mahg11}
       \cite{talz11}\cite{rapy11}\cite{scbb11}\cite{vasd11}\cite{vacg11}\cite{zhzh11}\\
-\twothousandtwelve: \cite{arbi12}\cite{jabi12}\cite{bija12}\cite{bova12}\cite{hucf12}\cite{zhym12}\cite{solo12}
-      \cite{hibi12}\cite{jabk12}\cite{mapm12}\cite{solo12}\cite{trub12}\cite{cobu12}\cite{hats12}
+\twothousandtwelve: \cite{arbi12}\cite{jabi12}\cite{bija12}\cite{bova12}\cite{hucf12}\cite{zhym12}
+      \cite{hibi12}\cite{jabk12}\cite{mapm12}, Solomatov \cite{solo12}, \cite{trub12}\cite{cobu12}\cite{hats12}
       \cite{holr12}\cite{huco12}\cite{list12}\cite{mibe12}\cite{vacl12}\cite{naco12}\cite{roar12}
       \cite{roba12}\cite{shlm12}\cite{srzh12}\cite{wele12}\cite{zhzf12}\cite{zams12}\cite{mavf12}\\
 \twothousandthirteen: \cite{bacs13}\cite{bogs13a}\cite{bogs13b}\cite{jabr13}\cite{qula13}\cite{oldh13}
       \cite{arbi13}\cite{cost13}\cite{bugu13}\cite{flgm13}\cite{conr13}\cite{ghbh13}\cite{huyz13}
       \cite{kecl13}\cite{vagc13}\cite{mafv13}\cite{almb13}\\
-\twothousandfourteen: \cite{flgw14}\cite{budt14}\cite{kava14}\cite{arfw14}\cite{wavp14}\cite{seki14}
+\twothousandfourteen: Rudolph \& Zhong \cite{ruzh14}, \cite{flgw14}\cite{budt14}\cite{kava14}\cite{arfw14}\cite{wavp14}\cite{seki14}
       \cite{agvg14}\cite{mabv14}\cite{zhu14}\\
-\twothousandfifteen: \cite{bacs15}\cite{bogf15}\cite{bomv15}\cite{sefw15}\cite{daso15}\cite{vami15}\cite{quxm15}
+\twothousandfifteen: Wong \& Solomatov \cite{woso15}, Zhong \& Rudolph \cite{zhru15}, 
+                     Ballmer et al \cite{bacs15}, Bower et al \cite{bogf15},
+                     Bouilhol et al \cite{bomv15}, Seton et al \cite{sefw15},
+                     Dannberg \& sobolev \cite{daso15}, van Hunen \& Miller \cite{vami15},
       \cite{wazh15}\cite{wavp15}\cite{waav15}\cite{hafg15}\cite{tarn15}\cite{legu15}\cite{tarn15}
       \cite{basn15}\cite{moba15}\cite{lizh15}\cite{welo15}\cite{wilm15}\cite{wahz15}\cite{hobb15}\\
-\twothousandsixteen: \cite{welm16}\cite{wele16}\cite{jada16}\cite{frbs16}\cite{robn16}\cite{boba16}\cite{mavm16}
-      \cite{gulm16}\cite{kili16}\cite{mcnw16}\cite{wavp16}\cite{wahz16}\cite{wele16}\cite{yagz16}
-      \cite{yagu16}\cite{jada16b}\cite{hulh16}\\
-\twothousandseventeen: \cite{aggv17}\cite{maav17}\cite{frbm17}\cite{haja17}\cite{majf17}\cite{ghts17}\cite{taac17}
-      \cite{yagz17}\cite{lizh17}\cite{hobe17}\\
+\twothousandsixteen: Wong \& Solomatov \cite{woso16a,woso16b}, Weller et al \cite{welm16},
+                     Weller \& Lenardic \cite{wele16}, Jadamec \cite{jada16,jada16b},
+                     Fritzell et al \cite{frbs16}, Rodriguez-Gonzalez et al \cite{robn16},
+                     Bobrov \& Baranov \cite{boba16}, Maunder et al \cite{mavm16},
+                     Gu et al \cite{gulm16}, Kiefer \& Li \cite{kili16},
+                     McKinnon et al \cite{mcnw16}, Wang et al \cite{wahz16},
+                     Yang \& gurnis \cite{yagu16}, Hu et al \cite{hulh16}\\
+\twothousandseventeen: \cite{aggv17}\cite{maav17}
+                       \cite{frbm17}\cite{haja17}
+                       \cite{majf17}\cite{ghts17}
+                       \cite{taac17}\cite{yagz17}
+                       \cite{lizh17}\cite{hobe17}\\
 \twothousandeighteen: \cite{hect18}\cite{king18}\cite{kavb18}\cite{wavp18}\cite{hulz18}\cite{lizo18}\cite{cimt18}
       \cite{trev18}\cite{wele18}\cite{yagz18}\cite{mazh18}\cite{biar18}\\
-\twothousandnineteen: \cite{mavb19}\cite{fube19}\cite{magn19}\cite{malg19}\cite{mazh19}\cite{boba19}\cite{lewh19}
-      \cite{scvm19}\cite{almc19}\cite{rejv19}\cite{huzl19}\\
-\twothousandtwenty: Weller \& Kiefer \cite{weki20}, Briaud et al \cite{braf20}, van den Broek et al \cite{vamg20},
-      Hertgen et al \cite{heyg20}, Billen \cite{bill20}, Semple \& Lenardic \cite{sele20}
+\twothousandnineteen: Flament \cite{flam19}, Maunder et al \cite{mavb19},
+                      Fuchs \& Becker \cite{fube19}, Magni \cite{magn19}, 
+                      Ma et al \cite{malg19}, Mao \& Zhong \cite{mazh19},
+                      Bobrov \& Baranov \cite{boba19}, Lenardic et al \cite{lewh19},
+                      Schliffke et al \cite{scvm19}, Allu Peddinti \& McNamara \cite{almc19},
+                      Reali et al \cite{rejv19}, Huang et al \cite{huzl19}\\
+\twothousandtwenty: Weller \& Kiefer \cite{weki20}, Briaud et al \cite{braf20}, 
+                    van den Broek et al \cite{vamg20}, Hertgen et al \cite{heyg20}, 
+                    Billen \cite{bill20}, Semple \& Lenardic \cite{sele20}
 \end{scriptsize}
 
 %------------------------------------------------------------------------------
@@ -471,6 +521,29 @@ by the Finite Element Method (FEM). \url{https://www.csc.fi/web/elmer}
 %------------------------------------------------------------------------------
 
 This code is hosted by CIG at \url{https://geodynamics.org/cig/software/gale/}
+GALE was meant to become the Citcom of Long Term Tectonics at CIG. However, 
+the LTT group summarised its status in 2009 as 
+follows\footnote{\url{https://geodynamics.org/cig/files/2714/1158/9008/2009_CIG_Talk_-_LTTWG.pdf}}:
+
+\hspace{1cm}
+\begin{minipage}[t]{0.75\textwidth}
+CIG LTT Failures\\
+Use is very limited\\
+Some technical issues\\
+pressure oscilations\\
+Slow UZAWA convergence\\
+Some non-functional rheologies (users need to be warned!)\\
+Easiest to fall back on our individual “known” codes\\
+Difficulty in translating geology to/from GALE (difficult I/O interface)\\
+Community engagement in development has not materialized \\
+Opaque code\\
+Limited time for PI’s to invest in getting involved in development\\
+Lack of understanding of the St. Germain infrastructure\\
+Numerous tutorial workshops (focusing mainly on how to run the cookbook examples)\\
+CIG rapid responses to (as yet limited) user requests for help
+\end{minipage}
+
+Rather logically only a handful of publications were produced with this code:
 
 \begin{scriptsize}
 \noindent
@@ -626,11 +699,14 @@ Erdos et al \cite{erhv19}, Theunissen \& Huismans \cite{thhu19}, Wolf \& Huisman
 \twothousandsixteen: \cite{kobc16}\cite{magc16}\cite{fige16}\cite{mauw16}\cite{duay16}\cite{mesj16}\cite{huwc16}
       \cite{staj16}\\
 \twothousandseventeen: \cite{mauw17}\cite{kocb17}\cite{vomc17}\cite{shwl17}\\
-\twothousandeighteen: \cite{zhlg18}\cite{masg18}\cite{gebu18}\cite{hegv18}, Dal Zilio et al \cite{davg18}\\
+\twothousandeighteen: Gorczyk et al \cite{gomb18}, \cite{zhlg18}\cite{masg18}\cite{gebu18}\cite{hegv18}, Dal Zilio et al \cite{davg18}\\
 \twothousandnineteen: \cite{kobg19}\cite{ligc19}\cite{sihf19}\cite{meag19}\cite{gubg19}\cite{vawg19}\cite{zhli19}\\
-\twothousandtwenty: Baes et al \cite{basg20}, \cite{zhlg20}\cite{dawl20}\cite{chcg20}\cite{meag20}\cite{chlc20}\cite{mugu20}, 
+\twothousandtwenty: Baes et al \cite{basg20}, \cite{zhlg20}, \cite{dawl20}, 
+                    \cite{chcg20}\cite{meag20}\cite{chlc20}\cite{mugu20}, 
                     Tang et al \cite{tacm20}, G{\"u}lcher et al \cite{gugm20}, Brizzi et al \cite{brvf20}, 
-                    Peral et al \cite{perz20}, Petrini et al \cite{pegy20}, Baes et al \cite{basg20b}, D'acquisto et al \cite{dadm20}
+                    Peral et al \cite{perz20}, Petrini et al \cite{pegy20}, 
+                    Baes et al \cite{basg20b}, D'acquisto et al \cite{dadm20},
+                    Perchuk et al \cite{pegz20}
 \end{scriptsize}
 
 
@@ -732,7 +808,7 @@ MILAMIN is a finite element method implementation in native MATLAB that is capab
 \nineteeneightynine: \cite{cund89}\cite{hoor89}\\
 \nineteenninetythree: \cite{pocp93}\cite{zhhj93}\\
 \nineteenninetyfour: \cite{wizh94}\\
-\nineteenninetysix: \cite{hach96}\cite{zhho96}\\
+\nineteenninetysix: \cite{zhho96}\\
 \nineteenninetyeight: \cite{gepd98}\\
 \twothousand: \cite{labp00}\\
 \twothousandone: \cite{bujl01}\cite{bupo01}\\
@@ -743,7 +819,7 @@ MILAMIN is a finite element method implementation in native MATLAB that is capab
 \twothousandsix: \cite{buwa06}\cite{lemm06}\\
 \twothousandseven: \cite{yaab07}\cite{buto07}\cite{chem07}\\
 \twothousandeight: \cite{yaba08}\cite{tibb08}\cite{buya08}\\
-\twothousandnine: \cite{gecm09}\cite{yahb09}\cite{bucl09}\cite{tigv09}\cite{yamb09}\\
+\twothousandnine: Gerbault et al \cite{gecm09}, \cite{yahb09}\cite{bucl09}\cite{tigv09}\cite{yamb09}\\
 \twothousandtwelve: \cite{anwb12}\cite{gech12}\cite{gubc12}\cite{gerb12}\\
 \twothousandthirteen: \cite{wabd13}\cite{frbm13}\cite{tibb13}\\
 \twothousandfourteen: \cite{frba14}\cite{gagb14}\cite{bufa14}\cite{bufy14b}\\
@@ -1096,57 +1172,35 @@ The first main improvement was being parallelised \cite{buba95}.
 Particles were added in \cite{strb02}.
 
 \begin{scriptsize}
-\nineteeneightythree:
-\cite{baum83}\\
-\nineteeneightyeight:
-\cite{glat88}\\
-\nineteenninetythree: 
-\cite{tasg93}\\
-\nineteenninetyfour: 
-\cite{tasg94}\\
-\nineteenninetyfive: 
-\cite{buba95}\\
-\nineteenninetysix: 
-\cite{buri96}\\
-\nineteenninetyseven: 
-\cite{burb97}\cite{yang97}\\
-\nineteenninetyeight: 
-\cite{burl98}\\
-\nineteenninetynine: 
-\cite{tabg99}\cite{ribr99}\\
-\twothousandone: 
-\cite{buda01}\cite{burm01}\cite{dabu01}\\
-\twothousandtwo: 
-\cite{burb02}\cite{strb02}\\
-\twothousandfive: 
-\cite{phbu05}\\
-\twothousandsix: 
-\cite{dabu06}\\
-\twothousandseven: 
-\cite{phbu07}\\
-\twothousandeight: 
-\cite{heib08}\cite{shlj08}\\
-\twothousandnine:
-\cite{phbs09}\cite{wodd09}\cite{gows09}\cite{iabu09}\cite{scbs09}\cite{scbs09b}
+\nineteeneightythree: \cite{baum83}\\
+\nineteeneightyeight: \cite{glat88}\\
+\nineteenninetythree: \cite{tasg93}\\
+\nineteenninetyfour: \cite{tasg94}\\
+\nineteenninetyfive: \cite{buba95}\\
+\nineteenninetysix: \cite{buri96}\\
+\nineteenninetyseven: \cite{burb97}\cite{yang97}\\
+\nineteenninetyeight: \cite{burl98}\\
+\nineteenninetynine: Tackley et al \cite{tabg99}, Richards et al \cite{ribr99}, 
+                     Reese et al \cite{resb99}\\
+\twothousandone: Bunge \& Davies \cite{buda01}, Bunge et al \cite{burm01}, Davies \& Bunge \cite{dabu01}\\
+\twothousandtwo: \cite{burb02}\cite{strb02}\\
+\twothousandthree: Bunge et al \cite{buht03}\\
+\twothousandfour: Reese et al \cite{resb04}\\
+\twothousandfive: Reese et al \cite{resb05}, \cite{phbu05}\\
+\twothousandsix: \cite{dabu06}\\
+\twothousandseven: \cite{phbu07}\\
+\twothousandeight: \cite{heib08}\cite{shlj08}\\
+\twothousandnine: \cite{phbs09}\cite{wodd09}\cite{gows09}\cite{iabu09}\cite{scbs09}\cite{scbs09b}
 \cite{scbr09}\cite{oebm09}\\
-\twothousandten:
-\cite{yayh10}\\
-\twothousandeleven:
-\cite{woda11}\cite{iahb11}\\
-\twothousandtwelve:
-\cite{dagd12}\cite{shbs12}\\
-\twothousandthirteen:
-\cite{dadb13}\cite{oflb13}\\
-\twothousandfourteen:
-\cite{butm14}\\
-\twothousandfifteen:
-\cite{amsb15}\cite{cobs15}\\
-\twothousandsixteen:
-\cite{vade16}\cite{necg16}\cite{pric16}\\
-\twothousandseventeen:
-\cite{woda17}\\
-\twothousandeighteen:
-\cite{ghbu18}\cite{cogb18}
+\twothousandten: \cite{yayh10}\\
+\twothousandeleven: \cite{woda11}\cite{iahb11}\\
+\twothousandtwelve: \cite{dagd12}\cite{shbs12}\\
+\twothousandthirteen: \cite{dadb13}\cite{oflb13}\\
+\twothousandfourteen: \cite{butm14}\\
+\twothousandfifteen: \cite{amsb15}\cite{cobs15}\\
+\twothousandsixteen: \cite{vade16}\cite{necg16}\cite{pric16}\\
+\twothousandseventeen: Wolstencroft \& Davies \cite{woda17}, Barry et al \cite{badw17} \\
+\twothousandeighteen: \cite{ghbu18}\cite{cogb18}
 \end{scriptsize}
 
 %------------------------------------------------------------------------------

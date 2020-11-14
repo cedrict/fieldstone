@@ -14,8 +14,10 @@ Gerbault (2012) \cite{gerb12}, Glerum et al (2018) \cite{gltf18}  for applicatio
 \item 2D Rayleigh-Benard convection, lateral heating, 30+ codes \cite{dejo83}
 \item 2D Rayleigh-Benard convection with nonlinear rheology \cite{tosn15,aspectmanual}
 \item 2D Rayleigh-Benard laminar plumes \cite{vavl09}
-\item 2D Rayleigh-Taylor convection/instability \cite{pros81,trab90,wesc92,popo92,ogaw93,soga01,bast02,taki03,bomh06}
-      \cite{basd08,qurj09,saev10,sunh10,como97,lezh11,lomw12,vyrc13,vaks97,bomh06,chtl13,deka08,mishin11,ropu19,robe19}
+\item 2D Rayleigh-Taylor convection/instability 
+      \cite{pros81,trab90,wesc92,popo92,ogaw93,soga01,bast02,taki03,bomh06}
+      \cite{basd08,qurj09,saev10,sunh10,como97,lezh11,lomw12,vyrc13,vaks97}
+      \cite{bomh06,chtl13,deka08,mishin11,ropu19,robe19,sctc20}
       \cite{maie12,fusc13,devv00a,dadh07,demh19,aspectmanual}
 \item Thin layer entrainment (see Section~\ref{sec:tlentr})
 \item 3D Rayleigh-Taylor instability \cite{fukk08,vosc15}
@@ -23,12 +25,13 @@ Gerbault (2012) \cite{gerb12}, Glerum et al (2018) \cite{gltf18}  for applicatio
 \item numerical sandbox \cite{bube06,bube06,maie12,busa16,gltf18}
 \item the Stokes sphere \cite{galemanual,aspectmanual}, in visco-plastic fluid \cite{limd02,demj04}. 
       Finite deformation in and around a fluid sphere \cite{sccm88,crud88}.
-\item the sinking block (sinker) \cite{thie11,cehg14,gery10,geyu03,mamo08,mishin11,fumt11,maie12} (see Section~\ref{sec:sinker})
+\item the sinking block (sinker) \cite{thie11,cehg14,gery10,geyu03,mamo08,mishin11,fumt11,maie12,sctc20} 
+      (see Section~\ref{sec:sinker})
 \item multiple sinkers \cite{mabl14,mabl15}
 \item 1D compression \cite{modm02}
 \item 2D compressible Stokes flow problem \cite{itki94,tagu07,lezh08,kilv10,lizh13}
 \item 3D convection at infinite Prandtl number (Busse) \cite{bucc93,trha98,onmm06,krhb12}
-\item Free surface evolution \cite{crsg12,aspectmanual}
+\item Free surface evolution \cite{crsg12,aspectmanual,sctc20}
 \item Love's problem \cite{bebe04}
 \item Poiseuille flow \cite{fojg94,fuku11,tagm09} (see Section~\ref{ss:poiseuille})
 \item Couette flow with temperature dependent viscosity \cite{egat10,demh19}
@@ -54,6 +57,7 @@ Gerbault (2012) \cite{gerb12}, Glerum et al (2018) \cite{gltf18}  for applicatio
 \item dam-break problem \cite{moeb99,bacp07,liir07,lemx08,homa09,anco09,grdn97,hini81,basd08}
 \item hot blob problem \cite{bugs09,fumt11} (see Section~\ref{sec:hotblob})
 \item viscous(-elastic) flow around a cylinder in a channel (see Section~\ref{sec:flowcyl})
+\item Sinking cylinder (2D Stokes sphere): appendix A of \cite{boht08a}, \cite{wali04}.
 \item Infinite plate with a circular hole \cite{yiha10,rama16}
 \item Semi-infinite elastic half plane with a circular hole \cite{verr98}
 \item Slope stability for elasto-plastic materials \cite{rama16}
@@ -556,7 +560,8 @@ Taken from \cite{fumt11}}
 %.......................................................
 \paragraph{Sinking block results for multiple elements}
 
-The setup is slightly altered: the domain is 512x512km. The block has size $L_b\times L_b=128\times 128$km, and is centered
+The setup is slightly altered: the domain is 512x512km. 
+The block has size $L_b\times L_b=128\times 128$km, and is centered
 on ($L_x/2,3L_y/4$). Free slip on all sides. Pressure is volume normalised. $|g_y|=10$.
 This benchmark is part of ASPECT, and can therefore be run with $Q_2\times Q_1$, $Q_2\times P_{-1}$ and $Q_1\times P_0$ elements (although the solver does not converge for the latter at high resolutions).
 Velocity and pressure are measured in the middle of the block (in the case of the $Q_1^+\times P_0$ element the 
