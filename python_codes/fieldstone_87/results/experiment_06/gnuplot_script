@@ -5,12 +5,226 @@ set key outside
 
 set log y
 set xlabel '# iteration'
-set ylabel '||R||_2'
-set output 'conv.pdf'
-plot[][1e-8:]\
-'48x48/conv.ascii' w lp ps .4 t '48x48',\
-'96x96/conv.ascii' w lp ps .4 t '96x96',\
-'128x128/conv.ascii' w lp ps .4 t '128x128',\
+set ylabel 'convergence index'
+
+set output 'conv_48x48.pdf'
+plot[][:]\
+'48x48/Picard/conv.ascii' u 1:2 w lp ps .2 lw .5 lt 1 dashtype 1 t 'Picard, Res.',\
+'48x48/Picard/conv.ascii' u 1:3 w lp ps .2 lw .5 lt 1 dashtype 2 t 'Picard, dvel',\
+'48x48/Picard/conv.ascii' u 1:4 w lp ps .2 lw .5 lt 1 dashtype 3 t 'Picard, dp',\
+'48x48/meth1/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 2 dashtype 1 t 'meth1, Res.',\
+'48x48/meth1/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 2 dashtype 2 t 'meth1, dvel',\
+'48x48/meth1/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 2 dashtype 3 t 'meth1, dp',\
+'48x48/meth2/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 3 dashtype 1 t 'meth2, Res.',\
+'48x48/meth2/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 3 dashtype 2 t 'meth2, dvel',\
+'48x48/meth2/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 3 dashtype 3 t 'meth2, dp',\
+'48x48/meth3/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 4 dashtype 1 t 'meth3, Res.',\
+'48x48/meth3/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 4 dashtype 2 t 'meth3, dvel',\
+'48x48/meth3/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 4 dashtype 3 t 'meth3, dp',\
+
+set output 'conv_64x64.pdf'
+plot[][:]\
+'64x64/Picard/conv.ascii' u 1:2 w lp ps .2 lw .5 lt 1 dashtype 1 t 'Picard, Res.',\
+'64x64/Picard/conv.ascii' u 1:3 w lp ps .2 lw .5 lt 1 dashtype 2 t 'Picard, dvel',\
+'64x64/Picard/conv.ascii' u 1:4 w lp ps .2 lw .5 lt 1 dashtype 3 t 'Picard, dp',\
+'64x64/meth1/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 2 dashtype 1 t 'meth1, Res.',\
+'64x64/meth1/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 2 dashtype 2 t 'meth1, dvel',\
+'64x64/meth1/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 2 dashtype 3 t 'meth1, dp',\
+'64x64/meth2/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 3 dashtype 1 t 'meth2, Res.',\
+'64x64/meth2/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 3 dashtype 2 t 'meth2, dvel',\
+'64x64/meth2/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 3 dashtype 3 t 'meth2, dp',\
+'64x64/meth3/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 4 dashtype 1 t 'meth3, Res.',\
+'64x64/meth3/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 4 dashtype 2 t 'meth3, dvel',\
+'64x64/meth3/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 4 dashtype 3 t 'meth3, dp',\
+
+set output 'conv_80x80.pdf'
+plot[][:]\
+'80x80/Picard/conv.ascii' u 1:2 w lp ps .2 lw .5 lt 1 dashtype 1 t 'Picard, Res.',\
+'80x80/Picard/conv.ascii' u 1:3 w lp ps .2 lw .5 lt 1 dashtype 2 t 'Picard, dvel',\
+'80x80/Picard/conv.ascii' u 1:4 w lp ps .2 lw .5 lt 1 dashtype 3 t 'Picard, dp',\
+'80x80/meth1/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 2 dashtype 1 t 'meth1, Res.',\
+'80x80/meth1/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 2 dashtype 2 t 'meth1, dvel',\
+'80x80/meth1/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 2 dashtype 3 t 'meth1, dp',\
+'80x80/meth2/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 3 dashtype 1 t 'meth2, Res.',\
+'80x80/meth2/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 3 dashtype 2 t 'meth2, dvel',\
+'80x80/meth2/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 3 dashtype 3 t 'meth2, dp',\
+'80x80/meth3/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 4 dashtype 1 t 'meth3, Res.',\
+'80x80/meth3/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 4 dashtype 2 t 'meth3, dvel',\
+'80x80/meth3/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 4 dashtype 3 t 'meth3, dp',\
+
+
+set title 'theta method 3'
+set output 'conv_meth3.pdf'
+plot[][:]\
+'48x48/meth3/conv.ascii'   u 1:2 w lp ps .2 lw .5 lt 1 dashtype 1 t '48x48, Res.',\
+'48x48/meth3/conv.ascii'   u 1:3 w lp ps .2 lw .5 lt 1 dashtype 2 t '48x48, dvel',\
+'48x48/meth3/conv.ascii'   u 1:4 w lp ps .2 lw .5 lt 1 dashtype 3 t '48x48, dp',\
+'64x64/meth3/conv.ascii'   u 1:2 w lp ps .2 lw .5 lt 2 dashtype 1 t '64x64, Res.',\
+'64x64/meth3/conv.ascii'   u 1:3 w lp ps .2 lw .5 lt 2 dashtype 2 t '64x64, dvel',\
+'64x64/meth3/conv.ascii'   u 1:4 w lp ps .2 lw .5 lt 2 dashtype 3 t '64x64, dp',\
+'80x80/meth3/conv.ascii'   u 1:2 w lp ps .2 lw .5 lt 3 dashtype 1 t '80x80, Res.',\
+'80x80/meth3/conv.ascii'   u 1:3 w lp ps .2 lw .5 lt 3 dashtype 2 t '80x80, dvel',\
+'80x80/meth3/conv.ascii'   u 1:4 w lp ps .2 lw .5 lt 3 dashtype 3 t '80x80, dp',\
+'96x96/meth3/conv.ascii'   u 1:2 w lp ps .2 lw .5 lt 4 dashtype 1 t '96x96, Res.',\
+'96x96/meth3/conv.ascii'   u 1:3 w lp ps .2 lw .5 lt 4 dashtype 2 t '96x96, dvel',\
+'96x96/meth3/conv.ascii'   u 1:4 w lp ps .2 lw .5 lt 4 dashtype 3 t '96x96, dp',\
+'112x112/meth3/conv.ascii' u 1:2 w lp ps .2 lw .5 lt 5 dashtype 1 t '112x112, Res.',\
+'112x112/meth3/conv.ascii' u 1:3 w lp ps .2 lw .5 lt 5 dashtype 2 t '112x112, dvel',\
+'112x112/meth3/conv.ascii' u 1:4 w lp ps .2 lw .5 lt 5 dashtype 3 t '112x112, dp',\
+'128x128/meth3/conv.ascii' u 1:2 w lp ps .2 lw .5 lt 6 dashtype 1 t '128x128, Res.',\
+'128x128/meth3/conv.ascii' u 1:3 w lp ps .2 lw .5 lt 6 dashtype 2 t '128x128, dvel',\
+'128x128/meth3/conv.ascii' u 1:4 w lp ps .2 lw .5 lt 6 dashtype 3 t '128x128, dp',\
+'144x144/meth3/conv.ascii' u 1:2 w lp ps .2 lw .5 lt 7 dashtype 1 t '144x144, Res.',\
+'144x144/meth3/conv.ascii' u 1:3 w lp ps .2 lw .5 lt 7 dashtype 2 t '144x144, dvel',\
+'144x144/meth3/conv.ascii' u 1:4 w lp ps .2 lw .5 lt 7 dashtype 3 t '144x144, dp',\
+'160x160/meth3/conv.ascii' u 1:2 w lp ps .2 lw .5 lt 7 dashtype 1 t '160x160, Res.',\
+'160x160/meth3/conv.ascii' u 1:3 w lp ps .2 lw .5 lt 7 dashtype 2 t '160x160, dvel',\
+'160x160/meth3/conv.ascii' u 1:4 w lp ps .2 lw .5 lt 7 dashtype 3 t '160x160, dp',\
+'176x176/meth3/conv.ascii' u 1:2 w lp ps .2 lw .5 lt 8 dashtype 1 t '176x176, Res.',\
+'176x176/meth3/conv.ascii' u 1:3 w lp ps .2 lw .5 lt 8 dashtype 2 t '176x176, dvel',\
+'176x176/meth3/conv.ascii' u 1:4 w lp ps .2 lw .5 lt 8 dashtype 3 t '176x176, dp',\
+
+
+
+################################
+
+set xlabel 'x'
+set title'horizontal profile y=Ly/2'
+set ylabel 'viscosity'
+set output 'horizontal_profile_eta.pdf'
+plot[][]\
+'48x48/meth3/horizontal_profile.ascii' u 1:2 w lp ps .12 lw .5 t '48x48',\
+'64x64/meth3/horizontal_profile.ascii' u 1:2 w lp ps .12 lw .5 t '64x64',\
+'80x80/meth3/horizontal_profile.ascii' u 1:2 w lp ps .12 lw .5 t '80x80',\
+'96x96/meth3/horizontal_profile.ascii' u 1:2 w lp ps .12 lw .5 t '96x96',\
+'112x112/meth3/horizontal_profile.ascii' u 1:2 w lp ps .12 lw .5 t '112x112',\
+'128x128/meth3/horizontal_profile.ascii' u 1:2 w lp ps .12 lw .5 t '128x128',\
+'144x144/meth3/horizontal_profile.ascii' u 1:2 w lp ps .12 lw .5 t '144x144',\
+'160x160/meth3/horizontal_profile.ascii' u 1:2 w lp ps .12 lw .5 t '160x160',\
+'176x176/meth3/horizontal_profile.ascii' u 1:2 w lp ps .12 lw .5 t '176x176',\
+
+set ylabel 'strain rate'
+set output 'horizontal_profile_sr.pdf'
+plot[][]\
+'48x48/meth3/horizontal_profile.ascii' u 1:3 w lp ps .12 lw .5 t '48x48',\
+'64x64/meth3/horizontal_profile.ascii' u 1:3 w lp ps .12 lw .5 t '64x64',\
+'80x80/meth3/horizontal_profile.ascii' u 1:3 w lp ps .12 lw .5 t '80x80',\
+'96x96/meth3/horizontal_profile.ascii' u 1:3 w lp ps .12 lw .5 t '80x80',\
+'112x112/meth3/horizontal_profile.ascii' u 1:3 w lp ps .12 lw .5 t '112x112',\
+'128x128/meth3/horizontal_profile.ascii' u 1:3 w lp ps .12 lw .5 t '128x128',\
+'144x144/meth3/horizontal_profile.ascii' u 1:3 w lp ps .12 lw .5 t '144x144',\
+'160x160/meth3/horizontal_profile.ascii' u 1:3 w lp ps .12 lw .5 t '160x160',\
+'176x176/meth3/horizontal_profile.ascii' u 1:3 w lp ps .12 lw .5 t '176x176',\
+ 
+
+unset log y 
+set ylabel 'pressure'
+set output 'horizontal_profile_p.pdf'
+plot[][]\
+'48x48/meth3/horizontal_profile.ascii' u 1:6 w lp ps .12 lw .5 t '48x48',\
+'64x64/meth3/horizontal_profile.ascii' u 1:6 w lp ps .12 lw .5 t '64x64',\
+'80x80/meth3/horizontal_profile.ascii' u 1:6 w lp ps .12 lw .5 t '80x80',\
+'96x96/meth3/horizontal_profile.ascii' u 1:6 w lp ps .12 lw .5 t '96x96',\
+'112x112/meth3/horizontal_profile.ascii' u 1:6 w lp ps .12 lw .5 t '112x112',\
+'128x128/meth3/horizontal_profile.ascii' u 1:6 w lp ps .12 lw .5 t '128x128',\
+'144x144/meth3/horizontal_profile.ascii' u 1:6 w lp ps .12 lw .5 t '144x144',\
+'160x160/meth3/horizontal_profile.ascii' u 1:6 w lp ps .12 lw .5 t '160x160',\
+'176x176/meth3/horizontal_profile.ascii' u 1:6 w lp ps .12 lw .5 t '176x176',\
+
+set ylabel 'velocity'
+set output 'horizontal_profile_uv.pdf'
+plot[][]\
+'48x48/meth3/horizontal_profile.ascii' u 1:4 w l lt 1  lw .5 dashtype 2 t '48x48, u',\
+'48x48/meth3/horizontal_profile.ascii' u 1:5 w l lt 1  lw .5 dashtype 4 t '48x48, v',\
+'64x64/meth3/horizontal_profile.ascii' u 1:4 w l lt 2  lw .5 dashtype 2 t '64x64, u',\
+'64x64/meth3/horizontal_profile.ascii' u 1:5 w l lt 2  lw .5 dashtype 4 t '64x64, v',\
+'80x80/meth3/horizontal_profile.ascii' u 1:4 w l lt 3  lw .5 dashtype 2 t '80x80, u',\
+'80x80/meth3/horizontal_profile.ascii' u 1:5 w l lt 3  lw .5 dashtype 4 t '80x80, v',\
+'96x96/meth3/horizontal_profile.ascii' u 1:4 w l lt 4  lw .5 dashtype 2 t '96x96, u',\
+'96x96/meth3/horizontal_profile.ascii' u 1:5 w l lt 4  lw .5 dashtype 4 t '96x96, v',\
+'112x112/meth3/horizontal_profile.ascii' u 1:4 w l lt 5  lw .5 dashtype 2 t '112x112, u',\
+'112x112/meth3/horizontal_profile.ascii' u 1:5 w l lt 5  lw .5 dashtype 4 t '112x112, v',\
+'128x128/meth3/horizontal_profile.ascii' u 1:4 w l lt 6  lw .5 dashtype 2 t '128x128, u',\
+'128x128/meth3/horizontal_profile.ascii' u 1:5 w l lt 6  lw .5 dashtype 4 t '128x128, v',\
+'144x144/meth3/horizontal_profile.ascii' u 1:4 w l lt 7  lw .5 dashtype 2 t '144x144, u',\
+'144x144/meth3/horizontal_profile.ascii' u 1:5 w l lt 7  lw .5 dashtype 4 t '144x144, v',\
+'160x160/meth3/horizontal_profile.ascii' u 1:4 w l lt 8  lw .5 dashtype 2 t '160x160, u',\
+'160x160/meth3/horizontal_profile.ascii' u 1:5 w l lt 8  lw .5 dashtype 4 t '160x160, v',\
+'176x176/meth3/horizontal_profile.ascii' u 1:4 w l lt 9  lw .5 dashtype 2 t '176x176, u',\
+'176x176/meth3/horizontal_profile.ascii' u 1:5 w l lt 9  lw .5 dashtype 4 t '176x176, v',\
+
+
+
+################################
+set xlabel 'y'
+set title'vertical profile x=Lx/2'
+set log y 
+set ylabel 'viscosity'
+set output 'vertical_profile_eta.pdf'
+plot[][]\
+'48x48/meth3/vertical_profile.ascii' u 1:2 w lp ps .12 lw .5 t '48x48',\
+'64x64/meth3/vertical_profile.ascii' u 1:2 w lp ps .12 lw .5 t '64x64',\
+'80x80/meth3/vertical_profile.ascii' u 1:2 w lp ps .12 lw .5 t '80x80',\
+'96x96/meth3/vertical_profile.ascii' u 1:2 w lp ps .12 lw .5 t '96x96',\
+'112x112/meth3/vertical_profile.ascii' u 1:2 w lp ps .12 lw .5 t '112x112',\
+'128x128/meth3/vertical_profile.ascii' u 1:2 w lp ps .12 lw .5 t '128x128',\
+'144x144/meth3/vertical_profile.ascii' u 1:2 w lp ps .12 lw .5 t '144x144',\
+'160x160/meth3/vertical_profile.ascii' u 1:2 w lp ps .12 lw .5 t '160x160',\
+'176x176/meth3/vertical_profile.ascii' u 1:2 w lp ps .12 lw .5 t '176x176',\
+
+set ylabel 'strain rate'
+set output 'vertical_profile_sr.pdf'
+plot[][]\
+'48x48/meth3/vertical_profile.ascii' u 1:3 w lp ps .12 lw .5 t '48x48',\
+'64x64/meth3/vertical_profile.ascii' u 1:3 w lp ps .12 lw .5 t '64x64',\
+'80x80/meth3/vertical_profile.ascii' u 1:3 w lp ps .12 lw .5 t '80x80',\
+'96x96/meth3/vertical_profile.ascii' u 1:3 w lp ps .12 lw .5 t '96x96',\
+'112x112/meth3/vertical_profile.ascii' u 1:3 w lp ps .12 lw .5 t '112x112',\
+'128x128/meth3/vertical_profile.ascii' u 1:3 w lp ps .12 lw .5 t '128x128',\
+'144x144/meth3/vertical_profile.ascii' u 1:3 w lp ps .12 lw .5 t '144x144',\
+'160x160/meth3/vertical_profile.ascii' u 1:3 w lp ps .12 lw .5 t '160x160',\
+'176x176/meth3/vertical_profile.ascii' u 1:3 w lp ps .12 lw .5 t '176x176',\
+
+unset log y 
+set ylabel 'pressure'
+set output 'vertical_profile_p.pdf'
+plot[][]\
+'48x48/meth3/vertical_profile.ascii' u 1:6 w lp ps .12 lw .5 t '48x48',\
+'64x64/meth3/vertical_profile.ascii' u 1:6 w lp ps .12 lw .5 t '64x64',\
+'80x80/meth3/vertical_profile.ascii' u 1:6 w lp ps .12 lw .5 t '80x80',\
+'96x96/meth3/vertical_profile.ascii' u 1:6 w lp ps .12 lw .5 t '96x96',\
+'112x112/meth3/vertical_profile.ascii' u 1:6 w lp ps .12 lw .5 t '112x112',\
+'128x128/meth3/vertical_profile.ascii' u 1:6 w lp ps .12 lw .5 t '128x128',\
+'144x144/meth3/vertical_profile.ascii' u 1:6 w lp ps .12 lw .5 t '144x144',\
+'160x160/meth3/vertical_profile.ascii' u 1:6 w lp ps .12 lw .5 t '160x160',\
+'176x176/meth3/vertical_profile.ascii' u 1:6 w lp ps .12 lw .5 t '176x176',\
+
+
+set ylabel 'velocity'
+set output 'vertical_profile_uv.pdf'
+plot[][]\
+'48x48/meth3/vertical_profile.ascii' u 1:4 w l lt 1 dashtype 2 lw .5 t '48x48, u',\
+'48x48/meth3/vertical_profile.ascii' u 1:5 w l lt 1 dashtype 4 lw .5 t '48x48, v',\
+'64x64/meth3/vertical_profile.ascii' u 1:4 w l lt 2 dashtype 2 lw .5 t '64x64, u',\
+'64x64/meth3/vertical_profile.ascii' u 1:5 w l lt 2 dashtype 4 lw .5 t '64x64, v',\
+'80x80/meth3/vertical_profile.ascii' u 1:4 w l lt 3 dashtype 2 lw .5 t '80x80, u',\
+'80x80/meth3/vertical_profile.ascii' u 1:5 w l lt 3 dashtype 4 lw .5 t '80x80, v',\
+'96x96/meth3/vertical_profile.ascii' u 1:4 w l lt 4 dashtype 2 lw .5 t '96x96, u',\
+'96x96/meth3/vertical_profile.ascii' u 1:5 w l lt 4 dashtype 4 lw .5 t '96x96, v',\
+'112x112/meth3/vertical_profile.ascii' u 1:4 w l lt 5 lw .5 dashtype 2 t '112x112, u',\
+'112x112/meth3/vertical_profile.ascii' u 1:5 w l lt 5 lw .5 dashtype 4 t '112x112, v',\
+'128x128/meth3/vertical_profile.ascii' u 1:4 w l lt 6 lw .5 dashtype 2 t '128x128, u',\
+'128x128/meth3/vertical_profile.ascii' u 1:5 w l lt 6 lw .5 dashtype 4 t '128x128, v',\
+'144x144/meth3/vertical_profile.ascii' u 1:4 w l lt 7 lw .5 dashtype 2 t '144x144, u',\
+'144x144/meth3/vertical_profile.ascii' u 1:5 w l lt 7 lw .5 dashtype 4 t '144x144, v',\
+'160x160/meth3/vertical_profile.ascii' u 1:4 w l lt 8 lw .5 dashtype 2 t '160x160, u',\
+'160x160/meth3/vertical_profile.ascii' u 1:5 w l lt 8 lw .5 dashtype 4 t '160x160, v',\
+'176x176/meth3/vertical_profile.ascii' u 1:4 w l lt 9 lw .5 dashtype 2 t '176x176, u',\
+'176x176/meth3/vertical_profile.ascii' u 1:5 w l lt 9 lw .5 dashtype 4 t '176x176, v',\
+
+
+
+exit
 
 #########################################################
 
@@ -22,52 +236,54 @@ set ylabel 'u'
 unset log y 
 set output 'u.pdf'
 plot[][]\
-'48x48/stats_u.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t '48x48',\
-'48x48/stats_u.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
-'96x96/stats_u.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t '96x96',\
-'96x96/stats_u.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
-'128x128/stats_u.ascii' u 1:($2/cm*year) w lp lt 3 ps .4 t '128x128',\
-'128x128/stats_u.ascii' u 1:($3/cm*year) w lp lt 3 ps .4 notitle ,\
+'48x48/stats_u.ascii'     u 1:($2/cm*year) w lp lt 1 lw .5 ps .2 t '48x48',\
+'48x48/stats_u.ascii'     u 1:($3/cm*year) w lp lt 1 lw .5 ps .2 notitle ,\
+'96x96/stats_u.ascii'     u 1:($2/cm*year) w lp lt 2 lw .5 ps .2 t '96x96',\
+'96x96/stats_u.ascii'     u 1:($3/cm*year) w lp lt 2 lw .5 ps .2 notitle ,\
+'128x128/stats_u.ascii'   u 1:($2/cm*year) w lp lt 3 lw .5 ps .2 t '128x128',\
+'128x128/stats_u.ascii'   u 1:($3/cm*year) w lp lt 3 lw .5 ps .2 notitle ,\
+'128x128_N/stats_u.ascii' u 1:($2/cm*year) w lp lt 3 lw .5 ps .2 dashtype 2 t '128x128, N(3)',\
+'128x128_N/stats_u.ascii' u 1:($3/cm*year) w lp lt 3 lw .5 ps .2 dashtype 2 notitle ,\
 
 set ylabel 'v (cm/yr)'
 set output 'v.pdf'
 plot[][]\
-'48x48/stats_v.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t '48x48',\
-'48x48/stats_v.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
-'96x96/stats_v.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t '96x96',\
-'96x96/stats_v.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
-'128x128/stats_v.ascii' u 1:($2/cm*year) w lp lt 3 ps .4 t '128x128',\
-'128x128/stats_v.ascii' u 1:($3/cm*year) w lp lt 3 ps .4 notitle ,\
+'48x48/stats_v.ascii' u 1:($2/cm*year) w lp lt 1 ps .2 t '48x48',\
+'48x48/stats_v.ascii' u 1:($3/cm*year) w lp lt 1 ps .2 notitle ,\
+'96x96/stats_v.ascii' u 1:($2/cm*year) w lp lt 2 ps .2 t '96x96',\
+'96x96/stats_v.ascii' u 1:($3/cm*year) w lp lt 2 ps .2 notitle ,\
+'128x128/stats_v.ascii' u 1:($2/cm*year) w lp lt 3 ps .2 t '128x128',\
+'128x128/stats_v.ascii' u 1:($3/cm*year) w lp lt 3 ps .2 notitle ,\
 
 set ylabel 'p'
 set output 'p.pdf'
 plot[][]\
-'48x48/stats_p.ascii' u 1:2 w lp lt 1 ps .4 t '48x48',\
-'48x48/stats_p.ascii' u 1:3 w lp lt 1 ps .4 notitle ,\
-'96x96/stats_p.ascii' u 1:2 w lp lt 2 ps .4 t '96x96',\
-'96x96/stats_p.ascii' u 1:3 w lp lt 2 ps .4 notitle ,\
-'128x128/stats_p.ascii' u 1:2 w lp lt 3 ps .4 t '128x128',\
-'128x128/stats_p.ascii' u 1:3 w lp lt 3 ps .4 notitle ,\
+'48x48/stats_p.ascii' u 1:2 w lp lt 1 ps .2 t '48x48',\
+'48x48/stats_p.ascii' u 1:3 w lp lt 1 ps .2 notitle ,\
+'96x96/stats_p.ascii' u 1:2 w lp lt 2 ps .2 t '96x96',\
+'96x96/stats_p.ascii' u 1:3 w lp lt 2 ps .2 notitle ,\
+'128x128/stats_p.ascii' u 1:2 w lp lt 3 ps .2 t '128x128',\
+'128x128/stats_p.ascii' u 1:3 w lp lt 3 ps .2 notitle ,\
 
 set ylabel '{/Symbol d}u (cm/yr)'
 set output 'du.pdf'
 plot[][]\
-'48x48/stats_du.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t '48x48',\
-'48x48/stats_du.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
-'96x96/stats_du.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t '96x96',\
-'96x96/stats_du.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
-'128x128/stats_du.ascii' u 1:($2/cm*year) w lp lt 3 ps .4 t '128x128',\
-'128x128/stats_du.ascii' u 1:($3/cm*year) w lp lt 3 ps .4 notitle ,\
+'48x48/stats_du.ascii' u 1:($2/cm*year) w lp lt 1 ps .2 t '48x48',\
+'48x48/stats_du.ascii' u 1:($3/cm*year) w lp lt 1 ps .2 notitle ,\
+'96x96/stats_du.ascii' u 1:($2/cm*year) w lp lt 2 ps .2 t '96x96',\
+'96x96/stats_du.ascii' u 1:($3/cm*year) w lp lt 2 ps .2 notitle ,\
+'128x128/stats_du.ascii' u 1:($2/cm*year) w lp lt 3 ps .2 t '128x128',\
+'128x128/stats_du.ascii' u 1:($3/cm*year) w lp lt 3 ps .2 notitle ,\
 
 set ylabel '{/Symbol d}p'
 set output 'dp.pdf'
 plot[][]\
-'48x48/stats_dp.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t '48x48',\
-'48x48/stats_dp.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
-'96x96/stats_dp.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t '96x96',\
-'96x96/stats_dp.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
-'128x128/stats_dp.ascii' u 1:($2/cm*year) w lp lt 3 ps .4 t '128x128',\
-'128x128/stats_dp.ascii' u 1:($3/cm*year) w lp lt 3 ps .4 notitle ,\
+'48x48/stats_dp.ascii' u 1:($2/cm*year) w lp lt 1 ps .2 t '48x48',\
+'48x48/stats_dp.ascii' u 1:($3/cm*year) w lp lt 1 ps .2 notitle ,\
+'96x96/stats_dp.ascii' u 1:($2/cm*year) w lp lt 2 ps .2 t '96x96',\
+'96x96/stats_dp.ascii' u 1:($3/cm*year) w lp lt 2 ps .2 notitle ,\
+'128x128/stats_dp.ascii' u 1:($2/cm*year) w lp lt 3 ps .2 t '128x128',\
+'128x128/stats_dp.ascii' u 1:($3/cm*year) w lp lt 3 ps .2 notitle ,\
 
 
 
