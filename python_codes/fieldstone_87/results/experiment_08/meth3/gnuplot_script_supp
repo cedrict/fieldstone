@@ -1,0 +1,132 @@
+set term pdf enhanced font 'Times,11pt'
+set grid
+set xlabel '# iteration'
+set log y
+
+set key outside
+set ylabel 'u'
+unset log y 
+set output 'u.pdf'
+plot[][]\
+'n_02/stats_u.ascii' u 1:2 w lp lt 1 ps .34 t 'n=2',\
+'n_02/stats_u.ascii' u 1:3 w lp lt 1 ps .34 notitle ,\
+'n_03/stats_u.ascii' u 1:2 w lp lt 2 ps .34 t 'n=3',\
+'n_03/stats_u.ascii' u 1:3 w lp lt 2 ps .34 notitle ,\
+'n_05/stats_u.ascii' u 1:2 w lp lt 3 ps .34 t 'n=5',\
+'n_05/stats_u.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
+
+set ylabel 'v'
+set output 'v.pdf'
+plot[][]\
+'n_02/stats_v.ascii' u 1:2 w lp lt 1 ps .34 t 'n=2',\
+'n_02/stats_v.ascii' u 1:3 w lp lt 1 ps .34 notitle ,\
+'n_03/stats_v.ascii' u 1:2 w lp lt 2 ps .34 t 'n=3',\
+'n_03/stats_v.ascii' u 1:3 w lp lt 2 ps .34 notitle ,\
+'n_05/stats_v.ascii' u 1:2 w lp lt 3 ps .34 t 'n=5',\
+'n_05/stats_v.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
+
+set ylabel 'p'
+set output 'p.pdf'
+plot[][]\
+'n_02/stats_p.ascii' u 1:2 w lp lt 1 ps .34 t 'n=2',\
+'n_02/stats_p.ascii' u 1:3 w lp lt 1 ps .34 notitle ,\
+'n_03/stats_p.ascii' u 1:2 w lp lt 2 ps .34 t 'n=3',\
+'n_03/stats_p.ascii' u 1:3 w lp lt 2 ps .34 notitle ,\
+'n_05/stats_p.ascii' u 1:2 w lp lt 3 ps .34 t 'n=5',\
+'n_05/stats_p.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
+
+set ylabel '{/Symbol d}u'
+set output 'du.pdf'
+plot[][]\
+'n_02/stats_du.ascii' u 1:2 w lp lt 1 ps .34 t 'n=2',\
+'n_02/stats_du.ascii' u 1:3 w lp lt 1 ps .34 notitle ,\
+'n_03/stats_du.ascii' u 1:2 w lp lt 2 ps .34 t 'n=3',\
+'n_03/stats_du.ascii' u 1:3 w lp lt 2 ps .34 notitle ,\
+'n_05/stats_du.ascii' u 1:2 w lp lt 3 ps .34 t 'n=5',\
+'n_05/stats_du.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
+
+set ylabel '{/Symbol d}v'
+set output 'dv.pdf'
+plot[][-2e-12:2e-12]\
+'n_02/stats_dv.ascii' u 1:2 w lp lt 1 ps .34 t 'n=2',\
+'n_02/stats_dv.ascii' u 1:3 w lp lt 1 ps .34 notitle ,\
+'n_03/stats_dv.ascii' u 1:2 w lp lt 2 ps .34 t 'n=3',\
+'n_03/stats_dv.ascii' u 1:3 w lp lt 2 ps .34 notitle ,\
+'n_05/stats_dv.ascii' u 1:2 w lp lt 3 ps .34 t 'n=5',\
+'n_05/stats_dv.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
+
+set ylabel '{/Symbol d}p'
+set output 'dp.pdf'
+plot[][]\
+'n_02/stats_dp.ascii' u 1:2 w lp lt 1 ps .34 t 'n=2',\
+'n_02/stats_dp.ascii' u 1:3 w lp lt 1 ps .34 notitle ,\
+'n_03/stats_dp.ascii' u 1:2 w lp lt 2 ps .34 t 'n=3',\
+'n_03/stats_dp.ascii' u 1:3 w lp lt 2 ps .34 notitle ,\
+'n_05/stats_dp.ascii' u 1:2 w lp lt 3 ps .34 t 'n=5',\
+'n_05/stats_dp.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
+
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
+plot[][]\
+'n_02/vrms.ascii'  w lp ps .3 t 'n=2',\
+'n_03/vrms.ascii'  w lp ps .3 t 'n=3',\
+'n_04/vrms.ascii'  w lp ps .3 t 'n=4',\
+'n_05/vrms.ascii'  w lp ps .3 t 'n=5',\
+
+#################################################################3
+set pointsize .33 
+
+p1=1.
+p0=-1.
+L=2.
+h=1.
+beta=1.
+
+#C1=1.
+#vel(x,n)= C1/(n+1) *  ((p1-p0)/L)**n*((h/2.)**(n+1)-(abs(x-0.5))**(n+1))  
+#mu(x,n)=1./C1 * ((p1-p0)/L*abs(x-0.5))**(1-n)
+
+vel(x,n)= 2.**(n-1)/(n+1.) *  ((p1-p0)/L)**n*((h/2.)**(n+1)-(abs(x-0.5))**(n+1))  
+
+mu(x,n)=1./2.**(n-1) * ((p1-p0)/L*abs(x-0.5))**(1-n)
+
+set xlabel 'y'
+set ylabel 'velocity'
+set output 'vel_profile.pdf'
+plot[][]\
+'n_01/vertical_profile.ascii' u 1:4 w lp t 'n=1',\
+'n_02/vertical_profile.ascii' u 1:4 w lp t 'n=2',\
+'n_03/vertical_profile.ascii' u 1:4 w lp t 'n=3',\
+'n_04/vertical_profile.ascii' u 1:4 w lp t 'n=4',\
+'n_05/vertical_profile.ascii' u 1:4 w lp t 'n=5',\
+vel(x,1) lt -1 lw .5 t 'analytical',\
+vel(x,2) lt -1 lw .5 notitle,\
+vel(x,3) lt -1 lw .5 notitle,\
+vel(x,4) lt -1 lw .5 notitle,\
+vel(x,5) lt -1 lw .5 notitle
+
+set log y 
+set ylabel 'strain rate'
+set output 'sr_profile.pdf'
+plot[][]\
+'n_02/vertical_profile.ascii' u 1:3 w lp t 'n=2',\
+'n_03/vertical_profile.ascii' u 1:3 w lp t 'n=3',\
+'n_04/vertical_profile.ascii' u 1:3 w lp t 'n=4',\
+'n_05/vertical_profile.ascii' u 1:3 w lp t 'n=5',\
+
+set ylabel 'viscosity'
+set output 'eta_profile.pdf'
+plot[][0.1:5e6]\
+'n_01/vertical_profile.ascii' u 1:2 w lp lw .3 t 'n=1',\
+'n_02/vertical_profile.ascii' u 1:2 w lp lw .3 t 'n=2',\
+'n_03/vertical_profile.ascii' u 1:2 w lp lw .3 t 'n=3',\
+'n_04/vertical_profile.ascii' u 1:2 w lp lw .3 t 'n=4',\
+'n_05/vertical_profile.ascii' u 1:2 w lp lw .3 t 'n=5',\
+mu(x,1) lt -1 lw .4 t 'analytical',\
+mu(x,2) lt -1 lw .4 notitle,\
+mu(x,3) lt -1 lw .4 notitle,\
+mu(x,4) lt -1 lw .4 notitle,\
+mu(x,5) lt -1 lw .4 notitle
+
+
+
