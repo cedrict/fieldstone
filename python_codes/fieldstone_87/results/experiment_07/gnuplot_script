@@ -1,13 +1,135 @@
 set term pdf enhanced font "Times,11pt"
 set grid
-set xlabel '# iter'
-set ylabel '||R||_2'
-set log y 
-set output 'conv.pdf'
-set pointsize .3
+set log y
+set xlabel "# iteration"
+set ylabel "||R||_2"
+set xtics 5
+set key outside
+set ylabel 'convergence indicator'
+
+set title 'Picard'
+set output 'conv_picard.pdf'
+plot[:50][]\
+'Picard/n_01/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 1 dashtype 1 t 'n=1, Res.',\
+'Picard/n_01/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 1 dashtype 2 t 'n=1, dvel',\
+'Picard/n_01/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 1 dashtype 3 t 'n=1, dp',\
+'Picard/n_02/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 2 dashtype 1 t 'n=2, Res.',\
+'Picard/n_02/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 2 dashtype 2 t 'n=2, dvel',\
+'Picard/n_02/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 2 dashtype 3 t 'n=2, dp',\
+'Picard/n_03/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 3 dashtype 1 t 'n=3, Res.',\
+'Picard/n_03/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 3 dashtype 2 t 'n=3, dvel',\
+'Picard/n_03/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 3 dashtype 3 t 'n=3, dp',\
+'Picard/n_04/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 4 dashtype 1 t 'n=4, Res.',\
+'Picard/n_04/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 4 dashtype 2 t 'n=4, dvel',\
+'Picard/n_04/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 4 dashtype 3 t 'n=4, dp',\
+'Picard/n_05/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 5 dashtype 1 t 'n=5, Res.',\
+'Picard/n_05/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 5 dashtype 2 t 'n=5, dvel',\
+'Picard/n_05/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 5 dashtype 3 t 'n=5, dp',\
+
+
+
+
+
+
+
+set title 'Newton - theta method 1'
+set output 'conv_meth1.pdf'
+plot[:][]\
+'meth1/n_01/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 1 dashtype 1 t 'n=1, Res.',\
+'meth1/n_01/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 1 dashtype 2 t 'n=1, dvel',\
+'meth1/n_01/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 1 dashtype 3 t 'n=1, dp',\
+'meth1/n_02/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 2 dashtype 1 t 'n=2, Res.',\
+'meth1/n_02/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 2 dashtype 2 t 'n=2, dvel',\
+'meth1/n_02/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 2 dashtype 3 t 'n=2, dp',\
+'meth1/n_03/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 3 dashtype 1 t 'n=3, Res.',\
+'meth1/n_03/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 3 dashtype 2 t 'n=3, dvel',\
+'meth1/n_03/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 3 dashtype 3 t 'n=3, dp',\
+'meth1/n_04/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 4 dashtype 1 t 'n=4, Res.',\
+'meth1/n_04/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 4 dashtype 2 t 'n=4, dvel',\
+'meth1/n_04/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 4 dashtype 3 t 'n=4, dp',\
+'meth1/n_05/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 5 dashtype 1 t 'n=5, Res.',\
+'meth1/n_05/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 5 dashtype 2 t 'n=5, dvel',\
+'meth1/n_05/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 5 dashtype 3 t 'n=5, dp',\
+
+
+set title 'Newton - theta method 2'
+set output 'conv_meth2.pdf'
+plot[:][]\
+'meth2/n_01/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 1 dashtype 1 t 'n=1, Res.',\
+'meth2/n_01/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 1 dashtype 2 t 'n=1, dvel',\
+'meth2/n_01/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 1 dashtype 3 t 'n=1, dp',\
+'meth2/n_02/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 2 dashtype 1 t 'n=2, Res.',\
+'meth2/n_02/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 2 dashtype 2 t 'n=2, dvel',\
+'meth2/n_02/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 2 dashtype 3 t 'n=2, dp',\
+'meth2/n_03/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 3 dashtype 1 t 'n=3, Res.',\
+'meth2/n_03/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 3 dashtype 2 t 'n=3, dvel',\
+'meth2/n_03/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 3 dashtype 3 t 'n=3, dp',\
+'meth2/n_04/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 4 dashtype 1 t 'n=4, Res.',\
+'meth2/n_04/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 4 dashtype 2 t 'n=4, dvel',\
+'meth2/n_04/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 4 dashtype 3 t 'n=4, dp',\
+'meth2/n_05/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 5 dashtype 1 t 'n=5, Res.',\
+'meth2/n_05/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 5 dashtype 2 t 'n=5, dvel',\
+'meth2/n_05/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 5 dashtype 3 t 'n=5, dp',\
+
+
+set title 'Newton - theta method 3'
+set output 'conv_meth3.pdf'
+plot[:][]\
+'meth3/n_01/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 1 dashtype 1 t 'n=1, Res.',\
+'meth3/n_01/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 1 dashtype 2 t 'n=1, dvel',\
+'meth3/n_01/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 1 dashtype 3 t 'n=1, dp',\
+'meth3/n_02/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 2 dashtype 1 t 'n=2, Res.',\
+'meth3/n_02/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 2 dashtype 2 t 'n=2, dvel',\
+'meth3/n_02/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 2 dashtype 3 t 'n=2, dp',\
+'meth3/n_03/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 3 dashtype 1 t 'n=3, Res.',\
+'meth3/n_03/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 3 dashtype 2 t 'n=3, dvel',\
+'meth3/n_03/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 3 dashtype 3 t 'n=3, dp',\
+'meth3/n_04/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 4 dashtype 1 t 'n=4, Res.',\
+'meth3/n_04/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 4 dashtype 2 t 'n=4, dvel',\
+'meth3/n_04/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 4 dashtype 3 t 'n=4, dp',\
+'meth3/n_05/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 5 dashtype 1 t 'n=5, Res.',\
+'meth3/n_05/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 5 dashtype 2 t 'n=5, dvel',\
+'meth3/n_05/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 5 dashtype 3 t 'n=5, dp',\
+
+
+
+
+########################################################3
+
+set title 'Newton - theta method 3'
+set ylabel 'viscosity on quad. points'
+set output 'stats_etaq_meth3.pdf'
 plot[][]\
-'n_01/conv.ascii' w lp t 'n=1',\
-'n_02/conv.ascii' w lp t 'n=2',\
-'n_03/conv.ascii' w lp t 'n=3',\
-'n_10/conv.ascii' w lp t 'n=10',\
+'meth3/n_01/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 2 t 'n=1',\
+'meth3/n_01/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 2 notitle,\
+'meth3/n_02/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 5 t 'n=2',\
+'meth3/n_02/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 5 notitle,\
+'meth3/n_03/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 6 t 'n=3',\
+'meth3/n_03/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 6 notitle,\
+'meth3/n_04/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 7 t 'n=4',\
+'meth3/n_04/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 7 notitle,\
+'meth3/n_05/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 8 t 'n=5',\
+'meth3/n_05/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 8 notitle,\
+
+unset log y
+set ylabel 'v_{rms}'
+set title 'Newton - theta method 3'
+set output 'vrms_meth3.pdf'
+plot[][]\
+'meth3/n_01/vrms.ascii' w lp ps .2 lw .5 t 'n=1',\
+'meth3/n_02/vrms.ascii' w lp ps .2 lw .5 t 'n=2',\
+'meth3/n_03/vrms.ascii' w lp ps .2 lw .5 t 'n=3',\
+'meth3/n_04/vrms.ascii' w lp ps .2 lw .5 t 'n=4',\
+'meth3/n_05/vrms.ascii' w lp ps .2 lw .5 t 'n=5',\
+
+set xtics 0.1
+unset log y
+set key outside
+
+
+
+
+
+
+
 
