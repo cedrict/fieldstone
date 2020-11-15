@@ -1,142 +1,159 @@
-set term pdf enhanced font 'Times,11pt'
+set term pdf enhanced font "Times,11pt"
 set grid
 set log y
+set xlabel "# iteration"
+set ylabel "||R||_2"
+set xtics 5
 set key outside
+set ylabel 'convergence indicator'
 
-set xlabel 'x'
-set ylabel '{/Symbol h}'
-set output 'diag_eta.pdf'
-plot[][0.1:]\
-'n01/diagonal_profile.ascii' ps .13 w lp t 'n=1',\
-'n02/diagonal_profile.ascii' ps .13 w lp t 'n=2',\
-'n03/diagonal_profile.ascii' ps .13 w lp t 'n=3',\
-'n04/diagonal_profile.ascii' ps .13 w lp t 'n=4',\
-'n05/diagonal_profile.ascii' ps .13 w lp t 'n=5',\
+set title 'Picard'
+set output 'conv_picard.pdf'
+plot[:50][]\
+'Picard/n_01/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 1 dashtype 1 t 'n=1, Res.',\
+'Picard/n_01/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 1 dashtype 2 t 'n=1, dvel',\
+'Picard/n_01/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 1 dashtype 3 t 'n=1, dp',\
+'Picard/n_02/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 2 dashtype 1 t 'n=2, Res.',\
+'Picard/n_02/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 2 dashtype 2 t 'n=2, dvel',\
+'Picard/n_02/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 2 dashtype 3 t 'n=2, dp',\
+'Picard/n_03/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 3 dashtype 1 t 'n=3, Res.',\
+'Picard/n_03/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 3 dashtype 2 t 'n=3, dvel',\
+'Picard/n_03/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 3 dashtype 3 t 'n=3, dp',\
+'Picard/n_04/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 4 dashtype 1 t 'n=4, Res.',\
+'Picard/n_04/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 4 dashtype 2 t 'n=4, dvel',\
+'Picard/n_04/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 4 dashtype 3 t 'n=4, dp',\
+'Picard/n_05/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 5 dashtype 1 t 'n=5, Res.',\
+'Picard/n_05/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 5 dashtype 2 t 'n=5, dvel',\
+'Picard/n_05/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 5 dashtype 3 t 'n=5, dp',\
 
-set ylabel 'effective strain rate'
-set output 'diag_sr.pdf'
+
+
+
+
+
+
+set title 'Newton - theta method 1'
+set output 'conv_meth1.pdf'
+plot[:][]\
+'meth1/n_01/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 1 dashtype 1 t 'n=1, Res.',\
+'meth1/n_01/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 1 dashtype 2 t 'n=1, dvel',\
+'meth1/n_01/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 1 dashtype 3 t 'n=1, dp',\
+'meth1/n_02/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 2 dashtype 1 t 'n=2, Res.',\
+'meth1/n_02/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 2 dashtype 2 t 'n=2, dvel',\
+'meth1/n_02/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 2 dashtype 3 t 'n=2, dp',\
+'meth1/n_03/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 3 dashtype 1 t 'n=3, Res.',\
+'meth1/n_03/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 3 dashtype 2 t 'n=3, dvel',\
+'meth1/n_03/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 3 dashtype 3 t 'n=3, dp',\
+'meth1/n_04/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 4 dashtype 1 t 'n=4, Res.',\
+'meth1/n_04/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 4 dashtype 2 t 'n=4, dvel',\
+'meth1/n_04/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 4 dashtype 3 t 'n=4, dp',\
+'meth1/n_05/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 5 dashtype 1 t 'n=5, Res.',\
+'meth1/n_05/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 5 dashtype 2 t 'n=5, dvel',\
+'meth1/n_05/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 5 dashtype 3 t 'n=5, dp',\
+
+
+set title 'Newton - theta method 2'
+set output 'conv_meth2.pdf'
+plot[:][]\
+'meth2/n_01/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 1 dashtype 1 t 'n=1, Res.',\
+'meth2/n_01/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 1 dashtype 2 t 'n=1, dvel',\
+'meth2/n_01/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 1 dashtype 3 t 'n=1, dp',\
+'meth2/n_02/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 2 dashtype 1 t 'n=2, Res.',\
+'meth2/n_02/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 2 dashtype 2 t 'n=2, dvel',\
+'meth2/n_02/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 2 dashtype 3 t 'n=2, dp',\
+'meth2/n_03/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 3 dashtype 1 t 'n=3, Res.',\
+'meth2/n_03/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 3 dashtype 2 t 'n=3, dvel',\
+'meth2/n_03/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 3 dashtype 3 t 'n=3, dp',\
+'meth2/n_04/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 4 dashtype 1 t 'n=4, Res.',\
+'meth2/n_04/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 4 dashtype 2 t 'n=4, dvel',\
+'meth2/n_04/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 4 dashtype 3 t 'n=4, dp',\
+'meth2/n_05/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 5 dashtype 1 t 'n=5, Res.',\
+'meth2/n_05/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 5 dashtype 2 t 'n=5, dvel',\
+'meth2/n_05/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 5 dashtype 3 t 'n=5, dp',\
+
+
+set title 'Newton - theta method 3'
+set output 'conv_meth3.pdf'
+plot[:][]\
+'meth3/n_01/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 1 dashtype 1 t 'n=1, Res.',\
+'meth3/n_01/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 1 dashtype 2 t 'n=1, dvel',\
+'meth3/n_01/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 1 dashtype 3 t 'n=1, dp',\
+'meth3/n_02/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 2 dashtype 1 t 'n=2, Res.',\
+'meth3/n_02/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 2 dashtype 2 t 'n=2, dvel',\
+'meth3/n_02/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 2 dashtype 3 t 'n=2, dp',\
+'meth3/n_03/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 3 dashtype 1 t 'n=3, Res.',\
+'meth3/n_03/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 3 dashtype 2 t 'n=3, dvel',\
+'meth3/n_03/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 3 dashtype 3 t 'n=3, dp',\
+'meth3/n_04/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 4 dashtype 1 t 'n=4, Res.',\
+'meth3/n_04/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 4 dashtype 2 t 'n=4, dvel',\
+'meth3/n_04/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 4 dashtype 3 t 'n=4, dp',\
+'meth3/n_05/conv.ascii'  u 1:2 w lp ps .2 lw .5 lt 5 dashtype 1 t 'n=5, Res.',\
+'meth3/n_05/conv.ascii'  u 1:3 w lp ps .2 lw .5 lt 5 dashtype 2 t 'n=5, dvel',\
+'meth3/n_05/conv.ascii'  u 1:4 w lp ps .2 lw .5 lt 5 dashtype 3 t 'n=5, dp',\
+
+
+
+
+########################################################3
+
+set title 'Newton - theta method 3'
+set ylabel 'viscosity on quad. points'
+set output 'stats_etaq_meth3.pdf'
 plot[][]\
-'n01/diagonal_profile.ascii' u 1:3 ps .13 w lp t 'n=1',\
-'n02/diagonal_profile.ascii' u 1:3 ps .13 w lp t 'n=2',\
-'n03/diagonal_profile.ascii' u 1:3 ps .13 w lp t 'n=3',\
-'n04/diagonal_profile.ascii' u 1:3 ps .13 w lp t 'n=4',\
-'n05/diagonal_profile.ascii' u 1:3 ps .13 w lp t 'n=5',\
+'meth3/n_01/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 2 t 'n=1',\
+'meth3/n_01/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 2 notitle,\
+'meth3/n_02/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 5 t 'n=2',\
+'meth3/n_02/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 5 notitle,\
+'meth3/n_03/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 6 t 'n=3',\
+'meth3/n_03/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 6 notitle,\
+'meth3/n_04/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 7 t 'n=4',\
+'meth3/n_04/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 7 notitle,\
+'meth3/n_05/stats_etaq.ascii' u 1:2 w lp ps .2 lw .5 lt 8 t 'n=5',\
+'meth3/n_05/stats_etaq.ascii' u 1:3 w lp ps .2 lw .5 lt 8 notitle,\
 
 unset log y
-set ylabel 'pressure'
-set output 'diag_p.pdf'
+set ylabel 'v_{rms}'
+set title 'Newton - theta method 3'
+set output 'vrms_meth3.pdf'
 plot[][]\
-'n01/diagonal_profile.ascii' u 1:6 ps .13 w lp t 'n=1',\
-'n02/diagonal_profile.ascii' u 1:6 ps .13 w lp t 'n=2',\
-'n03/diagonal_profile.ascii' u 1:6 ps .13 w lp t 'n=3',\
-'n04/diagonal_profile.ascii' u 1:6 ps .13 w lp t 'n=4',\
-'n05/diagonal_profile.ascii' u 1:6 ps .13 w lp t 'n=5',\
+'meth3/n_01/vrms.ascii' w lp ps .2 lw .5 t 'n=1',\
+'meth3/n_02/vrms.ascii' w lp ps .2 lw .5 t 'n=2',\
+'meth3/n_03/vrms.ascii' w lp ps .2 lw .5 t 'n=3',\
+'meth3/n_04/vrms.ascii' w lp ps .2 lw .5 t 'n=4',\
+'meth3/n_05/vrms.ascii' w lp ps .2 lw .5 t 'n=5',\
 
-set ylabel 'u'
-set output 'diag_u.pdf'
+
+set ylabel '{/Symbol Q}'
+set title '{/Symbol Q}-method 2'
+set output 'theta_meth2.pdf'
 plot[][]\
-'n01/diagonal_profile.ascii' u 1:4 ps .3 w lp t 'n=1',\
-'n02/diagonal_profile.ascii' u 1:4 ps .3 w lp t 'n=2',\
-'n03/diagonal_profile.ascii' u 1:4 ps .3 w lp t 'n=3',\
-'n04/diagonal_profile.ascii' u 1:4 ps .3 w lp t 'n=4',\
-'n05/diagonal_profile.ascii' u 1:4 ps .3 w lp t 'n=5',\
+'meth2/n_01/stats_theta.ascii' w lp ps .2 lw .5 t 'n=1',\
+'meth2/n_02/stats_theta.ascii' w lp ps .2 lw .5 t 'n=2',\
+'meth2/n_03/stats_theta.ascii' w lp ps .2 lw .5 t 'n=3',\
+'meth2/n_04/stats_theta.ascii' w lp ps .2 lw .5 t 'n=4',\
+'meth2/n_05/stats_theta.ascii' w lp ps .2 lw .5 t 'n=5',\
 
-set ylabel 'v'
-set output 'diag_v.pdf'
+set ylabel '{/Symbol Q}'
+set title '{/Symbol Q}-method 3'
+set output 'theta_meth3.pdf'
 plot[][]\
-'n01/diagonal_profile.ascii' u 1:5 ps .3 w lp t 'n=1',\
-'n02/diagonal_profile.ascii' u 1:5 ps .3 w lp t 'n=2',\
-'n03/diagonal_profile.ascii' u 1:5 ps .3 w lp t 'n=3',\
-'n04/diagonal_profile.ascii' u 1:5 ps .3 w lp t 'n=4',\
-'n05/diagonal_profile.ascii' u 1:5 ps .3 w lp t 'n=5',\
+'meth3/n_01/stats_theta.ascii' w lp ps .2 lw .5 t 'n=1',\
+'meth3/n_02/stats_theta.ascii' w lp ps .2 lw .5 t 'n=2',\
+'meth3/n_03/stats_theta.ascii' w lp ps .2 lw .5 t 'n=3',\
+'meth3/n_04/stats_theta.ascii' w lp ps .2 lw .5 t 'n=4',\
+'meth3/n_05/stats_theta.ascii' w lp ps .2 lw .5 t 'n=5',\
 
-set log y
-set xlabel '# iteration'
-set ylabel '||R||_2'
-set output 'conv.pdf'
-plot[][1e-8:]\
-'n01/conv.ascii' w lp ps .4 t 'n=1',\
-'n02/conv.ascii' w lp ps .4 t 'n=2',\
-'n03/conv.ascii' w lp ps .4 t 'n=3',\
-'n04/conv.ascii' w lp ps .4 t 'n=4',\
-'n05/conv.ascii' w lp ps .4 t 'n=5',\
 
-#########################################################
 
-cm=1
-year=1
-set xlabel '# iteration'
 
-set ylabel 'u'
-unset log y 
-set output 'u.pdf'
-plot[][]\
-'n01/stats_u.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t 'n01',\
-'n01/stats_u.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
-'n02/stats_u.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t 'n02',\
-'n02/stats_u.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
-'n03/stats_u.ascii' u 1:($2/cm*year) w lp lt 3 ps .4 t 'n03',\
-'n03/stats_u.ascii' u 1:($3/cm*year) w lp lt 3 ps .4 notitle ,\
-'n04/stats_u.ascii' u 1:($2/cm*year) w lp lt 4 ps .4 t 'n04',\
-'n04/stats_u.ascii' u 1:($3/cm*year) w lp lt 4 ps .4 notitle ,\
-'n05/stats_u.ascii' u 1:($2/cm*year) w lp lt 5 ps .4 t 'n05',\
-'n05/stats_u.ascii' u 1:($3/cm*year) w lp lt 5 ps .4 notitle ,\
 
-set ylabel 'v (cm/yr)'
-set output 'v.pdf'
-plot[][]\
-'n01/stats_v.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t 'n01',\
-'n01/stats_v.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
-'n02/stats_v.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t 'n02',\
-'n02/stats_v.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
-'n03/stats_v.ascii' u 1:($2/cm*year) w lp lt 3 ps .4 t 'n03',\
-'n03/stats_v.ascii' u 1:($3/cm*year) w lp lt 3 ps .4 notitle ,\
-'n04/stats_v.ascii' u 1:($2/cm*year) w lp lt 4 ps .4 t 'n04',\
-'n04/stats_v.ascii' u 1:($3/cm*year) w lp lt 4 ps .4 notitle ,\
-'n05/stats_v.ascii' u 1:($2/cm*year) w lp lt 5 ps .4 t 'n05',\
-'n05/stats_v.ascii' u 1:($3/cm*year) w lp lt 5 ps .4 notitle ,\
 
-set ylabel 'p'
-set output 'p.pdf'
-plot[][]\
-'n01/stats_p.ascii' u 1:2 w lp lt 1 ps .4 t 'n01',\
-'n01/stats_p.ascii' u 1:3 w lp lt 1 ps .4 notitle ,\
-'n02/stats_p.ascii' u 1:2 w lp lt 2 ps .4 t 'n02',\
-'n02/stats_p.ascii' u 1:3 w lp lt 2 ps .4 notitle ,\
-'n03/stats_p.ascii' u 1:2 w lp lt 3 ps .4 t 'n03',\
-'n03/stats_p.ascii' u 1:3 w lp lt 3 ps .4 notitle ,\
-'n04/stats_p.ascii' u 1:2 w lp lt 4 ps .4 t 'n04',\
-'n04/stats_p.ascii' u 1:3 w lp lt 4 ps .4 notitle ,\
-'n05/stats_p.ascii' u 1:2 w lp lt 5 ps .4 t 'n05',\
-'n05/stats_p.ascii' u 1:3 w lp lt 5 ps .4 notitle ,\
 
-set ylabel '{/Symbol d}u (cm/yr)'
-set output 'du.pdf'
-plot[][]\
-'n01/stats_du.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t 'n01',\
-'n01/stats_du.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
-'n02/stats_du.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t 'n02',\
-'n02/stats_du.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
-'n03/stats_du.ascii' u 1:($2/cm*year) w lp lt 3 ps .4 t 'n03',\
-'n03/stats_du.ascii' u 1:($3/cm*year) w lp lt 3 ps .4 notitle ,\
-'n04/stats_du.ascii' u 1:($2/cm*year) w lp lt 4 ps .4 t 'n04',\
-'n04/stats_du.ascii' u 1:($3/cm*year) w lp lt 4 ps .4 notitle ,\
-'n05/stats_du.ascii' u 1:($2/cm*year) w lp lt 5 ps .4 t 'n05',\
-'n05/stats_du.ascii' u 1:($3/cm*year) w lp lt 5 ps .4 notitle ,\
 
-set ylabel '{/Symbol d}p'
-set output 'dp.pdf'
-plot[][]\
-'n01/stats_dp.ascii' u 1:($2/cm*year) w lp lt 1 ps .4 t 'n01',\
-'n01/stats_dp.ascii' u 1:($3/cm*year) w lp lt 1 ps .4 notitle ,\
-'n02/stats_dp.ascii' u 1:($2/cm*year) w lp lt 2 ps .4 t 'n02',\
-'n02/stats_dp.ascii' u 1:($3/cm*year) w lp lt 2 ps .4 notitle ,\
-'n03/stats_dp.ascii' u 1:($2/cm*year) w lp lt 3 ps .4 t 'n03',\
-'n03/stats_dp.ascii' u 1:($3/cm*year) w lp lt 3 ps .4 notitle ,\
-'n04/stats_dp.ascii' u 1:($2/cm*year) w lp lt 4 ps .4 t 'n04',\
-'n04/stats_dp.ascii' u 1:($3/cm*year) w lp lt 4 ps .4 notitle ,\
-'n05/stats_dp.ascii' u 1:($2/cm*year) w lp lt 5 ps .4 t 'n05',\
-'n05/stats_dp.ascii' u 1:($3/cm*year) w lp lt 5 ps .4 notitle ,\
+
+
+
+
 
 
 
