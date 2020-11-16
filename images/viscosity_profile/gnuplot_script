@@ -7,7 +7,7 @@ set log x
 set key outside
 
 set output 'profiles_steinberger.pdf'
-plot[][]\
+plot[1e3:1e11][]\
 'steinberger/v1.d'          u (10**$1):2 w l lt 1 t 'v1',\
 'steinberger/v1_ad.d'       u (10**$1):2 w l lt 1 dashtype 2 t 'v1-ad',\
 'steinberger/v1_ad_zdb98.d' u (10**$1):2 w l lt 1 dashtype 3 t 'v1-ad-zadb98',\
