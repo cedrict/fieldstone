@@ -315,6 +315,16 @@ echo "--------------------------" >> features
 grep "schur_complement" */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
+echo "--------------------------" >> features
+echo "---defect picard----------" >> features
+echo "--------------------------" >> features
+grep "defect_picard" */keywords | cut -c1- | cut -f1 -d"/" >> features
+echo " " >> features
+
+
+
+
+
 
 
 
