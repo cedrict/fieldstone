@@ -1,0 +1,9 @@
+oct 28th, 2020
+
+Hi Cedric,
+
+What I can send you right now is three viscosity profiles I computed for another paper currently in preparation. The one visc-ref.d corresponds to Steinberger (GJI, 205, 604-621,2016) and then there are two corresponding to the 2006 paper. The viscosity drop in the bottom thermal boundary layer is already included (for excluding it one would have to multiply with the difference factor between the corresponding "adiababic" and "non-adiabatic" profiles), but the viscosity increase in the lithosphere isn't (i.e. it ~ corresponds to "mid-oceanic ridge") and would need to come in through temperature dependence.
+
+Is that something you can use?
+
+Bernhard  

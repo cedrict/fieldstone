@@ -1,0 +1,39 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+
+set xlabel 'viscosity (Pa.s)'
+set ylabel 'r (km)'
+set log x
+set key outside
+
+set output 'profiles_steinberger.pdf'
+plot[][]\
+'steinberger/v1.d'          u (10**$1):2 w l lt 1 t 'v1',\
+'steinberger/v1_ad.d'       u (10**$1):2 w l lt 1 dashtype 2 t 'v1-ad',\
+'steinberger/v1_ad_zdb98.d' u (10**$1):2 w l lt 1 dashtype 3 t 'v1-ad-zadb98',\
+'steinberger/v1_zdb98.d'    u (10**$1):2 w l lt 1 dashtype 4 t 'v1-zadb98',\
+'steinberger/v3.d'          u (10**$1):2 w l lt 2 t 'v3',\
+'steinberger/v4.d'          u (10**$1):2 w l lt 3 t 'v4',\
+'steinberger/v4_ad.d'       u (10**$1):2 w l lt 3 dashtype 2 t 'v4-ad',\
+'steinberger/v4_ad_zdb98.d' u (10**$1):2 w l lt 3 dashtype 3 t 'v4-ad-zadb98',\
+'steinberger/v4_zdb98.d'    u (10**$1):2 w l lt 3 dashtype 4 t 'v4-zadb98',\
+'steinberger/v5.d'          u (10**$1):2 w l lt 4 t 'v5',\
+'steinberger/v5_ad.d'       u (10**$1):2 w l lt 4 dashtype 2 t 'v5-ad',\
+'steinberger/v5_ad_zdb98.d' u (10**$1):2 w l lt 4 dashtype 3 t 'v5-ad-zadb98',\
+'steinberger/v5_zdb98.d'    u (10**$1):2 w l lt 4 dashtype 4 t 'v5-zadb98',\
+
+
+
+set output 'profiles.pdf'
+plot[][]\
+'steinberger2/visc_ref.d'   u (10**$1):(6371-$2)       w l lw .5 lt 1 t 'Steinberger (2016)',\
+'steinberger2/visc_sc06.d'  u (10**$1):(6371-$2)       w l lw .5 lt 2 t 'Steinberger \& C. (2006)',\
+'steinberger2/visc_sc06b.d' u (10**$1):(6371-$2)       w l lw .5 lt 3 t 'Steinberger \& C. (2006)',\
+'civs12.ascii'              u (10**$2):(6371-$1/1000)  w lp lt 4 ps .2 lw .5 t 'Ciskova et al (2012) - a',\
+'civs12.ascii'              u (10**$3):(6371-$1/1000)  w lp lt 5 ps .2 lw .5 t 'Ciskova et al (2012) - b',\
+'stho08.ascii'              u (10**$1):(6371-$2)       w lp lt 6 ps .2 lw .5 t 'Steinberger \& H. (2008), fig.3', \
+6371-70  lt -1 lw .3 dashtype 2 t '70km depth',\
+6371-400 lt -1 lw .3 dashtype 3 t '400km depth',\
+6371-670 lt -1 lw .3 dashtype 4 t '670km depth'
+
+#'visc_stho08.ascii' u 2:(6371*$1) w lp lw .5 ps .2 t 'stho08', \
