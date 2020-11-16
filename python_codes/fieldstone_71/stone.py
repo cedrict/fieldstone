@@ -104,7 +104,7 @@ depths_civs12[:]=np.flip(depths_civs12)
 viscA_civs12[:]=np.flip(viscA_civs12)
 viscB_civs12[:]=np.flip(viscB_civs12)
 
-#np.savetxt('civs12.ascii',np.array([depths_civs12,viscA_civs12,viscB_civs12]).T)
+np.savetxt('civs12.ascii',np.array([depths_civs12,viscA_civs12,viscB_civs12]).T)
 
 print('     -> read civs12 ok') 
 

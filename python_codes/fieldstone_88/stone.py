@@ -91,7 +91,9 @@ def eta(T,e,y):
           G=1.2-0.1*(z-0.42)/0.13
        else:
           G=1.1+0.7*(z-0.55)/0.45
-       val=min(1e4,etaref*np.exp(12.66*(G/(0.15+1.7*TT)-1)))
+       val=etaref*np.exp(12.66*(G/(0.15+1.7*TT)-1))
+       val=min(1e3,val)
+       val=max(1e-4,val)
 
        #print (y,z,TT,G,val)
 
