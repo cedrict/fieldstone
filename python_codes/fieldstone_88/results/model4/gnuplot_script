@@ -1,0 +1,44 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set xlabel '<T>'
+set ylabel  'y'
+
+set output 'profile_T.pdf'
+plot[][]\
+'profile_T_000000.ascii' u 2:1 w l t 'step=0',\
+'profile_T_000900.ascii' u 2:1 w l t 'step=900',\
+'profile_T_001800.ascii' u 2:1 w l t 'step=1800',\
+'profile_T_002700.ascii' u 2:1 w l t 'step=2700',\
+'profile_T_003600.ascii' u 2:1 w l t 'step=3600',\
+'profile_T_004500.ascii' u 2:1 w l t 'step=4500',\
+'profile_T_005400.ascii' u 2:1 w l t 'step=5400',\
+'profile_T_006300.ascii' u 2:1 w l t 'step=6300',\
+'profile_T_007200.ascii' u 2:1 w l t 'step=7200',\
+'profile_T_008100.ascii' u 2:1 w l t 'step=8100',\
+'profile_T_009000.ascii' u 2:1 w l t 'step=9000',\
+
+set log x
+set output 'profile_eta.pdf'
+plot[][]\
+'profile_eta_000000.ascii' u 2:1 w l t 'step=0',\
+'profile_eta_000900.ascii' u 2:1 w l t 'step=900',\
+'profile_eta_001800.ascii' u 2:1 w l t 'step=1800',\
+'profile_eta_002700.ascii' u 2:1 w l t 'step=2700',\
+'profile_eta_003600.ascii' u 2:1 w l t 'step=3600',\
+'profile_eta_004500.ascii' u 2:1 w l t 'step=4500',\
+'profile_eta_005400.ascii' u 2:1 w l t 'step=5400',\
+'profile_eta_006300.ascii' u 2:1 w l t 'step=6300',\
+'profile_eta_007200.ascii' u 2:1 w l t 'step=7200',\
+'profile_eta_008100.ascii' u 2:1 w l t 'step=8100',\
+'profile_eta_009000.ascii' u 2:1 w l t 'step=9000',\
+
+set ylabel 'v_{rms}'
+unset log x
+set output 'vrms.pdf'
+plot[][]\
+'vrms.ascii' w l notitle
+
+set ylabel '<T>'
+set output 'Tavrg.pdf'
+plot[][]\
+'Tavrg.ascii' w l notitle 
