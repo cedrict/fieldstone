@@ -8,10 +8,123 @@ set ylabel '||R||_2'
 set output 'conv.pdf'
 plot[][]\
 'n_02/conv.ascii' w lp ps .34 t 'n=2',\
+'n_03/conv.ascii' w lp ps .34 t 'n=3',\
 'n_05/conv.ascii' w lp ps .34 t 'n=5',\
 'n_10/conv.ascii' w lp ps .34 t 'n=10',\
 'n_20/conv.ascii' w lp ps .34 t 'n=20',\
 'n_50/conv.ascii' w lp ps .34 t 'n=50',\
+
+
+
+set title 'n=5'
+set output 'conv_n5.pdf'
+plot[:30][]\
+'n_05/conv.ascii' w l lt -1  t '100% Picard',\
+'n_05_all/conv_5_2_30.ascii'   w lp ps .1 lw .5  t 'Npicard=2',\
+'n_05_all/conv_5_3_30.ascii'   w lp ps .1 lw .5  t 'Npicard=3',\
+'n_05_all/conv_5_4_30.ascii'   w lp ps .1 lw .5  t 'Npicard=4',\
+'n_05_all/conv_5_5_30.ascii'   w lp ps .1 lw .5  t 'Npicard=5',\
+'n_05_all/conv_5_6_30.ascii'   w lp ps .1 lw .5  t 'Npicard=6',\
+'n_05_all/conv_5_7_30.ascii'   w lp ps .1 lw .5  t 'Npicard=7',\
+'n_05_all/conv_5_9_30.ascii'   w lp ps .1 lw .5  t 'Npicard=9',\
+'n_05_all/conv_5_11_30.ascii'  w lp ps .1 lw .5  t 'Npicard=11',\
+'n_05_all/conv_5_13_30.ascii'  w lp ps .1 lw .5  t 'Npicard=13',\
+'n_05_all/conv_5_15_30.ascii'  w lp ps .1 lw .5  t 'Npicard=15',\
+'n_05_all/conv_5_17_30.ascii'  w lp ps .1 lw .5  t 'Npicard=17',\
+'n_05_all/conv_5_19_30.ascii'  w lp ps .1 lw .5  t 'Npicard=19',\
+'n_05_all/conv_5_21_30.ascii'  w lp ps .1 lw .5  t 'Npicard=21',\
+'n_05_all/conv_5_23_30.ascii'  w lp ps .1 lw .5  t 'Npicard=23',\
+'n_05_all/conv_5_25_30.ascii'  w lp ps .1 lw .5  t 'Npicard=25',\
+'n_05_all/conv_5_27_30.ascii'  w lp ps .1 lw .5  t 'Npicard=25',\
+'n_05_all/conv_5_29_30.ascii'  w lp ps .1 lw .5  t 'Npicard=25',\
+'n_05_all/conv_5_31_30.ascii'  w lp ps .1 lw .5  t 'Npicard=25',\
+
+set title 'n=10'
+set output 'conv_n10.pdf'
+plot[:30][:1]\
+'n_10/conv.ascii' w l lt -1  t '100% Picard',\
+'n_10_all/conv_10_2_30.ascii'   w lp ps .1 lw .5  t 'Npicard=2',\
+'n_10_all/conv_10_3_30.ascii'   w lp ps .1 lw .5  t 'Npicard=3',\
+'n_10_all/conv_10_4_30.ascii'   w lp ps .1 lw .5  t 'Npicard=4',\
+'n_10_all/conv_10_5_30.ascii'   w lp ps .1 lw .5  t 'Npicard=5',\
+'n_10_all/conv_10_6_30.ascii'   w lp ps .1 lw .5  t 'Npicard=6',\
+'n_10_all/conv_10_7_30.ascii'   w lp ps .1 lw .5  t 'Npicard=7',\
+'n_10_all/conv_10_9_30.ascii'   w lp ps .1 lw .5  t 'Npicard=9',\
+'n_10_all/conv_10_11_30.ascii'  w lp ps .1 lw .5  t 'Npicard=11',\
+'n_10_all/conv_10_13_30.ascii'  w lp ps .1 lw .5  t 'Npicard=13',\
+'n_10_all/conv_10_15_30.ascii'  w lp ps .1 lw .5  t 'Npicard=15',\
+'n_10_all/conv_10_17_30.ascii'  w lp ps .1 lw .5  t 'Npicard=17',\
+'n_10_all/conv_10_19_30.ascii'  w lp ps .1 lw .5  t 'Npicard=19',\
+'n_10_all/conv_10_21_30.ascii'  w lp ps .1 lw .5  t 'Npicard=21',\
+'n_10_all/conv_10_23_30.ascii'  w lp ps .1 lw .5  t 'Npicard=23',\
+'n_10_all/conv_10_25_30.ascii'  w lp ps .1 lw .5  t 'Npicard=25',\
+'n_10_all/conv_10_27_30.ascii'  w lp ps .1 lw .5  t 'Npicard=27',\
+'n_10_all/conv_10_29_30.ascii'  w lp ps .1 lw .5  t 'Npicard=29',\
+'n_10_all/conv_10_31_30.ascii'  w lp ps .1 lw .5  t 'Npicard=31',\
+
+
+
+
+unset log y
+
+
+set title 'n=5'
+set ylabel '{/Symbol Q}'
+set output 'theta_n5.pdf'
+plot[][]\
+'n_05_all/stats_theta_5_2_30.ascii' w lp ps .1 lw .5 t 'Npicard=2',\
+'n_05_all/stats_theta_5_3_30.ascii' w lp ps .1 lw .5 t 'Npicard=3',\
+'n_05_all/stats_theta_5_4_30.ascii' w lp ps .1 lw .5 t 'Npicard=4',\
+'n_05_all/stats_theta_5_5_30.ascii' w lp ps .1 lw .5 t 'Npicard=5',\
+'n_05_all/stats_theta_5_6_30.ascii' w lp ps .1 lw .5 t 'Npicard=6',\
+'n_05_all/stats_theta_5_7_30.ascii' w lp ps .1 lw .5 t 'Npicard=7',\
+'n_05_all/stats_theta_5_9_30.ascii' w lp ps .1 lw .5 t 'Npicard=9',\
+'n_05_all/stats_theta_5_11_30.ascii' w lp ps .1 lw .5 t 'Npicard=11',\
+'n_05_all/stats_theta_5_13_30.ascii' w lp ps .1 lw .5 t 'Npicard=13',\
+'n_05_all/stats_theta_5_15_30.ascii' w lp ps .1 lw .5 t 'Npicard=15',\
+'n_05_all/stats_theta_5_17_30.ascii' w lp ps .1 lw .5 t 'Npicard=17',\
+'n_05_all/stats_theta_5_19_30.ascii' w lp ps .1 lw .5 t 'Npicard=19',\
+'n_05_all/stats_theta_5_21_30.ascii' w lp ps .1 lw .5 t 'Npicard=21',\
+'n_05_all/stats_theta_5_23_30.ascii' w lp ps .1 lw .5 t 'Npicard=23',\
+'n_05_all/stats_theta_5_25_30.ascii' w lp ps .1 lw .5 t 'Npicard=25',\
+'n_05_all/stats_theta_5_27_30.ascii' w lp ps .1 lw .5 t 'Npicard=27',\
+'n_05_all/stats_theta_5_29_30.ascii' w lp ps .1 lw .5 t 'Npicard=29',\
+'n_05_all/stats_theta_5_31_30.ascii' w lp ps .1 lw .5 t 'Npicard=31',\
+
+
+
+
+set title 'n=10'
+set ylabel '{/Symbol Q}'
+set output 'theta_n10.pdf'
+plot[][]\
+'n_10_all/stats_theta_10_2_30.ascii' w lp ps .1 lw .5 t 'Npicard=2',\
+'n_10_all/stats_theta_10_3_30.ascii' w lp ps .1 lw .5 t 'Npicard=3',\
+'n_10_all/stats_theta_10_4_30.ascii' w lp ps .1 lw .5 t 'Npicard=4',\
+'n_10_all/stats_theta_10_5_30.ascii' w lp ps .1 lw .5 t 'Npicard=5',\
+'n_10_all/stats_theta_10_6_30.ascii' w lp ps .1 lw .5 t 'Npicard=6',\
+'n_10_all/stats_theta_10_7_30.ascii' w lp ps .1 lw .5 t 'Npicard=7',\
+'n_10_all/stats_theta_10_9_30.ascii' w lp ps .1 lw .5 t 'Npicard=9',\
+'n_10_all/stats_theta_10_11_30.ascii' w lp ps .1 lw .5 t 'Npicard=11',\
+'n_10_all/stats_theta_10_13_30.ascii' w lp ps .1 lw .5 t 'Npicard=13',\
+'n_10_all/stats_theta_10_15_30.ascii' w lp ps .1 lw .5 t 'Npicard=15',\
+'n_10_all/stats_theta_10_17_30.ascii' w lp ps .1 lw .5 t 'Npicard=17',\
+'n_10_all/stats_theta_10_19_30.ascii' w lp ps .1 lw .5 t 'Npicard=19',\
+'n_10_all/stats_theta_10_21_30.ascii' w lp ps .1 lw .5 t 'Npicard=21',\
+'n_10_all/stats_theta_10_23_30.ascii' w lp ps .1 lw .5 t 'Npicard=23',\
+'n_10_all/stats_theta_10_25_30.ascii' w lp ps .1 lw .5 t 'Npicard=25',\
+'n_10_all/stats_theta_10_27_30.ascii' w lp ps .1 lw .5 t 'Npicard=27',\
+'n_10_all/stats_theta_10_29_30.ascii' w lp ps .1 lw .5 t 'Npicard=29',\
+'n_10_all/stats_theta_10_31_30.ascii' w lp ps .1 lw .5 t 'Npicard=31',\
+
+
+unset title
+
+
+
+
+
+
 
 set ylabel 'u'
 unset log y 
@@ -19,91 +132,101 @@ set output 'u.pdf'
 plot[][]\
 'n_02/stats_u.ascii' u 1:2 w lp lt 1 ps .34 t 'n=2',\
 'n_02/stats_u.ascii' u 1:3 w lp lt 1 ps .34 notitle ,\
-'n_05/stats_u.ascii' u 1:2 w lp lt 2 ps .34 t 'n=5',\
-'n_05/stats_u.ascii' u 1:3 w lp lt 2 ps .34 notitle  ,\
-'n_10/stats_u.ascii' u 1:2 w lp lt 3 ps .34 t 'n=10',\
-'n_10/stats_u.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
-'n_20/stats_u.ascii' u 1:2 w lp lt 4 ps .34 t 'n=20',\
-'n_20/stats_u.ascii' u 1:3 w lp lt 4 ps .34 notitle  ,\
-'n_50/stats_u.ascii' u 1:2 w lp lt 5 ps .34 t 'n=50',\
-'n_50/stats_u.ascii' u 1:3 w lp lt 5 ps .34 notitle  ,\
+'n_03/stats_u.ascii' u 1:2 w lp lt 2 ps .34 t 'n=3',\
+'n_03/stats_u.ascii' u 1:3 w lp lt 2 ps .34 notitle ,\
+'n_05/stats_u.ascii' u 1:2 w lp lt 3 ps .34 t 'n=5',\
+'n_05/stats_u.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
+'n_10/stats_u.ascii' u 1:2 w lp lt 4 ps .34 t 'n=10',\
+'n_10/stats_u.ascii' u 1:3 w lp lt 4 ps .34 notitle  ,\
+'n_20/stats_u.ascii' u 1:2 w lp lt 5 ps .34 t 'n=20',\
+'n_20/stats_u.ascii' u 1:3 w lp lt 5 ps .34 notitle  ,\
+'n_50/stats_u.ascii' u 1:2 w lp lt 6 ps .34 t 'n=50',\
+'n_50/stats_u.ascii' u 1:3 w lp lt 6 ps .34 notitle  ,\
 
 set ylabel 'v'
 set output 'v.pdf'
 plot[][]\
 'n_02/stats_v.ascii' u 1:2 w lp lt 1 ps .34 t 'n=2',\
 'n_02/stats_v.ascii' u 1:3 w lp lt 1 ps .34 notitle ,\
-'n_05/stats_v.ascii' u 1:2 w lp lt 2 ps .34 t 'n=5',\
-'n_05/stats_v.ascii' u 1:3 w lp lt 2 ps .34 notitle  ,\
-'n_10/stats_v.ascii' u 1:2 w lp lt 3 ps .34 t 'n=10',\
-'n_10/stats_v.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
-'n_20/stats_v.ascii' u 1:2 w lp lt 4 ps .34 t 'n=20',\
-'n_20/stats_v.ascii' u 1:3 w lp lt 4 ps .34 notitle  ,\
-'n_50/stats_v.ascii' u 1:2 w lp lt 5 ps .34 t 'n=50',\
-'n_50/stats_v.ascii' u 1:3 w lp lt 5 ps .34 notitle  ,\
+'n_03/stats_v.ascii' u 1:2 w lp lt 2 ps .34 t 'n=3',\
+'n_03/stats_v.ascii' u 1:3 w lp lt 2 ps .34 notitle ,\
+'n_05/stats_v.ascii' u 1:2 w lp lt 3 ps .34 t 'n=5',\
+'n_05/stats_v.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
+'n_10/stats_v.ascii' u 1:2 w lp lt 4 ps .34 t 'n=10',\
+'n_10/stats_v.ascii' u 1:3 w lp lt 4 ps .34 notitle  ,\
+'n_20/stats_v.ascii' u 1:2 w lp lt 5 ps .34 t 'n=20',\
+'n_20/stats_v.ascii' u 1:3 w lp lt 5 ps .34 notitle  ,\
+'n_50/stats_v.ascii' u 1:2 w lp lt 6 ps .34 t 'n=50',\
+'n_50/stats_v.ascii' u 1:3 w lp lt 6 ps .34 notitle  ,\
 
 set ylabel 'p'
 set output 'p.pdf'
 plot[][-5e9:5e9]\
 'n_02/stats_p.ascii' u 1:2 w lp lt 1 ps .34 t 'n=2',\
 'n_02/stats_p.ascii' u 1:3 w lp lt 1 ps .34 notitle ,\
-'n_05/stats_p.ascii' u 1:2 w lp lt 2 ps .34 t 'n=5',\
-'n_05/stats_p.ascii' u 1:3 w lp lt 2 ps .34 notitle  ,\
-'n_10/stats_p.ascii' u 1:2 w lp lt 3 ps .34 t 'n=10',\
-'n_10/stats_p.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
-'n_20/stats_p.ascii' u 1:2 w lp lt 4 ps .34 t 'n=20',\
-'n_20/stats_p.ascii' u 1:3 w lp lt 4 ps .34 notitle  ,\
-'n_50/stats_p.ascii' u 1:2 w lp lt 5 ps .34 t 'n=50',\
-'n_50/stats_p.ascii' u 1:3 w lp lt 5 ps .34 notitle  ,\
+'n_03/stats_p.ascii' u 1:2 w lp lt 2 ps .34 t 'n=3',\
+'n_03/stats_p.ascii' u 1:3 w lp lt 2 ps .34 notitle ,\
+'n_05/stats_p.ascii' u 1:2 w lp lt 3 ps .34 t 'n=5',\
+'n_05/stats_p.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
+'n_10/stats_p.ascii' u 1:2 w lp lt 4 ps .34 t 'n=10',\
+'n_10/stats_p.ascii' u 1:3 w lp lt 4 ps .34 notitle  ,\
+'n_20/stats_p.ascii' u 1:2 w lp lt 5 ps .34 t 'n=20',\
+'n_20/stats_p.ascii' u 1:3 w lp lt 5 ps .34 notitle  ,\
+'n_50/stats_p.ascii' u 1:2 w lp lt 6 ps .34 t 'n=50',\
+'n_50/stats_p.ascii' u 1:3 w lp lt 6 ps .34 notitle  ,\
 
 set ylabel '{/Symbol d}u'
 set output 'du.pdf'
 plot[][]\
 'n_02/stats_du.ascii' u 1:2 w lp lt 1 ps .34 t 'n=2',\
 'n_02/stats_du.ascii' u 1:3 w lp lt 1 ps .34 notitle ,\
-'n_05/stats_du.ascii' u 1:2 w lp lt 2 ps .34 t 'n=5',\
-'n_05/stats_du.ascii' u 1:3 w lp lt 2 ps .34 notitle  ,\
-'n_10/stats_du.ascii' u 1:2 w lp lt 3 ps .34 t 'n=10',\
-'n_10/stats_du.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
-'n_20/stats_du.ascii' u 1:2 w lp lt 4 ps .34 t 'n=20',\
-'n_20/stats_du.ascii' u 1:3 w lp lt 4 ps .34 notitle  ,\
-'n_50/stats_du.ascii' u 1:2 w lp lt 5 ps .34 t 'n=50',\
-'n_50/stats_du.ascii' u 1:3 w lp lt 5 ps .34 notitle  ,\
+'n_03/stats_du.ascii' u 1:2 w lp lt 2 ps .34 t 'n=3',\
+'n_03/stats_du.ascii' u 1:3 w lp lt 2 ps .34 notitle ,\
+'n_05/stats_du.ascii' u 1:2 w lp lt 3 ps .34 t 'n=5',\
+'n_05/stats_du.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
+'n_10/stats_du.ascii' u 1:2 w lp lt 4 ps .34 t 'n=10',\
+'n_10/stats_du.ascii' u 1:3 w lp lt 4 ps .34 notitle  ,\
+'n_20/stats_du.ascii' u 1:2 w lp lt 5 ps .34 t 'n=20',\
+'n_20/stats_du.ascii' u 1:3 w lp lt 5 ps .34 notitle  ,\
+'n_50/stats_du.ascii' u 1:2 w lp lt 6 ps .34 t 'n=50',\
+'n_50/stats_du.ascii' u 1:3 w lp lt 6 ps .34 notitle  ,\
 
 set ylabel '{/Symbol d}v'
 set output 'dv.pdf'
 plot[][-2e-12:2e-12]\
 'n_02/stats_dv.ascii' u 1:2 w lp lt 1 ps .34 t 'n=2',\
 'n_02/stats_dv.ascii' u 1:3 w lp lt 1 ps .34 notitle ,\
-'n_05/stats_dv.ascii' u 1:2 w lp lt 2 ps .34 t 'n=5',\
-'n_05/stats_dv.ascii' u 1:3 w lp lt 2 ps .34 notitle  ,\
-'n_10/stats_dv.ascii' u 1:2 w lp lt 3 ps .34 t 'n=10',\
-'n_10/stats_dv.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
-'n_20/stats_dv.ascii' u 1:2 w lp lt 4 ps .34 t 'n=20',\
-'n_20/stats_dv.ascii' u 1:3 w lp lt 4 ps .34 notitle  ,\
-'n_50/stats_dv.ascii' u 1:2 w lp lt 5 ps .34 t 'n=50',\
-'n_50/stats_dv.ascii' u 1:3 w lp lt 5 ps .34 notitle  ,\
-
-
-
+'n_03/stats_dv.ascii' u 1:2 w lp lt 2 ps .34 t 'n=3',\
+'n_03/stats_dv.ascii' u 1:3 w lp lt 2 ps .34 notitle ,\
+'n_05/stats_dv.ascii' u 1:2 w lp lt 3 ps .34 t 'n=5',\
+'n_05/stats_dv.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
+'n_10/stats_dv.ascii' u 1:2 w lp lt 4 ps .34 t 'n=10',\
+'n_10/stats_dv.ascii' u 1:3 w lp lt 4 ps .34 notitle  ,\
+'n_20/stats_dv.ascii' u 1:2 w lp lt 5 ps .34 t 'n=20',\
+'n_20/stats_dv.ascii' u 1:3 w lp lt 5 ps .34 notitle  ,\
+'n_50/stats_dv.ascii' u 1:2 w lp lt 6 ps .34 t 'n=50',\
+'n_50/stats_dv.ascii' u 1:3 w lp lt 6 ps .34 notitle  ,\
 
 set ylabel '{/Symbol d}p'
 set output 'dp.pdf'
 plot[][]\
 'n_02/stats_dp.ascii' u 1:2 w lp lt 1 ps .34 t 'n=2',\
 'n_02/stats_dp.ascii' u 1:3 w lp lt 1 ps .34 notitle ,\
-'n_05/stats_dp.ascii' u 1:2 w lp lt 2 ps .34 t 'n=5',\
-'n_05/stats_dp.ascii' u 1:3 w lp lt 2 ps .34 notitle  ,\
-'n_10/stats_dp.ascii' u 1:2 w lp lt 3 ps .34 t 'n=10',\
-'n_10/stats_dp.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
-'n_20/stats_dp.ascii' u 1:2 w lp lt 4 ps .34 t 'n=20',\
-'n_20/stats_dp.ascii' u 1:3 w lp lt 4 ps .34 notitle  ,\
-'n_50/stats_dp.ascii' u 1:2 w lp lt 5 ps .34 t 'n=50',\
-'n_50/stats_dp.ascii' u 1:3 w lp lt 5 ps .34 notitle  ,\
+'n_03/stats_dp.ascii' u 1:2 w lp lt 2 ps .34 t 'n=3',\
+'n_03/stats_dp.ascii' u 1:3 w lp lt 2 ps .34 notitle ,\
+'n_05/stats_dp.ascii' u 1:2 w lp lt 3 ps .34 t 'n=5',\
+'n_05/stats_dp.ascii' u 1:3 w lp lt 3 ps .34 notitle  ,\
+'n_10/stats_dp.ascii' u 1:2 w lp lt 4 ps .34 t 'n=10',\
+'n_10/stats_dp.ascii' u 1:3 w lp lt 4 ps .34 notitle  ,\
+'n_20/stats_dp.ascii' u 1:2 w lp lt 5 ps .34 t 'n=20',\
+'n_20/stats_dp.ascii' u 1:3 w lp lt 5 ps .34 notitle  ,\
+'n_50/stats_dp.ascii' u 1:2 w lp lt 6 ps .34 t 'n=50',\
+'n_50/stats_dp.ascii' u 1:3 w lp lt 6 ps .34 notitle  ,\
 
 set output 'vrms.pdf'
 plot[][]\
 'n_02/vrms.ascii'  w lp ps .3 t 'n=2',\
+'n_03/vrms.ascii'  w lp ps .3 t 'n=3',\
 'n_05/vrms.ascii'  w lp ps .3 t 'n=5',\
 'n_10/vrms.ascii'  w lp ps .3 t 'n=10',\
 'n_20/vrms.ascii'  w lp ps .3 t 'n=20',\
