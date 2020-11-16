@@ -1,0 +1,207 @@
+#! /bin/bash
+
+niter=100
+
+################################################
+Npicard=50
+theta_method=0 # irrelevant parameter
+
+nnn=1
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_01
+mv opla n_01/
+mv *.ascii n_01/
+mv *.vtu n_01/
+
+nnn=2
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_02
+mv opla n_02/
+mv *.ascii n_02/
+mv *.vtu n_02/
+
+nnn=3
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_03
+mv opla n_03/
+mv *.ascii n_03/
+mv *.vtu n_03/
+
+nnn=4
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_04
+mv opla n_04/
+mv *.ascii n_04/
+mv *.vtu n_04/
+
+nnn=5
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_05
+mv opla n_05/
+mv *.ascii n_05/
+mv *.vtu n_05/
+
+mkdir Picard
+mv n_01/ Picard/
+mv n_02/ Picard/
+mv n_03/ Picard/
+mv n_04/ Picard/
+mv n_05/ Picard/
+
+################################################
+Npicard=4
+theta_method=1
+
+nnn=1
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_01
+mv opla n_01/
+mv *.ascii n_01/
+mv *.vtu n_01/
+
+nnn=2
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_02
+mv opla n_02/
+mv *.ascii n_02/
+mv *.vtu n_02/
+
+nnn=3
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_03
+mv opla n_03/
+mv *.ascii n_03/
+mv *.vtu n_03/
+
+nnn=4
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_04
+mv opla n_04/
+mv *.ascii n_04/
+mv *.vtu n_04/
+
+nnn=5
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_05
+mv opla n_05/
+mv *.ascii n_05/
+mv *.vtu n_05/
+
+mkdir meth1
+mv n_01/ meth1/ 
+mv n_02/ meth1/ 
+mv n_03/ meth1/ 
+mv n_04/ meth1/ 
+mv n_05/ meth1/ 
+
+################################################
+Npicard=4
+theta_method=2
+
+nnn=1
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_01
+mv opla n_01/
+mv *.ascii n_01/
+mv *.vtu n_01/
+
+nnn=2
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_02
+mv opla n_02/
+mv *.ascii n_02/
+mv *.vtu n_02/
+
+nnn=3
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_03
+mv opla n_03/
+mv *.ascii n_03/
+mv *.vtu n_03/
+
+nnn=4
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_04
+mv opla n_04/
+mv *.ascii n_04/
+mv *.vtu n_04/
+
+nnn=5
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_05
+mv opla n_05/
+mv *.ascii n_05/
+mv *.vtu n_05/
+
+mkdir meth2
+mv n_01/ meth2/ 
+mv n_02/ meth2/ 
+mv n_03/ meth2/ 
+mv n_04/ meth2/ 
+mv n_05/ meth2/ 
+
+################################################
+Npicard=4
+theta_method=3
+
+nnn=1
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_01
+mv opla n_01/
+mv *.ascii n_01/
+mv *.vtu n_01/
+
+nnn=2
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_02
+mv opla n_02/
+mv *.ascii n_02/
+mv *.vtu n_02/
+
+nnn=3
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_03
+mv opla n_03/
+mv *.ascii n_03/
+mv *.vtu n_03/
+
+nnn=4
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_04
+mv opla n_04/
+mv *.ascii n_04/
+mv *.vtu n_04/
+
+nnn=5
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_05
+mv opla n_05/
+mv *.ascii n_05/
+mv *.vtu n_05/
+
+mkdir meth3
+mv n_01/ meth3/ 
+mv n_02/ meth3/ 
+mv n_03/ meth3/ 
+mv n_04/ meth3/ 
+mv n_05/ meth3/ 

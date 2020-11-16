@@ -1,0 +1,245 @@
+#! /bin/bash
+
+niter=50
+
+################################################
+Npicard=50
+theta_method=0 # irrelevant parameter
+
+nnn=2
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_02
+mv opla n_02/
+mv *.ascii n_02/
+mv *.vtu n_02/
+
+nnn=5
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_05
+mv opla n_05/
+mv *.ascii n_05/
+mv *.vtu n_05/
+
+nnn=10
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_10
+mv opla n_10/
+mv *.ascii n_10/
+mv *.vtu n_10/
+
+nnn=20
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_20
+mv opla n_20/
+mv *.ascii n_20/
+mv *.vtu n_20/
+
+nnn=50
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_50
+mv opla n_50/
+mv *.ascii n_50/
+mv *.vtu n_50/
+
+nnn=100
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_100
+mv opla n_100/
+mv *.ascii n_100/
+mv *.vtu n_100/
+
+mkdir Picard
+mv n_02/ Picard/
+mv n_05/ Picard/
+mv n_10/ Picard/
+mv n_20/ Picard/
+mv n_50/ Picard/
+mv n_100/ Picard/
+
+
+
+################################################
+Npicard=4
+theta_method=1
+
+nnn=2
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_02
+mv opla n_02/
+mv *.ascii n_02/
+mv *.vtu n_02/
+
+nnn=5
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_05
+mv opla n_05/
+mv *.ascii n_05/
+mv *.vtu n_05/
+
+nnn=10
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_10
+mv opla n_10/
+mv *.ascii n_10/
+mv *.vtu n_10/
+
+nnn=20
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_20
+mv opla n_20/
+mv *.ascii n_20/
+mv *.vtu n_20/
+
+nnn=50
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_50
+mv opla n_50/
+mv *.ascii n_50/
+mv *.vtu n_50/
+
+nnn=100
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_100
+mv opla n_100/
+mv *.ascii n_100/
+mv *.vtu n_100/
+
+mkdir meth1
+mv n_02/ meth1/ 
+mv n_05/ meth1/ 
+mv n_10/ meth1/ 
+mv n_20/ meth1/ 
+mv n_50/ meth1/ 
+mv n_100/ meth1/ 
+
+################################################
+Npicard=4
+theta_method=2
+
+nnn=2
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_02
+mv opla n_02/
+mv *.ascii n_02/
+mv *.vtu n_02/
+
+nnn=5
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_05
+mv opla n_05/
+mv *.ascii n_05/
+mv *.vtu n_05/
+
+nnn=10
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_10
+mv opla n_10/
+mv *.ascii n_10/
+mv *.vtu n_10/
+
+nnn=20
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_20
+mv opla n_20/
+mv *.ascii n_20/
+mv *.vtu n_20/
+
+nnn=50
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_50
+mv opla n_50/
+mv *.ascii n_50/
+mv *.vtu n_50/
+
+nnn=100
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_100
+mv opla n_100/
+mv *.ascii n_100/
+mv *.vtu n_100/
+
+mkdir meth2
+mv n_02/ meth2/ 
+mv n_05/ meth2/ 
+mv n_10/ meth2/ 
+mv n_20/ meth2/ 
+mv n_50/ meth2/ 
+mv n_100/ meth2/ 
+
+################################################
+Npicard=4
+theta_method=3
+
+nnn=2
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_02
+mv opla n_02/
+mv *.ascii n_02/
+mv *.vtu n_02/
+
+nnn=5
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_05
+mv opla n_05/
+mv *.ascii n_05/
+mv *.vtu n_05/
+
+nnn=10
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_10
+mv opla n_10/
+mv *.ascii n_10/
+mv *.vtu n_10/
+
+nnn=20
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_20
+mv opla n_20/
+mv *.ascii n_20/
+mv *.vtu n_20/
+
+nnn=50
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_50
+mv opla n_50/
+mv *.ascii n_50/
+mv *.vtu n_50/
+
+nnn=100
+echo $nnn $Npicard $niter $theta_method
+python3 stone.py $nnn $Npicard $niter $theta_method > opla
+mkdir n_100
+mv opla n_100/
+mv *.ascii n_100/
+mv *.vtu n_100/
+
+mkdir meth3
+mv n_02/ meth3/ 
+mv n_05/ meth3/ 
+mv n_10/ meth3/ 
+mv n_20/ meth3/ 
+mv n_50/ meth3/ 
+mv n_100/ meth3/ 

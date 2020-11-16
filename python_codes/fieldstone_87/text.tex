@@ -48,7 +48,8 @@ Finally, to simplify notations we define $\alpha=\frac1n-1$ so that
 \]
 
 
-
+\Literature: Dynamics of strongly time-dependent convection
+with non-Newtonian temperature-dependent viscosity, Larsen et al \cite{laym96}
 
  
 
@@ -294,7 +295,7 @@ to the viscous block and the rhs is simply the previous residual.
 %---------------------------------------------
 \subsubsection*{Implementation details}
 
-The code is a 'standard' $Q_2 \times Q_1$ element code which solves 
+The code is a $Q_2 \times Q_1$ element code which solves 
 a few nonlinear problems, some of which having analytical solutions. 
 
 It is established that the Newton method converges only if the initial guess is 'close enough'
@@ -308,12 +309,26 @@ Indeed, if $\theta=0$ we recover the defect correction Picard method and
 if $\theta=1$ we recover the standard Newton method. 
 Moreover, the parameter $\theta$ can be adapted according to the norm of 
 the residual, for example by choosing 
-\[
-\theta = 1 - \frac{||\vec{R}^k||}{||\vec{R}^1||}
-\]
-where $\vec{R}^1$ is the residual at the 1st iteration and 
-as $||\vec{R}^k||$ becomes small, $\theta \rightarrow 1$.
-This then ensures a smooth transition between both methods.
+\begin{equation}
+\theta = 1 - \frac{||\vec{R}^k||}{||\vec{R}^p||} 
+\label{eq:theta2}
+\end{equation}
+or
+\begin{equation}
+\theta = 1 - \sqrt{\frac{||\vec{R}^k||}{||\vec{R}^p||}}
+\label{eq:theta3}
+\end{equation}
+where $\vec{R}^p$ is the residual at the iteration $p$ before which Newton is switched on.
+As $||\vec{R}^k||$ becomes small, $\theta \rightarrow 1$.
+This then ensures a smooth transition between both methods. The version 
+with the square root makes the transition even more smooth.
+In the code we then defined the {\tt theta\_method} parameter:
+\begin{itemize}
+\item {\tt theta\_method}=1: $\theta=1$.
+\item {\tt theta\_method}=2: $\theta$ as given by Eq.~\eqref{eq:theta2}.
+\item {\tt theta\_method}=3: $\theta$ as given by Eq.~\eqref{eq:theta3}.
+\end{itemize}
+
 
 Concerning the defect Picard method, two main modifications 
 are needed: build a different rhs, and adapt the boundary conditions. 
@@ -364,87 +379,120 @@ values in the solution vector. Further down, when we apply boundary conditions,
 we must then apply zero, so that the correction is zero where 
 boundary conditions are applied in the domain.  
 
-
-
-\newpage
-%--------------------------------------------------------------------------
-\subsubsection*{Experiment 0 - the linear (regularised) lid driven cavity}
-
-The domain is a unit square. Free slip boundary conditions are prescribed on the 
-left, right and bottom boundaries, while $\vec\upnu=(x(1-x),0$ is prescribed on the 
-top. There are no buoyancy forces and the viscosity is set to 1. Although 
-not necessary, the pressure is normalised so as to have a zero volume average. 
-This is a linear problem and a single Stokes solve returns the solution. Any further 
-iteration should then not alter this solution. 
-Concretely, we expect that from the 2nd iteration the solution of the sytem $\delta {\cal X}$ 
-is zero (down to machine precision).
-
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_00/vel}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_00/p}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_00/sr}\\
-{\captionfont Solution as obtained on a $32\times 32$ grid.}
-\end{center}
-
-Four defect correction Picard iterations are carried out and the solution fields for 
-each iteration are shown here under:  
-
-\begin{center}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/du_00}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/du_01}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/du_02}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/du_03}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/dv_00}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/dv_01}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/dv_02}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/dv_03}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/dp_00}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/dp_01}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/dp_02}
-\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/dp_03}\\
-{\captionfont From left to right: iteration 0,1,2,3. 
-Top to bottom: horizontal component of the velocity correction, 
-vertical component of the velocity correction, and pressure correction, 
-as obtained on a $32\times 32$ grid. The fields obtained at iteration 0 
-are in fact the solution, and all other subsequently obtained fields 
-are essentially zero, as expected.}
-\end{center}
+We monitor three quantities during the nonlinear iterations:
+\begin{itemize}
+\item the 2-norm of nonlinear residual (i.e. the rhs)
+\begin{lstlisting}
+Rnorm=LA.norm(rhs,2) 
+\end{lstlisting}
+\item the 2-norm of the velocity (correction) vector
+\begin{lstlisting}
+LA.norm(dvel,2)
+\end{lstlisting}
+\item the 2-norm of the pressure (correction) vector
+\begin{lstlisting}
+LA.norm(dp,2)
+\end{lstlisting}
+\end{itemize}
+We then compute the three corresponding normalised quantities:
+\begin{lstlisting}
+index_res=Rnorm/Rnorm0
+index_vel=LA.norm(dvel,2)/LA.norm(vel,2)
+index_p=LA.norm(dp,2)/LA.norm(p,2)
+\end{lstlisting}
+When all three are smaller than the nonlinear tolerance then the system is said to have converged. 
+\begin{lstlisting}
+converged=(index_res<tol_nl and index_vel<tol_nl and index_p<tol_nl)
+\end{lstlisting}
+Using only the normalised nonlinear residual proved problematic because it often occurred that it would drop 
+more than six orders of magnitude over the first 2-3 nonlinear iterations. 
 
 \newpage
 %--------------------------------------------------------------------------
 \subsubsection*{Experiment 1 - the (regularised) lid driven cavity}
 
-This is the same experiment as above but the viscosity is now of the 
+The domain is a unit square. Free slip boundary conditions are prescribed on the 
+left, right and bottom boundaries, while $\vec\upnu=(x(1-x),0$ is prescribed on the 
+top. There are no buoyancy forces and the viscosity is set to $B=1$. 
+The pressure is normalised so as to have a zero volume average. 
+This is a linear problem and a single Stokes solve returns the solution. Any further 
+iteration should then not alter this solution. 
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/vel}
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/p}
+\includegraphics[width=4cm]{python_codes/fieldstone_87/results/experiment_00/sr}\\
+{\captionfont Solution as obtained on a $32\times 32$ grid.}
+\end{center}
+
+\noindent Four defect correction Picard iterations are carried out and the solution for 
+each iteration is shown here under:  
+
+\begin{center}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_87/results/experiment_00/du_00}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_87/results/experiment_00/du_01}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_87/results/experiment_00/du_02}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_87/results/experiment_00/du_03}\\
+\includegraphics[width=3.4cm]{python_codes/fieldstone_87/results/experiment_00/dv_00}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_87/results/experiment_00/dv_01}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_87/results/experiment_00/dv_02}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_87/results/experiment_00/dv_03}\\
+\includegraphics[width=3.4cm]{python_codes/fieldstone_87/results/experiment_00/dp_00}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_87/results/experiment_00/dp_01}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_87/results/experiment_00/dp_02}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_87/results/experiment_00/dp_03}\\
+{\captionfont From left to right: iteration 0,1,2,3. 
+Top to bottom: horizontali and vertical component of the velocity correction, 
+and pressure correction, as obtained on a $32\times 32$ grid. The fields obtained at iteration 0 
+are in fact the solution, and all other subsequently obtained fields 
+are essentially zero, as expected.}
+\end{center}
+
+This is now the same experiment as above but the viscosity is now of the 
 power law type with $B=1$ and $n>1$. Also, no-slip boundary conditions 
 are prescribed on the left, right and bottom sides. 
-The regularisation parameter $\dot{\gamma}$ is set to $10^{-8}$.
+The regularisation parameter $\dot{e}$ is set to $10^{-6}$.
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_01/vel.png}
-\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_01/p.png}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_01/sr.png}
-\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_01/eta.png}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_01/meth3/u.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_01/meth3/v.png}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_01/meth3/vel.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_01/meth3/sr.png}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_01/meth3/press.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_01/meth3/eta.png}\\
 {\captionfont Velocity, pressure, strain rate and viscosity fields as a function 
-of $n$ (from left to right: 2,3,4,5).} 
+of $n$ (from left to right: 1,2,3,4,5).} 
 \end{center}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/conv}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/du}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/dp}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/u}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/v}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/p}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/theta}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_01/conv_picard.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_01/conv_meth1.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_01/conv_meth2.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_01/conv_meth3.pdf}\\
+{\captionfont Npicard =4. $\dot{e}=10^{-6}$}
 \end{center}
 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_01/conv_n5}
-\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_01/conv_n10}\\
-{\captionfont Influence of the number of Picard iterations before wtiching to Newton ones
-for $n=5$ (left) and $n=10$ (right).}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/conv_n5_meth1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/conv_n5_meth2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/conv_n5_meth3}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/theta_n5_meth1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/theta_n5_meth2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/theta_n5_meth3}\\
+{\captionfont Influence of the number of Picard iterations before wtiching to Newton ones for $n=5$.}
 \end{center}
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/du_meth3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/dv_meth3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/dp_meth3.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/u_meth3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/v_meth3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_01/p_meth3.pdf}
+\end{center}
+
 
 
 
@@ -672,16 +720,27 @@ so that its viscosity is simply 1. The inclusion is characterised by $B=5$ and $
 Pressure is volume-average normalised. The regularisation parameter is set to $\dot{e}=10^{-5}$. 
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_87/results/experiment_05/v.png}\\
-\includegraphics[width=12cm]{python_codes/fieldstone_87/results/experiment_05/sr.png}\\
-\includegraphics[width=12cm]{python_codes/fieldstone_87/results/experiment_05/press.png}\\
-\includegraphics[width=12cm]{python_codes/fieldstone_87/results/experiment_05/eta.png}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_05/u.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_05/v.png}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_05/vel.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_05/sr.png}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_05/press.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_05/eta.png}\\
 {\captionfont From left to right: $n=1,2,3,4,5,10$. resolution 64x64. Newton.}
 \end{center}
 
 We see that when $n$ increases so does the effective viscosity in the inclusion. When 
 $n$ becomes very large this experiment becomes very similar to the SolVi (see 
 Section~\ref{sec:geobench}) benchmark.
+
+\begin{center}
+\includegraphics[width=7.8cm]{python_codes/fieldstone_87/results/experiment_05/conv_picard.pdf}
+\includegraphics[width=7.8cm]{python_codes/fieldstone_87/results/experiment_05/conv_meth1.pdf}\\
+\includegraphics[width=7.8cm]{python_codes/fieldstone_87/results/experiment_05/conv_meth2.pdf}
+\includegraphics[width=7.8cm]{python_codes/fieldstone_87/results/experiment_05/conv_meth3.pdf}\\
+{\captionfont Npicard =4. $\dot{e}=10^{-16}$}
+\end{center}
+
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/diag_eta}
@@ -694,12 +753,8 @@ upper right quadrant (i.e. $x\ge 0.5$ and $y\ge 0.5$)}
 \end{center}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/conv}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/du}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/dp}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/v}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/p}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/theta}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/theta_meth2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_05/theta_meth3}
 \end{center}
 
 
@@ -735,21 +790,33 @@ and that no viscosity cutoff is needed here.
 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_06/vel.png}
-\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_06/sr.png}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_06/eta.png}
-\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_06/p.png}\\
+\includegraphics[width=5.5cm]{python_codes/fieldstone_87/results/experiment_06/vel.png}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_87/results/experiment_06/u.png}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_87/results/experiment_06/v.png}\\
+\includegraphics[width=5.5cm]{python_codes/fieldstone_87/results/experiment_06/sr.png}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_87/results/experiment_06/eta.png}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_87/results/experiment_06/p.png}\\
 {\captionfont Velocity, strain rate, viscosity and pressure fields. 128x128 mesh.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/conv}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/du}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/dp}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/u}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/v}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/p}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/conv_48x48.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/conv_64x64.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/conv_80x80.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_06/conv_meth3.pdf}
 \end{center}
+
+\begin{center}
+\includegraphics[width=7.3cm]{python_codes/fieldstone_87/results/experiment_06/horizontal_profile_uv}
+\includegraphics[width=7.3cm]{python_codes/fieldstone_87/results/experiment_06/horizontal_profile_eta}\\
+\includegraphics[width=7.3cm]{python_codes/fieldstone_87/results/experiment_06/horizontal_profile_sr}
+\includegraphics[width=7.3cm]{python_codes/fieldstone_87/results/experiment_06/horizontal_profile_p}\\
+\includegraphics[width=7.3cm]{python_codes/fieldstone_87/results/experiment_06/vertical_profile_uv}
+\includegraphics[width=7.3cm]{python_codes/fieldstone_87/results/experiment_06/vertical_profile_eta}\\
+\includegraphics[width=7.3cm]{python_codes/fieldstone_87/results/experiment_06/vertical_profile_sr}
+\includegraphics[width=7.3cm]{python_codes/fieldstone_87/results/experiment_06/vertical_profile_p}\\
+\end{center}
+
 
 
 \newpage
@@ -831,26 +898,27 @@ $+u_0/2$ is prescribed at the top, and $-u_0/2$ is prescribed at the bottom.
 }
 \end{center}
 
-
-%\note{
-%When resolution increases the fault becomes thinner and 
-%thinner, so that the problem is not resolution independent.
-%Good or bad thing? Assess convergence with vrms ? 
-%}
-
+\begin{center}
+\includegraphics[width=7.8cm]{python_codes/fieldstone_87/results/experiment_07/conv_picard.pdf}
+\includegraphics[width=7.8cm]{python_codes/fieldstone_87/results/experiment_07/conv_meth1.pdf}\\
+\includegraphics[width=7.8cm]{python_codes/fieldstone_87/results/experiment_07/conv_meth2.pdf}
+\includegraphics[width=7.8cm]{python_codes/fieldstone_87/results/experiment_07/conv_meth3.pdf}\\
+{\captionfont Npicard =4. $\dot{e}=10^{-16}$}
+\end{center}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_07/conv.pdf}
+\includegraphics[width=7.8cm]{python_codes/fieldstone_87/results/experiment_07/stats_etaq_meth3.pdf}
+\includegraphics[width=7.8cm]{python_codes/fieldstone_87/results/experiment_07/vrms_meth3.pdf}
 \end{center}
 
 
 \begin{center}
-\includegraphics[width=4.52cm]{python_codes/fieldstone_87/results/experiment_07/u}
-\includegraphics[width=4.52cm]{python_codes/fieldstone_87/results/experiment_07/v}
-\includegraphics[width=4.52cm]{python_codes/fieldstone_87/results/experiment_07/vel}\\
-\includegraphics[width=4.52cm]{python_codes/fieldstone_87/results/experiment_07/eta}
-\includegraphics[width=4.52cm]{python_codes/fieldstone_87/results/experiment_07/sr}
-\includegraphics[width=4.52cm]{python_codes/fieldstone_87/results/experiment_07/press}\\
+\includegraphics[width=5.52cm]{python_codes/fieldstone_87/results/experiment_07/u}
+\includegraphics[width=5.52cm]{python_codes/fieldstone_87/results/experiment_07/v}
+\includegraphics[width=5.52cm]{python_codes/fieldstone_87/results/experiment_07/vel}\\
+\includegraphics[width=5.52cm]{python_codes/fieldstone_87/results/experiment_07/eta}
+\includegraphics[width=5.52cm]{python_codes/fieldstone_87/results/experiment_07/sr}
+\includegraphics[width=5.52cm]{python_codes/fieldstone_87/results/experiment_07/press}\\
 {\captionfont From top to bottom: n=1,2,3,5,10. Mesh 102x51}
 \end{center}
 
@@ -858,8 +926,304 @@ $+u_0/2$ is prescribed at the top, and $-u_0/2$ is prescribed at the bottom.
 
 
 
+\newpage
+%--------------------------------------------------------------------------
+\subsubsection*{Experiment 8 - Poiseuille flow}
+
+Boundary conditions are no slip at the top and bottom, and no vertical 
+velocity on the sides.
+Neumann (pressure) boundary conditions are applied on the 
+left and right boundaries: $p_L=1$, $p_R=-1$ respectively.
+We set $B=1$, $L_x=2$, $L_y=1$. 
+Resolution is 80x40. The regularisation parameter is set to $\dot{e}=10^{-8}$.
+
+There is an analytical solution to this problem. 
+In Gerya \cite{gery19}, the viscosity of the non-Newtonian flow is defined by the following rheological
+equation formulated in term of second stress and strain rate invariants
+\[
+2 \dot\varepsilon_e = C_1 \sigma_e^n
+\]
+where $C_1$ is a constant. The effective viscosity is formulated 
+as a function of second strain rate invariant
+\[
+\eta_{eff} = \frac{\sigma_e}{2\dot\varepsilon_e} 
+= C_1^{-\frac1n} (2 \dot\varepsilon_e)^{\frac1n-1}
+= \underbrace{C_1^{-\frac1n} 2^\alpha}_{B}  \dot\varepsilon_e^{\alpha}
+\]
+In this example we will set $C_1=2^{n-1}$. This has the advantage of setting $\eta=1$ at 
+the top and bottom walls. The vertical component 
+of the velocity is zero, while the horizontal component is 
+given by 
+\[
+u(x,n)=\frac{C_1}{n+1} \left(\frac{p_R-p_L}{L_x}\right)^n  
+\left(  \left(\frac{L_y}{2}\right)^{n+1} - \left| y -\frac{L_y}{2}\right|^{n+1} \right)
+\]
+the viscosity by
+\[
+\eta(y,n)=\frac{1}{C_1} \left( \frac{p_R-p_L}{L_x} y \right)^{1-n}
+\]
+and the pressure by 
+\[
+p(x)=\frac{p_R-p_L}{L_x}x+p_L
+\]
+In the Newtonian case of constant viscosity, then 
+\[
+u(y) = \frac{1}{2} \frac{p_R-p_L}{L_x } \frac{1}{\eta_0} (y^2-yH)
+\]
+
+When the viscosity is equal to 1 ($\alpha=0$) we recover the standard parabolic 
+velocity profile and a linear pressure field.
+When $n>1$ we see that the low strain rate in the middle of the flow
+yields high viscosities and these quickly grow to untractable values. 
+We therefore limit ourselves to $n=2,3,4,5$:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_08/meth3/vel_profile}
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_08/meth3/eta_profile}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_08/meth3/sr_profile}
+\includegraphics[width=8cm]{python_codes/fieldstone_87/results/experiment_08/meth3/vrms}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_08/conv_picard.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_08/conv_meth1.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_08/conv_meth2.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_08/conv_meth3.pdf}\\
+{\captionfont Npicard =4}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_87/results/experiment_08/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_87/results/experiment_08/eta}
+\includegraphics[width=5cm]{python_codes/fieldstone_87/results/experiment_08/sr}\\
+{\captionfont From top to bottom: $n=1,2,3,4,5$.}
+\end{center}
+
+\newpage
+%--------------------------------------------------------------------------
+\subsubsection*{Experiment 9 - the punch problem}
+
+The domain is $1\times0.5$. No-slip boundary conditions are prescribed on the left, right, and bottom 
+boundaries. On the top boundary $\upnu=(0,-1)$ is prescribed for $|x-L_x/2|<0.123456$.
+We set $\dot{e}=10^{-6}$ and $B=1$.
+When $n >> 1$ then $\alpha \rightarrow -1$ and then the effective viscosity tends to 
+\[
+\eta_{eff} \rightarrow 
+\frac{B}{\dot\varepsilon_e}
+=
+\frac{Y}{2\dot\varepsilon_e}
+\] 
+with $Y=2B$. This is the standard form for the viscosity rescaling method in (simple) plasticity.
+If the regularisation parameter is present, then 
+\[
+\eta_{eff} \rightarrow 
+\frac{Y}{2(\dot\varepsilon_e + \dot{e})}
+\] 
+with $Y=2B$. This is the standard form for the viscosity rescaling method in (simple) plasticity.
+Interestingly, when $\dot{e} \sim \dot\varepsilon_e$ then the 
+viscosity tends to $\sim B/\dot{e}$ which acts as a maximum viscosity (soft) limiter.
+In this case, $B/\dot{e}=10^6$ and we see that the viscosity in the rigid regions tends towards this value.
+
+\begin{center}
+\includegraphics[width=7.8cm]{python_codes/fieldstone_87/results/experiment_09/conv_picard.pdf}
+\includegraphics[width=7.8cm]{python_codes/fieldstone_87/results/experiment_09/conv_meth1.pdf}\\
+\includegraphics[width=7.8cm]{python_codes/fieldstone_87/results/experiment_09/conv_meth2.pdf}
+\includegraphics[width=7.8cm]{python_codes/fieldstone_87/results/experiment_09/conv_meth3.pdf}\\
+{\captionfont Npicard =4}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_87/results/experiment_09/meth3/u}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_87/results/experiment_09/meth3/v}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_87/results/experiment_09/meth3/vel}\\
+\includegraphics[width=5.8cm]{python_codes/fieldstone_87/results/experiment_09/meth3/press}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_87/results/experiment_09/meth3/sr}
+\includegraphics[width=5.8cm]{python_codes/fieldstone_87/results/experiment_09/meth3/eta}\\
+{\captionfont Resolution 80x40. $n=2,5,10,20,50,100$. Npicard=4. 
+$\theta$ method 3. When $n>>1$ we indeed recover the 
+classical solution of the rigid-plastic punch, see Section~\ref{sec:punch}}
+\end{center}
+
+
+\begin{center}
+a)\includegraphics[width=7.38cm]{python_codes/fieldstone_87/results/experiment_09/surface_profile_u_meth3.pdf}
+b)\includegraphics[width=7.38cm]{python_codes/fieldstone_87/results/experiment_09/surface_profile_v_meth3.pdf}\\
+c)\includegraphics[width=7.38cm]{python_codes/fieldstone_87/results/experiment_09/surface_profile_sr_meth3.pdf}
+d)\includegraphics[width=7.38cm]{python_codes/fieldstone_87/results/experiment_09/surface_profile_eta_meth3.pdf}\\
+e)\includegraphics[width=7.38cm]{python_codes/fieldstone_87/results/experiment_09/surface_profile_p_meth3.pdf}\\
+{\captionfont a,b,c,d,e) Velocity, strain rate, viscosity and pressure measured at the top of the domain, 
+Npicard=4, 80x40.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_09/vrms_meth3.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_09/stats_etaq_meth3.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_09/theta_meth2.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_09/theta_meth3.pdf}\\
+{\captionfont Npicard =4, $\theta$-method}
+\end{center}
+
+
+\newpage
+%--------------------------------------------------------------------------
+\subsubsection*{Experiment 10 - Spiegelman et al (2016) brick}
+
+
+
+This experiment is presented in Spiegelman (2016) \cite{spmw16} and is also carried out 
+in Fraters et al (2019) \cite{frbt19}. 
+The domain is $120\times30\si{\kilo\metre}$. Since the rheology does not 
+depend on pressure we set $\vec{g}=\vec{0}$.
+Boundary conditions and material parameters are shown hereunder:
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_87/images/spmw16a}
+\includegraphics[width=8cm]{python_codes/fieldstone_87/images/spmw16b}\\
+\end{center}
+The background strain rate is then 
+\[
+e = \frac{2 U_0}{L_x} = \frac{0.005 \si{\metre\per\year}}{120 \si{\kilo\metre}} \simeq 1.32\cdot 10^{-15} \si{\per\second}
+\]
+Although the rounded edges of the weak seed are implemented they are not 'seen' because 
+of the low resolution: $r=0.02H=600\si{\meter}$ while the resolution we use here is $\sim 1200\si{\meter}$
+
+In the von Mises rheology case (no pressure dependence), the viscosity of the top layer is given by 
+\[
+\eta_p= \frac{C}{2 \dot{\epsilon}_{e}}
+\]
+which we can replace by the following power law formulation:
+$\eta = B \dot{\varepsilon}_e^\alpha$
+where $B = \frac{\eta_{lim}}{e^\alpha}$ and $e=10^{-15}s^{-1}$ and $\eta_{lim}=C/2e$. 
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_10/conv_picard.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_10/conv_meth1.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_10/conv_meth2.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_10/conv_meth3.pdf}\\
+{\captionfont Npicard =4}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_10/vrms_meth3.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_10/stats_etaq_meth3.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_10/theta_meth2.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_87/results/experiment_10/theta_meth3.pdf}\\
+{\captionfont Npicard =4, $\theta$-method}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_10/meth3/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_10/meth3/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_10/meth3/v}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_10/meth3/press}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_10/meth3/sr}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_10/meth3/eta}\\
+{\captionfont Npicard=4, $\theta$-method=3, resolution 100x25, $n=100$.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=16cm]{python_codes/fieldstone_87/images/fig1}\\
+\includegraphics[width=14cm]{python_codes/fieldstone_87/images/fig2}\\
+{\captionfont Taken from Spiegelman et al. Note that I am 99\% sure that the pressure range in the paper is wrong.}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_10/meth3/sr2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_10/meth3/eta2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_87/results/experiment_10/meth3/press2}\\
+{\captionfont Same as above but with coloscales of Spiegelman et al} 
+\end{center}
 
 
 
 
+
+\newpage
+%--------------------------------------------------------------------------
+\subsubsection*{Flow around a cylinder}
+
+Because of symmetries we model only one fourth of the system.
+The domain is 4x8 and the cylinder is centered on the origin with a radius of 1/2.
+Free slip boundary conditions are prescribed on the sides, and $\vec\upnu=(0,-1)$
+is prescribed at the top. There is no gravity so density is irrelevant. 
+
+We start with a power-law rheology, with $B=1$ and $n=5$ , $\dot{e}=10^{-4}$:
+\begin{center}
+\includegraphics[width=7.64cm]{python_codes/fieldstone_87/results/experiment_11/meth3/u}
+\includegraphics[width=7.64cm]{python_codes/fieldstone_87/results/experiment_11/meth3/v}\\
+\includegraphics[width=7.64cm]{python_codes/fieldstone_87/results/experiment_11/meth3/vel}
+\includegraphics[width=7.64cm]{python_codes/fieldstone_87/results/experiment_11/meth3/press}\\
+\includegraphics[width=7.64cm]{python_codes/fieldstone_87/results/experiment_11/meth3/sr}
+\includegraphics[width=7.64cm]{python_codes/fieldstone_87/results/experiment_11/meth3/eta}\\
+{\captionfont Resolution 40x80. Npicard=4. $\theta$ method 3. }
+\end{center}
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_87/results/experiment_11/conv_picard.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_87/results/experiment_11/conv_meth1.pdf}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_87/results/experiment_11/conv_meth2.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_87/results/experiment_11/conv_meth3.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_87/results/experiment_11/bottom_profile_eta.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_87/results/experiment_11/bottom_profile_sr.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_87/results/experiment_11/bottom_profile_v.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_87/results/experiment_11/bottom_profile_p.pdf}\\
+{\captionfont Measurements at $y=0$. $\theta$-method=3.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_87/results/experiment_11/vrms_meth3.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_87/results/experiment_11/stats_etaq_meth3.pdf}
+\end{center}
+
+TODO: The Herschel-Bulkley viscosity is given by
+\[
+\eta 
+= K \dot{\varepsilon}_e^{\tilde{n}-1} + \frac{\tau_0}{\dot\varepsilon_e}
+\]
+and it is often regularised for small strain rates as follows:
+\[
+\eta 
+= K \dot{\varepsilon}_e^{\tilde{n}-1} + \frac{\tau_0}{\dot\varepsilon_e}
+\left(
+1 - \exp \frac{\dot\varepsilon_e}{\dot\varepsilon_0}
+\right)
+\]
+The Oldroyd number (Od) is used to quantify
+the relation between the plastic and viscous effects.
+\cite{demj04}
+\[
+Od =  \frac{\tau_0}{K (U/2r)^n}
+\]
+By choosing $K=1$, $U=1$, $r=1/2$ then $Od=\tau_0$. 
+There remains to choose $\dot\varepsilon_0$. When $\dot\varepsilon_e \rightarrow 0$,
+then $\eta \rightarrow \rightarrow K \dot{\varepsilon}_e^{\tilde{n}-1} + \tau_0/\dot\varepsilon_0$.
+
+
+
+Vary Od from 0.1 to 100 
+
+
+
+
+\newpage
+
+Remaining questions
+
+- how to choose reg parameter
+
+- how to measure convergence ?
+
+- line search - ask Menno
+
+- todo : 
+  - carreau example
+  - harmonic avrg example
+  - vrm example
+
+- higher order newton
+
+- regularisation parameter or max viscosity ?
+
+- positive definite
 

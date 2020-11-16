@@ -1,5 +1,7 @@
 #! /bin/bash
 
+#################### missing argument !!!
+
 Npicard=50
 niter=50
 
@@ -16,13 +18,6 @@ mkdir n_50
 mv opla n_50/
 mv *.ascii n_50/
 mv *.vtu n_50/
-
-
-
-
-
-
-
 
 nnn=2
 python3 stone.py $nnn $Npicard $niter

@@ -67,12 +67,6 @@ def viscosity_density(exx,eyy,exy,iiter,x,y,nnn):
     #varepsilon_reg=np.sqrt(exx**2+eyy**2+2*exy**2 + reg**2)
     varepsilon_reg=np.sqrt(0.5*(exx**2+eyy**2+2*exy**2) + reg**2)
 
-    # linear cavity
-    if experiment==0:
-       alpha=0
-       beta=1
-       rho=0
-
     #-----[cavity]-----
     if experiment==1:
        beta=1
@@ -149,6 +143,53 @@ def viscosity_density(exx,eyy,exy,iiter,x,y,nnn):
           alpha=0
        rho=0
 
+    # nonlinear poiseuille flow
+    if experiment==8:
+       alpha=1/nnn-1
+       C1=2**(nnn-1)
+       beta=C1**(-1./nnn)*2**alpha
+       #print (beta)
+       rho=0
+
+    # punch
+    if experiment==9:
+       alpha=1/nnn-1
+       beta=1
+       rho=0
+
+    # spmw16
+    if experiment==10:
+       xC=58.1e3
+       xD=61.9e3
+       yC=9.4e3
+       yD=9.4e3
+       sr_lim=1.e-15
+       tau_lim=100.e6
+       eta_lim=tau_lim/2.e0/sr_lim
+       if y<7.5e3 or \
+          abs(x-60e3)<2.5e3 and y<9.4e3 or \
+          abs(x-60e3)<1.9e3 and y<10.e3 or \
+          (x-xC)**2+(y-yC)**2<0.6e3**2  or \
+          (x-xD)**2+(y-yD)**2<0.6e3**2  : 
+          #n=1 
+          alpha = 0  
+          beta=1.e21
+       else:
+          alpha=1/nnn-1
+          beta=eta_lim/sr_lim**alpha
+       rho=0
+
+    # flow around cylinder
+    if experiment==11:
+       if x**2+y**2<0.5**2:
+          alpha=0
+          beta=1000
+       else:
+          alpha=1/nnn-1
+          beta=1
+       rho=0
+
+
     # compute effective power law viscosity
     eta=beta*varepsilon_reg**alpha
 
@@ -173,24 +214,29 @@ mP=4     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-experiment=7
+experiment=1
 
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 4):
-   nnn     = int(sys.argv[1])
-   Npicard = int(sys.argv[2])
-   niter   = int(sys.argv[3])
+#theta_method=1: theta=1
+#theta_method=2: theta=1-R^k/R^Npicard
+#theta_method=3: theta=1-sqrt(R^k/R^Npicard)
+
+if int(len(sys.argv) == 5):
+   nnn          = int(sys.argv[1])
+   Npicard      = int(sys.argv[2])
+   niter        = int(sys.argv[3])
+   theta_method = int(sys.argv[4])
 else:
    nnn=5
-   Npicard=30
-   niter=30
+   Npicard=4
+   niter=51
+   theta_method=3
 
 #...........................................
-if experiment==0 or experiment==1: # cavity
+if experiment==1: # cavity
    Lx=1.
    Ly=1.
    nelx=32
-   adapt_theta=True
    eta_ref=1. 
    reg=1e-6  
    gx=0
@@ -202,7 +248,6 @@ if experiment==2: # brick
    Lx=40e3
    Ly=10e3
    nelx=64
-   adapt_theta=True
    eta_ref=1e22 
    reg=1e-20  
    gx=0
@@ -214,7 +259,6 @@ if experiment==3 or experiment==4: # slab detachment
    Lx=1000e3
    Ly=660e3
    nelx=100
-   adapt_theta=True
    eta_ref=1e22 
    reg=1e-20  
    gx=0
@@ -225,8 +269,7 @@ if experiment==3 or experiment==4: # slab detachment
 if experiment==5:
    Lx=1
    Ly=1
-   nelx=64
-   adapt_theta=True
+   nelx=80
    eta_ref=100
    reg=1e-5
    gx=0
@@ -237,9 +280,8 @@ if experiment==5:
 if experiment==6: # Stokes sphere
    Lx=600e3
    Ly=600e3
-   nelx=128
-   adapt_theta=True
-   eta_ref=1e22
+   nelx=176
+   eta_ref=1e21
    reg=1e-18
    gx=0
    gy=-9.81
@@ -251,15 +293,63 @@ if experiment==7: # def around fault
    Lx=2*R0
    Ly=R0
    nelx=102
-   adapt_theta=True
    eta_ref=1e19
    reg=1e-16
    gx=0
    gy=0
    grid_stretch=True
 
+#...........................................
+if experiment==8: # poiseuille  
+   Lx=2
+   Ly=1
+   nelx=80
+   gx=0
+   gy=0
+   eta_ref=10
+   reg=1e-8
+   grid_stretch=False
+   p_bc_left=1
+   p_bc_right=-1
 
-tol_nl=1e-12 # nonlinear tolerance
+#...........................................
+if experiment==9: # punch  
+   Lx=1
+   Ly=0.5
+   nelx=80
+   gx=0
+   gy=0
+   eta_ref=10
+   reg=1e-6
+   grid_stretch=False
+
+#...........................................
+if experiment==10: # spmw16
+   Lx=120e3
+   Ly=30e3
+   nelx=100
+   gx=0
+   gy=0
+   eta_ref=1e22
+   reg=1e-17
+   grid_stretch=False
+
+#...........................................
+if experiment==11: # flow around cylinder
+   Lx=4
+   Ly=8
+   nelx=80
+   gx=0
+   gy=0
+   eta_ref=1
+   reg=1e-4
+   grid_stretch=False
+
+#...........................................
+
+use_russians=False
+
+tol_nl=1e-8 # nonlinear tolerance
 every=1
 produce_nl_vtu=False
 use_srn=False
@@ -297,7 +387,6 @@ dustats_file=open("stats_du.ascii","w")
 dvstats_file=open("stats_dv.ascii","w")
 dpstats_file=open("stats_dp.ascii","w")
 theta_file=open("stats_theta.ascii","w")
-srcstats_file=open("stats_src.ascii","w")
 srqstats_file=open("stats_srq.ascii","w")
 etaqstats_file=open("stats_etaq.ascii","w")
 convfile=open('conv.ascii',"w")
@@ -307,6 +396,10 @@ vrmsfile=open('vrms.ascii',"w")
 #################################################################
 
 print("experiment=",experiment)
+print("nnn",nnn)
+print("niter",niter)
+print("Npicard",Npicard)
+print("theta_method=",theta_method)
 print("nelx",nelx)
 print("nely",nely)
 print("nel",nel)
@@ -339,9 +432,6 @@ for j in range(0, nny):
 #end for
 
 print("setup: grid points: %.3f s" % (timing.time() - start))
-
-
-
 
 ###################################################################################################
 # build connectivity arrays for velocity and pressure
@@ -443,7 +533,7 @@ v     =np.zeros(NV,dtype=np.float64)    # y-component velocity
 bc_fix=np.zeros(NfemV,dtype=np.bool)    # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64) # boundary condition, value
 
-if experiment==0 or experiment==1: # cavity 
+if experiment==1: # cavity 
    for i in range(0,NV):
        if yV[i]/Ly>(1-eps):
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = xV[i]*(Lx-xV[i]) 
@@ -542,6 +632,63 @@ if experiment==7:
     #end for
 #end if
 
+if experiment==8:
+   for i in range(0,NV):
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if yV[i]/Ly<eps: 
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if yV[i]/Ly>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+    #end for
+#end if
+
+if experiment==9:
+   for i in range(0,NV):
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if yV[i]/Ly<eps: 
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if yV[i]/Ly>(1-eps) and abs(xV[i]-Lx/2)<0.0987654:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -1
+    #end for
+#end if
+
+if experiment==10:
+   velbc=0.0025/year
+   for i in range(0,NV):
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = velbc
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = -velbc
+       if yV[i]/Ly<eps: 
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+
+if experiment==11:
+   for i in range(0,NV):
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = 0 
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = 0
+       if yV[i]/Ly<eps: 
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          if xV[i]<0.5: 
+             bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if yV[i]/Ly>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -1
+
+
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 
 ###################################################################################################
@@ -551,6 +698,29 @@ print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 solution=np.zeros(Nfem,dtype=np.float64)          # right hand side of Ax=b
 
 solution[0:NfemV]=bc_val[0:NfemV]
+
+###################################################################################################
+# Neumann bc
+###################################################################################################
+Neumann_bc  = np.zeros(NfemV,dtype=np.float64)      
+
+if experiment==8:
+
+   for iel in range(0,nel):
+       if abs(xV[iconV[7,iel]]/Lx)<eps: #element on left boundary
+          if yV[iconV[0,iel]]>0:
+             Neumann_bc[2*iconV[0,iel]]+=p_bc_left*hy/3/2
+          if yV[iconV[3,iel]]<Ly:
+             Neumann_bc[2*iconV[3,iel]]+=p_bc_left*hy/3/2
+          Neumann_bc[2*iconV[7,iel]]+=p_bc_left*hy/3*4/2
+
+       if abs(xV[iconV[5,iel]]/Lx-1)<eps: #element on right boundary
+          if yV[iconV[1,iel]]>0:
+             Neumann_bc[2*iconV[1,iel]]-=p_bc_right*hy/3/2
+          if yV[iconV[2,iel]]<Ly:
+             Neumann_bc[2*iconV[2,iel]]-=p_bc_right*hy/3/2
+          Neumann_bc[2*iconV[5,iel]]-=p_bc_right*hy/3*4/2
+   #end for
 
 ###################################################################################################
 # non-linear iterations
@@ -585,15 +755,17 @@ for iiter in range(0,niter):
    # compute theta
    #################################################################
 
-   if iiter<=Npicard: 
+   if iiter<Npicard: 
       # use Picard iteration
       theta=0.
    else: 
       # use Newton iteration
-      if adapt_theta:
-         theta = max(1-Rnorm/RnormN,0)
-      else:
+      if theta_method==1:
          theta = 1
+      if theta_method==2:
+         theta = max(1-(Rnorm/RnormN),0)
+      if theta_method==3:
+         theta = max(1-np.sqrt(Rnorm/RnormN),0)
 
    print('     -> theta=',theta)
 
@@ -607,7 +779,6 @@ for iiter in range(0,niter):
    #################################################################
 
    A_sparse= lil_matrix((Nfem,Nfem),dtype=np.float64) # FEM stokes matrix 
-   #A_sparse= np.zeros((Nfem,Nfem),dtype=np.float64) # FEM stokes matrix 
    rhs     = np.zeros(Nfem,dtype=np.float64)          # right hand side of Ax=b
    N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64)  # N matrix  
    f_rhs   = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
@@ -618,6 +789,8 @@ for iiter in range(0,niter):
    rhoq    = np.zeros(9*nel,dtype=np.float64)         # density of q points 
    pq      = np.zeros(9*nel,dtype=np.float64)         # pressure of q points 
    srq     = np.zeros(9*nel,dtype=np.float64)         # total strain rate of q points 
+
+   f_rhs+=Neumann_bc
 
    counter=0
    for iel in range(0,nel):
@@ -694,11 +867,10 @@ for iiter in range(0,niter):
                       exyq+=NNNV[k]*exyn[iconV[k,iel]]
 
                # effective strain rate at qpoint                
-               #ee=exxq**2+eyyq**2+2*exyq**2 + reg**2
                ee=0.5*(exxq**2+eyyq**2+2*exyq**2) + reg**2
                srq[counter]=np.sqrt(ee)
 
-               # compute pressure at qpoint
+               # compute pressure at qpoint - not needed yet
                #for k in range(0,mP):
                #    pq[counter]+=NNNP[k]*p[iconP[k,iel]]
 
@@ -708,7 +880,7 @@ for iiter in range(0,niter):
                                             [0.        ,dNNNVdy[i]],
                                             [dNNNVdy[i],dNNNVdx[i]]]
 
-               # compute effective plastic viscosity
+               # compute effective viscosity and density
                etaq[counter],rhoq[counter],alpha=viscosity_density(exxq,eyyq,exyq,iiter,\
                                                                    xq[counter],yq[counter],nnn)
 
@@ -716,7 +888,7 @@ for iiter in range(0,niter):
                                  [eyyq*exxq,eyyq*eyyq,eyyq*exyq],\
                                  [exyq*exxq,exyq*eyyq,exyq*exyq]],dtype=np.float64) 
 
-               coef=2*etaq[counter]*alpha/ee / 2
+               coef=2*etaq[counter]*alpha/2/ee 
                # compute elemental a_mat matrix
                K_el0+=b_mat.T.dot(J_mat.dot(b_mat))*2*etaq[counter]*weightq*jcob
                K_el1+=b_mat.T.dot(D_mat.dot(b_mat))*coef*weightq*jcob
@@ -814,7 +986,7 @@ for iiter in range(0,niter):
    # requires last pressure dof to be at p=0
    ######################################################################
 
-   if experiment==0 or experiment==1 or experiment==3 or \
+   if experiment==1 or experiment==3 or \
       experiment==4 or experiment==5 : 
       for i in range(0,Nfem):
           A_sparse[Nfem-1,i]=0
@@ -839,22 +1011,14 @@ for iiter in range(0,niter):
       Rnorm0=Rnorm
       RVnorm0=RVnorm
       RPnorm0=RPnorm
-   if iiter==Npicard:
+   if iiter==Npicard-1:
       RnormN=Rnorm
-
-   convfile.write("%3d %10e %10e %10e %10e\n" %(iiter,Rnorm/Rnorm0,\
-                                                      RVnorm/RVnorm0,\
-                                                      RPnorm/RPnorm0,tol_nl)) 
-   convfile.flush()
-
-   converged=(Rnorm/Rnorm0<tol_nl)
 
    ######################################################################
    # solving system
    ######################################################################
 
    sparse_matrix=A_sparse.tocsr()
-   #sparse_matrix=sps.csr_matrix(A_sparse)
    sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
    du,dv=np.reshape(sol[0:NfemV],(NV,2)).T
@@ -866,6 +1030,7 @@ for iiter in range(0,niter):
    dustats_file.flush()
    dvstats_file.flush()
    dpstats_file.flush()
+
 
    print("     -> du (m,M) %.4e %.4e " %(np.min(du),np.max(du)))
    print("     -> dv (m,M) %.4e %.4e " %(np.min(dv),np.max(dv)))
@@ -888,16 +1053,213 @@ for iiter in range(0,niter):
    ustats_file.flush()
    vstats_file.flush()
 
-   #np.savetxt('velocity_{:04d}.ascii'.format(iter),np.array([x,y,u,v]).T,header='# x,y,u,v')
+   ######################################################################
+   # assess convergence
+   ######################################################################
+
+   dvel=sol[0:NfemV]
+   vel=solution[0:NfemV]
+
+   index_res=Rnorm/Rnorm0
+   index_vel=LA.norm(dvel,2)/LA.norm(vel,2)
+   index_p=LA.norm(dp,2)/LA.norm(p,2)
+
+   convfile.write("%3d %10e %10e %10e %10e\n" %(iiter,index_res,index_vel,index_p,tol_nl)) 
+   convfile.flush()
+
+   converged=(index_res<tol_nl and index_vel<tol_nl and index_p<tol_nl)
+
+   if index_res>2:
+      exit()
+
+   #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 
    print("solve system: %.3f s - Nfem %d" % (timing.time() - start, Nfem))
+
+   #################################################################
+   ###insert russians
+   #################################################################
+
+   if use_russians and iiter>Npicard: 
+
+      rhs     = np.zeros(Nfem,dtype=np.float64)          # right hand side of Ax=b
+      f_rhs   = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
+      h_rhs   = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
+
+      counter=0
+      for iel in range(0,nel):
+
+          # set arrays to 0 for each element 
+          K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
+          K_el0 =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
+          K_el1 =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
+          G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
+          f_el =np.zeros((mV*ndofV),dtype=np.float64)
+          h_el=np.zeros((mP*ndofP),dtype=np.float64)
+
+          V_el=np.zeros((mV*ndofV),dtype=np.float64)
+          for i in range(0,mV):
+              V_el[2*i+0]=solution[2*iconV[i,iel]+0]
+              V_el[2*i+1]=solution[2*iconV[i,iel]+1]
+
+          P_el=np.zeros((mP*ndofP),dtype=np.float64)
+          for i in range(0,mP):
+              P_el[i]=p[iconP[i,iel]]
+
+          # integrate viscous term at 9 quadrature points
+          for jq in [0,1,2]:
+              for iq in [0,1,2]:
+   
+                  # position & weight of quad. point
+                  rq=qcoords[iq]
+                  sq=qcoords[jq]
+                  weightq=qweights[iq]*qweights[jq]
+
+                  NNNV[0:mV]=NNV(rq,sq)
+                  dNNNVdr[0:mV]=dNNVdr(rq,sq)
+                  dNNNVds[0:mV]=dNNVds(rq,sq)
+                  NNNP[0:mP]=NNP(rq,sq)
+
+                  # calculate jacobian matrix
+                  jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                  for k in range(0,mV):
+                      jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                      jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                      jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                      jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+                  jcob = np.linalg.det(jcb)
+                  jcbi = np.linalg.inv(jcb)
+
+                  # compute dNdx & dNdy & strainrate
+                  exxq=0.0
+                  eyyq=0.0
+                  exyq=0.0
+                  for k in range(0,mV):
+                      dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                      dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                      exxq+=dNNNVdx[k]*u[iconV[k,iel]]
+                      eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
+                      exyq+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
+
+                  if use_srn:
+                     exxq=0.0
+                     eyyq=0.0
+                     exyq=0.0
+                     for k in range(0,mV):
+                         exxq+=NNNV[k]*exxn[iconV[k,iel]]
+                         eyyq+=NNNV[k]*eyyn[iconV[k,iel]]
+                         exyq+=NNNV[k]*exyn[iconV[k,iel]]
+
+                  # effective strain rate at qpoint                
+                  ee=0.5*(exxq**2+eyyq**2+2*exyq**2) + reg**2
+                  srq[counter]=np.sqrt(ee)
+
+                  # compute pressure at qpoint - not needed yet
+                  #for k in range(0,mP):
+                  #    pq[counter]+=NNNP[k]*p[iconP[k,iel]]
+
+                  # construct 3x8 b_mat matrix
+                  for i in range(0,mV):
+                      b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.       ],
+                                               [0.        ,dNNNVdy[i]],
+                                               [dNNNVdy[i],dNNNVdx[i]]]
+
+                  # compute effective viscosity and density
+                  etaq[counter],rhoq[counter],alpha=viscosity_density(exxq,eyyq,exyq,iiter,\
+                                                                      xq[counter],yq[counter],nnn)
+
+                  D_mat = np.array([[exxq*exxq,exxq*eyyq,exxq*exyq],\
+                                    [eyyq*exxq,eyyq*eyyq,eyyq*exyq],\
+                                    [exyq*exxq,exyq*eyyq,exyq*exyq]],dtype=np.float64) 
+
+                  coef=2*etaq[counter]*alpha/2/ee 
+                  # compute elemental a_mat matrix
+                  K_el0+=b_mat.T.dot(J_mat.dot(b_mat))*2*etaq[counter]*weightq*jcob
+                  K_el1+=b_mat.T.dot(D_mat.dot(b_mat))*coef*weightq*jcob
+
+                  # compute elemental rhs vector
+                  for i in range(0,mV):
+                      f_el[ndofV*i+0]+=NNNV[i]*jcob*weightq*gx*rhoq[counter]
+                      f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy*rhoq[counter]
+
+                  for i in range(0,mP):
+                      N_mat[0,i]=NNNP[i]
+                      N_mat[1,i]=NNNP[i]
+                      N_mat[2,i]=0.
+
+                  G_el-=b_mat.T.dot(N_mat)*weightq*jcob
+
+                  counter+=1
+              # end for iq 
+          # end for jq 
+
+          # finish building rhs which is -residual
+          f_el-=K_el0.dot(V_el)+G_el.dot(P_el) # b - K.V - G.P 
+          h_el-=G_el.T.dot(V_el)               # h - G^T.V 
+
+          K_el=K_el0+theta*K_el1
+
+          # impose b.c. 
+          for k1 in range(0,mV):
+              for i1 in range(0,ndofV):
+                  ikk=ndofV*k1          +i1
+                  m1 =ndofV*iconV[k1,iel]+i1
+                  if bc_fix[m1]:
+                     K_ref=K_el[ikk,ikk] 
+                     for jkk in range(0,mV*ndofV):
+                         f_el[jkk]-=K_el[jkk,ikk]*(bc_val[m1]-solution[m1])
+                         K_el[ikk,jkk]=0
+                         K_el[jkk,ikk]=0
+                     #end for jkk
+                     K_el[ikk,ikk]=K_ref
+                     f_el[ikk]=K_ref*(bc_val[m1]-solution[m1])
+                     h_el[:]-=G_el[ikk,:]*(bc_val[m1]-solution[m1])
+                     G_el[ikk,:]=0
+                  # end if 
+              # end for i1 
+          #end for k1 
+
+          # assemble right hand side rhs
+          for k1 in range(0,mV):
+              for i1 in range(0,ndofV):
+                  ikk=ndofV*k1          +i1
+                  m1 =ndofV*iconV[k1,iel]+i1
+                  f_rhs[m1]+=f_el[ikk]
+                  #end for k2
+              #end for i1
+          #end for k1 
+          for k1 in range(0,mP):
+              m1=iconP[k1,iel]
+              h_rhs[m1]+=h_el[k1]*scaling_coeff
+          #end for k1
+
+      # end for iel 
+
+      rhs[0:NfemV]=f_rhs
+      rhs[NfemV:Nfem]=h_rhs
+
+      print('f_rhs',f_rhs)
+      print('h_rhs',f_rhs)
+      #print(rhs)
+
+      RnormR=LA.norm(rhs,2) # residual 2-norm	
+
+      print('     -> ResidualR 2-norm=',RnormR)
+
+      tau=max(Rnorm**2/(Rnorm**2+RnormR**2),0.5)
+
+      print('     -> tau=',tau)
+
+      solution[:]+=(tau-1)*sol[:]
+
+      tau_file.write("%3d %10e \n" %(iiter,tau)) 
 
    #################################################################
    #normalise pressure (for experiments with p nullspace)
    #################################################################
    start = timing.time()
 
-   if experiment==0 or experiment==1 or experiment==3 or \
+   if experiment==1 or experiment==3 or \
       experiment==4 or experiment==5 or experiment==7:
 
       int_p=0
@@ -968,7 +1330,7 @@ for iiter in range(0,niter):
        dq[iconV[8,iel]]=(dp[iconP[0,iel]]+dp[iconP[1,iel]]+\
                          dp[iconP[2,iel]]+dp[iconP[3,iel]])*0.25
 
-   #np.savetxt('q_{:04d}.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
+   #np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
 
    print("project p(Q1) onto vel(Q2) nodes: %.3f s" % (timing.time() - start))
 
@@ -1027,9 +1389,6 @@ for iiter in range(0,niter):
    print("     -> exyc (m,M) %.5e %.5e " %(np.min(exyc),np.max(exyc)))
    print("     -> src  (m,M) %.5e %.5e " %(np.min(src),np.max(src)))
    print("     -> pc   (m,M) %.5e %.5e " %(np.min(pc),np.max(pc)))
-
-   srcstats_file.write("%3d %e %e \n" %(iiter,np.min(src),np.max(src)))
-   srcstats_file.flush()
 
    print("compute press & sr: %.3f s" % (timing.time() - start))
 
@@ -1314,6 +1673,54 @@ if experiment==5:
           diag_file.write("%e %e %e %e %e %e\n" %(r_i,etan[i],srn[i],u[i],v[i],q[i]))
    diag_file.close()
 
+######################################################################
+# export measurements for Stokes sphere
+######################################################################
+
+if experiment==6:
+   vert_file=open('vertical_profile.ascii',"w")
+   for i in range(0,NV):
+       if abs(xV[i]-Lx/2)/Lx<eps:
+          vert_file.write("%e %e %e %e %e %e\n" %(yV[i],etan[i],srn[i],u[i],v[i],q[i]))
+   vert_file.close()
+   hor_file=open('horizontal_profile.ascii',"w")
+   for i in range(0,NV):
+       if abs(yV[i]-Ly/2)/Ly<eps:
+          hor_file.write("%e %e %e %e %e %e\n" %(xV[i],etan[i],srn[i],u[i],v[i],q[i]))
+   hor_file.close()
+
+######################################################################
+# export measurements for slab detachment
+######################################################################
+
+if experiment==8:
+   vert_file=open('vertical_profile.ascii',"w")
+   for i in range(0,NV):
+       if abs(xV[i]-Lx/2)/Lx<eps:
+          vert_file.write("%e %e %e %e\n" %(yV[i],etan[i],srn[i],u[i]))
+   vert_file.close()
+
+######################################################################
+# export measurements for punch
+######################################################################
+
+if experiment==9:
+   surf_file=open('surface_profile.ascii',"w")
+   for i in range(0,NV):
+       if abs(yV[i]-Ly)/Ly<eps:
+          surf_file.write("%e %e %e %e %e %e\n" %(xV[i],etan[i],srn[i],u[i],v[i],q[i]))
+   surf_file.close()
+
+######################################################################
+# export measurements for flow around cylinder
+######################################################################
+
+if experiment==11:
+   bot_file=open('bottom_profile.ascii',"w")
+   for i in range(0,NV):
+       if abs(yV[i])<eps:
+          bot_file.write("%e %e %e %e %e %e\n" %(xV[i],etan[i],srn[i],u[i],v[i],q[i]))
+   bot_file.close()
 
 #####################################################################
 # plot of solution
@@ -1335,11 +1742,11 @@ vtufile.write("</DataArray>\n")
 vtufile.write("</Points> \n")
 #####
 vtufile.write("<CellData Scalars='scalars'>\n")
-vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%10e\n" % (exxc[iel]+eyyc[iel]))
-vtufile.write("</DataArray>\n")
-vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
+#vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
+#for iel in range (0,nel):
+#    vtufile.write("%10e\n" % (exxc[iel]+eyyc[iel]))
+#vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='(effective) viscosity' Format='ascii'> \n")
 for iel in range (0,nel):
     eta,dum,dum=viscosity_density(exxc[iel],eyyc[iel],exyc[iel],iiter,xc[iel],yc[iel],nnn)
     vtufile.write("%10e\n" %eta) 
@@ -1383,14 +1790,23 @@ vtufile.write("<DataArray type='Float32' Name='exyn' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%.5e \n" %exyn[i])
 vtufile.write("</DataArray>\n")
-vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' Name='(effective) strain rate' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%.5e \n" %srn[i])
 vtufile.write("</DataArray>\n")
-vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' Name='(effective) viscosity' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%.5e \n" %etan[i])
 vtufile.write("</DataArray>\n")
+
+vtufile.write("<DataArray type='Float32' Name='(effective) dev. stress' Format='ascii'> \n")
+for i in range(0,NV):
+    vtufile.write("%.5e \n" %(2*etan[i]*srn[i]))
+vtufile.write("</DataArray>\n")
+
+
+
+
 vtufile.write("</PointData>\n")
 #####
 vtufile.write("<Cells>\n")
