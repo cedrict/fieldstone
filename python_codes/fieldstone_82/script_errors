@@ -1,11 +1,21 @@
 #! /bin/bash
 
-rm -f errors
-rm -f vrms
+rm -f errors_nq*
+rm -f vrms_nq*
+rm -f vels_nq*
+rm -f press_nq*
+rm -f solve_nq*
+rm -f build_nq*
 
-for res in {4..20}; do
-    echo $res X $res X $res
-    python3 stone.py $res $res $res 0 > opla
-    grep errv opla >> errors
-    grep vrms opla >> vrms
+for nq in 2 3 4 ; do
+    for res in {4..24}; do
+        echo $res X $res X $res - nq=$nq
+        python3 stone.py $res $res $res $nq 0 > opla
+        grep errv opla >> errors_nq$nq
+        grep vrms opla >> vrms_nq$nq
+        grep solve opla >> solve_nq$nq
+        grep build opla | grep FE >> build_nq$nq
+        cat stats_vel.ascii >> vels_nq$nq
+        cat stats_p.ascii >> press_nq$nq
+    done
 done

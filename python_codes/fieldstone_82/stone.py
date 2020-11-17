@@ -207,15 +207,17 @@ Lx=1.  # x- extent of the domain
 Ly=1.  # y- extent of the domain 
 Lz=1.  # z- extent of the domain 
 
-if int(len(sys.argv) == 5):
+if int(len(sys.argv) == 6):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    nelz = int(sys.argv[3])
-   visu = int(sys.argv[4])
+   nqperdim=int(sys.argv[4])
+   visu = int(sys.argv[5])
 else:
-   nelx =24  # do not exceed 20 
+   nelx =6  # do not exceed 20 
    nely =nelx
    nelz =nelx
+   nqperdim=2
    visu=1
 #end if
 
@@ -227,7 +229,7 @@ hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
 
-pnormalise=True
+pnormalise=False
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
@@ -246,7 +248,6 @@ eps=1.e-10
 
 sqrt3=np.sqrt(3.)
 
-nqperdim=2
 
 if nqperdim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
@@ -269,6 +270,9 @@ bench=3
 beeta=0 # beta parameter for mms
 
 sparse=True
+
+stats_vel_file=open('stats_vel.ascii',"w")
+stats_p_file=open('stats_p.ascii',"w")
 
 #################################################################
 #################################################################
@@ -640,7 +644,20 @@ for iel in range(0, nel):
 
 #end for iel
 
-print("build FE matrix: %.3f s" % (timing.time() - start))
+print("build FE matrix: %.3f s, h= %e" % (timing.time() - start, hx))
+
+######################################################################
+# if we do not ensure int p dV=0 by means of a Lagrange multiplier
+# we do so by fixing the last pressure dof to zero and later 
+# fixing the pressure so that int p dV=0
+######################################################################
+
+if not pnormalise:
+   for i in range(0,Nfem):
+       A_sparse[Nfem-1,i]=0
+       A_sparse[i,Nfem-1]=0
+   A_sparse[Nfem-1,Nfem-1]=1
+   h_rhs[NfemP-1]=0
 
 ######################################################################
 # assemble K, G, GT, f, h into A and rhs
@@ -690,7 +707,7 @@ else:
 
 sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
-print("solve time: %.3f s" % (timing.time() - start))
+print("solve time: %.3f s, h= %e" % (timing.time() - start, hx))
 
 ######################################################################
 # put solution into separate x,y velocity arrays
@@ -708,9 +725,43 @@ print("     -> pp (m,M) %.7f %.7f %.7f" %(np.min(p),np.max(p),hx))
 if pnormalise:
    print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
 
+stats_vel_file.write("%e %e %e %e %e %e %e \n" %(np.min(u),np.max(u),\
+                                                 np.min(v),np.max(v),\
+                                                 np.min(w),np.max(w),hx))
+stats_vel_file.flush()
+
 #np.savetxt('velocity.ascii',np.array([xV,yV,zV,u,v,w]).T,header='# x,y,z,u,v,w')
 
 print("transfer solution: %.3f s" % (timing.time() - start))
+
+#################################################################
+# make sure int p dV = 0
+#################################################################
+start = timing.time()
+
+int_p=0
+if not pnormalise:
+   for iel in range (0,nel):
+       for iq in range(0,nqperdim):
+           for jq in range(0,nqperdim):
+               for kq in range(0,nqperdim):
+                   rq=qcoords[iq]
+                   sq=qcoords[jq]
+                   tq=qcoords[kq]
+                   weightq=qweights[iq]*qweights[jq]*qweights[kq]
+                   NNNP[0:mP]=NNP(rq,sq,tq)
+                   pq=np.sum(NNNP[0:mP]*p[iconP[0:mP,iel]])
+                   jcob=hx*hy*hz/8
+                   int_p+=pq*jcob*weightq
+   int_p/=(Lx*Ly*Ly)
+   p[:]-=int_p
+
+   print("     -> pp (m,M) %.7f %.7f %.7f" %(np.min(p),np.max(p),hx))
+
+stats_p_file.write("%e %e %e \n" %(np.min(p),np.max(p),hx))
+stats_p_file.flush()
+
+print("normalise pressure: %.3f s" % (timing.time() - start))
 
 #################################################################
 # compute xc,yc,zc,rho,eta
