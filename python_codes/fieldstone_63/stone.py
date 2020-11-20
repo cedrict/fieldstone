@@ -87,48 +87,47 @@ print("----------fieldstone---------")
 print("-----------------------------")
 #------------------------------------------------------------------------------
 
-GPa=1e9
+MPa=1e6
 
 ######################################################
 #parameters
 ######################################################
 
-nLayers = 201   # must be odd !
-nel_h=50
+nLayers = 101   # must be odd !
+nel_h=10
 
 #grain geometrical properties
 outer_radius=9e-5  #radius (m)  
-a_fac = 0.2       # ratio of a to R 
-h_fac = 5/90      # ratio of h to R
+a_fac = 20/90      # ratio of a to R 
+h_fac = 5/90       # ratio of h to R
 a = outer_radius*a_fac
 h = outer_radius*h_fac
 
 #Quartz mechanical properties
-E1 = 95e9           #Young's modulus (Pa)
-nu1=0.08              # poisson ratio
+E1 = 95e9                #Young's modulus (Pa)
+nu1=0.08                 # poisson ratio
 mu1= E1/(2*(1+nu1))      # shear modulus
 lambdaa1=2.*mu1*nu1/(1.-2.*nu1)  
-rho1=2.65e3            # density (kg/m^3)
 
-##mechanical properties 2 (cement)
-E2 = 84e9           #Young's modulus (Pa)
-nu2=0.31              # poisson ratio
+##cement mechanical properties
+E2 = 84e9                #Young's modulus (Pa)
+nu2=0.31                 # poisson ratio
 mu2= E2/(2*(1+nu2))      # shear modulus
 lambdaa2=2.*mu2*nu2/(1.-2.*nu2)  
-rho2=2.65e3            # density (kg/m^3)
 
 gx=0.  # gravity vector x-component
 gy=0.  # gravity vector y-component
 visu=1
-squarification  = False
+squarification  = True
     
 t_bc = 1e8  # traction at contact (Pa)
+
     
 #nb of eighths of disk
 nsection=2
 nel = nsection * nLayers * nLayers                  # number of elements per disk
 nel_minus = nsection * (nLayers-1) * (nLayers-1)    # number of elements per disk
-NV  = (nLayers+1)**2                         # number of mesh nodes per disk
+NV  = (nLayers+1)**2                                # number of mesh nodes per disk
 NV_minus  = nLayers**2  # number of mesh nodes per disk when outer layer is not considered
 
 qcoords_r=[1./6.,1./6.,2./3.] # coordinates & weights 
@@ -141,6 +140,8 @@ ndof=2
 ndim=2
 
 eps=1e-9
+
+axisymmetric=False
 
 ###################################################################
 #area_norm = get_area_cement(outer_radius,a_fac,h_fac)
@@ -528,8 +529,8 @@ for i in range(0,NV):
         #bc_fix[i*ndof] = True ; bc_val[i*ndof] = 0.
         bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
     #end if
-    if abs(y[i])<eps:  # top
-        bc_fix[i*ndof] = True ; bc_val[i*ndof] = 0
+#    if abs(y[i])<eps:  # top
+#        bc_fix[i*ndof] = True ; bc_val[i*ndof] = 0
     #endif
 #end for
 
@@ -576,7 +577,6 @@ print("compute elements areas: %.3f s" % (time.time() - start))
 start = time.time()
 
 a_mat = sps.lil_matrix((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-b_mat = np.zeros((3,ndof*m),dtype=np.float64)   # gradient matrix B 
 rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
 u     = np.zeros(NV,dtype=np.float64)           # x-component displacement 
 v     = np.zeros(NV,dtype=np.float64)           # y-component displacement 
@@ -586,8 +586,14 @@ dNNNVdy = np.zeros(m,dtype=np.float64)          # shape functions derivatives
 dNNNVdr = np.zeros(m,dtype=np.float64)          # shape functions derivatives
 dNNNVds = np.zeros(m,dtype=np.float64)          # shape functions derivatives
 
-k_mat = np.array([[1,1,0],[1,1,0],[0,0,0]],dtype=np.float64) 
-c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+if axisymmetric:
+   k_mat = np.array([[1,1,1,0],[1,1,1,0],[1,1,1,0],[0,0,0,0]],dtype=np.float64) 
+   c_mat = np.array([[2,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,1]],dtype=np.float64) 
+   b_mat = np.zeros((4,ndof*m),dtype=np.float64)   # gradient matrix B 
+else:
+   k_mat = np.array([[1,1,0],[1,1,0],[0,0,0]],dtype=np.float64) 
+   c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+   b_mat = np.zeros((3,ndof*m),dtype=np.float64)   # gradient matrix B 
 
 for iel in range(0, nel):
 
@@ -622,18 +628,19 @@ for iel in range(0, nel):
             dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
         #end for
 
-        # construct 3x8 b_mat matrix
-        for i in range(0, m):
-            b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.       ],
-                                     [0.        ,dNNNVdy[i]],
-                                     [dNNNVdy[i],dNNNVdx[i]]]
-        #end for
-
-        K_el += b_mat.T.dot((mu[iel]*c_mat+lambdaa[iel]*k_mat).dot(b_mat))*weightq*jcob
-
-        #for i in range(0, m):
-        #    f_el[ndof*i  ]+=NNNV[i]*jcob*weightq*gx*rho1
-        #    f_el[ndof*i+1]+=NNNV[i]*jcob*weightq*gy*rho1
+        if axisymmetric:
+           for i in range(0, m):
+               b_mat[0:4, 2*i:2*i+2] = [[dNNNVdx[i],0.       ],
+                                        [NNNV[i]/xq,0.       ],
+                                        [0.        ,dNNNVdy[i]],
+                                        [dNNNVdy[i],dNNNVdx[i]]]
+           K_el += 2.*np.pi*b_mat.T.dot((mu[iel]*c_mat+lambdaa[iel]*k_mat).dot(b_mat))*weightq*jcob * xq
+        else:
+           for i in range(0, m):
+               b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.       ],
+                                        [0.        ,dNNNVdy[i]],
+                                        [dNNNVdy[i],dNNNVdx[i]]]
+           K_el += b_mat.T.dot((mu[iel]*c_mat+lambdaa[iel]*k_mat).dot(b_mat))*weightq*jcob
         
     #end for kq
 
@@ -658,9 +665,13 @@ for iel in range(0, nel):
     inode0=icon[0,iel]
     inode1=icon[1,iel]
     inode2=icon[2,iel]
-    if abs(y[inode0])<eps and abs(y[inode2])<eps:  # nodes 2&3 on top boundary 
-       f_el[1]-=t_bc*(x[inode2]-x[inode0])/2
-       f_el[5]-=t_bc*(x[inode2]-x[inode0])/2
+    if abs(y[inode0])<eps and abs(y[inode2])<eps:  # nodes 0 & 2 on top boundary 
+       if axisymmetric:
+          f_el[1]-=t_bc*(x[inode2]-x[inode0])/2 * 2*np.pi*(x[inode2]+x[inode0])/2
+          f_el[5]-=t_bc*(x[inode2]-x[inode0])/2 * 2*np.pi*(x[inode2]+x[inode0])/2
+       else:
+          f_el[1]-=t_bc*(x[inode2]-x[inode0])/2
+          f_el[5]-=t_bc*(x[inode2]-x[inode0])/2
      #end if 
 
     # assemble matrix a_mat and right hand side rhs
@@ -706,7 +717,7 @@ print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
 #np.savetxt('displacement.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
            
 #####################################################################
-# retrieve pressure and compute elemental strain
+# compute elemental strain components
 #####################################################################
 start = time.time()
 
@@ -721,9 +732,9 @@ xc  = np.zeros(nel,dtype=np.float64)
 yc  = np.zeros(nel,dtype=np.float64)  
 exx = np.zeros(nel,dtype=np.float64)  
 eyy = np.zeros(nel,dtype=np.float64)  
+ett = np.zeros(nel,dtype=np.float64) # theta-theta 
 exy = np.zeros(nel,dtype=np.float64)  
 e   = np.zeros(nel,dtype=np.float64)  
-p   = np.zeros(nel,dtype=np.float64)   
 divv= np.zeros(nel,dtype=np.float64)  
 
 for iel in range(0,nel):
@@ -744,7 +755,11 @@ for iel in range(0,nel):
             jcb[1,1]+=dNNNVds[k]*y[icon[k,iel]]
         jcob=np.linalg.det(jcb)
         jcbi=np.linalg.inv(jcb)
+        xq=0
+        yq=0
         for k in range(0,m):
+            xq+=NNNV[k]*x[icon[k,iel]]
+            yq+=NNNV[k]*y[icon[k,iel]]
             dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
             dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
         #end for
@@ -752,25 +767,26 @@ for iel in range(0,nel):
             exx[iel] += dNNNVdx[k]*u[icon[k,iel]]*jcob*weightq
             eyy[iel] += dNNNVdy[k]*v[icon[k,iel]]*jcob*weightq
             exy[iel] += 0.5*(dNNNVdy[k]*u[icon[k,iel]]+dNNNVdx[k]*v[icon[k,iel]])*jcob*weightq
+            if axisymmetric:
+               ett[iel] += NNNV[k]*u[icon[k,iel]]/xq*jcob*weightq
+            else:
+               ett[iel] += 0 
         #end for
     #end for
     exx[iel]/=area[iel]
     eyy[iel]/=area[iel]
     exy[iel]/=area[iel]
-    divv[iel]=exx[iel]+eyy[iel]
+    divv[iel]=exx[iel]+eyy[iel]+ett[iel]
     e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
-    p[iel]=-(lambdaa[iel]+mu[iel])*(exx[iel]+eyy[iel])
 #end for
 
-print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 print("     -> exx (m,M) %.6e %.6e " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.6e %.6e " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.6e %.6e " %(np.min(exy),np.max(exy)))
 
-#np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
 #np.savetxt('strain.ascii',np.array([xc,yc,exx,eyy,exy,divv]).T,header='# xc,yc,exx,eyy,exy,divv')
 
-print("compute press & sr: %.3f s" % (time.time() - start))
+print("compute strain components: %.3f s" % (time.time() - start))
 
 #################################################################
 # compute elemental stress 
@@ -785,7 +801,7 @@ sigma_xx[:]=lambdaa[:]*divv[:]+2*mu[:]*exx[:]
 sigma_yy[:]=lambdaa[:]*divv[:]+2*mu[:]*eyy[:]
 sigma_xy[:]=                  +2*mu[:]*exy[:]
 
-sigma_angle[:]=0.5*np.arctan(2*sigma_xy[:]/(sigma_yy[:]-sigma_xx[:])) * (180/np.pi)
+sigma_angle[:]=0.5*np.arctan(2*sigma_xy[:]/(sigma_yy[:]-sigma_xx[:])) #* (180/np.pi)
 
 sigma_1=0.5*(sigma_xx[:]+sigma_yy[:]) \
        +np.sqrt( 0.25*(sigma_xx[:]-sigma_yy[:])**2+sigma_xy[:]**2 )
@@ -793,86 +809,6 @@ sigma_1=0.5*(sigma_xx[:]+sigma_yy[:]) \
 sigma_2=0.5*(sigma_xx[:]+sigma_yy[:]) \
        -np.sqrt( 0.25*(sigma_xx[:]-sigma_yy[:])**2+sigma_xy[:]**2 )
            
-#################################################################
-# project pressure, strain and stress onto nodes
-#################################################################
-start = time.time()
-
-exx_nodal = np.zeros(NV,dtype=np.float64)  
-eyy_nodal = np.zeros(NV,dtype=np.float64)  
-exy_nodal = np.zeros(NV,dtype=np.float64)  
-divv_nodal = np.zeros(NV,dtype=np.float64) 
-sigma_xx_nodal = np.zeros(NV,dtype=np.float64)  
-sigma_yy_nodal = np.zeros(NV,dtype=np.float64)  
-sigma_xy_nodal = np.zeros(NV,dtype=np.float64)  
-counter = np.zeros(NV,dtype=np.float64)  
-
-for iel in range(0,nel):
-    for kk in range(0,m):
-        if kk==0:
-           rq = 0.0
-           sq = 0.0
-        if kk==1:
-           rq = 1.0
-           sq = 0.0
-        if kk==2:
-           rq = 0.0
-           sq = 1.0
-        NNNV[0:m]=NNV(rq,sq)
-        dNNNVdr[0:m]=dNNVdr(rq,sq)
-        dNNNVds[0:m]=dNNVds(rq,sq)
-        jcb=np.zeros((2,2),dtype=np.float64)
-        for k in range(0,m):
-            jcb[0,0]+=dNNNVdr[k]*x[icon[k,iel]]
-            jcb[0,1]+=dNNNVdr[k]*y[icon[k,iel]]
-            jcb[1,0]+=dNNNVds[k]*x[icon[k,iel]]
-            jcb[1,1]+=dNNNVds[k]*y[icon[k,iel]]
-        #end for
-        jcbi=np.linalg.inv(jcb)
-        for k in range(0,m):
-            dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-            dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-        #end for
-        e_xx=0.
-        e_yy=0.
-        e_xy=0.
-        for k in range(0,m):
-            e_xx += dNNNVdx[k]*u[icon[k,iel]]
-            e_yy += dNNNVdy[k]*v[icon[k,iel]]
-            e_xy += 0.5*dNNNVdy[k]*u[icon[k,iel]]+ 0.5*dNNNVdx[k]*v[icon[k,iel]]
-        #end for
-        inode=icon[kk,iel]
-        exx_nodal[inode]+=e_xx
-        eyy_nodal[inode]+=e_yy
-        exy_nodal[inode]+=e_xy
-        divv_nodal[inode]+=e_xx+e_yy
-        sigma_xx_nodal[inode]+=lambdaa[iel]*(e_xx+e_yy)+2*mu[iel]*e_xx
-        sigma_yy_nodal[inode]+=lambdaa[iel]*(e_xx+e_yy)+2*mu[iel]*e_yy
-        sigma_xy_nodal[inode]+=                         2*mu[iel]*e_xy
-        counter[inode]+=1
-    #end for
-#end for
-
-exx_nodal/=counter
-eyy_nodal/=counter
-exy_nodal/=counter
-divv_nodal/=counter
-sigma_xx_nodal/=counter
-sigma_yy_nodal/=counter
-sigma_xy_nodal/=counter
-
-sigma_1_nodal=0.5*(sigma_xx_nodal[:]+sigma_yy_nodal[:]) \
-       +np.sqrt( 0.25*(sigma_xx_nodal[:]-sigma_yy_nodal[:])**2+sigma_xy_nodal[:]**2 )
-
-sigma_2_nodal=0.5*(sigma_xx_nodal[:]+sigma_yy_nodal[:]) \
-       -np.sqrt( 0.25*(sigma_xx_nodal[:]-sigma_yy_nodal[:])**2+sigma_xy_nodal[:]**2 )
-
-print("     -> exx_n (m,M) %.6e %.6e " %(np.min(exx_nodal),np.max(exx_nodal)))
-print("     -> eyy_n (m,M) %.6e %.6e " %(np.min(eyy_nodal),np.max(eyy_nodal)))
-print("     -> exy_n (m,M) %.6e %.6e " %(np.min(exy_nodal),np.max(exy_nodal)))
- 
-print("compute nodal quantities: %.3f s" % (time.time() - start))
-
 #################################################################
 
 if visu==1:
@@ -910,39 +846,35 @@ if visu==1:
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (e[iel]))
     vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_xx (MPa)' Format='ascii'> \n")
     for iel in range (0,nel):
-        vtufile.write("%10e\n" % (p[iel]))
+        vtufile.write("%10e\n" % (sigma_xx[iel]/MPa))
     vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_xx' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_yy (MPa)' Format='ascii'> \n")
     for iel in range (0,nel):
-        vtufile.write("%10e\n" % (sigma_xx[iel]/GPa))
+        vtufile.write("%10e\n" % (sigma_yy[iel]/MPa))
     vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_yy' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_xy (MPa)' Format='ascii'> \n")
     for iel in range (0,nel):
-        vtufile.write("%10e\n" % (sigma_yy[iel]/GPa))
+        vtufile.write("%10e\n" % (sigma_xy[iel]/MPa))
     vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_xy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (sigma_xy[iel]/GPa))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_angle' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='stress principal angle' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (sigma_angle[iel]))
     vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_1' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_1 (MPa)' Format='ascii'> \n")
     for iel in range (0,nel):
-        vtufile.write("%10e\n" % (sigma_1[iel]/GPa))
+        vtufile.write("%10e\n" % (sigma_1[iel]/MPa))
     vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_2' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_2 (MPa)' Format='ascii'> \n")
     for iel in range (0,nel):
-        vtufile.write("%10e\n" % (sigma_2[iel]/GPa))
+        vtufile.write("%10e\n" % (sigma_2[iel]/MPa))
     vtufile.write("</DataArray>\n")  
-    #vtufile.write("<DataArray type='Float32' Name='sigma_1_angle' Format='ascii'> \n")
-    #for iel in range (0,nel):
-    #    vtufile.write("%10e\n" % (sigma_1_angle[iel]))
-    #vtufile.write("</DataArray>\n")  
-    vtufile.write("<DataArray type='Float32' Name='volumetric strain' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='maximum shear stress (MPa)' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (0.5*(sigma_1[iel]-sigma_2[iel])/MPa))
+    vtufile.write("</DataArray>\n")  
+    vtufile.write("<DataArray type='Float32' Name='volumetric strain div(u)' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" %divv[iel]) 
     vtufile.write("</DataArray>\n")
@@ -954,7 +886,7 @@ if visu==1:
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (lambdaa[iel]))
     vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='tensile_zone' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='tensile_zone (sigma1 gt 0)' Format='ascii'> \n")
     for iel in range(0,nel):
         if sigma_1[iel]>0:
             vtufile.write("%10e \n" % 1)
@@ -964,6 +896,15 @@ if visu==1:
     #end for
     vtufile.write("</DataArray>\n")  
 
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='n1' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e %10e %10e\n" % (np.cos(sigma_angle[iel]),np.sin(sigma_angle[iel]),0.))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='n2' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e %10e %10e\n" % (np.cos(sigma_angle[iel]+np.pi/2),np.sin(sigma_angle[iel]+np.pi/2),0.))
+    vtufile.write("</DataArray>\n")
+
     vtufile.write("</CellData>\n")
 
     vtufile.write("<PointData Scalars='scalars'>\n")
@@ -972,65 +913,6 @@ if visu==1:
     for i in range(0,NV):
         vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
     vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e \n" %exx_nodal[i])
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e \n" %eyy_nodal[i])
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e \n" %exy_nodal[i])
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='volumetric strain' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e \n" %divv_nodal[i])
-    vtufile.write("</DataArray>\n")
-
-    vtufile.write("<DataArray type='Float32' Name='sigma_xx' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e \n" % (sigma_xx_nodal[i]/GPa))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_yy' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e \n" % (sigma_yy_nodal[i]/GPa))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_xy' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e \n" % (sigma_xy_nodal[i]/GPa))
-    vtufile.write("</DataArray>\n")
-
-    vtufile.write("<DataArray type='Float32' Name='tensile_zone' Format='ascii'> \n")
-    for i in range(0,NV):
-        if sigma_1_nodal[i]>0:
-            vtufile.write("%10e \n" % 1)
-        else:
-            vtufile.write("%10e \n" % 0)
-        #end if
-    #end for
-    vtufile.write("</DataArray>\n")  
-
-    #--
-    #vtufile.write("<DataArray type='Float32' Name='sigma_angle' Format='ascii'> \n")
-    #for i in range(0,NV):
-    #    vtufile.write("%10e \n" % sigma_angle_nodal[i])
-    #vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='sigma_1 (GPa)' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e \n" % (sigma_1_nodal[i]/GPa))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_2 (GPa)' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e \n" % (sigma_2_nodal[i]/GPa))
-    vtufile.write("</DataArray>\n")
-    #vtufile.write("<DataArray type='Float32' Name='sigma_1_angle' Format='ascii'> \n")
-    #for i in range(0,NV):
-    #    vtufile.write("%10e \n" % sigma_1_angle_nodal[i])
-    #vtufile.write("</DataArray>\n")
-    #--
     
     #vtufile.write("<DataArray type='Float32' Name='outer_node' Format='ascii'> \n")
     #for i in range(0,NV):
@@ -1088,4 +970,3 @@ print("Total time: %.3f s" % (time.time() - start_all))
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")
-
