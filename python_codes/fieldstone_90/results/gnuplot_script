@@ -1,0 +1,54 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set xlabel 'r'
+set key outside
+
+p1=1
+p2=0
+r1=0.5
+r2=1
+nu=0.25
+E=1
+lambda=0.5*E/(1+nu)
+
+Acoeff=r1**2*r2**2*(p2-p1)/(r2**2-r1**2)
+Bcoeff=(r1**2*p1-r2**2*p2)/(r2**2-r1**2)
+
+
+u(x)=(1+nu)/E*x*((1-2*nu)*Bcoeff-Acoeff/x**2)
+
+err(x)=(1+nu)/E*((1-2*nu)*Bcoeff+Acoeff/x**2)
+ett(x)=u(x)/x
+ezz(x)=0
+
+srr(x)=Acoeff/x**2+Bcoeff
+stt(x)=-Acoeff/x**2+Bcoeff
+szz(x)=lambda*(err(x)+ett(x)+ezz(x))
+
+set output 'displacement.pdf'
+plot[][]\
+'displacement.ascii' u 1:2 w p ps .3  t 'u_r',\
+u(x) lt -1 dashtype 2 t 'analytical'
+
+set ylabel 'strain'
+set output 'strain.pdf'
+plot[][]\
+'profiles.ascii' u 1:2 w p ps .3 t 'e_{rr}',\
+'profiles.ascii' u 1:3 w p ps .3 t 'e_{{/Symbol Q}{/Symbol Q}}',\
+'profiles.ascii' u 1:4 w p ps .3 t 'e_{zz}',\
+'profiles.ascii' u 1:5 w p ps .3 t 'e_{rz}',\
+err(x) lw .5 lt -1 dashtype 2 t 'e_{rr}, analytical',\
+ett(x) lw .5 lt -1 dashtype 3 t 'e_{{/Symbol Q}{/Symbol Q}}, analytical',\
+ezz(x) lw .5 lt -1 dashtype 4 t 'e_{zz}, e_{rz}, analytical'
+
+set ylabel 'stress'
+set output 'stress.pdf'
+plot[][]\
+'profiles.ascii' u 1:6 w p ps .3 t '{/Symbol s}_{rr}',\
+'profiles.ascii' u 1:7 w p ps .3 t '{/Symbol s}_{{/Symbol Q}{/Symbol Q}}',\
+'profiles.ascii' u 1:8 w p ps .3 t '{/Symbol s}_{zz}',\
+'profiles.ascii' u 1:9 w p ps .3 t '{/Symbol s}_{xz}',\
+srr(x) lt -1 lw .5 dashtype 2 t '{/Symbol s}_{rr}, analytical',\
+stt(x) lt -1 lw .5 dashtype 2 t '{/Symbol s}_{{/Symbol Q}{/Symbol Q}}, analytical',\
+szz(x) lt -1 lw .5 dashtype 3 t '{/Symbol s}_{zz}, analytical'
+
