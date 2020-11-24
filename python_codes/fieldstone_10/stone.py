@@ -10,15 +10,15 @@ from scipy.sparse import csr_matrix, lil_matrix
 #------------------------------------------------------------------------------
 
 def rho(x,y,z):
-    if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123**2:
-       val=2.
+    if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123456789**2:
+       val=1.01
     else:
        val=1.
     return val
 
 def mu(x,y,z):
-    if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123**2:
-       val=1.e2
+    if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123456789**2:
+       val=1e3
     else:
        val=1.
     return val
@@ -32,27 +32,29 @@ print("-----------------------------")
 m=8     # number of nodes making up an element
 ndof=3  # number of degrees of freedom per node
 
-Lx=1.  # x- extent of the domain 
-Ly=1.  # y- extent of the domain 
-Lz=1.  # z- extent of the domain 
-
-assert (Lx>0.), "Lx should be positive" 
-assert (Ly>0.), "Ly should be positive" 
-assert (Lz>0.), "Lz should be positive" 
-
-# allowing for argument parsing through command line
-if int(len(sys.argv) == 4):
+if int(len(sys.argv) == 2):
    nelx = int(sys.argv[1])
-   nely = int(sys.argv[2])
-   nelz = int(sys.argv[3])
 else:
-   nelx = 16
-   nely = nelx
-   nelz = nelx
+   nelx = 10
 
-assert (nelx>0.), "nelx should be positive" 
-assert (nely>0.), "nely should be positive" 
-assert (nelz>0.), "nelz should be positive" 
+quarter=False
+
+if quarter:
+   nely=nelx
+   nelz=2*nelx
+   Lx=0.5 
+   Ly=0.5
+   Lz=1.
+else: 
+   nely=nelx
+   nelz=nelx
+   Lx=1.
+   Ly=1.
+   Lz=1.
+
+FS=False
+NS=False
+OT=True
 
 visu=1
     
@@ -75,6 +77,17 @@ gy=0.   # gravity vector, y component
 gz=-1.  # gravity vector, z component
 
 sqrt3=np.sqrt(3.)
+
+#################################################################
+
+print('Lx=',Lx)
+print('Ly=',Ly)
+print('Lz=',Lz)
+print('nelx=',nelx)
+print('nely=',nely)
+print('nelz=',nelz)
+
+
 
 #################################################################
 # grid point setup
@@ -133,21 +146,55 @@ start = time.time()
 bc_fix=np.zeros(Nfem,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=float)  # boundary condition, value
 
-for i in range(0,NV):
-    if x[i]<eps:
-       bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
-    if x[i]>(Lx-eps):
-       bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
-    if y[i]<eps:
-       bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
-    if y[i]>(Ly-eps):
-       bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
-    if z[i]<eps:
-       bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
-    if z[i]>(Lz-eps):
-       bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
-    #end if
-#end for
+if FS or OT:
+   for i in range(0,NV):
+       if x[i]<eps:
+          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
+       if y[i]<eps:
+          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
+       if y[i]>(Ly-eps):
+          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
+       if z[i]<eps:
+          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
+       if not OT and z[i]>(Lz-eps):
+          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
+       #end if
+   #end for
+
+if NS:
+   for i in range(0,NV):
+       if x[i]<eps:
+          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
+          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
+          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
+       if x[i]>(1-eps):
+          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
+          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
+          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
+       if y[i]<eps:
+          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
+          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
+          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
+       if y[i]>(1-eps):
+          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
+          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
+          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
+       if z[i]<eps:
+          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
+          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
+          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
+       if z[i]>(Lz-eps):
+          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
+          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
+          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
+       if quarter and x[i]>(0.5-eps):
+          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
+       if quarter and y[i]>(0.5-eps):
+          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
+   #end for
+
 
 print("define b.c.: %.3f s" % (time.time() - start))
 
@@ -566,6 +613,109 @@ np.savetxt('pressure.ascii',np.array([xc,yc,zc,p]).T,header='# xc,yc,zc,p')
 np.savetxt('strainrate.ascii',np.array([xc,yc,zc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
 print("compute p and strainrate: %.3f s" % (time.time() - start))
+
+#####################################################################
+# compute vrms
+#####################################################################
+
+vrms=0.
+
+for iel in range(0, nel):
+
+    # integrate viscous term at 4 quadrature points
+    for iq in [-1, 1]:
+        for jq in [-1, 1]:
+            for kq in [-1, 1]:
+
+                # position & weight of quad. point
+                rq=iq/sqrt3
+                sq=jq/sqrt3
+                tq=kq/sqrt3
+                weightq=1.*1.*1.
+
+                # calculate shape functions
+                N[0]=0.125*(1.-rq)*(1.-sq)*(1.-tq)
+                N[1]=0.125*(1.+rq)*(1.-sq)*(1.-tq)
+                N[2]=0.125*(1.+rq)*(1.+sq)*(1.-tq)
+                N[3]=0.125*(1.-rq)*(1.+sq)*(1.-tq)
+                N[4]=0.125*(1.-rq)*(1.-sq)*(1.+tq)
+                N[5]=0.125*(1.+rq)*(1.-sq)*(1.+tq)
+                N[6]=0.125*(1.+rq)*(1.+sq)*(1.+tq)
+                N[7]=0.125*(1.-rq)*(1.+sq)*(1.+tq)
+
+                # calculate shape function derivatives
+                dNdr[0]=-0.125*(1.-sq)*(1.-tq) 
+                dNdr[1]=+0.125*(1.-sq)*(1.-tq)
+                dNdr[2]=+0.125*(1.+sq)*(1.-tq)
+                dNdr[3]=-0.125*(1.+sq)*(1.-tq)
+                dNdr[4]=-0.125*(1.-sq)*(1.+tq)
+                dNdr[5]=+0.125*(1.-sq)*(1.+tq)
+                dNdr[6]=+0.125*(1.+sq)*(1.+tq)
+                dNdr[7]=-0.125*(1.+sq)*(1.+tq)
+
+                dNds[0]=-0.125*(1.-rq)*(1.-tq) 
+                dNds[1]=-0.125*(1.+rq)*(1.-tq)
+                dNds[2]=+0.125*(1.+rq)*(1.-tq)
+                dNds[3]=+0.125*(1.-rq)*(1.-tq)
+                dNds[4]=-0.125*(1.-rq)*(1.+tq)
+                dNds[5]=-0.125*(1.+rq)*(1.+tq)
+                dNds[6]=+0.125*(1.+rq)*(1.+tq)
+                dNds[7]=+0.125*(1.-rq)*(1.+tq)
+
+                dNdt[0]=-0.125*(1.-rq)*(1.-sq) 
+                dNdt[1]=-0.125*(1.+rq)*(1.-sq)
+                dNdt[2]=-0.125*(1.+rq)*(1.+sq)
+                dNdt[3]=-0.125*(1.-rq)*(1.+sq)
+                dNdt[4]=+0.125*(1.-rq)*(1.-sq)
+                dNdt[5]=+0.125*(1.+rq)*(1.-sq)
+                dNdt[6]=+0.125*(1.+rq)*(1.+sq)
+                dNdt[7]=+0.125*(1.-rq)*(1.+sq)
+
+                # calculate jacobian matrix
+                jcb=np.zeros((3,3),dtype=np.float64)
+                for k in range(0,m):
+                    jcb[0,0] += dNdr[k]*x[icon[k,iel]]
+                    jcb[0,1] += dNdr[k]*y[icon[k,iel]]
+                    jcb[0,2] += dNdr[k]*z[icon[k,iel]]
+                    jcb[1,0] += dNds[k]*x[icon[k,iel]]
+                    jcb[1,1] += dNds[k]*y[icon[k,iel]]
+                    jcb[1,2] += dNds[k]*z[icon[k,iel]]
+                    jcb[2,0] += dNdt[k]*x[icon[k,iel]]
+                    jcb[2,1] += dNdt[k]*y[icon[k,iel]]
+                    jcb[2,2] += dNdt[k]*z[icon[k,iel]]
+                #end for 
+
+                # calculate the determinant of the jacobian
+                jcob = np.linalg.det(jcb)
+
+                # compute dNdx, dNdy, dNdz
+                uq=0.0
+                vq=0.0
+                wq=0.0
+                for k in range(0, m):
+                    uq+=N[k]*u[icon[k,iel]]
+                    vq+=N[k]*v[icon[k,iel]]
+                    wq+=N[k]*w[icon[k,iel]]
+                #end for 
+
+                vrms+=(uq**2+vq**2+wq**2)*jcob*weightq
+
+vrms=np.sqrt(vrms/Lx/Ly/Lz)
+
+
+#####################################################################
+# export various measurements for stokes sphere benchmark 
+#####################################################################
+start = time.time()
+
+vel=np.sqrt(u**2+v**2+w**2)
+print('bench ',Lx/nelx,nel,Nfem,\
+      np.min(u),np.max(u),\
+      np.min(v),np.max(v),\
+      np.min(w),np.max(w),\
+      np.min(vel),np.max(vel),\
+      np.min(p),np.max(p),
+      vrms)
 
 #####################################################################
 # plot of solution

@@ -7,4 +7,5 @@ numerical_benchmark
 stokes_equation
 viscous_rheology
 buoyancy_driven
+vrms
 paraview_output

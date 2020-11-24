@@ -13,9 +13,10 @@ nelx*nely*nelz=nel elements and
 nnx*nny*nnz=NV nodes.
 The density and the viscosity are prescribed in the domain 
 by means of two functions:
-the density is set to 2 inside a sphere of radius 0.123 centered 
-at (0.5,0.5,0.5) and 1 outside. The viscosity is 100 inside the sphere
+the density is set to $1+\delta \rho$ inside a sphere of radius 0.123456789 centered 
+at (0.5,0.5,0.5) and 1 outside. The viscosity is 1000 inside the sphere
 and 1 outside.  The gravity vector is set to $\vec{g}=(0,0,-1)$.
+This is the benchmark presented in Section~\ref{ss:stokes_sphere_3D}.
 
 The FE matrix size grows even faster now than in the previous 2D case so
 choosing the right matrix storage is of paramount importance. 
@@ -63,3 +64,27 @@ lithostatic signal of the pressure.
 \end{center}
 
 Note that a similar fortran code is present in the folder. 
+
+
+If the option 'quarter' is true, then the model takes advantage of the symmetries 
+of the problem and runs it in a quarter of the original domain, so that 
+the domain is then $0.5\times 0.5 \times 1$. Measurements/results are identical 
+to the full cube ones, but at a much lower cost.
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_10/results/quarter_FS/press}
+\includegraphics[width=4cm]{python_codes/fieldstone_10/results/quarter_FS/sr}
+\includegraphics[width=4cm]{python_codes/fieldstone_10/results/quarter_FS/vel}
+\includegraphics[width=4cm]{python_codes/fieldstone_10/results/quarter_FS/eta}\\
+{\captionfont Resolution 32x32x64 - FS}
+\end{center}
+
+
+
+
+\begin{center}
+\includegraphics[width=7cm]{images/stokes_sphere3D/vrms_FS}
+\includegraphics[width=7cm]{images/stokes_sphere3D/vrms_NS}\\
+{\captionfont Left: FS; Right: NS. Results obtained with this stones and other ones, as well as ASPECT.
+See Section~\ref{ss:stokes_sphere_3D} for all results.}
+\end{center}
