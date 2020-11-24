@@ -1,5 +1,14 @@
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_81/keywords}
 
+\begin{center}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_81}
+\end{center}
 
+\par\noindent\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This element is presented in Fortin (1981) \cite{fort81}. It is also mentioned in Dhatt \& Hubert (1986) \cite{dhhu86} and called 'H8N' and 
+proved to be LBB-stable in the appendix.
 
 \begin{center}
 \begin{tikzpicture}
@@ -149,6 +158,7 @@
 \node[] at (0.25,4) {$z$};
 
 \end{tikzpicture}\\
+{\captionfont Example of a simple 4x3x2 mesh. Additional face dofs are indicated in colour.}
 \end{center}
 
 Each element has 
@@ -158,7 +168,8 @@ Each element has
 \item 8+2 w dofs
 \end{itemize}
 
-Setting nelx=4, nely=3 and nelz=2, we can print the three connectivity arrays:
+Setting nelx=4, nely=3 and nelz=2, we can print the three connectivity arrays\footnote{it is the simplest way I found to account 
+for the additional dofs in the three dimensions: a connectivity array per dimension.}:
 
 \begin{itemize}
 \item iconu:
@@ -249,19 +260,58 @@ Setting nelx=4, nely=3 and nelz=2, we can print the three connectivity arrays:
 \end{itemize}
 
 
-
+\begin{center}
+a)\includegraphics[width=5.6cm]{python_codes/fieldstone_81/results/matrix4}
+b)\includegraphics[width=5.6cm]{python_codes/fieldstone_81/results/matrix8}
+c)\includegraphics[width=5.6cm]{python_codes/fieldstone_81/results/matrix12}\\
+d)\includegraphics[width=5.6cm]{python_codes/fieldstone_81/results/matrix16}
+e)\includegraphics[width=5.6cm]{python_codes/fieldstone_81/results/matrix20}
+f)\includegraphics[width=5.6cm]{python_codes/fieldstone_81/results/matrix24}\\
+{\captionfont non-zero pattern of the assembled Stokes matrix for $8^3$ (a), 
+$12^3$ (b), $16^3$ (c) and $20^3$ (d) meshes.}
+\end{center}
+This is bad news: a renumbering of the nodes/dofs would be beneficial so as to reduce the 
+skyline of the matrix. 
 
 %----------------------------------------------------
 \subsection*{Manufactured solution}
 
-This benchmark is presented in Section~\ref{mms3}. It was run with 3 different quadrature levels, $nq=2^3,3^3,4^3$. 
-Unfortunately a resolution 20x20x20 is the maximum which can be run. 
+This benchmark is presented in Section~\ref{mms3} and is called the 'Burstedde' benchmark in the ASPECT manual after 
+the paper by Burstedde et al (2013) \cite{busa13}, although it originates in Dohrmann \& Bochev (2004) \cite{dobo04}. 
+It was run with 3 different quadrature levels, $nq=2^3,3^3,4^3$. 
+Unfortunately a resolution 20x20x20 is the maximum which can be run as demonstrated 
+by the following table:
+
+\begin{center}
+\begin{tabular}{llll}
+\hline
+resolution &Nfem           &build (s) &solve(s) \\
+\hline\hline
+12x12x12   &12207+1728     &21        &5.4\\
+16x16x16   &27795+4096     &49        &40\\
+20x20x20   &52983+8000     &98.3      &414\\
+21x21x21   &61050+9261     &130       &753 \\
+22x22x22   &69897+10648    &144       &1213\\
+24x24x24   &90075+13824    &173       &2481\\
+\hline
+\end{tabular}
+\end{center}
+ 
+ 
+We recover a quadratic convergence for the velocity error and a linear convergence for the pressure error, 
+similarly to the $Q_1\times P_0$ element:
 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_81/results/conv.pdf}
 \end{center}
 
 
+%----------------------------------------------------
+\subsection*{Stokes sphere benchmark}
+
+It is described in Section~\ref{ss:stokes_sphere3D}. We here focus on the 'NS' case, i.e. no slip 
+boundary conditions are prescribed on all six faces.
 
 
 
+ 

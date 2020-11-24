@@ -6,6 +6,7 @@ import time as time
 import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix,lil_matrix
 import schur
+from scipy.sparse.csgraph import reverse_cuthill_mckee
 
 #------------------------------------------------------------------------------
 
@@ -54,10 +55,10 @@ def bz(x,y,z,beta):
     if bench==2:
        val=0
     if bench==3:
-       if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123**2:
-          val=1.1-1
+       if (x-0.5)**2+(y-0.5)**2+(z-0.5)**2<0.123456789**2:
+          val=1.01
        else:
-          val=1.-1
+          val=1.
     return val
 
 def eta(x,y,z,beta):
@@ -66,7 +67,10 @@ def eta(x,y,z,beta):
     if bench==2:
        val=1
     if bench==3:
-       val=1
+       if (x-0.5)**2+(y-0.5)**2+(z-0.5)**2<0.123456789**2:
+          val=1000.
+       else:
+          val=1.
     return val
 
 def uth(x,y,z):
@@ -346,6 +350,10 @@ Lx=1.  # x- extent of the domain
 Ly=1.  # y- extent of the domain 
 Lz=1.  # z- extent of the domain 
 
+OT=False
+NS=True
+
+
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 5):
    nelx = int(sys.argv[1])
@@ -353,7 +361,7 @@ if int(len(sys.argv) == 5):
    nelz = int(sys.argv[3])
    visu = int(sys.argv[4])
 else:
-   nelx = 10
+   nelx = 8
    nely = nelx
    nelz = nelx
    visu = 1
@@ -379,7 +387,7 @@ eps=1.e-10
 
 gx=0.    # gravity vector, x component
 gy=0.    # gravity vector, y component
-gz=-10.  # gravity vector, z component
+gz=-1.  # gravity vector, z component
 
 nqperdim=2
 
@@ -399,26 +407,30 @@ if nqperdim==4:
    qcoords=[-qc4a,-qc4b,qc4b,qc4a]
    qweights=[qw4a,qw4b,qw4b,qw4a]
 
-pnormalise=False
+if OT:
+   pnormalise=False
+else:
+   pnormalise=True
 
-pfix=True
+
+pfix=False
 
 sparse=True
 
 beta=0
 
-bench=1
+bench=3
 
 #################################################################
 #################################################################
 
-print("Lx",Lx)
-print("Ly",Ly)
-print("Lz",Lz)
-print("nelx",nelx)
-print("nely",nely)
-print("nelz",nelz)
-print("nel",nel)
+print("Lx=",Lx)
+print("Ly=",Ly)
+print("Lz=",Lz)
+print("nelx=",nelx)
+print("nely=",nely)
+print("nelz=",nelz)
+print("nel=",nel)
 print("nnx=",nnx)
 print("nny=",nny)
 print("nnz=",nnz)
@@ -426,11 +438,15 @@ print("NV=",NV)
 print("NP=",NP)
 print("NfemV=",NfemV)
 print("NfemP=",NfemP)
+print("Nfem=",Nfem)
 print("hx",hx)
 print("hy",hy)
 print("hz",hz)
 print("------------------------------")
 
+if bench==1:
+   NS=True
+   OT=False
 #################################################################
 # grid point setup
 #################################################################
@@ -584,95 +600,154 @@ for iel in range(0,nel):
     inode6=iconu[6,iel]
 
     if xV[inode0]<eps: #element is on face x=0
-       bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= uth(xV[iconu[0,iel]],yV[iconu[0,iel]],zV[iconu[0,iel]])
-       bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= vth(xV[iconv[0,iel]],yV[iconv[0,iel]],zV[iconv[0,iel]])
-       bc_fix[0*ndofV+2,iel]=True ; bc_val[0*ndofV+2,iel]= wth(xV[iconw[0,iel]],yV[iconw[0,iel]],zV[iconw[0,iel]])
-       bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= uth(xV[iconu[3,iel]],yV[iconu[3,iel]],zV[iconu[3,iel]])
-       bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= vth(xV[iconv[3,iel]],yV[iconv[3,iel]],zV[iconv[3,iel]])
-       bc_fix[3*ndofV+2,iel]=True ; bc_val[3*ndofV+2,iel]= wth(xV[iconw[3,iel]],yV[iconw[3,iel]],zV[iconw[3,iel]])
-       bc_fix[4*ndofV+0,iel]=True ; bc_val[4*ndofV+0,iel]= uth(xV[iconu[4,iel]],yV[iconu[4,iel]],zV[iconu[4,iel]])
-       bc_fix[4*ndofV+1,iel]=True ; bc_val[4*ndofV+1,iel]= vth(xV[iconv[4,iel]],yV[iconv[4,iel]],zV[iconv[4,iel]])
-       bc_fix[4*ndofV+2,iel]=True ; bc_val[4*ndofV+2,iel]= wth(xV[iconw[4,iel]],yV[iconw[4,iel]],zV[iconw[4,iel]])
-       bc_fix[7*ndofV+0,iel]=True ; bc_val[7*ndofV+0,iel]= uth(xV[iconu[7,iel]],yV[iconu[7,iel]],zV[iconu[7,iel]])
-       bc_fix[7*ndofV+1,iel]=True ; bc_val[7*ndofV+1,iel]= vth(xV[iconv[7,iel]],yV[iconv[7,iel]],zV[iconv[7,iel]])
-       bc_fix[7*ndofV+2,iel]=True ; bc_val[7*ndofV+2,iel]= wth(xV[iconw[7,iel]],yV[iconw[7,iel]],zV[iconw[7,iel]])
-       bc_fix[     24,iel]=True   ; bc_val[       24,iel]= uth(xV[iconu[8,iel]],yV[iconu[8,iel]],zV[iconu[8,iel]])
+       #-----
+       bc_fix[0*ndofV+0,iel]=True    ; bc_val[0*ndofV+0,iel]= uth(xV[iconu[0,iel]],yV[iconu[0,iel]],zV[iconu[0,iel]])
+       if NS:
+          bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= vth(xV[iconv[0,iel]],yV[iconv[0,iel]],zV[iconv[0,iel]])
+          bc_fix[0*ndofV+2,iel]=True ; bc_val[0*ndofV+2,iel]= wth(xV[iconw[0,iel]],yV[iconw[0,iel]],zV[iconw[0,iel]])
+       #-----
+       bc_fix[3*ndofV+0,iel]=True    ; bc_val[3*ndofV+0,iel]= uth(xV[iconu[3,iel]],yV[iconu[3,iel]],zV[iconu[3,iel]])
+       if NS:
+          bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= vth(xV[iconv[3,iel]],yV[iconv[3,iel]],zV[iconv[3,iel]])
+          bc_fix[3*ndofV+2,iel]=True ; bc_val[3*ndofV+2,iel]= wth(xV[iconw[3,iel]],yV[iconw[3,iel]],zV[iconw[3,iel]])
+       #-----
+       bc_fix[4*ndofV+0,iel]=True    ; bc_val[4*ndofV+0,iel]= uth(xV[iconu[4,iel]],yV[iconu[4,iel]],zV[iconu[4,iel]])
+       if NS:
+          bc_fix[4*ndofV+1,iel]=True ; bc_val[4*ndofV+1,iel]= vth(xV[iconv[4,iel]],yV[iconv[4,iel]],zV[iconv[4,iel]])
+          bc_fix[4*ndofV+2,iel]=True ; bc_val[4*ndofV+2,iel]= wth(xV[iconw[4,iel]],yV[iconw[4,iel]],zV[iconw[4,iel]])
+       #-----
+       bc_fix[7*ndofV+0,iel]=True    ; bc_val[7*ndofV+0,iel]= uth(xV[iconu[7,iel]],yV[iconu[7,iel]],zV[iconu[7,iel]])
+       if NS:
+          bc_fix[7*ndofV+1,iel]=True ; bc_val[7*ndofV+1,iel]= vth(xV[iconv[7,iel]],yV[iconv[7,iel]],zV[iconv[7,iel]])
+          bc_fix[7*ndofV+2,iel]=True ; bc_val[7*ndofV+2,iel]= wth(xV[iconw[7,iel]],yV[iconw[7,iel]],zV[iconw[7,iel]])
+       #-----
+       bc_fix[     24,iel]=True      ; bc_val[       24,iel]= uth(xV[iconu[8,iel]],yV[iconu[8,iel]],zV[iconu[8,iel]])
 
     if xV[inode6]>Lx-eps: #element is on face x=Lx
-       bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= uth(xV[iconu[1,iel]],yV[iconu[1,iel]],zV[iconu[1,iel]])
-       bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= vth(xV[iconv[1,iel]],yV[iconv[1,iel]],zV[iconv[1,iel]])
-       bc_fix[1*ndofV+2,iel]=True ; bc_val[1*ndofV+2,iel]= wth(xV[iconw[1,iel]],yV[iconw[1,iel]],zV[iconw[1,iel]])
-       bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= uth(xV[iconu[2,iel]],yV[iconu[2,iel]],zV[iconu[2,iel]])
-       bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= vth(xV[iconv[2,iel]],yV[iconv[2,iel]],zV[iconv[2,iel]])
-       bc_fix[2*ndofV+2,iel]=True ; bc_val[2*ndofV+2,iel]= wth(xV[iconw[2,iel]],yV[iconw[2,iel]],zV[iconw[2,iel]])
-       bc_fix[5*ndofV+0,iel]=True ; bc_val[5*ndofV+0,iel]= uth(xV[iconu[5,iel]],yV[iconu[5,iel]],zV[iconu[5,iel]])
-       bc_fix[5*ndofV+1,iel]=True ; bc_val[5*ndofV+1,iel]= vth(xV[iconv[5,iel]],yV[iconv[5,iel]],zV[iconv[5,iel]])
-       bc_fix[5*ndofV+2,iel]=True ; bc_val[5*ndofV+2,iel]= wth(xV[iconw[5,iel]],yV[iconw[5,iel]],zV[iconw[5,iel]])
-       bc_fix[6*ndofV+0,iel]=True ; bc_val[6*ndofV+0,iel]= uth(xV[iconu[6,iel]],yV[iconu[6,iel]],zV[iconu[6,iel]])
-       bc_fix[6*ndofV+1,iel]=True ; bc_val[6*ndofV+1,iel]= vth(xV[iconv[6,iel]],yV[iconv[6,iel]],zV[iconv[6,iel]])
-       bc_fix[6*ndofV+2,iel]=True ; bc_val[6*ndofV+2,iel]= wth(xV[iconw[6,iel]],yV[iconw[6,iel]],zV[iconw[6,iel]])
-       bc_fix[       27,iel]=True ; bc_val[       27,iel]= uth(xV[iconu[9,iel]],yV[iconu[9,iel]],zV[iconu[9,iel]])
+       #-----
+       bc_fix[1*ndofV+0,iel]=True    ; bc_val[1*ndofV+0,iel]= uth(xV[iconu[1,iel]],yV[iconu[1,iel]],zV[iconu[1,iel]])
+       if NS:
+          bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= vth(xV[iconv[1,iel]],yV[iconv[1,iel]],zV[iconv[1,iel]])
+          bc_fix[1*ndofV+2,iel]=True ; bc_val[1*ndofV+2,iel]= wth(xV[iconw[1,iel]],yV[iconw[1,iel]],zV[iconw[1,iel]])
+       #-----
+       bc_fix[2*ndofV+0,iel]=True    ; bc_val[2*ndofV+0,iel]= uth(xV[iconu[2,iel]],yV[iconu[2,iel]],zV[iconu[2,iel]])
+       if NS:
+          bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= vth(xV[iconv[2,iel]],yV[iconv[2,iel]],zV[iconv[2,iel]])
+          bc_fix[2*ndofV+2,iel]=True ; bc_val[2*ndofV+2,iel]= wth(xV[iconw[2,iel]],yV[iconw[2,iel]],zV[iconw[2,iel]])
+       #-----
+       bc_fix[5*ndofV+0,iel]=True    ; bc_val[5*ndofV+0,iel]= uth(xV[iconu[5,iel]],yV[iconu[5,iel]],zV[iconu[5,iel]])
+       if NS:
+          bc_fix[5*ndofV+1,iel]=True ; bc_val[5*ndofV+1,iel]= vth(xV[iconv[5,iel]],yV[iconv[5,iel]],zV[iconv[5,iel]])
+          bc_fix[5*ndofV+2,iel]=True ; bc_val[5*ndofV+2,iel]= wth(xV[iconw[5,iel]],yV[iconw[5,iel]],zV[iconw[5,iel]])
+       #-----
+       bc_fix[6*ndofV+0,iel]=True    ; bc_val[6*ndofV+0,iel]= uth(xV[iconu[6,iel]],yV[iconu[6,iel]],zV[iconu[6,iel]])
+       if NS:
+          bc_fix[6*ndofV+1,iel]=True ; bc_val[6*ndofV+1,iel]= vth(xV[iconv[6,iel]],yV[iconv[6,iel]],zV[iconv[6,iel]])
+          bc_fix[6*ndofV+2,iel]=True ; bc_val[6*ndofV+2,iel]= wth(xV[iconw[6,iel]],yV[iconw[6,iel]],zV[iconw[6,iel]])
+       #-----
+       bc_fix[       27,iel]=True    ; bc_val[       27,iel]= uth(xV[iconu[9,iel]],yV[iconu[9,iel]],zV[iconu[9,iel]])
 
     if yV[inode0]<eps: #element is on face y=0
-       bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= uth(xV[iconu[0,iel]],yV[iconu[0,iel]],zV[iconu[0,iel]])
-       bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= vth(xV[iconv[0,iel]],yV[iconv[0,iel]],zV[iconv[0,iel]])
-       bc_fix[0*ndofV+2,iel]=True ; bc_val[0*ndofV+2,iel]= wth(xV[iconw[0,iel]],yV[iconw[0,iel]],zV[iconw[0,iel]])
-       bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= uth(xV[iconu[1,iel]],yV[iconu[1,iel]],zV[iconu[1,iel]])
-       bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= vth(xV[iconv[1,iel]],yV[iconv[1,iel]],zV[iconv[1,iel]])
-       bc_fix[1*ndofV+2,iel]=True ; bc_val[1*ndofV+2,iel]= wth(xV[iconw[1,iel]],yV[iconw[1,iel]],zV[iconw[1,iel]])
-       bc_fix[4*ndofV+0,iel]=True ; bc_val[4*ndofV+0,iel]= uth(xV[iconu[4,iel]],yV[iconu[4,iel]],zV[iconu[4,iel]])
-       bc_fix[4*ndofV+1,iel]=True ; bc_val[4*ndofV+1,iel]= vth(xV[iconv[4,iel]],yV[iconv[4,iel]],zV[iconv[4,iel]])
-       bc_fix[4*ndofV+2,iel]=True ; bc_val[4*ndofV+2,iel]= wth(xV[iconw[4,iel]],yV[iconw[4,iel]],zV[iconw[4,iel]])
-       bc_fix[5*ndofV+0,iel]=True ; bc_val[5*ndofV+0,iel]= uth(xV[iconu[5,iel]],yV[iconu[5,iel]],zV[iconu[5,iel]])
-       bc_fix[5*ndofV+1,iel]=True ; bc_val[5*ndofV+1,iel]= vth(xV[iconv[5,iel]],yV[iconv[5,iel]],zV[iconv[5,iel]])
-       bc_fix[5*ndofV+2,iel]=True ; bc_val[5*ndofV+2,iel]= wth(xV[iconw[5,iel]],yV[iconw[5,iel]],zV[iconw[5,iel]])
-       bc_fix[       25,iel]=True ; bc_val[       25,iel]= vth(xV[iconv[8,iel]],yV[iconv[8,iel]],zV[iconv[8,iel]])
+       #-----
+       bc_fix[0*ndofV+1,iel]=True    ; bc_val[0*ndofV+1,iel]= vth(xV[iconv[0,iel]],yV[iconv[0,iel]],zV[iconv[0,iel]])
+       if NS:
+          bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= uth(xV[iconu[0,iel]],yV[iconu[0,iel]],zV[iconu[0,iel]])
+          bc_fix[0*ndofV+2,iel]=True ; bc_val[0*ndofV+2,iel]= wth(xV[iconw[0,iel]],yV[iconw[0,iel]],zV[iconw[0,iel]])
+       #-----
+       bc_fix[1*ndofV+1,iel]=True    ; bc_val[1*ndofV+1,iel]= vth(xV[iconv[1,iel]],yV[iconv[1,iel]],zV[iconv[1,iel]])
+       if NS:
+          bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= uth(xV[iconu[1,iel]],yV[iconu[1,iel]],zV[iconu[1,iel]])
+          bc_fix[1*ndofV+2,iel]=True ; bc_val[1*ndofV+2,iel]= wth(xV[iconw[1,iel]],yV[iconw[1,iel]],zV[iconw[1,iel]])
+       #-----
+       bc_fix[4*ndofV+1,iel]=True    ; bc_val[4*ndofV+1,iel]= vth(xV[iconv[4,iel]],yV[iconv[4,iel]],zV[iconv[4,iel]])
+       if NS:
+          bc_fix[4*ndofV+0,iel]=True ; bc_val[4*ndofV+0,iel]= uth(xV[iconu[4,iel]],yV[iconu[4,iel]],zV[iconu[4,iel]])
+          bc_fix[4*ndofV+2,iel]=True ; bc_val[4*ndofV+2,iel]= wth(xV[iconw[4,iel]],yV[iconw[4,iel]],zV[iconw[4,iel]])
+       #-----
+       bc_fix[5*ndofV+1,iel]=True    ; bc_val[5*ndofV+1,iel]= vth(xV[iconv[5,iel]],yV[iconv[5,iel]],zV[iconv[5,iel]])
+       if NS:
+          bc_fix[5*ndofV+0,iel]=True ; bc_val[5*ndofV+0,iel]= uth(xV[iconu[5,iel]],yV[iconu[5,iel]],zV[iconu[5,iel]])
+          bc_fix[5*ndofV+2,iel]=True ; bc_val[5*ndofV+2,iel]= wth(xV[iconw[5,iel]],yV[iconw[5,iel]],zV[iconw[5,iel]])
+       #-----
+       bc_fix[       25,iel]=True    ; bc_val[       25,iel]= vth(xV[iconv[8,iel]],yV[iconv[8,iel]],zV[iconv[8,iel]])
 
     if yV[inode6]>Ly-eps: #element is on face y=Ly
-       bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= uth(xV[iconu[2,iel]],yV[iconu[2,iel]],zV[iconu[2,iel]])
-       bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= vth(xV[iconv[2,iel]],yV[iconv[2,iel]],zV[iconv[2,iel]])
-       bc_fix[2*ndofV+2,iel]=True ; bc_val[2*ndofV+2,iel]= wth(xV[iconw[2,iel]],yV[iconw[2,iel]],zV[iconw[2,iel]])
-       bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= uth(xV[iconu[3,iel]],yV[iconu[3,iel]],zV[iconu[3,iel]])
-       bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= vth(xV[iconv[3,iel]],yV[iconv[3,iel]],zV[iconv[3,iel]])
-       bc_fix[3*ndofV+2,iel]=True ; bc_val[3*ndofV+2,iel]= wth(xV[iconw[3,iel]],yV[iconw[3,iel]],zV[iconw[3,iel]])
-       bc_fix[6*ndofV+0,iel]=True ; bc_val[6*ndofV+0,iel]= uth(xV[iconu[6,iel]],yV[iconu[6,iel]],zV[iconu[6,iel]])
-       bc_fix[6*ndofV+1,iel]=True ; bc_val[6*ndofV+1,iel]= vth(xV[iconv[6,iel]],yV[iconv[6,iel]],zV[iconv[6,iel]])
-       bc_fix[6*ndofV+2,iel]=True ; bc_val[6*ndofV+2,iel]= wth(xV[iconw[6,iel]],yV[iconw[6,iel]],zV[iconw[6,iel]])
-       bc_fix[7*ndofV+0,iel]=True ; bc_val[7*ndofV+0,iel]= uth(xV[iconu[7,iel]],yV[iconu[7,iel]],zV[iconu[7,iel]])
-       bc_fix[7*ndofV+1,iel]=True ; bc_val[7*ndofV+1,iel]= vth(xV[iconv[7,iel]],yV[iconv[7,iel]],zV[iconv[7,iel]])
-       bc_fix[7*ndofV+2,iel]=True ; bc_val[7*ndofV+2,iel]= wth(xV[iconw[7,iel]],yV[iconw[7,iel]],zV[iconw[7,iel]])
-       bc_fix[       28,iel]=True ; bc_val[       28,iel]= vth(xV[iconv[9,iel]],yV[iconv[9,iel]],zV[iconv[9,iel]])
+       #-----
+       bc_fix[2*ndofV+1,iel]=True    ; bc_val[2*ndofV+1,iel]= vth(xV[iconv[2,iel]],yV[iconv[2,iel]],zV[iconv[2,iel]])
+       if NS:
+          bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= uth(xV[iconu[2,iel]],yV[iconu[2,iel]],zV[iconu[2,iel]])
+          bc_fix[2*ndofV+2,iel]=True ; bc_val[2*ndofV+2,iel]= wth(xV[iconw[2,iel]],yV[iconw[2,iel]],zV[iconw[2,iel]])
+       #-----
+       bc_fix[3*ndofV+1,iel]=True    ; bc_val[3*ndofV+1,iel]= vth(xV[iconv[3,iel]],yV[iconv[3,iel]],zV[iconv[3,iel]])
+       if NS:
+          bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= uth(xV[iconu[3,iel]],yV[iconu[3,iel]],zV[iconu[3,iel]])
+          bc_fix[3*ndofV+2,iel]=True ; bc_val[3*ndofV+2,iel]= wth(xV[iconw[3,iel]],yV[iconw[3,iel]],zV[iconw[3,iel]])
+       #-----
+       bc_fix[6*ndofV+1,iel]=True    ; bc_val[6*ndofV+1,iel]= vth(xV[iconv[6,iel]],yV[iconv[6,iel]],zV[iconv[6,iel]])
+       if NS:
+          bc_fix[6*ndofV+0,iel]=True ; bc_val[6*ndofV+0,iel]= uth(xV[iconu[6,iel]],yV[iconu[6,iel]],zV[iconu[6,iel]])
+          bc_fix[6*ndofV+2,iel]=True ; bc_val[6*ndofV+2,iel]= wth(xV[iconw[6,iel]],yV[iconw[6,iel]],zV[iconw[6,iel]])
+       #-----
+       bc_fix[7*ndofV+1,iel]=True    ; bc_val[7*ndofV+1,iel]= vth(xV[iconv[7,iel]],yV[iconv[7,iel]],zV[iconv[7,iel]])
+       if NS:
+          bc_fix[7*ndofV+0,iel]=True ; bc_val[7*ndofV+0,iel]= uth(xV[iconu[7,iel]],yV[iconu[7,iel]],zV[iconu[7,iel]])
+          bc_fix[7*ndofV+2,iel]=True ; bc_val[7*ndofV+2,iel]= wth(xV[iconw[7,iel]],yV[iconw[7,iel]],zV[iconw[7,iel]])
+       #-----
+       bc_fix[       28,iel]=True    ; bc_val[       28,iel]= vth(xV[iconv[9,iel]],yV[iconv[9,iel]],zV[iconv[9,iel]])
 
     if zV[inode0]<eps: #element is on face z=0 
-       bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= uth(xV[iconu[0,iel]],yV[iconu[0,iel]],zV[iconu[0,iel]])
-       bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= vth(xV[iconv[0,iel]],yV[iconv[0,iel]],zV[iconv[0,iel]])
-       bc_fix[0*ndofV+2,iel]=True ; bc_val[0*ndofV+2,iel]= wth(xV[iconw[0,iel]],yV[iconw[0,iel]],zV[iconw[0,iel]])
-       bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= uth(xV[iconu[1,iel]],yV[iconu[1,iel]],zV[iconu[1,iel]])
-       bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= vth(xV[iconv[1,iel]],yV[iconv[1,iel]],zV[iconv[1,iel]])
-       bc_fix[1*ndofV+2,iel]=True ; bc_val[1*ndofV+2,iel]= wth(xV[iconw[1,iel]],yV[iconw[1,iel]],zV[iconw[1,iel]])
-       bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= uth(xV[iconu[2,iel]],yV[iconu[2,iel]],zV[iconu[2,iel]])
-       bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= vth(xV[iconv[2,iel]],yV[iconv[2,iel]],zV[iconv[2,iel]])
-       bc_fix[2*ndofV+2,iel]=True ; bc_val[2*ndofV+2,iel]= wth(xV[iconw[2,iel]],yV[iconw[2,iel]],zV[iconw[2,iel]])
-       bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= uth(xV[iconu[3,iel]],yV[iconu[3,iel]],zV[iconu[3,iel]])
-       bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= vth(xV[iconv[3,iel]],yV[iconv[3,iel]],zV[iconv[3,iel]])
-       bc_fix[3*ndofV+2,iel]=True ; bc_val[3*ndofV+2,iel]= wth(xV[iconw[3,iel]],yV[iconw[3,iel]],zV[iconw[3,iel]])
-       bc_fix[       26,iel]=True ; bc_val[       26,iel]= wth(xV[iconw[8,iel]],yV[iconw[8,iel]],zV[iconw[8,iel]])
+       #-----
+       if NS:
+          bc_fix[0*ndofV+0,iel]=True ; bc_val[0*ndofV+0,iel]= uth(xV[iconu[0,iel]],yV[iconu[0,iel]],zV[iconu[0,iel]])
+          bc_fix[0*ndofV+1,iel]=True ; bc_val[0*ndofV+1,iel]= vth(xV[iconv[0,iel]],yV[iconv[0,iel]],zV[iconv[0,iel]])
+       bc_fix[0*ndofV+2,iel]=True    ; bc_val[0*ndofV+2,iel]= wth(xV[iconw[0,iel]],yV[iconw[0,iel]],zV[iconw[0,iel]])
+       #-----
+       if NS:
+          bc_fix[1*ndofV+0,iel]=True ; bc_val[1*ndofV+0,iel]= uth(xV[iconu[1,iel]],yV[iconu[1,iel]],zV[iconu[1,iel]])
+          bc_fix[1*ndofV+1,iel]=True ; bc_val[1*ndofV+1,iel]= vth(xV[iconv[1,iel]],yV[iconv[1,iel]],zV[iconv[1,iel]])
+       bc_fix[1*ndofV+2,iel]=True    ; bc_val[1*ndofV+2,iel]= wth(xV[iconw[1,iel]],yV[iconw[1,iel]],zV[iconw[1,iel]])
+       #-----
+       if NS:
+          bc_fix[2*ndofV+0,iel]=True ; bc_val[2*ndofV+0,iel]= uth(xV[iconu[2,iel]],yV[iconu[2,iel]],zV[iconu[2,iel]])
+          bc_fix[2*ndofV+1,iel]=True ; bc_val[2*ndofV+1,iel]= vth(xV[iconv[2,iel]],yV[iconv[2,iel]],zV[iconv[2,iel]])
+       bc_fix[2*ndofV+2,iel]=True    ; bc_val[2*ndofV+2,iel]= wth(xV[iconw[2,iel]],yV[iconw[2,iel]],zV[iconw[2,iel]])
+       #-----
+       if NS:
+          bc_fix[3*ndofV+0,iel]=True ; bc_val[3*ndofV+0,iel]= uth(xV[iconu[3,iel]],yV[iconu[3,iel]],zV[iconu[3,iel]])
+          bc_fix[3*ndofV+1,iel]=True ; bc_val[3*ndofV+1,iel]= vth(xV[iconv[3,iel]],yV[iconv[3,iel]],zV[iconv[3,iel]])
+       bc_fix[3*ndofV+2,iel]=True    ; bc_val[3*ndofV+2,iel]= wth(xV[iconw[3,iel]],yV[iconw[3,iel]],zV[iconw[3,iel]])
+       #-----
+       bc_fix[       26,iel]=True    ; bc_val[       26,iel]= wth(xV[iconw[8,iel]],yV[iconw[8,iel]],zV[iconw[8,iel]])
 
     if zV[inode6]>Lz-eps: #element is on face z=Lz 
 
-       bc_fix[4*ndofV+0,iel]=True ; bc_val[4*ndofV+0,iel]= uth(xV[iconu[4,iel]],yV[iconu[4,iel]],zV[iconu[4,iel]])
-       bc_fix[4*ndofV+1,iel]=True ; bc_val[4*ndofV+1,iel]= vth(xV[iconv[4,iel]],yV[iconv[4,iel]],zV[iconv[4,iel]])
-       bc_fix[4*ndofV+2,iel]=True ; bc_val[4*ndofV+2,iel]= wth(xV[iconw[4,iel]],yV[iconw[4,iel]],zV[iconw[4,iel]])
-       bc_fix[5*ndofV+0,iel]=True ; bc_val[5*ndofV+0,iel]= uth(xV[iconu[5,iel]],yV[iconu[5,iel]],zV[iconu[5,iel]])
-       bc_fix[5*ndofV+1,iel]=True ; bc_val[5*ndofV+1,iel]= vth(xV[iconv[5,iel]],yV[iconv[5,iel]],zV[iconv[5,iel]])
-       bc_fix[5*ndofV+2,iel]=True ; bc_val[5*ndofV+2,iel]= wth(xV[iconw[5,iel]],yV[iconw[5,iel]],zV[iconw[5,iel]])
-       bc_fix[6*ndofV+0,iel]=True ; bc_val[6*ndofV+0,iel]= uth(xV[iconu[6,iel]],yV[iconu[6,iel]],zV[iconu[6,iel]])
-       bc_fix[6*ndofV+1,iel]=True ; bc_val[6*ndofV+1,iel]= vth(xV[iconv[6,iel]],yV[iconv[6,iel]],zV[iconv[6,iel]])
-       bc_fix[6*ndofV+2,iel]=True ; bc_val[6*ndofV+2,iel]= wth(xV[iconw[6,iel]],yV[iconw[6,iel]],zV[iconw[6,iel]])
-       bc_fix[7*ndofV+0,iel]=True ; bc_val[7*ndofV+0,iel]= uth(xV[iconu[7,iel]],yV[iconu[7,iel]],zV[iconu[7,iel]])
-       bc_fix[7*ndofV+1,iel]=True ; bc_val[7*ndofV+1,iel]= vth(xV[iconv[7,iel]],yV[iconv[7,iel]],zV[iconv[7,iel]])
-       bc_fix[7*ndofV+2,iel]=True ; bc_val[7*ndofV+2,iel]= wth(xV[iconw[7,iel]],yV[iconw[7,iel]],zV[iconw[7,iel]])
-       bc_fix[       29,iel]=True ; bc_val[       29,iel]= wth(xV[iconw[9,iel]],yV[iconw[9,iel]],zV[iconw[9,iel]])
+       #-----
+       if NS:
+          bc_fix[4*ndofV+0,iel]=True ; bc_val[4*ndofV+0,iel]= uth(xV[iconu[4,iel]],yV[iconu[4,iel]],zV[iconu[4,iel]])
+          bc_fix[4*ndofV+1,iel]=True ; bc_val[4*ndofV+1,iel]= vth(xV[iconv[4,iel]],yV[iconv[4,iel]],zV[iconv[4,iel]])
+       if not OT:
+          bc_fix[4*ndofV+2,iel]=True ; bc_val[4*ndofV+2,iel]= wth(xV[iconw[4,iel]],yV[iconw[4,iel]],zV[iconw[4,iel]])
+       #-----
+       if NS:
+          bc_fix[5*ndofV+0,iel]=True ; bc_val[5*ndofV+0,iel]= uth(xV[iconu[5,iel]],yV[iconu[5,iel]],zV[iconu[5,iel]])
+          bc_fix[5*ndofV+1,iel]=True ; bc_val[5*ndofV+1,iel]= vth(xV[iconv[5,iel]],yV[iconv[5,iel]],zV[iconv[5,iel]])
+       if not OT:
+          bc_fix[5*ndofV+2,iel]=True ; bc_val[5*ndofV+2,iel]= wth(xV[iconw[5,iel]],yV[iconw[5,iel]],zV[iconw[5,iel]])
+       #-----
+       if NS:
+          bc_fix[6*ndofV+0,iel]=True ; bc_val[6*ndofV+0,iel]= uth(xV[iconu[6,iel]],yV[iconu[6,iel]],zV[iconu[6,iel]])
+          bc_fix[6*ndofV+1,iel]=True ; bc_val[6*ndofV+1,iel]= vth(xV[iconv[6,iel]],yV[iconv[6,iel]],zV[iconv[6,iel]])
+       if not OT:
+          bc_fix[6*ndofV+2,iel]=True ; bc_val[6*ndofV+2,iel]= wth(xV[iconw[6,iel]],yV[iconw[6,iel]],zV[iconw[6,iel]])
+       #-----
+       if NS:
+          bc_fix[7*ndofV+0,iel]=True ; bc_val[7*ndofV+0,iel]= uth(xV[iconu[7,iel]],yV[iconu[7,iel]],zV[iconu[7,iel]])
+          bc_fix[7*ndofV+1,iel]=True ; bc_val[7*ndofV+1,iel]= vth(xV[iconv[7,iel]],yV[iconv[7,iel]],zV[iconv[7,iel]])
+       if not OT:
+          bc_fix[7*ndofV+2,iel]=True ; bc_val[7*ndofV+2,iel]= wth(xV[iconw[7,iel]],yV[iconw[7,iel]],zV[iconw[7,iel]])
+       #-----
+       if not OT:
+          bc_fix[       29,iel]=True    ; bc_val[       29,iel]= wth(xV[iconw[9,iel]],yV[iconw[9,iel]],zV[iconw[9,iel]])
 
 #end for
 
@@ -758,40 +833,40 @@ for iel in range(0,nel):
                 jcbi[2,0]=0    ; jcbi[2,1]=0    ; jcbi[2,2]=2/hz
 
                 # compute dNdx, dNdy, dNdz
-                a=0
-                b=0
-                c=0
-                d=0
-                e=0
-                f=0
-                g=0
-                h=0
-                i=0
-                jx=0
-                jy=0
-                jz=0
-                for k in range(0,mV):
-                    dNNNVudx[k]=jcbi[0,0]*dNNNVudr[k]
-                    dNNNVudy[k]=jcbi[1,1]*dNNNVuds[k]
-                    dNNNVudz[k]=jcbi[2,2]*dNNNVudt[k]
-                    dNNNVvdx[k]=jcbi[0,0]*dNNNVvdr[k]
-                    dNNNVvdy[k]=jcbi[1,1]*dNNNVvds[k]
-                    dNNNVvdz[k]=jcbi[2,2]*dNNNVvdt[k]
-                    dNNNVwdx[k]=jcbi[0,0]*dNNNVwdr[k]
-                    dNNNVwdy[k]=jcbi[1,1]*dNNNVwds[k]
-                    dNNNVwdz[k]=jcbi[2,2]*dNNNVwdt[k]
-                    a+=dNNNVudx[k]*xV[iconu[k,iel]]
-                    b+=dNNNVudy[k]*xV[iconu[k,iel]]
-                    c+=dNNNVudz[k]*xV[iconu[k,iel]]
-                    d+=dNNNVvdx[k]*yV[iconv[k,iel]]
-                    e+=dNNNVvdy[k]*yV[iconv[k,iel]]
-                    f+=dNNNVvdz[k]*yV[iconv[k,iel]]
-                    g+=dNNNVwdx[k]*zV[iconw[k,iel]]
-                    h+=dNNNVwdy[k]*zV[iconw[k,iel]]
-                    i+=dNNNVwdz[k]*zV[iconw[k,iel]]
-                    jx+=NNNVu[k]
-                    jy+=NNNVv[k]
-                    jz+=NNNVw[k]
+                #a=0
+                #b=0
+                #c=0
+                #d=0
+                #e=0
+                #f=0
+                #g=0
+                #h=0
+                #i=0
+                #jx=0
+                #jy=0
+                #jz=0
+                #for k in range(0,mV):
+                #    dNNNVudx[k]=jcbi[0,0]*dNNNVudr[k]
+                #    dNNNVudy[k]=jcbi[1,1]*dNNNVuds[k]
+                #    dNNNVudz[k]=jcbi[2,2]*dNNNVudt[k]
+                #    dNNNVvdx[k]=jcbi[0,0]*dNNNVvdr[k]
+                #    dNNNVvdy[k]=jcbi[1,1]*dNNNVvds[k]
+                #    dNNNVvdz[k]=jcbi[2,2]*dNNNVvdt[k]
+                #    dNNNVwdx[k]=jcbi[0,0]*dNNNVwdr[k]
+                #    dNNNVwdy[k]=jcbi[1,1]*dNNNVwds[k]
+                #    dNNNVwdz[k]=jcbi[2,2]*dNNNVwdt[k]
+                #    a+=dNNNVudx[k]*xV[iconu[k,iel]]
+                #    b+=dNNNVudy[k]*xV[iconu[k,iel]]
+                #    c+=dNNNVudz[k]*xV[iconu[k,iel]]
+                #    d+=dNNNVvdx[k]*yV[iconv[k,iel]]
+                #    e+=dNNNVvdy[k]*yV[iconv[k,iel]]
+                #    f+=dNNNVvdz[k]*yV[iconv[k,iel]]
+                #    g+=dNNNVwdx[k]*zV[iconw[k,iel]]
+                #    h+=dNNNVwdy[k]*zV[iconw[k,iel]]
+                #    i+=dNNNVwdz[k]*zV[iconw[k,iel]]
+                #    jx+=NNNVu[k]
+                #    jy+=NNNVv[k]
+                #    jz+=NNNVw[k]
                 #end for
 
                 volume[iel]+=jcob*weightq
@@ -954,17 +1029,10 @@ for iel in range(0, nel):
                                              [0.         ,dNNNVvdz[i],dNNNVwdy[i]]]
                 #end for
 
-                #K_el += b_mat.T.dot(c_mat.dot(b_mat))*eta(xq,yq,zq)*weightq*jcob
                 K_el += b_mat.T.dot(c_mat.dot(b_mat))*eta(xq,yq,zq,beta)*weightq*jcob
                 #K_el += b_mat.T.dot(c_mat.dot(b_mat))*eta_el[iel]*weightq*jcob
 
                 for i in range(0,mV):
-                    #f_el[ndofV*i+0]=NNNVu[i]*jcob*weightq*rho(xq,yq,zq)*gx
-                    #f_el[ndofV*i+1]=NNNVv[i]*jcob*weightq*rho(xq,yq,zq)*gy
-                    #f_el[ndofV*i+2]=NNNVw[i]*jcob*weightq*rho(xq,yq,zq)*gz
-                    #f_el[ndofV*i+0]+=NNNVu[i]*jcob*weightq*rho_el[iel]*gx
-                    #f_el[ndofV*i+1]+=NNNVv[i]*jcob*weightq*rho_el[iel]*gy
-                    #f_el[ndofV*i+2]+=NNNVw[i]*jcob*weightq*rho_el[iel]*gz
                     f_el[ndofV*i+0]-=NNNVu[i]*jcob*weightq*bx(xq,yq,zq,beta)
                     f_el[ndofV*i+1]-=NNNVv[i]*jcob*weightq*by(xq,yq,zq,beta)
                     f_el[ndofV*i+2]-=NNNVw[i]*jcob*weightq*bz(xq,yq,zq,beta)
@@ -1116,22 +1184,34 @@ if pfix:
 
 print("assemble blocks: %.3f s" % (time.time() - start))
 
-#plt.spy(a_mat)
-#plt.savefig('matrix.pdf', bbox_inches='tight')
+plt.spy(A_sparse, markersize=0.01)
+plt.savefig('matrix.png', bbox_inches='tight')
 
 ######################################################################
 # solve system
 ######################################################################
-#start = time.time()
 
 if sparse:
    sparse_matrix=A_sparse.tocsr()
    print("converted to csr. solving now ...")
+   start = time.time()
    sol=sps.linalg.spsolve(sparse_matrix,rhs)
+
+   #graph=sparse_matrix
+   #aux2 = reverse_cuthill_mckee(graph,symmetric_mode=True)
+   #for i in range(len(aux2)):
+   #    graph[:,i] = graph[aux2,i]
+   #for i in range(len(aux2)):
+   #    graph[i,:] = graph[i,aux2]
+   #plt.spy(graph, markersize=0.01)
+   #plt.savefig('graph.png', bbox_inches='tight')
+
+
 else:
+   start = time.time()
    sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
 
-#print("solve time: %.3f s" % (time.time() - start))
+print("solve time: %.3f s" % (time.time() - start))
 ######################################################################
 # put solution into separate x,y velocity arrays
 ######################################################################
@@ -1198,6 +1278,7 @@ erru=0.
 errv=0.
 errw=0.
 errp=0.
+vrms=0.
 for iel in range(0,nel):
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
@@ -1240,6 +1321,7 @@ for iel in range(0,nel):
                     vq+=NNNVv[k]*v[iconv[k,iel]]
                     wq+=NNNVw[k]*w[iconw[k,iel]]
 
+                vrms+=(uq**2+vq**2+wq**2)*jcob*weightq
                 #print(NNNVu,NNNVu.sum())
                 #print(iconu[:,iel])
                 #print(u[iconu[:,iel]])
@@ -1266,6 +1348,7 @@ erru=np.sqrt(erru)
 errv=np.sqrt(errv)
 errw=np.sqrt(errw)
 errp=np.sqrt(errp)
+vrms=np.sqrt(vrms/Lx/Ly/Lz)
 
 print("     -> nel= %6d ; errvel: %e ; p: %e %e %e %e"  %(nel,errvel,errp,erru,errv,errw))
 
@@ -1444,6 +1527,20 @@ if True:
        vtufile.write("</UnstructuredGrid>\n")
        vtufile.write("</VTKFile>\n")
        vtufile.close()
+
+#####################################################################
+# export various measurements for stokes sphere benchmark 
+#####################################################################
+start = time.time()
+
+vel=np.sqrt(u**2+v**2+w**2)
+print('bench ',Lx/nelx,nel,Nfem,\
+      np.min(u),np.max(u),\
+      np.min(v),np.max(v),\
+      np.min(w),np.max(w),\
+      np.min(vel),np.max(vel),\
+      np.min(p),np.max(p),
+      vrms)
 
 #####################################################################
 # plot of solution
