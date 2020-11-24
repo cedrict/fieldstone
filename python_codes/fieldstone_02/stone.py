@@ -9,15 +9,15 @@ import matplotlib.pyplot as plt
 
 #------------------------------------------------------------------------------
 def rho(x,y):
-    if (x-.5)**2+(y-0.5)**2<0.123**2:
-       val=2.
+    if (x-.5)**2+(y-0.5)**2<0.123456789**2:
+       val=1.01
     else:
        val=1.
     return val
 
 def mu(x,y):
-    if (x-.5)**2+(y-0.5)**2<0.123**2:
-       val=1.e2
+    if (x-.5)**2+(y-0.5)**2<0.123456789**2:
+       val=1.e3
     else:
        val=1.
     return val
@@ -46,25 +46,30 @@ print("variable declaration")
 m=4     # number of nodes making up an element
 ndof=2  # number of degrees of freedom per node
 
-Lx=1.  # horizontal extent of the domain 
-Ly=1.  # vertical extent of the domain 
+#160x160 is maximum resolution for full square on 32Gb RAM laptop
 
-assert (Lx>0.), "Lx should be positive" 
-assert (Ly>0.), "Ly should be positive" 
+FS=False
+NS=True
+OT=False
+half=False
 
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 4):
-   nelx = int(sys.argv[1])
-   nely = int(sys.argv[2])
-   visu = int(sys.argv[3])
+if int(len(sys.argv) == 3):
+   nely = int(sys.argv[1])
+   visu = int(sys.argv[2])
 else:
-   nelx = 48
-   nely = 48
+   nely = 64
    visu = 1
 
+if half:
+   nelx=nely//2
+   Lx=0.5 
+   Ly=1. 
+else:
+   nelx=nely
+   Lx=1. 
+   Ly=1. 
 
-assert (nelx>0.), "nnx should be positive" 
-assert (nely>0.), "nny should be positive" 
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
@@ -83,6 +88,10 @@ gx=0.  # gravity vector, x component
 gy=-1.  # gravity vector, y component
 
 sqrt3=np.sqrt(3.)
+
+
+print('nelx=',nelx)
+print('nely=',nely)
 
 # declare arrays
 print("declaring arrays")
@@ -108,10 +117,10 @@ for j in range(0, nny):
 
 print("connectivity")
 
-icon =np.zeros((m, nel),dtype=np.int32)
+icon =np.zeros((m,nel),dtype=np.int32)
 counter = 0
-for j in range(0, nely):
-    for i in range(0, nelx):
+for j in range(0,nely):
+    for i in range(0,nelx):
         icon[0, counter] = i + j * (nelx + 1)
         icon[1, counter] = i + 1 + j * (nelx + 1)
         icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
@@ -131,17 +140,44 @@ for j in range(0, nely):
 
 print("defining boundary conditions")
 
-bc_fix=np.zeros(Nfem,dtype=np.bool)  # boundary condition, yes/no
-bc_val=np.zeros(Nfem,dtype=float)  # boundary condition, value
-for i in range(0,NV):
-    if x[i]<eps:
-       bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
-    if x[i]>(Lx-eps):
-       bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
-    if y[i]<eps:
-       bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
-    if y[i]>(Ly-eps):
-       bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+bc_fix=np.zeros(Nfem,dtype=np.bool)    # boundary condition, yes/no
+bc_val=np.zeros(Nfem,dtype=np.float64) # boundary condition, value
+
+if FS:
+   for i in range(0,NV):
+       if x[i]<eps:
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+       if y[i]<eps:
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+       if y[i]>(Ly-eps):
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+
+if NS:
+   for i in range(0,NV):
+       if x[i]<eps:
+          bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
+          if not half:
+             bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+       if y[i]<eps:
+          bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+       if y[i]>(Ly-eps):
+          bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+
+if OT:
+   for i in range(0,NV):
+       if x[i]<eps:
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+       if y[i]<eps:
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
 #################################################################
 # build FE matrix
@@ -389,6 +425,67 @@ print("dens (m,M) %.4f %.4f " %(np.min(dens),np.max(dens)))
 np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
 
 np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+
+#####################################################################
+# compute vrms 
+#####################################################################
+
+vrms=0.
+
+for iel in range(0, nel):
+    for iq in [-1, 1]:
+        for jq in [-1, 1]:
+            rq=iq/sqrt3
+            sq=jq/sqrt3
+            weightq=1.*1.
+
+            # calculate shape functions
+            N[0]=0.25*(1.-rq)*(1.-sq)
+            N[1]=0.25*(1.+rq)*(1.-sq)
+            N[2]=0.25*(1.+rq)*(1.+sq)
+            N[3]=0.25*(1.-rq)*(1.+sq)
+
+            # calculate shape function derivatives
+            dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
+            dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
+            dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
+            dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
+
+            # calculate jacobian matrix
+            jcb = np.zeros((2, 2),dtype=float)
+            for k in range(0,m):
+                jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
+                jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
+                jcb[1, 0] += dNds[k]*x[icon[k,iel]]
+                jcb[1, 1] += dNds[k]*y[icon[k,iel]]
+
+            # calculate the determinant of the jacobian
+            jcob = np.linalg.det(jcb)
+
+            # compute dNdx & dNdy
+            uq=0.0
+            vq=0.0
+            for k in range(0, m):
+                uq+=N[k]*u[icon[k,iel]]
+                vq+=N[k]*v[icon[k,iel]]
+
+            vrms+=(uq**2+vq**2)*jcob*weightq
+
+vrms=np.sqrt(vrms/Lx/Ly)
+
+#####################################################################
+# export various measurements for stokes sphere benchmark 
+#####################################################################
+start = time.time()
+
+vel=np.sqrt(u**2+v**2)
+print('bench ',Lx/nelx,nel,Nfem,\
+      np.min(u),np.max(u),\
+      np.min(v),np.max(v),\
+      0,0,\
+      np.min(vel),np.max(vel),\
+      np.min(p),np.max(p),
+      vrms)
 
 #####################################################################
 # plot of solution

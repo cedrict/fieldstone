@@ -1,6 +1,7 @@
 2D
 box
 Q1P0 
+vrms
 penalty 
 matplotlib
 buoyancy_driven
