@@ -41,35 +41,24 @@ quadrature yields better results than the $3\times 3\times 3$ or $4\times 4 \tim
 %......................................
 \subsubsection*{Stokes sphere (bench=3)}
 
-A sphere of radius 0.123 is placed in the middle of the domain. It has a density excess $\delta\rho=0.1$
-with respect to the surrounding fluid which has a density $\rho_{fluid}=0$ or $\rho_{fluid}=1$. 
+This is the benchmark of Section~\ref{ss:stokes_sphere3D}.
+A sphere of radius 0.123456789 is placed in the middle of the domain. 
+It has a density excess $\delta\rho=0.01$
+with respect to the surrounding fluid which has a density $\rho_{fluid}=1$. 
+The sphere viscosity is 1000 why the fluid viscosity is 1.
 Boundary conditions are no slip on all sides. Gravity is $\vec{g}=-\vec{e}_z$.
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_82/results/sphere/vel.png}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_82/results/sphere/p.png}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_82/results/sphere/grid.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_82/results/sphere/vel.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_82/results/sphere/press.png}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_82/results/sphere/u.png}
 \includegraphics[width=5cm]{python_codes/fieldstone_82/results/sphere/v.png}
 \includegraphics[width=5cm]{python_codes/fieldstone_82/results/sphere/w.png}\\
-{\captionfont Resolution $24\times 24\times 24$. Quadrature $2\times 2 \times 2$. 
-$\rho_{fluid}=0$}
+{\captionfont Resolution $20\times 20\times 20$. Quadrature $2\times 2 \times 2$.} 
 \end{center}
 
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_82/results/sphere/vrms.pdf}\\
-{\captionfont Root mean square velocity as a function of the mesh size $h$
-for three different quadrature rules.}
-\end{center}
-
-
-\begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_82/results/sphere/u.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_82/results/sphere/v.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_82/results/sphere/w.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_82/results/sphere/p.pdf}\\
-{\captionfont min and max values of $u$, $v$, $w$ and $p$ as a function of $h$.}
-\end{center}
+All velocity and pressure statistics are presented in Section~\ref{ss:stokes_sphere3D}.
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_82/results/sphere/build.pdf}

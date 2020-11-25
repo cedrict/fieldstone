@@ -1,21 +1,23 @@
 #! /bin/bash
 
-rm -f errors_nq*
-rm -f vrms_nq*
-rm -f vels_nq*
-rm -f press_nq*
-rm -f solve_nq*
-rm -f build_nq*
+rm -f errors_nq*.ascii
+rm -f vrms_nq*.ascii
+rm -f vels_nq*.ascii
+rm -f press_nq*.ascii
+rm -f solve_nq*.ascii
+rm -f build_nq*.ascii
+rm -f statistics*.ascii
 
 for nq in 2 3 4 ; do
-    for res in {4..24}; do
+    for res in {4..22}; do
         echo $res X $res X $res - nq=$nq
         python3 stone.py $res $res $res $nq 0 > opla
-        grep errv opla >> errors_nq$nq
-        grep vrms opla >> vrms_nq$nq
-        grep solve opla >> solve_nq$nq
-        grep build opla | grep FE >> build_nq$nq
-        cat stats_vel.ascii >> vels_nq$nq
-        cat stats_p.ascii >> press_nq$nq
+        grep errv opla >> errors_nq$nq.ascii
+        grep vrms opla >> vrms_nq$nq.ascii
+        grep solve opla >> solve_nq$nq.ascii
+        grep build opla | grep FE >> build_nq$nq.ascii
+        cat stats_vel.ascii >> vels_nq$nq.ascii
+        cat stats_p.ascii >> press_nq$nq.ascii
+        grep bench opla >> statistics_nq$nq.ascii
     done
 done

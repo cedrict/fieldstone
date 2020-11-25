@@ -55,10 +55,10 @@ def bz(x,y,z,beta):
     if bench==2:
        val=0
     if bench==3:
-       if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123**2:
-          val=1.1-1
+       if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123456789**2:
+          val=1.01
        else:
-          val=1.-1
+          val=1.
     return val
 
 def eta(x,y,z,beta):
@@ -67,7 +67,10 @@ def eta(x,y,z,beta):
     if bench==2:
        val=1
     if bench==3:
-       val=1
+       if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123456789**2:
+          val=1000
+       else:
+          val=1.
     return val
 
 def uth(x,y,z):
@@ -214,7 +217,7 @@ if int(len(sys.argv) == 6):
    nqperdim=int(sys.argv[4])
    visu = int(sys.argv[5])
 else:
-   nelx =6  # do not exceed 20 
+   nelx = 20  # do not exceed 20 
    nely =nelx
    nelz =nelx
    nqperdim=2
@@ -247,7 +250,6 @@ Nfem=NfemV+NfemP # total number of dofs
 eps=1.e-10
 
 sqrt3=np.sqrt(3.)
-
 
 if nqperdim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
@@ -863,6 +865,20 @@ print("     -> nel= %6d ; errv: %e ; errp: %e " %(nel,errv,errp))
 print("     -> nel= %6d ; vrms: %e" % (nel,vrms))
 
 print("compute errors: %.3f s" % (timing.time() - start))
+
+
+#####################################################################
+# export various measurements for stokes sphere benchmark 
+#####################################################################
+
+vel=np.sqrt(u**2+v**2+w**2)
+print('bench ',Lx/nelx,nel,Nfem,\
+      np.min(u),np.max(u),\
+      np.min(v),np.max(v),\
+      np.min(w),np.max(w),\
+      np.min(vel),np.max(vel),\
+      np.min(p),np.max(p),
+      vrms)
 
 ###############################################################################
 # plot of solution

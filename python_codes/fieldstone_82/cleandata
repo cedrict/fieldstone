@@ -1,0 +1,4 @@
+rm *.ascii
+rm *.vtu
+rm *.png
+rm errors
