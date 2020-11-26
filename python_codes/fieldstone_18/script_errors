@@ -1,25 +1,23 @@
-rm -f errors
-python3 stone.py   6   6 0 | grep errv >> errors
-python3 stone.py   7   7 0 | grep errv >> errors
-python3 stone.py   8   8 0 | grep errv >> errors
-python3 stone.py   9   9 0 | grep errv >> errors
-python3 stone.py  10  10 0 | grep errv >> errors
-python3 stone.py  11  11 0 | grep errv >> errors
-python3 stone.py  12  12 0 | grep errv >> errors
-python3 stone.py  13  13 0 | grep errv >> errors
-python3 stone.py  14  14 0 | grep errv >> errors
-python3 stone.py  15  15 0 | grep errv >> errors
-python3 stone.py  16  16 0 | grep errv >> errors
-python3 stone.py  18  18 0 | grep errv >> errors
-python3 stone.py  20  20 0 | grep errv >> errors
-python3 stone.py  24  24 0 | grep errv >> errors
-python3 stone.py  28  28 0 | grep errv >> errors
-python3 stone.py  32  32 0 | grep errv >> errors
-python3 stone.py  40  40 0 | grep errv >> errors
-python3 stone.py  44  44 0 | grep errv >> errors
-python3 stone.py  48  48 0 | grep errv >> errors
-python3 stone.py  64  64 0 | grep errv >> errors
+#!/bin/bash
 
+rm statistics*.ascii
+
+#max for square is 160x160
+
+for nq in 3 4 5 6 10 ; do
+
+    for res in 6 7 8 9 10 11 12 13 14 15 16 18 20 22 24 26 28 32 40 44 48 56 64 80; do
+
+        echo $res x $res 
+
+        python3 stone.py $res $res 0 $nq > opla
+
+        grep errv opla >> errors_nq$nq
+        grep bench opla >> statistics_nq$nq.ascii  
+
+    done
+
+done
 
 
 

@@ -1,6 +1,7 @@
 2D
 box
 Q2Q1
+vrms
 sparse_matrix
 analytical_benchmark
 error_convergence

@@ -7,6 +7,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\subsubsection*{Donea \& Huerta benchmark}
 The details of the numerical setup are presented in Section \ref{mms1}.
 
 Each element has $m_V=9$ vertices so in total $ndof_V\times m_V=18$ velocity dofs and 
@@ -26,13 +27,28 @@ by imposing (Lagrange multiplier) that $\int_\Omega p \; dV=0$.
 \end{center}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_18/results/vel}
-\includegraphics[width=7cm]{python_codes/fieldstone_18/results/pressure}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_18/results/mms/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_18/results/mms/pressure}\\
 {\captionfont velocity and pressure fields for $32\times 32$ elements grid}
 \end{center}
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_18/results/errors}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_18/results/mms/errors}\\
 {\captionfont Velocity and pressure error convergence for both nullspace removal 
 techniques. The zero average pressure approach yields smaller errors.}
 \end{center}
+
+%-----------------------------------------
+\subsubsection*{Stokes sphere benchmark}
+
+The setup is described in Section~\ref{ss:stokes_sphere2D}.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_18/results/sphere/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_18/results/sphere/press}\\
+{\captionfont velocity and pressure fields for $32\times 32$ elements grid and $3^2$
+quadrature points per element.}
+\end{center}
+
+
+

@@ -8,18 +8,37 @@ import time as time
 
 #------------------------------------------------------------------------------
 
-def bx(x, y):
-    val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
-         (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
-         (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
-         1.-4.*y+12.*y*y-8.*y*y*y)
+def bx(x,y):
+    if bench==1:
+       val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
+            (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
+            (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
+            1.-4.*y+12.*y*y-8.*y*y*y)
+    if bench==2:
+       val=0 
     return val
 
-def by(x, y):
-    val=((8.-48.*y+48.*y*y)*x*x*x+
-         (-12.+72.*y-72.*y*y)*x*x+
-         (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
-         12.*y*y+24.*y*y*y-12.*y**4)
+def by(x,y):
+    if bench==1:
+       val=((8.-48.*y+48.*y*y)*x*x*x+
+            (-12.+72.*y-72.*y*y)*x*x+
+            (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
+            12.*y*y+24.*y*y*y-12.*y**4)
+    if bench==2:
+       if (x-.5)**2+(y-0.5)**2<0.123456789**2:
+          val=-1.01
+       else:
+          val=-1.
+    return val
+
+def eta(x,y):
+    if bench==1:
+       val=1
+    if bench==2:
+       if (x-.5)**2+(y-0.5)**2<0.123456789**2:
+          val=1000.
+       else:
+          val=1.
     return val
 
 #------------------------------------------------------------------------------
@@ -83,6 +102,8 @@ def NNP(rq,sq):
 
 #------------------------------------------------------------------------------
 
+eps=1.e-10
+
 print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
@@ -96,14 +117,16 @@ Lx=1.  # horizontal extent of the domain
 Ly=1.  # vertical extent of the domain 
 
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 4):
+if int(len(sys.argv) == 5):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
+   nqperdim = int(sys.argv[4])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 48
+   nely = 48
    visu = 1
+   nqperdim=3
     
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
@@ -113,23 +136,87 @@ NP=(nelx+1)*(nely+1) # number of P nodes
 
 nel=nelx*nely  # number of elements, total
 
-eta=1.  # dynamic viscosity 
-
 NfemV=NV*ndofV   # number of velocity dofs
 NfemP=NP*ndofP   # number of pressure dofs
 Nfem=NfemV+NfemP # total number of dofs
 
-eps=1.e-10
-qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
-qweights=[5./9.,8./9.,5./9.]
-
 hx=Lx/nelx
 hy=Ly/nely
 
-pnormalise=False
+pnormalise=True
+
+bench=2
+
+FS=False
+NS=False
+OT=False
+BO=True
+
+#################################################################
+
+
+if nqperdim==3:
+   qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
+   qweights=[5./9.,8./9.,5./9.]
+if nqperdim==4:
+   qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
+   qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
+   qw4a=(18-np.sqrt(30.))/36.
+   qw4b=(18+np.sqrt(30.))/36.
+   qcoords=[-qc4a,-qc4b,qc4b,qc4a]
+   qweights=[qw4a,qw4b,qw4b,qw4a]
+if nqperdim==5:
+   qc5a=np.sqrt(5.+2.*np.sqrt(10./7.))/3.
+   qc5b=np.sqrt(5.-2.*np.sqrt(10./7.))/3.
+   qc5c=0.
+   qw5a=(322.-13.*np.sqrt(70.))/900.
+   qw5b=(322.+13.*np.sqrt(70.))/900.
+   qw5c=128./225.
+   qcoords=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
+   qweights=[qw5a,qw5b,qw5c,qw5b,qw5a]
+if nqperdim==6:
+   qcoords=[-0.932469514203152,\
+            -0.661209386466265,\
+            -0.238619186083197,\
+            +0.238619186083197,\
+            +0.661209386466265,\
+            +0.932469514203152]
+   qweights=[0.171324492379170,\
+             0.360761573048139,\
+             0.467913934572691,\
+             0.467913934572691,\
+             0.360761573048139,\
+             0.171324492379170]
+if nqperdim==10:
+   qcoords=[-0.973906528517172,\
+            -0.865063366688985,\
+            -0.679409568299024,\
+            -0.433395394129247,\
+            -0.148874338981631,\
+             0.148874338981631,\
+             0.433395394129247,\
+             0.679409568299024,\
+             0.865063366688985,\
+             0.973906528517172]
+   qweights=[0.066671344308688,\
+             0.149451349150581,\
+             0.219086362515982,\
+             0.269266719309996,\
+             0.295524224714753,\
+             0.295524224714753,\
+             0.269266719309996,\
+             0.219086362515982,\
+             0.149451349150581,\
+             0.066671344308688]
 
 #################################################################
 #################################################################
+
+if OT or BO:
+   pnormalise=False
+
+if NS or FS:
+   pnormalise=True
 
 print("nelx",nelx)
 print("nely",nely)
@@ -231,24 +318,62 @@ start = time.time()
 
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
-for i in range(0,NV):
-    if x[i]<eps:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    #end if
-    if x[i]>(Lx-eps):
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    #end if
-    if y[i]<eps:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    #end if
-    if y[i]>(Ly-eps):
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    #end if
-#end for
+
+if NS:
+   for i in range(0,NV):
+       if x[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if y[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if y[i]>(Ly-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       #end if
+   #end for
+
+if FS:
+   for i in range(0,NV):
+       if x[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if y[i]<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if y[i]>(Ly-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       #end if
+   #end for
+
+if OT:
+   for i in range(0,NV):
+       if x[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if y[i]<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       #end if
+   #end for
+
+if BO:
+   for i in range(0,NV):
+       if x[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if y[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if y[i]>(Ly-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       #end if
+   #end for
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
@@ -277,6 +402,8 @@ u       = np.zeros(NV,dtype=np.float64)          # x-component velocity
 v       = np.zeros(NV,dtype=np.float64)          # y-component velocity
 c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
+mass=0.
+
 for iel in range(0,nel):
 
     # set arrays to 0 every loop
@@ -287,8 +414,8 @@ for iel in range(0,nel):
     NNNNP= np.zeros(mP*ndofP,dtype=np.float64)   
 
     # integrate viscous term at 4 quadrature points
-    for iq in [0,1,2]:
-        for jq in [0,1,2]:
+    for iq in range(0,nqperdim):
+        for jq in range(0,nqperdim):
 
             # position & weight of quad. point
             rq=qcoords[iq]
@@ -329,13 +456,14 @@ for iel in range(0,nel):
             #end for 
 
             # compute elemental a_mat matrix
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta*weightq*jcob
+            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(xq,yq)*weightq*jcob
 
             # compute elemental rhs vector
             for i in range(0,mV):
                 f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*bx(xq,yq)
                 f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*by(xq,yq)
             #end for 
+            mass+=jcob*weightq*abs(by(xq,yq))
 
             for i in range(0,mP):
                 N_mat[0,i]=NNNP[i]
@@ -396,8 +524,8 @@ for iel in range(0,nel):
 
 #end for iel
 
-print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
-print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
+print("     -> K_mat (m,M) %.4e %.4e " %(np.min(K_mat),np.max(K_mat)))
+print("     -> G_mat (m,M) %.4e %.4e " %(np.min(G_mat),np.max(G_mat)))
 
 print("build FE matrix: %.3f s" % (time.time() - start))
 
@@ -432,11 +560,11 @@ print("assemble blocks: %.3f s" % (time.time() - start))
 # must be fixed to remove the nullspace.
 ######################################################################
 
-if not pnormalise:
-   for i in range(0,Nfem):
-       a_mat[Nfem-1,i]=0
-   a_mat[Nfem-1,Nfem-1]=1
-   rhs[Nfem-1]=-1/6
+#if not pnormalise:
+#   for i in range(0,Nfem):
+#       a_mat[Nfem-1,i]=0
+#   a_mat[Nfem-1,Nfem-1]=1
+#   rhs[Nfem-1]=-1/6
 
 ######################################################################
 # solve system
@@ -455,9 +583,9 @@ start = time.time()
 u,v=np.reshape(sol[0:NfemV],(NV,2)).T
 p=sol[NfemV:Nfem]
 
-print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
-print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
+print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
+print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
 #np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
@@ -512,9 +640,9 @@ for iel in range(0,nel):
 
 #end for
 
-print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
+print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
+print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
 
 #np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
@@ -525,11 +653,13 @@ print("compute press & sr: %.3f s" % (time.time() - start))
 ######################################################################
 start = time.time()
 
+vrms=0.
 errv=0.
 errp=0.
+avrgp=0.
 for iel in range (0,nel):
-    for iq in [0,1,2]:
-        for jq in [0,1,2]:
+    for iq in range(0,nqperdim):
+        for jq in range(0,nqperdim):
 
             rq=qcoords[iq]
             sq=qcoords[jq]
@@ -562,18 +692,24 @@ for iel in range (0,nel):
             errv+=((uq-uth(xq,yq))**2+\
                    (vq-vth(xq,yq))**2)*weightq*jcob
 
+            vrms+=(uq**2+vq**2)*weightq*jcob
+
             pq=0.0
             for k in range(0,mP):
                 pq+=NNNP[k]*p[iconP[k,iel]]
             #end for
             errp+=(pq-pth(xq,yq))**2*weightq*jcob
 
+            avrgp+=pq*weightq*jcob
+
         #end for jq
     #end for iq
 #end for iel
 
-errv=np.sqrt(errv)
-errp=np.sqrt(errp)
+errv=np.sqrt(errv/Lx/Ly)
+errp=np.sqrt(errp/Lx/Ly)
+vrms=np.sqrt(vrms/Lx/Ly)
+avrgp=avrgp/Lx/Ly
 
 print("     -> nel= %6d ; errv= %e ; errp= %e" %(nel,errv,errp))
 
@@ -598,6 +734,24 @@ for iel in range(0,nel):
 #end for
 
 #np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
+
+#####################################################################
+# export various measurements for stokes sphere benchmark 
+#####################################################################
+
+for i in range(0,NV):
+    if abs(x[i]-0.5)<eps and abs(y[i]-0.5)<eps:
+       uc=u[i]
+       vc=abs(v[i])
+
+vel=np.sqrt(u**2+v**2)
+print('bench ',Lx/nelx,nel,Nfem,\
+      np.min(u),np.max(u),\
+      np.min(v),np.max(v),\
+      0,0,\
+      np.min(vel),np.max(vel),\
+      np.min(p),np.max(p),
+      vrms,avrgp,mass,uc,vc)
 
 #####################################################################
 # plot of solution
