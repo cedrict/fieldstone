@@ -1,0 +1,81 @@
+Boundary conditions are: free slip on the left, top and bottom, and no slip on the right.
+
+Having established the weak form of the Stokes equations and discretised them in 
+Section~\ref{XXX}, transforming a 2D plane-strain code into an axisymmetric one is rather straightforward.
+In a nutshell, 
+\begin{itemize}
+\item $x$ stands for r
+\item $\upnu_r$ is $u$, $\upnu_z$ is $w$
+\item the matrix ${\bm B}$ goes from 
+$3 \times m_v\cdot ndofV$ to
+$4 \times m_v\cdot ndofV$. 
+\item the matrix ${\bm N}$ goes from 
+$3 \times m_p\cdot ndofP$ to
+$4 \times m_p\cdot ndofP$. 
+\item the matrix ${\bm C}$ goes from 
+$3 \times 3$ to $4 \times 4$.
+\item integrals must be multiplied by $2 \pi$ and also contain an additional $r$ term
+which translates into $x_q$ in the code. 
+\end{itemize}
+
+
+The Stokes sphere velocity is given by
+\[
+\upnu_{Stokes} = \frac{2}{9} \frac{\delta \rho}{\eta_f} R_s^2 g
+\]
+which yields $\upnu_S\simeq 3.387 \cdot 10^{-5}$. However, 
+this is for a sphere in an infinite domain. When placed in a 
+cylinder, the influence of the walls will slow the sphere down. 
+Two corrections have been proposed be Habermann and by Faxen.
+
+We start by writing the drag force
+\[
+F_H = 6 \pi \eta_f R \upnu_{sphere}  \gamma(r/R) 
+\]
+In the case of the Stokes sphere in an infinite medium then $\gamma =1$ and equating
+$F_H$ with the buoyancy force $4/3 \pi R^3 \delta\rho g$ yields the above velocity.
+Habermann gives a coefficient $\gamma$ such that 
+\[
+\gamma(r/R)  = \frac{1-0.75857 (r/R)^5}{1+f_H(r/R)}
+\]
+with 
+\[
+f_H(r/R) = -2.1050(r/R)+ 2.0865(r/R)^3-  1.7068(r/R)^5 + 0.72603(r/R)^6 
+\]
+Faxen gives a coefficient $\gamma$ such that 
+\[
+\gamma(r/R) = \frac{1}{1 + f_F(r/R)} 
+\]
+with 
+\[
+f_F(r/R) = -2.10444(r/R) + 2.08877(r/R)^3 - 0.94813(r/R)^5 -1.372(r/R)^6 + 3.87(r/R)^8 - 4.19(r/R)^{10}
+\]
+In all three cases we have 
+\[
+\upnu_{sphere} = \upnu_{Stokes} = \frac{2}{9} \frac{\delta \rho}{\eta_f} R_s^2 g \frac{1}{\gamma(r/R)}
+\]
+Note that the Habermann \& Faxen expressions are copy-pasted from the GALE manual. I did not verify these yet. 
+Please check Lindgren (1999) \cite{lind99} to do so. They are about half the value of the Stokes velocity.
+
+We see that increasing the height of the cylinder does not substantially alter the results, and that 
+the velocity in the middle of the sphere seems to converge to the expected ones:
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_91/results/vc.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_91/results/mass.pdf}
+{\captionfont up to 256x512 elements!}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_91/results/ps/vel}
+\includegraphics[width=4cm]{python_codes/fieldstone_91/results/ps/press}
+\includegraphics[width=4cm]{python_codes/fieldstone_91/results/ps/exx}
+\includegraphics[width=4cm]{python_codes/fieldstone_91/results/ps/exy}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_91/results/axi/vel}
+\includegraphics[width=4cm]{python_codes/fieldstone_91/results/axi/press}
+\includegraphics[width=4cm]{python_codes/fieldstone_91/results/axi/exx}
+\includegraphics[width=4cm]{python_codes/fieldstone_91/results/axi/exy}\\
+{\captionfont Top row: plane strain; Bottom row: axisymmetric. Resolution 50x100}
+\end{center}
+
+

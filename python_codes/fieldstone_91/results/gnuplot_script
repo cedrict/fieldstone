@@ -1,0 +1,30 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+
+set pointsize .15
+set xlabel 'h'
+set ylabel 'v_{sphere}'
+set key outside
+set log x
+
+set output 'vc.pdf'
+plot[][]\
+'statistics_Ly1.0.ascii' u 2:19 w lp lw .5 pt 7 t 'L_y=1.0',\
+'statistics_Ly1.1.ascii' u 2:19 w lp lw .5 pt 7 t 'L_y=1.1',\
+'statistics_Ly1.2.ascii' u 2:19 w lp lw .5 pt 7 t 'L_y=1.2',\
+'statistics_Ly1.3.ascii' u 2:19 w lp lw .5 pt 7 t 'L_y=1.3',\
+'statistics_Ly1.0.ascii' u 2:21 w lp lw .5 pt 7 t 'v_{Habermann}',\
+'statistics_Ly1.0.ascii' u 2:22 w lp lw .5 pt 7 t 'v_{Faxen}',\
+
+#'statistics_Ly1.0.ascii' u 2:20 w lp lw .5 pt 7 t 'v_{Stokes}',\
+
+set ylabel 'total mass'
+set output 'mass.pdf'
+plot[][]\
+'statistics_Ly1.0.ascii' u 2:($17) w lp lw .5 pt 7 t 'L_y=1.0',\
+'statistics_Ly1.0.ascii' u 2:($23) w l lw .5 lt -1 t 'analytical'
+
+
+set output 'p_min.pdf'
+plot[][]\
+'statistics_Ly1.0.ascii' u 2:13 w lp lw .5 pt 7 t 'L_y=1.0',\
