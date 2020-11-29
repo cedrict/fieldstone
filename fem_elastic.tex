@@ -87,7 +87,7 @@ The rest of the procedure is pretty straightforward since it follows the same
 ideas as for the mixed viscous case, except that we here build the $\K$ matrix 
 only as follows:
 \[
-\K=\int_{\Omega_e} {\bm B}^T \cdot {\bm D} \cdot {\bm B} \; d\Omega 
+\K=\int_{\Omega_e} {\bm B}^T \cdot {\bm D} \cdot {\bm B} \; dV 
 \]
 
 
@@ -131,6 +131,490 @@ so
 \]
 
 
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{The axisymmetric case} \label{ss:fem_elast_axis}
+
+
+We start from 
+\begin{equation}
+{\bm \sigma} = \lambda \vec\nabla\cdot\vec{u}\;  {\bm 1}
++2 \mu {\bm \varepsilon}(\vec{u})
+\label{eq:elast_as}
+\end{equation}
+In cylindrical coordinates the velocity gradient is given by 
+\[
+\vec\nabla \vec{u}  =
+\left(
+\begin{array}{ccc}
+{\partial \, u_r \over \partial \, r} &
+{1 \over r} {\partial \, u_r \over \partial \, \theta} - {u_{\theta} \over r} &
+{\partial \, u_r \over \partial z} \\
+\\
+{\partial \, u_{\theta} \over \partial \, r} &
+{1 \over r} {\partial \, u_{\theta} \over \partial \, \theta} + {u_r \over r} &
+{\partial \, u_{\theta} \over \partial z} \\
+\\
+{\partial \, u_{z} \over \partial \, r} &
+{1 \over r} {\partial \, u_{z} \over \partial \, \theta} &
+{\partial \, u_{z} \over \partial z}
+\end{array}
+\right)
+\]
+In the case of axisymmetry, and in this case symmetry about the $z$ axis, there is invariance with respect to the rotation around the axis so stresses and other quantities are independent of the $\theta$ coordinate, or simply put $\partial_\theta \rightarrow 0$.
+The velocity gradient simplifies to:
+\[
+\vec\nabla \vec{u}  =
+\left(
+\begin{array}{ccc}
+{\partial \, u_r \over \partial \, r} &
+- {u_{\theta} \over r} &
+{\partial \, u_r \over \partial z} \\
+\\
+{\partial \, u_{\theta} \over \partial \, r} &
+{u_r \over r} &
+{\partial \, u_{\theta} \over \partial z} \\
+\\
+{\partial \, u_{z} \over \partial \, r} &
+0 &
+{\partial \, u_{z} \over \partial z}
+\end{array}
+\right)
+\]
+Also, it follows logically that $u_\theta=0$ so that ultimately:
+\[
+\vec\nabla \vec{u}  =
+\left(
+\begin{array}{ccc}
+\frac{\partial u_r}{\partial r} & 0 & {\partial  u_r \over \partial z} \\\\
+0 & {u_r \over r} & 0 \\ \\
+{\partial u_{z} \over \partial  r} & 0 & {\partial  u_{z} \over \partial z}
+\end{array}
+\right)
+\]
+and the strain tensor is then given by 
+\begin{equation}
+\label{eq:strain_as} 
+{\bm \varepsilon}(\vec{u})
+=\frac12\left(\vec\nabla \vec{u}+\vec\nabla \vec{u}^T\right)
+=
+\left(
+\begin{array}{ccc}
+{\partial \, u_r \over \partial \, r} &
+0 &
+\frac12({\partial u_{z} \over \partial r} + {\partial u_r \over \partial z}) \\ \\
+0 & {u_r \over r} & 0 \\ \\
+\frac12({\partial u_{z} \over \partial r} + {\partial u_r \over \partial z} ) & 0 & {\partial u_{z} \over \partial z} 
+\end{array}
+\right)
+\end{equation}
+The term $\vec\nabla \cdot \vec{u}$ is simply the trace of ${\bm \varepsilon}(\vec{u})$ so 
+\[
+\vec\nabla \cdot \vec{u}
+= {\partial u_r \over \partial r} +{u_r \over r}
++{\partial u_{z} \over \partial z}
+\]
+Finally the full stress tensor is then 
+\begin{eqnarray}
+{\bm \sigma}
+&=&
+\left(
+\begin{array}{ccc}
+\lambda({\partial  u_r \over \partial  r}
++{u_r \over r} +{\partial  u_{z} \over \partial z}) +
+2\mu {\partial  u_r \over \partial  r} &
+0 & \mu({\partial u_{z} \over \partial  r} + {\partial u_r \over \partial z} ) \\
+\\
+0 & \lambda({\partial u_r \over \partial r}
++{u_r \over r} +{\partial u_{z} \over \partial z}) + 2\mu{u_r \over r} & 0 \\
+\\
+\mu({\partial u_{z} \over \partial r} + {\partial u_r \over \partial z} )&0 & \lambda({\partial u_r \over \partial r}
++{u_r \over r} +{\partial u_{z} \over \partial z}) +
+2\mu{\partial  u_{z} \over \partial z}
+\end{array}
+\right) \nonumber\\ \nonumber\\
+&=&
+\left(
+\begin{array}{ccc}
+(\lambda+ 2\mu) {\partial u_r \over \partial r}
++\lambda ({u_r \over r} +{\partial  u_{z} \over \partial z})  &
+0 &
+\mu({\partial u_{z} \over \partial  r} + {\partial u_r \over \partial z} ) \\
+\\
+0 &
+(\lambda+2\mu) \frac{u_r}{r}
++ \lambda({\partial  u_r \over \partial r}
++{\partial u_{z} \over \partial z}) &
+0 \\
+\\
+\mu({\partial u_{z} \over \partial r} + {\partial u_r \over \partial z} ) &
+0 &
+(\lambda+2\mu) \frac{\partial u_z}{\partial z}
++\lambda({\partial u_r \over \partial r}
++{u_r \over r} ) 
+\end{array}
+\right) \nonumber
+\end{eqnarray}
+
+As we did in the 2D case, we rewrite the six independent stress terms in to a vector $\vec\sigma$ and we use Eq.~\eqref{eq:elast_as} to arrive at:
+\[
+\vec{\sigma}=
+\left(
+\begin{array}{c}
+\sigma_{rr} \\
+\sigma_{\theta\theta} \\
+\sigma_{zz} \\
+\sigma_{r\theta} \\
+\sigma_{rz} \\
+\sigma_{\theta z} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cccccc}
+\lambda+2\mu & \lambda & \lambda & 0 & 0 & 0 \\
+\lambda & \lambda+2\mu & \lambda & 0 & 0 & 0 \\
+\lambda & \lambda & \lambda+2\mu & 0 & 0 & 0 \\
+0 & 0 & 0 & \mu & 0 & 0\\
+0 & 0 & 0 & 0 & \mu & 0\\
+0 & 0 & 0 & 0 & 0 & \mu
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\varepsilon_{rr} \\
+\varepsilon_{\theta\theta} \\
+\varepsilon_{zz} \\
+2\varepsilon_{r\theta} \\
+2\varepsilon_{rz} \\
+2\varepsilon_{\theta z} 
+\end{array}
+\right)
+=\vec\varepsilon(\vec u)
+\]
+or $\vec\sigma = {\bm D} \cdot \vec\varepsilon(\vec u)$. Notice the similarity of matrix ${\bm D}$ with the one of Section~(XXX) in the 3D penalty formulation case.
+The components of the $\vec\varepsilon$ vector are
+\[
+\vec\varepsilon(\vec u)
+=
+\left(
+\begin{array}{c}
+\varepsilon_{rr} \\
+\varepsilon_{\theta\theta} \\
+\varepsilon_{zz} \\
+2\varepsilon_{r\theta} \\
+2\varepsilon_{rz} \\
+2\varepsilon_{\theta z} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\frac{\partial u_r}{\partial r} \\ 
+\frac{u_r}{r} \\ 
+\frac{\partial u_z}{\partial z} \\ 
+0 \\ 
+\frac{\partial u_z}{\partial r}+\frac{\partial u_r}{\partial z} \\ 
+0
+\end{array}
+\right)
+\]
+We see that there are two zeroes and consequently we'll find that
+$\sigma_{r\theta}$ and $\sigma_{\theta z}$ are also
+identically zero, so we discard these and end up with only four stress components :
+\[
+\vec{\sigma}=
+\left(
+\begin{array}{c}
+\sigma_{rr} \\
+\sigma_{\theta\theta} \\
+\sigma_{zz} \\
+\sigma_{rz} \\
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cccc}
+\lambda+2\mu & \lambda & \lambda & 0  \\
+\lambda & \lambda+2\mu & \lambda & 0  \\
+\lambda & \lambda & \lambda+2\mu & 0  \\
+0 & 0 & 0 & \mu 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\varepsilon_{rr} \\
+\varepsilon_{\theta\theta} \\
+\varepsilon_{zz} \\
+2\varepsilon_{rz} 
+\end{array}
+\right)
+%=\vec\varepsilon(\vec u)
+\]
+Note that in the literature the above relationship is often written 
+\[
+\left(
+\begin{array}{c}
+\sigma_{rr} \\
+\sigma_{\theta\theta} \\
+\sigma_{zz} \\
+\sigma_{rz} \\
+\end{array}
+\right)
+=
+\frac{E}{(1+\nu)(1-2\nu)}
+\left(
+\begin{array}{cccc}
+1-\nu & \lambda & \nu & 0  \\
+\nu & 1-\nu & \nu & 0  \\
+\nu & \nu & 1-\nu & 0  \\
+0 & 0 & 0 & (1-2\nu)/2
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\varepsilon_{rr} \\
+\varepsilon_{\theta\theta} \\
+\varepsilon_{zz} \\
+2\varepsilon_{rz} 
+\end{array}
+\right)
+\]
+which is equivalent since $E=2\mu(1+\nu)$ and $\lambda=\frac{\nu E}{(1+\nu)(1-2\nu)}$ (see for instance Section~5.2.4 in \cite{zita1}).   
+
+Only displacements in the $r$ and $z$ directions remain (note that $\varepsilon_{\theta\theta}$ is in fact equal to $u_r/r$). In what follows I rename $u=u_r$ and $u_z=w$ to simplify notations. 
+Then, inside an element we have 
+\begin{eqnarray}
+u^h(r,z) &=& \sum_{i=1}^m N_i(r,z) u_i \nonumber\\
+w^h(r,z) &=& \sum_{i=1}^m N_i(r,z) w_i
+\end{eqnarray}
+where $N_i$ are the shape functions attached 
+to the $m$ nodes of the element.
+We compute the elements of the ${\bm \varepsilon}$ tensor of Eq.~\eqref{eq:strain_as} as follows:
+\begin{eqnarray}
+\varepsilon_{rr} &=&
+\frac{\partial u^h}{\partial r} 
+= \sum_{i=1}^m \frac{\partial N_i}{\partial r}(r,z) \; u_i \\
+\varepsilon_{\theta\theta} &=& \frac{u_r^h}{r} = 
+\frac{1}{r}\sum_{i=1}^m N_i(r,z) \;  u_i \\
+\varepsilon_{zz} &=& 
+\frac{\partial w^h}{\partial z}
+= \sum_{i=1}^m \frac{\partial N_i}{\partial z}(r,z) \; w_i \\
+\varepsilon_{rz} &=& \frac12\frac{\partial u^h}{\partial z}
++\frac12 \frac{\partial w^h}{\partial r}
+= \sum_{i=1}^m \frac{\partial N_i}{\partial z}(r,z) u_i 
++ \sum_{i=1}^m \frac{\partial N_i}{\partial r}(r,z) w_i 
+\end{eqnarray}
+
+\noindent Let us take $m=3$, i.e. linear triangles, for simplicity. Then 
+the strain vector $\vec{\varepsilon}^h$ is given by
+\[
+\vec\varepsilon^h=
+\left(
+\begin{array}{c}
+\frac{\partial u^h}{\partial r} \\ \\
+\frac{u^h}{r} \\ \\
+\frac{\partial w^h}{\partial z} \\ \\
+\frac{\partial u^h}{\partial z} + \frac{\partial w^h}{\partial r} 
+\end{array}
+\right)
+=
+\underbrace{
+\left(
+\begin{array}{ccccccccc}
+\frac{\partial N_1}{\partial r} &  0 &  
+\frac{\partial N_2}{\partial r} &  0 &
+\frac{\partial N_3}{\partial r} &  0 \\  \\
+\frac{N_1}{r}  & 0 &  
+\frac{N_2}{r}  & 0 &
+\frac{N_3}{r}  & 0 \\  \\
+ 0 & \frac{\partial N_1}{\partial z}  &
+ 0 & \frac{\partial N_2}{\partial z}  &
+ 0 & \frac{\partial N_3}{\partial z}  \\ \\
+\frac{\partial N_1}{\partial z} & \frac{\partial N_1}{\partial r}  &
+\frac{\partial N_2}{\partial z} & \frac{\partial N_2}{\partial r}  &
+\frac{\partial N_3}{\partial z} & \frac{\partial N_3}{\partial r}   
+\end{array}
+\right)
+}_{\bm B (4\times 6) }
+\cdot
+\underbrace{
+\left(
+\begin{array}{c}
+u1 \\  w1 \\ u2 \\  w2 \\ u3 \\ w3 
+\end{array}
+\right)
+}_{\vec U (6\times1)}
+\]
+or $\vec\varepsilon^h= {\bm B} \cdot \vec{U}$
+and finally 
+\[
+\underbrace{
+\left(
+\begin{array}{c}
+\sigma_{rr} \\
+\sigma_{\theta\theta} \\
+\sigma_{zz} \\
+\sigma_{rz} 
+\end{array}
+\right)
+}_{\vec{\sigma}}
+=
+\underbrace{
+\left(
+\begin{array}{cccc}
+\lambda+2\mu & \lambda & \lambda & 0  \\
+\lambda & \lambda+2\mu & \lambda & 0  \\
+\lambda & \lambda & \lambda+2\mu & 0  \\
+0 & 0 & 0 & \mu 
+\end{array}
+\right)
+}_{\bm D}
+\!
+\cdot
+\!
+\underbrace{
+\left(
+\begin{array}{ccccccccc}
+\frac{\partial N_1}{\partial r} &  0 &  
+\frac{\partial N_2}{\partial r} &  0 &
+\frac{\partial N_3}{\partial r} &  0 \\  \\
+\frac{N_1}{r}  & 0 &  
+\frac{N_2}{r}  & 0 &
+\frac{N_3}{r}  & 0 \\  \\
+ 0 & \frac{\partial N_1}{\partial z}  &
+ 0 & \frac{\partial N_2}{\partial z}  &
+ 0 & \frac{\partial N_3}{\partial z}  \\ \\
+\frac{\partial N_1}{\partial z} & \frac{\partial N_1}{\partial r}  &
+\frac{\partial N_2}{\partial z} & \frac{\partial N_2}{\partial r}  &
+\frac{\partial N_3}{\partial z} & \frac{\partial N_3}{\partial r}   
+\end{array}
+\right)
+}_{\bm B (4\times 6) }
+\!
+\cdot
+\!
+\underbrace{
+\left(
+\begin{array}{c}
+u1 \\  w1 \\ u2 \\  w2 \\ u3 \\ w3 
+\end{array}
+\right)
+}_{\vec U (6\times1)}
+\]
+or, 
+\[
+\boxed{
+\vec\sigma = {\bm D} \cdot {\bm B} \cdot \vec{U}
+}
+\]
+Note that in 2D, the matrix ${\bm D}$ is $3\times3$ and 
+${\bm B}$ is $3\times 6$.
+
+\todo[inline]{I do not know yet how to arrive at what follows}
+
+\noindent The $6\times 6$ stiffness matrix is then 
+\[
+\K = \iiint {\bm B}^T \cdot {\bm D} \cdot {\bm B}\; dV
+\]
+with $dV= r dr d\theta dz$ in cylindrical coordinates. The integral 
+over the $\theta$ coordinate yields a factor $2\pi$ so 
+\[
+\K = 2 \pi \iint {\bm B}^T \cdot {\bm D} \cdot {\bm B}\; {\color{red} r} drdz
+\]
+The integration can now be performed as simply as was the case in the plane stress problem.
+
+\todo[inline]{write the derivation for the rhs}
+
+
+Note that in practice the matrix ${\bm D}$ is computed as follows (see for example Stone~63):
+\[
+{\bm D}
+=
+\left(
+\begin{array}{cccc}
+\lambda+2\mu & \lambda & \lambda & 0  \\
+\lambda & \lambda+2\mu & \lambda & 0  \\
+\lambda & \lambda & \lambda+2\mu & 0  \\
+0 & 0 & 0 & \mu 
+\end{array}
+\right)
+=
+\lambda
+\left(
+\begin{array}{cccc}
+1 & 1 & 1 & 0  \\
+1 & 1 & 1 & 0  \\
+1 & 1 & 1 & 0  \\
+0 & 0 & 0 & 0 
+\end{array}
+\right)
++
+\mu
+\left(
+\begin{array}{cccc}
+2 & 0 & 0 & 0 \\
+0 & 2 & 0 & 0 \\
+0 & 0 & 2 & 0 \\
+0 & 0 & 0 & 1  
+\end{array}
+\right)
+\]
+
+
+The divergence of the stress tensor is given by
+\begin{eqnarray}
+\vec\nabla \cdot {\bm \sigma}
+& = &
+\left[ {1 \over r} {\partial \over \partial \, r} \left( r \, \sigma_{\!rr} \right) + 
+{1 \over r} {\partial \, \sigma_{\!r\theta} \over \partial \, \theta} +
+{\partial \, \sigma_{\!rz} \over \partial z} - {\sigma_{\theta \theta} \over r} \right] \vec{ e}_r \\
+& + &
+\left[ {1 \over r} {\partial \over \partial \, r} \left( r \, \sigma_{\!r\theta} \right) + 
+{1 \over r} {\partial \, \sigma_{\!\theta\theta} \over \partial \, \theta} +
+{\partial \, \sigma_{\!\theta z} \over \partial z} + {\sigma_{r \theta} \over r} \right] \vec{e}_\theta \\
+& + &
+\left[ {1 \over r} {\partial \over \partial \, r} \left( r \, \sigma_{\!rz} \right) + 
+{1 \over r} {\partial \, \sigma_{\!\theta z} \over \partial \, \theta} +
+{\partial \, \sigma_{\!zz} \over \partial z} \right] \vec{e}_z
+\end{eqnarray}
+Since $\sigma_{r\theta}=\sigma_{\theta r}=0$ 
+and $\sigma_{z\theta}=\sigma_{\theta z}=0$
+and since $\partial_\theta \rightarrow 0$
+then 
+\begin{eqnarray}
+\vec\nabla \cdot {\bm \sigma}
+& = &
+\left[ {1 \over r} {\partial \over \partial \, r} \left( r \, \sigma_{\!rr} \right) + 
+{\partial \, \sigma_{\!rz} \over \partial z} - {\sigma_{\theta \theta} \over r} \right] \vec{ e}_r \\
+& + &
+\left[ {1 \over r} {\partial \over \partial \, r} \left( r \, \sigma_{\!rz} \right) 
+ +
+{\partial \, \sigma_{\!zz} \over \partial z} \right] \vec{e}_z
+\end{eqnarray}
+
+Then 
+\begin{eqnarray}
+\vec\nabla \cdot {\bm \sigma}|_r
+&=&  {1 \over r} {\partial \over \partial \, r} \left( r \, \sigma_{\!rr} \right) + 
+{\partial \, \sigma_{\!rz} \over \partial z} - {\sigma_{\theta \theta} \over r} \\
+&=& 
+\frac{\partial \sigma_{rr}}{\partial r} + \frac1r (\sigma_{rr}-\sigma_{\theta \theta} ) + \frac{\partial \sigma_{rz}}{\partial z} \\
+&=& 
+\frac{\partial \sigma_{rr}}{\partial r} + \frac{2\mu}{r} 
+({\partial \, u_r \over \partial \, r} - \frac{u_r}{r} ) 
++ \frac{\partial \sigma_{rz}}{\partial z} \\
+\vec\nabla \cdot {\bm \sigma}|_z
+&=& \frac{\partial \sigma_{rz}}{\partial r} + \frac{\sigma_{rz}}{r}
+ + {\partial \, \sigma_{\!zz} \over \partial z} 
+\end{eqnarray}
 
 
 
