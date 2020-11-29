@@ -625,7 +625,8 @@ for iel in range (0,nel):
 vrms=np.sqrt(vrms/Lx/Ly)
 avrgp=avrgp/Lx/Ly
 
-p-=avrgp
+if pnormalise:
+   p-=avrgp
 
 print("     -> nel= %6d ; vrms= %e " %(nel,vrms))
 
