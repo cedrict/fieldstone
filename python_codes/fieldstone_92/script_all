@@ -1,0 +1,23 @@
+#!/bin/bash
+
+rm statistics*.ascii
+
+python3 generate_nodes.py
+cat mypoints mysegments > mesh.poly
+
+for aa in 0.000015 0.00002 0.00005 0.00010 0.00025 0.00050 0.00080 0.00125 0.00250 0.00500 0.01000 ; do
+
+   echo 'aa='$aa
+
+   ../../../../triangle/triangle  -j -q -a$aa -o2 -pc mesh.poly
+   echo "nel="
+   head -1 mesh.1.ele 
+   head -1 mesh.1.ele > temp
+   echo "NV0="
+   head -1 mesh.1.node 
+   head -1 mesh.1.node >> temp
+   python3 stone.py > opla
+   grep bench opla >> statistics.ascii
+
+done
+

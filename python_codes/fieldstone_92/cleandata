@@ -1,0 +1,14 @@
+rm mesh.1.ele
+rm mesh.1.node
+rm mesh.1.poly
+rm mesh.poly
+rm mypoints
+rm mysegments
+rm opla
+rm solution.vtu
+rm stress.vtu
+rm temp
+
+
+
+
