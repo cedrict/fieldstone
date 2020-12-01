@@ -605,25 +605,34 @@ for iel in range (0,nel):
             jcob=np.linalg.det(jcb)
 
             uq=0.0
+            xq=0.0
             vq=0.0
             for k in range(0,mV):
+                xq+=NNNV[k]*xV[iconV[k,iel]]
                 uq+=NNNV[k]*u[iconV[k,iel]]
                 vq+=NNNV[k]*v[iconV[k,iel]]
             #end for
-            vrms+=(uq**2+vq**2)*weightq*jcob
+            if axisymmetric:
+               vrms+=(uq**2+vq**2)*weightq*jcob *2*np.pi*xq
+            else:
+               vrms+=(uq**2+vq**2)*weightq*jcob 
 
             pq=0.0
             for k in range(0,mP):
                 pq+=NNNP[k]*p[iconP[k,iel]]
             #end for
-            avrgp+=pq*weightq*jcob
+            if axisymmetric:
+               avrgp+=pq*weightq*jcob *2*np.pi*xq
+            else:
+               avrgp+=pq*weightq*jcob 
+
 
         #end for jq
     #end for iq
 #end for iel
 
-vrms=np.sqrt(vrms/Lx/Ly)
-avrgp=avrgp/Lx/Ly
+vrms=np.sqrt(vrms/(np.pi*Lx**2*Ly))
+avrgp=avrgp/(np.pi*Lx**2*Ly)
 
 if pnormalise:
    p-=avrgp
