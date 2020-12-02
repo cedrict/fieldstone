@@ -1,7 +1,19 @@
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_58/keywords}
 
-\Literature \cite{brhb14},\cite{brsp11},\cite{brsp14},\cite{hiok66},\cite{brze95},\cite{wami15}
-\cite{wowu95}\cite{zhwd90}
+\noindent \Literature:
+\begin{itemize}
+\item Compaction creep of sands due to time-dependent grain failure: Effects of chemical environment,
+      applied stress, and grain size. Brzesowsky \etal{} (2014) \cite{brhb14}
+\item Failure behavior of single sand grains: Theory versus experiment. Brzesowsky \etal{} (2011) \cite{brsp11}
+\item Time-independent compaction behavior of quartz sands. Brzesowsky \etal{} (2014) \cite{brsp14}
+\item Determination of the tensile strength of rock by a compression test of an 
+      irregular test piece. Hiramatsu \etal{} (1966) \cite{hiok66}
+\item Micromechanics of sand grain failure and sand compaction. Brzesowsky (1995) \cite{brze95}
+\item Contact fatigue in silica sand—Observations and modeling. Wang \& Michalowski (2015) \cite{wami15}
+\item Tensile stress concentration and compressive failure in cemented granular material. 
+      Wong \& Wu (1995)\cite{wowu95}
+\item Micromechanics of pressure-induced grain crushing in porous rocks. Zhang \etal{} (1990) \cite{zhwd90}
+\end{itemize}
 
 %----------------------------
 \subsubsection*{Experiment 1}
@@ -86,9 +98,8 @@ On the $y$-axis ($x=0$) the stresses are
 \sigma_{xy} (0,y) &=& 0 \\
 p(0,y) 
 &=& \frac{P}{\pi} \left[ \frac{(R-y)^3 }{(R-y)^4} + \frac{ (R+y)^3  }{(R+y)^4}  - \frac{2}{D} \right] \\
-&=& \frac{P}{\pi} \left[ \frac{1}{R-y} + \frac{ 1 }{R+y}  - \frac{2}{D} \right] \\
+&=& \frac{P}{\pi} \left[ \frac{1}{R-y} + \frac{ 1 }{R+y}  - \frac{2}{D} \right] 
 \end{eqnarray}
-
 In the code the pressure is retrieved after the displacements are computed. 
 In 2D, we have (using Eq.~\ref{eq:twoELAST} for the stress tensor):
 \begin{eqnarray}
@@ -134,22 +145,22 @@ nicely converge to a single smooth curve.
 \hline
 \end{tabular}
 
-\includegraphics[width=12cm]{python_codes/fieldstone_58/experiment1/vrms}
+\includegraphics[width=8cm]{python_codes/fieldstone_58/experiment1/vrms}
 \end{center}
 
 
 \newpage
 \begin{center}
-a)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/press_xaxis.pdf}
-b)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/press_yaxis.pdf}\\
-c)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/sigmaxx_xaxis.pdf}
-d)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/sigmaxx_yaxis.pdf}\\
-e)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/sigmayy_xaxis.pdf}
-f)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/sigmayy_yaxis.pdf}\\
-g)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/sigmaxy_xaxis.pdf}
-h)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/sigmaxy_yaxis.pdf}\\
-i)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/u_xaxis.pdf}
-j)\includegraphics[width=7.2cm]{python_codes/fieldstone_58/experiment1/v_yaxis.pdf}\\
+a)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/press_xaxis.pdf}
+b)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/press_yaxis.pdf}\\
+c)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/sigmaxx_xaxis.pdf}
+d)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/sigmaxx_yaxis.pdf}\\
+e)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/sigmayy_xaxis.pdf}
+f)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/sigmayy_yaxis.pdf}\\
+g)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/sigmaxy_xaxis.pdf}
+h)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/sigmaxy_yaxis.pdf}\\
+i)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/u_xaxis.pdf}
+j)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/v_yaxis.pdf}\\
 {\captionfont a,b) pressure along the $x$-axis;
 c,d) $\sigma_{xx}$  along the $x-$ and $y-$axis; 
 e,f) $\sigma_{yy}$  along the $x-$ and $y-$axis; 
@@ -160,18 +171,18 @@ j) vertical displacement along the $y-$axis}
 
 \newpage
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/u}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/v}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/divv}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/p}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/q}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/e}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/exx}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/eyy}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/exy}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/sigma_xx}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/sigma_yy}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/sigma_xy}\\
+\includegraphics[width=5.4cm]{python_codes/fieldstone_58/experiment1/111/u}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_58/experiment1/111/v}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_58/experiment1/111/divv}\\
+\includegraphics[width=5.4cm]{python_codes/fieldstone_58/experiment1/111/p}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_58/experiment1/111/q}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_58/experiment1/111/e}\\
+\includegraphics[width=5.4cm]{python_codes/fieldstone_58/experiment1/111/exx}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_58/experiment1/111/eyy}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_58/experiment1/111/exy}\\
+\includegraphics[width=5.4cm]{python_codes/fieldstone_58/experiment1/111/sigma_xx}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_58/experiment1/111/sigma_yy}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_58/experiment1/111/sigma_xy}\\
 {\captionfont Results for nLayers=11}
 \end{center}
 
@@ -182,15 +193,11 @@ a)\includegraphics[width=8cm]{python_codes/fieldstone_58/experiment1/contours}
 b)\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment1/111/e_2}\\
 {\captionfont 
 a) Maximum shear stress contours and corresponding photoelastic isochromatic 
-for a disk under diametrical compression \cite{sadd14};
+for a disk under diametrical compression \cite{sadd14};\\
 b) computed second invariant of the strain tensor.}
 \end{center}
 
 
-
-
-
-CHECK AGAINST MY NOTES!
 We can also look at the principal stresses.
 The principal direction angle $\theta_p$ defines the principal
 directions where the only stresses are normal stresses, and 
@@ -203,7 +210,6 @@ The principal stresses are found from the original stresses via
 \sigma_{1,2}=\frac{\sigma_{xx}+\sigma_{yy}}{2} \pm \sqrt{  \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 }
  \]
 
-%\includegraphics[width=10cm]{images/pstresses}\\
 
 
 \newpage
@@ -211,50 +217,42 @@ The principal stresses are found from the original stresses via
 \subsubsection*{Experiment 2}
 
 This experiment was designed in collaboration with T. Shinohara \index{contributors}{T. Shinohara}. 
-Unlike the previous one it does not have an analytical solution. 
+Unlike the previous one it does not have an analytical solution. Ideally we wished to look at a 
+cluster of grains as shown hereunder. However, because of the symmetries of the problem we can 
+here again only model one grain, with (idealised) boundary conditions:
  
 \begin{center}
 \begin{tikzpicture}
 %\draw[fill=gray!23,gray!23](0,0) rectangle (11,6);
 %\draw[step=0.5cm,gray,very thin] (0,0) grid (11,6); %background grid
-
 \filldraw[fill=blue!40!white, draw=black] (2,2) circle (1cm);
 \filldraw[fill=blue!40!white, draw=black] (4,2) circle (1cm);
 \filldraw[fill=blue!40!white, draw=black] (2,4) circle (1cm);
 \filldraw[fill=blue!40!white, draw=black] (4,4) circle (1cm);
-
 \draw[thick,->] (0.5,2) -- (1,2); \draw[thick,->] (5.5,2) -- (5,2);
 \draw[thick,->] (0.5,4) -- (1,4); \draw[thick,->] (5.5,4) -- (5,4);
-
 \draw[thick,->] (2,0.5) -- (2,1); \draw[thick,->] (2,5.5) -- (2,5);
 \draw[thick,->] (4,0.5) -- (4,1); \draw[thick,->] (4,5.5) -- (4,5);
-
-
 \draw[thick,->] (7.5,2) -- (8,2);
 \draw[thick,->] (9,0.5) -- (9,1); 
 \filldraw[fill=blue!40!white, draw=black] (9,2) circle (1cm);
-
 \filldraw[black] (10,2) circle (2pt) node[anchor=west] {$u=v=0$};
 \filldraw[black] (9,3) circle (2pt) node[anchor=south] {$u=v=0$};
-
 \node[] at (0.5,0.5)   {a)};
 \node[] at (7.5,0.5)   {b)};
-
 \end{tikzpicture}\\
 {\captionfont a) assembly of four circular grains and the pressure boundary conditions; 
 b) simplified setup of a single grain.}
 \end{center}
 
-
-
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment2/displ}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment2/displx}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment2/disply}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment2/divv}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment2/p}
-\includegraphics[width=5cm]{python_codes/fieldstone_58/experiment2/strain}\\
-\includegraphics[width=9cm]{python_codes/fieldstone_58/experiment2/dispvect}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_58/experiment2/displ}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_58/experiment2/displx}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_58/experiment2/disply}\\
+\includegraphics[width=5.5cm]{python_codes/fieldstone_58/experiment2/divv}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_58/experiment2/p}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_58/experiment2/strain}\\
+\includegraphics[width=10cm]{python_codes/fieldstone_58/experiment2/dispvect}
 \end{center}
 
 
