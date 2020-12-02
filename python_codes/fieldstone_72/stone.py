@@ -195,8 +195,8 @@ def eta(x,y):
        else:
           val=1.
     if bench==7:
-       if ((x-0.5)**2+(y-0.5)**2 < 0.123**2):
-          val=100.
+       if ((x-0.5)**2+(y-0.5)**2 < 0.123456789**2):
+          val=1000.
        else:
           val=1.
     if bench==8:
@@ -233,8 +233,8 @@ def rho(x,y):
     if bench==6:
        val=0.
     if bench==7:
-       if ((x-0.5)**2+(y-0.5)**2 < 0.123**2):
-          val=2.
+       if ((x-0.5)**2+(y-0.5)**2 < 0.123456789**2):
+          val=1.01
        else:
           val=1.
     if bench==8:
@@ -279,7 +279,7 @@ mP=4
 # bench=9 : mms (lami17)
 # bench=10: free surf. crsg12
 
-bench=3
+bench=7
 
 if bench==1 or bench==4 or bench==5 or bench==6 or bench==7 or bench==9:
    Lx=1
@@ -291,7 +291,7 @@ if bench==10:
    Lx=2800e3
    Ly=700e3
 
-bubble=1
+bubble=2
 
 if int(len(sys.argv) == 9):
    nelx=int(sys.argv[1])
@@ -303,7 +303,7 @@ if int(len(sys.argv) == 9):
    nqperdim=int(sys.argv[7])
    beta=float(sys.argv[8])
 else:
-   nelx = 16
+   nelx = 192
    nely = nelx
    visu = 1
    drho = 8
@@ -1069,6 +1069,20 @@ if bench==1 or bench==4 or bench==5 or bench==6 or bench==9:
    print("     -> nel= %6d ; errv= %.10f ; errp= %.10f; beta= %4e" %(nel,errv,errp,beta))
 
    print("compute errors: %.3f s" % (timing.time() - start))
+
+
+#####################################################################
+# export various measurements for stokes sphere benchmark 
+#####################################################################
+
+vel=np.sqrt(u**2+v**2)
+print('benchmark ',Lx/nelx,nel,Nfem,\
+      np.min(u),np.max(u),\
+      np.min(v),np.max(v),\
+      0,0,\
+      np.min(vel),np.max(vel),\
+      np.min(p),np.max(p),
+      vrms)
 
 #####################################################################
 # plot of solution
