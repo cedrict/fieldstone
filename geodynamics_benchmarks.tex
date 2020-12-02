@@ -23,17 +23,17 @@ computational geodynamics community.
       Glerum et al (2018) \cite{gltf18},
       Stone 8.
 \item 2D Rayleigh-Benard convection:\\
-      Blankenbach et al (1989) \cite{blbc89},
-      Travis et al (1990) \cite{trab90},
+      Blankenbach \etal (1989) \cite{blbc89},
+      Travis \etal (1990) \cite{trab90},
       Ogawa (1993) \cite{ogaw93},
       Trompert \& Hansen (1998) \cite{trha98},
-      Christon et al (2002) \cite{chgs02},
-      Chiu-Webster et al (2008) \cite{chhl08},
-      Kameyama et al (2005) \cite{kaks05},
+      Christon \etal (2002) \cite{chgs02},
+      Chiu-Webster \etal (2008) \cite{chhl08},
+      Kameyama \etal (2005) \cite{kaks05},
       King (2009) \cite{king09},
       Beuchert \& Podlachikov (2010) \cite{bepo10},
       Leng \& Zhong (2011) \cite{lezh11},
-      Vynnytska et al (2013) \cite{vyrc13},
+      Vynnytska \etal (2013) \cite{vyrc13},
       ASPECT manual \cite{aspectmanual},
       Stone 3.
 \item 2D Rayleigh-Benard convection, lateral heating, 30+ codes: de Vahl Davis \& Jones (1983) \cite{dejo83}.
@@ -1986,13 +1986,19 @@ In our case we have
 \upnu_s = \frac29 \frac{0.01\cdot 0.123456789^2\cdot 1}{1} \simeq 0.00003387017 = 3.387017 \cdot 10^{-5}
 \]
 
+Note that as noted in the Gale manual \cite{XXX} a correction can be made
+to this velocity when the sphere is itself viscous, see problem 2 p65-66
+of second English edition of 'Fluid Mechanics' by Landau \& Lifshitz, volume 6
+of Theoretical Physics.  
 
+
+\newpage
 \begin{center}
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_FS/C1_0}
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_FS/C1_1}
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_FS/C1_2}\\
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_FS/C1_3}
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_FS/C1_4}\\
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_FS/C1_0}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_FS/C1_1}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_FS/C1_2}\\
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_FS/C1_3}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_FS/C1_4}\\
 {\captionfont Octree-based ASPECT meshes. The background mesh is $16^3$ and refinement is allowed to take place 4 times.
 Note that a special output is automatically generated in the code which subdivides all elements in 8 for 
 visualisation purposes only.}
@@ -2020,11 +2026,11 @@ visualisation purposes only.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_FS/vely}
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_FS/velz}
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_FS/vel}\\
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_FS/press}
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_FS/C1}\\
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_FS/vely}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_FS/velz}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_FS/vel}\\
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_FS/press}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_FS/C1}\\
 {\captionfont High-resolution solution cross section at $x=0.5$}
 \end{center}
 
@@ -2046,9 +2052,9 @@ visualisation purposes only.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_NS/v}
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_NS/w}
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_NS/vel}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_NS/v}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_NS/w}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_NS/vel}
 {\captionfont 4+4 mesh}
 \end{center}
 
@@ -2073,16 +2079,47 @@ visualisation purposes only.}
 
 
 \begin{center}
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_OT/v}
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_OT/w}
-\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_OT/vel}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_OT/v}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_OT/w}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_amr_OT/vel}
 {\captionfont 4+4 mesh}
 \end{center}
 
+\newpage
+%.................................................................................
+\paragraph{CYL results}.
+
+note that sphere and walls are only 1000 times more viscous than fluid
+
+\begin{center}
+\includegraphics[width=5cm]{images/stokes_sphere3D/vrms_CYL}
+\includegraphics[width=5cm]{images/stokes_sphere3D/max_vel_CYL}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_gr_CYL/C1a}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_gr_CYL/C1b}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_gr_CYL/vel}\\
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_gr_CYL/u}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_gr_CYL/v}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_gr_CYL/w}\\
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_gr_CYL/sr}
+\includegraphics[width=5cm]{images/stokes_sphere3D/aspect_gr_CYL/press}\\
+{\captionfont level 5 mesh, 32x32x64 elements.}
+\end{center}
+
+I have proven in Stone 92 that the sphere should probably be $10^6$
+times more viscous than the fluid and the box should be 1.5 in height 
+to recover the Habermann/Faxen velocities. 
 
 
 
-
+\begin{center}
+\includegraphics[width=4cm]{images/stokes_sphere3D/aspect_amr_CYL/C1_0}
+\includegraphics[width=4cm]{images/stokes_sphere3D/aspect_amr_CYL/C1_1}
+\includegraphics[width=4cm]{images/stokes_sphere3D/aspect_amr_CYL/C1_2}
+\includegraphics[width=4cm]{images/stokes_sphere3D/aspect_amr_CYL/C1_3}
+\end{center}
 
 
 

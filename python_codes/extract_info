@@ -321,6 +321,16 @@ echo "--------------------------" >> features
 grep "defect_picard" */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
+echo "--------------------------" >> features
+echo "---axisymmetry------------" >> features
+echo "--------------------------" >> features
+grep "axisymmetry" */keywords | cut -c1- | cut -f1 -d"/" >> features
+echo " " >> features
+
+
+
+
+
 
 
 

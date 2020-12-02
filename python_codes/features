@@ -63,6 +63,13 @@ fieldstone_77
 fieldstone_78
 fieldstone_79
 fieldstone_80
+fieldstone_81
+fieldstone_84
+fieldstone_87
+fieldstone_88
+fieldstone_89
+fieldstone_90
+fieldstone_91
  
 ---------------------
 ---disc--------------
@@ -171,6 +178,10 @@ fieldstone_77
 fieldstone_78
 fieldstone_79
 fieldstone_80
+fieldstone_87
+fieldstone_88
+fieldstone_89
+fieldstone_90
  
 ---------------------
 ---3D----------------
@@ -184,6 +195,8 @@ fieldstone_69
 fieldstone_75
 fieldstone_79
 fieldstone_80
+fieldstone_81
+fieldstone_84
  
 ---------------------
 ---P1----------------
@@ -271,6 +284,11 @@ fieldstone_79
 fieldstone_79
 fieldstone_79
 fieldstone_80
+fieldstone_87
+fieldstone_88
+fieldstone_89
+fieldstone_90
+fieldstone_91
  
 ---------------------
 ---Q2----------------
@@ -306,6 +324,10 @@ fieldstone_79
 fieldstone_79
 fieldstone_79
 fieldstone_79
+fieldstone_87
+fieldstone_88
+fieldstone_89
+fieldstone_91
  
 ---------------------
 ---Q1P0---
@@ -368,6 +390,9 @@ fieldstone_67
 fieldstone_70
 fieldstone_71
 fieldstone_79
+fieldstone_87
+fieldstone_88
+fieldstone_91
  
 ---------------------
 ---Q2(8)Q1---
@@ -502,6 +527,10 @@ fieldstone_77
 fieldstone_78
 fieldstone_79
 fieldstone_80
+fieldstone_81
+fieldstone_87
+fieldstone_88
+fieldstone_91
  
 ---------------------
 ---energy_equation---
@@ -522,6 +551,7 @@ fieldstone_67
 fieldstone_68
 fieldstone_71
 fieldstone_79
+fieldstone_88
  
 ---------------------
 ---thermo mechanical-
@@ -535,6 +565,7 @@ fieldstone_51
 fieldstone_70
 fieldstone_71
 fieldstone_79
+fieldstone_88
  
 ---------------------
 ---compressible------
@@ -547,6 +578,7 @@ fieldstone_58
 fieldstone_63
 fieldstone_76
 fieldstone_79
+fieldstone_90
  
 ---------------------
 ---penalty-----------
@@ -615,6 +647,10 @@ fieldstone_77
 fieldstone_78
 fieldstone_79
 fieldstone_80
+fieldstone_81
+fieldstone_87
+fieldstone_88
+fieldstone_91
  
 --------------------------
 ---analytical benchmark---
@@ -663,6 +699,12 @@ fieldstone_77
 fieldstone_78
 fieldstone_79
 fieldstone_80
+fieldstone_81
+fieldstone_84
+fieldstone_87
+fieldstone_89
+fieldstone_90
+fieldstone_91
  
 --------------------------
 ---numerical benchmark----
@@ -698,6 +740,7 @@ fieldstone_75
 fieldstone_76
 fieldstone_78
 fieldstone_79
+fieldstone_87
  
 --------------------------
 ---time_stepping----------
@@ -721,6 +764,8 @@ fieldstone_67
 fieldstone_68
 fieldstone_71
 fieldstone_79
+fieldstone_88
+fieldstone_89
  
 --------------------------
 ---use_mesher-------------
@@ -744,6 +789,7 @@ fieldstone_59
 fieldstone_61
 fieldstone_70
 fieldstone_79
+fieldstone_87
  
 --------------------------
 ---matplotlib-------------
@@ -801,6 +847,9 @@ fieldstone_77
 fieldstone_78
 fieldstone_79
 fieldstone_80
+fieldstone_81
+fieldstone_84
+fieldstone_87
  
 --------------------------
 ---elastic rheology-------
@@ -811,6 +860,7 @@ fieldstone_58
 fieldstone_63
 fieldstone_64
 fieldstone_79
+fieldstone_90
  
 --------------------------
 ---viscous rheology-------
@@ -850,6 +900,9 @@ fieldstone_71
 fieldstone_72
 fieldstone_76
 fieldstone_79
+fieldstone_87
+fieldstone_88
+fieldstone_91
  
 --------------------------
 ---plastic rheology-------
@@ -898,15 +951,20 @@ fieldstone_76
 fieldstone_77
 fieldstone_78
 fieldstone_79
+fieldstone_88
+fieldstone_91
  
 --------------------------
 ---vrms-------------------
 --------------------------
+fieldstone_02
 fieldstone_03
 fieldstone_05
 fieldstone_06
 fieldstone_07
+fieldstone_10
 fieldstone_13
+fieldstone_18
 fieldstone_20
 fieldstone_22
 fieldstone_24
@@ -932,6 +990,9 @@ fieldstone_77
 fieldstone_78
 fieldstone_79
 fieldstone_80
+fieldstone_81
+fieldstone_88
+fieldstone_91
  
 --------------------------
 ---nusselt number---------
@@ -954,6 +1015,7 @@ fieldstone_28
 fieldstone_33
 fieldstone_51
 fieldstone_79
+fieldstone_88
  
 --------------------------
 ---residual---------------
@@ -968,6 +1030,7 @@ fieldstone_58
 fieldstone_63
 fieldstone_70
 fieldstone_79
+fieldstone_87
  
 --------------------------
 ---paraview output--------
@@ -1034,6 +1097,13 @@ fieldstone_77
 fieldstone_78
 fieldstone_79
 fieldstone_80
+fieldstone_81
+fieldstone_84
+fieldstone_87
+fieldstone_88
+fieldstone_89
+fieldstone_90
+fieldstone_91
  
 --------------------------
 ---stream function--------
@@ -1050,6 +1120,7 @@ fieldstone_36
 fieldstone_58
 fieldstone_63
 fieldstone_79
+fieldstone_90
  
 --------------------------
 ---steady_state-----------
@@ -1085,4 +1156,15 @@ fieldstone_39
 fieldstone_59
 fieldstone_61
 fieldstone_79
+fieldstone_88
+fieldstone_91
+ 
+--------------------------
+---defect picard----------
+--------------------------
+fieldstone_87
+ 
+--------------------------
+---axisymmetry------------
+--------------------------
  
