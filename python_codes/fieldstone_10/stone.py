@@ -706,7 +706,6 @@ vrms=np.sqrt(vrms/Lx/Ly/Lz)
 #####################################################################
 # export various measurements for stokes sphere benchmark 
 #####################################################################
-start = time.time()
 
 vel=np.sqrt(u**2+v**2+w**2)
 print('bench ',Lx/nelx,nel,Nfem,\
