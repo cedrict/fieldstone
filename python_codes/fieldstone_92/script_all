@@ -5,7 +5,7 @@ rm statistics*.ascii
 python3 generate_nodes.py
 cat mypoints mysegments > mesh.poly
 
-for aa in 0.000015 0.00002 0.00005 0.00010 0.00025 0.00050 0.00080 0.00125 0.00250 0.00500 0.01000 ; do
+for aa in 0.00001 0.000015 0.00002 0.00005 0.00010 0.00025 0.00050 0.00080 0.00125 0.00250 0.00500 0.01000 ; do
 
    echo 'aa='$aa
 

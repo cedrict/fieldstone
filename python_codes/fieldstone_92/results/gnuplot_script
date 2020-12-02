@@ -10,19 +10,24 @@ set log x
 
 set ylabel 'v_{sphere}'
 set output 'vc.pdf'
-plot[][]\
-'statistics_eta1000_25.ascii'        u 3:19 w lp lw .5 lt 1 pt 7 dashtype 1 t '10^3, n_p=25, L_y=1',\
-'statistics_eta10000_25.ascii'       u 3:19 w lp lw .5 lt 2 pt 7 dashtype 2 t '10^4, n_p=25, L_y=1',\
-'statistics_eta10000_35.ascii'       u 3:19 w lp lw .5 lt 2 pt 7 dashtype 3 t '10^4, n_p=35, L_y=1',\
-'statistics_eta10000_25_Ly11.ascii'  u 3:19 w lp lw .5 lt 2 pt 7 dashtype 4 t '10^4, n_p=25, L_y=1.1',\
-'statistics_eta10000_35_Ly12.ascii'  u 3:19 w lp lw .5 lt 2 pt 7 dashtype 5 t '10^4, n_p=35, L_y=1.2',\
-'statistics_eta100000_25.ascii'      u 3:19 w lp lw .5 lt 3 pt 7 dashtype 2 t '10^5, n_p=25, L_y=1',\
-'statistics_eta100000_35_Ly12.ascii' u 3:19 w lp lw .5 lt 3 pt 7 dashtype 3 t '10^5, n_p=25, L_y=1.2',\
-'statistics_eta100000_35_Ly13.ascii' u 3:19 w lp lw .5 lt 3 pt 7 dashtype 3 t '10^5, n_p=25, L_y=1.3',\
-'statistics_eta100000_45_Ly15.ascii' u 3:19 w lp lw .5 lt 4 pt 7 dashtype 1 t '10^5, n_p=45, L_y=1.5',\
-'statistics_eta1000000_45.ascii'     u 3:19 w lp lw .5 lt 5 pt 7 dashtype 1 t '10^6, n_p=45, L_y=1',\
-'statistics_eta1000_25.ascii'  u 3:21 w l lw .5  lt -1 dashtype 2 t 'v_H',\
-'statistics_eta1000_25.ascii'  u 3:22 w l lw .5  lt -1 dashtype 4 t 'v_F',\
+plot[][0.00001726:]\
+'statistics_eta1000_25.ascii'         u 3:19 w lp lw .5 lt 1 pt 7 dashtype 1 t '10^3, n_p=25, L_y=1',\
+'statistics_eta1000_45_Ly15.ascii'    u 3:19 w lp lw .5 lt 1 pt 7 dashtype 2 t '10^3, n_p=45, L_y=1.5',\
+'statistics_eta10000_25.ascii'        u 3:19 w lp lw .5 lt 2 pt 7 dashtype 1 t '10^4, n_p=25, L_y=1',\
+'statistics_eta10000_35.ascii'        u 3:19 w lp lw .5 lt 2 pt 7 dashtype 2 t '10^4, n_p=35, L_y=1',\
+'statistics_eta10000_25_Ly11.ascii'   u 3:19 w lp lw .5 lt 2 pt 7 dashtype 3 t '10^4, n_p=25, L_y=1.1',\
+'statistics_eta10000_35_Ly12.ascii'   u 3:19 w lp lw .5 lt 2 pt 7 dashtype 4 t '10^4, n_p=35, L_y=1.2',\
+'statistics_eta100000_25.ascii'       u 3:19 w lp lw .5 lt 3 pt 7 dashtype 1 t '10^5, n_p=25, L_y=1',\
+'statistics_eta100000_35_Ly12.ascii'  u 3:19 w lp lw .5 lt 3 pt 7 dashtype 2 t '10^5, n_p=25, L_y=1.2',\
+'statistics_eta100000_35_Ly13.ascii'  u 3:19 w lp lw .5 lt 3 pt 7 dashtype 3 t '10^5, n_p=25, L_y=1.3',\
+'statistics_eta100000_45_Ly15.ascii'  u 3:19 w lp lw .5 lt 3 pt 7 dashtype 4 t '10^5, n_p=45, L_y=1.5',\
+'statistics_eta1000000_45.ascii'      u 3:19 w lp lw .5 lt 4 pt 7 dashtype 1 t '10^6, n_p=45, L_y=1',\
+'statistics_eta1000000_45_Ly15.ascii' u 3:19 w lp lw .5 lt 4 pt 7 dashtype 2 t '10^6, n_p=45, L_y=1.5',\
+'statistics_eta1000000_45_Ly16.ascii' u 3:19 w lp lw .5 lt 4 pt 7 dashtype 3 t '10^6, n_p=45, L_y=1.6',\
+'statistics_eta1000000_45_Ly17.ascii' u 3:19 w lp lw 1.5 lt 4 pt 7 dashtype 3 t '10^6, n_p=45, L_y=1.7',\
+'statistics_eta1000000_55_Ly17.ascii' u 3:19 w lp lw .5 lt 4 pt 7 dashtype 3 t '10^6, n_p=55, L_y=1.7',\
+'statistics_eta1000_25.ascii'         u 3:21 w l lw 1.5  lt -1 dashtype 2 t 'v_{Habermann}',\
+'statistics_eta1000_25.ascii'         u 3:22 w l lw 1.5  lt -1 dashtype 4 t 'v_{Faxen}',\
 
 #set output 'p_min.pdf'
 #plot[][]\

@@ -8,6 +8,7 @@ rm opla
 rm solution.vtu
 rm stress.vtu
 rm temp
+rm statistics.ascii
 
 
 
