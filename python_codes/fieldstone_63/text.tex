@@ -120,7 +120,8 @@ is given by the relationship:
 \[
 \tan (2\theta_p) =  \frac{2 \sigma_{xy}}{\sigma_{xx} -\sigma_{yy}}
 \]
-We define the tensile zone as ????
+We find that $\theta_2$ is always negative, while $\theta_1$ showcases positive and negative values. 
+We define the tensile zone as $\sigma_1>0$.
 
 In general $\sigma_1$ is the maximum (most tensile) principal stress, 
 $\sigma_3$ is the minimum (most compressive) principal stress, 
@@ -130,6 +131,23 @@ The maximum shear stress (in 2D) is given by
 \[
 \tau_{max} = \frac12(\sigma_1-\sigma_2)
 \]
+
+In the axisymmetric case the stress tensor is given by 
+\[
+{\bm \sigma} = 
+\left(
+\begin{array}{ccc}
+\sigma_{rr} & 0 & \sigma_{rz} \\
+0 & \sigma_{\theta\theta} & 0 \\
+\sigma_{rz} & 0 & \sigma_{zz} 
+\end{array}
+\right)
+\]
+There are now three eigenvalues. However it is obvious that $\sigma_{\theta\theta}$ is 
+one of them and the other two correspond to those of the $2\times 2$ stress stensor with 
+$\sigma_{rr}$, $\sigma_{rz}$ and $\sigma_{zz}$ terms.
+The code therefore needs not be modified to compute these. 
+
 
 
 \begin{center}
@@ -148,6 +166,9 @@ we are shown one field which is a derivative of the solution (displacement) but 
 solution itelf.  
 }
 
+The following results are obtained with very high resolutions, i.e. 
+nLayers=901, nel\_h=80. This yields a mesh with about 1.6M triangles, 
+and Nfem=1,668,488.
 
 \newpage
 %-----------------------------------------------------------------------
@@ -155,20 +176,30 @@ solution itelf.
 
 
 \begin{center}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/disp}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/sigma_1}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/tensile_zone}\\
-\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/exx}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/exy}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/eyy}\\
-\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/sigma_xx}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/sigma_xy}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/sigma_yy}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/ps/disp}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/ps/disp_x}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/ps/disp_y}\\
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/ps/sigma1}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/ps/sigma2}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/ps/strain}\\
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/ps/angle}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/ps/maximum_shear_stress}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/ps/tensile}
 \end{center}
 
 \newpage
 %-----------------------------------------------------------------------
 \paragraph{Results in axisymmetric geometry}
 
-
+\begin{center}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/axi/disp}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/axi/disp_x}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/axi/disp_y}\\
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/axi/sigma1}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/axi/sigma2}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/axi/strain}\\
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/axi/angle}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/axi/maximum_shear_stress}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_63/results/axi/tensile}
+\end{center}
 

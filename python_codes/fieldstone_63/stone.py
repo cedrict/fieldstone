@@ -93,8 +93,8 @@ MPa=1e6
 #parameters
 ######################################################
 
-nLayers = 101   # must be odd !
-nel_h=10
+nLayers = 101   # must be odd !  up to 901 so far -> vtu file =350Mb
+nel_h=40
 
 #grain geometrical properties
 outer_radius=9e-5  #radius (m)  
@@ -118,7 +118,7 @@ lambdaa2=2.*mu2*nu2/(1.-2.*nu2)
 gx=0.  # gravity vector x-component
 gy=0.  # gravity vector y-component
 visu=1
-squarification  = True
+squarification  = False
     
 t_bc = 1e8  # traction at contact (Pa)
 
@@ -149,6 +149,10 @@ axisymmetric=False
 print ('nLayers  =',nLayers)
 print ('NV       =',NV)
 print ('nel      =',nel)
+print ('mu1      =',mu1)
+print ('mu2      =',mu2)
+print ('lambdaa1 =',lambdaa1)
+print ('lambdaa2 =',lambdaa2)
         
 #np.savetxt('info_grain_prop.ascii',np.array([outer_radius,a_fac,h_fac,E1,nu1,rho1,E2,mu2,rho2]).T \
 #           ,header='# diameter,a_fac,h_fac,E_qtz,nu_qtz,density_qtz,E_cement,mu_cement,density_cement')
@@ -541,10 +545,10 @@ print("setup: boundary conditions: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-area=np.zeros(nel,dtype=np.float64) 
-NNNV    = np.zeros(m,dtype=np.float64)           # shape functions V
-dNNNVdr  = np.zeros(m,dtype=np.float64)          # shape functions derivatives
-dNNNVds  = np.zeros(m,dtype=np.float64)          # shape functions derivatives
+area    = np.zeros(nel,dtype=np.float64) 
+NNNV    = np.zeros(m,dtype=np.float64)    # shape functions V
+dNNNVdr = np.zeros(m,dtype=np.float64)    # shape functions derivatives
+dNNNVds = np.zeros(m,dtype=np.float64)    # shape functions derivatives
 
 for iel in range(0,nel):
     for kq in range (0,nqel):
@@ -721,29 +725,30 @@ print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
 #####################################################################
 start = time.time()
 
-qcoords2_r=[0.1012865073235,0.7974269853531,0.1012865073235,\
-            0.4701420641051,0.4701420641051,0.0597158717898,0.3333333333333]
-qcoords2_s=[0.1012865073235,0.1012865073235,0.7974269853531,\
-            0.0597158717898,0.4701420641051,0.4701420641051,0.3333333333333]
-qweights2 =[0.0629695902724,0.0629695902724,0.0629695902724,\
-            0.0661970763942,0.0661970763942,0.0661970763942,0.1125000000000]
-
-xc  = np.zeros(nel,dtype=np.float64)  
-yc  = np.zeros(nel,dtype=np.float64)  
-exx = np.zeros(nel,dtype=np.float64)  
-eyy = np.zeros(nel,dtype=np.float64)  
-ett = np.zeros(nel,dtype=np.float64) # theta-theta 
-exy = np.zeros(nel,dtype=np.float64)  
-e   = np.zeros(nel,dtype=np.float64)  
-divv= np.zeros(nel,dtype=np.float64)  
+exx  = np.zeros(NV,dtype=np.float64)  
+eyy  = np.zeros(NV,dtype=np.float64)  
+ett  = np.zeros(NV,dtype=np.float64) # theta-theta 
+exy  = np.zeros(NV,dtype=np.float64)  
+e    = np.zeros(NV,dtype=np.float64)  
+count= np.zeros(NV,dtype=np.float64)  
+sigma_xx = np.zeros(NV,dtype=np.float64)  
+sigma_yy = np.zeros(NV,dtype=np.float64)  
+sigma_xy = np.zeros(NV,dtype=np.float64)  
+sigma_tt = np.zeros(NV,dtype=np.float64)  
 
 for iel in range(0,nel):
-    xc[iel]=np.sum(x[icon[:,iel]])/3.
-    yc[iel]=np.sum(y[icon[:,iel]])/3.
-    for kq in range(0,7):
-        rq=qcoords2_r[kq]
-        sq=qcoords2_s[kq]
-        weightq=qweights2[kq]
+    for j in range(0,m):
+        if j==0:
+           rq=0
+           sq=0
+        if j==1:
+           rq=1
+           sq=0
+        if j==2:
+           rq=0
+           sq=1
+        node=icon[j,iel]
+        count[node]+=1
         NNNV[0:m]=NNV(rq,sq)
         dNNNVdr[0:m]=dNNVdr(rq,sq)
         dNNNVds[0:m]=dNNVds(rq,sq)
@@ -753,53 +758,70 @@ for iel in range(0,nel):
             jcb[0,1]+=dNNNVdr[k]*y[icon[k,iel]]
             jcb[1,0]+=dNNNVds[k]*x[icon[k,iel]]
             jcb[1,1]+=dNNNVds[k]*y[icon[k,iel]]
-        jcob=np.linalg.det(jcb)
         jcbi=np.linalg.inv(jcb)
         xq=0
         yq=0
+        uq=0
         for k in range(0,m):
             xq+=NNNV[k]*x[icon[k,iel]]
             yq+=NNNV[k]*y[icon[k,iel]]
+            uq+=NNNV[k]*u[icon[k,iel]]
             dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
             dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
         #end for
+        exxn=0
+        eyyn=0
+        exyn=0
         for k in range(0,m):
-            exx[iel] += dNNNVdx[k]*u[icon[k,iel]]*jcob*weightq
-            eyy[iel] += dNNNVdy[k]*v[icon[k,iel]]*jcob*weightq
-            exy[iel] += 0.5*(dNNNVdy[k]*u[icon[k,iel]]+dNNNVdx[k]*v[icon[k,iel]])*jcob*weightq
-            if axisymmetric:
-               ett[iel] += NNNV[k]*u[icon[k,iel]]/xq*jcob*weightq
-            else:
-               ett[iel] += 0 
+            exxn += dNNNVdx[k]*u[icon[k,iel]]
+            eyyn += dNNNVdy[k]*v[icon[k,iel]]
+            exyn += 0.5*(dNNNVdy[k]*u[icon[k,iel]]+dNNNVdx[k]*v[icon[k,iel]])
         #end for
+        if axisymmetric:
+           xq=max(xq,1e-10)
+           ettn = uq/xq 
+        else:
+           ettn = 0 
+
+        exx[node]+=exxn
+        eyy[node]+=eyyn
+        exy[node]+=exyn
+        ett[node]+=ettn
+        
+        sigma_xx[node]+=lambdaa[iel]*(exxn+eyyn+ettn)+2*mu[iel]*exxn
+        sigma_yy[node]+=lambdaa[iel]*(exxn+eyyn+ettn)+2*mu[iel]*eyyn
+        sigma_tt[node]+=lambdaa[iel]*(exxn+eyyn+ettn)+2*mu[iel]*ettn
+        sigma_xy[node]+=                             +2*mu[iel]*exyn
+
     #end for
-    exx[iel]/=area[iel]
-    eyy[iel]/=area[iel]
-    exy[iel]/=area[iel]
-    divv[iel]=exx[iel]+eyy[iel]+ett[iel]
-    e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
 #end for
+
+exx[:]/=count[:]
+eyy[:]/=count[:]
+exy[:]/=count[:]
+ett[:]/=count[:]
+sigma_xx[:]/=count[:]
+sigma_yy[:]/=count[:]
+sigma_xy[:]/=count[:]
+sigma_tt[:]/=count[:]
+e[:]=np.sqrt(0.5*(exx[:]*exx[:]+eyy[:]*eyy[:])+exy[:]*exy[:])
 
 print("     -> exx (m,M) %.6e %.6e " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.6e %.6e " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.6e %.6e " %(np.min(exy),np.max(exy)))
+print("     -> ett (m,M) %.6e %.6e " %(np.min(ett),np.max(ett)))
+print("     -> sigma_xx (m,M) %.6e %.6e " %(np.min(sigma_xx),np.max(sigma_xx)))
+print("     -> sigma_yy (m,M) %.6e %.6e " %(np.min(sigma_yy),np.max(sigma_yy)))
+print("     -> sigma_xy (m,M) %.6e %.6e " %(np.min(sigma_xy),np.max(sigma_xy)))
+print("     -> sigma_tt (m,M) %.6e %.6e " %(np.min(sigma_tt),np.max(sigma_tt)))
 
-#np.savetxt('strain.ascii',np.array([xc,yc,exx,eyy,exy,divv]).T,header='# xc,yc,exx,eyy,exy,divv')
-
-print("compute strain components: %.3f s" % (time.time() - start))
+print("compute strain & stress components: %.3f s" % (time.time() - start))
 
 #################################################################
 # compute elemental stress 
 #################################################################
 
-sigma_xx = np.zeros(nel,dtype=np.float64)  
-sigma_yy = np.zeros(nel,dtype=np.float64)  
-sigma_xy = np.zeros(nel,dtype=np.float64)  
-sigma_angle = np.zeros(nel,dtype=np.float64)  
-
-sigma_xx[:]=lambdaa[:]*divv[:]+2*mu[:]*exx[:]
-sigma_yy[:]=lambdaa[:]*divv[:]+2*mu[:]*eyy[:]
-sigma_xy[:]=                  +2*mu[:]*exy[:]
+sigma_angle = np.zeros(NV,dtype=np.float64)  
 
 sigma_angle[:]=0.5*np.arctan(2*sigma_xy[:]/(sigma_yy[:]-sigma_xx[:])) #* (180/np.pi)
 
@@ -823,60 +845,11 @@ if visu==1:
         vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
     vtufile.write("</DataArray>\n")
     vtufile.write("</Points> \n")
-
-    vtufile.write("<CellData Scalars='scalars'>\n")
     #--
+    vtufile.write("<CellData Scalars='scalars'>\n")
     vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (area[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (exx[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (eyy[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (exy[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='strain (2nd inv)' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (e[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_xx (MPa)' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (sigma_xx[iel]/MPa))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_yy (MPa)' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (sigma_yy[iel]/MPa))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_xy (MPa)' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (sigma_xy[iel]/MPa))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='stress principal angle' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (sigma_angle[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_1 (MPa)' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (sigma_1[iel]/MPa))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_2 (MPa)' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (sigma_2[iel]/MPa))
-    vtufile.write("</DataArray>\n")  
-    vtufile.write("<DataArray type='Float32' Name='maximum shear stress (MPa)' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (0.5*(sigma_1[iel]-sigma_2[iel])/MPa))
-    vtufile.write("</DataArray>\n")  
-    vtufile.write("<DataArray type='Float32' Name='volumetric strain div(u)' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" %divv[iel]) 
     vtufile.write("</DataArray>\n")
     vtufile.write("<DataArray type='Float32' Name='mu' Format='ascii'> \n")
     for iel in range (0,nel):
@@ -886,28 +859,83 @@ if visu==1:
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (lambdaa[iel]))
     vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='tensile_zone (sigma1 gt 0)' Format='ascii'> \n")
-    for iel in range(0,nel):
-        if sigma_1[iel]>0:
-            vtufile.write("%10e \n" % 1)
-        else:
-            vtufile.write("%10e \n" % 0)
-        #end if
-    #end for
+    vtufile.write("</CellData>\n")
+    #--
+    vtufile.write("<PointData Scalars='scalars'>\n")
+    vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % (exx[i]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % (eyy[i]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='ett' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % (ett[i]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % (exy[i]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='strain (2nd inv)' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % (e[i]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_xx (MPa)' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % (sigma_xx[i]/MPa))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_yy (MPa)' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % (sigma_yy[i]/MPa))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_tt (MPa)' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % (sigma_tt[i]/MPa))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_xy (MPa)' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % (sigma_xy[i]/MPa))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='stress principal angle' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % (sigma_angle[i]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_1 (MPa)' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % (sigma_1[i]/MPa))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_2 (MPa)' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % (sigma_2[i]/MPa))
+    vtufile.write("</DataArray>\n")  
+    vtufile.write("<DataArray type='Float32' Name='maximum shear stress (MPa)' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % (0.5*(sigma_1[i]-sigma_2[i])/MPa))
     vtufile.write("</DataArray>\n")  
 
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='n1' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e %10e %10e\n" % (np.cos(sigma_angle[iel]),np.sin(sigma_angle[iel]),0.))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='n2' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e %10e %10e\n" % (np.cos(sigma_angle[iel]+np.pi/2),np.sin(sigma_angle[iel]+np.pi/2),0.))
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='tensile_zone (sigma1 gt 0)' Format='ascii'> \n")
+    #for iel in range(0,nel):
+    #    if sigma_1[iel]>0:
+    #        vtufile.write("%10e \n" % 1)
+    #    else:
+    #        vtufile.write("%10e \n" % 0)
+    #    #end if
+    #end for
+    #vtufile.write("</DataArray>\n")  
 
-    vtufile.write("</CellData>\n")
+    #vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='n1' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%10e %10e %10e\n" % (np.cos(sigma_angle[iel]),np.sin(sigma_angle[iel]),0.))
+    #vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='n2' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%10e %10e %10e\n" % (np.cos(sigma_angle[iel]+np.pi/2),np.sin(sigma_angle[iel]+np.pi/2),0.))
+    #vtufile.write("</DataArray>\n")
 
-    vtufile.write("<PointData Scalars='scalars'>\n")
+
+
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='displacement' Format='ascii'> \n")
     for i in range(0,NV):
