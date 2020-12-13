@@ -1,0 +1,282 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+set xlabel 'time'
+set log x
+
+set key outside
+
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:13 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:13 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:13 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:13 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:13 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:13 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:13 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:13 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:13 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64',\
+
+set ylabel 'sphere v_{rms}'
+set output 'vrms_sphere.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:16 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:16 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:16 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:16 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:16 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:16 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:16 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:16 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:16 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64',\
+
+set ylabel 'fluid+sphere v_{rms}'
+set output 'vrms_fluidsphere.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:17 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:17 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:17 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:17 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:17 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:17 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:17 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:17 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:17 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64',\
+
+set ylabel 'max(|v|)'
+set output 'max_vel.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:10 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:10 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:10 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:10 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:10 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:10 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:10 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:10 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:10 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64',\
+
+
+
+set ylabel 'max(p)'
+set output 'max_press.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii' u 4:12 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii' u 4:12 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii' u 4:12 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii' u 4:12 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii' u 4:12 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:12 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii' u 4:12 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii' u 4:12 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii' u 4:12 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64',\
+
+set ylabel '<density>'
+set output 'avrg_density.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:18 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:18 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:18 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:18 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:18 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:18 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:18 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:18 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:18 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64',\
+ 0.79788283183 lw 2 lt -1
+
+set ylabel '<viscosity>'
+set output 'avrg_viscosity.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:19 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:19 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:19 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:19 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:19 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:19 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:19 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:19 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:19 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64',\
+48.5851989989 lw 2 lt -1
+
+set ylabel 'sphere center x coordinate'
+set output 'center_position_x.pdf'
+plot[][]\
+0.5 lw 1 lt -1,\
+'statistics_0.00050_np24.ascii'  u 4:25 w l lw .5 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:25 w l lw .5 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:25 w l lw .5 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:25 w l lw .5 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:25 w l lw .5 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:25 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:25 w l lw .5 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:25 w l lw .5 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:25 w l lw .5 lt 4 dt 4 t 'a=0.00002, np=64'
+
+set ylabel 'sphere center y coordinate'
+set output 'center_position_y.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:26 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:26 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:26 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:26 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:26 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:26 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:26 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:26 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:26 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64'
+
+
+set ylabel 'sphere center x velocity'
+set output 'center_velocity_x.pdf'
+plot[][]\
+0. lw 1 lt -1,\
+'statistics_0.00050_np24.ascii'  u 4:27 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:27 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:27 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:27 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:27 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:27 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:27 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:27 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:27 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64'
+
+set ylabel 'sphere center y velocity'
+set output 'center_velocity_y.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:28 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:28 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:28 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:28 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:28 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:28 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:28 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:28 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:28 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64'
+
+
+
+set ylabel 'pressure at (0.5,0)'
+set output 'p_bottom.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:29 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:29 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:29 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:29 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:29 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:29 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:29 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:29 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:29 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64'
+
+set ylabel 'min topography'
+set output 'topography_min.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:30 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:30 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:30 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:30 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:30 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:30 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:30 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:30 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:30 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64'
+
+
+set ylabel 'max topography'
+set output 'topography_max.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:31 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:31 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:31 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:31 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:31 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:31 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:31 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:31 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:31 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64'
+
+set ylabel 'dt'
+set output 'dt.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:24 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:24 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:24 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:24 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:24 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:13 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:24 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:13 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:24 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64'
+
+set ylabel 'x velocity at (0.5,0.6)'
+set output 'point_u.pdf'
+plot[][]\
+0 lt -1 ,\
+'statistics_0.00050_np24.ascii'  u 4:32 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:32 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:32 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:32 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:32 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:32 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:32 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:32 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:32 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64'
+
+set ylabel 'y velocity at (0.5,0.6)'
+set output 'point_v.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:33 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:33 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:33 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:33 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:33 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:33 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:33 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:33 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:33 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64'
+
+set ylabel 'pressure at (0.5,0.6)'
+set output 'point_p.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:34 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:34 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:34 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:34 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:34 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:34 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:34 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:34 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:34 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64'
+
+set ylabel 'volume fluid+sphere'
+set output 'vol_fluidsphere.pdf'
+plot[][]\
+'statistics_0.00050_np24.ascii'  u 4:23 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:23 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:23 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:23 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:23 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:23 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:23 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:23 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:23 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64'
+
+set ylabel 'volume sphere'
+set output 'vol_sphere.pdf'
+plot[][]\
+pi*0.123456789**2 lt -1 lw 1,\
+'statistics_0.00050_np24.ascii'  u 4:22 w l lw .95 lt 1 dt 1 t 'a=0.00050, np=24',\
+'statistics_0.00050_np32.ascii'  u 4:22 w l lw .95 lt 1 dt 2 t 'a=0.00050, np=32',\
+'statistics_0.00050_np48.ascii'  u 4:22 w l lw .95 lt 1 dt 3 t 'a=0.00050, np=48',\
+'statistics_0.00050_np64.ascii'  u 4:22 w l lw .95 lt 1 dt 4 t 'a=0.00050, np=64',\
+'statistics_0.00050_np96.ascii'  u 4:22 w l lw .95 lt 1 dt 5 t 'a=0.00050, np=96',\
+'statistics_0.00050_np128.ascii' u 4:22 w l lw .95 lt 1 dt 6 t 'a=0.00050, np=128',\
+'statistics_0.00025_np32.ascii'  u 4:22 w l lw .95 lt 2 dt 2 t 'a=0.00025, np=32',\
+'statistics_0.00005_np48.ascii'  u 4:22 w l lw .95 lt 3 dt 3 t 'a=0.00005, np=48',\
+'statistics_0.00002_np64.ascii'  u 4:22 w l lw .95 lt 4 dt 4 t 'a=0.00002, np=64'
+
+
+

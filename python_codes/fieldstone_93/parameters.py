@@ -10,9 +10,9 @@ rad=0.123456789
 
 n_p=32 # must be even
 
-nstep=100
+nstep=200
 CFL=0.2
-end_time=200
+end_time=30
 
 # the following parameterisation is 
 # somewhat arbitrary

@@ -494,6 +494,14 @@ for istep in range(0,nstep):
     area = np.zeros(nel,dtype=np.float64) 
 
     vrms=0
+    vrms_a=0
+    vrms_f=0
+    vrms_s=0
+    vrms_fs=0
+    vol_a=0
+    vol_f=0
+    vol_s=0
+    vol_fs=0
     for iel in range(0,nel):
         for kq in range (0,nqel):
             rq=qcoords_r[kq]
@@ -524,15 +532,39 @@ for istep in range(0,nstep):
 
             vrms+=(uq**2+vq**2)*jcob*weightq 
 
+            if mat[iel]==1:
+               vrms_f+=(uq**2+vq**2)*jcob*weightq 
+               vrms_fs+=(uq**2+vq**2)*jcob*weightq 
+               vol_f+=jcob*weightq
+               vol_fs+=jcob*weightq
+               
+            if mat[iel]==2:
+               vrms_s+=(uq**2+vq**2)*jcob*weightq 
+               vrms_fs+=(uq**2+vq**2)*jcob*weightq 
+               vol_s+=jcob*weightq
+               vol_fs+=jcob*weightq
+
+            if mat[iel]==3:
+               vrms_a+=(uq**2+vq**2)*jcob*weightq 
+               vol_a+=jcob*weightq
+
         #end for
     #end for
 
-    vrms=np.sqrt(vrms/(np.pi*Lx**2*Ly))
+    vrms=np.sqrt(vrms/(Lx*Ly))
+    vrms_a=np.sqrt(vrms_a/vol_a)
+    vrms_f=np.sqrt(vrms_f/vol_f)
+    vrms_s=np.sqrt(vrms_s/vol_s)
+    vrms_fs=np.sqrt(vrms_fs/vol_fs)
 
     print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
     print("     -> total area (meas) %.6f " %(area.sum()))
     print("     -> total area (anal) %.6f " %(Lx*Ly))
-    print("     -> vrms= %e " %(vrms))
+    print("     -> vrms   = %e " %(vrms))
+    print("     -> vrms_a = %e " %(vrms_a))
+    print("     -> vrms_f = %e " %(vrms_f))
+    print("     -> vrms_s = %e " %(vrms_s))
+    print("     -> vrms_fs= %e " %(vrms_fs))
 
     print("compute area & vrms: %.3f s" % (timing.time() - start))
 
@@ -686,23 +718,56 @@ for istep in range(0,nstep):
     sigmaxy[:]=        +2*eta[:]*exy[:]
 
     #####################################################################
+    # locate (0.5,0.6) point ands record fields on it
+    #####################################################################
+
+    px=0.5
+    py=0.6
+    for iel in range(0,nel):
+        if abs(xc[iel]-px)<0.05 and  abs(yc[iel]-py)<0.05: 
+           p0x=xV[iconV[0,iel]]
+           p0y=yV[iconV[0,iel]]
+           p1x=xV[iconV[1,iel]]
+           p1y=yV[iconV[1,iel]]
+           p2x=xV[iconV[2,iel]]
+           p2y=yV[iconV[2,iel]]
+           r = 1/(2*area[iel])*(p0y*p2x - p0x*p2y + (p2y - p0y)*px + (p0x - p2x)*py)
+           s = 1/(2*area[iel])*(p0x*p1y - p0y*p1x + (p0y - p1y)*px + (p1x - p0x)*py)
+           if r >=0 and s>= 0 and 1-r-s>=0 :
+              NNNV[0:mV]=NNV(r,s)
+              NNNP[0:mP]=NNP(r,s)
+              xq=0.
+              yq=0.
+              uq=0.
+              vq=0.
+              for k in range(0,mV):
+                  xq+=NNNV[k]*xV[iconV[k,iel]]
+                  yq+=NNNV[k]*yV[iconV[k,iel]]
+                  uq+=NNNV[k]*u[iconV[k,iel]]
+                  vq+=NNNV[k]*v[iconV[k,iel]]
+              pq=0.
+              for k in range(0,mP):
+                  pq+=NNNP[k]*p[iconP[k,iel]]
+              p_u=uq
+              p_v=vq
+              p_p=pq
+              p_mat=mat[iel]
+              iel_target=iel
+
+    #print(iel_target,xq,yq,p_u,p_v,p_p,p_mat)
+
+    #####################################################################
     # carry out measurements for benchmark
-    # no need to divide by Lx*Ly=1!
     #####################################################################
     start = timing.time()
 
     avrg_rho=0.
     avrg_eta=0.
-    vol_sphere=0.
-    vol_air=0.
-    
     for iel in range(0,nel):
         avrg_rho+=rho[iel]*area[iel]
         avrg_eta+=eta[iel]*area[iel]
-        if mat[iel]==2:
-           vol_sphere+=area[iel]
-        if mat[iel]==3:
-           vol_air+=area[iel]
+    avrg_rho/=(Lx*Ly)
+    avrg_eta/=(Lx*Ly)
 
     counter=0
     for i in range(0,NV):
@@ -722,15 +787,16 @@ for istep in range(0,nstep):
     np.min(v),np.max(v),\
     np.min(vel),np.max(vel),\
     np.min(p),np.max(p),
-    vrms,\
+    vrms,vrms_a,vrms_f,vrms_s,vrms_fs,\
     avrg_rho,avrg_eta,\
-    vol_sphere,vol_air,\
+    vol_a,vol_f,vol_s,vol_fs,\
     dt,\
     xV[node_center],yV[node_center],u[node_center],v[node_center],\
     q[node_bottom],\
-    np.min(ys),np.max(ys))
+    np.min(ys),np.max(ys),
+    p_u,p_v,p_p,p_mat)
 
-    print("export data for benchmarking: %.3f s" % (timing.time() - start))
+    print("export measurements: %.3f s" % (timing.time() - start))
 
     #####################################################################
     # plot of solution
@@ -893,7 +959,8 @@ for istep in range(0,nstep):
     #--
     vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
     for iel in range (0,nel):
-        vtufile.write("%d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel],iconV[4,iel],iconV[5,iel]))
+        vtufile.write("%d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],\
+                                              iconV[3,iel],iconV[4,iel],iconV[5,iel]))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
