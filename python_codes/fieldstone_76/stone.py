@@ -54,32 +54,60 @@ def dpdy_th(x,y):
 def bx(x,y):
     if bench==1:
        return dpdx_th(x,y)-2*app(x)*b(y) -(a(x)*bpp(y)+cp(x)*dp(y))
+    if bench==2:
+       return 0
     if bench==9:
        return 3*x**2*y**2-y-1
 
 def by(x,y):
     if bench==1:
        return dpdy_th(x,y)-(ap(x)*bp(y)+cpp(x)*d(y)) -2*c(x)*dpp(y) 
+    if bench==2:
+       if abs(x-0.5)<0.0625 and abs(y-0.5)<0.0625:
+          return -1.01
+       else:
+          return -1
     if bench==9:
        return 2*x**3*y+3*x-1
+
+#------------------------------------------------------------------------------
+
+def eta(x,y):
+    if bench==1:
+       return 1
+    if bench==2:
+       if abs(x-0.5)<0.0625 and abs(y-0.5)<0.0625:
+          return 1000
+       else:
+          return 1
+       return 
+    if bench==9:
+       return 1 
+
 
 #------------------------------------------------------------------------------
 
 def velocity_x(x,y):
     if bench==1:
        return a(x)*b(y)
+    if bench==2:
+       return 0
     if bench==9:
        return x+x**2-2*x*y+x**3-3*x*y**2+x**2*y
 
 def velocity_y(x,y):
     if bench==1:
        return c(x)*d(y)
+    if bench==2:
+       return 0
     if bench==9:
        return -y-2*x*y+y**2-3*x**2*y+y**3-x*y**2
 
 def pressure(x,y):
     if bench==1:
        return x*(1-x)*(1-2*y)
+    if bench==2:
+       return 0
     if bench==9:
        return x*y+x+y+x**3*y**2-4/3
 
@@ -139,8 +167,10 @@ mV=9
 mP=3
 
 # bench=1 : mms #1 (lami17)
+# bench=2 : sinking cube
 # bench=9 : mms #2 (lami17)
-bench=9
+
+bench=2
 
 Lx=1
 Ly=1
@@ -151,8 +181,8 @@ if int(len(sys.argv) == 5):
    visu=int(sys.argv[3])
    nqperdim=int(sys.argv[4])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 64
+   nely = 64
    visu = 1
    nqperdim=2
 
@@ -221,7 +251,6 @@ if nqperdim==6:
 
 eps=1e-8
 
-eta=1.
 eta_ref=1.
 pnormalise=True
 sparse=True
@@ -372,15 +401,15 @@ bc_val = np.zeros(NfemV, dtype=np.float64)  # boundary condition, value
 for i in range(0,NV):
        if xV[i]/Lx<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+          #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
        if xV[i]/Lx>(1-eps):
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+          #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
        if yV[i]/Ly<eps:
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
+          #bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
        if yV[i]/Ly>(1-eps):
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
+          #bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
 
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
@@ -462,7 +491,7 @@ for iel in range(0,nel):
                                          [dNNNVdy[i],dNNNVdx[i]]]
 
             # compute elemental a_mat matrix
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta*weightq*jcob
+            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(xq,yq)*weightq*jcob
 
             # compute elemental rhs vector
             for i in range(0,mV):
@@ -650,21 +679,17 @@ start = timing.time()
 
 error_u = np.empty(NV,dtype=np.float64)
 error_v = np.empty(NV,dtype=np.float64)
-#error_p = np.empty(NP,dtype=np.float64)
 
 for i in range(0,NV): 
     error_u[i]=u[i]-velocity_x(xV[i],yV[i])
     error_v[i]=v[i]-velocity_y(xV[i],yV[i])
-
-#for i in range(0,NP): 
-#    error_p[i]=p[i]-pressure(xP[i],yP[i])
 
 print("compute nodal error for plot: %.3f s" % (timing.time() - start))
 
 #################################################################
 # compute error in L2 norm
 #################################################################
-if bench==1 or bench==9:
+if bench==1 or bench==9 or bench==2:
 
    start = timing.time()
 
@@ -716,6 +741,7 @@ if bench==1 or bench==9:
                    yq+=NNNP[k]*yP[iconP[k,iel]]
                    pq+=NNNP[k]*p[iconP[k,iel]]
                #end for
+               #print(xq,yq)
                errp+=(pq-pressure(xq,yq))**2*weightq*jcob
            #end for
        #end for
@@ -726,6 +752,76 @@ if bench==1 or bench==9:
    print("     -> nel= %6d ; errv= %.10f ; errp= %.10f" %(nel,errv,errp))
 
    print("compute errors: %.3f s" % (timing.time() - start))
+
+#####################################################################
+# export velocity and pressure on vertical profile at x=0.5
+# since a node belongs to 4 nodes and the pressure is discontinuous,
+# we export the four pressure values at the node.
+# velocities are then exported 4 times, which is silly.
+#####################################################################
+    
+profile=open('profile.ascii',"w")
+
+for iel in range(0,nel): 
+    if abs(xV[iconV[1,iel]]-0.5)<1e-6:
+       #lower right corner
+       rq=1
+       sq=-1
+       NNNP[0:mP]=NNP(rq,sq)
+       xq=0.0
+       yq=0.0
+       pq=0.0
+       for k in range(0,mP):
+           xq+=NNNP[k]*xP[iconP[k,iel]]
+           yq+=NNNP[k]*yP[iconP[k,iel]]
+           pq+=NNNP[k]*p[iconP[k,iel]]
+       uq=u[iconV[1,iel]]
+       vq=v[iconV[1,iel]]
+       profile.write("%10e %10e %10e %10e %10e\n" %(xq,yq,uq,vq,pq))
+       #upper right corner
+       rq=1
+       sq=+1
+       NNNP[0:mP]=NNP(rq,sq)
+       xq=0.0
+       yq=0.0
+       pq=0.0
+       for k in range(0,mP):
+           xq+=NNNP[k]*xP[iconP[k,iel]]
+           yq+=NNNP[k]*yP[iconP[k,iel]]
+           pq+=NNNP[k]*p[iconP[k,iel]]
+       uq=u[iconV[2,iel]]
+       vq=v[iconV[2,iel]]
+       profile.write("%10e %10e %10e %10e %10e\n" %(xq,yq,uq,vq,pq))
+
+    if abs(xV[iconV[0,iel]]-0.5)<1e-6:
+       #lower left corner
+       rq=-1
+       sq=-1
+       NNNP[0:mP]=NNP(rq,sq)
+       xq=0.0
+       yq=0.0
+       pq=0.0
+       for k in range(0,mP):
+           xq+=NNNP[k]*xP[iconP[k,iel]]
+           yq+=NNNP[k]*yP[iconP[k,iel]]
+           pq+=NNNP[k]*p[iconP[k,iel]]
+       uq=u[iconV[0,iel]]
+       vq=v[iconV[0,iel]]
+       profile.write("%10e %10e %10e %10e %10e\n" %(xq,yq,uq,vq,pq))
+       #upper left corner
+       rq=-1
+       sq=+1
+       NNNP[0:mP]=NNP(rq,sq)
+       xq=0.0
+       yq=0.0
+       pq=0.0
+       for k in range(0,mP):
+           xq+=NNNP[k]*xP[iconP[k,iel]]
+           yq+=NNNP[k]*yP[iconP[k,iel]]
+           pq+=NNNP[k]*p[iconP[k,iel]]
+       uq=u[iconV[3,iel]]
+       vq=v[iconV[3,iel]]
+       profile.write("%10e %10e %10e %10e %10e\n" %(xq,yq,uq,vq,pq))
 
 #####################################################################
 # plot of solution
