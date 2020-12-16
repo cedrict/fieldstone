@@ -1,9 +1,13 @@
 python3 generate_nodes.py
 cat mypoints mysegments > mesh.poly
 #../../../../triangle/triangle  -j -q25 -a0.00002 -o2 -pc mesh.poly
+#../../../../triangle/triangle  -j -q25 -a0.00003 -o2 -pc mesh.poly
+#../../../../triangle/triangle  -j -q25 -a0.00004 -o2 -pc mesh.poly
 #../../../../triangle/triangle  -j -q25 -a0.00005 -o2 -pc mesh.poly
-#../../../../triangle/triangle  -j -q25 -a0.00025 -o2 -pc mesh.poly
+#../../../../triangle/triangle  -j -q25 -a0.00010 -o2 -pc mesh.poly
+#../../../../triangle/triangle   -j -q25 -a0.00025 -o2 -pc mesh.poly
 ../../../../triangle/triangle  -j -q25 -a0.00050 -o2 -pc mesh.poly
+#../../../../triangle/triangle  -j -q25 -a0.00100 -o2 -pc mesh.poly
 echo "nel="
 head -1 mesh.1.ele 
 head -1 mesh.1.ele > temp
@@ -11,9 +15,9 @@ echo "NV0="
 head -1 mesh.1.node 
 head -1 mesh.1.node >> temp
 
-#python3 stone.py 
+python3 stone.py 
 
-python3 stone.py > opla
-grep benchmark opla > statistics.ascii
+#python3 stone.py > opla
+#grep benchmark opla > statistics.ascii
 
 

@@ -9,8 +9,9 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-This stone solves the problem of the Stokes sphere sinking under a deformable free surface, 
-It relies on an unstructured grid with Crouzeix-Raviart elements (see Section~\ref{ss:XXX}).
+This stone solves the problem of buoyancy-driven flows generated 
+by objects sinking in a fluid, potentially under a deformable free surface.
+It relies on an unstructured grid with Crouzeix-Raviart elements (see Section~\ref{sec:crouzeix-raviart}).
 
 The workflow is as follows: the main parameters are defined in {\sl parameters.py}.
 The file {\sl generate\_nodes.py} uses these parameters to generate points on the 
@@ -42,7 +43,7 @@ python3 stone.py
 
 Note that ressure normalisation is not done the right way: the pressure nullspace is 
 not removed from the matrix, but the solution is later normalised at the top
-of the domain so that its average over the domain is zero.
+of the domain or over the whole domain.
 
 Time stepping is carried out and the time step $\delta t$ is computed with a CFL criterion.
 Nodes are advected with their velocity but no remeshing is implemented so that when the 
@@ -50,10 +51,34 @@ deformation becomes to large around the sphere the triangles become really defor
 the simulation must be stopped. Given the parameters of this benchmark this corresponds 
 to $t\simeq 30$, while the simulation should ideally have been run up to $t>100$.
 
+\newpage
+%....................................................
+\paragraph{The Stokes sphere in a unit square}
+The setup and all results are described in Section~\ref{ss:stokes_sphere2D}.
+Nodes are added on a vertical line to facilitate pressure and velocity profile measurements.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp1/grid}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp1/vel}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp1/press}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp1/sr}\\
+{\captionfont  Mesh obtained with -a0.00050 in script, np=32. No-slip boundary conditions.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp1/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp1/v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp1/pressure}\\
+{\captionfont  Mesh obtained with -a0.00050 in script, np=24,32,48. No-slip boundary conditions.}
+\end{center}
+
+\newpage
+%..........................................................
+\paragraph{The Stokes sphere under a deformable surface}
+
 Nodes on the deformable surface are flagged at the beginning of the calculations and 
 exported to an ascii file for later postprocessing. The multiple measurements for this 
 benchmark are thoroughly described and plotted in Section~\ref{ss:stokes_sphere_fs2D}.
-
 
 \begin{center}
 \includegraphics[width=6.5cm]{python_codes/fieldstone_93/50/mesh0000}
@@ -64,21 +89,21 @@ benchmark are thoroughly described and plotted in Section~\ref{ss:stokes_sphere_
 \end{center}
 
 \begin{center}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_93/results/mesh1}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_93/results/mesh2}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_93/results/mesh3}\\
+\includegraphics[width=5.5cm]{python_codes/fieldstone_93/results_exp2/mesh1}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_93/results_exp2/mesh2}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_93/results_exp2/mesh3}\\
 {\captionfont  Mesh obtained with -a0.00050, -a0.00025 and -a0.00005 in script}
 \end{center}
 
 \begin{center}
-\includegraphics[width=4cm]{python_codes/fieldstone_93/results/vel_0000}
-\includegraphics[width=4cm]{python_codes/fieldstone_93/results/p_0000}
-\includegraphics[width=4cm]{python_codes/fieldstone_93/results/sr_0000}
-\includegraphics[width=4cm]{python_codes/fieldstone_93/results/mat_0000}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_93/results/vel_0136}
-\includegraphics[width=4cm]{python_codes/fieldstone_93/results/p_0136}
-\includegraphics[width=4cm]{python_codes/fieldstone_93/results/sr_0136}
-\includegraphics[width=4cm]{python_codes/fieldstone_93/results/mat_0136}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_93/results_exp2/vel_0000}
+\includegraphics[width=4cm]{python_codes/fieldstone_93/results_exp2/p_0000}
+\includegraphics[width=4cm]{python_codes/fieldstone_93/results_exp2/sr_0000}
+\includegraphics[width=4cm]{python_codes/fieldstone_93/results_exp2/mat_0000}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_93/results_exp2/vel_0136}
+\includegraphics[width=4cm]{python_codes/fieldstone_93/results_exp2/p_0136}
+\includegraphics[width=4cm]{python_codes/fieldstone_93/results_exp2/sr_0136}
+\includegraphics[width=4cm]{python_codes/fieldstone_93/results_exp2/mat_0136}\\
 {\captionfont  Mesh obtained with -a0.00025 in script. Top row $t=0$, 
 bottom row $t\simeq 30$.}
 \end{center}
@@ -87,31 +112,80 @@ bottom row $t\simeq 30$.}
 \newpage
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results/vrms}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results/vrms_sphere}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results/vrms_fluidsphere}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_93/results/p_bottom}
-\includegraphics[width=7cm]{python_codes/fieldstone_93/results/max_vel}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results/max_press}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results/avrg_density}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results/avrg_viscosity}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_93/results/center_position_x}
-\includegraphics[width=7cm]{python_codes/fieldstone_93/results/center_position_y}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_93/results/center_velocity_x}
-\includegraphics[width=7cm]{python_codes/fieldstone_93/results/center_velocity_y}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_93/results/topography_min}
-\includegraphics[width=7cm]{python_codes/fieldstone_93/results/topography_max}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results/point_u}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results/point_v}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results/point_p}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results/dt}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results/vol_sphere}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results/vol_fluidsphere}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp2/vrms}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp2/vrms_sphere}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp2/vrms_fluidsphere}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp2/p_bottom}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp2/max_vel}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp2/max_press}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp2/avrg_density}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp2/avrg_viscosity}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp2/center_position_x}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp2/center_position_y}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp2/center_velocity_x}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp2/center_velocity_y}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp2/topography_min}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp2/topography_max}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp2/point_u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp2/point_v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp2/point_p}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp2/dt}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp2/vol_sphere}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp2/vol_fluidsphere}
 \end{center}
 
 Results are remarkably similar for all resolutions. Note that because the pressure 
 is discontinuous across element edges, the recorded value at (0.5,0.6) shows small
 jumps.
+
+
+\newpage
+%..................................................................
+\paragraph{The square block in the middle of a unit square}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp3/grid}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp3/vel}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp3/press}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp3/sr}\\
+{\captionfont  Mesh obtained with -a0.00050 in script, np=32. Free-slip boundary conditions.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp3/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp3/v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_93/results_exp3/pressure}\\
+{\captionfont  Mesh obtained with -a0.00050 in script, np=24,32,48. Free-slip boundary conditions.}
+\end{center}
+
+\newpage
+%...................................................................................
+\paragraph{The Rayleigh-Taylor experiment of van Keken et al (1997) \cite{vaks97}}
+
+\begin{center}
+\includegraphics[width=9cm]{python_codes/fieldstone_93/results_exp4/grid_zoom}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp4/grid}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp4/vel}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp4/u}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp4/v}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp4/press}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp4/sr}\\
+{\captionfont $np=128$, $a=2\cdot10^{-6}$}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp4/min_u}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp4/max_u}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp4/min_v}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp4/max_v}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp4/min_p}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp4/max_p}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp4/vrms}
+\includegraphics[width=7cm]{python_codes/fieldstone_93/results_exp4/max_vel}\\
+\end{center}
+
+FINISH with other viscosities !
 
 
 

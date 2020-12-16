@@ -1,0 +1,118 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set log x
+set key outside
+set pointsize .2
+set xlabel 'nel'
+vref=1e-6
+
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
+plot[][185.29:]\
+'statistics_np24.ascii'  u 2:($13/vref) w lp t 'np=24, a=2-100' ,\
+'statistics_np32.ascii'  u 2:($13/vref) w lp t 'np=32, a=2-100' ,\
+'statistics_np48.ascii'  u 2:($13/vref) w lp t 'np=48, a=2-100' ,\
+'statistics_np64.ascii'  u 2:($13/vref) w lp t 'np=64, a=2-100' ,\
+'statistics_np80.ascii'  u 2:($13/vref) w lp t 'np=80, a=2-100' ,\
+'statistics_np96.ascii'  u 2:($13/vref) w lp t 'np=96, a=2-100' ,\
+'statistics_np128.ascii' u 2:($13/vref) w lp t 'np=128, a=2-100' ,\
+'statistics_np144.ascii' u 2:($13/vref) w lp t 'np=144, a=2-100' ,\
+'statistics_np160.ascii' u 2:($13/vref) w lp t 'np=160, a=2-100' ,\
+185.2947 lt -1, \
+185.2947*0.999999 lt -1 dt 2 ,\
+185.2947*1.000001  lt -1 dt 2,\
+185.29506 lw 4 
+
+set ylabel 'min(u)'
+set output 'min_u.pdf'
+plot[][]\
+'statistics_np24.ascii'  u 2:($5/vref) w lp t 'np=24, a=2-100' ,\
+'statistics_np32.ascii'  u 2:($5/vref) w lp t 'np=32, a=2-100' ,\
+'statistics_np48.ascii'  u 2:($5/vref) w lp t 'np=48, a=2-100' ,\
+'statistics_np64.ascii'  u 2:($5/vref) w lp t 'np=64, a=2-100' ,\
+'statistics_np80.ascii'  u 2:($5/vref) w lp t 'np=80, a=2-100' ,\
+'statistics_np96.ascii'  u 2:($5/vref) w lp t 'np=96, a=2-100' ,\
+'statistics_np128.ascii' u 2:($5/vref) w lp t 'np=128, a=2-100' ,\
+'statistics_np144.ascii' u 2:($5/vref) w lp t 'np=144, a=2-100' ,\
+'statistics_np160.ascii' u 2:($5/vref) w lp t 'np=160, a=2-100' ,\
+
+set ylabel 'max(u)'
+set output 'max_u.pdf'
+plot[][]\
+'statistics_np24.ascii'  u 2:($6/vref) w lp t 'np=24, a=2-100' ,\
+'statistics_np32.ascii'  u 2:($6/vref) w lp t 'np=32, a=2-100' ,\
+'statistics_np48.ascii'  u 2:($6/vref) w lp t 'np=48, a=2-100' ,\
+'statistics_np64.ascii'  u 2:($6/vref) w lp t 'np=64, a=2-100' ,\
+'statistics_np80.ascii'  u 2:($6/vref) w lp t 'np=80, a=2-100' ,\
+'statistics_np96.ascii'  u 2:($6/vref) w lp t 'np=96, a=2-100' ,\
+'statistics_np128.ascii' u 2:($6/vref) w lp t 'np=128, a=2-100' ,\
+'statistics_np144.ascii' u 2:($6/vref) w lp t 'np=144, a=2-100' ,\
+'statistics_np160.ascii' u 2:($6/vref) w lp t 'np=160, a=2-100' ,\
+
+set ylabel 'min(v)'
+set output 'min_v.pdf'
+plot[][]\
+'statistics_np24.ascii'  u 2:($7/vref) w lp t 'np=24, a=2-100' ,\
+'statistics_np32.ascii'  u 2:($7/vref) w lp t 'np=32, a=2-100' ,\
+'statistics_np48.ascii'  u 2:($7/vref) w lp t 'np=48, a=2-100' ,\
+'statistics_np64.ascii'  u 2:($7/vref) w lp t 'np=64, a=2-100' ,\
+'statistics_np80.ascii'  u 2:($7/vref) w lp t 'np=80, a=2-100' ,\
+'statistics_np96.ascii'  u 2:($7/vref) w lp t 'np=96, a=2-100' ,\
+'statistics_np128.ascii' u 2:($7/vref) w lp t 'np=128, a=2-100' ,\
+'statistics_np144.ascii' u 2:($7/vref) w lp t 'np=144, a=2-100' ,\
+'statistics_np160.ascii' u 2:($7/vref) w lp t 'np=160, a=2-100' ,\
+
+set ylabel 'max(v)'
+set output 'max_v.pdf'
+plot[][293.4:]\
+'statistics_np24.ascii'  u 2:($8/vref) w lp t 'np=24, a=2-100' ,\
+'statistics_np32.ascii'  u 2:($8/vref) w lp t 'np=32, a=2-100' ,\
+'statistics_np48.ascii'  u 2:($8/vref) w lp t 'np=48, a=2-100' ,\
+'statistics_np64.ascii'  u 2:($8/vref) w lp t 'np=64, a=2-100' ,\
+'statistics_np80.ascii'  u 2:($8/vref) w lp t 'np=80, a=2-100' ,\
+'statistics_np96.ascii'  u 2:($8/vref) w lp t 'np=96, a=2-100' ,\
+'statistics_np128.ascii' u 2:($8/vref) w lp t 'np=128, a=2-100' ,\
+'statistics_np144.ascii' u 2:($8/vref) w lp t 'np=144, a=2-100' ,\
+'statistics_np160.ascii' u 2:($8/vref) w lp t 'np=160, a=2-100' ,\
+
+set ylabel 'min(p)'
+set output 'min_p.pdf'
+plot[][]\
+'statistics_np24.ascii'  u 2:11 w lp t 'np=24, a=2-100' ,\
+'statistics_np32.ascii'  u 2:11 w lp t 'np=32, a=2-100' ,\
+'statistics_np48.ascii'  u 2:11 w lp t 'np=48, a=2-100' ,\
+'statistics_np64.ascii'  u 2:11 w lp t 'np=64, a=2-100' ,\
+'statistics_np80.ascii'  u 2:11 w lp t 'np=80, a=2-100' ,\
+'statistics_np96.ascii'  u 2:11 w lp t 'np=96, a=2-100' ,\
+'statistics_np128.ascii' u 2:11 w lp t 'np=128, a=2-100' ,\
+'statistics_np144.ascii' u 2:11 w lp t 'np=144, a=2-100' ,\
+'statistics_np160.ascii' u 2:11 w lp t 'np=160, a=2-100' ,\
+
+set ylabel 'max(p)'
+set output 'max_p.pdf'
+plot[][]\
+'statistics_np24.ascii'  u 2:12 w lp t 'np=24, a=2-100' ,\
+'statistics_np32.ascii'  u 2:12 w lp t 'np=32, a=2-100' ,\
+'statistics_np48.ascii'  u 2:12 w lp t 'np=48, a=2-100' ,\
+'statistics_np64.ascii'  u 2:12 w lp t 'np=64, a=2-100' ,\
+'statistics_np80.ascii'  u 2:12 w lp t 'np=80, a=2-100' ,\
+'statistics_np96.ascii'  u 2:12 w lp t 'np=96, a=2-100' ,\
+'statistics_np128.ascii' u 2:12 w lp t 'np=128, a=2-100' ,\
+'statistics_np144.ascii' u 2:12 w lp t 'np=144, a=2-100' ,\
+'statistics_np160.ascii' u 2:12 w lp t 'np=160, a=2-100' ,\
+5033.6947, 5033.6947*0.9999999 lt -1 dt 2 , 5033.6947*1.0000001  lt -1 dt 2
+
+set ylabel 'max(vel)'
+set output 'max_vel.pdf'
+plot[][421.9:]\
+'statistics_np24.ascii' u 2:($10/vref) w lp t 'np=24, a=2-100' ,\
+'statistics_np32.ascii' u 2:($10/vref) w lp t 'np=32, a=2-100' ,\
+'statistics_np48.ascii' u 2:($10/vref) w lp t 'np=48, a=2-100' ,\
+'statistics_np64.ascii' u 2:($10/vref) w lp t 'np=64, a=2-100' ,\
+'statistics_np80.ascii' u 2:($10/vref) w lp t 'np=80, a=2-100' ,\
+'statistics_np96.ascii' u 2:($10/vref) w lp t 'np=96, a=2-100' ,\
+'statistics_np128.ascii' u 2:($10/vref) w lp t 'np=128, a=2-100' ,\
+'statistics_np144.ascii' u 2:($10/vref) w lp t 'np=144, a=2-100' ,\
+'statistics_np160.ascii' u 2:($10/vref) w lp t 'np=160, a=2-100' ,\
+
+

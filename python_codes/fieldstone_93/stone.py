@@ -202,9 +202,9 @@ print("setup: connectivity P: %.3f s" % (timing.time() - start))
 #################################################################
 
 for i in range(0,NV):
-    if abs(xV[i]-0.5)<1e-6 and abs(yV[i]-0.6)<1e-6:
+    if abs(xV[i]-xobject)<1e-6 and abs(yV[i]-yobject)<1e-6:
        node_center=i
-    if abs(xV[i]-0.5)<1e-6 and abs(yV[i])<1e-6:
+    if abs(xV[i]-0.5*Lx)<1e-6 and abs(yV[i])<1e-6:
        node_bottom=i
 
 #################################################################
@@ -216,21 +216,57 @@ rho=np.zeros(nel,dtype=np.float64)
 eta=np.zeros(nel,dtype=np.float64) 
 mat=np.zeros(nel,dtype=np.int16) 
 
-for iel in range(0,nel):
-    x_c=xV[iconV[6,iel]]
-    y_c=yV[iconV[6,iel]]
-    mat[iel]=1
-    rho[iel]=1
-    eta[iel]=1
-    if y_c>0.75:
-       mat[iel]=3
-       rho[iel]=0
-       eta[iel]=0.001
-    if (x_c-0.5)**2+(y_c-0.6)**2<rad**2:
-       mat[iel]=2
-       rho[iel]=2
-       eta[iel]=1e3
-#end for
+if experiment==1:
+   for iel in range(0,nel):
+       x_c=xV[iconV[6,iel]]
+       y_c=yV[iconV[6,iel]]
+       mat[iel]=1
+       rho[iel]=1
+       eta[iel]=1
+       if (x_c-0.5)**2+(y_c-0.5)**2<rad**2:
+          mat[iel]=2
+          rho[iel]=1.01
+          eta[iel]=1e3
+
+if experiment==2:
+   for iel in range(0,nel):
+       x_c=xV[iconV[6,iel]]
+       y_c=yV[iconV[6,iel]]
+       mat[iel]=1
+       rho[iel]=1
+       eta[iel]=1
+       if y_c>0.75:
+          mat[iel]=3
+          rho[iel]=0
+          eta[iel]=0.001
+       if (x_c-0.5)**2+(y_c-0.6)**2<rad**2:
+          mat[iel]=2
+          rho[iel]=2
+          eta[iel]=1e3
+
+if experiment==3:
+   for iel in range(0,nel):
+       x_c=xV[iconV[6,iel]]
+       y_c=yV[iconV[6,iel]]
+       mat[iel]=1
+       rho[iel]=1
+       eta[iel]=1
+       if abs(x_c-0.5)<size/2 and abs(y_c-0.5)<size/2:
+          mat[iel]=2
+          rho[iel]=1.01
+          eta[iel]=1e3
+
+if experiment==4:
+   for iel in range(0,nel):
+       x_c=xV[iconV[6,iel]]
+       y_c=yV[iconV[6,iel]]
+       mat[iel]=1
+       rho[iel]=1010
+       eta[iel]=100
+       if y_c<0.2+0.02*np.cos(x_c*np.pi/Lx):
+          mat[iel]=2
+          rho[iel]=1000
+          eta[iel]=100
 
 print("material layout: %.3f s" % (timing.time() - start))
 
@@ -246,15 +282,23 @@ for i in range(0, NV):
     #Left boundary  
     if xV[i]/Lx<0.0000001:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+       if bc=='noslip':
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0  
     #right boundary  
     if xV[i]/Lx>0.9999999:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if bc=='noslip':
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0  
     #bottom boundary  
     if yV[i]/Lx<1e-6:
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0   
+       if bc=='noslip' or experiment==4:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
     #top boundary  
     if yV[i]/Ly>0.9999999:
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0  
+       if bc=='noslip'or experiment==4:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
 
 print("define boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -273,6 +317,7 @@ ys = np.zeros(np.count_nonzero(on_surf),dtype=np.float64)
 us = np.zeros(np.count_nonzero(on_surf),dtype=np.float64)  
 vs = np.zeros(np.count_nonzero(on_surf),dtype=np.float64)  
 ps = np.zeros(np.count_nonzero(on_surf),dtype=np.float64)  
+
 
 ################################################################################################
 ################################################################################################
@@ -469,22 +514,23 @@ for istep in range(0,nstep):
     # normalise pressure
     # no need to divide by Lx=1
     ######################################################################
-    start = timing.time()
+    if experiment==2:
+       start = timing.time()
 
-    avrg_p=0
-    for iel in range(0,nel):
-        if yP[iconP[0,iel]]>0.99999 and yP[iconP[1,iel]]>0.99999:
-           avrg_p+=0.5*(p[iconP[0,iel]]+p[iconP[1,iel]])*(xP[iconP[0,iel]]-xP[iconP[1,iel]])
-        if yP[iconP[1,iel]]>0.99999 and yP[iconP[2,iel]]>0.99999:
-           avrg_p+=0.5*(p[iconP[1,iel]]+p[iconP[2,iel]])*(xP[iconP[1,iel]]-xP[iconP[2,iel]])
-        if yP[iconP[2,iel]]>0.99999 and yP[iconP[0,iel]]>0.99999:
-           avrg_p+=0.5*(p[iconP[2,iel]]+p[iconP[0,iel]])*(xP[iconP[2,iel]]-xP[iconP[0,iel]])
+       avrg_p=0
+       for iel in range(0,nel):
+           if yP[iconP[0,iel]]>0.99999 and yP[iconP[1,iel]]>0.99999:
+              avrg_p+=0.5*(p[iconP[0,iel]]+p[iconP[1,iel]])*(xP[iconP[0,iel]]-xP[iconP[1,iel]])
+           if yP[iconP[1,iel]]>0.99999 and yP[iconP[2,iel]]>0.99999:
+              avrg_p+=0.5*(p[iconP[1,iel]]+p[iconP[2,iel]])*(xP[iconP[1,iel]]-xP[iconP[2,iel]])
+           if yP[iconP[2,iel]]>0.99999 and yP[iconP[0,iel]]>0.99999:
+              avrg_p+=0.5*(p[iconP[2,iel]]+p[iconP[0,iel]])*(xP[iconP[2,iel]]-xP[iconP[0,iel]])
 
-    print('     -> <p> at surface: ',avrg_p)
+       print('     -> <p> at surface: ',avrg_p)
 
-    p-=avrg_p
+       p-=avrg_p
 
-    print("normalise pressure: %.3f s" % (timing.time() - start))
+       print("normalise pressure: %.3f s" % (timing.time() - start))
 
     #################################################################
     # compute area of elements
@@ -493,6 +539,7 @@ for istep in range(0,nstep):
 
     area = np.zeros(nel,dtype=np.float64) 
 
+    avrg_p=0
     vrms=0
     vrms_a=0
     vrms_f=0
@@ -510,6 +557,7 @@ for istep in range(0,nstep):
             NNNV[0:mV]=NNV(rq,sq)
             dNNNVdr[0:mV]=dNNVdr(rq,sq)
             dNNNVds[0:mV]=dNNVds(rq,sq)
+            NNNP[0:mP]=NNP(rq,sq)
             jcb=np.zeros((2,2),dtype=np.float64)
             for k in range(0,mV):
                 jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
@@ -529,7 +577,7 @@ for istep in range(0,nstep):
                 yq+=NNNV[k]*yV[iconV[k,iel]]
                 uq+=NNNV[k]*u[iconV[k,iel]]
                 vq+=NNNV[k]*v[iconV[k,iel]]
-
+ 
             vrms+=(uq**2+vq**2)*jcob*weightq 
 
             if mat[iel]==1:
@@ -548,14 +596,24 @@ for istep in range(0,nstep):
                vrms_a+=(uq**2+vq**2)*jcob*weightq 
                vol_a+=jcob*weightq
 
+            pq=0.0
+            for k in range(0,mP):
+                pq+=NNNP[k]*p[iconP[k,iel]]
+            avrg_p+=pq*jcob*weightq
+
         #end for
     #end for
 
     vrms=np.sqrt(vrms/(Lx*Ly))
-    vrms_a=np.sqrt(vrms_a/vol_a)
     vrms_f=np.sqrt(vrms_f/vol_f)
     vrms_s=np.sqrt(vrms_s/vol_s)
     vrms_fs=np.sqrt(vrms_fs/vol_fs)
+    if experiment==2: 
+       vrms_a=np.sqrt(vrms_a/vol_a)
+
+    avrg_p/=(Lx*Ly)
+    if experiment==1 or experiment==3 or experiment==4: 
+       p-=avrg_p
 
     print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
     print("     -> total area (meas) %.6f " %(area.sum()))
@@ -565,6 +623,7 @@ for istep in range(0,nstep):
     print("     -> vrms_f = %e " %(vrms_f))
     print("     -> vrms_s = %e " %(vrms_s))
     print("     -> vrms_fs= %e " %(vrms_fs))
+    print("     -> avrg_p = %e " %(avrg_p))
 
     print("compute area & vrms: %.3f s" % (timing.time() - start))
 
@@ -721,40 +780,69 @@ for istep in range(0,nstep):
     # locate (0.5,0.6) point ands record fields on it
     #####################################################################
 
-    px=0.5
-    py=0.6
-    for iel in range(0,nel):
-        if abs(xc[iel]-px)<0.05 and  abs(yc[iel]-py)<0.05: 
-           p0x=xV[iconV[0,iel]]
-           p0y=yV[iconV[0,iel]]
-           p1x=xV[iconV[1,iel]]
-           p1y=yV[iconV[1,iel]]
-           p2x=xV[iconV[2,iel]]
-           p2y=yV[iconV[2,iel]]
-           r = 1/(2*area[iel])*(p0y*p2x - p0x*p2y + (p2y - p0y)*px + (p0x - p2x)*py)
-           s = 1/(2*area[iel])*(p0x*p1y - p0y*p1x + (p0y - p1y)*px + (p1x - p0x)*py)
-           if r >=0 and s>= 0 and 1-r-s>=0 :
-              NNNV[0:mV]=NNV(r,s)
-              NNNP[0:mP]=NNP(r,s)
-              xq=0.
-              yq=0.
-              uq=0.
-              vq=0.
-              for k in range(0,mV):
-                  xq+=NNNV[k]*xV[iconV[k,iel]]
-                  yq+=NNNV[k]*yV[iconV[k,iel]]
-                  uq+=NNNV[k]*u[iconV[k,iel]]
-                  vq+=NNNV[k]*v[iconV[k,iel]]
-              pq=0.
-              for k in range(0,mP):
-                  pq+=NNNP[k]*p[iconP[k,iel]]
-              p_u=uq
-              p_v=vq
-              p_p=pq
-              p_mat=mat[iel]
-              iel_target=iel
+    if experiment==1 or experiment==3:
 
-    #print(iel_target,xq,yq,p_u,p_v,p_p,p_mat)
+       p_u=0
+       p_v=0
+       p_p=0
+       p_mat=0
+       iel_target=0
+
+       profile=open('profile.ascii',"w")
+       for i in range(0,NV):
+           if abs(xV[i]-0.5)<1e-6:
+              profile.write("%10e %10e %10e %10e \n" %(yV[i],q[i]-(0.5-yV[i]),u[i],v[i]))
+              
+
+    if experiment==2:
+       start = timing.time()
+
+       px=0.5
+       py=0.6
+       for iel in range(0,nel):
+           if abs(xc[iel]-px)<0.05 and  abs(yc[iel]-py)<0.05: 
+              p0x=xV[iconV[0,iel]]
+              p0y=yV[iconV[0,iel]]
+              p1x=xV[iconV[1,iel]]
+              p1y=yV[iconV[1,iel]]
+              p2x=xV[iconV[2,iel]]
+              p2y=yV[iconV[2,iel]]
+              r = 1/(2*area[iel])*(p0y*p2x - p0x*p2y + (p2y - p0y)*px + (p0x - p2x)*py)
+              s = 1/(2*area[iel])*(p0x*p1y - p0y*p1x + (p0y - p1y)*px + (p1x - p0x)*py)
+              if r >=0 and s>= 0 and 1-r-s>=0 :
+                 NNNV[0:mV]=NNV(r,s)
+                 NNNP[0:mP]=NNP(r,s)
+                 xq=0.
+                 yq=0.
+                 uq=0.
+                 vq=0.
+                 for k in range(0,mV):
+                     xq+=NNNV[k]*xV[iconV[k,iel]]
+                     yq+=NNNV[k]*yV[iconV[k,iel]]
+                     uq+=NNNV[k]*u[iconV[k,iel]]
+                     vq+=NNNV[k]*v[iconV[k,iel]]
+                 pq=0.
+                 for k in range(0,mP):
+                     pq+=NNNP[k]*p[iconP[k,iel]]
+                 p_u=uq
+                 p_v=vq
+                 p_p=pq
+                 p_mat=mat[iel]
+                 iel_target=iel
+                 break
+
+       #print(iel_target,xq,yq,p_u,p_v,p_p,p_mat)
+
+       print("measure at 0.5,0.6: %.3f s" % (timing.time() - start))
+
+    if experiment==4:
+
+       p_u=0
+       p_v=0
+       p_p=0
+       p_mat=0
+       iel_target=0
+
 
     #####################################################################
     # carry out measurements for benchmark
@@ -1091,7 +1179,7 @@ for istep in range(0,nstep):
 
     #####################################################################
 
-    if model_time>end_time: 
+    if model_time>=end_time: 
        print("***********************************")
        print("*********end time reached**********")
        print("***********************************")
