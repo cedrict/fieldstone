@@ -533,12 +533,13 @@ Accurate numerical advection is a notoriously difficult problem. Unless very spe
 techniques are used it often yields undershoot ($c_i<0$) and overshoot ($c_i>0$), which 
 ultimately yields mass conservation issues. Also, unless special care is taken, 
 compositional fields tend to become more and more diffuse over time: the SUPG method (Section~\ref{sec:supg})
-and the entropy viscosity method add small amounts of diffusion to dampen the under- and 
+and the entropy viscosity method \cite{krhb12,ropu19} add small amounts of diffusion to dampen the under- and 
 overshoots. This means that at a given point two or more compositions may have values, 
 which require some form of averaging. If under- and overshoots are present, these averagings
 can become very problematic and even yield meaningless quantities (e.g. negative viscosities).
 
-One rather old and popular filtering approach is the so-called Lenardic and Kaula filter \cite{leka93}:
+One rather old and popular filtering approach is the so-called Lenardic and Kaula (1993) \cite{leka93}
+filter:
 
 \begin{center}
 \includegraphics[width=6cm]{images/compositions/leka93_filter1}\\
