@@ -8,8 +8,8 @@ the box and the interface between both fluids is given by
 $
 y(x)=0.2+0.02\cos \left( \frac{\pi x}{L_x}  \right)
 $
-The bottom fluid is parametrised by its mass density $\rho_1$ and its viscosity $\mu_1$, 
-while the layer above is parametrised by $\rho_2$ and $\mu_2$.
+The bottom fluid is parametrised by its mass density $\rho_1=1000$ and its viscosity $\eta_1=1,10,100$, 
+while the layer above is parametrised by $\rho_2=1010$ and $\eta_2=100$.
 
 No-slip boundary conditions are applied at the bottom and at the top of the box 
 while free-slip boundary conditions are applied on the sides. 
@@ -25,26 +25,64 @@ interface and the resolution is progressively increased. This results in the
 following figure:
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_25/results/grid}
-\includegraphics[width=8cm]{python_codes/fieldstone_25/results/vrms.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/100_100/grid}
 \end{center}
-The green line indicates results obtained with my code ELEFANT with grids up to 2000x2000
-with the exact same methodology.
+
+\newpage
+%..............................................................................
+\paragraph{Isoviscous case}
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_25/results/vel}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_25/results/rho}\\
-\includegraphics[width=7.5cm]{python_codes/fieldstone_25/results/exx}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_25/results/exy}\\
-\includegraphics[width=7.5cm]{python_codes/fieldstone_25/results/q}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_25/results/divv}\\
-{\captionfont Results obtained with $Q_1\times P_0$ elements.}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_25/results/100_100/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_25/results/100_100/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_25/results/100_100/v}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/vrms_100.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/max_vel_100.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/min_u_100.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/max_u_100.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/min_v_100.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/max_v_100.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/min_p_100.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/max_p_100.pdf}\\
+{\captionfont Results obtained with $Q_2\times Q_1$ elements} 
 \end{center}
 
+\newpage
+%..............................................................................
+\paragraph{Viscosity ratio = 10}
 
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_25/results/010_100/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_25/results/010_100/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_25/results/010_100/v}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/vrms_010.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/max_vel_010.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/min_u_010.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/max_u_010.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/min_v_010.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/max_v_010.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/min_p_010.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/max_p_010.pdf}\\
+{\captionfont Results obtained with $Q_2\times Q_1$ elements} 
+\end{center}
 
+\newpage
+%..............................................................................
+\paragraph{Viscosity ratio = 100}
 
-
-
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_25/results/001_100/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_25/results/001_100/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_25/results/001_100/v}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/vrms_001.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/max_vel_001.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/min_u_001.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/max_u_001.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/min_v_001.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/max_v_001.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/min_p_001.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_25/results/max_p_001.pdf}\\
+{\captionfont Results obtained with $Q_2\times Q_1$ elements} 
+\end{center}
 
 

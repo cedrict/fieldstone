@@ -4,7 +4,7 @@ import sys as sys
 import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix, lil_matrix, hstack, vstack
+from scipy.sparse import csr_matrix, lil_matrix 
 import time as time
 
 #------------------------------------------------------------------------------
@@ -15,6 +15,14 @@ def density(x,y,Lx):
        val=0+1000
     else:
        val=10+1000
+    return val
+
+def viscosity(x,y,Lx):
+    yinterface=0.2+0.02*np.cos(np.pi*x/Lx)
+    if y<yinterface:
+       val=eta_bottom
+    else:
+       val=100
     return val
 
 #------------------------------------------------------------------------------
@@ -80,14 +88,16 @@ assert (Lx>0.), "Lx should be positive"
 assert (Ly>0.), "Ly should be positive" 
 
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 4):
+if int(len(sys.argv) == 5):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
+   eta_bottom=float(sys.argv[4])
 else:
-   nelx = 20
-   nely = 20
+   nelx = 60
+   nely = 60
    visu = 1
+   eta_bottom=100
 
 assert (nelx>0.), "nnx should be positive" 
 assert (nely>0.), "nny should be positive" 
@@ -99,7 +109,6 @@ nnp=nnx*nny  # number of nodes
 
 nel=nelx*nely  # number of elements, total
 
-eta0=100.  # dynamic viscosity 
 
 NfemV=nnp*ndofV               # number of velocity dofs
 NfemP=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
@@ -112,10 +121,12 @@ qweights=[5./9.,8./9.,5./9.]
 hx=Lx/nelx
 hy=Ly/nely
 
-pnormalise=True
+pnormalise=False
 
 gx=0
 gy=-10
+
+eta_ref=100
 
 #################################################################
 #################################################################
@@ -126,6 +137,7 @@ print("nel",nel)
 print("nnx=",nnx)
 print("nny=",nny)
 print("nnp=",nnp)
+print("eta_bottom",eta_bottom)
 print("------------------------------")
 
 #################################################################
@@ -147,7 +159,7 @@ for j in range(0, nny):
 
 
 jtarget=2*int(nely/5)+1 -1 
-print (jtarget)
+#print (jtarget)
 counter = 0
 for j in range(0,nny):
     for i in range(0,nnx):
@@ -231,7 +243,8 @@ print("setup: connectivity: %.3f s" % (time.time() - start))
 
 rho=np.zeros(nnp,dtype=np.float64) 
 rho_el=np.zeros(nel,dtype=np.float64) 
-NV=np.zeros(mV,dtype=np.float64)            # shape functions V
+eta_el=np.zeros(nel,dtype=np.float64) 
+NV=np.zeros(mV,dtype=np.float64)       
 
 for i in range(0,nnp):
     rho[i]=density(x[i],y[i],Lx)
@@ -244,6 +257,7 @@ for iel in range(0,nel):
     xc=NV[:].dot(x[iconV[:,iel]])
     yc=NV[:].dot(y[iconV[:,iel]])
     rho_el[iel]=density(xc,yc,Lx)
+    eta_el[iel]=viscosity(xc,yc,Lx)
 #end for
 
 #np.savetxt('rho.ascii',np.array([x,y,rho]).T,header='# x,y')
@@ -278,8 +292,9 @@ print("setup: boundary conditions: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
+A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
+#K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
+#G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
 f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
 h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
 constr= np.zeros(NfemP,dtype=np.float64)         # constraint matrix/vector
@@ -346,7 +361,7 @@ for iel in range(0,nel):
                                          [dNVdy[i],dNVdx[i]]]
 
             # compute elemental a_mat matrix
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta0*weightq*jcob
+            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta_el[iel]*weightq*jcob
 
             # compute elemental rhs vector
             for i in range(0,mV):
@@ -393,18 +408,21 @@ for iel in range(0,nel):
                 for i2 in range(0,ndofV):
                     jkk=ndofV*k2          +i2
                     m2 =ndofV*iconV[k2,iel]+i2
-                    K_mat[m1,m2]+=K_el[ikk,jkk]
+                    #K_mat[m1,m2]+=K_el[ikk,jkk]
+                    A_sparse[m1,m2] += K_el[ikk,jkk]
             for k2 in range(0,mP):
                 jkk=k2
                 m2 =iconP[k2,iel]
-                G_mat[m1,m2]+=G_el[ikk,jkk]
+                #G_mat[m1,m2]+=G_el[ikk,jkk]
+                A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]*eta_ref/Ly
+                A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]*eta_ref/Ly
             f_rhs[m1]+=f_el[ikk]
     for k2 in range(0,mP):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
         constr[m2]+=NNNP[k2]
 
-G_mat*=eta0/Ly
+#G_mat*=eta_ref/Ly
 
 print("build FE matrix: %.3f s" % (time.time() - start))
 
@@ -422,11 +440,13 @@ if pnormalise:
    a_mat[Nfem,NfemV:Nfem]=constr
    a_mat[NfemV:Nfem,Nfem]=constr
 else:
-   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+   #a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
    rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-   a_mat[0:NfemV,0:NfemV]=K_mat
-   a_mat[0:NfemV,NfemV:Nfem]=G_mat
-   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+   #a_mat[0:NfemV,0:NfemV]=K_mat
+   #a_mat[0:NfemV,NfemV:Nfem]=G_mat
+   #a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+
+sparse_matrix=A_sparse.tocsr()
 
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
@@ -438,7 +458,9 @@ print("assemble blocks: %.3f s" % (time.time() - start))
 ######################################################################
 start = time.time()
 
-sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+sol=sps.linalg.spsolve(sparse_matrix,rhs)
+
+#sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
 
 print("solve time: %.3f s" % (time.time() - start))
 
@@ -448,7 +470,7 @@ print("solve time: %.3f s" % (time.time() - start))
 start = time.time()
 
 u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
-p=sol[NfemV:Nfem]*(eta0/Ly)
+p=sol[NfemV:Nfem]*(eta_ref/Ly)
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
@@ -510,6 +532,57 @@ print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 
 print("compute press & sr: %.3f s" % (time.time() - start))
 
+######################################################################
+# compute vrms 
+######################################################################
+start = time.time()
+
+avrg_p=0.
+vrms=0.
+for iel in range (0,nel):
+    for iq in [0,1,2]:
+        for jq in [0,1,2]:
+            rq=qcoords[iq]
+            sq=qcoords[jq]
+            weightq=qweights[iq]*qweights[jq]
+            NV[0:mV]=NNV(rq,sq)
+            dNVdr[0:mV]=dNNVdr(rq,sq)
+            dNVds[0:mV]=dNNVds(rq,sq)
+            NP[0:mP]=NNP(rq,sq)
+            jcb=np.zeros((2,2),dtype=np.float64)
+            for k in range(0,mV):
+                jcb[0,0]+=dNVdr[k]*x[iconV[k,iel]]
+                jcb[0,1]+=dNVdr[k]*y[iconV[k,iel]]
+                jcb[1,0]+=dNVds[k]*x[iconV[k,iel]]
+                jcb[1,1]+=dNVds[k]*y[iconV[k,iel]]
+            #end for
+            jcob=np.linalg.det(jcb)
+            uq=0.
+            vq=0.
+            for k in range(0,mV):
+                uq+=NV[k]*u[iconV[k,iel]]
+                vq+=NV[k]*v[iconV[k,iel]]
+            #end for
+            vrms+=(uq**2+vq**2)*weightq*jcob
+
+            pq=0.0
+            for k in range(0,mP):
+                 pq+=NP[k]*p[iconP[k,iel]]
+            avrg_p+=pq*jcob*weightq
+
+        #end for
+    #end for
+#end for
+
+vrms=np.sqrt(vrms/(Lx*Ly))
+avrg_p/=(Lx*Ly)
+
+p-=avrg_p
+
+print("     -> hx= %.6e  vrms= %.7e " % (hx,vrms))
+
+print("compute vrms: %.3f s" % (time.time() - start))
+
 #####################################################################
 # interpolate pressure onto velocity grid points
 #####################################################################
@@ -529,46 +602,15 @@ for iel in range(0,nel):
 
 #np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
 
-######################################################################
-# compute vrms 
-######################################################################
-start = time.time()
+#####################################################################
 
-vrms=0.
-for iel in range (0,nel):
-    for iq in [0,1,2]:
-        for jq in [0,1,2]:
-            rq=qcoords[iq]
-            sq=qcoords[jq]
-            weightq=qweights[iq]*qweights[jq]
-            NV[0:mV]=NNV(rq,sq)
-            dNVdr[0:mV]=dNNVdr(rq,sq)
-            dNVds[0:mV]=dNNVds(rq,sq)
-            jcb=np.zeros((2,2),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0]+=dNVdr[k]*x[iconV[k,iel]]
-                jcb[0,1]+=dNVdr[k]*y[iconV[k,iel]]
-                jcb[1,0]+=dNVds[k]*x[iconV[k,iel]]
-                jcb[1,1]+=dNVds[k]*y[iconV[k,iel]]
-            #end for
-            jcob=np.linalg.det(jcb)
-            uq=0.
-            vq=0.
-            for k in range(0,mV):
-                uq+=NV[k]*u[iconV[k,iel]]
-                vq+=NV[k]*v[iconV[k,iel]]
-            #end for
-            vrms+=(uq**2+vq**2)*weightq*jcob
-        #end for
-    #end for
-#end for
-
-vrms=np.sqrt(vrms/(Lx*Ly))
-
-print("     -> hx= %.6e  vrms= %.7e " % (hx,vrms))
-
-print("compute vrms: %.3f s" % (time.time() - start))
-
+vel=np.sqrt(u**2+v**2)
+print('benchmark ',nel,Nfem,hx,\
+np.min(u),np.max(u),\
+np.min(v),np.max(v),\
+np.min(vel),np.max(vel),\
+np.min(p),np.max(p),
+vrms)
 
 #####################################################################
 # plot of solution
@@ -615,6 +657,12 @@ vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % rho_el[iel]) 
 vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%10e\n" % eta_el[iel]) 
+vtufile.write("</DataArray>\n")
+
 vtufile.write("</CellData>\n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")

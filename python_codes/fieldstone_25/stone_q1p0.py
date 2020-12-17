@@ -16,6 +16,14 @@ def density(x,y,Lx):
        val=10+1000
     return val
 
+def viscosity(x,y,Lx):
+    yinterface=0.2+0.02*np.cos(np.pi*x/Lx)
+    if y<yinterface:
+       val=eta_bottom
+    else:
+       val=100
+    return val
+
 #------------------------------------------------------------------------------
 
 def NNV(rq,sq):
@@ -60,14 +68,16 @@ assert (Lx>0.), "Lx should be positive"
 assert (Ly>0.), "Ly should be positive" 
 
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 4):
+if int(len(sys.argv) == 5):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
+   eta_bottom=float(sys.argv[4])
 else:
-   nelx = 48
-   nely = 48
+   nelx = 20
+   nely = 20
    visu = 1
+   eta_bottom=100
 
 assert (nelx>0.), "nnx should be positive" 
 assert (nely>0.), "nny should be positive" 
@@ -79,8 +89,6 @@ nnp=nnx*nny  # number of nodes
 
 nel=nelx*nely  # number of elements, total
 
-eta0=100.  # dynamic viscosity 
-
 NfemV=nnp*ndofV   # number of velocity dofs
 NfemP=nel*ndofP   # number of pressure dofs
 Nfem=NfemV+NfemP # total number of dofs
@@ -91,10 +99,20 @@ sqrt3=np.sqrt(3.)
 hx=Lx/nelx
 hy=Ly/nely
 
-pnormalise=True
-
 gx=0
 gy=-10
+
+
+#################################################################
+#################################################################
+
+print("nelx",nelx)
+print("nely",nely)
+print("nel",nel)
+print("nnx=",nnx)
+print("nny=",nny)
+print("nnp=",nnp)
+print("eta_bottom",eta_bottom)
 
 #################################################################
 # grid point setup
@@ -156,13 +174,9 @@ print("setup: connectivity: %.3f s" % (time.time() - start))
 # compute density on nodes and elements
 #################################################################
 
-rho=np.zeros(nnp,dtype=np.float64) 
 rho_el=np.zeros(nel,dtype=np.float64) 
+eta_el=np.zeros(nel,dtype=np.float64) 
 NV    = np.zeros(mV,dtype=np.float64)            # shape functions V
-
-for i in range(0,nnp):
-    rho[i]=density(x[i],y[i],Lx)
-#end for
 
 for iel in range(0,nel):
     rq=0
@@ -171,6 +185,7 @@ for iel in range(0,nel):
     xc=NV[:].dot(x[icon[:,iel]])
     yc=NV[:].dot(y[icon[:,iel]])
     rho_el[iel]=density(xc,yc,Lx)
+    eta_el[iel]=viscosity(xc,yc,Lx)
 #end for
 
 #np.savetxt('rho.ascii',np.array([x,y,rho]).T,header='# x,y')
@@ -274,7 +289,7 @@ for iel in range(0, nel):
                                          [dNdy[i],dNdx[i]]]
 
             # compute elemental a_mat matrix
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta0*weightq*jcob
+            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta_el[iel]*weightq*jcob
 
             # compute elemental rhs vector
             for i in range(0, mV):
@@ -492,6 +507,17 @@ print("     -> hx= %.6e  vrms= %.7e " % (hx,vrms))
 
 print("compute vrms: %.3f s" % (time.time() - start))
 
+
+#####################################################################
+
+vel=np.sqrt(u**2+v**2)
+print('benchmark ',nel,Nfem,hx,\
+np.min(u),np.max(u),\
+np.min(v),np.max(v),\
+np.min(vel),np.max(vel),\
+np.min(p),np.max(p),
+vrms)
+
 #####################################################################
 # plot of solution
 #####################################################################
@@ -535,6 +561,12 @@ vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % rho_el[iel]) 
 vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%10e\n" % eta_el[iel]) 
+vtufile.write("</DataArray>\n")
+
 vtufile.write("</CellData>\n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")
@@ -547,11 +579,6 @@ vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
 for i in range(0,nnp):
     vtufile.write("%10e \n" %q[i])
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
-for i in range(0,nnp):
-    vtufile.write("%10e \n" %rho[i])
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("</PointData>\n")

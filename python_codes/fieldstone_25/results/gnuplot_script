@@ -1,10 +1,186 @@
-set term pdf enhanced
+set term pdf enhanced font "Times,11pt"
 set key outside
-set output 'vrms.pdf'
-set log xy
+set log x
 set xlabel 'h_x'
+
+vref=1e-6
+
+set format y "%10.5f"
+
+###############################################################
+# isoviscous
+###############################################################
+
 set ylabel 'v_{rms}'
-plot[][0.00005:]\
-'vrms_q1p0' u 3:5 w lp ps .5 t 'Q_1P_0',\
-'vrms_q2q1' u 3:5 w lp ps .5 t 'Q_2Q_1',\
-1.853e-4 lt -1 lw .5 notitle
+set output 'vrms_100.pdf'
+plot[][:185.3]\
+'100_100/statistics_q2q1.ascii' u 4:($13/vref) w lp ps .25 notitle,\
+185.29498 lt -1 lw .5
+
+set ylabel 'min(u)'
+set output 'min_u_100.pdf'
+plot[][]\
+'100_100/statistics_q2q1.ascii' u 4:($5/vref) w lp ps .25  notitle 
+
+set ylabel 'max(u)'
+set output 'max_u_100.pdf'
+plot[][]\
+'100_100/statistics_q2q1.ascii' u 4:($6/vref) w lp ps .25  notitle 
+
+set ylabel 'min(v)'
+set output 'min_v_100.pdf'
+plot[][]\
+'100_100/statistics_q2q1.ascii' u 4:($7/vref) w lp ps .25  notitle 
+
+set ylabel 'max(v)'
+set output 'max_v_100.pdf'
+plot[][]\
+'100_100/statistics_q2q1.ascii' u 4:($8/vref) w lp ps .25  notitle 
+
+set ylabel 'max(|v|)'
+set output 'max_vel_100.pdf'
+plot[][]\
+'100_100/statistics_q2q1.ascii' u 4:($10/vref) w lp ps .25  notitle 
+
+set ylabel 'min(p)'
+set output 'min_p_100.pdf'
+plot[][]\
+'100_100/statistics_q2q1.ascii' u 4:($11) w lp ps .25  notitle 
+
+set ylabel 'max(p)'
+set output 'max_p_100.pdf'
+plot[][]\
+'100_100/statistics_q2q1.ascii' u 4:($12) w lp ps .25  notitle 
+
+###############################################################
+# ratio 10/100
+###############################################################
+
+set ylabel 'v_{rms}'
+set output 'vrms_010.pdf'
+plot[][]\
+'010_100/statistics_q2q1.ascii' u 4:($13/vref) w lp ps .25 notitle 
+#185.29498 lt -1 lw .5
+
+set ylabel 'min(u)'
+set output 'min_u_010.pdf'
+plot[][]\
+'010_100/statistics_q2q1.ascii' u 4:($5/vref) w lp ps .25  notitle 
+
+set ylabel 'max(u)'
+set output 'max_u_010.pdf'
+plot[][]\
+'010_100/statistics_q2q1.ascii' u 4:($6/vref) w lp ps .25  notitle 
+
+set ylabel 'min(v)'
+set output 'min_v_010.pdf'
+plot[][]\
+'010_100/statistics_q2q1.ascii' u 4:($7/vref) w lp ps .25  notitle 
+
+set ylabel 'max(v)'
+set output 'max_v_010.pdf'
+plot[][]\
+'010_100/statistics_q2q1.ascii' u 4:($8/vref) w lp ps .25  notitle 
+
+set ylabel 'max(|v|)'
+set output 'max_vel_010.pdf'
+plot[][]\
+'010_100/statistics_q2q1.ascii' u 4:($10/vref) w lp ps .25  notitle 
+
+set ylabel 'min(p)'
+set output 'min_p_010.pdf'
+plot[][]\
+'010_100/statistics_q2q1.ascii' u 4:($11) w lp ps .25  notitle 
+
+set ylabel 'max(p)'
+set output 'max_p_010.pdf'
+plot[][]\
+'010_100/statistics_q2q1.ascii' u 4:($12) w lp ps .25  notitle 
+
+
+###############################################################
+# ratio 1/100
+###############################################################
+
+set ylabel 'v_{rms}'
+set output 'vrms_001.pdf'
+plot[][]\
+'001_100/statistics_q2q1.ascii' u 4:($13/vref) w lp ps .25 notitle 
+#185.29498 lt -1 lw .5
+
+set ylabel 'min(u)'
+set output 'min_u_001.pdf'
+plot[][]\
+'001_100/statistics_q2q1.ascii' u 4:($5/vref) w lp ps .25  notitle 
+
+set ylabel 'max(u)'
+set output 'max_u_001.pdf'
+plot[][]\
+'001_100/statistics_q2q1.ascii' u 4:($6/vref) w lp ps .25  notitle 
+
+set ylabel 'min(v)'
+set output 'min_v_001.pdf'
+plot[][]\
+'001_100/statistics_q2q1.ascii' u 4:($7/vref) w lp ps .25  notitle 
+
+set ylabel 'max(v)'
+set output 'max_v_001.pdf'
+plot[][2070:]\
+'001_100/statistics_q2q1.ascii' u 4:($8/vref) w lp ps .25  notitle 
+
+set ylabel 'max(|v|)'
+set output 'max_vel_001.pdf'
+plot[][:4564]\
+'001_100/statistics_q2q1.ascii' u 4:($10/vref) w lp ps .25  notitle 
+
+set ylabel 'min(p)'
+set output 'min_p_001.pdf'
+plot[][]\
+'001_100/statistics_q2q1.ascii' u 4:($11) w lp ps .25  notitle 
+
+set ylabel 'max(p)'
+set output 'max_p_001.pdf'
+plot[][]\
+'001_100/statistics_q2q1.ascii' u 4:($12) w lp ps .25  notitle 
+
+###############################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#set output 'vrms_010.pdf'
+#plot[][]\
+#'010_100/vrms_q1p0' u 3:5 w lp ps .25 t 'Q_1xP_0',\
+#'010_100/vrms_q2q1' u 3:5 w lp ps .25 t 'Q_2xQ_1',\
+#6.738e-04 lt -1 lw .5
+
+#set output 'vrms_001.pdf'
+#plot[][]\
+#'001_100/vrms_q1p0' u 3:5 w lp ps .25 t 'Q_1xP_0',\
+#'001_100/vrms_q2q1' u 3:5 w lp ps .25 t 'Q_2xQ_1',\
+#1.4419e-03 lt -1 lw .5
+
+ 
+ 
+ 
+ 
