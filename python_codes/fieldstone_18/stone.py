@@ -16,6 +16,8 @@ def bx(x,y):
             1.-4.*y+12.*y*y-8.*y*y*y)
     if bench==2:
        val=0 
+    if bench==3:
+       val=0 
     return val
 
 def by(x,y):
@@ -29,6 +31,12 @@ def by(x,y):
           val=-1.01
        else:
           val=-1.
+    if bench==3:
+       if abs(x-.5)<0.0625 and abs(y-0.5)<0.0625:
+          val=-1.01
+       else:
+          val=-1.
+
     return val
 
 def eta(x,y):
@@ -39,6 +47,11 @@ def eta(x,y):
           val=1000.
        else:
           val=1.
+    if bench==3:
+       if abs(x-.5)<0.0625 and abs(y-0.5)<0.0625:
+          val=1000
+       else:
+          val=1
     return val
 
 #------------------------------------------------------------------------------
@@ -123,8 +136,8 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    nqperdim = int(sys.argv[4])
 else:
-   nelx = 48
-   nely = 48
+   nelx = 64
+   nely = 64
    visu = 1
    nqperdim=3
     
@@ -145,12 +158,12 @@ hy=Ly/nely
 
 pnormalise=True
 
-bench=2
+bench=3
 
 FS=False
-NS=False
+NS=True
 OT=False
-BO=True
+BO=False
 
 #################################################################
 
@@ -752,6 +765,12 @@ print('bench ',Lx/nelx,nel,Nfem,\
       np.min(vel),np.max(vel),\
       np.min(p),np.max(p),
       vrms,avrgp,mass,uc,vc)
+
+profile=open('profile.ascii',"w")
+for i in range(0,NV):
+    if abs(x[i]-0.5)<1e-6:
+       profile.write("%10e %10e %10e %10e \n" %(y[i],u[i],v[i],q[i]))
+    
 
 #####################################################################
 # plot of solution

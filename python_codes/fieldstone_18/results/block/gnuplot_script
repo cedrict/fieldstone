@@ -1,0 +1,114 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+set log x
+set xlabel 'h'
+
+set pointsize .1
+
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
+plot[][]\
+'FS/statistics_block.ascii' u 2:15 w lp notitle
+
+set ylabel 'max(|v|)'
+set output 'max_vel.pdf'
+plot[][]\
+'FS/statistics_block.ascii' u 2:12 w lp notitle
+
+set ylabel 'max(u)'
+set output 'max_u.pdf'
+plot[][]\
+'FS/statistics_block.ascii' u 2:6 w lp notitle
+
+set ylabel 'min(u)'
+set output 'min_u.pdf'
+plot[][]\
+'FS/statistics_block.ascii' u 2:5 w lp notitle
+
+set ylabel 'max(v)'
+set output 'max_v.pdf'
+plot[][]\
+'FS/statistics_block.ascii' u 2:8 w lp notitle
+
+set ylabel 'min(v)'
+set output 'min_v.pdf'
+plot[][]\
+'FS/statistics_block.ascii' u 2:7 w lp notitle
+
+set ylabel 'max(p)'
+set output 'max_p.pdf'
+plot[][]\
+'FS/statistics_block.ascii' u 2:14 w lp notitle
+
+set ylabel 'min(p)'
+set output 'min_p.pdf'
+plot[][]\
+'FS/statistics_block.ascii' u 2:13 w lp notitle
+
+
+
+###################################################3
+unset log x
+set xlabel 'y'
+set key bottom
+
+set ylabel 'u'
+set output 'profile_u_FS.pdf'
+plot[][]\
+'FS/profile32.ascii' u 1:2  w lp t '32x32',\
+'FS/profile48.ascii' u 1:2  w lp t '48x48',\
+'FS/profile64.ascii' u 1:2  w lp t '64x64',\
+'FS/profile80.ascii' u 1:2  w lp t '80x80',\
+
+set ylabel 'v'
+set output 'profile_v_FS.pdf'
+plot[][]\
+'FS/profile32.ascii' u 1:3  w lp t '32x32',\
+'FS/profile48.ascii' u 1:3  w lp t '48x48',\
+'FS/profile64.ascii' u 1:3  w lp t '64x64',\
+'FS/profile80.ascii' u 1:3  w lp t '80x80',\
+
+set ylabel 'p'
+set output 'profile_p_FS.pdf'
+plot[][]\
+'FS/profile32.ascii' u 1:($4-(0.5-$1))  w lp t '32x32',\
+'FS/profile48.ascii' u 1:($4-(0.5-$1))  w lp t '48x48',\
+'FS/profile64.ascii' u 1:($4-(0.5-$1))  w lp t '64x64',\
+'FS/profile80.ascii' u 1:($4-(0.5-$1))  w lp t '80x80',\
+
+
+
+
+###################################################3
+unset log x
+set xlabel 'y'
+set key bottom
+
+set ylabel 'u'
+set output 'profile_u_NS.pdf'
+plot[][]\
+'NS/profile32.ascii' u 1:2  w lp t '32x32',\
+'NS/profile48.ascii' u 1:2  w lp t '48x48',\
+'NS/profile64.ascii' u 1:2  w lp t '64x64',\
+'NS/profile80.ascii' u 1:2  w lp t '80x80',\
+
+set ylabel 'v'
+set output 'profile_v_NS.pdf'
+plot[][]\
+'NS/profile32.ascii' u 1:3  w lp t '32x32',\
+'NS/profile48.ascii' u 1:3  w lp t '48x48',\
+'NS/profile64.ascii' u 1:3  w lp t '64x64',\
+'NS/profile80.ascii' u 1:3  w lp t '80x80',\
+
+set ylabel 'p'
+set output 'profile_p_NS.pdf'
+plot[][]\
+'NS/profile32.ascii' u 1:($4-(0.5-$1))  w lp t '32x32',\
+'NS/profile48.ascii' u 1:($4-(0.5-$1))  w lp t '48x48',\
+'NS/profile64.ascii' u 1:($4-(0.5-$1))  w lp t '64x64',\
+'NS/profile80.ascii' u 1:($4-(0.5-$1))  w lp t '80x80',\
+
+
+
+

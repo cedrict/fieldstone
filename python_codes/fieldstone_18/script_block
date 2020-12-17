@@ -1,0 +1,22 @@
+#!/bin/bash
+
+rm statistics*.ascii
+
+#max is 80x80
+
+nq=3
+
+for res in 16 32 48 64 80 ; do
+
+    echo $res x $res 
+
+    python3 stone.py $res $res 0 $nq > opla
+
+    grep bench opla >> statistics_block.ascii  
+    mv profile.ascii profile$res.ascii 
+
+done
+
+
+
+
