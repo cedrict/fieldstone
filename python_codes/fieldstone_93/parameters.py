@@ -6,12 +6,12 @@ size=1./8.
 
 #experiment=1 # stokes sphere in the middle
 #experiment=2 # stokes sphere under surface
-experiment=3 # square block
-#experiment=4  # vaks97 RT experiment
+#experiment=3 # square block
+experiment=4  # vaks97 RT experiment
 
-n_p=48 # must be even , default is 32
+n_p=64 # must be even , default is 32
 
-nstep=200
+nstep=500
 CFL=0.25
 
 # the following parameterisation is 
@@ -63,7 +63,7 @@ if experiment==4:
    gy=-10
    Lx=0.9142
    Ly=1
-   end_time=0
+   end_time=200
    np_surf=8*n_p
    xobject=0.
    yobject=0.

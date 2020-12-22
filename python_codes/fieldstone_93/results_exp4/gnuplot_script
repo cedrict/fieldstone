@@ -115,4 +115,82 @@ plot[][421.9:]\
 'statistics_np144.ascii' u 2:($10/vref) w lp t 'np=144, a=2-100' ,\
 'statistics_np160.ascii' u 2:($10/vref) w lp t 'np=160, a=2-100' ,\
 
+##############################################333
+set log y
+unset log x
+set xlabel 'time'
+set ylabel 'velocity'
 
+set output 'vrms_gamma.pdf'
+plot[:10][]\
+'gamma/statistics_np32_a050.ascii' u 4:13  w lp t 'v_{rms}, np=32, a=050',\
+'gamma/statistics_np32_a050.ascii' u 4:8   w lp t 'max(v), np=32, a=050',\
+'gamma/statistics_np48_a050.ascii' u 4:13  w lp t 'v_{rms}, np=48, a=050',\
+'gamma/statistics_np48_a050.ascii' u 4:8   w lp t 'max(v), np=48, a=050',\
+'gamma/statistics_np64_a050.ascii' u 4:13  w lp t 'v_{rms}, np=64, a=050',\
+'gamma/statistics_np64_a050.ascii' u 4:8   w lp t 'max(v), np=64, a=050',\
+'gamma/statistics_np64_a025.ascii' u 4:13  w lp t 'v_{rms}, np=64, a=025',\
+'gamma/statistics_np64_a025.ascii' u 4:8   w lp t 'max(v), np=64, a=025',\
+'gamma/statistics_np96_a025.ascii' u 4:13  w lp t 'v_{rms}, np=96, a=025',\
+'gamma/statistics_np96_a025.ascii' u 4:8   w lp t 'max(v), np=96, a=025',\
+0.000185*exp(0.01094019*x) lt -1 lw .5 t 'exp(0.01094019*t)',\
+0.000294*exp(0.0133*x) lt -1 lw .5 t 'exp(0.010*t)'
+
+unset log y
+set ylabel 'v_{rms}'
+set output 'vrms_time.pdf'
+plot[:][]\
+'gamma/statistics_np32_a050.ascii' u 4:13  w l lw .5 t 'v_{rms}, np=32, a=050',\
+'gamma/statistics_np48_a050.ascii' u 4:13  w l lw .5 t 'v_{rms}, np=48, a=050',\
+'gamma/statistics_np64_a050.ascii' u 4:13  w l lw .5 t 'v_{rms}, np=64, a=050',\
+'gamma/statistics_np64_a025.ascii' u 4:13  w l lw .5 t 'v_{rms}, np=64, a=025',\
+'gamma/statistics_np96_a025.ascii' u 4:13  w l lw .5 t 'v_{rms}, np=96, a=025',\
+
+set ylabel '|v|'
+set output 'vel_time.pdf'
+plot[:][]\
+'gamma/statistics_np32_a050.ascii' u 4:10  w l lw .5 t 'v_{rms}, np=32, a=050',\
+'gamma/statistics_np48_a050.ascii' u 4:10  w l lw .5 t 'v_{rms}, np=48, a=050',\
+'gamma/statistics_np64_a050.ascii' u 4:10  w l lw .5 t 'v_{rms}, np=64, a=050',\
+'gamma/statistics_np64_a025.ascii' u 4:10  w l lw .5 t 'v_{rms}, np=64, a=025',\
+'gamma/statistics_np96_a025.ascii' u 4:10  w l lw .5 t 'v_{rms}, np=96, a=025',\
+
+set ylabel 'u'
+set output 'u_time.pdf'
+plot[:][]\
+'gamma/statistics_np32_a050.ascii' u 4:5   w l lw .5 lt 1 t 'min(u), np=32, a=050',\
+'gamma/statistics_np32_a050.ascii' u 4:6   w l lw .5 lt 1 t 'max(u), np=32, a=050',\
+'gamma/statistics_np48_a050.ascii' u 4:5   w l lw .5 lt 2 t 'min(u), np=48, a=050',\
+'gamma/statistics_np48_a050.ascii' u 4:6   w l lw .5 lt 2 t 'max(u), np=48, a=050',\
+'gamma/statistics_np64_a050.ascii' u 4:5   w l lw .5 lt 3 t 'min(u), np=64, a=050',\
+'gamma/statistics_np64_a050.ascii' u 4:6   w l lw .5 lt 3 t 'max(u), np=64, a=050',\
+'gamma/statistics_np64_a025.ascii' u 4:5   w l lw .5 lt 4 t 'min(u), np=64, a=025',\
+'gamma/statistics_np64_a025.ascii' u 4:6   w l lw .5 lt 4 t 'max(u), np=64, a=025',\
+'gamma/statistics_np96_a025.ascii' u 4:5   w l lw .5 lt 5 t 'min(u), np=96, a=025',\
+'gamma/statistics_np96_a025.ascii' u 4:6   w l lw .5 lt 5 t 'max(u), np=96, a=025',\
+
+set ylabel 'v'
+set output 'v_time.pdf'
+plot[:][]\
+'gamma/statistics_np32_a050.ascii' u 4:7   w l lw .5 lt 1 t 'min(v), np=32, a=050',\
+'gamma/statistics_np32_a050.ascii' u 4:8   w l lw .5 lt 1 t 'max(v), np=32, a=050',\
+'gamma/statistics_np48_a050.ascii' u 4:7   w l lw .5 lt 2 t 'min(v), np=48, a=050',\
+'gamma/statistics_np48_a050.ascii' u 4:8   w l lw .5 lt 2 t 'max(v), np=48, a=050',\
+'gamma/statistics_np64_a050.ascii' u 4:7   w l lw .5 lt 3 t 'min(v), np=64, a=050',\
+'gamma/statistics_np64_a050.ascii' u 4:8   w l lw .5 lt 3 t 'max(v), np=64, a=050',\
+'gamma/statistics_np64_a025.ascii' u 4:7   w l lw .5 lt 4 t 'min(v), np=64, a=025',\
+'gamma/statistics_np64_a025.ascii' u 4:8   w l lw .5 lt 4 t 'max(v), np=64, a=025',\
+'gamma/statistics_np96_a025.ascii' u 4:7   w l lw .5 lt 5 t 'min(v), np=96, a=025',\
+'gamma/statistics_np96_a025.ascii' u 4:8   w l lw .5 lt 5 t 'max(v), np=96, a=025',\
+
+
+
+
+set ylabel '<density> (relative error)'
+set output 'avrg_rho_time.pdf'
+plot[:][]\
+'gamma/statistics_np32_a050.ascii' u 4:($18-1008)/1008   w l lw .5 lt 1 t 'max(v), np=32, a=050',\
+'gamma/statistics_np48_a050.ascii' u 4:($18-1008)/1008   w l lw .5 lt 2 t 'max(v), np=48, a=050',\
+'gamma/statistics_np64_a050.ascii' u 4:($18-1008)/1008   w l lw .5 lt 3 t 'max(v), np=64, a=050',\
+'gamma/statistics_np64_a025.ascii' u 4:($18-1008)/1008   w l lw .5 lt 4 t 'max(v), np=64, a=025',\
+'gamma/statistics_np96_a025.ascii' u 4:($18-1008)/1008   w l lw .5 lt 5 t 'max(v), np=96, a=025',\
