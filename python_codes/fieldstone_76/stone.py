@@ -181,8 +181,8 @@ if int(len(sys.argv) == 5):
    visu=int(sys.argv[3])
    nqperdim=int(sys.argv[4])
 else:
-   nelx = 64
-   nely = 64
+   nelx = 16
+   nely = 16
    visu = 1
    nqperdim=2
 
@@ -668,7 +668,9 @@ for iel in range (0,nel):
 
 vrms=np.sqrt(vrms/(Lx*Ly))
 
-print("     -> nel= %6d ; vrms= %.8f " %(nel,vrms))
+vel=np.sqrt(u**2+v**2)
+
+print("     -> nel= %6d ; vrms= %.14f ; max(vel)= %.14f" %(nel,vrms,np.max(vel)))
 
 print("compute v_rms : %.3f s" % (timing.time() - start))
 

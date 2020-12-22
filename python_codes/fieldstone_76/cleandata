@@ -1,0 +1,6 @@
+rm sol*.vtu
+rm stress*.vtu
+rm *.ascii
+rm temp
+rm opla
+
