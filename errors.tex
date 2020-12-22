@@ -127,7 +127,7 @@ We note that when using discontinuous pressure space
 when the viscosity is discontinuous provided that the element boundaries conform to the discontinuity.
 
  
-\subsubsection{About extrapolation}
+\subsubsection{About extrapolation}\label{ss:extrapolation}
 \index{general}{Extrapolation}
 
 {\it Section contributed by W. Bangerth and part of Thieulot \& Bangerth [in prep.]}
@@ -173,8 +173,45 @@ arrive at the following equation:
 If one assumes that $X_h$ converges to $X$ uniformly either from above or
 below (rather than oscillate around $X$), then this equation allows us
 to solve for $X^\ast$ and $r$:
+
+\[
+(X_h-X^\star)(X_{h/4}-X^\star)=(X_{h/2}-X^\star)(X_{h/2}-X^\star)
+\]
+
+\[
+X_h X_{h/4}
+-X^\star  X_{h/4}
+- X_h X^\star 
++ (X^\star)^2
+=X_{h/2}^2 -2 X^\star X_{h/2} + (X^\star)^2 
+\]
+
+\[
+X_h X_{h/4}
+-X^\star  X_{h/4}
+- X_h X^\star 
+=X_{h/2}^2 -2 X^\star X_{h/2} 
+\]
+
+\[
+X_h X_{h/4}
+-X_{h/2}^2 
+=
+-2 X^\star X_{h/2} 
++X^\star  X_{h/4}
++ X_h X^\star 
+\]
+
+\[
+X_h X_{h/4}
+-X_{h/2}^2 
+=
+X^\star ( -2  X_{h/2}  +   X_{h/4} + X_h )
+\]
+
+and finally:
 \begin{equation*}
-X^\star = \frac{X_h X_{h/2}-X_{h/2}^2}{X_h - 2 X_{h/2} + X_{h/4}}, \qquad\qquad
+X^\star = \frac{X_h X_{h/4}-X_{h/2}^2}{X_h - 2 X_{h/2} + X_{h/4}}, \qquad\qquad
 r = \log_2 \frac{X_{h/2}-X^\star}{X_{h/4}-X^\star}.
 \end{equation*}
 In the determination of $r$, we could also have used $X_h$ and $X_{h/2}$,

@@ -44,7 +44,25 @@ Initial values are
 
 Participating codes:
 \begin{itemize}
-\item \aspect ..DESCRIBE . Default is Q2Q1, entropy visc. Supg tried, and Q2pm1
+\item \aspect{} uses $Q_2\times Q_1$ elements by default. $Q_2\times P_{-1}$
+elements can be used by setting
+\begin{lstlisting}
+subsection Discretization
+  set Use locally conservative discretization = true
+end
+\end{lstlisting}
+The default stabilisation method when compositional fields are used is the 
+entropy viscosity method, but SUPG has also been implemented and can be 
+triggered with 
+\begin{lstlisting}
+subsection Discretization
+  subsection Stabilization parameters
+    set Stabilization method = SUPG
+  end
+end
+\end{lstlisting}
+
+The default mesh settings are as follows:
 \begin{lstlisting}
 subsection Mesh refinement
   set Initial adaptive refinement   = 1 
@@ -55,12 +73,66 @@ subsection Mesh refinement
 end
 \end{lstlisting}
 
+In the results hereafter when the combination 6-0 or 7-0 are mentioned, this means that the coarsening 
+fraction has been set to zero and these correspond then to regular meshes with 64x64 and 128x128 elements
+respectively.
+
+Active particles can also replace the compositional fields and this is how it is triggered from the input file:
+
+\begin{lstlisting}
+subsection Compositional fields
+  set Number of fields = 2 
+  set Names of fields = sphere, air 
+  set Compositional field methods = particles, particles
+  set Mapped particle properties = sphere:initial sphere, air: initial air 
+end
+
+subsection Postprocess
+  set List of postprocessors = visualization, ... , particles
+  subsection Visualization
+    set List of output variables = density, viscosity, strain rate
+    set Time between graphical output = 1 
+  end 
+  subsection Particles
+    set Number of particles = 100000
+    set Time between data output = 0 
+    set Data output format = vtu 
+    set List of particle properties = velocity, initial composition, initial position #, integrated strain
+    set Interpolation scheme = cell average
+    set Update ghost particles = true
+    set Particle generator name = random uniform
+  end 
+end
+\end{lstlisting}
 
  
-\item Stone 93. The resolution is controlled by the minimum area of 
+
+ 
+\item Stone 93. Code based on unstructured mesh of Crouzeix-Raviart triangular elements.
+ The resolution is controlled by the minimum area of 
 the triangles as passed as argument to the triangle mesher, and the parameter $np$ which controls
 the number of points on the hull ($np$ on each side), the surface ($5*np$) and the sphere ($5*np$);
-\item Alessandro's code
+
+\item Alessandro Regorda's code:
+The number of markers is fixed per element with random distribution.
+At the beginning of the simulation there are: 562500 for 150x150 grid with 25 markers per element, 
+600,000 for 200x200 grid with 15 markers per element,
+655,360 for 256x256 grid with 10 markers per element,
+2,621,440 for 512x512 grid with 10 markers per element.
+
+The advection is RK4. The code maintains the number of markers per element between half of the
+initial number and the initial number plus half (e.g. in 512x512
+markers are between 5 and 15). When in an element there are less
+markers than the minimum it adds random markers to reach the minimum,
+while if the number is higher than the maximum some of them are
+deleted. In this way elements are never empty. When new markers are
+added they assume the type of the nearest marker.
+Averaging only applies to viscosity, density is always arithmetically
+averaged.
+
+
+
+
 \end{itemize}
 
 In what follows 6-0 and 7-0 correspond to regular grids (no coarsening, no refinement) 

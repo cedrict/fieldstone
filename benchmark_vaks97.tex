@@ -1,0 +1,363 @@
+
+
+This numerical experiment was first presented in \cite{vaks97}.
+It consists of an isothermal Rayleigh-Taylor instability in a two-dimensional box
+of size $Lx=0.9142$ and $L_y=1$.
+
+Two Newtonian fluids are present in the system: the buoyant layer is placed at the bottom of 
+the box and the interface between both fluids is given by 
+\begin{equation}
+y(x)=0.2+0.02\cos \left( \frac{\pi x}{L_x}  \right)
+\end{equation}
+The bottom fluid is parametrised by its mass density $\rho_1=1000$ and its viscosity $\eta_1$, 
+while the layer above is parametrised by $\rho_2=1010$ and $\eta_2=100$.
+This experiment is to be carried out for various viscosity constrasts between the 
+two layers, i.e. $\eta_1=\{1,10,100\}$.
+
+No-slip boundary conditions are applied at the bottom and at the top of the box 
+while free-slip boundary conditions are applied on the sides.
+Gravity is pointing downwards with $|\vec{g}|=10$. 
+
+\begin{center}
+\includegraphics[width=4cm]{images/benchmark_vaks97/elefant256_0500.png}
+\includegraphics[width=4cm]{images/benchmark_vaks97/elefant256_1000.png}
+\includegraphics[width=4cm]{images/benchmark_vaks97/elefant256_1500.png}
+\includegraphics[width=4cm]{images/benchmark_vaks97/elefant256_2000.png}\\
+{\captionfont Example of time evolution obtained with the ELEFANT code for 
+a 256x256 grid with the particle-in-cell method.}
+\end{center}
+
+One can measure the following quantities:
+
+\begin{itemize}
+
+\item the root-mean-square velocity $v_{rms}$ in the domain as a function of time:
+\begin{equation}
+v_{rms}= \sqrt{ \frac{1}{L_xL_y} \int \int |{\bm v}|^2 dxdy}
+\end{equation}
+
+\item the maximum (or local maxima) of the $v_{rms}$ and its (their) corresponding time(s)
+
+\item the growth rate of the instability at $t=0$.
+From linear stability analysis, the analytical growth rate can be calculated \cite{ramb68,ramb81}: 
+$\gamma_{th}=0.01094019$, which is valid for an infinitesimal perturbation. 
+For each model run, the growth rate $\gamma$ is measured by fitting the $v_{rms}$ and/or (?) the maximum 
+vertical velocity measurements for a short time $t$. 
+
+\item the total mass of the system $M(t)$ as a function of time. Since there is no chemical diffusion in the 
+system (pure advection equation) the amount of material in the system is to remain constant, and 
+therefore its mass.
+\begin{equation}
+M(t) = \int \int \rho(x,y,t) dxdy
+\end{equation}
+Given the layout described in the previous paragraph, the exact analytical initial mass $M_0$ of the system 
+is given by 
+\[
+M_0=0.9142 \times (0.2 \times 1000 + 0.8\times 1010) = 921.5136
+\]
+The average density is then 
+\[
+<\rho>_0=\frac{M_0}{L_xL_y} = 1008
+\]
+We will then measure the relative mass error as a function of time
+\[
+\delta M(t) = \frac{M(t)-M_0}{M_0}
+\]
+which is equal to 
+\[
+<\delta\rho>(t) = \frac{<\rho>(t)-<\rho>_0}{<\rho>_0}
+\]
+
+\end{itemize}
+
+
+
+
+\paragraph{Instantaneous results}.
+Results obtained with stone 25 ($Q_2\times Q_1$ element) 
+and stone 93 ($P_2^+\times P_{-1}$ element), 
+both with mesh fitted so as to follow the interface between both fluids.
+
+
+\begin{center}
+\begin{tabular}{llp{4cm}p{4cm}p{4cm}}
+\hline
+            &  & $\eta_1=100$ &  $\eta_1=10$ &  $\eta_1=1$ \\ 
+\hline\hline
+$\min(u)$   & Stone 25 &  & & -4563.5\\
+            & Stone 93 ($P_2^+\times P_{-1}$) &  & &        \\
+            & Aspect   &  & &        \\
+\hline
+$\max(u)$   & Stone 25 &  &  & 1054.03\\
+            & Stone 93 ($P_2^+\times P_{-1}$)&  & &        \\
+            & Aspect   &  & &        \\
+\hline
+$\min(v)$   & Stone 25 &  &  & \\
+            & Stone 93 ($P_2^+\times P_{-1}$)&  & &        \\
+            & Aspect   &  & &        \\
+\hline
+$\max(v)$   & Stone 25 &  &  & 2070.9\\
+            & Stone 93 ($P_2^+\times P_{-1}$)&  & &        \\
+            & Aspect   &  & &        \\
+\hline
+$\max(|v|)$ & Stone 25 & 422.125 & & 4563.67\\
+            & Stone 93 ($P_2^+\times P_{-1}$)&  & &        \\
+            & Aspect   &  & &        \\
+\hline
+$v_{rms}$   & Stone 25 & 185.2947 & & 1441.87\\
+            & Stone 93 ($P_2^+\times P_{-1}$)&  & &        \\
+            & Aspect   &  & &        \\
+\hline
+$\min(p)$   & Stone 25 & -5048.16 & & -5048.7345\\ 
+            & Stone 93 ($P_2^+\times P_{-1}$)&  & &        \\
+            & Aspect   &  & &        \\
+\hline
+$\max(p)$   & Stone 25 & 5033.6947 & & 5032.329\\
+            & Stone 93 ($P_2^+\times P_{-1}$)&  & &        \\
+            & Aspect   &  & &        \\
+\hline
+\end{tabular}
+\end{center}
+
+
+
+
+
+
+\newpage
+
+
+
+\begin{center}
+\begin{tabular}{lllllll}
+\hline
+Code & Grid & Method & Growth Rate $\gamma$ & t (max vrms) & max (vrms)   & publication\\
+\hline\hline
+HS & 41x41 & extrapolated & 0.010996 & 211.1  & 0.0030958 & \cite{vaks97}\\
+   & 61x64 & extrapolated & 0.011109 & 209.17 & 0.0031022 & \\
+   & 81x81 & extrapolated & 0.011177 & 208.99 & 0.0030916 & \\
+\hline
+CND & 32x32 && 0.01106 & 208.4 & 0.003092 & \cite{vaks97}\\
+    & 48x48 && 0.01106 & 208.5 & 0.0030943 \\
+\hline 
+SK &   80x80 && 0.01130 & 215.67 & 0.00299279 & \cite{vaks97}\\
+   & 120x120 && 0.01127 & 206.38 & 0.0028922 \\
+   & 160x160 && 0.01179 & 207.84 & 0.0028970 \\
+\hline
+PvK & 30x30 & splines & 0.01185 & 213.38 & 0.00300 & \cite{vaks97}\\
+    & 50x50 & splines & 0.01198 & 211.81 & 0.003016 \\
+    & 80x80 & splines & 0.01207 & 210.75 & 0.003050 \\
+    & 100x100 & splines & 0.01211 &  & \\
+    & 30x30 & C1 element & 0.01253 & 210.59 & 0.003100 \\
+    & 80x80 & C1 element & 0.01225 & 207.05 & 0.003091 \\
+\hline
+ISMM & 160x160	& &0.00991 & 230.1 & 0.003093	 &\cite{soga01}\\
+ISMM & 120x120	& &0.00998 & 226.1 & 0.003133	 &\\
+MSOU & 160x160	& &0.00993 & 231.4 & 0.003085	 &\\
+MSOU & 120x120	& &0.01020 & 227.6 & 0.003134	 &\\
+FSOU & 160x160	& &0.01111 & 217.3 & 0.003118	 &\\
+FSOU & 120x120	& &0.01159 & 213.1 & 0.003151	 &\\
+\hline
+&64x64 	 &5 	&0.01112 	&206.5 	&0.003041 & \cite{taki03} \\
+&	 &15 	&0.01117 	&208.8 	&0.003098 & \\
+&	 &40 	&0.01115 	&209.9 	&0.003110 & \\
+&128x128 &5 	&0.01113 	&208.1 	&0.003079 & \\
+&	 &15 	&0.01110 	&208.9 	&0.003097 & \\
+&	 &40 	&0.01109 	&209.2 	&0.003102 & \\
+\hline
+& 120x132 & Level sets & 0.01252 & 211.2 & 0.00301 & \cite{sunh10} \\
+\hline
+& 67m res. &  & &   215.3  & 0.003106 & \cite{chtl13} \\
+& 100m res. & & &   215.28 & 0.003101 & \\
+\hline
+LaCoDe 	& 1808 elts (10754 dofs)   &&0.01221 & 215& 0.003110 & \cite{demh19} \\
+	& 7093 elts (2592 dofs)    &&0.01222 & 212& 0.003080 & \\
+	& 17960 elts (107468 dofs) &&0.01222 & 211& 0.003075 & \\
+\hline
+\end{tabular}\\
+{\captionfont Selected Quantities for the Isoviscous Rayleigh-Taylor problem.
+HS: FDM, stream function formulation, particles.
+PvK: FEM, stream function, marker-chain.\\
+SK: FEM, ConMan code, compositional field. 
+CND: spline method, stream function formulation, particles.
+}
+\end{center}
+
+
+List of literature showcasing results of the van Keken et al (1997) \cite{vaks97} setup:
+\begin{itemize}
+\item de Smet et al (2000) \cite{devv00a}. No table of results, only figures:
+\begin{center}
+\includegraphics[width=12cm]{images/benchmark_vaks97/devv00a_1}\\
+\includegraphics[width=6cm]{images/benchmark_vaks97/devv00a_2}
+\includegraphics[width=6cm]{images/benchmark_vaks97/devv00a_3}
+\end{center}
+
+\item Soboutia et al (2001) \cite{soga01}. Results reported in table above.
+\begin{center}
+\includegraphics[width=6cm]{images/benchmark_vaks97/soga01a}
+\includegraphics[width=6cm]{images/benchmark_vaks97/soga01b}
+\end{center}
+
+\item Babeyko et al (2002) \cite{bast02}. No table of results, only one figure:
+\begin{center}
+\includegraphics[width=7cm]{images/benchmark_vaks97/bast02_a}
+\includegraphics[width=7cm]{images/benchmark_vaks97/bast02_b}
+\end{center}
+
+\item Tackley \& King (2003) \cite{taki03}. Performed with grid resolutions of 
+64x64 or 128x128 and with either 5, 15, or 40 tracers per cell (on average). 
+Results reported in table above. 
+
+\begin{center}
+\includegraphics[width=5.27cm]{images/benchmark_vaks97/taki03_a}
+\includegraphics[width=5.27cm]{images/benchmark_vaks97/taki03_d}
+\includegraphics[width=5.27cm]{images/benchmark_vaks97/taki03_e}
+\end{center}
+
+There are also results for non-isoviscous cases.
+
+\item Bourgouin et al (2006) \cite{bomh06}. No table of results, only figures.
+Additional results for non-isoviscous in the paper.
+
+\begin{center}
+\includegraphics[width=7cm]{images/benchmark_vaks97/bomh06_a}
+\includegraphics[width=7cm]{images/benchmark_vaks97/bomh06_b}
+\end{center}
+
+\item Quinteros et al (2009) \cite{qurj09}.
+
+\begin{center}
+\includegraphics[width=5cm]{images/benchmark_vaks97/qurj09_a}
+\includegraphics[width=5cm]{images/benchmark_vaks97/qurj09_b}
+\includegraphics[width=5cm]{images/benchmark_vaks97/qurj09_c}
+\end{center}
+
+
+"Different snapshots from the domain evolution that are shown in Fig. 10 were compared with the ones published by van Keken et al. (1997). The evolution shown in this chapter and in the van Keken paper are identical for all the compared time steps."
+
+
+
+
+\item Samuel \& Evonuk (2010) \cite{saev10}.
+
+\begin{center}
+\includegraphics[width=4cm]{images/benchmark_vaks97/saev10_a}
+\includegraphics[width=5cm]{images/benchmark_vaks97/saev10_b}\\
+\includegraphics[width=5cm]{images/benchmark_vaks97/saev10_c}
+\includegraphics[width=5cm]{images/benchmark_vaks97/saev10_d}
+\end{center}
+
+\item Suckale et al (2010) \cite{sunh10}.
+
+\begin{center}
+\includegraphics[width=7cm]{images/benchmark_vaks97/sunh10_a}
+\includegraphics[width=7cm]{images/benchmark_vaks97/sunh10_e}\\
+{\captionfont The Rayleigh‐Taylor instability at t = 1500 computed by (left) 
+the level set method on a 300x330 grid, compared to the best results\\ 
+of (right) the four codes compared by van Keken \etal }\\
+b)\includegraphics[width=4.5cm]{images/benchmark_vaks97/sunh10_b}
+c)\includegraphics[width=5cm]{images/benchmark_vaks97/sunh10_c}
+d)\includegraphics[width=5.2cm]{images/benchmark_vaks97/sunh10_d}\\
+{\captionfont 
+b) Detailed comparison of the level set (thin black line) and the marker chain 
+approach (thick grey line) for the isothermal and isoviscous Rayleigh‐Taylor 
+instability at nondimensional time t = 1500. The plotted interfaces represent a 
+zoom onto the instability descending from the top downwards in the middle of the box. 
+The two methods yield an almost identical interface. 
+c) Evolution of the entrainment of the buoyant fluid over time as computed by 
+the five different codes. The level set computation was done on a 160 × 176 grid.
+d) Evolution of the root‐mean‐square velocity of the interface over time 
+as computed by the five different codes. The level set computation was done on a 160 × 176 grid.}
+\end{center}
+
+\item Leng \& Zhong (2011) \cite{lezh11}.
+
+\begin{center}
+\includegraphics[width=6cm]{images/benchmark_vaks97/lezh11_a}
+\includegraphics[width=9cm]{images/benchmark_vaks97/lezh11_b}\\
+{\captionfont Left: The mesh distribution and chemical composition for case RT1 at 
+two different times: (a and c) t = 0 and (b and d) t = 1500. 
+Right: a) The root‐mean‐square velocity Vrms and (b) the relative entrainment of 
+the buoyant material, with time for case RT1. The corresponding benchmark results from 
+van Keken et al. [1997] are also plotted.} 
+\end{center}
+
+
+\item Vynnytska et al (2013) \cite{vyrc13}. Results only for 100 viscosity contrast
+
+
+\item Choi et al (2013) \cite{chtl13}.
+
+\begin{center}
+\includegraphics[width=7cm]{images/benchmark_vaks97/chtl13_a}
+\includegraphics[width=7cm]{images/benchmark_vaks97/chtl13_b}\\
+{\captionfont 
+Left:
+Rayleigh‐Taylor instability. (a) Model setup. Snapshots of the density at dimensionless 
+time of (b) 500, (c) 1000, and (d) 1500. (e) Plot of Vrms versus dimensionless time, t. 
+The resolution is about 0.6 km. 
+Right:
+$\sigma_{xx}$ and density fields before and after the first remeshing with about 1 km resolution. 
+The white lines in the “After” images denote the original phase boundary before remeshing. 
+The thick‐lined box in the inset shows the location of the zoomed‐in part of the domain.}
+\end{center}
+
+
+\item Fuchs \& Schmeling (2013) \cite{fusc13}.
+
+\begin{center}
+\includegraphics[width=7cm]{images/benchmark_vaks97/fusc13}\\
+{\captionfont 
+Finite deformation field for different stages of the diapirism with three 
+different viscosity ratios and an initial non-dimensional thickness of 
+the buoyant layer $h_2=0.2$. 
+Left column: viscosity ratio $m = 0.1$. 
+Middle column: $m = 1$. 
+Right column: $m = 10$. 
+Top row: pillow stage. 
+Middle row: rising stage. 
+Lower row: final stage. }
+\end{center}
+
+
+
+\item de Montserrat et al (2019) \cite{demh19}.
+
+
+\begin{center}
+\includegraphics[width=7cm]{images/benchmark_vaks97/demh19}\\
+{\captionfont 
+a-e) Temporal evolution of the Rayleigh-Taylor instability. 
+f) Evolution of $\upnu_{rms}$. 
+Remeshing of the domain is necessary when the mesh becomes highly distorted. 
+Note that the red lines overlap with the blue line. 
+g) Second invariant of the accumulated strain in a mesh with heavily distorted elements, 
+and h) interpolated into a new high-quality mesh. 
+i) Histogram showing the logarithm of the error between the accumulated square root of 
+second invariant of the strain rate, pre- and post-remeshing.}
+\end{center}
+
+
+\item Robey \& Puckett (2019) \cite{ropu19}.
+
+\begin{center}
+\includegraphics[width=5cm]{images/benchmark_vaks97/ropu19}\\
+{\captionfont Computed solution of the van Keken isoviscous Rayleigh–Taylor problem
+at time $t = 2000$ on a uniform grid of 128x128 cells. }
+\end{center}
+
+
+
+\item Louis-Napoleon et al (2020) \cite{logb20}.
+
+\item Schuh-Senlis et al (2020) \cite{sctc20}.
+
+
+\end{itemize}
+
+\aspect manual \cite{aspectmanual}.
+Mishin (2011) \cite{mishin11},
+Logg et al (2012) \cite{lomw12},
+Maierova (2012) \cite{maie12},
+Robey (2019) \cite{robe19},
