@@ -134,7 +134,7 @@ plot[:10][]\
 'gamma/statistics_np96_a025.ascii' u 4:13  w lp t 'v_{rms}, np=96, a=025',\
 'gamma/statistics_np96_a025.ascii' u 4:8   w lp t 'max(v), np=96, a=025',\
 0.000185*exp(0.01094019*x) lt -1 lw .5 t 'exp(0.01094019*t)',\
-0.000294*exp(0.0133*x) lt -1 lw .5 t 'exp(0.010*t)'
+0.000294*exp(0.0133*x) lt -1 lw .5 t 'exp(0.0133*t)'
 
 unset log y
 set ylabel 'v_{rms}'

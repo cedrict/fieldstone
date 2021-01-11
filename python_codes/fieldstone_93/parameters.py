@@ -6,10 +6,10 @@ size=1./8.
 
 #experiment=1 # stokes sphere in the middle
 #experiment=2 # stokes sphere under surface
-#experiment=3 # square block
-experiment=4  # vaks97 RT experiment
+experiment=3 # square block
+#experiment=4  # vaks97 RT experiment
 
-n_p=64 # must be even , default is 32
+n_p=32 # must be even , default is 32
 
 nstep=500
 CFL=0.25
