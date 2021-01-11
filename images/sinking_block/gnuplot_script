@@ -1,0 +1,323 @@
+###############################################################################
+#gnuplot script
+###############################################################################
+
+set term pdf enhanced font "Times,11pt"
+set grid
+set xlabel 'y'
+set xtics 0.1
+set pointsize .1 
+
+###############################################################################
+
+set style rect fc lt -1 fs solid 0.15 noborder
+set obj rect from 0.5-0.0625, graph 0 to 0.5+0.0625, graph 1
+
+set ylabel 'pressure' 
+set output 'pressure_FS.pdf'
+plot[][]\
+'FS/stone93/profile_050_np48.ascii' u 1:2              t 'stone 93 (P_2^+xP_{-1})',\
+'FS/stone76/profile64x64.ascii'     u 2:($5-(0.5-$2)) w l lw .5  t 'stone 76 (Q_2xP_{-1})',\
+'FS/stone18/profile80.ascii'        u 1:($4-(0.5-$1)) w l lw .5 t 'stone 18 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_10/point_values.txt' u 3:($6-(0.5-$3)) w l lw .5   t 'ASPECT, none, lvl 10 (Q_2xQ_1)',\
+'FS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:($6-(0.5-$3)) w l lw .5   t 'ASPECT, none, lvl 10 (Q_2xP_{1-})',\
+
+set key outside
+set output 'pressure_FS_zoom.pdf'
+plot[0.4:0.6][]\
+'FS/stone93/profile_050_np48.ascii' u 1:2              t 'stone 93 (P_2^+xP_{-1})',\
+'FS/stone76/profile64x64.ascii'     u 2:($5-(0.5-$2)) w l lw .5  t 'stone 76 (Q_2xP_{-1})',\
+'FS/stone18/profile80.ascii'        u 1:($4-(0.5-$1)) w l lw .5 t 'stone 18 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_10/point_values.txt' u 3:($6-(0.5-$3)) w l lw .5   t 'ASPECT, none, lvl 10 (Q_2xQ_1)',\
+'FS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:($6-(0.5-$3)) w l lw .5   t 'ASPECT, none, lvl 10 (Q_2xP_{1-})',\
+
+set key inside
+set ylabel 'u' 
+set output 'u_FS.pdf'
+plot[][]\
+'FS/stone93/profile_050_np48.ascii' u 1:3  t 'stone 93 (P_2^+xP_{-1})',\
+'FS/stone76/profile64x64.ascii'     u 2:3  w l t 'stone 76 (Q_2xP_{-1})',\
+'FS/stone18/profile80.ascii'        u 1:2  w l t 'stone 18 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_10/point_values.txt' u 3:4 w l t 'ASPECT, none, lvl 10 (Q_2xQ_1)',\
+'FS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:4 w l t 'ASPECT, none, lvl 10 (Q_2xP_{-1})',\
+
+set key bottom
+set ylabel 'v' 
+set output 'v_FS.pdf'
+plot[][]\
+'FS/stone93/profile_050_np48.ascii' u 1:4  t 'stone 93 (P_2^+xP_{-1})',\
+'FS/stone76/profile64x64.ascii'     u 2:4  w l t 'stone 76 (Q_2xP_{-1})',\
+'FS/stone18/profile80.ascii'        u 1:3  w l t 'stone 18 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_10/point_values.txt' u 3:5 w l lw .5 t 'ASPECT, none, lvl 10 (Q_2xQ_1)',\
+'FS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:5 w l lw .5 t 'ASPECT, none, lvl 10 (Q_2xP_{-1})',\
+
+set key outside
+set output 'v_FS_zoom.pdf'
+plot[0.4:0.6][]\
+'FS/stone93/profile_050_np48.ascii' u 1:4  t 'stone 93 (P_2^+xP_{-1})',\
+'FS/stone76/profile64x64.ascii' u 2:4  w l lw .5 t 'stone 76 (Q_2xP_{-1})',\
+'FS/stone18/profile80.ascii'    u 1:3  w l lw .5 t 'stone 18 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_10/point_values.txt' u 3:5 w l lw .5 t 'ASPECT, none, lvl 10, Q_2xQ_1',\
+'FS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:5 w l lw .5 t 'ASPECT, none, lvl 10, Q_2xP_{-1}',\
+
+set key outside
+
+set output 'pressure_FS_ASPECT_56789.pdf'
+plot[0.4:0.6][]\
+'FS/ASPECT/q2q1/output_stokes_none_5/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 1 dt 1 t 'ASPECT, none, lvl 5 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_6/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 2 dt 1 t 'ASPECT, none, lvl 6 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_7/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 3 dt 1 t 'ASPECT, none, lvl 7 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_8/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 4 dt 1 t 'ASPECT, none, lvl 8 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_9/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 5 dt 1 t 'ASPECT, none, lvl 9 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_10/point_values.txt' u 3:($6-(0.5-$3)) w l lt 6 dt 1 t 'ASPECT, none, lvl 10 (Q_2xQ_1)',\
+'FS/ASPECT/q2p1/output_stokes_none_5/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 1 dt 2 t 'ASPECT, none, lvl 5 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_none_6/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 2 dt 2 t 'ASPECT, none, lvl 6 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_none_7/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 3 dt 2 t 'ASPECT, none, lvl 7 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_none_8/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 4 dt 2 t 'ASPECT, none, lvl 8 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_none_9/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 5 dt 2 t 'ASPECT, none, lvl 9 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:($6-(0.5-$3)) w l lt 6 dt 2 t 'ASPECT, none, lvl 10 (Q_2xP_{-1})',\
+
+
+set output 'v_FS_ASPECT_56789.pdf'
+plot[0.4:0.6][]\
+'FS/ASPECT/q2q1/output_stokes_none_5/point_values.txt'  u 3:5 w l lt 1 dt 1 t 'ASPECT, none, lvl 5 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_6/point_values.txt'  u 3:5 w l lt 2 dt 1 t 'ASPECT, none, lvl 6 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_7/point_values.txt'  u 3:5 w l lt 3 dt 1 t 'ASPECT, none, lvl 7 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_8/point_values.txt'  u 3:5 w l lt 4 dt 1 t 'ASPECT, none, lvl 8 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_9/point_values.txt'  u 3:5 w l lt 5 dt 1 t 'ASPECT, none, lvl 9 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_none_10/point_values.txt' u 3:5 w l lt 6 dt 1 t 'ASPECT, none, lvl 10 (Q_2xQ_1)',\
+'FS/ASPECT/q2p1/output_stokes_none_5/point_values.txt'  u 3:5 w l lt 1 dt 2 t 'ASPECT, none, lvl 5 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_none_6/point_values.txt'  u 3:5 w l lt 2 dt 2 t 'ASPECT, none, lvl 6 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_none_7/point_values.txt'  u 3:5 w l lt 3 dt 2 t 'ASPECT, none, lvl 7 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_none_8/point_values.txt'  u 3:5 w l lt 4 dt 2 t 'ASPECT, none, lvl 8 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_none_9/point_values.txt'  u 3:5 w l lt 5 dt 2 t 'ASPECT, none, lvl 9 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:5 w l lt 6 dt 2 t 'ASPECT, none, lvl 10 (Q_2xP_{-1})',\
+'FS/stone76/profile64x64.ascii' u 2:4  w l lt -1 lw .5 t 'stone 76 (Q_2xP_{-1})',\
+
+set output 'pressure_FS_ASPECT_avrg.pdf'
+plot[0.4:0.6][]\
+'FS/ASPECT/q2q1/output_stokes_none_9/point_values.txt'       u 3:($6-(0.5-$3)) w l lt 1 dt 1 lw .5 t 'ASPECT, none, lvl 9 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_arithmetic_9/point_values.txt' u 3:($6-(0.5-$3)) w l lt 2 dt 1 lw .5 t 'ASPECT, arithm., lvl 9 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_geometric_9/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 3 dt 1 lw .5 t 'ASPECT, geom., lvl 9 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_harmonic_9/point_values.txt'   u 3:($6-(0.5-$3)) w l lt 4 dt 1 lw .5 t 'ASPECT, harm., lvl 9 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_q1_9/point_values.txt'         u 3:($6-(0.5-$3)) w l lt 5 dt 1 lw .5 t 'ASPECT, Q1-proj., lvl 9 (Q_2xQ_1)',\
+'FS/ASPECT/q2p1/output_stokes_none_9/point_values.txt'       u 3:($6-(0.5-$3)) w l lt 1 dt 2 lw .5 t 'ASPECT, none, lvl 9 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_arithmetic_9/point_values.txt' u 3:($6-(0.5-$3)) w l lt 2 dt 2 lw .5 t 'ASPECT, arithm., lvl 9 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_geometric_9/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 3 dt 2 lw .5 t 'ASPECT, geom., lvl 9 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_harmonic_9/point_values.txt'   u 3:($6-(0.5-$3)) w l lt 4 dt 2 lw .5 t 'ASPECT, harm., lvl 9 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_q1_9/point_values.txt'         u 3:($6-(0.5-$3)) w l lt 5 dt 2 lw .5 t 'ASPECT, Q1-proj., lvl 9 (Q_2xP_{-1})',\
+
+set output 'v_FS_ASPECT_avrg.pdf'
+plot[0.4:0.6][]\
+'FS/ASPECT/q2q1/output_stokes_none_9/point_values.txt'       u 3:5 w l lt 1 dt 1 lw .5 t 'ASPECT, none, lvl 9 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_arithmetic_9/point_values.txt' u 3:5 w l lt 2 dt 1 lw .5 t 'ASPECT, arithm., lvl 9 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_geometric_9/point_values.txt'  u 3:5 w l lt 3 dt 1 lw .5 t 'ASPECT, geom., lvl 9 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_harmonic_9/point_values.txt'   u 3:5 w l lt 4 dt 1 lw .5 t 'ASPECT, harm., lvl 9 (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/output_stokes_q1_9/point_values.txt'         u 3:5 w l lt 5 dt 1 lw .5 t 'ASPECT, Q1-proj., lvl 9 (Q_2xQ_1)',\
+'FS/ASPECT/q2p1/output_stokes_none_9/point_values.txt'       u 3:5 w l lt 1 dt 2 lw .5 t 'ASPECT, none, lvl 9 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_arithmetic_9/point_values.txt' u 3:5 w l lt 2 dt 2 lw .5 t 'ASPECT, arithm., lvl 9 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_geometric_9/point_values.txt'  u 3:5 w l lt 3 dt 2 lw .5 t 'ASPECT, geom., lvl 9 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_harmonic_9/point_values.txt'   u 3:5 w l lt 4 dt 2 lw .5 t 'ASPECT, harm., lvl 9 (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/output_stokes_q1_9/point_values.txt'         u 3:5 w l lt 5 dt 2 lw .5 t 'ASPECT, Q1-proj., lvl 9 (Q_2xP_{-1})',\
+'FS/stone76/profile64x64.ascii' u 2:4  w l lt -1 lw .5 t 'stone 76 (Q_2xP_{-1})',\
+
+set key inside
+
+
+
+
+########################################################################
+########################################################################
+# NS
+########################################################################
+########################################################################
+
+set ylabel 'pressure' 
+set output 'pressure_NS.pdf'
+plot[][]\
+'NS/stone93/profile_050_np48.ascii' u 1:2  t 'stone 93 (P_2^+xP_{-1})',\
+'NS/stone76/profile64x64.ascii' u 2:($5-(0.5-$2))  t 'stone 76 (Q_2xP_{-1})',\
+'NS/stone18/profile80.ascii' u 1:($4-(0.5-$1))  w l t 'stone 18 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_none_10/point_values.txt' u 3:($6-(0.5-$3))  t 'ASPECT, none, lvl 9, Q_2xQ_1',\
+'NS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:($6-(0.5-$3))  t 'ASPECT, none, lvl 9, Q_2xP_{1-}',\
+
+set ylabel 'u' 
+set output 'u_NS.pdf'
+plot[][]\
+'NS/stone93/profile_050_np48.ascii' u 1:3  t 'stone 93 (P_2^+xP_{-1})',\
+'NS/stone76/profile64x64.ascii' u 2:3  t 'stone 76 (Q_2xP_{-1})',\
+'NS/stone18/profile80.ascii' u 1:2  w l t 'stone 18 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_none_10/point_values.txt' u 3:4 w l t 'ASPECT, none, lvl 9, Q_2xQ_1',\
+'NS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:4 w l t 'ASPECT, none, lvl 9, Q_2xP_{-1}',\
+
+set key bottom
+set ylabel 'v' 
+set output 'v_NS.pdf'
+plot[][]\
+'NS/stone93/profile_050_np48.ascii' u 1:4  t 'stone 93 (P_2^+xP_{-1})',\
+'NS/stone76/profile64x64.ascii' u 2:4   t 'stone 76 (Q_2xP_{-1})',\
+'NS/stone18/profile80.ascii' u 1:3  w l t 'stone 18 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_none_10/point_values.txt' u 3:5 w l t 'ASPECT, none, lvl 9, Q_2xQ_1',\
+'NS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:5 w l t 'ASPECT, none, lvl 9, Q_2xP_{-1}',\
+
+########################################################################
+
+set key outside
+set output 'pressure_NS_ASPECT_56789.pdf'
+plot[0.4:0.6][]\
+'NS/ASPECT/q2q1/output_stokes_none_5/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 1 dt 1 t 'ASPECT, none, lvl 5 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_none_6/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 2 dt 1 t 'ASPECT, none, lvl 6 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_none_7/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 3 dt 1 t 'ASPECT, none, lvl 7 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_none_8/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 4 dt 1 t 'ASPECT, none, lvl 8 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_none_9/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 5 dt 1 t 'ASPECT, none, lvl 9 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_none_10/point_values.txt' u 3:($6-(0.5-$3)) w l lt 6 dt 1 t 'ASPECT, none, lvl 10 (Q_2xQ_1)',\
+'NS/ASPECT/q2p1/output_stokes_none_5/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 1 dt 2 t 'ASPECT, none, lvl 5 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_none_6/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 2 dt 2 t 'ASPECT, none, lvl 6 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_none_7/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 3 dt 2 t 'ASPECT, none, lvl 7 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_none_8/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 4 dt 2 t 'ASPECT, none, lvl 8 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_none_9/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 5 dt 2 t 'ASPECT, none, lvl 9 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:($6-(0.5-$3)) w l lt 6 dt 2 t 'ASPECT, none, lvl 10 (Q_2xP_{-1})',\
+
+set output 'v_NS_ASPECT_56789.pdf'
+plot[0.4:0.6][]\
+'NS/ASPECT/q2q1/output_stokes_none_5/point_values.txt'  u 3:5 w l lt 1 dt 1 t 'ASPECT, none, lvl 5 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_none_6/point_values.txt'  u 3:5 w l lt 2 dt 1 t 'ASPECT, none, lvl 6 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_none_7/point_values.txt'  u 3:5 w l lt 3 dt 1 t 'ASPECT, none, lvl 7 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_none_8/point_values.txt'  u 3:5 w l lt 4 dt 1 t 'ASPECT, none, lvl 8 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_none_9/point_values.txt'  u 3:5 w l lt 5 dt 1 t 'ASPECT, none, lvl 9 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_none_10/point_values.txt' u 3:5 w l lt 6 dt 1 t 'ASPECT, none, lvl 10 (Q_2xQ_1)',\
+'NS/ASPECT/q2p1/output_stokes_none_5/point_values.txt'  u 3:5 w l lt 1 dt 2 t 'ASPECT, none, lvl 5 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_none_6/point_values.txt'  u 3:5 w l lt 2 dt 2 t 'ASPECT, none, lvl 6 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_none_7/point_values.txt'  u 3:5 w l lt 3 dt 2 t 'ASPECT, none, lvl 7 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_none_8/point_values.txt'  u 3:5 w l lt 4 dt 2 t 'ASPECT, none, lvl 8 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_none_9/point_values.txt'  u 3:5 w l lt 5 dt 2 t 'ASPECT, none, lvl 9 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:5 w l lt 6 dt 2 t 'ASPECT, none, lvl 10 (Q_2xP_{-1})',\
+'NS/stone76/profile64x64.ascii' u 2:4  w l lt -1 lw .5 t 'stone 76 (Q_2xP_{-1})',\
+
+set output 'pressure_NS_ASPECT_avrg.pdf'
+plot[0.4:0.6][]\
+'NS/ASPECT/q2q1/output_stokes_none_9/point_values.txt'       u 3:($6-(0.5-$3)) w l lt 1 dt 1 lw .5 t 'ASPECT, none, lvl 9 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_arithmetic_9/point_values.txt' u 3:($6-(0.5-$3)) w l lt 2 dt 1 lw .5 t 'ASPECT, arithm., lvl 9 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_geometric_9/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 3 dt 1 lw .5 t 'ASPECT, geom., lvl 9 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_harmonic_9/point_values.txt'   u 3:($6-(0.5-$3)) w l lt 4 dt 1 lw .5 t 'ASPECT, harm., lvl 9 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_q1_9/point_values.txt'         u 3:($6-(0.5-$3)) w l lt 5 dt 1 lw .5 t 'ASPECT, Q1-proj., lvl 9 (Q_2xQ_1)',\
+'NS/ASPECT/q2p1/output_stokes_none_9/point_values.txt'       u 3:($6-(0.5-$3)) w l lt 1 dt 2 lw .5 t 'ASPECT, none, lvl 9 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_arithmetic_9/point_values.txt' u 3:($6-(0.5-$3)) w l lt 2 dt 2 lw .5 t 'ASPECT, arithm., lvl 9 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_geometric_9/point_values.txt'  u 3:($6-(0.5-$3)) w l lt 3 dt 2 lw .5 t 'ASPECT, geom., lvl 9 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_harmonic_9/point_values.txt'   u 3:($6-(0.5-$3)) w l lt 4 dt 2 lw .5 t 'ASPECT, harm., lvl 9 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_q1_9/point_values.txt'         u 3:($6-(0.5-$3)) w l lt 5 dt 2 lw .5 t 'ASPECT, Q1-proj., lvl 9 (Q_2xP_{-1})',\
+
+set output 'v_NS_ASPECT_avrg.pdf'
+plot[0.4:0.6][]\
+'NS/ASPECT/q2q1/output_stokes_none_9/point_values.txt'       u 3:5 w l lt 1 dt 1 lw .5 t 'ASPECT, none, lvl 9 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_arithmetic_9/point_values.txt' u 3:5 w l lt 2 dt 1 lw .5 t 'ASPECT, arithm., lvl 9 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_geometric_9/point_values.txt'  u 3:5 w l lt 3 dt 1 lw .5 t 'ASPECT, geom., lvl 9 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_harmonic_9/point_values.txt'   u 3:5 w l lt 4 dt 1 lw .5 t 'ASPECT, harm., lvl 9 (Q_2xQ_1)',\
+'NS/ASPECT/q2q1/output_stokes_q1_9/point_values.txt'         u 3:5 w l lt 5 dt 1 lw .5 t 'ASPECT, Q1-proj., lvl 9 (Q_2xQ_1)',\
+'NS/ASPECT/q2p1/output_stokes_none_9/point_values.txt'       u 3:5 w l lt 1 dt 2 lw .5 t 'ASPECT, none, lvl 9 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_arithmetic_9/point_values.txt' u 3:5 w l lt 2 dt 2 lw .5 t 'ASPECT, arithm., lvl 9 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_geometric_9/point_values.txt'  u 3:5 w l lt 3 dt 2 lw .5 t 'ASPECT, geom., lvl 9 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_harmonic_9/point_values.txt'   u 3:5 w l lt 4 dt 2 lw .5 t 'ASPECT, harm., lvl 9 (Q_2xP_{-1})',\
+'NS/ASPECT/q2p1/output_stokes_q1_9/point_values.txt'         u 3:5 w l lt 5 dt 2 lw .5 t 'ASPECT, Q1-proj., lvl 9 (Q_2xP_{-1})',\
+'NS/stone76/profile64x64.ascii' u 2:4  w l lt -1 lw .5 t 'stone 76 (Q_2xP_{-1})',\
+
+
+########################################################################
+set xtics auto
+set xlabel 'h'
+set log x
+set key outside
+
+
+set ylabel 'v_{rms}'
+set output 'vrms_FS.pdf'
+plot[][5e-6:5.7e-6]\
+'FS/ASPECT/q2q1/statistics_none_5678910'       u (1./sqrt($4)):14  w lp lt 1 dt 1 lw .5 t 'ASPECT, none, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_arithmetic_5678910' u (1./sqrt($4)):14  w lp lt 2 dt 1 lw .5 t 'ASPECT, arithmetic, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_geometric_5678910'  u (1./sqrt($4)):14  w lp lt 3 dt 1 lw .5 t 'ASPECT, geometric, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_harmonic_5678910'   u (1./sqrt($4)):14  w lp lt 4 dt 1 lw .5 t 'ASPECT, harmonic, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_q1_5678910'         u (1./sqrt($4)):14  w lp lt 5 dt 1 lw .5 t 'ASPECT, Q1 proj., (Q_2xQ_1)',\
+'FS/ASPECT/q2p1/statistics_5678910'            u (1./sqrt($4)):14  w lp lt 1 dt 2 lw .5 t 'ASPECT, none, (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/statistics_arithmetic_5678910' u (1./sqrt($4)):14  w lp lt 2 dt 2 lw .5 t 'ASPECT, arithmetic, (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/statistics_geometric_5678910'  u (1./sqrt($4)):14  w lp lt 3 dt 2 lw .5 t 'ASPECT, geometric, (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/statistics_harmonic_5678910'   u (1./sqrt($4)):14  w lp lt 4 dt 2 lw .5 t 'ASPECT, harmonic, (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/statistics_q1_5678910'         u (1./sqrt($4)):14  w lp lt 5 dt 2 lw .5 t 'ASPECT, Q1 proj., (Q_2xP_{-1})',\
+'FS/ASPECT/q2q1/extrapolation_none_5678910'       u 1:2  w lp lt 1 dt 4 lw .5 t 'ASPECT, none, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_arithmetic_5678910' u 1:2  w lp lt 2 dt 4 lw .5 t 'ASPECT, arithmetic, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_geometric_5678910'  u 1:2  w lp lt 3 dt 4 lw .5 t 'ASPECT, geometric, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_harmonic_5678910'   u 1:2  w lp lt 4 dt 4 lw .5 t 'ASPECT, harmonic, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_q1_5678910'         u 1:2  w lp lt 5 dt 4 lw .5 t 'ASPECT, q1, (Q_2xQ_{1}), extrapol',\
+'FS/stone76/vrms_nq3'                          u (1./sqrt($3)):6   w lp lt 6 dt 1 lw .5 t 'stone 76 (Q_2xP_{-1})',\
+'FS/stone76/extrapolation'                     u 1:2   w lp lt 6 dt 4 lw .5 t 'stone 76 (Q_2xP_{-1}), extrapol',\
+
+set output 'vrms_FS_extrapolation_rate.pdf'
+plot[][]\
+'FS/ASPECT/q2q1/extrapolation_none_5678910'       u 1:3  w lp lt 1  lw .5 t 'ASPECT, none, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_arithmetic_5678910' u 1:3  w lp lt 2  lw .5 t 'ASPECT, arithmetic, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_geometric_5678910'  u 1:3  w lp lt 3  lw .5 t 'ASPECT, geometric, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_harmonic_5678910'   u 1:3  w lp lt 4  lw .5 t 'ASPECT, harmonic, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_q1_5678910'         u 1:3  w lp lt 5  lw .5 t 'ASPECT, q1, (Q_2xQ_{1}), extrapol',\
+
+
+set ylabel 'max(vel)'
+set output 'maxvel_FS.pdf'
+plot[][]\
+'FS/ASPECT/q2q1/statistics_none_5678910'       u (1./sqrt($4)):15  w lp lt 1 dt 1 lw .5 t 'ASPECT, none, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_arithmetic_5678910' u (1./sqrt($4)):15  w lp lt 2 dt 1 lw .5 t 'ASPECT, arithmetic, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_geometric_5678910'  u (1./sqrt($4)):15  w lp lt 3 dt 1 lw .5 t 'ASPECT, geometric, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_harmonic_5678910'   u (1./sqrt($4)):15  w lp lt 4 dt 1 lw .5 t 'ASPECT, harmonic, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_q1_5678910'         u (1./sqrt($4)):15  w lp lt 5 dt 1 lw .5 t 'ASPECT, Q1 proj., (Q_2xQ_1)',\
+'FS/ASPECT/q2p1/statistics_5678910'            u (1./sqrt($4)):15  w lp lt 1 dt 2 lw .5 t 'ASPECT, none, (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/statistics_arithmetic_5678910' u (1./sqrt($4)):15  w lp lt 2 dt 2 lw .5 t 'ASPECT, arithmetic, (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/statistics_geometric_5678910'  u (1./sqrt($4)):15  w lp lt 3 dt 2 lw .5 t 'ASPECT, geometric, (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/statistics_harmonic_5678910'   u (1./sqrt($4)):15  w lp lt 4 dt 2 lw .5 t 'ASPECT, harmonic, (Q_2xP_{-1})',\
+'FS/ASPECT/q2p1/statistics_q1_5678910'         u (1./sqrt($4)):15  w lp lt 5 dt 2 lw .5 t 'ASPECT, Q1 proj., (Q_2xP_{-1})',\
+'FS/ASPECT/q2q1/extrapolation_none_5678910'       u 1:4  w lp lt 1 dt 4 lw .5 t 'ASPECT, none, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_arithmetic_5678910' u 1:4  w lp lt 2 dt 4 lw .5 t 'ASPECT, arithmetic, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_geometric_5678910'  u 1:4  w lp lt 3 dt 4 lw .5 t 'ASPECT, geometric, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_harmonic_5678910'   u 1:4  w lp lt 4 dt 4 lw .5 t 'ASPECT, harmonic, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_q1_5678910'         u 1:4  w lp lt 5 dt 4 lw .5 t 'ASPECT, q1, (Q_2xQ_{1}), extrapol',\
+'FS/stone76/vrms_nq3'                          u (1./sqrt($3)):9   w lp lt 6 dt 1 lw .5 t 'stone 76 (Q_2xP_{-1})',\
+'FS/stone76/extrapolation'                     u 1:4   w lp lt 6 dt 4 lw .5 t 'stone 76 (Q_2xP_{-1}), extrapol',\
+
+
+set output 'maxvel_FS_extrapolation_rate.pdf'
+plot[][]\
+'FS/ASPECT/q2q1/extrapolation_none_5678910'       u 1:5  w lp lt 1  lw .5 t 'ASPECT, none, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_arithmetic_5678910' u 1:5  w lp lt 2  lw .5 t 'ASPECT, arithmetic, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_geometric_5678910'  u 1:5  w lp lt 3  lw .5 t 'ASPECT, geometric, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_harmonic_5678910'   u 1:5  w lp lt 4  lw .5 t 'ASPECT, harmonic, (Q_2xQ_{1}), extrapol',\
+'FS/ASPECT/q2q1/extrapolation_q1_5678910'         u 1:5  w lp lt 5  lw .5 t 'ASPECT, q1, (Q_2xq_{1}), extrapol',\
+
+set key right
+set log y
+vrms_star=5.647167e-06
+set output 'vrms_FS_error.pdf'
+plot[][]\
+'FS/ASPECT/q2q1/statistics_none_5678910'       u (1./sqrt($4)):(abs($14-vrms_star))  w lp lt 1 dt 1 lw .5 t 'ASPECT, none, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_arithmetic_5678910' u (1./sqrt($4)):(abs($14-vrms_star))  w lp lt 2 dt 1 lw .5 t 'ASPECT, arithmetic, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_geometric_5678910'  u (1./sqrt($4)):(abs($14-vrms_star))  w lp lt 3 dt 1 lw .5 t 'ASPECT, geometric, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_harmonic_5678910'   u (1./sqrt($4)):(abs($14-vrms_star))  w lp lt 4 dt 1 lw .5 t 'ASPECT, harmonic, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_q1_5678910'         u (1./sqrt($4)):(abs($14-vrms_star))  w lp lt 5 dt 1 lw .5 t 'ASPECT, Q1 proj., (Q_2xQ_1)',\
+0.0001*x lt -1
+
+maxvel_star=1.530214e-05
+set output 'maxvel_FS_error.pdf'
+plot[][]\
+'FS/ASPECT/q2q1/statistics_none_5678910'       u (1./sqrt($4)):(abs($15-maxvel_star))  w lp lt 1 dt 1 lw .5 t 'ASPECT, none, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_arithmetic_5678910' u (1./sqrt($4)):(abs($15-maxvel_star))  w lp lt 2 dt 1 lw .5 t 'ASPECT, arithmetic, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_geometric_5678910'  u (1./sqrt($4)):(abs($15-maxvel_star))  w lp lt 3 dt 1 lw .5 t 'ASPECT, geometric, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_harmonic_5678910'   u (1./sqrt($4)):(abs($15-maxvel_star))  w lp lt 4 dt 1 lw .5 t 'ASPECT, harmonic, (Q_2xQ_1)',\
+'FS/ASPECT/q2q1/statistics_q1_5678910'         u (1./sqrt($4)):(abs($15-maxvel_star))  w lp lt 5 dt 1 lw .5 t 'ASPECT, Q1 proj., (Q_2xQ_1)',\
+0.001*x lt -1
+
+
+
+
+
+
+
+
+
+
+
