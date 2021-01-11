@@ -1,0 +1,22 @@
+# 1: Time step number
+# 2: Time (seconds)
+# 3: Time step size (seconds)
+# 4: Number of mesh cells
+# 5: Number of Stokes degrees of freedom
+# 6: Number of temperature degrees of freedom
+# 7: Number of degrees of freedom for all compositions
+# 8: Iterations for temperature solver
+# 9: Iterations for composition solver 1
+# 10: Iterations for Stokes solver
+# 11: Velocity iterations in Stokes preconditioner
+# 12: Schur complement iterations in Stokes preconditioner
+# 13: Visualization file name
+# 14: RMS velocity (m/s)
+# 15: Max. velocity (m/s)
+# 16: Minimal value for composition C_1
+# 17: Maximal value for composition C_1
+# 18: Global mass for composition C_1
+# 19: Minimal pressure (Pa)
+# 20: Average pressure (Pa)
+# 21: Maximal pressure (Pa)
+0 0.000000000000e+00 0.000000000000e+00 65536 1705860 545025 545025 0 0 151 156 568 output_stokes/solution/solution-00000 2.84913165e-06 1.62677755e-05 0.00000000e+00 1.00000000e+00 5.56292710e-02 -5.01113830e-01 -3.73868992e-13 5.01113830e-01 
