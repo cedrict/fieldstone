@@ -1,0 +1,231 @@
+#############################################3
+set term pdf enhanced font "Times,10pt"
+set grid
+set key outside
+set xlabel 'time'
+
+set ylabel 'min/max u'
+set output 'u.pdf'
+plot[][]\
+'default/benchmark.ascii'   u 3:4 w l lt 1 lw .5 t 'default',\
+'default/benchmark.ascii'   u 3:5 w l lt 1 lw .5 notitle,\
+'npsurf120/benchmark.ascii' u 3:4 w l lt 2 dt 1 lw .5 t 'default w/ np_{surf}=120',\
+'npsurf120/benchmark.ascii' u 3:5 w l lt 2 dt 1 lw .5 notitle,\
+'npsurf150/benchmark.ascii' u 3:4 w l lt 2 dt 2 lw .5 t 'default w/ np_{surf}=150',\
+'npsurf150/benchmark.ascii' u 3:5 w l lt 2 dt 2 lw .5 notitle,\
+'npsurf200/benchmark.ascii' u 3:4 w l lt 2 dt 3 lw .5 t 'default w/ np_{surf}=200',\
+'npsurf200/benchmark.ascii' u 3:5 w l lt 2 dt 3 lw .5 notitle,\
+'npsurf250/benchmark.ascii' u 3:4 w l lt 2 dt 4 lw .5 t 'default w/ np_{surf}=250',\
+'npsurf250/benchmark.ascii' u 3:5 w l lt 2 dt 4 lw .5 notitle,\
+'gamma1p25/benchmark.ascii' u 3:4 w l lt 3 lw .5 t 'default w/ gamma=1.25',\
+'gamma1p25/benchmark.ascii' u 3:5 w l lt 3 lw .5 notitle,\
+'cfl0p125/benchmark.ascii'  u 3:4 w l lt 5 lw .5 t 'default w/ CFL=0.125',\
+'cfl0p125/benchmark.ascii'  u 3:5 w l lt 5 lw .5 notitle,\
+'a0p0008/benchmark.ascii'   u 3:4 w l lt 5 dt 1 lw .5 t 'default w/ a=0.0008',\
+'a0p0008/benchmark.ascii'   u 3:5 w l lt 5 dt 1 lw .5 notitle,\
+'a0p0005/benchmark.ascii'   u 3:4 w l lt 5 dt 2 lw .5 t 'default w/ a=0.0005',\
+'a0p0005/benchmark.ascii'   u 3:5 w l lt 5 dt 2 lw .5 notitle,\
+
+set ylabel 'min/max v'
+set output 'v.pdf'
+plot[][]\
+'default/benchmark.ascii'   u 3:6 w l lt 1 lw .5 t 'default',\
+'default/benchmark.ascii'   u 3:7 w l lt 1 lw .5 notitle,\
+'npsurf120/benchmark.ascii' u 3:6 w l lt 2 dt 1 lw .5 t 'default w/ np_{surf}=120',\
+'npsurf120/benchmark.ascii' u 3:7 w l lt 2 dt 1 lw .5 notitle,\
+'npsurf150/benchmark.ascii' u 3:6 w l lt 2 dt 2 lw .5 t 'default w/ np_{surf}=150',\
+'npsurf150/benchmark.ascii' u 3:7 w l lt 2 dt 2 lw .5 notitle,\
+'npsurf200/benchmark.ascii' u 3:6 w l lt 2 dt 3 lw .5 t 'default w/ np_{surf}=200',\
+'npsurf200/benchmark.ascii' u 3:7 w l lt 2 dt 3 lw .5 notitle,\
+'npsurf250/benchmark.ascii' u 3:6 w l lt 2 dt 4 lw .5 t 'default w/ np_{surf}=250',\
+'npsurf250/benchmark.ascii' u 3:7 w l lt 2 dt 4 lw .5 notitle,\
+'gamma1p25/benchmark.ascii' u 3:6 w l lt 3 lw .5 t 'default w/ gamma=1.25',\
+'gamma1p25/benchmark.ascii' u 3:7 w l lt 3 lw .5 notitle,\
+'cfl0p125/benchmark.ascii'  u 3:6 w l lt 5 lw .5 t 'default w/ CFL=0.125',\
+'cfl0p125/benchmark.ascii'  u 3:7 w l lt 5 lw .5 notitle,\
+'a0p0008/benchmark.ascii'   u 3:6 w l lt 5 dt 1 lw .5 t 'default w/ a=0.0008',\
+'a0p0008/benchmark.ascii'   u 3:7 w l lt 5 dt 1 lw .5 notitle,\
+'a0p0005/benchmark.ascii'   u 3:6 w l lt 5 dt 2 lw .5 t 'default w/ a=0.0005',\
+'a0p0005/benchmark.ascii'   u 3:7 w l lt 5 dt 2 lw .5 notitle,\
+
+set log y
+set ylabel 'max v'
+set output 'v_start.pdf'
+plot[0:10][0.000275:0.00038]\
+'default/benchmark.ascii'   u 3:7 w lp lt 1      lw .5 ps .2 t 'default',\
+'npsurf120/benchmark.ascii' u 3:7 w lp lt 2 dt 1 lw .5 ps .2 t 'default w/ np_{surf}=120',\
+'npsurf150/benchmark.ascii' u 3:7 w lp lt 2 dt 2 lw .5 ps .2 t 'default w/ np_{surf}=150',\
+'npsurf200/benchmark.ascii' u 3:7 w lp lt 2 dt 3 lw .5 ps .2 t 'default w/ np_{surf}=200',\
+'npsurf250/benchmark.ascii' u 3:7 w lp lt 2 dt 4 lw .5 ps .2 t 'default w/ np_{surf}=250',\
+'gamma1p25/benchmark.ascii' u 3:7 w lp lt 3      lw .5 ps .2 t 'default w/ gamma=1.25',\
+'cfl0p125/benchmark.ascii'  u 3:7 w lp lt 4      lw .5 ps .2 t 'default w/ CFL=0.125',\
+'a0p0008/benchmark.ascii'   u 3:7 w lp lt 5 dt 1 lw .5 ps .2 t 'default w/ a=0.0008',\
+'a0p0005/benchmark.ascii'   u 3:7 w lp lt 5 dt 2 lw .5 ps .2 t 'default w/ a=0.0005',\
+0.0002935*exp(0.0133*x) lt -1 lw .5 dt 2 
+
+#0.000185*exp(0.01094019*x) lt -1 lw .5 t 'exp(0.01094019*t)'
+
+
+
+unset log y
+
+
+
+
+
+
+set ylabel '|v|'
+set output 'vel.pdf'
+plot[][]\
+'default/benchmark.ascii'   u 3:9 w l lt 1      lw .25 t 'default',\
+'npsurf120/benchmark.ascii' u 3:9 w l lt 2 dt 1 lw .25 t 'default w/ np_{surf}=120',\
+'npsurf150/benchmark.ascii' u 3:9 w l lt 2 dt 2 lw .25 t 'default w/ np_{surf}=150',\
+'npsurf200/benchmark.ascii' u 3:9 w l lt 2 dt 3 lw .25 t 'default w/ np_{surf}=200',\
+'npsurf250/benchmark.ascii' u 3:9 w l lt 2 dt 4 lw .25 t 'default w/ np_{surf}=250',\
+'gamma1p25/benchmark.ascii' u 3:9 w l lt 3      lw .25 t 'default w/ gamma=1.25',\
+'cfl0p125/benchmark.ascii'  u 3:9 w l lt 4      lw .25 t 'default w/ CFL=0.125',\
+'a0p0008/benchmark.ascii'   u 3:9 w l lt 5 dt 1 lw .25 t 'default w/ a=0.0008',\
+'a0p0005/benchmark.ascii'   u 3:9 w l lt 5 dt 2 lw .25 t 'default w/ a=0.0005',\
+
+set log y
+set ylabel '(vol_2(t)-vol_2(0))/vol_2(0)' 
+set output 'vol2.pdf'
+plot[][]\
+'default/benchmark.ascii'   u 3:(abs($18-0.9142*0.2)/(0.9142*0.2) ) w l lt 1      lw .5 t 'default',\
+'npsurf120/benchmark.ascii' u 3:(abs($18-0.9142*0.2)/(0.9142*0.2) ) w l lt 2 dt 1 lw .5 t 'default w/ np_{surf}=120',\
+'npsurf150/benchmark.ascii' u 3:(abs($18-0.9142*0.2)/(0.9142*0.2) ) w l lt 2 dt 2 lw .5 t 'default w/ np_{surf}=150',\
+'npsurf200/benchmark.ascii' u 3:(abs($18-0.9142*0.2)/(0.9142*0.2) ) w l lt 2 dt 3 lw .5 t 'default w/ np_{surf}=200',\
+'npsurf250/benchmark.ascii' u 3:(abs($18-0.9142*0.2)/(0.9142*0.2) ) w l lt 2 dt 4 lw .5 t 'default w/ np_{surf}=250',\
+'gamma1p25/benchmark.ascii' u 3:(abs($18-0.9142*0.2)/(0.9142*0.2) ) w l lt 3      lw .5 t 'default w/ gamma=1.25',\
+'cfl0p125/benchmark.ascii'  u 3:(abs($18-0.9142*0.2)/(0.9142*0.2) ) w l lt 4      lw .5 t 'default w/ CFL=0.125',\
+'a0p0008/benchmark.ascii'   u 3:(abs($18-0.9142*0.2)/(0.9142*0.2) ) w l lt 5 dt 1 lw .5 t 'default w/ a=0.0008',\
+'a0p0005/benchmark.ascii'   u 3:(abs($18-0.9142*0.2)/(0.9142*0.2) ) w l lt 5 dt 2 lw .5 t 'default w/ a=0.0005',\
+
+unset log y
+
+set ylabel 'nel'
+set output 'nel.pdf'
+plot[][]\
+'default/benchmark.ascii'   u 3:1 w l lt 1      lw .5 t 'default',\
+'npsurf120/benchmark.ascii' u 3:1 w l lt 2 dt 1 lw .5 t 'default w/ np_{surf}=120',\
+'npsurf150/benchmark.ascii' u 3:1 w l lt 2 dt 2 lw .5 t 'default w/ np_{surf}=150',\
+'npsurf200/benchmark.ascii' u 3:1 w l lt 2 dt 3 lw .5 t 'default w/ np_{surf}=200',\
+'npsurf250/benchmark.ascii' u 3:1 w l lt 2 dt 4 lw .5 t 'default w/ np_{surf}=250',\
+'gamma1p25/benchmark.ascii' u 3:1 w l lt 3      lw .5 t 'default w/ gamma=1.25',\
+'cfl0p125/benchmark.ascii'  u 3:1 w l lt 4      lw .5 t 'default w/ CFL=0.125',\
+'a0p0008/benchmark.ascii'   u 3:1 w l lt 5 dt 1 lw .5 t 'default w/ a=0.0008',\
+'a0p0005/benchmark.ascii'   u 3:1 w l lt 5 dt 2 lw .5 t 'default w/ a=0.0005',\
+
+set ylabel 'np_{surf}'
+set output 'np_surf.pdf'
+plot[][80:]\
+'default/benchmark.ascii'   u 3:20 w l lt 1      t 'default',\
+'npsurf120/benchmark.ascii' u 3:20 w l lt 2 dt 1 t 'default w/ np_{surf}=120',\
+'npsurf150/benchmark.ascii' u 3:20 w l lt 2 dt 2 t 'default w/ np_{surf}=150',\
+'npsurf200/benchmark.ascii' u 3:20 w l lt 2 dt 3 t 'default w/ np_{surf}=200',\
+'npsurf250/benchmark.ascii' u 3:20 w l lt 2 dt 4 t 'default w/ np_{surf}=250',\
+'gamma1p25/benchmark.ascii' u 3:20 w l lt 3      t 'default w/ gamma=1.25',\
+'cfl0p125/benchmark.ascii'  u 3:20 w l lt 4      t 'default w/ CFL=0.125',\
+'a0p0008/benchmark.ascii'   u 3:20 w l lt 5 dt 1 t 'default w/ a=0.0008',\
+'a0p0005/benchmark.ascii'   u 3:20 w l lt 5 dt 2 t 'default w/ a=0.0005',\
+
+set ylabel 'dt'
+set output 'dt.pdf'
+plot[][:1.05]\
+'default/benchmark.ascii'   u 3:19 w l lt 1      t 'default',\
+'npsurf120/benchmark.ascii' u 3:19 w l lt 2 dt 1 t 'default w/ np_{surf}=120',\
+'npsurf150/benchmark.ascii' u 3:19 w l lt 2 dt 2 t 'default w/ np_{surf}=150',\
+'npsurf200/benchmark.ascii' u 3:19 w l lt 2 dt 3 t 'default w/ np_{surf}=200',\
+'npsurf250/benchmark.ascii' u 3:19 w l lt 2 dt 4 t 'default w/ np_{surf}=250',\
+'gamma1p25/benchmark.ascii' u 3:19 w l lt 3      t 'default w/ gamma=1.25',\
+'cfl0p125/benchmark.ascii'  u 3:19 w l lt 4      t 'default w/ CFL=0.125',\
+'a0p0008/benchmark.ascii'   u 3:19 w l lt 5 dt 1 t 'default w/ a=0.0008',\
+'a0p0005/benchmark.ascii'   u 3:20 w l lt 5 dt 2 t 'default w/ a=0.0005',\
+
+#############################################3
+
+set ylabel 'v_{rms}'
+
+set output 'vrms2000.pdf'
+plot[:2000][]\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/SK.vrms.3a.160.dat'   w l lw .5 lt -1 dt 2 t 'SK.vrms.3a.160.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/SK.vrms.dat'          w l lw .5 lt -1 dt 3 t 'SK.vrms.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/URC3a.vrms.dat'       w l lw .5 lt -1 dt 3 t 'URC3a.vrms.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/pvk80_001.vrms.dat'   w l lw .5 lt -1 dt 4 t 'pvk80\_001.vrms.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/mpd.vrms.dat'         w l lw .5 lt -1 dt 5 t 'mpd.vrms.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/HS81_14003a.vrms.dat' w l lw .5 lt -1 dt 6 t 'HS81\_14003a.vrms.dat',\
+'default/benchmark.ascii'   u 3:12 w l lt 1      lw .5 t 'default',\
+'npsurf120/benchmark.ascii' u 3:12 w l lt 2 dt 1 lw .5 t 'default w/ np_{surf}=120',\
+'npsurf150/benchmark.ascii' u 3:12 w l lt 2 dt 2 lw .5 t 'default w/ np_{surf}=150',\
+'npsurf200/benchmark.ascii' u 3:12 w l lt 2 dt 3 lw .5 t 'default w/ np_{surf}=200',\
+'npsurf250/benchmark.ascii' u 3:12 w l lt 2 dt 4 lw .5 t 'default w/ np_{surf}=250',\
+'gamma1p25/benchmark.ascii' u 3:12 w l lt 3      lw .5 t 'default w/ gamma=1.25',\
+'cfl0p125/benchmark.ascii'  u 3:12 w l lt 4      lw .5 t 'default w/ CFL=0.125',\
+'a0p0008/benchmark.ascii'   u 3:12 w l lt 5 dt 1 lw .5 t 'default w/ a=0.0008',\
+'a0p0005/benchmark.ascii'   u 3:12 w l lt 5 dt 2 lw .5 t 'default w/ a=0.0005',\
+'../../../images/benchmark_vaks97/louis_napoleon_etal/JADIM_VK_Ari_1.ascii'    u 1:(sqrt($2/0.9142)) w l lt 9 lw .5 dt 2 t 'JADIM, Arithm.',\
+'../../../images/benchmark_vaks97/louis_napoleon_etal/JADIM_VK_Harmo.ascii'    u 1:(sqrt($2/0.9142)) w l lt 9 lw .5 dt 3 t 'JADIM, Harm.',\
+'../../../images/benchmark_vaks97/louis_napoleon_etal/OPENFOAM_VK_Ari.ascii'   u 1:(sqrt($2/0.9142)) w l lt 9 lw .5 dt 4 t 'OpenFOAM, Arithm.',\
+'../../../images/benchmark_vaks97/louis_napoleon_etal/OPENFOAM_VK_Harmo.ascii' u 1:(sqrt($2/0.9142)) w l lt 9 lw .5 dt 5 t 'OpenFOAM, Harm.',\
+
+
+set output 'vrms400.pdf'
+plot[:400][]\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/SK.vrms.3a.160.dat'   w l lw .5 lt -1 dt 2 t 'SK.vrms.3a.160.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/SK.vrms.dat'          w l lw .5 lt -1 dt 3 t 'SK.vrms.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/URC3a.vrms.dat'       w l lw .5 lt -1 dt 3 t 'URC3a.vrms.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/pvk80_001.vrms.dat'   w l lw .5 lt -1 dt 4 t 'pvk80\_001.vrms.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/mpd.vrms.dat'         w l lw .5 lt -1 dt 5 t 'mpd.vrms.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/HS81_14003a.vrms.dat' w l lw .5 lt -1 dt 6 t 'HS81\_14003a.vrms.dat',\
+'default/benchmark.ascii'   u 3:12 w l lt 1      lw .5 t 'default',\
+'npsurf120/benchmark.ascii' u 3:12 w l lt 2 dt 1 lw .5 t 'default w/ np_{surf}=120',\
+'npsurf150/benchmark.ascii' u 3:12 w l lt 2 dt 2 lw .5 t 'default w/ np_{surf}=150',\
+'npsurf200/benchmark.ascii' u 3:12 w l lt 2 dt 3 lw .5 t 'default w/ np_{surf}=200',\
+'npsurf250/benchmark.ascii' u 3:12 w l lt 2 dt 4 lw .5 t 'default w/ np_{surf}=250',\
+'gamma1p25/benchmark.ascii' u 3:12 w l lt 3      lw .5 t 'default w/ gamma=1.25',\
+'cfl0p125/benchmark.ascii'  u 3:12 w l lt 4      lw .5 t 'default w/ CFL=0.125',\
+'a0p0008/benchmark.ascii'   u 3:12 w l lt 5      lw .5 t 'default w/ a=0.0008',\
+'a0p0005/benchmark.ascii'   u 3:12 w l lt 5 dt 2 lw .5 t 'default w/ a=0.0005',\
+'../../../images/benchmark_vaks97/louis_napoleon_etal/JADIM_VK_Ari_1.ascii'    u 1:(sqrt($2/0.9142)) w l lt 9 lw .5 dt 2 t 'JADIM, Arithm.',\
+'../../../images/benchmark_vaks97/louis_napoleon_etal/JADIM_VK_Harmo.ascii'    u 1:(sqrt($2/0.9142)) w l lt 9 lw .5 dt 3 t 'JADIM, Harm.',\
+'../../../images/benchmark_vaks97/louis_napoleon_etal/OPENFOAM_VK_Ari.ascii'   u 1:(sqrt($2/0.9142)) w l lt 9 lw .5 dt 4 t 'OpenFOAM, Arithm.',\
+'../../../images/benchmark_vaks97/louis_napoleon_etal/OPENFOAM_VK_Harmo.ascii' u 1:(sqrt($2/0.9142)) w l lt 9 lw .5 dt 5 t 'OpenFOAM, Harm.',\
+
+set xtics 1
+set output 'vrms_peak1.pdf'
+plot[200:215][0.00304:]\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/SK.vrms.3a.160.dat'   w l lw .5 lt -1 dt 2 t 'SK.vrms.3a.160.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/SK.vrms.dat'          w l lw .5 lt -1 dt 3 t 'SK.vrms.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/URC3a.vrms.dat'       w l lw .5 lt -1 dt 3 t 'URC3a.vrms.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/pvk80_001.vrms.dat'   w l lw .5 lt -1 dt 4 t 'pvk80\_001.vrms.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/mpd.vrms.dat'         w l lw .5 lt -1 dt 5 t 'mpd.vrms.dat',\
+'../../../images/benchmark_vaks97/vanKeken1997/fig3/HS81_14003a.vrms.dat' w l lw .5 lt -1 dt 6 t 'HS81\_14003a.vrms.dat',\
+'default/benchmark.ascii'   u 3:12 w l lt 1      lw .5 t 'default',\
+'npsurf120/benchmark.ascii' u 3:12 w l lt 2 dt 1 lw .5 t 'default w/ np_{surf}=120',\
+'npsurf150/benchmark.ascii' u 3:12 w l lt 2 dt 2 lw .5 t 'default w/ np_{surf}=150',\
+'npsurf200/benchmark.ascii' u 3:12 w l lt 2 dt 3 lw .5 t 'default w/ np_{surf}=200',\
+'npsurf250/benchmark.ascii' u 3:12 w l lt 2 dt 4 lw .5 t 'default w/ np_{surf}=250',\
+'gamma1p25/benchmark.ascii' u 3:12 w l lt 3      lw .5 t 'default w/ gamma=1.25',\
+'cfl0p125/benchmark.ascii'  u 3:12 w l lt 4      lw .5 t 'default w/ CFL=0.125',\
+'a0p0008/benchmark.ascii'   u 3:12 w l lt 5      lw .5 t 'default w/ a=0.0008',\
+'a0p0005/benchmark.ascii'   u 3:12 w l lt 5 dt 2 lw .5 t 'default w/ a=0.0005',\
+'../../../images/benchmark_vaks97/louis_napoleon_etal/JADIM_VK_Ari_1.ascii'    u 1:(sqrt($2/0.9142)) w l lt 9 lw .5 dt 2 t 'JADIM, Arithm.',\
+'../../../images/benchmark_vaks97/louis_napoleon_etal/JADIM_VK_Harmo.ascii'    u 1:(sqrt($2/0.9142)) w l lt 9 lw .5 dt 3 t 'JADIM, Harm.',\
+'../../../images/benchmark_vaks97/louis_napoleon_etal/OPENFOAM_VK_Ari.ascii'   u 1:(sqrt($2/0.9142)) w l lt 9 lw .5 dt 4 t 'OpenFOAM, Arithm.',\
+'../../../images/benchmark_vaks97/louis_napoleon_etal/OPENFOAM_VK_Harmo.ascii' u 1:(sqrt($2/0.9142)) w l lt 9 lw .5 dt 5 t 'OpenFOAM, Harm.',\
+
+#########################################################################
+
+set xtics .9142
+set ytics .1
+set size square
+set output 'interface.pdf'
+set xlabel 'x'
+set ylabel 'y'
+plot[0:1][0:1]\
+'default/interface_0000.ascii' w l t 't=0',\
+'default/interface_0100.ascii' w l t 't=100',\
+'default/interface_0430.ascii' w l t 't=200',\
+
+
+

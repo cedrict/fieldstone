@@ -1,0 +1,10 @@
+rm *.vtu
+rm *.ascii
+rm *.pdf
+rm mesh.1.ele
+rm mesh.1.node
+rm mesh.1.poly
+rm mesh.poly
+rm temp
+
+
