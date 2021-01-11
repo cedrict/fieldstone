@@ -1,0 +1,28 @@
+# 1: Time step number
+# 2: Time (years)
+# 3: Time step size (years)
+# 4: Number of mesh cells
+# 5: Number of Stokes degrees of freedom
+# 6: Number of temperature degrees of freedom
+# 7: Number of degrees of freedom for all compositions
+# 8: Number of nonlinear iterations
+# 9: Iterations for temperature solver
+# 10: Iterations for composition solver 1
+# 11: Iterations for composition solver 2
+# 12: Iterations for composition solver 3
+# 13: Iterations for Stokes solver
+# 14: Velocity iterations in Stokes preconditioner
+# 15: Schur complement iterations in Stokes preconditioner
+# 16: Minimal value for composition block
+# 17: Maximal value for composition block
+# 18: Global mass for composition block
+# 19: Minimal value for composition air
+# 20: Maximal value for composition air
+# 21: Global mass for composition air
+# 22: Minimal value for composition inclusion
+# 23: Maximal value for composition inclusion
+# 24: Global mass for composition inclusion
+# 25: RMS velocity (m/year)
+# 26: Max. velocity (m/year)
+# 27: Visualization file name
+0 0.000000000000e+00 0.000000000000e+00 1024 9539 1089 12675 100 0 0 0 0 2035 70900 11009 0.00000000e+00 1.00000000e+00 4.71245660e+09 0.00000000e+00 1.00000000e+00 5.10416667e+09 0.00000000e+00 1.00000000e+00 1.83376736e+08 1.43304788e-01 2.18976094e-01 output_gerya_vp_block_shortening_lvl5/solution/solution-00000 

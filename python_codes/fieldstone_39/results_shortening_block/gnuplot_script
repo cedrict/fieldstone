@@ -1,0 +1,75 @@
+set term pdf enhanced font "Times,11pt"
+set grid
+set xlabel '# iter'
+set ylabel '|res|_2'
+set log y 
+
+#################################################
+#von mises ######################################
+#################################################
+set key outside
+
+set output 'conv_vM.pdf'
+plot[][]\
+'16x16/nonlinear_conv_two.ascii' w l t '16x16',\
+'32x32/nonlinear_conv_two.ascii' w l t '32x32',\
+'64x64/nonlinear_conv_two.ascii' w l t '64x64',\
+'96x96/nonlinear_conv_two.ascii' w l t '96x96',\
+'128x128/nonlinear_conv_two.ascii' w l t '128x128',\
+'16x16_1e19/nonlinear_conv_two.ascii' w l lt 1 dashtype 4 t '16x16,reg',\
+'32x32_1e19/nonlinear_conv_two.ascii' w l lt 2 dashtype 4 t '32x32,reg',\
+'64x64_1e19/nonlinear_conv_two.ascii' w l lt 3 dashtype 4 t '64x64,reg',\
+'96x96_1e19/nonlinear_conv_two.ascii' w l lt 4 dashtype 4 t '96x96,reg',\
+'128x128_1e19/nonlinear_conv_two.ascii' w l lt 5 dashtype 4 t '128x128,reg',\
+
+set xtics 10000
+set xlabel 'x (m)'
+set output 'sr_line_vM.pdf'
+plot[][]\
+'16x16/sr_line.ascii'   u 1:3 w l t '16x16',\
+'32x32/sr_line.ascii'   u 1:3 w l t '32x32',\
+'64x64/sr_line.ascii'   u 1:3 w l t '64x64',\
+'96x96/sr_line.ascii'   u 1:3 w l t '96x96',\
+'128x128/sr_line.ascii' u 1:3 w l t '128x128',\
+
+
+set output 'sr_line_vM_reg.pdf'
+plot[][]\
+'16x16_1e19/sr_line.ascii' u 1:3 w l lt 1 dashtype 4 t '16x16,reg',\
+'32x32_1e19/sr_line.ascii' u 1:3 w l lt 2 dashtype 4 t '32x32,ref',\
+'64x64_1e19/sr_line.ascii' u 1:3 w l lt 3 dashtype 4 t '64x64,reg',\
+'96x96_1e19/sr_line.ascii' u 1:3 w l lt 4 dashtype 4 t '96x96,reg',\
+'128x128_1e19/sr_line.ascii' u 1:3 w l lt 5 dashtype 4 t '128x128,reg',\
+
+#################################################
+#drucker prager #################################
+#################################################
+unset xtics 
+
+set output 'conv_DP.pdf'
+plot[][]\
+'16x16_phi37/nonlinear_conv_two.ascii' w l t '16x16',\
+'32x32_phi37/nonlinear_conv_two.ascii' w l t '32x32',\
+'64x64_phi37/nonlinear_conv_two.ascii' w l t '64x64',\
+'96x96_phi37/nonlinear_conv_two.ascii' w l t '96x96',\
+'128x128_phi37/nonlinear_conv_two.ascii' w l t '128x128',\
+
+set output 'conv_DP_1e19.pdf'
+plot[][]\
+'32x32_phi37_1e19/nonlinear_conv_two.ascii' w l t '32x32',\
+'64x64_phi37_1e19/nonlinear_conv_two.ascii' w l t '64x64',\
+'64x64_phi37_1e19/nonlinear_conv_two.ascii' w l t '64x64',\
+'96x96_phi37_1e19/nonlinear_conv_two.ascii' w l t '96x96',\
+'128x128_phi37_1e19/nonlinear_conv_two.ascii' w l t '128x128',\
+
+set output 'sr_line_DP_1e19.pdf'
+plot[][]\
+'32x32_phi37_1e19/sr_line.ascii' u 1:3 w l t '32x32',\
+'64x64_phi37_1e19/sr_line.ascii' u 1:3 w l t '64x64',\
+'64x64_phi37_1e19/sr_line.ascii' u 1:3 w l t '64x64',\
+'96x96_phi37_1e19/sr_line.ascii' u 1:3 w l t '96x96',\
+'128x128_phi37_1e19/sr_line.ascii' u 1:3 w l t '128x128',\
+
+
+
+
