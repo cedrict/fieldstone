@@ -7,9 +7,12 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Before we dive in the implementation and the benchmarks, a side note which explains Eq.(3) 
+of 
+Choi \& Petersen \cite{chpe15}.
 The Drucker-Prager yield function is given by the function $f$:
 \[
-f = p \sin\phi + c\cos \phi - \tau_e
+{\cal F} = p \sin\phi + c\cos \phi - \tau_e
 \]
 where $\tau_e$ is the square root of the second invariant of the deviatoric stress
 (the 'effective' deviatoric stress).
@@ -21,11 +24,11 @@ and
 \[
 \tau = \frac{1}{2}(\sigma_1-\sigma_3)
 \]
-Inserting these into $f$ yields:
+Inserting these into ${\cal F}$ yields:
 \[
-f= \frac{1}{2}(\sigma_1+\sigma_3) \sin\phi + c \cos\phi - \frac{1}{2}(\sigma_1-\sigma_3)
+{\cal F}= \frac{1}{2}(\sigma_1+\sigma_3) \sin\phi + c \cos\phi - \frac{1}{2}(\sigma_1-\sigma_3)
 \]
-The yield condition $f=0$ can be reworked as follows:
+The yield condition ${\cal F}=0$ can be reworked as follows:
 \[
 \sigma_1 - \frac{1 + \sin\phi}{1-\sin\phi} \sigma_3 - 2 \frac{\cos \phi}{1-\sin\phi} c = 0
 \]
@@ -50,7 +53,7 @@ which is Eq.~3 of the article by Choi \& Petersen \cite{chpe15}.
 
 \vspace{1cm}
 
-This paper offers a solution to the problem of the angle of shear bands in 
+Choi \& Petersen offer a solution to the problem of the angle of shear bands in 
 geodynamic models. The underlying idea is based on simple modifications 
 brought to existing incompressible flow codes. Note that the codes
 featured in that paper also implemented elastic behaviour but this can 
@@ -102,7 +105,7 @@ The last term is now trivial to compute since the shape function derivatives, th
 and the plastic strain rate are known at the quadrature points. Remains the surface term. 
 We will neglect it for now to simplify our implementation and note that a) it will not directly 
 affect what happens inside the domain, b) it could be somewhat important when shear bands
-intersect with the free surface. 
+intersect with the free surface. Then 
 \begin{equation}
 \vec f' 
 =
@@ -113,76 +116,121 @@ intersect with the free surface.
 
 Although the authors do indicate that they add a term in each rhs, it is not very clear how they deal with
 the implementation issue above. We then propose an alternative: instead of explicitely removing the deviatoric 
-part of the strain rate as in Eq.~\ref{chpeform} and replace the trace of the tensor by $R$, one could 
+part of the strain rate as in \eqref{chpeform} and replace the trace of the tensor by $R$, one could 
 leave the term inside the matrix, thereby using a compressible form of the viscous block of the Stokes 
 matrix. We will recover the same converged solution as before, but the path to convergence will be 
 different that the first approach.
 In what follows, we denote the original approach by Choi \& Petersen 'method 1' and the latter 'method 2'.
+The ${\bm C}$ matrix is then 
+\[
+{\bm C}_{method\; 1}
+=
+\left(
+\begin{array}{ccc}
+2 &0 &0 \\
+0 &2 &0 \\
+0 &0 &1
+\end{array}
+\right)
+\qquad\qquad
+{\bm C}_{method\; 2}
+=
+\left(
+\begin{array}{ccc}
+4/3 &-2/3 &0 \\
+-2/3 & 4/3 &0 \\
+0 &0 &1
+\end{array}
+\right)
+\]
 
 
 Finally, we need to define what the plastic strain rate tensor is. When using a rigid plastic 
 rheology, the only deformation mechanism {\it is} plasticity so that the plastic strain rate {\it is}
 the strain rate. When using a visco-plastic rheology, the plastic strain rate is the strain rate 
-of the zones above/at yield (the shear bands, where the vrm is active).
+of the zones above/at yield (the shear bands, where the vrm is active). REPHRASE
 
 \begin{remark}
 The rhs of the continuity equation is formulated as a function of the (effective) plastic strain rate so that 
 in the case of multiple deformation mechanisms one should be careful about this term.
 \end{remark}
- 
-%..........................................................
-\subsubsection*{The 2010 brick}
 
-The setup is similar to the one in Kaus (2010) \cite{kaus10}. It is a 2D Cartesian domain filled with a 
+\newpage 
+%..........................................................
+\subsection*{Benchmark \#1 - The simple brick}
+
+%The setup is {\sl similar} to the one in Kaus (2010) \cite{kaus10}, the main difference being that 
+%there is no weak inclusion at the bottom of the domain. 
+The 2D Cartesian domain filled with a 
 single rigid-plastic material characterised by a cohesion $c=10\text{MPa}$, an 
 angle of friction $\phi$, a dilation angle $\psi$ and a density $\rho=2800\text{kg/m}^3$.
+Gravity is set to $|g_y|=10\si{\metre\per\square\second}$.
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[fill=gray!23,gray!23](0,0) rectangle (10,3);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (10,3); %background grid
+
+\draw[fill=gray!23,gray!23](1,1) rectangle (9,2);
+
+\draw[line width=0.5mm] (1,1)--(9,1)--(9,2)--(1,2)--cycle ;   
+
+\draw[line width=0.3mm] (5,0.9)--(5,1.1); 
+
+%left arrows
+\draw [->] (0.9,1) -- (0.6,1);
+\draw [->] (0.9,1.5) -- (0.6,1.5);
+\draw [->] (0.9,2) -- (0.6,2);
+
+\draw [->] (4.8,0.85) -- (4.5,0.85);
+\draw [->] (3.8,0.85) -- (3.5,0.85);
+\draw [->] (2.8,0.85) -- (2.5,0.85);
+\draw [->] (1.8,0.85) -- (1.5,0.85);
+
+%right arrows
+\draw [->] (9.1,1) -- (9.4,1);
+\draw [->] (9.1,1.5) -- (9.4,1.5);
+\draw [->] (9.1,2) -- (9.4,2);
+
+\draw [->] (5.2,0.85) -- (5.5,0.85);
+\draw [->] (6.2,0.85) -- (6.5,0.85);
+\draw [->] (7.2,0.85) -- (7.5,0.85);
+\draw [->] (8.2,0.85) -- (8.5,0.85);
+
+\node[] at (0.5,2.35) {$-v_{bc}$};
+\node[] at (9.5,2.35) {$+v_{bc}$};
+
+\node[] at (3.3,1.5) {$c,\phi,\psi,\rho,\eta_v,\eta_m$};
+  
+\draw [->] (6,0.25) -- (5.5,0.25) -- (5,0.75);
+\node[] at (8.1,0.25) {velocity discontinuity};
+
+\end{tikzpicture}
+\end{center}
+
+
 Extensional boundary conditions are as follows: 
 \begin{itemize}
-\item left boundary: $u=- v_{bc}$;
-\item right boundary: $u=+ v_{bc}$; 
-\item bottom boundary: $v=0$, $u=- v_{bc}$ for $x<L_x/2$,  $u=+ v_{bc}$ for $x>L_x/2$, and $u=0$ if $x=L_x/2$;
+\item left boundary: $u=- \upnu_{bc}$, $v$ free;
+\item right boundary: $u=+ \upnu_{bc}$, $v$ free; 
+\item bottom boundary: $v=0$, $u=- \upnu_{bc}$ for $x<L_x/2$,  $u=+ \upnu_{bc}$ for $x>L_x/2$, and $u=0$ if $x=L_x/2$;
 \item top boundary: zero traction.
 \end{itemize}
 For compressional boundary conditions the signs of all horizontal velocities should be reversed.
 The nonlinear tolerance is set to $\text{tol}=10^{-6}$. Nonlinear iterations stop when 
 maximum of the normalised nonlinear residual reaches the desired tolerance.
+$\upnu_{bc}$ is chosen so that the background strain rate is $\dot\varepsilon_{bckgr}=10^{-15}\si{\per\second}$, 
+i.e. $\upnu_{bc}=\dot\varepsilon_{bckgr} L_x/2$.
 
 Following Choi \& Petersen \cite{chpe15}, we run the experiment with an associative ($\phi=\psi$) plasticity
-and a non associative one ($\psi=0$, i.e. $R=0$). This second approach is essentially what many codes 
-do. 
+and a non associative one ($\psi=0$, i.e. $R=0$). This second approach is essentially what many codes do (
+i.e. $\vec\nabla\cdot\vec\upnu = 0$). We can also run the model with $\phi=\psi=0\si{\degree}$ so that 
+we recover the von Mises plasticity yield criterion which is independent of pressure.  
 
 The velocity, pressure, strain rate, dilation rate, and velocity divergence are shown hereunder both in 
-extension and compression.
-
-\begin{center}
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/extension_u}\\
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/extension_v}\\
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/extension_mueff}\\
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/extension_sr}\\
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/extension_press}\\
-{\small Extension. 1st row: Non-associative plasticity; 2nd and 3rd row: associative plasticity ($\psi=\phi$) with method 1 for two resolutions 120x12 and 240; 4th and 5th row: associative plasticity ($\psi=\phi$) with method 2 for two re    solutions 120x12 and 240}
-\end{center}
-
-\begin{center}
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/compression_u}\\
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/compression_v}\\
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/compression_mueff}\\
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/compression_sr}\\
-\includegraphics[width=.8\linewidth]{python_codes/fieldstone_39/images/compression_press}\\
-{\small Compression. 1st row: Non-associative plasticity; 2nd and 3rd row: associative plasticity ($\psi=\phi$) with method 1 for two resolutions 120x12 and 240; 4th and 5th row: associative plasticity ($\psi=\phi$) with method 2 for two re    solutions 120x12 and 240}
-\end{center}
-
-
-\begin{center}
-\includegraphics[width=.5\linewidth]{python_codes/fieldstone_39/images/conv_compression}
-\includegraphics[width=.5\linewidth]{python_codes/fieldstone_39/images/conv_extension}
-\end{center}
-
-One can also run the extension model for $\phi=\psi={0,5,10,15,20,25,30}\degree$
-\begin{center}
-\includegraphics[width=.5\linewidth]{python_codes/fieldstone_39/images/sr_0_30}
-\includegraphics[width=.5\linewidth]{python_codes/fieldstone_39/images/etaeff_0_30}\\
-\end{center}
+extension and compression. Note that the domain has been substantially extended in the horizontal 
+direction because of the wide shear band angles obtained in compression. It is now 80\si{\km} long 
+and 10\si{\km} high (aspect ratio 8:1). 
 
 Three angles are mechanically stable (e.g. \cite{kaus10}):
 \[
@@ -195,16 +243,66 @@ Three angles are mechanically stable (e.g. \cite{kaus10}):
 \theta=\frac{\pi}{4}\pm \frac{\phi+\phi}{4} \qquad \text{Arthur angle}
 \]
 In the case of associative plasticity, $\phi=\psi$, so that all three angles are the same. 
-Per row of elements, and per half of the domain (left and right) we find the element
-with the highest strain-rate and record their center coordinates on the figure hereunder. 
-These elements are shown for $\phi=\psi=\{0,10,20,30\}\degree$ alongside a line corresponding to 
-the expected analytical shear band angle value.
+Per row of elements, nodes or quadrature points, and per half of the domain (left and right) we find the location
+with the highest strain-rate and record their coordinates.
+
+
+\newpage
+{\bf Extension}
+
 \begin{center}
-\includegraphics[width=.6\linewidth]{python_codes/fieldstone_39/images/shear_bands}\\
-\includegraphics[width=.6\linewidth]{python_codes/fieldstone_39/images/shear_bands_nonass}\\
-Results obtained on a 240x24 grid, max 50 nl iterations.
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/conv_phi0_psi0_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/conv_phi0_psi0_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/conv_phi0_psi0_etam20.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/conv_phi30_psi0_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/conv_phi30_psi0_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/conv_phi30_psi0_etam20.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/conv_phi30_psi30_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/conv_phi30_psi30_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/conv_phi30_psi30_etam20.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/line_sr_phi0_psi0_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/line_sr_phi0_psi0_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/line_sr_phi0_psi0_etam20.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/line_sr_phi30_psi0_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/line_sr_phi30_psi0_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/line_sr_phi30_psi0_etam20.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/line_sr_phi30_psi30_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/line_sr_phi30_psi30_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/line_sr_phi30_psi30_etam20.pdf}\\
+\end{center}
+%\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/line_eta_etam0.pdf}
+%\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/line_eta_etam19.pdf}
+%\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/line_eta_etam20.pdf}\\
+
+\newpage
+\begin{center}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/shear_band_phi0_psi0_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/shear_band_phi0_psi0_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/shear_band_phi0_psi0_etam20.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/shear_band_phi30_psi0_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/shear_band_phi30_psi0_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/shear_band_phi30_psi0_etam20.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/shear_band_phi30_psi30_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/shear_band_phi30_psi30_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/shear_band_phi30_psi30_etam20.pdf}
 \end{center}
 
+
+\newpage
+One can also run the extension model for $\phi=\psi={0,5,10,15,20,25,30}\degree$:
+\begin{center}
+\includegraphics[width=.45\linewidth]{python_codes/fieldstone_39/images/sr_0_30}
+\includegraphics[width=.45\linewidth]{python_codes/fieldstone_39/images/etaeff_0_30}\\
+\end{center}
+
+
+
+
+\begin{center}
+\includegraphics[width=.45\linewidth]{python_codes/fieldstone_39/images/shear_bands}
+\includegraphics[width=.45\linewidth]{python_codes/fieldstone_39/images/shear_bands_nonass}\\
+Results obtained on a 240x24 grid, max 50 nl iterations.
+\end{center}
 
 
 Note that benchmarking this in not easy. One solution Timo and I found was to add a 

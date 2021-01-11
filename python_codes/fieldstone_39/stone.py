@@ -26,7 +26,7 @@ def gy(x,y):
 
 def ubc(x,y):
     if benchmark==1:
-       vaal=-1.e-15*(Lx/2.0)
+       vaal=1.e-15*(Lx/2.0)
     if benchmark==2:
        vaal=0.0025/year
     if benchmark==3: 
@@ -299,7 +299,7 @@ else:
    benchmark=1
    every=1
    if benchmark==1:
-      nelx = 240
+      nelx = 128
       phi=30
       psi=30
       niter=250
@@ -366,7 +366,6 @@ nq=9*nel
 
 eta_ref=1.e23      # scaling of G blocks
 scaling_coeff=eta_ref/Ly
-sparse=True
 solver = 2 
 if solver==1:
    use_SchurComplementApproach=True
@@ -399,7 +398,6 @@ print("NV=",NV)
 print("NfemV=",NfemV)
 print("NfemP=",NfemP)
 print("Nfem=",Nfem)
-print("sparse",sparse)
 print("hx",hx)
 print("hy",hy)
 print("niter",niter)
@@ -547,17 +545,12 @@ for iter in range(0,niter):
    print("--------------------------")
 
    #################################################################
-   # build FE matrix
+   # build FE matrix A and rhs 
    # [ K G ][u]=[f]
    # [GT 0 ][p] [h]
    #################################################################
 
-   if sparse:
-      A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
-   else:   
-      K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-      G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
-
+   A_sparse= lil_matrix((Nfem,Nfem),dtype=np.float64) # FEM stokes matrix 
    rhs     = np.zeros(Nfem,dtype=np.float64)          # right hand side of Ax=b
    N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64)  # N matrix  
    M_mat   = np.zeros((NfemP,NfemP),dtype=np.float64) # schur precond
@@ -716,22 +709,14 @@ for iter in range(0,niter):
                    for i2 in range(0,ndofV):
                        jkk=ndofV*k2          +i2
                        m2 =ndofV*iconV[k2,iel]+i2
-                       if sparse:
-                          A_sparse[m1,m2] += K_el[ikk,jkk]
-                       else:
-                          K_mat[m1,m2]+=K_el[ikk,jkk]
-                       # end if
+                       A_sparse[m1,m2] += K_el[ikk,jkk]
                    #end for i2
                #end for k2
                for k2 in range(0,mP):
                    jkk=k2
                    m2 =iconP[k2,iel]
-                   if sparse:
-                      A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]*scaling_coeff
-                      A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]*scaling_coeff
-                   else:
-                      G_mat[m1,m2]+=G_el[ikk,jkk]*scaling_coeff
-                   #end if
+                   A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]*scaling_coeff
+                   A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]*scaling_coeff
                f_rhs[m1]+=f_el[ikk]
                #end for k2
            #end for i1
@@ -748,9 +733,6 @@ for iter in range(0,niter):
 
    # end for iel 
 
-   if not sparse:
-      print("     -> K (m,M) %.5e %.5e " %(np.min(K_mat),np.max(K_mat)))
-      print("     -> G (m,M) %.5e %.5e " %(np.min(G_mat),np.max(G_mat)))
    print("     -> f (m,M) %.5e %.5e " %(np.min(f_rhs),np.max(f_rhs)))
    print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
 
@@ -774,74 +756,14 @@ for iter in range(0,niter):
    ######################################################################
    start = timing.time()
 
-   if use_SchurComplementApproach:
+   rhs[0:NfemV]=f_rhs
+   rhs[NfemV:Nfem]=h_rhs
+   sparse_matrix=A_sparse.tocsr()
+   Res=sparse_matrix.dot(sol)-rhs
+   sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
-      # convert matrices to CSR format
-      G_mat=sps.csr_matrix(G_mat)
-      K_mat=sps.csr_matrix(K_mat)
-      M_mat=sps.csr_matrix(M_mat)
-
-      Res[0:NfemV]=K_mat.dot(solV)+G_mat.dot(solP)-f_rhs
-      Res[NfemV:Nfem]=G_mat.T.dot(solV)-h_rhs
-
-      # declare necessary arrays
-      rvect_k=np.zeros(NfemP,dtype=np.float64) 
-      pvect_k=np.zeros(NfemP,dtype=np.float64) 
-      zvect_k=np.zeros(NfemP,dtype=np.float64) 
-      ptildevect_k=np.zeros(NfemV,dtype=np.float64) 
-      dvect_k=np.zeros(NfemV,dtype=np.float64) 
-   
-      # carry out solve
-      solP[:]=0.
-      solV=sps.linalg.spsolve(K_mat,f_rhs)
-      rvect_k=G_mat.T.dot(solV)-h_rhs
-      rvect_0=np.linalg.norm(rvect_k)
-      if use_preconditioner:
-         zvect_k=sps.linalg.spsolve(M_mat,rvect_k)
-      else:
-         zvect_k=rvect_k
-      pvect_k=zvect_k
-      for k in range (0,niter_stokes):
-          ptildevect_k=G_mat.dot(pvect_k)
-          dvect_k=sps.linalg.spsolve(K_mat,ptildevect_k)
-          alpha=(rvect_k.dot(zvect_k))/(ptildevect_k.dot(dvect_k))
-          solP+=alpha*pvect_k
-          solV-=alpha*dvect_k
-          rvect_kp1=rvect_k-alpha*G_mat.T.dot(dvect_k)
-          if use_preconditioner:
-              zvect_kp1=sps.linalg.spsolve(M_mat,rvect_kp1)
-          else:
-              zvect_kp1=rvect_kp1
-          beta=(zvect_kp1.dot(rvect_kp1))/(zvect_k.dot(rvect_k))
-          pvect_kp1=zvect_kp1+beta*pvect_k
-          rvect_k=rvect_kp1
-          pvect_k=pvect_kp1
-          zvect_k=zvect_kp1
-          xi=np.linalg.norm(rvect_k)/rvect_0
-          ls_conv_file.write("%d %6e \n"  %(k,xi))
-          print("lin.solver: %d %6e" % (k,xi))
-          if xi<solver_tolerance:
-             ls_niter_file.write("%d \n"  %(k))
-             break 
-      u,v=np.reshape(solV[0:NfemV],(NV,2)).T
-      p=solP[0:NfemP]*scaling_coeff
-   else:
-      rhs[0:NfemV]=f_rhs
-      rhs[NfemV:Nfem]=h_rhs
-      if not sparse:
-         a_mat[:,:]=0
-         a_mat[0:NfemV,0:NfemV]=K_mat
-         a_mat[0:NfemV,NfemV:Nfem]=G_mat
-         a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-         Res=a_mat.dot(sol)-rhs
-         sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
-      else:
-         sparse_matrix=A_sparse.tocsr()
-         Res=sparse_matrix.dot(sol)-rhs
-         sol=sps.linalg.spsolve(sparse_matrix,rhs)
-
-      u,v=np.reshape(sol[0:NfemV],(NV,2)).T
-      p=sol[NfemV:Nfem]*scaling_coeff
+   u,v=np.reshape(sol[0:NfemV],(NV,2)).T
+   p=sol[NfemV:Nfem]*scaling_coeff
 
    print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
    print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
@@ -1280,7 +1202,6 @@ for iter in range(0,niter):
       vtufile.write("</Points> \n")
       #####
       vtufile.write("<PointData Scalars='scalars'>\n")
-
       vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
       for iq in range(0,nq):
           vtufile.write("%10e \n" % etaq[iq])
@@ -1316,7 +1237,6 @@ for iter in range(0,niter):
       for iq in range (0,nq):
           vtufile.write("%d \n" % 1) 
       vtufile.write("</DataArray>\n")
-      #--  
       vtufile.write("</Cells>\n")
       #####
       vtufile.write("</Piece>\n")
@@ -1337,11 +1257,7 @@ for iter in range(0,niter):
       vtufile.write("</DataArray>\n")
       vtufile.write("</Points> \n")
       #####
-      #vtufile.write("<CellData Scalars='scalars'>\n")
-      #vtufile.write("</CellData>\n")
-      #####
       vtufile.write("<PointData Scalars='scalars'>\n")
-
       vtufile.write("<DataArray type='Float32' Name='Angle' Format='ascii'> \n")
       for i in range(0,NV):
           if np.abs(xV[i]-Lx/2)>hx/10:
@@ -1350,34 +1266,26 @@ for iter in range(0,niter):
              theta=90.
           vtufile.write("%10e \n" % theta)
       vtufile.write("</DataArray>\n")
-
-
-      #--
       vtufile.write("<DataArray type='Float32' Name='Res (u)' Format='ascii'> \n")
       for i in range(0,NV):
           vtufile.write("%10e \n" %Res_u[i])
       vtufile.write("</DataArray>\n")
-      #--
       vtufile.write("<DataArray type='Float32' Name='Res (v)' Format='ascii'> \n")
       for i in range(0,NV):
           vtufile.write("%10e \n" %Res_v[i])
       vtufile.write("</DataArray>\n")
-      #--
       vtufile.write("<DataArray type='Float32' Name='Res (p)' Format='ascii'> \n")
       for i in range(0,NV):
           vtufile.write("%10e \n" %Res_q[i])
       vtufile.write("</DataArray>\n")
-      #--
       vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
       for i in range(0,NV):
           vtufile.write("%10e \n" %q[i])
       vtufile.write("</DataArray>\n")
-      #--
       vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
       for i in range (0,NV):
           vtufile.write("%10e\n" % (etan[i]))
       vtufile.write("</DataArray>\n")
-      #--
       vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
       for i in range (0,NV):
           vtufile.write("%e\n" % (srn[i]))
@@ -1386,23 +1294,19 @@ for iter in range(0,niter):
       vtufile.write("</PointData>\n")
       #####
       vtufile.write("<Cells>\n")
-      #--
       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
       for iel in range (0,nel):
           vtufile.write("%d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel],\
                                                       iconV[4,iel],iconV[5,iel],iconV[6,iel],iconV[7,iel]))
       vtufile.write("</DataArray>\n")
-      #--
       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
       for iel in range (0,nel):
           vtufile.write("%d \n" %((iel+1)*8))
       vtufile.write("</DataArray>\n")
-      #--
       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
       for iel in range (0,nel):
           vtufile.write("%d \n" %23)
       vtufile.write("</DataArray>\n")
-      #--
       vtufile.write("</Cells>\n")
       #####
       vtufile.write("</Piece>\n")
@@ -1411,7 +1315,6 @@ for iter in range(0,niter):
       vtufile.close()
 
    print("write nl iter vtu file: %.3f s" % (timing.time() - start))
-
 
 #------------------------------------------------------------------------------
 # end of non-linear iterations
@@ -1648,52 +1551,42 @@ vtufile.write("</DataArray>\n")
 vtufile.write("</Points> \n")
 #####
 vtufile.write("<CellData Scalars='scalars'>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='exx (avrg)' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % exx_avrg[iel])
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='exy (avrg)' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % exy_avrg[iel])
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='strain rate (avrg)' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % (sr_avrg[iel]))
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
 for iel in range (0,nel):
     eta,dum,dum,dum= viscosity(exx[iel],eyy[iel],exy[iel],pc[iel],cohesion,phi,iter,xc[iel],yc[iel],eta_m,eta_v)
     vtufile.write("%10e\n" %eta) 
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='dilation rate (R)' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % (  2.*np.sin(psi)*sr[iel] ))
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("</CellData>\n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")
-#--
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/s)' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/year)' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%10e %10e %10e \n" %(u[i]*year,v[i]*year,0.))
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='Angle' Format='ascii'> \n")
 for i in range(0,NV):
     if np.abs(xV[i]-Lx/2)>hx/10:
@@ -1702,72 +1595,57 @@ for i in range(0,NV):
        theta=90.
     vtufile.write("%10e \n" % theta)
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%10e \n" %q[i])
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='Res (u)' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%10e \n" %Res_u[i])
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='Res (v)' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%10e \n" %Res_v[i])
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='Res (p)' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%10e \n" %Res_q[i])
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='exxn' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%.5e \n" %exxn[i])
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='eyyn' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%.5e \n" %eyyn[i])
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='exyn' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%.5e \n" %exyn[i])
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%.5e \n" %srn[i])
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%.5e \n" %etan[i])
 vtufile.write("</DataArray>\n")
-#--
-
 vtufile.write("</PointData>\n")
 #####
 vtufile.write("<Cells>\n")
-#--
 vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel],iconV[4,iel],iconV[5,iel],iconV[6,iel],iconV[7,iel]))
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%d \n" %((iel+1)*8))
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
 for iel in range (0,nel):
     vtufile.write("%d \n" %23)
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("</Cells>\n")
 #####
 vtufile.write("</Piece>\n")
