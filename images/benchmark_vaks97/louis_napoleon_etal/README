@@ -1,0 +1,48 @@
+7 janvier 2020:
+
+Salut Cédric,
+
+JADIM et OpenFOAM ne sortent pas comme ASPECT un fichier avec différentes grandeurs moyennées ... 
+Leurs résultats sont post-processés avec paraview et il faut leurs fichiers de résultats pour faire cela. 
+Le problème c'est que j'en ai supprimé beaucoup ...
+Du coup, si tu veux une grandeur précise, c'est possible mais pour le moment, il ne me reste que 
+le cas de ratio 100 avec OpenFOAM tout calculé.
+
+Je t'envoie les VRMS du maillage 91*100 pour JADIM et OpenFOAM en moyenne de viscosité harmonique 
+et arithmétique (ce qu'il y a dans le papier). 
+Pour OpenFOAM arithmétique (OpenFOAM_VK_Ari.csv), harmonique (OpenFOAM_VK_Harmo.csv) 
+et pour JADIM harmonique (JADIM_VK_Harmo.csv)  :
+La colonne $1 correspond au temps, la $2 au ratio 1 de viscosité, la $3 au ratio 10 et la $4 au 
+ratio 100 en données brutes, les données adimensionnées sont à la suite : 
+$5 correspond au temps, la $6 au ratio 1 de viscosité, la $7 au ratio 10 et la $8 au ratio 100 en adimensionné. 
+
+Pour JADIM arithmétique, c'est un peu le chaos, les pas de temps sauvegardés ne sont 
+pas les mêmes pour chaque ratio de viscosité, du coup les résultats pour les différents 
+ratio de viscosité sont séparés (JADIM_VK_ARI_*.csv avec * le ratio de viscosité) et du coup : 
+La colonne $1 correspond au temps, la $2 au ratio * de viscosité en données brutes 
+La colonne $3 correspond au temps, la $4 au ratio * de viscosité en adimensionné
+
+Aurélie
+
+--------------------------------
+
+Pardon, en fait ce que j'ai appelé " données brutes ", ça correspond U^2 et pas à VRMS ...
+VRMS = (2e col / volume)^(0.5)
+avec volume = 0.9142
+
+ou bien VRMS = 5e col * U 
+
+(la 2e colonne étant U^2 et la 5e colonne étant VRMS/U pour le ratio 1 de viscosité)
+
+et là, je retombe sur VRMS ~ 0.003 pour la valeur maximale, ce que tu obtiens avec tes courbes
+
+--------------------------------
+
+merci pr les fichiers. Si je veux plotter tes valeurs sur le meme graph 
+que celles de van Keken, il y a le facteur U. Si je le calcule avec Eq. 
+11 du papier je retombe pas sur mes pieds... C'est quoi la valuer de U 
+pr ce bench ?
+
+Ce/
+
+Aurélie: Alors : U = q * h2 = 0.0981 * 0.2 = 0.01962
