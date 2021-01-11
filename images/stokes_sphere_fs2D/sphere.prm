@@ -1,0 +1,100 @@
+set Dimension                              = 2
+set Start time                             = 0
+set End time                               = 200
+set Use years in output instead of seconds = false
+set CFL number                             = 0.25
+set Output directory                       = output-stokes
+set Maximum time step                      = 0.5
+set Pressure normalization                 = surface
+
+subsection Solver parameters
+  subsection Stokes solver parameters
+    set Number of cheap Stokes solver steps = 0
+  end
+end
+
+subsection Geometry model
+  set Model name = box
+  subsection Box
+    set X extent  = 1
+    set Y extent  = 1
+  end
+end
+
+subsection Boundary velocity model
+  set Tangential velocity boundary indicators = left, right, bottom, top
+end
+
+subsection Material model
+  set Model name = multicomponent
+  subsection Multicomponent
+    set Densities = 1, 2, 0
+    set Viscosities = 1, 1000, 0.001
+    #set Viscosity averaging scheme = maximum composition 
+    #set Viscosity averaging scheme = arithmetic
+    #set Viscosity averaging scheme = geometric
+    set Viscosity averaging scheme = harmonic
+    set Thermal expansivities = 0 
+  end 
+end
+
+subsection Gravity model
+  set Model name = vertical
+  subsection Vertical
+    set Magnitude = 1
+  end
+end
+
+subsection Boundary temperature model
+  set List of model names = box
+end
+
+subsection Initial temperature model
+  set Model name = function
+
+  subsection Function
+    set Function expression = 0
+  end
+end
+
+subsection Compositional fields
+  set Number of fields = 2
+end 
+
+subsection Initial composition model
+  set Model name = function
+
+  subsection Function
+    set Variable names      = x,y
+    set Function constants  = r=0.123456789, xc=0.5, yc=0.6
+    set Function expression = if(sqrt((x-xc)*(x-xc)+(y-yc)*(y-yc)) < r, 1, 0) ; if (y>0.75,1,0)
+  end
+end
+
+subsection Mesh refinement
+  set Initial adaptive refinement   = 1
+  set Initial global refinement     = 6
+  set Refinement fraction           = 0.9
+  set Strategy                      = composition
+  set Coarsening fraction           = 0.1
+end
+
+subsection Postprocess
+  set List of postprocessors = visualization, velocity statistics, composition statistics, pressure statistics, material statistics, global statistics, point values, particles
+
+  subsection Point values
+    set Evaluation points = 0.5,0.6 
+  end 
+
+  subsection Particles
+    set Number of particles      = 50000
+    set Time between data output = 1 
+    set Data output format       = vtu 
+    set List of particle properties = initial composition, initial position
+  end 
+
+  subsection Visualization
+    set List of output variables = density, viscosity, strain rate
+    set Time between graphical output = 1
+  end
+end

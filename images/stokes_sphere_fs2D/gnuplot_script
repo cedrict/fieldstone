@@ -1,0 +1,1114 @@
+##
+set term pdf enhanced font "Times,11pt"
+set grid
+set key outside
+set xlabel "time"
+
+set log x
+
+#6-0 dash 1
+#6-1 dash 2
+#6-2 dash 3
+#6-3 dash 4
+#7-0 dash 5
+
+####################################################################33
+####################################################################33
+set ylabel 'vrms'
+####################################################################33
+####################################################################33
+
+set title 'arithmetic averaging - compositional fields'
+set output 'vrms_arithm_comp.pdf'
+plot[:100][0.0010:]\
+'arithm_6_0/statistics'      u 2:15 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'arithm_6_1/statistics'      u 2:15 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'arithm_6_2/statistics'      u 2:15 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'arithm_6_3/statistics'      u 2:15 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'arithm_7_0/statistics'      u 2:15 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:13 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'arithmetic averaging - particle in cell'
+set output 'vrms_arithm_pic.pdf'
+plot[:100][0.0010:]\
+'pic_60_100000/statistics' u 2:13 w l lt 1 lw .5 dt 1 t 'Aspect, 6-0, n=100000',\
+'pic_60_200000/statistics' u 2:13 w l lt 1 lw .5 dt 1 t 'Aspect, 6-0, n=200000',\
+'pic_70_100000/statistics' u 2:13 w l lt 1 lw .5 dt 5 t 'Aspect, 7-0, n=100000',\
+'regorda/150x150.Arithmetic' u 1:17 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:17 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:17 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/512x512.Arithmetic' u 1:17 w l lw .5 lt 2 dt 4 t 'regorda, 512x512',\
+'stone93/statistics_0.00050_np32.ascii' u 4:13 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'arithmetic averaging'
+set output 'vrms_arithm_add.pdf'
+plot[:100][0.0010:]\
+'arithm_q2pm1/statistics'    u 2:15 w l lw .5 lt 2 dashtype 2 t 'Aspect, Q_2xP_{-1}, 6-1',\
+'stone93/statistics_0.00050_np32.ascii' u 4:13 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+####################################################################33
+set title 'geometric averaging - compositional fields'
+set output 'vrms_geom_comp.pdf'
+plot[:100][0.0012:]\
+'geom_6_0/statistics'     u 2:15 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'geom_6_1/statistics'     u 2:15 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'geom_6_2/statistics'     u 2:15 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'geom_6_3/statistics'     u 2:15 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'geom_7_0/statistics'     u 2:15 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:13 w l lw .5 lt -1 dashtype 1 t 'Stone 93, a=0.00050, np=32',\
+
+set title 'geometric averaging - particle in cell'
+set output 'vrms_geom_pic.pdf'
+plot[:100][0.0012:]\
+'regorda/150x150.Geometric' u 1:17 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric' u 1:17 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric' u 1:17 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/512x512.Geometric' u 1:17 w l lw .5 lt 2 dt 4 t 'regorda, 512x512',\
+'stone93/statistics_0.00050_np32.ascii' u 4:13 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'geometric averaging'
+set output 'vrms_geom_add.pdf'
+plot[:100][0.0012:]\
+'geom_q2pm1_6_0/statistics'   u 2:15 w l lw .5 lt 1 dt 1 t 'Aspect, Q_2xP_{-1}, 6-0',\
+'geom_q2pm1_6_1/statistics'   u 2:15 w l lw .5 lt 1 dt 2 t 'Aspect, Q_2xP_{-1}, 6-1',\
+'geom_q2pm1_6_2/statistics'   u 2:15 w l lw .5 lt 1 dt 3 t 'Aspect, Q_2xP_{-1}, 6-2',\
+'geom_q2pm1_6_3/statistics'   u 2:15 w l lw .5 lt 1 dt 4 t 'Aspect, Q_2xP_{-1}, 6-3',\
+'geom_q2pm1_7_0/statistics'   u 2:15 w l lw .5 lt 1 dt 5 t 'Aspect, Q_2xP_{-1}, 7-0',\
+'geom_6_0_vof/statistics'     u 2:13 w l lw .5 lt 2 dt 1 t 'Aspect, Q_2xQ_1, 6-0 (VOF)',\
+'geom_7_0_vof/statistics'     u 2:13 w l lw .5 lt 2 dt 5 t 'Aspect, Q_2xQ_1, 7-0 (VOF)',\
+'stone93/statistics_0.00050_np32.ascii' u 4:13 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+####################################################################33
+
+set title 'harmonic averaging - compositional fields'
+set output 'vrms_harm_comp.pdf'
+plot[:100][0.0012:]\
+'harm_6_0/statistics'     u 2:15 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'harm_6_1/statistics'     u 2:15 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'harm_6_2/statistics'     u 2:15 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'harm_6_3/statistics'     u 2:15 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'harm_7_0/statistics'     u 2:15 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:13 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'harmonic averaging - particle in cell'
+set output 'vrms_harm_pic.pdf'
+plot[:100][0.0012:]\
+'regorda/150x150.Harmonic' u 1:17 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic' u 1:17 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic' u 1:17 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/512x512.Harmonic' u 1:17 w l lw .5 lt 2 dt 4 t 'regorda, 512x512',\
+'stone93/statistics_0.00050_np32.ascii' u 4:13 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'harmonic averaging'
+set output 'vrms_harm_add.pdf'
+plot[:100][0.0012:]\
+'harm_q2pm1_6_0/statistics'   u 2:15 w l lw .5 lt 1 dt 1 t 'Aspect, Q_2xP_{-1}, 6-0',\
+'harm_q2pm1_6_1/statistics'   u 2:15 w l lw .5 lt 1 dt 2 t 'Aspect, Q_2xP_{-1}, 6-1',\
+'harm_q2pm1_6_2/statistics'   u 2:15 w l lw .5 lt 1 dt 3 t 'Aspect, Q_2xP_{-1}, 6-2',\
+'harm_q2pm1_6_3/statistics'   u 2:15 w l lw .5 lt 1 dt 4 t 'Aspect, Q_2xP_{-1}, 6-3',\
+'harm_q2pm1_7_0/statistics'   u 2:15 w l lw .5 lt 1 dt 5 t 'Aspect, Q_2xP_{-1}, 7-0',\
+'harm_supg/statistics'        u 2:15 w l lw .5 lt 3 dt 3 t 'Aspect, Q_2xQ_1, 6-1, SUPG',\
+'harm_6_0_vof/statistics'     u 2:13 w l lw .5 lt 7 dt 7 t 'Aspect, Q_2xQ_1, 6-0 (VOF)',\
+'harm_7_0_vof/statistics'     u 2:13 w l lw .5 lt 8 dt 7 t 'Aspect, Q_2xQ_1, 7-0 (VOF)',\
+'stone93/statistics_0.00050_np32.ascii' u 4:13 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+####################################################################33
+set title 'maximum composition averaging'
+
+set output 'vrms_maxcompo_comp.pdf'
+plot[:100][0.0012:]\
+'maxicompo_6_1/statistics'    u 2:15 w l lw .5 lt 4 dashtype 1 t 'Aspect, Q_2xQ_1, 6-1',\
+'maxicompo_7_0/statistics'    u 2:15 w l lw .5 lt 4 dashtype 1 t 'Aspect, Q_2xQ_1, 7-0',\
+
+set output 'vrms_maxcompo_add.pdf'
+plot[:100][0.0012:]\
+'maxicompo_6_0_vof/statistics' u 2:13 w l lw .5 lt 1 dashtype 1 t 'Aspect, Q_2xQ_1, 6-0 (VOF)',\
+'maxicompo_7_0_vof/statistics' u 2:13 w l lw .5 lt 2 dashtype 1 t 'Aspect, Q_2xQ_1, 7-0 (VOF)',\
+'stone93/statistics_0.00050_np32.ascii' u 4:13 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+
+
+####################################################################33
+####################################################################33
+####################################################################33
+####################################################################33
+
+unset title
+set output 'vrms_afs.pdf'
+plot[:100][]\
+'stone93/statistics_0.00050_np32.ascii' u 4:14 w l lt 1 lw .5 t 'air, Stone 93',\
+'stone93/statistics_0.00050_np32.ascii' u 4:15 w l lt 2 lw .5 t 'fluid, Stone 93',\
+'stone93/statistics_0.00050_np32.ascii' u 4:16 w l lt 3 lw .5 t 'sphere, Stone 93',\
+
+set title 'fluid+sphere'
+set output 'vrms_fs.pdf'
+plot[:100][]\
+'regorda/150x150.Arithmetic' u 1:18 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:18 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:18 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/150x150.Geometric'  u 1:18 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric'  u 1:18 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric'  u 1:18 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/150x150.Harmonic'   u 1:18 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic'   u 1:18 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic'   u 1:18 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00050_np32.ascii' u 4:17 w l lt -1 lw .5 t 'Stone 93',\
+
+####################################################################33
+####################################################################33
+set ylabel 'max(vel)'
+####################################################################33
+####################################################################33
+
+set title 'arithmetic averaging - comp. field'
+set output 'max_vel_arithm_comp.pdf'
+plot[:100][:0.006]\
+'arithm_6_0/statistics'   u 2:16 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'arithm_6_1/statistics'   u 2:16 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'arithm_6_2/statistics'   u 2:16 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-1',\
+'arithm_6_3/statistics'   u 2:16 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'arithm_7_0/statistics'   u 2:16 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:10 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'arithmetic averaging - particle in cell'
+set output 'max_vel_arithm_pic.pdf'
+plot[:100][:0.006]\
+'pic_60_100000/statistics' u 2:14 w l lt 1 lw .5 dt 1 t 'Aspect, 6-0, n=100000',\
+'pic_60_200000/statistics' u 2:14 w l lt 1 lw .5 dt 1 t 'Aspect, 6-0, n=200000',\
+'pic_70_100000/statistics' u 2:14 w l lt 1 lw .5 dt 5 t 'Aspect, 7-0, n=100000',\
+'regorda/150x150.Arithmetic' u 1:16 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:16 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:16 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00050_np32.ascii' u 4:10 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'arithmetic averaging'
+set output 'max_vel_arithm_add.pdf'
+plot[:100][:0.006]\
+'arithm_q2pm1/statistics' u 2:16 w l lw .5 lt 1 dashtype 2 t 'Aspect, arithm., Q_2xP_{-1}, 6-1',\
+'stone93/statistics_0.00050_np32.ascii' u 4:10 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+
+####################################################################33
+set title 'geometric averaging - comp. field'
+set output 'max_vel_geom_comp.pdf'
+plot[:100][:0.006]\
+'geom_6_0/statistics'     u 2:16 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'geom_6_1/statistics'     u 2:16 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'geom_6_2/statistics'     u 2:16 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'geom_6_3/statistics'     u 2:16 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'geom_7_0/statistics'     u 2:16 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:10 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'geometric averaging - particle in cell'
+set output 'max_vel_geom_pic.pdf'
+plot[:100][:0.006]\
+'regorda/150x150.Geometric' u 1:16 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric' u 1:16 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric' u 1:16 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00050_np32.ascii' u 4:10 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'geometric averaging'
+set output 'max_vel_geom_add.pdf'
+plot[:100][:0.006]\
+'geom_q2pm1_6_0/statistics'   u 2:16 w l lw .5 lt 1 dt 1 t 'Aspect, Q_2xP_{-1}, 6-0',\
+'geom_q2pm1_6_1/statistics'   u 2:16 w l lw .5 lt 1 dt 2 t 'Aspect, Q_2xP_{-1}, 6-1',\
+'geom_q2pm1_6_2/statistics'   u 2:16 w l lw .5 lt 1 dt 3 t 'Aspect, Q_2xP_{-1}, 6-2',\
+'geom_q2pm1_6_3/statistics'   u 2:16 w l lw .5 lt 1 dt 4 t 'Aspect, Q_2xP_{-1}, 6-3',\
+'geom_q2pm1_7_0/statistics'   u 2:16 w l lw .5 lt 1 dt 5 t 'Aspect, Q_2xP_{-1}, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:10 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+####################################################################33
+
+set output 'max_vel_maxcompo.pdf'
+plot[:100][:0.006]\
+'maxicompo_6_1/statistics'     u 2:16 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'maxicompo_7_0/statistics'     u 2:16 w l lw .5 lt 1 dashtype 2 t 'Aspect, 7-0',\
+'maxicompo_6_0_vof/statistics' u 2:14 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-0 (VOF)',\
+'maxicompo_7_0_vof/statistics' u 2:14 w l lw .5 lt 1 dashtype 4 t 'Aspect, 7-0 (VOF)',\
+'stone93/statistics_0.00050_np32.ascii' u 4:10 w l lw .5 lt -1 dashtype 1 t 'Stone 93'\
+
+####################################################################33
+
+set title 'Harmonic averaging - comp. field'
+set output 'max_vel_harm_comp.pdf'
+plot[:100][:0.006]\
+'harm_6_0/statistics'      u 2:16 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'harm_6_1/statistics'      u 2:16 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'harm_6_2/statistics'      u 2:16 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'harm_6_3/statistics'      u 2:16 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'harm_7_0/statistics'      u 2:16 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:10 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'Harmonic averaging - particle in cell'
+set output 'max_vel_harm_pic.pdf'
+plot[:100][:0.006]\
+'regorda/150x150.Harmonic' u 1:16 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic' u 1:16 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic' u 1:16 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00050_np32.ascii' u 4:10 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'Harmonic averaging'
+set output 'max_vel_harm_add.pdf'
+plot[:100][:0.006]\
+'harm_q2pm1_6_0/statistics'   u 2:16 w l lw .5 lt 1 dt 1 t 'Aspect, Q_2xP_{-1}, 6-0',\
+'harm_q2pm1_6_1/statistics'   u 2:16 w l lw .5 lt 1 dt 2 t 'Aspect, Q_2xP_{-1}, 6-1',\
+'harm_q2pm1_6_2/statistics'   u 2:16 w l lw .5 lt 1 dt 3 t 'Aspect, Q_2xP_{-1}, 6-2',\
+'harm_q2pm1_6_3/statistics'   u 2:16 w l lw .5 lt 1 dt 4 t 'Aspect, Q_2xP_{-1}, 6-3',\
+'harm_q2pm1_7_0/statistics'   u 2:16 w l lw .5 lt 1 dt 5 t 'Aspect, Q_2xP_{-1}, 7-0',\
+'harm_supg/statistics'     u 2:16 w l lw .5 lt 3 dashtype 1 t 'Aspect, Q_2xQ_1, 6-1 (SUPG)',\
+'harm_6_0_vof/statistics'  u 2:14 w l lw .5 lt 7 dashtype 1 t 'Aspect, Q_2xQ_1, 6-0 (VOF)',\
+'stone93/statistics_0.00050_np32.ascii' u 4:10 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+####################################################################33
+####################################################################33
+set ylabel 'max. pressure'
+####################################################################33
+####################################################################33
+
+set title 'arithmetic averaging - compositional fields'
+set output 'max_pressure_arithm_comp.pdf'
+plot[:100][:0.82]\
+'arithm_6_0/statistics'      u 2:25 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'arithm_6_1/statistics'      u 2:25 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'arithm_6_2/statistics'      u 2:25 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'arithm_6_3/statistics'      u 2:25 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'arithm_7_0/statistics'      u 2:25 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00025_np32.ascii' u 4:12 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'arithmetic averaging - particle in cell'
+set output 'max_pressure_arithm_pic.pdf'
+plot[:100][:0.82]\
+'pic_60_100000/statistics' u 2:23 w l lt 1 lw .5 dt 1 t 'Aspect, 6-0, n=100000',\
+'pic_60_200000/statistics' u 2:23 w l lt 1 lw .5 dt 1 t 'Aspect, 6-0, n=200000',\
+'pic_70_100000/statistics' u 2:23 w l lt 1 lw .5 dt 5 t 'Aspect, 7-0, n=100000',\
+'regorda/150x150.Arithmetic' u 1:3  w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:3  w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:3  w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00025_np32.ascii' u 4:12 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'arithmetic averaging'
+set output 'max_pressure_arithm_add.pdf'
+plot[:100][:0.82]\
+'arithm_q2pm1/statistics'    u 2:25 w l lw .5 lt 2 dashtype 1 t 'Aspect, arithm., Q_2xP_{-1}',\
+'stone93/statistics_0.00025_np32.ascii' u 4:12 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'geometric averaging - compositional fields'
+set output 'max_pressure_geom_comp.pdf'
+plot[:100][:0.82]\
+'geom_6_0/statistics'        u 2:25 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'geom_6_1/statistics'        u 2:25 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'geom_6_2/statistics'        u 2:25 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'geom_6_3/statistics'        u 2:25 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'geom_7_0/statistics'        u 2:25 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00025_np32.ascii' u 4:12 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'geometric averaging - particle in cell'
+set output 'max_pressure_geom_pic.pdf'
+plot[:100][:0.82]\
+'regorda/150x150.Geometric' u 1:3 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric' u 1:3 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric' u 1:3 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00025_np32.ascii' u 4:12 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'geometric averaging'
+set output 'max_pressure_geom_add.pdf'
+plot[:100][:0.82]\
+'geom_q2pm1_6_0/statistics'   u 2:25 w l lw .5 lt 1 dt 1 t 'Aspect, Q_2xP_{-1}, 6-0',\
+'geom_q2pm1_6_1/statistics'   u 2:25 w l lw .5 lt 1 dt 2 t 'Aspect, Q_2xP_{-1}, 6-1',\
+'geom_q2pm1_6_2/statistics'   u 2:25 w l lw .5 lt 1 dt 3 t 'Aspect, Q_2xP_{-1}, 6-2',\
+'geom_q2pm1_6_3/statistics'   u 2:25 w l lw .5 lt 1 dt 4 t 'Aspect, Q_2xP_{-1}, 6-3',\
+'geom_q2pm1_7_0/statistics'   u 2:25 w l lw .5 lt 1 dt 5 t 'Aspect, Q_2xP_{-1}, 7-0',\
+'stone93/statistics_0.00025_np32.ascii' u 4:12 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'harmonic averaging - compositional fields'
+set output 'max_pressure_harm_comp.pdf'
+plot[:100][:0.82]\
+'harm_6_0/statistics'       u 2:25 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'harm_6_1/statistics'       u 2:25 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'harm_6_2/statistics'       u 2:25 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'harm_6_3/statistics'       u 2:25 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'harm_7_0/statistics'       u 2:25 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00025_np32.ascii' u 4:12 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'harmonic averaging - particle in cell'
+set output 'max_pressure_harm_pic.pdf'
+plot[:100][:0.82]\
+'regorda/150x150.Harmonic' u 1:3 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic' u 1:3 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic' u 1:3 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00025_np32.ascii' u 4:12 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set title 'harmonic averaging'
+set output 'max_pressure_harm_add.pdf'
+plot[:100][:0.82]\
+'harm_q2pm1_6_0/statistics'   u 2:25 w l lw .5 lt 1 dt 1 t 'Aspect, Q_2xP_{-1}, 6-0',\
+'harm_q2pm1_6_1/statistics'   u 2:25 w l lw .5 lt 1 dt 2 t 'Aspect, Q_2xP_{-1}, 6-1',\
+'harm_q2pm1_6_2/statistics'   u 2:25 w l lw .5 lt 1 dt 3 t 'Aspect, Q_2xP_{-1}, 6-2',\
+'harm_q2pm1_6_3/statistics'   u 2:25 w l lw .5 lt 1 dt 4 t 'Aspect, Q_2xP_{-1}, 6-3',\
+'harm_q2pm1_7_0/statistics'   u 2:25 w l lw .5 lt 1 dt 5 t 'Aspect, Q_2xP_{-1}, 7-0',\
+'harm_supg/statistics'        u 2:25 w l lw .5 lt 3 dashtype 3 t 'Aspect, Q_2xQ_1, SUPG',\
+'stone93/statistics_0.00025_np32.ascii' u 4:12 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+set output 'max_pressure_maxcompo.pdf'
+plot[:100][:0.82]\
+'maxicompo_6_1/statistics'    u 2:25 w l lw .5 lt 1 dashtype 1 t 'Aspect, max. compo., Q_2xQ_1',\
+'stone93/statistics_0.00025_np32.ascii' u 4:12 w l lw .5 lt -1 dashtype 1 t 'Stone 93',\
+
+
+##################################################################
+##################################################################
+set ylabel 'volume sphere'
+##################################################################
+##################################################################
+
+
+set title 'arithmetic averaging - compositional fields'
+set output 'vol_sphere_arithm_comp.pdf'
+plot[:100][]\
+'arithm_6_0/statistics'   u 2:19 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'arithm_6_1/statistics'   u 2:19 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'arithm_6_2/statistics'   u 2:19 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'arithm_6_3/statistics'   u 2:19 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'arithm_7_0/statistics'   u 2:19 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+pi*0.123456789**2 lt -1 lw 2 dashtype 2 t 'analytical'
+
+set title 'arithmetic averaging - particle in cell'
+set output 'vol_sphere_arithm_pic.pdf'
+plot[:100][]\
+'regorda/150x150.Arithmetic' u 1:21 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:21 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:21 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+pi*0.123456789**2 lt -1 lw 2 dashtype 2 t 'analytical'
+
+set title 'arithmetic averaging'
+set output 'vol_sphere_arithm_add.pdf'
+plot[:100][]\
+'arithm_q2pm1/statistics' u 2:19 w l lw .5 lt 1 dashtype 2 t 'Aspect, arithm., Q_2xP_{-1}',\
+pi*0.123456789**2 lt -1 lw 2 dashtype 2 t 'analytical'
+
+
+
+set title 'geometric averaging - compositional fields'
+set output 'vol_sphere_geom_comp.pdf'
+plot[:100][]\
+'geom_6_1/statistics'         u 2:19 w l lw .5 lt 2 dashtype 1 t 'Aspect, geom., Q_2xQ_1',\
+'geom_6_2/statistics'     u 2:19 w l lw .5 lt 2 dashtype 4 t 'Aspect, geom., Q_2xQ_1, 6-2',\
+pi*0.123456789**2 lt -1 lw 2 dashtype 2 t 'analytical'
+
+set title 'geometric averaging - particle in cell'
+set output 'vol_sphere_geom_pic.pdf'
+plot[:100][]\
+'regorda/150x150.Geometric'  u 1:21 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric'  u 1:21 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric'  u 1:21 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+pi*0.123456789**2 lt -1 lw 2 dashtype 2 t 'analytical'
+
+set title 'geometric averaging'
+set output 'vol_sphere_geom_add.pdf'
+plot[:100][]\
+'geom_q2pm1_6_0/statistics'   u 2:19 w l lw .5 lt 1 dt 1 t 'Aspect, Q_2xP_{-1}, 6-0',\
+'geom_q2pm1_6_1/statistics'   u 2:19 w l lw .5 lt 1 dt 2 t 'Aspect, Q_2xP_{-1}, 6-1',\
+'geom_q2pm1_6_2/statistics'   u 2:19 w l lw .5 lt 1 dt 3 t 'Aspect, Q_2xP_{-1}, 6-2',\
+'geom_q2pm1_6_3/statistics'   u 2:19 w l lw .5 lt 1 dt 4 t 'Aspect, Q_2xP_{-1}, 6-3',\
+'geom_q2pm1_7_0/statistics'   u 2:19 w l lw .5 lt 1 dt 5 t 'Aspect, Q_2xP_{-1}, 7-0',\
+pi*0.123456789**2 lt -1 lw 2 dashtype 2 t 'analytical'
+
+
+
+set title 'harmonic averaging - compositional fields'
+set output 'vol_sphere_harm_comp.pdf'
+plot[:100][]\
+'harm_6_0/statistics'     u 2:19 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'harm_6_1/statistics'     u 2:19 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'harm_6_2/statistics'     u 2:19 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'harm_6_3/statistics'     u 2:19 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'harm_7_0/statistics'     u 2:19 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+pi*0.123456789**2 lt -1 lw 2 dashtype 2 t 'analytical
+
+set title 'harmonic averaging - compositional fields'
+set output 'vol_sphere_harm_pic.pdf'
+plot[:100][]\
+'regorda/150x150.Harmonic'   u 1:21 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic'   u 1:21 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic'   u 1:21 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+pi*0.123456789**2 lt -1 lw 2 dashtype 2 t 'analytical
+
+set title 'harmonic averaging - compositional fields'
+set output 'vol_sphere_harm_add.pdf'
+plot[:100][]\
+'harm_q2pm1_6_0/statistics'   u 2:19 w l lw .5 lt 1 dt 1 t 'Aspect, Q_2xP_{-1}, 6-0',\
+'harm_q2pm1_6_1/statistics'   u 2:19 w l lw .5 lt 1 dt 2 t 'Aspect, Q_2xP_{-1}, 6-1',\
+'harm_q2pm1_6_2/statistics'   u 2:19 w l lw .5 lt 1 dt 3 t 'Aspect, Q_2xP_{-1}, 6-2',\
+'harm_q2pm1_6_3/statistics'   u 2:19 w l lw .5 lt 1 dt 4 t 'Aspect, Q_2xP_{-1}, 6-3',\
+'harm_q2pm1_7_0/statistics'   u 2:19 w l lw .5 lt 1 dt 5 t 'Aspect, Q_2xP_{-1}, 7-0',\
+'harm_supg/statistics'    u 2:19 w l lw .5 lt 3 dashtype 3 t 'Aspect, harm., SUPG',\
+pi*0.123456789**2 lt -1 lw 2 dashtype 2 t 'analytical
+
+
+
+
+
+set output 'vol_sphere_maxcompo.pdf'
+plot[:100][]\
+'maxicompo_6_1/statistics'    u 2:19 w l lw .5 lt 4 dashtype 1 t 'Aspect, max. compo., Q_2xQ_1',\
+'stone93/statistics_0.00050_np32.ascii' u 4:22 w l lw .5 lt -1 dashtype 1 t 'Stone 93, a=0.00050, np=32',\
+pi*0.123456789**2 lt -1 lw 2 dashtype 2 t 'analytical
+
+######################################################################################
+
+
+set ylabel 'volume air'
+set output 'vol_air.pdf'
+plot[][]\
+'arithm_6_1/statistics'        u 2:22 w l lw .5 lt 1 dashtype 1 t 'Aspect, arithm., Q_2xQ_1',\
+'geom_6_1/statistics'          u 2:22 w l lw .5 lt 2 dashtype 1 t 'Aspect, geom., Q_2xQ_1',\
+'harm_6_1/statistics'          u 2:22 w l lw .5 lt 3 dashtype 1 t 'Aspect, harm., Q_2xQ_1',\
+'maxicompo_6_1/statistics' u 2:22 w l lw .5 lt 4 dashtype 1 t 'Aspect, max. compo., Q_2xQ_1',\
+'arithm_q2pm1/statistics'  u 2:22 w l lw .5 lt 1 dashtype 2 t 'Aspect, arithm., Q_2xP_{-1}',\
+'harm_supg/statistics'     u 2:22 w l lw .5 lt 3 dashtype 3 t 'Aspect, harm., SUPG',\
+'geom_6_2/statistics'      u 2:22 w l lw .5 lt 2 dashtype 4 t 'Aspect, geom., Q_2xQ_1, 6-2',\
+'harm_6_2/statistics'      u 2:22 w l lw .5 lt 3 dashtype 4 t 'Aspect, harm., Q_2xQ_1, 6-2',\
+'stone93/statistics_0.00050_np32.ascii' u 4:20 w l lw .5 lt -1 dashtype 1 t 'Stone 93, a=0.00050, np=32',\
+0.25 lt -1 dashtype 2 t 'analytical
+
+set ylabel 'volume fluid'
+set output 'vol_fluid.pdf'
+plot[][]\
+'stone93/statistics_0.00050_np32.ascii' u 4:21 w l t 'Stone 93, a=0.00050, np=32',\
+
+set ylabel 'volume fluid+sphere'
+set output 'vol_fluidsphere.pdf'
+plot[][]\
+'stone93/statistics_0.00050_np32.ascii' u 4:23 w l t 'Stone 93, a=0.00050, np=32',\
+
+
+#----------------------------------------------------
+
+set ylabel 'min(C_1)'
+set output 'C1_min.pdf'
+plot[][]\
+'arithm_6_1/statistics'     u 2:17 w l lw .5 lt 1 dashtype 1 t 'Aspect, arithm., Q_2xQ_1',\
+'geom_6_1/statistics'       u 2:17 w l lw .5 lt 2 dashtype 1 t 'Aspect, geom., Q_2xQ_1',\
+'harm_6_1/statistics'       u 2:17 w l lw .5 lt 3 dashtype 1 t 'Aspect, harm., Q_2xQ_1',\
+'maxicompo_6_1/statistics'  u 2:17 w l lw .5 lt 4 dashtype 1 t 'Aspect, max. compo., Q_2xQ_1',\
+'harm_supg/statistics'  u 2:17 w l lw .5 lt 3 dashtype 3 t 'Aspect, harm., SUPG',\
+'geom_6_2/statistics'   u 2:17 w l lw .5 lt 2 dashtype 4 t 'Aspect, geom., Q_2xQ_1, 6-2',\
+'harm_6_2/statistics'   u 2:17 w l lw .5 lt 3 dashtype 4 t 'Aspect, harm., Q_2xQ_1, 6-2',\
+'arithm_6_3/statistics'   u 2:17 w l lw .5 lt 1 dashtype 5 t 'Aspect, arithm., Q_2xQ_1, 6-3',\
+'harm_6_3/statistics'     u 2:17 w l lw .5 lt 3 dashtype 5 t 'Aspect, harm., Q_2xQ_1, 6-3',\
+'geom_7_0/statistics'     u 2:17 w l lw .5 lt 2 dashtype 7 t 'Aspect, geom., Q_2xQ_1, 7-0',\
+
+set ylabel 'max(C_1)'
+set output 'C1_max.pdf'
+plot[][]\
+'arithm_6_1/statistics'       u 2:18 w l lw .5 lt 1 dashtype 1 t 'Aspect, arithm., Q_2xQ_1',\
+'geom_6_1/statistics'         u 2:18 w l lw .5 lt 2 dashtype 1 t 'Aspect, geom., Q_2xQ_1',\
+'harm_6_1/statistics'         u 2:18 w l lw .5 lt 3 dashtype 1 t 'Aspect, harm., Q_2xQ_1',\
+'maxicompo_6_1/statistics'    u 2:18 w l lw .5 lt 4 dashtype 1 t 'Aspect, max. compo., Q_2xQ_1',\
+'harm_supg/statistics'    u 2:18 w l lw .5 lt 3 dashtype 3 t 'Aspect, harm., SUPG',\
+'geom_6_2/statistics'     u 2:18 w l lw .5 lt 2 dashtype 4 t 'Aspect, geom., Q_2xQ_1, 6-2',\
+'harm_6_2/statistics'     u 2:18 w l lw .5 lt 3 dashtype 4 t 'Aspect, harm., Q_2xQ_1, 6-2',\
+'arithm_6_3/statistics'   u 2:18 w l lw .5 lt 1 dashtype 5 t 'Aspect, arithm., Q_2xQ_1, 6-3',\
+'harm_6_3/statistics'     u 2:18 w l lw .5 lt 3 dashtype 5 t 'Aspect, harm., Q_2xQ_1, 6-3',\
+'geom_7_0/statistics'     u 2:18 w l lw .5 lt 2 dashtype 7 t 'Aspect, geom., Q_2xQ_1, 7-0',\
+
+set ylabel 'min(C_2)'
+set output 'C2_min.pdf'
+plot[][]\
+'arithm_6_1/statistics'     u 2:20 w l lw .5 lt 1 dashtype 1 t 'Aspect, arithm., Q_2xQ_1',\
+'geom_6_1/statistics'       u 2:20 w l lw .5 lt 2 dashtype 1 t 'Aspect, geom., Q_2xQ_1',\
+'harm_6_1/statistics'       u 2:20 w l lw .5 lt 3 dashtype 1 t 'Aspect, harm., Q_2xQ_1',\
+'maxicompo_6_1/statistics'  u 2:20 w l lw .5 lt 4 dashtype 1 t 'Aspect, max. compo., Q_2xQ_1',\
+'harm_supg/statistics'  u 2:20 w l lw .5 lt 3 dashtype 3 t 'Aspect, harm., SUPG',\
+'geom_6_2/statistics'   u 2:20 w l lw .5 lt 2 dashtype 4 t 'Aspect, geom., Q_2xQ_1, 6-2',\
+'harm_6_2/statistics'     u 2:20 w l lw .5 lt 3 dashtype 4 t 'Aspect, harm., Q_2xQ_1, 6-2',\
+'arithm_6_3/statistics'   u 2:20 w l lw .5 lt 1 dashtype 5 t 'Aspect, arithm., Q_2xQ_1, 6-3',\
+'harm_6_3/statistics'     u 2:20 w l lw .5 lt 3 dashtype 5 t 'Aspect, harm., Q_2xQ_1, 6-3',\
+
+set ylabel 'max(C_2)'
+set output 'C2_max.pdf'
+plot[][]\
+'arithm_6_1/statistics'       u 2:21 w l lw .5 lt 1 dashtype 1 t 'Aspect, arithm., Q_2xQ_1',\
+'geom_6_1/statistics'         u 2:21 w l lw .5 lt 2 dashtype 1 t 'Aspect, geom., Q_2xQ_1',\
+'harm_6_1/statistics'         u 2:21 w l lw .5 lt 3 dashtype 1 t 'Aspect, harm., Q_2xQ_1',\
+'maxicompo_6_1/statistics'    u 2:21 w l lw .5 lt 4 dashtype 1 t 'Aspect, max. compo., Q_2xQ_1',\
+'harm_supg/statistics'    u 2:21 w l lw .5 lt 3 dashtype 3 t 'Aspect, harm., SUPG',\
+'geom_6_2/statistics'     u 2:21 w l lw .5 lt 2 dashtype 4 t 'Aspect, geom., Q_2xQ_1, 6-2',\
+'harm_6_2/statistics'     u 2:21 w l lw .5 lt 3 dashtype 4 t 'Aspect, harm., Q_2xQ_1, 6-2',\
+'arithm_6_3/statistics'   u 2:21 w l lw .5 lt 1 dashtype 5 t 'Aspect, arithm., Q_2xQ_1, 6-3',\
+'harm_6_3/statistics'     u 2:21 w l lw .5 lt 3 dashtype 5 t 'Aspect, harm., Q_2xQ_1, 6-3',\
+
+############################################################
+############################################################
+set ylabel 'avrg. density'
+############################################################
+############################################################
+
+set title 'arithmetic averaging - compositional fields'
+set output 'avrg_density_arithm_comp.pdf'
+plot[][:0.802]\
+'arithm_6_0/statistics'      u 2:26 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'arithm_6_1/statistics'      u 2:26 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'arithm_6_2/statistics'      u 2:26 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'arithm_6_3/statistics'      u 2:26 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'arithm_7_0/statistics'      u 2:26 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+0.79788283183 lw 2 lt -1 
+
+set title 'arithmetic averaging - particle in cell'
+set output 'avrg_density_arithm_pic.pdf'
+plot[][:0.802]\
+'pic_60_100000/statistics' u 2:24 w l lt 1 lw .5 dt 1 t 'Aspect, 6-0, n=100000',\
+'pic_60_200000/statistics' u 2:24 w l lt 1 lw .5 dt 1 t 'Aspect, 6-0, n=200000',\
+'pic_70_100000/statistics' u 2:24 w l lt 1 lw .5 dt 5 t 'Aspect, 7-0, n=100000',\
+'regorda/150x150.Arithmetic' u 1:19 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:19 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:19 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+0.79788283183 lw 2 lt -1 
+
+set title 'arithmetic averaging'
+set output 'avrg_density_arithm_add.pdf'
+plot[][:0.802]\
+'arithm_q2pm1/statistics'    u 2:26 w l lw .5 lt 2 dashtype 2 t 'Aspect, arithm., Q_2xP_{-1}',\
+0.79788283183 lw 2 lt -1 
+
+
+set title 'geometric averaging - compositional fields'
+set output 'avrg_density_geom_comp.pdf'
+plot[][:0.802]\
+'geom_6_0/statistics'       u 2:26 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'geom_6_1/statistics'       u 2:26 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'geom_6_2/statistics'       u 2:26 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'geom_6_3/statistics'       u 2:26 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'geom_7_0/statistics'       u 2:26 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+0.79788283183 lw 2 lt -1 
+
+set title 'geometric averaging - particle in cell'
+set output 'avrg_density_geom_pic.pdf'
+plot[][:0.802]\
+'regorda/150x150.Geometric' u 1:19 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric' u 1:19 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric' u 1:19 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+0.79788283183 lw 2 lt -1 
+
+set title 'geometric averaging'
+set output 'avrg_density_geom_add.pdf'
+plot[][:0.802]\
+'geom_q2pm1_6_0/statistics'   u 2:26 w l lw .5 lt 1 dt 1 t 'Aspect, Q_2xP_{-1}, 6-0',\
+'geom_q2pm1_6_1/statistics'   u 2:26 w l lw .5 lt 1 dt 2 t 'Aspect, Q_2xP_{-1}, 6-1',\
+'geom_q2pm1_6_2/statistics'   u 2:26 w l lw .5 lt 1 dt 3 t 'Aspect, Q_2xP_{-1}, 6-2',\
+'geom_q2pm1_6_3/statistics'   u 2:26 w l lw .5 lt 1 dt 4 t 'Aspect, Q_2xP_{-1}, 6-3',\
+'geom_q2pm1_7_0/statistics'   u 2:26 w l lw .5 lt 1 dt 5 t 'Aspect, Q_2xP_{-1}, 7-0',\
+'geom_6_0_vof/statistics'   u 2:24 w l lw .5 lt 6 dashtype 1 t 'Aspect, Q_2xQ_1, harm, 6-0 (VOF)',\
+0.79788283183 lw 2 lt -1 
+
+
+
+
+
+set title 'harmonic averaging - compositional fields'
+set output 'avrg_density_harm_comp.pdf'
+plot[][:0.802]\
+'harm_6_0/statistics'      u 2:26 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'harm_6_1/statistics'      u 2:26 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'harm_6_2/statistics'      u 2:26 w l lw .5 lt 4 dashtype 3 t 'Aspect, 6-2',\
+'harm_6_3/statistics'      u 2:26 w l lw .5 lt 5 dashtype 4 t 'Aspect, 6-3',\
+'harm_7_0/statistics'      u 2:26 w l lw .5 lt 5 dashtype 5 t 'Aspect, 7-0',\
+0.79788283183 lw 2 lt -1 
+
+
+set title 'harmonic averaging - particle in cell'
+set output 'avrg_density_harm_pic.pdf'
+plot[][:0.802]\
+'regorda/150x150.Harmonic' u 1:19 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic' u 1:19 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic' u 1:19 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+0.79788283183 lw 2 lt -1 
+
+
+set title 'harmonic averaging'
+set output 'avrg_density_harm_add.pdf'
+plot[][:0.802]\
+'harm_q2pm1_6_0/statistics'   u 2:24 w l lw .5 lt 1 dt 1 t 'Aspect, Q_2xP_{-1}, 6-0',\
+'harm_q2pm1_6_1/statistics'   u 2:24 w l lw .5 lt 1 dt 2 t 'Aspect, Q_2xP_{-1}, 6-1',\
+'harm_q2pm1_6_2/statistics'   u 2:24 w l lw .5 lt 1 dt 3 t 'Aspect, Q_2xP_{-1}, 6-2',\
+'harm_q2pm1_6_3/statistics'   u 2:24 w l lw .5 lt 1 dt 4 t 'Aspect, Q_2xP_{-1}, 6-3',\
+'harm_q2pm1_7_0/statistics'   u 2:24 w l lw .5 lt 1 dt 5 t 'Aspect, Q_2xP_{-1}, 7-0',\
+'harm_6_0_vof/statistics'  u 2:24 w l lw .5 lt 6 dashtype 1 t 'Aspect, Q_2xQ_1, harm, 6-0 (VOF)',\
+'harm_7_0_vof/statistics'  u 2:24 w l lw .5 lt 7 dashtype 1 t 'Aspect, Q_2xQ_1, harm 7-0 (VOF)',\
+'harm_supg/statistics'     u 2:26 w l lw .5 lt 3 dashtype 3 t 'Aspect, harm., SUPG',\
+0.79788283183 lw 2 lt -1 
+
+
+
+
+set title 'max. compo.' 
+set output 'avrg_density_maxcompo.pdf'
+plot[][:0.802]\
+'maxicompo_6_1/statistics'    u 2:26 w l lw .5 lt 4 dashtype 1 t 'Aspect, max. compo., Q_2xQ_1',\
+'maxicompo_6_0_vof/statistics'         u 2:24 w l lw .5 lt 1 dashtype 1 t 'Aspect, Q_2xQ_1, VOF, 6-0',\
+'maxicompo_7_0_vof/statistics'         u 2:24 w l lw .5 lt 2 dashtype 1 t 'Aspect, Q_2xQ_1, VOF, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:18 w l lw .5 lt -1 dashtype 1 t 'Stone 93, a=0.00050, np=32',\
+0.79788283183 lw 2 lt -1 
+
+###########################################################################################
+set ylabel 'avrg. viscosity'
+###########################################################################################
+
+
+set title 'arithmetic averaging - compositional fields' 
+set output 'avrg_viscosity_arithm_comp.pdf'
+plot[][:]\
+'arithm_6_0/statistics'      u 2:27 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'arithm_6_1/statistics'      u 2:27 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'arithm_6_2/statistics'      u 2:27 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'arithm_6_3/statistics'      u 2:27 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'arithm_7_0/statistics'      u 2:27 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+48.5851989989 lw 1 lt -1  
+
+set title 'arithmetic averaging - particle in cell' 
+set output 'avrg_viscosity_arithm_pic.pdf'
+plot[][:]\
+'pic_60_100000/statistics' u 2:25 w l lt 1 lw .5 dt 1 t 'Aspect, 6-0, n=100000',\
+'pic_60_200000/statistics' u 2:25 w l lt 1 lw .5 dt 1 t 'Aspect, 6-0, n=200000',\
+'pic_70_100000/statistics' u 2:24 w l lt 1 lw .5 dt 5 t 'Aspect, 7-0, n=100000',\
+'regorda/150x150.Arithmetic' u 1:23 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:23 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:23 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+48.5851989989 lw 1 lt -1  
+
+
+set title 'geometric averaging - compositional fields' 
+set output 'avrg_viscosity_geom_comp.pdf'
+plot[][:]\
+'geom_6_0/statistics'     u 2:27 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'geom_6_1/statistics'     u 2:27 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'geom_6_2/statistics'     u 2:27 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'geom_6_3/statistics'     u 2:27 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'geom_7_0/statistics'     u 2:27 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+48.5851989989 lw 1 lt -1  
+
+set title 'geometric averaging - particle in cell' 
+set output 'avrg_viscosity_geom_pic.pdf'
+plot[][:]\
+'regorda/150x150.Geometric' u 1:23 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric' u 1:23 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric' u 1:23 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+48.5851989989 lw 2 lt -1  
+
+set title 'harmonic averaging - compositional fields' 
+set output 'avrg_viscosity_harm_comp.pdf'
+plot[][:]\
+'harm_6_0/statistics'      u 2:27 w l lw .5 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'harm_6_1/statistics'      u 2:27 w l lw .5 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'harm_6_2/statistics'      u 2:27 w l lw .5 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'harm_6_3/statistics'      u 2:27 w l lw .5 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'harm_7_0/statistics'      u 2:27 w l lw .5 lt 1 dashtype 5 t 'Aspect, 7-0',\
+48.5851989989 lw 1 lt -1  
+
+
+set title 'harmonic averaging - particle in cell' 
+set output 'avrg_viscosity_harm_pic.pdf'
+plot[][:]\
+'regorda/150x150.Harmonic' u 1:23 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic' u 1:23 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic' u 1:23 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+48.5851989989 lw 2 lt -1  
+
+set output 'avrg_viscosity_maxcompo.pdf'
+plot[][:]\
+'maxicompo_6_1/statistics'    u 2:27 w l lw .5 lt 4 dashtype 1 t 'Aspect, max. compo., Q_2xQ_1',\
+'maxicompo_6_0_vof/statistics'         u 2:25 w l lw .5 lt 1 dashtype 1 t 'Aspect, Q_2xQ_1, VOF, 6-0',\
+'maxicompo_7_0_vof/statistics'         u 2:25 w l lw .5 lt 2 dashtype 1 t 'Aspect, Q_2xQ_1, VOF, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:19 w l lw .5 lt -1 dashtype 1 t 'Stone 93, a=0.00050, np=32',\
+48.5851989989 lw 2 lt -1  
+
+
+#########################################
+set ylabel 'sphere center x coordinate'
+#########################################
+
+set output 'center_position_x_arithm_pic.pdf'
+plot[][]\
+'stone93/statistics_0.00050_np32.ascii' u 4:25 w l lt -1 lw .5 t 'Stone 93',\
+'regorda/150x150.Arithmetic' u 1:5 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:5 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:5 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+
+set output 'center_position_x_geom_pic.pdf'
+plot[][]\
+'stone93/statistics_0.00050_np32.ascii' u 4:25 w l lt -1 lw .5 t 'Stone 93',\
+'regorda/150x150.Geometric'  u 1:5 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric'  u 1:5 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric'  u 1:5 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+
+set output 'center_position_x_harm_pic.pdf'
+plot[][]\
+'stone93/statistics_0.00050_np32.ascii' u 4:25 w l lt -1 lw .5 t 'Stone 93',\
+'regorda/150x150.Harmonic'   u 1:5 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic'   u 1:5 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic'   u 1:5 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+
+#########################################
+set ylabel 'sphere center y coordinate'
+#########################################
+
+set output 'center_position_y_arithm_pic.pdf'
+plot[][:0.61]\
+'stone93/statistics_0.00050_np32.ascii' u 4:26 w l lt -1 t 'Stone 93',\
+'regorda/150x150.Arithmetic' u 1:6 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:6 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:6 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+
+set output 'center_position_y_geom_pic.pdf'
+plot[][:0.61]\
+'stone93/statistics_0.00050_np32.ascii' u 4:26 w l lt -1 t 'Stone 93',\
+'regorda/150x150.Geometric'  u 1:6 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric'  u 1:6 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric'  u 1:6 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+
+set output 'center_position_y_harm_pic.pdf'
+plot[][:0.61]\
+'stone93/statistics_0.00050_np32.ascii' u 4:26 w l lt -1 t 'Stone 93',\
+'regorda/150x150.Harmonic'   u 1:6 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic'   u 1:6 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic'   u 1:6 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+
+
+
+
+set ylabel 'sphere center x velocity'
+set output 'center_velocity_x.pdf'
+plot[][]\
+'stone93/statistics_0.00050_np32.ascii' u 4:27 w l t 'Stone 93',\
+'regorda/150x150.Arithmetic' u 1:7 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:7 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:7 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/150x150.Geometric'  u 1:7 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric'  u 1:7 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric'  u 1:7 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/150x150.Harmonic'   u 1:7 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic'   u 1:7 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic'   u 1:7 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+
+set ylabel 'sphere center y velocity'
+set output 'center_velocity_y.pdf'
+plot[:100][]\
+'stone93/statistics_0.00050_np32.ascii' u 4:28 w l lt -1 lw .5 t 'Stone 93',\
+'regorda/150x150.Arithmetic' u 1:8 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:8 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:8 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/150x150.Geometric'  u 1:8 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric'  u 1:8 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric'  u 1:8 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/150x150.Harmonic'   u 1:8 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic'   u 1:8 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic'   u 1:8 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+
+set ylabel 'pressure at (0.5,0)'
+set output 'p_bottom.pdf'
+plot[:100][]\
+'regorda/150x150.Arithmetic' u 1:4 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:4 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:4 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/150x150.Geometric'  u 1:4 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric'  u 1:4 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric'  u 1:4 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/150x150.Harmonic'   u 1:4 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic'   u 1:4 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic'   u 1:4 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00050_np32.ascii' u 4:29 w l lw .5 lt -1 t 'Stone 93',\
+
+
+set ylabel 'min topography'
+set output 'topography_min.pdf'
+plot[][0.5:]\
+'regorda/150x150.Arithmetic' u 1:15 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:15 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:15 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/150x150.Geometric'  u 1:15 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric'  u 1:15 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric'  u 1:15 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/150x150.Harmonic'   u 1:15 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic'   u 1:15 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic'   u 1:15 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00050_np32.ascii' u 4:30 w l lw .5 lt -1 t 'Stone 93',\
+
+set ylabel 'max topography'
+set output 'topography_max.pdf'
+plot[][:0.79]\
+'regorda/150x150.Arithmetic' u 1:14 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:14 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:14 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/150x150.Geometric'  u 1:14 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric'  u 1:14 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric'  u 1:14 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/150x150.Harmonic'   u 1:14 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic'   u 1:14 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic'   u 1:14 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00050_np32.ascii' u 4:31 w l lt -1 lw .5 t 'Stone 93',\
+
+#-----------------------------------------------------
+#-----------------------------------------------------
+set log x
+
+set ylabel 'v_x'
+
+set title 'arithmetic averaging - compositional fields'
+set output 'point_u_arithm_comp.pdf'
+plot[][-5e-6:5e-6]\
+'arithm_6_0/point_values.txt'    u 1:4 w p ps .05 t 'Aspect, 6-0',\
+'arithm_6_1/point_values.txt'    u 1:4 w p ps .05 t 'Aspect, 6-1',\
+'arithm_6_2/point_values.txt'    u 1:4 w p ps .05 t 'Aspect, 6-2',\
+'arithm_6_3/point_values.txt'    u 1:4 w p ps .05 t 'Aspect, 6-3',\
+'arithm_7_0/point_values.txt'    u 1:4 w p ps .05 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:32 w l lt -1 lw .5 t 'Stone 93',\
+
+set title 'geometric averaging - compositional fields'
+set output 'point_u_geom_comp.pdf'
+plot[][-5e-6:5e-6]\
+'geom_6_0/point_values.txt'      u 1:4 w p ps .05 t 'Aspect, 6-0',\
+'geom_6_1/point_values.txt'      u 1:4 w p ps .05 t 'Aspect, 6-1',\
+'geom_6_2/point_values.txt'      u 1:4 w p ps .05 t 'Aspect, 6-2',\
+'geom_6_3/point_values.txt'      u 1:4 w p ps .05 t 'Aspect, 6-3',\
+'geom_7_0/point_values.txt'      u 1:4 w p ps .05 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:32 w l lt -1 lw .5 t 'Stone 93',\
+
+
+set title 'harmonic averaging - compositional fields'
+set output 'point_u_harm_comp.pdf'
+plot[][-5e-6:5e-6]\
+'harm_6_0/point_values.txt'      u 1:4 w p ps .05 t 'Aspect, 6-0',\
+'harm_6_1/point_values.txt'      u 1:4 w p ps .05 t 'Aspect, 6-1',\
+'harm_6_2/point_values.txt'      u 1:4 w p ps .05 t 'Aspect, 6-2',\
+'harm_6_3/point_values.txt'      u 1:4 w p ps .05 t 'Aspect, 6-3',\
+'harm_7_0/point_values.txt'      u 1:4 w p ps .05 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:32 w l lt -1 lw .5 t 'Stone 93',\
+
+
+#'maxicompo_6_1/point_values.txt' u 1:4 w p ps .05 t 'Aspect, max. compo',\
+ 
+
+
+#-----------------------------------------------------
+
+set ylabel 'v_y'
+
+set title 'arithmetic averaging - compositional fields'
+set output 'point_v_arithm_comp.pdf'
+plot[][]\
+'arithm_6_0/point_values.txt'   u 1:5 w p ps .05 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'arithm_6_1/point_values.txt'   u 1:5 w p ps .05 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'arithm_6_2/point_values.txt'   u 1:5 w p ps .05 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'arithm_6_3/point_values.txt'   u 1:5 w p ps .05 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'arithm_7_0/point_values.txt'   u 1:5 w p ps .05 lt 1 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:33 w l lt -1 lw .5 t 'Stone 93',\
+
+set title 'geometric averaging - compositional fields'
+set output 'point_v_geom_comp.pdf'
+plot[][]\
+'geom_6_0/point_values.txt'     u 1:5 w p ps .05 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'geom_6_1/point_values.txt'     u 1:5 w p ps .05 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'geom_6_2/point_values.txt'     u 1:5 w p ps .05 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'geom_6_2/point_values.txt'     u 1:5 w p ps .05 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'geom_7_0/point_values.txt'     u 1:5 w p ps .05 lt 1 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:33 w l lt -1 lw .5 t 'Stone 93',\
+
+set title 'harmonic averaging - compositional fields'
+set output 'point_v_harm_comp.pdf'
+plot[][]\
+'harm_6_0/point_values.txt'     u 1:5 w p ps .05 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'harm_6_1/point_values.txt'     u 1:5 w p ps .05 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'harm_6_2/point_values.txt'     u 1:5 w p ps .05 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'harm_6_3/point_values.txt'     u 1:5 w p ps .05 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'harm_7_0/point_values.txt'     u 1:5 w p ps .05 lt 1 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:33 w l lt -1 lw .5 t 'Stone 93',\
+
+set output 'point_v_arithm_pic.pdf'
+plot[][]\
+'regorda/150x150.Arithmetic' u 1:10 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:10 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:10 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00050_np32.ascii' u 4:33 w l lt -1 lw .5 t 'Stone 93',\
+
+set output 'point_v_geom_pic.pdf'
+plot[][]\
+'regorda/150x150.Geometric'  u 1:10 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric'  u 1:10 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric'  u 1:10 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00050_np32.ascii' u 4:33 w l lt -1 lw .5 t 'Stone 93',\
+
+set output 'point_v_harm_pic.pdf'
+plot[][]\
+'regorda/150x150.Harmonic'   u 1:10 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic'   u 1:10 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic'   u 1:10 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00050_np32.ascii' u 4:33 w l lt -1 lw .5 t 'Stone 93',\
+
+
+
+#'maxicompo_6_1/point_values.txt'    u 1:5 w p ps .05 lt 4 dashtype 1 t 'Aspect, max. compo., Q_2xQ_1, 6-1',\
+#'arithm_q2pm1/point_values.txt' u 1:5 w p ps .05 lt 1 dashtype 2 t 'Aspect, arithm., Q_2xP_{-1}',\
+#'harm_supg/point_values.txt'    u 1:5 w p ps .05 lt 3 dashtype 3 t 'Aspect, harm., SUPG',\
+
+
+
+########################################3
+set ylabel 'pressure'
+########################################3
+
+set output 'point_p_arithm_comp.pdf'
+plot[:50][]\
+'arithm_6_0/point_values.txt'   u 1:6 w p ps .05 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'arithm_6_1/point_values.txt'   u 1:6 w p ps .05 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'arithm_6_2/point_values.txt'   u 1:6 w p ps .05 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'arithm_6_3/point_values.txt'   u 1:6 w p ps .05 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'arithm_7_0/point_values.txt'   u 1:6 w p ps .05 lt 1 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:34 w l lt -1 lw .5 t 'Stone 93',\
+
+set output 'point_p_geom_comp.pdf'
+plot[:50][]\
+'geom_6_0/point_values.txt'     u 1:6 w p ps .05 lt 1 dashtype 1 t 'Aspect, 6-0',\
+'geom_6_1/point_values.txt'     u 1:6 w p ps .05 lt 1 dashtype 2 t 'Aspect, 6-1',\
+'geom_6_2/point_values.txt'     u 1:6 w p ps .05 lt 1 dashtype 3 t 'Aspect, 6-2',\
+'geom_6_3/point_values.txt'     u 1:6 w p ps .05 lt 1 dashtype 4 t 'Aspect, 6-3',\
+'geom_7_0/point_values.txt'     u 1:6 w p ps .05 lt 1 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:34 w l lt -1 lw .5 t 'Stone 93',\
+
+set output 'point_p_harm_comp.pdf'
+plot[:50][]\
+'harm_6_0/point_values.txt'     u 1:6 w p ps .05 lt 3 dashtype 1 t 'Aspect, 6-0',\
+'harm_6_1/point_values.txt'     u 1:6 w p ps .05 lt 3 dashtype 2 t 'Aspect, 6-1',\
+'harm_6_2/point_values.txt'     u 1:6 w p ps .05 lt 3 dashtype 3 t 'Aspect, 6-2',\
+'harm_6_3/point_values.txt'     u 1:6 w p ps .05 lt 3 dashtype 4 t 'Aspect, 6-3',\
+'harm_7_0/point_values.txt'     u 1:6 w p ps .05 lt 3 dashtype 5 t 'Aspect, 7-0',\
+'stone93/statistics_0.00050_np32.ascii' u 4:34 w l lt -1 lw .5 t 'Stone 93',\
+
+#'maxicompo_6_1/point_values.txt'    u 1:6 w p ps .05 lt 4 dashtype 1 t 'Aspect, max. compo., Q_2xQ_1, 6-1',\
+#'arithm_q2pm1/point_values.txt' u 1:6 w p ps .05 lt 1 dashtype 2 t 'Aspect, arithm., Q_2xP_{-1}',\
+#'harm_supg/point_values.txt'    u 1:6 w p ps .05 lt 3 dashtype 3 t 'Aspect, harm., SUPG',\
+
+set output 'point_p_arithm_pic.pdf'
+plot[:50][]\
+'regorda/150x150.Arithmetic' u 1:11 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:11 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:11 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00050_np32.ascii' u 4:34 w l lt -1 lw .5 t 'Stone 93',\
+
+set output 'point_p_geom_pic.pdf'
+plot[:50][]\
+'regorda/150x150.Geometric'  u 1:11 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric'  u 1:11 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric'  u 1:11 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00050_np32.ascii' u 4:34 w l lt -1 lw .5 t 'Stone 93',\
+
+set output 'point_p_harm_pic.pdf'
+plot[:50][]\
+'regorda/150x150.Harmonic'   u 1:11 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic'   u 1:11 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic'   u 1:11 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00050_np32.ascii' u 4:34 w l lt -1 lw .5 t 'Stone 93',\
+
+
+#############################################3
+set ylabel 'point material'
+#############################################3
+
+set output 'point_material_arithm_comp.pdf'
+plot[:100][]\
+'arithm_6_1/point_values.txt'    u 1:8 w p ps .051 t 'Aspect, arithm, sphere',\
+'arithm_6_1/point_values.txt'    u 1:9 w p ps .051 t 'Aspect, arithm, air',\
+'stone93/statistics_0.00050_np32.ascii' u 4:($35-1) w l lw .5 lt -1 t 'Stone 93',\
+
+
+set output 'point_material_geom_comp.pdf'
+plot[:100][]\
+'geom_6_1/point_values.txt'      u 1:8 w p ps .051 t 'Aspect, geom, sphere',\
+'geom_6_1/point_values.txt'      u 1:9 w p ps .051 t 'Aspect, geom, air',\
+'stone93/statistics_0.00050_np32.ascii' u 4:($35-1) w l lw .5 lt -1 t 'Stone 93',\
+
+set output 'point_material_harm_comp.pdf'
+plot[:100][]\
+'harm_6_1/point_values.txt'      u 1:8 w p ps .051 t 'Aspect, harm, sphere',\
+'harm_6_1/point_values.txt'      u 1:9 w p ps .051 t 'Aspect, harm, air',\
+'stone93/statistics_0.00050_np32.ascii' u 4:($35-1) w l lw .5 lt -1 t 'Stone 93',\
+
+set output 'point_material_arithm_pic.pdf'
+plot[:100][-0.1:1.1]\
+'regorda/150x150.Arithmetic' u 1:13 w l lw .95 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:13 w l lw .95 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:13 w l lw .95 lt 2 dt 3 t 'regorda, 256x256',\
+
+set output 'point_material_geom_pic.pdf'
+plot[:100][-0.1:1.1]\
+'regorda/150x150.Geometric'  u 1:13 w l lw .95 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric'  u 1:13 w l lw .95 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric'  u 1:13 w l lw .95 lt 2 dt 3 t 'regorda, 256x256',\
+
+set output 'point_material_harm_pic.pdf'
+plot[:100][-0.1:1.1]\
+'regorda/150x150.Harmonic'   u 1:13 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic'   u 1:13 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic'   u 1:13 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+
+
+#'maxicompo_6_1/point_values.txt' u 1:8 w p ps .051 t 'Aspect, max. compo, sphere',\
+#'maxicompo_6_1/point_values.txt' u 1:9 w p ps .051 t 'Aspect, max. compo, air',\
+
+
+
+unset log x
+ 
+set xlabel 'istep'
+set ylabel 'dt'
+
+set output 'dt_aspect.pdf'
+plot[:500][]\
+'arithm_6_1/statistics'        u 1:3 w l lw .5 lt 1 dashtype 1 t 'Aspect, arithm., Q_2xQ_1',\
+'geom_6_1/statistics'          u 1:3 w l lw .5 lt 2 dashtype 1 t 'Aspect, geom., Q_2xQ_1',\
+'harm_6_1/statistics'          u 1:3 w l lw .5 lt 3 dashtype 1 t 'Aspect, harm., Q_2xQ_1',\
+'maxicompo_6_1/statistics' u 1:3 w l lw .5 lt 4 dashtype 1 t 'Aspect, max. compo., Q_2xQ_1',\
+'harm_supg/statistics'     u 1:3 w l lw .5 lt 3 dashtype 3 t 'Aspect, harm., SUPG',\
+'geom_6_2/statistics'      u 1:3 w l lw .5 lt 2 dashtype 4 t 'Aspect, geom., Q_2xQ_1, 6-2',\
+'harm_6_2/statistics'      u 1:3 w l lw .5 lt 3 dashtype 4 t 'Aspect, harm., Q_2xQ_1, 6-2',\
+'arithm_6_3/statistics'    u 1:3 w l lw .5 lt 1 dashtype 5 t 'Aspect, arithm., Q_2xQ_1, 6-3',\
+'harm_6_3/statistics'      u 1:3 w l lw .5 lt 3 dashtype 5 t 'Aspect, harm., Q_2xQ_1, 6-3',\
+'arithm_q2pm1/statistics'  u 1:3 w l lw .5 lt 1 dashtype 2 t 'Aspect, arithm., Q_2xP_{-1}',\
+'stone93/statistics_0.00050_np32.ascii' u 24 w l lw .5 lt -1 t 'Stone 93',\
+
+set output 'dt_pic.pdf'
+plot[:200][]\
+'regorda/150x150.Arithmetic' u 1:2 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Arithmetic' u 1:2 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Arithmetic' u 1:2 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/150x150.Geometric'  u 1:2 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Geometric'  u 1:2 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Geometric'  u 1:2 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'regorda/150x150.Harmonic'   u 1:2 w l lw .5 lt 2 dt 1 t 'regorda, 150x150',\
+'regorda/200x200.Harmonic'   u 1:2 w l lw .5 lt 2 dt 2 t 'regorda, 200x200',\
+'regorda/256x256.Harmonic'   u 1:2 w l lw .5 lt 2 dt 3 t 'regorda, 256x256',\
+'stone93/statistics_0.00050_np32.ascii' u 24 w l lw .5 lt -1 t 'Stone 93',\
+
+
+
+set ylabel '# it stokes solver'
+set output 'stokes_solver.pdf'
+plot[:500][]\
+'arithm_6_1/statistics'       u 1:11 w l lw .5 lt 1 dashtype 1 t 'Aspect, arithm., Q_2xQ_1',\
+'geom_6_1/statistics'         u 1:11 w l lw .5 lt 2 dashtype 1 t 'Aspect, geom., Q_2xQ_1',\
+'harm_6_1/statistics'         u 1:11 w l lw .5 lt 3 dashtype 1 t 'Aspect, harm., Q_2xQ_1',\
+'maxicompo_6_1/statistics' u 1:11 w l lw .5 lt 4 dashtype 1 t 'Aspect, max. compo., Q_2xQ_1',\
+'arithm_q2pm1/statistics' u 1:11 w l lw .5 lt 1 dashtype 2 t 'Aspect, harithm., Q_2xP_{-1}',\
+'harm_supg/statistics'    u 1:11 w l lw .5 lt 3 dashtype 3 t 'Aspect, harm., SUPG',\
+'geom_6_2/statistics'     u 1:11 w l lw .5 lt 2 dashtype 4 t 'Aspect, geom., Q_2xQ_1, 6-2',\
+'harm_6_2/statistics'     u 1:11 w l lw .5 lt 3 dashtype 4 t 'Aspect, harm., Q_2xQ_1, 6-2',\
+'arithm_6_3/statistics'   u 1:11 w l lw .5 lt 1 dashtype 5 t 'Aspect, arithm., Q_2xQ_1, 6-3',\
+'harm_6_3/statistics'     u 1:11 w l lw .5 lt 3 dashtype 5 t 'Aspect, harm., Q_2xQ_1, 6-3',\
+
+#------------------------------------------------------------
+
+#set output 'surface.pdf'
+#plot[][]\
+#'statistics_0.00050_np32.ascii' 
+
+
+
