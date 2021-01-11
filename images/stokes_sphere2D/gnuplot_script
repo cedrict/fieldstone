@@ -1,0 +1,603 @@
+set term pdf enhanced font "Times,11pt"
+
+set xlabel ' mesh size h'
+set log x
+set key outside
+
+# lt 1 : aspect
+# lt 2 : stone 2 Q1P0
+# lt 3 : stone 72 q1q1 bubble
+# lt 4 : stone 18 q2q1
+# lt 5 : regorda
+# lt 6 : stone 93 
+
+vs=2./9.*0.01*0.123456789**2 
+
+#-----------------------------------------------------------------------------------------------------
+
+set log y
+set ylabel 'dofs'
+set output 'dofs.pdf'
+plot[][]\
+'aspect_FS_gr/statistics_none.ascii'       u (1./(2**($1))):7 w lp lt 1 dashtype 1 lw .5 ps .15 t 'ASPECT, none',\
+'aspect_FS_gr/statistics_harmonic.ascii'   u (1./(2**($1))):7 w lp lt 1 dashtype 2 lw .5 ps .15 t 'ASPECT, harm.',\
+'aspect_FS_gr/statistics_geometric.ascii'  u (1./(2**($1))):7 w lp lt 1 dashtype 3 lw .5 ps .15 t 'ASPECT, geom..',\
+'aspect_FS_gr/statistics_arithmetic.ascii' u (1./(2**($1))):7 w lp lt 1 dashtype 4 lw .5 ps .15 t 'ASPECT, arithm..',\
+'aspect_FS_gr/statistics_q1.ascii'         u (1./(2**($1))):7 w lp lt 1 dashtype 5 lw .5 ps .15 t 'ASPECT, q1 proj.',\
+'stone02_FS/statistics.ascii'              u 2:4              w lp lt 2 dashtype 1 lw .5 ps .15 t 'Stone 2',\
+'stone02_half_FS/statistics.ascii'         u 2:4              w lp lt 2 dashtype 2 lw .5 ps .15 t 'Stone 2 (half)',\
+'stone72_FS/statistics_b1.ascii'           u 2:4              w lp lt 3 dashtype 1 lw .5 ps .15 t 'Stone 72',\
+'stone18_FS/statistics_nq3.ascii'          u 2:4              w lp lt 4 dashtype 1 lw .5 ps .15 t 'Stone 18',\
+
+unset log y
+
+#-----------------------------------------------------------------------------------------------------
+set ylabel 'v_{rms}'
+#-----------------------------------------------------------------------------------------------------
+
+set output 'vrms_FS.pdf'
+plot[:][0.34:0.45]\
+'aspect_FS_gr/statistics_none.ascii'       u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dt 1 t 'ASPECT, none',\
+'aspect_FS_gr/statistics_harmonic.ascii'   u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dt 2 t 'ASPECT, harm.',\
+'aspect_FS_gr/statistics_geometric.ascii'  u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dt 3 t 'ASPECT, geom..',\
+'aspect_FS_gr/statistics_arithmetic.ascii' u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dt 4 t 'ASPECT, arithm..',\
+'aspect_FS_gr/statistics_q1.ascii'         u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dt 5 t 'ASPECT, q1 proj.',\
+'stone02_FS/statistics.ascii'              u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 2 dt 1 t 'Stone 2',\
+'stone02_half_FS/statistics.ascii'         u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 2 dt 2 t 'Stone 2 (half)',\
+'stone72_FS/statistics_b1.ascii'           u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 3 dt 1 t 'Stone 72, bubble #1',\
+'stone72_FS/statistics_b2.ascii'           u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 3 dt 2 t 'Stone 72, bubble #2',\
+'stone18_FS/statistics_nq3.ascii'          u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 4 dt 1 t 'Stone 18, nq=3^2',\
+'stone18_FS/statistics_nq4.ascii'          u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 4 dt 2 t 'Stone 18, nq=4^2',\
+'stone18_FS/statistics_nq5.ascii'          u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 4 dt 3 t 'Stone 18, nq=5^2',\
+'stone18_FS/statistics_nq6.ascii'          u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 4 dt 4 t 'Stone 18, nq=6^2',\
+'stone18_FS/statistics_nq10.ascii'         u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 4 dt 5 t 'Stone 18, nq=10^2',\
+'regorda/FS.Arithmetic'                    u 1:10                    w lp lw .5 ps .15 pt 7 lt 5 dashtype 2 t 'Regorda, arithm',\
+'regorda/FS.Geometric'                     u 1:10                    w lp lw .5 ps .15 pt 7 lt 5 dashtype 3 t 'Regorda, geom',\
+'regorda/FS.Harmonic'                      u 1:10                    w lp lw .5 ps .15 pt 7 lt 5 dashtype 4 t 'Regorda, harm',\
+'stone93_FS/statistics_np.ascii'           u (sqrt(1/$2)):($13/vs)   w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_FS/statistics_a.ascii'            u (sqrt(1/$2)):($13/vs)   w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+1.48224e-5/vs lt -1 dt 2 lw .5
+
+
+set output 'vrms_NS.pdf'
+plot[:][0.22:]\
+'aspect_NS_gr/statistics_none.ascii'       u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_NS_gr/statistics_arithmetic.ascii' u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 2 t 'ASPECT, arithm..',\
+'aspect_NS_gr/statistics_geometric.ascii'  u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_NS_gr/statistics_harmonic.ascii'   u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 4 t 'ASPECT, harm.',\
+'aspect_NS_gr/statistics_q1.ascii'         u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+'stone02_NS/statistics.ascii'              u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_NS/statistics.ascii'         u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone18_NS/statistics_nq3.ascii'          u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'regorda/NS.Arithmetic'                    u 1:10                    w lp lw .5 ps .15 pt 7 lt 5 dashtype 2 t 'Regorda, arithm',\
+'regorda/NS.Geometric'                     u 1:10                    w lp lw .5 ps .15 pt 7 lt 5 dashtype 3 t 'Regorda, geom',\
+'regorda/NS.Harmonic'                      u 1:10                    w lp lw .5 ps .15 pt 7 lt 5 dashtype 4 t 'Regorda, harm',\
+'stone93_NS/statistics_np.ascii'           u (sqrt(1/$2)):($13/vs)   w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_NS/statistics_a.ascii'            u (sqrt(1/$2)):($13/vs)   w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+9.529e-6/vs lt -1 dt 2  lw .5
+
+set output 'vrms_OT.pdf'
+plot[:][:]\
+'aspect_OT_gr/statistics_none.ascii'       u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_OT_gr/statistics_harmonic.ascii'   u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_OT_gr/statistics_geometric.ascii'  u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_OT_gr/statistics_arithmetic.ascii' u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_OT_gr/statistics_q1.ascii'         u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+'stone02_OT/statistics.ascii'              u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_OT/statistics.ascii'         u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone18_OT/statistics_nq3.ascii'          u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_OT/statistics_nq4.ascii'          u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 2 t 'Stone 18, nq=4^2',\
+'stone18_OT/statistics_nq5.ascii'          u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 3 t 'Stone 18, nq=5^2',\
+'stone18_OT/statistics_nq6.ascii'          u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 4 t 'Stone 18, nq=6^2',\
+'stone18_OT/statistics_nq10.ascii'         u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 5 t 'Stone 18, nq=10^2',\
+'regorda/OT.Arithmetic'                    u 1:10                    w lp lw .5 ps .15 pt 7 lt 5 dashtype 2 t 'Regorda, arithm',\
+'regorda/OT.Geometric'                     u 1:10                    w lp lw .5 ps .15 pt 7 lt 5 dashtype 3 t 'Regorda, geom',\
+'regorda/OT.Harmonic'                      u 1:10                    w lp lw .5 ps .15 pt 7 lt 5 dashtype 4 t 'Regorda, harm',\
+
+set output 'vrms_BO.pdf'
+plot[:][:]\
+'stone18_BO/statistics_nq3.ascii'          u 2:($15)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_BO/statistics_nq4.ascii'          u 2:($15)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 2 t 'Stone 18, nq=4^2',\
+'stone18_BO/statistics_nq5.ascii'          u 2:($15)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 3 t 'Stone 18, nq=5^2',\
+'stone18_BO/statistics_nq6.ascii'          u 2:($15)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 4 t 'Stone 18, nq=6^2',\
+'stone18_BO/statistics_nq10.ascii'         u 2:($15)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 5 t 'Stone 18, nq=10^2',\
+
+
+
+
+#-----------------------------------------------------------------------------------------------------
+set ylabel '|v|_{max}'
+#-----------------------------------------------------------------------------------------------------
+
+set output 'max_vel_FS.pdf'
+plot[][]\
+'aspect_FS_gr/statistics_none.ascii'       u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_FS_gr/statistics_harmonic.ascii'   u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_FS_gr/statistics_geometric.ascii'  u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_FS_gr/statistics_arithmetic.ascii' u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_FS_gr/statistics_q1.ascii'         u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+'stone02_FS/statistics.ascii'              u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_FS/statistics.ascii'         u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone72_FS/statistics_b1.ascii'           u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 3 dashtype 1 t 'Stone 72, bubble #1',\
+'stone72_FS/statistics_b2.ascii'           u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 3 dashtype 2 t 'Stone 72, bubble #2',\
+'stone18_FS/statistics_nq3.ascii'          u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_FS/statistics_nq4.ascii'          u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 2 t 'Stone 18, nq=4^2',\
+'stone18_FS/statistics_nq5.ascii'          u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 3 t 'Stone 18, nq=5^2',\
+'stone18_FS/statistics_nq6.ascii'          u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 4 t 'Stone 18, nq=6^2',\
+'stone18_FS/statistics_nq10.ascii'         u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 4 t 'Stone 18, nq=10^2',\
+'stone93_FS/statistics_np.ascii'           u (sqrt(1/$2)):($10/vs)   w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_FS/statistics_a.ascii'            u (sqrt(1/$2)):($10/vs)   w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+
+set output 'max_vel_NS.pdf'
+plot[][]\
+'aspect_NS_gr/statistics_none.ascii'       u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_NS_gr/statistics_harmonic.ascii'   u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_NS_gr/statistics_geometric.ascii'  u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_NS_gr/statistics_arithmetic.ascii' u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_NS_gr/statistics_q1.ascii'         u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+'stone02_NS/statistics.ascii'              u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_NS/statistics.ascii'         u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone18_NS/statistics_nq3.ascii'          u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone93_NS/statistics_np.ascii'           u (sqrt(1/$2)):($10/vs)   w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_NS/statistics_a.ascii'            u (sqrt(1/$2)):($10/vs)   w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+
+set output 'max_vel_OT.pdf'
+plot[][]\
+'aspect_OT_gr/statistics_none.ascii'       u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_OT_gr/statistics_harmonic.ascii'   u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_OT_gr/statistics_geometric.ascii'  u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_OT_gr/statistics_arithmetic.ascii' u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_OT_gr/statistics_q1.ascii'         u (1./(2**($1))):($17/vs) w lp lw .5 ps .15 pt 7 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+'stone02_OT/statistics.ascii'              u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_OT/statistics.ascii'         u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone18_OT/statistics_nq3.ascii'          u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_OT/statistics_nq4.ascii'          u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 2 t 'Stone 18, nq=4^2',\
+'stone18_OT/statistics_nq5.ascii'          u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 3 t 'Stone 18, nq=5^2',\
+'stone18_OT/statistics_nq6.ascii'          u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 4 t 'Stone 18, nq=6^2',\
+'stone18_OT/statistics_nq10.ascii'         u 2:($12/vs)              w lp lw .5 ps .15 pt 7 lt 4 dashtype 4 t 'Stone 18, nq=10^2',\
+
+#-----------------------------------------------------------------------------------------------------
+set ylabel 'p_{min}'
+#-----------------------------------------------------------------------------------------------------
+
+set output 'pressure_min_FS.pdf'
+plot[][-0.5004:-0.5002]\
+'aspect_FS_gr/statistics_none.ascii'       u (1./(2**($1))):21 w lp lw .5 ps .15 pt 7 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_FS_gr/statistics_harmonic.ascii'   u (1./(2**($1))):21 w lp lw .5 ps .15 pt 7 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_FS_gr/statistics_geometric.ascii'  u (1./(2**($1))):21 w lp lw .5 ps .15 pt 7 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_FS_gr/statistics_arithmetic.ascii' u (1./(2**($1))):21 w lp lw .5 ps .15 pt 7 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_FS_gr/statistics_q1.ascii'         u (1./(2**($1))):21 w lp lw .5 ps .15 pt 7 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+'stone02_FS/statistics.ascii'              u 2:13              w lp lw .5 ps .15 pt 7 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_FS/statistics.ascii'         u 2:13              w lp lw .5 ps .15 pt 7 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone72_FS/statistics_b1.ascii'           u 2:13              w lp lw .5 ps .15 pt 7 lt 3 dashtype 1 t 'Stone 72, bubble #1',\
+'stone72_FS/statistics_b2.ascii'           u 2:13              w lp lw .5 ps .15 pt 7 lt 3 dashtype 2 t 'Stone 72, bubble #2',\
+'stone18_FS/statistics_nq3.ascii'          u 2:13              w lp lw .5 ps .15 pt 7 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_FS/statistics_nq4.ascii'          u 2:13              w lp lw .5 ps .15 pt 7 lt 4 dashtype 2 t 'Stone 18, nq=4^2',\
+'stone18_FS/statistics_nq5.ascii'          u 2:13              w lp lw .5 ps .15 pt 7 lt 4 dashtype 3 t 'Stone 18, nq=5^2',\
+'stone18_FS/statistics_nq6.ascii'          u 2:13              w lp lw .5 ps .15 pt 7 lt 4 dashtype 4 t 'Stone 18, nq=6^2',\
+'stone18_FS/statistics_nq10.ascii'         u 2:13              w lp lw .5 ps .15 pt 7 lt 4 dashtype 5 t 'Stone 18, nq=10^2',\
+'stone93_FS/statistics_np.ascii'           u (sqrt(1/$2)):11   w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_FS/statistics_a.ascii'            u (sqrt(1/$2)):11   w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+
+set output 'pressure_min_NS.pdf'
+plot[][]\
+'aspect_NS_gr/statistics_none.ascii'       u (1./(2**($1))):21 w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_NS_gr/statistics_harmonic.ascii'   u (1./(2**($1))):21 w lp lw .5 ps .15 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_NS_gr/statistics_geometric.ascii'  u (1./(2**($1))):21 w lp lw .5 ps .15 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_NS_gr/statistics_arithmetic.ascii' u (1./(2**($1))):21 w lp lw .5 ps .15 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_NS_gr/statistics_q1.ascii'         u (1./(2**($1))):21 w lp lw .5 ps .15 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+'stone02_NS/statistics.ascii'              u 2:13              w lp lw .5 ps .15 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_NS/statistics.ascii'         u 2:13              w lp lw .5 ps .15 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone72_NS/statistics.ascii'              u 2:13              w lp lw .5 ps .15 lt 3 dashtype 1 t 'Stone 72',\
+'stone18_NS/statistics_nq3.ascii'          u 2:13              w lp lw .5 ps .15 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'regorda/NS.Arithmetic'                    u 1:7               w lp lw .5 ps .15 pt 7 lt 5 dashtype 2 t 'Regorda, arithm',\
+'regorda/NS.Geometric'                     u 1:7               w lp lw .5 ps .15 pt 7 lt 5 dashtype 3 t 'Regorda, geom',\
+'regorda/NS.Harmonic'                      u 1:7               w lp lw .5 ps .15 pt 7 lt 5 dashtype 4 t 'Regorda, harm',\
+'stone93_NS/statistics_np.ascii'           u (sqrt(1/$2)):($11)   w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_NS/statistics_a.ascii'            u (sqrt(1/$2)):($11)   w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+
+set output 'pressure_min_OT.pdf'
+plot[][:0.005]\
+'aspect_OT_gr/statistics_none.ascii'       u (1./(2**($1))):21 w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_OT_gr/statistics_harmonic.ascii'   u (1./(2**($1))):21 w lp lw .5 ps .15 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_OT_gr/statistics_geometric.ascii'  u (1./(2**($1))):21 w lp lw .5 ps .15 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_OT_gr/statistics_arithmetic.ascii' u (1./(2**($1))):21 w lp lw .5 ps .15 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_OT_gr/statistics_q1.ascii'         u (1./(2**($1))):21 w lp lw .5 ps .15 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+'stone02_OT/statistics.ascii'              u 2:13              w lp lw .5 ps .15 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_OT/statistics.ascii'         u 2:13              w lp lw .5 ps .15 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone72_OT/statistics.ascii'              u 2:13              w lp lw .5 ps .15 lt 3 dashtype 1 t 'Stone 72',\
+'stone18_OT/statistics_nq3.ascii'          u 2:13              w lp lw .5 ps .15 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_OT/statistics_nq4.ascii'          u 2:13              w lp lw .5 ps .15 lt 4 dashtype 2 t 'Stone 18, nq=4^2',\
+'stone18_OT/statistics_nq5.ascii'          u 2:13              w lp lw .5 ps .15 lt 4 dashtype 3 t 'Stone 18, nq=5^2',\
+'stone18_OT/statistics_nq6.ascii'          u 2:13              w lp lw .5 ps .15 lt 4 dashtype 4 t 'Stone 18, nq=6^2',\
+'stone18_OT/statistics_nq10.ascii'         u 2:13              w lp lw .5 ps .15 lt 4 dashtype 5 t 'Stone 18, nq=10^2',\
+
+#-----------------------------------------------------------------------------------------------------
+set ylabel '<p>'
+#-----------------------------------------------------------------------------------------------------
+
+set output 'pressure_mean_FS.pdf'
+plot[][]\
+'aspect_FS_gr/statistics_none.ascii'       u (1./(2**($1))):22 w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_FS_gr/statistics_harmonic.ascii'   u (1./(2**($1))):22 w lp lw .5 ps .15 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_FS_gr/statistics_geometric.ascii'  u (1./(2**($1))):22 w lp lw .5 ps .15 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_FS_gr/statistics_arithmetic.ascii' u (1./(2**($1))):22 w lp lw .5 ps .15 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_FS_gr/statistics_q1.ascii'         u (1./(2**($1))):22 w lp lw .5 ps .15 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+
+set output 'pressure_mean_NS.pdf'
+plot[][]\
+'aspect_NS_gr/statistics_none.ascii'       u (1./(2**($1))):22 w lp lw .5 ps .15 pt 7 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_NS_gr/statistics_harmonic.ascii'   u (1./(2**($1))):22 w lp lw .5 ps .15 pt 7 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_NS_gr/statistics_geometric.ascii'  u (1./(2**($1))):22 w lp lw .5 ps .15 pt 7 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_NS_gr/statistics_arithmetic.ascii' u (1./(2**($1))):22 w lp lw .5 ps .15 pt 7 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_NS_gr/statistics_q1.ascii'         u (1./(2**($1))):22 w lp lw .5 ps .15 pt 7 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+'stone18_NS/statistics_nq3.ascii'          u 2:16              w lp lw .5 ps .15 pt 7 lt 4 dashtype 1 t 'Stone 18, nq=3^3',\
+'stone18_NS/statistics_nq4.ascii'          u 2:16              w lp lw .5 ps .15 pt 7 lt 4 dashtype 2 t 'Stone 18, nq=4^3',\
+'stone18_NS/statistics_nq5.ascii'          u 2:16              w lp lw .5 ps .15 pt 7 lt 4 dashtype 3 t 'Stone 18, nq=5^3',\
+'stone18_NS/statistics_nq6.ascii'          u 2:16              w lp lw .5 ps .15 pt 7 lt 4 dashtype 4 t 'Stone 18, nq=6^3',\
+'stone18_NS/statistics_nq10.ascii'         u 2:16              w lp lw .5 ps .15 pt 7 lt 4 dashtype 5 t 'Stone 18, nq=10^3',\
+
+set output 'pressure_mean_OT.pdf'
+plot[][]\
+'aspect_OT_gr/statistics_none.ascii'       u (1./(2**($1))):22 w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_OT_gr/statistics_harmonic.ascii'   u (1./(2**($1))):22 w lp lw .5 ps .15 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_OT_gr/statistics_geometric.ascii'  u (1./(2**($1))):22 w lp lw .5 ps .15 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_OT_gr/statistics_arithmetic.ascii' u (1./(2**($1))):22 w lp lw .5 ps .15 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_OT_gr/statistics_q1.ascii'         u (1./(2**($1))):22 w lp lw .5 ps .15 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+
+#-----------------------------------------------------------------------------------------------------
+set ylabel 'p_{max}'
+#-----------------------------------------------------------------------------------------------------
+
+set output 'pressure_max_FS.pdf'
+plot[][0.5002:0.5004]\
+'aspect_FS_gr/statistics_none.ascii'        u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_FS_gr/statistics_harmonic.ascii'    u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_FS_gr/statistics_geometric.ascii'   u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_FS_gr/statistics_arithmetic.ascii'  u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_FS_gr/statistics_q1.ascii'          u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+'stone02_FS/statistics.ascii'               u 2:14              w lp lw .5 ps .15 pt 7 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_FS/statistics.ascii'          u 2:14              w lp lw .5 ps .15 pt 7 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone72_FS/statistics_b1.ascii'            u 2:14              w lp lw .5 ps .15 pt 7 lt 3 dashtype 1 t 'Stone 72, bubble #1',\
+'stone72_FS/statistics_b2.ascii'            u 2:14              w lp lw .5 ps .15 pt 7 lt 3 dashtype 2 t 'Stone 72, bubble #2',\
+'stone18_FS/statistics_nq3.ascii'           u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_FS/statistics_nq4.ascii'           u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 2 t 'Stone 18, nq=4^2',\
+'stone18_FS/statistics_nq5.ascii'           u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 3 t 'Stone 18, nq=5^2',\
+'stone18_FS/statistics_nq6.ascii'           u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 4 t 'Stone 18, nq=6^2',\
+'stone18_FS/statistics_nq10.ascii'          u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 5 t 'Stone 18, nq=10^2',\
+'stone93_FS/statistics_np.ascii'           u (sqrt(1/$2)):12    w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_FS/statistics_a.ascii'            u (sqrt(1/$2)):12    w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+
+set output 'pressure_max_FS_zoom.pdf'
+plot[:0.0625][0.50025:0.50035]\
+'aspect_FS_gr/statistics_none.ascii'        u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_FS_gr/statistics_harmonic.ascii'    u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_FS_gr/statistics_geometric.ascii'   u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_FS_gr/statistics_arithmetic.ascii'  u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_FS_gr/statistics_q1.ascii'          u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+'stone72_FS/statistics_b1.ascii'            u 2:14              w lp lw .5 ps .15 pt 7 lt 3 dashtype 1 t 'Stone 72, bubble #1',\
+'stone72_FS/statistics_b2.ascii'            u 2:14              w lp lw .5 ps .15 pt 7 lt 3 dashtype 2 t 'Stone 72, bubble #2',\
+'stone18_FS/statistics_nq3.ascii'           u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_FS/statistics_nq4.ascii'           u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 2 t 'Stone 18, nq=4^2',\
+'stone18_FS/statistics_nq5.ascii'           u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 3 t 'Stone 18, nq=5^2',\
+'stone18_FS/statistics_nq6.ascii'           u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 4 t 'Stone 18, nq=6^2',\
+'stone18_FS/statistics_nq10.ascii'          u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 5 t 'Stone 18, nq=10^2',\
+
+
+
+
+
+
+
+
+set output 'pressure_max_NS.pdf'
+plot[][:]\
+'aspect_NS_gr/statistics_none.ascii'       u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_NS_gr/statistics_harmonic.ascii'   u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_NS_gr/statistics_geometric.ascii'  u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_NS_gr/statistics_arithmetic.ascii' u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_NS_gr/statistics_q1.ascii'         u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+'stone02_NS/statistics.ascii'              u 2:14              w lp lw .5 ps .15 pt 7 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_NS/statistics.ascii'         u 2:14              w lp lw .5 ps .15 pt 7 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone72_NS/statistics_b1.ascii'           u 2:14              w lp lw .5 ps .15 pt 7 lt 3 dashtype 1 t 'Stone 72, bubble #1',\
+'stone72_NS/statistics_b2.ascii'           u 2:14              w lp lw .5 ps .15 pt 7 lt 3 dashtype 2 t 'Stone 72, bubble #2',\
+'stone18_NS/statistics_nq3.ascii'          u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'regorda/NS.Arithmetic'                    u 1:6               w lp lw .5 ps .15 pt 7 lt 5 dashtype 2 t 'Regorda, arithm',\
+'regorda/NS.Geometric'                     u 1:6               w lp lw .5 ps .15 pt 7 lt 5 dashtype 3 t 'Regorda, geom',\
+'regorda/NS.Harmonic'                      u 1:6               w lp lw .5 ps .15 pt 7 lt 5 dashtype 4 t 'Regorda, harm',\
+'stone93_NS/statistics_np.ascii'           u (sqrt(1/$2)):($12)   w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_NS/statistics_a.ascii'            u (sqrt(1/$2)):($12)   w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+
+set output 'pressure_max_OT.pdf'
+plot[][0.995:]\
+'aspect_OT_gr/statistics_none.ascii'       u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_OT_gr/statistics_harmonic.ascii'   u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_OT_gr/statistics_geometric.ascii'  u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_OT_gr/statistics_arithmetic.ascii' u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_OT_gr/statistics_q1.ascii'         u (1./(2**($1))):23 w lp lw .5 ps .15 pt 7 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+'stone02_OT/statistics.ascii'              u 2:14              w lp lw .5 ps .15 pt 7 lt 1 dashtype 1 t 'Stone 2',\
+'stone02_half_OT/statistics.ascii'         u 2:14              w lp lw .5 ps .15 pt 7 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone72_OT/statistics_b1.ascii'           u 2:14              w lp lw .5 ps .15 pt 7 lt 3 dashtype 1 t 'Stone 72, bubble #1',\
+'stone72_OT/statistics_b2.ascii'           u 2:14              w lp lw .5 ps .15 pt 7 lt 3 dashtype 2 t 'Stone 72, bubble #2',\
+'stone18_OT/statistics_nq3.ascii'          u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_OT/statistics_nq4.ascii'          u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 2 t 'Stone 18, nq=3^2',\
+'stone18_OT/statistics_nq5.ascii'          u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 3 t 'Stone 18, nq=5^2',\
+'stone18_OT/statistics_nq6.ascii'          u 2:14              w lp lw .5 ps .15 pt 7 lt 4 dashtype 4 t 'Stone 18, nq=6^2',\
+
+#-----------------------------------------------------------------------------------------------------
+set ylabel 'velocity u*'
+#-----------------------------------------------------------------------------------------------------
+
+set output 'max_u_FS.pdf'
+plot[][0.26:]\
+'stone02_FS/statistics.ascii'        u 2:($6/vs)    w lp lw .5 ps .15 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_FS/statistics.ascii'   u 2:($6/vs)    w lp lw .5 ps .15 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone72_FS/statistics_b1.ascii'     u 2:($6/vs)    w lp lw .5 ps .15 lt 3 dashtype 1 t 'Stone 72, bubble #1',\
+'stone72_FS/statistics_b2.ascii'     u 2:($6/vs)    w lp lw .5 ps .15 lt 3 dashtype 2 t 'Stone 72, bubble #2',\
+'stone18_FS/statistics_nq3.ascii'    u 2:($6/vs)    w lp lw .5 ps .15 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_FS/statistics_nq4.ascii'    u 2:($6/vs)    w lp lw .5 ps .15 lt 4 dashtype 2 t 'Stone 18, nq=4^2',\
+'stone18_FS/statistics_nq5.ascii'    u 2:($6/vs)    w lp lw .5 ps .15 lt 4 dashtype 3 t 'Stone 18, nq=5^2',\
+'stone18_FS/statistics_nq6.ascii'    u 2:($6/vs)    w lp lw .5 ps .15 lt 4 dashtype 4 t 'Stone 18, nq=3^6',\
+'stone93_FS/statistics_np.ascii'     u (sqrt(1/$2)):($6/vs)    w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_FS/statistics_a.ascii'      u (sqrt(1/$2)):($6/vs)    w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+
+set output 'max_u_NS.pdf'
+plot[][8e-6:]\
+'stone02_NS/statistics.ascii'        u 2:6    w lp lw .5 ps .15 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_NS/statistics.ascii'   u 2:6    w lp lw .5 ps .15 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone72_NS/statistics.ascii'        u 2:6    w lp lw .5 ps .15 lt 3 dashtype 1 t 'Stone 72',\
+'stone18_NS/statistics_nq3.ascii'    u 2:6    w lp lw .5 ps .15 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'regorda/NS.Arithmetic'              u 1:2    w lp lw .5 ps .15 pt 7 lt 5 dashtype 2 t 'Regorda, arithm',\
+'regorda/NS.Geometric'               u 1:2    w lp lw .5 ps .15 pt 7 lt 5 dashtype 3 t 'Regorda, geom',\
+'regorda/NS.Harmonic'                u 1:2    w lp lw .5 ps .15 pt 7 lt 5 dashtype 4 t 'Regorda, harm',\
+'stone93_NS/statistics_np.ascii'     u (sqrt(1/$2)):6   w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_NS/statistics_a.ascii'      u (sqrt(1/$2)):6   w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+
+set output 'max_u_OT.pdf'
+plot[][]\
+'stone02_OT/statistics.ascii'        u 2:6    w lp lw .5 ps .15 lt 2 dashtype 1 t 'Stone 2',\
+'stone72_OT/statistics.ascii'        u 2:6    w lp lw .5 ps .15 lt 3 dashtype 1 t 'Stone 72',\
+'stone18_OT/statistics_nq3.ascii'    u 2:6    w lp lw .5 ps .15 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_OT/statistics_nq4.ascii'    u 2:6    w lp lw .5 ps .15 lt 4 dashtype 2 t 'Stone 18, nq=4^2',\
+'stone18_OT/statistics_nq5.ascii'    u 2:6    w lp lw .5 ps .15 lt 4 dashtype 3 t 'Stone 18, nq=5^2',\
+'stone18_OT/statistics_nq6.ascii'    u 2:6    w lp lw .5 ps .15 lt 4 dashtype 4 t 'Stone 18, nq=6^2',\
+'stone18_OT/statistics_nq10.ascii'   u 2:6    w lp lw .5 ps .15 lt 4 dashtype 5 t 'Stone 18, nq=10^2',\
+
+#-----------------------------------------------------------------------------------------------------
+set ylabel 'velocity v*'
+#-----------------------------------------------------------------------------------------------------
+
+set output 'max_v_FS.pdf'
+plot[][]\
+'stone02_FS/statistics.ascii'        u 2:($8/vs)    w lp lw .5 ps .15 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_FS/statistics.ascii'   u 2:($8/vs)    w lp lw .5 ps .15 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone72_FS/statistics_b1.ascii'     u 2:($8/vs)    w lp lw .5 ps .15 lt 3 dashtype 1 t 'Stone 72, bubble #1',\
+'stone72_FS/statistics_b2.ascii'     u 2:($8/vs)    w lp lw .5 ps .15 lt 3 dashtype 2 t 'Stone 72, bubble #2',\
+'stone18_FS/statistics_nq3.ascii'    u 2:($8/vs)    w lp lw .5 ps .15 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_FS/statistics_nq4.ascii'    u 2:($8/vs)    w lp lw .5 ps .15 lt 4 dashtype 2 t 'Stone 18, nq=4^2',\
+'stone18_FS/statistics_nq5.ascii'    u 2:($8/vs)    w lp lw .5 ps .15 lt 4 dashtype 3 t 'Stone 18, nq=5^2',\
+'stone18_FS/statistics_nq6.ascii'    u 2:($8/vs)    w lp lw .5 ps .15 lt 4 dashtype 4 t 'Stone 18, nq=6^2',\
+'stone18_FS/statistics_nq10.ascii'   u 2:($8/vs)    w lp lw .5 ps .15 lt 4 dashtype 5 t 'Stone 18, nq=10^2',\
+'stone93_FS/statistics_np.ascii'     u (sqrt(1/$2)):($8/vs)    w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_FS/statistics_a.ascii'      u (sqrt(1/$2)):($8/vs)    w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+
+set output 'max_v_NS.pdf'
+plot[][]\
+'stone02_NS/statistics.ascii'        u 2:($8/vs)    w lp lw .5 ps .15 pt 7 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_NS/statistics.ascii'   u 2:($8/vs)    w lp lw .5 ps .15 pt 7 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone72_NS/statistics.ascii'        u 2:($8/vs)    w lp lw .5 ps .15 pt 7 lt 3 dashtype 1 t 'Stone 72',\
+'stone18_NS/statistics_nq3.ascii'    u 2:($8/vs)    w lp lw .5 ps .15 pt 7 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'regorda/NS.Arithmetic'              u 1:($4/vs)    w lp lw .5 ps .15 pt 7 lt 5 dashtype 2 t 'Regorda, arithm',\
+'regorda/NS.Geometric'               u 1:($4/vs)    w lp lw .5 ps .15 pt 7 lt 5 dashtype 3 t 'Regorda, geom',\
+'regorda/NS.Harmonic'                u 1:($4/vs)    w lp lw .5 ps .15 pt 7 lt 5 dashtype 4 t 'Regorda, harm',\
+'stone93_NS/statistics_np.ascii'     u (sqrt(1/$2)):($8/vs)   w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_NS/statistics_a.ascii'      u (sqrt(1/$2)):($8/vs)   w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+1.4649e-5/vs lt -1 dt 2 lw .5 
+
+set output 'max_v_OT.pdf'
+plot[][]\
+'stone02_OT/statistics.ascii'        u 2:8    w lp lw .5 ps .15 lt 2 dashtype 1 t 'Stone 2',\
+'stone02_half_OT/statistics.ascii'   u 2:8    w lp lw .5 ps .15 lt 2 dashtype 2 t 'Stone 2 (half)',\
+'stone72_OT/statistics.ascii'        u 2:8    w lp lw .5 ps .15 lt 3 dashtype 1 t 'Stone 72',\
+'stone18_OT/statistics_nq3.ascii'    u 2:8    w lp lw .5 ps .15 lt 4 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_OT/statistics_nq4.ascii'    u 2:8    w lp lw .5 ps .15 lt 4 dashtype 2 t 'Stone 18, nq=4^2',\
+'stone18_OT/statistics_nq5.ascii'    u 2:8    w lp lw .5 ps .15 lt 4 dashtype 3 t 'Stone 18, nq=5^2',\
+'stone18_OT/statistics_nq6.ascii'    u 2:8    w lp lw .5 ps .15 lt 4 dashtype 4 t 'Stone 18, nq=6^2',\
+'stone18_OT/statistics_nq10.ascii'   u 2:8    w lp lw .5 ps .15 lt 4 dashtype 5 t 'Stone 18, nq=10^2',\
+
+#-----------------------------------------------------------------------------------------------------
+set ylabel 'mass of sphere'
+#-----------------------------------------------------------------------------------------------------
+
+set output 'mass_sphere.pdf'
+plot[][]\
+'aspect_FS_gr/statistics_none.ascii'       u (1./(2**($1))):20 w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, none',\
+'aspect_FS_gr/statistics_harmonic.ascii'   u (1./(2**($1))):20 w lp lw .5 ps .15 lt 1 dashtype 2 t 'ASPECT, harm.',\
+'aspect_FS_gr/statistics_geometric.ascii'  u (1./(2**($1))):20 w lp lw .5 ps .15 lt 1 dashtype 3 t 'ASPECT, geom..',\
+'aspect_FS_gr/statistics_arithmetic.ascii' u (1./(2**($1))):20 w lp lw .5 ps .15 lt 1 dashtype 4 t 'ASPECT, arithm..',\
+'aspect_FS_gr/statistics_q1.ascii'         u (1./(2**($1))):20 w lp lw .5 ps .15 lt 1 dashtype 5 t 'ASPECT, q1 proj.',\
+pi*0.123456789**2*1.01 lt -1 t 'analytical mass'
+
+
+set output 'mass_total.pdf'
+plot[][]\
+'stone18_NS/statistics_nq3.ascii'   u 2:17    w lp lw .5 ps .15 lt 1 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_NS/statistics_nq4.ascii'   u 2:17    w lp lw .5 ps .15 lt 2 dashtype 1 t 'Stone 18, nq=4^2',\
+'stone18_NS/statistics_nq5.ascii'   u 2:17    w lp lw .5 ps .15 lt 3 dashtype 1 t 'Stone 18, nq=5^2',\
+'stone18_NS/statistics_nq6.ascii'   u 2:17    w lp lw .5 ps .15 lt 4 dashtype 1 t 'Stone 18, nq=6^2',\
+'stone18_NS/statistics_nq10.ascii'  u 2:17    w lp lw .5 ps .15 lt 5 dashtype 1 t 'Stone 18, nq=10^2',\
+1+pi*0.123456789**2*0.01 lt -1 lw .5 dashtype 2 t 'analytical mass'
+
+#-----------------------------------------------------------------------------------------------------
+set ylabel 'velocity in the center / v_s'
+#-----------------------------------------------------------------------------------------------------
+
+set output 'center_velocity_FS.pdf'
+plot[][]\
+'stone18_FS/statistics_nq3.ascii'   u 2:(abs($19)/vs)    w lp lw .5 ps .15 lt 1 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_FS/statistics_nq4.ascii'   u 2:(abs($19)/vs)    w lp lw .5 ps .15 lt 2 dashtype 1 t 'Stone 18, nq=4^2',\
+'stone18_FS/statistics_nq5.ascii'   u 2:(abs($19)/vs)    w lp lw .5 ps .15 lt 3 dashtype 1 t 'Stone 18, nq=5^2',\
+'stone18_FS/statistics_nq6.ascii'   u 2:(abs($19)/vs)    w lp lw .5 ps .15 lt 4 dashtype 1 t 'Stone 18, nq=6^2',\
+'stone18_FS/statistics_nq10.ascii'  u 2:(abs($19)/vs)    w lp lw .5 ps .15 lt 5 dashtype 1 t 'Stone 18, nq=10^2',\
+'stone93_FS/statistics_np.ascii'    u (sqrt(1/$2)):(sqrt($27**2+$28**2)/vs)    w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_FS/statistics_a.ascii'     u (sqrt(1/$2)):(sqrt($27**2+$28**2)/vs)    w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+
+set output 'center_velocity_NS.pdf'
+plot[][]\
+'stone18_NS/statistics_nq3.ascii'   u 2:(abs($19)/vs)    w lp lw .5 ps .15 lt 1 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_NS/statistics_nq4.ascii'   u 2:(abs($19)/vs)    w lp lw .5 ps .15 lt 2 dashtype 1 t 'Stone 18, nq=4^2',\
+'stone18_NS/statistics_nq5.ascii'   u 2:(abs($19)/vs)    w lp lw .5 ps .15 lt 3 dashtype 1 t 'Stone 18, nq=5^2',\
+'stone18_NS/statistics_nq6.ascii'   u 2:(abs($19)/vs)    w lp lw .5 ps .15 lt 4 dashtype 1 t 'Stone 18, nq=6^2',\
+'stone18_NS/statistics_nq10.ascii'  u 2:(abs($19)/vs)    w lp lw .5 ps .15 lt 5 dashtype 1 t 'Stone 18, nq=10^2',\
+'regorda/NS.Arithmetic'             u 1:9             w lp lw .5 ps .15 pt 7 lt 5 dashtype 2 t 'Regorda, arithm',\
+'regorda/NS.Geometric'              u 1:9             w lp lw .5 ps .15 pt 7 lt 5 dashtype 3 t 'Regorda, geom',\
+'regorda/NS.Harmonic'               u 1:9             w lp lw .5 ps .15 pt 7 lt 5 dashtype 4 t 'Regorda, harm',\
+'stone93_NS/statistics_np.ascii'    u (sqrt(1/$2)):(sqrt($27**2+$28**2)/vs)    w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_NS/statistics_a.ascii'     u (sqrt(1/$2)):(sqrt($27**2+$28**2)/vs)    w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+
+set output 'center_velocity_OT.pdf'
+plot[][]\
+'stone18_OT/statistics_nq3.ascii'   u 2:(abs($19))    w lp lw .5 ps .15 lt 1 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_OT/statistics_nq4.ascii'   u 2:(abs($19))    w lp lw .5 ps .15 lt 2 dashtype 1 t 'Stone 18, nq=4^2',\
+'stone18_OT/statistics_nq5.ascii'   u 2:(abs($19))    w lp lw .5 ps .15 lt 3 dashtype 1 t 'Stone 18, nq=5^2',\
+'stone18_OT/statistics_nq6.ascii'   u 2:(abs($19))    w lp lw .5 ps .15 lt 4 dashtype 1 t 'Stone 18, nq=6^2',\
+'stone18_OT/statistics_nq10.ascii'  u 2:(abs($19))    w lp lw .5 ps .15 lt 5 dashtype 1 t 'Stone 18, nq=10^2',\
+
+set output 'center_velocity_BO.pdf'
+plot[][]\
+'stone18_BO/statistics_nq3.ascii'   u 2:(abs($19))    w lp lw .5 ps .15 lt 1 dashtype 1 t 'Stone 18, nq=3^2',\
+'stone18_BO/statistics_nq4.ascii'   u 2:(abs($19))    w lp lw .5 ps .15 lt 2 dashtype 1 t 'Stone 18, nq=4^2',\
+'stone18_BO/statistics_nq5.ascii'   u 2:(abs($19))    w lp lw .5 ps .15 lt 3 dashtype 1 t 'Stone 18, nq=5^2',\
+'stone18_BO/statistics_nq6.ascii'   u 2:(abs($19))    w lp lw .5 ps .15 lt 4 dashtype 1 t 'Stone 18, nq=6^2',\
+'stone18_BO/statistics_nq10.ascii'  u 2:(abs($19))    w lp lw .5 ps .15 lt 5 dashtype 1 t 'Stone 18, nq=10^2',\
+
+
+
+
+
+#-----------------------------------------------------------------------------------------------------
+set ylabel 'dynamic pressure'
+#-----------------------------------------------------------------------------------------------------
+unset log x
+set ytics 0.0001
+set xlabel 'y'
+set style rect fc lt -1 fs solid 0.15 noborder
+set obj rect from 0.5-0.123456789, graph 0 to 0.5+0.123456789, graph 1
+
+set title 'no averaging'
+set output 'pressure_profile_none_NS.pdf'
+plot[][]\
+'stone93_NS/profile.ascii'                                 u 1:2           w p        ps .05 lt -1 dashtype 1 t 'Stone 93',\
+'aspect_NS_gr/output_stokes_none_5/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, gr5, none',\
+'aspect_NS_gr/output_stokes_none_6/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 2 dashtype 1 t 'ASPECT, gr6, none',\
+'aspect_NS_gr/output_stokes_none_7/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 3 dashtype 1 t 'ASPECT, gr7, none',\
+'aspect_NS_gr/output_stokes_none_8/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 4 dashtype 1 t 'ASPECT, gr8, none',\
+'aspect_NS_gr/output_stokes_none_9/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 5 dashtype 1 t 'ASPECT, gr9, none',\
+
+set output 'pressure_profile_none_FS.pdf'
+plot[][]\
+'stone93_FS/profile.ascii'                                 u 1:2           w p        ps .05 lt -1 dashtype 1 t 'Stone 93',\
+'aspect_FS_gr/output_stokes_none_5/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, gr5, none',\
+'aspect_FS_gr/output_stokes_none_6/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 2 dashtype 1 t 'ASPECT, gr6, none',\
+'aspect_FS_gr/output_stokes_none_7/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 3 dashtype 1 t 'ASPECT, gr7, none',\
+'aspect_FS_gr/output_stokes_none_8/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 4 dashtype 1 t 'ASPECT, gr8, none',\
+'aspect_FS_gr/output_stokes_none_9/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 5 dashtype 1 t 'ASPECT, gr9, none',\
+'aspect_FS_gr/output_stokes_none_10/point_values.txt'      u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 6 dashtype 1 t 'ASPECT, gr10, none',\
+
+#-----
+
+set title 'arithmetic averaging'
+set output 'pressure_profile_arithmetic_NS.pdf'
+plot[][]\
+'stone93_NS/profile.ascii'                                 u 1:2           w p        ps .05 lt -1 dashtype 1 t 'Stone 93',\
+'aspect_NS_gr/output_stokes_arithmetic_5/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, gr5, none',\
+'aspect_NS_gr/output_stokes_arithmetic_6/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 2 dashtype 1 t 'ASPECT, gr6, none',\
+'aspect_NS_gr/output_stokes_arithmetic_7/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 3 dashtype 1 t 'ASPECT, gr7, none',\
+'aspect_NS_gr/output_stokes_arithmetic_8/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 4 dashtype 1 t 'ASPECT, gr8, none',\
+'aspect_NS_gr/output_stokes_arithmetic_9/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 5 dashtype 1 t 'ASPECT, gr9, none',\
+
+set output 'pressure_profile_arithmetic_FS.pdf'
+plot[][]\
+'stone93_FS/profile.ascii'                                 u 1:2           w p        ps .05 lt -1 dashtype 1 t 'Stone 93',\
+'aspect_FS_gr/output_stokes_arithmetic_5/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, gr5, none',\
+'aspect_FS_gr/output_stokes_arithmetic_6/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 2 dashtype 1 t 'ASPECT, gr6, none',\
+'aspect_FS_gr/output_stokes_arithmetic_7/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 3 dashtype 1 t 'ASPECT, gr7, none',\
+'aspect_FS_gr/output_stokes_arithmetic_8/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 4 dashtype 1 t 'ASPECT, gr8, none',\
+'aspect_FS_gr/output_stokes_arithmetic_9/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 5 dashtype 1 t 'ASPECT, gr9, none',\
+'aspect_FS_gr/output_stokes_arithmetic_10/point_values.txt'      u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 6 dashtype 1 t 'ASPECT, gr10, none',\
+
+
+#-----
+
+set title 'geometric averaging'
+set output 'pressure_profile_geometric_NS.pdf'
+plot[][]\
+'stone93_NS/profile.ascii'                                 u 1:2           w p        ps .05 lt -1 dashtype 1 t 'Stone 93',\
+'aspect_NS_gr/output_stokes_geometric_5/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, gr5, none',\
+'aspect_NS_gr/output_stokes_geometric_6/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 2 dashtype 1 t 'ASPECT, gr6, none',\
+'aspect_NS_gr/output_stokes_geometric_7/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 3 dashtype 1 t 'ASPECT, gr7, none',\
+'aspect_NS_gr/output_stokes_geometric_8/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 4 dashtype 1 t 'ASPECT, gr8, none',\
+'aspect_NS_gr/output_stokes_geometric_9/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 5 dashtype 1 t 'ASPECT, gr9, none',\
+
+set output 'pressure_profile_geometric_FS.pdf'
+plot[][]\
+'stone93_FS/profile.ascii'                                 u 1:2           w p        ps .05 lt -1 dashtype 1 t 'Stone 93',\
+'aspect_FS_gr/output_stokes_geometric_5/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, gr5, none',\
+'aspect_FS_gr/output_stokes_geometric_6/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 2 dashtype 1 t 'ASPECT, gr6, none',\
+'aspect_FS_gr/output_stokes_geometric_7/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 3 dashtype 1 t 'ASPECT, gr7, none',\
+'aspect_FS_gr/output_stokes_geometric_8/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 4 dashtype 1 t 'ASPECT, gr8, none',\
+'aspect_FS_gr/output_stokes_geometric_9/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 5 dashtype 1 t 'ASPECT, gr9, none',\
+'aspect_FS_gr/output_stokes_geometric_10/point_values.txt'      u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 6 dashtype 1 t 'ASPECT, gr10, none',\
+
+#-----
+
+set title 'harmonic averaging'
+set output 'pressure_profile_harmonic_NS.pdf'
+plot[][]\
+'stone93_NS/profile.ascii'                                 u 1:2           w p        ps .05 lt -1 dashtype 1 t 'Stone 93',\
+'aspect_NS_gr/output_stokes_harmonic_5/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, gr5, none',\
+'aspect_NS_gr/output_stokes_harmonic_6/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 2 dashtype 1 t 'ASPECT, gr6, none',\
+'aspect_NS_gr/output_stokes_harmonic_7/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 3 dashtype 1 t 'ASPECT, gr7, none',\
+'aspect_NS_gr/output_stokes_harmonic_8/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 4 dashtype 1 t 'ASPECT, gr8, none',\
+'aspect_NS_gr/output_stokes_harmonic_9/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 5 dashtype 1 t 'ASPECT, gr9, none',\
+
+set output 'pressure_profile_harmonic_FS.pdf'
+plot[][]\
+'stone93_FS/profile.ascii'                                 u 1:2           w p        ps .05 lt -1 dashtype 1 t 'Stone 93',\
+'aspect_FS_gr/output_stokes_harmonic_5/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, gr5, none',\
+'aspect_FS_gr/output_stokes_harmonic_6/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 2 dashtype 1 t 'ASPECT, gr6, none',\
+'aspect_FS_gr/output_stokes_harmonic_7/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 3 dashtype 1 t 'ASPECT, gr7, none',\
+'aspect_FS_gr/output_stokes_harmonic_8/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 4 dashtype 1 t 'ASPECT, gr8, none',\
+'aspect_FS_gr/output_stokes_harmonic_9/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 5 dashtype 1 t 'ASPECT, gr9, none',\
+'aspect_FS_gr/output_stokes_harmonic_10/point_values.txt'      u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 6 dashtype 1 t 'ASPECT, gr10, none',\
+
+#-----
+
+set title 'Q_1 projection'
+set output 'pressure_profile_q1_NS.pdf'
+plot[][]\
+'stone93_NS/profile.ascii'                                 u 1:2           w p        ps .05 lt -1 dashtype 1 t 'Stone 93',\
+'aspect_NS_gr/output_stokes_q1_5/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, gr5, none',\
+'aspect_NS_gr/output_stokes_q1_6/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 2 dashtype 1 t 'ASPECT, gr6, none',\
+'aspect_NS_gr/output_stokes_q1_7/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 3 dashtype 1 t 'ASPECT, gr7, none',\
+'aspect_NS_gr/output_stokes_q1_8/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 4 dashtype 1 t 'ASPECT, gr8, none',\
+'aspect_NS_gr/output_stokes_q1_9/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 5 dashtype 1 t 'ASPECT, gr9, none',\
+
+set title 'Q_1 projection'
+set output 'pressure_profile_q1_FS.pdf'
+plot[][]\
+'stone93_FS/profile.ascii'                                 u 1:2           w p        ps .05 lt -1 dashtype 1 t 'Stone 93',\
+'aspect_FS_gr/output_stokes_q1_5/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 1 dashtype 1 t 'ASPECT, gr5, none',\
+'aspect_FS_gr/output_stokes_q1_6/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 2 dashtype 1 t 'ASPECT, gr6, none',\
+'aspect_FS_gr/output_stokes_q1_7/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 3 dashtype 1 t 'ASPECT, gr7, none',\
+'aspect_FS_gr/output_stokes_q1_8/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 4 dashtype 1 t 'ASPECT, gr8, none',\
+'aspect_FS_gr/output_stokes_q1_9/point_values.txt'       u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 5 dashtype 1 t 'ASPECT, gr9, none',\
+'aspect_FS_gr/output_stokes_q1_10/point_values.txt'      u 3:($6-0.5+$3) w lp lw .5 ps .15 lt 6 dashtype 1 t 'ASPECT, gr10, none',\
+
+
+
+
+
+
+
+
