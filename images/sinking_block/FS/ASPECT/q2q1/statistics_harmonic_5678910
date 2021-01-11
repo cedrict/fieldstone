@@ -1,0 +1,27 @@
+# 1: Time step number
+# 2: Time (seconds)
+# 3: Time step size (seconds)
+# 4: Number of mesh cells
+# 5: Number of Stokes degrees of freedom
+# 6: Number of temperature degrees of freedom
+# 7: Number of degrees of freedom for all compositions
+# 8: Iterations for temperature solver
+# 9: Iterations for composition solver 1
+# 10: Iterations for Stokes solver
+# 11: Velocity iterations in Stokes preconditioner
+# 12: Schur complement iterations in Stokes preconditioner
+# 13: Visualization file name
+# 14: RMS velocity (m/s)
+# 15: Max. velocity (m/s)
+# 16: Minimal value for composition C_1
+# 17: Maximal value for composition C_1
+# 18: Global mass for composition C_1
+# 19: Minimal pressure (Pa)
+# 20: Average pressure (Pa)
+# 21: Maximal pressure (Pa)
+0 0.000000000000e+00 0.000000000000e+00 1024 9539 4225 4225 0 0 54 57 166 output_stokes/solution/solution-00000 4.63781196e-06 1.32685936e-05 0.00000000e+00 1.00000000e+00 1.31293403e-02 -5.00074829e-01 -4.43984584e-14 5.00074829e-01 
+0 0.000000000000e+00 0.000000000000e+00 4096 37507 16641 16641 0 0 83 86 249 output_stokes/solution/solution-00000 5.13947443e-06 1.43103156e-05 0.00000000e+00 1.00000000e+00 1.43500434e-02 -5.00083529e-01 7.93155214e-14 5.00083529e-01 
+0 0.000000000000e+00 0.000000000000e+00 16384 148739 66049 66049 0 0 93 96 251 output_stokes/solution/solution-00000 5.39260265e-06 1.48059790e-05 0.00000000e+00 1.00000000e+00 1.49807400e-02 -5.00088087e-01 -2.03138665e-13 5.00088087e-01 
+0 0.000000000000e+00 0.000000000000e+00 65536 592387 263169 263169 0 0 102 106 228 output_stokes/solution/solution-00000 5.51945632e-06 1.50511055e-05 0.00000000e+00 1.00000000e+00 1.53011746e-02 -5.00090416e-01 3.11777593e-12 5.00090416e-01 
+0 0.000000000000e+00 0.000000000000e+00 262144 2364419 1050625 1050625 0 0 159 164 326 output_stokes/solution/solution-00000 5.58307305e-06 1.51747203e-05 0.00000000e+00 1.00000000e+00 1.54626634e-02 -5.00091593e-01 -2.29205141e-11 5.00091593e-01 
+0 0.000000000000e+00 0.000000000000e+00 1048576 9447427 4198401 4198401 0 0 193 198 394 output_stokes/solution/solution-00000 5.61500034e-06 1.52374638e-05 0.00000000e+00 1.00000000e+00 1.55437258e-02 -5.00092184e-01 -4.21657640e-11 5.00092184e-01 
