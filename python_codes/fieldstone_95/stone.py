@@ -888,7 +888,12 @@ for istep in range(0,nstep):
 
     vel=np.sqrt(u**2+v**2)
 
-    benchfile.write("%e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e\n" %( \
+    length=0.
+    for i in range(4,3+np_surf):
+        length+=np.sqrt((xV[i+1]-xV[i])**2+(yV[i+1]-yV[i])**2)
+    print('     -> length interface=',length)
+
+    benchfile.write("%e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e\n" %( \
     nel,Nfem,model_time,\
     np.min(u),np.max(u),\
     np.min(v),np.max(v),\
@@ -896,7 +901,8 @@ for istep in range(0,nstep):
     np.min(p),np.max(p),
     vrms,vrms_f,vrms_s,\
     avrg_rho,avrg_eta,\
-    vol_f,vol_s,dt,np_surf))
+    vol_f,vol_s,dt,np_surf,
+    yV[np_surf+3],length))
     benchfile.flush()
 
     print("export measurements: %.3f s" % (timing.time() - start))
