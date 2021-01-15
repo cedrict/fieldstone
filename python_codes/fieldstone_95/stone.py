@@ -89,8 +89,8 @@ Ly=1
 # numerical parameters
 #------------------------------------------------------------------------------
 
-every=10
-nstep=10000
+every=1
+nstep=2000
 CFL=0.25
 end_time=1500
 np_surf=100          # initial nb of P1 nodes on the interface 
@@ -354,6 +354,14 @@ for istep in range(0,nstep):
     for i in range(4,np_surf+4):
         interface[i]=True
 
+    for iel in range(0,nel):
+        if (interface[iconV[0,iel]] and interface[iconV[1,iel]]):
+           interface[iconV[3,iel]]=True
+        if (interface[iconV[1,iel]] and interface[iconV[2,iel]]):
+           interface[iconV[4,iel]]=True
+        if (interface[iconV[2,iel]] and interface[iconV[0,iel]]):
+           interface[iconV[5,iel]]=True
+
     print("flag interface nodes: %.3f s" % (timing.time() - start))
 
     #################################################################
@@ -395,6 +403,7 @@ for istep in range(0,nstep):
 
        #first layer
        for iel in range(0,nel):
+           #if two consecutive nodes on the interface...
            if (interface[iconV[0,iel]] and interface[iconV[1,iel]] and iconV[1,iel]+1-iconV[0,iel]==0) or \
               (interface[iconV[1,iel]] and interface[iconV[2,iel]] and iconV[2,iel]+1-iconV[1,iel]==0) or \
               (interface[iconV[2,iel]] and interface[iconV[0,iel]] and iconV[0,iel]+1-iconV[2,iel]==0) :
@@ -410,33 +419,48 @@ for istep in range(0,nstep):
               matnod[iconV[6,iel]]=2
 
        #recursively loop over all triangles
-       #if they have at most 1 node on interface and at least 2 nodes of mat 2
-       #then they are definitely mat 2.
+       #if a triangle has an edge (ie its node in the middle) that is not on the 
+       #interface but that is flagged mat=2, then the triangle is mat=2 
        #I could make it more elegant by detecting when the number does 
        #not change, but it is ridiculously fast, so good enough for now.
-       for k in range(0,8):
+       for k in range(0,10):
           for iel in range(0,nel):
-              count=0
-              if interface[iconV[0,iel]]:
-                 count+=1
-              if interface[iconV[1,iel]]:
-                 count+=1
-              if interface[iconV[2,iel]]:
-                 count+=1
-              if count <= 1: 
-                 if (matnod[iconV[0,iel]]==2 and matnod[iconV[1,iel]]==2) or \
-                    (matnod[iconV[1,iel]]==2 and matnod[iconV[2,iel]]==2) or \
-                    (matnod[iconV[2,iel]]==2 and matnod[iconV[0,iel]]==2) :
-                    mat[iel]=2
-                    rho[iel]=1000
-                    eta[iel]=100
-                    matnod[iconV[0,iel]]=2
-                    matnod[iconV[1,iel]]=2
-                    matnod[iconV[2,iel]]=2
-                    matnod[iconV[3,iel]]=2
-                    matnod[iconV[4,iel]]=2
-                    matnod[iconV[5,iel]]=2
-                    matnod[iconV[6,iel]]=2
+              if (matnod[iconV[3,iel]]==2 and not interface[iconV[3,iel]]) or \
+                 (matnod[iconV[4,iel]]==2 and not interface[iconV[4,iel]]) or \
+                 (matnod[iconV[5,iel]]==2 and not interface[iconV[5,iel]]) :
+                 mat[iel]=2
+                 rho[iel]=1000
+                 eta[iel]=100
+                 matnod[iconV[0,iel]]=2
+                 matnod[iconV[1,iel]]=2
+                 matnod[iconV[2,iel]]=2
+                 matnod[iconV[3,iel]]=2
+                 matnod[iconV[4,iel]]=2
+                 matnod[iconV[5,iel]]=2
+                 matnod[iconV[6,iel]]=2
+
+
+              #count=0
+              #if interface[iconV[0,iel]]:
+              #   count+=1
+              #if interface[iconV[1,iel]]:
+              #   count+=1
+              #if interface[iconV[2,iel]]:
+              #   count+=1
+              #if count <= 1: 
+              #   if (matnod[iconV[0,iel]]==2 and matnod[iconV[1,iel]]==2) or \
+              #      (matnod[iconV[1,iel]]==2 and matnod[iconV[2,iel]]==2) or \
+              #      (matnod[iconV[2,iel]]==2 and matnod[iconV[0,iel]]==2) :
+              #      mat[iel]=2
+              #      rho[iel]=1000
+              #      eta[iel]=100
+              #      matnod[iconV[0,iel]]=2
+              #      matnod[iconV[1,iel]]=2
+              #      matnod[iconV[2,iel]]=2
+              #      matnod[iconV[3,iel]]=2
+              #      matnod[iconV[4,iel]]=2
+              #      matnod[iconV[5,iel]]=2
+              #      matnod[iconV[6,iel]]=2
           print('     it=',k,'nb triangles of mat 2=',np.count_nonzero(mat==2)) 
     #end if
  
