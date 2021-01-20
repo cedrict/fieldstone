@@ -988,7 +988,7 @@ for istep in range(0,nstep):
 
     if istep%every==0:
 
-       filename = 'solution_{:04d}.vtu'.format(istep)
+       filename = 'solution_{:06d}.vtu'.format(istep)
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
@@ -1209,7 +1209,7 @@ for istep in range(0,nstep):
        vtufile.close()
 
 
-       filename = 'interface_{:04d}.ascii'.format(istep)
+       filename = 'interface_{:06d}.ascii'.format(istep)
        surffile=open(filename,"w")
        surffile.write("#time= %e \n" %model_time)
        for i in range(4,4+np_surf):
