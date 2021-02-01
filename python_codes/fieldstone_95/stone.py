@@ -10,6 +10,11 @@ from scipy.sparse import lil_matrix
 import os
 
 #------------------------------------------------------------------------------
+# shape functions and theor derivatives
+# 1: MINI
+# 2: Crouzeix-Raviart
+# 3: Taylor-Hood
+#------------------------------------------------------------------------------
 
 def NNV(rq,sq):
     if element==1:
@@ -27,6 +32,14 @@ def NNV(rq,sq):
        NV_5= 4.*(1.-rq-sq)*sq*(1.-3.*rq) 
        NV_6= 27*(1.-rq-sq)*rq*sq
        return NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,NV_6
+    if element==3:
+       NV_0= 1-3*rq-3*sq+2*rq**2+4*rq*sq+2*sq**2 
+       NV_1= -rq+2*rq**2
+       NV_2= -sq+2*sq**2
+       NV_3= 4*rq-4*rq**2-4*rq*sq
+       NV_4= 4*rq*sq 
+       NV_5= 4*sq-4*rq*sq-4*sq**2
+       return NV_0,NV_1,NV_2,NV_3,NV_4,NV_5
 
 def dNNVdr(rq,sq):
     if element==1:
@@ -44,6 +57,14 @@ def dNNVdr(rq,sq):
        dNVdr_5= -16*sq+24*rq*sq+12*sq**2
        dNVdr_6= -54*rq*sq+27*sq-27*sq**2
        return dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,dNVdr_6
+    if element==3:
+       dNVdr_0= -3+4*rq+4*sq 
+       dNVdr_1= -1+4*rq
+       dNVdr_2= 0
+       dNVdr_3= 4-8*rq-4*sq
+       dNVdr_4= 4*sq
+       dNVdr_5= -4*sq
+       return dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5
 
 def dNNVds(rq,sq):
     if element==1:
@@ -61,6 +82,14 @@ def dNNVds(rq,sq):
        dNVds_5= 4-16*rq-8*sq+24*rq*sq+12*rq**2
        dNVds_6= -54*rq*sq+27*rq-27*rq**2
        return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6
+    if element==3:
+       dNVds_0= -3+4*rq+4*sq 
+       dNVds_1= 0
+       dNVds_2= -1+4*sq
+       dNVds_3= -4*rq
+       dNVds_4= +4*rq
+       dNVds_5= 4-4*rq-8*sq
+       return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5
 
 def NNP(rq,sq):
     NP_0=1.-rq-sq
@@ -76,14 +105,30 @@ print("---------------------------------------")
 
 # 1: MINI element
 # 2: Crouzeix-Raviart element
+# 3: Taylor-Hood P2-P1
 
-element=1
+if int(len(sys.argv) == 6):
+   element        = int(sys.argv[1])
+   np_surf        = int(sys.argv[2])
+   stretch_factor = float(sys.argv[3])
+   a              = float(sys.argv[4])
+   CFL            = float(sys.argv[5])
+else:
+   element=2            # element type
+   np_surf=200          # initial nb of P1 nodes on the interface 
+   stretch_factor=1.5   # if distance between 2 nodes exceeds stretch_factor*dist0 then add node 
+   a=0.001              # maximum size of triangles
+   CFL=0.25             #CFL number
 
-if element==1: # MINI elements
-   mV=4     # number of velocity nodes making up an element
+print(str(a))
 
-if element==2: # Crouzeix-Raviart elements
-   mV=7     # number of velocity nodes making up an element
+# number of velocity nodes making up an element
+if element==1: 
+   mV=4     
+if element==2: 
+   mV=7     
+if element==3: 
+   mV=6     
 
 mP=3     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
@@ -92,8 +137,7 @@ ndofP=1  # number of pressure degrees of freedom
 eta_ref=1
 
 #------------------------------------------------------------------------------
-# 6 point integration coeffs and weights
-# for both elements 
+# 6 point integration coeffs and weights for all elements 
 
 nqel=6
 
@@ -121,19 +165,17 @@ Ly=1
 # numerical parameters
 #------------------------------------------------------------------------------
 
-every=1
-nstep=2000
-CFL=0.25
+every=10
+nstep=11
 end_time=1500
-np_surf=100          # initial nb of P1 nodes on the interface 
 dist0=Lx/(np_surf-1) # rough estimate of avrg distance between interface nodes
-stretch_factor=1.5   # if distance between 2 nodes exceeds stretch_factor*dist0 then add node 
 
 ################################################################################################
 ################################################################################################
 # TIME STEPPING
 ################################################################################################
 ################################################################################################
+#benchfile=open('benchmark_'+str(element)+'_'+str(np_surf)+'_'+str(stretch_factor)+'_'+str(a) +'.ascii',"w")
 benchfile=open('benchmark.ascii',"w")
 
 model_time=0
@@ -143,7 +185,6 @@ for istep in range(0,nstep):
     print("--------------------------------------------")
     print("istep= ", istep, '; time=',model_time)
     print("--------------------------------------------")
-
 
     #################################################################
     # make mesh
@@ -243,6 +284,9 @@ for istep in range(0,nstep):
 
     nodesfile.close()
 
+    ####################################
+    # computing number of velocity dofs 
+
     # call triangle mesher
     # -p: Triangulates a Planar Straight Line Graph (.poly file)
     # -c: Encloses the convex hull with segments 
@@ -252,11 +296,11 @@ for istep in range(0,nstep):
     # -a: Applies a maximum triangle area constraint.
 
     if element==1:
-       os.system("../../../../triangle/triangle  -j -q20 -a0.001 -pc mesh.poly") # default
+       os.system("../../../../triangle/triangle  -j -q20 -a0.0005 -pc mesh.poly") # default
 
-    if element==2:
-       #os.system("../../../../triangle/triangle  -j -q -a0.001 -o2 -pc mesh.poly") # default
-       os.system("../../../../triangle/triangle  -j -q20 -a0.001 -o2 -pc mesh.poly") # default
+    if element==2 or element==3:
+       print("./triangle  -j -q20 -a"+str(a)+" -o2 -pc mesh.poly") # default
+       os.system("./triangle  -j -q20 -a"+str(a)+" -o2 -pc mesh.poly") # default
 
     #read nb of elements and nb of nodes 
     os.system(" head -1 mesh.1.ele > temp ")
@@ -272,22 +316,18 @@ for istep in range(0,nstep):
            NV0=int(fields[0])
         counter+=1
 
-    NV=NV0+nel # adding bubbles
- 
+    if element==1 or element==2:
+       NV=NV0+nel # adding bubbles
+    if element==3:
+       NV=NV0 
+
     NfemV=NV*ndofV     # number of velocity dofs
 
     if element==1:
        NfemP=NV0*ndofP   # number of pressure dofs
     if element==2:
        NfemP=nel*3*ndofP   # number of pressure dofs
-
-    Nfem=NfemV+NfemP    # total number of dofs
- 
-    print ('     -> nel', nel)
-    print ('     -> NV0', NV0)
-    print ('     -> NfemV', NfemV)
-    print ('     -> NfemP', NfemP)
-    print ('     -> Nfem ', Nfem)
+    #element=3 is done later
 
     print("make mesh with Triangle: %.3f s" % (timing.time() - start))
 
@@ -304,7 +344,7 @@ for istep in range(0,nstep):
     print("     -> xV (min/max): %.4f %.4f" %(np.min(xV[0:NV0]),np.max(xV[0:NV0])))
     print("     -> yV (min/max): %.4f %.4f" %(np.min(yV[0:NV0]),np.max(yV[0:NV0])))
 
-    #np.savetxt('gridV0.ascii',np.array([xV,yV]).T,header='# xV,yV')
+    np.savetxt('gridV0.ascii',np.array([xV,yV]).T,header='# xV,yV')
 
     print("read in mesh from file: %.3f s" % (timing.time() - start))
 
@@ -312,16 +352,16 @@ for istep in range(0,nstep):
     # connectivity
     #################################################################
     #
-    #  P_2^+           P_1^+
+    #  P_2^+           P_1^+           P_2
     #
-    #  02              02
-    #  ||\\            ||\\
-    #  || \\           || \\
-    #  ||  \\          ||  \\
-    #  05   04         ||   \\
-    #  || 06 \\        || 03 \\
-    #  ||     \\       ||     \\
-    #  00==03==01      00======01
+    #  02              02              02
+    #  ||\\            ||\\            ||\\
+    #  || \\           || \\           || \\
+    #  ||  \\          ||  \\          ||  \\
+    #  05   04         ||   \\         05   04
+    #  || 06 \\        || 03 \\        ||    \\
+    #  ||     \\       ||     \\       ||     \\
+    #  00==03==01      00======01      00==03==01	
     #
     # note that the ordering of nodes returned by triangle is different
     # than mine: https://www.cs.cmu.edu/~quake/triangle.highorder.html.
@@ -352,13 +392,43 @@ for istep in range(0,nstep):
        for iel in range (0,nel):
            iconV[6,iel]=NV0+iel
 
-    for iel in range (0,nel): #bubble nodes
-        xV[NV0+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
-        yV[NV0+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
+    if element==3:
+       iconV[0,:],iconV[1,:],iconV[2,:],iconV[4,:],iconV[5,:],iconV[3,:]=\
+       np.loadtxt('mesh.1.ele',unpack=True, usecols=[1,2,3,4,5,6],skiprows=1)
+       iconV[0,:]-=1
+       iconV[1,:]-=1
+       iconV[2,:]-=1
+       iconV[3,:]-=1
+       iconV[4,:]-=1
+       iconV[5,:]-=1
+       # from this information I must now extract the number of nodes 
+       # which make the P1 mesh for pressure.
+       P1bool=np.zeros(NV,dtype=np.bool) 
+       for iel in range(0,nel):
+           P1bool[iconV[0,iel]]=True
+           P1bool[iconV[1,iel]]=True
+           P1bool[iconV[2,iel]]=True
+       NfemP=np.count_nonzero(P1bool)
 
-    #np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# xV,yV')
+    if element==1 or element==2:
+       for iel in range (0,nel): #bubble nodes
+           xV[NV0+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
+           yV[NV0+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
+
+    np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# xV,yV')
 
     print("read in connectivity from file: %.3f s" % (timing.time() - start))
+
+    #################################################################
+
+    Nfem=NfemV+NfemP    # total number of dofs
+ 
+    print ('     -> nel', nel)
+    print ('     -> NV0', NV0)
+    print ('     -> NV ', NV)
+    print ('     -> NfemV', NfemV)
+    print ('     -> NfemP', NfemP)
+    print ('     -> Nfem ', Nfem)
 
     #################################################################
     # build pressure grid (nodes and icon)
@@ -366,8 +436,8 @@ for istep in range(0,nstep):
     start = timing.time()
 
     iconP=np.zeros((mP,nel),dtype=np.int32)
-    xP=np.empty(NfemP,dtype=np.float64)     # x coordinates
-    yP=np.empty(NfemP,dtype=np.float64)     # y coordinates
+    xP=np.zeros(NfemP,dtype=np.float64)     # x coordinates
+    yP=np.zeros(NfemP,dtype=np.float64)     # y coordinates
 
     if element==1:
        iconP[0,:]=iconV[0,:]
@@ -391,8 +461,20 @@ for istep in range(0,nstep):
            yP[counter]=yV[iconV[2,iel]]
            iconP[2,iel]=counter
            counter+=1
+
+    if element==3:
+       iconP[0,:]=iconV[0,:]
+       iconP[1,:]=iconV[1,:]
+       iconP[2,:]=iconV[2,:]
+       for iel in range(0,nel):
+           xP[iconP[0,iel]]=xV[iconP[0,iel]]
+           xP[iconP[1,iel]]=xV[iconP[1,iel]]
+           xP[iconP[2,iel]]=xV[iconP[2,iel]]
+           yP[iconP[0,iel]]=yV[iconP[0,iel]]
+           yP[iconP[1,iel]]=yV[iconP[1,iel]]
+           yP[iconP[2,iel]]=yV[iconP[2,iel]]
  
-    #np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+    np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
  
     #for iel in range (0,nel):
     #    print ("iel=",iel)
@@ -421,7 +503,7 @@ for istep in range(0,nstep):
         if (interface[iconV[2,iel]] and interface[iconV[0,iel]]):
            edge_on_interface[2,iel]=True
 
-    if element==2:
+    if element==2 or element==3:
        for iel in range(0,nel):
            if (interface[iconV[0,iel]] and interface[iconV[1,iel]]):
               interface[iconV[3,iel]]=True
@@ -449,13 +531,9 @@ for istep in range(0,nstep):
     eta[:]=100
  
     if istep==0:
-       if element==1:
-          centernode=3
-       if element==2:
-          centernode=6
        for iel in range(0,nel):
-           x_c=xV[iconV[centernode,iel]]
-           y_c=yV[iconV[centernode,iel]]
+           x_c=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3
+           y_c=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3
            if y_c<0.2+0.02*np.cos(x_c*np.pi/Lx):
               mat[iel]=2
               rho[iel]=1000
@@ -798,7 +876,7 @@ for istep in range(0,nstep):
 
     dt=(CFL*np.min(np.sqrt(area))/np.max(np.sqrt(u**2+v**2)))
 
-    dt=min(dt,1)
+    dt=min(dt,0.1)
 
     print("     -> dt=", dt)
 
@@ -851,15 +929,16 @@ for istep in range(0,nstep):
     #####################################################################
     # interpolate pressure onto velocity grid points
     #####################################################################
+    #  P_2^+           P_1^+           P_2
     #
-    #  02          #  02
-    #  ||\\        #  ||\\
-    #  || \\       #  || \\
-    #  ||  \\      #  ||  \\
-    #  05   04     #  ||   \\
-    #  || 06 \\    #  ||    \\
-    #  ||     \\   #  ||     \\
-    #  00==03==01  #  00======01
+    #  02              02              02
+    #  ||\\            ||\\            ||\\
+    #  || \\           || \\           || \\
+    #  ||  \\          ||  \\          ||  \\
+    #  05   04         ||   \\         05   04
+    #  || 06 \\        || 03 \\        ||    \\
+    #  ||     \\       ||     \\       ||     \\
+    #  00==03==01      00======01      00==03==01	
     #
     #####################################################################
 
@@ -871,7 +950,7 @@ for istep in range(0,nstep):
        for iel in range(0,nel):
            p_el[iel]=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3.
 
-    if element==2:
+    if element==2 or element==3:
        cc=np.zeros(NV,dtype=np.float64)
        for iel in range(0,nel):
            q[iconV[0,iel]]+=p[iconP[0,iel]]
@@ -966,7 +1045,7 @@ for istep in range(0,nstep):
         length+=np.sqrt((xV[i+1]-xV[i])**2+(yV[i+1]-yV[i])**2)
     print('     -> length interface=',length)
 
-    benchfile.write("%e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e\n" %( \
+    benchfile.write("%e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e %e\n" %( \
     nel,Nfem,model_time,\
     np.min(u),np.max(u),\
     np.min(v),np.max(v),\
@@ -975,7 +1054,7 @@ for istep in range(0,nstep):
     vrms,vrms_f,vrms_s,\
     avrg_rho,avrg_eta,\
     vol_f,vol_s,dt,np_surf,
-    yV[np_surf+3],length))
+    yV[np_surf+3],length,yV[4]))
     benchfile.flush()
 
     print("export measurements: %.3f s" % (timing.time() - start))
@@ -1124,7 +1203,6 @@ for istep in range(0,nstep):
        for i in range(0,NV):
            vtufile.write("%10e \n" %matnod[i])
        vtufile.write("</DataArray>\n")
-
        #--
        vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
        for i in range(0,NV):
@@ -1138,10 +1216,6 @@ for istep in range(0,nstep):
        for i in range(0,NV):
            vtufile.write("%10e \n" % exy_n[i])
        vtufile.write("</DataArray>\n")
-
-
-
-
        #--
        vtufile.write("<DataArray type='Float32' Name='interface' Format='ascii'> \n")
        for i in range(0,NV):
@@ -1177,7 +1251,7 @@ for istep in range(0,nstep):
        if element==1:
           for iel in range (0,nel):
               vtufile.write("%d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel]))
-       if element==2:
+       if element==2 or element==3:
           for iel in range (0,nel):
               vtufile.write("%d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],\
                                                     iconV[3,iel],iconV[4,iel],iconV[5,iel]))
@@ -1187,7 +1261,7 @@ for istep in range(0,nstep):
        if element==1:
           for iel in range (0,nel):
               vtufile.write("%d \n" %((iel+1)*3))
-       if element==2:
+       if element==2 or element==3:
           for iel in range (0,nel):
               vtufile.write("%d \n" %((iel+1)*6))
        vtufile.write("</DataArray>\n")
@@ -1196,7 +1270,7 @@ for istep in range(0,nstep):
        if element==1:
           for iel in range (0,nel):
               vtufile.write("%d \n" %5)
-       if element==2:
+       if element==2 or element==3:
           for iel in range (0,nel):
               vtufile.write("%d \n" %22)
        vtufile.write("</DataArray>\n")
@@ -1227,28 +1301,31 @@ for istep in range(0,nstep):
         xV[i]+=u[i]*dt
         yV[i]+=v[i]*dt
 
-    if element==2:
-       for iel in range(0,nel):
-           # node 3 is between nodes 0 and 1
-           xV[iconV[3,iel]]=0.5*(xV[iconV[0,iel]]+xV[iconV[1,iel]]) 
-           yV[iconV[3,iel]]=0.5*(yV[iconV[0,iel]]+yV[iconV[1,iel]]) 
-           # node 4 is between nodes 1 and 2
-           xV[iconV[4,iel]]=0.5*(xV[iconV[1,iel]]+xV[iconV[2,iel]]) 
-           yV[iconV[4,iel]]=0.5*(yV[iconV[1,iel]]+yV[iconV[2,iel]]) 
-           # node 5 is between nodes 0 and 2
-           xV[iconV[5,iel]]=0.5*(xV[iconV[0,iel]]+xV[iconV[2,iel]]) 
-           yV[iconV[5,iel]]=0.5*(yV[iconV[0,iel]]+yV[iconV[2,iel]]) 
-           # recenter middle node
-           xV[iconV[6,iel]]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
-           yV[iconV[6,iel]]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
+    #if element==2 or element==3:
+    #   for iel in range(0,nel):
+    #       # node 3 is between nodes 0 and 1
+    #       xV[iconV[3,iel]]=0.5*(xV[iconV[0,iel]]+xV[iconV[1,iel]]) 
+    #       yV[iconV[3,iel]]=0.5*(yV[iconV[0,iel]]+yV[iconV[1,iel]]) 
+    #       # node 4 is between nodes 1 and 2
+    #       xV[iconV[4,iel]]=0.5*(xV[iconV[1,iel]]+xV[iconV[2,iel]]) 
+    #       yV[iconV[4,iel]]=0.5*(yV[iconV[1,iel]]+yV[iconV[2,iel]]) 
+    #       # node 5 is between nodes 0 and 2
+    #       xV[iconV[5,iel]]=0.5*(xV[iconV[0,iel]]+xV[iconV[2,iel]]) 
+    #       yV[iconV[5,iel]]=0.5*(yV[iconV[0,iel]]+yV[iconV[2,iel]]) 
 
-    for iel in range(0,nel):
-        xP[iconP[0,iel]]=xV[iconV[0,iel]]
-        yP[iconP[0,iel]]=yV[iconV[0,iel]]
-        xP[iconP[1,iel]]=xV[iconV[1,iel]]
-        yP[iconP[1,iel]]=yV[iconV[1,iel]]
-        xP[iconP[2,iel]]=xV[iconV[2,iel]]
-        yP[iconP[2,iel]]=yV[iconV[2,iel]]
+    #if element==2:
+    #   for iel in range(0,nel):
+    #       # recenter middle node
+    #       xV[iconV[6,iel]]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
+    #       yV[iconV[6,iel]]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
+
+    #for iel in range(0,nel):
+    #    xP[iconP[0,iel]]=xV[iconV[0,iel]]
+    #    yP[iconP[0,iel]]=yV[iconV[0,iel]]
+    #    xP[iconP[1,iel]]=xV[iconV[1,iel]]
+    #    yP[iconP[1,iel]]=yV[iconV[1,iel]]
+    #    xP[iconP[2,iel]]=xV[iconV[2,iel]]
+    #    yP[iconP[2,iel]]=yV[iconV[2,iel]]
 
     #####################################################################
 

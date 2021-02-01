@@ -1,0 +1,137 @@
+
+
+# element np_surf stretching_factor a 
+
+#crouzeix raviart
+
+#######################################################
+
+echo 'starting default'
+mkdir  results_default
+cp stone.py results_default
+cp triangle results_default
+cd results_default 
+python3 stone.py 2 200 1.5 0.001 0.25 > opla_default  
+cd ..
+
+#######################################################
+# changing np_surf
+#######################################################
+
+echo 'starting model01'
+mkdir results_model01
+cp stone.py results_model01 
+cp triangle results_model01
+cd results_model01
+python3 stone.py 2 250 1.5 0.001 0.25 > opla_model01  
+cd ..
+
+echo 'starting model02'
+mkdir results_model02
+cp stone.py results_model02
+cp triangle results_model02
+cd results_model02
+python3 stone.py 2 300 1.5 0.001 0.25 > opla_model02  
+cd ..
+
+echo 'starting model03'
+mkdir results_model03
+cp stone.py results_model03
+cp triangle results_model03
+cd results_model03
+python3 stone.py 2 350 1.5 0.001 0.25 > opla_model03  
+cd ..
+
+echo 'starting model04'
+mkdir results_model04
+cp stone.py results_model04 
+cp triangle results_model04
+cd results_model04
+python3 stone.py 2 400 1.5 0.001 0.25 > opla_model04  
+cd ..
+
+echo 'starting model05'
+mkdir results_model05
+cp stone.py results_model05
+cp triangle results_model05
+cd results_model05
+python3 stone.py 2 500 1.5 0.001 0.25 > opla_model05 
+cd ..
+
+#######################################################
+# changing stretching
+#######################################################
+
+echo 'starting model06'
+mkdir results_model06
+cp stone.py results_model06
+cp triangle results_model06
+cd results_model06
+python3 stone.py 2 200 1.25 0.001 0.25 > opla_model06  
+cd ..
+
+#######################################################
+# changing a
+#######################################################
+
+echo 'starting model07'
+mkdir results_model07
+cp stone.py results_model07 
+cp triangle results_model07
+cd results_model07
+python3 stone.py 2 200 1.5 0.008 0.25 > opla_model07  
+cd ..
+
+echo 'starting model08'
+mkdir results_model08
+cp stone.py results_model08
+cp triangle results_model08
+cd results_model08
+python3 stone.py 2 200 1.5 0.005 0.25 > opla_model08  
+cd ..
+
+#######################################################
+# changing element
+#######################################################
+
+echo 'starting model09'
+mkdir results_model09
+cp stone.py results_model09
+cp triangle results_model09
+cd results_model09
+python3 stone.py 3 200 1.5 0.001 0.25 > opla_model09  
+cd ..
+
+
+#######################################################
+# changing np_surf and a
+#######################################################
+
+echo 'starting model10'
+mkdir results_model10
+cp stone.py results_model10
+cp triangle results_model10
+cd results_model10
+python3 stone.py 2 400 1.5 0.005 0.25 > opla_model10 
+cd ..
+
+#######################################################
+# changing CFL
+#######################################################
+
+echo 'starting model11'
+mkdir results_model11
+cp stone.py results_model11
+cp triangle results_model11
+cd results_model11
+python3 stone.py 3 200 1.5 0.001 0.1 > opla_model11 
+cd ..
+
+
+
+
+
+
+
+
+
