@@ -13,7 +13,7 @@ This stone is an example of $Q_2\times P_{-1}$ implementation.
 The 2D $Q_2$ shape functions have been derived in Section~\ref{ss:q22d}
 while the $P_{-1}$ shape functions are in Section~\ref{ss:lbfq2D}.
 The $-1$ subscript indicates that the pressure field is linear, 
-i.e. $p^h(x,y)=a+bx+cy$ inside the element, but discontinuous 
+i.e. $p^h(x,y)=a+bx+cy$ inside the element, but therefore discontinuous 
 from an element to another. 
 This poses a little problem in terms of exporting it to vtu (and plotting with paraview).
 I then simply choose to export the value of the pressure in the middle of 
@@ -22,8 +22,8 @@ each element.
 I carry out two benchmarks and we recover for both a cubic convergence 
 for the velocity error and a quadratic error convergence for the pressure.
 
-%.......................................
-\subsection*{Manufactured solution \#1}
+%......................................................
+\subsection*{Manufactured solution \#1 ({\tt bench=1})}
 
 The analytical solution originates in Lamichhane (2017) \cite{lami17}.
 The velocity and pressure are given by
@@ -35,17 +35,19 @@ p(x,y)&=& x(1-x)(1-2y)
 Boundary conditions are no-slip on all sides of the unit square. 
 The corresponding body force terms are derived in Section~\ref{ss:mms11}. 
 
-\begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_76/results/mms1/errors_v}
-\includegraphics[width=7cm]{python_codes/fieldstone_76/results/mms1/errors_p}
-\end{center}
+I have run this benchmark for three different quadratures and also with a 
+randomised grid ($\xi=0.1$). We see that we obtain a 3rd order convergence 
+on the velocity error and 2nd order convergence on the pressure order, 
+unless the grid is randomised and we then loose an order on each error.
 
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_76/results/mms1/vrms}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mms1/errors_v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mms1/errors_p}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mms1/vrms}
 \end{center}
 
-%.......................................
-\subsection*{Manufactured solution \#2}
+%......................................................
+\subsection*{Manufactured solution \#2 ({\tt bench=9})}
 
 This is the second manufactured solution 
 mentioned in Lamichhane \cite{lami17}. It is presented in Section~\ref{ss:mms2}.
@@ -60,13 +62,23 @@ velocity is prescribed on the boundary of the domain.
 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_76/results/mms2/errors_v}
-\includegraphics[width=7cm]{python_codes/fieldstone_76/results/mms2/errors_p}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mms2/errors_v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mms2/errors_p}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mms2/vrms}
 \end{center}
 
+%.......................................................
+\subsection*{Manufactured solution \#3 ({\tt bench=3})}
+
+This is the Donea \& Huerta benchmark, see Section~\ref{mms1}.
+
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_76/results/mms2/vrms}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/bench3/errors_v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/bench3/errors_p}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/bench3/vrms}
 \end{center}
+
+%.......................................................
 
 
 %.......................................

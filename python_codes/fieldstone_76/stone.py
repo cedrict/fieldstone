@@ -56,6 +56,12 @@ def bx(x,y):
        return dpdx_th(x,y)-2*app(x)*b(y) -(a(x)*bpp(y)+cp(x)*dp(y))
     if bench==2:
        return 0
+    if bench==3:
+       val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
+           (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
+           (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
+           1.-4.*y+12.*y*y-8.*y*y*y)
+       return val
     if bench==9:
        return 3*x**2*y**2-y-1
 
@@ -67,6 +73,12 @@ def by(x,y):
           return -1.01
        else:
           return -1
+    if bench==3:
+       val=((8.-48.*y+48.*y*y)*x*x*x+
+         (-12.+72.*y-72.*y*y)*x*x+
+         (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
+         12.*y*y+24.*y*y*y-12.*y**4)
+       return val
     if bench==9:
        return 2*x**3*y+3*x-1
 
@@ -81,9 +93,10 @@ def eta(x,y):
        else:
           return 1
        return 
+    if bench==3:
+       return 1 
     if bench==9:
        return 1 
-
 
 #------------------------------------------------------------------------------
 
@@ -92,6 +105,8 @@ def velocity_x(x,y):
        return a(x)*b(y)
     if bench==2:
        return 0
+    if bench==3:
+       return x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
     if bench==9:
        return x+x**2-2*x*y+x**3-3*x*y**2+x**2*y
 
@@ -100,6 +115,8 @@ def velocity_y(x,y):
        return c(x)*d(y)
     if bench==2:
        return 0
+    if bench==3:
+       return -y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
     if bench==9:
        return -y-2*x*y+y**2-3*x**2*y+y**3-x*y**2
 
@@ -108,6 +125,8 @@ def pressure(x,y):
        return x*(1-x)*(1-2*y)
     if bench==2:
        return 0
+    if bench==3:
+       return x*(1.-x)-1./6.
     if bench==9:
        return x*y+x+y+x**3*y**2-4/3
 
@@ -168,9 +187,10 @@ mP=3
 
 # bench=1 : mms #1 (lami17)
 # bench=2 : sinking cube
+# bench=3 : Donea & Huerta
 # bench=9 : mms #2 (lami17)
 
-bench=2
+bench=3
 
 Lx=1
 Ly=1
@@ -184,7 +204,7 @@ else:
    nelx = 16
    nely = 16
    visu = 1
-   nqperdim=2
+   nqperdim=3
 
 nnx=2*nelx+1
 nny=2*nely+1
@@ -258,7 +278,7 @@ sparse=True
 #rVnodes=[-1,1,1,-1,0]
 #sVnodes=[-1,-1,1,1,0]
 
-xi=0.0 # controls level of mesh randomness (between 0 and 0.5 max)
+xi=0. # controls level of mesh randomness (between 0 and 0.5 max)
 
 #################################################################
 # grid point setup
@@ -385,8 +405,8 @@ for iel in range(0,nel):
 #end for
 
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
-print("     -> total area meas %.6f " %(area.sum()))
-print("     -> total area anal %.6f " %(Lx*Ly))
+print("     -> total area meas %.8e " %(area.sum()))
+print("     -> total area anal %.8e " %(Lx*Ly))
 
 print("compute elements areas: %.3f s" % (timing.time() - start))
 
@@ -398,19 +418,35 @@ start = timing.time()
 bc_fix = np.zeros(NfemV, dtype=np.bool)  # boundary condition, yes/no
 bc_val = np.zeros(NfemV, dtype=np.float64)  # boundary condition, value
 
-for i in range(0,NV):
-       if xV[i]/Lx<eps:
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
-          #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
-       if xV[i]/Lx>(1-eps):
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
-          #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
-       if yV[i]/Ly<eps:
-          #bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
-       if yV[i]/Ly>(1-eps):
-          #bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+if bench==1 or bench==9 or bench==3:
+   for i in range(0,NV):
+          if xV[i]/Lx<eps:
+             bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
+             bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+          if xV[i]/Lx>(1-eps):
+             bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
+             bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+          if yV[i]/Ly<eps:
+             bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
+             bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+          if yV[i]/Ly>(1-eps):
+             bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
+             bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+
+else:
+   for i in range(0,NV):
+          if xV[i]/Lx<eps:
+             bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0 
+             #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+          if xV[i]/Lx>(1-eps):
+             bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+             #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+          if yV[i]/Ly<eps:
+             #bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+             bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+          if yV[i]/Ly>(1-eps):
+             #bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+             bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
 
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -627,8 +663,8 @@ print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 if pnormalise:
    print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
 
-#np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
-#np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))
 
@@ -691,7 +727,7 @@ print("compute nodal error for plot: %.3f s" % (timing.time() - start))
 #################################################################
 # compute error in L2 norm
 #################################################################
-if bench==1 or bench==9 or bench==2:
+if bench==1 or bench==9 or bench==2 or bench==3:
 
    start = timing.time()
 

@@ -6,7 +6,7 @@ rm *.ascii
 
 for nq in 2 3 4 ; do
 
-    for rs in 4 5 6 7 8 9 10 11 12 13 14 15 16 20 24 32 40 48 64; do
+    for rs in 4 5 6 7 8 9 10 11 12 13 14 15 16 20 24 32 40 43 48; do
 
         echo $rs 
 
