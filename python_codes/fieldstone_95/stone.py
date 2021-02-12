@@ -165,9 +165,9 @@ Ly=1
 # numerical parameters
 #------------------------------------------------------------------------------
 
-every=10
-nstep=11
-end_time=1500
+every=100
+nstep=100000
+end_time=1000
 dist0=Lx/(np_surf-1) # rough estimate of avrg distance between interface nodes
 
 ################################################################################################
@@ -564,7 +564,7 @@ for istep in range(0,nstep):
        #interface but that is flagged mat=2, then the triangle is mat=2 
        #I could make it more elegant by detecting when the number does 
        #not change, but it is super fast, so good enough for now.
-       for k in range(0,15):
+       for k in range(0,25):
 
           #update/propagate material nodal information to edges
           #I need to exclude edges on interface to avoid bleeding on the wrong side of interface
