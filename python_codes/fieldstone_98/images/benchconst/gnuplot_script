@@ -1,0 +1,28 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set key bottom outside
+set pointsize .5
+
+set xlabel 'latitude'
+
+set ylabel 'g_r'
+set output 'gr.pdf'
+plot 'gravity.ascii' u 2:6 w lp ,\
+0.06019874413 lt -1 dt 2 
+
+
+set ylabel 'U'
+set output 'U.pdf'
+plot 'gravity.ascii' u 2:7 w lp ,\
+-398575.884897 lt -1 dt 2 
+
+set log y 
+set ylabel 'relative error g_r'
+set output 'gr_relerror.pdf'
+plot 'gravity.ascii' u 2:(abs($6-0.06019874413)/0.06019874413) w lp notitle
+
+set ylabel 'relative error U'
+set output 'U_relerror.pdf'
+plot 'gravity.ascii' u 2:(abs($7+398575.884897)/398575.884897) w lp notitle
+
+ 
