@@ -15,6 +15,7 @@
 \usepackage{multicol}
 \usepackage{xargs}
 \usepackage{upgreek}
+\usepackage{comment}
 \usepackage{algorithm,algorithmic}
 \usepackage[pdftex,dvipsnames]{xcolor}
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
@@ -105,6 +106,10 @@ urlcolor=black}
 
 \newcommand{\nineteensixty}{{\color{chestnut}\bf 1960}}
 \newcommand{\nineteensixtyone}{{\color{chestnut}\bf 1961}}
+\newcommand{\nineteensixtytwo}{{\color{chestnut}\bf 1962}}
+\newcommand{\nineteensixtythree}{{\color{chestnut}\bf 1963}}
+\newcommand{\nineteensixtyfour}{{\color{chestnut}\bf 1964}}
+\newcommand{\nineteensixtyfive}{{\color{chestnut}\bf 1965}}
 \newcommand{\nineteensixtysix}{{\color{chestnut}\bf 1966}}
 \newcommand{\nineteensixtyseven}{{\color{chestnut}\bf 1967}}
 \newcommand{\nineteensixtyeight}{{\color{chestnut}\bf 1968}}
@@ -330,6 +335,10 @@ doi = "10.23644/uu.9209393.v1"}
 \section{Manufactured solutions \& numerical benchmarks} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{chapter12}
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The literature} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{chapter13} \label{app:topics}
 
 %==================================================================================================
 %==================================================================================================
@@ -369,7 +378,6 @@ doi = "10.23644/uu.9209393.v1"}
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Some useful maths} \input{maths} \label{app_maths} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Topics in (computational) geodynamics literature}\label{app:topics}\input{topics}
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Elemental mass matrices for simple geometries}\label{app:mm} \input{elemental_matrix}
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -390,6 +398,12 @@ doi = "10.23644/uu.9209393.v1"}
 \section{Computational Geophysics GEO4-1427 - projects} \input{compgeo}
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Using prisms in forward gravity modelling \label{app:prisms}} \input{app_prisms}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Solutions to exercises of chapter 9 \label{app:gravsols}} \input{app_gravsols}
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{How to download a single stone} \input{download_single_stone}
+
+
 
 %==================================================================================================
 %\begin{multicols}{2}

@@ -1,0 +1,36 @@
+\begin{tikzpicture}
+%\draw[fill=gray!23,gray!23](0,0) rectangle (7,9);
+
+%z axis
+\draw [->] (3.5,0.5) -- (3.5,8.5);
+%x axis
+\draw [->] (0.5,3.5) -- (6.5,3.5);
+
+\draw (3.5,3.5) circle (2.5cm);
+
+\draw[dashed] (1,1) -- (6,1) -- (6,6) -- (1,6) -- cycle;
+
+\node[] at (0.62,3.2) {$-R$};
+\node[] at (6.2,3.2) {$R$};
+\node[] at (6.7,3.5) {$x$};
+\node[] at (3.5,8.7) {$z$};
+
+\fill[blue!30!white] (4,4) rectangle (4.5,4.5); %cell i
+
+\draw [dashed] (3.5,8) -- (4.25,4.25);
+\draw [->,thick] (3.5,8) -- (3.75,6.8);
+
+\node[] at (4.25,4.25) {\Huge .};
+\node[] at (3.5,8) {\Huge .};
+\node[] at (4.38,4.25) {\footnotesize $i$};
+\node[] at (4.05,6.9) {\footnotesize $\vec{g}_i$};
+
+\draw[<->] (5.5,0.75) -- (6,0.75);
+\node[] at (5.75,0.5) {\footnotesize $h$};
+
+\draw[<->] (6.25,1) -- (6.25,1.5);
+\node[] at (6.5,1.25) {\footnotesize $h$};
+
+\draw[step=0.5cm,gray,very thin] (1,1) grid (6,6); %grid
+\end{tikzpicture}
+
