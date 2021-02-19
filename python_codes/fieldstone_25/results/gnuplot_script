@@ -1,4 +1,4 @@
-set term pdf enhanced font "Times,11pt"
+set term pdf enhanced font "Times,12pt"
 set key outside
 set log x
 set xlabel 'h_x'
@@ -6,6 +6,10 @@ set xlabel 'h_x'
 vref=1e-6
 
 set format y "%10.5f"
+
+vrms100=185.294975
+vrms010=672.9654426
+vrms001=1441.851
 
 ###############################################################
 # isoviscous
@@ -15,7 +19,15 @@ set ylabel 'v_{rms}'
 set output 'vrms_100.pdf'
 plot[][:185.3]\
 '100_100/statistics_q2q1.ascii' u 4:($13/vref) w lp ps .25 notitle,\
-185.29498 lt -1 lw .5
+'100_100/statistics_extrapolation_5.ascii' u 4:($13/vref) w p ps .25 notitle,\
+'100_100/statistics_extrapolation_6.ascii' u 4:($13/vref) w p ps .25 notitle,\
+'100_100/statistics_extrapolation_7.ascii' u 4:($13/vref) w p ps .25 notitle,\
+'100_100/statistics_extrapolation_8.ascii' u 4:($13/vref) w p ps .25 notitle,\
+'100_100/statistics_extrapolation_9.ascii' u 4:($13/vref) w p ps .25 notitle,\
+#185.29498 lt -1 lw .5
+
+
+
 
 set ylabel 'min(u)'
 set output 'min_u_100.pdf'
@@ -58,8 +70,13 @@ plot[][]\
 
 set ylabel 'v_{rms}'
 set output 'vrms_010.pdf'
-plot[][]\
-'010_100/statistics_q2q1.ascii' u 4:($13/vref) w lp ps .25 notitle 
+plot[][:676]\
+'010_100/statistics_q2q1.ascii' u 4:($13/vref) w lp ps .25 notitle,\
+'010_100/statistics_extrapolation_5.ascii' u 4:($13/vref) w p ps .25 notitle,\
+'010_100/statistics_extrapolation_6.ascii' u 4:($13/vref) w p ps .25 notitle,\
+'010_100/statistics_extrapolation_7.ascii' u 4:($13/vref) w p ps .25 notitle,\
+'010_100/statistics_extrapolation_8.ascii' u 4:($13/vref) w p ps .25 notitle,\
+'010_100/statistics_extrapolation_9.ascii' u 4:($13/vref) w p ps .25 notitle,\
 #185.29498 lt -1 lw .5
 
 set ylabel 'min(u)'
@@ -104,8 +121,13 @@ plot[][]\
 
 set ylabel 'v_{rms}'
 set output 'vrms_001.pdf'
-plot[][]\
-'001_100/statistics_q2q1.ascii' u 4:($13/vref) w lp ps .25 notitle 
+plot[][:1442.4]\
+'001_100/statistics_q2q1.ascii' u 4:($13/vref) w lp ps .25 notitle,\
+'001_100/statistics_extrapolation_5.ascii' u 4:($13/vref) w p ps .25 notitle,\
+'001_100/statistics_extrapolation_6.ascii' u 4:($13/vref) w p ps .25 notitle,\
+'001_100/statistics_extrapolation_7.ascii' u 4:($13/vref) w p ps .25 notitle,\
+'001_100/statistics_extrapolation_8.ascii' u 4:($13/vref) w p ps .25 notitle,\
+'001_100/statistics_extrapolation_9.ascii' u 4:($13/vref) w p ps .25 notitle,\
 #185.29498 lt -1 lw .5
 
 set ylabel 'min(u)'
@@ -182,5 +204,20 @@ plot[][]\
 
  
  
+##############################33 
  
- 
+set log y
+set ylabel 'v_{rms}-v^*_{rms} (x10^{-6})'
+set key inside bottom
+set output 'vrms_error.pdf'
+plot[][]\
+'100_100/statistics_q2q1.ascii' u 4:(abs($13/vref-vrms100)) w lp ps .25 t '{/Symbol h}^*=1 (Q_2xQ_1)',\
+'010_100/statistics_q2q1.ascii' u 4:(abs($13/vref-vrms010)) w lp ps .25 t '{/Symbol h}^*=0.1 (Q_2xQ_1)',\
+'001_100/statistics_q2q1.ascii' u 4:(abs($13/vref-vrms001)) w lp ps .25 t '{/Symbol h}^*=0.01 (Q_2xQ_1)',\
+'010_100_disc/statistics_q2.ascii' u 4:(abs($13/vref-vrms010)) w lp ps .25 t '{/Symbol h}^*=0.1 (Q_2xP_{-1})',\
+'100_100_disc/statistics_q2.ascii' u 4:(abs($13/vref-vrms100)) w lp ps .25 t '{/Symbol h}^*=1 (Q_2xP_{-1})',\
+1500*x**4 lt -1 dt 2 t 'x^4',\
+10*x**1 lt -1 dt 4 t 'x^1'
+
+
+

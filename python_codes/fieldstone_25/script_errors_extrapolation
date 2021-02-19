@@ -1,0 +1,26 @@
+rm -f statistics_extrapolation.ascii
+
+etab=100
+
+#----------------------------------------------------
+
+#for n in  9 18 36 72 144 288; do
+#for n in 6 12 24 48 96 192; do
+#for n in 7 14 28 56 112 224; do
+
+for n in 5 10 20 40 80 160 320; do
+    echo $n
+    python3 stone_q2.py $n $n 0 $etab > opla
+    grep benchm opla  >> statistics_extrapolation.ascii
+done
+
+rm opla
+
+
+
+
+
+
+
+
+

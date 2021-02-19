@@ -1,0 +1,22 @@
+rm -f statistics_q2.ascii
+
+etab=100
+
+#----------------------------------------------------
+
+for n in  21 24 29 32 40 45 48 51 56 61 64 69 72 77 80 85 88 93 96; do # 112 128 144 160 176 192; do
+    echo $n
+    python3 stone.py $n $n 0 $etab > opla
+    grep benchm opla  >> statistics_q2.ascii
+done
+
+rm opla
+
+
+
+
+
+
+
+
+
