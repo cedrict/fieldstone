@@ -25,7 +25,8 @@ Here the data file is read in, latitudes and longitudes are
 converted to spherical coordinates, densities
 are converted to temperatures, and the \aspect{} data ascii
 file {\tt bench2.txt} is generated.
-
+Because the density does not vary in the radial direction, only two values are stored in the ascii file, 
+one slightly below and one slightly above the desired shell.
 
 %----------------------------------------------------
 \subsubsection*{Part 2}
@@ -226,7 +227,7 @@ We can now compute the gravity fields on the WINTERC shell:
 \begin{center}
 \includegraphics[width=8.5cm]{python_codes/fieldstone_98/images/U}
 \includegraphics[width=8.5cm]{python_codes/fieldstone_98/images/gr}\\
-{\captionfont Resolution of measurement grid is 180x90. It took 
+{\captionfont Resolution of measurement grid is 181x91. It took 
 about 19,100 seconds to run, averaging 1.16s per measurement point.  
 Potential isocontours at -400.5e3, -401e3, -401.5e3, -402e3. 
 Radial acceleration contours at 0.0603, 0.0606 and 0.0609}

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="drawing.svg"
+   inkscape:export-filename="/home/cedrict/Desktop/FIELDSTONE/V2/fieldstone/images/gravity/drawing.png"
+   inkscape:export-xdpi="120"
+   inkscape:export-ydpi="120">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="121.71768"
+     inkscape:cy="537.14285"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1883"
+     inkscape:window-height="1025"
+     inkscape:window-x="37"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <image
+       sodipodi:absref="/home/cedrict/Desktop/FIELDSTONE/V2/fieldstone/images/gravity/shell.png"
+       xlink:href="shell.png"
+       width="315.38333"
+       height="212.19583"
+       preserveAspectRatio="none"
+       id="image893"
+       x="-49.212502"
+       y="45.381252" />
+    <image
+       sodipodi:absref="/home/cedrict/Downloads/evil-minion-minions-gif-clip-art-despicable-me-minions-holiday-7de157a3e670a38570441ad84cc79732.png"
+       y="129.48096"
+       x="85.724998"
+       id="image943"
+       xlink:href="file:///home/cedrict/Downloads/evil-minion-minions-gif-clip-art-despicable-me-minions-holiday-7de157a3e670a38570441ad84cc79732.png"
+       preserveAspectRatio="none"
+       height="44.752373"
+       width="44.752373" />
+    <path
+       style="opacity:1;fill:#feffff;fill-opacity:1;stroke:#000000;stroke-width:0.27420411;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path950"
+       sodipodi:type="arc"
+       sodipodi:cx="128.50723"
+       sodipodi:cy="126.15475"
+       sodipodi:rx="25.697706"
+       sodipodi:ry="10.583333"
+       sodipodi:start="0.69711243"
+       sodipodi:end="0.69277703"
+       sodipodi:open="true"
+       d="m 148.20964,132.94932 a 25.697706,10.583333 0 0 1 -36.17914,1.32702 25.697706,10.583333 0 0 1 -3.2614,-14.89856 25.697706,10.583333 0 0 1 36.17208,-1.35932 25.697706,10.583333 0 0 1 3.3398,14.89561" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="110.06666"
+       y="128.34705"
+       id="text948"><tspan
+         sodipodi:role="line"
+         id="tspan946"
+         x="110.06666"
+         y="128.34705"
+         style="font-size:5.64444447px;stroke-width:0.26458332px">I feel nothing!</tspan></text>
+    <image
+       sodipodi:absref="/home/cedrict/Desktop/FIELDSTONE/V2/fieldstone/images/gravity/minion1.jpg"
+       xlink:href="minion1.jpg"
+       transform="rotate(90)"
+       width="38.364582"
+       height="19.125593"
+       preserveAspectRatio="none"
+       id="image879"
+       x="138.72249"
+       y="-216.12679" />
+    <path
+       d="m 243.11763,151.09218 a 16.304487,10.583333 0 0 1 -22.95467,1.32702 16.304487,10.583333 0 0 1 -2.06927,-14.89856 16.304487,10.583333 0 0 1 22.95018,-1.35932 16.304487,10.583333 0 0 1 2.11902,14.89561"
+       sodipodi:open="true"
+       sodipodi:end="0.69277703"
+       sodipodi:start="0.69711243"
+       sodipodi:ry="10.583333"
+       sodipodi:rx="16.304487"
+       sodipodi:cy="144.29761"
+       sodipodi:cx="230.61699"
+       sodipodi:type="arc"
+       id="path886"
+       style="opacity:1;fill:#feffff;fill-opacity:1;stroke:#000000;stroke-width:0.21841393;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444444px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       x="221.87201"
+       y="146.94345"
+       id="text884"><tspan
+         sodipodi:role="line"
+         id="tspan882"
+         x="221.87201"
+         y="146.94345"
+         style="stroke-width:0.26458332px;font-size:5.64444444px;">Ouch</tspan></text>
+  </g>
+</svg>

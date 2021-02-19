@@ -16,6 +16,7 @@ Q3Q2
 Q4Q3
 MINI
 P2pPm1
+P2P1
 Q1Q1stab
 Q1P0RT
 P1
@@ -55,4 +56,5 @@ free_surface
 discontinuous_galerkin
 schur_complement
 defect_picard
+gravity
 

@@ -59,11 +59,11 @@ echo "---------------------" >> features
 grep P1 */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
 
-echo "---------------------" >> features
-echo "---P2----------------" >> features
-echo "---------------------" >> features
-grep P2 */keywords | cut -c1- | cut -f1 -d"/" >> features
-echo " " >> features
+#echo "---------------------" >> features
+#echo "---P2----------------" >> features
+#echo "---------------------" >> features
+#grep P2 */keywords | cut -c1- | cut -f1 -d"/" >> features
+#echo " " >> features
 
 
 echo "---------------------" >> features
@@ -326,6 +326,16 @@ echo "---axisymmetry------------" >> features
 echo "--------------------------" >> features
 grep "axisymmetry" */keywords | cut -c1- | cut -f1 -d"/" >> features
 echo " " >> features
+
+echo "--------------------------" >> features
+echo "---gravity----------------" >> features
+echo "--------------------------" >> features
+grep "gravity" */keywords | cut -c1- | cut -f1 -d"/" >> features
+echo " " >> features
+
+
+
+
 
 
 
