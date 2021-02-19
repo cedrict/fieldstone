@@ -2,9 +2,9 @@ In the Earth's mantle major solid state phase transitions occur in the
 silicate material which constitutes the planetary mantle
 outside the metallic iron/nickle core.
 These phase transitions are induced by the increase in the static
-pressure from a 1 bar ($10^5$ Pa) atmospheric value at the Earth's surface to 
-$136 \cdot 10^9 \mathrm{Pa}$ at the core mantle boundary at a depth of
-approximately 2900 km.
+pressure from a 1 bar ($10^5\si{\pascal}$) atmospheric value at the Earth's surface to 
+$136 \cdot 10^9\si{\pascal}$ at the core mantle boundary at a depth of
+approximately 2900\si{\kilo\metre}.
 Phase transitions in the Earth's interior are associated with changes 
 in the elastic wave velocities that can be deduced from seismological 
 observations.
@@ -65,6 +65,10 @@ with several geophysical observations.
   symmetric planet from the elastostatic equation for a static medium,
   \begin{equation} 
      \partial_j \sigma_{ij} + \rho g_i = 0
+\qquad
+\Leftrightarrow
+\qquad
+\vec\nabla\cdot{\bm \sigma} + \rho \vec{g} = \vec{0}
   \label{elastostatic-eqn}
   \end{equation} 
   {\it Hint:}
@@ -73,7 +77,7 @@ with several geophysical observations.
   $\sigma_{ij}=-P\delta_{ij}$,
   with $\delta_{ij}$ the Kronecker delta,
   and derive from equation (\ref{elastostatic-eqn})
-  for the pressure gradient, $\nabla P = \rho {\bf g}$. 
+  for the pressure gradient, $\vec\nabla P = \rho {\vec g}$. 
  }
 \end{problem}
 \end{minipage}
@@ -81,139 +85,146 @@ with several geophysical observations.
 
 \vspace{0.5cm}
 
+%---------------------------------------------------------
 \subsubsection{Gravity field of a mass distribution}
 Newton formulated the attraction force acting on a point 
-mass $m_0$, 
-located in a point with position vector ${\bf r}=(x,y,z)$,
+mass $m_0$,  located in a point with position vector ${\vec r}=(x,y,z)$,
 with $x,y,z$ the cartesian coordinates,
 from a second point mass $m_1$ located at
-${\bf r}_1=(x_1,y_1,z_1)$, illustrated in the following figure as,
+${\vec r}_1=(x_1,y_1,z_1)$, illustrated in the following figure as,
 \begin{equation}
-{\bf F} ({\bf r}) 
-        =\frac{G m_0 m_1}{\left | {\bf r}_1 - {\bf r} \right | ^2} ~ 
-          {\bf e}_{{\bf r r}_1}
+{\vec F} ({\vec r}) 
+=\frac{{\cal G} m_0 m_1}{\left | {\vec r}_1 - {\vec r} \right | ^2} ~ 
+          {\vec e}_{\vec{r} \vec{r}_1}
 \label{pointmass_gravity}
 \end{equation}
 
 \begin{center}
 \includegraphics[width=7cm]{images/gravity/gravity_diagram}\\
 {\captionfont Vector diagram of the gravitational forces acting on the two 
-point masses $m_0$, $m_1$ in vector locations ${\bf r}$ and
-${\bf r}_1$ respectively.
+point masses $m_0$, $m_1$ in vector locations ${\vec r}$ and
+${\vec r}_1$ respectively.
 From the expression for the gravity field (\ref{pointmass_gravity}) 
 it follows that the forces on both masses
-are of equal magnitude and in opposite direction. }
+are of equal magnitude and in opposite direction.}
 \end{center}
 
-Where ${\bf e}_{{\bf rr}_1}$ is the unit vector in 
-${\bf r}$ pointing towards ${\bf r}_1$
-and ${\bf F}({\bf r}_1) = - {\bf F}({\bf r})$.
-${\bf r}, {\bf r}_1$ 
+Where ${\vec e}_{\vec{r}\vec{r}_1}$ is the unit vector in 
+${\vec r}$ pointing towards ${\vec r}_1$
+and ${\vec F}({\vec r}_1) = - {\vec F}({\vec r})$.
+${\vec r}, {\vec r}_1$ 
 are the position vectors of the two point masses
 and 
-$\left | {\bf r}_1 - {\bf r} \right | =
+$\left | {\vec r}_1 - {\vec r} \right | =
 \sqrt{(x_1-x)^2 + (y_1-y)^2 + (z_1-z)^2}$
-is the distance between the points ${\bf r}$ and ${\bf r}_1$.
-$G$ is the gravitational constant 
-$G = 6.6732 \times 10^{-11} ~\mathrm{Nm^{2}kg^{-2}}$,
+is the distance between the points ${\vec r}$ and ${\vec r}_1$.
+${\cal G}$ is the gravitational constant 
+${\cal G} \simeq 6.67 \times 10^{-11} \si{\newton\square\metre\per\square\kilo\gram}$,
 $m_0, m_1$ the mass of the respective pointmasses.
 
 
-
-
 This gravitation effect is usually specified as a gravitation force per 
-unit mass or acceleration vector ${\bf g}$,
+unit mass or acceleration vector ${\vec g}$,
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-{\bf g}({\bf r}) =
-   \frac{G m_1}{\left | {\bf r}_1 - {\bf r} \right | ^2} ~ 
-                {\bf e}_{{\bf r r}_1} 
+{\vec g}({\vec r}) =
+\frac{{\cal G} m_1}{\left | {\vec r}_1 - {\vec r} \right | ^2} ~ {\vec e}_{\vec{r}\vec{r}_1} 
 \label{grav_accel}
 \end{equation}
+\end{mdframed}
 It can be verified by inspection that the acceleration vector field 
 can be written as the 
-gradient of a scalar potential field $U({\bf r})$ (i.e. the potential
+gradient of a scalar potential field $U({\vec r})$ (i.e. the potential
 energy per unit mass) with
-${\bf g} = - \nabla U = 
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+{\vec g} = - \vec\nabla U = 
 (- \frac{\partial U}{\partial x}, 
  - \frac{\partial U}{\partial y}, 
- - \frac{\partial U}{\partial z})$,
-(see problem \ref{problem-verify-gradient}),
+ - \frac{\partial U}{\partial z}),\]
+\end{mdframed}
+in Cartesian coordinates (see problem \ref{problem-verify-gradient}),
+and
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-\boxed{U({\bf r}) = - \frac{G m_1}{\left | {\bf r}_1 - {\bf r} \right |} }
+U({\vec r}) = - \frac{{\cal G} m_1}{\left | {\vec r}_1 - {\vec r} \right |} 
 \label{grav_potential}
 \end{equation}
+\end{mdframed}
 
 The gravity acceleration and corresponding potential field are additive 
 such that the total force or potential of a 
 collection of $N$ point masses is obtained by summation over individual
 point contributions,
 \begin{equation}
-{\bf g} ({\bf r}) = 
-        \sum_j^N \frac{G m_j}{\left | {\bf r}_j - {\bf r} \right | ^2} ~ 
-         {\bf e}_{{\bf r r}_j}
-,\ \ 
-U({\bf r}) = 
-        - \sum_j^N \frac{G m_j}{\left | {\bf r}_j - {\bf r} \right |}
+{\vec g} ({\vec r}) = 
+\sum_j^N \frac{{\cal G} m_j}{\left | {\vec r}_j - {\vec r} \right | ^2} ~ {\vec e}_{\vec{r}\vec{r}_j}
+, 
+\qquad
+U({\vec r}) = 
+- \sum_j^N \frac{{\cal G} m_j}{\left | {\vec r}_j - {\vec r} \right |}
 \end{equation}
-With this definition and sign convention 
-the potential field of
+With this definition and sign convention the potential field of
 a point source in the origin is represented by a
-potential well ($U({\bf r}) < 0$).
+potential well ($U({\vec r}) < 0$).
 This is known as Coulomb's law and the equivalent form for a continuous
 mass distribution of density $\rho$ (mass per unit volume) contained in
 a volume $V$ is,
 \begin{equation}
-{\bf g}({\bf r}) = 
-        \int_V \frac{G \rho({\bf r}^{'})}
-                     {\left | {\bf r}^{'} - {\bf r} \right | ^2} ~ 
-               {\bf e}_{{\bf r r}^{'}} ~ dV({\bf r}^{'})
-,\ \ 
-U({\bf r}) = 
-        - \int_V \frac{G \rho({\bf r}^{'})}
-                     {\left | {\bf r}^{'} - {\bf r} \right |} ~ 
-               dV({\bf r}^{'})
+{\vec g}({\vec r}) = 
+\int_V \frac{{\cal G} \rho({\vec r}^{'})}
+{\left | {\vec r}^{'} - {\vec r} \right | ^2} ~ 
+{\vec e}_{\vec{r}\vec{r}^{'}} ~ dV({\vec r}^{'})
+,
+\qquad 
+U({\vec r}) = 
+- \int_V \frac{{\cal G} \rho({\vec r}^{'})}
+                     {\left | {\vec r}^{'} - {\vec r} \right |} ~ 
+dV({\vec r}^{'})
 \label{Coulomb-integrals}
 \end{equation}
 
-~\\
-\noindent
+\vspace{.4cm}
+
 Besides the integral expression for the gravity field defined in
 (\ref{Coulomb-integrals}) there is also the differential form
 using the second order partial differential equations of Laplace and
 Poisson.
-It can be shown by verification that $U$ in (\ref{Coulomb-integrals})
+It can be shown by verification (see hereafter) that $U$ in (\ref{Coulomb-integrals})
 satisfies Poisson's equation, 
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-\boxed{\nabla^2 U = 4\pi G\rho}  \label{poisson_eqn}
+\vec\nabla^2 U = 4\pi {\cal G}\rho  \label{poisson_eqn}
 \end{equation}
-which reduces to Laplace's equation $\nabla^2 U = 0$
+\end{mdframed}
+which reduces to Laplace's equation $\vec\nabla^2 U = 0$
 outside the mass distribution in $V$ (where $\rho =0$). 
-\footnote{
+
 To show that $U$ in (\ref{Coulomb-integrals}) satisfies Poisson's
 equation integrate the normal component of the acceleration field
 over an arbitrary closed surface $S$ enclosing $V$
 and change the order of integration for the volume and surface
 integral.
 \begin{equation}
-\int_S \nabla U({\bf r}) \cdot {\bf n} \ dA({\bf r})
-   = - \int_V G \rho({\bf r}^{'}) 
+\int_S \vec\nabla U({\vec r}) \cdot {\vec n} \ dA({\vec r})
+   = - \int_V {\cal G} \rho({\vec r}^{'}) 
     \left \{
      \int_S 
-       \nabla 
-       \left ( \frac{1}{\left | {\bf r}^{'}-{\bf r} \right |} \right )
-      \cdot {\bf n} \ dA({\bf r}) 
-    \right \} dV({\bf r}^{'})
+       \vec\nabla 
+       \left ( \frac{1}{\left | {\vec r}^{'}-{\vec r} \right |} \right )
+      \cdot {\vec n} \ dA({\vec r}) 
+    \right \} dV({\vec r}^{'})
 \label{surface_integral}
 \end{equation}
 The surface integral on the right is independent of the choice of the
-surface $S$ as long as it contains ${\bf r}^{'}$.
+surface $S$ as long as it contains ${\vec r}^{'}$.
 We therefore replace this surface by a sphere of radius $R$ centered
 at $r^{'}$ and find for the surface integral the value $- 4 \pi$.
 \newline
 Next we apply the Gauss divergence theorem to the left hand surface 
 integral to obtain,
 \begin{equation}
-\int_V \nabla^2 U \ dV = \int_V 4 \pi G \rho \ dV  
+\int_V \vec\nabla^2 U \ dV = \int_V 4 \pi {\cal G} \rho \ dV  
 \label{int_form_poisson}
 \end{equation}
 Note that the surface has been contracted on the volume $V$
@@ -221,33 +232,179 @@ to obtain (\ref{int_form_poisson}).
 Since the surface and enclosed volume are arbitrary we obtain the Poisson
 equation,
 \begin{equation}
-\nabla^2 U  = 4 \pi G \rho 
+\vec\nabla^2 U  = 4 \pi {\cal G} \rho 
 \end{equation}
-}
 
 
+\vspace{.4cm}
 
-~\\
-In Newton's time the numerical value of $G$ had not been
-determined yet.
+In Newton's time the numerical value of ${\cal G}$ had not been
+determined yet. 
 As a result it was not possible to determine the mass of the 
 Earth $M_{\oplus}$ by measuring the gravitation force of the Earth 
 on a known `test mass'.
 This way only the value of $G M_{\oplus}$ could be determined.
 Only with the experiment named after Cavendish (1798)
-\footnote{
-http://en.wikipedia.org/wiki/Cavendish\_experiment
-}
+\footnote{\url{http://en.wikipedia.org/wiki/Cavendish_experiment}}
 it became possible
 to measure $G$ directly, in a torsion balance experiment,
 by determining the gravitational attraction of two closely spaced test 
-masses.   
+masses shown here:  
+
+\begin{center}
+\includegraphics[width=8cm]{images/gravity/Cavendish_Experiment}
+\end{center}
+
+
+%---------------------------------------------------------
+\subsubsection{Let us talk units}
+ 
+The SI units for (gravity) acceleration are $\si{\metre\per\square\second}$.
+However in the context of gravity, we will rarely encounter these.
+
+The Gal is the commonly used unit in gravimetry:
+\[
+0.01 \si{\metre\per\square\second} = 1 {\rm Gal}
+\]
+and often measurements are given in mGal or $\mu$Gal.
+
+As such, the acceleration due to Earth's gravity 
+at its surface is 976 to 983 Gal, the variation being due 
+mainly to differences in latitude and elevation. 
+
+
+%---------------------------------------------------------
+\subsubsection{Gravity Force Inside a Spherical Shell}
+
+
+%from wiki https://en.wikipedia.org/wiki/Shell_theorem
+
+In classical mechanics, the {\it shell theorem} gives 
+gravitational simplifications that can be applied to objects inside or outside a 
+{\it spherically symmetrical} body. 
+
+Isaac Newton proved the shell theorem and stated that:
+\begin{enumerate}
+\item A spherically symmetric body affects external objects gravitationally as though all of its mass were concentrated at a point at its centre.
+\item If the body is a spherically symmetric shell (i.e., a hollow ball), no net gravitational force is exerted by the shell on any object inside, regardless of the object's location within the shell.
+\end{enumerate}
+
+\begin{center}
+\includegraphics[width=8cm]{images/gravity/drawing}
+\end{center}
+
+These two propositions are not easy to prove. The second one is very important: it states
+that if I stand mid-mantle at a radius of, say, 5000\si{\kilo\metre}, the 1371\si{\kilo\metre}-thick 
+shell of rock above me does not contribute to the force of gravity that I am feeling. 
+Only the rocks below my feet contribute to this force.
+At this location we can write
+\[
+\frac{{\cal G}m M(r)}{r^2} = m a
+\]
+where $M(r)$ is the mass inside a sphere of radius $r$. The mass $m$ of my body cancels out, and we
+obtain 
+\[
+\frac{{\cal G} M(r)}{r^2} = a
+\]
+The acceleration in this context is often called $g$ and it clearly depends on $r$ so that 
+if density is constant, $M(r)=\frac{4\pi}{3}r^3\rho_0$ and then 
+\[
+g(r) = {\cal G} \frac{4\pi}{3}r\rho_0
+\]
+It also follows that the gravity acceleration in the center of the planet ($r=0$) must be zero and 
+the gravity acceleration increases linearly with the distance to the center. 
+If now the density is not constant (but radially symmetric, i.e. $\rho=\rho(r)$) then 
+\[
+g(r) =  {\cal G} \frac{4\pi}{r^2} \int_0^r \rho(r') r'^2 dr'
+\]
+Remember that this is true because of the spherical symmetry!
+
+%---------------------------------------------------------
+\subsubsection{Nonuniqueness}
+
+Given a body with mass $M$ at a distance $r$ from me, the gravitational acceleration 
+that I feel is 
+\[
+a = \frac{{\cal G} M}{r^2}
+\]
+If the mass is now twice as far (distance $2r$) then 
+\[
+a' = \frac{{\cal G} M}{(2r)^2} =  \frac{1}{4} \frac{{\cal G} M}{r^2} = \frac{1}{4}a
+\]
+Because of the inverse square of the distance the acceleration is four times as small. 
+
+However, if I now 'make' the mass of the body four times as large and twice as far, 
+\[
+a'' = \frac{{\cal G} (4M)}{(2r)^2} = \frac{{\cal G} M}{r^2} =a
+\]
+There lies a very important fact: There is an inescapabale trade-off between distance 
+and mass. 
+
+If gravity is measured at a single point in space nothing certain can be said about 
+what lies below: the object generating the gravity anomaly could be 'close' and 
+not so massive, or 'far' and really massive, 
+both situations potentially leading to the same measurement.
+
+\begin{center}
+\includegraphics[width=6cm]{images/gravity/nonunique}\\
+{\captionfont Taken from van der Meijde \etal (2015) \cite{vapb15}.}
+\end{center}
+
+
+%---------------------------------------------------------
+\subsubsection{The Netherlands}
+
+As explained in Crombaghs \etal (2002) \cite{crdv02},  
+in The Netherlands gravity values
+increase from south to north with about 1 milligal per kilometer. Smallest values occur
+in Limburg (981,100 milligal), while the largest values occur in Groningen (981,350
+milligal). Local variations are limited to 1 milligal over some kilometers.
+
+
+\begin{center}
+\includegraphics[height=5cm]{images/gravity/gravityNL}
+\includegraphics[height=5cm]{images/gravity/gravityNL2}\\
+{\captionfont Left: Taken from \url{https://www.nlog.nl/en/gravity-and-magnetic-field}. 
+The size of the Bouguer anomaly at a particular location is a measure of the mass deficit or mass 
+excess in the underlying rocks. A mass deficit  exists where  the stratigraphic succession is composed of relatively light rocks; 
+this yields a negative Bouguer anomaly. A mass excess exists where the stratigraphic succession is 
+composed of relatively heavy rocks, this yields a positive anomaly.
+Right: Taken from \url{https://upload.wikimedia.org/wikipedia/commons/c/ce/Valversnelling_in_Nederland.svg}.
+
+}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{images/gravity/bodemdaling}\\
+{\captionfont Taken from \url{https://bodemdalingskaart.nl/portal/index}. Is the continuous sinking of certain parts of the Netherlands 
+visible in the satellite gravity rate measurements ?}
+\end{center}
+
+%---------------------------------------------------------
+\subsubsection{Anomalies}
+
+WRITE ...
+
+%---------------------------------------------------------
+\subsubsection{Additivity}
+
+WRITE ...
+
+%---------------------------------------------------------
+\subsubsection{Inversion}
+
+WRITE ...
+
+
+
 
 %----------------------------------------------------------------
 %\subsubsection{Problem section: spherically symmetric density 
 %distributions and corresponding gravity fields}
 
 
+%---------------------------------------------------------
+\subsubsection{A few problems more to solve}
 
 \vspace{0.5cm}
 \fbox{
@@ -280,6 +437,14 @@ masses.
 \end{center}
 
 
+\begin{center}
+\includegraphics[width=7cm]{images/gravity/marsgravity}
+\includegraphics[width=7cm]{images/gravity/moongravity}\\
+{\captionfont Left: Mars gravity, taken from Hirt \etal (2011) \cite{hick12}; 
+Right: Moon gravity, taken from \url{https://en.wikipedia.org/wiki/Gravitation_of_the_Moon}}
+\end{center}
+
+
 %REDUNDANT WITH PREVIOUS EX
 %\fbox{
 %\begin{minipage}{0.9\textwidth}
@@ -301,7 +466,7 @@ masses.
 \begin{minipage}{0.9\textwidth}
 \begin{problem}
  {\small \it
-  Fig. \ref{Fig_PREM} suggests that the magnitude of the gravity aceleration
+The PREM profile suggests that the magnitude of the gravity aceleration
   is approximately constant throughout the Earth's mantle.
 Assume an approximate uniform value of $g$ in the Earth’s mantle, equal to the surface value $g_0 \sim 9.8m/s^2$ 
 and use an approximate average mantle density $\rho_m\sim 4.5 \times 10^3kg/m^3$ 
@@ -324,10 +489,13 @@ to obtain from Eq. (\ref{def_pressure_integ}) an approximation of the static pre
   (\ref{grav_accel}) and (\ref{grav_potential}),
   i.e. prove from these expressions 
   by explicit calculation of the gradient vector from the
-  scalar potential field that ${\bf g}= - \nabla U$.
+  scalar potential field that ${\vec g}= - \vec\nabla U$.
 
-  Hint: specify the potential in cartesian coordinates and differentiate
-  the result with respect to the coordinates $x,y,z$.
+Hint: specify the potential in \eqref{grav_potential} 
+in Cartesian coordinates (i.e. write explicitely $|\vec{r}_1-\vec{r}|$)
+and differentiate the result with respect to the coordinates $x,y,z$.
+What is the derivative of $(f(x))^\alpha$ with respect to $x$?   
+After a few steps you should then arrive at \eqref{grav_accel}. 
  }
 \end{problem}
 \end{minipage}
@@ -372,38 +540,38 @@ to obtain from Eq. (\ref{def_pressure_integ}) an approximation of the static pre
   gravity field of a 
   point-mass distribution with mass $M$, 
   described by a Dirac delta function, 
-  $\rho({\bf r}) = M \delta ({\bf r}-{\bf r}_0)$.
+  $\rho({\vec r}) = M \delta ({\vec r}-{\vec r}_0)$.
   Where the following property holds for the delta function,
   \begin{equation}
-   \int_V \delta( {\bf r}-{\bf r}_0) dV =
+   \int_V \delta( {\vec r}-{\vec r}_0) dV =
      \left \{
        \begin{array}{ll}
-         1, ~ {\bf r}_0 \in V \\ 
-         0, ~ {\bf r}_0 \ni V \\ 
+         1, ~ {\vec r}_0 \in V \\ 
+         0, ~ {\vec r}_0 \ni V \\ 
        \end{array}
      \right .
   ~or,~ more ~general
-   \int_V f({\bf r}) \delta( {\bf r}-{\bf r}_0) dV =
+   \int_V f({\vec r}) \delta( {\vec r}-{\vec r}_0) dV =
      \left \{
        \begin{array}{ll}
-         f({\bf r}_0), ~ {\bf r}_0 \in V \\ 
-         0, ~ {\bf r}_0 \ni V \\ 
+         f({\vec r}_0), ~ {\vec r}_0 \in V \\ 
+         0, ~ {\vec r}_0 \ni V \\ 
        \end{array}
      \right .
   \end{equation}
 
   Hint: integrate (\ref{poisson_eqn}) over a spherical volume,
-  centered at ${\bf r}_0$ and apply the Gauss divergence theoreme:
-  for a vector field ${\bf A}=(A_1,A_2,A_3)$ with divergence 
-  $\nabla \cdot {\bf A} = 
+  centered at ${\vec r}_0$ and apply the Gauss divergence theoreme:
+  for a vector field ${\vec A}=(A_1,A_2,A_3)$ with divergence 
+  $\vec\nabla \cdot {\vec A} = 
    \frac{\partial A_1}{\partial x} +
    \frac{\partial A_2}{\partial y} +
    \frac{\partial A_3}{\partial z}
   $
   \begin{equation}
-    \int_{V} \nabla \cdot {\bf A} dV
+    \int_{V} \vec\nabla \cdot {\vec A} dV
       =
-    \int_{\partial V} {\bf A} \cdot {\bf n} dS
+    \int_{\partial V} {\vec A} \cdot {\vec n} dS
   \end{equation}
   where $\partial V$ is the closed boundary surface of $V$.
  }
@@ -411,14 +579,9 @@ to obtain from Eq. (\ref{def_pressure_integ}) an approximation of the static pre
 \end{minipage}
 }
 
-\vspace{0.5cm}
-
-
-
-
-
 
 \vspace{0.5cm}
+
 \fbox{
 \begin{minipage}{0.9\textwidth}
 \begin{problem}
@@ -443,7 +606,7 @@ to obtain from Eq. (\ref{def_pressure_integ}) an approximation of the static pre
   To derive this result we compute the potential energy difference 
   as the path (line) integral of the work done by the gravity force 
   field on a unit mass and apply the gradient property 
-  ${\bf g}= - \nabla U$.
+  ${\vec g}= - \vec\nabla U$.
 The work done by moving a unit point mass from a location
 ${\bf r}_1$ to
 ${\bf r}_2$ is defined by the line integral,
@@ -457,7 +620,7 @@ ${\bf r}_2$ is defined by the line integral,
                {\bf g} \cdot d{\bf r}
     = 
      \int_{{\bf r}_1}^{{\bf r}_2}
-             - \nabla U \cdot d{\bf r}
+             - \vec\nabla U \cdot d{\bf r}
     = 
      \int_{U({\bf r}_1)}^{U({\bf r}_2)} - dU
 %%%           \nonumber \\
@@ -475,7 +638,7 @@ potential field,
    \frac{\partial U}{\partial y} dy + 
    \frac{\partial U}{\partial z} dz
     =
-   \nabla U \cdot d{\bf r} 
+   \vec\nabla U \cdot d{\vec r} 
 \end{equation}
 The gravitational potential field can thus be defined in terms of the
 work done by the gravity field to move a unit mass from infinity 
@@ -487,7 +650,7 @@ to the evaluation point.
      {\bf g} \cdot d{\bf r}
     =
     \int_{{\bf r}_\infty}^{{\bf r}_1}
-     -\nabla U \cdot d{\bf r}
+     -\vec\nabla U \cdot d{\bf r}
     =
     \int_{U({\bf r}_\infty)}^{U({\bf r}_1)}
      -dU
@@ -511,20 +674,20 @@ field.
 For a spherically symmetric planet the external gravity potential is
 given by (\ref{grav_field_unif_sphere}).
 Moving an object from the surface, the gravity potential changes 
-by $\Delta U = U(r) - U(R) = GM(-\frac{1}{r} + \frac{1}{R})$.
+by $\Delta U = U(r) - U(R) = {\cal G} M(-\frac{1}{r} + \frac{1}{R})$.
 Applying an energy conservation argument we require the change
 in total (potential plus kinetic) energy per unit mass to be:
 $\Delta E= \Delta U + \Delta K = 0$. 
-With $\Delta K = - v_{ex}^2 /2$ we get $v_{esc} = \sqrt{2GM/R}$.
+With $\Delta K = - v_{ex}^2 /2$ we get $v_{esc} = \sqrt{2{\cal G}M/R}$.
 
 \vspace{0.5cm}
 \fbox{
 \begin{minipage}{0.9\textwidth}
 \begin{problem}
- {\small \it
-  Compute the surface escape velocities for different celestial bodies
-  using the parameters given in Table \ref{Table_celest_param}
- }
+{\small \it
+Compute the surface escape velocities for different celestial bodies
+using the parameters given in the Table above. 
+}
 \end{problem}
 \end{minipage}
 }
@@ -550,7 +713,7 @@ With $\Delta K = - v_{ex}^2 /2$ we get $v_{esc} = \sqrt{2GM/R}$.
   using the expression for the internal gravity potential defined in
   (\ref{grav_field_unif_sphere_int})
   \begin{equation}
-    E = \frac{8\pi}{5} G \rho_0 M R^2
+    E = \frac{8\pi}{5} {\cal G} \rho_0 M R^2
   \end{equation}
   Compute the potential energy value $E$, 
   assuming a density 

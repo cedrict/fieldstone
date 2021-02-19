@@ -23,21 +23,32 @@ $i=j$ and zero otherwise. }
 In simple terms, the moment of inertia is the same for any rotation axis
 through the centre of the spherically symmetric body.
 
-
 The moment of inertia $I$ can be determined from Earth's global gravity
 field and the precession rate of the rotation axis determined 
 from astronomical data, see Bullen, {\it The Earth's density}, 1975.
 
-For a {\it spherically symmetric} body of finite volume, 
-the scalar moment of inertia is defined as
+
+The scalar moment of inertia is defined as
 a volume integral over point masses,
-$I = \int_V \rho d^2 dV$.
-It is often expressed in terms of the total mass $M$, the outer radius $R$ 
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+I = \int_V \rho(\vec{r}) d(\vec r)^2 dV.
+\]
+\end{mdframed}
+where $d(\vec r)$ is the distance from point $\vec{r}$ to the rotation axis.
+
+For a {\it spherically symmetric} body of finite volume, 
+it is often expressed in terms of the total mass $M$, the outer radius $R$ 
 and a prefactor $f$ as,
 \begin{equation}
 \boxed{    I = f M R^2}
 \label{def_momint_prefact}
 \end{equation}
+
+\begin{center}
+\includegraphics[width=6cm]{images/gravity/moments}\\
+{\captionfont Taken from Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Moment_of_inertia_factor}}}
+\end{center}
 
 We have seen that the planetary mass and surface density were used to
 constrain models for the interior density distribution.
@@ -47,10 +58,10 @@ observations.
 For Earth the following values for the total mass and moment of inertia
 prefactor have been found,
 \begin{eqnarray}
-M &=& 5.97 \cdot 10 ^{24}~\mathrm{kg} \nonumber\\
-I &=& 0.3307 M R^2   \nonumber
+M &=& 5.97 \cdot 10 ^{24}\si{\kilo\gram} \nonumber\\
+I &=& 0.3307 M R^2  \si{\kilo\gram\square\metre} \nonumber
 \end{eqnarray}
-where $R = 6371$ km is the mean radius.
+where $R = 6371\si{\kilo\metre}$ is the mean radius.
 The observed moment of inertia prefactor $f=0.3307$ is smaller than the 
 value $0.4$ for a homogeneous sphere 
 (see problem \ref{momint_homogeneous_sphere}), 
