@@ -107,6 +107,125 @@ if experiment==3:
           counter_segment+=1
           segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
 
+if experiment==5:
+
+   for i in range (0,2*n_p):
+       x=xA+i*(xB-xA)/(2*n_p)
+       y=yA-delta
+       nodesfile.write("%5d %10e %10e %3d\n" %(counter+1,x,y,0))
+       counter+=1
+       if i<2*n_p-1:
+          counter_segment+=1
+          segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+       
+   for i in range (0,n_p):
+       angle=np.pi/2-np.pi/2*i/n_p
+       rad=0.123-delta
+       x=xD+rad*np.cos(angle)
+       y=yD+rad*np.sin(angle)
+       nodesfile.write("%5d %10e %10e %3d\n" %(counter+1,x,y,0))
+       counter+=1
+       if i<n_p-1:
+          counter_segment+=1
+          segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+
+   for i in range (0,n_p):
+       angle=-np.pi+np.pi*i/n_p
+       rad=delta
+       x=xC+rad*np.cos(angle)
+       y=yC+rad*np.sin(angle)
+       nodesfile.write("%5d %10e %10e %3d\n" %(counter+1,x,y,0))
+       counter+=1
+       if i<n_p-1:
+          counter_segment+=1
+          segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+
+   for i in range (0,2*n_p):
+       angle=np.pi/2*i/(2*n_p)
+       rad=0.123+delta
+       x=xD+rad*np.cos(angle)
+       y=yD+rad*np.sin(angle)
+       nodesfile.write("%5d %10e %10e %3d\n" %(counter+1,x,y,0))
+       counter+=1
+       if i<2*n_p-1:
+          counter_segment+=1
+          segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+
+   for i in range (0,2*n_p):
+       x=xB-i*(xB-xA)/(2*n_p)
+       y=yB+delta
+       nodesfile.write("%5d %10e %10e %3d\n" %(counter+1,x,y,0))
+       counter+=1
+       if i<2*n_p-1:
+          counter_segment+=1
+          segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+       
+   for i in range (0,n_p):
+       angle=np.pi/2+np.pi*i/n_p
+       rad=delta
+       x=xA+rad*np.cos(angle)
+       y=yA+rad*np.sin(angle)
+       nodesfile.write("%5d %10e %10e %3d\n" %(counter+1,x,y,0))
+       counter+=1
+       if i<n_p-1:
+          counter_segment+=1
+          segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+
+
+if experiment==6:
+
+   xA=1000e3
+   yA=650e3
+   xB=xA
+   yB=450e3
+   xC=1100e3
+   yC=yB
+   xD=xC
+   yD=550e3
+   xE=Lx
+   yE=yD
+
+   for i in range (0,n_p):
+       x=xA
+       y=yA+i*(yB-yA)/(n_p)
+       nodesfile.write("%5d %10e %10e %3d\n" %(counter+1,x,y,0))
+       counter+=1
+       if i<2*n_p-1:
+          counter_segment+=1
+          segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+       
+   for i in range (0,n_p//2):
+       x=xB+i*(xC-xB)/(n_p/2)
+       y=yB
+       nodesfile.write("%5d %10e %10e %3d\n" %(counter+1,x,y,0))
+       counter+=1
+       if i<n_p/2-1:
+          counter_segment+=1
+          segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+       
+   for i in range (0,n_p//2):
+       x=xC
+       y=yC+i*(yD-yC)/(n_p/2)
+       nodesfile.write("%5d %10e %10e %3d\n" %(counter+1,x,y,0))
+       counter+=1
+       if i<n_p/2-1:
+          counter_segment+=1
+          segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+       
+   for i in range (0,3*n_p):
+       x=xD+i*(xE-xD)/(3*n_p-1)
+       y=yD
+       nodesfile.write("%5d %10e %10e %3d\n" %(counter+1,x,y,0))
+       counter+=1
+       if i<3*n_p-1:
+          counter_segment+=1
+          segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+       
+
+
+
+
+
 #middle of object
 nodesfile.write("%5d %10e %10e %3d \n" %(counter+1,xobject,yobject, 0))
 counter+=1
@@ -179,6 +298,27 @@ if experiment==4:
           segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
 
 
+if experiment==5:
+   for i in range (1,np_surf+1):
+       nodesfile.write("%5d %10e %10e %3d \n" %(counter+1,i*Lx/(np_surf+1),0.75, 0))
+       counter+=1
+       if i<np_surf-1:
+          counter_segment+=1
+          segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+
+if experiment==6:
+   for i in range (1,np_surf+1):
+       nodesfile.write("%5d %10e %10e %3d \n" %(counter+1,(i-1)*Lx/(np_surf-1),650e3, 0))
+       counter+=1
+       if i<np_surf-1:
+          counter_segment+=1
+          segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+
+
+   nodesfile.write("%5d %3d \n" %(counter_segment,1))
+
+   segmentfile.write("%5d \n" %(0))
+   segmentfile.write("%5d %e %e \n" %(1,0.1,0.1))
 
 
 

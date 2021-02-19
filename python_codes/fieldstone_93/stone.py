@@ -84,6 +84,8 @@ print ('NfemP', NfemP)
 print ('Nfem ', Nfem)
 
 eta_ref=1
+if experiment==6:
+   eta_ref=1e21
 
 #---------------------------------------
 # 6 point integration coeffs and weights 
@@ -268,6 +270,46 @@ if experiment==4:
           rho[iel]=1000
           eta[iel]=100
 
+if experiment==5:
+
+   for iel in range(0,nel):
+       x_c=xV[iconV[6,iel]]
+       y_c=yV[iconV[6,iel]]
+       r_c=np.sqrt((x_c-xD)**2+(y_c-yD)**2)
+       mat[iel]=1
+       rho[iel]=1
+       eta[iel]=1
+       if y_c>0.75:
+          mat[iel]=3
+          rho[iel]=0
+          eta[iel]=1e-6
+       if ((x_c-xA)**2+(y_c-yA)**2<delta**2) or \
+          ((x_c-xC)**2+(y_c-yC)**2<delta**2) or \
+          (x_c>=xA and x_c<=xB and y_c<y1+delta and y_c>y1-delta) or \
+          (r_c>=0.123-delta and r_c<=0.123+delta and x_c>=xB and y_c>=yC):
+          mat[iel]=2
+          rho[iel]=1.1
+          eta[iel]=10
+
+if experiment==6:
+
+   for iel in range(0,nel):
+       x_c=xV[iconV[6,iel]]
+       y_c=yV[iconV[6,iel]]
+       mat[iel]=1
+       rho[iel]=3200
+       eta[iel]=1e21
+       if y_c>650e3:
+          mat[iel]=3
+          rho[iel]=0
+          eta[iel]=1e19
+       if (x_c>1000e3 and y_c<650e3 and y_c>550e3) or\
+          (x_c>1000e3 and x_c<1100e3 and y_c>450e3 and y_c<650e3):
+          mat[iel]=2
+          rho[iel]=3300
+          eta[iel]=1e23
+
+
 print("material layout: %.3f s" % (timing.time() - start))
 
 #################################################################
@@ -294,6 +336,7 @@ for i in range(0, NV):
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0   
        if bc=='noslip' or experiment==4:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+
     #top boundary  
     if yV[i]/Ly>0.9999999:
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0  
@@ -312,12 +355,17 @@ for i in range(0, NV):
     if abs(yV[i]-0.75)<1e-6:
        on_surf[i]=True
 
+if experiment==6:
+   for i in range(0, NV):
+       if abs(yV[i]-650e3)<1:
+          on_surf[i]=True
+
+
 xs = np.zeros(np.count_nonzero(on_surf),dtype=np.float64)  
 ys = np.zeros(np.count_nonzero(on_surf),dtype=np.float64)  
 us = np.zeros(np.count_nonzero(on_surf),dtype=np.float64)  
 vs = np.zeros(np.count_nonzero(on_surf),dtype=np.float64)  
 ps = np.zeros(np.count_nonzero(on_surf),dtype=np.float64)  
-
 
 ################################################################################################
 ################################################################################################
@@ -835,7 +883,7 @@ for istep in range(0,nstep):
 
        print("measure at 0.5,0.6: %.3f s" % (timing.time() - start))
 
-    if experiment==4:
+    if experiment==4 or experiment==5 or experiment==6:
 
        p_u=0
        p_v=0
