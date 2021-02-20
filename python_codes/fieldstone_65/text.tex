@@ -7,8 +7,15 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Let us start by remembering that the Peclate number is given by 
+\[
+Pe = \frac{uh}{2\kappa} = \frac{uh\rho C_p}{2 k}
+\]
 
-\paragraph{Experiment 1}
+RECALL peclet formula
+
+%----------------------------
+\subsubsection*{Experiment 1}
 We wish to solve the advection-diffusion problem presented in 
 Section~\ref{ss:advdiff}:
 \begin{equation}
@@ -81,7 +88,7 @@ overly dissipative (i.e. overly diffusive):
 
 \newpage
 %..................................................................................
-\paragraph{Experiment 2 - advection skew to the mesh}
+\subsubsection*{Experiment 2 - advection skew to the mesh}
 
 The domain is a unit square. Resolution is $10\times10$ linear elements. Initial temperature is 
 irrelevant since we compute the steady state field. 
@@ -113,12 +120,69 @@ We then conduct three experiments: one without stabilisation, one with (isotropi
 one with SUPG, from left to right on the following plots:
 
 \begin{center}
-\includegraphics[width=15cm]{python_codes/fieldstone_65/results/exp2/Temps}\\
 \includegraphics[width=15cm]{python_codes/fieldstone_65/results/exp2/Temps2}\\
+\includegraphics[width=15cm]{python_codes/fieldstone_65/results/exp2/Temps}\\
 \includegraphics[width=15cm]{python_codes/fieldstone_65/images/exp2}\\
 {\captionfont Left to right: Standard Galerkin method, artificial diffusion, SUPG. 
 Bottom row taken from Donea \& Huerta \cite{dohu03}. }
 \end{center}
+
+
+
+%..................................................................................
+\subsubsection*{Experiment 3 - DG book setup}
+
+This setup comes from Li's book on Discontinuous Galerkin Methods \cite{li06}, Section 5.2.3.
+The 2D advection-diffusion equation is solved on a unit square with the following boundary 
+conditions:
+\begin{itemize}
+\item bottom: $T=0$
+\item left: $T=0$ if $y>0.5$, $T=1$ otherwise
+\item right: $T=0$
+\item top: $\partial_y T=0$
+\end{itemize} 
+Note that is not clear which value is actually prescribed in the lower left corner. 
+
+Coefficients are not specified but the experiment should be run at $u/\kappa=1,10,100$ where 
+$D$ is the diffusion coefficient (in the book $D$ is used instead of $\kappa$).
+We then set $\rho=C_p=1$, $u_0=1$ and we define $\xi=u/\kappa$ with $\xi=1,10,100$. Then 
+\[
+Pe = \frac{h\xi}{2} 
+\]
+We finally set nelx=nely=32, so that the heat conductivity coefficient can be computed.
+
+
+\begin{center}
+\includegraphics[height=10cm]{python_codes/fieldstone_65/results/exp3/libook}
+\includegraphics[height=10cm]{python_codes/fieldstone_65/results/exp3/Tnostab}\\
+{\captionfont Left: Taken from Li \cite{li06}. Computed results for a 2-D convection-diffusion 
+problem showing the effect of convection on the temperature distribution in the system.
+Right: results obtained without any stabilisation. From top to bottom, $Pe=0.015625$, 
+$Pe=0.15625$ and $Pe=1.5625$.}
+\end{center}
+
+The code also automatically generates the following 3D plots, and we see that for $\xi=100$
+we obtain a strong overshoot near the right boundary:
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_65/results/exp3/solution1.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_65/results/exp3/solution10.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_65/results/exp3/solution100.pdf}\\
+{\captionfont No stabilisation, from left to right: $\xi=1,10,100$.}
+\end{center}
+
+If I now increase the resolution then $h$ becomes smaller and so does the Peclet number, so that 
+the oscillations near the right wall disappear:
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_65/results/exp3/solution100.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_65/results/exp3/solution100_x2.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_65/results/exp3/solution100_x4.pdf}\\
+{\captionfont No stabilisation. $\xi=100$. From left to right: 32x32, 64x64 and 128x128 resolution.}
+\end{center}
+
+ToDo: run this experiment with SUPG.
+
 
 
 

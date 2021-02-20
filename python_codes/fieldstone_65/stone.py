@@ -20,7 +20,11 @@ ndim=2       # number of space dimensions
 m=4          # number of nodes making up an element
 ndofT=1      # number of degrees of freedom per node
 
-experiment=2
+# exp 1: 1D problem
+# exp 2: 2D skew to the mesh
+# exp 3: 2D setup from Li, DG book
+
+experiment=3
 
 if experiment==1:
    Lx=1.        # horizontal extent of the domain 
@@ -45,6 +49,21 @@ if experiment==2:
    hy=Ly/float(nely)
    f=0.
    Pe=1e4
+   u0=1.
+   hcapa=1.     # heat capacity
+   rho0=1       # reference density
+   hcond=u0*hx*rho0*hcapa/2/Pe     # thermal conductivity
+
+if experiment==3:
+   Lx=1.
+   Ly=1. 
+   nelx = 32
+   nely = 32
+   hx=Lx/float(nelx)
+   hy=Ly/float(nely)
+   f=0.
+   xi=1 # 1,10 or 100
+   Pe=xi*hx/2
    u0=1.
    hcapa=1.     # heat capacity
    rho0=1       # reference density
@@ -80,6 +99,11 @@ if experiment==2:
    else:
       beta=0
 
+if experiment==3: #????
+   if use_artificial_diffusion:
+      beta=1.                      # Pe>>1 so coth(Pe)->1 
+   else:
+      beta=0
 
 kappatilde=beta*kappa*Pe
 hcondtilde=kappatilde*rho0*hcapa
@@ -88,6 +112,7 @@ print("Lx=",Lx)
 print("Ly=",Ly)
 print("hx=",hx)
 print("hy=",hy)
+print("rho0=",rho0)
 print("hcond=",hcond)
 print("hcapa=",hcapa)
 print("kappa=",hcond/rho0/hcapa)
@@ -120,7 +145,7 @@ for j in range(0, nny):
 u = np.zeros(NV,dtype=np.float64)  # x-component velocity
 v = np.zeros(NV,dtype=np.float64)  # y-component velocity
 
-if experiment==1:
+if experiment==1 or experiment==3:
    counter = 0
    for j in range(0, nny):
        for i in range(0, nnx):
@@ -184,10 +209,20 @@ if experiment==2:
        if y[i]<eps:
           bc_fixT[i]=True ; bc_valT[i]=0.
 
-       #if x[i]/Lx>(1-eps):
-       #   bc_fixT[i]=True ; bc_valT[i]=0.
+if experiment==3:
+   for i in range(0,NV):
+       if x[i]/Lx<eps:
+          if y[i]>0.5:
+             bc_fixT[i]=True ; bc_valT[i]=0.
+          else:
+             bc_fixT[i]=True ; bc_valT[i]=1.
+       if x[i]/Lx>(1-eps):
+          bc_fixT[i]=True ; bc_valT[i]=0.
+       if y[i]<eps:
+          bc_fixT[i]=True ; bc_valT[i]=0.
        #if y[i]/Ly>(1-eps):
        #   bc_fixT[i]=True ; bc_valT[i]=0.
+ 
    #end for
 
 #####################################################################
@@ -199,7 +234,7 @@ T_anal  = np.zeros(NV,dtype=np.float64)
 if experiment==1:
    for i in range(0,NV):
        T_anal[i]=(x[i]-(1-np.exp(2*Pe*x[i]/hx))/(1-np.exp(2*Pe/hx)))/u0*f
-if experiment==2:
+if experiment==2 or experiment==3:
    T_anal[:]=0.
 
 #####################################################################
