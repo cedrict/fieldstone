@@ -9,7 +9,7 @@ lonmin=0.5
 lonmax=359.5
 
 #user chosen
-nrad=13  #301  # 301 <-> 300m resolution for -81:9km range
+nrad=301  # 301 <-> 300m resolution for -81:9km range
 
 alpha=3e-5
 rho0=3300
@@ -82,7 +82,7 @@ boundaries =np.zeros(9,dtype=np.float64)
 rhos =np.zeros(9,dtype=np.float64)
 
 cfile=open('crust1p0_full_for_aspect.ascii',"w")
-mfile=open('crust1p0_moho_for_aspect.ascii',"w")
+mfile=open('bench3.ascii',"w")
 
 cfile.write("# POINTS: %i %i %i \n" %(nrad,nlon,nlat)) 
 mfile.write("# POINTS: %i %i %i \n" %(nrad,nlon,nlat)) 
