@@ -10,30 +10,7 @@ import time as timing
 from scipy.sparse import lil_matrix
 from parameters import *
 
-Ggrav = 1 #6.6738480e-11
-
-#------------------------------------------------------------------------------
-
-def compute_viscosity(xq,yq,imat):
-    if imat==1:
-       etaq=100
-    elif imat==2:
-       etaq=1
-    else:
-       etaq=1000
-    return etaq
-
-def compute_density(xq,yq,imat):
-    if imat==1:
-       rhoq=10
-    elif imat==2:
-       rhoq=1
-    else:
-       rhoq=2
-    return rhoq
-    
-
-
+Ggrav = 6.67430e-11
 
 #------------------------------------------------------------------------------
 
@@ -109,7 +86,7 @@ print ('NfemV', NfemV)
 print ('NfemP', NfemP)
 print ('Nfem ', Nfem)
 
-eta_ref=10
+eta_ref=1e23
 
 #---------------------------------------
 # 6 point integration coeffs and weights 
@@ -126,6 +103,35 @@ nb6=0.223381589678011/2.
 qcoords_r=[nb1,nb2,nb2,nb4,nb3,nb4]
 qcoords_s=[nb2,nb1,nb2,nb3,nb4,nb4]
 qweights =[nb5,nb5,nb5,nb6,nb6,nb6]
+
+#################################################################
+# read profiles 
+#################################################################
+
+profile_eta=np.empty(1968,dtype=np.float64) 
+profile_depth=np.empty(1968,dtype=np.float64) 
+profile_eta,profile_depth=np.loadtxt('data/eta.ascii',unpack=True,usecols=[0,1])
+
+profile_rho=np.empty(3390,dtype=np.float64) 
+profile_depth=np.empty(3390,dtype=np.float64) 
+profile_rho,profile_depth=np.loadtxt('data/rho.ascii',unpack=True,usecols=[0,1])
+
+#################################################################
+# from density profile build gravity profile
+#################################################################
+
+profile_rad=np.empty(3390,dtype=np.float64) 
+profile_grav=np.zeros(3390,dtype=np.float64) 
+profile_mass=np.zeros(3390,dtype=np.float64) 
+
+profile_grav[0]=0
+for i in range(1,3390):
+    profile_rad[i]=i*1000
+    profile_mass[i]=profile_mass[i-1]+4*np.pi/3*(profile_rad[i]**3-profile_rad[i-1]**3)\
+                                     *(profile_rho[3389-i]+profile_rho[3389-(i-1)])*1000/2
+    profile_grav[i]=Ggrav*profile_mass[i]/profile_rad[i]**2
+    
+np.savetxt('profile_grav.ascii',np.array([profile_rad,profile_mass,profile_grav]).T)
 
 #################################################################
 # grid point setup
@@ -196,6 +202,7 @@ start = timing.time()
 iconP=np.zeros((mP,nel),dtype=np.int32)
 xP=np.empty(NfemP,dtype=np.float64)     # x coordinates
 yP=np.empty(NfemP,dtype=np.float64)     # y coordinates
+rP=np.empty(NfemP,dtype=np.float64)     # r coordinates
 
 counter=0
 for iel in range(0,nel):
@@ -210,7 +217,9 @@ for iel in range(0,nel):
     xP[counter]=xV[iconV[2,iel]]
     yP[counter]=yV[iconV[2,iel]]
     iconP[2,iel]=counter
+    rP[counter]=np.sqrt(xP[counter]**2+yP[counter]**2)
     counter+=1
+
 
 #np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
 
@@ -230,24 +239,28 @@ start = timing.time()
 
 rho=np.zeros(nel,dtype=np.float64) 
 eta=np.zeros(nel,dtype=np.float64) 
-mat=np.zeros(nel,dtype=np.int16) 
 
 for iel in range(0,nel):
     x_c=xV[iconV[6,iel]]
     y_c=yV[iconV[6,iel]]
+    r_c=np.sqrt(x_c**2+y_c**2)
+
+    j=int((R_outer-r_c)/1000)
+
+    rho[iel]=profile_rho[j]*1000
+
+    if r_c>R_inner:
+       eta[iel]=10**profile_eta[j]
+    else:
+       eta[iel]=eta_core
 
     if x_c**2+(y_c-y_blob)**2<R_blob**2:
-       mat[iel]=3
-    elif x_c**2+y_c**2<R_inner**2:
-       mat[iel]=1
-    else:
-       mat[iel]=2
+       rho[iel]=rho_blob
+       eta[iel]=eta_blob
 
-    rho[iel]=compute_density(x_c,y_c,mat[iel])
-    eta[iel]=compute_viscosity(x_c,y_c,mat[iel])
+    eta[iel]=min(eta_max,eta[iel])
 
 #end for
-   
 
 print("     -> eta (m,M) %.6e %.6e " %(np.min(eta),np.max(eta)))
 print("     -> rho (m,M) %.6e %.6e " %(np.min(rho),np.max(rho)))
@@ -264,11 +277,9 @@ bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 on_surf=np.zeros(NV,dtype=np.bool)  # boundary condition, yes/no
 
 for i in range(0, NV):
-
     #Left boundary  
-    if xV[i]<0.0000001:
+    if xV[i]<0.000001*R_inner:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0 
-
     #right boundary  
     if xV[i]**2+yV[i]**2>0.99999*R_outer**2:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
@@ -387,8 +398,8 @@ for istep in range(0,1):
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
 
             # compute etaq, rhoq
-            etaq=compute_viscosity(xq,yq,mat[iel])
-            rhoq=compute_density(xq,yq,mat[iel])
+            etaq=eta[iel] 
+            rhoq=rho[iel] 
 
             for i in range(0,mV):
                 b_mat[0:4, 2*i:2*i+2] = [[dNNNVdx[i],0.       ],
@@ -406,9 +417,12 @@ for istep in range(0,1):
             mass+=jcob*weightq*rhoq * 2*np.pi*xq
 
             #compute gx,gy
+            radq=np.sqrt(xq**2+yq**2)
+            grav=profile_grav[int(radq/1000)]
             angle=np.arctan2(yq,xq)
-            gx=-grav*np.cos(angle)
-            gy=-grav*np.sin(angle)
+            gx=grav*np.cos(angle)
+            gy=grav*np.sin(angle)
+            #print(xq,yq,gx,gy)
 
             for i in range(0,mV):
                 f_el[ndofV*i  ]-=NNNV[i]*jcob*weightq*gx*rhoq * 2*np.pi*xq
@@ -471,6 +485,8 @@ for istep in range(0,1):
     rhs[0:NfemV]=f_rhs
     rhs[NfemV:Nfem]=h_rhs
 
+    print('mass=',mass)
+
     print("build FE matrix: %.3f s" % (timing.time() - start))
 
     ######################################################################
@@ -489,6 +505,8 @@ for istep in range(0,1):
     u,v=np.reshape(sol[0:NfemV],(NV,2)).T
     p=sol[NfemV:Nfem]*eta_ref/R_outer
 
+    np.savetxt('p_solution.ascii',np.array([xP,yP,p]).T,header='# x,y')
+
     print("     -> u (m,M) %.6e %.6e " %(np.min(u),np.max(u)))
     print("     -> v (m,M) %.6e %.6e " %(np.min(v),np.max(v)))
     print("     -> p (m,M) %.6e %.6e " %(np.min(p),np.max(p)))
@@ -500,10 +518,7 @@ for istep in range(0,1):
     ######################################################################
 
     vrms=0
-    avrgp=0
-
     for iel in range(0,nel):
-
         for kq in range (0,nqel):
 
             # position & weight of quad. point
@@ -538,25 +553,27 @@ for istep in range(0,1):
 
             vrms+=(uq**2+vq**2)*jcob*weightq *xq*2*np.pi
 
-            pq=0.0
-            for k in range(0,mP):
-                pq+=NNNP[k]*p[iconP[k,iel]]
-            #end for
-            avrgp+=pq*weightq*jcob *2*np.pi*xq
-
-        #end for jq
-
         #end for
     #end for
 
     vrms=np.sqrt(vrms/(np.pi*R_outer**2/2))
-    avrgp=avrgp/(np.pi*R_outer**2/2)
-
-    p-=avrgp # normalising pressure
 
     print("     -> nel= %6d ; vrms= %e " %(nel,vrms))
 
     print("compute vrms: %.3f s" % (timing.time() - start))
+
+    ######################################################################
+
+    avrg_p=0
+    counter=0
+    for i in range(NfemP):
+        if rP[i]>0.99999*R_outer:
+           avrg_p+=p[i]
+           counter+=1
+
+    p-=(avrg_p/counter) # normalising pressure at surface
+
+    np.savetxt('p_solution_normalised.ascii',np.array([xP,yP,p,rP]).T)
 
     ######################################################################
     # compute elemental strainrate 
@@ -679,7 +696,7 @@ for istep in range(0,1):
            sr[i]=sr[i]/cc[i]
 
     #####################################################################
-    # compure dev stress tensor and stress tensor 
+    # compute dev stress tensor and stress tensor 
     #####################################################################
 
     tauxx = np.zeros(nel,dtype=np.float64)  
@@ -696,7 +713,6 @@ for istep in range(0,1):
     sigmaxx[:]=-p_el[:]+2*eta[:]*exx[:]
     sigmayy[:]=-p_el[:]+2*eta[:]*eyy[:]
     sigmaxy[:]=        +2*eta[:]*exy[:]
-
 
     #####################################################################
     # plot of solution
@@ -734,14 +750,9 @@ for istep in range(0,1):
         vtufile.write("%7e\n" % (eta[iel]))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='mat' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d\n" % (mat[iel]))
-    vtufile.write("</DataArray>\n")
-    #--
     vtufile.write("<DataArray type='Float32' Name='p (el)' Format='ascii'> \n")
     for iel in range (0,nel):
-        vtufile.write("%7e\n" % (p_el[iel]))
+        vtufile.write("%e\n" % (p_el[iel]))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
@@ -827,7 +838,7 @@ for istep in range(0,1):
     #--
     vtufile.write("<DataArray type='Float32' Name='p (nod)' Format='ascii'> \n")
     for i in range(0,NV):
-        vtufile.write("%10e \n" %q[i])
+        vtufile.write("%e \n" %q[i])
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='fix_u' Format='ascii'> \n")
@@ -926,7 +937,7 @@ for istep in range(0,1):
                 xq+=NNNV[k]*xV[iconV[k,iel]]
                 yq+=NNNV[k]*yV[iconV[k,iel]]
 
-            rhoq=compute_density(xq,yq,mat[iel])
+            rhoq=rho[iel]
 
             dist2=(xM[i]-xq)**2 + (yM[i]-yq)**2
 

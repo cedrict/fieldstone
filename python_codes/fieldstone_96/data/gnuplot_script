@@ -1,0 +1,41 @@
+set term pdf enhanced font "Times,12pt"
+unset grid
+set ylabel 'r'
+set xlabel 'density'
+set key outside
+
+
+set output 'rho2.pdf'
+plot[2:9][0:3500]\
+'rho.ascii' u 1:(3389-$2) w l lw 2 notitle,\
+3389 lt -1 dt 2 lw 0.2 t 'surface',\
+3389-50 lt -1 dt 3 lw 0.2 t 'moho',\
+1422 lt -1 dt 4 lw 0.2 t 'cmb'
+
+set xlabel 'viscosity (log_{10})'
+set output 'eta2.pdf'
+plot[20:30.5][0:3600]\
+'eta.ascii' u 1:(3389-$2) w l lw 2 notitle,\
+3389 lt -1 lw 0.2 t 'surface',\
+3389-50 lt -1 dt 3 lw 0.2 t 'moho',\
+1422 lt -1 dt 4 lw 0.2 t 'cmb'
+
+#-------------------------------------------
+
+set ylabel 'depth'
+set yrange [:] reverse 
+set output 'rho1.pdf'
+plot[2:9][]\
+'rho.ascii' u 1:($2) w l lw 2  notitle,\
+50 lt -1 dt 3 lw 0.2 t 'moho',\
+3389-1422 lt -1 dt 4 lw 0.2 t 'cmb',\
+3389 lt -1 
+
+set xlabel 'viscosity (log_{10})'
+set output 'eta1.pdf'
+plot[:30.5][3600:0]\
+'eta.ascii' u 1:2 w l lw 2  notitle,\
+50 lt -1 dt 3 lw 0.2 t 'moho',\
+3389-1422 lt -1 dt 4 lw 0.2 t 'cmb',\
+3389 lt -1 notitle
+

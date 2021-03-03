@@ -6,7 +6,7 @@ from parameters import *
 filename='mypoints'
 nodesfile=open(filename,"w")
 
-nodesfile.write("%5d %5d %3d %3d\n" %(np_inner+np_outer+2*np_vert+np_blob,2,0,1))
+nodesfile.write("%5d %5d %3d %3d\n" %(np_inner+np_outer+2*np_vert+np_blob+np_moho+np_trans,2,0,1))
 
 counter=0
 counter_segment=0
@@ -67,7 +67,6 @@ for i in range (0,np_vert):
        counter_segment+=1
        segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,4))
 
-
 #------------------------------------------------------------------------------
 # blob 
 #------------------------------------------------------------------------------
@@ -83,12 +82,40 @@ for i in range (0,np_blob):
        counter_segment+=1
        segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,5))
 
+#------------------------------------------------------------------------------
+# moho 
+#------------------------------------------------------------------------------
+
+for i in range (0,np_moho):
+    angle=np.pi/2-np.pi/np_moho*i
+    xi=R_moho*np.cos(angle)
+    yi=R_moho*np.sin(angle)
+    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,yi, 3))
+    counter+=1
+    if i<np_moho-1:
+       counter_segment+=1
+       segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,3))
+
+#------------------------------------------------------------------------------
+# transition in the mantle 
+#------------------------------------------------------------------------------
+
+for i in range (0,np_trans):
+    angle=np.pi/2-np.pi/np_trans*i
+    xi=R_trans*np.cos(angle)
+    yi=R_trans*np.sin(angle)
+    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,yi, 3))
+    counter+=1
+    if i<np_trans-1:
+       counter_segment+=1
+       segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,3))
+
+
+
+#------------------------------------------------------------------------------
+
 nodesfile.write("%5d %3d \n" %(counter_segment,1))
-
-
 
 segmentfile.write("%5d \n" %(1))
 segmentfile.write("%5d %e %e \n" %(1,0.1,0.1))
-
-
 
