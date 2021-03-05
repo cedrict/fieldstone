@@ -1,0 +1,24 @@
+\begin{flushright} {\tiny {\color{gray} (tikz\_quadrature\_idef.tex)}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (7,5); 
+\draw[fill=gray!20,gray!40] (1,1)--(4,1)--(4,3.7)--(3.25,3.55)--(2.5,3.35)--(1.75,3.05)--(1,2.65)--cycle;
+\draw [thick,->] (0.5,1) -- (5,1);
+\node[] at (1,0.6) {$a$};
+\node[] at (4,0.6) {$b$};
+\node[] at (5,0.6) {$x$};
+\draw [-] (1,0.8) -- (1,1.2);
+\draw [-] (4,0.8) -- (4,1.2);
+\draw [dashed] (1,1) -- (1,2.6);
+\draw [dashed] (4,1) -- (4,3.75);
+\draw[very thick] (0.75,2.5) .. controls (1.5,3) and (2.5,3.5) .. (4.25,3.75);
+\node[] at (4.75,4) {$f(x)$};
+\node[] at (-0.5,2.5) {$f(a)$};
+\draw [dashed] (0,2.65) -- (1,2.65);
+\node[] at (-0.5,3.8) {$f(b)$};
+\draw [dashed] (0,3.7) -- (4,3.7);
+\end{tikzpicture}
+\end{center}
+

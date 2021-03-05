@@ -1,0 +1,25 @@
+\begin{flushright} {\tiny {\color{gray} (tikz\_cartesian\_coordinates.tex)}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\begin{center}
+\begin{tikzpicture}
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (4,4); %background grid
+
+\draw [thick,->] (1.5,2) -- (3.5,2);
+\draw [thick,->] (1.5,2) -- (1.5,4);
+\draw [thick,->] (1.5,2) -- (0.5,0.5);
+
+\node[] at (0.75,0.25) {$x$};
+\node[] at (3.75,2) {$y$};
+\node[] at (1.75,3.75) {$z$};
+
+\draw[>=triangle 45, line width=0.3mm, ->] (1.5,2) -- (2.5,2) ;   
+\node[] at (2,1.7) {$\vec{e}_x$};
+
+\draw[>=triangle 45, line width=0.3mm, ->] (1.5,2) -- (1.5,3) ;   
+\node[] at (1.9,2.75) {$\vec{e}_y$};
+
+\draw[>=triangle 45, line width=0.3mm, ->] (1.5,2) -- (1,1.25) ;   
+\node[] at (1.25,1.1) {$\vec{e}_z$};
+
+\end{tikzpicture}
+\end{center}
