@@ -1,0 +1,27 @@
+\begin{flushright} {\tiny {\color{gray} (tikz\_q12d.tex)}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (4,4); 
+\draw[fill=gray!10,gray!10](1,1) rectangle (3,3);
+\draw[thick] (1,1)--(3,1)--(3,3)--(1,3)--cycle;
+\draw [->] (0.5,2) -- (3.5,2);
+\draw [->] (2,0.5) -- (2,3.5);
+\node[] at (3.7,1.9) {$r$};
+\node[] at (1.9,3.7) {$s$};
+\draw[black,fill=black] (1,1)   circle (1.5pt);
+\draw[black,fill=black] (3,1)   circle (1.5pt);
+\draw[black,fill=black] (3,3)   circle (1.5pt);
+\draw[black,fill=black] (1,3)   circle (1.5pt);
+\node[] at (0.8,0.8) {$1$};
+\node[] at (0.8,3.2) {$4$};
+\node[] at (3.2,0.8) {$2$};
+\node[] at (3.2,3.2) {$3$};
+\node[] at (1.18,2.1) {\tiny $-1$};
+\node[] at (2.82,2.1) {\tiny $+1$};
+\node[] at (2.18,1.1) {\tiny $-1$};
+\node[] at (2.18,2.85) {\tiny $+1$};
+\end{tikzpicture}
+\end{center}
+
