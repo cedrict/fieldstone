@@ -361,7 +361,7 @@ ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom per node
 ndofT=1  # number of temperature degrees of freedom per node
 
-Lx=1.
+Lx=1.5
 Ly=1.
 
 if int(len(sys.argv) == 7):
@@ -376,7 +376,7 @@ else:
    nely = 32
    visu = 1
    order= 2
-   Ra = 1e6
+   Ra = 16
    nstep=1000
 
 tol_ss=1e-6   # tolerance for steady state 
