@@ -1,0 +1,16 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set xlabel 'r'
+set ylabel '{/Symbol q}_1(r)'
+set output 'theta1.pdf'
+plot[-1:1][]\
+x**2-5./3.*x**4 notitle,\
+0 lt -1 notitle
+
+set ylabel '{/Symbol q}_2(r)'
+set output 'theta2.pdf'
+plot[-1:1][]\
+x**2-25./6.*x**4+7./2.*x**6 notitle,\
+0 lt -1 notitle
+
+

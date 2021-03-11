@@ -1,0 +1,95 @@
+This element is often reffered to as the 'DSSY' element becaus of the 
+four authors of the original paper: Douglas, Santos, sheen and Ye (1999) \cite{doss99}.
+
+The non-conforming finite element space is defined based on the 
+reference square element $Q_l$ on $[-1,1]^2$ :
+\[
+Q_l = \text{Span} \left\{ 1, r, s, \theta_l(r)-\theta_l(s)  \right\}
+\qquad l=1,\; \text{or} \; 2
+\]
+with
+\begin{eqnarray}
+\theta_1(r) &=& r^2-\frac53r^4  \nn\\
+\theta_2(r) &=& r^2-\frac{25}{6} r^4 + \frac72 r^6 
+\end{eqnarray}
+The dimension of $Q_l$ is four and the $\theta_l$ functions are as follows:
+\begin{center}
+\includegraphics[width=7cm]{images/dssy/theta1}
+\includegraphics[width=7cm]{images/dssy/theta2}
+\end{center}
+We have:
+\begin{itemize}
+\item $\theta_1(r=-1)=\theta_1(r=+1)=-\frac23$, $\theta_1(r=0)=0$ 
+\item $\theta_2(r=-1)=\theta_2(r=+1)=\frac13$, $\theta_2(r=0)=0$ 
+\end{itemize}
+
+\input{tikz_dssy2D}
+
+The basis function corresponding to the node (1, 0) is given by
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+N_1(r,s)^{(l)} &=& \frac{1}{4} - \frac{1}{2} r + \frac{\theta_l(r)-\theta_l(s)}{4 \theta_l(1)}  \nn\\
+N_2(r,s)^{(l)} &=& \frac{1}{4} + \frac{1}{2} r + \frac{\theta_l(r)-\theta_l(s)}{4 \theta_l(1)}  \nn\\
+N_3(r,s)^{(l)} &=& \frac{1}{4} - \frac{1}{2} s - \frac{\theta_l(r)-\theta_l(s)}{4 \theta_l(1)}  \nn\\
+N_4(r,s)^{(l)} &=& \frac{1}{4} + \frac{1}{2} s - \frac{\theta_l(r)-\theta_l(s)}{4 \theta_l(1)}  
+\end{eqnarray}
+\end{mdframed}
+We can easily verify that $\sum_i N_i(r,s,t)=1$ and that $N_i(\vec{r}_j)=\delta_{ij}$:
+\begin{eqnarray}
+N_1^{(l)}(r_1,s_1) 
+&=& \frac{1}{4} -\frac{1}{2} (-1) + \frac{\theta_l(-1)-\theta_l(0)}{4 \theta_l(1)}  
+= \frac{1}{4} +\frac{1}{2}  + \frac{\theta_l(-1)}{4 \theta_l(1)}  
+= \frac{1}{4} +\frac{1}{2}  + \frac{1}{4}   = 1 \nn\\
+N_1^{(l)}(r_2,s_2)
+&=& \frac{1}{4} -\frac{1}{2} (+1) + \frac{\theta_l(+1)-\theta_l(0)}{4 \theta_l(1)}  
+= \frac{1}{4} -\frac{1}{2} + \frac{\theta_l(+1)}{4 \theta_l(1)}  
+= \frac{1}{4} -\frac{1}{2} + \frac{1}{4}   = 0 \nn\\
+N_1^{(l)}(r_3,s_3)
+&=& \frac{1}{4} -\frac{1}{2} (0) + \frac{\theta_l(0)-\theta_l(-1)}{4 \theta_l(1)}  
+= \frac14 -\frac14  = 0 \nn\\
+N_1^{(l)}(r_4,s_4)
+&=& \frac{1}{4} -\frac{1}{2} (0) + \frac{\theta_l(0)-\theta_l(+1)}{4 \theta_l(1)}  
+= \frac14 -\frac14  = 0 \nn\\
+N_2^{(l)}(r_1,s_1) 
+&=& \frac{1}{4} + \frac{1}{2} (-1) + \frac{\theta_l(-1)-\theta_l(0)}{4 \theta_l(1)}  
+= \frac14 -\frac12 + \frac14 = 0 \nn\\
+N_2^{(l)}(r_2,s_2)
+&=& \frac{1}{4} + \frac{1}{2} (+1) + \frac{\theta_l(+1)-\theta_l(0)}{4 \theta_l(1)}  
+= \frac14 + \frac12 + \frac14 =1 \nn\\
+N_2^{(l)}(r_3,s_3)
+&=& \frac{1}{4} + \frac{1}{2} (0) + \frac{\theta_l(0)-\theta_l(-1)}{4 \theta_l(1)}  
+= \frac14 - \frac14 = 0 \nn\\
+N_2^{(l)}(r_4,s_4)
+&=& \frac{1}{4} + \frac{1}{2} (0) + \frac{\theta_l(0)-\theta_l(+1)}{4 \theta_l(1)}  
+= \frac14 - \frac14 = 0 \nn\\
+N_3^{(l)}(r_1,s_1)
+&=& \frac{1}{4} - \frac{1}{2} (0) - \frac{\theta_l(-1)-\theta_l(0)}{4 \theta_l(1)} 
+= \frac14 -\frac14 = 0\nn\\
+N_3^{(l)}(r_2,s_2)
+&=& \frac{1}{4} - \frac{1}{2} (0) - \frac{\theta_l(+1)-\theta_l(0)}{4 \theta_l(1)} 
+= \frac14 -\frac14 = 0\nn\\
+N_3^{(l)}(r_3,s_3)
+&=& \frac{1}{4} - \frac{1}{2} (-1) - \frac{\theta_l(0)-\theta_l(-1)}{4 \theta_l(1)} 
+= \frac14 +\frac12 + \frac14 = 1\nn\\
+N_3^{(l)}(r_4,s_4)
+&=& \frac{1}{4} - \frac{1}{2} (+1) - \frac{\theta_l(0)-\theta_l(+1)}{4 \theta_l(1)} 
+= \frac14 -\frac12 + \frac14 = 0\nn\\
+N_4^{(l)}(r_1,s_1)
+&=& \frac{1}{4} + \frac{1}{2} (0) - \frac{\theta_l(-1)-\theta_l(0)}{4 \theta_l(1)}  
+= \frac14 -\frac14 =0\nn\\
+N_4^{(l)}(r_2,s_2)
+&=& \frac{1}{4} + \frac{1}{2} (0) - \frac{\theta_l(+1)-\theta_l(0)}{4 \theta_l(1)}  
+= \frac14 -\frac14 =0\nn\\
+N_4^{(l)}(r_3,s_3)
+&=& \frac{1}{4} + \frac{1}{2} (-1) - \frac{\theta_l(0)-\theta_l(-1)}{4 \theta_l(1)}  
+= \frac14 -\frac12 +\frac14 = 0 \nn\\
+N_4^{(l)}(r_4,s_4)
+&=& \frac{1}{4} + \frac{1}{2} (1) - \frac{\theta_l(0)-\theta_l(1)}{4 \theta_l(1)}  
+= \frac14 +\frac12 +\frac14 = 1 \nn
+\end{eqnarray}
+
+
+\Literature: 
+Jeon \etal (2013) \cite{jens13},
+Bangerth \etal (2017) \cite{baks17},
+Sheen (2020) \cite{shee20}
