@@ -7,8 +7,14 @@
      -> nel=    100 ; vrms = 7.807596e-01s
      -> nel=    121 ; vrms = 7.802647e-01s
      -> nel=    144 ; vrms = 7.798765e-01s
+     -> nel=    169 ; vrms = 7.795667e-01s
      -> nel=    196 ; vrms = 7.793156e-01s
+     -> nel=    225 ; vrms = 7.791094e-01s
      -> nel=    256 ; vrms = 7.789381e-01s
+     -> nel=    400 ; vrms = 7.784792e-01s
+     -> nel=    441 ; vrms = 7.784016e-01s
+     -> nel=    625 ; vrms = 7.781759e-01s
      -> nel=   1024 ; vrms = 7.779610e-01s
      -> nel=   2304 ; vrms = 7.777706e-01s
+     -> nel=   2809 ; vrms = 7.777429e-01s
      -> nel=   4096 ; vrms = 7.777031e-01s

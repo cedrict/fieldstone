@@ -1,0 +1,15 @@
+#! /bin/bash
+
+form=1
+rs=80
+
+for sft in 1 2 3 4; do
+    echo sft=$sft 
+    python3 stone.py $rs $rs 1 $sft $form > opla
+    mv solution.vtu solution_$sft.vtu
+    mv solutionP0.vtu solutionP0_$sft.vtu
+done
+
+rm opla
+
+

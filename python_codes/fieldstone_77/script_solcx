@@ -1,0 +1,21 @@
+#! /bin/bash
+
+rm errors*.ascii
+rm vrms*.ascii
+
+for sft in 1 2 3 4; do
+    for form in  1 ; do
+        for rs in 4  6  8  10 12 14 16 18 20 24 28 32 48 64; do
+            echo sft=$sft form=$form rs=$rs
+
+            python3 stone.py $rs $rs 1 $sft $form > opla
+            grep errv opla >> errors_sft${sft}_form${form}.ascii
+            grep vrms opla >> vrms_sft${sft}_form${form}.ascii
+
+        done
+    done
+done
+
+rm opla
+
+

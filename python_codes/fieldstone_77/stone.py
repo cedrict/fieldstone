@@ -7,7 +7,7 @@ from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix
 import time as time
 from scipy.linalg import null_space
-
+import solcx
 
 #------------------------------------------------------------------------------
 
@@ -65,8 +65,8 @@ def by(x,y,experiment):
             (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
             12.*y*y+24.*y*y*y-12.*y**4)
     if experiment==2:
-       if abs(x-.5)<0.125 and abs(y-0.5)<0.125:
-          val=-1.001 
+       if abs(x-0.5)<0.0625 and abs(y-0.5)<0.0625:
+          val=-(1.+0.01)
        else:
           val=-1. #+1
     if experiment==3:
@@ -76,7 +76,7 @@ def by(x,y,experiment):
     if experiment==5:
        val=0
     if experiment==6:
-       val=-4*np.pi**2*np.cos(np.pi*x)*np.sin(np.pi*y) 
+       val=np.sin(np.pi*y)*np.cos(np.pi*x)
     return val
 
 #------------------------------------------------------------------------------
@@ -85,8 +85,8 @@ def eta(x,y,experiment):
     if experiment==1:
        val=1
     if experiment==2:
-       if abs(x-.5)<0.125 and abs(y-0.5)<0.125:
-          val=1.
+       if abs(x-0.5)<0.0625 and abs(y-0.5)<0.0625:
+          val=1e3
        else:
           val=1.
     if experiment==3:
@@ -96,7 +96,10 @@ def eta(x,y,experiment):
     if experiment==5:
        val=1.
     if experiment==6:
-       val=1.
+       if x<0.5:
+          val=1.
+       else:
+          val=1.e6
     return val
 
 #------------------------------------------------------------------------------
@@ -113,7 +116,8 @@ def velocity_x(x,y,experiment):
     if experiment==5:
        val = y*(1.-y)
     if experiment==6:
-       val=np.sin(np.pi*x)*np.cos(np.pi*y)
+       u,v,p=solcx.SolCxSolution(x,y)
+       val=u
     return val
 
 def velocity_y(x,y,experiment):
@@ -128,7 +132,8 @@ def velocity_y(x,y,experiment):
     if experiment==5:
        val = 0.
     if experiment==6:
-       val=-np.cos(np.pi*x)*np.sin(np.pi*y)
+       u,v,p=solcx.SolCxSolution(x,y)
+       val=v
     return val
 
 def pressure(x,y,experiment):
@@ -143,10 +148,34 @@ def pressure(x,y,experiment):
     if experiment==5:
        val=1.-2*x
     if experiment==6:
-       val=2*np.pi*np.cos(np.pi*x)*np.cos(np.pi*y)
+       u,v,p=solcx.SolCxSolution(x,y)
+       val=p
     return val
 
 #------------------------------------------------------------------------------
+# theta1 and theta2 functions for DSSY element
+
+def theta1(x):
+    return x*x-5/3*x**4
+
+def theta1p(x):
+    return 2*x-20/3*x**3
+
+def theta2(x):
+    return x*x-25/6*x**4+3.5*x**6
+
+def theta2p(x):
+    return 2*x-50/3*x**3+21*x**5
+
+#------------------------------------------------------------------------------
+# rannacher-turek      dssy element 
+# +-----2-----+        +-----3-----+
+# |           |        |           |
+# |           |        |           |
+# 3           1        0           1
+# |           |        |           |
+# |           |        |           |
+# +-----0-----+        +-----2-----+
 
 def NNV(rq,sq,sft):
     if sft==1:
@@ -159,6 +188,16 @@ def NNV(rq,sq,sft):
         NV_1=0.25*(1+2*rq+1.5*(rq**2-sq**2))
         NV_2=0.25*(1+2*sq-1.5*(rq**2-sq**2))
         NV_3=0.25*(1-2*rq+1.5*(rq**2-sq**2))
+    if sft==3:
+        NV_3=0.25-0.5*rq+(theta1(rq)-theta1(sq))/(4*theta1(1))
+        NV_1=0.25+0.5*rq+(theta1(rq)-theta1(sq))/(4*theta1(1))
+        NV_0=0.25-0.5*sq-(theta1(rq)-theta1(sq))/(4*theta1(1))
+        NV_2=0.25+0.5*sq-(theta1(rq)-theta1(sq))/(4*theta1(1))
+    if sft==4:
+        NV_3=0.25-0.5*rq+(theta2(rq)-theta2(sq))/(4*theta2(1))
+        NV_1=0.25+0.5*rq+(theta2(rq)-theta2(sq))/(4*theta2(1))
+        NV_0=0.25-0.5*sq-(theta2(rq)-theta2(sq))/(4*theta2(1))
+        NV_2=0.25+0.5*sq-(theta2(rq)-theta2(sq))/(4*theta2(1))
     return NV_0,NV_1,NV_2,NV_3
 
 def dNNVdr(rq,sq,sft):
@@ -172,6 +211,16 @@ def dNNVdr(rq,sq,sft):
        dNVdr_1=0.5+0.75*rq  
        dNVdr_2=-0.75*rq     
        dNVdr_3=-0.5+0.75*rq 
+    if sft==3:
+       dNVdr_3=-0.5+theta1p(rq)/(4*theta1(1))
+       dNVdr_1=+0.5+theta1p(rq)/(4*theta1(1))
+       dNVdr_0=    -theta1p(rq)/(4*theta1(1))
+       dNVdr_2=    -theta1p(rq)/(4*theta1(1))
+    if sft==4:
+       dNVdr_3=-0.5+theta2p(rq)/(4*theta2(1))
+       dNVdr_1=+0.5+theta2p(rq)/(4*theta2(1))
+       dNVdr_0=    -theta2p(rq)/(4*theta2(1))
+       dNVdr_2=    -theta2p(rq)/(4*theta2(1))
     return dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3
 
 def dNNVds(rq,sq,sft):
@@ -185,6 +234,16 @@ def dNNVds(rq,sq,sft):
        dNVds_1=-0.75*sq
        dNVds_2=0.5+0.75*sq
        dNVds_3=-0.75*sq
+    if sft==3:
+       dNVds_3=    -theta1p(sq)/(4*theta1(1))
+       dNVds_1=    -theta1p(sq)/(4*theta1(1))
+       dNVds_0=-0.5+theta1p(sq)/(4*theta1(1))
+       dNVds_2=+0.5+theta1p(sq)/(4*theta1(1))
+    if sft==4:
+       dNVds_3=    -theta2p(sq)/(4*theta2(1))
+       dNVds_1=    -theta2p(sq)/(4*theta2(1))
+       dNVds_0=-0.5+theta2p(sq)/(4*theta2(1))
+       dNVds_2=+0.5+theta2p(sq)/(4*theta2(1))
     return dNVds_0,dNVds_1,dNVds_2,dNVds_3
 
 #------------------------------------------------------------------------------
@@ -207,7 +266,7 @@ if int(len(sys.argv) == 6):
    sft = int(sys.argv[4])
    formulation=int(sys.argv[5])
 else:
-   nelx = 32
+   nelx = 80
    nely = nelx 
    visu = 1
    sft=1
@@ -215,6 +274,8 @@ else:
 
 # shape fct type 1: mid point
 # shape fct type 2: mid value
+# shape fct type 3: dssy1
+# shape fct type 4: dssy2
 # formulation=1: div-div v 
 # formulation=2: laplace v
 
@@ -229,11 +290,11 @@ Nfem=NfemV+NfemP # total number of dofs
 eps=1.e-10
 
 # experiment 1: donea & huerta benchmark (D&H)
-# experiment 2: stokes sphere
+# experiment 2: sinking block
 # experiment 3: DB2D benchmark
 # experiment 4: volker John 3 benchmark 
 # experiment 5: hor. poiseuille flow
-# experiment 6: solcx?
+# experiment 6: solcx
 
 experiment=2
 
@@ -945,6 +1006,64 @@ if visu==1:
    v_2=v_2/counter_2
 
    np.savetxt('velocity_2.ascii',np.array([xV_2,yV_2,u_2,v_2]).T,header='# x,y,u,v')
+
+   filename = 'solutionP0.vtu'
+   vtufile=open(filename,"w")
+   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+   vtufile.write("<UnstructuredGrid> \n")
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnp2,nel))
+   #####
+   vtufile.write("<Points> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+   for i in range(0,nnp2):
+       vtufile.write("%10e %10e %10e \n" %(xV_2[i],yV_2[i],0.))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Points> \n")
+   #####
+   vtufile.write("<CellData Scalars='scalars'>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % p[iel])
+   vtufile.write("</DataArray>\n")
+   #--
+   #vtufile.write("<DataArray type='Float32' Name='u' Format='ascii'> \n")
+   #for iel in range (0,nel):
+   #    vtufile.write("%e\n" % ((u[iconV[0,iel]]+ u[iconV[1,iel]]+ u[iconV[2,iel]]+ u[iconV[3,iel]])*0.25) )
+   #vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel' Format='ascii'> \n")
+   for iel in range (0,nel):
+       uu=(u[iconV[0,iel]]+ u[iconV[1,iel]]+ u[iconV[2,iel]]+ u[iconV[3,iel]])*0.25
+       vv=(v[iconV[0,iel]]+ v[iconV[1,iel]]+ v[iconV[2,iel]]+ v[iconV[3,iel]])*0.25
+       vtufile.write("%e %e %e\n" % (uu,vv,0.))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("</CellData>\n")
+   #####
+   vtufile.write("<Cells>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%d %d %d %d\n" %(iconV_2[0,iel],iconV_2[1,iel],iconV_2[2,iel],iconV_2[3,iel]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%d \n" %((iel+1)*4))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+   for iel in range (0,nel):
+       vtufile.write("%d \n" %9)
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("</Cells>\n")
+   #####
+   vtufile.write("</Piece>\n")
+   vtufile.write("</UnstructuredGrid>\n")
+   vtufile.write("</VTKFile>\n")
+   vtufile.close()
 
 print("-----------------------------")
 print("------------the end----------")
