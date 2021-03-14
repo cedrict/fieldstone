@@ -20,7 +20,7 @@ T=np.zeros(N,dtype=np.float64)
 
 #load data file into arrays
 
-lon[0:N],lat[0:N],rho[0:N]=np.loadtxt('rho_56km_SH_W32.txt',unpack=True,usecols=[0,1,2],skiprows=0)
+lon[0:N],lat[0:N],rho[0:N]=np.loadtxt('rho_56km_SH_v2.txt',unpack=True,usecols=[0,1,2],skiprows=0)
 
 print('lon (m/M):',np.min(lon),np.max(lon))
 print('lat (m/M):',np.min(lat),np.max(lat))
@@ -62,6 +62,68 @@ benchfile.close
 print('produced bench2.txt')
 
 ###############################################################################
+# part1a: producing input file bench3.txt for aspect, Root et al 2021, case 3 
+###############################################################################
+
+depths=np.zeros(N,dtype=np.float64)   
+
+lon[0:N],lat[0:N],depths[0:N]=np.loadtxt('Global_Moho_CRUST1.0_version2.xyz',unpack=True,usecols=[0,1,2],skiprows=0)
+
+print('lon (m/M):',np.min(lon),np.max(lon))
+print('lat (m/M):',np.min(lat),np.max(lat))
+print('depths (m/M):',np.min(depths),np.max(depths))
+
+lon[:]/=180
+lat[:]/=180
+
+lon[:]*=np.pi
+lat[:]*=np.pi
+
+colat[:]=np.pi/2-lat[:]
+
+depths[:]*=1000
+
+print('longitude (m/M): ',np.min(lon),np.max(lon))
+print('latitude (m/M): ',np.min(lat),np.max(lat))
+print('colatitude (m/M): ',np.min(colat),np.max(colat))
+
+theta=colat
+phi=lon
+
+
+nrad=160
+nlon=720
+nlat=360
+radmin=6371e3-80e3
+radmax=6371e3
+drad=(radmax-radmin)/(nrad-1)
+
+benchfile=open('bench3.ascii',"w")
+benchfile.write("# POINTS: %i %i %i \n" %(nrad,nlon,nlat))
+
+counter=0
+for j in range(0,360):
+    for i in range(0,720):
+        #counter=j+i*360
+        for irad in range(0,nrad):
+            rad=radmin+irad*drad
+            if rad>6371e3-depths[counter]:
+               rho=2900
+            else:
+               rho=3300
+            T=(1-rho/3300)/3e-5
+            benchfile.write("%f %f %f %f \n" %(rad,phi[counter],theta[counter],T))
+        counter+=1
+        
+benchfile.close
+
+print('produced bench3.ascii')
+
+exit()
+
+
+
+###############################################################################
 # part2: producing vtu file of the original lon-lat datas set 
 ###############################################################################
 # there are 259,200 cells
@@ -87,7 +149,7 @@ yc=np.zeros(N,dtype=np.float64)
 zc=np.zeros(N,dtype=np.float64)   
 
 #uncomment to set density in shell to constant value:
-rho[:]=3300
+#rho[:]=3300
 
 vtufile=open('layer.vtu',"w")
 vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -264,8 +326,8 @@ radius=6371e3+250e3
 nlon=180+1
 nlat=90+1
 
-nlon=41
-nlat=21
+#nlon=41
+#nlat=21
 
 gravfile=open('gravity.ascii',"w")
 
