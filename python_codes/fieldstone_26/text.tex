@@ -7,17 +7,20 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-As in \cite{schm11}, the computational domain is $1000km \times 660km$.
+As in Schmalholz (2011) \cite{schm11}, the computational domain is $1000\si{km} \times 660\si{km}$.
 No-slip boundary conditions are imposed on the sides of the system while free-slip
 boundary conditions are imposed at the top and bottom.
 Two materials are present in the domain: the lithosphere (mat.1) and the mantle (mat.2). 
-The overriding plate (mat.1) is $80km$ thick and is placed at the top of the domain. 
-An already subducted slab (mat.1) of $250km$ length hangs vertically under this plate.
+The overriding plate (mat.1) is $80\si{km}$ thick and is placed at the top of the domain. 
+An already subducted slab (mat.1) of $250\si{km}$ length hangs vertically under this plate.
 The mantle occupies the rest of the domain.
 
-The mantle has a constant viscosity $\eta_0=10^{21}Pa.s$ and a density $\rho=3150kg/m^3$. 
-The slab has a density $\rho=3300kg/m^3$ and is characterised by a power-law flow law so that 
-its effective viscosity depends on the second invariant of the strainrate $I_2$ as follows:
+The mantle has a constant viscosity $\eta_0=10^{21}\si{\pascal\second}$ 
+and a density $\rho=3150\si{kg\per\cubic\metre}$. 
+The slab has a density $\rho=3300\si{\kg\per\cubic\metre}$ 
+and is characterised by a power-law flow law so that 
+its effective viscosity depends on the second invariant of the strainrate 
+${\cal I}_2$ as follows:
 
 \begin{eqnarray}
 \eta_{eff}
@@ -49,9 +52,11 @@ case number & lithosphere & mantle & top surface \\
 \end{tabular}
 \end{center}
 
-This experiment is implemented in ASPECT and is available with the code. 
+This experiment is implemented in \aspect and is available with the code. 
 
-\Literature Bellas et al, 2018 \cite{bezb18}.
+Measurements are carried out on a vertical line $x=L_x/2$ and a horizontal line $y=550\si{km}$.
+
+\Literature: Bellas \etal (2018) \cite{bezb18}.
 
 \newpage
 %...................................................
