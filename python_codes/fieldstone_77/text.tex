@@ -35,6 +35,8 @@ I have implemented four benchmarks based on manufactured solutions:
 \item Donea-Huerta, see Section~\ref{mms1}
 
 \begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_77/results/dh/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_77/results/dh/press}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_77/results/dh/errors_form1}
 \includegraphics[width=8cm]{python_codes/fieldstone_77/results/dh/errors_form2}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_77/results/dh/vrms_form1}
@@ -49,6 +51,8 @@ Bottom row: root mean square velocity relative error.}
 \item Volker John benchmark \cite{jolm17}, see Section~\ref{mms10}:
 
 \begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_77/results/vj/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_77/results/vj/press}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_77/results/vj/errors_form1}
 \includegraphics[width=8cm]{python_codes/fieldstone_77/results/vj/errors_form2}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_77/results/vj/vrms_form1}
@@ -63,6 +67,8 @@ Bottom row: root mean square velocity relative error.}
 \item Dohrmann \& Bochev 2D benchmark \cite{dobo04,bodg06}, see Section~\ref{ss:mms2}:
 
 \begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_77/results/db2D/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_77/results/db2D/press}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_77/results/db2D/errors_form1}
 \includegraphics[width=8cm]{python_codes/fieldstone_77/results/db2D/errors_form2}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_77/results/db2D/vrms_form1}
@@ -130,7 +136,7 @@ Results for all four basis functions are shown here:
 {\captionfont Full density. Left to right: RT(MP), RT(MV), DSSY(1), DSSY(2). 64x64 elements}
 \end{center}
 
-We see that the pressure field is lithostatic but the velocity field is abnormal 
+We see that the pressure field is lithostatic and chequerboard-free  but the velocity field is abnormal 
 (we expect a convection cell on each side of the cube).
 If I now re-run these experiments in reduced density ($\rho_0=0$) then we recover
 the expected velocity field\footnote{Not saying it is 'the' solution but it at least makes sense}:
@@ -152,22 +158,24 @@ the expected velocity field\footnote{Not saying it is 'the' solution but it at l
 \end{center}
 
 
-If I now conduct a study\footnote{cube has slightly different size} on the value of $\delta\rho$:
+If I now conduct a short study on the value of $\delta\rho$:
 
 \begin{center}
-\includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/drho/vel1}
-\includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/drho/vel3}
-\includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/drho/vel2}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/drho/vels1}
-\includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/drho/vels3}
-\includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/drho/vels2}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/drho/press1}
-\includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/drho/press3}
-\includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/drho/press2}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_77/results/block/drho/vel1}
+\includegraphics[width=5cm]{python_codes/fieldstone_77/results/block/drho/vel3}
+\includegraphics[width=5cm]{python_codes/fieldstone_77/results/block/drho/vel2}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_77/results/block/drho/vels1}
+\includegraphics[width=5cm]{python_codes/fieldstone_77/results/block/drho/vels3}
+\includegraphics[width=5cm]{python_codes/fieldstone_77/results/block/drho/vels2}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_77/results/block/drho/press1}
+\includegraphics[width=5cm]{python_codes/fieldstone_77/results/block/drho/press3}
+\includegraphics[width=5cm]{python_codes/fieldstone_77/results/block/drho/press2}\\
 {\captionfont From left to right: $\delta \rho=1,0.1,0.01$. 80x80 elements.}
 \end{center}
 
-The conclusion is clear: in its current form, these elements are not capable to 
+The conclusion is clear: in its current form, and unless there is a fundamental 
+flaw in my implementation\footnote{but then how could the anlalytical benchmarks work 
+so well?}, these elements are not capable to 
 deal with buoyancy-driven flows where $\delta \rho/\rho < 1-10\%$ which is 
 unfortunately the type of simulations that are carried out in mantle dynamics modelling.
 The reasons are (partially) discussed in Section~\ref{ss:RTq1p0}, but 

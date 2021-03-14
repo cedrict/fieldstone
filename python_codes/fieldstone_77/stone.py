@@ -296,7 +296,7 @@ eps=1.e-10
 # experiment 5: hor. poiseuille flow
 # experiment 6: solcx
 
-experiment=2
+experiment=4
 
 pnormalise=True
 
