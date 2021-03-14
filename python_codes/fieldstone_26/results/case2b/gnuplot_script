@@ -39,7 +39,7 @@ plot[][:1e26]\
 set ylabel 'normalised nonlinear residual'
 set key right 
 set output 'residual.pdf'
-plot[][]\
+plot[][5e-8:]\
  '32/xi.ascii' u 1 w l t 'nelx=32',\
  '48/xi.ascii' u 1 w l t 'nelx=48',\
  '51/xi.ascii' u 1 w l t 'nelx=51',\
@@ -54,7 +54,7 @@ set key outside
 
 set xlabel 'x (km)'
 unset log y
-set ylabel 'e_{xx}'
+set ylabel 'e_{xx} (elemental)'
 set output 'horizontal_exx.pdf'
 plot[][]\
  '32/horizontal.ascii' u ($1/1000):5 w l t 'nelx=32',\
@@ -65,7 +65,7 @@ plot[][]\
 '128/horizontal.ascii' u ($1/1000):5 w l t 'nelx=128',\
 '151/horizontal.ascii' u ($1/1000):5 w l t 'nelx=151',\
 
-set ylabel 'e_{xx}'
+set ylabel 'e_{xx} (nodal)'
 set output 'horizontal_exxn.pdf'
 plot[][]\
  '32/horizontal.ascii' u ($1/1000):8 w l t 'nelx=32',\
@@ -78,7 +78,7 @@ plot[][]\
 
 
 set output 'horizontal_eyy.pdf'
-set ylabel 'e_{yy}'
+set ylabel 'e_{yy} (elemental)'
 plot[][]\
  '32/horizontal.ascii' u ($1/1000):6 w l t 'nelx=32',\
  '48/horizontal.ascii' u ($1/1000):6 w l t 'nelx=48',\
@@ -89,7 +89,7 @@ plot[][]\
 '151/horizontal.ascii' u ($1/1000):6 w l t 'nelx=151',\
 
 set output 'horizontal_eyyn.pdf'
-set ylabel 'e_{yy}'
+set ylabel 'e_{yy} (nodal)'
 plot[][]\
  '32/horizontal.ascii' u ($1/1000):9 w l t 'nelx=32',\
  '48/horizontal.ascii' u ($1/1000):9 w l t 'nelx=48',\
@@ -101,7 +101,7 @@ plot[][]\
 
 
 set output 'horizontal_exy.pdf'
-set ylabel 'e_{xy}'
+set ylabel 'e_{xy} (elemental)'
 plot[][]\
  '32/horizontal.ascii' u ($1/1000):7 w l t 'nelx=32',\
  '48/horizontal.ascii' u ($1/1000):7 w l t 'nelx=48',\
@@ -112,7 +112,7 @@ plot[][]\
 '151/horizontal.ascii' u ($1/1000):7 w l t 'nelx=151',\
 
 set output 'horizontal_exyn.pdf'
-set ylabel 'e_{xy}'
+set ylabel 'e_{xy} (nodal)'
 plot[][]\
  '32/horizontal.ascii' u ($1/1000):10 w l t 'nelx=32',\
  '48/horizontal.ascii' u ($1/1000):10 w l t 'nelx=48',\
@@ -125,7 +125,7 @@ plot[][]\
 #####################################################
 set xlabel 'y (km)'
 
-set ylabel 'e_{xx}'
+set ylabel 'e_{xx} (elemental)'
 set output 'vertical_exx.pdf'
 plot[][]\
  '32/vertical.ascii' u ($2/1000):5 w l t 'nelx=32',\
@@ -136,7 +136,7 @@ plot[][]\
 '128/vertical.ascii' u ($2/1000):5 w l t 'nelx=128',\
 '151/vertical.ascii' u ($2/1000):5 w l t 'nelx=151',\
 
-set ylabel 'e_{xx}'
+set ylabel 'e_{xx} (nodal)'
 set output 'vertical_exxn.pdf'
 plot[][]\
  '32/vertical.ascii' u ($2/1000):8 w l t 'nelx=32',\
@@ -149,7 +149,7 @@ plot[][]\
 
 
 
-set ylabel 'e_{yy}'
+set ylabel 'e_{yy} (elemental)'
 set output 'vertical_eyy.pdf'
 plot[][]\
  '32/vertical.ascii' u ($2/1000):6 w l t 'nelx=32',\
@@ -160,7 +160,7 @@ plot[][]\
 '128/vertical.ascii' u ($2/1000):6 w l t 'nelx=128',\
 '151/vertical.ascii' u ($2/1000):6 w l t 'nelx=151',\
 
-set ylabel 'e_{yy}'
+set ylabel 'e_{yy} (nodal)'
 set output 'vertical_eyyn.pdf'
 plot[][]\
  '32/vertical.ascii' u ($2/1000):9 w l t 'nelx=32',\
@@ -171,7 +171,7 @@ plot[][]\
 '128/vertical.ascii' u ($2/1000):9 w l t 'nelx=128',\
 '151/vertical.ascii' u ($2/1000):9 w l t 'nelx=151',\
 
-set ylabel 'e_{xy}'
+set ylabel 'e_{xy} (elemental)'
 set output 'vertical_exy.pdf'
 plot[][]\
  '32/vertical.ascii' u ($2/1000):7 w l t 'nelx=32',\
@@ -182,7 +182,7 @@ plot[][]\
 '128/vertical.ascii' u ($2/1000):7 w l t 'nelx=128',\
 '151/vertical.ascii' u ($2/1000):7 w l t 'nelx=151',\
 
-set ylabel 'e_{xy}'
+set ylabel 'e_{xy} (nodal)'
 set output 'vertical_exyn.pdf'
 plot[][]\
  '32/vertical.ascii' u ($2/1000):10 w l t 'nelx=32',\
@@ -192,6 +192,4 @@ plot[][]\
 '100/vertical.ascii' u ($2/1000):10 w l t 'nelx=100',\
 '128/vertical.ascii' u ($2/1000):10 w l t 'nelx=128',\
 '151/vertical.ascii' u ($2/1000):10 w l t 'nelx=151',\
-
-
 
