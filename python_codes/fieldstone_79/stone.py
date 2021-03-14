@@ -5,31 +5,39 @@ from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix, lil_matrix
 import sys
 
+experiment = 1
+
 ###############################################################################
 
 def Tbc(x,y):
-    #Tleft
-    if x<1e-6:
-       val=x+y 
-    #Tright
-    if abs(x-Lx)<1e-6:
-       val=x+y 
-    #Tbottom
-    if y<1e-6:
-       val=x+y 
-    #Ttop
-    if abs(y-Ly)<1e-6:
-       val=x+y
+
+    if experiment==1:
+       #Tleft
+      if x<1e-6:
+         val=x+y 
+      #Tright
+      if abs(x-Lx)<1e-6:
+         val=x+y 
+      #Tbottom
+      if y<1e-6:
+         val=x+y 
+      #Ttop
+      if abs(y-Ly)<1e-6:
+         val=x+y
+
     return val
 
 def T_analytical(x,y):
-    return x+y
+    if experiment==1:
+       return x+y
 
 def qx_analytical(x,y):
-    return 1
+    if experiment==1:
+       return -1
 
 def qy_analytical(x,y):
-    return 1
+    if experiment==1:
+       return -1
 
 ###############################################################################
 
@@ -128,7 +136,6 @@ if m==4:
            counter += 1
        #end for
    #end for
-   #print(icon)
 
 ###############################################################################
 # compute coordinates of nodes
@@ -167,7 +174,7 @@ if m==3:
            counter+=1
        #end for
    #end for
-#print (xT,yT)
+
 if m==4:
    counter = 0
    for j in range(0,nely):
@@ -386,9 +393,9 @@ if m==3:
        #end for
    #end for
 
-   np.savetxt('edge1.ascii',np.array([edge1_xc,edge1_yc,edge1_nx/10,edge1_ny/10,edge1_boundary_indicator]).T)
-   np.savetxt('edge2.ascii',np.array([edge2_xc,edge2_yc,edge2_nx/10,edge2_ny/10,edge2_boundary_indicator]).T)
-   np.savetxt('edge3.ascii',np.array([edge3_xc,edge3_yc,edge3_nx/10,edge3_ny/10,edge3_boundary_indicator]).T)
+   #np.savetxt('edge1.ascii',np.array([edge1_xc,edge1_yc,edge1_nx/10,edge1_ny/10,edge1_boundary_indicator]).T)
+   #np.savetxt('edge2.ascii',np.array([edge2_xc,edge2_yc,edge2_nx/10,edge2_ny/10,edge2_boundary_indicator]).T)
+   #np.savetxt('edge3.ascii',np.array([edge3_xc,edge3_yc,edge3_nx/10,edge3_ny/10,edge3_boundary_indicator]).T)
 
    #in what follows local numbering is 0,1,2 inside triangle
    for iel in range(0,nel):
@@ -642,6 +649,7 @@ for iter in range(0,niter):
               C12=-0.5
            else:
               C12=C12_inside
+
            edge2_Hx=-(0.5+C12)*edge2_nx[iel]*C2
            edge2_Hy=-(0.5+C12)*edge2_ny[iel]*C2
            edge2_JBx=edge2_Hx
