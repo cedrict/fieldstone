@@ -361,7 +361,7 @@ ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom per node
 ndofT=1  # number of temperature degrees of freedom per node
 
-Lx=1.5
+Lx=1.
 Ly=1.
 
 if int(len(sys.argv) == 7):
@@ -372,11 +372,11 @@ if int(len(sys.argv) == 7):
    Ra    = float(sys.argv[5])
    nstep = int(sys.argv[6])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 16
+   nely = 16
    visu = 1
    order= 2
-   Ra = 16
+   Ra = 1e4
    nstep=1000
 
 tol_ss=1e-6   # tolerance for steady state 
@@ -491,8 +491,7 @@ if nqperdim==6:
 # open output files
 
 Nu_vrms_file=open('Nu_vrms.ascii',"w")
-Nu_vrms_file.write("#time,Nusselt,vrms\n")
-dt_file=open('dt.ascii',"w")
+Nu_vrms_file.write("#istep,Nusselt,vrms\n")
 Tavrg_file=open('Tavrg.ascii',"w")
 conv_file=open('conv.ascii',"w")
 
@@ -1274,7 +1273,7 @@ for istep in range(0,nstep):
         #end for
     #end for
 
-    np.savetxt('T_profile.ascii',np.array([y_profile,T_profile]).T,header='# x,T')
+    np.savetxt('T_profile.ascii',np.array([y_profile,T_profile]).T,header='#y,T')
 
     print("compute T profile: %.3f s" % (timing.time() - start))
 
