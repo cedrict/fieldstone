@@ -2,13 +2,13 @@
 
 \begin{itemize}
 \item ask Taka to finish/write grain contact benchmark
-\item extract know-how and notes about $Q_1 \times P_0$-stab off ELEFANT and make stone(s). mention \cite{lisi12}
-\item revisit CBF and produce stone(s)
-\item produce stone for Taka's notch
-\item priduce stone for cicrle/ellipse hole in place - taka
+\item extract know-how and notes about $Q_1 \times P_0$-stab off \elefant and 
+make \stone(s). mention \cite{lisi12}
+\item revisit CBF and produce \stone(s)
+\item produce \stone for Taka's notch
+\item priduce \stone for cicrle/ellipse hole in place - taka
 \item incorporate Jort's DG 
 \item build fast/reliable schur complement solver
-\item look at Wouter K compgeo thesis again
 \item revisit all tikz of elements and add consistent colours
 \item revisit diff/disl creep partition stuff
 \item in the context of mesh generation on sphere cite \cite{moma19}
@@ -38,7 +38,7 @@ Wang \& Wang (1994) \cite{wawa94}. Richardson extrapolation.
 \item deformation around rigid particles \cite{ilma93}
 \item mesh containing both quadrilaterals and triangles \cite{anbr80}
 \item implementation of fault in FEM codes \cite{zhgu94,zhgu95}
-\item remove nnp from f14 and other stones
+\item remove nnp from f14 and other \stones
 \item check $Q_2 \times Q_{-1}$ element, \cite{grsa} p 697. pressure basis function based at the four 2x2 gauss points.
 \item run 3D burstedde bench qith Q1Q1 stab in aspect
 \item use 3D benchmark of s75 for s82 !
@@ -54,7 +54,7 @@ Wang \& Wang (1994) \cite{wawa94}. Richardson extrapolation.
   \item write Scott about matching compressible2 setup with his paper
   \item write about vorticity-velocity method: \cite{gats91,gust93,dehu95,ergq99,amct04,spez87}
   \item write about flexural isostasy \cite{maie12}, bottom Sopale
-  \item write about splines as shape functions \cite{chri92}. second or third order shape functions , using extra nodes instead of using more nodes per element. 
+  \item write about splines as basis functions \cite{chri92}. second or third order basis functions , using extra nodes instead of using more nodes per element. 
   Smaller matrix than Q2 or Q3 but: spline coeffs on nodes are no more unknowns. Plus bc are complicated. Does it work well with visc contrasts ?
   \item write about jacobian tensor and norm for Q1 rectangles. and more ?
   \item write about Courant nb
@@ -73,16 +73,20 @@ Wang \& Wang (1994) \cite{wawa94}. Richardson extrapolation.
 \item Compute gravity for each layer of CRUST1.0 , see stone 96
 \item Explore Iris subduction model parameter space
 \item geoid, who what where how
+\item Mars DEM \url{https://astrogeology.usgs.gov/search/details/Mars/GlobalSurveyor/MOLA/Mars_MGS_MOLA_DEM_mosaic_global_463m/cub} gravity
+\item redo Crameri benchmark rising bubble with stone 95-ish
+\item compute gravity above Lex's model \cite{furc15}
+\item use GEMMA moho data \url{http://gocedata.como.polimi.it/} \cite{resa15} 
 \end{itemize}
 
 %----------------------------------
 \subsection{GR thesis topics}
 \begin{itemize} 
 \item create stone for layeredflow 
-\item re-incorporate WK inversion as stone with python Stokes solver
+\item re-incorporate W.Klesses inversion as stone with python Stokes solver
 \item implement Navier-Stokes eqs a la http://ww2.lacan.upc.edu/huerta/exercises/Incompressible/Incompressible\_Ex2.htm
 \item FSSA implementation, derivation, everywhere in domain \cite{sctc20}. 
-\item numerical viscosimeter \cite{batt84}
+\item numerical viscosimeter \cite{batt84}, taylor couette flow, stokes flow dye cylinders
 \item advection a la van Hunen
 \item W.Klessens MD report idea, onset of convection
 \item folding experiments a la Frehner MSc/PhD thesis and papers 
@@ -134,6 +138,7 @@ with ASPECT:
 \item is there a formal definition of shape fct, trial fct, basis fct vs test fct 
 \item is there an efficient manner to start from (say) quadrilateral mesh defined by corners only, choose an 
 order $n$ corresponding to $Q_n \times Q_{n-1}$ and generate nodes without doubles?
+\item where in the maths does it say that I cannot prescribe a T for an outgoing flow boundary?
 \end{itemize}
 
 

@@ -70,9 +70,25 @@ compare these values with the analytical solutions we derived for simple spheric
 \subsubsection*{Exercise 1: Full sphere}
 
 \begin{itemize}
-\item[(1A)] In a domain of size $2R\times 2R \times 2R$ centered on the origin compute and store the coordinates 
-of $N^3$ points (use $R=6371\si{\kilo\metre}$). Please use arrays {\tt x}, {\tt y} and {\tt z} to store the coordinates.
-These arrays are $N^3$ long.\\
+\item[(1A)] We consider a domain of size $2R\times 2R \times 2R$ centered on the origin. It is 
+partitioned in $N\times N \times N$ cells as shown in the following figure.
+
+\begin{center}
+\input{tikz_gravity1}
+{\captionfont 2D representation of the exercise. $N=10$}
+%\includegraphics[width=3cm]{images/gravity/rubik}
+\end{center}
+
+
+Compute the associated volume {\tt dV} of a point as a function of $R$ and $N$ and  
+compute the size of a cell {\tt h}. Store in {\tt N} the total number of points.
+
+
+\item[(1B)] 
+In the middle of each cell we place a point. Compute and store the coordinates 
+of the $N^3$ points (use $R=6371\si{\kilo\metre}$). Please use 
+arrays {\tt x}, {\tt y} and {\tt z} to store the coordinates.
+Important: these arrays are $N^3$ long because they contain the coordinates of all points (cell centers).\\
 Help: draw on paper a $3\times3\times3$ grid. Place the axis system on the plot and explicitely write the arrays 
 for all 27 points. Example:
 \begin{verbatim}
@@ -83,43 +99,44 @@ x27=.... y27=.... z27=....
 \end{verbatim}
 Once you have done so, run your code for $N=3$, print the arrays and compare their content with what you 
 have on paper.
-Important remark: the coordinates are those of the {\it center} of the cells!
 
 
-\begin{center}
-\input{tikz_gravity1}
-{\captionfont 2D representation of the exercise. $N=10$}
-%\includegraphics[width=3cm]{images/gravity/rubik}
-\end{center}
-
-
-
-\item[(1B)] Compute the associated volume $dV$ of a point as a function of $R$ and $N$. Compute $h$, the size of the cell surrounding a point.
-\item[(1C)] For points inside a sphere of radius $R$ assign a density $\rho_0=3000\si{\kilo\metre\per\cubic\metre}$ 
+\item[(1C)] For points inside a sphere of radius $R$ assign a 
+density $\rho_0=3000\si{\kilo\gram\per\cubic\metre}$ 
 and zero otherwise, store these values in the {\tt rho} array.
 
-\item[(1D)] Fix $N=10$. Compute the total mass of the system 
+\item[(1D)] Fix $N=10$. Compute the total mass of the sphere
 \[
-M_h = \int_V \rho \; dV \simeq \sum_{e=1}^{N_e} \rho_e V_e
+M_s = \int_V \rho \; dV \simeq \sum_{e} \rho_e V_e
 \] 
-
-\item[(1E)] Fix $N=10$. Compute the moment of inertia of the system (with respect to the $z$ axis) 
-(obtained with Eq. \ref{mominert_uniform_sphere}). In order to compute this quantity we will make use of
-the formula for a spherically symmetric body: 
+and its volume 
 \[
-I = \int_V \rho d^2 dV \simeq \sum_i \rho_i d_i^2 dV_i
-\]
-where $d_i$ is the distance of point $i$ to the axis.
+V_s = \int_V \; dV \simeq \sum_{e}  V_e
+\] 
+Note that the sums run over the cells which center lies inside the sphere.
 
-\item[(1F)] Repeat the last two measurements with different values of $N\in(20,30,40,50,...?)$ .
+\item[(1E)] Fix $N=10$. Compute the moment of inertia of the sphere 
+with respect to rotation axis $z$ using Eq.~\eqref{eq:momI}. 
+
+%In order to compute this quantity we will make use of
+%the formula for a spherically symmetric body: 
+%\[
+%I = \int_V \rho d^2 dV \simeq \sum_i \rho_i d_i^2 dV_i
+%\]
+%where $d_i$ is the distance of point $i$ to the axis.
+
+\item[(1F)] Repeat the last measurements with different values of $N\in(20,30,40,50,...?)$ .
 For both the mass and moment of inertia report on the relative error as a function of $h$.
 
-\item[(1G)] Compute the coordinates of 7 points situated at $z=10^m$ meters {\it above the north pole} with $m=0,1,2,3,4,5,6$ and 
+\item[(1G)] Compute the coordinates of 9 points situated at $z=10^m$ meters 
+{\it above the north pole} with $m=0,1,2,3,4,5,6,7,8$ and 
 store these coordinates in arrays {\tt xm}, {\tt ym} {\tt zm}. 
 
-\item[(1H)] Fix $N=10$ for now. Compute the gravity potential $U$ and acceleration vector components $g_x,g_y,g_z$ at each of these 7 points. 
+\item[(1H)] Fix $N=10$ for now. Compute the gravity potential $U$ and acceleration vector 
+components $g_x,g_y,g_z$ at each of these 9 points using Eq.~\eqref{eq:gUexo} 
  
-\item[(1I)] Plot the computed quantities as a function of $z$ and plot on the same graphic the analytical values. 
+\item[(1I)] Plot the computed quantities as a function of $z$ and plot on 
+the same graphic the analytical values. 
 
 \item[(1J)] Fix $m=4$. Progressively increase $N$ and record the absolute error on the gravity vector norm 
 as a function of $h$. Plot this in log-log scale. Discuss.
@@ -139,19 +156,21 @@ Can you think of a way (and implement it) to arrive at the same results in less 
 
 This is based on the previous exercise. 
 \begin{itemize}
-\item[(2A)] For points with radius $r$ such that $R/2 \le r \le R$ assign a density $\rho_0=3000\si{\kilo\gram\per\cubic\metre}$ 
+\item For points with radius $r$ such that $R/2 \le r \le R$ assign a density $\rho_0=3000\si{\kilo\gram\per\cubic\metre}$ 
 and zero otherwise.
-\item[(2B)] Compute the gravity potential and vector components on the $x$-axis between $r=0$ and $r=3R$ 
+\item Compute the gravity potential and vector components on the $x$-axis between $r=0$ and $r=3R$ 
 with steps of $R/100$.
-\item[(2C)] Plot the results and the analytical solution on the same plot as a function of $r$.
-\item[(2D)] Repeat the exercise with different values of $N$. Discuss.
+\item Plot the results and the analytical solution on the same plot as a function of $r$.
+\item Repeat the exercise with different values of $N$. Discuss.
 \end{itemize}
+
+
+
 
 %....................................................
 \subsubsection*{Exercise 3: Full sphere - revisited}
 
-
-MAYBE WE WILL SEE 
+...NOT for 2021...
 
 We are now going to re-do the first exercise but this time we do not want any point outside of the sphere. 
 We shall therefore use the spherical coordinates (see Section~\ref{ss:sphercoord}).
@@ -168,6 +187,32 @@ these in arrays {\tt r}, {\tt theta}, {\tt phi}.
 \item Repeat the calculations of the first exercise.
 \item The cost of the calculation is the same as in exercise 1, but what about accuracy?
 \end{itemize}
+
+
+%....................................................
+\subsubsection*{Report}
+
+The report should contain results from exercises 1 and 2. I expect one pdf file per pair of students
+(maximum 10 pages) and the corresponding python file(s). 
+Your report does not have to follow questions 1A to 1K in sequential order. 
+Please send all files in a single email per {\bf April 4th, 2021, 23:59}. 
+
+You should have the following guidelines in mind when writing your report:
+\begin{itemize}
+\item Layout: is the document visually pleasing? Is it well structured? are the student names 
+and numbers present ?
+\item Is there a complete bibliography (if/when applicable)?
+\item Introduction: is the context clear? Are the methods presented?
+\item Figures: Are they properly numbered? captioned? all figures must be referenced in the text. 
+Are they of good quality? are they readable? are all axis labelled?
+\item Text: Overall quality of the language. Are there still typos ? Do all sentence make sense?
+\item If results are wrong, was an attempt made to document/explain the (probable) source
+of the problem?
+\item Discussion: are the results properly discussed, analyzed? are potential problems, 
+errors, limitations discussed?
+\item Conclusion: Are the report's findings summarized and when applicable generalized?
+\end{itemize}
+
 
 
 %what is the resolution one would need to represent the ellipsity of the Earth ?

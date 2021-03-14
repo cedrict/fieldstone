@@ -1,3 +1,6 @@
+\begin{flushright} {\tiny {\color{gray} elements2D.tex}} \end{flushright}
+
+
 Let us for a moment consider a single quadrilateral element in the $xy$-plane, 
 as shown on the following figure:
 \begin{center}
@@ -16,74 +19,64 @@ One option could be to assign all four vertices the same weight, say $1/4$ so th
 $u_M=(u_1+u_2+u_3+u_4)/4$, i.e. $u_M$ is simply given by the arithmetic mean 
 of the vertices values. This approach suffers from a major drawback as it does
 not use the location of point $M$ inside the element. For instance, when 
-$(x_M,y_M) \rightarrow (x_2,y_2)$ we expect $u_M \rightarrow u_2$.
+$(x_M,y_M) \rightarrow (x_2,y_2)$ we expect $u_M \rightarrow u_2$ but $u_M$ would 
+remain equal to $(u_1+u_2+u_3+u_4)/4$.
 
 In light of this, we could now assume that the weights would depend on the position 
 of $M$ in a continuous fashion:
-\[
+\begin{equation}
 u(x_M,y_M) = \sum_{i=1}^4 N_i(x_M,y_M)\;  u_i
-\]
+\end{equation}
 where the $N_i$ are continous ("well behaved") functions which have the property:
 \[
 N_i(x_j,y_j)=\delta_{ij}
 \]
 or, in other words: 
 \begin{eqnarray}
-N_3(x_1,y_1) &=& 0 \\
-N_3(x_2,y_2) &=& 0 \\
-N_3(x_3,y_3) &=& 1 \\
+N_3(x_1,y_1) &=& 0 \nn\\
+N_3(x_2,y_2) &=& 0 \nn\\
+N_3(x_3,y_3) &=& 1 \nn\\
 N_3(x_4,y_4) &=& 0 
 \end{eqnarray}
 The functions $N_i$ are commonly called basis functions. \index{general}{basis functions}
 
-Omitting the $M$ subscripts for any point inside the element, the velocity components $u$
-and $v$ are given by:
+Omitting the $M$ subscripts, the velocity components $u$ and $v$ for a point inside the element
+ are given by:
 \begin{eqnarray}
-\hat{u}(x,y) &=& \sum_{i=1}^4 N_i(x,y)\;  u_i \\
-\hat{v}(x,y) &=& \sum_{i=1}^4 N_i(x,y)\;  v_i \label{bf01}
+u_h(x,y) &=& \sum_{i=1}^4 N_i(x,y)\;  u_i \\
+v_h(x,y) &=& \sum_{i=1}^4 N_i(x,y)\;  v_i \label{bf01}
 \end{eqnarray}
 Rather interestingly, one can now easily compute velocity gradients (and therefore the 
 strain rate tensor) since we have assumed the basis functions to be "well behaved" 
 (in this case differentiable):
 \begin{eqnarray}
-\dot{\epsilon}_{xx}(x,y) &=& \frac{\partial u}{\partial x} = \sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  u_i \\
-\dot{\epsilon}_{yy}(x,y) &=& \frac{\partial v}{\partial y} = \sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  v_i \\
-\dot{\epsilon}_{xy}(x,y) &=& \frac{1}{2}\frac{\partial u}{\partial y} 
-+ \frac{1}{2}\frac{\partial v}{\partial x} 
+\dot{\epsilon}_{xx}(x,y) 
+&=& \frac{\partial u_h}{\partial x} = \sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  u_i \\
+\dot{\epsilon}_{yy}(x,y) 
+&=& \frac{\partial v_h}{\partial y} = \sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  v_i \\
+\dot{\epsilon}_{xy}(x,y) 
+&=& \frac{1}{2}\left(\frac{\partial u_h}{\partial y} + \frac{\partial v_h}{\partial x} \right) 
 = \frac{1}{2}\sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  u_i
 + \frac{1}{2}\sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  v_i
 \end{eqnarray}
-How we actually obtain the exact form of the basis functions is explained in the coming section.
-
-
-
-
-
+How we actually obtain the exact form of the basis functions is explained in the coming sections.
 
 
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Bilinear basis functions in 2D ($Q_1$)}
+\subsubsection{Bilinear basis functions in 2D ($Q_1$)} \label{ss:q12d}
 \index{general}{$Q_1$}
 
 In this section, we place ourselves in the most favorables case, i.e. the element is a square defined 
 by $-1<r<1$, $-1<s<1$ in the Cartesian coordinates system $(r,s)$:
 
-\begin{verbatim}
-3===========2       
-|           |     (r_0,s_0)=(-1,-1)
-|           |     (r_1,s_1)=(+1,-1)
-|           |     (r_2,s_2)=(+1,+1)
-|           |     (r_3,s_3)=(-1,+1)
-|           |
-0===========1
-\end{verbatim}
+\input{tikz_q12d}
 
-
+Note the counter-clockwise numbering.
 This element is commonly called the reference element. How we go from the $(x,y)$ coordinate system 
-to the $(r,s)$ once and vice versa will be dealt later on.
+to the $(r,s)$ once and vice versa will be dealt with later on.
 For now, the basis functions in the above reference element and in the reduced 
 coordinates system $(r,s)$ are given by:
 
@@ -95,7 +88,8 @@ N_3(r,s)&=&0.25(1+r)(1+s) \nonumber\\
 N_4(r,s)&=&0.25(1-r)(1+s) \nonumber
 \end{eqnarray}
 \end{mdframed}
-
+These basis functions are the product of the linear basis functions of Section~\ref{sec:bf1}
+in the $r$ direction and the $s$ direction.
 The partial derivatives of these functions with respect to $r$ ans $s$ automatically follow:
 
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -111,78 +105,85 @@ The partial derivatives of these functions with respect to $r$ ans $s$ automatic
 \end{align}
 \end{mdframed}
 
-Let us go back to Eq.(\ref{bf01}). And let us assume that the function $v(r,s)=C$ so that $v_i=C$ for $i=1,2,3,4$. 
+Let us go back to Eq.~\eqref{bf01} and let us assume that the 
+function $v(r,s)=C$ so that $v_i=C$ for $i=1,2,3,4$. 
 It then follows that 
 \[
-\hat{v}(r,s) = \sum_{i=1}^4 N_i(r,s)\;  v_i = C \sum_{i=1}^4 N_i(r,s)
+v_h(r,s) = \sum_{i=1}^4 N_i(r,s)\;  v_i = C \sum_{i=1}^4 N_i(r,s)
 =C [
 N_1(r,s)
 +N_2(r,s)
 +N_3(r,s)
 +N_4(r,s)]=C
 \]
-This is a very important property: if the $v$ function used to assign values at the vertices is constant, then 
-the value of $\hat{v}$ {\it anywhere} in the element is exactly $C$.
+This is a very important property: if the $v$ function used to 
+assign values at the vertices is constant, then 
+the value of $v_h$ {\it anywhere} in the element is exactly $C$.
 If we now turn to the derivatives of $v$ with respect to $r$ and $s$:
 \[
-\frac{\partial \hat{v}}{\partial r}(r,s) = \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s)\;  v_i = C \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s) 
+\frac{\partial {v}_h}{\partial r}(r,s) 
+= \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s)\;  v_i 
+= C \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s) 
 = C \left[ - 0.25(1-s)  + 0.25(1-s)  + 0.25(1+s)  - 0.25(1+s) \right] = 0 
 \]
 
 \[
-\frac{\partial \hat{v}}{\partial s}(r,s) = \sum_{i=1}^4 \frac{\partial N_i}{\partial s}(r,s)\;  v_i = C \sum_{i=1}^4 \frac{\partial N_i}{\partial s}(r,s) 
+\frac{\partial v_h}{\partial s}(r,s) 
+= \sum_{i=1}^4 \frac{\partial N_i}{\partial s}(r,s)\;  v_i 
+= C \sum_{i=1}^4 \frac{\partial N_i}{\partial s}(r,s) 
 = C \left[ - 0.25(1-r) - 0.25(1+r) + 0.25(1+r) + 0.25(1-r) \right] = 0 
 \]
 We reassuringly find that the derivative of a constant field anywhere in the element is exactly zero.
 
 If we now choose $v(r,s)=ar+bs$ with $a$ and $b$ two constant scalars, we find:
 \begin{eqnarray}
-\hat{v}(r,s) 
+v_h(r,s) 
 &=& \sum_{i=1}^4 N_i(r,s)\;  v_i  \\
 &=& \sum_{i=1}^4 N_i(r,s) (ar_i+bs_i) \\
 &=& a \underbrace{\sum_{i=1}^4 N_i(r,s) r_i}_{r} + b \underbrace{\sum_{i=1}^4 N_i(r,s) s_i}_{s} \\
 &=& a \left[ 
-0.25(1-r)(1-s)(-1)
-+0.25(1+r)(1-s)(+1)
-+0.25(1+r)(1+s)(+1)
-+0.25(1-r)(1+s)(-1) \right]  \nonumber\\
+ \frac14(1-r)(1-s)(-1)
++\frac14(1+r)(1-s)(+1)
++\frac14(1+r)(1+s)(+1)
++\frac14(1-r)(1+s)(-1) \right]  \nonumber\\
 &+& b  
 \left[ 
-0.25(1-r)(1-s)(-1)
-+0.25(1+r)(1-s)(-1)
-+0.25(1+r)(1+s)(+1)
-+0.25(1-r)(1+s)(+1) \right]  \nonumber\\
-&=& a \left[ 
--0.25(1-r)(1-s)
-+0.25(1+r)(1-s)
-+0.25(1+r)(1+s)
--0.25(1-r)(1+s) \right]  \nonumber\\
-&+& b  
+ \frac14(1-r)(1-s)(-1)
++\frac14(1+r)(1-s)(-1)
++\frac14(1+r)(1+s)(+1)
++\frac14(1-r)(1+s)(+1) \right]  \nonumber\\
+&=& \frac{a}{4} \left[ 
+-(1-r)(1-s)
++(1+r)(1-s)
++(1+r)(1+s)
+-(1-r)(1+s) \right]  \nonumber\\
+&+& \frac{b}{4}
 \left[ 
--0.25(1-r)(1-s)
--0.25(1+r)(1-s)
-+0.25(1+r)(1+s)
-+0.25(1-r)(1+s) \right]  \nonumber\\
+-(1-r)(1-s)
+-(1+r)(1-s)
++(1+r)(1+s)
++(1-r)(1+s) 
+\right]  \nonumber\\
 &=& ar+bs
 \end{eqnarray}
-{\color{red} verify above eq}.
-This set of bilinear shape functions is therefore capable of exactly representing a bilinear field.
+This set of bilinear basis functions is therefore capable of exactly representing a bilinear field.
 The derivatives are:
 \begin{eqnarray}
-\frac{\partial \hat{v}}{\partial r}(r,s) 
+\frac{\partial v_h}{\partial r}(r,s) 
 &=& \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s)\;  v_i  \\
-&=& a \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s) r_i + b \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s) s_i \\
+&=& a \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s) r_i 
++ b \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s) s_i \\
 &=& a \left[
-- 0.25(1-s)(-1) 
-+ 0.25(1-s)(+1) 
-+ 0.25(1+s)(+1) 
-- 0.25(1+s)(-1) 
+- \frac14(1-s)(-1) 
++ \frac14(1-s)(+1) 
++ \frac14(1+s)(+1) 
+- \frac14(1+s)(-1) 
 \right] \nonumber\\
 &+&b \left[
-- 0.25(1-s)(-1) 
-+ 0.25(1-s)(-1) 
-+ 0.25(1+s)(+1) 
-- 0.25(1+s)(+1) 
+- \frac14(1-s)(-1) 
++ \frac14(1-s)(-1) 
++ \frac14(1+s)(+1) 
+- \frac14(1+s)(+1) 
 \right] \nonumber\\
 &=& \frac{a}{4} \left[
  (1-s)
@@ -199,33 +200,33 @@ The derivatives are:
 &=& a 
 \end{eqnarray}
 Here again, we find that the derivative of the bilinear field inside the element is exact: 
-$\frac{\partial \hat{v}}{\partial r} = \frac{\partial v}{\partial r}$.
+$\frac{\partial v_h}{\partial r} = \frac{\partial v}{\partial r}$.
 
-However, following the same methodology as above, one can easily prove that this is no more true for polynomials of degree strivtly higher than 1. This fact has serious consequences: if the solution to the problem at hand is for instance a parabola, the $Q_1$ shape functions cannot represent the solution properly, but only by approximating the parabola in each element by a line. As we will see later, $Q_2$ basis functions can remedy this problem by containing themselves quadratic terms.
+However, following the same methodology as above, one can easily prove 
+that this is no more true for polynomials of degree strictly higher than 1. 
+This fact has serious consequences: if the solution to the problem at hand is 
+for instance a parabola, the $Q_1$ basis functions cannot represent the solution properly, 
+but only by approximating the parabola in each element by a line. As we will see 
+later, $Q_2$ basis functions can remedy this problem by containing quadratic terms.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Biquadratic basis functions in 2D ($Q_2$)}\label{ss:q22d}
 \index{general}{$Q_2$}
 
-This element is part of the so-called LAgrange family. 
+This element is part of the so-called Lagrange family. 
 \improvement{citation needed}
 
-Inside an element the local numbering of the nodes is as follows:
-\begin{verbatim}
-3=====6=====2
-|     |     |   (r_0,s_0)=(-1,-1)   (r_4,s_4)=( 0,-1)
-|     |     |   (r_1,s_1)=(+1,-1)   (r_5,s_5)=(+1, 0)
-7=====8=====5   (r_2,s_2)=(+1,+1)   (r_6,s_6)=( 0,+1)
-|     |     |   (r_3,s_3)=(-1,+1)   (r_7,s_7)=(-1, 0)
-|     |     |                       (r_8,s_8)=( 0, 0)
-0=====4=====1
-\end{verbatim}
-Note that this numering is also employed in \cite[56]{li06}.
-The basis polynomial is then
+Inside an element the local numbering of the nodes is as follows\footnote{I have adopted here 
+a numering scheme starting at zero!}:
+
+\input{tikz_q22d}
+
+Note that this numbering is also employed in Li \cite[p56]{li06}.
+The polynomial representation of the function $f$ over this element is then
 \[
-f(r,s) = a + br + cs + drs + er^2 + fs^2 + gr^2s + hrs^2 + i r^2s^2
+f_h(r,s) = a + br + cs + drs + er^2 + fs^2 + gr^2s + hrs^2 + i r^2s^2
 \]
-The velocity shape functions are given by:
+and one can show that the basis functions are:
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
 N_0(r,s)&=& \frac{1}{2}r(r-1)  \frac{1}{2}s(s-1)\nonumber\\
@@ -239,7 +240,7 @@ N_7(r,s)&=& \frac{1}{2}r(r-1)      (1-s^2)\nonumber\\
 N_8(r,s)&=&     (1-r^2)      (1-s^2)\nonumber
 \end{eqnarray}
 \end{mdframed}
-These are identical to \cite[p57]{li06}. Their derivatives are given by:
+Their derivatives are given by:
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{align}
 \frac{\partial N_0}{\partial r}&= \frac{1}{2}(2r-1)  \frac{1}{2}s(s-1) & 
@@ -274,20 +275,14 @@ The serendipity elements are those rectangular elements which have no
 interior nodes \cite[p65]{reddybook2}.
 
 Inside an element the local numbering of the nodes is as follows:
-\begin{verbatim}
-3=====6=====2
-|     |     |   (r_0,s_0)=(-1,-1)   (r_4,s_4)=( 0,-1)
-|     |     |   (r_1,s_1)=(+1,-1)   (r_5,s_5)=(+1, 0)
-7=====+=====5   (r_2,s_2)=(+1,+1)   (r_6,s_6)=( 0,+1)
-|     |     |   (r_3,s_3)=(-1,+1)   (r_7,s_7)=(-1, 0)
-|     |     |    
-0=====4=====1
-\end{verbatim}
+
+\input{tikz_serendipity2D}
+
 The main difference with the $Q_2$ element resides in the fact that there is 
-no node in the middle of the element
-The basis polynomial is then
+no node in the middle of the element.
+The polynomial representation of the function $f$ over the element is then
 \[
-f(r,s) = a + br + cs + drs + er^2 + fs^2 + gr^2s + hrs^2
+f_h(r,s) = a + br + cs + drs + er^2 + fs^2 + gr^2s + hrs^2
 \]
 Note that absence of the $r^2s^2$ term which was previously associated 
 to the center node. We find that 
@@ -304,11 +299,11 @@ N_7(r,s)&=& \frac{1}{2}(1-r)  (1-s^2)
 \end{eqnarray}
 \end{mdframed}
 
-The shape functions at the mid side nodes are products of a 
+The basis functions at the mid side nodes are products of a 
 second order polynomial parallel to side and 
 a linear function perpendicular to the side
-while shape functions for corner nodes are modifications of the bilinear
-quadrilateral element.
+while basis functions for corner nodes are modifications of the bilinear
+quadrilateral element. The first-order derivatives are given by:
 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
@@ -345,7 +340,7 @@ quadrilateral element.
 
 This element is proposed in Zhang \& Xiang (2020) \cite{zhxi20}. Two remarks
 must be made: 1) Eq.~(29) of their publication which is the definition
-of the shape functions contains an error\footnote{
+of the basis functions contains an error\footnote{
 Answer from the author: "N5 to N8 is missing an A in the denominator and 
 the calculation program does not have this problem"}. 2) The authors use a rather 
 uncommon and annoying rotated numbering:
@@ -388,20 +383,13 @@ E(r,s)=(1-r^2)(1-s^2)
 \qquad
 D=4(4A^2+m_x^2+m_y^2)
 \]
-and where the $n_i$ functions are the shape functions of the 'regular' 
+and where the $n_i$ functions are the basis functions of the 'regular' 
 8-node element (see Section~\ref{sec:serendipity2D}).
 
 This is implemented in stone 52.
 
-SHOW CONSISTENCY !! like in paper
-email sent to author about mistake.  
-
-
-
-
-
-
-
+\todo[inline]{not finished. SHOW CONSISTENCY !! like in paper
+email sent to author about mistake.  }
 
 
 
@@ -415,50 +403,41 @@ email sent to author about mistake.
 \index{general}{$Q_3$}
 
 Inside an element the local numbering of the nodes is as follows:
-\begin{verbatim}
-12===13===14===15   (r,s)_{00}=(-1,-1)     (r,s)_{08}=(-1,+1/3)  
-||   ||   ||   ||   (r,s)_{01}=(-1/3,-1)   (r,s)_{09}=(-1/3,+1/3)
-08===09===10===11   (r,s)_{02}=(+1/3,-1)   (r,s)_{10}=(+1/3,+1/3)
-||   ||   ||   ||   (r,s)_{03}=(+1,-1)     (r,s)_{11}=(+1,+1/3)
-04===05===06===07   (r,s)_{04}=(-1,-1/3)   (r,s)_{12}=(-1,+1)
-||   ||   ||   ||   (r,s)_{05}=(-1/3,-1/3) (r,s)_{13}=(-1/3,+1)
-00===01===02===03   (r,s)_{06}=(+1/3,-1/3) (r,s)_{14}=(+1/3,+1)
-                    (r,s)_{07}=(+1,-1/3)   (r,s)_{15}=(+1,+1)
-\end{verbatim}
 
-The velocity shape functions are given by:
+\input{tikz_q32d}
+
+The 1D cubic basis functions are given by:
 \begin{align}
-N_1(r)&=(-1   +r +9r^2 - 9r^3)/16 & 
-N_1(t)&=(-1   +t +9t^2 - 9t^3)/16 \nonumber\\
-N_2(r)&=(+9 -27r -9r^2 +27r^3)/16 &
-N_2(t)&=(+9 -27t -9t^2 +27t^3)/16 \nonumber\\
-N_3(r)&=(+9 +27r -9r^2 -27r^3)/16 &
-N_3(t)&=(+9 +27t -9t^2 -27t^3)/16 \nonumber\\
-N_4(r)&=(-1   -r +9r^2 + 9r^3)/16 &
-N_4(t)&=(-1   -t +9t^2 + 9t^3)/16 \nonumber
+N_1(r)&=(-1   +r +9r^2 - 9r^3)/16 & N_1(t)&=(-1   +t +9t^2 - 9t^3)/16 \nonumber\\
+N_2(r)&=(+9 -27r -9r^2 +27r^3)/16 & N_2(t)&=(+9 -27t -9t^2 +27t^3)/16 \nonumber\\
+N_3(r)&=(+9 +27r -9r^2 -27r^3)/16 & N_3(t)&=(+9 +27t -9t^2 -27t^3)/16 \nonumber\\
+N_4(r)&=(-1   -r +9r^2 + 9r^3)/16 & N_4(t)&=(-1   -t +9t^2 + 9t^3)/16 \nonumber
 \end{align}
 
+The resulting basis functions are simply the tensor product of the above 1D ones:
 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
-N_{01}(r,s)&=&N_1(r)N_1(s) = (-1   +r +9r^2 - 9r^3)/16 * (-1  +t +9s^2 - 9s^3)/16 \nonumber\\
-N_{02}(r,s)&=&N_2(r)N_1(s) = (+9 -27r -9r^2 +27r^3)/16 * (-1  +t +9s^2 - 9s^3)/16 \nonumber\\
-N_{03}(r,s)&=&N_3(r)N_1(s) = (+9 +27r -9r^2 -27r^3)/16 * (-1  +t +9s^2 - 9s^3)/16 \nonumber\\
-N_{04}(r,s)&=&N_4(r)N_1(s) = (-1   -r +9r^2 + 9r^3)/16 * (-1  +t +9s^2 - 9s^3)/16 \nonumber\\
-N_{05}(r,s)&=&N_1(r)N_2(s) = (-1   +r +9r^2 - 9r^3)/16 * (9 -27s -9s^2 +27s^3)/16 \nonumber\\
-N_{06}(r,s)&=&N_2(r)N_2(s) = (+9 -27r -9r^2 +27r^3)/16 * (9 -27s -9s^2 +27s^3)/16 \nonumber\\
-N_{07}(r,s)&=&N_3(r)N_2(s) = (+9 +27r -9r^2 -27r^3)/16 * (9 -27s -9s^2 +27s^3)/16 \nonumber\\
-N_{08}(r,s)&=&N_4(r)N_2(s) = (-1   -r +9r^2 + 9r^3)/16 * (9 -27s -9s^2 +27s^3)/16 \nonumber\\
-N_{09}(r,s)&=&N_1(r)N_3(s) =\\
-N_{10}(r,s)&=&N_2(r)N_3(s) =\\
-N_{11}(r,s)&=&N_3(r)N_3(s) =\\
-N_{12}(r,s)&=&N_4(r)N_3(s) =\\
-N_{13}(r,s)&=&N_1(r)N_4(s) =\\
-N_{14}(r,s)&=&N_2(r)N_4(s) =\\
-N_{15}(r,s)&=&N_3(r)N_4(s) =\\
-N_{16}(r,s)&=&N_4(r)N_4(s) =
+N_{01}(r,s)&=&N_1(r)N_1(s) = (-1   +r +9r^2 - 9r^3)/16 \times (-1  +t +9s^2 - 9s^3)/16 \nonumber\\
+N_{02}(r,s)&=&N_2(r)N_1(s) = (+9 -27r -9r^2 +27r^3)/16 \times (-1  +t +9s^2 - 9s^3)/16 \nonumber\\
+N_{03}(r,s)&=&N_3(r)N_1(s) = (+9 +27r -9r^2 -27r^3)/16 \times (-1  +t +9s^2 - 9s^3)/16 \nonumber\\
+N_{04}(r,s)&=&N_4(r)N_1(s) = (-1   -r +9r^2 + 9r^3)/16 \times (-1  +t +9s^2 - 9s^3)/16 \nonumber\\
+N_{05}(r,s)&=&N_1(r)N_2(s) = (-1   +r +9r^2 - 9r^3)/16 \times (9 -27s -9s^2 +27s^3)/16 \nonumber\\
+N_{06}(r,s)&=&N_2(r)N_2(s) = (+9 -27r -9r^2 +27r^3)/16 \times (9 -27s -9s^2 +27s^3)/16 \nonumber\\
+N_{07}(r,s)&=&N_3(r)N_2(s) = (+9 +27r -9r^2 -27r^3)/16 \times (9 -27s -9s^2 +27s^3)/16 \nonumber\\
+N_{08}(r,s)&=&N_4(r)N_2(s) = (-1   -r +9r^2 + 9r^3)/16 \times (9 -27s -9s^2 +27s^3)/16 \nonumber\\
+N_{09}(r,s)&=&N_1(r)N_3(s) = (-1   +r +9r^2 - 9r^3)/16 \times (9 +27t -9t^2 -27t^3)/16 \nn\\
+N_{10}(r,s)&=&N_2(r)N_3(s) = (+9 -27r -9r^2 +27r^3)/16 \times (9 +27t -9t^2 -27t^3)/16 \nn\\
+N_{11}(r,s)&=&N_3(r)N_3(s) = (+9 +27r -9r^2 -27r^3)/16 \times (9 +27t -9t^2 -27t^3)/16 \nn\\
+N_{12}(r,s)&=&N_4(r)N_3(s) = (-1   -r +9r^2 + 9r^3)/16 \times (9 +27t -9t^2 -27t^3)/16 \nn\\
+N_{13}(r,s)&=&N_1(r)N_4(s) = (-1   +r +9r^2 - 9r^3)/16 \times (-1   -t +9t^2 + 9t^3)/16\nn\\
+N_{14}(r,s)&=&N_2(r)N_4(s) = (+9 -27r -9r^2 +27r^3)/16 \times (-1   -t +9t^2 + 9t^3)/16\nn\\
+N_{15}(r,s)&=&N_3(r)N_4(s) = (+9 +27r -9r^2 -27r^3)/16 \times (-1   -t +9t^2 + 9t^3)/16\nn\\
+N_{16}(r,s)&=&N_4(r)N_4(s) = (-1   -r +9r^2 + 9r^3)/16 \times (-1   -t +9t^2 + 9t^3)/16
 \end{eqnarray}
 \end{mdframed}
+
+\todo[inline]{produce derivatives}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -486,7 +465,7 @@ Inside an element the local numbering of the nodes is as follows:
 \index{general}{$P_1$}
 
 Velocities (or displacements) $(u,v)$ in a plane element are interpolated from nodal velocities
-$(u_i,v_i)$ using shape functions $N_i$ as follows,
+$(u_i,v_i)$ using basis functions $N_i$ as follows,
 \[
 \left(
 \begin{array}{c}
@@ -626,7 +605,7 @@ x_1y_2-x_2y_1  & y_1-y_2 & x_2-x_1
 \end{array}
 \right)
 \]
-and finally the linear shape functions are given by:
+and finally the linear basis functions are given by:
 \begin{eqnarray}
 N_1(x,y) &=& \frac{1}{D}[(x_2y_3-x_3y_2) + (y_2-y_3)x + (x_3-x_2)y] \nn\\
 N_2(x,y) &=& \frac{1}{D}[(x_3y_1-x_1y_3) + (y_3-y_1)x + (x_1-x_3)y] \nn\\
@@ -659,7 +638,7 @@ The basis polynomial is then
 \[
 f(r,s) = a + br + cs 
 \]
-and the shape functions:
+and the basis functions:
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
 N_0(r,s) &=& 1-r-s \\
@@ -782,7 +761,7 @@ In the reference triangle, the barycentric coordinates write
 \lambda_3 &=& 1-\lambda_1-\lambda_2 = 1 - (-r-s+1) - r = s \nn
 \end{eqnarray}
 As we have seen before the bubble function is given by $\lambda_1\lambda_2\lambda_3 = (1-r-s)rs$
-and the polynomial form for the shape functions is given by:
+and the polynomial form for the basis functions is given by:
 \[
 f(r,s) =a+br+cs + d (1-r-s)rs
 \]
@@ -830,7 +809,7 @@ N_4(r,s) &=& 27(1-r-s)rs \nn
 \end{eqnarray}
 %\end{mdframed}
 It is trivial to verify that $\sum_i N_i =1$ for all values of $r,s$
-and the gradients of the shape functions are:
+and the gradients of the basis functions are:
 \begin{eqnarray}
 \frac{\partial N_1}{\partial r}(r,s) &=& -1 - 9(1-2r-s)s \\ 
 \frac{\partial N_2}{\partial r}(r,s) &=&  +1 - 9(1-2r-s)s \\ 
@@ -1005,7 +984,7 @@ This is used by the Crouzeix-Raviart element, see Section~\ref{sec:crouzeix-ravi
 01==04==02    
 \end{verbatim}
 
-The shape functions are given by:
+The basis functions are given by:
 \todo[inline]{find reference}
 
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -1019,7 +998,7 @@ N_6(r,s) &=& 4(1-r-s)s(1-3r)\\
 N_7(r,s) &=& 27 (1-r-s)rs 
 \end{eqnarray}
 \end{mdframed}
-It is then easy to verify that for all shape functions we have 
+It is then easy to verify that for all basis functions we have 
 $N_i(r_j,s_j)=\delta_{ij}$ where $j$ denotes one of the seven nodes. 
 
 The derivatives are as follows:
@@ -1044,7 +1023,7 @@ The derivatives are as follows:
 \end{eqnarray}
 
 
-Note that the shape functions can also be expressed as a function of the barycentric coordinates, 
+Note that the basis functions can also be expressed as a function of the barycentric coordinates, 
 as in the MILAMIN code \cite{daks08} or in Cuvelier et al, 1986 \cite{cuss86}\footnote{Note
 that the numbering of the nodes in the book is different with respect to the one above. }
 
@@ -1070,7 +1049,7 @@ N_7(\lambda_1,\lambda_2,\lambda_3) &=& 27\eta_1\eta_2\eta_3
 \end{eqnarray}
 
 \todo[inline]{
-VERIFY that when $\eta_1=1-r-s$, $\eta_2=r$ and $\eta_3=s$ we find the above $r,s$ shape functions
+VERIFY that when $\eta_1=1-r-s$, $\eta_2=r$ and $\eta_3=s$ we find the above $r,s$ basis functions
 }
 
 
@@ -1209,7 +1188,7 @@ b^{(1)}(x,y) &=&  (1-r)(1-s)\cdot (1-r^2) (1-s^2) \\
 b^{(2)}(x,y) &=&  \left(1+\frac{r+s}{4}\right) \cdot (1-r^2) (1-s^2) 
 \end{eqnarray}
 Both bubble functions are exactly one in the middle of the element and exactly zero on the edges
-of the element as expected from shape functions.
+of the element as expected from basis functions.
 
 
 %In what follows I focus on the two bubble functions $b^{(1)}$ and $b^{(2)}$ in \cite{lami17}.
@@ -1341,9 +1320,8 @@ f^h(r,s)&=&
 &+& \underbrace{b(r,s)}_{N_5} f_5
 \end{eqnarray}
 
-As in the $P_1^+$ case the resulting shape functions are a combination 
-of the regular $Q_1$ shape functions and the bubble.
-
+As in the $P_1^+$ case the resulting basis functions are a combination 
+of the regular $Q_1$ basis functions and the bubble.
 
 Consistency check $f(r,s)=C$:
 \begin{eqnarray}
@@ -1385,7 +1363,7 @@ f^h(r,s)
 &=& rs
 \end{eqnarray}
 
-We find that the shape functions can represent  a bilinear field exactly. 
+We find that the basis functions can represent  a bilinear field exactly. 
 Let us now turn to quadratic terms:
 
 Consistency check $f(r,s)=r^2$ (or $f(r,s)=s^2$): 
@@ -1471,6 +1449,7 @@ Franca et al (1993) \cite{frha93}, Idelsohn et al (1995) \cite{idsn95}.
 
 
 
+\newpage
 %-----------------------------------------------------------------
 \subsubsection{The rotated $Q_1$} \label{ss:rq1}
 \index{general}{$\tilde{Q}_1$}
@@ -1573,13 +1552,13 @@ of simulation carried out with this element).
 \includegraphics[width=6cm]{images/rannacherturek/N2}\\
 \includegraphics[width=6cm]{images/rannacherturek/N3}
 \includegraphics[width=6cm]{images/rannacherturek/N4}\\
-{\captionfont Graphical representation of the $\tilde{Q}_1$ shape functions}
+{\captionfont Graphical representation of the $\tilde{Q}_1$ basis functions}
 \end{center}
 
 %......................................
 \paragraph{The Mid Value (MV) variant}. 
 
-These shape functions are implemented in deal.II
+These basis functions are implemented in deal.II
 \footnote{\url{https://www.dealii.org/8.5.0/doxygen/deal.II/polynomials_rannacher_turek_8cc_source.html}}
 for $x\in[0,1]$ and $y\in[0,1]$:
 
@@ -1603,7 +1582,7 @@ It is easy to verify that these functions verify the property
 \frac{1}{|\Gamma_i|} \int_{\Gamma_i} N_j d\Gamma = \delta_{ij}
 \]
 
-These shape functions are used in \cite{shzh06} and mentioned in John \cite[p.722]{john16}.
+These basis functions are used in \cite{shzh06} and mentioned in John \cite[p.722]{john16}.
 
 \begin{eqnarray}
 \frac{\partial N_1}{\partial r} &=& -\frac{3}{4}r \nonumber\\
@@ -1620,7 +1599,7 @@ These shape functions are used in \cite{shzh06} and mentioned in John \cite[p.72
 \end{eqnarray}
 
 
-
+\newpage
 %-----------------------------------------------------------------------------
 \subsubsection{The 2D enriched $Q_1^+\times P_0$ of Fortin} \label{ss:Q1pP02D}
 
@@ -1654,6 +1633,10 @@ b_6^v(r,s) = \frac{1}{2}(1-r^2)(1+s)
 \end{mdframed}
 
 
+\newpage
+%-----------------------------------------------------------------------------
+\subsubsection{The DSSY element} \label{ss:dssy_2D}
+\input{dssy2D}
 
 
 

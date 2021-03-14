@@ -57,12 +57,12 @@ The six nodes of the reference element are
 \]
 and their corresponding basis functions:
 \begin{eqnarray}
-N_1(r,s,t)^{(l)} &=&  \frac16 - \frac12 x + \frac{1}{6\theta_l(1)}(2\theta_l(x)-\theta_l(y)-\theta_l(z))  \nn\\
-N_2(r,s,t)^{(l)} &=&  \frac16 + \frac12 x + \frac{1}{6\theta_l(1)}(2\theta_l(x)-\theta_l(y)-\theta_l(z))  \nn\\
-N_3(r,s,t)^{(l)} &=&  \frac16 - \frac12 y + \frac{1}{6\theta_l(1)}(2\theta_l(y)-\theta_l(z)-\theta_l(x))  \nn\\
-N_4(r,s,t)^{(l)} &=&  \frac16 + \frac12 y + \frac{1}{6\theta_l(1)}(2\theta_l(y)-\theta_l(z)-\theta_l(x))  \nn\\
-N_5(r,s,t)^{(l)} &=&  \frac16 - \frac12 z + \frac{1}{6\theta_l(1)}(2\theta_l(z)-\theta_l(x)-\theta_l(y))  \nn\\
-N_6(r,s,t)^{(l)} &=&  \frac16 + \frac12 z + \frac{1}{6\theta_l(1)}(2\theta_l(z)-\theta_l(x)-\theta_l(y))  
+N_1^{(l)}(r,s,t) &=&  \frac16 - \frac12 r + \frac{1}{6\theta_l(1)}(2\theta_l(r)-\theta_l(s)-\theta_l(t))  \nn\\
+N_2^{(l)}(r,s,t) &=&  \frac16 + \frac12 r + \frac{1}{6\theta_l(1)}(2\theta_l(r)-\theta_l(s)-\theta_l(t))  \nn\\
+N_3^{(l)}(r,s,t) &=&  \frac16 - \frac12 s + \frac{1}{6\theta_l(1)}(2\theta_l(s)-\theta_l(t)-\theta_l(r))  \nn\\
+N_4^{(l)}(r,s,t) &=&  \frac16 + \frac12 s + \frac{1}{6\theta_l(1)}(2\theta_l(s)-\theta_l(t)-\theta_l(r))  \nn\\
+N_5^{(l)}(r,s,t) &=&  \frac16 - \frac12 t + \frac{1}{6\theta_l(1)}(2\theta_l(t)-\theta_l(r)-\theta_l(s))  \nn\\
+N_6^{(l)}(r,s,t) &=&  \frac16 + \frac12 t + \frac{1}{6\theta_l(1)}(2\theta_l(t)-\theta_l(r)-\theta_l(s))  
 \end{eqnarray}
 These basis functions are also in \cite{doss99}.
 We can easily verify that $\sum_i N_i(r,s,t)=1$ and that $N_i(\vec{r}_j)=\delta_{ij}$:
@@ -82,5 +82,32 @@ N_1^{(l)}(r_6,s_6,t_6)
 \end{eqnarray}
 etc ...
 
+
+\begin{eqnarray}
+\partial_r N_1^{(l)}(r,s,t) &=&  - \frac12  + \frac{1}{3\theta_l(1)}\theta_l'(r)  \nn\\
+\partial_r N_2^{(l)}(r,s,t) &=&  + \frac12  + \frac{1}{3\theta_l(1)}\theta_l'(r)  \nn\\
+\partial_r N_3^{(l)}(r,s,t) &=&  -\frac{1}{6\theta_l(1)}\theta_l'(r)  \nn\\
+\partial_r N_4^{(l)}(r,s,t) &=&  -\frac{1}{6\theta_l(1)}\theta_l'(r)  \nn\\
+\partial_r N_5^{(l)}(r,s,t) &=&  -\frac{1}{6\theta_l(1)}\theta_l'(r)  \nn\\
+\partial_r N_6^{(l)}(r,s,t) &=&  -\frac{1}{6\theta_l(1)}\theta_l'(r)  
+\end{eqnarray}
+
+\begin{eqnarray}
+\partial_s N_1^{(l)}(r,s,t) &=&   -\frac{1}{6\theta_l(1)}\theta_l'(s) \nn\\
+\partial_s N_2^{(l)}(r,s,t) &=&   -\frac{1}{6\theta_l(1)}\theta_l'(s) \nn\\
+\partial_s N_3^{(l)}(r,s,t) &=& - \frac12  + \frac{1}{3\theta_l(1)}\theta_l'(s)  \nn\\
+\partial_s N_4^{(l)}(r,s,t) &=& + \frac12  + \frac{1}{3\theta_l(1)}\theta_l'(s)  \nn\\
+\partial_s N_5^{(l)}(r,s,t) &=&   \frac{1}{6\theta_l(1)}\theta_l'(s)  \nn\\
+\partial_s N_6^{(l)}(r,s,t) &=&   \frac{1}{6\theta_l(1)}\theta_l'(s)  
+\end{eqnarray}
+
+\begin{eqnarray}
+\partial_t N_1^{(l)}(r,s,t) &=& - \frac{1}{6\theta_l(1)}\theta_l(t)  \nn\\
+\partial_t N_2^{(l)}(r,s,t) &=& - \frac{1}{6\theta_l(1)}\theta_l(t)  \nn\\
+\partial_t N_3^{(l)}(r,s,t) &=& - \frac{1}{6\theta_l(1)}\theta_l(t)  \nn\\
+\partial_t N_4^{(l)}(r,s,t) &=& - \frac{1}{6\theta_l(1)}\theta_l(t)  \nn\\
+\partial_t N_5^{(l)}(r,s,t) &=& - \frac12 t + \frac{1}{3\theta_l(1)}\theta_l(t)  \nn\\
+\partial_t N_6^{(l)}(r,s,t) &=& + \frac12 t + \frac{1}{3\theta_l(1)}\theta_l(t)  
+\end{eqnarray}
 
 \Literature: Douglas \etal (1999) \cite{doss99}, 

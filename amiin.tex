@@ -72,7 +72,7 @@ Then, if $M$ is inside the element then its $y$ coordinate is given by
 \[
 y_M = \sum_i N_i(r_M,s_M) y_i
 \]
-where $N_i$ are the four $Q_1$ shape functions associated to the vertices.
+where $N_i$ are the four $Q_1$ basis functions associated to the vertices.
 Assuming we know $r_M$ then we can solve for $s_M$:
 \begin{eqnarray}
 y_M &=&  
@@ -144,7 +144,7 @@ If point $M$ is inside the quadrilateral, there exist a set of reduced coordinat
 \quad\quad\quad
 \sum_{i=1}^4 N_i(r_M,s_M,t_M) z_i = z_M
 \]
-This can be cast as a system of three equations and three unknowns. Unfortunately, each shape function $N_i$ 
+This can be cast as a system of three equations and three unknowns. Unfortunately, each basis function $N_i$ 
 contains a term $rst$ (as well as $rs$, $rt$, and $st$) so that it is not a linear system and standard techniques
 are not applicable. 
 We must then use an iterative technique: the algorithm starts with a guess for values $r_M,s_M,t_M$ and 

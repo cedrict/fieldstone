@@ -1,9 +1,11 @@
-Ths problem is a simulation to study the
+\begin{flushright} {\tiny {\color{gray} benchmark\_thin\_layer\_entrainment.tex}} \end{flushright}
+
+The problem is a simulation to study the
 amount of entrainment by thermal convection of a dense,
 thin layer at the bottom of the model \cite{vaks97}. 
 To the author's knowledge only two other publications \cite{taki03,vant07}
 have presented results pertaining to this benchmark.
-The results shown here after are obtained with my ELEFANT code using 
+The results shown here after are obtained with my \elefant code using 
 the particle-in-cell technique. 
 
 The box is $2\times 1$, and contains two fluids:
@@ -87,7 +89,7 @@ Pink points correspond to cases wherethe number of markers within each element w
 
 
 Looking at the root mean square velocity measurements, we see that
-the measurements done with ELEFANT agree nicely with those presented in \cite{vaks97}. 
+the measurements done with \elefant agree nicely with those presented in \cite{vaks97}. 
 Past $t\sim0.015$, the curves diverge clearly across all codes and authors, 
 so I only need to focus the comparison for times $t <0.015$. 
 For the three tested resolutions,measurements agree well and fall within the grey curves 
@@ -119,9 +121,11 @@ and more chaotic with markers being randomly mixed in the system in a non-orderl
 \includegraphics[width=0.23\linewidth]{images/benchmark_thinlayer/maarkers0225}
 \includegraphics[width=0.23\linewidth]{images/benchmark_thinlayer/maarkers0250}
 \includegraphics[width=0.23\linewidth]{images/benchmark_thinlayer/maarkers0275}\\
-{\scriptsize  marker distribution as obtained with ELEFANT for 
+{\scriptsize  marker distribution as obtained with \elefant for 
 grid 240x120, init\_marker\_density=7, random distribution, 
 CFL=0.25, rkmethod=2, m\_to\_q=2. Unpublished.}
 \end{center}
 
+
+\Literature: Trim \etal (2020) \cite{trlb20}.
 

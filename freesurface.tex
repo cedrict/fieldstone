@@ -223,11 +223,11 @@ deformation.
 (d) vertical adjustment of grid nodes in each column at equidistant ordinates.}
 \end{center}
 
-The ALE method is used in the SOPALE, SULEC, FANTOM, ELEFANT, and ASPECT codes to name a few
-(see Appendix~\ref{app:codes}).
+The ALE method is used in the \sopale, \sulec, \fantom, \elefant, 
+and \aspect{} codes to name a few (see Appendix~\ref{app:codes}).
 
 
-\paragraph{The not-so-simple but rather elegant approach of ASPECT}
+\paragraph{The not-so-simple but rather elegant approach of \aspect{}}
 
 What follows is mostly borrowed from Rose et al \cite{robh17}. Their approach 
 has the advantage that it does not presuppose a geometry (Cartesian, Spherical, ...)
@@ -637,23 +637,118 @@ this parameter will not play any role at all in the minimisation process.}
 
 \vspace{4cm}
 This is still WORK IN PROGRESS. I Need to look at those papers:
-\cite{raka87}
-\cite{huli88}\cite{pobe98}
-\cite{bens89}
-\cite{sucy00}
-\cite{rama90}
-\cite{tebm92}(moving pulse)
-\cite{dumg11}
-\cite{dumy16} 
-\cite{anmp15}
-\cite{krwd12}
-\cite{stcl10}
-\cite{maie12}
-\cite{guez96}\cite{zhgm96}
-\cite{elsp04}
-\cite{brwr00}
-\cite{pada83}
-and talk about free surface stabilisation \cite{kamm10,qube11,dumg11,robh17,sctc20}.
+
+ALE: Ramaswamy \& Kawahara (1987) \cite{raka87},
+ALE: Huerta \& Liu (1988) \cite{huli88},
+ALE: Ponthot \& Belytschko (1998)\cite{pobe98},
+ALE: Benson (1989) \cite{bens89},
+ALE: Sung \etal (2000) \cite{sucy00},
+ALE: Ramaswamy (1990) \cite{rama90},
+Tezduyar \etal (1992) \cite{tebm92}(moving pulse)
+Andres-Martinez \etal (2015) \cite{anmp15} (read !! extract benchmarks ? )
+Kramer \etal (2012) \cite{krwd12} (read !! extract benchmarks ? )
+Steer \etal (2011) \cite{stcl11}
+Maierova \cite{maie12}
+Zhong \etal \cite{zhgm96}, Gurnis \etal \cite{guez96}
+Ellis \etal (2004) \cite{elsp04}
+Braess \& Wriggers (2000) \cite{brwr00}
+Parsons \& Daly (1983) \cite{pada83}
+
+Free surface treatment in FDM: Duretz \etal \cite{dumg11}, \cite{dumy16}. 
 
 
+%-------------------------------------------------------
+\subsubsection{Free surface stabilization algorithm (FSSA)}
+\index{general}{Free Surface Stabilisation Algorithm}
+\index{general}{FSSA}
+
+Duretz \etal \cite{dumg11} is concerned with the Finite Difference method so I will 
+not expore this one further (see Gerya's book \cite{gery19book} for all things FDM).
+Note that their approach is similar to what follows. 
+
+There are then four articles left: 
+Kaus \etal (2010) \cite{kamm10},
+Quinquis \& Buiter (2011) \cite{qube11},
+Rose \etal \cite{robh17}, and 
+Schuh-Senlis \etal \cite{sctc20}.
+
+The first one is rather technical while the second is more to the point with some simple reasoning. 
+Apparently both author groups arrived at about the same formulation/algorithm 
+at about the same time. The third and fourth paper implement the algorithm in \aspect{} and 
+FAIStokes respectively. 
+
+The basic idea is rather simple. As stated in \cite{qube11}: 
+"In numerical subduction models which include a free surface
+or other interfaces with large density contrasts, an instability can
+occur as a result of numerical overshoot when computing restoring
+forces"
+
+In essence when the timestep $\delta t$ exceeds (or is comparable) to a characteristic relaxation 
+time $t_s$ then body and surface forces will be out of balance with the updated free surface. 
+As a consequence oscillations will occur and get amplified with sometimes a sloshing effect, also 
+called 'drunken sailor'. \index{general}{Drunken Sailor}.
+The solution is to add a term of the FE matrix which takes into account
+the incremental change in normal forces across density interfaces during
+each timestep:
+\[
+\Delta F_y = \Delta \rho \; g_y \delta t \; v_y
+\]
+where $\Delta F_y$ is the extra vertical force term across the interface, 
+$\Delta \rho$ is the change in density across the interface, and 
+$v_y$ is the vertical velocity on the interface.
+This extra term is applied to
+the free surface, and at any other interface with a density contrast.
+
+Unfortunately, although this is easy to understand, it is not very clear 
+how to implement it, which is when the first paper becomes useful.
+I first present results from my doomed 2014 paper \cite{thie14} 
+in which I carried out the Rayleigh-Taylor 
+instability experiment described in \cite{kamm10}
+where a dense fluid overlays another fluid 
+in a square domain with their initial interface being of sinusoidal shape\footnote{This 
+paper is about my \elefant code which relied at the time solely on $Q_1\times P_0$ elements
+with the penalty formulation.}. 
+
+\begin{center}
+\includegraphics[width=10cm]{images/fssa/drawing}\\
+{\captionfont 
+When the time step $\delta t$ is small, the simulation evolves smoothly, but 
+too large a time step leads to a sloshing instability, also called 'drunken sailor effect'
+in the community.}
+\end{center}
+
+The position $y(t)$ of the free surface point situated at $x=L_x$ is monitored over time:
+\begin{center}
+\includegraphics[width=10cm]{images/fssa/ynp}\\
+{\captionfont The stabilisation algorithm is first switched off and up to a time step of $\delta t\sim 3800\si{\year}$, 
+the free surface does not develop any instability (all curves are superimposed). 
+For a time step of $3900\si{\year}$ and above, a clear oscillation develops (green seesaw curve on the figure).
+Turning the algorithm on, time steps larger than $dt\sim 10,000\si{\year}$ can be used and no oscillation is observed. }
+\end{center}
+
+I found that: 
+a) the presence of the stabilisation algorithm with small time steps 
+does not introduce a significant difference in the outcome 
+(less than a meter of deviation after $1\si{\mega\year}$);
+b) the time step was increased up to $\delta t=20,000\si{\year}$ and the simulation remained stable 
+(the vertical deviation differed by approximately $4\si{\metre}$ from the one obtained with a very 
+small time step, which remains a remarkable result since it only represents $\sim 0.2\%$ of the 
+element size);
+c) time steps up to $\delta t=50,000\si{\year}$ remain stable but lead to oscillations at the beginning
+and deviate in the end by about 5 meters.
+ 
+Finally, let us look at the mathematical details behind this stabilisation, as 
+presented in Kaus \etal (2010) \cite{kamm10}.
+
+
+
+
+
+
+
+ 
+
+
+
+\Literature: Furuchi \cite{furu11}
 

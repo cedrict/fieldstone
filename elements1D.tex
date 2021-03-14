@@ -1,3 +1,5 @@
+\begin{flushright} {\tiny {\color{gray} elements1D.tex}} \end{flushright}
+
 
 %------------------------------------------
 \subsubsection{Linear basis functions ($Q_1$) \label{sec:bf1}}
@@ -9,26 +11,25 @@ Let $f(r)$ be a $C^1$ function on the interval $[-1:1]$ with $f(-1)=f_1$  and $f
 \end{center}
 Let us assume that the function $f(r)$ is to be approximated on $[-1,1]$ by the first order polynomial 
 \begin{equation}
-f(r)=a+br \label{eqquad1}
+f_h(r)=a+br \label{eqquad1}
 \end{equation}
-Then it must fulfill
+Then it must fulfil
 \begin{eqnarray}
-f(r=-1)&=&a-b =f_1 \nonumber\\
-f(r=+1)&=&a+b =f_2 \nonumber
+f_h(r=-1)&=&a-b =f_1 \nonumber\\
+f_h(r=+1)&=&a+b =f_2 \nonumber
 \end{eqnarray}
 This leads to  
+\begin{eqnarray}
+a&=&\frac{1}{2}(f_1+f_2)  \nn\\
+b&=&\frac{1}{2}(-f_1+f_2)  
+\end{eqnarray}
+and then replacing $a,b$ in Eq.~\eqref{eqquad1} by the above values one gets
 \[
-a=\frac{1}{2}(f_1+f_2)  
-\quad\quad
-b=\frac{1}{2}(-f_1+f_2)  
-\]
-and then replacing $a,b$ in Eq. (\ref{eqquad1}) by the above values on gets
-\[
-f(r) = \left[  \frac{1}{2}(1-r)\right] f_1 + \left[ \frac{1}{2}(1+r) \right] f_2
+f_h(r) = \left[  \frac{1}{2}(1-r)\right] f_1 + \left[ \frac{1}{2}(1+r) \right] f_2
 \]
 or
 \[
-f(r)=\sum_{i=1}^2 N_i(r) f_1
+f_h(r)=\sum_{i=1}^2 N_i(r) f_1
 \]
 with
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -39,9 +40,11 @@ N_2(r) &=& \frac{1}{2} (1+r)
 \end{mdframed}
 
 \begin{center}
-\includegraphics[width=6cm]{images/basis1D/linear.pdf}
+\includegraphics[width=8cm]{images/basis1D/linear.pdf}\\
+{\captionfont Plot of the two linear functions $N_1(r)$ and $N_2(r)$.}
 \end{center}
 
+\newpage
 %------------------------------------------
 \subsubsection{Quadratic basis functions ($Q_2$) \label{sec:bf2}}
 \index{general}{$Q_2$}
@@ -50,32 +53,32 @@ Let $f(r)$ be a $C^1$ function on the interval $[-1:1]$ with $f(-1)=f_1$, $f(0)=
 \begin{center}
 \includegraphics[width=8cm]{images/quadshapefct.png}
 \end{center}
-
-Let us assume that the function $f(r)$ is to be approximated on $[-1,1]$ by the second order polynomial
+Let us assume that the function $f(r)$ is to be approximated on $[-1,1]$ by the second order polynomial 
+$f_h(r)$:
 \begin{equation}
 f(r)=a+br+cr^2 \label{eqquad}
 \end{equation}
-Then it must fulfill
+Then it must fulfil
 \begin{eqnarray}
-f(r=-1)&=&a-b+c = f_1 \nonumber\\
-f(r=0) &=&a\quad\quad\quad\;     = f_2 \nonumber\\
-f(r=+1)&=&a+b+c = f_3 \nonumber
+f_h(r=-1)&=&a-b+c = f_1 \nonumber\\
+f_h(r=0) &=&a\quad\quad\quad\;     = f_2 \nonumber\\
+f_h(r=+1)&=&a+b+c = f_3 \nonumber
 \end{eqnarray}
 This leads to
+\begin{eqnarray}
+a&=&f_2   \nn\\
+b&=&\frac{1}{2}(-f1+f3)  \nn\\
+c&=&\frac{1}{2}(f_1+f_3-2f_2) 
+\end{eqnarray}
+and then replacing $a,b,c$ in Eq.~\eqref{eqquad} by the above values on gets
 \[
-a=f_2 
-\quad
-b=\frac{1}{2}(-f1+f3)
-\quad
-c=\frac{1}{2}(f_1+f_3-2f_2)
-\]
-and then replacing $a,b,c$ in Eq. (\ref{eqquad}) by the above values on gets
-\[
-f(r)=\left[\frac{1}{2}r(r-1)\right] f_1 + (1-r^2) f_2 + \left[\frac{1}{2}r(r+1)\right] f_3
+f_h(r)=\left[\frac{1}{2}r(r-1)\right] f_1 + (1-r^2) f_2 + \left[\frac{1}{2}r(r+1)\right] f_3
 \]
 or,
 \[
-f(r) = \sum_{i=1}^3 N_i(r) f_i
+\boxed{
+f_h(r) = \sum_{i=1}^3 N_i(r) f_i
+}
 \]
 with
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -87,27 +90,37 @@ N_3(r) &=& \frac{1}{2}r(r+1)
 \end{mdframed}
 
 \begin{center}
-\includegraphics[width=6cm]{images/basis1D/quadratic.pdf}
+\includegraphics[width=8cm]{images/basis1D/quadratic.pdf}\\
+{\captionfont Plot of the three quadratic functions $N_1(r)$, $N_2(r)$ and $N_3(r)$.}
 \end{center}
+
+We will later need the first-order derivatives of these functions:
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\frac{\partial N_1}{\partial r} &=& r-\frac{1}{2} \nonumber\\
+\frac{\partial N_2}{\partial r} &=& -2r \nonumber\\ 
+\frac{\partial N_3}{\partial r} &=& r+\frac{1}{2}
+\end{eqnarray}
+\end{mdframed}
 
 
 %------------------------------------------
 \subsubsection{Cubic basis functions ($Q_3$) \label{sec:bf3}}
 \index{general}{$Q_3$}
 
-The 1D basis polynomial is given by
+We proceed as previously by assuming that the third-order 
+polynomial representation of function $f(r)$ is given by
 \[
-f(r)=a+br+cr^2+dr^3
+f_h(r)=a+br+cr^2+dr^3
 \]
 with the nodes at position -1,-1/3, +1/3 and +1.
-
+It then must fulfil all four conditions:
 \begin{eqnarray}
 f(-1)   &=& a-b+c-d = f_1 \nonumber\\
 f(-1/3) &=& a-\frac{b}{3}+\frac{c}{9}-\frac{d}{27} = f_2 \nonumber\\
 f(+1/3) &=& a-\frac{b}{3}+\frac{c}{9}-\frac{d}{27} = f_3 \nonumber\\
 f(+1)   &=& a+b+c+d = f_4 \nonumber
 \end{eqnarray}
-
 Adding the first and fourth equation and the second and third, one arrives at
 \[
 f_1+f_4 = 2a+2c \quad\quad\quad f_2+f_3=2a+\frac{2c}{9}
@@ -133,9 +146,8 @@ b=\frac{1}{16} \left( f_1 - 27f_2 + 27f_3 -f_4   \right)
 d=\frac{9}{16} \left( -f_1 + 3f_2 - 3f_3 + f_4 \right)
 \]
 Finally,
-
 \begin{eqnarray}
-f(r) 
+f_h(r) 
 &=& a+b+cr^2+dr^3 \nonumber\\
 &=& \frac{1}{16} (-1+  r +9r^2 - 9r^3 )f_1 \nonumber\\ 
 &+& \frac{1}{16} ( 9-27r -9r^2 +27r^3 )f_2 \nonumber\\ 
@@ -143,7 +155,7 @@ f(r)
 &+& \frac{1}{16} (-1-  r +9r^2 + 9r^3 )f_4 \nonumber\\ 
 &=& \sum_{i=1}^4 N_i(r) f_i \nonumber
 \end{eqnarray}
-where
+where (see also for example \cite[p49]{li06})
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
 N_1&=& \frac{1}{16} (-1+  r+9r^2- 9r^3 ) \nonumber\\ 
@@ -154,25 +166,25 @@ N_4&=& \frac{1}{16} (-1-  r+9r^2+ 9r^3 ) \nonumber
 \end{mdframed}
 
 \begin{center}
-\includegraphics[width=6cm]{images/basis1D/cubic.pdf}
+\includegraphics[width=8cm]{images/basis1D/cubic.pdf}\\
+{\captionfont Plot of the four cubic functions $N_1(r)$, $N_2(r)$, $N_3(r)$ and $N_4(r)$.}
 \end{center}
 
-These are identical to \cite[p49]{li06}
-
-Verification:
+Let us now verify that these functions can represent any polynomial function up to third order:
 
 \begin{itemize}
 \item
 Let us assume $f(r)=C$, then
 \[
-\hat{f}(r) = \sum N_i(r) f_i = \sum_i N_i C = C \sum_i N_i  = C
+f_h(r) = \sum N_i(r) f_i = \sum_i N_i C = C \sum_i N_i  = C
 \]
 so that a constant function is exactly reproduced, as expected.
+This is a very important property of the $N_i$ functions: They must fulfil $\sum\limits_i N_i =1$.
 
 \item
 Let us assume $f(r)= r$, then $f_1=-1$, $f_2=-1/3$, $f_3=1/3$ and $f_4=+1$. We then have
 \begin{eqnarray}
-\hat{f}(r) 
+f_h(r) 
 &=& \sum N_i(r) f_i  \nonumber\\
 &=& - N_1(r) -\frac{1}{3}N_2(r) + \frac{1}{3}N_3(r)  + N_4(r) \nonumber\\
 &=& [-(-1+  r+9r^2- 9r^3 ) \nn\\
@@ -183,46 +195,66 @@ Let us assume $f(r)= r$, then $f_1=-1$, $f_2=-1/3$, $f_3=1/3$ and $f_4=+1$. We t
 &=& r   
 \end{eqnarray}
 
+\item The cases $f(r)=r^2$ and $f(r)=r^3$ are left as exercise.
+
 \end{itemize}
 
-
-The basis functions derivative are given by
+The basis functions first-order derivatives are given by
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
- \frac{\partial N_1}{\partial r}&=& \frac{1}{16}  (  1 +18r - 27r^2 ) \nonumber\\ 
- \frac{\partial N_2}{\partial r}&=& \frac{1}{16}  (-27 -18r + 81r^2 ) \nonumber\\ 
- \frac{\partial N_3}{\partial r}&=& \frac{1}{16}  (+27 -18r - 81r^2 ) \nonumber\\ 
- \frac{\partial N_4}{\partial r}&=& \frac{1}{16}  ( -1 +18r + 27r^2 ) \nonumber
+\frac{\partial N_1}{\partial r}&=& \frac{1}{16}  (  1 +18r - 27r^2 ) \nonumber\\ 
+\frac{\partial N_2}{\partial r}&=& \frac{1}{16}  (-27 -18r + 81r^2 ) \nonumber\\ 
+\frac{\partial N_3}{\partial r}&=& \frac{1}{16}  (+27 -18r - 81r^2 ) \nonumber\\ 
+\frac{\partial N_4}{\partial r}&=& \frac{1}{16}  ( -1 +18r + 27r^2 ) \nonumber
 \end{eqnarray}
 \end{mdframed}
-Verification:
+
+We can also verify that the derivatives are also properly approximated:
 
 \begin{itemize}
 \item
 Let us assume $f(r)=C$, then
 \begin{eqnarray}
-\frac{\partial \hat{f}}{\partial r} 
+\frac{\partial f_h}{\partial r} 
 &=& \sum_i \frac{\partial N_i}{\partial r} f_i  \nonumber\\
 &=&  C \sum_i \frac{\partial N_i}{\partial r}  \nonumber\\
-&=& \frac{C}{16} [  (  1 +18r - 27r^2 ) \nn\\
-&&+ (-27 -18r + 81r^2 )  \nn\\
-&&+  (+27 -18r - 81r^2 ) \nn\\
-&&+ ( -1 +18r + 27r^2 ) ]  \nonumber\\
+&=& \frac{C}{16} [  (  1 +18r - 27r^2 ) 
++ (-27 -18r + 81r^2 )  
++  (+27 -18r - 81r^2 ) 
++ ( -1 +18r + 27r^2 ) ]  \nonumber\\
 &=& 0 \nonumber
 \end{eqnarray}
 
 \item
 Let us assume $f(r)= r$, then $f_1=-1$, $f_2=-1/3$, $f_3=1/3$ and $f_4=+1$. We then have
 \begin{eqnarray}
-\frac{\partial \hat{f}}{\partial r} 
+\frac{\partial f_h}{\partial r} 
 &=& \sum_i \frac{\partial N_i}{\partial r} f_i  \nonumber\\
-&=& \frac{1}{16} [  -(  1 +18r - 27r^2 ) \nn\\ 
-&& -\frac{1}{3} (-27 -18r + 81r^2 )  \nn\\
-&& +\frac{1}{3}  (+27 -18r - 81r^2 ) \nn\\
-&& + ( -1 +18r + 27r^2 ) ]  \nonumber\\
+&=& \frac{1}{16} [  -(  1 +18r - 27r^2 ) 
+ -\frac{1}{3} (-27 -18r + 81r^2 )  
+ +\frac{1}{3} (27 -18r - 81r^2 )
+ + ( -1 +18r + 27r^2 ) ]  \nonumber\\
 &=& \frac{1}{16} [-2 + 18 + 54r^2 - 54r^2] \nonumber\\
 &=& 1 \nonumber
 \end{eqnarray}
+
+\item
+Let us assume $f(r)= r^2$, then $f_1=1$, $f_2=1/9$, $f_3=1/9$ and $f_4=1$. We then have
+\begin{eqnarray}
+\frac{\partial f_h}{\partial r} 
+&=& \sum_i \frac{\partial N_i}{\partial r} f_i  \nonumber\\
+&=& \frac{1}{16} \left[  
+(  1 +18r - 27r^2 ) 
++\frac19 (-27 -18r + 81r^2 )  
++\frac19  (27 -18r - 81r^2 )
++ ( -1 +18r + 27r^2 ) \right]  \nonumber\\
+&=& \frac{1}{16}(32r) \nn\\
+&=& 2r
+\end{eqnarray}
+as expected.
+
+
+
 
 \end{itemize}
 
@@ -232,16 +264,16 @@ Let us assume $f(r)= r$, then $f_1=-1$, $f_2=-1/3$, $f_3=1/3$ and $f_4=+1$. We t
 
 The 1D basis polynomial is given by
 \[
-f(r)=a+br+cr^2+dr^3+er^4
+f_h(r)=a+br+cr^2+dr^3+er^4
 \]
 with the nodes at position -1,-1/2, 0, +1/2 and +1.
-
+The function $f^h(r)$ must then fulfil 
 \begin{eqnarray}
-f(-1)   &=& a-b+c-d+e = f_1 \nonumber\\
-f(-1/2) &=& a-\frac{b}{2}+\frac{c}{4}-\frac{d}{8}+\frac{e}{16} = f_2 \nonumber\\
-f(0)    &=& a = f_3 \nonumber\\
-f(+1/2) &=& a-\frac{b}{2}+\frac{c}{4}-\frac{d}{8}+\frac{e}{16} = f_4 \nonumber\\
-f(+1)   &=& a+b+c+d+e = f_5 \nonumber
+f_h(-1)   &=& a-b+c-d+e = f_1 \nonumber\\
+f_h(-1/2) &=& a-\frac{b}{2}+\frac{c}{4}-\frac{d}{8}+\frac{e}{16} = f_2 \nonumber\\
+f_h(0)    &=& a = f_3 \nonumber\\
+f_h(+1/2) &=& a-\frac{b}{2}+\frac{c}{4}-\frac{d}{8}+\frac{e}{16} = f_4 \nonumber\\
+f_h(+1)   &=& a+b+c+d+e = f_5 \nonumber
 \end{eqnarray}
 or, 
 \begin{equation}
@@ -266,7 +298,6 @@ f_1 \\ f_2 \\ f_3 \\ f_4 \\ f_5
 \end{array}
 \right)
 \end{equation}
-
 The third line gives $a=f_3$ so that
 \begin{equation}
 \underbrace{
@@ -327,7 +358,6 @@ f_1 -f_3 \\ f_2 -f_3\\ f_4-f_3 \\ f_5 -f_3
 \end{array}
 \right)
 \]
-
 and then 
 \begin{eqnarray}
 b &=& \frac{1}{6} \left( f_1 -8f_2 +8 f_4 -f_5     \right) \\
@@ -335,9 +365,9 @@ c &=& \frac{1}{6} \left( -f_1 +16f_2 -30f_3    + 16f_4- f_5   \right) \\
 d &=& \frac{1}{6} \left( -4f_1 +8f_2     -8f_4+ 4 f_5   \right) \\
 e &=& \frac{1}{6} \left( 4f_1 -16f_2 +24f_3 -16f_4+ 4 f_5   \right) 
 \end{eqnarray}
-
+Finally
 \begin{eqnarray}
-f(r) 
+f_h(r) 
 &=& a+br+cr^2+dr^3+er^4 \\
 &=& f_3 + 
 \frac{1}{6} \left( f_1 -8f_2 +8 f_4 -f_5     \right)  r  +
@@ -350,33 +380,31 @@ f(r)
 &+& \frac{1}{6} \left(  8r+16 r^2 -8r^3 -16 r^4\right) f_4 \\
 &+& \frac{1}{6} \left(  -r- r^2 +4r^3 +4r^4\right) f_5
 \end{eqnarray}
-
-Finally
+with 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
-N_1(r)&=& \frac{1}{6} \left(  r- r^2 -4r^3 +4r^4\right) \\
-N_2(r)&=& \frac{1}{6} \left(  -8r+16 r^2 +8r^3 -16 r^4\right)  \\
-N_3(r)&=& \left( 1 -5r^2+4r^4  \right)  \\
-N_4(r)&=& \frac{1}{6} \left(  8r+16 r^2 -8r^3 -16 r^4\right)  \\
+N_1(r)&=& \frac{1}{6} \left(  r- r^2 -4r^3 +4r^4\right) \nn\\
+N_2(r)&=& \frac{1}{6} \left(  -8r+16 r^2 +8r^3 -16 r^4\right)  \nn\\
+N_3(r)&=& \left( 1 -5r^2+4r^4  \right) \nn \\
+N_4(r)&=& \frac{1}{6} \left(  8r+16 r^2 -8r^3 -16 r^4\right)  \nn\\
 N_5(r)&=& \frac{1}{6} \left(  -r- r^2 +4r^3 +4r^4\right) 
 \end{eqnarray}
 \end{mdframed}
 
-
 \begin{center}
-\includegraphics[width=6cm]{images/basis1D/quartic.pdf}
+\includegraphics[width=8cm]{images/basis1D/quartic.pdf}\\
+{\captionfont Plot of the 5 quartic basis functions.}
 \end{center}
-
 
 The basis functions derivative are given by
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
-\frac{\partial N_1}{\partial r}&=& \frac{1}{6}(1-2r-12r^2+16r^3)\\
-\frac{\partial N_2}{\partial r}&=& \frac{1}{6}(-8+32r+24r^2-64r^3)\\
-\frac{\partial N_3}{\partial r}&=& -10r+16r^3\\
-\frac{\partial N_4}{\partial r}&=& \frac{1}{6} (8+32r-24r^2-64r^3)\\
+\frac{\partial N_1}{\partial r}&=& \frac{1}{6}(1-2r-12r^2+16r^3) \nn\\
+\frac{\partial N_2}{\partial r}&=& \frac{1}{6}(-8+32r+24r^2-64r^3) \nn\\
+\frac{\partial N_3}{\partial r}&=& -10r+16r^3 \nn\\
+\frac{\partial N_4}{\partial r}&=& \frac{1}{6} (8+32r-24r^2-64r^3) \nn\\
 \frac{\partial N_5}{\partial r}&=& \frac{1}{6} (-1-2r+12r^2+16r^3) 
 \end{eqnarray}
 \end{mdframed}
 
-
+\todo[inline]{add derivatives!}

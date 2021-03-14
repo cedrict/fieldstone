@@ -1,3 +1,5 @@
+\begin{flushright} {\tiny {\color{gray} supg.tex}} \end{flushright}
+
 As abondantly documented in the literature advection needs to be stabilised
 as it otherwise showcases non-negligible under- and overshoots.
 A standard approach is the Streamline Upwind Petrov Galerkin (SUPG) method.
@@ -97,7 +99,7 @@ The $\beta$ factor is shown in the following figure as a function of the Peclet 
 Let us assume that $u>0$, i.e. advection goes from left to right. 
 Node $i-1$ is said to be on the upstream side of node $i$, and node $i+1$
 is on the downstream side of node . In Petrov FEM, instead of selecting the weight functions to be the
-same as the standard shape functions, we distort them as shown below.
+same as the standard basis functions, we distort them as shown below.
 
 \index{general}{Bubble Function}
 The distortion is based on so-called bubble functions since they have zero
@@ -286,7 +288,7 @@ If the equation is a pure advection equation, then $k=0$ so $III=VI=0$.
 
 
 We see that both $I+IV$ and $II+V$ contain the term $N^\uptheta_i  + \tau \vec\upnu\cdot\vec\nabla N_i^\theta$
-which we can interpret as a 'modified' shape function:
+which we can interpret as a 'modified' basis function:
 \[
 \boxed{
 \underline{N}^\uptheta_i = N^\uptheta_i  + \tau \vec\upnu\cdot\vec\nabla N_i^\theta
@@ -319,7 +321,7 @@ with
 \]
 
 \begin{remark}
-If the shape functions are first-order ones, then $VI=0$ since $\Delta \vec N^\uptheta = \vec 0$.  
+If the basis functions are first-order ones, then $VI=0$ since $\Delta \vec N^\uptheta = \vec 0$.  
 \end{remark}
 
 The SUPG-stabilised pure advection equation is extensively tested in the Stone \ref{f43}.
@@ -329,7 +331,7 @@ The SUPG-stabilised pure advection equation is extensively tested in the Stone \
 \subsubsection{About the choice of the parameter $\tau$}\label{ss:tausupg}
 
 \begin{itemize}
-\item The approach used in step-63 and subsequently in ASPECT is the 
+\item The approach used in step-63 and subsequently in \aspect{} is the 
 one in John \& Knobloch \cite{jokn06,knob08} which is also to be found in early 
 80's papers \cite{brhu82,hubr82}:
 \[
@@ -433,7 +435,7 @@ then $Pe\rightarrow \infty$ so
 \subsubsection{Some remarks about Appendix A of Thieulot (2011) \cite{thie11}}
 
 
-In the DOUAR paper \cite{brtf08} or the FANTOM paper \cite{thie11},
+In the \douar paper \cite{brtf08} or the \fantom paper \cite{thie11},
 The advection matrix is simply modified and computed as follows:
 \[
 ({\bm K}_a^e)_{SUPG}
@@ -471,28 +473,47 @@ elements of size $h$:
 \]
 The additional matrix has the same structure as the 1D diffusion matrix matrix in \ref{sec:diff1D}.
 
-The parameter $\tau$ is chosen as follows:
+The parameter $\tau$ is chosen as follows \cite{teos00}:
 \begin{equation}
-\tau=\gamma \frac{h}{\upnu} 
+\tau= \left(\frac{1}{\tau_1} + \frac{1}{\tau_2} + \frac{1}{\tau_3} \right)^{-1}
+\qquad
+\tau_1=\frac{h}{2 |\vec\upnu|},
+\quad
+\tau_2 = \theta \; \delta t,
+\quad
+\tau_3 = \frac{h^2 \rho C_p}{k}
 \label{tausupg}
 \end{equation}
-where $\gamma$ is a user chosen parameter (see Appendix A of \cite{thie11}). 
+where $h$ is a measure of the element size and $\theta$ is related to the time
+discretisation scheme ($\theta$ = 1/2 corresponds to a mid-point implicit scheme),
+and we can define $\gamma=\tau |\vec\upnu|/h$ (see Appendix A of \cite{thie11}). 
 
-A typical test case for testing a advection scheme is the step advection benchmark (
-see for instance \cite{dohu03}). At $t=0$, 
+A typical test case for testing an advection scheme is the step advection benchmark 
+(see for instance Donea \& Huerta (2003) \cite{dohu03}). At $t=0$, 
 a field $T(x)$ is prescribed in a 1D domain of unit length. For $x\le 1/4$ we have $T(x)=1$ and 
 $T(x)=0$ everywhere else as shown on the following figure:
 \begin{center}
-\includegraphics[width=8cm]{images/supg/fantom3}
+\includegraphics[width=8cm]{images/supg/fantom3}\\
+{\captionfont Taken and modified from Thieulot (2011) \cite{thie11}}
 \end{center}
-The prescribed velocity is $\upnu=1$, 50 elements are used and 250 time steps are 
-carried out with $\delta t=0.1h/\upnu=0.002$.
-As discussed in \cite{thie11}, using Equation~\ref{tausupg}, 
-one arrives to $\gamma=0.045$, which leads to a desired removal of the oscillations through a small
+The prescribed velocity is $\upnu=1$, 50 elements are used ($h=0.02$) and 250 time steps are 
+carried out with $\delta t=0.1h/\upnu=0.002$ (CFL number of 0.1).
+Then it follows that $\tau_3=\infty$ (no diffusion, i.e. $k=0$) and 
+\[
+\tau
+= \left(\frac{2}{0.02} + \frac{2}{0.002} \right)^{-1}
+= \left(\frac{1}{0.01} + \frac{1}{0.001} \right)^{-1}
+= \left(\frac{1}{0.01} (1 + \frac{1}{10})  \right)^{-1}
+= 0.01 \left(\frac{11}{10}  \right)^{-1}
+\simeq 0.009091
+\]
+which yields $\gamma = 0.00909/0.02=0.4545...$
+Using this value leads to a desired removal of the oscillations through a small
 amount of numerical diffusion. Braun \cite{brau03} argues for a constant
-$\gamma=1/\sqrt{15}=0.258$ (citing \cite{hubr82}), which effect is also shown in the figure above. This 
-value is arguably too large and introduces indesirable diffusion. Note that this same value is 
-to be found in Bochev et al (2004) \cite{bogs04}. The authors then state that 
+$\gamma=1/\sqrt{15}=0.258$ (citing Hughes \& Brooks (1982) \cite{hubr82}), 
+which effect is also shown in the figure above. This 
+value is arguably too large and introduces an undesirable diffusion. Note that this same value is 
+to be found in Bochev \etal (2004) \cite{bogs04}. The authors then state that 
 "for 1D pure advection problems, this choice maximizes the phase accuracy in the semidiscrete
 equation" and cite Raymond \& Gardner (1976) \cite{raga76} as source. 
 

@@ -1,3 +1,5 @@
+\begin{flushright} {\tiny {\color{gray} trcriterion.tex}} \end{flushright}
+
 The Tresca or maximum shear stress yield criterion is taken to be the work of Henri Tresca. It is also referred as the Tresca-Guest (TG) criterion. The functional form of this yield criterion is
 \[
 f(\sigma_1,\sigma_2,\sigma_3) = 0
@@ -8,16 +10,22 @@ In terms of the principal stresses the Tresca criterion is expressed as
 \]
 The following figure shows the Tresca-Guest yield surface in the three-dimensional space of principal stresses. 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{images/rheology/tresca/Tresca.pdf}
+\includegraphics[width=0.6\textwidth]{images/rheology/tresca/Tresca.pdf}\\
+{\captionfont Taken from \url{https://en.wikipedia.org/wiki/Yield_surface}}
 \end{center}
-It is a prism of six sides and having infinite length. This means that the material remains viscous when all three principal stresses are roughly equivalent (a hydrostatic pressure), no matter how much it is compressed or stretched. However, when one of principal stresses becomes smaller (or larger) than the others the material is subject to shearing. In such situations, if the shear stress reaches the yield limit then the material enters the plastic domain. 
+It is a prism of six sides and having infinite length. This means that the 
+material remains viscous when all three principal stresses are roughly equivalent 
+(a hydrostatic pressure), no matter how much it is compressed or stretched. 
+However, when one of principal stresses becomes smaller (or larger) than the others 
+the material is subject to shearing. In such situations, if the shear 
+stress reaches the yield limit then the material enters the plastic domain. 
 
 \begin{remark}
-The yield function presents sharp corners, making its numerical implementation more difficult (directional derivatives are needed)
+The yield function presents sharp corners, making its numerical implementation 
+more difficult (directional derivatives are needed)
 \end{remark}
 
-
-We have already established in Eq.~\ref{eq:sig13a}:
+We have already established in Eq.~\eqref{eq:sig13a}:
 \begin{eqnarray}
 \sigma_1 - \sigma_3  &=& 2 \sqrt{{\cal I}_2({\bm \tau})} \cos \theta \nn
 \end{eqnarray}
@@ -29,7 +37,7 @@ F^{\text{\tiny TR}}=2\sqrt{ {\cal I}_2({\bm \tau})  } \cos \theta - c
 \]
 \end{mdframed}
 
-\Literature: \cite{long03}
+\Literature: Tin-Loi \& Ngo \cite{ting03}
 
 
 %DO NOT READ FURTHER - 9dec2019

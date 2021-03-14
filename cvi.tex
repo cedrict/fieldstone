@@ -1,3 +1,4 @@
+\begin{flushright} {\tiny {\color{gray} cvi.tex}} \end{flushright}
 
 WORK IN PROGRESS !!!
 
@@ -330,6 +331,196 @@ u(r,s,t)&=&\sum_i N_i(r,s,t) u_i + [\alpha_r (s+t) +\beta_r](1-r)(1+r) \nn\\
 v(r,s,t)&=&\sum_i N_i(r,s,t) v_i + [\alpha_s (r+t) +\beta_s](1-s)(1+s) \nn\\
 w(r,s,t)&=&\sum_i N_i(r,s,t) w_i + [\alpha_t (r+s) +\beta_t](1-t)(1+t) \nn
 \end{eqnarray}
+
+
+%------------------------------------------------------------------------
+\subsubsection{In 2D with $P_1$ basis functions - what about triangles?}
+
+
+The reference linear element is: 
+\begin{verbatim}
+s
+|
+3
+|\
+|  \
+|    \
+1-----2 ->r
+\end{verbatim}
+
+Shape functions are 
+\begin{eqnarray}
+N_1(r,s) &=& 1-r-s \nn\\
+N_2(r,s) &=& r \nn\\
+N_3(r,s) &=& s 
+\end{eqnarray}
+
+Velocity vector is $\vec\upnu=(u,v)$. 
+\[
+u_h(r,s)=\sum_i N_i(r,s) u_i
+\qquad
+v_h(r,s)=\sum_i N_i(r,s) v_i
+\]
+In the element
+\[
+\vec\nabla\cdot\vec\upnu_h = 
+\frac{\partial u_h}{\partial r}
++
+\frac{\partial v_h}{\partial s}
+=(-u_1+u_2)+(-v_1+v_3)
+\]
+which is evidently not zero everywhere in the element.
+
+The CVI approach consists in adding polynomial terms to the expressions of $u_h$ and $v_h$.
+
+\paragraph{approach 1}
+In what follows I assume that the additional terms are of the form (where $r$, $s$ and $1-r-s$ are the three basis functions, and we here use only two per line, similarly to the quadrilateral counterpart):
+
+\begin{eqnarray}
+u_h(r,s)&=&\sum_i N_i(r,s) u_i + f(r,s) r(1-r-s) \\
+v_h(r,s)&=&\sum_i N_i(r,s) v_i + g(r,s) s(1-r-s) 
+\end{eqnarray}
+The velocity divergence requirement is then
+\begin{eqnarray}
+0=\vec\nabla\cdot\vec\upnu_h 
+&=& 
+  -u_1+u_2 + \partial_r f r(1-r-s) + f(r,s)(1-2r-s) \\
+&&-v_1+v_3 + \partial_s g s(1-r-s) + g(r,s)(1-2s-r)
+\end{eqnarray}
+
+\begin{itemize}
+\item
+We start simple and postulate $f(r,s)=a$, $g(r,s)=b$, so then 
+\begin{eqnarray}
+0=\vec\nabla\cdot\vec\upnu_h 
+&=&   -u_1+u_2 +  a(1-2r-s) -v_1+v_3 +  b(1-2s-r) \\
+&=&  (-u_1+u_2-v_1+v_3 +a +b ) + (-2a-b)r + (-a-2b)s
+\end{eqnarray}
+It is impossible to find $a$ and $b$ such that this expression is zero everywhere inside the element.
+
+\item
+We postulate then $f(r,s)=a+br+cs$, $g(r,s)=d+er+fs$, so  
+\begin{eqnarray}
+0=\vec\nabla\cdot\vec\upnu_h 
+&=& -u_1+u_2 + \partial_r f r(1-r-s) + f(r,s)(1-2r-s) \nn\\
+&&  -v_1+v_3 + \partial_s g s(1-r-s) + g(r,s)(1-2s-r) \nn\\
+&=& -u_1+u_2 + b r(1-r-s) + (a+br+cs) (1-2r-s) \nn\\
+&&  -v_1+v_3 + f s(1-r-s) + (d+er+fs)(1-2s-r) \nn\\
+&=& -u_1+u_2  -v_1+v_3 + a + d \nn\\
+&& +(b-2a+b-d+e)r \nn\\
+&& +(f-a+c-2d+f)s \nn\\
+&& +(-b-2b-e)r^2 \nn\\
+&& +(-f-c-2f)s^2 \nn\\
+&& +(-b-f-b-2c-2e-f)rs \nn\\
+&=& -u_1+u_2  -v_1+v_3 + a + d \nn\\
+&& +(2b-2a-d+e)r \nn\\
+&& +(2f-a+c-2d)s \nn\\
+&& +(-3b-e)r^2 \nn\\
+&& +(-3f-c)s^2 \nn\\
+&& +(-2b-2f-2c-2e)rs  \nn
+\end{eqnarray}
+Immediately $e=-3b$ and $c=-3f$. Inserting these in the last line yields
+$-2b-2f-2c-2e=-2b-2f+6f+6b=4b+4f=0$, i.e. $b=-f$.
+Inserting these in the remaining lines:
+\begin{eqnarray}
+a+d &=& u_1-u_2  +v_1-v_3 \nn\\
+2b-2a-d+(-3b) &=& 0 \nn\\
+2(-b)-a+(3b)-2d &=& 0 \nn
+\end{eqnarray}
+or,
+\begin{eqnarray}
+a+d &=& u_1-u_2  +v_1-v_3 \nn\\
+-2a-b-d &=& 0 \nn\\
+-a + b-2d &=& 0 \nn
+\end{eqnarray}
+or, 
+\[
+\left(
+\begin{array}{ccc}
+1 &0 & 1 \\
+-2 & -1 & -1 \\
+-1 & 1 & -2 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+a \\ b  \\d 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+u_1-u_2+v_1-v_3 \\
+0 \\ 0 
+\end{array}
+\right)
+\]
+Determinant= 3 -2 -1 = 0. Matrix is singular ... !! Moving on...
+
+\item We now postulate $f(r,s)=a+br+cs+hrs$, $g(r,s)=d+er+fs+krs$, so then 
+
+
+\begin{eqnarray}
+0=\vec\nabla\cdot\vec\upnu_h 
+&=& -u_1+u_2 + \partial_r f r(1-r-s) + f(r,s)(1-2r-s) \nn\\
+&&  -v_1+v_3 + \partial_s g s(1-r-s) + g(r,s)(1-2s-r) \nn\\
+&=& -u_1+u_2 + (b+hs) r(1-r-s) + (a+br+cs+hrs) (1-2r-s) \nn\\
+&&  -v_1+v_3 + (f+kr) s(1-r-s) + (d+er+fs+krs)(1-2s-r) \nn\\
+&=& -u_1+u_2  -v_1+v_3 + a + d \nn\\
+&& +(b-2a+b-d+e)r \nn\\
+&& +(f-a+c-2d+f)s \nn\\
+&& +(-b-2b-e)r^2 \nn\\
+&& +(-f-c-2f)s^2 \nn\\
+&& +(-b-f-b-2c-2e-f+2h+2k)rs \nn\\
+&& +(-h-k-2k-h)rs^2 \nn\\
+&& +(-h-k-2h-k)r^2s \nn\\
+&=& -u_1+u_2  -v_1+v_3 + a + d \nn\\
+&& +(b-2a+b-d+e)r \nn\\
+&& +(f-a+c-2d+f)s \nn\\
+&& +(-3b-e)r^2 \nn\\
+&& +(-3f-c)s^2 \nn\\
+&& +(-2b-2f-2c-2e+2h+2k)rs \nn\\
+&& +(-2h-3k)rs^2 \nn\\
+&& +(-3h-2k)r^2s 
+\end{eqnarray}
+Immediately we see that the last 2 lines yield $k=h=0$. Back to the drawing board...
+
+I {\it could} keep adding high order terms but I suspect it is a doomed effort and even if it would work, the cost would be prohibitive.
+
+\end{itemize}
+
+
+\paragraph{approach 2} This time I include all three basis functions $r$ , $s$ and $1-r-s$, not just two. Then
+
+\begin{eqnarray}
+u_h(r,s)&=&\sum_i N_i(r,s) u_i + f(r,s) rs(1-r-s) \\
+v_h(r,s)&=&\sum_i N_i(r,s) v_i + g(r,s) rs(1-r-s) 
+\end{eqnarray}
+
+\begin{eqnarray}
+0=\vec\nabla\cdot\vec\upnu_h 
+&=& 
+  -u_1+u_2 + \partial_r f \; rs(1-r-s) + f(r,s)s(1-2r-s) \\
+&&-v_1+v_3 + \partial_s g \; rs(1-r-s) + g(r,s)r(1-2s-r)
+\end{eqnarray}
+
+
+We postulate $f(r,s)=a$, $g(r,s)=b$, so then 
+\begin{eqnarray}
+0=\vec\nabla\cdot\vec\upnu_h 
+&=&   -u_1+u_2 +  as(1-2r-s) -v_1+v_3 +  br(1-2s-r) \\
+&=&  (-u_1+u_2 -v_1+v_3) + ...
+\end{eqnarray}
+it is also a dead end!
+
+And this will not change with high order terms in $f$ and $g$. Because of the presence of all three 
+basis functions in the additional terms we see that no 
+coefficient will enter the parenthesis above and therefore it is doomed. 
+
+
+
+
 
 
 

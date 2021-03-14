@@ -1,0 +1,80 @@
+
+The abstract of the original publication by Blankenbach \etal (1989) \cite{blbc89} reads:
+\begin{center}
+{\it 
+We have carried out a comparison study for a set of benchmark problems 
+which are relevant for convection in the Earth’s mantle. The cases comprise 
+steady isoviscous convection, variable viscosity convection and time-dependent 
+convection with internal heating. We compare Nusselt numbers, velocity, 
+temperature, heat-flow , topography and geoid data. Among the applied codes 
+are finite-difference, finite-element and spectral methods. In a synthesis 
+we give best estimates of the ‘true’ solutions and ranges of uncertainty. We
+recommend these data for the validation of convection codes in the future.
+}
+\end{center}
+
+The setup is as follows:
+
+The temperature is fixed to zero on top and to $\Delta T$ at the bottom, 
+with reflecting symmetry at the sidewalls (i.e. $\partial_x T=0$) 
+and there are no internal heat sources. 
+Free-slip conditions are implemented on all boundaries. 
+
+The Rayleigh number is given by
+\[
+Ra = \frac{\alpha g_y \Delta T h^3 }{\kappa \nu}
+=\frac{\alpha g_y \Delta T h^3 \rho^2 c_p}{k \mu}
+\]
+
+The initial temperature field is given by 
+\[
+T(x,y)=(1-y) - 0.01\cos(\pi x) \sin(\pi x)
+\]
+The perturbation in the initial temperature fields leads to 
+a perturbation of the density field and sets the fluid in motion. 
+
+Depending on the initial Rayleigh number, the system ultimately reaches a 
+steady state after some time. The steady-state 
+temperature field of case 1a is shown on Fig. (\ref{fig_blankenbach1}).
+
+
+
+Results:
+
+\begin{center}
+a)\includegraphics[width=4.5cm]{images/benchmark_blbc89/temp1a}
+b)\includegraphics[width=4.5cm]{images/benchmark_blbc89/temp1b}
+c)\includegraphics[width=4.5cm]{images/benchmark_blbc89/temp1c}\\
+{\captionfont Temperature fields at steady-state for 
+$\Ranb=10^4$ (a), $\Ranb=10^5$ (b), $\Ranb=10^6$ (c).
+Obtained with \elefant code \cite{thie14}.}
+\end{center}
+
+
+\begin{center}
+a)\includegraphics[width=12cm]{images/benchmark_blbc89/krhb12a}
+b)\includegraphics[width=12cm]{images/benchmark_blbc89/krhb12b}\\
+{\captionfont a) Results for the 2-D benchmark problem with uniform mesh refinement. 
+\# DoFs indicates the number of degrees of freedom.
+Reference results from Blankenbach et al. (1989).
+b) Results with adaptive mesh refinement. The number of degrees of freedom (\# DoFs) for
+each finest mesh size $h$ varies between time steps; 
+the indicated numbers provide a typical range.}
+\end{center}
+
+\Literature: Travis \etal (1990) \cite{trab90},
+Ogawa (1993) \cite{ogaw93},
+Trompert \& Hansen (1998) \cite{trha98},
+Christon \etal (2002) \cite{chgs02},
+Chiu-Webster \etal (2008) \cite{chhl08},
+Kameyama \etal (2005) \cite{kaks05},
+King (2009) \cite{king09},
+Beuchert \& Podlachikov (2010) \cite{bepo10},
+Leng \& Zhong (2011) \cite{lezh11},
+Davies \etal (2011) \cite{dawk11},
+Vynnytska \etal (2013) \cite{vyrc13},
+\aspect{} manual \cite{aspectmanual},
+\stone 3.
+
+
+

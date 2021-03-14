@@ -1,3 +1,5 @@
+\begin{flushright} {\tiny {\color{gray} dgfem1D\_ssdiff.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Let us start simple with the 1D steady state heat conduction problem in 1D, given by the following 
 equation:
@@ -6,9 +8,10 @@ equation:
 \end{equation}
 Although this equation is usually solved as is with its second-order derivative, it can also 
 be written in a mixed form, using the heat flux $q$ (a scalar in 1D):
-\[
--\frac{dq}{dx}=0 \qquad q-\frac{dT}{dx}=0 \qquad x\in[0,1]
-\]
+\begin{eqnarray}
+-\frac{dq}{dx} &=&0   \nn\\
+q-\frac{dT}{dx}&=&0 \qquad x\in[0,1]
+\end{eqnarray}
 and the boundary conditions remain unchanged. 
 
 We apply the standard approach to establish the weak forms of these two first-order ODEs, and we do so 
@@ -74,7 +77,7 @@ T_h(x) = N_k(x) T_k^+ + N_{k+1}(x)T_{k+1}^-
 q_h(x) = N_k(x) q_k^+ + N_{k+1}(x)q_{k+1}^-
 \]
 As in the (Continuous) Galerkin case of section~\ref{sec:diff1D}, the test functions are taken to 
-be the shape functions, and in this case for both temperature and flux. 
+be the basis functions, and in this case for both temperature and flux. 
 
 There are four unknowns ${\color{red} q_k^+}$, ${\color{red} q_{k+1}^-}$, 
 ${\color{red}T_k^+}$ and ${\color{red}T_{k+1}^-}$ per element. 
@@ -97,7 +100,7 @@ All other $q$ and $T$ quantities in the above/following equations will need to f
 \end{eqnarray}
 
 \begin{itemize}
-\item We take $\tilde{f}=N_k$ and by vertue of the properties of shape functions $N$ we have: 
+\item We take $\tilde{f}=N_k$ and by vertue of the properties of basis functions $N$ we have: 
 \begin{eqnarray}
 \tilde{f}_k^+&=&\tilde{f}(x_k^+) = N_k(x_k^+)=1 \nn\\
 \tilde{f}_{k+1}^-&=&\tilde{f}(x_{k+1}^-)   = N_k(x_{k+1}^+)=0 \nn
@@ -298,9 +301,9 @@ N_{k+1} N_k & N_{k+1} N_{k+1}
 
 \newpage
 We will also use the results obtained in Appendix~\ref{app:mm} for 1D linear elements:
-\[
+\begin{eqnarray}
 {\bm M}^e
-=\int_{\Omega_e} \vec{N}^T \vec{N} dV
+&=&\int_{\Omega_e} \vec{N}^T \vec{N} dV
 =\int_{\Omega_e} 
 \left(
 \begin{array}{cc}
@@ -324,10 +327,8 @@ dV
 1 & 2
 \end{array}
 \right)
-\]
-and also 
-\[
-{\bm K}^e =
+\nn\\
+{\bm K}^e &=&
 \int_{\Omega_e} 
 \left(
 \begin{array}{cc}
@@ -344,10 +345,10 @@ dV
 1 & 1
 \end{array}
 \right)
-\]
+\end{eqnarray}
 
 
-
+\noindent
 Filling this into equations (\ref{eq:dgq1}) and (\ref{eq:dgT1}), gives 
 \begin{eqnarray}
 {\bm K}^e \cdot 
@@ -483,7 +484,8 @@ which becomes
 
 
 
-Combining these equations gives the numerical implementation:
+Combining these equations gives the expression for the linear system for the 
+element under consideration:
 \begin{eqnarray}
 \boxed{
 \left(
@@ -579,7 +581,7 @@ Eq.~(\ref{eq:dgsyst1D}) then becomes:
 \hat{q}_N &=& q_N^+ -{\cal E} (T_N^--T_N^+) \nn  \\
 \hat{T}_N &=& T_N^- \nn
 \end{eqnarray}
-Eq.~(\ref{eq:dg6}) becomes:
+Eq.~\eqref{eq:dg6} becomes:
 \begin{eqnarray}
 0 
 &=& -\hat{q}_{N} 
@@ -589,7 +591,7 @@ Eq.~(\ref{eq:dg6}) becomes:
 + \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_k dx \cdot {\color{red}q_{N-1}^+} 
 + \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_{k+1}dx \cdot {\color{red}q_{N}^-} 
 \end{eqnarray}
-Eq.~(\ref{eq:dg7}) becomes:
+Eq.~\eqref{eq:dg7} becomes:
 \begin{eqnarray}
 0
 &=& -\hat{T}_{N} 
@@ -599,7 +601,7 @@ Eq.~(\ref{eq:dg7}) becomes:
 + \int_{x_k}^{x_{k+1}} \frac{dN_{k+1} }{dx} (N_k(x) {\color{red} T_{N-1}^+} + N_{k+1}(x) {\color{red}T_{N}^-}) dx
 \nn 
 \end{eqnarray}
-Eq.~(\ref{eq:dgsyst1D}) then becomes:
+Eq.~\eqref{eq:dgsyst1D} then becomes:
 \begin{eqnarray}
 \left(
 \begin{array}{cccc}
@@ -630,10 +632,10 @@ Eq.~(\ref{eq:dgsyst1D}) then becomes:
 \paragraph{Solving strategies} Following Li \cite{li06}, there are three main strategies:
 \begin{itemize}
 \item Successive substitution: all the variables are initialized to zero. 
-Eq.~(\ref{eq:dgsyst1Dleft}) is solved
+Eq.~\eqref{eq:dgsyst1Dleft} is solved
 to obtain the data for the first element, where boundary conditions are specified.
-Then Eq.~(\ref{eq:dgsyst1D}) is used for all interior elements.
-Finally Eq.(~\ref{eq:dgsyst1Dright}) is used for the last element.
+Then Eq.~\eqref{eq:dgsyst1D} is used for all interior elements.
+Finally Eq.~\eqref{eq:dgsyst1Dright} is used for the last element.
 This procedure is carried out until all fields have converged.  
 
 \item Global assembly: this approach is identical to the one 
@@ -710,7 +712,11 @@ shows satisfying results for ${\cal E}=4$ and ${\cal C}=-1/2,0,1/2$ or
 ${\cal E}=0$ and ${\cal C}=1,4,10$.
 
 
-
+\begin{remark}
+Aside from the shear complexity of the above derivations as compared to those
+for the SG method, the fact that we have two tuning parameters ${\cal E}$
+and ${\cal C}$ is a real drawback.
+\end{remark}
 
 
 

@@ -1,3 +1,6 @@
+
+\begin{flushright} {\tiny {\color{gray} geodynamics\_benchmarks.tex}} \end{flushright}
+
 Some published numerical experiments have over time become benchmarks for other codes, while some 
 others showcased comparisons between codes. Here is a short list of 'famous' benchmarks' in the 
 computational geodynamics community.
@@ -25,20 +28,9 @@ computational geodynamics community.
       Glerum \etal (2018) \cite{gltf18},
       Stone 8.
 
-\item 2D Rayleigh-Benard convection:\\
-      Blankenbach \etal (1989) \cite{blbc89},
-      Travis \etal (1990) \cite{trab90},
-      Ogawa (1993) \cite{ogaw93},
-      Trompert \& Hansen (1998) \cite{trha98},
-      Christon \etal (2002) \cite{chgs02},
-      Chiu-Webster \etal (2008) \cite{chhl08},
-      Kameyama \etal (2005) \cite{kaks05},
-      King (2009) \cite{king09},
-      Beuchert \& Podlachikov (2010) \cite{bepo10},
-      Leng \& Zhong (2011) \cite{lezh11},
-      Vynnytska \etal (2013) \cite{vyrc13},
-      \aspect{} manual \cite{aspectmanual},
-      Stone 3.
+\item 2D Rayleigh-Benard convection (see Section~\ref{ss:blbc89}).
+
+
 \item 2D Rayleigh-Benard convection, lateral heating, 30+ codes: 
       de Vahl Davis \& Jones (1983) \cite{dejo83}.
 \item 2D Rayleigh-Benard convection with nonlinear rheology:  
@@ -135,11 +127,8 @@ computational geodynamics community.
 \item thermal diffusion of Gaussian distribution (see compgeo notes, elefant manual)
 \item stress build-up in Maxwell visco-elastic material \cite{geyu07,chtl13,egat10,demh19}
 \item plastic oedometer test  \cite{chtl13}
-\item SolCx \cite{dumg11,gemd13,mamo08,vemmXX,demh19,aspectmanual} {\tt Stone 05}
-\item SolKz \cite{dumg11,gemd13,mamo08,vemmXX,demh19,aspectmanual} {\tt Stone 06}
-\item SolVi, inclusion \cite{scpo03,kapo06,maie12,deka08,bepo10,sunh10,vosc15,demh19,aspectmanual,litu02} {\tt Stone 07}
 \item channel flow (nonlinear) \cite{maie12,frbt19,gery10,egat10} (\bscthesis) \index{general}{BSc Thesis}
-\item relaxation of sinusoidal topography \cite{crsg12,robh17}
+\item relaxation of sinusoidal interface \cite{crsg12,robh17}
 \item single layer visco-elastic folding \cite{scps01,vosc15}
 \item Three-dimensional folding of an embedded viscous layer in pure shear \cite{flet91}
 \item dam-break problem \cite{moeb99,bacp07,liir07,lemx08,homa09,anco09,grdn97,hini81,basd08}
@@ -861,11 +850,6 @@ Note the interesting benchmark for 2D visco-elastic flow in \cite{bepo10}.
 \input{benchmark_thin_layer_entrainment}
 
 
-Carried out in van Keken et al (1997) \cite{vaks97}. Also in \cite{trlb20}.
-
-\todo[inline]{write about this benchmark. use ELEFANT manual.}
-
-
 %................................................................................
 \subsubsection{Heat flow around a cylinder} \label{sec:hfcyl}
 
@@ -894,7 +878,7 @@ Further: $k=0.01$, $c_p=1$, $\rho=1$, CFL number is 0.1.
 \includegraphics[width=5cm]{images/benchmark_heatcyl/temper_0080}
 \includegraphics[width=5cm]{images/benchmark_heatcyl/temper_0150}\\
 {\captionfont Time evolution of the temperature field.
-Results obtained with ELEFANT (unpublished)}
+Results obtained with \elefant (unpublished)}
 \end{center}
 
 
@@ -925,11 +909,10 @@ DynEarthSol2D are plotted in circles. Taken from \cite{chtl13}}
 \subsubsection{Laplace equation on a semi infinite plate} \label{sec:lapplate})
 \input{benchmark_laplace_plate}
 
-
 %................................................................................
 \subsubsection{Slab detachment benchmark} \label{sec:slabdetach}
 
-\cite{schm11,aspectmanual,gltf18}
+\Literature: \cite{schm11,aspectmanual,gltf18}, \stone 26.
 
 \begin{center}
 \includegraphics[width=6cm]{images/benchmark_slabdetach/gltf18}\\
@@ -1934,12 +1917,6 @@ and yet the temperature field is not zero in the middle, in the absence of heat 
 \subsubsection{Rayleigh-Taylor experiment of van Keken et al (1997)} \label{ss:vaks97}
 \input{benchmark_vaks97}
 
-
-
-
-
-
-
 \newpage
 %................................................................................
 \subsubsection{(Instantaneous) Sinking block (2D)} \label{ss:sinking_block}
@@ -1960,5 +1937,17 @@ and yet the temperature field is not zero in the middle, in the absence of heat 
 \subsubsection{Stokes sphere (2D) in fluid with deformable free surface} \label{ss:stokes_sphere_fs2D}
 \input{benchmark_stokes_sphere_fs_2D}
 
+%.......................................................
+\subsubsection{Relaxation of topography (Crameri \etal, 2012)} \label{ss:crsg12}
+\input{benchmark_crsg12}
+
+%.......................................................
+\subsubsection{3D spherical shell convection benchmark} \label{ss:sscb3D}
+\input{benchmark_sscb3D}
+
+
+%.......................................................
+\subsubsection{2D convection benchmark} \label{ss:blbc89}
+\input{benchmark_blbc89}
 
 

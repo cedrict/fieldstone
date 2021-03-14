@@ -38,6 +38,7 @@ $D(\vec \upnu)$, such as for instance in Fullsack (1995) \cite{full95}.
 
 %.............................................
 \subsection{Viscous Newtonian rheology}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 The relationship between velocity-related stresses and
 velocity derivatives is such that the total stress tensor has the form \cite{berc09}
@@ -111,6 +112,7 @@ This is an obvious conflict of notations.
 
 %------------------------------------------------------------------------
 \subsection{The heat transport equation - energy conservation equation \label{ss:hte}}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 %The heat contained within a volume $dV$ is $\rho C_p T dV$ where 
 %$C_p$ is the specific heat. The total heat ${\cal H}$ contained
@@ -244,29 +246,9 @@ Finally
 = 2 \eta \left( (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + 2(\dot{\varepsilon}_{xy}^d)^2 \right) \nn
 \end{equation}
 
-%\paragraph{Non-dimensionalisation}
-%We can scale the equations as follows:
-%\[
-%T =T_0 T'
-%\qquad 
-%t =\frac{a^2}{\kappa \; Ra} t'
-%\qquad
-%\vec\upnu = \frac{\kappa \; Ra}{a} \vec\upnu'
-%\]
-%where $a$ is a characteristic length, giving:
-%\[
-%Ra \left( \frac{\partial T'}{\partial t'}  + \vec\upnu'\cdot\vec\nabla' T' \right)
-%=\Delta' T'
-%\]
-%$Ra$ is is the only parameter which affects the convection. When it becomes very large 
-%this equation essentially becomes an advection equation. 
-
-
-
-
-
 %------------------------------------------------------------------------
 \subsection{The momentum conservation equations} 
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 As explained in Section~\ref{ss:nondim}, in Earth science applications the Navier-Stokes 
 equations reduce to the Stokes equation:
@@ -290,6 +272,7 @@ Using the relationship ${\bm \tau} = 2 \eta \dot{\bm \varepsilon}^d$ we arrive a
 
 %------------------------------------------------------------------------
 \subsection{The mass conservation equations} 
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 \index{general}{Solenoidal Field} 
 \index{general}{Divergence-free}
 \index{general}{Continuity Equation}
@@ -311,9 +294,10 @@ then
 \]
 and finally:
 \begin{mdframed}[backgroundcolor=blue!5]
-\[
+\begin{equation}
 \frac{\partial \rho}{\partial t} + {\vec \nabla}\cdot(\rho {\vec \upnu}) = 0
-\]
+\label{eq:massconvgen}
+\end{equation}
 \end{mdframed}
 In the case of an incompressible flow, then $\partial \rho/\partial t=0$ and 
 ${\vec \nabla}\rho=0$, i.e. $D\rho/Dt=0$ and the remaining equation is simply:
@@ -357,8 +341,10 @@ the continuity equation for an incompressible fluid is :
 
 
 %------------------------------------------------------------------------------
-\subsection{The equations in ASPECT manual}
-The following is lifted off the ASPECT manual.
+\subsection{The equations in \aspect manual}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
+
+The following is lifted off the \aspect manual.
 We focus on the system of equations in a $d=2$- or $d=3$-dimensional
 domain $\Omega$ that describes the motion of a highly viscous fluid driven
 by differences in the gravitational force due to a density that depends on
@@ -397,14 +383,11 @@ u$, pressure $p$ and temperature $T$:
   \\
   &\quad
   +\alpha T \left( \bm v \cdot \vec\nabla p \right)
-  \notag
-  \\
-  &\quad
-  &
-  & \textrm{in $\Omega$},
+  && \textrm{in $\Omega$},
   \notag
 \end{align}
-where $\dot{\bm \varepsilon}(\vec\upnu) = \frac{1}{2}(\vec\nabla \vec\upnu + \vec\nabla \vec\upnu^T)$ is the symmetric gradient of the velocity (often called the
+where $\dot{\bm \varepsilon}(\vec\upnu) = \frac{1}{2}(\vec\nabla \vec\upnu + \vec\nabla \vec\upnu^T)$ 
+is the symmetric gradient of the velocity (often called the
 \textit{strain rate}).%
 
 In this set of equations, \eqref{eq:stokes-1} and \eqref{eq:stokes-2}
@@ -424,11 +407,11 @@ terms of this equation correspond to
 \item adiabatic compression of material;
 \end{itemize}
 
-In order to arrive at the set of equations that ASPECT solves, 
+In order to arrive at the set of equations in the \aspect manual
 we need to 
 \begin{itemize}
-\item neglect the $\partial p/\partial t$
-\item neglect the $\partial \rho / \partial t$ 
+\item neglect the $\partial p/\partial t$ \todo{wrong rephrase} 
+\item neglect the $\partial \rho / \partial t$  in \eqref{eq:massconvgen}.
 \end{itemize}
 from equations above. A partial answer is given in the next section. 
 
@@ -454,6 +437,7 @@ but since $k_B=\lambda+2\eta/3=0$, then $\lambda=-2\eta/3$ so
 
 %---------------------------------------------------------------------------------------------------
 \subsection{Equations for thermal convection in an anelastic, compressible, self-gravitating spherical mantle }
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 %------------------------------------------------------------------------------
 
 What follows is borrowed from Section 2.1 of Gli{\v{s}}ovi{\'c} et al (2012) \cite{glfm12}.
@@ -528,7 +512,7 @@ about thermodynamic parameters (either constant or depth-dependent) violate the 
 \index{general}{ALA}
 \index{general}{Anelastic Liquid Approximation}
 Important simplifications are made assuming the anelastic-liquid approximation 
-(e.g. \cite{jamc80} Jarvis \& McKenzie (1980) \cite{jamc80},Solheim \& Peltier (1990) \cite{sope90}).
+(e.g. Jarvis \& McKenzie (1980) \cite{jamc80}, Solheim \& Peltier (1990) \cite{sope90}).
 This approximation is justified because the velocities associated with mantle convection 
 are very slow compared to the local sound speed and
 hence acoustic waves cannot be generated by the slow changes in the mantle pressure field. 
@@ -573,13 +557,13 @@ are dropped for notational convenience (this is the case in what follows).
 It is a tedious but trivial exercise to show that the dimensionless equation of 
 conservation of momentum is then written as follows:
 \[
-\rho \frac{Ra_s}{Pr_s} \frac{D\vec\upnu}{Dt} =
+\rho \frac{\Ranb_s}{Pr_s} \frac{D\vec\upnu}{Dt} =
 \frac{\rho}{\alpha_s \Delta T} \vec\nabla \phi - \vec\nabla p + \vec\nabla \cdot {\bm \tau}
 \]
-in which we introduce the surface Rayleigh $Ra_s$ and Prandtl $Pr_s$ numbers defined, 
+in which we introduce the surface Rayleigh $\Ranb_s$ and Prandtl $\Prnb_s$ numbers defined, 
 respectively, by
 \[
-Ra_s=\frac{\rho_{0s}^2 C_p g_{0s} \alpha_s \Delta T d^3}{k_s \eta_s}
+\Ranb_s=\frac{\rho_{0s}^2 C_p g_{0s} \alpha_s \Delta T d^3}{k_s \eta_s}
 \qquad
 \qquad
 Pr_s= \frac{\eta_s C_p}{k_s}
@@ -591,7 +575,7 @@ infinite Prandtl number approximation. \index{general}{Prandtl number}
 
 The equation of energy conservation may also be rewritten in terms of the surface Rayleigh number, as follows
 \[
-\frac{D T}{D t} = \frac{1}{\rho Ra_s} \left( \vec\nabla\cdot k\vec\nabla T + Q \right) 
+\frac{D T}{D t} = \frac{1}{\rho \Ranb_s} \left( \vec\nabla\cdot k\vec\nabla T + Q \right) 
 +\frac{Di}{\rho} \left( -\alpha T \frac{Dp}{Dt} + \Phi  \right)
 \]
 where $Di$ is the dissipation number (see Peltier (1972) \cite{pelt72}) 
@@ -610,7 +594,7 @@ After simplifications, the dimensionless system of governing equations is writte
 \vec\nabla\cdot(\rho_0 \vec\upnu) =0 \\
 \frac{\rho}{\alpha_s \Delta T} \vec\nabla \phi - \vec\nabla p + \vec\nabla \cdot {\bm \tau} = \vec{0} \\
 \frac{\partial T}{\partial t} + \vec\upnu\cdot\vec\nabla T =  
-\frac{1}{\rho_0 Ra_s} \left( \vec\nabla\cdot k\vec\nabla T + Q \right) +
+\frac{1}{\rho_0 \Ranb_s} \left( \vec\nabla\cdot k\vec\nabla T + Q \right) +
 \frac{Di}{\rho_0} (-\alpha T \rho_0 g_0 u_r + \Phi) 
 \end{eqnarray}
 with 
@@ -624,6 +608,7 @@ with
 
 %------------------------------------------------------------------------------
 \subsection{Non-dimensionalisation of the Navier-Stokes equations}\label{ss:nondim}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 %______________________________________________
 \subsubsection{Approach \# 1 - isothermal flow}
@@ -640,11 +625,11 @@ quantities which are relevant for geodynamics\footnote{Note that in the paper
 the authors conflate $\rho$ and $\tilde{\rho}$ which prevents them from non-dimensionalising
 all terms as we do here.}:
 \begin{itemize}
-\item a reference viscosity value $\underline{\eta}=10^{20}\text{Pa}\cdot\text{s}$
-\item a reference mass density $\underline{\rho}=1000\text{kg/m}^3$
-\item a reference time $\underline{t}=1\text{Myr}\simeq 3.15\cdot 10^{13} \text{s}$
-\item a reference length $\underline{l}=1000\text{m} $
-\item a reference gravity $\underline{g}=9.81\text{m}/\text{s}^2$
+\item a reference viscosity value $\underline{\eta}=10^{20} \si{\pascal\second}$
+\item a reference mass density $\underline{\rho}=1000\si{\kg\per\cubic\metre}$
+\item a reference time $\underline{t}=1\text{Myr}\simeq 3.15\cdot 10^{13}\si{\second}$
+\item a reference length $\underline{l}=1000\si{\metre}$
+\item a reference gravity $\underline{g}=9.81\si{\metre\per\square\second}$
 \end{itemize}
 It follows that a reference pressure can be obtained:
 \[
@@ -658,7 +643,7 @@ where viscous effects are dominant i.e. creeping flows (which
 is the case in geodynamics).
 The definition of a reference velocity is more straightforward:
 \[
-\underline{\upnu} = \frac{\underline{l}}{\underline{t}} = 1 \text{mm}/\text{year}
+\underline{\upnu} = \frac{\underline{l}}{\underline{t}} = 1\si{\mm\per\year}
 \]
 We define dimensionless variables through:
 \[
@@ -734,7 +719,7 @@ Re = \frac{\underline{\rho} \underline{l}^2}{\underline{\eta} \underline{t} }
 \qquad
 Fr= \frac{\underline{l}}{\underline{g}\underline{t}^2 }
 \]
-From this we conclude that inertial forces in the Earth’s mantle
+From this we conclude that inertial forces in the Earth's mantle
 are small compared to viscous forces.
 We can then write:
 \[
@@ -885,7 +870,7 @@ Pr=\frac{\eta}{\rho \kappa}
 \]
 and of course the Rayleigh number
 \[
-Ra= \frac{ \rho_0 \alpha \Delta T  g_0  l^3}{\kappa \eta}
+\Ranb= \frac{ \rho_0 \alpha \Delta T  g_0  l^3}{\kappa \eta}
 \]
 so that the dimensionless Navier-Stokes become simply:
 \[
@@ -897,7 +882,7 @@ so that the dimensionless Navier-Stokes become simply:
 =
  - \ {\color{teal} \vec\nabla p}'
 + {\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
-- Ra  {\color{teal}T}  {\color{teal}\vec{g}}
+- \Ranb  {\color{teal}T}  {\color{teal}\vec{g}}
 }
 \]
 
@@ -924,6 +909,7 @@ in mantle modelling.
 
 %------------------------------------------------------------------------------
 \subsection{The Navier-Stokes equations in cylindrical coordinates}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 In cylindrical coordinates, $(r,\theta,z)$, the continuity equation for an incompressible fluid is 
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -970,6 +956,7 @@ and the Laplacian operator is \index{general}{Laplace Operator} \index{general}{
 
 %------------------------------------------------------------------------------
 \subsection{The Navier-Stokes equations in spherical coordinates}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 In spherical coordinates, $(r,\theta,\phi)$, the continuity equation for an incompressible fluid is 
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -1030,6 +1017,7 @@ THESE EQUATIONS SHOULD BE CHECKED and RE-CHECKED !!
 
 %------------------------------------------------------------------------------
 \subsection{The equations for axisymmetric geometries}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 \input{axisymmetric_eqs}
 
@@ -1048,6 +1036,7 @@ THESE EQUATIONS SHOULD BE CHECKED and RE-CHECKED !!
 %---------------------------------
 \subsection{The Boussinesq approximation}
 \index{general}{Boussinesq Approximation}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 As nicely explained in Spiegel \& Veronis \cite{spve60}: "In the study of problems of thermal convection it is a frequent practice to simplify the basic equations by introducing certain approximations which are attributed to
 Boussinesq (1903). The Boussinesq approximations can best be summarized by two
@@ -1102,6 +1091,7 @@ of the source term.
 \subsection{The Extended Boussinesq approximation}
 \index{general}{Extended Boussinesq Approximation}
 \index{general}{EBA}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 
 Yuen et al (2007) \cite{yumc07} state that "the background of the extended Boussinesq 
@@ -1116,6 +1106,7 @@ Christensen and Yuen (1985) \cite{chyu85} and more completely in Matyska and Yue
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 \subsection{Stokes equation for elastic medium}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 What follows is mostly borrowed from Becker \& Kaus lecture notes.
 
@@ -1227,6 +1218,7 @@ direction of this stress.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 \newpage
 \subsection{The strain rate tensor in all coordinate systems}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 The strain rate tensor $\dot{\bm\varepsilon}$ is given by
 \begin{equation}
@@ -1365,6 +1357,7 @@ and likewise:
 \newpage
 %-------------------------------
 \subsection{Boundary conditions}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 %wiki
 In mathematics, the Dirichlet (or first-type) 
@@ -1380,7 +1373,9 @@ applied within the boundary of the domain.
 
 It is possible to describe the problem using other boundary conditions: 
 a Dirichlet boundary condition specifies the values of the solution itself 
-(as opposed to its derivative) on the boundary, whereas the Cauchy boundary condition, mixed boundary condition and Robin boundary condition are all different types of combinations of the Neumann and Dirichlet boundary conditions.
+(as opposed to its derivative) on the boundary, whereas the Cauchy boundary condition, 
+mixed boundary condition and Robin boundary condition are all different types of combinations 
+of the Neumann and Dirichlet boundary conditions.
 
 \index{general}{Dirichlet Boundary Condition}
 \index{general}{Neumann Boundary Condition}
@@ -1396,7 +1391,7 @@ You may find the following terms in the computational geodynamics literature:
 \item { no slip}: this means that the velocity (or displacement) is exactly zero on the boundary, i.e. ${\vec \upnu}={\vec 0}$.
 \item { prescribed velocity}: ${\vec \upnu}={\vec \upnu}_{bc}$
 \item stress b.c.: 
-\item open .b.c.: see fieldstone 29. 
+\item open .b.c.: see \stone 29. 
 \end{itemize}
 
 %....................................
@@ -1407,6 +1402,7 @@ There are two types of boundary conditions for this equation: temperature bounda
 \newpage
 %------------------------------------------
 \subsection{Meaningful physical quantities}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 \begin{itemize}
 \item \underline{Velocity} $\vec \upnu (\text{m/s})$: This is a vector quantity and both magnitude and direction are needed to define it. It is the rate of change of position with respect to a frame of reference.
@@ -1437,15 +1433,24 @@ root mean square averages:
 \end{equation}
 
 
-\item \underline{Pressure} $p (\text{Pa})$:
-\item \underline{Stress tensor} ${\bm \sigma}$ (Pa): \index{general}{Stress Tensor}
+\item \underline{Pressure} $p$ (\si{\pascal}):
+\item \underline{Stress tensor} ${\bm \sigma}$ (\si{\pascal}): \index{general}{Stress Tensor}
 \item \underline{Strain tensor} ${\bm \varepsilon}$ (dimensionless): \index{general}{Strain Tensor}
-\item \underline{Strain rate tensor} $ \dot{\bm \varepsilon} (\text{s}^{-1}$): \index{general}{Strain Rate Tensor}
+\item \underline{Strain rate tensor} $ \dot{\bm \varepsilon}$ (\si{\per\second}): 
+\index{general}{Strain Rate Tensor}
 
-\item \underline{Argand Number}: see England \& McKenzie \cite{enmc82}, Houseman \& England \cite{hoen86a}
+\item \underline{Argand Number}: 
+Non-dimensional number (Ar) representing the ratio of the stress arising 
+from crustal thickness
+contrasts (vertical stress) to the stress required to deform
+the material at ambient strain rates (horizontal stress)
+It is commonly used in mountain building
+dynamics as a measure of the tendency of an orogen to
+collapse under its own gravitational potential energy.
+See England \& McKenzie \cite{enmc82}, Houseman \& England \cite{hoen86a}.
 
 %..........................................
-\item \underline{(Thermal) Rayleigh number} $Ra$ (or $Ra_T$) (X): \index{general}{Rayleigh Number}
+\item \underline{(Thermal) Rayleigh number} $\Ranb$ (or $\Ranb_T$) (X): \index{general}{Rayleigh Number}
 It is a dimensionless number that expresses the	ratio of the driving forces to the opposing forces.
 The buoyancy force comes from the volumetric thermal expansion while the viscous forces and 
 the heat diffusivity oppose convection (the latter one smoothes out thermal gradients). 
@@ -1453,22 +1458,22 @@ the heat diffusivity oppose convection (the latter one smoothes out thermal grad
 The Rayleigh number for convection driven by a constant temperature hot base and a cold surface
 in a domain of thickness $D$ is:
 \[
-Ra 
+\Ranb 
 = \frac{\rho_0 g \alpha D^3 }{\eta \kappa}  \cdot  \Delta T
 = \frac{\rho_0^2 C_p g \alpha D^3 \Delta T}{\eta k}
 \]
 The Rayleigh number for convection driven by a hot base (constant basal heat flow $q_b$)
 and a colder surface is:
 \[
-Ra = \frac{\rho_0 g \alpha D^3}{\eta \kappa } \cdot  \frac{q_b D}{k}
+\Ranb = \frac{\rho_0 g \alpha D^3}{\eta \kappa } \cdot  \frac{q_b D}{k}
 \]  
 The Rayleigh number for convection driven by internal heating $H$ (production per cubic meter) is:
 \[
-Ra = \frac{\rho_0 g \alpha D^3}{\eta \kappa} \cdot  \frac{H D^2}{k }
+\Ranb = \frac{\rho_0 g \alpha D^3}{\eta \kappa} \cdot  \frac{H D^2}{k }
 \]
 The Rayleigh number for convection driven by both basal heat flow and internal heating is:	
 \[
-Ra = \frac{\rho_0 g \alpha D^3}{\eta \kappa} \cdot  \frac{q_b D + H D^2}{k }
+\Ranb = \frac{\rho_0 g \alpha D^3}{\eta \kappa} \cdot  \frac{q_b D + H D^2}{k }
 \]
 For convection to occur, the Rayleigh number must be larger than the so-called critical 
 Rayleigh number, which ranges from 600 to 3000 (it depends on the boundary conditions and the 
@@ -1476,41 +1481,44 @@ geometry).
 \index{general}{Critical Rayleigh Number}
 
 %.........................................
-\item \underline{Compositional Rayleigh Number} $Ra_C$: \index{general}{Compositional Rayleigh Number} 
+\item \underline{Compositional Rayleigh Number} $\Ranb_C$: \index{general}{Compositional Rayleigh Number} 
 \[
-Ra_C= \frac{\Delta \rho_C  g  D^3}{\kappa \eta_0}
+\Ranb_C= \frac{\Delta \rho_C  g  D^3}{\kappa \eta_0}
 \]
 where $\Delta_C$ is the difference in density between the distinct material compositions
 (when compared at identical temperatures). See for instance Trim et al (2020) \cite{trlb20}.
 
-
 %.........................................
-\item \underline{Prandtl number} $Pr$ (X): \index{general}{Prandtl Number} It is named after the German physicist 
-Ludwig Prandtl and is defined as the ratio of momentum diffusivity to thermal diffusivity. It is given as: 
+\item \underline{Prandtl number} $Pr$ (X): \index{general}{Prandtl Number} 
+It is named after the German physicist 
+Ludwig Prandtl and is defined as the ratio of momentum diffusivity to thermal diffusivity. 
+It is given as: 
 \[
 Pr = \frac{\text{momentum diffusivity}}{\text{thermal diffusivity}} = \frac{\eta/\rho}{k/(\rho C_p)}= \frac{\eta C_p}{k}
 \]
-For Earth materials, we have $Pr \sim (10^{21} 1000)/3 >> 1$, which means that momentum diffusivity dominates.
+For Earth materials, we have $Pr \sim (10^{21} 1000)/3 >> 1$, 
+which means that momentum diffusivity dominates.
 
 %..........................................
-\item \underline{Nusselt number} $N_u$ (X): \index{general}{Nusselt Number}  the Nusselt number (Nu) 
+\item \underline{Nusselt number} $N_u$ (X): \index{general}{Nusselt Number}  
+the Nusselt number ($\Nunb$) 
 is the ratio of convective to conductive heat transfer across (normal to) the boundary. 
 The conductive component is measured under the same conditions as the heat convection 
 but with a (hypothetically) stagnant (or motionless) fluid.
 
-In practice the Nusselt number Nu of a layer (typically the mantle of a planet) is defined as follows:
+In practice the Nusselt number $\Nunb$ of a layer (typically the mantle of a planet) is defined as follows:
 \begin{equation}
-\text{Nu} = \frac{q}{q_c}
+\Nunb = \frac{q}{q_c}
 \end{equation} 
 where $q$ is the heat transferred by convection while $q_c=k \Delta T /D$ 
 is the amount of heat that would be conducted through a layer of
 thickness $D$ with a temperature difference $\Delta T$ across it with 
 $k$ being the thermal conductivity.
 
-For 2D Cartesian systems of size ($L_x$,$L_y$) the Nu is computed \cite{blbc89}
+For 2D Cartesian systems of size ($L_x$,$L_y$) the $\Nunb$ is computed \cite{blbc89}
 \[
-\text{Nu} = 
- \frac{\frac{1}{L_x}\int_{0}^{L_x} k \frac{\partial T}{\partial y}(x,y=L_y) dx }
+\Nunb = 
+\frac{\frac{1}{L_x}\int_{0}^{L_x} k \frac{\partial T}{\partial y}(x,y=L_y) dx }
 {-\frac{1}{L_x}\int_0^{L_x} k T(x,y=0) /L_y dx}
 =-L_y \frac{\int_{0}^{L_x} \frac{\partial T}{\partial y}(x,y=L_y) dx }{\int_0^{L_x} T(x,y=0) dx}
 \]
@@ -1520,22 +1528,26 @@ over the mean bottom temperature.
 \todo[inline]{finish. not happy with definition. Look at literature}
 
 Note that in the case when no convection takes place then the measured heat flux at the top is 
-the one obtained from a purely conductive profile which yields Nu=1.
+the one obtained from a purely conductive profile which yields $\Nunb$=1.
 
-Note that a relationship Ra $\propto$ Nu$^\alpha $ exists between the Rayleigh number Ra and the Nusselt number Nu in convective systems, see \cite{wodd09} and references therein. 
+Note that a relationship  $\Ranb \propto \Nunb^\alpha $ exists between the Rayleigh 
+number $\Ranb$ and the Nusselt number $\Nunb$ in convective systems, see \cite{wodd09} and references therein. 
 
-Turning now to cylindrical geometries with inner radius $R_1$ and outer radius $R_2$, we define $f=R_1/R_2$. A small value of $f$ corresponds to a high
+Turning now to cylindrical geometries with inner radius $R_1$ and outer radius $R_2$, 
+we define $f=R_1/R_2$. A small value of $f$ corresponds to a high
 degree of curvature. We assume now that $R_2-R_1=1$, so that $R_2=1/(1-f)$ and $R_1=f/(1-f)$. 
 Following \cite{jarv93}, the Nusselt number at the inner and outer boundaries are:
 \begin{equation}
 \boxed{
-\text{Nu}_{inner} = \frac{f \ln f}{1-f} \frac{1}{2\pi} \int_0^{2\pi} \left( \frac{\partial T}{\partial r} \right)_{r=R_1} d\theta
+\Nunb_{inner} 
+=\frac{f \ln f}{1-f} \frac{1}{2\pi} \int_0^{2\pi} \left( \frac{\partial T}{\partial r}\right)_{r=R_1}d\theta
 }
 \label{eqNuAnnIn}
 \end{equation}
 \begin{equation}
 \boxed{
-\text{Nu}_{outer} = \frac{\ln f}{1-f} \frac{1}{2\pi} \int_0^{2\pi} \left( \frac{\partial T}{\partial r} \right)_{r=R_2} d\theta
+\Nunb_{outer} 
+= \frac{\ln f}{1-f} \frac{1}{2\pi} \int_0^{2\pi} \left( \frac{\partial T}{\partial r} \right)_{r=R_2} d\theta
 }
 \label{eqNuAnnOut}
 \end{equation}
@@ -1550,11 +1562,11 @@ so that
 \]
 We then find:
 \begin{eqnarray}
-\text{Nu}_{inner} 
+\Nunb_{inner} 
 &=& \frac{f \ln f}{1-f} \frac{1}{2\pi} \int_0^{2\pi} \left( \frac{\partial T_c}{\partial r} \right)_{r=R_1} d\theta
 = \frac{f \ln f}{1-f} \frac{1}{R_1}\frac{1}{\ln f} 
 = 1 \\
-\text{Nu}_{outer} 
+\Nunb_{outer} 
 &=& \frac{\ln f}{1-f} \frac{1}{2\pi} \int_0^{2\pi} \left( \frac{\partial T_c}{\partial r} \right)_{r=R_2} d\theta 
 = \frac{\ln f}{1-f} \frac{1}{R_2}\frac{1}{\ln f} = 1 
 \end{eqnarray}
@@ -1566,42 +1578,52 @@ given by a steady state conductive geotherm.
 \Literature \cite{hohr87}
  
 %..........................................
-\item \underline{Temperature} (K):
-\item \underline{(Dynamic) Viscosity} (Pa.s): For air it is roughly $10^{-5}$Pa.s, about $10^{-3}$Pa.s for water, about $10^{10}$Pa.s for ice and about $10^{17}$Pa.s for salt. 
+\item \underline{Temperature} (\si{\kelvin}):
 
+\item \underline{(Dynamic) Viscosity} (\si{\pascal\second}): 
+For air it is roughly $10^{-5}\si{\pascal\second}$, 
+about $10^{-3}\si{\pascal\second}$ for water, 
+about $10^{10}\si{\pascal\second}$ for ice and 
+about $10^{17}\si{\pascal\second}$ for salt. 
 
+\item \underline{(mass) Density} $\rho$ (\si{\kg\per\cubic\metre}):
 
-\item \underline{Density} (kg/m$^3$):
-\item \underline{Heat capacity} $C_p$ ($J.K^{-1}$): 
+\item \underline{Heat capacity} $C_p$ (\si{\joule\per\kelvin}): 
 It is the measure of the heat/energy required to increase the 
-temperature of a unit quantity of a substance by unit degree. Note that the specific heat capacity $c_P$ of a 
-substance is the heat capacity of a sample of the substance divided by the mass of the sample, with units $J\cdot K\cdot kg^{-1}$.
+temperature of a unit quantity of a substance by unit degree. Note that the specific 
+heat capacity $c_P$ of a substance is the heat capacity of a sample of the substance 
+divided by the mass of the sample, with units \si{\joule\per\kelvin\per\kg}.
 
-\item \underline{Heat conductivity}, or thermal conductivity $k$ ($W.m^{-1}.K^{-1}$). It is the 
-property of a material that indicates its ability to conduct heat. It appears primarily in 
-Fourier's Law for heat conduction.
+\item \underline{Heat conductivity}, or thermal conductivity $k$ (\si{\watt\per\metre\per\kelvin}). 
+It is the property of a material that indicates its ability to conduct heat. It appears primarily 
+in Fourier's Law for heat conduction.
 Note that it is a function of temperature, especially in mantle convection settings,
 see Bonneville \& Capolsini (1999) \cite{boca99} and refs therein, 
 Miyauchi \& Kameyama (2013) \cite{mika13}, Hofmeister \& Yuen (2007) \cite{hoyu07}. 
 Note also that it can be a tensorial quantity in anisotropic context.
 The heat conductivity of many rocks was determined in \cite{ando13}.
 
-\item \underline{Heat diffusivity}: $\kappa=k/(\rho C_p)$ ($m^2.s^{-1}$). Substances with high thermal diffusivity rapidly adjust their temperature to that of their surroundings, because they 
+\item \underline{Heat diffusivity}: $\kappa=k/(\rho C_p)$ ($m^2.s^{-1}$). Substances with 
+high thermal diffusivity rapidly adjust their temperature to that of their surroundings, because they 
 conduct heat quickly in comparison to their volumetric heat capacity or 'thermal bulk'.
-\item \underline{thermal expansion} $\alpha$ (K$^{-1}$): it is the tendency of a matter to change in volume in response to a change in temperature. Note that it is a function of temperature, especially in mantle convection settings \cite{mika13}.
 
-\item \underline{Urey Ratio}: mantle heat production divided by heat loss) is a key constraint for thermal history models. Recent Urey ratio estimates are in the range of 0.21–0.49. \cite{lecm11}
+\item \underline{thermal expansion} $\alpha$ (\si{\per\kelvin}): 
+it is the tendency of a matter to change in volume in response to a change in temperature. 
+Note that it is a function of temperature, especially in mantle convection settings \cite{mika13}.
 
-\item \underline{Shear modulus}: modulus of rigidity, usually expressed in GPa. It describes the 
-material response to shear stress.
+\item \underline{Urey Ratio}: mantle heat production divided by heat loss. It is a key constraint 
+for thermal history models. Recent Urey ratio estimates are in the range of 0.21-0.49. \cite{lecm11}
+
+\item \underline{Shear modulus}: modulus of rigidity, usually expressed in \si{\giga\pascal}. 
+It describes the material response to shear stress.
 
 \item \underline{Poisson ratio}: response in the direction orthogonal to uniaxial stress.
 
 \item \underline{Young's modulus}: describes the material strain response to uniaxial stress
-in the direction of this stress, usually expressed in GPa.
+in the direction of this stress, usually expressed in \si{\giga\pascal}.
 
-\item \underline{Average viscosity}: following Christensen (1983) \cite{chri83b}, one can compute the averaged
-viscosity in a domain as follows:
+\item \underline{Average viscosity}: following Christensen (1983) \cite{chri83b}, 
+one can compute the averaged viscosity in a domain as follows:
 \begin{equation}
 \langle \eta \rangle = \frac{\int_V \eta \dot{\varepsilon}_e^2 dV}{\int_V  \dot{\varepsilon}_e^2 dV }
 \label{eq:avrgeta}
@@ -1616,6 +1638,7 @@ viscosity in a domain as follows:
 
 %------------------------------------------------------
 \subsection{Principal stress and principal invariants} \label{sec:princ_stress}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 \index{general}{Maximum Shear Stress} 
 \index{general}{Principal Stress}
@@ -2227,7 +2250,8 @@ There are 3 different Lode angles, as explained online\footnote{\url{https://en.
 \[
 \sin 3\theta_s = -\sin 3 \bar{\theta}_s = \cos 3\theta_c = \frac{3\sqrt{3}}{2}\frac{{\cal I}_3({\bm \tau})}{({\cal I}_2({\bm \tau}))^{3/2}}
 \]
-and they are related by $\theta_s = \frac{\pi}{6}-\theta_c$ and $\theta_s = -\bar{\theta}_s$. The one used in fieldstone is in fact the $\bar{\theta}_s$ above.
+and they are related by $\theta_s = \frac{\pi}{6}-\theta_c$ and $\theta_s = -\bar{\theta}_s$. 
+The one used in \fieldstone is in fact the $\bar{\theta}_s$ above.
 \label{rq:signs}
 \end{remark}
 
@@ -2276,6 +2300,7 @@ The expression for the Lode angle is different in \cite[p101]{book_zitf} than in
 
 %------------------------------------------------------
 \subsection{Tensor (moment) invariants}\label{sec:invariants}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 \index{general}{Tensor Invariant}
 \index{general}{Moment Invariant}
@@ -2314,6 +2339,7 @@ Given a tensor $\bm{T}$,  one can compute its (moment) invariants as follows
 
 %----------------------------------------------------------------
 \subsection{Stress \& strain rate invariants}\label{sec:stress_invariants}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 The implementation of the plasticity criterions relies essentially 
 on the invariants of the (deviatoric) stress ${\bm \tau}$ 
@@ -2534,7 +2560,8 @@ or,
 \end{array}
 \right)
 \]
-which is the equation in Section 2.1.3 in ASPECT manual. 
+which is the equation in Section 2.1.3 in \aspect{} manual\footnote{This may have changed since 
+the last time I checked the manual!}. 
 
 Let us now turn to the second invariant of the deviatoric strain rate 
 (see Eq.~\eqref{eq:I2epsd}):
@@ -2625,6 +2652,7 @@ which is not the same as the previous expression!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Alternative principal stresses notations}\label{sec:altinv}
+\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 The principal stresses of the stress tensor ${\bm \sigma}$ are $\sigma_1$, $\sigma_2$
 and $\sigma_3$ with $\sigma_1 \geq \sigma_2 \geq \sigma_3$.

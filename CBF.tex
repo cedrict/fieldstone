@@ -1,3 +1,5 @@
+\begin{flushright} {\tiny {\color{gray} cbf.tex}} \end{flushright}
+
 The Consistent Boundary Flux technique was devised to 
 alleviate the problem of the accuracy of primary variables 
 derivatives (mainly velocity and temperature) on boundaries.
@@ -54,7 +56,7 @@ living on the nodes on the boundary, and assuming we have already solved the Sto
 equation and therefore have obtained the velocity and pressure.
 
 Finally, since the traction vector can be expressed as a function of the velocity 
-shape functions on the edgem i.e.
+basis functions on the edgem i.e.
 \[
 \vec{t} = \sum_{i=1}^m N_i^\upnu \vec{t}_i
 \]
@@ -157,7 +159,7 @@ living on the nodes on the boundary,
 \[
 q_n = \sum_{i=1}^2 q_{n|i} N_i
 \]
-so that the left hand term becomes a mass matrix for the shape functions living on 
+so that the left hand term becomes a mass matrix for the basis functions living on 
 the boundary.
 We have already covered the right hand side terms when building the FE system 
 to solve the heat transport equation, so that in the end 

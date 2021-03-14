@@ -1,5 +1,7 @@
 \index{general}{MMS} 
 \index{general}{Method of Manufactured Solutions}
+\begin{flushright} {\tiny {\color{gray} mms.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The method of manufactured solutions is a relatively simple way of carrying out
 code verification. In essence, one postulates a solution for the PDE at hand (as
@@ -84,7 +86,7 @@ One can also compute the stress components:
 All the necessary functions to do this benchmark are in {\tt mms/dh.py}:
 \lstinputlisting[language=python]{mms/dh.py}
 
-This benchmark is implemented in ASPECT \cite{aspectmanual} and in {\tt Stones 01}.
+This benchmark is implemented in \aspect{} \cite{aspectmanual} and in {\tt Stones 01}.
 
 We have
 \[
@@ -195,7 +197,7 @@ inserting this solution into the momentum equation with a given viscosity $\eta(
 (constant or position/velocity/strain rate dependent). 
 The domain is a unit cube and velocity boundary conditions 
 simply use Eq. (\ref{eqbur}). 
-Note that the pressure fulfills 
+Note that the pressure fulfils 
 \[
 \int_\Omega p(x,y,z) dV = 0.  
 \]
@@ -829,7 +831,7 @@ p(r)=\frac{1}{n+1} (1- r^{n+1})
 \end{center}
 
 This benchmark is of course very simple and the fact that the solution is independent of $\theta$
-renders it not so useful. It has succesfully been implemented in ELEFANT.
+renders it not so useful. It has succesfully been implemented in \elefant.
 
 %-----------------------------------------------------------------------------
 \subsubsection{Viscous beam under extension}
@@ -1961,6 +1963,56 @@ This is presented in Soulaimani et al (1987) \cite{sofo87}.
 \qquad
 p(x,y,z)=x+y+z-1/2
 \]
+
+
+%..........................................................
+\subsubsection{Poisson equation on 3D shell} 
+
+This benchmark is presented in Phillips \etal \cite{phdo19}. 
+Inner radius is 1, outer radius is 3.
+The right hand side term of the Poisson equation is given by:
+\begin{eqnarray}
+f(r,\theta,\phi)&=&
+\frac{\sin^2\theta }{R^2} 
+\left[
+(\cos\phi-\sin\phi)(20\sin^2\theta -15) -\sin 2\phi (10\sin^2 \theta -6)
+\right] \nn\\
+&\times & \left[ \left(\frac{r}{R_{inner}}\right)^2 -1  \right]
+\left[ \left(\frac{r}{R_{outer}}\right)^2 -1  \right] \nn\\
+&+&\sin^4 \theta
+\left[ \cos\phi -\sin\phi -\frac12 \sin 2\phi \right]
+\left[
+\frac{20r^2}{R_{inner}^2R_{outer}^2} -6 \left( \frac{1}{R_{inner}^2}+\frac{1}{R_{outer}^2}  \right)
+\right]
+\end{eqnarray}
+Note: what is $R$ here??
+
+The solution is then 
+\[
+T(r,\theta,\phi) = \sin^4 \theta \left[ \cos\phi -\sin\phi -\frac12 \sin 2\phi \right]
+\left[ \left(\frac{r}{R_{inner}}\right)^2 -1  \right]
+\left[ \left(\frac{r}{R_{outer}}\right)^2 -1  \right]
+\]
+This expression is used to generate the Dirichlet boundary conditions on the inner and outer surfaces.
+
+
+%..........................................................
+\subsubsection{SolCx} 
+\input{benchmark_solcx}
+
+
+%..........................................................
+\subsubsection{SolKz} 
+\input{benchmark_solkz}
+
+
+%..........................................................
+\subsubsection{SolVi} 
+\input{benchmark_solvi}
+
+
+
+
 
 
 

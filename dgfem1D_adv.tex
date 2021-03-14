@@ -1,3 +1,6 @@
+\begin{flushright} {\tiny {\color{gray} dgfem1D\_adv.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Starting from the 1-D advection equation:
 \begin{equation}
     \frac{\partial T}{\partial t}+u\frac{\partial T}{\partial x}=0 
@@ -40,7 +43,7 @@ when $u>0$ this flux then simply becomes:
 uT(a,b)=u a
 \end{equation}
 which is in essence an upwinding scheme.
-Filling this into equation \ref{1Dcond} gives:
+Filling this into equation \eqref{1Dcond} gives:
 \begin{equation}
 \int_{x_k}^{x_{k+1}}\left(
 \tilde{f}(x)\frac{\partial T_h}{\partial t}-
@@ -83,7 +86,7 @@ N_{k+1}(x)  \dot{T}_h -
 \frac{\partial N_{k+1}}{\partial x} uT_h \right) dx
 + u{\color{red} T_{k+1}^-}      &=& 0
 \end{eqnarray}
-We now use Eqs.~(\ref{eq:dgadv1}) and (\ref{eq:dgadv2})
+We now use Eqs.~\eqref{eq:dgadv1} and \eqref{eq:dgadv2}
 \begin{eqnarray}
 \int_{x_k}^{x_{k+1}}\left(
 N_k
@@ -294,6 +297,7 @@ so
 }
 \end{eqnarray}
 
+\noindent
 Using the same first order Runge-Kutta method as in the previous section, 
 \begin{equation}
 T^k(t+\delta t)=T_k(t) +\delta t \; \dot{T}_k

@@ -1,3 +1,4 @@
+\begin{flushright} {\tiny {\color{gray} elemental\_matrix.tex}} \end{flushright}
 
 In what follows I compute the mass matrix for a variety of reference elements.
 If you wish to use these in a code, do not forget to take the jacobian 
@@ -387,7 +388,7 @@ Example:
 \subsection{Quadrilaterals: rectangular linear elements} \label{app:qrle}
 
 We assume that each element is a rectangle of size $h_x \times h_y$. 
-We start from the linear shape functions in the reference element as a function of $r,s$:
+We start from the linear basis functions in the reference element as a function of $r,s$:
 \begin{eqnarray}
 N_1(r,s) &=& \frac{1}{4}(1-r)(1-s) \\ 
 N_2(r,s) &=& \frac{1}{4}(1+r)(1-s) \\ 
@@ -862,7 +863,7 @@ h_x
 %---------------------------------------
 \subsection{Triangles: linear elements} \label{ss:tle}
 
-We start from the linear shape functions in the reference triangle given as a function of $r,s$:
+We start from the linear basis functions in the reference triangle given as a function of $r,s$:
 \begin{eqnarray}
 N_1(r,s) &=& 1-r-s \\
 N_2(r,s) &=& r \\
@@ -990,7 +991,7 @@ Then the mass matrix is given by
 This is Eq.(4.10e) of Li \cite{li06}.
 
 
-We start from the shape functions:
+We start from the basis functions:
 \begin{eqnarray}
 N_1(x,y) &=& \frac{1}{2S} ( x_2y_3-x_3y_2+(y_2-y_3)x+(x_3-x_2)y   ) \nn\\
 N_2(x,y) &=& \frac{1}{2S} ( x_3y_1-x_1y_3+(y_3-y_1)x+(x_1-x_3)y   ) \nn\\

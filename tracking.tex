@@ -1,3 +1,4 @@
+\begin{flushright} {\tiny {\color{gray} tracking.tex}} \end{flushright}
 
 Unless using a fully Lagrangian formulation, one needs an additional numerical method to represent/track
 the various materials present in an undeformable (Eulerian) mesh.
@@ -21,7 +22,7 @@ solid body rotation problem. The field inside the cut out has value 3 and it is 
 outside. The rotational speed is such that one full revolution is effected in 
 628 cycles. The width of the gap separating the two halves of the cylinder,
 as well as the maximum extent of the "bridge" connecting the two halves, is 5 cells.
-Right: Perspective view of initial conditions for the two dimensiona! solid body rotation
+Right: Perspective view of initial conditions for the two dimensional! solid body rotation
 problem. Note that only a $50\times50$ portion of the mesh centered on the cylinder is displayed.}
 \end{center}
 
@@ -41,14 +42,19 @@ Note that the Zalesak disc is often supplemented with a cone and a Gaussian feat
 \index{general}{MAC}
 
 \begin{remark}
-The terms 'particle' and 'marker' are commonly (and unfortunately) interchangeably used in the literature in the context of the particle-in-cell technique. However, one should be aware that the marker-and-cell (MAC) technique is something different: it was invented in the early 60's at the Los Alamos Laboratories by Harlow and Welch \cite{hawe65}. For more information on MAC see the review paper by McKee et al \cite{mctf08}. Also, Tackley and King (2003) \cite{taki03} talk about the tracer-ratio method in the context of PIC... 
+The terms 'particle' and 'marker' are commonly (and unfortunately) interchangeably used in the literature 
+in the context of the particle-in-cell technique. However, one should be aware that the marker-and-cell (MAC) 
+technique is something different: it was invented in the early 60's at the Los Alamos Laboratories by 
+Harlow and Welch (1965) \cite{hawe65}. For more information on MAC see the review paper 
+by McKee \etal (2008) \cite{mctf08}. 
+Also, Tackley and King (2003) \cite{taki03} talk about the tracer-ratio method in the context of PIC... 
 \end{remark}
 
 The Particle-in-cell method is by far the most widely used in computational geodynamics. 
 In its most basic form it is a rather simple method to implement and this probably owes to its success
-and early adoption \cite{popo92}  in non-parallel codes such as SOPALE \cite{full95}, 
-I2VIS \cite{geyu03} or CITCOM \cite{mczh04} (Appendix~\ref{app:codes}).
-It has been implemented in ASPECT \cite{galh18} and the inherent load balancing issues arising from the 
+and early adoption \cite{popo92}  in non-parallel codes such as \sopale \cite{full95}, 
+I2VIS \cite{geyu03} or \citcoms \cite{mczh04} (Appendix~\ref{app:codes}).
+It has been implemented in \aspect{} \cite{galh18} and the inherent load balancing issues arising from the 
 parallel implementation as well as from the use of Adaptive Mesh Refinement are discussed. 
 It has also been implemented in the MILAMIN code \cite{daks08} to study LLSVPs \cite{musd15}.
 
@@ -58,7 +64,7 @@ It has also been implemented in the MILAMIN code \cite{daks08} to study LLSVPs \
 between the fluid is not tracked explicitely, and if one uses a random distribution of 
 particles the black dotted line reprensents the 'real' interface between the fluids 
 while the red line is liekly to be the interface one would obtain based on the 
-distribution of particles. Taken from Crameri et al (2012) \cite{crsg12}.}
+distribution of particles. Taken from Crameri \etal (2012) \cite{crsg12}.}
 \end{center}
 
 Samuel (2018) \cite{samu18} does a great job at explaining 
@@ -119,7 +125,7 @@ desired accuracy while being CPU and memory intensive, the latter will certainly
 of particles which will be problematic since the projection onto the mesh might yield zero values or very inaccurate values.
 How many particles (per element/cell) will be enough?
 Also, should the particles be randomly distributed in the domain or on some kind of regular grid? 
-See fieldstone 13 (Section~\ref{f13}).
+See \stone 13.
 
 Taken from Tackley and King (2003) \cite{taki03}: "Tracers are initialized on a regular grid 
 with each tracer perturbed from its grid position by a random amount of up to
@@ -163,11 +169,11 @@ However, one could also decide to first average the properties onto the nodes
 before using these nodal values to assign values to the quadrature points (which I coin 'nodal approach'). 
 In this case the FDM approach seen above could apply. 
 
-Finally, in both FDM and FEM bi/trilinear shape functions are used for the interpolation as 
-they can be interpreted as weighing functions. Higher order shape functions could also be used 
-but the standard $Q_2$ shape functions (Section~\ref{sec:shpfct2d})
+Finally, in both FDM and FEM bi/trilinear basis functions are used for the interpolation as 
+they can be interpreted as weighing functions. Higher order basis functions could also be used 
+but the standard $Q_2$ basis functions (Section~\ref{sec:shpfct2d})
 are 2-nd order polynomials which can take negative values (as opposed to the $Q_1$ 
-shape functions which are strictly positive)
+basis functions which are strictly positive)
 and this can pose problems: in some cases, although all values to be averaged are positive, 
 their weighed average can be negative.
 See Section~\ref{ss:bern} for concrete examples.
@@ -241,7 +247,7 @@ We see that the harmonic mean tends to favour the small values. Also we recover 
 \end{equation}
 
 %When all $f_i$ are equal to $f_0$ their computed average should also be equal to $f_0$. As a consequence the 
-%weights $N_i$ should fulfill the condition $\sum\limits_{i=1}^n N_i=1$.
+%weights $N_i$ should fulfil the condition $\sum\limits_{i=1}^n N_i=1$.
 %If all weights are equal, then $N_i=1/n$ and the averagings become:
 
 %\begin{equation}
@@ -264,7 +270,7 @@ if viscosity (and density) are assumed to be constant inside each element (see
 a functional representation of the field inside the element which is as 
 close as possible (in the least-squares sense, then) to the particle-based field. 
 
-Thielmann et al (2014) \cite{thmk14} use the $Q_2P_{-1}$ element and introduce an element-wise interpolation
+Thielmann \etal (2014) \cite{thmk14} use the $Q_2P_{-1}$ element and introduce an element-wise interpolation
 scheme based on a least squares fitting of the particle properties and choose the functional to 
 be a linear function to match the pressure space. 
 They define the error $\epsilon$ such that 
@@ -372,7 +378,7 @@ dramatic for density, 2) would be wrong and physically and numerically
 problematic for viscosity (a viscosity cannot be negative, and this would 
 automatically destroy the SPD nature of the viscous block of the Stokes matrix).
 
-This problem is discussed in Thielmann et al (2014) in Section 3.2.1 and they 
+This problem is discussed in Thielmann \etal (2014) in Section 3.2.1 and they 
 call this "Over- and Under-shooting". A simple (iteratuve) 
 fix is then designed which insures that the computed value is within user-defined 
 acceptable bounds. This is also mentioned in \cite{galb19} but the authors 
@@ -390,7 +396,7 @@ by Samuel (2018) \cite{samu18}, and the multiscale PIC in \cite{asmo12}.
 \begin{remark}
 TO BE WRITTEN.
 A word about the tracer ratio method. \cite{taki03}. 
-Trim et al (2020) show a modified method 
+Trim \etal (2020) show a modified method 
 with a tracer repositioning algorithm designed to promote even tracer
 coverage \cite{trlb20}. 
 \end{remark}
@@ -407,7 +413,7 @@ explanation of its implementation.
 
 Once the particle $i$ has been localised inside a given element (Section~\ref{sec:amiin}) 
 and its reduced coordinates $(r,s,t)$ determined, the velocity at this location can 
-be computed through the shape functions:
+be computed through the basis functions:
 \[
 \vec\upnu_i=\sum_{k=1}^m N_i(r,s,t) \vec\upnu_k
 \]
@@ -477,7 +483,7 @@ be found in \cite{osfe01}.
 
 Several improvements upon the original LSM have been proposed, 
 such as for instance the conservative level set of \cite{zhbl14}.
-The most notable difference between CLS method originally proposed by Olsson et al. \cite{olkr05,olkz07}
+The most notable difference between CLS method originally proposed by Olsson \etal \cite{olkr05,olkz07}
 and standard LS method lies in the choice of LS function. Instead of the signed distance function, the
 CLS methods employ the Heaviside function $H(\phi)$ 
 \[
@@ -515,7 +521,7 @@ are computed as follows:
 \subsubsection{The field/composition technique \label{sec:compfield}}
 \index{general}{Compositional Field}
 
-This is the approach taken by the ASPECT developers \cite{krhb12,hedg17}. 
+This is the approach taken by the \aspect{} developers \cite{krhb12,hedg17}. 
 Each material $i$ is represented by a compositional field $c_i$, 
 which takes values between 0 and 1.
 Each compositional field is then advected with the (prescribed or computed) Stokes velocity \cite{chri92}:
@@ -565,7 +571,7 @@ are also set to 0 and 1, respectively (blue).
 The $C$-value of all grid points that do not exhibit spurious oscillations (green) is then corrected
 according to the difference between the original average composition and that computed after the reset-
 ting of the spurious values.
-Taken from Plesa et al (2013) \cite{plth13}.}
+Taken from Plesa \etal (2013) \cite{plth13}.}
 \end{center}
 
 
@@ -641,13 +647,13 @@ can be complicated to establish at startup: for instance, a Stokes sphere will r
 a mesh made of triangles which maps exactly the surface of the sphere (see \cite{thie18,moma19} 
 for methods on how to efficiently produce such meshes). In the case of more complex 3D geometries
 this may prove nearly impossible to do. So will the problem of splitting a surface into two 
-(or merging two domains). \todo{I still have pics from the old days using DOUAR- include} 
+(or merging two domains). \todo{I still have pics from the old days using \douar- include} 
 
 This method is usually coupled to Eulerian meshes (typically with FDM, but not only). 
 It was used in \cite{woid78} in the context of salt domes analysis and later in \cite{chri82,chyu84}.
 It is also used in \cite{vaks97} but little details are given about the algorithms used
 to track and update the chain in the presence of such large deformation.
-It is also used (athough coupled to level set functions) in the DOUAR code\cite{brtf08} 
+It is also used (athough coupled to level set functions) in the \douar code\cite{brtf08} 
 (see Section~\ref{app:codes}). Having worked myself on this code and having had to produce 
 complex initial triangulated surfaces for simulations (see for example \cite{lobh10}) it is 
 easy to understand why later users of this code did implement the marker-in-cell technique.
@@ -672,9 +678,9 @@ Literature: Lin \& van Keken (2006) \cite{liva05,liva06a,liva06b,kaus05,mulyukov
 %..............................................
 \subsubsection{Hybrid methods}
 
-In Braun et al. \cite{brtf08} a level set method is presented which is based on a 3-D set
+In Braun \etal \cite{brtf08} a level set method is presented which is based on a 3-D set
 of triangulated points, which makes it a hybrid between tracers and level set functions:
-in the DOUAR code (Appendix~\ref{app:codes}) the interface is then explicitely tracked by means of the tracers while the LSF is computed 
+in the \douar code (Appendix~\ref{app:codes}) the interface is then explicitely tracked by means of the tracers while the LSF is computed 
 on the FE nodes. Although very promising in theory, this method proved to be difficult to use in practice
 since it requires a) a triangulation of the interfaces at $t=0$ which is not trivial if the geometries
 are complex (think about a slab in 3D); b) the addition or removal of tracers because of the interface deformation

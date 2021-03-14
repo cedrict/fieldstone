@@ -1,18 +1,60 @@
-
+\begin{flushright} {\tiny {\color{gray} coordinate\_systems.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 %........................................
 \subsubsection{Cartesian coordinates}
+\index{general}{Gradient Operator in Cartesian Coordinates}
+\index{general}{Divergence Operator in Cartesian Coordinates}
+\index{general}{Laplace Operator in Cartesian Coordinates}
+\index{general}{Path Increment in Cartesian Coordinates}
 
 The unit vectors along the $x$, $y$ and $z$ axis are 
 $\vec{e}_x$, $\vec{e}_y$ and $\vec{e}_z$ respectively.
 
-%........................................
-\subsubsection{Cylindrical coordinates}
+\input{tikz_cartesian_coordinates}
 
+\noindent Any vector can then be written
+\[
+{\vec V}  = V_x {\vec e}_x  + V_y {\vec e}_y + V_z \vec{e}_z
+\]
+The gradient of a function $f$ is 
+\[
+\vec{\nabla} f= \text{grad }f 
+\frac{\partial f}{\partial x}\; \vec{e}_x +
+\frac{\partial f}{\partial y}\; \vec{e}_y +
+\frac{\partial f}{\partial z}\; \vec{e}_z,
+\]
+the divergence of a vector $\vec{V}$ is
+\[
+\vec{\nabla}\cdot \vec{V} = 
+\frac{\partial V_x}{\partial x}+
+\frac{\partial V_y}{\partial y}+
+\frac{\partial V_z}{\partial z}
+\]
+and the Laplace operator of a function $f$ is:
+\[
+\Delta f = 
+\frac{\partial^2 f}{\partial x^2} + 
+\frac{\partial^2 f}{\partial y^2} + 
+\frac{\partial^2 f}{\partial z^2}  
+\]
+Finally the path increment is
+\[
+d\vec{r} = dx \; {\vec e}_x  + dy\; {\vec e}_y + dz \; \vec{e}_z
+\]
+and the volume element is 
+\[
+dV=dx\; dy \; dz
+\]
+
+%........................................
+\subsubsection{Polar coordinates}
 
 We have $r>0$ and $\theta=[0,2\pi[$, defined in the $(x,y)-$plane.
 
-The relation between the unit vector in Cartesian and Polar/Cylindrical coordinates
+\input{tikz_polar_coordinates}
+
+\noindent The relation between the unit vector in Cartesian and Polar/Cylindrical coordinates
 is given by:
 \[
 \left(
@@ -36,7 +78,15 @@ is given by:
 \end{array}
 \right)
 \]
-which yields
+which should be read:
+\begin{eqnarray}
+{\vec e}_{r}      &=& \cos\theta \; {\vec e}_{x} + \sin\theta \;  {\vec e}_{y} \nn\\
+{\vec e}_{\theta} &=& -\sin\theta \; {\vec e}_{x} + \cos\theta \;  {\vec e}_{y} 
+\end{eqnarray}
+Note that this $2\times 2$ matrix is a 
+rotation matrix\footnote{\url{https://en.wikipedia.org/wiki/Rotation_matrix}}
+corresponding to an angle $-\theta$. The inverse of this matrix always exists 
+(we can always counter-rotate) and it then yields
 \[
 \left(
 \begin{array}{c}
@@ -59,7 +109,6 @@ which yields
 \end{array}
 \right)
 \]
-
 so that for any vector ${\vec V}$
 \begin{eqnarray}
 {\vec V} 
@@ -67,11 +116,85 @@ so that for any vector ${\vec V}$
 &=& V_x [(\cos \theta) {\vec e}_r - (\sin \theta) {\vec e}_\theta]  + 
     V_y [(\sin \theta) {\vec e}_r + (\cos \theta){\vec e}_\theta] \nonumber\\
 &=& [V_x (\cos \theta) + V_y (\sin \theta)] {\vec e}_r +
-[- V_x(\sin \theta) + V_y (\cos \theta)]{\vec e}_\theta  
+[- V_x(\sin \theta) + V_y (\cos \theta)]{\vec e}_\theta \nn\\
+&=& V_r \vec{e}_r  + V_\theta \vec{e}_\theta \nn
+\end{eqnarray}
+with
+\begin{eqnarray}
+V_r &=& V_x \cos \theta + V_y \sin \theta \nn\\
+V_\theta &=& - V_x \sin \theta + V_y \cos \theta \nn
+\end{eqnarray}
+Finally the path increment is
+\[
+d\vec{r} = dr \; {\vec e}_r  + r \sin\theta d\theta \; {\vec e}_\theta
+\]
+and the volume element is 
+\[
+dV= r dr \; d\theta
+\]
+
+The gradient, divergence and laplacian formulae are given in the following section.
+
+\index{general}{Path Increment in Polar Coordinates}
+
+%...........................................................
+\subsubsection{Cylindrical coordinates \label{ss:cylcoord}}
+
+%Redo with tikz
+\begin{center}
+\includegraphics[width=4cm]{images/cylindrical}\\
+{\captionfont Cylindrical coordinates}
+%https://tutorial.math.lamar.edu/classes/calcii/CylindricalCoords.aspx 
+\end{center}
+
+\[
+{\vec V} 
+= V_r \; \vec{e}_r  + V_\theta \; \vec{e}_\theta + V_z \; \vec{e}_z
+\]
+We have 
+\begin{eqnarray}
+x &=& r \; \cos\theta \nn\\
+y &=& r \; \sin \theta \nn\\\ 
+r &=& \sqrt{x^2+y^2} \nn
 \end{eqnarray}
 
+Let $f(r,\theta)$ be a function of the spatial coordinates. It s gradient is then
+\[
+\vec \nabla f
+= \frac{\partial f}{\partial r} \; \vec{e}_r 
++ \frac{1}{r} \frac{\partial f}{\partial \theta} \; \vec{e}_\theta
++ \frac{\partial f}{\partial r} \; \vec{e}_z
+\]
+The divergence of a vector field $\vec{V}$ is 
+\[
+\vec\nabla \cdot \vec{V} 
+= \frac{1}{r} \frac{\partial }{\partial r} (r V_r) 
++ \frac{1}{r} \frac{\partial V_\theta}{\partial \theta} 
++ \frac{\partial V_z}{\partial z}
+\]
+and the Laplacian of $f$ is
+\[
+\Delta f = \frac{1}{r} \frac{\partial }{\partial r} \left( r \frac{\partial f}{\partial r} \right)
++ \frac{1}{r^2} \frac{\partial^2 f}{\partial \theta^2} 
++ \frac{\partial^2 f}{\partial z^2} 
+\]
+Finally the path increment is
+\[
+d\vec{r} = dr \; {\vec e}_r  + r \sin\theta d\theta \; {\vec e}_\theta + dz \; \vec{e}_z
+\]
+and the volume element is 
+\[
+dV= r dr \; d\theta \; dz
+\]
+\index{general}{Gradient Operator in Cylindrical Coordinates}
+\index{general}{Divergence Operator in Cylindrical Coordinates}
+\index{general}{Laplace Operator in Cylindrical Coordinates}
+\index{general}{Path Increment in Cylindrical Coordinates}
 
-
+\begin{remark} 
+Cylindrical coordinates can also be denoted by $(\rho,\theta)$, $(r,\phi)$ or even $(\rho,\phi)$.
+They are sometimes called "cylindrical polar coordinates" or "polar cylindrical coordinates".
+\end{remark}
 
 %........................................
 \subsubsection{Spherical coordinates \label{ss:sphercoord}}
@@ -103,27 +226,34 @@ where we formally take advantage of the two argument arctan
 function to eliminate quadrant confusion.
 
 The path increment is expressed as:
-\[
+
+\begin{equation}
 d\vec{r} = dr \; \vec{e}_r + r d\theta \; \vec{e}_\theta + r \sin\theta d\phi \; \vec{e}_\phi
-\]
-The gradient is 
-\[
-\vec\nabla = \frac{\partial}{\partial r} \; \vec{e}_r
-+ \frac{1}{r} \frac{\partial}{\partial \theta} \; \vec{e}_\theta 
-+ \frac{1}{r \; \sin\theta} \frac{\partial}{\partial \phi} \;  \vec{e}_\phi
-\]
-The divergence of a vector $\vec{V}$ is given in Eq.~\eqref{eq:divsc}. \index{general}{Divergence}
-The Laplacian is given by: \index{general}{Laplacian}
-\[
-\Delta = \vec\nabla \cdot\vec\nabla = \vec\nabla^2
+\end{equation}
+The gradient of a function $f(r,\theta,\phi)$ is 
+\begin{equation}
+\vec\nabla f= \frac{\partial f}{\partial r} \; \vec{e}_r
++ \frac{1}{r} \frac{\partial f}{\partial \theta} \; \vec{e}_\theta 
++ \frac{1}{r \; \sin\theta} \frac{\partial f}{\partial \phi} \;  \vec{e}_\phi
+\end{equation}
+The divergence of a vector $\vec{V}$ is
+\begin{equation}
+\vec\nabla\cdot \vec{V}=
+\frac{1}{r^2} \frac{\partial}{\partial r} \left(r^2 V_r \right) 
++
+\frac{1}{r \sin\theta} \frac{\partial}{\partial \theta} (V_\theta \sin\theta)
++
+\frac{1}{r \sin\theta} \frac{\partial V_\phi}{\partial \phi}=0
+\label{eq:divsc}
+\end{equation}
+The Laplacian of function $f$ is given by: \index{general}{Laplacian}
+\begin{equation}
+\Delta f= \vec\nabla \cdot\vec\nabla f= \vec\nabla^2 f
 =
-\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial}{\partial r} \right)
-+\frac{1}{r^2 \sin\theta} \frac{\partial}{\partial \theta} \left( \sin\theta \frac{\partial}{\partial \theta} \right)
-+\frac{1}{r^2 \sin^2\theta}  \frac{\partial^2}{\partial \phi^2}
-\]
-
-
-
+\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial f}{\partial r} \right)
++\frac{1}{r^2 \sin\theta} \frac{\partial}{\partial \theta} \left( \sin\theta \frac{\partial f}{\partial \theta} \right)
++\frac{1}{r^2 \sin^2\theta}  \frac{\partial^2 f}{\partial \phi^2}
+\end{equation}
 
 In geography one uses latitude and longitude, represented hereunder:
 \begin{center}
@@ -138,21 +268,36 @@ Since the colatitude is the complementary angle of the latitude,
 i.e. the difference between 90 and the latitude, 
 where southern latitudes are denoted with a minus sign,
 $\theta$ as shown above is actually is the colatitude.
-The co-latitude is shown in red on the following figure:
+The colatitude is shown in red on the following figure: 
+\index{general}{Colatitude}
 \begin{center}
 \includegraphics[width=3cm]{images/colatitude}
 \end{center}
 
 The volume of a sphere of radius $R$ is easily obtained by computing 
 \begin{eqnarray}
-V 
-&=& \int dV \nn\\
+V_{sphere} 
+&=& \iiint_{sphere} dV \nn\\
 &=& \int_0^R r^2 dr \int_0^\pi \sin\theta d\theta \int_0^{2\pi} d\phi  \nn\\
 &=& \frac{1}{3}R^3  \cdot 2 \cdot 2\pi \nn\\
 &=& \frac{4}{3}\pi R^3 
 \end{eqnarray}
+\index{general}{Volume of a Sphere}
 
-The spherical unit vectors are related to the cartesian unit vectors by:
+The volume of a spherical shell of inner radius $R_i$ and outer radius $R_o$
+is equally easily obtained by computing 
+
+\begin{eqnarray}
+V_{shell}
+&=& \iiint_{shell} dV \nn\\
+&=& \int_{R_i}^{R_o} r^2 dr \int_0^\pi \sin\theta d\theta \int_0^{2\pi} d\phi  \nn\\
+&=& \frac{1}{3}(R_o^3-R_i^3)  \cdot 2 \cdot 2\pi \nn\\
+&=& \frac{4}{3}\pi (R^3_o -R^3_i)
+\end{eqnarray}
+\index{general}{Volume of a Spherical shell}
+
+
+\noindent The spherical unit vectors are related to the cartesian unit vectors by:
 \[
 \left(
 \begin{array}{c}
@@ -198,11 +343,11 @@ and the cartesian unit vectors are related to the spherical unit vectors by
 
 \begin{eqnarray}
 \vec{\upnu} 
-&=& u \vec{e}_x + v \vec{e}_y + w \vec{e}_z \\
-&=& u ( \sin\theta \cos\phi \vec{e}_r +  \cos\theta\cos\phi \vec{e}_{\theta} -\sin\phi \vec{e}_{\phi} ) \\
-&+& v ( \sin\theta \sin\phi \vec{e}_r + \cos\theta\sin\phi \vec{e}_\theta  +  \cos\phi \vec{e}_\phi  )  \\
-&+& w ( \cos\theta \vec{e}_r   -\sin\theta \vec{e}_\theta  ) \\
-&=& v_r \vec{e}_r + v_\theta \vec{e}_\theta + v_\phi \vec{e}_\phi 
+&=& u\; \vec{e}_x + v \; \vec{e}_y + w \; \vec{e}_z \\
+&=& u\; ( \sin\theta \cos\phi \; \vec{e}_r +  \cos\theta\cos\phi \;  \vec{e}_{\theta} -\sin\phi \; \vec{e}_{\phi} ) \\
+&+& v\; ( \sin\theta \sin\phi \; \vec{e}_r + \cos\theta\sin\phi \; \vec{e}_\theta  +  \cos\phi \;  \vec{e}_\phi  )  \\
+&+& w\; ( \cos\theta \; \vec{e}_r   -\sin\theta \; \vec{e}_\theta  ) \\
+&=& v_r\; \vec{e}_r + v_\theta\; \vec{e}_\theta + v_\phi\; \vec{e}_\phi 
 \end{eqnarray}
 with 
 \begin{eqnarray}
@@ -210,5 +355,3 @@ v_r      &=&  u \sin \theta  \cos \phi  + v \sin\theta \sin \phi + w \cos\theta 
 v_\theta &=&  u \cos\theta\cos\phi + v \cos\theta\sin\phi -w \sin\theta   \\
 v_\phi   &=& -u \sin\phi  + v \cos\phi  
 \end{eqnarray}
-
-

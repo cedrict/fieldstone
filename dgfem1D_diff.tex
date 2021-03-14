@@ -1,3 +1,5 @@
+\begin{flushright} {\tiny {\color{gray} dgfem1D\_diff.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Starting from the simple transient 1-D heat conduction problem similar to the 
 steady state heat conduction problem only with added time dependence:
@@ -6,11 +8,11 @@ steady state heat conduction problem only with added time dependence:
 \frac{\partial T}{\partial t}=\frac{\partial^2T}{\partial x^2} \qquad T(x=0)=0 \qquad T(x=1)=1 \qquad \text{on} \quad x\in[0,1]
 \end{equation}
 
-
 Once again we split this system into two seperate first order equations:
-\begin{equation}
-\frac{\partial T}{\partial t}-\frac{\partial q}{\partial x}=0 \quad;\qquad \frac{\partial T}{\partial x} -q =0
-\end{equation}
+\begin{eqnarray}
+\frac{\partial T}{\partial t}-\frac{\partial q}{\partial x}&=&0 \nn\\
+\frac{\partial T}{\partial x} -q &=& 0
+\end{eqnarray}
 
 We apply the standard approach to establish the weak forms of these two first-order PDEs, and we do so 
 on an element $e$ bound by nodes $k$ and $k+1$ with coordinates $x_k$ and $x_{k+1}$
@@ -19,22 +21,19 @@ on an element $e$ bound by nodes $k$ and $k+1$ with coordinates $x_k$ and $x_{k+
 \int_{x_k}^{x_{k+1}} \frac{\partial T}{\partial t} \tilde{f}(x)dx
  -\left[q \tilde{f} \right]_{x_k}^{x_{k+1}} 
 + \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} q(x) dx &=& 0
-\label{eq:dg1}\\
+\label{eq:dg1a}\\
 \int_{x_k}^{x_{k+1}}  \left( q-\frac{dT}{dx} \right) \overline{f}(x) dx
 =
 \int_{x_k}^{x_{k+1}}  q(x) \overline{f}(x) dx
 -\left[ T \overline{f}  \right]_{x_k}^{x_{k+1}} + \int_{x_k}^{x_{k+1}} \frac{d\overline{f}}{dx} T(x) dx 
 &=& 0
-\label{eq:dg2}
+\label{eq:dg2a}
 \end{eqnarray}
 where $\tilde{f}$ and $\overline{f}$ are test functions.
 
-
-In what follows we coin $\dot{T}=\partial T/\partial t$. 
-We once again recover Equations (\ref{eq:dgq1}) and (\ref{eq:dgT1}), althought with 
-an additional time derivative term: 
-
-
+In what follows we coin $\dot{T}=\partial T/\partial t$ (for convenience of notation). 
+We once again recover Equations (\ref{eq:dgq1}) and (\ref{eq:dgT1}), although with 
+an additional time derivative term. 
 
 Filling this into equations (\ref{eq:dgq1}) and (\ref{eq:dgT1}), gives 
 \begin{eqnarray}
@@ -348,7 +347,7 @@ and then
 \]
 
 
-
+NOT REALLY FINISHED...
 
 
 

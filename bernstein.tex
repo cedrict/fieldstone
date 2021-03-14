@@ -1,4 +1,4 @@
-
+\begin{flushright} {\tiny {\color{gray} bernstein.tex}} \end{flushright}
 
 
 The $n+1$ Bernstein basis polynomials of degree $n$ on the interval $[0,1]$
@@ -22,17 +22,17 @@ b_{2,2}(x) &=& x^2
 \includegraphics[width=5cm]{images/bernstein/b1.pdf}
 \includegraphics[width=5cm]{images/bernstein/b2.pdf}
 
-We see that the zero-th and first order polynomials are the same as the linear shape functions defined in 
+We see that the zero-th and first order polynomials are the same as the linear basis functions defined in 
 Section~\ref{sec:elts1D}. However the second order polynomials (and higher) differ from the second-order
-shape functions. 
+basis functions. 
 
 Also, the Bernstein polynomials have a lot of properties, but one that is of importance to us
 is the following: $b_{m,n}(x) \geq 0 \quad  \forall x\in [0,1]$, i.e. the polynomials 
-are positive. This is however not true for shape functions for $n\geq 2$.
-Another important property shared with shape functions is that their sum over the interval is 
+are positive. This is however not true for basis functions for $n\geq 2$.
+Another important property shared with basis functions is that their sum over the interval is 
 exactly 1, i.e. $\sum_m b_{m,n}(x)=1$.
 
-In order to facilitate the comparison between the 2nd-order shape functions and Bernstein 
+In order to facilitate the comparison between the 2nd-order basis functions and Bernstein 
 polynomials, I will express the latter as a function of the reduced coordinate
 $r\in[-1,1]=2(x-1/2)$ (or $x=(r+1)/2$). We have then:
 
@@ -42,11 +42,11 @@ b_{1,2}(r) &=& \frac{1}{2}(1-r^2) \nn\\
 b_{2,2}(r) &=& \frac{1}{4}(1+r)^2
 \end{eqnarray}
 
-Both 2nd-order Bernstein polynomials and shape functions are plotted here under:
+Both 2nd-order Bernstein polynomials and basis functions are plotted here under:
 \begin{center}
 \includegraphics[width=7cm]{images/bernstein/b2_.pdf}
 \includegraphics[width=7cm]{images/bernstein/N2_.pdf}\\
-{\captionfont Left: Second-order Bernstein polynomials; right: 2nd-order shape functions.}
+{\captionfont Left: Second-order Bernstein polynomials; right: 2nd-order basis functions.}
 \end{center}
 
 Having reached this point, the burning question is why should we care?
@@ -61,7 +61,7 @@ as we usually do in the FE methodology:
 f^h(r) = \sum_{i=0}^2 f_i N_i(r) = f_0 N_0(r) = N_0(r) = \frac{1}{2}r(r-1)
 \]
 This means that although the field $f$ is always positive (or null) inside the element
-its representation with the shape functions is negative over half (!) of the element
+its representation with the basis functions is negative over half (!) of the element
 (see purple curve on the right panel above).
 If we now turn to the Bernstein polynomials:
 \[
@@ -101,7 +101,7 @@ If we now plot both approximations:
 \begin{center}
 \includegraphics[width=7cm]{images/bernstein/N2__.pdf}
 \end{center}
-We see that in this case the shape function-based approximation yields values 
+We see that in this case the basis function-based approximation yields values 
 above 1 over half of the element while the Bernstein polynomial-based 
 approximation remains between 0 and 1 as expected.
 
@@ -157,15 +157,15 @@ f^h_{Q_2} &=& r^2+r+1 \\
 f^h_{B_2} &=& \frac{1}{2} (1+r^2)+r+1 
 \end{eqnarray}
 We see on the following figure that although Bernstein polynomials cannot 
-represent $f(r)$ exactly they still do a better job than first order shape functions
+represent $f(r)$ exactly they still do a better job than first order basis functions
 ($Q_1$ projection).
 \begin{center}
 \includegraphics[width=7cm]{images/bernstein/hammer.pdf}
 \end{center}
 
 As a conclusion there is a trade-off: 2nd-order Bernstein polynomials {\it always} yield positive 
-values when the field is positive (as opposed to 2nd-order shape functions) but they cannot 
-represent exactly a 2nd-order polynomial field (while shape functions can).
+values when the field is positive (as opposed to 2nd-order basis functions) but they cannot 
+represent exactly a 2nd-order polynomial field (while basis functions can).
 
 The positivity can be really critical in geodynamical simulations: a negative density makes no sense, 
 and a negative viscosity even less!
@@ -183,7 +183,7 @@ The resulting fields on the quadrature points are shown:
 \includegraphics[width=7cm]{images/bernstein/qrho.png}
 \includegraphics[width=7cm]{images/bernstein/qetaeff.png}
 \end{center}
-The bottom row is obtained with the shape functions while the top row is obtained with the Bernstein 
+The bottom row is obtained with the basis functions while the top row is obtained with the Bernstein 
 polynomials as interpolants. The thin blue line actually indicated points with negative viscosity and 
 on the left the colour bar shows densities below the value of 1890 (lowest density in the domain).
 

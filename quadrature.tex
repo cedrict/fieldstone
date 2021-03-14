@@ -1,52 +1,110 @@
-As we will see later, using the Finite Element method to solve problems involves computing integrals which are more often than not too complex to be computed analytically/exactly. We will then need to compute them numerically.
+As we will see later, using the Finite Element method to solve problems involves 
+computing integrals which are more often than not too complex to be computed 
+analytically/exactly. We will then need to compute them numerically.
 
 [wiki] In essence, 
 the basic problem in numerical integration is to compute an approximate solution to a definite integral
-\[
-\int_a^b f(x) dx
-\]
+\begin{equation}
+I=\int_a^b f(x) dx
+\label{Idef}
+\end{equation}
 to a given degree of accuracy.
 This problem has been widely studied and we know that 
-if $f(x)$ is a smooth function, and the domain of integration is bounded, there are many methods for approximating the integral to the desired precision.
+if $f(x)$ is a smooth function, and the domain of integration is bounded, 
+there are many methods for approximating the integral to the desired precision.
 
 There are several reasons for carrying out numerical integration.
 \begin{itemize}
-\item The integrand $f(x)$ may be known only at certain points, such as obtained by sampling. Some embedded systems and other computer applications may need numerical integration for this reason.
-\item A formula for the integrand may be known, but it may be difficult or impossible to find an antiderivative that is an elementary function. An example of such an integrand is $f(x)=exp(-x^2)$, the antiderivative of which (the error function, times a constant) cannot be written in elementary form.
-\item It may be possible to find an antiderivative symbolically, but it may be easier to compute a numerical approximation than to compute the antiderivative. That may be the case if the antiderivative is given as an infinite series or product, or if its evaluation requires a special function that is not available.
+\item The integrand $f(x)$ may be known only at certain points, such as obtained by sampling. 
+Some embedded systems and other computer applications may need numerical integration for this reason.
+\item A formula for the integrand may be known, but it may be difficult or impossible to 
+find an antiderivative that is an elementary function. An example of such an integrand 
+is $f(x)=exp(-x^2)$, the antiderivative of which (the error function, times a constant) 
+cannot be written in elementary form.
+\item It may be possible to find an antiderivative symbolically, but it may be 
+easier to compute a numerical approximation than to compute the antiderivative. That may be the 
+case if the antiderivative is given as an infinite series or product, or if its evaluation 
+requires a special function that is not available.
 \end{itemize}
 
-%-----------------------------
+Let us remember that the integral of Eq.~\eqref{Idef} is in fact equal to the (signed) area 
+between the $x$-axis and the curve $f(x)$ over the interval $[a,b]$:
+
+\input{tikz_quadrature_idef}
+
+Note that in the example above $f(x)>0$ so the area of the gray domain is counted positive.
+For example, if the function $f(x)$ is a polynomial the integral can easily be computed 
+analytically. In the case of a $0^{th}$ order polynomial, we have $f(x)=C$ where $C$ is a 
+constant. We then have 
+\begin{equation}
+I=\int_a^b f(x) dx = \int_a^b C \; dx  = C \int_a^b dx = C(b-a)
+\end{equation}
+
+\input{tikz_quadrature_idef2}
+
+We see that the area of the gray domain in simply the product of its length $b-a$ by its height $c$
+and we indeed recover $I=C(b-a)$.
+
+
+%-------------------------------------------------------------------------
 \subsubsection{in 1D - Midpoint and Trepezoidal rules  \label{sec:quad1D}}
 
-The simplest method of this type is to let the interpolating function be a constant function (a polynomial of degree zero) that passes through the point $((a+b)/2, f((a+b)/2))$.
-
+The simplest method of this type is to let the interpolating function be 
+a constant function (a polynomial of degree zero) that passes through the point $((a+b)/2, f((a+b)/2))$.
 This is called the midpoint rule \index{general}{Midpoint Rule} or rectangle rule. 
 \index{general}{Rectangle Rule}
+We then have 
 \[
-\int_a^b f(x)dx \simeq (b-a) f(\frac{a+b}{2})
+I=\int_a^b f(x)dx \simeq (b-a) f\left(\frac{a+b}{2}\right)
 \]
+which is the area of this gray domain:
 
-\improvement[inline]{insert here figure}
+\input{tikz_quadrature_rectangle}
 
-The interpolating function may be a straight line (an affine function, i.e. a polynomial of degree 1)
+We can do a little bit better at virtually no cost:
+we choose the interpolating function to be a straight line 
+(an affine function, i.e. a polynomial of degree 1)
 passing through the points $(a, f(a))$ and $(b, f(b))$.
-
 This is called the trapezoidal rule. \index{general}{Trapezoidal Rule} 
+Then 
 \[
-\int_a^b f(x)dx \simeq (b-a) \frac{f(a)+f(b)}{2}
+I=\int_a^b f(x)dx \simeq (b-a) \frac{f(a)+f(b)}{2}
 \]
 
-\improvement[inline]{insert here figure}
+\input{tikz_quadrature_trapeze}
 
-For either one of these rules, we can make a more accurate approximation by breaking up the interval [a, b] into some number n of subintervals, computing an approximation for each subinterval, then adding up all the results. This is called a composite rule, extended rule, or iterated rule. For example, the composite trapezoidal rule can be stated as
-
+We see that if the function $f$ is monotonous on the interval $[a,b]$ then 
+the trapezoidal approach is likely to return a value close to the real value. 
+However if the function $f$ oscillates a lot in the interval, approximating it 
+with a single rectangle or trapeze is not a sound assumption.
+We can then make use of the additive property of the integral: let $c$ 
+be the coordinate of the middle of the $[a,b]$ interval, i.e. $c=(a+b)/2$. 
+Then we have 
 \[
+I=\int_a^b f(x)dx = \int_a^c f(x)dx + \int_c^b f(x)dx
+\]
+We can then apply the midpoint rule or the trapezoidal rule over both segments 
+$[a,c]$ and $[c,b]$:
+
+\input{tikz_quadrature_both}
+
+In this case we would have 
+\begin{eqnarray}
+I_{midpoint} &=& (c-a)f(\frac{a+c}{2}) + (b-c)f(\frac{c+b}{2})  \nn\\
+I_{trapeze}  &=& (c-a)\frac{f(a)+f(c)}{2} + (b-c) \frac{f(c)+f(b)}{2} \nn
+\end{eqnarray}
+
+Of course we can repeat the process and for either one of these rules, 
+we can make a more accurate approximation by 
+breaking up the interval $[a,b]$ into some number $n$ of subintervals, computing 
+an approximation for each subinterval, then adding up all the results. 
+For example, 
+the composite trapezoidal rule can be stated as
+\begin{equation}
 \int_a^b f(x)dx \simeq \frac{b-a}{n} \left( \frac{f(a)}{2}  
-+\sum_{k=1}^{n-1} f(a+k\frac{b-a}{n})
++\sum_{k=1}^{n-1} f\left(a+k\frac{b-a}{n}\right)
    +\frac{f(b)}{2} \right)
-\]
-
+\end{equation}
 where the subintervals have the form $[kh,(k+1)h]$, with $h=(b-a)/n$ and $k=0,1,2,\dots,n-1$.
 
 
@@ -68,7 +126,7 @@ yields the Newton-Cotes formulas, of which the rectangle rule and the trapezoida
 
 If we allow the intervals between interpolation points to vary, we find another group of quadrature formulas, such as 
 the Gauss(ian) quadrature formulas. \index{general}{Gauss-Legendre Quadrature}
-A Gaussian quadrature rule is typically more accurate than a Newton–Cotes rule, 
+A Gaussian quadrature rule is typically more accurate than a Newton-Cotes rule, 
 which requires the same number of function evaluations, if the integrand is smooth 
 (i.e., if it is sufficiently differentiable).
 
@@ -78,20 +136,22 @@ to yield an exact result for polynomials of degree $2n-1$ or less by a suitable 
 and weights $w_i$ for $i=1,\dots,n$.
 
 The domain of integration for such a rule is conventionally taken as $[-1,1]$, so the rule is stated as
+\begin{mdframed}[backgroundcolor=blue!5]
 \[
 \int_{-1}^{+1} f(x) dx = \sum_{i_q=1}^n w_{i_q} f(x_{i_q})
 \]
+\end{mdframed}
 In this formula the $x_{i_q}$ coordinate is 
-the $i$-th root of the Legendre polynomial $P_n(x)$. \index{general}{Legendre Polynomial}
+the $i$-th root of the Legendre polynomial $P_n(x)$\todo{what are these ?}. \index{general}{Legendre Polynomial}
 
 It is important to note that a Gaussian quadrature will only produce good results if the function $f(x)$
 is well approximated by a polynomial function within the range $[-1,1]$.
 As a consequence, the method is not, for example, suitable for functions with singularities.
 
-\begin{center}
-\includegraphics[width=5.cm]{images/quadrature/gq2}\\
-Gauss-Legendre points and their weights.
-\end{center}
+%\begin{center}
+%\includegraphics[width=5.cm]{images/quadrature/gq2}\\
+%Gauss-Legendre points and their weights.
+%\end{center}
 
 \begin{center}
 \begin{tabular}{lllrr}
@@ -142,36 +202,36 @@ n & $x_{iq}$ & $w_{iq}$ & $x_{iq}$ (approx) & $w_{iq}$ (approx) \\
 {\captionfont Abscissae and weights for Gauss quadratures up to $n=10$. See \cite[p89]{li06}}
 \end{center}
 
-
-
-As shown in the above table, it can be shown that the weight values must fulfill the following condition:
+As shown in the above table, it can be shown that the weight values must fulfil the following condition:
 \begin{equation}
 \sum_{i_q} w_{i_q}=2 \label{gq23}
 \end{equation}
-and it is worth noting that all quadrature point coordinates are symmetrical around the origin.
+This simply comes from the requirement that when $f(x)=1$ then $\int_{-1}^{+1}f(x)dx=2=\sum w_{iq}$.
+It is also worth noting that all quadrature point coordinates are symmetrical around the origin.
 
 Since most quadrature formula are only valid on a specific interval, we now must address the problem 
 of their use outside of such intervals. The solution turns out to be quite simple: one 
 must carry out a change of variables from the interval $[a,b]$ to $[-1,1]$.
-
 We then consider the reduced coordinate $r\in[-1,1]$ such that 
-\[
+\begin{equation}
 r=\frac{2}{b-a}(x-a)-1 
-\]
+\end{equation}
 This relationship can be reversed such that when $r$ is known, its equivalent coordinate 
 $x\in[a,b]$ can be computed:
-\[
+\begin{equation}
 x=\frac{b-a}{2}(1+r)+a
-\]
+\end{equation}
 From this it follows that
-\[
+\begin{equation}
 dx=\frac{b-a}{2}dr
-\]
+\end{equation}
 and then 
-\[
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
 \int_a^b f(x) dx  = \frac{b-a}{2} \int_{-1}^{+1} f(r) dr \simeq 
 \frac{b-a}{2} \sum_{i_q=1}^n w_{i_q} f(r_{i_q})
-\]
+\end{equation}
+\end{mdframed}
 
 %--------------------
 \subsubsection{A probably naive way of finding the quadrature points coordinates and weights}
@@ -210,13 +270,13 @@ set $f(x)=ax$ where $a\neq 0$. We have $I=0$ so
  \label{eq:glqtwo}
 \end{equation}
 In order to integrate exactly first-order polynomials an $n_q$-point based quadrature must 
-fulfill Eqs.\eqref{eq:glqone} and \eqref{eq:glqtwo}.
+fulfil Eqs.\eqref{eq:glqone} and \eqref{eq:glqtwo}.
 \begin{itemize}
 \item
 If $n_q=1$, then we automatically have $w_1=2$ and $w_1 x_1 =0 $, i.e. $x_1=0$.
 \item
 If $n_q=2$, then $w_1+w_2=2$ and $a(w_1x_1+w_2x_2) = 0$. There are many solutions $w_1,w_2,x_1,x_2$ which 
-can fulfill these two equations, so this is not enough to determine a unique set of coordinates and weights.
+can fulfil these two equations, so this is not enough to determine a unique set of coordinates and weights.
 \end{itemize}
 
 Let us now turn to second-order polynomials: as before, I choose $f(x)=a x^2$. We have 
@@ -258,7 +318,7 @@ A three-point quadrature will then be needed for those. Because of the symmetry,
 point will be at $x=0$.
 
 \begin{remark} 
-This approach unfortunately does not shed any light on why the method is calle Gauss-Legendre quadrature
+This approach unfortunately does not shed any light on why the method is called Gauss-Legendre quadrature
 nor why the quadrature points are the zeros of the Legendre polynomials...
 \end{remark}
 
@@ -329,21 +389,29 @@ I_{gq}=\int_{-1}^{+1} f(x) dx
 %-----------------------------
 \subsubsection{in 2D/3D - theory}
 
-
 Let us now turn to a two-dimensional integral of the form
 \[
 I=\int_{-1}^{+1} \int_{-1}^{+1} f(x,y) dx dy
 \]
+where $f(x,y)$ is again assumed to be continuous over the domain. 
 The equivalent Gaussian quadrature writes:
 \[
 I_{gq}
 \simeq \sum_{i_q=1}^{n_q}\sum_{j_q}^{n_q} f(x_{i_q},y_{j_q}) w_{i_q} w_{j_q}
 \]
+Finally we have 
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+I=\int_{a}^{+b}\int_{c}^{+d} f(x,y) dx dy
+\simeq \frac{b-a}{2} \frac{d-c}{2} 
+\sum_{i_q=1}^{n_q}\sum_{j_q}^{n_q} f(x_{i_q},y_{j_q}) w_{i_q} w_{j_q}
+\end{equation}
+\end{mdframed}
 
 %----------------------------------------
-\subsubsection{quadrature on triangles}
+\subsubsection{Quadrature on triangles}
 
-Quadrature rules for triangles can be found in Dunavant, 1985 \cite{duna85}.
+Quadrature rules for triangles can be found in Dunavant (1985) \cite{duna85}.
 The following ones are identical to those in the {\sl ip\_triangle.m} 
 file of the MILAMIN code \cite{daks08}. See also Lether (1976) \cite{leth76}
 on the topic of computation of double integrals over a triangle.
@@ -417,11 +485,32 @@ w_2 = \left(620-\sqrt{213125-53320\sqrt{10}}\right)/3720
 \]
 
 
-      
+%----------------------------------------
+\subsubsection{A mathematical recreation: computing the volume of a tetrahedron}
 
+Let us find the volume of tetrahedron bounded by the planes passing through the points 
+A(1,0,0), B(0,1,0), C(0,0,1) and the coordinate planes Oxy, Oxz and Oyz.
+
+\input{tikz_tetrahedron}
+
+The equation of the plane is $x+y+z=1$, or $z=1-x-y$.Hence, the limits of integration over 
+the variable $z$ range in the interval from
+$z=0$ to $z=1-x-y$. Now we can calculate the volume of the tetrahedron:
+\begin{eqnarray}
+V 
+&=& \iiint dx \; dy \; dz \nn\\
+&=& \int_0^1 dx \int_0^{1-x} dy \int_{0}^{1-x-y} dz \nn\\
+&=& \int_0^1 dx \int_0^{1-x} dy (1-x-y) \nn\\
+&=& \int_0^1 dx \left[y-xy-\frac12 y^2 \right]_0^{1-x} \nn\\
+&=& \int_0^1 dx \left((1-x)-x(1-x)-\frac12 (1-x)^2 \right) \nn\\
+&=& \int_0^1 dx \left(\frac12 -x + \frac12 x^2   \right) \nn\\
+&=& \left[ \frac12 x  -\frac12 x^2 + \frac16 x^3   \right]_0^1 \nn\\
+&=& \frac16
+\end{eqnarray}
+We will use this result in the following section.
 
 %----------------------------------------
-\subsubsection{quadrature on tetrahedra}
+\subsubsection{Quadrature on tetrahedra}
 
 \begin{remark}
 In what follows the coefficients in the tables are not the reduced coordinates
@@ -430,11 +519,13 @@ of the quadratue points but the coefficients corresponding to the 4 nodes.
 
 Quadrature rules on tetrahedra take the form:
 \[
-\int\int\int_{el} f(x,y,z) dxdydz = V_{el} \sum_{iq=1}^{nqel} w_{iq} f(\xi^{iq}_1,\xi^{iq}_2,\xi^{iq}_3,\xi^{iq}_4) 
+\int\int\int_{el} f(x,y,z) dxdydz = V_{el} \sum_{iq=1}^{nqel} 
+w_{iq} f(\xi^{iq}_1,\xi^{iq}_2,\xi^{iq}_3,\xi^{iq}_4) 
 \]
 or, that is to say:
 \[
-\int\int\int_{el} f(x,y,z) dxdydz = \sum_{iq=1}^{nqel} (w_{iq}V_{el}) f(\xi^{iq}_1,\xi^{iq}_2,\xi^{iq}_3,\xi^{iq}_4) 
+\int\int\int_{el} f(x,y,z) dxdydz = \sum_{iq=1}^{nqel} 
+(w_{iq}V_{el}) f(\xi^{iq}_1,\xi^{iq}_2,\xi^{iq}_3,\xi^{iq}_4) 
 \]
 with in our case $V_{el}=1/6$.
 
@@ -448,14 +539,17 @@ x_{iq}=\sum_{i=1}^4 \xi_i^{iq} x_i = \frac{1}{4} (x_1+x_2+x_3+x_4)
 \]
 Same for $y$ and $z$ coordinates. 
 
-A four-point quadrature rule is characterised by $w_{iq}=V_el*0.25=1/24\simeq 04166666666666667$ and 
+A four-point quadrature rule is characterised by $w_{iq}=V_{el}*0.25=1/24\simeq 04166666666666667$ and 
 
 \begin{tabular}{lcccc}
+\hline
  & $\xi_1$ & $\xi_2$ & $\xi_3$ & $\xi_4$ \\
+\hline\hline
 iq=1 & 0.585410196624969 & 0.138196601125011 & 0.138196601125011 & 0.138196601125011 \\
 iq=2 & 0.138196601125011 & 0.585410196624969 & 0.138196601125011 & 0.138196601125011 \\
 iq=3 & 0.138196601125011 & 0.138196601125011 & 0.585410196624969 & 0.138196601125011 \\
 iq=4 & 0.138196601125011 & 0.138196601125011 & 0.138196601125011 & 0.585410196624969 \\
+\hline
 \end{tabular}
 
 We then have:
@@ -479,15 +573,17 @@ t_{iq}=\sum_{i=1}^4 \xi_i^{iq} z_i
 \]
 Finally:
 
-\[
-\begin{array}{ccccc}
-     & r_q & s_q & t_q  & w_q \\
+\begin{tabular}{ccccc}
+\hline
+     & $r_q$ & $s_q$ & $t_q$  & $w_q$ \\
+\hline
+\hline
 iq=1 & 0.138196601125011 & 0.138196601125011 & 0.138196601125011 & 0.04166666666666667\\
 iq=2 & 0.585410196624969 & 0.138196601125011 & 0.138196601125011 & 0.04166666666666667\\
 iq=3 & 0.138196601125011 & 0.585410196624969 & 0.138196601125011 & 0.04166666666666667\\
 iq=4 & 0.138196601125011 & 0.138196601125011 & 0.585410196624969 & 0.04166666666666667\\
-\end{array}
-\]
+\hline
+\end{tabular}
 
 
 %------------------------------------------
@@ -539,7 +635,7 @@ as follow:
 \[
 f(r,s) = \sum_{i=1}^{m} N_{i}(r,s) f_i
 \]
-where $m$ is the number of nodes and $N_i$ are the shape functions. 
+where $m$ is the number of nodes and $N_i$ are the basis functions. 
 The value of $f$ at a quadrature point is then simply
 \[
 f(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) f_i

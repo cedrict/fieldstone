@@ -1,11 +1,14 @@
+\begin{flushright} {\tiny {\color{gray} dgfem2D.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Let us start from the 2D steady state heat diffusion equation:
 \begin{equation}
-    \vec{\nabla} \cdot k \vec{\nabla} T + H=0
+\vec{\nabla} \cdot k \vec{\nabla} T + H=0
 \end{equation}
 Just as in the 1D case this equation can be split in two separate first order differential equations:
 \begin{equation}
-    \underbrace{-\vec{\nabla}\cdot \vec{q} + H=0}_{\text{ODE 1}} \quad ; \quad \underbrace{\vec{q}=-k\vec{\nabla } T}_{\text{ODE 2}}
+\underbrace{-\vec{\nabla}\cdot \vec{q} + H=0}_{\text{ODE 1}} \qquad 
+; \qquad \underbrace{\vec{q}=-k\vec{\nabla } T}_{\text{ODE 2}}
 \end{equation}
 Let $N^\uptheta_i$ be the temperature basis functions so that the temperature inside an element is given by
 \begin{equation}
@@ -20,27 +23,22 @@ Similarly we let the basis function for the heat flux be such that
 \qhy(\vec{r}) = \sum_{i=1}^m N_i^q (\vec r) \qiy = \vec{N^q}\cdot \vec{\qy}
 \end{equation}
 where $\vec{\qx}$, $\vec{\qy}$ and $\vec{N}^q$ 
-are vectors of length $m$ too. Implicitly if $m$ is the same for temperature and heat flux, then $N^\uptheta = N^q$.
-
+are vectors of length $m$ too. Implicitly if $m$ is the same for temperature and heat 
+flux, then $N^\uptheta = N^q$.
 Let us establish the weak forms of the 1st order ODEs. 
-
 
 \paragraph{ODE 1} This results in:
 \begin{eqnarray}
 \int_\Omega {N^\uptheta_i} \vec{\nabla} \cdot \vec{q} \; dV = \int_\Omega {N^\uptheta_i} H \; dV
 \label{eq:SSD2D}
 \end{eqnarray}
-Using the product rule which states:
-\[
-\vec{\nabla} \cdot ({N^\uptheta_i}\vec{q})={N^\uptheta_i}\vec{\nabla} \cdot \vec{q} 
-+ \vec{\nabla}{N^\uptheta_i} \cdot \vec{q} 
-\qquad
-\Rightarrow
-\qquad
+Using the product rule $\vec{\nabla} \cdot ({N^\uptheta_i}\vec{q})={N^\uptheta_i}\vec{\nabla} \cdot \vec{q} 
++ \vec{\nabla}{N^\uptheta_i} \cdot \vec{q}$ then we can write
+\[ 
 {N^\uptheta_i}\vec{\nabla} \cdot \vec{q}=\vec{\nabla} \cdot ({N^\uptheta_i}\vec{q})- 
 \vec{\nabla}{N^\uptheta_i} \cdot \vec{q}
 \]
-which we insert in Eq.~(\ref{eq:SSD2D}) results in 
+which we insert in Eq.~\eqref{eq:SSD2D} results in 
 \begin{equation}
 \int_{\Omega} \vec{\nabla} \cdot ({N^\uptheta_i} \vec{q}) \; dV - 
 \int_{\Omega} \vec{\nabla} {N^\uptheta_i} \cdot \vec{q} \; dV = \int_{\Omega} {N^\uptheta_i} H \; dV
@@ -48,7 +46,7 @@ which we insert in Eq.~(\ref{eq:SSD2D}) results in
 \end{equation}
 Using the divergence theorem 
 $\int_\Omega \vec{\nabla} \cdot \vec{F} \; d\Omega = \int_{d\Omega}(\vec{F} \cdot \vec{n}) \; dS$ 
- applied to Eq.~(\ref{eq:SSD2D1}) leads to
+ applied to Eq.~\eqref{eq:SSD2D1} leads to
 \begin{equation}
 \int_{d\Omega}{N^\uptheta_i} \vec{\hat{q}} \cdot \vec{n} \; dS  - 
 \int_{\Omega} \vec{\nabla} {N^\uptheta_i} \cdot \vec{q} \; dV = 
@@ -56,7 +54,10 @@ $\int_\Omega \vec{\nabla} \cdot \vec{F} \; d\Omega = \int_{d\Omega}(\vec{F} \cdo
 \end{equation}
 
 Here $\vec{n}$ is the outward vector everywhere on the boundary. 
-The exact solution $\vec{q}=(\qx,\qy)$ can be approximated with $\vec{q}_h$ in a  finite element space, same for the approximation of the flux at the boundary $\hat{q}=\hat{q_h}$ which takes a special form in the context of the DG methods (as reflected by the presence of the hat).
+The exact solution $\vec{q}=(\qx,\qy)$ can be approximated with $\vec{q}_h$ in a  
+finite element space, same for the approximation of the flux at the boundary $\hat{q}=\hat{q_h}$ 
+which takes a special form in the context of the DG methods (as reflected by the presence of the hat).
+We decompose the resulting equation in 3 terms $A$, $B$ and $C$:
 \begin{equation}
 \underbrace{ \int_{d\Omega}{N^\uptheta_i} \vec{\hat{q_h}} \cdot \vec{n} \; dS}_{A } - 
 \underbrace{ \int_{\Omega} \vec{\nabla} {N^\uptheta_i} \cdot \vec{q_h} \; dV}_{B} = 
@@ -145,10 +146,10 @@ coefficients are constant matrices, which is quite misleading since some are act
 \end{itemize}
 
 
-Filling Eqs.~(\ref{flux2Da},\ref{flux2Db}) into $A$ of Eq.~(\ref{eq:q2dss}) leads to
+Filling Eqs.~\eqref{flux2Da} and \eqref{flux2Db} into $A$ of 
+Eq.~\eqref{eq:q2dss} leads to
 %(note that I have introduced the upperscript + on the normal components 
 %because the integration is on the boundary of the element - does that make sense?)
-
 
 \begin{eqnarray}
 A&=& \int_{\partial\Omega} N^\uptheta_i \vec{\hat{q_h}} \cdot \vec{n} \; dS \nn\\ 
@@ -240,15 +241,15 @@ $C_{11} \rightarrow {\cal E}$}
 
 
 %---------------------------------------------------
-\paragraph{ODE 2} The weak form of Ode \#2 writes:
-
+\paragraph{ODE 2} Its weak form writes:
 \[
 \int_\Omega N_i^q (\vec{q} + k\vec{\nabla } T ) dV = 0
 \]
-or, (once again we drop the superscript on the shape functions and the $h$):
+or, (once again we drop the superscript on the basis functions and the $h$): 
 \begin{eqnarray}
 0 &=& \int_\Omega N_i \vec{q} \;  dV + \int_\Omega N_i k\vec{\nabla } T \; dV \nn\\
- &=& \int_\Omega N_i \vec{q} \;  dV + \int_\Omega \vec\nabla (N_i k  T) \; dV - \int_\Omega \vec\nabla (k N_i) T \; dV
+&=& \int_\Omega N_i \vec{q} \;  dV + \int_\Omega \vec\nabla (N_i k  T) \; dV 
+- \int_\Omega \vec\nabla (k N_i) T \; dV
 \end{eqnarray}
 We then use $\int_\Omega \vec\nabla f \; dV = \int_{\partial\Omega} f \vec{dS}$
 and as before the temperature on the edge integral should be $\hat{T}$:
@@ -285,7 +286,7 @@ which (aside from a minus sign coming from a different definition of the heat fl
 \includegraphics[width=8cm]{images/dgfem/li_02} (with $\kappa \rightarrow k$, ${\bm w}\rightarrow \vec{N}$)
 \end{center}
 
-
+\noindent 
 The temperature flux $\hat{T}$ is chosen to be (table 4.1 in book):
 \begin{eqnarray}
 \hat{T}_h 
@@ -649,100 +650,7 @@ If $k$ is constant per element, then:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\par\noindent\rule{\textwidth}{0.4pt}
-DISCARD THIS PAGE
-
-We start from the steady state (no advection) energy equation:
-\[
-\vec\nabla\cdot (k \vec\nabla T) + Q = 0
-\]
-where $Q$ is a source term.
-As we did in 1D we tranform this equation by reintroducing the heat flux
-\footnote{\url{https://en.wikipedia.org/wiki/Thermal_conduction}} $\vec{q}$ 
-\begin{eqnarray}
-\vec q &=& - k \vec\nabla T \\
-\vec\nabla \cdot \vec q &=& Q
-\end{eqnarray}
-We then multiply these two equations with the test functions $\vec{N}_q$ (this one 
-is vector valued) and 
-$N_T$ respectively and integrate over the element $e$ under consideration:
-\begin{eqnarray}
-\int_{\Omega_e} \vec{N}_q \cdot  \vec q  \; dV &=& - \int_{\Omega_e} \vec{N}_q \cdot k \vec\nabla T\; dV \\
-\int_{\Omega_e} N_T \vec\nabla \cdot \vec q \;  dV &=& \int_{\Omega_e} N_T Q \; dV
-\end{eqnarray}
-We then use integration by parts to make fluxes appear (and assume $k$ is constant within 
-the element). We have
-\begin{eqnarray}
-\int_{\Omega_e} \vec{N}_q \cdot k \vec\nabla T \; dV 
-&=& \int_{\Gamma_e} kT \;  \vec{N}_q \cdot \vec{n} \; dS 
-- \int _{\Omega_e}  kT \;  \vec\nabla\cdot \vec{N}_q  \;  dV \\
-\int_{\Omega_e} N_T \vec\nabla \cdot \vec q \; dV 
-&=& \int_{\Gamma_e} {N}_T \vec{q} \cdot \vec{n}  \; dS
-- \int_{\Omega_e} \vec\nabla N_T \cdot \vec q \; dV 
-\end{eqnarray}
-We then finally obtain the weak forms that are to be discretised:
-\begin{eqnarray}
-\int_{\Omega_e} \vec{N}_q \cdot  \vec q \; dV &=& 
--\int_{\Gamma_e} kT \;  \vec{N}_q \cdot \vec{n} \; dS 
-+ \int _{\Omega_e}  kT \;  \vec\nabla\cdot \vec{N}_q  \;  dV \\
-\int_{\Gamma_e}    {N}_T  \vec{q}\cdot \vec{n}  \; dS
-- \int_{\Omega_e} \vec\nabla N_T \cdot \vec q \; dV 
-&=& \int_{\Omega_e} N_T Q \; dV
-\end{eqnarray}
-
-We seek to approximate the exact solution $(\vec{q},T)$ with functions $(\vec{q}_h,T_h)$ inside the element so we 
-now have 
-\begin{eqnarray}
-\int_{\Omega_e} \vec{N}_q \cdot  \vec q_h \; dV &=& 
--\int_{\Gamma_e} k \hat{T}_h \;  \vec{N}_q \cdot \vec{n} \; dS 
-+ \int _{\Omega_e}  k T_h \;  \vec\nabla\cdot \vec{N}_q  \;  dV \\
-\int_{\Gamma_e}    {N}_T \hat{\vec{q}}_h \cdot \vec{n}  \; dS
-- \int_{\Omega_e} \vec\nabla N_T \cdot \vec{q}_h \; dV 
-&=& \int_{\Omega_e} N_T Q \; dV
-\end{eqnarray}
-where the numerical fluxes are the approximations to $(\vec{q},T)$ on the boundary of element $e$.
-As before we must now specify these fluxes inside the domain and also on the boundaries. These
-can obviously not be chosen at will since they must at least render the discontinuous formulation stable.
-
-
-
-The following table is taken from Li \cite{li06} and lists the numerical fluxes 
-that are considered consistent and stable for the solution of the steady state heat conduction 
-problems \cite{arbc02,cacp00}:
-\begin{center}
-\begin{tabular}{lll}
-\hline
-Method & $\hat{\vec{q}}_h$ & $\hat{T}_h$ \\
-\hline
-LDG \cite{cosh98} & $\{ \vec{q}_h \}$  & \\
-DG  \cite{cacp00} & \\
-Brezzi et al (2000) \cite{brmm00} &\\
-IP \cite{dodu76} & \\
-Bassi-Rebay \cite{barm97} &\\
-NIPG \cite{riwg99} & \\
-\hline
-\end{tabular}
-\end{center}
-where the $C$ coefficients are matrices ?!
-
-
-
 \index{general}{Average Operator}
 \index{general}{Jump Operator}
-
-
 
 

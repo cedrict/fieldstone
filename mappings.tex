@@ -59,7 +59,7 @@ can be mapped to the physical quadrilateral as follows:
 x&=& N_1(r,s) x_1 + N_2(r,s) x_2 + N_3(r,s) x_3 + N_4(r,s) x_4 \\
 y&=& N_1(r,s) y_1 + N_2(r,s) y_2 + N_3(r,s) y_3 + N_4(r,s) y_4 
 \end{eqnarray} 
-where the shape functions $N_i(r,s)$ are defined in section \ref{sec:elts1D}.
+where the basis functions $N_i(r,s)$ are defined in section \ref{sec:elts1D}.
 
 In the following example the program randomly generates 10000 points inside the reference 
 element and computes their mapping into the $(x,y)$ space. 
@@ -105,7 +105,7 @@ the inverse mapping is trivial:
 r&=&\frac{x-x_1}{x_2-x_1} \\
 s&=&\frac{y-y_1}{y_4-y_1} 
 \end{eqnarray}
-Also in this case the shape functions can easily be written as functions of $(x,y)$:
+Also in this case the basis functions can easily be written as functions of $(x,y)$:
 \begin{eqnarray}
 N_1(x,y) &=& \left( \frac{x_3 -x }{h_x}  \right) \left( \frac{y_3 -y }{h_y}  \right) \nn\\
 N_2(x,y) &=& \left( \frac{x - x_1}{h_x}  \right) \left( \frac{y_3 -y }{h_y}  \right) \nn\\
@@ -113,12 +113,12 @@ N_3(x,y) &=& \left( \frac{x - x_1}{h_x}  \right) \left( \frac{y - y_1}{h_y}  \ri
 N_4(x,y) &=& \left( \frac{x_3 -x }{h_x}  \right) \left( \frac{y - y_1}{h_y}  \right) \nn 
 \end{eqnarray}
 
-On the one hand, any variable defined on the element can be approximated using the shape functions:
+On the one hand, any variable defined on the element can be approximated using the basis functions:
 \begin{equation}
 f_h(r,s)=\sum_i N_i(r,s) f_i.
 \end{equation}
 If we treat the coordinate variables $x$ and $y$ themselves as functions, 
-then the shape functions can be used to construct the mapping:
+then the basis functions can be used to construct the mapping:
 \begin{equation}
 x(r,s)=\sum_i N_i(r,s) x_i 
 \qquad

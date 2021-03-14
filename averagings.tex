@@ -27,9 +27,9 @@ def mu(x,y):
     return val
 \end{verbatim}
 This is very simple, but it has been shown to potentially be problematic. In essence, it can introduce very large contrasts inside a single element and perturb the quadrature. Please read section 3.3 of \cite{hedg17} and/or
-have a look at the section titled "Averaging material properties" in the ASPECT manual.
+have a look at the section titled "Averaging material properties" in the \aspect{} manual.
 
-\item another similar approach consists in assigning a density and viscosity value to the nodes of the FE mesh first, and then using these nodal values to assign values to the quadrature points. Very often ,and quite logically, the shape functions are used to this effect. Indeed we have seen before that for any point $(r,s,t)$ inside an element we have
+\item another similar approach consists in assigning a density and viscosity value to the nodes of the FE mesh first, and then using these nodal values to assign values to the quadrature points. Very often ,and quite logically, the basis functions are used to this effect. Indeed we have seen before that for any point $(r,s,t)$ inside an element we have
 \[
 f_h(r,s,t) = \sum_{i}^m f_i N_i(r,s,t)
 \]  

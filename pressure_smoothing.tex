@@ -305,7 +305,7 @@ J
 &+& \iint_{\Omega_3} (N_4(x,y) q_4 + N_5(x,y)q_5 + N_8(x,y)q_8 + N_7(x,y)q_7 -p_3)^2 dV \nn\\
 &+& \iint_{\Omega_4} (N_5(x,y) q_5 + N_6(x,y)q_6 + N_9(x,y)q_9 + N_8(x,y)q_8 -p_4)^2 dV 
 \end{eqnarray}
-where the $N_i$ functions are the shape functions (unusually expressed in $x,y$ coordinates).
+where the $N_i$ functions are the basis functions (unusually expressed in $x,y$ coordinates).
 The least square procedure looks for the set of $q_i$ such that 
 \[
 \frac{\partial J}{\partial q_i} =0 \qquad \forall i=1,...9
@@ -419,8 +419,8 @@ u(x,y)  = \sum_{i=1}^4 N_i(x,y) u_i
 \qquad 
 v(x,y)  = \sum_{i=1}^4 N_i(x,y) v_i
 \]
-where the $N_i$ are the $Q_1$ shape functions and $q_i$ are the sought after nodal values. 
-We multiply the equation above by a $Q_1$ shape function $N_i$ and integrate over the whole domain:
+where the $N_i$ are the $Q_1$ basis functions and $q_i$ are the sought after nodal values. 
+We multiply the equation above by a $Q_1$ basis function $N_i$ and integrate over the whole domain:
 \[
 \iint_\Omega N_i(x,y) q(x,y) \; dxdy = -\lambda \iint_\Omega N_i \vec\nabla\cdot \vec\upnu  \; dx dy
 \]

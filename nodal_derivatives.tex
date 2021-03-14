@@ -19,7 +19,7 @@ For any point inside an element, this problem is trivial and we have
 \vec g^h(x,y) = \sum_{k=1}^m \vec\nabla N_k (x,y) f_k \label{eq:derr1}
 \end{equation}
 This method works adequately everywhere inside the element, but 
-since the shape functions derivatives
+since the basis functions derivatives
 are not uniquely defined on the nodes 
 this problem requires careful attention
 to arrive at the best result.
@@ -61,7 +61,7 @@ ASPECT.
 
 
 %________________________________________________________
-\subsubsection{Consistent approach using shape functions ("method 3")}
+\subsubsection{Consistent approach using basis functions ("method 3")}
 
 What follows is formulated in 2D Cartesian coordinates for simplicity. 
 Let us start from the function $g$ which is the gradient of the function $f$
@@ -69,7 +69,7 @@ in the $x$-direction:
 \[
 g(x,y) = \frac{\partial f}{\partial x}(x,y)
 \]
-If we left-multiply this equation by a shape function $N_i(x,y)$ 
+If we left-multiply this equation by a basis function $N_i(x,y)$ 
 and integrate over an element, we arrive at 
 \begin{equation}
 \int_{\Omega_e} N_i(x,y)\; g(x,y)\; dV =
@@ -81,7 +81,7 @@ The function $g$ is represented inside an element by
 g^h(x,y) = \sum_j N_j(x,y) g_j = \vec{N} \cdot \vec{g}
 \]
 where $\vec{g}=(g_1,g_2,\dots g_{m_v})$ is the vector of nodal values for the element
-and $\vec{N}$ is the vector of shape functions.
+and $\vec{N}$ is the vector of basis functions.
 Likewise we have:
 \[
 \left. \frac{\partial f}{\partial x}(x,y) \right|^h = \frac{\partial \vec{N}}{\partial x}\cdot \vec{f}

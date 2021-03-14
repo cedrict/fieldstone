@@ -1,3 +1,6 @@
+\begin{flushright} {\tiny {\color{gray} dpcriterion.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 The von Mises yield criterion is not suitable for modelling the yielding of frictional material 
 as it does not include the effect of mean stress as observed in experiments. To overcome this 
 limitation, Drucker and Prager \cite{drpr52} proposed a revised function for frictional materials.
@@ -34,12 +37,12 @@ and finally
 -\frac{k\cos\theta}{1 + \alpha \sqrt{3}\sin\theta}
 \]
 \begin{remark}
-This is the same equation as Eq. 19 of Wojciechowski \cite{wojc18} but with $\theta \rightarrow -\theta$. 
+This is the same equation as Eq.~19 of Wojciechowski \cite{wojc18} but with $\theta \rightarrow -\theta$. 
 \end{remark}
 
 \vspace{.5cm}
 
-The Mohr-Coulomb yield criterion writes  (see Eq.~(\ref{eq:mccrit}))
+The Mohr-Coulomb yield criterion writes  (see Eq.~\eqref{eq:mccrit})
 \[
 \tau_m = -\sigma_m \sin\phi + c \cos\phi
 \]
@@ -49,7 +52,7 @@ and Mohr-Coulomb criteria leads to:
 -\frac{3 \alpha \cos\theta}{1 + \alpha \sqrt{3}\sin\theta} &=& -\sin\phi \label{eq:qq1}\\
 -\frac{k\cos\theta}{1 + \alpha \sqrt{3}\sin\theta} &=& c \cos\phi \label{eq:qq2}
 \end{eqnarray}
-Eq.~(\ref{eq:qq1}) yields
+Eq.~\eqref{eq:qq1} yields
 \[
 3 \alpha \cos\theta = \sin\phi (1 + \alpha \sqrt{3}\sin\theta) 
 \]
@@ -62,7 +65,7 @@ and finally
 \alpha(\phi) =  \frac{\sin\phi}{ 3 \cos\theta - \sqrt{3}\sin\theta \sin\phi}
 }
 \]
-Inserting this into Eq.~(\ref{eq:qq2}):
+Inserting this into Eq.~\eqref{eq:qq2}:
 \begin{eqnarray}
 - k \cos\theta 
 &=& c \cos \phi \left(1 +\alpha \sqrt{3} \sin\theta \right)  \nn\\
@@ -103,9 +106,10 @@ F^{\text{\tiny DP}}
 - \frac{p \sin\phi  + c \cos \phi }{  \cos\theta - \frac{1}{\sqrt{3}}\sin\theta \sin\phi} 
 \end{eqnarray}
 which, when multiplied by $\cos\theta - \frac{1}{\sqrt{3}}\sin\theta \sin\phi$, gives
-the Mohr-Coulomb criterion of Eq.~(\ref{eq:mcF}). 
+the Mohr-Coulomb criterion of Eq.~\eqref{eq:mcF}. 
 
-For $\theta=\pi/6$, the DP yield surface {\bf circumscribes} the MC yield surface and Eq.~(\ref{eq:Fdp}) writes:
+For $\theta=\pi/6$, the DP yield surface {\bf circumscribes} the MC yield 
+surface and Eq.~\eqref{eq:Fdp} writes:
 \begin{eqnarray}
 F^{\text{\tiny DP}}
 &=& \sqrt{{\cal I}_2({\bm \tau})} 
@@ -119,7 +123,8 @@ F^{\text{\tiny DP}}
 \end{eqnarray}
 which is the formula used in Glerum et al (2018) \cite{gltf18}.
 
-For $\theta=-\pi/6$, the DP yield surface {\bf middle circumscribes} the MC yield surface and Eq.~(\ref{eq:Fdp}) writes:
+For $\theta=-\pi/6$, the DP yield surface {\bf middle circumscribes} the MC yield surface 
+and Eq.~\eqref{eq:Fdp} writes:
 \begin{eqnarray}
 F^{\text{\tiny DP}}
 &=& \sqrt{{\cal I}_2({\bm \tau})} 
@@ -211,7 +216,7 @@ F
 &=& \tau_e \sqrt{3} - \left( \frac{6 \sin\phi}{3-\sin\phi}  p  + c \frac{6 \cos\phi}{3-\sin\phi} \right) \nn\\
 &=& \sqrt{3} \left[ \tau_e  - \left( \frac{6 \sin\phi}{\sqrt{3}(3-\sin\phi)}  p  + c \frac{6 \cos\phi}{\sqrt{3}(3-\sin\phi)} \right)  \right]
 \end{eqnarray}
-Except for the $\sqrt{3}$ this is identical to Eq.~(\ref{eq:dpc}).
+Except for the $\sqrt{3}$ this is identical to Eq.~\eqref{eq:dpc}.
 \end{remark}
 
 %..............

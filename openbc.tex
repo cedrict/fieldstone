@@ -27,7 +27,7 @@ the literature: \cite{qusp10} and \cite{chgv12}.
 
 We start again from the variational form of the momentum equation, and focus on the term containing 
 the full stress tensor ${\bm \sigma}$. 
-Let us look at the stress tensor gradient, multiplied by the shape function $N$, integrated over the domain:
+Let us look at the stress tensor gradient, multiplied by the basis function $N$, integrated over the domain:
 \begin{eqnarray}
 \int_V N {\vec \nabla}\cdot {\bm \sigma} \; dV 
 &=&\int_V \left[ {\vec \nabla}\cdot(N {\bm \sigma}) -{\vec \nabla}N \cdot {\bm \sigma}\right] \; dV \nonumber\\
@@ -473,7 +473,7 @@ interval [-1,1] yields 2. Finally
 \end{array}
 \right)
 \]
-This is implemented in fieldstone 61 and 64.
+This is implemented in \stones 61 and 64.
 
 
 
@@ -537,7 +537,7 @@ N_3(x,y) t_y(x,y)
 since $t_x=0$ and there function $N_2$ will be zero on the edge.
 
 We also arbitrarily set $y_1=y_3=0$. We have seen in Section~\ref{shpfct2d} that 
-the shape functions (expressed as a function of the real coordinates $x,y$) 
+the basis functions (expressed as a function of the real coordinates $x,y$) 
 for a linear triangle are given by:
 \begin{eqnarray}
 N_1(x,y) &=& \frac{1}{D}[(x_2y_3-x_3y_2) + (y_2-y_3)x + (x_3-x_2)y] \nn\\

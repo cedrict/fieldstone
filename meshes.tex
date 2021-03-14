@@ -1,3 +1,5 @@
+\begin{flushright} {\tiny {\color{gray} meshes.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Before basis functions can be defined and PDEs can be discretised and solved 
 we must first tesselate the domain with polygons, e.g. triangles and 
@@ -191,7 +193,7 @@ b)\includegraphics[width=4cm]{images/meshes/voronoi}\\
 b) Connecting the centers of the circumcircles produces the Voronoi diagram (in red). }
 \end{center}
 
-The Delaunay triangulation is used in the DOUAR code which is based on a particle levelset function to track materials. These particles are connected by means of a Delaunay triangulation (usually in a plane at startup, and then in a local Euclidean geometry once the surface is deformed) \cite{brtf08}.
+The Delaunay triangulation is used in the \douar code which is based on a particle levelset function to track materials. These particles are connected by means of a Delaunay triangulation (usually in a plane at startup, and then in a local Euclidean geometry once the surface is deformed) \cite{brtf08}.
 
 \Literature: \cite{gebo}.
 
@@ -330,9 +332,9 @@ a mid-ocean rift or an ascending plume will evolve in time and the mesh will hav
 In light of all this, it was only a matter of time before Adaptive Mesh Refinement was adopted 
 in computatinal geodynamics. However, since the use and update of such meshes is somewhat 
 complex in terms of numerical algorithms, its introduction came somewhat late (00's and later).
-The DOUAR code (see Section~\ref{app:codes}) developed originally by J. Braun and Ph. Fullsack 
+The \douar code (see Section~\ref{app:codes}) developed originally by J. Braun and Ph. Fullsack 
 is a prime example of an early multi-purpose code relying on a self-written Octree library \cite{brtf08}.
-More recently the ASPECT code was developed on top of the Octree library p4est \cite{buwg11}
+More recently the \aspect{} code was developed on top of the Octree library p4est \cite{buwg11}
 
 For further reading I suggest you read the review by May, Schellart \& Moresi on this topic \cite{masm13}.
 
@@ -501,13 +503,16 @@ and the juxtaposition of triangles near the poles and quadrilaterals elsewhere.
 As a consequence more regular, but more complex, grids have been designed over the years which tesselate the surface of the 
 sphere into triangles or quadrilaterals (sometimes overlapping).
 There is the 'cubed sphere' \cite{roip96,heta03,chob05,sthh06,chcc07,brmw10,yiym19},
-the ying-yang grid \cite{kasa04,yoka04,yoka06,kaks08,tack08,crta14,crta16},
-the ying-yang-zhong grid \cite{haka16}, the spiral grid \cite{hust08}, 
+the Yin-Yang grid \cite{kasa04,yoka04,yoka06,kaks08,tack08,crta14,crta16},
+the Yin-Yang-zhong grid \cite{haka16}, the Yin-yang grid of 
+Shahnas \& Peltier \cite{shpe15}, the spiral grid \cite{hust08}, 
 an icosahedron-based grid \cite{bafr85,tasu01},
-or a grid composed of 12 blocks further subdivided into quadrilaterals \cite{zhzm00} as used in the CitcomS code.
-Note that \cite{oldp12} have also presented a method for generating a numerical grid on a spherical surface wwhich 
-allows the grid to be based on several different regular polyhedrons (including octahedron, cube, icosahedron,
-and rhombic dodecahedron).
+or a grid composed of 12 blocks further subdivided into quadrilaterals \cite{zhzm00} 
+as used in the CitcomS code.
+Note that \cite{oldp12} have also presented a method for generating a numerical 
+grid on a spherical surface wwhich 
+allows the grid to be based on several different regular polyhedrons (including octahedron, 
+cube, icosahedron, and rhombic dodecahedron). 
 
 \begin{center}
 \includegraphics[width=12cm]{images/meshes/kaks08}\\
@@ -542,7 +547,8 @@ Adaptive Mesh Refinement \cite{algs12,busa13}.
 The CitcomS mesh ('HS12') composed of 12 blocks also subdivided 
 into $N_b \times N_b$ quadrilateral shaped cells
 \cite{zhzm00,sthh06,zhmt08,arfw14}.
-Note that ASPECT \cite{krhb12,hedg17}, a relatively new code aimed at superseeding CitcomS can generate and use 
+Note that \aspect{} \cite{krhb12,hedg17}, a relatively new code aimed at 
+superseeding CitcomS can generate and use 
 this type of mesh \cite{thie17} but is not limited to it.
 
 \item The icosahedral mesh ('HS20') composed of 20 triangular blocks \cite{bafr85,baum85} subdivided into triangles, which is 
@@ -659,7 +665,7 @@ circulation model; colours represent temperatures (red=hot, blue=cold)
 at a depth of $200\si{km}$ below the surface. Taken from Oeser et al (2009) \cite{oebm09}.}
 \end{center}
 
-
+\Literature: Phillips \etal \cite{phdo19} present an algorithm which builds polyhedral-based grids.
 
 
 

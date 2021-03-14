@@ -3,7 +3,7 @@ write about recovering accurate strain rate components and heat flux components 
 
 Let $\vec g(\vec r)$  be the desired nodal 
 field which we want to be the continuous $Q_1$ representation of the field $\vec \nabla f^h$.
-Since the derivative of the shape function does not exist on the nodes we need to design
+Since the derivative of the basis function does not exist on the nodes we need to design
 an algorithm do do so. This problem is well known and has been 
 investigated 
 \improvement{refs!}.
@@ -19,7 +19,7 @@ such that it satisfies
 \int_\Omega \phi \vec g^h \; d\Omega  = \int_\Omega \phi \vec\nabla f^h \; d\Omega 
 \quad\quad \forall \phi
 \] 
-We will then successively replace $\phi$ by all the shape functions $N_i$ 
+We will then successively replace $\phi$ by all the basis functions $N_i$ 
 and since we have $g^h=\sum_j N_i g_i$ we then obtain
 \[
 \sum_j \int N_i N_j d\Omega g_i = \int N_i  \vec\nabla f^h \; d\Omega 
@@ -48,7 +48,7 @@ Then
 \frac{\sum\limits_{ e \text{ adj. to }j} |\Omega_e| (\vec\nabla f)_e(\vec r_j) }{\sum |\Omega_e|}
 \]
 where $|\Omega_e|$ is the volume of the element and $(\vec\nabla f^h)_e(\vec r_j)$
-is the gradient of $f$ as obtained with the shape functions inside element $e$ and 
+is the gradient of $f$ as obtained with the basis functions inside element $e$ and 
 computed at location $\vec r_j$.
 
 %........................................................

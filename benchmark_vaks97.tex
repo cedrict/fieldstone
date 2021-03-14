@@ -1,4 +1,4 @@
-
+\begin{flushright} {\tiny {\color{gray} benchmark\_vaks97.tex}} \end{flushright}
 
 This numerical experiment was first presented in \cite{vaks97}.
 It consists of an isothermal Rayleigh-Taylor instability in a two-dimensional box
@@ -23,8 +23,9 @@ Gravity is pointing downwards with $|\vec{g}|=10$.
 \includegraphics[width=4cm]{images/benchmark_vaks97/elefant256_1000.png}
 \includegraphics[width=4cm]{images/benchmark_vaks97/elefant256_1500.png}
 \includegraphics[width=4cm]{images/benchmark_vaks97/elefant256_2000.png}\\
-{\captionfont Example of time evolution obtained with the ELEFANT code for 
-a 256x256 grid with the particle-in-cell method.}
+{\captionfont Example of time evolution obtained with the \elefant code for 
+a 256x256 grid with the particle-in-cell method.\\
+{\tiny {\color{gray} in images/benchmark\_vaks97/}}  }
 \end{center}
 
 One can measure the following quantities:
@@ -66,6 +67,16 @@ We will then measure the relative mass error as a function of time
 which is equal to 
 \[
 <\delta\rho>(t) = \frac{<\rho>(t)-<\rho>_0}{<\rho>_0}
+\]
+
+\item the length of the interface between the fluids. At startup it is given by 
+\[
+{\cal L}(0) = \int_0^L \sqrt{1 + (dy/dx)^2} dx
+\]
+with $y(x)=0.2+0.02\cos(\pi x/L)$. Using WolframAlpha, we find
+\[
+{\cal L}(0)= \frac{L}{\pi} \int_0^\pi \sqrt{1 + \left(0.02\frac{\pi}{L}\sin(\pi x /L) \right)^2} dx
+\simeq 0.9152786349
 \]
 
 \end{itemize}
@@ -233,11 +244,9 @@ Additional results for non-isoviscous in the paper.
 \includegraphics[width=5cm]{images/benchmark_vaks97/qurj09_c}
 \end{center}
 
-
-"Different snapshots from the domain evolution that are shown in Fig. 10 were compared with the ones published by van Keken et al. (1997). The evolution shown in this chapter and in the van Keken paper are identical for all the compared time steps."
-
-
-
+"Different snapshots from the domain evolution that are shown in Fig. 10 were compared with the 
+ones published by van Keken et al. (1997). The evolution shown in this chapter and 
+in the van Keken paper are identical for all the compared time steps."
 
 \item Samuel \& Evonuk (2010) \cite{saev10}.
 
@@ -251,8 +260,8 @@ Additional results for non-isoviscous in the paper.
 \item Suckale et al (2010) \cite{sunh10}.
 
 \begin{center}
-\includegraphics[width=7cm]{images/benchmark_vaks97/sunh10_a}
-\includegraphics[width=7cm]{images/benchmark_vaks97/sunh10_e}\\
+\includegraphics[height=7cm]{images/benchmark_vaks97/sunh10_a}
+\includegraphics[height=7cm]{images/benchmark_vaks97/sunh10_e}\\
 {\captionfont The Rayleigh‐Taylor instability at t = 1500 computed by (left) 
 the level set method on a 300x330 grid, compared to the best results\\ 
 of (right) the four codes compared by van Keken \etal }\\
@@ -270,6 +279,34 @@ the five different codes. The level set computation was done on a 160 × 176 gri
 d) Evolution of the root‐mean‐square velocity of the interface over time 
 as computed by the five different codes. The level set computation was done on a 160 × 176 grid.}
 \end{center}
+
+\begin{center}
+a)\includegraphics[width=6cm]{images/benchmark_vaks97/sunh10_f}
+b)\includegraphics[width=6cm]{images/benchmark_vaks97/sunh10_g}\\
+{\captionfont Taken from the supplementary material: a) Convergence test for the isothermal and isoviscous Rayleigh-Taylor instability, benchmark problem 3.
+A lack of convergence is easiest to identify during the phases of rapid rise of an instability. We illustrate this for the rise of
+the secondary instability on the right side of the box at time t=1000 and four different grid sizes: 60x66, 80x88, 100x110,
+and 120x132. We observe convergence for grid sizes above 100x110.\\
+b) Convergence test for the isothermal and isoviscous Rayleigh-Taylor instability, benchmark problem 3.
+We illustrate this convergence test for the rise of the secondary instability at time $t=1000$. The four
+interfaces were computed based on the time steps: $\Delta t = 180 \Delta x$, $\Delta t = 90 \Delta x$, 
+$\Delta t = 45 \Delta x$, and $\Delta t = 25 \Delta x$. We observe convergence for time steps $\Delta t \le 25 \Delta x$.
+}
+\end{center}
+
+\begin{center}
+a) \includegraphics[height=5cm]{images/benchmark_vaks97/sunh10_h}
+b) \includegraphics[height=5cm]{images/benchmark_vaks97/sunh10_i}\\
+{\captionfont 
+a) The isothermal Rayleigh-Taylor instability with viscosity contrast 10 at non-dimensional time
+t=500. The computation was done with a grid resolution of 250 × 275. 
+b) The Rayleigh-Taylor instability as computed by the HS-tracer method at time t=1500. The equations
+of motion for this simulation were solved on an 81×81 grid. The right panel is a zoom onto the peak located left of the
+descending instability. Each blue dot represents one particle and the grid represents a rough estimate of the scale at which
+the flow field is approximated correctly.
+}
+\end{center}
+
 
 \item Leng \& Zhong (2011) \cite{lezh11}.
 
@@ -296,9 +333,10 @@ van Keken et al. [1997] are also plotted.}
 Left:
 Rayleigh‐Taylor instability. (a) Model setup. Snapshots of the density at dimensionless 
 time of (b) 500, (c) 1000, and (d) 1500. (e) Plot of Vrms versus dimensionless time, t. 
-The resolution is about 0.6 km. 
+The resolution is about $0.6\si{\kilo\metre}$. 
 Right:
-$\sigma_{xx}$ and density fields before and after the first remeshing with about 1 km resolution. 
+$\sigma_{xx}$ and density fields before and after the first remeshing with about $1\si{\kilo\metre}$ 
+resolution. 
 The white lines in the “After” images denote the original phase boundary before remeshing. 
 The thick‐lined box in the inset shows the location of the zoomed‐in part of the domain.}
 \end{center}
@@ -379,66 +417,127 @@ by \cite{vaks97} but results are therefore not consistent with those of \cite{va
 
 \item Logg et al (2012) \cite{lomw12}: only Entrainment of a Dense Layer by Thermal convection.
 
+\newpage
 \item \aspect{} manual \cite{aspectmanual}.
 
 \begin{center}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0000}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0001}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0002}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0003}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0004}\\
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0005}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0006}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0007}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0008}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0009}\\
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0010}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0011}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0012}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0013}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0014}\\
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0015}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0016}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0017}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0018}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition0019}\\
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0000}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0001}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0002}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0003}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0004}\\
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0005}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0006}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0007}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0008}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0009}\\
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0010}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0011}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0012}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0013}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0014}\\
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0015}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0016}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0017}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0018}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition0019}\\
 ---------------------------------------\\
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0000}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0001}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0002}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0003}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0004}\\
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0005}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0006}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0007}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0008}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0009}\\
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0010}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0011}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0012}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0013}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0014}\\
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0015}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0016}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0017}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0018}
-\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl8/composition_threshold0019}\\
-
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0000}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0001}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0002}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0003}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0004}\\
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0005}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0006}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0007}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0008}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0009}\\
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0010}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0011}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0012}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0013}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0014}\\
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0015}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0016}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0017}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0018}
+\includegraphics[width=3cm]{images/benchmark_vaks97/aspect/lvl7/composition_threshold0019}\\
 {\captionfont Time evolution of the system, smooth compositional field, CFL=0.25, 
 mesh refinement level 8. Top block is with 256 colors, bottom block is the same data 
 but only using two colors. From t=0 until t=2000, every 100s.}
 \end{center}
 
+When compositional fields are used the solution has been shown (see \aspect manual)
+to be very sensitive to the resolution. In an attempt to remedy this issue, 
+an approach was devised, which consists in replacing the original discontinuous initial 
+condition with a smoothed out version. The function in the input file 
+\begin{lstlisting}
+set Function expression = if( (z>0.2+0.02*cos(pi*x/0.9142)) , 0 , 1 )
+\end{lstlisting}
+is then replaced by 
+\begin{lstlisting}
+set Function expression = 0.5*(1+tanh((0.2+0.02*cos(pi*x/0.9142)-z)/0.02))
+\end{lstlisting}
+The last number on the line is a parameter which controls the 'thickness' of the interface.
+When it becomes small we recover a discontinuous implementation (this very much 
+depends on the mesh size). 
+
 
 \begin{center}
-\includegraphics[width=7cm]{images/benchmark_vaks97/aspect/velocity-discontinuous}
-\includegraphics[width=7cm]{images/benchmark_vaks97/aspect/velocity-smooth}\\
-{\captionfont 
-root mean square measurements with discontinuous (left) and smoothed, continuous 
-(right) initial conditions
-for the compositional field: 5 global refinements correspond to a $32\times  32$ mesh,
-9 refinements to a $512 \times 512$ mesh.}
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/aspect/velocity-discontinuous}
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/aspect/velocity-smooth}
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/aspect/smoothing-parameter-velocity}\\
+{\captionfont Taken from the \aspect manual. 
+Root mean square measurements with discontinuous (left) and smoothed, continuous 
+(middle) initial conditions for the compositional field: 5 global refinements correspond to 
+a $32\times 32$ mesh, 9 refinements to a $512 \times 512$ mesh.
+Right: influence of smoothing parameter (level 7).}
 \end{center}
+
+
+
+\begin{center}
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/vrms6}
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/vrms7}
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/vrms8}\\
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/vrms6_peak1}
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/vrms7_peak1}
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/vrms8_peak1}\\
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/vrms6_peak2}
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/vrms7_peak2}
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/vrms8_peak2}\\
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/C1_6}
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/C1_7}
+\includegraphics[width=5.4cm]{images/benchmark_vaks97/C1_8}\\
+{\captionfont Results obtained for both approaches and vof, on various meshes and for 
+various smoothing parameters. The dashed lines indicate the \stone 95 results.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=10cm]{images/benchmark_vaks97/aspect/C1}\\
+{\captionfont Results for smoothed approach. Left to right: level 6,7,8. Top to bottom: smoothing 
+parameter 0.0025, 0.005, 0.01, 0.02. We see that level6 results in combination with a small smoothing parameter
+yield a very different outcome.}
+\end{center}
+
+\begin{center}
+\includegraphics[height=6cm]{images/benchmark_vaks97/aspect/contours_678}
+\includegraphics[height=6cm]{images/benchmark_vaks97/aspect/contours_678zoom}\\
+{\captionfont 0.5 compositional field $C_1$ isocontours for all 12 simulations.} 
+\end{center}
+
+\begin{center}
+\includegraphics[height=5cm]{images/benchmark_vaks97/aspect/contours_78}
+\includegraphics[height=5cm]{images/benchmark_vaks97/aspect/contours_8}\\
+{\captionfont 0.5 compositional field $C_1$ isocontours for levels 7 and 8 (left), 
+and level 8 (right)} 
+\end{center}
+
+
+\newpage
+The code can also rely on the VOF method to solve the advection equation 
+for the computational fields:
 
 \begin{center}
 \includegraphics[width=9cm]{images/benchmark_vaks97/aspect_vof/rms_vel_comparison.png}
@@ -474,7 +573,59 @@ with each fluid type more evident.   }
 
 \end{itemize}
 
-
-
+\begin{landscape} 
+\begin{scriptsize}
+\begin{tabular}{l|lllllllllll|l}
+\hline
+Publication & $\eta^\star$ & Stokes  & Transport  
+& vrms & png & max & peak 1 & peak 1 & peak 2 & peak 2  & growth rate &  observation \\
+&& method & method & && time & time & vrms & time & vrms & rate & \\
+\hline\hline
+van Keken \etal \cite{vaks97} 
+&1&&& $\surd$ & $\surd$ & 2000 & 211.1 & 0.0030958&     &    & 0.010996 & HS 41x41 \\
+&1&&&&&& 209.17&0.0031022  && & 0.011109 & HS 61x61  \\
+&1&&&&&& 208.99&0.0030916  && & 0.011177 & HS 81x81  \\
+&1&&&&&& 208.4 &0.003092   && & 0.01106  & CND 32x32  \\
+&1&&&&&& 208.5 &0.0030943  && & 0.01106  & CND 48x48  \\
+&1&&&&&& 215.67&0.00299279 && & 0.01130  & SK 80x80  \\
+&1&&&&&& 206.38&0.0028922  && & 0.01127  & SK 120x120  \\
+&1&&&&&& 207.84&0.0028970  && & 0.01179  & SK 160x160  \\
+&1&&&&&&       &           && & 0.01220  & SK 160x160  \\
+&1&&&&&& 213.38&0.00300    && & 0.01185  & PvK 30x30 splines   \\
+&1&&&&&& 211.81&0.003016   && & 0.01198  & PvK 50x50 splines   \\
+&1&&&&&& 210.75&0.003050   && & 0.01207  & PvK 80x80 splines   \\
+&1&&&&&&       &           && & 0.01211  & PvK 100x100 splines   \\
+&1&&&&&& 210.59&0.003100   && & 0.01253  & PvK 30x30 C1   \\
+&1&&&&&& 207.05&0.003091   && & 0.01225  & PvK 80x80 C1   \\ \hline
+de Smet \etal \cite{devv00a} & \\ \\ \hline
+Sobouti \etal \cite{soga01} & \\ \\ \hline
+Babeyko \etal \cite{bast02} & \\ \\ \hline
+Tackley \& King \cite{taki03} & \\ \\ \hline
+Bourgouin \etal \cite{bomh06} & \\ \\ \hline
+Quinteros \etal \cite{qurj09} & \\ \\ \hline
+Samuel \& Evonuk \cite{saev10} & \\ \\ \hline
+Suckale \etal \cite{sunh10} & 1  & FDM &level set & $\surd$ & $\surd$ & 1500 & 211.2  &0.00301 & ? & ? & 0.01252  & 120x132  \\ \hline
+Suckale \etal \cite{sunh10} & 10 & FDM &level set & $\surd$ & $\surd$ &  500 & ?      & ?      & ? & ? & 0.04809  & 250x275  \\ \hline
+Leng \& Zhong \cite{lezh11} & 1  & FEM & tracers  & $\surd$ & $\surd$ & 1500 & ?      & ?      & ? & ? & ?        & AMR(6+3) \\ \hline
+Maierova PhD thesis \cite{maie12}  
+&   1 &&&Y& Y &2000 &211 & 0.003107\\ 
+& 0.1 &&&Y& N &2000 &73 & 0.009411 \\ 
+& 100 &&&Y& N &2000 &51 & 0.013938 \\ 
+\\ \hline
+Vynnytska \etal \cite{vyrc13} & \\ \\ \hline
+Choi \etal \cite{chtl13} & \\ \\ \hline
+Fuchs \& Schmeling \cite{fusc13} & \\ \\ \hline
+Mulyukova PhD thesis\cite{mulyukova}  & \\ \\ \hline
+de Montserrat \etal \cite{demh19} & \\ \\ \hline
+Robey \& Puckett \cite{ropu19} & \\ \\ \hline
+Robey PhD thesis \cite{robe19}  & \\ \\ \hline
+Louis-Napoleon \etal \cite{logb20} & 1 & FEM & VOF \& CF& &&&&&&&& JADIM, OpenFOAM \& \aspect{}   \\ \\
+\hline
+\aspect{} manual \cite{aspectmanual} & 1  & FEM & CF, PIC & $\surd$ 
+& $\surd$ &  \\ \\
+\hline
+\end{tabular}
+\end{scriptsize}
+\end{landscape}
 
 

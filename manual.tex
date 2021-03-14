@@ -22,7 +22,19 @@
 \usepackage{amsthm}
 \usepackage{gensymb} %\degree
 \usepackage{siunitx} %\si{XX}
-\newcommand{\aspect}{{\textsc{Aspect}{}}}
+\newcommand{\aspect}{{\textsc{Aspect~}{}}}
+\newcommand{\elefant}{{\textsc{Elefant~}{}}}
+\newcommand{\citcoms}{{\textsc{CitcomS~}{}}}
+\newcommand{\fantom}{{\textsc{Fantom~}{}}}
+\newcommand{\sulec}{{\textsc{Sulec~}{}}}
+\newcommand{\sopale}{{\textsc{Sopale~}{}}}
+\newcommand{\douar}{{\textsc{Douar~}{}}}
+\newcommand{\ghost}{{\textsc{Ghost~}{}}}
+\newcommand{\fluidity}{{\textsc{Fluidity~}{}}}
+\newcommand{\sepran}{{\textsc{Sepran~}{}}}
+\newcommand{\stone}{{\color{teal} {\textsc{stone~}}}}
+\newcommand{\stones}{{\color{teal} {\textsc{stones}~}}}
+\newcommand{\fieldstone}{{\color{teal} {\textsc{FieldStone~}}}}
 \newtheorem*{remark}{Remark}
 %\setcounter{secnumdepth}{1} % sections are level 1
 \usepackage{dirtytalk}
@@ -83,14 +95,19 @@ urlcolor=black}
 \newcommand{\R}{{\mathbb{R}}}
 \newcommand{\LLL}{{\mathbb{L}}}
 \newcommand{\SSS}{{\mathbb{S}}}
-\newcommand{\fieldstone}{{\bf fieldstone}}
 \newcommand{\Literature}{\includegraphics[height=4mm]{images/lit} {\sffamily Relevant Literature}}
 \newcommand{\bscthesis}{{(\bf BSc Thesis)}}
 \newcommand{\mscthesis}{{(\bf MSc Thesis)}}
 \newcommand{\captionfont}{\tiny}
+\newcommand{\pythonfile}{\color{blue} \sffamily }
+\newcommand{\shellscriptfile}{\color{purple} \sffamily }
+\newcommand{\asciifile}{\color{olive} \sffamily }
 \newcommand{\OK}{{\bf OK}}
 \newcommand{\filenamefont }{\sl }
 \newcommand{\codefont}{\bfseries\ttfamily}
+\newcommand{\Ranb}{{\mathsf{Ra}}}
+\newcommand{\Nunb}{{\mathsf{Nu}}}
+\newcommand{\Prnb}{{\mathsf{Pr}}}
 
 
 %The predefined color names are
@@ -287,7 +304,7 @@ doi = "10.23644/uu.9209393.v1"}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The physical equations} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Physics and a bit of mathematics} \label{chapt3} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{chapter3} 
 
 \newpage
@@ -372,7 +389,7 @@ doi = "10.23644/uu.9209393.v1"}
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Don’t be a hero - unless you have to} \input{hero} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{A FANTOM, an ELEFANT and a GHOST} \input{mycodes} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{A \fantom, an \elefant and a \ghost} \input{mycodes} %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Some useful Python commands} \input{useful_python} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -395,13 +412,15 @@ doi = "10.23644/uu.9209393.v1"}
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Analytical expressions for $\G_{el}$} \label{app:Gel} \input{Gel}%%%%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Computational Geophysics GEO4-1427 - projects} \input{compgeo}
+\section{Computational Geophysics GEO4-1427 - projects} \input{compgeo} %%%%%%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Using prisms in forward gravity modelling \label{app:prisms}} \input{app_prisms}
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Solutions to exercises of chapter 9 \label{app:gravsols}} \input{app_gravsols}
+\section{Solutions to exercises of chapter 9 \label{app:gravsols}} \input{app_gravsols} %
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{How to download a single stone} \input{download_single_stone}
+\section{How to download a single stone} \input{download_single_stone} %%%%%%%%%%%%%%%%%%
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{A quick guide to Paraview} \input{paraview} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
