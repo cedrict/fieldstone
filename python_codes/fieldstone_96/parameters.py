@@ -16,7 +16,7 @@ eta_blob=1e24
 
 np_grav=50
 
-eta_core=1e20
+eta_core=1e26
 
 R_moho=R_outer-49.5e3
 np_moho=250

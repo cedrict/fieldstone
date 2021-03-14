@@ -45,9 +45,38 @@ starts below the moho at 50\si{\km} and stopped at the cmb. }:
 {\captionfont Taken from Steinverger \etal (2010) \cite{stwt10}}
 \end{center}
 
-In table 1 of \cite{stwt10}: crust thickness is set to 50km. The core radius is set 
+In table 1 of Steinberger \etal \cite{stwt10}: crust thickness is set to 50km. The core radius is set 
 to 1389.5km. However in the data set we were sent it seems that the cmb is at 1422\si{\km}
 radius.
-
 To simplify things we take $R=3389\si{\km}$ and $R_{cmb}=1422\si{\km}$ in the code.
+
+There are three python files in this \stone:
+\begin{itemize}
+\item {\pythonfile parameters.py}: the main physical and geometrical parameters are defined in it;
+\item {\pythonfile generate\_nodes.py}: this code generates the two files  {\sl mypoints} and {\sl mysegments}
+which will be first concatenated into {\sl mesh.poly} and then passed to the Triangle mesher. 
+The mesher then returns {\sl mesh.1.node} and {\sl mesh.1.ele}.  
+\item {\pythonfile stone.py} This is the 'real' code: the above mentioned files are read in and are used to 
+build the mesh. Density and viscosity profile datasets are read in so that viscosity, density and 
+gravity acceleration can then be assigned to elements/nodes/quadrature points. Boundary conditions 
+are set up, the FEM is built, and the system solved. The pressure at the surface of the planet is 
+normalised to zero average. Results are then exported to ascii and vtu file(s).
+\end{itemize}
+In order to run the code, simply make use of the provided script {\shellscriptfile run\_script}. 
+In it the call to the Triangle mesher is carried out:
+\begin{verbatim}
+../../../../triangle/triangle   -q -j -O -a4000000000 -o2 -pc  mesh.poly
+\end{verbatim}
+The number following the {\tt -a} option is the maximum size of an element. This controls the 
+average size of the generated elements inside the domain. Decreasing this number automatically 
+generates more elements, i.e. a higher resolution. 
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_96/images/notes1}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_96/images/notes2}
+\end{center}
+
+
+
+
  

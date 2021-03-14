@@ -279,8 +279,11 @@ on_surf=np.zeros(NV,dtype=np.bool)  # boundary condition, yes/no
 for i in range(0, NV):
     #Left boundary  
     if xV[i]<0.000001*R_inner:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0 
-    #right boundary  
+       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+       if abs(yV[i])<R_inner:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+
+    #planet surface
     if xV[i]**2+yV[i]**2>0.99999*R_outer**2:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
@@ -835,6 +838,17 @@ for istep in range(0,1):
     for i in range(0,NV):
         vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
     vtufile.write("</DataArray>\n")
+
+    #--
+    vtufile.write("<DataArray type='Float32' Name='gravity vector (norm)' Format='ascii'> \n")
+    for i in range(0,NV):
+        rad=np.sqrt(xV[i]**2+yV[i]**2)
+        grav=profile_grav[int(rad/1000)]
+        vtufile.write("%10e \n" %grav)
+    vtufile.write("</DataArray>\n")
+
+
+
     #--
     vtufile.write("<DataArray type='Float32' Name='p (nod)' Format='ascii'> \n")
     for i in range(0,NV):
