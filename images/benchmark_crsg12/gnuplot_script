@@ -1,0 +1,100 @@
+set term pdf enhanced font "Times,11pt" 
+set grid
+set xlabel 'time (kyr)' 
+set ylabel 'max. topography (km)'
+set key outside
+
+set output 'topo.pdf'
+plot[0:120][-.5:] \
+'paperdata/SULEC_sa_100_18.dat' u 1:2 w l lt 1 dt 1 t 'SULEC, 100, 18',\
+'paperdata/SULEC_sa_100_19.dat' u 1:2 w l lt 1 dt 2 t 'SULEC, 100, 19',\
+'paperdata/SULEC_sa_100_20.dat' u 1:2 w l lt 1 dt 3 t 'SULEC, 100, 20',\
+'paperdata/SULEC_sa_200_19.dat' u 1:2 w l lt 1 dt 4 t 'SULEC, 200, 19',\
+'paperdata/SULEC_sa_50_19.dat'  u 1:2 w l lt 1 dt 5 t 'SULEC, 50, 19',\
+'paperdata/SULEC_fs.dat'        u 1:2 w l lt 1 dt 6 t 'SULEC, f.s.',\
+'paperdata/FDCON_100_18.dat' u 1:2 w l lt 2 dt 1 t 'FDCON, 100, 18',\
+'paperdata/FDCON_100_19.dat' u 1:2 w l lt 2 dt 2 t 'FDCON, 100, 19',\
+'paperdata/FDCON_100_20.dat' u 1:2 w l lt 2 dt 3 t 'FDCON, 100, 20',\
+'paperdata/FDCON_200_19.dat' u 1:2 w l lt 2 dt 4 t 'FDCON, 200, 19',\
+'paperdata/FDCON_50_19.dat'  u 1:2 w l lt 2 dt 5 t 'FDCON, 50, 19',\
+'paperdata/MILAMIN_VEP.dat'  u 1:2 w l lt 3 dt 1 t 'MILAMIN',\
+'paperdata/I2VIS_100_18.dat' u 1:2 w l lt 4 dt 1 t 'I2VIS, 100, 18',\
+'paperdata/I2VIS_100_19.dat' u 1:2 w l lt 4 dt 2 t 'I2VIS, 100, 19',\
+'paperdata/I2VIS_100_20.dat' u 1:2 w l lt 4 dt 3 t 'I2VIS, 100, 20',\
+'paperdata/STAGYY_100_18.dat' u 1:2 w l lt 5 dt 1 t 'STAGYY, 100, 18',\
+'paperdata/STAGYY_100_19.dat' u 1:2 w l lt 5 dt 2 t 'STAGYY, 100, 19',\
+'paperdata/STAGYY_100_20.dat' u 1:2 w l lt 5 dt 3 t 'STAGYY, 100, 20',\
+'paperdata/STAGYY_200_19.dat' u 1:2 w l lt 5 dt 4 t 'STAGYY, 200, 19',\
+'paperdata/STAGYY_50_19.dat'  u 1:2 w l lt 5 dt 5 t 'STAGYY, 50, 19',\
+'paperdata/UNDERWORLD_sa_100_18.dat' u 1:2 w l lt 6 dt 1 t 'UNDERWORLD, 100, 18',\
+'paperdata/UNDERWORLD_sa_100_19.dat' u 1:2 w l lt 6 dt 2 t 'UNDERWORLD, 100, 19',\
+'paperdata/UNDERWORLD_sa_100_20.dat' u 1:2 w l lt 6 dt 3 t 'UNDERWORLD, 100, 20',\
+'paperdata/UNDERWORLD_fs.dat'        u 1:2 w l lt 6 dt 6 t 'UNDERWORLD, f.s.',\
+'aspect/statistics_aspect' u ($2/1000):($15/1000) w l lt 7 dt 6 t 'Aspect, f.s.',\
+ 7.*exp(-0.2139e-11*x*3600*24*365*1000.)   t 'analytical' lt -1
+
+
+set output 'topozoom.pdf'
+plot[:160][-.05:0.5] \
+'paperdata/SULEC_sa_100_18.dat' u 1:2 w l lt 1 dt 1 t 'SULEC, 100, 18',\
+'paperdata/SULEC_sa_100_19.dat' u 1:2 w l lt 1 dt 2 t 'SULEC, 100, 19',\
+'paperdata/SULEC_sa_100_20.dat' u 1:2 w l lt 1 dt 3 t 'SULEC, 100, 20',\
+'paperdata/SULEC_sa_200_19.dat' u 1:2 w l lt 1 dt 4 t 'SULEC, 200, 19',\
+'paperdata/SULEC_sa_50_19.dat'  u 1:2 w l lt 1 dt 5 t 'SULEC, 50, 19',\
+'paperdata/SULEC_fs.dat'        u 1:2 w l lt 1 dt 6 t 'SULEC, f.s.',\
+'paperdata/FDCON_100_18.dat' u 1:2 w l lt 2 dt 1 t 'FDCON, 100, 18',\
+'paperdata/FDCON_100_19.dat' u 1:2 w l lt 2 dt 2 t 'FDCON, 100, 19',\
+'paperdata/FDCON_100_20.dat' u 1:2 w l lt 2 dt 3 t 'FDCON, 100, 20',\
+'paperdata/FDCON_200_19.dat' u 1:2 w l lt 2 dt 4 t 'FDCON, 200, 19',\
+'paperdata/FDCON_50_19.dat'  u 1:2 w l lt 2 dt 5 t 'FDCON, 50, 19',\
+'paperdata/MILAMIN_VEP.dat'  u 1:2 w l lt 3 dt 1 t 'MILAMIN',\
+'paperdata/I2VIS_100_18.dat' u 1:2 w l lt 4 dt 1 t 'I2VIS, 100, 18',\
+'paperdata/I2VIS_100_19.dat' u 1:2 w l lt 4 dt 2 t 'I2VIS, 100, 19',\
+'paperdata/I2VIS_100_20.dat' u 1:2 w l lt 4 dt 3 t 'I2VIS, 100, 20',\
+'paperdata/STAGYY_100_18.dat' u 1:2 w l lt 5 dt 1 t 'STAGYY, 100, 18',\
+'paperdata/STAGYY_100_19.dat' u 1:2 w l lt 5 dt 2 t 'STAGYY, 100, 19',\
+'paperdata/STAGYY_100_20.dat' u 1:2 w l lt 5 dt 3 t 'STAGYY, 100, 20',\
+'paperdata/STAGYY_200_19.dat' u 1:2 w l lt 5 dt 4 t 'STAGYY, 200, 19',\
+'paperdata/STAGYY_50_19.dat'  u 1:2 w l lt 5 dt 5 t 'STAGYY, 50, 19',\
+'paperdata/UNDERWORLD_sa_100_18.dat' u 1:2 w l lt 6 dt 1 t 'UNDERWORLD, 100, 18',\
+'paperdata/UNDERWORLD_sa_100_19.dat' u 1:2 w l lt 6 dt 2 t 'UNDERWORLD, 100, 19',\
+'paperdata/UNDERWORLD_sa_100_20.dat' u 1:2 w l lt 6 dt 3 t 'UNDERWORLD, 100, 20',\
+'paperdata/UNDERWORLD_fs.dat'        u 1:2 w l lt 6 dt 6 t 'UNDERWORLD, f.s.',\
+'aspect/statistics_aspect' u ($2/1000):($15/1000) w l lt 7 dt 6 t 'Aspect, f.s.',\
+ 7.*exp(-0.2139e-11*x*3600*24*365*1000.)   t 'analytical' lt -1
+
+set log y
+set output 'topozoom2.pdf'
+plot[:2.5][6:7.1] \
+'paperdata/SULEC_sa_100_18.dat' u 1:2 w l lt 1 dt 1 t 'SULEC, 100, 18',\
+'paperdata/SULEC_sa_200_19.dat' u 1:2 w l lt 1 dt 4 t 'SULEC, 200, 19',\
+'paperdata/SULEC_fs.dat'        u 1:2 w l lt 1 dt 6 t 'SULEC, f.s.',\
+'paperdata/FDCON_100_18.dat' u 1:2 w l lt 2 dt 1 t 'FDCON, 100, 18',\
+'paperdata/FDCON_200_19.dat' u 1:2 w l lt 2 dt 4 t 'FDCON, 200, 19',\
+'paperdata/MILAMIN_VEP.dat'  u 1:2 w l lt 3 dt 1 t 'MILAMIN',\
+'paperdata/I2VIS_100_18.dat' u 1:2 w l lt 4 dt 1 t 'I2VIS, 100, 18',\
+'paperdata/STAGYY_100_18.dat' u 1:2 w l lt 5 dt 1 t 'STAGYY, 100, 18',\
+'paperdata/STAGYY_200_19.dat' u 1:2 w l lt 5 dt 4 t 'STAGYY, 200, 19',\
+'paperdata/UNDERWORLD_sa_100_18.dat' u 1:2 w l lt 6 dt 1 t 'UNDERWORLD, 100, 18',\
+'paperdata/UNDERWORLD_fs.dat'        u 1:2 w l lt 6 dt 6 t 'UNDERWORLD, f.s.',\
+'aspect/statistics_aspect' u ($2/1000):($15/1000) w l lt 7 dt 6 t 'Aspect, f.s.',\
+ 7.*exp(-0.2139e-11*x*3600*24*365*1000.)   t 'analytical' lt -1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

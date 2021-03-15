@@ -1,5 +1,4 @@
-set term pdf enhanced
-
+set term pdf enhanced font "Times,12pt"
 
 
 T(x,w)=1200+(x-120e3)/(660e3-120e3)*(w-1300) +273
@@ -16,10 +15,11 @@ eta(x,y,z,w)=0.5*exp((300e3+p(x)*z)/8.314/T(x,w)) * (A/mu*(b/y)**m )**(-1)
 
 set xtics 100e3
 set xlabel 'depth'
+set ylabel 'eff. viscosity'
 
 set output 'pressure.pdf'
 plot[120e3:660e3][]\
-p(x)
+p(x) lw 2 
 
 set output 'temperature.pdf'
 plot[120e3:660e3][]\
@@ -29,22 +29,22 @@ set key bottom
 set log y
 set output 'viscosity1.pdf'
 plot[120e3:660e3][]\
-eta(x, 0.002,6e-6,1550) lt 1  t 'd=2.0mm, V=6, T_b=1550C',\
-eta(x, 0.001,6e-6,1550) lt 2  t 'd=1.0mm, V=6, T_b=1550C',\
-eta(x,0.0001,6e-6,1550) lt 3  t 'd=0.1mm, V=6, T_b=1550C'
+eta(x, 0.002,6e-6,1550) lt 1 lw 3  t 'd=2.0mm, V=6, T_b=1550C',\
+eta(x, 0.001,6e-6,1550) lt 2 lw 3  t 'd=1.0mm, V=6, T_b=1550C',\
+eta(x,0.0001,6e-6,1550) lt 3 lw 3  t 'd=0.1mm, V=6, T_b=1550C'
 
 
 set output 'viscosity2.pdf'
 plot[120e3:660e3][]\
-eta(x,0.001,5e-6,1550)  t 'd=1mm, V=5, T_b=1550C',\
-eta(x,0.001,6e-6,1550)  t 'd=1mm, V=6, T_b=1550C',\
-eta(x,0.001,7e-6,1550)  t 'd=1mm, V=7, T_b=1550C'
+eta(x,0.001,5e-6,1550)  lw 3 t 'd=1mm, V=5, T_b=1550C',\
+eta(x,0.001,6e-6,1550)  lw 3 t 'd=1mm, V=6, T_b=1550C',\
+eta(x,0.001,7e-6,1550)  lw 3 t 'd=1mm, V=7, T_b=1550C'
 
 set output 'viscosity3.pdf'
 plot[120e3:660e3][]\
-eta(x,0.001,6e-6,1500)  t 'd=1mm, V=6, T_b=1500C',\
-eta(x,0.001,6e-6,1550)  t 'd=1mm, V=6, T_b=1550C',\
-eta(x,0.001,6e-6,1600)  t 'd=1mm, V=6, T_b=1600C'
+eta(x,0.001,6e-6,1500)  lw 3 t 'd=1mm, V=6, T_b=1500C',\
+eta(x,0.001,6e-6,1550)  lw 3 t 'd=1mm, V=6, T_b=1550C',\
+eta(x,0.001,6e-6,1600)  lw 3 t 'd=1mm, V=6, T_b=1600C'
 
 
 
