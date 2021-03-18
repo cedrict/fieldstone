@@ -4,17 +4,18 @@ R_inner=1.422e6
 R_outer=3.389e6
 
 np_inner=150
-np_outer=300
+np_outer=350
 
 np_vert=80
 
 np_blob=35
 R_blob=100e3
-y_blob=2600e3
-rho_blob=5000
+z_blob=2600e3
+rho_blob=4000
 eta_blob=1e24
 
-np_grav=50
+np_grav=8
+nel_phi=20
 
 eta_core=1e26
 

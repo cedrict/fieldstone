@@ -20,8 +20,8 @@ segmentfile=open("mysegments","w")
 for i in range (0,np_inner):
     angle=-np.pi/2+np.pi/np_inner*i
     xi=R_inner*np.cos(angle)
-    yi=R_inner*np.sin(angle)
-    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,yi, 1))
+    zi=R_inner*np.sin(angle)
+    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,zi, 1))
     counter+=1
     if i<np_inner-1:
        counter_segment+=1
@@ -33,8 +33,8 @@ for i in range (0,np_inner):
 
 for i in range (0,np_vert):
     xi=0
-    yi=R_inner+(R_outer-R_inner)/np_vert*i
-    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,yi, 2))
+    zi=R_inner+(R_outer-R_inner)/np_vert*i
+    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,zi, 2))
     counter+=1
     if i<np_vert-1:
        counter_segment+=1
@@ -47,8 +47,8 @@ for i in range (0,np_vert):
 for i in range (0,np_outer):
     angle=np.pi/2-np.pi/np_outer*i
     xi=R_outer*np.cos(angle)
-    yi=R_outer*np.sin(angle)
-    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,yi, 3))
+    zi=R_outer*np.sin(angle)
+    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,zi, 3))
     counter+=1
     if i<np_outer-1:
        counter_segment+=1
@@ -60,8 +60,8 @@ for i in range (0,np_outer):
 
 for i in range (0,np_vert):
     xi=0
-    yi=-R_outer+(R_outer-R_inner)/np_vert*i
-    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,yi, 4))
+    zi=-R_outer+(R_outer-R_inner)/np_vert*i
+    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,zi, 4))
     counter+=1
     if i<np_vert-1:
        counter_segment+=1
@@ -75,8 +75,8 @@ for i in range (0,np_blob):
 
     angle=-np.pi/2+np.pi/np_blob*i
     xi=R_blob*np.cos(angle)
-    yi=y_blob+R_blob*np.sin(angle)
-    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,yi, 5))
+    zi=z_blob+R_blob*np.sin(angle)
+    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,zi, 5))
     counter+=1
     if i<np_blob-1:
        counter_segment+=1
@@ -89,8 +89,8 @@ for i in range (0,np_blob):
 for i in range (0,np_moho):
     angle=np.pi/2-np.pi/np_moho*i
     xi=R_moho*np.cos(angle)
-    yi=R_moho*np.sin(angle)
-    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,yi, 3))
+    zi=R_moho*np.sin(angle)
+    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,zi, 3))
     counter+=1
     if i<np_moho-1:
        counter_segment+=1
@@ -103,8 +103,8 @@ for i in range (0,np_moho):
 for i in range (0,np_trans):
     angle=np.pi/2-np.pi/np_trans*i
     xi=R_trans*np.cos(angle)
-    yi=R_trans*np.sin(angle)
-    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,yi, 3))
+    zi=R_trans*np.sin(angle)
+    nodesfile.write("%5d %f %f %3d \n" %(counter+1,xi,zi, 3))
     counter+=1
     if i<np_trans-1:
        counter_segment+=1

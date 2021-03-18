@@ -73,10 +73,49 @@ generates more elements, i.e. a higher resolution.
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_96/images/notes1}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_96/images/notes2}
+\includegraphics[width=9cm]{python_codes/fieldstone_96/images/notes2}
 \end{center}
 
+Given the symmetry of the problem any term containing $\partial_\theta$ or $\upnu_\theta$ is zero.
+The strain rate tensor given in Section~\ref{ss:srcc} then simplifies to:
+
+\begin{eqnarray}
+\dot\varepsilon_{rr} 
+&=& \frac{\partial \upnu_r}{\partial r} \nn\\
+\dot\varepsilon_{\theta\theta}  &=& \frac{\upnu_r}{r} \nn\\
+\dot\varepsilon_{\theta r} = \dot\varepsilon_{r\theta}  &=& 0 \nn\\
+\dot\varepsilon_{zz} &=& \frac{\partial \upnu_z}{\partial z} \nn\\
+\dot{\varepsilon}_{rz} = \dot{\varepsilon}_{zr} 
+&=& \frac{1}{2}\left( \frac{\partial \upnu_r}{\partial z} + \frac{\partial \upnu_z}{\partial r} \right) \nn\\
+\dot{\varepsilon}_{\theta z} = \dot{\varepsilon}_{z \theta} &=& 0 \nn
+\end{eqnarray}
+Note that the term $\dot\varepsilon_{\theta\theta} $ is not zero!
+The deviatoric stress tensor ${\bm \tau}=2\eta \dot{\bm \varepsilon}$ can be computed
+as well as the full stress tensor ${\bm \sigma}=-p {\bm 1} + {\bm \tau}$. 
 
 
-
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_96/images/rho}
+\includegraphics[width=5cm]{python_codes/fieldstone_96/images/eta}
+\includegraphics[width=5cm]{python_codes/fieldstone_96/images/mesh}
+\end{center}
  
+%--------------------------------------------------
+\subsubsection*{Gravity calculations}
+
+This is an axisymmetric problem so the mesh is generated for a single value of the cylindrical 
+coordinates $\theta$ angle. 
+This makes gravity calculations a bit more difficult because each triangle of the mesh corresponds
+in 3D to a ring of matter with this triangular cross section. 
+I have therefore chosen to chunk this ring in {\tt nel\_phi} bits. Each bit has a given volume and therefore
+mass, and having computed its center its generated gravity field can be added. 
+The volume of such a block is $\iiint_{block} r dr d\theta dz =\iint_\triangle rdrdz \cdot \int d\theta$.  
+The first integral is carried out for each triangle and the result is stored in the {\tt arear} array. 
+
+
+
+
+
+
+
+TODO: elliptic blob
