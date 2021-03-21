@@ -13,30 +13,24 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This benchmark is taken from Donea \& Huerta (2003) \cite{dohu03} and is described fully in section \ref{mms}. 
+This benchmark is taken from Donea \& Huerta (2003) \cite{dohu03} and is described fully in section \ref{mms1}. 
 In order to illustrate the behavior of selected mixed finite elements in the solution 
 of stationary Stokes flow,  we consider a two-dimensional problem 
 in the square domain $\Omega=[0,1]\times[0,1]$, which possesses a closed-form analytical 
-solution. The problem consists of determining the velocity field $\vec{\upnu} = (u,v)$ and the 
-pressure $p$ such that 
-\[
-\eta \Delta \vec\upnu - \vec{\nabla} p + \vec{b} = \vec{0}   \quad\quad {\rm in} \; \Omega
-\]
-\[
-\vec{\nabla} \cdot \vec{\upnu} = 0 \quad\quad {\rm in} \; \Omega
-\]
-\[
-\vec{\upnu}=\vec{0} \quad\quad {\rm on} \; \Gamma_D
-\]
-where the fluid viscosity is taken as $\eta=1$. 
+solution. 
 
 \begin{center}
-\includegraphics[width=13cm]{python_codes/fieldstone_01/solution.pdf}
+\includegraphics[width=10cm]{python_codes/fieldstone_01/results/errors.pdf}\\
+{\captionfont Quadratic convergence for velocity error, 
+linear convergence for pressure error, as expected.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_01/errors.pdf}\\
-{\captionfont Quadratic convergence for velocity error, 
-linear convergence for pressure error, as expected.}
+\includegraphics[width=10cm]{python_codes/fieldstone_01/results/pressure.pdf}\\
+{\captionfont Pressure field}
+\end{center}
+
+\begin{center}
+\includegraphics[width=15cm]{python_codes/fieldstone_01/solution.pdf}
 \end{center}
 
