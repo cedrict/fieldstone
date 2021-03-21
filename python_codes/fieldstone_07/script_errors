@@ -1,18 +1,39 @@
 rm -f errors
-python3 fieldstone.py   8   8 0 | grep nel >> errors
-python3 fieldstone.py  12  12 0 | grep nel >> errors
-python3 fieldstone.py  16  16 0 | grep nel >> errors
-python3 fieldstone.py  20  20 0 | grep nel >> errors
-python3 fieldstone.py  24  24 0 | grep nel >> errors
-python3 fieldstone.py  28  28 0 | grep nel >> errors
-python3 fieldstone.py  32  32 0 | grep nel >> errors
-python3 fieldstone.py  40  40 0 | grep nel >> errors
-python3 fieldstone.py  48  48 0 | grep nel >> errors
-python3 fieldstone.py  64  64 0 | grep nel >> errors
-python3 fieldstone.py  80  80 0 | grep nel >> errors
-python3 fieldstone.py  96  96 0 | grep nel >> errors
-python3 fieldstone.py 128 128 0 | grep nel >> errors
-python3 fieldstone.py 150 150 0 | grep nel >> errors
+echo 8x8
+python3 stone.py   8   8 0 | grep nel >> errors
+python3 stone.py   9   9 0 | grep nel >> errors
+python3 stone.py  10  10 0 | grep nel >> errors
+python3 stone.py  11  11 0 | grep nel >> errors
+python3 stone.py  12  12 0 | grep nel >> errors
+python3 stone.py  13  13 0 | grep nel >> errors
+python3 stone.py  14  14 0 | grep nel >> errors
+python3 stone.py  15  15 0 | grep nel >> errors
+echo 16x16 
+python3 stone.py  16  16 0 | grep nel >> errors
+python3 stone.py  18  18 0 | grep nel >> errors
+python3 stone.py  20  20 0 | grep nel >> errors
+python3 stone.py  24  24 0 | grep nel >> errors
+python3 stone.py  28  28 0 | grep nel >> errors
+python3 stone.py  30  30 0 | grep nel >> errors
+echo 32x32 
+python3 stone.py  32  32 0 | grep nel >> errors
+python3 stone.py  40  40 0 | grep nel >> errors
+python3 stone.py  48  48 0 | grep nel >> errors
+python3 stone.py  52  52 0 | grep nel >> errors
+python3 stone.py  56  56 0 | grep nel >> errors
+python3 stone.py  60  60 0 | grep nel >> errors
+echo 64x64 
+python3 stone.py  64  64 0 | grep nel >> errors
+python3 stone.py  72  72 0 | grep nel >> errors
+python3 stone.py  80  80 0 | grep nel >> errors
+python3 stone.py  88  88 0 | grep nel >> errors
+python3 stone.py  96  96 0 | grep nel >> errors
+echo 128x128 
+python3 stone.py 104 104 0 | grep nel >> errors
+python3 stone.py 112 112 0 | grep nel >> errors
+python3 stone.py 120 120 0 | grep nel >> errors
+python3 stone.py 128 128 0 | grep nel >> errors
+python3 stone.py 150 150 0 | grep nel >> errors
 
 
 

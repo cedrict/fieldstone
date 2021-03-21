@@ -25,5 +25,5 @@ set ylabel 'error'
 plot[][]\
 'errors' u (1./sqrt($2)):5 w lp ps .5 t 'velocity',\
 'errors' u (1./sqrt($2)):8 w lp ps .5 t 'pressure',\
-x**.5/.25 w l t 'x^2',\
-x**1/10. w l t 'x^1'
+x**.5/.15 w l lt -1 dt 2 t 'x^{0.5}',\
+x**1/4.  w l lt -1 dt 1 t 'x^1'
