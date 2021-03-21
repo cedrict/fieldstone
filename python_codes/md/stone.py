@@ -372,11 +372,11 @@ if int(len(sys.argv) == 7):
    Ra    = float(sys.argv[5])
    nstep = int(sys.argv[6])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 32
+   nely = 32
    visu = 1
    order= 2
-   Ra = 1e4
+   Ra = 14
    nstep=1000
 
 tol_ss=1e-6   # tolerance for steady state 
@@ -1217,7 +1217,7 @@ for istep in range(0,nstep):
     print("     -> qy_n (m,M) %.6e %.6e " %(np.min(qy_n),np.max(qy_n)))
 
     #np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
-    #np.savetxt('strainrate.ascii',np.array([xV,yV,exx_n,eyy_n,exy_n]).T,header='# x,y,exx,eyy,exy')
+    np.savetxt('strainrate.ascii',np.array([xV,yV,exx_n,eyy_n,exy_n]).T,header='# x,y,exx,eyy,exy')
 
     print("compute press & sr: %.3f s" % (timing.time() - start))
 
@@ -1292,7 +1292,7 @@ for istep in range(0,nstep):
        vtufile.write("<Points> \n")
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
+           vtufile.write("%10f %10f %10f \n" %(xV[i],yV[i],0.))
        vtufile.write("</DataArray>\n")
        vtufile.write("</Points> \n")
        #####
@@ -1300,37 +1300,37 @@ for istep in range(0,nstep):
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+           vtufile.write("%10f %10f %10f \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='press' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10e \n" %q[i])
+           vtufile.write("%.15f \n" %q[i])
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10e \n" %T[i])
+           vtufile.write("%.15f \n" %T[i])
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10e \n" %exx_n[i])
+           vtufile.write("%.15f \n" %exx_n[i])
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10e \n" %eyy_n[i])
+           vtufile.write("%.15f \n" %eyy_n[i])
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10e \n" %exy_n[i])
+           vtufile.write("%.15f \n" %exy_n[i])
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10e %10e %10e \n" %(qx_n[i],qy_n[i],0.))
+           vtufile.write("%10f %10f %10f \n" %(qx_n[i],qy_n[i],0.))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</PointData>\n")
