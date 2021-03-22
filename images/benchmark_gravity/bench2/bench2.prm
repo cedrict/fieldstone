@@ -1,0 +1,111 @@
+#based on ../tests/ascii_data_initial_temperature_3d_shell.prm 
+
+##### simple test for ascii data initial temperature
+
+set Dimension                              = 3
+set Use years in output instead of seconds = true
+set End time                               = 0
+set Output directory                       = output-bench2
+set Nonlinear solver scheme                = no Advection, no Stokes
+
+
+subsection Geometry model
+  set Model name = spherical shell
+  subsection Spherical shell
+    set Inner radius  = 6291e3
+    set Outer radius  = 6315e3
+    set Custom mesh subdivision     = number of slices
+    set Number of slices = 1
+    set Initial lateral refinement  = 4
+  end
+end
+
+
+subsection Initial temperature model
+  set Model name = ascii data
+  subsection Ascii data model
+    set Data directory       = /home/cedrict/Desktop/ASPECT/2021_01/aspect/build/bench2/
+    set Data file name       = bench2.txt
+  end
+end
+
+
+# The parameters below this comment were created by the update script
+# as replacement for the old 'Model settings' subsection. They can be
+# safely merged with any existing subsections with the same name.
+
+#subsection Boundary velocity model
+#  set Prescribed velocity boundary indicators = west:function, east:function, south:function, inner:function, outer:function
+#end
+
+# Model boundary velocity
+subsection Boundary velocity model
+  set Zero velocity boundary indicators       = top, bottom
+end
+
+subsection Boundary velocity model
+  subsection Function
+    set Function expression = 1;0;0
+  end
+end
+
+
+subsection Gravity model
+  set Model name = radial constant
+
+  subsection Radial constant
+    set Magnitude = 10
+  end
+end
+
+
+subsection Material model
+  set Model name = simple
+  subsection Simple model
+    set Viscosity = 1e21
+  end
+end
+
+subsection Material model
+  set Model name = simple
+
+  subsection Simple model
+    set Reference density             = 3300
+    set Reference specific heat       = 1
+    set Reference temperature         = 0
+    set Thermal conductivity          = 1
+    set Thermal expansion coefficient = 3e-5
+    set Viscosity                     = 1e19
+  end
+end
+
+subsection Formulation
+  set Formulation = Boussinesq approximation
+end
+
+
+
+# Mesh refinement
+subsection Mesh refinement
+  set Initial global refinement          = 0
+end
+
+
+# Postprocessing
+subsection Postprocess
+  set List of postprocessors = gravity calculation,visualization, material statistics
+  subsection Visualization
+    set List of output variables = density, viscosity, partition
+    set Time between graphical output = 0
+    set Interpolate output = false 
+  end
+
+
+  subsection Gravity calculation
+    set Sampling scheme               = map 
+    set Minimum radius                = 6621e3 
+    set Number points longitude       = 181
+    set Number points latitude        = 91
+    set Quadrature degree increase    = 4
+  end
+end

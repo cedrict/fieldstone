@@ -1,0 +1,118 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize 0.3
+
+grav2=496.542034795e-5
+grav5=1241.35514223e-5
+grav10=2482.71067903e-5
+
+set ylabel 'gravity norm'
+set xlabel 'Initial lateral refinement'
+set title 'nq^+=3, nslice=2'
+set output 'grav_latres.pdf'
+plot[][]\
+'results_latres' u 3:11 w lp t 'average',\
+'results_latres' u 3:12 w lp t 'minimum',\
+'results_latres' u 3:13 w lp t 'maximum',\
+grav10 lt -1 dt 2 
+
+set log y
+set ylabel 'gravity norm (error)'
+set output 'grav_latres_error.pdf'
+plot[][]\
+'results_latres' u 3:(abs($11-grav10)) w lp t 'average',\
+'results_latres' u 3:(abs($12-grav10)) w lp t 'minimum',\
+'results_latres' u 3:(abs($13-grav10)) w lp t 'maximum',\
+1e-5 lt -1 dt 2 t '1 mGal'
+
+
+set ylabel 'gravity norm (relative error)'
+set output 'grav_latres_relerror.pdf'
+plot[][]\
+'results_latres' u 3:(abs($11-grav10))/grav10 w lp notitle
+
+
+
+
+##########################################################################
+unset log y 
+set ylabel 'gravity norm'
+set xlabel 'Quadrature degree increase'
+set title 'lat. res. 6, nslice=2'
+set output 'grav_nqplus.pdf'
+plot[][]\
+'results_nqplus' u 2:11 w lp t 'average',\
+'results_nqplus' u 2:12 w lp t 'minimum',\
+'results_nqplus' u 2:13 w lp t 'maximum',\
+grav10 lt -1 dt 2 
+
+set log y
+set ylabel 'gravity norm (error)'
+set output 'grav_nqplus_error.pdf'
+plot[][]\
+'results_nqplus' u 2:(abs($11-grav10)) w lp t 'average',\
+'results_nqplus' u 2:(abs($12-grav10)) w lp t 'minimum',\
+'results_nqplus' u 2:(abs($13-grav10)) w lp t 'maximum',\
+1e-5 lt -1 dt 2 t '1 mGal'
+
+set ylabel 'gravity norm (relative error)'
+set output 'grav_nqplus_relerror.pdf'
+plot[][]\
+'results_nqplus' u 2:(abs($11-grav10))/grav10 w lp notitle
+
+##########################################################################
+
+unset log y 
+set ylabel 'gravity norm'
+set xlabel 'Number of slices'
+set title 'lat. res. 6, nq^+=3'
+set output 'grav_nslice.pdf'
+plot[][]\
+'results_nslice' u 1:11 w lp t 'average',\
+'results_nslice' u 1:12 w lp t 'minimum',\
+'results_nslice' u 1:13 w lp t 'maximum',\
+grav10 lt -1 dt 2 
+
+set log y
+
+set ylabel 'gravity norm (error)'
+set title 'lat. res. 6, nq^+=3'
+set output 'grav_nslice_error.pdf'
+plot[][]\
+'results_nslice' u 1:(abs($11-grav10)) w lp t 'average',\
+'results_nslice' u 1:(abs($12-grav10)) w lp t 'minimum',\
+'results_nslice' u 1:(abs($13-grav10)) w lp t 'maximum',\
+1e-5 lt -1 dt 2 t '1 mGal'
+
+
+set ylabel 'gravity norm (relative error)'
+set title 'lat. res. 6, nq^+=3'
+set output 'grav_nslice_relerror.pdf'
+plot[][]\
+'results_nslice' u 1:(abs($11-grav10))/grav10 w lp notitle
+
+
+
+
+##########################################################################
+##########################################################################
+unset title
+set xlabel 'cost'
+set log x
+unset log y 
+set output 'grav_cost.pdf'
+plot[][]\
+'results' u ($7*((3+$2)**3)):11 pt 5  notitle,\
+grav10 lt -1 dt 2 
+
+
+set output 'grav_cost_error.pdf'
+set log 
+plot[][]\
+'results' u ($7*((3+$2)**3)):(abs($11-grav10)) t 'average' ,\
+'results' u ($7*((3+$2)**3)):(abs($12-grav10)) t 'minimum',\
+'results' u ($7*((3+$2)**3)):(abs($13-grav10)) t 'maximum',\
+1e-5 lt -1 dt 2 t '1 mGal'
+
+
+
