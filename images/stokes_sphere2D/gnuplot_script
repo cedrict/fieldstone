@@ -37,11 +37,11 @@ set ylabel 'v_{rms}'
 
 set output 'vrms_FS.pdf'
 plot[:][0.34:0.45]\
-'aspect_FS_gr/statistics_none.ascii'       u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dt 1 t 'ASPECT, none',\
-'aspect_FS_gr/statistics_harmonic.ascii'   u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dt 2 t 'ASPECT, harm.',\
-'aspect_FS_gr/statistics_geometric.ascii'  u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dt 3 t 'ASPECT, geom..',\
-'aspect_FS_gr/statistics_arithmetic.ascii' u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dt 4 t 'ASPECT, arithm..',\
-'aspect_FS_gr/statistics_q1.ascii'         u (1./(2**($1))):($16/vs) w lp lw .5 ps .15 pt 7 lt 1 dt 5 t 'ASPECT, q1 proj.',\
+'aspect_FS_gr/statistics_none.ascii'       u (1./(2**($1))):($16/vs) w lp lw 1.5 ps .15 pt 7 lt 1 dt 1 t 'ASPECT, none',\
+'aspect_FS_gr/statistics_harmonic.ascii'   u (1./(2**($1))):($16/vs) w lp lw 1.5 ps .15 pt 7 lt 1 dt 2 t 'ASPECT, harm.',\
+'aspect_FS_gr/statistics_geometric.ascii'  u (1./(2**($1))):($16/vs) w lp lw 1.5 ps .15 pt 7 lt 1 dt 3 t 'ASPECT, geom..',\
+'aspect_FS_gr/statistics_arithmetic.ascii' u (1./(2**($1))):($16/vs) w lp lw 1.5 ps .15 pt 7 lt 1 dt 4 t 'ASPECT, arithm..',\
+'aspect_FS_gr/statistics_q1.ascii'         u (1./(2**($1))):($16/vs) w lp lw 1.5 ps .15 pt 7 lt 1 dt 5 t 'ASPECT, q1 proj.',\
 'stone02_FS/statistics.ascii'              u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 2 dt 1 t 'Stone 2',\
 'stone02_half_FS/statistics.ascii'         u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 2 dt 2 t 'Stone 2 (half)',\
 'stone72_FS/statistics_b1.ascii'           u 2:($15/vs)              w lp lw .5 ps .15 pt 7 lt 3 dt 1 t 'Stone 72, bubble #1',\
@@ -54,8 +54,8 @@ plot[:][0.34:0.45]\
 'regorda/FS.Arithmetic'                    u 1:10                    w lp lw .5 ps .15 pt 7 lt 5 dashtype 2 t 'Regorda, arithm',\
 'regorda/FS.Geometric'                     u 1:10                    w lp lw .5 ps .15 pt 7 lt 5 dashtype 3 t 'Regorda, geom',\
 'regorda/FS.Harmonic'                      u 1:10                    w lp lw .5 ps .15 pt 7 lt 5 dashtype 4 t 'Regorda, harm',\
-'stone93_FS/statistics_np.ascii'           u (sqrt(1/$2)):($13/vs)   w lp lw .5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
-'stone93_FS/statistics_a.ascii'            u (sqrt(1/$2)):($13/vs)   w lp lw .5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
+'stone93_FS/statistics_np.ascii'           u (sqrt(1/$2)):($13/vs)   w lp lw 1.5 ps .15 pt 7 lt 6 dt 1 t 'Stone 93 - np=16,32,48,64, a=50',\
+'stone93_FS/statistics_a.ascii'            u (sqrt(1/$2)):($13/vs)   w lp lw 1.5 ps .15 pt 7 lt 6 dt 2 t 'Stone 93 - np=32, a=50,25,5',\
 1.48224e-5/vs lt -1 dt 2 lw .5
 
 
