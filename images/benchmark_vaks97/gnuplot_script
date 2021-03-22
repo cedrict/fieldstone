@@ -1,0 +1,164 @@
+set term pdf enhanced font "Times,12pt"
+set xlabel 'time'
+set ylabel 'v_{rms}'
+set key outside
+unset grid
+
+set arrow from 208.5, graph 0 to 208.5, graph 1 nohead lw .5 dt 2 
+set arrow from 872, graph 0 to 872, graph 1 nohead lw .5 dt 2 
+
+set title 'level 6'
+set output 'vrms6.pdf'
+plot[0:1200][]\
+'aspect/lvl6/statistics'               u 2:14 w l lt 1 dt 1 lw .5 t 'disc',\
+'aspect/lvl6_smooth_0p0025/statistics' u 2:14 w l lt 2 dt 1 lw .5 t 'smooth, 0.0025',\
+'aspect/lvl6_smooth_0p005/statistics'  u 2:14 w l lt 2 dt 2 lw .5 t 'smooth, 0.005',\
+'aspect/lvl6_smooth_0p01/statistics'   u 2:14 w l lt 2 dt 3 lw .5 t 'smooth, 0.01',\
+'aspect/lvl6_smooth_0p02/statistics'   u 2:14 w l lt 2 dt 4 lw .5 t 'smooth, 0.02',\
+'aspect_vof/lvl6/statistics'           u 2:13 w l lt 3 dt 1 lw .5 t 'vof',\
+0.00309 lt -1 lw .5 dt 2 notitle,\
+0.000865 lt -1 lw .5 dt 2 notitle
+
+set title 'level 7'
+set output 'vrms7.pdf'
+plot[0:1200][]\
+'aspect/lvl7/statistics'               u 2:14 w l lt 1 dt 1 lw .5 t 'disc',\
+'aspect/lvl7_smooth_0p0025/statistics' u 2:14 w l lt 2 dt 1 lw .5 t 'smooth, 0.0025',\
+'aspect/lvl7_smooth_0p005/statistics'  u 2:14 w l lt 2 dt 2 lw .5 t 'smooth, 0.005',\
+'aspect/lvl7_smooth_0p01/statistics'   u 2:14 w l lt 2 dt 3 lw .5 t 'smooth, 0.01',\
+'aspect/lvl7_smooth_0p02/statistics'   u 2:14 w l lt 2 dt 4 lw .5 t 'smooth, 0.02',\
+'aspect_vof/lvl7/statistics'           u 2:13 w l lt 3 dt 1 lw .5 t 'vof',\
+0.00309 lt -1 lw .5 dt 2 notitle,\
+0.000865 lt -1 lw .5 dt 2 notitle
+
+set title 'level 8'
+set output 'vrms8.pdf'
+plot[0:1200][]\
+'aspect/lvl8/statistics'               u 2:14 w l lt 1 dt 1 lw .5 t 'disc',\
+'aspect/lvl8_smooth_0p0025/statistics' u 2:14 w l lt 2 dt 1 lw .5 t 'smooth, 0.0025',\
+'aspect/lvl8_smooth_0p005/statistics'  u 2:14 w l lt 2 dt 2 lw .5 t 'smooth, 0.005',\
+'aspect/lvl8_smooth_0p001/statistics'  u 2:14 w l lt 2 dt 3 lw .5 t 'smooth, 0.01',\
+'aspect/lvl8_smooth_0p02/statistics'   u 2:14 w l lt 2 dt 4 lw .5 t 'smooth, 0.02',\
+'aspect_vof/lvl8/statistics'           u 2:13 w l lt 3 dt 1 lw .5 t 'vof',\
+0.00309 lt -1 lw .5 dt 2 notitle,\
+0.000865 lt -1 lw .5 dt 2 notitle
+
+
+set title 'level 6, peak 1'
+set output 'vrms6_peak1.pdf'
+plot[190:230][]\
+'aspect/lvl6/statistics'               u 2:14 w l lt 1 dt 1 lw .5 t ' disc',\
+'aspect/lvl6_smooth_0p0025/statistics' u 2:14 w l lt 2 dt 1 lw .5 t ' smooth, 0.0025',\
+'aspect/lvl6_smooth_0p005/statistics'  u 2:14 w l lt 2 dt 2 lw .5 t ' smooth, 0.005',\
+'aspect/lvl6_smooth_0p01/statistics'   u 2:14 w l lt 2 dt 3 lw .5 t ' smooth, 0.01',\
+'aspect/lvl6_smooth_0p02/statistics'   u 2:14 w l lt 2 dt 4 lw .5 t ' smooth, 0.02',\
+'aspect_vof/lvl6/statistics'           u 2:13 w l lt 3 dt 1 lw .5 t ' vof',\
+0.00309 lt -1 lw .5 dt 2 notitle
+
+set title 'level 7, peak 1'
+set output 'vrms7_peak1.pdf'
+plot[190:230][]\
+'aspect/lvl7/statistics'               u 2:14 w l lt 1 dt 1 lw .5 t 'disc',\
+'aspect/lvl7_smooth_0p0025/statistics' u 2:14 w l lt 2 dt 1 lw .5 t 'smooth, 0.0025',\
+'aspect/lvl7_smooth_0p005/statistics'  u 2:14 w l lt 2 dt 2 lw .5 t 'smooth, 0.005',\
+'aspect/lvl7_smooth_0p01/statistics'   u 2:14 w l lt 2 dt 3 lw .5 t 'smooth, 0.01',\
+'aspect/lvl7_smooth_0p02/statistics'   u 2:14 w l lt 2 dt 4 lw .5 t 'smooth, 0.02',\
+'aspect_vof/lvl7/statistics'           u 2:13 w l lt 3 dt 1 lw .5 t 'vof',\
+0.00309 lt -1 lw .5 dt 2 notitle
+
+
+set title 'level 8, peak 1 '
+set output 'vrms8_peak1.pdf'
+plot[190:230][]\
+'aspect/lvl8/statistics'               u 2:14 w l lt 1 dt 1 lw .5 t 'disc',\
+'aspect/lvl8_smooth_0p0025/statistics' u 2:14 w l lt 2 dt 1 lw .5 t 'smooth, 0.0025',\
+'aspect/lvl8_smooth_0p005/statistics'  u 2:14 w l lt 2 dt 2 lw .5 t 'smooth, 0.005',\
+'aspect/lvl8_smooth_0p001/statistics'  u 2:14 w l lt 2 dt 3 lw .5 t 'smooth, 0.01',\
+'aspect/lvl8_smooth_0p02/statistics'   u 2:14 w l lt 2 dt 4 lw .5 t 'smooth, 0.02',\
+'aspect_vof/lvl8/statistics'           u 2:13 w l lt 3 dt 1 lw .5 t 'vof',\
+0.00309 lt -1 lw .5 dt 2 notitle
+
+
+
+set title 'level 6, peak 2'
+set output 'vrms6_peak2.pdf'
+plot[840:950][]\
+'aspect/lvl6/statistics'               u 2:14 w l lt 1 dt 1 lw .5 t ' disc',\
+'aspect/lvl6_smooth_0p0025/statistics' u 2:14 w l lt 2 dt 1 lw .5 t ' smooth, 0.0025',\
+'aspect/lvl6_smooth_0p005/statistics'  u 2:14 w l lt 2 dt 2 lw .5 t ' smooth, 0.005',\
+'aspect/lvl6_smooth_0p01/statistics'   u 2:14 w l lt 2 dt 3 lw .5 t ' smooth, 0.01',\
+'aspect/lvl6_smooth_0p02/statistics'   u 2:14 w l lt 2 dt 4 lw .5 t ' smooth, 0.02',\
+'aspect_vof/lvl6/statistics'           u 2:13 w l lt 3 dt 1 lw .5 t ' vof',\
+0.000865 lt -1 lw .5 dt 2 notitle
+
+set title 'level 7, peak 2'
+set output 'vrms7_peak2.pdf'
+plot[840:950][]\
+'aspect/lvl7/statistics'               u 2:14 w l lt 1 dt 1 lw .5 t 'disc',\
+'aspect/lvl7_smooth_0p0025/statistics' u 2:14 w l lt 2 dt 1 lw .5 t 'smooth, 0.0025',\
+'aspect/lvl7_smooth_0p005/statistics'  u 2:14 w l lt 2 dt 2 lw .5 t 'smooth, 0.005',\
+'aspect/lvl7_smooth_0p01/statistics'   u 2:14 w l lt 2 dt 3 lw .5 t 'smooth, 0.01',\
+'aspect/lvl7_smooth_0p02/statistics'   u 2:14 w l lt 2 dt 4 lw .5 t 'smooth, 0.02',\
+'aspect_vof/lvl7/statistics'           u 2:13 w l lt 3 dt 1 lw .5 t 'vof',\
+0.000865 lt -1 lw .5 dt 2 notitle
+
+
+set title 'level 8, peak 2'
+set output 'vrms8_peak2.pdf'
+plot[840:950][]\
+'aspect/lvl8/statistics'               u 2:14 w l lt 1 dt 1 lw .5 t 'disc',\
+'aspect/lvl8_smooth_0p0025/statistics' u 2:14 w l lt 2 dt 1 lw .5 t 'smooth, 0.0025',\
+'aspect/lvl8_smooth_0p005/statistics'  u 2:14 w l lt 2 dt 2 lw .5 t 'smooth, 0.005',\
+'aspect/lvl8_smooth_0p001/statistics'  u 2:14 w l lt 2 dt 3 lw .5 t 'smooth, 0.01',\
+'aspect/lvl8_smooth_0p02/statistics'   u 2:14 w l lt 2 dt 4 lw .5 t 'smooth, 0.02',\
+'aspect_vof/lvl8/statistics'           u 2:13 w l lt 3 dt 1 lw .5 t 'vof',\
+0.000865 lt -1 lw .5 dt 2 notitle
+
+
+
+
+
+#########################################
+set ylabel 'Global mass for composition C_1'
+
+set title 'level 6'
+set output 'C1_6.pdf'
+plot[0:1200][]\
+'aspect/lvl6/statistics'               u 2:18 w l lt 1 dt 1 lw .5 t 'disc',\
+'aspect/lvl6_smooth_0p0025/statistics' u 2:18 w l lt 2 dt 1 lw .5 t 'smooth, 0.0025',\
+'aspect/lvl6_smooth_0p005/statistics'  u 2:18 w l lt 2 dt 2 lw .5 t 'smooth, 0.005',\
+'aspect/lvl6_smooth_0p01/statistics'   u 2:18 w l lt 2 dt 3 lw .5 t 'smooth, 0.01',\
+'aspect/lvl6_smooth_0p02/statistics'   u 2:18 w l lt 2 dt 4 lw .5 t 'smooth, 0.02',\
+'aspect_vof/lvl6/statistics'           u 2:17 w l lt 3 dt 1 lw .5 t 'vof',\
+0.18284 lt -1 dt 2 t 'analytical'
+
+set title 'level 7'
+set output 'C1_7.pdf'
+plot[0:1200][]\
+'aspect/lvl7/statistics'               u 2:18 w l lt 1 dt 1 lw .5 t 'disc',\
+'aspect/lvl7_smooth_0p0025/statistics' u 2:18 w l lt 2 dt 1 lw .5 t 'smooth, 0.0025',\
+'aspect/lvl7_smooth_0p005/statistics'  u 2:18 w l lt 2 dt 2 lw .5 t 'smooth, 0.005',\
+'aspect/lvl7_smooth_0p01/statistics'   u 2:18 w l lt 2 dt 3 lw .5 t 'smooth, 0.01',\
+'aspect/lvl7_smooth_0p02/statistics'   u 2:18 w l lt 2 dt 4 lw .5 t 'smooth, 0.02',\
+'aspect_vof/lvl7/statistics'           u 2:17 w l lt 3 dt 1 lw .5 t 'vof',\
+0.18284 lt -1 dt 2 t 'analytical'
+
+set title 'level 8'
+set output 'C1_8.pdf'
+plot[0:1200][]\
+'aspect/lvl8/statistics'               u 2:18 w l lt 1 dt 1 lw .5 t 'disc',\
+'aspect/lvl8_smooth_0p0025/statistics' u 2:18 w l lt 2 dt 1 lw .5 t 'smooth, 0.0025',\
+'aspect/lvl8_smooth_0p005/statistics'  u 2:18 w l lt 2 dt 2 lw .5 t 'smooth, 0.005',\
+'aspect/lvl8_smooth_0p01/statistics'   u 2:18 w l lt 2 dt 3 lw .5 t 'smooth, 0.01',\
+'aspect/lvl8_smooth_0p02/statistics'   u 2:18 w l lt 2 dt 4 lw .5 t 'smooth, 0.02',\
+'aspect_vof/lvl8/statistics'           u 2:17 w l lt 3 dt 1 lw .5 t 'vof',\
+0.18284 lt -1 dt 2 t 'analytical'
+
+
+
+
+
+
+
+
+
