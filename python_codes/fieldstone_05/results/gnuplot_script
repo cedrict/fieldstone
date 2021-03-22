@@ -3,6 +3,7 @@ set log xy
 set xlabel 'h'
 set ylabel 'error'
 set key outside
+set format y "10^{%L}"
 
 set output 'errors_even.pdf'
 plot[][]\

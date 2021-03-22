@@ -12,13 +12,14 @@ The viscosity is prescribed at the quadrature points
 If the number of elements is even in the $x$-direction direction, all elements 
 (and their associated quadrature points)
 have a constant viscosity ($1$ or  $10^6$). If it is odd, then the elements situated 
-at the viscosity jump have half their integration points with $\mu=1$ and half with $\mu=10^6$ 
+at the viscosity jump have half their integration points with $\eta=1$ and half 
+with $\eta=10^6$ 
 (which is a pathological case since the used quadrature rule inside elements cannot represent 
 accurately such a jump).  
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_05/results/errors_even.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_05/results/errors_odd.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_05/results/errors_even.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_05/results/errors_odd.pdf}\\
 {\captionfont Velocity and pressure error convergence as a function of mesh size and for various values
 of the penalty parameter. Left: even number of elements in each direction; Right: odd numbers.
 }
@@ -30,7 +31,7 @@ be high enough to insure an incompressible flow and thereby recover the expected
 due to round-off errors. 
 
 \begin{center}
-\includegraphics[width=16cm]{python_codes/fieldstone_05/results/solution.pdf}
+\includegraphics[width=16cm]{python_codes/fieldstone_05/results/solution.pdf}\\
 {\captionfont Various fields for 100x100 mesh}
 \end{center}
 

@@ -4,8 +4,10 @@ set log xy
 set xlabel 'h'
 set ylabel 'error'
 set key bottom
+set format y "10^{%L}"
+set key outside
 plot[][]\
-'errors' u (1./sqrt($2)):5 w lp t 'velocity',\
-'errors' u (1./sqrt($2)):8 w lp t 'pressure',\
-x**2/1000. w l t 'x^2',\
-x**1/10. w l t 'x^1'
+'errors' u (1./sqrt($2)):5 w lp ps .5  t 'velocity',\
+'errors' u (1./sqrt($2)):8 w lp ps .5 t 'pressure',\
+x**2/1000. w l lt -1 dt 1 t 'x^2',\
+x**1/10.   w l lt -1 dt 2 t 'x^1'

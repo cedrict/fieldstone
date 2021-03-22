@@ -10,7 +10,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 The SolKz benchmark \cite{repa87} is similar to the SolCx benchmark.
 but the viscosity is now a function of the space coordinates: 
 \begin{equation}
-\mu(y)=\exp(By) \quad {\rm with} \quad B=13.8155
+\eta(y)=\exp(By) \quad {\rm with} \quad B=13.8155
 \end{equation}
 It is however not a discontinuous function but grows exponentially with the vertical coordinate so that its overall variation is again $10^6$. 
 The forcing is again chosen by imposing a spatially variable density variation as follows:
@@ -18,9 +18,12 @@ The forcing is again chosen by imposing a spatially variable density variation a
 \rho(x,y)=\sin(2y) \cos(3\pi x)
 \end{equation}
 Free slip boundary conditions are imposed on all sides of the domain.
-This benchmark is presented in \cite{zhon96} as well and is studied in \cite{dumg11} and \cite{gemd13}.
+This benchmark is presented in Zhong (1996) \cite{zhon96} as well and is studied 
+in Duretz \etal (2011) \cite{dumg11} and Gerya \etal (2013) \cite{gemd13}.
 
+\begin{center}
 \includegraphics[width=14cm]{python_codes/fieldstone_06/results/solution.pdf}
+\end{center}
 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_06/results/errors.pdf}\\
