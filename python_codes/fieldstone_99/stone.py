@@ -37,6 +37,9 @@ theta=np.zeros(N,dtype=np.float64)
 # so we read lat/lon values from these last.
 ###################################################################################################
 
+print('fetch data from toobig/f99')
+exit()
+
 lon[0:N],lat[0:N],rho_c[0:N]=\
 np.loadtxt('data/rho_c_out.xyz',unpack=True,usecols=[0,1,2],skiprows=0)
 
