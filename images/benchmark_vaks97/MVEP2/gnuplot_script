@@ -1,0 +1,16 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+set xlabel 'time'
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
+plot[][]\
+'VK_Results65_3.txt' u 1:2 w l lt 1 dt 1 t '65, 3',\
+'VK_Results65_5.txt' u 1:2 w l lt 1 dt 2 t '65, 5',\
+'VK_Results65_7.txt' u 1:2 w l lt 1 dt 3 t '65, 7',\
+'VK_Results129_3.txt' u 1:2 w l lt 2 dt 1 t '129, 3',\
+'VK_Results129_5.txt' u 1:2 w l lt 2 dt 2 t '129, 5',\
+'VK_Results129_7.txt' u 1:2 w l lt 2 dt 3 t '129, 7',\
+'VK_Results257_3.txt' u 1:2 w l lt 3 dt 1 t '257, 3',\
+'VK_Results257_5.txt' u 1:2 w l lt 3 dt 2 t '257, 5',\
+'VK_Results257_7.txt' u 1:2 w l lt 3 dt 3 t '257, 7',\
