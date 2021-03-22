@@ -1,4 +1,4 @@
-set term pdf enhanced font "Times,10pt"
+set term pdf enhanced font "Times,12pt"
 set grid
 set xlabel 'x'
 set ylabel 'T'
@@ -6,15 +6,15 @@ set key left
 
 set output 'T1.pdf'
 plot[][]\
-'Temperature1.ascii' u 1:3 w lp t 'FEM',\
+'Temperature1.ascii' u 1:3 w lp pt 5 t 'FEM',\
 'Temperature1.ascii' u 1:4 w lp lt -1 t 'analytical'
 
 set output 'T2.pdf'
 plot[][]\
-'Temperature2.ascii' u 1:3 w lp t 'FEM',\
+'Temperature2.ascii' u 1:3 w lp pt 5 t 'FEM',\
 'Temperature2.ascii' u 1:4 w lp lt -1 t 'analytical'
 
 set output 'T3.pdf'
 plot[][]\
-'Temperature3.ascii' u 1:3 w lp t 'FEM',\
+'Temperature3.ascii' u 1:3 w lp pt 5 t 'FEM',\
 'Temperature3.ascii' u 1:4 w lp lt -1 t 'analytical'

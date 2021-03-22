@@ -7,15 +7,14 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Let us start by remembering that the Peclate number is given by 
+Let us start by remembering that the Peclet number is given by 
 \[
-Pe = \frac{uh}{2\kappa} = \frac{uh\rho C_p}{2 k}
+\Penb = \frac{uh}{2\kappa} = \frac{uh\rho C_p}{2 k}
 \]
-
-RECALL peclet formula
+where $u$ is the velocity, $h$ is the element size and $\kappa$ is the diffusion coefficient.
 
 %----------------------------
-\subsubsection*{Experiment 1}
+\subsection*{Experiment 1}
 We wish to solve the advection-diffusion problem presented in 
 Section~\ref{ss:advdiff}:
 \begin{equation}
@@ -29,19 +28,24 @@ We will consider three values of the Peclet number: 0.25, 1 and 5.
 From these values we can compute the corresponding heat conductivity value $k$.
 Linear elements are used.
 
-As $Pe$ increases, a sharp gradient, sometimes called a boundary layer,
-develops at the right end of the domain. For high $Pe$ values, the solution shows 
+The analytical solution is given by Eq.~(2.23) in Donea \& Huerta \cite{dohu03}:
+\[
+T(x)= \frac{f}{u_0} \left(  x - \frac{1-\exp(2x \; \Penb /h_x)}{1-\exp(2\; \Penb / h_x)} \right) 
+\]
+
+As $\Penb$ increases, a sharp gradient, sometimes called a boundary layer,
+develops at the right end of the domain. For high $\Penb$ values, the solution shows 
 spurious node to node oscillations, failing to capture the highly nonlinear change. This oscillatory
-behavior is seen for $Pe>1$ (see Donea \& Huerta \cite{dohu03}).
+behavior is seen for $\Penb>1$ (see Donea \& Huerta \cite{dohu03}).
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_65/results/solution1.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_65/results/solution2.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_65/results/solution3.pdf}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_65/results/T1.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_65/results/T2.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_65/results/T3.pdf}\\
-{\captionfont Left to right: $Pe$=0.25, $Pe$=1, $Pe$=5}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_65/results/exp1/solution1.pdf}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_65/results/exp1/solution2.pdf}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_65/results/exp1/solution3.pdf}\\
+\includegraphics[width=5.5cm]{python_codes/fieldstone_65/results/exp1/T1.pdf}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_65/results/exp1/T2.pdf}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_65/results/exp1/T3.pdf}\\
+{\captionfont Left to right: $\Penb$=0.25, $Pe$=1, $Pe$=5}
 \end{center}
 
 Finally we see that we recover identical results as in Donea \& Huerta \cite{dohu03}:
@@ -52,11 +56,11 @@ Finally we see that we recover identical results as in Donea \& Huerta \cite{doh
 
 If we now use the artificial diffusion presented in Section~\ref{ss:supg}, we have
 \[
-\tilde{\kappa}=\beta \kappa Pe = \beta \frac{k}{\rho C_p} Pe
+\tilde{\kappa}=\beta \kappa \Penb = \beta \frac{k}{\rho C_p} \Penb
 \]
 with 
 \[
-\beta=\coth(Pe)-\frac{1}{Pe}
+\beta=\coth(\Penb)-\frac{1}{\Penb}
 \]
 which yields:
 \[
@@ -70,25 +74,36 @@ and the code solves the following equation
 
 We observe that this approach recovers the analytical solution exactly:
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_65/results/artdiff/T1.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_65/results/artdiff/T2.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_65/results/artdiff/T3.pdf}\\
-{\captionfont Left to right: $Pe$=0.25, $Pe$=1, $Pe$=5}
+\includegraphics[width=5cm]{python_codes/fieldstone_65/results/exp1/artdiff/T1.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_65/results/exp1/artdiff/T2.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_65/results/exp1/artdiff/T3.pdf}\\
+{\captionfont Left to right: $\Penb$=0.25, $\Penb$=1, $\Penb$=5}
 \end{center}
 
 If one now uses 'full upwinding', i.e. $\beta=1$, we see that the scheme is 
 overly dissipative (i.e. overly diffusive):
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_65/results/artdiff1/T1.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_65/results/artdiff1/T2.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_65/results/artdiff1/T3.pdf}\\
-{\captionfont Left to right: $Pe$=0.25, $Pe$=1, $Pe$=5}
+\includegraphics[width=5cm]{python_codes/fieldstone_65/results/exp1/artdiff1/T1.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_65/results/exp1/artdiff1/T2.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_65/results/exp1/artdiff1/T3.pdf}\\
+{\captionfont Left to right: $\Penb$=0.25, $\Penb$=1, $\Penb$=5}
 \end{center}
+
+\paragraph{Pure diffusion} It is also worth noting that when the velocity $u=0$, then the ODE becomes 
+\begin{equation}
+- k \frac{d^2T}{dx^2} = f \qquad \text{in} \quad [0,L_x]
+\end{equation}
+with the boundary conditions $T(x=0)=0$ and $T(x=L_x)=0$.
+The result is a parabolic profile and given the boundary conditions we arrive at 
+\[
+T(x)=\frac{f}{k}x(Lx-x)
+\]
+
 
 \newpage
 %..................................................................................
-\subsubsection*{Experiment 2 - advection skew to the mesh}
+\subsection*{Experiment 2 - advection skew to the mesh}
 
 The domain is a unit square. Resolution is $10\times10$ linear elements. Initial temperature is 
 irrelevant since we compute the steady state field. 
@@ -104,15 +119,15 @@ temperature $T$. Right: prescribed velocity field.}
 On page 75 of \cite{dohu03} the authors state that 
 "the diffusivity coefficient is taken to be $10^{-4}$ , 
 corresponding to a mesh Peclet number of $10^4$. 
-Given that $Pe=u h/2\kappa$ and h=0.1, this statement makes no sense.
-I have therefore chosen $Pe=10^4$ and then 
-$\kappa=uh/2Pe = 5\cdot10^{-6}$.
+Given that $\Penb=u h/2\kappa$ and h=0.1, this statement makes no sense.
+I have therefore chosen $\Penb=10^4$ and then 
+$\kappa=uh/2\Penb = 5\cdot10^{-6}$.
 \end{remark}
 
 The norm of the velocity vector $\vec{\upnu}$ is $|\vec{\upnu}|=1$. 
 Since the Peclet number is so high, we have 
 \[
-\tau = \frac{h}{2 u_0} \left( \coth (Pe) -\frac{1}{Pe} \right) \rightarrow 
+\tau = \frac{h}{2 u_0} \left( \coth (\Penb) -\frac{1}{\Penb} \right) \rightarrow 
 \frac{h}{2 u_0} 
 \]
 
@@ -130,7 +145,7 @@ Bottom row taken from Donea \& Huerta \cite{dohu03}. }
 
 
 %..................................................................................
-\subsubsection*{Experiment 3 - DG book setup}
+\subsection*{Experiment 3 - DG book setup}
 
 This setup comes from Li's book on Discontinuous Galerkin Methods \cite{li06}, Section 5.2.3.
 The 2D advection-diffusion equation is solved on a unit square with the following boundary 
@@ -147,7 +162,7 @@ Coefficients are not specified but the experiment should be run at $u/\kappa=1,1
 $D$ is the diffusion coefficient (in the book $D$ is used instead of $\kappa$).
 We then set $\rho=C_p=1$, $u_0=1$ and we define $\xi=u/\kappa$ with $\xi=1,10,100$. Then 
 \[
-Pe = \frac{h\xi}{2} 
+\Penb = \frac{h\xi}{2} 
 \]
 We finally set nelx=nely=32, so that the heat conductivity coefficient can be computed.
 
@@ -157,8 +172,8 @@ We finally set nelx=nely=32, so that the heat conductivity coefficient can be co
 \includegraphics[height=10cm]{python_codes/fieldstone_65/results/exp3/Tnostab}\\
 {\captionfont Left: Taken from Li \cite{li06}. Computed results for a 2-D convection-diffusion 
 problem showing the effect of convection on the temperature distribution in the system.
-Right: results obtained without any stabilisation. From top to bottom, $Pe=0.015625$, 
-$Pe=0.15625$ and $Pe=1.5625$.}
+Right: results obtained without any stabilisation. From top to bottom, $\Penb=0.015625$, 
+$\Penb=0.15625$ and $\Penb=1.5625$.}
 \end{center}
 
 The code also automatically generates the following 3D plots, and we see that for $\xi=100$
@@ -183,6 +198,26 @@ the oscillations near the right wall disappear:
 
 ToDo: run this experiment with SUPG.
 
+%..................................................................................
+\subsection*{Experiment 4 - Heat flow around a cylinder} 
 
+This experiment is described in Section~\ref{sec:hfcyl}.
+We vary the Peclet number from $10^{-3}$ to $10^2$. 
+The prescribed velocity field is as follows:
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_65/results/exp4/vel}
+\end{center}
+
+Zero temperature is prescribed at the bottom and top boundaries.
+The steady state temperature fields for $\Penb=0.001, 0.01, 0.1, 1, 10$ 
+on a 250x100 grid are shown here:
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_65/results/exp4/temps}
+\end{center}
+
+Note that the velocity is not tangential to the bottom and top walls, so that we actually 
+prescribe a tempetature on outflow regions, which is not possible! 
 
 

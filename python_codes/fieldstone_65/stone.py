@@ -23,8 +23,9 @@ ndofT=1      # number of degrees of freedom per node
 # exp 1: 1D problem
 # exp 2: 2D skew to the mesh
 # exp 3: 2D setup from Li, DG book
+# exp 4: 2D heat flow around cylinder
 
-experiment=3
+experiment=4
 
 if experiment==1:
    Lx=1.        # horizontal extent of the domain 
@@ -69,6 +70,21 @@ if experiment==3:
    rho0=1       # reference density
    hcond=u0*hx*rho0*hcapa/2/Pe     # thermal conductivity
 
+if experiment==4:
+   Lx=10.
+   Ly=4. 
+   nelx = 250
+   nely = 100
+   hx=Lx/float(nelx)
+   hy=Ly/float(nely)
+   f=0.
+   Pe=10
+   u0=1.
+   hcapa=1.     # heat capacity
+   rho0=1       # reference density
+   hcond=u0*hx*rho0*hcapa/2/Pe     # thermal conductivity
+
+
 use_artificial_diffusion=False
 
 use_supg=False
@@ -99,7 +115,7 @@ if experiment==2:
    else:
       beta=0
 
-if experiment==3: #????
+if experiment==3 or experiment==4: #????
    if use_artificial_diffusion:
       beta=1.                      # Pe>>1 so coth(Pe)->1 
    else:
@@ -147,8 +163,8 @@ v = np.zeros(NV,dtype=np.float64)  # y-component velocity
 
 if experiment==1 or experiment==3:
    counter = 0
-   for j in range(0, nny):
-       for i in range(0, nnx):
+   for j in range(0,nny):
+       for i in range(0,nnx):
            u[counter]=u0
            v[counter]=0
            counter += 1
@@ -157,13 +173,30 @@ if experiment==1 or experiment==3:
 
 if experiment==2:
    counter = 0
-   for j in range(0, nny):
-       for i in range(0, nnx):
+   for j in range(0,nny):
+       for i in range(0,nnx):
            u[counter]=u0*np.cos(30./180.*np.pi)
            v[counter]=u0*np.sin(30./180.*np.pi)
            counter += 1
        #end for
    #end for
+
+if experiment==4:
+   counter = 0
+   for j in range(0,nny):
+       for i in range(0,nnx):
+           xi=x[counter]-2
+           yi=y[counter]-2
+           if xi**2+yi**2<1:
+              u[counter]=0
+              v[counter]=0
+           else:
+              u[counter]=u0*(1-(xi**2-yi**2)/(xi**2+yi**2)**2)
+              v[counter]=-2*u0*xi*yi/(xi**2+yi**2)**2
+           counter += 1
+       #end for
+   #end for
+
 
 #####################################################################
 # connectivity
@@ -222,7 +255,17 @@ if experiment==3:
           bc_fixT[i]=True ; bc_valT[i]=0.
        #if y[i]/Ly>(1-eps):
        #   bc_fixT[i]=True ; bc_valT[i]=0.
- 
+   #end for
+
+if experiment==4:
+   for i in range(0,NV):
+       if y[i]/Ly<eps:
+          bc_fixT[i]=True ; bc_valT[i]=0.
+       if y[i]/Ly>(1-eps):
+          bc_fixT[i]=True ; bc_valT[i]=0.
+       if (x[i]-2)**2+(y[i]-2)**2<1:
+          bc_fixT[i]=True ; bc_valT[i]=1.
+
    #end for
 
 #####################################################################
@@ -234,7 +277,7 @@ T_anal  = np.zeros(NV,dtype=np.float64)
 if experiment==1:
    for i in range(0,NV):
        T_anal[i]=(x[i]-(1-np.exp(2*Pe*x[i]/hx))/(1-np.exp(2*Pe/hx)))/u0*f
-if experiment==2 or experiment==3:
+if experiment==2 or experiment==3 or experiment==4:
    T_anal[:]=0.
 
 #####################################################################
