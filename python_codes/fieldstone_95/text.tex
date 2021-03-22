@@ -1,4 +1,12 @@
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_95/keywords}
 
+\begin{center}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_95}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This stone tackles the Rayleigh-Taylor instability problem of van Keken \etal \cite{vaks97}. 
 It builds on Stone 93 as it relies on triangular elements (the MINI element(see Section~\ref{pair:mini}), 
@@ -37,7 +45,7 @@ establish the time and amplitude of the first two peaks. We also wish to monitor
 
 \newpage
 %..........................................................
-\paragraph{Isoviscous results}.
+\subsubsection*{Isoviscous results - instantaneous results}.
 
 \begin{center}
 \begin{tabular}{|l|l|l|l|l|l|l|l|}
@@ -57,6 +65,8 @@ $np_{surf}$=550 &               &              &              & 1.852939e-04  & 
 Root mean square velocity $v_{rms}$ value for $t=0$. Crouzeix-Raviart element.}
 \end{center}
 
+%..........................................................
+\subsubsection*{Isoviscous results - short term}
 
 We now turn to the growth rate(s) which is measured in gnuplot as follows:
 
@@ -87,39 +97,117 @@ def. w/ $a=0.0005$      & 0.0108964 & 0.0110449& 0.0133781\\
 \end{tabular}
 \end{center}
 
+%..........................................................
+\subsubsection*{Isoviscous results - Long term evolution}
 
+The script {\tt script\_run\_al} is designed to run for a long time (several days) 
+and will lauch all 1+14 runs at the same time: 
+
+\begin{tabular}{lccccc}
+\hline
+experiment &  CFL   &  $a$   & $np_{surf}$ & $\gamma$ & elt type \\
+\hline
+\hline
+default    &  0.25  &  0.001 & 200         & 1.5      &  2        \\
+\#1        &  '     &    '   & 250         & '        &  '        \\
+\#2        &  '     &    '   & 300         & '        &  '        \\
+\#3        &  '     &    '   & 350         & '        &  '        \\
+\#4        &  '     &    '   & 400         & '        &  '        \\
+\#5        &  '     &    '   & 500         & '        &  '        \\
+\#6        &  '     &    '   & '           & 1.25     &  '        \\
+\#7        &  '     & 0.0008 & '           & '        &  '        \\
+\#8        &  '     & 0.0005 & '           & '        &  '        \\
+\#9        &  '     &    '   & '           & '        &  3        \\
+\#10       &  '     & 0.0005 & 400         & '        &  '        \\
+\#11       &  0.1   &    '   & '           & '        &  '        \\
+\#12       &  0.5   &    '   & '           & '        &  '        \\
+\#13       &  0.75  &    '   & '           & '        &  '        \\
+\#14       &  1     &    '   & '           & '        &  '        \\
+\hline
+\end{tabular}
+
+Results are shown hereunder:
+
+\begin{itemize}
+\item minimum and maximum value of the velocity components $u$ and $v$:
 
 \begin{center}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/u}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/v}\\
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/v_start}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/vel}\\
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/vrms2000}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/vrms400}\\
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/vrms_peak1}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/vrms_peak2}\\
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/nel}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/np_surf}\\
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/vol1}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/vol2}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/dt}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_95/results/u}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_95/results/v}\\
+\end{center}
+
+\item max($v$) for the first 10 seconds:
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_95/results/v_start}
+\end{center}
+
+\item time step $\delta t$ value: 
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_95/results/dt}
+\end{center}
+
+\item volume of fluid 1 and 2 (relative change):
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_95/results/vol1}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_95/results/vol2}
+\end{center}
+
+\item number of elements: 
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_95/results/nel}
+\end{center}
+
+\item velocity norm $|\vec\upnu|$
+ 
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_95/results/vel}
+\end{center}
+
+\item The root mean square velocity
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_95/results/vrms2000}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_95/results/vrms400}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_95/results/vrms_peak1}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_95/results/vrms_peak2}\\
+\end{center}
+
+\item the number of points on the interface
+and its length 
+
+\begin{center}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/np_surf}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/length_interface}
+\end{center}
+
+\item the position of interseaction of the interface with the left and right boundaries: 
+
+\begin{center}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/left}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/right}
 \end{center}
 
+\end{itemize}
 
-\begin{center}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0000.png}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0050.png}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0100.png}\\
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0150.png}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0200.png}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0250.png}\\
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0300.png}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0350.png}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0400.png}\\
-{\captionfont Cade default + npsurf=250, up to time = 400}
-\end{center}
+
+
+
+%\begin{center}
+%\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0000.png}
+%\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0050.png}
+%\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0100.png}\\
+%\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0150.png}
+%\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0200.png}
+%\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0250.png}\\
+%\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0300.png}
+%\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0350.png}
+%\includegraphics[width=5.5cm]{python_codes/fieldstone_95/results/npsurf250/grid0400.png}\\
+%{\captionfont Cade default + npsurf=250, up to time = 400}
+%\end{center}
 
 
 I have also plotted the vrms against those of the original paper and those of Louis-Napoleon \etal \cite{logb20}
