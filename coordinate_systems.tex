@@ -133,7 +133,7 @@ and the volume element is
 dV= r dr \; d\theta
 \]
 
-The gradient, divergence and laplacian formulae are given in the following section.
+The gradient, divergence and Laplacian formulae are given in the following section.
 
 \index{general}{Path Increment in Polar Coordinates}
 
@@ -199,7 +199,7 @@ They are sometimes called "cylindrical polar coordinates" or "polar cylindrical 
 %........................................
 \subsubsection{Spherical coordinates \label{ss:sphercoord}}
 
-On the following figure are represented the three cartesian axis, 
+On the following figure are represented the three Cartesian axis, 
 a point and its spherical coordinates $r,\theta,\phi$:
 \begin{center}
 \includegraphics[width=5cm]{images/sphcoord}\\
@@ -216,7 +216,7 @@ z &=& r \cos\theta
 \end{eqnarray}
 The inverse tangent used to compute $\phi$ must be suitably defined, 
 taking into account the correct quadrant of $(x,y)$,
-which is why the atan2 intrinsic function is used in fortran for example.    
+which is why the atan2 intrinsic function is used in \textsc{FORTRAN} for example.    
 This is often written as follows:
 \begin{eqnarray}
 \theta &=& \arctan \left(\sqrt{x^2+y^2},z\right) \\
@@ -297,7 +297,7 @@ V_{shell}
 \index{general}{Volume of a Spherical shell}
 
 
-\noindent The spherical unit vectors are related to the cartesian unit vectors by:
+\noindent The spherical unit vectors are related to the Cartesian unit vectors by:
 \[
 \left(
 \begin{array}{c}
@@ -318,7 +318,7 @@ V_{shell}
 \end{array}
 \right)
 \]
-and the cartesian unit vectors are related to the spherical unit vectors by
+and the Cartesian unit vectors are related to the spherical unit vectors by
 
 \[
 \left(
@@ -355,3 +355,141 @@ v_r      &=&  u \sin \theta  \cos \phi  + v \sin\theta \sin \phi + w \cos\theta 
 v_\theta &=&  u \cos\theta\cos\phi + v \cos\theta\sin\phi -w \sin\theta   \\
 v_\phi   &=& -u \sin\phi  + v \cos\phi  
 \end{eqnarray}
+
+
+%.................................................................................................
+\subsubsection{Converting tensors between Cartesian and Spherical bases \label{ss:convcartspher}}
+
+Let ${\bm T}$ be a tensor
+\[
+{\bm T}=
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+\qquad\qquad
+{\bm T}=
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{r\phi} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
+T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
+\end{array}
+\right)
+\]
+in the Cartesian basis (left) and the spherical basis (right).
+
+The two sets of components are related by
+\[
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+\sin\theta \; \cos\phi & \cos\theta \; \cos\phi & -\sin\phi \\
+\sin\theta \; \sin\phi & \cos\theta \; \sin\phi &  \cos\phi \\
+\cos\theta & -\sin\theta & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{r\phi} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
+T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\sin\theta\;\cos\phi & \sin\theta\;\sin\phi & \cos\theta \\
+\cos\theta\;\cos\phi & \cos\theta\;\sin\phi & -\sin\theta \\
+-\sin\phi & \cos\phi & 0 
+\end{array}
+\right)
+\]
+or
+\[
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{r\phi} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
+T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+\sin\theta \; \cos\phi & \sin\theta \; \sin\phi & \cos\theta \\
+\cos\theta \; \cos\phi & \cos\theta \; \sin\phi & -\sin\theta \\
+-\sin\phi & \cos\phi & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\sin\theta\;\cos\phi & \cos\theta\;\cos\phi & -\sin\phi \\
+\sin\theta\;\sin\phi & \cos\theta\;\sin\phi & \cos\phi \\
+\cos\theta & -\sin\theta & 0
+\end{array}
+\right)
+\]
+If we now assume that the tensor ${\bm T}$ is symmetric (e.g. stress tensor, strain rate tensor),
+then there are only 6 independent terms.
+
+We sometimes define $c_\theta=\cos\theta$, $c_\phi=\cos\phi$, etc ...
+so that 
+
+\[
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{r\phi} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
+T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+s_\theta \; c_\phi & s_\theta \; s_\phi & c_\theta \\
+c_\theta \; c_\phi & c_\theta \; s_\phi & -s_\theta \\
+-s_\phi & c_\phi & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+s_\theta\;c\phi & c_\theta\;c\phi & -s_\phi \\
+s_\theta\;s\phi & c_\theta\;s\phi & c_\phi \\
+c_\theta & -s_\theta & 0
+\end{array}
+\right)
+\]
+
+
+
+
