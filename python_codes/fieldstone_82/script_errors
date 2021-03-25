@@ -9,7 +9,7 @@ rm -f build_nq*.ascii
 rm -f statistics*.ascii
 
 for nq in 2 3 4 ; do
-    for res in {4..22}; do
+    for res in {4..24}; do
         echo $res X $res X $res - nq=$nq
         python3 stone.py $res $res $res $nq 0 > opla
         grep errv opla >> errors_nq$nq.ascii

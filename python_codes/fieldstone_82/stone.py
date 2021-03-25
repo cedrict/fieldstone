@@ -24,6 +24,10 @@ def bx(x,y,z,beta):
        val=0
     if bench==3:
        val=0
+    if bench==4:
+       val=0
+    if bench==5:
+       val=4*(2*y-1)*(2*z-1)  *(-1)
     return val
 
 def by(x,y,z,beta):
@@ -40,6 +44,10 @@ def by(x,y,z,beta):
        val=0
     if bench==3:
        val=0
+    if bench==4:
+       val=0
+    if bench==5:
+       val=4*(2*x-1)*(2*z-1) *(-1)
     return val
 
 def bz(x,y,z,beta):
@@ -59,6 +67,13 @@ def bz(x,y,z,beta):
           val=1.01
        else:
           val=1.
+    if bench==4:
+       if abs(x-0.5)<0.125 and abs(y-0.5)<0.125 and abs(z-0.5)<0.125:
+          val=0.01
+       else:
+          val=0.
+    if bench==5:
+       val=-2*(2*x-1)*(2*y-1) *(-1)
     return val
 
 def eta(x,y,z,beta):
@@ -71,6 +86,13 @@ def eta(x,y,z,beta):
           val=1000
        else:
           val=1.
+    if bench==4:
+       if abs(x-0.5)<0.125 and abs(y-0.5)<0.125 and abs(z-0.5)<0.125:
+          val=1000
+       else:
+          val=1.
+    if bench==5:
+       val=1
     return val
 
 def uth(x,y,z):
@@ -80,6 +102,10 @@ def uth(x,y,z):
        val=0.5-z
     if bench==3:
        val=0
+    if bench==4:
+       val=0
+    if bench==5:
+       val=x*(1-x)*(1-2*y)*(1-2*z)
     return val
 
 def vth(x,y,z):
@@ -89,6 +115,10 @@ def vth(x,y,z):
        val=0
     if bench==3:
        val=0
+    if bench==4:
+       val=0
+    if bench==5:
+       val=(1-2*x)*y*(1-y)*(1-2*z)
     return val
 
 def wth(x,y,z):
@@ -98,6 +128,10 @@ def wth(x,y,z):
        val=0
     if bench==3:
        val=0
+    if bench==4:
+       val=0
+    if bench==5:
+       val=-2*(1-2*x)*(1-2*y)*z*(1-z)
     return val
 
 def pth(x,y,z):
@@ -107,6 +141,10 @@ def pth(x,y,z):
        val=0
     if bench==3:
        val=0
+    if bench==4:
+       val=0
+    if bench==5:
+       val=(2*x-1)*(2*y-1)*(2*z-1)
     return val
 
 #------------------------------------------------------------------------------
@@ -217,16 +255,12 @@ if int(len(sys.argv) == 6):
    nqperdim=int(sys.argv[4])
    visu = int(sys.argv[5])
 else:
-   nelx = 20  # do not exceed 20 
+   nelx = 16  # do not exceed 20 
    nely =nelx
    nelz =nelx
    nqperdim=2
    visu=1
 #end if
-
-gx=0
-gy=0
-gz=-1
 
 hx=Lx/nelx
 hy=Ly/nely
@@ -249,8 +283,6 @@ Nfem=NfemV+NfemP # total number of dofs
 
 eps=1.e-10
 
-sqrt3=np.sqrt(3.)
-
 if nqperdim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
    qweights=[1.,1.]
@@ -267,7 +299,7 @@ if nqperdim==4:
    qcoords=[-qc4a,-qc4b,qc4b,qc4a]
    qweights=[qw4a,qw4b,qw4b,qw4a]
 
-bench=3
+bench=5
 
 beeta=0 # beta parameter for mms
 
@@ -646,6 +678,11 @@ for iel in range(0, nel):
 
 #end for iel
 
+#export sparsity pattern of matrix
+#plt.spy(A_sparse,markersize=1)
+#plt.savefig('matrix.png', bbox_inches='tight')
+#exit()
+
 print("build FE matrix: %.3f s, h= %e" % (timing.time() - start, hx))
 
 ######################################################################
@@ -773,6 +810,8 @@ start = timing.time()
 xc = np.zeros(nel,dtype=np.float64)  # x coordinates
 yc = np.zeros(nel,dtype=np.float64)  # y coordinates
 zc = np.zeros(nel,dtype=np.float64)  # z coordinates
+bx_el = np.zeros(nel,dtype=np.float64)  
+by_el = np.zeros(nel,dtype=np.float64)  
 bz_el = np.zeros(nel,dtype=np.float64)  
 eta_el = np.zeros(nel,dtype=np.float64) 
 
@@ -780,6 +819,8 @@ for iel in range(0,nel):
     xc[iel]=0.5*(xV[iconV[0,iel]]+xV[iconV[6,iel]])
     yc[iel]=0.5*(yV[iconV[0,iel]]+yV[iconV[6,iel]])
     zc[iel]=0.5*(zV[iconV[0,iel]]+zV[iconV[6,iel]])
+    bx_el[iel]=bx(xc[iel],yc[iel],zc[iel],beeta)
+    by_el[iel]=by(xc[iel],yc[iel],zc[iel],beeta)
     bz_el[iel]=bz(xc[iel],yc[iel],zc[iel],beeta)
     eta_el[iel]=eta(xc[iel],yc[iel],zc[iel],beeta)
 #end for
@@ -829,7 +870,6 @@ for iel in range (0,nel):
                 uq=0.0
                 vq=0.0
                 wq=0.0
-                pq=0.0
                 for k in range(0,mV):
                     xq+=NNNV[k]*xV[iconV[k,iel]]
                     yq+=NNNV[k]*yV[iconV[k,iel]]
@@ -839,6 +879,7 @@ for iel in range (0,nel):
                     wq+=NNNV[k]*w[iconV[k,iel]]
                 #end for
 
+                pq=0.0
                 for k in range(0,mP):
                     pq+=NNNP[k]*p[iconP[k,iel]]
                 #end for
@@ -881,6 +922,114 @@ print('bench ',Lx/nelx,nel,Nfem,\
       vrms)
 
 ###############################################################################
+# export velocity and pressure on diagonals
+###############################################################################
+   
+diagfile1=open("diag1.ascii","w")
+diagfile2=open("diag2.ascii","w")
+diagfile3=open("diag3.ascii","w")
+diagfile4=open("diag4.ascii","w")
+
+npts=100
+
+for idiag in range(0,4):
+
+    if idiag==0:
+       x_start=0
+       y_start=0
+       z_start=0
+       x_end=Lx
+       y_end=Ly
+       z_end=Lz
+
+    if idiag==1:
+       x_start=Lx
+       y_start=0
+       z_start=0
+       x_end=0
+       y_end=Ly
+       z_end=Lz
+
+    if idiag==2:
+       x_start=Lx
+       y_start=Ly
+       z_start=0
+       x_end=0
+       y_end=0
+       z_end=Lz
+
+    if idiag==3:
+       x_start=0
+       y_start=Ly
+       z_start=0
+       x_end=Lx
+       y_end=0
+       z_end=Lz
+
+    delta_x=(x_end-x_start)/npts
+    delta_y=(y_end-y_start)/npts
+    delta_z=(z_end-z_start)/npts
+
+    for i in range(0,npts):
+        xq=x_start+delta_x/2+i*delta_x
+        yq=y_start+delta_y/2+i*delta_y
+        zq=z_start+delta_z/2+i*delta_z
+        qq=np.sqrt((xq-x_start)**2+(yq-y_start)**2+(zq-z_start)**2)
+        for iel in range(0,nel):
+            if xq>=xV[iconV[0,iel]] and xq<=xV[iconV[6,iel]] and \
+               yq>=yV[iconV[0,iel]] and yq<=yV[iconV[6,iel]] and \
+               zq>=zV[iconV[0,iel]] and zq<=zV[iconV[6,iel]] :
+               rq=((xq-xV[iconV[0,iel]])/hx-0.5)*2
+               sq=((yq-yV[iconV[0,iel]])/hy-0.5)*2
+               tq=((zq-zV[iconV[0,iel]])/hz-0.5)*2
+               NNNV[0:mV]=NNV(rq,sq,tq)
+               NNNP[0:mP]=NNP(rq,sq,tq)
+               uq=0.0
+               vq=0.0
+               wq=0.0
+               for k in range(0,mV):
+                   uq+=NNNV[k]*u[iconV[k,iel]]
+                   vq+=NNNV[k]*v[iconV[k,iel]]
+                   wq+=NNNV[k]*w[iconV[k,iel]]
+               #end for
+               pq=0.0
+               for k in range(0,mP):
+                   pq+=NNNP[k]*p[iconP[k,iel]]
+               #end for
+               if idiag==0:
+                  diagfile1.write("%.10f %.10f %.10f %.20f %.20f %.20f %.20f %.10f\n" %(xq,yq,zq,uq,vq,wq,pq,qq))
+               if idiag==1:
+                  diagfile2.write("%.10f %.10f %.10f %.20f %.20f %.20f %.20f %.10f\n" %(xq,yq,zq,uq,vq,wq,pq,qq))
+               if idiag==2:
+                  diagfile3.write("%.10f %.10f %.10f %.20f %.20f %.20f %.20f %.10f\n" %(xq,yq,zq,uq,vq,wq,pq,qq))
+               if idiag==3:
+                  diagfile4.write("%.10f %.10f %.10f %.20f %.20f %.20f %.20f %.10f\n" %(xq,yq,zq,uq,vq,wq,pq,qq))
+            #end if
+        #end for
+    #end for
+#end for
+
+
+###############################################################################
+# export solution on vertical line
+###############################################################################
+
+vertfile=open("vert.ascii","w")
+
+for i in range(0,NP):
+    if abs(xV[i]-Lx/2)<1e-6 and abs(yV[i]-Ly/2)<1e-6:
+       vertfile.write("%.10f %.20f %.20f %.20f %.20f\n" %(zV[i],u[i],v[i],w[i],p[i]))
+
+
+#counter=0
+#for i in range(0,nnx):
+#    for j in range(0,nny):
+#        for k in range(0,nnz):
+#            counter += 1
+
+
+
+###############################################################################
 # plot of solution
 ###############################################################################
 start = timing.time()
@@ -905,6 +1054,16 @@ if visu==1:
        vtufile.write("%d\n" % iel)
    vtufile.write("</DataArray>\n")
    #--
+   vtufile.write("<DataArray type='Float32' Name='rho.gx' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%f\n" % bx_el[iel])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='rho.gy' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%f\n" % by_el[iel])
+   vtufile.write("</DataArray>\n")
+   #--
    vtufile.write("<DataArray type='Float32' Name='rho.gz' Format='ascii'> \n")
    for iel in range (0,nel):
        vtufile.write("%f\n" % bz_el[iel])
@@ -926,7 +1085,7 @@ if visu==1:
    #--
    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
    for i in range (0,nnx*nny*nnz):
-       vtufile.write("%f\n" % p[i])
+       vtufile.write("%.20f\n" % p[i])
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
@@ -943,8 +1102,16 @@ if visu==1:
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
    for i in range(0,nnx*nny*nnz):
-       vtufile.write("%10f %10f %10f \n" %(u[i],v[i],w[i]))
+       vtufile.write("%.20f %.20f %.20f \n" %(u[i],v[i],w[i]))
    vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (th)' Format='ascii'> \n")
+   for i in range(0,nnx*nny*nnz):
+       vtufile.write("%.20f %.20f %.20f \n" %(uth(xV[i],yV[i],zV[i]),\
+                                              vth(xV[i],yV[i],zV[i]),\
+                                              wth(xV[i],yV[i],zV[i])))
+   vtufile.write("</DataArray>\n")
+
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (err)' Format='ascii'> \n")
    for i in range(0,nnx*nny*nnz):
