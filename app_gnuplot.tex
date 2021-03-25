@@ -240,6 +240,18 @@ M 	&Mu 	 &Z 		&Zeta 	  &m 		&mu 	($\mu$)       &z 		&zeta $\zeta$\\
 \end{tabular}
 
 
+%----------------------------------------
+\subsubsection*{piecewise function}
+
+You can define piecewise functions as follows:
+\begin{verbatim}
+f(x) = x<a  ? 1 : 1/0
+g(x) = x>=a ? 1 : 1/0 
+\end{verbatim}
+and then use these functions like any function, e.g.:
+\begin{verbatim}
+plot[-10:12] f(x),g(x)
+\end{verbatim}
 
 
 
