@@ -121,7 +121,7 @@ NV=nnx*nny*nnz  # number of nodes
 
 nel=nelx*nely*nelz  # number of elements, total
 
-penalty=1.e7  # penalty coefficient value
+penalty=1.e3  # penalty coefficient value
 
 Nfem=NV*ndofV  # Total number of degrees of freedom
 
