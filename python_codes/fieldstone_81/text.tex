@@ -274,7 +274,7 @@ This is bad news: a renumbering of the nodes/dofs would be beneficial so as to r
 skyline of the matrix. 
 
 %----------------------------------------------------
-\subsection*{Manufactured solution}
+\subsection*{Manufactured solution ({\tt bench=1})}
 
 This benchmark is presented in Section~\ref{mms3} and is called the 'Burstedde' benchmark in the ASPECT manual after 
 the paper by Burstedde et al (2013) \cite{busa13}, although it originates in Dohrmann \& Bochev (2004) \cite{dobo04}. 
@@ -302,15 +302,54 @@ We recover a quadratic convergence for the velocity error and a linear convergen
 similarly to the $Q_1\times P_0$ element:
 
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_81/results/conv.pdf}
+\includegraphics[width=10cm]{python_codes/fieldstone_81/results/bench1/conv.pdf}
+\end{center}
+
+%----------------------------------------------------
+\subsection*{Horizontal shear ({\tt bench=2})}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_81/results/bench2/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_81/results/bench2/press}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_81/results/bench2/u}
+\includegraphics[width=5cm]{python_codes/fieldstone_81/results/bench2/v}
+\includegraphics[width=5cm]{python_codes/fieldstone_81/results/bench2/w}
 \end{center}
 
 
+
 %----------------------------------------------------
-\subsection*{Stokes sphere benchmark}
+\subsection*{Stokes sphere benchmark ({\tt bench=3})}
 
 It is described in Section~\ref{ss:stokes_sphere3D}. We here focus on the 'NS' case, i.e. no slip 
 boundary conditions are prescribed on all six faces.
+
+\begin{center}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_81/results/bench3/u}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_81/results/bench3/v}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_81/results/bench3/w}\\
+\includegraphics[width=5.5cm]{python_codes/fieldstone_81/results/bench3/vel}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_81/results/bench3/vrms}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_81/results/bench3/press}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

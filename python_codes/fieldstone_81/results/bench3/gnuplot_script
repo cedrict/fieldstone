@@ -1,0 +1,64 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set log x
+set xlabel 'h'
+
+set key outside
+
+set output 'u.pdf'
+set ylabel 'u min/max'
+plot[][]\
+'statistics_nq2.ascii' u 2:5  w lp lt 1 t 'nq=2^3',\
+'statistics_nq2.ascii' u 2:6  w lp lt 1 notitle,\
+'statistics_nq3.ascii' u 2:5  w lp lt 2 t 'nq=3^3',\
+'statistics_nq3.ascii' u 2:6  w lp lt 2 notitle,\
+'statistics_nq4.ascii' u 2:5  w lp lt 3 t 'nq=4^3',\
+'statistics_nq4.ascii' u 2:6  w lp lt 3 notitle,\
+
+set output 'v.pdf'
+set ylabel 'v min/max'
+plot[][]\
+'statistics_nq2.ascii' u 2:7  w lp lt 1 t 'nq=2^3',\
+'statistics_nq2.ascii' u 2:8  w lp lt 1 notitle,\
+'statistics_nq3.ascii' u 2:7  w lp lt 2 t 'nq=3^3',\
+'statistics_nq3.ascii' u 2:8  w lp lt 2 notitle,\
+'statistics_nq4.ascii' u 2:7  w lp lt 3 t 'nq=4^3',\
+'statistics_nq4.ascii' u 2:8  w lp lt 3 notitle,\
+
+set output 'w.pdf'
+set ylabel 'w min/max'
+plot[][]\
+'statistics_nq2.ascii' u 2:9  w lp lt 1 t 'nq=2^3',\
+'statistics_nq2.ascii' u 2:10 w lp lt 1 notitle,\
+'statistics_nq3.ascii' u 2:9  w lp lt 2 t 'nq=3^3',\
+'statistics_nq3.ascii' u 2:10 w lp lt 2 notitle,\
+'statistics_nq4.ascii' u 2:9  w lp lt 3 t 'nq=4^3',\
+'statistics_nq4.ascii' u 2:10 w lp lt 3 notitle,\
+
+set output 'vel.pdf'
+set ylabel 'max(vel)'
+plot[][]\
+'statistics_nq2.ascii' u 2:12 w lp t 'nq=2^3',\
+'statistics_nq3.ascii' u 2:12 w lp t 'nq=3^3',\
+'statistics_nq4.ascii' u 2:12 w lp t 'nq=4^3',\
+
+set output 'press.pdf'
+set ylabel 'pressure min/max'
+plot[][]\
+'statistics_nq2.ascii' u 2:13 w lp lt 1 t 'nq=2^3',\
+'statistics_nq2.ascii' u 2:14 w lp lt 1 notitle   ,\
+'statistics_nq3.ascii' u 2:13 w lp lt 2 t 'nq=3^3',\
+'statistics_nq3.ascii' u 2:14 w lp lt 2 notitle   ,\
+'statistics_nq4.ascii' u 2:13 w lp lt 3 t 'nq=4^3',\
+'statistics_nq4.ascii' u 2:14 w lp lt 3 notitle   ,\
+
+set output 'vrms.pdf'
+set ylabel 'v_{rms}'
+plot[][]\
+'statistics_nq2.ascii' u 2:15 w lp lt 1 t 'nq=2^3',\
+'statistics_nq3.ascii' u 2:15 w lp lt 2 t 'nq=3^3',\
+'statistics_nq4.ascii' u 2:15 w lp lt 3 t 'nq=4^3',\
+
+
+
+

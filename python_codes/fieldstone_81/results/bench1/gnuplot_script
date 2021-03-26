@@ -6,6 +6,7 @@ set ylabel 'error'
 set output 'conv.pdf'
 set key outside
 set pointsize 0.5
+set format y "10^{%L}"
 plot[][]\
 'errors_nq2' u (1/$3**0.333):6 w lp lt 1 pt 1 t 'v (nq=2^3)',\
 'errors_nq2' u (1/$3**0.333):9 w lp lt 2 pt 1 t 'p (nq=2^3)',\

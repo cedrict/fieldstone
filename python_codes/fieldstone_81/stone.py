@@ -9,6 +9,7 @@ import schur
 from scipy.sparse.csgraph import reverse_cuthill_mckee
 
 #------------------------------------------------------------------------------
+# rhs for Burstedde benchmark
 
 def bx(x,y,z,beta):
     if bench==1:
@@ -61,6 +62,8 @@ def bz(x,y,z,beta):
           val=1.
     return val
 
+#------------------------------------------------------------------------------
+
 def eta(x,y,z,beta):
     if bench==1:
        val=np.exp(1-beta*(x*(1-x)+y*(1-y)+z*(1-z)) )
@@ -72,6 +75,9 @@ def eta(x,y,z,beta):
        else:
           val=1.
     return val
+
+#------------------------------------------------------------------------------
+# velocity and pressure solution for Burstedde benchmark
 
 def uth(x,y,z):
     if bench==1:
@@ -223,7 +229,6 @@ def dNNVudt(r,s,t):
     dNdt_9= dB10udt(r,s,t)
     return dNdt_0,dNdt_1,dNdt_2,dNdt_3,dNdt_4,dNdt_5,dNdt_6,dNdt_7,dNdt_8,dNdt_9
 
-
 #------------------------------------------------------------------------------
 
 def NNVv(r,s,t):
@@ -336,6 +341,13 @@ def NNP(r,s,t):
     return 1
 
 #------------------------------------------------------------------------------
+#bench=1: Burstedde benchmark
+#bench=2: Horizontal shear 
+#bench=3: Stokes sphere
+
+bench=3
+
+
 
 print("-----------------------------")
 print("--------fieldstone 10--------")
@@ -353,7 +365,6 @@ Lz=1.  # z- extent of the domain
 OT=False
 NS=True
 
-
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 5):
    nelx = int(sys.argv[1])
@@ -361,7 +372,7 @@ if int(len(sys.argv) == 5):
    nelz = int(sys.argv[3])
    visu = int(sys.argv[4])
 else:
-   nelx = 8
+   nelx = 24
    nely = nelx
    nelz = nelx
    visu = 1
@@ -384,10 +395,6 @@ hy=Ly/nely
 hz=Lz/nelz
 
 eps=1.e-10
-
-gx=0.    # gravity vector, x component
-gy=0.    # gravity vector, y component
-gz=-1.  # gravity vector, z component
 
 nqperdim=2
 
@@ -419,7 +426,6 @@ sparse=True
 
 beta=0
 
-bench=3
 
 #################################################################
 #################################################################
@@ -447,6 +453,7 @@ print("------------------------------")
 if bench==1:
    NS=True
    OT=False
+
 #################################################################
 # grid point setup
 #################################################################
@@ -504,9 +511,9 @@ print("mesh setup: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-iconu =np.zeros((mV, nel),dtype=np.int32)
-iconv =np.zeros((mV, nel),dtype=np.int32)
-iconw =np.zeros((mV, nel),dtype=np.int32)
+iconu=np.zeros((mV,nel),dtype=np.int32)
+iconv=np.zeros((mV,nel),dtype=np.int32)
+iconw=np.zeros((mV,nel),dtype=np.int32)
 
 counter = 0
 for i in range(0, nelx):
@@ -1569,7 +1576,7 @@ if visu==1:
    #--
    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
    for iel in range (0,nel):
-       vtufile.write("%f\n" % p[iel])
+       vtufile.write("%.20f\n" % p[iel])
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
@@ -1603,12 +1610,12 @@ if visu==1:
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
    for i in range(0,NV):
-       vtufile.write("%10f %10f %10f \n" %(u[i],v[i],w[i]))
+       vtufile.write("%.20f %.20f %.20f \n" %(u[i],v[i],w[i]))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (err)' Format='ascii'> \n")
    for i in range(0,nnx*nny*nnz):
-       vtufile.write("%10f %10f %10f \n" %(error_u[i],error_v[i],error_w[i]))
+       vtufile.write("%.10f %.10f %.10f \n" %(error_u[i],error_v[i],error_w[i]))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("</PointData>\n")

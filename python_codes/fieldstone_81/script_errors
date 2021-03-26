@@ -3,9 +3,9 @@
 rm -f errors
 rm -f statistics.ascii
 
-for res in {8..18}; do
+for res in {8..20}; do
     echo $res X $res X $res
-    python3 stone.py $res $res $res 0 > opla
+    python3 stone.py $res $res $res 1 > opla
     grep errv opla >> errors 
     grep bench opla >> statistics.ascii
 done
