@@ -1191,7 +1191,7 @@ more than a single vector bubble function per element. In this article we show t
 with a small modification of the standard bubble function we can get the stability just 
 by using a single vector bubble function per element."
 
-\input{lamichhane}
+\input{lamichhane2D}
 
 \end{itemize}
 
@@ -1358,12 +1358,22 @@ These basis functions are used in \cite{shzh06} and mentioned in John \cite[p.72
 %-----------------------------------------------------------------------------
 \subsubsection{The 2D enriched $Q_1^+\times P_0$ of Fortin} \label{ss:Q1pP02D}
 
+We here consider the enriched $Q_1\times P_0$ element introduced first by 
+Fortin (1981) \cite{fort81}.
+The layout of the degrees of freedom is as follows:
+
 \input{tikz_q1pp02D}
 
+\noindent The approximation of the velocity components $u$ and $v$ inside the element is
 \[
-u^h(r,s,t) = aN_1 + b N_2 + cN_3 +dN_4 + d b_5(r,s) + e b_{6}(r,s)
+u^h(r,s) = a^u \; N_1(r,s) + b^u \;  N_2(r,s) + c^u \; N_3(r,s) +d^u \; N_4(r,s) 
++ d\; b_5^u(r,s) + e\; b_{6}^u(r,s)
 \]
-with 
+\[
+v^h(r,s) = a^v \; N_1(r,s) + b^v \;  N_2(r,s) + c^v \; N_3(r,s) +d^v \; N_4(r,s) 
++ d^v b_5^v(r,s) + e^v b_{6}^v(r,s)
+\]
+where $N_{1,2,3,4}$ are the standard $Q_1$ basis functions in 2D and with 
 \[
 b_5^u(r,s) = \frac{1}{2}(1-r)(1-s^2)
 \qquad
@@ -1375,17 +1385,35 @@ b_5^v(r,s) = \frac{1}{2}(1-r^2)(1-s)
 \qquad
 b_6^v(r,s) = \frac{1}{2}(1-r^2)(1+s)
 \]
+In the end one arrives at
 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
 {N}_1^u(r,s) &=&  N_1(r,s) - \frac{1}{2} b_5^u(r,s)\nn\\
-{N}_2^u(r,s) &=&  N_2(r,s) - \frac{1}{2} b_{6}^u(r,s)\nn\\
-{N}_3^u(r,s) &=&  N_3(r,s) - \frac{1}{2} b_{6}^u(r,s)\nn\\
+{N}_2^u(r,s) &=&  N_2(r,s) - \frac{1}{2} b_6^u(r,s)\nn\\
+{N}_3^u(r,s) &=&  N_3(r,s) - \frac{1}{2} b_6^u(r,s)\nn\\
 {N}_4^u(r,s) &=&  N_4(r,s) - \frac{1}{2} b_5^u(r,s)\nn\\
-{N}_5^u(r,s) &=&  b_5^u(r,s)\nn\\
-{N}_{6}^u(r,s) &=&  b_{6}^u(r,s) \nn
+{N}_5^u(r,s) &=&  b_5^u(r,s) \nn\\
+{N}_6^u(r,s) &=&  b_6^u(r,s) \nn\\
+\nn\\
+{N}_1^v(r,s) &=&  N_1(r,s) - \frac{1}{2} b_5^v(r,s)\nn\\
+{N}_2^v(r,s) &=&  N_2(r,s) - \frac{1}{2} b_5^v(r,s)\nn\\
+{N}_3^v(r,s) &=&  N_3(r,s) - \frac{1}{2} b_6^v(r,s)\nn\\
+{N}_4^v(r,s) &=&  N_4(r,s) - \frac{1}{2} b_6^v(r,s)\nn\\
+{N}_5^v(r,s) &=&  b_5^v(r,s) \nn\\
+{N}_6^v(r,s) &=&  b_6^v(r,s) 
 \end{eqnarray}
 \end{mdframed}
+
+We can check for the zero-th order consistency: Let $u(r,s)=C$, then 
+\begin{eqnarray}
+u^h(r,s) 
+= \sum_{i=1}^6 N_i^u(r,s) u_i 
+= C \sum_{i=1}^6 N_i^u(r,s) 
+= C \sum_{i=1}^4 N_i(r,s)  
+= C
+\end{eqnarray}
+
 
 
 \newpage

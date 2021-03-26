@@ -256,6 +256,14 @@ in Cartesian coordinates and on a sphere, which is based on Stripack \cite{renk9
 
 \todo[inline]{write about gmesh}
 
+\begin{center}
+\includegraphics[width=5cm]{images/meshes/gusa98a}
+\includegraphics[width=5cm]{images/meshes/gusa98b}\\
+{\captionfont Taken from Gudmundsson \& Sambridge (1998) \cite{gusa98}.
+Boundaries of Voronoi cells around 4100 of the original 16,200 2x2 degree cells
+selected to sample the details of the regionalization.}
+\end{center}
+
 
 %...........................
 \subsubsection{Tetrahedra}
@@ -377,8 +385,15 @@ as best exemplified on the following figures:
 \includegraphics[height=4.5cm]{images/meshes/habo04}\\
 \includegraphics[height=4.5cm]{images/meshes/kott05}
 \includegraphics[height=4.5cm]{images/meshes/specfem}\\
+\includegraphics[height=4.5cm]{images/meshes/conf3D}\\
 {\captionfont 
-From left to right: \cite{vaks15}; \cite{depl96}; \cite{habo04}; \cite{kott05}; Specfem manual}
+Top row, From left to right: 
+van Driel \etal (2015) \cite{vaks15}; 
+Deb \etal (1996) \cite{depl96}; 
+Harris \etal (2004) \cite{habo04}; 
+Komatitsch \etal (2005) \cite{kott05}; 
+Middle row: Specfem manual;
+Bottom row: I don't know anymore.}
 \end{center}
 
 \Literature: 
@@ -468,11 +483,7 @@ Finally both transformations can be applied to the same mesh:
 \includegraphics[width=8cm]{images/meshes/stretching/stretch_xy}
 \end{center}
 
-This approach is used in Stone 67 (\ref{f67}).
-
-
-
-
+This approach is used in \stone 67.
 
 %.......................................
 \subsubsection{Meshes in an annulus}
@@ -481,7 +492,8 @@ This approach is used in Stone 67 (\ref{f67}).
 \begin{center}
 \includegraphics[width=6.8cm]{images/meshes/brhv08}
 \includegraphics[width=6.8cm]{images/meshes/brva07a}\\
-{\captionfont The quadratic finite element mesh as used in \cite{brhv08,brva07a}}
+{\captionfont The quadratic finite element mesh as used in 
+Brandenburg \etal \cite{brhv08,brva07a}}
 \end{center}
 
 
@@ -522,7 +534,7 @@ cube, icosahedron, and rhombic dodecahedron).
 
 How such meshes are built is often not discussed in the literature. It is 
 a tedious exercise of three-dimensional geometry and it can be time-consuming, especially 
-the connectivity array generation. In \cite{thie18} I present an open source 
+the connectivity array generation. In Thieulot (2018) \cite{thie18} I present an open source 
 mesh generator for three hollow sphere meshes: the 'cubed sphere' mesh, the CitcomS mesh and the 
 icosahedral mesh.
 
@@ -543,6 +555,12 @@ of the sphere.
 The cubed sphere has recently been used in large-scale mantle convection simulation in conjunction with 
 Adaptive Mesh Refinement \cite{algs12,busa13}.  
 
+\begin{center}
+\includegraphics[width=4cm]{images/ghost/hs06}
+\end{center}
+
+
+
 \item 
 The CitcomS mesh ('HS12') composed of 12 blocks also subdivided 
 into $N_b \times N_b$ quadrilateral shaped cells
@@ -550,6 +568,11 @@ into $N_b \times N_b$ quadrilateral shaped cells
 Note that \aspect{} \cite{krhb12,hedg17}, a relatively new code aimed at 
 superseeding CitcomS can generate and use 
 this type of mesh \cite{thie17} but is not limited to it.
+
+\begin{center}
+\includegraphics[width=4cm]{images/ghost/citcom12}
+\end{center}
+
 
 \item The icosahedral mesh ('HS20') composed of 20 triangular blocks \cite{bafr85,baum85} subdivided into triangles, which is 
 used in the TERRA code \cite{burb96,burb97,burl98,dadb13}.

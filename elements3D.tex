@@ -420,32 +420,7 @@ interior nodes \cite[p91]{reddybook2}.
 \subsubsection{Enriched linear basis functions in quadrilaterals ($Q_1^+$) -WIP} \label{ss:quadmini3D}
 \index{general}{$Q_1^+$}
 
-Following Lamichhane (2017) \cite{lami17} we can define two bubble functions to enrich the 
-$Q_1$ space:
-
-\begin{eqnarray}
-b^{(1)} (r,s,t) &=& (1-r)(1-s)(1-t) \cdot (1-r^2) (1-s^2) (1-t^2) \\
-b^{(2)} (r,s,t) &=& (1 + \beta(r+s+t)) \cdot (1-r^2) (1-s^2) (1-t^2) 
-\end{eqnarray}
-
-The first one includes a tri-linear term while the second one includes a linear one parameterised by $\beta$.
-In both cases the bubble is identically zero on the edges of the reference element and it is exactly 1 
-in its middle.
-
-\begin{eqnarray}
-\frac{\partial b^{(1)}}{\partial r}(r,s,t) &=& (3r^2-2r-1)(1-s)(1-s^2)(1-t)(1-t^2) \\ 
-\frac{\partial b^{(1)}}{\partial s}(r,s,t) &=& (3s^2-2s-1)(1-r)(1-r^2)(1-t)(1-t^2) \\ 
-\frac{\partial b^{(1)}}{\partial t}(r,s,t) &=& (3t^2-2t-1)(1-r)(1-r^2)(1-s)(1-s^2)  
-\end{eqnarray}
-
-\begin{eqnarray}
-\frac{\partial b^{(2)}}{\partial r}(r,s,t) &=&  -[b(3r^2+2r(s+t)-1)+2r](1-s^2)(1-t^2)\\
-\frac{\partial b^{(2)}}{\partial s}(r,s,t) &=&  -[b(3s^2+2s(r+t)-1)+2s](1-r^2)(1-t^2)\\
-\frac{\partial b^{(2)}}{\partial t}(r,s,t) &=&  -[b(3t^2+2t(r+s)-1)+2t](1-r^2)(1-s^2)
-\end{eqnarray}
-
-
-
+\input{lamichhane3D}
 
 
 %-----------------------------------------------------------------
@@ -558,9 +533,11 @@ However, only $\vec\upnu\cdot \vec{n}$ is present on these mid-face nodes:
 
 \input{tikz_q1pp0}
 
-Fortin states: "this element satisfies the B.B. condition and is probably the simplest 3-D element to do SO. This
+Fortin states: "this element satisfies the B.B. condition and is probably the 
+simplest 3-D element to do So. This
 unfortunately does not mean that it is more accurate (at least on regular meshes)." and 
-"the element satisfies the B.B. condition. It can therefore be used in a non-regular mesh without fear. The number of
+"the element satisfies the B.B. condition. It can therefore be used in a non-regular mesh 
+without fear. The number of
 degrees of freedom is approximately double with respect to the $Q_1\times P_0$ element and this is
 reflected by an increased number of vortices and a reduction of their size. However, there
 seems to be a qualitative deficiency of these vortices since they do not easily assemble into
@@ -575,10 +552,11 @@ Considering a single element, we have
 \vec{V}^T=(\underbrace{u_1,v_1,w_1,\dots,u_8,v_8,w_8}_{Q_1\; dofs},
 \underbrace{u_9,v_9,w_9,u_{10},v_{10},w_{10}}_{bubble \; dofs})
 \]
-The big difference with all other elements so far is the fact that the dofs $u_9,v_9,w_9$ are not colocated (same
-for the other three). $u_9$ lives in the middle of the $r=-1$ face, $v_9$ lives in the middle of the $s=-1$ face and 
+The big difference with all other elements so far is the fact that the 
+dofs $u_9,v_9,w_9$ are not colocated (same
+for the other three). $u_9$ lives in the middle of the $r=-1$ face, $v_9$ lives in 
+the middle of the $s=-1$ face and 
 $w_9$ lives in the middle of the $t=-1$ face.
-
 
 \item $Q_2$: $3\times 3\times 3\times 3=81$ velocity dofs 
 \end{itemize}
@@ -935,30 +913,49 @@ u_1 \\ v_1 \\ w_1 \\ u_2 \\ v_2 \\ w_2 \\ u_3 \\ v_3 \\ \dots \\ u_{10} \\ v_{10
 %-----------------------------------------------------------------------------
 \subsubsection{The $Q_1\times Q_1$ + 2 bubbles} \label{ss:Q1Q1bb_3D}
 
+This element is implemented in \stone 82.
 The two bubble functions are given in Karabelas \etal (2020) \cite{kahp20}:
 \begin{eqnarray}
-b_9(r,s,t) &=& \left(\frac{27}{32}\right)^3 (1-r^2)(1-s^2)(1-t^2) \cdot (1-r)(1-s)(1-t) \\
-b_{10}(r,s,t) &=& \left(\frac{27}{32}\right)^3 (1-r^2)(1-s^2)(1-t^2) \cdot (1+r)(1+s)(1+t) 
+b_9(r,s,t) &=& \left(\frac{27}{32}\right)^3 (1-r^2)(1-s^2)(1-t^2) \cdot (1-r)(1-s)(1-t) = \beta_9(r)\cdot\beta_9(s)\beta_9(t) \\
+b_{10}(r,s,t) &=& \left(\frac{27}{32}\right)^3 (1-r^2)(1-s^2)(1-t^2) \cdot (1+r)(1+s)(1+t) = \beta_{10}(r)\cdot\beta_{10}(s)\beta_{10}(t) 
 \end{eqnarray}
-where I have chosen nodes 1 and 7 as diagonally opposed nodes.
+where I have chosen nodes 1 ($\vec{r}=(-1,-1,-1)$) and 7 ($\vec{r}=(+1,+1,+1)$) 
+as diagonally opposed nodes (a requirement from the paper), 
+and with
+\[
+\beta_9(x)=\frac{27}{32} (1-x^2) (1-x)
+\qquad
+\beta_{10}(x)=\frac{27}{32} (1-x^2) (1+x)
+\]
+
+I have added the $(27/32)^3$ coefficients so that these functions are exactly 1 a their 
+corresponding nodes.
+The term $(1-r^2)(1-s^2)(1-t^2)$ makes sure that the two bubbles are conforming and exactly zero 
+on the 6 faces of the element.
 In what follows $\tilde{N}_{1..8}$ are the standard $Q_1$ basis functions.
 
 \begin{center}
 \includegraphics[width=8cm]{images/MINI3D/bubbles.pdf}\\
-{\captionfont Representation of bubbles $b_9(r)$ and $b_{10}(r)$}
+{\captionfont Representation of bubbles $\beta_9(x)$ and $\beta_{10}(x)$}
 \end{center}
 
-The ten nodes are the standard 8 corners of the $Q_1$ element as well 
-as $(-1/3,-1/3,-1/3)$ for $b_9$ and $(1/3,1/3,1/3)$ for $b_{10}$.
+Note that bubble function 9 is not zero at node 10 and vice versa!
 
-We have
+The authors state: "This also allows for a straightforward inclusion in com-
+bination with existing finite element codes since all required
+implementations are purely on the element level". 
+
+
+The ten nodes are the standard 8 corners of the $Q_1$ element as well 
+as $\vec{r}_9=(-1/3,-1/3,-1/3)$ for $b_9$ and $\vec{r}_{10}=(1/3,1/3,1/3)$ for $b_{10}$.
+
+We have the following approximation of function $f$ inside the element:
 \[
 f^h(r,s,t) = \sum_{i=1}^{8} a_i \tilde{N}_i(r,s,t) + a_9 b_9(r,s,t) + a_{10} b_{10}(r,s,t)
 \]
-Because of the formulation of the bubbles these are exactly zero at the corners of the reference element.
-
-
-We can compute the values of the ten polynomials ($\tilde{N}_{1-8},b_9,b_{10}$) at the ten nodes:
+We notice that bubble functions are exactly zero at the corners of the reference element and
+we can compute the values of the ten polynomials ($\tilde{N}_{1-8}(r,s,t),b_9(r,s,t),b_{10}(r,s,t)$) 
+at the ten nodes:
 \[
 \begin{array}{c|cccccccccc}
  & \tilde{N}_1 & \tilde{N}_2 & \tilde{N}_3 & \tilde{N}_4 & \tilde{N}_5 
@@ -1078,7 +1075,7 @@ f^h(r,s,t)
 %&+& \left(  \frac{64}{63}b_9(r,s,t) -\frac{8}{63} b_{10}(r,s,t) \right) f_9 
 %+ \left( -\frac{8}{63} b_{9}(r,s,t)  + \frac{64}{63}b_{10}(r,s,t) \right) f_{10} \nonumber\\
 &=& \left(N_1(r,s,t) - \frac{2^3}{3^3}b_9(r,s,t) \right) f_1 \nonumber\\
-&+& \left(N_2(r,s,t) - \frac{2^3}{3^3}\frac{10}{21} b_9(r,s,t) - \frac{2^8}{3^3}\frac{4}{21} b_{10}(r,s,t)  \right) f_2 \nonumber\\
+&+& \left(N_2(r,s,t) - \frac{2^3}{3^3}\frac{10}{21} b_9(r,s,t) - \frac{2^3}{3^3}\frac{4}{21} b_{10}(r,s,t)  \right) f_2 \nonumber\\
 &+&\left( N_3(r,s,t)  -\frac{2^3}{3^3}\frac{4}{21} b_9r,s,t) -\frac{2^3}{3^3}\frac{10}{21} b_{10}(r,s,t)  \right)f_3 \nonumber\\
 &+& \left( N_4(r,s,t) -\frac{2^3}{3^3}\frac{10}{21} b_{9}r,s,t) -\frac{2^3}{3^3}\frac{4}{21} b_{10}(r,s,t)\right)f_4 \nonumber\\ 
 &+&\left( N_5(r,s,t)- \frac{2^3}{3^3}\frac{10}{21} b_{9}r,s,t) -\frac{2^3}{3^3}\frac{4}{21} b_{10}(r,s,t) \right) f_5 \nonumber\\
@@ -1086,14 +1083,14 @@ f^h(r,s,t)
 &+&\left( N_7(r,s,t) - \frac{2^3}{3^3}b_{10}(r,s,t) \right) f_7 \nonumber\\
 &+&\left(N_8(r,s,t) -\frac{2^3}{3^3}\frac{4}{21} b_9(r,s,t) -\frac{2^3}{3^3}\frac{10}{21} b_{10}(r,s,t) \right) f_8 \nonumber\\
 &+& \left(  \frac{64}{63}b_9(r,s,t) -\frac{8}{63} b_{10}(r,s,t) \right) f_9 
-+ \left( -\frac{8}{63} b_{9}(r,s,t)  + \frac{64}{63}b_{10}(r,s,t) \right) f_{10} \nonumber\\
++ \left( -\frac{8}{63} b_{9}(r,s,t)  + \frac{64}{63}b_{10}(r,s,t) \right) f_{10} 
 \end{eqnarray}
 
 and finally arrive at the basis functions:
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
 N_1(r,s,t)    &=&  \tilde{N}_1(r,s,t) - \frac{2^3}{3^3}b_9(r,s,t)      \nonumber\\
-N_2(r,s,t)    &=&  \tilde{N}_2(r,s,t) - \frac{2^3}{3^3}\frac{10}{21} b_9(r,s,t) - \frac{2^8}{3^3}\frac{4}{21} b_{10}(r,s,t)      \nonumber\\
+N_2(r,s,t)    &=&  \tilde{N}_2(r,s,t) - \frac{2^3}{3^3}\frac{10}{21} b_9(r,s,t) - \frac{2^3}{3^3}\frac{4}{21} b_{10}(r,s,t)      \nonumber\\
 N_3(r,s,t)    &=&  \tilde{N}_3(r,s,t)  -\frac{2^3}{3^3}\frac{4}{21} b_9(r,s,t) -\frac{2^3}{3^3}\frac{10}{21} b_{10}(r,s,t)      \nonumber\\
 N_4(r,s,t)    &=&  \tilde{N}_4(r,s,t) -\frac{2^3}{3^3}\frac{10}{21} b_{9}(r,s,t) -\frac{2^3}{3^3}\frac{4}{21} b_{10}r,s,t)      \nonumber\\
 N_5(r,s,t)    &=&  \tilde{N}_5(r,s,t)- \frac{2^3}{3^3}\frac{10}{21} b_{9}(r,s,t) -\frac{2^3}{3^3}\frac{4}{21} b_{10}(r,s,t)      \nonumber\\
@@ -1117,6 +1114,61 @@ These are somewhat complex forms for the basis functions so we wish to verify th
 + \left[\frac{2^3}{3^3} (-3)  + \frac{8}{9} \right] b_{10}(r,s,t) \nonumber\\
 &=& 1
 \end{eqnarray}
+Let us move to first order consistency with $f(r)=r$:
+\begin{eqnarray}
+f^h(r,s,t)
+=\sum_{i=1}^{10} N_i(r,s,t) f_i
+=\sum_{i=1}^{10} N_i(r,s,t) r_i 
+\end{eqnarray}
+It has been established for the $\tilde{N}_i$ functions so we are left with
+\begin{eqnarray}
+f^h(r,s,t)
+&=& \underbrace{\sum_{i=1}^8 \tilde{N}_i r_i }_{=r} \nn\\
+&& -\frac{2^3}{3^3}b_9(r,s,t) (-1)  \nn\\
+&& -\frac{2^3}{3^3}\frac{10}{21} b_9(r,s,t) (+1) - \frac{2^3}{3^3}\frac{4}{21} b_{10}(r,s,t) (+1)  \nn\\
+&& -\frac{2^3}{3^3}\frac{4}{21} b_9(r,s,t)  (+1)-\frac{2^3}{3^3}\frac{10}{21} b_{10}(r,s,t) (+1)     \nn\\
+&&-\frac{2^3}{3^3}\frac{10}{21} b_{9}(r,s,t) (-1) -\frac{2^3}{3^3}\frac{4}{21} b_{10}r,s,t) (-1)     \nn\\
+&&- \frac{2^3}{3^3}\frac{10}{21} b_{9}(r,s,t) (-1) -\frac{2^3}{3^3}\frac{4}{21} b_{10}(r,s,t)  (-1)    \nn\\
+&& -\frac{2^3}{3^3}\frac{4}{21} b_9(r,s,t) (+1) -\frac{2^3}{3^3}\frac{10}{21} b_{10}(r,s,t) (+1)  \nn\\
+&& - \frac{2^3}{3^3}b_{10}(r,s,t) (+1)     \nonumber\\
+&&-\frac{2^3}{3^3}\frac{4}{21} b_9(r,s,t) (-1) -\frac{2^3}{3^3}\frac{10}{21} b_{10}(r,s,t) (-1)      \nonumber\\
+&& +  \frac{64}{63}b_9(r,s,t)(-1/3) -\frac{8}{63} b_{10}(r,s,t) (-1/3)     \nn\\
+&&  -\frac{8}{63} b_{9}(r,s,t)(+1/3)  + \frac{64}{63}b_{10}(r,s,t)   (+1/3) \nn\\
+&=& r + 
+b_9(r,s,t) \left( 
+\frac{8}{27} -\frac{8}{27}\frac{10}{21} -\frac{8}{27}\frac{4}{21} 
++\frac{8}{27}\frac{10}{21}
++\frac{8}{27}\frac{10}{21} 
+-\frac{8}{27}\frac{4}{21}  
++\frac{8}{27}\frac{4}{21}
+-\frac{64}{189}-\frac{8}{189}
+\right) \nn\\ 
+&+& b_{10}(r,s,t) \left(
+-\frac{8}{27} \frac{4}{21} 
+-\frac{8}{27}\frac{10}{21} 
++ \frac{8}{27}\frac{4}{21} 
++ \frac{8}{27}\frac{4}{21} 
+-\frac{8}{27}\frac{10}{21} 
+-\frac{8}{27}
++\frac{8}{27}\frac{10}{21}
++\frac{8}{189}
++\frac{64}{189}
+\right) \nn\\
+&=& r +  
+b_9(r,s,t) \frac{8}{27} 
+\underbrace{\left( 1 - \frac{10}{21} - \frac{4}{21} + \frac{10}{21} + \frac{10}{21} 
+-\frac{9}{7} \right)}_{=0}
++b_{10}(r,s,t) \frac{8}{27} 
+\underbrace{\left( 
+- \frac{4}{21} -\frac{10}{21} + \frac{4}{21} + \frac{4}{21} - \frac{10}{21} -1 +  \frac{10}{21} + \frac{9}{7}
+\right)}_{=0} \nn\\
+&=& r 
+\end{eqnarray}
+which proves first-order consistency.
+
+
+
+
 
 The derivatives of the $\tilde{N}_i$ basis functions are already established so we only focus on the spatial derivatives of the bubble functions:
 \begin{eqnarray}
@@ -1137,6 +1189,8 @@ The derivatives of the $\tilde{N}_i$ basis functions are already established so 
 \frac{\partial b_{10}}{\partial t} 
 &=& \left(\frac{27}{32}\right)^3 (1-r^2)(1-s^2) (1+r)(1+s) (1-2t-3t^2  ) \nonumber
 \end{eqnarray}
+
+Note that the authors explain static condensation for the bubbles in the appendix of the paper.
 
 
 \Literature: Fortin \& Fortin (1985) \cite{fofo85}, Soulaimani \etal (1987) \cite{sofo87}

@@ -2,8 +2,8 @@ set term pdf enhanced font "Times,11pt"
 set grid
 set xtics .3333333333
 set output "bubbles.pdf"
-set xlabel 'r'
+set xlabel 'x'
 plot[-1:1][]\
-27./32*(1-x**2)*(1-x) t 'b_9(r)',\
-27./32*(1-x**2)*(1+x) t 'b_{10}(r)'
+27./32*(1-x**2)*(1-x) t '{/Symbol b}_9(x)',\
+27./32*(1-x**2)*(1+x) t '{/Symbol b}_{10}(x)'
 

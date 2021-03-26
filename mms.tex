@@ -1681,9 +1681,9 @@ so that the flow is indeed incompressible:
 f'(x) g'(y) h'(z) + f'(x) g'(y) h'(z) -2f'(x) g'(y) h'(z)
 =0
 \]
-The velocity gradient ${\bm L}$ is then given by
+The velocity gradient ${\bm L}(\vec\upnu)$ is then given by
 \[
-{\bm L} =
+{\bm L}(\vec\upnu) =
 \left(
 \begin{array}{ccc}
 f'g'h' &  f'' g h' & -2f'' g' h \\ \\
@@ -1695,7 +1695,7 @@ fg'h'' & f'gh''    & -2f'g'h'
 and the strain rate tensor by:
 \[
 \dot{\bm \varepsilon}(\vec\upnu)
-=\frac{1}{2}({\bm L}+{\bm L}^T)
+=\frac{1}{2}({\bm L}(\vec\upnu)+{\bm L}(\vec\upnu)^T)
 =
 \frac{1}{2}
 \left(
@@ -1865,6 +1865,28 @@ with $\int_\Omega p(x,y,z) dx dy dz =0$, so
 \end{array}
 \right) 
 \]
+Then we find that 
+\[
+\vec{b}
+=
+\left(
+\begin{array}{c}
+2(2y-1)(2z-1) -(-2)(1-2y)(1-2z) \\
+2(2x-1)(2z-1) -(1-2x)(-2)(1-2z) \\
+2(2x-1)(2y-1) +2(1-2x)(1-2y)(-2)
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+4(2y-1)(2z-1)\\ \\
+4(2x-1)(2z-1) \\ \\
+-2(2x-1)(2y-1) 
+\end{array}
+\right)
+\]
+
+
 The root mean square velocity is given by 
 \begin{eqnarray}
 \int_\Omega u^2 dV &=& 1/270 \\
@@ -1876,7 +1898,8 @@ and then
 \upnu_{vrms} =\sqrt{\frac{6}{270}} \simeq 0.1490712
 \]
 
-This benchmark is implemented in Stone 75. The code is available in {\tt /mms/mms3D.py}.
+This benchmark is implemented in \stone 75 and \stone 82.  
+The code is available in {\tt /mms/mms3D.py}.
 
 %..................................
 \paragraph{Second application}
@@ -1903,12 +1926,35 @@ f'''(x)=24x-12 \qquad
 g'''(y)=24y-12 \qquad
 h'''(z)=24z-12
 \]
-
+The velocity field is then given by
 \begin{eqnarray}
-u(x,y,z) &=& 4 x^2(1-x)^2  y(2y^2-3y+1) z(2z^2-3z+1)  \\
-v(x,y,z) &=& 4 x(2x^2-3x+1) y^2(1-y)^2 z(2z^2-3z+1) \\
-w(x,y,z) &=& -8 x(2x^2-3x+1) y(2y^2-3y+1) z^2(1-z)^2 
+u(x,y,z) 
+&=& f(x) g'(y) h'(z) 
+= 4 x^2(1-x)^2  y(2y^2-3y+1) z(2z^2-3z+1)  \nn\\
+v(x,y,z) 
+&=& f'(x) g(y) h'(z) 
+= 4 x(2x^2-3x+1) y^2(1-y)^2 z(2z^2-3z+1) \nn\\
+w(x,y,z) 
+&=& -2f'(x) g'(y) h(z) 
+= -8 x(2x^2-3x+1) y(2y^2-3y+1) z^2(1-z)^2 
 \end{eqnarray}
+We choose
+\[
+p(x,y,z)=f'g'h' = 2x(2x^2-3x+1)  2y(2y^2-3y+1)  2z(2z^2-3z+1) 
+\]
+
+
+
+
+
+
+
+
+
+
+
+
+
 %..........................................................
 \subsubsection{2D Analytical benchmark XII}\label{ss:sofo87_2D}
 

@@ -1,7 +1,7 @@
 Let us assume a Cartesian domain discretised in $nel_x \times nel_y$
 elements in 2D and $nel_x \times nel_y \times nel_z$ elements in 3D.
 Focusing only on the total number of velocity dofs (the values indicated after the 
-arrows are the limits when $nel_x >> 1$):
+arrows are the limits when $nel_x=nel_y=nel_z >> 1$):
 
 \begin{itemize}
 
@@ -21,13 +21,6 @@ ndof_{3D}&=&3 (2nel_x+1) \cdot (2nel_y+1) \cdot (2nel_z+1)
 \qquad \rightarrow \qquad 24 \cdot nel_x^3 \nonumber
 \end{eqnarray}
 
-\item $Q_1^+ \times Q_1$
-\begin{eqnarray}
-ndof_{2D}  &=&2 [ (nel_x+1) \cdot (nel_y+1) + nel_x \cdot nel_y ]
-\qquad \rightarrow \qquad 4 \cdot nel_x^2   \nonumber\\
-ndof_{3D}  &=&3 [ (nel_x+1) \cdot (nel_y+1) \cdot (nel_z+1) + nel_x \cdot nel_y \cdot nel_z ]
-\qquad \rightarrow \qquad 6 \cdot nel_x^3 \nonumber
-\end{eqnarray}
 
 \item $Q_1^+ \times P_0$
 
@@ -38,6 +31,39 @@ ndof_{3D}&=&3 (nel_x+1) \cdot (nel_y+1) \cdot (nel_z+1) \nonumber\\
 &+&  (nel_x+1)\cdot nel_y \cdot nel_z + nelx\cdot (nel_y+1) \cdot nelz + nelx\cdot nely \cdot (nel_z+1)
 \quad \rightarrow \quad 6 \cdot nel_x^3 \nonumber
 \end{eqnarray}
+
+\item $Q_1 \times Q_1$+1 bubble
+
+\begin{eqnarray}
+ndof_{2D}&=& 2[(nel_x+1) \cdot (nel_y+1)  + \cdot nelx\cdot nely ]
+\quad \rightarrow \quad 4 \cdot nel_x^2 \nonumber
+\end{eqnarray}
+
+%\item $Q_1^+ \times Q_1$
+%\begin{eqnarray}
+%ndof_{2D}  &=&2 [ (nel_x+1) \cdot (nel_y+1) + nel_x \cdot nel_y ]
+%\qquad \rightarrow \qquad 4 \cdot nel_x^2   \nonumber
+%ndof_{3D}  &=&3 [ (nel_x+1) \cdot (nel_y+1) \cdot (nel_z+1) + nel_x \cdot nel_y \cdot nel_z ]
+%\qquad \rightarrow \qquad 6 \cdot nel_x^3 \nonumber
+%\end{eqnarray}
+
+\item $Q_1 \times Q_1$+2 bubbles
+
+\begin{eqnarray}
+ndof_{3D}&=& 3[(nel_x+1) \cdot (nel_y+1) \cdot  (nel_z+1) + 2\cdot nelx\cdot nely \cdot nelz]
+\quad \rightarrow \quad 9 \cdot nel_x^3 \nonumber
+\end{eqnarray}
+
+
+\item Rannacher-turek or DSSY:
+
+\begin{eqnarray}
+ndof_{2D}&=& 2[(nel_y+1) \cdot nel_x+nel_y\cdot(nel_x+1)  ] 
+\quad\rightarrow \quad 4 \cdot nel_x^2 \nonumber\nn\\
+ndof_{3D}&=& 3[ nel_x\cdot (nel_y+1)\cdot nel_z + (nel_x+1) \cdot nel_y\cdot nel_z  +nel_x\cdot nel_y\cdot (nel_z+1) ]  
+\quad \rightarrow \quad 9 \cdot nel_x^3 \nonumber
+\end{eqnarray}
+ 
 
 \end{itemize}
 
@@ -50,6 +76,10 @@ If we now assume $nel_x=nel_y=nel_z$, we can then plot the values above as a fun
 
 We see that the $Q_1^+\times Q_1$ and $Q_1^+ \times P_0$ actually 
 ield the same number of velocity dofs. 
+
+Simply based on the dof count and wishing for a (bi/tri)linear approximation 
+for pressure, we must conclude that the $Q_1\times Q_1$+2 bubbles is the most desirable 
+since it is also LBB stable.
 
 \begin{center}
 \begin{tikzpicture}
@@ -344,5 +374,23 @@ ield the same number of velocity dofs.
 \end{tikzpicture}
 \end{center}
 
+Add DSSY, RT, Q1Q1+2 bubbles
 
+\vspace{.5cm}
 
+\begin{tabular}{llll}
+\hline
+2D &  \\ 
+Rannacher-Turek & NCQ1P0 & \stone 77 & pb with buoyancy-driven flow \\
+Lamichhane      & Q1+Q1  & \stone 72, \stone 74  & \\ 
+DSSY            &        & \stone 77  pb with buoyancy-driven flow \\
+Fortin          &        & \stone 80 \\
+\hline
+\hline
+3D & \\
+Rannacher-Turek & NCQ1P0  & \elefant &  \\
+Lamichhane      & Q1+Q1   & \stone  & Does not work \\ 
+DSSY & \\
+Fortin & & \stone 81 \\
+\hline
+\end{tabular}
