@@ -9,35 +9,88 @@ from scipy.sparse import csr_matrix, lil_matrix
 
 #------------------------------------------------------------------------------
 
-def rho(x,y,z):
-    if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123456789**2:
-       val=1.01
-    else:
-       val=1.
+def bx(x,y,z):
+    if experiment==1 or experiment==2 or experiment==3 or experiment==4:
+       val=0
+    if experiment==5:
+       val=4*(2*y-1)*(2*z-1)
     return val
 
+def by(x,y,z):
+    if experiment==1 or experiment==2 or experiment==3 or experiment==4:
+       val=0
+    if experiment==5:
+       val=4*(2*x-1)*(2*z-1)
+    return val
+
+
+def bz(x,y,z):
+    if experiment==1 or experiment==2 or experiment==3 or experiment==4:
+       if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123456789**2:
+          val=1.01*gz
+       else:
+          val=1.*gz
+    if experiment==5:
+       val=-2*(2*x-1)*(2*y-1) 
+    return val
+
+#------------------------------------------------------------------------------
+
 def mu(x,y,z):
-    if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123456789**2:
-       val=1e3
-    else:
+    if experiment==1 or experiment==2 or experiment==3 or experiment==4:
+       if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123456789**2:
+          val=1e3
+       else:
+          val=1.
+    if experiment==5:
        val=1.
     return val
 
 #------------------------------------------------------------------------------
+
+def uth(x,y,z):
+    val=x*(1-x)*(1-2*y)*(1-2*z)
+    return val
+
+def vth(x,y,z):
+    val=(1-2*x)*y*(1-y)*(1-2*z)
+    return val
+
+def wth(x,y,z):
+    val=-2*(1-2*x)*(1-2*y)*z*(1-z)
+    return val
+
+def pth(x,y,z):
+    val=(2*x-1)*(2*y-1)*(2*z-1)
+    return val
+
+#------------------------------------------------------------------------------
+
+experiment=5
 
 print("-----------------------------")
 print("--------fieldstone 10--------")
 print("-----------------------------")
 
 m=8     # number of nodes making up an element
-ndof=3  # number of degrees of freedom per node
+ndofV=3  # number of degrees of freedom per node
 
 if int(len(sys.argv) == 2):
    nelx = int(sys.argv[1])
 else:
-   nelx = 10
+   nelx = 16
 
-quarter=False
+if experiment==1:
+   quarter=False
+if experiment==2:
+   quarter=False
+if experiment==3:
+   quarter=False
+if experiment==4:
+   quarter=True
+if experiment==5:
+   quarter=False
+
 
 if quarter:
    nely=nelx
@@ -52,9 +105,11 @@ else:
    Ly=1.
    Lz=1.
 
-FS=False
+
+
+FS=True
 NS=False
-OT=True
+OT=False
 
 visu=1
     
@@ -68,12 +123,10 @@ nel=nelx*nely*nelz  # number of elements, total
 
 penalty=1.e7  # penalty coefficient value
 
-Nfem=NV*ndof  # Total number of degrees of freedom
+Nfem=NV*ndofV  # Total number of degrees of freedom
 
 eps=1.e-10
 
-gx=0.   # gravity vector, x component
-gy=0.   # gravity vector, y component
 gz=-1.  # gravity vector, z component
 
 sqrt3=np.sqrt(3.)
@@ -86,8 +139,6 @@ print('Lz=',Lz)
 print('nelx=',nelx)
 print('nely=',nely)
 print('nelz=',nelz)
-
-
 
 #################################################################
 # grid point setup
@@ -146,54 +197,84 @@ start = time.time()
 bc_fix=np.zeros(Nfem,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=float)  # boundary condition, value
 
-if FS or OT:
-   for i in range(0,NV):
-       if x[i]<eps:
-          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
-       if x[i]>(Lx-eps):
-          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
-       if y[i]<eps:
-          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
-       if y[i]>(Ly-eps):
-          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
-       if z[i]<eps:
-          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
-       if not OT and z[i]>(Lz-eps):
-          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
-       #end if
-   #end for
+if experiment==1 or experiment==2 or experiment==3 or experiment==4:
 
-if NS:
-   for i in range(0,NV):
-       if x[i]<eps:
-          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
-          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
-          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
-       if x[i]>(1-eps):
-          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
-          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
-          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
-       if y[i]<eps:
-          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
-          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
-          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
-       if y[i]>(1-eps):
-          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
-          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
-          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
-       if z[i]<eps:
-          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
-          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
-          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
-       if z[i]>(Lz-eps):
-          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
-          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
-          bc_fix[i*ndof+2]=True ; bc_val[i*ndof+2]= 0.
-       if quarter and x[i]>(0.5-eps):
-          bc_fix[i*ndof+0]=True ; bc_val[i*ndof+0]= 0.
-       if quarter and y[i]>(0.5-eps):
-          bc_fix[i*ndof+1]=True ; bc_val[i*ndof+1]= 0.
-   #end for
+   if FS or OT:
+      for i in range(0,NV):
+          if x[i]<eps:
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
+          if x[i]>(Lx-eps):
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
+          if y[i]<eps:
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
+          if y[i]>(Ly-eps):
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
+          if z[i]<eps:
+             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0.
+          if not OT and z[i]>(Lz-eps):
+             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0.
+          #end if
+      #end for
+
+   if NS:
+      for i in range(0,NV):
+          if x[i]<eps:
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
+             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0.
+          if x[i]>(1-eps):
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
+             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0.
+          if y[i]<eps:
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
+             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0.
+          if y[i]>(1-eps):
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
+             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0.
+          if z[i]<eps:
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
+             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0.
+          if z[i]>(Lz-eps):
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
+             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0.
+          if quarter and x[i]>(0.5-eps):
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
+          if quarter and y[i]>(0.5-eps):
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
+      #end for
+
+if experiment==5:
+      for i in range(0,NV):
+          if x[i]<eps:
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(x[i],y[i],z[i])
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= vth(x[i],y[i],z[i])
+             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= wth(x[i],y[i],z[i])
+          if x[i]>(1-eps):
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(x[i],y[i],z[i])
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= vth(x[i],y[i],z[i])
+             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= wth(x[i],y[i],z[i])
+          if y[i]<eps:
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(x[i],y[i],z[i])
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= vth(x[i],y[i],z[i])
+             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= wth(x[i],y[i],z[i])
+          if y[i]>(1-eps):
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(x[i],y[i],z[i])
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= vth(x[i],y[i],z[i])
+             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= wth(x[i],y[i],z[i])
+          if z[i]<eps:
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(x[i],y[i],z[i])
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= vth(x[i],y[i],z[i])
+             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= wth(x[i],y[i],z[i])
+          if z[i]>(Lz-eps):
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(x[i],y[i],z[i])
+             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= vth(x[i],y[i],z[i])
+             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= wth(x[i],y[i],z[i])
+
 
 
 print("define b.c.: %.3f s" % (time.time() - start))
@@ -210,7 +291,7 @@ print("define b.c.: %.3f s" % (time.time() - start))
 start = time.time()
 
 a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64) # matrix of Ax=b
-b_mat = np.zeros((6,ndof*m),dtype=np.float64)    # gradient matrix B 
+b_mat = np.zeros((6,ndofV*m),dtype=np.float64)    # gradient matrix B 
 rhs   = np.zeros(Nfem,dtype=np.float64)          # right hand side of Ax=b
 N     = np.zeros(m,dtype=np.float64)             # shape functions
 dNdx  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
@@ -235,8 +316,8 @@ c_mat[3,3]=1. ; c_mat[4,4]=1. ; c_mat[5,5]=1.
 for iel in range(0, nel):
 
     # set 2 arrays to 0 every loop
-    b_el=np.zeros(m*ndof,dtype=np.float64)
-    a_el=np.zeros((m*ndof,m*ndof),dtype=np.float64)
+    b_el=np.zeros(m*ndofV,dtype=np.float64)
+    a_el=np.zeros((m*ndofV,m*ndofV),dtype=np.float64)
 
     # integrate viscous term at 4 quadrature points
     for iq in [-1, 1]:
@@ -335,9 +416,9 @@ for iel in range(0, nel):
 
                 # compute elemental rhs vector
                 for i in range(0, m):
-                    b_el[ndof*i+0]+=N[i]*jcob*wq*rho(xq,yq,zq)*gx
-                    b_el[ndof*i+1]+=N[i]*jcob*wq*rho(xq,yq,zq)*gy
-                    b_el[ndof*i+2]+=N[i]*jcob*wq*rho(xq,yq,zq)*gz
+                    b_el[ndofV*i+0]+=N[i]*jcob*wq*bx(xq,yq,zq)
+                    b_el[ndofV*i+1]+=N[i]*jcob*wq*by(xq,yq,zq)
+                    b_el[ndofV*i+2]+=N[i]*jcob*wq*bz(xq,yq,zq)
                 #end for 
 
             #end for kq 
@@ -429,13 +510,13 @@ for iel in range(0, nel):
 
     # apply boundary conditions
     for k1 in range(0,m):
-        for i1 in range(0,ndof):
-            m1 =ndof*icon[k1,iel]+i1
+        for i1 in range(0,ndofV):
+            m1 =ndofV*icon[k1,iel]+i1
             if bc_fix[m1]: 
                fixt=bc_val[m1]
-               ikk=ndof*k1+i1
+               ikk=ndofV*k1+i1
                aref=a_el[ikk,ikk]
-               for jkk in range(0,m*ndof):
+               for jkk in range(0,m*ndofV):
                    b_el[jkk]-=a_el[jkk,ikk]*fixt
                    a_el[ikk,jkk]=0.
                    a_el[jkk,ikk]=0.
@@ -448,13 +529,13 @@ for iel in range(0, nel):
 
     # assemble matrix a_mat and right hand side rhs
     for k1 in range(0,m):
-        for i1 in range(0,ndof):
-            ikk=ndof*k1          +i1
-            m1 =ndof*icon[k1,iel]+i1
+        for i1 in range(0,ndofV):
+            ikk=ndofV*k1          +i1
+            m1 =ndofV*icon[k1,iel]+i1
             for k2 in range(0,m):
-                for i2 in range(0,ndof):
-                    jkk=ndof*k2          +i2
-                    m2 =ndof*icon[k2,iel]+i2
+                for i2 in range(0,ndofV):
+                    jkk=ndofV*k2          +i2
+                    m2 =ndofV*icon[k2,iel]+i2
                     a_mat[m1,m2]+=a_el[ikk,jkk]
                 #end for
             #end for
@@ -484,9 +565,9 @@ start = time.time()
 
 u,v,w=np.reshape(sol,(NV,3)).T
 
-print("     -> u (m,M) %.5f %.5f " %(np.min(u),np.max(u)))
-print("     -> v (m,M) %.5f %.5f " %(np.min(v),np.max(v)))
-print("     -> w (m,M) %.5f %.5f " %(np.min(w),np.max(w)))
+print("     -> u (m,M) %.5e %.5e " %(np.min(u),np.max(u)))
+print("     -> v (m,M) %.5e %.5e " %(np.min(v),np.max(v)))
+print("     -> w (m,M) %.5e %.5e " %(np.min(w),np.max(w)))
 
 np.savetxt('velocity.ascii',np.array([x,y,z,u,v,w]).T,header='# x,y,z,u,v,w')
 
@@ -593,21 +674,21 @@ for iel in range(0,nel):
 
     p[iel]=-penalty*(exx[iel]+eyy[iel]+ezz[iel])
     visc[iel]=mu(xc[iel],yc[iel],zc[iel])
-    dens[iel]=rho(xc[iel],yc[iel],zc[iel])
+    dens[iel]=bz(xc[iel],yc[iel],zc[iel])
     sr[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel]+ezz[iel]*ezz[iel])
                     +exy[iel]*exy[iel]+exz[iel]*exz[iel]+eyz[iel]*eyz[iel])
     
 #end for
 
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
-print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-print("     -> ezz (m,M) %.4f %.4f " %(np.min(ezz),np.max(ezz)))
-print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
-print("     -> exz (m,M) %.4f %.4f " %(np.min(exz),np.max(exz)))
-print("     -> eyz (m,M) %.4f %.4f " %(np.min(eyz),np.max(eyz)))
-print("     -> visc (m,M) %.4f %.4f " %(np.min(visc),np.max(visc)))
-print("     -> dens (m,M) %.4f %.4f " %(np.min(dens),np.max(dens)))
+print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
+print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
+print("     -> ezz (m,M) %.4e %.4e " %(np.min(ezz),np.max(ezz)))
+print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
+print("     -> exz (m,M) %.4e %.4e " %(np.min(exz),np.max(exz)))
+print("     -> eyz (m,M) %.4e %.4e " %(np.min(eyz),np.max(eyz)))
+print("     -> visc (m,M) %.4e %.4e " %(np.min(visc),np.max(visc)))
+print("     -> dens (m,M) %.4e %.4e " %(np.min(dens),np.max(dens)))
 
 np.savetxt('pressure.ascii',np.array([xc,yc,zc,p]).T,header='# xc,yc,zc,p')
 np.savetxt('strainrate.ascii',np.array([xc,yc,zc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
@@ -618,22 +699,19 @@ print("compute p and strainrate: %.3f s" % (time.time() - start))
 # compute vrms
 #####################################################################
 
+errv=0
+errp=0
 vrms=0.
 
 for iel in range(0, nel):
-
-    # integrate viscous term at 4 quadrature points
     for iq in [-1, 1]:
         for jq in [-1, 1]:
             for kq in [-1, 1]:
-
-                # position & weight of quad. point
                 rq=iq/sqrt3
                 sq=jq/sqrt3
                 tq=kq/sqrt3
                 weightq=1.*1.*1.
 
-                # calculate shape functions
                 N[0]=0.125*(1.-rq)*(1.-sq)*(1.-tq)
                 N[1]=0.125*(1.+rq)*(1.-sq)*(1.-tq)
                 N[2]=0.125*(1.+rq)*(1.+sq)*(1.-tq)
@@ -643,7 +721,6 @@ for iel in range(0, nel):
                 N[6]=0.125*(1.+rq)*(1.+sq)*(1.+tq)
                 N[7]=0.125*(1.-rq)*(1.+sq)*(1.+tq)
 
-                # calculate shape function derivatives
                 dNdr[0]=-0.125*(1.-sq)*(1.-tq) 
                 dNdr[1]=+0.125*(1.-sq)*(1.-tq)
                 dNdr[2]=+0.125*(1.+sq)*(1.-tq)
@@ -683,16 +760,18 @@ for iel in range(0, nel):
                     jcb[2,0] += dNdt[k]*x[icon[k,iel]]
                     jcb[2,1] += dNdt[k]*y[icon[k,iel]]
                     jcb[2,2] += dNdt[k]*z[icon[k,iel]]
-                #end for 
-
-                # calculate the determinant of the jacobian
                 jcob = np.linalg.det(jcb)
 
-                # compute dNdx, dNdy, dNdz
+                xq=0.0
+                yq=0.0
+                zq=0.0
                 uq=0.0
                 vq=0.0
                 wq=0.0
-                for k in range(0, m):
+                for k in range(0,m):
+                    xq+=N[k]*x[icon[k,iel]]
+                    yq+=N[k]*y[icon[k,iel]]
+                    zq+=N[k]*z[icon[k,iel]]
                     uq+=N[k]*u[icon[k,iel]]
                     vq+=N[k]*v[icon[k,iel]]
                     wq+=N[k]*w[icon[k,iel]]
@@ -700,8 +779,27 @@ for iel in range(0, nel):
 
                 vrms+=(uq**2+vq**2+wq**2)*jcob*weightq
 
+                errv+=((uq-uth(xq,yq,zq))**2+\
+                       (vq-vth(xq,yq,zq))**2+\
+                       (wq-wth(xq,yq,zq))**2)*weightq*jcob
+
+                errp+=(p[iel]-pth(xq,yq,zq))**2*weightq*jcob
+
+
+            #end for
+        #end for
+    #end for
+#end for
+
+
+errv=np.sqrt(errv)
+errp=np.sqrt(errp)
+
 vrms=np.sqrt(vrms/Lx/Ly/Lz)
 
+print("     -> nel= %6d ; errv: %e ; errp: %e " %(nel,errv,errp))
+
+print("     -> nel= %6d ; vrms: %e" % (nel,vrms))
 
 #####################################################################
 # export various measurements for stokes sphere benchmark 
@@ -746,7 +844,12 @@ if visu==1:
        vtufile.write("%f\n" % p[iel])
    vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%f\n" % pth(xc[iel],yc[iel],zc[iel]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='density*gz' Format='ascii'> \n")
    for iel in range (0,nel):
        vtufile.write("%f\n" % dens[iel])
    vtufile.write("</DataArray>\n")
@@ -765,9 +868,21 @@ if visu==1:
    #####
    vtufile.write("<PointData Scalars='scalars'>\n")
    #--
+   vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%f\n" % pth(x[i],y[i],z[i]))
+   vtufile.write("</DataArray>\n")
+   #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
    for i in range(0,NV):
        vtufile.write("%10f %10f %10f \n" %(u[i],v[i],w[i]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (th)' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%.20f %.20f %.20f \n" %(uth(x[i],y[i],z[i]),\
+                                              vth(x[i],y[i],z[i]),\
+                                              wth(x[i],y[i],z[i])))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("</PointData>\n")

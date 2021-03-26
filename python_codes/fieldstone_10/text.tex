@@ -7,6 +7,39 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%----------------------------------------------------------
+\subsection*{Manufactured solution ({\tt experiment=5})}
+
+It is described in Section~\ref{ss:mms3Dgen}.
+The velocity and pressure fields are:
+\begin{eqnarray}
+u(x,y,z) &=& x(1-x)(1-2y)(1-2z)\\
+v(x,y,z) &=& (1-2x) y(1-y) (1-2z) \\
+w(x,y,z) &=& -2(1-2x)(1-2y)z(1-z) \\
+p(x,y,z) &=& (2x-1)(2y-1)(2z-1)
+\end{eqnarray}
+This flow field has the built-in property that there is no flux through the 
+boundaries. 
+
+\begin{center}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_10/results/exp5/press}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_10/results/exp5/vel}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_10/results/exp5/vrms}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_10/results/exp5/conv}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_10/results/exp5/p_stats}
+\end{center}
+We recover the expected second order velocity error convergence 
+and first order pressure error convergence. 
+
+
+
+
+%------------------------------
+\subsection*{Stokes sphere}
+
 The domain is a unit cube. Free slip boundary conditions 
 are imposed on all sides. The mesh counts 
 nelx*nely*nelz=nel elements and 
@@ -23,48 +56,48 @@ choosing the right matrix storage is of paramount importance.
 
 Three experiments are carried out:
 \begin{enumerate}
-\item the one described above.
+\item[Exp.~1:] the one described above.
+Free slip or no slip boundary conditions.
 We see that the pressure field is dominated by the lithostatic signal.
-\item same as experiment 1, but a reference density of 1 is substracted to all densities, so that 
+\item[Exp.~2:] same as experiment 1, but a reference density of 1 is substracted to all densities, so that 
 the sphere density is 1 and the density of the surrounding fluid is now 0. In essence, we remove a
 'background' density which does not participate in the flow generation, and thereby get rid of the 
 lithostatic signal of the pressure.
-\item same as experiment 2, but the top boundary is now open (free surface)
+Free slip or no slip boundary conditions.
+\item[Exp.~3:] same as experiment 2, but the top boundary is now open (free surface)
 \end{enumerate} 
 
-
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_10/results/grid}
-\includegraphics[width=5cm]{python_codes/fieldstone_10/results/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_10/results/press}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_10/results/visc}
-\includegraphics[width=5cm]{python_codes/fieldstone_10/results/dens}\\
-{\small Experiment 1: resolution 24x24x24}
+\includegraphics[width=5cm]{python_codes/fieldstone_10/results/exp1/grid}
+\includegraphics[width=5cm]{python_codes/fieldstone_10/results/exp1/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_10/results/exp1/press}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_10/results/exp1/visc}
+\includegraphics[width=5cm]{python_codes/fieldstone_10/results/exp1/dens}\\
+{\small Exp.~1: resolution $24\times 24\times 24$}
 \end{center}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_10/results/dens_2}
-\includegraphics[width=5cm]{python_codes/fieldstone_10/results/press_2}\\
-{\small Experiment 2: Density and pressure fields. Resolution 24x24x24}
+\includegraphics[width=5cm]{python_codes/fieldstone_10/results/exp2/dens_2}
+\includegraphics[width=5cm]{python_codes/fieldstone_10/results/exp2/press_2}\\
+{\small Exp.~2: Density and pressure fields. Resolution 24x24x24}
 \end{center}
 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_10/results/press_3}
-\includegraphics[width=5cm]{python_codes/fieldstone_10/results/vel_3}\\
-{\small Experiment 3: pressure and velocity fields. Resolution 24x24x24}
+\includegraphics[width=5cm]{python_codes/fieldstone_10/results/exp3/press_3}
+\includegraphics[width=5cm]{python_codes/fieldstone_10/results/exp3/vel_3}\\
+{\small Exp.~3: pressure and velocity fields. Resolution 24x24x24}
 \end{center}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_10/results/model1/pressure.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_10/results/model2/pressure.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_10/results/model3/pressure.pdf}\\
-{\captionfont Elemental pressure for all elements as a function of their vertical (middle) coordinate for
-(from left to right) experiments 1, 2 and 3. }
+\includegraphics[width=5.6cm]{python_codes/fieldstone_10/results/exp1/pressure.pdf}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_10/results/exp2/pressure.pdf}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_10/results/exp3/pressure.pdf}\\
+{\captionfont Elemental pressure for all elements as a function of their vertical 
+(middle) coordinate for (from left to right) experiments 1, 2 and 3. }
 \end{center}
 
 Note that a similar fortran code is present in the folder. 
-
 
 If the option 'quarter' is true, then the model takes advantage of the symmetries 
 of the problem and runs it in a quarter of the original domain, so that 
@@ -76,7 +109,7 @@ to the full cube ones, but at a much lower cost.
 \includegraphics[width=4cm]{python_codes/fieldstone_10/results/quarter_FS/sr}
 \includegraphics[width=4cm]{python_codes/fieldstone_10/results/quarter_FS/vel}
 \includegraphics[width=4cm]{python_codes/fieldstone_10/results/quarter_FS/eta}\\
-{\captionfont Resolution 32x32x64 - FS}
+{\captionfont Resolution $32\times 32\times 64$ - FS}
 \end{center}
 
 
