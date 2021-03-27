@@ -13,8 +13,6 @@ recommend these data for the validation of convection codes in the future.
 }
 \end{center}
 
-The setup is as follows:
-
 The temperature is fixed to zero on top and to $\Delta T$ at the bottom, 
 with reflecting symmetry at the sidewalls (i.e. $\partial_x T=0$) 
 and there are no internal heat sources. 
@@ -22,10 +20,9 @@ Free-slip conditions are implemented on all boundaries.
 
 The Rayleigh number is given by
 \[
-Ra = \frac{\alpha g_y \Delta T h^3 }{\kappa \nu}
+\Ranb = \frac{\alpha g_y \Delta T h^3 }{\kappa \nu}
 =\frac{\alpha g_y \Delta T h^3 \rho^2 c_p}{k \mu}
 \]
-
 The initial temperature field is given by 
 \[
 T(x,y)=(1-y) - 0.01\cos(\pi x) \sin(\pi x)
@@ -34,12 +31,7 @@ The perturbation in the initial temperature fields leads to
 a perturbation of the density field and sets the fluid in motion. 
 
 Depending on the initial Rayleigh number, the system ultimately reaches a 
-steady state after some time. The steady-state 
-temperature field of case 1a is shown on Fig. (\ref{fig_blankenbach1}).
-
-
-
-Results:
+steady state after some time. 
 
 \begin{center}
 a)\includegraphics[width=4.5cm]{images/benchmark_blbc89/temp1a}
@@ -52,9 +44,10 @@ Obtained with \elefant code \cite{thie14}.}
 
 
 \begin{center}
-a)\includegraphics[width=12cm]{images/benchmark_blbc89/krhb12a}
-b)\includegraphics[width=12cm]{images/benchmark_blbc89/krhb12b}\\
-{\captionfont a) Results for the 2-D benchmark problem with uniform mesh refinement. 
+a)\includegraphics[width=13cm]{images/benchmark_blbc89/krhb12a}
+b)\includegraphics[width=13cm]{images/benchmark_blbc89/krhb12b}\\
+{\captionfont 
+a) Results for the 2-D benchmark problem with uniform mesh refinement. 
 \# DoFs indicates the number of degrees of freedom.
 Reference results from Blankenbach et al. (1989).
 b) Results with adaptive mesh refinement. The number of degrees of freedom (\# DoFs) for

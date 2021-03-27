@@ -1,0 +1,38 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set xlabel 'h'
+set ylabel 'error in L_2 norm'
+set output 'conv.pdf'
+set log xy
+set key outside
+
+plot[][]\
+'../../../python_codes/fieldstone_10/results/exp5/errors.ascii'       u (1/($3)**0.3333):6 w lp lt 1 lw .5 pt 1 ps .4  t 'stone 10, v, {/Symbol l}=10^7',\
+'../../../python_codes/fieldstone_10/results/exp5/errors.ascii'       u (1/($3)**0.3333):9 w lp lt 1 lw .5 pt 2 ps .4  t 'stone 10, p, {/Symbol l}=10^7',\
+'../../../python_codes/fieldstone_82/results/bench5/errors_nq2.ascii' u (1/($3)**0.3333):6 w lp lt 2 lw .5 pt 1 ps .4  t 'stone 82, v, nq=2^3',\
+'../../../python_codes/fieldstone_82/results/bench5/errors_nq2.ascii' u (1/($3)**0.3333):9 w lp lt 2 lw .5 pt 2 ps .4  t 'stone 82, p, nq=2^3',\
+'../../../python_codes/fieldstone_82/results/bench5/errors_nq3.ascii' u (1/($3)**0.3333):6 w lp lt 3 lw .5 pt 1 ps .4  t 'stone 82, v, nq=3^3',\
+'../../../python_codes/fieldstone_82/results/bench5/errors_nq3.ascii' u (1/($3)**0.3333):9 w lp lt 3 lw .5 pt 2 ps .4  t 'stone 82, p, nq=3^3',\
+'../../../python_codes/fieldstone_82/results/bench5/errors_nq4.ascii' u (1/($3)**0.3333):6 w lp lt 4 lw .5 pt 1 ps .4  t 'stone 82, v, nq=4^3',\
+'../../../python_codes/fieldstone_82/results/bench5/errors_nq4.ascii' u (1/($3)**0.3333):9 w lp lt 4 lw .5 pt 2 ps .4  t 'stone 82, p, nq=4^3',\
+x**2/10.9  w l lt -1 dashtype 2 t 'h^2',\
+x**1/2.5 w l lt -1 dashtype 3 t 'h^{1}',\
+x**1.6/1.5 w l lt -1 dashtype 4 t 'h^{1.6}'
+
+
+set ylabel 'pressure'
+unset log y
+set output 'p_stats.pdf'
+plot[][]\
+'../../../python_codes/fieldstone_10/results/exp5/statistics.ascii' u 2:13 w lp lt 1 ps .4 lw .5 t 'stone 10, min(p), {/Symbol l}=10^7',\
+'../../../python_codes/fieldstone_10/results/exp5/statistics.ascii' u 2:14 w lp lt 1 ps .4 lw .5 t 'stone 10, max(p), {/Symbol l}=10^7',\
+'../../../python_codes/fieldstone_82/results/bench5/press_nq2.ascii' u 3:1 w lp lt 2 ps .4 lw .5 t 'stone 82, min(p), nq=2^3',\
+'../../../python_codes/fieldstone_82/results/bench5/press_nq2.ascii' u 3:2 w lp lt 2 ps .4 lw .5 t 'stone 82, max(p), nq=2^3',\
+'../../../python_codes/fieldstone_82/results/bench5/press_nq3.ascii' u 3:1 w lp lt 3 ps .4 lw .5 t 'stone 82, min(p), nq=3^3',\
+'../../../python_codes/fieldstone_82/results/bench5/press_nq3.ascii' u 3:2 w lp lt 3 ps .4 lw .5 t 'stone 82, max(p), nq=3^3',\
+'../../../python_codes/fieldstone_82/results/bench5/press_nq4.ascii' u 3:1 w lp lt 4 ps .4 lw .5 t 'stone 82, min(p), nq=4^3',\
+'../../../python_codes/fieldstone_82/results/bench5/press_nq4.ascii' u 3:2 w lp lt 4 ps .4 lw .5 t 'stone 82, max(p), nq=4^3',\
+1 lt -1 dt 2 notitle,\
+-1 lt -1 dt 2 notitle
+
+

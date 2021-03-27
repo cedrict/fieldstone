@@ -6,10 +6,10 @@ as shown on the following figure:
 \begin{center}
 \includegraphics[width=5.8cm]{images/shape}
 \end{center}
-Let us assume that we know the values of a given field $u$ at the vertices.
+Let us assume that we know the values of a given field $u$ at the four vertices.
 For a given point $M$ inside the element in the plane, what is the value of the 
 field $u$ at this point?
-It makes sense to postulate that $u_M=u(x_M,y_M)$ will be given  by 
+It makes sense to postulate that $u_M$ will be given  by 
 \[
 u_M= \phi(u_1,u_2,u_3,u_4,x_M,y_M) 
 \]
@@ -17,7 +17,11 @@ where $\phi$ is a function to be determined. Although $\phi$ is not unique, we c
 decide to express the value $u_M$ as a weighed sum of the values at the vertices $u_i$.
 One option could be to assign all four vertices the same weight, say $1/4$ so that 
 $u_M=(u_1+u_2+u_3+u_4)/4$, i.e. $u_M$ is simply given by the arithmetic mean 
-of the vertices values. This approach suffers from a major drawback as it does
+of the vertices values. 
+If the function $u(x,y)$ is such that it is a constant function, say $u(x,y)=C$, 
+then $u_M=(u_1+u_2+u_3+u_4)/4=(C+C+C+C)/4=C$ and the result is exact.
+However, for any other function $u$ the value $u_M$ will not be as accurate.
+Also, this approach suffers from a major drawback as it does
 not use the location of point $M$ inside the element. For instance, when 
 $(x_M,y_M) \rightarrow (x_2,y_2)$ we expect $u_M \rightarrow u_2$ but $u_M$ would 
 remain equal to $(u_1+u_2+u_3+u_4)/4$.
@@ -25,43 +29,45 @@ remain equal to $(u_1+u_2+u_3+u_4)/4$.
 In light of this, we could now assume that the weights would depend on the position 
 of $M$ in a continuous fashion:
 \begin{equation}
-u(x_M,y_M) = \sum_{i=1}^4 N_i(x_M,y_M)\;  u_i
+u(x_M,y_M) = \sum_{i=1}^4 \bN_i(x_M,y_M)\;  u_i
+= \bN_1(x_M,y_M) u_1 + \bN_2(x_M,y_M) u_2 + \bN_3(x_M,y_M) u_3 + \bN_4(x_M,y_M) u_4 
 \end{equation}
-where the $N_i$ are continous ("well behaved") functions which have the property:
+where the $N_i$ are continuous (and also "well behaved") functions which have the property:
 \[
-N_i(x_j,y_j)=\delta_{ij}
+\bN_i(x_j,y_j)=\delta_{ij}
 \]
 or, in other words: 
 \begin{eqnarray}
-N_3(x_1,y_1) &=& 0 \nn\\
-N_3(x_2,y_2) &=& 0 \nn\\
-N_3(x_3,y_3) &=& 1 \nn\\
-N_3(x_4,y_4) &=& 0 
+\bN_3(x_1,y_1) &=& 0 \nn\\
+\bN_3(x_2,y_2) &=& 0 \nn\\
+\bN_3(x_3,y_3) &=& 1 \nn\\
+\bN_3(x_4,y_4) &=& 0 
 \end{eqnarray}
-The functions $N_i$ are commonly called basis functions. \index{general}{basis functions}
+The functions $\bN_i$ are commonly called basis functions. \index{general}{basis functions}
 
 Omitting the $M$ subscripts, the velocity components $u$ and $v$ for a point inside the element
  are given by:
 \begin{eqnarray}
-u_h(x,y) &=& \sum_{i=1}^4 N_i(x,y)\;  u_i \\
-v_h(x,y) &=& \sum_{i=1}^4 N_i(x,y)\;  v_i \label{bf01}
+u^h(x,y) &=& \sum_{i=1}^4 \bN_i(x,y)\;  u_i \\
+v^h(x,y) &=& \sum_{i=1}^4 \bN_i(x,y)\;  v_i \label{bf01}
 \end{eqnarray}
-Rather interestingly, one can now easily compute velocity gradients (and therefore the 
+where we have added the superscript $h$ to denote that it is an approximation of the functions 
+of this element of diameter $h$. 
+
+One can now easily compute velocity gradients (and therefore the 
 strain rate tensor) since we have assumed the basis functions to be "well behaved" 
-(in this case differentiable):
+(in this case first-order differentiable):
 \begin{eqnarray}
-\dot{\epsilon}_{xx}(x,y) 
-&=& \frac{\partial u_h}{\partial x} = \sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  u_i \\
-\dot{\epsilon}_{yy}(x,y) 
-&=& \frac{\partial v_h}{\partial y} = \sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  v_i \\
-\dot{\epsilon}_{xy}(x,y) 
-&=& \frac{1}{2}\left(\frac{\partial u_h}{\partial y} + \frac{\partial v_h}{\partial x} \right) 
-= \frac{1}{2}\sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  u_i
-+ \frac{1}{2}\sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  v_i
+\dot{\epsilon}^h_{xx}(x,y) 
+&=& \frac{\partial u^h}{\partial x} = \sum_{i=1}^4 \frac{\partial \bN_i}{\partial x}\;  u_i \\
+\dot{\epsilon}^h_{yy}(x,y) 
+&=& \frac{\partial v^h}{\partial y} = \sum_{i=1}^4 \frac{\partial \bN_i}{\partial y}\;  v_i \\
+\dot{\epsilon}^h_{xy}(x,y) 
+&=& \frac{1}{2}\left(\frac{\partial u^h}{\partial y} + \frac{\partial v^h}{\partial x} \right) 
+= \frac{1}{2}\sum_{i=1}^4 \frac{\partial \bN_i}{\partial y}\;  u_i
++ \frac{1}{2}\sum_{i=1}^4 \frac{\partial \bN_i}{\partial x}\;  v_i
 \end{eqnarray}
-How we actually obtain the exact form of the basis functions is explained in the coming sections.
-
-
+How we actually obtain the exact form of the basis functions $\bN_i$ is explained in the coming sections.
 
 
 
@@ -69,200 +75,23 @@ How we actually obtain the exact form of the basis functions is explained in the
 \subsubsection{Bilinear basis functions in 2D ($Q_1$)} \label{ss:q12d}
 \index{general}{$Q_1$}
 
-In this section, we place ourselves in the most favorables case, i.e. the element is a square defined 
-by $-1<r<1$, $-1<s<1$ in the Cartesian coordinates system $(r,s)$:
+\input{basis_Q1_2D}
 
-\input{tikz_q12d}
-
-Note the counter-clockwise numbering.
-This element is commonly called the reference element. How we go from the $(x,y)$ coordinate system 
-to the $(r,s)$ once and vice versa will be dealt with later on.
-For now, the basis functions in the above reference element and in the reduced 
-coordinates system $(r,s)$ are given by:
-
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
-N_1(r,s)&=&0.25(1-r)(1-s) \nonumber\\
-N_2(r,s)&=&0.25(1+r)(1-s) \nonumber\\
-N_3(r,s)&=&0.25(1+r)(1+s) \nonumber\\
-N_4(r,s)&=&0.25(1-r)(1+s) \nonumber
-\end{eqnarray}
-\end{mdframed}
-These basis functions are the product of the linear basis functions of Section~\ref{sec:bf1}
-in the $r$ direction and the $s$ direction.
-The partial derivatives of these functions with respect to $r$ ans $s$ automatically follow:
-
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{align}
-\frac{\partial N_1}{\partial r}(r,s)&= - 0.25(1-s) &
-\frac{\partial N_1}{\partial s}(r,s)&= - 0.25(1-r) \nonumber\\
-\frac{\partial N_2}{\partial r}(r,s)&= + 0.25(1-s) &
-\frac{\partial N_2}{\partial s}(r,s)&= - 0.25(1+r) \nonumber\\
-\frac{\partial N_3}{\partial r}(r,s)&= + 0.25(1+s) &
-\frac{\partial N_3}{\partial s}(r,s)&= + 0.25(1+r) \nonumber\\
-\frac{\partial N_4}{\partial r}(r,s)&= - 0.25(1+s) &
-\frac{\partial N_4}{\partial s}(r,s)&= + 0.25(1-r) \nonumber
-\end{align}
-\end{mdframed}
-
-Let us go back to Eq.~\eqref{bf01} and let us assume that the 
-function $v(r,s)=C$ so that $v_i=C$ for $i=1,2,3,4$. 
-It then follows that 
-\[
-v_h(r,s) = \sum_{i=1}^4 N_i(r,s)\;  v_i = C \sum_{i=1}^4 N_i(r,s)
-=C [
-N_1(r,s)
-+N_2(r,s)
-+N_3(r,s)
-+N_4(r,s)]=C
-\]
-This is a very important property: if the $v$ function used to 
-assign values at the vertices is constant, then 
-the value of $v_h$ {\it anywhere} in the element is exactly $C$.
-If we now turn to the derivatives of $v$ with respect to $r$ and $s$:
-\[
-\frac{\partial {v}_h}{\partial r}(r,s) 
-= \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s)\;  v_i 
-= C \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s) 
-= C \left[ - 0.25(1-s)  + 0.25(1-s)  + 0.25(1+s)  - 0.25(1+s) \right] = 0 
-\]
-
-\[
-\frac{\partial v_h}{\partial s}(r,s) 
-= \sum_{i=1}^4 \frac{\partial N_i}{\partial s}(r,s)\;  v_i 
-= C \sum_{i=1}^4 \frac{\partial N_i}{\partial s}(r,s) 
-= C \left[ - 0.25(1-r) - 0.25(1+r) + 0.25(1+r) + 0.25(1-r) \right] = 0 
-\]
-We reassuringly find that the derivative of a constant field anywhere in the element is exactly zero.
-
-If we now choose $v(r,s)=ar+bs$ with $a$ and $b$ two constant scalars, we find:
-\begin{eqnarray}
-v_h(r,s) 
-&=& \sum_{i=1}^4 N_i(r,s)\;  v_i  \\
-&=& \sum_{i=1}^4 N_i(r,s) (ar_i+bs_i) \\
-&=& a \underbrace{\sum_{i=1}^4 N_i(r,s) r_i}_{r} + b \underbrace{\sum_{i=1}^4 N_i(r,s) s_i}_{s} \\
-&=& a \left[ 
- \frac14(1-r)(1-s)(-1)
-+\frac14(1+r)(1-s)(+1)
-+\frac14(1+r)(1+s)(+1)
-+\frac14(1-r)(1+s)(-1) \right]  \nonumber\\
-&+& b  
-\left[ 
- \frac14(1-r)(1-s)(-1)
-+\frac14(1+r)(1-s)(-1)
-+\frac14(1+r)(1+s)(+1)
-+\frac14(1-r)(1+s)(+1) \right]  \nonumber\\
-&=& \frac{a}{4} \left[ 
--(1-r)(1-s)
-+(1+r)(1-s)
-+(1+r)(1+s)
--(1-r)(1+s) \right]  \nonumber\\
-&+& \frac{b}{4}
-\left[ 
--(1-r)(1-s)
--(1+r)(1-s)
-+(1+r)(1+s)
-+(1-r)(1+s) 
-\right]  \nonumber\\
-&=& ar+bs
-\end{eqnarray}
-This set of bilinear basis functions is therefore capable of exactly representing a bilinear field.
-The derivatives are:
-\begin{eqnarray}
-\frac{\partial v_h}{\partial r}(r,s) 
-&=& \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s)\;  v_i  \\
-&=& a \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s) r_i 
-+ b \sum_{i=1}^4 \frac{\partial N_i}{\partial r}(r,s) s_i \\
-&=& a \left[
-- \frac14(1-s)(-1) 
-+ \frac14(1-s)(+1) 
-+ \frac14(1+s)(+1) 
-- \frac14(1+s)(-1) 
-\right] \nonumber\\
-&+&b \left[
-- \frac14(1-s)(-1) 
-+ \frac14(1-s)(-1) 
-+ \frac14(1+s)(+1) 
-- \frac14(1+s)(+1) 
-\right] \nonumber\\
-&=& \frac{a}{4} \left[
- (1-s)
-+ (1-s)
-+ (1+s)
-+ (1+s)
-\right] \nonumber\\
-&+&\frac{b}{4} \left[
- (1-s)
-- (1-s)
-+ (1+s)
-- (1+s)
-\right] \nonumber\\
-&=& a 
-\end{eqnarray}
-Here again, we find that the derivative of the bilinear field inside the element is exact: 
-$\frac{\partial v_h}{\partial r} = \frac{\partial v}{\partial r}$.
-
-However, following the same methodology as above, one can easily prove 
-that this is no more true for polynomials of degree strictly higher than 1. 
-This fact has serious consequences: if the solution to the problem at hand is 
-for instance a parabola, the $Q_1$ basis functions cannot represent the solution properly, 
-but only by approximating the parabola in each element by a line. As we will see 
-later, $Q_2$ basis functions can remedy this problem by containing quadratic terms.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Biquadratic basis functions in 2D ($Q_2$)}\label{ss:q22d}
 \index{general}{$Q_2$}
 
-This element is part of the so-called Lagrange family. 
-\improvement{citation needed}
+\input{basis_Q2_2D}
 
-Inside an element the local numbering of the nodes is as follows\footnote{I have adopted here 
-a numering scheme starting at zero!}:
 
-\input{tikz_q22d}
 
-Note that this numbering is also employed in Li \cite[p56]{li06}.
-The polynomial representation of the function $f$ over this element is then
-\[
-f_h(r,s) = a + br + cs + drs + er^2 + fs^2 + gr^2s + hrs^2 + i r^2s^2
-\]
-and one can show that the basis functions are:
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
-N_0(r,s)&=& \frac{1}{2}r(r-1)  \frac{1}{2}s(s-1)\nonumber\\
-N_1(r,s)&=& \frac{1}{2}r(r+1)  \frac{1}{2}s(s-1)\nonumber\\
-N_2(r,s)&=& \frac{1}{2}r(r+1)  \frac{1}{2}s(s+1)\nonumber\\
-N_3(r,s)&=& \frac{1}{2}r(r-1)  \frac{1}{2}s(s+1)\nonumber\\
-N_4(r,s)&=&     (1-r^2)  \frac{1}{2}s(s-1)\nonumber\\
-N_5(r,s)&=& \frac{1}{2}r(r+1)      (1-s^2)\nonumber\\
-N_6(r,s)&=&     (1-r^2)  \frac{1}{2}s(s+1)\nonumber\\
-N_7(r,s)&=& \frac{1}{2}r(r-1)      (1-s^2)\nonumber\\
-N_8(r,s)&=&     (1-r^2)      (1-s^2)\nonumber
-\end{eqnarray}
-\end{mdframed}
-Their derivatives are given by:
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{align}
-\frac{\partial N_0}{\partial r}&= \frac{1}{2}(2r-1)  \frac{1}{2}s(s-1) & 
-\frac{\partial N_0}{\partial s}&= \frac{1}{2}r(r-1)  \frac{1}{2}(2s-1)\nonumber\\
-\frac{\partial N_1}{\partial r}&= \frac{1}{2}(2r+1)  \frac{1}{2}s(s-1) &
-\frac{\partial N_1}{\partial s}&= \frac{1}{2}r(r+1)  \frac{1}{2}(2s-1)\nonumber\\
-\frac{\partial N_2}{\partial r}&= \frac{1}{2}(2r+1)  \frac{1}{2}s(s+1) &
-\frac{\partial N_2}{\partial s}&= \frac{1}{2}r(r+1)  \frac{1}{2}(2s+1)\nonumber\\
-\frac{\partial N_3}{\partial r}&= \frac{1}{2}(2r-1)  \frac{1}{2}s(s+1) &
-\frac{\partial N_3}{\partial s}&= \frac{1}{2}r(r-1)  \frac{1}{2}(2s+1)\nonumber\\
-\frac{\partial N_4}{\partial r}&=       (-2r)  \frac{1}{2}s(s-1) &
-\frac{\partial N_4}{\partial s}&=     (1-r^2)  \frac{1}{2}(2s-1)\nonumber\\
-\frac{\partial N_5}{\partial r}&= \frac{1}{2}(2r+1)     (1-s^2)&
-\frac{\partial N_5}{\partial s}&= \frac{1}{2}r(r+1)        (-2s)\nonumber\\
-\frac{\partial N_6}{\partial r}&=       (-2r)  \frac{1}{2}s(s+1)&
-\frac{\partial N_6}{\partial s}&=     (1-r^2)  \frac{1}{2}(2s+1)\nonumber\\
-\frac{\partial N_7}{\partial r}&= \frac{1}{2}(2r-1)     (1-s^2)&
-\frac{\partial N_7}{\partial s}&= \frac{1}{2}r(r-1)        (-2s)\nonumber\\
-\frac{\partial N_8}{\partial r}&=       (-2r)     (1-s^2)&
-\frac{\partial N_8}{\partial s}&=     (1-r^2)        (-2s)\nonumber
-\end{align}
-\end{mdframed}
+
+
+
+
+
+
 
 
 
@@ -386,12 +215,10 @@ D=4(4A^2+m_x^2+m_y^2)
 and where the $n_i$ functions are the basis functions of the 'regular' 
 8-node element (see Section~\ref{sec:serendipity2D}).
 
-This is implemented in stone 52.
+This is implemented in \stone 52.
 
 \todo[inline]{not finished. SHOW CONSISTENCY !! like in paper
 email sent to author about mistake.  }
-
-
 
 
 
@@ -402,42 +229,17 @@ email sent to author about mistake.  }
 \subsubsection{Bicubic basis functions in 2D ($Q_3$)}
 \index{general}{$Q_3$}
 
-Inside an element the local numbering of the nodes is as follows:
+\input{basis_Q3_2D}
 
-\input{tikz_q32d}
 
-The 1D cubic basis functions are given by:
-\begin{align}
-N_1(r)&=(-1   +r +9r^2 - 9r^3)/16 & N_1(t)&=(-1   +t +9t^2 - 9t^3)/16 \nonumber\\
-N_2(r)&=(+9 -27r -9r^2 +27r^3)/16 & N_2(t)&=(+9 -27t -9t^2 +27t^3)/16 \nonumber\\
-N_3(r)&=(+9 +27r -9r^2 -27r^3)/16 & N_3(t)&=(+9 +27t -9t^2 -27t^3)/16 \nonumber\\
-N_4(r)&=(-1   -r +9r^2 + 9r^3)/16 & N_4(t)&=(-1   -t +9t^2 + 9t^3)/16 \nonumber
-\end{align}
 
-The resulting basis functions are simply the tensor product of the above 1D ones:
 
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
-N_{01}(r,s)&=&N_1(r)N_1(s) = (-1   +r +9r^2 - 9r^3)/16 \times (-1  +t +9s^2 - 9s^3)/16 \nonumber\\
-N_{02}(r,s)&=&N_2(r)N_1(s) = (+9 -27r -9r^2 +27r^3)/16 \times (-1  +t +9s^2 - 9s^3)/16 \nonumber\\
-N_{03}(r,s)&=&N_3(r)N_1(s) = (+9 +27r -9r^2 -27r^3)/16 \times (-1  +t +9s^2 - 9s^3)/16 \nonumber\\
-N_{04}(r,s)&=&N_4(r)N_1(s) = (-1   -r +9r^2 + 9r^3)/16 \times (-1  +t +9s^2 - 9s^3)/16 \nonumber\\
-N_{05}(r,s)&=&N_1(r)N_2(s) = (-1   +r +9r^2 - 9r^3)/16 \times (9 -27s -9s^2 +27s^3)/16 \nonumber\\
-N_{06}(r,s)&=&N_2(r)N_2(s) = (+9 -27r -9r^2 +27r^3)/16 \times (9 -27s -9s^2 +27s^3)/16 \nonumber\\
-N_{07}(r,s)&=&N_3(r)N_2(s) = (+9 +27r -9r^2 -27r^3)/16 \times (9 -27s -9s^2 +27s^3)/16 \nonumber\\
-N_{08}(r,s)&=&N_4(r)N_2(s) = (-1   -r +9r^2 + 9r^3)/16 \times (9 -27s -9s^2 +27s^3)/16 \nonumber\\
-N_{09}(r,s)&=&N_1(r)N_3(s) = (-1   +r +9r^2 - 9r^3)/16 \times (9 +27t -9t^2 -27t^3)/16 \nn\\
-N_{10}(r,s)&=&N_2(r)N_3(s) = (+9 -27r -9r^2 +27r^3)/16 \times (9 +27t -9t^2 -27t^3)/16 \nn\\
-N_{11}(r,s)&=&N_3(r)N_3(s) = (+9 +27r -9r^2 -27r^3)/16 \times (9 +27t -9t^2 -27t^3)/16 \nn\\
-N_{12}(r,s)&=&N_4(r)N_3(s) = (-1   -r +9r^2 + 9r^3)/16 \times (9 +27t -9t^2 -27t^3)/16 \nn\\
-N_{13}(r,s)&=&N_1(r)N_4(s) = (-1   +r +9r^2 - 9r^3)/16 \times (-1   -t +9t^2 + 9t^3)/16\nn\\
-N_{14}(r,s)&=&N_2(r)N_4(s) = (+9 -27r -9r^2 +27r^3)/16 \times (-1   -t +9t^2 + 9t^3)/16\nn\\
-N_{15}(r,s)&=&N_3(r)N_4(s) = (+9 +27r -9r^2 -27r^3)/16 \times (-1   -t +9t^2 + 9t^3)/16\nn\\
-N_{16}(r,s)&=&N_4(r)N_4(s) = (-1   -r +9r^2 + 9r^3)/16 \times (-1   -t +9t^2 + 9t^3)/16
-\end{eqnarray}
-\end{mdframed}
 
-\todo[inline]{produce derivatives}
+
+
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -623,7 +425,7 @@ A=\frac{1}{2}D = \frac{1}{2}
 \right|
 \]
 
-If we now conder the reference element in the reduced coordinates space $(r,s)$:
+If we now consider the reference element in the reduced coordinates space $(r,s)$:
 
 \begin{verbatim}
 2            
@@ -667,7 +469,7 @@ Let us assume that the function $f(r,s)$ is to be approximated on $[-1,1]\times[
 \[
 f(r,s)=a+br+cs
 \]
-The function $f$ then must fulfil:
+The function $f$ then must fulfill:
 \begin{eqnarray}
 f(r_1,s_1)&=&a \;\;\;\;\;\; =f_1    \nn\\
 f(r_2,s_2)&=&a+\frac{b}{2}=f_2 \nn\\

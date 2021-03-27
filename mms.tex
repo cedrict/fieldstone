@@ -39,7 +39,7 @@ u(x,y) &=& x^2(1- x)^2 (2y - 6y^2 + 4y^3)  \nonumber\\
 v(x,y) &=& -y^2 (1 - y)^2 (2x - 6x^2 + 4x^3) \nonumber\\
 p(x,y) &=& x(1 -x)- 1/6 \nonumber 
 \end{eqnarray}
-Note that the pressure obeys $\int_{\Omega} p \; d\Omega = 0$.
+Note that the pressure obeys $\int_{\Omega} p \; dV = 0$.
 One can turn to the spatial derivatives of the fields:
 \begin{eqnarray}
 \dot{\varepsilon}_{xx}=\frac{\partial u}{\partial x} &=&  (2x -6x^2 +4 x^3 ) (2y - 6y^2 + 4y^3)  \\
@@ -63,7 +63,7 @@ The velocity and pressure fields look like:
 \end{center}
 
 As shown in \cite{dohu03}, If the LBB condition is not satisfied, spurious oscillations spoil the pressure approximation. 
-Figures below show results obtained with a mesh of 20x20 Q1P0 (left) and P1P1 (right) elements:
+Figures below show results obtained with a mesh of 20x20 $Q_1\times P_0$ (left) and $P_1\times P_1$ (right) elements:
 \begin{center}
 \includegraphics[height=5cm]{images/mms/Ex1_Q1P0_pres.png}
 \includegraphics[height=5cm]{images/mms/Ex1_P1P1_pres.png}]]
@@ -86,7 +86,7 @@ One can also compute the stress components:
 All the necessary functions to do this benchmark are in {\tt mms/dh.py}:
 \lstinputlisting[language=python]{mms/dh.py}
 
-This benchmark is implemented in \aspect{} \cite{aspectmanual} and in {\tt Stones 01}.
+This benchmark is implemented in \aspect{} \cite{aspectmanual} and in \stone 1 and many more.
 
 We have
 \[
@@ -97,7 +97,7 @@ We have
 \int_0^1 \int_0^1 v^2 dxdy=
 \int_0^1 \int_0^1 ( -y^2 (1 - y)^2 (2x - 6x^2 + 4x^3) )^2 dx dy = \frac{1}{33075}
 \]
-so 
+so the root mean square velocity is  
 \[
 v_{rms} = \sqrt{ \frac{1}{L_x L_y}  \int_0^1 \int_0^1 (u^2+v^2) dx dy } \simeq 0.00777615791
 \]
@@ -108,15 +108,15 @@ v_{rms} = \sqrt{ \frac{1}{L_x L_y}  \int_0^1 \int_0^1 (u^2+v^2) dx dy } \simeq 0
 \subsubsection{Analytical benchmark II \label{ss:mms2} - "DB2D"}
 
 Taken from Dohrmann \& Bochev (2004,2006) \cite{dobo04,bodg06}. 
-This benchmark is also used in \cite{wosp14,lami17}.
+This benchmark is also used in Worthen \etal \cite{wosp14} and Lamichhane \etal \cite{lami17}.
 It is for a unit square with $\nu=\eta/\rho=1$ and the smooth exact solution is
 \begin{eqnarray}
 u(x,y) &=& x+x^2 - 2xy+x^3 - 3xy^2 + x^2y \\
 v(x,y) &=& -y-2xy+y^2 -3x^2y + y^3 - xy^2 \\
 p(x,y) &=& xy+x+y+x^3y^2 - 4/3
 \end{eqnarray}
-Note that the pressure obeys $\int_{\Omega} p \; d\Omega = 0$.
-
+Note that the pressure field is such that $\int_{\Omega} p \; dV = 0$.
+The gradient components of the velocity and pressure fields are given by:
 \begin{eqnarray}
 \frac{\partial u}{\partial x} &=& 3x^2+2x(y+1)-3y^2-2y+1   \\
 \frac{\partial u}{\partial y} &=& x(x-6y-2)\\
@@ -125,29 +125,31 @@ Note that the pressure obeys $\int_{\Omega} p \; d\Omega = 0$.
 \frac{\partial p}{\partial x} &=& 3x^2y^2 + y +1 \\ 
 \frac{\partial p}{\partial y} &=& 2x^3y+x+1 
 \end{eqnarray}
-Then 
+so that the strain rate tensor components are 
 \begin{eqnarray}
 \dot{\varepsilon}_{xx} &=&  3x^2+2x(y+1)-3y^2-2y+1 \\
 \dot{\varepsilon}_{yy} &=& -3x^2-2x(y+1)+3y^2+2y-1 \\
 \dot{\varepsilon}_{xy} &=&  \frac{1}{2} [x(x-6y-2) -y(6x+y+2) ] \\
 &=& \frac{1}{2}( x^2 -y^2 -12xy -2x -2y)
 \end{eqnarray}
-and 
+We have
 \begin{eqnarray}
 \frac{\partial \dot{\varepsilon}_{xx}}{\partial x} &=& 2(3x+y+1) \\
 \frac{\partial \dot{\varepsilon}_{xy}}{\partial y} &=& -6x-y-1  \\
 \frac{\partial \dot{\varepsilon}_{xy}}{\partial x} &=&  -6y+x-1 \\  
 \frac{\partial \dot{\varepsilon}_{yy}}{\partial y} &=& 2(3y-x+1) 
 \end{eqnarray}
-so that yhe corresponding body force is given by:
+so that the corresponding body force is given by:
 \begin{eqnarray}
 b_x 
-&=&  \frac{\partial p}{\partial x}  -  2\frac{\partial \dot{\varepsilon}_{xx}}{\partial x} -  2\frac{\partial \dot{\varepsilon}_{xy}}{\partial y} \\
-&=& 3x^2y^2 + y +1  - 4(3x+y+1) - 2(-6x-y-1) \\
+&=& \frac{\partial p}{\partial x}  
+-2\frac{\partial \dot{\varepsilon}_{xx}}{\partial x} -  2\frac{\partial \dot{\varepsilon}_{xy}}{\partial y} \nn\\
+&=& 3x^2y^2 + y +1  - 4(3x+y+1) - 2(-6x-y-1) \nn\\
 &=& 3x^2y^2 -y-1   \\
 b_y 
-&=& \frac{\partial p}{\partial y} -2 \frac{\partial \dot{\varepsilon}_{xy}}{\partial x} - 2\frac{\partial \dot{\varepsilon}_{yy}}{\partial y}  \\
-&=& 2x^3y+x+1  -2(-6y+x-1) - 4(3y-x+1) \\
+&=& \frac{\partial p}{\partial y} 
+-2 \frac{\partial \dot{\varepsilon}_{xy}}{\partial x} - 2\frac{\partial \dot{\varepsilon}_{yy}}{\partial y}  \nn\\
+&=& 2x^3y+x+1  -2(-6y+x-1) - 4(3y-x+1) \nn\\
 &=& 2x^3y+3x-1 
 \end{eqnarray}
 
@@ -160,7 +162,7 @@ Finally we have
 \int_0^1 \int_0^1 v^2 dxdy=
 \int_0^1 \int_0^1 (-y-2xy+y^2 -3x^2y + y^3 - xy^2  )^2 dx dy = \frac{5911}{2520}
 \]
-so 
+so the root mean square velocity is
 \[
 v_{rms} = \sqrt{ \frac{1}{L_x L_y}  \int_0^1 \int_0^1 (u^2+v^2) dx dy }  
 = \sqrt{\frac{401\cdot 5 + 5911}{2520}}\simeq 1.77236278... 
@@ -1898,8 +1900,16 @@ and then
 \upnu_{vrms} =\sqrt{\frac{6}{270}} \simeq 0.1490712
 \]
 
-This benchmark is implemented in \stone 75 and \stone 82.  
+This benchmark is implemented in \stone 10 ($Q_1\times P_0$), 
+%\stone 75 (MINI-1 bubble) 
+and \stone 82 (MINI-2 bubbles).  
 The code is available in {\tt /mms/mms3D.py}.
+
+\begin{center}
+\includegraphics[width=7cm]{images/mms/generic3D/conv.pdf}
+\includegraphics[width=7cm]{images/mms/generic3D/p_stats.pdf}\\
+{\captionfont Error convergence and pressure statistics}
+\end{center}
 
 %..................................
 \paragraph{Second application}

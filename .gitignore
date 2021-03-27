@@ -16,6 +16,7 @@ __pycache__/
 *.bbl
 *.idx
 *.bst
+*.bak
 *.ilg
 *.ind
 *.tdo

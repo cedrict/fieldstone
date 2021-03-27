@@ -602,30 +602,30 @@ dealing with large viscosity variations within the simulation
 domain. It consists of a bulk of fluid 1 ($\eta_1,\rho_1$) 
 in which a block of fluid 2 ($\eta_2,\rho_2$) falls under its own
 weight. The domain is a square of size $L_x = L_y = 500\si{\kilo\metre}$ and the
-block is initially centred at point ($x=250\si{\km}$, $y$ = 400 km) with size
-$100 \times 100$ km.
+block is initially centred at point ($x=250\si{\km}$, $y=400\si{\km}$) with size
+$100 \times 100\si{\km}$.
 Free slip boundary conditions are imposed on all sides of the domain. 
 In \cite{thie11} five experiments have been conducted:
 $\eta_1 = 10^{20}\si{\pascal\second}$, $\rho_2=3220\si{\kg\per\cubic\metre}$ ;
-$\eta_1 = 10^{21}$ Pa.s, $\rho_2=3300\si{\kg\per\cubic\metre}$ ;
-$\eta_1 = 10^{22}$ Pa.s, $\rho_2=6600\si{\kg\per\cubic\metre}$ ;
-$\eta_1 = 10^{23}$ Pa.s, $\rho_2=3300\si{\kg\per\cubic\metre}$ ;
+$\eta_1 = 10^{21}\si{\pascal\second}$, $\rho_2=3300\si{\kg\per\cubic\metre}$ ;
+$\eta_1 = 10^{22}\si{\pascal\second}$, $\rho_2=6600\si{\kg\per\cubic\metre}$ ;
+$\eta_1 = 10^{23}\si{\pascal\second}$, $\rho_2=3300\si{\kg\per\cubic\metre}$ ;
 $\eta_1 = 10^{24}\si{\pascal\second}$, $\rho_2=9900\si{\kg\per\cubic\metre}$ ;
 while in all experiments the density of the surrounding fluid is
-$\rho_1=3200$ kg/m$^3$ and the viscosity of the block is varied between
-$10^{19}$ and $5\cdot10^{27}$ Pa.s.
+$\rho_1=3200\si{\kg\per\cubic\metre}$ and the viscosity of the block is varied between
+$10^{19}$ and $5\cdot10^{27}\si{\pascal\second}$.
 
 \begin{center}
 \includegraphics[width=5cm]{images/benchmark_sinker/thie11a}
 \includegraphics[width=7cm]{images/benchmark_sinker/thie11b}\\
 {\captionfont Left: 
-$\eta_1 = 10^{21}$ Pa.s, $\rho_2= 3300$ kg/m$^3$. 
+$\eta_1 = 10^{21}\si{\pascal\second}$, $\rho_2= 3300\si{\kg\per\cubic\metre}$. 
 (a) Initial setup; 
-(b) $\eta_1 = 10^{21}$ Pa.s at time $t$ = 10 Myrs; 
-(c) $\eta_1 = 10^{22}$ Pa.s at time $t$ = 20 Myrs; 
-(d) $\eta_1 = 10^{23}$ Pa.s at time $t$ = 20 Myrs; 
-(e) $\eta_1 = 10^{25}$ Pa.s at time $t$ = 20 Myrs; 
-(f) $\eta_1 = 10^{27}$ Pa.s at time $t$ = 20 Myrs. 
+(b) $\eta_1 = 10^{21}\si{\pascal\second}$ at time $t$ = 10 Myrs; 
+(c) $\eta_1 = 10^{22}\si{\pascal\second}$ at time $t$ = 20 Myrs; 
+(d) $\eta_1 = 10^{23}\si{\pascal\second}$ at time $t$ = 20 Myrs; 
+(e) $\eta_1 = 10^{25}\si{\pascal\second}$ at time $t$ = 20 Myrs; 
+(f) $\eta_1 = 10^{27}\si{\pascal\second}$ at time $t$ = 20 Myrs. 
 Right: Velocity measurements as a function of the viscosity contrast between
 surrounding medium and block for all experiments.
 Taken from \cite{thie11}}
@@ -641,7 +641,7 @@ The body force of the momentum equation was taken as $(0, 0,-\rho g)$ with $g = 
 Along all walls on the domain, free-slip boundary conditions were employed.
 
 \begin{center}
-\includegraphics[width=8cm]{images/benchmark_sinker/fumt11}\\
+\includegraphics[width=6cm]{images/benchmark_sinker/fumt11}\\
 {\captionfont Simulation setup for the 3D falling block (SINKER) problem. The vectors represent computed flow.
 Taken from \cite{fumt11}}
 \end{center}
@@ -771,8 +771,7 @@ This comes from Elman et al \cite{elsw}(section 3.1.4). The velocity is prescrib
 \[
 {\vec v}=(2y(1-x^2) ; -2x(1-y^2) )
 \]
-with a domain given by $\Omega=[-1:1]\times[-1:1]$.
-The strainrate tensor is then given by:
+on the domain $\Omega=[-1:1]\times[-1:1]$. The strainrate tensor is given by:
 \[
 \dot{\bm \varepsilon}=
 \left(
@@ -822,21 +821,27 @@ v_{rms}^2
 &=& \frac{1}{\Omega} \int_\Omega (u^2+v^2) d\Omega \nonumber\\
 &=& \frac{1}{4} \int_{-1}^{+1}\int_{-1}^{+1} (u^2+v^2) dxdy \nonumber\\
 &=& \frac{1}{4} \int_{-1}^{+1}\int_{-1}^{+1} [ 4y^2(1-x^2)^2 + 4x^2(1-y^2)^2   ] dxdy \nonumber\\
-&=& 
+&=& \int_{-1}^{+1}\int_{-1}^{+1} [ y^2(1-x^2)^2 + x^2(1-y^2)^2   ] dxdy \nonumber\\
+&=& \int_{-1}^{+1}\int_{-1}^{+1} [ y^2(1-2x+x^2) + x^2(1-2y+y^2)  ] dxdy \nonumber\\
+&=& \int_{-1}^{+1}\int_{-1}^{+1} y^2 dxdy
++ \int_{-1}^{+1}\int_{-1}^{+1} 2 x^2 y^2 dxdy
++ \int_{-1}^{+1}\int_{-1}^{+1} x^2 dxdy\nn\\
+&=& 2  \frac23 + 2 \frac23\frac23 + 2 \frac23 \nn\\
+&=& \frac{32}{9} \nn\\
+&=& 3.5555
 \end{eqnarray}
 
-\todo[inline]{finish vrms calculation of benchmark}
 
 
 
 %................................................................................
 \subsubsection{Viscous flow around a cylinder in 2D and 3D } \label{sec:flowcyl}
 
-There are many variants of this problem: 2D \cite{turek}, 3D \cite{john02}.
+There are many variants of this problem: 2D in Turek \cite{turek}, 3D in John \cite{john02}.
 Many studies focus on Navier-Stokes flow since the cylinder generates
 vortices at high Reynolds numbers. Steady state solutions at low Re are shown 
 here\footnote{\url{up of the test and data measurement}}.
-Note the interesting benchmark for 2D visco-elastic flow in \cite{bepo10}.
+Note the interesting benchmark for 2D visco-elastic flow in Beuchert \& Podlachikov \cite{bepo10}.
 
 \begin{center}
 \includegraphics[width=8cm]{images/benchmark_flow_cylinder/turek}
@@ -863,7 +868,7 @@ v(x,y)&=& -2U_\infty \frac{xy}{(x^2+y^2)^2}
 Boundary conditions are as follows:
 $T=0$ is imposed at the top and bottom of the domain. 
 $T=1$ is imposed inside a disc centered at (2,2) with radius 1.  
-Further: $k=0.01$, $c_p=1$, $\rho=1$, CFL number is 0.1.
+Further: $k=0.01$, $C_p=1$, $\rho=1$, CFL number is 0.1.
 
 \begin{center}
 \includegraphics[width=5cm]{images/benchmark_heatcyl/u}
@@ -882,12 +887,13 @@ Further: $k=0.01$, $c_p=1$, $\rho=1$, CFL number is 0.1.
 Results obtained with \elefant (unpublished)}
 \end{center}
 
+This is carried out in \stone 65.
 
 %................................................................................
 \subsubsection{Thermal diffusion of half-cooling space} \label{sec:hcsp}
 
 This is a simple 1D experiment which solution is (for instance) available 
-in Turcotte \& Schubert \cite{tusc} and is also presented in \cite{chtl13}.
+in Turcotte \& Schubert \cite{tusc} and is also presented in Choi \etal \cite{chtl13}.
 
 The domain is 100km deep. $T_0=$0\degree C is prescribed a the surface and 
 $T_m=$1300\degree C is prescribed at the bottom. The initial temperature is $T(y)=1300$\degree C.
@@ -907,13 +913,14 @@ DynEarthSol2D are plotted in circles. Taken from \cite{chtl13}}
 
 
 %................................................................................
-\subsubsection{Laplace equation on a semi infinite plate} \label{sec:lapplate})
+\subsubsection{Laplace equation on a semi infinite plate} \label{sec:lapplate}
 \input{benchmark_laplace_plate}
 
 %................................................................................
 \subsubsection{Slab detachment benchmark} \label{sec:slabdetach}
 
-\Literature: \cite{schm11,aspectmanual,gltf18}, \stone 26.
+\Literature: Schmeling (2011) \cite{schm11}, \aspect manual \cite{aspectmanual}, Glerum \etal \cite{gltf18}, 
+\stone 26.
 
 \begin{center}
 \includegraphics[width=6cm]{images/benchmark_slabdetach/gltf18}\\
@@ -1020,7 +1027,7 @@ or,
 \]
 so that the velocity is given by:
 \[
-u(y) = \frac{1}{\pi} ( y \tan^{-1}((y-y_0)/\beta) - y_0 \tan^{-1}((y-y_0)/beta)  
+u(y) = \frac{1}{\pi} ( y \tan^{-1}((y-y_0)/\beta) - y_0 \tan^{-1}((y-y_0)/\beta)  
 -0.5* \beta \log (\beta^2 + y^2 - 2 y y_0 +y_0^2) + \pi y (\epsilon +0.5)) 
 \]
 
@@ -1049,10 +1056,6 @@ or,
 \[
  -\beta C_1 \log [\beta^2 + (1-y_0)^2]  + 2 (1-y_0)  C_1 \tan^{-1} \frac{1-y_0}{\beta} + \pi (1+2\epsilon)  C_1  + C_2 = 2\pi
 \]
-
-
-
-
 or,
 \[
 -\beta C_1 \log (\beta^2 + (1+y_0)^2)  +  2(1+y_0)C_1 \tan^{-1} ((1+y_0)/\beta) - \pi (1+2\epsilon)  C_1  +C_2  = 0
