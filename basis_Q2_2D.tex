@@ -5,7 +5,7 @@ This element is part of the so-called Lagrange family \cite{raki00}.
 Inside an element the local numbering of the nodes is as follows\footnote{I have adopted here 
 a numbering scheme starting at zero!}:
 
-\input{tikz_q22d}
+\input{tikz/tikz_q22d}
 
 Note that this numbering is also employed in Li \cite[p56]{li06}.
 The polynomial representation of the function $\phi$ over this element is then
@@ -28,6 +28,21 @@ and one can show that the basis functions are:
 \end{mdframed}
 
 Note that we have $\bN_i(r_j,s_j)=\delta_{ij}$ and $\bN_i(r_i,s_i)=1$. 
+
+\begin{center}
+\includegraphics[width=4cm]{images/basis_Q2_2D/N1}
+\includegraphics[width=4cm]{images/basis_Q2_2D/N2}
+\includegraphics[width=4cm]{images/basis_Q2_2D/N3}\\
+\includegraphics[width=4cm]{images/basis_Q2_2D/N4}
+\includegraphics[width=4cm]{images/basis_Q2_2D/N5}
+\includegraphics[width=4cm]{images/basis_Q2_2D/N6}\\
+\includegraphics[width=4cm]{images/basis_Q2_2D/N7}
+\includegraphics[width=4cm]{images/basis_Q2_2D/N8}
+\includegraphics[width=4cm]{images/basis_Q2_2D/N9}\\
+{\captionfont Surface representation of the basis functions on the reference element.\\
+{\color{gray} in images/basis\_Q2\_2D/ }}
+\end{center}
+
 
 Their derivatives are given by:
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -52,3 +67,5 @@ Their derivatives are given by:
 \frac{\partial \bN_8}{\partial s}&=     (1-r^2)        (-2s)\nonumber
 \end{align}
 \end{mdframed}
+
+These basis functions are used in \stone 18.

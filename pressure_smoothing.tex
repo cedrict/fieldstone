@@ -7,18 +7,18 @@ the spurious pressure checkerboard modes.
 \index{general}{Checkerboard mode}
 
 These modes have been thoroughly analysed decades ago, see for instance
-Hughes et al (1979)\cite{hulb79}, 
-Sani et al (1981) \cite{sagl81a,sagl81b},
+Hughes \etal (1979)\cite{hulb79}, 
+Sani \etal (1981) \cite{sagl81a,sagl81b},
 Griffiths \& Silvester (1994) \cite{grsi94}.
 They can be filtered out(Chen (1995)  \cite{chpc95}) 
-or simply smoothed (Lee et al (1979) \cite{legs79}), as we will see later.
-Nodes on edges and corners may need special treatment as documented in Sani et al \cite{sagl81a} or
-Lee et al (1979) \cite{legs79}.
+or simply smoothed (Lee \etal (1979) \cite{legs79}), as we will see later.
+Nodes on edges and corners may need special treatment as documented in Sani \etal \cite{sagl81a} or
+Lee \etal (1979) \cite{legs79}.
 The list of 8 schemes is not exhaustive with regards to the above mentioned publications. 
 There has been considerable amount of work on the topic and this section is 
 unfortunately not representing the literature appropriately.
 
-\mscthesis: Get all relevant literature, digest it, implement all variants in fieldstone 12.
+\mscthesis: Get relevant literature, digest it, implement all variants in fieldstone 12.
  \index{general}{MSc Thesis} 
 
 
@@ -42,7 +42,7 @@ c) elemental pressure and smoothed pressure for the punch experiment \cite{thfb0
 \paragraph{Scheme 1}.
 
 The easiest post-processing step that can be used (especially when a regular grid is used) 
-is explained in Thieulot et al (2008) \cite{thfb08}: "The element-to-node interpolation is performed by
+is explained in Thieulot \etal (2008) \cite{thfb08}: "The element-to-node interpolation is performed by
 averaging the elemental values from elements common to each node; 
 the node-to-element interpolation is performed
 by averaging the nodal values element-by-element. This
@@ -110,7 +110,7 @@ q=q/count
 %----------------------------------------------------------------------
 \paragraph{Schemes 2,3}.
 
-{\sl Schemes 2,3} are very similar and are presented in Sani et al (1981) \cite{sagl81a,sagl81b}.
+{\sl Schemes 2,3} are very similar and are presented in Sani \etal (1981) \cite{sagl81a,sagl81b}.
 Scheme 2 uses the areas of the surrounding elements as weights for the arithmetic averaging
 while scheme 3 uses the area of the triangles:
 
@@ -251,7 +251,7 @@ Likewise the pressure $p_M$ at the corner node is obtained through the pressures
 
 
 %------------------------------------------------------------------------------
-\paragraph{Scheme 5 - Least squares} This scheme is presented (among other places) in Lee et al (1979)
+\paragraph{Scheme 5 - Least squares} This scheme is presented (among other places) in Lee \etal (1979)
 \cite{legs79}. 
 Let us start from the patch of 4 $Q_1$ elements counting 9 nodes: 
 

@@ -66,6 +66,37 @@ You can also resize on the fly:
 \end{verbatim}
 
 
+\item How to compress files:
+tar is used to pack files into an archive without zipping them. 
+This enables easy attaching to email, or to sending across the internet without the computer having
+to start a new transfer for every file. 
+Also it ensures everything belong to a certain package stays together.
+Optionally it can be used to zip files.
+Let us have an example of three files; {\it a.txt, b.py} and {\it c.dat}
+These can be packed together with
+
+\begin{verbatim}
+> tar -cf allFiles.tar *
+\end{verbatim}
+
+c stands for {\it compress} and f for {\it file}, as can be seen in the manpage of tar.
+It can similarly be extracted using the command:
+
+\begin{verbatim}
+> tar -xf allFiles.tar *
+\end{verbatim}
+
+to recover three original files.
+
+Additionally, it is possible to zip them as well, by adding a z to the options. 
+The default extension then becomes {\it tgz}:
+
+\begin{verbatim}
+> tar -czf allFiles.tgz *
+> tar -xzf allFiles.tgz *
+\end{verbatim}
+
+
 
 \end{itemize}
 

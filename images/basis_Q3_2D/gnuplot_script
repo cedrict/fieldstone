@@ -1,0 +1,90 @@
+set term pdf enhanced font "Times,12pt"
+set xlabel 'r'
+set ylabel 's'
+set xrange [-1:1]
+set yrange [-1:1]
+set pm3d
+#set pal gray
+
+N1r(x,y)=(-1    +x +9*x**2 - 9*x**3)/16
+N2r(x,y)=(+9 -27*x -9*x**2 +27*x**3)/16
+N3r(x,y)=(+9 +27*x -9*x**2 -27*x**3)/16
+N4r(x,y)=(-1    -x +9*x**2 + 9*x**3)/16
+
+N1t(x,y)=(-1    +y +9*y**2 - 9*y**3)/16
+N2t(x,y)=(+9 -27*y -9*y**2 +27*y**3)/16
+N3t(x,y)=(+9 +27*y -9*y**2 -27*y**3)/16
+N4t(x,y)=(-1    -y +9*y**2 + 9*y**3)/16
+
+
+N1(x,y)=N1r(x,y)*N1t(x,y) 
+N2(x,y)=N2r(x,y)*N1t(x,y)
+N3(x,y)=N3r(x,y)*N1t(x,y)
+N4(x,y)=N4r(x,y)*N1t(x,y)
+
+N5(x,y)=N1r(x,y)*N2t(x,y) 
+N6(x,y)=N2r(x,y)*N2t(x,y) 
+N7(x,y)=N3r(x,y)*N2t(x,y) 
+N8(x,y)=N4r(x,y)*N2t(x,y) 
+
+N9(x,y) =N1r(x,y)*N3t(x,y) 
+N10(x,y)=N2r(x,y)*N3t(x,y) 
+N11(x,y)=N3r(x,y)*N3t(x,y) 
+N12(x,y)=N4r(x,y)*N3t(x,y) 
+
+N13(x,y)=N1r(x,y)*N4t(x,y) 
+N14(x,y)=N2r(x,y)*N4t(x,y) 
+N15(x,y)=N3r(x,y)*N4t(x,y) 
+N16(x,y)=N4r(x,y)*N4t(x,y) 
+
+set output 'N1.pdf
+splot N1(x,y) lt -1 t 'N_1'
+
+set output 'N2.pdf
+splot N2(x,y) lt -1 t 'N_2'
+
+set output 'N3.pdf
+splot N3(x,y) lt -1 t 'N_3'
+
+set output 'N4.pdf
+splot N4(x,y) lt -1 t 'N_4'
+
+set output 'N5.pdf
+splot N5(x,y) lt -1 t 'N_5'
+
+set output 'N6.pdf
+splot N6(x,y) lt -1 t 'N_6'
+
+set output 'N7.pdf
+splot N7(x,y) lt -1 t 'N_7'
+
+set output 'N8.pdf
+splot N8(x,y) lt -1 t 'N_8'
+
+set output 'N9.pdf
+splot N9(x,y) lt -1 t 'N_9'
+
+set output 'N10.pdf
+splot N10(x,y) lt -1 t 'N_{10}'
+
+set output 'N11.pdf
+splot N10(x,y) lt -1 t 'N_{10}'
+
+set output 'N11.pdf
+splot N11(x,y) lt -1 t 'N_{11}'
+
+set output 'N12.pdf
+splot N12(x,y) lt -1 t 'N_{12}'
+
+set output 'N13.pdf
+splot N13(x,y) lt -1 t 'N_{13}'
+
+set output 'N14.pdf
+splot N14(x,y) lt -1 t 'N_{14}'
+
+set output 'N15.pdf
+splot N15(x,y) lt -1 t 'N_{15}'
+
+set output 'N16.pdf
+splot N16(x,y) lt -1 t 'N_{16}'
+

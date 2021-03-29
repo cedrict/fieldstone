@@ -42,7 +42,7 @@ Let us assume that the 1D domain on which a given ODE/PDE is to be solved has be
 and let us zoom in on three consecutive points:
 
 \begin{center}
-\input{tikz_fdm1Da}
+\input{tikz/tikz_fdm1Da}
 \end{center}
 
 \noindent In the context of a discrete calculation on a set of discrete points $x_i$
@@ -86,7 +86,7 @@ becomes:
 This is a first-order ODE. It needs to be supplemented by a single boundary condition, 
 which in this case constrains the pressure to be zero at the surface, i.e. $p(y=L_y)=0$.
 
-\input{tikz_fdm1De}
+\input{tikz/tikz_fdm1De}
 
 We can write the discretised ODE at node 2 (since we know $p_3=0$):
 \begin{equation}
@@ -333,7 +333,7 @@ Another way to arrive at the same expression is to write the expansion at $x_0 \
 i.e. at the (convenient, yet nonexistant) half points $i\pm 1/2$:
 
 \begin{center}
-\input{tikz_fdm1Db}
+\input{tikz/tikz_fdm1Db}
 \end{center}
 
 

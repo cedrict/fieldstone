@@ -1,0 +1,81 @@
+\begin{flushright} {\tiny {\color{gray} basis\_Q28\_2D.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The serendipity elements are those rectangular elements which have no
+interior nodes \cite[p65]{reddybook2}.
+
+Inside an element the local numbering of the nodes is as follows:
+
+\input{tikz/tikz_serendipity2D}
+
+The main difference with the $Q_2$ element resides in the fact that there is 
+no node in the middle of the element.
+The polynomial representation of the function $\phi$ over the element is then
+\[
+\phi_h(r,s) = a + br + cs + drs + er^2 + fs^2 + gr^2s + hrs^2
+\]
+Note that absence of the $r^2s^2$ term which was previously associated 
+to the center node. We find that 
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\bN_0(r,s)&=& \frac{1}{4}(1-r)(1-s)(-r-s-1) \\
+\bN_1(r,s)&=& \frac{1}{4}(1+r)(1-s)(r-s-1) \\
+\bN_2(r,s)&=& \frac{1}{4}(1+r)(1+s)(r+s-1) \\
+\bN_3(r,s)&=& \frac{1}{4}(1-r)(1+s)(-r+s-1) \\
+\bN_4(r,s)&=& \frac{1}{2}(1-r^2)(1-s)  \\
+\bN_5(r,s)&=& \frac{1}{2}(1+r)  (1-s^2)\\
+\bN_6(r,s)&=& \frac{1}{2}(1-r^2)(1+s)  \\
+\bN_7(r,s)&=& \frac{1}{2}(1-r)  (1-s^2)
+\end{eqnarray}
+\end{mdframed}
+
+The basis functions at the mid side nodes are products of a 
+second order polynomial parallel to side and 
+a linear function perpendicular to the side
+while basis functions for corner nodes are modifications of the bilinear
+quadrilateral element.
+
+\begin{center}
+\includegraphics[width=4cm]{images/basis_Q28_2D/N1}
+\includegraphics[width=4cm]{images/basis_Q28_2D/N2}
+\includegraphics[width=4cm]{images/basis_Q28_2D/N3}
+\includegraphics[width=4cm]{images/basis_Q28_2D/N4}\\
+\includegraphics[width=4cm]{images/basis_Q28_2D/N5}
+\includegraphics[width=4cm]{images/basis_Q28_2D/N6}
+\includegraphics[width=4cm]{images/basis_Q28_2D/N7}
+\includegraphics[width=4cm]{images/basis_Q28_2D/N8}\\
+{\captionfont Surface representation of the basis functions on the reference element.\\
+{\color{gray} in images/basis\_Q28\_2D/ }}
+\end{center}
+
+
+
+The first-order derivatives are given by:
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\frac{\partial \bN_0}{\partial r}(r,s)&=& -\frac{1}{4}(s-1)(2r+s)  \\
+\frac{\partial \bN_1}{\partial r}(r,s)&=& -\frac{1}{4}(s-1)(2r-s)  \\
+\frac{\partial \bN_2}{\partial r}(r,s)&=& \frac{1}{4}(s+1)(2r+s)  \\
+\frac{\partial \bN_3}{\partial r}(r,s)&=& \frac{1}{4}(s+1)(2r-s)  \\
+\frac{\partial \bN_4}{\partial r}(r,s)&=& r(s-1)  \\
+\frac{\partial \bN_5}{\partial r}(r,s)&=& \frac{1}{2} (1-s^2)  \\
+\frac{\partial \bN_6}{\partial r}(r,s)&=& -r(s+1)  \\
+\frac{\partial \bN_7}{\partial r}(r,s)&=& -\frac{1}{2} (1-s^2)  
+\end{eqnarray}
+\end{mdframed}
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\frac{\partial \bN_0}{\partial s}(r,s)&=& -\frac{1}{4}(r-1)(r+2s) \\
+\frac{\partial \bN_1}{\partial s}(r,s)&=& -\frac{1}{4}(r+1)(r-2s) \\
+\frac{\partial \bN_2}{\partial s}(r,s)&=&  \frac{1}{4}(r+1)(r+2s) \\
+\frac{\partial \bN_3}{\partial s}(r,s)&=&  \frac{1}{4}(r-1)(r-2s) \\
+\frac{\partial \bN_4}{\partial s}(r,s)&=& - \frac{1}{2}(1-r^2)\\
+\frac{\partial \bN_5}{\partial s}(r,s)&=&  -(r+1)s \\
+\frac{\partial \bN_6}{\partial s}(r,s)&=& \frac{1}{2} (1-r^2)\\
+\frac{\partial \bN_7}{\partial s}(r,s)&=&  (r-1)s
+\end{eqnarray}
+\end{mdframed}
+
+These basis functions are used in \stone 52.

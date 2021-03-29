@@ -3,7 +3,7 @@
 
 Inside an element the local numbering of the nodes is as follows:
 
-\input{tikz_q32d}
+\input{tikz/tikz_q32d}
 
 The 1D cubic basis functions are given by:
 \begin{align}
@@ -36,7 +36,33 @@ The resulting basis functions are simply the tensor product of the above 1D ones
 \end{eqnarray}
 \end{mdframed}
 
-\todo[inline]{produce derivatives}
+\begin{center}
+\includegraphics[width=4cm]{images/basis_Q3_2D/N1}
+\includegraphics[width=4cm]{images/basis_Q3_2D/N2}
+\includegraphics[width=4cm]{images/basis_Q3_2D/N3}
+\includegraphics[width=4cm]{images/basis_Q3_2D/N4}\\
+\includegraphics[width=4cm]{images/basis_Q3_2D/N5}
+\includegraphics[width=4cm]{images/basis_Q3_2D/N6}
+\includegraphics[width=4cm]{images/basis_Q3_2D/N7}
+\includegraphics[width=4cm]{images/basis_Q3_2D/N8}\\
+\includegraphics[width=4cm]{images/basis_Q3_2D/N9}
+\includegraphics[width=4cm]{images/basis_Q3_2D/N10}
+\includegraphics[width=4cm]{images/basis_Q3_2D/N11}
+\includegraphics[width=4cm]{images/basis_Q3_2D/N12}\\
+\includegraphics[width=4cm]{images/basis_Q3_2D/N13}
+\includegraphics[width=4cm]{images/basis_Q3_2D/N14}
+\includegraphics[width=4cm]{images/basis_Q3_2D/N15}
+\includegraphics[width=4cm]{images/basis_Q3_2D/N16}\\
+{\captionfont Surface representation of the basis functions on the reference element.\\
+{\color{gray} in images/basis\_Q3\_2D/ }}
+\end{center}
+
+The derivatives are trivial to obtain from the derivatives of the 1D basis functions, 
+e.g.
+\[
+\frac{\partial \bN_{13}}{\partial r} = 
+\frac{\partial \bN_{1}}{\partial r} \bN_4(s) 
+\]
 
 These basis functions are used in \stone 19.
 

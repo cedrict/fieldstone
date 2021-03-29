@@ -59,7 +59,7 @@ UMFPACK and CHOLMOD\footnote{\url{http://faculty.cse.tamu.edu/davis/suitesparse.
 \cite{pardiso-6.0a,pardiso-6.0b,pardiso-6.0c}, or those inside 
 PETSc\footnote{\url{https://www.mcs.anl.gov/petsc/}} \ref{petsc-user-ref}.
 
-Braun et al (2008) \cite{brtf08} list the following features of direct solvers:
+Braun \etal (2008) \cite{brtf08} list the following features of direct solvers:
 \begin{itemize}
 \item Robust
 \item Black-box operation
@@ -103,7 +103,7 @@ Having solved this equation (we have obtained $\vec{\cal P}$), the velocity can 
 $\K\cdot \vec{\cal V} =\vec{f}- \G \cdot \vec{\cal P}$. 
 
 \begin{remark}
-The Schur complement matrix naturally occurs when the Stokes matrix is decompused using 
+The Schur complement matrix naturally occurs when the Stokes matrix is decomposed using 
 a LDU block-factorisation. Indeed, we have 
 \[
 \left(
@@ -140,7 +140,7 @@ For now, let us assume that we have built the $\SSS$ matrix and the right hand
 side $\underline{\vec{f}}=\G^T \cdot \K^{-1} \cdot \vec{f} - \vec{h}$.
 We must solve $\SSS\cdot \vec{\cal P} = \underline{\vec{f}}$.
 It is easy to see that $\SSS$ is actually a full matrix (i.e. not sparse) and 
-aside from the costs of building it explicitely using a direct solver would require {\it way}
+aside from the costs of building it explicitly using a direct solver would require {\it way}
 too much memory. We then turn to iterative methods. 
 
 \index{general}{Richardson Iterations}
@@ -199,7 +199,7 @@ Richardson iterations are part of the family of stationary iterative methods, si
 \end{equation}
 which is the definition of a stationary method. 
 
-Since the $\alpha$ parameter is the key to a succesful Uzawa algorithm, 
+Since the $\alpha$ parameter is the key to a successful Uzawa algorithm, 
 this issue has of course been looked into. What follows is 
 presented in p221 of Braess \cite{braess}.
 For the analysis of the Uzawa algorithm, we define the residue
@@ -244,7 +244,7 @@ auxiliary vector.
 %Note that in \cite{glow} it is stated: the convergence of this algorithm is proved for 
 %$\alpha \in (0,2\mu/d)$ (where $d$ is the number of dimensions).
 %\todo[inline]{check this, and report page number}
-Note that this algorithm is presented in \cite{zivt85} in the context of viscosplastic flow.
+Note that this algorithm is presented in \cite{zivt85} in the context of viscoplastic flow.
 
 As mentioned above, there is a way to rework the original Uzawa algorithm 
 to include Eq. (\ref{uzaa3}). It is yields a modified 
@@ -395,7 +395,7 @@ will have a negative impact on the convergence.
 \begin{remark} 
 This algorithm requires one solve with matrix $\K$ per iteration 
 but says nothing about the method employed to do so (direct or iterative solver)
-nor the corrsponding preconditioner.
+nor the corresponding preconditioner.
 \end{remark} 
 
 \index{general}{Preconditioned Conjugate Gradient}  
@@ -441,7 +441,7 @@ the Schur complement equation takes the form:
 \end{itemize}
 \end{mdframed}
 
-Following Zhong et al \cite{zhym12} one can define the following matrix as preconditioner:
+Following Zhong \etal \cite{zhym12} one can define the following matrix as preconditioner:
 \[
 {\bm M} = diag \left[ \G^T (diag [\K]  )^{-1} \G \right]
 \]

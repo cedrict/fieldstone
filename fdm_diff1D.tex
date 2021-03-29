@@ -19,7 +19,7 @@ boundary conditions have been given). The domain is $[0,L_x]$
 and it is discretised by means of $nnx$ points as depicted hereunder:
 
 \begin{center}
-\input{tikz_fdm1Dc}
+\input{tikz/tikz_fdm1Dc}
 \end{center}
 
 The derivative of temperature with regards to time can be approximated
@@ -62,7 +62,7 @@ Such a scheme is an {\bf explicit} finite difference method and
 was made possible by the choice to evaluate the temporal derivative with forward differences.
 
 \begin{center}
-\input{tikz_fdmExpl}
+\input{tikz/tikz_fdmExpl}
 \end{center}
 
 \noindent In order to solve the original PDE equation we need to
@@ -88,7 +88,7 @@ will either be bounded or will decay.
 For example:
 
 \begin{center}
-\input{tikz_fdm1Dd}
+\input{tikz/tikz_fdm1Dd}
 \end{center}
 
 Then, we will be able to compute the new temperature of (for example) 
@@ -177,7 +177,7 @@ The previous equation can be rearranged as follows:
 \end{equation}
 
 \begin{center}
-\input{tikz_fdmImpl}
+\input{tikz/tikz_fdmImpl}
 \end{center}
 
 
@@ -631,7 +631,7 @@ Any partially implicit method is more complicated to compute as we need to infer
 at time $n+1$ by solution (inversion) of a system of linear equations based on the known solution at time $n$. 
 
 \begin{center}
-\input{tikz_fdmCN}
+\input{tikz/tikz_fdmCN}
 \end{center}
 
 %-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/

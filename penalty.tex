@@ -1,3 +1,6 @@
+\begin{flushright} {\tiny {\color{gray} penalty.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 \label{sec_penalty}
 
 \index{general}{Penalty Formulation}
@@ -143,23 +146,23 @@ Because the stress tensor is symmetric one can also rewrite it the following vec
 
 Remember that
 \[
-\frac{\partial u}{\partial x} = \sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  u_i 
+\frac{\partial u}{\partial x} = \sum_{i=1}^4 \frac{\partial \bN_i}{\partial x}\;  u_i 
 \quad\quad
-\frac{\partial v}{\partial y} = \sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  v_i 
+\frac{\partial v}{\partial y} = \sum_{i=1}^4 \frac{\partial \bN_i}{\partial y}\;  v_i 
 \quad\quad
-\frac{\partial w}{\partial z} = \sum_{i=1}^4 \frac{\partial N_i}{\partial z}\;  w_i 
+\frac{\partial w}{\partial z} = \sum_{i=1}^4 \frac{\partial \bN_i}{\partial z}\;  w_i 
 \]
 and 
 \begin{eqnarray}
 \frac{\partial u}{\partial y} +\frac{\partial v}{\partial x} 
-&=& \sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  u_i
-+ \sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  v_i \nonumber\\
+&=& \sum_{i=1}^4 \frac{\partial \bN_i}{\partial y}\;  u_i
++ \sum_{i=1}^4 \frac{\partial \bN_i}{\partial x}\;  v_i \nonumber\\
 \frac{\partial u}{\partial z} +\frac{\partial w}{\partial x} 
-&=& \sum_{i=1}^4 \frac{\partial N_i}{\partial z}\;  u_i
-+ \sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  w_i \nonumber\\
+&=& \sum_{i=1}^4 \frac{\partial \bN_i}{\partial z}\;  u_i
++ \sum_{i=1}^4 \frac{\partial \bN_i}{\partial x}\;  w_i \nonumber\\
 \frac{\partial v}{\partial z} +\frac{\partial w}{\partial y} 
-&=& \sum_{i=1}^4 \frac{\partial N_i}{\partial z}\;  v_i
-+ \sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  w_i \nonumber
+&=& \sum_{i=1}^4 \frac{\partial \bN_i}{\partial z}\;  v_i
++ \sum_{i=1}^4 \frac{\partial \bN_i}{\partial y}\;  w_i \nonumber
 \end{eqnarray}
 so that
 \[
@@ -177,30 +180,30 @@ so that
 \underbrace{
 \left(
 \begin{array}{ccccccccccccc}
-\frac{\partial N_1}{\partial x} & 0 & 0 &  
-\frac{\partial N_2}{\partial x} & 0 & 0 &
-\frac{\partial N_3}{\partial x} & 0 & 0 & \dots &
-\frac{\partial N_4}{\partial x} & 0 & 0 \\  \\
-0 & \frac{\partial N_1}{\partial y} & 0 &
-0 & \frac{\partial N_2}{\partial y} & 0 &
-0 & \frac{\partial N_3}{\partial y} & 0 & \dots &
-0 & \frac{\partial N_4}{\partial y} & 0  \\ \\
-0 & 0 & \frac{\partial N_1}{\partial z}  &
-0 & 0 & \frac{\partial N_2}{\partial z}  &
-0 & 0 & \frac{\partial N_3}{\partial z}  & \dots &
-0 & 0 & \frac{\partial N_4}{\partial z}   \\ \\
-\frac{\partial N_1}{\partial y} &  \frac{\partial N_1}{\partial x} & 0 &
-\frac{\partial N_2}{\partial y} &  \frac{\partial N_2}{\partial x} & 0 &
-\frac{\partial N_3}{\partial y} &  \frac{\partial N_3}{\partial x} & 0 & \dots &
-\frac{\partial N_4}{\partial y} &  \frac{\partial N_4}{\partial x} & 0 \\ \\ 
-\frac{\partial N_1}{\partial z} & 0 &\frac{\partial N_1}{\partial x}  &
-\frac{\partial N_2}{\partial z} & 0 &\frac{\partial N_2}{\partial x}  &
-\frac{\partial N_3}{\partial z} & 0 &\frac{\partial N_3}{\partial x}  & \dots &
-\frac{\partial N_4}{\partial z} & 0 &\frac{\partial N_4}{\partial x}  \\ \\ 
-0 & \frac{\partial N_1}{\partial z} &  \frac{\partial N_1}{\partial y}  &
-0 & \frac{\partial N_2}{\partial z} &  \frac{\partial N_2}{\partial y}  &
-0 & \frac{\partial N_3}{\partial z} &  \frac{\partial N_3}{\partial y}  & \dots &
-0 & \frac{\partial N_4}{\partial z} &  \frac{\partial N_4}{\partial y} 
+\frac{\partial \bN_1}{\partial x} & 0 & 0 &  
+\frac{\partial \bN_2}{\partial x} & 0 & 0 &
+\frac{\partial \bN_3}{\partial x} & 0 & 0 & \dots &
+\frac{\partial \bN_4}{\partial x} & 0 & 0 \\  \\
+0 & \frac{\partial \bN_1}{\partial y} & 0 &
+0 & \frac{\partial \bN_2}{\partial y} & 0 &
+0 & \frac{\partial \bN_3}{\partial y} & 0 & \dots &
+0 & \frac{\partial \bN_4}{\partial y} & 0  \\ \\
+0 & 0 & \frac{\partial \bN_1}{\partial z}  &
+0 & 0 & \frac{\partial \bN_2}{\partial z}  &
+0 & 0 & \frac{\partial \bN_3}{\partial z}  & \dots &
+0 & 0 & \frac{\partial \bN_4}{\partial z}   \\ \\
+\frac{\partial \bN_1}{\partial y} &  \frac{\partial \bN_1}{\partial x} & 0 &
+\frac{\partial \bN_2}{\partial y} &  \frac{\partial \bN_2}{\partial x} & 0 &
+\frac{\partial \bN_3}{\partial y} &  \frac{\partial \bN_3}{\partial x} & 0 & \dots &
+\frac{\partial \bN_4}{\partial y} &  \frac{\partial \bN_4}{\partial x} & 0 \\ \\ 
+\frac{\partial \bN_1}{\partial z} & 0 &\frac{\partial \bN_1}{\partial x}  &
+\frac{\partial \bN_2}{\partial z} & 0 &\frac{\partial \bN_2}{\partial x}  &
+\frac{\partial \bN_3}{\partial z} & 0 &\frac{\partial \bN_3}{\partial x}  & \dots &
+\frac{\partial \bN_4}{\partial z} & 0 &\frac{\partial \bN_4}{\partial x}  \\ \\ 
+0 & \frac{\partial \bN_1}{\partial z} &  \frac{\partial \bN_1}{\partial y}  &
+0 & \frac{\partial \bN_2}{\partial z} &  \frac{\partial \bN_2}{\partial y}  &
+0 & \frac{\partial \bN_3}{\partial z} &  \frac{\partial \bN_3}{\partial y}  & \dots &
+0 & \frac{\partial \bN_4}{\partial z} &  \frac{\partial \bN_4}{\partial y} 
 \end{array}
 \right)
 }_{\bm B (6\times 24) }
@@ -235,26 +238,26 @@ We start again from
 \[
 {\vec \nabla}\cdot {\bm \sigma} + {\vec b} = {\vec 0} 
 \]
-For the $N_i$'s 'regular enough', we can write:
+For the $\bN_i$'s 'regular enough', we can write:
 \[
-\int_{\Omega_e} N_i {\vec \nabla}\cdot {\bm \sigma} d\Omega + \int_{\Omega_e} N_i  {\vec b} \;  d\Omega =0
+\int_{\Omega_e} \bN_i {\vec \nabla}\cdot {\bm \sigma} d\Omega + \int_{\Omega_e} \bN_i  {\vec b} \;  d\Omega =0
 \]
 We can integrate by parts and drop the surface term\footnote{We will come back to this at a later stage}:
 \[
-\int_{\Omega_e} {\vec \nabla } N_i \cdot {\bm \sigma} \; d\Omega = \int_{\Omega_e} N_i  {\vec b}\;  d\Omega 
+\int_{\Omega_e} {\vec \nabla } \bN_i \cdot {\bm \sigma} \; d\Omega = \int_{\Omega_e} \bN_i  {\vec b}\;  d\Omega 
 \]
 or, 
 \[
 \int_{\Omega_e} 
 \left(
 \begin{array}{cccccc}
-\frac{\partial N_i}{\partial x} & 0 & 0 & 
-\frac{\partial N_i}{\partial y} & 
-\frac{\partial N_i}{\partial z} & 0 \\  \\
-0 & \frac{\partial N_i}{\partial y} &  0 & 
-\frac{\partial N_i}{\partial x}  & 0 & \frac{\partial N_i}{\partial z} \\ \\
-0 & 0 & \frac{\partial N_i}{\partial z} & 0 & 
-\frac{\partial N_i}{\partial x} &  \frac{\partial N_i}{\partial y} 
+\frac{\partial \bN_i}{\partial x} & 0 & 0 & 
+\frac{\partial \bN_i}{\partial y} & 
+\frac{\partial \bN_i}{\partial z} & 0 \\  \\
+0 & \frac{\partial \bN_i}{\partial y} &  0 & 
+\frac{\partial \bN_i}{\partial x}  & 0 & \frac{\partial \bN_i}{\partial z} \\ \\
+0 & 0 & \frac{\partial \bN_i}{\partial z} & 0 & 
+\frac{\partial \bN_i}{\partial x} &  \frac{\partial \bN_i}{\partial y} 
 \end{array}
 \right)
 \cdot
@@ -268,20 +271,20 @@ or,
 \sigma_{yz}
 \end{array}
 \right) \;
-d\Omega = \int_{\Omega_e} N_i {\vec b} \;  d\Omega 
+d\Omega = \int_{\Omega_e} \bN_i {\vec b} \;  d\Omega 
 \]
 Let $i=1,2,3,4,\dots 8$ and stack the resulting eight equations on top of one another. 
 \begin{eqnarray}
 \int_{\Omega_e} 
 \left(
 \begin{array}{cccccc}
-\frac{\partial N_i}{\partial x} & 0 & 0 & 
-\frac{\partial N_i}{\partial y} & 
-\frac{\partial N_i}{\partial z} & 0 \\  \\
-0 & \frac{\partial N_i}{\partial y} &  0 & 
-\frac{\partial N_i}{\partial x}  & 0 & \frac{\partial N_i}{\partial z} \\ \\
-0 & 0 & \frac{\partial N_i}{\partial z} & 0 & 
-\frac{\partial N_i}{\partial x} &  \frac{\partial N_i}{\partial y} 
+\frac{\partial \bN_i}{\partial x} & 0 & 0 & 
+\frac{\partial \bN_i}{\partial y} & 
+\frac{\partial \bN_i}{\partial z} & 0 \\  \\
+0 & \frac{\partial \bN_i}{\partial y} &  0 & 
+\frac{\partial \bN_i}{\partial x}  & 0 & \frac{\partial \bN_i}{\partial z} \\ \\
+0 & 0 & \frac{\partial \bN_i}{\partial z} & 0 & 
+\frac{\partial \bN_i}{\partial x} &  \frac{\partial \bN_i}{\partial y} 
 \end{array}
 \right)
 \cdot
@@ -295,7 +298,7 @@ Let $i=1,2,3,4,\dots 8$ and stack the resulting eight equations on top of one an
 \sigma_{yz}
 \end{array}
 \right)
-d\Omega &=& \int_{\Omega_e} N_1 
+d\Omega &=& \int_{\Omega_e} \bN_1 
 \left(
 \begin{array}{c}
 b_x \\ b_y \\ b_z
@@ -305,13 +308,13 @@ b_x \\ b_y \\ b_z
 \int_{\Omega_e} 
 \left(
 \begin{array}{cccccc}
-\frac{\partial N_i}{\partial x} & 0 & 0 & 
-\frac{\partial N_i}{\partial y} & 
-\frac{\partial N_i}{\partial z} & 0 \\  \\
-0 & \frac{\partial N_i}{\partial y} &  0 & 
-\frac{\partial N_i}{\partial x}  & 0 & \frac{\partial N_i}{\partial z} \\ \\
-0 & 0 & \frac{\partial N_i}{\partial z} & 0 & 
-\frac{\partial N_i}{\partial x} &  \frac{\partial N_i}{\partial y} 
+\frac{\partial \bN_i}{\partial x} & 0 & 0 & 
+\frac{\partial \bN_i}{\partial y} & 
+\frac{\partial \bN_i}{\partial z} & 0 \\  \\
+0 & \frac{\partial \bN_i}{\partial y} &  0 & 
+\frac{\partial \bN_i}{\partial x}  & 0 & \frac{\partial \bN_i}{\partial z} \\ \\
+0 & 0 & \frac{\partial \bN_i}{\partial z} & 0 & 
+\frac{\partial \bN_i}{\partial x} &  \frac{\partial \bN_i}{\partial y} 
 \end{array}
 \right)
 \cdot
@@ -325,7 +328,7 @@ b_x \\ b_y \\ b_z
 \sigma_{yz}
 \end{array}
 \right)
-d\Omega &=& \int_{\Omega_e} N_2 
+d\Omega &=& \int_{\Omega_e} \bN_2 
 \left(
 \begin{array}{c}
 b_x \\ b_y \\ b_z
@@ -336,13 +339,13 @@ d\Omega \nonumber\\ \nonumber\\
 \int_{\Omega_e} 
 \left(
 \begin{array}{cccccc}
-\frac{\partial N_8}{\partial x} & 0 & 0 & 
-\frac{\partial N_8}{\partial y} & 
-\frac{\partial N_8}{\partial z} & 0 \\  \\
-0 & \frac{\partial N_8}{\partial y} &  0 & 
-\frac{\partial N_8}{\partial x}  & 0 & \frac{\partial N_8}{\partial z} \\ \\
-0 & 0 & \frac{\partial N_8}{\partial z} & 0 & 
-\frac{\partial N_8}{\partial x} &  \frac{\partial N_8}{\partial y} 
+\frac{\partial \bN_8}{\partial x} & 0 & 0 & 
+\frac{\partial \bN_8}{\partial y} & 
+\frac{\partial \bN_8}{\partial z} & 0 \\  \\
+0 & \frac{\partial \bN_8}{\partial y} &  0 & 
+\frac{\partial \bN_8}{\partial x}  & 0 & \frac{\partial \bN_8}{\partial z} \\ \\
+0 & 0 & \frac{\partial \bN_8}{\partial z} & 0 & 
+\frac{\partial \bN_8}{\partial x} &  \frac{\partial \bN_8}{\partial y} 
 \end{array}
 \right)
 \cdot
@@ -356,7 +359,7 @@ d\Omega \nonumber\\ \nonumber\\
 \sigma_{yz}
 \end{array}
 \right)
-d\Omega &=& \int_{\Omega_e} N_8 
+d\Omega &=& \int_{\Omega_e} \bN_8 
 \left(
 \begin{array}{c}
 b_x \\ b_y \\ b_z
@@ -367,7 +370,7 @@ d\Omega
 We easily recognize ${\bm B}^T$ inside the integrals!
 Let us define 
 \[
-{\vec N}_b^T=(N_1 b_x , N_1 b_y, N_1 b_z ... N_8 b_x, N_8 b_y, N_8 b_z)
+{\vec \bN}_b^T=(\bN_1 b_x , \bN_1 b_y, \bN_1 b_z ... \bN_8 b_x, \bN_8 b_y, \bN_8 b_z)
 \]
 then we can write
 \[
@@ -384,13 +387,13 @@ then we can write
 \right)
 d\Omega
 =
-\int_{\Omega_e} {\vec N}_b d\Omega 
+\int_{\Omega_e} {\vec \bN}_b d\Omega 
 \]
 and finally:
 \[
 \int_{\Omega_e} {\bm B}^T \cdot [ \lambda {\bm K} + \eta {\bm C} ] \cdot {\bm B} \cdot {\vec V} d\Omega
 =
-\int_{\Omega_e} {\vec N}_b d\Omega 
+\int_{\Omega_e} {\vec \bN}_b d\Omega 
 \]
 Since $\vec V$ contains is the vector of unknowns (i.e. the velocities at the corners), 
 it does not depend on the $x$ or $y$ coordinates
@@ -405,7 +408,7 @@ so it can be taking outside of the integral:
 }_{(24\times 1)}
 =
 \underbrace{
-\int_{\Omega_e} {\vec N}_b d\Omega 
+\int_{\Omega_e} {\vec \bN}_b d\Omega 
 }_{\vec B_{el} (24\times 1)}
 \]
 or, 
@@ -425,7 +428,7 @@ or,
 }_{(24\times 1)}
 =
 \underbrace{
-\int_{\Omega_e} {\vec N}_b d\Omega 
+\int_{\Omega_e} {\vec \bN}_b d\Omega 
 }_{\vec B_{el} (24\times 1)}
 \]
 

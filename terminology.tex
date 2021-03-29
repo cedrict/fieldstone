@@ -9,11 +9,11 @@ is approximated by continuous piecewise \index{general}{Piecewise} complete Poly
 pressure by continuous piecewise complete Polynomials of degree  $n$.
 For example $P_2 \times P_1$ means 
 \[
-u \sim a_1 + a_2 x + a_3 y + a_4 xy + a_5 x^2 + a_6 y^2
+u^h(x,y) \sim a_1 + a_2 x + a_3 y + a_4 xy + a_5 x^2 + a_6 y^2
 \]
 with similar approximations for $v$, and 
 \[
-p \sim b_1 + b_2x + b_3 y
+p^h(x,y) \sim b_1 + b_2x + b_3 y
 \]
 Both velocity and pressure are continuous across element boundaries, 
 and each triangular element contains 6 velocity nodes and three pressure nodes.
@@ -32,11 +32,11 @@ is approximated by a continuous piecewise polynomial of degree $m$ {\sl in each 
 and likewise for pressure, except that the polynomial is of degree $n$.
 For instance,  $Q_2 \times Q_1$ \index{general}{$Q_2 \times Q_1$} means
 \[
-u \sim a_1 + a_2 x + a_3 y + a_4 xy + a_5 x^2 + a_6 y^2 + a_7 x^2y + a_8 xy^2 + a_9 x^2y^2
+u^h(x,y) \sim a_1 + a_2 x + a_3 y + a_4 xy + a_5 x^2 + a_6 y^2 + a_7 x^2y + a_8 xy^2 + a_9 x^2y^2
 \]
 and 
 \[
-p \sim b_1 + b_2x + b_3 y + b_4 xy
+p^h(x,y) \sim b_1 + b_2x + b_3 y + b_4 xy
 \]
 \item For these same families, $Q_m \times Q_{-n}$ is as above, except that the pressure approximation 
 is not continuous at element boundaries. \index{general}{$Q_m \times Q_{-n}$}
@@ -58,7 +58,8 @@ Another point which needs to be clarified is the use of so-called 'conforming el
 Following again Gresho \& Sani \cite{grsa}, 
 conforming velocity elements are those for which the basis functions form a subset 
 of $H^1$ for the continuous problem (the first derivatives and their squares are integrable in $\Omega$).
-For instance, the rotated $Q_1 \times P_0$ element of Rannacher and Turek (see section \ref{pair}) is such that 
+For instance, the rotated $Q_1 \times P_0$ element of Rannacher and Turek 
+(see section \ref{ss:RTq1p0}) is such that 
 the velocity is discontinous across element edges, so that the derivative does not exist there. Another
 typical example of non-conforming element is the Crouzeix-Raviart element \cite{crra73}.
 

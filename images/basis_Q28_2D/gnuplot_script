@@ -1,0 +1,45 @@
+set term pdf enhanced font "Times,12pt"
+set xlabel 'r'
+set ylabel 's'
+set xrange [-1:1]
+set yrange [-1:1]
+set pm3d
+#set pal gray
+
+N1(x,y)=(1-x)*(1-y)*(-x-y-1)*0.25
+N2(x,y)=(1+x)*(1-y)*(x-y-1) *0.25
+N3(x,y)=(1+x)*(1+y)*(x+y-1) *0.25
+N4(x,y)=(1-x)*(1+y)*(-x+y-1)*0.25
+N5(x,y)=(1-x**2)*(1-y)*0.5
+N6(x,y)=(1+x)*(1-y**2)*0.5
+N7(x,y)=(1-x**2)*(1+y)*0.5
+N8(x,y)=(1-x)*(1-y**2)*0.5
+
+set output 'N1.pdf
+splot N1(x,y) lt -1 t 'N_1'
+
+set output 'N2.pdf
+splot N2(x,y) lt -1 t 'N_2'
+
+set output 'N3.pdf
+splot N3(x,y) lt -1 t 'N_3'
+
+set output 'N4.pdf
+splot N4(x,y) lt -1 t 'N_4'
+
+set output 'N5.pdf
+splot N5(x,y) lt -1 t 'N_5'
+
+set output 'N6.pdf
+splot N6(x,y) lt -1 t 'N_6'
+
+set output 'N7.pdf
+splot N7(x,y) lt -1 t 'N_7'
+
+set output 'N8.pdf
+splot N8(x,y) lt -1 t 'N_8'
+
+
+
+
+

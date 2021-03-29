@@ -71,24 +71,23 @@ How we actually obtain the exact form of the basis functions $\bN_i$ is explaine
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Bilinear basis functions in 2D ($Q_1$)} \label{ss:q12d}
 \index{general}{$Q_1$}
 
 \input{basis_Q1_2D}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Biquadratic basis functions in 2D ($Q_2$)}\label{ss:q22d}
 \index{general}{$Q_2$}
 
 \input{basis_Q2_2D}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Bicubic basis functions in 2D ($Q_3$)}
+\index{general}{$Q_3$}
 
-
-
-
-
+\input{basis_Q3_2D}
 
 
 
@@ -98,67 +97,19 @@ How we actually obtain the exact form of the basis functions $\bN_i$ is explaine
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Eight node serendipity basis functions in 2D ($Q_2^{(8)}$)}
 \label{sec:serendipity2D}
-\index{general}{$Q_2^{(8)}$} \index{general}{Serendipity element}
+\index{general}{$Q_2^{(8)}$} 
+\index{general}{Serendipity element}
 
-The serendipity elements are those rectangular elements which have no
-interior nodes \cite[p65]{reddybook2}.
+\input{basis_Q28_2D}
 
-Inside an element the local numbering of the nodes is as follows:
 
-\input{tikz_serendipity2D}
 
-The main difference with the $Q_2$ element resides in the fact that there is 
-no node in the middle of the element.
-The polynomial representation of the function $f$ over the element is then
-\[
-f_h(r,s) = a + br + cs + drs + er^2 + fs^2 + gr^2s + hrs^2
-\]
-Note that absence of the $r^2s^2$ term which was previously associated 
-to the center node. We find that 
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
-N_0(r,s)&=& \frac{1}{4}(1-r)(1-s)(-r-s-1) \\
-N_1(r,s)&=& \frac{1}{4}(1+r)(1-s)(r-s-1) \\
-N_2(r,s)&=& \frac{1}{4}(1+r)(1+s)(r+s-1) \\
-N_3(r,s)&=& \frac{1}{4}(1-r)(1+s)(-r+s-1) \\
-N_4(r,s)&=& \frac{1}{2}(1-r^2)(1-s)  \\
-N_5(r,s)&=& \frac{1}{2}(1+r)  (1-s^2)\\
-N_6(r,s)&=& \frac{1}{2}(1-r^2)(1+s)  \\
-N_7(r,s)&=& \frac{1}{2}(1-r)  (1-s^2)
-\end{eqnarray}
-\end{mdframed}
 
-The basis functions at the mid side nodes are products of a 
-second order polynomial parallel to side and 
-a linear function perpendicular to the side
-while basis functions for corner nodes are modifications of the bilinear
-quadrilateral element. The first-order derivatives are given by:
 
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
-\frac{\partial N_0}{\partial r}(r,s)&=& -\frac{1}{4}(s-1)(2r+s)  \\
-\frac{\partial N_1}{\partial r}(r,s)&=& -\frac{1}{4}(s-1)(2r-s)  \\
-\frac{\partial N_2}{\partial r}(r,s)&=& \frac{1}{4}(s+1)(2r+s)  \\
-\frac{\partial N_3}{\partial r}(r,s)&=& \frac{1}{4}(s+1)(2r-s)  \\
-\frac{\partial N_4}{\partial r}(r,s)&=& r(s-1)  \\
-\frac{\partial N_5}{\partial r}(r,s)&=& \frac{1}{2} (1-s^2)  \\
-\frac{\partial N_6}{\partial r}(r,s)&=& -r(s+1)  \\
-\frac{\partial N_7}{\partial r}(r,s)&=& -\frac{1}{2} (1-s^2)  
-\end{eqnarray}
-\end{mdframed}
 
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
-\frac{\partial N_0}{\partial s}(r,s)&=& -\frac{1}{4}(r-1)(r+2s) \\
-\frac{\partial N_1}{\partial s}(r,s)&=& -\frac{1}{4}(r+1)(r-2s) \\
-\frac{\partial N_2}{\partial s}(r,s)&=&  \frac{1}{4}(r+1)(r+2s) \\
-\frac{\partial N_3}{\partial s}(r,s)&=&  \frac{1}{4}(r-1)(r-2s) \\
-\frac{\partial N_4}{\partial s}(r,s)&=& - \frac{1}{2}(1-r^2)\\
-\frac{\partial N_5}{\partial s}(r,s)&=&  -(r+1)s \\
-\frac{\partial N_6}{\partial s}(r,s)&=& \frac{1}{2} (1-r^2)\\
-\frac{\partial N_7}{\partial s}(r,s)&=&  (r-1)s
-\end{eqnarray}
-\end{mdframed}
+
+
+
 
 
 
@@ -197,14 +148,14 @@ Note that $A$ is the area of the element, and that in the case when
 the element is a rectangle then $m_x=m_y=0$.
 
 \begin{eqnarray}
-N_1(r,s)&=& n_1(r,s) +(m_x^2 - m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
-N_2(r,s)&=& n_2(r,s) +(m_x^2 + m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
-N_3(r,s)&=& n_3(r,s) +(m_x^2 - m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
-N_4(r,s)&=& n_4(r,s) +(m_x^2 + m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
-N_5(r,s)&=& n_5(r,s) -m_x(2Am_x+m_y^2)\frac{E(r,s)}{AD} \nn\\
-N_6(r,s)&=& n_6(r,s) -m_y(2Am_y+m_x^2)\frac{E(r,s)}{AD} \nn\\
-N_7(r,s)&=& n_7(r,s) +m_x(-2Am_x+m_y^2)\frac{E(r,s)}{AD} \nn\\
-N_8(r,s)&=& n_8(r,s) +m_y(-2Am_y+m_x^2)\frac{E(r,s)}{AD} \nn
+\bN_1(r,s)&=& n_1(r,s) +(m_x^2 - m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
+\bN_2(r,s)&=& n_2(r,s) +(m_x^2 + m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
+\bN_3(r,s)&=& n_3(r,s) +(m_x^2 - m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
+\bN_4(r,s)&=& n_4(r,s) +(m_x^2 + m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
+\bN_5(r,s)&=& n_5(r,s) -m_x(2Am_x+m_y^2)\frac{E(r,s)}{AD} \nn\\
+\bN_6(r,s)&=& n_6(r,s) -m_y(2Am_y+m_x^2)\frac{E(r,s)}{AD} \nn\\
+\bN_7(r,s)&=& n_7(r,s) +m_x(-2Am_x+m_y^2)\frac{E(r,s)}{AD} \nn\\
+\bN_8(r,s)&=& n_8(r,s) +m_y(-2Am_y+m_x^2)\frac{E(r,s)}{AD} \nn
 \end{eqnarray}
 with 
 \[
@@ -225,21 +176,6 @@ email sent to author about mistake.  }
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Bicubic basis functions in 2D ($Q_3$)}
-\index{general}{$Q_3$}
-
-\input{basis_Q3_2D}
-
-
-
-
-
-
-
-
-
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -247,285 +183,20 @@ email sent to author about mistake.  }
 \index{general}{$Q_4$}
 
 Inside an element the local numbering of the nodes is as follows:
-\begin{verbatim}
-20===21===22===23===24
-||   ||   ||   ||   ||
-15===16===17===18===19 
-||   ||   ||   ||   || 
-10===11===12===13===14 
-||   ||   ||   ||   || 
-05===06===07===08===09 
-||   ||   ||   ||   || 
-00===01===02===03===04 
-\end{verbatim}
 
-
-
+\input{tikz/tikz_q42d}
 
 %.....................................................................
 \subsubsection{Linear basis functions for triangles in 2D ($P_1$)}\label{ss:p1}
 \index{general}{$P_1$}
 
-Velocities (or displacements) $(u,v)$ in a plane element are interpolated from nodal velocities
-$(u_i,v_i)$ using basis functions $N_i$ as follows,
-\[
-\left(
-\begin{array}{c}
-u \\v
-\end{array}
-\right)
-=
-\left(
-\begin{array}{cccccc}
-N_1 & 0 & N_2 & 0 & N_3 & 0\\
-0 & N_1 & 0 & N_2 & 0 & N_3\\
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{c}
-u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3
-\end{array}
-\right)
-\]
-This is the simplest 2‐D element, which is also called linear triangular element.
-\begin{center}
-\includegraphics[width=5cm]{images/shapefunctions/triangleFEM1}
-\end{center}
-
-For this element, we have three nodes at the vertices of the triangle, which are 
-numbered around the element in the counterclockwise direction. 
-Each node has two degrees of freedom (can move in the $x$ and $y$ directions). 
-The velocities $u$ and $v$ are assumed to be linear functions within the element, that is, 
-\[
-u=b_1 +b_2x+b_3y
-\quad\quad\quad
-v=b_4 +b_5x+b_6y
-\]
-where $b_i$ are constants to be determined and which depend on the triangle shape.
-Note that the strain rate components are then given by
-\[
-\dot\varepsilon_{xx}=b_2 
-\quad\quad
-\dot\varepsilon_{yy}=b_6 
-\quad\quad
-\dot\varepsilon_{xy}=(b_3+b_5)/2
-\]
-and are constant throughout the element.
-
-The velocities should satisfy the following six equations:
-\begin{eqnarray}
-u_1 &=& b_1 + b_2x_1+b_3y_1 \nn\\
-u_2 &=& b_1 + b_2x_2+b_3y_2 \nn\\
-u_3 &=& b_1 + b_2x_3+b_3y_3 \nn\\
-v_1 &=& b_4 + b_5x_1+b_6y_1 \nn\\
-v_2 &=& b_4 + b_5x_2+b_6y_2 \nn\\
-v_3 &=& b_4 + b_5x_3+b_6y_3 \nn
-\end{eqnarray}
-
-This can be re-written:
-\[
-\left(
-\begin{array}{c}
-u_1 \\ u_2 \\ u_3  
-\end{array}
-\right)
-=
-\left(
-\begin{array}{ccc}
-1 & x_1 & y_1 \\
-1 & x_2 & y_2 \\
-1 & x_3 & y_3 \\
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{c}
-b_1 \\ b_2 \\ b_3  
-\end{array}
-\right)
-\]
-In order to obtain $b_1,b_2,b_3$ we need to solve this system, or simply to compute the
-inverse of the 3x3 ${\bm M}$ matrix, as explained in \ref{sec:inv3x3}.
-
-We define $D=det({\bm M})$ and we get
-\[
-\left(
-\begin{array}{c}
-b_1 \\ b_2 \\ b_3  
-\end{array}
-\right)
-=
-\frac{1}{D}
-\tilde{\bm M}
-\cdot
-\left(
-\begin{array}{c}
-u_1 \\ u_2 \\ u_3  
-\end{array}
-\right)
-\]
-
-\[
-\left(
-\begin{array}{c}
-b_4 \\ b_5 \\ b_6  
-\end{array}
-\right)
-=
-\frac{1}{D}
-\tilde{\bm M}
-\cdot
-\left(
-\begin{array}{c}
-v_1 \\ v_2 \\ v_3  
-\end{array}
-\right)
-\]
-
-The matrix $\tilde{\bm M}$ writes:
-\[
-\tilde{\bm M}
-=
-\left(
-\begin{array}{ccc}
-  x_2y_3-x_3y_2  & -(y_3-y_2) &   x_3-x_2 \\
--(x_1y_3-x_3y_1) &   y_3-y_1  & -(x_3-x_1) \\
-  x_1y_2-x_2y_1  & -(y_2-y_1) &   x_2-x_1
-\end{array}
-\right)
-\]
-ie,
-\[
-\tilde{\bm M}
-=
-\left(
-\begin{array}{ccc}
-x_2y_3-x_3y_2  & y_2-y_3 & x_3-x_2 \\
-x_3y_1-x_1y_3  & y_3-y_1 & x_1-x_3 \\
-x_1y_2-x_2y_1  & y_1-y_2 & x_2-x_1
-\end{array}
-\right)
-\]
-and finally the linear basis functions are given by:
-\begin{eqnarray}
-N_1(x,y) &=& \frac{1}{D}[(x_2y_3-x_3y_2) + (y_2-y_3)x + (x_3-x_2)y] \nn\\
-N_2(x,y) &=& \frac{1}{D}[(x_3y_1-x_1y_3) + (y_3-y_1)x + (x_1-x_3)y] \nn\\
-N_3(x,y) &=& \frac{1}{D}[(x_1y_2-x_2y_1) + (y_1-y_2)x + (x_2-x_1)y] \nn
-\end{eqnarray}
-Note that the area $A$ of the triangle is given by:
-\[
-A=\frac{1}{2}D = \frac{1}{2}
-\left|
-\begin{array}{ccc}
-1 & x_1 & y_1 \\
-1 & x_2 & y_2 \\
-1 & x_3 & y_3 
-\end{array}
-\right|
-\]
-
-If we now consider the reference element in the reduced coordinates space $(r,s)$:
-
-\begin{verbatim}
-2            
-|\
-|  \        (r_0,s_0)=(0,0)
-|    \      (r_1,s_1)=(1,0)
-|      \    (r_2,s_2)=(0,2)
-0=======1
-\end{verbatim}
-
-The basis polynomial is then
-\[
-f(r,s) = a + br + cs 
-\]
-and the basis functions:
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
-N_0(r,s) &=& 1-r-s \\
-N_1(r,s) &=& r \\
-N_2(r,s) &=& s 
-\end{eqnarray}
-\end{mdframed}
+\input{basis_P1_2D}
 
 %.....................................................................
 \subsubsection{Linear basis functions for quadrilaterals in 2D ($P_1$)}\label{ss:lbfq2D}
 \index{general}{$P_1$}
 
-\begin{verbatim}
-.=====.=====.
-|     |     |
-|     3     |   (r_1,s_1)=(0,0)
-|     |     |   (r_2,s_2)=(1/2,0)
-.=====1==2==.   (r_3,s_3)=(0,1/2)
-|     |     |
-|     |     |
-|     |     |
-.=====.=====.
-\end{verbatim}
-
-Let us assume that the function $f(r,s)$ is to be approximated on $[-1,1]\times[-1,1]$ by 
-\[
-f(r,s)=a+br+cs
-\]
-The function $f$ then must fulfill:
-\begin{eqnarray}
-f(r_1,s_1)&=&a \;\;\;\;\;\; =f_1    \nn\\
-f(r_2,s_2)&=&a+\frac{b}{2}=f_2 \nn\\
-f(r_3,s_3)&=&a+\frac{c}{2}=f_3
-\end{eqnarray}
-This leads to : 
-\[
-a=f_1
-\quad
-\quad
-b=2(f_2-f_1)
-\quad
-\quad
-c=2(f_3-f_1)
-\]
-Then
-\[
-f(r,s)=f_1 + 2(f_2-f_1) r + 2(f_3-f_1) s
-\]
-or, 
-\[
-f(r) = \sum_{i=1}^3 N_i(r,s) f_i
-\]
-with
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
-N_1(r) &=& 1-2(r+s)  \nonumber\\
-N_2(r) &=& 2r   \nonumber\\
-N_3(r) &=& 2s
-\end{eqnarray}
-\end{mdframed}
-
-Note that we could also have set 
-\begin{verbatim}
-.=====3=====.
-|     |     |
-|     |     |   (r_1,s_1)=(0,0)
-|     |     |   (r_2,s_2)=(1,0)
-.=====1=====2   (r_3,s_3)=(0,1)
-|     |     |
-|     |     |
-|     |     |
-.=====.=====.
-\end{verbatim}
-and we would then have
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
-N_1(r) &=& 1-r-s  \nonumber\\
-N_2(r) &=& r   \nonumber\\
-N_3(r) &=& s
-\end{eqnarray}
-\end{mdframed}
-
-
-
-
+\input{basis_pm1_2D}
 
 %.....................................................................
 \subsubsection{Enriched linear basis functions in triangles ($P_1^+$)}
@@ -1013,6 +684,9 @@ Franca \etal (1993) \cite{frha93}, Idelsohn \etal (1995) \cite{idsn95}.
 
 The nodes are not on the corners of the element but in the middle of the
 element edges:
+
+\input{tikz/tikz_RTQ1P0}
+
 \begin{verbatim}
 +======3======+
 |             |
@@ -1164,7 +838,7 @@ We here consider the enriched $Q_1\times P_0$ element introduced first by
 Fortin (1981) \cite{fort81}.
 The layout of the degrees of freedom is as follows:
 
-\input{tikz_q1pp02D}
+\input{tikz/tikz_q1pp02D}
 
 \noindent The approximation of the velocity components $u$ and $v$ inside the element is
 \[

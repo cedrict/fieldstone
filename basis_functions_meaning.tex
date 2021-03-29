@@ -8,11 +8,11 @@ Let us consider a 1D domain subdivided in 3 elements. We then consider the four 
 attached to each node. On the following sketch these are not depicted on a single element with 
 reduced coordinates but instead for the whole domain in the natural coordinate $x$:
 
-\input{tikz_basisfunctions}
+\input{tikz/tikz_basisfunctions}
 
 The four cases a,b,c,d are examples of combinations of these basis functions:
 \[
-f_h(x)=\sum_{i=1}^4 N_i(x) f_i
+f_h(x)=\sum_{i=1}^4 \bN_i(x) f_i
 \]
 Where $f_i$ are the values associated to the four nodes. 
 We assume that the distance $h$ between nodes is 1.
@@ -32,7 +32,7 @@ smaller elements will do an increasingly better job and will get closer to the c
 systematic error will subsist.  
 
 
-Note that these drawings are trivial to produce since $N_i(x_j)=\delta_{ij}$ by definition, so that 
+Note that these drawings are trivial to produce since $\bN_i(x_j)=\delta_{ij}$ by definition, so that 
 $f_h(x_j)=f_j$.
 
 %........................................................................

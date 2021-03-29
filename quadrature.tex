@@ -30,7 +30,7 @@ requires a special function that is not available.
 Let us remember that the integral of Eq.~\eqref{Idef} is in fact equal to the (signed) area 
 between the $x$-axis and the curve $f(x)$ over the interval $[a,b]$:
 
-\input{tikz_quadrature_idef}
+\input{tikz/tikz_quadrature_idef}
 
 Note that in the example above $f(x)>0$ so the area of the gray domain is counted positive.
 For example, if the function $f(x)$ is a polynomial the integral can easily be computed 
@@ -40,7 +40,7 @@ constant. We then have
 I=\int_a^b f(x) dx = \int_a^b C \; dx  = C \int_a^b dx = C(b-a)
 \end{equation}
 
-\input{tikz_quadrature_idef2}
+\input{tikz/tikz_quadrature_idef2}
 
 We see that the area of the gray domain in simply the product of its length $b-a$ by its height $c$
 and we indeed recover $I=C(b-a)$.
@@ -59,7 +59,7 @@ I=\int_a^b f(x)dx \simeq (b-a) f\left(\frac{a+b}{2}\right)
 \]
 which is the area of this gray domain:
 
-\input{tikz_quadrature_rectangle}
+\input{tikz/tikz_quadrature_rectangle}
 
 We can do a little bit better at virtually no cost:
 we choose the interpolating function to be a straight line 
@@ -71,7 +71,7 @@ Then
 I=\int_a^b f(x)dx \simeq (b-a) \frac{f(a)+f(b)}{2}
 \]
 
-\input{tikz_quadrature_trapeze}
+\input{tikz/tikz_quadrature_trapeze}
 
 We see that if the function $f$ is monotonous on the interval $[a,b]$ then 
 the trapezoidal approach is likely to return a value close to the real value. 
@@ -86,7 +86,7 @@ I=\int_a^b f(x)dx = \int_a^c f(x)dx + \int_c^b f(x)dx
 We can then apply the midpoint rule or the trapezoidal rule over both segments 
 $[a,c]$ and $[c,b]$:
 
-\input{tikz_quadrature_both}
+\input{tikz/tikz_quadrature_both}
 
 In this case we would have 
 \begin{eqnarray}
@@ -491,7 +491,7 @@ w_2 = \left(620-\sqrt{213125-53320\sqrt{10}}\right)/3720
 Let us find the volume of tetrahedron bounded by the planes passing through the points 
 A(1,0,0), B(0,1,0), C(0,0,1) and the coordinate planes Oxy, Oxz and Oyz.
 
-\input{tikz_tetrahedron}
+\input{tikz/tikz_tetrahedron}
 
 The equation of the plane is $x+y+z=1$, or $z=1-x-y$.Hence, the limits of integration over 
 the variable $z$ range in the interval from

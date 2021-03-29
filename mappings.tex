@@ -459,7 +459,7 @@ the $Q_2$ mapping manages to capture the 'real' shape of the element.}
 \subsubsection{bilinear, biquadratic and bicubic mapping in an annulus }
 
 In the light of what precedes, we can now ask ourselves how this translates to 
-a real geodynamic cas. Let us then consider the case of an annular domain, 
+a real geodynamic case. Let us then consider the case of an annular domain, 
 a cross section of a hollow sphere. 
 When using quadrilateral elements, the mesh will look similar to this:
 
@@ -514,9 +514,9 @@ and once again compute their coordinates in the the $x,y$ space:
 {\captionfont Left to right: position of the mapped points for the $Q_1$, $Q_2$ and $Q_3$ mappings.}
 \end{center}
 
-For each point $i$ we now compute ist distance $r_i$ 
+For each point $i$ we now compute the distance $r_i$ 
 to the origin, which, if the 
-mapping was perfect, whoudl be exactly equal to $R_1=1$. 
+mapping was perfect, would be exactly equal to $R_1=1$. 
 On the following plots are shown the error $r_i-1$ for all 
 points, from $r=-1$ to $r=+1$.
 
@@ -528,8 +528,8 @@ points, from $r=-1$ to $r=+1$.
 \end{center}
 
 We see that the amplitude of the error decreases with the order of the mapping used, 
-which is why for instance ASPECT uses a $Q_4$ mapping by default.
-Actually, in this particular case, the equation which describes the cicrle is not a 
+which is why for instance \aspect uses a $Q_4$ mapping by default.
+Actually, in this particular case, the equation which describes the circle is not a 
 polynomial so that no high-order mapping will ever be able to {\it exactly} 
 represent the curved boundary of the element!
 

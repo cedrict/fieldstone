@@ -28,7 +28,7 @@ g_z (x,y,z)
 In order to compute the gravity tensor ${\bm T}=\vec\nabla \vec g$, also called gravitational gravity tensor \cite{ruys11}
 or Marussi tensor,  
 we need to compute $\frac{\partial^2 U}{\partial \alpha \partial \beta}$ with $\alpha,\beta=x,y,z$
-and we obtain (See Arroyo et al (2015) \cite{arct15}):
+and we obtain (See Arroyo \etal (2015) \cite{arct15}):
 \begin{eqnarray}
 T_{xx}(x,y,z)&=& -{\cal G} \int\int\int \frac{3(x-x')^2-({\vec r}-{\vec r}')^2}{|{\vec r}-{\vec r}'|^5} \rho({\vec r}') dx'dy'dz' \\
 T_{yy}(x,y,z)&=& -{\cal G} \int\int\int \frac{3(y-y')^2-({\vec r}-{\vec r}')^2}{|{\vec r}-{\vec r}'|^5} \rho({\vec r}') dx'dy'dz' \\
@@ -68,7 +68,8 @@ and the running integration point $Q(x',y',z')$.
 The coordinate axes have been assumed to be parallel to the edges of the prism, which
 extends between the coordinate surfaces related to the
 bounds $x_1$, $x_2$, $y_1$, $y_2$, $z_1$, $z_2$.
-It is well known that the integral can be solved analytically (Mader (1951) \cite{made51}, see also Nagy et al \cite{napb00,napb02}), 
+It is well known that the integral can be solved analytically (Mader (1951) \cite{made51}, 
+see also Nagy \etal \cite{napb00,napb02}), 
 resulting in the formula for the potential $U(x,y,z)$:
 
 \[
@@ -91,7 +92,7 @@ r_{ijk}=\sqrt{ (x-x_i)^2+(y-y_j)^2+(z-z_k)^2}
 \]
 \begin{remark}
 The direct application of this equation will fail when the computation point $P$ is situated on an edge or on
-a corner of the prism; the respective limit values have been derived by Nagy et al. \cite{napb00,napb02}
+a corner of the prism; the respective limit values have been derived by Nagy \etal \cite{napb00,napb02}
 \end{remark}
 
 
@@ -189,7 +190,7 @@ the components of a prism measuring 200m$^3$ at a height of 0.01 km,
 with an observation mesh of 1km$\times$1km, and discretized every 20m is shown hereunder:
 \begin{center}
 \includegraphics[width=14cm]{images/gravity/arct15b}\\
-{\captionfont Taken from Arroyo et al (2015) \cite{arct15}. 
+{\captionfont Taken from Arroyo \etal (2015) \cite{arct15}. 
 Gravity gradient response for a prism buried a depth of 100m,\\ 
 Each side having a length of 200 m and constant density contrast 
 of 100 kg/m$^3$.}

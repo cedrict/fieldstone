@@ -26,16 +26,18 @@ hold by Ladyzhenskaya; see \cite{lady69}."
 Unfortunately, to quote Donea \& Huerta \cite{dohu03}: 
 "In the finite element context, it is by no means easy to prove whether or not a given
 velocity-pressure pair satisfies the LBB compatibility condition."
-Elman et al state: "[...] Choosing spaces for which the discrete inf-sup condition holds
+Elman \etal state: "[...] Choosing spaces for which the discrete inf-sup condition holds
 and is a delicate matter, and seemingly natural choices of velocity and pressure approximation
 do not work. [...] In general, care must be taken to make the velocity space 
 rich enough compared to the pressure space."
 
-The LBB condition, or inf-sup condition can be proven in different ways, and standard techniques have been designed
-as listed in Boffi et al (2008) \cite{bobf08}.
+The LBB condition, or inf-sup condition can be proven in different ways, 
+and standard techniques have been designed
+as listed in Boffi \etal (2008) \cite{bobf08}.
 
 %p129
-Elman et al \cite{elsw} state that "The inf-sup condition is a sufficient condition for the pressure to be unique up
+Elman \etal \cite{elsw} state that "The inf-sup condition is a sufficient condition 
+for the pressure to be unique up
 to  constant in the case of an enclosed flow." This can also be proven for other boundary conditions.
 This approach, based on the macro-element technique \cite{sten90} is explored in Appendix \ref{app:Gel}.
 
@@ -100,10 +102,10 @@ The \underline{Raviart-Thomas} family\todo{find literature} on triangles and qua
 \subsubsection{The bi/tri-linear velocity - constant pressure element ($Q_1\times P_0$)}
 
 \begin{minipage}[t]{0.5\textwidth}
-\input{tikz_q1p0}
+\input{tikz/tikz_q1p0}
 \end{minipage}
 \begin{minipage}[t]{0.5\textwidth}
-\input{tikz_q1p0_3D}
+\input{tikz/tikz_q1p0_3D}
 \end{minipage}
 
 discussed in example 3.71 of \cite{john16}
@@ -137,12 +139,12 @@ This element is crowned "probably the most accurate 2D element" in Gresho \& San
 
 It is characterised by piecewise Biquadratic velocities, 
 and piecewise linear discontinuous polynomial pressure. 
-The element satisfies the inf-sup condition, see page 211 of Hughes \cite{hugh}, or p138 of Elman et al
-\cite{elsw}.
-It is used in van de Vosse et al (1989) \cite{vavs89} for steady laminar flowin a curved tube. 
+The element satisfies the inf-sup condition, see page 211 of Hughes \cite{hugh}, or 
+p138 of Elman \etal \cite{elsw}.
+It is used in van de Vosse \etal (1989) \cite{vavs89} for steady laminar flowin a curved tube. 
 See Boffi \& Gastaldi (2002) \cite{boga02} 
 for the two possible choices for the definition of the pressure space..
-This element is mentioned in Kaus (2010) \cite{kaus10} and Pelletier et al (1989) \cite{pefc89} 
+This element is mentioned in Kaus (2010) \cite{kaus10} and Pelletier \etal (1989) \cite{pefc89} 
 and it is  used in Frehner (2014) \cite{freh14} to study 3D fold growth rates 
 (see online supplementary material) and in Schmalholtz (2008) \cite{schm08}.
 
@@ -161,10 +163,10 @@ This element is implemented in Stone 76.
 \label{ss:pairq2q1}
 
 \begin{minipage}[t]{0.5\textwidth}
-\input{tikz_q2q1}
+\input{tikz/tikz_q2q1}
 \end{minipage}
 \begin{minipage}[t]{0.5\textwidth}
-\input{tikz_q2q1_3D}
+\input{tikz/tikz_q2q1_3D}
 \end{minipage}
 
 
@@ -187,10 +189,10 @@ Biquadratic velocities, bilinear pressure. See Hood and Taylor. The element sati
 \subsubsection{The stabilised bi/tri-linear velocity -  bi/tri-linear pressure element ($Q_1\times Q_1$-stab)}
 
 \begin{minipage}[t]{0.5\textwidth}
-\input{tikz_q1q1}
+\input{tikz/tikz_q1q1}
 \end{minipage}
 \begin{minipage}[t]{0.5\textwidth}
-\input{tikz_q1q1_3D}
+\input{tikz/tikz_q1q1_3D}
 \end{minipage}
 
 See \cite{nosi01} for a fourier analysis of the normal and stablised (a la \cite{hufb86}) $Q_1-Q_1$ element.
@@ -213,7 +215,7 @@ A $P_1\times P_1$ version of it is used in \cite{kahp20}.
 \subsubsection{The MINI triangular element ($P_1^+\times P_1$) in 2D}
 \label{pair:mini}
 
-The \index{general}{MINI element} MINI element was first introduced in Arnold et al, 1984 \cite{arbf84}.
+The \index{general}{MINI element} MINI element was first introduced in Arnold \etal, 1984 \cite{arbf84}.
 It is also discussed in section 3.6.1 of \cite{john16}.
 It is schematically represented hereunder:
 
@@ -247,7 +249,7 @@ It is also said to be LBB stable in \cite[p180]{reddybook2}.
 
 Note that this element is used in \cite{brwr00} in the context of Arbitrary Lagrangian Eulerian 
 finite element analysis of free surface flows.
-Also used in Zlotnik et al (2007) \cite{zldf07} for suduction with X-FEM technique.
+Also used in Zlotnik \etal (2007) \cite{zldf07} for suduction with X-FEM technique.
 
 
 
@@ -290,7 +292,7 @@ character of the pressure field: once again, it is $P_1$ over the element, but d
 across element edges.
 
 \begin{remark}
-Cuvelier et al, 1986 \cite{cuss86} recommend a 6-point or 7-point quadrature rule for this element.
+Cuvelier \etal, 1986 \cite{cuss86} recommend a 6-point or 7-point quadrature rule for this element.
 \end{remark}
 
 \begin{remark}
@@ -384,12 +386,12 @@ optimal order of convergence on perturbed meshes is achieved only by the mean-
 value-oriented version of the unmapped $Q_1^{rot}\times Q_0$   finite element.
 \end{remark}
 
-Mahmood et al \cite{maky17} mention a very important fact: "The chosen nonconforming element requires
+Mahmood \etal \cite{maky17} mention a very important fact: "The chosen nonconforming element requires
 additional stabilization for handling the deformation tensor formulation due to missing Korn’s inequality 
 \cite{horg95,knob00}.
 To this end we employ the standard edge oriented stabilization \cite{tuos02,tuou07} in our simulations."
 This is a rather unfortunate fact that although LBB stable this element needs an additional 
-term in the weak form (see Turek et al (2002) \cite{tuos02}) 
+term in the weak form (see Turek \etal (2002) \cite{tuos02}) 
 so as to suppress parasitic velocity modes when the div-grad formulation 
 of the Stokes equation is used (as opposed to the Laplace formulation -- see \cite[Section 6.5.2]{dohu03}).
 
@@ -430,7 +432,7 @@ There is one reference to it in \cite{hufb86}.
 %.........................................................................
 \subsubsection{A note about incompressibility and standard mixed methods}
 
-What follows is nicely explained and demonstrated in John et al \cite{jolm17}. In their 
+What follows is nicely explained and demonstrated in John \etal \cite{jolm17}. In their 
 example 1.1 they look at the velocity error of benchmark VJ2 (see Section~\ref{mms9}) 
 which analytical solution is a zero velocity field. They show that for the MINI, 
 Taylor-Hood and Crouzeix-Raviart triangular elements the velocity error grows 

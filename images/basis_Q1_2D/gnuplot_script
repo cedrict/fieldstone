@@ -1,0 +1,16 @@
+set term pdf enhanced font "Times,12pt"
+set xlabel 'r'
+set ylabel 's'
+set xrange [-1:1]
+set yrange [-1:1]
+set pm3d
+#set pal gray
+
+set output 'N1.pdf
+splot 0.25*(1-x)*(1-y) lt -1 t 'N_1'
+set output 'N2.pdf
+splot 0.25*(1+x)*(1-y) lt -1 t 'N_2'
+set output 'N3.pdf
+splot 0.25*(1+x)*(1+y) lt -1 t 'N_3'
+set output 'N4.pdf
+splot 0.25*(1-x)*(1+y) lt -1 t 'N_4'

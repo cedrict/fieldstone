@@ -1,12 +1,20 @@
 \begin{flushright} {\tiny {\color{gray} benchmark\_stokes\_sphere\_3D.tex}} \end{flushright}
 
+\vspace{1cm}
+\begin{flushright}
+Data pertaining to this section are to be found at:
+\url{https://github.com/cedrict/fieldstone/tree/master/images/stokes_sphere3D}
+\end{flushright}
+\vspace{1cm}
+
 This is a simple experiment without an analytical solution. The idea here is simple: to design
 a small number of Stokes sphere-related experiments and provide for them (very) high-resolution results 
 obtained with various codes so as to turn these into benchmarks. 
 The domain is chosen to be a unit cube. Gravity is such that $\vec{g}=(0,0,-g)$ with $g=1$. 
 The sphere is in the middle of the domain and has a radius $R=0.123456798$.
 The fluid has a density $\rho_f=1$ and viscosity $\eta_f=1$. The sphere has a density $\rho_s=\rho_f+\delta\rho$
-and a viscosity $\eta_s=10^m \eta_f$. Default values for $\delta\rho$ and $m$ are set to 0.01 and 3 respectively.
+and a viscosity $\eta_s=10^m \eta_f$. Default values for $\delta\rho$ and $m$ are 
+set to 0.01 and 3 respectively.
 
 Concerning boundary conditions, we distinguish three cases:
 \begin{itemize}
@@ -188,4 +196,6 @@ to recover the Habermann/Faxen velocities.
 \includegraphics[width=4cm]{images/stokes_sphere3D/aspect_amr_CYL/C1_2}
 \includegraphics[width=4cm]{images/stokes_sphere3D/aspect_amr_CYL/C1_3}
 \end{center}
+
+
 
