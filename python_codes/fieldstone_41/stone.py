@@ -8,14 +8,6 @@ import time as time
 
 #------------------------------------------------------------------------------
 
-def gx(x,y):
-    return 0
-
-def gy(x,y):
-    return -grav
-
-#------------------------------------------------------------------------------
-
 def NNV(rq,sq):
     NV_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
     NV_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
@@ -64,12 +56,12 @@ def NNP(rq,sq):
 
 #model=1: van Keken et al 1997
 #model=2: layers
+#model=3: stokes sphere with free surf
 
-model=1
+model=3
 
 #------------------------------------------------------------------------------
 
-year=3600.*24.*365.25
 eps=1.e-10
 
 print("-----------------------------")
@@ -86,14 +78,37 @@ if model==1:
    Ly=1e4      # vertical extent of the domain 
    nelx=48
    nely=48
-   grav=10
+   gx=0
+   gy=-10
 
 if model==2:
    Lx=50e3  # horizontal extent of the domain 
    Ly=10e3  # vertical extent of the domain 
    nelx = 125
    nely = 25
-   grav=9.81
+   gx=0
+   gy=-9.81
+
+if model==3:
+   Lx=1
+   Ly=1
+   nelx=48
+   nely=48
+   gx=0
+   gy=-1
+   #material 1: eta_salt=1, rho_salt=1
+   #material 2: eta_sph=1e3, rho_sph=2
+   #material 3: eta_air=1e-3, rho_air=0
+   rho_mat = np.array([1,2,0],dtype=np.float64) 
+   eta_mat = np.array([1,1e3,1e-3],dtype=np.float64) 
+   R_sphere=0.123456789
+   x_sphere=0.5
+   y_sphere=0.6
+   mass0=0.79788283183
+   nmarker_per_dim=6
+   eta_ref=1
+   year=1
+
 
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
@@ -109,7 +124,6 @@ qweights=[5./9.,8./9.,5./9.]
 hx=Lx/nelx
 hy=Ly/nely
 pnormalise=True
-eta_ref=1e21      # scaling of G blocks
 
 if model==1:
    #material 1: eta_salt=1e19, rho_salt=2150
@@ -120,6 +134,8 @@ if model==1:
    amplitude=200
    mass0=Lx*salt_thickness*rho_mat[0]+Lx*(Ly-salt_thickness)*rho_mat[1]
    nmarker_per_dim=10
+   eta_ref=1e21      # scaling of G blocks
+   year=3600.*24.*365.25
 
 if model==2:
    #material 1: eta_salt=1e17, rho_salt=2200
@@ -129,17 +145,20 @@ if model==2:
    salt_thickness=2e3
    amplitude=500
    nmarker_per_dim=4
+   eta_ref=1e21      # scaling of G blocks
+   year=3600.*24.*365.25
 
-avrg=3
+
+avrg=-3
 nstep_change=2500
-nstep=500
-CFL_nb=0.1
-rk=3
+nstep=1
+CFL_nb=0.25
+rk=2
 
 nmarker_per_element=nmarker_per_dim**2
 nmarker=nmarker_per_element*nel
 
-every=10
+every=1
 
 debug=False
 
@@ -277,13 +296,22 @@ print("marker setup: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-for im in range (0,nmarker):
-    if swarm_y[im]>salt_thickness+amplitude*np.cos(np.pi*swarm_x[im]/Lx):
-       swarm_mat[im]=2
-    else:
+if model==1:
+   for im in range (0,nmarker):
+       if swarm_y[im]>salt_thickness+amplitude*np.cos(np.pi*swarm_x[im]/Lx):
+          swarm_mat[im]=2
+       else:
+          swarm_mat[im]=1
+       #end if
+   #end for 
+
+if model==3:
+   for im in range (0,nmarker):
        swarm_mat[im]=1
-    #end if
-#end for 
+       if swarm_y[im]>0.75:
+          swarm_mat[im]=3
+       if (swarm_x[im]-x_sphere)**2+(swarm_y[im]-y_sphere)**2<R_sphere**2:
+          swarm_mat[im]=2
 
 print("marker layout: %.3f s" % (time.time() - start))
 
@@ -307,18 +335,30 @@ start = time.time()
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
-for i in range(0,NV):
-    if x[i]/Lx<eps:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
-    if x[i]/Lx>(1-eps):
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
-    if y[i]/Ly<eps:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. 
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if y[i]/Ly>(1-eps):
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. 
-#end for 
+if model==1:
+   for i in range(0,NV):
+       if x[i]/Lx<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
+       if x[i]/Lx>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
+       if y[i]/Ly<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. 
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if y[i]/Ly>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. 
+
+if model==3:
+   for i in range(0,NV):
+       if x[i]/Lx<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if x[i]/Lx>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if y[i]/Ly<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if y[i]/Ly>(1-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. 
+
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
@@ -339,18 +379,17 @@ for istep in range(0,nstep):
     #################################################################
     start = time.time()
 
-    rho_nodal=np.zeros(NP,dtype=np.float64) 
-    rho_nodal_counter=np.zeros(NP,dtype=np.float64) 
-
     eta_elemental=np.zeros(nel,dtype=np.float64) 
+    rho_nodal=np.zeros(NP,dtype=np.float64) 
+    eta_nodal=np.zeros(NP,dtype=np.float64) 
     nmarker_in_element=np.zeros(nel,dtype=np.float64) 
+    nodal_counter=np.zeros(NP,dtype=np.float64) 
 
     for im in range(0,nmarker):
-
+        #localise marker
         ielx=int(swarm_x[im]/Lx*nelx)
         iely=int(swarm_y[im]/Ly*nely)
         iel=nelx*(iely)+ielx
-
         if debug:
            if ielx<0:
               print ('ielx<0',ielx)
@@ -364,7 +403,7 @@ for istep in range(0,nstep):
               print ('iel<0')
            if iel>nel-1:
               print ('iel>nel-1')
-
+        #weighed averaging
         N1=0.25*(1-swarm_r[im])*(1-swarm_s[im])
         N2=0.25*(1+swarm_r[im])*(1-swarm_s[im])
         N3=0.25*(1+swarm_r[im])*(1+swarm_s[im])
@@ -373,30 +412,42 @@ for istep in range(0,nstep):
         rho_nodal[iconP[1,iel]]+=rho_mat[swarm_mat[im]-1]*N2
         rho_nodal[iconP[2,iel]]+=rho_mat[swarm_mat[im]-1]*N3
         rho_nodal[iconP[3,iel]]+=rho_mat[swarm_mat[im]-1]*N4
-        rho_nodal_counter[iconP[0,iel]]+=N1
-        rho_nodal_counter[iconP[1,iel]]+=N2
-        rho_nodal_counter[iconP[2,iel]]+=N3
-        rho_nodal_counter[iconP[3,iel]]+=N4
+        nodal_counter[iconP[0,iel]]+=N1
+        nodal_counter[iconP[1,iel]]+=N2
+        nodal_counter[iconP[2,iel]]+=N3
+        nodal_counter[iconP[3,iel]]+=N4
 
         nmarker_in_element[iel]+=1
-        if avrg==1: # arithmetic
-           eta_elemental[iel]+=eta_mat[swarm_mat[im]-1]
-        if avrg==2: # geometric
-           eta_elemental[iel]+=np.log(eta_mat[swarm_mat[im]-1],10)
-        if avrg==3: # harmonic
-           eta_elemental[iel]+=1./eta_mat[swarm_mat[im]-1]
+        if abs(avrg)==1 : # arithmetic
+           eta_elemental[iel]     +=eta_mat[swarm_mat[im]-1]
+           eta_nodal[iconP[0,iel]]+=eta_mat[swarm_mat[im]-1]*N1
+           eta_nodal[iconP[1,iel]]+=eta_mat[swarm_mat[im]-1]*N2
+           eta_nodal[iconP[2,iel]]+=eta_mat[swarm_mat[im]-1]*N3
+           eta_nodal[iconP[3,iel]]+=eta_mat[swarm_mat[im]-1]*N4
+        if abs(avrg)==2: # geometric
+           eta_elemental[iel]     +=np.log10(eta_mat[swarm_mat[im]-1])
+           eta_nodal[iconP[0,iel]]+=np.log10(eta_mat[swarm_mat[im]-1])*N1
+           eta_nodal[iconP[1,iel]]+=np.log10(eta_mat[swarm_mat[im]-1])*N2
+           eta_nodal[iconP[2,iel]]+=np.log10(eta_mat[swarm_mat[im]-1])*N3
+           eta_nodal[iconP[3,iel]]+=np.log10(eta_mat[swarm_mat[im]-1])*N4
+        if abs(avrg)==3: # harmonic
+           eta_elemental[iel]     +=1/eta_mat[swarm_mat[im]-1]
+           eta_nodal[iconP[0,iel]]+=1/eta_mat[swarm_mat[im]-1]*N1
+           eta_nodal[iconP[1,iel]]+=1/eta_mat[swarm_mat[im]-1]*N2
+           eta_nodal[iconP[2,iel]]+=1/eta_mat[swarm_mat[im]-1]*N3
+           eta_nodal[iconP[3,iel]]+=1/eta_mat[swarm_mat[im]-1]*N4
     #end for
 
-    for iel in range(0,nel):
-        if avrg==1:
-            eta_elemental[iel]/=nmarker_in_element[iel]
-        if avrg==2:
-            eta_elemental[iel]=10.**(eta_elemental[iel]/nmarker_in_element[iel])
-        if avrg==3:
-            eta_elemental[iel]=nmarker_in_element[iel]/eta_elemental[iel]
-    #end for
-
-    rho_nodal/=rho_nodal_counter
+    rho_nodal/=nodal_counter
+    if abs(avrg)==1:
+       eta_nodal/=nodal_counter
+       eta_elemental[:]/=nmarker_in_element[:]
+    if abs(avrg)==2:
+       eta_nodal[:]=10.**(eta_nodal[:]/nodal_counter[:])
+       eta_elemental[:]=10.**(eta_elemental[:]/nmarker_in_element[:])
+    if abs(avrg)==3:
+       eta_nodal[:]=nodal_counter[:]/eta_nodal[:]
+       eta_elemental[:]=nmarker_in_element[:]/eta_elemental[:]
 
     nmarker_file.write("%d %e %e\n" %(istep,np.min(nmarker_in_element),np.max(nmarker_in_element))) 
     nmarker_file.flush()
@@ -476,9 +527,12 @@ for istep in range(0,nstep):
 
                 for k in range(0,mP):
                     rhoq[counter]+=NNNP[k]*rho_nodal[iconP[k,iel]]
+                    etaq[counter]+=NNNP[k]*eta_nodal[iconP[k,iel]]
                 #end for
 
-                etaq[counter]=eta_elemental[iel]
+                if avrg>0:
+                   etaq[counter]=eta_elemental[iel]
+
                 # construct 3x8 b_mat matrix
                 for i in range(0,mV):
                     b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.        ],
@@ -489,8 +543,8 @@ for istep in range(0,nstep):
                 K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq[counter]*weightq*jcob
 
                 for i in range(0,mV):
-                    f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*gx(xq[counter],yq[counter])*rhoq[counter]
-                    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy(xq[counter],yq[counter])*rhoq[counter]
+                    f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*rhoq[counter]*gx
+                    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*rhoq[counter]*gy
                 #end for
 
                 for i in range(0,mP):
@@ -563,7 +617,7 @@ for istep in range(0,nstep):
     print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
 
     #np.savetxt('rhoq.ascii',np.array([xq,yq,rhoq]).T,header='# x,y,rho')
-    #np.savetxt('etaq.ascii',np.array([xq,yq,etaq]).T,header='# x,y,eta')
+    np.savetxt('etaq.ascii',np.array([xq,yq,etaq]).T,header='# x,y,eta')
 
     print("build FE matrix: %.3f s" % (time.time() - start))
 
@@ -840,12 +894,14 @@ for istep in range(0,nstep):
     print("compute strainrate: %.3f s" % (time.time() - start))
 
     #####################################################################
-    # interpolate pressure (q) and density (qq) onto velocity grid points
+    # interpolate pressure (q), density (rhoV) and viscosity (etaV)
+    # onto velocity grid points
     #####################################################################
     start = time.time()
 
     q=np.zeros(NV,dtype=np.float64)
-    qq=np.zeros(NV,dtype=np.float64)
+    rhoV=np.zeros(NV,dtype=np.float64)
+    etaV=np.zeros(NV,dtype=np.float64)
 
     for iel in range(0,nel):
         q[iconV[0,iel]]=p[iconP[0,iel]]
@@ -857,20 +913,31 @@ for istep in range(0,nstep):
         q[iconV[6,iel]]=(p[iconP[2,iel]]+p[iconP[3,iel]])*0.5
         q[iconV[7,iel]]=(p[iconP[3,iel]]+p[iconP[0,iel]])*0.5
         q[iconV[8,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]]+p[iconP[3,iel]])*0.25
-        qq[iconV[0,iel]]=rho_nodal[iconP[0,iel]]
-        qq[iconV[1,iel]]=rho_nodal[iconP[1,iel]]
-        qq[iconV[2,iel]]=rho_nodal[iconP[2,iel]]
-        qq[iconV[3,iel]]=rho_nodal[iconP[3,iel]]
-        qq[iconV[4,iel]]=(rho_nodal[iconP[0,iel]]+rho_nodal[iconP[1,iel]])*0.5
-        qq[iconV[5,iel]]=(rho_nodal[iconP[1,iel]]+rho_nodal[iconP[2,iel]])*0.5
-        qq[iconV[6,iel]]=(rho_nodal[iconP[2,iel]]+rho_nodal[iconP[3,iel]])*0.5
-        qq[iconV[7,iel]]=(rho_nodal[iconP[3,iel]]+rho_nodal[iconP[0,iel]])*0.5
-        qq[iconV[8,iel]]=(rho_nodal[iconP[0,iel]]+rho_nodal[iconP[1,iel]]+\
-                          rho_nodal[iconP[2,iel]]+rho_nodal[iconP[3,iel]])*0.25
+        rhoV[iconV[0,iel]]=rho_nodal[iconP[0,iel]]
+        rhoV[iconV[1,iel]]=rho_nodal[iconP[1,iel]]
+        rhoV[iconV[2,iel]]=rho_nodal[iconP[2,iel]]
+        rhoV[iconV[3,iel]]=rho_nodal[iconP[3,iel]]
+        rhoV[iconV[4,iel]]=(rho_nodal[iconP[0,iel]]+rho_nodal[iconP[1,iel]])*0.5
+        rhoV[iconV[5,iel]]=(rho_nodal[iconP[1,iel]]+rho_nodal[iconP[2,iel]])*0.5
+        rhoV[iconV[6,iel]]=(rho_nodal[iconP[2,iel]]+rho_nodal[iconP[3,iel]])*0.5
+        rhoV[iconV[7,iel]]=(rho_nodal[iconP[3,iel]]+rho_nodal[iconP[0,iel]])*0.5
+        rhoV[iconV[8,iel]]=(rho_nodal[iconP[0,iel]]+rho_nodal[iconP[1,iel]]+\
+                            rho_nodal[iconP[2,iel]]+rho_nodal[iconP[3,iel]])*0.25
+        etaV[iconV[0,iel]]=eta_nodal[iconP[0,iel]]
+        etaV[iconV[1,iel]]=eta_nodal[iconP[1,iel]]
+        etaV[iconV[2,iel]]=eta_nodal[iconP[2,iel]]
+        etaV[iconV[3,iel]]=eta_nodal[iconP[3,iel]]
+        etaV[iconV[4,iel]]=(eta_nodal[iconP[0,iel]]+eta_nodal[iconP[1,iel]])*0.5
+        etaV[iconV[5,iel]]=(eta_nodal[iconP[1,iel]]+eta_nodal[iconP[2,iel]])*0.5
+        etaV[iconV[6,iel]]=(eta_nodal[iconP[2,iel]]+eta_nodal[iconP[3,iel]])*0.5
+        etaV[iconV[7,iel]]=(eta_nodal[iconP[3,iel]]+eta_nodal[iconP[0,iel]])*0.5
+        etaV[iconV[8,iel]]=(eta_nodal[iconP[0,iel]]+eta_nodal[iconP[1,iel]]+\
+                            eta_nodal[iconP[2,iel]]+eta_nodal[iconP[3,iel]])*0.25
+
     #end for
 
     print("     -> press nodal (m,M) %.5e %.5e " %(np.min(q),np.max(q)))
-    print("     -> rho nodal (m,M) %.5e %.5e " %(np.min(qq),np.max(qq)))
+    print("     -> rho nodal (m,M) %.5e %.5e " %(np.min(rhoV),np.max(rhoV)))
 
     #np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
 
@@ -881,7 +948,6 @@ for istep in range(0,nstep):
     # but the 8-node one does, i.e. type=23. 
     #####################################################################
     start = time.time()
-
     
     if istep%every==0:
        filename = 'solution_{:04d}.vtu'.format(istep) 
@@ -949,7 +1015,12 @@ for istep in range(0,nstep):
        #--
        vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10e \n" %qq[i])
+           vtufile.write("%10e \n" %rhoV[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e \n" %etaV[i])
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</PointData>\n")
@@ -1028,6 +1099,57 @@ for istep in range(0,nstep):
        vtufile.close()
 
     print("write vtu files: %.3f s" % (time.time() - start))
+
+    vtufile=open('qpts.vtu',"w")
+    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+    vtufile.write("<UnstructuredGrid> \n")
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nq,nq))
+
+    vtufile.write("<PointData Scalars='scalars'>\n")
+    vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'>\n")
+    for i in range(0,nq):
+        vtufile.write("%10e  \n" %etaq[i])
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='log10(eta)' Format='ascii'>\n")
+    for i in range(0,nq):
+        vtufile.write("%10e  \n" %(np.log10(etaq[i])))
+    vtufile.write("</DataArray>\n")
+
+    vtufile.write("</PointData>\n")
+
+    vtufile.write("<Points> \n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+    for i in range(0,nq):
+        vtufile.write("%10e %10e %10e \n" %(xq[i],yq[i],0.))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Points> \n")
+
+    vtufile.write("<Cells>\n")
+
+    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+    for i in range(0,nq):
+        vtufile.write("%d " % i)
+    vtufile.write("</DataArray>\n")
+
+    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+    for i in range(0,nq):
+        vtufile.write("%d " % (i+1))
+    vtufile.write("</DataArray>\n")
+
+    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+    for i in range(0,nq):
+        vtufile.write("%d " % 1)
+    vtufile.write("</DataArray>\n")
+
+    vtufile.write("</Cells>\n")
+
+    vtufile.write("</Piece>\n")
+    vtufile.write("</UnstructuredGrid>\n")
+    vtufile.write("</VTKFile>\n")
+    vtufile.close()
+
+
+
 
     Time+=dt
 

@@ -94,14 +94,26 @@ overly dissipative (i.e. overly diffusive):
 \begin{equation}
 - k \frac{d^2T}{dx^2} = f \qquad \text{in} \quad [0,L_x]
 \end{equation}
-with the boundary conditions $T(x=0)=0$ and $T(x=L_x)=0$.
-The result is a parabolic profile and given the boundary conditions we arrive at 
+and its solution is 
 \[
-T(x)=\frac{f}{k}x(Lx-x)
+T(x)=-\frac{k}{k} (\frac{1}{2}x^2 + a x + b)
+\]
+Using the boundary conditions $T(x=0)=0$ and $T(x=L_x)=0$, we find
+\[
+b=0
+\qquad
+a = Lx/2
+\]
+so the result is the following parabolic profile: 
+\[
+T(x)=\frac{f}{2k}x(L_x-x)
+\]
+with 
+\[
+q(x)=-\frac{dT}{dx} = -\frac{f}{k}x
 \]
 
 
-\newpage
 %..................................................................................
 \subsection*{Experiment 2 - advection skew to the mesh}
 
