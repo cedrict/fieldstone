@@ -1,0 +1,21 @@
+\begin{flushright} {\tiny {\color{gray} (tikz\_pm1\_2D.tex)}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (4,4); 
+\draw[fill=gray!10,gray!10](2,2)--(2.5,2)--(2,2.5)--cycle;
+\draw[thick] (1,1)--(3,1)--(3,3)--(1,3)--cycle;
+\draw [->] (0.5,2) -- (3.5,2);
+\draw [->] (2,0.5) -- (2,3.5);
+\node[] at (3.7,1.9) {$r$};
+\node[] at (1.9,3.7) {$s$};
+\draw[black,fill=black] (2,2)   circle (1.5pt);
+\draw[black,fill=black] (2.5,2)   circle (1.5pt);
+\draw[black,fill=black] (2,2.5)   circle (1.5pt);
+\node[] at (1.8,1.8) {\tiny $1$};
+\node[] at (2.6,1.8) {\tiny $2$};
+\node[] at (1.8,2.6) {\tiny $3$};
+\end{tikzpicture}
+\end{center}
+
