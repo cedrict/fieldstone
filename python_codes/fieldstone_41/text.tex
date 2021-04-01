@@ -117,19 +117,102 @@ et al (1997). Letters stand for authors initials.}
 \end{center}
 
 
-
+\newpage
 %---------------------------------------------------------------
 \subsection*{Stokes sphere under deformable free surface}
 
-
 The setup is described in Section~\ref{ss:stokes_sphere_fs2D}. 
-Densities are projected on the $Q_1$ nodes with an arithmetica averaging. 
-Viscosities are projected onto elements ($avrg>0$) or onto $Q_1$nodes ($avrg<0$).
+Densities are projected on the nodes or elements with an arithmetic averaging while
+viscosities are projected onto elements ({\tt avrg}$>0$) or onto $Q_1$nodes ({\tt avrg}$<0$).
+There are 7 averaging schemes implemented:
+\begin{itemize}
+\item[{\tt avrg}=-1] first-order basis function weighed arithmetic average onto nodes
+\item[{\tt avrg}=-2] first-order basis function weighed geometric average onto nodes
+\item[{\tt avrg}=-3] first-order basis function weighed harmonic average onto nodes
+\item[{\tt avrg}=+1]  elemental piecewise constant arithmetic average 
+\item[{\tt avrg}=+2]  elemental piecewise constant geometric average 
+\item[{\tt avrg}=+3]  elemental piecewise constant harmonic average 
+\item[{\tt avrg}=+4]  elemental first-order least square projection 
+\end{itemize}
 
+Let us recall that the Least Squares methodology is presented for example in 
+Thielmann \etal \cite{thmk14} and in Section~\ref{ss:pic}:
+the density or viscosity values carried by the markers are represented by a linear 
+function in a 2D space inside each 
+element, i.e. $\tilde{\eta}({\vec r}) = a + b x+c y$ and $\tilde{\rho}=d+ex+fy$.
 
+When {\tt avrg}$<0$ values are projected onto quadrature points by means 
+of $Q_1$ basis functions using the values at the corners of the element.
+When {\tt avrg}$=1,2,3$ all quadrature points receive the same elemental value. 
+When {\tt avrg}$=4$ the coordinates of each quadrature points are used in order to 
+estimate the value from the coefficients $\{a,b,c\}$ and $\{d,e,f\}$ 
+of the (limited) least square.
 
+Given the current limitations of this simple code I can only run experiments up to $\sim 80\times80$ elements.
+Also since I later wish to plot the density and viscosity values carried by the quadrature points 
+on a vertical line passing through the middle of the sphere, I focus on odd numbers of elements
+in the horizontal direction and investigate $33\times33$, $49\times49$, $65\times65$ and $81\times81$.
 
+\begin{center}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_41/results/exp3/markers}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_41/results/exp3/vel_line}\\
+{\captionfont 
+Left: markers on 33x33 grid, $5^2$ markers per element.  
+Right: vertical component $v$ of the velocity as obtained \\
+on the $81\times81$ mesh using least squares + limiter projection.\\
+The black line indicates the location of profile measurements.}
+\end{center}
 
+\begin{center}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/33x33/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/33x33/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/33x33/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/33x33/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/49x49/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/49x49/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/49x49/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/49x49/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/65x65/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/65x65/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/65x65/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/65x65/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/81x81/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/81x81/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/81x81/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/81x81/profile_eta_nodal.pdf}\\
+{\captionfont 
+1st column: vertical velocity profile; 
+2nd column: vertical pressure profile; 
+3rd column: viscosity on quadrature points in log scale for {\tt avrg}$>0$ (elemental approach);
+4th column: viscosity on quadrature points in log scale for {\tt avrg}$<0$ (nodal approach);
+$5^2$ markers per element.
+The black dot indicates the velocity in the middle of the sphere 
+obtained with \stone 93 using Crouzeix-Raviart triangular elements.} 
+\end{center}
+It is immediately apparent that the least-square case yields smooth velocity profiles, even at 
+low resolutions. Also it is clear that nodal approaches tend to smear out the transition zone
+but do not yield a visible improvement in terms of velocity.
 
- 
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_41/results/exp3/mass.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_41/results/exp3/vrms.pdf}\\
+{\captionfont Total mass and root mean square velocity $\upnu_{rms}$ for all 7 projections.}
+\end{center}
+
+%-----------------------------------------------------------------------------
+\subsubsection*{A word about the need for a limiter}
+
+The following figures are obtained with a standard linear least square algorithm. 
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_41/results/exp3/rho_ls}
+\includegraphics[width=7cm]{python_codes/fieldstone_41/results/exp3/eta_ls}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_41/results/exp3/rho_ls_warp}
+\includegraphics[width=7cm]{python_codes/fieldstone_41/results/exp3/eta_ls_warp}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_41/results/exp3/rho_ls_warp2}
+\includegraphics[width=7cm]{python_codes/fieldstone_41/results/exp3/eta_ls_warp2}\\
+\end{center}
+
+Describe here limiter...
+
 
