@@ -69,7 +69,7 @@ R^{i,i+1} = \frac{\langle (\vec{\cal V}^i - \langle \vec{\cal V}^i\rangle)
 Since the correlation is normalised, it takes values between 0
 (very dissimilar velocity fields) and 1 (very similar fields). The
 following convergence criterion, formulated in terms of the variable $\chi = 1 -R^{i,i+1} $
-has been implemented: convergence is reached when $\chi>tol$.
+has been implemented: convergence is reached when $\chi<tol$.
 Since pressure is a derived quantity from velocity, if velocity is converged so is 
 pressure\footnote{Two caveats here: the amplitude of the chequerboard mode
 might come into play - in the case $Q_1\times P_0$ elements are used- and so does the applied smoothing.}.
@@ -112,13 +112,13 @@ or 0.0001 (as in Kaus \etal (2010) \cite{kaus10}).
 The last option is via the nonlinear residual. Coming back to the penalty formulation, 
 we can form the nonlinear residual as follows:
 \[
-\vec{\cal R}^i = \K(\eta_{\rm eff}(\dot{\bm\varepsilon}^{i-1},p^{i-1})) \cdot \vec{\cal V}^i - \vec{f}
+\vec{\cal R}^i = \K(\eta_{\rm eff}(\dot{\bm\varepsilon}^{i},p^{i})) \cdot \vec{\cal V}^i - \vec{f}
 \]
 where $\K$ is defined in Section~\ref{sec_penalty}. 
 Close to convergence $\vec{\cal V}^i$ and $\vec{\cal V}^{i-1}$
 are very close so that we expect the residual $\vec{\cal R}$ to become smaller and smaller.
 In order to extract a scalar from $\vec{\cal R}$ we once again resort to the $L^2$-norm and 
-we also wish to to monitor its relative change. In this case it is customary to use $\vec{\cal R}^0$ so 
+we also wish to to monitor its relative change. In this case it is customary to use $\vec{\cal R}^0=\vec{f}$ so 
 that the convergence criterion becomes
 \[
 \frac{||\vec{\cal R}^i ||}{||\vec{\cal R}^0 ||} < tol.

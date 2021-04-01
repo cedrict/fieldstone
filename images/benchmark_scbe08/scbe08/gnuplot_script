@@ -1,0 +1,16 @@
+set term pdf enhanced font 'Times,12pt"
+set grid
+set yrange[] reverse
+set xlabel 'time'
+set ylabel 'depth'
+set output 'slab_tip_depth.pdf'
+set key outside
+plot[0:100] 'I2VISA.dat'   w lp lt 1 ps .24 t 'I2VIS (1821x93) arithm.',\
+            'I2VISG.dat'   w lp lt 2 ps .24 t 'I2VIS (1821x93) geom.',\
+            'I2VISH.dat'   w lp lt 3 ps .24 t 'I2VIS (1821x93) harm.',\
+            'IELVISA.dat'  w lp lt 1 ps .24 t 'I2ELVIS (561x141) arithm.',\
+            'IELVISG.dat'  w lp lt 2 ps .24 t 'I2ELVIS (561x141) geom.',\
+            'IELVISH.dat'  w lp lt 3 ps .24 t 'I2ELVIS (561x141) harm.',\
+            'FDCONH.dat'   w lp lt 3 ps .24 t 'FDCON (561x141) harm',\
+            'CITCOMG.dat'  w lp lt 2 ps .24 t 'CITCOM (256x64) geom' 
+

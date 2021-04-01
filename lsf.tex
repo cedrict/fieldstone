@@ -1,0 +1,83 @@
+\begin{flushright} {\tiny {\color{gray} lsf.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This method was developed in the 80's by Stanley Osher and James Sethian \cite{lofo06}
+
+The Level-set Method (LSM), as it is commonly used in Computational Fluid Dynamics -- and especially 
+in Computational Geodynamics -- represents a close curve $\Gamma$ (say, in our case, the 
+interface between two fluids or layers) by means of a function $\phi$ (called the level-set function, or LSF).
+$\Gamma$ is then the zero level-set of $\phi$:
+\begin{equation}
+\Gamma = \left\{ (x,y) \; |\; \phi(x,y)=0 \right\}
+\end{equation}
+The convention is that $\phi>0$ inside the region delimited by $\Gamma$ and $\phi<0$ outside.
+The function value indicates on which side of the
+interface a point is located (negative or positive) and this is
+used to identify materials. 
+
+Furthermore, if the curve $\Gamma$ moves with a velocity $\vec \upnu$, 
+then it satisfies the following equation:
+\begin{equation}
+\frac{\partial \phi}{\partial t} + \vec\upnu \cdot \vec\nabla \phi = 0 
+\end{equation}
+
+The level set function is generally chosen to
+be a signed distance function, i.e. $|\vec\nabla \phi| = 1$ everywhere 
+and its value is also the distance to the interface.
+
+As explained in \cite{hitg14}, the level-set function $\phi$ is advected 
+with the velocity $\vec\upnu$ which is obtained by solving the Stokes equations.
+This velocity does not guarantee that after an advection step the signed 
+distance quality of the LSF is preserved. 
+The LSF then needs to be corrected, which is also called reinitialisation. 
+Finally, solving the advection equation must be done in an accurate manner both in time and space,
+so that so-called ENO (essentially non-oscillatory) schemes are often employed for the 
+space derivative \cite{ossh91,saev10}.
+
+
+The level set method has not often been used in the geodynamics 
+community with some notable exceptions 
+\cite{bomh06,bomh07,habm07,grbh07,zlfd08,hagr10,sunh10,suhe10,hitg14}
+An overview of the method and applications can
+be found in \cite{osfe01}.
+
+Several improvements upon the original LSM have been proposed, 
+such as for instance the conservative level set of \cite{zhbl14}.
+The most notable difference between CLS method originally proposed by Olsson \etal \cite{olkr05,olkz07}
+and standard LS method lies in the choice of LS function. Instead of the signed distance function, the
+CLS methods employ the Heaviside function $H(\phi)$ 
+\[
+H(\phi)=
+\left\{
+\begin{array}{ll}
+1 & \phi>0 \\
+1/2 & \phi=0 \\
+0 & \phi<0
+\end{array}
+\right.
+\]
+where $\phi$ is the signed distance function as in the LSM. 
+In practice, a hyperbolic tangent function is used:
+\[
+H(\phi) = \frac{1}{2} (1+\tan (\phi/2\epsilon))
+\]
+where $\epsilon$ defines the spreading width of $H$. In the case where there are only 
+two fluids (i.e. a single level set is sufficient), the material properties such as density and viscosity
+are computed as follows:
+\[
+\rho=\rho_1+(\rho_2-\rho_1)H(\phi)
+\]
+\[
+\eta=\eta_1+(\eta_2-\eta_1)H(\phi)
+\]
+
+\Literature: \cite{vasv05,vasv08,migi07,vasv05b}. 
+\begin{itemize}
+\item Review of level-set methods \cite{gifo18}
+\item Interactive 3-D computation of fault surfaces using level sets \cite{kadt08}
+\end{itemize}
+
+
+
+
+
