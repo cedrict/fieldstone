@@ -1,0 +1,142 @@
+############### Global parameters
+
+set Dimension                              = 2
+set Start time                             = 0
+set End time                               = 15
+set CFL number				   = 0.5
+set Use years in output instead of seconds = false
+set Output directory                       = rawoutput3
+
+
+############### Parameters describing the model
+# Let us here choose a box domain of size 2x1
+# where we fix the temperature at the top and bottom boundaries
+# and prescribe the temperature along the side boundaries based on
+# thermal boundary layer theory.
+
+subsection Geometry model
+  set Model name = asymbox 
+
+  subsection AsymBox
+    set X extent = 2
+    set Y extent = 1
+  end
+end
+
+
+subsection Model settings # +reflective T BC on 0,1 
+  set Fixed temperature boundary indicators   = 2, 3
+  set Zero velocity boundary indicators       = 
+  set Tangential velocity boundary indicators = 0,1,2,3
+  set Prescribed velocity boundary indicators =
+
+  set Include adiabatic heating = false
+  set Include shear heating     = false
+  set Radiogenic heating rate   = 0
+
+end
+
+
+# We then set the temperature to zero
+# at the top boundary and to 1 at the bottom. 
+# The side boundaries are symmetric. This is implemented by not declaring them in Model settings,
+# then they are insulated (i.e. no heat flux through the boundaries). According to the manual,
+# this is often used to specify symmetry boundaries.
+subsection Boundary temperature model
+  set Model name = box
+  
+  subsection Box
+    set Bottom temperature = 1
+    set Top temperature    = 0
+    set Left temperature   = 0
+    set Right temperature  = 0  
+
+  end
+end
+
+
+#Velocity is not prescribed
+#
+#subsection Boundary velocity model
+#  subsection Function
+#    set Variable names      = x,z
+#    set Function constants  = c=0.5
+#    set Function expression = -(z-c);x-c #if(x>1+sin(0.5*pi*t), 1, -1); 0
+#  end
+#end
+
+
+# We then choose a vertical gravity model and describe the
+# initial temperature distribution based on boundary layer theory.
+# The material model is the same as before.
+subsection Gravity model
+  set Model name = vertical
+
+  subsection Vertical
+    set Magnitude = 3e09 #1 
+  end
+end
+
+subsection Initial conditions
+  set Model name = tdle
+ 
+# We prescribe the temperature based on boundary layer theory as stated in van Keken 97 (as is hardwired in box.cc).
+
+end
+
+
+subsection Material model
+  set Model name = Clinviscghmax #simple
+
+  subsection Clinviscghmax model
+    set Thermal conductivity          = 1
+    set Thermal expansion coefficient = 1e-4 #3e-1
+    set Viscosity                     = 1
+    set Reference density             = 1 #1000
+    set Reference specific heat       = 1
+    set Reference temperature         = 0   
+    set Viscosity Averaging           = Max
+  end
+end
+
+
+# The final part of this input file describes how many times the
+# mesh is refined and what to do with the solution once computed
+subsection Mesh refinement
+  set Initial adaptive refinement        = 0
+  #set Coarsening fraction                = 0.05
+  #set Refinement fraction                = 0.05
+  set Initial global refinement          = 8
+  set Time steps between mesh refinement = 0
+  set Strategy                           = composition
+end
+
+
+subsection Postprocess
+  set List of postprocessors = visualization, temperature statistics, composition statistics, velocity statistics
+
+  subsection Visualization
+    set List of output variables = all
+    set Time between graphical output = 0.1
+  end
+end
+
+
+# This is the new part: We declare that there will
+# be one compositional field, with Gamma a stepfunction, so 1 within the field.
+# The field is a layer of 0.025 thickness at the bottom of the domain.
+subsection Compositional fields
+  set Number of fields = 2
+  set List of viscosities of fields = 1, 1
+  set List of densities of fields = 1, 1.00015  #1000, 1450
+end
+
+subsection Compositional initial conditions
+  set Model name = function
+ 
+    subsection Function
+      set Variable names      = x,z
+      set Function expression = if(z<=0.025,0,1);if(z<=0.025,1,0)  #mantle, tdl
+  end
+end
+

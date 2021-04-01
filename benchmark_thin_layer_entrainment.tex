@@ -1,12 +1,20 @@
 \begin{flushright} {\tiny {\color{gray} benchmark\_thin\_layer\_entrainment.tex}} \end{flushright}
 
+\vspace{1cm}
+\begin{flushright}
+Data pertaining to this section are to be found at:
+\url{https://github.com/cedrict/fieldstone/tree/master/images/benchmark\_thinlayer}
+\end{flushright}
+\vspace{1cm}
+
 The problem is a simulation to study the
 amount of entrainment by thermal convection of a dense,
 thin layer at the bottom of the model \cite{vaks97}. 
-To the author's knowledge only two other publications \cite{taki03,vant07}
+To the author's knowledge only two other publications (Tackley \& King (2003) \cite{taki03},
+van Thienen (2007) \cite{vant07})
 have presented results pertaining to this benchmark.
 The results shown here after are obtained with my \elefant code using 
-the particle-in-cell technique. 
+the particle-in-cell technique and originate in the \elefant paper \cite{thie14}. 
 
 The box is $2\times 1$, and contains two fluids:
 \begin{center}
@@ -20,20 +28,21 @@ Both fluids have a thermal expansion coefficient $\alpha=10^{-10}$, a
 thermal conductivity $k=1$, and a heat capacity coefficient $c_p=1$.
 Fluid 2 is placed at the bottom of the box ($0\leq y \leq 0.025$).
 
-This experiment is parameterised by the thermal Rayleigh number $Ra=300,000$ and 
-and the compositional Rayleigh number $Ra_c=450,000$ which are defined as follows:
+This experiment is parameterised by the thermal Rayleigh number $\Ranb=300,000$ and 
+and the compositional Rayleigh number $\Ranb_c=450,000$ which are defined as follows:
 
 \begin{eqnarray}
-Ra_T=\frac{\alpha \rho g \Delta T L_y^3}{\kappa \eta}
+\Ranb_T&=&\frac{\alpha \rho g \Delta T L_y^3}{\kappa \eta}
 = \frac{\alpha \rho^2 g \Delta T L_y^3 c_p}{k \eta}
 = \alpha g \\
-Ra_c&=&\frac{ \Delta \rho g L_y^3}{\kappa \eta}
+\Ranb_c&=&\frac{ \Delta \rho g L_y^3}{\kappa \eta}
 = \frac{ \rho \Delta \rho g L_y^3 c_p}{k \eta}
 = \Delta \rho g
 \end{eqnarray}
 where I have used the relationship $\kappa=k/\rho c_p$.
-$B$ is defined as $B=Ra_T/Ra_c$ so 
-The gravity acceleration is therefore set to $g=Ra/\alpha$ and this yields $\Delta \rho=Ra_c/g=B Ra_T/g = B\times \alpha$.
+$B$ is defined as $B=\Ranb_T/\Ranb_c$ so 
+The gravity acceleration is therefore set to $g=\Ranb/\alpha$ and 
+this yields $\Delta \rho=\Ranb_c/g=B \Ranb_T/g = B\times \alpha$.
 
 Free-slip boundary conditions are imposed on all sides of the domain.
 Temperature boundary conditions are $T(x,y=0)=1$ and 
@@ -50,11 +59,11 @@ T_s(x,y) &=& \frac{1}{2} - \frac{Q}{2\sqrt{\pi}} \sqrt{\frac{u_0}{2-y}} \exp \le
 \end{eqnarray}
 with
 \begin{equation}
-u_0=\frac{L_x^{7/3}}{(1+L_x^4)^{2/3}} \left(\frac{Ra}{2\sqrt{\pi}} \right)^{2/3}
+u_0=\frac{L_x^{7/3}}{(1+L_x^4)^{2/3}} \left(\frac{\Ranb}{2\sqrt{\pi}} \right)^{2/3}
 \quad\quad
 Q=2\sqrt{\frac{L_x}{\pi u_0}}
 \end{equation}
-Using $L_x=2$, $Ra=3\times10^5$, one gets
+Using $L_x=2$, $\Ranb=3\times10^5$, one gets
 $u_0 \simeq 1469.315 $ and $Q\simeq 0.0416305$.
 
 Given the small thickness of the bottom layer, it seems quite legitimate to 
@@ -62,7 +71,6 @@ investigate the influence of grid resolution on the simulation.
 I have therefore looked at the initial root mean square velocity measurement 
 as a function of the element diagonal value (a proxy for the average resolution
 in the case where elements are not square). 
-
 
 Results are confirm that 
 the element size plays a non negligible role at startup on the dynamics of the system.
@@ -78,18 +86,18 @@ significant velocity variations at high resolution.
 
 \begin{center}
 \includegraphics[width=0.65\linewidth]{images/benchmark_thinlayer/thie14}\\
-{\scriptsize 
+{\captionfont  
 Thin layer entrainment experiment: root mean square velocity measurements at
 $t=0$ as a function of the element diagonal size. 
 The red square points correspond to resolutions where the number of elements in each direction 
 is a multiple of 40 (i.e. $L_y/d$), so that no element would contain a mix of fluids 1 and 2. 
 Pink points correspond to cases wherethe number of markers within each element was varied between 4 and 500 
-(random spatial distribution). Taken from \cite{thie14}}
+(random spatial distribution). Taken from \elefant paper \cite{thie14}}
 \end{center}
 
 
 Looking at the root mean square velocity measurements, we see that
-the measurements done with \elefant agree nicely with those presented in \cite{vaks97}. 
+the measurements done with \elefant agree nicely with those presented in van Keken \etal \cite{vaks97}. 
 Past $t\sim0.015$, the curves diverge clearly across all codes and authors, 
 so I only need to focus the comparison for times $t <0.015$. 
 For the three tested resolutions,measurements agree well and fall within the grey curves 
@@ -99,8 +107,11 @@ Courant number (0.1 to 0.25) and the initial number of markers per element (100 
 and these parameters led to extremely similar results.
 
 \begin{center}
-\includegraphics[width=0.65\linewidth]{images/benchmark_thinlayer/thie14b}\\
-{\scriptsize Thin layer entrainment experiment. Root mean square velocity as a function of time.All results presented invan Keken \etal (1997) are collapsed in dashed lines. All simulationswere run with an initial marker density of 100 markers per element and with a Courant numberof 0.25. Taken from \cite{thie14}.}
+\includegraphics[width=0.5\linewidth]{images/benchmark_thinlayer/vrms/vrms.pdf}\\
+{\captionfont Thin layer entrainment experiment. Root mean square velocity as a function of time.
+All results presented in van Keken \etal (1997) are collapsed in black dashed lines. 
+All simulations were run with an initial marker density of 100 markers per element and with 
+a Courant numberof 0.25. Taken from \elefant paper \cite{thie14}.}
 \end{center}
 
 As observed in van Keken \etal, the dense layer is first swept 
@@ -121,9 +132,10 @@ and more chaotic with markers being randomly mixed in the system in a non-orderl
 \includegraphics[width=0.23\linewidth]{images/benchmark_thinlayer/maarkers0225}
 \includegraphics[width=0.23\linewidth]{images/benchmark_thinlayer/maarkers0250}
 \includegraphics[width=0.23\linewidth]{images/benchmark_thinlayer/maarkers0275}\\
-{\scriptsize  marker distribution as obtained with \elefant for 
-grid 240x120, init\_marker\_density=7, random distribution, 
-CFL=0.25, rkmethod=2, m\_to\_q=2. Unpublished.}
+{\captionfont Marker distribution as obtained with \elefant for 
+grid 240x120, init\_marker\_density=7, \\
+random distribution, 
+CFL=0.25, rkmethod=2, m\_to\_q=2. (unpublished).}
 \end{center}
 
 

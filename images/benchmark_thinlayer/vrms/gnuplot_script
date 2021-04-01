@@ -1,0 +1,93 @@
+set terminal pdf enhanced font 'Times,12pt"
+#set output 'vrms_old.pdf'
+#set grid
+#set key left
+#plot[0:0.01] 'vaks97/HSvrms1200.dat' w l t 'HSvrms1200',\
+#             'vaks97/HSvrms2400.dat' w l t 'HSvrms2400',\
+#             'vaks97/HSvrms4800.dat' w l t 'HSvrms4800',\
+#             'vaks97/SK160.vrms.dat'    w l t 'SK160',\
+#             'vaks97/SK160_C6.vrms.dat' w l t 'SK160C6',\
+#             'vaks97/URC125x40_240k.vrms.dat' w l ,\
+#             'vaks97/URC125x40_40k.vrms.dat' w l,\
+#             'vaks97/URCchain.vrms.dat' w l ,\
+#             'vaks97/pvk.vrms.dat' w l ,\
+#             'vaks97/pvk120_003.vrms.dat' w l t 'pvk120',\
+#             'vaks97/pvk150_001.vrms.dat' w l t 'pvk150',\
+#             '125x40_C0p1_npcl200_g/vrms.dat'  u ($2):($3) w lp ps .25 t 'ELEFANT'
+
+set ylabel "v_{rms}"
+set xlabel "time"
+set grid
+set xtics 0.002
+set key right
+set output 'vrms.pdf'
+plot[0:0.017]'vaks97/HSvrms1200.dat'          w l  lt -1 lw 1 t 'van Keken et al, 1997',\
+             'vaks97/HSvrms2400.dat'          w l  lt -1 lw 1 notitle,\
+             'vaks97/HSvrms4800.dat'          w l  lt -1 lw 1 notitle,\
+             'vaks97/SK160.vrms.dat'          w l  lt -1 lw 1 notitle,\
+             'vaks97/SK160_C6.vrms.dat'       w l  lt -1 lw 1 notitle,\
+             'vaks97/URC125x40_240k.vrms.dat' w l  lt -1 lw 1 notitle,\
+             'vaks97/URC125x40_40k.vrms.dat'  w l  lt -1 lw 1 notitle,\
+             'vaks97/URCchain.vrms.dat'       w l  lt -1 lw 1 notitle,\
+             'vaks97/pvk.vrms.dat'            w l  lt -1 lw 1 notitle,\
+             'vaks97/pvk120_003.vrms.dat'     w l  lt -1 lw 1 notitle,\
+             'vaks97/pvk150_001.vrms.dat'     w l  lt -1 lw 1 notitle,\
+             'elefant/125x40_C0p25_npcl100_g/vrms.dat'  u ($2):($3) w l lt 1 lw 1 t 'ELEFANT, 125x40',\
+             'elefant/200x48_C0p20_npcl100_g/vrms.dat'  u ($2):($3) w l lt 2 lw 1 t 'ELEFANT, 200x48',\
+             'elefant/512x256_C0p20_npcl100/vrms.dat' u ($2):($3)   w l lt 3 lw 1 t 'ELEFANT, 512x256',\
+             'aspect/statistics512x256'          u 2:23             w l lt 4 lw 1 t 'ASPECT, 512x256'
+
+#        '200x48_C0p05_npcl250_g/vrms.dat'  u ($2):($3) w l lt 6 t 'ELEFANT, 200x48, n=250, C=0.05',\
+#        '120x60_C0p20_npcl100_g/vrms.dat'  u ($2):($3) w l lt 4 t 'ELEFANT, 120x60, n=100, C=0.20',\
+#        '125x40_C0p1_npcl200_g/vrms.dat'  u ($2):($3) w l lt 1 t 'ELEFANT, 125x40, n=200, C=0.10',\
+#        '125x40_C0p1_npcl100_g/vrms.dat'  u ($2):($3) w l lt 1 t 'ELEFANT, 125x40, n=100, C=0.10',\
+#        '512x256_C0p20_npcl100/vrms.dat'   u ($2):($3) w l lt 8 lw 4 t 'ELEFANT, 512x256, npcl=100, C=0.20',\
+
+exit
+
+
+set key left
+
+set log x 
+set ylabel 'v_{rms} (t=0)'
+set xlabel 'ncellx'
+set output 'vrmszero_old.pdf'
+plot[][377:389] 'vrmszero.dat' u 1:3 w lp notitle,\
+             'vrmszero40.dat' u 1:3 w lp t ' multiples of 40' ,\
+             'vrmszero_vkk.dat' u 1:3 pt 5 ps .5 t 'van Keken et al, 1997',\
+       385 notitle,386 notitle
+
+set xlabel 'average element size'
+set ytics 1
+set grid
+set key bottom
+set output 'vrmszero.pdf'
+
+set arrow 1 from  0.00255,385.35 to 0.00275,385.8
+set  label "800x800" at 0.00225,385.15
+ 
+
+set arrow 2 from  0.01,385.35 to 0.01125,385.8
+set  label "200x200" at 0.007,385.15
+
+set arrow 3 from  0.02799,386 to 0.02799,385.3
+set  label "80x80" at 0.027,386.15
+
+
+set arrow 4 from  0.029,383.5 to 0.0295,384.1
+set  label "125x40" at 0.025,383.25
+
+set object 2 rect from 0.0165,384.75 to 0.031,385.75 fc lt -1 fs solid 0.15 #   rgb "gold"
+
+set xtics (0.001,0.002,0.005,0.01,0.02,0.05,0.1)
+set ytics .5
+plot[0.001:0.1][377:387] \
+                'vrmszero40.dat'    u (sqrt((2./$1)**2+(1./$2)**2)):3 w lp pt 5 ps .5 t ' multiple of 40' ,\
+                'vrmszero_ar2.dat'  u (sqrt((2./$1)**2+(1./$2)**2)):3 w lp pt 5 ps .5 t ' aspect ratio 1:1', \
+                'vrmszero_ar4.dat'  u (sqrt((2./$1)**2+(1./$2)**2)):3 w lp pt 5 ps .5 t ' aspect ratio 1:2', \
+                'vrmszero_npcl.dat' u (sqrt((2./$1)**2+(1./$2)**2)):3 w lp pt 5 ps .5 t ' aspect ratio 1:1, 4<n<500 ', \
+                'vrmszero_vkk.dat'  u (sqrt((2./$1)**2+(1./$2)**2)):3 lt -1 pt 5 ps .5 t 'van Keken et al, 1997'
+
+#'vrmszero.dat'      u (sqrt((2./$1)**2+(1./$2)**2)):3 w lp t 'misc',\
+
+
