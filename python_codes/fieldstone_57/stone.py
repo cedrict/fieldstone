@@ -20,7 +20,7 @@ T_right=1.
 
 # Stablization constants
 E=4
-C=0.5
+C=0.
 
 #------------------------------------------------------------------------------
 # Declare arrays
@@ -41,14 +41,13 @@ q_plus_old=np.zeros(nnx,dtype=np.float64)   # Old flux at positive side of node
 T_min[0]=T_left
 T_plus[nnx-1]=T_right 
 
-
 conv_file=open('convergence.ascii',"w")
 
-################################################################################################
-################################################################################################
+######################################################################################
+######################################################################################
 # TIME STEPPING
-################################################################################################
-################################################################################################
+######################################################################################
+######################################################################################
 start=time.time()
 
 rhs_el=np.zeros(4,dtype=np.float64)     # elemental right hand side vector  
@@ -71,7 +70,6 @@ K_right=np.array([[hx/3,hx/6,-C ,-0.5],
 for it in range(0,niter):
     print("----------------------------------")
     print("iter= ", it)
-    print("----------------------------------")
 
     #update q flux at boundaries
     q_min[0]=q_plus[0]-E*(T_min[0]-T_plus[0])                 # left boundary
@@ -118,14 +116,20 @@ for it in range(0,niter):
     filename = 'q_minus_{:04d}.ascii'.format(it) 
     np.savetxt(filename,np.array([x,q_min]).T,header='# x,q_min')
 
-    conv_file.write("%d %e %e %e %e\n" %(it,np.max(T_min-T_min_old),np.max(T_plus-T_plus_old),np.max(q_min-q_min_old),np.max(q_plus-q_plus_old)) ) ; conv_file.flush()
+    conv_file.write("%d %e %e %e %e\n" %(it,np.max(T_min-T_min_old),\
+                                            np.max(T_plus-T_plus_old),\
+                                            np.max(q_min-q_min_old),\
+                                            np.max(q_plus-q_plus_old)) ) 
+    conv_file.flush()
 
     #test convergence
     if np.max(T_min-T_min_old)<abstol and\
        np.max(T_plus-T_plus_old)<abstol and\
        np.max(q_min-q_min_old)<abstol and\
        np.max(q_plus-q_plus_old)<abstol:
+       print("------------------------------------------------")
        print("iterations have converged after ",it,'iterations')
+       print("------------------------------------------------")
        break
 
     #np.savetxt('T_min_diff.ascii',np.array([x,T_min-T_min_old]).T,header='# x,T_min')
