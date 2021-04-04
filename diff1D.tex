@@ -21,6 +21,11 @@ mathematical functions\footnote{\url{https://en.wikipedia.org/wiki/Function_(mat
 by this {\color{Violet} color}.
 \end{remark}
 
+\begin{remark}
+In what follows $\int_{\Omega_e}$ should be understood as $\int_{x_k}^{x_{k+1}}$.
+\end{remark}
+
+
 %........................................................
 \subsubsection{From the strong form to the weak form}
 
@@ -29,7 +34,10 @@ We focus here on the 1D diffusion equation (no advection, no heat sources, see S
 \rho C_p \frac{\partial {\color{Violet}T}}{\partial t} 
 = \frac{\partial }{\partial x} \left( k \frac{\partial {\color{Violet}T}}{\partial x}  \right)
 \end{equation}
-This is the {\color{olive}strong form} of the ODE to solve. \index{general}{Strong Form}
+where $\rho$ is the density, $C_p$ the heat capacity and $k$ the heat conductivity. All three coefficients
+are assumed to be constant in space and time.
+
+This is the {\color{olive}strong form} of the PDE to solve. \index{general}{Strong Form}
 I can multiply this equation by a function\footnote{This function should be well-behaved with 
 special properties, but we here assume it is a polynomial function.} ${\color{Violet}f}(x)$ 
 and integrate it over $\Omega$:
@@ -38,8 +46,8 @@ and integrate it over $\Omega$:
 =
 \int_{\Omega} {\color{Violet}f}(x) \;  \frac{\partial }{\partial x} \left( k \frac{\partial {\color{Violet}T}}{\partial x}  \right) dx
 \end{equation}
-Looking at the right hand side, it is of the form $\int u v'$ so that I naturally 
-integrate it by parts:
+Looking at the right hand side, it is of the form $\int u v'$ so that I 
+integrate it by parts\footnote{$\int_\Omega uv' = \int_{\partial\Omega} uv - \int_\Omega u'v$}:
 \begin{equation}
 \int_{\Omega} {\color{Violet}f}(x) \;  \frac{\partial }{\partial x} 
 \left( k \frac{\partial {\color{Violet}T}}{\partial x}  \right) dx
@@ -67,8 +75,8 @@ We then obtain the {\color{olive}weak form} of the diffusion equation in 1D:
 }
 \end{equation}
 We then use the additive property of the integral 
-$\int_\Omega \dots = \sum_{elts} \int_{\Omega_e} \dots$
-so that 
+$\int_\Omega \dots = \sum\limits_{elts} \int_{\Omega_e} \dots$
+so that the equation above becomes 
 \begin{equation}
 \sum_{elts} \left(     
 \underbrace{ \int_{\Omega_e} {\color{Violet}f}(x) \rho C_p   \frac{\partial {\color{Violet}T}}{\partial t} dx }_{{\Lambda}_f^e}
@@ -98,12 +106,12 @@ and $T_{k+1}$:
 \begin{eqnarray}
 {\color{Violet}T}^h(x) 
 %&=& N_{k}(x) T_k + N_{k+1}(x) T_{k+1}  \nn\\
-&=& \underbrace{\frac{x_{k+1}-x}{h_x}}_{{\color{Violet}N}_k^\theta(x)} T_k 
+&=& \underbrace{\frac{x_{k+1}-x}{h_x}}_{{\color{Violet}\bN}_k^\uptheta(x)} T_k 
 + 
-\underbrace{\frac{x-x_k}{h_x}}_{{\color{Violet}N}_{k+1}^\theta(x)} T_{k+1} \nn
+\underbrace{\frac{x-x_k}{h_x}}_{{\color{Violet}\bN}_{k+1}^\uptheta(x)} T_{k+1} \nn
 \end{eqnarray}
-where ${\color{Violet}N}_k^\theta(x)$ is the (temperature) basis function associated to node $k$ and 
-${\color{Violet}N}_{k+1}^\theta(x)$ is the basis function associated to node $k+1$.
+where ${\color{Violet}\bN}_k^\uptheta(x)$ is the (temperature) basis function associated to node $k$ and 
+${\color{Violet}\bN}_{k+1}^\uptheta(x)$ is the basis function associated to node $k+1$.
 
 Rather reassuringly, we have:
 \begin{itemize}
@@ -111,46 +119,55 @@ Rather reassuringly, we have:
 \item $x=x_{k+1}$ yields ${\color{Violet}T}^h(x_{k+1})=T_{k+1}$
 \item $x=x_{1/2}=(x_k+x_{k+1})/2$ yields ${\color{Violet}T}^h(x_{1/2})=(T_k+T_{k+1})/2$
 \end{itemize}
-In what follows we abbreviate $\partial {\color{Violet}T}^h/\partial x$(x) by $\dot{\color{Violet}T}^h(x)$.
+In what follows we abbreviate $\partial {\color{Violet}T}^h/\partial t$ by $\dot{\color{Violet}T}^h(x)$.
 Let us compute ${\Lambda}_f^e$ and ${\Upsilon}_f^e$ separately.
 \begin{eqnarray}
 {\Lambda}_f^e 
 &=&\int_{x_k}^{x_{k+1}} {\color{Violet}f}(x) \rho C_p \dot {\color{Violet}T}^h(x) dx \nn\\
-&=& \int_{x_k}^{x_{k+1}} {\color{Violet}f}(x) \rho C_p \;\;  [ {\color{Violet}N}_{k}^\theta(x) \dot{T}_k 
-+ {\color{Violet}N}_{k+1}^\theta(x) \dot{T}_{k+1} ] \;\; dx  \nn\\
-&=& \int_{x_k}^{x_{k+1}} {\color{Violet}f}(x) \rho C_p {\color{Violet}N}_{k}^\theta(x) \dot{T}_k  dx  
-+ \int_{x_k}^{x_{k+1}} {\color{Violet}f}(x) \rho C_p {\color{Violet}N}_{k+1}^\theta(x) \dot{T}_{k+1}   dx \nn\\
-&=&  \left( \int_{x_k}^{x_{k+1}} {\color{Violet}f}(x) \rho C_p  {\color{Violet}N}_{k}^\theta(x) dx \right) \dot{T}_k  
-+ \left( \int_{x_k}^{x_{k+1}} {\color{Violet}f}(x) \rho C_p {\color{Violet}N}_{k+1}^\theta(x) dx \right)  \dot{T}_{k+1}  \nn
+&=& \int_{x_k}^{x_{k+1}} {\color{Violet}f}(x) \rho C_p \;\;  [ {\color{Violet}\bN}_{k}^\uptheta(x) \dot{T}_k 
++ {\color{Violet}\bN}_{k+1}^\uptheta(x) \dot{T}_{k+1} ] \;\; dx  \nn\\
+&=& \int_{x_k}^{x_{k+1}} {\color{Violet}f}(x) \rho C_p {\color{Violet}\bN}_{k}^\uptheta(x) \dot{T}_k  dx  
++ \int_{x_k}^{x_{k+1}} {\color{Violet}f}(x) 
+\rho C_p {\color{Violet}\bN}_{k+1}^\uptheta(x) \dot{T}_{k+1}   dx \nn\\
+&=&  \left( \int_{x_k}^{x_{k+1}} {\color{Violet}f}(x) \rho C_p  
+{\color{Violet}\bN}_{k}^\uptheta(x) dx \right) \dot{T}_k  
++ \left( \int_{x_k}^{x_{k+1}} {\color{Violet}f}(x) \rho C_p 
+{\color{Violet}\bN}_{k+1}^\uptheta(x) dx \right)  \dot{T}_{k+1}  \nn
 \end{eqnarray}
-Taking ${\color{Violet}f}(x)={\color{Violet}N}_k^\theta(x)$ and omitting '$(x)$' in the rhs:
+Taking ${\color{Violet}f}(x)={\color{Violet}\bN}_k^\uptheta(x)$ and omitting '$(x)$' in the rhs:
 \[
-{\Lambda}_{N_k^\theta}^e=
+{\Lambda}_{\bN_k^\uptheta}^e=
 %\int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \rho C_p \dot{\color{blue}T}(x) dx
-\left( \int_{x_k}^{x_{k+1}} \rho C_p  {\color{Violet}N}_k^\theta {\color{Violet}N}_{k}^\theta dx \right) \dot{T}_k  
-+ \left( \int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}N}_k^\theta {\color{Violet}N}_{k+1}^\theta dx \right)  \dot{T}_{k+1} 
+\left( \int_{x_k}^{x_{k+1}} \rho C_p  {\color{Violet}\bN}_k^\uptheta 
+{\color{Violet}\bN}_{k}^\uptheta dx \right) \dot{T}_k  
++ \left( \int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}\bN}_k^\uptheta 
+{\color{Violet}\bN}_{k+1}^\uptheta dx \right)  \dot{T}_{k+1} 
 \]
-Taking ${\color{Violet}f}(x)={\color{Violet}N}_{k+1}^\theta(x)$ and omitting '$(x)$' in the rhs:
+Taking ${\color{Violet}f}(x)={\color{Violet}\bN}_{k+1}^\uptheta(x)$ 
+and omitting '$(x)$' in the rhs:
 \[
-{\Lambda}_{N_{k+1}^\theta}^e
+{\Lambda}_{\bN_{k+1}^\uptheta}^e
 %\int_{x_k}^{x_{k+1}} {\color{blue}f}(x) \dot{\color{blue}T}(x) dx
-= \left( \int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}N}_{k+1}^\theta {\color{Violet}N}_{k}^\theta dx \right) \dot{T}_k  
-+ \left( \int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}N}_{k+1}^\theta {\color{Violet}N}_{k+1}^\theta dx \right)  \dot{T}_{k+1} 
+= \left( \int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}\bN}_{k+1}^\uptheta 
+{\color{Violet}N}_{k}^\uptheta dx \right) \dot{T}_k  
++ \left( \int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}\bN}_{k+1}^\uptheta 
+{\color{Violet}N}_{k+1}^\uptheta dx \right)  \dot{T}_{k+1} 
 \]
 We can rearrange these last two equations as follows:
 \[
 \left(
 \begin{array}{c}
-{\Lambda}_{N_k^\theta}^e  \\ \\ {\Lambda}_{N_{k+1}^\theta}^e
+{\Lambda}_{\bN_k^\uptheta}^e  \\ \\ 
+{\Lambda}_{\bN_{k+1}^\uptheta}^e
 \end{array}
 \right)
 =
 \left(
 \begin{array}{cc}
-\int_{x_k}^{x_{k+1}} {\color{Violet}N}_k^\theta     \rho C_p {\color{Violet}N}_{k}^\theta dx  
-&  \int_{x_k}^{x_{k+1}} {\color{Violet}N}_k^\theta  \rho C_p {\color{Violet}N}_{k+1}^\theta dx \\ \\
-\int_{x_k}^{x_{k+1}} {\color{Violet}N}_{k+1}^\theta \rho C_p {\color{Violet}N}_{k}^\theta dx  
-&  \int_{x_k}^{x_{k+1}} {\color{Violet}N}_{k+1}^\theta \rho C_p {\color{Violet}N}_{k+1}^\theta dx 
+\int_{x_k}^{x_{k+1}} {\color{Violet}\bN}_k^\uptheta        \rho C_p {\color{Violet}\bN}_{k}^\uptheta dx  
+&  \int_{x_k}^{x_{k+1}} {\color{Violet}\bN}_k^\uptheta     \rho C_p {\color{Violet}\bN}_{k+1}^\uptheta dx\\ \\
+\int_{x_k}^{x_{k+1}} {\color{Violet}\bN}_{k+1}^\uptheta    \rho C_p {\color{Violet}\bN}_{k}^\uptheta dx  
+&  \int_{x_k}^{x_{k+1}} {\color{Violet}\bN}_{k+1}^\uptheta \rho C_p {\color{Violet}\bN}_{k+1}^\uptheta dx 
 \end{array}
 \right)
 \cdot
@@ -165,7 +182,7 @@ and we can take the integrals outside of the matrix:
 \[
 \left(
 \begin{array}{c}
-{\Lambda}_{N_k^\theta}^e \\ \\ {\Lambda}_{N_{k+1}^\theta}^e
+{\Lambda}_{\bN_k^\uptheta}^e \\ \\ {\Lambda}_{\bN_{k+1}^\uptheta}^e
 \end{array}
 \right)
 =
@@ -174,8 +191,10 @@ and we can take the integrals outside of the matrix:
 \rho C_p
 \left(
 \begin{array}{cc}
-{\color{Violet}N}_k^\theta     {\color{Violet}N}_{k}^\theta &  {\color{Violet}N}_k^\theta     {\color{Violet}N}_{k+1}^\theta  \\ \\
-{\color{Violet}N}_{k+1}^\theta {\color{Violet}N}_{k}^\theta &  {\color{Violet}N}_{k+1}^\theta {\color{Violet}N}_{k+1}^\theta 
+{\color{Violet}N}_k^\uptheta     {\color{Violet}\bN}_{k}^\uptheta 
+&  {\color{Violet}\bN}_k^\uptheta     {\color{Violet}N}_{k+1}^\uptheta  \\ \\
+{\color{Violet}N}_{k+1}^\uptheta {\color{Violet}\bN}_{k}^\uptheta 
+&  {\color{Violet}\bN}_{k+1}^\uptheta {\color{Violet}N}_{k+1}^\uptheta 
 \end{array}
 \right)
 dx
@@ -190,10 +209,10 @@ dx
 \]
 Finally, we can define the vectors 
 \[
-{\vec {\color{Violet}N}}^T = 
+{\vec {\color{Violet}\bN}}^T = 
 \left(
 \begin{array}{c}
-{\color{Violet}N}_k^\theta(x)  \\ \\  {\color{Violet}N}_{k+1}^\theta (x)
+{\color{Violet}\bN}_k^\uptheta(x)  \\ \\  {\color{Violet}\bN}_{k+1}^\uptheta (x)
 \end{array}
 \right)
 \]
@@ -221,59 +240,73 @@ so that
 \[
 \left(
 \begin{array}{c}
-{\Lambda}_{N_k^\theta}^e \\  \\ {\Lambda}_{N_{k+1}^\theta}^e
+{\Lambda}_{\bN_k^\uptheta}^e \\  \\ 
+{\Lambda}_{\bN_{k+1}^\uptheta}^e
 \end{array}
 \right)
 =
-\left( \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}N}}^T \rho C_p  {\vec {\color{Violet}N}} dx  \right) \cdot \dot{\vec T}^e
+\left( \int_{x_k}^{x_{k+1}}   
+{\vec {\color{Violet}\bN}}^T \rho C_p  {\vec {\color{Violet}\bN}} dx  \right) \cdot \dot{\vec T}^e
 \]
-
 Let us now go back to the diffusion term:
-
 \begin{eqnarray}
 {\Upsilon}_f^e &=&
-\int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}f}}{\partial x} k \frac{\partial {\color{Violet}T}^h}{\partial x} dx \nn\\
+\int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}f}}{\partial x} k 
+\frac{\partial {\color{Violet}T}^h}{\partial x} dx \nn\\
 &=&
-\int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}f}}{\partial x} k \frac{\partial  ({\color{Violet}N}_{k}^\theta(x) T_k 
-+ {\color{Violet}N}_{k+1}^\theta(x) T_{k+1} ) }{\partial x} dx  \nn\\
+\int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}f}}{\partial x} k \frac{\partial  
+({\color{Violet}\bN}_{k}^\uptheta(x) T_k 
++ {\color{Violet}\bN}_{k+1}^\uptheta(x) T_{k+1} ) }{\partial x} dx  \nn\\
 %&=&
 %\int_{x_k}^{x^{k+1}} \left( \frac{\partial {\color{blue}f}}{\partial x}  \frac{\partial  {\color{blue}N}_{k} } {\partial x}  T_k 
 %+ \frac{\partial {\color{blue}f}}{\partial x}  \frac{\partial  {\color{blue}N}_{k+1} } {\partial x}  T_{k+1} \right)  dx \nn\\
 &=&
-\left( \int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}f}}{\partial x}  k \frac{\partial  {\color{Violet}N}_{k}^\theta } {\partial x}  dx \right)  T_k 
-+ \left( \int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}f}}{\partial x}  k \frac{\partial  {\color{Violet}N}_{k+1}^\theta } {\partial x} dx \right) T_{k+1}  \nn
+\left( \int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}f}}{\partial x}  
+k \frac{\partial  {\color{Violet}\bN}_{k}^\uptheta } {\partial x}  dx \right)  T_k 
++ \left( \int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}f}}{\partial x}  
+k \frac{\partial  {\color{Violet}\bN}_{k+1}^\uptheta } {\partial x} dx \right) T_{k+1}  \nn
 \end{eqnarray}
-Taking ${\color{Violet}f}(x)={\color{Violet}N}_k^\theta(x)$ 
+Taking ${\color{Violet}f}(x)={\color{Violet}\bN}_k^\uptheta(x)$ 
 \[
-{\Upsilon}_{N_k^\theta}^e=
+{\Upsilon}_{\bN_k^\uptheta}^e=
 %\int_{x_k}^{x^{k+1}} \frac{\partial {\color{blue}f}}{\partial x} \frac{\partial {\color{blue}T}}{\partial x} dx
-  \left( \int_{x_k}^{x^{k+1}} k\frac{\partial {\color{Violet}N}_k^\theta}{\partial x}  \frac{\partial  {\color{Violet}N}_{k}^\theta } {\partial x}  dx \right)  T_k 
-+ \left( \int_{x_k}^{x^{k+1}} k\frac{\partial {\color{Violet}N}_k^\theta}{\partial x}  \frac{\partial  {\color{Violet}N}_{k+1}^\theta } {\partial x} dx \right) T_{k+1}  \nn
+\left( \int_{x_k}^{x^{k+1}} k\frac{\partial {\color{Violet}\bN}_k^\uptheta}{\partial x}  
+\frac{\partial  {\color{Violet}\bN}_{k}^\uptheta } {\partial x}  dx \right)  T_k 
++ \left( \int_{x_k}^{x^{k+1}} k\frac{\partial {\color{Violet}\bN}_k^\uptheta}{\partial x}  
+\frac{\partial  {\color{Violet}\bN}_{k+1}^\uptheta } {\partial x} dx \right) T_{k+1}  \nn
 \]
-Taking ${\color{Violet}f}(x)={\color{Violet}N}_{k+1}^\theta(x)$ 
+Taking ${\color{Violet}f}(x)={\color{Violet}\bN}_{k+1}^\theta(x)$ 
 \[
-{\Upsilon}_{N_{k+1}^\theta}^e=
+{\Upsilon}_{\bN_{k+1}^\uptheta}^e=
 %\int_{x_k}^{x^{k+1}} \frac{\partial {\color{blue}f}}{\partial x} \frac{\partial {\color{blue}T}}{\partial x} dx
 %=
-  \left( \int_{x_k}^{x^{k+1}} k\frac{\partial {\color{Violet}N}_{k+1}^\theta}{\partial x}  \frac{\partial  {\color{Violet}N}_{k}^\theta } {\partial x}  dx \right)  T_k 
-+ \left( \int_{x_k}^{x^{k+1}} k\frac{\partial {\color{Violet}N}_{k+1}^\theta}{\partial x}  \frac{\partial  {\color{Violet}N}_{k+1}^\theta } {\partial x} dx \right) T_{k+1}  \nn
+\left( \int_{x_k}^{x^{k+1}} k\frac{\partial {\color{Violet}\bN}_{k+1}^\uptheta}{\partial x}  
+\frac{\partial  {\color{Violet}\bN}_{k}^\uptheta } {\partial x}  dx \right)  T_k 
++ 
+\left( \int_{x_k}^{x^{k+1}} k\frac{\partial {\color{Violet}\bN}_{k+1}^\uptheta}{\partial x}  
+\frac{\partial  {\color{Violet}\bN}_{k+1}^\uptheta } {\partial x} dx \right) T_{k+1}  \nn
 \]
 
 
 \[
 \left(
 \begin{array}{cc}
- {\Upsilon}_{N_k^\theta}^e \\ \\ {\Upsilon}_{N_{k+1}^\theta}^e
+{\Upsilon}_{\bN_k^\uptheta}^e \\ \\ 
+{\Upsilon}_{\bN_{k+1}^\uptheta}^e
 \end{array}
 \right)
 =
 \left(
 \begin{array}{cc}
-\int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}N}_k^\theta}{\partial x} k \frac{\partial  {\color{Violet}N}_{k}^\theta } {\partial x}  dx & 
-\int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}N}_k^\theta}{\partial x} k \frac{\partial  {\color{Violet}N}_{k+1}^\theta } {\partial x} dx 
+\int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}\bN}_k^\uptheta}{\partial x} 
+k \frac{\partial  {\color{Violet}\bN}_{k}^\uptheta } {\partial x}  dx & 
+\int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}\bN}_k^\uptheta}{\partial x} 
+k \frac{\partial  {\color{Violet}\bN}_{k+1}^\uptheta } {\partial x} dx 
 \\ \\
-\int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}N}_{k+1}^\theta}{\partial x} k \frac{\partial  {\color{Violet}N}_{k}^\theta } {\partial x}  dx & 
-\int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}N}_{k+1}^\theta}{\partial x} k \frac{\partial  {\color{Violet}N}_{k+1}^\theta } {\partial x} dx 
+\int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}\bN}_{k+1}^\uptheta}{\partial x} 
+k \frac{\partial  {\color{Violet}\bN}_{k}^\uptheta } {\partial x}  dx & 
+\int_{x_k}^{x^{k+1}} \frac{\partial {\color{Violet}\bN}_{k+1}^\uptheta}{\partial x} 
+k \frac{\partial  {\color{Violet}\bN}_{k+1}^\uptheta } {\partial x} dx 
 \end{array}
 \right)
 \cdot
@@ -288,7 +321,8 @@ or,
 \[
 \left(
 \begin{array}{cc}
- {\Upsilon}_{N_k^\theta}^e \\ \\ {\Upsilon}_{N_{k+1}^\theta}^e
+{\Upsilon}_{\bN_k^\uptheta}^e \\ \\ 
+{\Upsilon}_{\bN_{k+1}^\uptheta}^e
 \end{array}
 \right)
 =
@@ -297,11 +331,15 @@ or,
 k
 \left(
 \begin{array}{cc}
-\frac{\partial {\color{Violet}N}_k^\theta}{\partial x}  \frac{\partial  {\color{Violet}N}_{k}^\theta } {\partial x}   & 
-\frac{\partial {\color{Violet}N}_k^\theta}{\partial x}  \frac{\partial  {\color{Violet}N}_{k+1}^\theta } {\partial x}  
+\frac{\partial {\color{Violet}\bN}_k^\uptheta}{\partial x}  \frac{\partial  
+{\color{Violet}\bN}_{k}^\uptheta } {\partial x}   & 
+\frac{\partial {\color{Violet}\bN}_k^\uptheta}{\partial x}  \frac{\partial  
+{\color{Violet}\bN}_{k+1}^\uptheta } {\partial x}  
 \\ \\
-\frac{\partial {\color{Violet}N}_{k+1}^\theta}{\partial x}  \frac{\partial  {\color{Violet}N}_{k}^\theta } {\partial x}   & 
-\frac{\partial {\color{Violet}N}_{k+1}^\theta}{\partial x}  \frac{\partial  {\color{Violet}N}_{k+1}^\theta } {\partial x}  
+\frac{\partial {\color{Violet}\bN}_{k+1}^\uptheta}{\partial x}  \frac{\partial  
+{\color{Violet}\bN}_{k}^\uptheta } {\partial x}   & 
+\frac{\partial {\color{Violet}\bN}_{k+1}^\uptheta}{\partial x}  \frac{\partial  
+{\color{Violet}\bN}_{k+1}^\uptheta } {\partial x}  
 \end{array}
 \right)
 dx
@@ -318,8 +356,8 @@ Finally, we can define the vector
 {\vec {\color{Violet}B}}^T=
 \left(
 \begin{array}{cc}
- \frac{\partial {\color{Violet}N}_k^\theta}{\partial x}   \\ \\
- \frac{\partial {\color{Violet}N}_{k+1}^\theta}{\partial x}
+\frac{\partial {\color{Violet}\bN}_k^\uptheta}{\partial x}   \\ \\
+\frac{\partial {\color{Violet}\bN}_{k+1}^\uptheta}{\partial x}
 \end{array}
 \right)
 \]
@@ -327,18 +365,22 @@ so that
 \[
 \left(
 \begin{array}{cc}
- {\Upsilon}_{N_k^\theta}^e \\ \\ {\Upsilon}_{N_{k+1}^\theta}^e
+{\Upsilon}_{\bN_k^\uptheta}^e \\ \\ 
+{\Upsilon}_{\bN_{k+1}^\uptheta}^e
 \end{array}
 \right)
 =
-\left( \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}B}}^T k {\vec {\color{Violet}B}} dx  \right) \cdot {\vec T}^e
+\left( \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}B}}^T 
+k {\vec {\color{Violet}B}} dx  \right) \cdot {\vec T}^e
 \]
 
 The weak form discretised over 1 element becomes
 \[
-\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}N}}^T \rho C_p {\vec {\color{Violet}N}} dx  \right) }_{\bm M^e} \cdot \dot{\vec T}^e
+\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}\bN}}^T 
+\rho C_p {\vec {\color{Violet}\bN}} dx  \right) }_{\bm M^e} \cdot \dot{\vec T}^e
 +
-\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}B}}^T k {\vec {\color{Violet}B}} dx  \right)}_{{\bm K}_d^e} \cdot {\vec T}^e
+\underbrace{\left( \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}B}}^T k 
+{\vec {\color{Violet}B}} dx  \right)}_{{\bm K}_d^e} \cdot {\vec T}^e
 =0
 \]
 or,
@@ -354,7 +396,8 @@ or,
 }
 \]
 ${\bm M}^e$ is commonly called the {\color{olive}mass matrix}, or capacitance matrix \cite[p103]{reddybook2}.
-Note that the matrices are not coloured: the $x$ dependence has disappeared when the integration was carried out.
+Note that the matrices are not coloured: the $x$ dependence has disappeared when 
+the integration was carried out.
 \index{general}{Mass Matrix}\index{general}{Capacitance Matrix}
 
 
@@ -377,7 +420,7 @@ or,
 \]
 with 
 \[
-{\bm M}^e=  \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}N}}^T \rho C_p {\vec {\color{Violet}N}} dx  
+{\bm M}^e=  \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}\bN}}^T \rho C_p {\vec {\color{Violet}\bN}} dx  
 \quad\quad\quad
 {\bm K}_d^e =
  \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}B}}^T k {\vec {\color{Violet}B}} dx 
@@ -389,14 +432,14 @@ with
 Let us compute ${\bm M}^e$ for an element:
 \[
 {\bm M}^e
-= \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}N}}^T \rho C_p {\vec {\color{Violet}N}} dx  
+= \int_{x_k}^{x_{k+1}}   {\vec {\color{Violet}\bN}}^T \rho C_p {\vec {\color{Violet}\bN}} dx  
 =
 \left(
 \begin{array}{cc}
-\int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}N}_k^\theta {\color{Violet}N}_{k}^\theta dx   
-&  \int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}N}_k^\theta {\color{Violet}N}_{k+1}^\theta dx \\ \\
-\int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}N}_{k+1}^\theta {\color{Violet}N}_{k}^\theta dx  
-&  \int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}N}_{k+1}^\theta {\color{Violet}N}_{k+1}^\theta dx 
+\int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}\bN}_k^\uptheta {\color{Violet}\bN}_{k}^\uptheta dx   
+&  \int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}\bN}_k^\uptheta {\color{Violet}\bN}_{k+1}^\uptheta dx \\ \\
+\int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}\bN}_{k+1}^\uptheta {\color{Violet}\bN}_{k}^\uptheta dx  
+&  \int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}\bN}_{k+1}^\uptheta {\color{Violet}\bN}_{k+1}^\uptheta dx 
 \end{array}
 \right)
 =
@@ -409,10 +452,11 @@ M_{21} & M_{22}
 \]
 with 
 \[
-{\vec {\color{Violet}N}}^T = 
+{\vec {\color{Violet}\bN}}^T = 
 \left(
 \begin{array}{c}
-{\color{Violet}N}_k^\theta(x)  \\ \\  {\color{Violet}N}_{k+1}^\theta(x)
+{\color{Violet}\bN}_k^\uptheta(x)  \\ \\  
+{\color{Violet}\bN}_{k+1}^\uptheta(x)
 \end{array}
 \right)
 =
@@ -426,7 +470,8 @@ with
 We only need to compute 3 integrals since $M_{12}=M_{21}$.
 Let us start with $M_{11}$:
 \[
-M_{11}=\int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}N}_k^\theta(x) {\color{Violet}N}_{k}^\theta(x) dx
+M_{11}=\int_{x_k}^{x_{k+1}} \rho C_p {\color{Violet}\bN}_k^\uptheta(x) 
+{\color{Violet}\bN}_{k}^\uptheta(x) dx
 =   
 \int_{x_k}^{x_{k+1}} \rho C_p 
 \frac{x_{k+1}-x}{h_x}  
@@ -493,35 +538,35 @@ Finally
 \]
 In the new coordinate system, the {\color{olive}basis functions} 
 \[
-{\color{Violet}N}_k^\theta(x) = \frac{x_{k+1}-x}{h_x} 
+{\color{Violet}\bN}_k^\uptheta(x) = \frac{x_{k+1}-x}{h_x} 
 \quad
 \quad
 \quad
-{\color{Violet}N}_{k+1}^\theta(x) = \frac{x-x_k}{h_x} 
+{\color{Violet}\bN}_{k+1}^\uptheta(x) = \frac{x-x_k}{h_x} 
 \]
 become 
 \[
-{\color{Violet}N}_k^\theta(r) = \frac{1}{2} (1-r)
+{\color{Violet}\bN}_k^\uptheta(r) = \frac{1}{2} (1-r)
 \quad
 \quad
 \quad
-{\color{Violet}N}_{k+1}^\theta(r) = \frac{1}{2} (1+r)
+{\color{Violet}\bN}_{k+1}^\uptheta(r) = \frac{1}{2} (1+r)
 \]
 Also, 
 \[
-\frac{\partial {\color{Violet}N}_k^\theta}{\partial x} = - \frac{1}{h_x} 
+\frac{\partial {\color{Violet}\bN}_k^\uptheta}{\partial x} = - \frac{1}{h_x} 
 \quad
 \quad
 \quad
-\frac{\partial {\color{Violet}N}_{k+1}^\theta}{\partial x} = \frac{1}{h_x} 
+\frac{\partial {\color{Violet}\bN}_{k+1}^\uptheta}{\partial x} = \frac{1}{h_x} 
 \]
 so that 
 \[
 {\vec {\color{Violet}B}}^T=
 \left(
 \begin{array}{cc}
- \frac{\partial {\color{Violet}N}_k^\theta}{\partial x}   \\ \\
- \frac{\partial {\color{Violet}N}_{k+1}^\theta}{\partial x}
+ \frac{\partial {\color{Violet}\bN}_k^\uptheta}{\partial x}   \\ \\
+ \frac{\partial {\color{Violet}\bN}_{k+1}^\uptheta}{\partial x}
 \end{array}
 \right)
 =
@@ -574,7 +619,8 @@ so that python programmers can benchmark their code against this simple example}
 \end{center}
 For each element we have 
 \[
-\underbrace{( {\bm M}^e +  {\bm K}_d^e \; \delta t )}_{\bm A^{e}} \cdot {\vec T}^{new} =  \underbrace{{\bm M}^e \cdot  {\vec T}^{old} }_{\vec b^{e}}
+\underbrace{( {\bm M}^e +  {\bm K}_d^e \; \delta t )}_{\bm A^{e}} \cdot {\vec T}^{new} =  
+\underbrace{{\bm M}^e \cdot  {\vec T}^{old} }_{\vec b^{e}}
 \]
 with 
 \[

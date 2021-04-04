@@ -1,7 +1,9 @@
 
 This format seems to be the universally accepted format for 2D and 3D visualisation in 
-Computational Geodynamics. Such files can be opened with free softwares such as 
-Paraview \footnote{https://www.paraview.org/}, MayaVi \footnote{https://docs.enthought.com/mayavi/mayavi/}
+Computational Geodynamics (and even CFD ?). Such files can be opened with open source 
+softwares such as 
+Paraview \footnote{https://www.paraview.org/}, 
+MayaVi \footnote{https://docs.enthought.com/mayavi/mayavi/}
 or Visit \footnote{https://wci.llnl.gov/simulation/computer-codes/visit/}.
 
 Unfortunately it is my experience that no simple tutorial exists about how to build 
@@ -10,7 +12,7 @@ format\footnote{https://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf}
 but it delivers the information in a convoluted way. I therefore describe hereafter 
 how \fieldstone{} builds the vtk files. 
 
-I hereunder show vtk file corresponding to the 3x2 grid presented earlier \ref{subsection_meshes}.
+I hereunder show vtk file corresponding to a 3x2 grid made of linear elements.
 In this particular example there are:
 \begin{itemize}
 \item 12 nodes and 6 elements
@@ -19,7 +21,7 @@ In this particular example there are:
 \end{itemize}
 Note that vtk files are inherently 3D so that even in the case of a 2D simulation the $z$-coordinate 
 of the points and for instance their $z$-velocity component must be provided.
-The file, usually called {\sl solution.vtu} starts with a header:
+The file, usually called {\filenamefont solution.vtk} starts with a header:
 
 \lstinputlisting[language=python,firstline=1,lastline=3]{images/vtk/solution.vtu}
 
@@ -52,5 +54,9 @@ The file is then closed with
 The {\sl solution.vtu} file can then be opened with ParaView, MayaVi or Visit and the reader 
 is advised to find tutorials online on how to install and use these softwares. 
 
-
+\begin{center}
+\includegraphics[width=4cm]{images/vtk/grid}
+\includegraphics[width=4cm]{images/vtk/vel}
+\includegraphics[width=4cm]{images/vtk/press}
+\end{center}
 

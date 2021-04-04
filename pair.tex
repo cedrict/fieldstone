@@ -216,8 +216,8 @@ A $P_1\times P_1$ version of it is used in \cite{kahp20}.
 \label{pair:mini}
 
 The \index{general}{MINI element} MINI element was first introduced in Arnold \etal, 1984 \cite{arbf84}.
-It is also discussed in section 3.6.1 of \cite{john16}.
-It is schematically represented hereunder:
+It is also discussed in section 3.6.1 of John \cite{john16}.
+It is schematically represented as follows:
 
 \begin{center}
 \includegraphics[width=8cm]{images/mini/minielement}\\
@@ -225,31 +225,37 @@ It is schematically represented hereunder:
 \end{center}
 
 \begin{remark}
-Note that \cite{frol03} propose an equal-order-linear-continuous velocity-pressure variables which is enriched 
-with velocity {\it and} pressure bubble functions to model the Stokes problem. They show by static condensation that
-these bubble functions give rise to a stabilized method involving least-squares forms of the momentum and of the
-continuity equations. In some cases their approach recovers the MINI element. Also check \cite{gamt08}.
+Note that Franca \& Oliveira (2003) \cite{frol03} propose an equal-order-linear-continuous 
+velocity-pressure variables which is enriched 
+with velocity {\it and} pressure bubble functions to model the Stokes problem. 
+They show by static condensation that
+these bubble functions give rise to a stabilized method involving least-squares forms of 
+the momentum and of the
+continuity equations. In some cases their approach recovers 
+the MINI element. Also check Ganesan \etal (2008) \cite{gamt08}.
 \end{remark}
 
 \begin{remark}
-According to Braess\cite{braess}, since the support of the bubble is restricted to the element, 
+As explained in Braess \cite{braess}, since the support of the bubble is restricted to the element, 
 the associated variable (dofs living on the bubble) can be eliminated from the resulting 
 system of linear equations by static condensation. \index{general}{Static Condensation}
 Also, the MINI element is cheaper than the Taylor-Hood element but it is commonly accepted
 that it yields a poorer approximation of the pressure.
 \end{remark}
 
-The 3D MINI element is not very common but it is used for instance in \cite{pico98}.
-It is also said to be LBB stable in \cite[p180]{reddybook2}.
+The 3D MINI element is not very common but it is used for instance in Pichelin \& Coupez (1998) 
+\cite{pico98}. It is also said to be LBB stable in Reddy \cite[p180]{reddybook2}.
 
 \begin{center}
-\includegraphics[width=10cm]{images/mini/mini3D}\\
+\includegraphics[width=8cm]{images/mini/mini3D}\\
 {\captionfont Velocity and pressure nodes for the 3D MINI element, taken from \cite{pico98}}
 \end{center}
 
-Note that this element is used in \cite{brwr00} in the context of Arbitrary Lagrangian Eulerian 
-finite element analysis of free surface flows.
-Also used in Zlotnik \etal (2007) \cite{zldf07} for suduction with X-FEM technique.
+Note that this element is used in Braess \& Wriggers (2000) \cite{brwr00} 
+in the context of Arbitrary Lagrangian Eulerian 
+finite element analysis of free surface flows, and also 
+in Zlotnik \etal (2007) \cite{zldf07} for subduction with X-FEM technique. 
+\index{general}{X-FEM}
 
 
 
@@ -416,16 +422,15 @@ TerraNeo code uses stabilised with PSPG \cite{babd20}.
 
 \begin{itemize}
 \item $P_1\times P_0$: example 3.70 in \cite{john16}, also \cite{john98}. \index{general}{$P_1\times P_0$}
-\item Q2P0: \index{general}{$Q_2 \times P_0$}: 
+\item $Q_2\times P_0$: \index{general}{$Q_2 \times P_0$}: 
 Quadratic velocities, constant pressure. The element satisfies the inf-sup condition, but the constant pressure assumption may require fine discretisation.
 
-\item Q2Q2: This element is never used, probably because a) it is unstable, b) it is very costly. 
+\item $Q_2\times Q_2$: This element is never used, probably because a) it is unstable, b) it is very costly. 
 There is one reference to it in \cite{hufb86}.
-\item Q1P-1 Bilinear velocities,  piecewise linear discontinuous polynomial pressure.
+\item $Q_1\times P_{-1}$ Bilinear velocities,  piecewise linear discontinuous polynomial pressure.
 \item See Fortin \cite{fort81} for various stable low order elements other than the enriched $Q_1^+ \times P_0$
-\item Stable cheapest nonconforming finite elements for the Stokes equations \cite{kiys16}
-\item Q1Q1 + nonconforming null edge average \cite{fros07}
-\item P3-P2 mentioned in \cite{sten90}   \index{general}{$P_3\times P_2 element$}
+\item $Q_1\times Q_1$ + nonconforming null edge average \cite{fros07}
+\item $P_3\times P_2$ mentioned in \cite{sten90}   \index{general}{$P_3\times P_2 element$}
 
 \end{itemize}
 

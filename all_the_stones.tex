@@ -1,4 +1,110 @@
 
+\newpage
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{
+Naming convention
+\label{f00}}
+\addcontentsline{toc}{section}{\protect\numberline{} 
+Naming convention
+}
+
+These have evolved in the first two years so that the early stones may not 
+follow these conventions (yet).
+
+\begin{tabular}{p{2cm}p{12cm}}
+\hline
+Variable & meaning \\
+\hline
+\hline
+{\tt mV}    & number $m_\upnu$ of velocity nodes in the element \\
+{\tt mP}    & number $m_p$ of pressure nodes in the element \\
+{\tt mT}    & number $m_T$ of temperature nodes in the element \\
+{\tt ndofV} & number of velocity degrees of freedom per velocity node \\
+{\tt ndofP} & number of pressure degrees of freedom per pressure node \\
+{\tt NV}    & total number of velocity nodes \\
+{\tt NfemV} & total number of velocity degrees of freedom \\
+{\tt NfemP} & total number of pressure degrees of freedom \\
+{\tt Nfem}  & total number of degrees of freedom \\
+{\tt nelx,nely,nelz} & number of elements in each direction \\
+{\tt nel}   & total number of elements \\
+{\tt nqel}  & number of quadrature points per element \\
+{\tt xq,yq,zq} & coordinates of a quadrature point \\
+{\tt uq,vq,wq} & velocity at a quadrature point \\
+{\tt pq}   & pressure at a quadrature point \\
+{\tt etaq} & viscosity value at a quadrature point \\
+{\tt rhoq} & density value at a quadrature point \\
+{\tt dt}   & time step $\delta t$\\ 
+{\tt gx,gy,gz} & components of the gravity vector \\
+{\tt jcob} & determinant of the Jacobian matrix \\
+\hline
+\end{tabular}
+
+\vspace{.5cm}
+
+\begin{tabular}{p{3.5cm}p{10.5cm}}
+\hline
+Array & meaning \\
+\hline
+\hline
+{\tt iconV} & connectivity array for velocity nodes \\
+{\tt iconP} & connectivity array for pressure nodes \\
+{\tt qcoords\_r} & contains the $r$ coordinates of the {\tt nel} quadrature points \\
+{\tt qcoords\_s} & contains the $s$ coordinates of the {\tt nel} quadrature points \\
+{\tt qcoords\_t} & contains the $t$ coordinates of the {\tt nel} quadrature points \\
+{\tt qweights} & contains the weights associated to the {\tt nel} quadrature points \\
+{\tt xV,yV,zV} & coordinates of the {\tt NV} velocity nodes \\
+{\tt xP,yP,zP} & coordinates of the {\tt NP} pressure nodes \\
+{\tt bc\_fix} & boolean array of size {\tt NfemV}. Is true if a boundary condition
+                is specify at a dof \\
+{\tt bc\_val} & value of the boundary condition at a given dof \\
+{\tt u,v,w} & velocity components \\ 
+{\tt p} & pressure \\ 
+{\tt q} & pressure projected onto the velocity nodes\\
+{\tt NNNV} & velocity basis functions values at a quadrature point \\
+{\tt dNNNVdr} & velocity basis functions derivatives values at a quadrature point \\
+{\tt dNNNVds} & velocity basis functions derivatives values at a quadrature point \\
+{\tt dNNNVdt} & velocity basis functions derivatives values at a quadrature point \\
+{\tt NNNP} & pressure basis functions values at a quadrature point \\
+{\tt b\_mat} & elemental gradient matrix ${\bm B}$ \\
+{\tt K\_el}  & elemental stiffness matrix $\K_{el}$ \\
+{\tt G\_el}  & elemental gradient matrix $\G_{el}$ \\
+{\tt N\_mat}  & elemental ${\bm N}$ matrix \\
+{\tt a\_mat}  & fully assembled Stokes matrix \\
+{\tt A\_sparse} & Stokes matrix in {\tt lil\_matrix} format \\
+{\tt exx,eyy,exy,...} & components of the strain rate tensor (elemental or nodal array)\\
+{\tt tauxx,tauyy,tauxy,...} & components of the deviatoric stress tensor (elemental or nodal array)\\
+{\tt jcb} & 2x2 or 3x3 Jacobian matrix \\
+{\tt jcbi} & inverse of the Jacobian matrix \\
+{\tt rhs} & right hand side vector \\
+{\tt sol} & solution vector returned by the solver\\
+\hline
+\end{tabular}
+
+\vspace{.5cm}
+
+\begin{tabular}{p{2cm}p{12cm}}
+\hline
+Function & meaning \\
+\hline
+{\tt NNV}    & function which returns the value of all velocity basis functions 
+               ${\cal N}_i^\upnu$ at a given location\\
+{\tt dNNVdr} & function which returns the value of all velocity basis functions 
+               ${\cal N}_i^\upnu$ derivative with respect to $r$ at a given location\\
+{\tt dNNVds} & function which returns the value of all velocity basis functions 
+               ${\cal N}_i^\upnu$ derivative with respect to $s$ at a given location\\
+{\tt dNNVdt} & function which returns the value of all velocity basis functions 
+               ${\cal N}_i^\upnu$ derivative with respect to $t$ at a given location\\
+{\tt NNP}    & function which returns the value of all pressure basis functions 
+               ${\cal N}_i^P$ at a given location\\
+{\tt bx} & \\
+{\tt by} & \\
+{\tt bz} & \\
+\hline
+\end{tabular}
+
+
+
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{
 Stone 00: mesh generation in 1D, 2D, 3D 
@@ -713,10 +819,10 @@ Stone 78: $Q_1\times P_0$ macro-element
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{
-Stone 79: Discontinuous Galerkin in 2D - steady state diffusion 
+Stone 79: 2D steady state diffusion with DG-FEM  
 \label{f79}}
 \addcontentsline{toc}{section}{\protect\numberline{} 
-Stone 79: Discontinuous Galerkin in 2D - steady state diffusion 
+Stone 79: 2D steady state diffusion with DG-FEM
 }
 \input{python_codes/fieldstone_79/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -881,7 +987,6 @@ Stone 97: using the CRUST 1.0 dataset
 Stone 97: using the CRUST 1.0 dataset 
 }
 \input{python_codes/fieldstone_97/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{

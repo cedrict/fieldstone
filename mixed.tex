@@ -1,9 +1,11 @@
 \index{general}{Mixed Formulation}
 \begin{flushright} {\tiny {\color{gray} mixed.tex}} \end{flushright}
 
-\subsubsection{in three dimensions}
+\subsubsection{In three dimensions}
 
-In what follows the flow is assumed to be \underline{incompressible}, 
+The FEM formulation of the Stokes equation is quite complex so 
+we simplify things as much as possible for now by 
+assuming the flow to be \underline{incompressible}, 
 \underline{isoviscous} and \underline{isothermal}. 
 
 The methodology to derive the discretised equations of the mixed system is 
@@ -13,14 +15,14 @@ velocity and pressure at the same time, and that we therefore must solve
 the mass and momentum conservation equations together.
 As before, velocity inside an element is given by 
 \begin{equation}
-{\vec \upnu}^h({\vec r})=\sum_{i=1}^{m_v} N_i^\upnu({\vec r})\;  {\vec \upnu}_i
+{\vec \upnu}^h({\vec r})=\sum_{i=1}^{m_v} \bN_i^\upnu({\vec r})\;  {\vec \upnu}_i
 \label{mixed01}
 \end{equation}
 where $N_i^{\upnu}$ are the polynomial basis functions for the velocity,
-and the summation runs over the $m_v$ nodes composing the element.
+and the summation runs over the $m_v$ velocity nodes composing the element.
 A similar expression is used for pressure:
 \begin{equation}
-p^h({\vec r})=\sum_{i=1}^{m_p} N_i^p({\vec r}) \; p_i
+p^h({\vec r})=\sum_{i=1}^{m_p} \bN_i^p({\vec r}) \; p_i
 \label{mixed02}
 \end{equation}
 Note that the velocity is a vector of size while pressure (and temperature)
@@ -30,26 +32,27 @@ It is also very important to remember that the numbers of
 velocity nodes and pressure nodes for a given element 
 are more often than not different and that velocity and pressure
 nodes need not be colocated. Indeed, unless 
-co-called 'stabilised elements' are used, we have $m_v>m_p$, which 
+so-called 'stabilised elements' are used, we have $m_v>m_p$, which 
 means that the polynomial order of the velocity field is higher than 
 the polynomial order of the pressure field (usually by value 1).
 
-\todo[inline]{insert here link(s) to manual and literature} 
-
-Other notations are sometimes used for Eqs.(\ref{mixed01}) and (\ref{mixed02}):
+Other notations will be sometimes used for Eqs.~\eqref{mixed01} and \eqref{mixed02}:
 \begin{equation}
-u^h({\vec r}) = \vec{N}^\upnu \cdot \vec{u}
+u^h({\vec r}) = \vec{\bN}^\upnu \cdot \vec{u}
 \quad\quad\quad\quad
-v^h({\vec r}) = \vec{N}^\upnu \cdot \vec{v}
+v^h({\vec r}) = \vec{\bN}^\upnu \cdot \vec{v}
 \quad\quad\quad\quad
-w^h({\vec r}) = \vec{N}^\upnu \cdot \vec{w}
+w^h({\vec r}) = \vec{\bN}^\upnu \cdot \vec{w}
 \quad\quad\quad\quad
-p^h({\vec r}) = \vec{N}^p \cdot \vec{p}
+p^h({\vec r}) = \vec{\bN}^p \cdot \vec{p}
 \end{equation} 
-where ${\vec \upnu}=(u,v,w)$ and $\vec{N}^\upnu$ is the vector containing all basis functions evaluated at location ${\vec r}$:
+where ${\vec \upnu}=(u,v,w)$ and $\vec{\bN}^\upnu$ is the vector containing 
+all basis functions evaluated at location ${\vec r}$:
 \begin{eqnarray}
-\vec{N}^v &=& \left( N_1^\upnu({\vec r}),  N_2^\upnu({\vec r}),  N_3^\upnu({\vec r}), \dots  N_{m_v}^\upnu({\vec r}) \right) \\
-\vec{N}^p &=& \left( N_1^p({\vec r}),  N_2^p({\vec r}),  N_3^p({\vec r}), \dots  N_{m_p}^p({\vec r}) \right)
+\vec{\bN}^v &=& \left( \bN_1^\upnu({\vec r}),  \bN_2^\upnu({\vec r}),  
+\bN_3^\upnu({\vec r}), \dots  \bN_{m_v}^\upnu({\vec r}) \right) \\
+\vec{\bN}^p &=& \left( \bN_1^p({\vec r}),  \bN_2^p({\vec r}),  
+\bN_3^p({\vec r}), \dots  \bN_{m_p}^p({\vec r}) \right)
 \end{eqnarray}
 and with 
 \begin{eqnarray}
@@ -64,28 +67,33 @@ We start again from
 {\vec \nabla}\cdot {\bm \sigma} + {\vec b} &=& {\vec 0} \\
 {\vec \nabla}\cdot {\vec v} &=& 0
 \end{eqnarray}
-For the $N_i^\upnu$'s and $N_i^p$ 'regular enough', we can write:
+For the $\bN_i^\upnu$'s and $\bN_i^p$ 'regular enough', we can write:
 \begin{eqnarray}
-\int_{\Omega_e} N_i^\upnu {\vec \nabla}\cdot {\bm \sigma} d\Omega + \int_{\Omega_e} N_i^\upnu  {\vec b} \; d\Omega 
+\int_{\Omega_e} \bN_i^\upnu {\vec \nabla}\cdot {\bm \sigma}\;  dV
++ \int_{\Omega_e} \bN_i^\upnu  {\vec b} \; dV
 &=& \vec 0 \\
-\int_{\Omega_e} N_i^p {\vec \nabla}\cdot {\vec v} d\Omega &=& 0
+\int_{\Omega_e} \bN_i^p {\vec \nabla}\cdot {\vec v} \; dV &=& 0
 \end{eqnarray}
 We can integrate by parts and drop the surface term\footnote{We will come back to this at a later stage}:
 \begin{eqnarray}
-\int_{\Omega_e} {\vec \nabla } N_i^\upnu \cdot {\bm \sigma} d\Omega &=& \int_{\Omega_e} N_i^\upnu  {\vec b} d\Omega \\
-\int_{\Omega_e} N_i^p {\vec \nabla}\cdot {\vec v} d\Omega &=& 0
+\int_{\Omega_e} {\vec \nabla } \bN_i^\upnu \cdot {\bm \sigma} dV
+&=& \int_{\Omega_e} \bN_i^\upnu  {\vec b} \; dV \\
+\int_{\Omega_e} \bN_i^p {\vec \nabla}\cdot {\vec v} \; dV &=& 0
 \end{eqnarray}
 or, 
 \begin{equation}
 \int_{\Omega_e} 
 \left(
 \begin{array}{cccccc}
-\frac{\partial N_i^\upnu}{\partial x} & 0 & 0& 
-\frac{\partial N_i^\upnu}{\partial y} & \frac{\partial N_i^\upnu}{\partial z} & 0\\  \\
-0 & \frac{\partial N_i^\upnu}{\partial y} & 0  & \frac{\partial N_i^\upnu}{\partial x}  & 0 &
-\frac{\partial N_i^\upnu}{\partial z}  \\ \\
-0 & 0 & \frac{\partial N_i^\upnu}{\partial z} &  0 & \frac{\partial N_i^\upnu}{\partial x} &  
-\frac{\partial N_i^\upnu}{\partial y} 
+\frac{\partial \bN_i^\upnu}{\partial x} & 0 & 0& 
+\frac{\partial \bN_i^\upnu}{\partial y} & 
+\frac{\partial \bN_i^\upnu}{\partial z} & 0\\  \\
+0 & \frac{\partial \bN_i^\upnu}{\partial y} & 0  & 
+\frac{\partial \bN_i^\upnu}{\partial x}  & 0 &
+\frac{\partial \bN_i^\upnu}{\partial z}  \\ \\
+0 & 0 & \frac{\partial \bN_i^\upnu}{\partial z} &  0 & 
+\frac{\partial \bN_i^\upnu}{\partial x} &  
+\frac{\partial \bN_i^\upnu}{\partial y} 
 \end{array}
 \right)
 \cdot
@@ -99,7 +107,7 @@ or,
 \sigma_{yz}\\
 \end{array}
 \right)
-d\Omega = \int_{\Omega_e} N_i^\upnu {\vec b} \; d\Omega 
+d\Omega = \int_{\Omega_e} \bN_i^\upnu {\vec b} \; dV
 \end{equation}
 The above equation can ultimately be written:
 \begin{equation}
@@ -114,9 +122,9 @@ The above equation can ultimately be written:
 \sigma_{yz}
 \end{array}
 \right)
-d\Omega
+dV
 =
-\int_{\Omega_e} {\vec N}_b d\Omega 
+\int_{\Omega_e} {\vec \bN}_b\; dV
 \end{equation}
 We have previously established that the strain rate 
 vector $\vec{\dot \varepsilon}$ is:
@@ -135,29 +143,35 @@ vector $\vec{\dot \varepsilon}$ is:
 =
 \left(
 \begin{array}{c}
-\sum\limits_i \frac{\partial N_i^\upnu}{\partial x} u_i \\ \\
-\sum\limits_i \frac{\partial N_i^\upnu}{\partial y} v_i \\ \\
-\sum\limits_i \frac{\partial N_i^\upnu}{\partial z} w_i \\ \\
-\sum\limits_i (\frac{\partial N_i^\upnu}{\partial y} u_i\! +\! \frac{\partial N_i^\upnu}{\partial x} v_i) \\ \\
-\sum\limits_i (\frac{\partial N_i^\upnu}{\partial z} u_i\! +\! \frac{\partial N_i^\upnu}{\partial x} w_i) \\ \\
-\sum\limits_i (\frac{\partial N_i^\upnu}{\partial z} v_i\! +\! \frac{\partial N_i^\upnu}{\partial y} w_i) 
+\sum\limits_i \frac{\partial \bN_i^\upnu}{\partial x} u_i \\ \\
+\sum\limits_i \frac{\partial \bN_i^\upnu}{\partial y} v_i \\ \\
+\sum\limits_i \frac{\partial \bN_i^\upnu}{\partial z} w_i \\ \\
+\sum\limits_i (\frac{\partial \bN_i^\upnu}{\partial y} u_i\! +\! 
+\frac{\partial \bN_i^\upnu}{\partial x} v_i) \\ \\
+\sum\limits_i (\frac{\partial \bN_i^\upnu}{\partial z} u_i\! +\! 
+\frac{\partial \bN_i^\upnu}{\partial x} w_i) \\ \\
+\sum\limits_i (\frac{\partial \bN_i^\upnu}{\partial z} v_i\! +\! 
+\frac{\partial \bN_i^\upnu}{\partial y} w_i) 
 \end{array}
 \right)
 =
 \underbrace{
 \left(
 \begin{array}{ccccccccccc}
-\frac{\partial N_1^\upnu}{\partial x} & 0 & 0 &  \cdots  & \frac{\partial N_{m_v}^\upnu}{\partial x} & 0 & 0 \\ \\
-0 & \frac{\partial N_1^\upnu}{\partial y} & 0 & \cdots & 0 & \frac{\partial N_{m_v}^\upnu}{\partial y} & 0 \\ \\
-0 & 0 & \frac{\partial N_1^\upnu}{\partial z} & \cdots & 0 & 0 & \frac{\partial N_{m_v}^\upnu}{\partial z} 
+\frac{\partial \bN_1^\upnu}{\partial x} & 0 & 0 &  \cdots  & 
+\frac{\partial \bN_{m_v}^\upnu}{\partial x} & 0 & 0 \\ \\
+0 & \frac{\partial \bN_1^\upnu}{\partial y} & 0 & \cdots & 0 & 
+\frac{\partial \bN_{m_v}^\upnu}{\partial y} & 0 \\ \\
+0 & 0 & \frac{\partial \bN_1^\upnu}{\partial z} & \cdots & 0 & 0 & 
+\frac{\partial \bN_{m_v}^\upnu}{\partial z} 
 \\ \\
-\frac{\partial N_1^\upnu}{\partial y} &  \frac{\partial N_1^\upnu}{\partial x} &  
+\frac{\partial \bN_1^\upnu}{\partial y} &  \frac{\partial \bN_1^\upnu}{\partial x} &  
 0 & \cdots  &\frac{\partial N_{m_v}^\upnu}{\partial x} 
-& \frac{\partial N_{m_v}^\upnu}{\partial x} & 0 \\ \\
-\frac{\partial N_1^\upnu}{\partial z} & 0 & \frac{\partial N_1^\upnu}{\partial x} & \cdots &
-\frac{\partial N_{m_v}^\upnu}{\partial z} & 0 & \frac{\partial N_{m_v}^\upnu}{\partial x} \\  \\
-0 &  \frac{\partial N_1^\upnu}{\partial z}  & \frac{\partial N_1^\upnu}{\partial y} & \cdots &
-0 &  \frac{\partial N_{m_v}^\upnu}{\partial z}  & \frac{\partial N_{m_v}^\upnu}{\partial y} 
+& \frac{\partial \bN_{m_v}^\upnu}{\partial x} & 0 \\ \\
+\frac{\partial \bN_1^\upnu}{\partial z} & 0 & \frac{\partial \bN_1^\upnu}{\partial x} & \cdots &
+\frac{\partial \bN_{m_v}^\upnu}{\partial z} & 0 & \frac{\partial \bN_{m_v}^\upnu}{\partial x} \\  \\
+0 &  \frac{\partial \bN_1^\upnu}{\partial z}  & \frac{\partial \bN_1^\upnu}{\partial y} & \cdots &
+0 &  \frac{\partial \bN_{m_v}^\upnu}{\partial z}  & \frac{\partial \bN_{m_v}^\upnu}{\partial y} 
 \end{array}
 \right) 
 }_{\bm B}
@@ -230,21 +244,21 @@ with
 \end{array}
 \right)  \label{eq:mixedC}
 \end{equation}
-Let us define matrix ${\bm N}^p$ of size $6\times m_p$:
+Let us define matrix ${\bm \bN}^p$ of size $6\times m_p$:
 \begin{equation}
-{\bm N}^p=
+{\bm \bN}^p=
 \left(
 \begin{array}{c}
 1 \\ 1 \\ 1 \\ 0 \\ 0 \\ 0
 \end{array}
 \right)
-\vec{N^p} 
+\vec{\bN^p} 
 =
 \left(
 \begin{array}{c}
-\vec{N^p} \\
-\vec{N^p} \\
-\vec{N^p} \\
+\vec{\bN^p} \\
+\vec{\bN^p} \\
+\vec{\bN^p} \\
 0 \\
 0 \\
 0
@@ -254,7 +268,7 @@ Let us define matrix ${\bm N}^p$ of size $6\times m_p$:
 so that
 \begin{equation}
 \vec{\sigma} 
-= - {\bm N}^p
+= - {\bm \bN}^p
  \cdot {\vec P}  + 
 {\bm C} \cdot  {\bm B}\cdot {\vec V}
 \end{equation}
@@ -262,16 +276,16 @@ finally
 \begin{equation}
 \int_{\Omega_e} {\bm B}^T \cdot 
 [
-- {\bm N}^p  \cdot {\vec P}  + {\bm C} \cdot  {\bm B}\cdot {\vec V}
+- {\bm \bN}^p  \cdot {\vec P}  + {\bm C} \cdot  {\bm B}\cdot {\vec V}
 ]
 \; d\Omega
 =
-\int_{\Omega_e} {\bm N}_b \; d\Omega 
+\int_{\Omega_e} {\bm \bN}_b \; d\Omega 
 \end{equation}
 or,
 \begin{equation}
 \underbrace{\left(-\int_{\Omega_e} {\bm B}^T \cdot 
-{\bm N}^p  
+{\bm \bN}^p  
 \; d\Omega \right)}_{\G} \cdot {\vec P} 
 +
 \underbrace{
@@ -282,61 +296,64 @@ or,
 \right)}_{\K}
 \cdot {\vec V}
 =
-\underbrace{\int_{\Omega_e} {\vec N}_b \; d\Omega }_{\vec f}
+\underbrace{\int_{\Omega_e} {\vec \bN}_b \; d\Omega }_{\vec f}
 \end{equation}
 where the matrix $\K$ is of size $(m_v*ndof_v \times m_v*ndof_v)$, 
 and matrix ${\G}$ is of size $(m_v*ndof_v \times m_p*ndof_p)$.
 Turning now to the mass conservation equation:
 \begin{eqnarray}
-\vec 0&=&\int_{\Omega_e} \vec{N}^p {\vec \nabla}\cdot {\vec v} \; d\Omega \nonumber\\
-&=& \int_{\Omega_e} \vec{N}^p \sum_{i=1}^{m_v} 
-\left( \frac{\partial N_i^\upnu}{\partial x} u_i + \frac{\partial N_i^\upnu}{\partial y} v_i 
-+ \frac{\partial N_i^\upnu}{\partial z} w_i 
+\vec 0&=&\int_{\Omega_e} \vec{\bN}^p {\vec \nabla}\cdot {\vec v} \; d\Omega \nonumber\\
+&=& \int_{\Omega_e} \vec{\bN}^p \sum_{i=1}^{m_v} 
+\left( \frac{\partial \bN_i^\upnu}{\partial x} u_i + \frac{\partial \bN_i^\upnu}{\partial y} v_i 
++ \frac{\partial \bN_i^\upnu}{\partial z} w_i 
 \right)  
 d\Omega \nonumber\\
 &=& 
 \int_{\Omega_e} 
 \left(
 \begin{array}{c}
-N_1^p \left(
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial x} u_i +
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial y} v_i +
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial z} w_i  \right) \\
-N_2^p \left(
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial x} u_i +
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial y} v_i +
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial z} w_i  \right) \\
-N_3^p \left(
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial x} u_i +
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial y} v_i +
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial z} w_i  \right) \\
+\bN_1^p \left(
+\sum\limits_{i=1}^{m_v} \frac{\partial \bN_i^\upnu}{\partial x} u_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial \bN_i^\upnu}{\partial y} v_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial \bN_i^\upnu}{\partial z} w_i  \right) \\
+\bN_2^p \left(
+\sum\limits_{i=1}^{m_v} \frac{\partial \bN_i^\upnu}{\partial x} u_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial \bN_i^\upnu}{\partial y} v_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial \bN_i^\upnu}{\partial z} w_i  \right) \\
+\bN_3^p \left(
+\sum\limits_{i=1}^{m_v} \frac{\partial \bN_i^\upnu}{\partial x} u_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial \bN_i^\upnu}{\partial y} v_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial \bN_i^\upnu}{\partial z} w_i  \right) \\
 \dots \\
-N_{m_p}^p \left(
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial x} u_i +
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial y} v_i +
-\sum\limits_{i=1}^{m_v} \frac{\partial N_i^\upnu}{\partial z} w_i  \right) 
+\bN_{m_p}^p \left(
+\sum\limits_{i=1}^{m_v} \frac{\partial \bN_i^\upnu}{\partial x} u_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial \bN_i^\upnu}{\partial y} v_i +
+\sum\limits_{i=1}^{m_v} \frac{\partial \bN_i^\upnu}{\partial z} w_i  \right) 
 \end{array}
 \right) dV \nonumber \\  %%%%%%%%%%%%%%%%%%%%%%%%%%
 &=& 
 \int_{\Omega_e} 
 \left(
 \begin{array}{cccccc}
-{N}_1^p & {N}_1^p & {N}_1^p & 0 & 0 & 0 \\\\
-{N}_2^p & {N}_2^p & {N}_2^p & 0 & 0 & 0 \\\\
-{N}_3^p & {N}_3^p & {N}_3^p & 0 & 0 & 0 \\\\
+{\bN}_1^p & {\bN}_1^p & {\bN}_1^p & 0 & 0 & 0 \\\\
+{\bN}_2^p & {\bN}_2^p & {\bN}_2^p & 0 & 0 & 0 \\\\
+{\bN}_3^p & {\bN}_3^p & {\bN}_3^p & 0 & 0 & 0 \\\\
 \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\\\
-{N}_{m_p}^p & {N}_{m_p}^p & {N}_{m_p}^p & 0 &0 & 0 
+{\bN}_{m_p}^p & {\bN}_{m_p}^p & {\bN}_{m_p}^p & 0 &0 & 0 
 \end{array}
 \right)
 \cdot
 \left(
 \begin{array}{c}
-\sum\limits_i \frac{\partial N_i^\upnu}{\partial x} u_i \\ \\
-\sum\limits_i \frac{\partial N_i^\upnu}{\partial y} v_i \\ \\
-\sum\limits_i \frac{\partial N_i^\upnu}{\partial z} w_i \\ \\
-\sum\limits_i (\frac{\partial N_i^\upnu}{\partial y} u_i\! +\! \frac{\partial N_i^\upnu}{\partial x} v_i) \\ \\
-\sum\limits_i (\frac{\partial N_i^\upnu}{\partial z} u_i\! +\! \frac{\partial N_i^\upnu}{\partial x} w_i) \\ \\
-\sum\limits_i (\frac{\partial N_i^\upnu}{\partial z} v_i\! +\! \frac{\partial N_i^\upnu}{\partial y} w_i) 
+\sum\limits_i \frac{\partial \bN_i^\upnu}{\partial x} u_i \\ \\
+\sum\limits_i \frac{\partial \bN_i^\upnu}{\partial y} v_i \\ \\
+\sum\limits_i \frac{\partial \bN_i^\upnu}{\partial z} w_i \\ \\
+\sum\limits_i (\frac{\partial \bN_i^\upnu}{\partial y} u_i\! +\! 
+\frac{\partial \bN_i^\upnu}{\partial x} v_i) \\ \\
+\sum\limits_i (\frac{\partial \bN_i^\upnu}{\partial z} u_i\! +\! 
+\frac{\partial \bN_i^\upnu}{\partial x} w_i) \\ \\
+\sum\limits_i (\frac{\partial \bN_i^\upnu}{\partial z} v_i\! +\! 
+\frac{\partial \bN_i^\upnu}{\partial y} w_i) 
 \end{array}
 \right)
 \; dV \nonumber\\ %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -345,18 +362,18 @@ N_{m_p}^p \left(
 \underbrace{
 \left(
 \begin{array}{cccccc}
-{N}_1^p & {N}_1^p & {N}_1^p & 0 & 0 & 0 \\
-{N}_2^p & {N}_2^p & {N}_2^p & 0 & 0 & 0 \\
-{N}_3^p & {N}_3^p & {N}_3^p & 0 & 0 & 0 \\
+{\bN}_1^p & {\bN}_1^p & {\bN}_1^p & 0 & 0 & 0 \\
+{\bN}_2^p & {\bN}_2^p & {\bN}_2^p & 0 & 0 & 0 \\
+{\bN}_3^p & {\bN}_3^p & {\bN}_3^p & 0 & 0 & 0 \\
 \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
-{N}_{m_p}^p & {N}_{m_p}^p & {N}_{m_p}^p & 0 &0 & 0 
+{\bN}_{m_p}^p & {\bN}_{m_p}^p & {\bN}_{m_p}^p & 0 &0 & 0 
 \end{array}
 \right)
-}_{{\bm N}^p}
+}_{{\bm \bN}^p}
 \cdot
 \vec{\dot \varepsilon} \; dV  \nonumber \\
 &=& 
-\left(\int {\bm N}^p \cdot {\bm B} \; dV \right) \cdot \vec{V} \nonumber\\
+\left(\int {\bm \bN}^p \cdot {\bm B} \; dV \right) \cdot \vec{V} \nonumber\\
 &=& -\G_e^T \cdot {\vec V}
 \end{eqnarray}
 
@@ -428,11 +445,10 @@ Note that matrix $\mathbb{K}$ is analogous to a discrete Laplacian operator, mat
 
 %--------------------------------------------------------------------------------
 \paragraph{On the physical dimensions of the Stokes matrix blocks}
-
 We start from the Stokes equations:
 
 \begin{eqnarray}
-- {\vec \nabla p} + {\vec \nabla} \cdot (2 \eta \dot{\bm \varepsilon} ) + \rho {\bm g} &=& 0  \\
+- {\vec \nabla p} + {\vec \nabla} \cdot (2 \eta \dot{\bm \varepsilon} ) + \rho \vec{g} &=& \vec{0}  \\
 \vec \nabla \cdot \vec \upnu &=& 0 
 \end{eqnarray}
 
@@ -454,22 +470,21 @@ We can then easily deduce:
 %complement $\SSS$). One can easily verify that $[\G^T \K \G]=[\C]$.
 
 %--------------------------------------------------------------------------------
-\paragraph{On elemental level mass balance.}
-
+\paragraph{On elemental level mass balance}
 Note that in what is above no assumption has been made about whether 
 the pressure basis functions are continuous or discontinuous from one 
 element to another. 
 
-Indeed, as mentioned in \cite{grsa}, since the 
+Indeed, as mentioned in Gresho \& Sani \cite{grsa}, since the 
 weak formulation of the momentum equation involves
 integration by parts of ${\vec \nabla }p$, the resulting weak form contains 
 no derivatives of pressure. This introduces the possibility of approximating it
 by functions (piecewise polynomials, of course) that are not $C^0$-continuous, 
-and indeed this has been done and is quite popular/useful. 
+and indeed this has been done and is quite popular/useful (e.g. $P_0$ or $P_{-1}$). 
 
 It is then worth noting that {\sl only} discontinuous pressure 
 elements assure an element-level mass balance \cite{grsa}:
-if for instance $N_i^p$ is piecewise-constant on element $e$ (of value 1), the 
+if for instance $\bN_i^p$ is piecewise-constant on element $e$ (of value 1), the 
 elemental weak form of the mass conservation equation is 
 \[
 \int_{\Omega_e} N_i^p {\vec \nabla} \cdot {\vec \upnu} = 
@@ -567,7 +582,7 @@ so that
 =
 {\bm C}^d \cdot \vec{\dot \varepsilon}
 \end{equation}
-which is identical to the one in the Appendix A of \cite{schm08}.
+which is identical to the one in the Appendix A of Schmalholz (2008) \cite{schm08}.
 In two dimensions, we have
 \[
 \vec\tau=\frac{1}{3}\eta 
@@ -582,9 +597,10 @@ In two dimensions, we have
 }_{{\bm C}^d}
 \cdot
 \]
-see for instance \cite{anmp15}.
+see for instance Andres-Martinez \etal (2015) \cite{anmp15}.
 
-In the case where we assume incompressible flow from the beginning, i.e. $\dot{\bm \varepsilon}=\dot{\bm \varepsilon}^d$, 
+In the case where we assume incompressible flow from the beginning, 
+i.e. $\dot{\bm \varepsilon}=\dot{\bm \varepsilon}^d$, 
 then 
 \begin{equation}
 \vec \tau  
@@ -622,16 +638,16 @@ then
 
 The momentum conservation equation can be written as follows:
 \[
-\vec\nabla\cdot( 2 \eta \vec{\dot\epsilon}) - \vec\nabla p + \vec b = \vec 0
+\vec\nabla\cdot( 2 \eta \dot{\bm \varepsilon}) - \vec\nabla p + \vec b = \vec 0
 \]
 When the viscosity $\eta$ is constant this equation becomes
 \[
 \eta \Delta \vec v - \vec\nabla p + \vec b = \vec 0
 \]
-In this case the matrix ${\bm B}$ takes a different form \cite[Eq. 6.24]{dohu03}
+In this case the matrix ${\bm B}$ takes a different form (See Donea \& Huerta \cite[Eq. 6.24]{dohu03})
 and one should be aware that this can have consequences for the Neumann boundary conditions. 
 
-In \cite{bugs09} the authors state that when the Laplacian formulation is used 
+In Burstedde \etal (2009) \cite{bugs09} the authors state that when the Laplacian formulation is used 
 it has the computational advantage that the velocity
 components are coupled only through the incompressibility condition. 
 While the two formulations are equivalent only for constant viscosity, they state 
@@ -658,30 +674,30 @@ velocity gradient tensor in a vector:
 =
 \left(
 \begin{array}{c}
-\sum_i \partial_x N_i u_i \\
-\sum_i \partial_y N_i u_i \\
-\sum_i \partial_z N_i u_i \\
-\sum_i \partial_x N_i v_i \\
-\sum_i \partial_y N_i v_i \\
-\sum_i \partial_z N_i v_i \\
-\sum_i \partial_x N_i w_i \\
-\sum_i \partial_y N_i w_i \\
-\sum_i \partial_z N_i w_i 
+\sum_i \partial_x \bN_i u_i \\
+\sum_i \partial_y \bN_i u_i \\
+\sum_i \partial_z \bN_i u_i \\
+\sum_i \partial_x \bN_i v_i \\
+\sum_i \partial_y \bN_i v_i \\
+\sum_i \partial_z \bN_i v_i \\
+\sum_i \partial_x \bN_i w_i \\
+\sum_i \partial_y \bN_i w_i \\
+\sum_i \partial_z \bN_i w_i 
 \end{array}
 \right) \nonumber\\
 &=&
 \underbrace{
 \left(
 \begin{array}{cccccccccc}
-\partial_x N_1^\upnu & 0 & 0 & \partial_x N_2^\upnu & 0 & 0 & \cdots & \partial_x N^\upnu_{m_\upnu} & 0 & 0 \\
-\partial_y N_1^\upnu & 0 & 0 & \partial_y N_2^\upnu & 0 & 0 & \cdots & \partial_y N^\upnu_{m_\upnu} & 0 & 0 \\
-\partial_z N_1^\upnu & 0 & 0 & \partial_z N_2^\upnu & 0 & 0 & \cdots & \partial_z N^\upnu_{m_\upnu} & 0 & 0 \\
-0 & \partial_x N_1^\upnu & 0 & 0& \partial_x N_2^\upnu & 0 & \cdots & 0 & \partial_x N^\upnu_{m_\upnu}  & 0 \\
-0 & \partial_y N_1^\upnu & 0 & 0& \partial_y N_2^\upnu & 0 & \cdots & 0 & \partial_y N^\upnu_{m_\upnu}  & 0 \\
-0 & \partial_z N_1^\upnu & 0 & 0& \partial_z N_2^\upnu & 0 & \cdots & 0 & \partial_z N^\upnu_{m_\upnu}  & 0 \\
-0 & 0 & \partial_x N_1^\upnu  & 0& 0& \partial_x N_2^\upnu & \cdots & 0 & 0 & \partial_x N^\upnu_{m_\upnu}  \\
-0 & 0 & \partial_y N_1^\upnu  & 0& 0& \partial_y N_2^\upnu & \cdots & 0 & 0 & \partial_y N^\upnu_{m_\upnu}  \\
-0 & 0 & \partial_z N_1^\upnu  & 0& 0& \partial_z N_2^\upnu & \cdots & 0 & 0 & \partial_z N^\upnu_{m_\upnu}  \\
+\partial_x \bN_1^\upnu & 0 & 0 & \partial_x \bN_2^\upnu & 0 & 0 & \cdots & \partial_x \bN^\upnu_{m_\upnu} & 0 & 0 \\
+\partial_y \bN_1^\upnu & 0 & 0 & \partial_y \bN_2^\upnu & 0 & 0 & \cdots & \partial_y \bN^\upnu_{m_\upnu} & 0 & 0 \\
+\partial_z \bN_1^\upnu & 0 & 0 & \partial_z \bN_2^\upnu & 0 & 0 & \cdots & \partial_z \bN^\upnu_{m_\upnu} & 0 & 0 \\
+0 & \partial_x \bN_1^\upnu & 0 & 0& \partial_x \bN_2^\upnu & 0 & \cdots & 0 & \partial_x \bN^\upnu_{m_\upnu}  & 0 \\
+0 & \partial_y \bN_1^\upnu & 0 & 0& \partial_y \bN_2^\upnu & 0 & \cdots & 0 & \partial_y \bN^\upnu_{m_\upnu}  & 0 \\
+0 & \partial_z \bN_1^\upnu & 0 & 0& \partial_z \bN_2^\upnu & 0 & \cdots & 0 & \partial_z \bN^\upnu_{m_\upnu}  & 0 \\
+0 & 0 & \partial_x \bN_1^\upnu  & 0& 0& \partial_x \bN_2^\upnu & \cdots & 0 & 0 & \partial_x \bN^\upnu_{m_\upnu}  \\
+0 & 0 & \partial_y \bN_1^\upnu  & 0& 0& \partial_y \bN_2^\upnu & \cdots & 0 & 0 & \partial_y \bN^\upnu_{m_\upnu}  \\
+0 & 0 & \partial_z \bN_1^\upnu  & 0& 0& \partial_z \bN_2^\upnu & \cdots & 0 & 0 & \partial_z \bN^\upnu_{m_\upnu}  \\
 \end{array}
 \right) 
 }_{\bm B}
@@ -710,20 +726,20 @@ and in two dimensions:
 =
 \left(
 \begin{array}{c}
-\sum_i \partial_x N_i u_i \\
-\sum_i \partial_y N_i u_i \\
-\sum_i \partial_x N_i v_i \\
-\sum_i \partial_y N_i v_i 
+\sum_i \partial_x \bN_i u_i \\
+\sum_i \partial_y \bN_i u_i \\
+\sum_i \partial_x \bN_i v_i \\
+\sum_i \partial_y \bN_i v_i 
 \end{array}
 \right)
 =
 \underbrace{
 \left(
 \begin{array}{cccccccccc}
-\partial_x N_1^\upnu & 0  & \partial_x N_2^\upnu & 0  & \cdots & \partial_x N_i^\upnu{m_\upnu} & 0 \\
-\partial_y N_1^\upnu & 0  & \partial_y N_2^\upnu & 0  & \cdots & \partial_y N_i^\upnu{m_\upnu} & 0 \\
-0 & \partial_x N_1^\upnu  & 0& \partial_x N_2^\upnu  & \cdots & 0 & \partial_x N_i^\upnu{m_\upnu}  \\
-0 & \partial_y N_1^\upnu  & 0& \partial_y N_2^\upnu  & \cdots & 0 & \partial_y N_i^\upnu{m_\upnu}  
+\partial_x \bN_1^\upnu & 0  & \partial_x \bN_2^\upnu & 0  & \cdots & \partial_x \bN_i^\upnu{m_\upnu} & 0 \\
+\partial_y \bN_1^\upnu & 0  & \partial_y \bN_2^\upnu & 0  & \cdots & \partial_y \bN_i^\upnu{m_\upnu} & 0 \\
+0 & \partial_x \bN_1^\upnu  & 0& \partial_x \bN_2^\upnu  & \cdots & 0 & \partial_x \bN_i^\upnu{m_\upnu}  \\
+0 & \partial_y \bN_1^\upnu  & 0& \partial_y \bN_2^\upnu  & \cdots & 0 & \partial_y \bN_i^\upnu{m_\upnu}  
 \end{array}
 \right) 
 }_{\bm B}
@@ -745,7 +761,7 @@ u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3 \\ \dots \\ u_{m_v} \\ v_{m_v}
 %-----------------------------------------------------------------------------------
 \paragraph{On the 'forgotten' surface terms}
 
-to finish
+FINISH write
 
 %-----------------------------------------------------------------------------------
 \paragraph{Revisiting the penalty method}
@@ -1067,7 +1083,7 @@ The velocity divergence $\vec\nabla \cdot \vec{\upnu}$ is simply the trace of $\
 = {\partial \upnu_r \over \partial r} +{\upnu_r \over r}
 +{\partial \upnu_{z} \over \partial z}
 \]
-The components of the $\vec{\dot{\varepsilon}}$ vector are
+The components of the $\vec{\dot{\varepsilon}}(\vec{v})$ vector are
 \[
 \vec{\dot{\varepsilon}}(\vec \upnu)
 =
@@ -1110,25 +1126,25 @@ we only keep the four non zero components:
 Only displacements in the $r$ and $z$ directions remain (note that $\dot\varepsilon_{\theta\theta}$ is in fact equal to $u_r/r$). In what follows I rename $u=\upnu_r$ and $w=\upnu_z$ to simplify notations. 
 Then, inside an element we have 
 \begin{eqnarray}
-u^h(r,z) &=& \sum_{i=1}^{m_\upnu} N_i^\upnu(r,z) u_i \nonumber\\
-w^h(r,z) &=& \sum_{i=1}^{m_\upnu} N_i^\upnu(r,z) w_i
+u^h(r,z) &=& \sum_{i=1}^{m_\upnu} \bN_i^\upnu(r,z) u_i \nonumber\\
+w^h(r,z) &=& \sum_{i=1}^{m_\upnu} \bN_i^\upnu(r,z) w_i
 \end{eqnarray}
-where $N_i^\upnu$ are the velocity basis functions attached 
+where $\bN_i^\upnu$ are the velocity basis functions attached 
 to the $m_\upnu$ nodes of the element.
 We compute the elements of the $\vec{\dot{\varepsilon}}(\vec\upnu)$ vector as follows:
 \begin{eqnarray}
 \dot\varepsilon_{rr} &=&
 \frac{\partial u^h}{\partial r} 
-= \sum_{i=1}^m \frac{\partial N_i}{\partial r}(r,z) \; u_i \\
+= \sum_{i=1}^m \frac{\partial \bN_i}{\partial r}(r,z) \; u_i \\
 \dot\varepsilon_{\theta\theta} &=& \frac{u_r^h}{r} = 
-\frac{1}{r}\sum_{i=1}^m N_i(r,z) \;  u_i \\
+\frac{1}{r}\sum_{i=1}^m \bN_i(r,z) \;  u_i \\
 \dot\varepsilon_{zz} &=& 
 \frac{\partial w^h}{\partial z}
-= \sum_{i=1}^m \frac{\partial N_i}{\partial z}(r,z) \; w_i \\
+= \sum_{i=1}^m \frac{\partial \bN_i}{\partial z}(r,z) \; w_i \\
 2\dot\varepsilon_{rz} &=& \frac{\partial u^h}{\partial z}
 + \frac{\partial w^h}{\partial r}
-= \sum_{i=1}^m \frac{\partial N_i}{\partial z}(r,z) u_i 
-+ \sum_{i=1}^m \frac{\partial N_i}{\partial r}(r,z) w_i 
+= \sum_{i=1}^m \frac{\partial \bN_i}{\partial z}(r,z) u_i 
++ \sum_{i=1}^m \frac{\partial \bN_i}{\partial r}(r,z) w_i 
 \end{eqnarray}
 and then 
 \[
@@ -1145,24 +1161,24 @@ and then
 \underbrace{
 \left(
 \begin{array}{ccccccccc}
-\frac{\partial N_1}{\partial r} &  0 &  
-\frac{\partial N_2}{\partial r} &  0 & 
+\frac{\partial \bN_1}{\partial r} &  0 &  
+\frac{\partial \bN_2}{\partial r} &  0 & 
 \cdots & \cdots &
-\frac{\partial N_{m_\upnu}}{\partial r} &  0 
+\frac{\partial \bN_{m_\upnu}}{\partial r} &  0 
 \\  \\
-\frac{N_1}{r}  & 0 &  
-\frac{N_2}{r}  & 0 & 
+\frac{\bN_1}{r}  & 0 &  
+\frac{\bN_2}{r}  & 0 & 
 \cdots & \cdots &
-\frac{N_{m_\upnu}}{r}  & 0  
+\frac{\bN_{m_\upnu}}{r}  & 0  
 \\  \\
-0 & \frac{\partial N_1}{\partial z}  &
-0 & \frac{\partial N_2}{\partial z}  &  
+0 & \frac{\partial \bN_1}{\partial z}  &
+0 & \frac{\partial \bN_2}{\partial z}  &  
 \cdots & \cdots &
-0 & \frac{\partial N_{m_\upnu}}{\partial z}   
+0 & \frac{\partial \bN_{m_\upnu}}{\partial z}   
 \\ \\
-\frac{\partial N_1}{\partial z} & \frac{\partial N_1}{\partial r}  &
-\frac{\partial N_2}{\partial z} & \frac{\partial N_2}{\partial r}  & \cdots & \cdots &
-\frac{\partial N_{m_\upnu}}{\partial z} & \frac{\partial N_{m_\upnu}}{\partial r}  
+\frac{\partial \bN_1}{\partial z} & \frac{\partial \bN_1}{\partial r}  &
+\frac{\partial \bN_2}{\partial z} & \frac{\partial \bN_2}{\partial r}  & \cdots & \cdots &
+\frac{\partial \bN_{m_\upnu}}{\partial z} & \frac{\partial \bN_{m_\upnu}}{\partial r}  
 \end{array}
 \right)
 }_{\bm B (4\times 2 m_\upnu) }
@@ -1224,9 +1240,9 @@ The pressure term becomes
 =
 \left(
 \begin{array}{c}
--\sum\limits_i^{m_p} N_i^p(r,z) p_i \\
--\sum\limits_i^{m_p} N_i^p(r,z) p_i \\ 
--\sum\limits_i^{m_p} N_i^p(r,z) p_i \\ 
+-\sum\limits_i^{m_p} \bN_i^p(r,z) p_i \\
+-\sum\limits_i^{m_p} \bN_i^p(r,z) p_i \\ 
+-\sum\limits_i^{m_p} \bN_i^p(r,z) p_i \\ 
 0
 \end{array}
 \right)
@@ -1235,13 +1251,13 @@ The pressure term becomes
 \underbrace{
 \left(
 \begin{array}{cccc}
-N_1^p & N_2^p & \cdots & N_{m_p}^p \\
-N_1^p & N_2^p & \cdots & N_{m_p}^p \\
-N_1^p & N_2^p & \cdots & N_{m_p}^p \\
+\bN_1^p & \bN_2^p & \cdots & \bN_{m_p}^p \\
+\bN_1^p & \bN_2^p & \cdots & \bN_{m_p}^p \\
+\bN_1^p & \bN_2^p & \cdots & \bN_{m_p}^p \\
 0 & 0 & \cdots & 0
 \end{array}
 \right)
-}_{{\bm N}_p^T}
+}_{{\bm \bN}_p^T}
 \cdot
 \underbrace{
 \left(
@@ -1257,30 +1273,30 @@ with ${\bm N}_p$ a $m_p \times 4$ matrix given by
 =
 \left(
 \begin{array}{cccc}
-{N}_1^p & {N}_1^p & {N}_1^p & 0   \\
-{N}_2^p & {N}_2^p & {N}_2^p & 0   \\
-{N}_3^p & {N}_3^p & {N}_3^p & 0   \\
+{\bN}_1^p & {\bN}_1^p & {\bN}_1^p & 0   \\
+{\bN}_2^p & {\bN}_2^p & {\bN}_2^p & 0   \\
+{\bN}_3^p & {\bN}_3^p & {\bN}_3^p & 0   \\
 \vdots & \vdots & \vdots & \vdots  \\
-{N}_{m_p}^p & {N}_{m_p}^p & {N}_{m_p}^p & 0 
+{\bN}_{m_p}^p & {\bN}_{m_p}^p & {\bN}_{m_p}^p & 0 
 \end{array}
 \right)
 \]
 We then have:
 \[
-\vec{\sigma} = {\bm N}_p \cdot \vec{P} 
+\vec{\sigma} = {\bm \bN}_p \cdot \vec{P} 
 + {\bm C} \cdot {\bm B} \cdot \vec{V}
 \]
 and the discretised weak form of the momentum conservation equation writes: 
 \begin{equation}
 \int_{\Omega_e} {\bm B}^T \cdot 
-[ - {\bm N}_p  \cdot {\vec P}  + {\bm C} \cdot  {\bm B}\cdot {\vec V} ] \; dV
+[ - {\bm \bN}_p  \cdot {\vec P}  + {\bm C} \cdot  {\bm B}\cdot {\vec V} ] \; dV
 =
-\int_{\Omega_e} {\bm N}_b \; dV
+\int_{\Omega_e} \vec{\bN}_b \; dV
 \end{equation}
 or,
 \begin{equation}
 \underbrace{\left(-\int_{\Omega_e} {\bm B}^T \cdot 
-{\bm N}^p  
+{\bm \bN}^p  
 \; dV \right)}_{\G_e} \cdot {\vec P} 
 +
 \underbrace{
@@ -1291,15 +1307,15 @@ or,
 \right)}_{\K_e}
 \cdot {\vec V}
 =
-\underbrace{\int_{\Omega_e} {\vec N}_b \; dV }_{{\vec f}_e}
+\underbrace{\int_{\Omega_e} {\vec \bN}_b \; dV }_{{\vec f}_e}
 \end{equation}
-The term ${\bm N}_b$ is identical to the one for 2D or 3D Stokes problems.
+The term $\vec{\bN}_b$ is identical to the one for 2D or 3D Stokes problems.
 
 \note{
 We have in cylindrical coordinates $dV= r dr d\theta dz$. The integral 
 over the $\theta$ coordinate yields a factor $2\pi$ so for instance 
 \[
-\K_e = 2 \pi \iint_{\Omega_e} {\bm B}^T \cdot {\bm D} \cdot {\bm B}\; {\color{red} r} drdz
+\K_e = 2 \pi \iint_{\Omega_e} {\bm B}^T \cdot {\bm C} \cdot {\bm B}\; {\color{red} r} drdz
 \]
 Note the $r$ term in the integrand.
 The integration can now be performed as simply as was the case in the plane strain problem.
@@ -1372,7 +1388,7 @@ N_{m_p}^p \left(
 &=& -\G_e^T \cdot {\vec V}
 \end{eqnarray}
 
-Note that it is common to actually start from $- \vec\nabla\cdot\vec v=0$ (see Eq.(3) in \cite{mabl14})
+Note that it is common to actually start from $- \vec\nabla\cdot\vec v=0$ (see Eq.~(3) in \cite{mabl14})
 so as to arrive at $\G_e^T \cdot {\vec V}=\vec 0$
 Ultimately we obtain the following system for each element:
 \[

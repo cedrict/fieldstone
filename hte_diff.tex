@@ -21,32 +21,33 @@ or,
 \end{eqnarray}
 We have seen that the two left hand side terms of the first equation become 
 ${\bm M}^\uptheta \cdot \dot{\vec{T}}$ and ${\bm K}_a \cdot \vec{T}$.
-Let $N^\uptheta$ be the temperature basis functions so that the temperature inside an element is 
+Let $\bN^\uptheta(\vec{r})$ be the temperature basis functions so that the temperature inside an element is 
 given by
 \begin{equation}
-T^h({\vec r}) = \sum_{i=1}^{m_T} N^\uptheta_i ({\vec r}) T_i = \vec N^\uptheta \cdot \vec T
+T^h({\vec r}) = \sum_{i=1}^{m_T} \bN^\uptheta_i ({\vec r}) T_i = \vec \bN^\uptheta \cdot \vec T
 \end{equation}
 where $\vec T$ is a vector of length $m_T$.
-Let $N^q$ be the heat flux basis functions, and let us define (in 2D) $\vec{q}=(\qx,\qy)$ so that 
+Let $\bN^q(\vec{r})$ be the heat flux basis functions, 
+and let us define (in 2D) $\vec{q}=(\qx,\qy)$ so that 
 \begin{eqnarray}
-\qx^h({\vec r}) &=& \sum_{i=1}^{m_q} N^q_i ({\vec r}) \qx_i = \vec{N}^q \cdot \vec{\qx} \\
-\qy^h({\vec r}) &=& \sum_{i=1}^{m_q} N^q_i ({\vec r}) \qy_i = \vec{N}^q \cdot \vec{\qy} 
+\qx^h({\vec r}) &=& \sum_{i=1}^{m_q} \bN^q_i ({\vec r})\; \qx_i = \vec{\bN}^q \cdot \vec{\qx} \\
+\qy^h({\vec r}) &=& \sum_{i=1}^{m_q} \bN^q_i ({\vec r})\; \qy_i = \vec{\bN}^q \cdot \vec{\qy} 
 \end{eqnarray}
-where $\vec{N}^q$, $\vec{\qx}$ and $\vec{\qy}$ are vectors of length $m_q$.
+where $\vec{\bN}^q$, $\vec{\qx}$ and $\vec{\qy}$ are vectors of length $m_q$.
 The weak form of the third term of Eq.~(\ref{eq:htediff1}) is then
 \begin{eqnarray}
-\int_\Omega N_i^\theta  \nabla \cdot \vec{q} \;  d\Omega
-&=& -\int_\Omega N_i^\theta  
+\int_\Omega \bN_i^\uptheta \; \nabla \cdot \vec{q} \;  d\Omega
+&=& -\int_\Omega \bN_i^\uptheta  
 \left(  \frac{\partial }{\partial x}\qx + \frac{\partial }{\partial y}\qy \right) d\Omega \nn\\
-&=& \int_\Omega N_i^\theta  \left(  \frac{\partial \vec{N}^q}{\partial x}\cdot \vec{\qx}
-+  \frac{\partial \vec{N}^q}{\partial y}\cdot \vec{\qy} \right) d\Omega \nn\\
-&=& \int_\Omega N_i^\theta  \frac{\partial \vec{N}^q}{\partial x}\cdot  \vec{\qx} \;  d\Omega + 
-\int_\Omega  N_i^\uptheta \frac{\partial \vec{N}^q}{\partial y} \cdot \vec{\qy} \;  d\Omega \nn
+&=& \int_\Omega \bN_i^\uptheta  \left(  \frac{\partial \vec{\bN}^q}{\partial x}\cdot \vec{\qx}
++  \frac{\partial \vec{\bN}^q}{\partial y}\cdot \vec{\qy} \right) d\Omega \nn\\
+&=& \int_\Omega \bN_i^\uptheta  \frac{\partial \vec{\bN}^q}{\partial x}\cdot  \vec{\qx} \;  d\Omega + 
+\int_\Omega  \bN_i^\uptheta \frac{\partial \vec{\bN}^q}{\partial y} \cdot \vec{\qy} \;  d\Omega \nn
 \end{eqnarray}
 Writing this last equation for $i=1,...m_T$ yields
 \[
-\underbrace{\left( \int_\Omega \vec{N}^\theta  \frac{\partial \vec{N}^q}{\partial x} \; d\Omega \right)}_{{\bm H}_x} \cdot\vec{\qx}+ 
-\underbrace{\left( \int_\Omega  \vec{N}^\uptheta \frac{\partial \vec{N}^q}{\partial y}  \;  d\Omega\right)}_{{\bm H}_y} \cdot \vec{\qy}
+\underbrace{\left( \int_\Omega \vec{\bN}^\uptheta \frac{\partial \vec{\bN}^q}{\partial x} \; d\Omega \right)}_{{\bm H}_x} \cdot\vec{\qx}+ 
+\underbrace{\left( \int_\Omega \vec{\bN}^\uptheta \frac{\partial \vec{\bN}^q}{\partial y} \; d\Omega\right)}_{{\bm H}_y} \cdot \vec{\qy}
 \]
 In the end, we obtain:
 \begin{equation}
@@ -57,7 +58,7 @@ In the end, we obtain:
 \end{equation}
 Turning now to Eq.~(\ref{eq:htediff2}), its weak form is
 \[
-\int_\Omega N_i^q \left( \vec{q} + k \vec \nabla T \right) d\Omega = \vec{0}
+\int_\Omega \bN_i^q \left( \vec{q} + k \vec \nabla T \right) d\Omega = \vec{0}
 \]
 and we can decompose it in its $x$ and $y$ components:
 %\begin{eqnarray}
@@ -66,27 +67,27 @@ and we can decompose it in its $x$ and $y$ components:
 %\end{eqnarray}
 %We process these further as follows:
 \begin{eqnarray}
-0&=&\int_\Omega N_i^q \left( \qx^h + k  \frac{\partial T^h}{\partial x} \right) \; d\Omega  \nn\\
-&=& \int_\Omega N_i^q \left( \vec{N}^q \cdot \vec{\qx} 
-+ k  \frac{\partial \vec{N}^\uptheta}{\partial x} \cdot \vec{T} \right) \; d\Omega \nn\\ 
-&=& \int_\Omega N_i^q \vec{N}^q \cdot \vec{\qx} \; d\Omega  
-+ \int _\Omega k N_i^q   \frac{\partial \vec{N}^\uptheta}{\partial x}\cdot \vec{T} \;  d\Omega \nn\\ 
-0&=&\int_\Omega N_i^q \left( \qy^h + k  \frac{\partial T^h}{\partial y} \right) \;  d\Omega \nn\\
-&=& \int_\Omega N_i^q \left( \vec{N}^q \cdot \vec{\qy} 
-+ k  \frac{\partial \vec{N}^\uptheta}{\partial y} \cdot \vec{T} \right) \;  d\Omega \nn\\ 
-&=& \int_\Omega N_i^q \vec{N}^q \cdot \vec{\qy} \; d\Omega
-+ \int _\Omega k N_i^q   \frac{\partial \vec{N}^\uptheta}{\partial y} \cdot \vec{T} \;  d\Omega 
+0&=&\int_\Omega \bN_i^q \left( \qx^h + k  \frac{\partial T^h}{\partial x} \right) \; d\Omega  \nn\\
+&=& \int_\Omega \bN_i^q \left( \vec{\bN}^q \cdot \vec{\qx} 
++ k  \frac{\partial \vec{\bN}^\uptheta}{\partial x} \cdot \vec{T} \right) \; d\Omega \nn\\ 
+&=& \int_\Omega \bN_i^q \vec{\bN}^q \cdot \vec{\qx} \; d\Omega  
++ \int _\Omega k \bN_i^q   \frac{\partial \vec{\bN}^\uptheta}{\partial x}\cdot \vec{T} \;  d\Omega \nn\\ 
+0&=&\int_\Omega \bN_i^q \left( \qy^h + k  \frac{\partial T^h}{\partial y} \right) \;  d\Omega \nn\\
+&=& \int_\Omega \bN_i^q \left( \vec{\bN}^q \cdot \vec{\qy} 
++ k  \frac{\partial \vec{\bN}^\uptheta}{\partial y} \cdot \vec{T} \right) \;  d\Omega \nn\\ 
+&=& \int_\Omega \bN_i^q \vec{\bN}^q \cdot \vec{\qy} \; d\Omega
++ \int _\Omega k \bN_i^q   \frac{\partial \vec{\bN}^\uptheta}{\partial y} \cdot \vec{T} \;  d\Omega 
 \end{eqnarray}
 Writing these equations for $i=1,...m_q$ yields:
 \begin{eqnarray}
-0&=& \int_\Omega \vec{N}^q \vec{N}^q \cdot \vec{\qx} \; d\Omega
-+ \int _\Omega k \vec{N}^q   \frac{\partial \vec{N}^\uptheta}{\partial x}\cdot \vec{T} \; d\Omega \nn\\ 
-&=& \underbrace{\left( \int_\Omega \vec{N}^q \vec{N}^q d\Omega \right)}_{{\bm M}^q}  \cdot \vec{\qx} 
-+ \underbrace{\left(\int _\Omega k \vec{N}^q  \frac{\partial \vec{N}^\uptheta}{\partial x}\; d\Omega\right)}_{{\bm G}_x} \cdot \vec{T} \label{eq:htediff4}\\ 
-0&=& \int_\Omega \vec{N}^q \vec{N}^q \cdot \vec{\qy} \; d\Omega
-+ \int _\Omega k \vec{N}^q   \frac{\partial \vec{N}^\uptheta}{\partial y} \cdot \vec{T} \;  d\Omega \nn\\ 
-&=& \underbrace{\left( \int_\Omega \vec{N}^q \vec{N}^q d\Omega \right)}_{{\bm M}^q}  \cdot \vec{\qy} 
-+ \underbrace{\left(\int _\Omega k \vec{N}^q  \frac{\partial \vec{N}^\uptheta}{\partial y} \; d\Omega\right)}_{{\bm G}_y} \cdot \vec{T} \label{eq:htediff5}
+0&=& \int_\Omega \vec{\bN}^q \vec{\bN}^q \cdot \vec{\qx} \; d\Omega
++ \int _\Omega k \vec{\bN}^q   \frac{\partial \vec{\bN}^\uptheta}{\partial x}\cdot \vec{T} \; d\Omega \nn\\ 
+&=& \underbrace{\left( \int_\Omega \vec{\bN}^q \vec{\bN}^q d\Omega \right)}_{{\bm M}^q}  \cdot \vec{\qx} 
++ \underbrace{\left(\int _\Omega k \vec{\bN}^q  \frac{\partial \vec{\bN}^\uptheta}{\partial x}\; d\Omega\right)}_{{\bm G}_x} \cdot \vec{T} \label{eq:htediff4}\\ 
+0&=& \int_\Omega \vec{\bN}^q \vec{\bN}^q \cdot \vec{\qy} \; d\Omega
++ \int _\Omega k \vec{\bN}^q   \frac{\partial \vec{\bN}^\uptheta}{\partial y} \cdot \vec{T} \;  d\Omega \nn\\ 
+&=& \underbrace{\left( \int_\Omega \vec{\bN}^q \vec{\bN}^q d\Omega \right)}_{{\bm M}^q}  \cdot \vec{\qy} 
++ \underbrace{\left(\int _\Omega k \vec{\bN}^q  \frac{\partial \vec{\bN}^\uptheta}{\partial y} \; d\Omega\right)}_{{\bm G}_y} \cdot \vec{T} \label{eq:htediff5}
 \end{eqnarray}
 
 Finally Eqs.~(\ref{eq:htediff3},\ref{eq:htediff4},\ref{eq:htediff5}) 
@@ -117,7 +118,7 @@ Euler time scheme):
 \end{array}
 \right)
 \]
-If we choose $m_q=m_T$ and $N^q=N^\uptheta$ then
+If we choose $m_q=m_T$ and $\bN^q=\bN^\uptheta$ then
 %then ${\bm H}_x = {\bm G}_x$,  ${\bm H}_y = {\bm G}_y$  and 
 ${\bm M}^\uptheta = {\bm M}^q = {\bm M}$ 
 so that 

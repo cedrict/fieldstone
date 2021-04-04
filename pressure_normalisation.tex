@@ -10,20 +10,18 @@ In such a case, one commonly impose the average of the pressure over the whole d
 a subset of the boundary 
 to have a zero average, i.e.
 \begin{equation}
-\int_\Omega p dV = 0
+\int_\Omega p\; dV = 0
 \end{equation}
-Another possibility is to impose the pressure value at a single node. 
 
-Let us assume for example that we are using $Q_1 \times P_0$ elements. Then the pressure is constant 
-inside each element. 
-The integral above becomes:
+Let us assume for example that we are using $Q_1 \times P_0$ elements. The pressure is constant 
+inside each element so the integral above becomes:
 \begin{equation}
-\int_\Omega p dV = 
-\sum_e  \int_{\Omega_e} p dV = 
-\sum_e  p_e \int_{\Omega_e} dV = 
-\sum_e  p_e A_e = 0
+\int_\Omega p\; dV = 
+\sum_e  \int_{\Omega_e} p\; dV = 
+\sum_e  p_e \int_{\Omega_e}\; dV = 
+\sum_e  p_e V_e = 0
 \end{equation}
-where the sum runs over all elements $e$ of area $A_e$.
+where the sum runs over all elements $e$ of volume $V_e$.
 This can be rewritten 
 \[
 \vec{L} \cdot \vec{\cal P}=0

@@ -1,0 +1,50 @@
+The domain is a $L_x \times L_y$ Cartesian box. 
+The velocity field $\vec{\upnu} = (L_y - y)y \vec{e}_x$ is prescribed on all 
+boundaries, or simply prescribed everywhere in the domain. 
+Temperature is set to $T=0$ everywhere in the domain at $t=0$. 
+
+As we have seen in Section~\ref{ss:hte}, the shear heating, $\Phi$ is expressed as: 
+
+\begin{equation}
+\Phi = 2 \eta  \dot{\bm \varepsilon}^d(\vec\upnu) : \dot{\bm \varepsilon}^d(\vec\upnu)
+\end{equation}
+We have 
+\begin{eqnarray}
+\dot{\varepsilon}_{xx}(\vec\upnu) &=& \partial_x u = 0 \nn\\
+\dot{\varepsilon}_{yy}(\vec\upnu) &=& \partial_y v = 0 \nn\\
+\dot{\varepsilon}_{xy}(\vec\upnu) &=& \frac12( \partial_x v + \partial_y u) = \frac{1}{2}(L_y-2y)
+\end{eqnarray}
+We see that the flow is incompressible ($\dot{\varepsilon}_{xx}+\dot{\varepsilon}_{yy}=0$)
+so that $\dot{\bm \varepsilon}^d(\vec\upnu)= \dot{\bm \varepsilon}(\vec\upnu)$ and 
+\[
+\Phi(x,y) = 
+2 \eta [ \dot{\varepsilon}_{xx}(\vec\upnu) ^2 + \dot{\varepsilon}_{yy}(\vec\upnu)^2
++ 2 \dot{\varepsilon}_{xy}(\vec\upnu)^2 ]
+= 2\eta 2\frac{1}{4}(L_y-2y)^2 = \eta (L_y-2y)^2
+\]
+We set $\eta=1$ and  $L_y=1$ ($L_x$ is actually irrelevant) so that 
+$\Phi(x,y)=(1-2y)^2$.
+
+ 
+The energy equation is given by
+\begin{equation}
+\rho C_p \left( \frac{\partial T}{\partial t} + \vec{\upnu} \cdot \vec{\nabla} T  \right) 
+= k \Delta T + \Phi,
+\end{equation}
+assuming that there is no conduction (i.e. $k=0$) and since $\vec{\nabla}T \propto \vec{e}_y$ while 
+$\vec\upnu \propto \vec{e}_x$ then it simplifies to  
+\[ 
+\frac{\partial T}{\partial t } = \Phi 
+\]
+where we have taken $\rho=1$ and $C_p=1$ for convenience.
+Since $T(t=0)=0$, we then have
+\[
+T(t) = \Phi\; t
+\]
+
+
+
+
+
+
+
