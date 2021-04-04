@@ -148,10 +148,11 @@ When {\tt avrg}$=4$ the coordinates of each quadrature points are used in order 
 estimate the value from the coefficients $\{a,b,c\}$ and $\{d,e,f\}$ 
 of the (limited) least square.
 
-Given the current limitations of this simple code I can only run experiments up to $\sim 80\times80$ elements.
+Given the current limitations of this simple code I can only run experiments with limited resolutions. 
 Also since I later wish to plot the density and viscosity values carried by the quadrature points 
 on a vertical line passing through the middle of the sphere, I focus on odd numbers of elements
-in the horizontal direction and investigate $33\times33$, $49\times49$, $65\times65$ and $81\times81$.
+in the horizontal direction and investigate $33\times33$, $49\times49$, $65\times65$, $81\times81$,
+and $97\times97$.
 
 \begin{center}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_41/results/exp3/markers}
@@ -180,6 +181,18 @@ The black line indicates the location of profile measurements.}
 \includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/81x81/profile_p.pdf}
 \includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/81x81/profile_eta_elemental.pdf}
 \includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/81x81/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/97x97/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/97x97/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/97x97/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/97x97/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/113x113/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/113x113/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/113x113/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/113x113/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/129x129/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/129x129/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/129x129/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/129x129/profile_eta_nodal.pdf}\\
 {\captionfont 
 1st column: vertical velocity profile; 
 2nd column: vertical pressure profile; 
