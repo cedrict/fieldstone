@@ -9,6 +9,7 @@ import time as time
 import matplotlib.pyplot as plt
 
 #------------------------------------------------------------------------------
+
 def bx(x, y):
     val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
          (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
@@ -22,6 +23,8 @@ def by(x, y):
          12.*y*y+24.*y*y*y-12.*y**4)
     return val
 
+#------------------------------------------------------------------------------
+
 def velocity_x(x,y):
     val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
     return val
@@ -33,6 +36,8 @@ def velocity_y(x,y):
 def pressure(x,y):
     val=x*(1.-x)-1./6.
     return val
+
+#------------------------------------------------------------------------------
 
 def onePlot(variable, plotX, plotY, title, labelX, labelY, extVal, limitX, limitY, colorMap):
     im = axes[plotX][plotY].imshow(np.flipud(variable),extent=extVal, cmap=colorMap, interpolation="nearest")
@@ -48,6 +53,8 @@ def onePlot(variable, plotX, plotY, title, labelX, labelY, extVal, limitX, limit
     axes[plotX][plotY].set_ylabel(labelY)
     fig.colorbar(im,ax=axes[plotX][plotY])
     return
+
+#------------------------------------------------------------------------------
 
 def NNV(rq,sq):
     N_0=0.25*(1.-rq)*(1.-sq)
@@ -95,9 +102,9 @@ else:
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
-nnp=nnx*nny  # number of nodes
+NV=nnx*nny  # number of nodes
 nel=nelx*nely  # number of elements, total
-NfemV=nnp*ndofV   # number of velocity dofs
+NfemV=NV*ndofV   # number of velocity dofs
 NfemP=nel*ndofP   # number of pressure dofs
 Nfem=NfemV+NfemP # total number of dofs
 
@@ -111,12 +118,18 @@ eps=1.e-10
 sqrt3=np.sqrt(3.)
 
 #################################################################
+
+print('nnx=',nnx)
+print('nny=',nny)
+
+
+#################################################################
 # grid point setup
 #################################################################
 start = time.time()
 
-x = np.empty(nnp, dtype=np.float64)  # x coordinates
-y = np.empty(nnp, dtype=np.float64)  # y coordinates
+x = np.empty(NV, dtype=np.float64)  # x coordinates
+y = np.empty(NV, dtype=np.float64)  # y coordinates
 
 counter = 0
 for j in range(0, nny):
@@ -134,12 +147,12 @@ start = time.time()
 
 icon =np.zeros((m, nel),dtype=np.int32)
 counter = 0
-for j in range(0, nely):
-    for i in range(0, nelx):
-        icon[0, counter] = i + j * (nelx + 1)
-        icon[1, counter] = i + 1 + j * (nelx + 1)
-        icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
-        icon[3, counter] = i + (j + 1) * (nelx + 1)
+for j in range(0,nely):
+    for i in range(0,nelx):
+        icon[0,counter] = i + j * (nelx + 1)
+        icon[1,counter] = i + 1 + j * (nelx + 1)
+        icon[2,counter] = i + 1 + (j + 1) * (nelx + 1)
+        icon[3,counter] = i + (j + 1) * (nelx + 1)
         counter += 1
 
 print("setup: connectivity: %.3f s" % (time.time() - start))
@@ -151,7 +164,7 @@ start = time.time()
 
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
-for i in range(0, nnp):
+for i in range(0,NV):
     if x[i]<eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
@@ -184,8 +197,8 @@ dNdx  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNdy  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNdr  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNds  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-u     = np.zeros(nnp,dtype=np.float64)          # x-component velocity
-v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
+u     = np.zeros(NV,dtype=np.float64)          # x-component velocity
+v     = np.zeros(NV,dtype=np.float64)          # y-component velocity
 p     = np.zeros(nel,dtype=np.float64)          # y-component velocity
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
@@ -214,10 +227,10 @@ for iel in range(0, nel):
             # calculate jacobian matrix
             jcb = np.zeros((2, 2),dtype=float)
             for k in range(0,m):
-                jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
-                jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
-                jcb[1, 0] += dNds[k]*x[icon[k,iel]]
-                jcb[1, 1] += dNds[k]*y[icon[k,iel]]
+                jcb[0,0] += dNdr[k]*x[icon[k,iel]]
+                jcb[0,1] += dNdr[k]*y[icon[k,iel]]
+                jcb[1,0] += dNds[k]*x[icon[k,iel]]
+                jcb[1,1] += dNds[k]*y[icon[k,iel]]
 
             # calculate the determinant of the jacobian
             jcob = np.linalg.det(jcb)
@@ -280,6 +293,8 @@ for iel in range(0, nel):
             G_mat[m1,iel]+=G_el[ikk,0]
     h_rhs[iel]+=h_el[0]
 
+#end for iel
+
 print("     -> h_rhs (m,M) %.4e %.4e " %(np.min(h_rhs),np.max(h_rhs)))
 print("     -> f_rhs (m,M) %.4e %.4e " %(np.min(f_rhs),np.max(f_rhs)))
 
@@ -324,9 +339,10 @@ if use_SchurComplementApproach:
        pvect_k=pvect_kp1
        xi=np.linalg.norm(rvect_k)/rvect_0
        conv_file.write("%d %6e \n"  %(k,xi))
+       print('iteration=',k,' xi=',xi)
        if xi<solver_tolerance:
           break 
-   u,v=np.reshape(solV[0:NfemV],(nnp,2)).T
+   u,v=np.reshape(solV[0:NfemV],(NV,2)).T
    p=solP[0:NfemP]
 
 else:
@@ -339,7 +355,7 @@ else:
    rhs[0:NfemV]=f_rhs
    rhs[NfemV:Nfem]=h_rhs
    sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
-   u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
+   u,v=np.reshape(sol[0:NfemV],(NV,2)).T
    p=sol[NfemV:Nfem]
 
 print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
@@ -400,9 +416,10 @@ print("compute press & sr: %.3f s" % (time.time() - start))
 ######################################################################
 # compute nodal pressure
 ######################################################################
+start = time.time()
 
-q=np.zeros(nnp,dtype=np.float64)  
-count=np.zeros(nnp,dtype=np.float64)  
+q=np.zeros(NV,dtype=np.float64)  
+count=np.zeros(NV,dtype=np.float64)  
 
 for iel in range(0,nel):
     q[icon[0,iel]]+=p[iel]
@@ -416,23 +433,25 @@ for iel in range(0,nel):
 
 q=q/count
 
+print("poject press on V grid: %.3f s" % (time.time() - start))
+
 ######################################################################
 # compute error
 ######################################################################
 start = time.time()
 
-error_u = np.empty(nnp,dtype=np.float64)
-error_v = np.empty(nnp,dtype=np.float64)
-error_q = np.empty(nnp,dtype=np.float64)
+error_u = np.empty(NV,dtype=np.float64)
+error_v = np.empty(NV,dtype=np.float64)
+error_q = np.empty(NV,dtype=np.float64)
 error_p = np.empty(nel,dtype=np.float64)
 
-for i in range(0,nnp): 
+for i in range(0,NV): 
     error_u[i]=u[i]-velocity_x(x[i],y[i])
     error_v[i]=v[i]-velocity_y(x[i],y[i])
     error_q[i]=q[i]-pressure(x[i],y[i])
 
-for i in range(0,nel): 
-    error_p[i]=p[i]-pressure(xc[i],yc[i])
+for iel in range(0,nel): 
+    error_p[iel]=p[iel]-pressure(xc[iel],yc[iel])
 
 errv=0.
 errp=0.
@@ -471,7 +490,6 @@ for iel in range (0,nel):
 
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
-
 
 print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
 

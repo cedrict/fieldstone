@@ -3,4 +3,5 @@ rm *.vtu
 rm *.pdf
 rm page.aux
 rm page.log
+rm errors
 
