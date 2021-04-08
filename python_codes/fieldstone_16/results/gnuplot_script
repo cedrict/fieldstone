@@ -1,4 +1,4 @@
-set term pdf enhanced font "Times,11pt"
+set term pdf enhanced font "Times,12pt"
 set log y
 set pointsize 0.5
 set grid
@@ -16,6 +16,7 @@ plot[][]\
 3/(x) lt -1 dashtype 3 t 'x^{-1}' 
 
 #unset log y
+set ylabel 'time (s)'
 set output 'solve_time.pdf'
 plot[][]\
 'solve_time_ps0.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'no prec.',\
@@ -25,12 +26,23 @@ plot[][]\
 'solve_time_ps4.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'prec. #4',\
 x**(-3)/10000 lt -1 dashtype 3 t 'x^{-1}' 
 
+set ylabel 'time (s)'
+set output 'build_precond.pdf'
+plot[][]\
+'build_precond_ps0.ascii' u (1/sqrt($8)):5 w lp pt 5 t 'no prec.',\
+'build_precond_ps1.ascii' u (1/sqrt($8)):5 w lp pt 5 t 'prec. #1',\
+'build_precond_ps2.ascii' u (1/sqrt($8)):5 w lp pt 5 t 'prec. #2',\
+'build_precond_ps3.ascii' u (1/sqrt($8)):5 w lp pt 5 t 'prec. #3',\
+'build_precond_ps4.ascii' u (1/sqrt($8)):5 w lp pt 5 t 'prec. #4',\
 
+
+
+set format y "10^{%L}"
 unset log x
 set xlabel '# iteration'
 set ylabel 'normalised residual'
 set output 'residual_32x32.pdf'
-plot[][]\
+plot[:500][]\
 'solver_convergence_rs32_ps0.ascii'    w l lt 1  t 'no prec.',\
 'solver_convergence_rs32_ps1.ascii'    w l lt 2  t 'prec. #1',\
 'solver_convergence_rs32_ps2.ascii'    w l lt 3  t 'prec. #2',\
@@ -39,7 +51,7 @@ plot[][]\
 1e-8 lt -1 lw 2 
 
 set output 'residual_64x64.pdf'
-plot[][]\
+plot[:500][]\
 'solver_convergence_rs64_ps0.ascii'    w l lt 1  t 'no prec.',\
 'solver_convergence_rs64_ps1.ascii'    w l lt 2  t 'prec. #1',\
 'solver_convergence_rs64_ps2.ascii'    w l lt 3  t 'prec. #2',\
@@ -48,7 +60,7 @@ plot[][]\
 1e-8 lt -1 lw 2 
 
 set output 'residual_96x96.pdf'
-plot[][]\
+plot[:500][]\
 'solver_convergence_rs96_ps0.ascii'    w l lt 1  t 'no prec.',\
 'solver_convergence_rs96_ps1.ascii'    w l lt 2  t 'prec. #1',\
 'solver_convergence_rs96_ps2.ascii'    w l lt 3  t 'prec. #2',\

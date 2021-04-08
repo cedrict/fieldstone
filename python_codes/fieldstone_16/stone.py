@@ -8,6 +8,7 @@ from scipy.sparse import csr_matrix
 import time as time
 import matplotlib.pyplot as plt
 import schur_complement_cg_solver as cg
+from scipy.sparse import lil_matrix
 
 #------------------------------------------------------------------------------
 
@@ -69,7 +70,7 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    precond_type = int(sys.argv[4])
 else:
-   nelx = 64
+   nelx = 32
    nely = nelx
    visu = 1
    precond_type=2
@@ -154,14 +155,27 @@ for i in range(0,NV):
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
 #################################################################
+# compute element center coordinates
+#################################################################
+
+xc = np.zeros(nel,dtype=np.float64)  
+yc = np.zeros(nel,dtype=np.float64)  
+for iel in range(0,nel):
+    xc[iel] = (xV[iconV[0,iel]]+xV[iconV[2,iel]])*0.5 
+    yc[iel] = (yV[iconV[0,iel]]+yV[iconV[2,iel]])*0.5 
+
+#################################################################
 # build FE matrix
-# [ K G ][u]=[f]
-# [GT 0 ][p] [h]
+# [ K  G ][u]=[f]
+# [GT -C ][p] [h]
 #################################################################
 start = time.time()
 
-K_mat  = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-G_mat  = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
+K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
+G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
+M_mat = np.zeros((NfemP,NfemP),dtype=np.float64) # preconditioner 
+C_mat = np.zeros((NfemP,NfemP),dtype=np.float64) # stays zero
+
 f_rhs  = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
 h_rhs  = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
 b_mat  = np.zeros((3,ndofV*mV),dtype=np.float64)  # gradient matrix B 
@@ -170,9 +184,10 @@ dNNNdx = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 dNNNdy = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 dNNNdr = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 dNNNds = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
-u      = np.zeros(NV,dtype=np.float64)          # x-component velocity
-v      = np.zeros(NV,dtype=np.float64)          # y-component velocity
-p      = np.zeros(nel,dtype=np.float64)          # y-component velocity
+u      = np.zeros(NV,dtype=np.float64)            # x-component velocity
+v      = np.zeros(NV,dtype=np.float64)            # y-component velocity
+p      = np.zeros(nel,dtype=np.float64)           # y-component velocity
+
 c_mat  = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 for iel in range(0, nel):
@@ -222,7 +237,7 @@ for iel in range(0, nel):
                                          [0.     ,dNNNdy[i]],
                                          [dNNNdy[i],dNNNdx[i]]]
 
-            # compute elemental a_mat matrix
+            # compute elemental K_el matrix
             K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(xq,yq)*weightq*jcob
 
             # compute elemental rhs vector
@@ -282,19 +297,7 @@ print("build FE matrix: %.3f s" % (time.time() - start))
 # compute Schur preconditioner
 ######################################################################
 start = time.time()
-
-M_mat = np.zeros((NfemP,NfemP),dtype=np.float64) 
    
-xc = np.zeros(nel,dtype=np.float64)  
-yc = np.zeros(nel,dtype=np.float64)  
-for iel in range(0,nel):
-       rq = 0.0
-       sq = 0.0
-       NNN[0:mV]=NNV(rq,sq)
-       for k in range(0,mV):
-           xc[iel] += NNN[k]*xV[iconV[k,iel]]
-           yc[iel] += NNN[k]*yV[iconV[k,iel]]
-
 if precond_type==0:
    for i in range(0,NfemP):
        M_mat[i,i]=1
@@ -333,7 +336,7 @@ if precond_type==4:
 #plt.spy(M_mat)
 #plt.savefig('matrix.pdf', bbox_inches='tight')
 
-print("build Schur matrix precond: %.3f s" % (time.time() - start))
+print("build Schur matrix precond: %e s, nel= %d" % (time.time() - start, nel))
 
 ######################################################################
 # solve system  
@@ -342,22 +345,26 @@ start = time.time()
 
 if use_SchurComplementApproach:
 
-   solV,solP,niter=cg.schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
-                   NfemV,NfemP,niter_stokes,solver_tolerance,use_preconditioner)
+   K_mat=csr_matrix(K_mat)
+   G_mat=csr_matrix(G_mat)
+   M_mat=csr_matrix(M_mat)
 
+   solV,solP,niter=cg.schur_complement_cg_solver(K_mat,G_mat,C_mat,M_mat,f_rhs,h_rhs,\
+                                                 NfemV,NfemP,niter_stokes,\
+                                                 solver_tolerance,use_preconditioner)
    u,v=np.reshape(solV[0:NfemV],(NV,2)).T
    p=solP[0:NfemP]*(eta_ref/Ly)
 
 else:
-   sol =np.zeros(Nfem,dtype=np.float64)  # x coordinates
-   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-   rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-   a_mat[0:NfemV,0:NfemV]=K_mat
-   a_mat[0:NfemV,NfemV:Nfem]=G_mat
-   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+   sol =np.zeros(Nfem,dtype=np.float64) 
+   A_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  
+   rhs   = np.zeros(Nfem,dtype=np.float64)        
+   A_mat[0:NfemV,0:NfemV]=K_mat
+   A_mat[0:NfemV,NfemV:Nfem]=G_mat
+   A_mat[NfemV:Nfem,0:NfemV]=G_mat.T
    rhs[0:NfemV]=f_rhs
    rhs[NfemV:Nfem]=h_rhs
-   sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+   sol=sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
    u,v=np.reshape(sol[0:NfemV],(NV,2)).T
    p=sol[NfemV:Nfem]*(eta_ref/Ly)
 
