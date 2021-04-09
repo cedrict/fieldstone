@@ -7,6 +7,8 @@ import time as timing
 import matplotlib.pyplot as plt
 from scipy.sparse import lil_matrix
 from scipy.linalg import null_space
+from scipy.sparse.csgraph import reverse_cuthill_mckee
+import schur_complement_cg_solver as cg
 
 #------------------------------------------------------------------------------
 
@@ -28,6 +30,8 @@ def bx(x,y,z,beta):
        val=0
     if bench==5:
        val=4*(2*y-1)*(2*z-1)  *(-1)
+    if bench==-1:
+       val=0
     return val
 
 def by(x,y,z,beta):
@@ -48,6 +52,8 @@ def by(x,y,z,beta):
        val=0
     if bench==5:
        val=4*(2*x-1)*(2*z-1) *(-1)
+    if bench==-1:
+       val=0
     return val
 
 def bz(x,y,z,beta):
@@ -74,7 +80,11 @@ def bz(x,y,z,beta):
           val=0.
     if bench==5:
        val=-2*(2*x-1)*(2*y-1) *(-1)
+    if bench==-1:
+       val=0
     return val
+
+#------------------------------------------------------------------------------
 
 def eta(x,y,z,beta):
     if bench==1:
@@ -93,7 +103,11 @@ def eta(x,y,z,beta):
           val=1.
     if bench==5:
        val=1
+    if bench==-1:
+       val=0
     return val
+
+#------------------------------------------------------------------------------
 
 def uth(x,y,z):
     if bench==1:
@@ -106,6 +120,8 @@ def uth(x,y,z):
        val=0
     if bench==5:
        val=x*(1-x)*(1-2*y)*(1-2*z)
+    if bench==-1:
+       val=0
     return val
 
 def vth(x,y,z):
@@ -119,6 +135,8 @@ def vth(x,y,z):
        val=0
     if bench==5:
        val=(1-2*x)*y*(1-y)*(1-2*z)
+    if bench==-1:
+       val=0
     return val
 
 def wth(x,y,z):
@@ -132,6 +150,8 @@ def wth(x,y,z):
        val=0
     if bench==5:
        val=-2*(1-2*x)*(1-2*y)*z*(1-z)
+    if bench==-1:
+       val=0
     return val
 
 def pth(x,y,z):
@@ -145,6 +165,8 @@ def pth(x,y,z):
        val=0
     if bench==5:
        val=(2*x-1)*(2*y-1)*(2*z-1)
+    if bench==-1:
+       val=0
     return val
 
 #------------------------------------------------------------------------------
@@ -255,33 +277,53 @@ if int(len(sys.argv) == 6):
    nqperdim=int(sys.argv[4])
    visu = int(sys.argv[5])
 else:
-   nelx = 16  # do not exceed 20 
+   nelx = 12  # do not exceed 20 
    nely =nelx
    nelz =nelx
    nqperdim=2
    visu=1
 #end if
 
+bench=5
+
+beeta=0 # beta parameter for mms
+
+globall=False
+
+pnormalise=True
+apply_RCM=False
+matrix_snapshot=False
+
+if not globall:
+   pnormalise=False
+   niter=200
+   tol=1e-6
+   use_precond=False
+
+if bench==-1:
+   nelx=2
+   nely=2
+   nelz=2
+   globall=False
+
+nnx=nelx+1  # number of elements, x direction
+nny=nely+1  # number of elements, y direction
+nnz=nelz+1  # number of elements, z direction
+nel=nelx*nely*nelz  # number of elements, total
+NV=nnx*nny*nnz+2*nel 
+NP=nnx*nny*nnz
+NfemV=NV*ndofV   # number of velocity dofs
+NfemP=NP*ndofP   # number of pressure dofs
+Nfem=NfemV+NfemP # total number of dofs
 hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
 
-pnormalise=False
-    
-nnx=nelx+1  # number of elements, x direction
-nny=nely+1  # number of elements, y direction
-nnz=nelz+1  # number of elements, z direction
+if pnormalise:
+   NfemTot=Nfem+1
+else:
+   NfemTot=Nfem
 
-nel=nelx*nely*nelz  # number of elements, total
-
-NV=nnx*nny*nnz+2*nel 
-NP=nnx*nny*nnz
-
-NfemV=NV*ndofV   # number of velocity dofs
-NfemP=NP*ndofP   # number of pressure dofs
-Nfem=NfemV+NfemP # total number of dofs
-
-eps=1.e-10
 
 if nqperdim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
@@ -298,12 +340,6 @@ if nqperdim==4:
    qw4b=(18+np.sqrt(30.))/36.
    qcoords=[-qc4a,-qc4b,qc4b,qc4a]
    qweights=[qw4a,qw4b,qw4b,qw4a]
-
-bench=5
-
-beeta=0 # beta parameter for mms
-
-sparse=True
 
 stats_vel_file=open('stats_vel.ascii',"w")
 stats_p_file=open('stats_p.ascii',"w")
@@ -323,6 +359,7 @@ print("NP=",NP)
 print("NfemV=",NfemV)
 print("NfemP=",NfemP)
 print("Nfem=",Nfem)
+print("NfemTot=",NfemTot)
 print("------------------------------")
 
 ######################################################################
@@ -502,8 +539,10 @@ print("testing shape fcts: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-bc_fix=np.zeros(Nfem,dtype=np.bool)    # boundary condition, yes/no
-bc_val=np.zeros(Nfem,dtype=np.float64) # boundary condition, value
+eps=1.e-10
+
+bc_fix=np.zeros(NfemTot,dtype=np.bool)    # boundary condition, yes/no
+bc_val=np.zeros(NfemTot,dtype=np.float64) # boundary condition, value
 
 for i in range(0,NV):
     if xV[i]/Lx<eps or xV[i]/Lx>(1-eps):
@@ -527,25 +566,25 @@ print("define b.c.: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-if sparse:
-   if pnormalise:
-      A_sparse = lil_matrix((Nfem+1,Nfem+1),dtype=np.float64)
-   else:
-      A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
+if globall:
+   A_mat = lil_matrix((NfemTot,NfemTot),dtype=np.float64)
+   rhs   = np.zeros(NfemTot,dtype=np.float64)          # right hand side of Ax=b
 else:   
-   K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-   G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
+   K_mat = lil_matrix((NfemV,NfemV),dtype=np.float64) # matrix K 
+   G_mat = lil_matrix((NfemV,NfemP),dtype=np.float64) # matrix G
+   C_mat = lil_matrix((NfemP,NfemP),dtype=np.float64) # matrix C
+   M_mat = lil_matrix((NfemV,NfemV),dtype=np.float64) # matrix M
 
-u = np.zeros(NV,dtype=np.float64)           # x-component velocity
-v = np.zeros(NV,dtype=np.float64)           # y-component velocity
-w = np.zeros(NV,dtype=np.float64)           # z-component velocity
-p = np.zeros(NP,dtype=np.float64)           # z-component velocity
+f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
+h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
+u = np.zeros(NV,dtype=np.float64)                # x-component velocity
+v = np.zeros(NV,dtype=np.float64)                # y-component velocity
+w = np.zeros(NV,dtype=np.float64)                # z-component velocity
+p = np.zeros(NP,dtype=np.float64)                # z-component velocity
 N_mat  = np.zeros((6,ndofP*mP),dtype=np.float64) # matrix  
 constr = np.zeros(NfemP,dtype=np.float64)        # constraint matrix/vector
-f_rhs = np.zeros(NfemV,dtype=np.float64)          # right hand side f 
-h_rhs = np.zeros(NfemP,dtype=np.float64)          # right hand side h 
-b_mat = np.zeros((6,ndofV*mV),dtype=np.float64)   # gradient matrix B 
-c_mat = np.zeros((6,6),dtype=np.float64)          # C matrix 
+b_mat = np.zeros((6,ndofV*mV),dtype=np.float64)  # gradient matrix B 
+c_mat = np.zeros((6,6),dtype=np.float64)         # C matrix 
 c_mat[0,0]=2. ; c_mat[1,1]=2. ; c_mat[2,2]=2.
 c_mat[3,3]=1. ; c_mat[4,4]=1. ; c_mat[5,5]=1.
 
@@ -655,16 +694,16 @@ for iel in range(0, nel):
                 for i2 in range(0,ndofV):
                     jkk=ndofV*k2          +i2
                     m2 =ndofV*iconV[k2,iel]+i2
-                    if sparse:
-                       A_sparse[m1,m2] += K_el[ikk,jkk]
+                    if globall:
+                       A_mat[m1,m2] += K_el[ikk,jkk]
                     else:
                        K_mat[m1,m2]+=K_el[ikk,jkk]
             for k2 in range(0,mP):
                 jkk=k2
                 m2 =iconP[k2,iel]
-                if sparse:
-                   A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
-                   A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
+                if globall:
+                   A_mat[m1,NfemV+m2]+=G_el[ikk,jkk]
+                   A_mat[NfemV+m2,m1]+=G_el[ikk,jkk]
                 else:
                    G_mat[m1,m2]+=G_el[ikk,jkk]
             f_rhs[m1]+=f_el[ikk]
@@ -672,18 +711,30 @@ for iel in range(0, nel):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
         constr[m2]+=NNNNP[k2]
-        if sparse and pnormalise:
-           A_sparse[Nfem,NfemV+m2]+=NNNNP[k2] 
-           A_sparse[NfemV+m2,Nfem]+=NNNNP[k2] 
+        if globall and pnormalise:
+           A_mat[Nfem,NfemV+m2]+=NNNNP[k2] 
+           A_mat[NfemV+m2,Nfem]+=NNNNP[k2] 
 
 #end for iel
 
-#export sparsity pattern of matrix
-#plt.spy(A_sparse,markersize=1)
-#plt.savefig('matrix.png', bbox_inches='tight')
-#exit()
+
 
 print("build FE matrix: %.3f s, h= %e" % (timing.time() - start, hx))
+
+######################################################################
+
+if bench==-1:
+   print ("-----bench=-1-------------------------------------------")
+   print('size of G_mat:',G_mat.shape)
+   for i in range(NfemV):
+       print(i,G_mat[i,0:NfemP])
+   G2 = np.zeros((51,NfemP),dtype=np.float64)
+   G2[0:3,:]=G_mat[39:42,:] 
+   G2[3:,:]=G_mat[81:,:]    
+   ns = null_space(G2)
+   opla=ns.shape
+   print('size of nullspace=',opla[1])
+   exit()
 
 ######################################################################
 # if we do not ensure int p dV=0 by means of a Lagrange multiplier
@@ -692,77 +743,107 @@ print("build FE matrix: %.3f s, h= %e" % (timing.time() - start, hx))
 ######################################################################
 
 if not pnormalise:
-   for i in range(0,Nfem):
-       A_sparse[Nfem-1,i]=0
-       A_sparse[i,Nfem-1]=0
-   A_sparse[Nfem-1,Nfem-1]=1
-   h_rhs[NfemP-1]=0
+   if globall:
+      for i in range(0,Nfem):
+          A_mat[Nfem-1,i]=0
+          A_mat[i,Nfem-1]=0
+      A_mat[Nfem-1,Nfem-1]=1
+      h_rhs[NfemP-1]=0
+   #else:
+      G_mat[:,NfemP-1]=0
+      C_mat[NfemP-1,NfemP-1]=-1 # -C in the matrix !
+      h_rhs[NfemP-1]=0
 
 ######################################################################
 # assemble K, G, GT, f, h into A and rhs
 ######################################################################
 start = timing.time()
 
-if not sparse:
-   if pnormalise:
-      a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
-      rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
-      a_mat[0:NfemV,0:NfemV]=K_mat
-      a_mat[0:NfemV,NfemV:Nfem]=G_mat
-      a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-      a_mat[Nfem,NfemV:Nfem]=constr
-      a_mat[NfemV:Nfem,Nfem]=constr
-   else:
-      a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-      rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-      a_mat[0:NfemV,0:NfemV]=K_mat
-      a_mat[0:NfemV,NfemV:Nfem]=G_mat
-      a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-   #end if
-else:
-   if pnormalise:
-      rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
-   else:
-      rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-#else:
+if globall:
+   rhs[0:NfemV]=f_rhs
+   rhs[NfemV:Nfem]=h_rhs
+   A_csr=A_mat.tocsr()
 
-rhs[0:NfemV]=f_rhs
-rhs[NfemV:Nfem]=h_rhs
+#if not globall:
+#   if pnormalise:
+#      a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
+#      a_mat[0:NfemV,0:NfemV]=K_mat
+#      a_mat[0:NfemV,NfemV:Nfem]=G_mat
+#      a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+#      a_mat[Nfem,NfemV:Nfem]=constr
+#      a_mat[NfemV:Nfem,Nfem]=constr
+#   else:
+#      a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+#      a_mat[0:NfemV,0:NfemV]=K_mat
+#      a_mat[0:NfemV,NfemV:Nfem]=G_mat
+#      a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+#   #end if
+#   sparse_matrix=sps.csr_matrix(a_mat)
 
-print("assemble blocks: %.3f s" % (timing.time() - start))
+print("assemble rhs & convert to csr: %.3f s" % (timing.time() - start))
 
-#plt.spy(a_mat)
-#plt.savefig('matrix.pdf', bbox_inches='tight')
+######################################################################
+# apply reverse Cuthill-McKee algorithm 
+######################################################################
+start = timing.time()
+
+#take snapshot of matrix before reordering
+if matrix_snapshot:
+   plt.spy(A_csr, markersize=0.1)
+   plt.savefig('matrix_bef.png', bbox_inches='tight')
+   plt.clf()
+
+if apply_RCM:
+   #compute reordering array
+   perm = reverse_cuthill_mckee(A_csr,symmetric_mode=True)
+   #build reverse perm array
+   perm_inv=np.empty(len(perm),dtype=np.int32)
+   for i in range(0,len(perm)):
+       perm_inv[perm[i]]=i
+   A_csr=A_csr[np.ix_(perm,perm)]
+   rhs=rhs[np.ix_(perm)]
+
+if matrix_snapshot:
+   #take snapshot of matrix after reordering
+   plt.spy(A_csr, markersize=1)
+   plt.savefig('matrix_aft.png', bbox_inches='tight')
+   plt.clf()
+
+print("apply reordering: %.3f s" % (timing.time() - start))
+
 
 ######################################################################
 # solve system
 ######################################################################
-start = timing.time()
 
-if sparse:
-   sparse_matrix=A_sparse.tocsr()
+if globall:
+   sol=sps.linalg.spsolve(A_csr,rhs)
+   if apply_RCM:
+      sol=sol[np.ix_(perm_inv)]
+   u,v,w=np.reshape(sol[0:NfemV],(NV,3)).T
+   p=sol[NfemV:Nfem]
+   if pnormalise:
+      print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
+
 else:
-   sparse_matrix=sps.csr_matrix(a_mat)
-
-sol=sps.linalg.spsolve(sparse_matrix,rhs)
-
-print("solve time: %.3f s, h= %e" % (timing.time() - start, hx))
-
-######################################################################
-# put solution into separate x,y velocity arrays
-######################################################################
-start = timing.time()
-
-u,v,w=np.reshape(sol[0:NfemV],(NV,3)).T
-p=sol[NfemV:Nfem]
+   # convert matrices to CSR format
+   G_mat=sps.csr_matrix(G_mat)
+   K_mat=sps.csr_matrix(K_mat)
+   M_mat=sps.csr_matrix(M_mat)
+   C_mat=sps.csr_matrix(C_mat)
+   print("     -> K_mat (m,M) %.7f %.7f " %(np.min(K_mat),np.max(K_mat)))
+   print("     -> G_mat (m,M) %.7f %.7f " %(np.min(G_mat),np.max(G_mat)))
+   print("     -> M_mat (m,M) %.7f %.7f " %(np.min(M_mat),np.max(M_mat)))
+   print("     -> C_mat (m,M) %.7f %.7f " %(np.min(C_mat),np.max(C_mat)))
+   solV,solP,k=cg.schur_complement_cg_solver(K_mat,G_mat,C_mat,M_mat,\
+                         f_rhs,h_rhs,NfemV,NfemP,niter,tol,use_precond)
+   u,v,w=np.reshape(solV,(NV,3)).T
+   p=solP[:]
 
 print("     -> uu (m,M) %.7f %.7f %.7f" %(np.min(u),np.max(u),hx))
 print("     -> vv (m,M) %.7f %.7f %.7f" %(np.min(v),np.max(v),hx))
 print("     -> ww (m,M) %.7f %.7f %.7f" %(np.min(w),np.max(w),hx))
 print("     -> pp (m,M) %.7f %.7f %.7f" %(np.min(p),np.max(p),hx))
-
-if pnormalise:
-   print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
 
 stats_vel_file.write("%e %e %e %e %e %e %e \n" %(np.min(u),np.max(u),\
                                                  np.min(v),np.max(v),\
@@ -771,15 +852,17 @@ stats_vel_file.flush()
 
 #np.savetxt('velocity.ascii',np.array([xV,yV,zV,u,v,w]).T,header='# x,y,z,u,v,w')
 
-print("transfer solution: %.3f s" % (timing.time() - start))
+print("solve time: %.3f s, h= %e" % (timing.time() - start, hx))
 
 #################################################################
-# make sure int p dV = 0
+# make sure int p dV = 0 if pnormalise=F
 #################################################################
 start = timing.time()
+   
 
 int_p=0
 if not pnormalise:
+   print("     -> pp (m,M) %.7f %.7f %.7f" %(np.min(p),np.max(p),hx))
    for iel in range (0,nel):
        for iq in range(0,nqperdim):
            for jq in range(0,nqperdim):
@@ -792,6 +875,10 @@ if not pnormalise:
                    pq=np.sum(NNNP[0:mP]*p[iconP[0:mP,iel]])
                    jcob=hx*hy*hz/8
                    int_p+=pq*jcob*weightq
+               #end for
+           #end for
+       #end for
+   #end for
    int_p/=(Lx*Ly*Ly)
    p[:]-=int_p
 
@@ -834,6 +921,12 @@ print("compute gridc: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
+avrg_u=0
+avrg_v=0
+avrg_w=0
+avrg_absu=0
+avrg_absv=0
+avrg_absw=0
 vrms=0.
 errv=0.
 errp=0.
@@ -884,6 +977,13 @@ for iel in range (0,nel):
                     pq+=NNNP[k]*p[iconP[k,iel]]
                 #end for
 
+                avrg_u+=uq*weightq*jcob
+                avrg_v+=vq*weightq*jcob
+                avrg_w+=wq*weightq*jcob
+                avrg_absu+=abs(uq)*weightq*jcob
+                avrg_absv+=abs(vq)*weightq*jcob
+                avrg_absw+=abs(wq)*weightq*jcob
+
                 vrms+=(uq**2+vq**2+wq**2)*weightq*jcob
 
                 errv+=((uq-uth(xq,yq,zq))**2+\
@@ -897,13 +997,22 @@ for iel in range (0,nel):
     #end for iq
 #end for iel
 
-errv=np.sqrt(errv)
-errp=np.sqrt(errp)
-vrms=np.sqrt(vrms)
+errv=np.sqrt(errv/Lx/Ly/Lz)
+errp=np.sqrt(errp/Lx/Ly/Lz)
+vrms=np.sqrt(vrms/Lx/Ly/Lz)
+avrg_u/=(Lx*Ly*Lz)
+avrg_v/=(Lx*Ly*Lz)
+avrg_w/=(Lx*Ly*Lz)
+avrg_absu/=(Lx*Ly*Lz)
+avrg_absv/=(Lx*Ly*Lz)
+avrg_absw/=(Lx*Ly*Lz)
 
 print("     -> nel= %6d ; errv: %e ; errp: %e " %(nel,errv,errp))
 
 print("     -> nel= %6d ; vrms: %e" % (nel,vrms))
+
+print("     -> nel= %6d ; averages u,v,w: %e %e %e %e %e %e  " % (nel,avrg_u,avrg_v,avrg_w,\
+                                                                  avrg_absu,avrg_absv,avrg_absw))
 
 print("compute errors: %.3f s" % (timing.time() - start))
 

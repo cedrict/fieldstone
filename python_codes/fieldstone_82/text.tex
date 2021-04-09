@@ -143,8 +143,14 @@ through the middle of the block:
 We see that unfortunately the resolution 24x24x24 is most certainly not high 
 enough to speak of capturing the true solution of the problem...
 
-
-
+Also, one can verify that the solution is symmetric by looking at the averages of the 
+velocity components (and their absolute value) as a function of the mesh size:
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_82/results/bench4/averages.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_82/results/bench4/averages_abs.pdf}
+\end{center}
+It seems that the somewhat anisotropic placement of the bubbles does not introduce 
+a form of asymmetry in the solution.
 
 %......................................
 \subsubsection*{Manufactured solution (bench=5)}
@@ -171,6 +177,54 @@ boundaries.
 \includegraphics[width=8cm]{python_codes/fieldstone_82/results/bench5/p_stats.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_82/results/bench5/times.pdf}
 \end{center}
+
+When using the Preconditioned Conjugate Gradients algorithm on the Schur complement 
+we find that the number of iterations is rather constant across the range of resolutions
+that can be used:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_82/results/bench5/solver_convergence.pdf}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_82/results/bench5/vel1}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_82/results/bench5/vel2}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_82/results/bench5/velth}\\
+\includegraphics[width=5.2cm]{python_codes/fieldstone_82/results/bench5/press1}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_82/results/bench5/press2}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_82/results/bench5/pressth}\\
+\end{center}
+
+%................................................
+\subsubsection*{bench=-1: computing Ker($\G$) on a 2x2x2 mesh}
+
+We consider a mesh composed of $2\times 2\times 2$ elements. We prescribe no slip boundary conditions 
+on all sides, so that only the node in the middle has 3 velocity dofs left, in addition 
+to the 8*2=16 bubbles counting in total 48 velocity dofs, so 51 vdofs are left.
+
+The matrix $\G$ is [(3*3*3)+(8*2)]*3=43*3=129 vdofs X (3*3*3=27) pdofs. 
+Imposing the boundary conditions will zero 26*3=78 lines so that the leftover matrix $\G$
+has size $51\times 27$. If this element is stable its nullspace should be of size 1. 
+
+Given the ordering of the nodes, the middle node has global number 13, so that 
+its vdofs are 39, 40, and 41. The bubbles occupy rows 81 to 128. 
+We create a matrix $\G_2$ which contains only the lines of $\G$ which contain non-zero terms:
+\begin{lstlisting}
+G2 = np.zeros((51,NfemP),dtype=np.float64)
+G2[0:3,:]=G_mat[39:42,:] 
+G2[3:,:]=G_mat[81:,:]    
+\end{lstlisting}
+We then proceed to find the kernel/nullspace of matrix $\G_2$:
+\begin{lstlisting}
+ns = null_space(G2)
+\end{lstlisting}
+and we find that its size is just 1, as expected. 
+
+
+
+
+
 
 
 
