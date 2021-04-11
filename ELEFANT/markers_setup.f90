@@ -15,11 +15,11 @@ use structures
 implicit none
 
 integer i,ii,jj,counter
-real(8) chi,eta
+real(8) chi,eta,NNNT(mT)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{markers\_setup}
+!@@ \subsection{markers\_setup.f90}
 !@@ REDO and rebase on element, local coords and basis fcts
 !==================================================================================================!
 
@@ -45,17 +45,21 @@ if (init_marker_random) then
          counter=counter+1
          call random_number(eta)
          call random_number(chi)
-         swarm(counter)%x=mesh(iel)%xV(1)+mesh(iel)%hx*eta
-         swarm(counter)%y=mesh(iel)%yV(1)+mesh(iel)%hy*chi
-         swarm(counter)%z=0.d0
          swarm(counter)%r=(eta-0.5d0)*2d0
          swarm(counter)%s=(chi-0.5d0)*2d0
          swarm(counter)%t=0.d0
+         call NNT(swarm(counter)%r,swarm(counter)%s,swarm(counter)%t,NNNT(1:mT),mT,ndim)
+         swarm(counter)%x=sum(NNNT(1:mT)*mesh(iel)%xV(1:mT))
+         swarm(counter)%y=sum(NNNT(1:mT)*mesh(iel)%yV(1:mT))
+         swarm(counter)%z=0.d0
+         mesh(iel)%list_of_markers(i)=counter
+         swarm(counter)%iel=iel
       end do
    end do
 
 else
 
+   !REDO!
    counter=0
    do iel=1,nel
       do ii=1,nmarker_per_dim

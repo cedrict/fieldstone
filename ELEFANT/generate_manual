@@ -1,0 +1,5 @@
+grep -h @@ *.f90 > code.tex
+sed 's/!@@//g' code.tex > code2.tex
+mv code2.tex code.tex
+
+

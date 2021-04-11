@@ -15,6 +15,7 @@ logical(1) use_markers
 integer nmarker_per_dim
 integer nmarker
 logical(1) init_marker_random
+integer nmat
 
 integer counti,countf,count_rate
 integer iproc,idummy
@@ -43,6 +44,9 @@ integer, parameter :: two=2
 integer, parameter :: three=3
 integer, parameter :: four=4
 
+real(8), dimension(9), parameter :: Ctemp2D= (/ 2.d0,0.d0,0.d0,0.d0,2.d0,0.d0,0.d0,0.d0,1.d0 /)
+real(8), dimension(3,3), parameter :: Cmat2D= reshape( Ctemp2D, (/3,3/) )
+
 end module constants
 
 !----------------------------------------------------------
@@ -66,8 +70,8 @@ type element
      logical(1) :: left,right,top,bottom
      logical(1) :: left_node(4),right_node(4),top_node(4),bottom_node(4)
      logical(1) :: fix_u(4),fix_v(4),fix_w(4),fix_T(4)
-     real(8), dimension(:), allocatable :: xq,yq,zq,weightq,rq,sq,tq,gxq,gyq,gzq
-     real(8), dimension(:), allocatable :: etaq,rhoq,hcondq,hcapaq,hprodq
+     real(8), dimension(:), allocatable :: xq,yq,zq,weightq,rq,sq,tq,gxq,gyq,gzq,pq,thetaq
+     real(8), dimension(:), allocatable :: etaq,rhoq,hcondq,hcapaq,hprodq,JxWq
      real(8) :: exx(4),eyy(4),ezz(4),exy(4),exz(4),eyz(4) 
 end type element
 
@@ -90,5 +94,20 @@ type marker
 end type
 
 type(marker), dimension(:), allocatable :: swarm
+
+type material    
+   real(8) rho0
+   real(8) eta0 
+   real(8) c,c_sw,phi,phi_sw           !
+   real(8) alpha,T0                    ! thermal expansion coeff.
+   real(8) hcapa                       ! heat capacity
+   real(8) hcond                       ! heat conductivity
+   real(8) hprod                       ! heat production coefficient
+   real(8) A_diff,Q_diff,V_diff,f_diff !
+   real(8) n_disl,A_disl,Q_disl,V_disl,f_disl !
+   real(8) n_prls,A_prls,Q_prls,V_prls,f_prls
+end type material 
+
+type(material), dimension(:), allocatable :: mat
 
 end module

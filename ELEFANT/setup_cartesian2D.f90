@@ -22,7 +22,7 @@ call system_clock(counti,count_rate)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{\tt setup\_cartesian2D}
+!@@ \subsection{setup\_cartesian2D.f90}
 !@@ 
 !==================================================================================================!
 
@@ -145,6 +145,9 @@ do iel=1,nel
    allocate(mesh(iel)%hcondq(nqel))
    allocate(mesh(iel)%hcapaq(nqel))
    allocate(mesh(iel)%hprodq(nqel))
+   allocate(mesh(iel)%JxWq(nqel))
+   allocate(mesh(iel)%pq(nqel))
+   allocate(mesh(iel)%thetaq(nqel))
 end do
 
 do iel=1,nel
@@ -157,6 +160,7 @@ do iel=1,nel
       call NNV(rq,sq,0,NNNV(1:mV),mV,ndim,pair)
       mesh(iel)%xq(counter)=sum(mesh(iel)%xV(1:mV)*NNNV(1:mV))
       mesh(iel)%yq(counter)=sum(mesh(iel)%yV(1:mV)*NNNV(1:mV))
+      mesh(iel)%zq(counter)=0.d0
       mesh(iel)%weightq(counter)=qweights(iq)*qweights(jq)
       mesh(iel)%rq(counter)=rq
       mesh(iel)%sq(counter)=sq
@@ -193,20 +197,13 @@ end do
 
 
 
+!==============================================================================!
 
+call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-
-
-call export_mesh
+if (iproc==0) write(*,*) '     -> setup_cartesian2D ',elapsed
 
 end if ! iproc
-
-!==================================================================================================!
-!==================================================================================================!
-
-!call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
-
-!write(*,*) '     -> cartesian 2D setup',elapsed,'s'
 
 end subroutine
 

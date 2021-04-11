@@ -6,15 +6,8 @@ use structures
 implicit none
 
 
-ndim=2
-Lx=1
-Ly=1
-nelx=16
-nely=15
-geometry='cartesian2D'
-pair='q1p0'
-nmarker_per_dim=8
-init_marker_random=.true.
+call declare_main_parameters
+call define_material_properties
 
 !--------------------------------------
 
@@ -91,12 +84,20 @@ write(*,*) 'Nq=',Nq
 select case (geometry)
 case('cartesian2D'); call setup_cartesian2D
 end select
+call export_mesh
 
 call markers_setup
-!call material_layout
+call material_layout
 !call material_paint
 call export_swarm
+call assign_values_to_qpoints
+call define_bcV
 
+
+
+
+
+call postprocessors
 call output_solution
 call output_qpoints
 

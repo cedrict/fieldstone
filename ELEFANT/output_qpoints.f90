@@ -49,6 +49,26 @@ do iel=1,nel
 end do
 write(123,*) '</DataArray>'
 
+!-----
+write(123,*) '<DataArray type="Float32" Name="rho" Format="ascii">'
+do iel=1,nel
+   do iq=1,nqel
+      write(123,*) mesh(iel)%rhoq(iq)
+   end do
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="eta" Format="ascii">'
+do iel=1,nel
+   do iq=1,nqel
+      write(123,*) mesh(iel)%etaq(iq)
+   end do
+end do
+write(123,*) '</DataArray>'
+
+
+
+
 
 
 

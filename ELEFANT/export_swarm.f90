@@ -18,7 +18,7 @@ integer im
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{\tt template}
+!@@ \subsection{export\_swarm.f90}
 !@@
 !==================================================================================================!
 
@@ -63,6 +63,24 @@ write(123,*) '</DataArray>'
 write(123,*) '<DataArray type="Float32" Name="paint" Format="ascii">'
 do im=1,nmarker
 write(123,*) swarm(im)%paint
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="rho0" Format="ascii">'
+do im=1,nmarker
+write(123,*) mat(swarm(im)%mat)%rho0
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="eta0" Format="ascii">'
+do im=1,nmarker
+write(123,*) mat(swarm(im)%mat)%eta0
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="iel" Format="ascii">'
+do im=1,nmarker
+write(123,*) swarm(im)%iel
 end do
 write(123,*) '</DataArray>'
 
