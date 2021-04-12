@@ -6,7 +6,7 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine output_qpoints
+subroutine output_swarm
 
 use global_parameters
 use structures
@@ -14,12 +14,13 @@ use timing
 
 implicit none
 
-integer iq
+integer im
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{output\_qpoints}
-!@@
+!@@ \subsubsection{output\_swarm.f90}
+!@@ This subroutine produces the {\filenamefont markers.vtu} file which contains the 
+!@@ swarm of particles with all their properties.
 !==================================================================================================!
 
 if (iproc==0) then
@@ -28,82 +29,92 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-open(unit=123,file='qpoints.vtu',status='replace',form='formatted')
+
+open(unit=123,file='markers.vtu',status='replace',form='formatted')
 write(123,*) '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian">'
 write(123,*) '<UnstructuredGrid>'
-write(123,*) '<Piece NumberOfPoints="',Nq,'" NumberOfCells="',Nq,'">'
-!=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-write(123,*) '<Points>'
-write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Format="ascii">'
-do iel=1,nel
-   do iq=1,nqel
-      write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq)
-   end do
-end do
-write(123,*) '</DataArray>'
-write(123,*) '</Points>'
+write(123,*) '<Piece NumberOfPoints="',nmarker,'" NumberOfCells="',nmarker,'">'
 !=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 write(123,*) '<PointData Scalars="scalars">'
 !-----
 write(123,*) '<DataArray type="Float32" Name="r" Format="ascii">'
-do iel=1,nel
-   do iq=1,nqel
-      write(123,*) mesh(iel)%rq(iq)
-   end do
+do im=1,nmarker
+write(123,'(es12.4)') swarm(im)%r
 end do
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Float32" Name="s" Format="ascii">'
-do iel=1,nel
-   do iq=1,nqel
-      write(123,*) mesh(iel)%sq(iq)
-   end do
+do im=1,nmarker
+write(123,'(es12.4)') swarm(im)%s
 end do
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Float32" Name="t" Format="ascii">'
-do iel=1,nel
-   do iq=1,nqel
-      write(123,*) mesh(iel)%tq(iq)
-   end do
+do im=1,nmarker
+write(123,'(es12.4)') swarm(im)%t
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="mat" Format="ascii">'
+do im=1,nmarker
+write(123,'(i4)') swarm(im)%mat
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="paint" Format="ascii">'
+do im=1,nmarker
+write(123,*) swarm(im)%paint
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="rho0" Format="ascii">'
+do im=1,nmarker
+write(123,*) mat(swarm(im)%mat)%rho0
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="eta0" Format="ascii">'
+do im=1,nmarker
+write(123,*) mat(swarm(im)%mat)%eta0
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="iel" Format="ascii">'
+do im=1,nmarker
+write(123,*) swarm(im)%iel
 end do
 write(123,*) '</DataArray>'
 
-!-----
-write(123,*) '<DataArray type="Float32" Name="rho" Format="ascii">'
-do iel=1,nel
-   do iq=1,nqel
-      write(123,*) mesh(iel)%rhoq(iq)
-   end do
-end do
-write(123,*) '</DataArray>'
-!-----
-write(123,*) '<DataArray type="Float32" Name="eta" Format="ascii">'
-do iel=1,nel
-   do iq=1,nqel
-      write(123,*) mesh(iel)%etaq(iq)
-   end do
-end do
-write(123,*) '</DataArray>'
+
 !-----
 write(123,*) '</PointData>'
+!=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+write(123,*) '<Points>'
+!-----
+write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Format="ascii">'
+do im=1,nmarker
+write(123,'(3es12.4)') swarm(im)%x,swarm(im)%y,swarm(im)%z
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '</Points>'
 !=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 write(123,*) '<Cells>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="connectivity" Format="ascii">'
-do iq=1,Nq
-write(123,'(i8)') iq-1
+do im=1,nmarker
+write(123,'(i8)') im-1
 end do
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="offsets" Format="ascii">'
-do iq=1,Nq
-write(123,'(i8)') iq
+do im=1,nmarker
+write(123,'(i8)') im
 end do
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="types" Format="ascii">'
-do iq=1,Nq
+do im=1,nmarker
 write(123,'(i1)') 1
 end do
 write(123,*) '</DataArray>'
@@ -115,11 +126,20 @@ write(123,*) '</UnstructuredGrid>'
 write(123,*) '</VTKFile>'
 close(123)
 
+
+
+
+
+
+
+
+
+
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> output_qpoints ',elapsed
+if (iproc==0) write(*,*) '     -> output_swarm ',elapsed
 
 end if ! iproc
 

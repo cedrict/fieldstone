@@ -152,6 +152,15 @@ do iel=1,nel
 end do
 write(123,*) '</DataArray>'
 !-----
+write(123,*) '<DataArray type="Float32" Name="pressure (q)" Format="ascii">'
+do iel=1,nel
+   write(123,*) mesh(iel)%q(1)
+   write(123,*) mesh(iel)%q(2)
+   write(123,*) mesh(iel)%q(3)
+   write(123,*) mesh(iel)%q(4)
+end do
+write(123,*) '</DataArray>'
+!-----
 write(123,*) '<DataArray type="Float32" Name="boundary: left" Format="ascii">'
 do iel=1,nel
    if (mesh(iel)%left_node(1)) then

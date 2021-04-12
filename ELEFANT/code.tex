@@ -1,14 +1,39 @@
- \subsection{assign\_values\_to\_qpoints.f90}
+ \subsubsection{assign\_values\_to\_qpoints.f90}
 
- \subsection{basis\_functions\_V.f90}
+ \subsubsection{basis\_functions\_V.f90}
+ This file contains 3 functions: 
+ \subsubsection{compute\_dNdx\_dNdy.f90}
+ This subroutine computes $\partial{\bN}/\partial x$ and $\partial{\bN}/\partial y$
+ at a location $r,s$ passed as argument.
+ \subsubsection{compute\_elemental\_matrices.f90}
 
- \subsection{export\_swarm.f90}
+ \subsubsection{interpolate\_onto\_nodes.f90}
 
- \subsection{markers\_setup.f90}
+ \subsubsection{make\_matrix.f90}
+ This subroutine loops over all elements, build their elemental matrices and rhs, 
+ apply the boundary conditions ont these elemental matrices, and then 
+ assembles them in the global matrix, either in CSR or in MUMPS format.
+ \subsubsection{markers\_setup.f90}
  REDO and rebase on element, local coords and basis fcts
- \subsection{postprocessors}
+ \subsubsection{output\_mesh.f90}
+ This subroutine produces the {\filenamefont meshV.vtu} file which only 
+ contains the corner nodes.
+ \subsubsection{output\_qpoints}
 
- \subsection{setup\_cartesian2D.f90}
+ \subsubsection{output\_swarm.f90}
+ This subroutine produces the {\filenamefont markers.vtu} file which contains the 
+ swarm of particles with all their properties.
+ \subsubsection{postprocessors.f90}
+
+ \subsubsection{prescribe\_stokes\_solution.f90}
+
+ \subsubsection{quadrature\_setup.f90}
+
+ \subsubsection{setup\_cartesian2D.f90}
  
- \subsection{template}
+ \subsubsection{setup\_cartesian3D.f90}
+ 
+ \subsubsection{solve\_stokes}
+
+ \subsubsection{template}
 

@@ -1,82 +1,27 @@
-module global_parameters
-implicit none
-
-integer :: mV,mP,mT
-integer :: nelx,nely,nelz,nel,iel
-real(8) :: Lx,Ly,Lz
-integer :: ndim
-character(len=12) :: geometry
-character(len=4) :: pair
-integer nq_per_dim,nqel
-integer ndofV
-integer NfemV,NfemP,NfemT
-integer NV, NP, NT, Nq 
-logical(1) use_markers
-integer nmarker_per_dim
-integer nmarker
-logical(1) init_marker_random
-integer nmat
-
-integer counti,countf,count_rate
-integer iproc,idummy
-real(8) elapsed
-end module
-
-!----------------------------------------------------------
-
-module constants
-implicit none
-
-real(8), parameter :: mm=1.d-3
-real(8), parameter :: cm=1.d-2
-real(8), parameter :: km=1.d+3
-real(8), parameter :: hour=3600.d0
-real(8), parameter :: day=86400.d0
-real(8), parameter :: year=31536000.d0 
-real(8), parameter :: Myr=3.1536d13 
-real(8), parameter :: TKelvin=273.15d0 
-real(8), parameter :: eps=1.d-8
-real(8), parameter :: sqrt3 = 1.732050807568877293527446341505d0
-real(8), dimension(2), parameter :: qcoords=(/-1.d0/sqrt3,+1.d0/sqrt3/)
-real(8), dimension(2), parameter :: qweights=(/1.d0 , 1.d0 /)
-integer, parameter :: one=1
-integer, parameter :: two=2
-integer, parameter :: three=3
-integer, parameter :: four=4
-
-real(8), dimension(9), parameter :: Ctemp2D= (/ 2.d0,0.d0,0.d0,0.d0,2.d0,0.d0,0.d0,0.d0,1.d0 /)
-real(8), dimension(3,3), parameter :: Cmat2D= reshape( Ctemp2D, (/3,3/) )
-
-end module constants
-
-!----------------------------------------------------------
-
 module structures
 implicit none
 
 type element
-     integer :: iconV(5),iconT(4),iconP(4)
+     integer :: iconV(10),iconT(8),iconP(8)
      integer :: ielx,iely,ielz
      integer :: nmarker
      integer :: list_of_markers(100)
-     real(8) :: xV(5),yV(5),zV(5)
-     real(8) :: xT(4),yT(4),zT(4)
-     real(8) :: xP(4),yP(4),zP(4)
+     real(8) :: xV(10),yV(10),zV(10)
+     real(8) :: xT(8),yT(8),zT(8)
+     real(8) :: xP(8),yP(8),zP(8)
      real(8) :: xc,yc,zc
      real(8) :: hx,hy,hz
-     real(8) :: u(5),v(5),w(5),p(4),T(4)
+     real(8) :: u(10),v(10),w(10),p(8),T(8),q(8)
      real(8) :: a_eta,b_eta,c_eta,d_eta
      real(8) :: a_rho,b_rho,c_rho,d_rho
-     logical(1) :: left,right,top,bottom
-     logical(1) :: left_node(4),right_node(4),top_node(4),bottom_node(4)
-     logical(1) :: fix_u(4),fix_v(4),fix_w(4),fix_T(4)
+     logical(1) :: left,right,top,bottom,front,back
+     logical(1) :: left_node(8),right_node(8),top_node(8),bottom_node(8),front_node(8),back_node(8)
+     logical(1) :: fix_u(8),fix_v(8),fix_w(8),fix_T(8)
      real(8), dimension(:), allocatable :: xq,yq,zq,weightq,rq,sq,tq,gxq,gyq,gzq,pq,thetaq
      real(8), dimension(:), allocatable :: etaq,rhoq,hcondq,hcapaq,hprodq,JxWq
-     real(8) :: exx(4),eyy(4),ezz(4),exy(4),exz(4),eyz(4) 
+     real(8) :: exx(8),eyy(8),ezz(8),exy(8),exz(8),eyz(8) 
 end type element
-
 type(element), dimension(:), allocatable :: mesh
-
 
 type marker
      real(8)    :: x,y,z
@@ -92,7 +37,6 @@ type marker
      real(8)    :: hcapa
      real(8)    :: hprod
 end type
-
 type(marker), dimension(:), allocatable :: swarm
 
 type material    
@@ -107,7 +51,6 @@ type material
    real(8) n_disl,A_disl,Q_disl,V_disl,f_disl !
    real(8) n_prls,A_prls,Q_prls,V_prls,f_prls
 end type material 
-
 type(material), dimension(:), allocatable :: mat
 
 end module

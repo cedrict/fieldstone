@@ -1,7 +1,7 @@
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{basis\_functions\_V.f90}
-!@@
+!@@ \subsubsection{basis\_functions\_V.f90}
+!@@ This file contains 3 functions: 
 !==================================================================================================!
 
 function Bubble(r,s)
@@ -28,7 +28,6 @@ end function
 !=================================================================
 
 subroutine NNV(r,s,t,NV,mV,ndim,pair)
-!use global_parameters
 implicit none
 integer, intent(in) :: mV,ndim
 real(8), intent(in) :: r,s,t
@@ -37,7 +36,6 @@ real(8), external :: Bubble
 character(len=4), intent(in) :: pair
 
 if (ndim==2) then
-
    select case(pair)
    case('q1p0')
       NV(1)=0.25*(1-r)*(1-s)
@@ -53,11 +51,9 @@ if (ndim==2) then
    case default
       stop 'pb in NNV'
    end select
-
 end if
 
 if (ndim==3) then
-
    select case(pair)
    case('q1p0')
       NV(1)=0.125*(1-r)*(1-s)*(1-t)
@@ -71,24 +67,21 @@ if (ndim==3) then
    case default
       stop 'pb in NNV'
    end select
-
-
-
 end if
 
 end subroutine
 
 !==========================================================
 
-subroutine dNNVdr(r,s,t,dNVdr)
-use global_parameters
+subroutine dNNVdr(r,s,t,dNVdr,mV,ndim,pair)
 implicit none
+integer, intent(in) :: mV,ndim
 real(8), intent(in) :: r,s,t
 real(8), intent(out) :: dNVdr(mV)
 real(8), external :: dBubbledr
+character(len=4), intent(in) :: pair
 
 if (ndim==2) then
-
    select case(pair)
    case('q1p0')
       dNVdr(1)=-0.25*(1-s)
@@ -104,22 +97,25 @@ if (ndim==2) then
    case default
       stop 'pb in NNV'
    end select
+end if
 
+if (ndim==3) then
+   stop 'dNNVdr: 3D not implemented'
 end if
 
 end subroutine
 
 !==========================================================
 
-subroutine dNNVds(r,s,t,dNVds)
-use global_parameters
+subroutine dNNVds(r,s,t,dNVds,mV,ndim,pair)
 implicit none
+integer, intent(in) :: mV,ndim
 real(8), intent(in) :: r,s,t
 real(8), intent(out) :: dNVds(mV)
 real(8), external :: dBubbleds
+character(len=4), intent(in) :: pair
 
 if (ndim==2) then
-
    select case(pair)
    case('q1p0')
       dNVds(1)=-0.25*(1-r)
@@ -135,15 +131,41 @@ if (ndim==2) then
    case default
       stop 'pb in NNV'
    end select
+end if
 
+if (ndim==3) then
+   stop 'dNNVds: 3D not implemented'
 end if
 
 end subroutine
 
 !==========================================================
 
+subroutine dNNVdt(r,s,t,dNVdt,mV,ndim,pair)
+implicit none
+integer, intent(in) :: mV,ndim
+real(8), intent(in) :: r,s,t
+real(8), intent(out) :: dNVdt(mV)
+real(8), external :: dBubbledt
+character(len=4), intent(in) :: pair
 
+select case(pair)
+case('q1p0')
+   dNVdt(1)=-0.125*(1-r)*(1-s)
+   dNVdt(2)=-0.125*(1+r)*(1-s)
+   dNVdt(3)=-0.125*(1+r)*(1+s)
+   dNVdt(4)=-0.125*(1-r)*(1+s)
+   dNVdt(5)=+0.125*(1-r)*(1-s)
+   dNVdt(6)=+0.125*(1+r)*(1-s)
+   dNVdt(7)=+0.125*(1+r)*(1+s)
+   dNVdt(8)=+0.125*(1-r)*(1+s)
+case default
+   stop 'pb in dNNVdt'
+end select
 
+end subroutine
+
+!==========================================================
 
 
 

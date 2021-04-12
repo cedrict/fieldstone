@@ -15,13 +15,13 @@ implicit none
 ndim=2
 Lx=1
 Ly=1
-nelx=48
-nely=48
+nelx=64
+nely=64
 geometry='cartesian2D'
 pair='q1p0'
 
 use_markers=.true.
-nmarker_per_dim=8
+nmarker_per_dim=10
 init_marker_random=.true.
 nmat=3
 

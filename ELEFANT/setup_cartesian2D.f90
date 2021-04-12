@@ -11,18 +11,18 @@ subroutine setup_cartesian2D
 use global_parameters
 use structures
 use constants 
+use timing
 
 implicit none
 
-integer counter
-integer ielx,iely,iq,jq
-real(8) hx,hy,rq,sq,NNNV(mV)
+integer counter,ielx,iely,i
+real(8) hx,hy
 
 call system_clock(counti,count_rate)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{setup\_cartesian2D.f90}
+!@@ \subsubsection{setup\_cartesian2D.f90}
 !@@ 
 !==================================================================================================!
 
@@ -31,14 +31,12 @@ if (iproc==0) then
 hx=Lx/nelx
 hy=Ly/nely
 
-
 allocate(mesh(nel))
 
 !==========================================================
 !velocity 
 
 if (pair=='q1p0' .or. pair=='q1q1') then
-
    counter=0    
    do iely=1,nely    
       do ielx=1,nelx    
@@ -67,7 +65,6 @@ if (pair=='q1p0' .or. pair=='q1q1') then
          if (iely==nely) mesh(counter)%top=.true.
       end do    
    end do    
-
 end if
 
 if (pair=='q1q1') then ! add bubble node
@@ -94,108 +91,33 @@ if (pair=='q1p0') then
 end if
 
 if (pair=='q1q1') then
-   mesh(1:nel)%xP(1)=mesh(1:nel)%xV(1)
-   mesh(1:nel)%xP(2)=mesh(1:nel)%xV(2)
-   mesh(1:nel)%xP(3)=mesh(1:nel)%xV(3)
-   mesh(1:nel)%xP(4)=mesh(1:nel)%xV(4)
-   mesh(1:nel)%yP(1)=mesh(1:nel)%yV(1)
-   mesh(1:nel)%yP(2)=mesh(1:nel)%yV(2)
-   mesh(1:nel)%yP(3)=mesh(1:nel)%yV(3)
-   mesh(1:nel)%yP(4)=mesh(1:nel)%yV(4)
-   mesh(1:nel)%iconP(1)=mesh(1:nel)%iconV(1)
-   mesh(1:nel)%iconP(2)=mesh(1:nel)%iconV(2)
-   mesh(1:nel)%iconP(3)=mesh(1:nel)%iconV(3)
-   mesh(1:nel)%iconP(4)=mesh(1:nel)%iconV(4)
+   do i=1,ncorners
+      mesh(1:nel)%xP(i)=mesh(1:nel)%xV(i)
+      mesh(1:nel)%yP(i)=mesh(1:nel)%yV(i)
+      mesh(1:nel)%iconP(i)=mesh(1:nel)%iconV(i)
+   end do
 end if
-
 
 !==========================================================
 ! temperature 
 
-mesh(1:nel)%xT(1)=mesh(1:nel)%xV(1)
-mesh(1:nel)%xT(2)=mesh(1:nel)%xV(2)
-mesh(1:nel)%xT(3)=mesh(1:nel)%xV(3)
-mesh(1:nel)%xT(4)=mesh(1:nel)%xV(4)
-mesh(1:nel)%yT(1)=mesh(1:nel)%yV(1)
-mesh(1:nel)%yT(2)=mesh(1:nel)%yV(2)
-mesh(1:nel)%yT(3)=mesh(1:nel)%yV(3)
-mesh(1:nel)%yT(4)=mesh(1:nel)%yV(4)
-
-mesh(1:nel)%iconT(1)=mesh(1:nel)%iconV(1)
-mesh(1:nel)%iconT(2)=mesh(1:nel)%iconV(2)
-mesh(1:nel)%iconT(3)=mesh(1:nel)%iconV(3)
-mesh(1:nel)%iconT(4)=mesh(1:nel)%iconV(4)
-
-!==========================================================
-! quadrature points
-
-do iel=1,nel
-   allocate(mesh(iel)%xq(nqel))
-   allocate(mesh(iel)%yq(nqel))
-   allocate(mesh(iel)%zq(nqel))
-   allocate(mesh(iel)%weightq(nqel))
-   allocate(mesh(iel)%rq(nqel))
-   allocate(mesh(iel)%sq(nqel))
-   allocate(mesh(iel)%tq(nqel))
-   allocate(mesh(iel)%gxq(nqel))
-   allocate(mesh(iel)%gyq(nqel))
-   allocate(mesh(iel)%gzq(nqel))
-   allocate(mesh(iel)%rhoq(nqel))
-   allocate(mesh(iel)%etaq(nqel))
-   allocate(mesh(iel)%hcondq(nqel))
-   allocate(mesh(iel)%hcapaq(nqel))
-   allocate(mesh(iel)%hprodq(nqel))
-   allocate(mesh(iel)%JxWq(nqel))
-   allocate(mesh(iel)%pq(nqel))
-   allocate(mesh(iel)%thetaq(nqel))
-end do
-
-do iel=1,nel
-   counter=0
-   do iq=1,nq_per_dim
-   do jq=1,nq_per_dim
-      counter=counter+1
-      rq=qcoords(iq)
-      sq=qcoords(jq)
-      call NNV(rq,sq,0,NNNV(1:mV),mV,ndim,pair)
-      mesh(iel)%xq(counter)=sum(mesh(iel)%xV(1:mV)*NNNV(1:mV))
-      mesh(iel)%yq(counter)=sum(mesh(iel)%yV(1:mV)*NNNV(1:mV))
-      mesh(iel)%zq(counter)=0.d0
-      mesh(iel)%weightq(counter)=qweights(iq)*qweights(jq)
-      mesh(iel)%rq(counter)=rq
-      mesh(iel)%sq(counter)=sq
-      mesh(iel)%tq(counter)=0
-   end do
-   end do
+do i=1,ncorners
+   mesh(1:nel)%xT(i)=mesh(1:nel)%xV(i)
+   mesh(1:nel)%yT(i)=mesh(1:nel)%yV(i)
+   mesh(1:nel)%iconT(i)=mesh(1:nel)%iconV(i)
 end do
 
 !==========================================================
 ! flag nodes on boundaries
 
 do iel=1,nel
-   mesh(iel)%left_node(1)=(abs(mesh(iel)%xV(1)-0)<eps*Lx)
-   mesh(iel)%left_node(2)=(abs(mesh(iel)%xV(2)-0)<eps*Lx)
-   mesh(iel)%left_node(3)=(abs(mesh(iel)%xV(3)-0)<eps*Lx)
-   mesh(iel)%left_node(4)=(abs(mesh(iel)%xV(4)-0)<eps*Lx)
-
-   mesh(iel)%right_node(1)=(abs(mesh(iel)%xV(1)-Lx)<eps*Lx)
-   mesh(iel)%right_node(2)=(abs(mesh(iel)%xV(2)-Lx)<eps*Lx)
-   mesh(iel)%right_node(3)=(abs(mesh(iel)%xV(3)-Lx)<eps*Lx)
-   mesh(iel)%right_node(4)=(abs(mesh(iel)%xV(4)-Lx)<eps*Lx)
-
-   mesh(iel)%bottom_node(1)=(abs(mesh(iel)%yV(1)-0)<eps*Ly)
-   mesh(iel)%bottom_node(2)=(abs(mesh(iel)%yV(2)-0)<eps*Ly)
-   mesh(iel)%bottom_node(3)=(abs(mesh(iel)%yV(3)-0)<eps*Ly)
-   mesh(iel)%bottom_node(4)=(abs(mesh(iel)%yV(4)-0)<eps*Ly)
-
-   mesh(iel)%top_node(1)=(abs(mesh(iel)%yV(1)-Ly)<eps*Ly)
-   mesh(iel)%top_node(2)=(abs(mesh(iel)%yV(2)-Ly)<eps*Ly)
-   mesh(iel)%top_node(3)=(abs(mesh(iel)%yV(3)-Ly)<eps*Ly)
-   mesh(iel)%top_node(4)=(abs(mesh(iel)%yV(4)-Ly)<eps*Ly)
+   do i=1,ncorners
+      mesh(iel)%left_node(i)  =(abs(mesh(iel)%xV(i)-0 )<eps*Lx)
+      mesh(iel)%right_node(i) =(abs(mesh(iel)%xV(i)-Lx)<eps*Lx)
+      mesh(iel)%bottom_node(i)=(abs(mesh(iel)%yV(i)-0 )<eps*Ly)
+      mesh(iel)%top_node(i)   =(abs(mesh(iel)%yV(i)-Ly)<eps*Ly)
+   end do
 end do
-
-
-
 
 !==============================================================================!
 

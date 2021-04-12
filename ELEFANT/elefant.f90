@@ -55,8 +55,12 @@ NfemV=NV*ndofV
 NfemP=NP
 NfemT=NT
 Nq=nqel*nel
+ncorners=2**ndim
+if (ndim==2) ndim2=3
+if (ndim==3) ndim2=6
 
-
+solve_stokes_system=.true.
+nstep=1
 
 !----------------------------
 write(*,*) 'Lx,Ly=',Lx,Ly
@@ -65,37 +69,48 @@ write(*,*) 'nel',nel
 write(*,*) 'pair',pair
 write(*,*) 'geometry=',geometry
 write(*,*) 'nqel=',nqel
+write(*,*) 'NV=',NV
+write(*,*) 'NP=',NP
+write(*,*) 'NT=',NT
 write(*,*) 'NfemV=',NfemV
 write(*,*) 'NfemP=',NfemP
 write(*,*) 'NfemT=',NfemT
 write(*,*) 'Nq=',Nq
+write(*,*) 'ncorners=',ncorners
 !----------------------------
-
-
-
-
-
-
 
 
 !-------------------------------------------------
 
-
 select case (geometry)
 case('cartesian2D'); call setup_cartesian2D
+case('cartesian3D'); call setup_cartesian3D
 end select
-call export_mesh
+call output_mesh
+call quadrature_setup
 
 call markers_setup
 call material_layout
 !call material_paint
-call export_swarm
-call assign_values_to_qpoints
-call define_bcV
+call output_swarm
 
+do istep=1,nstep !-----------------------------------------
+                                                          !
+   if (solve_stokes_system) then                          !
+                                                          !
+      call assign_values_to_qpoints
+      call define_bcV                                     !
+      call make_matrix                                    !
+      call solve_stokes                                   !
+      call interpolate_onto_nodes                         !
 
+   else                                                   !
 
+      call prescribe_stokes_solution                      !
 
+   end if
+                                                          !
+end do !---------------------------------------------------
 
 call postprocessors
 call output_solution

@@ -6,20 +6,21 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine export_swarm
+subroutine output_mesh
 
 use global_parameters
 use structures
-!use constants
+use timing
 
 implicit none
 
-integer im
+integer i
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{export\_swarm.f90}
-!@@
+!@@ \subsubsection{output\_mesh.f90}
+!@@ This subroutine produces the {\filenamefont meshV.vtu} file which only 
+!@@ contains the corner nodes.
 !==================================================================================================!
 
 if (iproc==0) then
@@ -28,117 +29,46 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-
-open(unit=123,file='markers.vtu',status='replace',form='formatted')
+open(unit=123,file='meshV.vtu',status='replace',form='formatted')
 write(123,*) '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian">'
 write(123,*) '<UnstructuredGrid>'
-write(123,*) '<Piece NumberOfPoints="',nmarker,'" NumberOfCells="',nmarker,'">'
-!=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-write(123,*) '<PointData Scalars="scalars">'
-!-----
-write(123,*) '<DataArray type="Float32" Name="r" Format="ascii">'
-do im=1,nmarker
-write(123,'(es12.4)') swarm(im)%r
-end do
-write(123,*) '</DataArray>'
-!-----
-write(123,*) '<DataArray type="Float32" Name="s" Format="ascii">'
-do im=1,nmarker
-write(123,'(es12.4)') swarm(im)%s
-end do
-write(123,*) '</DataArray>'
-!-----
-write(123,*) '<DataArray type="Float32" Name="t" Format="ascii">'
-do im=1,nmarker
-write(123,'(es12.4)') swarm(im)%t
-end do
-write(123,*) '</DataArray>'
-!-----
-write(123,*) '<DataArray type="Float32" Name="mat" Format="ascii">'
-do im=1,nmarker
-write(123,'(i4)') swarm(im)%mat
-end do
-write(123,*) '</DataArray>'
-!-----
-write(123,*) '<DataArray type="Float32" Name="paint" Format="ascii">'
-do im=1,nmarker
-write(123,*) swarm(im)%paint
-end do
-write(123,*) '</DataArray>'
-!-----
-write(123,*) '<DataArray type="Float32" Name="rho0" Format="ascii">'
-do im=1,nmarker
-write(123,*) mat(swarm(im)%mat)%rho0
-end do
-write(123,*) '</DataArray>'
-!-----
-write(123,*) '<DataArray type="Float32" Name="eta0" Format="ascii">'
-do im=1,nmarker
-write(123,*) mat(swarm(im)%mat)%eta0
-end do
-write(123,*) '</DataArray>'
-!-----
-write(123,*) '<DataArray type="Float32" Name="iel" Format="ascii">'
-do im=1,nmarker
-write(123,*) swarm(im)%iel
-end do
-write(123,*) '</DataArray>'
-
-
-!-----
-write(123,*) '</PointData>'
-!=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+write(123,*) '<Piece NumberOfPoints="',ncorners*nel,'" NumberOfCells="',nel,'">'
+!.............................
 write(123,*) '<Points>'
-!-----
 write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Format="ascii">'
-do im=1,nmarker
-write(123,'(3es12.4)') swarm(im)%x,swarm(im)%y,swarm(im)%z
+do iel=1,nel
+   do i=1,ncorners
+      write(123,*) mesh(iel)%xV(i),mesh(iel)%yV(i),mesh(iel)%zV(i)
+   end do
 end do
 write(123,*) '</DataArray>'
-!-----
 write(123,*) '</Points>'
-!=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+!.............................
 write(123,*) '<Cells>'
-!-----
 write(123,*) '<DataArray type="Int32" Name="connectivity" Format="ascii">'
-do im=1,nmarker
-write(123,'(i8)') im-1
+do iel=1,nel
+   !write(123,*) (iel-1)*4,(iel-1)*4+1,(iel-1)*4+2,(iel-1)*4+3 
+   write(123,*) ( (iel-1)*4+i-1,i=1,ncorners) 
 end do
 write(123,*) '</DataArray>'
-!-----
 write(123,*) '<DataArray type="Int32" Name="offsets" Format="ascii">'
-do im=1,nmarker
-write(123,'(i8)') im
-end do
+write(123,*) (iel*ncorners,iel=1,nel)
 write(123,*) '</DataArray>'
-!-----
 write(123,*) '<DataArray type="Int32" Name="types" Format="ascii">'
-do im=1,nmarker
-write(123,'(i1)') 1
-end do
+if (ndim==2) write(123,*) (9,iel=1,nel)
+if (ndim==3) write(123,*) (12,iel=1,nel)
 write(123,*) '</DataArray>'
-!-----
 write(123,*) '</Cells>'
-!=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 write(123,*) '</Piece>'
 write(123,*) '</UnstructuredGrid>'
 write(123,*) '</VTKFile>'
 close(123)
 
-
-
-
-
-
-
-
-
-
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> export_swarm ',elapsed
+if (iproc==0) write(*,*) '     -> output_mesh ',elapsed
 
 end if ! iproc
 

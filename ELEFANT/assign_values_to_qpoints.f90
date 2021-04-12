@@ -11,20 +11,19 @@ subroutine assign_values_to_qpoints
 use global_parameters
 use structures
 use constants
+use timing
 
 implicit none
 
-integer i,im,iq
-integer ipvt2D(3),job
+integer i,im,iq,idummy,ipvt2D(3),job
 real(8) x(1000),y(1000),z(1000),rho(1000),eta(1000),rcond
-real(8) A2D(3,3),B2D(3),work2D(3)
+real(8) A2D(3,3),B2D(3),work2D(3),NNNT(mT),NNNP(mP)
 real(8) pm,Tm,exxm,eyym,ezzm,exym,exzm,eyzm
 real(8) exxq,eyyq,ezzq,exyq,exzq,eyzq
-real(8) NNNT(mT),NNNP(mP)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{assign\_values\_to\_qpoints.f90}
+!@@ \subsubsection{assign\_values\_to\_qpoints.f90}
 !@@
 !==================================================================================================!
 
@@ -92,6 +91,7 @@ if (use_markers) then
       A2D(3,2)=sum(y(1:mesh(iel)%nmarker)*x(1:mesh(iel)%nmarker)) 
       A2D(3,3)=sum(y(1:mesh(iel)%nmarker)*y(1:mesh(iel)%nmarker))
       call DGECO (A2D, three, three, ipvt2D, rcond, work2D)
+
 
       ! build rhs for density and solve
       B2D(1)=sum(rho(1:mesh(iel)%nmarker))
@@ -183,7 +183,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> name ',elapsed
+if (iproc==0) write(*,*) '     -> assign_values_to_qpoints ',elapsed
 
 end if ! iproc
 
