@@ -91,9 +91,9 @@ if int(len(sys.argv) == 4):
    order     =int(sys.argv[2])
    supg_type =int(sys.argv[3])
 else:
-   experiment=6
+   experiment=8
    order=2
-   supg_type=1
+   supg_type=0
 
 if order==1:
    m=4          # number of nodes making up an element
@@ -180,6 +180,18 @@ if experiment==7: # elastic slab
    ymin=0.
    every=5
 
+if experiment==8: # advection cone Li book
+   nelx=200
+   nely=4
+   Lx=1
+   Ly=0.05
+   tfinal=8
+   CFLnb=0.1
+   xmin=0.
+   ymin=0.
+   every=10
+
+
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
     
@@ -264,6 +276,9 @@ for j in range(0,nny):
            yy=y[counter]/Ly
            u[counter]=(xx*xx*(1.-xx)**2*(2.*yy-6.*yy*yy+4*yy*yy*yy))*cm/year  *100
            v[counter]=(-yy*yy*(1.-yy)**2*(2.*xx-6.*xx*xx+4*xx*xx*xx))*cm/year *100
+        if experiment==8:
+           u[counter]=0.1
+           v[counter]=0
         counter += 1
     #end for
 #end for
@@ -370,7 +385,7 @@ if experiment==5:
           bc_fixT[i]=True ; bc_valT[i]=0.
    #end for
 
-if experiment==6 or experiment==17:
+if experiment==6 or experiment==7:
    for i in range(0,NV):
        if x[i]/Lx<eps and np.abs(y[i]-Ly/2)<=300e3:
           bc_fixT[i]=True ; bc_valT[i]=1.
@@ -381,6 +396,13 @@ if experiment==6 or experiment==17:
        if y[i]/Ly>(1-eps):
           bc_fixT[i]=True ; bc_valT[i]=0.
    #end for
+
+if experiment==8:
+   for i in range(0,NV):
+       if x[i]/Lx<eps:
+          bc_fixT[i]=True ; bc_valT[i]=0.
+       if x[i]/Lx>(1-eps):
+          bc_fixT[i]=True ; bc_valT[i]=0.
 
 print("boundary conditions (%.3fs)" % (timing.time() - start))
 
@@ -442,6 +464,15 @@ if experiment==6 or experiment==7:
           T[i]=0
        #end if
     #end for
+
+if experiment==8:
+   for i in range(0,NV):
+       if x[i]<0.1:
+          T[i]=np.sin(10*np.pi*x[i])
+       else: 
+          T[i]=0
+       #end if
+   #end for
 
 Tm1[:]=T[:]
 Tm2[:]=T[:]

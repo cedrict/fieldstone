@@ -14,7 +14,7 @@ plot[][]\
 0 lt -1 notitle,\
 1 lt -1 notitle
 
-
+set ylabel '<T>'
 set output 'avrg_T.pdf'
 plot[][]\
 'nosupg/avrg_T.ascii' w l t 'no SUPG',\
