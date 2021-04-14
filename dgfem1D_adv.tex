@@ -6,7 +6,8 @@ Starting from the 1-D advection equation:
     \frac{\partial T}{\partial t}+u\frac{\partial T}{\partial x}=0 
 \end{equation}
 where $T$ is the temperature and $u$ the velocity. 
-As shown before we start by discretizing the domain into a collection of elements. Then the above equation can be integrated over the element which is bounded by nodes $x_k$ and $x_{k+1}$. 
+As shown before we start by discretizing the domain into a collection of elements. 
+Then the above equation can be integrated over the element which is bounded by nodes $x_k$ and $x_{k+1}$. 
 
 \begin{equation}
 \int_{x_k}^{x_{k+1}}  \left(\frac{\partial T}{\partial t}+u\frac{\partial T}{\partial x}\right) \tilde{f}(x) dx 
@@ -16,14 +17,13 @@ As shown before we start by discretizing the domain into a collection of element
 -\int_{x_k}^{x_{k+1}} \frac{\partial \tilde{f}}{\partial x} uT dx
 =0 \nn
 \end{equation}
-with the test function $\tilde{f}$. 
+with $\tilde{f}$ the test function. 
 Inside the elements the test functions are defined by well defined polynomials. 
 We once again define
-\[
-\tilde{f}_k^+=\tilde{f}(x_k^+)
-\qquad
-\tilde{f}_{k+1}^-=\tilde{f}(x_{k+1}^-)
-\]
+\begin{eqnarray}
+\tilde{f}_k^+    &=&\tilde{f}(x_k^+) \nn\\
+\tilde{f}_{k+1}^-&=&\tilde{f}(x_{k+1}^-)\nn
+\end{eqnarray}
 \begin{equation}
     \int_{x_k}^{x_{k+1}}\left(
     \tilde{f}(x)\frac{\partial T_h}{\partial t}-
@@ -43,7 +43,8 @@ when $u>0$ this flux then simply becomes:
 uT(a,b)=u a
 \end{equation}
 which is in essence an upwinding scheme.
-Filling this into equation \eqref{1Dcond} gives:
+Filling this into equation \eqref{1Dcond} gives\footnote{why do we only keep $T^-$? because 
+of the velocity direction?}:
 \begin{equation}
 \int_{x_k}^{x_{k+1}}\left(
 \tilde{f}(x)\frac{\partial T_h}{\partial t}-
@@ -53,55 +54,58 @@ Filling this into equation \eqref{1Dcond} gives:
 The function $T_h$ inside the element can be approximated 
 as follows:
 \begin{equation}
-T_h(x) = \sum_{i=1}^m N_i(x) T_i = 
-N_k(x) {\color{red}T_k^+} + N_{k+1}(x) {\color{red}T_{k+1}^-}
+T_h(x) = \sum_{i=1}^m \bN_i(x) T_i = 
+\bN_k(x) {\color{red}T_k^+} + \bN_{k+1}(x) {\color{red}T_{k+1}^-}
 \label{eq:dgadv1} 
 \end{equation}
+where the red quantities are the unknown dofs.
 In what follows we coin $\dot{T}=\partial T/\partial t$ so
 \begin{equation}
 \dot{T}_h(x) 
-= \sum_{i=1}^m N_i(x) \dot{T}_i 
-= N_k(x) {\color{red}\dot{T}_k^+} + N_{k+1}(x) {\color{red}\dot{T}_{k+1}^-}
+= \sum_{i=1}^m \bN_i(x) \dot{T}_i 
+= \bN_k(x) {\color{red}\dot{T}_k^+} + \bN_{k+1}(x) {\color{red}\dot{T}_{k+1}^-}
 \label{eq:dgadv2} 
 \end{equation}
-Taking $\tilde{f}(x)=N_k(x)$ and then $\tilde{f}(x)=N_{k+1}(x)$ we arrive at
+Taking $\tilde{f}(x)=\bN_k(x)$ and then $\tilde{f}(x)=\bN_{k+1}(x)$ we arrive at
 \begin{eqnarray}
 \int_{x_k}^{x_{k+1}}\left(
-N_k(x) \dot{T}_h -
-\frac{\partial N_k}{\partial x} uT_h \right) dx
-+\underbrace{N_k(x_{k+1}^-)}_{=0}u {\color{red}T_{k+1}^-}     - \underbrace{N_k (x_{k}^-)}_{=1}uT_{k}^- &=& 0 \\
-\int_{x_k}^{x_{k+1}}\left(
-N_{k+1}(x) \dot{T}_h -
-\frac{\partial N_{k+1}}{\partial x} uT_h \right) dx
-+ \underbrace{N_{k+1}(x_{k+1}^-)}_{1}u {\color{red}T_{k+1}^-}     -\underbrace{N_{k+1}(x_{k}^-)}_{=0}uT_{k}^- &=& 0
+\bN_k(x) \dot{T}_h -
+\frac{\partial \bN_k}{\partial x} uT_h \right) dx
++\underbrace{\bN_k(x_{k+1}^-)}_{=0}u {\color{red}T_{k+1}^-}     - 
+\underbrace{\bN_k (x_{k}^-)}_{=1}uT_{k}^- &=& 0 \\
+\int_{x_k}^{x_{k+1}}\left( \bN_{k+1}(x) \dot{T}_h -
+\frac{\partial \bN_{k+1}}{\partial x} uT_h \right) dx
++ \underbrace{\bN_{k+1}(x_{k+1}^-)}_{=1}u {\color{red}T_{k+1}^-}     -
+\underbrace{\bN_{k+1}(x_{k}^-)}_{=0}uT_{k}^- &=& 0.
 \end{eqnarray}
-i.e.
+The underbraced terms are either 0 or 1 due to the properties of the basis functions
+$\bN_i(\vec{r}_j)=\delta_{ij}$. Finally:
 \begin{eqnarray}
 \int_{x_k}^{x_{k+1}}\left(
-N_k(x) \dot{T}_h -
-\frac{\partial N_k}{\partial x} uT_h \right) dx
-   -  uT_{k}^- &=& 0 \\
+\bN_k(x) \dot{T}_h -
+\frac{\partial \bN_k}{\partial x} uT_h \right) dx
+   -  uT_{k}^- &=& 0 \label{eq:dgadv3}\\
 \int_{x_k}^{x_{k+1}}\left(
-N_{k+1}(x)  \dot{T}_h -
-\frac{\partial N_{k+1}}{\partial x} uT_h \right) dx
-+ u{\color{red} T_{k+1}^-}      &=& 0
+\bN_{k+1}(x)  \dot{T}_h -
+\frac{\partial \bN_{k+1}}{\partial x} uT_h \right) dx
++ u{\color{red} T_{k+1}^-}      &=& 0  \label{eq:dgadv4}
 \end{eqnarray}
-We now use Eqs.~\eqref{eq:dgadv1} and \eqref{eq:dgadv2}
+We now use Eqs.~\eqref{eq:dgadv1} and \eqref{eq:dgadv2} in Eq.~\eqref{eq:dgadv3} and Eq.~\eqref{eq:dgadv4}:
 \begin{eqnarray}
 \int_{x_k}^{x_{k+1}}\left(
-N_k
-[N_k {\color{red}\dot{T}_k^+} + N_{k+1} {\color{red}\dot{T}_{k+1}^-}]
+\bN_k
+[\bN_k {\color{red}\dot{T}_k^+} + \bN_{k+1} {\color{red}\dot{T}_{k+1}^-}]
 -
-\frac{\partial N_k}{\partial x} u
-[N_k {\color{red}T_k^+} + N_{k+1} {\color{red}T_{k+1}^-}]
+\frac{\partial \bN_k}{\partial x} u
+[\bN_k {\color{red}T_k^+} + \bN_{k+1} {\color{red}T_{k+1}^-}]
  \right) dx
    -  uT_{k}^- &=& 0 \\
 \int_{x_k}^{x_{k+1}}\left(
-N_{k+1} 
-[N_k {\color{red}\dot{T}_k^+} + N_{k+1} {\color{red}\dot{T}_{k+1}^-}]
+\bN_{k+1} 
+[\bN_k {\color{red}\dot{T}_k^+} + \bN_{k+1} {\color{red}\dot{T}_{k+1}^-}]
  -
-\frac{\partial N_{k+1}}{\partial x} u
-[N_k {\color{red}T_k^+} + N_{k+1} {\color{red}T_{k+1}^-}]
+\frac{\partial \bN_{k+1}}{\partial x} u
+[\bN_k {\color{red}T_k^+} + \bN_{k+1} {\color{red}T_{k+1}^-}]
 \right) dx
 + u{\color{red} T_{k+1}^-}      &=& 0
 \end{eqnarray}
@@ -111,8 +115,8 @@ Defining again (see Appendix~\ref{app:mm})
 \int_{x_k}^{x_{k+1}}
 \left(
 \begin{array}{cc}
-N_kN_k & N_k N_{k+1} \\
-N_{k+1}N_k & N_{k+1} N_{k+1} 
+\bN_k    \bN_k & \bN_k     \bN_{k+1} \\
+\bN_{k+1}\bN_k & \bN_{k+1} \bN_{k+1} 
 \end{array}
 \right)
 dx
@@ -131,8 +135,8 @@ and
 \int_{\Omega_e} 
 \left(
 \begin{array}{cc}
-\frac{dN_k}{dx} N_k     & \frac{dN_k}{dx} N_{k+1} \\
-\frac{dN_{k+1}}{dx} N_k & \frac{dN_{k+1}}{dx} N_{k+1}
+\frac{d\bN_k}{dx}     \bN_k & \frac{d\bN_k}{dx}     \bN_{k+1} \\
+\frac{d\bN_{k+1}}{dx} \bN_k & \frac{d\bN_{k+1}}{dx} \bN_{k+1}
 \end{array}
 \right)
 dV
@@ -306,14 +310,14 @@ we multiply the equation by $\delta t$ and we obtain
 \begin{eqnarray}
 \left(
 \begin{array}{cc}
-{\color{blue} T_k^+}(t+\delta t)  \\
-{\color{blue}T_{k+1}^-} (t+\delta t) 
+{\color{red} T_k^+}(t+\delta t)  \\
+{\color{red}T_{k+1}^-} (t+\delta t) 
 \end{array}
 \right)=
  \left(
 \begin{array}{cc}
-{\color{blue} T_k^+} (t) \\
-{\color{blue}T_{k+1}^-} (t) 
+{\color{red} T_k^+} (t) \\
+{\color{red}T_{k+1}^-} (t) 
 \end{array}
 \right)+
 \frac{u \delta t}{h} 
@@ -324,8 +328,8 @@ we multiply the equation by $\delta t$ and we obtain
 \right)
 \left(
 \begin{array}{cc}
-{\color{blue}T_k^+} (t) \\
-{\color{blue}T_{k+1}^-} (t)
+{\color{red}T_k^+} (t) \\
+{\color{red}T_{k+1}^-} (t)
 \end{array}
 \right) + 
 \frac{u \delta t}{h} \left(
@@ -340,8 +344,8 @@ and finally
 \begin{eqnarray}
 \left(
 \begin{array}{cc}
-{\color{blue} T_k^+}(t+\delta t)  \\
-{\color{blue}T_{k+1}^-} (t+\delta t) 
+{\color{red} T_k^+}(t+\delta t)  \\
+{\color{red}T_{k+1}^-} (t+\delta t) 
 \end{array}
 \right)=
 \left[
@@ -355,8 +359,8 @@ and finally
 \right]\cdot
 \left(
 \begin{array}{cc}
-{\color{blue}T_k^+} (t) \\
-{\color{blue}T_{k+1}^-} (t)
+{\color{red}T_k^+} (t) \\
+{\color{red}T_{k+1}^-} (t)
 \end{array}
 \right) + 
 \frac{u \delta t}{h} \left(
@@ -365,14 +369,47 @@ and finally
      -2 
 \end{array}
 \right)T_k^- (t+\delta t) 
+\label{eq:dgadv5} 
 \end{eqnarray}
 \end{mdframed}
+Also, since $C=u \delta t / h $, then the equation above can also 
+be written
+\begin{eqnarray}
+\left(
+\begin{array}{cc}
+{\color{red} T_k^+}(t+\delta t)  \\
+{\color{red}T_{k+1}^-} (t+\delta t) 
+\end{array}
+\right)=
+\left[
+{\bm 1} + 
+C
+\left(\begin{array}{cc}
+    -3 & -1 \\
+     3 & -1
+\end{array}
+\right)
+\right]\cdot
+\left(
+\begin{array}{cc}
+{\color{red}T_k^+} (t) \\
+{\color{red}T_{k+1}^-} (t)
+\end{array}
+\right) + 
+C \left(
+\begin{array}{cc}
+     4   \\
+     -2 
+\end{array}
+\right)T_k^- (t+\delta t) 
+\end{eqnarray}
 
 
 
 
 
 
-
-This problem can be solved starting from the left boundary and sweeping through all the elements. The updated values of adjacent elements are used in the calculation of the next element as soon as this element becomes available which is why 
+This problem can be solved starting from the left boundary and sweeping through all 
+the elements. The updated values of adjacent elements are used in the calculation of 
+the next element as soon as this element becomes available which is why 
 the last term $T_k^-$ is taken  at $t+\delta t$.

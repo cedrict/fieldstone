@@ -2,56 +2,52 @@
 %......................................
 \subsubsection{The Stenberg macro-element} 
 
-\begin{center}
-\includegraphics[width=5cm]{images/meshtopos/elsw}
-\includegraphics[width=5cm]{images/meshtopos/grsa}\\
-{\captionfont Left: Fig 3.12 of Elman \etal book \cite{elsw}.
-Right: Taken from Gresho \& Sani's book \cite{grsa}: "For fans of $Q_1Q_0$ who want 
-guaranteed optimal convergence of both u and p (with however larger error 
+This macro-element is introduced in Stenberg (1984) \cite{sten84}. 
+
+\input{tikz/tikz_stenberg}
+
+Gresho \& Sani \cite{grsa} state: "For fans of $Q_1\times Q_0$ who want 
+guaranteed optimal convergence of both $u$ and $p$ (with however larger error 
 constants caused by the distorted shapes?), one way to assure this is
-to discretise via the macro elements above, each composed of five $Q_1Q_0$
+to discretise via the macro elements above, each composed of five $Q_1\times Q_0$
 quadrilaterals. Such checkerboard-killer meshes have been employed in practice
 by (at least) Bath\'e \cite{chba93}. Both the macro-element and the proof are
-due to Stenberg \cite{sten84}."}
-\end{center}
+due to Stenberg \cite{sten84}."
+
+Chapelle \& Bathe \cite{chba93}: "the numerical inf-sup test is passed for this mesh and in fact,
+this behavior was proven analytically (see Brezzi \& Fortin \cite{brfo}, see 
+also Le Tallec \& Ruas \cite{leru86}).
 
 \begin{center}
-\includegraphics[width=5cm]{images/meshtopos/chba93}\\
-{\captionfont Taken from Chapelle \& Bathe \cite{chba93}: "the numerical inf-sup test is passed for this mesh and in fact,
-this behavior was proven analytically (see Brezzi \& Fortin \cite{brfo}, see also Le Tallec \& Ruas \cite{leru86}).}
-\end{center}
-
-\begin{center}
-\includegraphics[width=5cm]{images/meshtopos/sten84}
 \includegraphics[width=5cm]{images/meshtopos/qizh07}\\
-{\captionfont Left: Taken from Stenberg (1984) \cite{sten84}. 
-Right: Taken from Qin \& Zhang (2007) \cite{qizh07}.}
+{\captionfont Taken from Qin \& Zhang (2007) \cite{qizh07}.}
 \end{center}
 
-Implemented in \stone 78.
+Implemented in \stone~78.
+
+\Literature: Fig 3.12 of Elman \etal book \cite{elsw}.
 
 %......................................
 \subsubsection{The Le Tallec macro-element} 
 
-\begin{center}
-\includegraphics[width=7cm]{images/meshtopos/leta81}\\
-{\captionfont Taken from Le Tallec (1981) \cite{leta81}.}
-\end{center}
+This macro-element is introduced in Le Tallec (1981) \cite{leta81}.
+
+\input{tikz/tikz_letallec}
+
 This macro-element has been proven stable in \cite{leta81,leru86}, i.e. it satisfies 
 the stability condition (see Section~\ref{ss:pair}).
-It is also mentioned in \cite{qizh07}.
+It is also mentioned in Qin \& Zhang (2007) \cite{qizh07}.
 
 Implemented in \stone 78.
 
 %..............................................
 \subsubsection{The Qin \& Zhang macro-elements}
 
-In their paper \cite{qizh07} the authors mention the above two macro-elements 
-and also introduce three new ones:
+In their paper Qin \& Zhang (2007) \cite{qizh07} the authors mention the Stenberg and Le Tallec
+macro-elements and also introduce three new ones:
 
-\begin{center}
-\includegraphics[width=10cm]{images/meshtopos/qizh07b}
-\end{center}
+\input{tikz/tikz_qizh07a}
+
 
 They also indicate that although stable, these macro-elements are inferior 
 to the above two. 

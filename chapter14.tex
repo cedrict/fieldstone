@@ -1,6 +1,14 @@
 
+This version on \elefant is different than the one I built from 2012 until 2018.
+It incorporates many features and contains many identical algorithms with the original 
+one but in a more streamlined version. Also the number of solvers, marker projections, 
+element types, geometries, etc ... has been greatly reduced. 
+
+This code is in Fortran because a) this is the language I know best; b) it is (really) fast;
+c) the interface with MUMPS is seamless.  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Principal features}
+\subsection{Principal features}
 
 \begin{itemize}
 \item 4 geometries:
@@ -21,11 +29,343 @@
 \item paint  
 \item elemental least square projection
 \end{itemize}
-
-
 \item Outer solver: Preconditioned Conjugate Gradients applied to Schur complement equation.
 \item Inner solver: MUMPS or Preconditioned Conjugate Gradients.
 \item free surface
 \item open boundary conditions
+\item Nonlinear rheologies (viscous-viscoplastic)
 \item Newton solver (?)
 \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Philosophy}
+\begin{itemize}
+\item readability
+\item not memory efficient/optimised
+\item object oriented fortran
+\item using modules which contain 99\% of the arrays
+\item export to vtu 
+\item testing
+\item similar notations to python codes
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{The modules and objects}
+The whole code is built around a few modules and objects:
+
+\begin{itemize}
+\item {\filenamefont module\_global.f90}
+
+\lstinputlisting[language=Fortran]{ELEFANT/module_global.f90}
+
+\item {\filenamefont module\_constants.f90}
+
+\lstinputlisting[language=Fortran]{ELEFANT/module_constants.f90}
+
+\item {\filenamefont module\_timing.f90}
+\lstinputlisting[language=Fortran]{ELEFANT/module_timing.f90}
+
+\item {\filenamefont module\_structures.f90}
+\lstinputlisting[language=Fortran]{ELEFANT/module_structures.f90}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Install MUMPS (Ubuntu)}
+
+\subsubsection{Sequential install}
+
+Go to the MUMPS website \url{http://mumps.enseeiht.fr/index.php?page=home} and 
+fill the form of the Download page. 
+Once you have received a link to {\filenamefont MUMPS\_3.X.X.tar.gz}, download
+the file and place it in a folder on your computer. Expand it. 
+In the terminal place go to the folder, then type:
+\begin{verbatim}
+> cp Make.inc/Makefile.inc.generic.SEQ Makefile.inc
+\end{verbatim}
+Edit {\filenamefont Makefile.inc} and replace the C compiler {\tt cc} 
+and Fortran compiler {\tt f90} by the names of the compilers on 
+your system (in my case {\tt gcc} and {\tt gfortran} respectively).
+
+Then simply make:
+\begin{verbatim}
+> make 
+\end{verbatim}
+In the end you should find the following files in the {\tt lib} folder:
+\begin{verbatim}
+> cd lib
+> ls -la
+libdmumps.a
+libmumps_common.a
+libpord.a
+\end{verbatim}
+Finally copy {\tt libseq/mpif.h} in the \elefant folder.
+
+Edit the Makefile of \elefant to adjust the location of the MUMPS solver.
+
+ADD METIS support
+
+\subsubsection{Parallel install}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{List of subroutines}
+
+\input{ELEFANT/code.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Setting up an experiment/benchmark/cookbook}
+
+opla
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The MUMPS solver}
+
+MUMPS stands for MUltifrontal Massively Parallel Solver. It is a software package 
+for solving systems of linear equations of the 
+form ${\bm A}\cdot{\vec x} = {\vec b}$, where ${\bm A}$ is a square sparse matrix (unsymmetric, 
+symmetric positive definite, or general symmetric). 
+
+MUMPS implements a direct method which performs a direct factorisation
+${\bm A} = {\bm L}\cdot{\bm U}$ where ${\bm L}$ is a lower triangular matrix and ${\bm U}$ 
+an upper triangular matrix. If the matrix is symmetric then the factorisation becomes
+${\bm A} = {\bm L}\cdot{\bm D}\cdot{\bm L}^T$
+where ${\bm D}$ is a block diagonal matrix. 
+All the features of the MUMPS package are documented in the manual available from the 
+website\footnote{\url{http://mumps.enseeiht.fr/index.php?page=home}}.
+
+%The main features of the MUMPS package include the solution of the transposed system, 
+%input of the matrix in assembled format (distributed or centralized) or elemental format, 
+%error analysis, iterative refinement, scaling of the original matrix, out-of-core capability, 
+%parallel analysis, detection of null pivots, basic estimate of rank deficiency and null space 
+%basis for symmetric matrices and computation of a Schur complement matrix. 
+
+MUMPS offers several built-in ordering algorithms as well as an 
+interface to external ordering packages such as PORD \cite{schu01}, SCOTCH \cite{pell07} 
+or METIS \cite{kaku98} (used in this study). 
+The software is mainly written in Fortran 90 although a C interface is available. 
+The parallel version of MUMPS requires 
+MPI \cite{snoh96} for message passing and makes use of the BLAS \cite{dodd90a,dodd90b}, BLACS, and ScaLAPACK
+\cite{blcc97} libraries. 
+The sequential version only relies on BLAS and LAPACK.
+
+The system ${\bm A}\cdot{\vec x} = {\vec b}$ is solved in three main steps:
+\begin{itemize}
+\item Analysis: preprocessing including an 
+ordering based on the symmetrized pattern ${\bm A} + {\bm A}^T$ 
+and a symbolic factorisation is performed. 
+
+\item Factorisation: a direct factorisation ${\bm A}_{pre} = {\bm L}\cdot{\bm U}$ 
+or ${\bm A}_{pre} = {\bm L}\cdot{\bm D}\cdot {\bm L}^T$ depending on 
+the symmetry of the preprocessed matrix is computed. 
+
+\item Solution:
+The solution of ${\bm L}\cdot{\bm U}\cdot{\vec x}_{pre} = {\vec b}_{pre}$ 
+or ${\bm L}\cdot{\bm D}\cdot{\bm L}^T {\vec x}_{pre} = {\vec b}_{pre}$ (where 
+${\vec x}_{pre}$ and ${\vec b}_{pre}$ are respectively the transformed solution 
+${\vec x}$ and right-hand side ${\vec b}$ associated to the preprocessed matrix 
+${\bm A}_{pre}$), is obtained through a forward elimination step
+${\bm L}\cdot{\vec y}={\vec b}_{pre}$ (or ${\bm L}\cdot{\bm D}\cdot{\vec y}={\vec b}_{pre}$), 
+followed by a backward elimination step
+${\bm U}\cdot{\vec x}_{pre} ={\vec y}$ (or ${\bm L}^T{\vec x}_{pre} ={\vec y}$). 
+
+\end{itemize}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{How we use MUMPS - the elemental format}
+
+What follows is written with $Q_1\times P_0$ elements in mind. 
+
+In two dimensions, the FE grid is composed of $nelx \times nely=nel$ elements. 
+The resulting matrix size $N$ is given by $N=(nelx+1)(nely+1)ndofV$ with $ndofV=2$ in 2D.
+The connectivity array $icon$ is defined and computed at the beginning for each element. 
+
+The entries $mesh(iel)\%icon(1:4)$ list the nodes making up the element $iel$.
+In three dimensions, the grid is naturally composed of 
+$nelx \times nely \times nelz = nel$ elements and the 
+resulting matrix size is $N=(nelx+1)(nely+1)(nelz+1)ndofV$ with $ndofV=3$.
+
+%------------------------------
+\subsubsection{Allocating arrays}
+
+First, a variable of type {\tt dmumps\_struc} must be declared:
+\begin{verbatim}
+type(DMUMPS_STRUC) idV 
+\end{verbatim}
+
+At the beginning of the program, it is necessary to 
+initialise an MPI communicator:
+
+\begin{verbatim}
+call mpi_init(ierr)                            
+call mpi_comm_size(mpi_comm_world,nproc,ierr) 
+call mpi_comm_rank(mpi_comm_world,iproc,ierr) 
+\end{verbatim}
+
+Several components of the {\tt idV} variable must then be set and MUMPS 
+must be initialised: 
+\begin{verbatim}
+idV%COMM = MPI_COMM_WORLD 
+idV%SYM = 1              
+idV%PAR=1                
+idV%JOB = -1             
+call DMUMPS(idV)        
+\end{verbatim}
+
+In the code above
+{\tt SYM=1} indicates that the global assembled matrix is symmetric.
+{\tt JOB=-1} initializes an instance of the package. 
+%Note that a call with 
+%{\tt JOB=-1} must be performed before any other call to the package on the same instance. 
+%It sets default values for other components of {\tt MUMPS\_STRUC}.
+{\tt PAR} must be initialized on all processors and are accessed by MUMPS only during the initialisation phase.
+It is here set to 1, i.e. the host is involved in factorisation/solve phases.
+
+In order to solve the FEM problem with MUMPS the user has to declare/build 
+a subset of the variables and arrays of {\tt idV} (Note: what follows is only valid in 
+the case of an elemental input of the FEM matrix):
+\begin{itemize}
+\item {\tt idV\%N} is the order of the matrix ${\bm A}$
+and {\tt idV\%NELT} is the number of elements being input:
+\begin{verbatim}
+idV%N=Nfem    
+idV%NELT=nel
+\end{verbatim}
+
+\item {\tt idV\%ELTPTR} is an integer array of 
+length {\tt idV\%NELT+1}. {\tt idV\%ELTPTR(j)} points to the position in {\tt idV\%ELTVAR}
+of the first variable in element {\tt j}, and {\tt idV\%ELTPTR(NELT+1)} must be set to 
+the position after the last variable of the last element. It is built as follows: 
+
+\begin{lstlisting}
+allocate(idV%ELTPTR(idV%NELT+1))
+do iel=1,nel                         
+   idV%ELTPTR(iel)=1+(iel-1)*(ndofV*mV)   
+end do                         
+idV%ELTPTR(iel)=1+nel*(ndofV*mV) 
+\end{lstlisting}
+where $mV=4$ is the number of nodes of the two-dimensional bi-linear $Q_1$ element.
+
+\begin{center}
+\includegraphics[width=16cm]{images/MUMPS/grid}\\
+{\captionfont Schematic representation of an $8\times4$ FE grid. 
+Element 22 is singled out, and is shown to
+be composed of 4 nodes: 24, 25, 33 and 34. To the right are shown the corresponding elemental
+matrix {\tt K\_el} and right hand side {b\_el}, and where the values will be written in the
+{\tt idV\%A\_ELT} and {\tt idV\%RHS} arrays respectively.}
+\end{center}
+
+
+\item {\tt idV\%ELTVAR} is an integer array of length {\tt idV\%ELTPTR(NELT+1)-1} and must 
+be set to the lists of variables of the elements. 
+Those for element {\tt j} are stored in positions {\tt idV\%ELTPTR(j),..., idV\%ELTPTR(j+1)-1}. 
+\begin{verbatim}
+LELTVAR=nel*(mV*ndofV)  
+allocate(idV%ELTVAR(LELTVAR))
+counter=0   
+do iel=1,nel 
+   do k=1,mV    
+      inode=mesh(iel)%icon(k)  
+      do idof=1,ndof    
+         iii=(inode-1)*ndofV+idof   
+         counter=counter+1         
+         idV%ELTVAR(counter)=iii   
+      end do                   
+   end do                 
+end do               
+\end{verbatim}
+
+
+\item {\tt idV\%A\_ELT} contains the entries of the elemental matrices stored after one another. Since  
+all elemental matrices are symmetric one only needs to store the upper half (including the diagonal terms), 
+as shown in green colour in the figure above.
+Each elemental matrix contains ({\tt mV*ndofV})$\times$({\tt mV*ndofV}) values but only 
+({\tt mV*ndofV})({\tt mV*ndofV+1}){\tt /2} will be stored:
+\begin{verbatim}
+NA_ELT=nel*(mV*ndofV)*(mV*ndofV+1)/2 
+allocate(idV%A_ELT (NA_ELT))
+\end{verbatim}
+
+\item {\tt RHS} is a real array containing the assembled right-hand side of the linear system:
+\begin{verbatim}
+allocate(idV%RHS (idV%N))
+\end{verbatim}
+
+\end{itemize}
+
+Note that the above code requires little to no change in the case that higher-order elements are used. 
+
+%==================
+\subsubsection{Assembly}
+
+The host loops over the elements and for each element
+the matrix ${\bm K}_{el}$. 
+ For each element an elemental matrix {\tt K\_el} and a rhs term {\tt b\_el}
+are built. Boundary conditions are then applied, 
+and half of {\tt K\_el} is then stored in {\tt A\_ELT} while 
+{\tt b\_el} is assembled in the global vector {\tt RHS}.
+
+\begin{verbatim}
+counter=0
+do iel=1,nel
+
+[build elemental matrices K\_el and Bel]
+[impose boundary conditions on K\_el, Bel]
+
+do k1=1,m
+   ik=icon(k1,iel)
+   do i1=1,ndof
+      ikk=ndof*(k1-1)+i1
+      m1=ndof*(ik-1)+i1
+      do k2=1,m
+         do i2=1,ndof
+            jkk=ndof*(k2-1)+i2
+            if (jkk>=ikk) then
+            counter=counter+1
+            idV%A_ELT(counter)=K_el(ikk,jkk)
+            end if
+         end do
+      end do
+      idV%RHS(m1)=idV%RHS(m1)+Bel(ikk)
+   end do
+end do
+
+end do
+\end{verbatim}
+
+
+
+
+%------------------------------
+\subsubsection{Solving the system}
+
+Once the loop over all elements is completed, {\tt INCTL(5)}
+must be set to 1 since the elemental format is being used. 
+All three phases of the solve are then carried out. Note that the 
+vector {\tt RHS} is overriden by the solution after the solve is completed.   
+
+\begin{verbatim}
+id%ICNTL(5) = 1 ! choosing elemental format
+id%ICNTL(7) = 5 ! using Metis
+id%JOB = 1      ! analysis phase 
+CALL DMUMPS(id)
+id%JOB = 2      ! factorisation phase 
+CALL DMUMPS(id)
+id%JOB = 3      ! solve phase
+CALL DMUMPS(id)
+\end{verbatim}
+
+Finally all arrays of the {\tt idV} structure are deallocated:
+\begin{verbatim}
+deallocate(idV%A_ELT)
+deallocate(idV%RHS)
+deallocate(idV%ELTPTR)
+deallocate(idV%ELTVAR)
+\end{verbatim}
+
+

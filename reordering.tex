@@ -1,0 +1,140 @@
+
+
+%--------------------------------------------
+\subsubsection*{The need for reordering}
+
+
+The profile (or envelope) of a symmetric matrix determines how
+close its non-zero elements are to the diagonal:
+\[
+{\rm profile} = \sum_{i=1}^n (i-\min(ne(i)))
+\]
+The bandwidth is the largest deviation:
+\[
+{\rm bandwidth} = \max( i - \min (ne(i)))
+\]
+The cost for a band cholesky factorisation with
+bandwidth $p$ is $n(p^2 + 3p)$ flops assuming $n>>p$.  (source?)
+
+In conclusion: reducing bandwidth means a factor solve if Cholesky factorisation is used.
+
+
+%--------------------------------------------
+\subsubsection*{A simple example}
+
+
+Let us consider a structurally symmetric matrix ${\bm M}$. 
+We wish to reduce its bandwidth by permuting rows and columns 
+such as to move all the nonzero elements of ${\bm M}$ 
+in a band as close as possible to the diagonal.
+We then talk about {\sl Bandwidth Reduction}. 
+\index{general}{Bandwidth Reduction}
+
+We know that the solution a linear system remains unchanged if lines or columns 
+of the matrix (and corresponding rhs) are permuted.
+
+For example\footnote{Taken from 
+\url{http://ciprian-zavoianu.blogspot.com/2009/01/project-bandwidth-reduction.html}}
+, let us consider the $5\times 5$ matrix ${\bm M}$:
+\[
+{\bm M}=
+\left(
+\begin{array}{cccccccc}
+1 & . & . & . & 1 & . & . & . \\
+. & 1 & 1 & . & . & 1 & . & 1 \\
+. & 1 & 1 & . & 1 & . & . & . \\
+. & . & . & 1 & . & . & 1 & . \\
+1 & . & 1 & . & 1 & . & . & . \\
+. & 1 & . & . & . & 1 & . & 1 \\
+. & . & . & 1 & . & . & 1 & . \\
+. & 1 & . & . & . & 1 & . & 1 
+\end{array}
+\right)
+\]
+Simply through row and column permutations it can be rewritten
+\[
+{\bm M}'=
+\left(
+\begin{array}{cccccccc}
+1 & 1 & . & . & . & . & . & . \\
+1 & 1 & . & . & . & . & . & . \\
+. & . & 1 & 1 & 1 & . & . & . \\
+. & . & 1 & 1 & 1 & . & . & . \\
+. & . & 1 & 1 & 1 & 1 & . & . \\
+. & . & . & . & 1 & 1 & 1 & . \\
+. & . & . & . & . & 1 & 1 & 1 \\
+. & . & . & . & . & . & 1 & 1 
+\end{array}
+\right)
+\]
+
+
+
+%---------------------------------------------------
+\subsubsection*{The different existing algorithms}
+
+\begin{itemize}
+\item The simplest bandwidth reduction method is the Cuthill-McKee algorithm (1969) \cite{cumc69}
+
+\item Reverse Cuthill-McKee algorithm (1976) \cite{gibbs76}
+
+\item The Gibbs-Poole-Stockmeyer and Gibbs-King algorithm is
+an alternative, often superior, profile reduction method (1976) \cite{gips76}
+
+
+\item Sloan algorithm \cite{sloan86,sloan89}
+
+\end{itemize}
+
+
+
+%---------------------------------------------------
+\subsubsection*{Implementation in python}
+
+The documentation for the reverse Cuthill-McKee algorithm is available online\footnote{
+\url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csgraph.reverse_cuthill_mckee.html}},
+but it is quite useless as to how the result of the function call should be used. 
+I therefore provide here a small python program in /images/reordering which builds
+matrix ${\bm M}$ and returns ${\bm M}'$. 
+
+This header is necessary:
+\begin{lstlisting}
+from scipy.sparse import csr_matrix
+from scipy.sparse.csgraph import reverse_cuthill_mckee
+\end{lstlisting}
+After the matrix is filled, the reverse Cuthill-McKee algorithm is used to compute the 
+permutation order of the rows and columns:
+\begin{lstlisting}
+perm = reverse_cuthill_mckee(sparse_matrix,symmetric_mode=True)
+\end{lstlisting}
+The result is an array of size $n$ which indicates the new order of rows and columns:
+\begin{lstlisting}
+[6 3 7 5 1 2 4 0]
+\end{lstlisting}
+All that we have to do then is to use this array to rebuild the matrix:
+\begin{lstlisting}
+sparse_matrix=sparse_matrix[np.ix_(perm,perm)]
+\end{lstlisting}
+In case a right hand side vector exists, it must be reordered too in order to match the matrix:
+\begin{lstlisting}
+rhs=rhs[np.ix_(perm)]
+\end{lstlisting}
+Assuming a solution of the reordered matrix and rhs has been obtained, it must be reordered back.
+We therefore create the inverse permutation array:
+\begin{lstlisting}
+perm_inv=np.empty(n,dtype=np.int32)
+for i in range(0,n):
+    perm_inv[perm[i]]=i
+\end{lstlisting}
+and use it as follows:
+\begin{lstlisting}
+sol=sol[np.ix_(perm_inv)]
+\end{lstlisting}
+
+
+\begin{center}
+a) \includegraphics[width=4cm]{images/reordering/matrix_bef}
+b) \includegraphics[width=4cm]{images/reordering/matrix_aft}\\
+{\captionfont a) before reordering; b) after reordering.}
+\end{center}
+

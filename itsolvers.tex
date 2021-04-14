@@ -1,8 +1,21 @@
 
-\url{https://en.wikipedia.org/wiki/Iterative_method}
+In what follows, we want to solve the system of linear equations
+\begin{equation}
+{\bm A}\cdot \vec{x} = \vec{b} 
+\end{equation}
+for the vector $\vec{x}$, 
+where the known $n\times n$ matrix ${\bm A}$ is 
+symmetric (i.e., ${\bm A}^T = {\bm A}$), 
+positive-definite (i.e. $\vec{x}^T\cdot {\bm A} \cdot \vec{x} > 0$ 
+for all non-zero vectors $\vec{x}$ in $\mathbb{R}^n$), 
+and real, and $\vec{b}$ is known as well. 
+We denote the unique solution of this system by $\vec{x}^\star$.
+
 
 %........................................
 \subsubsection{Stationary iterative methods}
+
+\url{https://en.wikipedia.org/wiki/Iterative_method}
 
 Basic examples of stationary iterative methods use a splitting of the matrix ${\bm A}$ such as
 \[
@@ -86,8 +99,64 @@ do with the time step.
 \subsubsection{Krylov subspace methods}
 
 \begin{itemize}
-\item Conjugate Gradient
+\item {\color{purple} Conjugate Gradient}
 \footnote{\url{https://en.wikipedia.org/wiki/Conjugate_gradient_method}} 
+
+It was first proposed by Hestenes and Stiefel in 1952 \cite{hest52}.
+The method solves an SPD system ${\bm A}\cdot \vec{x} = \vec{b}$ of size $n$.
+In theory (i.e. exact arithmetic) it does so in $n$ iterations.
+Each iteration requires a few inner products in $\mathbb{R}^n$ and one matrix-vector multiplication.
+With roundoff error, CG can work poorly (or not at all), but for some 
+${\bm A}$ (and $\vec{b}$), can get good approximate solution in $<<n$ iterations.
+
+As an iterative method, the conjugate gradient method monotonically (in the energy norm) 
+improves approximations $\vec{x}_k$ to the exact solution and
+may reach the required tolerance after a relatively small (compared to the problem size) number 
+of iterations. The improvement is typically linear and its speed is determined by the 
+condition number $\kappa({\bm A})$ of the system matrix ${\bm A}$: 
+the larger $\kappa({\bm A})$ is, the slower the improvement.
+
+If $\kappa({\bm A})$ is large, preconditioning is commonly used to replace the 
+original system ${\bm A} \cdot \vec{x}-\vec{b}=\vec{0}$ 
+with ${\bm M}^{-1}\cdot ({\bm A} \cdot \vec{x}-\vec{b})=\vec{0}$ 
+such that $\kappa({\bm M}^{-1}\cdot {\bm A})$ 
+is smaller than $\kappa({\bm A})$. 
+
+The resulting method is called the Preconditioned Conjugate Gradient method (PCG).
+An extreme case of preconditioner is ${\bm M}={\bm A}^{-1}$ but it is a silly case
+since applying the preconditioner is as difficult as solving the system in the 
+first place.
+In the end the goal is to find a matrix ${\bm M}$ that is cheap to multiply, 
+and is an approximate inverse of ${\bm A}$ 
+(or at least has a more clustered spectrum than ${\bm A}$).
+
+\begin{center}
+\frame{\includegraphics[height=5.6cm]{images/solvers/cgwiki}}
+\frame{\includegraphics[height=5.6cm]{images/solvers/pcgwiki}}
+\frame{\includegraphics[height=5.6cm]{images/solvers/shew94}}\\
+{\captionfont Top: algorithms as obtained from Wikipedia (Left: CG; Right: PCG);
+Bottom: algorithm from Shewchuk (1994) \cite{shew94}.}
+\end{center}
+
+Also available on Wikipedia is a (naive) MATLAB implementation of the CG algorithm:
+\begin{center}
+\frame{\includegraphics[height=6cm]{images/solvers/cgwiki2}}
+\end{center}
+We see that its implementation is actually rather simple and straightforward!
+
+\Literature: Shewchuk, An Introduction to the Conjugate 
+Gradient Method Without the Agonizing Pain \cite{shew94}
+
+The CG and PCG algorithms are used in Section~\ref{ss:schurpcg}.
+It is implemented in \stone~15,16,82.
+
+
+
+
+
+
+
+
 \item Biconjugate Gradient method
 \footnote{\url{https://en.wikipedia.org/wiki/Biconjugate_gradient_method}}
 \item Biconjugate Gradient stabilised method

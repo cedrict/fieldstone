@@ -25,10 +25,10 @@ in 1D is given by:
 \[
 \frac{u}{2h}
 \left[
-\left(1-\frac{1}{Pe}\right) T_{i+1} + \frac{2}{Pe} T_i - \left(1+\frac{1}{Pe}\right)T_{i-1} 
+\left(1-\frac{1}{\Penb}\right) T_{i+1} + \frac{2}{\Penb} T_i - \left(1+\frac{1}{\Penb}\right)T_{i-1} 
 \right] = f
 \]
-and we show in Stone~\ref{f65} that the solution is far from accurate for $Pe>1$. Let us ask ourselves the 
+and we show in Stone~\ref{f65} that the solution is far from accurate for $\Penb>1$. Let us ask ourselves the 
 following question: could come up with a modified version of the equation above which 
 guarantees an exact solution on a uniform mesh of linear elements?
 
@@ -41,7 +41,7 @@ is\footnote{$\coth(x)=(\exp(x)-\exp(-x))/(\exp(x)+\exp(-x))$}:
 \[
 \frac{u}{2h}
 \left[
-\left(1-\coth(Pe) \right) T_{i+1} + 2 \coth(Pe) T_i - \left(1+\coth(Pe)\right) T_{i-1} 
+\left(1-\coth(\Penb) \right) T_{i+1} + 2 \coth(\Penb) T_i - \left(1+\coth(\Penb)\right) T_{i-1} 
 \right] = f
 \]
 which can be arranged into the following form:
@@ -56,20 +56,20 @@ u
 where 
 $\tilde{\kappa}$ is known as artificial (numerical) diffusion (dissipation) given by
 \[
-\tilde{\kappa}=\beta \frac{u h}{2} = \beta \kappa Pe
+\tilde{\kappa}=\beta \frac{u h}{2} = \beta \kappa \Penb
 \qquad
 \text{with}
 \qquad
-\beta = \coth (Pe) - \frac{1}{Pe}
+\beta = \coth (\Penb) - \frac{1}{\Penb}
 \]
-where $Pe$ is the (dimensionless) Peclet number defined as: \index{general}{Peclet Number}
+where $\Penb$ is the (dimensionless) Peclet number defined as: \index{general}{Peclet Number}
 \[
 \boxed{
-Pe= \frac{u h }{2 \kappa}
+\Penb= \frac{u h }{2 \kappa}
 }
 \]
-If $Pe>1$ we say the problem is advection-dominated, 
-else if $Pe<1$ we say the problem is diffusion-dominated.
+If $\Penb>1$ we say the problem is advection-dominated, 
+else if $\Penb<1$ we say the problem is diffusion-dominated.
 
 One can also define $\tilde{k}=\rho_0 C_p \tilde{\kappa}$ so that 
 the discretised 1D advection-diffusion becomes:
@@ -82,14 +82,10 @@ or, in its continuous formulation:
 \[
 \rho_0 C_p u \frac{dT}{dx} - (k+ \tilde{k}) \frac{d^2T}{dx^2} = f
 \]
-
-
-
-
 The $\beta$ factor is shown in the following figure as a function of the Peclet number:
 \begin{center}
 \includegraphics[width=8cm]{images/supg/beta}\\
-{\captionfont Note that the value of $\beta$ is positive only for $Pe>1$.}
+{\captionfont Note that the value of $\beta$ is positive only for $\Penb>1$.}
 \end{center}
 
 
@@ -106,8 +102,8 @@ The distortion is based on so-called bubble functions since they have zero
 values on the nodes and they are nonzero on elements' interiors.
 For instance one can take
 \begin{eqnarray}
-{N}^\star_1(r)&=&\frac{1}{2}(1-r)-\frac{3}{4}\beta(1-r^2) \\
-{N}^\star_2(r)&=&\frac{1}{2}(1+r)+\frac{3}{4}\beta(1-r^2) 
+{\bN}^\star_1(r)&=&\frac{1}{2}(1-r)-\frac{3}{4}\beta(1-r^2) \\
+{\bN}^\star_2(r)&=&\frac{1}{2}(1+r)+\frac{3}{4}\beta(1-r^2) 
 \end{eqnarray}
 as test/weight functions
 where $\beta$ is a parameter that controls the amount of upwinding. 
@@ -123,7 +119,7 @@ for $\beta=0.25$}
 
 \begin{eqnarray}
 {\bm K}_a^e 
-&=& \int_{x_k}^{x_{k+1}}   ({\vec N}^\star)^T \rho C_p \vec\upnu \cdot {\bm B} \; dx  \nn\\
+&=& \int_{x_k}^{x_{k+1}}   ({\vec \bN}^\star)^T \rho C_p \vec\upnu \cdot {\bm B} \; dx  \nn\\
 &=& 
 \rho C_p u
 \left(
@@ -139,7 +135,7 @@ for $\beta=0.25$}
 \left(\begin{array}{c}
 -\frac{3}{4}\beta(1-r^2) \\ +\frac{3}{4}\beta(1-r^2) 
 \end{array}\right)
-\left( \frac{dN_1}{dr} \; \frac{dN_2}{dr} \right)  dr \\
+\left( \frac{d\bN_1}{dr} \; \frac{d\bN_2}{dr} \right)  dr \\
 &=&
 \frac{\rho C_p u}{2}
 \left(
@@ -203,33 +199,33 @@ Let $N^\uptheta_i$ be the temperature basis function at node $i$ so that the tem
 given by\footnote{the $\uptheta$ superscript has been chosen to denote temperature so as to avoid confusion
 with the transpose operator}:
 \begin{equation}
-T^h({\vec r}) = \sum_{i=1}^{m_T} N^\uptheta_i ({\vec r})\;  T_i = \vec N^\uptheta \cdot \vec T
+T^h({\vec r}) = \sum_{i=1}^{m_T} \bN^\uptheta_i ({\vec r})\;  T_i = \vec \bN^\uptheta \cdot \vec T
 \end{equation}
-where $\vec T$ and $\vec N^\uptheta$ are vectors of length $m_T$. Also:
+where $\vec T$ and $\vec \bN^\uptheta$ are vectors of length $m_T$. Also:
 \[
-\vec \nabla \vec N^\uptheta = 
+\vec \nabla \vec \bN^\uptheta = 
 \left(
 \begin{array}{cccc}
-\partial_x N_1^\uptheta & 
-\partial_x N_2^\uptheta & \dots &
-\partial_x N_{m_T}^\uptheta \\ \\
-\partial_y N_1^\uptheta & 
-\partial_y N_2^\uptheta & \dots &
-\partial_y N_{m_T}^\uptheta 
+\partial_x \bN_1^\uptheta & 
+\partial_x \bN_2^\uptheta & \dots &
+\partial_x \bN_{m_T}^\uptheta \\ \\
+\partial_y \bN_1^\uptheta & 
+\partial_y \bN_2^\uptheta & \dots &
+\partial_y \bN_{m_T}^\uptheta 
 \end{array}
 \right)
 \]
 The weak form is then
 \begin{equation}
-\int_{\Omega_e} N^\uptheta_i \left[ 
+\int_{\Omega_e} \bN^\uptheta_i \left[ 
 \rho C_p \left( \dot{T} + {\vec \upnu}\cdot {\vec\nabla T} \right) \right] d\Omega
-= \int_{\Omega_e}  N^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T  d\Omega
+= \int_{\Omega_e}  \bN^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T  d\Omega
 \end{equation}
 or,
 \[
-\underbrace{\int_{\Omega_e} N^\uptheta_i  \rho C_p \dot{T}^h d\Omega}_{I}
-+ \underbrace{\int_{\Omega_e} N^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T^h}   d\Omega}_{II}
-= \underbrace{\int_{\Omega_e}  N^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T^h d\Omega}_{III}
+\underbrace{\int_{\Omega_e} \bN^\uptheta_i  \rho C_p \dot{T}^h d\Omega}_{I}
++ \underbrace{\int_{\Omega_e} \bN^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T^h}   d\Omega}_{II}
+= \underbrace{\int_{\Omega_e}  \bN^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T^h d\Omega}_{III}
 \quad\quad
 i=1,m_T
 \]
@@ -237,7 +233,7 @@ The streamline upwind Petrov-Galerkin (SUPG)
 method adds the following stabilisation term to the left hand side of this equation (see Section 2.4 
 in Donea \& Huerta \cite{dohu03}):
 \[
-\int_{\Omega_e} (\vec\upnu\cdot\vec\nabla N_i^\theta ) \tau {\cal R}(\vec\upnu) \; d\Omega
+\int_{\Omega_e} (\vec\upnu\cdot\vec\nabla \bN_i^\theta ) \tau {\cal R}(\vec\upnu) \; d\Omega
 \]
 where ${\cal R}$ is the residual defined as
 \[
@@ -251,30 +247,30 @@ $III$, so we here focus on the additional SUPG terms.
   
 We then have three terms to deal with:
 \begin{eqnarray}
-IV &=&\int_{\Omega_e} \tau(\vec\upnu\cdot\nabla N_i^\theta) (\rho C_p\dot{T}^h)  d\Omega \\
-V  &=&\int_{\Omega_e} \tau(\vec\upnu\cdot\nabla N_i^\theta)(\rho C_p{\vec \upnu}\cdot{\vec\nabla T^h}) d\Omega \\
-VI &=&\int_{\Omega_e} \tau(\vec\upnu\cdot\nabla N_i^\theta)(-{\vec \nabla} \cdot k \vec\nabla T^h ) d\Omega 
+IV &=&\int_{\Omega_e} \tau(\vec\upnu\cdot\nabla \bN_i^\theta) (\rho C_p\dot{T}^h)  d\Omega \\
+V  &=&\int_{\Omega_e} \tau(\vec\upnu\cdot\nabla \bN_i^\theta)(\rho C_p{\vec \upnu}\cdot{\vec\nabla T^h}) d\Omega \\
+VI &=&\int_{\Omega_e} \tau(\vec\upnu\cdot\nabla \bN_i^\theta)(-{\vec \nabla} \cdot k \vec\nabla T^h ) d\Omega 
 \end{eqnarray}
 
 We can compute the quantity $I+IV$:
 \begin{eqnarray}
 I+IV 
 &=&
-\int_{\Omega_e} N^\uptheta_i  \rho C_p \dot{T}^h d\Omega 
+\int_{\Omega_e} \bN^\uptheta_i  \rho C_p \dot{T}^h d\Omega 
 +
-\int_{\Omega_e}(\vec\upnu\cdot\vec\nabla N_i^\theta)  \tau ( \rho C_p\dot{T}^h)  d\Omega \nn\\
+\int_{\Omega_e}(\vec\upnu\cdot\vec\nabla \bN_i^\theta)  \tau ( \rho C_p\dot{T}^h)  d\Omega \nn\\
 &=& 
-\int_{\Omega_e} ( N^\uptheta_i + \tau \vec\upnu\cdot\vec\nabla N_i^\theta )  ( \rho C_p\dot{T}^h)  d\Omega 
+\int_{\Omega_e} ( \bN^\uptheta_i + \tau \vec\upnu\cdot\vec\nabla \bN_i^\theta )  ( \rho C_p\dot{T}^h)  d\Omega 
 \end{eqnarray}
 and also $II+V$:
 \begin{eqnarray}
 II+V 
 &=&
-\int_{\Omega_e} N^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T^h}   d\Omega
+\int_{\Omega_e} \bN^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T^h}   d\Omega
 +
-\int_{\Omega_e}(\vec\upnu\cdot\vec\nabla N_i^\theta) \tau (\rho C_p {\vec \upnu}\cdot{\vec\nabla T^h}) d\Omega \\
+\int_{\Omega_e}(\vec\upnu\cdot\vec\nabla \bN_i^\theta) \tau (\rho C_p {\vec \upnu}\cdot{\vec\nabla T^h}) d\Omega \\
 &=& 
-\int_{\Omega_e} (N^\uptheta_i  + \tau \vec\upnu\cdot\vec\nabla N_i^\theta) (\rho C_p {\vec \upnu}\cdot{\vec\nabla T^h}) d\Omega 
+\int_{\Omega_e} (\bN^\uptheta_i  + \tau \vec\upnu\cdot\vec\nabla \bN_i^\theta) (\rho C_p {\vec \upnu}\cdot{\vec\nabla T^h}) d\Omega 
 \end{eqnarray}
 
 \begin{remark} Because of the integration by parts which 
@@ -287,22 +283,22 @@ If the equation is a pure advection equation, then $k=0$ so $III=VI=0$.
 \end{remark}
 
 
-We see that both $I+IV$ and $II+V$ contain the term $N^\uptheta_i  + \tau \vec\upnu\cdot\vec\nabla N_i^\theta$
+We see that both $I+IV$ and $II+V$ contain the term $\bN^\uptheta_i  + \tau \vec\upnu\cdot\vec\nabla \bN_i^\theta$
 which we can interpret as a 'modified' basis function:
 \[
 \boxed{
-\underline{N}^\uptheta_i = N^\uptheta_i  + \tau \vec\upnu\cdot\vec\nabla N_i^\theta
+\underline{\bN}^\uptheta_i = \bN^\uptheta_i  + \tau \vec\upnu\cdot\vec\nabla \bN_i^\theta
 }
 \]
 This yields the following modified elemental matrices
 \[
 {\bm M}^\uptheta \quad \rightarrow \quad \underline{\bm M}^\uptheta
-= \int \rho C_p \vec{\underline{N}}^\uptheta \vec{N}^\uptheta \; d\Omega
+= \int \rho C_p \vec{\underline{\bN}}^\uptheta \vec{\bN}^\uptheta \; d\Omega
 \]
 
 \[
 {\bm K}_a \quad \rightarrow  \quad \underline{\bm K}_a 
-= \int \rho C_p \vec{\underline{N}}^\uptheta ({\vec \upnu}\cdot \vec\nabla \vec{N}^\uptheta) \; d\Omega
+= \int \rho C_p \vec{\underline{\bN}}^\uptheta ({\vec \upnu}\cdot \vec\nabla \vec{\bN}^\uptheta) \; d\Omega
 \]
 
 \begin{remark} 
@@ -311,17 +307,18 @@ The modified mass matrix is not symmetrical anymore.
 
 Under the assumption that $k$ is constant within the element, we have 
 \[
-VI = \int_{\Omega_e} \tau(\vec\upnu\cdot\nabla N_i^\theta)(- k \Delta T^h ) d\Omega 
+VI = \int_{\Omega_e} \tau(\vec\upnu\cdot\nabla \bN_i^\theta)(- k \Delta T^h ) d\Omega 
 \]
 with 
 \[
 \Delta T^h 
-= \Delta \sum_{i=1}^{m_T} N^\uptheta_i ({\vec r}) T_i 
-=  \sum_{i=1}^{m_T} \Delta N^\uptheta_i ({\vec r}) T_i = \Delta \vec N^\uptheta \cdot \vec T
+= \Delta \sum_{i=1}^{m_T} \bN^\uptheta_i ({\vec r}) T_i 
+= \sum_{i=1}^{m_T} \Delta \bN^\uptheta_i ({\vec r}) T_i 
+= \Delta \vec \bN^\uptheta \cdot \vec T
 \]
 
 \begin{remark}
-If the basis functions are first-order ones, then $VI=0$ since $\Delta \vec N^\uptheta = \vec 0$.  
+If the basis functions are first-order ones, then $VI=0$ since $\Delta \vec \bN^\uptheta = \vec 0$.  
 \end{remark}
 
 The SUPG-stabilised pure advection equation is extensively tested in the Stone \ref{f43}.
@@ -335,7 +332,7 @@ The SUPG-stabilised pure advection equation is extensively tested in the Stone \
 one in John \& Knobloch \cite{jokn06,knob08} which is also to be found in early 
 80's papers \cite{brhu82,hubr82}:
 \[
-\tau_1 = \frac{h}{2 |\vec\upnu| p} \left( \coth (Pe) - \frac{1}{Pe} \right)
+\tau_1 = \frac{h}{2 |\vec\upnu| p} \left( \coth (\Penb) - \frac{1}{\Penb} \right)
 \]
 where $\tau$ is computed on each cell, $h$ being its diameter in the direction of $\vec\upnu$, 
 and $p$ is the order of the approximation (i.e. the maximum degree of polynomials).
@@ -344,7 +341,7 @@ Note that Hughes \& Brooks \cite{hubr82} replace the costly 'coth' term by an as
 \begin{center}
 \includegraphics[width=8cm]{images/supg/hubr82}\\
 {\captionfont Taken from \cite{hubr82}. Here $\alpha$ is the Peclet number and the vertical axis
-is the term $ \coth (Pe) -1/Pe$.}
+is the term $ \coth (\Penb) -1/\Penb$.}
 \end{center}
 
 
@@ -356,13 +353,13 @@ Codina (2000) (see Eq.39 of \cite{codi00}) defines $\tau$ as follows:
 where $\sigma$ is a reaction term (which we neglect in what follows). This equation 
 can be re-written:
 \[
-\tau_2= \frac{h}{2 |\vec\upnu|} \left( 1 + \frac{1}{Pe} \right)^{-1}
+\tau_2= \frac{h}{2 |\vec\upnu|} \left( 1 + \frac{1}{\Penb} \right)^{-1}
 \]
 
 \item
 Shakib \etal (1991) (see Eq. 3.59 of \cite{shhj91}) propose another formula:
 \[
-\tau_3= \frac{h}{2 |\vec\upnu|} \left( 1 + \frac{9}{Pe^2} \right)^{-1}
+\tau_3= \frac{h}{2 |\vec\upnu|} \left( 1 + \frac{9}{\Penb^2} \right)^{-1}
 \]
 
 \item
@@ -370,7 +367,7 @@ Braun \cite{brau03} uses
 \[
 \tau_4 = \frac{h}{|\vec\upnu| \sqrt{15}} = \frac{h}{2|\vec\upnu|} \frac{2}{\sqrt{15}} 
 \]
-This formula is independent of $Pe$ and is also in Bochev \etal (2004) \cite{bogs04}.
+This formula is independent of $\Penb$ and is also in Bochev \etal (2004) \cite{bogs04}.
 It is also used in Hughes \& Brooks (1982) \cite{hubr82} for pure advection problems in 1D
 and this value is attributed to Raymond \& Garder (1976)  \cite{raga76}.
 
@@ -382,18 +379,18 @@ Crank-Nicolson: $\theta=1/2$, CFL condition yields $\delta t = C \frac{h}{|\vec\
 \[
 \tau_5 = \left( \frac{2 |\vec{\upnu}|}{h} + \frac{2}{\delta t}+  \frac{\kappa}{h^2}  \right)^{-1}  
 = \left( \frac{2 |\vec{\upnu}|}{h} + \frac{2 v}{C h} +  \frac{\kappa}{h^2}  \right)^{-1}  
-= \frac{h}{2 |\vec{\upnu}|}  \left( 1 + \frac{1}{C} + \frac{1}{4 Pe} \right)^{-1} \nn 
+= \frac{h}{2 |\vec{\upnu}|}  \left( 1 + \frac{1}{C} + \frac{1}{4 \Penb} \right)^{-1} \nn 
 \]
 Note that the velocity in the CFL criterion is the maximum velocity in the domain, while 
 in all other expressions above for $\tau_i$ it is the velocity in the cell/element. 
 By doing so, the relationship  for $\tau_5$ is actually only valid for the cell with the 
 highest velocity. 
-Also, this has been used in the context of SUPG methods for the N-S equations, not advection-diffusion
-equations! This approach is then not considered further.
+Also, this has been used in the context of SUPG methods for the Navier-Stokes equations, 
+not advection-diffusion equations! This approach is then not considered further.
 
 \item Franca \etal (2004) \cite{frhm04} use the following formula which originates from 
-Franca \etal (1992) \cite{frfh92}: if $0\le Pe < 1$ then
-$\tau = \frac{h}{2 |\vec\upnu|} Pe$ and if $Pe \ge 1$ then $\tau = \frac{h}{2 |\vec\upnu|}$.
+Franca \etal (1992) \cite{frfh92}: if $0\le \Penb < 1$ then
+$\tau = \frac{h}{2 |\vec\upnu|} \Penb$ and if $\Penb \ge 1$ then $\tau = \frac{h}{2 |\vec\upnu|}$.
 Note however that their definition of the Peclet number includes a scalar parameter $m$ which is 
 the minimum between 1/3 and and 2$C_k$ where the calculation of this parameter is discussed in 
 Remarks 4 and 5 of \cite{frfh92}. The authors conclude that for linear quadrilaterals the value
@@ -417,7 +414,7 @@ plot this quantity against the Peclet number:
 \end{center}
 
 In the case when the equation to be stabilised is a pure advection equation, 
-then $Pe\rightarrow \infty$ so 
+then $\Penb\rightarrow \infty$ so 
 \[
 \gamma_1 \rightarrow 1  \quad
 \gamma_2 \rightarrow 1 \quad
@@ -427,30 +424,26 @@ then $Pe\rightarrow \infty$ so
 \]
 
 
-
-
-
-
 %------------------------------
 \subsubsection{Some remarks about Appendix A of Thieulot (2011) \cite{thie11}}
-
+\label{ss:appAthie11}
 
 In the \douar paper \cite{brtf08} or the \fantom paper \cite{thie11},
 The advection matrix is simply modified and computed as follows:
 \[
 ({\bm K}_a^e)_{SUPG}
 =
-\int_{x_k}^{x_{k+1}}   ({\vec N}^\star)^T \rho C_p \vec\upnu \cdot {\bm B} dx  
+\int_{x_k}^{x_{k+1}}   ({\vec \bN}^\star)^T \rho C_p \vec\upnu \cdot {\bm B} dx  
 \quad\quad
 {\text with}
 \quad\quad
-{\vec N}^\star= {\vec N} + \tau \vec \upnu \cdot {\bm B}
+{\vec \bN}^\star= {\vec \bN} + \tau \vec \upnu \cdot {\bm B}
 \]
 Note that we can also write 
 \[
 ({\bm K}_a^e)_{SUPG}
 =
-\int_{x_k}^{x_{k+1}}   {\vec N}^T \rho C_p \vec\upnu \cdot {\bm B} dx  
+\int_{x_k}^{x_{k+1}}   {\vec \bN}^T \rho C_p \vec\upnu \cdot {\bm B} dx  
 +
 \int_{x_k}^{x_{k+1}}  \tau (\vec \upnu \cdot {\bm B})^T   \rho C_p (\vec\upnu \cdot {\bm B}) dx  
 \]

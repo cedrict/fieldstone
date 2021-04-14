@@ -2,8 +2,8 @@
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-What follows is borrowed from the book "Discontinuous finite elements in fluid dynamics and heat
-transfer" by Ben Q. Li \cite{li06}.
+What follows is borrowed from the book {\it Discontinuous finite elements in fluid dynamics and heat
+transfer} by Ben Q. Li \cite{li06}.
 
 To illustrate the basic ideas of the discontinuous finite element method, we
 consider a simple, one-dimensional, first order differential equation with $u$
@@ -30,7 +30,7 @@ u(x_{j+1})f(x_{j+1})
 \end{equation}
 
 
-On $\Omega_j$ $u$ is approximated by $u_h \in H$, $H$ being an appropriate function
+On the element $\Omega_j$ the function $u$ is approximated by $u_h \in H$, $H$ being an appropriate function
 space of finite dimension, and $f$ by $f_h$ taken from the same function space as $u_h$. 
 Upon substituting $(u_h , f_h )$ for $(u,f)$ in the equation above, we have
 the discontinuous Galerkin finite element formulation:
@@ -57,15 +57,12 @@ u_j^- = \lim_{x \nearrow x_j^-} u_h(x)
 $x_j$ and $x_{j+1}$ mark the
 boundaries of the element}
 \end{center}
-
 Conversely, we also have:
 \begin{equation}
 u_{j+1}^+ = \lim_{x \searrow x_{j+1}^+} u_h(x)
 \qquad
 u_{j+1}^- = \lim_{x \nearrow x_{j+1}^-} u_h(x)
 \end{equation}
-
-
 
 It is key to remember that 1) $u_h$ is discontinuous only at the element boundaries; 
 2) the solution $u$ is smooth within (but excluding) the boundary. 
@@ -76,20 +73,20 @@ calculated using the two limiting values approaching the interface from the two
 adjacent elements. This feature is certainly desirable for problems with internal
 discontinuities.
 
-We can now write CHECK CHECK
+We can finally write for a single element:
 \begin{equation}
 u_{j+1}^- f_h(x_{j+1}) - u_j^+ f_h(x_{j}) 
 -\int_{x_j}^{x_{j+1}} \left( u_h \frac{d f_h}{dx} - g f_h(x)\right)  dx = 0
 \end{equation}
-and we can integrate by parts again the term which contains a derivative:
-\[
-\int_{x_j}^{x_{j+1}} u_h(x) \frac{d f_h}{dx} dx = [u_h f_h] -  \int_{x_j}^{x_{j+1}} f_h(x) \frac{d u_h}{dx} dx 
-\]
+%and we can integrate by parts again the term which contains a derivative:
+%\[
+%\int_{x_j}^{x_{j+1}} u_h(x) \frac{d f_h}{dx} dx = [u_h f_h] -  \int_{x_j}^{x_{j+1}} f_h(x) \frac{d u_h}{dx} dx 
+%\]
 
-and then 
-\begin{equation}
-u_{j+1}^- f_h(x_{j+1}) - u_j^+ f_h(x_{j}) 
--\int_{x_j}^{x_{j+1}} \left( u_h \frac{d f_h}{dx} - g f_h(x)\right)  dx = 0
-\end{equation}
+%and then 
+%\begin{equation}
+%u_{j+1}^- f_h(x_{j+1}) - u_j^+ f_h(x_{j}) 
+%-\int_{x_j}^{x_{j+1}} \left( u_h \frac{d f_h}{dx} - g f_h(x)\right)  dx = 0
+%\end{equation}
 
 

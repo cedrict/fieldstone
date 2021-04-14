@@ -6,78 +6,14 @@ The success of a mixed finite element formulation crucially depends on a proper 
 \subsubsection{The compatibility condition (or LBB condition, or inf-sup condition)} \label{ss:LBBcond}
 \index{general}{LBB} \index{general}{Optimal Rate}
 
-WARNING: I am not comfortable writing about this topic. What follows is a rough attempt at making sense of it.
-
-
-The Lady{\v z}henskaya-Babu{\v s}ka-Brezzi (LBB) condition is a sufficient 
-condition for a saddle point problem to have a unique solution.
-For saddle point problems coming from the Stokes equations, 
-many discretizations are unstable, giving rise to artifacts such as spurious oscillations. 
-The LBB condition gives criteria for when a discretization of a saddle point problem is stable. 
-It also assures convergence at the optimal rate. 
-
-Bochev \& Gunzburger \cite{bogu09} state: "
-The terminology “LBB” originates from the facts that this condition was first explicitly discussed
-in the finite element setting for saddle point problems by Brezzi \cite{brez74} and that it is a special case of
-the general weak-coercivity condition first discussed for finite element methods by Babu{\v s}ka
-\cite{babu71} and that, in the continuous setting of the Stokes equation, this condition was first proved to
-hold by Ladyzhenskaya; see \cite{lady69}."
-
-Unfortunately, to quote Donea \& Huerta \cite{dohu03}: 
-"In the finite element context, it is by no means easy to prove whether or not a given
-velocity-pressure pair satisfies the LBB compatibility condition."
-Elman \etal state: "[...] Choosing spaces for which the discrete inf-sup condition holds
-and is a delicate matter, and seemingly natural choices of velocity and pressure approximation
-do not work. [...] In general, care must be taken to make the velocity space 
-rich enough compared to the pressure space."
-
-The LBB condition, or inf-sup condition can be proven in different ways, 
-and standard techniques have been designed
-as listed in Boffi \etal (2008) \cite{bobf08}.
-
-%p129
-Elman \etal \cite{elsw} state that "The inf-sup condition is a sufficient condition 
-for the pressure to be unique up
-to  constant in the case of an enclosed flow." This can also be proven for other boundary conditions.
-This approach, based on the macro-element technique \cite{sten90} is explored in Appendix \ref{app:Gel}.
-
-
-It can be shown that, provided the kernel (null space) of matrix $\G$ is zero,
-the Stokes matrix is non-singular, that is $\vec{\cal V}$ and $\vec{\cal P}$ 
-are uniquely defined, and the Schur complement matrix $\SSS$ is positive definite. 
-Simply put, taking $\vec{\cal V}=\vec{0}$ in the discretised Stokes system 
-without body forces yields $\G \cdot \vec{\cal P}=\vec{0}$ and implies
-that any pressure solution is only unique up to the null space of the matrix $\G$.
-
-We know that the Schur complement matrix $\SSS$ is positive definite if and only if all of its eigenvalues are positive.
-One could then (numerically) compute the eigenvalues of $\SSS$ and check that these are indeed strictly positive
-to show that $\SSS$ is pos def. 
-
-%Since $\SSS$ is trivially symmetric (because $\K$ is symmetric), then 
-
-Another way is to see that $\SSS$ is positive definite only if $\text{ker}(\G)=\{0\}$.
-Again to quote Donea \& Huerta \cite{dohu03}: "If this is the case, the partitioned Stokes matrix  
-is non-singular and delivers uniquely defined velocity and pressure fields. If this is not the case, a
-stable and convergent velocity field might be obtained, but the pressure field is likely
-to present spurious and oscillatory results." 
-Note that in the case of the $Q_1 \times P_0$ element it has been shown that the multiple families of 
-checkboard pressure modes actually lie in the kernel of $\G$. \cite{sagl81a,sagl81b}
-
-One could then also numerically compute the Ker of G?
-
-\vspace{.4cm}
-
-LBB means velocity and pressure spaces yield uniquely defined vel and p solutions. 
-is proving ker(G)=0 enough? is proving S (S)PD enough ?
-
-Check \cite{chba93}
+\input{lbb}
 
 
 %........................................................................................
 \subsubsection{Families}
 \index{general}{Taylor-Hood}
 
-The family of \underline{Taylor-Hood} finite element spaces on triangular/tetrahedral 
+The family of {\color{olive} Taylor-Hood} finite element spaces on triangular/tetrahedral 
 grids is given by $P_k \times P_{k-1}$ with $k\geq 2$, 
 and on quadrilateral/hexahedral grids by $Q_k \times Q_{k-1}$ with $k\geq 2$.
 This means that the pressure is then approximated by continuous functions. 
@@ -85,199 +21,57 @@ This means that the pressure is then approximated by continuous functions.
 These finite elements are very popular, in particular the pairs for $k=2$, i.e.
 $Q_2\times Q_1$ and $P_2\times P_1$.
 The reason why $k\geq 2$ comes from the fact that the 
-$Q_1 \times Q_0$ (i.e. $Q_1 \times P_0$) and $P_2\times P_1$
-are not stable elements (they are not inf-sup stable). 
+$Q_1 \times Q_0$ (i.e. $Q_1 \times P_0$) and $P_1\times P_0$
+are not stable elements (they are not inf-sup stable), as
+shown in John \cite[p64]{john16} and \cite[p67]{john16}. 
 
 \begin{remark}
 Note that a similar element to $Q_2 \times Q_1$ has been proposed
 and used succesfully used \cite{taho73,hota74}: it is denoted by $Q_2^{(8)} \times Q_1$ 
 since the center node ('$x^2y^2$') and its associated degrees of freedom have been removed. It 
-has also been proved to be LBB stable. 
+has also been proved to be LBB stable. These are also called {\color{olive} Serendipity} elements. 
 \end{remark}
 
+The {\color{olive} Raviart-Thomas} family... 
 
-The \underline{Raviart-Thomas} family\todo{find literature} on triangles and quadrilaterals.
+Check Scott \& Vogelius (1985) \cite{scvo85} element, see John \cite[p70]{john16}.
 
 %........................................................................................
 \subsubsection{The bi/tri-linear velocity - constant pressure element ($Q_1\times P_0$)}
-
-\begin{minipage}[t]{0.5\textwidth}
-\input{tikz/tikz_q1p0}
-\end{minipage}
-\begin{minipage}[t]{0.5\textwidth}
-\input{tikz/tikz_q1p0_3D}
-\end{minipage}
-
-discussed in example 3.71 of \cite{john16}
-
-However simple it may look, the \index{general}{$Q_1 \times P_0$} element is 
-one of the hardest elements to analyze and many questions are still open about its properties. 
-The element does not satisfy the inf-sup condition \cite{hugh}p211. 
-In \cite{grsa} it is qualified as follows: slightly unstable but highly usable. 
-
-The $Q_1 \times P_0$ mixed approximation is the lowest order conforming approximation 
-method defined on a rectangular grid. It also happens to be the most famous example 
-of an unstable mixed approximation method.
-\cite[p235]{elsw}.
-
-This element is discussed in \cite{fort81}, \cite{fofo85} and in \cite{pisa85} 
-in the context of multigrid use.
-
-This element is plagued by so-called pressure checkerboard modes which
-have been thoroughly analysed \cite{grsi94}, \cite{chpc95}, \cite{sagl81a,sagl81b}.
-These can be filtered out \cite{chpc95}. Smoothing techniques are also discussed in \cite{legs79}.
-
-\Literature \cite{fobo90}\cite{grle85}\cite{leru86}
-
-
-
-%----------------------------------------------------------------------
-\subsubsection{The bi/tri-quadratic velocity - discontinuous linear pressure element ($Q_2 \times P_{-1}$)}
-\label{ss:pairq2pm1}
-
-This element is crowned "probably the most accurate 2D element" in Gresho \& Sani's book \cite{grsa}.
-
-It is characterised by piecewise Biquadratic velocities, 
-and piecewise linear discontinuous polynomial pressure. 
-The element satisfies the inf-sup condition, see page 211 of Hughes \cite{hugh}, or 
-p138 of Elman \etal \cite{elsw}.
-It is used in van de Vosse \etal (1989) \cite{vavs89} for steady laminar flowin a curved tube. 
-See Boffi \& Gastaldi (2002) \cite{boga02} 
-for the two possible choices for the definition of the pressure space..
-This element is mentioned in Kaus (2010) \cite{kaus10} and Pelletier \etal (1989) \cite{pefc89} 
-and it is  used in Frehner (2014) \cite{freh14} to study 3D fold growth rates 
-(see online supplementary material) and in Schmalholtz (2008) \cite{schm08}.
-
-Note that the serendipity version of this pair, i.e. $Q_2^{(20)}\times P_{-1}$ is also LBB stable
-as shown in p180 of Reddy \cite{reddybook2}.
-
-This element is implemented in Stone 76. 
-
-\begin{center}
-\includegraphics[width=6cm]{images/q2pm1/q2pm1}
-\end{center}
-
+\label{ss:pairq1p0}
+\input{pair_q1p0}
 
 %----------------------------------------------------------------------
 \subsubsection{The bi/tri-quadratic velocity - bi/tri-linear pressure element ($Q_2 \times Q_1$)}
 \label{ss:pairq2q1}
-
-\begin{minipage}[t]{0.5\textwidth}
-\input{tikz/tikz_q2q1}
-\end{minipage}
-\begin{minipage}[t]{0.5\textwidth}
-\input{tikz/tikz_q2q1_3D}
-\end{minipage}
-
-
-In \cite{grsa} Gresho \& Sani write that in their opinion $div(\vec v)=0$ is not strong enough.
-
-This element, implemented in penalised form, is discussed in \cite{been79} and the follow-up paper \cite{been80}. CHECK
-
-Biquadratic velocities, bilinear pressure. See Hood and Taylor. The element satisfies the inf-sup condition \cite{hugh}p215. 
-
-\begin{center}
-\includegraphics[width=6cm]{images/q2q1/q2numering}
-\end{center}
+\input{pair_q2q1}
 
 %----------------------------------------------------------------------
-\subsubsection{The stabilised bi/tri-linear velocity -  constant pressure element ($Q_1\times P_0$-stab)}
+\subsubsection{The bi/tri-quadratic velocity - discontinuous linear pressure element ($Q_2 \times P_{-1}$)}
+\label{ss:pairq2pm1}
+\input{pair_q2pm1}
 
-\Literature: \cite{sike90,vibo92,kesi92,qizh07,lisi12,chco01,chri02}
+%----------------------------------------------------------------------
+\subsubsection{The stabilised bi/tri-linear velocity - constant pressure element ($Q_1\times P_0$-stab)}
+\label{ss:pairq1p0stab}
+\input{pair_q1p0stab}
+
 
 %----------------------------------------------------------------------
 \subsubsection{The stabilised bi/tri-linear velocity -  bi/tri-linear pressure element ($Q_1\times Q_1$-stab)}
-
-\begin{minipage}[t]{0.5\textwidth}
-\input{tikz/tikz_q1q1}
-\end{minipage}
-\begin{minipage}[t]{0.5\textwidth}
-\input{tikz/tikz_q1q1_3D}
-\end{minipage}
-
-See \cite{nosi01} for a fourier analysis of the normal and stablised (a la \cite{hufb86}) $Q_1-Q_1$ element.
-This element is used in \cite{bugs09,busa13} in conjunction with AMR. 
-Stabilisation is worked out out in \cite{dobo04,bodg06,bodo06}.
-
-$Q_1\times P_0$-stab. Pro: stabilisation can be switched off; Con: stabilisation for deformed elements? 
-problem near boundaries: incomplete stencil? choice of parameter $\beta$.
-
-$Q_1\times Q_1$-stab. Pro: easier to implement than $Q_1\times P_0$-stab, stabilisation local to element, easier when elements are not rectangular, no free parameter; Con: stabilisation cannot be switched off.
-
-\Literature: \cite{shry78,temr92,tezd92,grcc95,idsn95,knto00,fros07,lihc09}. See Braack \& Lube \cite{brlu09}
-for a review of local projection stabilisation for incompressible flow problems. 
-
-This unstable pair is also used in ice sheet modelling \cite{heah18,zhjg11,zwgg07}
-A $P_1\times P_1$ version of it is used in \cite{kahp20}.
-
+\label{ss:pairq1q1stab}
+\input{pair_q1q1stab}
 
 %----------------------------------------------------------------------
 \subsubsection{The MINI triangular element ($P_1^+\times P_1$) in 2D}
 \label{pair:mini}
-
-The \index{general}{MINI element} MINI element was first introduced in Arnold \etal, 1984 \cite{arbf84}.
-It is also discussed in section 3.6.1 of John \cite{john16}.
-It is schematically represented as follows:
-
-\begin{center}
-\includegraphics[width=8cm]{images/mini/minielement}\\
-{\captionfont Figure taken from Donea and Huerta \cite{dohu03}}
-\end{center}
-
-\begin{remark}
-Note that Franca \& Oliveira (2003) \cite{frol03} propose an equal-order-linear-continuous 
-velocity-pressure variables which is enriched 
-with velocity {\it and} pressure bubble functions to model the Stokes problem. 
-They show by static condensation that
-these bubble functions give rise to a stabilized method involving least-squares forms of 
-the momentum and of the
-continuity equations. In some cases their approach recovers 
-the MINI element. Also check Ganesan \etal (2008) \cite{gamt08}.
-\end{remark}
-
-\begin{remark}
-As explained in Braess \cite{braess}, since the support of the bubble is restricted to the element, 
-the associated variable (dofs living on the bubble) can be eliminated from the resulting 
-system of linear equations by static condensation. \index{general}{Static Condensation}
-Also, the MINI element is cheaper than the Taylor-Hood element but it is commonly accepted
-that it yields a poorer approximation of the pressure.
-\end{remark}
-
-The 3D MINI element is not very common but it is used for instance in Pichelin \& Coupez (1998) 
-\cite{pico98}. It is also said to be LBB stable in Reddy \cite[p180]{reddybook2}.
-
-\begin{center}
-\includegraphics[width=8cm]{images/mini/mini3D}\\
-{\captionfont Velocity and pressure nodes for the 3D MINI element, taken from \cite{pico98}}
-\end{center}
-
-Note that this element is used in Braess \& Wriggers (2000) \cite{brwr00} 
-in the context of Arbitrary Lagrangian Eulerian 
-finite element analysis of free surface flows, and also 
-in Zlotnik \etal (2007) \cite{zldf07} for subduction with X-FEM technique. 
-\index{general}{X-FEM}
-
-
-
-
-
-
+\input{pair_mini}
 
 %----------------------------------------------------------------------
 \subsubsection{The quadratic velocity - linear pressure triangle ($P_2\times P_1$)}
 \label{ss:p2p1}
+\input{pair_p2p1}
 
-From \cite{segal}: \say{Taylor-Hood elements \cite{taho73} 
-are characterized by the fact that the pressure is continuous in the region $\Omega$. 
-A typical example is the quadratic triangle (P2P1 element).
-In this element the velocity is approximated by a quadratic polynomial and the pressure by a
-linear polynomial. One can easily verify that both approximations are continuous over 
-the element boundaries.}
-It can be shown, Segal (1979), that this element is admissible if at least 3 elements 
-are used. The quadrilateral counterpart of this triangle is the $Q_2\times Q_1$ element.
-Reddy and Gartling \cite[p179]{reddybook2} also report this element to be LBB stable.
-
-\Literature: Schubert \& Anderson \cite{scan85}, Leng \etal \cite{lejx14}, Cuffaro \etal \cite{cump20}
 
 
 %----------------------------------------------------------------------

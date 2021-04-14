@@ -1,0 +1,35 @@
+\begin{flushright} {\tiny {\color{gray} pair\_q1p0.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+\begin{minipage}{0.48\textwidth}
+\begin{center}
+\input{tikz/tikz_q1p0}
+\end{center}
+\end{minipage}
+\begin{minipage}{0.48\textwidth}
+\begin{center}
+\input{tikz/tikz_q1p0_3D}
+\end{center}
+\end{minipage}
+
+However simple it may look, the \index{general}{$Q_1 \times P_0$} element is 
+one of the hardest elements to analyze and many questions are still open about its properties. 
+The element does not satisfy the inf-sup condition \cite[p211]{hugh}. 
+In Gresho \& Sani \cite{grsa} it is labeled as follows: slightly unstable but highly usable. 
+
+The $Q_1 \times P_0$ mixed approximation is the lowest order conforming approximation 
+method defined on a rectangular grid. It also happens to be the most famous example 
+of an unstable mixed approximation method.
+\cite[p235]{elsw}.
+
+This element is discussed in Fortin (1981) \cite{fort81}, Fortin \& Fortin (1985) \cite{fofo85} 
+and in Pitk\"aranta \& Saarinen (1985) \cite{pisa85} in the context of multigrid use.
+
+This element is plagued by so-called pressure checkerboard modes which
+have been thoroughly analysed \cite{grsi94}, \cite{chpc95}, \cite{sagl81a,sagl81b}.
+These can be filtered out \cite{chpc95}. Smoothing techniques are also discussed in \cite{legs79}, 
+and explained in Section~\ref{psmoothing}.
+
+\Literature: Fortin \& Boivin (1990) \cite{fobo90}, Gresho \& Lee (1985) \cite{grle85},
+Le Tallec \& Ruas (1986) \cite{leru86}.

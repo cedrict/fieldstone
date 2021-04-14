@@ -71,12 +71,12 @@ The same goes for the right boundary, and the same reasoning applies for the hea
 Inside an element bounded by nodes $k$ and $k+1$, 
 the temperature $T$ and heat flux $q$ are interpolated over an isoparametric linear element:
 \[
-T_h(x) = N_k(x) T_k^+ + N_{k+1}(x)T_{k+1}^-
+T_h(x) = \bN_k(x) T_k^+ + \bN_{k+1}(x)T_{k+1}^-
 \]
 \[
-q_h(x) = N_k(x) q_k^+ + N_{k+1}(x)q_{k+1}^-
+q_h(x) = \bN_k(x) q_k^+ + \bN_{k+1}(x)q_{k+1}^-
 \]
-As in the (Continuous) Galerkin case of section~\ref{sec:diff1D}, the test functions are taken to 
+As in the (Continuous/Standard) Galerkin case of section~\ref{sec:diff1D}, the test functions are taken to 
 be the basis functions, and in this case for both temperature and flux. 
 
 There are four unknowns ${\color{red} q_k^+}$, ${\color{red} q_{k+1}^-}$, 
@@ -92,49 +92,49 @@ All other $q$ and $T$ quantities in the above/following equations will need to f
 + \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} q_h(x) dx  \nonumber\\
 &=&-\hat{q}_{k+1} \tilde{f}_{k+1}^-
 +\hat{q}_k     \tilde{f}_k^+
-+ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} ( N_k(x) q_k^+ + N_{k+1}(x)q_{k+1}^- ) dx \nonumber\\
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} ( \bN_k(x) q_k^+ + \bN_{k+1}(x)q_{k+1}^- ) dx \nonumber\\
 &=& -\hat{q}_{k+1} \tilde{f}_{k+1}^-
 +\hat{q}_k     \tilde{f}_k^+
-+ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} N_k(x) dx \cdot q_k^+ 
-+ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} N_{k+1}(x) dx \cdot q_{k+1}^- 
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} \bN_k(x) dx \cdot q_k^+ 
++ \int_{x_k}^{x_{k+1}} \frac{d\tilde{f}}{dx} \bN_{k+1}(x) dx \cdot q_{k+1}^- 
 \end{eqnarray}
 
 \begin{itemize}
-\item We take $\tilde{f}=N_k$ and by vertue of the properties of basis functions $N$ we have: 
+\item We take $\tilde{f}=\bN_k$ and by vertue of the properties of basis functions $\bN$ we have: 
 \begin{eqnarray}
-\tilde{f}_k^+&=&\tilde{f}(x_k^+) = N_k(x_k^+)=1 \nn\\
-\tilde{f}_{k+1}^-&=&\tilde{f}(x_{k+1}^-)   = N_k(x_{k+1}^+)=0 \nn
+\tilde{f}_k^+&=&\tilde{f}(x_k^+) = \bN_k(x_k^+)=1 \nn\\
+\tilde{f}_{k+1}^-&=&\tilde{f}(x_{k+1}^-)   = \bN_k(x_{k+1}^+)=0 \nn
 \end{eqnarray}
 so that 
 \begin{eqnarray}
 0 
 &=& \hat{q}_k   
-+ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_k(x) dx \cdot q_k^+ 
-+ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_{k+1}(x) dx \cdot q_{k+1}^- \nn\\ 
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_k}{dx} \bN_k(x) dx \cdot q_k^+ 
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_k}{dx} \bN_{k+1}(x) dx \cdot q_{k+1}^- \nn\\ 
 &=& 
 \frac{1}{2}({\color{red}q_k^+} + q_k^-) - {\cal E} (T_k^- - {\color{red}T_k^+}) 
 - {\cal C}(q_k^- - {\color{red}q_k^+}) \nn\\
-&+& \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_k dx \cdot {\color{red}q_k^+ }
-+ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_{k+1} dx \cdot {\color{red} q_{k+1}^-} \label{eq:dg4}
+&+& \int_{x_k}^{x_{k+1}} \frac{d\bN_k}{dx} \bN_k dx \cdot {\color{red}q_k^+ }
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_k}{dx} \bN_{k+1} dx \cdot {\color{red} q_{k+1}^-} \label{eq:dg4}
 \end{eqnarray}
 
-\item We take $\tilde{f}=N_{k+1}$ and likewise:
+\item We take $\tilde{f}=\bN_{k+1}$ and likewise:
 \begin{eqnarray}
-\tilde{f}_k^+&=&\tilde{f}(x_k^+) = N_{k+1}(x_k^+)=0 \nn\\
-\tilde{f}_{k+1}^-&=&\tilde{f}(x_{k+1}^-)   = N_{k+1}(x_{k+1}^+)=1 \nn
+\tilde{f}_k^+&=&\tilde{f}(x_k^+) = \bN_{k+1}(x_k^+)=0 \nn\\
+\tilde{f}_{k+1}^-&=&\tilde{f}(x_{k+1}^-)   = \bN_{k+1}(x_{k+1}^+)=1 \nn
 \end{eqnarray}
 so that 
 \begin{eqnarray}
 0 
 &=& -\hat{q}_{k+1} 
-+ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_k(x) dx \cdot q_k^+ 
-+ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_{k+1}(x) dx \cdot q_{k+1}^- \nn\\ 
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_{k+1}}{dx} \bN_k(x) dx \cdot q_k^+ 
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_{k+1}}{dx} \bN_{k+1}(x) dx \cdot q_{k+1}^- \nn\\ 
 &=& - \left[
 \frac{1}{2}(q_{k+1}^+ + {\color{red}q_{k+1}^-}) - {\cal E} ({\color{red}T_{k+1}^-} 
 - T_{k+1}^+) -{\cal C}({\color{red}q_{k+1}^-} - q_{k+1}^+) 
 \right]\nn\\
-&+& \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_k dx \cdot {\color{red}q_k^+} 
-+ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_{k+1}dx \cdot {\color{red}q_{k+1}^-}  \label{eq:dg6}
+&+& \int_{x_k}^{x_{k+1}} \frac{d\bN_{k+1}}{dx} \bN_k dx \cdot {\color{red}q_k^+} 
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_{k+1}}{dx} \bN_{k+1}dx \cdot {\color{red}q_{k+1}^-}  \label{eq:dg6}
 \end{eqnarray}
 
 
@@ -146,8 +146,8 @@ and finally
 &&\int_{x_k}^{x_{k+1}} 
 \left(
 \begin{array}{cc}
-\frac{dN_k}{dx} N_k     & \frac{dN_k}{dx} N_{k+1} \\
-\frac{dN_{k+1}}{dx} N_k & \frac{dN_{k+1}}{dx} N_{k+1}
+\frac{d\bN_k}{dx} \bN_k     & \frac{d\bN_k}{dx} \bN_{k+1} \\
+\frac{d\bN_{k+1}}{dx} \bN_k & \frac{d\bN_{k+1}}{dx} \bN_{k+1}
 \end{array}
 \right)dx  \cdot
 \left(
@@ -208,38 +208,38 @@ and finally
 
 
 \begin{itemize}
-\item We take $\overline{f}=N_k$: 
+\item We take $\overline{f}=\bN_k$: 
 \begin{eqnarray}
-\overline{f}_k^+&=&\overline{f}(x_k^+)= N_k(x_k^+) =1 \nn\\
-\overline{f}_{k+1}^-&=&\overline{f}(x_{k+1}^-) = N_k(x_{k+1}^-) = 0\nn
+\overline{f}_k^+&=&\overline{f}(x_k^+)= \bN_k(x_k^+) =1 \nn\\
+\overline{f}_{k+1}^-&=&\overline{f}(x_{k+1}^-) = \bN_k(x_{k+1}^-) = 0\nn
 \end{eqnarray}
 so that 
 \begin{eqnarray}
 0
 &=& \hat{T}_k     
-+ \int_{x_k}^{x_{k+1}}  q_h(x) N_k dx
-+ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} T_h(x) dx  \nn\\
++ \int_{x_k}^{x_{k+1}}  q_h(x) \bN_k dx
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_k}{dx} T_h(x) dx  \nn\\
 &=& 
 \frac{1}{2}(T_k^-+{\color{red}T_k^+}) + {\cal C} (T_k^- - {\color{red}T_k^+}) \nn\\
-&+& \int_{x_k}^{x_{k+1}}  (N_k(x) {\color{red}q_k^+} + N_{k+1}(x) {\color{red}q_{k+1}^-}) N_k dx
-+ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} (N_k(x) {\color{red}T_k^+} + N_{k+1}(x) {\color{red}T_{k+1}^-})   dx 
+&+& \int_{x_k}^{x_{k+1}}  (\bN_k(x) {\color{red}q_k^+} + \bN_{k+1}(x) {\color{red}q_{k+1}^-}) \bN_k dx
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_k}{dx} (\bN_k(x) {\color{red}T_k^+} + \bN_{k+1}(x) {\color{red}T_{k+1}^-})   dx 
 \label{eq:dg5}
 \end{eqnarray}
 
-\item We take $\overline{f}=N_{k+1}$:
+\item We take $\overline{f}=\bN_{k+1}$:
 \begin{eqnarray}
-\overline{f}_k^+&=&\overline{f}(x_k^+) = N_{k+1}(x_k^+) = 0 \nn\\
-\overline{f}_{k+1}^-&=&\overline{f}(x_{k+1}^-) = N_{k+1}(x_{k+1}^-) =1 \nn
+\overline{f}_k^+&=&\overline{f}(x_k^+) = \bN_{k+1}(x_k^+) = 0 \nn\\
+\overline{f}_{k+1}^-&=&\overline{f}(x_{k+1}^-) = \bN_{k+1}(x_{k+1}^-) =1 \nn
 \end{eqnarray}
 so that 
 \begin{eqnarray}
 0
 &=& -\hat{T}_{k+1} 
-+ \int_{x_k}^{x_{k+1}}  q_h(x) N_{k+1} dx
-+ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1} }{dx} T_h(x) dx  \nn\\
++ \int_{x_k}^{x_{k+1}}  q_h(x) \bN_{k+1} dx
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_{k+1} }{dx} T_h(x) dx  \nn\\
 &=&-\left[\frac{1}{2}({\color{red}T_{k+1}^-}+T_{k+1}^+) + {\cal C}({\color{red}T_{k+1}^-} -T_{k+1}^+)\right]\\
-&+& \int_{x_k}^{x_{k+1}} (N_k(x) {\color{red}q_k^+} + N_{k+1}(x) {\color{red}q_{k+1}^-})  N_{k+1} dx
-+ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1} }{dx} (N_k(x) {\color{red} T_k^+} + N_{k+1}(x) {\color{red}T_{k+1}^-}) dx 
+&+& \int_{x_k}^{x_{k+1}} (\bN_k(x) {\color{red}q_k^+} + \bN_{k+1}(x) {\color{red}q_{k+1}^-})  \bN_{k+1} dx
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_{k+1} }{dx} (\bN_k(x) {\color{red} T_k^+} + \bN_{k+1}(x) {\color{red}T_{k+1}^-}) dx 
 \label{eq:dg7}
 \end{eqnarray}
 
@@ -254,8 +254,8 @@ and finally
 && \int_{x_k}^{x_{k+1}} 
 \left(
 \begin{array}{cc}
-N_k N_k     & N_k N_{k+1} \\
-N_{k+1} N_k & N_{k+1} N_{k+1}
+ \bN_k \bN_k     & \bN_k \bN_{k+1} \\
+ \bN_{k+1} \bN_k & \bN_{k+1} \bN_{k+1}
 \end{array}
 \right)dx
 \left(
@@ -267,8 +267,8 @@ N_{k+1} N_k & N_{k+1} N_{k+1}
 \int_{x_k}^{x_{k+1}} 
 \left(
 \begin{array}{cc}
-\frac{dN_k}{dx} N_k     & \frac{dN_k}{dx} N_{k+1} \\
-\frac{dN_{k+1}}{dx} N_k & \frac{dN_{k+1}}{dx} N_{k+1}
+\frac{d\bN_k}{dx} \bN_k     & \frac{d\bN_k}{dx} \bN_{k+1} \\
+\frac{d\bN_{k+1}}{dx} \bN_k & \frac{d\bN_{k+1}}{dx} \bN_{k+1}
 \end{array}
 \right)dx
 \left(
@@ -303,12 +303,12 @@ N_{k+1} N_k & N_{k+1} N_{k+1}
 We will also use the results obtained in Appendix~\ref{app:mm} for 1D linear elements:
 \begin{eqnarray}
 {\bm M}^e
-&=&\int_{\Omega_e} \vec{N}^T \vec{N} dV
+&=&\int_{\Omega_e} \vec{\bN}^T \vec{\bN} dV
 =\int_{\Omega_e} 
 \left(
 \begin{array}{cc}
-N_k N_k & N_k N_{k+1} \\
-N_{k+1} N_k & N_{k+1}N_{k+1}
+ \bN_k \bN_k & \bN_k \bN_{k+1} \\
+ \bN_{k+1} \bN_k & \bN_{k+1}\bN_{k+1}
 \end{array}
 \right)
 dV 
@@ -332,8 +332,8 @@ dV
 \int_{\Omega_e} 
 \left(
 \begin{array}{cc}
-\frac{dN_k}{dx} N_k     & \frac{dN_k}{dx} N_{k+1} \\
-\frac{dN_{k+1}}{dx} N_k & \frac{dN_{k+1}}{dx} N_{k+1}
+\frac{d\bN_k}{dx} \bN_k     & \frac{d\bN_k}{dx} \bN_{k+1} \\
+\frac{d\bN_{k+1}}{dx} \bN_k & \frac{d\bN_{k+1}}{dx} \bN_{k+1}
 \end{array}
 \right)
 dV
@@ -524,23 +524,23 @@ Eq.~(\ref{eq:dg4}) becomes:
 \begin{eqnarray}
 0 
 &=& \hat{q}_k   
-+ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_k(x) dx \cdot q_k^+ 
-+ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_{k+1}(x) dx \cdot q_{k+1}^- \nn\\ 
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_k}{dx} \bN_k(x) dx \cdot q_k^+ 
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_k}{dx} \bN_{k+1}(x) dx \cdot q_{k+1}^- \nn\\ 
 &=& 
 {\color{red}q_1^+} - {\cal E} (T_k^- - {\color{red}T_1^+}) 
-+ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_k dx \cdot {\color{red}q_1^+ }
-+ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} N_{k+1} dx \cdot {\color{red} q_{2}^-}
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_k}{dx} \bN_k dx \cdot {\color{red}q_1^+ }
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_k}{dx} \bN_{k+1} dx \cdot {\color{red} q_{2}^-}
 \end{eqnarray}
 Eq.~(\ref{eq:dg5}) becomes:
 \begin{eqnarray}
 0
 &=& \hat{T}_1     
-+ \int_{x_k}^{x_{k+1}}  q_h(x) N_k dx
-+ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} T_h(x) dx  \nn\\
++ \int_{x_k}^{x_{k+1}}  q_h(x) \bN_k dx
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_k}{dx} T_h(x) dx  \nn\\
 &=& 
 T_1^-  
-+ \int_{x_k}^{x_{k+1}}  (N_k(x) {\color{red}q_1^+} + N_{k+1}(x) {\color{red}q_{2}^-}) N_k dx
-+ \int_{x_k}^{x_{k+1}} \frac{dN_k}{dx} (N_k(x) {\color{red}T_1^+} + N_{k+1}(x) {\color{red}T_{2}^-})   dx 
++ \int_{x_k}^{x_{k+1}}  (\bN_k(x) {\color{red}q_1^+} + \bN_{k+1}(x) {\color{red}q_{2}^-}) \bN_k dx
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_k}{dx} (\bN_k(x) {\color{red}T_1^+} + \bN_{k+1}(x) {\color{red}T_{2}^-})   dx 
 \end{eqnarray}
 Eq.~(\ref{eq:dgsyst1D}) then becomes:
 \begin{eqnarray}
@@ -585,20 +585,20 @@ Eq.~\eqref{eq:dg6} becomes:
 \begin{eqnarray}
 0 
 &=& -\hat{q}_{N} 
-+ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_k(x) dx \cdot q_{N-1}^+ 
-+ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_{k+1}(x) dx \cdot q_{N}^- \nn\\ 
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_{k+1}}{dx} \bN_k(x) dx \cdot q_{N-1}^+ 
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_{k+1}}{dx} \bN_{k+1}(x) dx \cdot q_{N}^- \nn\\ 
 &=& - \left[ q_N^+ -{\cal E} (T_N^--T_N^+) \right] 
-+ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_k dx \cdot {\color{red}q_{N-1}^+} 
-+ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1}}{dx} N_{k+1}dx \cdot {\color{red}q_{N}^-} 
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_{k+1}}{dx} \bN_k dx \cdot {\color{red}q_{N-1}^+} 
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_{k+1}}{dx} \bN_{k+1}dx \cdot {\color{red}q_{N}^-} 
 \end{eqnarray}
 Eq.~\eqref{eq:dg7} becomes:
 \begin{eqnarray}
 0
 &=& -\hat{T}_{N} 
-+ \int_{x_k}^{x_{k+1}}  q_h(x) N_{k+1} dx
-+ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1} }{dx} T_h(x) dx  \nn\\
-&=&-T_N^- + \int_{x_k}^{x_{k+1}} (N_k(x) {\color{red}q_{N-1}^+} + N_{k+1}(x) {\color{red}q_{N}^-})  N_{k+1} dx
-+ \int_{x_k}^{x_{k+1}} \frac{dN_{k+1} }{dx} (N_k(x) {\color{red} T_{N-1}^+} + N_{k+1}(x) {\color{red}T_{N}^-}) dx
++ \int_{x_k}^{x_{k+1}}  q_h(x) \bN_{k+1} dx
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_{k+1} }{dx} T_h(x) dx  \nn\\
+&=&-T_N^- + \int_{x_k}^{x_{k+1}} (\bN_k(x) {\color{red}q_{N-1}^+} + \bN_{k+1}(x) {\color{red}q_{N}^-})  \bN_{k+1} dx
++ \int_{x_k}^{x_{k+1}} \frac{d\bN_{k+1} }{dx} (\bN_k(x) {\color{red} T_{N-1}^+} + \bN_{k+1}(x) {\color{red}T_{N}^-}) dx
 \nn 
 \end{eqnarray}
 Eq.~\eqref{eq:dgsyst1D} then becomes:

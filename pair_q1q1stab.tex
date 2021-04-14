@@ -1,0 +1,24 @@
+\begin{flushright} {\tiny {\color{gray} pair\_q1q1stab.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{minipage}[t]{0.5\textwidth}
+\input{tikz/tikz_q1q1}
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+\input{tikz/tikz_q1q1_3D}
+\end{minipage}
+
+See \cite{nosi01} for a fourier analysis of the normal and stablised (a la \cite{hufb86}) $Q_1-Q_1$ element.
+This element is used in \cite{bugs09,busa13} in conjunction with AMR. 
+Stabilisation is worked out out in \cite{dobo04,bodg06,bodo06}.
+
+$Q_1\times P_0$-stab. Pro: stabilisation can be switched off; Con: stabilisation for deformed elements? 
+problem near boundaries: incomplete stencil? choice of parameter $\beta$.
+
+$Q_1\times Q_1$-stab. Pro: easier to implement than $Q_1\times P_0$-stab, stabilisation local to element, easier when elements are not rectangular, no free parameter; Con: stabilisation cannot be switched off.
+
+\Literature: \cite{shry78,temr92,tezd92,grcc95,idsn95,knto00,fros07,lihc09}. See Braack \& Lube \cite{brlu09}
+for a review of local projection stabilisation for incompressible flow problems. 
+
+This unstable pair is also used in ice sheet modelling \cite{heah18,zhjg11,zwgg07}
+A $P_1\times P_1$ version of it is used in \cite{kahp20}.

@@ -18,7 +18,7 @@ The list of 8 schemes is not exhaustive with regards to the above mentioned publ
 There has been considerable amount of work on the topic and this section is 
 unfortunately not representing the literature appropriately.
 
-\mscthesis: Get relevant literature, digest it, implement all variants in fieldstone 12.
+\mscthesis: Get relevant literature, digest it, implement all variants in \stone 12.
  \index{general}{MSc Thesis} 
 
 
@@ -300,10 +300,10 @@ J=
 Inside each element the field $q(x,y)$ is given by a bilinear interpolation so that:
 \begin{eqnarray}
 J
-&=& \iint_{\Omega_1} (N_1(x,y) q_1 + N_2(x,y)q_2 + N_5(x,y)q_5 + N_4(x,y)q_4 -p_1)^2 dV \nn\\
-&+& \iint_{\Omega_2} (N_2(x,y) q_2 + N_3(x,y)q_3 + N_6(x,y)q_6 + N_5(x,y)q_5 -p_2)^2 dV \nn\\
-&+& \iint_{\Omega_3} (N_4(x,y) q_4 + N_5(x,y)q_5 + N_8(x,y)q_8 + N_7(x,y)q_7 -p_3)^2 dV \nn\\
-&+& \iint_{\Omega_4} (N_5(x,y) q_5 + N_6(x,y)q_6 + N_9(x,y)q_9 + N_8(x,y)q_8 -p_4)^2 dV 
+&=& \iint_{\Omega_1} (\bN_1(x,y) q_1 + \bN_2(x,y)q_2 + \bN_5(x,y)q_5 + \bN_4(x,y)q_4 -p_1)^2 dV \nn\\
+&+& \iint_{\Omega_2} (\bN_2(x,y) q_2 + \bN_3(x,y)q_3 + \bN_6(x,y)q_6 + \bN_5(x,y)q_5 -p_2)^2 dV \nn\\
+&+& \iint_{\Omega_3} (\bN_4(x,y) q_4 + \bN_5(x,y)q_5 + \bN_8(x,y)q_8 + \bN_7(x,y)q_7 -p_3)^2 dV \nn\\
+&+& \iint_{\Omega_4} (\bN_5(x,y) q_5 + \bN_6(x,y)q_6 + \bN_9(x,y)q_9 + \bN_8(x,y)q_8 -p_4)^2 dV 
 \end{eqnarray}
 where the $N_i$ functions are the basis functions (unusually expressed in $x,y$ coordinates).
 The least square procedure looks for the set of $q_i$ such that 
@@ -313,79 +313,79 @@ The least square procedure looks for the set of $q_i$ such that
 and this yields 9 equations/constraints for 9 unknowns.
 \begin{eqnarray}
 \frac{\partial J}{\partial q_1} 
-&=& \iint_{\Omega_1} 2 (N_1(x,y) q_1 + N_2(x,y)q_2 + N_5(x,y)q_5 + N_4(x,y)q_4 -p_1) N_1(x,y) dV \nn\\
+&=& \iint_{\Omega_1} 2 (\bN_1(x,y) q_1 + \bN_2(x,y)q_2 + \bN_5(x,y)q_5 + \bN_4(x,y)q_4 -p_1) \bN_1(x,y) dV \nn\\
 \frac{\partial J}{\partial q_2}
-&=& \iint_{\Omega_1} 2(N_1(x,y) q_1 + N_2(x,y)q_2 + N_5(x,y)q_5 + N_4(x,y)q_4 -p_1) N_2(x,y) dV \nn\\
-&+& \iint_{\Omega_2} 2(N_2(x,y) q_2 + N_3(x,y)q_3 + N_6(x,y)q_6 + N_5(x,y)q_5 -p_2) N_2(x,y) dV \nn\\
+&=& \iint_{\Omega_1} 2(\bN_1(x,y) q_1 + \bN_2(x,y)q_2 + \bN_5(x,y)q_5 + \bN_4(x,y)q_4 -p_1) \bN_2(x,y) dV \nn\\
+&+& \iint_{\Omega_2} 2(\bN_2(x,y) q_2 + \bN_3(x,y)q_3 + \bN_6(x,y)q_6 + \bN_5(x,y)q_5 -p_2) \bN_2(x,y) dV \nn\\
 \frac{\partial J}{\partial q_3}
-&=& \iint_{\Omega_2} 2(N_2(x,y) q_2 + N_3(x,y)q_3 + N_6(x,y)q_6 + N_5(x,y)q_5 -p_2) N_3(x,y) dV \nn\\
+&=& \iint_{\Omega_2} 2(\bN_2(x,y) q_2 + \bN_3(x,y)q_3 + \bN_6(x,y)q_6 + \bN_5(x,y)q_5 -p_2) \bN_3(x,y) dV \nn\\
 \frac{\partial J}{\partial q_4}
-&=& \iint_{\Omega_1} 2(N_1(x,y) q_1 + N_2(x,y)q_2 + N_5(x,y)q_5 + N_4(x,y)q_4 -p_1) N_4(x,y) dV \nn\\
-&+& \iint_{\Omega_3} 2(N_4(x,y) q_4 + N_5(x,y)q_5 + N_8(x,y)q_8 + N_7(x,y)q_7 -p_3) N_4(x,y) dV \nn\\
+&=& \iint_{\Omega_1} 2(\bN_1(x,y) q_1 + \bN_2(x,y)q_2 + \bN_5(x,y)q_5 + \bN_4(x,y)q_4 -p_1) \bN_4(x,y) dV \nn\\
+&+& \iint_{\Omega_3} 2(\bN_4(x,y) q_4 + \bN_5(x,y)q_5 + \bN_8(x,y)q_8 + \bN_7(x,y)q_7 -p_3) \bN_4(x,y) dV \nn\\
 \frac{\partial J}{\partial q_5}
-&=& \iint_{\Omega_1} 2(N_1(x,y) q_1 + N_2(x,y)q_2 + N_5(x,y)q_5 + N_4(x,y)q_4 -p_1) N_5(x,y) dV \nn\\
-&+& \iint_{\Omega_2} 2(N_2(x,y) q_2 + N_3(x,y)q_3 + N_6(x,y)q_6 + N_5(x,y)q_5 -p_2) N_5(x,y) dV \nn\\
-&+& \iint_{\Omega_3} 2(N_4(x,y) q_4 + N_5(x,y)q_5 + N_8(x,y)q_8 + N_7(x,y)q_7 -p_3) N_5(x,y) dV \nn\\
-&+& \iint_{\Omega_4} 2(N_5(x,y) q_5 + N_6(x,y)q_6 + N_9(x,y)q_9 + N_8(x,y)q_8 -p_4) N_5(x,y) dV \nn\\
+&=& \iint_{\Omega_1} 2(\bN_1(x,y) q_1 + \bN_2(x,y)q_2 + \bN_5(x,y)q_5 + \bN_4(x,y)q_4 -p_1) \bN_5(x,y) dV \nn\\
+&+& \iint_{\Omega_2} 2(\bN_2(x,y) q_2 + \bN_3(x,y)q_3 + \bN_6(x,y)q_6 + \bN_5(x,y)q_5 -p_2) \bN_5(x,y) dV \nn\\
+&+& \iint_{\Omega_3} 2(\bN_4(x,y) q_4 + \bN_5(x,y)q_5 + \bN_8(x,y)q_8 + \bN_7(x,y)q_7 -p_3) \bN_5(x,y) dV \nn\\
+&+& \iint_{\Omega_4} 2(\bN_5(x,y) q_5 + \bN_6(x,y)q_6 + \bN_9(x,y)q_9 + \bN_8(x,y)q_8 -p_4) \bN_5(x,y) dV \nn\\
 \frac{\partial J}{\partial q_6}
-&=& \iint_{\Omega_2} 2(N_2(x,y) q_2 + N_3(x,y)q_3 + N_6(x,y)q_6 + N_5(x,y)q_5 -p_2) N_6(x,y) dV \nn\\
-&+& \iint_{\Omega_4} 2(N_5(x,y) q_5 + N_6(x,y)q_6 + N_9(x,y)q_9 + N_8(x,y)q_8 -p_4) N_6(x,y) dV \nn\\
+&=& \iint_{\Omega_2} 2(\bN_2(x,y) q_2 + \bN_3(x,y)q_3 + \bN_6(x,y)q_6 + \bN_5(x,y)q_5 -p_2) \bN_6(x,y) dV \nn\\
+&+& \iint_{\Omega_4} 2(\bN_5(x,y) q_5 + \bN_6(x,y)q_6 + \bN_9(x,y)q_9 + \bN_8(x,y)q_8 -p_4) \bN_6(x,y) dV \nn\\
 \frac{\partial J}{\partial q_7}
-&=& \iint_{\Omega_3} 2(N_4(x,y) q_4 + N_5(x,y)q_5 + N_8(x,y)q_8 + N_7(x,y)q_7 -p_3) N_7(x,y) dV \nn\\
+&=& \iint_{\Omega_3} 2(\bN_4(x,y) q_4 + \bN_5(x,y)q_5 + \bN_8(x,y)q_8 + \bN_7(x,y)q_7 -p_3) \bN_7(x,y) dV \nn\\
 \frac{\partial J}{\partial q_8}
-&=& \iint_{\Omega_3} 2(N_4(x,y) q_4 + N_5(x,y)q_5 + N_8(x,y)q_8 + N_7(x,y)q_7 -p_3) N_8(x,y)dV \nn\\
-&+& \iint_{\Omega_4} 2(N_5(x,y) q_5 + N_6(x,y)q_6 + N_9(x,y)q_9 + N_8(x,y)q_8 -p_4) N_8(x,y)dV \nn\\ 
+&=& \iint_{\Omega_3} 2(\bN_4(x,y) q_4 + \bN_5(x,y)q_5 + \bN_8(x,y)q_8 + \bN_7(x,y)q_7 -p_3) \bN_8(x,y)dV \nn\\
+&+& \iint_{\Omega_4} 2(\bN_5(x,y) q_5 + \bN_6(x,y)q_6 + \bN_9(x,y)q_9 + \bN_8(x,y)q_8 -p_4) \bN_8(x,y)dV \nn\\ 
 \frac{\partial J}{\partial q_9}
-&=& \iint_{\Omega_4} 2(N_5(x,y) q_5 + N_6(x,y)q_6 + N_9(x,y)q_9 + N_8(x,y)q_8 -p_4) N_9(x,y)dV 
+&=& \iint_{\Omega_4} 2(\bN_5(x,y) q_5 + \bN_6(x,y)q_6 + \bN_9(x,y)q_9 + \bN_8(x,y)q_8 -p_4) \bN_9(x,y)dV 
 \end{eqnarray}
 The factor 2 are removed and the terms $\int p_i N_j $ are known so they end up in the right hand side.
-
 \begin{eqnarray}
- \iint_{\Omega_1} (N_1N_1 q_1 + N_1N_2 q_2 + N_1N_5q_5 + N_1N_4q_4) dV &=& \iint_{\Omega_1} p_1 N_1 dV \nn\\
- \iint_{\Omega_1} (N_2 N_1  q_1 + N_2 N_2q_2 + N_2 N_5q_5 + N_2 N_4q_4)  dV \nn\\
-+\iint_{\Omega_2} (N_2 N_2 q_2 + N_3 N_2 q_3 + N_6 N_2 q_6 + N_5 N_2 q_5) dV 
-&=& \iint_{\Omega_1} p_1N_2 dV + \iint_{\Omega_2}  p_2 N_2 dV \nn\\
+ \iint_{\Omega_1} (\bN_1 \bN_1 q_1 + \bN_1 \bN_2 q_2 + \bN_1 \bN_5 q_5 + \bN_1 \bN_4 q_4) dV 
+&=& \iint_{\Omega_1} p_1 N_1 dV \nn\\
+ \iint_{\Omega_1} (\bN_2 \bN_1 q_1 + \bN_2 \bN_2 q_2 + \bN_2 \bN_5 q_5 + \bN_2 \bN_4 q_4) dV \nn\\
++\iint_{\Omega_2} (\bN_2 \bN_2 q_2 + \bN_3 \bN_2 q_3 + \bN_6 \bN_2 q_6 + \bN_5 \bN_2 q_5) dV 
+&=& \iint_{\Omega_1} p_1N_2 dV + \iint_{\Omega_2}  p_2 \bN_2 dV \nn\\
 \nn\\
 \dots &=& \dots \nn\\
 \nn\\
- \iint_{\Omega_4} (N_9N_5 q_5 + N_9N_6q_6 + N_9N_9q_9 + N_9N_8q_8) dV &=&  \iint_{\Omega_4} p_4 N_9 dV 
+ \iint_{\Omega_4} (\bN_9\bN_5 q_5 + \bN_9\bN_6q_6 + \bN_9\bN_9q_9 + \bN_9\bN_8q_8) dV &=&  \iint_{\Omega_4} p_4 \bN_9 dV 
 \end{eqnarray}
 
 The mass matrices corresponding to the four elements are 
 \[
 {\bm M}_1 = \int_{\Omega_1} \left( \begin{array}{cccc}
-N_1 N_1 & N_1 N_2 & N_1 N_5 & N_1 N_4 \\
-N_2 N_1 & N_2 N_2 & N_2 N_5 & N_2 N_4 \\
-N_5 N_1 & N_5 N_2 & N_5 N_5 & N_5 N_4 \\
-N_4 N_1 & N_4 N_2 & N_4 N_5 & N_4 N_4 
+ \bN_1 \bN_1 & \bN_1 \bN_2 & \bN_1 \bN_5 & \bN_1 \bN_4 \\
+ \bN_2 \bN_1 & \bN_2 \bN_2 & \bN_2 \bN_5 & \bN_2 \bN_4 \\
+ \bN_5 \bN_1 & \bN_5 \bN_2 & \bN_5 \bN_5 & \bN_5 \bN_4 \\
+ \bN_4 \bN_1 & \bN_4 \bN_2 & \bN_4 \bN_5 & \bN_4 \bN_4 
 \end{array}\right) dV
 \qquad
 {\bm M}_2 = \int_{\Omega_2} \left( \begin{array}{cccc}
-N_2 N_2 & N_2 N_3 & N_2 N_6 & N_2 N_5 \\
-N_3 N_2 & N_3 N_3 & N_3 N_6 & N_3 N_5 \\
-N_6 N_2 & N_6 N_3 & N_6 N_6 & N_6 N_5 \\
-N_5 N_2 & N_5 N_3 & N_5 N_6 & N_5 N_5 
+ \bN_2 \bN_2 & \bN_2 \bN_3 & \bN_2 \bN_6 & \bN_2 \bN_5 \\
+ \bN_3 \bN_2 & \bN_3 \bN_3 & \bN_3 \bN_6 & \bN_3 \bN_5 \\
+ \bN_6 \bN_2 & \bN_6 \bN_3 & \bN_6 \bN_6 & \bN_6 \bN_5 \\
+ \bN_5 \bN_2 & \bN_5 \bN_3 & \bN_5 \bN_6 & \bN_5 \bN_5 
 \end{array}\right) dV
 \]
 \[
 {\bm M}_3 = \int_{\Omega_3} \left( \begin{array}{cccc}
-N_4 N_4 & N_4 N_5 & N_4 N_8 & N_4 N_7 \\
-N_5 N_4 & N_5 N_5 & N_5 N_8 & N_5 N_7 \\
-N_8 N_4 & N_8 N_5 & N_8 N_8 & N_8 N_7 \\
-N_7 N_4 & N_7 N_5 & N_7 N_8 & N_7 N_7 
+ \bN_4 \bN_4 & \bN_4 \bN_5 & \bN_4 \bN_8 & \bN_4 \bN_7 \\
+ \bN_5 \bN_4 & \bN_5 \bN_5 & \bN_5 \bN_8 & \bN_5 \bN_7 \\
+ \bN_8 \bN_4 & \bN_8 \bN_5 & \bN_8 \bN_8 & \bN_8 \bN_7 \\
+ \bN_7 \bN_4 & \bN_7 \bN_5 & \bN_7 \bN_8 & \bN_7 \bN_7 
 \end{array}\right) dV
 \qquad
 {\bm M}_4 = \int_{\Omega_4} \left( \begin{array}{cccc}
-N_5 N_5 & N_5 N_6 & N_5 N_9 & N_5 N_8 \\
-N_6 N_5 & N_6 N_6 & N_6 N_9 & N_6 N_8 \\
-N_9 N_5 & N_9 N_6 & N_9 N_9 & N_9 N_8 \\
-N_8 N_5 & N_8 N_6 & N_8 N_9 & N_8 N_8 
+ \bN_5 \bN_5 & \bN_5 \bN_6 & \bN_5 \bN_9 & \bN_5 \bN_8 \\
+ \bN_6 \bN_5 & \bN_6 \bN_6 & \bN_6 \bN_9 & \bN_6 \bN_8 \\
+ \bN_9 \bN_5 & \bN_9 \bN_6 & \bN_9 \bN_9 & \bN_9 \bN_8 \\
+ \bN_8 \bN_5 & \bN_8 \bN_6 & \bN_8 \bN_9 & \bN_8 \bN_8 
 \end{array}\right) dV
 \]
 so that the 9 equations above are actually the result of the assembly process of these four 
 elemental systems:
 \[
-\left( \iint_{\Omega_e} \vec{N}^T\vec{N} dV \right) \cdot \vec{q}_e = \iint_{\Omega_i} \vec{N}^T p_e dV 
+\left( \iint_{\Omega_e} \vec{\bN}^T\vec{\bN} dV \right) \cdot \vec{q}_e = \iint_{\Omega_i} \vec{\bN}^T p_e dV 
 \qquad\qquad e=1,2,3,4
 \]
 
@@ -407,119 +407,120 @@ We are going to treat this equation as any other PDE in the context of the FE me
 we are going to establish its weak form. 
 We assume that the pressure is given inside an element by
 \[
-q(x,y) = \sum_{i=1}^4 N_i(x,y) q_i = \vec{N} \cdot \vec{q}
+q(x,y) = \sum_{i=1}^4 \bN_i(x,y) q_i = \vec{\bN} \cdot \vec{q}
 \]
 and the velocity:
 \[
 \vec\upnu = (u,v) 
 \qquad 
 \qquad 
-u(x,y)  = \sum_{i=1}^4 N_i(x,y) u_i
+u(x,y)  = \sum_{i=1}^4 \bN_i(x,y) u_i
 \qquad 
 \qquad 
-v(x,y)  = \sum_{i=1}^4 N_i(x,y) v_i
+v(x,y)  = \sum_{i=1}^4 \bN_i(x,y) v_i
 \]
-where the $N_i$ are the $Q_1$ basis functions and $q_i$ are the sought after nodal values. 
-We multiply the equation above by a $Q_1$ basis function $N_i$ and integrate over the whole domain:
+where the $\bN_i$ are the $Q_1$ basis functions and $q_i$ are the sought after nodal values. 
+We multiply the equation above by a $Q_1$ basis function $\bN_i$ and integrate over the whole domain:
 \[
-\iint_\Omega N_i(x,y) q(x,y) \; dxdy = -\lambda \iint_\Omega N_i \vec\nabla\cdot \vec\upnu  \; dx dy
+\iint_\Omega \bN_i(x,y) q(x,y) \; dxdy 
+= -\lambda \iint_\Omega \bN_i \vec\nabla\cdot \vec\upnu  \; dx dy
 \]
 As before we now focus on the above expression inside a single element $e$:
 \[
-\iint_{\Omega_e} N_i(x,y) q(x,y) \; dxdy = -\lambda \iint_{\Omega_e} N_i \vec\nabla\cdot \vec\upnu \; dx dy
+\iint_{\Omega_e} \bN_i(x,y) q(x,y) \; dxdy = -\lambda \iint_{\Omega_e} \bN_i \vec\nabla\cdot \vec\upnu \; dx dy
 \]
-After $N_i \rightarrow \vec{N}=(N_1,N_2,N_3,N_4)^T$, the left hand side term becomes:
+After $\bN_i \rightarrow \vec{\bN}=(\bN_1,\bN_2,\bN_3,\bN_4)^T$, the left hand side term becomes:
 \[
-\iint _{\Omega_e} \vec{N}^T q(x,y) \; dxdy 
+\iint _{\Omega_e} \vec{\bN}^T q(x,y) \; dxdy 
 =
-\iint _{\Omega_e} \vec{N}^T \vec{N} \cdot \vec{q} \; dxdy 
+\iint _{\Omega_e} \vec{\bN}^T \vec{\bN} \cdot \vec{q} \; dxdy 
 =
-\left(\underbrace{\iint _{\Omega_e} \vec{N}^T \vec{N} dxdy}_{{\bm M}_e} \right) \cdot \vec{q}  
+\left(\underbrace{\iint _{\Omega_e} \vec{\bN}^T \vec{\bN} dxdy}_{{\bm M}_e} \right) \cdot \vec{q}  
 \]
 where ${\bm M}_e$ is the elemental mass matrix.
 We now turn to the right hand side. We have
 \[
 \vec\nabla\cdot \vec\upnu
 = \frac{\partial u}{\partial x}+\frac{\partial v}{\partial y}
-= \sum_i \frac{\partial N_i}{\partial x} u_i + \sum_i \frac{\partial N_i}{\partial y} v_i 
+= \sum_i \frac{\partial \bN_i}{\partial x} u_i + \sum_i \frac{\partial \bN_i}{\partial y} v_i 
 \]
 We here too define $\vec{V}_e=(u_1,v_1,u_2,v_2,u_3,v_3,u_4,v_4)^T$ so that 
 
 \begin{eqnarray}
-&& \iint_{\Omega_e} \vec{N} {\vec \nabla}\cdot {\vec \upnu} \; d\Omega \nn\\
-&=& \iint_{\Omega_e} \vec{N}^T \sum_{i=1}^{4} 
-\left( \frac{\partial N_i}{\partial x} u_i + \frac{\partial N_i}{\partial y} v_i 
+&& \iint_{\Omega_e} \vec{\bN} {\vec \nabla}\cdot {\vec \upnu} \; dV \nn\\
+&=& \iint_{\Omega_e} \vec{\bN}^T \sum_{i=1}^{4} 
+\left( \frac{\partial \bN_i}{\partial x} u_i + \frac{\partial \bN_i}{\partial y} v_i 
 \right)  
-d\Omega \nonumber\\
+dV \nonumber\\
 &=& 
 \iint_{\Omega_e} 
 \left(
 \begin{array}{c}
-N_1 \left(
-\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial x} u_i +
-\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial y} v_i \right) \\
-N_2 \left(
-\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial x} u_i +
-\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial y} v_i \right) \\
-N_3 \left(
-\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial x} u_i +
-\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial y} v_i \right) \\
-N_4 \left(
-\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial x} u_i +
-\sum\limits_{i=1}^{4} \frac{\partial N_i}{\partial y} v_i \right) 
+\bN_1 \left(
+\sum\limits_{i=1}^{4} \frac{\partial \bN_i}{\partial x} u_i +
+\sum\limits_{i=1}^{4} \frac{\partial \bN_i}{\partial y} v_i \right) \\
+\bN_2 \left(
+\sum\limits_{i=1}^{4} \frac{\partial \bN_i}{\partial x} u_i +
+\sum\limits_{i=1}^{4} \frac{\partial \bN_i}{\partial y} v_i \right) \\
+\bN_3 \left(
+\sum\limits_{i=1}^{4} \frac{\partial \bN_i}{\partial x} u_i +
+\sum\limits_{i=1}^{4} \frac{\partial \bN_i}{\partial y} v_i \right) \\
+\bN_4 \left(
+\sum\limits_{i=1}^{4} \frac{\partial \bN_i}{\partial x} u_i +
+\sum\limits_{i=1}^{4} \frac{\partial \bN_i}{\partial y} v_i \right) 
 \end{array}
-\right) d \Omega \nonumber \\  %%%%%%%%%%%%%%%%%%%%%%%%%%
+\right) dV \nonumber \\  %%%%%%%%%%%%%%%%%%%%%%%%%%
 &=& 
 \int_{\Omega_e} 
 \left(
 \begin{array}{ccc}
-{N}_1& {N}_1 &  0 \\\\
-{N}_2& {N}_2 &  0 \\\\
-{N}_3& {N}_3 &  0 \\\\
-{N}_4& {N}_4 &  0 
+{\bN}_1& {\bN}_1 &  0 \\\\
+{\bN}_2& {\bN}_2 &  0 \\\\
+{\bN}_3& {\bN}_3 &  0 \\\\
+{\bN}_4& {\bN}_4 &  0 
 \end{array}
 \right)
 \cdot
 \left(
 \begin{array}{c}
-\sum\limits_i \frac{\partial N_i}{\partial x} u_i \\ \\
-\sum\limits_i \frac{\partial N_i}{\partial y} v_i \\ \\
-\sum\limits_i (\frac{\partial N_i}{\partial y} u_i\! +\! \frac{\partial N_i}{\partial x} v_i) 
+\sum\limits_i \frac{\partial \bN_i}{\partial x} u_i \\ \\
+\sum\limits_i \frac{\partial \bN_i}{\partial y} v_i \\ \\
+\sum\limits_i (\frac{\partial \bN_i}{\partial y} u_i\! +\! \frac{\partial \bN_i}{\partial x} v_i) 
 \end{array}
 \right)
-\; d\Omega \nonumber\\ %%%%%%%%%%%%%%%%%%%%%%%%%%
+\; dV \nonumber\\ %%%%%%%%%%%%%%%%%%%%%%%%%%
 &=& 
 \int_{\Omega_e} 
 \underbrace{
 \left(
 \begin{array}{cccccc}
-{N}_1 & {N}_1 &  0 \\
-{N}_2 & {N}_2 &  0 \\
-{N}_3 & {N}_3 &  0 \\
-{N}_4 & {N}_4 &  0 
+{\bN}_1 & {\bN}_1 &  0 \\
+{\bN}_2 & {\bN}_2 &  0 \\
+{\bN}_3 & {\bN}_3 &  0 \\
+{\bN}_4 & {\bN}_4 &  0 
 \end{array}
 \right)
 }_{{\bm N}}
 \cdot
 \underbrace{
 \left(\begin{array}{cccccccc}
-\partial_x N_1 & 0 &  
-\partial_x N_2 & 0 &  
-\partial_x N_3 & 0 &  
-\partial_x N_4 & 0 \\ \\
-0 & \partial_y N_1 &   
-0 & \partial_y N_2 &   
-0 & \partial_y N_3 &   
-0 & \partial_y N_4 \\ \\
-\partial_y N_1 & \partial_x N_1 &  
-\partial_y N_2 & \partial_x N_2 &  
-\partial_y N_3 & \partial_x N_3 &  
-\partial_y N_4 & \partial_x N_4 
+\partial_x \bN_1 & 0 &  
+\partial_x \bN_2 & 0 &  
+\partial_x \bN_3 & 0 &  
+\partial_x \bN_4 & 0 \\ \\
+0 & \partial_y \bN_1 &   
+0 & \partial_y \bN_2 &   
+0 & \partial_y \bN_3 &   
+0 & \partial_y \bN_4 \\ \\
+\partial_y \bN_1 & \partial_x \bN_1 &  
+\partial_y \bN_2 & \partial_x \bN_2 &  
+\partial_y \bN_3 & \partial_x \bN_3 &  
+\partial_y \bN_4 & \partial_x \bN_4 
 \end{array}\right)}_{{\bm B}}
 \cdot \vec{V}_e
-\; d\Omega  \nonumber \\
+\; dV  \nonumber \\
 &=& 
-\left(\int_{\Omega_e} {\bm N} \cdot {\bm B} \; d\Omega \right) \cdot \vec{V}_e \nonumber\\
+\left(\int_{\Omega_e} {\bm N} \cdot {\bm B} \; dV \right) \cdot \vec{V}_e \nonumber\\
 &=& -\G_e^T \cdot {\vec V}_e
 \end{eqnarray}
 
@@ -529,7 +530,7 @@ After assembly we arrive at
 \qquad
 \text{with}
 \qquad
-\G_e = -\int_{\Omega_e} {\bm N} \cdot {\bm B} \; d\Omega
+\G_e = -\int_{\Omega_e} {\bm N} \cdot {\bm B} \; dV
 \]
 where ${\bm M}$ is the global mass matrix, $\vec{q}$ the vector of all 
 nodal pressures, $\G$ the discrete gradient matrix and $\vec{V}$
@@ -560,7 +561,7 @@ have built matrix $\G$ so you can easily re-use this piece of code
 to compute $\G$ again, this time with a reduced integration quadrature.
 If you are using the penalty formulation then you need to program 
 all from scratch and then simply do away with these unnecessary terms, or 
-you can direcly build the rhs as $\int_{\Omega_e} \vec{N}^T p_e$ (assuming
+you can direcly build the rhs as $\int_{\Omega_e} \vec{\bN}^T p_e$ (assuming
 you have previously computed the pressure in the middle of each element 
 by means of $p=-\lambda\vec\nabla\cdot\vec\upnu$).
 \end{remark}

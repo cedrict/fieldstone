@@ -367,6 +367,19 @@ fix is then designed which insures that the computed value is within user-define
 acceptable bounds. This is also mentioned in \cite{galb19} but the authors 
 explain that this problem was not encountered in the context of the publication.
 
+\begin{remark}
+One could consider the above least-square approach with $\tilde{f}=a$, i.e. $\tilde{f}$ is
+a zero-th order polynomial. In this case
+\[
+\epsilon^2 = \sum_{i=1}^n ( \tilde{f}(x_i,y_i)-f_i)^2 = \sum_{i=1}^n (a-f_i)^2 
+\]
+The gradient becomes
+\[
+\vec\nabla(\epsilon^2)= \frac{d \epsilon^2}{da} = \sum_{i=1}^n 2 (a-f_i) = 0
+\]
+or $a=\frac1n \sum_i f_i$. We here recover the arithmetic averaging!
+\end{remark}
+
 
 
 
