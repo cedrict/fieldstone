@@ -95,12 +95,24 @@ if (ndim==2) then
       dNVdr(4)=-0.25*(1+s)-0.25d0*dBubbledr(r,s)
       dNVdr(5)=dBubbledr(r,s)      
    case default
-      stop 'pb in NNV'
+      stop 'pb in dNNVdr'
    end select
 end if
 
 if (ndim==3) then
-   stop 'dNNVdr: 3D not implemented'
+   select case(pair)
+   case('q1p0')
+      dNVdr(1)=-0.125*(1-s)*(1-t)
+      dNVdr(2)=+0.125*(1-s)*(1-t)
+      dNVdr(3)=+0.125*(1+s)*(1-t)
+      dNVdr(4)=-0.125*(1+s)*(1-t)
+      dNVdr(5)=-0.125*(1-s)*(1+t)
+      dNVdr(6)=+0.125*(1-s)*(1+t)
+      dNVdr(7)=+0.125*(1+s)*(1+t)
+      dNVdr(8)=-0.125*(1+s)*(1+t)
+   case default
+      stop 'pb in dNNVdr'
+   end select
 end if
 
 end subroutine
@@ -129,12 +141,24 @@ if (ndim==2) then
       dNVds(4)=+0.25*(1-r)-0.25d0*dBubbleds(r,s)
       dNVds(5)=dBubbleds(r,s)      
    case default
-      stop 'pb in NNV'
+      stop 'pb in dNNVds'
    end select
 end if
 
 if (ndim==3) then
-   stop 'dNNVds: 3D not implemented'
+   select case(pair)
+   case('q1p0')
+      dNVds(1)=-0.125*(1-r)*(1-t)
+      dNVds(2)=-0.125*(1+r)*(1-t)
+      dNVds(3)=+0.125*(1+r)*(1-t)
+      dNVds(4)=+0.125*(1-r)*(1-t)
+      dNVds(5)=-0.125*(1-r)*(1+t)
+      dNVds(6)=-0.125*(1+r)*(1+t)
+      dNVds(7)=+0.125*(1+r)*(1+t)
+      dNVds(8)=+0.125*(1-r)*(1+t)
+   case default
+      stop 'pb in dNNVds'
+   end select
 end if
 
 end subroutine

@@ -39,21 +39,21 @@ allocate(mesh(nel))
 
 if (pair=='q1p0' .or. pair=='q1q1') then
    counter=0    
-   do ielx=1,nelx    
+   do ielz=1,nelz    
       do iely=1,nely    
-         do ielz=1,nelz    
+         do ielx=1,nelx    
             counter=counter+1    
             mesh(counter)%ielx=ielx
             mesh(counter)%iely=iely
             mesh(counter)%ielz=ielz
-            mesh(counter)%iconV(1)=(nely+1)*(nelz+1)*(ielx-1)+(nelz+1)*(iely-1)+ielz
-            mesh(counter)%iconV(2)=(nely+1)*(nelz+1)*(ielx  )+(nelz+1)*(iely-1)+ielz
-            mesh(counter)%iconV(3)=(nely+1)*(nelz+1)*(ielx  )+(nelz+1)*(iely  )+ielz
-            mesh(counter)%iconV(4)=(nely+1)*(nelz+1)*(ielx-1)+(nelz+1)*(iely  )+ielz
-            mesh(counter)%iconV(5)=(nely+1)*(nelz+1)*(ielx-1)+(nelz+1)*(iely-1)+ielz+1
-            mesh(counter)%iconV(6)=(nely+1)*(nelz+1)*(ielx  )+(nelz+1)*(iely-1)+ielz+1
-            mesh(counter)%iconV(7)=(nely+1)*(nelz+1)*(ielx  )+(nelz+1)*(iely  )+ielz+1
-            mesh(counter)%iconV(8)=(nely+1)*(nelz+1)*(ielx-1)+(nelz+1)*(iely  )+ielz+1
+            mesh(counter)%iconV(1)=(nelx+1)*(nely+1)*(ielz-1)+ (iely-1)*(nelx+1) + ielx
+            mesh(counter)%iconV(2)=(nelx+1)*(nely+1)*(ielz-1)+ (iely-1)*(nelx+1) + ielx+1
+            mesh(counter)%iconV(3)=(nelx+1)*(nely+1)*(ielz-1)+ (iely  )*(nelx+1) + ielx+1
+            mesh(counter)%iconV(4)=(nelx+1)*(nely+1)*(ielz-1)+ (iely  )*(nelx+1) + ielx
+            mesh(counter)%iconV(5)=(nelx+1)*(nely+1)*(ielz  )+ (iely-1)*(nelx+1) + ielx
+            mesh(counter)%iconV(6)=(nelx+1)*(nely+1)*(ielz  )+ (iely-1)*(nelx+1) + ielx+1
+            mesh(counter)%iconV(7)=(nelx+1)*(nely+1)*(ielz  )+ (iely  )*(nelx+1) + ielx+1
+            mesh(counter)%iconV(8)=(nelx+1)*(nely+1)*(ielz  )+ (iely  )*(nelx+1) + ielx
             mesh(counter)%xV(1)=(ielx-1)*hx
             mesh(counter)%xV(2)=(ielx-1)*hx+hx
             mesh(counter)%xV(3)=(ielx-1)*hx+hx
@@ -109,9 +109,9 @@ end if
 
 if (pair=='q1p0') then
    counter=0    
-   do ielx=1,nelx    
+   do ielz=1,nelz
       do iely=1,nely    
-         do ielz=1,nelz
+         do ielx=1,nelx    
             counter=counter+1    
             mesh(counter)%iconP(1)=counter
             mesh(counter)%xP(1)=mesh(counter)%xC

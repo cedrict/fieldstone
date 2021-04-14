@@ -6,7 +6,7 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine postprocessors
+subroutine matrix_setup_K
 
 use global_parameters
 use structures
@@ -14,65 +14,66 @@ use timing
 
 implicit none
 
-integer iq
-real(8) avrg_u,avrg_v,avrg_w,vrms
-real(8) uq,vq,wq,volume,NNNV(mV)
+integer :: k
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{postprocessors.f90}
+!@@ \subsubsection{matrix\_setup\_K}
 !@@
 !==================================================================================================!
 
+if (iproc==0) call system_clock(counti,count_rate)
+
+!==============================================================================!
+
+Nel=ndofV*mV          ! size of an elemental matrix
+
+idV%N=NfemV
+
+idV%NELT=nel
+LELTVAR=nel*Nel           ! nb of elts X size of elemental matrix
+NA_ELT=nel*Nel*(Nel+1)/2  ! nb of elts X nb of nbs in elemental matrix
+
+allocate(idV%A_ELT (NA_ELT)) 
+allocate(idV%RHS   (idV%N))  
+
 if (iproc==0) then
 
-call system_clock(counti,count_rate)
+   allocate(idV%ELTPTR(idV%NELT+1)) 
+   allocate(idV%ELTVAR(LELTVAR))    
 
-!==============================================================================!
+   !=====[building ELTPTR]=====
 
-avrg_u=0.d0
-avrg_v=0.d0
-avrg_w=0.d0
-vrms=0.d0
-volume=0.d0
-
-do iel=1,nel
-   do iq=1,nqel
-      call NNV(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNV(1:mV),mV,ndim,pair)
-      uq=sum(NNNV(1:mV)*mesh(iel)%u(1:mV))
-      vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV))
-      wq=sum(NNNV(1:mV)*mesh(iel)%w(1:mV))
-      avrg_u=avrg_u+uq*mesh(iel)%JxWq(iq)
-      avrg_v=avrg_v+vq*mesh(iel)%JxWq(iq)
-      avrg_w=avrg_w+wq*mesh(iel)%JxWq(iq)
-      vrms=vrms+(uq**2+vq**2+wq**2)*mesh(iel)%JxWq(iq)
-      volume=volume+mesh(iel)%JxWq(iq)
+   do iel=1,nel
+      idV%ELTPTR(iel)=1+(iel-1)*(ndofV*mV)
    end do
-end do
+   idV%ELTPTR(iel)=1+nel*(ndofV*mV)
 
-vrms=sqrt(vrms/volume)
-avrg_u=avrg_u/volume
-avrg_v=avrg_v/volume
-avrg_w=avrg_w/volume
+   !=====[building ELTVAR]=====
 
-write(*,*) '          -> vrms=',vrms
-write(*,*) '          -> avrg_u=',avrg_u
-write(*,*) '          -> avrg_v=',avrg_v
-write(*,*) '          -> avrg_w=',avrg_w
-write(*,*) '          -> volume=',volume
+   counter=0
+   do iel=1,nel
+      do k=1,mV
+         inode=mesh(iel)%iconV(k)
+         do idof=1,ndofV
+            iii=(inode-1)*ndofV+idof
+            counter=counter+1
+            idV%ELTVAR(counter)=iii
+         end do
+      end do
+   end do
 
-
-
-
-
+end if ! iproc=0
 
 !==============================================================================!
+
+if (iproc==0) then 
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> postprocessors ',elapsed
+write(*,*) '     -> matrix_setup_K ',elapsed
 
-end if ! iproc
+end if
 
 end subroutine
 

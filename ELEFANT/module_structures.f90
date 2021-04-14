@@ -15,7 +15,9 @@ type element
      real(8) :: a_eta,b_eta,c_eta,d_eta
      real(8) :: a_rho,b_rho,c_rho,d_rho
      logical(1) :: left,right,top,bottom,front,back
-     logical(1) :: left_node(8),right_node(8),top_node(8),bottom_node(8),front_node(8),back_node(8)
+     logical(1) :: left_node(8),right_node(8)
+     logical(1) :: top_node(8),bottom_node(8)
+     logical(1) :: front_node(8),back_node(8)
      logical(1) :: fix_u(8),fix_v(8),fix_w(8),fix_T(8)
      real(8), dimension(:), allocatable :: xq,yq,zq,weightq,rq,sq,tq,gxq,gyq,gzq,pq,thetaq
      real(8), dimension(:), allocatable :: etaq,rhoq,hcondq,hcapaq,hprodq,JxWq

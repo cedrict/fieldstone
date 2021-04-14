@@ -12,16 +12,18 @@ use global_parameters
 
 implicit none
 
-ndim=2
+ndim=3
 Lx=1
 Ly=1
-nelx=64
-nely=64
-geometry='cartesian2D'
+Lz=4
+nelx=20
+nely=30
+nelz=40
+geometry='cartesian'
 pair='q1p0'
 
 use_markers=.true.
-nmarker_per_dim=10
+nmarker_per_dim=3
 init_marker_random=.true.
 nmat=3
 

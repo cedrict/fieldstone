@@ -86,6 +86,10 @@ do iq=1,nqel
          NNNmat(3,k)=0.d0
       end do
 
+      K_el=K_el+matmul(transpose(Bmat(1:ndim2,1:mV*ndofV)),&
+                       matmul(Cmat2D,Bmat(1:ndim2,1:mV*ndofV)))&
+                       *mesh(iel)%etaq(iq)*mesh(iel)%JxWq(iq)
+
    else
 
       call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNdx,dNdy,dNdz,jcob)
@@ -132,12 +136,13 @@ do iq=1,nqel
          NNNmat(6,k)=0.d0
       end do
 
+      K_el=K_el+matmul(transpose(Bmat(1:ndim2,1:mV*ndofV)),&
+                       matmul(Cmat3D,Bmat(1:ndim2,1:mV*ndofV)))&
+                       *mesh(iel)%etaq(iq)*mesh(iel)%JxWq(iq)
+
    end if
 
    G_el=G_el-matmul(transpose(Bmat(1:ndim2,1:mV*ndofV)),NNNmat(1:ndim2,1:mP))*mesh(iel)%JxWq(iq)
-
-   K_el=K_el+matmul(transpose(Bmat(1:ndim2,1:mV*ndofV)),&
-                    matmul(Cmat2D,Bmat(1:ndim2,1:mV*ndofV)))*mesh(iel)%etaq(iq)*mesh(iel)%JxWq(iq)
 
 end do
 

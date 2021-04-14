@@ -42,7 +42,7 @@ call system_clock(counti,count_rate)
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> name ',elapsed
+write(*,*) '     -> name ',elapsed
 
 end if ! iproc
 

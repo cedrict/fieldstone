@@ -85,6 +85,47 @@ write(123,*) swarm(im)%iel
 end do
 write(123,*) '</DataArray>'
 
+!-----
+write(123,*) '<DataArray type="Float32" Name="eta" Format="ascii">'
+do im=1,nmarker
+write(123,*) swarm(im)%eta
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="rho" Format="ascii">'
+do im=1,nmarker
+write(123,*) swarm(im)%rho
+end do
+write(123,*) '</DataArray>'
+
+!-----
+write(123,*) '<DataArray type="Float32" Name="hcapa" Format="ascii">'
+do im=1,nmarker
+write(123,*) swarm(im)%hcapa
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="hcond" Format="ascii">'
+do im=1,nmarker
+write(123,*) swarm(im)%hcond
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="hprod" Format="ascii">'
+do im=1,nmarker
+write(123,*) swarm(im)%hprod
+end do
+write(123,*) '</DataArray>'
+
+
+
+
+
+
+
+
+
+
 
 !-----
 write(123,*) '</PointData>'

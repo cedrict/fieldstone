@@ -133,7 +133,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> name ',elapsed
+if (iproc==0) write(*,*) '     -> interpolate_onto_nodes ',elapsed
 
 end if ! iproc
 

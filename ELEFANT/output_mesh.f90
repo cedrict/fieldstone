@@ -48,7 +48,7 @@ write(123,*) '<Cells>'
 write(123,*) '<DataArray type="Int32" Name="connectivity" Format="ascii">'
 do iel=1,nel
    !write(123,*) (iel-1)*4,(iel-1)*4+1,(iel-1)*4+2,(iel-1)*4+3 
-   write(123,*) ( (iel-1)*4+i-1,i=1,ncorners) 
+   write(123,*) ( (iel-1)*ncorners+i-1,i=1,ncorners) 
 end do
 write(123,*) '</DataArray>'
 write(123,*) '<DataArray type="Int32" Name="offsets" Format="ascii">'
