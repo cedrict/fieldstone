@@ -1,0 +1,28 @@
+\begin{flushright} {\tiny {\color{gray} (tikz\_mini.tex)}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[fill=gray!23,gray!23](0,0) rectangle (5,5);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (5,3.5); %background grid
+\draw[thick] (1,0.5) -- (4,1)  -- (3,3) -- cycle; %1-9-2-6-5
+
+%pressure nodes
+\draw[violet] (1,0.5) circle (4pt); % 0 
+\draw[violet] (4,1) circle (4pt); % 1 
+\draw[violet] (3,3) circle (4pt); % 2 
+
+%velocity nodes
+\draw[black,fill=teal] (1,0.5)   circle (2pt);
+\draw[black,fill=teal] (4,1)   circle (2pt);
+\draw[black,fill=teal] (3,3)   circle (2pt);
+\draw[black,fill=teal] (2.75,1.5)   circle (2pt);
+
+% legend
+\draw[black,fill=teal] (3.1,0.2) circle (2pt); \node[] at (3.4,0.2) {$\vec\upnu$};
+\draw[violet] (4.1,0.2) circle (4pt); 
+\node[] at (4.4,0.2) {$p$};
+\node[] at (2.5,3.75) {4 vel. nodes, 3 press. nodes};
+\end{tikzpicture}\\
+\end{center}
+

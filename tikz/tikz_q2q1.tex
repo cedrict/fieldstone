@@ -1,24 +1,28 @@
+\begin{flushright} {\tiny {\color{gray} (tikz\_q2q1.tex)}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\begin{center}
+%\begin{center}
 \begin{tikzpicture}
-\draw[fill=gray!23,gray!23](0,0) rectangle (5,5);
+%\draw[fill=gray!23,gray!23](0,0) rectangle (5,5);
 %\draw[step=0.5cm,gray,very thin] (0,0) grid (4,4); %background grid
 \draw[thick] (1,1) -- (3,1.2) -- (2.7,3) -- (1.1,3.1) -- cycle;  
 \node[] at (0.7,0.8) {0};
 \node[] at (3.3,1) {1};
 \node[] at (3,3.1) {2};
 \node[] at (0.8,3.2) {3};
-\draw[black,fill=black] (1,1)     circle (2pt); \draw (1,1) circle (4pt);
-\draw[black,fill=black] (3,1.2)   circle (2pt); \draw (3,1.2) circle (4pt);
-\draw[black,fill=black] (2.7,3)   circle (2pt); \draw (2.7,3) circle (4pt);
-\draw[black,fill=black] (1.1,3.1) circle (2pt); \draw (1.1,3.1) circle (4pt);
-\draw[black,fill=black] (2,1.1) circle (2pt) ; \node[] at (2,0.8) {4};
-\draw[black,fill=black] (2.85,2.1) circle (2pt) ; \node[] at (3.1,2.1) {5};
-\draw[black,fill=black] (1.9,3.05) circle (2pt) ; \node[] at (1.9,3.3) {6};
-\draw[black,fill=black] (1.05,2.05) circle (2pt) ; \node[] at (0.8,2) {7};
-\draw[black,fill=black] (1.9,2.075) circle (2pt) ; \node[] at (2.1,2) {8};
-\draw[black,fill=black] (3.1,0.2) circle (2pt); \node[] at (3.4,0.2) {$\vec\upnu$};
-\draw (4.1,0.2) circle (4pt); \node[] at (4.4,0.2) {$p$};
-\node[] at (2.5,4.5) {27 vel. nodes, 8 press. nodes};
-\end{tikzpicture}\\
-\end{center}
+\draw[black,fill=teal] (1,1)     circle (2pt); \draw[violet] (1,1) circle (4pt);
+\draw[black,fill=teal] (3,1.2)   circle (2pt); \draw[violet] (3,1.2) circle (4pt);
+\draw[black,fill=teal] (2.7,3)   circle (2pt); \draw[violet] (2.7,3) circle (4pt);
+\draw[black,fill=teal] (1.1,3.1) circle (2pt); \draw[violet] (1.1,3.1) circle (4pt);
+\draw[black,fill=teal] (2,1.1) circle (2pt) ; \node[] at (2,0.8) {4};
+\draw[black,fill=teal] (2.85,2.1) circle (2pt) ; \node[] at (3.1,2.1) {5};
+\draw[black,fill=teal] (1.9,3.05) circle (2pt) ; \node[] at (1.9,3.3) {6};
+\draw[black,fill=teal] (1.05,2.05) circle (2pt) ; \node[] at (0.8,2) {7};
+\draw[black,fill=teal] (1.9,2.075) circle (2pt) ; \node[] at (2.1,2) {8};
+\draw[black,fill=teal] (3.1,0.2) circle (2pt); 
+\node[] at (3.4,0.2) {$\vec\upnu$};
+\draw[violet] (4.1,0.2) circle (4pt); 
+\node[] at (4.4,0.2) {$p$};
+\node[] at (2.5,4.5) {9 vel. nodes, 4 press. nodes};
+\end{tikzpicture}
+%\end{center}
