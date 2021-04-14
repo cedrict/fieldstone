@@ -1,0 +1,15 @@
+set term pdf enhanced font "Times,10pt"
+set grid
+set xlabel 'x'
+set ylabel 'T'
+set output 'T.pdf'
+set key outside
+
+plot[][]\
+'T_minus_00000.ascii' w l t 'istep=0',\
+'T_minus_00050.ascii' w l t 'istep=50',\
+'T_minus_00100.ascii' w l t 'istep=100',\
+'T_minus_00150.ascii' w l t 'istep=150',\
+'T_minus_00200.ascii' w l t 'istep=200',\
+'T_minus_00250.ascii' w l t 'istep=250'
+

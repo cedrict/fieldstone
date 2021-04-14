@@ -36,10 +36,10 @@ print (dt,nstep*dt)
 #------------------------------------------------------------------------------
 x=np.linspace(0,Lx,nnx) 
 
-T_minus=np.zeros(nnx)      # Temperature at negative side of node
-T_minus_old=np.zeros(nnx)  # Temperature at negative side of node
-T_plus=np.zeros(nnx)       # Temperature at positive side of node
-T_plus_old=np.zeros(nnx)   # Temperature at positive side of node
+T_minus=np.zeros(nnx,dtype=np.float64)      # Temperature at negative side of node
+T_minus_old=np.zeros(nnx,dtype=np.float64)  # Temperature at negative side of node
+T_plus=np.zeros(nnx,dtype=np.float64)       # Temperature at positive side of node
+T_plus_old=np.zeros(nnx,dtype=np.float64)   # Temperature at positive side of node
 
 #------------------------------------------------------------------------------
 # initial conditions
