@@ -32,6 +32,13 @@ hx=Lx/nelx
 hy=Ly/nely
 
 allocate(mesh(nel))
+do iel=1,nel
+mesh(iel)%u=0.d0
+mesh(iel)%v=0.d0
+mesh(iel)%w=0.d0
+mesh(iel)%T=0.d0
+mesh(iel)%p=0.d0
+end do
 
 !==========================================================
 !velocity 
@@ -118,6 +125,14 @@ do iel=1,nel
       mesh(iel)%top_node(i)   =(abs(mesh(iel)%yV(i)-Ly)<eps*Ly)
    end do
 end do
+
+if (debug) then
+
+   do iel=1,nel
+   print *,iel,mesh(iel)%iconV(1:4),mesh(iel)%iconP(1)
+   end do
+
+end if
 
 !==============================================================================!
 

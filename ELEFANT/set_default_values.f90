@@ -37,9 +37,9 @@ solve_stokes_system=.true.
 
 geometry='cartesian'
 
+use_MUMPS=.false.
 
-
-
+debug=.false.
 
 !==============================================================================!
 

@@ -28,10 +28,14 @@ integer :: ndim2               ! size of G_el (3 in 2D, 6 in 3D)
 logical :: solve_stokes_system ! whether the Stokes system is solved or not
 logical :: use_markers         ! whether markers are used or not
 logical :: init_marker_random  ! whether markers are initally randomised
+logical :: use_MUMPS 
+logical :: debug 
 real(8) :: block_scaling_coeff ! scaling coefficient for the G block
 
 character(len=12) :: geometry  ! type of domain geometry
 character(len=4) :: pair       ! type of element pair
+
+real(8) :: vrms,vrms_test
 
 integer :: iel
 integer :: istep           

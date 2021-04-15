@@ -17,7 +17,7 @@ implicit none
 integer counter_mumps,k1,k2,ikk,jkk,i1,i2,m1,m2,ik ! <- too many ?!
 real(8) :: hel(mP)
 real(8) :: fel(mV*ndofV)
-real(8) :: Kel(mV*ndofV,mV*ndofV)
+real(8) :: K_el(mV*ndofV,mV*ndofV)
 real(8) :: Gel(mV*ndofV,mP)
 real(8) :: Cel(mP,mP)
 
@@ -40,20 +40,23 @@ Cel=0.d0
 counter_mumps=0
 !idV%RHS=0.d0
 !idV%A_ELT=0.d0
-!csrGT%mat=0
+csrGT%mat=0
+
+print *,size(K_el)
 
 do iel=1,nel
 
-   call compute_elemental_matrices(Kel,Gel,fel,hel)
+   call compute_elemental_matrices(K_el,Gel,fel,hel)
 
-!   call impose_boundary_conditions(Kel,Gel,fel,hel)
+
+!   call impose_boundary_conditions(K_el,Gel,fel,hel)
 
    !--------------------
    !assemble GT, f and h
    !--------------------
 
    if (pair=='q1p0') then
-!      csrGT%mat(csrGT%ia(iel):csrGT%ia(iel+1)-1)=Gel(:,1)
+      csrGT%mat(csrGT%ia(iel):csrGT%ia(iel+1)-1)=Gel(:,1)
 !      rhs_h(iel,1)=rhs_h(iel,1)+hel(1)
    end if
 
@@ -97,7 +100,7 @@ do iel=1,nel
                   jkk=ndofV*(k2-1)+i2
                   if (jkk>=ikk) then
                      counter_mumps=counter_mumps+1
-!                     idV%A_ELT(counter_mumps)=Kel(ikk,jkk)
+!                     idV%A_ELT(counter_mumps)=K_el(ikk,jkk)
                   end if
                end do
             end do

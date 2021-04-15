@@ -12,12 +12,12 @@ use global_parameters
 
 implicit none
 
-ndim=3
-Lx=1
-Ly=1
+ndim=2
+Lx=3
+Ly=2
 Lz=4
-nelx=20
-nely=30
+nelx=3
+nely=2
 nelz=40
 geometry='cartesian'
 pair='q1p0'
@@ -27,6 +27,7 @@ nmarker_per_dim=3
 init_marker_random=.true.
 nmat=3
 
+debug=.true.
 
 end subroutine
 
@@ -47,11 +48,11 @@ mat(1)%eta0=1
 
 !sphere
 mat(2)%rho0=2
-mat(2)%eta0=1d3
+mat(2)%eta0=1!d3
 
 !air
 mat(3)%rho0=0.001
-mat(3)%eta0=1d-3
+mat(3)%eta0=1!d-3
 
 
 end subroutine
@@ -204,3 +205,23 @@ gz=0
 end subroutine
 
 !==================================================================================================!
+
+subroutine test
+
+use global_parameters 
+use constants
+
+implicit none
+
+vrms_test=0.
+
+if (abs(vrms-vrms_test)/vrms_test<epsilon_test) then
+   print *,'***** test passed *****'
+else
+   print *,'***** test FAILED *****'
+end if
+
+end subroutine
+
+!==================================================================================================!
+

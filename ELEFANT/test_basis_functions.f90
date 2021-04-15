@@ -6,7 +6,7 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine postprocessors
+subroutine test_basis_functions
 
 use global_parameters
 use structures
@@ -15,12 +15,12 @@ use timing
 implicit none
 
 integer iq
-real(8) avrg_u,avrg_v,avrg_w
-real(8) uq,vq,wq,volume,NNNV(mV)
+real(8) NNNV(1:mV),rq,sq,tq,uq,vq,exxq,eyyq
+real(8) dNdx(mV),dNdy(mV),dNdz(mV),jcob
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{postprocessors.f90}
+!@@ \subsubsection{test\_basis\_functions}
 !@@
 !==================================================================================================!
 
@@ -30,47 +30,57 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-avrg_u=0.d0
-avrg_v=0.d0
-avrg_w=0.d0
-vrms=0.d0
-volume=0.d0
+if (debug) then
 
+!constant field
+write(*,*) 'constant u=v=1'
 do iel=1,nel
+   mesh(iel)%u=1
+   mesh(iel)%v=1
+   mesh(iel)%w=1
    do iq=1,nqel
-      call NNV(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNV(1:mV),mV,ndim,pair)
-      uq=sum(NNNV(1:mV)*mesh(iel)%u(1:mV))
-      vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV)) !; print *,vq
-      wq=sum(NNNV(1:mV)*mesh(iel)%w(1:mV))
-      avrg_u=avrg_u+uq*mesh(iel)%JxWq(iq)
-      avrg_v=avrg_v+vq*mesh(iel)%JxWq(iq)
-      avrg_w=avrg_w+wq*mesh(iel)%JxWq(iq)
-      vrms=vrms+(uq**2+vq**2+wq**2)*mesh(iel)%JxWq(iq)
-      volume=volume+mesh(iel)%JxWq(iq)
+      rq=mesh(iel)%rq(iq)
+      sq=mesh(iel)%sq(iq)
+      tq=mesh(iel)%tq(iq)
+      call NNV(rq,sq,tq,NNNV(1:mV),mV,ndim,pair)
+      uq=sum(NNNV(1:mV)*mesh(iel)%u(1:mV)) 
+      vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV)) 
+      call compute_dNdx_dNdy(rq,sq,dNdx,dNdy,jcob)
+      exxq=sum(dNdx(1:mV)*mesh(iel)%u(1:mV)) 
+      eyyq=sum(dNdy(1:mV)*mesh(iel)%v(1:mV)) 
+      print *,mesh(iel)%xq(iq),mesh(iel)%yq(iq),uq,vq,exxq,eyyq
    end do
 end do
 
-vrms=sqrt(vrms/volume)
-avrg_u=avrg_u/volume
-avrg_v=avrg_v/volume
-avrg_w=avrg_w/volume
+!linear field
+write(*,*) 'linear'
+do iel=1,nel
+   mesh(iel)%u=mesh(iel)%xV
+   mesh(iel)%v=mesh(iel)%yV
+   mesh(iel)%w=mesh(iel)%zV
+   do iq=1,nqel
+      rq=mesh(iel)%rq(iq)
+      sq=mesh(iel)%sq(iq)
+      tq=mesh(iel)%tq(iq)
+      call NNV(rq,sq,tq,NNNV(1:mV),mV,ndim,pair)
+      uq=sum(NNNV(1:mV)*mesh(iel)%u(1:mV)) 
+      vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV)) 
+      call compute_dNdx_dNdy(rq,sq,dNdx,dNdy,jcob)
+      exxq=sum(dNdx(1:mV)*mesh(iel)%u(1:mV)) 
+      eyyq=sum(dNdy(1:mV)*mesh(iel)%v(1:mV)) 
+      print *,mesh(iel)%xq(iq),mesh(iel)%yq(iq),uq,vq,exxq,eyyq
+   end do
+end do
 
-write(*,*) '          -> vrms=',vrms
-write(*,*) '          -> avrg_u=',avrg_u
-write(*,*) '          -> avrg_v=',avrg_v
-write(*,*) '          -> avrg_w=',avrg_w
-write(*,*) '          -> volume=',volume
 
 
-
-
-
+end if
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> postprocessors ',elapsed
+write(*,*) '     -> test_basis_functions ',elapsed
 
 end if ! iproc
 

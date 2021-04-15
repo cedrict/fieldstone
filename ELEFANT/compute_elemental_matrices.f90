@@ -67,6 +67,8 @@ do iq=1,nqel
          Bmat(3,i2)=dNdx(k)
       end do 
 
+      !print *,Bmat
+
       !---------------
       ! compute f_el
       !---------------
@@ -87,8 +89,8 @@ do iq=1,nqel
       end do
 
       K_el=K_el+matmul(transpose(Bmat(1:ndim2,1:mV*ndofV)),&
-                       matmul(Cmat2D,Bmat(1:ndim2,1:mV*ndofV)))&
-                       *mesh(iel)%etaq(iq)*mesh(iel)%JxWq(iq)
+                matmul(Cmat2D,Bmat(1:ndim2,1:mV*ndofV)))*  &
+                mesh(iel)%etaq(iq)*mesh(iel)%JxWq(iq)
 
    else
 
@@ -145,6 +147,19 @@ do iq=1,nqel
    G_el=G_el-matmul(transpose(Bmat(1:ndim2,1:mV*ndofV)),NNNmat(1:ndim2,1:mP))*mesh(iel)%JxWq(iq)
 
 end do
+
+if (debug) then   
+print *,iel,'================================='
+print *,(K_el(1,:))
+print *,(K_el(2,:))
+print *,(K_el(3,:))
+print *,(K_el(4,:))
+print *,(K_el(5,:))
+print *,(K_el(6,:))
+print *,(K_el(7,:))
+print *,(K_el(8,:))
+print *,G_el
+end if
 
 end subroutine
 

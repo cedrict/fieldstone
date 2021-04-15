@@ -19,7 +19,7 @@ integer i,im,iq,idummy,ipvt2D(3),job
 real(8) x(1000),y(1000),z(1000),rho(1000),eta(1000),rcond
 real(8) A2D(3,3),B2D(3),work2D(3),NNNT(mT),NNNP(mP)
 real(8) pm,Tm,exxm,eyym,ezzm,exym,exzm,eyzm
-real(8) exxq,eyyq,ezzq,exyq,exzq,eyzq
+real(8) exxq,eyyq,ezzq,exyq,exzq,eyzq,etaq_min,etaq_max
 
 !==================================================================================================!
 !==================================================================================================!
@@ -33,6 +33,9 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
+etaq_max=-1d50
+etaq_min=+1d50
+
 if (use_markers) then 
 
    do iel=1,nel
@@ -43,6 +46,8 @@ if (use_markers) then
 
          call NNP(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNP(1:mP),mP,ndim,pair)
          pm=sum(NNNP(1:mP)*mesh(iel)%p(1:mP))
+
+         !or use q ?
 
          call NNT(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNT(1:mT),mT,ndim)
          Tm=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
@@ -133,8 +138,11 @@ if (use_markers) then
                             mesh(iel)%b_rho*(mesh(iel)%xq(iq)-mesh(iel)%xc)+&
                             mesh(iel)%c_rho*(mesh(iel)%yq(iq)-mesh(iel)%yc)
       end do
-   end do
 
+      etaq_min=min(minval(mesh(iel)%etaq(:)),etaq_min)
+      etaq_max=max(maxval(mesh(iel)%etaq(:)),etaq_max)
+
+   end do ! iel
 
 else
 
@@ -176,8 +184,7 @@ else
 
 end if
 
-
-
+write(*,*) '          etaq (m/M):',etaq_min,etaq_max
 
 !==============================================================================!
 

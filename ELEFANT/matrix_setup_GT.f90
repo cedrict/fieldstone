@@ -6,7 +6,7 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine postprocessors
+subroutine matrix_setup_GT
 
 use global_parameters
 use structures
@@ -14,13 +14,11 @@ use timing
 
 implicit none
 
-integer iq
-real(8) avrg_u,avrg_v,avrg_w
-real(8) uq,vq,wq,volume,NNNV(mV)
+integer inode,k,nz,i,ii,nsees
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{postprocessors.f90}
+!@@ \subsubsection{matrix\_setup\_GT.f90}
 !@@
 !==================================================================================================!
 
@@ -30,47 +28,54 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-avrg_u=0.d0
-avrg_v=0.d0
-avrg_w=0.d0
-vrms=0.d0
-volume=0.d0
+csrGT%nr=NfemP ! number of rows
+csrGT%nc=NfemV ! number of columns
 
-do iel=1,nel
-   do iq=1,nqel
-      call NNV(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNV(1:mV),mV,ndim,pair)
-      uq=sum(NNNV(1:mV)*mesh(iel)%u(1:mV))
-      vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV)) !; print *,vq
-      wq=sum(NNNV(1:mV)*mesh(iel)%w(1:mV))
-      avrg_u=avrg_u+uq*mesh(iel)%JxWq(iq)
-      avrg_v=avrg_v+vq*mesh(iel)%JxWq(iq)
-      avrg_w=avrg_w+wq*mesh(iel)%JxWq(iq)
-      vrms=vrms+(uq**2+vq**2+wq**2)*mesh(iel)%JxWq(iq)
-      volume=volume+mesh(iel)%JxWq(iq)
+if (pair=='q1p0') then ! is pressure discontinuous
+   csrGT%NZ=mV*ndofV*nel
+else
+
+   stop 'matrix_setup_GT: not done for q1q1'
+
+end if
+
+write(*,'(a,i8)') '          matrix GT%NZ=',csrGT%nz
+
+allocate(csrGT%ia(csrGT%nr+1))
+allocate(csrGT%ja(csrGT%NZ))  
+allocate(csrGT%mat(csrGT%NZ)) 
+
+if (pair=='q1p0') then ! is pressure discontinuous
+
+   nz=0
+   csrGT%ia(1)=1
+   do iel=1,nel      ! iel indicates the row in the matrix
+      nsees=0
+      do i=1,mV
+         inode=mesh(iel)%iconV(i)
+         do k=1,ndofV
+            ii=ndofV*(inode-1) + k ! column address in the matrix
+            nz=nz+1
+            csrGT%ja(nz)=ii
+            nsees=nsees+1
+         end do
+      end do
+      csrGT%ia(iel+1)=csrGT%ia(iel)+nsees
    end do
-end do
 
-vrms=sqrt(vrms/volume)
-avrg_u=avrg_u/volume
-avrg_v=avrg_v/volume
-avrg_w=avrg_w/volume
+   if (debug) then
+   write(*,*) '          nz=',nz
+   write(*,*) '          csrGT%ia (m/M)',minval(csrGT%ia), maxval(csrGT%ia)
+   write(*,*) '          csrGT%ja (m/M)',minval(csrGt%ja), maxval(csrGT%ja)
+   end if
 
-write(*,*) '          -> vrms=',vrms
-write(*,*) '          -> avrg_u=',avrg_u
-write(*,*) '          -> avrg_v=',avrg_v
-write(*,*) '          -> avrg_w=',avrg_w
-write(*,*) '          -> volume=',volume
-
-
-
-
-
+end if
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> postprocessors ',elapsed
+write(*,*) '     -> matrix_setup_GT ',elapsed
 
 end if ! iproc
 

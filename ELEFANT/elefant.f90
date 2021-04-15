@@ -6,6 +6,19 @@ use structures
 implicit none
 
 call header
+
+#ifdef UseMUMPS
+print *,'with MUMPS support'
+!include 'mpif.h'
+!call mpi_init(ierr)
+!call mpi_comm_size (mpi_comm_world,nproc,ierr)
+!call mpi_comm_rank (mpi_comm_world,iproc,ierr)
+!call mpi_get_processor_name(procname,resultlen,ierr)
+#else
+print *,'no MUMPS support'
+#endif
+
+call spacer
 call set_default_values
 call declare_main_parameters
 call define_material_properties
@@ -62,24 +75,26 @@ solve_stokes_system=.true.
 nstep=1
 
 !----------------------------
-write(*,*) 'geometry = ',geometry
-write(*,*) 'pair     = ',pair
-write(*,*) 'Lx       =',Lx
-write(*,*) 'Ly       =',Ly
-write(*,*) 'Lz       =',Lz
-write(*,*) 'nelx     =',nelx
-write(*,*) 'nely     =',nely
-write(*,*) 'nelz     =',nelz
-write(*,*) 'nel      =',nel
-write(*,*) 'nqel     =',nqel
-write(*,*) 'NV       =',NV
-write(*,*) 'NP       =',NP
-write(*,*) 'NT       =',NT
-write(*,*) 'NfemV    =',NfemV
-write(*,*) 'NfemP    =',NfemP
-write(*,*) 'NfemT    =',NfemT
-write(*,*) 'Nq       =',Nq
-write(*,*) 'ncorners =',ncorners
+write(*,*) '          ndim     =',ndim
+write(*,*) '          geometry = ',geometry
+write(*,*) '          pair     = ',pair
+write(*,*) '          Lx       =',Lx
+write(*,*) '          Ly       =',Ly
+write(*,*) '          Lz       =',Lz
+write(*,*) '          nelx     =',nelx
+write(*,*) '          nely     =',nely
+write(*,*) '          nelz     =',nelz
+write(*,*) '          nel      =',nel
+write(*,*) '          nqel     =',nqel
+write(*,*) '          NV       =',NV
+write(*,*) '          NP       =',NP
+write(*,*) '          NT       =',NT
+write(*,*) '          NfemV    =',NfemV
+write(*,*) '          NfemP    =',NfemP
+write(*,*) '          NfemT    =',NfemT
+write(*,*) '          Nq       =',Nq
+write(*,*) '          ncorners =',ncorners
+write(*,*) '          use_MUMPS=',use_MUMPS
 !----------------------------
 
 
@@ -93,11 +108,15 @@ case('spherical')
 end select
 call output_mesh
 call quadrature_setup
+call test_basis_functions
 
 call markers_setup
 call material_layout
 !call material_paint
 call output_swarm
+
+call matrix_setup_K
+call matrix_setup_GT
 
 do istep=1,nstep !-----------------------------------------
 
