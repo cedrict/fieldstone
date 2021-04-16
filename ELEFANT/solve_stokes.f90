@@ -9,6 +9,8 @@
 subroutine solve_stokes
 
 use global_parameters
+use global_measurements
+use global_arrays
 !use structures
 !use constants
 use timing
@@ -19,7 +21,9 @@ implicit none
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{solve\_stokes}
-!@@
+!@@ This subroutine solves the saddle point problem using the preconditioned 
+!@@ conjugate gradient (PCG) applied to the Schur complement $\SSS$ 
+!@@ (see Section~\ref{ss:schurpcg}).
 !==================================================================================================!
 
 if (iproc==0) then
@@ -31,18 +35,18 @@ call system_clock(counti,count_rate)
 
 
 
+solV=0
+solP=0
 
-
-
-
-
+p_min=minval(solP)
+p_max=maxval(solP)
 
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> solve_stokes ',elapsed
+write(*,'(a,f4.2,a)') '     >> solve_stokes                     ',elapsed,' s'
 
 end if ! iproc
 

@@ -82,9 +82,9 @@ else
          csrK%NZ=csrK%NZ*(ndofV**2)    
          csrK%nz=(csrK%nz-csrK%nr)/2+csrK%nr
 
-         write(*,'(a)')       '          CSR matrix format SYMMETRIC' 
-         write(*,'(a,i10,a)') '          csrK%nr      =',csrK%nr,'  ' 
-         write(*,'(a,i10,a)') '          csrK%nz      =',csrK%nz,'  ' 
+         write(*,'(a)')     '        CSR matrix format symm' 
+         write(*,'(a,i10)') '        csrK%nr =',csrK%nr
+         write(*,'(a,i10)') '        csrK%nz =',csrK%nz
    
          allocate(csrK%ia(csrK%nr+1))   
          allocate(csrK%ja(csrK%nz))     
@@ -208,7 +208,7 @@ if (iproc==0) then
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,*) '     -> matrix_setup_K ',elapsed
+write(*,'(a,f4.2,a)') '     >> matrix_setup_K                   ',elapsed,' s'
 
 end if
 

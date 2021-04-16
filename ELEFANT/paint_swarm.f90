@@ -6,21 +6,22 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine prescribe_stokes_solution
+subroutine paint_swarm
 
 use global_parameters
 use structures
+!use constants
 use timing
 
 implicit none
 
-integer k
+integer im
+real(8) dx,dy,dz
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{prescribe\_stokes\_solution.f90}
-!@@ This subroutine prescribes the velocity, pressure, temperature and strain rate components
-!@@ on the corners of each element via the {\sl analytical\_solution} subroutine.
+!@@ \subsubsection{paint\_swarm}
+!@@ 
 !==================================================================================================!
 
 if (iproc==0) then
@@ -29,31 +30,47 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-do iel=1,nel
-   do k=1,ncorners
-      call analytical_solution(mesh(iel)%xV(k),&
-                               mesh(iel)%yV(k),&
-                               mesh(iel)%zV(k),&
-                               mesh(iel)%u(k),&
-                               mesh(iel)%v(k),&
-                               mesh(iel)%w(k),&
-                               mesh(iel)%q(k),&
-                               mesh(iel)%T(k),&
-                               mesh(iel)%exx(k),&
-                               mesh(iel)%eyy(k),&
-                               mesh(iel)%ezz(k),&
-                               mesh(iel)%exy(k),&
-                               mesh(iel)%exz(k),&
-                               mesh(iel)%eyz(k))
+if (use_swarm) then
 
+   do im=1,nmarker  
+      swarm(im)%paint = 0.
    end do
-end do
+
+   if (geometry=='cartesian') then
+
+      if (nxstripes>1 .or. nystripes>1 .or. nzstripes>1) then
+         dx=Lx/nxstripes  
+         dy=Ly/nystripes  
+         dz=Lz/nzstripes  
+         do im=1,nmarker 
+            if ( (mod(int(swarm(im)%x/dx),2)==1).neqv.(mod(int(swarm(im)%y/dy),2)==1) ) then
+               swarm(im)%paint=1
+            end if
+            if (ndim==3) then
+               if ( (swarm(im)%paint==1) .neqv. (mod(int(swarm(im)%z/dz),2)==1) ) then
+                  swarm(im)%paint=1
+               end if
+            end if
+            swarm(im)%paint=swarm(im)%paint-0.5
+         end do    
+      end if
+
+      if (nxstripes<1) then
+         do im=1,nmarker 
+            call random_number(swarm(im)%paint)
+            swarm(im)%paint=swarm(im)%paint-0.5
+         end do
+      end if
+
+   end if ! cartesian
+
+end if ! use_markers
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> prescribe_stokes_solution ',elapsed
+write(*,'(a,f4.2,a)') '     >> paint_swarm ',elapsed,' s'
 
 end if ! iproc
 

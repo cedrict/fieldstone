@@ -42,14 +42,11 @@ counter_mumps=0
 !idV%A_ELT=0.d0
 csrGT%mat=0
 
-print *,size(K_el)
-
 do iel=1,nel
 
    call compute_elemental_matrices(K_el,Gel,fel,hel)
 
-
-!   call impose_boundary_conditions(K_el,Gel,fel,hel)
+   call impose_boundary_conditions(K_el,Gel,fel,hel)
 
    !--------------------
    !assemble GT, f and h
@@ -118,7 +115,7 @@ end do
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> make_matrix ',elapsed
+write(*,'(a,f4.2,a)') '     >> make_matrix                      ',elapsed,' s'
 
 end if ! iproc
 

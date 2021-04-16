@@ -21,7 +21,9 @@ real(8) rq,sq,tq,NNNV(mV)
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{quadrature\_setup.f90}
-!@@
+!@@ This subroutine allocates all GLQ-related arrays for each element.
+!@@ It further computes the real $(x_q,y_q,z_q)$ and reduced $(r_q,s_q,t_q)$
+!@@ coordinates of the GLQ points, and assigns them their weights.
 !==================================================================================================!
 
 if (iproc==0) then
@@ -39,6 +41,8 @@ do iel=1,nel
    allocate(mesh(iel)%hcondq(nqel),mesh(iel)%hcapaq(nqel),mesh(iel)%hprodq(nqel))
    allocate(mesh(iel)%pq(nqel),mesh(iel)%thetaq(nqel))
 end do
+
+!--------------------------------------
 
 if (ndim==2) then
    do iel=1,nel
@@ -91,7 +95,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> quadrature_setup ',elapsed
+write(*,'(a,f4.2,a)') '     >> quadrature_setup                 ',elapsed,' s'
 
 end if ! iproc
 

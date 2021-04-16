@@ -29,6 +29,7 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
+if (use_swarm) then
 
 open(unit=123,file='markers.vtu',status='replace',form='formatted')
 write(123,*) '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian">'
@@ -57,7 +58,7 @@ write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Float32" Name="mat" Format="ascii">'
 do im=1,nmarker
-write(123,'(i4)') swarm(im)%mat
+write(123,'(f5.2)') swarm(im)%mat*(1+0.1*swarm(im)%paint)
 end do
 write(123,*) '</DataArray>'
 !-----
@@ -117,16 +118,6 @@ write(123,*) swarm(im)%hprod
 end do
 write(123,*) '</DataArray>'
 
-
-
-
-
-
-
-
-
-
-
 !-----
 write(123,*) '</PointData>'
 !=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -167,20 +158,13 @@ write(123,*) '</UnstructuredGrid>'
 write(123,*) '</VTKFile>'
 close(123)
 
-
-
-
-
-
-
-
-
+end if
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> output_swarm ',elapsed
+write(*,'(a,f4.2,a)') '     >> output_swarm                     ',elapsed,' s'
 
 end if ! iproc
 

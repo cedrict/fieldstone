@@ -126,19 +126,27 @@ do iel=1,nel
    end do
 end do
 
+!==========================================================
+! initialise boundary arrays
+
+do iel=1,nel
+   mesh(iel)%fix_u=.false.
+   mesh(iel)%fix_v=.false.
+   mesh(iel)%fix_w=.false.
+   mesh(iel)%fix_T=.false.
+end do
+
 if (debug) then
-
    do iel=1,nel
-   print *,iel,mesh(iel)%iconV(1:4),mesh(iel)%iconP(1)
+   print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),mesh(iel)%iconP(1:mP)
    end do
-
 end if
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> setup_cartesian2D ',elapsed
+write(*,'(a,f4.2,a)') '     >> setup_cartesian2D                ',elapsed,' s'
 
 end if ! iproc
 

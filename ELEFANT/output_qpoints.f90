@@ -127,7 +127,7 @@ close(123)
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> output_qpoints ',elapsed
+write(*,'(a,f4.2,a)') '     >> output_qpoints                   ',elapsed,' s'
 
 end if ! iproc
 

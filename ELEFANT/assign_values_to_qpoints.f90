@@ -9,6 +9,7 @@
 subroutine assign_values_to_qpoints
 
 use global_parameters
+use global_measurements
 use structures
 use constants
 use timing
@@ -19,7 +20,7 @@ integer i,im,iq,idummy,ipvt2D(3),job
 real(8) x(1000),y(1000),z(1000),rho(1000),eta(1000),rcond
 real(8) A2D(3,3),B2D(3),work2D(3),NNNT(mT),NNNP(mP)
 real(8) pm,Tm,exxm,eyym,ezzm,exym,exzm,eyzm
-real(8) exxq,eyyq,ezzq,exyq,exzq,eyzq,etaq_min,etaq_max
+real(8) exxq,eyyq,ezzq,exyq,exzq,eyzq
 
 !==================================================================================================!
 !==================================================================================================!
@@ -35,8 +36,10 @@ call system_clock(counti,count_rate)
 
 etaq_max=-1d50
 etaq_min=+1d50
+rhoq_max=-1d50
+rhoq_min=+1d50
 
-if (use_markers) then 
+if (use_swarm) then 
 
    do iel=1,nel
   
@@ -141,6 +144,8 @@ if (use_markers) then
 
       etaq_min=min(minval(mesh(iel)%etaq(:)),etaq_min)
       etaq_max=max(maxval(mesh(iel)%etaq(:)),etaq_max)
+      rhoq_min=min(minval(mesh(iel)%etaq(:)),rhoq_min)
+      rhoq_max=max(maxval(mesh(iel)%etaq(:)),rhoq_max)
 
    end do ! iel
 
@@ -151,7 +156,7 @@ else
 
          !compute pq
 
-         call NNP(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim)
+         call NNP(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim,pair)
          mesh(iel)%pq(iq)=sum(NNNP(1:mP)*mesh(iel)%p(1:mP))
 
          !compute strainrate and Tq
@@ -180,17 +185,24 @@ else
 
    
       end do
+
+      etaq_min=min(minval(mesh(iel)%etaq(:)),etaq_min)
+      etaq_max=max(maxval(mesh(iel)%etaq(:)),etaq_max)
+      rhoq_min=min(minval(mesh(iel)%etaq(:)),rhoq_min)
+      rhoq_max=max(maxval(mesh(iel)%etaq(:)),rhoq_max)
+
    end do
 
 end if
 
-write(*,*) '          etaq (m/M):',etaq_min,etaq_max
+write(*,'(a,2es10.3)') '        rhoq (m/M):',rhoq_min,rhoq_max
+write(*,'(a,2es10.3)') '        etaq (m/M):',etaq_min,etaq_max
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> assign_values_to_qpoints ',elapsed
+write(*,'(a,f4.2,a)') '     >> assign_values_to_qpoints         ',elapsed,' s'
 
 end if ! iproc
 

@@ -6,7 +6,7 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine set_default_values
+subroutine set_global_parameters_pair
 
 use global_parameters
 
@@ -14,44 +14,48 @@ implicit none
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{set\_default\_values}
-!@@ This subroutine assigns default values to many of the global variables.
+!@@ \subsubsection{set\_global\_parameters\_pair}
+!@@
 !==================================================================================================!
 
 if (iproc==0) then
 
-!==============================================================================!
+if (pair=='q1p0') then 
+   mV=2**ndim
+   mP=1
+   mT=2**ndim
+   if (ndim==2) then
+      nel=nelx*nely
+      NV=(nelx+1)*(nely+1)
+      NT=(nelx+1)*(nely+1)
+      NP=nel
+   else
+      nel=nelx*nely*nelz
+      NV=(nelx+1)*(nely+1)*(nelz+1)
+      NT=(nelx+1)*(nely+1)*(nelz+1)
+      NP=nel
+   end if
+end if
 
-ndim=2
+if (pair=='q1q1') then
+   mP=2**ndim
+   mT=2**ndim
+   if (ndim==2) then
+      mV=2**ndim+1
+      nel=nelx*nely
+      NV=(nelx+1)*(nely+1)+nel
+      NT=(nelx+1)*(nely+1)
+      NP=(nelx+1)*(nely+1)
+   else
+      mV=2**ndim+2
+      nel=nelx*nely*nelz
+      NV=(nelx+1)*(nely+1)*(nelz+1)+2*nel
+      NT=(nelx+1)*(nely+1)*(nelz+1)
+      NP=(nelx+1)*(nely+1)*(nelz+1)
+   end if
+end if
 
-geometry='cartesian'
-pair='q1p0'
-
-use_swarm=.false.
-nmarker_per_dim=5 
-init_marker_random=.false. 
-
-nstep=1
-
-solve_stokes_system=.true. 
-
-geometry='cartesian'
-
-use_MUMPS=.false.
-
-debug=.false.
-
-use_T=.false.
-
-nmat=1
-
-nxstripes=1
-nystripes=1
-nzstripes=1
-
-nmarker=0
-
-write(*,'(a)') '     >> set_default_values '
+write(*,'(a)') '     >> set_global_parameters_pair '
 
 end if ! iproc
 

@@ -76,8 +76,6 @@ type compressedrowstorage
    integer,dimension(:),allocatable :: ja
    real(8),dimension(:),allocatable :: mat 
    real(8),dimension(:),allocatable :: rhs 
-   integer,dimension(:),allocatable :: ia_minus1 
-   integer,dimension(:),allocatable :: ja_minus1
    integer,dimension(:),allocatable :: idiag
 end type compressedrowstorage
 

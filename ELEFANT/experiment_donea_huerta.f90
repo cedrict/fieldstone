@@ -15,22 +15,12 @@ implicit none
 ndim=2
 Lx=1
 Ly=1
-Lz=4
+
 nelx=30
 nely=40
-nelz=40
-geometry='cartesian'
-pair='q1p0'
 
-use_markers=.true.
-nmarker_per_dim=4
-init_marker_random=.true.
-nmat=3
 
-debug=.false.
 
-nxstripes=-3
-nystripes=4
 
 end subroutine
 
@@ -42,19 +32,6 @@ use global_parameters
 use structures
 
 implicit none
-
-!liquid
-mat(1)%rho0=1
-mat(1)%eta0=1
-
-!sphere
-mat(2)%rho0=2
-mat(2)%eta0=1d3
-
-!air
-mat(3)%rho0=0.001
-mat(3)%eta0=1d-3
-
 
 end subroutine
 
@@ -73,8 +50,8 @@ real(8), intent(in) :: x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz
 integer, intent(in) :: imat,mode
 real(8), intent(out) :: eta,rho,hcond,hcapa,hprod
 
-eta=mat(imat)%eta0
-rho=mat(imat)%rho0
+eta=1
+rho=1
 
 end subroutine
 
@@ -87,21 +64,6 @@ use structures
 
 implicit none
 
-integer im
-
-if (use_markers) then
-
-   do im=1,nmarker
-
-      swarm(im)%mat=1
-
-      if (swarm(im)%y>0.75) swarm(im)%mat=3
-
-      if ((swarm(im)%x-0.5d0)**2+(swarm(im)%y-0.6d0)**2<0.123456789**2) swarm(im)%mat=2
-
-   end do
-
-end if
 
 end subroutine
 
@@ -125,23 +87,27 @@ do iel=1,nel
    do i=1,4
       if (mesh(iel)%left_node(i)) then
          mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
+         mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
       end if
    end do
    !right boundary
    do i=1,4
       if (mesh(iel)%right_node(i)) then
          mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
+         mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
       end if
    end do
    !bottom boundary
    do i=1,4
       if (mesh(iel)%bottom_node(i)) then
+         mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
          mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
       end if
    end do
    !top boundary
    do i=1,4
       if (mesh(iel)%top_node(i)) then
+         mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
          mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
       end if
    end do
@@ -184,8 +150,27 @@ implicit none
 real(8), intent(in) :: x,y,z
 real(8), intent(out) :: u,v,w,p,T,exx,eyy,ezz,exy,exz,eyz
 
+real(8) dudxth,dvdxth,dudyth,dvdyth
 
+u=x**2 * (1.d0-x)**2 * (2.d0*y - 6.d0*y**2 + 4*y**3)
+v=-y**2 * (1.d0-y)**2 * (2.d0*x - 6.d0*x**2 + 4*x**3)
+w=0d0
+p=x*(1-x)-1d0/6d0
 
+dudxth=4*x*y*(1-x)*(1-2*x)*(1-3*y+2*y**2)
+dudyth=2*x**2*(1-x)**2*(1-6*y+6*y**2)
+dvdxth=-2*y**2*(1-y)**2*(1-6*x+6*x**2)
+dvdyth=-4*x*y*(1-y)*(1-2*y)*(1-3*x+2*x**2)
+
+exx=dudxth
+eyy=dvdyth
+exy=0.5d0*(dudyth+dvdxth)
+
+ezz=0d0
+exz=0d0
+eyz=0d0
+
+T=0
 
 end subroutine
 
@@ -196,10 +181,14 @@ subroutine gravity_model(x,y,z,gx,gy,gz)
 implicit none
 
 integer, intent(in) :: x,y,z
-integer, intent(out) :: gx,gy,gz
+real(8), intent(out) :: gx,gy,gz
 
-gx=0
-gy=-1
+gx= ( (12.d0-24.d0*y)*x**4 + (-24.d0+48.d0*y)*x**3 + (-48.d0*y+72.d0*y**2-48.d0*y**3+12.d0)*x**2 &
+    + (-2.d0+24.d0*y-72.d0*y**2+48.d0*y**3)*x + 1.d0-4.d0*y+12.d0*y**2-8.d0*y**3 )
+
+gy=( (8.d0-48.d0*y+48.d0*y**2)*x**3 + (-12.d0+72.d0*y-72*y**2)*x**2 + &
+     (4.d0-24.d0*y+48.d0*y**2-48.d0*y**3+24.d0*y**4)*x - 12.d0*y**2 + 24.d0*y**3 -12.d0*y**4)
+
 gz=0
 
 

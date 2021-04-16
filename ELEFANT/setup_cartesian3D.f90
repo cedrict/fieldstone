@@ -155,6 +155,22 @@ do iel=1,nel
    end do
 end do
 
+!==========================================================
+! initialise boundary arrays
+
+do iel=1,nel
+   mesh(iel)%fix_u=.false.
+   mesh(iel)%fix_v=.false.
+   mesh(iel)%fix_w=.false.
+   mesh(iel)%fix_T=.false.
+end do
+
+if (debug) then
+   do iel=1,nel
+   print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),mesh(iel)%iconP(1:mP)
+   end do
+end if
+
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)

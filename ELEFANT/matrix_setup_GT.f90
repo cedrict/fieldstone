@@ -39,7 +39,7 @@ else
 
 end if
 
-write(*,'(a,i8)') '          matrix GT%NZ=',csrGT%nz
+write(*,'(a,i8)') '        matrix GT%NZ=',csrGT%nz
 
 allocate(csrGT%ia(csrGT%nr+1))
 allocate(csrGT%ja(csrGT%NZ))  
@@ -75,7 +75,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,*) '     -> matrix_setup_GT ',elapsed
+write(*,'(a,f4.2,a)') '     >> matrix_setup_GT                  ',elapsed,' s'
 
 end if ! iproc
 

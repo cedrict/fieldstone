@@ -15,6 +15,7 @@ use timing
 implicit none
 
 integer k
+real(8) uth,vth,wth,dum
 
 !==================================================================================================!
 !==================================================================================================!
@@ -323,7 +324,7 @@ end do
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Float32" Name="density" Format="ascii">'
-if (use_markers) then
+if (use_swarm) then
    do iel=1,nel
       do k=1,ncorners
          write(123,*) mesh(iel)%a_rho+&
@@ -341,7 +342,7 @@ end if
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Float32" Name="viscosity" Format="ascii">'
-if (use_markers) then
+if (use_swarm) then
    do iel=1,nel
       do k=1,4
          write(123,*) mesh(iel)%a_eta+&
@@ -356,6 +357,16 @@ else
       end do
    end do
 end if
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Name="velocity (analytical)" Format="ascii">'
+do iel=1,nel
+   do k=1,4
+      call analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
+                               uth,vth,wth,dum,dum,dum,dum,dum,dum,dum,dum)
+      write(123,*) uth,vth,wth
+   end do
+end do
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '</PointData>'
@@ -387,7 +398,7 @@ close(123)
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,*) '     -> output_solution ',elapsed
+write(*,'(a,f4.2,a)') '     >> output_solution                  ',elapsed,' s'
 
 end if ! iproc
 

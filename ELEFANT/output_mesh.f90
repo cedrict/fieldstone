@@ -68,7 +68,7 @@ close(123)
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> output_mesh ',elapsed
+write(*,'(a,f4.2,a)') '     >> output_mesh                      ',elapsed,' s'
 
 end if ! iproc
 
