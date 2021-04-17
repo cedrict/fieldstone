@@ -10,7 +10,6 @@ subroutine locate_point(x,y,z,ielt,r,s,t)
 
 use global_parameters
 use structures
-!use constants
 
 implicit none
 
@@ -26,7 +25,9 @@ integer ielx,iely,ielz
 !@@ This file contains a few simple subroutines which deal with the localisation of a point 
 !@@ in the mesh. The {\tt locate\_point} subroutine receives the coordinates of a point as argument 
 !@@ and returns its reduced coordinates and the id of the element it sits in.
-!@@ 
+!@@ It relies on 3 other subroutines ({\tt find\_ielx\_r}, {\tt find\_iely\_s}, {\tt find\_ielz\_t})
+!@@ which take as argument a coorinate (x,y,z) and return the corresponding reduced
+!@@ coordinate (r,s,t) and the integer coordinate (ielx,iely,ielz).
 !==================================================================================================!
 
 if (geometry=='cartesian') then
@@ -138,12 +139,3 @@ t=((z-zmin)/(zmax-zmin)-0.5d0)*2.d0
 end subroutine
 
 !==================================================================================================!
-
-
-
-
-
-
-
-
-

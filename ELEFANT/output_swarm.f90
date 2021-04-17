@@ -19,7 +19,8 @@ integer im
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{output\_swarm.f90}
-!@@ This subroutine produces the {\filenamefont markers.vtu} file which contains the 
+!@@ This subroutine produces the {\filenamefont swarm.vtu} file in the 
+!@@ {\foldernamefont OUTPUT} folder which contains the 
 !@@ swarm of particles with all their properties.
 !==================================================================================================!
 
@@ -31,7 +32,7 @@ call system_clock(counti,count_rate)
 
 if (use_swarm) then
 
-open(unit=123,file='markers.vtu',status='replace',form='formatted')
+open(unit=123,file='OUTPUT/swarm.vtu',status='replace',form='formatted')
 write(123,*) '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian">'
 write(123,*) '<UnstructuredGrid>'
 write(123,*) '<Piece NumberOfPoints="',nmarker,'" NumberOfCells="',nmarker,'">'
@@ -85,7 +86,6 @@ do im=1,nmarker
 write(123,*) swarm(im)%iel
 end do
 write(123,*) '</DataArray>'
-
 !-----
 write(123,*) '<DataArray type="Float32" Name="eta" Format="ascii">'
 do im=1,nmarker
@@ -98,7 +98,6 @@ do im=1,nmarker
 write(123,*) swarm(im)%rho
 end do
 write(123,*) '</DataArray>'
-
 !-----
 write(123,*) '<DataArray type="Float32" Name="hcapa" Format="ascii">'
 do im=1,nmarker
@@ -117,7 +116,6 @@ do im=1,nmarker
 write(123,*) swarm(im)%hprod
 end do
 write(123,*) '</DataArray>'
-
 !-----
 write(123,*) '</PointData>'
 !=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

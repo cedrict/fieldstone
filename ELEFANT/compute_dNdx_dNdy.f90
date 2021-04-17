@@ -24,7 +24,7 @@ real(8), parameter :: t=0d0
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{compute\_dNdx\_dNdy.f90}
-!@@ This subroutine computes $\partial{\bN}/\partial x$ and $\partial{\bN}/\partial y$
+!@@ This subroutine computes $\partial{\bN^\upnu}/\partial x$ and $\partial{\bN^\upnu}/\partial y$
 !@@ at a location $r,s$ passed as argument.
 !==================================================================================================!
 

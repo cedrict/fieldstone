@@ -89,7 +89,6 @@ else
          allocate(csrK%ia(csrK%nr+1))   
          allocate(csrK%ja(csrK%nz))     
          allocate(csrK%mat(csrK%nz))    
-         allocate(csrK%rhs(csrK%nr))    
          
          nz=0
          csrK%ia(1)=1
@@ -153,7 +152,6 @@ else
          allocate(csrK%ia(csrK%nr+1))   
          allocate(csrK%ja(csrK%nz))     
          allocate(csrK%mat(csrK%nz))    
-         allocate(csrK%rhs(csrK%nr))    
 
          nz=0
          csrK%ia(1)=1

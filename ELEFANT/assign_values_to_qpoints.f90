@@ -144,8 +144,8 @@ if (use_swarm) then
 
       etaq_min=min(minval(mesh(iel)%etaq(:)),etaq_min)
       etaq_max=max(maxval(mesh(iel)%etaq(:)),etaq_max)
-      rhoq_min=min(minval(mesh(iel)%etaq(:)),rhoq_min)
-      rhoq_max=max(maxval(mesh(iel)%etaq(:)),rhoq_max)
+      rhoq_min=min(minval(mesh(iel)%rhoq(:)),rhoq_min)
+      rhoq_max=max(maxval(mesh(iel)%rhoq(:)),rhoq_max)
 
    end do ! iel
 
@@ -188,8 +188,8 @@ else
 
       etaq_min=min(minval(mesh(iel)%etaq(:)),etaq_min)
       etaq_max=max(maxval(mesh(iel)%etaq(:)),etaq_max)
-      rhoq_min=min(minval(mesh(iel)%etaq(:)),rhoq_min)
-      rhoq_max=max(maxval(mesh(iel)%etaq(:)),rhoq_max)
+      rhoq_min=min(minval(mesh(iel)%rhoq(:)),rhoq_min)
+      rhoq_max=max(maxval(mesh(iel)%rhoq(:)),rhoq_max)
 
    end do
 

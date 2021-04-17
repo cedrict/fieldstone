@@ -14,13 +14,18 @@ use timing
 
 implicit none
 
-integer i,ii,jj,counter
+integer i,ii,jj,kk,counter,counter2
 real(8) chi,eta,psi,NNNT(mT)
 
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{swarm\_setup.f90}
-!@@ REDO and rebase on element, local coords and basis fcts
+!@@ This subroutine generates the swarm of particles. The layout is controled 
+!@@ by the {\tt init\_marker\_random} parameter.
+!@@ \begin{center}
+!@@ \includegraphics[width=5cm]{ELEFANT/images/swarm_reg} 
+!@@ \includegraphics[width=5cm]{ELEFANT/images/swarm_rand} 
+!@@ \end{center}
 !==================================================================================================!
 
 if (iproc==0) then
@@ -28,6 +33,8 @@ if (iproc==0) then
 call system_clock(counti,count_rate)
 
 !==============================================================================!
+
+if (use_swarm) then
 
 mesh(1:nel)%nmarker=nmarker_per_dim**ndim
 
@@ -61,24 +68,55 @@ if (init_marker_random) then
 
 else
 
-   !REDO!
-   counter=0
-   do iel=1,nel
-      do ii=1,nmarker_per_dim
-      do jj=1,nmarker_per_dim
-         counter=counter+1
-         swarm(counter)%x=mesh(iel)%xV(1)+(ii-0.5)*mesh(iel)%hx/nmarker_per_dim
-         swarm(counter)%y=mesh(iel)%yV(1)+(jj-0.5)*mesh(iel)%hy/nmarker_per_dim
-         swarm(counter)%y=0.d0
-         swarm(counter)%r=(ii-0.5)/nmarker_per_dim-0.5
-         swarm(counter)%s=(jj-0.5)/nmarker_per_dim-0.5
-         swarm(counter)%t=0.d0
+   if (ndim==2) then
+      counter=0
+      do iel=1,nel
+         counter2=0
+         do ii=1,nmarker_per_dim
+         do jj=1,nmarker_per_dim
+            counter=counter+1
+            counter2=counter2+1
+            swarm(counter)%r=((ii-0.5)/nmarker_per_dim-0.5)*2
+            swarm(counter)%s=((jj-0.5)/nmarker_per_dim-0.5)*2
+            swarm(counter)%t=0d0
+            call NNT(swarm(counter)%r,swarm(counter)%s,swarm(counter)%t,NNNT(1:mT),mT,ndim)
+            swarm(counter)%x=sum(NNNT(1:mT)*mesh(iel)%xV(1:mT))
+            swarm(counter)%y=sum(NNNT(1:mT)*mesh(iel)%yV(1:mT))
+            swarm(counter)%z=0d0
+            mesh(iel)%list_of_markers(counter2)=counter
+            swarm(counter)%iel=iel
+         end do
+         end do
       end do
+   end if
+
+   if (ndim==3) then
+      counter=0
+      do iel=1,nel
+         counter2=0
+         do ii=1,nmarker_per_dim
+         do jj=1,nmarker_per_dim
+         do kk=1,nmarker_per_dim
+            counter=counter+1
+            counter2=counter2+1
+            swarm(counter)%r=((ii-0.5)/nmarker_per_dim-0.5)*2
+            swarm(counter)%s=((jj-0.5)/nmarker_per_dim-0.5)*2
+            swarm(counter)%t=((kk-0.5)/nmarker_per_dim-0.5)*2
+            call NNT(swarm(counter)%r,swarm(counter)%s,swarm(counter)%t,NNNT(1:mT),mT,ndim)
+            swarm(counter)%x=sum(NNNT(1:mT)*mesh(iel)%xV(1:mT))
+            swarm(counter)%y=sum(NNNT(1:mT)*mesh(iel)%yV(1:mT))
+            swarm(counter)%z=sum(NNNT(1:mT)*mesh(iel)%zV(1:mT))
+            mesh(iel)%list_of_markers(counter2)=counter
+            swarm(counter)%iel=iel
+         end do
+         end do
+         end do
       end do
-   end do
+   end if
 
-end if
+end if ! init_marker_random
 
+end if ! use_swarm
 
 !==============================================================================!
 

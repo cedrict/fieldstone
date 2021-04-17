@@ -6,57 +6,40 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine set_default_values
+subroutine solve_KVeqf(rhs,guess)
 
 use global_parameters
+use global_arrays
+use structures
+!use constants
+use timing
 
 implicit none
 
+real(8), intent(in) :: rhs(NfemV)
+real(8), intent(in) :: guess(NfemV)
+
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{set\_default\_values}
-!@@ This subroutine assigns default values to many of the global variables.
+!@@ \subsubsection{solve_KVeqf.f90}
+!@@
 !==================================================================================================!
 
-if (iproc==0) then
 
-!==============================================================================!
+if (use_MUMPS) then
 
-ndim=2
 
-geometry='cartesian'
-pair='q1p0'
 
-use_swarm=.false.
-nmarker_per_dim=5 
-init_marker_random=.false. 
+else
 
-nstep=1
+   call solve_cg_diagprec(csrK%NR,csrK%NZ,csrK%mat,csrK%ia,csrK%ja,guess,rhs,Kdiag)
 
-solve_stokes_system=.true. 
+end if
 
-geometry='cartesian'
 
-use_MUMPS=.false.
 
-debug=.false.
 
-use_T=.false.
 
-nmat=1
-
-penalty=1e6
-use_penalty=.False.
-
-nxstripes=1
-nystripes=1
-nzstripes=1
-
-nmarker=0
-
-write(*,'(a)') '     >> set_default_values '
-
-end if ! iproc
 
 end subroutine
 

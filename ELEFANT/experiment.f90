@@ -16,15 +16,18 @@ ndim=2
 Lx=1
 Ly=1
 Lz=4
-nelx=30
-nely=40
+nelx=20
+nely=20
 nelz=40
 geometry='cartesian'
 pair='q1p0'
 
-use_markers=.true.
-nmarker_per_dim=4
-init_marker_random=.true.
+penalty=1000d0
+use_penalty=.true.
+
+use_swarm=.true.
+nmarker_per_dim=5
+init_marker_random=.false.
 nmat=3
 
 debug=.false.
@@ -89,7 +92,7 @@ implicit none
 
 integer im
 
-if (use_markers) then
+if (use_swarm) then
 
    do im=1,nmarker
 
@@ -195,13 +198,12 @@ subroutine gravity_model(x,y,z,gx,gy,gz)
 
 implicit none
 
-integer, intent(in) :: x,y,z
-integer, intent(out) :: gx,gy,gz
+real(8), intent(in) :: x,y,z
+real(8), intent(out) :: gx,gy,gz
 
 gx=0
 gy=-1
 gz=0
-
 
 end subroutine
 

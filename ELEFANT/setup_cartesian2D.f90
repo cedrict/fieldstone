@@ -23,7 +23,10 @@ call system_clock(counti,count_rate)
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{setup\_cartesian2D.f90}
-!@@ 
+!@@ This subroutine assigns to every element the coordinates of the its velocity, pressure,
+!@@ and temperature nodes, the velocity, pressure and temperature connectivity arrays,
+!@@ the coordinates of its center (xc,yc), its integer coordinates (ielx, iely),
+!@@ and its dimensions (hx,hy).
 !==================================================================================================!
 
 if (iproc==0) then

@@ -35,6 +35,8 @@ logical :: use_T               ! whether the code solves the energy equation
 logical :: debug               ! triggers lots of additional checks & prints
 real(8) :: Lx,Ly,Lz            ! cartesian domain size
 real(8) :: block_scaling_coeff ! scaling coefficient for the G block
+real(8) :: penalty             ! penalty parameter
+logical :: use_penalty 
 
 character(len=10) :: geometry  ! type of domain geometry
 character(len=4) :: pair       ! type of element pair
@@ -66,6 +68,7 @@ real(8) :: w_min
 real(8) :: w_max
 real(8) :: p_min
 real(8) :: p_max
+real(8) :: errv,errp,errq
 end module
 
 

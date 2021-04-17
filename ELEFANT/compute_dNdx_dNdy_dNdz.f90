@@ -23,8 +23,8 @@ real(8) jcb(3,3),jcbi(3,3)
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{compute\_dNdx\_dNdy\_dNdz.f90}
-!@@ This subroutine computes $\partial{\bN}/\partial x$, $\partial{\bN}/\partial y$ and
-!@@ $\partial{\bN}/\partial z$ at a location $r,s,t$ passed as argument.
+!@@ This subroutine computes $\partial{\bN^\upnu}/\partial x$, $\partial{\bN^\upnu}/\partial y$ and
+!@@ $\partial{\bN^\upnu}/\partial z$ at a location $r,s,t$ passed as argument.
 !==================================================================================================!
 
 call dNNVdr(r,s,t,dNNNVdr(1:mV),mV,ndim,pair)

@@ -3,7 +3,7 @@ switch =  -fbounds-check -fcheck=all -ffree-line-length-none  -Wall -Wno-unused-
 libs = -lblas 
 
 objects = module_structures.o module_global.o module_constants.o module_timing.o module_global_arrays.o\
-experiment_donea_huerta.o\
+experiment.o\
 mylapack.o\
 assign_values_to_qpoints.o\
 basis_functions_V.o basis_functions_P.o basis_functions_T.o\
@@ -19,7 +19,7 @@ quadrature_setup.o\
 setup_cartesian2D.o setup_cartesian3D.o\
 set_default_values.o set_global_parameters_pair.o swarm_setup.o\
 test_basis_functions.o\
-solve_stokes.o\
+solve_stokes.o solve_cg_diagprec.o spmv_kernels.o solve_KVeqf.o\
 elefant.o
 
 elefant: $(objects)
@@ -35,5 +35,6 @@ clean:
 	rm -f *.o 
 	rm -f elefant
 	rm -f *.vtu
+	rm -f *.ascii
 	rm -f opla
 

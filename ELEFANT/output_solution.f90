@@ -20,7 +20,8 @@ real(8) uth,vth,wth,dum
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{output\_solution}
-!@@
+!@@ This subroutine generates the {\filenamefont solution.vtu} in the {\foldernamefont OUTPUT}
+!@@ folder. It also generates the basic ascii file {\filenamefont solution.ascii}
 !==================================================================================================!
 
 if (iproc==0) then
@@ -29,7 +30,7 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-open(unit=123,file='solution.vtu',status='replace',form='formatted')
+open(unit=123,file='OUTPUT/solution.vtu',status='replace',form='formatted')
 write(123,*) '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian">'
 write(123,*) '<UnstructuredGrid>'
 write(123,*) '<Piece NumberOfPoints="',ncorners*nel,'" NumberOfCells="',nel,'">'
@@ -86,6 +87,7 @@ end if
 end do
 write(123,*) '</DataArray>'
 !-----
+if (ndim==3) then
 write(123,*) '<DataArray type="Float32" Name="boundary: back" Format="ascii">'
 do iel=1,nel
 if (mesh(iel)%back) then
@@ -95,7 +97,9 @@ else
 end if
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
+if (ndim==3) then
 write(123,*) '<DataArray type="Float32" Name="boundary: front" Format="ascii">'
 do iel=1,nel
 if (mesh(iel)%front) then
@@ -105,6 +109,7 @@ else
 end if
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
 write(123,*) '<DataArray type="Float32" Name="hx" Format="ascii">'
 do iel=1,nel
@@ -118,11 +123,13 @@ do iel=1,nel
 end do
 write(123,*) '</DataArray>'
 !-----
+if (ndim==3) then
 write(123,*) '<DataArray type="Float32" Name="hz" Format="ascii">'
 do iel=1,nel
    write(123,*) mesh(iel)%hz
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
 write(123,*) '<DataArray type="Float32" Name="nmarker" Format="ascii">'
 do iel=1,nel
@@ -166,11 +173,6 @@ do iel=1,nel
    write(123,*) mesh(iel)%c_eta
 end do
 write(123,*) '</DataArray>'
-
-
-
-
-
 !-----
 write(123,*) '</CellData>'
 !=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -198,6 +200,7 @@ do iel=1,nel
 end do
 write(123,*) '</DataArray>'
 !-----
+if (use_T) then 
 write(123,*) '<DataArray type="Float32" Name="temperature (T)" Format="ascii">'
 do iel=1,nel
    do k=1,ncorners
@@ -205,6 +208,7 @@ do iel=1,nel
    end do
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
 write(123,*) '<DataArray type="Float32" Name="pressure (q)" Format="ascii">'
 do iel=1,nel
@@ -215,6 +219,7 @@ end do
 write(123,*) '</DataArray>'
 
 !-----
+if (ndim==3) then
 write(123,*) '<DataArray type="Float32" Name="boundary: back" Format="ascii">'
 do iel=1,nel
    do k=1,ncorners
@@ -226,7 +231,9 @@ do iel=1,nel
    end do
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
+if (ndim==3) then
 write(123,*) '<DataArray type="Float32" Name="boundary: front" Format="ascii">'
 do iel=1,nel
    do k=1,ncorners
@@ -238,6 +245,7 @@ do iel=1,nel
    end do
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
 write(123,*) '<DataArray type="Float32" Name="boundary: left" Format="ascii">'
 do iel=1,nel
@@ -311,6 +319,7 @@ do iel=1,nel
 end do
 write(123,*) '</DataArray>'
 !-----
+if (ndim==3) then
 write(123,*) '<DataArray type="Float32" Name="fix_w" Format="ascii">'
 do iel=1,nel
    do k=1,ncorners
@@ -322,6 +331,7 @@ do iel=1,nel
    end do
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
 write(123,*) '<DataArray type="Float32" Name="density" Format="ascii">'
 if (use_swarm) then
@@ -392,6 +402,23 @@ write(123,*) '</Cells>'
 write(123,*) '</Piece>'
 write(123,*) '</UnstructuredGrid>'
 write(123,*) '</VTKFile>'
+close(123)
+
+
+
+open(unit=123,file="OUTPUT/solution.ascii",action="write")
+write(123,*) '#1,2,3  x,y,z '
+write(123,*) '#4,5,6  u,v,w '
+write(123,*) '#7      q '
+write(123,*) '#8      T '
+
+do iel=1,nel 
+   do k=1,ncorners
+      write(123,*) mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
+                   mesh(iel)%u(k),mesh(iel)%v(k),mesh(iel)%w(k),&
+                   mesh(iel)%q(k),mesh(iel)%T(k)
+   end do
+end do
 close(123)
 
 !==============================================================================!
