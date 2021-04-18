@@ -11,6 +11,7 @@ subroutine matrix_setup_K
 use global_parameters
 use structures
 use timing
+use matrices, only : csrK
 
 implicit none
 
@@ -71,8 +72,7 @@ else
 
    if (iproc==0) then
 
-      csrK%nr=NfemV
-      csrK%nc=NfemV
+      csrK%n=NfemV
 
       if (geometry=='cartesian' .and. ndim==2) then
 
@@ -80,13 +80,13 @@ else
          nny=nely+1
          csrK%NZ=(4*4+(2*(nnx-2)+2*(nny-2))*6+(nnx-2)*(nny-2)*9)
          csrK%NZ=csrK%NZ*(ndofV**2)    
-         csrK%nz=(csrK%nz-csrK%nr)/2+csrK%nr
+         csrK%nz=(csrK%nz-csrK%n)/2+csrK%n
 
          write(*,'(a)')     '        CSR matrix format symm' 
-         write(*,'(a,i10)') '        csrK%nr =',csrK%nr
+         write(*,'(a,i10)') '        csrK%n  =',csrK%n
          write(*,'(a,i10)') '        csrK%nz =',csrK%nz
    
-         allocate(csrK%ia(csrK%nr+1))   
+         allocate(csrK%ia(csrK%n+1))   
          allocate(csrK%ja(csrK%nz))     
          allocate(csrK%mat(csrK%nz))    
          
@@ -143,13 +143,13 @@ else
              +2*(nny-2)*(nnz-2)*18                       ! 2 faces
          csrK%nz=csrK%nz*(ndofV**2)                                ! matrix expands 3fold twice 
 
-         csrK%nz=(csrK%nz-csrK%nr)/2+csrK%nr
+         csrK%nz=(csrK%nz-csrK%n)/2+csrK%n
 
-         write(*,'(a)')       '          CSR matrix format SYMMETRIC' 
-         write(*,'(a,i10,a)') '          csrK%nr      =',csrK%nr,'  ' 
-         write(*,'(a,i10,a)') '          csrK%nz      =',csrK%nz,'  ' 
+         write(*,'(a)')     '          CSR matrix format SYMMETRIC' 
+         write(*,'(a,i10)') '          csrK%n  =',csrK%n
+         write(*,'(a,i10)') '          csrK%nz =',csrK%nz
 
-         allocate(csrK%ia(csrK%nr+1))   
+         allocate(csrK%ia(csrK%n+1))   
          allocate(csrK%ja(csrK%nz))     
          allocate(csrK%mat(csrK%nz))    
 

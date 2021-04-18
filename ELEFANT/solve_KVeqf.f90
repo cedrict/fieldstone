@@ -10,9 +10,10 @@ subroutine solve_KVeqf(rhs,guess)
 
 use global_parameters
 use global_arrays
-use structures
+!use structures
 !use constants
 use timing
+use matrices, only : csrK
 
 implicit none
 
@@ -21,10 +22,13 @@ real(8), intent(in) :: guess(NfemV)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{solve_KVeqf.f90}
-!@@
+!@@ \subsubsection{solve\_KVeqf}
+!@@ This subroutine solves the system $\K\cdot \vec{V} = \vec{f}$. The matrix is 
+!@@ implicit passed as argument via the module but the rhs and the guess vector are 
+!@@ passed as arguments.
+!@@ If MUMPS is used the system is solved via MUMPS (the guess is vector
+!@@ is then neglected), otherwise a call is made to !@@ the {\tt solve\_cg\_diagprec} subroutine.
 !==================================================================================================!
-
 
 if (use_MUMPS) then
 
@@ -32,14 +36,9 @@ if (use_MUMPS) then
 
 else
 
-   call solve_cg_diagprec(csrK%NR,csrK%NZ,csrK%mat,csrK%ia,csrK%ja,guess,rhs,Kdiag)
+   call pcg_solver_csr(csrK,guess,rhs,Kdiag)
 
 end if
-
-
-
-
-
 
 end subroutine
 

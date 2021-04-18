@@ -11,8 +11,10 @@ program elefant
 use global_parameters
 use global_arrays
 use structures
+use matrices
 
 implicit none
+
 
 call header
 
@@ -46,6 +48,7 @@ if (ndim==2) ndim2=3
 if (ndim==3) ndim2=6
 allocate(solV(NfemV))
 allocate(solP(NfemP))
+allocate(solQ(NfemV))
 allocate(rhs_f(NfemV))
 allocate(rhs_h(NfemP))
 allocate(mat(nmat))
@@ -126,9 +129,9 @@ call test_basis_functions
 call swarm_setup
 call material_layout
 call paint_swarm
-call output_swarm
 call matrix_setup_K
 call matrix_setup_GT
+call matrix_setup_M
 
 do istep=1,nstep !-----------------------------------------
                                                           !
@@ -151,6 +154,8 @@ do istep=1,nstep !-----------------------------------------
    call postprocessors                                    !
    call output_solution                                   !
    call output_qpoints                                    !
+   call output_swarm
+   call write_stats                                       !
                                                           !
 end do !---------------------------------------------------
 

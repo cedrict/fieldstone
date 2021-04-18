@@ -51,11 +51,13 @@ write(123,'(es12.4)') swarm(im)%s
 end do
 write(123,*) '</DataArray>'
 !-----
+if (ndim==3) then
 write(123,*) '<DataArray type="Float32" Name="t" Format="ascii">'
 do im=1,nmarker
 write(123,'(es12.4)') swarm(im)%t
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
 write(123,*) '<DataArray type="Float32" Name="mat" Format="ascii">'
 do im=1,nmarker
@@ -99,23 +101,29 @@ write(123,*) swarm(im)%rho
 end do
 write(123,*) '</DataArray>'
 !-----
+if (use_T) then
 write(123,*) '<DataArray type="Float32" Name="hcapa" Format="ascii">'
 do im=1,nmarker
 write(123,*) swarm(im)%hcapa
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
+if (use_T) then
 write(123,*) '<DataArray type="Float32" Name="hcond" Format="ascii">'
 do im=1,nmarker
 write(123,*) swarm(im)%hcond
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
+if (use_T) then
 write(123,*) '<DataArray type="Float32" Name="hprod" Format="ascii">'
 do im=1,nmarker
 write(123,*) swarm(im)%hprod
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
 write(123,*) '</PointData>'
 !=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

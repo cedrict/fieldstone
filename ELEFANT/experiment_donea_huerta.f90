@@ -16,10 +16,11 @@ ndim=2
 Lx=1
 Ly=1
 
-nelx=30
-nely=40
+nelx=16
+nely=16
 
-
+use_penalty=.true.
+penalty=100
 
 
 end subroutine
@@ -180,7 +181,7 @@ subroutine gravity_model(x,y,z,gx,gy,gz)
 
 implicit none
 
-integer, intent(in) :: x,y,z
+real(8), intent(in) :: x,y,z
 real(8), intent(out) :: gx,gy,gz
 
 gx= ( (12.d0-24.d0*y)*x**4 + (-24.d0+48.d0*y)*x**3 + (-48.d0*y+72.d0*y**2-48.d0*y**3+12.d0)*x**2 &
@@ -191,6 +192,8 @@ gy=( (8.d0-48.d0*y+48.d0*y**2)*x**3 + (-12.d0+72.d0*y-72*y**2)*x**2 + &
 
 gz=0
 
+!gx=-gx
+!gy=-gy
 
 end subroutine
 

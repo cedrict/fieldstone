@@ -22,13 +22,16 @@ real(8), intent(out) :: h_el(mP)
 
 integer iq,k,i1,i2,i3
 real(8) Bmat(ndim2,mV*ndofV),NNNmat(ndim2,mP)
-real(8) rq,sq,tq,jcob,weightq
+real(8) rq,sq,tq,jcob,weightq,etaq
 real(8) NNNV(mV),NNNP(mP),dNdx(mV),dNdy(mV),dNdz(mV)
 
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{compute\_elemental\_matrices.f90}
-!@@ Improvement: only use Cmat and not Cmat2D, Cmat3D
+!@@ Note that when the material model is called directly on the quadrature points and 
+!@@ the penalty formulation is used then the viscosity at the reduced quadrature location 
+!@@ is obtained by taking the maximum viscosity value carried by the quadrature points of 
+!@@ the element. 
 !==================================================================================================!
 
 K_el=0.d0
@@ -146,10 +149,12 @@ end do ! nqel
 
 if (use_penalty) then
 
+
    rq=0d0
    sq=0d0
    tq=0d0
    weightq=2**ndim
+   etaq=maxval(mesh(iel)%etaq(:))
 
    if (ndim==2) then
 
@@ -184,7 +189,7 @@ if (use_penalty) then
 
    K_el=K_el+matmul(transpose(Bmat(1:ndim2,1:mV*ndofV)),&
                     matmul(Kmat,Bmat(1:ndim2,1:mV*ndofV)))&
-                    *penalty*mesh(iel)%a_eta*jcob*weightq
+                    *penalty*etaq*jcob*weightq
 
 end if ! penalty
 

@@ -12,7 +12,6 @@ use global_parameters
 use global_measurements
 use global_arrays
 use structures
-!use constants
 use timing
 
 implicit none
@@ -45,20 +44,37 @@ if (use_penalty) then
 
    call solve_KVeqf(rhs_f,SolV)
 
+   !velocity
+   do iel=1,nel
+   do k=1,mV
+      inode=mesh(iel)%iconV(k)
+      mesh(iel)%u(k)=solV((inode-1)*ndofV+1)
+      mesh(iel)%v(k)=solV((inode-1)*ndofV+2)
+      if (ndim==3) &
+      mesh(iel)%w(k)=solV((inode-1)*ndofV+3)
+   end do
+   end do
+
    ! compute pressure -> solP
 
+   call recover_pressure_penalty
+
    ! normalise pressure
+
+   !pressure
+   do iel=1,nel
+   do k=1,mP
+      inode=mesh(iel)%iconP(k)
+      mesh(iel)%p(k)=solP(inode)
+   end do
+   end do
+
 
 else
 
 
 
-
-end if
-
-!transfer solution to elements
-
-do iel=1,nel
+   do iel=1,nel
 
    !velocity
    do k=1,mV
@@ -75,12 +91,14 @@ do iel=1,nel
       mesh(iel)%p(k)=solP(inode)
    end do
 
-end do
+   end do
 
+end if
 
 p_min=minval(solP)
 p_max=maxval(solP)
 
+write(*,'(a,2es12.4)') '        p (m,M)',p_min,p_max
 
 !==============================================================================!
 

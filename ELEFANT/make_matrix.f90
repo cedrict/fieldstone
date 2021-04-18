@@ -12,6 +12,7 @@ use global_parameters
 use global_arrays
 use structures
 use timing
+use matrices, only : csrGT,csrK
 
 implicit none
 

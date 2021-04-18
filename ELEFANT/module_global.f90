@@ -36,6 +36,7 @@ logical :: debug               ! triggers lots of additional checks & prints
 real(8) :: Lx,Ly,Lz            ! cartesian domain size
 real(8) :: block_scaling_coeff ! scaling coefficient for the G block
 real(8) :: penalty             ! penalty parameter
+real(8) :: time
 logical :: use_penalty 
 
 character(len=10) :: geometry  ! type of domain geometry
@@ -55,6 +56,7 @@ real(8) :: vrms,   vrms_test
 real(8) :: avrg_u, avrg_u_test
 real(8) :: avrg_v, avrg_v_test
 real(8) :: avrg_w, avrg_w_test
+real(8) :: avrg_p, avrg_p_test
 real(8) :: volume, volume_test
 real(8) :: etaq_min
 real(8) :: etaq_max

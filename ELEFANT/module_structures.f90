@@ -70,17 +70,41 @@ type material
    real(8) n_prls,A_prls,Q_prls,V_prls,f_prls
 end type material 
 type(material), dimension(:), allocatable :: mat
+end module
 
-type compressedrowstorage    
-   integer nr                             ! number of rows of (full) matrix
-   integer nc                             ! number of columns of (full) matrix
+
+
+!---------------------------------------------------------------------------
+module matrix_storage
+
+type compressedrowstorage_sqr    
+   integer n                              ! size of square matrix 
    integer nz                             ! number of nonzeros
    integer,dimension(:),allocatable :: ia  
    integer,dimension(:),allocatable :: ja
    real(8),dimension(:),allocatable :: mat
-end type compressedrowstorage
+end type compressedrowstorage_sqr
 
-type(compressedrowstorage) csrK
-type(compressedrowstorage) csrGT
+type compressedrowstorage_rec    
+   integer nr                
+   integer nc                
+   integer nz                             ! number of nonzeros
+   integer,dimension(:),allocatable :: ia  
+   integer,dimension(:),allocatable :: ja
+   real(8),dimension(:),allocatable :: mat
+end type compressedrowstorage_rec
 
 end module
+
+!-----------------------------------------
+module matrices
+use matrix_storage
+implicit none
+type(compressedrowstorage_sqr) csrK
+type(compressedrowstorage_rec) csrGT
+type(compressedrowstorage_sqr) csrM
+end module
+
+
+
+

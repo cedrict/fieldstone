@@ -33,12 +33,11 @@ call system_clock(counti,count_rate)
 
 if (ndim==2) then
 
-   allocate(q(NT))   ; q=0.d0
+   !allocate(q(NT))   ; q=0.d0
    allocate(exx(NT)) ; exx=0.d0
    allocate(eyy(NT)) ; eyy=0.d0
    allocate(exy(NT)) ; exy=0.d0
    allocate(counter(NT)) ; counter=0.d0
-
 
    do iel=1,nel
       do k=1,ncorners
@@ -48,7 +47,7 @@ if (ndim==2) then
          eyy(node)=eyy(node)+sum(dNdy*mesh(iel)%v(1:mV))         
          exy(node)=exy(node)+sum(dNdx*mesh(iel)%v(1:mV))*0.5d0 &
                             +sum(dNdy*mesh(iel)%u(1:mV))*0.5d0 
-         if (pair=='q1p0') q(node)=q(node)+mesh(iel)%p(1)
+         !if (pair=='q1p0') q(node)=q(node)+mesh(iel)%p(1)
          counter(node)=counter(node)+1
       end do
    end do
@@ -56,7 +55,7 @@ if (ndim==2) then
    exx=exx/counter
    eyy=eyy/counter
    exy=exy/counter
-   q=q/counter
+   !q=q/counter
 
    do iel=1,nel
       do k=1,ncorners
@@ -64,11 +63,11 @@ if (ndim==2) then
          mesh(iel)%exx(k)=exx(node)
          mesh(iel)%eyy(k)=eyy(node)
          mesh(iel)%exy(k)=exy(node)
-         if (pair=='q1p0') mesh(iel)%q(k)=q(node)
+         !if (pair=='q1p0') mesh(iel)%q(k)=q(node)
       end do
    end do
 
-   deallocate(q,exx,eyy,exy,counter)
+   deallocate(exx,eyy,exy,counter)
 
 end if
 

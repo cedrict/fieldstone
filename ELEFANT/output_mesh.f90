@@ -29,7 +29,7 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-open(unit=123,file='meshV.vtu',status='replace',form='formatted')
+open(unit=123,file='OUTPUT/meshV.vtu',status='replace',form='formatted')
 write(123,*) '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian">'
 write(123,*) '<UnstructuredGrid>'
 write(123,*) '<Piece NumberOfPoints="',ncorners*nel,'" NumberOfCells="',nel,'">'

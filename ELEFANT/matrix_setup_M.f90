@@ -6,22 +6,22 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine matrix_setup_GT
+subroutine matrix_setup_M
 
 use global_parameters
-use structures
 use timing
-
-use matrices, only : csrGT
+use matrices, only : csrM
 
 implicit none
 
-integer inode,k,nz,i,ii,nsees
+integer i,jp,ip,nsees,nz,nnx,nny,i1,i2,j,j1,j2
+!integer itemp(200)
+!logical, dimension(:), allocatable :: alreadyseen
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{matrix\_setup\_GT.f90}
-!@@
+!@@ \subsubsection{matrix_setup_M}
+!@@ See Section~\ref{ss:symmcsrss}. 
 !==================================================================================================!
 
 if (iproc==0) then
@@ -30,54 +30,62 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-csrGT%nr=NfemP ! number of rows
-csrGT%nc=NfemV ! number of columns
+if (geometry=='cartesian' .and. ndim==2) then
 
-if (pair=='q1p0') then ! is pressure discontinuous
-   csrGT%NZ=mV*ndofV*nel
-else
+   csrM%n=NV
 
-   stop 'matrix_setup_GT: not done for q1q1'
+   nnx=nelx+1
+   nny=nely+1
+   csrM%NZ=(4*4+(2*(nnx-2)+2*(nny-2))*6+(nnx-2)*(nny-2)*9)
+   csrM%nz=(csrM%nz-csrM%n)/2+csrM%n
 
-end if
+   write(*,'(a)')     '        CSR matrix format symm' 
+   write(*,'(a,i10)') '        csrM%n  =',csrM%n
+   write(*,'(a,i10)') '        csrM%nz =',csrM%nz
 
-write(*,'(a,i8)') '        matrix GT%NZ=',csrGT%nz
-
-allocate(csrGT%ia(csrGT%nr+1))
-allocate(csrGT%ja(csrGT%NZ))  
-allocate(csrGT%mat(csrGT%NZ)) 
-
-if (pair=='q1p0') then ! is pressure discontinuous
+   allocate(csrM%ia(csrM%n+1)) 
+   allocate(csrM%ja(csrM%nz))   
+   allocate(csrM%mat(csrM%nz))  
 
    nz=0
-   csrGT%ia(1)=1
-   do iel=1,nel      ! iel indicates the row in the matrix
-      nsees=0
-      do i=1,mV
-         inode=mesh(iel)%iconV(i)
-         do k=1,ndofV
-            ii=ndofV*(inode-1) + k ! column address in the matrix
-            nz=nz+1
-            csrGT%ja(nz)=ii
-            nsees=nsees+1
+   csrM%ia(1)=1
+   do j1=1,nny
+      do i1=1,nnx
+         ip=(j1-1)*nnx+i1 ! node number
+         nsees=0
+         do j2=-1,1 ! exploring neighbouring nodes
+            do i2=-1,1
+               i=i1+i2
+               j=j1+j2
+               if (i>=1 .and. i<= nnx .and. j>=1 .and. j<=nny) then ! if node exists
+                  jp=(j-1)*nnx+i  ! node number of neighbour 
+                  if (jp>=ip) then  ! upper diagonal
+                     nz=nz+1
+                     csrM%ja(nz)=jp
+                     nsees=nsees+1
+                  end if
+               end if
+            end do
          end do
+         csrM%ia(ip+1)=csrM%ia(ip)+nsees
       end do
-      csrGT%ia(iel+1)=csrGT%ia(iel)+nsees
    end do
 
    if (debug) then
    write(*,*) '          nz=',nz
-   write(*,*) '          csrGT%ia (m/M)',minval(csrGT%ia), maxval(csrGT%ia)
-   write(*,*) '          csrGT%ja (m/M)',minval(csrGt%ja), maxval(csrGT%ja)
+   write(*,*) '          csrM%ia (m/M)',minval(csrM%ia), maxval(csrM%ia)
+   write(*,*) '          csrM%ja (m/M)',minval(csrM%ja), maxval(csrM%ja)
+   write(*,*) csrM%ia
+   write(*,*) csrM%ja
    end if
 
-end if
+end if ! cartesian 2D
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> matrix_setup_GT                  ',elapsed,' s'
+write(*,'(a,f4.2,a)') '     >> matrix_setup_M ',elapsed,' s'
 
 end if ! iproc
 

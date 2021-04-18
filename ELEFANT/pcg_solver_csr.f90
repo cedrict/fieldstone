@@ -6,27 +6,31 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine solve_cg_diagprec(N,NZ,mat,ia,ja,guess,rhs,diag)
+subroutine pcg_solver_csr(csrMat,guess,rhs,diag)
+
+use matrix_storage 
 
 implicit none
 
-integer, intent(in) :: N,NZ
-integer, intent(in) :: ia(N+1),ja(NZ)
-real(8), intent(in) :: mat(NZ)  
-real(8), intent(inout) :: guess(N)  
-real(8), intent(in) :: rhs(N)  
-real(8), intent(in) :: diag(N)  
+type(compressedrowstorage_sqr) csrMat
+
+!integer, intent(in) :: N,NZ
+!integer, intent(in) :: ia(N+1),ja(NZ)
+!real(8), intent(in) :: mat(NZ)  
+real(8), intent(inout) :: guess(csrMat%n)  
+real(8), intent(in) :: rhs(csrMat%n)  
+real(8), intent(in) :: diag(csrMat%n)  
 
 integer, parameter :: nitermax=1000
 real(8), parameter :: rtol=1.d-6
 
 integer iter
 real(8) alpha,beta,tol2,rhs_norm,gammma,ZR,ZZRR
-real(8) R(N),RR(N),P(N),phi(N),Z(N),ZZ(N)
+real(8) R(csrMat%N),RR(csrMat%N),P(csrMat%N),phi(csrMat%N),Z(csrMat%N),ZZ(csrMat%N)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{solve\_cg\_diagprec}
+!@@ \subsubsection{pcg\_solver\_csr}
 !@@ The subroutine solves $A\cdot = b$ by means f the preconditioned Conjugate Gradient method
 !@@ and the implementation follows algorithm 2.2 on page 82 of Elman, Silvester \&
 !@@ Wathen \cite{elsw}:
@@ -58,7 +62,7 @@ rhs_norm=dot_product(rhs,rhs)
 
 !------------------------------------------------
 
-call spmv_symm (N,NZ,guess,phi,mat,ja,ia)
+call spmv_symm (csrMat%n,csrMat%nz,guess,phi,csrMat%mat,csrMat%ja,csrMat%ia)
 
 R=rhs-phi
 
@@ -72,7 +76,7 @@ do iter=1,nitermax
 
    ! compute phi_k=A.P_k
 
-   call spmv_symm (N,NZ,P,phi,mat,ja,ia)
+   call spmv_symm (csrMat%n,csrMat%nz,P,phi,csrMat%mat,csrMat%ja,csrMat%ia)
 
    ! compute alpha
 
@@ -86,7 +90,7 @@ do iter=1,nitermax
 
    gammma=dot_product(RR,RR)/rhs_norm 
 
-   !print *,gammma
+   write(1234,*) iter,gammma 
 
    if (gammma < tol2) then
       write(*,'(a,i4)') '        inner solver:',iter
@@ -110,6 +114,8 @@ do iter=1,nitermax
    ZR=ZZRR
 
 end do
+
+call flush(1234)
 
 if (iter==nitermax+1) stop 'conv. not reached'
 

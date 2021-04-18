@@ -15,7 +15,8 @@ use timing
 implicit none
 
 integer k
-real(8) uth,vth,wth,dum
+real(8) uth,vth,wth,dum,rq,sq
+real(8) dNdx(mV),dNdy(mV),dNdz(mV),div_v,jcob
 
 !==================================================================================================!
 !==================================================================================================!
@@ -131,46 +132,70 @@ end do
 write(123,*) '</DataArray>'
 end if
 !-----
+if (use_swarm) then
 write(123,*) '<DataArray type="Float32" Name="nmarker" Format="ascii">'
 do iel=1,nel
    write(123,*) mesh(iel)%nmarker
 end do
 write(123,*) '</DataArray>'
-
+end if
 !-----
+if (use_swarm) then
 write(123,*) '<DataArray type="Float32" Name="least squares: a_rho" Format="ascii">'
 do iel=1,nel
    write(123,*) mesh(iel)%a_rho
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
+if (use_swarm) then
 write(123,*) '<DataArray type="Float32" Name="least squares: b_rho" Format="ascii">'
 do iel=1,nel
    write(123,*) mesh(iel)%b_rho
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
+if (use_swarm) then
 write(123,*) '<DataArray type="Float32" Name="least squares: c_rho" Format="ascii">'
 do iel=1,nel
    write(123,*) mesh(iel)%c_rho
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
+if (use_swarm) then
 write(123,*) '<DataArray type="Float32" Name="least squares: a_eta" Format="ascii">'
 do iel=1,nel
    write(123,*) mesh(iel)%a_eta
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
+if (use_swarm) then
 write(123,*) '<DataArray type="Float32" Name="least squares: b_eta" Format="ascii">'
 do iel=1,nel
    write(123,*) mesh(iel)%b_eta
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
+if (use_swarm) then
 write(123,*) '<DataArray type="Float32" Name="least squares: c_eta" Format="ascii">'
 do iel=1,nel
    write(123,*) mesh(iel)%c_eta
+end do
+write(123,*) '</DataArray>'
+end if
+!-----
+write(123,*) '<DataArray type="Float32" Name="div(v)" Format="ascii">'
+do iel=1,nel
+   rq=0d0
+   sq=0d0
+   call compute_dNdx_dNdy(rq,sq,dNdx,dNdy,jcob)
+   div_v=sum(dNdx(1:mV)*mesh(iel)%u(1:mV))&
+        +sum(dNdy(1:mV)*mesh(iel)%v(1:mV))
+   write(123,*) div_v
 end do
 write(123,*) '</DataArray>'
 !-----

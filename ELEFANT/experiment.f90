@@ -16,8 +16,8 @@ ndim=2
 Lx=1
 Ly=1
 Lz=4
-nelx=20
-nely=20
+nelx=16
+nely=16
 nelz=40
 geometry='cartesian'
 pair='q1p0'
@@ -30,7 +30,7 @@ nmarker_per_dim=5
 init_marker_random=.false.
 nmat=3
 
-debug=.false.
+debug=.true.
 
 nxstripes=-3
 nystripes=4

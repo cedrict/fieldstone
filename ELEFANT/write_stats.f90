@@ -6,55 +6,38 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine set_global_parameters_pair
+subroutine write_stats
 
 use global_parameters
+use global_measurements
+use timing
 
 implicit none
 
+
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{set\_global\_parameters\_pair}
+!@@ \subsubsection{write_stats}
 !@@
 !==================================================================================================!
 
 if (iproc==0) then
 
-if (pair=='q1p0') then 
-   mV=2**ndim
-   mP=1
-   mT=2**ndim
-   if (ndim==2) then
-      nel=nelx*nely
-      NV=(nelx+1)*(nely+1)
-      NT=(nelx+1)*(nely+1)
-   else
-      nel=nelx*nely*nelz
-      NV=(nelx+1)*(nely+1)*(nelz+1)
-      NT=(nelx+1)*(nely+1)*(nelz+1)
-   end if
-   NP=nel
-end if
+call system_clock(counti,count_rate)
 
-if (pair=='q1q1') then
-   mP=2**ndim
-   mT=2**ndim
-   if (ndim==2) then
-      mV=2**ndim+1
-      nel=nelx*nely
-      NV=(nelx+1)*(nely+1)+nel
-      NT=(nelx+1)*(nely+1)
-      NP=(nelx+1)*(nely+1)
-   else
-      mV=2**ndim+2
-      nel=nelx*nely*nelz
-      NV=(nelx+1)*(nely+1)*(nelz+1)+2*nel
-      NT=(nelx+1)*(nely+1)*(nelz+1)
-      NP=(nelx+1)*(nely+1)*(nelz+1)
-   end if
-end if
+!==============================================================================!
 
-write(*,'(a)') '     >> set_global_parameters_pair '
+
+write(1234,*) istep,time,nel,vrms,errv,errp,errq,&
+              volume,avrg_u,avrg_v,avrg_w,avrg_p
+
+call flush(1234)
+
+!==============================================================================!
+
+call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
+
+write(*,'(a,f4.2,a)') '     >> write_stats ',elapsed,' s'
 
 end if ! iproc
 
