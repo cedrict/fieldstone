@@ -54,6 +54,8 @@ nzstripes=1
 
 nmarker=0
 
+use_ALE=.false.
+
 write(*,'(a)') '     >> set_default_values '
 
 end if ! iproc

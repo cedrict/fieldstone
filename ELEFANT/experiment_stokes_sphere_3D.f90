@@ -12,19 +12,23 @@ use global_parameters
 
 implicit none
 
-ndim=2
-Lx=1
-Ly=1
+!----------------------------------------------------------
 
-nelx=3
-nely=2
+ndim=3
+Lx=1!4
+Ly=1!3
+Lz=1!2
+
+nelx=16!4
+nely=16!3
+nelz=16!2
 
 use_penalty=.true.
-penalty=100
+penalty=20000
 
-pair='q1q1'
+debug=.false.
 
-debug=.true.
+!----------------------------------------------------------
 
 end subroutine
 
@@ -36,6 +40,12 @@ use global_parameters
 use structures
 
 implicit none
+
+!----------------------------------------------------------
+
+! your stuff here
+
+!----------------------------------------------------------
 
 end subroutine
 
@@ -54,8 +64,17 @@ real(8), intent(in) :: x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz
 integer, intent(in) :: imat,mode
 real(8), intent(out) :: eta,rho,hcond,hcapa,hprod
 
-eta=1
-rho=1
+!----------------------------------------------------------
+
+if ((x-0.5)**2+(y-0.5)**2+(z-0.5)**2<0.123456789d0**2) then
+   eta=1d1
+   rho=1.01d0
+else
+   eta=1d0
+   rho=1.d0
+end if
+
+!----------------------------------------------------------
 
 end subroutine
 
@@ -68,6 +87,10 @@ use structures
 
 implicit none
 
+!----------------------------------------------------------
+
+
+!----------------------------------------------------------
 
 end subroutine
 
@@ -80,42 +103,51 @@ use structures
 
 implicit none
 
-integer i
+!----------------------------------------------------------
+
+integer k
 
 do iel=1,nel
 
    mesh(iel)%fix_u(:)=.false. 
    mesh(iel)%fix_v(:)=.false. 
+   mesh(iel)%fix_w(:)=.false. 
 
-   !left boundary
-   do i=1,4
-      if (mesh(iel)%bnd1_node(i)) then
-         mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
-         mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
+   do k=1,mV
+      if (mesh(iel)%bnd1_node(k)) then
+         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
       end if
-   end do
-   !right boundary
-   do i=1,4
-      if (mesh(iel)%bnd2_node(i)) then
-         mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
-         mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
+      if (mesh(iel)%bnd2_node(k)) then
+         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
       end if
-   end do
-   !bottom boundary
-   do i=1,4
-      if (mesh(iel)%bnd3_node(i)) then
-         mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
-         mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
+      if (mesh(iel)%bnd3_node(k)) then
+         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
       end if
-   end do
-   !top boundary
-   do i=1,4
-      if (mesh(iel)%bnd4_node(i)) then
-         mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
-         mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
+      if (mesh(iel)%bnd4_node(k)) then
+         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
+      end if
+      if (mesh(iel)%bnd5_node(k)) then
+         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
+      end if
+      if (mesh(iel)%bnd6_node(k)) then
+         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
       end if
    end do
 end do
+
+!----------------------------------------------------------
 
 end subroutine
 
@@ -128,7 +160,11 @@ use structures
 
 implicit none
 
+!----------------------------------------------------------
 
+! your stuff here
+
+!----------------------------------------------------------
 
 end subroutine
 
@@ -141,7 +177,11 @@ use structures
 
 implicit none
 
+!----------------------------------------------------------
 
+! your stuff here
+
+!----------------------------------------------------------
 
 end subroutine
 
@@ -154,27 +194,11 @@ implicit none
 real(8), intent(in) :: x,y,z
 real(8), intent(out) :: u,v,w,p,T,exx,eyy,ezz,exy,exz,eyz
 
-real(8) dudxth,dvdxth,dudyth,dvdyth
+!----------------------------------------------------------
 
-u=x**2 * (1.d0-x)**2 * (2.d0*y - 6.d0*y**2 + 4*y**3)
-v=-y**2 * (1.d0-y)**2 * (2.d0*x - 6.d0*x**2 + 4*x**3)
-w=0d0
-p=x*(1-x)-1d0/6d0
+! your stuff here
 
-dudxth=4*x*y*(1-x)*(1-2*x)*(1-3*y+2*y**2)
-dudyth=2*x**2*(1-x)**2*(1-6*y+6*y**2)
-dvdxth=-2*y**2*(1-y)**2*(1-6*x+6*x**2)
-dvdyth=-4*x*y*(1-y)*(1-2*y)*(1-3*x+2*x**2)
-
-exx=dudxth
-eyy=dvdyth
-exy=0.5d0*(dudyth+dvdxth)
-
-ezz=0d0
-exz=0d0
-eyz=0d0
-
-T=0
+!----------------------------------------------------------
 
 end subroutine
 
@@ -187,16 +211,13 @@ implicit none
 real(8), intent(in) :: x,y,z
 real(8), intent(out) :: gx,gy,gz
 
-gx= ( (12.d0-24.d0*y)*x**4 + (-24.d0+48.d0*y)*x**3 + (-48.d0*y+72.d0*y**2-48.d0*y**3+12.d0)*x**2 &
-    + (-2.d0+24.d0*y-72.d0*y**2+48.d0*y**3)*x + 1.d0-4.d0*y+12.d0*y**2-8.d0*y**3 )
+!----------------------------------------------------------
 
-gy=( (8.d0-48.d0*y+48.d0*y**2)*x**3 + (-12.d0+72.d0*y-72*y**2)*x**2 + &
-     (4.d0-24.d0*y+48.d0*y**2-48.d0*y**3+24.d0*y**4)*x - 12.d0*y**2 + 24.d0*y**3 -12.d0*y**4)
+gx=0
+gy=0
+gz=-1
 
-gz=0
-
-!gx=-gx
-!gy=-gy
+!----------------------------------------------------------
 
 end subroutine
 
@@ -210,13 +231,11 @@ use constants
 
 implicit none
 
-vrms_test=0.
+!----------------------------------------------------------
 
-if (abs(vrms-vrms_test)/vrms_test<epsilon_test) then
-   print *,'***** test passed *****'
-else
-   print *,'***** test FAILED *****'
-end if
+! your stuff here
+
+!----------------------------------------------------------
 
 end subroutine
 
@@ -226,8 +245,11 @@ subroutine postprocessor_experiment
 
 implicit none
 
+!----------------------------------------------------------
 
+! your stuff here
 
+!----------------------------------------------------------
 
 end subroutine
 

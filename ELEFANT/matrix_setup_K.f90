@@ -130,8 +130,6 @@ else
 
       if (geometry=='cartesian' .and. ndim==3) then
 
-         stop 'not tested - pb with nodes ordering probably'
-
          nnx=nelx+1
          nny=nely+1
          nnz=nelz+1
@@ -145,9 +143,9 @@ else
 
          csrK%nz=(csrK%nz-csrK%n)/2+csrK%n
 
-         write(*,'(a)')     '          CSR matrix format SYMMETRIC' 
-         write(*,'(a,i10)') '          csrK%n  =',csrK%n
-         write(*,'(a,i10)') '          csrK%nz =',csrK%nz
+         write(*,'(a)')     '        CSR matrix format symm' 
+         write(*,'(a,i10)') '        csrK%n  =',csrK%n
+         write(*,'(a,i10)') '        csrK%nz =',csrK%nz
 
          allocate(csrK%ia(csrK%n+1))   
          allocate(csrK%ja(csrK%nz))     
@@ -155,21 +153,24 @@ else
 
          nz=0
          csrK%ia(1)=1
-         do i1=1,nnx
-         do j1=1,nny
          do k1=1,nnz
-         ip=nny*nnz*(i1-1)+(j1-1)*nnz + k1 ! node number
+         do j1=1,nny
+         do i1=1,nnx
+         !ip=nny*nnz*(i1-1)+(j1-1)*nnz + k1 ! node number
+         ip=nnx*nny*(k1-1)+(j1-1)*nnx + i1 ! node number
          do kk=1,ndofV
             ii=ndofV*(ip-1) + kk ! address in the matrix
             nsees=0
-            do i2=-1,1 ! exploring neighbouring nodes
-            do j2=-1,1 ! exploring neighbouring nodes
             do k2=-1,1 ! exploring neighbouring nodes
+            do j2=-1,1 ! exploring neighbouring nodes
+            do i2=-1,1 ! exploring neighbouring nodes
                i=i1+i2
                j=j1+j2
                k=k1+k2
                if (i>=1 .and. i<= nnx .and. j>=1 .and. j<=nny .and. k>=1 .and. k<=nnz) then ! if node exists
-                  jp=nny*nnz*(i-1)+(j-1)*nnz + k ! node number
+                  !jp=nny*nnz*(i-1)+(j-1)*nnz + k ! node number
+                  jp=nnx*nny*(k-1)+(j-1)*nnx + i ! node number
+                  !print *,'node',ip,'sees node',jp
                   do l=1,ndofV
                      jj=ndofV*(jp-1)+l  ! address in the matrix
                      if (jj>=ii) then  ! upper diagonal

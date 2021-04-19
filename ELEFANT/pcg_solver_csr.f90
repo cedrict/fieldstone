@@ -14,9 +14,6 @@ implicit none
 
 type(compressedrowstorage_sqr) csrMat
 
-!integer, intent(in) :: N,NZ
-!integer, intent(in) :: ia(N+1),ja(NZ)
-!real(8), intent(in) :: mat(NZ)  
 real(8), intent(inout) :: guess(csrMat%n)  
 real(8), intent(in) :: rhs(csrMat%n)  
 real(8), intent(in) :: diag(csrMat%n)  
@@ -90,7 +87,7 @@ do iter=1,nitermax
 
    gammma=dot_product(RR,RR)/rhs_norm 
 
-   write(1234,*) iter,gammma 
+   write(9999,*) iter,sqrt(gammma)
 
    if (gammma < tol2) then
       write(*,'(a,i4)') '        inner solver:',iter
@@ -115,7 +112,7 @@ do iter=1,nitermax
 
 end do
 
-call flush(1234)
+call flush(9999)
 
 if (iter==nitermax+1) stop 'conv. not reached'
 

@@ -14,8 +14,8 @@ use timing
 
 implicit none
 
-integer k
-real(8) uth,vth,wth,dum,rq,sq
+integer i,k
+real(8) uth,vth,wth,pth,dum,rq,sq,tq
 real(8) dNdx(mV),dNdy(mV),dNdz(mV),div_v,jcob
 
 !==================================================================================================!
@@ -48,9 +48,9 @@ write(123,*) '</Points>'
 !=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 write(123,*) '<CellData Scalars="scalars">'
 !-----
-write(123,*) '<DataArray type="Float32" Name="boundary: left" Format="ascii">'
+write(123,*) '<DataArray type="Float32" Name="boundary: 1" Format="ascii">'
 do iel=1,nel
-if (mesh(iel)%left) then
+if (mesh(iel)%bnd1) then
    write(123,*) 1
 else
    write(123,*) 0
@@ -58,9 +58,9 @@ end if
 end do
 write(123,*) '</DataArray>'
 !-----
-write(123,*) '<DataArray type="Float32" Name="boundary: right" Format="ascii">'
+write(123,*) '<DataArray type="Float32" Name="boundary: 2" Format="ascii">'
 do iel=1,nel
-if (mesh(iel)%right) then
+if (mesh(iel)%bnd2) then
    write(123,*) 1
 else
    write(123,*) 0
@@ -68,9 +68,9 @@ end if
 end do
 write(123,*) '</DataArray>'
 !-----
-write(123,*) '<DataArray type="Float32" Name="boundary: bottom" Format="ascii">'
+write(123,*) '<DataArray type="Float32" Name="boundary: 3" Format="ascii">'
 do iel=1,nel
-if (mesh(iel)%bottom) then
+if (mesh(iel)%bnd3) then
    write(123,*) 1
 else
    write(123,*) 0
@@ -78,9 +78,9 @@ end if
 end do
 write(123,*) '</DataArray>'
 !-----
-write(123,*) '<DataArray type="Float32" Name="boundary: top" Format="ascii">'
+write(123,*) '<DataArray type="Float32" Name="boundary: 4" Format="ascii">'
 do iel=1,nel
-if (mesh(iel)%top) then
+if (mesh(iel)%bnd4) then
    write(123,*) 1
 else
    write(123,*) 0
@@ -89,9 +89,9 @@ end do
 write(123,*) '</DataArray>'
 !-----
 if (ndim==3) then
-write(123,*) '<DataArray type="Float32" Name="boundary: back" Format="ascii">'
+write(123,*) '<DataArray type="Float32" Name="boundary: 5" Format="ascii">'
 do iel=1,nel
-if (mesh(iel)%back) then
+if (mesh(iel)%bnd5) then
    write(123,*) 1
 else
    write(123,*) 0
@@ -101,9 +101,9 @@ write(123,*) '</DataArray>'
 end if
 !-----
 if (ndim==3) then
-write(123,*) '<DataArray type="Float32" Name="boundary: front" Format="ascii">'
+write(123,*) '<DataArray type="Float32" Name="boundary: 6" Format="ascii">'
 do iel=1,nel
-if (mesh(iel)%front) then
+if (mesh(iel)%bnd6) then
    write(123,*) 1
 else
    write(123,*) 0
@@ -131,6 +131,12 @@ do iel=1,nel
 end do
 write(123,*) '</DataArray>'
 end if
+!-----
+write(123,*) '<DataArray type="Float32" Name="vol" Format="ascii">'
+do iel=1,nel
+   write(123,*) mesh(iel)%vol
+end do
+write(123,*) '</DataArray>'
 !-----
 if (use_swarm) then
 write(123,*) '<DataArray type="Float32" Name="nmarker" Format="ascii">'
@@ -192,9 +198,17 @@ write(123,*) '<DataArray type="Float32" Name="div(v)" Format="ascii">'
 do iel=1,nel
    rq=0d0
    sq=0d0
-   call compute_dNdx_dNdy(rq,sq,dNdx,dNdy,jcob)
-   div_v=sum(dNdx(1:mV)*mesh(iel)%u(1:mV))&
-        +sum(dNdy(1:mV)*mesh(iel)%v(1:mV))
+   tq=0d0
+   if (ndim==2) then
+      call compute_dNdx_dNdy(rq,sq,dNdx,dNdy,jcob)
+      div_v=sum(dNdx(1:mV)*mesh(iel)%u(1:mV))&
+           +sum(dNdy(1:mV)*mesh(iel)%v(1:mV))
+   else
+      call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNdx,dNdy,dNdz,jcob)
+      div_v=sum(dNdx(1:mV)*mesh(iel)%u(1:mV))&
+           +sum(dNdy(1:mV)*mesh(iel)%v(1:mV))&
+           +sum(dNdz(1:mV)*mesh(iel)%w(1:mV))
+   end if
    write(123,*) div_v
 end do
 write(123,*) '</DataArray>'
@@ -245,10 +259,10 @@ write(123,*) '</DataArray>'
 
 !-----
 if (ndim==3) then
-write(123,*) '<DataArray type="Float32" Name="boundary: back" Format="ascii">'
+write(123,*) '<DataArray type="Float32" Name="boundary: 5" Format="ascii">'
 do iel=1,nel
    do k=1,ncorners
-      if (mesh(iel)%back_node(k)) then
+      if (mesh(iel)%bnd5_node(k)) then
          write(123,*) 1
       else
          write(123,*) 0
@@ -259,10 +273,10 @@ write(123,*) '</DataArray>'
 end if
 !-----
 if (ndim==3) then
-write(123,*) '<DataArray type="Float32" Name="boundary: front" Format="ascii">'
+write(123,*) '<DataArray type="Float32" Name="boundary: 6" Format="ascii">'
 do iel=1,nel
    do k=1,ncorners
-      if (mesh(iel)%front_node(k)) then
+      if (mesh(iel)%bnd6_node(k)) then
          write(123,*) 1
       else
          write(123,*) 0
@@ -272,10 +286,10 @@ end do
 write(123,*) '</DataArray>'
 end if
 !-----
-write(123,*) '<DataArray type="Float32" Name="boundary: left" Format="ascii">'
+write(123,*) '<DataArray type="Float32" Name="boundary: 1" Format="ascii">'
 do iel=1,nel
    do k=1,ncorners
-      if (mesh(iel)%left_node(k)) then
+      if (mesh(iel)%bnd1_node(k)) then
          write(123,*) 1
       else
          write(123,*) 0
@@ -284,10 +298,10 @@ do iel=1,nel
 end do
 write(123,*) '</DataArray>'
 !-----
-write(123,*) '<DataArray type="Float32" Name="boundary: right" Format="ascii">'
+write(123,*) '<DataArray type="Float32" Name="boundary: 2" Format="ascii">'
 do iel=1,nel
    do k=1,ncorners
-      if (mesh(iel)%right_node(k)) then
+      if (mesh(iel)%bnd2_node(k)) then
          write(123,*) 1
       else
          write(123,*) 0
@@ -296,10 +310,10 @@ do iel=1,nel
 end do
 write(123,*) '</DataArray>'
 !-----
-write(123,*) '<DataArray type="Float32" Name="boundary: bottom" Format="ascii">'
+write(123,*) '<DataArray type="Float32" Name="boundary: 3" Format="ascii">'
 do iel=1,nel
    do k=1,ncorners
-      if (mesh(iel)%bottom_node(k)) then
+      if (mesh(iel)%bnd3_node(k)) then
          write(123,*) 1
       else
          write(123,*) 0
@@ -308,10 +322,10 @@ do iel=1,nel
 end do
 write(123,*) '</DataArray>'
 !-----
-write(123,*) '<DataArray type="Float32" Name="boundary: top" Format="ascii">'
+write(123,*) '<DataArray type="Float32" Name="boundary: 4" Format="ascii">'
 do iel=1,nel
    do k=1,ncorners
-      if (mesh(iel)%top_node(k)) then
+      if (mesh(iel)%bnd4_node(k)) then
          write(123,*) 1
       else
          write(123,*) 0
@@ -396,7 +410,7 @@ write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Name="velocity (analytical)" Format="ascii">'
 do iel=1,nel
-   do k=1,4
+   do k=1,mV
       call analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
                                uth,vth,wth,dum,dum,dum,dum,dum,dum,dum,dum)
       write(123,*) uth,vth,wth
@@ -404,22 +418,108 @@ do iel=1,nel
 end do
 write(123,*) '</DataArray>'
 !-----
+write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Name="velocity (error)" Format="ascii">'
+do iel=1,nel
+   do k=1,mV
+      call analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
+                               uth,vth,wth,dum,dum,dum,dum,dum,dum,dum,dum)
+      write(123,*) mesh(iel)%u(k)-uth,mesh(iel)%v(k)-vth,mesh(iel)%w(k)-wth
+   end do
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="pressure q (analytical)" Format="ascii">'
+do iel=1,nel
+   do k=1,mV
+      call analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
+                               uth,vth,wth,pth,dum,dum,dum,dum,dum,dum,dum)
+      write(123,*) pth
+   end do
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="pressure q (error)" Format="ascii">'
+do iel=1,nel
+   do k=1,mV
+      call analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
+                               uth,vth,wth,pth,dum,dum,dum,dum,dum,dum,dum)
+      write(123,*) mesh(iel)%q(k)-pth
+   end do
+end do
+write(123,*) '</DataArray>'
+
+!-----
+write(123,*) '<DataArray type="Float32" Name="exx" Format="ascii">'
+do iel=1,nel
+   do k=1,mV
+      write(123,*) mesh(iel)%exx(k)
+   end do
+end do
+write(123,*) '</DataArray>'
+!-----
+write(123,*) '<DataArray type="Float32" Name="eyy" Format="ascii">'
+do iel=1,nel
+   do k=1,mV
+      write(123,*) mesh(iel)%eyy(k)
+   end do
+end do
+write(123,*) '</DataArray>'
+!-----
+if (ndim==3) then
+write(123,*) '<DataArray type="Float32" Name="ezz" Format="ascii">'
+do iel=1,nel
+   do k=1,mV
+      write(123,*) mesh(iel)%ezz(k)
+   end do
+end do
+write(123,*) '</DataArray>'
+end if
+!-----
+write(123,*) '<DataArray type="Float32" Name="exy" Format="ascii">'
+do iel=1,nel
+   do k=1,mV
+      write(123,*) mesh(iel)%exy(k)
+   end do
+end do
+write(123,*) '</DataArray>'
+!-----
+if (ndim==3) then
+write(123,*) '<DataArray type="Float32" Name="exz" Format="ascii">'
+do iel=1,nel
+   do k=1,mV
+      write(123,*) mesh(iel)%exz(k)
+   end do
+end do
+write(123,*) '</DataArray>'
+end if
+!-----
+if (ndim==3) then
+write(123,*) '<DataArray type="Float32" Name="eyz" Format="ascii">'
+do iel=1,nel
+   do k=1,mV
+      write(123,*) mesh(iel)%eyz(k)
+   end do
+end do
+write(123,*) '</DataArray>'
+end if
+!-----
 write(123,*) '</PointData>'
 !=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 write(123,*) '<Cells>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="connectivity" Format="ascii">'
 do iel=1,nel
-   write(123,*) (iel-1)*4,(iel-1)*4+1,(iel-1)*4+2,(iel-1)*4+3 
+   write(123,*) ( (iel-1)*ncorners+i-1,i=1,ncorners) 
 end do
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="offsets" Format="ascii">'
-write(123,*) (iel*4,iel=1,nel)
+write(123,*) (iel*ncorners,iel=1,nel)
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="types" Format="ascii">'
-write(123,*) (5,iel=1,nel)
+if (ndim==2) write(123,*) (9,iel=1,nel)
+if (ndim==3) write(123,*) (12,iel=1,nel)
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '</Cells>'

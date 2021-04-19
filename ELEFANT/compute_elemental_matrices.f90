@@ -38,7 +38,6 @@ K_el=0.d0
 G_el=0.d0
 f_el=0.d0
 h_el=0.d0
-
 Bmat=0.d0
 
 do iq=1,nqel
@@ -92,13 +91,14 @@ do iq=1,nqel
 
    else
 
-      call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNdx,dNdy,dNdz,jcob)
+      call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNdx(1:mV),dNdy(1:mV),dNdz(1:mV),jcob)
 
       mesh(iel)%JxWq(iq)=jcob*mesh(iel)%weightq(iq)
 
       !-------------------------
       ! building gradient matrix
       !-------------------------
+      Bmat=0
       do k=1,mV    
          i1=ndofV*k-2    
          i2=ndofV*k-1    
@@ -145,10 +145,9 @@ do iq=1,nqel
 
 end do ! nqel
 
-
+!----------------------------------------------------------
 
 if (use_penalty) then
-
 
    rq=0d0
    sq=0d0
@@ -193,21 +192,24 @@ if (use_penalty) then
 
 end if ! penalty
 
+!----------------------------------------------------------
 
-
-
-if (debug) then   
-print *,iel,'================================='
-print *,(K_el(1,:))
-print *,(K_el(2,:))
-print *,(K_el(3,:))
-print *,(K_el(4,:))
-print *,(K_el(5,:))
-print *,(K_el(6,:))
-print *,(K_el(7,:))
-print *,(K_el(8,:))
-print *,G_el
-end if
+!if (debug) then   
+!print *,iel,'================================='
+!print *,shape(K_el)
+!K_el=K_el*72
+!K_el=K_el-transpose(K_el)
+!print *,(K_el(1,:))
+!print *,(K_el(2,:))
+!print *,(K_el(3,:))
+!print *,(K_el(4,:))
+!print *,(K_el(5,:))
+!print *,(K_el(6,:))
+!print *,(K_el(7,:))
+!print *,(K_el(8,:))
+!stop
+!print *,G_el
+!end if
 
 end subroutine
 

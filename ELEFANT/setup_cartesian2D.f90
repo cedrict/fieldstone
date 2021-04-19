@@ -36,11 +36,12 @@ hy=Ly/nely
 
 allocate(mesh(nel))
 do iel=1,nel
-mesh(iel)%u=0.d0
-mesh(iel)%v=0.d0
-mesh(iel)%w=0.d0
-mesh(iel)%T=0.d0
-mesh(iel)%p=0.d0
+   mesh(iel)%u=0.d0
+   mesh(iel)%v=0.d0
+   mesh(iel)%w=0.d0
+   mesh(iel)%T=0.d0
+   mesh(iel)%p=0.d0
+   mesh(iel)%q=0.d0
 end do
 
 !==========================================================
@@ -69,19 +70,20 @@ if (pair=='q1p0' .or. pair=='q1q1') then
          mesh(counter)%yc=(iely-1)*hy+hy/2
          mesh(counter)%hx=hx
          mesh(counter)%hy=hy
-         if (ielx==1)    mesh(counter)%left=.true.
-         if (ielx==nelx) mesh(counter)%right=.true.
-         if (iely==1)    mesh(counter)%bottom=.true.
-         if (iely==nely) mesh(counter)%top=.true.
+         mesh(counter)%vol=hx*hy
+         if (ielx==1)    mesh(counter)%bnd1=.true.
+         if (ielx==nelx) mesh(counter)%bnd2=.true.
+         if (iely==1)    mesh(counter)%bnd3=.true.
+         if (iely==nely) mesh(counter)%bnd4=.true.
       end do    
    end do    
 end if
 
 if (pair=='q1q1') then ! add bubble node
    do iel=1,nel
-      mesh(iel)%xV(4)=mesh(iel)%xc
-      mesh(iel)%yV(4)=mesh(iel)%yc
-      mesh(counter)%iconV(5)=nel+iel
+      mesh(iel)%xV(5)=mesh(iel)%xc
+      mesh(iel)%yV(5)=mesh(iel)%yc
+      mesh(iel)%iconV(5)=(nelx+1)*(nely+1)+iel
    end do
 end if
 
@@ -101,7 +103,7 @@ if (pair=='q1p0') then
 end if
 
 if (pair=='q1q1') then
-   do i=1,ncorners
+   do i=1,4
       mesh(1:nel)%xP(i)=mesh(1:nel)%xV(i)
       mesh(1:nel)%yP(i)=mesh(1:nel)%yV(i)
       mesh(1:nel)%iconP(i)=mesh(1:nel)%iconV(i)
@@ -111,7 +113,7 @@ end if
 !==========================================================
 ! temperature 
 
-do i=1,ncorners
+do i=1,4
    mesh(1:nel)%xT(i)=mesh(1:nel)%xV(i)
    mesh(1:nel)%yT(i)=mesh(1:nel)%yV(i)
    mesh(1:nel)%iconT(i)=mesh(1:nel)%iconV(i)
@@ -121,11 +123,11 @@ end do
 ! flag nodes on boundaries
 
 do iel=1,nel
-   do i=1,ncorners
-      mesh(iel)%left_node(i)  =(abs(mesh(iel)%xV(i)-0 )<eps*Lx)
-      mesh(iel)%right_node(i) =(abs(mesh(iel)%xV(i)-Lx)<eps*Lx)
-      mesh(iel)%bottom_node(i)=(abs(mesh(iel)%yV(i)-0 )<eps*Ly)
-      mesh(iel)%top_node(i)   =(abs(mesh(iel)%yV(i)-Ly)<eps*Ly)
+   do i=1,4
+      mesh(iel)%bnd1_node(i)=(abs(mesh(iel)%xV(i)-0 )<eps*Lx)
+      mesh(iel)%bnd2_node(i)=(abs(mesh(iel)%xV(i)-Lx)<eps*Lx)
+      mesh(iel)%bnd3_node(i)=(abs(mesh(iel)%yV(i)-0 )<eps*Ly)
+      mesh(iel)%bnd4_node(i)=(abs(mesh(iel)%yV(i)-Ly)<eps*Ly)
    end do
 end do
 
@@ -139,9 +141,11 @@ do iel=1,nel
    mesh(iel)%fix_T=.false.
 end do
 
+!==========================================================
+
 if (debug) then
    do iel=1,nel
-   print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),mesh(iel)%iconP(1:mP)
+   print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),'iconP',mesh(iel)%iconP(1:mP)
    end do
 end if
 

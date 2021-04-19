@@ -15,7 +15,6 @@ use matrices
 
 implicit none
 
-
 call header
 
 #ifdef UseMUMPS
@@ -48,7 +47,6 @@ if (ndim==2) ndim2=3
 if (ndim==3) ndim2=6
 allocate(solV(NfemV))
 allocate(solP(NfemP))
-allocate(solQ(NfemV))
 allocate(rhs_f(NfemV))
 allocate(rhs_h(NfemP))
 allocate(mat(nmat))
@@ -114,6 +112,7 @@ if (use_T)       write(*,'(a,i10)')    '        NfemT       =',NfemT
                  write(*,'(a,i10)')    '        nmat        =',nmat
                  write(*,'(a,l10)')    '        use_penalty =',use_penalty
 if (use_penalty) write(*,'(a,es10.3)') '        penalty     =',penalty
+if (use_ALE)     write(*,'(a,l10)')    '        use_ALE     =',penalty
 !----------------------------------------------------------
 
 call spacer
@@ -127,7 +126,7 @@ call output_mesh
 call quadrature_setup
 call test_basis_functions
 call swarm_setup
-call material_layout
+call swarm_material_layout
 call paint_swarm
 call matrix_setup_K
 call matrix_setup_GT
@@ -150,7 +149,8 @@ do istep=1,nstep !-----------------------------------------
       call prescribe_stokes_solution                      !
                                                           !
    end if                                                 !
-                                                          !
+
+   call compute_elemental_volumes                         !
    call postprocessors                                    !
    call output_solution                                   !
    call output_qpoints                                    !

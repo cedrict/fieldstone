@@ -36,12 +36,12 @@ logical :: debug               ! triggers lots of additional checks & prints
 real(8) :: Lx,Ly,Lz            ! cartesian domain size
 real(8) :: block_scaling_coeff ! scaling coefficient for the G block
 real(8) :: penalty             ! penalty parameter
-real(8) :: time
-logical :: use_penalty 
+real(8) :: time                ! real human/model time
+logical :: use_penalty         ! whether the penalty formulation is used
+logical :: use_ALE             ! whether the ALE (free surface) is used
 
 character(len=10) :: geometry  ! type of domain geometry
 character(len=4) :: pair       ! type of element pair
-
 
 integer :: iel
 integer :: istep           
@@ -68,8 +68,8 @@ real(8) :: v_min
 real(8) :: v_max
 real(8) :: w_min
 real(8) :: w_max
-real(8) :: p_min
-real(8) :: p_max
+real(8) :: p_min,q_min
+real(8) :: p_max,q_max
 real(8) :: errv,errp,errq
 end module
 

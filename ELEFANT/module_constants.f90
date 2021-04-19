@@ -17,16 +17,4 @@ real(8), parameter :: epsilon_test=1.d-6
 real(8), parameter :: sqrt3 = 1.732050807568877293527446341505d0
 real(8), dimension(2), parameter :: qcoords=(/-1.d0/sqrt3,+1.d0/sqrt3/)
 real(8), dimension(2), parameter :: qweights=(/1.d0 , 1.d0 /)
-!real(8), dimension(36), parameter :: Ctemp3D= (/ 2d0,0d0,0d0,0d0,0d0,0d0, &
-!                                                 0d0,2d0,0d0,0d0,0d0,0d0, &
-!                                                 0d0,0d0,2d0,0d0,0d0,0d0, &
-!                                                 0d0,0d0,0d0,1d0,0d0,0d0, &
-!                                                 0d0,0d0,0d0,0d0,1d0,0d0, &
-!                                                 0d0,0d0,0d0,0d0,0d0,1d0 /)
-!real(8), dimension(9), parameter :: Ctemp2D= (/2d0,0d0,0d0,0d0,2d0,0d0,0d0,0d0,1d0/)
-!real(8), dimension(3,3), parameter :: Cmat2D= reshape( Ctemp2D, (/3,3/) )
-!real(8), dimension(6,6), parameter :: Cmat3D= reshape( Ctemp3D, (/6,6/) )
-real(8), dimension(8), parameter :: rcorners=(/-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0,-1d0/)
-real(8), dimension(8), parameter :: scorners=(/-1d0,-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0/)
-real(8), dimension(8), parameter :: tcorners=(/-1d0,-1d0,-1d0,-1d0,+1d0,+1d0,+1d0,+1d0/)
 end module constants

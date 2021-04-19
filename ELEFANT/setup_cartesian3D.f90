@@ -23,7 +23,10 @@ call system_clock(counti,count_rate)
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{setup\_cartesian3D.f90}
-!@@ 
+!@@ This subroutine assigns to every element the coordinates of the its velocity, pressure,
+!@@ and temperature nodes, the velocity, pressure and temperature connectivity arrays,
+!@@ the coordinates of its center (xc,yc,zc), its integer coordinates (ielx,iely,ielz),
+!@@ and its dimensions (hx,hy,hz).
 !==================================================================================================!
 
 if (iproc==0) then
@@ -84,12 +87,13 @@ if (pair=='q1p0' .or. pair=='q1q1') then
             mesh(counter)%hx=hx
             mesh(counter)%hy=hy
             mesh(counter)%hz=hz
-            if (ielx==1)    mesh(counter)%back=.true.
-            if (ielx==nelx) mesh(counter)%front=.true.
-            if (iely==1)    mesh(counter)%left=.true.
-            if (iely==nely) mesh(counter)%right=.true.
-            if (ielz==1)    mesh(counter)%bottom=.true.
-            if (ielz==nelz) mesh(counter)%top=.true.
+            mesh(counter)%vol=hx*hy*hz
+            if (ielx==1)    mesh(counter)%bnd1=.true.
+            if (ielx==nelx) mesh(counter)%bnd2=.true.
+            if (iely==1)    mesh(counter)%bnd3=.true.
+            if (iely==nely) mesh(counter)%bnd4=.true.
+            if (ielz==1)    mesh(counter)%bnd5=.true.
+            if (ielz==nelz) mesh(counter)%bnd6=.true.
          end do    
       end do    
    end do    
@@ -98,9 +102,14 @@ end if
 if (pair=='q1q1') then ! add bubble node
    stop 'setup_cartesian3D: xyz'
    do iel=1,nel
-      mesh(iel)%xV(4)=mesh(iel)%xc
-      mesh(iel)%yV(4)=mesh(iel)%yc
-      mesh(counter)%iconV(5)=nel+iel
+      mesh(iel)%xV(9)=mesh(iel)%xV(1)+hx/3
+      mesh(iel)%yV(9)=mesh(iel)%yV(1)+hy/3
+      mesh(iel)%zV(9)=mesh(iel)%yV(1)+hy/3
+      mesh(counter)%iconV(9)=(nelx+1)*(nely+1)*(nelz+1)+2*(iel-1)+1
+      mesh(iel)%xV(10)=mesh(iel)%xV(1)+2*hx/3
+      mesh(iel)%yV(10)=mesh(iel)%yV(1)+2*hy/3
+      mesh(iel)%zV(10)=mesh(iel)%yV(1)+2*hy/3
+      mesh(counter)%iconV(10)=(nelx+1)*(nely+1)*(nelz+1)+2*(iel-1)+1
    end do
 end if
 
@@ -146,12 +155,12 @@ end do
 
 do iel=1,nel
    do i=1,ncorners
-      mesh(iel)%back_node(i)  =(abs(mesh(iel)%xV(i)-0 )<eps*Lx)
-      mesh(iel)%front_node(i) =(abs(mesh(iel)%xV(i)-Lx)<eps*Lx)
-      mesh(iel)%left_node(i)  =(abs(mesh(iel)%yV(i)-0 )<eps*Ly)
-      mesh(iel)%right_node(i) =(abs(mesh(iel)%yV(i)-Ly)<eps*Ly)
-      mesh(iel)%bottom_node(i)=(abs(mesh(iel)%zV(i)-0 )<eps*Lz)
-      mesh(iel)%top_node(i)   =(abs(mesh(iel)%zV(i)-Lz)<eps*Lz)
+      mesh(iel)%bnd1_node(i)=(abs(mesh(iel)%xV(i)-0 )<eps*Lx)
+      mesh(iel)%bnd2_node(i)=(abs(mesh(iel)%xV(i)-Lx)<eps*Lx)
+      mesh(iel)%bnd3_node(i)=(abs(mesh(iel)%yV(i)-0 )<eps*Ly)
+      mesh(iel)%bnd4_node(i)=(abs(mesh(iel)%yV(i)-Ly)<eps*Ly)
+      mesh(iel)%bnd5_node(i)=(abs(mesh(iel)%zV(i)-0 )<eps*Lz)
+      mesh(iel)%bnd6_node(i)=(abs(mesh(iel)%zV(i)-Lz)<eps*Lz)
    end do
 end do
 
@@ -175,7 +184,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-if (iproc==0) write(*,*) '     -> setup_cartesian2D ',elapsed
+write(*,'(a,f4.2,a)') '     >> setup_cartesian3D                ',elapsed,' s'
 
 end if ! iproc
 

@@ -83,7 +83,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine material_layout 
+subroutine swarm_material_layout 
 
 use global_parameters
 use structures
@@ -126,25 +126,25 @@ do iel=1,nel
 
    !left boundary
    do i=1,4
-      if (mesh(iel)%left_node(i)) then
+      if (mesh(iel)%bnd1_node(i)) then
          mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
       end if
    end do
    !right boundary
    do i=1,4
-      if (mesh(iel)%right_node(i)) then
+      if (mesh(iel)%bnd2_node(i)) then
          mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
       end if
    end do
    !bottom boundary
    do i=1,4
-      if (mesh(iel)%bottom_node(i)) then
+      if (mesh(iel)%bnd3_node(i)) then
          mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
       end if
    end do
    !top boundary
    do i=1,4
-      if (mesh(iel)%top_node(i)) then
+      if (mesh(iel)%bnd4_node(i)) then
          mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
       end if
    end do

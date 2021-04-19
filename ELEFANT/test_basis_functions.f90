@@ -25,7 +25,8 @@ real(8) dNdx(mV),dNdy(mV),dNdz(mV),jcob
 !@@ An analytical velocity field is prescribed (constant, linear or quadratic) and the 
 !@@ corresponding values are computed onto the quadrature points via the 
 !@@ (derivatives of the) basis functions.
-!@@ It generates three ascii files in the {\foldernamefont OUTPUT} folder.
+!@@ It generates three ascii files in the {\foldernamefont OUTPUT} folder which 
+!@@ are to be processed with the gnuplot script present there.
 !==================================================================================================!
 
 if (iproc==0) then
@@ -36,7 +37,7 @@ call system_clock(counti,count_rate)
 
 if (debug) then
 
-open(unit=123,file='OUTPUT/test_basis_functions_constant.ascii',action='write')
+open(unit=123,file='OUTPUT/TEST/test_basis_functions_constant.ascii',action='write')
 do iel=1,nel
    mesh(iel)%u=1
    mesh(iel)%v=1
@@ -60,7 +61,7 @@ do iel=1,nel
 end do
 close(123)
 
-open(unit=123,file='OUTPUT/test_basis_functions_linear.ascii',action='write')
+open(unit=123,file='OUTPUT/TEST/test_basis_functions_linear.ascii',action='write')
 do iel=1,nel
    mesh(iel)%u=mesh(iel)%xV
    mesh(iel)%v=mesh(iel)%yV
@@ -84,7 +85,7 @@ do iel=1,nel
 end do
 close(123)
 
-open(unit=123,file='OUTPUT/test_basis_functions_quadratic.ascii',action='write')
+open(unit=123,file='OUTPUT/TEST/test_basis_functions_quadratic.ascii',action='write')
 do iel=1,nel
    mesh(iel)%u=mesh(iel)%xV**2
    mesh(iel)%v=mesh(iel)%yV**2

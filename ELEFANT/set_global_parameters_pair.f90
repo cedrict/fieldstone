@@ -9,6 +9,7 @@
 subroutine set_global_parameters_pair
 
 use global_parameters
+use global_arrays, only: rV,sV,tV
 
 implicit none
 
@@ -20,6 +21,10 @@ implicit none
 
 if (iproc==0) then
 
+allocate(rV(mV))
+allocate(sV(mV))
+allocate(tV(mV))
+
 if (pair=='q1p0') then 
    mV=2**ndim
    mP=1
@@ -28,13 +33,20 @@ if (pair=='q1p0') then
       nel=nelx*nely
       NV=(nelx+1)*(nely+1)
       NT=(nelx+1)*(nely+1)
+      rV=(/-1d0,+1d0,+1d0,-1d0/)
+      sV=(/-1d0,-1d0,+1d0,+1d0/)
    else
       nel=nelx*nely*nelz
       NV=(nelx+1)*(nely+1)*(nelz+1)
       NT=(nelx+1)*(nely+1)*(nelz+1)
+      rV=(/-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0,-1d0/)
+      sV=(/-1d0,-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0/)
+      tV=(/-1d0,-1d0,-1d0,-1d0,+1d0,+1d0,+1d0,+1d0/)
    end if
    NP=nel
 end if
+
+!----------------------------------------------------------
 
 if (pair=='q1q1') then
    mP=2**ndim
@@ -45,12 +57,17 @@ if (pair=='q1q1') then
       NV=(nelx+1)*(nely+1)+nel
       NT=(nelx+1)*(nely+1)
       NP=(nelx+1)*(nely+1)
+      rV=(/-1d0,+1d0,+1d0,-1d0/)
+      sV=(/-1d0,-1d0,+1d0,+1d0/)
    else
       mV=2**ndim+2
       nel=nelx*nely*nelz
       NV=(nelx+1)*(nely+1)*(nelz+1)+2*nel
       NT=(nelx+1)*(nely+1)*(nelz+1)
       NP=(nelx+1)*(nely+1)*(nelz+1)
+      rV=(/-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0,-1d0/)
+      sV=(/-1d0,-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0/)
+      tV=(/-1d0,-1d0,-1d0,-1d0,+1d0,+1d0,+1d0,+1d0/)
    end if
 end if
 

@@ -10,7 +10,7 @@ subroutine solve_stokes
 
 use global_parameters
 use global_measurements
-use global_arrays
+use global_arrays, only: rhs_f,solV,solP
 use structures
 use timing
 
@@ -40,65 +40,77 @@ guess=0
 
 if (use_penalty) then
 
-   ! solve K.V=f -> solV
+   call solve_KVeqf(rhs_f,solV)
 
-   call solve_KVeqf(rhs_f,SolV)
-
-   !velocity
+   !transfer velocity onto elements
    do iel=1,nel
-   do k=1,mV
-      inode=mesh(iel)%iconV(k)
-      mesh(iel)%u(k)=solV((inode-1)*ndofV+1)
-      mesh(iel)%v(k)=solV((inode-1)*ndofV+2)
-      if (ndim==3) &
-      mesh(iel)%w(k)=solV((inode-1)*ndofV+3)
+      do k=1,mV
+         inode=mesh(iel)%iconV(k)
+         mesh(iel)%u(k)=solV((inode-1)*ndofV+1)
+         mesh(iel)%v(k)=solV((inode-1)*ndofV+2)
+         if (ndim==3) &
+         mesh(iel)%w(k)=solV((inode-1)*ndofV+3)
+      end do
    end do
-   end do
-
-   ! compute pressure -> solP
 
    call recover_pressure_penalty
 
-   ! normalise pressure
 
-   !pressure
+   !transfer pressure onto elements
    do iel=1,nel
-   do k=1,mP
-      inode=mesh(iel)%iconP(k)
-      mesh(iel)%p(k)=solP(inode)
+      do k=1,mP
+         inode=mesh(iel)%iconP(k)
+         mesh(iel)%p(k)=solP(inode)
+      end do
    end do
-   end do
 
 
-else
+else !-----------------------------------------------------
 
 
 
+
+
+
+
+
+   !transfer solution onto elements
    do iel=1,nel
-
-   !velocity
-   do k=1,mV
-      inode=mesh(iel)%iconV(k)
-      mesh(iel)%u(k)=solV((inode-1)*ndofV+1)
-      mesh(iel)%v(k)=solV((inode-1)*ndofV+2)
-      if (ndim==3) &
-      mesh(iel)%w(k)=solV((inode-1)*ndofV+3)
-   end do
-
-   !pressure
-   do k=1,mP
-      inode=mesh(iel)%iconP(k)
-      mesh(iel)%p(k)=solP(inode)
-   end do
-
+      do k=1,mV
+         inode=mesh(iel)%iconV(k)
+         mesh(iel)%u(k)=solV((inode-1)*ndofV+1)
+         mesh(iel)%v(k)=solV((inode-1)*ndofV+2)
+         if (ndim==3) &
+         mesh(iel)%w(k)=solV((inode-1)*ndofV+3)
+      end do
+      do k=1,mP
+         inode=mesh(iel)%iconP(k)
+         mesh(iel)%p(k)=solP(inode)
+      end do
    end do
 
 end if
 
-p_min=minval(solP)
-p_max=maxval(solP)
+!----------------------------------------------------------
 
-write(*,'(a,2es12.4)') '        p (m,M)',p_min,p_max
+u_max=-1d30
+u_min=+1d30
+v_max=-1d30
+v_min=+1d30
+v_max=-1d30
+v_min=+1d30
+do iel=1,nel
+   u_max=max(maxval(mesh(iel)%u(1:mV)),u_max)
+   u_min=min(minval(mesh(iel)%u(1:mV)),u_min)
+   v_max=max(maxval(mesh(iel)%v(1:mV)),v_max)
+   v_min=min(minval(mesh(iel)%v(1:mV)),v_min)
+   w_max=max(maxval(mesh(iel)%w(1:mV)),w_max)
+   w_min=min(minval(mesh(iel)%w(1:mV)),w_min)
+end do
+write(*,'(a,2es12.4)') '        u (m,M)',u_min,u_max
+write(*,'(a,2es12.4)') '        v (m,M)',v_min,v_max
+write(*,'(a,2es12.4)') '        w (m,M)',w_min,w_max
+
 
 !==============================================================================!
 

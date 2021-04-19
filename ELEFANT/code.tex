@@ -9,13 +9,20 @@
  This subroutine computes $\partial{\bN^\upnu}/\partial x$ and $\partial{\bN^\upnu}/\partial y$
  at a location $r,s$ passed as argument.
  \subsubsection{compute\_elemental\_matrices.f90}
- Improvement: only use Cmat and not Cmat2D, Cmat3D
- \subsubsection{impose\_boundary\_conditions}
+ Note that when the material model is called directly on the quadrature points and 
+ the penalty formulation is used then the viscosity at the reduced quadrature location 
+ is obtained by taking the maximum viscosity value carried by the quadrature points of 
+ the element. 
+ \subsubsection{compute\_elemental\_volumes}
 
+ \subsubsection{impose\_boundary\_conditions}
+ This subroutine modifies the elemental $\K$, $\G$ and $\C$ matrices as well as the 
+ elemental rhs $f_{el}$ and $h_{el}$ and returns them modified after imposing
+ velocity Dirichlet boundary conditions.
  \subsubsection{template}
 
  \subsubsection{interpolate\_onto\_nodes.f90}
-
+ This subroutine interpolates the components of the strain rate tensor on the velocity nodes.
  \subsubsection{locate\_point}
  This file contains a few simple subroutines which deal with the localisation of a point 
  in the mesh. The {\tt locate\_point} subroutine receives the coordinates of a point as argument 
@@ -31,6 +38,8 @@
 
  \subsubsection{matrix\_setup\_K}
 
+ \subsubsection{matrix\_setup\_M}
+ See Section~\ref{ss:symmcsrss}. 
  \subsubsection{output\_mesh.f90}
  This subroutine produces the {\filenamefont meshV.vtu} file which only 
  contains the corner nodes.
@@ -45,29 +54,7 @@
  swarm of particles with all their properties.
  \subsubsection{paint\_swarm}
  
- \subsubsection{postprocessors.f90}
- This subroutine computes the root mean square velocity
- and each of the average velocity components. It also 
- computes the volume using GLQ.
- \subsubsection{prescribe\_stokes\_solution.f90}
- This subroutine prescribes the velocity, pressure, temperature and strain rate components
- on the corners of each element via the {\sl analytical\_solution} subroutine.
- \subsubsection{quadrature\_setup.f90}
- This subroutine allocates all GLQ-related arrays for each element.
- It further computes the real $(x_q,y_q,z_q)$ and reduced $(r_q,s_q,t_q)$
- coordinates of the GLQ points, and assigns them their weights.
- \subsubsection{set\_default\_values}
- This subroutine assigns default values to many of the global variables.
- \subsubsection{set\_global\_parameters\_pair}
-
- \subsubsection{setup\_cartesian2D.f90}
- This subroutine assigns to every element the coordinates of the its velocity, pressure,
- and temperature nodes, the velocity, pressure and temperature connectivity arrays,
- the coordinates of its center (xc,yc), its integer coordinates (ielx, iely),
- and its dimensions (hx,hy).
- \subsubsection{setup\_cartesian3D.f90}
- 
- \subsubsection{solve\_cg\_diagprec}
+ \subsubsection{pcg\_solver\_csr}
  The subroutine solves $A\cdot = b$ by means f the preconditioned Conjugate Gradient method
  and the implementation follows algorithm 2.2 on page 82 of Elman, Silvester \&
  Wathen \cite{elsw}:
@@ -91,10 +78,45 @@
  the maximum number of iterations is set to 1000, and the relative tolerance to $tol=10^{-6}$.
  Since the preconditioned is the diagonal of the ${\bm A}$ matrix, then the inverse of 
  ${\bm M}$ is trivial to compute/apply. 
+ \subsubsection{postprocessors.f90}
+ This subroutine computes the root mean square velocity
+ and each of the average velocity components. It also 
+ computes the volume using GLQ.
+ \subsubsection{prescribe\_stokes\_solution.f90}
+ This subroutine prescribes the velocity, pressure, temperature and strain rate components
+ on the corners of each element via the {\sl analytical\_solution} subroutine.
+ \subsubsection{quadrature\_setup.f90}
+ This subroutine allocates all GLQ-related arrays for each element.
+ It further computes the real $(x_q,y_q,z_q)$ and reduced $(r_q,s_q,t_q)$
+ coordinates of the GLQ points, and assigns them their weights.
+ \subsubsection{recover\_pressure\_penalty}
+ This is scheme 4 in Section~\ref{psmoothing} (see \stone~12) which was proven to be 
+ very cheap and very accurate. 
+ The viscosity at the reduced quadrature location 
+ is obtained by taking the maximum viscosity value carried by the quadrature points of 
+ the element. 
+ \subsubsection{set\_default\_values}
+ This subroutine assigns default values to many of the global variables.
+ \subsubsection{set\_global\_parameters\_pair}
+
+ \subsubsection{setup\_cartesian2D.f90}
+ This subroutine assigns to every element the coordinates of the its velocity, pressure,
+ and temperature nodes, the velocity, pressure and temperature connectivity arrays,
+ the coordinates of its center (xc,yc), its integer coordinates (ielx, iely),
+ and its dimensions (hx,hy).
+ \subsubsection{setup\_cartesian3D.f90}
+ 
+ \subsubsection{solve\_KVeqf}
+ This subroutine solves the system $\K\cdot \vec{V} = \vec{f}$. The matrix is 
+ implicit passed as argument via the module but the rhs and the guess vector are 
+ passed as arguments.
+ If MUMPS is used the system is solved via MUMPS (the guess is vector
+ is then neglected), otherwise a call is made to  the {\tt solve\_cg\_diagprec} subroutine.
  \subsubsection{solve\_stokes}
- This subroutine solves the saddle point problem using the preconditioned 
- conjugate gradient (PCG) applied to the Schur complement $\SSS$ 
- (see Section~\ref{ss:schurpcg}).
+ This subroutine solves the Stokes system: if it is a saddle point problem 
+ it does so using the preconditioned conjugate gradient (PCG) applied 
+ to the Schur complement $\SSS$  (see Section~\ref{ss:schurpcg}).
+ If the penalty method is used 
  \subsubsection{spmv\_kernels}
  This file contains the Sparse Matrix-Vector multiplication kernels (see Section~\ref{ss:spmv}).
  \subsubsection{swarm\_setup.f90}
@@ -112,3 +134,5 @@
  corresponding values are computed onto the quadrature points via the 
  (derivatives of the) basis functions.
  It generates three ascii files in the {\foldernamefont OUTPUT} folder.
+ \subsubsection{write\_stats}
+

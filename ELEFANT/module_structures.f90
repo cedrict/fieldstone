@@ -16,16 +16,17 @@ type element
    real(8) :: u(10),v(10),w(10)               ! velocity degrees of freedom
    real(8) :: p(8),q(8)                       ! pressure dofs and projected pressure q 
    real(8) :: T(8)                            ! temperature degrees of freedom
-   real(8) :: exx(8),eyy(8),exy(8)            ! strain rate components for 2D
-   real(8) :: ezz(8),exz(8),eyz(8)            ! additional strain rate components for 3D
+   real(8) :: exx(10),eyy(10),exy(10)            ! strain rate components for 2D
+   real(8) :: ezz(10),exz(10),eyz(10)            ! additional strain rate components for 3D
    real(8) :: a_eta,b_eta,c_eta,d_eta         ! least square coeffs for viscosity
    real(8) :: a_rho,b_rho,c_rho,d_rho         ! least square coeffs for density
-   logical(1) :: left,right                   ! true if element on left or right boundary      
-   logical(1) :: top,bottom                   ! true if element on left or right boundary      
-   logical(1) :: front,back                   ! true if element on left or right boundary      
-   logical(1) :: left_node(8),right_node(8)   ! flags for nodes on left or right boundaries
-   logical(1) :: top_node(8),bottom_node(8)   ! flags for nodes on bottom or top boundaries
-   logical(1) :: front_node(8),back_node(8)   ! flags for nodes on back or front boundaries
+   real(8) :: vol                             ! volume/area of the element
+   logical(1) :: bnd1,bnd2                    ! true if element on x=0 or x=Lx boundary 
+   logical(1) :: bnd3,bnd4                    ! true if element on y=0 or y=Ly boundary 
+   logical(1) :: bnd5,bnd6                    ! true if element on z=0 or z=Lz boundary 
+   logical(1) :: bnd1_node(8),bnd2_node(8)    ! flags for nodes on x=0 or x=Lx boundary  
+   logical(1) :: bnd3_node(8),bnd4_node(8)    ! flags for nodes on y=0 or y=Ly boundary  
+   logical(1) :: bnd5_node(8),bnd6_node(8)    ! flags for nodes on z=0 or z=Lz boundary  
    logical(1) :: fix_u(8),fix_v(8),fix_w(8)   ! whether a given velocity dof is prescribed
    logical(1) :: fix_T(8)                     ! whether a given temperature dof is prescribed
    real(8),allocatable :: xq(:),yq(:),zq(:)   ! coordinates of q. points inside elt

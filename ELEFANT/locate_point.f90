@@ -67,7 +67,7 @@ integer, intent(out) :: ielt
 if (ndim==2) then
    ielt=nelx*(iely-1)+ielx
 else
-   stop 'compute_ic in 3D'
+   ielt=nelx*nely*(ielz-1)+nelx*(iely-1)+ielx
 end if
 
 end subroutine
