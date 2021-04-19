@@ -29,6 +29,8 @@ def by(x, y):
        val=0
     return val
 
+#------------------------------------------------------------------------------
+
 def velocity_x(x,y):
     if bench==1:
        val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
@@ -94,9 +96,6 @@ else:
    nelx = 64
    nely = nelx
    visu = 1
-
-assert (nelx>0.), "nnx should be positive" 
-assert (nely>0.), "nny should be positive" 
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
@@ -123,9 +122,9 @@ xi=0. # controls level of mesh randomness (between 0 and 0.5 max)
 #bench=1: donea huerta
 #bench=2: ldc 
 #bench=3: punch
-bench=3
+bench=1
 
-use_filter=True
+use_filter=False
 
 #################################################################
 # grid point setup
@@ -162,13 +161,13 @@ start = time.time()
 icon =np.zeros((m,nel),dtype=np.int32)
 
 counter = 0
-for j in range(0, nely):
-    for i in range(0, nelx):
-        icon[0, counter] = i + j * (nelx + 1)
-        icon[1, counter] = i + 1 + j * (nelx + 1)
-        icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
-        icon[3, counter] = i + (j + 1) * (nelx + 1)
-        counter += 1
+for j in range(0,nely):
+    for i in range(0,nelx):
+        icon[0,counter] = i + j * (nelx + 1)
+        icon[1,counter] = i + 1 + j * (nelx + 1)
+        icon[2,counter] = i + 1 + (j + 1) * (nelx + 1)
+        icon[3,counter] = i + (j + 1) * (nelx + 1)
+        counter+=1
     #end for
 #end for
 
@@ -227,8 +226,7 @@ else:
           bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
    #end for
-
-
+#end if
 
 print("boundary conditions: %.3f s" % (time.time() - start))
 

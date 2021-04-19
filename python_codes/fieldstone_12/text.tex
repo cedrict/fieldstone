@@ -7,10 +7,9 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 We start from the analytical benchmark of Section \ref{mms1} and we use $Q_1 \times P_0$
 elements with a penalty formulation. 
-We have seen in stone $\# 1$ how to recover the elemental pressure as a postprocessing step. 
+We have seen in \stone~1 how to recover the elemental pressure as a postprocessing step. 
 However, the discontinous nature of the pressure field (and the presence of a
 parasitic checkerboard mode) can be problematic for many reasons 
 (pressure enters the rheology, equation of state, plotting, ...). 
@@ -18,16 +17,16 @@ We then wish to project the elemental pressure onto the nodes of the mesh while 
 time filtering the checkerboard mode out. 
 
 Terminology: in general, when a discontinuous elemental pressure is used in a stone, 
-it is called $p$ while its projection onto the nodes is coined $q$. 
+it is called $p$ while its projection onto the velocity nodes is called $q$. 
 In this case we compute several nodal pressures as explained in Section~\ref{psmoothing}:
 
 \begin{itemize}
 %...........
-\item $q_1$: smoothed pressure obtained with the  center-to-node approach (scheme 1)
+\item $q_1$: smoothed pressure obtained with the  center-to-node approach (scheme 1).
 
-\item $q_2$: the nodal pressure obtained by smoothing the elemental pressure using element areas (scheme 2)
+\item $q_2$: the nodal pressure obtained by smoothing the elemental pressure using element areas (scheme 2).
 
-\item $q_3$: the nodal pressure obtained by smoothing the elemental p using triangle areas (scheme 3)
+\item $q_3$: the nodal pressure obtained by smoothing the elemental p using triangle areas (scheme 3).
 
 \item $q_4$: smoothed pressure obtained with the center-to-node approach with inverse element area weighing.
 
@@ -42,11 +41,12 @@ In this case we compute several nodal pressures as explained in Section~\ref{psm
 \end{itemize}
 
 Since the setups showcase Dirichlet boundary conditions on all four sides, 
-the pressure solution is normalised so that $\int p dV =0 $.
+the pressure solution is normalised so that $\int p\; dV =0 $.
 
 \begin{remark}
 Nodes on edges and corners may need special treatment as documented in Sani et al \cite{sagl81a} or
 Lee et al (1979) \cite{legs79} which is not done here.  
+Nodes on the boundary showcase the largest errors. Maybe then use CBF instead for these?
 \end{remark}
 
 \begin{remark}
@@ -54,13 +54,8 @@ Lee et al (1979) \cite{legs79} discuss two different ways to compute the lumped 
 \end{remark}
 
 \begin{remark}
-Nodes on the boundary showcase the largest errors. Maybe then use CBF instead for these?
-\end{remark}
-
-\begin{remark}
 In the same folder there is a fortran90 version of the consistent recovery algorithm.
 \end{remark}
-
 
 I have created a simple checkerboard filter. Let $\phi=\pm 1$ denote this field.
 The filter is applied as follows:
@@ -73,7 +68,7 @@ Likewise, if $p=constant$ then $p_{filtered}=p$.
 This idea is probably to be found in the relevant publications of Section~\ref{psmoothing}
 in some form or shape. 
 
-There is much more work to be done on this topic/stone!
+There is much more work to be done on this topic/stone! Look at cost vs accuracy!
 
 \newpage
 %...............................................
@@ -89,24 +84,24 @@ $q^8$ converges like $h^2$.
 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_12/results/reg/pressure}
-\includegraphics[width=5cm]{python_codes/fieldstone_12/results/reg/p_error}
-\includegraphics[width=5cm]{python_codes/fieldstone_12/results/reg/q1_error}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_12/results/reg/q2_error}
-\includegraphics[width=5cm]{python_codes/fieldstone_12/results/reg/q3_error}
-\includegraphics[width=5cm]{python_codes/fieldstone_12/results/reg/q4_error}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_12/results/reg/q6_error}
-\includegraphics[width=5cm]{python_codes/fieldstone_12/results/reg/q7_error}
-\includegraphics[width=5cm]{python_codes/fieldstone_12/results/reg/q8_error}\\
+\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/pressure}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/p_error}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/q1_error}\\
+\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/q2_error}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/q3_error}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/q4_error}\\
+\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/q6_error}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/q7_error}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/q8_error}\\
 {\captionfont Left: pressure fields as a function of the $x$-coordinate. 
 Right: absolute error with regards to the analytical solution. All on 32x32 mesh.}
 \end{center}
 
 It is worth noticing that the checkerboard is (visually) not present:
 \begin{center}
-\includegraphics[width=4cm]{python_codes/fieldstone_12/results/reg/p32}
-\includegraphics[width=4cm]{python_codes/fieldstone_12/results/reg/p48}
-\includegraphics[width=4cm]{python_codes/fieldstone_12/results/reg/p64}\\
+\includegraphics[width=4.5cm]{python_codes/fieldstone_12/results/reg/p32}
+\includegraphics[width=4.5cm]{python_codes/fieldstone_12/results/reg/p48}
+\includegraphics[width=4.5cm]{python_codes/fieldstone_12/results/reg/p64}\\
 {\captionfont Elemental pressure field for 32x32, 48x48 and 64x64 resolutions.}
 \end{center}
 This means that the algorithms above fulfill an interpolation function, but not a smoothing one.
@@ -126,8 +121,8 @@ In this case a 32x32 mesh looks as follows:
 We repeat the same exercise as before on such a mesh and look at the errors
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rand/errors_nofilter}
-\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rand/errors_filter}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/rand/errors_nofilter}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/rand/errors_filter}\\
 {\captionfont Velocity and pressure errors for $\xi=0.2$. Left: no filter, right: with filter.} 
 \end{center}
 
