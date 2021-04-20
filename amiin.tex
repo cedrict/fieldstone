@@ -284,4 +284,64 @@ if all its lateral faces are vertical then one can
 compute the reduced coordinates without using an iterative method.
 
 
+%-----------------------------------------------------
+\subsubsection{Three-dimensional space - special case}
+
+We assume that the mesh is such that the cross section of all $Q_1$ elements 
+is a rectangle in the $xy$-plane. 
+
+Let $(x,y,z)$ be a point inside the element. 
+The global coordinates $x,y,z$ are obtained from the 
+reduced coordinates $r,s,t$ via the basis the basis functions:
+\begin{eqnarray}
+x=\sum_{i=1}^8 \bN_i (r,s,t) x_i \qquad 
+y=\sum_{i=1}^8 \bN_i (r,s,t) y_i  \qquad 
+z=\sum_{i=1}^8 \bN_i (r,s,t) z_i \label{xyz}
+\end{eqnarray}
+Let 
+\begin{eqnarray}
+{\vec v}_1 &=& (+1,+1,+1,+1,+1,+1,+1,+1) \nn\\
+{\vec v}_2 &=& (-1,+1,+1,-1,-1,+1,+1,-1) \nn\\
+{\vec v}_3 &=& (-1,-1,+1,+1,-1,-1,+1,+1) \nn\\
+{\vec v}_4 &=& (-1,-1,-1,-1,+1,+1,+1,+1) \nn\\
+{\vec v}_5 &=& (+1,-1,+1,-1,+1,-1,+1,-1) \nn\\
+{\vec v}_6 &=& (+1,-1,-1,+1,-1,+1,+1,-1) \nn\\
+{\vec v}_7 &=& (+1,+1,-1,-1,-1,-1,+1,+1) \nn
+\end{eqnarray}
+and 
+\begin{eqnarray}
+{\vec x} &=& (x_1,x_2,x_3,x_4,x_5,x_6,x_7,x_8) \nn\\
+{\vec y} &=& (y_1,y_2,y_3,y_4,y_5,y_6,y_7,y_8) \nn\\
+{\vec z} &=& (z_1,z_2,z_3,z_4,z_5,z_6,z_7,z_8) \nn
+\end{eqnarray}
+then Eqs.~\eqref{xyz} can also be written
+\begin{eqnarray}
+x&=&\frac{1}{8} \left( {\vec v}_1 + r  {\vec v}_2 + s  {\vec v}_3 + t  {\vec v}_4 
+                 + rs  {\vec v}_5 + rt {\vec v}_6 + st {\vec v}_7 \right) \cdot {\vec x} \nn\\ 
+y&=&\frac{1}{8} \left( {\vec v}_1 + r  {\vec v}_2 + s  {\vec v}_3 + t  {\vec v}_4 
+                 + rs  {\vec v}_5 + rt {\vec v}_6 + st {\vec v}_7 \right) \cdot {\vec y} \nn\\
+z&=&\frac{1}{8} \left( {\vec v}_1 + r  {\vec v}_2 + s  {\vec v}_3 + t  {\vec v}_4 
+                 + rs  {\vec v}_5 + rt {\vec v}_6 + st {\vec v}_7 \right) \cdot {\vec z} \label{zzz}
+\end{eqnarray}
+If the element has a rectangular cross-section $s_x \times s_y$ then 
+\begin{eqnarray}
+{\vec x} &=& (x_0,x_0+s_x,x_0+s_x,x_0,x_0,x_0+s_x,x_0+s_x,x_0) \nn\\
+{\vec y} &=& (y_0,y_0,y_0+s_y,y_0+s_y,y_0,y_0,y_0+s_y,y_0+s_y) \nn
+\end{eqnarray}
+which yields
+\begin{eqnarray}
+r&=& \frac{x-x_0}{2s_x}-1  \nn\\
+s&=& \frac{y-y_0}{2s_y}-1  \nn
+\end{eqnarray}
+Since the local coordinates $r$ and $s$ can be easily computed, one can use Eq.~\eqref{zzz} to obtain $t$:
+\[
+t=\frac{8z - ({\vec v}_1 + r {\vec v}_2 + s {\vec v}_3 + rs  {\vec v}_5 ) \cdot {\vec z}} 
+{ ({\vec v}_4  + r  {\vec v}_6 + s  {\vec v}_7)  \cdot {\vec z} }
+\]
+
+
+
+
+
+
 

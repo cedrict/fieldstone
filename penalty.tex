@@ -32,7 +32,7 @@ Equation (\ref{penal}) can be used to eliminate the pressure in the momentum equ
 so that the mass and momentum conservation equations fuse to become :
 \begin{equation}
 {\vec \nabla}\cdot ( 2 \eta \dot\varepsilon({\vec \upnu})) 
-+ \lambda {\vec \nabla} ({\vec \nabla }\cdot {\vec \upnu}) + \rho {\bm g} = \vec{0} \label{peneq}
++ \lambda {\vec \nabla} ({\vec \nabla }\cdot {\vec \upnu}) + \rho {\vec g} = \vec{0} \label{peneq}
 \end{equation}
 
 Malkus \& Hughes (1978) \cite{mahu78} have established the equivalence 
@@ -65,7 +65,7 @@ being in general quite sensitive to the condition number of the matrix at hand."
 %I will now focus on a Stokes flow in two dimensions. 
 
 Since the penalty formulation is only valid for incompressible flows, then 
-$\dot{\bm \epsilon}(\vec\upnu)=\dot{\bm \epsilon}^d(\vec\upnu)$ so that 
+$\dot{\bm \varepsilon}(\vec\upnu)=\dot{\bm \varepsilon}^d(\vec\upnu)$ so that 
 the $d$ superscript is ommitted in what follows.
 Because the stress tensor is symmetric one can also rewrite it the following vector format:
 \begin{eqnarray}
@@ -93,12 +93,12 @@ Because the stress tensor is symmetric one can also rewrite it the following vec
 +2 \eta
 \left(
 \begin{array}{c}
-\dot{\epsilon}_{xx}\\
-\dot{\epsilon}_{yy}\\
-\dot{\epsilon}_{zz}\\
-\dot{\epsilon}_{xy}\\
-\dot{\epsilon}_{xz}\\
-\dot{\epsilon}_{yz}
+\dot{\varepsilon}_{xx}\\
+\dot{\varepsilon}_{yy}\\
+\dot{\varepsilon}_{zz}\\
+\dot{\varepsilon}_{xy}\\
+\dot{\varepsilon}_{xz}\\
+\dot{\varepsilon}_{yz}
 \end{array}
 \right)
 \nonumber\\
@@ -106,21 +106,21 @@ Because the stress tensor is symmetric one can also rewrite it the following vec
 \lambda
 \left(
 \begin{array}{c}
-\dot{\epsilon}_{xx} + \dot{\epsilon}_{yy} + \dot{\epsilon}_{zz}\\
-\dot{\epsilon}_{xx} + \dot{\epsilon}_{yy} + \dot{\epsilon}_{zz}\\
-\dot{\epsilon}_{xx} + \dot{\epsilon}_{yy} + \dot{\epsilon}_{zz}\\
+\dot{\varepsilon}_{xx} + \dot{\varepsilon}_{yy} + \dot{\varepsilon}_{zz}\\
+\dot{\varepsilon}_{xx} + \dot{\varepsilon}_{yy} + \dot{\varepsilon}_{zz}\\
+\dot{\varepsilon}_{xx} + \dot{\varepsilon}_{yy} + \dot{\varepsilon}_{zz}\\
 0 \\ 0 \\ 0
 \end{array}
 \right)
 +2 \eta
 \left(
 \begin{array}{c}
-\dot{\epsilon}_{xx}\\
-\dot{\epsilon}_{yy}\\
-\dot{\epsilon}_{zz}\\
-\dot{\epsilon}_{xy}\\
-\dot{\epsilon}_{xz}\\
-\dot{\epsilon}_{yz}
+\dot{\varepsilon}_{xx}\\
+\dot{\varepsilon}_{yy}\\
+\dot{\varepsilon}_{zz}\\
+\dot{\varepsilon}_{xy}\\
+\dot{\varepsilon}_{xz}\\
+\dot{\varepsilon}_{yz}
 \end{array}
 \right)\nonumber\\
 &=&

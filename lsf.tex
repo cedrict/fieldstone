@@ -24,6 +24,8 @@ then it satisfies the following equation:
 The level set function is generally chosen to
 be a signed distance function, i.e. $|\vec\nabla \phi| = 1$ everywhere 
 and its value is also the distance to the interface.
+The function value indicates on which side of the interface a
+point is located (negative or positive) and this is used to identify materials.
 
 As explained in \cite{hitg14}, the level-set function $\phi$ is advected 
 with the velocity $\vec\upnu$ which is obtained by solving the Stokes equations.
@@ -36,8 +38,16 @@ space derivative \cite{ossh91,saev10}.
 
 
 The level set method has not often been used in the geodynamics 
-community with some notable exceptions 
-\cite{bomh06,bomh07,habm07,grbh07,zlfd08,hagr10,sunh10,suhe10,hitg14}
+community with some notable exceptions.
+Bourgouin et al use this method combined with Finite Differences to model 
+lava flows \cite{bomh06,bomh07,habm07,grbh07}.
+Braun \etal use a so-called particle based level set methodology in their 
+FEM code in conjunction with AMR \cite{brtf08}.
+Zlotnik \etal coupled the X-FEM method with level set functions to model 
+slab break-off and Rayleigh-Taylor Diapirism \cite{zlfd08}.
+This same particle level sets are studied by Samuel and Evonuk and applied to geophysical flows \cite{saev10}. 
+In Suckale \etal (2010) \cite{sunh10,suhe10} the authors investigate simulating buoyancy‐driven flow in the presence of large viscosity contrasts.
+Hale \etal (2010) \cite{hagr10} use the LSM in 3D and sudy the dynamics of slab tear faults.
 An overview of the method and applications can
 be found in \cite{osfe01}.
 

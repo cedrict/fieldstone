@@ -19,8 +19,7 @@ There has been considerable amount of work on the topic and this section is
 unfortunately not representing the literature appropriately.
 
 \mscthesis: Get relevant literature, digest it, implement all variants in \stone 12.
- \index{general}{MSc Thesis} 
-
+\index{general}{MSc Thesis} 
 
 On the following figure (a,b), pressure fields for the lid driven cavity experiment 
 are presented for both an even and un-even number of elements. We see that 
@@ -393,7 +392,7 @@ elemental systems:
 %------------------------------------------------------------------------------
 \paragraph{Scheme 6 - Consistent pressure recovery}
 
-The is the method presented in Zienkiewicz \& Nakazawa (1982) \cite{zina82}. In the second part 
+This is the method presented in Zienkiewicz \& Nakazawa (1982) \cite{zina82}. In the second part 
 of this publication the authors wish to establish a simple and effective numerical method to calculate 
 variables eliminated by the penalisation process. 
 The method involves an additional finite element solution for the nodal pressures using 
@@ -403,21 +402,21 @@ Let us start with\footnote{I here voluntarily use $q$ instead of $p$}:
 \[
 q = -\lambda \vec\nabla\cdot \vec\upnu
 \]
-We are going to treat this equation as any other PDE in the context of the FE method, i.e. 
+We are going to treat this equation like any other PDE in the context of the FE method, i.e. 
 we are going to establish its weak form. 
 We assume that the pressure is given inside an element by
 \[
-q(x,y) = \sum_{i=1}^4 \bN_i(x,y) q_i = \vec{\bN} \cdot \vec{q}
+q(x,y) = \sum_{i=1}^{m_\upnu} \bN_i(x,y) q_i = \vec{\bN} \cdot \vec{q}
 \]
 and the velocity:
 \[
 \vec\upnu = (u,v) 
 \qquad 
 \qquad 
-u(x,y)  = \sum_{i=1}^4 \bN_i(x,y) u_i
+u(x,y)  = \sum_{i=1}^{m_\upnu} \bN_i(x,y) u_i
 \qquad 
 \qquad 
-v(x,y)  = \sum_{i=1}^4 \bN_i(x,y) v_i
+v(x,y)  = \sum_{i=1}^{m_\upnu} \bN_i(x,y) v_i
 \]
 where the $\bN_i$ are the $Q_1$ basis functions and $q_i$ are the sought after nodal values. 
 We multiply the equation above by a $Q_1$ basis function $\bN_i$ and integrate over the whole domain:
@@ -448,10 +447,10 @@ We here too define $\vec{V}_e=(u_1,v_1,u_2,v_2,u_3,v_3,u_4,v_4)^T$ so that
 
 \begin{eqnarray}
 && \iint_{\Omega_e} \vec{\bN} {\vec \nabla}\cdot {\vec \upnu} \; dV \nn\\
-&=& \iint_{\Omega_e} \vec{\bN}^T \sum_{i=1}^{4} 
+&=& \iint_{\Omega_e} \vec{\bN}^T \sum_{i=1}^{m_\upnu} 
 \left( \frac{\partial \bN_i}{\partial x} u_i + \frac{\partial \bN_i}{\partial y} v_i 
 \right)  
-dV \nonumber\\
+dV \label{eq:psmoth6}\\
 &=& 
 \iint_{\Omega_e} 
 \left(
@@ -523,6 +522,10 @@ dV \nonumber\\
 \left(\int_{\Omega_e} {\bm N} \cdot {\bm B} \; dV \right) \cdot \vec{V}_e \nonumber\\
 &=& -\G_e^T \cdot {\vec V}_e
 \end{eqnarray}
+This makes sense since $\G^T$ is the discrete divergence operator. However, it is not very efficient to 
+build $\G_e$ only to multiply it with a vector of already known quantities. 
+In practice we implement Eq.~\eqref{eq:psmoth6} which implmentation resembles the buoyancy term of the 
+Stokes equation.
 
 After assembly we arrive at
 \[
@@ -581,38 +584,7 @@ Same as scheme 6, but with lumped mass matrix.
 \paragraph{Scheme 8 - bilinear interpolation} Let us assume that the centers of the 
 four elements make a $Q_1$ quadrilateral element, as shown on this figure:
 
-
-\begin{center}
-\begin{tikzpicture}
-%\draw[fill=gray!5,gray!5](0,0) rectangle (9,7);
-%\draw[step=0.5cm,gray,very thin] (0,0) grid (9,7); %background grid
-\draw[thick](1.5,1.5) -- (4.5,1) -- (6.5,1) -- (7.5,3) -- (7,5.5) -- (4.5,6) --(1.5,5.5) -- (1,3.5) -- cycle;  
-\draw[thick](4.5,1)--(4,3.5)--(4.5,6);
-\draw[thick](1,3.5)--(4,3.5)--(7.5,3);
-
-\draw[black,fill=blue] (2.75,2.375) circle (2pt); 
-\node[] at (2.5,2.5) {\color{blue}1};
-\draw[black,fill=blue] (5.625,2.125) circle (2pt); 
-\node[] at (5.9,2) {\color{blue}2};
-\draw[black,fill=blue] (5.75,4.5) circle (2pt); 
-\node[] at (2.5,4.6) {\color{blue}3};
-\draw[black,fill=blue] (2.75,4.625) circle (2pt); 
-\node[] at (6,4.5) {\color{blue}4};
-
-\draw[black,fill=black] (1.5,1.5) circle (2pt); \node[] at (1.2,1.2){1}; %1
-\draw[black,fill=black] (4.5,1)   circle (2pt); \node[] at (4.5,0.75){2}; %2
-\draw[black,fill=black] (6.5,1)   circle (2pt); \node[] at (6.75,0.75){3}; %3
-\draw[black,fill=black] (1,3.5)   circle (2pt); \node[] at (0.75,3.5){4}; %4
-\draw[black,fill=black] (4,3.5)   circle (2pt); \node[] at (3.75,3.25){5}; %5
-\draw[black,fill=black] (7.5,3)   circle (2pt); \node[] at (7.75,3){6}; %6
-\draw[black,fill=black] (1.5,5.5) circle (2pt); \node[] at (1.25,5.5){7}; %7
-\draw[black,fill=black] (4.5,6)   circle (2pt); \node[] at (4.5,6.3){8}; %8
-\draw[black,fill=black] (7,5.5)   circle (2pt); \node[] at (7.25,5.75){9}; %9
-
-\draw[blue](2.75,2.375)--(5.625,2.125)--(5.75,4.5)--(2.75,4.625)--cycle;
-\end{tikzpicture}
-\end{center}
-
+\input{tikz/tikz_pscheme8}
 
 
 

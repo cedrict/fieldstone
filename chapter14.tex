@@ -18,12 +18,13 @@ c) the interface with MUMPS is seamless.
 \item Annulus
 \item Hollow Sphere
 \end{itemize}
-\item 2 elements:
+\item 3 elements:
 \begin{itemize}
 \item $Q_1\times P_0$
 \item $Q_1\times Q_1$-MINI
+\item $Q_2\times Q_1$
 \end{itemize}
-\item Marker-in-Cell
+\item Particle-in-Cell
 \begin{itemize}
 \item random or regular distribution of markers
 \item paint  
@@ -55,19 +56,22 @@ c) the interface with MUMPS is seamless.
 The whole code is built around a few modules and objects:
 
 \begin{itemize}
-\item {\filenamefont module\_global.f90}
-
+\item {\filenamefont module\_global.f90}\\
 \lstinputlisting[language=Fortran]{ELEFANT/module_global.f90}
 
-\item {\filenamefont module\_constants.f90}
-
+\item {\filenamefont module\_constants.f90}\\
 \lstinputlisting[language=Fortran]{ELEFANT/module_constants.f90}
 
-\item {\filenamefont module\_timing.f90}
+\item {\filenamefont module\_timing.f90}\\
 \lstinputlisting[language=Fortran]{ELEFANT/module_timing.f90}
 
-\item {\filenamefont module\_structures.f90}
+\item {\filenamefont module\_structures.f90}\\
+\begin{scriptsize}
 \lstinputlisting[language=Fortran]{ELEFANT/module_structures.f90}
+\end{scriptsize}
+
+\item {\filenamefont module\_global\_arrays.f90}\\
+\lstinputlisting[language=Fortran]{ELEFANT/module_global_arrays.f90}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,6 +121,10 @@ ADD METIS support
 \subsection{Setting up an experiment/benchmark/cookbook}
 
 opla
+
+\begin{center}
+\input{tikz/tikz_elefant_boundaries}
+\end{center}
 
 
 

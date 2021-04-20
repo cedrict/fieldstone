@@ -107,8 +107,9 @@ COLIND&=&(0,1,4,5, \; 0,1,2,4,5,6, \; 1,2,3,5,6,7, ..., 6,7,10,11) \nn\\
 RWPTR &=&(0,4,10,16, ... )   \nn
 \end{eqnarray}
 
+
 %..............................................................................
-\subsubsection{2D domain - Symmetric matrix CSR storage}
+\subsubsection{2D domain - Symmetric matrix CSR storage} \label{ss:symmcsrss}
 
 If the matrix is symmetric, i.e. ${\bm M}={\bm M}^T$, then we may wish to 
 only store half of it, always in the interest of saving memory. 
@@ -143,6 +144,14 @@ COLIND&=&(0,1,4,5, \; 1,2,4,5,6, \; 3,5,6,7, ..., ,11) \nn\\
 RWPTR &=&(0,4,9,14, ... )   \nn
 \end{eqnarray}
 
+In case the numbering is Fortran-like, then 
+\begin{eqnarray}
+ja=COLIND&=&(
+1, 2, 5, 6, \quad  2, 3, 5, 6, 7, \quad 3, 4, 6, 7, 8, \quad      
+4, 7, 8, \quad  5, 6, 9, 10, \quad 6, 7, 9, 10, 11, \nn\\
+&& 7, 8, 10, 11, 12, \quad 8, 11, 12, \quad 9, 10, \quad 10, 11, \quad  11, 12, \quad 12) \nn\\
+ia=RWPTR &=&(1, 5, 10, 15, 18, 22, 27, 32, 35, 37, 39, 41, 42)  \nn
+\end{eqnarray}
 
 %..............................................................................
 \subsubsection{2D domain - Two degrees of freedom per node}
@@ -218,10 +227,51 @@ COLIND&=&(0,1,2,3,8,9,10,11, \; 0,1,2,3,8,9,10,11,\; ...) \nn\\
 RWPTR &=&(0,8,16,28, ... ) \nn
 \end{eqnarray}
 
+Assuming we are using $Q_1\times P_0$ elements, the structure of the matrix $\G_{el}^T$ is as follows
+(the 6 pressure dofs are connected to 24 velocity dofs):
+
+\begin{scriptsize}
+\begin{equation}
+\left(
+\begin{array}{ccccccccccccccccccccccccc}
+&0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 & 17 & 18 & 19 & 20 & 21 & 22 & 23     \\
+\Box&\Box & \Box&\Box &  &  &  &  & \Box&\Box & \Box&\Box &  &  &  &  &  &  &  &  &  &  &  &  \\
+    &     & \Box&\Box & \Box&\Box &  &  &  &  & \Box&\Box & \Box&\Box &  &  &  &  &  &  &  &  &  &  \\
+ & &     &     & \Box&\Box & \Box&\Box &  &  &  &  & \Box&\Box & \Box&\Box &  &  &  &  &  &  &  &    \\
+ & & & &  & &     &     & \Box&\Box & \Box&\Box &  &  &  &  & \Box&\Box & \Box&\Box &  &  &  &      \\
+ & & & & & &  & &     &     & \Box&\Box & \Box&\Box &  &  &  &  & \Box&\Box & \Box&\Box &  &       \\
+ & &  & & & & & &  & &     &     & \Box&\Box & \Box&\Box &  &  &  &  & \Box&\Box & \Box&\Box        
+\end{array}
+\right)
+\end{equation} 
+\end{scriptsize}
+
+Assuming we are now using $Q_1\times Q_1$ elements (without bubble), 
+the structure of the matrix $\G_{el}^T$ is different: we now have 12 pressure dofs 
+which are coupled to 24 velocity dofs:
+\begin{scriptsize}
+\begin{equation}
+\left(
+\begin{array}{ccccccccccccccccccccccccc}
+ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 & 17 & 18 & 19 & 20 & 21 & 22 & 23 & 24    \\
+0 &\Box&\Box & \Box&\Box &  &  &  &  & \Box&\Box & \Box&\Box &  &  &  &  &  &  &  &  &  &  &  &  \\
+1 & \Box&\Box & \Box&\Box & \Box  & \Box  &  &  & \Box&\Box & \Box&\Box & \Box  & \Box  &  &  &  &  &  &  &  &  &  & \\
+2 &  & & \Box&\Box & \Box  & \Box  & \Box  & \Box  & & & \Box&\Box & \Box  & \Box  & \Box  &\Box  &  &  &  &  &  &  &  & \\ 
+3 &  & & &  & \Box  & \Box  & \Box  & \Box  & & & & & \Box  & \Box  & \Box  &\Box  &  &  &  &  &  &  &  & \\ 
+\\
+... \\
+\\
+9 & & & & & & & & &\Box &\Box &\Box &\Box & \Box  & \Box &  &  & & &\Box &\Box & \Box &\Box & &  \\
+10 & & & & & & & & & & &\Box &\Box & \Box  & \Box & \Box & \Box & & &\Box &\Box & \Box &\Box &\Box & \Box \\
+11 & & & & & & & & & & & & & \Box  & \Box & \Box & \Box & & & & & \Box &\Box &\Box & \Box \\
+\end{array}
+\right)
+\end{equation} 
+\end{scriptsize}
+
 
 %..............................................................................
-\subsubsection{3D domain - CSR- Three degrees of freedom}
-
+\subsubsection{3D domain - CSR- Q1 - One degree of freedom}
 
 Let us consider a $3\times4\times2$ grid which counts 
 $nnx\cdot nny \cdot nnz = 5 \cdot 4\cdot 3=60$ nodes.
@@ -245,6 +295,14 @@ The total number of nonzeros in the case $ndof=1$ would be decomposed as follows
 \item $2(nny-2)(nnz-2)$ nodes see 18 nodes
 \item $(nnx-2)(nny-2)(nnz-2)$ interior nodes see 27 nodes
 \end{itemize}
+
+%..............................................................................
+\subsubsection{3D domain - CSR- Q2 - one degree of freedom}
+
+
+\begin{center}
+\input{tikz/tikz_4x3x2_q2.tex}
+\end{center}
 
 
 
@@ -270,7 +328,7 @@ A conversion to CSR format is still necessary before calling the solver.
 
 
 %..............................................................................
-\subsubsection{Sparse Matrix-Vector multiplication}
+\subsubsection{About Sparse Matrix-Vector multiplication} \label{ss:spmv}
 \index{general}{SpMV} \index{general}{Sparse Matrix-Vector Multiplication}
 
 When/if the matrix ${\bm M}$ is stored in a two-dimensional array, 
@@ -343,4 +401,181 @@ or multiple threads has given rise to a lot of literature.
 
 \Literature Krotkiewski \& Dabrowski \cite{krda10}, Section 9.4 of Kepley \cite{knepley}, 
 Williams \etal (2008) \cite{widc08}
+
+%..............................................................................
+\subsubsection{SpMV and SpMV-T with the CSR format - a concrete example}
+
+(What follows was orignally written for \elefant so that code excerpts and loop indexing 
+are those of Fortran.)
+
+Let us consider a simple matrix $\mathbb{G}$ which is not square (size is $3\times5$):
+\[
+\G^T=
+\left(
+\begin{array}{ccccc}
+{\color{teal} 1} & {\color{teal}0}& {\color{teal}4}& {\color{teal}1}& {\color{teal}2}\\
+{\color{violet}0}& {\color{violet}1}& {\color{violet}1}& {\color{violet}1}& {\color{violet}0}\\
+{\color{orange}3}& {\color{orange}0} & {\color{orange}0}& {\color{orange}7}& {\color{orange}1}
+\end{array}
+\right)
+\]
+
+The number of rows is $nr=3$, the number of columns is $nc=5$ and the number of nonzeros is 
+$nz=10$.
+
+Let us consider two vectors $\vec{\cal V}^T=(1,1,1,1,1)$ and $\vec{\cal P}^T=(1,1,1)$.
+Obviously, we have:
+\[
+{\G}^T \cdot \vec{\cal V} = 
+\left(
+\begin{array}{c}
+8\\3\\11
+\end{array}
+\right)
+\qquad
+\text{and}
+\qquad
+{\G} \cdot \vec{\cal P} = 
+\left(
+\begin{array}{c}
+4 \\ 1\\ 5\\ 9\\ 3
+\end{array}
+\right)
+\]
+
+The CSR storage of ${\G}^T$ requires three arrays:
+$ia$ (integer, size $nr+1$), $ja$ (integer, size $nz$) and $mat$ (real, size $nz$). 
+In the case of the small matrix above:
+\begin{eqnarray}
+ia &=&(1,5,8,11)  \nn\\
+ja &=&(1,3,4,5,2,3,4,1,4,5) \nn\\
+mat&=&({\color{teal} 1,4,1,2},{\color{violet}1,1,1},{\color{orange}3,7,1}) \nn
+\end{eqnarray}
+The sparse matrix vector multiplication kernel SpMV for $\vec{y} = {\bm A}\cdot \vec{x}$ 
+has been explained above, and it is trivial to carry out this algorithm by hand 
+and verify that the vector $y$ is given by $y^T=(8,3,11)$.
+
+Let us now turn to an interesting problem. Is it possible with the same arrays $ia,ja,mat$ to compute the 
+multiplication of the transpose of the matrix with a vector? 
+The answer is of course positive and the code is given hereunder:
+
+\begin{lstlisting}[language=Fortran]
+y=0.d0
+do i = 1,nr
+   do k=ia(i), ia(i+1)-1
+      y(ja(k))=y(ja(k))+mat(k)*x(i)
+   end do
+end do
+\end{lstlisting}
+
+Let us take $i=1$. The variable $k$ then goes from 1 to 4. 
+The inner loop does:
+\begin{verbatim}
+y(1)=y(1)+mat(1)*x(1)
+y(3)=y(3)+mat(2)*x(1)
+y(4)=y(4)+mat(3)*x(1)
+y(5)=y(5)+mat(4)*x(1)
+\end{verbatim}
+
+Let us take $i=2$. The variable $k$ then goes from 5 to 7. 
+The inner loop does:
+\begin{verbatim}
+y(2)=y(2)+mat(5)*x(2)
+y(3)=y(3)+mat(6)*x(2)
+y(4)=y(4)+mat(7)*x(2)
+\end{verbatim}
+
+Let us take $i=3$. The variable $k$ then goes from 8 to 10. 
+The inner loop does:
+\begin{verbatim}
+y(1)=y(1)+mat(8)*x(3)
+y(4)=y(4)+mat(9)*x(3)
+y(5)=y(5)+mat(10)*x(3)
+\end{verbatim}
+
+So in total, we have:
+\begin{verbatim}
+y(1)=mat(1)*x(1)+mat(8)*x(3)
+y(2)=mat(5)*x(2)
+y(3)=mat(2)*x(1)+mat(6)*x(2)
+y(4)=mat(3)*x(1)+mat(7)*x(2)+mat(9)*x(3)
+y(5)=mat(4)*x(1)+mat(10)*x(3)
+\end{verbatim}
+which is indeed the result of the transposed of the matrix multiplied by a vector $\vec{x}$.
+
+\vspace{0.6cm}
+
+Let us consider a simple matrix $\K$ which is square (size is $5\times5$):
+\[
+\K=
+\left(
+\begin{array}{ccccc}
+1&0&4&1&2\\
+0&1&0&1&0\\
+4&0&0&7&1\\
+1&1&7&4&0\\
+2&0&1&0&5
+\end{array}
+\right)
+\]
+
+In this case , NZ=16.
+\begin{eqnarray}
+ia &=&(1,5,7,10,14,17) \nn\\
+ja &=&(1,3,4,5,\;\; 2,4, \;\; 1,4,5, \;\; 1,2,3,4, \;\; 1,3,5) \nn\\
+mat&=&(1,4,1,2,1,1,4,7,1,1,1,7,4,2,1,5) \nn
+\end{eqnarray}
+The sparse matrix vector multiplication kernel SpMV for $\vec{y} = {\bm A}\cdot \vec{x}$ 
+is given  as follows in its simplest form.
+Since the matrix is symmetric, there is no use to store the whole matrix. Its upper half (for instance) will do. 
+In this case, NZ=
+and then 
+\begin{eqnarray}
+ia &=&(1,5,7,9,10,11) \nn\\
+ja &=&(1,3,4,5,\;\; 2,4, \;\; 4,5, \;\; 4, \;\; 5) \nn\\
+mat&=&(1,4,1,2,\;\; 1,1, \;\; 7,1, \;\; 4,\;\; 5) \nn
+\end{eqnarray}
+
+All is good and well until one wishes to multiply the real matrix by a vector. 
+The SpMV routines described above will not work since it will return the upper half of the matrix 
+multiplied by the vector.
+
+One can then write a decicated algorithm:
+\begin{verbatim}
+do i = 1,nr
+
+   ! multiply the upper half by the vector
+
+   do k=ia(i), ia(i+1)-1
+      y(i) = y(i) + mat(k)*x(ja(k))
+   end do
+
+   ! multiply the transpose of matrix by vector
+   ! but omit diagonal 
+
+   do k=ia(i), ia(i+1)-1
+      if (i/=ja(k)) then
+         y(ja(k))=y(ja(k))+mat(k)*x(i)
+      end if
+   end do
+
+end do
+\end{verbatim}
+
+
+Example:
+
+\begin{verbatim}
+y(1)
+=y(1) + mat(1)*x(ja(1)) + mat(2)*x(ja(2)) + mat(3)*x(ja(3)) + mat(4)*x(ja(4)) 
+=y(1) + mat(1)*x(1) + mat(2)*x(3) + mat(3)*x(4) + mat(4)*x(5) 
+\end{verbatim}
+etc ...
+
+Finish?
+
+ 
+
+
+
 

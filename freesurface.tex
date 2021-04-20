@@ -660,7 +660,7 @@ Free surface treatment in FDM: Duretz \etal \cite{dumg11}, \cite{dumy16}.
 \index{general}{Free Surface Stabilisation Algorithm}
 \index{general}{FSSA}
 
-Duretz \etal \cite{dumg11} is concerned with the Finite Difference method so I will 
+Duretz \etal (2011) \cite{dumg11} is concerned with the Finite Difference method so I will 
 not expore this one further (see Gerya's book \cite{gery19book} for all things FDM).
 Note that their approach is similar to what follows. 
 
@@ -672,14 +672,14 @@ Schuh-Senlis \etal \cite{sctc20}.
 
 The first one is rather technical while the second is more to the point with some simple reasoning. 
 Apparently both author groups arrived at about the same formulation/algorithm 
-at about the same time. The third and fourth paper implement the algorithm in \aspect{} and 
-FAIStokes respectively. 
+at about the same time. The third and fourth paper implement the algorithm in \aspect{} and the 
+FAIStokes code respectively. 
 
-The basic idea is rather simple. As stated in \cite{qube11}: 
+The basic idea is rather simple. As stated in Quinquis \etal (2011) \cite{qube11}: 
 "In numerical subduction models which include a free surface
 or other interfaces with large density contrasts, an instability can
 occur as a result of numerical overshoot when computing restoring
-forces"
+forces". 
 
 In essence when the timestep $\delta t$ exceeds (or is comparable) to a characteristic relaxation 
 time $t_s$ then body and surface forces will be out of balance with the updated free surface. 
@@ -699,18 +699,19 @@ the free surface, and at any other interface with a density contrast.
 
 Unfortunately, although this is easy to understand, it is not very clear 
 how to implement it, which is when the first paper becomes useful.
-I first present results from my doomed 2014 paper \cite{thie14} 
-in which I carried out the Rayleigh-Taylor 
-instability experiment described in \cite{kamm10}
-where a dense fluid overlays another fluid 
-in a square domain with their initial interface being of sinusoidal shape\footnote{This 
+I first present results from my doomed 2014 paper
+\footnote{This 
 paper is about my \elefant code which relied at the time solely on $Q_1\times P_0$ elements
-with the penalty formulation.}. 
+with the penalty formulation.} 
+\cite{thie14} in which I carried out the Rayleigh-Taylor instability experiment described in \cite{kamm10}
+where a dense fluid overlays another fluid 
+in a square domain with their initial interface being of sinusoidal shape.
 
 \begin{center}
 \includegraphics[width=10cm]{images/fssa/drawing}\\
 {\captionfont 
-When the time step $\delta t$ is small, the simulation evolves smoothly, but 
+Taken from Thieulot (2014) \cite{thie14} When the time step $\delta t$ is small, 
+the simulation evolves smoothly, but 
 too large a time step leads to a sloshing instability, also called 'drunken sailor effect'
 in the community.}
 \end{center}
@@ -718,10 +719,13 @@ in the community.}
 The position $y(t)$ of the free surface point situated at $x=L_x$ is monitored over time:
 \begin{center}
 \includegraphics[width=10cm]{images/fssa/ynp}\\
-{\captionfont The stabilisation algorithm is first switched off and up to a time step of $\delta t\sim 3800\si{\year}$, 
+{\captionfont The stabilisation algorithm is first switched off and up to a 
+time step of $\delta t\sim 3800\si{\year}$, 
 the free surface does not develop any instability (all curves are superimposed). 
-For a time step of $3900\si{\year}$ and above, a clear oscillation develops (green seesaw curve on the figure).
-Turning the algorithm on, time steps larger than $dt\sim 10,000\si{\year}$ can be used and no oscillation is observed. }
+For a time step of $3900\si{\year}$ and above, a clear oscillation develops 
+(green seesaw curve on the figure).
+Turning the algorithm on, time steps larger than $dt\sim 10,000\si{\year}$ 
+can be used and no oscillation is observed. }
 \end{center}
 
 I found that: 
@@ -738,15 +742,11 @@ and deviate in the end by about 5 meters.
 Finally, let us look at the mathematical details behind this stabilisation, as 
 presented in Kaus \etal (2010) \cite{kamm10}.
 
-
-
-
-
-
+FINISH!!
 
  
 
 
 
-\Literature: Furuchi \cite{furu11}
+\Literature: Furuchi (2011) \cite{furu11}
 
