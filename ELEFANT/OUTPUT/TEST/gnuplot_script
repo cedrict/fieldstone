@@ -1,0 +1,79 @@
+set term pdf enhanced font "Times,7pt"
+set grid
+set key outside
+
+set output 'element.pdf'
+
+set multiplot layout 4,2 rowsfirst
+
+set title 'field'
+plot[][]\
+'test_basis_functions_constant.ascii' u 1:4 ps 0.25 t 'constant',\
+'test_basis_functions_constant.ascii' u 2:5 ps 0.25 t 'constant',\
+'test_basis_functions_constant.ascii' u 3:6 ps 0.25 t 'constant',\
+1 lt -1 
+
+set title 'field derivative'
+plot[][]\
+'test_basis_functions_constant.ascii' u 1:7 ps 0.25 t 'constant',\
+'test_basis_functions_constant.ascii' u 2:8 ps 0.25 t 'constant',\
+'test_basis_functions_constant.ascii' u 3:9 ps 0.25 t 'constant',\
+0 lt -1 
+
+set title 'field'
+plot[][]\
+'test_basis_functions_linear.ascii' u 1:4 ps 0.25 t 'linear',\
+'test_basis_functions_linear.ascii' u 2:5 ps 0.25 t 'linear',\
+'test_basis_functions_linear.ascii' u 3:6 ps 0.25 t 'linear',\
+x lt -1 
+
+set title 'field derivative'
+plot[][]\
+'test_basis_functions_linear.ascii' u 1:7 ps 0.25 t 'linear',\
+'test_basis_functions_linear.ascii' u 2:8 ps 0.25 t 'linear',\
+'test_basis_functions_linear.ascii' u 3:9 ps 0.25 t 'linear',\
+1 lt -1 
+
+set title 'field'
+plot[][]\
+'test_basis_functions_quadratic.ascii' u 1:4 ps 0.25 t 'quadratic',\
+'test_basis_functions_quadratic.ascii' u 2:5 ps 0.25 t 'quadratic',\
+'test_basis_functions_quadratic.ascii' u 3:6 ps 0.25 t 'quadratic',\
+x**2 lt -1 
+
+set title 'field derivative'
+plot[][]\
+'test_basis_functions_quadratic.ascii' u 1:7 ps 0.25 t 'quadratic',\
+'test_basis_functions_quadratic.ascii' u 2:8 ps 0.25 t 'quadratic',\
+'test_basis_functions_quadratic.ascii' u 3:9 ps 0.25 t 'quadratic',\
+2*x lt -1 
+
+set title 'field'
+plot[][]\
+'test_basis_functions_cubic.ascii' u 1:4 ps 0.25 t 'cubic',\
+'test_basis_functions_cubic.ascii' u 2:5 ps 0.25 t 'cubic',\
+'test_basis_functions_cubic.ascii' u 3:6 ps 0.25 t 'cubic',\
+x**3 lt -1 
+
+set title 'field derivative'
+plot[][]\
+'test_basis_functions_cubic.ascii' u 1:7 ps 0.25 t 'cubic',\
+'test_basis_functions_cubic.ascii' u 2:8 ps 0.25 t 'cubic',\
+'test_basis_functions_cubic.ascii' u 3:9 ps 0.25 t 'cubic',\
+3*x**2 lt -1 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

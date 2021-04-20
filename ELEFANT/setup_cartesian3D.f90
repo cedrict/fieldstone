@@ -15,7 +15,7 @@ use timing
 
 implicit none
 
-integer counter,ielx,iely,ielz,i
+integer counter,ielx,iely,ielz,i,k,nnx,nny,nnz
 real(8) hx,hy,hz
 
 call system_clock(counti,count_rate)
@@ -100,16 +100,62 @@ if (pair=='q1p0' .or. pair=='q1q1') then
 end if
 
 if (pair=='q1q1') then ! add bubble node
-   stop 'setup_cartesian3D: xyz'
    do iel=1,nel
       mesh(iel)%xV(9)=mesh(iel)%xV(1)+hx/3
       mesh(iel)%yV(9)=mesh(iel)%yV(1)+hy/3
-      mesh(iel)%zV(9)=mesh(iel)%yV(1)+hy/3
+      mesh(iel)%zV(9)=mesh(iel)%zV(1)+hz/3
       mesh(counter)%iconV(9)=(nelx+1)*(nely+1)*(nelz+1)+2*(iel-1)+1
       mesh(iel)%xV(10)=mesh(iel)%xV(1)+2*hx/3
       mesh(iel)%yV(10)=mesh(iel)%yV(1)+2*hy/3
-      mesh(iel)%zV(10)=mesh(iel)%yV(1)+2*hy/3
-      mesh(counter)%iconV(10)=(nelx+1)*(nely+1)*(nelz+1)+2*(iel-1)+1
+      mesh(iel)%zV(10)=mesh(iel)%zV(1)+2*hz/3
+      mesh(counter)%iconV(10)=(nelx+1)*(nely+1)*(nelz+1)+2*(iel-1)+2
+      !write(888,*) mesh(iel)%xV(9),mesh(iel)%yV(9),mesh(iel)%zV(9)
+   end do
+end if
+
+if (pair=='q2q1') then
+   nnx=2*nelx+1
+   nny=2*nely+1
+   nnz=2*nelz+1
+   counter=0    
+   do ielz=1,nelz    
+      do iely=1,nely    
+         do ielx=1,nelx    
+            counter=counter+1    
+            mesh(counter)%ielx=ielx
+            mesh(counter)%iely=iely
+            mesh(counter)%ielz=ielz
+            mesh(counter)%iconV(1)=(ielx-1)*2+1+(iely-1)*2*nnx                      + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(2)=(ielx-1)*2+2+(iely-1)*2*nnx                      + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(3)=(ielx-1)*2+3+(iely-1)*2*nnx                      + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(4)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx                  + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(5)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx                  + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(6)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx                  + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(7)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx*2                + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(8)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx*2                + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(9)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx*2                + 2*nnx*nny*(ielz-1)
+ 
+            mesh(counter)%iconV(10)=(ielx-1)*2+1+(iely-1)*2*nnx        + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(11)=(ielx-1)*2+2+(iely-1)*2*nnx        + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(12)=(ielx-1)*2+3+(iely-1)*2*nnx        + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(13)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx    + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(14)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx    + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(15)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx    + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(16)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx*2  + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(17)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx*2  + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(18)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx*2  + nnx*nny + 2*nnx*nny*(ielz-1)
+
+            mesh(counter)%iconV(19)=(ielx-1)*2+1+(iely-1)*2*nnx        + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(20)=(ielx-1)*2+2+(iely-1)*2*nnx        + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(21)=(ielx-1)*2+3+(iely-1)*2*nnx        + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(22)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx    + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(23)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx    + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(24)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx    + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(25)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx*2  + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(26)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx*2  + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(27)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx*2  + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+         end do
+      end do
    end do
 end if
 
@@ -143,11 +189,11 @@ end if
 !==========================================================
 ! temperature 
 
-do i=1,ncorners
-   mesh(1:nel)%xT(i)=mesh(1:nel)%xV(i)
-   mesh(1:nel)%yT(i)=mesh(1:nel)%yV(i)
-   mesh(1:nel)%zT(i)=mesh(1:nel)%zV(i)
-   mesh(1:nel)%iconT(i)=mesh(1:nel)%iconV(i)
+do k=1,mT
+   mesh(1:nel)%xT(k)=mesh(1:nel)%xV(k)
+   mesh(1:nel)%yT(k)=mesh(1:nel)%yV(k)
+   mesh(1:nel)%zT(k)=mesh(1:nel)%zV(k)
+   mesh(1:nel)%iconT(k)=mesh(1:nel)%iconV(k)
 end do
 
 !==========================================================
@@ -177,9 +223,13 @@ end do
 if (debug) then
    do iel=1,nel
    print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),mesh(iel)%iconP(1:mP)
+   do k=1,mV
+      write(777,*) mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
    end do
-end if
+   end do
 
+end if
+stop
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)

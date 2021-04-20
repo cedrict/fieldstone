@@ -109,6 +109,30 @@ do iel=1,nel
 end do
 close(123)
 
+open(unit=123,file='OUTPUT/TEST/test_basis_functions_cubic.ascii',action='write')
+do iel=1,nel
+   mesh(iel)%u=mesh(iel)%xV**3
+   mesh(iel)%v=mesh(iel)%yV**3
+   mesh(iel)%w=mesh(iel)%zV**3
+   do iq=1,nqel
+      rq=mesh(iel)%rq(iq)
+      sq=mesh(iel)%sq(iq)
+      tq=mesh(iel)%tq(iq)
+      call NNV(rq,sq,tq,NNNV(1:mV),mV,ndim,pair)
+      uq=sum(NNNV(1:mV)*mesh(iel)%u(1:mV)) 
+      vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV)) 
+      wq=sum(NNNV(1:mV)*mesh(iel)%w(1:mV)) 
+      if (ndim==2) call compute_dNdx_dNdy(rq,sq,dNdx,dNdy,jcob)
+      if (ndim==3) call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNdx,dNdy,dNdz,jcob)
+      exxq=sum(dNdx(1:mV)*mesh(iel)%u(1:mV)) 
+      eyyq=sum(dNdy(1:mV)*mesh(iel)%v(1:mV)) 
+      ezzq=sum(dNdz(1:mV)*mesh(iel)%w(1:mV)) 
+      write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
+                   uq,vq,wq,exxq,eyyq,ezzq
+   end do
+end do
+close(123)
+
 end if
 
 !==============================================================================!

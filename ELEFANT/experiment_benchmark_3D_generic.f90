@@ -19,14 +19,16 @@ Lx=1
 Ly=1
 Lz=1
 
-nelx=14
-nely=14
-nelz=14
+nelx=4
+nely=3
+nelz=2
 
 use_penalty=.true.
 penalty=1000
 
-!debug=.true.
+debug=.true.
+
+pair='q2q1'
 
 !----------------------------------------------------------
 

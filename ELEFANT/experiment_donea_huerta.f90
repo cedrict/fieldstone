@@ -22,7 +22,7 @@ nely=2
 use_penalty=.true.
 penalty=100
 
-pair='q1q1'
+pair='q2q1'
 
 debug=.true.
 

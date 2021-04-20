@@ -15,7 +15,7 @@ use timing
 
 implicit none
 
-integer counter,ielx,iely,i
+integer counter,ielx,iely,i,nnx,nny,k
 real(8) hx,hy
 
 call system_clock(counti,count_rate)
@@ -27,6 +27,39 @@ call system_clock(counti,count_rate)
 !@@ and temperature nodes, the velocity, pressure and temperature connectivity arrays,
 !@@ the coordinates of its center (xc,yc), its integer coordinates (ielx, iely),
 !@@ and its dimensions (hx,hy).
+!@@ \begin{center}
+!@@ \input{tikz/tikz_3x2_q1}
+!@@ \end{center}
+!@@ \begin{verbatim}
+!@@ elt:  1  | iconV  1  2  6   5  iconP  1
+!@@ elt:  2  | iconV  2  3  7   6  iconP  2
+!@@ elt:  3  | iconV  3  4  8   7  iconP  3
+!@@ elt:  4  | iconV  5  6  10  9  iconP  4
+!@@ elt:  5  | iconV  6  7  11  10 iconP  5
+!@@ elt:  6  | iconV  7  8  12  11 iconP  6
+!@@ \end{verbatim}
+!@@ \begin{center}
+!@@ \input{tikz/tikz_3x2_mini}
+!@@ \end{center}
+!@@ \begin{verbatim}
+!@@ elt:  1  | iconV  1  2  6   5   13 iconP  1  2  6   5
+!@@ elt:  2  | iconV  2  3  7   6   14 iconP  2  3  7   6
+!@@ elt:  3  | iconV  3  4  8   7   15 iconP  3  4  8   7
+!@@ elt:  4  | iconV  5  6  10  9   16 iconP  5  6  10  9
+!@@ elt:  5  | iconV  6  7  11  10  17 iconP  6  7  11  10
+!@@ elt:  6  | iconV  7  8  12  11  18 iconP  7  8  12  11
+!@@ \end{verbatim}
+!@@ \begin{center}
+!@@ \input{tikz/tikz_3x2_q2}
+!@@ \end{center}
+!@@ \begin{verbatim}
+!@@ elt:  1  | iconV  1   2   3   8   9   10  15  16  17 iconP           1           2           6           5
+!@@ elt:  2  | iconV  3   4   5   10  11  12  17  18  19 iconP           2           3           7           6
+!@@ elt:  3  | iconV  5   6   7   12  13  14  19  20  21 iconP           3           4           8           7
+!@@ elt:  4  | iconV  15  16  17  22  23  24  29  30  31 iconP           5           6          10           9
+!@@ elt:  5  | iconV  17  18  19  24  25  26  31  32  33 iconP           6           7          11          10
+!@@ elt:  6  | iconV  19  20  21  26  27  28  33  34  35 iconP           7           8          12          11
+!@@ \end{verbatim}
 !==================================================================================================!
 
 if (iproc==0) then
@@ -87,6 +120,55 @@ if (pair=='q1q1') then ! add bubble node
    end do
 end if
 
+if (pair=='q2q1') then
+   nnx=2*nelx+1
+   nny=2*nely+1
+   counter=0    
+   do iely=1,nely    
+      do ielx=1,nelx    
+         counter=counter+1    
+         mesh(counter)%ielx=ielx
+         mesh(counter)%iely=iely
+         mesh(counter)%iconV(1)=(ielx-1)*2+1+(iely-1)*2*nnx
+         mesh(counter)%iconV(2)=(ielx-1)*2+2+(iely-1)*2*nnx
+         mesh(counter)%iconV(3)=(ielx-1)*2+3+(iely-1)*2*nnx
+         mesh(counter)%iconV(4)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx
+         mesh(counter)%iconV(5)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx
+         mesh(counter)%iconV(6)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx
+         mesh(counter)%iconV(7)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx*2
+         mesh(counter)%iconV(8)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx*2
+         mesh(counter)%iconV(9)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx*2
+         mesh(counter)%xV(1)=(ielx-1)*hx
+         mesh(counter)%xV(2)=(ielx-1)*hx+hx/2
+         mesh(counter)%xV(3)=(ielx-1)*hx+hx
+         mesh(counter)%xV(4)=(ielx-1)*hx
+         mesh(counter)%xV(5)=(ielx-1)*hx+hx/2
+         mesh(counter)%xV(6)=(ielx-1)*hx+hx
+         mesh(counter)%xV(7)=(ielx-1)*hx
+         mesh(counter)%xV(8)=(ielx-1)*hx+hx/2
+         mesh(counter)%xV(9)=(ielx-1)*hx+hx
+         mesh(counter)%yV(1)=(iely-1)*hy
+         mesh(counter)%yV(2)=(iely-1)*hy
+         mesh(counter)%yV(3)=(iely-1)*hy
+         mesh(counter)%yV(4)=(iely-1)*hy+hy/2
+         mesh(counter)%yV(5)=(iely-1)*hy+hy/2
+         mesh(counter)%yV(6)=(iely-1)*hy+hy/2
+         mesh(counter)%yV(7)=(iely-1)*hy+hy
+         mesh(counter)%yV(8)=(iely-1)*hy+hy
+         mesh(counter)%yV(9)=(iely-1)*hy+hy
+         mesh(counter)%xc=(ielx-1)*hx+hx/2
+         mesh(counter)%yc=(iely-1)*hy+hy/2
+         mesh(counter)%hx=hx
+         mesh(counter)%hy=hy
+         mesh(counter)%vol=hx*hy
+         if (ielx==1)    mesh(counter)%bnd1=.true.
+         if (ielx==nelx) mesh(counter)%bnd2=.true.
+         if (iely==1)    mesh(counter)%bnd3=.true.
+         if (iely==nely) mesh(counter)%bnd4=.true.
+      end do    
+   end do    
+end if
+
 !==========================================================
 ! pressure 
 
@@ -107,6 +189,27 @@ if (pair=='q1q1') then
       mesh(1:nel)%xP(i)=mesh(1:nel)%xV(i)
       mesh(1:nel)%yP(i)=mesh(1:nel)%yV(i)
       mesh(1:nel)%iconP(i)=mesh(1:nel)%iconV(i)
+   end do
+end if
+
+if (pair=='q2q1') then
+   counter=0    
+   do iely=1,nely    
+      do ielx=1,nelx    
+         counter=counter+1    
+         mesh(counter)%iconP(1)=ielx+(iely-1)*(nelx+1)    
+         mesh(counter)%iconP(2)=ielx+1+(iely-1)*(nelx+1)    
+         mesh(counter)%iconP(3)=ielx+1+iely*(nelx+1)    
+         mesh(counter)%iconP(4)=ielx+iely*(nelx+1)    
+         mesh(counter)%xP(1)=(ielx-1)*hx
+         mesh(counter)%xP(2)=(ielx-1)*hx+hx
+         mesh(counter)%xP(3)=(ielx-1)*hx+hx
+         mesh(counter)%xP(4)=(ielx-1)*hx
+         mesh(counter)%yP(1)=(iely-1)*hy
+         mesh(counter)%yP(2)=(iely-1)*hy
+         mesh(counter)%yP(3)=(iely-1)*hy+hy
+         mesh(counter)%yP(4)=(iely-1)*hy+hy
+      end do
    end do
 end if
 
@@ -146,6 +249,9 @@ end do
 if (debug) then
    do iel=1,nel
    print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),'iconP',mesh(iel)%iconP(1:mP)
+   do k=1,mV
+      write(777,*) mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
+   end do
    end do
 end if
 
