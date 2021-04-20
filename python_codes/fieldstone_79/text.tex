@@ -132,8 +132,8 @@ randomised nodes so no right angles
 
 
 
-%------------------------------
-\subsubsection*{Benchmark \#1} 
+%------------------------------------------------
+\subsubsection*{Experiment \#1 - testing signs} 
 
 We define the simple temperature field 
 \[
@@ -147,9 +147,27 @@ q_y(x,y)=-1
 \]
 I prescribe this temperature on all four sides of the domain. 
 
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_79/results/exp1/temp}
+\includegraphics[width=5cm]{python_codes/fieldstone_79/results/exp1/temp2}
+\end{center}
+
 
 VERIFY: minus sign problem for heat fluxes ?
 
 
 %------------------------------
-\subsubsection*{Benchmark \#2} 
+\subsubsection*{Experiment \#2 - testing symmetry} 
+
+On all four sides of the domain the temperature $T(x,y)=x(L_x-x)+y(L_y-y)$
+is prescribed. There is no analytical solution to this problem (?) but 
+it allows us to test that the solution is symmetric as expected.
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_79/results/exp2/temp}
+\includegraphics[width=5cm]{python_codes/fieldstone_79/results/exp2/temp2}
+\end{center}
+
+
+
+

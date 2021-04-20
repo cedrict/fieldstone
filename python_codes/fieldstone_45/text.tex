@@ -8,9 +8,11 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The domain is a unit square. Only the pure advection equation is solved. The setup 
-is identical to stone 43. $P_1$ triangular elements are used. Crank-Nicolson scheme is used.
- 
+The domain is a unit square. Only the pure advection equation is solved. 
+The setup is identical to Experiment 1 of \stone 43. 
+$P_1$ triangular elements are used. A Crank-Nicolson scheme is used for the time
+discretisation. The mesh is based on splitting square cells. It is either  
+perfectly regular or has some randomness added to it:
 
 \begin{center}
 \includegraphics[width=8.5cm]{python_codes/fieldstone_45/results/mesh_reg}

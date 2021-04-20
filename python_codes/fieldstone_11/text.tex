@@ -1,6 +1,6 @@
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_11/keywords}
 
-The setup is identical to the one of the Stone \ref{f10}.
+The setup is identical to the one of the \stone~10.
 
 The difference lies in how we solve the Stokes equation. This stone does not rely on 
 the penalty method (Section \ref{sec:penalty}) 
@@ -9,17 +9,18 @@ velocity and pressure at the same time (see Section~\ref{sec:mixed}).
 
 In the case when free slip boundary conditions are applied on all 
 6 faces of the cube we know that there is a pressure nullspace, i.e.
-that the pressure can be computed up to a constant. In order to 
+that the pressure can only be computed up to a constant. In order to 
 remove this nullspace one must add an additional constraint 
 We here choose to (somewhat arbitrarily) enforce that the average pressure 
 over the whole domain is zero:
 \[
-<p>=\frac{1}{|\Omega|} \int_\Omega p dV =0 
+<p>=\frac{1}{|\Omega|} \int_\Omega p \; dV =0 
 \]
 Since the code relies of discontinuous zero-th order polynomial shape functions 
 for pressure this condition simply writes (and since $|\Omega|=1$):
 \[
-<p>=\frac{1}{|\Omega|} \int_\Omega p dV =  \sum_{e} \int_{\Omega_e} p dV = \sum_e p_e V_e = h^3 \sum_e p_e =0
+<p>=\frac{1}{|\Omega|} \int_\Omega p\;  dV 
+=  \sum_{e} \int_{\Omega_e} p dV = \sum_e p_e V_e = h^3 \sum_e p_e =0
 \]
 Dividing all by $h^3$, the condition becomes simply:
 \[

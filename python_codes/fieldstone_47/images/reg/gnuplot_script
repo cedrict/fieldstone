@@ -11,9 +11,9 @@ plot[][]\
 'errors6' u (1./sqrt($3)):9 w lp lt 2 pt 4 t 'pressure, nqel=6',\
 'errors7' u (1./sqrt($3)):6 w lp lt 3 pt 5 ps .5  t 'velocity, nqel=7',\
 'errors7' u (1./sqrt($3)):9 w lp lt 3 pt 6 ps .5 t 'pressure, nqel=7',\
-x**2/11. w l lt 4 t 'x^2',\
-x**1.5   w l lt 5 t 'x^{1.5}',\
-x**1/2   w l lt 6 t 'x^{1}'
+x**2/11. w l lt -1 dt 1 t 'x^2',\
+x**1.5   w l lt -1 dt 2 t 'x^{1.5}',\
+x**1/2   w l lt -1 dt 3 t 'x^{1}'
 
 set xlabel 'x'
 set ylabel 'p'

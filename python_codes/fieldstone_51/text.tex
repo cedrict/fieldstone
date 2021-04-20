@@ -4,12 +4,12 @@
 
 The following problem is studied in \cite{jolm17}. The equations that they solve are the thermo-mechanically coupled steady state equations:
 \begin{eqnarray}
--\vec{\nabla}p + \Delta \vec{\upnu} + Ra T \vec{e}_y &=& 0\\
+-\vec{\nabla}p + \Delta \vec{\upnu} + \Ranb T \vec{e}_y &=& 0\\
 \vec\nabla\cdot\vec\upnu &=& 0 \\
 -\Delta T + \vec\upnu\cdot\nabla T &=& 0
 \end{eqnarray}
 In our case the code is based on the MINI element (a.k.a. $P_1^+ \times P_1$), see Section~\ref{pair:mini}
-and we set $Ra=10^6$.
+and we set $\Ranb=10^6$.
 
 The domain is chosen to be the right triangle
 with vertices $(0,0)$, $(1,0)$, and $(0,1)$. 

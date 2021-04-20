@@ -33,6 +33,7 @@ showme
 *.1.poly
 *.1.ele
 *.1.node
+ELEFANT/OLD/
 
 # C extensions
 *.so
