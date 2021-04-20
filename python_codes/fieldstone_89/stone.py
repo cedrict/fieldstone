@@ -4,6 +4,8 @@ import time as timing
 from scipy import special
 
 #------------------------------------------------------------------------------
+# function which computes the area of a triangle
+#------------------------------------------------------------------------------
 
 def compute_area_of_triangle(x1,y1,x2,y2,x3,y3):
     ABx=x2-x1
@@ -15,6 +17,8 @@ def compute_area_of_triangle(x1,y1,x2,y2,x3,y3):
     area=0.5*norm
     return area
 
+#------------------------------------------------------------------------------
+# Q1 shape functions and their derivatives
 #------------------------------------------------------------------------------
 
 def NQ1(r,s):
@@ -38,6 +42,8 @@ def dNQ1ds(r,s):
     dNds_3=+0.25*(1-r)
     return dNds_0,dNds_1,dNds_2,dNds_3
 
+#------------------------------------------------------------------------------
+# Q2 shape functions and their derivatives
 #------------------------------------------------------------------------------
 
 def NNV(rq,sq):
@@ -76,6 +82,10 @@ def dNNVds(rq,sq):
     dNVds_8=     (1.-rq**2) *       (-2.*sq)
     return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8
 
+#------------------------------------------------------------------------------
+# function which takes the coordinates of a point as argument and 
+# returns the velocity, reduced coordinates and strain rate components 
+# at this location
 #------------------------------------------------------------------------------
 
 def interpolate_fields_on_pt(xm,ym):
@@ -131,19 +141,27 @@ every=1 # how often vtu/ascii output is generated
 #3: pure shear
 #4: biaxial extension 
 
-experiment=4
+experiment=1
 
 oldfile=open('old.ascii',"w")
 newfile=open('new.ascii',"w")
 areafile=open('area.ascii',"w")
 
 #################################################################
+# reduced coordinates of nodes
+#  3-------2   3---6---2  
+#  |       |   |       | 
+#  |       |   7   8   5  
+#  |       |   |       |  
+#  0-------1   0---4---1  
 
 rVnodesQ1=[-1,+1,1,-1]
 sVnodesQ1=[-1,-1,1,+1]
 
 rVnodesQ2=[-1,+1,1,-1, 0,1,0,-1,0]
 sVnodesQ2=[-1,-1,1,+1,-1,0,1, 0,0]
+
+#################################################################
 
 nnx=2*nelx+1                  # number of nodes, x direction
 nny=2*nely+1                  # number of nodes, y direction
@@ -217,7 +235,7 @@ for j in range(0,nely):
 print("setup: connectivity: %.3f s" % (timing.time() - start))
 
 #################################################################
-# define velocity field 
+# define velocity field on Eulerian mesh 
 #################################################################
 start = timing.time()
 
@@ -245,7 +263,7 @@ if experiment==4:
        v[i]= yV[i]-Ly/2
 
 #####################################################################
-# compute nodal strainrate
+# compute nodal strainrate exx_n, eyy_n and exy_n
 #####################################################################
 start = timing.time()
     
@@ -307,6 +325,9 @@ print("compute press & sr: %.3f s" % (timing.time() - start))
 #################################################################
 # marker setup. The cloud of markers is called a swarm. 
 # the swarm is composed of swarm_nelx X swarm_nely cells.
+# The swarm also possesses its onwn connectivity array, which 
+# is convenient for plotting purposes and also subsequent 
+# calculations since we'll compute cell values.
 #################################################################
 start = timing.time()
 
@@ -338,6 +359,10 @@ swarm_y0=np.empty(swarm_nmarker,dtype=np.float64)
 swarm_disp_x=np.zeros(swarm_nmarker,dtype=np.float64)  
 swarm_disp_y=np.zeros(swarm_nmarker,dtype=np.float64)  
 
+swarm_dudx=np.zeros(swarm_nmarker,dtype=np.float64) 
+swarm_dudy=np.zeros(swarm_nmarker,dtype=np.float64) 
+swarm_dvdx=np.zeros(swarm_nmarker,dtype=np.float64) 
+swarm_dvdy=np.zeros(swarm_nmarker,dtype=np.float64) 
 
 counter = 0
 for j in range(0, swarm_nny):
@@ -382,6 +407,8 @@ print("markers setup: %.3f s" % (timing.time() - start))
 
 #################################################################
 # marker paint
+# layers or stripes are painted on the swarm to make its 
+# deformation clearly visible.
 #################################################################
 start = timing.time()
 
@@ -431,6 +458,9 @@ for istep in range(0,nstep):
     print("istep= ", istep)
     print("-----------------------------")
 
+    #####################################################################
+    # timestep value computed by means of simple CFL condition 
+
     dt=CFL_nb*(Lx/nelx)/np.max(np.sqrt(u**2+v**2))
 
     print('dt=',dt)
@@ -445,7 +475,7 @@ for istep in range(0,nstep):
 
     for im in range(0,swarm_nmarker):
            if swarm_active[im]:
-              swarm_u[im],swarm_v[im],rm,sm,iel,exx_m,eyy_m,exy_m=\
+              swarm_u[im],swarm_v[im],rm,sm,iel,swarm_exx[im],swarm_eyy[im],swarm_exy[im]=\
                     interpolate_fields_on_pt(swarm_x[im],swarm_y[im])
               swarm_x[im]+=swarm_u[im]*dt
               swarm_y[im]+=swarm_v[im]*dt
@@ -454,6 +484,7 @@ for istep in range(0,nstep):
            # end if active
     # end for im
 
+    # update total displacement
     swarm_disp_x[:]=swarm_x[:]-swarm_x0[:]
     swarm_disp_y[:]=swarm_y[:]-swarm_y0[:]
 
@@ -463,10 +494,7 @@ for istep in range(0,nstep):
     print("advect markers: %.3f s" % (timing.time() - start))
 
     #####################################################################
-    # old method 
-    # update strain inside swarm cells
-    # If a cell has an inactive marker, it is also labelled inactive, 
-    # and its strain is set to zero.
+    # If a cell has an inactive marker, it is also labelled inactive 
     #####################################################################
 
     for iel in range(0,swarm_nel):
@@ -480,6 +508,12 @@ for istep in range(0,nstep):
            swarm_active_cell[iel]=False
         #end if
     #end for
+
+    #####################################################################
+    # old method of updating strain inside swarm cells by simple time int.
+    # Coordinates of cell centra are updated.
+    # If cell is inactive its strain is set to zero.
+    #####################################################################
 
     for iel in range(0,swarm_nel):
         if swarm_active_cell[iel]:
@@ -502,8 +536,7 @@ for istep in range(0,nstep):
     print("     -> old: swarm_exy_cell (m,M) %.5e %.5e " %(np.min(swarm_exy_cell),np.max(swarm_exy_cell)))
 
     #####################################################################
-    # old method
-    # compute eigen values of integrated strain tensor
+    # old method: compute eigen values of integrated strain tensor
     # later well lambda 1,2 to be compared with these
     # We use here arctan2, which returns angles in rads in [-pi,pi] range
     #####################################################################
@@ -513,11 +546,14 @@ for istep in range(0,nstep):
     
     for iel in range(0,swarm_nel):
         if swarm_active_cell[iel]:
-            swarm_princp_e1[iel] = 0.5*(swarm_exx_cell[iel]+swarm_eyy_cell[iel]) + \
-                   np.sqrt(swarm_exy_cell[iel]**2 + 0.25*(swarm_exx_cell[iel]-swarm_eyy_cell[iel])**2) 
-            swarm_princp_e2[iel] = 0.5*(swarm_exx_cell[iel]+swarm_eyy_cell[iel]) - \
-                   np.sqrt(swarm_exy_cell[iel]**2 + 0.25*(swarm_exx_cell[iel]-swarm_eyy_cell[iel])**2)
-
+            temp1=0.5*(swarm_exx_cell[iel]+swarm_eyy_cell[iel]) 
+            temp2=np.sqrt(swarm_exy_cell[iel]**2 + 0.25*(swarm_exx_cell[iel]-swarm_eyy_cell[iel])**2) 
+            swarm_princp_e1[iel] = temp1+temp2 
+            swarm_princp_e2[iel] = temp1-temp2 
+            #swarm_princp_e1[iel] = 0.5*(swarm_exx_cell[iel]+swarm_eyy_cell[iel]) + \
+            #       np.sqrt(swarm_exy_cell[iel]**2 + 0.25*(swarm_exx_cell[iel]-swarm_eyy_cell[iel])**2) 
+            #swarm_princp_e2[iel] = 0.5*(swarm_exx_cell[iel]+swarm_eyy_cell[iel]) - \
+            #       np.sqrt(swarm_exy_cell[iel]**2 + 0.25*(swarm_exx_cell[iel]-swarm_eyy_cell[iel])**2)
             swarm_old_angle[iel]=np.arctan2(2*swarm_exy_cell[iel],\
                                  (swarm_exx_cell[iel]-swarm_eyy_cell[iel]))/2. /np.pi*180
     
@@ -546,10 +582,10 @@ for istep in range(0,nstep):
     # https://www.continuummechanics.org/deformationgradient.html
     #####################################################################
 
-    swarm_Fxx=np.zeros(swarm_nel,dtype=np.float64)  
-    swarm_Fxy=np.zeros(swarm_nel,dtype=np.float64)  
-    swarm_Fyx=np.zeros(swarm_nel,dtype=np.float64)  
-    swarm_Fyy=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_Fxx_cell=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_Fxy_cell=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_Fyx_cell=np.zeros(swarm_nel,dtype=np.float64)  
+    swarm_Fyy_cell=np.zeros(swarm_nel,dtype=np.float64)  
 
     swarm_graddisp_xx=np.zeros(swarm_nmarker,dtype=np.float64)  
     swarm_graddisp_xy=np.zeros(swarm_nmarker,dtype=np.float64)  
@@ -573,14 +609,12 @@ for istep in range(0,nstep):
                    jcb[1,0]+=dNNNVds[k]*swarm_x0[swarm_icon[k,iel]]
                    jcb[1,1]+=dNNNVds[k]*swarm_y0[swarm_icon[k,iel]]
                jcbi=np.linalg.inv(jcb)
-
                det=jcb[0,0]*jcb[1,1]-jcb[0,1]*jcb[1,0]
                #print(4*det, (swarm_x[swarm_icon[1,iel]]-swarm_x[swarm_icon[0,iel]])*\
                #             (swarm_y[swarm_icon[2,iel]]-swarm_y[swarm_icon[0,iel]]))
                #print( jcb[1,1]/det, -jcb[0,1]/det)
                #print(-jcb[1,0]/det, jcb[0,0]/det)
                #print(jcbi)
-
 
                for k in range(0,4):
                    dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
@@ -608,10 +642,10 @@ for istep in range(0,nstep):
            swarm_graddisp_yx[im]=0
            swarm_graddisp_yy[im]=0
 
-    print("     -> xx (m,M) %.5e %.5e " %(np.min(swarm_graddisp_xx),np.max(swarm_graddisp_xx)))
-    print("     -> xy (m,M) %.5e %.5e " %(np.min(swarm_graddisp_xy),np.max(swarm_graddisp_xy)))
-    print("     -> yx (m,M) %.5e %.5e " %(np.min(swarm_graddisp_yx),np.max(swarm_graddisp_yx)))
-    print("     -> yy (m,M) %.5e %.5e " %(np.min(swarm_graddisp_yy),np.max(swarm_graddisp_yy)))
+    print("     -> grad disp xx (m,M) %.5e %.5e " %(np.min(swarm_graddisp_xx),np.max(swarm_graddisp_xx)))
+    print("     -> grad disp xy (m,M) %.5e %.5e " %(np.min(swarm_graddisp_xy),np.max(swarm_graddisp_xy)))
+    print("     -> grad disp yx (m,M) %.5e %.5e " %(np.min(swarm_graddisp_yx),np.max(swarm_graddisp_yx)))
+    print("     -> grad disp yy (m,M) %.5e %.5e " %(np.min(swarm_graddisp_yy),np.max(swarm_graddisp_yy)))
 
     for iel in range(0,swarm_nel):
         if swarm_active_cell[iel]:
@@ -619,27 +653,26 @@ for istep in range(0,nstep):
            sq=0
            NNNV[0:4]=NQ1(rq,sq)
            for k in range(0,4):
-               swarm_Fxx[iel]+=NNNV[k]*swarm_graddisp_xx[swarm_icon[k,iel]]
-               swarm_Fxy[iel]+=NNNV[k]*swarm_graddisp_yx[swarm_icon[k,iel]]
-               swarm_Fyx[iel]+=NNNV[k]*swarm_graddisp_xy[swarm_icon[k,iel]]
-               swarm_Fyy[iel]+=NNNV[k]*swarm_graddisp_yy[swarm_icon[k,iel]]
-           swarm_Fxx[iel]+=1
-           swarm_Fyy[iel]+=1
+               swarm_Fxx_cell[iel]+=NNNV[k]*swarm_graddisp_xx[swarm_icon[k,iel]]
+               swarm_Fxy_cell[iel]+=NNNV[k]*swarm_graddisp_yx[swarm_icon[k,iel]]
+               swarm_Fyx_cell[iel]+=NNNV[k]*swarm_graddisp_xy[swarm_icon[k,iel]]
+               swarm_Fyy_cell[iel]+=NNNV[k]*swarm_graddisp_yy[swarm_icon[k,iel]]
+           swarm_Fxx_cell[iel]+=1
+           swarm_Fyy_cell[iel]+=1
         #end if
     #end for
 
-    print("     -> Fxx (m,M) %.5e %.5e " %(np.min(swarm_Fxx),np.max(swarm_Fxx)))
-    print("     -> Fxy (m,M) %.5e %.5e " %(np.min(swarm_Fxy),np.max(swarm_Fxy)))
-    print("     -> Fyx (m,M) %.5e %.5e " %(np.min(swarm_Fyx),np.max(swarm_Fyx)))
-    print("     -> Fyy (m,M) %.5e %.5e " %(np.min(swarm_Fyy),np.max(swarm_Fyy)))
+    print("     -> Fxx (m,M) %.5e %.5e " %(np.min(swarm_Fxx_cell),np.max(swarm_Fxx_cell)))
+    print("     -> Fxy (m,M) %.5e %.5e " %(np.min(swarm_Fxy_cell),np.max(swarm_Fxy_cell)))
+    print("     -> Fyx (m,M) %.5e %.5e " %(np.min(swarm_Fyx_cell),np.max(swarm_Fyx_cell)))
+    print("     -> Fyy (m,M) %.5e %.5e " %(np.min(swarm_Fyy_cell),np.max(swarm_Fyy_cell)))
 
-    print('hx,hy=',swarm_hx,swarm_hy)
-    print(swarm_Fxx[target_cell],swarm_Fxy[target_cell])
-    print(swarm_Fyx[target_cell],swarm_Fyy[target_cell])
-    print('x=',swarm_x[swarm_icon[:,target_cell]])
-    print('y=',swarm_y[swarm_icon[:,target_cell]])
-    print((swarm_y[swarm_icon[2,target_cell]]-swarm_y[swarm_icon[1,target_cell]]) / swarm_hy)
-
+    #print('hx,hy=',swarm_hx,swarm_hy)
+    #print(swarm_Fxx_cell[target_cell],swarm_Fxy_cell[target_cell])
+    #print(swarm_Fyx_cell[target_cell],swarm_Fyy_cell[target_cell])
+    #print('x=',swarm_x[swarm_icon[:,target_cell]])
+    #print('y=',swarm_y[swarm_icon[:,target_cell]])
+    #print((swarm_y[swarm_icon[2,target_cell]]-swarm_y[swarm_icon[1,target_cell]]) / swarm_hy)
     #exit()
 
     #####################################################################
@@ -695,9 +728,9 @@ for istep in range(0,nstep):
     swarm_Vyx=np.zeros(swarm_nel,dtype=np.float64)  
     swarm_Vyy=np.zeros(swarm_nel,dtype=np.float64)  
     
-    swarm_lambda1=np.zeros(swarm_nel,dtype=np.float64) # eigenvalues of V
-    swarm_lambda2=np.zeros(swarm_nel,dtype=np.float64)
-    swarm_lambda12=np.zeros(swarm_nel,dtype=np.float64)
+    swarm_lambda1_cell=np.zeros(swarm_nel,dtype=np.float64) # eigenvalues of V
+    swarm_lambda2_cell=np.zeros(swarm_nel,dtype=np.float64)
+    swarm_lambda12_cell=np.zeros(swarm_nel,dtype=np.float64)
 
     Re=np.zeros((2,2),dtype=np.float64) # cell rotation tensor 
     Ve=np.zeros((2,2),dtype=np.float64) # cell stretch tensor 
@@ -706,17 +739,17 @@ for istep in range(0,nstep):
     for iel in range(0,swarm_nel):
         if swarm_active_cell[iel]:
             # element deformation gradient
-            Fe[0,0]=swarm_Fxx[iel]
-            Fe[0,1]=swarm_Fxy[iel]
-            Fe[1,0]=swarm_Fyx[iel]
-            Fe[1,1]=swarm_Fyy[iel]
+            Fe[0,0]=swarm_Fxx_cell[iel]
+            Fe[0,1]=swarm_Fxy_cell[iel]
+            Fe[1,0]=swarm_Fyx_cell[iel]
+            Fe[1,1]=swarm_Fyy_cell[iel]
             
             Ftransp=np.transpose(Fe)
+
             # step 1 Cauchy-Green deformation tensor
             C=np.matmul(Ftransp,Fe)
             
             # step 2 find eigenvalues of C
-
             mu1 = 0.5 * (C[0,0] + C[1,1] + np.sqrt(4*C[0,1]*C[1,0] + (C[0,0] - C[1,1])**2) )
             mu2 = 0.5 * (C[0,0] + C[1,1] - np.sqrt(4*C[0,1]*C[1,0] + (C[0,0] - C[1,1])**2) )
 
@@ -752,9 +785,9 @@ for istep in range(0,nstep):
             swarm_Vyy[iel]=Ve[1,1]
             
             # eigenvalues of V, which are the square roots of those of C
-            swarm_lambda1[iel]=np.sqrt(mu1)
-            swarm_lambda2[iel]=np.sqrt(mu2)
-            swarm_lambda12[iel]=swarm_lambda1[iel]*swarm_lambda2[iel]
+            swarm_lambda1_cell[iel]=np.sqrt(mu1)
+            swarm_lambda2_cell[iel]=np.sqrt(mu2)
+            swarm_lambda12_cell[iel]=swarm_lambda1_cell[iel]*swarm_lambda2_cell[iel]
 
             swarm_new_angle[iel]=np.arctan2(2*swarm_Vxy[iel],\
                                             (swarm_Vxx[iel]-swarm_Vyy[iel]))/2. /np.pi*180
@@ -764,6 +797,13 @@ for istep in range(0,nstep):
 
     #####################################################################
     # write out data for target cell
+    # 3-----2
+    # |    /|
+    # |   / |
+    # |  /  |
+    # | /   |
+    # |/    |
+    # 0-----1
     #####################################################################
 
     area_triangle1=compute_area_of_triangle(swarm_x[swarm_icon[0,target_cell]],\
@@ -786,8 +826,8 @@ for istep in range(0,nstep):
 
     newfile.write("%d %e %e %e %e %e %e %e %e %e %e %e %e\n" %(istep,\
                                           swarm_new_angle[target_cell],\
-                                          swarm_lambda1[target_cell]-1,\
-                                          swarm_lambda2[target_cell]-1,\
+                                          swarm_lambda1_cell[target_cell]-1,\
+                                          swarm_lambda2_cell[target_cell]-1,\
                                           swarm_Rxx[target_cell],\
                                           swarm_Rxy[target_cell],\
                                           swarm_Ryx[target_cell],\
@@ -796,13 +836,49 @@ for istep in range(0,nstep):
                                           swarm_Vxy[target_cell],\
                                           swarm_Vyx[target_cell],\
                                           swarm_Vyy[target_cell],\
-                                          swarm_lambda12[target_cell]))
+                                          swarm_lambda12_cell[target_cell]))
     newfile.flush()
 
     print("     -> swarm_Rxx[target_cell] %.8e " % swarm_Rxx[target_cell] )
     print("     -> swarm_Rxy[target_cell] %.8e " % swarm_Rxy[target_cell] )
     print("     -> swarm_Ryx[target_cell] %.8e " % swarm_Ryx[target_cell] )
     print("     -> swarm_Ryy[target_cell] %.8e " % swarm_Ryy[target_cell] )
+
+
+
+
+    #####################################################################
+    swarm_lambda1=np.zeros(swarm_nmarker,dtype=np.float64) # eigenvalues of V
+    swarm_lambda2=np.zeros(swarm_nmarker,dtype=np.float64)
+
+    for im in range(0,swarm_nmarker):
+        if swarm_active[im]:
+
+           swarm_Fxx[im]+=dt*
+           swarm_Fyy[im]+=dt*
+           swarm_Fxy[im]+=dt*
+
+           Fe[0,0]=swarm_Fxx[im]
+           Fe[0,1]=swarm_Fxy[im]
+           Fe[1,0]=swarm_Fyx[im]
+           Fe[1,1]=swarm_Fyy[im]
+            
+           Ftransp=np.transpose(Fe)
+
+           # step 1 Cauchy-Green deformation tensor
+           C=np.matmul(Ftransp,Fe)
+            
+           # step 2 find eigenvalues of C
+           mu1 = 0.5 * (C[0,0] + C[1,1] + np.sqrt(4*C[0,1]*C[1,0] + (C[0,0] - C[1,1])**2) )
+           mu2 = 0.5 * (C[0,0] + C[1,1] - np.sqrt(4*C[0,1]*C[1,0] + (C[0,0] - C[1,1])**2) )
+
+           swarm_lambda1[im]=np.sqrt(mu1)
+           swarm_lambda2[im]=np.sqrt(mu2)
+
+
+
+
+
 
     #####################################################################
     # export swarm to vtu 
@@ -871,7 +947,6 @@ for istep in range(0,nstep):
                                                 np.sin(swarm_old_angle[iel]/180*np.pi+np.pi/2), 0.)   )
        vtufile.write("</DataArray>\n")
 
-       
        #----------new----------
        vtufile.write("<DataArray type='Float32' Name='new: exx' Format='ascii'> \n")
        for iel in range (0,swarm_nel):
@@ -914,19 +989,19 @@ for istep in range(0,nstep):
 
        vtufile.write("<DataArray type='Float32' Name='Fxx' Format='ascii'> \n")
        for iel in range (0,swarm_nel):
-           vtufile.write("%e\n" % swarm_Fxx[iel])
+           vtufile.write("%e\n" % swarm_Fxx_cell[iel])
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Float32' Name='Fxy' Format='ascii'> \n")
        for iel in range (0,swarm_nel):
-           vtufile.write("%e\n" % swarm_Fxy[iel])
+           vtufile.write("%e\n" % swarm_Fxy_cell[iel])
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Float32' Name='Fyx' Format='ascii'> \n")
        for iel in range (0,swarm_nel):
-           vtufile.write("%e\n" % swarm_Fyx[iel])
+           vtufile.write("%e\n" % swarm_Fyx_cell[iel])
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Float32' Name='Fyy' Format='ascii'> \n")
        for iel in range (0,swarm_nel):
-           vtufile.write("%e\n" % swarm_Fyy[iel])
+           vtufile.write("%e\n" % swarm_Fyy_cell[iel])
        vtufile.write("</DataArray>\n")
 
        vtufile.write("<DataArray type='Float32' Name='Rxx' Format='ascii'> \n")
@@ -965,17 +1040,16 @@ for istep in range(0,nstep):
 
        vtufile.write("<DataArray type='Float32' Name='lambda1' Format='ascii'> \n")
        for iel in range (0,swarm_nel):
-           vtufile.write("%e\n" % swarm_lambda1[iel])
+           vtufile.write("%e\n" % swarm_lambda1_cell[iel])
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Float32' Name='lambda2' Format='ascii'> \n")
        for iel in range (0,swarm_nel):
-           vtufile.write("%e\n" % swarm_lambda2[iel])
+           vtufile.write("%e\n" % swarm_lambda2_cell[iel])
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Float32' Name='lambda1*lambda2' Format='ascii'> \n")
        for iel in range (0,swarm_nel):
-           vtufile.write("%e\n" % (swarm_lambda1[iel]*swarm_lambda2[iel]))
+           vtufile.write("%e\n" % (swarm_lambda1_cell[iel]*swarm_lambda2_cell[iel]))
        vtufile.write("</DataArray>\n")
-
 
        vtufile.write("</CellData>\n")
        #####
@@ -1011,6 +1085,14 @@ for istep in range(0,nstep):
            vtufile.write("%10e  \n" % (swarm_graddisp_yy[i]))
        vtufile.write("</DataArray>\n")
 
+       vtufile.write("<DataArray type='Float32' Name='lambda1' Format='ascii'> \n")
+       for i in range(0,swarm_nmarker):
+           vtufile.write("%10e  \n" % (swarm_lambda1[i]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='lambda2' Format='ascii'> \n")
+       for i in range(0,swarm_nmarker):
+           vtufile.write("%10e  \n" % (swarm_lambda2[i]))
+       vtufile.write("</DataArray>\n")
 
 
        vtufile.write("</PointData>\n")
@@ -1043,8 +1125,6 @@ for istep in range(0,nstep):
        #np.savetxt('markers_{:04d}.ascii'.format(istep),np.array([swarm_x,swarm_y]).T)
 
        print("export to vtu file: %.3f s" % (timing.time() - start))
-
-
 
 #end timestepping istep
 

@@ -1,0 +1,52 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize 0.3
+set xlabel 'istep'
+set key outside
+
+set ylabel 'principal angle {/Symbol Q} in target cell'
+set output 'principal_angle.pdf'
+plot[][]\
+'old.ascii' w lp  t 'old',\
+'new.ascii' w lp  t 'new',\
+
+set ylabel 'area of target cell'
+set output 'area.pdf'
+plot[][:]\
+'area.ascii' w lp t 'geometric',\
+'new.ascii' u 1:13 w lp  t '{/Symbol l}_1*{/Symbol l}_2',\
+'old.ascii' u 1:5 w lp  t '({/Symbol e}_1+1)*({/Symbol e}_2+1)'
+ 
+
+set ylabel 'principal strains of target cell'
+set output 'principal_strains.pdf'
+plot[][]\
+'old.ascii' u 1:3 w lp  t 'old: e_1',\
+'old.ascii' u 1:4 w lp  t 'old: e_2',\
+'new.ascii' u 1:3 w lp  t 'new: {/Symbol e}_1={/Symbol l}_1-1',\
+'new.ascii' u 1:4 w lp  t 'new: {/Symbol e}_2={/Symbol l}_2-1',\
+-1 lt -1
+
+set ylabel 'R tensor components of target cell'
+set output 'R.pdf'
+plot[][]\
+'new.ascii' u 1:5 w lp  t 'new: Rxx',\
+'new.ascii' u 1:6 w lp  t 'new: Rxy',\
+'new.ascii' u 1:7 w lp  t 'new: Ryx',\
+'new.ascii' u 1:8 w lp  t 'new: Ryy',\
+
+set ylabel 'V tensor components of target cell'
+set output 'V.pdf'
+plot[][]\
+'new.ascii' u 1:9  w lp  t 'new: Vxx',\
+'new.ascii' u 1:10 w lp  t 'new: Vxy',\
+'new.ascii' u 1:11 w lp  t 'new: Vyx',\
+'new.ascii' u 1:12 w lp  t 'new: Vyy',\
+
+set ylabel 'maximum possible shear'
+set output 'maximum_shear.pdf
+plot[][]\
+'old.ascii' u 1:($3-$4) w lp  t 'old: e_1-e_2',\
+'new.ascii' u 1:($3-$4) w lp  t 'new: {/Symbol l}_1-{/Symbol l}_2',\
+
+

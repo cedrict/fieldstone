@@ -6,7 +6,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-{\sl This stone was developed in collaboration wth Taco Broerse}. \index{contributors}{T. Broerse}
+{\sl This stone was developed in collaboration with Taco Broerse}. \index{contributors}{T. Broerse}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -15,10 +15,10 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 What follows (and more particularly the concrete examples of deformations) 
 is borrowed from the excellent site \url{https://www.continuummechanics.org/}.
 
-%\begin{multicols}{2}
-
 Let us start by defining the deformed vector $\vec{x}$ and the reference vector $\vec{X}$.
 We assume that deformation occurs and that it transforms $\vec{X}$ into $\vec{x}$.
+
+
 
 %-----------------------------------------------------
 \subsection*{Some simple examples}
@@ -34,7 +34,7 @@ y &=& Y + 1.5
 \begin{tikzpicture}
 \draw[fill=gray!11,gray!11](0,0) rectangle (5.5,4.5);
 \draw[step=1cm,gray,very thin] (0,0) grid (5.5,4.5); %background grid
-\draw[thick,dashed] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;
+\draw[ultra thick,dashed,teal] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;
 \draw[thin,->]   (1,1) -- (5,1) ;
 \draw[thin,->]   (1,1) -- (1,4) ;
 \draw[fill=gray!33,thick] (3.5,2.5) -- (5.5,2.5) -- (5.5,4.5) -- (3.5,4.5) -- cycle; 
@@ -74,7 +74,7 @@ X \\ Y
 \end{array}
 \right)
 \]
-We will see the significance of the matrix ${\bm F}$ is what follows.
+We will see the significance of the matrix ${\bm F}$ in what follows.
 
 \paragraph{Rigid body rotation} For instance:
 \begin{eqnarray}
@@ -87,7 +87,7 @@ y &=& X \sin \theta + Y \cos \theta
 \begin{tikzpicture}
 \draw[fill=gray!11,gray!11](0,0) rectangle (5.5,4.5);
 \draw[step=1cm,gray,very thin] (0,0) grid (5.5,4.5); 
-\draw[thick,dashed] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;
+\draw[ultra thick,dashed,teal] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;
 \draw[fill=gray!33,thick] (1,1) -- (2.732,2) -- (1.732,3.732) -- (0,2.732) -- cycle; 
 \draw[thin,->]   (1,1) -- (5,1) ;
 \draw[thin,->]   (1,1) -- (1,4) ;
@@ -141,7 +141,7 @@ y &=1.5 Y
 \draw[fill=gray!11,gray!11](0,0) rectangle (5.5,4.5);
 \draw[step=1cm,gray,very thin] (0,0) grid (5.5,4.5); 
 \draw[fill=gray!33,thick] (1,1) -- (5,1) -- (5,4) -- (1,4) -- cycle;
-\draw[thick,dashed] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;
+\draw[ultra thick,dashed,teal] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;
 \draw[thin,->]   (1,1) -- (5.5,1) ;
 \draw[thin,->]   (1,1) -- (1,4.5) ;
 \node[] at (4.8,0.7) {$x$};
@@ -178,8 +178,8 @@ y &=\frac12 X + Y
 \begin{tikzpicture}
 \draw[fill=gray!11,gray!11](0,0) rectangle (5.5,4.5);
 \draw[step=1cm,gray,very thin] (0,0) grid (5.5,4.5); 
-\draw[fill=gray!33,thick,dashed] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;
-\draw[thick] (1,1) -- (3,2) -- (3,4) -- (1,3) -- cycle;
+\draw[fill=gray!33,thick] (1,1) -- (3,2) -- (3,4) -- (1,3) -- cycle;
+\draw[ultra thick,dashed,teal] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;
 \draw[thin,->]   (1,1) -- (5.5,1) ;
 \draw[thin,->]   (1,1) -- (1,4.5) ;
 \node[] at (4.8,0.7) {$x$};
@@ -217,8 +217,8 @@ y &=\frac12 X + Y
 \begin{tikzpicture}
 \draw[fill=gray!11,gray!11](0,0) rectangle (5.5,4.5);
 \draw[step=1cm,gray,very thin] (0,0) grid (5.5,4.5); 
-\draw[fill=gray!33,thick,dashed] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;
-\draw[thick] (1,1) -- (3,2) -- (4,4) -- (2,3) -- cycle;
+\draw[fill=gray!33,thick] (1,1) -- (3,2) -- (4,4) -- (2,3) -- cycle;
+\draw[ultra thick,dashed,teal] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;
 \draw[thin,->]   (1,1) -- (5.5,1) ;
 \draw[thin,->]   (1,1) -- (1,4.5) ;
 \node[] at (4.8,0.7) {$x$};
@@ -231,7 +231,10 @@ the area is not conserved since the area of the undeformed square is 4,
 while the area of the parallelogram is 3
 (Split it in two triangles. The area of the triangle inside the square is 4-1-1-0.5).
 
-Let us finally consider this other shear example:
+So while the expression for ${\bm F}$ above may superficially resemble 
+pure shear (irrotational, area preserving shear), it is not. 
+To describe pure shear with ${\bm F}$, the diagonal terms are no longer 1. 
+The following shear example does describe pure shear:
 \begin{equation}
 \begin{cases} 
 x &=1.25X + 0.75 Y \\ 
@@ -261,8 +264,8 @@ y &=0.75 X + 1.25Y
 \begin{tikzpicture}
 \draw[fill=gray!11,gray!11](0,0) rectangle (5.5,5.5);
 \draw[step=1cm,gray,very thin] (0,0) grid (5.5,5.5); 
-\draw[fill=gray!33,thick,dashed] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;
-\draw[thick] (1,1) -- (3.5,2.5) -- (5,5) -- (2.5,3.5) -- cycle;
+\draw[fill=gray!33,thick] (1,1) -- (3.5,2.5) -- (5,5) -- (2.5,3.5) -- cycle;
+\draw[ultra thick,dashed,teal] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;
 \draw[thin,->]   (1,1) -- (5.5,1) ;
 \draw[thin,->]   (1,1) -- (1,4.5) ;
 \node[] at (4.8,0.7) {$x$};
@@ -277,46 +280,46 @@ The area of the resulting parallelogram is still 1, so this deformation conserve
 
 
 %......................................................................
-\subsection*{Combination of deformations}
+%\subsection*{Combination of deformations}
 
-So far we have then seen two types of deformation: stretching and shear, and these
-can also be accompanied by rotation. 
-It then makes sense to think of a deformed body as the result of successive 
-shearing, stretching and rotation. 
-
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_89/images/broerse}\\
-{\captionfont Taken from Broerse et al, subm.
-Any homogeneous deformation ${\bm F}$ can be written as a succession of a simple shear
-parallel to x called ${\bm \Gamma}$; an extension in x and an extension in y direction called
-${\bm \Lambda}$; followed by an orthogonal rotation ${\bm Q}$. 
-Here, the change between initial line vectors $d\vec{X}$ (in this case
-the side vectors of a square) to final initial line vectors $d\vec{x}$ (the deformed quadrilaterals) is
-determined by: $d\vec{x} = {\bm F} \cdot d\vec{X}$. 
-First row, incremental deformation, second row, cumulative deformation.
-}
-\end{center}
+%So far we have then seen two types of deformation: stretching and shear, and these
+%can also be accompanied by rotation. 
+%It then makes sense to think of a deformed body as the result of successive 
+%shearing, stretching and rotation. 
 
 
-Thinking of ${\bm F}$ as the matrix which transforms $\vec{X}$ into $\vec{x}$
-it then makes sense to decompose it into the product of three matrices, 
-one accounting for rotation ${\bm R}$ (or ${\bm Q}$ as in the example above), 
-one for stretching ${\bm \Lambda}$ and
-one for shearing ${\bm \Gamma}$.
-However, there is a caveat in this approach: it is easy to show that 
-these transformations do not necessarily commute, i.e. the order in which 
-these transformations are succesively applied matters.\footnote{is this true? verify!}  
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_89/images/broerse}\\
+%{\captionfont Taken from Broerse et al, subm.
+%Any homogeneous deformation ${\bm F}$ can be written as a succession of a simple shear
+%parallel to x called ${\bm \Gamma}$; an extension in x and an extension in y direction called
+%${\bm \Lambda}$; followed by an orthogonal rotation ${\bm Q}$. 
+%Here, the change between initial line vectors $d\vec{X}$ (in this case
+%the side vectors of a square) to final initial line vectors $d\vec{x}$ (the deformed quadrilaterals) is
+%determined by: $d\vec{x} = {\bm F} \cdot d\vec{X}$. 
+%First row, incremental deformation, second row, cumulative deformation.
+%}
+%\end{center}
 
-We then write
-\[
-{\bm F} = {\bm R} \cdot {\bm \Lambda} \cdot {\bm \Gamma}
-\] 
+
+%Thinking of ${\bm F}$ as the matrix which transforms $\vec{X}$ into $\vec{x}$
+%it then makes sense to decompose it into the product of three matrices, 
+%one accounting for rotation ${\bm R}$ (or ${\bm Q}$ as in the example above), 
+%one for stretching ${\bm \Lambda}$ and
+%one for shearing ${\bm \Gamma}$.
+%However, there is a caveat in this approach: it is easy to show that 
+%these transformations do not necessarily commute, i.e. the order in which 
+%these transformations are succesively applied matters.
+
+%We then write
+%\[
+%{\bm F} = {\bm R} \cdot {\bm \Lambda} \cdot {\bm \Gamma}
+%\] 
 
 %......................................................................
 \subsection*{Polar decomposition of ${\bm F}$}
 
-A polar decomposition separates ${\bm F}$ into a rotation (or reflection) and a scaling of 
+A polar decomposition separates ${\bm F}$ into a rotation and a stretching of 
 the space along a set of orthogonal axes\footnote{\url{https://en.wikipedia.org/wiki/Polar_decomposition}}. 
 \index{general}{Polar Decomposition}
 
@@ -355,7 +358,8 @@ It can be decomposed as
 \end{array}
 \right)
 \]
-where ${\bm U}$ is the right stretch tensor, or as \index{general}{Right stretch Tensor} 
+where ${\bm R}$ is the aforementioned rotation,  
+${\bm U}$ is the right stretch tensor, or as \index{general}{Right stretch Tensor} 
 \[
 {\bm F} = {\bm V} \cdot {\bm R}
 =
@@ -383,11 +387,11 @@ easily be proven that
 \qquad
 {\bm U} = {\bm R}^T\cdot{\bm V}\cdot {\bm R}
 \]
-Note that  $V$ and $U$ are symmetric, and have positive eigen values, and the 
-eigen values correspond to stretches in $[0,\infty[$.
+Note that  ${\bm V}$ and ${\bm U}$ are symmetric, and have positive eigenvalues, and the 
+eigenvalues correspond to stretches in $[0,\infty]$.
 These stretches then form the axes of a strain ellipse. 
-$U$ and $V$ have furthermore the same eigen values, but their eigen vectors are 
-rotated with regards to each other since ${\bm U} = {\bm R}’ \cdot {\bm V} \cdot {\bm R}$ (which is basically a coordinate rotation).
+$U$ and $V$ have furthermore the same eigenvalues, but their eigenvectors are 
+rotated with regards to each other since ${\bm U} = {\bm R}^T \cdot {\bm V} \cdot {\bm R}$ (which is basically a coordinate rotation).
 
 
 
@@ -818,11 +822,11 @@ the 'old' method actually can be (spoiler alert: up to few tens of \%).
 
 \newpage
 %------------------------------------------------------------------------
-\subsection*{Polar decomposition a la Hoger \& Carlon (1984)}
+\subsection*{Polar decomposition a la Hoger \& Carlson (1984)}
 
 The polar decomposition of ${\bm F}$ is not trivial, but an 
 application of the Cayley-Hamilton theorem allows for this 
-as explained in Hoger \& Carlon (1984) \cite{hoca84}.
+as explained in Hoger \& Carlson (1984) \cite{hoca84}.
 
 The deformation gradient tensor ${\bm F}$ is computed in the middle of
 each cell at a given time $t$ as follows:
@@ -941,30 +945,31 @@ These markers form a Lagrangian mesh which deforms over time:
 {\captionfont Lagrangian mesh after 50 time steps.}
 \end{center}
 Markers which are advected outside of the domain are simply flagged inactive and these
-are no more advected. If one marker of a cell is flagged inactive so is the cell itself. 
+are no longer advected. If one marker of a cell is flagged inactive so is the cell itself. 
 
 At each time step the cumulative strain $\varepsilon_{ij}$ components are
 computed at the center of the marker cells, as well as the principal strains $\varepsilon_1$ 
 and $\varepsilon_2$ and the direction $\theta_\varepsilon$ of the principal strain:
 
 \begin{center}
-\includegraphics[width=4cm]{python_codes/fieldstone_89/results/shearband/old_angle_00}
-\includegraphics[width=4cm]{python_codes/fieldstone_89/results/shearband/old_exy_00}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_89/results/shearband/old_angle_100}
-\includegraphics[width=4cm]{python_codes/fieldstone_89/results/shearband/old_exy_100}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_89/results/shearband/old_angle_00}
+\includegraphics[width=6cm]{python_codes/fieldstone_89/results/shearband/old_exy_00}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_89/results/shearband/old_angle_100}
+\includegraphics[width=6cm]{python_codes/fieldstone_89/results/shearband/old_exy_100}\\
 {\captionfont Left: principal strain directions, Right: $\varepsilon_{xy}$.
 Top row: first time step; Bottom row: 100th time step.}
 \end{center}
 
 
 \begin{center}
-\includegraphics[width=4cm]{python_codes/fieldstone_89/results/shearband/old_dirs0000}
-\includegraphics[width=4cm]{python_codes/fieldstone_89/results/shearband/old_dirs0005}
-\includegraphics[width=4cm]{python_codes/fieldstone_89/results/shearband/old_dirs0010}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_89/results/shearband/new_dirs0000}
-\includegraphics[width=4cm]{python_codes/fieldstone_89/results/shearband/new_dirs0005}
-\includegraphics[width=4cm]{python_codes/fieldstone_89/results/shearband/new_dirs0010}\\
-{\captionfont Directions of the principal strains. Top is old, bottom is new. We see that 
+\includegraphics[width=5cm]{python_codes/fieldstone_89/results/shearband/old_dirs0000}
+\includegraphics[width=5cm]{python_codes/fieldstone_89/results/shearband/old_dirs0005}
+\includegraphics[width=5cm]{python_codes/fieldstone_89/results/shearband/old_dirs0010}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_89/results/shearband/new_dirs0000}
+\includegraphics[width=5cm]{python_codes/fieldstone_89/results/shearband/new_dirs0005}
+\includegraphics[width=5cm]{python_codes/fieldstone_89/results/shearband/new_dirs0010}\\
+{\captionfont Directions of the principal strains. Top is old (strain rate integration), 
+bottom is new (finite strain). We see that 
 the old method does not record any rotation and the angles remain at 45\si{\degree}. 
 The new method shows principal strains which align more and more with the direction 
 of shearing towards the center.}
@@ -982,12 +987,12 @@ recorded over time in a file:
 \end{center}
 
 \begin{center}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/shearband/principal_angle.pdf}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/shearband/principal_strains.pdf}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/shearband/area.pdf}\\
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/shearband/R.pdf}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/shearband/V.pdf}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/shearband/maximum_shear.pdf}\\
+\includegraphics[width=9.cm]{python_codes/fieldstone_89/results/shearband/principal_angle.pdf}
+\includegraphics[width=9.cm]{python_codes/fieldstone_89/results/shearband/principal_strains.pdf}\\
+\includegraphics[width=9.cm]{python_codes/fieldstone_89/results/shearband/area.pdf}
+\includegraphics[width=9.cm]{python_codes/fieldstone_89/results/shearband/maximum_shear.pdf}\\
+\includegraphics[width=9.cm]{python_codes/fieldstone_89/results/shearband/R.pdf}
+\includegraphics[width=9.cm]{python_codes/fieldstone_89/results/shearband/V.pdf}\\
 {\captionfont Time evolution of the principal angle $\theta_\varepsilon$, 
 the strain principal values, the relative area change of the target cell, 
 the components of ${\bm R}$, the components of ${\bm V}$ and the maximum 
@@ -1012,7 +1017,7 @@ In this case the velocity field is prescribed to be:
 u(x,y)&=&0 \\
 v(x,y)&=&y
 \end{eqnarray}
-Since the divergence of this field is not zero, volume is not conserved.
+Since the divergence of this field is not zero, volume (area) is not conserved.
 
 The components of the strain rate tensor are
 \[
@@ -1034,7 +1039,7 @@ So that the components of the strain for the old method are given by:
 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_89/results/vertical/vel}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_89/results/vertical/vel}\\
 {\captionfont Velocity field on Eulerian mesh}
 \end{center}
 
@@ -1055,12 +1060,12 @@ REDO
 \end{center}
 
 \begin{center}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/vertical/principal_angle.pdf}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/vertical/principal_strains.pdf}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/vertical/area.pdf}\\
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/vertical/R.pdf}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/vertical/V.pdf}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/vertical/maximum_shear.pdf}\\
+\includegraphics[width=9.5cm]{python_codes/fieldstone_89/results/vertical/principal_angle.pdf}
+\includegraphics[width=9.5cm]{python_codes/fieldstone_89/results/vertical/principal_strains.pdf}\\
+\includegraphics[width=9.5cm]{python_codes/fieldstone_89/results/vertical/area.pdf}
+\includegraphics[width=9.5cm]{python_codes/fieldstone_89/results/vertical/maximum_shear.pdf}\\
+\includegraphics[width=9.5cm]{python_codes/fieldstone_89/results/vertical/R.pdf}
+\includegraphics[width=9.5cm]{python_codes/fieldstone_89/results/vertical/V.pdf}\\
 {\captionfont Time evolution of the principal angle $\theta_\varepsilon$, 
 the strain principal values, the relative area change of the target cell, 
 the components of ${\bm R}$, the components of ${\bm V}$ and the maximum
@@ -1094,7 +1099,7 @@ So that the components of the strain for the old method are given by:
 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_89/results/pureshear/vel}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_89/results/pureshear/vel}\\
 {\captionfont Velocity field on Eulerian mesh}
 \end{center}
 
@@ -1116,12 +1121,12 @@ So that the components of the strain for the old method are given by:
 
 
 \begin{center}
-\includegraphics[width=5.cm]{python_codes/fieldstone_89/results/pureshear/principal_angle.pdf}
-\includegraphics[width=5.cm]{python_codes/fieldstone_89/results/pureshear/principal_strains.pdf}
-\includegraphics[width=5.cm]{python_codes/fieldstone_89/results/pureshear/area.pdf}\\
-\includegraphics[width=5.cm]{python_codes/fieldstone_89/results/pureshear/R.pdf}
-\includegraphics[width=5.cm]{python_codes/fieldstone_89/results/pureshear/V.pdf}
-\includegraphics[width=5.cm]{python_codes/fieldstone_89/results/pureshear/maximum_shear.pdf}\\
+\includegraphics[width=9.5cm]{python_codes/fieldstone_89/results/pureshear/principal_angle.pdf}
+\includegraphics[width=9.5cm]{python_codes/fieldstone_89/results/pureshear/principal_strains.pdf}\\
+\includegraphics[width=9.5cm]{python_codes/fieldstone_89/results/pureshear/area.pdf}
+\includegraphics[width=9.5cm]{python_codes/fieldstone_89/results/pureshear/maximum_shear.pdf}\\
+\includegraphics[width=9.5cm]{python_codes/fieldstone_89/results/pureshear/R.pdf}
+\includegraphics[width=9.5cm]{python_codes/fieldstone_89/results/pureshear/V.pdf}\\
 {\captionfont Time evolution of the principal angle $\theta_\varepsilon$, 
 the strain principal values, the relative area change of the target cell, 
 the components of ${\bm R}$, the components of ${\bm V}$ and the maximum
@@ -1130,7 +1135,7 @@ possible shear.}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-\subsection*{Bi-axial extension (experiment=4)}
+\subsection*{Bi-axial stretch (experiment=4)}
 
 The velocity is given by
 \begin{eqnarray}
@@ -1151,7 +1156,7 @@ The velocity divergence is zero. The components of the strain for the old method
 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_89/results/biaxial/vel}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_89/results/biaxial/vel}\\
 {\captionfont Velocity field on Eulerian mesh}
 \end{center}
 
@@ -1177,12 +1182,12 @@ The velocity divergence is zero. The components of the strain for the old method
 \end{center}
 
 \begin{center}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/biaxial/principal_angle.pdf}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/biaxial/principal_strains.pdf}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/biaxial/area.pdf}\\
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/biaxial/R.pdf}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/biaxial/V.pdf}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_89/results/biaxial/maximum_shear.pdf}\\
+\includegraphics[width=9.cm]{python_codes/fieldstone_89/results/biaxial/principal_angle.pdf}
+\includegraphics[width=9.cm]{python_codes/fieldstone_89/results/biaxial/principal_strains.pdf}\\
+\includegraphics[width=9.cm]{python_codes/fieldstone_89/results/biaxial/area.pdf}
+\includegraphics[width=9.cm]{python_codes/fieldstone_89/results/biaxial/maximum_shear.pdf}\\
+\includegraphics[width=9.cm]{python_codes/fieldstone_89/results/biaxial/R.pdf}
+\includegraphics[width=9.cm]{python_codes/fieldstone_89/results/biaxial/V.pdf}\\
 {\captionfont Time evolution of the principal angle $\theta_\varepsilon$, 
 the strain principal values and the area of the target cell.}
 \end{center}
@@ -1190,15 +1195,19 @@ the strain principal values and the area of the target cell.}
 PB: e2 cannot become less than -1 
 
 
+\section{Discussion ‘old’ vs. ’new’ cumulative strain}
 
+The first observation is that all quantities from the ‘old’ (integrated strain rates) and ’new’ (strain computed from cumulative displacements) start at the same values. The ‘old’ cumulative strains are thus an acceptable approximation for small deformations. For increasing deformation a number of problems arise with the ‘old’ strains:
 
+\begin{itemize}
+\item principal axes do not rotate for simple shear (The shear band, experiment 1) while they should continuously change
+\item principal strain values deviate from the exact values (the ’new’ principal strains) (all experiments)
+\item negative principal strains for the ‘old’ definition can decrease below the theoretical limit of -1 (The shear band, experiment 1; bi-axial stretch, experiment 4)
+\item related to the previous point, the area computed from these principal strains may incorrectly become negative (The shear band, experiment 1;  bi-axial stretch, experiment 4)
+\item the maximum shear deviates from the correct value (all experiments except for experiment 1)
+\end{itemize}
 
-
-
-
-
-
-
+The problems in the integration of strain rates is due to two causes. Firstly, strain rates are determined relative to the current state (already deformed), which means that the state with respect the deformation is defined changes during integration. Rather, the ’new’ strains based on the cumulative  displacements are all references with respect to the original, undeformed, configuration. Secondly, because incremental principal axes change during general deformation that contains simple shear or rigid body rotation (which does not occur for the special cases of experiment 2, 3 and 4), incremental strains cannot be summed \cite{malvern}. In the special cases where there is no rotation, strain rates may be integrated, and the result is a strain measure called natural strain or Hencky strain \cite{malvern}.
 
 
 
