@@ -37,6 +37,28 @@ hz=Lz/nelz
 
 allocate(mesh(nel))
 
+counter=0    
+do ielz=1,nelz    
+   do iely=1,nely    
+      do ielx=1,nelx    
+         counter=counter+1    
+         mesh(counter)%ielx=ielx
+         mesh(counter)%iely=iely
+         mesh(counter)%ielz=ielz
+         mesh(counter)%hx=hx
+         mesh(counter)%hy=hy
+         mesh(counter)%hz=hz
+         mesh(counter)%vol=hx*hy*hz
+         if (ielx==1)    mesh(counter)%bnd1=.true.
+         if (ielx==nelx) mesh(counter)%bnd2=.true.
+         if (iely==1)    mesh(counter)%bnd3=.true.
+         if (iely==nely) mesh(counter)%bnd4=.true.
+         if (ielz==1)    mesh(counter)%bnd5=.true.
+         if (ielz==nelz) mesh(counter)%bnd6=.true.
+      end do    
+   end do    
+end do
+
 !==========================================================
 !velocity 
 
@@ -46,9 +68,6 @@ if (pair=='q1p0' .or. pair=='q1q1') then
       do iely=1,nely    
          do ielx=1,nelx    
             counter=counter+1    
-            mesh(counter)%ielx=ielx
-            mesh(counter)%iely=iely
-            mesh(counter)%ielz=ielz
             mesh(counter)%iconV(1)=(nelx+1)*(nely+1)*(ielz-1)+ (iely-1)*(nelx+1) + ielx
             mesh(counter)%iconV(2)=(nelx+1)*(nely+1)*(ielz-1)+ (iely-1)*(nelx+1) + ielx+1
             mesh(counter)%iconV(3)=(nelx+1)*(nely+1)*(ielz-1)+ (iely  )*(nelx+1) + ielx+1
@@ -84,16 +103,6 @@ if (pair=='q1p0' .or. pair=='q1q1') then
             mesh(counter)%xc=(ielx-1)*hx+hx/2
             mesh(counter)%yc=(iely-1)*hy+hy/2
             mesh(counter)%zc=(ielz-1)*hz+hz/2
-            mesh(counter)%hx=hx
-            mesh(counter)%hy=hy
-            mesh(counter)%hz=hz
-            mesh(counter)%vol=hx*hy*hz
-            if (ielx==1)    mesh(counter)%bnd1=.true.
-            if (ielx==nelx) mesh(counter)%bnd2=.true.
-            if (iely==1)    mesh(counter)%bnd3=.true.
-            if (iely==nely) mesh(counter)%bnd4=.true.
-            if (ielz==1)    mesh(counter)%bnd5=.true.
-            if (ielz==nelz) mesh(counter)%bnd6=.true.
          end do    
       end do    
    end do    
@@ -122,18 +131,16 @@ if (pair=='q2q1') then
       do iely=1,nely    
          do ielx=1,nelx    
             counter=counter+1    
-            mesh(counter)%ielx=ielx
-            mesh(counter)%iely=iely
-            mesh(counter)%ielz=ielz
-            mesh(counter)%iconV(1)=(ielx-1)*2+1+(iely-1)*2*nnx                      + 2*nnx*nny*(ielz-1)
-            mesh(counter)%iconV(2)=(ielx-1)*2+2+(iely-1)*2*nnx                      + 2*nnx*nny*(ielz-1)
-            mesh(counter)%iconV(3)=(ielx-1)*2+3+(iely-1)*2*nnx                      + 2*nnx*nny*(ielz-1)
-            mesh(counter)%iconV(4)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx                  + 2*nnx*nny*(ielz-1)
-            mesh(counter)%iconV(5)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx                  + 2*nnx*nny*(ielz-1)
-            mesh(counter)%iconV(6)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx                  + 2*nnx*nny*(ielz-1)
-            mesh(counter)%iconV(7)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx*2                + 2*nnx*nny*(ielz-1)
-            mesh(counter)%iconV(8)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx*2                + 2*nnx*nny*(ielz-1)
-            mesh(counter)%iconV(9)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx*2                + 2*nnx*nny*(ielz-1)
+
+            mesh(counter)%iconV(1)=(ielx-1)*2+1+(iely-1)*2*nnx                   + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(2)=(ielx-1)*2+2+(iely-1)*2*nnx                   + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(3)=(ielx-1)*2+3+(iely-1)*2*nnx                   + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(4)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx               + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(5)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx               + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(6)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx               + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(7)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx*2             + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(8)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx*2             + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconV(9)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx*2             + 2*nnx*nny*(ielz-1)
  
             mesh(counter)%iconV(10)=(ielx-1)*2+1+(iely-1)*2*nnx        + nnx*nny + 2*nnx*nny*(ielz-1)
             mesh(counter)%iconV(11)=(ielx-1)*2+2+(iely-1)*2*nnx        + nnx*nny + 2*nnx*nny*(ielz-1)
@@ -154,6 +161,97 @@ if (pair=='q2q1') then
             mesh(counter)%iconV(25)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx*2  + 2*nnx*nny + 2*nnx*nny*(ielz-1)
             mesh(counter)%iconV(26)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx*2  + 2*nnx*nny + 2*nnx*nny*(ielz-1)
             mesh(counter)%iconV(27)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx*2  + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+
+            mesh(counter)%xV(01)=(ielx-1)*hx
+            mesh(counter)%xV(02)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xV(03)=(ielx-1)*hx+hx
+            mesh(counter)%xV(04)=(ielx-1)*hx
+            mesh(counter)%xV(05)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xV(06)=(ielx-1)*hx+hx
+            mesh(counter)%xV(07)=(ielx-1)*hx
+            mesh(counter)%xV(08)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xV(09)=(ielx-1)*hx+hx
+
+            mesh(counter)%xV(10)=(ielx-1)*hx
+            mesh(counter)%xV(11)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xV(12)=(ielx-1)*hx+hx
+            mesh(counter)%xV(13)=(ielx-1)*hx
+            mesh(counter)%xV(14)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xV(15)=(ielx-1)*hx+hx
+            mesh(counter)%xV(16)=(ielx-1)*hx
+            mesh(counter)%xV(17)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xV(18)=(ielx-1)*hx+hx
+
+            mesh(counter)%xV(19)=(ielx-1)*hx
+            mesh(counter)%xV(20)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xV(21)=(ielx-1)*hx+hx
+            mesh(counter)%xV(22)=(ielx-1)*hx
+            mesh(counter)%xV(23)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xV(24)=(ielx-1)*hx+hx
+            mesh(counter)%xV(25)=(ielx-1)*hx
+            mesh(counter)%xV(26)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xV(27)=(ielx-1)*hx+hx
+
+            mesh(counter)%yV(01)=(iely-1)*hy
+            mesh(counter)%yV(02)=(iely-1)*hy
+            mesh(counter)%yV(03)=(iely-1)*hy
+            mesh(counter)%yV(04)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yV(05)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yV(06)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yV(07)=(iely-1)*hy+hy
+            mesh(counter)%yV(08)=(iely-1)*hy+hy
+            mesh(counter)%yV(09)=(iely-1)*hy+hy
+
+            mesh(counter)%yV(10)=(iely-1)*hy
+            mesh(counter)%yV(11)=(iely-1)*hy
+            mesh(counter)%yV(12)=(iely-1)*hy
+            mesh(counter)%yV(13)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yV(14)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yV(15)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yV(16)=(iely-1)*hy+hy
+            mesh(counter)%yV(17)=(iely-1)*hy+hy
+            mesh(counter)%yV(18)=(iely-1)*hy+hy
+
+            mesh(counter)%yV(19)=(iely-1)*hy
+            mesh(counter)%yV(20)=(iely-1)*hy
+            mesh(counter)%yV(21)=(iely-1)*hy
+            mesh(counter)%yV(22)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yV(23)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yV(24)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yV(25)=(iely-1)*hy+hy
+            mesh(counter)%yV(26)=(iely-1)*hy+hy
+            mesh(counter)%yV(27)=(iely-1)*hy+hy
+
+            mesh(counter)%zV(01)=(ielz-1)*hz
+            mesh(counter)%zV(02)=(ielz-1)*hz
+            mesh(counter)%zV(03)=(ielz-1)*hz
+            mesh(counter)%zV(04)=(ielz-1)*hz
+            mesh(counter)%zV(05)=(ielz-1)*hz
+            mesh(counter)%zV(06)=(ielz-1)*hz
+            mesh(counter)%zV(07)=(ielz-1)*hz
+            mesh(counter)%zV(08)=(ielz-1)*hz
+            mesh(counter)%zV(09)=(ielz-1)*hz
+
+            mesh(counter)%zV(10)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zV(11)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zV(12)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zV(13)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zV(14)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zV(15)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zV(16)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zV(17)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zV(18)=(ielz-1)*hz+hz/2d0
+
+            mesh(counter)%zV(19)=(ielz-1)*hz+hz
+            mesh(counter)%zV(20)=(ielz-1)*hz+hz
+            mesh(counter)%zV(21)=(ielz-1)*hz+hz
+            mesh(counter)%zV(22)=(ielz-1)*hz+hz
+            mesh(counter)%zV(23)=(ielz-1)*hz+hz
+            mesh(counter)%zV(24)=(ielz-1)*hz+hz
+            mesh(counter)%zV(25)=(ielz-1)*hz+hz
+            mesh(counter)%zV(26)=(ielz-1)*hz+hz
+            mesh(counter)%zV(27)=(ielz-1)*hz+hz
+
          end do
       end do
    end do
@@ -222,14 +320,14 @@ end do
 
 if (debug) then
    do iel=1,nel
-   print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),mesh(iel)%iconP(1:mP)
+   print *,'--------------------------------------------------'
+   print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),' | iconP',mesh(iel)%iconP(1:mP)
    do k=1,mV
       write(777,*) mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
    end do
    end do
-
 end if
-stop
+
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)

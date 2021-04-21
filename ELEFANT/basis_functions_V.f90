@@ -39,6 +39,7 @@ real(8), parameter :: bb=10d0/21d0
 real(8), parameter :: cc=4d0/21d0
 real(8), parameter :: dd=64d0/63d0
 real(8), parameter :: ee=8d0/63d0
+real(8) Nmr,Nlr,Nrr,Nls,Nms,Nrs,Nlt,Nmt,Nrt
 real(8) b1,b2
 
 if (ndim==2) then
@@ -94,34 +95,36 @@ if (ndim==3) then
       NV( 9)= dd*b1-ee*b2
       NV(10)=-ee*b1+dd*b2
    case('q2q1')
-      NV(01)= 0.5d0*r*(r-1.d0) * 0.5d0*s*(s-1.d0) * 0.5d0*t*(t-1.d0) 
-      NV(02)= 0.5d0*r*(r+1.d0) * 0.5d0*s*(s-1.d0) * 0.5d0*t*(t-1.d0) 
-      NV(03)= 0.5d0*r*(r+1.d0) * 0.5d0*s*(s+1.d0) * 0.5d0*t*(t-1.d0) 
-      NV(04)= 0.5d0*r*(r-1.d0) * 0.5d0*s*(s+1.d0) * 0.5d0*t*(t-1.d0) 
-      NV(05)= 0.5d0*r*(r-1.d0) * 0.5d0*s*(s-1.d0) * 0.5d0*t*(t+1.d0) 
-      NV(06)= 0.5d0*r*(r+1.d0) * 0.5d0*s*(s-1.d0) * 0.5d0*t*(t+1.d0) 
-      NV(07)= 0.5d0*r*(r+1.d0) * 0.5d0*s*(s+1.d0) * 0.5d0*t*(t+1.d0) 
-      NV(08)= 0.5d0*r*(r-1.d0) * 0.5d0*s*(s+1.d0) * 0.5d0*t*(t+1.d0) 
-      NV(09)= (1.d0-r**2)      * 0.5d0*s*(s-1.d0) * 0.5d0*t*(t-1.d0) 
-      NV(10)= 0.5d0*r*(r+1.d0) * (1.d0-s**2)      * 0.5d0*t*(t-1.d0) 
-      NV(11)= (1.d0-r**2)      * 0.5d0*s*(s+1.d0) * 0.5d0*t*(t-1.d0) 
-      NV(12)= 0.5d0*r*(r-1.d0) * (1.d0-s**2)      * 0.5d0*t*(t-1.d0) 
-      NV(13)= (1.d0-r**2)      * 0.5d0*s*(s-1.d0) * 0.5d0*t*(t+1.d0) 
-      NV(14)= 0.5d0*r*(r+1.d0) * (1.d0-s**2)      * 0.5d0*t*(t+1.d0) 
-      NV(15)= (1.d0-r**2)      * 0.5d0*s*(s+1.d0) * 0.5d0*t*(t+1.d0) 
-      NV(16)= 0.5d0*r*(r-1.d0) * (1.d0-s**2)      * 0.5d0*t*(t+1.d0) 
-      NV(17)= 0.5d0*r*(r-1.d0) * 0.5d0*s*(s-1.d0) * (1.d0-t**2) 
-      NV(18)= 0.5d0*r*(r+1.d0) * 0.5d0*s*(s-1.d0) * (1.d0-t**2) 
-      NV(19)= 0.5d0*r*(r+1.d0) * 0.5d0*s*(s+1.d0) * (1.d0-t**2) 
-      NV(20)= 0.5d0*r*(r-1.d0) * 0.5d0*s*(s+1.d0) * (1.d0-t**2) 
-      NV(21)= (1.d0-r**2)      * (1.d0-s**2)      * 0.5d0*t*(t-1.d0) 
-      NV(22)= (1.d0-r**2)      * 0.5d0*s*(s-1.d0) * (1.d0-t**2) 
-      NV(23)= 0.5d0*r*(r+1.d0) * (1.d0-s**2)      * (1.d0-t**2) 
-      NV(24)= (1.d0-r**2)      * 0.5d0*s*(s+1.d0) * (1.d0-t**2) 
-      NV(25)= 0.5d0*r*(r-1.d0) * (1.d0-s**2)      * (1.d0-t**2) 
-      NV(26)= (1.d0-r**2)      * (1.d0-s**2)      * 0.5d0*t*(t+1.d0) 
-      NV(27)= (1.d0-r**2)      * (1.d0-s**2)      * (1.d0-t**2) 
-
+      Nlr=0.5d0*r*(r-1d0) ; Nls=0.5d0*s*(s-1d0) ; Nlt=0.5d0*t*(t-1d0) 
+      Nmr=(1d0-r**2)      ; Nms=(1d0-s**2)      ; Nmt=(1d0-t**2)       
+      Nrr=0.5d0*r*(r+1d0) ; Nrs=0.5d0*s*(s+1d0) ; Nrt=0.5d0*t*(t+1d0) 
+      NV(01)= Nlr * Nls * Nlt 
+      NV(02)= Nmr * Nls * Nlt 
+      NV(03)= Nrr * Nls * Nlt 
+      NV(04)= Nlr * Nms * Nlt 
+      NV(05)= Nmr * Nms * Nlt 
+      NV(06)= Nrr * Nms * Nlt 
+      NV(07)= Nlr * Nrs * Nlt 
+      NV(08)= Nmr * Nrs * Nlt 
+      NV(09)= Nrr * Nrs * Nlt 
+      NV(10)= Nlr * Nls * Nmt 
+      NV(11)= Nmr * Nls * Nmt 
+      NV(12)= Nrr * Nls * Nmt 
+      NV(13)= Nlr * Nms * Nmt 
+      NV(14)= Nmr * Nms * Nmt 
+      NV(15)= Nrr * Nms * Nmt 
+      NV(16)= Nlr * Nrs * Nmt 
+      NV(17)= Nmr * Nrs * Nmt 
+      NV(18)= Nrr * Nrs * Nmt 
+      NV(19)= Nlr * Nls * Nrt 
+      NV(20)= Nmr * Nls * Nrt 
+      NV(21)= Nrr * Nls * Nrt 
+      NV(22)= Nlr * Nms * Nrt 
+      NV(23)= Nmr * Nms * Nrt 
+      NV(24)= Nrr * Nms * Nrt 
+      NV(25)= Nlr * Nrs * Nrt 
+      NV(26)= Nmr * Nrs * Nrt 
+      NV(27)= Nrr * Nrs * Nrt 
    case default
       stop 'pb in NNV'
    end select
@@ -144,6 +147,7 @@ real(8), parameter :: bb=10d0/21d0
 real(8), parameter :: cc=4d0/21d0
 real(8), parameter :: dd=64d0/63d0
 real(8), parameter :: ee=8d0/63d0
+real(8) dNmr,dNlr,dNrr,Nls,Nms,Nrs,Nlt,Nmt,Nrt
 real(8) db1dr,db2dr
 
 if (ndim==2) then
@@ -200,33 +204,37 @@ if (ndim==3) then
       dNVdr(09)= dd*db1dr-ee*db2dr
       dNVdr(10)=-ee*db1dr+dd*db2dr
    case('q2q1')
-      dNVdr(01)= 0.5d0*(2*r-1.d0) * 0.5d0*s*(s-1.d0) * 0.5d0*t*(t-1.d0) 
-      dNVdr(02)= 0.5d0*(2*r+1.d0) * 0.5d0*s*(s-1.d0) * 0.5d0*t*(t-1.d0) 
-      dNVdr(03)= 0.5d0*(2*r+1.d0) * 0.5d0*s*(s+1.d0) * 0.5d0*t*(t-1.d0) 
-      dNVdr(04)= 0.5d0*(2*r-1.d0) * 0.5d0*s*(s+1.d0) * 0.5d0*t*(t-1.d0) 
-      dNVdr(05)= 0.5d0*(2*r-1.d0) * 0.5d0*s*(s-1.d0) * 0.5d0*t*(t+1.d0) 
-      dNVdr(06)= 0.5d0*(2*r+1.d0) * 0.5d0*s*(s-1.d0) * 0.5d0*t*(t+1.d0) 
-      dNVdr(07)= 0.5d0*(2*r+1.d0) * 0.5d0*s*(s+1.d0) * 0.5d0*t*(t+1.d0) 
-      dNVdr(08)= 0.5d0*(2*r-1.d0) * 0.5d0*s*(s+1.d0) * 0.5d0*t*(t+1.d0) 
-      dNVdr(09)= (-2*r)           * 0.5d0*s*(s-1.d0) * 0.5d0*t*(t-1.d0) 
-      dNVdr(10)= 0.5d0*(2*r+1.d0) * (1.d0-s**2)      * 0.5d0*t*(t-1.d0) 
-      dNVdr(11)= (-2*r)           * 0.5d0*s*(s+1.d0) * 0.5d0*t*(t-1.d0) 
-      dNVdr(12)= 0.5d0*(2*r-1.d0) * (1.d0-s**2)      * 0.5d0*t*(t-1.d0) 
-      dNVdr(13)= (-2*r)           * 0.5d0*s*(s-1.d0) * 0.5d0*t*(t+1.d0) 
-      dNVdr(14)= 0.5d0*(2*r+1.d0) * (1.d0-s**2)      * 0.5d0*t*(t+1.d0) 
-      dNVdr(15)= (-2*r)           * 0.5d0*s*(s+1.d0) * 0.5d0*t*(t+1.d0) 
-      dNVdr(16)= 0.5d0*(2*r-1.d0) * (1.d0-s**2)      * 0.5d0*t*(t+1.d0) 
-      dNVdr(17)= 0.5d0*(2*r-1.d0) * 0.5d0*s*(s-1.d0) * (1.d0-t**2) 
-      dNVdr(18)= 0.5d0*(2*r+1.d0) * 0.5d0*s*(s-1.d0) * (1.d0-t**2) 
-      dNVdr(19)= 0.5d0*(2*r+1.d0) * 0.5d0*s*(s+1.d0) * (1.d0-t**2) 
-      dNVdr(20)= 0.5d0*(2*r-1.d0) * 0.5d0*s*(s+1.d0) * (1.d0-t**2) 
-      dNVdr(21)= (-2*r)           * (1.d0-s**2)      * 0.5d0*t*(t-1.d0) 
-      dNVdr(22)= (-2*r)           * 0.5d0*s*(s-1.d0) * (1.d0-t**2) 
-      dNVdr(23)= 0.5d0*(2*r+1.d0) * (1.d0-s**2)      * (1.d0-t**2) 
-      dNVdr(24)= (-2*r)           * 0.5d0*s*(s+1.d0) * (1.d0-t**2) 
-      dNVdr(25)= 0.5d0*(2*r-1.d0) * (1.d0-s**2)      * (1.d0-t**2) 
-      dNVdr(26)= (-2*r)           * (1.d0-s**2)      * 0.5d0*t*(t+1.d0) 
-      dNVdr(27)= (-2*r)           * (1.d0-s**2)      * (1.d0-t**2) 
+
+      dNlr=r-0.5d0 ; Nls=0.5d0*s*(s-1d0) ; Nlt=0.5d0*t*(t-1d0) 
+      dNmr=-2d0*r  ; Nms=(1d0-s**2)      ; Nmt=(1d0-t**2)       
+      dNrr=r+0.5d0 ; Nrs=0.5d0*s*(s+1d0) ; Nrt=0.5d0*t*(t+1d0) 
+      dNVdr(01)= dNlr * Nls * Nlt 
+      dNVdr(02)= dNmr * Nls * Nlt 
+      dNVdr(03)= dNrr * Nls * Nlt 
+      dNVdr(04)= dNlr * Nms * Nlt 
+      dNVdr(05)= dNmr * Nms * Nlt 
+      dNVdr(06)= dNrr * Nms * Nlt 
+      dNVdr(07)= dNlr * Nrs * Nlt 
+      dNVdr(08)= dNmr * Nrs * Nlt 
+      dNVdr(09)= dNrr * Nrs * Nlt 
+      dNVdr(10)= dNlr * Nls * Nmt 
+      dNVdr(11)= dNmr * Nls * Nmt 
+      dNVdr(12)= dNrr * Nls * Nmt 
+      dNVdr(13)= dNlr * Nms * Nmt 
+      dNVdr(14)= dNmr * Nms * Nmt 
+      dNVdr(15)= dNrr * Nms * Nmt 
+      dNVdr(16)= dNlr * Nrs * Nmt 
+      dNVdr(17)= dNmr * Nrs * Nmt 
+      dNVdr(18)= dNrr * Nrs * Nmt 
+      dNVdr(19)= dNlr * Nls * Nrt 
+      dNVdr(20)= dNmr * Nls * Nrt 
+      dNVdr(21)= dNrr * Nls * Nrt 
+      dNVdr(22)= dNlr * Nms * Nrt 
+      dNVdr(23)= dNmr * Nms * Nrt 
+      dNVdr(24)= dNrr * Nms * Nrt 
+      dNVdr(25)= dNlr * Nrs * Nrt 
+      dNVdr(26)= dNmr * Nrs * Nrt 
+      dNVdr(27)= dNrr * Nrs * Nrt 
    case default
       stop 'pb in dNNVdr'
    end select
@@ -249,6 +257,7 @@ real(8), parameter :: bb=10d0/21d0
 real(8), parameter :: cc=4d0/21d0
 real(8), parameter :: dd=64d0/63d0
 real(8), parameter :: ee=8d0/63d0
+real(8) Nmr,Nlr,Nrr,dNls,dNms,dNrs,Nlt,Nmt,Nrt
 real(8) db1ds,db2ds
 
 if (ndim==2) then
@@ -304,33 +313,36 @@ if (ndim==3) then
       dNVds(09)= dd*db1ds-ee*db2ds
       dNVds(10)=-ee*db1ds+dd*db2ds
    case('q2q1')
-      dNVds(01)= 0.5d0*r*(r-1.d0) * 0.5d0*(2*s-1.d0) * 0.5d0*t*(t-1.d0) 
-      dNVds(02)= 0.5d0*r*(r+1.d0) * 0.5d0*(2*s-1.d0) * 0.5d0*t*(t-1.d0) 
-      dNVds(03)= 0.5d0*r*(r+1.d0) * 0.5d0*(2*s+1.d0) * 0.5d0*t*(t-1.d0) 
-      dNVds(04)= 0.5d0*r*(r-1.d0) * 0.5d0*(2*s+1.d0) * 0.5d0*t*(t-1.d0) 
-      dNVds(05)= 0.5d0*r*(r-1.d0) * 0.5d0*(2*s-1.d0) * 0.5d0*t*(t+1.d0) 
-      dNVds(06)= 0.5d0*r*(r+1.d0) * 0.5d0*(2*s-1.d0) * 0.5d0*t*(t+1.d0) 
-      dNVds(07)= 0.5d0*r*(r+1.d0) * 0.5d0*(2*s+1.d0) * 0.5d0*t*(t+1.d0) 
-      dNVds(08)= 0.5d0*r*(r-1.d0) * 0.5d0*(2*s+1.d0) * 0.5d0*t*(t+1.d0) 
-      dNVds(09)= (1.d0-r**2)      * 0.5d0*(2*s-1.d0) * 0.5d0*t*(t-1.d0) 
-      dNVds(10)= 0.5d0*r*(r+1.d0) * (-2*s)           * 0.5d0*t*(t-1.d0) 
-      dNVds(11)= (1.d0-r**2)      * 0.5d0*(2*s+1.d0) * 0.5d0*t*(t-1.d0) 
-      dNVds(12)= 0.5d0*r*(r-1.d0) * (-2*s)           * 0.5d0*t*(t-1.d0) 
-      dNVds(13)= (1.d0-r**2)      * 0.5d0*(2*s-1.d0) * 0.5d0*t*(t+1.d0) 
-      dNVds(14)= 0.5d0*r*(r+1.d0) * (-2*s)           * 0.5d0*t*(t+1.d0) 
-      dNVds(15)= (1.d0-r**2)      * 0.5d0*(2*s+1.d0) * 0.5d0*t*(t+1.d0) 
-      dNVds(16)= 0.5d0*r*(r-1.d0) * (-2*s)           * 0.5d0*t*(t+1.d0) 
-      dNVds(17)= 0.5d0*r*(r-1.d0) * 0.5d0*(2*s-1.d0) * (1.d0-t**2) 
-      dNVds(18)= 0.5d0*r*(r+1.d0) * 0.5d0*(2*s-1.d0) * (1.d0-t**2) 
-      dNVds(19)= 0.5d0*r*(r+1.d0) * 0.5d0*(2*s+1.d0) * (1.d0-t**2) 
-      dNVds(20)= 0.5d0*r*(r-1.d0) * 0.5d0*(2*s+1.d0) * (1.d0-t**2) 
-      dNVds(21)= (1.d0-r**2)      * (-2*s)           * 0.5d0*t*(t-1.d0) 
-      dNVds(22)= (1.d0-r**2)      * 0.5d0*(2*s-1.d0) * (1.d0-t**2) 
-      dNVds(23)= 0.5d0*r*(r+1.d0) * (-2*s)           * (1.d0-t**2) 
-      dNVds(24)= (1.d0-r**2)      * 0.5d0*(2*s+1.d0) * (1.d0-t**2) 
-      dNVds(25)= 0.5d0*r*(r-1.d0) * (-2*s)           * (1.d0-t**2) 
-      dNVds(26)= (1.d0-r**2)      * (-2*s)           * 0.5d0*t*(t+1.d0) 
-      dNVds(27)= (1.d0-r**2)      * (-2*s)           * (1.d0-t**2) 
+      Nlr=0.5d0*r*(r-1d0) ; dNls=s-0.5d0 ; Nlt=0.5d0*t*(t-1d0) 
+      Nmr=(1d0-r**2)      ; dNms=-2d0*s  ; Nmt=(1d0-t**2)       
+      Nrr=0.5d0*r*(r+1d0) ; dNrs=s+0.5d0 ; Nrt=0.5d0*t*(t+1d0) 
+      dNVds(01)= Nlr * dNls * Nlt 
+      dNVds(02)= Nmr * dNls * Nlt 
+      dNVds(03)= Nrr * dNls * Nlt 
+      dNVds(04)= Nlr * dNms * Nlt 
+      dNVds(05)= Nmr * dNms * Nlt 
+      dNVds(06)= Nrr * dNms * Nlt 
+      dNVds(07)= Nlr * dNrs * Nlt 
+      dNVds(08)= Nmr * dNrs * Nlt 
+      dNVds(09)= Nrr * dNrs * Nlt 
+      dNVds(10)= Nlr * dNls * Nmt 
+      dNVds(11)= Nmr * dNls * Nmt 
+      dNVds(12)= Nrr * dNls * Nmt 
+      dNVds(13)= Nlr * dNms * Nmt 
+      dNVds(14)= Nmr * dNms * Nmt 
+      dNVds(15)= Nrr * dNms * Nmt 
+      dNVds(16)= Nlr * dNrs * Nmt 
+      dNVds(17)= Nmr * dNrs * Nmt 
+      dNVds(18)= Nrr * dNrs * Nmt 
+      dNVds(19)= Nlr * dNls * Nrt 
+      dNVds(20)= Nmr * dNls * Nrt 
+      dNVds(21)= Nrr * dNls * Nrt 
+      dNVds(22)= Nlr * dNms * Nrt 
+      dNVds(23)= Nmr * dNms * Nrt 
+      dNVds(24)= Nrr * dNms * Nrt 
+      dNVds(25)= Nlr * dNrs * Nrt 
+      dNVds(26)= Nmr * dNrs * Nrt 
+      dNVds(27)= Nrr * dNrs * Nrt 
    case default
       stop 'pb in dNNVds'
    end select
@@ -353,6 +365,7 @@ real(8), parameter :: bb=10d0/21d0
 real(8), parameter :: cc=4d0/21d0
 real(8), parameter :: dd=64d0/63d0
 real(8), parameter :: ee=8d0/63d0
+real(8) Nmr,Nlr,Nrr,Nls,Nms,Nrs,dNlt,dNmt,dNrt
 real(8) db1dt,db2dt
 
 select case(pair)
@@ -379,33 +392,36 @@ case('q1q1')
    dNVdt(09)= dd*db1dt-ee*db2dt
    dNVdt(10)=-ee*db1dt+dd*db2dt
 case('q2q1')
-   dNVdt(01)= 0.5d0*r*(r-1.d0) * 0.5d0*s*(s-1.d0) * 0.5d0*(2*t-1.d0) 
-   dNVdt(02)= 0.5d0*r*(r+1.d0) * 0.5d0*s*(s-1.d0) * 0.5d0*(2*t-1.d0) 
-   dNVdt(03)= 0.5d0*r*(r+1.d0) * 0.5d0*s*(s+1.d0) * 0.5d0*(2*t-1.d0) 
-   dNVdt(04)= 0.5d0*r*(r-1.d0) * 0.5d0*s*(s+1.d0) * 0.5d0*(2*t-1.d0) 
-   dNVdt(05)= 0.5d0*r*(r-1.d0) * 0.5d0*s*(s-1.d0) * 0.5d0*(2*t+1.d0) 
-   dNVdt(06)= 0.5d0*r*(r+1.d0) * 0.5d0*s*(s-1.d0) * 0.5d0*(2*t+1.d0) 
-   dNVdt(07)= 0.5d0*r*(r+1.d0) * 0.5d0*s*(s+1.d0) * 0.5d0*(2*t+1.d0) 
-   dNVdt(08)= 0.5d0*r*(r-1.d0) * 0.5d0*s*(s+1.d0) * 0.5d0*(2*t+1.d0) 
-   dNVdt(09)= (1.d0-r**2)      * 0.5d0*s*(s-1.d0) * 0.5d0*(2*t-1.d0) 
-   dNVdt(10)= 0.5d0*r*(r+1.d0) * (1.d0-s**2)      * 0.5d0*(2*t-1.d0) 
-   dNVdt(11)= (1.d0-r**2)      * 0.5d0*s*(s+1.d0) * 0.5d0*(2*t-1.d0) 
-   dNVdt(12)= 0.5d0*r*(r-1.d0) * (1.d0-s**2)      * 0.5d0*(2*t-1.d0) 
-   dNVdt(13)= (1.d0-r**2)      * 0.5d0*s*(s-1.d0) * 0.5d0*(2*t+1.d0) 
-   dNVdt(14)= 0.5d0*r*(r+1.d0) * (1.d0-s**2)      * 0.5d0*(2*t+1.d0) 
-   dNVdt(15)= (1.d0-r**2)      * 0.5d0*s*(s+1.d0) * 0.5d0*(2*t+1.d0) 
-   dNVdt(16)= 0.5d0*r*(r-1.d0) * (1.d0-s**2)      * 0.5d0*(2*t+1.d0) 
-   dNVdt(17)= 0.5d0*r*(r-1.d0) * 0.5d0*s*(s-1.d0) * (-2*t) 
-   dNVdt(18)= 0.5d0*r*(r+1.d0) * 0.5d0*s*(s-1.d0) * (-2*t) 
-   dNVdt(19)= 0.5d0*r*(r+1.d0) * 0.5d0*s*(s+1.d0) * (-2*t) 
-   dNVdt(20)= 0.5d0*r*(r-1.d0) * 0.5d0*s*(s+1.d0) * (-2*t) 
-   dNVdt(21)= (1.d0-r**2)      * (1.d0-s**2)      * 0.5d0*(2*t-1.d0) 
-   dNVdt(22)= (1.d0-r**2)      * 0.5d0*s*(s-1.d0) * (-2*t) 
-   dNVdt(23)= 0.5d0*r*(r+1.d0) * (1.d0-s**2)      * (-2*t) 
-   dNVdt(24)= (1.d0-r**2)      * 0.5d0*s*(s+1.d0) * (-2*t) 
-   dNVdt(25)= 0.5d0*r*(r-1.d0) * (1.d0-s**2)      * (-2*t) 
-   dNVdt(26)= (1.d0-r**2)      * (1.d0-s**2)      * 0.5d0*(2*t+1.d0) 
-   dNVdt(27)= (1.d0-r**2)      * (1.d0-s**2)      * (-2*t) 
+   Nlr=0.5d0*r*(r-1d0) ; Nls=0.5d0*s*(s-1d0) ; dNlt=t-0.5d0
+   Nmr=(1d0-r**2)      ; Nms=(1d0-s**2)      ; dNmt=-2*t
+   Nrr=0.5d0*r*(r+1d0) ; Nrs=0.5d0*s*(s+1d0) ; dNrt=t+0.5d0
+   dNVdt(01)= Nlr * Nls * dNlt 
+   dNVdt(02)= Nmr * Nls * dNlt 
+   dNVdt(03)= Nrr * Nls * dNlt 
+   dNVdt(04)= Nlr * Nms * dNlt 
+   dNVdt(05)= Nmr * Nms * dNlt 
+   dNVdt(06)= Nrr * Nms * dNlt 
+   dNVdt(07)= Nlr * Nrs * dNlt 
+   dNVdt(08)= Nmr * Nrs * dNlt 
+   dNVdt(09)= Nrr * Nrs * dNlt 
+   dNVdt(10)= Nlr * Nls * dNmt 
+   dNVdt(11)= Nmr * Nls * dNmt 
+   dNVdt(12)= Nrr * Nls * dNmt 
+   dNVdt(13)= Nlr * Nms * dNmt 
+   dNVdt(14)= Nmr * Nms * dNmt 
+   dNVdt(15)= Nrr * Nms * dNmt 
+   dNVdt(16)= Nlr * Nrs * dNmt 
+   dNVdt(17)= Nmr * Nrs * dNmt 
+   dNVdt(18)= Nrr * Nrs * dNmt 
+   dNVdt(19)= Nlr * Nls * dNrt 
+   dNVdt(20)= Nmr * Nls * dNrt 
+   dNVdt(21)= Nrr * Nls * dNrt 
+   dNVdt(22)= Nlr * Nms * dNrt 
+   dNVdt(23)= Nmr * Nms * dNrt 
+   dNVdt(24)= Nrr * Nms * dNrt 
+   dNVdt(25)= Nlr * Nrs * dNrt 
+   dNVdt(26)= Nmr * Nrs * dNrt 
+   dNVdt(27)= Nrr * Nrs * dNrt 
 case default
    stop 'pb in dNNVdt'
 end select

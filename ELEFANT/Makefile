@@ -3,11 +3,11 @@ switch =  -fbounds-check -fcheck=all -ffree-line-length-none  -Wall -Wno-unused-
 libs = -lblas 
 
 #experiment_stokes_sphere_3D.o\
-#experiment_benchmark_3D_generic.o\
+experiment_donea_huerta.o\
 
 objects = module_structures.o module_global.o module_constants.o module_timing.o module_global_arrays.o\
-experiment_donea_huerta.o\
 mylapack.o\
+experiment_benchmark_3D_generic.o\
 assign_values_to_qpoints.o\
 basis_functions_V.o basis_functions_P.o basis_functions_T.o\
 compute_elemental_matrices.o compute_dNdx_dNdy.o compute_dNdx_dNdy_dNdz.o compute_elemental_volumes.o\
@@ -41,6 +41,8 @@ clean:
 	rm -f elefant
 	rm -f OUTPUT/*.vtu
 	rm -f OUTPUT/*.ascii
+	rm -f OUTPUT/TEST/*.ascii
+	rm -f OUTPUT/TEST/*.pdf
 	rm -f opla
 	rm -f fort.*
 
