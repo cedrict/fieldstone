@@ -8,11 +8,10 @@ real(8), intent(out) :: NP(mP)
 character(len=4), intent(in) :: pair
 
 if (ndim==2) then
-
    select case(pair)
    case('q1p0')
       NP(1)=1
-   case('q1q1')
+   case('q1q1','q2q1')
       NP(1)=0.25*(1-r)*(1-s)
       NP(2)=0.25*(1+r)*(1-s)
       NP(3)=0.25*(1+r)*(1+s)
@@ -20,27 +19,24 @@ if (ndim==2) then
    case default
       stop 'pb in NNP'
    end select
-
 end if
 
 if (ndim==3) then
-
    select case(pair)
    case('q1p0')
       NP(1)=1
-   case('q1q1')
-      NP(1)=0.125*(1-r)*(1-s)*(1-t)
-      NP(2)=0.125*(1+r)*(1-s)*(1-t)
-      NP(3)=0.125*(1+r)*(1+s)*(1-t)
-      NP(4)=0.125*(1-r)*(1+s)*(1-t)
-      NP(5)=0.125*(1-r)*(1-s)*(1+t)
-      NP(6)=0.125*(1+r)*(1-s)*(1+t)
-      NP(7)=0.125*(1+r)*(1+s)*(1+t)
-      NP(8)=0.125*(1-r)*(1+s)*(1+t)
+   case('q1q1','q2q1')
+      NP(1)=0.125d0*(1d0-r)*(1d0-s)*(1d0-t)
+      NP(2)=0.125d0*(1d0+r)*(1d0-s)*(1d0-t)
+      NP(3)=0.125d0*(1d0+r)*(1d0+s)*(1d0-t)
+      NP(4)=0.125d0*(1d0-r)*(1d0+s)*(1d0-t)
+      NP(5)=0.125d0*(1d0-r)*(1d0-s)*(1d0+t)
+      NP(6)=0.125d0*(1d0+r)*(1d0-s)*(1d0+t)
+      NP(7)=0.125d0*(1d0+r)*(1d0+s)*(1d0+t)
+      NP(8)=0.125d0*(1d0-r)*(1d0+s)*(1d0+t)
    case default
       stop 'pb in NNP'
    end select
-
 end if
 
 end subroutine

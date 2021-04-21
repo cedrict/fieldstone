@@ -164,16 +164,15 @@ if (ndim==2) then
       dNVdr(4)=-0.25*(1+s)-0.25d0*dBubbledr(r,s)
       dNVdr(5)=dBubbledr(r,s)      
    case('q2q1')
-dNVdr(1)= 0.5d0*(2.d0*r-1.d0) * 0.5d0*t*(t-1)
-dNVdr(2)=           (-2.d0*r) * 0.5d0*t*(t-1)
-dNVdr(3)= 0.5d0*(2.d0*r+1.d0) * 0.5d0*t*(t-1)
-dNVdr(4)= 0.5d0*(2.d0*r-1.d0) *   (1.d0-t**2)
-dNVdr(5)=           (-2.d0*r) *   (1.d0-t**2)
-dNVdr(6)= 0.5d0*(2.d0*r+1.d0) *   (1.d0-t**2)
-dNVdr(7)= 0.5d0*(2.d0*r-1.d0) * 0.5d0*t*(t+1)
-dNVdr(8)=           (-2.d0*r) * 0.5d0*t*(t+1)
-dNVdr(9)= 0.5d0*(2.d0*r+1.d0) * 0.5d0*t*(t+1)
-
+      dNVdr(1)= 05d0*(2d0*r-1.d0) * 0.5d0*t*(t-1)
+      dNVdr(2)=          (-2d0*r) * 0.5d0*t*(t-1)
+      dNVdr(3)= 05d0*(2d0*r+1.d0) * 0.5d0*t*(t-1)
+      dNVdr(4)= 05d0*(2d0*r-1.d0) *    (1d0-t**2)
+      dNVdr(5)=          (-2d0*r) *    (1d0-t**2)
+      dNVdr(6)= 05d0*(2d0*r+1.d0) *    (1d0-t**2)
+      dNVdr(7)= 05d0*(2d0*r-1.d0) * 0.5d0*t*(t+1)
+      dNVdr(8)=          (-2d0*r) * 0.5d0*t*(t+1)
+      dNVdr(9)= 05d0*(2d0*r+1.d0) * 0.5d0*t*(t+1)
    case default
       stop 'pb in dNNVdr'
    end select
@@ -204,7 +203,6 @@ if (ndim==3) then
       dNVdr(09)= dd*db1dr-ee*db2dr
       dNVdr(10)=-ee*db1dr+dd*db2dr
    case('q2q1')
-
       dNlr=r-0.5d0 ; Nls=0.5d0*s*(s-1d0) ; Nlt=0.5d0*t*(t-1d0) 
       dNmr=-2d0*r  ; Nms=(1d0-s**2)      ; Nmt=(1d0-t**2)       
       dNrr=r+0.5d0 ; Nrs=0.5d0*s*(s+1d0) ; Nrt=0.5d0*t*(t+1d0) 
@@ -274,15 +272,15 @@ if (ndim==2) then
       dNVds(4)=+0.25*(1-r)-0.25d0*dBubbleds(r,s)
       dNVds(5)=dBubbleds(r,s)      
    case('q2q1')
-      dNVds(1)= 0.5d0*r*(r-1.d0) * 0.5d0*(2.d0*s-1.d0)
-      dNVds(2)=      (1.d0-r**2) * 0.5d0*(2.d0*s-1.d0)
-      dNVds(3)= 0.5d0*r*(r+1.d0) * 0.5d0*(2.d0*s-1.d0)
-      dNVds(4)= 0.5d0*r*(r-1.d0) *           (-2.d0*s)
-      dNVds(5)=      (1.d0-r**2) *           (-2.d0*s)
-      dNVds(6)= 0.5d0*r*(r+1.d0) *           (-2.d0*s)
-      dNVds(7)= 0.5d0*r*(r-1.d0) * 0.5d0*(2.d0*s+1.d0)
-      dNVds(8)=      (1.d0-r**2) * 0.5d0*(2.d0*s+1.d0)
-      dNVds(9)= 0.5d0*r*(r+1.d0) * 0.5d0*(2.d0*s+1.d0)
+      dNVds(1)= 0.5d0*r*(r-1.d0) * 0.5d0*(2d0*s-1d0)
+      dNVds(2)=      (1.d0-r**2) * 0.5d0*(2d0*s-1d0)
+      dNVds(3)= 0.5d0*r*(r+1.d0) * 0.5d0*(2d0*s-1d0)
+      dNVds(4)= 0.5d0*r*(r-1.d0) *          (-2d0*s)
+      dNVds(5)=      (1.d0-r**2) *          (-2d0*s)
+      dNVds(6)= 0.5d0*r*(r+1.d0) *          (-2d0*s)
+      dNVds(7)= 0.5d0*r*(r-1.d0) * 0.5d0*(2d0*s+1d0)
+      dNVds(8)=      (1.d0-r**2) * 0.5d0*(2d0*s+1d0)
+      dNVds(9)= 0.5d0*r*(r+1.d0) * 0.5d0*(2d0*s+1d0)
    case default
       stop 'pb in dNNVds'
    end select

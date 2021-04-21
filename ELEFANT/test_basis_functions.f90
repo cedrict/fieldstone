@@ -15,8 +15,8 @@ use timing
 implicit none
 
 integer iq
-real(8) NNNV(1:mV),rq,sq,tq,uq,vq,wq,exxq,eyyq,ezzq
-real(8) dNdx(mV),dNdy(mV),dNdz(mV),jcob
+real(8) NNNV(1:mV),rq,sq,tq,uq,vq,wq,exxq,eyyq,ezzq,pq
+real(8) dNdx(mV),dNdy(mV),dNdz(mV),jcob,NNNP(1:mP)
 
 !==================================================================================================!
 !==================================================================================================!
@@ -37,7 +37,7 @@ call system_clock(counti,count_rate)
 
 if (debug) then
 
-open(unit=123,file='OUTPUT/TEST/test_basis_functions_constant.ascii',action='write')
+open(unit=123,file='OUTPUT/TEST/test_basis_functions_V_constant.ascii',action='write')
 do iel=1,nel
    mesh(iel)%u=1
    mesh(iel)%v=1
@@ -61,7 +61,7 @@ do iel=1,nel
 end do
 close(123)
 
-open(unit=123,file='OUTPUT/TEST/test_basis_functions_linear.ascii',action='write')
+open(unit=123,file='OUTPUT/TEST/test_basis_functions_V_linear.ascii',action='write')
 do iel=1,nel
    mesh(iel)%u=mesh(iel)%xV
    mesh(iel)%v=mesh(iel)%yV
@@ -85,7 +85,7 @@ do iel=1,nel
 end do
 close(123)
 
-open(unit=123,file='OUTPUT/TEST/test_basis_functions_quadratic.ascii',action='write')
+open(unit=123,file='OUTPUT/TEST/test_basis_functions_V_quadratic.ascii',action='write')
 do iel=1,nel
    mesh(iel)%u=mesh(iel)%xV**2
    mesh(iel)%v=mesh(iel)%yV**2
@@ -109,7 +109,7 @@ do iel=1,nel
 end do
 close(123)
 
-open(unit=123,file='OUTPUT/TEST/test_basis_functions_cubic.ascii',action='write')
+open(unit=123,file='OUTPUT/TEST/test_basis_functions_V_cubic.ascii',action='write')
 do iel=1,nel
    mesh(iel)%u=mesh(iel)%xV**3
    mesh(iel)%v=mesh(iel)%yV**3
@@ -129,6 +129,62 @@ do iel=1,nel
       ezzq=sum(dNdz(1:mV)*mesh(iel)%w(1:mV)) 
       write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
                    uq,vq,wq,exxq,eyyq,ezzq
+   end do
+end do
+close(123)
+
+open(unit=123,file='OUTPUT/TEST/test_basis_functions_P_constant.ascii',action='write')
+do iel=1,nel
+   mesh(iel)%p=1
+   do iq=1,nqel
+      rq=mesh(iel)%rq(iq)
+      sq=mesh(iel)%sq(iq)
+      tq=mesh(iel)%tq(iq)
+      call NNP(rq,sq,tq,NNNP(1:mP),mP,ndim,pair)
+      pq=sum(NNNP(1:mP)*mesh(iel)%p(1:mP)) 
+      write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),pq
+   end do
+end do
+close(123)
+
+open(unit=123,file='OUTPUT/TEST/test_basis_functions_P_linear.ascii',action='write')
+do iel=1,nel
+   mesh(iel)%p=mesh(iel)%xP
+   do iq=1,nqel
+      rq=mesh(iel)%rq(iq)
+      sq=mesh(iel)%sq(iq)
+      tq=mesh(iel)%tq(iq)
+      call NNP(rq,sq,tq,NNNP(1:mP),mP,ndim,pair)
+      pq=sum(NNNP(1:mP)*mesh(iel)%p(1:mP)) 
+      write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),pq
+   end do
+end do
+close(123)
+
+open(unit=123,file='OUTPUT/TEST/test_basis_functions_P_quadratic.ascii',action='write')
+do iel=1,nel
+   mesh(iel)%p=mesh(iel)%xP**2
+   do iq=1,nqel
+      rq=mesh(iel)%rq(iq)
+      sq=mesh(iel)%sq(iq)
+      tq=mesh(iel)%tq(iq)
+      call NNP(rq,sq,tq,NNNP(1:mP),mP,ndim,pair)
+      pq=sum(NNNP(1:mP)*mesh(iel)%p(1:mP)) 
+      write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),pq
+   end do
+end do
+close(123)
+
+open(unit=123,file='OUTPUT/TEST/test_basis_functions_P_cubic.ascii',action='write')
+do iel=1,nel
+   mesh(iel)%p=mesh(iel)%xP**3
+   do iq=1,nqel
+      rq=mesh(iel)%rq(iq)
+      sq=mesh(iel)%sq(iq)
+      tq=mesh(iel)%tq(iq)
+      call NNP(rq,sq,tq,NNNP(1:mP),mP,ndim,pair)
+      pq=sum(NNNP(1:mP)*mesh(iel)%p(1:mP)) 
+      write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),pq
    end do
 end do
 close(123)

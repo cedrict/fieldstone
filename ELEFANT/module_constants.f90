@@ -15,6 +15,4 @@ real(8), parameter :: TKelvin=273.15d0
 real(8), parameter :: eps=1.d-8
 real(8), parameter :: epsilon_test=1.d-6
 real(8), parameter :: sqrt3 = 1.732050807568877293527446341505d0
-real(8), dimension(2), parameter :: qcoords=(/-1.d0/sqrt3,+1.d0/sqrt3/)
-real(8), dimension(2), parameter :: qweights=(/1.d0 , 1.d0 /)
 end module constants

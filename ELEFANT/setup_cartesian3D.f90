@@ -276,13 +276,61 @@ if (pair=='q1p0') then
 end if
 
 if (pair=='q1q1') then
-   do i=1,ncorners
+   do i=1,mP
       mesh(1:nel)%xP(i)=mesh(1:nel)%xV(i)
       mesh(1:nel)%yP(i)=mesh(1:nel)%yV(i)
       mesh(1:nel)%zP(i)=mesh(1:nel)%zV(i)
       mesh(1:nel)%iconP(i)=mesh(1:nel)%iconV(i)
    end do
 end if
+
+if (pair=='q2q1') then
+   counter=0    
+   do ielz=1,nelz    
+      do iely=1,nely    
+         do ielx=1,nelx    
+            counter=counter+1    
+
+            mesh(counter)%iconP(1)=(nelx+1)*(nely+1)*(ielz-1)+ (iely-1)*(nelx+1) + ielx
+            mesh(counter)%iconP(2)=(nelx+1)*(nely+1)*(ielz-1)+ (iely-1)*(nelx+1) + ielx+1
+            mesh(counter)%iconP(3)=(nelx+1)*(nely+1)*(ielz-1)+ (iely  )*(nelx+1) + ielx+1
+            mesh(counter)%iconP(4)=(nelx+1)*(nely+1)*(ielz-1)+ (iely  )*(nelx+1) + ielx
+            mesh(counter)%iconP(5)=(nelx+1)*(nely+1)*(ielz  )+ (iely-1)*(nelx+1) + ielx
+            mesh(counter)%iconP(6)=(nelx+1)*(nely+1)*(ielz  )+ (iely-1)*(nelx+1) + ielx+1
+            mesh(counter)%iconP(7)=(nelx+1)*(nely+1)*(ielz  )+ (iely  )*(nelx+1) + ielx+1
+            mesh(counter)%iconP(8)=(nelx+1)*(nely+1)*(ielz  )+ (iely  )*(nelx+1) + ielx
+
+            mesh(counter)%xP(1)=(ielx-1)*hx
+            mesh(counter)%xP(2)=(ielx-1)*hx+hx
+            mesh(counter)%xP(3)=(ielx-1)*hx+hx
+            mesh(counter)%xP(4)=(ielx-1)*hx
+            mesh(counter)%xP(5)=(ielx-1)*hx
+            mesh(counter)%xP(6)=(ielx-1)*hx+hx
+            mesh(counter)%xP(7)=(ielx-1)*hx+hx
+            mesh(counter)%xP(8)=(ielx-1)*hx
+
+            mesh(counter)%yP(1)=(iely-1)*hy
+            mesh(counter)%yP(2)=(iely-1)*hy
+            mesh(counter)%yP(3)=(iely-1)*hy+hy
+            mesh(counter)%yP(4)=(iely-1)*hy+hy
+            mesh(counter)%yP(5)=(iely-1)*hy
+            mesh(counter)%yP(6)=(iely-1)*hy
+            mesh(counter)%yP(7)=(iely-1)*hy+hy
+            mesh(counter)%yP(8)=(iely-1)*hy+hy
+
+            mesh(counter)%zP(1)=(ielz-1)*hz
+            mesh(counter)%zP(2)=(ielz-1)*hz
+            mesh(counter)%zP(3)=(ielz-1)*hz
+            mesh(counter)%zP(4)=(ielz-1)*hz
+            mesh(counter)%zP(5)=(ielz-1)*hz+hz
+            mesh(counter)%zP(6)=(ielz-1)*hz+hz
+            mesh(counter)%zP(7)=(ielz-1)*hz+hz
+            mesh(counter)%zP(8)=(ielz-1)*hz+hz
+         end do
+      end do
+   end do
+end if
+
 
 !==========================================================
 ! temperature 

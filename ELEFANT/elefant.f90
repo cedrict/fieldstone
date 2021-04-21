@@ -35,13 +35,14 @@ call set_global_parameters_pair
 
 !----------------------------------------------------------
 
-nq_per_dim=2
-nqel=nq_per_dim**ndim
 ndofV=ndim
 NfemV=NV*ndofV
 NfemP=NP
 NfemT=NT
-Nq=nqel*nel
+
+!nq_per_dim=2
+!nqel=nq_per_dim**ndim
+!Nq=nqel*nel
 ncorners=2**ndim
 if (ndim==2) ndim2=3
 if (ndim==3) ndim2=6
