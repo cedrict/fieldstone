@@ -36,6 +36,7 @@ plot[][:1e26]\
 '128/vertical.ascii' u ($2/1000):4 w l t 'nelx=128',\
 '151/vertical.ascii' u ($2/1000):4 w l t 'nelx=151',\
 
+set xlabel '# iter'
 set ylabel 'normalised nonlinear residual'
 set key right 
 set output 'residual.pdf'
