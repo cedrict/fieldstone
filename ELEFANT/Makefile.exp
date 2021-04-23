@@ -1,0 +1,4 @@
+
+object_experiment = EXPERIMENTS/numbench_stokes_sphere_with_fs_2D/experiment.o
+
+#object_experiment = EXPERIMENTS/numbench_stokes_sphere_3D/experiment.o

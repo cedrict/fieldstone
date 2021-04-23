@@ -34,13 +34,15 @@ call system_clock(counti,count_rate)
 if (pair=='q1p0' .or. pair=='q1q1') then
    nq_per_dim=2
    allocate(qcoords(nq_per_dim))
-   qcoords=(/-1.d0/sqrt3,+1.d0/sqrt3/)
-   qweights=(/1.d0 , 1.d0 /)
+   allocate(qweights(nq_per_dim))
+   qcoords=(/-1d0/sqrt3,+1.d0/sqrt3/)
+   qweights=(/1d0,1d0/)
 end if
 
 if (pair=='q2q1') then
    nq_per_dim=3
    allocate(qcoords(nq_per_dim))
+   allocate(qweights(nq_per_dim))
    qcoords=(/-sqrt(3d0/5d0),0d0,sqrt(3d0/5d0)/)
    qweights=(/ 5d0/9d0,8d0/9d0,5d0/9d0 /)
 end if

@@ -1,13 +1,12 @@
+
+include Makefile.exp
+
 f90comp = gfortran
 switch =  -fbounds-check -fcheck=all -ffree-line-length-none  -Wall -Wno-unused-dummy-argument -cpp #-DUseMUMPS
 libs = -lblas 
 
-#experiment_stokes_sphere_3D.o\
-experiment_donea_huerta.o\
-
 objects = module_structures.o module_global.o module_constants.o module_timing.o module_global_arrays.o\
 mylapack.o\
-experiment_benchmark_3D_generic.o\
 assign_values_to_qpoints.o\
 basis_functions_V.o basis_functions_P.o basis_functions_T.o\
 compute_elemental_matrices.o compute_dNdx_dNdy.o compute_dNdx_dNdy_dNdz.o compute_elemental_volumes.o\
@@ -27,8 +26,8 @@ solve_stokes.o spmv_kernels.o solve_KVeqf.o\
 write_stats.o\
 elefant.o
 
-elefant: $(objects)
-	$(f90comp) -o elefant $(switch) $(objects) $(libs)
+elefant: $(objects) $(object_experiment) 
+	$(f90comp) -o elefant $(switch) $(objects) experiment.o $(libs)
 
 %.o: %.f90
 	$(f90comp) -c $(switch) $<
@@ -39,8 +38,11 @@ clean:
 	rm -f *.mod 
 	rm -f *.o 
 	rm -f elefant
+	rm -f solu*.pdf
 	rm -f OUTPUT/*.vtu
 	rm -f OUTPUT/*.ascii
+	rm -f OUTPUT/*.py
+	rm -f OUTPUT/*.pdf
 	rm -f OUTPUT/TEST/*.ascii
 	rm -f OUTPUT/TEST/*.pdf
 	rm -f opla

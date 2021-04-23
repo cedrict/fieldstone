@@ -75,8 +75,6 @@ if (geometry=='cartesian' .and. ndim==2) then
    write(*,*) '          nz=',nz
    write(*,*) '          csrM%ia (m/M)',minval(csrM%ia), maxval(csrM%ia)
    write(*,*) '          csrM%ja (m/M)',minval(csrM%ja), maxval(csrM%ja)
-   write(*,*) csrM%ia
-   write(*,*) csrM%ja
    end if
 
 end if ! cartesian 2D
