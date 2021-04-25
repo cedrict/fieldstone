@@ -9,6 +9,7 @@
 subroutine set_default_values
 
 use global_parameters
+use gravity
 
 implicit none
 
@@ -55,6 +56,12 @@ nzstripes=1
 nmarker=0
 
 use_ALE=.false.
+
+grav_pointmass=.false. 
+grav_prism=.false.
+plane_nnx=0
+plane_nny=0
+line_nnp=0
 
 write(*,'(a)') '     >> set_default_values '
 

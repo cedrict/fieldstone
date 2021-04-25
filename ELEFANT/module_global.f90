@@ -40,6 +40,7 @@ real(8) :: time                ! real human/model time
 logical :: use_penalty         ! whether the penalty formulation is used
 logical :: use_ALE             ! whether the ALE (free surface) is used
 
+
 character(len=10) :: geometry  ! type of domain geometry
 character(len=4) :: pair       ! type of element pair
 
@@ -74,3 +75,15 @@ real(8) :: errv,errp,errq
 end module
 
 
+module gravity
+logical :: grav_pointmass      ! 
+logical :: grav_prism          ! 
+real(8) :: plane_height
+real(8) :: plane_xmin,plane_ymin
+real(8) :: plane_xmax,plane_ymax
+integer :: plane_nnx,plane_nny
+real(8) :: xbeg,xend
+real(8) :: ybeg,yend
+real(8) :: zbeg,zend
+integer :: line_nnp
+end module

@@ -40,7 +40,7 @@ mesh(1:nel)%nmarker=nmarker_per_dim**ndim
 
 nmarker=nel*nmarker_per_dim**ndim
 
-write(*,'(a,i7)') '        nmarker=',nmarker
+write(*,'(a,i9)') '        nmarker=',nmarker
 write(*,'(a,l)')  '        init_marker_random=',init_marker_random
 
 allocate(swarm(nmarker))

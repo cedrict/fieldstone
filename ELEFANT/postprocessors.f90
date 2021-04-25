@@ -33,6 +33,8 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
+if (solve_stokes_system) then 
+
 avrg_u=0d0
 avrg_v=0d0
 avrg_w=0d0
@@ -91,13 +93,19 @@ write(*,'(a,es12.5)') '        errv   =',errv
 write(*,'(a,es12.5)') '        errp   =',errp
 write(*,'(a,es12.5)') '        errq   =',errq
 
+else
+
+   write(*,'(a)') '        solve_stokes_system=F: errors not computed' 
+
+end if
+
 call postprocessor_experiment
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> postprocessors                   ',elapsed,' s'
+write(*,'(a,f6.2,a)') '     >> postprocessors                   ',elapsed,' s'
 
 end if ! iproc
 

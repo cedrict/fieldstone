@@ -7,7 +7,7 @@ type element
    integer :: iconP(8)                        ! connectivity array for pressure dofs
    integer :: ielx,iely,ielz                  ! integer coords of the elt (Cartesian geom.)
    integer :: nmarker                         ! number of markers in element
-   integer :: list_of_markers(100)            ! list of markers inside the element
+   integer :: list_of_markers(200)            ! list of markers inside the element
    real(8) :: xV(27),yV(27),zV(27)            ! coordinates of velocity nodes
    real(8) :: xT(27),yT(27),zT(27)            ! coordinates of temperature nodes
    real(8) :: xP(8),yP(8),zP(8)               ! coordinates of pressure nodes
@@ -21,6 +21,8 @@ type element
    real(8) :: a_eta,b_eta,c_eta,d_eta         ! least square coeffs for viscosity
    real(8) :: a_rho,b_rho,c_rho,d_rho         ! least square coeffs for density
    real(8) :: vol                             ! volume/area of the element
+   real(8) :: rho_avrg                        ! average density inside the element
+   real(8) :: eta_avrg                        ! average viscosity inside the element
    logical(1) :: bnd1,bnd2                    ! true if element on x=0 or x=Lx boundary 
    logical(1) :: bnd3,bnd4                    ! true if element on y=0 or y=Ly boundary 
    logical(1) :: bnd5,bnd6                    ! true if element on z=0 or z=Lz boundary 

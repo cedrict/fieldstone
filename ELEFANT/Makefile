@@ -9,7 +9,8 @@ objects = module_structures.o module_global.o module_constants.o module_timing.o
 mylapack.o\
 assign_values_to_qpoints.o\
 basis_functions_V.o basis_functions_P.o basis_functions_T.o\
-compute_elemental_matrices.o compute_dNdx_dNdy.o compute_dNdx_dNdy_dNdz.o compute_elemental_volumes.o\
+compute_elemental_matrices.o compute_dNdx_dNdy.o compute_dNdx_dNdy_dNdz.o\
+compute_elemental_rho_eta_vol.o compute_gravity.o\
 output_mesh.o output_swarm.o output_solution.o output_qpoints.o\
 header.o\
 impose_boundary_conditions.o initialise_mumps_V.o interpolate_onto_nodes.o\
@@ -45,11 +46,13 @@ clean:
 	rm -f OUTPUT/*.pdf
 	rm -f OUTPUT/TEST/*.ascii
 	rm -f OUTPUT/TEST/*.pdf
+	rm -f OUTPUT/GRAVITY/*.ascii
 	rm -f opla
 	rm -f fort.*
 
 cleandata:
 	rm -f OUTPUT/*.vtu
 	rm -f OUTPUT/*.ascii
+	rm -f OUTPUT/GRAVITY/*.ascii
 	rm -f opla
 	rm -f fort.*

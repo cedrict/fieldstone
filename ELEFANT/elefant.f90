@@ -136,10 +136,10 @@ call matrix_setup_M
 do istep=1,nstep !-----------------------------------------
                                                           !
    call spacer_istep                                      !
+   call assign_values_to_qpoints                          !
                                                           !
    if (solve_stokes_system) then                          !
                                                           !
-      call assign_values_to_qpoints                       !
       call define_bcV                                     !
       call make_matrix                                    !
       call solve_stokes                                   !
@@ -151,7 +151,8 @@ do istep=1,nstep !-----------------------------------------
                                                           !
    end if                                                 !
 
-   call compute_elemental_volumes                         !
+   call compute_elemental_rho_eta_vol                     !
+   call compute_gravity                                   !
    call postprocessors                                    !
    call output_solution                                   !
    call output_qpoints                                    !

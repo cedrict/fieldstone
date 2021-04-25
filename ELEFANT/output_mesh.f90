@@ -29,6 +29,8 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
+if (debug) then
+
 open(unit=123,file='OUTPUT/meshV.vtu',status='replace',form='formatted')
 write(123,*) '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian">'
 write(123,*) '<UnstructuredGrid>'
@@ -38,7 +40,7 @@ write(123,*) '<Points>'
 write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Format="ascii">'
 do iel=1,nel
    do i=1,ncorners
-      write(123,*) mesh(iel)%xV(i),mesh(iel)%yV(i),mesh(iel)%zV(i)
+      write(123,'(es12.4)') mesh(iel)%xV(i),mesh(iel)%yV(i),mesh(iel)%zV(i)
    end do
 end do
 write(123,*) '</DataArray>'
@@ -62,6 +64,8 @@ write(123,*) '</Piece>'
 write(123,*) '</UnstructuredGrid>'
 write(123,*) '</VTKFile>'
 close(123)
+
+end if
 
 !==============================================================================!
 

@@ -16,6 +16,8 @@ implicit none
 
 integer im
 
+logical, parameter :: output_rst=.false.
+
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{output\_swarm.f90}
@@ -39,22 +41,26 @@ write(123,*) '<Piece NumberOfPoints="',nmarker,'" NumberOfCells="',nmarker,'">'
 !=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 write(123,*) '<PointData Scalars="scalars">'
 !-----
+if (output_rst) then
 write(123,*) '<DataArray type="Float32" Name="r" Format="ascii">'
 do im=1,nmarker
-write(123,'(es12.4)') swarm(im)%r
+write(123,'(f5.2)') swarm(im)%r
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
+if (output_rst) then
 write(123,*) '<DataArray type="Float32" Name="s" Format="ascii">'
 do im=1,nmarker
-write(123,'(es12.4)') swarm(im)%s
+write(123,'(f5.2)') swarm(im)%s
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
-if (ndim==3) then
+if (output_rst .and. ndim==3) then
 write(123,*) '<DataArray type="Float32" Name="t" Format="ascii">'
 do im=1,nmarker
-write(123,'(es12.4)') swarm(im)%t
+write(123,'(f5.2)') swarm(im)%t
 end do
 write(123,*) '</DataArray>'
 end if
@@ -67,60 +73,60 @@ write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Float32" Name="paint" Format="ascii">'
 do im=1,nmarker
-write(123,*) swarm(im)%paint
+write(123,'(f5.2)') swarm(im)%paint
 end do
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Float32" Name="rho0" Format="ascii">'
 do im=1,nmarker
-write(123,*) mat(swarm(im)%mat)%rho0
+write(123,'(es12.4)') mat(swarm(im)%mat)%rho0
 end do
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Float32" Name="eta0" Format="ascii">'
 do im=1,nmarker
-write(123,*) mat(swarm(im)%mat)%eta0
+write(123,'(es12.4)') mat(swarm(im)%mat)%eta0
 end do
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Float32" Name="iel" Format="ascii">'
 do im=1,nmarker
-write(123,*) swarm(im)%iel
+write(123,'(i7)') swarm(im)%iel
 end do
 write(123,*) '</DataArray>'
 !-----
-write(123,*) '<DataArray type="Float32" Name="eta" Format="ascii">'
+write(123,'(a)') '<DataArray type="Float32" Name="eta" Format="ascii">'
 do im=1,nmarker
-write(123,*) swarm(im)%eta
+write(123,'(es12.4)') swarm(im)%eta
 end do
-write(123,*) '</DataArray>'
+write(123,'(a)') '</DataArray>'
 !-----
-write(123,*) '<DataArray type="Float32" Name="rho" Format="ascii">'
+write(123,'(a)') '<DataArray type="Float32" Name="rho" Format="ascii">'
 do im=1,nmarker
-write(123,*) swarm(im)%rho
+write(123,'(es12.4)') swarm(im)%rho
 end do
-write(123,*) '</DataArray>'
+write(123,'(a)') '</DataArray>'
 !-----
 if (use_T) then
-write(123,*) '<DataArray type="Float32" Name="hcapa" Format="ascii">'
+write(123,'(a)') '<DataArray type="Float32" Name="hcapa" Format="ascii">'
 do im=1,nmarker
-write(123,*) swarm(im)%hcapa
+write(123,'(es12.4)') swarm(im)%hcapa
 end do
-write(123,*) '</DataArray>'
+write(123,'(a)') '</DataArray>'
 end if
 !-----
 if (use_T) then
-write(123,*) '<DataArray type="Float32" Name="hcond" Format="ascii">'
+write(123,'(a)') '<DataArray type="Float32" Name="hcond" Format="ascii">'
 do im=1,nmarker
-write(123,*) swarm(im)%hcond
+write(123,'(es12.4)') swarm(im)%hcond
 end do
-write(123,*) '</DataArray>'
+write(123,'(a)') '</DataArray>'
 end if
 !-----
 if (use_T) then
 write(123,*) '<DataArray type="Float32" Name="hprod" Format="ascii">'
 do im=1,nmarker
-write(123,*) swarm(im)%hprod
+write(123,'(f12.4)') swarm(im)%hprod
 end do
 write(123,*) '</DataArray>'
 end if
@@ -170,7 +176,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> output_swarm                     ',elapsed,' s'
+write(*,'(a,f6.2,a)') '     >> output_swarm                     ',elapsed,' s'
 
 end if ! iproc
 

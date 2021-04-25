@@ -16,7 +16,7 @@ use timing
 implicit none
 
 integer iq,jq,kq,counter
-real(8) rq,sq,tq,NNNV(mV)
+real(8) rq,sq,tq,NNNV(mV),dNdx(mV),dNdy(mV),dNdz(mV),jcob
 real(8), dimension(:), allocatable :: qcoords,qweights
 
 !==================================================================================================!
@@ -61,6 +61,7 @@ do iel=1,nel
    allocate(mesh(iel)%rhoq(nqel),mesh(iel)%etaq(nqel))
    allocate(mesh(iel)%hcondq(nqel),mesh(iel)%hcapaq(nqel),mesh(iel)%hprodq(nqel))
    allocate(mesh(iel)%pq(nqel),mesh(iel)%thetaq(nqel))
+   mesh(iel)%JxWq(:)=0d0
 end do
 
 !--------------------------------------
@@ -81,6 +82,8 @@ if (ndim==2) then
          mesh(iel)%rq(counter)=rq
          mesh(iel)%sq(counter)=sq
          mesh(iel)%tq(counter)=0
+         call compute_dNdx_dNdy(rq,sq,dNdx,dNdy,jcob)
+         mesh(iel)%JxWq(counter)=jcob*mesh(iel)%weightq(counter)
       end do
       end do
    end do
@@ -106,6 +109,8 @@ if (ndim==3) then
          mesh(iel)%rq(counter)=rq
          mesh(iel)%sq(counter)=sq
          mesh(iel)%tq(counter)=tq
+         call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNdx,dNdy,dNdz,jcob)
+         mesh(iel)%JxWq(counter)=jcob*mesh(iel)%weightq(counter)
       end do
       end do
       end do
