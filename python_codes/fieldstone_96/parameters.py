@@ -14,7 +14,7 @@ z_blob=2600e3
 rho_blob=4000
 eta_blob=1e24
 
-np_grav=8
+np_grav=2
 nel_phi=20
 
 eta_core=1e26

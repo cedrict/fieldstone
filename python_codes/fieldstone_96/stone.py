@@ -284,7 +284,7 @@ for i in range(0, NV):
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
 
     #planet surface
-    if xV[i]**2+zV[i]**2>0.99999*R_outer**2:
+    if xV[i]**2+zV[i]**2>0.9999*R_outer**2:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
 
@@ -328,6 +328,27 @@ print("     -> total area (meas) %.6f " %(area.sum()))
 print("     -> total area (anal) %.6f " %(np.pi*R_outer**2/2))
 
 print("compute elements areas: %.3f s" % (timing.time() - start))
+
+#################################################################
+# compute normal to surface 
+#################################################################
+
+nx=np.zeros(NV,dtype=np.float64)     # x coordinates
+nz=np.zeros(NV,dtype=np.float64)     # y coordinates
+
+for i in range(0,NV):
+    #Left boundary  
+    if xV[i]<0.000001*R_inner:
+       nx[i]=-1
+       nz[i]=0.
+
+    #planet surface
+    if xV[i]**2+zV[i]**2>0.9999*R_outer**2:
+       nx[i]=xV[i]/R_outer
+       nz[i]=zV[i]/R_outer
+
+
+print("compute surface normal vector: %.3f s" % (timing.time() - start))
 
 ################################################################################################
 
@@ -685,11 +706,49 @@ for istep in range(0,1):
     tau_zz[:]=2*eta[:]*e_zz[:]
     tau_rz[:]=2*eta[:]*e_rz[:]
 
-
     sigma_rr[:]=-p_el[:]+tau_rr[:]
     sigma_tt[:]=-p_el[:]+tau_tt[:]
     sigma_zz[:]=-p_el[:]+tau_zz[:]
     sigma_rz[:]=         tau_rz[:]
+
+    #####################################################################
+    # compute traction at surface
+    #####################################################################
+
+    filename = 'surface_traction.ascii'
+    tracfile=open(filename,"w")
+    for iel in range(0,nel):
+
+        if xV[iconV[0,iel]]**2+zV[iconV[0,iel]]**2>0.99999*R_outer**2 and\
+           xV[iconV[1,iel]]**2+zV[iconV[1,iel]]**2>0.99999*R_outer**2:
+           inode=iconV[3,iel]
+           tr=sigma_rr[iel]*nx[inode]+sigma_rz[iel]*nz[inode]
+           tz=sigma_rz[iel]*nx[inode]+sigma_zz[iel]*nz[inode]
+           theta=np.arctan2(xV[inode],zV[inode])/np.pi*180
+           trr=tr*nx[inode]+tz*nz[inode]
+           tracfile.write("%10e %10e %10e %10e %10e %10e %10e %10e\n" \
+                          %(xV[inode],zV[inode],nx[inode],nz[inode],tr,tz,theta,trr))
+
+        if xV[iconV[1,iel]]**2+zV[iconV[1,iel]]**2>0.99999*R_outer**2 and\
+           xV[iconV[2,iel]]**2+zV[iconV[2,iel]]**2>0.99999*R_outer**2:
+           inode=iconV[4,iel]
+           tr=sigma_rr[iel]*nx[inode]+sigma_rz[iel]*nz[inode]
+           tz=sigma_rz[iel]*nx[inode]+sigma_zz[iel]*nz[inode]
+           theta=np.arctan2(xV[inode],zV[inode])/np.pi*180
+           trr=tr*nx[inode]+tz*nz[inode]
+           tracfile.write("%10e %10e %10e %10e %10e %10e %10e %10e\n" \
+                          %(xV[inode],zV[inode],nx[inode],nz[inode],tr,tz,theta,trr))
+
+        if xV[iconV[2,iel]]**2+zV[iconV[2,iel]]**2>0.99999*R_outer**2 and\
+           xV[iconV[3,iel]]**2+zV[iconV[3,iel]]**2>0.99999*R_outer**2:
+           inode=iconV[5,iel]
+           tr=sigma_rr[iel]*nx[inode]+sigma_rz[iel]*nz[inode]
+           tz=sigma_rz[iel]*nx[inode]+sigma_zz[iel]*nz[inode]
+           theta=np.arctan2(xV[inode],zV[inode])/np.pi*180
+           trr=tr*nx[inode]+tz*nz[inode]
+           tracfile.write("%10e %10e %10e %10e %10e %10e %10e %10e\n" \
+                          %(xV[inode],zV[inode],nx[inode],nz[inode],tr,tz,theta,trr))
+
 
     #####################################################################
     # plot of solution
@@ -865,6 +924,12 @@ for istep in range(0,1):
            val=0
         vtufile.write("%10e \n" %val)
     vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e %10e %10e \n" % (nx[i],0.,nz[i]))
+    vtufile.write("</DataArray>\n")
+
     #--
     vtufile.write("</PointData>\n")
     #####
