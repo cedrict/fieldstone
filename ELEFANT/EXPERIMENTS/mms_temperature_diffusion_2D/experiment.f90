@@ -9,44 +9,21 @@
 subroutine declare_main_parameters
 
 use global_parameters
-use gravity
 
 implicit none
 
 !----------------------------------------------------------
 
-ndim=3
-Lx=1d3
-Ly=1d3
-Lz=1d3
+Lx=1
+Ly=1
 
-nelx=48
-nely=48
-nelz=48
+nelx=32
+nely=32
+
+use_T=.true.
 
 solve_stokes_system=.false.
 
-use_swarm=.true.
-nmarker_per_dim=3 
-nmat=2
-
-grav_pointmass=.true.
-!grav_prism=.true.
-plane_height=Lz+0.1
-plane_xmin=0
-plane_ymin=0
-plane_xmax=Lx
-plane_ymax=Ly
-plane_nnx=0
-plane_nny=25
-
-xbeg=Lx/2
-xend=1.11d3
-ybeg=Ly/2
-yend=2.22d3
-zbeg=Lz/2
-zend=5.55d3
-line_nnp=256
 
 
 !----------------------------------------------------------
@@ -64,13 +41,6 @@ implicit none
 
 !----------------------------------------------------------
 
-!liquid
-mat(1)%rho0=0
-mat(1)%eta0=1
-
-!sphere
-mat(2)%rho0=100
-mat(2)%eta0=2
 
 !----------------------------------------------------------
 
@@ -93,8 +63,11 @@ real(8), intent(out) :: eta,rho,hcond,hcapa,hprod
 
 !----------------------------------------------------------
 
-eta=mat(imat)%eta0
-rho=mat(imat)%rho0
+eta=0
+rho=1
+hcond=1
+hcapa=1
+hprod=0
 
 !----------------------------------------------------------
 
@@ -109,21 +82,8 @@ use structures
 
 implicit none
 
-integer im
-
 !----------------------------------------------------------
-! 1: fluid
-! 2: sphere
 
-do im=1,nmarker
-
-   swarm(im)%mat=1
-
-   if ((swarm(im)%x-0.5*Lx)**2+(swarm(im)%y-0.5*Ly)**2+(swarm(im)%z-0.5*Lz)**2<500**2) then
-      swarm(im)%mat=2      
-   end if
-
-end do
 
 !----------------------------------------------------------
 
@@ -154,9 +114,37 @@ use structures
 
 implicit none
 
+integer i
+
 !----------------------------------------------------------
 
-! your stuff here
+do iel=1,nel
+   mesh(iel)%fix_T(:)=.false. 
+   !left boundary
+   !do i=1,mT
+   !   if (mesh(iel)%bnd1_node(i)) then
+   !      mesh(iel)%fix_T(i)=.true. ; mesh(iel)%T(i)=0.d0
+   !   end if
+   !end do
+   !right boundary
+   !do i=1,mT
+   !   if (mesh(iel)%bnd2_node(i)) then
+   !      mesh(iel)%fix_T(i)=.true. ; mesh(iel)%T(i)=0.d0
+   !   end if
+   !end do
+   !bottom boundary
+   do i=1,mT
+      if (mesh(iel)%bnd3_node(i)) then
+         mesh(iel)%fix_T(i)=.true. ; mesh(iel)%T(i)=1.d0
+      end if
+   end do
+   !top boundary
+   do i=1,mT
+      if (mesh(iel)%bnd4_node(i)) then
+         mesh(iel)%fix_T(i)=.true. ; mesh(iel)%T(i)=0.d0
+      end if
+   end do
+end do
 
 !----------------------------------------------------------
 
@@ -164,7 +152,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine temperature_layout
+subroutine initial_temperature
 
 use global_parameters
 use structures
@@ -173,7 +161,9 @@ implicit none
 
 !----------------------------------------------------------
 
-! your stuff here
+do iel=1,nel
+   mesh(iel)%T=0.5
+end do
 
 !----------------------------------------------------------
 
@@ -196,7 +186,7 @@ u=0
 v=0
 w=0
 p=0
-T=0
+T=1-y
 exx=0
 eyy=0
 ezz=0
@@ -221,7 +211,7 @@ real(8), intent(out) :: gx,gy,gz
 
 gx=0
 gy=0
-gz=-1
+gz=0
 
 !----------------------------------------------------------
 

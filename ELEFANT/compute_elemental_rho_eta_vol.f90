@@ -9,6 +9,7 @@
 subroutine compute_elemental_rho_eta_vol
 
 use global_parameters
+use global_measurements
 use structures
 use timing
 
@@ -34,6 +35,8 @@ r_min=+1d30
 r_max=-1d30
 e_min=+1d30
 e_max=-1d30
+vol_min=+1d30
+vol_max=-1d30
 
 do iel=1,nel
    mesh(iel)%rho_avrg=0d0
@@ -50,6 +53,8 @@ do iel=1,nel
    r_max=max(r_max,mesh(iel)%rho_avrg)
    e_min=min(e_min,mesh(iel)%eta_avrg)
    e_max=max(e_max,mesh(iel)%eta_avrg)
+   vol_min=min(vol_min,mesh(iel)%vol)
+   vol_max=max(vol_max,mesh(iel)%vol)
 end do
 
 write(*,'(a,2es10.3)') '        rho_avrg (m/M):',r_min,r_max

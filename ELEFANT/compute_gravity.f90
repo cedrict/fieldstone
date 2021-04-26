@@ -130,7 +130,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> compute_gravity ',elapsed,' s'
+write(*,'(a,f6.2,a)') '     >> compute_gravity ',elapsed,' s'
 
 end if ! iproc
 
@@ -250,84 +250,4 @@ end if
 
 end subroutine
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-subroutine gbox(x0,y0,z0,x1,y1,z1,x2,y2,z2,rho,g)
-
-use constants
-
-implicit none
-
-! Computes the vertical attraction of a rectangular prism.  
-! Sides of prism are parallel to x,y,z axes, and z axis is vertical down.  
-! Input parameters:
-!    Observation point is (x0,y0,z0).  The prism extends from x1
-!    to x2, from y1 to y2, and from z1 to z2 in the x, y, and z 
-!    directions, respectively.  Density of prism is rho.  All 
-!    distance parameters in units of m; rho in units of kg/(m**3). 
-! Output parameters:
-!    Vertical attraction of gravity, g, in Gal. 
-! Adapted from Blakely's book.
-
-real(8), intent(in) ::  x0,y0,z0,x1,y1,z1,x2,y2,z2,rho
-real(8), intent(out) :: g 
-
-integer i,j,k,ijk
-integer, dimension(2), parameter :: isign=(/-1,1/)
-real(8) ::  x(2),y(2),z(2),summ,arg1,arg2,arg3,rijk
-
-x(1)=x0-x1
-y(1)=y0-y1
-z(1)=z0-z1
-x(2)=x0-x2
-y(2)=y0-y2
-z(2)=z0-z2
-
-summ=0d0
-do i=1,2
-   do j=1,2
-      do k=1,2
-         rijk=sqrt(x(i)**2+y(j)**2+z(k)**2)
-         ijk=isign(i)*isign(j)*isign(k)
-         arg1=atan2((x(i)*y(j)),(z(k)*rijk))
-         if(arg1.lt.0.)arg1=arg1+twopi
-         arg2=rijk+y(j)
-         arg3=rijk+x(i)
-         !if(arg2.le.0.)pause 'GBOX:  Bad field point'
-         !if(arg3.le.0.)pause 'GBOX:  Bad field point'
-         arg2=log(arg2)
-         arg3=log(arg3)
-         summ=summ+ijk*(z(k)*arg1-x(i)*arg2-y(j)*arg3)
-      end do
-    end do
-end do
-
-g=rho*Ggrav*summ/mGal
-
-end subroutine
-
-
-
+!==================================================================================================!

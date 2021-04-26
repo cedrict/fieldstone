@@ -34,10 +34,10 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-etaq_max=-1d50
-etaq_min=+1d50
-rhoq_max=-1d50
-rhoq_min=+1d50
+etaq_min=+1d50 ; etaq_max=-1d50 
+rhoq_min=+1d50 ; rhoq_max=-1d50
+hcapaq_min=+1d50 ; hcapaq_max=-1d50 
+hcondq_min=+1d50 ; hcondq_max=-1d50 
 
 if (use_swarm) then 
 
@@ -219,6 +219,7 @@ else
 
          call NNT(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim)
          mesh(iel)%thetaq(iq)=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
+
          exxq=sum(NNNT(1:mT)*mesh(iel)%exx(1:mT))
          eyyq=sum(NNNT(1:mT)*mesh(iel)%eyy(1:mT))
          ezzq=sum(NNNT(1:mT)*mesh(iel)%ezz(1:mT))
@@ -238,14 +239,16 @@ else
                              mesh(iel)%hcondq(iq),&
                              mesh(iel)%hcapaq(iq),&
                              mesh(iel)%hprodq(iq))
-
-   
       end do
 
       etaq_min=min(minval(mesh(iel)%etaq(:)),etaq_min)
       etaq_max=max(maxval(mesh(iel)%etaq(:)),etaq_max)
       rhoq_min=min(minval(mesh(iel)%rhoq(:)),rhoq_min)
       rhoq_max=max(maxval(mesh(iel)%rhoq(:)),rhoq_max)
+      hcapaq_min=min(minval(mesh(iel)%hcapaq(:)),hcapaq_min)
+      hcapaq_max=max(maxval(mesh(iel)%hcapaq(:)),hcapaq_max)
+      hcondq_min=min(minval(mesh(iel)%hcondq(:)),hcondq_min)
+      hcondq_max=max(maxval(mesh(iel)%hcondq(:)),hcondq_max)
 
    end do
 

@@ -6,7 +6,7 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine compute_elemental_matrices(K_el,G_el,f_el,h_el)
+subroutine compute_elemental_matrix_stokes(K_el,G_el,f_el,h_el)
 
 use global_parameters
 use global_arrays
@@ -27,7 +27,7 @@ real(8) NNNV(mV),NNNP(mP),dNdx(mV),dNdy(mV),dNdz(mV)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{compute\_elemental\_matrices.f90}
+!@@ \subsubsection{compute\_elemental\_matrix\_stokes.f90}
 !@@ Note that when the material model is called directly on the quadrature points and 
 !@@ the penalty formulation is used then the viscosity at the reduced quadrature location 
 !@@ is obtained by taking the maximum viscosity value carried by the quadrature points of 

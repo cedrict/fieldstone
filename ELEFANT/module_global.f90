@@ -33,13 +33,15 @@ logical :: init_marker_random  ! whether markers are initally randomised
 logical :: use_MUMPS           ! whether MUMPS is used for inner solve 
 logical :: use_T               ! whether the code solves the energy equation
 logical :: debug               ! triggers lots of additional checks & prints
+logical :: use_penalty         ! whether the penalty formulation is used
+logical :: use_ALE             ! whether the ALE (free surface) is used
+
 real(8) :: Lx,Ly,Lz            ! cartesian domain size
 real(8) :: block_scaling_coeff ! scaling coefficient for the G block
 real(8) :: penalty             ! penalty parameter
 real(8) :: time                ! real human/model time
-logical :: use_penalty         ! whether the penalty formulation is used
-logical :: use_ALE             ! whether the ALE (free surface) is used
-
+real(8) :: dt,dt_prev          ! time step 
+real(8) :: CFL_nb 
 
 character(len=10) :: geometry  ! type of domain geometry
 character(len=4) :: pair       ! type of element pair
@@ -58,11 +60,12 @@ real(8) :: avrg_u, avrg_u_test
 real(8) :: avrg_v, avrg_v_test
 real(8) :: avrg_w, avrg_w_test
 real(8) :: avrg_p, avrg_p_test
+real(8) :: avrg_T, avrg_T_test
 real(8) :: volume, volume_test
-real(8) :: etaq_min
-real(8) :: etaq_max
-real(8) :: rhoq_min
-real(8) :: rhoq_max
+real(8) :: etaq_min,etaq_max
+real(8) :: rhoq_min,rhoq_max
+real(8) :: hcapaq_min,hcapaq_max
+real(8) :: hcondq_min,hcondq_max
 real(8) :: u_min
 real(8) :: u_max
 real(8) :: v_min
@@ -71,7 +74,9 @@ real(8) :: w_min
 real(8) :: w_max
 real(8) :: p_min,q_min
 real(8) :: p_max,q_max
-real(8) :: errv,errp,errq
+real(8) :: T_min,T_max
+real(8) :: vol_min,vol_max
+real(8) :: errv,errp,errq,errT
 end module
 
 

@@ -40,7 +40,7 @@ guess=0
 
 if (use_penalty) then
 
-   call solve_KVeqf(rhs_f,solV)
+   call solve_KV_eq_f(rhs_f,solV)
 
    !transfer velocity onto elements
    do iel=1,nel

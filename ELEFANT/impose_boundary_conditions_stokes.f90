@@ -6,11 +6,10 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine impose_boundary_conditions(K_el,G_el,f_el,h_el)
+subroutine impose_boundary_conditions_stokes(K_el,G_el,f_el,h_el)
 
 use global_parameters
 use structures
-!use constants
 
 implicit none
 
@@ -24,7 +23,7 @@ real(8) bcvalue,Kref
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{impose\_boundary\_conditions}
+!@@ \subsubsection{impose\_boundary\_conditions\_stokes}
 !@@ This subroutine modifies the elemental $\K$, $\G$ and $\C$ matrices as well as the 
 !@@ elemental rhs $f_{el}$ and $h_{el}$ and returns them modified after imposing
 !@@ velocity Dirichlet boundary conditions.

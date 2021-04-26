@@ -106,6 +106,7 @@ implicit none
 type(compressedrowstorage_sqr) csrK
 type(compressedrowstorage_rec) csrGT
 type(compressedrowstorage_sqr) csrM
+type(compressedrowstorage_sqr) csrA
 end module
 
 

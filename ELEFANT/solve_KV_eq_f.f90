@@ -6,7 +6,7 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine solve_KVeqf(rhs,guess)
+subroutine solve_KV_eq_f(rhs,guess)
 
 use global_parameters
 use global_arrays
@@ -22,7 +22,7 @@ real(8), intent(in) :: guess(NfemV)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{solve\_KVeqf}
+!@@ \subsubsection{solve\_KV\_eq\_f}
 !@@ This subroutine solves the system $\K\cdot \vec{V} = \vec{f}$. The matrix is 
 !@@ implicit passed as argument via the module but the rhs and the guess vector are 
 !@@ passed as arguments.

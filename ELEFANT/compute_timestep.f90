@@ -6,22 +6,22 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine prescribe_stokes_solution
+subroutine compute_timestep
 
 use global_parameters
-use structures
+!use structures
+!use constants
+use global_measurements
 use timing
 
 implicit none
 
-integer k
-real(8) dum 
+real(8) hmin,maxv
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{prescribe\_stokes\_solution.f90}
-!@@ This subroutine prescribes the velocity, pressure, temperature and strain rate components
-!@@ on the corners of each element via the {\sl analytical\_solution} subroutine.
+!@@ \subsubsection{compute_timestep}
+!@@
 !==================================================================================================!
 
 if (iproc==0) then
@@ -30,31 +30,33 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-do iel=1,nel
-   do k=1,mV
-      call analytical_solution(mesh(iel)%xV(k),&
-                               mesh(iel)%yV(k),&
-                               mesh(iel)%zV(k),&
-                               mesh(iel)%u(k),&
-                               mesh(iel)%v(k),&
-                               mesh(iel)%w(k),&
-                               mesh(iel)%q(k),&
-                               dum,&
-                               mesh(iel)%exx(k),&
-                               mesh(iel)%eyy(k),&
-                               mesh(iel)%ezz(k),&
-                               mesh(iel)%exy(k),&
-                               mesh(iel)%exz(k),&
-                               mesh(iel)%eyz(k))
+maxv=max(abs(u_min),abs(u_max),abs(v_min),abs(v_max),abs(w_min),abs(w_max))
 
-   end do
-end do
+hmin=(vol_min)**(1./3.)
+
+if (maxv>1d-15) then
+   dt=CFL_nb*hmin/maxv
+else
+   dt=1d50
+end if
+
+if (use_T) then
+   dt=min(dt,hmin**2*rhoq_min*hcapaq_min/hcondq_max)
+end if
+
+write(*,'(a,es12.4)') '        dt=',dt 
+
+
+
+
+
+
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> prescribe_stokes_solution ',elapsed,' s'
+write(*,'(a,f4.2,a)') '     >> compute_timestep ',elapsed,' s'
 
 end if ! iproc
 

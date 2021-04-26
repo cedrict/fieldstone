@@ -83,33 +83,31 @@ implicit none
 integer i
 
 do iel=1,nel
-
    mesh(iel)%fix_u(:)=.false. 
    mesh(iel)%fix_v(:)=.false. 
-
    !left boundary
-   do i=1,4
+   do i=1,mV
       if (mesh(iel)%bnd1_node(i)) then
          mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
          mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
       end if
    end do
    !right boundary
-   do i=1,4
+   do i=1,mV
       if (mesh(iel)%bnd2_node(i)) then
          mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
          mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
       end if
    end do
    !bottom boundary
-   do i=1,4
+   do i=1,mV
       if (mesh(iel)%bnd3_node(i)) then
          mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
          mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
       end if
    end do
    !top boundary
-   do i=1,4
+   do i=1,mV
       if (mesh(iel)%bnd4_node(i)) then
          mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
          mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0

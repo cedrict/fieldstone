@@ -6,22 +6,28 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine prescribe_stokes_solution
+subroutine make_matrix_energy
 
 use global_parameters
+use global_arrays, only: rhs_b
+use matrices, only: csrA
 use structures
+!use constants
 use timing
 
 implicit none
 
-integer k
-real(8) dum 
+integer inode,jnode,k,k1,k2
+real(8) :: Ael(mT,mT),bel(mT)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{prescribe\_stokes\_solution.f90}
-!@@ This subroutine prescribes the velocity, pressure, temperature and strain rate components
-!@@ on the corners of each element via the {\sl analytical\_solution} subroutine.
+!@@ \subsubsection{make\_matrix\_energy}
+!@@ This subroutine builds the linear system for the energy equation. 
+!@@ It loops over each element, builds its elemental matrix ${\bm A}_{el}$
+!@@ and right hand side $\vec{b}_{el}$, applies boundary conditions, 
+!@@ and assembles these into the global matrix csrA and the corresponding 
+!@@ right hand side rhs\_b. 
 !==================================================================================================!
 
 if (iproc==0) then
@@ -30,31 +36,38 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-do iel=1,nel
-   do k=1,mV
-      call analytical_solution(mesh(iel)%xV(k),&
-                               mesh(iel)%yV(k),&
-                               mesh(iel)%zV(k),&
-                               mesh(iel)%u(k),&
-                               mesh(iel)%v(k),&
-                               mesh(iel)%w(k),&
-                               mesh(iel)%q(k),&
-                               dum,&
-                               mesh(iel)%exx(k),&
-                               mesh(iel)%eyy(k),&
-                               mesh(iel)%ezz(k),&
-                               mesh(iel)%exy(k),&
-                               mesh(iel)%exz(k),&
-                               mesh(iel)%eyz(k))
+csrA%mat=0d0
+rhs_b=0d0
 
+do iel=1,nel
+
+   call compute_elemental_matrix_energy(Ael,bel)
+   call impose_boundary_conditions_energy(Ael,bel)
+
+   do k1=1,mT
+      inode=mesh(iel)%iconT(k1)
+      do k2=1,mT
+         jnode=mesh(iel)%iconT(k2)
+         do k=csrA%ia(inode),csrA%ia(inode+1)-1
+            if (csrA%ja(k)==jnode) then
+               csrA%mat(k)=csrA%mat(k)+Ael(k1,k2)
+               exit
+            end if
+         end do
+      end do
+      rhs_b(inode)=rhs_b(inode)+bel(k1)
    end do
+
 end do
+
+write(*,'(a,2es12.4)') '        mat (m/M)',minval(csrA%mat),maxval(csrA%mat)
+write(*,'(a,2es12.4)') '        rhs (m/M)',minval(rhs_b),maxval(rhs_b)
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> prescribe_stokes_solution ',elapsed,' s'
+write(*,'(a,f6.2,a)') '     >> make_matrix_energy ',elapsed,' s'
 
 end if ! iproc
 

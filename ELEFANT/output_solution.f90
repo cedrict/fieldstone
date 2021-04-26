@@ -216,6 +216,7 @@ write(123,*) '</CellData>'
 !=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 write(123,*) '<PointData Scalars="scalars">'
 !-----
+if (solve_stokes_system) then
 write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Name="velocity" Format="ascii">'
 do iel=1,nel
    do k=1,ncorners
@@ -223,7 +224,9 @@ do iel=1,nel
    end do
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
+if (solve_stokes_system) then
 write(123,*) '<DataArray type="Float32" Name="pressure (p)" Format="ascii">'
 do iel=1,nel
    if (pair=='q1p0') then
@@ -237,6 +240,7 @@ do iel=1,nel
    end if
 end do
 write(123,*) '</DataArray>'
+end if 
 !-----
 if (use_T) then 
 write(123,*) '<DataArray type="Float32" Name="temperature (T)" Format="ascii">'
@@ -248,6 +252,7 @@ end do
 write(123,*) '</DataArray>'
 end if
 !-----
+if (solve_stokes_system) then
 write(123,*) '<DataArray type="Float32" Name="pressure (q)" Format="ascii">'
 do iel=1,nel
    do k=1,ncorners
@@ -255,7 +260,7 @@ do iel=1,nel
    end do
 end do
 write(123,*) '</DataArray>'
-
+end if
 !-----
 if (output_boundary_indicators .and. ndim==3) then
 write(123,*) '<DataArray type="Float32" Name="boundary: 5" Format="ascii">'
@@ -341,6 +346,7 @@ end do
 write(123,*) '</DataArray>'
 end if
 !-----
+if (solve_stokes_system) then
 write(123,*) '<DataArray type="Float32" Name="fix_u" Format="ascii">'
 do iel=1,nel
    do k=1,ncorners
@@ -352,7 +358,9 @@ do iel=1,nel
    end do
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
+if (solve_stokes_system) then
 write(123,*) '<DataArray type="Float32" Name="fix_v" Format="ascii">'
 do iel=1,nel
    do k=1,ncorners
@@ -364,6 +372,7 @@ do iel=1,nel
    end do
 end do
 write(123,*) '</DataArray>'
+end if
 !-----
 if (ndim==3) then
 write(123,*) '<DataArray type="Float32" Name="fix_w" Format="ascii">'

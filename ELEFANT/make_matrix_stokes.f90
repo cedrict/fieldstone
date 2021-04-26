@@ -6,7 +6,7 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine make_matrix
+subroutine make_matrix_stokes
 
 use global_parameters
 use global_arrays
@@ -25,7 +25,7 @@ real(8) :: C_el(mP,mP)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{make\_matrix.f90}
+!@@ \subsubsection{make\_matrix\_stokes.f90}
 !@@ This subroutine loops over all elements, build their elemental matrices and rhs, 
 !@@ apply the boundary conditions ont these elemental matrices, and then 
 !@@ assembles them in the global matrix, either in CSR or in MUMPS format.
@@ -50,9 +50,8 @@ if (allocated(csrK%mat)) csrK%mat=0d0
 
 do iel=1,nel
 
-   call compute_elemental_matrices(K_el,G_el,f_el,h_el)
-!print *,f_el
-   call impose_boundary_conditions(K_el,G_el,f_el,h_el)
+   call compute_elemental_matrix_stokes(K_el,G_el,f_el,h_el)
+   call impose_boundary_conditions_stokes(K_el,G_el,f_el,h_el)
 
    !--------------------
    !assemble GT, f and h
@@ -138,8 +137,6 @@ do iel=1,nel
 
    end if
 
-
-
 end do
 
 !csrGT%mat=csrGT%mat*block_scaling_coeff
@@ -153,7 +150,7 @@ if (allocated(csrK%mat)) write(*,'(a,2es12.4)') '        csrK%mat (m/M):',minval
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> make_matrix                      ',elapsed,' s'
+write(*,'(a,f4.2,a)') '     >> make_matrix\_stokes              ',elapsed,' s'
 
 end if ! iproc
 

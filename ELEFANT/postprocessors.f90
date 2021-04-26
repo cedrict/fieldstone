@@ -16,7 +16,7 @@ use timing
 implicit none
 
 integer iq
-real(8) uq,vq,wq,pq,qq,NNNV(mV),NNNP(mP),NNNT(mT)
+real(8) uq,vq,wq,pq,qq,Tq,NNNV(mV),NNNP(mP),NNNT(mT)
 real(8) uth,vth,wth,pth,Tth,dum
 
 !==================================================================================================!
@@ -33,16 +33,17 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-if (solve_stokes_system) then 
 
 avrg_u=0d0
 avrg_v=0d0
 avrg_w=0d0
+avrg_T=0d0
 vrms=0d0
 volume=0d0
 errv=0d0
 errp=0d0
 errq=0d0
+errT=0d0
 
 do iel=1,nel
    do iq=1,nqel
@@ -67,11 +68,16 @@ do iel=1,nel
       vrms=vrms+(uq**2+vq**2+wq**2)*mesh(iel)%JxWq(iq)
       volume=volume+mesh(iel)%JxWq(iq)
 
+
+      Tq=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
+      avrg_T=avrg_T+Tq*mesh(iel)%JxWq(iq)
+
       call analytical_solution(mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
                                uth,vth,wth,pth,Tth,dum,dum,dum,dum,dum,dum)
       errv=errv+((uq-uth)**2+(vq-vth)**2+(wq-wth)**2)*mesh(iel)%JxWq(iq)
       errp=errp+(pq-pth)**2*mesh(iel)%JxWq(iq)
       errq=errq+(qq-pth)**2*mesh(iel)%JxWq(iq)
+      errT=errT+(Tq-Tth)**2*mesh(iel)%JxWq(iq)
 
    end do
 end do
@@ -79,25 +85,26 @@ end do
 errv=sqrt(errv)
 errp=sqrt(errp)
 errq=sqrt(errq)
+errT=sqrt(errT)
 vrms=sqrt(vrms/volume)
 avrg_u=avrg_u/volume
 avrg_v=avrg_v/volume
 avrg_w=avrg_w/volume
+avrg_T=avrg_T/volume
 
-write(*,'(a,es12.5)') '        vrms   =',vrms
-write(*,'(a,es12.5)') '        avrg_u =',avrg_u
-write(*,'(a,es12.5)') '        avrg_v =',avrg_v
-write(*,'(a,es12.5)') '        avrg_w =',avrg_w
-write(*,'(a,es12.5)') '        volume =',volume
-write(*,'(a,es12.5)') '        errv   =',errv
-write(*,'(a,es12.5)') '        errp   =',errp
-write(*,'(a,es12.5)') '        errq   =',errq
-
-else
-
-   write(*,'(a)') '        solve_stokes_system=F: errors not computed' 
-
+if (solve_stokes_system) then 
+             write(*,'(a,es12.5)') '        vrms   =',vrms
+             write(*,'(a,es12.5)') '        avrg_u =',avrg_u
+             write(*,'(a,es12.5)') '        avrg_v =',avrg_v
+if (ndim==3) write(*,'(a,es12.5)') '        avrg_w =',avrg_w
+             write(*,'(a,es12.5)') '        errv   =',errv
+             write(*,'(a,es12.5)') '        errp   =',errp
+             write(*,'(a,es12.5)') '        errq   =',errq
+if (use_T)   write(*,'(a,es12.5)') '        errT   =',errT
 end if
+
+if (use_T)   write(*,'(a,es12.5)') '        avrg_T =',avrg_T
+             write(*,'(a,es12.5)') '        volume =',volume
 
 call postprocessor_experiment
 

@@ -132,31 +132,37 @@ call paint_swarm
 call matrix_setup_K
 call matrix_setup_GT
 call matrix_setup_M
+call matrix_setup_A
+call initial_temperature
 
 do istep=1,nstep !-----------------------------------------
                                                           !
    call spacer_istep                                      !
    call assign_values_to_qpoints                          !
+   call compute_elemental_rho_eta_vol                     !
                                                           !
    if (solve_stokes_system) then                          !
-                                                          !
       call define_bcV                                     !
-      call make_matrix                                    !
+      call make_matrix_stokes                             !
       call solve_stokes                                   !
       call interpolate_onto_nodes                         !
-                                                          !
    else                                                   !
-                                                          !
       call prescribe_stokes_solution                      !
-                                                          !
    end if                                                 !
-
-   call compute_elemental_rho_eta_vol                     !
+                                                          !
+   call compute_timestep                                  !
+                                                          !
+   if (use_T) then                                        !
+      call define_bcT                                     !
+      call make_matrix_energy                             !
+      call solve_energy                                   !
+   end if                                                 !
+                                                          !
    call compute_gravity                                   !
    call postprocessors                                    !
    call output_solution                                   !
    call output_qpoints                                    !
-   call output_swarm
+   call output_swarm                                      !
    call write_stats                                       !
                                                           !
 end do !---------------------------------------------------
