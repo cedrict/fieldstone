@@ -5,4 +5,8 @@
 
 #object_experiment = EXPERIMENTS/numbench_stokes_sphere_3D_swarm/experiment.o
 
-object_experiment = EXPERIMENTS/gravity_sphere/experiment.o
+#object_experiment = EXPERIMENTS/gravity_sphere/experiment.o
+
+#object_experiment = EXPERIMENTS/mms_temperature_diffusion_2D/experiment.o
+
+object_experiment = EXPERIMENTS/mms_temperature_diffusion_3D/experiment.o

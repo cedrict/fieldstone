@@ -16,10 +16,8 @@ use timing
 
 implicit none
 
-integer, parameter :: iunit=600
 integer, parameter :: maxits=1000
 integer, parameter :: size_krylov_subspace=100
-logical, parameter :: use_mgmgres_prec=.true.
 real(8), parameter :: rtol=1.d-14
 real(8), parameter :: atol=1.d50 
 
@@ -55,7 +53,6 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-open(unit=iunit,file="OUTPUT/TEMPERATURE_SOLVER/conv.ascii")
 write(*,'(a)') '...........................................'
 call pmgmres_ilu_cr (csrA%N,csrA%NZ,csrA%ia,csrA%ja,csrA%mat,sol,rhs_b,& 
                      maxits,               &
@@ -64,17 +61,9 @@ call pmgmres_ilu_cr (csrA%N,csrA%NZ,csrA%ia,csrA%ja,csrA%mat,sol,rhs_b,&
                      rtol)
 write(*,'(a)') '...........................................'
 
-!                     niterused,            &
-!                     iunit,                &
-!                     use_mgmgres_prec)
-!subroutine pmgmres_ilu_cr ( n, nz_num, ia, ja, a, x, rhs, itr_max, mr, &
-!  tol_abs, tol_rel )
-
-!write(*,'(a,i6,a)') '        convergence in ',niterused,' iterations'
-
 write(*,'(a,2es12.4)') '        -> T (m/M)',minval(sol),maxval(sol)
 
-close(600)
+!transfer solution to elements
 
 do iel=1,nel
    do k=1,mT
@@ -82,14 +71,11 @@ do iel=1,nel
    end do
 end do
 
-
-
-
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> solve_energy ',elapsed,' s'
+write(*,'(a,f6.2,a)') '     >> solve_energy ',elapsed,' s'
 
 end if ! iproc
 

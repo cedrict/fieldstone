@@ -53,12 +53,12 @@ call system_clock(counti,count_rate)
 !@@ \input{tikz/tikz_3x2_q2}
 !@@ \end{center}
 !@@ \begin{verbatim}
-!@@ elt:  1  | iconV  1   2   3   8   9   10  15  16  17 iconP           1           2           6           5
-!@@ elt:  2  | iconV  3   4   5   10  11  12  17  18  19 iconP           2           3           7           6
-!@@ elt:  3  | iconV  5   6   7   12  13  14  19  20  21 iconP           3           4           8           7
-!@@ elt:  4  | iconV  15  16  17  22  23  24  29  30  31 iconP           5           6          10           9
-!@@ elt:  5  | iconV  17  18  19  24  25  26  31  32  33 iconP           6           7          11          10
-!@@ elt:  6  | iconV  19  20  21  26  27  28  33  34  35 iconP           7           8          12          11
+!@@ elt:  1  | iconV  1   2   3   8   9   10  15  16  17 iconP 1  2  6  5
+!@@ elt:  2  | iconV  3   4   5   10  11  12  17  18  19 iconP 2  3  7  6
+!@@ elt:  3  | iconV  5   6   7   12  13  14  19  20  21 iconP 3  4  8  7
+!@@ elt:  4  | iconV  15  16  17  22  23  24  29  30  31 iconP 5  6 10  9
+!@@ elt:  5  | iconV  17  18  19  24  25  26  31  32  33 iconP 6  7 11 10
+!@@ elt:  6  | iconV  19  20  21  26  27  28  33  34  35 iconP 7  8 12 11
 !@@ \end{verbatim}
 !==================================================================================================!
 

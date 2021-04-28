@@ -9,19 +9,17 @@
 subroutine compute_timestep
 
 use global_parameters
-!use structures
-!use constants
 use global_measurements
 use timing
 
 implicit none
 
-real(8) hmin,maxv
+real(8) hmin,maxv,p
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{compute_timestep}
-!@@
+!@@ \subsubsection{compute\_timestep}
+!@@ See Section~\ref{ss:cfl}.
 !==================================================================================================!
 
 if (iproc==0) then
@@ -34,8 +32,11 @@ maxv=max(abs(u_min),abs(u_max),abs(v_min),abs(v_max),abs(w_min),abs(w_max))
 
 hmin=(vol_min)**(1./3.)
 
+if (pair=='q1p0' .or. pair=='q1q1') p=1d0
+if (pair=='q2q1' .or. pair=='q2p1') p=2d0
+
 if (maxv>1d-15) then
-   dt=CFL_nb*hmin/maxv
+   dt=CFL_nb*hmin/p/maxv
 else
    dt=1d50
 end if
@@ -45,12 +46,6 @@ if (use_T) then
 end if
 
 write(*,'(a,es12.4)') '        dt=',dt 
-
-
-
-
-
-
 
 !==============================================================================!
 

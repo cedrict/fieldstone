@@ -22,7 +22,7 @@ integer nnx,nny,nnz
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{matrix_setup_A}
+!@@ \subsubsection{matrix\_setup\_A}
 !@@ If the geometry is Cartesian then the number of nonzeros in the matrix and its sparsity 
 !@@ structures are computed in a very efficient way. 
 !==================================================================================================!
@@ -97,14 +97,14 @@ end if
 if (geometry=='cartesian' .and. ndim==3) then
    nz=0
    csrA%ia(1)=1
-   do i1=1,nnx
-   do j1=1,nny
    do k1=1,nnz
+   do j1=1,nny
+   do i1=1,nnx
       ip=nnx*nny*(k1-1)+(j1-1)*nnx + i1 ! node number
       nsees=0
-      do i2=-1,1 ! exploring neighbouring nodes
-      do j2=-1,1 ! exploring neighbouring nodes
       do k2=-1,1 ! exploring neighbouring nodes
+      do j2=-1,1 ! exploring neighbouring nodes
+      do i2=-1,1 ! exploring neighbouring nodes
          i=i1+i2
          j=j1+j2
          k=k1+k2
@@ -122,6 +122,9 @@ if (geometry=='cartesian' .and. ndim==3) then
    end do
    end do
 end if
+
+!print *,csrA%ja
+!print *,csrA%ia
 
 end if ! use_T
 

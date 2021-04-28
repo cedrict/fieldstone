@@ -103,10 +103,11 @@ end module
 module matrices
 use matrix_storage
 implicit none
-type(compressedrowstorage_sqr) csrK
-type(compressedrowstorage_rec) csrGT
-type(compressedrowstorage_sqr) csrM
-type(compressedrowstorage_sqr) csrA
+type(compressedrowstorage_sqr) csrK  ! (1,1) block of Stokes matrix
+type(compressedrowstorage_rec) csrGT ! (2,1) block of Stokes matrix
+type(compressedrowstorage_sqr) csrMV ! velocity mass matrix
+type(compressedrowstorage_sqr) csrMP ! pressure mass matrix 
+type(compressedrowstorage_sqr) csrA  ! energy matrix
 end module
 
 

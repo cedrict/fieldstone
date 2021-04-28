@@ -8,14 +8,32 @@
  \subsubsection{compute\_dNdx\_dNdy.f90}
  This subroutine computes $\partial{\bN^\upnu}/\partial x$ and $\partial{\bN^\upnu}/\partial y$
  at a location $r,s$ passed as argument.
- \subsubsection{compute\_elemental\_matrices.f90}
+ \subsubsection{compute\_dNdx\_dNdy\_dNdz.f90}
+ This subroutine computes $\partial{\bN^\uptheta}/\partial x$, 
+ $\partial{\bN^\uptheta}/\partial y$ and
+ $\partial{\bN^\uptheta}/\partial z$ at a location $r,s,t$ passed as argument.
+ \subsubsection{compute\_dNTdx\_dNTdy.f90}
+ This subroutine computes $\partial{\bN^\uptheta}/\partial x$ 
+ and $\partial{\bN^\uptheta}/\partial y$  at a location $r,s$ passed as argument.
+ \subsubsection{compute\_elemental\_matrix\_energy}
+ This subroutine buils the elemental matrix ${\bm A}_{el}$ and its corresponding 
+ right hand side $\vec{b}_{el}$. 
+ \subsubsection{compute\_elemental\_matrix\_stokes.f90}
  Note that when the material model is called directly on the quadrature points and 
  the penalty formulation is used then the viscosity at the reduced quadrature location 
  is obtained by taking the maximum viscosity value carried by the quadrature points of 
  the element. 
- \subsubsection{compute\_elemental\_volumes}
+ \subsubsection{compute\_elemental\_rho\_eta\_vol}
+ This subroutine computes the elemental volume, the average density and 
+ viscosity using the values already stored on the quadrature points. 
+ \subsubsection{compute\_gravity}
 
- \subsubsection{impose\_boundary\_conditions}
+ \subsubsection{compute\_timestep}
+ See Section~\ref{ss:cfl}.
+ \subsubsection{impose\_boundary\_conditions\_energy}
+ This routine takes as argument the elemental matrices and vectors Ael, Bel
+ and applies the boundary conditions to them.
+ \subsubsection{impose\_boundary\_conditions\_stokes}
  This subroutine modifies the elemental $\K$, $\G$ and $\C$ matrices as well as the 
  elemental rhs $f_{el}$ and $h_{el}$ and returns them modified after imposing
  velocity Dirichlet boundary conditions.
@@ -30,10 +48,19 @@
  It relies on 3 other subroutines ({\tt find\_ielx\_r}, {\tt find\_iely\_s}, {\tt find\_ielz\_t})
  which take as argument a coorinate (x,y,z) and return the corresponding reduced
  coordinate (r,s,t) and the integer coordinate (ielx,iely,ielz).
- \subsubsection{make\_matrix.f90}
+ \subsubsection{make\_matrix\_energy}
+ This subroutine builds the linear system for the energy equation. 
+ It loops over each element, builds its elemental matrix ${\bm A}_{el}$
+ and right hand side $\vec{b}_{el}$, applies boundary conditions, 
+ and assembles these into the global matrix csrA and the corresponding 
+ right hand side rhs\_b. 
+ \subsubsection{make\_matrix\_stokes.f90}
  This subroutine loops over all elements, build their elemental matrices and rhs, 
  apply the boundary conditions ont these elemental matrices, and then 
  assembles them in the global matrix, either in CSR or in MUMPS format.
+ \subsubsection{matrix\_setup\_A}
+ If the geometry is Cartesian then the number of nonzeros in the matrix and its sparsity 
+ structures are computed in a very efficient way. 
  \subsubsection{matrix\_setup\_GT.f90}
 
  \subsubsection{matrix\_setup\_K}
@@ -142,7 +169,10 @@
  and temperature nodes, the velocity, pressure and temperature connectivity arrays,
  the coordinates of its center (xc,yc,zc), its integer coordinates (ielx,iely,ielz),
  and its dimensions (hx,hy,hz).
- \subsubsection{solve\_KVeqf}
+ \subsubsection{solve\_energy}
+ This routine solves the energy equation using a GMRES solver obtained from 
+ \url{https://people.sc.fsu.edu/~jburkardt/f_src/mgmres/mgmres.html} 
+ \subsubsection{solve\_KV\_eq\_f}
  This subroutine solves the system $\K\cdot \vec{V} = \vec{f}$. The matrix is 
  implicit passed as argument via the module but the rhs and the guess vector are 
  passed as arguments.

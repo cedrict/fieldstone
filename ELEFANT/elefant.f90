@@ -86,6 +86,27 @@ end if
 
 call define_material_properties
 
+
+call spacer
+select case (geometry)
+case('cartesian') 
+   if (ndim==2) call setup_cartesian2D
+   if (ndim==3) call setup_cartesian3D
+case('spherical')
+end select
+call output_mesh
+call quadrature_setup
+call test_basis_functions
+call swarm_setup
+call swarm_material_layout
+call paint_swarm
+call matrix_setup_K
+call matrix_setup_GT
+call matrix_setup_MV
+call matrix_setup_MP
+call matrix_setup_A
+call initial_temperature
+
 !----------------------------------------------------------
                  write(*,'(a,i10)')    '        ndim        =',ndim
                  write(*,'(a,a11)')    '        geometry    =',geometry
@@ -115,25 +136,6 @@ if (use_T)       write(*,'(a,i10)')    '        NfemT       =',NfemT
 if (use_penalty) write(*,'(a,es10.3)') '        penalty     =',penalty
 if (use_ALE)     write(*,'(a,l10)')    '        use_ALE     =',penalty
 !----------------------------------------------------------
-
-call spacer
-select case (geometry)
-case('cartesian') 
-   if (ndim==2) call setup_cartesian2D
-   if (ndim==3) call setup_cartesian3D
-case('spherical')
-end select
-call output_mesh
-call quadrature_setup
-call test_basis_functions
-call swarm_setup
-call swarm_material_layout
-call paint_swarm
-call matrix_setup_K
-call matrix_setup_GT
-call matrix_setup_M
-call matrix_setup_A
-call initial_temperature
 
 do istep=1,nstep !-----------------------------------------
                                                           !

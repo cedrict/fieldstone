@@ -12,7 +12,7 @@ use global_parameters
 use global_arrays
 use structures
 use timing
-use matrices, only : csrGT,csrK
+use matrices, only : csrGT,csrK,csrMP
 
 implicit none
 
@@ -22,6 +22,7 @@ real(8) :: f_el(mV*ndofV)
 real(8) :: K_el(mV*ndofV,mV*ndofV)
 real(8) :: G_el(mV*ndofV,mP)
 real(8) :: C_el(mP,mP)
+real(8) :: S_el(mP,mP)
 
 !==================================================================================================!
 !==================================================================================================!
@@ -51,6 +52,7 @@ if (allocated(csrK%mat)) csrK%mat=0d0
 do iel=1,nel
 
    call compute_elemental_matrix_stokes(K_el,G_el,f_el,h_el)
+
    call impose_boundary_conditions_stokes(K_el,G_el,f_el,h_el)
 
    !--------------------
@@ -136,6 +138,32 @@ do iel=1,nel
       end do   
 
    end if
+
+   ! build elemental approximate Schur complement
+   ! only keep diagonal of K
+   ! should this happen before bc are applied?
+   ! add C_el ?
+   do k1=1,mV
+   do k2=1,mV
+      if (k1/=k2) K_el(k1,k2)=0d0
+      if (k1==k2) K_el(k1,k2)=1d0/K_el(k1,k2)
+   end do
+   end do
+   S_el=matmul(transpose(G_el),matmul(K_el,G_el))
+
+   !assemble approx Schur complement
+
+   do k1=1,mP
+      m1=mesh(iel)%iconP(k1) ! global coordinate of pressure dof
+      do k2=1,mP
+         m2=mesh(iel)%iconP(k2) ! global coordinate of pressure dof
+         do k=csrMP%ia(m1),csrMP%ia(m1+1)-1    
+            if (csrMP%ja(k)==m2) then  
+               csrMP%mat(k)=csrMP%mat(k)+S_el(k1,k2)  
+            end if    
+         end do
+      end do
+   end do
 
 end do
 

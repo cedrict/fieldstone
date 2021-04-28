@@ -6,11 +6,11 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine matrix_setup_M
+subroutine matrix_setup_MV
 
 use global_parameters
 use timing
-use matrices, only : csrM
+use matrices, only : csrMV
 
 implicit none
 
@@ -20,7 +20,7 @@ integer i,jp,ip,nsees,nz,nnx,nny,i1,i2,j,j1,j2
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{matrix\_setup\_M}
+!@@ \subsubsection{matrix\_setup\_MV}
 !@@ See Section~\ref{ss:symmcsrss}. 
 !==================================================================================================!
 
@@ -32,23 +32,23 @@ call system_clock(counti,count_rate)
 
 if (geometry=='cartesian' .and. ndim==2) then
 
-   csrM%n=NV
+   csrMV%n=NV
 
    nnx=nelx+1
    nny=nely+1
-   csrM%NZ=(4*4+(2*(nnx-2)+2*(nny-2))*6+(nnx-2)*(nny-2)*9)
-   csrM%nz=(csrM%nz-csrM%n)/2+csrM%n
+   csrMV%NZ=(4*4+(2*(nnx-2)+2*(nny-2))*6+(nnx-2)*(nny-2)*9)
+   csrMV%nz=(csrMV%nz-csrMV%n)/2+csrMV%n
 
    write(*,'(a)')     '        CSR matrix format symm' 
-   write(*,'(a,i10)') '        csrM%n  =',csrM%n
-   write(*,'(a,i10)') '        csrM%nz =',csrM%nz
+   write(*,'(a,i10)') '        csrMV%n  =',csrMV%n
+   write(*,'(a,i10)') '        csrMV%nz =',csrMV%nz
 
-   allocate(csrM%ia(csrM%n+1)) 
-   allocate(csrM%ja(csrM%nz))   
-   allocate(csrM%mat(csrM%nz))  
+   allocate(csrMV%ia(csrMV%n+1)) 
+   allocate(csrMV%ja(csrMV%nz))   
+   allocate(csrMV%mat(csrMV%nz))  
 
    nz=0
-   csrM%ia(1)=1
+   csrMV%ia(1)=1
    do j1=1,nny
       do i1=1,nnx
          ip=(j1-1)*nnx+i1 ! node number
@@ -61,20 +61,20 @@ if (geometry=='cartesian' .and. ndim==2) then
                   jp=(j-1)*nnx+i  ! node number of neighbour 
                   if (jp>=ip) then  ! upper diagonal
                      nz=nz+1
-                     csrM%ja(nz)=jp
+                     csrMV%ja(nz)=jp
                      nsees=nsees+1
                   end if
                end if
             end do
          end do
-         csrM%ia(ip+1)=csrM%ia(ip)+nsees
+         csrMV%ia(ip+1)=csrMV%ia(ip)+nsees
       end do
    end do
 
    if (debug) then
    write(*,*) '          nz=',nz
-   write(*,*) '          csrM%ia (m/M)',minval(csrM%ia), maxval(csrM%ia)
-   write(*,*) '          csrM%ja (m/M)',minval(csrM%ja), maxval(csrM%ja)
+   write(*,*) '          csrMV%ia (m/M)',minval(csrMV%ia), maxval(csrMV%ia)
+   write(*,*) '          csrMV%ja (m/M)',minval(csrMV%ja), maxval(csrMV%ja)
    end if
 
 end if ! cartesian 2D
@@ -83,7 +83,7 @@ end if ! cartesian 2D
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> matrix_setup_M ',elapsed,' s'
+write(*,'(a,f4.2,a)') '     >> matrix_setup_MV ',elapsed,' s'
 
 end if ! iproc
 
