@@ -1,0 +1,29 @@
+set term pdf enhanced font 'Times,12pt"
+set log x
+set log y
+set grid
+set key left
+set xlabel 'N'
+set ylabel 'solve time'
+set output 'timings.pdf'
+plot[1e2:][]\
+ 'timings.ascii' u 1:6 w lp pt 5 ps .25 t 'Y12',\
+x**1.78/10000000. lt -1 dt 2 t 'x^{1.78}' 
+
+set key bottom
+set xlabel 'h'
+set ylabel 'v_{rms}'
+unset log y 
+set output 'vrms.pdf'
+plot[][]\
+'vrms.ascii' u 2:4 w lp ps .4 notitle,\
+0.00777615791 lt -1 dt 2 t 'analytical' 
+
+set key bottom right
+set ylabel '||e_v||_2'
+set log y 
+set output 'errv.pdf'
+plot[][]\
+'errors.ascii' u 2:4 w lp ps .4 notitle,\
+x**2/10 lt -1 dt 2 t 'h^2' 
+

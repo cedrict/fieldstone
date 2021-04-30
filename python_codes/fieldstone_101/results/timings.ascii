@@ -1,0 +1,32 @@
+   128 time Y12 solver   :     0.000 s
+   512 time Y12 solver   :     0.006 s
+  1152 time Y12 solver   :     0.021 s
+  2048 time Y12 solver   :     0.063 s
+  3200 time Y12 solver   :     0.132 s
+  4608 time Y12 solver   :     0.223 s
+  6272 time Y12 solver   :     0.560 s
+  8192 time Y12 solver   :     0.774 s
+ 10368 time Y12 solver   :     1.356 s
+ 12800 time Y12 solver   :     1.581 s
+ 15488 time Y12 solver   :     2.168 s
+ 18432 time Y12 solver   :     2.852 s
+ 21632 time Y12 solver   :     5.712 s
+ 25088 time Y12 solver   :     5.410 s
+ 28800 time Y12 solver   :     7.683 s
+ 32768 time Y12 solver   :    12.116 s
+ 36992 time Y12 solver   :    11.485 s
+ 41472 time Y12 solver   :    14.747 s
+ 46208 time Y12 solver   :    18.135 s
+ 51200 time Y12 solver   :    28.549 s
+ 56448 time Y12 solver   :    22.180 s
+ 61952 time Y12 solver   :    27.853 s
+ 67712 time Y12 solver   :    46.202 s
+ 73728 time Y12 solver   :    45.063 s
+ 80000 time Y12 solver   :    49.000 s
+ 86528 time Y12 solver   :    51.120 s
+ 93312 time Y12 solver   :    57.276 s
+100352 time Y12 solver   :    94.184 s
+107648 time Y12 solver   :    75.914 s
+115200 time Y12 solver   :    83.244 s
+123008 time Y12 solver   :   102.481 s
+131072 time Y12 solver   :   133.379 s
