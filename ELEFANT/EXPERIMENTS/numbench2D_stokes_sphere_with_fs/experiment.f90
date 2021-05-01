@@ -12,23 +12,28 @@ use global_parameters
 
 implicit none
 
-!----------------------------------------------------------
+ndim=2
+Lx=1
+Ly=1
 
-ndim=3
-Lx=1!4
-Ly=1!3
-Lz=1!2
+nelx=5
+nely=4
 
-nelx=16!4
-nely=16!3
-nelz=16!2
+geometry='cartesian'
+pair='q1q1'
 
+penalty=1000d0
 use_penalty=.true.
-penalty=20000
 
-debug=.false.
+use_swarm=.true.
+nmarker_per_dim=5
+init_marker_random=.false.
+nmat=3
 
-!----------------------------------------------------------
+debug=.true.
+
+nxstripes=-3
+nystripes=4
 
 end subroutine
 
@@ -41,11 +46,18 @@ use structures
 
 implicit none
 
-!----------------------------------------------------------
+!liquid
+mat(1)%rho0=1
+mat(1)%eta0=1
 
-! your stuff here
+!sphere
+mat(2)%rho0=2
+mat(2)%eta0=1d3
 
-!----------------------------------------------------------
+!air
+mat(3)%rho0=0.001
+mat(3)%eta0=1d-3
+
 
 end subroutine
 
@@ -64,17 +76,8 @@ real(8), intent(in) :: x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz
 integer, intent(in) :: imat,mode
 real(8), intent(out) :: eta,rho,hcond,hcapa,hprod
 
-!----------------------------------------------------------
-
-if ((x-0.5)**2+(y-0.5)**2+(z-0.5)**2<0.123456789d0**2) then
-   eta=1d1
-   rho=1.01d0
-else
-   eta=1d0
-   rho=1.d0
-end if
-
-!----------------------------------------------------------
+eta=mat(imat)%eta0
+rho=mat(imat)%rho0
 
 end subroutine
 
@@ -87,10 +90,21 @@ use structures
 
 implicit none
 
-!----------------------------------------------------------
+integer im
 
+if (use_swarm) then
 
-!----------------------------------------------------------
+   do im=1,nmarker
+
+      swarm(im)%mat=1
+
+      if (swarm(im)%y>0.75) swarm(im)%mat=3
+
+      if ((swarm(im)%x-0.5d0)**2+(swarm(im)%y-0.6d0)**2<0.123456789**2) swarm(im)%mat=2
+
+   end do
+
+end if
 
 end subroutine
 
@@ -103,51 +117,38 @@ use structures
 
 implicit none
 
-!----------------------------------------------------------
-
-integer k
+integer i
 
 do iel=1,nel
 
    mesh(iel)%fix_u(:)=.false. 
    mesh(iel)%fix_v(:)=.false. 
-   mesh(iel)%fix_w(:)=.false. 
 
-   do k=1,mV
-      if (mesh(iel)%bnd1_node(k)) then
-         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
-         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
-         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
+   !left boundary
+   do i=1,4
+      if (mesh(iel)%bnd1_node(i)) then
+         mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
       end if
-      if (mesh(iel)%bnd2_node(k)) then
-         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
-         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
-         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
+   end do
+   !right boundary
+   do i=1,4
+      if (mesh(iel)%bnd2_node(i)) then
+         mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
       end if
-      if (mesh(iel)%bnd3_node(k)) then
-         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
-         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
-         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
+   end do
+   !bottom boundary
+   do i=1,4
+      if (mesh(iel)%bnd3_node(i)) then
+         mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
       end if
-      if (mesh(iel)%bnd4_node(k)) then
-         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
-         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
-         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
-      end if
-      if (mesh(iel)%bnd5_node(k)) then
-         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
-         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
-         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
-      end if
-      if (mesh(iel)%bnd6_node(k)) then
-         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
-         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
-         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
+   end do
+   !top boundary
+   do i=1,4
+      if (mesh(iel)%bnd4_node(i)) then
+         mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
       end if
    end do
 end do
-
-!----------------------------------------------------------
 
 end subroutine
 
@@ -160,28 +161,20 @@ use structures
 
 implicit none
 
-!----------------------------------------------------------
 
-! your stuff here
-
-!----------------------------------------------------------
 
 end subroutine
 
 !==================================================================================================!
 
-subroutine temperature_layout
+subroutine initial_temperature
 
 use global_parameters
 use structures
 
 implicit none
 
-!----------------------------------------------------------
 
-! your stuff here
-
-!----------------------------------------------------------
 
 end subroutine
 
@@ -194,11 +187,8 @@ implicit none
 real(8), intent(in) :: x,y,z
 real(8), intent(out) :: u,v,w,p,T,exx,eyy,ezz,exy,exz,eyz
 
-!----------------------------------------------------------
 
-! your stuff here
 
-!----------------------------------------------------------
 
 end subroutine
 
@@ -211,13 +201,9 @@ implicit none
 real(8), intent(in) :: x,y,z
 real(8), intent(out) :: gx,gy,gz
 
-!----------------------------------------------------------
-
 gx=0
-gy=0
-gz=-1
-
-!----------------------------------------------------------
+gy=-1
+gz=0
 
 end subroutine
 
@@ -231,11 +217,13 @@ use constants
 
 implicit none
 
-!----------------------------------------------------------
+vrms_test=0.
 
-! your stuff here
-
-!----------------------------------------------------------
+if (abs(vrms-vrms_test)/vrms_test<epsilon_test) then
+   print *,'***** test passed *****'
+else
+   print *,'***** test FAILED *****'
+end if
 
 end subroutine
 
@@ -245,11 +233,8 @@ subroutine postprocessor_experiment
 
 implicit none
 
-!----------------------------------------------------------
 
-! your stuff here
 
-!----------------------------------------------------------
 
 end subroutine
 

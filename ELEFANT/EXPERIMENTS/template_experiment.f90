@@ -136,7 +136,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine temperature_layout
+subroutine initial_temperature
 
 use global_parameters
 use structures

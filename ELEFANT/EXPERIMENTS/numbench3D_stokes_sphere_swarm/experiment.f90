@@ -16,38 +16,25 @@ implicit none
 !----------------------------------------------------------
 
 ndim=3
-Lx=1d3
-Ly=1d3
-Lz=1d3
+Lx=1
+Ly=1
+Lz=1
 
 nelx=48
 nely=48
 nelz=48
 
-solve_stokes_system=.false.
+use_penalty=.true.
+penalty=20000
+
+debug=.false.
 
 use_swarm=.true.
-nmarker_per_dim=3 
 nmat=2
 
+solve_stokes_system=.false.
+
 grav_pointmass=.true.
-!grav_prism=.true.
-plane_height=Lz+0.1
-plane_xmin=0
-plane_ymin=0
-plane_xmax=Lx
-plane_ymax=Ly
-plane_nnx=0
-plane_nny=25
-
-xbeg=Lx/2
-xend=1.11d3
-ybeg=Ly/2
-yend=2.22d3
-zbeg=Lz/2
-zend=5.55d3
-line_nnp=256
-
 
 !----------------------------------------------------------
 
@@ -65,11 +52,11 @@ implicit none
 !----------------------------------------------------------
 
 !liquid
-mat(1)%rho0=0
+mat(1)%rho0=1-1
 mat(1)%eta0=1
 
 !sphere
-mat(2)%rho0=100
+mat(2)%rho0=2-1
 mat(2)%eta0=2
 
 !----------------------------------------------------------
@@ -119,7 +106,7 @@ do im=1,nmarker
 
    swarm(im)%mat=1
 
-   if ((swarm(im)%x-0.5*Lx)**2+(swarm(im)%y-0.5*Ly)**2+(swarm(im)%z-0.5*Lz)**2<500**2) then
+   if ((swarm(im)%x-0.5)**2+(swarm(im)%y-0.5)**2+(swarm(im)%z-0.5)**2<0.123456789d0**2) then
       swarm(im)%mat=2      
    end if
 
@@ -140,6 +127,47 @@ implicit none
 
 !----------------------------------------------------------
 
+integer k
+
+do iel=1,nel
+
+   mesh(iel)%fix_u(:)=.false. 
+   mesh(iel)%fix_v(:)=.false. 
+   mesh(iel)%fix_w(:)=.false. 
+
+   do k=1,mV
+      if (mesh(iel)%bnd1_node(k)) then
+         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
+      end if
+      if (mesh(iel)%bnd2_node(k)) then
+         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
+      end if
+      if (mesh(iel)%bnd3_node(k)) then
+         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
+      end if
+      if (mesh(iel)%bnd4_node(k)) then
+         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
+      end if
+      if (mesh(iel)%bnd5_node(k)) then
+         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
+      end if
+      if (mesh(iel)%bnd6_node(k)) then
+         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0d0
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
+      end if
+   end do
+end do
 
 !----------------------------------------------------------
 

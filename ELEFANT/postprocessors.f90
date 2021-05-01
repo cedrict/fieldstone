@@ -25,6 +25,8 @@ real(8) uth,vth,wth,pth,Tth,dum
 !@@ This subroutine computes the root mean square velocity
 !@@ and each of the average velocity components. It also 
 !@@ computes the volume using GLQ.
+!@@ There is still probably a bit of an inconsistency since I use the 
+!@@ temperature basis functions to compute $q$ at quadrature points...
 !==================================================================================================!
 
 if (iproc==0) then
@@ -58,19 +60,17 @@ do iel=1,nel
       call NNP(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim,pair)
       pq=sum(NNNP(1:mP)*mesh(iel)%p(1:mP))
 
-      !compute qq
+      !compute qq and Tq
       call NNT(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim,pair)
       qq=sum(NNNT(1:mT)*mesh(iel)%q(1:mT))
+      Tq=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
 
       avrg_u=avrg_u+uq*mesh(iel)%JxWq(iq)
       avrg_v=avrg_v+vq*mesh(iel)%JxWq(iq)
       avrg_w=avrg_w+wq*mesh(iel)%JxWq(iq)
+      avrg_T=avrg_T+Tq*mesh(iel)%JxWq(iq)
       vrms=vrms+(uq**2+vq**2+wq**2)*mesh(iel)%JxWq(iq)
       volume=volume+mesh(iel)%JxWq(iq)
-
-
-      Tq=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
-      avrg_T=avrg_T+Tq*mesh(iel)%JxWq(iq)
 
       call analytical_solution(mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
                                uth,vth,wth,pth,Tth,dum,dum,dum,dum,dum,dum)
@@ -93,18 +93,18 @@ avrg_w=avrg_w/volume
 avrg_T=avrg_T/volume
 
 if (solve_stokes_system) then 
-             write(*,'(a,es12.5)') '        vrms   =',vrms
-             write(*,'(a,es12.5)') '        avrg_u =',avrg_u
-             write(*,'(a,es12.5)') '        avrg_v =',avrg_v
-if (ndim==3) write(*,'(a,es12.5)') '        avrg_w =',avrg_w
-             write(*,'(a,es12.5)') '        errv   =',errv
-             write(*,'(a,es12.5)') '        errp   =',errp
-             write(*,'(a,es12.5)') '        errq   =',errq
-if (use_T)   write(*,'(a,es12.5)') '        errT   =',errT
+             write(*,'(a,es12.5)') shift//'vrms   =',vrms
+             write(*,'(a,es12.5)') shift//'avrg_u =',avrg_u
+             write(*,'(a,es12.5)') shift//'avrg_v =',avrg_v
+if (ndim==3) write(*,'(a,es12.5)') shift//'avrg_w =',avrg_w
+             write(*,'(a,es12.5)') shift//'errv   =',errv
+             write(*,'(a,es12.5)') shift//'errp   =',errp
+             write(*,'(a,es12.5)') shift//'errq   =',errq
+if (use_T)   write(*,'(a,es12.5)') shift//'errT   =',errT
 end if
 
-if (use_T)   write(*,'(a,es12.5)') '        avrg_T =',avrg_T
-             write(*,'(a,es12.5)') '        volume =',volume
+if (use_T)   write(*,'(a,es12.5)') shift//'avrg_T =',avrg_T
+             write(*,'(a,es12.5)') shift//'volume =',volume
 
 call postprocessor_experiment
 
@@ -112,7 +112,7 @@ call postprocessor_experiment
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') '     >> postprocessors                   ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'postprocessors (',elapsed,' s)'
 
 end if ! iproc
 

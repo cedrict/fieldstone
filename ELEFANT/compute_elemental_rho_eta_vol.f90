@@ -57,14 +57,14 @@ do iel=1,nel
    vol_max=max(vol_max,mesh(iel)%vol)
 end do
 
-write(*,'(a,2es10.3)') '        rho_avrg (m/M):',r_min,r_max
-write(*,'(a,2es10.3)') '        eta_avrg (m/M):',e_min,e_max
+write(*,'(a,2es10.3)') shift//'rho_avrg (m/M):',r_min,r_max
+write(*,'(a,2es10.3)') shift//'eta_avrg (m/M):',e_min,e_max
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> compute_elemental_rho_eta_vol ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'comp_eltal_rho_eta_vol (',elapsed,' s)'
 
 end if ! iproc
 

@@ -8,6 +8,7 @@
 
 subroutine compute_timestep
 
+use structures, only: shift
 use global_parameters
 use global_measurements
 use timing
@@ -45,13 +46,13 @@ if (use_T) then
    dt=min(dt,hmin**2*rhoq_min*hcapaq_min/hcondq_max)
 end if
 
-write(*,'(a,es12.4)') '        dt=',dt 
+write(*,'(a,es12.4)') shift//'dt=',dt 
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> compute_timestep ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'compute_timestep (',elapsed,' s)'
 
 end if ! iproc
 

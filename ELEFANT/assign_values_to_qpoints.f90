@@ -254,14 +254,14 @@ else
 
 end if
 
-write(*,'(a,2es10.3)') '        rhoq (m/M):',rhoq_min,rhoq_max
-write(*,'(a,2es10.3)') '        etaq (m/M):',etaq_min,etaq_max
+write(*,'(a,2es10.3)') shift//'rhoq (m/M):',rhoq_min,rhoq_max
+write(*,'(a,2es10.3)') shift//'etaq (m/M):',etaq_min,etaq_max
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> assign_values_to_qpoints         ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'assign_vals_to_qpoints (',elapsed,' s)'
 
 end if ! iproc
 

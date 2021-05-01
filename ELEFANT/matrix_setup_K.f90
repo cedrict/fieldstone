@@ -72,7 +72,7 @@ else
 
    if (iproc==0) then
 
-      csrK%n=NfemV
+      csrK%N=NfemV
 
       if (geometry=='cartesian' .and. ndim==2) then
 
@@ -80,18 +80,31 @@ else
          nny=nely+1
          csrK%NZ=(4*4+(2*(nnx-2)+2*(nny-2))*6+(nnx-2)*(nny-2)*9)
          csrK%NZ=csrK%NZ*(ndofV**2)    
-         csrK%nz=(csrK%nz-csrK%n)/2+csrK%n
+         if (.not.csrK%full_matrix_storage) csrK%nz=(csrK%nz-csrK%n)/2+csrK%n
 
-         write(*,'(a)')     '        CSR matrix format symm' 
-         write(*,'(a,i10)') '        csrK%n  =',csrK%n
-         write(*,'(a,i10)') '        csrK%nz =',csrK%nz
+         write(*,'(a)')     shift//'sparse matrix format' 
+         write(*,'(a,l)')   shift//'full_matrix_storage ',csrK%full_matrix_storage
+         write(*,'(a,i10)') shift//'csrK%n  =',csrK%n
+         write(*,'(a,i10)') shift//'csrK%nz =',csrK%nz
    
-         allocate(csrK%ia(csrK%n+1))   
-         allocate(csrK%ja(csrK%nz))     
-         allocate(csrK%mat(csrK%nz))    
+         allocate(csrK%ia(csrK%N+1))   
+         allocate(csrK%ja(csrK%NZ))     
+         allocate(csrK%mat(csrK%NZ))    
+         if (csrK%full_matrix_storage) then
+            allocate(csrK%rnr(15*csrK%NZ))
+            allocate(csrK%snr(15*csrK%NZ))
+            csrK%rnr(:)=0
+            csrK%snr(:)=0
+            csrK%rnr(1)=1
+            csrK%snr(1)=1
+         end if
+
+         !for later: rnr and ja are same ? but rnr must be over allocated ?
          
-         nz=0
+         NZ=0
          csrK%ia(1)=1
+         if (csrK%full_matrix_storage) csrK%rnr(1)=1
+         if (csrK%full_matrix_storage) csrK%snr(1)=1
          do j1=1,nny
          do i1=1,nnx
             ip=(j1-1)*nnx+i1 ! node number
@@ -106,11 +119,19 @@ else
                      jp=(j-1)*nnx+i  ! node number of neighbour 
                      do l=1,ndofV
                         jj=2*(jp-1)+l  ! address in the matrix
-                        if (jj>=ii) then  ! upper diagonal
+
+                        if (csrK%full_matrix_storage) then
+                           nz=nz+1
+                           csrK%ja(nz)=jj
+                           nsees=nsees+1
+                           csrK%snr(nz)=ii
+                           csrK%rnr(nz)=jj
+                        elseif(jj>=ii) then  ! upper diagonal
                            nz=nz+1
                            csrK%ja(nz)=jj
                            nsees=nsees+1
                         end if
+
                      end do
                   end if
                end do
@@ -124,6 +145,8 @@ else
          write(*,*) '          nz=',nz
          write(*,*) '          csrK%ia (m/M)',minval(csrK%ia), maxval(csrK%ia)
          write(*,*) '          csrK%ja (m/M)',minval(csrK%ja), maxval(csrK%ja)
+         print *,csrK%rnr(1:NfemV)
+         print *,csrK%snr(1:NfemV)
          end if
 
       end if ! cartesian 2D
@@ -141,22 +164,30 @@ else
              +2*(nny-2)*(nnz-2)*18                       ! 2 faces
          csrK%nz=csrK%nz*(ndofV**2)                                ! matrix expands 3fold twice 
 
-         csrK%nz=(csrK%nz-csrK%n)/2+csrK%n
+         if (.not. csrK%full_matrix_storage) csrK%nz=(csrK%nz-csrK%n)/2+csrK%n
 
-         write(*,'(a)')     '        CSR matrix format symm' 
-         write(*,'(a,i10)') '        csrK%n  =',csrK%n
-         write(*,'(a,i10)') '        csrK%nz =',csrK%nz
+         write(*,'(a)')     shift//'CSR matrix format symm' 
+         write(*,'(a,l)')   shift//'full_matrix_storage ',csrK%full_matrix_storage
+         write(*,'(a,i10)') shift//'csrK%n  =',csrK%n
+         write(*,'(a,i10)') shift//'csrK%nz =',csrK%nz
 
          allocate(csrK%ia(csrK%n+1))   
          allocate(csrK%ja(csrK%nz))     
          allocate(csrK%mat(csrK%nz))    
+         if (csrK%full_matrix_storage) then
+            allocate(csrK%rnr(15*csrK%NZ))
+            allocate(csrK%snr(15*csrK%NZ))
+            csrK%rnr(:)=0
+            csrK%snr(:)=0
+            csrK%rnr(1)=1
+            csrK%snr(1)=1
+         end if
 
-         nz=0
+         NZ=0
          csrK%ia(1)=1
          do k1=1,nnz
          do j1=1,nny
          do i1=1,nnx
-         !ip=nny*nnz*(i1-1)+(j1-1)*nnz + k1 ! node number
          ip=nnx*nny*(k1-1)+(j1-1)*nnx + i1 ! node number
          do kk=1,ndofV
             ii=ndofV*(ip-1) + kk ! address in the matrix
@@ -168,16 +199,22 @@ else
                j=j1+j2
                k=k1+k2
                if (i>=1 .and. i<= nnx .and. j>=1 .and. j<=nny .and. k>=1 .and. k<=nnz) then ! if node exists
-                  !jp=nny*nnz*(i-1)+(j-1)*nnz + k ! node number
                   jp=nnx*nny*(k-1)+(j-1)*nnx + i ! node number
-                  !print *,'node',ip,'sees node',jp
                   do l=1,ndofV
                      jj=ndofV*(jp-1)+l  ! address in the matrix
-                     if (jj>=ii) then  ! upper diagonal
+
+                     if (csrK%full_matrix_storage) then
+                        nz=nz+1
+                        csrK%ja(nz)=jj
+                        nsees=nsees+1
+                        csrK%snr(nz)=ii
+                        csrK%rnr(nz)=jj
+                     elseif(jj>=ii) then  ! upper diagonal
                         nz=nz+1
                         csrK%ja(nz)=jj
                         nsees=nsees+1
                      end if
+
                   end do
                end if
             end do
@@ -207,7 +244,7 @@ if (iproc==0) then
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> matrix_setup_K                   ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'matrix_setup_K (',elapsed,' s)'
 
 end if
 

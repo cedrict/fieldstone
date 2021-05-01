@@ -54,11 +54,11 @@ end do
 p_min=minval(solP)
 p_max=maxval(solP)
 
-write(*,'(a,2es12.4)') '        p (m,M)',p_min,p_max
 
 !----------------------------------------------------------
 
 q=0d0
+c=0d0
 do iel=1,nel
    do k=1,mV
       q(mesh(iel)%iconV(k))=q(mesh(iel)%iconV(k))+solP(iel)/mesh(iel)%vol
@@ -76,7 +76,6 @@ end do
 q_min=minval(q)
 q_max=maxval(q)
 
-write(*,'(a,2es12.4)') '        q (m,M)',q_min,q_max
 
 !----------------------------------------------------------
 

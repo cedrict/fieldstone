@@ -55,7 +55,6 @@ if (use_penalty) then
 
    call recover_pressure_penalty
 
-
    !transfer pressure onto elements
    do iel=1,nel
       do k=1,mP
@@ -107,16 +106,18 @@ do iel=1,nel
    w_max=max(maxval(mesh(iel)%w(1:mV)),w_max)
    w_min=min(minval(mesh(iel)%w(1:mV)),w_min)
 end do
-write(*,'(a,2es12.4)') '        u (m,M)',u_min,u_max
-write(*,'(a,2es12.4)') '        v (m,M)',v_min,v_max
-write(*,'(a,2es12.4)') '        w (m,M)',w_min,w_max
 
+             write(*,'(a,2es12.4)') shift//'u (m,M)',u_min,u_max
+             write(*,'(a,2es12.4)') shift//'v (m,M)',v_min,v_max
+if (ndim==3) write(*,'(a,2es12.4)') shift//'w (m,M)',w_min,w_max
+             write(*,'(a,2es12.4)') shift//'p (m,M)',p_min,p_max
+             write(*,'(a,2es12.4)') shift//'q (m,M)',q_min,q_max
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> solve_stokes                     ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'solve_stokes (',elapsed,' s)'
 
 end if ! iproc
 

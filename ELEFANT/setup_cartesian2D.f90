@@ -259,7 +259,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> setup_cartesian2D                ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'setup_cartesian2D (',elapsed,' s)'
 
 end if ! iproc
 

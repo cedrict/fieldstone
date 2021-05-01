@@ -8,6 +8,7 @@
 
 subroutine matrix_setup_MP
 
+use structures, only: shift
 use global_parameters
 use timing
 use matrices, only : csrMP
@@ -44,9 +45,9 @@ if (geometry=='cartesian' .and. ndim==2) then
       stop 'matrix_setup_MP: pair not implemented'
    end select 
 
-   write(*,'(a)')     '        CSR matrix format symm' 
-   write(*,'(a,i10)') '        csrMP%n  =',csrMP%n
-   write(*,'(a,i10)') '        csrMP%nz =',csrMP%nz
+   write(*,'(a)')     shift//'CSR matrix format symm' 
+   write(*,'(a,i10)') shift//'csrMP%n  =',csrMP%n
+   write(*,'(a,i10)') shift//'csrMP%nz =',csrMP%nz
 
    allocate(csrMP%ia(csrMP%n+1)) 
    allocate(csrMP%ja(csrMP%nz))   
@@ -113,9 +114,9 @@ if (geometry=='cartesian' .and. ndim==3) then
       stop 'matrix_setup_MP: pair not implemented'
    end select 
 
-   write(*,'(a)')     '        CSR matrix format symm' 
-   write(*,'(a,i10)') '        csrMP%n  =',csrMP%n
-   write(*,'(a,i10)') '        csrMP%nz =',csrMP%nz
+   write(*,'(a)')     shift//'CSR matrix format symm' 
+   write(*,'(a,i10)') shift//'csrMP%n  =',csrMP%n
+   write(*,'(a,i10)') shift//'csrMP%nz =',csrMP%nz
 
    allocate(csrMP%ia(csrMP%n+1)) 
    allocate(csrMP%ja(csrMP%nz))   
@@ -175,7 +176,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> matrix_setup_MP ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'matrix_setup_MP (',elapsed,' s)'
 
 end if ! iproc
 

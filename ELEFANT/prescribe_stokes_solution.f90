@@ -54,7 +54,7 @@ end do
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> prescribe_stokes_solution ',elapsed,' s'
+write(*,'(a,f6.2,a)') '     >> prescribe_stokes_solution ',elapsed,' s'
 
 end if ! iproc
 

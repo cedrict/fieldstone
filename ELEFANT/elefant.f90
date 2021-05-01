@@ -31,9 +31,16 @@ print *,'no MUMPS support'
 call spacer
 call set_default_values
 call declare_main_parameters
+call read_command_line_options
 call set_global_parameters_pair
 
 !----------------------------------------------------------
+
+if (use_penalty) then
+   csrK%full_matrix_storage=.true. ! y12m solver 
+else
+   csrK%full_matrix_storage=.false. ! pcg_solver 
+end if
 
 ndofV=ndim
 NfemV=NV*ndofV
@@ -49,7 +56,7 @@ if (ndim==3) ndim2=6
 allocate(solV(NfemV))
 allocate(solP(NfemP))
 allocate(rhs_f(NfemV))
-allocate(rhs_h(NfemP))
+if (.not.use_penalty) allocate(rhs_h(NfemP))
 allocate(mat(nmat))
 allocate(Kdiag(NfemV))
 
@@ -105,9 +112,11 @@ call matrix_setup_GT
 call matrix_setup_MV
 call matrix_setup_MP
 call matrix_setup_A
+!call output_matrix_tikz
 call initial_temperature
 
 !----------------------------------------------------------
+write(*,'(a)') '..................................'
                  write(*,'(a,i10)')    '        ndim        =',ndim
                  write(*,'(a,a11)')    '        geometry    =',geometry
                  write(*,'(a,a10)')    '        pair        =',pair
@@ -142,9 +151,9 @@ do istep=1,nstep !-----------------------------------------
    call spacer_istep                                      !
    call assign_values_to_qpoints                          !
    call compute_elemental_rho_eta_vol                     !
+   call define_bcV                                     !
                                                           !
    if (solve_stokes_system) then                          !
-      call define_bcV                                     !
       call make_matrix_stokes                             !
       call solve_stokes                                   !
       call interpolate_onto_nodes                         !
@@ -169,7 +178,7 @@ do istep=1,nstep !-----------------------------------------
                                                           !
 end do !---------------------------------------------------
 
-call spacer_end
+!call spacer_end
 
 call footer
 

@@ -9,47 +9,20 @@
 subroutine declare_main_parameters
 
 use global_parameters
-use gravity
 
 implicit none
 
-!----------------------------------------------------------
+ndim=2
+Lx=1
+Ly=1
 
-ndim=3
-Lx=1d3
-Ly=1d3
-Lz=1d3
+nelx=64
+nely=64
 
-nelx=48
-nely=48
-nelz=48
+use_penalty=.true.
+penalty=1d7
 
-solve_stokes_system=.false.
-
-use_swarm=.true.
-nmarker_per_dim=3 
-nmat=2
-
-grav_pointmass=.true.
-!grav_prism=.true.
-plane_height=Lz+0.1
-plane_xmin=0
-plane_ymin=0
-plane_xmax=Lx
-plane_ymax=Ly
-plane_nnx=0
-plane_nny=25
-
-xbeg=Lx/2
-xend=1.11d3
-ybeg=Ly/2
-yend=2.22d3
-zbeg=Lz/2
-zend=5.55d3
-line_nnp=256
-
-
-!----------------------------------------------------------
+debug=.false.
 
 end subroutine
 
@@ -61,18 +34,6 @@ use global_parameters
 use structures
 
 implicit none
-
-!----------------------------------------------------------
-
-!liquid
-mat(1)%rho0=0
-mat(1)%eta0=1
-
-!sphere
-mat(2)%rho0=100
-mat(2)%eta0=2
-
-!----------------------------------------------------------
 
 end subroutine
 
@@ -91,12 +52,8 @@ real(8), intent(in) :: x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz
 integer, intent(in) :: imat,mode
 real(8), intent(out) :: eta,rho,hcond,hcapa,hprod
 
-!----------------------------------------------------------
-
-eta=mat(imat)%eta0
-rho=mat(imat)%rho0
-
-!----------------------------------------------------------
+eta=1
+rho=1
 
 end subroutine
 
@@ -109,23 +66,6 @@ use structures
 
 implicit none
 
-integer im
-
-!----------------------------------------------------------
-! 1: fluid
-! 2: sphere
-
-do im=1,nmarker
-
-   swarm(im)%mat=1
-
-   if ((swarm(im)%x-0.5*Lx)**2+(swarm(im)%y-0.5*Ly)**2+(swarm(im)%z-0.5*Lz)**2<500**2) then
-      swarm(im)%mat=2      
-   end if
-
-end do
-
-!----------------------------------------------------------
 
 end subroutine
 
@@ -138,10 +78,40 @@ use structures
 
 implicit none
 
-!----------------------------------------------------------
+integer i
 
-
-!----------------------------------------------------------
+do iel=1,nel
+   mesh(iel)%fix_u(:)=.false. 
+   mesh(iel)%fix_v(:)=.false. 
+   !left boundary
+   do i=1,mV
+      if (mesh(iel)%bnd1_node(i)) then
+         mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
+         mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
+      end if
+   end do
+   !right boundary
+   do i=1,mV
+      if (mesh(iel)%bnd2_node(i)) then
+         mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
+         mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
+      end if
+   end do
+   !bottom boundary
+   do i=1,mV
+      if (mesh(iel)%bnd3_node(i)) then
+         mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
+         mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
+      end if
+   end do
+   !top boundary
+   do i=1,mV
+      if (mesh(iel)%bnd4_node(i)) then
+         mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
+         mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
+      end if
+   end do
+end do
 
 end subroutine
 
@@ -154,11 +124,7 @@ use structures
 
 implicit none
 
-!----------------------------------------------------------
 
-! your stuff here
-
-!----------------------------------------------------------
 
 end subroutine
 
@@ -171,11 +137,7 @@ use structures
 
 implicit none
 
-!----------------------------------------------------------
 
-! your stuff here
-
-!----------------------------------------------------------
 
 end subroutine
 
@@ -188,23 +150,27 @@ implicit none
 real(8), intent(in) :: x,y,z
 real(8), intent(out) :: u,v,w,p,T,exx,eyy,ezz,exy,exz,eyz
 
-!----------------------------------------------------------
+real(8) dudxth,dvdxth,dudyth,dvdyth
 
-! your stuff here
+u=x**2 * (1.d0-x)**2 * (2.d0*y - 6.d0*y**2 + 4*y**3)
+v=-y**2 * (1.d0-y)**2 * (2.d0*x - 6.d0*x**2 + 4*x**3)
+w=0d0
+p=x*(1-x)-1d0/6d0
 
-u=0
-v=0
-w=0
-p=0
+dudxth=4*x*y*(1-x)*(1-2*x)*(1-3*y+2*y**2)
+dudyth=2*x**2*(1-x)**2*(1-6*y+6*y**2)
+dvdxth=-2*y**2*(1-y)**2*(1-6*x+6*x**2)
+dvdyth=-4*x*y*(1-y)*(1-2*y)*(1-3*x+2*x**2)
+
+exx=dudxth
+eyy=dvdyth
+exy=0.5d0*(dudyth+dvdxth)
+
+ezz=0d0
+exz=0d0
+eyz=0d0
+
 T=0
-exx=0
-eyy=0
-ezz=0
-exy=0
-exz=0
-eyz=0
-
-!----------------------------------------------------------
 
 end subroutine
 
@@ -217,13 +183,16 @@ implicit none
 real(8), intent(in) :: x,y,z
 real(8), intent(out) :: gx,gy,gz
 
-!----------------------------------------------------------
+gx= ( (12.d0-24.d0*y)*x**4 + (-24.d0+48.d0*y)*x**3 + (-48.d0*y+72.d0*y**2-48.d0*y**3+12.d0)*x**2 &
+    + (-2.d0+24.d0*y-72.d0*y**2+48.d0*y**3)*x + 1.d0-4.d0*y+12.d0*y**2-8.d0*y**3 )
 
-gx=0
-gy=0
-gz=-1
+gy=( (8.d0-48.d0*y+48.d0*y**2)*x**3 + (-12.d0+72.d0*y-72*y**2)*x**2 + &
+     (4.d0-24.d0*y+48.d0*y**2-48.d0*y**3+24.d0*y**4)*x - 12.d0*y**2 + 24.d0*y**3 -12.d0*y**4)
 
-!----------------------------------------------------------
+gz=0
+
+!gx=-gx
+!gy=-gy
 
 end subroutine
 
@@ -237,11 +206,13 @@ use constants
 
 implicit none
 
-!----------------------------------------------------------
+vrms_test=0.
 
-! your stuff here
-
-!----------------------------------------------------------
+if (abs(vrms-vrms_test)/vrms_test<epsilon_test) then
+   print *,'***** test passed *****'
+else
+   print *,'***** test FAILED *****'
+end if
 
 end subroutine
 
@@ -251,11 +222,8 @@ subroutine postprocessor_experiment
 
 implicit none
 
-!----------------------------------------------------------
 
-! your stuff here
 
-!----------------------------------------------------------
 
 end subroutine
 

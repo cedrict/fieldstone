@@ -8,6 +8,7 @@
 
 subroutine matrix_setup_MV
 
+use structures, only: shift
 use global_parameters
 use timing
 use matrices, only : csrMV
@@ -39,9 +40,9 @@ if (geometry=='cartesian' .and. ndim==2) then
    csrMV%NZ=(4*4+(2*(nnx-2)+2*(nny-2))*6+(nnx-2)*(nny-2)*9)
    csrMV%nz=(csrMV%nz-csrMV%n)/2+csrMV%n
 
-   write(*,'(a)')     '        CSR matrix format symm' 
-   write(*,'(a,i10)') '        csrMV%n  =',csrMV%n
-   write(*,'(a,i10)') '        csrMV%nz =',csrMV%nz
+   write(*,'(a)')     shift//'CSR matrix format symm' 
+   write(*,'(a,i10)') shift//'csrMV%n  =',csrMV%n
+   write(*,'(a,i10)') shift//'csrMV%nz =',csrMV%nz
 
    allocate(csrMV%ia(csrMV%n+1)) 
    allocate(csrMV%ja(csrMV%nz))   
@@ -83,7 +84,7 @@ end if ! cartesian 2D
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> matrix_setup_MV ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'matrix_setup_MV (',elapsed,' s)'
 
 end if ! iproc
 

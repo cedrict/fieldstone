@@ -114,7 +114,7 @@ end if
 
 !==============================================================================!
 
-write(*,'(a)') '     >> set_global_parameters_pair '
+write(*,'(a)') 'set_global_parameters_pair '
 
 end if ! iproc
 

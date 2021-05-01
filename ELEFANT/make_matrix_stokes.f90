@@ -43,11 +43,11 @@ C_el=0.d0
 counter_mumps=0
 !idV%RHS=0.d0
 !idV%A_ELT=0.d0
-csrGT%mat=0d0
 Kdiag=0d0
 rhs_f=0.
-rhs_h=0.
+if (allocated(rhs_h)) rhs_h=0.
 if (allocated(csrK%mat)) csrK%mat=0d0 
+if (allocated(csrGT%mat)) csrGT%mat=0d0
 
 do iel=1,nel
 
@@ -59,14 +59,16 @@ do iel=1,nel
    !assemble GT, f and h
    !--------------------
 
-   if (pair=='q1p0') then
+   if (.not.use_penalty) then
+
+      if (pair=='q1p0') then
       csrGT%mat(csrGT%ia(iel):csrGT%ia(iel+1)-1)=G_el(:,1)
       rhs_h(iel)=rhs_h(iel)+h_el(1)
-   end if
+      end if
 
-   if (pair=='q1q1') then
+      if (pair=='q1q1') then
 
-      do k1=1,mV
+         do k1=1,mV
          ik=mesh(iel)%iconV(k1)
          do i1=1,ndofV
             ikk=ndofV*(k1-1)+i1 ! local coordinate of velocity dof
@@ -81,12 +83,14 @@ do iel=1,nel
 !               end do    
             end do
          end do
-      end do
+         end do
 
-      do k2=1,mP
-         m2=mesh(iel)%iconP(k2) ! global coordinate of pressure dof
-         rhs_h(m2)=rhs_h(m2)+h_el(k2)
-      end do
+         do k2=1,mP
+            m2=mesh(iel)%iconP(k2) ! global coordinate of pressure dof
+            rhs_h(m2)=rhs_h(m2)+h_el(k2)
+         end do
+
+      end if
 
    end if
 
@@ -170,15 +174,15 @@ end do
 !csrGT%mat=csrGT%mat*block_scaling_coeff
 !rhs_h=rhs_h*block_scaling_coeff
 
-                         write(*,'(a,2es12.4)') '        rhs_f (m/M):   ',minval(rhs_f),maxval(rhs_f)
-if (allocated(csrK%mat)) write(*,'(a,2es12.4)') '        csrK%mat (m/M):',minval(csrK%mat),maxval(csrK%mat)
-                         write(*,'(a,2es12.4)') '        Kdiag (m/M):   ',minval(Kdiag),maxval(Kdiag)
+                         write(*,'(a,2es12.4)') shift//'rhs_f (m/M):   ',minval(rhs_f),maxval(rhs_f)
+if (allocated(csrK%mat)) write(*,'(a,2es12.4)') shift//'csrK%mat (m/M):',minval(csrK%mat),maxval(csrK%mat)
+                         write(*,'(a,2es12.4)') shift//'Kdiag (m/M):   ',minval(Kdiag),maxval(Kdiag)
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> make_matrix\_stokes              ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'make_matrix_stokes (',elapsed,' s)'
 
 end if ! iproc
 

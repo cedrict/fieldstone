@@ -25,6 +25,8 @@ if (iproc==0) then
 
 ndim=2
 
+CFL_nb=0.25
+
 geometry='cartesian'
 pair='q1p0'
 
@@ -63,7 +65,7 @@ plane_nnx=0
 plane_nny=0
 line_nnp=0
 
-write(*,'(a)') '     >> set_default_values '
+write(*,'(a)') 'set_default_values '
 
 end if ! iproc
 

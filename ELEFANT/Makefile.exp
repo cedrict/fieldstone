@@ -1,12 +1,20 @@
 
-#object_experiment = EXPERIMENTS/numbench_stokes_sphere_with_fs_2D/experiment.o
+object_experiment = EXPERIMENTS/mms2D_donea_huerta/experiment.o 
 
-#object_experiment = EXPERIMENTS/numbench_stokes_sphere_3D/experiment.o
+#object_experiment = EXPERIMENTS/numbench2D_five_sinkers/experiment.o
 
-#object_experiment = EXPERIMENTS/numbench_stokes_sphere_3D_swarm/experiment.o
+#object_experiment = EXPERIMENTS/numbench3D_kinematic_ridge/experiment.o
+
+
+
+#object_experiment = EXPERIMENTS/numbench2D_stokes_sphere_with_fs/experiment.o
+
+#object_experiment = EXPERIMENTS/numbench3D_stokes_sphere/experiment.o
+
+#object_experiment = EXPERIMENTS/numbench3D_stokes_sphere_swarm/experiment.o
 
 #object_experiment = EXPERIMENTS/gravity_sphere/experiment.o
 
-#object_experiment = EXPERIMENTS/mms_temperature_diffusion_2D/experiment.o
+#object_experiment = EXPERIMENTS/mms2D_temperature_diffusion/experiment.o
 
-object_experiment = EXPERIMENTS/mms_temperature_diffusion_3D/experiment.o
+#object_experiment = EXPERIMENTS/mms3D_temperature_diffusion/experiment.o

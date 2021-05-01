@@ -30,6 +30,8 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
+if (.not.use_penalty) then
+
 csrGT%nr=NfemP ! number of rows
 csrGT%nc=NfemV ! number of columns
 
@@ -41,7 +43,7 @@ else
 
 end if
 
-write(*,'(a,i8)') '        matrix GT%NZ=',csrGT%nz
+write(*,'(a,i8)') shift//'matrix GT%NZ=',csrGT%nz
 
 allocate(csrGT%ia(csrGT%nr+1))
 allocate(csrGT%ja(csrGT%NZ))  
@@ -69,15 +71,18 @@ if (pair=='q1p0') then ! is pressure discontinuous
    write(*,*) '          nz=',nz
    write(*,*) '          csrGT%ia (m/M)',minval(csrGT%ia), maxval(csrGT%ia)
    write(*,*) '          csrGT%ja (m/M)',minval(csrGt%ja), maxval(csrGT%ja)
+   print *,csrGT%ja
    end if
 
 end if
+
+end if !use_penalty
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> matrix_setup_GT                  ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'matrix_setup_GT (',elapsed,' s)'
 
 end if ! iproc
 

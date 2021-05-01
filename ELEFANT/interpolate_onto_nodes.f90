@@ -120,7 +120,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> interpolate_onto_nodes           ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'interpolate_onto_nodes (',elapsed,' s)'
 
 end if ! iproc
 

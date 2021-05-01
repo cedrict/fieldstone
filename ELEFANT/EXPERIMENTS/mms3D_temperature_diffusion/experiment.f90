@@ -20,9 +20,9 @@ Lx=1
 Ly=1
 Lz=1
 
-nelx=64
-nely=64
-nelz=64
+nelx=5
+nely=4
+nelz=3
 
 use_T=.true.
 

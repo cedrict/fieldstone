@@ -12,28 +12,26 @@ use global_parameters
 
 implicit none
 
-ndim=2
-Lx=1
-Ly=1
-Lz=4
-nelx=16
-nely=16
-nelz=40
-geometry='cartesian'
-pair='q1p0'
+!----------------------------------------------------------
 
-penalty=1000d0
-use_penalty=.true.
+ndim=3
 
-use_swarm=.true.
-nmarker_per_dim=5
-init_marker_random=.false.
-nmat=3
+solve_stokes_system=.false.
 
-debug=.true.
+Lx=250.d3
+Ly=200.d3
+Lz=50.d3
 
-nxstripes=-3
-nystripes=4
+nelx=64
+nely=int(Ly/Lx*nelx)
+nelz=int(Lz/Lx*nelx)
+
+use_T=.true.
+
+nstep=1
+
+
+!----------------------------------------------------------
 
 end subroutine
 
@@ -46,18 +44,10 @@ use structures
 
 implicit none
 
-!liquid
-mat(1)%rho0=1
-mat(1)%eta0=1
+!----------------------------------------------------------
 
-!sphere
-mat(2)%rho0=2
-mat(2)%eta0=1d3
 
-!air
-mat(3)%rho0=0.001
-mat(3)%eta0=1d-3
-
+!----------------------------------------------------------
 
 end subroutine
 
@@ -76,8 +66,17 @@ real(8), intent(in) :: x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz
 integer, intent(in) :: imat,mode
 real(8), intent(out) :: eta,rho,hcond,hcapa,hprod
 
-eta=mat(imat)%eta0
-rho=mat(imat)%rho0
+!----------------------------------------------------------
+
+rho=3300d0
+
+eta=1d22
+
+hcond=2.5
+hcapa=1200
+hprod=0
+
+!----------------------------------------------------------
 
 end subroutine
 
@@ -90,21 +89,10 @@ use structures
 
 implicit none
 
-integer im
+!----------------------------------------------------------
 
-if (use_swarm) then
 
-   do im=1,nmarker
-
-      swarm(im)%mat=1
-
-      if (swarm(im)%y>0.75) swarm(im)%mat=3
-
-      if ((swarm(im)%x-0.5d0)**2+(swarm(im)%y-0.6d0)**2<0.123456789**2) swarm(im)%mat=2
-
-   end do
-
-end if
+!----------------------------------------------------------
 
 end subroutine
 
@@ -114,41 +102,44 @@ subroutine define_bcV
 
 use global_parameters
 use structures
+use constants
 
 implicit none
 
-integer i
+integer k
+real(8) xi,yi,xxx
+
+!----------------------------------------------------------
 
 do iel=1,nel
 
    mesh(iel)%fix_u(:)=.false. 
    mesh(iel)%fix_v(:)=.false. 
+   mesh(iel)%fix_w(:)=.false. 
 
-   !left boundary
-   do i=1,4
-      if (mesh(iel)%bnd1_node(i)) then
-         mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
+   do k=1,mV
+      if (mesh(iel)%bnd1_node(k)) then
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
       end if
-   end do
-   !right boundary
-   do i=1,4
-      if (mesh(iel)%bnd2_node(i)) then
-         mesh(iel)%fix_u(i)=.true. ; mesh(iel)%u(i)=0.d0
+      if (mesh(iel)%bnd2_node(k)) then
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
       end if
-   end do
-   !bottom boundary
-   do i=1,4
-      if (mesh(iel)%bnd3_node(i)) then
-         mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
-      end if
-   end do
-   !top boundary
-   do i=1,4
-      if (mesh(iel)%bnd4_node(i)) then
-         mesh(iel)%fix_v(i)=.true. ; mesh(iel)%v(i)=0.d0
+      if (mesh(iel)%bnd6_node(k)) then
+         xi=mesh(iel)%xV(k)
+         yi=mesh(iel)%yV(k)
+         xxx=Lx/2.d0-atan((yi-Ly/2.)/Ly*1000)*25d3
+         if (xi<=xxx) then
+            mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=-1*cm/year
+         else
+            mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=+1*cm/year
+         end if
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0d0
+         mesh(iel)%fix_w(k)=.true. ; mesh(iel)%w(k)=0d0
       end if
    end do
 end do
+
+!----------------------------------------------------------
 
 end subroutine
 
@@ -161,20 +152,51 @@ use structures
 
 implicit none
 
+integer k
 
+!----------------------------------------------------------
+
+do iel=1,nel
+   mesh(iel)%fix_T(:)=.false. 
+   !bottom boundary
+   do k=1,mT
+      if (mesh(iel)%bnd5_node(k)) then
+         mesh(iel)%fix_T(k)=.true. ; mesh(iel)%T(k)=1300.d0
+      end if
+   end do
+   !top boundary
+   do k=1,mT
+      if (mesh(iel)%bnd6_node(k)) then
+         mesh(iel)%fix_T(k)=.true. ; mesh(iel)%T(k)=0.d0
+      end if
+   end do
+end do
+
+
+!----------------------------------------------------------
 
 end subroutine
 
 !==================================================================================================!
 
-subroutine temperature_layout
+subroutine initial_temperature
 
 use global_parameters
 use structures
 
 implicit none
 
+integer k
 
+!----------------------------------------------------------
+
+do iel=1,nel
+   do k=1,mT
+      mesh(iel)%T(k)=-(mesh(iel)%zT(k)-Lz)/Lz*1300 
+   end do
+end do
+
+!----------------------------------------------------------
 
 end subroutine
 
@@ -187,8 +209,23 @@ implicit none
 real(8), intent(in) :: x,y,z
 real(8), intent(out) :: u,v,w,p,T,exx,eyy,ezz,exy,exz,eyz
 
+!----------------------------------------------------------
 
+! your stuff here
 
+u=0
+v=0
+w=0
+p=0
+T=0
+exx=0
+eyy=0
+ezz=0
+exy=0
+exz=0
+eyz=0
+
+!----------------------------------------------------------
 
 end subroutine
 
@@ -201,9 +238,13 @@ implicit none
 real(8), intent(in) :: x,y,z
 real(8), intent(out) :: gx,gy,gz
 
+!----------------------------------------------------------
+
 gx=0
-gy=-1
-gz=0
+gy=0
+gz=-1
+
+!----------------------------------------------------------
 
 end subroutine
 
@@ -217,13 +258,11 @@ use constants
 
 implicit none
 
-vrms_test=0.
+!----------------------------------------------------------
 
-if (abs(vrms-vrms_test)/vrms_test<epsilon_test) then
-   print *,'***** test passed *****'
-else
-   print *,'***** test FAILED *****'
-end if
+! your stuff here
+
+!----------------------------------------------------------
 
 end subroutine
 
@@ -233,8 +272,11 @@ subroutine postprocessor_experiment
 
 implicit none
 
+!----------------------------------------------------------
 
+! your stuff here
 
+!----------------------------------------------------------
 
 end subroutine
 

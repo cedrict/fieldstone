@@ -10,8 +10,6 @@ subroutine solve_KV_eq_f(rhs,guess)
 
 use global_parameters
 use global_arrays
-!use structures
-!use constants
 use timing
 use matrices, only : csrK
 
@@ -20,6 +18,12 @@ implicit none
 real(8), intent(in) :: rhs(NfemV)
 real(8), intent(in) :: guess(NfemV)
 
+integer, dimension(:,:), allocatable :: ha
+real(8), dimension(:), allocatable :: pivot
+real(8) aflag(8)
+integer iflag(10), ifail,nn1,nn
+real(8), dimension(:), allocatable :: mat 
+
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{solve\_KV\_eq\_f}
@@ -27,7 +31,8 @@ real(8), intent(in) :: guess(NfemV)
 !@@ implicit passed as argument via the module but the rhs and the guess vector are 
 !@@ passed as arguments.
 !@@ If MUMPS is used the system is solved via MUMPS (the guess is vector
-!@@ is then neglected), otherwise a call is made to !@@ the {\tt solve\_cg\_diagprec} subroutine.
+!@@ is then neglected). Same if y12m solver is used. 
+!@@ Otherwise a call is made to the {\tt pcg\_solver\_csr} subroutine.
 !==================================================================================================!
 
 if (use_MUMPS) then
@@ -36,7 +41,27 @@ if (use_MUMPS) then
 
 else
 
-   call pcg_solver_csr(csrK,guess,rhs,Kdiag)
+   aflag=0
+   iflag=0
+   allocate(ha(NfemV,11))
+   allocate(pivot(NfemV))
+   allocate(mat(15*csrK%NZ)) ; mat=0d0
+   nn=size(csrK%snr)
+   nn1=size(csrK%rnr)
+
+   mat(1:csrK%NZ)=csrK%mat(1:csrK%NZ)
+
+   call y12maf(NfemV,csrK%NZ,mat,csrK%snr,nn,csrK%rnr,nn1,pivot,ha,NfemV,aflag,iflag,rhs,ifail)
+
+   if (ifail/=0) stop 'problem with y12m solver'
+
+   solV=rhs
+
+   deallocate(ha)
+   deallocate(pivot)
+   deallocate(mat)
+
+   !call pcg_solver_csr(csrK,guess,rhs,Kdiag)
 
 end if
 

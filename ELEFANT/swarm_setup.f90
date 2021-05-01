@@ -122,7 +122,7 @@ end if ! use_swarm
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f4.2,a)') '     >> swarm_setup                      ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'swarm_setup (',elapsed,' s)'
 
 end if ! iproc
 

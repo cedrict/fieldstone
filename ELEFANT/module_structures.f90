@@ -73,6 +73,9 @@ type material
    real(8) n_prls,A_prls,Q_prls,V_prls,f_prls
 end type material 
 type(material), dimension(:), allocatable :: mat
+
+character(len=36), parameter :: shift='                                 ->'
+
 end module
 
 
@@ -86,6 +89,8 @@ type compressedrowstorage_sqr
    integer,dimension(:),allocatable :: ia  
    integer,dimension(:),allocatable :: ja
    real(8),dimension(:),allocatable :: mat
+   logical full_matrix_storage
+   integer, dimension(:), allocatable :: snr,rnr
 end type compressedrowstorage_sqr
 
 type compressedrowstorage_rec    
