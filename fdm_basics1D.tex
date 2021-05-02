@@ -39,7 +39,7 @@ is made smaller and smaller, the (numerical approximation) error decreases $\pro
 \index{general}{Truncation Error}
 
 Let us assume that the 1D domain on which a given ODE/PDE is to be solved has been discretised
-and let us zoom in on three consecutive points:
+and let us zoom in on three consecutive points ($x_0=x_i$ here):
 
 \begin{center}
 \input{tikz/tikz_fdm1Da}
@@ -86,7 +86,9 @@ becomes:
 This is a first-order ODE. It needs to be supplemented by a single boundary condition, 
 which in this case constrains the pressure to be zero at the surface, i.e. $p(y=L_y)=0$.
 
+\begin{center}
 \input{tikz/tikz_fdm1De}
+\end{center}
 
 We can write the discretised ODE at node 2 (since we know $p_3=0$):
 \begin{equation}
@@ -330,7 +332,7 @@ Note that this formula requires one value left and one value right of the point
 under consideration. 
 
 Another way to arrive at the same expression is to write the expansion at $x_0 \pm h/2$, 
-i.e. at the (convenient, yet nonexistant) half points $i\pm 1/2$:
+i.e. at the (convenient, yet nonexistent) half points $i\pm 1/2$:
 
 \begin{center}
 \input{tikz/tikz_fdm1Db}

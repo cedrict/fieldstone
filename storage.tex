@@ -246,6 +246,15 @@ Assuming we are using $Q_1\times P_0$ elements, the structure of the matrix $\G_
 \end{equation} 
 \end{scriptsize}
 
+\begin{center}
+\input{tikz/csrStokes_3x2_ELEFANT}
+\input{tikz/csrStokes_4x3_ELEFANT}
+\input{tikz/csrStokes_5x4_ELEFANT}\\
+{\captionfont From left to right: Nonzero structures of the assembled Stokes matrix for a 
+$3\times 2$, $4\times 3$ and $5\times 4$ mesh of $Q_1\times P_0$ elements.}
+\end{center}
+
+
 Assuming we are now using $Q_1\times Q_1$ elements (without bubble), 
 the structure of the matrix $\G_{el}^T$ is different: we now have 12 pressure dofs 
 which are coupled to 24 velocity dofs:
@@ -268,6 +277,8 @@ which are coupled to 24 velocity dofs:
 \right)
 \end{equation} 
 \end{scriptsize}
+
+
 
 
 %..............................................................................

@@ -4,6 +4,10 @@ It incorporates many features and contains many identical algorithms with the or
 one but in a more streamlined version. Also the number of solvers, marker projections, 
 element types, geometries, etc ... has been greatly reduced. 
 
+\begin{center}
+\includegraphics[width=7cm]{images/elefant/logo_elefant_small}
+\end{center}
+
 This code is in Fortran because a) this is the language I know best; b) it is (really) fast;
 c) the interface with MUMPS is seamless.  
 
@@ -55,24 +59,24 @@ c) the interface with MUMPS is seamless.
 \subsubsection{The modules and objects}
 The whole code is built around a few modules and objects:
 
-\begin{itemize}
-\item {\filenamefont module\_global.f90}\\
-\lstinputlisting[language=Fortran]{ELEFANT/module_global.f90}
+%\begin{itemize}
+%\item {\filenamefont module\_global.f90}\\
+%\lstinputlisting[language=Fortran]{ELEFANT/module_global.f90}
 
-\item {\filenamefont module\_constants.f90}\\
-\lstinputlisting[language=Fortran]{ELEFANT/module_constants.f90}
+%\item {\filenamefont module\_constants.f90}\\
+%\lstinputlisting[language=Fortran]{ELEFANT/module_constants.f90}
 
-\item {\filenamefont module\_timing.f90}\\
-\lstinputlisting[language=Fortran]{ELEFANT/module_timing.f90}
+%\item {\filenamefont module\_timing.f90}\\
+%\lstinputlisting[language=Fortran]{ELEFANT/module_timing.f90}
 
-\item {\filenamefont module\_structures.f90}\\
-\begin{scriptsize}
-\lstinputlisting[language=Fortran]{ELEFANT/module_structures.f90}
-\end{scriptsize}
+%\item {\filenamefont module\_structures.f90}\\
+%\begin{scriptsize}
+%\lstinputlisting[language=Fortran]{ELEFANT/module_structures.f90}
+%\end{scriptsize}
 
-\item {\filenamefont module\_global\_arrays.f90}\\
-\lstinputlisting[language=Fortran]{ELEFANT/module_global_arrays.f90}
-\end{itemize}
+%\item {\filenamefont module\_global\_arrays.f90}\\
+%\lstinputlisting[language=Fortran]{ELEFANT/module_global_arrays.f90}
+%\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Install MUMPS (Ubuntu)}
@@ -126,7 +130,9 @@ opla
 \input{tikz/tikz_elefant_boundaries}
 \end{center}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{To do list}
+\input{ELEFANT/todo}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -3,6 +3,8 @@
 
 WARNING: I am not comfortable writing about this topic. What follows is a rough attempt at making sense of it.
 
+\hspace{.4cm}
+
 The Lady{\v z}henskaya-Babu{\v s}ka-Brezzi (LBB\footnote{
 \url{https://en.wikipedia.org/wiki/Ladyzhenskaya-Babuska-Brezzi_condition}}) condition is a sufficient 
 condition for a saddle point problem to have a unique solution.
@@ -57,5 +59,72 @@ stable and convergent velocity field might be obtained, but the pressure field i
 to present spurious and oscillatory results." 
 Note that in the case of the $Q_1 \times P_0$ element it has been shown that the multiple families of 
 checkboard pressure modes actually lie in the kernel of $\G$. \cite{sagl81a,sagl81b}
+
+\hspace{.4cm}
+
+We can look at this in a different manner, as explained in Elman \etal \cite{elsw}:
+the unique solvability of the matrix system
+\begin{equation}
+\left(
+\begin{array}{cc}
+\K & \G \\
+\G^T & 0 
+\end{array}
+\right)
+\cdot 
+\left(
+\begin{array}{c}
+\vec{\cal V} \\ \vec{\cal P}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{f} \\ \vec{h}
+\end{array}
+\right)
+\label{eq:lbbsyst}
+\end{equation}
+is determined by looking at the homogeneous system
+\begin{equation}
+\left(
+\begin{array}{cc}
+\K & \G \\
+\G^T & 0 
+\end{array}
+\right)
+\cdot 
+\left(
+\begin{array}{c}
+\vec{\cal V} \\ \vec{\cal P}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{0} \\ \vec{0}
+\end{array}
+\right)
+\end{equation}
+or,
+\begin{eqnarray}
+\K \cdot \vec{\cal V} + \G \cdot \vec{\cal P} &=& \vec{0} \nn\\
+\G^T \cdot \vec{\cal V} &=& \vec{0}
+\end{eqnarray}
+To start, premultiply the first equation by $\vec{\cal V}^T$ and the second by 
+$\vec{\cal P}^T$. The second yields
+$\vec{\cal P}^T \cdot \G^T \cdot \vec{\cal V} = ( \vec{\cal V}^T \cdot \G\cdot \vec{\cal P}  )^T = \vec{0}$
+which is present in the first equation so that it simplifies to $\vec{\cal V}^T\cdot \K \cdot \vec{\cal V} = \vec{0}$.
+Since $\K$ is positive definite, it follows that $\vec{\cal V}=\vec{0}$, implying unique solvability
+with respect to the velocity. 
+
+On the other hand, unique solvability with respect to the pressure is problematic. Substituting $\vec{\cal V}=\vec{0}$
+in the system above gives $\G \cdot \vec{\cal P} = \vec{0}$, and implies that any pressure solution is only unique 
+up to the nullspace of the matrix $\G$. 
+The bottom line is that if Eq.~\eqref{eq:lbbsyst} is to properly represent a continuous Stokes
+problem, then the mixed approximation spaces need to be chosen carefully.
+Specifically, we have to ensure that $null(\G)=\{1\}$ in the case of enclosed flow,
+and that $null(\G)=\{0\}$, otherwise.
+
 
 

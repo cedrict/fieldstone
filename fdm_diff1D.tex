@@ -188,7 +188,7 @@ Instead, we have to solve a {\color{olive}linear system of equations}, which is 
 
 The main advantage of implicit methods is that there are no restrictions on the time step,
 the fully implicit scheme is {\bf unconditionally stable}.
-This does not mean that it is accurate. 
+This does not mean that it is accurate! Stability and accuracy are two different things! 
 Taking large time steps may result in an inaccurate solution for features with
 small spatial scales!
 
@@ -274,8 +274,9 @@ by the total number of nodes/points $nnx$ in order to compute a new temperature 
 There are two main approaches to solving such a linear system: one can use a {\color{olive} direct}
 approach or an {\color{olive} iterative} approach. 
 In a nutshell, a direct solver will 'manipulate' the matrix lines and columns 
-so as to arrive at the solution. A simple example of such an approach is the 
-technique of elimination of variables:
+so as to arrive at the solution (like you would do on paper yourself for a small system). 
+A simple example of such an approach is the 
+technique of elimination of variables of the following example.
 
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
@@ -382,7 +383,8 @@ is met (see Section~\ref{ss:itsolvers}). There are two classes of iteratives met
 {\color{olive} Krylov subspace methods} (e.g. CG, GMRES, BiCG).
 At this stage things get real complicated and the details of iterative solvers 
 are vastly out of the scope of this 
-course\footnote{\url{https://en.wikipedia.org/wiki/Iterative_method}} \cite{saad}.     
+course\footnote{\url{https://en.wikipedia.org/wiki/Iterative_method}} (see 
+for instance the book by Saad \cite{saad}).     
 \index{general}{BiCG solver}
 \index{general}{Jacobi solver}
 \index{general}{Gauss-Seidel solver}
@@ -411,7 +413,7 @@ The iterative method is defined by:
 \end{equation}
 where $\vec{T}^{\color{Fuchsia}0}$ is the initial guess (often taken to be zero).
 Note that the superscript denotes the iteration number and has nothing to 
-do with the time step.
+do with the time step in this context.
 This method is trivial to implement since the linear system on the 
 left side of the equal sign involves a diagonal matrix.
 This can also be written 
@@ -513,7 +515,8 @@ temperature vectors are nearly identical, or,
 where $\epsilon$ is a carefully chosen small enough number. 
 
 A sufficient (but not necessary) condition for the method to converge is that 
-the matrix ${\bm A}$ is strictly or irreducibly diagonally dominant. 
+the matrix ${\bm A}$ is strictly or irreducibly diagonally dominant
+\footnote{\url{https://en.wikipedia.org/wiki/Diagonally_dominant_matrix}}. 
 Strict row diagonal dominance means that for each row, the absolute value of 
 the diagonal term is greater than the sum of absolute values of other 
 terms $|a_{ii}|>\sum_{j\neq i} |a_{ij}| $.

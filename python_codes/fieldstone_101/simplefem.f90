@@ -17,7 +17,7 @@ integer, dimension(:,:), allocatable :: icon   ! connectivity array
                                                !
 integer i1,i2,i,j,k,iel,counter,iq,jq          !
 integer ik,jk,ikk,jkk,m1,m2,k1,k2,job,nz       !
-integer ii,ij,j1,j2,jj,inode,ip,jp,l
+integer ii,ij,j1,j2,jj,inode,ip,jp,l,ijk       !
                                                !  
 real(8) Lx,Ly                                  ! size of the numerical domain
 real(8) viscosity                              ! dynamic viscosity $\eta$ of the material
@@ -72,13 +72,18 @@ open(unit=777,file='timings.ascii')
 open(unit=888,file='vrms.ascii')
 open(unit=999,file='errors.ascii')
 
-do nnx=8,256,8 ! resolution loop
+!do nnx=8,256,8 ! resolution loop
+
+do ijk=1,1
 
 Lx=1.d0
 Ly=1.d0
 
 !nnx=150
 nny=nnx
+
+nnx=17
+nny=15
 
 np=nnx*nny
 
@@ -154,7 +159,8 @@ Y12_NZ=(4*4+(2*(nnx-2)+2*(nny-2))*6+(nnx-2)*(nny-2)*9)
 Y12_NZ=Y12_NZ*(ndof**2)    
 
 print *,'======================================'
-print *,'nnx=',nnx
+print *,'nnx=',nnx,'nelx=',nelx
+print *,'nny=',nny,'nely=',nely
 print *,'N=',Y12_N
 print *,'NZ=',Y12_NZ
 
@@ -210,6 +216,9 @@ end do
 !print *,nz
 !print *,minval(snr(1:nz)), maxval(snr(1:nz))
 !print *,minval(rnr(1:nz)), maxval(rnr(1:nz))
+
+print *,rnr(1:Nfem)
+print *,snr(1:Nfem)
 
 !==============================================!
 !=====[define bc]==============================!
@@ -454,8 +463,8 @@ do i=1,np
    v(i)=Y12_B((i-1)*ndof+2)
 end do
 
-open(unit=123,file='OUT/solution_u.dat',status='replace')
-open(unit=234,file='OUT/solution_v.dat',status='replace')
+open(unit=123,file='OUT/solution_u.ascii',status='replace')
+open(unit=234,file='OUT/solution_v.ascii',status='replace')
 do i=1,np
    write(123,'(5f20.10)') x(i),y(i),u(i),uth(x(i),y(i)),u(i)-uth(x(i),y(i))
    write(234,'(5f20.10)') x(i),y(i),v(i),vth(x(i),y(i)),v(i)-vth(x(i),y(i))
@@ -467,7 +476,7 @@ close(234)
 !=====[retrieve pressure]======================!
 !==============================================!
 
-open(unit=123,file='OUT/solution_p.dat',status='replace')
+open(unit=123,file='OUT/solution_p.ascii',status='replace')
 
 do iel=1,nel
 
