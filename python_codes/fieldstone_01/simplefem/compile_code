@@ -1,0 +1,1 @@
+gfortran simplefem.f90 linpack_d.f90 -lblas
