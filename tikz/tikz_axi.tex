@@ -1,0 +1,27 @@
+\begin{flushright} {\tiny {\color{gray} (tikz\_axi.tex)}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{tikzpicture}
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (10,6); %background grid
+
+\draw[dashed,fill=teal!20] (2,2)--(3.5,1)--(3.5,3.5)--(2,4.5)--cycle ;
+\draw[thick,->] (2,2) -- (0.5,0.5); 
+\draw[thick,->] (2,2) -- (5,2); 
+\draw[thick,->] (2,2) -- (2,5.5); 
+\node[] at (0.25,0.5) {$x$};
+\node[] at (5,1.7) {$y$};
+\node[] at (1.75,5) {$z$};
+\node[] at (2.75,1.25) {$r$};
+\node[] at (2,1.4) {$\theta$};
+\draw[] (1.7,1.7) .. controls (2,1.63) ..   (2.3,1.8);
+
+\draw[dashed,fill=teal!20] (7,3)--(8.5,3)--(8.5,5)--(7,5)--cycle; 
+\draw[thick,->] (7,3) -- (9,3); 
+\draw[thick,->] (7,3) -- (7,5.5); 
+\node[] at (9,2.7) {$r$};
+\node[] at (7.25,5.5) {$z$};
+
+\draw[->] (3,2.75) .. controls (4.5,5) .. (7.5,4.5);
+\end{tikzpicture}
+
+
