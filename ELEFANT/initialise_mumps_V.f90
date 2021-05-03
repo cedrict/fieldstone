@@ -8,7 +8,7 @@
 
 subroutine initialise_mumps_V
 
-use global_parameters
+use module_parameters
 
 implicit none
 

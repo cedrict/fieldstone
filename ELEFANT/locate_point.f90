@@ -8,8 +8,8 @@
 
 subroutine locate_point(x,y,z,ielt,r,s,t)
 
-use global_parameters
-use structures
+use module_parameters
+use module_mesh 
 
 implicit none
 
@@ -57,7 +57,7 @@ end subroutine
 
 subroutine compute_iel(ielx,iely,ielz,ielt)
 
-use global_parameters
+use module_parameters
 
 implicit none
 
@@ -76,8 +76,8 @@ end subroutine
 
 subroutine find_ielx_r (x,ielx,r)
 
-use global_parameters
-use structures
+use module_parameters
+use module_mesh 
 
 implicit none
 
@@ -98,8 +98,8 @@ end subroutine
 
 subroutine find_iely_s (y,iely,s)
 
-use global_parameters
-use structures
+use module_parameters
+use module_mesh 
 
 implicit none
 
@@ -120,8 +120,8 @@ end subroutine
 
 subroutine find_ielz_t (z,ielz,t)
 
-use global_parameters
-use structures
+use module_parameters
+use module_mesh 
 
 implicit none
 

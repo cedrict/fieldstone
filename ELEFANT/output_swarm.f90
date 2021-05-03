@@ -8,9 +8,10 @@
 
 subroutine output_swarm
 
-use global_parameters
-use structures
-use timing
+use module_parameters
+use module_swarm
+use module_materials
+use module_timing
 
 implicit none
 
@@ -79,13 +80,13 @@ write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Float32" Name="rho0" Format="ascii">'
 do im=1,nmarker
-write(123,'(es12.4)') mat(swarm(im)%mat)%rho0
+write(123,'(es12.4)') materials(swarm(im)%mat)%rho0
 end do
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Float32" Name="eta0" Format="ascii">'
 do im=1,nmarker
-write(123,'(es12.4)') mat(swarm(im)%mat)%eta0
+write(123,'(es12.4)') materials(swarm(im)%mat)%eta0
 end do
 write(123,*) '</DataArray>'
 !-----

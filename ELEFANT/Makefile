@@ -2,20 +2,21 @@
 include Makefile.exp
 
 f90comp = gfortran
-switch =  -fbounds-check -fcheck=all -ffree-line-length-none  -Wall -Wno-unused-dummy-argument -cpp #-DUseMUMPS
+switch =  -fdefault-real-8 -fbounds-check -fcheck=all -ffree-line-length-none  -Wall -Wno-unused-dummy-argument -cpp #-DUseMUMPS
 #switch = -cpp 
 #switch =  -ffree-line-length-none -O3 -cpp #-DUseMUMPS
 libs = -lblas 
 
-objects = module_structures.o module_global.o module_constants.o module_timing.o module_global_arrays.o\
+objects = module_mesh.o module_parameters.o module_constants.o module_timing.o module_global_arrays.o\
+module_statistics.o module_gravity.o module_sparse.o module_materials.o module_swarm.o\
 mylapack.o\
 assign_values_to_qpoints.o\
-basis_functions_V.o basis_functions_P.o basis_functions_T.o\
+basis_functions_V.o basis_functions_P.o basis_functions_T.o basis_functions_L.o\
 compute_elemental_matrix_stokes.o compute_timestep.o\
 compute_dNdx_dNdy.o compute_dNdx_dNdy_dNdz.o\
 compute_dNTdx_dNTdy.o compute_dNTdx_dNTdy_dNTdz.o\
 compute_elemental_rho_eta_vol.o compute_gravity.o compute_elemental_matrix_energy.o \
-output_mesh.o output_swarm.o output_solution.o output_qpoints.o\
+output_mesh.o output_swarm.o output_solution.o output_qpoints.o output_solution_python.o\
 header.o\
 impose_boundary_conditions_stokes.o impose_boundary_conditions_energy.o\
 initialise_mumps_V.o interpolate_onto_nodes.o\
@@ -24,7 +25,7 @@ make_matrix_stokes.o make_matrix_energy.o \
 matrix_setup_K.o matrix_setup_GT.o matrix_setup_MV.o matrix_setup_MP.o matrix_setup_A.o\
 mgmres.o\
 output_matrix_tikz.o\
-postprocessors.o\
+postprocessors.o project_V_onto_L.o\
 prescribe_stokes_solution.o paint_swarm.o pcg_solver_csr.o\
 quadrature_setup.o\
 recover_pressure_penalty.o read_command_line_options.o\

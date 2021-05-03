@@ -8,8 +8,8 @@
 
 subroutine set_global_parameters_pair
 
-use global_parameters
-use global_arrays, only: rV,sV,tV
+use module_parameters
+use module_arrays, only: rV,sV,tV
 
 implicit none
 
@@ -28,6 +28,7 @@ if (pair=='q1p0') then
    mV=2**ndim
    mP=1
    mT=2**ndim
+   mL=2**ndim
    allocate(rV(mV))
    allocate(sV(mV))
    allocate(tV(mV))
@@ -53,6 +54,7 @@ end if
 if (pair=='q1q1') then
    mP=2**ndim
    mT=2**ndim
+   mL=2**ndim
    if (ndim==2) then
       mV=2**ndim+1
       nel=nelx*nely
@@ -85,6 +87,7 @@ if (pair=='q2q1') then
    mV=3**ndim
    mP=2**ndim
    mT=3**ndim
+   mL=2**ndim
    allocate(rV(mV))
    allocate(sV(mV))
    allocate(tV(mV))

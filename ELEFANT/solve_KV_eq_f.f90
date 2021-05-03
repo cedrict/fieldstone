@@ -8,14 +8,14 @@
 
 subroutine solve_KV_eq_f(rhs,guess)
 
-use global_parameters
-use global_arrays
-use timing
-use matrices, only : csrK
+use module_parameters
+use module_arrays
+use module_timing
+use module_sparse, only : csrK
 
 implicit none
 
-real(8), intent(in) :: rhs(NfemV)
+real(8), intent(inout) :: rhs(NfemV)
 real(8), intent(in) :: guess(NfemV)
 
 integer, dimension(:,:), allocatable :: ha
@@ -41,6 +41,9 @@ if (use_MUMPS) then
 
 else
 
+   !csrK%mat=csrK%mat/1d40
+   !rhs=rhs/1d40
+
    aflag=0
    iflag=0
    allocate(ha(NfemV,11))
@@ -53,7 +56,8 @@ else
 
    call y12maf(NfemV,csrK%NZ,mat,csrK%snr,nn,csrK%rnr,nn1,pivot,ha,NfemV,aflag,iflag,rhs,ifail)
 
-   if (ifail/=0) stop 'problem with y12m solver'
+   print *,ifail
+   if (ifail/=0) stop 'solve_KV_eq_f: problem with y12m solver'
 
    solV=rhs
 

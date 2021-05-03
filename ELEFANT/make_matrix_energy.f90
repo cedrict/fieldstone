@@ -8,12 +8,11 @@
 
 subroutine make_matrix_energy
 
-use global_parameters
-use global_arrays, only: rhs_b
-use matrices, only: csrA
-use structures
-!use constants
-use timing
+use module_parameters
+use module_arrays, only: rhs_b
+use module_sparse, only: csrA
+use module_mesh 
+use module_timing
 
 implicit none
 

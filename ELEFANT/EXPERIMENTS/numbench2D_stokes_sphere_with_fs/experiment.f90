@@ -8,7 +8,7 @@
 
 subroutine declare_main_parameters
 
-use global_parameters
+use module_parameters
 
 implicit none
 
@@ -16,11 +16,11 @@ ndim=2
 Lx=1
 Ly=1
 
-nelx=5
-nely=4
+nelx=25
+nely=25
 
 geometry='cartesian'
-pair='q1q1'
+pair='q1p0'
 
 penalty=1000d0
 use_penalty=.true.
@@ -41,23 +41,21 @@ end subroutine
 
 subroutine define_material_properties
 
-use global_parameters
-use structures
+use module_materials 
 
 implicit none
 
 !liquid
-mat(1)%rho0=1
-mat(1)%eta0=1
+materials(1)%rho0=1
+materials(1)%eta0=1
 
 !sphere
-mat(2)%rho0=2
-mat(2)%eta0=1d3
+materials(2)%rho0=2
+materials(2)%eta0=1d3
 
 !air
-mat(3)%rho0=0.001
-mat(3)%eta0=1d-3
-
+materials(3)%rho0=0.001
+materials(3)%eta0=1d-3
 
 end subroutine
 
@@ -66,9 +64,7 @@ end subroutine
 subroutine material_model(x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz,imat,mode,&
                           eta,rho,hcond,hcapa,hprod)
 
-use global_parameters
-use structures
-use constants
+use module_materials
 
 implicit none
 
@@ -76,8 +72,8 @@ real(8), intent(in) :: x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz
 integer, intent(in) :: imat,mode
 real(8), intent(out) :: eta,rho,hcond,hcapa,hprod
 
-eta=mat(imat)%eta0
-rho=mat(imat)%rho0
+eta=materials(imat)%eta0
+rho=materials(imat)%rho0
 
 end subroutine
 
@@ -85,8 +81,8 @@ end subroutine
 
 subroutine swarm_material_layout 
 
-use global_parameters
-use structures
+use module_parameters
+use module_swarm 
 
 implicit none
 
@@ -112,8 +108,8 @@ end subroutine
 
 subroutine define_bcV
 
-use global_parameters
-use structures
+use module_parameters
+use module_mesh 
 
 implicit none
 
@@ -156,9 +152,6 @@ end subroutine
 
 subroutine define_bcT
 
-use global_parameters
-use structures
-
 implicit none
 
 
@@ -168,9 +161,6 @@ end subroutine
 !==================================================================================================!
 
 subroutine initial_temperature
-
-use global_parameters
-use structures
 
 implicit none
 
@@ -211,19 +201,8 @@ end subroutine
 
 subroutine test
 
-use global_parameters 
-use global_measurements 
-use constants
-
 implicit none
 
-vrms_test=0.
-
-if (abs(vrms-vrms_test)/vrms_test<epsilon_test) then
-   print *,'***** test passed *****'
-else
-   print *,'***** test FAILED *****'
-end if
 
 end subroutine
 

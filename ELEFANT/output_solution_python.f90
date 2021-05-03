@@ -8,13 +8,15 @@
 
 subroutine output_solution_python
 
-!use global_parameters
-!use structures
-!use constants
-use timing
+use module_parameters
+use module_mesh 
+use module_timing
+use module_statistics
 
 implicit none
 
+integer k
+real(8) rho(4)
 
 !==================================================================================================!
 !==================================================================================================!
@@ -97,8 +99,8 @@ write(123,'(a)') 'ax.set_ylabel("y")'
 do iel=1,nel
    write(123,'(a,es12.3,a,e12.3,a)') 'x=np.array([',mesh(iel)%xV(1),',',mesh(iel)%xV(3),'])'
    write(123,'(a,es12.3,a,e12.3,a)') 'y=np.array([',mesh(iel)%yV(1),',',mesh(iel)%yV(3),'])'
-   do i=1,ncorners
-      rho(i)=mesh(iel)%a_rho+mesh(iel)%b_rho*(mesh(iel)%xV(k)-mesh(iel)%xc)+&
+   do k=1,ncorners
+      rho(k)=mesh(iel)%a_rho+mesh(iel)%b_rho*(mesh(iel)%xV(k)-mesh(iel)%xc)+&
                              mesh(iel)%c_rho*(mesh(iel)%yV(k)-mesh(iel)%yc)
    end do
    write(123,'(a,es12.3,a,es12.3,a,es12.3,a,es12.3,a)' ) 'z=np.array([[',rho(1),',',rho(2),'],[',rho(4),',',rho(3),']])'

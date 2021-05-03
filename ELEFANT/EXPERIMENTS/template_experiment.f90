@@ -8,7 +8,7 @@
 
 subroutine declare_main_parameters
 
-use global_parameters
+use module_parameters
 
 implicit none
 
@@ -24,9 +24,6 @@ end subroutine
 
 subroutine define_material_properties
 
-use global_parameters
-use structures
-
 implicit none
 
 !----------------------------------------------------------
@@ -40,10 +37,6 @@ end subroutine
 
 subroutine material_model(x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz,imat,mode,&
                           eta,rho,hcond,hcapa,hprod)
-
-use global_parameters
-use structures
-use constants
 
 implicit none
 
@@ -62,9 +55,6 @@ end subroutine
 
 subroutine swarm_material_layout 
 
-use global_parameters
-use structures
-
 implicit none
 
 !----------------------------------------------------------
@@ -77,9 +67,6 @@ end subroutine
 !==================================================================================================!
 
 subroutine define_bcV
-
-use global_parameters
-use structures
 
 implicit none
 
@@ -94,40 +81,9 @@ end subroutine
 
 subroutine define_bcT
 
-use global_parameters
-use structures
-
 implicit none
 
 !----------------------------------------------------------
-
-do iel=1,nel
-   mesh(iel)%fix_T(:)=.false. 
-   !left boundary
-   do i=1,mT
-      if (mesh(iel)%bnd1_node(i)) then
-         mesh(iel)%fix_T(i)=.true. ; mesh(iel)%T(i)=0.d0
-      end if
-   end do
-   !right boundary
-   do i=1,mT
-      if (mesh(iel)%bnd2_node(i)) then
-         mesh(iel)%fix_T(i)=.true. ; mesh(iel)%T(i)=0.d0
-      end if
-   end do
-   !bottom boundary
-   do i=1,mT
-      if (mesh(iel)%bnd3_node(i)) then
-         mesh(iel)%fix_T(i)=.true. ; mesh(iel)%T(i)=0.d0
-      end if
-   end do
-   !top boundary
-   do i=1,mT
-      if (mesh(iel)%bnd4_node(i)) then
-         mesh(iel)%fix_T(i)=.true. ; mesh(iel)%T(i)=0.d0
-      end if
-   end do
-end do
 
 
 !----------------------------------------------------------
@@ -137,9 +93,6 @@ end subroutine
 !==================================================================================================!
 
 subroutine initial_temperature
-
-use global_parameters
-use structures
 
 implicit none
 
@@ -193,7 +146,7 @@ real(8), intent(out) :: gx,gy,gz
 
 gx=0
 gy=0
-gz=-1
+gz=0
 
 !----------------------------------------------------------
 
@@ -202,10 +155,6 @@ end subroutine
 !==================================================================================================!
 
 subroutine test
-
-use global_parameters 
-use global_measurements 
-use constants
 
 implicit none
 

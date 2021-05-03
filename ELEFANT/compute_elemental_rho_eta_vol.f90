@@ -8,10 +8,10 @@
 
 subroutine compute_elemental_rho_eta_vol
 
-use global_parameters
-use global_measurements
-use structures
-use timing
+use module_parameters
+use module_statistics 
+use module_mesh 
+use module_timing
 
 implicit none
 

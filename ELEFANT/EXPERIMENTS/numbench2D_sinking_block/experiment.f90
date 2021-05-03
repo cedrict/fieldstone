@@ -14,17 +14,16 @@ implicit none
 
 !----------------------------------------------------------
 
-Lx=1
-Ly=1
+Lx=512d3
+Ly=512d3
 
 nelx=32
 nely=32
 
-use_T=.true.
+!solve_stokes_system=.false.
 
-solve_stokes_system=.false.
-
-
+use_penalty=.true.
+penalty=1e6
 
 !----------------------------------------------------------
 
@@ -56,11 +55,13 @@ real(8), intent(out) :: eta,rho,hcond,hcapa,hprod
 
 !----------------------------------------------------------
 
-eta=0
-rho=1
-hcond=1
-hcapa=1
-hprod=0
+if (abs(x-256d3)<64d3 .and. abs(y-384d3)<64d3) then
+   eta=1d22
+   rho=3300
+else
+   eta=1d21
+   rho=3200
+end if
 
 !----------------------------------------------------------
 
@@ -83,10 +84,43 @@ end subroutine
 
 subroutine define_bcV
 
+use module_mesh
+use module_parameters
+
 implicit none
+
+integer k
 
 !----------------------------------------------------------
 
+do iel=1,nel
+   mesh(iel)%fix_u(:)=.false. 
+   mesh(iel)%fix_v(:)=.false. 
+   !left boundary
+   do k=1,mV
+      if (mesh(iel)%bnd1_node(k)) then
+         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0.d0
+      end if
+   end do
+   !right boundary
+   do k=1,mV
+      if (mesh(iel)%bnd2_node(k)) then
+         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0.d0
+      end if
+   end do
+   !bottom boundary
+   do k=1,mV
+      if (mesh(iel)%bnd3_node(k)) then
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0.d0
+      end if
+   end do
+   !top boundary
+   do k=1,mV
+      if (mesh(iel)%bnd4_node(k)) then
+         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0.d0
+      end if
+   end do
+end do
 
 !----------------------------------------------------------
 
@@ -96,30 +130,10 @@ end subroutine
 
 subroutine define_bcT
 
-use module_parameters
-use module_mesh 
-
 implicit none
-
-integer i
 
 !----------------------------------------------------------
 
-do iel=1,nel
-   mesh(iel)%fix_T(:)=.false. 
-   !bottom boundary
-   do i=1,mT
-      if (mesh(iel)%bnd3_node(i)) then
-         mesh(iel)%fix_T(i)=.true. ; mesh(iel)%T(i)=1.d0
-      end if
-   end do
-   !top boundary
-   do i=1,mT
-      if (mesh(iel)%bnd4_node(i)) then
-         mesh(iel)%fix_T(i)=.true. ; mesh(iel)%T(i)=0.d0
-      end if
-   end do
-end do
 
 !----------------------------------------------------------
 
@@ -129,16 +143,11 @@ end subroutine
 
 subroutine initial_temperature
 
-use module_parameters
-use module_mesh 
-
 implicit none
 
 !----------------------------------------------------------
 
-do iel=1,nel
-   mesh(iel)%T=0.5
-end do
+! your stuff here
 
 !----------------------------------------------------------
 
@@ -161,7 +170,7 @@ u=0
 v=0
 w=0
 p=0
-T=1-y
+T=0
 exx=0
 eyy=0
 ezz=0
@@ -185,7 +194,7 @@ real(8), intent(out) :: gx,gy,gz
 !----------------------------------------------------------
 
 gx=0
-gy=0
+gy=-10
 gz=0
 
 !----------------------------------------------------------

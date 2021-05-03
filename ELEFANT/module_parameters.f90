@@ -1,9 +1,10 @@
-module global_parameters
+module module_parameters
 implicit none
 
 integer :: mV                  ! number of velocity nodes per element
 integer :: mP                  ! number of pressure nodes per element
 integer :: mT                  ! number of temperature nodes per element
+integer :: mL                  ! number of vertices/corners of basic shape
 integer :: nelx,nely,nelz      ! number of elements in each direction
 integer :: nel                 ! total number of elements
 integer :: ndim                ! number of dimensions
@@ -49,46 +50,4 @@ character(len=4) :: pair       ! type of element pair
 integer :: iel
 integer :: istep           
 integer :: iproc
-end module
-
-!-------------------------------------------
-
-module global_measurements
-implicit none
-real(8) :: vrms,   vrms_test
-real(8) :: avrg_u, avrg_u_test
-real(8) :: avrg_v, avrg_v_test
-real(8) :: avrg_w, avrg_w_test
-real(8) :: avrg_p, avrg_p_test
-real(8) :: avrg_T, avrg_T_test
-real(8) :: volume, volume_test
-real(8) :: etaq_min,etaq_max
-real(8) :: rhoq_min,rhoq_max
-real(8) :: hcapaq_min,hcapaq_max
-real(8) :: hcondq_min,hcondq_max
-real(8) :: u_min
-real(8) :: u_max
-real(8) :: v_min
-real(8) :: v_max
-real(8) :: w_min
-real(8) :: w_max
-real(8) :: p_min,q_min
-real(8) :: p_max,q_max
-real(8) :: T_min,T_max
-real(8) :: vol_min,vol_max
-real(8) :: errv,errp,errq,errT
-end module
-
-
-module gravity
-logical :: grav_pointmass      ! 
-logical :: grav_prism          ! 
-real(8) :: plane_height
-real(8) :: plane_xmin,plane_ymin
-real(8) :: plane_xmax,plane_ymax
-integer :: plane_nnx,plane_nny
-real(8) :: xbeg,xend
-real(8) :: ybeg,yend
-real(8) :: zbeg,zend
-integer :: line_nnp
 end module

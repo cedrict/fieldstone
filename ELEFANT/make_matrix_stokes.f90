@@ -8,11 +8,11 @@
 
 subroutine make_matrix_stokes
 
-use global_parameters
-use global_arrays
-use structures
-use timing
-use matrices, only : csrGT,csrK,csrMP
+use module_parameters
+use module_arrays
+use module_mesh 
+use module_timing
+use module_sparse, only : csrGT,csrK,csrMP
 
 implicit none
 

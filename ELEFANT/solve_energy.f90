@@ -8,11 +8,11 @@
 
 subroutine solve_energy
 
-use global_parameters
-use global_arrays
-use structures
-use matrices 
-use timing
+use module_parameters 
+use module_arrays
+use module_sparse, only: csrA 
+use module_mesh 
+use module_timing
 
 implicit none
 

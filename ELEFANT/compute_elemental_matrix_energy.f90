@@ -8,9 +8,9 @@
 
 subroutine compute_elemental_matrix_energy(Ael,bel)
 
-use global_parameters
-use structures
-use timing
+use module_parameters
+use module_mesh 
+use module_timing
 
 implicit none
 

@@ -8,7 +8,7 @@
 
 subroutine pcg_solver_csr(csrMat,guess,rhs,diag)
 
-use matrix_storage 
+use module_sparse, only: compressedrowstorage_sqr 
 
 implicit none
 

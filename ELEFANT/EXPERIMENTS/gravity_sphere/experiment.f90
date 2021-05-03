@@ -8,8 +8,8 @@
 
 subroutine declare_main_parameters
 
-use global_parameters
-use gravity
+use module_parameters
+use module_gravity
 
 implicit none
 
@@ -57,20 +57,19 @@ end subroutine
 
 subroutine define_material_properties
 
-use global_parameters
-use structures
+use module_materials 
 
 implicit none
 
 !----------------------------------------------------------
 
 !liquid
-mat(1)%rho0=0
-mat(1)%eta0=1
+materials(1)%rho0=0
+materials(1)%eta0=1
 
 !sphere
-mat(2)%rho0=100
-mat(2)%eta0=2
+materials(2)%rho0=100
+materials(2)%eta0=2
 
 !----------------------------------------------------------
 
@@ -81,9 +80,7 @@ end subroutine
 subroutine material_model(x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz,imat,mode,&
                           eta,rho,hcond,hcapa,hprod)
 
-use global_parameters
-use structures
-use constants
+use module_materials
 
 implicit none
 
@@ -93,8 +90,8 @@ real(8), intent(out) :: eta,rho,hcond,hcapa,hprod
 
 !----------------------------------------------------------
 
-eta=mat(imat)%eta0
-rho=mat(imat)%rho0
+eta=materials(imat)%eta0
+rho=materials(imat)%rho0
 
 !----------------------------------------------------------
 
@@ -104,8 +101,8 @@ end subroutine
 
 subroutine swarm_material_layout 
 
-use global_parameters
-use structures
+use module_parameters
+use module_swarm
 
 implicit none
 
@@ -133,9 +130,6 @@ end subroutine
 
 subroutine define_bcV
 
-use global_parameters
-use structures
-
 implicit none
 
 !----------------------------------------------------------
@@ -148,9 +142,6 @@ end subroutine
 !==================================================================================================!
 
 subroutine define_bcT
-
-use global_parameters
-use structures
 
 implicit none
 
@@ -165,9 +156,6 @@ end subroutine
 !==================================================================================================!
 
 subroutine initial_temperature
-
-use global_parameters
-use structures
 
 implicit none
 
@@ -230,10 +218,6 @@ end subroutine
 !==================================================================================================!
 
 subroutine test
-
-use global_parameters 
-use global_measurements 
-use constants
 
 implicit none
 

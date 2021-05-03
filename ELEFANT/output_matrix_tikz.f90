@@ -8,11 +8,10 @@
 
 subroutine output_matrix_tikz
 
-use global_parameters
-use structures
-use matrices
-!use constants
-use timing
+use module_parameters
+use module_mesh 
+use module_sparse
+use module_timing
 
 implicit none
 

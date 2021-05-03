@@ -1,7 +1,5 @@
-module global_arrays
-
+module module_arrays
 implicit none
-
 
 real(8), dimension(:), allocatable :: rhs_f,rhs_h,rhs_b
 real(8), dimension(:), allocatable :: solV,solP

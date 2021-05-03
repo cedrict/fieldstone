@@ -8,11 +8,11 @@
 
 subroutine interpolate_onto_nodes
 
-use global_parameters
-use structures
-use constants
-use timing
-use global_arrays, only: rV,sV,tV
+use module_parameters
+use module_mesh 
+use module_constants
+use module_timing
+use module_arrays, only: rV,sV,tV
 
 implicit none
 

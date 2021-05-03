@@ -8,8 +8,8 @@
 
 subroutine compute_dNdx_dNdy_dNdz(r,s,t,dNdx,dNdy,dNdz,jcob)
 
-use global_parameters
-use structures
+use module_parameters
+use module_mesh 
 
 implicit none
 

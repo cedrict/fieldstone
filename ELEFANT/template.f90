@@ -8,10 +8,12 @@
 
 subroutine name
 
-!use global_parameters
-!use structures
-!use constants
-use timing
+!use module_parameters
+!use module_mesh 
+!use module_constants
+!use module_swarm
+!use module_materials
+use module_timing
 
 implicit none
 

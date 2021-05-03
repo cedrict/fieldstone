@@ -8,9 +8,9 @@
 
 subroutine output_qpoints
 
-use global_parameters
-use structures
-use timing
+use module_parameters
+use module_mesh 
+use module_timing
 
 implicit none
 

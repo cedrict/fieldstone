@@ -8,10 +8,10 @@
 
 subroutine compute_elemental_matrix_stokes(K_el,G_el,f_el,h_el)
 
-use global_parameters
-use global_arrays
-use structures
-use constants
+use module_parameters
+use module_arrays
+use module_mesh
+use module_constants
 
 implicit none
 

@@ -8,8 +8,8 @@
 
 subroutine impose_boundary_conditions_energy(Ael,bel)
 
-use global_parameters, only: iel,mT
-use structures
+use module_parameters, only: iel,mT
+use module_mesh 
 
 implicit none
 

@@ -8,18 +8,19 @@
 
 subroutine assign_values_to_qpoints
 
-use global_parameters
-use global_measurements
-use structures
-use constants
-use timing
+use module_parameters 
+use module_mesh
+use module_swarm
+use module_statistics
+use module_constants
+use module_timing
 
 implicit none
 
 integer i,im,iq,idummy,ipvt2D(3),ipvt3D(4),job
 real(8) x(1000),y(1000),z(1000),rho(1000),eta(1000),rcond
 real(8) A2D(3,3),B2D(3),work2D(3),A3D(4,4),B3D(4),work3D(4),NNNT(mT),NNNP(mP)
-real(8) pm,Tm,exxm,eyym,ezzm,exym,exzm,eyzm
+real(8) pm,Tm,exxm,eyym,ezzm,exym,exzm,eyzm,NNNV(mV)
 real(8) exxq,eyyq,ezzq,exyq,exzq,eyzq
 
 !==================================================================================================!
@@ -50,16 +51,16 @@ if (use_swarm) then
          call NNP(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNP(1:mP),mP,ndim,pair)
          pm=sum(NNNP(1:mP)*mesh(iel)%p(1:mP))
 
-         !or use q ?
-
          call NNT(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNT(1:mT),mT,ndim)
          Tm=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
-         exxm=sum(NNNT(1:mT)*mesh(iel)%exx(1:mT))
-         eyym=sum(NNNT(1:mT)*mesh(iel)%eyy(1:mT))
-         ezzm=sum(NNNT(1:mT)*mesh(iel)%ezz(1:mT))
-         exym=sum(NNNT(1:mT)*mesh(iel)%exy(1:mT))
-         exzm=sum(NNNT(1:mT)*mesh(iel)%exz(1:mT))
-         eyzm=sum(NNNT(1:mT)*mesh(iel)%eyz(1:mT))
+
+         call NNV(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNV(1:mV),mV,ndim,pair)
+         exxm=sum(NNNV(1:mV)*mesh(iel)%exx(1:mV))
+         eyym=sum(NNNV(1:mV)*mesh(iel)%eyy(1:mV))
+         ezzm=sum(NNNV(1:mV)*mesh(iel)%ezz(1:mV))
+         exym=sum(NNNV(1:mV)*mesh(iel)%exy(1:mV))
+         exzm=sum(NNNV(1:mV)*mesh(iel)%exz(1:mV))
+         eyzm=sum(NNNV(1:mV)*mesh(iel)%eyz(1:mV))
 
          call material_model(swarm(im)%x,&
                              swarm(im)%y,&
@@ -208,24 +209,22 @@ if (use_swarm) then
 else
 
    do iel=1,nel
-      do iq=1,nqel
 
-         !compute pq
+      do iq=1,nqel
 
          call NNP(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim,pair)
          mesh(iel)%pq(iq)=sum(NNNP(1:mP)*mesh(iel)%p(1:mP))
 
-         !compute strainrate and Tq
-
          call NNT(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim)
          mesh(iel)%thetaq(iq)=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
 
-         exxq=sum(NNNT(1:mT)*mesh(iel)%exx(1:mT))
-         eyyq=sum(NNNT(1:mT)*mesh(iel)%eyy(1:mT))
-         ezzq=sum(NNNT(1:mT)*mesh(iel)%ezz(1:mT))
-         exyq=sum(NNNT(1:mT)*mesh(iel)%exy(1:mT))
-         exzq=sum(NNNT(1:mT)*mesh(iel)%exz(1:mT))
-         eyzq=sum(NNNT(1:mT)*mesh(iel)%eyz(1:mT))
+         call NNV(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNV(1:mV),mV,ndim,pair)
+         exxq=sum(NNNV(1:mV)*mesh(iel)%exx(1:mV))
+         eyyq=sum(NNNV(1:mV)*mesh(iel)%eyy(1:mV))
+         ezzq=sum(NNNV(1:mV)*mesh(iel)%ezz(1:mV))
+         exyq=sum(NNNV(1:mV)*mesh(iel)%exy(1:mV))
+         exzq=sum(NNNV(1:mV)*mesh(iel)%exz(1:mV))
+         eyzq=sum(NNNV(1:mV)*mesh(iel)%eyz(1:mV))
 
          call material_model(mesh(iel)%xq(iq),&
                              mesh(iel)%yq(iq),&

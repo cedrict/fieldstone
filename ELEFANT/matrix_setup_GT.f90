@@ -8,11 +8,10 @@
 
 subroutine matrix_setup_GT
 
-use global_parameters
-use structures
-use timing
-
-use matrices, only : csrGT
+use module_parameters
+use module_mesh 
+use module_timing
+use module_sparse, only : csrGT
 
 implicit none
 

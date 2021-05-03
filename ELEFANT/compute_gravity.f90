@@ -8,11 +8,11 @@
 
 subroutine compute_gravity
 
-use global_parameters
-use gravity
-use structures
-use constants
-use timing
+use module_parameters
+use module_gravity
+use module_mesh 
+use module_constants
+use module_timing
 
 implicit none
 
@@ -143,9 +143,9 @@ end subroutine
 
 subroutine gravity_at_point(xM,yM,zM,elt,gx,gy,gz,U)
 
-use gravity, only: grav_pointmass,grav_prism
-use structures, only: element
-use constants, only: pi,pi2,eps,Ggrav
+use module_gravity, only: grav_pointmass,grav_prism
+use module_mesh, only: element
+use module_constants, only: pi,pi2,eps,Ggrav
 
 implicit none
 

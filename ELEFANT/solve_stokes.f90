@@ -8,11 +8,11 @@
 
 subroutine solve_stokes
 
-use global_parameters
-use global_measurements
-use global_arrays, only: rhs_f,solV,solP
-use structures
-use timing
+use module_parameters
+use module_statistics 
+use module_arrays, only: rhs_f,solV,solP
+use module_mesh
+use module_timing
 
 implicit none
 

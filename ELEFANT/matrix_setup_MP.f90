@@ -8,10 +8,9 @@
 
 subroutine matrix_setup_MP
 
-use structures, only: shift
-use global_parameters
-use timing
-use matrices, only : csrMP
+use module_parameters
+use module_timing
+use module_sparse, only : csrMP
 
 implicit none
 

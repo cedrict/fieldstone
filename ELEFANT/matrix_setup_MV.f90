@@ -8,10 +8,10 @@
 
 subroutine matrix_setup_MV
 
-use structures, only: shift
-use global_parameters
-use timing
-use matrices, only : csrMV
+use module_mesh 
+use module_parameters
+use module_timing
+use module_sparse, only : csrMV
 
 implicit none
 

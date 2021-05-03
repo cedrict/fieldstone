@@ -1,4 +1,4 @@
-module constants
+module module_constants
 implicit none
 integer, parameter :: one=1
 integer, parameter :: two=2
@@ -25,4 +25,4 @@ real(8), parameter :: twopi = 2d0*pi
 real(8), parameter :: fourpi = 4d0*pi
 real(8), parameter :: eotvos=1d-9
 real(8), parameter :: mGal=0.01d-3 ! m/s^2
-end module constants
+end module

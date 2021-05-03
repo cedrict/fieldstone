@@ -1,0 +1,10 @@
+#! /bin/bash
+
+rm -f statistics
+
+for nelx in {8..96}; do
+    echo 'nelx=' $nelx
+    ./elefant -nelx $nelx -nely $nelx > opla
+    cat fort.1234 >> statistics
+done
+

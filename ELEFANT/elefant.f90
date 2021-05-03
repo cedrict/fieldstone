@@ -8,10 +8,11 @@
 
 program elefant
 
-use global_parameters
-use global_arrays
-use structures
-use matrices
+use module_parameters
+use module_arrays
+use module_mesh
+use module_sparse
+use module_materials
 
 implicit none
 
@@ -57,7 +58,7 @@ allocate(solV(NfemV))
 allocate(solP(NfemP))
 allocate(rhs_f(NfemV))
 if (.not.use_penalty) allocate(rhs_h(NfemP))
-allocate(mat(nmat))
+allocate(materials(nmat))
 allocate(Kdiag(NfemV))
 
 allocate(Cmat(ndim2,ndim2)) ; Cmat=0d0
@@ -151,7 +152,7 @@ do istep=1,nstep !-----------------------------------------
    call spacer_istep                                      !
    call assign_values_to_qpoints                          !
    call compute_elemental_rho_eta_vol                     !
-   call define_bcV                                     !
+   call define_bcV                                        !
                                                           !
    if (solve_stokes_system) then                          !
       call make_matrix_stokes                             !
@@ -172,6 +173,7 @@ do istep=1,nstep !-----------------------------------------
    call compute_gravity                                   !
    call postprocessors                                    !
    call output_solution                                   !
+   call output_solution_python                            !
    call output_qpoints                                    !
    call output_swarm                                      !
    call write_stats                                       !

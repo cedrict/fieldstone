@@ -8,11 +8,11 @@
 
 subroutine recover_pressure_penalty
 
-use global_parameters
-use global_measurements
-use structures
-use timing
-use global_arrays, only : solP
+use module_parameters
+use module_statistics 
+use module_mesh 
+use module_timing
+use module_arrays, only : solP
 
 implicit none
 

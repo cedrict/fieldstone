@@ -8,9 +8,8 @@
 
 subroutine read_command_line_options
 
-use global_parameters
-use structures, only: shift
-!use constants
+use module_parameters
+use module_timing
 
 implicit none
 

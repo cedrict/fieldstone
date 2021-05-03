@@ -1,11 +1,11 @@
 
-object_experiment = EXPERIMENTS/mms2D_donea_huerta/experiment.o 
+object_experiment = EXPERIMENTS/numbench2D_sinking_block/experiment.o 
+
+#object_experiment = EXPERIMENTS/mms2D_donea_huerta/experiment.o 
 
 #object_experiment = EXPERIMENTS/numbench2D_five_sinkers/experiment.o
 
 #object_experiment = EXPERIMENTS/numbench3D_kinematic_ridge/experiment.o
-
-
 
 #object_experiment = EXPERIMENTS/numbench2D_stokes_sphere_with_fs/experiment.o
 

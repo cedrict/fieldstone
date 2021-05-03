@@ -8,10 +8,10 @@
 
 subroutine setup_cartesian2D
 
-use global_parameters
-use structures
-use constants 
-use timing
+use module_parameters
+use module_mesh 
+use module_constants 
+use module_timing
 
 implicit none
 
@@ -99,6 +99,16 @@ if (pair=='q1p0' .or. pair=='q1q1') then
          mesh(counter)%yV(2)=(iely-1)*hy
          mesh(counter)%yV(3)=(iely-1)*hy+hy
          mesh(counter)%yV(4)=(iely-1)*hy+hy
+
+         mesh(counter)%xL(1)=mesh(counter)%xV(1)
+         mesh(counter)%xL(2)=mesh(counter)%xV(2)
+         mesh(counter)%xL(3)=mesh(counter)%xV(3)
+         mesh(counter)%xL(4)=mesh(counter)%xV(4)
+         mesh(counter)%yL(1)=mesh(counter)%yV(1)
+         mesh(counter)%yL(2)=mesh(counter)%yV(2)
+         mesh(counter)%yL(3)=mesh(counter)%yV(3)
+         mesh(counter)%yL(4)=mesh(counter)%yV(4)
+
          mesh(counter)%xc=(ielx-1)*hx+hx/2
          mesh(counter)%yc=(iely-1)*hy+hy/2
          mesh(counter)%hx=hx
@@ -156,6 +166,17 @@ if (pair=='q2q1') then
          mesh(counter)%yV(7)=(iely-1)*hy+hy
          mesh(counter)%yV(8)=(iely-1)*hy+hy
          mesh(counter)%yV(9)=(iely-1)*hy+hy
+
+         mesh(counter)%xL(1)=mesh(counter)%xV(1)
+         mesh(counter)%xL(2)=mesh(counter)%xV(3)
+         mesh(counter)%xL(3)=mesh(counter)%xV(9)
+         mesh(counter)%xL(4)=mesh(counter)%xV(7)
+
+         mesh(counter)%yL(1)=mesh(counter)%yV(1)
+         mesh(counter)%yL(2)=mesh(counter)%yV(3)
+         mesh(counter)%yL(3)=mesh(counter)%yV(9)
+         mesh(counter)%yL(4)=mesh(counter)%yV(7)
+
          mesh(counter)%xc=(ielx-1)*hx+hx/2
          mesh(counter)%yc=(iely-1)*hy+hy/2
          mesh(counter)%hx=hx

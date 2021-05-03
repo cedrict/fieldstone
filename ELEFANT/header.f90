@@ -8,7 +8,7 @@
 
 subroutine header
 
-use global_parameters
+use module_parameters
 
 implicit none
 
@@ -27,7 +27,7 @@ end subroutine
 
 subroutine spacer
 
-use global_parameters
+use module_parameters
 
 implicit none
 
@@ -43,7 +43,7 @@ end subroutine
 
 subroutine spacer_istep
 
-use global_parameters
+use module_parameters
 
 implicit none
 
@@ -60,7 +60,7 @@ end subroutine
 
 subroutine spacer_end
 
-use global_parameters
+use module_parameters
 
 implicit none
 
@@ -76,7 +76,7 @@ end subroutine
 
 subroutine footer
 
-use global_parameters
+use module_parameters
 
 implicit none
 

@@ -8,9 +8,9 @@
 
 subroutine write_stats
 
-use global_parameters
-use global_measurements
-use timing
+use module_parameters
+use module_statistics 
+use module_timing
 
 implicit none
 

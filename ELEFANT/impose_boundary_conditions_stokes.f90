@@ -8,8 +8,8 @@
 
 subroutine impose_boundary_conditions_stokes(K_el,G_el,f_el,h_el)
 
-use global_parameters
-use structures
+use module_parameters
+use module_mesh 
 
 implicit none
 

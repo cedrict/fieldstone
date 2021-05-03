@@ -8,7 +8,7 @@
 
 subroutine declare_main_parameters
 
-use global_parameters
+use module_parameters
 
 implicit none
 
@@ -20,9 +20,9 @@ Lx=1
 Ly=1
 Lz=1
 
-nelx=5
-nely=4
-nelz=3
+nelx=15
+nely=14
+nelz=13
 
 use_T=.true.
 
@@ -35,9 +35,6 @@ end subroutine
 !==================================================================================================!
 
 subroutine define_material_properties
-
-use global_parameters
-use structures
 
 implicit none
 
@@ -52,10 +49,6 @@ end subroutine
 
 subroutine material_model(x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz,imat,mode,&
                           eta,rho,hcond,hcapa,hprod)
-
-use global_parameters
-use structures
-use constants
 
 implicit none
 
@@ -79,9 +72,6 @@ end subroutine
 
 subroutine swarm_material_layout 
 
-use global_parameters
-use structures
-
 implicit none
 
 !----------------------------------------------------------
@@ -94,9 +84,6 @@ end subroutine
 !==================================================================================================!
 
 subroutine define_bcV
-
-use global_parameters
-use structures
 
 implicit none
 
@@ -111,8 +98,8 @@ end subroutine
 
 subroutine define_bcT
 
-use global_parameters
-use structures
+use module_parameters
+use module_mesh
 
 implicit none
 
@@ -144,8 +131,8 @@ end subroutine
 
 subroutine initial_temperature
 
-use global_parameters
-use structures
+use module_parameters
+use module_mesh
 
 implicit none
 
@@ -210,10 +197,6 @@ end subroutine
 !==================================================================================================!
 
 subroutine test
-
-use global_parameters 
-use global_measurements 
-use constants
 
 implicit none
 

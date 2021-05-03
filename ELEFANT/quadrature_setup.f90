@@ -8,15 +8,15 @@
 
 subroutine quadrature_setup
 
-use global_parameters
-use structures
-use constants
-use timing
+use module_parameters
+use module_mesh 
+use module_constants
+use module_timing
 
 implicit none
 
 integer iq,jq,kq,counter
-real(8) rq,sq,tq,NNNV(mV),dNdx(mV),dNdy(mV),dNdz(mV),jcob
+real(8) rq,sq,tq,NNNL(mL),dNdx(mV),dNdy(mV),dNdz(mV),jcob
 real(8), dimension(:), allocatable :: qcoords,qweights
 
 !==================================================================================================!
@@ -74,9 +74,9 @@ if (ndim==2) then
          counter=counter+1
          rq=qcoords(iq)
          sq=qcoords(jq)
-         call NNV(rq,sq,0,NNNV(1:mV),mV,ndim,pair)
-         mesh(iel)%xq(counter)=sum(mesh(iel)%xV(1:mV)*NNNV(1:mV))
-         mesh(iel)%yq(counter)=sum(mesh(iel)%yV(1:mV)*NNNV(1:mV))
+         call NNL(rq,sq,0,NNNL(1:mV),mV,ndim,pair)
+         mesh(iel)%xq(counter)=sum(mesh(iel)%xV(1:mV)*NNNL(1:mV))
+         mesh(iel)%yq(counter)=sum(mesh(iel)%yV(1:mV)*NNNL(1:mV))
          mesh(iel)%zq(counter)=0.d0
          mesh(iel)%weightq(counter)=qweights(iq)*qweights(jq)
          mesh(iel)%rq(counter)=rq
@@ -101,10 +101,10 @@ if (ndim==3) then
          rq=qcoords(iq)
          sq=qcoords(jq)
          tq=qcoords(kq)
-         call NNV(rq,sq,tq,NNNV(1:mV),mV,ndim,pair)
-         mesh(iel)%xq(counter)=sum(mesh(iel)%xV(1:mV)*NNNV(1:mV))
-         mesh(iel)%yq(counter)=sum(mesh(iel)%yV(1:mV)*NNNV(1:mV))
-         mesh(iel)%zq(counter)=sum(mesh(iel)%zV(1:mV)*NNNV(1:mV))
+         call NNL(rq,sq,tq,NNNL(1:mV),mV,ndim,pair)
+         mesh(iel)%xq(counter)=sum(mesh(iel)%xV(1:mV)*NNNL(1:mV))
+         mesh(iel)%yq(counter)=sum(mesh(iel)%yV(1:mV)*NNNL(1:mV))
+         mesh(iel)%zq(counter)=sum(mesh(iel)%zV(1:mV)*NNNL(1:mV))
          mesh(iel)%weightq(counter)=qweights(iq)*qweights(jq)*qweights(kq)
          mesh(iel)%rq(counter)=rq
          mesh(iel)%sq(counter)=sq

@@ -8,10 +8,9 @@
 
 subroutine paint_swarm
 
-use global_parameters
-use structures
-!use constants
-use timing
+use module_parameters
+use module_swarm 
+use module_timing
 
 implicit none
 

@@ -8,10 +8,10 @@
 
 subroutine setup_cartesian3D
 
-use global_parameters
-use structures
-use constants 
-use timing
+use module_parameters
+use module_mesh
+use module_constants 
+use module_timing
 
 implicit none
 
@@ -100,6 +100,11 @@ if (pair=='q1p0' .or. pair=='q1q1') then
             mesh(counter)%zV(6)=(ielz-1)*hz+hz
             mesh(counter)%zV(7)=(ielz-1)*hz+hz
             mesh(counter)%zV(8)=(ielz-1)*hz+hz
+
+            mesh(counter)%xL(1:mL)=mesh(counter)%xV(1:8)
+            mesh(counter)%yL(1:mL)=mesh(counter)%yV(1:8)
+            mesh(counter)%zL(1:mL)=mesh(counter)%zV(1:8)
+
             mesh(counter)%xc=(ielx-1)*hx+hx/2
             mesh(counter)%yc=(iely-1)*hy+hy/2
             mesh(counter)%zc=(ielz-1)*hz+hz/2

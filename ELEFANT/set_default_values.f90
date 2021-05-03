@@ -8,8 +8,8 @@
 
 subroutine set_default_values
 
-use global_parameters
-use gravity
+use module_parameters
+use module_gravity
 
 implicit none
 
