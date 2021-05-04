@@ -725,9 +725,9 @@ for istep in range(0,1):
            tr=sigma_rr[iel]*nx[inode]+sigma_rz[iel]*nz[inode]
            tz=sigma_rz[iel]*nx[inode]+sigma_zz[iel]*nz[inode]
            theta=np.arctan2(xV[inode],zV[inode])/np.pi*180
-           trr=tr*nx[inode]+tz*nz[inode]
+           normal_traction=tr*nx[inode]+tz*nz[inode]
            tracfile.write("%10e %10e %10e %10e %10e %10e %10e %10e\n" \
-                          %(xV[inode],zV[inode],nx[inode],nz[inode],tr,tz,theta,trr))
+                          %(xV[inode],zV[inode],nx[inode],nz[inode],tr,tz,theta,normal_traction))
 
         if xV[iconV[1,iel]]**2+zV[iconV[1,iel]]**2>0.99999*R_outer**2 and\
            xV[iconV[2,iel]]**2+zV[iconV[2,iel]]**2>0.99999*R_outer**2:
@@ -735,19 +735,19 @@ for istep in range(0,1):
            tr=sigma_rr[iel]*nx[inode]+sigma_rz[iel]*nz[inode]
            tz=sigma_rz[iel]*nx[inode]+sigma_zz[iel]*nz[inode]
            theta=np.arctan2(xV[inode],zV[inode])/np.pi*180
-           trr=tr*nx[inode]+tz*nz[inode]
+           normal_traction=tr*nx[inode]+tz*nz[inode]
            tracfile.write("%10e %10e %10e %10e %10e %10e %10e %10e\n" \
-                          %(xV[inode],zV[inode],nx[inode],nz[inode],tr,tz,theta,trr))
+                          %(xV[inode],zV[inode],nx[inode],nz[inode],tr,tz,theta,normal_traction))
 
         if xV[iconV[2,iel]]**2+zV[iconV[2,iel]]**2>0.99999*R_outer**2 and\
-           xV[iconV[3,iel]]**2+zV[iconV[3,iel]]**2>0.99999*R_outer**2:
+           xV[iconV[0,iel]]**2+zV[iconV[0,iel]]**2>0.99999*R_outer**2:
            inode=iconV[5,iel]
            tr=sigma_rr[iel]*nx[inode]+sigma_rz[iel]*nz[inode]
            tz=sigma_rz[iel]*nx[inode]+sigma_zz[iel]*nz[inode]
            theta=np.arctan2(xV[inode],zV[inode])/np.pi*180
-           trr=tr*nx[inode]+tz*nz[inode]
+           normal_traction=tr*nx[inode]+tz*nz[inode]
            tracfile.write("%10e %10e %10e %10e %10e %10e %10e %10e\n" \
-                          %(xV[inode],zV[inode],nx[inode],nz[inode],tr,tz,theta,trr))
+                          %(xV[inode],zV[inode],nx[inode],nz[inode],tr,tz,theta,normal_traction))
 
 
     #####################################################################
