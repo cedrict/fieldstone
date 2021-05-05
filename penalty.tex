@@ -6,8 +6,8 @@
 \index{general}{Penalty Formulation}
 
 In order to impose the incompressibility constraint, two widely used procedures are available, namely the 
-Lagrange multiplier method and the penalty method \cite{bathe82,hugh}. The latter is implemented 
-in \elefant, which allows for the elimination of the pressure variable from the momentum equation 
+Lagrange multiplier method and the penalty method \cite{bathe82,hugh}. The latter 
+allows for the elimination of the pressure variable from the momentum equation 
 (resulting in a reduction of the matrix size).%, based on a relaxation of the incompressibility constraint. 
 
 Mathematical details on the origin and validity of the penalty approach applied to the Stokes problem 
@@ -50,7 +50,7 @@ Indeed, the SPD character of the matrix lends itself
 to efficient solving stragegies and is less memory-demanding since it is sufficient to 
 store only the upper half of the matrix including the diagonal \cite{gova}.
 
-The penalty approach for example is used in the \sopale, \douar, \fantom and \elefant geodynamical 
+The penalty approach for example is used in the \sopale, \douar, ConMan, \fantom and \elefant geodynamical 
 codes. 
 
 \begin{remark}
@@ -66,8 +66,8 @@ being in general quite sensitive to the condition number of the matrix at hand."
 
 Since the penalty formulation is only valid for incompressible flows, then 
 $\dot{\bm \varepsilon}(\vec\upnu)=\dot{\bm \varepsilon}^d(\vec\upnu)$ so that 
-the $d$ superscript is ommitted in what follows.
-Because the stress tensor is symmetric one can also rewrite it the following vector format:
+the $d$ superscript is omitted in what follows. We here focus on Cartesian coordinates only
+and because the stress tensor is symmetric one can also rewrite it the following vector format:
 \begin{eqnarray}
 \left(
 \begin{array}{c}
@@ -165,34 +165,34 @@ Because the stress tensor is symmetric one can also rewrite it the following vec
 \end{eqnarray}
 Remember that
 \[
-\frac{\partial u}{\partial x} = \sum_{i=1}^{m_\upnu} \frac{\partial \bN_i}{\partial x}\;  u_i 
+\frac{\partial u^h}{\partial x} = \sum_{i=1}^{m_\upnu} \frac{\partial \bN_i}{\partial x}\;  u_i 
 \quad\quad
-\frac{\partial v}{\partial y} = \sum_{i=1}^{m_\upnu} \frac{\partial \bN_i}{\partial y}\;  v_i 
+\frac{\partial v^h}{\partial y} = \sum_{i=1}^{m_\upnu} \frac{\partial \bN_i}{\partial y}\;  v_i 
 \quad\quad
-\frac{\partial w}{\partial z} = \sum_{i=1}^{m_\upnu} \frac{\partial \bN_i}{\partial z}\;  w_i 
+\frac{\partial w^h}{\partial z} = \sum_{i=1}^{m_\upnu} \frac{\partial \bN_i}{\partial z}\;  w_i 
 \]
 and 
 \begin{eqnarray}
-\frac{\partial u}{\partial y} +\frac{\partial v}{\partial x} 
+\frac{\partial u^h}{\partial y} +\frac{\partial v^h}{\partial x} 
 &=& \sum_{i=1}^{m_\upnu} \frac{\partial \bN_i}{\partial y}\;  u_i
 + \sum_{i=1}^{m_\upnu} \frac{\partial \bN_i}{\partial x}\;  v_i \nonumber\\
-\frac{\partial u}{\partial z} +\frac{\partial w}{\partial x} 
+\frac{\partial u^h}{\partial z} +\frac{\partial w^h}{\partial x} 
 &=& \sum_{i=1}^{m_\upnu} \frac{\partial \bN_i}{\partial z}\;  u_i
 + \sum_{i=1}^{m_\upnu} \frac{\partial \bN_i}{\partial x}\;  w_i \nonumber\\
-\frac{\partial v}{\partial z} +\frac{\partial w}{\partial y} 
+\frac{\partial v^h}{\partial z} +\frac{\partial w^h}{\partial y} 
 &=& \sum_{i=1}^{m_\upnu} \frac{\partial \bN_i}{\partial z}\;  v_i
 + \sum_{i=1}^{m_\upnu} \frac{\partial \bN_i}{\partial y}\;  w_i \nonumber
 \end{eqnarray}
-so that, since in 3D $m_\upnu=8$:
+so that, since in $m_\upnu=8$ in 3D:
 \[
 \left(
 \begin{array}{c}
-\frac{\partial u}{\partial x} \\ \\
-\frac{\partial v}{\partial y} \\ \\
-\frac{\partial w}{\partial z} \\ \\
-\frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \\ \\
-\frac{\partial u}{\partial z} + \frac{\partial w}{\partial x} \\ \\
-\frac{\partial v}{\partial z} + \frac{\partial w}{\partial y} 
+\frac{\partial u^h}{\partial x} \\ \\
+\frac{\partial v^h}{\partial y} \\ \\
+\frac{\partial w^h}{\partial z} \\ \\
+\frac{\partial u^h}{\partial y} + \frac{\partial v^h}{\partial x} \\ \\
+\frac{\partial u^h}{\partial z} + \frac{\partial w^h}{\partial x} \\ \\
+\frac{\partial v^h}{\partial z} + \frac{\partial w^h}{\partial y} 
 \end{array}
 \right)
 =
@@ -259,7 +259,7 @@ We start again from
 \]
 For the $\bN_i$'s 'regular enough', we can write:
 \[
-\int_{\Omega_e} \bN_i {\vec \nabla}\cdot {\bm \sigma} dV + \int_{\Omega_e} \bN_i  {\vec b} \;  dV =0
+\int_{\Omega_e} \bN_i {\vec \nabla}\cdot {\bm \sigma}\;  dV + \int_{\Omega_e} \bN_i  {\vec b} \;  dV =0
 \]
 We can integrate by parts and drop the surface term\footnote{We will come back to this at a later stage}:
 \[
@@ -414,9 +414,9 @@ and finally:
 =
 \int_{\Omega_e} {\vec \bN}_b \; dV
 \]
-Since $\vec V$ contains is the vector of unknowns (i.e. the velocities at the corners), 
-it does not depend on the $x$ or $y$ coordinates
-so it can be taking outside of the integral:
+Since $\vec V$ is the vector of unknowns (i.e. the velocities at the corners), 
+it does not depend on the $x$, $y$ or $z$ coordinates
+so it can be taken outside of the integral (remember$dV=dx\; dy\; dz$ here):
 \[
 \underbrace{
 \left(\int_{\Omega_e} {\bm B}^T \cdot [ \lambda {\bm K} + \eta {\bm C} ] \cdot {\bm B} \;  dV \right) 
@@ -489,10 +489,31 @@ Then, since $m_\upnu=4$ (each element has 4 velocity nodes), we have
 \end{array}
 \right)
 \]
-Matrix ${\bm B}$ has size $3\times 8$, etc ...  
+Conversely the matrix ${\bm B}$ has size $3\times 8$, etc ...  
+Note that we will come across matrix ${\bm C}$ again when we solve the (non penalty-formulated) Stokes equations 
+in the following sections.
 
+As stated before the implementation is rather straightforward since only one FE matrix must be computed 
+and assembled. However, there is one specific point which needs to be addressed: reduced integration.
 
-\todo[inline]{Write about reduced integration \cite{hulb79} }
+To quote Hughes \etal (1979) \cite{hulb79}: {\it When a quadrature rule of lower order than the ``standard'' one
+is employed, this is called reduced integration. If all terms employ the same reduced
+integration, this is called uniform reduced integration; if reduced integration is used
+on some terms while standard integration is used on others, this is called selective reduced integration.}
 
+\begin{center}
+\includegraphics[width=7cm]{images/penalty/hulb79}\\
+{\captionfont Selective Gauss-Legendre integration rules for 2-dimensional isoparametric Lagrange
+elements. Taken from Hughes \etal (1979) \cite{hulb79}.}
+\end{center}
 
-\Literature Oden \etal \cite{odks82}, Dhatt \& Hubert\cite{dhhu86}.
+In the context of penalty-based codes, it has been shown \cite{mahu78} that it is crucial to resort 
+to a selective reduced integration approach. 
+The viscosity term ${\bm A}_{el}^\eta$ is integrated on $2^{ndim}$ points but the 
+penalty term ${\bm A}_{el}^\lambda$ must be integrated on a single quadrature point.
+Finally, when the pressure is computed from the velocity via Eq.~\eqref{penal}, 
+the divergence term must also be computed at a single point in the middle of the element.
+
+See \stone~01 for a concrete example of a 2D penalty-based Stokes solver.
+
+\Literature: Oden \etal \cite{odks82}, Dhatt \& Hubert\cite{dhhu86}.
