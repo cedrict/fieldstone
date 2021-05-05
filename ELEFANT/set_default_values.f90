@@ -65,6 +65,8 @@ plane_nnx=0
 plane_nny=0
 line_nnp=0
 
+normalise_pressure=.false.
+
 write(*,'(a)') 'set_default_values '
 
 end if ! iproc

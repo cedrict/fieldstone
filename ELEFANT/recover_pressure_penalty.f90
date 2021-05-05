@@ -16,8 +16,8 @@ use module_arrays, only : solP
 
 implicit none
 
-integer k
-real(8) rq,sq,tq,etaq,jcob
+integer k,inode
+real(8) rq,sq,tq,jcob,pp
 real(8) dNdx(mV),dNdy(mV),dNdz(mV),div_v,q(NV),c(NV)
 
 !==================================================================================================!
@@ -25,9 +25,6 @@ real(8) dNdx(mV),dNdy(mV),dNdz(mV),div_v,q(NV),c(NV)
 !@@ \subsubsection{recover\_pressure\_penalty}
 !@@ This is scheme 4 in Section~\ref{psmoothing} (see \stone~12) which was proven to be 
 !@@ very cheap and very accurate. 
-!@@ The viscosity at the reduced quadrature location 
-!@@ is obtained by taking the maximum viscosity value carried by the quadrature points of 
-!@@ the element. 
 !==================================================================================================!
 
 do iel=1,nel
@@ -35,7 +32,6 @@ do iel=1,nel
    rq=0d0
    sq=0d0
    tq=0d0
-   etaq=maxval(mesh(iel)%etaq(:))
 
    if (ndim==2) then
       call compute_dNdx_dNdy(rq,sq,dNdx,dNdy,jcob)
@@ -47,13 +43,27 @@ do iel=1,nel
            +sum(dNdy(1:mV)*mesh(iel)%v(1:mV))&
            +sum(dNdz(1:mV)*mesh(iel)%w(1:mV))
    end if 
-   solP(iel)=-penalty*etaq*div_v
+   solP(iel)=-penalty*mesh(iel)%eta_avrg*div_v
 
 end do
 
 p_min=minval(solP)
 p_max=maxval(solP)
 
+if (normalise_pressure) then
+   pp=sum(mesh(1:nel)%vol*solP(1:nel))/sum(mesh(1:nel)%vol)
+   solP=solP-pp
+end if
+
+!----------------------------------------------------------
+!transfer pressure onto elements
+
+do iel=1,nel
+   do k=1,mP
+      inode=mesh(iel)%iconP(k)
+      mesh(iel)%p(k)=solP(inode)
+   end do
+end do
 
 !----------------------------------------------------------
 
@@ -75,7 +85,6 @@ end do
 
 q_min=minval(q)
 q_max=maxval(q)
-
 
 !----------------------------------------------------------
 

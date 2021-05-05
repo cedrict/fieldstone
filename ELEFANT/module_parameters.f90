@@ -36,13 +36,15 @@ logical :: use_T               ! whether the code solves the energy equation
 logical :: debug               ! triggers lots of additional checks & prints
 logical :: use_penalty         ! whether the penalty formulation is used
 logical :: use_ALE             ! whether the ALE (free surface) is used
+logical :: normalise_pressure  ! 
 
 real(8) :: Lx,Ly,Lz            ! cartesian domain size
 real(8) :: block_scaling_coeff ! scaling coefficient for the G block
 real(8) :: penalty             ! penalty parameter
 real(8) :: time                ! real human/model time
 real(8) :: dt,dt_prev          ! time step 
-real(8) :: CFL_nb 
+real(8) :: CFL_nb
+real(8) :: dparam1,dparam2,dparam3 
 
 character(len=10) :: geometry  ! type of domain geometry
 character(len=4) :: pair       ! type of element pair

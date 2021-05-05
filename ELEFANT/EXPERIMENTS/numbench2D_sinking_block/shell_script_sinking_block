@@ -1,0 +1,17 @@
+#! /bin/bash
+
+rm -f statistics_v.ascii
+rm -f statistics_q.ascii
+
+for nelx in 32 64 96 128; do
+    for eta in 1e17 5e17 1e18 5e18 1e19 5e19 6e19 7e19 8e19 9e19 1e20 2e20 3e20 4e20 5e20 6e20 7e20 8e20 9e20 1e21 2e21 3e21 4e21 5e21 6e21 7e21 8e21 9e21 1e22 2e22 3e22 4e22 5e22 6e22 7e22 8e22 9e22 1e23 2e23 3e23 4e23 5e23 1e24; do
+    #for eta in 1e23; do
+        echo 'nelx=' $nelx $eta
+        ./elefant -nelx $nelx -nely $nelx -dparam1 3208 -dparam2 $eta > opla
+        grep middle_v opla >> statistics_v_$nelx.ascii
+        grep middle_q opla >> statistics_q_$nelx.ascii
+    done
+    echo ' ' >> statistics_v.ascii
+    echo ' ' >> statistics_q.ascii
+done
+

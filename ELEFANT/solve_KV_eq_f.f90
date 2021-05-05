@@ -41,9 +41,6 @@ if (use_MUMPS) then
 
 else
 
-   !csrK%mat=csrK%mat/1d40
-   !rhs=rhs/1d40
-
    aflag=0
    iflag=0
    allocate(ha(NfemV,11))
@@ -56,7 +53,7 @@ else
 
    call y12maf(NfemV,csrK%NZ,mat,csrK%snr,nn,csrK%rnr,nn1,pivot,ha,NfemV,aflag,iflag,rhs,ifail)
 
-   print *,ifail
+   if (ifail/=0) print *,'ifail=',ifail
    if (ifail/=0) stop 'solve_KV_eq_f: problem with y12m solver'
 
    solV=rhs

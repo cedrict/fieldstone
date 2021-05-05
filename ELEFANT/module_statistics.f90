@@ -6,6 +6,7 @@ real(8) :: avrg_v, avrg_v_test
 real(8) :: avrg_w, avrg_w_test
 real(8) :: avrg_p, avrg_p_test
 real(8) :: avrg_T, avrg_T_test
+real(8) :: avrg_q, avrg_q_test
 real(8) :: volume, volume_test
 real(8) :: etaq_min,etaq_max
 real(8) :: rhoq_min,rhoq_max

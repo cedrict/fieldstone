@@ -40,6 +40,8 @@ avrg_u=0d0
 avrg_v=0d0
 avrg_w=0d0
 avrg_T=0d0
+avrg_p=0d0
+avrg_q=0d0
 vrms=0d0
 volume=0d0
 errv=0d0
@@ -55,6 +57,7 @@ do iel=1,nel
       uq=sum(NNNV(1:mV)*mesh(iel)%u(1:mV))
       vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV))
       wq=sum(NNNV(1:mV)*mesh(iel)%w(1:mV))
+      qq=sum(NNNV(1:mT)*mesh(iel)%q(1:mV))
 
       !compute pq
       call NNP(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim,pair)
@@ -62,13 +65,14 @@ do iel=1,nel
 
       !compute qq and Tq
       call NNT(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim,pair)
-      qq=sum(NNNT(1:mT)*mesh(iel)%q(1:mT))
       Tq=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
 
       avrg_u=avrg_u+uq*mesh(iel)%JxWq(iq)
       avrg_v=avrg_v+vq*mesh(iel)%JxWq(iq)
       avrg_w=avrg_w+wq*mesh(iel)%JxWq(iq)
       avrg_T=avrg_T+Tq*mesh(iel)%JxWq(iq)
+      avrg_p=avrg_p+pq*mesh(iel)%JxWq(iq)
+      avrg_q=avrg_q+qq*mesh(iel)%JxWq(iq)
       vrms=vrms+(uq**2+vq**2+wq**2)*mesh(iel)%JxWq(iq)
       volume=volume+mesh(iel)%JxWq(iq)
 
@@ -91,12 +95,16 @@ avrg_u=avrg_u/volume
 avrg_v=avrg_v/volume
 avrg_w=avrg_w/volume
 avrg_T=avrg_T/volume
+avrg_p=avrg_p/volume
+avrg_q=avrg_q/volume
 
 if (solve_stokes_system) then 
              write(*,'(a,es12.5)') shift//'vrms   =',vrms
              write(*,'(a,es12.5)') shift//'avrg_u =',avrg_u
              write(*,'(a,es12.5)') shift//'avrg_v =',avrg_v
 if (ndim==3) write(*,'(a,es12.5)') shift//'avrg_w =',avrg_w
+             write(*,'(a,es12.5)') shift//'avrg_p =',avrg_p
+             write(*,'(a,es12.5)') shift//'avrg_q =',avrg_q
              write(*,'(a,es12.5)') shift//'errv   =',errv
              write(*,'(a,es12.5)') shift//'errp   =',errp
              write(*,'(a,es12.5)') shift//'errq   =',errq

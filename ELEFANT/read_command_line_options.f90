@@ -37,21 +37,47 @@ if (numarg>0) then
    do while (option_ID <= argc)
       call getarg(option_ID,arg)
 
+      !------------------------------------------
       if (arg=='-nelx') then
          option_ID=option_ID+1
          call getarg(option_ID,arg)
          read(arg,*) nelx 
          write(*,'(a,i4)') shift//'read nelx=',nelx
+      !------------------------------------------
       elseif (arg=='-nely') then
          option_ID=option_ID+1
          call getarg(option_ID,arg)
          read(arg,*) nely 
          write(*,'(a,i4)') shift//'read nely=',nely
+      !------------------------------------------
       elseif (arg=='-nelz') then
          option_ID=option_ID+1
          call getarg(option_ID,arg)
          read(arg,*) nelz 
          write(*,'(a,i4)') shift//'read nelz=',nelz
+
+      !------------------------------------------
+      elseif (arg=='-dparam1') then
+         option_ID=option_ID+1
+         call getarg(option_ID,arg)
+         read(arg,*) dparam1 
+         write(*,*) ' read dparam1 as argument: ',dparam1
+      !------------------------------------------
+      else if (arg=='-dparam2') then
+         option_ID=option_ID+1
+         call getarg(option_ID,arg)
+         read(arg,*) dparam2 
+         write(*,*) ' read dparam2 as argument: ',dparam2
+      !------------------------------------------
+      else if (arg=='-dparam3') then
+         option_ID=option_ID+1
+         call getarg(option_ID,arg)
+         read(arg,*) dparam3 
+         write(*,*) ' read dparam3 as argument: ',dparam3
+
+
+
+
       else
          err_detected=.true.
          exit

@@ -55,15 +55,6 @@ if (use_penalty) then
 
    call recover_pressure_penalty
 
-   !transfer pressure onto elements
-   do iel=1,nel
-      do k=1,mP
-         inode=mesh(iel)%iconP(k)
-         mesh(iel)%p(k)=solP(inode)
-      end do
-   end do
-
-
 else !-----------------------------------------------------
 
 

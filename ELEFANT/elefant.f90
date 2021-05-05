@@ -173,7 +173,7 @@ do istep=1,nstep !-----------------------------------------
    call compute_gravity                                   !
    call postprocessors                                    !
    call output_solution                                   !
-   call output_solution_python                            !
+   !call output_solution_python                            !
    call output_qpoints                                    !
    call output_swarm                                      !
    call write_stats                                       !

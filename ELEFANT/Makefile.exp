@@ -1,20 +1,48 @@
 
-object_experiment = EXPERIMENTS/numbench2D_sinking_block/experiment.o 
+############################
+#manufactured solution in 2D
+############################
+
+object_experiment = EXPERIMENTS/mms2D_solcx/experiment.o 
+
+#object_experiment = EXPERIMENTS/mms2D_solkz/experiment.o 
 
 #object_experiment = EXPERIMENTS/mms2D_donea_huerta/experiment.o 
 
+#object_experiment = EXPERIMENTS/mms2D_temperature_diffusion/experiment.o
+
+############################
+#manufactured solution in 3D
+############################
+
+#object_experiment = EXPERIMENTS/mms3D_temperature_diffusion/experiment.o
+
+###########################
+#numerical benchmarks in 2D
+###########################
+
+#object_experiment = EXPERIMENTS/numbench2D_sinking_block/experiment.o 
+
 #object_experiment = EXPERIMENTS/numbench2D_five_sinkers/experiment.o
 
-#object_experiment = EXPERIMENTS/numbench3D_kinematic_ridge/experiment.o
-
 #object_experiment = EXPERIMENTS/numbench2D_stokes_sphere_with_fs/experiment.o
+
+
+###########################
+#numerical benchmarks in 3D
+###########################
+
+#object_experiment = EXPERIMENTS/numbench3D_kinematic_ridge/experiment.o
 
 #object_experiment = EXPERIMENTS/numbench3D_stokes_sphere/experiment.o
 
 #object_experiment = EXPERIMENTS/numbench3D_stokes_sphere_swarm/experiment.o
 
+
+###########################
+# gravity
+###########################
+
 #object_experiment = EXPERIMENTS/gravity_sphere/experiment.o
 
-#object_experiment = EXPERIMENTS/mms2D_temperature_diffusion/experiment.o
 
-#object_experiment = EXPERIMENTS/mms3D_temperature_diffusion/experiment.o

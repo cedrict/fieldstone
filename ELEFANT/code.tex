@@ -1,5 +1,10 @@
  \subsubsection{assign\_values\_to\_qpoints.f90}
 
+ \subsubsection{basis\_functions\_L.f90}
+ This file contains the basis functions associated with the vertices/corners
+ of the element, i.e. P1 for triangles, Q1 for quads. 
+ I have used the 'L' letter ('Linear') because 'V' for vertices or 'C' for 
+ corners was problematic.
  \subsubsection{basis\_functions\_V.f90}
  This file contains 3 functions: 
  \subsubsection{compute\_dNdx\_dNdy\_dNdz.f90}
@@ -65,8 +70,12 @@
 
  \subsubsection{matrix\_setup\_K}
 
- \subsubsection{matrix\_setup\_M}
+ \subsubsection{matrix\_setup\_MP}
+ This subroutine computes the structure of the pressure mass matrix. 
+ \subsubsection{matrix\_setup\_MV}
  See Section~\ref{ss:symmcsrss}. 
+ \subsubsection{output\_matrix\_tikz}
+
  \subsubsection{output\_mesh.f90}
  This subroutine produces the {\filenamefont meshV.vtu} file which only 
  contains the corner nodes.
@@ -75,6 +84,8 @@
  \subsubsection{output\_solution}
  This subroutine generates the {\filenamefont solution.vtu} in the {\foldernamefont OUTPUT}
  folder. It also generates the basic ascii file {\filenamefont solution.ascii}
+ \subsubsection{output\_solution\_python}
+
  \subsubsection{output\_swarm.f90}
  This subroutine produces the {\filenamefont swarm.vtu} file in the 
  {\foldernamefont OUTPUT} folder which contains the 
@@ -109,19 +120,28 @@
  This subroutine computes the root mean square velocity
  and each of the average velocity components. It also 
  computes the volume using GLQ.
+ There is still probably a bit of an inconsistency since I use the 
+ temperature basis functions to compute $q$ at quadrature points...
  \subsubsection{prescribe\_stokes\_solution.f90}
  This subroutine prescribes the velocity, pressure, temperature and strain rate components
  on the corners of each element via the {\sl analytical\_solution} subroutine.
+ \subsubsection{template}
+
+ \subsubsection{template}
+
+ \subsubsection{template}
+
+ \subsubsection{template}
+
  \subsubsection{quadrature\_setup.f90}
  This subroutine allocates all GLQ-related arrays for each element.
  It further computes the real $(x_q,y_q,z_q)$ and reduced $(r_q,s_q,t_q)$
  coordinates of the GLQ points, and assigns them their weights.
+ \subsubsection{read\_command\_line\_options}
+
  \subsubsection{recover\_pressure\_penalty}
  This is scheme 4 in Section~\ref{psmoothing} (see \stone~12) which was proven to be 
  very cheap and very accurate. 
- The viscosity at the reduced quadrature location 
- is obtained by taking the maximum viscosity value carried by the quadrature points of 
- the element. 
  \subsubsection{set\_default\_values}
  This subroutine assigns default values to many of the global variables.
  \subsubsection{set\_global\_parameters\_pair}
@@ -157,12 +177,12 @@
  \input{tikz/tikz_3x2_q2}
  \end{center}
  \begin{verbatim}
- elt:  1  | iconV  1   2   3   8   9   10  15  16  17 iconP           1           2           6           5
- elt:  2  | iconV  3   4   5   10  11  12  17  18  19 iconP           2           3           7           6
- elt:  3  | iconV  5   6   7   12  13  14  19  20  21 iconP           3           4           8           7
- elt:  4  | iconV  15  16  17  22  23  24  29  30  31 iconP           5           6          10           9
- elt:  5  | iconV  17  18  19  24  25  26  31  32  33 iconP           6           7          11          10
- elt:  6  | iconV  19  20  21  26  27  28  33  34  35 iconP           7           8          12          11
+ elt:  1  | iconV  1   2   3   8   9   10  15  16  17 iconP 1  2  6  5
+ elt:  2  | iconV  3   4   5   10  11  12  17  18  19 iconP 2  3  7  6
+ elt:  3  | iconV  5   6   7   12  13  14  19  20  21 iconP 3  4  8  7
+ elt:  4  | iconV  15  16  17  22  23  24  29  30  31 iconP 5  6 10  9
+ elt:  5  | iconV  17  18  19  24  25  26  31  32  33 iconP 6  7 11 10
+ elt:  6  | iconV  19  20  21  26  27  28  33  34  35 iconP 7  8 12 11
  \end{verbatim}
  \subsubsection{setup\_cartesian3D.f90}
  This subroutine assigns to every element the coordinates of the its velocity, pressure,
@@ -177,7 +197,8 @@
  implicit passed as argument via the module but the rhs and the guess vector are 
  passed as arguments.
  If MUMPS is used the system is solved via MUMPS (the guess is vector
- is then neglected), otherwise a call is made to  the {\tt solve\_cg\_diagprec} subroutine.
+ is then neglected). Same if y12m solver is used. 
+ Otherwise a call is made to the {\tt pcg\_solver\_csr} subroutine.
  \subsubsection{solve\_stokes}
  This subroutine solves the Stokes system: if it is a saddle point problem 
  it does so using the preconditioned conjugate gradient (PCG) applied 
@@ -202,4 +223,5 @@
  It generates three ascii files in the {\foldernamefont OUTPUT} folder which 
  are to be processed with the gnuplot script present there.
  \subsubsection{write\_stats}
-
+ This subroutine writes in fort.1234 various statistics (istep, time, vrms, averages, 
+ errors, ...) 

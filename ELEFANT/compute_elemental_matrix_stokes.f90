@@ -22,7 +22,7 @@ real(8), intent(out) :: h_el(mP)
 
 integer iq,k,i1,i2,i3
 real(8) Bmat(ndim2,mV*ndofV),NNNmat(ndim2,mP)
-real(8) rq,sq,tq,jcob,weightq,etaq
+real(8) rq,sq,tq,jcob,weightq
 real(8) NNNV(mV),NNNP(mP),dNdx(mV),dNdy(mV),dNdz(mV)
 
 !==================================================================================================!
@@ -153,7 +153,6 @@ if (use_penalty) then
    sq=0d0
    tq=0d0
    weightq=2**ndim
-   etaq=maxval(mesh(iel)%etaq(:))
 
    if (ndim==2) then
 
@@ -188,7 +187,7 @@ if (use_penalty) then
 
    K_el=K_el+matmul(transpose(Bmat(1:ndim2,1:mV*ndofV)),&
                     matmul(Kmat,Bmat(1:ndim2,1:mV*ndofV)))&
-                    *penalty*etaq*jcob*weightq
+                    *penalty*mesh(iel)%eta_avrg*jcob*weightq
 
 end if ! penalty
 

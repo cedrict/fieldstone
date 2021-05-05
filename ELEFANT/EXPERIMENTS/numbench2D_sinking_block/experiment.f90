@@ -17,13 +17,14 @@ implicit none
 Lx=512d3
 Ly=512d3
 
-nelx=32
-nely=32
+nelx=96
+nely=96
 
 !solve_stokes_system=.false.
 
 use_penalty=.true.
 penalty=1e6
+normalise_pressure=.true.
 
 !----------------------------------------------------------
 
@@ -47,6 +48,8 @@ end subroutine
 subroutine material_model(x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz,imat,mode,&
                           eta,rho,hcond,hcapa,hprod)
 
+use module_parameters, only: dparam1,dparam2
+
 implicit none
 
 real(8), intent(in) :: x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz
@@ -56,11 +59,11 @@ real(8), intent(out) :: eta,rho,hcond,hcapa,hprod
 !----------------------------------------------------------
 
 if (abs(x-256d3)<64d3 .and. abs(y-384d3)<64d3) then
-   eta=1d22
-   rho=3300
+   eta=dparam2
+   rho=dparam1-3200
 else
    eta=1d21
-   rho=3200
+   rho=3200-3200
 end if
 
 !----------------------------------------------------------
@@ -219,9 +222,30 @@ end subroutine
 
 subroutine postprocessor_experiment
 
+use module_parameters
+use module_mesh
+use module_constants, only: eps,year
+
 implicit none
 
+integer k
+
 !----------------------------------------------------------
+
+do iel=1,nel
+   do k=1,mV
+      if (abs(mesh(iel)%xV(k)-256d3)<eps*Lx .and. abs(mesh(iel)%yV(k)-384d3)<eps*Ly) then
+          write(*,*) 'middle_q',nelx,1e21/dparam2,&
+                      mesh(iel)%q(k) / (dparam1-3200)/128d3/10,\
+                      mesh(iel)%p(1) / (dparam1-3200)/128d3/10
+          write(*,*) 'middle_v',nelx,1e21/dparam2,mesh(iel)%v(k) *1d21 / (dparam1-3200)
+      end if
+      !if (abs(mesh(iel)%xV(k)-256d3)<eps*Lx) then
+      !   write(1234,*) mesh(iel)%yV(k),mesh(iel)%q(k)
+      !   write(1235,*) mesh(iel)%yV(k),mesh(iel)%p(1)
+      !end if
+   end do
+end do
 
 ! your stuff here
 

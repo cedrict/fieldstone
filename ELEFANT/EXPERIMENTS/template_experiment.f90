@@ -68,6 +68,9 @@ end subroutine
 
 subroutine define_bcV
 
+use module_parameters, only: iel,nel,mV
+use module_mesh
+
 implicit none
 
 !----------------------------------------------------------

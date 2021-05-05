@@ -2,12 +2,12 @@
 include Makefile.exp
 
 f90comp = gfortran
-switch =  -fdefault-real-8 -fbounds-check -fcheck=all -ffree-line-length-none  -Wall -Wno-unused-dummy-argument -cpp #-DUseMUMPS
+switch =  -fbounds-check -fcheck=all -ffree-line-length-none  -Wall -Wno-unused-dummy-argument -cpp #-DUseMUMPS
 #switch = -cpp 
 #switch =  -ffree-line-length-none -O3 -cpp #-DUseMUMPS
 libs = -lblas 
 
-objects = module_mesh.o module_parameters.o module_constants.o module_timing.o module_global_arrays.o\
+objects = module_mesh.o module_parameters.o module_constants.o module_timing.o module_arrays.o\
 module_statistics.o module_gravity.o module_sparse.o module_materials.o module_swarm.o\
 mylapack.o\
 assign_values_to_qpoints.o\
@@ -66,3 +66,4 @@ cleandata:
 	rm -f OUTPUT/GRAVITY/*.ascii
 	rm -f opla
 	rm -f fort.*
+	rm statistics*
