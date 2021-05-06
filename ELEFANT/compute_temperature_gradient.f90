@@ -6,27 +6,25 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine make_matrix_energy
+subroutine compute_temperature_gradient
 
 use module_parameters
-use module_arrays, only: rhs_b
-use module_sparse, only: csrA
 use module_mesh 
+!use module_constants
+!use module_swarm
+!use module_materials
+use module_arrays
 use module_timing
 
 implicit none
 
-integer inode,jnode,k,k1,k2
-real(8) :: Ael(mT,mT),bel(mT)
+integer k,node
+real(8) qx(NT),qy(NT),cc(NT),dNdx(mT),dNdy(mT),jcob
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{make\_matrix\_energy}
-!@@ This subroutine builds the linear system for the energy equation. 
-!@@ It loops over each element, builds its elemental matrix ${\bm A}_{el}$
-!@@ and right hand side $\vec{b}_{el}$, applies boundary conditions, 
-!@@ and assembles these into the global matrix csrA and the corresponding 
-!@@ right hand side rhs\_b. 
+!@@ \subsubsection{compute\_temperature\_gradient}
+!@@
 !==================================================================================================!
 
 if (iproc==0) then
@@ -35,41 +33,56 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-csrA%mat=0d0
-rhs_b=0d0
+if (ndim==2) then
 
-do iel=1,nel
+   qx=0d0
+   qy=0d0
+   cc=0d0
 
-   call compute_elemental_matrix_energy(Ael,bel)
-   call impose_boundary_conditions_energy(Ael,bel)
-
-   do k1=1,mT
-      inode=mesh(iel)%iconT(k1)
-      do k2=1,mT
-         jnode=mesh(iel)%iconT(k2)
-         do k=csrA%ia(inode),csrA%ia(inode+1)-1
-            if (csrA%ja(k)==jnode) then
-               csrA%mat(k)=csrA%mat(k)+Ael(k1,k2)
-               exit
-            end if
-         end do
+   do iel=1,nel
+      do k=1,mT
+         call compute_dNTdx_dNTdy(rT(k),sT(k),dNdx(1:mT),dNdy(1:mT),jcob)
+         node=mesh(iel)%iconT(k)
+         qx(node)=qx(node)+sum(dNdx*mesh(iel)%T(1:mT))         
+         qy(node)=qy(node)+sum(dNdy*mesh(iel)%T(1:mT))         
+         cc(node)=cc(node)+1d0
       end do
-      rhs_b(inode)=rhs_b(inode)+bel(k1)
    end do
 
-end do
+   qx=qx/cc
+   qy=qy/cc
 
-write(*,'(a,2es12.4)') '        mat (m/M)',minval(csrA%mat),maxval(csrA%mat)
-write(*,'(a,2es12.4)') '        rhs (m/M)',minval(rhs_b),maxval(rhs_b)
+   do iel=1,nel
+      do k=1,mT
+         node=mesh(iel)%iconT(k)
+         mesh(iel)%qx(k)=qx(node)
+         mesh(iel)%qy(k)=qy(node)
+         mesh(iel)%qz(k)=0d0
+      end do
+   end do
 
-write(1235,'(4es12.4)') minval(csrA%mat),maxval(csrA%mat),minval(rhs_b),maxval(rhs_b)
-call flush(1235)
+   write(*,'(a,2es13.5)') shift//'qx(m/M)  =',minval(qx),maxval(qx)
+   write(*,'(a,2es13.5)') shift//'qy(m/M)  =',minval(qy),maxval(qy)
+
+end if
+
+!----------------------------------------------------------
+
+if (ndim==3) then
+
+   stop 'compute_temperature_gradient: 3D not done'
+
+end if
+
+
+
+
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'make_matrix_energy (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'compute_temperature_gradient (',elapsed,' s)'
 
 end if ! iproc
 

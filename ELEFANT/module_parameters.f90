@@ -48,8 +48,10 @@ real(8) :: dparam1,dparam2,dparam3
 
 character(len=10) :: geometry  ! type of domain geometry
 character(len=4) :: pair       ! type of element pair
+character(len=6) :: cistep
 
 integer :: iel
 integer :: istep           
 integer :: iproc
+integer :: output_freq
 end module

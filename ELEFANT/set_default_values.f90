@@ -67,6 +67,8 @@ line_nnp=0
 
 normalise_pressure=.false.
 
+output_freq=1
+
 write(*,'(a)') 'set_default_values '
 
 end if ! iproc

@@ -33,10 +33,10 @@ call dNNTds(r,s,t,dNNNTds(1:mT),mT,ndim)
 
 jcb2D=0.d0 
 do k=1,mT 
-   jcb2D(1,1)=jcb2D(1,1)+dNNNTdr(k)*mesh(iel)%xV(k)
-   jcb2D(1,2)=jcb2D(1,2)+dNNNTdr(k)*mesh(iel)%yV(k)
-   jcb2D(2,1)=jcb2D(2,1)+dNNNTds(k)*mesh(iel)%xV(k)
-   jcb2D(2,2)=jcb2D(2,2)+dNNNTds(k)*mesh(iel)%yV(k)
+   jcb2D(1,1)=jcb2D(1,1)+dNNNTdr(k)*mesh(iel)%xT(k)
+   jcb2D(1,2)=jcb2D(1,2)+dNNNTdr(k)*mesh(iel)%yT(k)
+   jcb2D(2,1)=jcb2D(2,1)+dNNNTds(k)*mesh(iel)%xT(k)
+   jcb2D(2,2)=jcb2D(2,2)+dNNNTds(k)*mesh(iel)%yT(k)
 enddo    
 
 jcob=jcb2D(1,1)*jcb2D(2,2)-jcb2D(2,1)*jcb2D(1,2)   

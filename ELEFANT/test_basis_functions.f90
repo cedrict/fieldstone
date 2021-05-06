@@ -15,8 +15,8 @@ use module_timing
 implicit none
 
 integer iq
-real(8) NNNV(1:mV),rq,sq,tq,uq,vq,wq,exxq,eyyq,ezzq,pq
-real(8) dNdx(mV),dNdy(mV),dNdz(mV),jcob,NNNP(1:mP)
+real(8) NNNV(1:mV),rq,sq,tq,uq,vq,wq,exxq,eyyq,ezzq,pq,dTdxq,dTdyq
+real(8) dNdx(mV),dNdy(mV),dNdz(mV),jcob,NNNP(1:mP),NNNT(1:mT)
 
 !==================================================================================================!
 !==================================================================================================!
@@ -188,6 +188,43 @@ do iel=1,nel
    end do
 end do
 close(123)
+
+open(unit=123,file='OUTPUT/TEST/test_basis_functions_T_constant.ascii',action='write')
+do iel=1,nel
+   mesh(iel)%T=1
+   do iq=1,nqel
+      rq=mesh(iel)%rq(iq)
+      sq=mesh(iel)%sq(iq)
+      tq=mesh(iel)%tq(iq)
+      call NNT(rq,sq,tq,NNNT(1:mT),mT,ndim)
+      Tq=sum(NNNT(1:mT)*mesh(iel)%T(1:mT)) 
+      write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),Tq
+   end do
+end do
+close(123)
+
+open(unit=123,file='OUTPUT/TEST/test_basis_functions_T_linear.ascii',action='write')
+do iel=1,nel
+   mesh(iel)%T(1:mT)=mesh(iel)%yT(1:mT)
+   do iq=1,nqel
+      rq=mesh(iel)%rq(iq)
+      sq=mesh(iel)%sq(iq)
+      tq=mesh(iel)%tq(iq)
+      call NNT(rq,sq,tq,NNNT(1:mT),mT,ndim)
+      Tq=sum(NNNT(1:mT)*mesh(iel)%T(1:mT)) 
+
+      if (ndim==2) call compute_dNTdx_dNTdy(rq,sq,dNdx(1:mT),dNdy(1:mT),jcob)
+      !if (ndim==3) call compute_dNTdx_dNTdy_dNTdz(rq,sq,tq,dNdx,dNdy,dNdz,jcob)
+      dTdxq=sum(dNdx(1:mT)*mesh(iel)%T(1:mT)) 
+      dTdyq=sum(dNdy(1:mT)*mesh(iel)%T(1:mT)) 
+
+      write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),Tq,dTdxq,dTdyq
+   end do
+end do
+close(123)
+
+
+
 
 end if
 

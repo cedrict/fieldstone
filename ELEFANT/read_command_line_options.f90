@@ -20,7 +20,7 @@ character(len=255) :: arg
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{read_command_line_options}
+!@@ \subsubsection{read\_command\_line\_options}
 !@@
 !==================================================================================================!
 
@@ -74,10 +74,7 @@ if (numarg>0) then
          call getarg(option_ID,arg)
          read(arg,*) dparam3 
          write(*,*) ' read dparam3 as argument: ',dparam3
-
-
-
-
+      !------------------------------------------
       else
          err_detected=.true.
          exit
@@ -93,10 +90,6 @@ if (numarg>0) then
    end if
 
 end if
-
-
-
-
 
 write(*,'(a)') 'read_command_line_options'
 

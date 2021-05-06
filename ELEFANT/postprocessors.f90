@@ -99,20 +99,20 @@ avrg_p=avrg_p/volume
 avrg_q=avrg_q/volume
 
 if (solve_stokes_system) then 
-             write(*,'(a,es12.5)') shift//'vrms   =',vrms
-             write(*,'(a,es12.5)') shift//'avrg_u =',avrg_u
-             write(*,'(a,es12.5)') shift//'avrg_v =',avrg_v
-if (ndim==3) write(*,'(a,es12.5)') shift//'avrg_w =',avrg_w
-             write(*,'(a,es12.5)') shift//'avrg_p =',avrg_p
-             write(*,'(a,es12.5)') shift//'avrg_q =',avrg_q
-             write(*,'(a,es12.5)') shift//'errv   =',errv
-             write(*,'(a,es12.5)') shift//'errp   =',errp
-             write(*,'(a,es12.5)') shift//'errq   =',errq
-if (use_T)   write(*,'(a,es12.5)') shift//'errT   =',errT
+             write(*,'(a,es12.5)') shift//'vrms =',vrms
+             write(*,'(a,es12.5)') shift//'<u>  =',avrg_u
+             write(*,'(a,es12.5)') shift//'<v>  =',avrg_v
+if (ndim==3) write(*,'(a,es12.5)') shift//'<w>  =',avrg_w
+             write(*,'(a,es12.5)') shift//'<p>  =',avrg_p
+             write(*,'(a,es12.5)') shift//'<q>  =',avrg_q
+             write(*,'(a,es12.5)') shift//'errv =',errv
+             write(*,'(a,es12.5)') shift//'errp =',errp
+             write(*,'(a,es12.5)') shift//'errq =',errq
 end if
 
-if (use_T)   write(*,'(a,es12.5)') shift//'avrg_T =',avrg_T
-             write(*,'(a,es12.5)') shift//'volume =',volume
+if (use_T)   write(*,'(a,es12.5)') shift//'errT =',errT
+if (use_T)   write(*,'(a,es12.5)') shift//'<T>  =',avrg_T
+             write(*,'(a,es12.5)') shift//'vol  =',volume
 
 call postprocessor_experiment
 

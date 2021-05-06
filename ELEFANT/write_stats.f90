@@ -28,9 +28,11 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
+if (istep==1) write(1234,'(a)') '#   01          02     03          04          05          06        07    08      09     10     11     12      13'
+if (istep==1) write(1234,'(a)') '#istep        time    nel        vrms        errv        errp      errq   vol  avrg_u avrg_v avrg_w avrg_p  avrg_T' 
 
-write(1234,'(i4,es12.4,i7,9es12.4)') istep,time,nel,vrms,errv,errp,errq,&
-              volume,avrg_u,avrg_v,avrg_w,avrg_p
+write(1234,'(i6,es12.4,i7,10es12.4)') istep,time,nel,vrms,errv,errp,errq,&
+              volume,avrg_u,avrg_v,avrg_w,avrg_p,avrg_T
 
 call flush(1234)
 

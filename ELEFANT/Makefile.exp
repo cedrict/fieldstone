@@ -3,7 +3,9 @@
 #manufactured solution in 2D
 ############################
 
-object_experiment = EXPERIMENTS/mms2D_solcx/experiment.o 
+object_experiment = EXPERIMENTS/mms2D_solvi/experiment.o 
+
+#object_experiment = EXPERIMENTS/mms2D_solcx/experiment.o 
 
 #object_experiment = EXPERIMENTS/mms2D_solkz/experiment.o 
 
@@ -20,6 +22,8 @@ object_experiment = EXPERIMENTS/mms2D_solcx/experiment.o
 ###########################
 #numerical benchmarks in 2D
 ###########################
+
+#object_experiment = EXPERIMENTS/numbench2D_blbc89/experiment.o 
 
 #object_experiment = EXPERIMENTS/numbench2D_sinking_block/experiment.o 
 

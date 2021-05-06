@@ -53,6 +53,8 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
+sol=0d0
+
 write(*,'(a)') '...........................................'
 call pmgmres_ilu_cr (csrA%N,csrA%NZ,csrA%ia,csrA%ja,csrA%mat,sol,rhs_b,& 
                      maxits,               &
@@ -62,6 +64,8 @@ call pmgmres_ilu_cr (csrA%N,csrA%NZ,csrA%ia,csrA%ja,csrA%mat,sol,rhs_b,&
 write(*,'(a)') '...........................................'
 
 write(*,'(a,2es12.4)') '        -> T (m/M)',minval(sol),maxval(sol)
+write(1237,'(2es12.4)') minval(sol),maxval(sol)
+call flush(1237)
 
 !transfer solution to elements
 
@@ -75,7 +79,7 @@ end do
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') '     >> solve_energy ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'solve_energy (',elapsed,' s)'
 
 end if ! iproc
 

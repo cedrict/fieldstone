@@ -91,8 +91,8 @@ else
          allocate(csrK%ja(csrK%NZ))     
          allocate(csrK%mat(csrK%NZ))    
          if (csrK%full_matrix_storage) then
-            allocate(csrK%rnr(15*csrK%NZ))
-            allocate(csrK%snr(15*csrK%NZ))
+            allocate(csrK%rnr(csrK%NZ))
+            allocate(csrK%snr(csrK%NZ))
             csrK%rnr(:)=0
             csrK%snr(:)=0
             csrK%rnr(1)=1
@@ -175,8 +175,8 @@ else
          allocate(csrK%ja(csrK%nz))     
          allocate(csrK%mat(csrK%nz))    
          if (csrK%full_matrix_storage) then
-            allocate(csrK%rnr(15*csrK%NZ))
-            allocate(csrK%snr(15*csrK%NZ))
+            allocate(csrK%rnr(csrK%NZ))
+            allocate(csrK%snr(csrK%NZ))
             csrK%rnr(:)=0
             csrK%snr(:)=0
             csrK%rnr(1)=1

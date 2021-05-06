@@ -26,7 +26,7 @@ real(8), parameter :: alphaT=0.5d0
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{compute\_elemental\_matrix\_energy}
-!@@ This subroutine buils the elemental matrix ${\bm A}_{el}$ and its corresponding 
+!@@ This subroutine builds the elemental matrix ${\bm A}_{el}$ and its corresponding 
 !@@ right hand side $\vec{b}_{el}$. 
 !==================================================================================================!
 

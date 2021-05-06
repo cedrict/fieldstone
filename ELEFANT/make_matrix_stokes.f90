@@ -178,6 +178,9 @@ end do
 if (allocated(csrK%mat)) write(*,'(a,2es12.4)') shift//'csrK%mat (m/M):',minval(csrK%mat),maxval(csrK%mat)
                          write(*,'(a,2es12.4)') shift//'Kdiag (m/M):   ',minval(Kdiag),maxval(Kdiag)
 
+write(1236,'(4es12.4)') minval(rhs_f),maxval(rhs_f),minval(Kdiag),maxval(Kdiag)
+call flush(1236)
+
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)

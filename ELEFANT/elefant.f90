@@ -16,6 +16,14 @@ use module_materials
 
 implicit none
 
+open(unit=1234,file="OUTPUT/STATS/statistics.ascii")
+open(unit=1235,file="OUTPUT/STATS/statistics_energy_system.ascii")
+open(unit=1236,file="OUTPUT/STATS/statistics_stokes_system.ascii")
+open(unit=1237,file="OUTPUT/STATS/statistics_T.ascii")
+open(unit=1238,file="OUTPUT/STATS/statistics_VP.ascii")
+open(unit=1239,file="OUTPUT/STATS/statistics_pmgmres.ascii")
+open(unit=1240,file="OUTPUT/STATS/statistics_rheology.ascii")
+
 call header
 
 #ifdef UseMUMPS
@@ -149,6 +157,7 @@ if (use_ALE)     write(*,'(a,l10)')    '        use_ALE     =',penalty
 
 do istep=1,nstep !-----------------------------------------
                                                           !
+   call int_to_char(cistep,6,istep)                       !
    call spacer_istep                                      !
    call assign_values_to_qpoints                          !
    call compute_elemental_rho_eta_vol                     !
@@ -168,6 +177,7 @@ do istep=1,nstep !-----------------------------------------
       call define_bcT                                     !
       call make_matrix_energy                             !
       call solve_energy                                   !
+      call compute_temperature_gradient                   !
    end if                                                 !
                                                           !
    call compute_gravity                                   !
@@ -177,6 +187,8 @@ do istep=1,nstep !-----------------------------------------
    call output_qpoints                                    !
    call output_swarm                                      !
    call write_stats                                       !
+                                                          !
+   time=time+dt                                           !
                                                           !
 end do !---------------------------------------------------
 

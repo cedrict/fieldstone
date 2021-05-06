@@ -9,5 +9,6 @@ real(8), dimension(:,:), allocatable :: Cmat
 real(8), dimension(:,:), allocatable :: Kmat
 
 real(8), dimension(:), allocatable :: rV,sV,tV
+real(8), dimension(:), allocatable :: rT,sT,tT
 
 end module

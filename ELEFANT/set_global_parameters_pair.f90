@@ -9,7 +9,7 @@
 subroutine set_global_parameters_pair
 
 use module_parameters
-use module_arrays, only: rV,sV,tV
+use module_arrays, only: rV,sV,tV,rT,sT,tT
 
 implicit none
 
@@ -32,12 +32,19 @@ if (pair=='q1p0') then
    allocate(rV(mV))
    allocate(sV(mV))
    allocate(tV(mV))
+   allocate(rT(mT))
+   allocate(sT(mT))
+   allocate(tT(mT))
    if (ndim==2) then
       nel=nelx*nely
       NV=(nelx+1)*(nely+1)
       NT=(nelx+1)*(nely+1)
       rV=(/-1d0,+1d0,+1d0,-1d0/)
       sV=(/-1d0,-1d0,+1d0,+1d0/)
+      tV=0d0
+      rT=(/-1d0,+1d0,+1d0,-1d0/)
+      sT=(/-1d0,-1d0,+1d0,+1d0/)
+      tT=0d0
    else
       nel=nelx*nely*nelz
       NV=(nelx+1)*(nely+1)*(nelz+1)
@@ -45,6 +52,9 @@ if (pair=='q1p0') then
       rV=(/-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0,-1d0/)
       sV=(/-1d0,-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0/)
       tV=(/-1d0,-1d0,-1d0,-1d0,+1d0,+1d0,+1d0,+1d0/)
+      rT=(/-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0,-1d0/)
+      sT=(/-1d0,-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0/)
+      tT=(/-1d0,-1d0,-1d0,-1d0,+1d0,+1d0,+1d0,+1d0/)
    end if
    NP=nel
 end if
@@ -55,6 +65,9 @@ if (pair=='q1q1') then
    mP=2**ndim
    mT=2**ndim
    mL=2**ndim
+   allocate(rT(mT))
+   allocate(sT(mT))
+   allocate(tT(mT))
    if (ndim==2) then
       mV=2**ndim+1
       nel=nelx*nely
@@ -66,6 +79,8 @@ if (pair=='q1q1') then
       allocate(tV(mV))
       rV=(/-1d0,+1d0,+1d0,-1d0/)
       sV=(/-1d0,-1d0,+1d0,+1d0/)
+      rT=(/-1d0,+1d0,+1d0,-1d0/)
+      sT=(/-1d0,-1d0,+1d0,+1d0/)
    else
       mV=2**ndim+2
       nel=nelx*nely*nelz
@@ -78,6 +93,9 @@ if (pair=='q1q1') then
       rV=(/-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0,-1d0/)
       sV=(/-1d0,-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0/)
       tV=(/-1d0,-1d0,-1d0,-1d0,+1d0,+1d0,+1d0,+1d0/)
+      rT=(/-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0,-1d0/)
+      sT=(/-1d0,-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0/)
+      tT=(/-1d0,-1d0,-1d0,-1d0,+1d0,+1d0,+1d0,+1d0/)
    end if
 end if
 
@@ -91,6 +109,9 @@ if (pair=='q2q1') then
    allocate(rV(mV))
    allocate(sV(mV))
    allocate(tV(mV))
+   allocate(rT(mT))
+   allocate(sT(mT))
+   allocate(tT(mT))
    if (ndim==2) then
       nel=nelx*nely
       NV=(2*nelx+1)*(2*nely+1)

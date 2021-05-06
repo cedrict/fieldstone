@@ -1,0 +1,50 @@
+set term pdf enhanced font "times,11pt"
+set grid
+
+set key outside
+
+set output 'rhoq.pdf'
+plot[][]\
+'statistics_rheology.ascii' u 1 w l t 'min(rhoq)',\
+'statistics_rheology.ascii' u 2 w l t 'max(rhoq)',\
+
+set output 'etaq.pdf'
+plot[][]\
+'statistics_rheology.ascii' u 3 w l t 'min(etaq)',\
+'statistics_rheology.ascii' u 4 w l t 'max(etaq)',\
+
+set output 'vrms.pdf'
+plot[][]\
+'statistics.ascii' u 4 w l t 'v_{rms}',\
+
+set output 'volume.pdf'
+plot[][]\
+'statistics.ascii' u 8 w l t 'volume',\
+
+set output 'avrg_u.pdf'
+plot[][]\
+'statistics.ascii' u 9 w l t '<u>',\
+
+set output 'avrg_v.pdf'
+plot[][]\
+'statistics.ascii' u 10 w l t '<v>',\
+
+set output 'avrg_w.pdf'
+plot[][]\
+'statistics.ascii' u 11 w l t '<w>',\
+
+set output 'avrg_T.pdf'
+plot[][]\
+'statistics.ascii' u 13 w l t '<T>',\
+
+
+set output 'T.pdf'
+plot[][]\
+'statistics_T.ascii' u 1 w l lw 2 t 'min(T)',\
+'statistics_T.ascii' u 2 w l lw 2 t 'max(T)',\
+
+
+
+
+
+

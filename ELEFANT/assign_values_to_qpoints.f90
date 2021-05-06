@@ -230,7 +230,7 @@ else
                              mesh(iel)%yq(iq),&
                              mesh(iel)%zq(iq),&
                              mesh(iel)%pq(iq),&
-                             mesh(iel)%Tq(iq),&
+                             mesh(iel)%thetaq(iq),&
                              exxq,eyyq,ezzq,exyq,exzq,eyzq,&
                              idummy,one,&
                              mesh(iel)%etaq(iq),&
@@ -255,6 +255,8 @@ end if
 
 write(*,'(a,2es10.3)') shift//'rhoq (m/M):',rhoq_min,rhoq_max
 write(*,'(a,2es10.3)') shift//'etaq (m/M):',etaq_min,etaq_max
+
+write(1240,'(4es12.4)') rhoq_min,rhoq_max,etaq_min,etaq_max
 
 !==============================================================================!
 

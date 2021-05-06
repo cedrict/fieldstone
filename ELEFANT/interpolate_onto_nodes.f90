@@ -64,6 +64,10 @@ if (ndim==2) then
       end do
    end do
 
+   write(*,'(a,2es13.5)') shift//'exx(m/M)  =',minval(exx),maxval(exx)
+   write(*,'(a,2es13.5)') shift//'eyy(m/M)  =',minval(eyy),maxval(eyy)
+   write(*,'(a,2es13.5)') shift//'exy(m/M)  =',minval(exy),maxval(exy)
+
 end if
 
 !--------------------------------------
@@ -113,6 +117,13 @@ if (ndim==3) then
          mesh(iel)%eyz(k)=eyz(node)
       end do
    end do
+
+   write(*,'(a,2es13.5)') shift//'exx(m/M)  =',minval(exx),maxval(exx)
+   write(*,'(a,2es13.5)') shift//'eyy(m/M)  =',minval(eyy),maxval(eyy)
+   write(*,'(a,2es13.5)') shift//'ezz(m/M)  =',minval(ezz),maxval(ezz)
+   write(*,'(a,2es13.5)') shift//'exy(m/M)  =',minval(exy),maxval(exy)
+   write(*,'(a,2es13.5)') shift//'exz(m/M)  =',minval(exz),maxval(exz)
+   write(*,'(a,2es13.5)') shift//'eyz(m/M)  =',minval(eyz),maxval(eyz)
 
 end if
 

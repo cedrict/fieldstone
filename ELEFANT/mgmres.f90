@@ -1216,12 +1216,15 @@ subroutine pmgmres_ilu_cr ( n, nz_num, ia, ja, a, x, rhs, itr_max, mr, &
 
   end do
 
-  if ( verbose ) then
-    write ( *, '(a)' ) ' '
-    write ( *, '(a)' ) 'PMGMRES_ILU_CR:'
-    write ( *, '(a,i6)' ) '  Iterations = ', itr_used
-    write ( *, '(a,g14.6)' ) '  Final residual = ', rho
-  end if
+  !if ( verbose ) then
+  !  write ( *, '(a)' ) ' '
+  !  write ( *, '(a)' ) 'PMGMRES_ILU_CR:'
+  !  write ( *, '(a,i6)' ) '  Iterations = ', itr_used
+  !  write ( *, '(a,g14.6)' ) '  Final residual = ', rho
+  !end if
+
+  write(1239,*) itr_used,rho
+  call flush(1239)
 
   return
 end

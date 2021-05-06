@@ -17,6 +17,7 @@ type element
   real(8) :: u(27),v(27),w(27)                ! velocity degrees of freedom
   real(8) :: p(8),q(27)                       ! pressure dofs and projected pressure q 
   real(8) :: T(8)                             ! temperature degrees of freedom
+  real(8) :: qx(8),qy(8),qz(8) 
   real(8) :: exx(27),eyy(27),exy(27)          ! strain rate components for 2D
   real(8) :: ezz(27),exz(27),eyz(27)          ! additional strain rate components for 3D
   real(8) :: a_eta,b_eta,c_eta,d_eta          ! least square coeffs for viscosity

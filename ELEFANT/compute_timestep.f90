@@ -45,6 +45,7 @@ if (use_T) then
    dt=min(dt,hmin**2*rhoq_min*hcapaq_min/hcondq_max)
 end if
 
+
 write(*,'(a,es12.4)') shift//'dt=',dt 
 
 !==============================================================================!

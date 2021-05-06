@@ -18,7 +18,7 @@ implicit none
 integer i,k
 real(8) uth,vth,wth,pth,dum,rq,sq,tq
 real(8) dNdx(mV),dNdy(mV),dNdz(mV),div_v,jcob
-real(8) uL(mL),vL(mL),wL(mL),pL(mL),qL(mL),TL(mL)
+real(8) uL(mL),vL(mL),wL(mL),pL(mL),qL(mL),TL(mL),qxL(mL),qyL(mL),qzL(mL)
 
 logical, parameter :: output_boundary_indicators=.false. ! careful with these for higher order elts
 logical, parameter :: output_fixed_boundaries=.false. ! careful with these for higher order elts
@@ -30,13 +30,13 @@ logical, parameter :: output_fixed_boundaries=.false. ! careful with these for h
 !@@ folder. It also generates the basic ascii file {\filenamefont solution.ascii}
 !==================================================================================================!
 
-if (iproc==0) then
+if (iproc==0 .and. mod(istep,output_freq)==0) then
 
 call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-open(unit=123,file='OUTPUT/solution.vtu',status='replace',form='formatted')
+open(unit=123,file='OUTPUT/solution_'//cistep//'.vtu',status='replace',form='formatted')
 write(123,'(a)') '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian">'
 write(123,'(a)') '<UnstructuredGrid>'
 write(123,'(a,i8,a,i7,a)') '<Piece NumberOfPoints="',mL*nel,'" NumberOfCells="',nel,'">'
@@ -250,6 +250,28 @@ do iel=1,nel
 end do
 write(123,*) '</DataArray>'
 end if
+
+!-----
+if (use_T) then 
+write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Name="heat flux" Format="ascii">'
+do iel=1,nel
+   call project_qxyz_onto_L(mesh(iel),qxL,qyL,qzL,mL)
+   do k=1,mL
+      write(123,'(3es12.4)') qxL(k),qyL(k),qzL(k)
+   end do
+end do
+write(123,*) '</DataArray>'
+end if
+
+
+
+
+
+
+
+
+
+
 !-----
 if (solve_stokes_system) then
 write(123,*) '<DataArray type="Float32" Name="pressure (q)" Format="ascii">'
