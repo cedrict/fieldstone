@@ -15,6 +15,8 @@ def mesher(Lx,Ly,nelx,nely,nel,NV,mV):
     dx4=Lx/nelx/4
     dy4=Ly/nely/4
 
+    eps=dx/2/np.sqrt(3)
+
     counter=0
     for irow in range(0,nely):
 
@@ -35,14 +37,14 @@ def mesher(Lx,Ly,nelx,nely,nel,NV,mV):
        #-------------
        # second line
        for icol in range(0,nelx):
-          xV[counter]=icol*dx+dx4
-          yV[counter]=dy4 + irow*dy
+          xV[counter]=icol*dx    + dx2- eps
+          yV[counter]=dy2-eps + irow*dy
           counter=counter+1
-          xV[counter]=icol*dx+2*dx4
-          yV[counter]=dy4 + irow*dy
+          xV[counter]=icol*dx+dx2
+          yV[counter]=dy2-eps + irow*dy
           counter=counter+1
-          xV[counter]=icol*dx+3*dx4
-          yV[counter]=dy4 + irow*dy
+          xV[counter]=icol*dx+dx2 + eps
+          yV[counter]=dy2-eps + irow*dy
           counter=counter+1
        #end for
 
@@ -52,13 +54,13 @@ def mesher(Lx,Ly,nelx,nely,nel,NV,mV):
           xV[counter]=icol*dx
           yV[counter]=dy2 + irow*dy
           counter=counter+1
-          xV[counter]=icol*dx+dx4
+          xV[counter]=icol*dx+dx2 - eps
           yV[counter]=dy2 + irow*dy
           counter=counter+1
-          xV[counter]=icol*dx+2*dx4
+          xV[counter]=icol*dx+dx2
           yV[counter]=dy2 + irow*dy
           counter=counter+1
-          xV[counter]=icol*dx+3*dx4
+          xV[counter]=icol*dx+dx2 +eps
           yV[counter]=dy2 + irow*dy
           counter=counter+1
        #end for
@@ -69,14 +71,14 @@ def mesher(Lx,Ly,nelx,nely,nel,NV,mV):
        #-------------
        # fourth line
        for icol in range(0,nelx):
-          xV[counter]=icol*dx+dx4
-          yV[counter]=3*dy4 + irow*dy
+          xV[counter]=icol*dx+dx2-eps
+          yV[counter]=dy2+eps + irow*dy
           counter=counter+1
-          xV[counter]=icol*dx+2*dx4
-          yV[counter]=3*dy4 + irow*dy
+          xV[counter]=icol*dx+dx2
+          yV[counter]=dy2+eps + irow*dy
           counter=counter+1
-          xV[counter]=icol*dx+3*dx4
-          yV[counter]=3*dy4 + irow*dy
+          xV[counter]=icol*dx+dx2 + eps
+          yV[counter]=dy2+eps + irow*dy
           counter=counter+1
        #end for
 

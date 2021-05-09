@@ -6,14 +6,14 @@ def mesher(Lx,Ly,nelx,nely,nel,NV,mV):
     yV = np.zeros(NV,dtype=np.float64)  # y coordinates
     iconV =np.zeros((mV,nel),dtype=np.int32)
 
-    sx=Lx/nelx
-    sy=Ly/nely
+    hx=Lx/nelx
+    hy=Ly/nely
 
     counter=0    
     for j in range(0,nely+1):
         for i in range(0,nelx+1):    
-            xV[counter]=i*sx
-            yV[counter]=j*sy
+            xV[counter]=i*hx
+            yV[counter]=j*hy
             counter=counter+1    
         #end do 
     #end do   
@@ -21,8 +21,8 @@ def mesher(Lx,Ly,nelx,nely,nel,NV,mV):
 
     for j in range(0,nely+1):    
         for i in range(1,nelx+1):
-          xV[counter]=(i-0.5)*sx
-          yV[counter]=j*sy
+          xV[counter]=(i-0.5)*hx
+          yV[counter]=j*hy
           counter=counter+1    
        #end do
     #end do
@@ -30,8 +30,8 @@ def mesher(Lx,Ly,nelx,nely,nel,NV,mV):
     
     for j in range(1,nely+1):    
         for i in range(0,nelx+1):    
-            xV[counter]=i*sx
-            yV[counter]=(j-0.5)*sy
+            xV[counter]=i*hx
+            yV[counter]=(j-0.5)*hy
             counter=counter+1    
         #end do
     #end do
@@ -39,48 +39,49 @@ def mesher(Lx,Ly,nelx,nely,nel,NV,mV):
 
     delta=1./3.
 
+    epsilon=hx/np.sqrt(6)
+
     for j in range(0,nely):    
           for i in range(0,nelx):    
-              xV[counter]=(i+0.5)*sx
-              yV[counter]=(j+0.5)*sy
-              counter=counter+1    
+              xV[counter]=(i+0.5)*hx
+              yV[counter]=(j+0.5)*hy
+              counter=counter+1               #09
 
-              xV[counter]=(i+0.5)*sx
-              yV[counter]=(j+0.5-delta)*sy
+              xV[counter]=(i+0.5)*hx
+              yV[counter]=(j+0.5)*hy -epsilon
+              counter=counter+1               #10
+
+              xV[counter]=(i+0.5)*hx+epsilon/2
+              yV[counter]=(j+0.5)*hy-epsilon/2
               counter=counter+1               #11
 
-              xV[counter]=(i+0.5+delta/2)*sx
-              yV[counter]=(j+0.5-delta/2)*sy
+              xV[counter]=(i+0.5)*hx+epsilon
+              yV[counter]=(j+0.5)*hy
               counter=counter+1               #12
 
-              xV[counter]=(i+0.5+delta)*sx
-              yV[counter]=(j+0.5)*sy
-              counter=counter+1               #13
+              xV[counter]=(i+0.5)*hx+epsilon/2
+              yV[counter]=(j+0.5)*hy+epsilon/2
+              counter=counter+1             #13
 
-              xV[counter]=(i+0.5+delta/2)*sx
-              yV[counter]=(j+0.5+delta/2)*sy
+              xV[counter]=(i+0.5)*hx
+              yV[counter]=(j+0.5)*hy+epsilon
               counter=counter+1             #14
 
-              xV[counter]=(i+0.5)*sx
-              yV[counter]=(j+0.5+delta)*sy
+              xV[counter]=(i+0.5)*hx-epsilon/2
+              yV[counter]=(j+0.5)*hy+epsilon/2
               counter=counter+1             #15
 
-              xV[counter]=(i+0.5-delta/2)*sx
-              yV[counter]=(j+0.5+delta/2)*sy
+              xV[counter]=(i+0.5)*hx-epsilon
+              yV[counter]=(j+0.5)*hy
               counter=counter+1             #16
 
-              xV[counter]=(i+0.5-delta)*sx
-              yV[counter]=(j+0.5)*sy
+              xV[counter]=(i+0.5)*hx-epsilon/2
+              yV[counter]=(j+0.5)*hy-epsilon/2
               counter=counter+1             #17
-
-              xV[counter]=(i+0.5-delta/2)*sx
-              yV[counter]=(j+0.5-delta/2)*sy
-              counter=counter+1             #10
 
         #end do
     #end do
 
-    #np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y,u,v')
 
     counter=0
     for irowf in range(0,nely):

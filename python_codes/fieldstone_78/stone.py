@@ -6,8 +6,12 @@ from scipy.sparse.linalg.dsolve import linsolve
 import scipy.sparse as sps
 import letallec
 import stenberg
-import qinzhang
 import regular
+import macro_A
+import macro_B
+import macro_QZ1 
+import macro_QZ2
+import macro_QZ3
 
 ###############################################################################
 
@@ -136,8 +140,8 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    topo = int(sys.argv[4])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 3
+   nely = 3
    visu = 1
    topo = 2
 
@@ -147,24 +151,42 @@ pnormalise=False # using int p dV=0 constrain
 #exp2: block
 #exp3: sphere
 #exp4: aquarium
+#exp5: solkz TODO
 
-experiment=2
+experiment=1
 
 if topo==0: #regular
    NV=(nelx+1)*(nely+1)
    nel=nelx*nely
 
-if topo==1: #stenberg 
+if topo==1: #stenberg  (S)
    NV=nely*(5*nelx+2)+2*nelx+1
    nel=5*nelx*nely
 
-if topo==2: #le tallec
+if topo==2: #le tallec (LT)
    NV=(2*nelx+1)*(2*nely+1)+nely*nelx*8
    nel=12*nelx*nely
 
-if topo==3: # qizh07
+if topo==3: # qizh07 (QZ1)
    nel=nelx*nely*12
    NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +9*nelx*nely
+
+if topo==4: # qizh07 (QZ2)
+   nel=nelx*nely*8
+   NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +5*nelx*nely
+
+if topo==5: # qizh07 (QZ3)
+   nel=nelx*nely*6
+   NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +3*nelx*nely
+
+if topo==6: # mine (A)
+   nel=nelx*nely*7
+   NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +4*nelx*nely
+
+if topo==7: # mine (B)
+   nel=nelx*nely*5
+   NV=(nelx+1)*(nely+1)+4*nelx*nely
+
 
 NfemV=NV*ndofV   # number of velocity dofs
 NfemP=nel*ndofP   # number of pressure dofs
@@ -203,7 +225,19 @@ if topo==2:
    xV,yV,iconV=letallec.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 
 if topo==3:
-   xV,yV,iconV=qinzhang.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+   xV,yV,iconV=macro_QZ1.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+
+if topo==4:
+   xV,yV,iconV=macro_QZ2.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+
+if topo==5:
+   xV,yV,iconV=macro_QZ3.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+
+if topo==6:
+   xV,yV,iconV=macro_A.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+
+if topo==7:
+   xV,yV,iconV=macro_B.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 
 ###############################################################################
 # compute coordinates of center of elements

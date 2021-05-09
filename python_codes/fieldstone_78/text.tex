@@ -15,12 +15,15 @@ so-called Stenberg macro-element described in Section~\ref{ss:meshtopos}.
 On the following a mesh is shown which consists of $16\times 16$ of such macro-elements:
 
 \begin{center}
-a)\includegraphics[width=7cm]{python_codes/fieldstone_78/results/mms/grid0}
-b)\includegraphics[width=7cm]{python_codes/fieldstone_78/results/mms/grid1}\\
-c)\includegraphics[width=7cm]{python_codes/fieldstone_78/results/mms/grid2}
-d)\includegraphics[width=7cm]{python_codes/fieldstone_78/results/mms/grid3}\\
-{\captionfont Meshes composed of 4800 elements. a) regular; b) Stenberg macro-elementl 
-c) Le Tallec macro-element; d) Qin \& Zhang macro-element.}
+a)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/grid0000}
+b)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/grid0001}
+c)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/grid0002}
+d)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/grid0003}\\
+e)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/grid0004}
+f)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/grid0005}
+g)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/grid0006}
+h)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/grid0007}\\
+{\captionfont  opla}
 \end{center}
 
 The meshes are created by importing the corresponding files:
@@ -61,15 +64,20 @@ Rather interestingly the projection of the pressure onto the nodes has a converg
 higher than the raw elemental pressure. As predicted in Qin \& Zhang, the Stenberg macro-element 
 yields the best results, followed by the Le Tallec and then the one they propose (this conclusion 
 is logically supported by looking at root mean square velocity measurements). 
-Finally, the presence of the checkerboard makes it painfully clear that it is the worst element 
+Finally, the presence of the checkerboard for the regular structure mesh case
+makes it painfully clear that it is the worst mesh topology 
 and the pressure error does not converge.  
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_78/results/mms/errors_regular.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_78/results/mms/errors_stenberg.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_78/results/mms/errors_letallec.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_78/results/mms/errors_qinzhang.pdf}\\
+%\includegraphics[width=7cm]{python_codes/fieldstone_78/results/mms/errors_regular.pdf}
+%\includegraphics[width=7cm]{python_codes/fieldstone_78/results/mms/errors_stenberg.pdf}\\
+%\includegraphics[width=7cm]{python_codes/fieldstone_78/results/mms/errors_letallec.pdf}
+%\includegraphics[width=7cm]{python_codes/fieldstone_78/results/mms/errors_qinzhang.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms/errors_V.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms/errors_P.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms/errors_Q.pdf}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_78/results/mms/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_78/results/mms/pstats.pdf}
 \end{center}
 
 On the following figures the pressure is plotted against the analytical solution and 
@@ -77,18 +85,30 @@ we see that there is no checkerboarding occurring:
 Rather interestingly the pressure error is the largest next to the boundaries:
 
 \begin{center}
-\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/p_0}
-\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/p_1}
-\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/p_2}
-\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/p_3}\\
-\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/p_error_0}
-\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/p_error_1}
-\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/p_error_2}
-\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/p_error_3}\\
-\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/pressure0}
-\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/pressure1}
-\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/pressure2}
-\includegraphics[width=3.74cm]{python_codes/fieldstone_78/results/mms/pressure3}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/vel0000}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/vel0001}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/vel0002}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/vel0003}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/vel0004}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/vel0005}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/vel0006}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/vel0007}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/p0}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/p1}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/p2}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/p3}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/p4}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/p5}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/p6}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/p7}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/perror0}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/perror1}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/perror2}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/perror3}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/perror4}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/perror5}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/perror6}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms/16x16/perror7}\\
 {\captionfont Meshes count about the same number of elements, i.e. 4800. 
 Left to right: regular, Stenberg, Le Tallec, Qin \& Zhang. Top row is pressure, 
 middle row is pressure error. Bottom row is pressure profile.} 
@@ -149,14 +169,14 @@ sides. The buoyancy force $\rho g_y$ is -1 in the block and zero elsewhere. Visc
 equal to 1 everywhere. 
 
 \begin{center}
-\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/by0}
-\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/by1}
-\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/by2}
-\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/by3}\\
-\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/p0}
-\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/p1}
-\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/p2}
-\includegraphics[width=3.8cm]{python_codes/fieldstone_78/results/block/reduced/p3}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/block/reduced/by0}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/block/reduced/by1}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/block/reduced/by2}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/block/reduced/by3}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/block/reduced/p0}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/block/reduced/p1}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/block/reduced/p2}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/block/reduced/p3}\\
 {\captionfont Velocity field (top row) and pressure field (bottom row) 
 for regular, Stenberg, Le Tallec, Qin \& Zhang.} 
 \end{center}
