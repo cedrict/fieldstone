@@ -25,7 +25,7 @@ Note that although the velocity $u$ is prescribed, it can vary in space, hence
 the subscript $i$. 
 
 There is however a major problem: 
-the FTCS method is in this case {\bf unconditionally} unstable, i.e., it blows up for any $\delta t$.
+the FTCS method is in this case {\bf unconditionally} {\bf un}stable, i.e., it blows up for any $\delta t$.
 The instability is related to the fact that this scheme produces negative diffusion, 
 which is numerically unstable.
 
@@ -36,7 +36,7 @@ in the time derivative term with $(T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1
 The resulting equation is
 \[
 \frac{T_{\color{teal}i}^{n+1}-  (T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)/2 }{\delta t} 
-= - u_i \frac{T^n_{{\color{teal}i+1}}-T^n_{{\color{teal}i-1}}}{2 h_x}
+= - u_i \frac{T^n_{{\color{teal}i+1}}-T^n_{{\color{teal}i-1}}}{2 h}
 \]
 or, 
 \[

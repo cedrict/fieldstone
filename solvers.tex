@@ -1,11 +1,15 @@
+\begin{flushright} {\tiny {\color{gray} solvers.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Let us start again from the (full) Stokes system:
 \begin{equation}
+\underbrace{
 \left(
 \begin{array}{cc}
 \K & \G \\ \G^T & -\C 
 \end{array}
 \right)
+}_{\cal A}
 \cdot
 \left(
 \begin{array}{c}
@@ -25,16 +29,68 @@ and $\vec{\cal P}$ vectors. But how?
 Unfortunately, this question is not simple to answer and the appropriate method depends on many 
 parameters, but mainly on how big the matrix blocks are and what the condition number of the matrix $\K$ is. 
 
-In what follow I cover:
+First let us start with an obvious question: couldn't we just compute the inverse of the matrix ${\cal A}$?
+Under the assumption that the inverse of $\K$ and $\SSS$ exists, we can and we find\footnote{The matrix 
+$\C$ is here omitted but it bears no consequences on the conclusion.}
+\[
+{\cal A}^{-1} = 
+\left(
+\begin{array}{cc}
+\K & \G \\ \G^T & 0
+\end{array}
+\right)^{-1}
+=
+\left(
+\begin{array}{cc}
+\K^{-1} + \K^{-1} \cdot \G \cdot\SSS^{-1} \cdot\G^T \cdot\K^{-1} & -\K^{-1} \cdot\G \cdot\SSS^{-1} \\ 
+-\SSS^{-1} \cdot\G^T \cdot\K^{-1}  &  \SSS^{-1}
+\end{array}
+\right)
+\]
+However, such an expression is of limited interest in the numerical solution of saddle
+point problems since it showcases 5 times the inverse of $\K$ and more importantly
+the inverse of the Schur complement matrix $\S$ which is likely to be a full matrix so 
+that we never want to compute it explicitely.
+
+
+As concisely explained in Clevenger \& Heister (2021) \cite{clhe21}, 
+there are three common approaches used in the literature for solving the above equation on large scales:
 \begin{itemize}
-\item solving when the penalty approach is used
-\item the Schur complement approach
-\item the FGMRES approach \cite{deit13}
+\item a pressure corrected, Schur complement CG scheme, using multigrid as an 
+approximation to the velocity block;
+\item a block-preconditioned Krylov
+method, also using multigrid on the velocity block.
+For this method, there are two main types:
+\begin{itemize}
+\item GMRES\cite{mabl15,rumi15} (or any Krylov method not requiring symmetry) with
+block-triangular preconditioner (This is what \aspect does):
+\[
+{\bm P} = \left(
+\begin{array}{cc}
+\K & \G \\
+0 & - \SSS
+\end{array}
+\right)
+\]
+
+\item MINRES\cite{gmhj16} with block-diagonal preconditioner
+\[
+{\bm P} = \left(
+\begin{array}{cc}
+\K & 0 \\
+0 & - \SSS
+\end{array}
+\right)
+\]
+
 \end{itemize}
 
-\Literature \cite{pasa75,mamo08,fumt11,knke04,kool00,kopo93} \cite{lane18}
 
-Preconditioners \Literature: \cite{seuv10}
+\item an all-at-once multigrid performed on the entire Stokes
+system, using Uzawa-type smoothers.
+\end{itemize}
+
+
 
 %...................................................
 \subsubsection{When using the penalty formulation}
@@ -356,8 +412,8 @@ This algorithm is of course explained in detail in many textbooks such as Saad \
 in Zhong, Yuen, Moresi \& Knepley (2012) \cite{zhym12}, and in Section~\ref{ss:itsolvers}.
 
 Let us look at this algorithm more closely. The parts which may prove to be somewhat tricky 
-are those involving the matrix inverse (in our case the inverse of the Schur complement matrix).
-We start the iterations with a guess pressure $\vec{\cal P}_0$ (and an initial guess velocity 
+are those involving the matrix the Schur complement matrix since we wish never to build 
+it explicitely. We start the iterations with a guess pressure $\vec{\cal P}_0$ (and an initial guess velocity 
 which could be obtained by 
 solving $\K\cdot \vec{\cal V}_0 =\vec{f}- \G\cdot \vec{\cal P}_0$).
 \begin{eqnarray}
@@ -557,16 +613,128 @@ and it is trivial to invert. The entries in
 $diag[\K]$ are the average viscosity in the elements associated
 with a given degree of freedom.
 
-Another very cheap way of building ${\bm M}$ is to realise that the matrix $\SSS$ has dimensions element surface/volume 
+Another very cheap way of building ${\bm M}$ for $Q_1\times P_0$ lements 
+is to realise that the matrix $\SSS$ has dimensions element surface/volume 
 divided by viscosity. We can then postulate 
 \[
 M_{e,e} = \frac{|\Omega|_e}{\eta_e} 
 \]
 where $e$ is an element and $\eta_e$ is the (average viscosity) inside the element.
+For higher order elements, we need to use the pressure mass matrix.
 
-These two preconditioners and two other variants are implement in \stone 16 for 
+These two preconditioners and two other variants are implemented in \stone 16 for 
 $Q_1\times P_0$ elements.
 
+%......................................................
+\subsubsection{Generalized Conjugate Residual approach (Geenen \etal (2009))}
+
+This approach is presented in Geenen \etal (2009) \cite{geum09}. 
+The saddle point problem arising from the constrained Stokes equation is 
+solved with a Krylov method, GCR \cite{vavu94}, right preconditioned (postconditioned) 
+with a block triangular preconditioner (BTR) \cite{brpa88}.
+
+The preconditioner ${\bm P}$ is given by
+\[
+{\bm P} = \left(
+\begin{array}{cc}
+\K & \G \\
+0 & - \tilde{\SSS}
+\end{array}
+\right)
+\]
+
+The GCR algorithm \cite{eies83} in this case is taken from Vuik \etal (2000) \cite{vusb00}
+and makes use of the block triangular preconditioner as follows:
+\begin{itemize}
+\item[] $\vec{r}_0 = \vec{b} - {\bm A}\cdot \vec{x}^0$
+\item[] for $k$=0,1,2,...
+\begin{itemize}
+\item $\vec{s}^{k+1}={\bm P}^{-1} \cdot \vec{r}^k$
+\item $\vec{v}^{k+1} = {\bm A}\cdot \vec{s}^{k+1}$
+\item for i=0,1,...$k$
+\begin{itemize}
+\item $\vec{v}^{k+1}=\vec{v}^{k+1} - (\vec{v}^{k+1},\vec{v}^{i}) \vec{v}^i$
+\item $\vec{s}^{k+1}=\vec{s}^{k+1} - (\vec{v}^{k+1},\vec{v}^{i}) \vec{s}^i$
+\end{itemize}
+\item end for
+\item $\vec{v}^{k+1}=\vec{v}^{k+1} / \| \vec{v}^{k+1} \|_2$
+\item $\vec{s}^{k+1}=\vec{s}^{k+1} / \| \vec{v}^{k+1} \|_2$  
+\item $\vec{x}^{k+1} = \vec{x}^k + (\vec{v}^{k+1},\vec{r}^k) \vec{s}^{k+1} $
+\item $\vec{r}^{k+1} = \vec{r}^k - (\vec{v}^{k+1}, \vec{r}^k) \vec{v}^{k+1}$
+\end{itemize}
+\item[] end for
+\end{itemize}
+
+As explained in Geenen \etal, instead of constructing ${\bm P}^{-1}$
+explicitely and applying it to $\vec{r}$, we instead solve the system 
+${\bm P}\cdot \vec{s} = \vec{r}$. We first decompose $\vec{r}$ and $\vec{s}$
+as follows:
+\[
+\vec{r}^k = \left( \begin{array}{c} \vec{r}_\upnu^k \\ \vec{r}_p^k   \end{array} \right)
+\qquad
+\vec{s}^{k+1} = \left( \begin{array}{c} \vec{s}_\upnu^{k+1} \\ \vec{s}_p^{k+1}   \end{array} \right)
+\]
+so that we have to solve 
+\[
+\left(
+\begin{array}{cc}
+\K & \G \\
+0 & - \tilde{\SSS}
+\end{array}
+\right)
+\cdot
+\left( \begin{array}{c} \vec{s}_\upnu^{k+1} \\ \vec{s}_p^{k+1}   \end{array} \right)
+=
+\left( \begin{array}{c} \vec{r}_\upnu^k \\ \vec{r}_p^k   \end{array} \right)
+\]
+This is actually rather trivial because of the upper triangular nature of the preconditioner ${\bm P}$.
+It immediately follows:
+\begin{eqnarray}
+\tilde{\SSS}\cdot  \vec{s}_p^{k+1} &=& -\vec{r}_p^k   \\
+\K \cdot \vec{s}_\upnu^{k+1} &=& \vec{r}_\upnu^k - \G \cdot \vec{s}_p^{k+1}
+\end{eqnarray}
+As before we now must specify how we solve the above two equations (and we must therefore
+make a choice about the approximate Schur complement $\tilde{\SSS}$).
+
+In the paper they take ${\bm  M}_p$, the pressure mass matrix scaled with the inverse of viscosity 
+as an approximation to the Schur complement $\tilde{\SSS}$, which is spectrally equivalent.
+Note that sometimes this mass matrix can be lumped which makes solving with it trivial and fast.
+
+The inner solve with $\K$ is carried out with a CG solvers preconditioned with AMG. They 
+state that ``Using AMG as a preconditioner to CG for the subsystem solution
+guarantees $h$-independent convergence of the solver during the preconditioner construction phase.''
+
+%......................................................
+\subsubsection{Using MINRES a la Burstedde \etal (2008)}
+
+This approach is presented in Burstedde \etal (2008) \cite{bugg08}.
+They state that neglecting the off-diagonal blocks motivates use of the symmetric
+positive definite preconditioner:
+\[
+{\bm P} = \left(
+\begin{array}{cc}
+\tilde{\K} & 0 \\
+0 & \tilde{\SSS}
+\end{array}
+\right)
+\]
+where $\tilde{\K}$ is a variable-viscosity discrete vector Laplacian
+approximation of $\K$ (see explanations in \cite{bugs09}), 
+which is motivated by the fact that
+for constant viscosity and Dirichlet boundary conditions,
+$\K$ and $\tilde\K$ are equivalent. 
+$\tilde{\SSS}$ is an approximation of
+the Schur complement given by a lumped mass matrix
+weighted by the inverse viscosity $\eta^{-1}$. The resulting
+diagonal matrix $\tilde{\SSS}$ is spectrally equivalent to $\SSS$ \cite{elsw}.
+They also use AMG as preconditioner for the inner solves. 
+
+Note that Burstedde \etal  (2008) \cite{bugg08} relies on stabilised 
+$Q_1\times Q_1$ elements from Dohrmann \& Bochev \cite{dobo04} 
+so that their Stokes matrix does feature the associated $-\C$ block.
+Subsequent papers do so too, see Burstedde \etal (2009) \cite{bugs09}, 
+Burstedde \etal (2013) \cite{busa13}.
+The same solver structure based on MINRES is used in these articles too.
 
 %---------------------------------------------
 \subsubsection{The Augmented Lagrangian approach}
@@ -669,11 +837,518 @@ This method has obvious ties with the penalty method.
 If $\lambda >> \max_\Omega{\eta}$ then the matrix $\tilde{\K}$ is ill-conditioned and an iterative solver must be used.
 \end{remark}
 
+%------------------------------------------------------------------------------
+\subsubsection{The SIMPLE method}
+
+The SIMPLE method (Semi-Implicit Method for Pressure-Linked Equations)
+has been introduced by Patankar \& Spalding (1972) \cite{pasp72} as an iterative method to solve
+the finite volume discretized incompressible Navier-Stokes equations. The algorithm
+is based on the following steps:
+\begin{itemize}
+\item First the pressure is assumed to be known from the previous iteration.
+\item Then the velocity is solved from the momentum equations. The newly obtained
+velocities do not satisfy the continuity equation since the pressure is only a
+guess.
+\item In the next substeps the velocities and pressures are corrected in order to
+satisfy the discrete continuity equation.
+\end{itemize}
+The algorithm follows from a block LU decomposition
+\begin{equation}
+\left(
+\begin{array}{cc}
+\K & \G \\ \G^T & -\C 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal V} \\ \vec{\cal P}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\K & 0 \\ 
+\G^T & -\SSS
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+{\bm I} & \K^{-1} \cdot \G \\
+0 & {\bm I} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal V} \\ \vec{\cal P}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{f} \\ \vec{h}
+\end{array}
+\right)
+\end{equation}
+The approximation $\K^{-1}$ as ${\bm D}_\K^{-1} = (diag(\K))^{-1}$ leads to the 
+SIMPLE algorithm. In this case the approximation of the Schur complement matrix is given by
+\[
+\tilde{\SSS} = \G^T {\bm D}_\K^{-1} \G
+\]
+and the decomposition looks like
+\[
+\left(
+\begin{array}{cc}
+\K & \G \\ \G^T & -\C 
+\end{array}
+\right)
+\simeq
+\left(
+\begin{array}{cc}
+\K & 0 \\ 
+\G^T & -\tilde{\SSS}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+{\bm I} & {\bm D}_\K^{-1} \cdot \G \\
+0 & {\bm I} 
+\end{array}
+\right)
+\]
+
+Before we can write out the SIMPLE algorithm, we must first take a small detour via 
+distributive iterative methods \cite{vusb00,tack10}.
+Let us consider the linear system 
+\[
+{\bm A}\cdot \vec{x}=\vec{b}
+\] 
+A stationary iterative method is defined as follows:
+\[
+\vec{x}^{k+1}= {\bm B}\cdot \vec{x}^{k}+ \vec{c}
+\]
+where $\vec{c}=({\bm I}-{\bm B})\cdot {\bm A}^{-1}\cdot \vec{b}$. 
+Left-multiplying all terms by $({\bm I}-{\bm B})^{-1}$ first and then left-multiplying again 
+by ${\bm A}$  we arrive at:
+\[
+{\bm A}\cdot ({\bm I}-{\bm B})^{-1}\cdot \vec{x}^{k+1}
+={\bm A}\cdot ({\bm I}-{\bm B})^{-1}\cdot {\bm B}\cdot 
+\vec{x}^{k} + {\bm A}\cdot ({\bm I}-{\bm B})^{-1} \cdot \vec{c}
+\]
+We define ${\bm M}={\bm A}\cdot ({\bm I}-{\bm B})^{-1} $ so that now
+\[
+{\bm M}\cdot\vec{x}^{k+1}={\bm M}\cdot {\bm B}\cdot \vec{x}^{k}+\vec{b} 
+\]
+We define ${\bm N}={\bm M}\cdot {\bm B}$
+and finally 
+\[
+{\bm M}\cdot\vec{x}^{k+1}={\bm N}\cdot \vec{x}^{k}+\vec{b} 
+\]
+Note that ${\bm A}={\bm M}-{\bm N}$:
+\[
+{\bm M}-{\bm N}={\bm M}-{\bm M}\cdot {\bm B}
+= {\bm M}\cdot  ({\bm I}-{\bm B}) 
+= {\bm A}\cdot ({\bm I}-{\bm B})^{-1}\cdot ({\bm I}-{\bm B}) 
+= {\bm A}
+\]
+Let us now write the original system 
+${\bm A}\cdot \vec{x}=\vec{b}$ as $({\bm A}{\bm B})({\bm B}^{-1}\cdot \vec{x})=\vec{b}$
+or, $ \underline{\bm A} \underline{\vec{x}}=\vec{b} $
+with 
+$\vec{x}={\bm B}\cdot \underline{\vec{x}}$
+and 
+$\underline{\bm A}={\bm A}\cdot {\bm B}$.
+Splitting $\underline{\bm A}={\bm M}-{\bm N}$ again yields 
+\[
+{\bm M}\cdot \underline{\vec{x}}^{k+1}={\bm N}\cdot \underline{\vec{x}}^{k}+\vec{b} 
+\]
+Using $\vec{x}={\bm B}\cdot \underline{\vec{x}}$, we get 
+\[
+{\bm M}\cdot {\bm B}^{-1}\cdot \vec{x}^{k+1} = {\bm N}\cdot {\bm B}^{-1}\cdot  \vec{x}^{k}+\vec{b} 
+\]
+We then have 
+\begin{eqnarray}
+\vec{x}^{k+1}
+&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ {\bm N} \cdot  {\bm B}^{-1}  \cdot \vec{x}^{k}+ \vec{b}  ] \\
+&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ ({\bm M} - \underline{\bm A}) \cdot  {\bm B}^{-1}\cdot \vec{x}^{k}+\vec{b}  ]\\
+&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ ({\bm M} - {\bm A}\cdot {\bm B}) \cdot  {\bm B}^{-1}\cdot  \vec{x}^{k}+ \vec{b}  ]\\
+&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ {\bm M}\cdot {\bm B}^{-1} \cdot \vec{x}^{k} - {\bm A}\cdot {\bm B}\cdot  {\bm B}^{-1} \cdot \vec{x}^{k}+\vec{b}  ]\\
+&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ {\bm M}\cdot {\bm B}^{-1} \cdot \vec{x}^{k} - {\bm A}\cdot \vec{x}^{k}+ \vec{b}  ]\\
+&=&  \vec{x}^k + {\bm B}\cdot {\bm M}^{-1}\cdot [ \vec{b}    - {\bm A} \cdot \vec{x}^{k}  ]
+\end{eqnarray}
+Finally, we have the following recursion:
+\begin{equation}
+\boxed{\vec{x}^{k+1} = \vec{x}^k +{\bm B} \cdot {\bm M} ^{-1}\cdot (-{\bm A}\cdot \vec{x}^{k} + \vec{b}  ) }
+\end{equation}
+
+
+Coming back to the SIMPLE algorithm, we start from 
+\[
+{\bm A}=
+\left(
+\begin{array}{cc}
+\K & \G \\
+\G^T & 0
+\end{array}
+\right)
+\]
+The matrix ${\bm B}$ is then chosen to be 
+\[
+{\bm B}=
+\left(
+\begin{array}{cc}
+1 & -\K^{-1} \G \\
+0 & 1
+\end{array}
+\right)
+\]
+We then have 
+\[
+{\bm A} {\bm B} = 
+\left(
+\begin{array}{cc}
+\K & \G \\
+\G^T & 0
+\end{array}
+\right)
+\left(
+\begin{array}{cc}
+1 & -\K^{-1} \G \\
+0 & 1
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\K & 0 \\
+\G^T & -\SSS
+\end{array}
+\right)
+\]
+where $\SSS=\G^T\K^{-1}\G$.
+We define ${\bm D}_\K =diag(\K)$ and $\hat{\SSS}=\G^T \cdot {\bm D}_\K^{-1} \cdot \G$. 
+We further define 
+\[
+{\bm M}=
+\left(
+\begin{array}{cc}
+\K & 0 \\
+\G^T & -\hat{\SSS}
+\end{array}
+\right)
+\]
+and ${\bm N}$ follows from the splitting ${\bm A}{\bm B}= {\bm M} - {\bm N}$. 
+(Note that we do not need to form nor use ${\bm N}$).
+
+The standard SIMPLE algorithm also replaces $\K^{-1}$  by  ${\bm D}_\K^{-1}$ in ${\bm B}$ so that 
+${\bm B}$ is approximated by:
+\[
+{\bm B}=
+\left(
+\begin{array}{cc}
+1 & -{\bm D}_\K^{-1} \G \\
+0 & 1
+\end{array}
+\right)
+\]
+in the iterations.
+
+
+We can define 
+\[
+\vec{r}^k=
+\vec{b}-{\bm A}\cdot \vec{x}^k = 
+\left(
+\begin{array}{c}
+f \\ h
+\end{array}
+\right)
+-
+\left(
+\begin{array}{cc}
+\K & \G \\
+\G^T & 0
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal V}^k \\ \vec{\cal P}^k
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+r_V^k \\ r_P^k
+\end{array}
+\right)
+\]
+
+The iteration loop then looks like
+\[
+\left(
+\begin{array}{c}
+V^{k+1} \\ P^{k+1}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+V^k \\ P^k
+\end{array}
+\right)
++ 
+{\bm B}  {\bm M} ^{-1}
+\left(
+\begin{array}{c}
+r_V^k \\ r_P^k
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+V^k \\ P^k
+\end{array}
+\right)
++ 
+\left(
+\begin{array}{c}
+\delta V^k \\ \delta P^k
+\end{array}
+\right)
+\quad\quad
+\textrm{with}\quad\quad
+\left(
+\begin{array}{c}
+\delta V^k \\ \delta P^k
+\end{array}
+\right)
+=
+{\bm B}  {\bm M} ^{-1}
+\left(
+\begin{array}{c}
+r_V^k \\ r_P^k
+\end{array}
+\right)
+\]
+
+
+
+We then have to solve 
+\begin{equation}
+{\bm M} 
+\left(
+\begin{array}{c}
+\delta^\star V^k \\ \delta^\star P^k
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\K & 0 \\
+\G^T & \hat{\SSS}
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+\delta^\star V^k \\ \delta^\star P^k
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+r_V^k \\ r_P^k
+\end{array}
+\right)
+\label{simple1}
+\end{equation}
+and then compute
+\begin{equation}
+\left(
+\begin{array}{c}
+\delta V^k \\ \delta P^k
+\end{array}
+\right)
+=
+{\bm B}  
+\left(
+\begin{array}{c}
+\delta^\star V^k \\ \delta^\star P^k
+\end{array}
+\right)
+\label{simple2}
+\end{equation}
+
+Fortunately Eq.(\ref{simple1})
+translates into:
+\begin{eqnarray}
+\K \; \delta^\star V^k &=&  r_V^k   \\
+\hat{\SSS} \;  \delta^\star P^k &=&  r_P^k - \G^T \delta^\star V^k 
+\end{eqnarray}
+
+and Eq.(\ref{simple2}) 
+translates into:
+
+\[
+\left(
+\begin{array}{c}
+\delta V^k \\ \delta P^k
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+1 & -{\bm D}^{-1}\cdot \G \\
+0 & 1
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+\delta^\star V^k \\ \delta^* P^k
+\end{array}
+\right)
+\]
+or, 
+\begin{eqnarray}
+\delta V_k &=& \delta^\star V^k  -{\bm D}_\K^{-1} \G \delta^\star P_k \\
+\delta P_k &=& \delta^\star P^k
+\end{eqnarray}
+
+The final algorithm will then look as follows:
+
+\begin{enumerate}
+\item compute residual $r_V^k$
+\item compute residual $r_P^k$
+\item Solve $\K  \; \delta^\star V^k =  r_V^k  $
+\item Solve $\hat{\SSS} \; \delta^\star P^k =  r_P^k - \G^T \delta^\star V^k $
+\item compute $\delta V_k = \delta^\star V^k  -{\bm D}_\K^{-1} \G \delta^\star P_k $
+\item compute $\delta P_k = \delta^\star P^k$
+\item update $V^{k+1} = V^k + \delta V^k$
+\item update $P^{k+1} = P^k + \delta P^k$
+\end{enumerate}
+
+
+{\color{red} It seems that two linear systems need to 
+be solved, one with $\K$ and one with $\hat{\SSS}$. 
+iIs it really what people do ?}
+
+
+
+Bizarrely, this scheme does not coincide with \cite{urvs09}. Or does it ?
+See also: \cite{eche13}, \cite{brsa97b}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+Thus one iteration of SIMPLE corresponds to the solving of the following system:
+
+\[
+\left(
+\begin{array}{cc}
+\K & 0 \\ 
+\G^T & -\tilde{\SSS}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cc}
+{\bm I} & {\bm D}_\K^{-1} \cdot \G \\
+0 & {\bm I} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\delta \vec{\cal V} \\ \delta \vec{\cal P}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{f} \\ \vec{h}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{cc}
+\K & \G \\ \G^T & -\C 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\delta \vec{\cal V}^{(k)} \\ \delta \vec{\cal P}^{(k)}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{r}_{\cal V} \\ \vec{r}_{\cal P}
+\end{array}
+\right)
+\]
+
+
+Finally, the SIMPLE algorithm is as follows:
+\begin{itemize}
+\item $\vec{\cal V}^{(k)}$ and $\vec{\cal P}^{(k)}$ are given
+\item Compute the residuals 
+\begin{eqnarray}
+\vec{r}_{\cal V} &=& \vec{f} - \K \cdot \vec{\cal V}^{(k)} - \G \cdot \vec{\cal P}^{(k)} \nn\\
+\vec{r}_{\cal P} &=& \vec{h} - \G^T \cdot \vec{\cal V}^{(k)}
+\end{eqnarray}
+\item Solve $\K \cdot \delta  \vec{\cal V}^{\star} = \vec{r}_{\cal V}$
+\item Solve $\tilde{\SSS} \cdot \delta \vec{\cal P}^\star 
+= \vec{r}_{\cal P} - \G^T \cdot \delta  \vec{\cal V}^{\star}$
+\item Update $\delta \vec{\cal P} =\delta \vec{\cal P}^\star $
+\item Update $ \delta  \vec{\cal V}  =  \delta  \vec{\cal V}^{\star} 
+- {\bm D}_\K^{-1} \cdot \G \cdot \delta \vec{\cal P}^\star $
+\item Update
+\begin{eqnarray}
+\vec{\cal V}^{(k+1)} &=& \vec{\cal V}^{(k)} + \omega_{\cal V} \delta \vec{\cal V} \nn\\
+\vec{\cal P}^{(k+1)} &=& \vec{\cal P}^{(k)} + \omega_{\cal P} \delta \vec{\cal P} 
+\end{eqnarray}
+
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 %...................................................
-\subsubsection{The GMRES approach}
+\subsubsection{The GMRES approach - NOT FINISHED}
 
 The Generalized Minimal Residual method \cite{sasc86} 
 is an extension of MINRES (which is only applicable to symmetric systems) to unsymmetric systems. 
@@ -727,5 +1402,9 @@ equation).
 
 
 
+the FGMRES approach \cite{deit13}
 
 
+\Literature \cite{pasa75,mamo08,fumt11,knke04,kool00,kopo93} \cite{lane18}
+
+Preconditioners \Literature: \cite{seuv10}

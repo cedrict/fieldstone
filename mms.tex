@@ -118,12 +118,12 @@ p(x,y) &=& xy+x+y+x^3y^2 - 4/3
 Note that the pressure field is such that $\int_{\Omega} p \; dV = 0$.
 The gradient components of the velocity and pressure fields are given by:
 \begin{eqnarray}
-\frac{\partial u}{\partial x} &=& 3x^2+2x(y+1)-3y^2-2y+1   \\
-\frac{\partial u}{\partial y} &=& x(x-6y-2)\\
-\frac{\partial v}{\partial x} &=& -y(6x+y+2)\\
-\frac{\partial v}{\partial y} &=& -3x^2-2x(y+1)+3y^2+2y-1 \\
-\frac{\partial p}{\partial x} &=& 3x^2y^2 + y +1 \\ 
-\frac{\partial p}{\partial y} &=& 2x^3y+x+1 
+\frac{\partial u}{\partial x} &=& 3x^2+2x(y+1)-3y^2-2y+1  \nn \\
+\frac{\partial u}{\partial y} &=& x(x-6y-2) \nn\\
+\frac{\partial v}{\partial x} &=& -y(6x+y+2) \nn\\
+\frac{\partial v}{\partial y} &=& -3x^2-2x(y+1)+3y^2+2y-1 \nn\\
+\frac{\partial p}{\partial x} &=& 3x^2y^2 + y +1 \nn\\ 
+\frac{\partial p}{\partial y} &=& 2x^3y+x+1 \nn
 \end{eqnarray}
 so that the strain rate tensor components are 
 \begin{eqnarray}
@@ -169,8 +169,14 @@ v_{rms} = \sqrt{ \frac{1}{L_x L_y}  \int_0^1 \int_0^1 (u^2+v^2) dx dy }
 \]
 
 
-
-
+\begin{center}
+\includegraphics[width=5cm]{images/benchmark_db2d/vel}
+\includegraphics[width=5cm]{images/benchmark_db2d/u}
+\includegraphics[width=5cm]{images/benchmark_db2d/bx}\\
+\includegraphics[width=5cm]{images/benchmark_db2d/press}
+\includegraphics[width=5cm]{images/benchmark_db2d/v}
+\includegraphics[width=5cm]{images/benchmark_db2d/by}
+\end{center}
 
 %-----------------------------------------------------------------------------
 \subsubsection{Analytical benchmark III \label{mms3} - "DB3D"}

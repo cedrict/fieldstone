@@ -86,7 +86,7 @@ computational geodynamics community.
       Finite deformation in and around a fluid sphere \cite{sccm88,crud88}.
 \item the sinking block (sinker) \cite{thie11,cehg14,gery10,geyu03,mamo08,mishin11,fumt11,maie12,sctc20} 
       (see Section~\ref{sec:sinker})
-\item multiple sinkers \cite{mabl14,mabl15}
+\item multiple sinkers \cite{mabl14,mabl15,clhe21}
 \item Thin layer entrainment (see Section~\ref{sec:tlentr})
 \item 1D compression \cite{modm02}
 \item 2D compressible Stokes flow problem \cite{itki94,tagu07,lezh08,kilv10,lizh13}
@@ -164,6 +164,7 @@ computational geodynamics community.
       Kameyama \etal (2008) \cite{kaks08},
       Wright \etal (2010) \cite{wrfy10},
       Davies \etal (2013) \cite{dadb13},
+      Burstedde \etal (2013) \cite{busa13},
       Arrial \etal (2014) \cite{arfw14},
       Liu \& King (2019) \cite{liki19}
 \item Heat flow around a cylinder (see Section~\ref{sec:hfcyl})
@@ -766,7 +767,7 @@ limit state design/analysis \cite{mich01,zhll03,gour04,gork06,lesk05,shls03}.
 %................................................................................
 \subsubsection{Driven cavity with analytical solution} \label{sec:ldc_anal}
 
-This comes from Elman \etal \cite{elsw}(section 3.1.4). The velocity is prescribed to be
+This comes from Elman \etal \cite{elsw}(section 3.1.4)\footnote{actually, not?}. The velocity is prescribed to be
 \[
 {\vec v}=(2y(1-x^2) ; -2x(1-y^2) )
 \]
@@ -830,6 +831,65 @@ v_{rms}^2
 &=& 3.5555
 \end{eqnarray}
 
+We can reformulate the benchmark in the unit square $\Omega=[0:1]\times[0:1]$.
+
+\begin{eqnarray}
+u(x,y) &=&  (2y-1)x(1-x) \nn\\
+v(x,y) &=& - (2x-1)y(1-y) \nn
+\end{eqnarray}
+
+Then 
+\begin{eqnarray}
+\dot\varepsilon_{xx}(x,y) &=& (2y-1)(1-2x) \nn\\
+\dot\varepsilon_{xy}(x,y) &=&  x(1-x)  - y(1-y)  \nn\\
+\dot\varepsilon_{yy}(x,y) &=& - (2x-1)(1-2y)  \nn
+\end{eqnarray}
+We of course recover 
+\[
+\dot\varepsilon_{xx}(x,y) + \dot\varepsilon_{yy}(x,y) = 0
+\]
+The Stokes equation is then:
+\begin{eqnarray}
+-\frac{\partial p}{\partial x} + 2\eta (-2(2y-1)-(1-2y)  ) &=& \rho g_x \nn\\
+-\frac{\partial p}{\partial y} + 2\eta ((1-2x)+2(2x-1)  ) &=& \rho g_y \nn
+\end{eqnarray}
+or
+\begin{eqnarray}
+-\frac{\partial p}{\partial x} + 2\eta (1-2y) &=& \rho g_x \nn\\
+-\frac{\partial p}{\partial y} - 2\eta (1-2x) &=& \rho g_y \nn
+\end{eqnarray}
+where we assume the viscosity $\eta=1$ to be constant in space.
+Assuming $g_x=0$, the first equation is
+\[
+\frac{\partial p}{\partial x} =  2 (1-2y)
+\]
+i.e.
+\[
+p(x,y) = 2 x (1-2y) + f(y)
+\]
+Inserting this in the second equation:
+\[
+4 x - f'(y) - 2 (1-2x)   = \rho g_y
+\]
+Assuming $g_y=-1$, then
+\[
+8 x -2  - f'(y)  = \rho 
+\]
+we set $\rho(x,y)= 8x-2$ and then $f'(y)=0$ so $f(y)=C$ where $C$
+is a constant.
+Finally the pressure is given by:
+\[
+p(x,y)= 2 x (1-2y) + C
+\]
+We add the following requirement: $\int_\Omega p(x,y) d\Omega =0$ 
+\[
+\int_{0}^1 \int _0^1 p(x,y) = 0
+\Rightarrow 
+\int_{0}^1 \int _0^1 [ 2 x (1-2y) + C] = 0
+\]
+so that $C=0$.
+
+We also find $\upnu_{rms}=\frac{1}{\sqrt{45}}\simeq 0.1490711985$
 
 
 

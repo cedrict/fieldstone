@@ -3,26 +3,27 @@ In what follows, we want to solve the system of linear equations
 \begin{equation}
 {\bm A}\cdot \vec{x} = \vec{b} 
 \end{equation}
-for the vector $\vec{x}$, 
-where the known $n\times n$ matrix ${\bm A}$ is 
+for the vector $\vec{x}$.
+We denote the unique solution of this system by $\vec{x}^\star$.
+
+Note that in some cases the the known $n\times n$ matrix ${\bm A}$ is 
 symmetric (i.e., ${\bm A}^T = {\bm A}$), 
 positive-definite (i.e. $\vec{x}^T\cdot {\bm A} \cdot \vec{x} > 0$ 
 for all non-zero vectors $\vec{x}$ in $\mathbb{R}^n$), 
-and real, and $\vec{b}$ is known as well. 
-We denote the unique solution of this system by $\vec{x}^\star$.
+and real, and $\vec{b}$ is known as well (typically the $\K$ matrix). 
 
 
 %........................................
 \subsubsection{Stationary iterative methods}
 
-\url{https://en.wikipedia.org/wiki/Iterative_method}
 
 Basic examples of stationary iterative methods use a splitting of the matrix ${\bm A}$ such as
 \[
 {\bm A}={\bm D}+{\bm L}+{\bm U}
 \]
-where D is only the diagonal part of A, L is the strict lower triangular part of A and
-U is the strict upper triangular part of A.
+where ${\bm D}$ is only the diagonal part of ${\bm A}$, 
+${\bm L}$ is the strict lower triangular part of ${\bm A}$ and
+${\bm U}$ is the strict upper triangular part of ${\bm A}$.
 
 For instance:
 \[
@@ -66,38 +67,100 @@ For instance:
 \]
 
 
-CHANGE with M and N
-The iterative method is defined by:
+
+\begin{itemize}
+\item Jacobi method\footnote{\url{https://en.wikipedia.org/wiki/Jacobi_method}}: 
+The solution is then obtained iteratively via
+
 \begin{equation}
-{\bm D} \cdot \vec{T}^{{\color{Fuchsia}k+1}} = -({\bm L} + {\bm U}) \cdot \vec{T}^{\color{Fuchsia}k} 
+{\bm D} \cdot \vec{x}^{{\color{Fuchsia}k+1}} = -({\bm L} + {\bm U}) \cdot \vec{x}^{\color{Fuchsia}k} 
 + \vec{b}
 \qquad k=0,1,\dots
 \end{equation}
-where $\vec{T}^{\color{Fuchsia}0}$ is the initial guess (often taken to be zero).
-Note that the superscript denotes the iteration number and has nothing to 
-do with the time step.
+where 
+$\vec{x}^{\color{Fuchsia}k}$ is the $k$-th approximation or iteration of $\vec{x}$ and
+$\vec{x}^{\color{Fuchsia}0}$ is the initial guess (often taken to be zero).
+A sufficient (but not necessary) condition for the method to converge is that the matrix ${\bm A}$ 
+is strictly or irreducibly diagonally dominant.
 
+\item Gauss-Seidel method\footnote{\url{https://en.wikipedia.org/wiki/Gauss-Seidel_method}}: 
+It is defined by the iteration
+\begin{equation}
+{\bm L_\star} \cdot \vec{x}^{{\color{Fuchsia}k+1}} = - {\bm U} \cdot \vec{x}^{\color{Fuchsia}k} 
++ \vec{b}
+\qquad k=0,1,\dots
+\end{equation}
+where ${\bm L}_\star = {\bm L}+{\bm U}$.
 
-\begin{itemize}
-\item Richardson method: 
-\item Jacobi method: 
-\item Damped Jacobi method: 
-\item Gauss–Seidel method: 
+There is actually a way to make the computation of $\vec{x}^{(k+1)}$ which uses the elements of 
+$\vec{x}^{(k+1)}$ that have already been computed, and only the elements of $\vec{x}^{(k)}$ that 
+have not been computed in the $k+1$ iteration. 
+This means that, unlike the Jacobi method, only one storage vector is required as elements 
+can be overwritten as they are computed, which can be advantageous for very large problems. 
+
+Note that Gauss-Seidel is the same as SOR (successive over-relaxation) with $\omega = 1$.
+
 \item Successive over-relaxation method (SOR):
-\item Symmetric successive over-relaxation (SSOR):
+\begin{equation}
+({\bm D} + \omega {\bm L}) \cdot \vec{x}^{{\color{Fuchsia}k+1}} 
+= - (\omega{\bm U} + (\omega-1) {\bm D}) \cdot \vec{x}^{\color{Fuchsia}k} 
++ \omega \vec{b}
+\qquad k=0,1,\dots
+\end{equation}
+
+
+\item Symmetric successive over-relaxation 
+(SSOR)\footnote{\url{https://en.wikipedia.org/wiki/Symmetric_successive_over-relaxation}}:
+The version of SOR for symmetric matrices ${\bm A}$, in which ${\bm U}={\bm L}^T$ is 
+given by the recursion
+\begin{equation}
+\vec{x}^{{\color{Fuchsia}k+1}} 
+=  \vec{x}^{\color{Fuchsia}k} 
+-\gamma^k {\bm P}^{-1} ( {\bm A}\cdot \vec{x}^{(k)} -\vec{b})
+\qquad k=0,1,\dots
+\end{equation}
+with 
+\[
+{\bm P} = \left(\frac{\bm D}{\omega}+{\bm L}\right) \frac{\omega}{2-\omega} {\bm D}^{-1}\cdot
+\left(\frac{\bm D}{\omega}+ {\bm L} \right)
+\]
+with $0<\omega<2$.
+
+%\item Richardson method: 
+%\item Damped Jacobi method: 
+
+
 \end{itemize}
 
-\index{general}{BiCG solver}
 \index{general}{Jacobi solver}
 \index{general}{Gauss-Seidel solver}
-\index{general}{GMRES solver}
-\index{general}{CG solver}
-\index{general}{SSOR solver}
+\index{general}{SOR iterative method}
+\index{general}{SSOR iterative method}
 
+\index{general}{GMRES solver}
+
+All these methods can be cast in a more general framework\footnote{
+\url{https://en.wikipedia.org/wiki/Iterative_method}}: 
+The basic iterative methods work by splitting the matrix A into M-N 
+and here the matrix M should be easily invertible. The iterative methods are now defined as 
+\begin{equation}
+{\bm M} \cdot \vec{x}^{k+1} = {\bm N}\cdot \vec{x}^k + \vec{b}
+\end{equation}
+with 
+\begin{itemize}
+\item Richardson method: ${\bm M}=\frac{1}{\omega} {\bm I}$
+\item Jacobi method: ${\bm M}={\bm D}$
+\item Damped Jacobi method: ${\bm M}=\frac{1}{\omega}{\bm D}$
+\item Gauss–Seidel method: ${\bm M}={\bm D} + {\bm L}$
+\item Successive over-relaxation method: ${\bm M} = \frac{\bm D}{\omega}+{\bm L}$
+\item Symmetric successive over-relaxation:  ${\bm M} = \left(\frac{\bm D}{\omega}+{\bm L}\right) \frac{\omega}{2-\omega} {\bm D}^{-1}\cdot \left(\frac{\bm D}{\omega}+ {\bm L} \right)$
+\end{itemize}
+and ${\bm N}={\bm M}-{\bm A}$.
 
 %........................................
 \subsubsection{Krylov subspace methods}
 
+\index{general}{CG solver}
 \begin{itemize}
 \item {\color{purple} Conjugate Gradient}
 \footnote{\url{https://en.wikipedia.org/wiki/Conjugate_gradient_method}} 
@@ -157,11 +220,16 @@ It is implemented in \stone~15,16,82.
 
 
 
+\index{general}{BiCG solver}
 \item Biconjugate Gradient method
 \footnote{\url{https://en.wikipedia.org/wiki/Biconjugate_gradient_method}}
 \item Biconjugate Gradient stabilised method
 \footnote{\url{https://en.wikipedia.org/wiki/Biconjugate_gradient_stabilized_method}}
-\item MINRES
+\item MINRES: For iterative solution of symmetric systems Ax = b, the conjugate gradient method
+(CG) is commonly used when A is positive definite, while the minimum residual method (MINRES)
+is typically reserved for indefinite systems.
+
+
 \item Generalized minimal residual method (GMRES)
 \footnote{\url{https://en.wikipedia.org/wiki/Generalized_minimal_residual_method}}
 \end{itemize}
