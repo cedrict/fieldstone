@@ -91,6 +91,13 @@ system, using Uzawa-type smoothers.
 \end{itemize}
 
 
+\Literature: Preconditioners for Incompressible Navier-Stokes Solvers \cite{seuv10}
+
+Saddle point preconditioners have been extensively discussed and studied \cite{bewa08}, \cite{dewu04}
+
+Diagonal preconditioners in \cite{shrb01}, \cite{babc94}.
+
+
 
 %...................................................
 \subsubsection{When using the penalty formulation}
@@ -842,17 +849,18 @@ If $\lambda >> \max_\Omega{\eta}$ then the matrix $\tilde{\K}$ is ill-conditione
 
 The SIMPLE method (Semi-Implicit Method for Pressure-Linked Equations)
 has been introduced by Patankar \& Spalding (1972) \cite{pasp72} as an iterative method to solve
-the finite volume discretized incompressible Navier-Stokes equations. The algorithm
-is based on the following steps:
-\begin{itemize}
-\item First the pressure is assumed to be known from the previous iteration.
-\item Then the velocity is solved from the momentum equations. The newly obtained
-velocities do not satisfy the continuity equation since the pressure is only a
-guess.
-\item In the next substeps the velocities and pressures are corrected in order to
-satisfy the discrete continuity equation.
-\end{itemize}
-The algorithm follows from a block LU decomposition
+the finite volume discretized incompressible Navier-Stokes equations. 
+%The algorithm
+%is based on the following steps:
+%\begin{itemize}
+%\item First the pressure is assumed to be known from the previous iteration.
+%\item Then the velocity is solved from the momentum equations. The newly obtained
+%velocities do not satisfy the continuity equation since the pressure is only a
+%guess.
+%\item In the next substeps the velocities and pressures are corrected in order to
+%satisfy the discrete continuity equation.
+%\end{itemize}
+In a nutshell, the algorithm follows from a block LU decomposition
 \begin{equation}
 \left(
 \begin{array}{cc}
@@ -894,10 +902,7 @@ The algorithm follows from a block LU decomposition
 \end{equation}
 The approximation $\K^{-1}$ as ${\bm D}_\K^{-1} = (diag(\K))^{-1}$ leads to the 
 SIMPLE algorithm. In this case the approximation of the Schur complement matrix is given by
-\[
-\tilde{\SSS} = \G^T {\bm D}_\K^{-1} \G
-\]
-and the decomposition looks like
+$\tilde{\SSS} = \G^T\cdot  {\bm D}_\K^{-1} \cdot \G$  and the decomposition looks like
 \[
 \left(
 \begin{array}{cc}
@@ -920,8 +925,8 @@ and the decomposition looks like
 \right)
 \]
 
-Before we can write out the SIMPLE algorithm, we must first take a small detour via 
-distributive iterative methods \cite{vusb00,tack10}.
+Before we can write out the SIMPLE algorithm, we must first take a small detour via so-called
+distributive iterative methods \cite{vusb00,tack10}. \index{general}{Distributive Iterative Method}
 Let us consider the linear system 
 \[
 {\bm A}\cdot \vec{x}=\vec{b}
@@ -947,16 +952,13 @@ and finally
 \[
 {\bm M}\cdot\vec{x}^{k+1}={\bm N}\cdot \vec{x}^{k}+\vec{b} 
 \]
-Note that ${\bm A}={\bm M}-{\bm N}$:
-\[
-{\bm M}-{\bm N}={\bm M}-{\bm M}\cdot {\bm B}
+Note that ${\bm M}-{\bm N}={\bm M}-{\bm M}\cdot {\bm B}
 = {\bm M}\cdot  ({\bm I}-{\bm B}) 
 = {\bm A}\cdot ({\bm I}-{\bm B})^{-1}\cdot ({\bm I}-{\bm B}) 
-= {\bm A}
-\]
+= {\bm A}$. 
 Let us now write the original system 
-${\bm A}\cdot \vec{x}=\vec{b}$ as $({\bm A}{\bm B})({\bm B}^{-1}\cdot \vec{x})=\vec{b}$
-or, $ \underline{\bm A} \underline{\vec{x}}=\vec{b} $
+${\bm A}\cdot \vec{x}=\vec{b}$ as $({\bm A}\cdot {\bm B})\cdot ({\bm B}^{-1}\cdot \vec{x})=\vec{b}$
+or, $ \underline{\bm A}\cdot  \underline{\vec{x}}=\vec{b} $
 with 
 $\vec{x}={\bm B}\cdot \underline{\vec{x}}$
 and 
@@ -981,10 +983,9 @@ We then have
 \end{eqnarray}
 Finally, we have the following recursion:
 \begin{equation}
-\boxed{\vec{x}^{k+1} = \vec{x}^k +{\bm B} \cdot {\bm M} ^{-1}\cdot (-{\bm A}\cdot \vec{x}^{k} + \vec{b}  ) }
+\boxed{\vec{x}^{k+1} = \vec{x}^k +{\bm B} \cdot {\bm M} ^{-1}\cdot (\vec{b} -{\bm A}\cdot \vec{x}^{k}  ) }
+\label{eq:simplerec}
 \end{equation}
-
-
 Coming back to the SIMPLE algorithm, we start from 
 \[
 {\bm A}=
@@ -1000,24 +1001,25 @@ The matrix ${\bm B}$ is then chosen to be
 {\bm B}=
 \left(
 \begin{array}{cc}
-1 & -\K^{-1} \G \\
-0 & 1
+{\bm I} & -\K^{-1} \G \\
+0 & {\bm I}
 \end{array}
 \right)
 \]
 We then have 
 \[
-{\bm A} {\bm B} = 
+{\bm A}\cdot  {\bm B} = 
 \left(
 \begin{array}{cc}
 \K & \G \\
 \G^T & 0
 \end{array}
 \right)
+\cdot 
 \left(
 \begin{array}{cc}
-1 & -\K^{-1} \G \\
-0 & 1
+{\bm I} & -\K^{-1} \G \\
+0 & {\bm I}
 \end{array}
 \right)
 =
@@ -1029,7 +1031,7 @@ We then have
 \right)
 \]
 where $\SSS=\G^T\K^{-1}\G$.
-We define ${\bm D}_\K =diag(\K)$ and $\hat{\SSS}=\G^T \cdot {\bm D}_\K^{-1} \cdot \G$. 
+Let us recall that we define ${\bm D}_\K =diag(\K)$ and $\hat{\SSS}=\G^T \cdot {\bm D}_\K^{-1} \cdot \G$. 
 We further define 
 \[
 {\bm M}=
@@ -1040,7 +1042,7 @@ We further define
 \end{array}
 \right)
 \]
-and ${\bm N}$ follows from the splitting ${\bm A}{\bm B}= {\bm M} - {\bm N}$. 
+and ${\bm N}$ follows from the splitting ${\bm A}\cdot {\bm B}= {\bm M} - {\bm N}$. 
 (Note that we do not need to form nor use ${\bm N}$).
 
 The standard SIMPLE algorithm also replaces $\K^{-1}$  by  ${\bm D}_\K^{-1}$ in ${\bm B}$ so that 
@@ -1049,21 +1051,19 @@ ${\bm B}$ is approximated by:
 {\bm B}=
 \left(
 \begin{array}{cc}
-1 & -{\bm D}_\K^{-1} \G \\
-0 & 1
+{\bm I} & -{\bm D}_\K^{-1} \G \\
+0 & {\bm I}
 \end{array}
 \right)
 \]
 in the iterations.
-
-
 We can define 
 \[
 \vec{r}^k=
 \vec{b}-{\bm A}\cdot \vec{x}^k = 
 \left(
 \begin{array}{c}
-f \\ h
+\vec{f} \\ \vec{h}
 \end{array}
 \right)
 -
@@ -1082,16 +1082,17 @@ f \\ h
 =
 \left(
 \begin{array}{c}
-r_V^k \\ r_P^k
+\vec{r}_{\cal V}^k \\ \vec{r}_{\cal P}^k
 \end{array}
 \right)
 \]
 
-The iteration loop then looks like
+The iteration loop of Eq.~\eqref{eq:simplerec} then takes the form 
 \[
 \left(
 \begin{array}{c}
-V^{k+1} \\ P^{k+1}
+\vec{\cal V}^{k+1} \\ 
+\vec{\cal P}^{k+1}
 \end{array}
 \right)
 =
@@ -1130,208 +1131,143 @@ V^k \\ P^k
 {\bm B}  {\bm M} ^{-1}
 \left(
 \begin{array}{c}
-r_V^k \\ r_P^k
+\vec{r}_{\cal V}^k \\ 
+\vec{r}_{\cal P}^k
 \end{array}
 \right)
 \]
-
-
-
+This last equation can be rewritten\footnote{Remember 
+that $({\bm A}\cdot {\bm B})^{-1}={\bm B}^{-1}\cdot {\bm A}^{-1}$}:
+\[
+{\bm M} \cdot 
+\left[ {\bm B}^{-1} \cdot 
+\left(
+\begin{array}{c}
+\delta \vec{\cal V}^k \\ 
+\delta \vec{\cal P}^k
+\end{array}
+\right)
+\right]
+=
+\left(
+\begin{array}{c}
+\vec{r}_{\cal V}^k \\ 
+\vec{r}_{\cal P}^k
+\end{array}
+\right)
+\]
 We then have to solve 
 \begin{equation}
 {\bm M} 
+\cdot
 \left(
 \begin{array}{c}
-\delta^\star V^k \\ \delta^\star P^k
+\delta^\star \vec{\cal V}^k \\ 
+\delta^\star \vec{\cal P}^k
 \end{array}
 \right)
 =
 \left(
 \begin{array}{cc}
 \K & 0 \\
-\G^T & \hat{\SSS}
+\G^T & -\hat{\SSS}
 \end{array}
 \right)
+\cdot
 \left(
 \begin{array}{c}
-\delta^\star V^k \\ \delta^\star P^k
+\delta^\star \vec{\cal V}^k \\ 
+\delta^\star \vec{\cal P}^k
 \end{array}
 \right)
 =
 \left(
 \begin{array}{c}
-r_V^k \\ r_P^k
+\vec{r}_{\cal V}^k \\ 
+\vec{r}_{\cal P}^k
 \end{array}
 \right)
-\label{simple1}
+\label{simple1aa}
 \end{equation}
 and then compute
 \begin{equation}
 \left(
 \begin{array}{c}
-\delta V^k \\ \delta P^k
+\delta \vec{\cal V}^k \\ 
+\delta \vec{\cal P}^k
 \end{array}
 \right)
 =
 {\bm B}  
 \left(
 \begin{array}{c}
-\delta^\star V^k \\ \delta^\star P^k
+\delta^\star \vec{\cal V}^k \\ 
+\delta^\star \vec{\cal P}^k
 \end{array}
 \right)
-\label{simple2}
+\label{simple2aa}
 \end{equation}
-
-Fortunately Eq.(\ref{simple1})
-translates into:
+Fortunately Eq.~\eqref{simple1aa} translates into:
 \begin{eqnarray}
-\K \; \delta^\star V^k &=&  r_V^k   \\
-\hat{\SSS} \;  \delta^\star P^k &=&  r_P^k - \G^T \delta^\star V^k 
+\K \cdot \delta^\star \vec{\cal V}^k &=&  \vec{r}_{\cal V}^k   \\
+\hat{\SSS} \cdot  \delta^\star \vec{\cal P}^k &=&  - \vec{r}_P^k + \G^T \cdot \delta^\star \vec{V}^k 
 \end{eqnarray}
-
-and Eq.(\ref{simple2}) 
-translates into:
-
+and Eq.~\eqref{simple2aa} translates into:
 \[
 \left(
 \begin{array}{c}
-\delta V^k \\ \delta P^k
+\delta \vec{\cal V}^k \\ 
+\delta \vec{\cal P}^k
 \end{array}
 \right)
 =
 \left(
 \begin{array}{cc}
-1 & -{\bm D}^{-1}\cdot \G \\
-0 & 1
+{\bm I} & -{\bm D}_\K^{-1}\cdot \G \\
+0 & {\bm I}
 \end{array}
 \right)
+\cdot
 \left(
 \begin{array}{c}
-\delta^\star V^k \\ \delta^* P^k
+\delta^\star \vec{\cal V}^k \\ 
+\delta^* \vec{\cal P}^k
 \end{array}
 \right)
 \]
 or, 
 \begin{eqnarray}
-\delta V_k &=& \delta^\star V^k  -{\bm D}_\K^{-1} \G \delta^\star P_k \\
-\delta P_k &=& \delta^\star P^k
+\delta \vec{\cal V}_k &=& \delta^\star \vec{\cal V}^k 
+-{\bm D}_\K^{-1}\cdot \G \cdot\delta^\star \vec{\cal P}_k \\
+\delta \vec{\cal P}_k &=& \delta^\star \vec{\cal P}^k
 \end{eqnarray}
 
+\newpage
 The final algorithm will then look as follows:
 
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{enumerate}
-\item compute residual $r_V^k$
-\item compute residual $r_P^k$
-\item Solve $\K  \; \delta^\star V^k =  r_V^k  $
-\item Solve $\hat{\SSS} \; \delta^\star P^k =  r_P^k - \G^T \delta^\star V^k $
-\item compute $\delta V_k = \delta^\star V^k  -{\bm D}_\K^{-1} \G \delta^\star P_k $
-\item compute $\delta P_k = \delta^\star P^k$
-\item update $V^{k+1} = V^k + \delta V^k$
-\item update $P^{k+1} = P^k + \delta P^k$
-\end{enumerate}
-
-
-{\color{red} It seems that two linear systems need to 
-be solved, one with $\K$ and one with $\hat{\SSS}$. 
-iIs it really what people do ?}
-
-
-
-Bizarrely, this scheme does not coincide with \cite{urvs09}. Or does it ?
-See also: \cite{eche13}, \cite{brsa97b}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\newpage
-Thus one iteration of SIMPLE corresponds to the solving of the following system:
-
-\[
-\left(
-\begin{array}{cc}
-\K & 0 \\ 
-\G^T & -\tilde{\SSS}
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{cc}
-{\bm I} & {\bm D}_\K^{-1} \cdot \G \\
-0 & {\bm I} 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{c}
-\delta \vec{\cal V} \\ \delta \vec{\cal P}
-\end{array}
-\right)
-=
-\left(
-\begin{array}{c}
-\vec{f} \\ \vec{h}
-\end{array}
-\right)
--
-\left(
-\begin{array}{cc}
-\K & \G \\ \G^T & -\C 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{c}
-\delta \vec{\cal V}^{(k)} \\ \delta \vec{\cal P}^{(k)}
-\end{array}
-\right)
-=
-\left(
-\begin{array}{c}
-\vec{r}_{\cal V} \\ \vec{r}_{\cal P}
-\end{array}
-\right)
-\]
-
-
-Finally, the SIMPLE algorithm is as follows:
-\begin{itemize}
-\item $\vec{\cal V}^{(k)}$ and $\vec{\cal P}^{(k)}$ are given
-\item Compute the residuals 
+\item compute the residuals 
 \begin{eqnarray}
 \vec{r}_{\cal V} &=& \vec{f} - \K \cdot \vec{\cal V}^{(k)} - \G \cdot \vec{\cal P}^{(k)} \nn\\
 \vec{r}_{\cal P} &=& \vec{h} - \G^T \cdot \vec{\cal V}^{(k)}
 \end{eqnarray}
-\item Solve $\K \cdot \delta  \vec{\cal V}^{\star} = \vec{r}_{\cal V}$
-\item Solve $\tilde{\SSS} \cdot \delta \vec{\cal P}^\star 
-= \vec{r}_{\cal P} - \G^T \cdot \delta  \vec{\cal V}^{\star}$
-\item Update $\delta \vec{\cal P} =\delta \vec{\cal P}^\star $
-\item Update $ \delta  \vec{\cal V}  =  \delta  \vec{\cal V}^{\star} 
-- {\bm D}_\K^{-1} \cdot \G \cdot \delta \vec{\cal P}^\star $
-\item Update
+\item Solve $\K  \cdot \delta^\star \vec{\cal V}^k =  \vec{r}_{\cal V}^k  $
+\item Solve $\hat{\SSS} \cdot \delta^\star \vec{\cal P}^k =  \vec{r}_{\cal P}^k - \G^T \cdot  \delta^\star V^k $
+\item Compute $\delta \vec{\cal V}^k = \delta^\star \vec{\cal V}^k -{\bm D}_\K^{-1} \cdot \G \cdot \delta^\star \vec{\cal P}_k $
+\item Update $\delta \vec{\cal P}^k = \delta^\star \vec{\cal P}^k$
+\item Update 
 \begin{eqnarray}
-\vec{\cal V}^{(k+1)} &=& \vec{\cal V}^{(k)} + \omega_{\cal V} \delta \vec{\cal V} \nn\\
-\vec{\cal P}^{(k+1)} &=& \vec{\cal P}^{(k)} + \omega_{\cal P} \delta \vec{\cal P} 
+\vec{\cal V}^{(k+1)} &=& \vec{\cal V}^{(k)} + \omega_{\cal V} \delta \vec{\cal V}^{(k)} \nn\\
+\vec{\cal P}^{(k+1)} &=& \vec{\cal P}^{(k)} + \omega_{\cal P} \delta \vec{\cal P}^{(k)} 
 \end{eqnarray}
+\end{enumerate}
+\end{mdframed}
+where the parameters $\omega_{\cal V}$ and $\omega_{\cal P}$ are between 0 and 1. 
 
-\end{itemize}
+\Literature: Echevarria Serur (2013) \cite{eche13}, Braess \& Sarazin (1997) \cite{brsa97b}, 
+see Ur Rehman \etal (2009) \cite{urvs09} for SIMPLE(R) algorithm. See also \cite{tack10}.
+
 
 
 
@@ -1404,7 +1340,5 @@ equation).
 
 the FGMRES approach \cite{deit13}
 
+\Literature \cite{pasa75,mamo08,fumt11,knke04,kool00,kopo93} 
 
-\Literature \cite{pasa75,mamo08,fumt11,knke04,kool00,kopo93} \cite{lane18}
-
-Preconditioners \Literature: \cite{seuv10}
