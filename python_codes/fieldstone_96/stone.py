@@ -892,7 +892,7 @@ for istep in range(0,1):
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
     for i in range(0,NV):
-        vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+        vtufile.write("%10e %10e %10e \n" %(u[i],0.,v[i]))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='gravity vector (norm)' Format='ascii'> \n")
