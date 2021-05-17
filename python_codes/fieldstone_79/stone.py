@@ -10,34 +10,54 @@ experiment = 1
 ###############################################################################
 
 def Tbc(x,y):
-
+    #----------------
     if experiment==1:
        #Tleft
-      if x<1e-6:
+       if x<1e-6:
          val=x+y 
-      #Tright
-      if abs(x-Lx)<1e-6:
+       #Tright
+       if abs(x-Lx)<1e-6:
          val=x+y 
-      #Tbottom
-      if y<1e-6:
+       #Tbottom
+       if y<1e-6:
          val=x+y 
-      #Ttop
-      if abs(y-Ly)<1e-6:
+       #Ttop
+       if abs(y-Ly)<1e-6:
          val=x+y
+    #----------------
+    if experiment==2:
+       #Tleft
+       if x<1e-6:
+         val=y*(Ly-y)+x*(Lx-x) 
+       #Tright
+       if abs(x-Lx)<1e-6:
+         val=y*(Ly-y)+x*(Lx-x) 
+       #Tbottom
+       if y<1e-6:
+         val=y*(Ly-y)+x*(Lx-x) 
+       #Ttop
+       if abs(y-Ly)<1e-6:
+         val=y*(Ly-y)+x*(Lx-x) 
 
     return val
 
 def T_analytical(x,y):
     if experiment==1:
        return x+y
+    if experiment==2:
+       return 0 
 
 def qx_analytical(x,y):
     if experiment==1:
        return -1
+    if experiment==2:
+       return 0
 
 def qy_analytical(x,y):
     if experiment==1:
        return -1
+    if experiment==2:
+       return 0
 
 ###############################################################################
 
@@ -53,7 +73,7 @@ Lx=1.
 Ly=1.
 
 
-m=4
+m=3
 nedge=m
 
 if m==3:
@@ -82,7 +102,7 @@ debug=False
 
 tol=1e-9
     
-visualise_all=True
+visualise_all=False
 
 #########################
 #physical pb 
@@ -1118,6 +1138,8 @@ np.savetxt('T.ascii',np.array([xT,yT,T]).T,header='# x,y,T')
 np.savetxt('qx.ascii',np.array([xT,yT,qx]).T,header='# x,y,qx')
 np.savetxt('qy.ascii',np.array([xT,yT,qy]).T,header='# x,y,qy')
 
+
+exit()
 ###################################################################3
 #compute errors
 ###################################################################3
