@@ -31,3 +31,31 @@ we can straightforwardly discretise them:
 &=& \frac{f(x_0+h_x,y_0+h_y)-f(x_0-h_x,y_0+h_y)-f(x_0+h_x,y_0-h_y)+f(x_0-h_x,y_0-h_y)}{2 h_x h_y}
 + {\cal O}(h_x^2,h_y^2) \nn
 \end{eqnarray}
+
+%...............................
+\subsubsection{From 1D to 2D}
+
+INSERT TEXT
+
+\begin{center}
+\input{tikz/tikz_needicon}
+\end{center}
+
+
+Also, here is a rather handy code snippet which should allow you to make nice plots of the coming exercises.
+
+\begin{lstlisting}
+       filename = 'solution_{:04d}.pdf'.format(istep) 
+       fig = plt.figure ()
+       ax = fig.gca(projection='3d')
+       ax.plot_surface(x.reshape ((nny,nnx)),y.reshape((nny,nnx)),T.reshape((nny,nnx)),color = 'darkseagreen')
+       ax.set_xlabel ( 'X [ m ] ')
+       ax.set_ylabel ( 'Y [ m ] ')
+       ax.set_zlabel ( ' Temperature  [ C ] ')
+       plt.title('Timestep  %.2d' %(istep),loc='right')
+       plt.grid ()
+       plt.savefig(filename)
+       #plt.show ()
+       plt.close()
+\end{lstlisting}
+

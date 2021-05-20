@@ -1,0 +1,124 @@
+All quantities with an $r$ subscript denote real quantities, while quantities with 
+an $m$ subscript denote dimensionless model quantites, i.e. values that are used as inputs to the code.
+
+Let us define four coefficients $K_L$, $K_T$, $K_M$ and $K_\theta$ as follows:
+\begin{equation}
+K_L=\frac{L_m}{L_r}
+\quad\quad\quad
+K_T=\frac{T_m}{T_r}
+\quad\quad\quad
+K_M=\frac{M_m}{M_r}
+\quad\quad\quad
+K_\theta=\frac{\theta_m}{\theta_r}
+\label{eqkkk}
+\end{equation}
+where $L_{\{m,r\}}$, $T_{\{m,r\}}$, $M_{\{m,r\}}$ and $\theta_{\{m,r\}}$ are respectively lengths, times, masses and temperatures, and the coefficients $K$ bear the following dimensions:
+\[
+K_M \rightarrow kg^{-1} \mbox{ , or } M^{-1}
+\]
+\[
+K_L \rightarrow m^{-1} \mbox{ , or } L^{-1}
+\]
+\[
+K_T \rightarrow s^{-1} \mbox{ , or } T^{-1}
+\]
+\[
+K_\theta \rightarrow K^{-1} \mbox{ , or } \theta^{-1}
+\]
+
+\paragraph{Velocity}
+
+The dimensions of a velocity are: $m.s^{-1}$, or $LT^{-1}$, so that
+\begin{equation}
+{\bm v}_m = \frac{L_m}{T_m} = \frac{K_L L_r}{K_T T_r} = K_L K_T^{-1} \frac{L_r}{T_r} = K_L K_T^{-1} {\bm v}_r  
+\label{eqvel}
+\end{equation}
+
+
+\paragraph{Viscosity} The dimensions of a viscosity are $Pa.s$, or $ML^{-1}T^{-1}$, so that
+\begin{equation}
+\mu_m=\frac{M_m}{L_mT_m}=\frac{K_M}{K_LK_T}\frac{M_r}{L_rT_r}=\frac{K_M}{K_LK_T} \mu_r
+\label{eqmu}
+\end{equation}
+
+
+\paragraph{Cohesion} The dimensions of a cohesion are those of a stress, i.e. $Pa$, or $ML^{-1}T^{-2}$, so that
+\[
+c_m=\frac{M_m}{L_mT_m^2}=\frac{K_M}{K_LK_T^2}\frac{M_r}{L_rT_r^2}=\frac{K_M}{K_LK_T^2} c_r
+\]
+
+\paragraph{Density} The dimensions of a density are $kg.m^{-3}$, or $ML^{-3}$, so that
+\[
+\rho_m=\frac{M_m}{L^3_m}=\frac{K_M}{K_L^3}\frac{M_r}{L^3_r}=\frac{K_M}{K_L^3} \rho_r
+\]
+
+\paragraph{Gravity} The dimensions of the gravity acceleration are $m.s^{-2}$, or $LT^{-2}$, so that
+\[
+{\bm g}_m=\frac{L_m}{T_m^2}=\frac{K_L}{K_T^2}\frac{L_r}{T_r^2}=\frac{K_L}{K_T^2} {\bm g}_r
+\]
+
+
+
+\paragraph{Body force} The dimensions of body forces are those of $\rho {\bm g}$, i.e. $kg.m^{-2}.s^{-2}$, or $ML^{-2}T^{-2}$, so that
+\[
+(\rho {\bm g})_m = \frac{M_m}{L_m^2T_m^2}=\frac{K_M}{K_L^2K_T^2}\frac{M_r}{L_r^2T_r^2}=\frac{K_M}{K_L^2K_T^2}(\rho {\bm g})_r
+\]
+\paragraph{Thermal expansion}  The dimension of thermal expansion is $^\circ C^{-1}$, so that
+\[
+\alpha_m = \frac{1}{\theta_m} = \frac{1}{K_\theta} \frac{1}{\theta_r} = \frac{1}{K_\theta} \alpha_r
+\]
+\paragraph{Thermal conductivity} The dimensions of the thermal conductivity are $W/m/K$, i.e. $kg.m.s^{-3}.K^{-1}$, so that
+\[
+k_m = \frac{M_m L_m}{T^3_m \theta_m} = \frac{K_M K_L}{K_T^3 K_\theta}\frac{M_r L_r}{T^3_r \theta_r} = \frac{K_M K_L}{K_T^3 K_\theta}k_r
+\]
+
+\paragraph{Thermal diffusivity} The dimensions of thermal diffusivity are $m^2/s$ so that
+\[
+\kappa_m = \frac{L^2_m}{T_m} = \frac{K_L^2}{K_T} \frac{L_r^2}{T_r} = \frac{K_L^2}{K_T} \kappa_r 
+\]
+
+\paragraph{Heat capacity} The dimensions are $J.kg^{-1}.K^{-1}$, i.e. $m^2.s^{-2}.K^{-1}$ so that
+\[
+(c_p)_m = \frac{L^2_m}{T_m^2 \theta_m} = \frac{K_L^2}{K_T^2 K_\theta} \frac{L^2_r}{T_r^2 \theta_r} = \frac{K_L^2}{K_T^2 K_\theta} (c_p)_r 
+\]
+
+\paragraph{Radiogenic heat production} The dimensions are $W.m^{-3}$, i.e. $kg.m^{-1}.s^{-3}$ so that
+\[
+H_m = \frac{M_m}{L_m T_m^3} = \frac{K_M}{K_L K_T^3} \frac{M_r }{L_r T_r^3} = \frac{K_M}{K_L K_T^3} H_r 
+\]
+
+\paragraph{A constant} The dimensions of $A$ are $Pa^{-n}.s^{-1}$, or $M^{-n} L^n T^{(2n-1)}$ so that
+\[
+A_m = \frac{L_m^n T_m^{2n+1}   }{M_m^n } = \frac{K_L^n K_T^{2n-1}  }{K_M^n } A_r
+\]
+
+\paragraph{Activation energy} The dimensions of $Q$ are $J.mol^{-1}$, but the dimensions of $\tilde{Q}=Q/R$ are $K$, so that
+\[
+\tilde{Q}_m = \theta_m = K_\theta \tilde{Q}_r
+\]
+
+\paragraph{Activation volume} The dimensions of $V$ are $m^3.mol^{-1}$, but the dimensions of $\tilde{V}=V/R$ are $m^3.^\circ C.J^{-1}$, so that
+\[
+\tilde{V}_m = \frac{K_L K_T^2 K_\theta}{K_M } \tilde{V}_r 
+\]
+
+
+The following coefficients are used in the code too :
+
+\[
+K_\mu = \frac{\mu_m}{\mu_m} = \frac{K_M}{K_LK_T}
+\]
+\[
+K_{v} =\frac{  {\bm v}_m  }{ {\bm v}_r } = \frac{K_L}{K_T} 
+\]
+\[
+K_{stress} = \frac{K_M}{K_LK_T^2}
+\]
+\[
+K_\rho = \frac{\rho_m}{\rho_r} = \frac{K_M}{K_L^3}
+\]
+
+
+
+
+

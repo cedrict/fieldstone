@@ -370,7 +370,7 @@ For further reading I suggest you read the review by May, Schellart \& Moresi on
 
 %.......................................
 \subsubsection{Conformal Mesh Refinement}
-\index[general]{Conformal Mesh Refinement}
+\index{general}{Conformal Mesh Refinement}
 
 The quadtree/octree mesh refinement presented above is one option
 when it comes to mesh refinement (or $h$-refinement). However their 
@@ -378,6 +378,13 @@ massive drawback is the presence of hanging notes which require
 special attention. 
 Another approach to mesh refinement is conformal mesh refinement
 as best exemplified on the following figures: 
+
+\begin{center}
+\includegraphics[height=4.5cm]{images/meshes/amrnew}\\
+{\captionfont Taken from Deb \etal (1996) \cite{depl96}.
+A typical instance of the outcome of the refinement procedure. 
+Notice that the ‘spill-over’ is reduced to one row on each side of the ‘localized’ elements.}
+\end{center}
 
 \begin{center}
 \includegraphics[height=4.5cm]{images/meshes/vaks15}
@@ -396,12 +403,35 @@ Middle row: Specfem manual;
 Bottom row: I don't know anymore.}
 \end{center}
 
+\begin{center}
+\includegraphics[height=5cm]{images/meshes/gari09_a}
+\includegraphics[height=5cm]{images/meshes/gari09_b}\\
+{\captionfont Taken from Garimella (2009) \cite{gari09}.}
+\end{center}
+
+\begin{center}
+\includegraphics[height=4cm]{images/meshes/newmeshref1}
+\includegraphics[height=4cm]{images/meshes/newmeshref2}
+\end{center}
+
+
+\begin{center}
+\includegraphics[height=4cm]{images/meshes/refine_mesh_sheet_directional1}
+\includegraphics[height=4cm]{images/meshes/refine_mesh_sheet_directional2}
+\includegraphics[height=4cm]{images/meshes/refine_mesh_sheet_directional4}\\
+\url{https://cubit.sandia.gov/public/14.0/help_manual/WebHelp/mesh_generation/mesh_modification/mesh_refinement.htm}
+\end{center}
+
 \Literature: 
 D{\"u}ster \& Rank \cite{dura01},
 Harris \etal (2004) \cite{habo04},
 Anderson \etal (2009) \cite{anbo09},
 Garimella (2009) \cite{gari09},
 Nicolas \& Fouquet (2013) \cite{nifo13,nifo13b}.
+\cite{parr07,
+ande09,
+schn00}
+
 
 %.......................................
 \subsubsection{Stretching the mesh}
@@ -502,17 +532,20 @@ Brandenburg \etal \cite{brhv08,brva07a}}
 
 The following is for the most part published in Thieulot (2018) \cite{thie18}.
 
-To a first approximation the Earth is a sphere: the Earth's polar diameter is about 43 kilometers shorter 
-than its equatorial diameter, a negligible difference of about 0.3\%. As a consequence, modelling physical processes 
+To a first approximation the Earth is a sphere: the Earth's polar diameter is 
+about 43 kilometers shorter than its equatorial diameter, a negligible difference of 
+about 0.3\%. As a consequence, modelling physical processes 
 which take place in the planet require the discretisation of a sphere. 
 Furthermore, because core dynamics occur on vastly difference time scales than mantle dynamics, mantle 
 modelling usually leaves the core out, thereby requiring simulations to be run on a hollow sphere mesh
 (with the noticeable exception of \cite{geyu07}).
 
-Although so-called latitude-longitude grids would seem appealing, they suffer from the convergence of meridians at the poles
-(resulting in over sampling at poles)
-and the juxtaposition of triangles near the poles and quadrilaterals elsewhere. 
-As a consequence more regular, but more complex, grids have been designed over the years which tesselate the surface of the 
+Although so-called latitude-longitude grids would seem appealing, 
+they suffer from the convergence of meridians at the poles
+(resulting in over sampling at poles) and the juxtaposition of triangles 
+near the poles and quadrilaterals elsewhere. 
+As a consequence more regular, but more complex, grids have been designed 
+over the years which tesselate the surface of the 
 sphere into triangles or quadrilaterals (sometimes overlapping).
 There is the 'cubed sphere' \cite{roip96,heta03,chob05,sthh06,chcc07,brmw10,yiym19},
 the Yin-Yang grid \cite{kasa04,yoka04,yoka06,kaks08,tack08,crta14,crta16},
@@ -522,37 +555,48 @@ an icosahedron-based grid \cite{bafr85,tasu01},
 or a grid composed of 12 blocks further subdivided into quadrilaterals \cite{zhzm00} 
 as used in the CitcomS code.
 Note that \cite{oldp12} have also presented a method for generating a numerical 
-grid on a spherical surface wwhich 
+grid on a spherical surface which 
 allows the grid to be based on several different regular polyhedrons (including octahedron, 
 cube, icosahedron, and rhombic dodecahedron). 
+Ideally, one wishes to generate a mesh that is regular,
+i.e. angles between edges/faces as close to $90^\circ$ as possible, 
+of approximately similar volumes.
+
 
 \begin{center}
 \includegraphics[width=12cm]{images/meshes/kaks08}\\
-{\captionfont Taken from Kameyama \etal (2008) \cite{kaks08}.}
+{\captionfont Example of Yin-Yang grid. Taken from Kameyama \etal (2008) \cite{kaks08}.}
 \end{center}
-
 
 How such meshes are built is often not discussed in the literature. It is 
 a tedious exercise of three-dimensional geometry and it can be time-consuming, especially 
 the connectivity array generation. In Thieulot (2018) \cite{thie18} I present an open source 
 mesh generator for three hollow sphere meshes: the 'cubed sphere' mesh, the CitcomS mesh and the 
-icosahedral mesh.
-
-
-The open source code library {\sc ghost}\cite{thie18} allows 
-three different types of hollow sphere meshes to be built
-, i.e. meshes bounded by two concentric spheres:
+icosahedral mesh:
 
 \begin{itemize}
 \item 
 The cubed sphere ('HS06'), composed of 6 blocks which 
 are themselves subdivided into $N_b \times N_b$ quadrilateral shaped cells  \cite{sado72,roip96,heta03,busa13}.
-%3 types: conformal \cite{rapm96,mcgr96}, obtained with elliptic solvers/spring dynamics \cite{puli07}, 
-%gnomonic  \cite{sado72,mcgr96}
-Four types of cubed spheres meshes have been proposed: the conformal, elliptic, gnomonic and spring types \cite{puli07}.
-However only gnomonic meshes are considered here: these are obtained by inscribing a cube within a sphere and expanding to the surface
+Four types of cubed spheres meshes have been proposed: the conformal, elliptic, gnomonic and spring types \cite{puli07}:
+
+
+\begin{center}
+\includegraphics[width=6.5cm]{images/meshes/puli07}
+\includegraphics[width=8.5cm]{images/meshes/cubed_nair}\\
+{\captionfont 
+Left: The cubed-sphere grids at $2^\circ$ resolution displaying cells on the sphere,
+ the image focuses on the distribution of grid cells near one corner of the grid;
+ (a) conformal mapping \cite{rapm96,mcgr96}, (b) the gnomonic grid modified by elliptic solver,
+ (c) equiangular gnomonic mapping and (d) the gnomonic grid modified by spring dynamics. \cite{puli07}.
+Right: Taken from presentation by R. Nair, see Nair2008.pdf
+}
+\end{center}
+
+However only gnomonic meshes are considered in Thieulot (2018): these 
+are obtained by inscribing a cube within a sphere and expanding to the surface
 of the sphere.
-The cubed sphere has recently been used in large-scale mantle convection simulation in conjunction with 
+The cubed sphere has been used in large-scale mantle convection simulation in conjunction with 
 Adaptive Mesh Refinement \cite{algs12,busa13}.  
 
 \begin{center}
@@ -577,6 +621,15 @@ this type of mesh \cite{thie17} but is not limited to it.
 \item The icosahedral mesh ('HS20') composed of 20 triangular blocks \cite{bafr85,baum85} subdivided into triangles, which is 
 used in the TERRA code \cite{burb96,burb97,burl98,dadb13}.
 \end{itemize}
+
+
+\begin{center}
+\includegraphics[width=8cm]{images/meshes/spherical_choices1}
+\includegraphics[width=8cm]{images/meshes/spherical_choices2}\\
+{\captionfont source?}
+\end{center}
+
+
 
 Given the regularity and symmetry of these meshes determining the location of the 
 mesh nodes in space is a relatively straightforward task. Building the mesh connectivity in an 
@@ -614,6 +667,8 @@ $6^3$ cells; e) HS20 mesh composed of 20 blocks containing each $6^3$ cells.}
 \end{center}
 
 \end{enumerate}
+
+
 
 More information on these steps is available in the manual of the code.
 In the following table the number of nodes and cells for a variety of resolutions 
@@ -680,6 +735,8 @@ HS20 &
 levels.\\ HS06: cubed sphere; HS12: CitcomS mesh; HS20: icosahedral mesh.}
 \end{center}
 
+There are also many possibilities offered by the use of tetrahedral cells/elements:
+
 
 \begin{center}
 \includegraphics[width=7cm]{images/meshes/oebm09}\\
@@ -687,6 +744,20 @@ levels.\\ HS06: cubed sphere; HS12: CitcomS mesh; HS20: icosahedral mesh.}
 circulation model; colours represent temperatures (red=hot, blue=cold)
 at a depth of $200\si{km}$ below the surface. Taken from Oeser \etal (2009) \cite{oebm09}.}
 \end{center}
+
+
+\begin{center}
+\includegraphics[width=7cm]{images/meshes/htm}\\
+{\captionfont Example of a Hierarchical Triangular Mesh}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=7cm]{images/meshes/bafr85}
+\includegraphics[width=7cm]{images/meshes/simj12}\\
+{\captionfont \cite{bafr85}, \cite{simj12}}
+\end{center}
+
 
 \Literature: Phillips \etal \cite{phdo19} present an algorithm which builds polyhedral-based grids.
 
