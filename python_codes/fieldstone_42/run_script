@@ -1,0 +1,59 @@
+
+python3 stone.py 16 8 0 1
+mv solution.vtu solution_geom0_order1.vtu
+ 
+python3 stone.py 16 8 1 1 
+mv solution.vtu solution_geom1_order1.vtu
+
+python3 stone.py 16 8 2 1 
+mv solution.vtu solution_geom2_order1.vtu
+
+###########################################
+
+python3 stone.py 16 8 0 2
+mv solution.vtu solution_geom0_order2.vtu
+ 
+python3 stone.py 16 8 1 2 
+mv solution.vtu solution_geom1_order2.vtu
+
+python3 stone.py 16 8 2 2 
+mv solution.vtu solution_geom2_order2.vtu
+
+###########################################
+
+python3 stone.py 16 8 0 3
+mv solution.vtu solution_geom0_order3.vtu
+ 
+python3 stone.py 16 8 1 3 
+mv solution.vtu solution_geom1_order3.vtu
+
+python3 stone.py 16 8 2 3 
+mv solution.vtu solution_geom2_order3.vtu
+
+
+###########################################
+
+rm vrms.ascii
+python3 stone.py 16  8 2 1 > opla
+grep errv opla >> vrms.ascii 
+python3 stone.py 32 16 2 1 > opla
+grep errv opla >> vrms.ascii 
+python3 stone.py 48 24 2 1 > opla
+grep errv opla >> vrms.ascii 
+python3 stone.py 64 32 2 1 > opla
+grep errv opla >> vrms.ascii 
+python3 stone.py 80 40 2 1 > opla
+grep errv opla >> vrms.ascii 
+python3 stone.py 96 48 2 1 > opla
+grep errv opla >> vrms.ascii 
+rm opla
+
+
+
+
+
+
+
+
+
+
