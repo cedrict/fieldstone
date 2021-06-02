@@ -5,7 +5,7 @@
 %
 
 
-The 1D advection equation is:
+The 1D hyperbloic advection equation is:
 \begin{equation}
 \rho C_p \left( \frac{\partial T}{\partial t}  
 + u \frac{\partial T}{\partial x} \right)=0 
@@ -25,13 +25,23 @@ Note that although the velocity $u$ is prescribed, it can vary in space, hence
 the subscript $i$. 
 
 There is however a major problem: 
-the FTCS method is in this case {\bf unconditionally} {\bf un}stable, i.e., it blows up for any $\delta t$.
+the FTCS method is in this case {\bf unconditionally} {\bf un}stable (see Section 6.2.1 
+of \cite{hoch}), i.e., it blows up for any $\delta t$.
 The instability is related to the fact that this scheme produces negative diffusion, 
 which is numerically unstable.
+We could also consider the FTFS method:
+\[
+\frac{T_{\color{teal}i}^{n+1}-T^n_{\color{teal}i}}{\delta t} 
++ u_i \frac{T^n_{\color{teal}i+1} - T^n_{{\color{teal}i}}}{h} =0 
+\]
+but it is also {\bf unconditionally} {\bf un}stable (see Section 6.2.1 of \cite{hoch}).
 
-We will now look at to methods which alleviate this problem: the Lax method and the Streamline Upwind method.
+We will now look at to methods which alleviate this problem:
 
-The {\color{olive} Lax method} consists of replacing the $T_{\color{teal}i}^n$ 
+\index{general}{Lax-Friedrichs method}
+\begin{itemize}
+\item The {\color{olive} Lax-Friedrichs method}\footnote{Named after Peter Lax 
+and Kurt O. Friedrichs} consists of replacing the $T_{\color{teal}i}^n$ 
 in the time derivative term with $(T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)/2$. 
 The resulting equation is
 \[
@@ -43,10 +53,9 @@ or,
 T_{\color{teal}i}^{n+1} = \frac{1}{2} (T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)  
 - \frac{u_i \delta t}{h}  \frac{1}{2} (T^n_{{\color{teal}i+1}}-T^n_{{\color{teal}i-1}})
 \]
-
-
-
-In the {\color{olive}Streamline upwind} method the spatial finite difference scheme 
+von Neumann stability analysis indicates that this method is stable
+when $C=u \delta t/h \leq 1$ where $C$ is the Courant number.
+\item In the {\color{olive}Streamline upwind} method the spatial finite difference scheme 
 depends on the sign of the velocity:
 \[
 \frac{T_{\color{teal}i}^{n+1}-  (T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)/2   }{\delta t} =
@@ -58,6 +67,12 @@ depends on the sign of the velocity:
 \right.
 \]
 In fact, we have replaced central with forward or backward derivatives, depending on the flow direction. 
+This method is stable when $C=u \delta t/h \leq 1$. 
+\end{itemize}
+These are not the only possibilities, see for instance the {\color{olive} leapfrog method} or the 
+{\color{olive} Lax-Wendroff method} \cite{hoch}.
+\index{general}{Leapfrog method}
+\index{general}{Lax-Wendroff method}
 
 
 Finally, The Crank-Nicolson implicit scheme for solving the diffusion equation 
@@ -89,7 +104,7 @@ Boundary conditions are $T=1$ at $x=0$ and $T=0$ at $x=1$.
 \end{center}
 
 Program the above FTCS method. Run the model for 250 time steps with $\delta t=0.002$. 
-Program the Lax method by modifying the previous code.\\
+Program the Lax-Friedrichs method by modifying the previous code.\\
 Bonus: Program the upwind method and/or the Crank-Nicolson method. 
 
 \par\noindent\rule{\textwidth}{0.4pt}

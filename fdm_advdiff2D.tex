@@ -61,11 +61,41 @@ This is particularly the case if there are large gradients in the quantity that 
 We have seen how to deal with the time derivative (explicit, implicit) 
 and with the first order space derivative (forward, backward or central).
 Let us consider again the FTCS scheme (Forward in Time, Central in Space).
-\[
+\begin{equation}
 \frac{T_{\color{teal}i,j}^{n+1}-T^n_{\color{teal}i,j}}{\delta t} 
 + u_{i,j} \frac{T^n_{\color{teal}i+1,j} - T^n_{{\color{teal}i-1,j}}}{2h_x} 
 + v_{i,j} \frac{T^n_{\color{teal}i,j+1} - T^n_{{\color{teal}i,j-1}}}{2h_y} =0 
+\end{equation}
+The fully implicit version is then as follows:
+\begin{equation}
+\frac{T_{\color{teal}i,j}^{n+1}-T^n_{\color{teal}i,j}}{\delta t} 
++ u_{i,j} \frac{T^{n+1}_{\color{teal}i+1,j} - T^{n+1}_{{\color{teal}i-1,j}}}{2h_x} 
++ v_{i,j} \frac{T^{n+1}_{\color{teal}i,j+1} - T^{n+1}_{{\color{teal}i,j-1}}}{2h_y} =0 
+\end{equation}
+or, 
+\[
+T_{\color{teal}i,j}^{n+1}   
++\frac{u_{i,j} \delta t}{2 h_x}
+(  T^{n+1}_{\color{teal}i+1,j} - T^{n+1}_{{\color{teal}i-1,j}}  )
++\frac{v_{i,j} \delta t}{2 h_y}
+(  T^{n+1}_{\color{teal}i,j+1} - T^{n+1}_{{\color{teal}i,j-1}} )
+=
+T^n_{\color{teal}i,j}
 \]
+The terms on the left will form five diagonals in the matrix while the term on the right 
+is the right hand side.
+
+The Crank-Nicolson approach is then easily derived by taking:
+\begin{equation}
+\frac{T_{\color{teal}i,j}^{n+1}-T^n_{\color{teal}i,j}}{\delta t} 
++\frac{u_{i,j}}{2} \frac{T^{n}_{\color{teal}i+1,j} - T^{n}_{{\color{teal}i-1,j}}}{2h_x} 
++\frac{v_{i,j}}{2} \frac{T^{n}_{\color{teal}i,j+1} - T^{n}_{{\color{teal}i,j-1}}}{2h_y} 
++\frac{u_{i,j}}{2} \frac{T^{n+1}_{\color{teal}i+1,j} - T^{n+1}_{{\color{teal}i-1,j}}}{2h_x} 
++\frac{v_{i,j}}{2} \frac{T^{n+1}_{\color{teal}i,j+1} - T^{n+1}_{{\color{teal}i,j-1}}}{2h_y} 
+=0 
+\end{equation}
+
+
 
 
 %-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/

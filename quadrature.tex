@@ -115,8 +115,8 @@ The interval $[-2,2]$ is broken into 16 sub-intervals. The blue lines correspond
 approximation of the red curve by means of a) the midpoint rule,  b) the trapezoidal rule.
 \end{center}
 
-There are several algorithms for numerical integration (also commonly called 'numerical quadrature', or
-simply 'quadrature') \index{general}{Quadrature}.
+There are several algorithms for numerical integration (also commonly called ``{\color{olive}numerical quadrature}'', or
+simply ``{\color{olive}quadrature}'') \index{general}{Quadrature}.
 Interpolation with polynomials evaluated at equally spaced points in $[a,b]$
 yields the Newton-Cotes formulas, of which the rectangle rule and the trapezoidal rule are examples. 
 \index{general}{Newton-Cotes}
@@ -142,7 +142,7 @@ The domain of integration for such a rule is conventionally taken as $[-1,1]$, s
 \]
 \end{mdframed}
 In this formula the $x_{i_q}$ coordinate is 
-the $i$-th root of the Legendre polynomial $P_n(x)$\todo{what are these ?}. \index{general}{Legendre Polynomial}
+the $i$-th root of the {\color{olive} Legendre polynomial} $P_n(x)$\todo{what are these ?}. \index{general}{Legendre Polynomial}
 
 It is important to note that a Gaussian quadrature will only produce good results if the function $f(x)$
 is well approximated by a polynomial function within the range $[-1,1]$.
@@ -229,25 +229,24 @@ and then
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
 \int_a^b f(x) dx  = \frac{b-a}{2} \int_{-1}^{+1} f(r) dr \simeq 
-\frac{b-a}{2} \sum_{i_q=1}^n w_{i_q} f(r_{i_q})
+\frac{b-a}{2} \sum_{i_q=1}^{n_q} w_{i_q} f(r_{i_q})
 \end{equation}
 \end{mdframed}
 
 %--------------------
 \subsubsection{A probably naive way of finding the quadrature points coordinates and weights}
 
-
-We start from the assumption that the quadrature must be exact for polynomials $f(x)$, that it is 
+We start from the assumption that the quadrature must be exact for polynomials $f(r)$, that it is 
 written
 \[
-I= \int_{-1}^{+1} f(x) dx = \sum_{i_q=1}^{n_q} w_{iq} f(x_{i_q}) 
+I= \int_{-1}^{+1} f(r) dr = \sum_{i_q=1}^{n_q} w_{iq} f(r_{i_q}) 
 \]
-and that $n_q>0$, $w_{i_q}\neq 0$ and $x_{i_q}\in [-1,1]$.
+and that $n_q>0$, $w_{i_q}\neq 0$ and $r_{i_q}\in [-1,1]$.
 
-Let us start with zero-th order polynomials, i.e. $f(x)=C$. Then $I=2C$ and we must then 
+Let us start with zero-th order polynomials, i.e. $f(r)=C$. Then $I=2C$ and we must then 
 have 
 \[
-2C = \sum_{i_q=1}^{n_q} w_{iq} f(x_{i_q})  =  \sum_{i_q=1}^{n_q} w_{iq} C   
+2C = \sum_{i_q=1}^{n_q} w_{iq} f(r_{i_q})  =  \sum_{i_q=1}^{n_q} w_{iq} C   
 \]
 which imposes 
 \begin{equation}
@@ -260,12 +259,14 @@ As long as the sum of the weights is equal to 2, any $n_q$-point based quadratur
 integrate exactly a zero-th order polynomial. 
 
 Let us move on with first-order polynomials. Since we have covered the constant term hereabove, we
-set $f(x)=ax$ where $a\neq 0$. We have $I=0$ so
+set $f(r)=ar$ where $a\neq 0$. We have $I=0$ so
 \begin{equation}
-0 = \sum_{i_q=1}^{n_q} w_{iq} f(x_{i_q})  = \sum_{i_q=1}^{n_q} w_{iq} x_{i_q}
+0 = \sum_{i_q=1}^{n_q} w_{iq} f(r_{i_q})  = a \sum_{i_q=1}^{n_q} w_{iq} r_{i_q}
+\qquad
+\Rightarrow
 \qquad
 \boxed{
-\sum_{i_q=1}^{n_q} w_{iq} x_{i_q} = 0\qquad \forall n_q>0
+\sum_{i_q=1}^{n_q} w_{iq} r_{i_q} = 0\qquad \forall n_q>0
 }
  \label{eq:glqtwo}
 \end{equation}
@@ -273,38 +274,40 @@ In order to integrate exactly first-order polynomials an $n_q$-point based quadr
 fulfil Eqs.\eqref{eq:glqone} and \eqref{eq:glqtwo}.
 \begin{itemize}
 \item
-If $n_q=1$, then we automatically have $w_1=2$ and $w_1 x_1 =0 $, i.e. $x_1=0$.
+If $n_q=1$, then we automatically have $w_1=2$ and $w_1 r_1 =0 $, i.e. $r_1=0$.
 \item
-If $n_q=2$, then $w_1+w_2=2$ and $a(w_1x_1+w_2x_2) = 0$. There are many solutions $w_1,w_2,x_1,x_2$ which 
+If $n_q=2$, then $w_1+w_2=2$ and $w_1r_1+w_2r_2 = 0$. There are many solutions $w_1,w_2,r_1,r_2$ which 
 can fulfil these two equations, so this is not enough to determine a unique set of coordinates and weights.
 \end{itemize}
 
-Let us now turn to second-order polynomials: as before, I choose $f(x)=a x^2$. We have 
+Let us now turn to second-order polynomials: as before, I choose $f(r)=a r^2$. We have 
 $I=2a/3$ and 
 \begin{equation}
-\frac{2a}{3} = \sum_{i_q=1}^{n_q} w_{iq} f(x_{i_q})  = a \sum_{i_q=1}^{n_q} w_{iq} x_{i_q}^2 
+\frac{2a}{3} = \sum_{i_q=1}^{n_q} w_{iq} f(r_{i_q})  = a \sum_{i_q=1}^{n_q} w_{iq} r_{i_q}^2 
 \qquad
 \boxed{
-\sum_{i_q=1}^{n_q} w_{iq} x^2_{i_q} = \frac{2}{3}\qquad \forall n_q>0
+\sum_{i_q=1}^{n_q} w_{iq} r^2_{i_q} = \frac{2}{3}\qquad \forall n_q>0
 }
 \label{eq:glqthree}
 \end{equation}
 \begin{itemize}
 \item
-If $n_q=1$,  we know that $w_1=2$ and $x_1=0$. This means that 1-point quadrature cannot exactly integrate polynomials 
-higher than 1.
+If $n_q=1$, we know that $w_1=2$ and $r_1=0$. 
+This means that 1-point quadrature cannot exactly integrate polynomials higher than 1.
 \item
-If $n_q=2$, then $w_1+w_2=2$, $w_1x_1+w_2x_2 =0$ and now $w_1x_1^2+w_2x_2^2 =2/3$. We have three equations but still four unknowns. At this stage, we can do a simple additional assumption: common sense would have us realise that there is no 
-reason why the (in this case) 2 quadrature point coorinates should be both negative or both positive. In light thereof we require that quadrature point coordinates are symmetric with respect with the origin $x=0$, i.e. $x_1=-x_2$ in this case.
-This yields to write:  $w_1x_1+w_2x_2 = w_1x_1+w_2(-x_1)=x_1(w_1-w_2)=0$. If $x_1=0$ then $x_2=0$ too and we do not 
+If $n_q=2$, then $w_1+w_2=2$, $w_1r_1+w_2r_2 =0$ and now $w_1r_1^2+w_2r_2^2 =2/3$. We have three equations but still four unknowns. 
+At this stage, we can do a simple additional assumption: common sense would have us realise that there is no 
+reason why the (in this case) 2 quadrature point coordinates should be both negative or both positive. In light 
+thereof we require that quadrature point coordinates are symmetric with respect with the origin $r=0$, i.e. $r_1=-r_2$ in this case.
+This yields to write:  $w_1r_1+w_2r_2 = w_1r_1+w_2(-r_1)=r_1(w_1-w_2)=0$. If $r_1=0$ then $r_2=0$ too and we do not 
 have a 2-point quadrature. It must then follows that $w_1=w_2$. And finally 
-$w_1x_1^2+w_2x_2^2 = w_1 x_1^2 + w_1 (-x_1)^2=2/3$, i.e. $x_1=-1/\sqrt{3}$ and $x_2=1/\sqrt{3}$ since $x_1<x_2$.
+$w_1r_1^2+w_2r_2^2 = w_1 r_1^2 + w_1 (-r_1)^2=2/3$, i.e. $r_1=-1/\sqrt{3}$ and $r_2=1/\sqrt{3}$ since $r_1<r_2$.
 \end{itemize}
 
-If we now turn to third-order polynomials, i.e. $f(x)=ax^3$, then $I=0$ again. We then must have
+If we now turn to third-order polynomials, i.e. $f(r)=ar^3$, then $I=0$ again. We then must have
 \begin{equation}
 \boxed{
-\sum_{i_q=1}^{n_q} w_{iq} x^3_{i_q} =  0  \qquad \forall n_q>0
+\sum_{i_q=1}^{n_q} w_{iq} r^3_{i_q} =  0  \qquad \forall n_q>0
 }
 \end{equation}
 We see that the coordinates and weights obtained for a 2-point quadrature verify this equation, i.e. 
@@ -312,10 +315,10 @@ a 2-point quadrature can also exactly integrate a 3rd-order polynomial.
 However, it is equally easy to verify that the 2-point quadrature cannot exactly integrate a 4th-order polynomial
 since 
 \[
-I= \int_{-1}^{+1} x^4 dx = \frac{2}{5} \neq  \sum_{i_q=1}^{2} w_{iq} x_{i_q}^4
+I= \int_{-1}^{+1} r^4 dr = \frac{2}{5} \neq  \sum_{i_q=1}^{2} w_{iq} r_{i_q}^4
 \]
 A three-point quadrature will then be needed for those. Because of the symmetry, we know that the middle
-point will be at $x=0$.
+point will be at $r=0$.
 
 \begin{remark} 
 This approach unfortunately does not shed any light on why the method is called Gauss-Legendre quadrature
@@ -330,15 +333,15 @@ nor why the quadrature points are the zeros of the Legendre polynomials...
 
 Since we know how to carry out any required change of variables, we choose for simplicity 
 $a=-1$, $b=+1$.
-Let us take for example $f(x)=\pi$. Then we can compute the integral of this function 
+Let us take for example $f(r)=\pi$. Then we can compute the integral of this function 
 over the interval $[a,b]$ exactly:
 \[
-I=\int_{-1}^{+1} f(x) dx = \pi \int_{-1}^{+1}dx  = 2 \pi
+I=\int_{-1}^{+1} f(r) dr = \pi \int_{-1}^{+1}dr  = 2 \pi
 \]
 We can now use a Gauss-Legendre formula to compute this same integral:
 \[
-I_{gq}=\int_{-1}^{+1} f(x) dx 
-= \sum_{i_q=1}^{n_q} w_{i_q} f(x_{i_q}) 
+I_{gq}=\int_{-1}^{+1} f(r) dr
+= \sum_{i_q=1}^{n_q} w_{i_q} f(r_{i_q}) 
 = \sum_{i_q=1}^{n_q} w_{i_q} \pi
 = \pi \underbrace{\sum_{i_q=1}^{n_q} w_{i_q} }_{=2}
 = 2 \pi
@@ -350,17 +353,17 @@ quadrature rules.
 
 \paragraph{example 2}
 
-Let us now take $f(x)=m x+ p$ and repeat the same exercise:
+Let us now take $f(r)=m r+ p$ and repeat the same exercise:
 \[
-I=\int_{-1}^{+1} f(x) dx = \int_{-1}^{+1} (mx+p) dx  =  [\frac{1}{2} m x^2 + p x ]_{-1}^{+1} =2p
+I=\int_{-1}^{+1} f(r) dr = \int_{-1}^{+1} (mr+p) dr  =  [\frac{1}{2} m r^2 + p r ]_{-1}^{+1} =2p
 \]
 \[
-I_{gq}=\int_{-1}^{+1} f(x) dx 
-\!= \sum_{i_q=1}^{n_q} w_{i_q} f(x_{i_q}) 
-\!= \sum_{i_q=1}^{n_q} w_{i_q} (m x_{i_q} + p)  
-\!= m \underbrace{\sum_{i_q=1}^{n_q} w_{i_q} x_{i_q}}_{=0}  + p \underbrace{\sum_{i_q=1}^{n_q} w_{i_q}}_{=2}  = 2p
+I_{gq}=\int_{-1}^{+1} f(r) dr
+\!= \sum_{i_q=1}^{n_q} w_{i_q} f(r_{i_q}) 
+\!= \sum_{i_q=1}^{n_q} w_{i_q} (m r_{i_q} + p)  
+\!= m \underbrace{\sum_{i_q=1}^{n_q} w_{i_q} r_{i_q}}_{=0}  + p \underbrace{\sum_{i_q=1}^{n_q} w_{i_q}}_{=2}  = 2p
 \]
-since the quadrature points are symmetric w.r.t. to zero on the x-axis.
+since the quadrature points are symmetric w.r.t. to zero on the $r$-axis.
 Once again the quadrature is able to compute the exact value of this integral: this makes sense since 
 an $n$-point rule exactly integrates a $2n-1$ order polynomial such that a 1 point quadrature exactly 
 integrates a first order polynomial like the one above.
@@ -369,20 +372,20 @@ integrates a first order polynomial like the one above.
 
 \paragraph{example 3}
 
-Let us now take $f(x)=x^2$. We have 
+Let us now take $f(r)=r^2$. We have 
 \[
-I=\int_{-1}^{+1} f(x) dx = \int_{-1}^{+1} x^2 dx  =  [\frac{1}{3}x^3 ]_{-1}^{+1} =  \frac{2}{3} 
+I=\int_{-1}^{+1} f(r) dr = \int_{-1}^{+1} r^2 dr  =  \left[\frac{1}{3}r^3 \right]_{-1}^{+1} =  \frac{2}{3} 
 \]
 and 
 \[
-I_{gq}=\int_{-1}^{+1} f(x) dx 
-\!= \sum_{i_q=1}^{n_q} w_{i_q} f(x_{i_q}) 
-\!= \sum_{i_q=1}^{n_q} w_{i_q} x_{i_q}^2 
+I_{gq}=\int_{-1}^{+1} f(r) dr 
+\!= \sum_{i_q=1}^{n_q} w_{i_q} f(r_{i_q}) 
+\!= \sum_{i_q=1}^{n_q} w_{i_q} r_{i_q}^2 
 \]
 
 \begin{itemize}
-\item $n_q=1$: $x_{iq}^{(1)}=0$, $w_{i_q}=2$. $I_{gq}=0$
-\item $n_q=2$: $x_{q}^{(1)}=-1/\sqrt{3}$, $x_{q}^{(2)}=1/\sqrt{3}$, $w_{q}^{(1)}=w_{q}^{(2)}=1$. $I_{gq}=\frac{2}{3}$
+\item $n_q=1$: $r_{iq}^{(1)}=0$, $w_{i_q}=2$. $I_{gq}=0$
+\item $n_q=2$: $r_{q}^{(1)}=-1/\sqrt{3}$, $r_{q}^{(2)}=1/\sqrt{3}$, $w_{q}^{(1)}=w_{q}^{(2)}=1$. $I_{gq}=\frac{2}{3}$
 \item It also works $\forall n_q>2$ !
 \end{itemize}
 
@@ -391,20 +394,20 @@ I_{gq}=\int_{-1}^{+1} f(x) dx
 
 Let us now turn to a two-dimensional integral of the form
 \[
-I=\int_{-1}^{+1} \int_{-1}^{+1} f(x,y) dx dy
+I=\int_{-1}^{+1} \int_{-1}^{+1} f(r,s) dr ds
 \]
-where $f(x,y)$ is again assumed to be continuous over the domain. 
+where $f(r,s)$ is again assumed to be continuous over the domain. 
 The equivalent Gaussian quadrature writes:
 \[
 I_{gq}
-\simeq \sum_{i_q=1}^{n_q}\sum_{j_q}^{n_q} f(x_{i_q},y_{j_q}) w_{i_q} w_{j_q}
+\simeq \sum_{i_q=1}^{n_q}\sum_{j_q}^{n_q} f(r_{i_q},s_{j_q}) w_{i_q} w_{j_q}
 \]
 Finally we have 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-I=\int_{a}^{+b}\int_{c}^{+d} f(x,y) dx dy
+I=\int_{a}^{+b}\int_{c}^{+d} f(r,s) dr ds
 \simeq \frac{b-a}{2} \frac{d-c}{2} 
-\sum_{i_q=1}^{n_q}\sum_{j_q}^{n_q} f(x_{i_q},y_{j_q}) w_{i_q} w_{j_q}
+\sum_{i_q=1}^{n_q}\sum_{j_q}^{n_q} f(r_{i_q},s_{j_q}) w_{i_q} w_{j_q}
 \end{equation}
 \end{mdframed}
 

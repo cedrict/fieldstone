@@ -939,7 +939,7 @@ The Navier-Stokes equations of motion for an incompressible fluid with uniform v
 &=& 
 -\frac{\partial p}{\partial z} + f_z + \eta \Delta \upnu_z
 \end{eqnarray}
-where The Lagrangian or material derivative is
+where the Lagrangian or material derivative is
 \[
 \frac{D}{Dt} = \frac{\partial}{\partial t} 
 + \upnu_r \frac{\partial}{\partial r}  
@@ -956,8 +956,10 @@ and the Laplacian operator is \index{general}{Laplace Operator} \index{general}{
 
 
 %------------------------------------------------------------------------------
-\subsection{The Navier-Stokes equations in spherical coordinates}
+\subsection{The Stokes equations in spherical coordinates}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
+
+
 
 In spherical coordinates, $(r,\theta,\phi)$, the continuity equation for an incompressible fluid is 
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -968,42 +970,174 @@ In spherical coordinates, $(r,\theta,\phi)$, the continuity equation for an inco
 \end{equation}
 \end{mdframed}
 
-The Navier-Stokes equations of motion for an incompressible fluid with uniform viscosity are:
+
+Concerning the momentum equation, we start from 
 \begin{eqnarray}
-\rho\left( \frac{D\upnu_r}{Dt} - \frac{\upnu_\theta^2+\upnu_\phi^2}{r} \right)
+{\vec \nabla}\cdot {\bm \sigma} + {\vec f} &=& \vec{0} 
+\end{eqnarray}
+The buoyancy force $\vec{f}$ is nearly always given by 
+$\vec{f}=\rho \vec{g} = - \rho g \; \vec{e}_r$ (with $g>0$), i.e. $f_\phi=f_\theta=0$, and then
+\[
+- {\vec \nabla}p + {\vec \nabla}\cdot {\bm \tau} - \rho g \vec{e}_r = \vec{0}
+\]
+or,
+\begin{eqnarray}
+- ({\vec \nabla}p)_r      + ({\vec \nabla}\cdot {\bm \tau})_r     &=& \rho {g} \nonumber\\
+- ({\vec \nabla}p)_\theta + ({\vec \nabla}\cdot {\bm \tau})_\theta&=&0  \nonumber\\
+- ({\vec \nabla}p)_\phi   + ({\vec \nabla}\cdot {\bm \tau})_\phi  &=&0  \nonumber
+\end{eqnarray}
+The pressure gradient is simply given by:
+\begin{eqnarray}
+({\vec \nabla}p)_r &=& \frac{\partial p}{\partial r}  \nonumber\\
+({\vec \nabla}p)_\theta &=& \frac{1}{r}\frac{\partial p}{\partial \theta}  \nonumber\\
+({\vec \nabla}p)_\phi &=& \frac{1}{r\sin\theta}\frac{\partial p}{\partial \phi}  \nonumber
+\end{eqnarray}
+We now turn to the remaining three components of the divergence of deviatoric stress in 
+spherical coordinates $r,\theta,\phi$, which are given by\footnote{Would be nice to 
+have a ref here} %Eq.(\ref{eq_divtensor}):
+
+\begin{eqnarray}
+({\vec \nabla}\cdot {\bm \tau})_r 
+&=& 
+\frac{\partial \tau_{rr}}{\partial r} 
++ \frac{1}{r} \frac{\partial \tau_{\theta r}}{\partial \theta} 
++ \frac{1}{r \sin\theta} \frac{\partial \tau_{\phi r}}{\partial \phi} 
++ \frac{2 \tau_{rr} - \tau_{\theta\theta} -\tau_{\phi\phi}}{r} 
++ \frac{\tau_{\theta r} \cot\theta}{r} 
+\nonumber\\
+({\vec \nabla}\cdot {\bm \tau})_\theta
+&=& 
+\frac{\partial \tau_{r\theta}}{\partial r} 
++ \frac{1}{r} \frac{\partial \tau_{\theta \theta}}{\partial \theta} 
++ \frac{1}{r \sin\theta} \frac{\partial \tau_{\phi \theta}}{\partial \phi} 
++ \frac{3 \tau_{\theta r} + (\tau_{\theta\theta}- \tau_{\phi\phi}) \cot\theta}{r} 
+ \nonumber\\
+({\vec \nabla}\cdot {\bm \tau})_\phi
+&=& 
+\frac{\partial \tau_{r\phi}}{\partial r} 
++ \frac{1}{r} \frac{\partial \tau_{\theta \phi}}{\partial \theta} 
++ \frac{1}{r \sin\theta} \frac{\partial \tau_{\phi\phi}}{\partial \phi} 
++\frac{3 \tau_{r \phi }+2 \tau_{\phi \theta} \cot\theta}{r} 
+\end{eqnarray}
+And finally the momentum equation writes: 
+\begin{eqnarray}
+-\frac{\partial p}{\partial r} 
++\frac{\partial \tau_{rr}}{\partial r} 
++ \frac{1}{r} \frac{\partial \tau_{\theta r}}{\partial \theta} 
++ \frac{1}{r \sin\theta} \frac{\partial \tau_{\phi r}}{\partial \phi} 
++ \frac{2 \tau_{rr} - \tau_{\theta\theta} -\tau_{\phi\phi}}{r} 
++ \frac{\tau_{\theta r} \cot\theta}{r} 
+ &=&  \rho g
+\nonumber\\
+\nonumber\\
+- \frac{1}{r}\frac{\partial p}{\partial \theta}  
++\frac{\partial \tau_{r\theta}}{\partial r} 
++ \frac{1}{r} \frac{\partial \tau_{\theta \theta}}{\partial \theta} 
++ \frac{1}{r \sin\theta} \frac{\partial \tau_{\phi \theta}}{\partial \phi} 
++ \frac{3 \tau_{\theta r} + (\tau_{\theta\theta}- \tau_{\phi\phi}) \cot\theta}{r} 
+  &=& 0 
+\nonumber\\
+\nonumber\\
+- \frac{1}{r\sin\theta}\frac{\partial p}{\partial \phi} 
++\frac{\partial \tau_{r\phi}}{\partial r} 
++ \frac{1}{r} \frac{\partial \tau_{\theta \phi}}{\partial \theta} 
++ \frac{1}{r \sin\theta} \frac{\partial \tau_{\phi\phi}}{\partial \phi} 
++\frac{3 \tau_{r \phi }+2 \tau_{\phi \theta} \cot\theta}{r} 
+&=&0
+\label{eq_st1}
+\end{eqnarray}
+The deviatoric stress tensor components are
+\begin{eqnarray}
+\tau_{rr} 
+&=& 2 \eta 
+\left[ \dot{\varepsilon}_{rr} - 
+\frac{1}{3} (\dot{\varepsilon}_{rr} + \dot{\varepsilon}_{\theta\theta} + \dot{\varepsilon}_{\phi\phi} ) \right] \nonumber\\
+\tau_{\theta\theta} &=& 2 \eta 
+\left[ \dot{\varepsilon}_{\theta\theta} - 
+\frac{1}{3} (\dot{\varepsilon}_{rr} + \dot{\varepsilon}_{\theta\theta} + \dot{\varepsilon}_{\phi\phi} ) \right] \nonumber\\
+\tau_{\phi\phi} &=& 2 \eta 
+\left[ \dot{\varepsilon}_{\phi\phi} - 
+\frac{1}{3} (\dot{\varepsilon}_{rr} + \dot{\varepsilon}_{\theta\theta} + \dot{\varepsilon}_{\phi\phi} ) \right] \nonumber\\
+\tau_{r\theta} &=&  2 \eta  \dot{\varepsilon}_{r\theta}\\
+\tau_{r\phi} &=& 2 \eta  \dot{\varepsilon}_{r\phi} \\
+\tau_{\theta\phi} &=&  2 \eta  \dot{\varepsilon}_{\theta\phi}
+\end{eqnarray}
+with
+\begin{eqnarray}
+\dot\varepsilon_{rr} 
+&=& \frac{\partial \upnu_r}{\partial r} \nonumber\\
+\dot\varepsilon_{\theta\theta} 
+&=& \frac{\upnu_r}{r} + \frac{1}{r} \frac{\partial \upnu_\theta}{\partial \theta}  \nonumber\\
+\dot\varepsilon_{\phi\phi} 
+&=& \frac{1}{r \sin\theta} \frac{\partial \upnu_\phi}{\partial \phi} +
+\frac{\upnu_r}{r} +\frac{\upnu_\theta \cot \theta}{r} \nonumber\\
+\dot\varepsilon_{\theta r} = \dot\varepsilon_{r\theta}   
+&=& \frac{1}{2} \left( r \frac{\partial}{\partial r} (\frac{\upnu_\theta}{r} ) 
++\frac{1}{r} \frac{\partial \upnu_r}{\partial \theta} \right) \nonumber\\
+\dot\varepsilon_{\phi r} = \dot\varepsilon_{r\phi}      
+&=&  \frac{1}{2} \left(  \frac{1}{r \sin\theta} \frac{\partial \upnu_r}{\partial \phi} 
++ r \frac{\partial }{\partial r} (\frac{\upnu_\phi}{r}) \right)  \nonumber\\
+\dot\varepsilon_{\phi \theta} = \dot\varepsilon_{\theta\phi} 
+&=& \frac{1}{2} \left( \frac{\sin \theta}{r} \frac{\partial }{\partial \theta} (\frac{\upnu_\phi}{\sin\theta}) + \frac{1}{r \sin\theta} \frac{\partial \upnu_\theta}{\partial \phi}    \right) \nonumber
+\end{eqnarray}
+We go further by assuming the fluid to be incompressible
+(i.e. $\dot{\varepsilon}_{rr} + \dot{\varepsilon}_{\theta\theta} + \dot{\varepsilon}_{\phi\phi} =0$) and then:
+\begin{eqnarray}
+\tau_{rr} = 2 \eta \dot{\varepsilon}_{rr}  
 &=&
--\frac{\partial p}{\partial r} + f_r + \eta \left( \Delta \upnu_r - \frac{2\upnu_r}{r^2} 
+2 \eta  \frac{\partial \upnu_r}{\partial r} \nonumber\\
+\tau_{\theta\theta} = 2 \eta \dot{\varepsilon}_{\theta\theta} 
+&=& 2\eta \left( \frac{\upnu_r}{r} + \frac{1}{r} \frac{\partial \upnu_\theta}{\partial \theta} \right)
+\nonumber\\
+\tau_{\phi\phi} = 2 \eta \dot{\varepsilon}_{\phi\phi}  
+&=& 2\eta \left( 
+ \frac{1}{r \sin\theta} \frac{\partial \upnu_\phi}{\partial \phi} +
+\frac{\upnu_r}{r} +\frac{\upnu_\theta \cot \theta}{r}  \right)
+\nonumber\\
+\tau_{r\theta} =  2 \eta  \dot{\varepsilon}_{r\theta}
+&=&
+\eta \left( r \frac{\partial}{\partial r} (\frac{\upnu_\theta}{r} ) 
++\frac{1}{r} \frac{\partial \upnu_r}{\partial \theta} \right)
+\nonumber\\
+\tau_{r\phi} = 2 \eta  \dot{\varepsilon}_{r\phi}
+&=&
+\eta \left(  \frac{1}{r \sin\theta} \frac{\partial \upnu_r}{\partial \phi} 
++ r \frac{\partial }{\partial r} (\frac{\upnu_\phi}{r}) \right)
+\nonumber\\
+\tau_{\theta\phi} =  2 \eta  \dot{\varepsilon}_{\theta\phi} 
+&=&
+\eta \left( \frac{\sin \theta}{r} \frac{\partial }{\partial \theta} (\frac{\upnu_\phi}{\sin\theta}) + \frac{1}{r \sin\theta} \frac{\partial \upnu_\theta}{\partial \phi}    \right)
+\nonumber
+\end{eqnarray}
+Inserting these expressions in Eq.~\eqref{eq_st1} is a cumbersome affair...
+Under the assumption that the fluid is also isoviscous, 
+we get\footnote{I have not thoroughly checked these equations yet} 
+\begin{eqnarray}
+\rho g
+&=&
+-\frac{\partial p}{\partial r} + \eta \left( \Delta \upnu_r - \frac{2\upnu_r}{r^2} 
 -\frac{2}{r^2} \frac{\partial \upnu_\theta}{\partial \theta} - \frac{2 \upnu_\theta \cot \theta}{r^2}
 -\frac{2}{r^2 \sin\theta} \frac{\partial \upnu_\phi}{\partial \phi}
-\right) \nonumber\\
-\rho \left(  
-\frac{D\upnu_\theta}{Dt} + \frac{\upnu_\theta \upnu_r}{r} - \frac{\upnu^2_\phi \cot \theta}{r}
-\right)
+\right) 
+\nonumber\\
+0
 &=& 
--\frac{1}{r}\frac{\partial p}{\partial \theta} + f_\theta
+-\frac{1}{r}\frac{\partial p}{\partial \theta} 
 +\eta \left(
 \Delta \upnu_\theta + \frac{2}{r^2} \frac{\partial \upnu_r}{\partial \theta}
 -\frac{\upnu_\theta}{r^2 \sin^2\theta } -\frac{2 \cot \theta}{r^2 \sin\theta}
 \frac{\partial \upnu_\phi}{\partial \phi}  
-\right) \nonumber\\
-\rho \left(  
-\frac{D\upnu_\phi}{Dt} + \frac{\upnu_\phi \upnu_r}{r} - \frac{\upnu_\theta \upnu_\phi \cot \theta}{r}
-\right)
+\right) 
+\nonumber\\
+0
 &=& 
-- \frac{1}{r \sin\theta} \frac{\partial p}{\partial \phi} + f_\phi + \eta
+- \frac{1}{r \sin\theta} \frac{\partial p}{\partial \phi}  + \eta
 \left(
 \Delta \upnu_\phi + \frac{2}{r^2 \sin\theta} \frac{\partial \upnu_r}{\partial \phi}
 -\frac{\upnu_\phi}{r^2 \sin^2 \theta} + \frac{2 \cot \theta}{r^2 \sin\theta}
 \frac{\partial \upnu_\theta}{\partial \phi}
 \right) \nn\\
 \end{eqnarray}
-where The Lagrangian or material derivative is
-\[
-\frac{D}{Dt} = \frac{\partial}{\partial t} 
-+ \upnu_r \frac{\partial}{\partial r}  
-+ \frac{\upnu_\theta}{r} \frac{\partial}{\partial \theta}
-+ \frac{\upnu_\phi}{r \sin\theta} \frac{\partial}{\partial \phi}  
-\]
 and the Laplacian operator is \index{general}{Laplace Operator} \index{general}{Laplacian} 
 \[
 \Delta = \frac{1}{r^2} \frac{\partial }{\partial r}\left( r^2 \frac{\partial }{\partial r}\right)
@@ -1014,7 +1148,9 @@ and the Laplacian operator is \index{general}{Laplace Operator} \index{general}{
 + \frac{1}{r^2 \sin^2\theta} \frac{\partial^2 }{\partial\phi^2}
 \]
 
-THESE EQUATIONS SHOULD BE CHECKED and RE-CHECKED !!
+\todo[inline]{
+Before being used these equations should be checked against multiple sources.  
+}
 
 %------------------------------------------------------------------------------
 \subsection{The equations for axisymmetric geometries}

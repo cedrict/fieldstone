@@ -1,3 +1,6 @@
+\begin{flushright} {\tiny {\color{gray} axisymmetric\_eqs.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 In some cases the assumption can be made that the object we wish to sudy has an 
 axisymmetric geometry, for example a plume:
@@ -36,13 +39,62 @@ then become \footnote{\url{https://en.wikipedia.org/wiki/Navier-Stokes_equations
 \end{eqnarray}
 
 
+The velocity gradient in cylindrical coordinates is given by 
+
+\begin{eqnarray}
+\dot\varepsilon_{rr} 
+&=& \frac{\partial \upnu_r}{\partial r} 
+\\
+\dot\varepsilon_{\theta\theta} 
+&=& \frac{\upnu_r}{r} + \frac{1}{r} \frac{\partial \upnu_\theta}{\partial \theta}  
+\\
+\dot\varepsilon_{\theta r} = \dot\varepsilon_{r\theta} 
+&=& \frac{1}{2} \left(   \frac{\partial \upnu_\theta}{\partial r} - \frac{\upnu_\theta}{r} 
++\frac{1}{r} \frac{\partial \upnu_r}{\partial \theta}  \right)
+\\
+\dot\varepsilon_{zz} 
+&=& \frac{\partial \upnu_z}{\partial z} 
+\\
+\dot{\varepsilon}_{rz} = \dot{\varepsilon}_{zr} 
+&=& \frac{1}{2}\left( \frac{\partial \upnu_r}{\partial z} + \frac{\partial \upnu_z}{\partial r}  \right) 
+\\
+\dot{\varepsilon}_{\theta z} = \dot{\varepsilon}_{z \theta} &=& \frac{1}{2}\left( 
+\frac{1}{r} \frac{\partial \upnu_z}{\partial \theta} + \frac{\partial \upnu_\theta}{\partial z}  \right) 
+\end{eqnarray}
+
+In the axisymmetric case, we have $\upnu_\theta=0$ and $\partial_\theta \rightarrow 0$ so that 
+\begin{eqnarray}
+\dot\varepsilon_{rr} &=& \frac{\partial \upnu_r}{\partial r}  \\
+\dot\varepsilon_{\theta\theta} &=& \frac{\upnu_r}{r} \\
+\dot\varepsilon_{r\theta} = \dot\varepsilon_{\theta r} &=& 0\\
+\dot\varepsilon_{zz} &=& \frac{\partial \upnu_z}{\partial z} \\
+\dot{\varepsilon}_{rz} = \dot{\varepsilon}_{zr} 
+&=& \frac{1}{2}\left( \frac{\partial \upnu_r}{\partial z} + \frac{\partial \upnu_z}{\partial r}  \right) \\
+\dot{\varepsilon}_{\theta z} = \dot{\varepsilon}_{z \theta} &=& 0
+\end{eqnarray}
+or, 
+\[
+\dot{\bm\varepsilon}
+=
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{rr} & 0 & \dot{\varepsilon}_{rz} \\
+0 & \dot{\varepsilon}_{\theta\theta}  & 0 \\
+\dot{\varepsilon}_{zr} & 0 & \dot\varepsilon_{zz}
+\end{array}
+\right)
+\]
+
+
+
+
 
 
 %---------------------------------------
 \subsubsection{In spherical coordinates}
 
 
-THESE EQUATIONS SHOULD BE CHECKED and RE-CHECKED !!
+
 
 Assuming the flow velocity does not depend on $\phi$ ($\partial_\phi =0$) and therefore also that $\upnu_\phi=0$
 \[

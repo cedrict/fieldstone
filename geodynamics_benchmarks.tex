@@ -90,7 +90,7 @@ computational geodynamics community.
 \item Thin layer entrainment (see Section~\ref{sec:tlentr})
 \item 1D compression \cite{modm02}
 \item 2D compressible Stokes flow problem \cite{itki94,tagu07,lezh08,kilv10,lizh13}
-\item 3D convection at infinite Prandtl number:
+\item 3D convection at infinite Prandtl number with modest viscosity variation:
       Busse \etal (1993) \cite{bucc93},
       Trompert \& Hansen \cite{trha98},
       Kameyama \etal (2005) \cite{kaks05},
@@ -108,6 +108,9 @@ computational geodynamics community.
       were carried out with (a) 64x32x64 and (b) 64x64x64 mesh divisions.
       Right: Taken from Kronbichler \etal (2012).}
       \end{center}
+
+\item Numerical simulations of three-dimensional thermal convection in a fluid with strongly
+      temperature-dependent viscosity: Ogawa \etal \cite{ogsz91,kaks05} 
 
 \item Free surface evolution: Crameri \etal (2012) \cite{crsg12}, \aspect{} manual \cite{aspectmanual},
                               Schuh-Senlis \etal (2020) \cite{sctc20}
@@ -1971,12 +1974,36 @@ and yet the temperature field is not zero in the middle, in the absence of heat 
 
 
 %................................................................................
-\subsubsection{Hole in an Elastic material with a circular hole\label{sec:elastic_hole}}
+\subsubsection{Hole in an Elastic material with a circular hole (1)\label{sec:elastic_hole}}
 
 This is taken from Prof. Hassani's syllabus 'Mise en oeuvre de la m\'ethode des 
 \'el\'ements finis'.
 
+\begin{center}
 \includegraphics[width=6cm]{images/benchmark_elastic_hole/hassani}
+\end{center}
+
+%................................................................................
+\subsubsection{Hole in an Elastic-plastic material with a circular hole (2)\label{sec:elastic_hole2}}
+
+This is taken from the Ramm \etal \cite{rarr03} book, Section~11.2.
+It consists of a stretched plate with a circular central hole under plane
+strain condition. It is sufficient to discretize one quarter of the system using symmetry.
+The width $e$ of the plate is equal to its height $h = 100$ mm; the radius $r$ of the hole
+is 10 mm. The following figure shows the system with its boundary conditions. The applied
+tractions $\overline{p}$ = 100 N/mm2 are scaled with the load factor $\lambda$. 
+
+The Young's modulus is $E=206900.00kN/mm^2$ and the Poisson ratio is $\nu=0.29$.
+
+\begin{center}
+\includegraphics[width=10cm]{images/benchmark_rarr03/rarr03a}\\
+\includegraphics[height=5cm]{images/benchmark_rarr03/rarr03b}
+\includegraphics[height=5cm]{images/benchmark_rarr03/rarr03c}\\
+{\captionfont Taken from \cite{rarr03}. Adaptively approximated results of elastic
+computations for load factor $\lambda=4.5$.}
+\end{center}
+
+Check original source for elasto-plastic parameters and results. 
 
 
 \newpage

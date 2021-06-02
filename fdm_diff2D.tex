@@ -500,6 +500,9 @@ T_{{\color{teal}13}}^n + \tilde{Q}_{\color{teal}13} \delta t\\
 \]
 Note that we now have five 'diagonals' filled with non-zero entries as opposed to three
 diagonals in the 1D case.
+
+Note also that this is a simplified matrix since we assumed that $s_x=s_y$.
+
 \end{landscape}
 
 %-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -589,6 +592,47 @@ T_{{\color{teal}13}}^n + \tilde{Q}_{\color{teal}13} \delta t
 \end{equation}
 Note that is the boundary values had not been zero they would have found their way to the right hand side 
 vector.
+
+The Crank-Nicolson version of the implicit scheme is then as follows:
+\begin{eqnarray}
+\frac{T_{{\color{brown}i},{\color{brown}j}}^{n+1}-T_{\color{brown}i,j}^n}{\delta t}
+&=& \frac12 \kappa
+\left(
+\frac{ T_{{\color{brown}i-1,j}}^{n+1}-2T_{{\color{brown}i,j}}^{n+1}+T_{{\color{brown}i+1,j}}^{n+1} }{h_x^2} + 
+\frac{ T_{{\color{brown}i,j-1}}^{n+1}-2T_{{\color{brown}i,j}}^{n+1}+T_{{\color{brown}i,j+1}}^{n+1} }{h_y^2}
+\right) \nn\\
+&+& \frac12 \kappa
+\left(
+\frac{ T_{{\color{brown}i-1,j}}^{n}-2T_{{\color{brown}i,j}}^{n}+T_{{\color{brown}i+1,j}}^{n} }{h_x^2} + 
+\frac{ T_{{\color{brown}i,j-1}}^{n}-2T_{{\color{brown}i,j}}^{n}+T_{{\color{brown}i,j+1}}^{n} }{h_y^2}
+\right) 
+\end{eqnarray}
+The implementation of this method will require from you to bring 
+all the terms in $T^{n+1}$ to the left of the equal sign 
+while all the terms in $T^n$ are assumed to be known and therefore find their way into
+the right hand side. 
+
+Likewise, the Lax-Friedrichs method is as follows:
+\begin{equation}
+\frac{T_{{\color{brown}i},{\color{brown}j}}^{n+1}-
+\frac{1}{4} \left(  
+T_{{\color{brown}i-1,j}}^{n}  +
+T_{{\color{brown}i+1,j}}^{n}  +
+T_{{\color{brown}i,j-1}}^{n}  +
+T_{{\color{brown}i,j+1}}^{n}  
+\right)
+}{\delta t}
+= \kappa
+\left(
+\frac{ T_{{\color{brown}i-1,j}}^{n+1}-2T_{{\color{brown}i,j}}^{n+1}+T_{{\color{brown}i+1,j}}^{n+1} }{h_x^2} + 
+\frac{ T_{{\color{brown}i,j-1}}^{n+1}-2T_{{\color{brown}i,j}}^{n+1}+T_{{\color{brown}i,j+1}}^{n+1} }{h_y^2}
+\right)
++\frac{Q_{{\color{brown}i,j}}^n}{\rho C_p}
+\end{equation}
+Rearranging terms with $n+1$ on the left and terms with $n$ on the right hand side gives
+
+\index{general}{Lax-Friedrichs Method}
+\index{general}{Crank-Nicolson Method}
 
 
 %STENCILS in 2D?

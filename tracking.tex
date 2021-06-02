@@ -209,6 +209,24 @@ imated by a continuous variation, and effectively, the rheolog-
 ical properties on both sides of the discontinuity will be 
 averaged in some way within the element."
 
+It is also used in Tan \& Gurnis (tagu07) \cite{dagu07}: "
+The composition field is computed using the marker
+chain method \cite{dagu86,vaks97}. The marker chain is advected using a fourth-order
+predictor-corrector scheme. If the distance between two
+adjacent markers is greater than a predefined threshold, a
+new marker is inserted in between them. The marker chain
+defines the material interface. Because of material entrain-
+ment, the length of the marker chain grows exponentially
+with time. The computational efficiency of the marker chain
+method severely deteriorates if there is substantial material
+entrainment, in which case we halt the computation. For
+some halted models, the marker chain is trimmed to remove
+excess entrainment, and the computation restarted in order
+to proceed further. The trimming of the marker chain
+introduces error in the composition field, but the magnitude
+of the error is estimated to be small and does not influence
+the stability of the chemical layer."
+
 Literature: Lin \& van Keken (2006) \cite{liva05,liva06a,liva06b,kaus05,mulyukova}
 
 %..............................................
