@@ -1,0 +1,27 @@
+set term pdf enhanced
+set grid
+
+R=6371e3
+
+Rd=3480e3
+
+rho0=3300
+
+ff=0.1
+
+
+
+f1(x,y)=rho0*(1-ff*(x-Rd)**y/(R-Rd)**y)
+f2(x,y)=rho0*(1-ff*(Rd-x)**y/(R-Rd)**y)
+
+f(x,y)= x>Rd? f1(x,y) : f2(x,y)
+
+set key outside
+set output 'density.pdf'
+plot[0:R][] f(x,1),f(x,2),f(x,3)
+
+
+T(x,y)= x>Rd? (x-Rd)**y/(R-Rd)**y : (Rd-x)**y/(R-Rd)**y
+set output 'temperature.pdf'
+plot[0:R][] T(x,1), T(x,2), T(x,3)
+
