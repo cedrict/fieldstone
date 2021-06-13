@@ -1,0 +1,19 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+set xlabel 'epsilon'
+set ylabel 'error v'
+set output 'errorss.pdf'
+set title 'LT macroelement - 16x16 grid'
+
+set arrow from 0.2886, graph 0 to 0.2886, graph 1 nohead
+
+plot[][]\
+'dh/errors_LR' u ($1/100.):7 w lp ps .6 t 'v, d-h',\
+'dh/errors_LR' u ($1/100.):($10/200) w lp ps .6 t 'p, d-h',\
+'db/errors_LR' u ($1/100.):($7/10) w lp ps .6 t 'v, d-b',\
+'db/errors_LR' u ($1/100.):($10/2000) w lp ps .6 t 'p, d-b',\
+'cavity/errors_LR' u ($1/100.):($7/5) w lp ps .6 t 'v, cavity',\
+'cavity/errors_LR' u ($1/100.):($10/1000) w lp ps .6 t 'p, cavity',\
+'solkz/errors_LR' u ($1/100.):($7*100) w lp ps .6 t 'v, solkz',\
+'solkz/errors_LR' u ($1/100.):($10/200) w lp ps .6 t 'p, solkz',\
