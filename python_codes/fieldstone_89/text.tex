@@ -1195,20 +1195,23 @@ the strain principal values and the area of the target cell.}
 PB: e2 cannot become less than -1 
 
 
-\section{Discussion ‘old’ vs. ’new’ cumulative strain}
+\subsection*{Discussion 'old' vs. 'new' cumulative strain}
 
-The first observation is that all quantities from the ‘old’ (integrated strain rates) and ’new’ (strain computed from cumulative displacements) start at the same values. The ‘old’ cumulative strains are thus an acceptable approximation for small deformations. For increasing deformation a number of problems arise with the ‘old’ strains:
+The first observation is that all quantities from the 'old' (integrated strain rates) and 'new' 
+(strain computed from cumulative displacements) start at the same values. 
+The 'old' cumulative strains are thus an acceptable approximation for small deformations. 
+For increasing deformation a number of problems arise with the 'old' strains:
 
 \begin{itemize}
 \item principal axes do not rotate for simple shear (The shear band, experiment 1) while they should continuously change
-\item principal strain values deviate from the exact values (the ’new’ principal strains) (all experiments)
-\item negative principal strains for the ‘old’ definition can decrease below the theoretical limit of -1 (The shear band, experiment 1; bi-axial stretch, experiment 4)
+\item principal strain values deviate from the exact values (the 'new' principal strains) (all experiments)
+\item negative principal strains for the 'old' definition can decrease below the theoretical limit of -1 (The shear band, experiment 1; bi-axial stretch, experiment 4)
 \item related to the previous point, the area computed from these principal strains may incorrectly become negative (The shear band, experiment 1;  bi-axial stretch, experiment 4)
 \item the maximum shear deviates from the correct value (all experiments except for experiment 1)
 \end{itemize}
 
-The problems in the integration of strain rates is due to two causes. Firstly, strain rates are determined relative to the current state (already deformed), which means that the state with respect the deformation is defined changes during integration. Rather, the ’new’ strains based on the cumulative  displacements are all references with respect to the original, undeformed, configuration. Secondly, because incremental principal axes change during general deformation that contains simple shear or rigid body rotation (which does not occur for the special cases of experiment 2, 3 and 4), incremental strains cannot be summed \cite{malvern}. In the special cases where there is no rotation, strain rates may be integrated, and the result is a strain measure called natural strain or Hencky strain \cite{malvern}.
+The problems in the integration of strain rates is due to two causes. Firstly, strain rates are determined relative to the current state (already deformed), which means that the state with respect the deformation is defined changes during integration. Rather, the 'new' strains based on the cumulative  displacements are all references with respect to the original, undeformed, configuration. Secondly, because incremental principal axes change during general deformation that contains simple shear or rigid body rotation (which does not occur for the special cases of experiment 2, 3 and 4), incremental strains cannot be summed \cite{malvern}. In the special cases where there is no rotation, strain rates may be integrated, and the result is a strain measure called natural strain or Hencky strain \cite{malvern}.
 
 
-
+\Literature: McKenzie (1979) \cite{mcke79} , McKenzie \& Jackson (1983) \cite{mcja83}
 

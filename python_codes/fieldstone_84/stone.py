@@ -87,6 +87,8 @@ def grav_calc(prism,obs_point,method,rho,hx,hy,hz,xx=None,yy=None,zz=None):
                     # There are cases where the calculations will fail, f.e. log(0) or arctan(1/0). 
                     # To stop this, exception cases are defined. They are set to the limit values, 
                     # so log(0) -> 0 and arctan(1/0) -> 1/2 pi
+                    # For some reason a minus sign is here introduced so that it is not needed
+                    # later on in the U,gx,gy,gz equations.
                     if x[i] == 0:
                         arctan_x = - 0.5*np.pi
                     else:

@@ -37,7 +37,7 @@ theta=np.zeros(N,dtype=np.float64)
 # so we read lat/lon values from these last.
 ###################################################################################################
 
-print('fetch data from toobig/f99')
+print('this stone cannot run unless you fetch the required dataset from toobig/f99')
 exit()
 
 lon[0:N],lat[0:N],rho_c[0:N]=\
@@ -412,8 +412,6 @@ for ilat in range(0,nlat):
     #end for
 #end for
 vtufile.write("</DataArray>\n")
-
-
 
 vtufile.write("</CellData>\n")
 #####

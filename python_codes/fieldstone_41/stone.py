@@ -1,10 +1,42 @@
-import numpy as np
 import sys as sys
 import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix
 import time as time
+from scipy.optimize import nnls
+from scipy.sparse import lil_matrix
+import numpy as np
+
+#------------------------------------------------------------------------------
+# These two functions were written by G. Mack
+
+def sign(n):
+    if n < 0:
+        return -1.0
+    return 1.0
+
+def limiter(c_0, c_1, c_2, S = 0, L=1, h=1):
+    """
+    Limits a the slopes of a plane in 2D
+    See latex for a complete explaination
+    float- c_0, c_1, c_2 should be given by a least squares approximation.
+    float - S is the lowest allowed property value
+    float - L is the highest allowed property value
+    float - h is the width of the cell
+    """
+    k_u = min(c_0 - S, L-c_0)
+    k_l = (abs(c_1) + abs(c_2)) * h/2
+    if k_l > k_u:
+        c_max = k_u *2/h
+        c_1 = sign(c_1) * min(abs(c_1), c_max)
+        c_2 = sign(c_2) * min(abs(c_2), c_max)
+    k_l = (abs(c_1) + abs(c_2)) * h/2
+    if k_l > k_u:
+        c_change = (k_l - k_u)/h # denominator is written up as 2*h/2
+        c_1 = sign(c_1) * (abs(c_1) - c_change)
+        c_2 = sign(c_2) * (abs(c_2) - c_change)
+    return c_1, c_2
 
 #------------------------------------------------------------------------------
 
@@ -60,6 +92,15 @@ def NNP(rq,sq):
 
 model=3
 
+#avrg=1: elemental averaging - arithmetic
+#avrg=2: elemental averaging - geometric
+#avrg=3: elemental averaging - harmonic
+#avrg=4: least square 
+
+#avrg=-1: nodal averaging - arithmetic
+#avrg=-2: nodal averaging - geometric
+#avrg=-3: nddal averaging - harmonic
+
 #------------------------------------------------------------------------------
 
 eps=1.e-10
@@ -80,6 +121,17 @@ if model==1:
    nely=48
    gx=0
    gy=-10
+   #material 1: eta_salt=1e19, rho_salt=2150
+   #material 2: eta_sed=1e19, rho_sed=2600
+   rho_mat = np.array([2150,2600],dtype=np.float64) 
+   eta_mat = np.array([1e19,1.e19],dtype=np.float64) 
+   salt_thickness=2000
+   amplitude=200
+   mass0=Lx*salt_thickness*rho_mat[0]+Lx*(Ly-salt_thickness)*rho_mat[1]
+   nmarker_per_dim=10
+   eta_ref=1e21      # scaling of G blocks
+   year=3600.*24.*365.25
+   avrg=3
 
 if model==2:
    Lx=50e3  # horizontal extent of the domain 
@@ -88,12 +140,22 @@ if model==2:
    nely = 25
    gx=0
    gy=-9.81
+   #material 1: eta_salt=1e17, rho_salt=2200
+   #material 2: eta_sed=1e21, #rho_sed=2600
+   rho_mat = np.array([2200,2600],dtype=np.float64) 
+   eta_mat = np.array([1e17,1.e20],dtype=np.float64) 
+   salt_thickness=2e3
+   amplitude=500
+   nmarker_per_dim=4
+   eta_ref=1e21      # scaling of G blocks
+   year=3600.*24.*365.25
+   avrg=3
 
 if model==3:
    Lx=1
    Ly=1
-   nelx=48
-   nely=48
+   nelx=129
+   nely=nelx
    gx=0
    gy=-1
    #material 1: eta_salt=1, rho_salt=1
@@ -105,10 +167,13 @@ if model==3:
    x_sphere=0.5
    y_sphere=0.6
    mass0=0.79788283183
-   nmarker_per_dim=6
+   nmarker_per_dim=5
    eta_ref=1
    year=1
+   avrg=4
 
+if int(len(sys.argv) == 2):
+   avrg=int(sys.argv[1])
 
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
@@ -123,40 +188,15 @@ qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
 hx=Lx/nelx
 hy=Ly/nely
-pnormalise=True
-
-if model==1:
-   #material 1: eta_salt=1e19, rho_salt=2150
-   #material 2: eta_sed=1e19, rho_sed=2600
-   rho_mat = np.array([2150,2600],dtype=np.float64) 
-   eta_mat = np.array([1e19,1.e19],dtype=np.float64) 
-   salt_thickness=2000
-   amplitude=200
-   mass0=Lx*salt_thickness*rho_mat[0]+Lx*(Ly-salt_thickness)*rho_mat[1]
-   nmarker_per_dim=10
-   eta_ref=1e21      # scaling of G blocks
-   year=3600.*24.*365.25
-
-if model==2:
-   #material 1: eta_salt=1e17, rho_salt=2200
-   #material 2: eta_sed=1e21, #rho_sed=2600
-   rho_mat = np.array([2200,2600],dtype=np.float64) 
-   eta_mat = np.array([1e17,1.e20],dtype=np.float64) 
-   salt_thickness=2e3
-   amplitude=500
-   nmarker_per_dim=4
-   eta_ref=1e21      # scaling of G blocks
-   year=3600.*24.*365.25
-
-
-avrg=-3
-nstep_change=2500
-nstep=1
-CFL_nb=0.25
-rk=2
-
 nmarker_per_element=nmarker_per_dim**2
 nmarker=nmarker_per_element*nel
+pnormalise=True
+
+
+nstep_change=2500000
+nstep=1
+CFL_nb=0.0025
+rk=2
 
 every=1
 
@@ -171,13 +211,15 @@ print("nel",nel)
 print("nnx=",nnx)
 print("nny=",nny)
 print("NV=",NV)
+print("avrg=",avrg)
 print("------------------------------")
 
 vrms_file=open('vrms.ascii',"w")
 mass_file=open('mass.ascii',"w")
 nmarker_file=open('nmarker_per_element.ascii',"w")
-marker3333_file=open('marker3333.ascii',"w")
 dt_file=open('dt.ascii',"w")
+profileq_file=open('profileq.ascii',"w")
+profilec_file=open('profilec.ascii',"w")
 
 #################################################################
 # grid point setup
@@ -284,7 +326,6 @@ for iel in range(0,nel):
 swarm_x0[0:nmarker]=swarm_x[0:nmarker]
 swarm_y0[0:nmarker]=swarm_y[0:nmarker]
 
-marker3333_file.write("%d %e %e\n" %(0,swarm_x[3333],swarm_y[3333]))
 
 print("     -> swarm_x (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))
 print("     -> swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
@@ -362,6 +403,19 @@ if model==3:
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
+
+#################################################################
+# compute element center coordinates 
+#################################################################
+
+xc = np.zeros(nel,dtype=np.float64)
+yc = np.zeros(nel,dtype=np.float64)
+
+for iel in range(0,nel):
+    xc[iel]=(x[iconV[0,iel]]+x[iconV[2,iel]])/2
+    yc[iel]=(y[iconV[0,iel]]+y[iconV[2,iel]])/2
+
+
 #--------------------------------------------------------------------------------------------------
 # time stepping loop
 #--------------------------------------------------------------------------------------------------
@@ -382,8 +436,14 @@ for istep in range(0,nstep):
     eta_elemental=np.zeros(nel,dtype=np.float64) 
     rho_nodal=np.zeros(NP,dtype=np.float64) 
     eta_nodal=np.zeros(NP,dtype=np.float64) 
-    nmarker_in_element=np.zeros(nel,dtype=np.float64) 
+    nmarker_in_element=np.zeros(nel,dtype=np.int16) 
     nodal_counter=np.zeros(NP,dtype=np.float64) 
+    list_of_markers_in_element=np.zeros((2*nmarker_per_element,nel),dtype=np.int32)
+    eta_min=np.zeros(nel,dtype=np.float64) ; eta_min[:]=1e36
+    eta_max=np.zeros(nel,dtype=np.float64) 
+    rho_min=np.zeros(nel,dtype=np.float64) ; rho_min[:]=1e6
+    rho_max=np.zeros(nel,dtype=np.float64) 
+    
 
     for im in range(0,nmarker):
         #localise marker
@@ -417,7 +477,15 @@ for istep in range(0,nstep):
         nodal_counter[iconP[2,iel]]+=N3
         nodal_counter[iconP[3,iel]]+=N4
 
+        rho_min[iel]=min(rho_min[iel],rho_mat[swarm_mat[im]-1])
+        rho_max[iel]=max(rho_max[iel],rho_mat[swarm_mat[im]-1])
+
+        eta_min[iel]=min(eta_min[iel],eta_mat[swarm_mat[im]-1])
+        eta_max[iel]=max(eta_max[iel],eta_mat[swarm_mat[im]-1])
+
+        list_of_markers_in_element[nmarker_in_element[iel],iel]=im
         nmarker_in_element[iel]+=1
+
         if abs(avrg)==1 : # arithmetic
            eta_elemental[iel]     +=eta_mat[swarm_mat[im]-1]
            eta_nodal[iconP[0,iel]]+=eta_mat[swarm_mat[im]-1]*N1
@@ -461,6 +529,75 @@ for istep in range(0,nstep):
 
     print("markers onto grid: %.3f s" % (time.time() - start))
 
+    #print(list_of_markers_in_element[:,0])
+    #print(list_of_markers_in_element[:,11])
+    #print(list_of_markers_in_element[:,38])
+
+    #################################################################
+    # least square process
+    # for each element I loop over the markers in it and build 
+    # the corresponding A matrix and b rhs. 
+    # The solution, i.e. the coefficients (a,b,c for viscosity, 
+    # d,e,f for density) are stored for each element.
+    #################################################################
+    start = time.time()
+
+    a_ls=np.zeros(nel,dtype=np.float64) 
+    b_ls=np.zeros(nel,dtype=np.float64) 
+    c_ls=np.zeros(nel,dtype=np.float64) 
+    d_ls=np.zeros(nel,dtype=np.float64) 
+    e_ls=np.zeros(nel,dtype=np.float64) 
+    f_ls=np.zeros(nel,dtype=np.float64) 
+
+    b_ls2=np.zeros(nel,dtype=np.float64) 
+    c_ls2=np.zeros(nel,dtype=np.float64) 
+    e_ls2=np.zeros(nel,dtype=np.float64) 
+    f_ls2=np.zeros(nel,dtype=np.float64) 
+
+    for iel in range(0,nel):
+        A_ls = np.zeros((3,3),dtype=np.float64) 
+        rhs_eta_ls = np.zeros((3),dtype=np.float64) 
+        rhs_rho_ls = np.zeros((3),dtype=np.float64) 
+        A_ls[0,0]=nmarker_in_element[iel]
+        for i in range(0,nmarker_in_element[iel]):
+            im=list_of_markers_in_element[i,iel]
+            xim=swarm_x[im]-xc[iel]
+            yim=swarm_y[im]-yc[iel]
+            A_ls[0,1]+=xim
+            A_ls[0,2]+=yim
+            A_ls[1,1]+=xim**2
+            A_ls[1,2]+=xim*yim
+            A_ls[2,2]+=yim**2
+            rhs_eta_ls[0]+=eta_mat[swarm_mat[im]-1]
+            rhs_eta_ls[1]+=eta_mat[swarm_mat[im]-1]*xim
+            rhs_eta_ls[2]+=eta_mat[swarm_mat[im]-1]*yim
+            rhs_rho_ls[0]+=rho_mat[swarm_mat[im]-1]
+            rhs_rho_ls[1]+=rho_mat[swarm_mat[im]-1]*xim
+            rhs_rho_ls[2]+=rho_mat[swarm_mat[im]-1]*yim
+        #end for
+        A_ls[1,0]=A_ls[0,1]
+        A_ls[2,0]=A_ls[0,2]
+        A_ls[2,1]=A_ls[1,2]
+        sol=np.linalg.solve(A_ls,rhs_eta_ls)
+        #sol,res=nnls(A_ls,rhs_ls,maxiter=100)
+        #print(res)
+        a_ls[iel]=sol[0]
+        b_ls[iel]=sol[1]
+        c_ls[iel]=sol[2]
+        sol=np.linalg.solve(A_ls,rhs_rho_ls)
+        d_ls[iel]=sol[0]
+        e_ls[iel]=sol[1]
+        f_ls[iel]=sol[2]
+    #end for
+
+    #apply limiter
+    for iel in range(0,nel):
+        b_ls2[iel],c_ls2[iel]=limiter(a_ls[iel],b_ls[iel],c_ls[iel],eta_min[iel],eta_max[iel],hx)
+        e_ls2[iel],f_ls2[iel]=limiter(d_ls[iel],e_ls[iel],f_ls[iel],rho_min[iel],rho_max[iel],hx)
+
+
+    print("compute ls coefficients: %.3f s" % (time.time() - start))
+
     #################################################################
     # build FE matrix
     # [ K G ][u]=[f]
@@ -468,8 +605,15 @@ for istep in range(0,nstep):
     #################################################################
     start = time.time()
 
-    K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-    G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
+    if pnormalise:
+       A_sparse = lil_matrix((Nfem+1,Nfem+1),dtype=np.float64)
+       rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
+    else:
+       A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
+       rhs   = np.zeros(Nfem,dtype=np.float64)          # right hand side of Ax=b
+
+    #K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
+    #G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
     f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
     h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
     constr= np.zeros(NfemP,dtype=np.float64)         # constraint matrix/vector
@@ -533,6 +677,10 @@ for istep in range(0,nstep):
                 if avrg>0:
                    etaq[counter]=eta_elemental[iel]
 
+                if avrg==4:
+                   etaq[counter]=a_ls[iel]+b_ls2[iel]*(xq[counter]-xc[iel])+c_ls2[iel]*(yq[counter]-yc[iel])
+                   rhoq[counter]=d_ls[iel]+e_ls2[iel]*(xq[counter]-xc[iel])+f_ls2[iel]*(yq[counter]-yc[iel])
+
                 # construct 3x8 b_mat matrix
                 for i in range(0,mV):
                     b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.        ],
@@ -588,70 +736,71 @@ for istep in range(0,nstep):
                     for i2 in range(0,ndofV):
                         jkk=ndofV*k2          +i2
                         m2 =ndofV*iconV[k2,iel]+i2
-                        K_mat[m1,m2]+=K_el[ikk,jkk]
+                        #K_mat[m1,m2]+=K_el[ikk,jkk]
+                        A_sparse[m1,m2] += K_el[ikk,jkk]
                     #end for
                 #end for
                 for k2 in range(0,mP):
                     jkk=k2
                     m2 =iconP[k2,iel]
-                    G_mat[m1,m2]+=G_el[ikk,jkk]
+                    #G_mat[m1,m2]+=G_el[ikk,jkk]
+                    A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]*eta_ref/Ly
+                    A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]*eta_ref/Ly
                 #end for
                 f_rhs[m1]+=f_el[ikk]
             #end for
         #end for
 
-        for k2 in range(0,mP):
-            m2=iconP[k2,iel]
-            h_rhs[m2]+=h_el[k2]
-            constr[m2]+=NNNNP[k2]
-        #end for
+        if pnormalise:
+           for k2 in range(0,mP):
+               m2=iconP[k2,iel]
+               h_rhs[m2]+=h_el[k2]
+               constr[m2]+=NNNNP[k2]
+               A_sparse[Nfem,NfemV+m2]=constr[m2]
+               A_sparse[NfemV+m2,Nfem]=constr[m2]
+           #end for
 
     #end for
 
-    G_mat*=eta_ref/Ly
+    #G_mat*=eta_ref/Ly
     h_rhs*=eta_ref/Ly
 
-    print("     -> K (m,M) %.5e %.5e " %(np.min(K_mat),np.max(K_mat)))
-    print("     -> G (m,M) %.5e %.5e " %(np.min(G_mat),np.max(G_mat)))
+    #print("     -> K (m,M) %.5e %.5e " %(np.min(K_mat),np.max(K_mat)))
+    #print("     -> G (m,M) %.5e %.5e " %(np.min(G_mat),np.max(G_mat)))
     print("     -> f (m,M) %.5e %.5e " %(np.min(f_rhs),np.max(f_rhs)))
     print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
 
     #np.savetxt('rhoq.ascii',np.array([xq,yq,rhoq]).T,header='# x,y,rho')
-    np.savetxt('etaq.ascii',np.array([xq,yq,etaq]).T,header='# x,y,eta')
+    #np.savetxt('etaq.ascii',np.array([xq,yq,etaq]).T,header='# x,y,eta')
 
     print("build FE matrix: %.3f s" % (time.time() - start))
 
     ######################################################################
     # assemble K, G, GT, f, h into A and rhs
-    ######################################################################
-    start = time.time()
-
-    if pnormalise:
-       a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
-       rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
-       a_mat[0:NfemV,0:NfemV]=K_mat
-       a_mat[0:NfemV,NfemV:Nfem]=G_mat
-       a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-       a_mat[Nfem,NfemV:Nfem]=constr
-       a_mat[NfemV:Nfem,Nfem]=constr
-    else:
-       a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-       rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-       a_mat[0:NfemV,0:NfemV]=K_mat
-       a_mat[0:NfemV,NfemV:Nfem]=G_mat
-       a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-
-    rhs[0:NfemV]=f_rhs
-    rhs[NfemV:Nfem]=h_rhs
-
-    print("assemble blocks: %.3f s" % (time.time() - start))
-
-    ######################################################################
     # solve system
     ######################################################################
     start = time.time()
 
-    sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+    #if pnormalise:
+    #   a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
+    #   a_mat[0:NfemV,0:NfemV]=K_mat
+    #   a_mat[0:NfemV,NfemV:Nfem]=G_mat
+    #   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+    #   a_mat[Nfem,NfemV:Nfem]=constr
+    #   a_mat[NfemV:Nfem,Nfem]=constr
+    #else:
+    #   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+    #   rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+    #   a_mat[0:NfemV,0:NfemV]=K_mat
+    #   a_mat[0:NfemV,NfemV:Nfem]=G_mat
+    #   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+    #sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+
+    rhs[0:NfemV]=f_rhs
+    rhs[NfemV:Nfem]=h_rhs
+
+    sparse_matrix=A_sparse.tocsr()
+    sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
     print("solve time: %.3f s" % (time.time() - start))
 
@@ -688,6 +837,7 @@ for istep in range(0,nstep):
 
     vrms=0.
     mass=0.
+    counter=0
     for iel in range (0,nel):
         for iq in [0,1,2]:
             for jq in [0,1,2]:
@@ -720,20 +870,17 @@ for istep in range(0,nstep):
                     uq+=NNNV[k]*u[iconV[k,iel]]
                     vq+=NNNV[k]*v[iconV[k,iel]]
                 #end for
-                rhoq=0.
-                for k in range(0,mP):
-                    rhoq+=NNNP[k]*rho_nodal[iconP[k,iel]]
-                #end for
                 vrms+=(uq**2+vq**2)*weightq*jcob
-                mass+=rhoq*weightq*jcob
+                mass+=rhoq[counter]*weightq*jcob
+                counter+=1
             #end for
         #end for
     #end for
 
     vrms=np.sqrt(vrms/(Lx*Ly))
 
-    vrms_file.write("%e %e \n" %(Time,vrms)) ; vrms_file.flush()
-    mass_file.write("%e %e %e\n" %(Time,mass,mass0)) ; mass_file.flush()
+    vrms_file.write("%e %e %d\n" %(Time,vrms,avrg)) ; vrms_file.flush()
+    mass_file.write("%.10f %.10f %.10f %d\n" %(Time,mass,mass0,avrg)) ; mass_file.flush()
 
     print("     -> vrms %.5e " %vrms)
     print("     -> mass %.5e " %mass)
@@ -839,9 +986,6 @@ for istep in range(0,nstep):
 
     #end if
 
-    marker3333_file.write("%d %e %e\n" %(istep,swarm_x[3333],swarm_y[3333]))
-    marker3333_file.flush()
-
     print("advect markers: %.3f s" % (time.time() - start))
 
     ######################################################################
@@ -849,8 +993,6 @@ for istep in range(0,nstep):
     ######################################################################
     start = time.time()
 
-    xc = np.zeros(nel,dtype=np.float64)
-    yc = np.zeros(nel,dtype=np.float64)
     exx = np.zeros(nel,dtype=np.float64)
     eyy = np.zeros(nel,dtype=np.float64)
     exy = np.zeros(nel,dtype=np.float64)
@@ -876,8 +1018,6 @@ for istep in range(0,nstep):
             dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
         #end for
         for k in range(0,mV):
-            xc[iel] += NNNV[k]*x[iconV[k,iel]]
-            yc[iel] += NNNV[k]*y[iconV[k,iel]]
             exx[iel] += dNNNVdx[k]*u[iconV[k,iel]]
             eyy[iel] += dNNNVdy[k]*v[iconV[k,iel]]
             exy[iel] += 0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
@@ -892,6 +1032,7 @@ for istep in range(0,nstep):
     #np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
     print("compute strainrate: %.3f s" % (time.time() - start))
+
 
     #####################################################################
     # interpolate pressure (q), density (rhoV) and viscosity (etaV)
@@ -943,6 +1084,22 @@ for istep in range(0,nstep):
 
     print("interpolate press on V nodes: %.3f s" % (time.time() - start))
 
+    ######################################################################
+    # export vertical profiles
+    ######################################################################
+
+    for iq in range(0,nq):
+        if abs(xq[iq]-Lx/2)<1e-6:
+           profileq_file.write("%e %e %e\n" %(yq[iq],etaq[iq],rhoq[iq]))
+           profileq_file.flush()
+
+    for iel in range(0,nel):
+        if abs(xc[iel]-Lx/2)<1e-6: 
+           profilec_file.write("%e %e %e %e %e\n" %(y[iconV[4,iel]],eta_elemental[iel],u[iconV[4,iel]],v[iconV[4,iel]],q[iconV[4,iel]]))
+           profilec_file.write("%e %e %e %e %e\n" %(y[iconV[8,iel]],eta_elemental[iel],u[iconV[8,iel]],v[iconV[8,iel]],q[iconV[8,iel]]))
+           profilec_file.write("%e %e %e %e %e\n" %(y[iconV[6,iel]],eta_elemental[iel],u[iconV[6,iel]],v[iconV[6,iel]],q[iconV[6,iel]]))
+           profilec_file.flush()
+
     #####################################################################
     # plot of solution. The 9-node Q2 element does not exist in vtk, 
     # but the 8-node one does, i.e. type=23. 
@@ -950,6 +1107,152 @@ for istep in range(0,nstep):
     start = time.time()
     
     if istep%every==0:
+
+       filename = 'fields_ls_{:04d}.vtu'.format(istep) 
+       vtufile=open(filename,"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(4*nel,nel))
+       #####
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+       for iel in range(0,nel):
+           vtufile.write("%10e %10e %10e \n" %(x[iconV[0,iel]],y[iconV[0,iel]],0.))
+           vtufile.write("%10e %10e %10e \n" %(x[iconV[1,iel]],y[iconV[1,iel]],0.))
+           vtufile.write("%10e %10e %10e \n" %(x[iconV[2,iel]],y[iconV[2,iel]],0.))
+           vtufile.write("%10e %10e %10e \n" %(x[iconV[3,iel]],y[iconV[3,iel]],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
+       vtufile.write("<CellData Scalars='scalars'>\n")
+       vtufile.write("<DataArray type='Float32' Name='eta_min' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (eta_min[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='eta_max' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (eta_max[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='eta_max-eta_min' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (eta_max[iel]-eta_min[iel]))
+       vtufile.write("</DataArray>\n")
+
+       vtufile.write("<DataArray type='Float32' Name='rho_min' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (rho_min[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='rho_max' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (rho_max[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='rho_max-rho_min' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (rho_max[iel]-rho_min[iel]))
+       vtufile.write("</DataArray>\n")
+
+       vtufile.write("<DataArray type='Float32' Name='a_ls' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (a_ls[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='b_ls' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (b_ls[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='c_ls' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (c_ls[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='b_ls (after limiter)' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (b_ls2[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='c_ls (after limiter)' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (c_ls2[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='d_ls' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (d_ls[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='e_ls' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (e_ls[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='f_ls' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (f_ls[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='e_ls (after limiter)' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (e_ls2[iel]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='f_ls (after limiter)' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (f_ls2[iel]))
+       vtufile.write("</DataArray>\n")
+
+       vtufile.write("</CellData>\n")
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='eta_ls' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (a_ls[iel]+b_ls[iel]*(x[iconV[0,iel]]-xc[iel])+c_ls[iel]*(y[iconV[0,iel]]-yc[iel]) ))
+           vtufile.write("%10e\n" % (a_ls[iel]+b_ls[iel]*(x[iconV[1,iel]]-xc[iel])+c_ls[iel]*(y[iconV[1,iel]]-yc[iel]) ))
+           vtufile.write("%10e\n" % (a_ls[iel]+b_ls[iel]*(x[iconV[2,iel]]-xc[iel])+c_ls[iel]*(y[iconV[2,iel]]-yc[iel]) ))
+           vtufile.write("%10e\n" % (a_ls[iel]+b_ls[iel]*(x[iconV[3,iel]]-xc[iel])+c_ls[iel]*(y[iconV[3,iel]]-yc[iel]) ))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='eta_ls2' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (a_ls[iel]+b_ls2[iel]*(x[iconV[0,iel]]-xc[iel])+c_ls2[iel]*(y[iconV[0,iel]]-yc[iel]) ))
+           vtufile.write("%10e\n" % (a_ls[iel]+b_ls2[iel]*(x[iconV[1,iel]]-xc[iel])+c_ls2[iel]*(y[iconV[1,iel]]-yc[iel]) ))
+           vtufile.write("%10e\n" % (a_ls[iel]+b_ls2[iel]*(x[iconV[2,iel]]-xc[iel])+c_ls2[iel]*(y[iconV[2,iel]]-yc[iel]) ))
+           vtufile.write("%10e\n" % (a_ls[iel]+b_ls2[iel]*(x[iconV[3,iel]]-xc[iel])+c_ls2[iel]*(y[iconV[3,iel]]-yc[iel]) ))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='rho_ls' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (d_ls[iel]+e_ls[iel]*(x[iconV[0,iel]]-xc[iel])+f_ls[iel]*(y[iconV[0,iel]]-yc[iel]) ))
+           vtufile.write("%10e\n" % (d_ls[iel]+e_ls[iel]*(x[iconV[1,iel]]-xc[iel])+f_ls[iel]*(y[iconV[1,iel]]-yc[iel]) ))
+           vtufile.write("%10e\n" % (d_ls[iel]+e_ls[iel]*(x[iconV[2,iel]]-xc[iel])+f_ls[iel]*(y[iconV[2,iel]]-yc[iel]) ))
+           vtufile.write("%10e\n" % (d_ls[iel]+e_ls[iel]*(x[iconV[3,iel]]-xc[iel])+f_ls[iel]*(y[iconV[3,iel]]-yc[iel]) ))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='rho_ls2' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (d_ls[iel]+e_ls2[iel]*(x[iconV[0,iel]]-xc[iel])+f_ls2[iel]*(y[iconV[0,iel]]-yc[iel]) ))
+           vtufile.write("%10e\n" % (d_ls[iel]+e_ls2[iel]*(x[iconV[1,iel]]-xc[iel])+f_ls2[iel]*(y[iconV[1,iel]]-yc[iel]) ))
+           vtufile.write("%10e\n" % (d_ls[iel]+e_ls2[iel]*(x[iconV[2,iel]]-xc[iel])+f_ls2[iel]*(y[iconV[2,iel]]-yc[iel]) ))
+           vtufile.write("%10e\n" % (d_ls[iel]+e_ls2[iel]*(x[iconV[3,iel]]-xc[iel])+f_ls2[iel]*(y[iconV[3,iel]]-yc[iel]) ))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</PointData>\n")
+       #####
+       vtufile.write("<Cells>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d %d %d %d\n" %(iel*4,iel*4+1,iel*4+2,iel*4+3))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %((iel+1)*4))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %5)
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</Cells>\n")
+       #####
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
+
+
        filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -1050,6 +1353,7 @@ for istep in range(0,nstep):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
+
        filename = 'markers_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -1098,58 +1402,53 @@ for istep in range(0,nstep):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
+
+       filename = 'qpts_{:04d}.vtu'.format(istep) 
+       vtufile=open(filename,"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nq,nq))
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'>\n")
+       for i in range(0,nq):
+           vtufile.write("%10e  \n" %etaq[i])
+       vtufile.write("</DataArray>\n")
+       #vtufile.write("<DataArray type='Float32' Name='log10(eta)' Format='ascii'>\n")
+       #for i in range(0,nq):
+       #    vtufile.write("%10e  \n" %(np.log10(etaq[i])))
+       #vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'>\n")
+       for i in range(0,nq):
+           vtufile.write("%10e  \n" %rhoq[i])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</PointData>\n")
+
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+       for i in range(0,nq):
+           vtufile.write("%10e %10e %10e \n" %(xq[i],yq[i],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
+       vtufile.write("<Cells>\n")
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       for i in range(0,nq):
+           vtufile.write("%d " % i)
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       for i in range(0,nq):
+           vtufile.write("%d " % (i+1))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       for i in range(0,nq):
+           vtufile.write("%d " % 1)
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Cells>\n")
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
+
     print("write vtu files: %.3f s" % (time.time() - start))
-
-    vtufile=open('qpts.vtu',"w")
-    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-    vtufile.write("<UnstructuredGrid> \n")
-    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nq,nq))
-
-    vtufile.write("<PointData Scalars='scalars'>\n")
-    vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'>\n")
-    for i in range(0,nq):
-        vtufile.write("%10e  \n" %etaq[i])
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='log10(eta)' Format='ascii'>\n")
-    for i in range(0,nq):
-        vtufile.write("%10e  \n" %(np.log10(etaq[i])))
-    vtufile.write("</DataArray>\n")
-
-    vtufile.write("</PointData>\n")
-
-    vtufile.write("<Points> \n")
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
-    for i in range(0,nq):
-        vtufile.write("%10e %10e %10e \n" %(xq[i],yq[i],0.))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</Points> \n")
-
-    vtufile.write("<Cells>\n")
-
-    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-    for i in range(0,nq):
-        vtufile.write("%d " % i)
-    vtufile.write("</DataArray>\n")
-
-    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-    for i in range(0,nq):
-        vtufile.write("%d " % (i+1))
-    vtufile.write("</DataArray>\n")
-
-    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-    for i in range(0,nq):
-        vtufile.write("%d " % 1)
-    vtufile.write("</DataArray>\n")
-
-    vtufile.write("</Cells>\n")
-
-    vtufile.write("</Piece>\n")
-    vtufile.write("</UnstructuredGrid>\n")
-    vtufile.write("</VTKFile>\n")
-    vtufile.close()
-
-
-
 
     Time+=dt
 
