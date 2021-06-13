@@ -1,0 +1,22 @@
+rm -f errors.ascii
+
+#----------------------------------------------------
+
+g=0
+
+for n in 8 16 24 32 48 56 64 80 96 128; do 
+    echo $n
+    python3 stone.py $n $n 0 $g> opla
+    grep benchm opla  >> errors.ascii
+done
+
+rm opla
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,4 @@
+rm sol*.vtu
+rm *.ascii
+rm opla
+

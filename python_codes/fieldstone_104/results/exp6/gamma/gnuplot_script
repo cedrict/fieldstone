@@ -1,0 +1,21 @@
+set term pdf enhanced font "Times,12pt"
+set log xy
+set key outside
+set format y "10^{%L}"
+set xlabel 'h'
+set ylabel 'error (L_2 norm)'
+
+set output 'errors.pdf'
+plot[][]\
+'errors_16.ascii' u 7:3 w lp ps .5 lt 1 t 'velocity, 16x16',\
+'errors_16.ascii' u 7:4 w lp ps .5 lt 2 t 'pressure, 16x16',\
+'errors_16.ascii' u 7:6 w lp ps .5 lt 3 t 'div(v), 16x16',\
+'errors_32.ascii' u 7:3 w lp ps .5 lt 1 dt 2 t 'velocity, 32x32',\
+'errors_32.ascii' u 7:4 w lp ps .5 lt 2 dt 2 t 'pressure, 32x32',\
+'errors_32.ascii' u 7:6 w lp ps .5 lt 3 dt 2 t 'div(v), 32x32',\
+'errors_48.ascii' u 7:3 w lp ps .5 lt 1 dt 3 t 'velocity, 48x48',\
+'errors_48.ascii' u 7:4 w lp ps .5 lt 2 dt 3 t 'pressure, 48x48',\
+'errors_48.ascii' u 7:6 w lp ps .5 lt 3 dt 3 t 'div(v), 48x48',\
+'errors_64.ascii' u 7:3 w lp ps .5 lt 1 dt 3 t 'velocity, 64x64',\
+'errors_64.ascii' u 7:4 w lp ps .5 lt 2 dt 3 t 'pressure, 64x64',\
+'errors_64.ascii' u 7:6 w lp ps .5 lt 3 dt 3 t 'div(v), 64x64'

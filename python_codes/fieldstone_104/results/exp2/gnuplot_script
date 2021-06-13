@@ -1,0 +1,15 @@
+set term pdf enhanced font "Times,12pt"
+set log xy
+set key outside
+set format y "10^{%L}"
+set xlabel 'h'
+set ylabel 'velocity error L2-norm'
+set output 'errors.pdf'
+plot[][]\
+'errors_Ra_0000001.ascii' u 2:3 w lp ps .5 t 'Ra=10^0, Q_2xQ_{1}',\
+'errors_Ra_0000100.ascii' u 2:3 w lp ps .5 t 'Ra=10^2, Q_2xQ_{1}',\
+'errors_Ra_0010000.ascii' u 2:3 w lp ps .5 t 'Ra=10^4, Q_2xQ_{1}',\
+'errors_Ra_1000000.ascii' u 2:3 w lp ps .5 t 'Ra=10^6, Q_2xQ_{1}',\
+'errors_Ra_1000000_disc.ascii' u 2:3 w lp lt 7 ps .5 pt 1 t 'Ra=10^0, Q_2xP_{-1}',\
+'errors_Ra_1000000_disc.ascii' u 2:3 w lp lt 7 ps .5 pt 2 t 'Ra=10^6, Q_2xP_{-1}',\
+x**4*5 lt -1 dt 2 t 'h^4'

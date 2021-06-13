@@ -1,0 +1,20 @@
+set term pdf enhanced font "Times,12pt"
+set log xy
+set key outside
+set format y "10^{%L}"
+set xlabel 'h'
+set ylabel 'error (L_2 norm)'
+
+set output 'errors.pdf'
+plot[][]\
+'errors.ascii'      u 2:3 w lp lt 1 pt 1 ps .5 t 'velocity, Q_2xQ_{1}',\
+'errors.ascii'      u 2:4 w lp lt 2 pt 1 ps .5 t 'pressure, Q_2xQ_{1}',\
+'errors.ascii'      u 2:6 w lp lt 3 pt 1 ps .5 t 'div(v), Q_2xQ_{1}',\
+'errors.ascii'      u 2:7 w lp lt 4 pt 1 ps .5 t 'grad(v), Q_2xQ_{1}',\
+'errors_disc.ascii' u 2:3 w lp lt 1 pt 2 ps .5 t 'velocity, Q_2xP_{-1}',\
+'errors_disc.ascii' u 2:4 w lp lt 2 pt 2 ps .5 t 'pressure, Q_2xP_{-1}',\
+'errors_disc.ascii' u 2:6 w lp lt 3 pt 2 ps .5 t 'div(v), Q_2xP_{-1}',\
+'errors_disc.ascii' u 2:7 w lp lt 4 pt 2 ps .5 t 'grad(v), Q_2xP_{-1}',\
+x**3/3 lt -1 dt 2 t 'h^3',\
+x**2/4 lt -1 dt 3 t 'h^2',\
+x*20    lt -1 dt 4 t 'h^1'
