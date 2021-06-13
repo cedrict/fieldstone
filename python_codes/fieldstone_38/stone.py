@@ -12,6 +12,9 @@ def rho(rho0,alpha,T,T0):
     val=rho0*(1.-alpha*(T-T0)) - rho0
     return val
 
+def T_anal(x,y):
+    return T0*np.cos(np.pi/Lx*x)*np.sinh(np.pi/Lx*y)/np.sinh(np.pi/Lx*Ly)
+
 #------------------------------------------------------------------------------
 
 print("-----------------------------")
@@ -33,12 +36,14 @@ alpha=2e-5   # thermal expansion coefficient
 hcond=6.66   # thermal conductivity
 hcapa=1200   # heat capacity
 rho0=3700    # reference density
-T0=0.1       # reference temperature
+T0=100       # reference temperature
 CFL=1        # CFL number 
 gy=-10       # vertical component of gravity vector
 eta=1e17*rho0
 penalty=1e6*eta # penalty coefficient value
-nstep=500   # maximum number of timestep   
+nstep=2500   # maximum number of timestep   
+
+dt_max=1e6*year
 
 tol=1e-6
 
@@ -47,8 +52,8 @@ if int(len(sys.argv) == 3):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
 else:
-   nelx = 48
-   nely = 48
+   nelx = 96
+   nely = 96
 
 Ra= rho0*abs(gy)*alpha*T0*Lx**3/(hcond/rho0/hcapa)/eta
 
@@ -379,7 +384,7 @@ for istep in range(0,nstep):
 
     dt2=CFL*(Lx/nelx)**2/(hcond/hcapa/rho0)
 
-    dt=np.min([dt1,dt2])
+    dt=np.min([dt1,dt2,dt_max])
 
     time+=dt
 
@@ -572,6 +577,7 @@ for istep in range(0,nstep):
 
     #################################################################
     # compute Nusselt number at top
+    # actually it is not the Nusselt number, only int_Lx qy dx
     #################################################################
 
     Nusselt=0
@@ -818,7 +824,7 @@ for istep in range(0,nstep):
            vtufile.write("%10f \n" %(rho(rho0,alpha,T[i],T0)))
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='T' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
        for i in range(0,nnp):
            vtufile.write("%10e \n" % (T[i]))
        vtufile.write("</DataArray>\n")
@@ -847,6 +853,14 @@ for istep in range(0,nstep):
        for i in range (0,nnp):
            vtufile.write("%e\n" % exy[i])
        vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='T (anal)' Format='ascii'> \n")
+       for i in range(0,nnp):
+           vtufile.write("%10e \n" % (T_anal(x[i],y[i])))
+       vtufile.write("</DataArray>\n")
+       #--
+
+
+
        #--
        vtufile.write("</PointData>\n")
        #####
