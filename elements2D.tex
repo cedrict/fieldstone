@@ -605,12 +605,12 @@ freedom for each component of the velocity and one degree of freedom shared by b
 the velocity."
 
 Two versions are proposed, if I understand it correctly.
-The first one is given in Eq.~7 (three extra dofs: $u_5$, $v_5$, $w$):
+The first one is given in Eq.~(7) (three extra dofs: $u_5$, $v_5$, $w$):
 \begin{eqnarray}
 u^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) u_i + \left[ u_5 - \frac{w}{4}(1-s) \right] (1-r^2)(1-s^2) \nonumber\\
 v^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) v_i + \left[ v_5 - \frac{w}{4}(1-r) \right] (1-r^2)(1-s^2) 
 \end{eqnarray}
-The second one in Eq.23 (four extra dofs: $u_5$, $v_5$, $u_6$, $v_6$):
+The second one in Eq.~(23) (four extra dofs: $u_5$, $v_5$, $u_6$, $v_6$):
 \begin{eqnarray}
 u^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) u_i + \left[ u_5 +u_6(r+s) \right] (1-r^2)(1-s^2) \nonumber\\
 v^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) v_i + \left[ v_5 +v_6(r+s) \right] (1-r^2)(1-s^2) 
@@ -622,7 +622,7 @@ bilinear approximations for both velocity and pressure variables. The velocity
 field is enriched with piecewise polynomial bubble functions with null average at element
 edges."
 
-It looks like they are proposing (see their Eq.~2.6):
+It looks like they are proposing (see their Eq.~(2.6)):
 \begin{eqnarray}
 u^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) u_i + (\alpha + \gamma s)\frac{1}{2}(r^2+s^2-\frac43) \nn\\ 
 v^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) v_i + (\beta + \gamma r) \frac{1}{2}(r^2+s^2-\frac43)  

@@ -128,7 +128,8 @@ uses the Trilinos solver library \cite{hewi12}, and can deal with 2D and 3D geom
                           Heron \etal \cite{hemn20}, O'Neill \etal \cite{onlw20}, 
                           Assanelli \etal \cite{aslr20}, Muluneh \etal \cite{mubi20},
                           Negredo \etal \cite{nemc20}, Lesher \etal \cite{ledb20},
-                          Mitrovica \etal \cite{miac20}, Withers \cite{with20}
+                          Mitrovica \etal \cite{miac20}, Withers \cite{with20},
+                          Lees \etal \cite{lerm20}
 \item[\twothousandtwentyone] Barrionuevo \etal \cite{balm21}, Bredow \& Steinberger \cite{brst21},
                              Saxena \etal \cite{sacp21}, Grevemeyer \etal \cite{grrm21},
                              Heckenbach \etal \cite{hebg21}, Njinju \etal \cite{njsn21}, 
@@ -189,8 +190,10 @@ Katzman \etal \cite{katl95}\\
 Morra \etal \cite{moct07}\\
 Morra \etal \cite{moct09}\\
 Morra \etal \cite{moyb10}\\
-Quevedo \etal \cite{qumm12}, Butterworth \etal \cite{buqm12}\\
+Quevedo \etal \cite{qumm12}, Butterworth \etal \cite{buqm12}, Li \& Ribe \cite{liri12}\\
 Quevedo \etal \cite{quhm13}\\
+Di Leo \etal \cite{diwl14}, Li \etal \cite{lidr14}\\
+Xu \& Ribe \cite{xuri16}\\
 Gerardi \etal \cite{gert19}
 \end{scriptsize}
 
@@ -393,7 +396,8 @@ These codes are hosted by CIG at\\
 \cite{cuwi14}
 \cite{paml14b}
 Ratnaswamy \etal (2015) \cite{rasg15}\\
-Chapman (2021) \cite{chap21}
+Chapman (2021) \cite{chap21},
+Trim \etal \cite{trbs21}
 \end{scriptsize}
 
 %------------------------------------------------------------------------------
@@ -719,6 +723,7 @@ Section 3 of \cite{qums07} presents the evolutionary path which lead to this cod
 \item[\twothousandeleven] Leng \& Gurnis \cite{legu11}, Rey \etal \cite{retk11}
 \item[\twothousandtwelve] Leng \etal \cite{lega12}
 \item[\twothousandfourteen] Rey \etal \cite{recf14}
+\item[\twothousandtwentyone] Zhang \& Leng \cite{zhle21}
 \end{itemize}
 \end{scriptsize}
 
@@ -813,7 +818,8 @@ Section 3 of \cite{qums07} presents the evolutionary path which lead to this cod
                             \cite{cavg13}\cite{ligw13},
                             \cite{vocg13}\cite{gery13c},
                             \cite{gery13}\cite{milp13},
-                            \cite{rugb13}\cite{scdg13}
+                            \cite{rugb13}\cite{scdg13},
+                            Agrusta \etal \cite{agat13}
 \item[\twothousandfourteen] \cite{dugs14}\cite{puge14},
                             \cite{voge14b}\cite{bagb14},
                             \cite{lige14}\cite{stjm14},
@@ -839,7 +845,8 @@ Section 3 of \cite{qums07} presents the evolutionary path which lead to this cod
 \item[\twothousandnineteen] Koptev \etal \cite{kobg19}, Li \etal \cite{ligc19},
                       Sizova \etal \cite{sihf19}, Menant \etal \cite{meag19},
                       Gulcher \etal \cite{gubg19}, van Zelst \etal \cite{vawg19},
-                      Zhong \etal \cite{zhli19}, van Dinther \etal \cite{vakf19}
+                      Zhong \etal \cite{zhli19}, van Dinther \etal \cite{vakf19},
+                      Lei \etal \cite{lell19}
 \item[\twothousandtwenty] Baes \etal \cite{basg20}, Zhou \etal \cite{zhlg20}, 
                     Dai \etal \cite{dawl20}, Chowdhury \etal \cite{chcg20},
                     Menant \etal \cite{meag20}, Chen \etal \cite{chlc20}, Munch \etal \cite{mugu20}, 
@@ -847,7 +854,8 @@ Section 3 of \cite{qums07} presents the evolutionary path which lead to this cod
                     Peral \etal \cite{perz20}, Petrini \etal \cite{pegy20}, 
                     Baes \etal \cite{basg20b}, D'acquisto \etal \cite{dadm20},
                     Perchuk \etal \cite{pegz20}, Ruh \cite{ruh20}, Schierjott \etal \cite{sctr20}
-\item[\twothousandtwentyone]  Pei \etal \cite{pels21}, Chowdhury \etal \cite{chcg21}
+\item[\twothousandtwentyone]  Pei \etal \cite{pels21}, Chowdhury \etal \cite{chcg21},
+                              Qi \etal \cite{qill21}
 \end{itemize}
 \end{scriptsize}
 
@@ -1051,6 +1059,15 @@ There are tons of papers with PyLith.
 \cite{crvs15}
 }
 
+%------------------------------------------------------------------------------
+\item {\codefont RBF} 
+%------------------------------------------------------------------------------
+\index{general}{Radial Basis Functions}
+
+Arrial \etal \cite{arfw14}
+
+See also poster by Yuen
+
 
 %------------------------------------------------------------------------------
 \item RHEA \index{general}{RHEA}
@@ -1136,6 +1153,7 @@ and compressible viscous media.
 \item[\twothousandseventeen] Ciskova \etal \cite{civj17}, Wei \etal \cite{wewv17}
 \item[\twothousandeighteen] \cite{spcv18}\cite{chss18}
 \item[\twothousandnineteen] \cite{zhdv19}\cite{vayu19}\cite{casv19}\cite{vaws19}\cite{cibi19}
+\item[\twothousandtwentyone] Pokorny \etal \cite{pocv21}
 \end{itemize}
 \end{scriptsize}
 
@@ -1516,9 +1534,17 @@ This stands for 'Yet Another Convection Code'.
 Section 3 of \cite{qums07} presents the evolutionary path which lead to this code.
 Also check \cite{magm20} for Underworld2. 
 
+\begin{center}
+\includegraphics[width=5.5cm]{images/codes/underworld1}
+\includegraphics[width=5.5cm]{images/codes/underworld2}
+\includegraphics[width=5.5cm]{images/codes/underworld3}\\
+{\captionfont Taken from a presentation by L. Moresi}
+\end{center}
+
+
 \begin{scriptsize}
 \begin{itemize}
-\item[\twothousandsix] \cite{stfs06}\cite{momu06}
+\item[\twothousandsix] Stegman \etal \cite{stfs06}, Moresi \& Muhlhaus \cite{momu06}
 \item[\twothousandseven] \cite{moql07}\cite{stfs07}\cite{qums07}
 \item[\twothousandeight] \cite{lemm08}\cite{ozrs08}\cite{gotc08}\cite{stmt08}\cite{scsf11}
 \item[\twothousandten] \cite{casm10}\cite{mamb10}\cite{stsf10}\cite{stfc10}\cite{fasm10}\cite{cazf10}

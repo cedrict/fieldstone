@@ -23,7 +23,7 @@ $\vec{e}_x$, $\vec{e}_y$ and $\vec{e}_z$ respectively.
 \]
 The gradient of a function $f$ is 
 \[
-\vec{\nabla} f= \text{grad }f 
+\vec{\nabla} f= \text{grad }f= 
 \frac{\partial f}{\partial x}\; \vec{e}_x +
 \frac{\partial f}{\partial y}\; \vec{e}_y +
 \frac{\partial f}{\partial z}\; \vec{e}_z,
@@ -360,6 +360,80 @@ v_\theta &=&  u \cos\theta\cos\phi + v \cos\theta\sin\phi -w \sin\theta   \\
 v_\phi   &=& -u \sin\phi  + v \cos\phi  
 \end{eqnarray}
 
+%.................................................................................................
+\subsubsection{Converting tensors between Cartesian and Cylindrical bases \label{ss:convcartspher}}
+
+\[
+{\bm T}_{\tiny Cyl}=
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{rz} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta z} \\
+T_{z r}      & T_{z \theta}     & T_{zz}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+ \cos \theta&\sin \theta&0 \\
+-\sin \theta&\cos \theta&0 \\
+0 & 0 & 1 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\cos \theta & -\sin \theta&0 \\
+\sin \theta &  \cos \theta&0 \\
+0 & 0 & 1 
+\end{array}
+\right)
+\]
+
+\[
+{\bm T}_{\tiny Cart}=
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+ \cos \theta&-\sin \theta&0 \\
+\sin \theta&\cos \theta&0 \\
+0 & 0 & 1 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{rz} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta z} \\
+T_{z r}      & T_{z \theta}     & T_{zz}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\cos \theta & \sin \theta&0 \\
+-\sin \theta &  \cos \theta&0 \\
+0 & 0 & 1 
+\end{array}
+\right)
+\]
+
+
 
 %.................................................................................................
 \subsubsection{Converting tensors between Cartesian and Spherical bases \label{ss:convcartspher}}
@@ -456,44 +530,4 @@ T_{zx} & T_{zy} & T_{zz}
 \]
 If we now assume that the tensor ${\bm T}$ is symmetric (e.g. stress tensor, strain rate tensor),
 then there are only 6 independent terms.
-
-We sometimes define $c_\theta=\cos\theta$, $c_\phi=\cos\phi$, etc ...
-so that 
-
-\[
-\left(
-\begin{array}{ccc}
-T_{rr}       & T_{r\theta}      & T_{r\phi} \\
-T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
-T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
-\end{array}
-\right)
-=
-\left(
-\begin{array}{ccc}
-s_\theta \; c_\phi & s_\theta \; s_\phi & c_\theta \\
-c_\theta \; c_\phi & c_\theta \; s_\phi & -s_\theta \\
--s_\phi & c_\phi & 0 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-T_{xx} & T_{xy} & T_{xz} \\
-T_{yx} & T_{yy} & T_{yz} \\
-T_{zx} & T_{zy} & T_{zz} 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-s_\theta\;c\phi & c_\theta\;c\phi & -s_\phi \\
-s_\theta\;s\phi & c_\theta\;s\phi & c_\phi \\
-c_\theta & -s_\theta & 0
-\end{array}
-\right)
-\]
-
-
-
 

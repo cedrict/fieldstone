@@ -1,0 +1,131 @@
+\begin{flushright} {\tiny {\color{gray} fsbc\_annulus.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In the context of geodynamical modelling we often wish to prescribed free-slip 
+boundary conditions on a given boundary of the domain. If the domain is a rectangle
+which sides align with the Cartesian axis, then fixing $\upnu_x=0$ or $\upnu_y=0$
+is simple and does indeed insure free-slip boundary conditions. 
+
+However the situation is much more complicated in the case of a curved boundary, 
+such as for instance the inner and outer boundaries of an annulus or spherical shell.
+
+If the curved boundary is a circular, the procedure is as follows:
+\begin{enumerate}
+\item identify the node on the boundary which is to be fixed. 
+\item compute its coordinate angle $\theta$ (and $\phi$ in 3D) 
+\item do a rotation so as to bring it back onto the x-axis (2D) or z-axis (3D)
+\item apply free slip boundary condition (now easy since parallel or perpendicular to axis)
+\item rotate back
+\end{enumerate}
+
+This technique is implemented in \stone 33 and \stone 96.
+
+\paragraph{A few remarks about rotation matrices} 
+In a given plane, the counter-clockwise rotation matrix by and angle $\theta$ is defined by 
+\[
+{\cal R}=
+\left(
+\begin{array}{cc}
+\cos\theta & \sin\theta \\
+-\sin\theta & \cos\theta
+\end{array}
+\right)
+\]
+The image of vector $\vec{V}$ by a rotation of angle $\theta$ is given by
+\[
+\vec{V}'={\cal R}\cdot \vec{V}
+\]
+
+Coordinate transformations of second-rank tensors involve the very same   
+matrix as vector transforms. A transformation of the stress tensor ${\bm \sigma}$ ,
+from the reference $xy$-coordinate system to ${\bm \sigma}'$ in a new $x'y'-$system is done as follows:
+\[
+{\bm \sigma}'={\cal R}\cdot {\bm \sigma}\cdot{\cal R}^T
+\]
+
+
+
+[from Wikipedia] A basic rotation (also called elemental rotation) is a rotation about one of the axes of a Coordinate system. The following three basic rotation matrices rotate vectors by an angle $\alpha$ 
+about the x-, y-, or z-axis, in three dimensions, using the right-hand rule—which codifies their 
+alternating signs. 
+
+\[
+{\cal R}_x(\alpha)=
+\left(
+\begin{array}{ccc}
+1 & 0 & 0 \\
+0 & \cos\alpha & -\sin\alpha \\
+0 & \sin\alpha & \cos\alpha
+\end{array}
+\right)
+\]
+
+\[
+{\cal R}_y(\alpha)=
+\left(
+\begin{array}{ccc}
+\cos\alpha & 0 & \sin\alpha \\
+0 & 1 & 0 \\
+-\sin\alpha & 0 &\cos\alpha
+\end{array}
+\right)
+\]
+
+\[
+{\cal R}_z(\alpha)=
+\left(
+\begin{array}{ccc}
+\cos\alpha & -\sin\alpha & 0\\
+\sin\alpha & \cos\alpha & 0 \\
+0 & 0 & 1 
+\end{array}
+\right)
+\]
+
+In my \elefant code
+I first rotate around the $z$ axis by and angle $-\phi$ and then 
+around axis $y$ by an angle $-\theta$ in the case of a spherical shell.
+
+\[
+{\cal R}_y(-\theta)=
+\left(
+\begin{array}{ccc}
+\cos(-\theta) & 0 & \sin(-\theta) \\
+0 & 1 & 0 \\
+-\sin(-\theta) & 0 &\cos(-\theta)
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+\cos\theta & 0 & -\sin\theta \\
+0 & 1 & 0 \\
+\sin\theta & 0 &\cos\theta
+\end{array}
+\right)
+\]
+
+\[
+{\cal R}_z(-\phi)
+=
+\left(
+\begin{array}{ccc}
+\cos(-\phi)& -\sin(-\phi) & 0\\
+\sin(-\phi)& \cos(-\phi) & 0 \\
+0 & 0 & 1 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+\cos\phi& \sin\phi & 0\\
+-\sin\phi& \cos\phi & 0 \\
+0 & 0 & 1 
+\end{array}
+\right)
+\]
+
+These are the {\tt Rott} and {\tt Rotp} matrices in the routines.
+
+
+
