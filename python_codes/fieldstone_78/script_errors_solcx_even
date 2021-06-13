@@ -1,0 +1,100 @@
+#! /bin/bash
+
+rm errors_*
+rm vrms_*
+rm pstats_*
+rm qstats_*
+rm ustats_*
+rm vstats_*
+rm *.ascii
+
+
+for rs in 16 32 48 64 80 96 112; do
+    echo $rs 
+    python3 stone.py $rs $rs 0 0 0 > opla
+    grep errv opla >> errors_regular
+    grep vrms opla >> vrms_regular
+    grep p opla | grep m,M  >> pstats_regular
+    grep q opla | grep m,M  >> qstats_regular
+    grep u opla | grep m,M  >> ustats_regular
+    grep v opla | grep m,M  >> vstats_regular
+done
+
+for rs in 8 16 24 32 40 48 56; do
+    echo $rs 
+    python3 stone.py $rs $rs 0 1 0 > opla
+    grep errv opla >> errors_S
+    grep vrms opla >> vrms_S
+    grep p opla | grep m,M  >> pstats_S
+    grep q opla | grep m,M  >> qstats_S
+    grep u opla | grep m,M  >> ustats_S
+    grep v opla | grep m,M  >> vstats_S
+done
+
+for rs in 4 8 12 16 20 24 28 32; do
+    echo $rs 
+    python3 stone.py $rs $rs 0 2 0 > opla
+    grep errv opla >> errors_LT
+    grep vrms opla >> vrms_LT
+    grep p opla | grep m,M  >> pstats_LT
+    grep q opla | grep m,M  >> qstats_LT
+    grep u opla | grep m,M  >> ustats_LT
+    grep v opla | grep m,M  >> vstats_LT
+done
+
+for rs in 4 8 12 16 20 24 28 32; do
+    echo $rs 
+    python3 stone.py $rs $rs 0 3 0 > opla
+    grep errv opla >> errors_QZ1
+    grep vrms opla >> vrms_QZ1
+    grep p opla | grep m,M  >> pstats_QZ1
+    grep q opla | grep m,M  >> qstats_QZ1
+    grep u opla | grep m,M  >> ustats_QZ1
+    grep v opla | grep m,M  >> vstats_QZ1
+done
+
+for rs in 6 12 18 24 30 36 40; do
+    echo $rs 
+    python3 stone.py $rs $rs 0 4 0 > opla
+    grep errv opla >> errors_QZ2
+    grep vrms opla >> vrms_QZ2
+    grep p opla | grep m,M  >> pstats_QZ2
+    grep q opla | grep m,M  >> qstats_QZ2
+    grep u opla | grep m,M  >> ustats_QZ2
+    grep v opla | grep m,M  >> vstats_QZ2
+done
+
+for rs in 8 16 32 40 48; do
+    echo $rs 
+    python3 stone.py $rs $rs 0 5 0 > opla
+    grep errv opla >> errors_QZ3
+    grep vrms opla >> vrms_QZ3
+    grep p opla | grep m,M  >> pstats_QZ3
+    grep q opla | grep m,M  >> qstats_QZ3
+    grep u opla | grep m,M  >> ustats_QZ3
+    grep v opla | grep m,M  >> vstats_QZ3
+done
+
+for rs in 6 12 18 24 30 36 42; do
+    echo $rs 
+    python3 stone.py $rs $rs 0 6 0 > opla
+    grep errv opla >> errors_A
+    grep vrms opla >> vrms_A
+    grep p opla | grep m,M  >> pstats_A
+    grep q opla | grep m,M  >> qstats_A
+    grep u opla | grep m,M  >> ustats_A
+    grep v opla | grep m,M  >> vstats_A
+done
+
+for rs in 8 16 24 32 40 48 56; do
+    echo $rs 
+    python3 stone.py $rs $rs 0 7 0 > opla
+    grep errv opla >> errors_B
+    grep vrms opla >> vrms_B
+    grep p opla | grep m,M  >> pstats_B
+    grep q opla | grep m,M  >> qstats_B
+    grep u opla | grep m,M  >> ustats_B
+    grep v opla | grep m,M  >> vstats_B
+done
+
+rm opla

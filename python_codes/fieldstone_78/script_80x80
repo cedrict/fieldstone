@@ -1,0 +1,53 @@
+#! /bin/bash
+
+rs=80
+
+echo 'reg'
+python3 stone.py $rs $rs 1 0 0 > opla
+mv solution.vtu solution_0.vtu
+mv pressure_top.ascii pressure_top_0.ascii
+mv vel_profile.ascii vel_profile_0.ascii 
+
+echo 'S'
+python3 stone.py $rs $rs 1 1 0 > opla
+mv solution.vtu solution_1.vtu
+mv pressure_top.ascii pressure_top_1.ascii
+mv vel_profile.ascii vel_profile_1.ascii 
+
+echo 'LT'
+python3 stone.py $rs $rs 1 2 0 > opla
+mv solution.vtu solution_2.vtu
+mv pressure_top.ascii pressure_top_2.ascii
+mv vel_profile.ascii vel_profile_2.ascii 
+
+echo 'QZ1'
+python3 stone.py $rs $rs 1 3 0 > opla
+mv solution.vtu solution_3.vtu
+mv pressure_top.ascii pressure_top_3.ascii
+mv vel_profile.ascii vel_profile_3.ascii 
+
+echo 'QZ2'
+python3 stone.py $rs $rs 1 4 0 > opla
+mv solution.vtu solution_4.vtu
+mv pressure_top.ascii pressure_top_4.ascii
+mv vel_profile.ascii vel_profile_4.ascii 
+
+echo 'QZ3'
+python3 stone.py $rs $rs 1 5 0 > opla
+mv solution.vtu solution_5.vtu
+mv pressure_top.ascii pressure_top_5.ascii
+mv vel_profile.ascii vel_profile_5.ascii 
+
+echo 'A'
+python3 stone.py $rs $rs 1 6 0 > opla
+mv solution.vtu solution_6.vtu
+mv pressure_top.ascii pressure_top_6.ascii
+mv vel_profile.ascii vel_profile_6.ascii 
+
+echo 'B'
+python3 stone.py $rs $rs 1 7 0 > opla
+mv solution.vtu solution_7.vtu
+mv pressure_top.ascii pressure_top_7.ascii
+mv vel_profile.ascii vel_profile_7.ascii 
+
+rm opla

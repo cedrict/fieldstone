@@ -4,14 +4,17 @@ import time as timing
 from scipy.sparse import csr_matrix, lil_matrix
 from scipy.sparse.linalg.dsolve import linsolve
 import scipy.sparse as sps
-import letallec
-import stenberg
+import macro_LT
+import macro_S
 import regular
 import macro_A
 import macro_B
 import macro_QZ1 
 import macro_QZ2
 import macro_QZ3
+import solkz
+import solcx
+import solvi
 
 ###############################################################################
 
@@ -26,6 +29,26 @@ def bx(x, y):
     if experiment==3:
        val=0.
     if experiment==4:
+       val=0.
+    if experiment==5:
+       val=0.
+    if experiment==6:
+       val=0.
+    if experiment==7:
+       val=0.
+    if experiment==8:
+       val=0.
+    if experiment==9:
+       val=(3*x**2*y**2-y-1)
+    if experiment==10:
+       val=0.
+    if experiment==11:
+       val=0.
+    if experiment==12:
+       val=0.
+    if experiment==13:
+       val=0.
+    if experiment==14:
        val=0.
     return val
 
@@ -47,6 +70,30 @@ def by(x, y):
           val=0
     if experiment==4:
        val=-1
+    if experiment==5:
+       val=np.sin(2*y)*np.cos(3*np.pi*x)
+    if experiment==6:
+       val=0.
+    if experiment==7:
+       val=-(8*x-2)
+    if experiment==8:
+       if abs(x-Lx/2)<64e3 and abs(y-384e3)<64e3:
+          val=-10*3208#+32000
+       else:
+          val=-10*3200#+32000
+       val=-32000
+    if experiment==9:
+       val=(2*x**3*y+3*x-1)
+    if experiment==10:
+       val=0.
+    if experiment==11:
+       val=0.
+    if experiment==12:
+       val=-10.
+    if experiment==13:
+       val=np.sin(np.pi*y)*np.cos(np.pi*x)
+    if experiment==14:
+       val=0
     return val
 
 def viscosity(x,y):
@@ -61,6 +108,36 @@ def viscosity(x,y):
           val=1
     if experiment==4:
        val=1
+    if experiment==5:
+       B=0.5*np.log(1e6)
+       val=np.exp(2*B*y)
+    if experiment==6:
+       val=1.
+    if experiment==7:
+       val=1.
+    if experiment==8:
+       if abs(x-Lx/2)<64e3 and abs(y-384e3)<64e3:
+          val=1e24
+       else:
+          val=1e21
+    if experiment==9:
+       val=1.
+    if experiment==10:
+       val=1.
+    if experiment==11:
+       val=1.
+    if experiment==12:
+       val=1.
+    if experiment==13:
+       if x<0.5:
+          val=1
+       else:
+          val=1e6
+    if experiment==14:
+       if (np.sqrt(x*x+y*y) < 0.2):
+          val=1e3
+       else:
+          val=1.
     return val
 
 ###############################################################################
@@ -74,6 +151,26 @@ def velocity_x(x,y):
        val=0.
     if experiment==4:
        val=0
+    if experiment==5:
+       val,xxx,xxxx=solkz.SolKzSolution(x,y)
+    if experiment==6:
+       val=0
+    if experiment==7:
+       val=(2*y-1)*x*(1-x)
+    if experiment==8:
+       val=0
+    if experiment==9:
+       val=x+x**2-2*x*y+x**3-3*x*y**2+x**2*y
+    if experiment==10:
+       val=0
+    if experiment==11:
+       val=0
+    if experiment==12:
+       val=0
+    if experiment==13:
+       val,xxx,xxx=solcx.SolCxSolution(x,y)
+    if experiment==14:
+       val,xxx,xxx=solvi.solution(x,y) 
     return val
 
 def velocity_y(x,y):
@@ -85,6 +182,26 @@ def velocity_y(x,y):
        val=0.
     if experiment==4:
        val=0
+    if experiment==5:
+       xxx,val,xxxx=solkz.SolKzSolution(x,y)
+    if experiment==6:
+       val=0
+    if experiment==7:
+       val=-(2*x-1)*y*(1-y)
+    if experiment==8:
+       val=0
+    if experiment==9:
+       val=-y-2*x*y+y**2-3*x**2*y+y**3-x*y**2
+    if experiment==10:
+       val=0
+    if experiment==11:
+       val=0
+    if experiment==12:
+       val=0
+    if experiment==13:
+       xxx,val,xxx=solcx.SolCxSolution(x,y)
+    if experiment==14:
+       xxx,val,xxx=solvi.solution(x,y) 
     return val
 
 def pressure(x,y):
@@ -96,6 +213,26 @@ def pressure(x,y):
        val=0.
     if experiment==4:
        val=0.5-y
+    if experiment==5:
+       xxx,xxxx,val=solkz.SolKzSolution(x,y)
+    if experiment==6:
+       val=0
+    if experiment==7:
+       val=2*x*(1-2*y)
+    if experiment==8:
+       val=-32000*(y-Ly/2)
+    if experiment==9:
+       val=x*y+x+y+x**3*y**2-4./3.
+    if experiment==10:
+       val=0
+    if experiment==11:
+       val=0
+    if experiment==12:
+       val=0
+    if experiment==13:
+       xxx,xxx,val=solcx.SolCxSolution(x,y)
+    if experiment==14:
+       xxx,xxx,val=solvi.solution(x,y) 
     return val
 
 ###############################################################################
@@ -131,39 +268,65 @@ mV=4     # number of nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-Lx=1.  # horizontal extent of the domain 
-Ly=1.  # vertical extent of the domain 
 
-if int(len(sys.argv) == 5):
+if int(len(sys.argv) == 6):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
    topo = int(sys.argv[4])
+   epsi = float(sys.argv[5])
 else:
-   nelx = 3
-   nely = 3
+   nelx = 64
+   nely = 64
    visu = 1
-   topo = 2
+   topo = 1
+   epsi = 0
 
-pnormalise=False # using int p dV=0 constrain
+pnormalise=True # using int p dV=0 constrain
 
-#exp1: mms
+#exp1: mms donea huerta
 #exp2: block
-#exp3: sphere
-#exp4: aquarium
-#exp5: solkz TODO
+#exp3: sphere 
+#exp4: aquarium (retire)
+#exp5: mms solkz
+#exp6: regularised lid driven cavity
+#exp7: mms cavity
+#exp8: sinking block
+#exp9: mms dohrmann bochev 
+#exp10: flow around square cylinder
+#exp11: flow over cavity
+#exp12: flow over obstacle
+#exp13: mms solcx
+#exp14: mms solvi
 
-experiment=1
+experiment=14
+
+#...........................
+
+if experiment!=8:
+   Lx=1. 
+   Ly=1.
+   eta_ref=1
+else:
+   Lx=512e3
+   Ly=512e3
+   eta_ref=1e21
+ 
+if experiment==10 or experiment==11 or experiment==12:
+   pnormalise=False 
+   Lx=4
+
+#...........................
 
 if topo==0: #regular
    NV=(nelx+1)*(nely+1)
    nel=nelx*nely
 
-if topo==1: #stenberg  (S)
+if topo==1: #Stenberg  (S)
    NV=nely*(5*nelx+2)+2*nelx+1
    nel=5*nelx*nely
 
-if topo==2: #le tallec (LT)
+if topo==2: #Le Tallec (LT)
    NV=(2*nelx+1)*(2*nely+1)+nely*nelx*8
    nel=12*nelx*nely
 
@@ -211,6 +374,11 @@ if nqperdim==2:
 rVnodes=[-1,+1,+1,-1]
 sVnodes=[-1,-1,+1,+1]
 
+if experiment==8:
+   vscaling=0.01/365.25/24/3600
+else:
+   vscaling=1.
+
 ###############################################################################
 # computing nodes coordinates and their connectivity
 ###############################################################################
@@ -219,10 +387,10 @@ if topo==0:
    xV,yV,iconV=regular.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 
 if topo==1:
-   xV,yV,iconV=stenberg.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+   xV,yV,iconV=macro_S.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 
 if topo==2:
-   xV,yV,iconV=letallec.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+   xV,yV,iconV=macro_LT.mesher(Lx,Ly,nelx,nely,nel,NV,mV,epsi)
 
 if topo==3:
    xV,yV,iconV=macro_QZ1.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
@@ -302,19 +470,135 @@ start = timing.time()
 
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
-for i in range(0,NV):
-    if xV[i]<eps:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if xV[i]>(Lx-eps):
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if yV[i]<eps:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if yV[i]>(Ly-eps):
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+
+if experiment==5 or experiment==8 or experiment==13:
+   for i in range(0,NV):
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if yV[i]/Ly<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if yV[i]/Ly>(1-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+
+elif experiment==6:
+   for i in range(0,NV):
+       if yV[i]>(Ly-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 16.*xV[i]**2*(1-xV[i])**2
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if xV[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if xV[i]>(Lx-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if yV[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+
+elif experiment==7 or experiment==9 or experiment==14:
+   for i in range(0,NV):
+       if yV[i]>(Ly-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+       if xV[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+       if xV[i]>(Lx-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+       if yV[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])
+elif experiment==10:
+   for i in range(0,NV):
+       if yV[i]>(Ly-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+       if xV[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 1
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if yV[i]<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+       if abs(xV[i]-Lx/2-0.125)<0.0001 and abs(yV[i]-Ly/2)<0.1251:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if abs(xV[i]-Lx/2+0.125)<0.0001 and abs(yV[i]-Ly/2)<0.1251:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if abs(xV[i]-Lx/2)<0.1251 and abs(yV[i]-Ly/2-0.125)<0.0001:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if abs(xV[i]-Lx/2)<0.1251 and abs(yV[i]-Ly/2+0.125)<0.0001:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+
+elif experiment==11:
+   for i in range(0,NV):
+       if yV[i]>(Ly-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+       if yV[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+       if yV[i]>0.4999*Ly and xV[i]<eps: 
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = -(yV[i]-Ly/2)*(yV[i]-Ly)
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if xV[i]<0.25001*Lx and abs(yV[i]-Ly/2)<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if abs(xV[i]-0.25*Lx)<eps and yV[i]<0.5*Ly:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if xV[i]>0.74999*Lx and abs(yV[i]-Ly/2)<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if abs(xV[i]-0.75*Lx)<eps and yV[i]<0.5*Ly:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if yV[i]>0.4999*Ly and xV[i]>Lx-eps: 
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+
+
+
+
+
+elif experiment==12:
+   for i in range(0,NV):
+       if yV[i]>(Ly-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+       if yV[i]<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+       if xV[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 1
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if xV[i]>Lx-eps: 
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+       if abs(xV[i]-0.5*Lx)<eps and yV[i]<0.25*Ly:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
+
+
+
+
+
+else:
+   for i in range(0,NV):
+       if yV[i]>(Ly-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if xV[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if xV[i]>(Lx-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if yV[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+
+
+
 
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -389,6 +673,7 @@ for iel in range(0,nel):
 
             # compute elemental a_mat matrix
             K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xc[iel],yc[iel])*weightq*jcob
+            #K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq,yq)*weightq*jcob
 
             # compute elemental rhs vector
             for i in range(0,mV):
@@ -396,6 +681,8 @@ for iel in range(0,nel):
                 f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*by(xq,yq)
                 G_el[ndofV*i  ,0]-=dNNNVdx[i]*jcob*weightq
                 G_el[ndofV*i+1,0]-=dNNNVdy[i]*jcob*weightq
+
+    G_el*=eta_ref/Lx
 
     # impose b.c. 
     for k1 in range(0,mV):
@@ -435,10 +722,10 @@ for iel in range(0,nel):
 #end for iel
 
 #pinning pressure on last element
-for i in range(0,Nfem):
-    A_mat[Nfem-1,i]=0
-A_mat[Nfem-1,Nfem-1]=1
-rhs[Nfem-1]=0    
+#for i in range(0,Nfem):
+#    A_mat[Nfem-1,i]=0
+#A_mat[Nfem-1,Nfem-1]=1
+#rhs[Nfem-1]=0    
 
 print("build FE matrix: %.3f s" % (timing.time() - start))
 
@@ -459,10 +746,10 @@ print("solve time: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 u,v=np.reshape(sol[0:NfemV],(NV,2)).T
-p=sol[NfemV:Nfem]
+p=sol[NfemV:Nfem]*eta_ref/Lx
 
-print("     -> u (m,M) %.6f %.6f nel= %d" %(np.min(u),np.max(u),nel))
-print("     -> v (m,M) %.6f %.6f nel= %d" %(np.min(v),np.max(v),nel))
+print("     -> u (m,M) %12.4e %12.4e nel= %d" %(np.min(u),np.max(u),nel))
+print("     -> v (m,M) %12.4e %12.4e nel= %d" %(np.min(v),np.max(v),nel))
 
 #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 
@@ -570,9 +857,34 @@ if True:
    vrms=np.sqrt(vrms/(Lx*Ly))
 
    print("     -> nel= %6d ; errv= %.8f ; errp= %.8f ; errq= %.8f" %(nel,errv,errp,errq))
-   print("     -> nel= %6d ; vrms= %.8f " %(nel,vrms))
+   print("     -> nel= %6d ; vrms= %12.4e " %(nel,vrms))
 
 print("compute errors: %.3f s" % (timing.time() - start))
+
+###############################################################################
+# export profiles
+###############################################################################
+
+pfile=open('pressure_top.ascii',"w")
+for iel in range(0,nel):
+    if abs(yV[iconV[0,iel]]-Ly)<eps and abs(yV[iconV[1,iel]]-Ly)<eps:
+       pfile.write("%10e %10e \n" %(xc[iel],p[iel]))
+    if abs(yV[iconV[1,iel]]-Ly)<eps and abs(yV[iconV[2,iel]]-Ly)<eps:
+       pfile.write("%10e %10e \n" %(xc[iel],p[iel]))
+    if abs(yV[iconV[2,iel]]-Ly)<eps and abs(yV[iconV[3,iel]]-Ly)<eps:
+       pfile.write("%10e %10e \n" %(xc[iel],p[iel]))
+    if abs(yV[iconV[3,iel]]-Ly)<eps and abs(yV[iconV[0,iel]]-Ly)<eps:
+       pfile.write("%10e %10e \n" %(xc[iel],p[iel]))
+pfile.close()
+
+vfile=open('vel_profile.ascii',"w")
+for i in range(0,NV):
+    if abs(xV[i]-Lx/2)<eps:
+       vfile.write("%10e %10e %10e\n" %(yV[i],u[i],v[i]))
+vfile.close()
+    
+
+
 
 ###############################################################################
 # plot of solution
@@ -596,16 +908,19 @@ if visu:
    for iel in range(0,nel):
        vtufile.write("%10e \n" %(p[iel]))
    vtufile.write("</DataArray>\n")
-   if experiment==1 or experiment==4:
-      vtufile.write("<DataArray type='Float32' Name='p (error)' Format='ascii'> \n")
-      for iel in range(0,nel):
-          vtufile.write("%10e \n" %(error_p[iel]))
-      vtufile.write("</DataArray>\n")
-   if experiment==3:
+   vtufile.write("<DataArray type='Float32' Name='p (error)' Format='ascii'> \n")
+   for iel in range(0,nel):
+       vtufile.write("%10e \n" %(error_p[iel]))
+   vtufile.write("</DataArray>\n")
+   if experiment==3 or experiment==5 or experiment==8:
       vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
       for iel in range(0,nel):
            vtufile.write("%10e \n" %(viscosity(xc[iel],yc[iel])))
       vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='p analytical' Format='ascii'> \n")
+   for iel in range(0,nel):
+       vtufile.write("%10e \n" %(pressure(xc[iel],yc[iel])))
+   vtufile.write("</DataArray>\n")
 
 
    vtufile.write("<DataArray type='Float32' Name='bx' Format='ascii'> \n")
@@ -628,8 +943,13 @@ if visu:
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel' Format='ascii'> \n")
    for i in range(0,NV):
-       vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+       vtufile.write("%10e %10e %10e \n" %(u[i]/vscaling,v[i]/vscaling,0.))
    vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel (analytical)' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10e %10e %10e \n" %(velocity_x(xV[i],yV[i]),velocity_y(xV[i],yV[i]),0.))
+   vtufile.write("</DataArray>\n")
+
    #--
    vtufile.write("<DataArray type='Float32'  Name='q' Format='ascii'> \n")
    for i in range(0,NV):

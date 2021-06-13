@@ -1,65 +1,201 @@
 set term pdf enhanced font "Times,11pt"
 set key outside
+set log xy
+set ylabel 'error'
 set pointsize 0.3
 
+#set output 'errors_S.pdf'
+#plot[][]\
+#'errors_S' u (1./sqrt($3)):6 w lp lt 1 pt 5 t 'velocity',\
+#'errors_S' u (1./sqrt($3)):9 w lp lt 2 pt 5 t 'p',\
+#'errors_S' u (1./sqrt($3)):12 w lp lt 3 pt 5 t 'q',\
+#x**2/50 w l lt -1 dashtype 3 t 'x^2',\
+#x**1/5 w l lt -1 dashtype 2 t 'x^{1}',\
+#x**1.5/5 w l lt -1 dashtype 4 t 'x^{1.5}'
 
-set xlabel 'h'
+#set output 'errors_LR.pdf'
+#plot[][]\
+#'errors_LR' u (1./sqrt($3)):6 w lp lt 1 pt 5 t 'velocity',\
+#'errors_LR' u (1./sqrt($3)):9 w lp lt 2 pt 5 t 'p',\
+#'errors_LR' u (1./sqrt($3)):12 w lp lt 3 pt 5 t 'q',\
+#x**2/50 w l lt -1 dashtype 3 t 'x^2',\
+#x**1/5 w l lt -1 dashtype 2 t 'x^{1}',\
+#x**1.5/5 w l lt -1 dashtype 4 t 'x^{1.5}'
+
+#set output 'errors_regular.pdf'
+#plot[][]\
+#'errors_regular' u (1./sqrt($3)):6 w lp lt 1 pt 5 t 'velocity',\
+#'errors_regular' u (1./sqrt($3)):9 w lp lt 2 pt 5 t 'p',\
+#'errors_regular' u (1./sqrt($3)):12 w lp lt 3 pt 5 t 'q',\
+#x**2/50 w l lt -1 dashtype 3 t 'x^2',\
+#x**1/5 w l lt -1 dashtype 2 t 'x^{1}',\
+#x**1.5/5 w l lt -1 dashtype 4 t 'x^{1.5}'
+
+#set output 'errors_QZ1.pdf'
+#plot[][]\
+#'errors_QZ1' u (1./sqrt($3)):6 w lp lt 1 pt 5 t 'velocity',\
+#'errors_QZ1' u (1./sqrt($3)):9 w lp lt 2 pt 5 t 'p',\
+#'errors_QZ1' u (1./sqrt($3)):12 w lp lt 3 pt 5 t 'q',\
+#x**2/50 w l lt -1 dashtype 3 t 'x^2',\
+#x**1/5 w l lt -1 dashtype 2 t 'x^{1}',\
+#x**1.5/5 w l lt -1 dashtype 4 t 'x^{1.5}'
+
+#set output 'errors_B.pdf'
+#plot[][]\
+#'errors_B' u (1./sqrt($3)):6 w lp lt 1 pt 5 t 'velocity',\
+#'errors_B' u (1./sqrt($3)):9 w lp lt 2 pt 5 t 'p',\
+#'errors_B' u (1./sqrt($3)):12 w lp lt 3 pt 5 t 'q',\
+#x**2/50 w l lt -1 dashtype 3 t 'x^2',\
+#x**1/5 w l lt -1 dashtype 2 t 'x^{1}',\
+#x**1.5/5 w l lt -1 dashtype 4 t 'x^{1.5}'
+
+
+
+
+
+
+set xlabel '<h>'
+set output 'errors_V.pdf'
+plot[][]\
+'errors_regular' u (1./sqrt($3)):6 w lp lt 1 pt 5 t 'Reg',\
+'errors_S'       u (1./sqrt($3)):6 w lp lt 2 pt 5 t 'S',\
+'errors_LR'      u (1./sqrt($3)):6 w lp lt 3 pt 5 t 'LR',\
+'errors_QZ1'     u (1./sqrt($3)):6 w lp lt 4 dt 1 pt 5 t 'QZ1',\
+'errors_QZ2'     u (1./sqrt($3)):6 w lp lt 4 dt 2 pt 4 t 'QZ2',\
+'errors_QZ3'     u (1./sqrt($3)):6 w lp lt 4 dt 3 pt 5 t 'QZ3',\
+'errors_A'       u (1./sqrt($3)):6 w lp lt 5 pt 5 t 'A',\
+'errors_B'       u (1./sqrt($3)):6 w lp lt 6 pt 5 t 'B',\
+x**2/50 w l lt -1 dashtype 3 t 'x^2'
+
+set output 'errors_P.pdf'
+plot[][]\
+'errors_regular' u (1./sqrt($3)):9 w lp lt 1 pt 5 t 'Reg',\
+'errors_S'       u (1./sqrt($3)):9 w lp lt 2 pt 5 t 'S',\
+'errors_LR'      u (1./sqrt($3)):9 w lp lt 3 pt 5 t 'LR',\
+'errors_QZ1'     u (1./sqrt($3)):9 w lp lt 4 dt 1 pt 5 t 'QZ1',\
+'errors_QZ2'     u (1./sqrt($3)):9 w lp lt 4 dt 2 pt 5 t 'QZ2',\
+'errors_QZ3'     u (1./sqrt($3)):9 w lp lt 4 dt 3 pt 5 t 'QZ3',\
+'errors_A'       u (1./sqrt($3)):9 w lp lt 5 pt 5 t 'A',\
+'errors_B'       u (1./sqrt($3)):9 w lp lt 6 pt 5 t 'B',\
+x/5 w l lt -1 dashtype 3 t 'x'
+
+set output 'errors_Q.pdf'
+plot[][:1]\
+'errors_regular' u (1./sqrt($3)):12 w lp lt 1 pt 5 t 'Reg',\
+'errors_S'       u (1./sqrt($3)):12 w lp lt 2 pt 5 t 'S',\
+'errors_LR'      u (1./sqrt($3)):12 w lp lt 3 pt 5 t 'LR',\
+'errors_QZ1'     u (1./sqrt($3)):12 w lp lt 4 dt 1 pt 5 t 'QZ1',\
+'errors_QZ2'     u (1./sqrt($3)):12 w lp lt 4 dt 2 pt 4 t 'QZ2',\
+'errors_QZ3'     u (1./sqrt($3)):12 w lp lt 4 dt 3 pt 3 t 'QZ3',\
+'errors_A'       u (1./sqrt($3)):12 w lp lt 5 pt 5 t 'A',\
+'errors_B'       u (1./sqrt($3)):12 w lp lt 6 pt 5 t 'B',\
+x**1.5/5 w l lt -1 dashtype 3 t 'x^{1.5}'
+
+
+
+
+unset log y
+set xlabel '<h>'
 set ylabel 'v_{rms}'
 set log x
 set output 'vrms.pdf'
-plot[:][:]\
-'vrms_regular'  u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'regular',\
-'vrms_stenberg' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'Stenberg',\
-'vrms_letallec' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'Le Tallec',\
-'vrms_qinzhang' u (1./sqrt($3)):6 w lp lt 4 pt 1 t 'qinzhang',\
+plot[][]\
+'vrms_regular' u (1./sqrt($3)):6 w lp lt 1 pt 5 t 'regular',\
+'vrms_S'       u (1./sqrt($3)):6 w lp lt 2 pt 5 t 'Stenberg',\
+'vrms_LR'      u (1./sqrt($3)):6 w lp lt 3 pt 5 t 'LR',\
+'vrms_QZ1'     u (1./sqrt($3)):6 w lp lt 4 pt 5 dt 1 t 'QZ1',\
+'vrms_QZ2'     u (1./sqrt($3)):6 w lp lt 4 pt 4 dt 2 t 'QZ2',\
+'vrms_QZ3'     u (1./sqrt($3)):6 w lp lt 4 pt 3 dt 3 t 'QZ3',\
+'vrms_A'       u (1./sqrt($3)):6 w lp lt 5 pt 5 t 'A',\
+'vrms_B'       u (1./sqrt($3)):6 w lp lt 6 pt 5 t 'B',\
 
-set ylabel 'elemental pressure'
+
+set ylabel 'min/max pressure'
 set output 'pstats.pdf'
-plot[:][:]\
-'pstats_regular'   u (1./sqrt($7)):4 w lp lt 1 pt 1 t 'regular',\
-'pstats_regular'   u (1./sqrt($7)):5 w lp lt 1 pt 1 notitle,\
-'pstats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 pt 1 lw 3 t 'Stenberg',\
-'pstats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 pt 1 lw 3 notitle,\
-'pstats_letallec'  u (1./sqrt($7)):4 w lp lt 3 pt 1 t 'Le Tallec',\
-'pstats_letallec'  u (1./sqrt($7)):5 w lp lt 3 pt 1 notitle,\
-'pstats_qinzhang'  u (1./sqrt($7)):4 w lp lt 4 pt 1 t 'Qin \& Zhang',\
-'pstats_qinzhang'  u (1./sqrt($7)):5 w lp lt 4 pt 1 notitle,\
+plot[][-1:1]\
+'pstats_regular'   u (1./sqrt($7)):4 w lp lt 1 lw .5 pt 1 t 'Reg',\
+'pstats_regular'   u (1./sqrt($7)):5 w lp lt 1 lw .5 pt 1 notitle,\
+'pstats_S'   u (1./sqrt($7)):4 w lp lt 2 lw 1.5 pt 1 t 'S',\
+'pstats_S'   u (1./sqrt($7)):5 w lp lt 2 lw 1.5 pt 1 notitle,\
+'pstats_LR'  u (1./sqrt($7)):4 w lp lt 3 lw .5 pt 1 t 'LR',\
+'pstats_LR'  u (1./sqrt($7)):5 w lp lt 3 lw .5 pt 1 notitle,\
+'pstats_QZ1' u (1./sqrt($7)):4 w lp lt 4 lw .5 pt 1 dt 1 t 'QZ1',\
+'pstats_QZ1' u (1./sqrt($7)):5 w lp lt 4 lw .5 pt 1 dt 1 notitle,\
+'pstats_QZ2' u (1./sqrt($7)):4 w lp lt 4 lw .5 pt 1 dt 2 t 'QZ2',\
+'pstats_QZ2' u (1./sqrt($7)):5 w lp lt 4 lw .5 pt 1 dt 2 notitle,\
+'pstats_QZ3' u (1./sqrt($7)):4 w lp lt 4 lw .5 pt 1 dt 3 t 'QZ3',\
+'pstats_QZ3' u (1./sqrt($7)):5 w lp lt 4 lw .5 pt 1 dt 3 notitle,\
+'pstats_A'   u (1./sqrt($7)):4 w lp lt 5 lw .5 pt 1 t 'A',\
+'pstats_A'   u (1./sqrt($7)):5 w lp lt 5 lw .5 pt 1 notitle,\
+'pstats_B'   u (1./sqrt($7)):4 w lp lt 6 lw .5 pt 1 t 'B',\
+'pstats_B'   u (1./sqrt($7)):5 w lp lt 6 lw .5 pt 1 notitle,\
 
-set ylabel 'nodal pressure'
-set output 'qstats.pdf'
-plot[:][:]\
-'qstats_regular'   u (1./sqrt($7)):4 w lp lt 1 pt 1 t 'regular',\
-'qstats_regular'   u (1./sqrt($7)):5 w lp lt 1 pt 1 notitle,\
-'qstats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 lw 3 pt 1 t 'Stenberg',\
-'qstats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 lw 3 pt 1 notitle,\
-'qstats_letallec'  u (1./sqrt($7)):4 w lp lt 3 pt 1 t 'Le Tallec',\
-'qstats_letallec'  u (1./sqrt($7)):5 w lp lt 3 pt 1 notitle,\
-'qstats_qinzhang'  u (1./sqrt($7)):4 w lp lt 4 pt 1 t 'Qin \& Zhang',\
-'qstats_qinzhang'  u (1./sqrt($7)):5 w lp lt 4 pt 1 notitle,\
-
-set ylabel 'horizontal velocity'
+set ylabel 'min/max pressure'
 set output 'ustats.pdf'
-plot[:][:]\
-'ustats_regular'   u (1./sqrt($7)):4 w lp lt 1 pt 1 t 'regular',\
-'ustats_regular'   u (1./sqrt($7)):5 w lp lt 1 pt 1 notitle,\
-'ustats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 lw 3 pt 1 t 'Stenberg',\
-'ustats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 lw 3 pt 1 notitle,\
-'ustats_letallec'  u (1./sqrt($7)):4 w lp lt 3 pt 1 t 'Le Tallec',\
-'ustats_letallec'  u (1./sqrt($7)):5 w lp lt 3 pt 1 notitle,\
-'ustats_qinzhang'  u (1./sqrt($7)):4 w lp lt 4 pt 1 t 'Qin \& Zhang',\
-'ustats_qinzhang'  u (1./sqrt($7)):5 w lp lt 4 pt 1 notitle
+plot[][]\
+'ustats_regular'   u (1./sqrt($7)):4 w lp lt 1 lw .5 pt 1 t 'Reg',\
+'ustats_regular'   u (1./sqrt($7)):5 w lp lt 1 lw .5 pt 1 notitle,\
+'ustats_S'   u (1./sqrt($7)):4 w lp lt 2 lw 1.5 pt 1 t 'S',\
+'ustats_S'   u (1./sqrt($7)):5 w lp lt 2 lw 1.5 pt 1 notitle,\
+'ustats_LR'  u (1./sqrt($7)):4 w lp lt 3 lw .5 pt 1 t 'LR',\
+'ustats_LR'  u (1./sqrt($7)):5 w lp lt 3 lw .5 pt 1 notitle,\
+'ustats_QZ1' u (1./sqrt($7)):4 w lp lt 4 lw .5 pt 1 dt 1 t 'QZ1',\
+'ustats_QZ1' u (1./sqrt($7)):5 w lp lt 4 lw .5 pt 1 dt 1 notitle,\
+'ustats_QZ2' u (1./sqrt($7)):4 w lp lt 4 lw .5 pt 1 dt 2 t 'QZ2',\
+'ustats_QZ2' u (1./sqrt($7)):5 w lp lt 4 lw .5 pt 1 dt 2 notitle,\
+'ustats_QZ3' u (1./sqrt($7)):4 w lp lt 4 lw .5 pt 1 dt 3 t 'QZ3',\
+'ustats_QZ3' u (1./sqrt($7)):5 w lp lt 4 lw .5 pt 1 dt 3 notitle,\
+'ustats_A'   u (1./sqrt($7)):4 w lp lt 5 lw .5 pt 1 t 'A',\
+'ustats_A'   u (1./sqrt($7)):5 w lp lt 5 lw .5 pt 1 notitle,\
+'ustats_B'   u (1./sqrt($7)):4 w lp lt 6 lw .5 pt 1 t 'B',\
+'ustats_B'   u (1./sqrt($7)):5 w lp lt 6 lw .5 pt 1 notitle,\
 
-set ylabel 'vertical velocity'
+set ylabel 'min/max pressure'
 set output 'vstats.pdf'
-plot[:][:]\
-'vstats_regular'   u (1./sqrt($7)):4 w lp lt 1 pt 1 t 'regular',\
-'vstats_regular'   u (1./sqrt($7)):5 w lp lt 1 pt 1 notitle,\
-'vstats_stenberg'  u (1./sqrt($7)):4 w lp lt 2 lw 3 pt 1 t 'Stenberg',\
-'vstats_stenberg'  u (1./sqrt($7)):5 w lp lt 2 lw 3 pt 1 notitle,\
-'vstats_letallec'  u (1./sqrt($7)):4 w lp lt 3 pt 1 t 'Le Tallec',\
-'vstats_letallec'  u (1./sqrt($7)):5 w lp lt 3 pt 1 notitle,\
-'vstats_qinzhang'  u (1./sqrt($7)):4 w lp lt 4 pt 1 t 'Qin \& Zhang',\
-'vstats_qinzhang'  u (1./sqrt($7)):5 w lp lt 4 pt 1 notitle
+plot[][]\
+'vstats_regular'   u (1./sqrt($7)):4 w lp lt 1 lw .5 pt 1 t 'Reg',\
+'vstats_regular'   u (1./sqrt($7)):5 w lp lt 1 lw .5 pt 1 notitle,\
+'vstats_S'   u (1./sqrt($7)):4 w lp lt 2 lw 1.5 pt 1 t 'S',\
+'vstats_S'   u (1./sqrt($7)):5 w lp lt 2 lw 1.5 pt 1 notitle,\
+'vstats_LR'  u (1./sqrt($7)):4 w lp lt 3 lw .5 pt 1 t 'LR',\
+'vstats_LR'  u (1./sqrt($7)):5 w lp lt 3 lw .5 pt 1 notitle,\
+'vstats_QZ1' u (1./sqrt($7)):4 w lp lt 4 lw .5 pt 1 dt 1 t 'QZ1',\
+'vstats_QZ1' u (1./sqrt($7)):5 w lp lt 4 lw .5 pt 1 dt 1 notitle,\
+'vstats_QZ2' u (1./sqrt($7)):4 w lp lt 4 lw .5 pt 1 dt 2 t 'QZ2',\
+'vstats_QZ2' u (1./sqrt($7)):5 w lp lt 4 lw .5 pt 1 dt 2 notitle,\
+'vstats_QZ3' u (1./sqrt($7)):4 w lp lt 4 lw .5 pt 1 dt 3 t 'QZ3',\
+'vstats_QZ3' u (1./sqrt($7)):5 w lp lt 4 lw .5 pt 1 dt 3 notitle,\
+'vstats_A'   u (1./sqrt($7)):4 w lp lt 5 lw .5 pt 1 t 'A',\
+'vstats_A'   u (1./sqrt($7)):5 w lp lt 5 lw .5 pt 1 notitle,\
+'vstats_B'   u (1./sqrt($7)):4 w lp lt 6 lw .5 pt 1 t 'B',\
+'vstats_B'   u (1./sqrt($7)):5 w lp lt 6 lw .5 pt 1 notitle,\
+
+set ylabel 'min/max pressure'
+set output 'qstats.pdf'
+plot[][-1:1]\
+'qstats_regular'   u (1./sqrt($7)):4 w lp lt 1 lw .5 pt 1 t 'Reg',\
+'qstats_regular'   u (1./sqrt($7)):5 w lp lt 1 lw .5 pt 1 notitle,\
+'qstats_S'   u (1./sqrt($7)):4 w lp lt 2 lw 1.5 pt 1 t 'S',\
+'qstats_S'   u (1./sqrt($7)):5 w lp lt 2 lw 1.5 pt 1 notitle,\
+'qstats_LR'  u (1./sqrt($7)):4 w lp lt 3 lw .5 pt 1 t 'LR',\
+'qstats_LR'  u (1./sqrt($7)):5 w lp lt 3 lw .5 pt 1 notitle,\
+'qstats_QZ1' u (1./sqrt($7)):4 w lp lt 4 lw .5 pt 1 dt 1 t 'QZ1',\
+'qstats_QZ1' u (1./sqrt($7)):5 w lp lt 4 lw .5 pt 1 dt 1 notitle,\
+'qstats_QZ2' u (1./sqrt($7)):4 w lp lt 4 lw .5 pt 1 dt 2 t 'QZ2',\
+'qstats_QZ2' u (1./sqrt($7)):5 w lp lt 4 lw .5 pt 1 dt 2 notitle,\
+'qstats_QZ3' u (1./sqrt($7)):4 w lp lt 4 lw .5 pt 1 dt 3 t 'QZ3',\
+'qstats_QZ3' u (1./sqrt($7)):5 w lp lt 4 lw .5 pt 1 dt 3 notitle,\
+'qstats_A'   u (1./sqrt($7)):4 w lp lt 5 lw .5 pt 1 t 'A',\
+'qstats_A'   u (1./sqrt($7)):5 w lp lt 5 lw .5 pt 1 notitle,\
+'qstats_B'   u (1./sqrt($7)):4 w lp lt 6 lw .5 pt 1 t 'B',\
+'qstats_B'   u (1./sqrt($7)):5 w lp lt 6 lw .5 pt 1 notitle,\
+
+
+
+
+
+
+
 
 
 

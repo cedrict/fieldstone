@@ -1,3 +1,10 @@
 rm *.vtu
 rm *.ascii
+rm ustat*
+rm vstat*
+rm pstat*
+rm qstat*
+rm vrms*
+rm errors*
+rm pressure*.ascii
 
