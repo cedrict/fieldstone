@@ -1,0 +1,106 @@
+set term pdf enhanced font "Times,12pt"
+set key outside
+
+set xlabel 'y (km)'
+set ylabel 'v_y (cm/year)'
+
+scale=0.01/365.25/24/3600.
+km=1000.
+
+set title 'Regular grid'
+set output 'vel_0.pdf'
+plot[:512][-0.3:0.05]\
+'32/vel_profile_0.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '32x32',\
+'48/vel_profile_0.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '48x48',\
+'64/vel_profile_0.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '64x64',\
+'80/vel_profile_0.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '80x80',\
+'96/vel_profile_0.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '96x96',\
+'128/vel_profile_0.ascii' u ($1/km):($3/scale) w p ps 0.24 t '128x128',\
+'128/vel_profile_0.ascii' u ($1/km):($3/scale) w l lt -1 dt 2 t 'ref',\
+
+set title 'macro-element S'
+set output 'vel_1.pdf'
+plot[:512][-0.3:0.05]\
+'32/vel_profile_1.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '32x32',\
+'48/vel_profile_1.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '48x48',\
+'64/vel_profile_1.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '64x64',\
+'80/vel_profile_1.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '80x80',\
+'96/vel_profile_1.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '96x96',\
+'128/vel_profile_1.ascii' u ($1/km):($3/scale) w p ps 0.24 t '128x128',\
+'128/vel_profile_0.ascii' u ($1/km):($3/scale) w l lt -1 dt 2 t 'ref',\
+
+
+set title 'macro-element LT'
+set output 'vel_2.pdf'
+plot[:512][-0.3:0.05]\
+'32/vel_profile_2.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '32x32',\
+'48/vel_profile_2.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '48x48',\
+'64/vel_profile_2.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '64x64',\
+'80/vel_profile_2.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '80x80',\
+'96/vel_profile_2.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '96x96',\
+'128/vel_profile_2.ascii' u ($1/km):($3/scale) w p ps 0.24 t '128x128',\
+'128/vel_profile_0.ascii' u ($1/km):($3/scale) w l lt -1 dt 2 t 'ref',\
+
+set title 'macro-element QZ1'
+set output 'vel_3.pdf'
+plot[:512][-0.3:0.05]\
+'32/vel_profile_3.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '32x32',\
+'48/vel_profile_3.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '48x48',\
+'64/vel_profile_3.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '64x64',\
+'80/vel_profile_3.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '80x80',\
+'96/vel_profile_3.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '96x96',\
+'128/vel_profile_3.ascii' u ($1/km):($3/scale) w p ps 0.24 t '128x128',\
+'128/vel_profile_0.ascii' u ($1/km):($3/scale) w l lt -1 dt 2 t 'ref',\
+
+set title 'macro-element QZ2'
+set output 'vel_4.pdf'
+plot[:512][-0.3:0.05]\
+'32/vel_profile_4.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '32x32',\
+'48/vel_profile_4.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '48x48',\
+'64/vel_profile_4.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '64x64',\
+'80/vel_profile_4.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '80x80',\
+'96/vel_profile_4.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '96x96',\
+'128/vel_profile_4.ascii' u ($1/km):($3/scale) w p ps 0.24 t '128x128',\
+'128/vel_profile_0.ascii' u ($1/km):($3/scale) w l lt -1 dt 2 t 'ref',\
+
+set title 'macro-element QZ3'
+set output 'vel_5.pdf'
+plot[:512][-0.3:0.05]\
+'32/vel_profile_5.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '32x32',\
+'48/vel_profile_5.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '48x48',\
+'64/vel_profile_5.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '64x64',\
+'80/vel_profile_5.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '80x80',\
+'96/vel_profile_5.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '96x96',\
+'128/vel_profile_5.ascii' u ($1/km):($3/scale) w p ps 0.24 t '128x128',\
+'128/vel_profile_0.ascii' u ($1/km):($3/scale) w l lt -1 dt 2 t 'ref',\
+
+set title 'macro-element A'
+set output 'vel_6.pdf'
+plot[:512][-0.3:0.05]\
+'32/vel_profile_6.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '32x32',\
+'48/vel_profile_6.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '48x48',\
+'64/vel_profile_6.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '64x64',\
+'80/vel_profile_6.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '80x80',\
+'96/vel_profile_6.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '96x96',\
+'128/vel_profile_6.ascii' u ($1/km):($3/scale) w p ps 0.24 t '128x128',\
+'128/vel_profile_0.ascii' u ($1/km):($3/scale) w l lt -1 dt 2 t 'ref',\
+
+set title 'macro-element B'
+set output 'vel_7.pdf'
+plot[:512][-0.3:0.05]\
+'32/vel_profile_7.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '32x32',\
+'48/vel_profile_7.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '48x48',\
+'64/vel_profile_7.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '64x64',\
+'80/vel_profile_7.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '80x80',\
+'96/vel_profile_7.ascii'  u ($1/km):($3/scale) w p ps 0.24 t '96x96',\
+'128/vel_profile_7.ascii' u ($1/km):($3/scale) w p ps 0.24 t '128x128',\
+'128/vel_profile_0.ascii' u ($1/km):($3/scale) w l lt -1 dt 2 t 'ref',\
+
+
+
+
+
+
+
+
+
