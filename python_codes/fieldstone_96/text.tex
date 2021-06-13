@@ -103,69 +103,356 @@ as well as the full stress tensor ${\bm \sigma}=-p {\bm 1} + {\bm \tau}$.
 \includegraphics[width=6cm]{python_codes/fieldstone_96/images/mesh}
 \end{center}
 
-We wish to compute the stress at the surface. At any given point the surface is characterised
-by its (local) normal vector $\vec{n}$. The traction at that point will then be $\vec{t}={\bm \sigma}\cdot \vec{n}$.
-\begin{eqnarray}
-\vec{t} &=& 
-\left(
-\begin{array}{ccc}
-\sigma_{rr} & \sigma_{r \theta} & \sigma_{rz} \\
-\sigma_{\theta r} & \sigma_{\theta\theta} & \sigma_{\theta z} \\
-\sigma_{z r} & \sigma_{z \theta} & \sigma_{zz} 
-\end{array}
-\right)
-\cdot 
-\left(
-\begin{array}{c}
-n_r \\ n_\theta \\ n_z
-\end{array}
-\right)  \\
-&=&
-\left[
-- p {\bm 1} + 2 \eta 
-\left(
-\begin{array}{ccc}
-\dot{\varepsilon}_{rr}       & \dot{\varepsilon}_{r \theta}     & \dot{\varepsilon}_{rz} \\
-\dot{\varepsilon}_{\theta r} & \dot{\varepsilon}_{\theta\theta} & \dot{\varepsilon}_{\theta z} \\
-\dot{\varepsilon}_{z r}      & \dot{\varepsilon}_{z \theta}     & \dot{\varepsilon}_{zz} 
-\end{array}
-\right)
-\right]
-\cdot 
-\left(
-\begin{array}{c}
-n_r \\ 0 \\ n_z
-\end{array}
-\right) \\
-&=&
-\left[
-- p {\bm 1} + 2 \eta 
-\left(
-\begin{array}{ccc}
-\dot{\varepsilon}_{rr}       & 0     & \dot{\varepsilon}_{rz} \\
-0  & \dot{\varepsilon}_{\theta\theta} & 0 \\
-\dot{\varepsilon}_{z r}      & 0     & \dot{\varepsilon}_{zz} 
-\end{array}
-\right)
-\right]
-\cdot 
-\left(
-\begin{array}{c}
-n_r \\ 0 \\ n_z
-\end{array}
-\right) \\
-&=& 
-\left(
-\begin{array}{c}
--p n_r  + 2 \eta ( \dot{\varepsilon}_{rr} n_r + \dot{\varepsilon}_{rz} n_z) \\
-0 \\
--p n_z + 2 \eta (\dot{\varepsilon}_{z r} n_r +  \dot{\varepsilon}_{zz}  n_z )
-\end{array}
-\right) 
-\end{eqnarray}
+%--------------------------------------------------
+\subsubsection*{Stresses and coordinate changes}
 
-The radial component of the traction is also computed as $t_r=\vec{t}\cdot \vec{n}$.
-Results are exported in the {\filenamefont surface\_traction.ascii} file.
+\paragraph{From Cylindrical to Cartesian coordinates}
+
+In cylindrical coordinates, and in the axisymmetric case
+the strain rate tensor is given by
+\[
+\dot{\bm\varepsilon}
+=
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{rr} & 0 & \dot{\varepsilon}_{rz} \\
+0 & \dot{\varepsilon}_{\theta\theta}  & 0 \\
+\dot{\varepsilon}_{zr} & 0 & \dot\varepsilon_{zz}
+\end{array}
+\right)
+\]
+We will now convert it to Cartesian coordinates using the equation from \url{https://www.brown.edu/Departments/Engineering/Courses/En221/Notes/Polar_Coords/Polar_Coords.htm}:
+\[
+{\bm T}_{\tiny Cyl}=
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{rz} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta z} \\
+T_{z r}      & T_{z \theta}     & T_{zz}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+ \cos \theta&\sin \theta&0 \\
+-\sin \theta&\cos \theta&0 \\
+0 & 0 & 1 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\cos \theta & -\sin \theta&0 \\
+\sin \theta &  \cos \theta&0 \\
+0 & 0 & 1 
+\end{array}
+\right)
+\]
+
+\[
+{\bm T}_{\tiny Cart}=
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+ \cos \theta&-\sin \theta&0 \\
+\sin \theta&\cos \theta&0 \\
+0 & 0 & 1 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{rz} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta z} \\
+T_{z r}      & T_{z \theta}     & T_{zz}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\cos \theta & \sin \theta&0 \\
+-\sin \theta &  \cos \theta&0 \\
+0 & 0 & 1 
+\end{array}
+\right)
+\]
+In our case the calculation is taking place in the $(x,z)$
+plane, i.e. $\theta=0$ so that the rotation matrices above 
+are in fact identity matrices. 
+We then simply have 
+$\dot{\bm \varepsilon}_{\tiny Cart}=
+\dot{\bm \varepsilon}_{\tiny Cyl}$.
+
+
+
+%..........................................................
+\paragraph{From Cartesian to Spherical coordinates}
+
+We have
+\[
+{\bm T}_{\tiny Sph}=
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{r\phi} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
+T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+\sin\theta \cos\phi & \sin\theta \sin\phi & \cos\theta \\
+\cos\theta \cos\phi & \cos\theta \sin\phi & -\sin\theta \\
+-\sin\phi & \cos\phi & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\sin\theta\cos\phi & \cos\theta\cos\phi & -\sin\phi \\
+\sin\theta\sin\phi & \cos\theta\sin\phi & \cos\phi \\
+\cos\theta & -\sin\theta & 0
+\end{array}
+\right)
+\]
+
+\[
+{\bm T}_{\tiny Cart}=
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+\sin\theta\cos\phi & \cos\theta\cos\phi & -\sin\phi \\
+\sin\theta\sin\phi & \cos\theta\sin\phi & \cos\phi \\
+\cos\theta & -\sin\theta & 0
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{r\phi} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
+T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\sin\theta \cos\phi & \sin\theta \sin\phi & \cos\theta \\
+\cos\theta \cos\phi & \cos\theta \sin\phi & -\sin\theta \\
+-\sin\phi & \cos\phi & 0 
+\end{array}
+\right)
+\]
+In our case, calculations take place in the 
+$(x,z)$-plane so we have $\phi=0$ and the equation above 
+becomes
+\[
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{r\phi} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
+T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+\sin\theta  & 0 & \cos\theta \\
+\cos\theta  & 0 & -\sin\theta \\
+0 & 1 & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\sin\theta & \cos\theta & 0 \\
+0 & 0 & 1 \\
+\cos\theta & -\sin\theta & 0
+\end{array}
+\right)
+\]
+We define $c_\theta=\cos\theta$, $s_\theta=\sin\theta$ so that
+\[
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{r\phi} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
+T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+s_\theta  & 0 & c_\theta \\
+c_\theta  & 0 & -s_\theta \\
+0 & 1 & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+s_\theta & c_\theta & 0 \\
+0 & 0 & 1 \\
+c_\theta & -s_\theta & 0
+\end{array}
+\right)
+\]
+As we have seen above we have 
+\[
+\dot{\bm\varepsilon}_{\tiny Cart}
+=
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{xx} & 0 & \dot{\varepsilon}_{xz} \\
+0 & \dot{\varepsilon}_{yy}  & 0 \\
+\dot{\varepsilon}_{xz} & 0 & \dot\varepsilon_{zz}
+\end{array}
+\right)
+\]
+so 
+\begin{eqnarray}
+\dot{\bm \varepsilon}_{\tiny Sph}=
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{rr}       & \dot\varepsilon_{r\theta}      & \dot\varepsilon_{r\phi} \\
+\dot\varepsilon_{\theta r} & \dot\varepsilon_{\theta\theta} & \dot\varepsilon_{\theta\phi} \\
+\dot\varepsilon_{\phi r}   & \dot\varepsilon_{\phi \theta}  & \dot\varepsilon_{\phi\phi}
+\end{array}
+\right)
+&=&
+\left(
+\begin{array}{ccc}
+s_\theta  & 0 & c_\theta \\
+c_\theta  & 0 & -s_\theta \\
+0 & 1 & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{xx} & 0 & \dot{\varepsilon}_{xz} \\
+0 & \dot{\varepsilon}_{yy}  & 0 \\
+\dot{\varepsilon}_{xz} & 0 & \dot\varepsilon_{zz}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+s_\theta & c_\theta & 0 \\
+0 & 0 & 1 \\
+c_\theta & -s_\theta & 0
+\end{array}
+\right)  \nonumber\\
+&=&
+\left(
+\begin{array}{ccc}
+s_\theta  & 0 & c_\theta \\
+c_\theta  & 0 & -s_\theta \\
+0 & 1 & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{xx} s_\theta + 
+\dot\varepsilon_{xz} c_\theta  & 
+\dot\varepsilon_{xx} c_\theta - 
+\dot\varepsilon_{xz} s_\theta  &
+0 \\
+0 & 0 & \dot{\varepsilon}_{yy}  
+\\
+\dot\varepsilon_{xz} s_\theta + 
+\dot\varepsilon_{zz} c_\theta  &
+\dot\varepsilon_{xz} c_\theta - 
+\dot\varepsilon_{zz} s_\theta  &
+0 
+\end{array}
+\right)  \nonumber\\
+&=&
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{xx} s_\theta^2 + 
+2 \dot\varepsilon_{xz} c_\theta  s_\theta +
+\dot\varepsilon_{zz} c_\theta ^2  
+& 
+\dot\varepsilon_{xx} c_\theta s_\theta - 
+\dot\varepsilon_{xz} s_\theta^2  +
+\dot\varepsilon_{xz} c_\theta^2 - 
+\dot\varepsilon_{zz} s_\theta c_\theta 
+& 0 \\ \\
+\dot\varepsilon_{xx} s_\theta c_\theta+ 
+\dot\varepsilon_{xz} c_\theta^2  -
+\dot\varepsilon_{xz} s_\theta^2 -
+\dot\varepsilon_{zz} c_\theta s_\theta 
+&
+\dot\varepsilon_{xx} c_\theta^2 - 
+2\dot\varepsilon_{xz} s_\theta c_\theta +
+\dot\varepsilon_{zz} s_\theta^2  
+& 0 
+\\ \\
+0 & 0 & \dot{\varepsilon}_{yy} 
+\end{array}
+\right)  \nonumber
+\end{eqnarray}
+We can easily verify that the trace of this tensor is zero.
+
+The deviatoric stress is given by 
+${\bm \tau}=2\eta \dot{\bm \varepsilon}$,
+the traction at the surface  by 
+$\vec{t}={\bm \tau}\cdot \vec{n}$ (
+with $\vec{n}=\vec{e}_r$ at the surface in Spherical coordinates) and the normal to the surface component of this traction 
+is given by
+\[
+t_r = \vec{t}\cdot \vec{n} = ({\bm \tau}\cdot \vec{n})\cdot \vec{n} = \tau_{rr}
+\]
+
+
 
 
  

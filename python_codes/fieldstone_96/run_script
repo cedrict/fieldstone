@@ -1,6 +1,6 @@
 python3 generate_nodes.py
 cat mypoints mysegments > mesh.poly
-../../../../triangle/triangle   -q -j -O -a2000000000 -o2 -pc  mesh.poly
+../../../../triangle/triangle   -q -j -O -a5000000000 -o2 -pc  mesh.poly
 
 echo "nel="
 head -1 mesh.1.ele 
