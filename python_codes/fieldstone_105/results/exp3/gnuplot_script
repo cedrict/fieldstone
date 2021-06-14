@@ -1,0 +1,14 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+set output 'w.pdf'
+set xlabel 'x'
+set ylabel 'w'
+plot[][]\
+'w.ascii' u 1:2 w lp ps .5 notitle
+
+set output 'load.pdf'
+set xlabel 'x'
+set ylabel 'load'
+plot[][]\
+'w.ascii' u 1:4 w lp ps .5 notitle
