@@ -2,13 +2,12 @@ set term pdf enhanced font "Times,12pt"
 set grid
 
 set output 'w.pdf'
-set xlabel 'x'
-set ylabel 'w'
+set xlabel 'x (km)'
+set ylabel 'deflection w (m)'
 plot[][]\
-'w.ascii' u 1:2 w lp ps .5 notitle
+'w.ascii' u ($1/1000):2 w lp ps .5 notitle
 
 set output 'load.pdf'
-set xlabel 'x'
 set ylabel 'load'
 plot[][]\
-'w.ascii' u 1:4 w lp ps .5 notitle
+'w.ascii' u ($1/1000):4 w lp ps .5 notitle
