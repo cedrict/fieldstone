@@ -325,6 +325,8 @@ start = timing.time()
 rho=np.zeros(nel,dtype=np.float64) 
 eta=np.zeros(nel,dtype=np.float64) 
 eta_nodal=np.zeros(NV,dtype=np.float64) 
+etaeff=np.zeros(nel,dtype=np.float64) 
+etaeff_nodal=np.zeros(NV,dtype=np.float64) 
 rho_nodal=np.zeros(NV,dtype=np.float64) 
 
 for iel in range(0,nel):
@@ -333,11 +335,15 @@ for iel in range(0,nel):
     r_c=np.sqrt(x_c**2+z_c**2)
     j=int((R_outer-r_c)/1000)
     rho[iel]=profile_rho[j]*1000
+
+    rho[iel]=0
+
     if r_c>R_inner:
        eta[iel]=10**profile_eta[j]
     else:
        eta[iel]=eta_core
 
+    etaeff[iel]=mu*dt/(1+mu/eta[iel]*dt) 
 
     if x_c**2+(z_c-z_blob)**2<R_blob**2:
        rho[iel]=rho_blob
@@ -357,6 +363,7 @@ for i in range(0,NV):
     else:
        eta_nodal[i]=eta_core
 
+    etaeff_nodal[i]=mu*dt/(1+mu/eta_nodal[i]*dt) 
 
     if xV[i]**2+(zV[i]-z_blob)**2 < 1.001*R_blob**2:
        eta_nodal[i]=eta_blob
@@ -560,6 +567,8 @@ for istep in range(0,1):
 
             # compute etaq, rhoq
             etaq=eta[iel] 
+            if use_ev:
+               etaq=etaeff[iel]
             #rhoq=rho[iel] 
 
             #rhoq=rhoq-2950
@@ -1016,6 +1025,14 @@ for istep in range(0,1):
         vtufile.write("%7e\n" % (eta[iel]))
     vtufile.write("</DataArray>\n")
     #--
+    vtufile.write("<DataArray type='Float32' Name='viscosity (effective)' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%7e\n" % (etaeff[iel]))
+    vtufile.write("</DataArray>\n")
+
+
+
+    #--
     #vtufile.write("<DataArray type='Float32' Name='xc' Format='ascii'> \n")
     #for iel in range (0,nel):
     #    vtufile.write("%10e\n" % xc[iel])
@@ -1123,13 +1140,11 @@ for istep in range(0,1):
     for i in range(0,NV):
         vtufile.write("%e \n" %q[i])
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' Name='r' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%e \n" %r_nodal[i])
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Int32' Name='surface' Format='ascii'> \n")
     for i in range(0,NV):
@@ -1138,20 +1153,23 @@ for istep in range(0,1):
         else:
            vtufile.write("%d \n" %0)
     vtufile.write("</DataArray>\n")
-
-
     #--
     vtufile.write("<DataArray type='Float32' Name='theta (sph.coords)' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%e \n" %theta_nodal[i])
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%e \n" %eta_nodal[i])
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='viscosity (effective)' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%e \n" %etaeff_nodal[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%e \n" %rho_nodal[i])
     vtufile.write("</DataArray>\n")

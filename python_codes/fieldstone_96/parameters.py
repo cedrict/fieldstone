@@ -20,6 +20,16 @@ np_wall=60 # max 200+ ?
 nnr=np_wall
 nnt=np_outer
 
+
+#-------------------------------------
+# elasto-viscous stuff
+#-------------------------------------
+mu=1e11
+year=365.25*3600*24
+dt=50*year
+use_ev=True
+
+
 #-------------------------------------
 #forcing constant viscosity in domain
 #-------------------------------------
