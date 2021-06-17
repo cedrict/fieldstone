@@ -1,0 +1,8 @@
+rm sol*.vtu
+rm stress*.vtu
+rm *.ascii
+rm mesh.*
+rm mypoints
+rm mysegments
+rm temp
+
