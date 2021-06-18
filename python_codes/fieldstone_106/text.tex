@@ -13,10 +13,10 @@ The Rayleigh number is defined by
 =\frac{\rho_0^2 C_p g \alpha \Delta T (R_{outer}-R_{inner})^3}{\eta_0 k}
 \]
 The original article relies on dimensionless mass, momentum and energy conservation equations
-but donot provide enough information to attempt an identical replication. I therefore 
+but does not provide enough information to attempt an identical replication. I therefore 
 choose here parameters which yield the same Rayleigh number $\Ranb=10^7$:
 \begin{itemize}
-\item $\rho_0=3000\si{\kg\per\cubic\metre}$
+\item $\rho_0=3300\si{\kg\per\cubic\metre}$
 \item $\alpha=3\cdot 10^{-5} \si{\per\kelvin}$
 \item $\Delta T=3000\si{\kelvin}$
 \item $R_{inner}=3480\si{\km}$
@@ -29,20 +29,21 @@ The viscosity is then
 \[
 \eta_0
 =\frac{\rho_0^2 C_p g \alpha \Delta T (R_{outer}-R_{inner})^3}{\Ranb k}
-\simeq 8 \cdot 10^{21}\si{\pascal\second}
+\simeq 9.66 \cdot 10^{21}\si{\pascal\second}
 \]
 The domain is a section of an annulus with an angular opening of $\pi/4$. 
 It is centered around the vertical axis. 
 
 
 
-The viscosity is either constant $\eta_0$ or temperature-dependent 
+The viscosity is either constant ($\eta_0$) or temperature-dependent 
 \[
 \eta(T')
 =\eta_0 \exp\left[ \frac{E}{R \Delta T} \left( \frac{1}{T'+t_0} -\frac{1}{1+t_0}  \right)   \right]
 =\eta_0 \exp\left[ \frac{E}{R} \left( \frac{1}{T' \Delta T  +t_0 \Delta T} -\frac{1}{\Delta T +t_0 \Delta T}  \right)   \right]
 \]
-where "$t_0$ is the surface temperature $T_{surf}$ divided by the temperature drop across the shell $\Delta T$", and 
+where ``$t_0$ is the surface temperature $T_{surf}$ divided by 
+the temperature drop across the shell $\Delta T$'', and 
 I think the authors took 
 \[
 T'=\frac{T-T_s}{T_p-T_s}= \frac{T-T_s}{\Delta T}

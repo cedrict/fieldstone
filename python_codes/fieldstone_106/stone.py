@@ -8,6 +8,7 @@ from scipy.sparse import lil_matrix
 import time as timing
 import random
 from scipy import special
+from scipy.interpolate import interp1d
 
 #------------------------------------------------------------------------------
 # denisty and viscosity functions
@@ -115,8 +116,8 @@ def NNP(r,s,order):
 cm=0.01
 year=365.25*3600*24
 eps=1e-9
-Rinner=3480e3
-Router=6371e3
+Rinner=3481.001e3
+Router=6369.999e3
 
 #------------------------------------------------------------------------------
 
@@ -138,11 +139,11 @@ if int(len(sys.argv) == 4):
 else:
    nelr = 48
    visu = 1
-   nstep=2000
+   nstep= 500
 
-#E=0    
+E=0    
 #E=6317.6 
-E=74829.6 
+#E=74829.6 
 R=8.3145
 DeltaT=3000
 Tsurf=293
@@ -155,6 +156,7 @@ Ra=1e7
 alpha=3e-5
 eta0=rho0**2*hcapa*g0*alpha*DeltaT*(Router-Rinner)**3/Ra/hcond
 eta_max=1e3*eta0
+viscosity_model=1
 
 tfinal=1e10*year
 
@@ -240,6 +242,23 @@ print ('E/R Delta T = ',E/R/DeltaT)
 print("-----------------------------")
 
 #################################################################
+
+profile_r=np.empty(2821,dtype=np.float64)
+profile_eta=np.empty(2821,dtype=np.float64)
+#profile_r[1:11511],profile_rho[1:11511]=np.loadtxt('data/rho_prem.ascii',unpack=True,usecols=[0,1])
+profile_r,profile_eta=np.loadtxt('../../images/viscosity_profile/steinberger2/visc_sc06.d',unpack=True,usecols=[1,0])
+
+profile_r=(6371-profile_r)*1000
+
+profile_r=np.flip(profile_r)
+profile_eta=np.flip(profile_eta)
+
+print(np.min(profile_r),np.max(profile_r))
+print(np.min(profile_eta),np.max(profile_eta))
+
+f_cubic   = interp1d(profile_r, profile_eta, kind='cubic')
+
+#################################################################
 # checking that all velocity shape functions are 1 on their node 
 # and  zero elsewhere
 #for i in range(0,mV):
@@ -273,6 +292,8 @@ for j in range(0,nnr):
 #end for
 
 #np.savetxt('gridV.ascii',np.array([xV,yV,tV,rV]).T,header='# x,y')
+
+print(np.min(rV),np.max(rV))
 
 print("build V grid: %.3f s" % (timing.time() - start))
 
@@ -619,7 +640,17 @@ for istep in range(0,nstep):
 
                 e=np.sqrt(0.5*(exxq**2+eyyq**2)+exyq**2)
 
-                etaq=eta(Tq)
+                r_q=np.sqrt(xq**2+yq**2)
+
+                if viscosity_model==1:
+                   etaq=eta(Tq)
+                else:
+                   if r_q> 6371e3-200e3:
+                      etaq=1e24
+                   else:
+                      etaq=f_cubic(r_q)
+                      etaq=10**etaq
+
                 rhoq=rho(Tq)                
                 gxq=-xq/np.sqrt(xq**2+yq**2)*g0
                 gyq=-yq/np.sqrt(xq**2+yq**2)*g0
@@ -664,7 +695,7 @@ for istep in range(0,nstep):
             #end for
         #end for
 
-
+        #free slip at bottom and top
         if flag_el_3[iel] or flag_el_4[iel]:
            for k in range(0,mV):
                inode=iconV[k,iel]
@@ -695,18 +726,9 @@ for istep in range(0,nstep):
                   f_el=RotMat.T.dot(f_el)
                   G_el=RotMat.T.dot(G_el)
 
-
-
-
-
-
-
-
-
-
-
-
-
+               #end if
+           #end for
+        #end if
 
         G_el*=eta_ref/Rinner
         h_el*=eta_ref/Rinner
@@ -1152,8 +1174,15 @@ for istep in range(0,nstep):
     sr_n=np.sqrt(0.5*(exx_n**2+eyy_n**2)+exy_n**2)
 
     for i in range(0,NV):
-        eta_n[i]=eta(T[i])
         rho_n[i]=rho(T[i])
+        if viscosity_model==1:
+           eta_n[i]=eta(T[i])
+        else:
+           if rV[i]> 6371e3-200e3:
+              eta_n[i]=1e24
+           else:
+              eta_n[i]=10**(f_cubic(rV[i]))
+
 
     print("     -> exx_n (m,M) %.6e %.6e " %(np.min(exx_n),np.max(exx_n)))
     print("     -> eyy_n (m,M) %.6e %.6e " %(np.min(eyy_n),np.max(eyy_n)))
@@ -1226,6 +1255,11 @@ for istep in range(0,nstep):
        for i in range(0,NV):
            vtufile.write("%10e \n" %T[i])
        vtufile.write("</DataArray>\n")
+       #--
+       #vtufile.write("<DataArray type='Float32' Name='eta (S&C,2006)' Format='ascii'> \n")
+       #for i in range(0,NV):
+       #    vtufile.write("%10e \n" %(f_cubic(rV[i])))
+       #vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
        for i in range(0,NV):
