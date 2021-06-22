@@ -12,6 +12,123 @@ import matplotlib.pyplot as plt
 import random
 
 #------------------------------------------------------------------------------
+# constants
+
+eps=1e-9
+year=365.25*3600*24
+
+#------------------------------------------------------------------------------
+
+print("-----------------------------")
+print("----------fieldstone---------")
+print("-----------------------------")
+
+ndim=2   # number of dimensions
+ndofV=2  # number of velocity degrees of freedom per node
+ndofP=1  # number of pressure degrees of freedom per node
+ndofT=1  # number of temperature degrees of freedom per node
+order= 2
+
+########################################################################
+# input parameters to play with
+########################################################################
+
+Lx      = 4000.
+Ly      = 1000.
+nelx    = 40
+nely    = 10
+nstep   = 200
+g0      = 9.81
+Kxx     = 1e-12
+Kyy     = 1e-12
+Ttop    = 100
+Tbottom = 110
+rho_f   = 997       # https://en.wikipedia.org/wiki/Density#Water
+eta_f   = 1e-3      # https://en.wikipedia.org/wiki/Viscosity#Water
+hcond_f = 0.6     # https://en.wikipedia.org/wiki/List_of_thermal_conductivities
+hcapa_f = 4184    # https://en.wikipedia.org/wiki/Specific_heat_capacity 
+alpha_f = 2.1e-4  # https://en.wikipedia.org/wiki/Thermal_expansion
+
+plot_nliter = 1
+
+########################################################################
+
+Ra= Kxx*rho_f*g0*alpha_f*(Tbottom-Ttop)*Ly/ (hcond_f/rho_f/hcapa_f)/eta_f
+
+CFL_nb=0.05
+apply_filter=False
+supg_type=0
+
+every=1
+T0=Ttop
+
+use_relax=True
+relax=0.25
+tol=1e-4
+
+tfinal=1000*year
+
+nel=nelx*nely
+nnx=order*nelx+1  # number of elements, x direction
+nny=order*nely+1  # number of elements, y direction
+NV=nnx*nny
+
+gx=0
+gy=-g0
+
+NP=(nelx+1)*(nely+1)
+mV=9     # number of velocity nodes making up an element
+mP=4     # number of pressure nodes making up an element
+rVnodes=[-1,0,+1,-1,0,+1,-1,0,+1]
+sVnodes=[-1,-1,-1,0,0,0,+1,+1,+1]
+rPnodes=[-1,+1,-1,+1]
+sPnodes=[-1,-1,+1,+1]
+
+NfemV=NV*ndofV       # number of velocity dofs
+NfemP=NP*ndofP       # number of pressure dofs
+Nfem=NfemV+NfemP     # total nb of dofs
+NfemT=NV*ndofT       # nb of temperature dofs
+
+hx=Lx/nelx # element size in x direction
+hy=Ly/nely # element size in y direction
+
+sparse=True # storage of FEM matrix 
+
+#################################################################
+
+sqrt2=np.sqrt(2)
+
+nqperdim=3
+qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
+qweights=[5./9.,8./9.,5./9.]
+
+#################################################################
+# open output files
+
+vrms_file=open('vrms.ascii',"w")
+dt_file=open('dt.ascii',"w")
+Tavrg_file=open('Tavrg.ascii',"w")
+conv_file=open('conv.ascii',"w")
+Tstats_file=open('stats_T.ascii',"w")
+ustats_file=open('stats_u.ascii',"w")
+vstats_file=open('stats_v.ascii',"w")
+
+#################################################################
+
+print ('Ra       =',Ra)
+print ('nnx      =',nnx)
+print ('nny      =',nny)
+print ('NV       =',NV)
+print ('NP       =',NP)
+print ('nel      =',nel)
+print ('NfemV    =',NfemV)
+print ('NfemP    =',NfemP)
+print ('Nfem     =',Nfem)
+print ('nqperdim =',nqperdim)
+print ('relax    =',relax)
+print("-----------------------------")
+
+#------------------------------------------------------------------------------
 # Q2 velocity shape functions
 #------------------------------------------------------------------------------
 # 6---7---8  
@@ -80,121 +197,6 @@ def dNNPds(r,s):
     dNds_2=+0.25*(1.-r)
     dNds_3=+0.25*(1.+r)
     return dNds_0,dNds_1,dNds_2,dNds_3
-
-#------------------------------------------------------------------------------
-# constants
-
-eps=1e-9
-year=365.25*3600*24
-
-#------------------------------------------------------------------------------
-
-print("-----------------------------")
-print("----------fieldstone---------")
-print("-----------------------------")
-
-ndim=2   # number of dimensions
-ndofV=2  # number of velocity degrees of freedom per node
-ndofP=1  # number of pressure degrees of freedom per node
-ndofT=1  # number of temperature degrees of freedom per node
-order= 2
-
-########################################################################
-# input parameters to play with
-########################################################################
-
-Lx      = 4000.
-Ly      = 1000.
-nelx    = 48
-nely    = 12
-nstep   = 100
-g0      = 9.81
-Kxx     = 1e-12
-Kyy     = 1e-12
-Ttop    = 100
-Tbottom = 110
-rho_f   = 997       # https://en.wikipedia.org/wiki/Density#Water
-eta_f   = 1e-3      # https://en.wikipedia.org/wiki/Viscosity#Water
-hcond_f = 0.6     # https://en.wikipedia.org/wiki/List_of_thermal_conductivities
-hcapa_f = 4184    # https://en.wikipedia.org/wiki/Specific_heat_capacity 
-alpha_f = 2.1e-4  # https://en.wikipedia.org/wiki/Thermal_expansion
-
-########################################################################
-
-Ra= Kxx*rho_f*g0*alpha_f*(Tbottom-Ttop)*Ly/ (hcond_f/rho_f/hcapa_f)/eta_f
-
-CFL_nb=0.05
-apply_filter=False
-supg_type=0
-
-every=1
-T0=Ttop
-
-use_relax=True
-relax=0.75
-tol=1e-3
-
-tfinal=1000*year
-
-nel=nelx*nely
-nnx=order*nelx+1  # number of elements, x direction
-nny=order*nely+1  # number of elements, y direction
-NV=nnx*nny
-
-gx=0
-gy=-g0
-
-NP=(nelx+1)*(nely+1)
-mV=9     # number of velocity nodes making up an element
-mP=4     # number of pressure nodes making up an element
-rVnodes=[-1,0,+1,-1,0,+1,-1,0,+1]
-sVnodes=[-1,-1,-1,0,0,0,+1,+1,+1]
-rPnodes=[-1,+1,-1,+1]
-sPnodes=[-1,-1,+1,+1]
-
-NfemV=NV*ndofV       # number of velocity dofs
-NfemP=NP*ndofP       # number of pressure dofs
-Nfem=NfemV+NfemP     # total nb of dofs
-NfemT=NV*ndofT       # nb of temperature dofs
-
-hx=Lx/nelx # element size in x direction
-hy=Ly/nely # element size in y direction
-
-sparse=True # storage of FEM matrix 
-
-#################################################################
-
-sqrt2=np.sqrt(2)
-
-nqperdim=3
-qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
-qweights=[5./9.,8./9.,5./9.]
-
-#################################################################
-# open output files
-
-vrms_file=open('vrms.ascii',"w")
-dt_file=open('dt.ascii',"w")
-Tavrg_file=open('Tavrg.ascii',"w")
-conv_file=open('conv.ascii',"w")
-Tstats_file=open('stats_T.ascii',"w")
-ustats_file=open('stats_u.ascii',"w")
-vstats_file=open('stats_v.ascii',"w")
-
-#################################################################
-
-print ('Ra       =',Ra)
-print ('nnx      =',nnx)
-print ('nny      =',nny)
-print ('NV       =',NV)
-print ('NP       =',NP)
-print ('nel      =',nel)
-print ('NfemV    =',NfemV)
-print ('NfemP    =',NfemP)
-print ('Nfem     =',Nfem)
-print ('nqperdim =',nqperdim)
-print ('relax    =',relax)
-print("-----------------------------")
 
 #################################################################
 # build velocity nodes coordinates 
@@ -496,8 +498,10 @@ for istep in range(0,nstep):
                 Nxx_el-=eta_f/Kxx*np.outer(NNNV,NNNV)*weightq*jcob
                 Nyy_el-=eta_f/Kyy*np.outer(NNNV,NNNV)*weightq*jcob
 
-                Gx_el-=np.outer(NNNV,dNNNPdx)*weightq*jcob
-                Gy_el-=np.outer(NNNV,dNNNPdy)*weightq*jcob
+                #Gx_el-=np.outer(NNNV,dNNNPdx)*weightq*jcob
+                #Gy_el-=np.outer(NNNV,dNNNPdy)*weightq*jcob
+                Gx_el+=np.outer(dNNNVdx,NNNP)*weightq*jcob
+                Gy_el+=np.outer(dNNNVdy,NNNP)*weightq*jcob
 
                 Hx_el-=np.outer(NNNP,dNNNVdx)*weightq*jcob
                 Hy_el-=np.outer(NNNP,dNNNVdy)*weightq*jcob 
@@ -982,9 +986,47 @@ for istep in range(0,nstep):
     # matplotlib output 
     #####################################################################
 
-
-
-
+    if plot_nliter==1 and istep%every==0:
+        plot_x = np.flipud(np.reshape(xV,(nny,nnx)))
+        plot_y = np.reshape(yV,(nny,nnx))
+     
+        plot_var = np.flipud(np.reshape(T,(nny,nnx)))
+        plt.figure(1)
+        plt.set_cmap('magma')
+        bla = plt.pcolormesh(plot_x,-plot_y,plot_var,shading='gouraud')
+        plt.colorbar(bla,label='Temperature (C°)')
+        plt.xlabel('Distance along profile (m)')
+        plt.ylabel('Depth (m)')
+        plt.gca().set_aspect('equal')
+        filename = 'temp_{:04d}.png'.format(istep)
+        plt.savefig(filename,dpi=300)
+        plt.close(1)
+ 
+        plt.figure(2)
+        maxvar=np.max(np.abs(v))
+        plot_var = np.flipud(np.reshape(v,(nny,nnx)))
+        plt.set_cmap('RdBu_r')
+        bla = plt.pcolormesh(plot_x,-plot_y,plot_var, vmin=-maxvar, vmax=maxvar,shading='gouraud')
+        plt.colorbar(bla,label='v (m/s)')
+        plt.xlabel('Distance along profile (m)')
+        plt.ylabel('Depth (m)')
+        plt.gca().set_aspect('equal')
+        filename = 'v_{:04d}.png'.format(istep)
+        plt.savefig(filename,dpi=300)
+        plt.close(2)
+     
+        plt.figure(3)
+        maxvar=np.max(np.abs(u))
+        plot_var = np.flipud(np.reshape(u,(nny,nnx)))
+        plt.set_cmap('RdBu_r')
+        bla = plt.pcolormesh(plot_x,-plot_y,plot_var, vmin=-maxvar, vmax=maxvar,shading='gouraud')
+        plt.colorbar(bla,label='v (m/s)')
+        plt.xlabel('Distance along profile (m)')
+        plt.ylabel('Depth (m)')
+        plt.gca().set_aspect('equal')
+        filename = 'u_{:04d}.png'.format(istep)
+        plt.savefig(filename,dpi=300)
+        plt.close(3)
 
     #####################################################################
     # plot of solution
@@ -1062,6 +1104,7 @@ for istep in range(0,nstep):
        vtufile.write("</Piece>\n")
        vtufile.write("</UnstructuredGrid>\n")
        vtufile.write("</VTKFile>\n")
+       vtufile.close()
 
 
     if False:
