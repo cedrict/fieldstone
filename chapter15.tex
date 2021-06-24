@@ -1,0 +1,418 @@
+
+{\color{orange} I am by no means an expert when it comes to porous media. I hope to revisit the topic regularly in the coming years and improve this section. Any help or comment welcome.}
+
+\subsection{The equations of fluid flow in a porous medium}
+
+A porous medium is a material containing pores. These pores can 
+be filled with a gas or a fluid. Often the pore space forms a network which allows fluids to pass through.
+
+The equations under consideration are the following:
+\begin{itemize}
+\item Darcy's law is an equation that describes the flow of a fluid through a porous medium. The law was formulated by Henry Darcy\footnote{\url{https://en.wikipedia.org/wiki/Henry_Darcy}}
+based on results of experiments on the flow of water through beds of sand:
+
+\begin{equation}
+\vec{\upnu} = -\frac{{\bm K}}{\eta} (\vec\nabla p + \rho_f \vec{g})
+\label{eq:darcy}
+\end{equation}
+
+
+\item mass conservation (incompressibility condition):
+\begin{equation}
+\vec\nabla\cdot\vec\upnu = 0
+\label{eq:porous:incomp}
+\end{equation}
+\item heat transport:
+Usually it is a good approximation to assume that the solid and fluid phases are in local
+thermal equilibrium (LTE) but there are situations, such as highly transient problems and
+some steady-state problems, where this is not so. Now this is commonly referred to as local thermal nonequilibrium (LTNE). If one wishes to allow for heat transfer between solid and fluid (that is, one no longer has local thermal equilibrium), then the equations are
+
+\begin{eqnarray}
+(1-\upphi)(\rho C_p)_s \frac{\partial T_s}{\partial t}
+&=& (1-\upphi) \vec\nabla \cdot (k_s \vec\nabla T_s)
++ (1-\upphi) q_s + h (T_f-T_s) \\
+\upphi (\rho C_p)_f  \frac{\partial T_f}{\partial t}
++ (\rho C_p)_f \vec\upnu \cdot \vec\nabla T_f 
+&=& \upphi \vec\nabla \cdot (k_f \vec\nabla T_f)
++ \upphi q_f + h (T_s-T_f)
+\end{eqnarray}
+
+When it is assumed that there is local thermal equilibrium then $T_f=T_s=T$ (Section 2.1 of Nield \& Bejan). 
+Then one can add the equations together and obtain 
+\[
+(\rho C_p)_m \frac{\partial T}{\partial t} 
++
+(\rho C_p)_f \vec{\upnu} \cdot \vec\nabla T 
+= 
+\vec\nabla \cdot ( k_m \vec\nabla T)
++ q_m
+\]
+with 
+\begin{eqnarray}
+(\rho C_p)_m &=& (1-\upphi) (\rho C_p)_s + \upphi (\rho C_p)_ f\\ k_m &=& (1-\upphi) k_s + \upphi k_f \\
+q_m &=& (1-\upphi) q_s + \upphi q_f 
+\end{eqnarray}
+
+\item linearised equation of state in the form of the Oberbeck-Boussinesq approximation (Section 2.3 of Nield \& Bejan):
+\[
+\rho=\rho_0(1-\alpha(T_f-T_0))
+\]
+\end{itemize}
+
+\noindent In the equations above the subscript $f$ stands for ``fluid'', and the subscript $s$ for ``solid''. $\vec{\upnu}$ is the velocity (\si{\metre\per\second}), $p$ is the pressure (\si{\pascal}), $\vec{g}$ is the gravitational acceleration (\si{\metre\per\square\second}), $\upphi$ is the porosity, ${\bm K}$ the permeability tensor (\si{\square\metre}), $\rho$ the mass density (\si{\kg\per\cubic\metre}), $T$ the temperature (\si{\kelvin}), $h$ the coefficient of heat transfer between solid and fluid (unit?), $\alpha$ the coefficient of thermal expansion, $k$ the heat conductivity, $C_p$ the heat capacity, and $\eta$ the dynamic viscosity (\si{\pascal\second}). 
+
+For the case of an isotropic medium the permeability is a scalar, i.e. ${\bm K}=K {\bm 1}$ so that 
+\begin{equation}
+\vec{\upnu} = -\frac{K}{\eta} (\vec\nabla p + \rho_f \vec{g})
+\label{eq:darcy2}
+\end{equation}
+
+Values of $K$ for natural materials vary widely. Typical values for soils, in terms of the unit \si{\square\metre}, 
+are: clean gravel $10^{-7}-10^{-9}$, 
+clean sand $10^{-9}–10^{-12}$ , peat $10^{-11}-10^{-13}$,
+stratified clay $10^{-13}-10^{-16}$, 
+and unweathered clay $10^{-16}-10^{-20}$. 
+Workers concerned with geophysics often use as a unit of permeability the Darcy, which equals $0.987\cdot 10^{-12}\si{\square\metre}$.
+
+
+
+%------------------------------------------------
+\subsection{Weak form and discretisation}
+
+We wish to solve the equations of the previous section 
+with the Finite Element method. 
+There are four unknown fields: $\vec{\upnu}=(u,v)$, $T_s$, $T_f$, $p$
+which we conveniently downsize to three assuming local thermal equilibrium (LTE), i.e. $T=T_f=T_s$.
+
+The Cartesian domain is partitioned in non-overlapping elements. 
+In each element the fields can be expressed as follows:
+\begin{eqnarray}
+\upnu_x(x,y) &=& \sum_{i=1}^{m_\upnu} \bN_i^\upnu (x,y) \; \upnu_{x,i} = \vec{\bN}^\upnu \cdot \vec{\cal V}_x \\
+\upnu_y(x,y) &=& \sum_{i=1}^{m_\upnu} \bN_i^\upnu (x,y) \; \upnu_{y,i} = \vec{\bN}^\upnu \cdot \vec{\cal V}_y \\
+p(x,y) &=& \sum_{i=1}^{m_p} \bN_i^p(x,y) \; p_i 
+= \vec{\bN}^p \cdot \vec{\cal P} \\
+T(x,y) &=& \sum_{i=1}^{m_T} \bN_i^\uptheta (x,y) \; T_i
+= \vec{\bN}^\uptheta \cdot \vec{\cal T}
+\end{eqnarray}
+with
+\begin{eqnarray}
+\vec{\bN}^\upnu &=& (\bN^\upnu_1, \bN^\upnu_2, \dots \bN^\upnu_{m_\upnu}) \\
+\vec{\bN}^p &=& (\bN^p_1, \bN^p_2, \dots \bN^p_{m_p}) \\
+\vec{\bN}^T &=& (\bN^T_1, \bN^T_2, \dots \bN^T_{m_T}).
+\end{eqnarray}
+
+The heat transport poses no real problem and the topic has been treated in Section~\ref{ss:hte_fem} so we will not repeat it here. When solving this equation we assume that the velocity of the advection term is known.
+
+There are actually two approaches to solve the mass and momentum conservation equations.
+We wish to find the velocity and pressure fields assuming the temperature known. 
+
+%--------------------------------------------------
+\subsubsection{Mixed variable approach}
+
+We have two coupled equations \eqref{eq:darcy} and \eqref{eq:porous:incomp}:
+
+\begin{eqnarray}
+-\eta {\bm K}^{-1} \cdot \vec\upnu - \vec\nabla p &=& \rho \vec{g} \label{eq:darcy4} \\
+-\vec\nabla \cdot \vec\upnu &=& 0
+\end{eqnarray}
+or, defining ${\bm L}=\eta {\bm K}^{-1}$, these become in 2D Cartesian coordinates:
+\begin{eqnarray}
+-L_{xx}\upnu_x-L_{xy}\upnu_y -\partial_x p &=&\rho g_x \\
+-L_{yx}\upnu_x-L_{yy}\upnu_y -\partial_y p &=&\rho g_y \\
+-\partial_x \upnu_x - \partial_y \upnu_y &=& 0
+\end{eqnarray}
+Let us go through each line separately and establish its weak form:
+\[
+-\int \vec{\bN}^\upnu L_{xx} \upnu_x \; dV
+-\int \vec{\bN}^\upnu L_{xy} \upnu_y \; dV
+-\int \vec{\bN}^\upnu \partial_x p  \; dV = \int \vec{\bN}^\upnu \rho g_x \]
+\[
+\underbrace{\left(-\int \vec{\bN}^\upnu L_{xx} \vec{\bN}^\upnu dV\right)}_{\N_{xx}} \cdot \vec{V}_x
++
+\underbrace{\left(-\int \vec{\bN}^\upnu L_{xy} \vec{\bN}^\upnu dV \right)}_{\N_{xy}} \cdot
+\vec{V}_y
++
+\underbrace{\left(-\int \vec{\bN}^\upnu \partial_x \vec{\bN}^p dV \right)}_{\G_x} \cdot \vec{P} 
+= 
+\underbrace{\int \vec{\bN}^\upnu \rho g_x }_{\vec{f}_x}
+\]
+The second line yields
+\[
+\underbrace{\left(-\int \vec{\bN}^\upnu L_{yx} \vec{\bN}^\upnu dV\right)}_{\N_{yx}} \cdot \vec{V}_x
++
+\underbrace{\left(-\int \vec{\bN}^\upnu L_{yy} \vec{\bN}^\upnu dV \right)}_{\N_{yy}} \cdot
+\vec{V}_y
++
+\underbrace{\left(-\int \vec{\bN}^\upnu \partial_y \vec{\bN}^p dV \right)}_{\G_y} \cdot \vec{P} 
+= 
+\underbrace{\int \vec{\bN}^\upnu \rho g_y }_{\vec{f}_y}
+\]
+The third line yields
+\begin{eqnarray}
+-\int \vec{\bN}^p ( \partial_x \upnu_x + \partial_y \upnu_y) \; dV &=& \vec{0}\\
+\underbrace{\left(-\int \vec{\bN}^p \partial_x \vec{\bN}^\upnu dV \right)}_{\HH_x} \cdot \vec{V}_x
+\underbrace{\left(-\int \vec{\bN}^p \partial_y \vec{\bN}^\upnu dV \right)}_{\HH_y}\cdot \vec{V}_y &=& \vec{0} 
+\end{eqnarray}
+In the end:
+\[
+\left(
+\begin{array}{ccc}
+\N_{xx} & \N_{xy} & \G_x \\
+\N_{yx} & \N_{yy} & \G_y \\
+\HH_{x} & \HH_y & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal V}_x \\
+\vec{\cal V}_y \\ 
+\vec{\cal P}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{f}_x \\ 
+\vec{f}_y \\ 
+\vec{h}
+\end{array}
+\right)
+\]
+In the case of an isotropic material and an isoviscous fluid, 
+we have 
+\[
+\N_{xx} = \N_{yy} 
+= - \frac{\eta}{K}  \int \vec{\bN}^\upnu \vec{\bN}^\upnu dV
+= - \frac{\eta}{K}  \M^\upnu 
+\]
+where $\M^\upnu$ is the velocity mass matrix, while $\N_{xy} = \N_{yx} = 0$ so that we then solve
+\[
+\left(
+\begin{array}{ccc}
+-\frac{\eta}{K} \M^\upnu & 0 & \G_x \\
+0 & -\frac{\eta}{K} \M^\upnu & \G_y \\
+\HH_{x} & \HH_y & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal V}_x \\
+\vec{\cal V}_y \\ 
+\vec{\cal P}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{f}_x \\ 
+\vec{f}_y \\ 
+\vec{h}
+\end{array}
+\right)
+\]
+
+
+
+
+
+\paragraph{About the $\G$ blocks} What is above has one major disadvantage: the 
+$\G$ blocks contain the biquadratic basis velocity  and the derivatives of the bilinear pressure basis functions. 
+We could be tempted to integrate $\int \vec{\bN}^\upnu \partial_xp dV$ by parts in order to bring the space derivative on the velocity basis functions and thereby recover the $\HH$ blocks. However there is a surface term $[ \vec{\bN}^\upnu p]_\Gamma$ which I am not too sure what to do about... I have implemented this in the code (while disregarding the surface term) and found that the convergence was much much worse.
+
+
+\paragraph{Block scaling} As explained in Section~\ref{pscaling}, we need to scale the blocks so as to insure an accurate solution. Eq.~\eqref{eq:darcy4} can be written 
+\[
+-\eta L^2 {\bm K}^{-1} \cdot \frac{\vec\upnu}{L^2} - \vec\nabla p = \rho \vec{g}
+\]
+where $L$ is a characteristic length. The term $\vec{\upnu}/L^2$ has the same dimensions as the Laplacian of the velocity in the Stokes equations and we obviously find that the dimension of 
+the $\eta'=\eta L^2 {\bm K}^{-1}$ term is one of viscosity. 
+Following the reasoning in Section~\ref{pscaling} the scaling coefficient for the $\G$ and $\HH$ blocks is 
+\[
+\frac{\eta'}{L} = \frac{\eta L^2 }{\tilde{K} L} 
+= \frac{\eta L}{\tilde{K}}
+\]
+where $\tilde{K}$ is a representative quantity of the ${\bm K}$ tensor. In our case, we find that taking $L=h_x$ yields blocks 
+which coefficient magnitudes are very well matched.
+After each elemental $\G$ or $\HH$ block is built it is 
+multiplied by the factor above and assembled. 
+After the solve, the obtained pressure must then be multiplied by this factor to recover the proper magnitude.
+
+
+%-------------------------------------------
+\subsubsection{Second approach}
+
+
+
+Inserting Eq.~\eqref{eq:darcy} in Eq.~\eqref{eq:porous:incomp}
+we obtain
+\begin{equation}
+\vec\nabla \cdot 
+\left( -\frac{{\bm K}}{\eta} (\vec\nabla p + \rho \vec{g}) \right) = 0
+\label{eq:second1}
+\end{equation}
+If we assume that the permeability tensor, the viscosity and the gravity are constant, then 
+\[
+\frac{{\bm K}}{\eta} \left(\Delta p + \vec\nabla\rho\cdot \vec{g}) \right) = 0
+\]
+or simply
+\[
+\Delta p + \vec\nabla\rho\cdot \vec{g} = 0.
+\]
+We end up with a simple Poisson equation. 
+
+Let us now establish the weak form of Eq.~\eqref{eq:second1} (without the above assumption): 
+\[
+\int \bN_i^p \vec\nabla \cdot 
+\left( \frac{{\bm K}}{\eta} (\vec\nabla p + \rho \vec{g}) \right) 
++\int \bN^p_i \vec\nabla \cdot (\rho \vec{g}) = 0
+\]
+After integration by parts + neglecting surface term (for now) we obtain
+\[
+-\left( \int (\vec\nabla \vec{\bN}^p)^T \cdot \frac{\bm K}{\eta} \cdot \vec\nabla \vec{\bN} dV \right) \cdot \vec{P} 
++ \int \vec{\bN}^p (\vec\nabla \rho \cdot \vec{g}) dV = \vec{0}
+\]
+We denote here ${\bm B} = \vec\nabla \vec \bN^p$ so 
+\[
+\left( \int {\bm B}^T \cdot \frac{\bm K}{\eta} \cdot {\bm B} dV \right) \cdot \vec{P}
+=
+\int \vec{\bN}^p (\vec\nabla \rho \cdot \vec{g}) dV
+\]
+Using the equation of state, 
+we find that 
+\[
+\vec\nabla \rho = -\alpha \rho_0 \vec\nabla T 
+= -\alpha \rho_0 \vec\nabla (\vec{N}^\uptheta \cdot \vec{T})
+\]
+Note that the discarded surface term are not trivial to formulate and that this approach does not easily allow to 
+prescribe velocities anywhere in the domain since the velocity 
+field is not solved for. 
+
+
+
+
+
+
+
+%...............................................
+\subsection{The equations in dimensionless form}
+
+This follows Palm \etal (1972) \cite{pawk72}.
+The field variables may conveniently made dimensionless by choosing \[
+h, \quad \Delta T, \quad \frac{\eta \kappa}{K}, \quad \frac{\kappa}{h}
+\]
+as units of length, temperature, pressure, and velocity respectively.
+
+Let us start with Eq.~\eqref{eq:darcy2}. Dividing each side by
+the reference velocity $\kappa/h$ yields:
+\begin{eqnarray}
+\vec{\upnu}'=\frac{\vec{\upnu}}{\kappa/h}
+&=&
+-\frac{K h}{\eta \kappa} (\vec\nabla p + \rho \vec{g}) 
+\end{eqnarray}
+Defining the dynamic pressure $\tilde{p}$ as 
+\[
+\tilde{p} = p-\rho_0 g (L_y-y)
+\]
+then $\vec\nabla p = \vec \nabla \tilde{p} - \rho_0 g \vec{e}_y$ and introducing the temperature-dependence of the density in the equation yields
+\begin{eqnarray}
+\vec{\upnu}'
+&=&
+-\frac{K h}{\eta \kappa} (\vec\nabla \tilde{p} - \rho_0 g \vec{e}_y + \rho_0(1-\alpha(T-T_0) g  \vec{e}_y)  \\
+&=&
+-\frac{K h}{\eta \kappa} (\vec\nabla \tilde{p}  -\rho_0\alpha(T-T_0) g \vec{e}_y) 
+\end{eqnarray}
+We now define the dimensionless temperature $T'$ as
+\[
+T'= \frac{T-T_0}{\Delta T}
+\]
+then 
+\begin{eqnarray}
+\vec{\upnu}'
+&=&
+-\frac{K h}{\eta \kappa} (\vec\nabla \tilde{p}  -\rho_0\alpha T' \Delta T g \vec{e}_y)  \\
+&=& - \vec\nabla' \tilde{p}' + \frac{\alpha \rho_0 g K \Delta T h}{\kappa \eta } T' \vec{e}_y  \\
+&=& - \vec\nabla' \tilde{p}' + \Ranb T' \vec{e}_y
+\end{eqnarray}
+
+The other two equations (mass and energy conservation) are trivial, so dropping the primes, 
+the (steady state form of the) equations takes the form
+\begin{eqnarray}
+-\vec\nabla p + \Ranb T \vec{e}_z - \vec{\upnu} &=& \vec{0} \\
+\vec\nabla\cdot \vec\upnu &=& 0\\
+\vec\upnu\cdot\vec\nabla T &=& \vec\nabla^2 T
+\end{eqnarray}
+where $\Ranb$ is a Rayleigh number defined by
+\[
+\boxed{
+\Ranb = \frac{K \rho_0 g \alpha \Delta T h}{\kappa \eta}
+}
+\]
+
+Following Palm \etal (1972) \cite{pawk72} and Kuo (1961) \cite{kuo61}, we introduce $T = T_0 - z + \uptheta$ where $T_0$ is a dimensionless temperature, eliminating the pressure by applying the curl operator and applying the equation of continuity.
+
+It is know that the curl of a gradient is zero, so $\vec\nabla \times \vec\nabla p =0$. 
+We then have
+\[
+\vec\nabla \times [ \Ranb T \vec{e}_z - \vec{\upnu}   ] = \vec{0}
+\]
+or, 
+\[
+-\Ranb \frac{\partial T}{\partial x} - 
+\left(\frac{\partial \upnu_x}{\partial z}-\frac{\partial \upnu_z}{\partial x}   \right) =0
+\]
+We take the partial derivative with respect to $x$ of the above 
+equation to obtain
+\[
+-\Ranb \frac{\partial^2 T}{\partial x^2} - 
+\left(\frac{\partial^2 \upnu_x}{\partial xz}
+-\frac{\partial \upnu_z}{\partial x^2}  \right) =0
+\]
+using the incompressibility condition we have $\partial_x \upnu_x = -\partial_z \upnu_z$ so 
+\[
+-\Ranb \frac{\partial^2 T}{\partial x^2} - 
+\left(-\frac{\partial^2 \upnu_z}{\partial z^2}
+-\frac{\partial^2 \upnu_z}{\partial x^2}  \right) =0
+\]
+\[
+-\Ranb \frac{\partial^2 T}{\partial x^2} 
++ \Delta \upnu_z=0
+\]
+We take the Laplacian of this equation:
+\[
+-\Ranb \frac{\partial^2 \Delta T}{\partial x^2} 
++ \Delta^2 \upnu_z=0
+\]
+Since $\Delta T= \vec\upnu\cdot\vec\nabla T$ then
+\[
+-\Ranb \frac{\partial^2 (\vec\upnu\cdot\vec\nabla T)}{\partial x^2} 
++ \Delta^2 \upnu_z=0
+\]
+We have $\vec\nabla T = -\vec{e}_z + \vec\nabla \uptheta$
+so $\vec\upnu\cdot\vec\nabla T = -\upnu_z + \vec\upnu \cdot \vec\nabla \uptheta $ and finally
+\[
+-\Ranb \frac{\partial^2 (  -\upnu_z + \vec\upnu \cdot \vec\nabla \uptheta    )}{\partial x^2} + \Delta^2 \upnu_z=0
+\]
+or,
+\[
+\vec\nabla^4 \upnu_z + \Ranb \frac{\partial^2 \upnu_z}{\partial x^2}
+= \frac{\partial^2 (\vec\upnu \cdot \vec\nabla \uptheta)}{\partial x^2} 
+\]
+
+
+
+Finally we recover Eqs.~(2.11-13) of Palm \etal (1972) \cite{pawk72}:
+\begin{eqnarray}
+\vec\nabla^4 \upnu_y +\Ranb \frac{\partial^2 \upnu_z}{\partial x^2}
+&=& \frac{\partial^2 (\vec\upnu \cdot \vec\nabla \uptheta)}{\partial x^2}  \\
+\vec\nabla^2 \uptheta + \upnu_z &=&  \vec\upnu \cdot\vec\nabla\uptheta \\
+\vec\nabla\cdot \vec\upnu &=& 0
+\end{eqnarray}
+
+
+The boundary conditions are then $\upnu_y = \uptheta=0$ for $y=0,1$.
+
+This formulation of the equation forms the basis 
+of the convection benchmark in the coming section.
+

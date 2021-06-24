@@ -35,38 +35,39 @@ order= 2
 
 Lx      = 4000.
 Ly      = 1000.
-nelx    = 40
-nely    = 10
-nstep   = 200
+nelx    = 60
+nely    = 15
+nstep   = 1000
 g0      = 9.81
 Kxx     = 1e-12
 Kyy     = 1e-12
 Ttop    = 100
 Tbottom = 110
-rho_f   = 997       # https://en.wikipedia.org/wiki/Density#Water
-eta_f   = 1e-3      # https://en.wikipedia.org/wiki/Viscosity#Water
+rho_f   = 997     # https://en.wikipedia.org/wiki/Density#Water
+eta_f   = 1e-3    # https://en.wikipedia.org/wiki/Viscosity#Water
 hcond_f = 0.6     # https://en.wikipedia.org/wiki/List_of_thermal_conductivities
 hcapa_f = 4184    # https://en.wikipedia.org/wiki/Specific_heat_capacity 
 alpha_f = 2.1e-4  # https://en.wikipedia.org/wiki/Thermal_expansion
 
-plot_nliter = 1
+use_matplotlib = False
+use_paraview = True
+every=1
 
 ########################################################################
 
 Ra= Kxx*rho_f*g0*alpha_f*(Tbottom-Ttop)*Ly/ (hcond_f/rho_f/hcapa_f)/eta_f
 
-CFL_nb=0.05
+CFL_nb=0.25
 apply_filter=False
 supg_type=0
 
-every=1
 T0=Ttop
 
-use_relax=True
-relax=0.25
+use_relax=False
+relax=0.5
 tol=1e-4
 
-tfinal=1000*year
+tfinal=1000000*year
 
 nel=nelx*nely
 nnx=order*nelx+1  # number of elements, x direction
@@ -94,6 +95,8 @@ hy=Ly/nely # element size in y direction
 
 sparse=True # storage of FEM matrix 
 
+pscaling=eta_f*hx/Kxx
+
 #################################################################
 
 sqrt2=np.sqrt(2)
@@ -112,6 +115,7 @@ conv_file=open('conv.ascii',"w")
 Tstats_file=open('stats_T.ascii',"w")
 ustats_file=open('stats_u.ascii',"w")
 vstats_file=open('stats_v.ascii',"w")
+RaNu_file=open('RaNu.ascii',"w")
 
 #################################################################
 
@@ -126,6 +130,7 @@ print ('NfemP    =',NfemP)
 print ('Nfem     =',Nfem)
 print ('nqperdim =',nqperdim)
 print ('relax    =',relax)
+print ('pscaling =',pscaling)
 print("-----------------------------")
 
 #------------------------------------------------------------------------------
@@ -441,7 +446,6 @@ for istep in range(0,nstep):
 
     for iel in range(0,nel):
 
-        # set arrays to 0 every loop
         fx_el =np.zeros((mV),dtype=np.float64)
         fy_el =np.zeros((mV),dtype=np.float64)
         Nxx_el =np.zeros((mV,mV),dtype=np.float64)
@@ -452,7 +456,7 @@ for istep in range(0,nstep):
         Gy_el=np.zeros((mV,mP),dtype=np.float64)
         Hx_el=np.zeros((mP,mV),dtype=np.float64)
         Hy_el=np.zeros((mP,mV),dtype=np.float64)
-        h_el=np.zeros((mP*ndofP),dtype=np.float64)
+        h_el=np.zeros((mP),dtype=np.float64)
 
         for iq in range(0,nqperdim):
             for jq in range(0,nqperdim):
@@ -489,6 +493,7 @@ for istep in range(0,nstep):
                     dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                     dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
                 #end for
+                #print(xq,yq,Tq)
 
                 for k in range(0,mP):
                     dNNNPdx[k]=jcbi[0,0]*dNNNPdr[k]+jcbi[0,1]*dNNNPds[k]
@@ -498,10 +503,10 @@ for istep in range(0,nstep):
                 Nxx_el-=eta_f/Kxx*np.outer(NNNV,NNNV)*weightq*jcob
                 Nyy_el-=eta_f/Kyy*np.outer(NNNV,NNNV)*weightq*jcob
 
-                #Gx_el-=np.outer(NNNV,dNNNPdx)*weightq*jcob
-                #Gy_el-=np.outer(NNNV,dNNNPdy)*weightq*jcob
-                Gx_el+=np.outer(dNNNVdx,NNNP)*weightq*jcob
-                Gy_el+=np.outer(dNNNVdy,NNNP)*weightq*jcob
+                Gx_el-=np.outer(NNNV,dNNNPdx)*weightq*jcob
+                Gy_el-=np.outer(NNNV,dNNNPdy)*weightq*jcob
+                #Gx_el+=np.outer(dNNNVdx,NNNP)*weightq*jcob
+                #Gy_el+=np.outer(dNNNVdy,NNNP)*weightq*jcob
 
                 Hx_el-=np.outer(NNNP,dNNNVdx)*weightq*jcob
                 Hy_el-=np.outer(NNNP,dNNNVdy)*weightq*jcob 
@@ -514,6 +519,13 @@ for istep in range(0,nstep):
 
             # end for jq
         # end for iq
+
+        #scaling blocks
+        Gx_el*=pscaling
+        Gy_el*=pscaling
+        Hx_el*=pscaling
+        Hy_el*=pscaling
+        h_el *=pscaling
 
         #print(np.min(Nxx_el),np.max(Nxx_el))
         #print(np.min(Gx_el),np.max(Gx_el))
@@ -617,7 +629,7 @@ for istep in range(0,nstep):
 
     u=sol[0:NV]
     v=sol[NV:NfemV]
-    p=sol[NfemV:Nfem]
+    p=sol[NfemV:Nfem]*pscaling
 
     print("     -> u (m,M) %.6e %.6e " %(np.min(u),np.max(u)))
     print("     -> v (m,M) %.6e %.6e " %(np.min(v),np.max(v)))
@@ -628,7 +640,7 @@ for istep in range(0,nstep):
     ustats_file.flush()
     vstats_file.flush()
 
-    np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+    #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
     #np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
     print("split vel into u,v: %.3f s" % (timing.time() - start))
@@ -655,9 +667,9 @@ for istep in range(0,nstep):
        dt1=CFL_nb*(Lx/nelx)/np.max(np.sqrt(u**2+v**2))
        dt2=CFL_nb*(Lx/nelx)**2 /(hcond_f/hcapa_f/rho_f)
        dt=np.min([dt1,dt2])
-       print('     -> dt1 = %.6f (year)' %dt1/year)
-       print('     -> dt2 = %.6f (year)' %dt2/year)
-       print('     -> dt  = %.6f (year)' %dt/year)
+       print('     -> dt1 = %.6f (year)' %(dt1/year))
+       print('     -> dt2 = %.6f (year)' %(dt2/year))
+       print('     -> dt  = %.6f (year)' %(dt/year))
        time+=dt
        print('     -> time= %.6f; tfinal= %.6f (year)' %(time/year,tfinal/year))
 
@@ -980,13 +992,25 @@ for istep in range(0,nstep):
     # compute Nusselt number
     #####################################################################
 
-    #TODO
+    top_flux=0
+    for iel in range (0,nel):
+        if yV[iconV[8,iel]]> 0.999*Ly:
+           top_flux-=hcond_f*((dTdy_n[iconV[6,iel]]+dTdy_n[iconV[7,iel]])/2)*hx/2
+           top_flux-=hcond_f*((dTdy_n[iconV[7,iel]]+dTdy_n[iconV[8,iel]])/2)*hx/2
+    top_flux/=Lx
+
+    Nu=top_flux/((Tbottom-Ttop)/Ly*hcond_f)
+
+    RaNu_file.write("%10e %.10e\n" % (Ra,Nu))
+    RaNu_file.flush()
+
+    print('Nusselt number:',Nu)
 
     #####################################################################
     # matplotlib output 
     #####################################################################
 
-    if plot_nliter==1 and istep%every==0:
+    if use_matplotlib==1 and istep%every==0:
         plot_x = np.flipud(np.reshape(xV,(nny,nnx)))
         plot_y = np.reshape(yV,(nny,nnx))
      
@@ -1033,7 +1057,7 @@ for istep in range(0,nstep):
     #####################################################################
     start = timing.time()
 
-    if istep%every==0:
+    if use_paraview and istep%every==0:
 
        filename = 'solution_{:04d}.vtu'.format(istep)
        vtufile=open(filename,"w")
@@ -1107,61 +1131,7 @@ for istep in range(0,nstep):
        vtufile.close()
 
 
-    if False:
-       filename = 's__olution_{:04d}.vtu'.format(istep)
-       vtufile=open(filename,"w")
-       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-       vtufile.write("<UnstructuredGrid> \n")
-       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
-       #####
-       vtufile.write("<Points> \n")
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-       for i in range(0,NV):
-           vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("</Points> \n")
-       ####
-       vtufile.write("<PointData Scalars='scalars'>\n")
-       #--
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-       for i in range(0,NV):
-           vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
-       for i in range(0,NV):
-           vtufile.write("%10e \n" %T[i])
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("</PointData>\n")
-       #####
-       vtufile.write("<Cells>\n")
-       #--
-       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[2,iel],iconV[8,iel],iconV[6,iel],\
-                                                       iconV[1,iel],iconV[5,iel],iconV[7,iel],iconV[3,iel]))
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%d \n" %((iel+1)*8))
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-       for iel in range (0,nel):
-           vtufile.write("%d \n" %23)
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("</Cells>\n")
-       #####
-       vtufile.write("</Piece>\n")
-       vtufile.write("</UnstructuredGrid>\n")
-       vtufile.write("</VTKFile>\n")
-
-
-    if False:
-       filename = 's_olution_{:04d}.vtu'.format(istep)
+       filename = 'solution_HR_{:04d}.vtu'.format(istep)
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
@@ -1176,7 +1146,7 @@ for istep in range(0,nstep):
        #####
        vtufile.write("<PointData Scalars='scalars'>\n")
        #--
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/s)' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")

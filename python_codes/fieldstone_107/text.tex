@@ -1,0 +1,163 @@
+
+This stone is based on WAFLE, a simple finite element code which solves the mass, momentum and heat transfer equations in two dimensions in a porous media. This  code was written by M. Saltnes (Master student at the Dept. of Mathematics, University of Bergen) and myself between September 2009 and May 2010. The title of the thesis is "Finite Element Modelling for Buoyancy Driven Flow in Natural Geothermal Systems". 
+
+
+
+
+
+
+
+
+We use biquadratic polynomials $(Q_2)$ for velocity and temperature, 
+and bilinear polynomials ($Q_1$) for pressure.
+
+The mass and momentum conservation equations yield the following system 
+
+\[
+\left(
+\begin{array}{ccc}
+\N_{xx} & \N_{xy} & \G_x \\
+\N_{yx} & \N_{yy} & \G_y \\
+\HH_{x} & \HH_y & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal V}_x \\
+\vec{\cal V}_y \\ 
+\vec{\cal P}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{f}_x \\ 
+\vec{f}_y \\ 
+\vec{h}
+\end{array}
+\right)
+\]
+where the right hand side vectors $\vec{f}_x $ and $\vec{f}_y$ depend on temperature via the density. 
+
+The discretised steady state heat transport equation simply is 
+\[
+({\K}_a + {\K}_d ) \cdot \vec{\cal T}= \vec{0}
+\]
+where $\K_a$ is the advection matrix (built with the previously obtained velocity) and $\K_d$ is the diffusion matrix.
+
+We iterate this out using a simple relaxation technique \cite{vyrc13} as in \stone 20 and 51 for example.
+After I have solved for velocity (using the most recent temperature field in the rhs), the velocity is relaxed as follows:
+\[
+\vec{\cal V}_x^k = \gamma \vec{\cal V}_x^k + (1-\gamma) \vec{\cal V}_x^{k-1}
+\]
+\[
+\vec{\cal V}_y^k = \gamma \vec{\cal V}_y^k + (1-\gamma) \vec{\cal V}_y^{k-1}
+\]
+and after having solved for temperature having used the most recent velocity field, the same approach is taken for temperature:
+\[
+\vec{\cal T}^k = \gamma \vec{\cal T}^k + (1-\gamma) \vec{\cal T}^{k-1}
+\]
+where the relaxation parameter $\gamma$ is between 0 and 1.
+Convergence is reached when two consecutive velocity and temperature fields
+do not change anymore.
+
+\vspace{1cm}
+
+no periodic boundary conditions yet
+
+average heat coeffs with solid
+
+%...............................................
+\subsection*{Benchmark}
+
+NOT FINISHED. See Palm \etal 1972. 
+
+The solution can be expanded in a power series in the parameter $\xi$ defined by 
+\[
+\xi^2 = \frac{\Ranb-\Ranb_c}{\Ranb}
+\qquad
+\text{or,}\qquad
+\Ranb = \frac{\Ranb_c}{1-\xi^2}
+\]
+The solution is then expected to follow:
+\begin{eqnarray}
+v &=& \xi v^{(1)} + \xi^2 v^{(2)} + \dots + \xi^n v^{(n)} + \dots \\
+\theta &=& \xi \uptheta^{(1)} + \xi^2 \uptheta^{(2)} + \dots + \xi^n \uptheta^{(n)} + \dots 
+\end{eqnarray}
+
+
+\[
+\Ranb_c = \frac{(\pi^2+a^2)^2}{a^2}
+\]
+
+\begin{eqnarray}
+A_1&=&4\pi \left( \frac{\Ranb_{c,s}}{\Ranb_c} \right)^{1/2} \nonumber\\
+A_2 &=& 0 \nonumber\\
+A_3&=&2\pi \left(\frac{\Ranb_{c,s}}{\Ranb_c} \right)^{1/2} \left(1 + \frac{7}{24} \frac{\Ranb_{c,s}}{\Ranb_c}   \right) \nonumber\\
+A_2 &=& 0 \nonumber\\
+A_5&=&\frac{3\pi}{2} \left(\frac{\Ranb_{c,s}}{\Ranb_c} \right)^{1/2}
+\left(1+\frac{7}{12} \frac{\Ranb_{c,s}}{\Ranb_c} -
+\frac{173}{3\cdot24\cdot24} \left(\frac{R_{0s}}{R_0}\right) ^2 
+\right) \nonumber\\
+A_6 &=& 0 \nonumber
+\end{eqnarray}
+
+
+\[
+\Nunb
+\simeq 1 + 2 \frac{\Ranb_{c,s}}{\Ranb_c} \eta^2
++ 2 \frac{\Ranb_{c,s}}{\Ranb_c}
+\left( 1 -\frac{17}{24}\frac{\Ranb_{c,s}}{\Ranb_c} \right) \eta^4
++2 \frac{\Ranb_{c,s}}{\Ranb_c}
+\left( 
+1 -\frac{17}{12}\frac{\Ranb_{c,s}}{\Ranb_c}
++ \frac{191}{288} \left(\frac{\Ranb_{c,s}}{\Ranb_c}\right) ^2
+\right) \eta^6 
+\]
+
+
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_107/images/souche_bench}\\
+Taken from Souche, poster EGU, 2010. Standard FEM: $Q_2$ pressure, 
+$Q_1$ temperature, $Q_1$ velocity. 
+Mixed FEM: $P_{-1}$ pressure, $Q_2$ temperature, $Q_2$ velocity.
+\end{center}
+
+
+
+
+
+%...............................................
+\subsection*{Onset and steady state of Darcy-B\'enard convection}
+
+Let us consider a system heated from below and cooled from the top. We employ a grid consisting of $nelx\times nely$ elements and horizontal periodic boundary conditions are imposed. The temperature at the top $T_t$, is set to 100\si{\celsius}, while the temperature at the bottom of the domain is higher, $T_b$=110\si{\celsius}. The initial temperature field in the system is defined as a linear gradient between Tb and Tt with a randomness of 1\% to trigger the instabilities needed for convection to occur. 
+
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_107/images/souche_conv}
+\end{center}
+
+The initial temperature in the system is a linear gradient between $T_{bottom}$ and $T_{top}$ with a 1\% random perturbation so as to favour the apparition of instabilities.
+Only the value of the heat conductivity $k$ is varied to change the $\Ranb$ number value. All other material parameters are kept constant.
+
+Below a critical $\Ranb$ number, the system is stable and no convection patterns develop. Heat is transported only by diffusion.
+The heat flux is then given by $\vec{q}_{diff}=-k \vec{\nabla} T_f=-k (T_b-T_t)/L_y$.
+
+
+Above a critical $\Ranb$ number, convection occurs in the system so that heat is transported both by advection and diffusion. 
+One can measure $\vec{q}_T$ at the top of the simulation domain (averaged over the whole length) and the Nusselt number $\Nunb$ can be computed as follows:
+\[
+\Nunb=\frac{(Heat Flux)_{total}}{(Heat Flux)_{diff}} 
+= \frac{\langle-k \vec{\nabla}\cdot \vec{n} T\rangle_{top}}{ -k (\Delta T)/L_y}
+\]
+Obviously for sub-critical Rayleigh flows, the Nusselt number is equal to 1. 
+
+\begin{center}
+\includegraphics[width=9cm]{python_codes/fieldstone_107/images/NuRa2}\\
+In WAFLE: $200 \times 50$ elements, horizontal periodic boundary conditions.\\ Domain is 4x1km. Permeability = 1e-12. porosity 0.99. 2 phases.  
+\end{center}
+
+
+
