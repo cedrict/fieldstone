@@ -32,22 +32,60 @@ order= 2
 ########################################################################
 # input parameters to play with
 ########################################################################
+# experiment 1: convection
+# experiment 2: benchmark 
 
-Lx      = 4000.
-Ly      = 1000.
-nelx    = 60
-nely    = 15
-nstep   = 1000
-g0      = 9.81
-Kxx     = 1e-12
-Kyy     = 1e-12
-Ttop    = 100
-Tbottom = 110
-rho_f   = 997     # https://en.wikipedia.org/wiki/Density#Water
-eta_f   = 1e-3    # https://en.wikipedia.org/wiki/Viscosity#Water
-hcond_f = 0.6     # https://en.wikipedia.org/wiki/List_of_thermal_conductivities
-hcapa_f = 4184    # https://en.wikipedia.org/wiki/Specific_heat_capacity 
-alpha_f = 2.1e-4  # https://en.wikipedia.org/wiki/Thermal_expansion
+experiment=2
+
+if experiment==1:
+   Lx      = 4000.
+   Ly      = 1000.
+   nelx    = 100
+   nely    = 25
+   nstep   = 200
+   g0      = 9.81
+   Kxx     = 1e-12
+   Kyy     = 1e-12
+   Ttop    = 100
+   Tbottom = 110
+   rho_f   = 997     # https://en.wikipedia.org/wiki/Density#Water
+   eta_f   = 1e-3    # https://en.wikipedia.org/wiki/Viscosity#Water
+   hcond_f = 0.6     # https://en.wikipedia.org/wiki/List_of_thermal_conductivities
+   hcapa_f = 4184    # https://en.wikipedia.org/wiki/Specific_heat_capacity 
+   alpha_f = 2.1e-4  # https://en.wikipedia.org/wiki/Thermal_expansion
+
+   Lx=4
+   Ly=1
+   Ttop    = 0
+   Tbottom = 1
+   Kxx=1
+   Kyy=1
+   eta_f=1
+   rho_f=1
+   hcond_f=1
+   hcapa_f=1
+
+
+if experiment==2:
+   Lx      = 1
+   Ly      = 1
+   nelx    = 64
+   nely    = 64
+   nstep   = 1
+   g0      = 1
+   Kxx     = 1
+   Kyy     = 1
+   Ttop    = 1
+   Tbottom = 2
+   rho_f   = 1  
+   eta_f   = 1
+   hcond_f = 1   
+   hcapa_f = 1  
+   alpha_f = 0 
+
+if int(len(sys.argv) == 3):
+   nelx = int(sys.argv[1])
+   nely = int(sys.argv[2])
 
 use_matplotlib = False
 use_paraview = True
@@ -55,9 +93,13 @@ every=1
 
 ########################################################################
 
+discP=True
+
 Ra= Kxx*rho_f*g0*alpha_f*(Tbottom-Ttop)*Ly/ (hcond_f/rho_f/hcapa_f)/eta_f
 
-CFL_nb=0.25
+Ra=150
+
+CFL_nb=0.5
 apply_filter=False
 supg_type=0
 
@@ -74,16 +116,21 @@ nnx=order*nelx+1  # number of elements, x direction
 nny=order*nely+1  # number of elements, y direction
 NV=nnx*nny
 
-gx=0
-gy=-g0
 
-NP=(nelx+1)*(nely+1)
+if discP:
+   NP=3*nelx*nely
+   mP=3  
+   rPnodes=[0,1,0]
+   sPnodes=[0,0,1]
+else:
+   NP=(nelx+1)*(nely+1)
+   mP=4 
+   rPnodes=[-1,+1,-1,+1]
+   sPnodes=[-1,-1,+1,+1]
+
 mV=9     # number of velocity nodes making up an element
-mP=4     # number of pressure nodes making up an element
 rVnodes=[-1,0,+1,-1,0,+1,-1,0,+1]
 sVnodes=[-1,-1,-1,0,0,0,+1,+1,+1]
-rPnodes=[-1,+1,-1,+1]
-sPnodes=[-1,-1,+1,+1]
 
 NfemV=NV*ndofV       # number of velocity dofs
 NfemP=NP*ndofP       # number of pressure dofs
@@ -93,9 +140,7 @@ NfemT=NV*ndofT       # nb of temperature dofs
 hx=Lx/nelx # element size in x direction
 hy=Ly/nely # element size in y direction
 
-sparse=True # storage of FEM matrix 
-
-pscaling=eta_f*hx/Kxx
+pscaling=eta_f*hx/Kxx 
 
 #################################################################
 
@@ -104,6 +149,14 @@ sqrt2=np.sqrt(2)
 nqperdim=3
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
+
+#nqperdim=4
+#qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
+#qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
+#qw4a=(18-np.sqrt(30.))/36.
+#qw4b=(18+np.sqrt(30.))/36.
+#qcoords=[-qc4a,-qc4b,qc4b,qc4a]
+#qweights=[qw4a,qw4b,qw4b,qw4a]
 
 #################################################################
 # open output files
@@ -133,9 +186,9 @@ print ('relax    =',relax)
 print ('pscaling =',pscaling)
 print("-----------------------------")
 
-#------------------------------------------------------------------------------
+#################################################################
 # Q2 velocity shape functions
-#------------------------------------------------------------------------------
+#################################################################
 # 6---7---8  
 # |       |  
 # 3   4   5  
@@ -178,30 +231,104 @@ def dNNVds(r,s):
     dNds_8= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
     return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8
 
-#------------------------------------------------------------------------------
-# Q1 pressure shape functions 
-#------------------------------------------------------------------------------
+#################################################################
+# Q1 or P-1 pressure shape functions 
+#################################################################
 
 def NNP(r,s):
-    N_0=0.25*(1-r)*(1-s)
-    N_1=0.25*(1+r)*(1-s)
-    N_2=0.25*(1-r)*(1+s)
-    N_3=0.25*(1+r)*(1+s)
-    return N_0,N_1,N_2,N_3
+    if discP:
+       NP_0=1-r-s
+       NP_1=r
+       NP_2=s
+       return NP_0,NP_1,NP_2
+    else:
+       N_0=0.25*(1-r)*(1-s)
+       N_1=0.25*(1+r)*(1-s)
+       N_2=0.25*(1-r)*(1+s)
+       N_3=0.25*(1+r)*(1+s)
+       return N_0,N_1,N_2,N_3
 
 def dNNPdr(r,s):
-    dNdr_0=-0.25*(1.-s) 
-    dNdr_1=+0.25*(1.-s) 
-    dNdr_2=-0.25*(1.+s) 
-    dNdr_3=+0.25*(1.+s) 
-    return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+    if discP:
+       dNdr_0=-1
+       dNdr_1=1
+       dNdr_2=0
+       return dNdr_0,dNdr_1,dNdr_2
+    else:
+       dNdr_0=-0.25*(1.-s) 
+       dNdr_1=+0.25*(1.-s) 
+       dNdr_2=-0.25*(1.+s) 
+       dNdr_3=+0.25*(1.+s) 
+       return dNdr_0,dNdr_1,dNdr_2,dNdr_3
 
 def dNNPds(r,s):
-    dNds_0=-0.25*(1.-r)
-    dNds_1=-0.25*(1.+r)
-    dNds_2=+0.25*(1.-r)
-    dNds_3=+0.25*(1.+r)
-    return dNds_0,dNds_1,dNds_2,dNds_3
+    if discP:
+       dNds_0=-1
+       dNds_1=0
+       dNds_2=1
+       return dNds_0,dNds_1,dNds_2
+    else:
+       dNds_0=-0.25*(1.-r)
+       dNds_1=-0.25*(1.+r)
+       dNds_2=+0.25*(1.-r)
+       dNds_3=+0.25*(1.+r)
+       return dNds_0,dNds_1,dNds_2,dNds_3
+
+#################################################################
+# checking that all velocity shape functions are 1 on their node 
+# and  zero elsewhere
+#for i in range(0,mV):
+#   print ('node',i,':',NNV(rVnodes[i],sVnodes[i]))
+
+#################################################################
+# checking that all pressure shape functions are 1 on their node 
+# and  zero elsewhere
+#for i in range(0,mP):
+#   print ('node',i,':',NNP(rPnodes[i],sPnodes[i]))
+
+#################################################################
+# material model
+#################################################################
+
+def density(x,y,T):
+    if experiment==1:
+       return rho_f*(1-alpha_f*(T-T0))-rho_f
+    if experiment==2:
+       return 1
+
+def gravity_x(x,y):
+    if experiment==1:
+       return 0 
+    if experiment==2:
+       return - x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y) + 3*x**2*y**3
+  
+def gravity_y(x,y):
+    if experiment==1:
+       return g0
+    if experiment==2:
+       return  y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x) + 3*x**3*y**2
+
+#################################################################
+# analytical solution
+#################################################################
+
+def velocity_x(x,y):
+    if experiment==1:
+       return 0
+    if experiment==2:
+       return x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+
+def velocity_y(x,y):
+    if experiment==1:
+       return 0
+    if experiment==2:
+       return -y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    
+def pressure(x,y):
+    if experiment==1:
+       return 0
+    if experiment==2:
+       return  -x**3*y**3+0.0625
 
 #################################################################
 # build velocity nodes coordinates 
@@ -220,7 +347,7 @@ for j in range(0,nny):
     #end for
 #end for
 
-#np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
+np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
 
 print("build V grid: %.3f s" % (timing.time() - start))
 
@@ -244,6 +371,18 @@ for j in range(0,nely):
         counter += 1
     #end for
 #end for
+
+#for iel in range (0,nel):
+#     print ("iel=",iel)
+#     print ("node 1",iconV[0][iel],"at pos.",xV[iconV[0][iel]], yV[iconV[0][iel]])
+#     print ("node 2",iconV[1][iel],"at pos.",xV[iconV[1][iel]], yV[iconV[1][iel]])
+#     print ("node 3",iconV[2][iel],"at pos.",xV[iconV[2][iel]], yV[iconV[2][iel]])
+#     print ("node 4",iconV[3][iel],"at pos.",xV[iconV[3][iel]], yV[iconV[3][iel]])
+#     print ("node 5",iconV[4][iel],"at pos.",xV[iconV[4][iel]], yV[iconV[4][iel]])
+#     print ("node 6",iconV[5][iel],"at pos.",xV[iconV[5][iel]], yV[iconV[5][iel]])
+#     print ("node 7",iconV[6][iel],"at pos.",xV[iconV[6][iel]], yV[iconV[6][iel]])
+#     print ("node 8",iconV[7][iel],"at pos.",xV[iconV[7][iel]], yV[iconV[7][iel]])
+#     print ("node 9",iconV[8][iel],"at pos.",xV[iconV[8][iel]], yV[iconV[8][iel]])
 
 # creating a dedicated connectivity array to plot the solution on Q1 space
 # different icon array but same velocity nodes.
@@ -271,16 +410,30 @@ start = timing.time()
 xP=np.empty(NP,dtype=np.float64)     # x coordinates
 yP=np.empty(NP,dtype=np.float64)     # y coordinates
 
-counter=0    
-for j in range(0,(order-1)*nely+1):
-    for i in range(0,(order-1)*nelx+1):
-        xP[counter]=i*hx/(order-1)
-        yP[counter]=j*hy/(order-1)
-        counter+=1
-    #end for
-#end for
+if discP:
+   counter=0
+   for iel in range(nel):
+       xP[counter]=xV[iconV[4,iel]]
+       yP[counter]=yV[iconV[4,iel]]
+       counter+=1
+       xP[counter]=xV[iconV[4,iel]]+hx/2
+       yP[counter]=yV[iconV[4,iel]]
+       counter+=1
+       xP[counter]=xV[iconV[4,iel]]
+       yP[counter]=yV[iconV[4,iel]]+hy/2
+       counter+=1
+   #end for
+else:   
+   counter=0    
+   for j in range(0,(order-1)*nely+1):
+       for i in range(0,(order-1)*nelx+1):
+           xP[counter]=i*hx/(order-1)
+           yP[counter]=j*hy/(order-1)
+           counter+=1
+       #end for
+   #end for
 
-#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
 
 print("build P grid: %.3f s" % (timing.time() - start))
 
@@ -291,20 +444,33 @@ start = timing.time()
 
 iconP=np.zeros((mP,nel),dtype=np.int32)
 
-om1=order-1
-counter=0
-for j in range(0,nely):
-    for i in range(0,nelx):
-        counter2=0
-        for k in range(0,order):
-            for l in range(0,order):
-                iconP[counter2,counter]=i*om1+l+j*om1*(om1*nelx+1)+(om1*nelx+1)*k 
-                counter2+=1
-            #end for
-        #end for
-        counter += 1
-    #end for
-#end for
+if discP:
+   for iel in range(nel):
+       iconP[0,iel]=3*iel
+       iconP[1,iel]=3*iel+1
+       iconP[2,iel]=3*iel+2
+else:
+   om1=order-1
+   counter=0
+   for j in range(0,nely):
+       for i in range(0,nelx):
+           counter2=0
+           for k in range(0,order):
+               for l in range(0,order):
+                   iconP[counter2,counter]=i*om1+l+j*om1*(om1*nelx+1)+(om1*nelx+1)*k 
+                   counter2+=1
+               #end for
+           #end for
+           counter += 1
+       #end for
+   #end for
+
+#for iel in range (0,nel):
+#     print ("iel=",iel)
+#     print ("node 1",iconP[0,iel],"at pos.",xP[iconP[0,iel]], yP[iconP[0,iel]])
+#     print ("node 2",iconP[1,iel],"at pos.",xP[iconP[1,iel]], yP[iconP[1,iel]])
+#     print ("node 3",iconP[2,iel],"at pos.",xP[iconP[2,iel]], yP[iconP[2,iel]])
+#     print ("node 4",iconP[3,iel],"at pos.",xP[iconP[3,iel]], yP[iconP[3,iel]])
 
 print("build iconP: %.3f s" % (timing.time() - start))
 
@@ -316,15 +482,32 @@ start = timing.time()
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
-for i in range(0,NV):
-    if xV[i]/Lx<eps:
-       bc_fix[i*ndofV] = True ; bc_val[i*ndofV]   = 0.
-    if xV[i]/Lx>(1-eps):
-       bc_fix[i*ndofV] = True ; bc_val[i*ndofV]   = 0.
-    if yV[i]/Ly<eps:
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if yV[i]/Ly>(1-eps):
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+if experiment==1: # free slip
+   for i in range(0,NV):
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV]   = 0.
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV]   = 0.
+       if yV[i]/Ly<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if yV[i]/Ly>(1-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+
+if experiment==2: # no slip
+   for i in range(0,NV):
+       if xV[i]/Lx<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if xV[i]/Lx>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if yV[i]/Ly<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if yV[i]/Ly>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+
 
 print("velocity b.c.: %.3f s" % (timing.time() - start))
 
@@ -356,7 +539,8 @@ T_init = np.zeros(NV,dtype=np.float64)
 
 for i in range(0,NV):
     T[i]= Tbottom-yV[i]/Ly*(Tbottom-Ttop) # conductive profile
-    T[i] += random.uniform(-2.,+2)
+    T[i] += random.uniform(-0.1,+0.1)
+    #T[i] += np.sin(xV[i]/Lx*np.pi*3)*0.01
 #end for
 
 T_prev[:]=T[:]
@@ -393,6 +577,7 @@ for iel in range(0,nel):
                 jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
             #end for
             jcob = np.linalg.det(jcb)
+            #print(jcob)
             area[iel]+=jcob*weightq
        #end for
    #end for
@@ -420,10 +605,10 @@ dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVdr = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNPdx = np.zeros(mP,dtype=np.float64)           # shape functions derivatives
-dNNNPdy = np.zeros(mP,dtype=np.float64)           # shape functions derivatives
-dNNNPdr = np.zeros(mP,dtype=np.float64)           # shape functions derivatives
-dNNNPds = np.zeros(mP,dtype=np.float64)           # shape functions derivatives
+#dNNNPdx = np.zeros(mP,dtype=np.float64)           # shape functions derivatives
+#dNNNPdy = np.zeros(mP,dtype=np.float64)           # shape functions derivatives
+#dNNNPdr = np.zeros(mP,dtype=np.float64)           # shape functions derivatives
+#dNNNPds = np.zeros(mP,dtype=np.float64)           # shape functions derivatives
 
 time=0
 
@@ -454,8 +639,8 @@ for istep in range(0,nstep):
         Nyx_el =np.zeros((mV,mV),dtype=np.float64)
         Gx_el=np.zeros((mV,mP),dtype=np.float64)
         Gy_el=np.zeros((mV,mP),dtype=np.float64)
-        Hx_el=np.zeros((mP,mV),dtype=np.float64)
-        Hy_el=np.zeros((mP,mV),dtype=np.float64)
+        #Hx_el=np.zeros((mP,mV),dtype=np.float64)
+        #Hy_el=np.zeros((mP,mV),dtype=np.float64)
         h_el=np.zeros((mP),dtype=np.float64)
 
         for iq in range(0,nqperdim):
@@ -464,13 +649,13 @@ for istep in range(0,nstep):
                 sq=qcoords[jq]
                 weightq=qweights[iq]*qweights[jq]
 
+
                 NNNV[0:mV]=NNV(rq,sq)
                 dNNNVdr[0:mV]=dNNVdr(rq,sq)
                 dNNNVds[0:mV]=dNNVds(rq,sq)
-
                 NNNP[0:mP]=NNP(rq,sq)
-                dNNNPdr[0:mP]=dNNPdr(rq,sq)
-                dNNNPds[0:mP]=dNNPds(rq,sq)
+                #dNNNPdr[0:mP]=dNNPdr(rq,sq)
+                #dNNNPds[0:mP]=dNNPds(rq,sq)
 
                 # calculate jacobian matrix
                 jcb=np.zeros((ndim,ndim),dtype=np.float64)
@@ -493,28 +678,28 @@ for istep in range(0,nstep):
                     dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                     dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
                 #end for
-                #print(xq,yq,Tq)
 
-                for k in range(0,mP):
-                    dNNNPdx[k]=jcbi[0,0]*dNNNPdr[k]+jcbi[0,1]*dNNNPds[k]
-                    dNNNPdy[k]=jcbi[1,0]*dNNNPdr[k]+jcbi[1,1]*dNNNPds[k]
+                #for k in range(0,mP):
+                #    dNNNPdx[k]=jcbi[0,0]*dNNNPdr[k]+jcbi[0,1]*dNNNPds[k]
+                #    dNNNPdy[k]=jcbi[1,0]*dNNNPdr[k]+jcbi[1,1]*dNNNPds[k]
                 #end for
 
                 Nxx_el-=eta_f/Kxx*np.outer(NNNV,NNNV)*weightq*jcob
                 Nyy_el-=eta_f/Kyy*np.outer(NNNV,NNNV)*weightq*jcob
 
-                Gx_el-=np.outer(NNNV,dNNNPdx)*weightq*jcob
-                Gy_el-=np.outer(NNNV,dNNNPdy)*weightq*jcob
-                #Gx_el+=np.outer(dNNNVdx,NNNP)*weightq*jcob
-                #Gy_el+=np.outer(dNNNVdy,NNNP)*weightq*jcob
+                #Gx_el-=np.outer(NNNV,dNNNPdx)*weightq*jcob
+                #Gy_el-=np.outer(NNNV,dNNNPdy)*weightq*jcob
+                Gx_el+=np.outer(dNNNVdx,NNNP)*weightq*jcob
+                Gy_el+=np.outer(dNNNVdy,NNNP)*weightq*jcob
 
-                Hx_el-=np.outer(NNNP,dNNNVdx)*weightq*jcob
-                Hy_el-=np.outer(NNNP,dNNNVdy)*weightq*jcob 
+                #Hx_el-=np.outer(NNNP,dNNNVdx)*weightq*jcob
+                #Hy_el-=np.outer(NNNP,dNNNVdy)*weightq*jcob 
 
                 # compute elemental rhs vector
                 for i in range(0,mV):
-                    fx_el[i]-=NNNV[i]*jcob*weightq*(rho_f*(1-alpha_f*(Tq-T0)))*gx
-                    fy_el[i]-=NNNV[i]*jcob*weightq*(rho_f*(1-alpha_f*(Tq-T0)))*gy
+                    fx_el[i]+=NNNV[i]*jcob*weightq*density(xq,yq,Tq)*gravity_x(xq,yq)
+                    fy_el[i]+=NNNV[i]*jcob*weightq*density(xq,yq,Tq)*gravity_y(xq,yq)
+                    #fy_el[i]-=NNNV[i]*jcob*weightq*Ra*Tq
                 #end for
 
             # end for jq
@@ -523,50 +708,37 @@ for istep in range(0,nstep):
         #scaling blocks
         Gx_el*=pscaling
         Gy_el*=pscaling
-        Hx_el*=pscaling
-        Hy_el*=pscaling
-        h_el *=pscaling
+        #Hx_el*=pscaling
+        #Hy_el*=pscaling
+        #h_el *=pscaling
 
+        #print('---------------------------')
         #print(np.min(Nxx_el),np.max(Nxx_el))
         #print(np.min(Gx_el),np.max(Gx_el))
         #print(np.min(Gy_el),np.max(Gy_el))
-        #print(np.min(Hx_el),np.max(Hx_el))
-        #print(np.min(Hy_el),np.max(Hy_el))
 
-        # impose b.c.: only works for free slip !!! 
+        # impose b.c.: only works for free slip or no slip !!! 
         for k1 in range(0,mV):
             #horizontal component
             m1 =ndofV*iconV[k1,iel]+0
             if bc_fix[m1]:
                N_ref=Nxx_el[k1,k1] 
-               for k2 in range(0,mV):
-                   fx_el[k2]-=Nxx_el[k2,k1]*bc_val[m1]
-                   fy_el[k2]-=Nyx_el[k2,k1]*bc_val[m1]
-                   Nxx_el[k1,k2]=0
-                   Nxx_el[k2,k1]=0
-               #end for
+               Nxx_el[k1,:]=0
+               Nxx_el[:,k1]=0
                Nxx_el[k1,k1]=N_ref 
                fx_el[k1]=0
                Gx_el[k1,:]=0
-               Nxy_el[k1,:]=0
-               Nyx_el[:,k1]=0
-               Hx_el[:,k1]=0
+               #Hx_el[:,k1]=0
             #vertical component
             m1 =ndofV*iconV[k1,iel]+1
             if bc_fix[m1]:
                N_ref=Nyy_el[k1,k1] 
-               for k2 in range(0,mV):
-                   fx_el[k2]-=Nxy_el[k2,k1]*bc_val[m1]
-                   fy_el[k2]-=Nyy_el[k2,k1]*bc_val[m1]
-                   Nyy_el[k1,k2]=0
-                   Nyy_el[k2,k1]=0
-               #end for
+               Nyy_el[k1,:]=0
+               Nyy_el[:,k1]=0
                Nyy_el[k1,k1]=N_ref 
                fy_el[k1]=0
                Gy_el[k1,:]=0
-               Nyx_el[k1,:]=0
-               Nxy_el[:,k1]=0
-               Hy_el[:,k1]=0
+               #Hy_el[:,k1]=0
 
         #assemble ( no h vector ! )
         for k1 in range(0,mV):
@@ -583,8 +755,8 @@ for istep in range(0,nstep):
                 m2 =iconP[k2,iel]
                 A_sparse[m1   ,m2+NfemV] += Gx_el[k1,k2]
                 A_sparse[m1+NV,m2+NfemV] += Gy_el[k1,k2]
-                A_sparse[m2+NfemV,m1   ] += Hx_el[k2,k1]
-                A_sparse[m2+NfemV,m1+NV] += Hy_el[k2,k1]
+                A_sparse[m2+NfemV,m1   ] -= Gx_el[k1,k2]
+                A_sparse[m2+NfemV,m1+NV] -= Gy_el[k1,k2]
 
     #end for iel
 
@@ -605,13 +777,22 @@ for istep in range(0,nstep):
     print("assemble rhs %.3f s" % (timing.time() - start))
 
     ######################################################################
+    ######################################################################
+
+    print("FEM matrix:",np.min(A_sparse),np.max(A_sparse)) 
+    print("FEM rhs:   ",np.min(rhs),np.max(rhs)) 
+    #A_sparse/=1e8
+    #rhs/=1e8
+    #print("FEM matrix:",np.min(A_sparse),np.max(A_sparse)) 
+
+    ######################################################################
     # assign extra pressure b.c. to remove null space
     ######################################################################
 
-    A_sparse[Nfem-1,:]=0
-    A_sparse[:,Nfem-1]=0
-    A_sparse[Nfem-1,Nfem-1]=1
-    rhs[Nfem-1]=0
+    #A_sparse[Nfem-1,:]=0
+    #A_sparse[:,Nfem-1]=0
+    #A_sparse[Nfem-1,Nfem-1]=1
+    #rhs[Nfem-1]=0
 
     ######################################################################
     # solve system
@@ -640,10 +821,51 @@ for istep in range(0,nstep):
     ustats_file.flush()
     vstats_file.flush()
 
-    #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
-    #np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+    np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+    np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
     print("split vel into u,v: %.3f s" % (timing.time() - start))
+
+    #################################################################
+    # normalise pressure
+    #################################################################
+
+    p[:]=-xP[:]**3*yP[:]**3
+
+    pavrg=0.
+    for iel in range (0,nel):
+        for iq in range(0,nqperdim):
+            for jq in range(0,nqperdim):
+                rq=qcoords[iq]
+                sq=qcoords[jq]
+                weightq=qweights[iq]*qweights[jq]
+                NNNP[0:mP]=NNP(rq,sq)
+                dNNNVdr[0:mV]=dNNVdr(rq,sq)
+                dNNNVds[0:mV]=dNNVds(rq,sq)
+                jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                for k in range(0,mV):
+                    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+                jcob = np.linalg.det(jcb)
+                pq=0.
+                for k in range(0,mP):
+                    pq+=NNNP[k]*p[iconP[k,iel]]
+                #end for
+                pavrg+=pq*weightq*jcob
+            #end for jq
+        #end for iq
+    #end for iel
+
+    pavrg/=(Lx*Ly)
+
+    print ('*************************pavrg=',pavrg)
+
+    p[:]-=pavrg
+    print("     -> p (m,M) %.6e %.6e " %(np.min(p),np.max(p)))
+
+    print("normalise pressure: %.3f s" % (timing.time() - start))
 
     #################################################################
     # relaxation step
@@ -1007,6 +1229,70 @@ for istep in range(0,nstep):
     print('Nusselt number:',Nu)
 
     #####################################################################
+    # compute L2 errors
+    #####################################################################
+    start = timing.time()
+
+    errv=0.
+    errp=0.
+    errq=0.
+    for iel in range (0,nel):
+
+        for iq in range(0,nqperdim):
+            for jq in range(0,nqperdim):
+                rq=qcoords[iq]
+                sq=qcoords[jq]
+                weightq=qweights[iq]*qweights[jq]
+
+                NNNV[0:mV]=NNV(rq,sq)
+                dNNNVdr[0:mV]=dNNVdr(rq,sq)
+                dNNNVds[0:mV]=dNNVds(rq,sq)
+                NNNP[0:mP]=NNP(rq,sq)
+
+                jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                for k in range(0,mV):
+                    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+                jcob = np.linalg.det(jcb)
+
+                xq=0.
+                yq=0.
+                uq=0.
+                vq=0.
+                qq=0.
+                for k in range(0,mV):
+                    xq+=NNNV[k]*xV[iconV[k,iel]]
+                    yq+=NNNV[k]*yV[iconV[k,iel]]
+                    uq+=NNNV[k]*u[iconV[k,iel]]
+                    vq+=NNNV[k]*v[iconV[k,iel]]
+                    qq+=NNNV[k]*q[iconV[k,iel]]
+                errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
+                errq+=(qq-pressure(xq,yq))**2*weightq*jcob
+
+                xq=0.
+                yq=0.
+                pq=0.
+                for k in range(0,mP):
+                    xq+=NNNP[k]*xP[iconP[k,iel]]
+                    yq+=NNNP[k]*yP[iconP[k,iel]]
+                    pq+=NNNP[k]*p[iconP[k,iel]]
+                errp+=(pq-pressure(xq,yq))**2*weightq*jcob
+
+            # end for jq
+        # end for iq
+    # end for iel
+
+    errv=np.sqrt(errv)
+    errp=np.sqrt(errp)
+    errq=np.sqrt(errq)
+
+    print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errq= %.8e" %(nel,errv,errp,errq))
+
+    print("compute errors: %.3f s" % (timing.time() - start))
+
+    #####################################################################
     # matplotlib output 
     #####################################################################
 
@@ -1076,7 +1362,7 @@ for istep in range(0,nstep):
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/s)' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+           vtufile.write("%15e %15e %3e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
@@ -1146,12 +1432,44 @@ for istep in range(0,nstep):
        #####
        vtufile.write("<PointData Scalars='scalars'>\n")
        #--
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/s)' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='press' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='vx' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e \n" % u[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='vy' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e \n" % v[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       if experiment==2:
+          vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (analytical)' Format='ascii'> \n")
+          for i in range(0,NV):
+              vtufile.write("%10e %10e %10e \n" %(velocity_x(xV[i],yV[i]),velocity_y(xV[i],yV[i]),0.))
+          vtufile.write("</DataArray>\n")
+          #--
+          vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (error)' Format='ascii'> \n")
+          for i in range(0,NV):
+              vtufile.write("%10e %10e %10e \n" %(u[i]-velocity_x(xV[i],yV[i]),v[i]-velocity_y(xV[i],yV[i]),0.))
+          vtufile.write("</DataArray>\n")
+          #--
+          vtufile.write("<DataArray type='Float32'  Name='q (analytical)' Format='ascii'> \n")
+          for i in range(0,NV):
+              vtufile.write("%10e \n" %(pressure(xV[i],yV[i])))
+          vtufile.write("</DataArray>\n")
+          #--
+          vtufile.write("<DataArray type='Float32'  Name='q (error)' Format='ascii'> \n")
+          for i in range(0,NV):
+              vtufile.write("%10e \n" %(q[i]-pressure(xV[i],yV[i])))
+          vtufile.write("</DataArray>\n")
+       #end if
+       #--
+       vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%10e \n" %q[i])
        vtufile.write("</DataArray>\n")
@@ -1160,7 +1478,6 @@ for istep in range(0,nstep):
        for i in range(0,NV):
            vtufile.write("%10e \n" %T[i])
        vtufile.write("</DataArray>\n")
-
        #--
        vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
        for i in range(0,NV):
@@ -1180,6 +1497,16 @@ for istep in range(0,nstep):
        vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%10e \n" %sr_n[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='dTdx' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e \n" %dTdx_n[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='dTdy' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e \n" %dTdy_n[i])
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</PointData>\n")

@@ -1,0 +1,23 @@
+
+rm errors.ascii
+
+python3 stone.py  6  6 | grep errv >> errors.ascii
+python3 stone.py  7  7 | grep errv >> errors.ascii
+python3 stone.py  8  8 | grep errv >> errors.ascii
+mv solution_HR_0000.vtu sol08.vtu
+python3 stone.py  9  9 | grep errv >> errors.ascii
+python3 stone.py 10 10 | grep errv >> errors.ascii
+python3 stone.py 11 11 | grep errv >> errors.ascii
+python3 stone.py 12 12 | grep errv >> errors.ascii
+python3 stone.py 13 13 | grep errv >> errors.ascii
+python3 stone.py 14 14 | grep errv >> errors.ascii
+python3 stone.py 15 15 | grep errv >> errors.ascii
+python3 stone.py 16 16 | grep errv >> errors.ascii
+mv solution_HR_0000.vtu sol16.vtu
+python3 stone.py 24 24 | grep errv >> errors.ascii
+python3 stone.py 29 29 | grep errv >> errors.ascii
+python3 stone.py 32 32 | grep errv >> errors.ascii
+mv solution_HR_0000.vtu sol32.vtu
+python3 stone.py 49 49 | grep errv >> errors.ascii
+python3 stone.py 64 64 | grep errv >> errors.ascii
+mv solution_HR_0000.vtu sol64.vtu

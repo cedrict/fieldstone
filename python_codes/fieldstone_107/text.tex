@@ -1,12 +1,27 @@
 
-This stone is based on WAFLE, a simple finite element code which solves the mass, momentum and heat transfer equations in two dimensions in a porous media. This  code was written by M. Saltnes (Master student at the Dept. of Mathematics, University of Bergen) and myself between September 2009 and May 2010. The title of the thesis is "Finite Element Modelling for Buoyancy Driven Flow in Natural Geothermal Systems". 
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_107/keywords}
+
+\begin{center}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_107}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+{\sl This stone was developed in collaboration with Zolt{\'a}n Erd{\H{o}}s}. 
+\index{contributors}{Z. Erd{\H{o}}s}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
+This stone is based on WAFLE, a simple finite element code which solves the mass, momentum and heat transfer 
+equations in two dimensions in a porous media. This  code was written by M. Saltnes (Master student at 
+the Dept. of Mathematics, University of Bergen) and myself between September 2009 and May 2010. The title 
+of the thesis is "Finite Element Modelling for Buoyancy Driven Flow in Natural Geothermal Systems". 
 
-
-
-
+\vspace{1cm}
 
 We use biquadratic polynomials $(Q_2)$ for velocity and temperature, 
 and bilinear polynomials ($Q_1$) for pressure.
@@ -44,10 +59,12 @@ The discretised steady state heat transport equation simply is
 \[
 ({\K}_a + {\K}_d ) \cdot \vec{\cal T}= \vec{0}
 \]
-where $\K_a$ is the advection matrix (built with the previously obtained velocity) and $\K_d$ is the diffusion matrix.
+where $\K_a$ is the advection matrix (built with the previously obtained velocity) 
+and $\K_d$ is the diffusion matrix.
 
 We iterate this out using a simple relaxation technique \cite{vyrc13} as in \stone 20 and 51 for example.
-After I have solved for velocity (using the most recent temperature field in the rhs), the velocity is relaxed as follows:
+After I have solved for velocity (using the most recent temperature field in the rhs), 
+the velocity is relaxed as follows:
 \[
 \vec{\cal V}_x^k = \gamma \vec{\cal V}_x^k + (1-\gamma) \vec{\cal V}_x^{k-1}
 \]
@@ -64,9 +81,62 @@ do not change anymore.
 
 \vspace{1cm}
 
-no periodic boundary conditions yet
+WARNING no periodic boundary conditions yet
 
-average heat coeffs with solid
+WARNING average heat coeffs with solid
+
+\Literature: Section 10 in Simpson's book \cite{simp17}
+
+%...............................................
+\subsection*{Manufactured solution}
+
+Before we start using the code for convection experiments, we wish to benchmark it
+with a manufactured solution. 
+We start from the velocity of the Donea \& Huerta benchmark in the unit square:
+\begin{eqnarray}
+u(x,y) &=& x^2(1- x)^2 (2y - 6y^2 + 4y^3)  \\
+v(x,y) &=& -y^2 (1 - y)^2 (2x - 6x^2 + 4x^3) 
+\end{eqnarray}
+which we know to be divergence-free.
+We postulate $p(x,y)=-x^3y^3+0.0625$ (so that it is on average zero over the domain) 
+and set $\rho=1$, ${\bm K}={\bm 1}$, $\eta_f=1$ so that 
+\begin{eqnarray} 
+g_x(x,y) 
+&=& -u(x,y) - \partial_x p \nn\\
+&=& -u(x,y) +3x^2y^3 \nn\\ 
+g_y(x,y)  
+&=& -v(x,y) - \partial_y p \nn\\ 
+&=& -v(x,y) +3x^3y^2 \nn
+\end{eqnarray}
+
+\begin{center}
+\includegraphics[width=3cm]{python_codes/fieldstone_107/results/mms/q2q1/vel08}
+\includegraphics[width=3cm]{python_codes/fieldstone_107/results/mms/q2q1/vel16}
+\includegraphics[width=3cm]{python_codes/fieldstone_107/results/mms/q2q1/vel32}
+\includegraphics[width=3cm]{python_codes/fieldstone_107/results/mms/q2q1/vel64}
+\includegraphics[width=3cm]{python_codes/fieldstone_107/results/mms/q2q1/q64}\\
+\includegraphics[width=3cm]{python_codes/fieldstone_107/results/mms/q2p1/vel08}
+\includegraphics[width=3cm]{python_codes/fieldstone_107/results/mms/q2p1/vel16}
+\includegraphics[width=3cm]{python_codes/fieldstone_107/results/mms/q2p1/vel32}
+\includegraphics[width=3cm]{python_codes/fieldstone_107/results/mms/q2p1/vel64}
+\includegraphics[width=3cm]{python_codes/fieldstone_107/results/mms/q2p1/q64}\\
+{\captionfont Top row: $Q_2\times Q_1$, bottom row: $Q_2\times P_1$. From left to right, 8x8,
+16x16, 32x32, 64x64. }
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_107/results/mms/errors.pdf}\\
+{\captionfont Velocity and pressure errors converge quadratically, which is quite
+surprising...(?), for both elements $Q_2\times Q_1$ and $Q_2\times P_1$.}
+\end{center}
+
+{\color{orange} There is a big problem!! Even at 64x64 resolution the velocity artefacts 
+are visible. I have checked and re-checked the mesh, connectivity, basis functions, 
+derivatives, jacobian values, etc ... I have checked the elemental matrices against those of 
+\stone~48. I am not sure what the problem is. Is this a conceptual
+problem with the boundary conditions? }
+
+
 
 %...............................................
 \subsection*{Benchmark}
@@ -132,25 +202,34 @@ Mixed FEM: $P_{-1}$ pressure, $Q_2$ temperature, $Q_2$ velocity.
 %...............................................
 \subsection*{Onset and steady state of Darcy-B\'enard convection}
 
-Let us consider a system heated from below and cooled from the top. We employ a grid consisting of $nelx\times nely$ elements and horizontal periodic boundary conditions are imposed. The temperature at the top $T_t$, is set to 100\si{\celsius}, while the temperature at the bottom of the domain is higher, $T_b$=110\si{\celsius}. The initial temperature field in the system is defined as a linear gradient between Tb and Tt with a randomness of 1\% to trigger the instabilities needed for convection to occur. 
+Let us consider a system heated from below and cooled from the top. We employ a 
+grid consisting of $nelx\times nely$ elements and horizontal periodic boundary conditions are imposed. 
+The temperature at the top $T_t$, is set to 100\si{\celsius}, while the temperature at the 
+bottom of the domain is higher, $T_b$=110\si{\celsius}. The initial temperature field in the system is defined 
+as a linear gradient between $T_b$ and $T_t$ with a randomness of 1\% to trigger the 
+instabilities needed for convection to occur. 
 
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_107/images/drawing}\\
+{\captionfont Setup for the experiment}
+\end{center}
 
 \begin{center}
 \includegraphics[width=14cm]{python_codes/fieldstone_107/images/souche_conv}
 \end{center}
 
-The initial temperature in the system is a linear gradient between $T_{bottom}$ and $T_{top}$ with a 1\% random perturbation so as to favour the apparition of instabilities.
-Only the value of the heat conductivity $k$ is varied to change the $\Ranb$ number value. All other material parameters are kept constant.
-
-Below a critical $\Ranb$ number, the system is stable and no convection patterns develop. Heat is transported only by diffusion.
+Only the value of the bottom temperature is varied to change the $\Ranb$ number value. 
+All other material parameters are kept constant.
+Below a critical $\Ranb$ number, the system is stable and no convection patterns develop. Heat 
+is transported only by diffusion.
 The heat flux is then given by $\vec{q}_{diff}=-k \vec{\nabla} T_f=-k (T_b-T_t)/L_y$.
-
-
-Above a critical $\Ranb$ number, convection occurs in the system so that heat is transported both by advection and diffusion. 
-One can measure $\vec{q}_T$ at the top of the simulation domain (averaged over the whole length) and the Nusselt number $\Nunb$ can be computed as follows:
+Above a critical $\Ranb$ number, convection occurs in the system so that heat is transported 
+both by advection and diffusion. 
+One can measure $\vec{q}_T$ at the top of the simulation domain (averaged over the whole length) and 
+the Nusselt number $\Nunb$ can be computed as follows:
 \[
 \Nunb=\frac{(Heat Flux)_{total}}{(Heat Flux)_{diff}} 
-= \frac{\langle-k \vec{\nabla}\cdot \vec{n} T\rangle_{top}}{ -k (\Delta T)/L_y}
+= \frac{\langle - k \vec{\nabla}T \cdot \vec{n}\rangle_{top}}{ -k (\Delta T)/L_y}
 \]
 Obviously for sub-critical Rayleigh flows, the Nusselt number is equal to 1. 
 
@@ -160,4 +239,4 @@ In WAFLE: $200 \times 50$ elements, horizontal periodic boundary conditions.\\ D
 \end{center}
 
 
-
+\Literature: Banu \& Rees \cite{bare02}
