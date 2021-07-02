@@ -1,7 +1,7 @@
 
-This three-dimensional benchmark was first proposed by \cite{bucc93}. 
+This three-dimensional benchmark was first proposed by \cite{bucc94}. 
 It has been subsequently presented in \cite{tack94,trha98,albe00,onmm06,dawk11,krhb12}.
-We here focus on Case 1 of \cite{bucc93}:  an isoviscous bimodal convection experiment at $Ra=3\cdot 10^5$.
+We here focus on Case 1 of \cite{bucc94}:  an isoviscous bimodal convection experiment at $Ra=3\cdot 10^5$.
 
 The domain is of size $a\times b\times h$ with $a=1.0079h$, $b=0.6283h$ with $h=2700$km. It is filled with a Newtonian fluid characterised by $\rho_0=3300{\rm kg}.{\rm m}^{-3}$, $\alpha=10^{-5}{\rm K}^{-1}$, 
 $\mu=8.0198\times10^{23}{\rm Pa.s}$, 
@@ -14,7 +14,7 @@ Note that using these numbers (as privided in the original paper), we arrive at 
 is not exactly $3\cdot10^5$ as announced. Also, the heat diffusivity $\kappa=k/\rho_0 c_p$ is 
 {\it exactly} $10^{-6}$.
 
-The various measurements presented in \cite{bucc93} are listed hereafter:
+The various measurements presented in \cite{bucc94} are listed hereafter:
 \begin{itemize}
 \item The Nusselt number $Nu$ computed at the top surface following Eq. (\ref{eqNu}):
 \[
@@ -107,7 +107,7 @@ c_mat = np.array([[2,0,0,0,0,0],\
 \end{center}
 
 
-The reported values for Busse et al. in the following table are taken from Table 3 of \cite{bucc93}.
+The reported values for Busse et al. in the following table are taken from Table 3 of \cite{bucc94}.
 The reported values for fieldstone are adimensionalised by means of a reference temperature (3700K),
 a reference lengthscale 2700km, and a reference time $L_z^2/\kappa\sim 7.29e+18$s.
 The steady state is arrived at by solving the steady state Stokes and temperature equations 
@@ -119,7 +119,7 @@ with a relaxation parameter of 1/2.
 
 \begin{tabular}{llllll}
 \hline
-                                & ASPECT & ($Q_2\times Q_1/Q_1$)      &       & Busse et al \cite{bucc93} & fieldstone \\
+                                & ASPECT & ($Q_2\times Q_1/Q_1$)      &       & Busse et al \cite{bucc94} & fieldstone \\
 Mesh size                       & Lz/24  & Lz/32 & Lz/48 & (best results)            & $14\times 8\times 20$    \\
 \hline
 Nu                              & 3.5539 &3.5447 & 3.5397 & $3.5374  \pm 0.0005$   \\
