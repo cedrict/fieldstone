@@ -1,0 +1,156 @@
+\begin{flushright} {\tiny {\color{gray} dimensionless\_equations2.tex.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Let us now consider a box heated from below and cooled from above. 
+We define 4 fundamental reference quantities:
+\begin{itemize}
+\item a length $L_{ref}$ (\si{\metre}), ($L$)
+\item a temperature $T_{ref}$ (\si{\kelvin}), ($\uptheta$)
+\item a viscosity $\eta_{ref}$ (\si{\pascal\second}), ($ML^{-1}T^{-1}$)
+\item a thermal diffusion coefficient $\kappa_{ref}$ (\si{\square\metre\per\second}), ($L^2T^{-1}$)
+\end{itemize}
+From these reference quantities one can form secondary ones, such as
+\begin{itemize}
+\item a time $t_{ref} = L_{ref}^2 / \kappa_{ref}$ (diffusion time)
+\item a velocity $\upnu_{ref} = L_{ref} / t_{ref} = \kappa_{ref}/L_{ref}$
+\item an acceleration $g_{ref} = \upnu_{ref} / t_{ref} = \kappa_{ref}^2/L_{ref}^3$
+\item a strain rate $\dot{\varepsilon}_{ref} = t_{ref}^{-1} = \kappa_{ref} / L_{ref}^2$
+\item a pressure $p_{ref} = \eta_{ref} \dot{\varepsilon}_{ref} $
+\item a reference density $\rho_{ref} = \eta_{ref} L_{ref} t_{ref}/L_{ref}^3 = \eta_{ref} L_{ref}^{-2} t_{ref}$
+\end{itemize}
+We define {\color{teal}dimensionless} quantities as follows:
+\[
+{\color{teal}x} = \frac{x}{L_{ref}}
+\qquad
+{\color{teal}\vec\upnu} = \frac{\vec\upnu}{\upnu_{ref}}
+\qquad
+{\color{teal}t} = \frac{t}{t_{ref}}
+\qquad
+{\color{teal} \eta} = \frac{\eta}{\eta_{ref}}
+\qquad
+{\color{teal} g} =\frac{g}{g_{ref}}
+\qquad
+{\color{teal} \vec\nabla} = L_{ref}\; \vec\nabla
+\qquad
+{\color{teal} \partial_t} = t_{ref}\; \partial_t 
+\qquad
+{\color{teal} T} = \frac{T}{T_{ref}}
+\]
+We start from the standard Navier-Stokes equation\footnote{\url{https://en.wikipedia.org/wiki/Navier-Stokes_equations}}
+\[
+\rho \frac{D \vec\upnu}{D t}
+=
+-\vec\nabla p + \vec\nabla \cdot 2 \eta \dot{\bm\varepsilon}
++ \rho \vec{g} 
+\]
+and assume that the density is temperature-dependent (Boussinesq approximation) so that
+\[
+\rho \frac{D \vec\upnu}{D t}
+=
+-\vec\nabla p + \vec\nabla \cdot 2 \eta \dot{\bm\varepsilon}
++ \rho_0(1-\alpha T) \vec{g} 
+\]
+and remove the hydrostatic pressure (although we keep using $p$ for simplicity - $p$ is now the dynamic pressure):
+\[
+\rho \frac{D \vec\upnu}{D t}
+=
+-\vec\nabla p + \vec\nabla \cdot 2 \eta \dot{\bm\varepsilon}
+- \rho_0\alpha T \vec{g} 
+\]
+We divide this equation by $p_{ref}=\eta_{ref}\dot{\varepsilon}_{ref}$:
+\[
+\frac{1}{\eta_{ref}\dot{\varepsilon}_{ref}} \rho
+\frac{D \vec\upnu}{D t} 
+=
+-\vec\nabla {\color{teal}p} + \vec\nabla \cdot 2 \frac{\eta}{\eta_{ref}} \frac{\dot{\bm\varepsilon}}{\dot{\varepsilon}_{ref}}
+- \frac{\rho_0\alpha T \vec{g}}{\eta_{ref} \dot{\varepsilon}_{ref}} 
+\]
+Let us call $\vec{e}$ the positive vertical vector ($\vec{e}_z$ in Cartesian coordinates, $\vec{e}_r$ in spherical coordinates), then 
+$\vec{g} = -g_0 \vec{e}$ and then 
+\[
+\frac{\upnu_{ref} \rho_{ref}}{\eta_{ref}\dot{\varepsilon}_{ref}}
+{\color{teal}\rho}\frac{D {\color{teal}\vec\upnu}}{D t}
+=
+-\vec\nabla {\color{teal}p} + \vec\nabla \cdot 2 {\color{teal} \eta} {\color{teal} \dot{\bm\varepsilon}}
++ \frac{\rho_0\alpha T g_0 L_r^2}{\eta_{ref} \kappa_{ref}} \vec{e}
+\]
+Finally, dividing by $L_r^{-1}$ yields
+\[
+\frac{\upnu_{ref} \rho_{ref} L_{ref}}{\eta_{ref}\dot{\varepsilon}_{ref}  t_{ref} }
+{\color{teal}\rho} \frac{{\color{teal} D \vec\upnu}}{\color{teal} D t}
+=
+-{\color{teal} \vec\nabla} {\color{teal}p} + {\color{teal} \vec\nabla} \cdot 2 {\color{teal} \eta} {\color{teal} \dot{\bm\varepsilon}}
++ \frac{\rho_0\alpha T g_0 L_r^3}{\eta_{ref} \kappa_{ref}} \vec{e}
+\]
+and finally 
+\[
+\frac{\rho_{ref} \kappa_{ref}}{\eta_{ref}}
+{\color{teal}\rho} \frac{{\color{teal} D \vec\upnu}}{\color{teal} D t}
+=
+-{\color{teal} \vec\nabla} {\color{teal}p} + {\color{teal} \vec\nabla} \cdot 2 {\color{teal} \eta} {\color{teal} \dot{\bm\varepsilon}}
++ \frac{\rho_0\alpha T_{ref} g_0 L_r^3}{\eta_{ref} \kappa_{ref}} {\color{teal} T} \vec{e}
+\]
+In the context of a system with a temperature difference $\Delta T$ 
+between the bottom and top boundaries separated by a distance $H$, one would then take $T_{ref} = \Delta T$ and $L_r=H$ so that the equation becomes:
+\[
+\frac{\rho_{ref} \kappa_{ref}}{\eta_{ref}}
+{\color{teal}\rho} \frac{{\color{teal} D \vec\upnu}}{\color{teal} D t}
+=
+-{\color{teal} \vec\nabla} {\color{teal}p} + {\color{teal} \vec\nabla} \cdot 2 {\color{teal} \eta} {\color{teal} \dot{\bm\varepsilon}}
++ \underbrace{\frac{\rho_0\alpha \Delta T g_0 H^3}{\eta_{ref} \kappa_{ref}} }_{\Ranb} {\color{teal} T}\vec{e}
+\]
+and we obviously recover the classical definition of the Rayleigh number.
+On the left side of the equation we recognize the (inverse of the) Prandlt number $\Prnb=\frac{\eta}{\rho \kappa}$. 
+We can estimate the dimensionless number before the inertial term for Earth
+geodynamics:
+\[
+\Prnb \simeq \frac{10^{20-23}}{3000 \cdot 10^{-6}} >> 10^{23}
+\]
+Its inverse is then extremely small and this is why we neglect the inertial terms
+in mantle modelling.
+
+
+If the fluid is isoviscous, one can then set $\eta_{ref}=\eta=\eta_0$ and then ${\color{teal}\eta}=1$ and then 
+\[
+-{\color{teal} \vec\nabla} {\color{teal}p} + {\color{teal} \vec\nabla} \cdot 2  {\color{teal} \dot{\bm\varepsilon}}
++ \Ranb {\color{teal} T} \vec{e}= \vec{0}
+\]
+
+Turning now to the continuity equation $\vec\nabla \cdot\vec\upnu = 0$,
+it is trivial to show that  ${\color{teal} \vec\nabla } \cdot  {\color{teal}\vec\upnu} = 0$.
+Finally, starting from the simple heat transport equation:
+\[
+\frac{\partial T}{\partial t} + \vec\upnu\cdot\vec\nabla T = \kappa \Delta T
+\]
+We divide each side by $T_{ref}$ so that 
+\[
+\frac{\partial {\color{teal}T}}{\partial t} + \vec\upnu\cdot\vec\nabla {\color{teal}T} = \kappa \Delta {\color{teal}T}
+\]
+We now divide each side by the reference velocity $\upnu_{ref}$ 
+and we obtain
+\[
+\frac{L_{ref}}{\kappa_{ref}} \frac{\partial {\color{teal}T}}{\partial t} + {\color{teal} \vec\upnu} \cdot\vec\nabla {\color{teal}T} 
+=  \frac{L_{ref}}{\kappa_{ref}}  \kappa \Delta {\color{teal}T}
+\]
+We multiply each side by $L_{ref}$ and we finally get
+\[
+\frac{L_{ref}^2}{\kappa_{ref}} 
+\frac{\partial {\color{teal}T}}{\partial t}
++ {\color{teal} \vec\upnu} \cdot  {\color{teal}\vec\nabla} {\color{teal}T} =  {\color{teal} \kappa} {\color{teal}\Delta} {\color{teal}T}
+\]
+and finally
+\[
+\frac{ {\color{teal} \partial T}}{ {\color{teal} \partial t}} 
++ {\color{teal} \vec\upnu} \cdot  {\color{teal}\vec\nabla} {\color{teal}T} =  {\color{teal} \kappa} {\color{teal}\Delta} {\color{teal}T}
+\]
+The set of dimensionless equations is then:
+\begin{eqnarray}
+-{\color{teal} \vec\nabla} {\color{teal}p} + {\color{teal} \vec\nabla} \cdot 2  {\color{teal} \dot{\bm\varepsilon}}
++ \Ranb  {\color{teal} T} \vec{e} &=& \vec{0} \\
+{\color{teal} \vec\nabla } \cdot  {\color{teal}\vec\upnu} &=& 0 \\
+\frac{ {\color{teal} \partial T}}{ {\color{teal} \partial t}} 
++ {\color{teal} \vec\upnu} \cdot  {\color{teal}\vec\nabla} {\color{teal}T} &=&  {\color{teal} \kappa} {\color{teal}\Delta} {\color{teal}T}
+\end{eqnarray}
+
+
+

@@ -634,15 +634,15 @@ then
 \end{equation}
 
 %--------------------------------------------------------------------------------
-\paragraph{Two slightly different formulations}
+\paragraph{A slightly different formulation}
 
 The momentum conservation equation can be written as follows:
 \[
-\vec\nabla\cdot( 2 \eta \dot{\bm \varepsilon}) - \vec\nabla p + \vec b = \vec 0
+\vec\nabla\cdot( 2 \eta \dot{\bm \varepsilon}(\vec\upnu)) - \vec\nabla p + \vec b = \vec 0
 \]
-When the viscosity $\eta$ is constant this equation becomes
+When the viscosity $\eta$ is constant and the flow is incompressible this equation becomes
 \[
-\eta \Delta \vec v - \vec\nabla p + \vec b = \vec 0
+\eta \Delta \vec \upnu - \vec\nabla p + \vec b = \vec 0
 \]
 In this case the matrix ${\bm B}$ takes a different form (See Donea \& Huerta \cite[Eq. 6.24]{dohu03})
 and one should be aware that this can have consequences for the Neumann boundary conditions. 
@@ -753,6 +753,109 @@ u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3 \\ \dots \\ u_{m_v} \\ v_{m_v}
 }_{\vec V}
 \]
 
+If such a formulation is used, it makes more sense to actually group the unknowns as follows:
+\[
+\vec{\cal V}=(u_1, \dots, u_{m_\upnu},v_1,\dots,v_{m_\upnu}, w_1, \dots, w_{m_\upnu})
+\]
+
+We start from 
+\[
+\eta \Delta \vec\upnu -\vec\nabla p + \rho \vec{g} = \vec{0}
+\]
+In 2D Cartesian coordinates this becomes:
+\begin{eqnarray}
+\eta \Delta u - \partial_x p + \rho g_x &=& 0\\
+\eta \Delta v - \partial_y p + \rho g_y &=& 0
+\end{eqnarray}
+or, 
+\begin{eqnarray}
+\eta \left(\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} \right) - \partial_x p + \rho g_x &=& 0\\
+\eta \left(\frac{\partial^2 v}{\partial x^2} + \frac{\partial^2 v}{\partial y^2} \right) - \partial_y p + \rho g_y &=& 0
+\end{eqnarray}
+Assuming that we prescribe the normal velocity on all sides (i.e. no Neumann boundary conditions), we can establish the weak form of these equations:
+\begin{eqnarray}
+\underbrace{
+\left(
+\int_\Omega \eta (
+\frac{\partial \vec{\bN}^\upnu}{\partial x}
+\frac{\partial \vec{\bN}^\upnu}{\partial x} 
++
+\frac{\partial \vec{\bN}^\upnu}{\partial y}
+\frac{\partial \vec{\bN}^\upnu}{\partial y}) \;
+dV \right) }_{\N}
+\cdot \vec{\cal V}_x
++
+\underbrace{
+\left(
+-\int_\Omega \frac{\partial \vec{\bN}^\upnu}{\partial x} \vec{\bN}^p \; dV
+\right)}_{G_{x}}
+\cdot \vec{\cal P} 
+&=& \underbrace{ \int_\Omega \vec{\bN}^\upnu \rho g_x \; dV }_{\vec{f}_x}\\
+\underbrace{
+\left(
+\int_\Omega \eta (
+\frac{\partial \vec{\bN}^\upnu}{\partial x}
+\frac{\partial \vec{\bN}^\upnu}{\partial x} 
++
+\frac{\partial \vec{\bN}^\upnu}{\partial y}
+\frac{\partial \vec{\bN}^\upnu}{\partial y}) \;
+dV \right) }_{\N}
+\cdot \vec{\cal V}_y
++
+\underbrace{
+\left(
+-\int_\Omega \frac{\partial \vec{\bN}^\upnu}{\partial y} \vec{\bN}^p \; dV
+\right)}_{G_{y}}
+\cdot \vec{\cal P} 
+&=& \underbrace{ \int_\Omega \vec{\bN}^\upnu \rho g_y \; dV }_{\vec{f}_y}
+\end{eqnarray}
+Turning now to the continuity equation
+\[
+-\vec\nabla\cdot\vec\upnu = 0
+\]
+or,
+\[
+-\frac{\partial u}{\partial x} 
+-\frac{\partial v}{\partial y} =0
+\]
+Its weak form then is
+\[
+\underbrace{
+\left(-\int_\Omega \vec{\bN}^p \frac{\partial \vec{\bN}^\upnu}{\partial x} dV
+\right) \cdot \vec{\cal V}_x }_{G_x^T}
++
+\underbrace{\left(- \int_\Omega \vec{\bN}^p \frac{\partial \vec{\bN}^\upnu}{\partial y}   dV \right)}_{G_y^T} \cdot \vec{\cal V}_y 
+=0
+\]
+In the end:
+\[
+\left(
+\begin{array}{ccc}
+{\N} & 0 & {\G}_x  \\
+0 & {\N} & {\G}_y  \\
+\G_x & \G_y & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal V}_x \\
+\vec{\cal V}_y \\
+\vec{\cal P} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{f}_x \\
+\vec{f}_y \\
+0
+\end{array}
+\right)
+\]
+
+This approach is implemented in \stone~48. 
+
 
 
 
@@ -780,7 +883,7 @@ following saddle point system:
 \K & \G  \\ 
 \G^T & 0 
 \end{array} \right) \cdot
-\left( \begin{array}{c}  \vec{V} \\ \vec{P}  \end{array} \right) = 
+\left( \begin{array}{c}  \vec{\cal V} \\ \vec{\cal P}  \end{array} \right) = 
 \left( \begin{array}{c}  \vec{f} \\ \vec{0}  \end{array} \right) 
 \]
 One can perturb the continuity equation 
@@ -791,16 +894,16 @@ This yields
 \left( \begin{array}{cc}
 \K & \G  \\ \G^T & -\mathbb{C}_\epsilon
 \end{array} \right) \cdot
-\left( \begin{array}{c}  \vec{V} \\ \vec{P}  \end{array} \right) = 
+\left( \begin{array}{c}  \vec{\cal V} \\ \vec{\cal P}  \end{array} \right) = 
 \left( \begin{array}{c}  \vec{f} \\ \vec{0}  \end{array} \right) 
 \]
 or,
 \[
-\vec{P}= \frac{1}{\epsilon} \mathbb{M}_p^{-1} \cdot  \G^T \cdot \vec{V}
+\vec{\cal P}= \frac{1}{\epsilon} \mathbb{M}_p^{-1} \cdot  \G^T \cdot \vec{\cal V}
 \]
 Substituting pressure in the first equation yields:
 \begin{equation}
-(\K + \frac{1}{\epsilon} \G \cdot \mathbb{M}_p^{-1} \cdot \G^T ) \cdot \vec{V} = \vec{f} 
+(\K + \frac{1}{\epsilon} \G \cdot \mathbb{M}_p^{-1} \cdot \G^T ) \cdot \vec{\cal V} = \vec{f} 
 \label{eqdpf}
 \end{equation}
 

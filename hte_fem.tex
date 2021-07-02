@@ -19,13 +19,13 @@ The weak form is then
 = \int_\Omega  N^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T  d\Omega
 \end{equation}
 
-\[
+\begin{equation}
 \underbrace{\int_\Omega N^\uptheta_i  \rho C_p \frac{\partial T}{\partial t} d\Omega}_{I}
 + \underbrace{\int_\Omega N^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T}   d\Omega}_{II}
 = \underbrace{\int_\Omega  N^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T d\Omega}_{III}
 \quad\quad
 i=1,m_T
-\]
+\end{equation}
 
 Looking at the first term:
 \begin{eqnarray}
@@ -33,16 +33,16 @@ Looking at the first term:
 &=&  \int_\Omega N^\uptheta_i  \rho C_p \vec N^\uptheta \cdot \dot{\vec T}  d\Omega \\
 \end{eqnarray}
 so that when we assemble all contributions for $i=1,m_T$ we get:
-\[
+\begin{equation}
 I 
 = \int_\Omega \vec N^\uptheta  \rho C_p \vec N^\uptheta \cdot \dot{\vec T}  d\Omega
 = \left( \int_\Omega \rho C_p  \vec N^\uptheta  \vec N^\uptheta  d\Omega \right) \cdot \dot{\vec T}
 = {\bm M}^T \cdot \dot{\vec T}
- \]
+ \end{equation}
 where ${\bm M}^T$ is the mass matrix of the system of size $(m_T \times m_T)$ with 
-\[
+\begin{equation}
 M_{ij}^T = \int_\Omega \rho C_p N_i^\uptheta N_j^\uptheta d\Omega
-\]
+\end{equation}
 Turning now to the second term:
 \begin{eqnarray}
 \int_\Omega N^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T}   d\Omega
@@ -109,218 +109,6 @@ where ${\bm K}_d$ is the diffusion term matrix:
 %\]
 \todo[inline]{add source term!!}
 
-%....................................................
-\subsubsection{Dealing with the time discretisation} \label{sec:timediscr}
-
-Essentially we have to solve a PDE of the type:
-\[
-\frac{\partial T}{\partial t} = {\cal F}(\vec \upnu,T,\vec\nabla T,\Delta T)
-\]
-with ${\cal F}=\frac{1}{\rho C_p}(-\vec\upnu\cdot\vec\nabla T + \vec\nabla\cdot k\vec\nabla T)$.
-
-\index{general}{Forward Euler}
-\index{general}{Backward Euler}
-\index{general}{Crank-Nicolson}
-
-The (explicit) forward Euler method is:
-\[
-\frac{T^{n+1}-T^n}{\delta t} = {\cal F}^n(T,\vec\nabla T,\Delta T)
-\]
-The (implicit) backward Euler method is:
-\[
-\frac{T^{n+1}-T^n}{\delta t} = {\cal F}^{n+1}(T,\vec\nabla T,\Delta T)
-\]
-and the (implicit) Crank-Nicolson algorithm is:
-\[
-\frac{T^{n+1}-T^n}{\delta t} = 
-\frac{1}{2}
-\left[
-{\cal F}^{n}(T,\vec\nabla T,\Delta T)
-+
-{\cal F}^{n+1}(T,\vec\nabla T,\Delta T)
-\right]
-\]
-where the superscript $n$ indicates the time step.
-The Crank-Nicolson is obviously based on the trapezoidal rule, with second-order convergence in time.
-
-
-In what follows, I omit the superscript on the mass matrix to simplify notations: ${\bm M}^\uptheta={\bm M}$.
-In terms of Finite Elements, these become:
-\begin{itemize}
-\item Explicit Forward euler:
-\[
-\frac{1}{\delta t} ({\bm M}^{n+1} \cdot \vec T^{n+1}  -{\bm M}^n \cdot \vec T^{n} )
-=
--({\bm K}_a^n+{\bm K}^n_d) \cdot \vec T^{n}
-\]
-or, 
-\[
-\boxed{
-{\bm M}^{n+1} \cdot \vec T^{n+1}
-= \left(  {\bm M}^n  + ({\bm K}_a^n+{\bm K}_d^n) \delta t \right)\cdot \vec T^{n} 
-}
-\]
-
-\item Implicit Backward euler:
-\[
-\frac{1}{\delta t} ({\bm M}^{n+1} \cdot \vec T^{n+1}  -{\bm M}^n \cdot \vec T^{n} )
-= -({\bm K}_a^{n+1}+{\bm K}_d^{n+1}) \cdot \vec T^{n+1}
-\]
-or, 
-\begin{equation}
-\boxed{
-\left( {\bm M}^{n+1} +({\bm K}_a^{n+1}+{\bm K}_d^{n+1})\delta t \right) \cdot \vec T^{n+1}
-=
-{\bm M}^n \cdot \vec T^{n} 
-}
-\label{eq:hte_ibe}
-\end{equation}
-
-\item Crank-Nicolson
-
-\[
-\frac{1}{\delta t} \left({\bm M}^{n+1} \cdot \vec T^{n+1}  -{\bm M}^n \cdot \vec T^{n} \right)
-= 
-\frac{1}{2}
-\left[
--({\bm K}_a^{n+1}+{\bm K}_d^{n+1}) \cdot \vec T^{n+1}
--({\bm K}_a^{n}+{\bm K}_d^{n}) \cdot \vec T^{n}
-\right]
-\]
-or,
-\[
-\boxed{
-\left( {\bm M}^{n+1} +({\bm K}_a^{n+1}+{\bm K}_d^{n+1})\frac{\delta t}{2} \right) \cdot \vec T^{n+1}
-= \left(  {\bm M}^n  + ({\bm K}_a^n+{\bm K}_d^n) \frac{\delta t}{2} \right)\cdot \vec T^{n} 
-}
-\]
-
-Note that in benchmarks where the domain/grid does not deform, the coefficients do not change in space
-and the velocity field is constant in time, or in practice out of convenience, the ${\bm K}$  and ${\bm M}$ 
-matrices do not change and the r.h.s. can be constructed with the same matrices as the FE matrix.
-
-\end{itemize}
-
-
-
-
-\index{general}{BDF-2}
-\paragraph{The Backward differentiation formula} (see for instance Hairer \& Wanner \cite{hawa91} 
-or Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Backward_differentiation_formula}}. 
-See also step-31 of deal.II\footnote{\url{https://www.dealii.org/current/doxygen/deal.II/step_31.html}}.
-The second-order BDF (or BDF-2) as shown in Kronbichler \etal (2012) \cite{krhb12} 
-is as follows: it is a finite-difference 
-quadratic interpolation approximation of the $\partial T/\partial t$ term which involves
-$t^n$, $t^{n-1}$ and $t^{n-2}$:
-\begin{equation}
-\frac{\partial T}{\partial t}(t^n) \simeq
-\frac{1}{\delta t_n} \left( \frac{2\delta t_n + \delta t_{n-1}}{\delta t_n+\delta t_{n-1} } T^n  
-- \frac{\delta t_n +\delta t_{n-1}}{\delta t_{n-1}} T^{n-1}
-+ \frac{\delta t_n^2}{\delta t_{n-1}(\delta t_n+\delta t_{n-1})} T^{n-2}
-\right)
-\end{equation}
-where $\delta t_n=t^n-t^{n-1}$. We also then have the approximation
-\[
-T^n  
-\simeq T^{n-1} + \delta t_n \frac{\partial T}{\partial t}
-\simeq T^{n-1} + \delta t_n \frac{T^{n-1}-T^{n-2}}{\delta t_{n-1}} 
-= \left(1 + \frac{\delta t_n}{\delta t_{n-1}} \right) T^{n-1} + \frac{\delta t_n}{\delta t_{n-1}} T^{n-2}
-\]
-
-
-
-
-Starting again from 
-${\bm M}^\uptheta \cdot \dot{\vec T} + ({\bm K}_a + {\bm K}_d) \cdot \vec T = \vec 0$,
-we write 
-\[
-{\bm M}^\uptheta \cdot 
-\frac{1}{\delta t_n} \left( \frac{2\delta t_n + \delta t_{n-1}}{\delta t_n+\delta t_{n-1} } \vec T^n  
-- \frac{\delta t_n +\delta t_{n-1}}{\delta t_{n-1}} \vec T^{n-1}
-+ \frac{\delta t_n^2}{\delta t_{n-1}(\delta t_n+\delta t_{n-1})} \vec T^{n-2} \right)
-+ ({\bm K}_a + {\bm K}_d) \cdot \vec T^n = \vec 0
-\]
-and finally:
-\begin{equation}
-\left[
-\frac{2\delta t_n + \delta t_{n-1}}{\delta t_n+\delta t_{n-1} }
-{\bm M}^\uptheta
-+ \delta t_n({\bm K}_a + {\bm K}_d)
-\right]
- \cdot \vec T^n =
- \frac{\delta t_n +\delta t_{n-1}}{\delta t_{n-1}} {\bm M}^\uptheta \cdot \vec T^{n-1}
-- \frac{\delta t_n^2}{\delta_{n-1}(\delta t_n+\delta t_{n-1})} {\bm M}^\uptheta \cdot \vec T^{n-2}
-\label{eq:bdf2}
-\end{equation}
-For practical reasons one may wish to bring the advection term to the rhs (i.e. fully implicit)
-so that the matrix is symmetric. 
-In this case the equation becomes 
-\[
-\left[
-\frac{2\delta t_n + \delta t_{n-1}}{\delta t_n+\delta t_{n-1} }
-{\bm M}^\uptheta
-+ \delta t_n {\bm K}_d
-\right]
- \cdot \vec T^n 
-=
- \frac{\delta t_n +\delta t_{n-1}}{\delta t_{n-1}} {\bm M}^\uptheta \cdot \vec T^{n-1}
-- \frac{\delta t_n^2}{\delta_{n-1}(\delta t_n+\delta t_{n-1})} {\bm M}^\uptheta \cdot \vec T^{n-2}
-- \delta t_n {\bm K}_a^\star \cdot \vec T^{n,\star} 
-\]
-with 
-\[
-(\cdot)^\star = \left(1 + \frac{\delta t_n}{\delta t_{n-1}} \right) (\cdot)^{n-1} 
-+ \frac{\delta t_n}{\delta t_{n-1}} (\cdot )^{n-2}
-\]
-which denotes the extrapolation of a quantity to time $n$.
-Be aware that the ${\bm K}_a^\star$ matrix contains the velocity $\vec\upnu^\star$.
-
-Note that if all timesteps are equal, i.e. $\delta t_n=\delta t_{n-1}=\delta t$, Eq.~\eqref{eq:bdf2} becomes:
-\[
-\left[
-\frac{3}{2}
-{\bm M}^\uptheta
-+ \delta t({\bm K}_a + {\bm K}_d)
-\right]
- \cdot \vec T^n =
-{\bm M}^\uptheta \cdot \left(2 \vec T^{n-1} - \frac{1}{2} \vec T^{n-2} \right)
-\]
-or, 
-\[
-\left[
-{\bm M}^\uptheta
-+ \frac{2}{3}\delta t({\bm K}_a + {\bm K}_d)
-\right]
- \cdot \vec T^n =
-{\bm M}^\uptheta \cdot \left( \frac{4}{3} \vec T^{n-1} - \frac{1}{3} \vec T^{n-2} \right)
-\]
-
-When the timestep $\delta t$ is kept constant (which may be a bad idea with regards to the CFL condition),
-the backward differenciation formula family of implicit methods
-for the integration of ODEs are simplified. 
-The BDF-1 is simply the backward Euler method as seen above:
-\[
-T^{n+1}-T^n=\delta t\;  {\cal F}^{n+1}
-\]
-The BDF-2 is given by 
-\[
-T^{n+2} - \frac{4}{3}T^{n+1} +\frac{1}{3} T^n = \frac{2}{3} \delta t\;  {\cal F}^{n+2}
-\]
-The BDF-3 is given by 
-\[
-T^{n+3} - \frac{18}{11}T^{n+2} +\frac{9}{11} T^{n+1} -\frac{2}{11}T^n = \frac{6}{11} \delta t \; {\cal F}^{n+3}
-\]
-The BDF-4 is given by 
-\[
-T^{n+4}-\frac{48}{25}T^{n+1}+\frac{36}{25}T^{n+1}-\frac{16}{25}T^{n+1}+\frac{3}{25}T^n 
-= \frac{12}{25}\delta t\;  {\cal F}^{n+4}
-\]
-Each BDF-$s$ method achieves order $s$.
-
-
-
-
-
 
 %....................................................
 \subsubsection{On steady states}
@@ -334,6 +122,14 @@ This is irrelevant for the Stokes equations which do not contain an explicit tim
 transport equation can reach a steady state. 
 Note that if one is only interested in the steady state solution (and not how the system gets there in time)
 then the heat transport equation should be solved with $\partial T/\partial t$ set to zero. 
+
+
+
+
+%....................................................
+%..........................................................
+\subsubsection{Dealing with the time discretisation} \label{sec:timediscr}
+\input{time_discretisation}
 
 %....................................................
 \subsubsection{Anisotropic heat conduction}\label{sec:anisotropic}

@@ -1,0 +1,15 @@
+
+Python is touted as the one language students should learn and master. However it is a language which allows *way* too much liberty in its syntax and encourages students to be sloppy. 
+
+For instance the following code runs just fine:
+
+\begin{lstlisting}
+for k in range(0,5): 
+    for k in range(0,5):
+        for k in range(0,5):
+            print (k)
+\end{lstlisting}
+
+This alone should disqualify this language. It is easy to see the obvious problem with this code, but adding a few lines of code in between each 'for' line hides the problem and the absence of any warning makes this code a nightmare to debug.
+
+

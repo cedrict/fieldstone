@@ -1,4 +1,4 @@
-\begin{flushright} {\tiny {\color{gray} elemental\_matrix.tex}} \end{flushright}
+\begin{flushright} {\tiny {\color{gray} app\_elemental\_matrix.tex}} \end{flushright}
 
 In what follows I compute the mass matrix for a variety of reference elements.
 If you wish to use these in a code, do not forget to take the jacobian 
@@ -495,6 +495,336 @@ dr ds\nn\\
 \right)
 \end{eqnarray}
 
+%__________________________________
+\subsubsection{Diffusion matrix}
+
+
+\[
+{\bm K}_d^e = k \frac{h_xh_y}{4} \int_{-1}^{+1}\int_{-1}^{+1}
+{\bm B}^T(r,s) \cdot {\bm B}(r,s) \; dr ds
+\]
+with
+\[
+{\bm B}(r,s) =
+\left(
+\begin{array}{cccc}
+-\frac{1}{h_x} \frac12 (1-s) &
+\frac{1}{h_x} \frac12 (1-s) &
+\frac{1}{h_x} \frac12 (1+s) &
+-\frac{1}{h_x} \frac12 (1+s) \\ \\
+-\frac{1}{h_y} \frac12 (1-r) &
+-\frac{1}{h_y} \frac12 (1+r) &
+\frac{1}{h_y} \frac12 (1+r) &
+\frac{1}{h_y} \frac12 (1-r) \\ \\
+\end{array}
+\right)
+\]
+Then 
+\begin{eqnarray}
+&& {\bm B}^T(r,s) \cdot {\bm B}(r,s) \\
+&=&
+\left(
+\begin{array}{cc}
+-\frac{1}{h_x} \frac12 (1-s) & -\frac{1}{h_y} \frac12 (1-r) \\
+\frac{1}{h_x} \frac12 (1-s) & -\frac{1}{h_y} \frac12 (1+r) \\
+\frac{1}{h_x} \frac12 (1+s) & \frac{1}{h_y} \frac12 (1+r)  \\
+-\frac{1}{h_x} \frac12 (1+s) & \frac{1}{h_y} \frac12 (1-r) 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cccc}
+-\frac{1}{h_x} \frac12 (1-s) &
+\frac{1}{h_x} \frac12 (1-s) &
+\frac{1}{h_x} \frac12 (1+s) &
+-\frac{1}{h_x} \frac12 (1+s) \\ \\
+-\frac{1}{h_y} \frac12 (1-r) &
+-\frac{1}{h_y} \frac12 (1+r) &
+\frac{1}{h_y} \frac12 (1+r) &
+\frac{1}{h_y} \frac12 (1-r) 
+\end{array}
+\right) \\
+&=&
+\frac{1}{4h_x^2}
+\left(
+\begin{array}{cc}
+-(1-s) & -  (1-r) \\
+ (1-s) & - (1+r) \\
+ (1+s) &  (1+r)  \\
+-(1+s) &  (1-r) 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cccc}
+-(1-s) &  (1-s) &
+ (1+s) & -(1+s) \\ 
+-(1-r) & -(1+r) &
+ (1+r) &  (1-r) 
+\end{array}
+\right) \\
+&=& 
+\frac{1}{4h_x^2}
+\left(
+\begin{array}{cccc}
+(1-r)^2 & (1-r^2) & -(1-r^2) & -(1-r)^2 \\
+(1-r^2) & (1+r)^2 & -(1+r)^2 & -(1-r^2) \\
+-(1-r^2) & -(1+r)^2 & (1+r)^2 & (1-r^2) \\
+-(1-r)^2 & -(1-r^2) & (1-r^2) & (1-r)^2
+\end{array}
+\right) \\
+&=& 
+\frac{1}{4h_y^2}
+\left(
+\begin{array}{cccc}
+(1-s)^2 & -(1-s)^2 & -(1-s^2) & (1-s^2) \\
+-(1-s)^2 & (1-s)^2 & (1-s^2) & -(1-s^2) \\
+-(1-s^2) & (1-s^2) & (1+s)^2 & - (1+s)^2 \\
+(1-s^2) & -(1-s^2) & -(1+s)^2 & (1+s)^2 
+\end{array}
+\right) \\
+\end{eqnarray}
+So in the end 
+\begin{eqnarray}
+{\bm K}_d^e 
+&=& k \frac{h_xh_y}{4} \int_{-1}^{+1}\int_{-1}^{+1}
+\frac{1}{4h_x^2}
+\left(
+\begin{array}{cccc}
+(1-r)^2 & (1-r^2) & -(1-r^2) & -(1-r)^2 \\
+(1-r^2) & (1+r)^2 & -(1+r)^2 & -(1-r^2) \\
+-(1-r^2) & -(1+r)^2 & (1+r)^2 & (1-r^2) \\
+-(1-r)^2 & -(1-r^2) & (1-r^2) & (1-r)^2
+\end{array}
+\right)
+dr ds \\
+&+&
+\frac{h_xh_y}{4} \int_{-1}^{+1}\int_{-1}^{+1}
+\frac{1}{4h_y^2}
+\left(
+\begin{array}{cccc}
+(1-s)^2 & -(1-s)^2 & -(1-s^2) & (1-s^2) \\
+-(1-s)^2 & (1-s)^2 & (1-s^2) & -(1-s^2) \\
+-(1-s^2) & (1-s^2) & (1+s)^2 & - (1+s)^2 \\
+(1-s^2) & -(1-s^2) & -(1+s)^2 & (1+s)^2 
+\end{array}
+\right) dr ds \\
+&=& k \frac{k h_y}{8 h_x} \int_{-1}^{+1}
+\left(
+\begin{array}{cccc}
+(1-r)^2 & (1-r^2) & -(1-r^2) & -(1-r)^2 \\
+(1-r^2) & (1+r)^2 & -(1+r)^2 & -(1-r^2) \\
+-(1-r^2) & -(1+r)^2 & (1+r)^2 & (1-r^2) \\
+-(1-r)^2 & -(1-r^2) & (1-r^2) & (1-r)^2
+\end{array}
+\right)
+dr  \\
+&+&
+\frac{k h_x}{8 h_y} \int_{-1}^{+1}
+\left(
+\begin{array}{cccc}
+(1-s)^2 & -(1-s)^2 & -(1-s^2) & (1-s^2) \\
+-(1-s)^2 & (1-s)^2 & (1-s^2) & -(1-s^2) \\
+-(1-s^2) & (1-s^2) & (1+s)^2 & - (1+s)^2 \\
+(1-s^2) & -(1-s^2) & -(1+s)^2 & (1+s)^2 
+\end{array}
+\right) ds \\
+&=& 
+k \frac{k h_y}{8 h_x} \frac{4}{3}
+\left(
+\begin{array}{cccc}
+2 &1 &-1 &2 \\
+1 &2 &-2 &-1\\
+-1 &-2 &2 &1\\
+-2 &-1 &1 &2 
+\end{array}
+\right) 
++
+\frac{k h_x}{8 h_y} \frac{4}{3}
+\left(
+\begin{array}{cccc}
+2 &-2 &-1 &1 \\
+-2 &2 & 1 &-1 \\
+-1 &1 & 2 &-2 \\
+1 &-1 &-2 &2 
+\end{array}
+\right)  \\
+&=& 
+\frac{k h_x h_y }{6}
+\left(
+\begin{array}{cccc}
+ \frac{2}{h_x^2}+\frac{2}{h_y^2} &
+-\frac{2}{h_x^2}+\frac{1}{h_y^2} &
+-\frac{1}{h_x^2}-\frac{1}{h_y^2} &
+ \frac{1}{h_x^2}-\frac{2}{h_y^2} \\
+-\frac{2}{h_x^2}+\frac{1}{h_y^2} &
+ \frac{2}{h_x^2}+\frac{2}{h_y^2} &
+ \frac{1}{h_x^2}-\frac{2}{h_y^2} &
+-\frac{1}{h_x^2}-\frac{1}{h_y^2} \\
+-\frac{1}{h_x^2}-\frac{1}{h_y^2} &
+ \frac{1}{h_x^2}-\frac{2}{h_y^2} &
+ \frac{2}{h_x^2}+\frac{2}{h_y^2} &
+-\frac{2}{h_x^2}+\frac{1}{h_y^2} \\
+ \frac{1}{h_x^2}-\frac{2}{h_y^2} &
+-\frac{1}{h_x^2}-\frac{1}{h_y^2} &
+-\frac{2}{h_x^2}+\frac{1}{h_y^2} &
+ \frac{2}{h_x^2}+\frac{2}{h_y^2} 
+\end{array}
+\right)  
+\end{eqnarray}
+
+
+%__________________________________
+\subsubsection{Advection matrix}
+
+\[
+{\bm K}_a = \rho C_p \frac{h_xh_y}{4}
+\int_{-1}^{+1} \int_{-1}^{+1} {\bm N}^T(r,s) (\vec\upnu \cdot {\bm B}(r,s)) \; dr ds
+\]
+with 
+\[
+\vec\upnu \cdot  {\bm B}(r,s) 
+=
+\left(
+-\frac{u}{2h_x}(1-s)\!-\!\frac{v}{2h_y}(1-r) \quad
+ \frac{u}{2h_x}(1-s)\!-\!\frac{v}{2h_y}(1+r) \quad
+ \frac{u}{2h_x}(1+s)\!+\!\frac{v}{2h_y}(1+r) \quad
+-\frac{u}{2h_x}(1+s)\!+\!\frac{v}{2h_y}(1-r) 
+\right)
+\]
+Assuming that the velocity is constant within the element (which is almost always not true!), we can write:
+\begin{eqnarray}
+{\bm K}_a 
+&=&
+\rho C_p \frac{h_xh_y}{16}\frac{v}{2h_y}
+\int_{-1}^{+1} \int_{-1}^{+1} 
+\left(
+\begin{array}{c}
+(1-r)(1-s)\\
+(1+r)(1-s)\\
+(1+r)(1+s)\\
+(1-r)(1+s)
+\end{array}
+\right)
+\left(
+-(1-r) \quad
+-(1+r) \quad
+(1+r) \quad
+(1-r) 
+\right) \;
+dr ds \\
+&+& 
+\rho C_p \frac{h_xh_y}{16}\frac{u}{2h_x}
+\int_{-1}^{+1} \int_{-1}^{+1} 
+\left(
+\begin{array}{c}
+(1-r)(1-s)\\
+(1+r)(1-s)\\
+(1+r)(1+s)\\
+(1-r)(1+s)
+\end{array}
+\right)
+\left(
+-(1-s) \quad
+(1-s) \quad
+(1+s) \quad
+-(1+s) 
+\right) \;
+dr ds  \\
+&=&
+\rho C_p \frac{h_x v}{32}
+\int_{-1}^{+1} \int_{-1}^{+1} 
+\left(
+\begin{array}{c}
+(1-r)(1-s)\\
+(1+r)(1-s)\\
+(1+r)(1+s)\\
+(1-r)(1+s)
+\end{array}
+\right)
+\left(
+-(1-r) \quad
+-(1+r) \quad
+(1+r) \quad
+(1-r) 
+\right) \;
+dr ds \\
+&+& 
+\rho C_p \frac{h_y u}{32}
+\int_{-1}^{+1} \int_{-1}^{+1} 
+\left(
+\begin{array}{c}
+(1-r)(1-s)\\
+(1+r)(1-s)\\
+(1+r)(1+s)\\
+(1-r)(1+s)
+\end{array}
+\right)
+\left(
+-(1-s) \quad
+(1-s) \quad
+(1+s) \quad
+-(1+s) 
+\right) \;
+dr ds  \\
+&=& 
+\rho C_p \frac{1}{12} 
+\left(
+v h_x 
+\left(
+\begin{array}{cccc}
+-2 &-1 &1 &2 \\
+-1 &-2 &2 &1 \\
+-1 &-2 &2 &1 \\
+-2 &-1 &1 &2
+\end{array}
+\right)
++ u h_y
+\left(
+\begin{array}{cccc}
+-2 &2 &1 &-1 \\
+-2 &2 &1 &-1 \\
+-1 &1 &2 &-2 \\
+-1 &1 &2 &-2
+\end{array}
+\right)
+\right)
+\end{eqnarray}
+and finally
+\[
+{\bm K}_a
+=
+\frac{\rho C_p}{3}
+\left(
+\begin{array}{cccc}
+-\frac{1}{2} u h_y  -\frac{1}{2} v h_x & 
+ \frac{1}{2} u h_y  -\frac{1}{4} v h_x & 
+ \frac{1}{4} u h_y  +\frac{1}{4} v h_x & 
+-\frac{1}{4} u h_y  +\frac{1}{2} v h_x \\ \\
+-\frac{1}{2} u h_y  -\frac{1}{4} v h_x & 
+ \frac{1}{2} u h_y  -\frac{1}{2} v h_x & 
+ \frac{1}{4} u h_y  +\frac{1}{2} v h_x & 
+-\frac{1}{4} u h_y  +\frac{1}{4} v h_x \\ \\
+-\frac{1}{4} u h_y  -\frac{1}{4} v h_x & 
+ \frac{1}{4} u h_y  -\frac{1}{2} v h_x & 
+ \frac{1}{2} u h_y  +\frac{1}{2} v h_x & 
+-\frac{1}{2} u h_y  +\frac{1}{4} v h_x \\ \\
+-\frac{1}{4} u h_y  -\frac{1}{2} v h_x & 
+ \frac{1}{4} u h_y  -\frac{1}{4} v h_x & 
+ \frac{1}{2} u h_y  +\frac{1}{4} v h_x & 
+-\frac{1}{2} u h_y  +\frac{1}{2} v h_x 
+\end{array}
+\right)
+\]
+
+
+
+
+
+
+
+
+
 \subsubsection{Matrices for D.G.}
 
 In the context of Discontinuous Galerkin methods we will need
@@ -887,6 +1217,93 @@ Since the pressure is constant inside each element, then $\G_{el}$ is $(ndof_V*m
 
 
 
+%---------------------------
+\subsection{Quadrilaterals: rectangular quadratic elements} \label{app:qrqe}
+
+\input{tikz/tikz_q22d}
+
+\[
+\vec{\bN}(r,s) 
+=
+\left(
+\begin{array}{c}
+\bN_1(r,s) \\ 
+\bN_2(r,s) \\
+\bN_3(r,s) \\
+\bN_4(r,s) \\
+\bN_5(r,s) \\
+\bN_6(r,s) \\
+\bN_7(r,s) \\
+\bN_8(r,s) \\
+\bN_9(r,s) 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\bN_1(r) \bN_1(s) \\
+\bN_2(r) \bN_1(s) \\
+\bN_3(r) \bN_1(s) \\
+\bN_1(r) \bN_2(s) \\
+\bN_2(r) \bN_2(s) \\
+\bN_3(r) \bN_2(s) \\
+\bN_1(r) \bN_3(s) \\
+\bN_2(r) \bN_3(s) \\
+\bN_3(r) \bN_3(s) 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+ \frac{1}{2}r(r-1)  \frac{1}{2}s(s-1)\\
+     (1-r^2)        \frac{1}{2}s(s-1)\\
+ \frac{1}{2}r(r+1)  \frac{1}{2}s(s-1)\\
+ \frac{1}{2}r(r-1)  (1-s^2)\\
+     (1-r^2)        (1-s^2)
+ \frac{1}{2}r(r+1)  (1-s^2)\\
+ \frac{1}{2}r(r-1)  \frac{1}{2}s(s+1)\\
+     (1-r^2)        \frac{1}{2}s(s+1)\\
+ \frac{1}{2}r(r+1)  \frac{1}{2}s(s+1)\\
+\end{array}
+\right)
+\]
+The mass matrix on the reference element is then
+\[
+{\bm M}^e =
+\iint_\square
+\left(
+\begin{array}{ccccccccc}
+\bN_1 \bN_1 & \bN_1 \bN_2 & \bN_1 \bN_3 & \bN_1 \bN_4 & \bN_1 \bN_5 & \bN_1 \bN_6 & \bN_1 \bN_7 & \bN_1 \bN_8 & \bN_1 \bN_9 \\ 
+\bN_2 \bN_1 & \bN_2 \bN_2 & \bN_2 \bN_3 & \bN_2 \bN_4 & \bN_2 \bN_5 & \bN_2 \bN_6 & \bN_2 \bN_7 & \bN_2 \bN_8 & \bN_2 \bN_9 \\ 
+\dots \\
+\bN_9 \bN_1 & \bN_9 \bN_2 & \bN_9 \bN_3 & \bN_9 \bN_4 & \bN_9 \bN_5 & \bN_9 \bN_6 & \bN_9 \bN_7 & \bN_9 \bN_8 & \bN_9 \bN_9 
+\end{array}
+\right)
+dr ds
+\]
+with for example\footnote{Thank you WolframAlpha again!}
+\begin{eqnarray}
+\iint_\square \bN_1(r,s) \bN_1(r,s) \; drds &=&  \frac{16}{225} \\
+\iint_\square \bN_1(r,s) \bN_2(r,s) \; drds &=& \frac{8}{225} \\ 
+\iint_\square \bN_1(r,s) \bN_3(r,s) \; drds &=&  -\frac{4}{225} \\
+\iint_\square \bN_1(r,s) \bN_8(r,s) \; drds &=&  \frac{-2}{225} \\
+\iint_\square \bN_1(r,s) \bN_9(r,s) \; drds &=&  \frac{1}{225} \\
+\iint_\square \bN_5(r,s) \bN_5(r,s) \; drds &=&  \frac{256}{225} \\
+\end{eqnarray}
+
+In \stone~107, we find for a 3x2 mesh on domain 6x4:
+\begin{verbatim}
+M = 
+[[ 16.   8.  -4.   8.   4.  -2.  -4.  -2.   1.]
+ [  8.  64.   8.   4.  32.   4.  -2. -16.  -2.]
+ [ -4.   8.  16.  -2.   4.   8.   1.  -2.  -4.]
+ [  8.   4.  -2.  64.  32. -16.   8.   4.  -2.]
+ [  4.  32.   4.  32. 256.  32.   4.  32.   4.]
+ [ -2.   4.   8. -16.  32.  64.  -2.   4.   8.]
+ [ -4.  -2.   1.   8.   4.  -2.  16.   8.  -4.]
+ [ -2. -16.  -2.   4.  32.   4.   8.  64.   8.]
+ [  1.  -2.  -4.  -2.   4.   8.  -4.   8.  16.]] / 225
+\end{verbatim}
 
 
 

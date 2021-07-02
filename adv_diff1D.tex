@@ -284,35 +284,36 @@ assembled into ${\bm M}$, ${\bm K}_a$, ${\bm K}_d$, $\vec{T}$ and $\vec{F}$:
 
 We can revisit the time discretisation again, assuming for simplicity that the coefficients of the PDE are not time-dependent.
 Choosing a fully explicit approach would have us write
-\[
+\begin{equation}
 {\bm M} \cdot \frac{{\vec T}^{n+1}-{\vec T}^n}{\delta t} + ({\bm K}_a + {\bm K}_d) \cdot {\vec T}^{n} = {\vec F}
 \quad
 \Rightarrow
 \quad
 {\bm M} \cdot {\vec T}^{n+1} = [{\bm M} - ({\bm K}_a + {\bm K}_d) \delta t] \cdot {\vec T}^{n} = {\vec F}
-\]
+\end{equation}
 while choosing a fully implicit approach would have us write
-\[
+\begin{equation}
 {\bm M} \cdot \frac{{\vec T}^{n+1}-{\vec T}^n}{\delta t} + ({\bm K}_a + {\bm K}_d) \cdot {\vec T}^{n+1} = {\vec F}
 \quad
 \Rightarrow
 \quad
 [{\bm M} +  ({\bm K}_a + {\bm K}_d) \delta t] \cdot {\vec T}^{n+1}
 ={\bm M}\cdot {\vec T}^n+ {\vec F} \delta t
-\]
+\end{equation}
 We can also consider a more generic approach and write:
-\[
+\begin{equation}
 {\bm M} \cdot \frac{{\vec T}^{n+1}-{\vec T}^n}{\delta t} + ({\bm K}_a + {\bm K}_d) \cdot (\alpha {\vec T}^{n+1}+(1-\alpha)\vec{T}^{n}) = {\vec F}
-\]
-\[
+\end{equation}
+\begin{equation}
 [{\bm M} +  \alpha({\bm K}_a + {\bm K}_d) \delta t] \cdot {\vec T}^{n+1}
 =
 [{\bm M} - (1-\alpha)({\bm K}_a + {\bm K}_d) \delta t] \cdot {\vec T}^{n} + {\vec F}\delta t
-\]
-When $\alpha=0$ we recover the explicit scheme, when $\alpha=1$ we recover the implicit one, and when $\alpha=1/2$ we get a so-called 
+\end{equation}
+When $\alpha=0$ we recover the explicit scheme, when $\alpha=1$ we recover 
+the implicit one, and when $\alpha=1/2$ we get a so-called 
 mid-point algorithm (Crank-Nicolson).
 
-Write about SUPG!!!
+\todo[inline]{Write about SUPG}
 
 %-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 \begin{center}
@@ -328,6 +329,7 @@ Let us consider the domain $[0,1]$. The temperature field at $t=0$ is
 given by $T=1$ for $x<0.25$ and $T=0$ otherwise. The prescribed 
 velocity is $u=1$ and we set $nnx=51$.
 Boundary conditions are $T=1$ at $x=0$ and $T=0$ at $x=1$.
+Only advection is present, no heat source nor diffusion.
 
 \begin{center}
 \input{tikz/tikz_fdm1Df}
