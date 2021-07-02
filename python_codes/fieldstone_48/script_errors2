@@ -1,9 +1,9 @@
 rm -f errors2
 rm -f FEMbuild2
 
-for l in 4 6 8 10 12 14 16 24 28 32 36 48 64; do
+for l in 4 5 6 7 8 9 10 11 12 14 16 21 24 28 32 35 36 48 64; do
 
-   python3 fieldstone.py $l $l 0 2 > opla 
+   python3 stone.py $l $l 0 2 > opla 
    grep errv opla >> errors2 
    grep FE opla >> FEMbuild2
 

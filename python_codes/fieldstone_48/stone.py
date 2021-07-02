@@ -367,10 +367,10 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    order = int(sys.argv[4])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 8
+   nely = 8
    visu = 1
-   order= 3
+   order= 2
 
 nel=nelx*nely
 nnx=order*nelx+1  # number of elements, x direction
@@ -424,6 +424,8 @@ hx=Lx/nelx
 hy=Ly/nely
 
 sparse=True
+
+mode=1
 
 #################################################################
 
@@ -669,12 +671,15 @@ start = timing.time()
 
 if sparse:
    A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
+   AA_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
 else:   
    K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
    G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
 
 f_rhs   = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
+ff_rhs  = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
 h_rhs   = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
+hh_rhs  = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
 b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
 N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
 NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
@@ -694,12 +699,19 @@ for iel in range(0,nel):
     K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
     G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
     h_el=np.zeros((mP*ndofP),dtype=np.float64)
+    fx_el =np.zeros((mV),dtype=np.float64)
+    fy_el =np.zeros((mV),dtype=np.float64)
+    Nxx_el =np.zeros((mV,mV),dtype=np.float64)
+    Nyy_el =np.zeros((mV,mV),dtype=np.float64)
+    Gx_el=np.zeros((mV,mP),dtype=np.float64)
+    Gy_el=np.zeros((mV,mP),dtype=np.float64)
 
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
+
 
             NNNV[0:mV]=NNV(rq,sq,order)
             dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
@@ -746,6 +758,15 @@ for iel in range(0,nel):
 
             G_el-=b_mat.T.dot(N_mat)*weightq*jcob
 
+            #-----------------------------------------------------------------------
+            Nxx_el+=(np.outer(dNNNVdx,dNNNVdx)+np.outer(dNNNVdy,dNNNVdy))*weightq*jcob
+            Nyy_el+=(np.outer(dNNNVdx,dNNNVdx)+np.outer(dNNNVdy,dNNNVdy))*weightq*jcob
+            Gx_el-=np.outer(dNNNVdx,NNNP)*weightq*jcob
+            Gy_el-=np.outer(dNNNVdy,NNNP)*weightq*jcob
+            fx_el+=NNNV*jcob*weightq*bx(xq,yq)
+            fy_el+=NNNV*jcob*weightq*by(xq,yq)
+            #-----------------------------------------------------------------------
+
         # end for jq
     # end for iq
 
@@ -764,6 +785,29 @@ for iel in range(0,nel):
                f_el[ikk]=K_ref*bc_val[m1]
                h_el[:]-=G_el[ikk,:]*bc_val[m1]
                G_el[ikk,:]=0
+
+    for k1 in range(0,mV): # only no slip !!!
+        # x bc
+        m1 =ndofV*iconV[k1,iel]
+        if bc_fix[m1]:
+           #print(xV[iconV[k1,iel]],yV[iconV[k1,iel]])
+           N_ref=Nxx_el[k1,k1]
+           Nxx_el[k1,:]=0.
+           Nxx_el[:,k1]=0.
+           Nxx_el[k1,k1]=N_ref
+           fx_el[k1]=0.
+           Gx_el[k1,:]=0.
+        # y bc
+        m1 =ndofV*iconV[k1,iel]+1
+        if bc_fix[m1]:
+           #print(xV[iconV[k1,iel]],yV[iconV[k1,iel]])
+           N_ref=Nyy_el[k1,k1]
+           Nyy_el[k1,:]=0.
+           Nyy_el[:,k1]=0.
+           Nyy_el[k1,k1]=N_ref
+           fy_el[k1]=0.
+           Gy_el[k1,:]=0.
+
 
     # assemble matrix K_mat and right hand side rhs
     for k1 in range(0,mV):
@@ -791,6 +835,22 @@ for iel in range(0,nel):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
 
+
+    for k1 in range(0,mV):
+        m1 =iconV[k1,iel]
+        for k2 in range(0,mV):
+            m2 =iconV[k2,iel]
+            AA_sparse[m1   ,m2   ] += Nxx_el[k1,k2]
+            AA_sparse[m1+NV,m2+NV] += Nyy_el[k1,k2]
+        ff_rhs[m1   ]+=fx_el[k1]
+        ff_rhs[m1+NV]+=fy_el[k1]
+        for k2 in range(0,mP):
+            m2 =iconP[k2,iel]
+            AA_sparse[m1   ,m2+NfemV] += Gx_el[k1,k2]
+            AA_sparse[m1+NV,m2+NfemV] += Gy_el[k1,k2]
+            AA_sparse[m2+NfemV,m1   ] += Gx_el[k1,k2]
+            AA_sparse[m2+NfemV,m1+NV] += Gy_el[k1,k2]
+
 if not sparse:
    print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
    print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
@@ -798,19 +858,23 @@ if not sparse:
 print("build FE matrix: %.3fs - %d elts" % (timing.time()-start, nel))
 
 ######################################################################
-# assemble K, G, GT, f, h into A and rhs
+# assemble rhs
 ######################################################################
 start = timing.time()
-
+   
 rhs = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-rhs[0:NfemV]=f_rhs
-rhs[NfemV:Nfem]=h_rhs
 
-if not sparse:
-   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64) 
-   a_mat[0:NfemV,0:NfemV]=K_mat
-   a_mat[0:NfemV,NfemV:Nfem]=G_mat
-   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+if mode==1:
+   rhs[0:NfemV]=f_rhs
+   rhs[NfemV:Nfem]=h_rhs
+   if not sparse:
+      a_mat = np.zeros((Nfem,Nfem),dtype=np.float64) 
+      a_mat[0:NfemV,0:NfemV]=K_mat
+      a_mat[0:NfemV,NfemV:Nfem]=G_mat
+      a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+else:
+   rhs[0:NfemV]=ff_rhs
+   rhs[NfemV:Nfem]=hh_rhs
 
 print("assemble blocks: %.3f s" % (timing.time() - start))
 
@@ -818,15 +882,21 @@ print("assemble blocks: %.3f s" % (timing.time() - start))
 # assign extra pressure b.c. to remove null space
 ######################################################################
 
-if sparse:
-   A_sparse[Nfem-1,:]=0
-   A_sparse[:,Nfem-1]=0
-   A_sparse[Nfem-1,Nfem-1]=1
-   rhs[Nfem-1]=0
+if mode==1:
+   if sparse:
+      A_sparse[Nfem-1,:]=0
+      A_sparse[:,Nfem-1]=0
+      A_sparse[Nfem-1,Nfem-1]=1
+      rhs[Nfem-1]=0
+   else:
+      a_mat[Nfem-1,:]=0
+      a_mat[:,Nfem-1]=0
+      a_mat[Nfem-1,Nfem-1]=1
+      rhs[Nfem-1]=0
 else:
-   a_mat[Nfem-1,:]=0
-   a_mat[:,Nfem-1]=0
-   a_mat[Nfem-1,Nfem-1]=1
+   AA_sparse[Nfem-1,:]=0
+   AA_sparse[:,Nfem-1]=0
+   AA_sparse[Nfem-1,Nfem-1]=1
    rhs[Nfem-1]=0
 
 
@@ -835,10 +905,13 @@ else:
 ######################################################################
 start = timing.time()
 
-if sparse:
-   sparse_matrix=A_sparse.tocsr()
+if mode==1:
+   if sparse:
+      sparse_matrix=A_sparse.tocsr()
+   else:
+      sparse_matrix=sps.csr_matrix(a_mat)
 else:
-   sparse_matrix=sps.csr_matrix(a_mat)
+      sparse_matrix=AA_sparse.tocsr()
 
 sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
@@ -849,7 +922,12 @@ print("solve time: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-u,v=np.reshape(sol[0:NfemV],(NV,2)).T
+if mode==1:
+   u,v=np.reshape(sol[0:NfemV],(NV,2)).T
+else:
+   u=sol[0:NV]
+   v=sol[NV:NfemV]
+
 p=sol[NfemV:Nfem]
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
