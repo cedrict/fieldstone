@@ -1,0 +1,30 @@
+#!/bin/bash
+# parameters
+# nelr
+# visu
+# nstep
+# exp
+# every
+
+nstep=100
+
+for nelr in 16 24 32 48 64; do 
+
+    python3 stone.py $nelr 1 $nstep 1 20 > opla1 
+    mkdir exp1_$nelr
+    mv *.ascii exp1_$nelr
+    mv *.vtu exp1_$nelr
+
+    python3 stone.py $nelr 1 $nstep 2 20 > opla2
+    mkdir exp2_$nelr
+    mv *.ascii exp2_$nelr
+    mv *.vtu exp2_$nelr
+
+    python3 stone.py $nelr 1 $nstep 3 20 > opla3 
+    mkdir exp3_$nelr
+    mv *.ascii exp3_$nelr
+    mv *.vtu exp3_$nelr
+
+done
+
+
