@@ -14,11 +14,22 @@ from scipy.interpolate import interp1d
 # denisty and viscosity functions
 #------------------------------------------------------------------------------
 
-def eta(T):
-    Tused=min(T,Tpatch)
-    Tused=max(Tused,Tsurf)
-    val=eta0*np.exp(E*(1./(Tused+T0)-1./(1+T0)))    
-    val=min(val,eta_max)
+def eta(T,rrr):
+    if viscosity_model==1:
+       Tused=min(T,Tpatch)
+       Tused=max(Tused,Tsurf)
+       val=eta0*np.exp(E*(1./(Tused+T0)-1./(1+T0)))    
+       val=min(val,eta_max)
+    elif viscosity_model==2:
+       rad=3481e3+(rrr-Rinner)*(6370e3-3480e3)
+       rad=min(6379999,rad)
+       rad=max(3481001,rad)
+       if rad>6371e3-200e3:
+          val=1e23
+       else:
+          val=f_cubic(rad)
+          val=10**val
+       val/=1e21
     return val
 
 #------------------------------------------------------------------------------
@@ -133,23 +144,13 @@ if int(len(sys.argv) == 6):
    exp   = int(sys.argv[4])
    every = int(sys.argv[5])
 else:
-   nelr = 24
+   nelr = 32
    visu = 1
    nstep= 1000
    exp  = 1
-   every= 1
+   every= 5
 
 axisymmetric=True
-
-#DeltaT=3000
-#Tsurf=293
-#Tpatch=Tsurf+DeltaT
-#hcond=3
-#hcapa=1250
-#rho0=3300
-#g0=9.81
-#alpha=3e-5
-#eta0=rho0**2*hcapa*g0*alpha*DeltaT*(Router-Rinner)**3/Ra/hcond
 
 Rinner=1.2222 
 Router=2.2222 
@@ -238,10 +239,27 @@ Tavrg_file=open('Tavrg.ascii',"w")
 Tstats_file=open('stats_T.ascii',"w")
 vrstats_file=open('stats_vr.ascii',"w")
 vtstats_file=open('stats_vt.ascii',"w")
+Tcorner_file=open('Tcorner.ascii',"w")
 
 #################################################################
+#Ra=1e6
+#Rinner=3480e3
+#Router=6371e3
+#DeltaT=3000
+#hcond=2.25
+#hcapa=1250
+#rho0=3250
+#g0=9.81
+#alpha=3e-5
+#eta0=rho0**2*hcapa*g0*alpha*DeltaT*(Router-Rinner)**3/Ra/hcond
+#print(eta0)
+#print(np.exp(-DeltaT/3273*E))
+#print(np.exp(-DeltaT/3273*E)*eta0)
+#exit()
+#################################################################
 
-#print ('Ra          =',rho0*alpha*g0*DeltaT*(Router-Rinner)**3/eta0/(hcond/hcapa/rho0) )
+sigma_ref=829.55
+
 print ('Ra          =',Ra)
 print ('Rinner/Router=',Rinner/Router)
 print ('nelr        =',nelr)
@@ -261,16 +279,16 @@ print ("-----------------------------")
 # reading in steinberger profile 
 #################################################################
 
-#profile_r=np.empty(2821,dtype=np.float64)
-#profile_eta=np.empty(2821,dtype=np.float64)
+profile_r=np.empty(2821,dtype=np.float64)
+profile_eta=np.empty(2821,dtype=np.float64)
 ##profile_r[1:11511],profile_rho[1:11511]=np.loadtxt('data/rho_prem.ascii',unpack=True,usecols=[0,1])
-#profile_r,profile_eta=np.loadtxt('../../images/viscosity_profile/steinberger2/visc_sc06.d',unpack=True,usecols=[1,0])
-#profile_r=(6371-profile_r)*1000
-#profile_r=np.flip(profile_r)
-#profile_eta=np.flip(profile_eta)
-#print(np.min(profile_r),np.max(profile_r))
-#print(np.min(profile_eta),np.max(profile_eta))
-#f_cubic   = interp1d(profile_r, profile_eta, kind='cubic')
+profile_r,profile_eta=np.loadtxt('../../images/viscosity_profile/steinberger2/visc_sc06.d',unpack=True,usecols=[1,0])
+profile_r=(6371-profile_r)*1000
+profile_r=np.flip(profile_r)
+profile_eta=np.flip(profile_eta)
+print(np.min(profile_r),np.max(profile_r))
+print(np.min(profile_eta),np.max(profile_eta))
+f_cubic=interp1d(profile_r, profile_eta, kind='cubic')
 
 #################################################################
 # checking that all velocity shape functions are 1 on their node 
@@ -614,12 +632,6 @@ dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVdr = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 Tvect   = np.zeros(mV,dtype=np.float64)   
-exx_n   = np.zeros(NV,dtype=np.float64)  
-eyy_n   = np.zeros(NV,dtype=np.float64)  
-exy_n   = np.zeros(NV,dtype=np.float64)  
-
-
-
 
 time=0
 
@@ -694,7 +706,8 @@ for istep in range(0,nstep):
                     dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
                 #end for
 
-                etaq=eta(Tq)
+                rrq=np.sqrt(xq**2+yq**2)
+                etaq=eta(Tq,rrq)
 
                 #Cartesian components of -\vec{e}_r
                 erxq=-xq/np.sqrt(xq**2+yq**2)  
@@ -1126,6 +1139,12 @@ for istep in range(0,nstep):
     Tstats_file.write("%6e %6e %6e\n" % (time,np.min(Traw),np.max(Traw)))
     Tstats_file.flush()
 
+    for i in range(0,NV):
+        if flag_2[i] and flag_3[i]:
+           T_23=Traw[i]
+    Tcorner_file.write("%10e %10e \n" % (time,T_23))
+    Tcorner_file.flush()
+
     print("solve T time: %.3f s" % (timing.time() - start))
 
     #################################################################
@@ -1235,16 +1254,15 @@ for istep in range(0,nstep):
     print("compute vrms: %.3f s" % (timing.time() - start))
 
     #####################################################################
-    # compute nodal strainrate and heat flux 
+    # compute nodal strainrate and pressure 
     #####################################################################
     start = timing.time()
-    
+
     exx_n = np.zeros(NV,dtype=np.float64)  
     eyy_n = np.zeros(NV,dtype=np.float64)  
+    ett_n = np.zeros(NV,dtype=np.float64)  
     exy_n = np.zeros(NV,dtype=np.float64)  
-    sr_n  = np.zeros(NV,dtype=np.float64)  
     eta_n = np.zeros(NV,dtype=np.float64)  
-    rh_n  = np.zeros(NV,dtype=np.float64)  
     count = np.zeros(NV,dtype=np.int32)  
     q=np.zeros(NV,dtype=np.float64)
     c=np.zeros(NV,dtype=np.float64)
@@ -1271,16 +1289,19 @@ for istep in range(0,nstep):
             #end for
             e_xx=0.
             e_yy=0.
+            e_tt=0.
             e_xy=0.
             for k in range(0,mV):
                 e_xx += dNNNVdx[k]*u[iconV[k,iel]]
                 e_yy += dNNNVdy[k]*v[iconV[k,iel]]
+                e_tt += NNNV[k]*u[iconV[k,iel]]
                 e_xy += 0.5*(dNNNVdy[k]*u[iconV[k,iel]]+dNNNVdx[k]*v[iconV[k,iel]])
             #end for
             inode=iconV[i,iel]
             exx_n[inode]+=e_xx
             eyy_n[inode]+=e_yy
             exy_n[inode]+=e_xy
+            ett_n[inode]+=e_tt
             q[inode]+=np.dot(p[iconP[0:mP,iel]],NNNP[0:mP])
             count[inode]+=1
         #end for
@@ -1289,30 +1310,95 @@ for istep in range(0,nstep):
     exx_n/=count
     eyy_n/=count
     exy_n/=count
+    ett_n/=count
     q/=count
 
-    sr_n=np.sqrt(0.5*(exx_n**2+eyy_n**2)+exy_n**2)
-
     for i in range(0,NV):
-        if viscosity_model==1:
-           eta_n[i]=eta(T[i])
-        else:
-           if rV[i]> 6371e3-200e3:
-              eta_n[i]=1e24
-           else:
-              eta_n[i]=10**(f_cubic(rV[i]))
+        eta_n[i]=eta(T[i],rV[i])
 
 
     print("     -> exx_n (m,M) %.6e %.6e " %(np.min(exx_n),np.max(exx_n)))
     print("     -> eyy_n (m,M) %.6e %.6e " %(np.min(eyy_n),np.max(eyy_n)))
     print("     -> exy_n (m,M) %.6e %.6e " %(np.min(exy_n),np.max(exy_n)))
-    print("     -> sr_n (m,M) %.6e %.6e " %(np.min(sr_n),np.max(sr_n)))
+    print("     -> ett_n (m,M) %.6e %.6e " %(np.min(ett_n),np.max(ett_n)))
     print("     -> eta_n (m,M) %.6e %.6e " %(np.min(eta_n),np.max(eta_n)))
 
-    #np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
     #np.savetxt('strainrate.ascii',np.array([xV,yV,exx_n,eyy_n,exy_n]).T,header='# x,y,exx,eyy,exy')
 
     print("compute press & sr: %.3f s" % (timing.time() - start))
+
+    #####################################################################
+    # normalise pressure at surface
+    #####################################################################
+
+    qavrg=0
+    for i in range(0,NV):
+        if flag_4[i]:
+           qavrg+=q[i]
+    q[:]-=qavrg/nnt
+
+    #np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
+
+    #####################################################################
+    # compute stress tensor 
+    #####################################################################
+
+    tauxx_n = np.zeros(NV,dtype=np.float64)  
+    tauyy_n = np.zeros(NV,dtype=np.float64)  
+    tautt_n = np.zeros(NV,dtype=np.float64)  
+    tauxy_n = np.zeros(NV,dtype=np.float64)  
+
+    tauxx_n[:]=2*eta_n[:]*exx_n[:]
+    tauyy_n[:]=2*eta_n[:]*eyy_n[:]
+    tauxy_n[:]=2*eta_n[:]*exy_n[:]
+    tautt_n[:]=2*eta_n[:]*ett_n[:]
+
+    sigmaxx_n = np.zeros(NV,dtype=np.float64)  
+    sigmayy_n = np.zeros(NV,dtype=np.float64)  
+    sigmatt_n = np.zeros(NV,dtype=np.float64)  
+    sigmaxy_n = np.zeros(NV,dtype=np.float64)  
+
+    sigmaxx_n=-q[:]+tauxx_n[:]
+    sigmayy_n=-q[:]+tauyy_n[:]
+    sigmatt_n=-q[:]+tautt_n[:]
+    sigmaxy_n=      tauxy_n[:]
+
+    #####################################################################
+    # compute traction at the surface
+    #####################################################################
+
+    if istep%every==0:
+       nx = np.zeros(NV,dtype=np.float64)  
+       ny = np.zeros(NV,dtype=np.float64)  
+       for i in range(0,NV):
+           if flag_4[i]:
+              nx[i]=np.cos(tV[i])
+              ny[i]=np.sin(tV[i])
+
+       tx_n=np.zeros(NV,dtype=np.float64)  
+       ty_n=np.zeros(NV,dtype=np.float64)  
+       tx_n=sigmaxx_n*nx+sigmaxy_n*ny
+       tx_n=sigmaxy_n*nx+sigmayy_n*ny
+
+       tractfile=open('surface_traction.ascii',"w")
+       t_n=np.zeros(nnt,dtype=np.float64)  
+       counter=0
+       for i in range(0,NV):
+           if flag_4[i]:
+              t_n[counter]=tx_n[i]*nx[i]+ty_n[i]*ny[i]
+              tractfile.write("%10e %10e \n" %(np.pi/2-tV[i],t_n[counter]))
+              counter+=1
+       tractfile.close()
+
+       #in order to compute topo I need dimensioned values!
+       tnavrg=np.sum(t_n)/nnt
+       topofile=open('surface_topography.ascii',"w")
+       counter=0
+       for i in range(0,NV):
+           if flag_4[i]:
+              topofile.write("%10e %10e \n" %(np.pi/2-tV[i],-(t_n[counter]-tnavrg)*sigma_ref/9.81/3250))
+              counter+=1
+       topofile.close()
 
     #####################################################################
     # compute temperature & visc profile
@@ -1320,12 +1406,19 @@ for istep in range(0,nstep):
     start = timing.time()
 
     if istep%every==0:
-       filename = 'profile.ascii'.format(istep)
-       vprofile=open(filename,"w")
+       vprofile=open('profile.ascii',"w")
        for i in range(0,NV):
            if abs(xV[i])<0.001:
               vprofile.write("%10e %10e %10e\n" % (yV[i],T[i],eta_n[i]))
        vprofile.close()
+
+       bot_file=open('bottom_temp.ascii',"w")
+       for i in range(0,NV):
+           if flag_3[i]:
+              bot_file.write("%10e %10e %10e\n" % (tV[i],T[i],rV[i]))
+       bot_file.close()
+
+
 
     print("compute profiles: %.3f s" % (timing.time() - start))
 
@@ -1355,6 +1448,16 @@ for istep in range(0,nstep):
            vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
        #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e %10e %10e \n" %(nx[i],ny[i],0.))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='traction' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e %10e %10e \n" %(tx_n[i],ty_n[i],0.))
+       vtufile.write("</DataArray>\n")
+       #--
        vtufile.write("<DataArray type='Float32' Name='vr' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%10e \n" %(vr[i]))
@@ -1374,11 +1477,6 @@ for istep in range(0,nstep):
        for i in range(0,NV):
            vtufile.write("%10e \n" %T[i])
        vtufile.write("</DataArray>\n")
-       #--
-       #vtufile.write("<DataArray type='Float32' Name='eta (S&C,2006)' Format='ascii'> \n")
-       #for i in range(0,NV):
-       #    vtufile.write("%10e \n" %(f_cubic(rV[i])))
-       #vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
        for i in range(0,NV):
@@ -1432,14 +1530,9 @@ for istep in range(0,nstep):
            vtufile.write("%10e \n" %exy_n[i])
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='ett' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10e \n" %sr_n[i])
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("<DataArray type='Float32' Name='dev stress' Format='ascii'> \n")
-       for i in range(0,NV):
-           vtufile.write("%10e \n" %(2*eta_n[i]*sr_n[i]))
+           vtufile.write("%10e \n" %ett_n[i])
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</PointData>\n")
@@ -1609,7 +1702,7 @@ for istep in range(0,nstep):
        #--
        vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
        for i in range(0,NV_P1):
-           vtufile.write("%10f \n" %eta(T_P1[i]))
+           vtufile.write("%10f \n" %eta(T_P1[i],np.sqrt(xV_P1[i]**2+yV_P1[i]**2)))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")

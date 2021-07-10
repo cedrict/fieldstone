@@ -1,0 +1,171 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+set key outside
+set xlabel 'time'
+
+#########################################
+set ylabel 'v_{rms}'
+
+set output 'vrms1.pdf'
+plot[][]\
+'exp1_24/vrms.ascii' w l t '24',\
+'exp1_32/vrms.ascii' w l t '32',\
+'exp1_48/vrms.ascii' w l t '48',\
+'exp1_64/vrms.ascii' w l t '64',\
+'exp1_80/vrms.ascii' w l t '80',\
+
+set output 'vrms2.pdf'
+plot[][]\
+'exp2_24/vrms.ascii' w l t '24',\
+'exp2_32/vrms.ascii' w l t '32',\
+'exp2_48/vrms.ascii' w l t '48',\
+'exp2_64/vrms.ascii' w l t '64',\
+'exp2_80/vrms.ascii' w l t '80',\
+
+set output 'vrms3.pdf'
+plot[][]\
+'exp3_24/vrms.ascii' w l t '24',\
+'exp3_32/vrms.ascii' w l t '32',\
+'exp3_48/vrms.ascii' w l t '48',\
+'exp3_64/vrms.ascii' w l t '64',\
+'exp3_80/vrms.ascii' w l t '80',\
+
+#########################################
+set ylabel '<T>'
+
+set output 'Tavrg1.pdf'
+plot[][]\
+'exp1_24/Tavrg.ascii' w l t '24',\
+'exp1_32/Tavrg.ascii' w l t '32',\
+'exp1_48/Tavrg.ascii' w l t '48',\
+'exp1_64/Tavrg.ascii' w l t '64',\
+'exp1_80/Tavrg.ascii' w l t '80',\
+
+set output 'Tavrg2.pdf'
+plot[][]\
+'exp2_24/Tavrg.ascii' w l t '24',\
+'exp2_32/Tavrg.ascii' w l t '32',\
+'exp2_48/Tavrg.ascii' w l t '48',\
+'exp2_64/Tavrg.ascii' w l t '64',\
+'exp2_80/Tavrg.ascii' w l t '80',\
+
+set output 'Tavrg3.pdf'
+plot[][]\
+'exp3_24/Tavrg.ascii' w l t '24',\
+'exp3_32/Tavrg.ascii' w l t '32',\
+'exp3_48/Tavrg.ascii' w l t '48',\
+'exp3_64/Tavrg.ascii' w l t '64',\
+'exp3_80/Tavrg.ascii' w l t '80',\
+
+#########################################
+set ylabel 'min/max T'
+
+set output 'stats_T1.pdf'
+plot[][-0.25:1.25]\
+'exp1_24/stats_T.ascii' w l lt 2 t '24', 'exp1_24/stats_T.ascii' u 1:3 w l lt 1 notitle,\
+'exp1_32/stats_T.ascii' w l lt 3 t '32', 'exp1_32/stats_T.ascii' u 1:3 w l lt 2 notitle,\
+'exp1_48/stats_T.ascii' w l lt 4 t '48', 'exp1_48/stats_T.ascii' u 1:3 w l lt 3 notitle,\
+'exp1_64/stats_T.ascii' w l lt 4 t '64', 'exp1_64/stats_T.ascii' u 1:3 w l lt 4 notitle,\
+'exp1_80/stats_T.ascii' w l lt 1 t '80', 'exp1_80/stats_T.ascii' u 1:3 w l lt 5 notitle,\
+
+set output 'stats_T2.pdf'
+plot[][-0.25:1.25]\
+'exp2_24/stats_T.ascii' w l lt 2 t '24', 'exp2_24/stats_T.ascii' u 1:3 w l lt 1 notitle,\
+'exp2_32/stats_T.ascii' w l lt 3 t '32', 'exp2_32/stats_T.ascii' u 1:3 w l lt 2 notitle,\
+'exp2_48/stats_T.ascii' w l lt 4 t '48', 'exp2_48/stats_T.ascii' u 1:3 w l lt 3 notitle,\
+'exp2_64/stats_T.ascii' w l lt 4 t '64', 'exp2_64/stats_T.ascii' u 1:3 w l lt 4 notitle,\
+'exp2_80/stats_T.ascii' w l lt 1 t '80', 'exp2_80/stats_T.ascii' u 1:3 w l lt 5 notitle,\
+
+set output 'stats_T3.pdf'
+plot[][-0.25:1.25]\
+'exp3_24/stats_T.ascii' w l lt 2 t '24', 'exp3_24/stats_T.ascii' u 1:3 w l lt 1 notitle,\
+'exp3_32/stats_T.ascii' w l lt 3 t '32', 'exp3_32/stats_T.ascii' u 1:3 w l lt 2 notitle,\
+'exp3_48/stats_T.ascii' w l lt 4 t '48', 'exp3_48/stats_T.ascii' u 1:3 w l lt 3 notitle,\
+'exp3_64/stats_T.ascii' w l lt 4 t '64', 'exp3_64/stats_T.ascii' u 1:3 w l lt 4 notitle,\
+'exp3_80/stats_T.ascii' w l lt 1 t '80', 'exp3_80/stats_T.ascii' u 1:3 w l lt 5 notitle,\
+
+#########################################
+set ylabel 'Temperature on vertical axis {/Symbol Q}={/Symbol p}/2 '
+
+set output 'profile_T1.pdf'
+plot[1.22:2.2222][]\
+'exp1_24/profile.ascii' w lp lt 1 ps .15 t '24',\
+'exp1_32/profile.ascii' w lp lt 2 ps .15 t '32',\
+'exp1_48/profile.ascii' w lp lt 3 ps .15 t '48',\
+'exp1_64/profile.ascii' w lp lt 4 ps .15 t '64',\
+'exp1_80/profile.ascii' w lp lt 5 ps .15 t '80',\
+
+
+set output 'profile_T2.pdf'
+plot[1.22:2.2222][]\
+'exp2_24/profile.ascii' w lp lt 1 ps .15 t '24',\
+'exp2_32/profile.ascii' w lp lt 2 ps .15 t '32',\
+'exp2_48/profile.ascii' w lp lt 3 ps .15 t '48',\
+'exp2_64/profile.ascii' w lp lt 4 ps .15 t '64',\
+'exp2_80/profile.ascii' w lp lt 5 ps .15 t '80',\
+
+
+set output 'profile_T3.pdf'
+plot[1.22:2.2222][]\
+'exp3_24/profile.ascii' w lp lt 1 ps .15 t '24',\
+'exp3_32/profile.ascii' w lp lt 2 ps .15 t '32',\
+'exp3_48/profile.ascii' w lp lt 3 ps .15 t '48',\
+'exp3_64/profile.ascii' w lp lt 4 ps .15 t '64',\
+'exp3_80/profile.ascii' w lp lt 5 ps .15 t '80',\
+
+set log y
+
+set output 'profile_eta1.pdf'
+plot[1.22:2.2222][]\
+'exp1_24/profile.ascii' u 1:3 w lp lt 1 ps .15 t '24',\
+'exp1_32/profile.ascii' u 1:3 w lp lt 2 ps .15 t '32',\
+'exp1_48/profile.ascii' u 1:3 w lp lt 3 ps .15 t '48',\
+'exp1_64/profile.ascii' u 1:3 w lp lt 4 ps .15 t '64',\
+'exp1_80/profile.ascii' u 1:3 w lp lt 5 ps .15 t '80',\
+
+set output 'profile_eta2.pdf'
+plot[1.22:2.2222][]\
+'exp2_24/profile.ascii' u 1:3 w lp lt 2 ps .15 t '24',\
+'exp2_32/profile.ascii' u 1:3 w lp lt 3 ps .15 t '32',\
+'exp2_48/profile.ascii' u 1:3 w lp lt 4 ps .15 t '48',\
+'exp2_64/profile.ascii' u 1:3 w lp lt 5 ps .15 t '64',\
+'exp2_80/profile.ascii' u 1:3 w lp lt 1 ps .15 t '80',\
+
+set output 'profile_eta3.pdf'
+plot[1.22:2.2222][]\
+'exp3_24/profile.ascii' u 1:3 w lp lt 1 ps .15 t '24',\
+'exp3_32/profile.ascii' u 1:3 w lp lt 2 ps .15 t '32',\
+'exp3_48/profile.ascii' u 1:3 w lp lt 3 ps .15 t '48',\
+'exp3_64/profile.ascii' u 1:3 w lp lt 4 ps .15 t '64',\
+'exp3_80/profile.ascii' u 1:3 w lp lt 5 ps .15 t '80',\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

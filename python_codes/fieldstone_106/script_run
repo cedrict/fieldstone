@@ -8,7 +8,7 @@
 
 nstep=100
 
-for nelr in 16 24 32 48 64; do 
+for nelr in 24 32 48 64 80; do 
 
     python3 stone.py $nelr 1 $nstep 1 20 > opla1 
     mkdir exp1_$nelr

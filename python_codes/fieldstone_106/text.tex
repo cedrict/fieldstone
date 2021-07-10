@@ -6,8 +6,10 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Literature Kiefer \& Hager \cite{kiha92}, King \cite{king97}, Redmond \& King \cite{reki04}.
 
+\par\noindent\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This stone is inspired by Kellogg \& King (1997) \cite{keki97}. 
 
@@ -24,7 +26,8 @@ mentions $r$ values of 1.7 which is somewhat in the 'middle' of the cone.
 Because the equations in the paper are in dimensionless form, and 
 because it is common to choose the depth of the mantle as reference length, 
 then we probably have $r_o-r_i=1$. In this case we find $r_i=1.22\dots$ and 
-$r_o=2.22\dots$ ({\color{orange} 1st guess}: confirmed by author S.K., June 2021).
+$r_o=2.22\dots$ ({\color{orange} 1st guess}: confirmed by author S.K., June 2021. 
+Also consistent with King \cite{king97}).
 
 Free-slip boundary conditions are imposed on all boundaries.
 A patch on the inner boundary of the shell is heated by
@@ -93,7 +96,7 @@ $t=0.000561$ corresponds to $1.5\cdot 10^8\si{\year}$,
 $t=0.000730$ corresponds to $2.0\cdot 10^8\si{\year}$, and
 $t=0.016353$ corresponds to $4.4\cdot 10^9\si{\year}$.
 This yields a reference time of about 270e9, which is close 
-to ours $t_{ref}=h^2/\kappa = (2891e3)^2/10^{-6}\sim 8.36\cdot 10^{18}s \sim 265\cdot 10^9 \si{\year}$
+to  the one obtained as $t_{ref}=h^2/\kappa = (2891e3)^2/10^{-6}\sim 8.36\cdot 10^{18}s \sim 265\cdot 10^9 \si{\year}$
 (see Section~\ref{ss:dimeqs2}).
 
 This stone relies on $Q_2\times Q_1$ elements while the orginal paper relies
@@ -119,8 +122,12 @@ controlled by the $use\_fs\_on\_sides$ parameter. If this parameter is true then
 rotational nullspace and it is removed by setting $\vec\upnu=\vec{0}$ at $x=0$ and $y=r_i$.
 This option was not explored in the original paper.
 
+The equations are solved in their cylindrical axisymmetric form, see
+Section~\ref{ss:axicyleqs}. Their FE discretisation is presented in Section~\ref{ss:cyl_axi}
+and Section~\ref{ss:hte_axisym}.
+
+
 \begin{remark}
-In the current version the code is 2D, not axisymmetric!
 LK filter and/or SUPG should be tested (at the moment the temperature us thresholded in the 
 material model). Explore resolution, initial T in the mantle, try scaled-down Steinberger average 
 viscosity profile, look at dynamic topography, strain-rate dependent power-law rheology, different 
@@ -129,7 +136,159 @@ Would be nice to normalise the pressure on the top surface, not only a corner.
 Also remove all bc on sides and use reduced density only? 
 \end{remark}
 
+%------------------------------------------------
+\subsubsection*{Computing surface tractions}
 
+Pressure normalised to be zero in the upper right corner so as to remove the nullspace. 
+It is then projected onto the velocity nodes. This quantity is then normalised so that 
+the average pressure at the surface is zero. 
+
+Because of the axisymmetry the deviatoric stress tensor and stress tensor 
+are given by
+\[
+{\bm \tau} 
+= 
+\left(
+\begin{array}{ccc}
+\tau_{rr} & \tau_{r\theta} & \tau_{rz} \\
+\tau_{\theta r} & \tau_{\theta \theta} & \tau_{\theta z} \\
+\tau_{zr} & \tau_{z\theta} & \tau_{zz} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+\tau_{rr} & 0 & \tau_{rz} \\
+0  & \tau_{\theta \theta} & 0 \\
+\tau_{zr} & 0 & \tau_{zz} 
+\end{array}
+\right)
+\qquad
+\text{and}
+\qquad
+{\bm \sigma} = -p {\bm 1} + {\bm \tau}
+\]
+The traction at the surface is given by 
+\[
+\vec{t}_n 
+= {\bm \sigma}\cdot \vec{n}
+=
+\left(
+\begin{array}{c}
+\sigma_{rr} n_r + \sigma_{rz} n_z \\
+0 \\
+\sigma_{zr} n_r + \sigma_{zz} n_z
+\end{array}
+\right)
+\]
+and the normal component of the traction by 
+\[
+t_n= \vec{t}_n \cdot \vec{n} = \sigma_{rr} n_r^2 + 2 \sigma_{rz} n_r n_z + \sigma_{zz} n_z^2
+\]
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection*{Scaling it back up}
+
+What follows is an attempt at using the regular equations with Earth-like values for parameters...
+
+As explained in Section~\ref{ss:dimeqs2} we choose four reference quantities:
+\begin{itemize}
+\item the reference length $L_{ref}=r_o-r_i=2891\si{\kilo\metre}$ (trivial choice)
+with $r_i=3480\si{\km}$ and $r_o=6371\si{\km}$.
+
+
+\item the reference temperature $T_{ref}=\Delta T = 3000\si{\kelvin}$ (trivial choice)
+
+\item the thermal diffusion coefficient $\kappa_{ref}$. From Warren \etal \cite{wabj08}:
+$\rho_0=3250\si{\kg\per\cubic\metre}$,  $k=2.25 \si{\watt\per\metre\per\kelvin}$,  $C_p=1250 \si{\joule\per\kelvin}$
+so 
+\[
+\kappa = \frac{k}{\rho C_p} =	\frac{2.25}{3250 \cdot 1250} \simeq 5.5\cdot 10^{-7} 
+\]
+so we take $\kappa_{ref} = 5.5\cdot 10^{-7} \si{\square\metre\per\second}$.
+
+\item the reference viscosity $\eta_{ref}$. The Rayleigh number is defined by
+\[
+\Ranb 
+= \frac{\rho_0 g \alpha \Delta T (r_o-r_i)^3}{\eta_0 \kappa}
+=\frac{\rho_0^2 C_p g \alpha \Delta T (r_o-r_i)^3}{\eta_0 k}
+\]
+with $\alpha=3\cdot 10^{-5} \si{\per\kelvin}$ and $g=9.81\si{\metre\per\square\second}$
+so 
+\[
+\eta_{ref}=\eta_0 =\frac{\rho_0^2 C_p g \alpha \Delta T (R_{outer}-R_{inner})^3}{\Ranb \; k}
+\simeq 1.25 \cdot 10^{22}\si{\pascal\second}
+\]
+which is a very acceptable value for the mantle viscosity, see Section~\ref{ss:viscprof}.
+\end{itemize}
+
+\noindent The dimensionless viscosity is either constant ($\eta_0'=1$) or temperature-dependent 
+\[
+\eta'(T')
+=\eta_0' \exp\left[ \frac{E}{R \Delta T} \left( \frac{1}{T'+t_0} -\frac{1}{1+t_0}  \right)   \right]
+%=\eta_0' \exp\left[ \frac{E}{R} \left( \frac{1}{T' \Delta T  +t_0 \Delta T} -\frac{1}{\Delta T +t_0 \Delta T}  \right)   \right]
+\]
+where ``$t_0$ is the surface temperature $T_{surf}$ divided by 
+the temperature drop across the shell $\Delta T$''.
+Assuming that the authors used 
+\[
+T'=\frac{T-T_{surf}}{T_{patch}-T_{surf}}= \frac{T-T_{surf}}{\Delta T}
+\]
+then (after multiplying the equation above by $\eta_{ref}$): 
+\[
+\eta(T)
+=\eta_0 \exp\left[ \frac{E}{R} \left( \frac{1}{T-T_{surf}  + T_{surf}} 
+-\frac{1}{T_{patch}-T_{surf} + T_{surf}}  \right)   \right]
+=\eta_0 \exp\left[ \frac{E}{R} \left( \frac{1}{T} -\frac{1}{T_{patch}}\right) \right]
+\]
+so that $\eta(T_{patch})=\eta_0$. The authors investigate three cases:
+\[
+\frac{E}{R \Delta T} = \{0,0.25328,3\}
+\]
+With $R=8.31$ and $\Delta T=3000\si{\kelvin}$ then $E=\{ 0, 6317.6 , 74829.6 \}$ which 
+are rather low values for an activation energy. 
+
+Note that the rheology can be written:
+\[
+\eta(T)  
+= \frac12 \underbrace{2 \eta_0  \exp\left( -\frac{E}{R T_{patch}} \right) }_{A^{-1}} \exp \frac{E}{R T}  
+\]
+which is effectively a diffusion creep type viscosity.
+We find that for $T_{patch}=3000+273=3273$: 
+\[
+A^{-1} = \{ 2.5e22, 1.98e22 , 1.6e21 \}
+\]
+or, 
+\[
+A = \{ 4e-23    , 5.05e-23   ,  6.26e-22\} 
+\]
+
+
+From the four reference values above we can construct additional ones, 
+such as the reference stress, which we will need to look at dynamic topography.
+From Section~\ref{ss:dimeqs2}:
+\[
+\sigma_{ref} 
+= \eta_{ref} \dot{\varepsilon}_{ref} 
+= \eta_{ref} \frac{\kappa_{ref}}{L^2_{ref}} 
+= \eta_0 \frac{\kappa }{ (r_o-r_i)^2}
+= \frac{\rho_0 g \alpha \Delta T (r_o-r_i)^3}{\Ranb \; \kappa} \frac{\kappa}{(r_o-r_i)^2}
+= \frac{\rho_0 g \alpha \Delta T (r_o-r_i)}{\Ranb}
+\simeq 829.55  
+\] 
+
+
+
+
+Of course this exercise is somewhat silly as the values of most material parameters
+vary with depth, temperature, etc ... and the choices I have made so far are rather arbitrary.
+
+The following results obtained on various meshes. 
+No SUPG. The CFL number is set to 1. 
+$Q_2\times Q_1$ elements are used. 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,7 +298,6 @@ Also remove all bc on sides and use reduced density only?
 \includegraphics[width=15cm]{python_codes/fieldstone_106/images/keki97b}
 \end{center}
 
-The following results obtained on various meshes. No SUPG. CFL number is 1. Q2Q1 elements. $\Ranb=10^6$. 
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_106/results/axi/vrms1}
@@ -185,65 +343,5 @@ The following results obtained on various meshes. No SUPG. CFL number is 1. Q2Q1
 \includegraphics[width=5cm]{python_codes/fieldstone_106/results/axi/profile_T3}
 \includegraphics[width=5cm]{python_codes/fieldstone_106/results/axi/profile_eta3}
 \end{center}
-
-
-
-
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection*{Scaling it back up}
-
-What follows is an attempt at using the regular equations with Earth-like values for parameters...
-
-The Rayleigh number is defined by
-\[
-\Ranb 
-= \frac{\rho_0 g \alpha \Delta T (r_o-r_i)^3}{\eta_0 \kappa}
-=\frac{\rho_0^2 C_p g \alpha \Delta T (r_o-r_i)^3}{\eta_0 k}
-\]
-If we take typical values for the parameters
-\begin{itemize}
-\item $\rho_0=3300\si{\kg\per\cubic\metre}$
-\item $\alpha=3\cdot 10^{-5} \si{\per\kelvin}$
-\item $\Delta T=3000\si{\kelvin}$
-\item $r_i=3480\si{\km}$
-\item $r_o=6371\si{\km}$
-\item $k=3 \si{\watt\per\metre\per\kelvin}$
-\item $C_p=1250 \si{\joule\per\kelvin}$
-\item $g=9.81\si{\metre\per\square\second}$
-\item $\Ranb=10^7$ (value in the article)
-\end{itemize}
-the viscosity can then be computed 
-\[
-\eta_0 =\frac{\rho_0^2 C_p g \alpha \Delta T (R_{outer}-R_{inner})^3}{\Ranb \; k}
-\simeq 9.66 \cdot 10^{21}\si{\pascal\second}
-\]
-The dimensionless viscosity is either constant ($\eta_0'=1$) or temperature-dependent 
-\[
-\eta'(T')
-=\eta_0' \exp\left[ \frac{E}{R \Delta T} \left( \frac{1}{T'+t_0} -\frac{1}{1+t_0}  \right)   \right]
-%=\eta_0' \exp\left[ \frac{E}{R} \left( \frac{1}{T' \Delta T  +t_0 \Delta T} -\frac{1}{\Delta T +t_0 \Delta T}  \right)   \right]
-\]
-where ``$t_0$ is the surface temperature $T_{surf}$ divided by 
-the temperature drop across the shell $\Delta T$''.
-Assuming that the authors used 
-\[
-T'=\frac{T-T_{surf}}{T_{patch}-T_{surf}}= \frac{T-T_{surf}}{\Delta T}
-\]
-then 
-\[
-\eta(T)
-=\eta_0 \exp\left[ \frac{E}{R} \left( \frac{1}{T-T_s  + T_s} -\frac{1}{T_p-T_s + T_s}  \right)   \right]
-=\eta_0 \exp\left[ \frac{E}{R} \left( \frac{1}{T} -\frac{1}{T_p}  \right)   \right]
-\]
-so that $\eta(T_p)=\eta_0$. 
-The authors investigate three cases:
-\[
-\frac{E}{R \Delta T} = \{0,0.25328,3\}
-\]
-With $R=8.31$ and $\Delta T=3000\si{\kelvin}$ then $E=\{ 0, 6317.6 , 74829.6 \}$ which 
-are rather low values. 
-
 
 
