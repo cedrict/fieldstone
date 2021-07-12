@@ -1,0 +1,50 @@
+We start from
+\[
+\rho C_p \left(\frac{\partial T}{\partial t} 
++\vec\upnu\cdot\vec\nabla T \right)
+= k \Delta T
+\]
+The temperature gradient in cylindrical coordinates is 
+\[
+\vec\nabla T = 
+\left(
+\begin{array}{c}
+\partial_r T \\
+\frac{1}{r}\partial_\theta T \\
+\partial_z T 
+\end{array}
+\right)
+\]
+Since $\upnu_\theta=0$ and also $\partial_\theta T=0$ then 
+\[
+\vec\upnu\cdot\vec\nabla T = \upnu_r \frac{\partial T}{\partial r}
++ \upnu_z \frac{\partial T}{\partial z}
+\]
+and we have the Laplace operator (terms in $\partial_\theta$ have 
+been left out):
+\[
+\Delta T = \frac{1}{r} \frac{\partial }{\partial r}
+\left(r \frac{\partial T}{\partial r} \right)
++\frac{\partial^2 T }{\partial z^2}
+\]
+However for the FE formulation we will formulate the equation as
+\[
+\rho C_p \left(\frac{\partial T}{\partial t} 
++\vec\upnu\cdot\vec\nabla T \right)
+= \vec\nabla \cdot (k \vec\nabla T)
+\]
+After multiplying this equation by a test function and integrating over the domain, the diffusion term is integrated by parts (surface terms are per usual discarded), and we finally obtain
+\[
+{\bm M} \cdot \frac{\partial \vec{\cal T}}{\partial t}
++
+({\bm K}_a + {\bm K}_d ) \cdot \vec{\cal T} = \vec{0}
+\]
+with
+\begin{eqnarray}
+{\bm K}_a &=& \int \rho C_p \vec    {N}^T (\vec\upnu\cdot {\bm B}) \; dV \\
+{\bm K}_d &=& \int k {\bm B}^T \cdot {\bm B} \; dV 
+\end{eqnarray}
+where the matrix ${\bm B}$ is identical in this case to the 2D Cartesian one.
+
+It looks like switching from 2D Cartesian to 3D cylindrical axisymmetric does not introduce any change in the formulation.
+A bit too good to be true ? 

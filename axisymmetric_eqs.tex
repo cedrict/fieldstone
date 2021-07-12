@@ -1,7 +1,7 @@
 \begin{flushright} {\tiny {\color{gray} axisymmetric\_eqs.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
+In what follows we are concerned with incompressible flow.
 In some cases the assumption can be made that the object we wish to sudy has an 
 axisymmetric geometry, for example a plume:
 
@@ -16,6 +16,21 @@ b,c) Taken from Leitch \etal (1996) \cite{lesy96}.}
 Looking at the figure above we see that there are in fact two cases: axisymmetry in 
 cylindrical coordinates (b) and axisymmetry in spherical coordinates (c).
 
+As mentioned in Kellogg \& King (1997) \cite{keki97}: "By imposing axisymmetry,
+we restrict the problem to two degrees of freedom, reducing the computational
+effort significantly over 3D calculations."
+However, Redmond \& King (2004) \cite{reki04} also mention:
+"An important caveat of axisymmetric calculations is that there are no variations 
+in the $\phi$ direction (i.e., there are no $\phi$ derivatives in
+the governing equations). Thus, as we get further from
+the pole, the results become increasingly less physical.
+Downwelling drips off the pole are actually downwelling
+doughnuts that follow the entire small circle. In a fully
+3D calculation, this doughnut feature would in reality be a drip."
+
+
+See Section~\ref{ss:cyl_axi} for the FE formulation of these equations.
+
 %---------------------------------------
 \subsubsection{In cylindrical coordinates}
 
@@ -28,18 +43,19 @@ then become \footnote{\url{https://en.wikipedia.org/wiki/Navier-Stokes_equations
 -\frac{\partial p}{\partial r} + \eta
 \left(
 \frac1r \frac{\partial}{\partial r} ( r  \frac{\partial \upnu_r}{\partial r}   ) 
-+  \frac{\partial^2 \upnu_z}{\partial z^2} - \frac{\upnu_r}{r^2}
-\right) +\rho g_r&=& 0 \\
++  \frac{\partial^2 \upnu_r}{\partial z^2} - \frac{\upnu_r}{r^2}
+\right) +\rho g_r&=& 0 
+\\
 -\frac{\partial p}{\partial z} + \eta
 \left(
-\frac1r \frac{\partial}{\partial r} ( r  \frac{\partial \upnu_r}{\partial r}   ) 
+\frac1r \frac{\partial}{\partial r} ( r  \frac{\partial \upnu_z}{\partial r}   ) 
 +  \frac{\partial^2 \upnu_z}{\partial z^2} 
-\right) +\rho g_r&=& 0 \\
+\right) +\rho g_z&=& 0 \\
 \frac1r \frac{\partial}{\partial r} (r \upnu_r) + \frac{\partial \upnu_z}{\partial z} &=& 0
 \end{eqnarray}
 
 
-The velocity gradient in cylindrical coordinates is given by 
+The strain rate tensor in cylindrical coordinates is given by 
 
 \begin{eqnarray}
 \dot\varepsilon_{rr} 
@@ -85,7 +101,7 @@ or,
 \right)
 \]
 
-
+See for example Kiefer \& Hager (1992) \cite{kiha92}.
 
 
 

@@ -1115,7 +1115,7 @@ Finally the matrix ${\bm N}^p$ is of size $3\times m_p$:
 
 
 In cylindrical coordinates the velocity gradient is given by 
-\[
+\begin{equation}
 \vec\nabla \vec{\upnu}  =
 \left(
 \begin{array}{ccc}
@@ -1133,10 +1133,10 @@ In cylindrical coordinates the velocity gradient is given by
 {\partial \, \upnu_{z} \over \partial z}
 \end{array}
 \right)
-\]
+\end{equation}
 In the case of axisymmetry, and in this case symmetry about the $z$ axis, there is invariance with respect to the rotation around the axis so stresses and other quantities are independent of the $\theta$ coordinate, or simply put $\partial_\theta \rightarrow 0$.
 The velocity gradient simplifies to:
-\[
+\begin{equation}
 \vec\nabla \vec{\upnu}  =
 \left(
 \begin{array}{ccc}
@@ -1153,9 +1153,9 @@ The velocity gradient simplifies to:
 {\partial \, \upnu_{z} \over \partial z}
 \end{array}
 \right)
-\]
+\end{equation}
 Also, it follows logically that $\upnu_\theta=0$ so that ultimately:
-\[
+\begin{equation}
 \vec\nabla \vec{\upnu}  =
 \left(
 \begin{array}{ccc}
@@ -1164,7 +1164,7 @@ Also, it follows logically that $\upnu_\theta=0$ so that ultimately:
 {\partial \upnu_{z} \over \partial  r} & 0 & {\partial  \upnu_{z} \over \partial z}
 \end{array}
 \right)
-\]
+\end{equation}
 and the strain rate tensor is then given by 
 \begin{equation}
 \dot{\bm \varepsilon}(\vec{\upnu})
@@ -1226,10 +1226,11 @@ we only keep the four non zero components:
 \end{array}
 \right)
 \]
-Only displacements in the $r$ and $z$ directions remain (note that $\dot\varepsilon_{\theta\theta}$ is in fact equal to $u_r/r$). In what follows I rename $u=\upnu_r$ and $w=\upnu_z$ to simplify notations. 
+Only displacements in the $r$ and $z$ directions remain (note that $\dot\varepsilon_{\theta\theta}$ 
+is in fact equal to $\upnu_r/r$). In what follows I rename $u=\upnu_r$ and $w=\upnu_z$ to simplify notations. 
 Then, inside an element we have 
 \begin{eqnarray}
-u^h(r,z) &=& \sum_{i=1}^{m_\upnu} \bN_i^\upnu(r,z) u_i \nonumber\\
+u^h(r,z) &=& \sum_{i=1}^{m_\upnu} \bN_i^\upnu(r,z) u_i \\
 w^h(r,z) &=& \sum_{i=1}^{m_\upnu} \bN_i^\upnu(r,z) w_i
 \end{eqnarray}
 where $\bN_i^\upnu$ are the velocity basis functions attached 
@@ -1250,7 +1251,7 @@ We compute the elements of the $\vec{\dot{\varepsilon}}(\vec\upnu)$ vector as fo
 + \sum_{i=1}^m \frac{\partial \bN_i}{\partial r}(r,z) w_i 
 \end{eqnarray}
 and then 
-\[
+\begin{equation}
 \vec{\dot\varepsilon}^h=
 \left(
 \begin{array}{c}
@@ -1293,8 +1294,8 @@ u_1 \\  w_1 \\ u_2 \\  w_2  \\ \vdots \\ u_{m_\upnu} \\ w_{m_\upnu}
 \end{array}
 \right)
 }_{\vec V ( 2m_\upnu \times1)}
-\]
-or $\vec{\dot{\varepsilon}}^h= {\bm B} \cdot \vec{V}$, where $\vec{V}$ is the vector 
+\end{equation}
+or $\vec{\dot{\varepsilon}}^h= {\bm B} \cdot \vec{\cal V}$, where $\vec{\cal V}$ is the vector 
 of velocity dofs for an element.
 The stress vector is then 
 \[
@@ -1334,7 +1335,7 @@ The stress vector is then
 \right)
 \]
 The pressure term becomes
-\[
+\begin{equation}
 \left(
 \begin{array}{c}
 -p^h \\ -p^h \\ -p^h \\ 0
@@ -1369,7 +1370,7 @@ p_1 \\ p_2 \\ \vdots \\ p_{m_p}
 \end{array}
 \right)
 }_{\vec{P}}
-\]
+\end{equation}
 with ${\bm N}_p$ a $m_p \times 4$ matrix given by
 \[
 {\bm N}_p
@@ -1485,10 +1486,10 @@ N_{m_p}^p \left(
 \sum\limits_i (\frac{\partial N_i^\upnu}{\partial z} u_i\! +\! \frac{\partial N_i^\upnu}{\partial r} w_i) \\ \\
 \end{array}
 \right)
-}_{ {\bm B} \cdot \vec{V}}
+}_{ {\bm B} \cdot \vec{\cal V}}
 \; dV \nonumber\\
-&=& \left( \int_{\Omega_e} {\bm N}_p \cdot {\bm B} \; dV  \right) \cdot \vec{V} \nonumber\\
-&=& -\G_e^T \cdot {\vec V}
+&=& \left( \int_{\Omega_e} {\bm N}_p \cdot {\bm B} \; dV  \right) \cdot \vec{\cal V} \nonumber\\
+&=& -\G_e^T \cdot \vec{\cal V}
 \end{eqnarray}
 
 Note that it is common to actually start from $- \vec\nabla\cdot\vec v=0$ (see Eq.~(3) in \cite{mabl14})
@@ -1504,7 +1505,7 @@ Ultimately we obtain the following system for each element:
 \cdot
 \left(
 \begin{array}{c}
-\vec{V} \\ \vec{P} 
+\vec{\cal V} \\ \vec{\cal P} 
 \end{array}
 \right)
 =
@@ -1516,8 +1517,4 @@ Ultimately we obtain the following system for each element:
 \]
 Such a matrix is then generated for each element and then must me assembled into the
 global F.E. matrix.
-
-
-
-
 
