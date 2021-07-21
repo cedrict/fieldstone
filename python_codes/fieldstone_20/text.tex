@@ -9,16 +9,16 @@ We here focus on Case 1 of \cite{bucc94}:  an isoviscous bimodal convection expe
 
 The domain is of size $a\times b\times h$ with $a=1.0079h$, $b=0.6283h$ 
 with $h=\SI{2700}{km}$. It is filled with a Newtonian fluid 
-characterised by $\rho_0=3300{\rm kg}.{\rm m}^{-3}$, $\alpha=10^{-5}{\rm K}^{-1}$, 
-$\mu=8.0198\times10^{23}{\rm Pa.s}$, 
-$k=3.564{\rm W}.{\rm m}^{-1}.{\rm K}^{-1}$, 
-$C_p=1080{\rm J}.{\rm K}^{-1}.{\rm kg}^{-1}$.
-The gravity vector is set to $\vec{g}=(0,0,-10)^T$.
-The temperature is imposed at the bottom  ($T=3700^\circ$C) and at the top ($T=0^\circ$C).
+characterised by $\rho_0=3300\si{\kg\per\cubic\meter}$, $\alpha=10^{-5}\si{\kelvin}^{-1}$, 
+$\mu=8.0198\times10^{23}~\si{\pascal\second}$, 
+$k=3.564~\si{\watt\per\meter\per\kelvin}$, 
+$C_p=1080~\si{\joule\per\kelvin\per\kg}$.
+The gravity vector is set to $\vec{g}=(0,0,-10)^T\si{\meter\per\square\second}$.
+The temperature is imposed at the bottom  ($T=3700~\si{\celsius}$) and at the top ($T=0~\si{\celsius}$).
 
 Note that using these numbers (as provided in the original paper), we arrive at $\Ranb$=29967.01, which 
 is not exactly $3\cdot10^5$ as announced. Also, the heat diffusivity $\kappa=k/\rho_0 C_p$ is 
-{\it exactly} $10^{-6}$.
+{\it exactly} $10^{-6}~\si{\square\meter\per\second}$.
 
 The various measurements presented in \cite{bucc94} are listed hereafter:
 \begin{itemize}
@@ -105,7 +105,7 @@ for i in range(0,NT):
        + 100*(np.cos(np.pi*xT[i]/Lx) + np.cos(np.pi*yT[i]/Ly))*np.sin(np.pi*zT[i]/Lz)
 \end{lstlisting}
 
-The ${\bm C}$ matrix of Eq.~\ref{eq:mixedC} is then built:
+The ${\bm C}$ matrix of Eq.~\eqref{eq:mixedC} is then built:
 \begin{lstlisting}
 c_mat = np.array([[2,0,0,0,0,0],\
                   [0,2,0,0,0,0],\
@@ -230,6 +230,8 @@ w_old=w
 T_old=T
 \end{lstlisting}
 \end{enumerate}
+In this case I found that a relaxation coefficient of 1 actually works so it is used by default.
+
 
 \paragraph{Computing nodal derivatives}  
 Another interesting approach here is how the strain rate is computed on the nodes as well as
@@ -237,11 +239,9 @@ the temperature gradient. The strain rate is not needed for the required measure
 benchmark but the Nusselt number calculations require $\partial T/\partial z$ at the top
 boundary.    
 The idea is simple: loop over all elements, and for each element loop over its support nodes
-(in this case the 2x2x2 nodes of the $Q_1$), compute the required derivative there and add its contribution 
-to the nodal field. Finally divide the obtained field by the number of elements each node is 
-part of.
-
-
+(in this case the $2\times 2\times 2$ nodes of the $Q_1$), compute the required derivative 
+there and add its contribution to the nodal field. Finally divide the obtained field by 
+the number of elements each node is part of.
 
 
 \newpage
@@ -249,11 +249,9 @@ part of.
 \subsubsection*{Results}
 
 Given how the code is written and how costly 3D simulations are in general, high resolution
-runs take a {\it very} long time to run, even using relaxation instead of time stepping. 
+runs take a long time to run, even using relaxation instead of time stepping. 
 
 \begin{center}
-%\includegraphics[width=7cm]{python_codes/fieldstone_20/results/velstats.pdf}
-%\includegraphics[width=7cm]{python_codes/fieldstone_20/results/Tstats.pdf}
 \includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/Tavrg.pdf}\\
 \includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/vrms.pdf}
 \includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/Tmid.pdf}\\
@@ -274,10 +272,10 @@ a reference lengthscale 2700km, and a reference time $L_z^2/\kappa\sim 7.29e+18$
 %i.e. $t=3.645e+19$s.
 
 
-
+\begin{center}
 \begin{tabular}{llllll}
 \hline
-                                & \aspect & ($Q_2\times Q_1/Q_1$)      &       & Busse et al \cite{bucc94} &  \\
+                                & \aspect & ($Q_2\times Q_1/Q_2$)      &       & Busse et al \cite{bucc94} &  \\
 Mesh size                       & Lz/24  & Lz/32 & Lz/48 & (best results)            & \\ 
 \hline
 $\Nunb$                         & 3.5539 &3.5447 & 3.5397 & $3.5374  \pm 0.0005$   \\
@@ -298,8 +296,16 @@ $dTdz(L_x,L_y,L_z)$& 0.7237 & 0.7205 & 0.7174 & $0.7140 \pm 0.0500$ \\
 $dTdz(0,L_y,L_z)$  &  & & & $3.1740 \pm 0.0500$ \\
 \hline
 \end{tabular}
+\end{center}
 
-\vspace{1cm}
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/u}
+\includegraphics[width=5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/v}
+\includegraphics[width=5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/w}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/T}
+\includegraphics[width=5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/sr}\\
+{\captionfont Results obtained on 24x12x32 mesh}
+\end{center}
 
-THIS IS NOT FINISHED: I need to run the model at higher resolutions, which will take a few days.
 

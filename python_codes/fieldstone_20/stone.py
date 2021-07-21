@@ -31,9 +31,9 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    nelz = int(sys.argv[3])
 else:
-   nelx =20
-   nely =13
-   nelz =20
+   nelx =16
+   nely =10
+   nelz =16
 
 assert (nelz%4==0), "nelz should be even and multiple of 4" 
 
@@ -42,8 +42,6 @@ gy=0
 gz=-10
 
 visu=1
-
-pnormalise=False
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
@@ -73,7 +71,6 @@ alpha=1.e-5
 
 eps=1.e-10
 
-CFL_nb=0.005
 
 year=3.154e+7
 Myear=1e6*year
@@ -100,7 +97,8 @@ hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
 
-relax=1.
+relax=1
+CFL_nb=0.005 # not needed since relaxation is used
 
 #################################################################
 #################################################################
@@ -430,8 +428,8 @@ for istep in range(0,nstep):
         #end for 
         rhs[NfemV+iel]+=h_el[0]*scaling_coeff
 
-    #print("K_mat (m,M) = %.6e %.6e" %(np.min(K_mat),np.max(K_mat)))
-    #print("G_mat (m,M) = %.6e %.6e" %(np.min(G_mat),np.max(G_mat)))
+    #end
+
     #print("f_rhs (m,M) = %.6e %.6e" %(np.min(f_rhs),np.max(f_rhs)))
     #print("h_rhs (m,M) = %.6e %.6e" %(np.min(h_rhs),np.max(h_rhs)))
 
@@ -441,7 +439,6 @@ for istep in range(0,nstep):
     # assemble K, G, GT, f, h into A and rhs
     ######################################################################
     #start = timing.time()
-
     #if pnormalise:
     #   a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
     #   rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
@@ -458,7 +455,6 @@ for istep in range(0,nstep):
     #rhs[0:NfemV]=f_rhs
     #rhs[NfemV:Nfem]=h_rhs
     #print("assemble blocks: %.3f s" % (timing.time() - start))
-
     ######################################################################
     #a_mat[NfemV-1,:]=0
     #a_mat[:,NfemV-1]=0
@@ -470,7 +466,7 @@ for istep in range(0,nstep):
     start = timing.time()
 
     #sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
-    #print (sol)
+
     sol=sps.linalg.spsolve(A_sparse.tocsr(),rhs)
 
     print("solve time: %.3f s" % (timing.time() - start))
@@ -495,8 +491,8 @@ for istep in range(0,nstep):
     w_stats[istep,0]=np.min(w)
     w_stats[istep,1]=np.max(w)
 
-    if pnormalise:
-       print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
+    #if pnormalise:
+    #   print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
 
     #np.savetxt('velocity.ascii',np.array([xV,yV,zV,u,v,w]).T,header='# x,y,z,u,v,w')
 
@@ -533,10 +529,9 @@ for istep in range(0,nstep):
     print("compute timestep: %.3f s" % (timing.time() - start))
 
     ######################################################################
-    # compute vrms 
-    # note that instead of computing jcob by means of the determinant
-    # I instead assign it its value under the assumption that the elements
-    # are cuboids. 
+    # compute vrms. Note that instead of computing jcob by means of the 
+    # determinant I instead assign it its value under the assumption that 
+    # the elements are cuboids. 
     ######################################################################
     start = timing.time()
 
@@ -663,49 +658,52 @@ for istep in range(0,nstep):
                         B_mat[2,k]=dNNNTdz[k]
                     # end for 
 
-                    rho_lhs=rho0
+                    # compute mass matrix
+                    #MM=NNNT_mat.dot(NNNT_mat.T)*rho_lhs*hcapa*weightq*jcob
 
-                # compute mass matrix
-                #MM=NNNT_mat.dot(NNNT_mat.T)*rho_lhs*hcapa*weightq*jcob
+                    # compute diffusion matrix
+                    Kd=B_mat.T.dot(B_mat)*hcond*weightq*jcob
 
-                # compute diffusion matrix
-                Kd=B_mat.T.dot(B_mat)*hcond*weightq*jcob
+                    # compute advection matrix
+                    Ka=NNNT_mat.dot(vel.dot(B_mat))*rho0*hcapa*weightq*jcob
 
-                # compute advection matrix
-                Ka=NNNT_mat.dot(vel.dot(B_mat))*rho_lhs*hcapa*weightq*jcob
+                    #a_el=MM+alphaT*(Ka+Kd)*dt
+                    #b_el=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Tvect)
 
+                    a_el+=(Kd+Ka)
 
-                #a_el=MM+alphaT*(Ka+Kd)*dt
-                #b_el=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Tvect)
+                #end for
+            #end for
+        #end for
 
-                a_el+=(Kd+Ka)
+        # apply boundary conditions
 
-                # apply boundary conditions
+        for k1 in range(0,mT):
+            m1=iconT[k1,iel]
+            if bc_fixT[m1]:
+               Aref=a_el[k1,k1]
+               for k2 in range(0,mT):
+                   m2=iconT[k2,iel]
+                   b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
+                   a_el[k1,k2]=0
+                   a_el[k2,k1]=0
+               # end for
+               a_el[k1,k1]=Aref
+               b_el[k1]=Aref*bc_valT[m1]
+            # end if
+        # end for
 
-                for k1 in range(0,mT):
-                    m1=iconT[k1,iel]
-                    if bc_fixT[m1]:
-                       Aref=a_el[k1,k1]
-                       for k2 in range(0,mT):
-                           m2=iconT[k2,iel]
-                           b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
-                           a_el[k1,k2]=0
-                           a_el[k2,k1]=0
-                       # end for
-                       a_el[k1,k1]=Aref
-                       b_el[k1]=Aref*bc_valT[m1]
-                    # end if
-                # end for
+        # assemble matrix A_mat and right hand side rhs
+        for k1 in range(0,mT):
+            m1=iconT[k1,iel]
+            for k2 in range(0,mT):
+                m2=iconT[k2,iel]
+                A_mat[m1,m2]+=a_el[k1,k2]
+            # end for
+            rhs[m1]+=b_el[k1]
+        # end for
 
-                # assemble matrix A_mat and right hand side rhs
-                for k1 in range(0,mT):
-                    m1=iconT[k1,iel]
-                    for k2 in range(0,mT):
-                        m2=iconT[k2,iel]
-                        A_mat[m1,m2]+=a_el[k1,k2]
-                    # end for
-                    rhs[m1]+=b_el[k1]
-                # end for
+    #end for
 
     print("     -> A_mat (m,M) = %.6e %.6e" %(np.min(A_mat),np.max(A_mat)))
     print("     -> rhs   (m,M) = %.6e %.6e" %(np.min(rhs),np.max(rhs)))
@@ -1001,26 +999,6 @@ for istep in range(0,nstep):
            vtufile.write("%.6e\n" % p[iel])
        vtufile.write("</DataArray>\n")
        #--
-       #vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
-       #for iel in range (0,nel):
-       #    vtufile.write("%.6e\n" % sr[iel])
-       #vtufile.write("</DataArray>\n")
-       #--
-       #vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
-       #for iel in range (0,nel):
-       #    vtufile.write("%.6e \n" %exx[iel])
-       #vtufile.write("</DataArray>\n")
-       #--
-       #vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
-       #for iel in range (0,nel):
-       #    vtufile.write("%.6e \n" %eyy[iel])
-       #vtufile.write("</DataArray>\n")
-       #--
-       #vtufile.write("<DataArray type='Float32' Name='ezz' Format='ascii'> \n")
-       #for iel in range (0,nel):
-       #    vtufile.write("%.6e \n" %ezz[iel])
-       #vtufile.write("</DataArray>\n")
-       #--
        vtufile.write("</CellData>\n")
        #####
        vtufile.write("<PointData Scalars='scalars'>\n")
@@ -1068,6 +1046,11 @@ for istep in range(0,nstep):
        vtufile.write("<DataArray type='Float32' Name='eyz(n)' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%.6e \n" %eyzn[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sr(n)' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%.6e \n" %srn[i])
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='dTdx(n)' Format='ascii'> \n")
@@ -1166,8 +1149,8 @@ for istep in range(0,nstep):
 
     #####################################################################
 
-    if np.abs(Nu-Nu_old)<1.e-5:
-       print("Nu converged to 1e-5")
+    if np.abs(Nu-Nu_old)<1.e-6:
+       print("Nu converged to 1e-6")
        break
 
     #####################################################################
