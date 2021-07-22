@@ -334,16 +334,29 @@ for iel in range(0,nel):
     z_c=(zV[iconV[0,iel]]+zV[iconV[1,iel]]+zV[iconV[2,iel]])/3
     r_c=np.sqrt(x_c**2+z_c**2)
     j=int((R_outer-r_c)/1000)
-    rho[iel]=profile_rho[j]*1000
 
+    #rho[iel]=profile_rho[j]*1000
     rho[iel]=0
 
-    if r_c>R_inner:
-       eta[iel]=10**profile_eta[j]
-    else:
-       eta[iel]=eta_core
-
-    etaeff[iel]=mu*dt/(1+mu/eta[iel]*dt) 
+    if viscosity_model==1: # isoviscous
+       eta[iel]=eta0
+       etaeff[iel]=eta0
+    elif viscosity_model==2: # steinberger 
+       if r_c>R_inner:
+          eta[iel]=10**profile_eta[j]
+       else:
+          eta[iel]=eta_core
+       etaeff[iel]=mu*dt/(1+mu/eta[iel]*dt) 
+    else: # 3 layer model
+       if r_c>R_outer-100e3:
+          eta[iel]=eta_crust
+       elif r_c>R_outer-500e3:
+          eta[iel]=eta_lith
+       elif r_c>R_inner:
+          eta[iel]=eta_mantle
+       else:
+          eta[iel]=eta_core
+       etaeff[iel]=eta[iel]
 
     if x_c**2+(z_c-z_blob)**2<R_blob**2:
        rho[iel]=rho_blob
@@ -354,26 +367,35 @@ for iel in range(0,nel):
 for i in range(0,NV):
     r_c=np.sqrt(xV[i]**2+zV[i]**2)
     j=int((R_outer-r_c)/1000)
-    rho_nodal[i]=profile_rho[j]*1000
 
+    #rho_nodal[i]=profile_rho[j]*1000
     rho_nodal[i]=0
 
-    if r_c>R_inner*0.999:
-       eta_nodal[i]=10**profile_eta[j]
+    if viscosity_model==1: # isoviscous
+       eta_nodal[i]=eta0
+       etaeff_nodal[i]=eta0
+    elif viscosity_model==2: # steinberger 
+       if r_c>R_inner*0.999:
+          eta_nodal[i]=10**profile_eta[j]
+       else:
+          eta_nodal[i]=eta_core
+       etaeff_nodal[i]=mu*dt/(1+mu/eta_nodal[i]*dt) 
     else:
-       eta_nodal[i]=eta_core
-
-    etaeff_nodal[i]=mu*dt/(1+mu/eta_nodal[i]*dt) 
+       if r_c>R_outer-100e3:
+          eta_nodal[i]=eta_crust
+       elif r_c>R_outer-500e3:
+          eta_nodal[i]=eta_lith
+       elif r_c>R_inner:
+          eta_nodal[i]=eta_mantle
+       else:
+          eta_nodal[i]=eta_core
+       etaeff_nodal[i]=eta[iel]
 
     if xV[i]**2+(zV[i]-z_blob)**2 < 1.001*R_blob**2:
        eta_nodal[i]=eta_blob
        rho_nodal[i]=rho_blob
     eta_nodal[i]=min(eta_max,eta_nodal[i])
 #end for
-
-if isoviscous:
-   eta[:]=eta0
-   eta_nodal[:]=eta0
 
 print("     -> eta_elemental (m,M) %.6e %.6e " %(np.min(eta),np.max(eta)))
 print("     -> eta_nodal     (m,M) %.6e %.6e " %(np.min(eta_nodal),np.max(eta_nodal)))
@@ -591,7 +613,10 @@ for istep in range(0,1):
 
             #compute gx,gy
             radq=np.sqrt(xq**2+yq**2)
-            grav=profile_grav[int(radq/1000)]
+            if use_isog:
+               grav=g0
+            else:
+               grav=profile_grav[int(radq/1000)]
             angle=np.arctan2(yq,xq)
             gx=grav*np.cos(angle)
             gy=grav*np.sin(angle)
@@ -765,16 +790,19 @@ for istep in range(0,1):
     ######################################################################
     start = timing.time()
 
-    avrg_p=0
-    counter=0
-    for i in range(NfemP):
-        if rP[i]>0.99999*R_outer:
-           avrg_p+=p[i]
-           counter+=1
+    if surface_bc==0 or surface_bc==1:
 
-    p-=(avrg_p/counter) # normalising pressure at surface
+       avrg_p=0
+       counter=0
+       for i in range(NfemP):
+           if rP[i]>0.99999*R_outer:
+              avrg_p+=p[i]
+              counter+=1
 
-    #np.savetxt('p_solution_normalised.ascii',np.array([xP,yP,p,rP]).T)
+       p-=(avrg_p/counter) # normalising pressure at surface
+
+       #np.savetxt('p_solution_normalised.ascii',np.array([xP,yP,p,rP]).T)
+
 
     print("normalise pressure: %.3f s" % (timing.time() - start))
 
@@ -966,6 +994,21 @@ for istep in range(0,1):
            pel=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3.
            tracfile.write("%10e %10e %10e %10e \n" %(theta[iel],tau_rr[iel]-pel,xc[iel],zc[iel]))
 
+    tracfile=open('surface_vr.ascii',"w")
+    for i in range(0,NV):
+        if surface_node[i]: 
+           tracfile.write("%10e %10e \n" \
+                          %(theta_nodal[i],u[i]*np.sin(theta_nodal[i])+v[i]*np.cos(theta_nodal[i])  ))
+    tracfile.close()
+
+    tracfile=open('surface_vt.ascii',"w")
+    for i in range(0,NV):
+        if surface_node[i]: 
+           tracfile.write("%10e %10e \n" \
+                          %(theta_nodal[i],u[i]*np.cos(theta_nodal[i])-v[i]*np.sin(theta_nodal[i]) ) )
+    tracfile.close()
+
+
 
 #        if np.sqrt(xc[iel]**2+zc[iel]**2)>R_outer-dr:
 #           if surface_node[iconV[3,iel]] and xV[iconV[3,iel]]>0:
@@ -1132,7 +1175,10 @@ for istep in range(0,1):
     vtufile.write("<DataArray type='Float32' Name='gravity vector (norm)' Format='ascii'> \n")
     for i in range(0,NV):
         rad=np.sqrt(xV[i]**2+zV[i]**2)
-        grav=profile_grav[int(rad/1000)]
+        if use_isog:
+           grav=g0
+        else:
+           grav=profile_grav[int(rad/1000)]
         vtufile.write("%10e \n" %grav)
     vtufile.write("</DataArray>\n")
     #--
@@ -1153,6 +1199,16 @@ for istep in range(0,1):
         else:
            vtufile.write("%d \n" %0)
     vtufile.write("</DataArray>\n")
+
+    #--
+    vtufile.write("<DataArray type='Int32' Name='dyn topo' Format='ascii'> \n")
+    for i in range(0,NV):
+        if surface_node[i]:
+           vtufile.write("%d \n" % (-(tau_rr_nodal[i]-q[i])/g0/rho_surf) ) # (-pI + tau).vec{n} / rho g0
+        else:
+           vtufile.write("%d \n" % 0)
+    vtufile.write("</DataArray>\n")
+
     #--
     vtufile.write("<DataArray type='Float32' Name='theta (sph.coords)' Format='ascii'> \n")
     for i in range(0,NV):
