@@ -66,14 +66,14 @@ else:
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
 
-nnp=nnx*nny  # number of nodes
+NV=nnx*nny  # number of nodes
 
 nel=nelx*nely  # number of elements, total
 
 eta=1.  # dynamic viscosity 
 
-NfemV=nnp*ndofV   # number of velocity dofs
-NfemP=nel*ndofP   # number of pressure dofs
+NfemV=NV*ndofV   # number of velocity dofs
+NfemP=nel*ndofP  # number of pressure dofs
 Nfem=NfemV+NfemP # total number of dofs
 
 pnormalise=True
@@ -85,8 +85,8 @@ Gscaling=eta/(Ly/nely)
 #################################################################
 start = time.time()
 
-x = np.empty(nnp, dtype=np.float64)  # x coordinates
-y = np.empty(nnp, dtype=np.float64)  # y coordinates
+x=np.empty(NV,dtype=np.float64)  # x coordinates
+y=np.empty(NV,dtype=np.float64)  # y coordinates
 
 counter = 0
 for j in range(0, nny):
@@ -130,7 +130,8 @@ start = time.time()
 
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
-for i in range(0, nnp):
+
+for i in range(0,NV):
     if x[i]<eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
@@ -169,9 +170,9 @@ dNdx  = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 dNdy  = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 dNdr  = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 dNds  = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
-u     = np.zeros(nnp,dtype=np.float64)          # x-component velocity
-v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
-p     = np.zeros(nel,dtype=np.float64)          # y-component velocity
+u     = np.zeros(NV,dtype=np.float64)            # x-component velocity
+v     = np.zeros(NV,dtype=np.float64)            # y-component velocity
+p     = np.zeros(nel,dtype=np.float64)           # pressure field 
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) # a
 #c_mat = np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64)  #b
 
@@ -295,7 +296,7 @@ print("solve time: %.3f s" % (time.time() - start))
 ######################################################################
 start = time.time()
 
-u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
+u,v=np.reshape(sol[0:NfemV],(NV,2)).T
 p=sol[NfemV:Nfem]*Gscaling
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
@@ -371,11 +372,11 @@ print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 print("compute press & sr: %.3f s" % (time.time() - start))
 
 ######################################################################
-# compute nodal pressure
+# compute nodal pressure q
 ######################################################################
 
-q=np.zeros(nnp,dtype=np.float64)  
-count=np.zeros(nnp,dtype=np.float64)  
+q=np.zeros(NV,dtype=np.float64)  
+count=np.zeros(NV,dtype=np.float64)  
 
 for iel in range(0,nel):
     q[icon[0,iel]]+=p[iel]
@@ -397,12 +398,12 @@ q=q/count
 ######################################################################
 start = time.time()
 
-error_u = np.empty(nnp,dtype=np.float64)
-error_v = np.empty(nnp,dtype=np.float64)
-error_q = np.empty(nnp,dtype=np.float64)
+error_u = np.empty(NV,dtype=np.float64)
+error_v = np.empty(NV,dtype=np.float64)
+error_q = np.empty(NV,dtype=np.float64)
 error_p = np.empty(nel,dtype=np.float64)
 
-for i in range(0,nnp): 
+for i in range(0,NV): 
     error_u[i]=u[i]-velocity_x(x[i],y[i])
     error_v[i]=v[i]-velocity_y(x[i],y[i])
     error_q[i]=q[i]-pressure(x[i],y[i])
