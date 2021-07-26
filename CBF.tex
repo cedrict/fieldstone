@@ -9,68 +9,70 @@ dynamic topography and geoid.
 
 The idea was first introduced in Mizukami (1986) \cite{mizu86} and later used 
 in geodynamics in Zhong \etal (1993) \cite{zhgh93}. It was finally implemented 
-in the CitcomS code \cite{zhmt08,mole97} and more recently
-in the ASPECT code (dynamic topography postprocessor).
+in the \citcoms code \cite{zhmt08,mole97} and more recently
+in the \aspect code (dynamic topography postprocessor).
 Note that the CBF should be seen as a post-processor step 
 as it does not alter the primary variables values.
 
-The CBF method is implemented and used in Stone~\ref{f_49}.
-It is also discussed but not explicitely named in \cite[p309]{reddybook2}.
-Also see \cite{lahe76,grls87,mahz78}.
+The CBF method is implemented and used in \stone~27.
+It is also discussed but not explicitely named in Reddy's book \cite[p309]{reddybook2}.
+Also see Larock \& Herrmann (1976) \cite{lahe76}, Gresho \etal (1987) \cite{grls87}, Marshall \etal \cite{mahz78}.
 
 %---------------------------------------------------------------
 \subsubsection{The CBF applied to the Stokes equation}
 We start from the strong form:
-\begin{eqnarray}
-{\vec \nabla}\cdot {\bm \sigma} + {\vec b} &=& {\vec 0} 
-\end{eqnarray}
+\begin{equation}
+{\vec \nabla}\cdot {\bm \sigma} + {\vec b} = {\vec 0} 
+\end{equation}
 and then write the weak form on an element $e$:
-\begin{eqnarray}
-\int_{\Omega_e} N_i^\upnu {\vec \nabla}\cdot {\bm \sigma} d\Omega + \int_{\Omega_e} N_i^\upnu  {\vec b} \; d\Omega 
-&=& \vec 0 
-\end{eqnarray}
+\begin{equation}
+\int_{\Omega_e} N_i^\upnu {\vec \nabla}\cdot {\bm \sigma}\; dV
++ \int_{\Omega_e} N_i^\upnu  {\vec b} \; dV
+= \vec 0 
+\end{equation}
 We then use the two equations: 
 \index{general}{Chain Rule} 
 \index{general}{Divergence Theorem}
 \[
-\bm \nabla \cdot ( N  \bm \sigma ) = N \bm \nabla \cdot \bm \sigma + \bm \nabla N \cdot  \bm \sigma  
+\vec \nabla \cdot ( N  \bm \sigma ) = N \vec{\nabla} \cdot \bm \sigma + \vec{\nabla} N \cdot  \bm \sigma  
 \qquad \text{(chain rule)}
 \]
 \[
-\int_\Omega (\bm \nabla \cdot {\bm \sigma} )\; dV = \int_\Gamma {\bm \sigma} \cdot \bm n \; dS
+\int_\Omega (\vec \nabla \cdot {\bm \sigma} )\; dV = \int_\Gamma {\bm \sigma} \cdot \vec{n} \; dS
 \qquad \text{(divergence theorem)}
 \]
 and integrate by parts in order to obtain:
 \begin{eqnarray}
-\int_\Gamma N_i^\upnu {\bm \sigma}\cdot{\bm n} dS - 
-\int_{\Omega_e} {\vec \nabla } N_i^\upnu \cdot {\bm \sigma} d\Omega + \int_{\Omega_e} N_i^\upnu  {\vec b} d\Omega =\vec{0}
+\int_\Gamma N_i^\upnu {\bm \sigma}\cdot\vec{n} \; dS - 
+\int_{\Omega_e} {\vec \nabla } N_i^\upnu \cdot {\bm \sigma} \; dV 
++ \int_{\Omega_e} N_i^\upnu  {\vec b} \; dV =\vec{0}
 \end{eqnarray}
-and since the traction vector ${\vec t}$ is given by $\vec{t}={\bm \sigma}\cdot{\bm n}$ we have:
+and since the traction vector ${\vec t}$ is given by $\vec{t}={\bm \sigma}\cdot\vec{n}$ we have:
 \begin{eqnarray}
-\int_{\Gamma_e}  N_i^\upnu {\bm t} dS 
-&=& \int_{\Omega_e} {\vec \nabla } N_i^\upnu \cdot {\bm \sigma}\; d\Omega 
-- \int_{\Omega_e} N_i^\upnu  {\vec b} \; d\Omega   \label{eq:cbf1}
+\int_{\Gamma_e}  N_i^\upnu {\vec t} \; dS 
+&=& \int_{\Omega_e} {\vec \nabla } N_i^\upnu \cdot {\bm \sigma}\; dV 
+- \int_{\Omega_e} N_i^\upnu  {\vec b} \; dV   \label{eq:cbf1}
 \end{eqnarray}
 The core idea of the method lies in considering the traction vector as an unknown 
 living on the nodes on the boundary, and assuming we have already solved the Stokes 
 equation and therefore have obtained the velocity and pressure.
 
 Finally, since the traction vector can be expressed as a function of the velocity 
-basis functions on the edgem i.e.
+basis functions on the edge i.e.
 \[
 \vec{t} = \sum_{i=1}^m N_i^\upnu \vec{t}_i
 \]
-the left hand term yields an edge (1D) mass matrix $M'$ (see Section~\ref{app:mm}).
+the left hand term yields an edge (1D) mass matrix $\M'$ (see Section~\ref{app:mm}).
 
 \begin{remark}
-In Stone~\ref{f_27} an alternative to equation \ref{eq:cbf1} is used. Although
+In \stone~27 an alternative to equation \ref{eq:cbf1} is used. Although
 somewhat inefficient, the elemental matrices $\K$ and $\G$ and the corresponding 
 body force rhs are built and the rhs of the traction equation is computed as follows:
 \[
-M' \cdot {\cal T} = -\K {\cal V} - \G {\cal P} + f
+\M' \cdot \vec{\cal T} = -\K \cdot \vec{\cal V} - \G \cdot\vec{\cal P} + \vec{f}
 \]
-where ${\cal T}$ is the vector of assembled tractions which we want to compute 
-and ${\cal V}$ and ${\cal T}$ are the solutions of the Stokes problem. 
+where $\vec{\cal T}$ is the vector of assembled tractions which we want to compute 
+and $\vec{\cal V}$ and $\vec{\cal T}$ are the solutions of the Stokes problem. 
 \end{remark}
 
 \begin{remark} 
@@ -81,7 +83,7 @@ a Conjugate Gradient method.
 \begin{remark} 
 With a trapezoidal integration rule 
 (i.e. Gauss-Lobatto - see Section~\ref{sec:loba}) the matrix can even be diagonalised and the resulting 
-matrix is simply diagonal, which results in a very cheap solve \cite{zhgh93}.
+matrix is simply diagonal, which results in a very cheap solve as mentioned in Zhong \etal (1993) \cite{zhgh93}.
 \end{remark}
 
 %---------------------------------------------------------------
@@ -164,10 +166,10 @@ the boundary.
 We have already covered the right hand side terms when building the FE system 
 to solve the heat transport equation, so that in the end 
 \[
-M' \cdot {\cal Q}_n =
-- M \cdot \frac{\partial \bm T}{\partial t} -K_a \cdot {\bm T} - K_d \cdot {\bm T} 
+\M' \cdot \vec{\cal Q}_n =
+- \M \cdot \frac{\partial \bm T}{\partial t} -K_a \cdot {\bm T} - K_d \cdot {\bm T} 
 \]
-where ${\cal Q}_n$ is the assembled vector of normal heat flux components.
+where $\vec{\cal Q}_n$ is the assembled vector of normal heat flux components.
 Note that in all terms the assembly only takes place over the elements along the boundary.
 
 
@@ -176,7 +178,7 @@ Note that the resulting matrix is symmetric.
 
 \subsubsection{Some implementation details for the Stokes equation}
 
-What follows is relevant for Stone~\ref{f_27} which relies on $Q_1$ shape 
+What follows is relevant for \stone~27 which relies on $Q_1$ shape 
 functions for the velocity. 
 Let us start with a small example, a 3x2 element FE grid:
 \begin{center}

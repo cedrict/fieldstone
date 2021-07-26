@@ -1,13 +1,10 @@
 \begin{flushright} {\tiny {\color{gray} pair\_q1p0stab.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 WARNING: this entire subsection is copied from an old document. It needs to be revised and 
 updated. I intend to write a Stone implementing this element.
 
-
 \Literature: Explore these 2 refs which I found after my q1p0-stab work of 2015 \cite{chke20,eguc03}
-
 
 Many techniques have been proposed to stabilise this element:
 
@@ -23,14 +20,12 @@ mentioned in \cite{sofo87}, \cite{fort81}.
 adding 1 dof mid-side on each face with buble function \cite{rota87}
 \end{itemize}
 
-
 In effect, both jump stabilisation techniques provide an a-priori filter for the weakly unstable pressure modes associated 
 with the Q1P0 element. The global jump stabilisation formulation introduces a pressure diffusion operator
 that perturbs the incompressibility constraint. The global jump formulation insures mass conservation in a global  
 sense since the null space of the stabilising matrix constains the constant-pressure vector. However, the global 
 jump stabilisation smears the div-free constraint over a small region, i.e., the divergence is not 
-zero at the element level \cite{chri}.
-
+zero at the element level \cite{chri00}.
 
 The stability of mixed finite element methods boils down to properties of the null space of the matrix $\G$. 
 An approximation is unstable if $\G \cdot \vec{\cal P} = \vec{0}$ where $\vec{\cal P}$ 
