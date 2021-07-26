@@ -1,5 +1,8 @@
 
 
+%_____________________________________________
+\paragraph{Basic facts about the planet}
+
 Facts about planet Mars\footnote{\url{https://en.wikipedia.org/wiki/Mars}}:
 \begin{itemize}
 \item average radius $R=3389.5 \pm 0.2 \si{\km}$
@@ -19,8 +22,11 @@ g_{surf}=\frac{{\cal G} M}{R^2}
 \simeq 3.727977
 \]
 
+%_____________________________________________
+\paragraph{Internal structure of the planet}
+
 The internal structure of the planet is not settled although 
-it is now widely accepted that the planet has a core. 
+it is now widely accepted that the planet has a core. News alert: \cite{khcv21,stkb21,knpb21}. 
 
 B. Steinberger was kind enough to communicate to us the density and viscosity 
 profiles used in Steinverger \etal (2010) \cite{stwt10} \footnote{Files sent to us 
@@ -37,7 +43,6 @@ starts below the moho at 50\si{\km} and stopped at the cmb. }:
 {\tiny {\color{gray} in python\_codes/fieldstone\_96/data/}}
 \end{center}
 
-
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_96/images/stwt10_b}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_96/images/stwt10_c}
@@ -50,9 +55,17 @@ to 1389.5km. However in the data set we were sent it seems that the cmb is at 14
 radius.
 To simplify things we take $R=3389\si{\km}$ and $R_{cmb}=1422\si{\km}$ in the code.
 
+\todo[inline]{Sort this out}
+
+%_______________________________________________________________
+\paragraph{How the code works}
+
 There are three python files in this \stone:
 \begin{itemize}
 \item {\pythonfile parameters.py}: the main physical and geometrical parameters are defined in it;
+
+DESCRIBE PARAMETERS
+
 \item {\pythonfile generate\_nodes.py}: this code generates the two files  {\sl mypoints} and {\sl mysegments}
 which will be first concatenated into {\sl mesh.poly} and then passed to the Triangle mesher. 
 The mesher then returns {\sl mesh.1.node} and {\sl mesh.1.ele}.  
@@ -65,21 +78,29 @@ normalised to zero average. Results are then exported to ascii and vtu file(s).
 In order to run the code, simply make use of the provided script {\shellscriptfile run\_script}. 
 In it the call to the Triangle mesher is carried out:
 \begin{verbatim}
-../../../../triangle/triangle   -q -j -O -a4000000000 -o2 -pc  mesh.poly
+../../../../triangle/triangle   -q -j -O -a5000000000 -o2 -pc  mesh.poly
 \end{verbatim}
 The number following the {\tt -a} option is the maximum size of an element. This controls the 
 average size of the generated elements inside the domain. Decreasing this number automatically 
 generates more elements, i.e. a higher resolution. 
 
+The code relies on $P_2\times P_1$ elements or Crouzeix-Raviart elements. Fluids are Newtonian and 
+temperature effects are neglected. 
+
+We assume that the problem is axisymmetric, which allows us to simplify the equations greatly. 
+We here rely on axisymmetric cylindrical coordinates, see Section~\ref{ss:axicyleqs}.
+As shown on the following figure we assume that the deformation/flow is independent of the angle 
+$\theta$ so that the remaining space coordinates are $r$ and $z$.
 \begin{center}
 \input{tikz/tikz_axi}
 \end{center}
 
-\begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_96/images/notes1}\\
-\includegraphics[width=9cm]{python_codes/fieldstone_96/images/notes2}
-\end{center}
+%\begin{center}
+%\includegraphics[width=7cm]{python_codes/fieldstone_96/images/notes1}\\
+%\includegraphics[width=9cm]{python_codes/fieldstone_96/images/notes2}
+%\end{center}
 
+We assume here that the fluid is incompressible.
 Given the symmetry of the problem any term containing $\partial_\theta$ or $\upnu_\theta$ is zero.
 The strain rate tensor given in Section~\ref{ss:srcc} then simplifies to:
 
@@ -97,21 +118,22 @@ Note that the term $\dot\varepsilon_{\theta\theta} $ is not zero!
 The deviatoric stress tensor ${\bm \tau}=2\eta \dot{\bm \varepsilon}$ can be computed
 as well as the full stress tensor ${\bm \sigma}=-p {\bm 1} + {\bm \tau}$. 
 
-\begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_96/images/rho}
-\includegraphics[width=6cm]{python_codes/fieldstone_96/images/eta}
-\includegraphics[width=6cm]{python_codes/fieldstone_96/images/mesh}
-\end{center}
+%\begin{center}
+%\includegraphics[width=6cm]{python_codes/fieldstone_96/images/rho}
+%\includegraphics[width=6cm]{python_codes/fieldstone_96/images/eta}
+%\includegraphics[width=6cm]{python_codes/fieldstone_96/images/mesh}
+%\end{center}
 
-%--------------------------------------------------
-\subsubsection*{Stresses and coordinate changes}
+ONE problem remains: I have not yet found out how to remove the core altogether!
+so for now I set zero velocity at cmb nodes (equivalent to no slip).
 
+%__________________________________________________________________
 \paragraph{From Cylindrical to Cartesian coordinates}
 
 In cylindrical coordinates, and in the axisymmetric case
 the strain rate tensor is given by
 \[
-\dot{\bm\varepsilon}
+\dot{\bm\varepsilon}(\vec\upnu)
 =
 \left(
 \begin{array}{ccc}
@@ -121,7 +143,7 @@ the strain rate tensor is given by
 \end{array}
 \right)
 \]
-We will now convert it to Cartesian coordinates using the equation from \url{https://www.brown.edu/Departments/Engineering/Courses/En221/Notes/Polar_Coords/Polar_Coords.htm}:
+We will now convert it to Cartesian coordinates using the equation from \url{https://www.brown.edu/Departments/Engineering/Courses/En221/Notes/Polar_Coords/Polar_Coords.htm}, where ${\bm T}$ is a tensor:
 \[
 {\bm T}_{\tiny Cyl}=
 \left(
@@ -199,21 +221,20 @@ $\dot{\bm \varepsilon}_{\tiny Cart}=
 \dot{\bm \varepsilon}_{\tiny Cyl}$.
 
 
-
-%..........................................................
+%__________________________________________________________________
 \paragraph{From Cartesian to Spherical coordinates}
 
 We have
-\[
-{\bm T}_{\tiny Sph}=
+\begin{eqnarray}
+{\bm T}_{\tiny Sph}&=&
 \left(
 \begin{array}{ccc}
 T_{rr}       & T_{r\theta}      & T_{r\phi} \\
 T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
 T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
 \end{array}
-\right)
-=
+\right) \nn\\
+&=&
 \left(
 \begin{array}{ccc}
 \sin\theta \cos\phi & \sin\theta \sin\phi & \cos\theta \\
@@ -236,19 +257,17 @@ T_{zx} & T_{zy} & T_{zz}
 \sin\theta\sin\phi & \cos\theta\sin\phi & \cos\phi \\
 \cos\theta & -\sin\theta & 0
 \end{array}
-\right)
-\]
-
-\[
-{\bm T}_{\tiny Cart}=
+\right) 
+\nn\\
+{\bm T}_{\tiny Cart} &=&
 \left(
 \begin{array}{ccc}
 T_{xx} & T_{xy} & T_{xz} \\
 T_{yx} & T_{yy} & T_{yz} \\
 T_{zx} & T_{zy} & T_{zz} 
 \end{array}
-\right)
-=
+\right) \nn\\
+&=&
 \left(
 \begin{array}{ccc}
 \sin\theta\cos\phi & \cos\theta\cos\phi & -\sin\phi \\
@@ -272,7 +291,7 @@ T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
 -\sin\phi & \cos\phi & 0 
 \end{array}
 \right)
-\]
+\end{eqnarray}
 In our case, calculations take place in the 
 $(x,z)$-plane so we have $\phi=0$ and the equation above 
 becomes
@@ -453,15 +472,28 @@ t_r = \vec{t}\cdot \vec{n} = ({\bm \tau}\cdot \vec{n})\cdot \vec{n} = \tau_{rr}
 \]
 
 
+%_____________________________________________________________
+\paragraph{A proxy for elasto-viscous lithospheric rheology}
 
-
-Effective viscosity calculations. See Section~\ref{ss:evrheo}
+The implementation of elastic behaviour in a velocity-pressure code is not trivial and is presented in Section~\ref{ss:evrheo}.
+In the end the lithospheric viscosity will be an effective viscosity given by
 \[
 \eta_{eff} = \frac{\mu \delta t}{1+\mu/\eta \delta t} 
 \]
 This is only used if \texttt{use\_ev} is true.
 
 
+%_____________________________________________________________
+\paragraph{Comparing with \aspect}
+
+We define a simple geometry: there are 3 materials in the domain: the `crust' between 0 and 100km depth, 
+the `lithosphere' between 100 and 500km depth and the mantle down to the cmb at 1600km depth.
+Based on Steinberger \etal \cite{stwt10}, we take $\eta_{mantle}=6\cdot 10^{20}$, and $\eta_{lith}=10^{21}$
+while the crust viscosity will be varied over several orders of magnitude.
+For simplicity we take the gravitational to be constant in the model at $g=3.72$.
+
+The blob has a radius of 300km and its center is located 1000km below the north pole of the planet.
+It is therefore entirely in the mantle and its relative density with regards to the mantle is $\delta\rho=-200$.
 
  
 %--------------------------------------------------
@@ -476,10 +508,8 @@ mass, and having computed its center its generated gravity field can be added.
 The volume of such a block is $\iiint_{block} r dr d\theta dz =\iint_\triangle rdrdz \cdot \int d\theta$.  
 The first integral is carried out for each triangle and the result is stored in the {\tt arear} array. 
 
+NOT FINISHED/TESTED
+
+Look at Morgan (1965) \cite{morg65} for gravity anomalies above sinking sphere. 
 
 
-
-
-
-
-TODO: elliptic blob

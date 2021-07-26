@@ -3,47 +3,59 @@ import numpy as np
 R_outer=3.397e6
 R_inner=R_outer-1600e3
 
-np_inner=80   # max 150
-np_outer=120  # max 450
-
-np_blob=150
-R_blob=300e3
-z_blob=R_outer-1000e3
-rho_blob=-200
-eta_blob=6e20
-
-eta_core=1e25
+eta_core=1e21
 
 eta_max=1e25
 
-np_wall=60 # max 200+ ?
-nnr=np_wall
-nnt=np_outer
+nnr=100
+nnt=250
 
+R_moho=R_outer-100e3
+np_moho=nnt
 
-
+R_trans=R_outer-500e3
+np_trans=nnt
 
 rho_surf=3000 # dyn topo
 
 #-------------------------------------
-# elasto-viscous stuff
+# elasto-viscous rheology
 #-------------------------------------
+
+use_ev=False
 mu=1e11
 year=365.25*3600*24
 dt=50*year
-use_ev=False
 
 #-------------------------------------
 # viscosity model
 #-------------------------------------
+# 1: isoviscous
+# 2: steinberger data
+# 3: three layer model
 
 viscosity_model = 3
 
-eta_crust=1e24
+rho_crust=3300
+eta_crust=1e25
+
+rho_lith=3500
 eta_lith=1e21
+
+rho_mantle=3700
 eta_mantle=6e20
 
-eta0=6e20
+eta0=6e20 # isoviscous case
+
+#-------------------------------------
+# blob setup 
+#-------------------------------------
+
+np_blob=150
+R_blob=300e3
+z_blob=R_outer-1000e3
+rho_blob=rho_mantle-200
+eta_blob=6e20
 
 #-------------------------------------
 #boundary conditions at planet surface
@@ -52,7 +64,7 @@ eta0=6e20
 #1: free-slip
 #2: free top surface
 
-surface_bc=1
+surface_bc=2
 
 #-------------------------------------
 # gravity acceleration
@@ -68,8 +80,3 @@ nel_phi=20
 
 #rho_ref=3389
 
-R_moho=R_outer-49.5e3
-np_moho=0
-
-R_trans=R_outer-1111.5e3
-np_trans=0

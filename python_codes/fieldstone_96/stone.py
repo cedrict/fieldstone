@@ -325,8 +325,6 @@ start = timing.time()
 rho=np.zeros(nel,dtype=np.float64) 
 eta=np.zeros(nel,dtype=np.float64) 
 eta_nodal=np.zeros(NV,dtype=np.float64) 
-etaeff=np.zeros(nel,dtype=np.float64) 
-etaeff_nodal=np.zeros(NV,dtype=np.float64) 
 rho_nodal=np.zeros(NV,dtype=np.float64) 
 
 for iel in range(0,nel):
@@ -335,28 +333,30 @@ for iel in range(0,nel):
     r_c=np.sqrt(x_c**2+z_c**2)
     j=int((R_outer-r_c)/1000)
 
-    #rho[iel]=profile_rho[j]*1000
-    rho[iel]=0
 
     if viscosity_model==1: # isoviscous
        eta[iel]=eta0
-       etaeff[iel]=eta0
+       rho[iel]=0
     elif viscosity_model==2: # steinberger 
        if r_c>R_inner:
           eta[iel]=10**profile_eta[j]
        else:
           eta[iel]=eta_core
-       etaeff[iel]=mu*dt/(1+mu/eta[iel]*dt) 
+       #etaeff[iel]=mu*dt/(1+mu/eta[iel]*dt) 
+       rho[iel]=profile_rho[j]*1000
     else: # 3 layer model
        if r_c>R_outer-100e3:
           eta[iel]=eta_crust
+          rho[iel]=rho_crust
        elif r_c>R_outer-500e3:
           eta[iel]=eta_lith
+          rho[iel]=rho_lith
        elif r_c>R_inner:
           eta[iel]=eta_mantle
+          rho[iel]=rho_mantle
        else:
           eta[iel]=eta_core
-       etaeff[iel]=eta[iel]
+          rho[iel]=5000
 
     if x_c**2+(z_c-z_blob)**2<R_blob**2:
        rho[iel]=rho_blob
@@ -368,18 +368,17 @@ for i in range(0,NV):
     r_c=np.sqrt(xV[i]**2+zV[i]**2)
     j=int((R_outer-r_c)/1000)
 
-    #rho_nodal[i]=profile_rho[j]*1000
-    rho_nodal[i]=0
 
     if viscosity_model==1: # isoviscous
        eta_nodal[i]=eta0
-       etaeff_nodal[i]=eta0
+       rho_nodal[i]=0
     elif viscosity_model==2: # steinberger 
        if r_c>R_inner*0.999:
           eta_nodal[i]=10**profile_eta[j]
        else:
           eta_nodal[i]=eta_core
-       etaeff_nodal[i]=mu*dt/(1+mu/eta_nodal[i]*dt) 
+       #etaeff_nodal[i]=mu*dt/(1+mu/eta_nodal[i]*dt) 
+       #rho_nodal[i]=profile_rho[j]*1000
     else:
        if r_c>R_outer-100e3:
           eta_nodal[i]=eta_crust
@@ -389,7 +388,6 @@ for i in range(0,NV):
           eta_nodal[i]=eta_mantle
        else:
           eta_nodal[i]=eta_core
-       etaeff_nodal[i]=eta[iel]
 
     if xV[i]**2+(zV[i]-z_blob)**2 < 1.001*R_blob**2:
        eta_nodal[i]=eta_blob
@@ -400,7 +398,6 @@ for i in range(0,NV):
 print("     -> eta_elemental (m,M) %.6e %.6e " %(np.min(eta),np.max(eta)))
 print("     -> eta_nodal     (m,M) %.6e %.6e " %(np.min(eta_nodal),np.max(eta_nodal)))
 print("     -> rho_elemental (m,M) %.6e %.6e " %(np.min(rho),np.max(rho)))
-print("     -> rho_elemental (m,M) %.6e %.6e " %(np.min(rho_nodal),np.max(rho_nodal)))
 
 print("material layout: %.3f s" % (timing.time() - start))
 
@@ -420,10 +417,10 @@ for i in range(0, NV):
        if abs(zV[i])<R_inner:
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
     #bottom boundary  
-    if zV[i]<0.000001*R_inner:
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-       if abs(xV[i])<R_inner:
-          bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = 0.
+    #if zV[i]<0.000001*R_inner:
+    #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+    #   if abs(xV[i])<R_inner:
+    #      bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = 0.
 
     #planet surface
     if surface_node[i] and surface_bc==0: #no-slip surface
@@ -577,24 +574,15 @@ for istep in range(0,1):
             # compute dNdx & dNdy
             xq=0.0
             yq=0.0
-            etaq=0.0
-            rhoq=0.0
             for k in range(0,mV):
                 xq+=NNNV[k]*xV[iconV[k,iel]]
                 yq+=NNNV[k]*zV[iconV[k,iel]]
-                etaq+=NNNV[k]*eta_nodal[iconV[k,iel]]
-                rhoq+=NNNV[k]*rho_nodal[iconV[k,iel]]
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
 
             # compute etaq, rhoq
             etaq=eta[iel] 
-            if use_ev:
-               etaq=etaeff[iel]
-            #rhoq=rho[iel] 
-
-            #rhoq=rhoq-2950
-            #etaq=1e23
+            rhoq=rho[iel] 
 
             for i in range(0,mV):
                 b_mat[0:4, 2*i:2*i+2] = [[dNNNVdx[i],0.       ],
@@ -788,6 +776,10 @@ for istep in range(0,1):
     print("compute vrms: %.3f s" % (timing.time() - start))
 
     ######################################################################
+    # if free slip  or no slip is used at the surface then there is 
+    # a pressure nullspace which needs to be removed. 
+    # I here make sure that the pressure is zero on the surface on average
+    ######################################################################
     start = timing.time()
 
     if surface_bc==0 or surface_bc==1:
@@ -799,10 +791,9 @@ for istep in range(0,1):
               avrg_p+=p[i]
               counter+=1
 
-       p-=(avrg_p/counter) # normalising pressure at surface
+       p-=(avrg_p/counter) 
 
        #np.savetxt('p_solution_normalised.ascii',np.array([xP,yP,p,rP]).T)
-
 
     print("normalise pressure: %.3f s" % (timing.time() - start))
 
@@ -1068,10 +1059,10 @@ for istep in range(0,1):
         vtufile.write("%7e\n" % (eta[iel]))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='viscosity (effective)' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%7e\n" % (etaeff[iel]))
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='viscosity (effective)' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%7e\n" % (etaeff[iel]))
+    #vtufile.write("</DataArray>\n")
 
 
 
@@ -1215,15 +1206,15 @@ for istep in range(0,1):
         vtufile.write("%e \n" %theta_nodal[i])
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%e \n" %eta_nodal[i])
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
+    #for i in range(0,NV):
+    #    vtufile.write("%e \n" %eta_nodal[i])
+    #vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='viscosity (effective)' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%e \n" %etaeff_nodal[i])
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='viscosity (effective)' Format='ascii'> \n")
+    #for i in range(0,NV):
+    #    vtufile.write("%e \n" %etaeff_nodal[i])
+    #vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
     for i in range(0,NV):
@@ -1279,7 +1270,10 @@ for istep in range(0,1):
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='traction' Format='ascii'> \n")
     for i in range(0,NV):
-        vtufile.write("%10e %10e %10e \n" % (tau_rr_nodal[i],0.,tau_rt_nodal[i]))
+        if surface_node[i]:
+           vtufile.write("%10e %10e %10e \n" % (tau_rr_nodal[i],0.,tau_rt_nodal[i]))
+        else:
+           vtufile.write("%e %e %e \n" % (0,0,0))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='fix_u' Format='ascii'> \n")
