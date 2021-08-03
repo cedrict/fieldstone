@@ -45,9 +45,9 @@ else:
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
-nnp=nnx*nny  # number of nodes
+NV=nnx*nny  # number of nodes
 nel=nelx*nely  # number of elements, total
-Nfem=nnp*ndof  # Total number of degrees of freedom
+Nfem=NV*ndof  # Total number of degrees of freedom
 
 gx=0
 gy=9.81
@@ -72,8 +72,8 @@ print("declaring arrays")
 #################################################################
 start = time.time()
 
-x = np.empty(nnp, dtype=np.float64)  # x coordinates
-y = np.empty(nnp, dtype=np.float64)  # y coordinates
+x = np.empty(NV, dtype=np.float64)  # x coordinates
+y = np.empty(NV, dtype=np.float64)  # y coordinates
 
 counter = 0
 for j in range(0, nny):
@@ -108,7 +108,7 @@ start = time.time()
 
 bc_fix = np.zeros(Nfem, dtype=np.bool)  # boundary condition, yes/no
 bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
-for i in range(0, nnp):
+for i in range(0, NV):
     if x[i]<eps:
        bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
        #bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
@@ -139,8 +139,8 @@ dNdx  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNdy  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNdr  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNds  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-u     = np.zeros(nnp,dtype=np.float64)          # x-component velocity
-v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
+u     = np.zeros(NV,dtype=np.float64)          # x-component velocity
+v     = np.zeros(NV,dtype=np.float64)          # y-component velocity
 c_mat = np.array([[2*mu+lambdaa,lambdaa,0],[lambdaa,2*mu+lambdaa,0],[0,0,mu]],dtype=np.float64) 
 
 for iel in range(0, nel):
@@ -255,7 +255,7 @@ print("solve time: %.3f s" % (time.time() - start))
 #####################################################################
 start = time.time()
 
-u,v=np.reshape(sol,(nnp,2)).T
+u,v=np.reshape(sol,(NV,2)).T
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
@@ -385,11 +385,11 @@ if visu==1:
        vtufile=open('solution.vtu',"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
-       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnp,nel))
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
        #####
        vtufile.write("<Points> \n")
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-       for i in range(0,nnp):
+       for i in range(0,NV):
           vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
        vtufile.write("</DataArray>\n")
        vtufile.write("</Points> \n")
@@ -436,12 +436,12 @@ if visu==1:
        vtufile.write("<PointData Scalars='scalars'>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-       for i in range(0,nnp):
+       for i in range(0,NV):
            vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (th)' Format='ascii'> \n")
-       for i in range(0,nnp):
+       for i in range(0,NV):
            vtufile.write("%10e %10e %10e \n" %(0.,velocity_y(x[i],y[i],rho,gy,lambdaa,mu,Ly),0.))
        vtufile.write("</DataArray>\n")
        #--

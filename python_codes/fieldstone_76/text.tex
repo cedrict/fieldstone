@@ -12,7 +12,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 This stone is an example of $Q_2\times P_{-1}$ implementation. 
 The 2D $Q_2$ shape functions have been derived in Section~\ref{ss:q22d}
 while the $P_{-1}$ shape functions are in Section~\ref{ss:lbfq2D}.
-The $-1$ subscript indicates that the pressure field is linear, 
+The $-1$ subscript indicates that the pressure field is linear (but not bilinear!), 
 i.e. $p^h(x,y)=a+bx+cy$ inside the element, but therefore discontinuous 
 from an element to another. 
 This poses a little problem in terms of exporting it to vtu (and plotting with paraview).
@@ -41,9 +41,9 @@ on the velocity error and 2nd order convergence on the pressure order,
 unless the grid is randomised and we then loose an order on each error.
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mms1/errors_v}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mms1/errors_p}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mms1/vrms}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/mms1/errors_v}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/mms1/errors_p}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/mms1/vrms}
 \end{center}
 
 %......................................................
@@ -57,14 +57,14 @@ u(x,y) &=& x+x^2 - 2xy+x^3 - 3xy^2 + x^2y \\
 v(x,y) &=& -y-2xy+y^2 -3x^2y + y^3 - xy^2 \\
 p(x,y) &=& xy+x+y+x^3y^2 - 4/3
 \end{eqnarray}
-Note that the pressure obeys $\int_{\Omega} p \; d\Omega = 0$. The analytical 
+Note that the pressure obeys $\int_{\Omega} p \; dV = 0$. The analytical 
 velocity is prescribed on the boundary of the domain. 
 
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mms2/errors_v}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mms2/errors_p}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mms2/vrms}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/mms2/errors_v}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/mms2/errors_p}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/mms2/vrms}
 \end{center}
 
 %.......................................................
@@ -73,15 +73,12 @@ velocity is prescribed on the boundary of the domain.
 This is the Donea \& Huerta benchmark, see Section~\ref{mms1}.
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/bench3/errors_v}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/bench3/errors_p}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/bench3/vrms}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench3/errors_v}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench3/errors_p}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench3/vrms}
 \end{center}
 
 %.......................................................
-
-
-%.......................................
 \subsection*{Instantaneous sinking block}
 
 It is fully described in Section~\ref{ss:sinking_block}

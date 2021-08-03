@@ -232,8 +232,8 @@ prescribed on the lateral boundaries, while $v=0$ is prescribed at the top and b
 i.e. boundary conditions are imposed on the bubble nodes too.
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_80/results/dh/pressure}
-\includegraphics[width=7cm]{python_codes/fieldstone_80/results/dh/pressure_error}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/dh/pressure}
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/dh/pressure_error}\\
 {\captionfont  opla}
 \end{center}
 
@@ -242,8 +242,8 @@ Looking at the velocity and pressure error convergence, we see that the number o
 points does not matter much, but surprisingly the lowest number of quad points seems to yield slightly
 better results...
 \begin{center}
-\includegraphics[width=7.4cm]{python_codes/fieldstone_80/results/dh/errors}
-\includegraphics[width=7.4cm]{python_codes/fieldstone_80/results/dh/vrms}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/dh/errors}
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/dh/vrms}\\
 {\captionfont Left: Velocity and pressure error convergence as a function of resolution for 
 different quadrature rules. Right: root mean square velocity.}
 \end{center}
@@ -286,16 +286,16 @@ is set to zero. No slip are imposed on all three other boundaries.
 The pressure field does not showcase any checkerboard mode. 
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc/vel}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc/p}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc/u_dofs}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc/v_dofs}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/ldc/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/ldc/p}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/ldc/u_dofs}
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/ldc/v_dofs}
 {\captionfont 64x64}
 \end{center}
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc/p_top}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc/vrms}
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/ldc/p_top}
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/ldc/vrms}
 \end{center}
 
 %---------------------------------------------------------------
@@ -304,14 +304,14 @@ The pressure field does not showcase any checkerboard mode.
 The velocity at the top is $u(x,y)=16x^2(1-x)^2$. 
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc_reg/vel}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/ldc_reg/p}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/ldc_reg/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/ldc_reg/p}\\
 {\captionfont Resolution 96x96}
 \end{center}
 
 The pressure field converges to a unique solution and no visible checkerboard signal.
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_80/results/ldc_reg/p_top.pdf}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_80/results/ldc_reg/p_top.pdf}\\
 {\captionfont Elemental pressure at the top of the domain.}
 \end{center}
 
@@ -323,14 +323,14 @@ The pressure field converges to a unique solution and no visible checkerboard si
 This benchmark is defined in Section~\ref{ss:mms2}.
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/db2d/vel}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/db2d/p}
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/db2d/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/db2d/p}
 \end{center}
 
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/db2d/errors}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_80/results/db2d/vrms}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/db2d/errors}
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/db2d/vrms}\\
 {\captionfont Left: Velocity and pressure error convergence; Right: root mean square velocity
 as a function of mesh size.}
 \end{center}
@@ -352,7 +352,7 @@ Viscosity is constant in the domain.
 \end{center}
 
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_80/results/sphere/vrms}\\
+\includegraphics[width=10cm]{python_codes/fieldstone_80/results/sphere/vrms}\\
 {\captionfont Root mean square velocity for $\delta \rho=0.001$, for both full density and reduced 
 density models.}
 \end{center}
@@ -385,21 +385,22 @@ What is surprising is the fact that L2-norm pressure error is best for nq=2 but 
 are best for $nq>2$.
 
 
-
+\newpage
 %---------------------------------------------------------------
 \subsection*{SolCx}
 
 See Stone 5 and Section~\ref{sec:geobench}.
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_80/results/solcx/vrms}
-\includegraphics[width=7cm]{python_codes/fieldstone_80/results/solcx/errors}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/solcx/vrms}
+\includegraphics[width=8cm]{python_codes/fieldstone_80/results/solcx/errors}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_80/results/solcx/stats_u}
 \includegraphics[width=5cm]{python_codes/fieldstone_80/results/solcx/stats_v}
 \includegraphics[width=5cm]{python_codes/fieldstone_80/results/solcx/stats_p}\\
 \end{center}
 
 
+\newpage
 %---------------------------------------------------------------
 \subsection*{Sinking block}
 

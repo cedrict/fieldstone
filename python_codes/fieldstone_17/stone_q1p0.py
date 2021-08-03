@@ -124,11 +124,11 @@ nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
 nnz=nelz+1  # number of elements, z direction
 
-nnp=nnx*nny*nnz  # number of nodes
+NV=nnx*nny*nnz  # number of nodes
 
 nel=nelx*nely*nelz  # number of elements, total
 
-NfemV=nnp*ndofV   # number of velocity dofs
+NfemV=NV*ndofV   # number of velocity dofs
 NfemP=nel*ndofP   # number of pressure dofs
 Nfem=NfemV+NfemP # total number of dofs
 
@@ -143,9 +143,9 @@ beta=0
 ######################################################################
 start = time.time()
 
-x = np.empty(nnp, dtype=np.float64)  # x coordinates
-y = np.empty(nnp, dtype=np.float64)  # y coordinates
-z = np.empty(nnp, dtype=np.float64)  # z coordinates
+x = np.empty(NV, dtype=np.float64)  # x coordinates
+y = np.empty(NV, dtype=np.float64)  # y coordinates
+z = np.empty(NV, dtype=np.float64)  # z coordinates
 
 counter=0
 for i in range(0, nnx):
@@ -188,7 +188,7 @@ start = time.time()
 bc_fix=np.zeros(Nfem,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=float)  # boundary condition, value
 
-for i in range(0,nnp):
+for i in range(0,NV):
     if x[i]<eps:
        bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(x[i],y[i],z[i])
        bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= vth(x[i],y[i],z[i])
@@ -234,9 +234,9 @@ dNdz  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNdr  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNds  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNdt  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-u     = np.zeros(nnp,dtype=np.float64)          # x-component velocity
-v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
-w     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
+u     = np.zeros(NV,dtype=np.float64)          # x-component velocity
+v     = np.zeros(NV,dtype=np.float64)          # y-component velocity
+w     = np.zeros(NV,dtype=np.float64)          # y-component velocity
 p     = np.zeros(nel,dtype=np.float64)          # y-component velocity
 c_mat = np.zeros((6,6),dtype=np.float64) 
 
@@ -416,7 +416,7 @@ print("solve time: %.3f s" % (time.time() - start))
 ######################################################################
 start = time.time()
 
-u,v,w=np.reshape(sol[0:NfemV],(nnp,3)).T
+u,v,w=np.reshape(sol[0:NfemV],(NV,3)).T
 p=sol[NfemV:Nfem]
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
@@ -548,11 +548,11 @@ if visu==1:
    vtufile=open("solution.vtu","w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
    vtufile.write("<UnstructuredGrid> \n")
-   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnp,nel))
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
    #####
    vtufile.write("<Points> \n")
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-   for i in range(0,nnp):
+   for i in range(0,NV):
        vtufile.write("%10f %10f %10f \n" %(x[i],y[i],z[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("</Points> \n")
@@ -604,12 +604,12 @@ if visu==1:
    vtufile.write("<PointData Scalars='scalars'>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-   for i in range(0,nnp):
+   for i in range(0,NV):
        vtufile.write("%10f %10f %10f \n" %(u[i],v[i],w[i]))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (A.S.)' Format='ascii'> \n")
-   for i in range(0,nnp):
+   for i in range(0,NV):
        vtufile.write("%10f %10f %10f \n" %(uth(x[i],y[i],z[i]), vth(x[i],y[i],z[i]), wth(x[i],y[i],z[i]) ))
    vtufile.write("</DataArray>\n")
    #--

@@ -9,7 +9,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 
 In what follows we will be re-doing the numerical experiments presented in 
-Zhong et al. \cite{zhgh93}.
+Zhong et al. (1993) \cite{zhgh93}.
 
 The first benchmark showcases a unit square domain with free slip 
 boundary conditions prescribed on all sides.
@@ -28,7 +28,7 @@ and $y_0$ represents the location of the buoyancy strip.
 We set $g_y=-1$ and prescribe $\rho(x,y)=\rho_0 \alpha \cos(kx) \delta(y-y_0)$ on the nodes
 of the mesh.
 
-One can prove (\cite{zhgh93} and refs. therein) that 
+One can prove (Zhong \etal \cite{zhgh93} and refs. therein) that 
 there is an analytic solution for the surface stress $\sigma_{zz}$
 \footnote{Note that in the paper the authors use $\rho \alpha g$ which does not have the 
 dimensions of a stress}
@@ -52,7 +52,7 @@ Under these assumptions the density field for $y_0=59/64$ is:
 We can recover the stress at the boundary by computing 
 the $yy$ component of the stress tensor in the top row of elements: 
 \[
-\sigma_{yy} = -p + 2 \eta \dot{\epsilon}_{yy}
+\sigma_{yy} = -p + 2 \eta \dot{\varepsilon}_{yy}(\vec\upnu)
 \]
 Note that pressure is by definition elemental, and that strain rate
 components are then also computed in the middle of each element.
@@ -71,8 +71,8 @@ by means of the C$\rightarrow$N algorithm or a least square algorithm (LS).
 \includegraphics[width=7cm]{python_codes/fieldstone_27/results/63_64/sigmazz_error.pdf}
 \end{center}
 
-The consistent boundary flux (CBF) method allows us to compute traction vectors ${\bm t}={\bm \sigma}\cdot{\bm n}$
-on the boundary of the domain. On the top boundary, ${\bm n}=(0,1)$ so that ${\bm t}=(\sigma_{xy}, \sigma_{yy})^T$ and 
+The consistent boundary flux (CBF) method allows us to compute traction vectors $\vec{t}={\bm \sigma}\cdot\vec{n}$
+on the boundary of the domain. On the top boundary, $\vec{n}=(0,1)$ so that $\vec{t}=(\sigma_{xy}, \sigma_{yy})^T$ and 
 $t_y$ is the quantity we need to consider and compare to other results.
 
 In the following table are shown the results presented in \cite{zhgh93} alongside the results obtained with Fieldstone:
@@ -131,7 +131,7 @@ in the nullspace of $\G$ the pressure normalisation constant does not play a rol
 
 As shown in Appendix~\ref{app:mm}, the $Q_1$ mass matrix for the reference cell/element is given by:
 \[
-{\bm M}^e=
+{\M}^e=
 \frac{1}{3}
 \left(
 \begin{array}{cc}
@@ -145,7 +145,7 @@ quadrature method to arrive at the mass matrix, and in this case the simple trap
 integration rule variant thereof (see Section~\ref{sec:quad1D}).
 We then have:
 \begin{equation}
-{\bm M}_e=\int_{\Omega_e} \vec{N}^T \vec{N} dV
+{\M}_e=\int_{\Omega_e} \vec{N}^T \vec{N} dV
 = \int_{-1}^{+1} \vec{N}^T \vec{N} dr
 \end{equation}
 on the reference element, with 
@@ -172,7 +172,7 @@ We know compute the following integrals with the trapezoidal rule:
 \end{eqnarray}
 and finally 
 \[
-{\bm M}^e=
+{\M}^e=
 \left(
 \begin{array}{cc}
 1 & 0 \\ 0 & 1

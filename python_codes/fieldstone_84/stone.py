@@ -409,7 +409,7 @@ z_plane=Lz+10
 
 #--------------------------------------
 compute_gravity_on_line=False
-nnp_line=101
+npts_line=101
 x_begin=xc_object
 y_begin=yc_object
 z_begin=zc_object
@@ -417,7 +417,7 @@ x_end=1.11e3
 y_end=2.22e3
 z_end=5.55e3
 if buried_object=='earth':
-   nnp_line=123
+   npts_line=123
    x_end=4*outer_radius_earth
    y_end=11e3
    z_end=7e3
@@ -436,7 +436,7 @@ if buried_object == 'cube':
 #--------------------------------------
 compute_gravity_on_spiral=True
 if buried_object=='earth':
-   nnp_spiral=500
+   npts_spiral=500
    radius_spiral=outer_radius_earth+250e3
 
 
@@ -699,16 +699,16 @@ if Massth != 0:
 
 if compute_gravity_on_plane:
 
-   nnp_m=nnx_m*nny_m
+   npts_m=nnx_m*nny_m
    nelx_m=nnx_m-1
    nely_m=nny_m-1
    nel_m=nelx_m*nely_m
    Lx_m=Lx
    Ly_m=Ly
 
-   x_m = np.zeros(nnp_m,dtype=np.float64)  # x coordinates
-   y_m = np.zeros(nnp_m,dtype=np.float64)  # y coordinates
-   z_m = np.zeros(nnp_m,dtype=np.float64)  # y coordinates
+   x_m = np.zeros(npts_m,dtype=np.float64)  # x coordinates
+   y_m = np.zeros(npts_m,dtype=np.float64)  # y coordinates
+   z_m = np.zeros(npts_m,dtype=np.float64)  # y coordinates
 
    counter = 0
    for j in range(0, nny_m):
@@ -731,22 +731,22 @@ if compute_gravity_on_plane:
    meas_point = np.zeros(3,dtype=np.float64)
    ll_corner = np.zeros(3,dtype=np.float64)
     
-   U = np.zeros(nnp_m,dtype=np.float64)
-   gx = np.zeros(nnp_m,dtype=np.float64)
-   gy = np.zeros(nnp_m,dtype=np.float64)
-   gz = np.zeros(nnp_m,dtype=np.float64)
-   Txx = np.zeros(nnp_m,dtype=np.float64)
-   Tyy = np.zeros(nnp_m,dtype=np.float64)
-   Tzz = np.zeros(nnp_m,dtype=np.float64)
-   Txy = np.zeros(nnp_m,dtype=np.float64)
-   Txz = np.zeros(nnp_m,dtype=np.float64)
-   Tyz = np.zeros(nnp_m,dtype=np.float64)
+   U = np.zeros(npts_m,dtype=np.float64)
+   gx = np.zeros(npts_m,dtype=np.float64)
+   gy = np.zeros(npts_m,dtype=np.float64)
+   gz = np.zeros(npts_m,dtype=np.float64)
+   Txx = np.zeros(npts_m,dtype=np.float64)
+   Tyy = np.zeros(npts_m,dtype=np.float64)
+   Tzz = np.zeros(npts_m,dtype=np.float64)
+   Txy = np.zeros(npts_m,dtype=np.float64)
+   Txz = np.zeros(npts_m,dtype=np.float64)
+   Tyz = np.zeros(npts_m,dtype=np.float64)
 
    start = time.time()
 
-   for i in range(0,nnp_m):
+   for i in range(0,npts_m):
        if i%10==0:
-          print('point=',i,'out of ',nnp_m)
+          print('point=',i,'out of ',npts_m)
        meas_point[0]=x_m[i]
        meas_point[1]=y_m[i]
        meas_point[2]=z_m[i]
@@ -777,56 +777,56 @@ if compute_gravity_on_plane:
    vtufile=open(filename,"w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
    vtufile.write("<UnstructuredGrid> \n")
-   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnp_m,nel_m))
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(npts_m,nel_m))
    #####
    vtufile.write("<Points> \n")
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-   for i in range(0,nnp_m):
+   for i in range(0,npts_m):
        vtufile.write("%10e %10e %10e \n" %(x_m[i],y_m[i],z_m[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("</Points> \n")
    #####
    vtufile.write("<PointData Scalars='scalars'>\n")
    vtufile.write("<DataArray type='Float32' Name='U' Format='ascii'> \n")
-   for i in range(0,nnp_m):
+   for i in range(0,npts_m):
        vtufile.write("%10e \n" %(U[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Float32' Name='Txx' Format='ascii'> \n")
-   for i in range(0,nnp_m):
+   for i in range(0,npts_m):
        vtufile.write("%10e \n" %(Txx[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Float32' Name='Tyy' Format='ascii'> \n")
-   for i in range(0,nnp_m):
+   for i in range(0,npts_m):
        vtufile.write("%10e \n" %(Tyy[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Float32' Name='Tzz' Format='ascii'> \n")
-   for i in range(0,nnp_m):
+   for i in range(0,npts_m):
        vtufile.write("%10e \n" %(Tzz[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Float32' Name='Txy' Format='ascii'> \n")
-   for i in range(0,nnp_m):
+   for i in range(0,npts_m):
        vtufile.write("%10e \n" %(Txy[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Float32' Name='Txz' Format='ascii'> \n")
-   for i in range(0,nnp_m):
+   for i in range(0,npts_m):
        vtufile.write("%10e \n" %(Txz[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Float32' Name='Tyz' Format='ascii'> \n")
-   for i in range(0,nnp_m):
+   for i in range(0,npts_m):
        vtufile.write("%10e \n" %(Tyz[i]))
    vtufile.write("</DataArray>\n")
 
    vtufile.write("<DataArray type='Float32' Name='Hor. grad. magn.' Format='ascii'> \n")
-   for i in range(0,nnp_m):
+   for i in range(0,npts_m):
        vtufile.write("%10e \n" %(np.sqrt(Txz[i]**2+Tyz[i]**2)))
    vtufile.write("</DataArray>\n")
 
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='gravity vector g' Format='ascii'> \n")
-   for i in range(0,nnp_m):
+   for i in range(0,npts_m):
        vtufile.write("%10e %10e %10e \n" %(gx[i],gy[i],gz[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Float32' Name='|g|' Format='ascii'> \n")
-   for i in range(0,nnp_m):
+   for i in range(0,npts_m):
        vtufile.write("%10e \n" %(gnorm[i]))
    vtufile.write("</DataArray>\n")
    #--
@@ -862,36 +862,36 @@ if compute_gravity_on_plane:
 
 if compute_gravity_on_line:
 
-   x_line = np.zeros(nnp_line,dtype=np.float64)  
-   y_line = np.zeros(nnp_line,dtype=np.float64)  
-   z_line = np.zeros(nnp_line,dtype=np.float64)  
-   r_line = np.zeros(nnp_line,dtype=np.float64)
+   x_line = np.zeros(npts_line,dtype=np.float64)  
+   y_line = np.zeros(npts_line,dtype=np.float64)  
+   z_line = np.zeros(npts_line,dtype=np.float64)  
+   r_line = np.zeros(npts_line,dtype=np.float64)
 
    meas_point = np.zeros(3,dtype=np.float64)
    ll_corner = np.zeros(3,dtype=np.float64)
     
-   U = np.zeros(nnp_line,dtype=np.float64)
-   gx = np.zeros(nnp_line,dtype=np.float64)
-   gy = np.zeros(nnp_line,dtype=np.float64)
-   gz = np.zeros(nnp_line,dtype=np.float64)
-   Txx = np.zeros(nnp_line,dtype=np.float64)
-   Tyy = np.zeros(nnp_line,dtype=np.float64)
-   Tzz = np.zeros(nnp_line,dtype=np.float64)
-   Txy = np.zeros(nnp_line,dtype=np.float64)
-   Txz = np.zeros(nnp_line,dtype=np.float64)
-   Tyz = np.zeros(nnp_line,dtype=np.float64)
+   U = np.zeros(npts_line,dtype=np.float64)
+   gx = np.zeros(npts_line,dtype=np.float64)
+   gy = np.zeros(npts_line,dtype=np.float64)
+   gz = np.zeros(npts_line,dtype=np.float64)
+   Txx = np.zeros(npts_line,dtype=np.float64)
+   Tyy = np.zeros(npts_line,dtype=np.float64)
+   Tzz = np.zeros(npts_line,dtype=np.float64)
+   Txy = np.zeros(npts_line,dtype=np.float64)
+   Txz = np.zeros(npts_line,dtype=np.float64)
+   Tyz = np.zeros(npts_line,dtype=np.float64)
 
    start = time.time()
 
-   for i in range(0,nnp_line):
+   for i in range(0,npts_line):
        if i%10==0:
-          print('point=',i,'out of ',nnp_line)
-       meas_point[0]=x_begin+(x_end-x_begin)/(nnp_line-1)*i
-       meas_point[1]=y_begin+(y_end-y_begin)/(nnp_line-1)*i
-       meas_point[2]=z_begin+(z_end-z_begin)/(nnp_line-1)*i
-       x_line[i]=x_begin+(x_end-x_begin)/(nnp_line-1)*i
-       y_line[i]=y_begin+(y_end-y_begin)/(nnp_line-1)*i
-       z_line[i]=z_begin+(z_end-z_begin)/(nnp_line-1)*i
+          print('point=',i,'out of ',npts_line)
+       meas_point[0]=x_begin+(x_end-x_begin)/(npts_line-1)*i
+       meas_point[1]=y_begin+(y_end-y_begin)/(npts_line-1)*i
+       meas_point[2]=z_begin+(z_end-z_begin)/(npts_line-1)*i
+       x_line[i]=x_begin+(x_end-x_begin)/(npts_line-1)*i
+       y_line[i]=y_begin+(y_end-y_begin)/(npts_line-1)*i
+       z_line[i]=z_begin+(z_end-z_begin)/(npts_line-1)*i
        for iel in range(0,nel):
           ll_corner[0]=x[icon[0,iel]]
           ll_corner[1]=y[icon[0,iel]]
@@ -913,23 +913,23 @@ if compute_gravity_on_line:
 
    print("compute gravity on line: %.3f s" % (time.time() - start))
 
-   for i in range(0,nnp_line):
+   for i in range(0,npts_line):
        r_line[i]=np.sqrt((x_line[i]-xc_object)**2+(y_line[i]-yc_object)**2+(z_line[i]-zc_object)**2)
 
    gnorm=np.sqrt(gx**2+gy**2+gz**2)
 
    # compute analytical solution 
-   U_th = np.zeros(nnp_line,dtype=np.float64)
-   gnorm_th = np.zeros(nnp_line,dtype=np.float64)
-   Txx_th = np.zeros(nnp_line,dtype=np.float64)
-   Tyy_th = np.zeros(nnp_line,dtype=np.float64)
-   Tzz_th = np.zeros(nnp_line,dtype=np.float64)
-   Txy_th = np.zeros(nnp_line,dtype=np.float64)
-   Txz_th = np.zeros(nnp_line,dtype=np.float64)
-   Tyz_th = np.zeros(nnp_line,dtype=np.float64)
+   U_th = np.zeros(npts_line,dtype=np.float64)
+   gnorm_th = np.zeros(npts_line,dtype=np.float64)
+   Txx_th = np.zeros(npts_line,dtype=np.float64)
+   Tyy_th = np.zeros(npts_line,dtype=np.float64)
+   Tzz_th = np.zeros(npts_line,dtype=np.float64)
+   Txy_th = np.zeros(npts_line,dtype=np.float64)
+   Txz_th = np.zeros(npts_line,dtype=np.float64)
+   Tyz_th = np.zeros(npts_line,dtype=np.float64)
 
    if buried_object=='sphere':
-      for i in range(0,nnp_line):
+      for i in range(0,npts_line):
           if r_line[i]>radius_sphere:
              gnorm_th[i]=G*Massth/r_line[i]**2
              U_th[i]=-G*Massth/r_line[i]
@@ -947,10 +947,10 @@ if compute_gravity_on_line:
       ll_corner[0]=xc_object-cube_size/2
       ll_corner[1]=yc_object-cube_size/2
       ll_corner[2]=zc_object-cube_size/2
-      for i in range(0,nnp_line):
-          meas_point[0]=x_begin+(x_end-x_begin)/(nnp_line-1)*i
-          meas_point[1]=y_begin+(y_end-y_begin)/(nnp_line-1)*i
-          meas_point[2]=z_begin+(z_end-z_begin)/(nnp_line-1)*i
+      for i in range(0,npts_line):
+          meas_point[0]=x_begin+(x_end-x_begin)/(npts_line-1)*i
+          meas_point[1]=y_begin+(y_end-y_begin)/(npts_line-1)*i
+          meas_point[2]=z_begin+(z_end-z_begin)/(npts_line-1)*i
           a,b,c=grav_calc(ll_corner,meas_point,'prism',rho_cube,cube_size,cube_size,cube_size)
           U_th[i]=a
           gnorm_th[i]=np.sqrt(b[0]**2+b[1]**2+b[2]**2)
@@ -967,26 +967,26 @@ if compute_gravity_on_line:
    vtufile=open("line.vtu","w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
    vtufile.write("<UnstructuredGrid> \n")
-   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnp_line,nnp_line-1))
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(npts_line,npts_line-1))
    #####
    vtufile.write("<Points> \n")
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-   for i in range(0,nnp_line):
+   for i in range(0,npts_line):
        vtufile.write("%10f %10f %10f \n" %(x_line[i],y_line[i],z_line[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("</Points> \n")
    #####
    vtufile.write("<Cells>\n")
    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-   for iel in range (0,nnp_line-1):
+   for iel in range (0,npts_line-1):
        vtufile.write("%d %d\n" %(iel,iel+1))
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-   for iel in range (0,nnp_line-1):
+   for iel in range (0,npts_line-1):
        vtufile.write("%d \n" %((iel+1)*2))
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-   for iel in range (0,nnp_line-1):
+   for iel in range (0,npts_line-1):
        vtufile.write("%d \n" %3)
    vtufile.write("</DataArray>\n")
    vtufile.write("</Cells>\n")
@@ -1066,22 +1066,22 @@ if compute_gravity_at_single_point:
 
 if compute_gravity_on_spiral:
 
-   x_spiral = np.zeros(nnp_spiral,dtype=np.float64)  
-   y_spiral = np.zeros(nnp_spiral,dtype=np.float64)  
-   z_spiral = np.zeros(nnp_spiral,dtype=np.float64)  
-   r_spiral = np.zeros(nnp_spiral,dtype=np.float64)  
-   theta_spiral = np.zeros(nnp_spiral,dtype=np.float64)  
-   phi_spiral = np.zeros(nnp_spiral,dtype=np.float64)  
-   gx = np.zeros(nnp_spiral,dtype=np.float64)
-   gy = np.zeros(nnp_spiral,dtype=np.float64)
-   gz = np.zeros(nnp_spiral,dtype=np.float64)
-   U = np.zeros(nnp_spiral,dtype=np.float64)
-   Txx = np.zeros(nnp_spiral,dtype=np.float64)
-   Tyy = np.zeros(nnp_spiral,dtype=np.float64)
-   Tzz = np.zeros(nnp_spiral,dtype=np.float64)
-   Txy = np.zeros(nnp_spiral,dtype=np.float64)
-   Txz = np.zeros(nnp_spiral,dtype=np.float64)
-   Tyz = np.zeros(nnp_spiral,dtype=np.float64)
+   x_spiral = np.zeros(npts_spiral,dtype=np.float64)  
+   y_spiral = np.zeros(npts_spiral,dtype=np.float64)  
+   z_spiral = np.zeros(npts_spiral,dtype=np.float64)  
+   r_spiral = np.zeros(npts_spiral,dtype=np.float64)  
+   theta_spiral = np.zeros(npts_spiral,dtype=np.float64)  
+   phi_spiral = np.zeros(npts_spiral,dtype=np.float64)  
+   gx = np.zeros(npts_spiral,dtype=np.float64)
+   gy = np.zeros(npts_spiral,dtype=np.float64)
+   gz = np.zeros(npts_spiral,dtype=np.float64)
+   U = np.zeros(npts_spiral,dtype=np.float64)
+   Txx = np.zeros(npts_spiral,dtype=np.float64)
+   Tyy = np.zeros(npts_spiral,dtype=np.float64)
+   Tzz = np.zeros(npts_spiral,dtype=np.float64)
+   Txy = np.zeros(npts_spiral,dtype=np.float64)
+   Txz = np.zeros(npts_spiral,dtype=np.float64)
+   Tyz = np.zeros(npts_spiral,dtype=np.float64)
 
    meas_point = np.zeros(3,dtype=np.float64)
    ll_corner = np.zeros(3,dtype=np.float64)
@@ -1089,9 +1089,9 @@ if compute_gravity_on_spiral:
    golden_ratio = (1. + np.sqrt(5.))/2.
    golden_angle = 2. * np.pi * (1. - 1./golden_ratio)
 
-   for i in range(0,nnp_spiral):
+   for i in range(0,npts_spiral):
        r_spiral[i] = radius_spiral
-       theta_spiral[i] = np.arccos(1. - 2. * i / (nnp_spiral - 1.))
+       theta_spiral[i] = np.arccos(1. - 2. * i / (npts_spiral - 1.))
        phi_spiral[i] = np.fmod((i*golden_angle), 2.*np.pi)
 
    x_spiral[:]=r_spiral[:]*np.sin(theta_spiral[:])*np.cos(phi_spiral[:])+xc_object
@@ -1100,9 +1100,9 @@ if compute_gravity_on_spiral:
 
    start = time.time()
 
-   for i in range(0,nnp_spiral):
+   for i in range(0,npts_spiral):
        if i%10==0:
-          print('point=',i,'out of ',nnp_spiral)
+          print('point=',i,'out of ',npts_spiral)
        meas_point[0]=x_spiral[i]
        meas_point[1]=y_spiral[i]
        meas_point[2]=z_spiral[i]
@@ -1130,22 +1130,22 @@ if compute_gravity_on_spiral:
    vtufile=open("spiral.vtu","w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
    vtufile.write("<UnstructuredGrid> \n")
-   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnp_spiral,nnp_spiral))
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(npts_spiral,npts_spiral))
    #####
    vtufile.write("<Points> \n")
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-   for i in range(0,nnp_spiral):
+   for i in range(0,npts_spiral):
        vtufile.write("%10f %10f %10f \n" %(x_spiral[i],y_spiral[i],z_spiral[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("</Points> \n")
    #####
    vtufile.write("<PointData>\n")
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='gravity vector g' Format='ascii'> \n")
-   for i in range(0,nnp_spiral):
+   for i in range(0,npts_spiral):
        vtufile.write("%10e %10e %10e \n" %(gx[i],gy[i],gz[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Float32' Name='|g|' Format='ascii'> \n")
-   for i in range(0,nnp_spiral):
+   for i in range(0,npts_spiral):
        vtufile.write("%10e \n" %(gnorm[i]))
    vtufile.write("</DataArray>\n")
    #--
@@ -1153,15 +1153,15 @@ if compute_gravity_on_spiral:
    #####
    vtufile.write("<Cells>\n")
    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-   for i in range (0,nnp_spiral):
+   for i in range (0,npts_spiral):
        vtufile.write("%d \n" % i)
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-   for i in range (0,nnp_spiral):
+   for i in range (0,npts_spiral):
        vtufile.write("%d \n" %(i+1))
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-   for iel in range (0,nnp_spiral):
+   for iel in range (0,npts_spiral):
        vtufile.write("%d \n" % 1)
    vtufile.write("</DataArray>\n")
    vtufile.write("</Cells>\n")
@@ -1172,17 +1172,17 @@ if compute_gravity_on_spiral:
    vtufile.close()
 
    # compute analytical solution 
-   U_th = np.zeros(nnp_spiral,dtype=np.float64)
-   gnorm_th = np.zeros(nnp_spiral,dtype=np.float64)
-   Txx_th = np.zeros(nnp_spiral,dtype=np.float64)
-   Tyy_th = np.zeros(nnp_spiral,dtype=np.float64)
-   Tzz_th = np.zeros(nnp_spiral,dtype=np.float64)
-   Txy_th = np.zeros(nnp_spiral,dtype=np.float64)
-   Txz_th = np.zeros(nnp_spiral,dtype=np.float64)
-   Tyz_th = np.zeros(nnp_spiral,dtype=np.float64)
+   U_th = np.zeros(npts_spiral,dtype=np.float64)
+   gnorm_th = np.zeros(npts_spiral,dtype=np.float64)
+   Txx_th = np.zeros(npts_spiral,dtype=np.float64)
+   Tyy_th = np.zeros(npts_spiral,dtype=np.float64)
+   Tzz_th = np.zeros(npts_spiral,dtype=np.float64)
+   Txy_th = np.zeros(npts_spiral,dtype=np.float64)
+   Txz_th = np.zeros(npts_spiral,dtype=np.float64)
+   Tyz_th = np.zeros(npts_spiral,dtype=np.float64)
 
    if buried_object=='sphere':
-      for i in range(0,nnp_spiral):
+      for i in range(0,npts_spiral):
           if r_spiral[i]>radius_sphere:
              gnorm_th[i]=G*Massth/r_spiral[i]**2
              U_th[i]=-G*Massth/r_spiral[i]
