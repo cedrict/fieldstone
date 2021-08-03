@@ -3,8 +3,9 @@
 \index{general}{Strain Rate}
 \index{general}{Spin Tensor}
 
-The velocity gradient is given in Cartesian coordinates by:
+The velocity gradient ${\bm L}$ is given in Cartesian coordinates by:
 \begin{equation}
+{\bm L}(\vec\upnu)=
 \vec\nabla\vec\upnu = 
 \left(
 \begin{array}{ccc}
@@ -18,7 +19,7 @@ It can be decomposed into its symmetric and skew-symmetric parts according to:
 \begin{equation}
 \vec\nabla\vec\upnu = \vec\nabla^s\vec\upnu + \vec\nabla^w\vec\upnu = \dot{\bm \varepsilon}(\vec \upnu) +  \dot{\bm \omega}(\vec \upnu)
 \end{equation}
-The symmetric part is called the strain rate (or rate of deformation):
+The symmetric part is called the strain rate (or rate of deformation)\footnote{Note that often the dot is ommitted and for example the \aspect manual uses the ${\bm \varepsilon}$ notation.}:
 \begin{equation}
 \dot{\bm \varepsilon}(\vec \upnu) = \frac{1}{2}\left( \vec\nabla\vec\upnu + (\vec\nabla\vec\upnu)^T \right)
 \end{equation}
@@ -28,12 +29,8 @@ The skew-symmetric tensor is called spin tensor (or vorticity tensor):
 \end{equation}
 
 \begin{remark}
-The velocity gradient tensor is sometimes denoted by ${\bm L}=\vec\nabla\vec\upnu$.
-\end{remark}
-
-\begin{remark}
 In the mathematical literature a different notation for the strain rate tensor is often used, i.e. 
-$D(\vec \upnu)$, such as for instance in Fullsack (1995) \cite{full95}.
+${\bm D}(\vec \upnu)$, such as for instance in Fullsack (1995) \cite{full95}.
 \end{remark}
 
 %.............................................
@@ -43,37 +40,39 @@ $D(\vec \upnu)$, such as for instance in Fullsack (1995) \cite{full95}.
 The relationship between velocity-related stresses and
 velocity derivatives is such that the total stress tensor has the form \cite{berc09}
 \begin{equation}
-{\bm \sigma} = -p {\bm 1} + {\bm A}:\dot{\bm \varepsilon}
+{\bm \sigma} = -p {\bm 1} + {\bm A}:\dot{\bm \varepsilon}(\vec\upnu)
 \end{equation}
 where $p$ is the thermodynamic pressure which is a function of the density $\rho$ and the temperature $T$ (an equation of state is then needed)
 and ${\bm A}$ is the fourth-rank stiffness tensor.
 
 Since both the stress and the strain tensors are symmetric and for isotropic 
-fluids we have \cite{malvern}
+fluids we have (see Malvern \cite{malvern})
 \begin{equation}
-{\bm A}:\dot{\bm \varepsilon} = \lambda (\vec\nabla\cdot\vec\upnu) {\bm 1} + 2\eta \dot{\bm \varepsilon}
+{\bm A}:\dot{\bm \varepsilon}(\vec\upnu) 
+= \lambda (\vec\nabla\cdot\vec\upnu) {\bm 1} + 2\eta \dot{\bm \varepsilon}(\vec\upnu)
 \end{equation}
 where $\lambda$ is the bulk viscosity and $\eta$ is the dynamic viscosity\footnote{also sometimes called shear viscosity}. 
 The stress tensor is then 
 \begin{equation}
-{\bm \sigma} = (-p  + \lambda (\vec\nabla\cdot\vec\upnu)) {\bm 1} + 2\eta \dot{\bm \varepsilon}
+{\bm \sigma} = (-p  + \lambda (\vec\nabla\cdot\vec\upnu)) {\bm 1} + 2\eta \dot{\bm \varepsilon}(\vec\upnu)
 \end{equation}
 By writing 
 \[
-\dot{\bm \varepsilon} = \frac{1}{3}{\text tr}(\dot{\bm \varepsilon}) {\bm 1} + \dot{\bm \varepsilon}^d =
- \frac{1}{3}(\vec\nabla\cdot\vec\upnu) {\bm 1} + \dot{\bm \varepsilon}^d
+\dot{\bm \varepsilon}(\vec\upnu) 
+= \frac{1}{3}{\rm tr}(\dot{\bm \varepsilon}(\vec\upnu)) {\bm 1} + \dot{\bm \varepsilon}^d(\vec\upnu) =
+ \frac{1}{3}(\vec\nabla\cdot\vec\upnu) {\bm 1} + \dot{\bm \varepsilon}^d (\vec\upnu)
 \]
-where $\dot{\bm \varepsilon}^d$ is the deviatoric strain rate tensor and 
+where $\dot{\bm \varepsilon}^d(\vec\upnu)$ is the deviatoric strain rate tensor and 
 (in Cartesian coordinates)
 \begin{equation}
 \vec\nabla\cdot\vec\upnu = 
 \text{div} (\vec\upnu ) =
-{\text tr}(\dot{\bm \varepsilon}) =
+{\rm tr}(\dot{\bm \varepsilon}(\vec\upnu)) =
 \frac{\partial u}{\partial x}+ 
 \frac{\partial v}{\partial y}+ 
 \frac{\partial w}{\partial z} 
 \end{equation} 
-where $\text{tr}$ is the trace operator, we arrive at
+where ${\rm tr}$ is the trace operator, we arrive at
 \begin{eqnarray}
 {\bm \sigma} 
 &=& (-p+\lambda(\vec\nabla\cdot\vec\upnu)) {\bm 1} + 2\eta \left[ \frac{1}{3}(\vec\nabla\cdot\vec\upnu) {\bm 1} + \dot{\bm \varepsilon}^d \right] \\
@@ -95,18 +94,20 @@ This difference is usually neglected (and it is safe to do so, see \cite[section
 by explicitly assuming $\zeta=0$ (also called the Stokes assumption \cite[p256]{scto01}), 
 so that one can then refer to pressure as a single well-defined value.
 Note that in the case of an incompressible Newtonian Fluid, 
-the strain rate tensor is deviatoric $({\text tr}(\dot{\bm \varepsilon}) = \text{div}(\vec\upnu) =0)$ and the above considerations vanish.
+the strain rate tensor is deviatoric $({\text tr}(\dot{\bm \varepsilon}(\vec\upnu)) 
+= \text{div}(\vec\upnu) =0)$ and the above considerations vanish.
 
 Finally, for both compressible and incompressible flow, the stress tensor becomes simply
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-{\bm \sigma}=-p {\bm 1} + 2\eta \dot{\bm \varepsilon}^d = -p {\bm 1} + {\bm \tau}
+{\bm \sigma}=-p {\bm 1} + 2\eta \dot{\bm \varepsilon}^d(\vec\upnu) = -p {\bm 1} + {\bm \tau}
 \end{equation}
 \end{mdframed}
-where ${\bm \tau} = 2\eta \dot{\bm \varepsilon}^d$ is the deviatoric stress tensor.
+where ${\bm \tau} = 2\eta \dot{\bm \varepsilon}^d(\vec\upnu)$ is the deviatoric stress tensor.
 
 \begin{remark}
-On page 256 of Schubert, Turcotte and Olson \cite{scto01}, equation 6.5.3, the authors write $\tau_{ii}/3=k_B e_{ii}$ while stating that $\tau$ is deviatoric in equation 6.4.2. 
+On page 256 of Schubert, Turcotte and Olson \cite{scto01}, 
+equation 6.5.3, the authors write $\tau_{ii}/3=k_B e_{ii}$ while stating that $\tau$ is deviatoric in equation 6.4.2. 
 This is an obvious conflict of notations. 
 \end{remark}
 
@@ -241,12 +242,11 @@ In what follows I use the index notation as it makes for easier derivations:
 + 2 \eta  \dot{\bm \varepsilon}^d : {\bm 1} ({\vec \nabla}\cdot{\vec \upnu}) \nonumber\\ 
 &=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
 \end{eqnarray}
-Finally
+Finally (in Cartesian coordinates)
 \begin{equation}
 \Phi = {\bm \tau}:{\vec \nabla}{\vec \upnu} = 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d
 = 2 \eta \left( (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + 2(\dot{\varepsilon}_{xy}^d)^2 \right) \nn
 \end{equation}
-
 See Schubert \& Yuen (1978) \cite{scyu78} for an analysis of shear heating instability in the upper mantle.
 
 %------------------------------------------------------------------------
@@ -266,10 +266,10 @@ it also writes
 \begin{equation}
 -{\vec \nabla}p + {\vec \nabla}\cdot {\bm \tau} + \rho {\vec g} = \vec{0}
 \end{equation}
-Using the relationship ${\bm \tau} = 2 \eta \dot{\bm \varepsilon}^d$ we arrive at 
+Using the relationship ${\bm \tau} = 2 \eta \dot{\bm \varepsilon}^d(\vec\upnu)$ we arrive at 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
--{\vec \nabla}p + {\vec \nabla}\cdot (2 \eta \dot{\bm \varepsilon}^d ) + \rho {\vec g} = \vec{0}
+-{\vec \nabla}p + {\vec \nabla}\cdot (2 \eta \dot{\bm \varepsilon}^d(\vec\upnu) ) + \rho {\vec g} = \vec{0}
 \end{equation}
 \end{mdframed}
 
@@ -391,7 +391,7 @@ u$, pressure $p$ and temperature $T$:
 \end{align}
 where $\dot{\bm \varepsilon}(\vec\upnu) = \frac{1}{2}(\vec\nabla \vec\upnu + \vec\nabla \vec\upnu^T)$ 
 is the symmetric gradient of the velocity (often called the
-\textit{strain rate}).%
+\textit{strain rate}).
 
 In this set of equations, \eqref{eq:stokes-1} and \eqref{eq:stokes-2}
 represent the compressible Stokes equations in which $\mathbf v=\mathbf
@@ -628,15 +628,15 @@ quantities which are relevant for geodynamics\footnote{Note that in the paper
 the authors conflate $\rho$ and $\tilde{\rho}$ which prevents them from non-dimensionalising
 all terms as we do here.}:
 \begin{itemize}
-\item a reference viscosity value $\underline{\eta}=10^{20} \si{\pascal\second}$
-\item a reference mass density $\underline{\rho}=1000\si{\kg\per\cubic\metre}$
-\item a reference time $\underline{t}=1\text{Myr}\simeq 3.15\cdot 10^{13}\si{\second}$
-\item a reference length $\underline{l}=1000\si{\metre}$
-\item a reference gravity $\underline{g}=9.81\si{\metre\per\square\second}$
+\item a reference viscosity value $\underline{\eta}=10^{20}~\si{\pascal\second}$
+\item a reference mass density $\underline{\rho}=1000~\si{\kg\per\cubic\metre}$
+\item a reference time $\underline{t}=1\text{Myr}\simeq 3.15\cdot 10^{13}~\si{\second}$
+\item a reference length $\underline{l}=1000~\si{\metre}$
+\item a reference gravity $\underline{g}=9.81~\si{\metre\per\square\second}$
 \end{itemize}
 It follows that a reference pressure can be obtained:
 \[
-\underline{p}=\underline{\rho} \underline{g} \underline{l} = 9.81\cdot 10^6\text{Pa}
+\underline{p}=\underline{\rho} \underline{g} \underline{l} = 9.81\cdot 10^6~\si{\pascal}
 \]
 Note that there is unfortunately no natural selection for the pressure scale. 
 We could also have used $\underline{p}=\underline{\rho}\underline{\upnu}^2$ 
@@ -646,7 +646,7 @@ where viscous effects are dominant i.e. creeping flows (which
 is the case in geodynamics).
 The definition of a reference velocity is more straightforward:
 \[
-\underline{\upnu} = \frac{\underline{l}}{\underline{t}} = 1\si{\mm\per\year}
+\underline{\upnu} = \frac{\underline{l}}{\underline{t}} = 1~\si{\mm\per\year}
 \]
 We define dimensionless variables through:
 \[
@@ -755,13 +755,13 @@ dimensionless Stokes equations):
 \]
 Note that in our case $Re/Fr\simeq 30.5$. 
 
-%___________________________
+%_________________________________________________________________________
 \subsubsection{Approach \# 2 - Temperature dependent \label{ss:dimeqs2}}
 
 \input{dimensionless_equations2}
 
 
-%------------------------------------------------------------------------------
+%_________________________________________________________________________
 \subsection{The Navier-Stokes equations in cylindrical coordinates}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
@@ -773,7 +773,6 @@ In cylindrical coordinates, $(r,\theta,z)$, the continuity equation for an incom
 \frac{\partial \upnu_z}{\partial z} =0
 \end{equation}
 \end{mdframed}
-
 The Navier-Stokes equations of motion for an incompressible fluid with uniform viscosity are:
 \begin{eqnarray}
 \rho \left(  \frac{D\upnu_r}{Dt} -\frac{\upnu_\theta^2}{r} \right) 
@@ -812,8 +811,6 @@ and the Laplacian operator is \index{general}{Laplace Operator} \index{general}{
 \subsection{The Stokes equations in spherical coordinates}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
-
-
 In spherical coordinates, $(r,\theta,\phi)$, the continuity equation for an incompressible fluid is 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
@@ -822,8 +819,6 @@ In spherical coordinates, $(r,\theta,\phi)$, the continuity equation for an inco
 \frac{1}{r \sin \theta} \frac{\partial \upnu_\phi}{\partial \phi} = 0
 \end{equation}
 \end{mdframed}
-
-
 Concerning the momentum equation, we start from 
 \begin{eqnarray}
 {\vec \nabla}\cdot {\bm \sigma} + {\vec f} &=& \vec{0} 
@@ -1034,29 +1029,26 @@ The Boussinesq approximation assumes that the density can be
 considered constant in all occurrences in the equations with the exception of
 the buoyancy term on the right hand side of \eqref{eq:stokes-1}. The primary
 result of this assumption is that the continuity equation \eqref{eq:stokes-2}
-will now read
-\[
-{\bm \nabla}\cdot{\bm v} = 0
-\]
+will now read ${\vec \nabla}\cdot{\vec \upnu} = 0$.
 This implies that the strain rate tensor is deviatoric.
 Under the Boussinesq approximation, the equations are much simplified:
 
 \begin{align}
   \label{eq:stokes-1}
-  -\nabla \cdot \left[2\eta \dot{\bm \varepsilon}(\bm v)
-                \right] + \nabla p &=
-  \rho \bm g
+  -\vec\nabla \cdot \left[2\eta \dot{\bm \varepsilon}(\vec\upnu)
+                \right] + \vec\nabla p &=
+  \rho \vec{g}
   &
   & \textrm{in $\Omega$},
   \\
   \label{eq:stokes-2}
-  \nabla \cdot (\rho \bm v) &= 0
+  \vec\nabla \cdot (\rho \vec\upnu) &= 0
   &
   & \textrm{in $\Omega$},
   \\
   \label{eq:temperature}
-  \rho_0 C_p \left(\frac{\partial T}{\partial t} + \bm v\cdot\nabla T\right)
-  - \nabla\cdot k\nabla T
+  \rho_0 C_p \left(\frac{\partial T}{\partial t} + \vec\upnu \cdot\vec\nabla T\right)
+  - \vec\nabla\cdot k\vec\nabla T
   &=
   \rho H
   &
@@ -1072,15 +1064,11 @@ of the source term.
 \index{general}{EBA}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
-
-Yuen \etal (2007) \cite{yumc07} state that "the background of the extended Boussinesq 
+Yuen \etal (2007) \cite{yumc07} state that the background of the extended Boussinesq 
 equations can be found described in 
 Christensen and Yuen (1985) \cite{chyu85} and more completely in Matyska and Yuen (2007) \cite{mayu07}.
 
 \Literature \cite{hayk91,hayk93}
-
-
-
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
@@ -1128,7 +1116,7 @@ One often then write Eq.~\eqref{eq:oone} as follows:
 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-{\bm \sigma} = \lambda (\vec{\nabla}\cdot\vec{u}) {\bm 1} + 2\mu {\bm \varepsilon}   \label{eq:twoELAST}
+{\bm \sigma} = \lambda (\vec{\nabla}\cdot\vec{u}) {\bm 1} + 2\mu {\bm \varepsilon}(\vec{u})   \label{eq:twoELAST}
 \end{equation}
 \end{mdframed}
 where $\lambda$ is the Lam\'e parameter and $\mu$ is the shear modulus\footnote{It is also sometimes written $G$}.
@@ -1139,13 +1127,14 @@ The term $\vec{\nabla}\cdot\vec{u}$ is the isotropic dilation.
 
 The strain tensor is related to the displacement as follows: \index{general}{Strain Tensor}
 \[
-{\bm \varepsilon} = \frac{1}{2}(\vec{\nabla}\vec{u} + (\vec{\nabla}\vec{u})^T)
+{\bm \varepsilon}(\vec{u}) 
+= \frac{1}{2}(\vec{\nabla}\vec{u} + (\vec{\nabla}\vec{u})^T)
 \]
 The incompressibility (or bulk modulus) $K$ is defined as $p=-K \vec{\nabla}\cdot\vec{u}$ 
 where $p$ is the pressure with \index{general}{Bulk Modulus}
 \begin{eqnarray}
 p&=&-\frac{1}{3} \text{tr}({\bm \sigma}) \nonumber\\
- &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u}) \text{tr}[{\bm 1}] + 2 \mu \text{tr}[{\bm \varepsilon}]] \nonumber\\
+ &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u}) \text{tr}[{\bm 1}] + 2 \mu {\rm tr}[{\bm \varepsilon}(\vec{u})]] \nonumber\\
  &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u})  3  + 2 \mu  (\vec{\nabla}\cdot\vec{u}) ] \nonumber\\
  &=& -\left[ \lambda + \frac{2}{3} \mu \right] (\vec{\nabla}\cdot\vec{u})  
 \end{eqnarray}
@@ -1170,7 +1159,7 @@ K=\lambda+\frac{2}{3}\mu
 \begin{remark}
 Eq. (\ref{eq:oone}) and (\ref{eq:twoELAST}) are analogous to the ones that one has to solve
 in the context of viscous flow using the penalty method. In this case $\lambda$ is the penalty coefficient, 
-${\bm u}$ is the velocity, and $\mu$ is then the dynamic viscosity.
+$\vec{u}$ is the velocity, and $\mu$ is then the dynamic viscosity.
 \end{remark}
 
 The Lam\'e parameter and the shear modulus are also linked to $\nu$ the poisson ratio, 
@@ -1298,7 +1287,6 @@ the matrix ${\cal P}$. As we have seen before, this yields
 \upnu_r &=& u \cos\theta + v \sin\theta \\
 \upnu_\theta &=& -u \sin\theta + v \cos\theta
 \end{eqnarray}
-
 A second-order tensor ${\bm a}$ is Cartesian coordinates transforms into ${\bm a}^\star$
 in polar coordinates by 
 \[
@@ -1388,11 +1376,11 @@ There are two types of boundary conditions for this equation: temperature bounda
 \item \underline{Velocity} $\vec \upnu (\text{m/s})$: This is a vector quantity and both magnitude and direction are needed to define it. It is the rate of change of position with respect to a frame of reference.
 \item \underline{Root mean square velocity} $\upnu_{rms} (\text{m/s})$: 
 \begin{equation}
-\upnu_{rms} = \left ( \frac{\int_\Omega |{\vec \upnu}|^2 \;  d \Omega}{\int_\Omega d\Omega }  \right )^{1/2}
-=\left ( \frac{1}{V_\Omega} \int_\Omega |{\vec \upnu}|^2 \;  d \Omega \right )^{1/2} \label{eqVrms}
+\upnu_{rms} = \left ( \frac{\int_\Omega |{\vec \upnu}|^2 \;  dV}{\int_\Omega dV }  \right )^{1/2}
+=\left ( \frac{1}{V_\Omega} \int_\Omega |{\vec \upnu}|^2 \;  dV \right )^{1/2} \label{eqVrms}
 \end{equation}
 \begin{remark}
-$V_\Omega$ is usually computed numerically at the same time $\upnu_{vrms}$ is computed.
+$V_\Omega$ is usually computed numerically at the same time that $\upnu_{vrms}$ is computed.
 \end{remark}
 In Cartesian coordinates, for a cuboid domain of size $Lx\times L_y \times Lz$, 
 the $\upnu_{rms}$ is simply given by:
@@ -1627,7 +1615,7 @@ As seen before (see Section~\ref{sec:stresstensor})
 the stress tensor is a symmetric $3\times3$ real matrix, and linear algebra tells us that it 
 therefore has three mutually orthogonal unit-length eigenvectors $\vec{n}_{1}$, $\vec{n}_{2}$, 
 $\vec{n}_{3}$ and three real eigenvalues $\lambda _{1},\lambda _{2},\lambda _{3}$ 
-such that ${\bm \sigma}\cdot \vec{n}_i=\lambda_{i} \vec{n}_{i}$.
+such that ${\bm \sigma}\!\cdot\! \vec{n}_i=\lambda_{i} \vec{n}_{i}$.
 
 %from wiki stress 
 As a consequence, in a coordinate system with axes $\vec{n}_{1},\vec{n}_{2},\vec{n}_{3}$, 
@@ -1704,7 +1692,6 @@ n_x \\ n_y
 \right)
 = \vec{0}
 \]
-
 which yields
 \[
 (\sigma_{xx}-\lambda)(\sigma_{yy}-\lambda)-\sigma_{xy}^2 =0
@@ -1745,11 +1732,11 @@ stresses
 \end{mdframed}
 The eigenvector $\vec{n}_1$ corresponding to $\sigma_1$ is obtained by solving 
 \[
-{\bm \sigma}\cdot \vec{n}_1 = \sigma_1 \vec{n}_1
+{\bm \sigma}\!\cdot\! \vec{n}_1 = \sigma_1 \vec{n}_1
 \]
 and same for the other eigenvalue/vector:
 \[
-{\bm \sigma}\cdot \vec{n}_2 = \sigma_2 \vec{n}_2
+{\bm \sigma} \!\cdot\! \vec{n}_2 = \sigma_2 \vec{n}_2
 \]
 Each is a system of two equations with two unknowns. These are not difficult to solve, 
 but can prove cumbersome. Note that linear algebra tells us that $\vec{n}_1\cdot\vec{n}_2=0$, 
@@ -1763,7 +1750,6 @@ a stress tensor that is diagonal, with the principal stresses on the diagonal?
 \includegraphics[width=8cm]{images/princ_stress/PrincipalStress}\\
 {\scriptsize Taken from \url{https://www.efunda.com/formulae/solid_mechanics/mat_mechanics/plane_stress_principal.cfm}}
 \end{center}
- 
 The rotation matrix is 
 \[
 {\bm R}=
@@ -1989,13 +1975,14 @@ K_3({\bm \sigma})
 -( \sigma_{xx}\sigma_{yz}^2 +  \sigma_{zz} \sigma_{xy}^2 + \sigma_{yy}\sigma_{xz}^2 )
 \end{eqnarray}
 \index{general}{Principal Invariants}
-$K_1$, $K_2$ and $K_3$ are called {\bf principal}
+
+\noindent $K_1$, $K_2$ and $K_3$ are called {\bf principal}
 invariants\footnote{\url{https://en.wikipedia.org/wiki/Invariants_of_tensors}} 
 (see also Appendix A.1 of Zienkiewicz \& Taylor \cite{zita2}). 
 These invariants can be written in a coordinate-free manner:
 \begin{eqnarray}
-K_1({\bm \sigma}) &=& tr({\bm \sigma})  \nn\\
-K_2({\bm \sigma}) &=& \frac{1}{2}(  tr({\bm \sigma}) ^2 - tr({\bm \sigma}^2)  ) \nn\\
+K_1({\bm \sigma}) &=& {\rm tr}({\bm \sigma})  \nn\\
+K_2({\bm \sigma}) &=& \frac{1}{2}(  {\rm tr}({\bm \sigma}) ^2 - {\rm tr}({\bm \sigma}^2)  ) \nn\\
 K_3({\bm \sigma}) &=& \det ({\bm \sigma}) \nn
 \end{eqnarray}
 and if the stress tensor is diagonal, we have
@@ -2231,7 +2218,7 @@ There are 3 different Lode angles, as explained online\footnote{\url{https://en.
 \sin 3\theta_s = -\sin 3 \bar{\theta}_s = \cos 3\theta_c = \frac{3\sqrt{3}}{2}\frac{{\cal I}_3({\bm \tau})}{({\cal I}_2({\bm \tau}))^{3/2}}
 \]
 and they are related by $\theta_s = \frac{\pi}{6}-\theta_c$ and $\theta_s = -\bar{\theta}_s$. 
-The one used in \fieldstone is in fact the $\bar{\theta}_s$ above.
+The one used in this document is in fact the $\bar{\theta}_s$ above.
 \label{rq:signs}
 \end{remark}
 
@@ -2293,14 +2280,14 @@ Given a tensor $\bm{T}$,  one can compute its (moment) invariants as follows
 
 \begin{eqnarray}
 {\cal I}_1({\bm T}) 
-&=& tr[\bm{T}] \\
+&=& {\rm tr}[\bm{T}] \\
 &=& T_{xx} + T_{yy} + T_{zz} \\ 
 {\cal I}_2({\bm T}) 
-&=& \frac{1}{2} tr[{\bm T}\cdot{\bm T}] \\
+&=& \frac{1}{2} {\rm tr}[{\bm T}\cdot{\bm T}] \\
 &=& \frac{1}{2} \sum_{ij} T_{ij} T_{ji} \\
 &=& \frac{1}{2} (T_{xx}^2 + T_{yy}^2 + T_{zz}^2) + T_{xy}^2 + T_{xz}^2 + T_{yz}^2 \\ 
 {\cal I}_3({\bm T}) 
-&=& \frac{1}{3} tr[{\bm T}\cdot{\bm T}\cdot {\bm T}]   \\
+&=& \frac{1}{3} {\rm tr}[{\bm T}\cdot{\bm T}\cdot {\bm T}]   \\
 &=& \frac{1}{3}\sum_i\sum_j \sum_k T_{ij} T_{jk} T_{ki}  \\
 &=& \frac{1}{3} (T_{xx} ( T_{xx}T_{xx} + T_{xy}T_{xy} + T_{xz}T_{xz} )) \qquad (i=j=x,k=x,y,z)\nn\\ 
 &+& \frac{1}{3} (T_{yy} ( T_{yx}T_{yx} + T_{yy}T_{yy} + T_{yz}T_{yz} )) \qquad (i=j=y,k=x,y,z)\nn\\ 
@@ -2456,18 +2443,16 @@ NOT SURE AT ALL. One can prove that (REF?)\footnote{Near identical equations are
 9 {\cal I}_1({\bm \sigma}) {\cal I}_2({\bm \sigma}) 
 +27 {\cal I}_3({\bm \sigma})   \right) \nn\\
 &=& det ({\bm\tau}) \nn\\
-&=& \tau_1 \tau_2\tau_3 \nn\\
+&=& \tau_1 \tau_2\tau_3 \nn
 \end{eqnarray}
 }
 
 \index{general}{Plain Strain}
 \paragraph{Two-dimensional plane strain calculations} 
 
-
-
 We start from the 3D strain rate tensor 
 \[
-\dot{\bm \varepsilon} = 
+\dot{\bm \varepsilon}(\vec\upnu) = 
 \left(
 \begin{array}{ccc}
 \dot{\varepsilon}_{xx} & \dot{\varepsilon}_{xy} & \dot{\varepsilon}_{xz} \\
@@ -2487,7 +2472,7 @@ so that $w=0$ (velocity in the $z$ direction is zero) and $\partial_z \rightarro
 We then have $\dot{\varepsilon}_{zz}=0$ as well as $\dot{\varepsilon}_{xz}=0$ and $\dot{\varepsilon}_{yz}=0$, so
 that the strain rate tensor is 
 \[
-\dot{\bm \varepsilon}=
+\dot{\bm \varepsilon}(\vec\upnu)=
 \left( \begin{array}{ccc}
 \dot{\varepsilon}_{xx} & \dot{\varepsilon}_{xy} & 0 \\
 \dot{\varepsilon}_{xy} & \dot{\varepsilon}_{yy} & 0 \\
@@ -2521,12 +2506,11 @@ equations of Section~\ref{sec:stress_invariants} and we obtain:
 &=& \frac{1}{3}(  \tau_{xx}^3 + 3 (\tau_{xx}+\tau_{yy}) \tau_{xy}^2  +  \tau_{yy}^3 )   \nn\\
 &=& \frac{1}{3}(  \tau_{xx}^3 +  \tau_{yy}^3 )  \qquad \text{since } \tau_{ii}=0 
 \end{eqnarray}
-
 Let us now think about compressible flow in this context. 
 The deviatoric strain rate tensor is defined as 
 \[
 \dot{\bm \varepsilon}^d 
-= \dot{\bm \varepsilon} -\frac{1}{3} Tr[\dot{\bm \varepsilon}]   {\bm 1} 
+= \dot{\bm \varepsilon} -\frac{1}{3} {\rm tr}[\dot{\bm \varepsilon}]   {\bm 1} 
 = \dot{\bm \varepsilon} -\frac{1}{3} (\dot{\varepsilon}_{xx} +\dot{\varepsilon}_{yy}   )  {\bm 1} 
 \]
 or,

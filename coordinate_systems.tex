@@ -21,6 +21,8 @@ $\vec{e}_x$, $\vec{e}_y$ and $\vec{e}_z$ respectively.
 \[
 {\vec V}  = V_x {\vec e}_x  + V_y {\vec e}_y + V_z \vec{e}_z
 \]
+'How much of $\vec{V}$ is there in the $x-$direction' is obtained
+with $\vec{V}\cdot\vec{e}_x = V_x$.
 The gradient of a function $f$ is 
 \[
 \vec{\nabla} f= \text{grad }f= 
@@ -48,7 +50,7 @@ d\vec{r} = dx \; {\vec e}_x  + dy\; {\vec e}_y + dz \; \vec{e}_z
 \]
 and the volume element is 
 \[
-dV=dx\; dy \; dz
+dV=dx\; dy \; dz.
 \]
 
 %........................................
@@ -87,6 +89,9 @@ which should be read:
 {\vec e}_{r}      &=& \cos\theta \; {\vec e}_{x} + \sin\theta \;  {\vec e}_{y} \nn\\
 {\vec e}_{\theta} &=& -\sin\theta \; {\vec e}_{x} + \cos\theta \;  {\vec e}_{y} 
 \end{eqnarray}
+Obviously for $\theta=0$ we find $\vec{e}_r=\vec{e}_x$ and $\vec{e}_\theta = \vec{0}$, while for 
+$\theta=\pi/2$ then $\vec{e}_r=\vec{0}$ and $\vec{e}_\theta=\vec{e}_y$.
+
 Note that this $2\times 2$ matrix is a 
 rotation matrix\footnote{\url{https://en.wikipedia.org/wiki/Rotation_matrix}}
 corresponding to an angle $-\theta$. The inverse of this matrix always exists 
@@ -134,10 +139,10 @@ d\vec{r} = dr \; {\vec e}_r  + r \sin\theta d\theta \; {\vec e}_\theta
 \]
 and the volume element is 
 \[
-dV= r dr \; d\theta
+dV= r dr \; d\theta.
 \]
-
-The gradient, divergence and Laplacian formulae are given in the following section.
+The gradient, divergence and Laplacian formulae are given in the following section about 
+the cylindrical coordinates.
 
 \index{general}{Path Increment in Polar Coordinates}
 
@@ -162,7 +167,7 @@ y &=& r \; \sin \theta \nn\\\
 r &=& \sqrt{x^2+y^2} \nn
 \end{eqnarray}
 
-Let $f(r,\theta)$ be a function of the spatial coordinates. It s gradient is then
+Let $f(r,\theta)$ be a function of the spatial coordinates. Its gradient is then
 \[
 \vec \nabla f
 = \frac{\partial f}{\partial r} \; \vec{e}_r 
@@ -344,13 +349,13 @@ and the Cartesian unit vectors are related to the spherical unit vectors by
 \end{array}
 \right)
 \]
-
+Finally, the velocity vector $\vec{\upnu}$ then becomes
 \begin{eqnarray}
 \vec{\upnu} 
-&=& u\; \vec{e}_x + v \; \vec{e}_y + w \; \vec{e}_z \\
-&=& u\; ( \sin\theta \cos\phi \; \vec{e}_r +  \cos\theta\cos\phi \;  \vec{e}_{\theta} -\sin\phi \; \vec{e}_{\phi} ) \\
-&+& v\; ( \sin\theta \sin\phi \; \vec{e}_r + \cos\theta\sin\phi \; \vec{e}_\theta  +  \cos\phi \;  \vec{e}_\phi  )  \\
-&+& w\; ( \cos\theta \; \vec{e}_r   -\sin\theta \; \vec{e}_\theta  ) \\
+&=& u\; \vec{e}_x + v \; \vec{e}_y + w \; \vec{e}_z \nn\\
+&=& u\; ( \sin\theta \cos\phi \; \vec{e}_r +  \cos\theta\cos\phi \;  \vec{e}_{\theta} -\sin\phi \; \vec{e}_{\phi} ) \nn\\
+&+& v\; ( \sin\theta \sin\phi \; \vec{e}_r + \cos\theta\sin\phi \; \vec{e}_\theta  +  \cos\phi \;  \vec{e}_\phi  )  \nn\\
+&+& w\; ( \cos\theta \; \vec{e}_r   -\sin\theta \; \vec{e}_\theta  ) \nn\\
 &=& v_r\; \vec{e}_r + v_\theta\; \vec{e}_\theta + v_\phi\; \vec{e}_\phi 
 \end{eqnarray}
 with 

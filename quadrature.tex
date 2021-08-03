@@ -1,3 +1,6 @@
+\begin{flushright} {\tiny {\color{gray} quadrature.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 As we will see later, using the Finite Element method to solve problems involves 
 computing integrals which are more often than not too complex to be computed 
 analytically/exactly. We will then need to compute them numerically.
@@ -19,7 +22,7 @@ There are several reasons for carrying out numerical integration.
 Some embedded systems and other computer applications may need numerical integration for this reason.
 \item A formula for the integrand may be known, but it may be difficult or impossible to 
 find an antiderivative that is an elementary function. An example of such an integrand 
-is $f(x)=exp(-x^2)$, the antiderivative of which (the error function, times a constant) 
+is $f(x)=\exp(-x^2)$, the antiderivative of which (the error function, times a constant) 
 cannot be written in elementary form.
 \item It may be possible to find an antiderivative symbolically, but it may be 
 easier to compute a numerical approximation than to compute the antiderivative. That may be the 
@@ -631,43 +634,53 @@ n & $x_{iq}$ & $w_{iq}$ & $x_{iq}$ (approx) & $w_{iq}$ (approx) \\
 \subsubsection{Computing the 'real' coordinates of the quadrature points and other considerations}
 
 The quadrature point coordinates are always given in (what I call) reduced coordinates, i.e. between 
--1 and 1 in 1D (for example).
-However, one sometimes need their equivalent in the $x,y,z$ Cartesian space. 
-This is trivial once one remembers that within an element, a field $f$ in reprensented 
+-1 and 1.
+However, one sometimes need their equivalent in the $x,y$ Cartesian space. 
+This is trivial once one remembers that within an element, a field $f$ is reprensented 
 as follow:
 \[
-f(r,s) = \sum_{i=1}^{m} N_{i}(r,s) f_i
+f(r,s) = \sum_{i=1}^{m} \bN_{i}(r,s) f_i
 \]
-where $m$ is the number of nodes and $N_i$ are the basis functions. 
-The value of $f$ at a quadrature point is then simply
+where $m$ is the number of nodes, $r$ and $s$ are the reduced coordinates 
+and $\bN_i$ are the basis functions. 
+The value of $f$ at a quadrature point $(r_q,s_q)$ is then simply
 \[
-f(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) f_i
+f(r_q,s_q) = \sum_{i=1}^{m} \bN_{i}(r_q,s_q) f_i
 \]
 If we now take $f=x$, then
 \[
-x_q =x(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) x_i
+x_q =x(r_q,s_q) = \sum_{i=1}^{m} \bN_{i}(r_q,s_q) x_i
 \]
-Likewise in 2D and 3D:
+and
 \[
-y_q =y(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) y_i
+y_q =y(r_q,s_q) = \sum_{i=1}^{m} \bN_{i}(r_q,s_q) y_i
+\]
+where $x_i$ and $y_i$ are the Cartesian coordinates of the nodes.
+This is then easily extended to three dimensions:
+\[
+x_q =x(r_q,s_q,t_q) = \sum_{i=1}^{m} \bN_{i}(r_q,s_q,t_q) x_i
 \]
 \[
-z_q =z(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) z_i
+y_q =x(r_q,s_q,t_q) = \sum_{i=1}^{m} \bN_{i}(r_q,s_q,t_q) y_i
+\]
+\[
+z_q =z(r_q,s_q,t_q) = \sum_{i=1}^{m} \bN_{i}(r_q,s_q,t_q) z_i
 \]
 or, 
 \[
-\vec{r}_q =\vec{r}(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) \vec{r}_i
+\vec{r}_q =\vec{r}(r_q,s_q,t_q) = \sum_{i=1}^{m} \bN_{i}(r_q,s_q,t_q) \vec{r}_i
 \]
 This also applies to other fields such as velocity, temperature, or even strain rate components 
-(if the strain rate values have been previously computed on the nodes): 
+(as long as the strain rate values have previously been computed on the nodes): 
 \[
-\vec{\upnu}_q =\vec{\upnu}(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) \vec{\upnu}_i
+\vec{\upnu}_q =\vec{\upnu}(r_q,s_q) = \sum_{i=1}^{m} \bN_{i}(r_q,s_q) \vec{\upnu}_i
 \]
 \[
-T_q =T(r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q) T_i
+T_q =T(r_q,s_q) = \sum_{i=1}^{m} \bN_{i}(r_q,s_q) T_i
 \]
 \[
-\dot{\varepsilon}_{xy,q} =   \dot{\varepsilon}_{xy} (r_q,s_q) = \sum_{i=1}^{m} N_{i}(r_q,s_q)  \dot{\varepsilon}_{xy,i}
+\dot{\varepsilon}_{xy,q} 
+= \dot{\varepsilon}_{xy} (r_q,s_q) = \sum_{i=1}^{m} \bN_{i}(r_q,s_q)  \dot{\varepsilon}_{xy,i}
 \]
 
 
