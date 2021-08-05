@@ -87,8 +87,8 @@ how small or large the viscosity may become, which may prove problematic once
 implemented as it can lead to runaway effects (strain rate becomes large $\rightarrow$
 viscosity becomes smaller $\rightarrow$ strain rate becomes larger, etc ...).
 This problem is alleviated in the so-called Carreau
-\footnote{\url{https://en.wikipedia.org/wiki/Carreau_fluid}} model 
-(see for example Zinani \& Frey (@007) \cite{zifr07}). 
+\footnote{\url{https://en.wikipedia.org/wiki/Carreau_fluid}} model \cite{carr72} 
+(see for example Zinani \& Frey (2007) \cite{zifr07}). 
 The viscosity is then given by
 \begin{equation}
 \eta(\dot{\varepsilon}_{e}) = \eta_\infty + (\eta_0-\eta_\infty) \left(1 + (\lambda \dot{\varepsilon}_{e})^2 \right)^{(n-1)/2}
@@ -110,12 +110,14 @@ the product $\lambda \dot{\varepsilon}_{e}$. Right: taken from
 video at \url{https://youtu.be/qErs5zZV4BQ}.}
 \end{center}
 
-Note that the (Bird)-Carreau-Yasuda model \cite{osru14} is very similar to the standard (Bird)-Carreau:
+Note that the (Bird)-Carreau-Yasuda model \cite{yaac81,osru14} is very similar to the standard (Bird)-Carreau:
 \begin{equation}
 \eta = \eta_\infty + (\eta_0-\eta_\infty) \left(1 + (\lambda \dot{\varepsilon}_{e})^a \right)^{(n-1)/a}
 \end{equation}
 It is for instance used in van de Vosse \etal (2003) \cite{vadv03} to model blood.
 \index{general}{Bird-Carreau-Yasuda model}
+
+Flows in a Lid-Driven Cavity with this rheology are presented in \cite{zifr07,shal09}.
 
 \Literature: Bercovici (1993) \cite{berc93}, Bercovici (1995) \cite{berc95},
 Marcotte (2000) \cite{marc00}, Huerta \& Liu (1988) \cite{huli88}.
@@ -124,7 +126,7 @@ Marcotte (2000) \cite{marc00}, Huerta \& Liu (1988) \cite{huli88}.
 \subsubsection{Bingham model} \label{sec:bingham}
 \index{general}{Bingham model}
 
-Bingham fluids can sustain an applied stress without any motion occuring. Only when the applied stress exceeds
+Bingham \cite{bingham} fluids can sustain an applied stress without any motion occuring. Only when the applied stress exceeds
 a yield stress $\tau_0$ then the fluid flows. This translates as follows \cite{reddybook2}:
 
 \begin{eqnarray}
@@ -1503,7 +1505,6 @@ Kiraly \etal (2020) \cite{kich20}
 %...........................................
 \subsubsection{Rheology of the lithosphere}
 
-
 \begin{center}
 \includegraphics[height=5cm]{images/rheology/budr08}\\
 {\captionfont Schematic view of the three most common first order rheological models of the continental 
@@ -1525,10 +1526,63 @@ Friction controls level of shear stress in upper part of crust and sometimes in 
 then, below brittle/ductile transition, shear stress is controlled by thermally-activated dislocation creep.}
 \end{center}
 
+Molnar \cite{moln92} discusses the validity of the Brace-Goetze strength profiles. 
+In particular, he has this to say about the power law parameters:
+{\it
+The uncertainty alone in $Q$ alone renders calculated strengths 
+uncertain by 10 times at temperatures of about 700C.
+Correspondingly, that uncertainty in Q is approximately equivalent 
+to an uncertainty of about 100C in temperature.
+}
+
+
+\begin{center}
+\begin{tabular}{l|l}
+\hline
+
+Wet Quartzite & upper crust  \cite{jahu12,wabj08} \\
+              & upper continental crust \cite{kecw09,cube11} \\
+              & lower crust  \cite{jahu12,wabj08} \\
+              & ocean sediment \cite{kecw09} \\
+Dry Olivine   & lithosphere  \cite{hube07}\\
+              & sublithospheric mantle \cite{hube07}\\
+Dry Maryland Diabase & lower crust \cite{wabj08,wabj08b} \\
+                     & lower continental crust \cite{kecw09,cube11} \\
+                     & oceanic crust \cite{wabj08,kecw09,wabj08b,cube11} \\
+Wet Olivine   & continental mantle lithosphere \cite{wabj08,wabj08b} \\
+              & oceanic mantle lithosphere \cite{wabj08,wabj08b} \\
+              & sublithospheric mantle \cite{wabj08,kecw09,wabj08b} \\
+              & mantle lithosphere \cite{kecw09} \\
+\hline
+\end{tabular}
+\end{center}
+
+
+
 \Literature \cite{buwa06,budr08,rana97a,rana97b}
 
 
+
+
+
 \todo[inline]{I need to talk about Byerlee's law. \cite{byer78}}
+
+%...........................................
+\subsubsection{References for visco-plasticity}
+
+\begin{itemize}
+\item Plasticity and Geomechanics, Davis and Selvadurai. \cite{dase02}
+\item Elasticity and Geomechanics, Davis and Selvadurai. \cite{dase96}
+\item Rheology of the Earht, Ranalli. \cite{ranalli}
+\item Deformation of Earth materials, Karato. \cite{kara08}
+\item Fundamentals of the Theory of Plasticity, Kachanov. \cite{kacha04} 
+\item Computational methods for plasticity, de Souza Neto et al. \cite{depo}
+\item Computer simulation of dynamic phenomena, M. wilkins \cite{wilk}
+\item Continuum theory of plasticity, Khan and Huang \cite{khhu}
+\end{itemize}
+
+\Literature: \cite{zien75,zihl75,zico74,zihp95,ziph95,lova01,thfb08}
+
 
 
 

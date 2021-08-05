@@ -141,6 +141,87 @@ v(r,s)
 }
 \]
 
+%-------------------------------------------------------------------
+\subsubsection{In 2D with $Q_1$ basis functions - better approach ?}
+
+
+We start from
+\[
+\left(
+\begin{array}{c}
+\frac{\partial u}{\partial x} \\ \\
+\frac{\partial u}{\partial y} 
+\end{array}
+\right)
+=
+\tilde{\bm J} \cdot
+\left(
+\begin{array}{c}
+\frac{\partial u}{\partial r} \\ \\
+\frac{\partial u}{\partial s} 
+\end{array}
+\right)
+\]
+where $\tilde{\bm J}$ in the inverse of the Jacobian matrix.
+We then postulate
+\begin{eqnarray}
+u(r,s)&=&\sum_i N_i(r,s) u_i + (a s + b)(1-r)(1+r) \nn\\
+v(r,s)&=&\sum_i N_i(r,s) v_i + (c r + d)(1-s)(1+s) \nn
+\end{eqnarray}
+In this case,
+\begin{eqnarray}
+\frac{\partial u}{\partial r}&=&\sum_i \frac{\partial N_i}{\partial r} u_i + (a s + b) (-2r)   \nn\\
+\frac{\partial u}{\partial s}&=&\sum_i \frac{\partial N_i}{\partial s} u_i + a (1-r^2) \nn\\
+\frac{\partial v}{\partial r}&=&\sum_i \frac{\partial N_i}{\partial s} v_i + c (1-s^2) \nn\\
+\frac{\partial v}{\partial s}&=&\sum_i \frac{\partial N_i}{\partial s} v_i + (c r + d)(-2s) \nn
+\end{eqnarray}
+We have introduced 4 coefficients  $(a,b,c,d)$ which remain to be determined.
+We have
+\begin{eqnarray}
+\frac{\partial u}{\partial x} 
+&=& \tilde{J}_{xx} \frac{\partial u}{\partial r} +  \tilde{J}_{xy} \frac{\partial u}{\partial s}  \nn\\
+&=& \tilde{J}_{xx} \left( \sum_i \frac{\partial N_i}{\partial r} u_i + (a s + b) (-2r)  \right) 
+ +  \tilde{J}_{xy} \left( \sum_i \frac{\partial N_i}{\partial s} u_i + a (1-r^2) \right)  \nn\\
+&=& \tilde{J}_{xx} \left(  -(1-s) u_{12} + (1+s) u_{34} + (a s + b) (-2r)  \right) \nn\\ 
+&+&  \tilde{J}_{xy} \left(  -(1-r) u_{14} - (1+r) u_{23} + a (1-r^2) \right) \nn\\ 
+\nn\\
+\frac{\partial v}{\partial y} 
+&=& \tilde{J}_{yx} \left(  -(1-s) v_{12} + (1+s) v_{34} + c (1-s^2)   \right)  \nn\\
+&+&  \tilde{J}_{yy} \left(  -(1-r) v_{14} - (1+r) v_{23} + (cr+d) (-2s) \right) \nn
+\end{eqnarray}
+where $u_{ij}=(u_i-u_j)/4$ and $v_{ij}=(v_i-v_j)/4$.
+The velocity divergence can be written as follows
+\[
+\frac{\partial u}{\partial x} 
++\frac{\partial v}{\partial y} = C_0 +C_1 r + C_2 s + C_3 rs + C_4 r^2 + C_5 s^2 =0
+\]
+with
+\begin{eqnarray}
+C_0 &=& J_{xx} (-u_{12} + u_{34} ) + J_{xy} (- u_{14} - u_{23} )  + J_{yx}  (-v_{12} + v_{34}) + J_{yy} (-v_{14} - v_{23} )  \nn\\ 
+C_1 &=& J_{xy} (u_{14} - u_{23}) + J_{yy} (v_{14} - v_{23}) - 2 b J_{xx}   \nn\\ 
+C_2 &=& J_{xx} (u_{12} + u_{34}) + J_{yx} ( v_{12} + v_{34} )  - 2 d J_{yy}    \nn\\ 
+C_3 &=& -2 a J_{xx}  -2 c J_{yy} \nn\\ 
+C_4 &=& -a J_{xy}  \nn\\
+C_5 &=& -c J_{yx}  \nn\\
+\end{eqnarray}
+where the six $C_i$ coefficients are functions of the velocities and the other coefficients.
+In order for this expression to be exactly null {\it everywhere}, each $C$ coefficient has
+to be independently null.
+
+This immediately yields $a=c=0$ and the equation for $C_3$ is immediately satisfied.
+
+We then have:
+\[
+b=\frac{1}{2J_{xx}} ( J_{xy} (u_{14} - u_{23}) + J_{yy} (v_{14} - v_{23})  ) 
+\]
+\[
+d=\frac{1}{2J_{yy}} ( J_{xx} (u_{12} + u_{34}) + J_{yx} ( v_{12} + v_{34} ) ) 
+\]
+
+
+
+
+
 
 %-----------------------------------------------------------------
 \subsubsection{In 3D with $Q_1$ basis functions - Naive approach}
@@ -332,6 +413,194 @@ v(r,s,t)&=&\sum_i N_i(r,s,t) v_i + [\alpha_s (r+t) +\beta_s](1-s)(1+s) \nn\\
 w(r,s,t)&=&\sum_i N_i(r,s,t) w_i + [\alpha_t (r+s) +\beta_t](1-t)(1+t) \nn
 \end{eqnarray}
 
+
+%-------------------------------------------------------------------
+\subsubsection{In 3D with $Q_1$ basis functions - better approach ?}
+
+We start again from 
+\[
+\left(
+\begin{array}{c}
+\frac{\partial f}{\partial x} \\ \\
+\frac{\partial f}{\partial y} \\ \\
+\frac{\partial f}{\partial z} 
+\end{array}
+\right)
+=
+\tilde{\bm J} \cdot
+\left(
+\begin{array}{c}
+\frac{\partial f}{\partial r} \\ \\
+\frac{\partial f}{\partial s} \\ \\ 
+\frac{\partial f}{\partial t} 
+\end{array}
+\right)
+\]
+We then postulate 
+\begin{eqnarray}
+u(r,s,t)&=&\sum_i N_i(r,s,t) u_i + (a s + b t +c)(1-r)(1+r) \nn\\
+v(r,s,t)&=&\sum_i N_i(r,s,t) v_i + (d r + e t +f)(1-s)(1+s) \nn\\
+w(r,s,t)&=&\sum_i N_i(r,s,t) w_i + (g r + h s +i)(1-t)(1+t) \nn
+\end{eqnarray}
+so that:
+\begin{eqnarray}
+\frac{\partial u}{\partial x} 
+&=& \tilde{J}_{xx} \frac{\partial u}{\partial r} 
++\tilde{J}_{xy} \frac{\partial u}{\partial s}
++\tilde{J}_{xz} \frac{\partial u}{\partial t} \nn\\
+&=&  \tilde{J}_{xx} \left[\sum_i \frac{\partial N_i}{\partial r} u_i + (a s + b t +c)(-2r)  \right]\! %\nn\\
++\tilde{J}_{xy} \left[\sum_i \frac{\partial N_i}{\partial s} u_i + a (1-r^2)  \right]\! %\nn\\
++\tilde{J}_{xz} \left[\sum_i \frac{\partial N_i}{\partial t} u_i + b (1-r^2)  \right]
+\nn\\
+\frac{\partial v}{\partial y} 
+&=& \tilde{J}_{yx} \frac{\partial v}{\partial r} 
++\tilde{J}_{yy} \frac{\partial v}{\partial s}
++\tilde{J}_{yz} \frac{\partial v}{\partial t} \nn\\
+&=&  \tilde{J}_{yx} \left[\sum_i \frac{\partial N_i}{\partial r} v_i + d (1-s^2)  \right]\!
++\tilde{J}_{yy} \left[\sum_i \frac{\partial N_i}{\partial s} v_i + (d r + e t +f)(-2s) \right]\!
++\tilde{J}_{yz} \left[\sum_i \frac{\partial N_i}{\partial t} v_i + e (1-s^2)  \right] 
+\nn\\
+\frac{\partial w}{\partial z} 
+&=& \tilde{J}_{zx} \frac{\partial w}{\partial r} 
++\tilde{J}_{zy} \frac{\partial w}{\partial s}
++\tilde{J}_{zz} \frac{\partial w}{\partial t} \nn\\
+&=&  \tilde{J}_{zx} \left[\sum_i \frac{\partial N_i}{\partial r} w_i + g (1-t^2)  \right]\! 
++\tilde{J}_{zy} \left[\sum_i \frac{\partial N_i}{\partial s} w_i + h (1-t^2) \right] \! 
++\tilde{J}_{zz} \left[\sum_i \frac{\partial N_i}{\partial t} w_i + (g r + h s +i)(-2t)  \right] \nn
+\end{eqnarray}
+
+where for any function $f$:
+\begin{eqnarray}
+\sum_i
+\frac{\partial N_i}{\partial r} f_i 
+%&=&
+% (1-s)(1-t)(f_{2}-f_1)
+%+(1-s)(1+t)(f_{6}-f_5)
+%+(1+s)(1-t)(f_{3}-f_4)
+%+(1+s)(1+t)(f_{7}-f_8) \nn\\
+&=&
+ (1-s)(1-t)f_{21}
++(1-s)(1+t)f_{65}
++(1+s)(1-t)f_{34}
++(1+s)(1+t)f_{78} 
+\nn\\
+&=& ( f_{21}+f_{65}+f_{34}+f_{78}) \nn\\
+&+& (-f_{21}-f_{65}+f_{34}+f_{78})s \nn\\
+&+& (-f_{21}+f_{65}-f_{34}+f_{78})t \nn\\
+&+& ( f_{21}-f_{65}-f_{34}+f_{78})st 
+\nn\\
+&=& f_{r1} + f_{r2}s + f_{r3}t + f_{r4} st \nn\\ 
+\sum_i
+\frac{\partial N_i}{\partial s} f_i 
+%&=&
+% (1-r)(1-t)(f_4-f_1)
+%+(1+r)(1-t)(f_3-f_2)
+%+(1-r)(1+t)(f_8-f_5)
+%+(1+r)(1+t)(f_7-f_6) \nn\\
+&=&
+ (1-r)(1-t)f_{41}
++(1+r)(1-t)f_{32}
++(1-r)(1+t)f_{85}
++(1+r)(1+t)f_{76} \nn\\
+&=&
+   ( f_{41}+f_{32}+f_{85}+f_{76})  \nn\\
+&+&(-f_{41}+f_{32}-f_{85}+f_{76})r \nn\\
+&+&(-f_{41}-f_{32}+f_{85}+f_{76})t \nn\\
+&+&( f_{41}-f_{32}-f_{85}+f_{76})rt
+\nn\\
+&=& f_{s1} + f_{s2}r + f_{s3}t + f_{s4} rt \nn\\ 
+\sum_i
+\frac{\partial N_i}{\partial t} f_i 
+&=&
+ (1-r)(1-s)f_{51}
++(1+r)(1-s)f_{62}
++(1+r)(1+s)f_{73}
++(1-r)(1+s)f_{84} \nn\\
+&=&( f_{51}+f_{62}+f_{73}+f_{84}) \nn\\ 
+&+&(-f_{51}+f_{62}+f_{73}-f_{84})r\nn\\
+&+&(-f_{51}-f_{62}+f_{73}+f_{84})s\nn\\
+&+&( f_{51}-f_{62}+f_{73}-f_{84})rs
+\nn\\
+&=& f_{t1} + f_{t2}r + f_{t3}s + f_{t4} rs \nn
+\end{eqnarray}
+The velocity divergence is then 
+\[
+ \frac{\partial u}{\partial x} 
++\frac{\partial v}{\partial y} 
++\frac{\partial w}{\partial z} 
+= C_0 +C_1 r + C_2 s + C_3 t + C_4 rs + C_5 st + C_6 rt + C_7r^2 + C_8 s^2 + C_9 t ^2 =0
+\]
+with:
+\begin{eqnarray}
+C_0 &=&
+J_{xx} u_{r1} + J_{xy} u_{s1} + J_{xz} u_{t1} + 
+J_{yx} v_{r1} + J_{yy} v_{s1} + J_{yz} v_{t1} + 
+J_{zx} w_{r1} + J_{zy} w_{s1} + J_{zz} w_{t1} \nn\\
+&+&  J_{xy} a + J_{xz} b + J_{yx} d + J_{yz} e + J_{zx} g + J_{zy} h \nn\\
+C_1 &=& 
+J_{xy} u_{s2} + J_{xz} u_{t2} + 
+J_{yy} v_{s2} + J_{yz} v_{t2} + 
+J_{zy} w_{s2} + J_{zz} w_{t2} -J_{xx} 2c \nn \\ % r
+C_2 &=&
+J_{xx} u_{r2} + J_{xz} u_{t3} +
+J_{yx} v_{r2} + J_{yz} v_{t3} +
+J_{zx} w_{r2} + J_{zz} w_{t3} -J_{yy} 2f \nn\\ % s 
+C_3 &=&
+J_{xx} u_{r3} + J_{xy} u_{s3} +
+J_{yx} v_{r3} + J_{yy} v_{s3} +
+J_{zy} w_{r3} + J_{zy} w_{s3} -J_{zz} 2i \nn\\ % t 
+C_4 &=& J_{xz} u_{t4} + J_{yz} v_{t4} + J_{zz} w_{t4} -J_{xx} 2a - J_{yy} 2d  \nn\\ % rs
+C_5 &=& J_{xx} u_{r4} + J_{yx} v_{r4} + J_{zx} w_{r4} -J_{yy} 2e - J_{zz} 2h  \nn\\ % st
+C_6 &=& J_{xy} u_{s4} + J_{yy} v_{s4} + J_{zy} w_{s4} -J_{xx} 2b - J_{zz} 2g  \nn\\ % rt
+C_7 &=& - \tilde{J}_{xy} a - \tilde{J}_{xz} b  \nn\\ % r^2 
+C_8 &=& - \tilde{J}_{yx} d - \tilde{J}_{yz} e  \nn\\ % s^2 
+C_9 &=& - \tilde{J}_{zx} g - \tilde{J}_{zy} h  \nn   % t^2
+\end{eqnarray}
+It is then trivial to obtain $c,f,i$. 
+Concerning $a,b,d,e,g,h$ we are left with 6 equations for 6 unknowns, which can be cast as follows:
+\[
+\left(
+\begin{array}{cccccc}
+J_{xx} & & J_{yy} & & & \\
+ & & & J_{yy} & &  J_{zz}\\ 
+ & J_{xx} & & & J_{zz} & \\ 
+J_{xy} &  J_{xz} & & & & \\ 
+ & & J_{yx} & J_{yz} & \\ 
+ & & & & -J_{zx} & J_{zy} \\ 
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+a \\b\\ d\\ e\\ g\\ h
+\end{array}
+\right)
+=
+\frac{1}{2}
+\left(
+\begin{array}{c}
+ J_{xz} u_{t4} + J_{yz} v_{t4} + J_{zz} w_{t4} \\
+ J_{xx} u_{r4} + J_{yx} v_{r4} + J_{zx} w_{r4} \\
+ J_{xy} u_{s4} + J_{yy} v_{s4} + J_{zy} w_{s4} \\
+ 0 \\ 0 \\  0
+\end{array}
+\right)
+\]
+In the case of a regular grid with nodes aligned with the x,y,z axis, this 
+system is indefinite as $J_{xy}=J_{yx}=J_{xz}=...=0$.
+
+We can approach it simply:
+From the last three equations we have 
+\[
+b=-\frac{J_{xy}}{J_{xz}} a \quad\quad
+e=-\frac{J_{yx}}{J_{yz}} d \quad\quad
+h=-\frac{J_{zx}}{J_{zy}} g
+\]
+The equations involving C4,C5,C6 become:
+\begin{eqnarray}
+C_4 &=& J_{xz} u_{t4} + J_{yz} v_{t4} + J_{zz} w_{t4} -J_{xx} 2a - J_{yy} 2d  \nn\\ % rs
+C_5 &=& J_{xx} u_{r4} + J_{yx} v_{r4} + J_{zx} w_{r4} +2J_{yy} \frac{J_{yx}}{J_{yz}} d + 2J_{zz} \frac{J_{zx}}{J_{zy}}  \nn\\ % st
+C_6 &=& J_{xy} u_{s4} + J_{yy} v_{s4} + J_{zy} w_{s4} +2J_{xx} \frac{J_{xy}}{J_{xz}} a - J_{zz} 2g  \nn\\ % rt
+\end{eqnarray}
 
 %------------------------------------------------------------------------
 \subsubsection{In 2D with $P_1$ basis functions - what about triangles?}

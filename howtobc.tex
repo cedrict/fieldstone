@@ -146,4 +146,29 @@ The third technique is the one adopted throughout this document.
 As shown in \cite{wuxl08}, it is better to replace the 1 on the diagonal 
 by the former diagonal term as it reduces the condition number of the matrix. 
 The rhs must then be modified accordingly.
+
+\Literature Behr (2004) \cite{behr04}
+
+\todo{ASK DAVE for permission} This is an excerpt of an email sent to me by Dave May in May 2014: 
+{\it 
+Never ever ever impose bc's using a penalty approach.
+For problems with a fixed mesh topology and time dependent Dirichlet domain (e.g. the segment 
+of the boundary with Dirichlet bc's 
+maybe change size/shape over time - for example with a true stick/slip type interface), it's nice to define the matrix 
+with the dimension associated with the mesh+basis and leave all bc's in the operator. 
+Leaving the bc's in the operator can be implemented in a manner which still retains the operators symmetry (assuming 
+it was symmetric to begin with). This leaves the choice of what to stick on the diagonal. Simply using "1" could 
+screw up the spectrum of the matrix and kill the iterative solver performance. A better choice would be to insert 
+a diagonal entry closely related to the operator; e.g. something that looks like the diagonal entry 
+of $\int 2 \eta \epsilon(u) : \epsilon(v) dV$ (for the discrete stress tensor term). 
+
+Removing Dirichlet bc's entirely for the discrete operator sounds attractive. The code will like the FE theory 
+and you will only be solving for variables which are "unknowns" (compared with the above). 
+However, introducing a time dependent Dirichlet domain means the matrix must be re-sized, as should its non-zero structure 
+be re-allocated. Also, implemented multi-grid is annoying when the Dirichlet entries are removed. In fact, most of  
+the code associated with stripping out Diriclet bc's is annoying and ugly. However, removing the bcs ensures symmetry, 
+it ensures the discrete operator will have a nice spectrum (c.f. the above option). Also, stripping out bcs usually 
+increases overall storage as you have one representation of the discrete vectors given to the solver which will be  
+of size (N-n) and in your mesh you will have a repsentation of length N. ``N'' being the total number of dofs in your 
+system, ``n'' being the number of Dirichlet constrained dofs in your system. }
  
