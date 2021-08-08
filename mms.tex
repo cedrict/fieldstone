@@ -460,6 +460,24 @@ v_{rms} = \sqrt{\frac{1}{L^2}\frac{861752}{1575}} = \sqrt{\frac{215438}{1575}}
 \simeq 11.6955560683
 \]
 
+I have added this benchmark to \aspect{}.
+The velocity and pressure errors (in the $L_2$ norm) are measured for $L=1,2,3$, 
+levels 3 to 9 (resolutions $8\times8$ to $512\times 512$)  
+and $\epsilon=10^{-1},10^{-2},10^{-3}$. The figure below shows the velocity and pressure 
+error convergence as a function of the mesh size for $\epsilon=0.1$ (results are identical for 
+the other two $\epsilon$ values).
+The expected convergence rates (cubic convergence for velocity and quadratic for pressure) are 
+recovered for the $1\times 1$ domain at all resolutions. These rates are recovered for 
+the $2\times 2$ domain for resolutions above level 6. We see that 
+the multitude of low viscosity bands in the upper right corner of the $3\times 3$ domain 
+will require a refinement level superior to 9 to recover the optimal convergence rates. 
+
+\begin{center}
+\includegraphics[width=7cm]{images/mms/mms7_errors}\\
+{\captionfont Velocity and pressure error convergence as a function of the mesh size $h$ for 3 domain sizes with $\epsilon=0.1$.}
+\end{center}
+
+
 \bscthesis \index{general}{BSc Thesis}
 
 %-----------------------------------------------------------------------------
