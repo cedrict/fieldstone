@@ -13,33 +13,32 @@ many discretizations are unstable, giving rise to artifacts such as spurious osc
 The LBB condition gives criteria for when a discretization of a saddle point problem is stable. 
 It also assures convergence at the optimal rate. 
 
-Bochev \& Gunzburger \cite{bogu09} state: "
-The terminology “LBB” originates from the facts that this condition was first explicitly discussed
+Bochev \& Gunzburger \cite{bogu09} state: ``
+The terminology 'LBB' originates from the facts that this condition was first explicitly discussed
 in the finite element setting for saddle point problems by Brezzi\footnote{
 \url{https://en.wikipedia.org/wiki/Franco_Brezzi}} \cite{brez74} and that it is a special case of
 the general weak-coercivity condition first discussed for finite element methods by Ivo Babu{\v s}ka\footnote{
 \url{https://en.wikipedia.org/wiki/Ivo_Babuska}}
 \cite{babu71} and that, in the continuous setting of the Stokes equation, this condition was first proved to
-hold by Olga Ladyzhenskaya\footnote{\url{https://en.wikipedia.org/wiki/Olga_Ladyzhenskaya}}; see \cite{lady69}."
+hold by Olga Ladyzhenskaya\footnote{\url{https://en.wikipedia.org/wiki/Olga_Ladyzhenskaya}}; see \cite{lady69}.''
 
 Unfortunately, to quote Donea \& Huerta \cite{dohu03}: 
-"In the finite element context, it is by no means easy to prove whether or not a given
-velocity-pressure pair satisfies the LBB compatibility condition."
-Elman \etal state: "[...] Choosing spaces for which the discrete inf-sup condition holds
+``In the finite element context, it is by no means easy to prove whether or not a given
+velocity-pressure pair satisfies the LBB compatibility condition.''
+Elman \etal state: ``[...] Choosing spaces for which the discrete inf-sup condition holds
 and is a delicate matter, and seemingly natural choices of velocity and pressure approximation
 do not work. [...] In general, care must be taken to make the velocity space 
-rich enough compared to the pressure space."
+rich enough compared to the pressure space.''
 
 The LBB condition, or inf-sup condition can be proven in different ways, 
 and standard techniques have been designed
 as listed in Boffi \etal (2008) \cite{bobf08}.
 
 %p129
-Elman \etal \cite{elsw} state that "The inf-sup condition is a sufficient condition 
-for the pressure to be unique up
-to  constant in the case of an enclosed flow." This can also be proven for other boundary conditions.
+Elman \etal \cite{elsw} state that ``The inf-sup condition is a sufficient condition 
+for the pressure to be unique up to constant in the case of an enclosed flow.''
+This can also be proven for other boundary conditions.
 This approach, based on the macro-element technique \cite{sten90} is explored in Appendix \ref{app:Gel}.
-
 
 It can be shown that, provided the kernel (null space) of matrix $\G$ is zero,
 the Stokes matrix is non-singular, that is $\vec{\cal V}$ and $\vec{\cal P}$ 
@@ -53,10 +52,10 @@ One could then (numerically) compute the eigenvalues of $\SSS$ and check that th
 to show that $\SSS$ is positive definite but that would prove very costly. 
 
 Another way is to see that $\SSS$ is positive definite only if $\text{ker}(\G)=\{0\}$.
-Again to quote Donea \& Huerta \cite{dohu03}: "If this is the case, the partitioned Stokes matrix  
+Again to quote Donea \& Huerta \cite{dohu03}: ``If this is the case, the partitioned Stokes matrix  
 is non-singular and delivers uniquely defined velocity and pressure fields. If this is not the case, a
 stable and convergent velocity field might be obtained, but the pressure field is likely
-to present spurious and oscillatory results." 
+to present spurious and oscillatory results.'' 
 Note that in the case of the $Q_1 \times P_0$ element it has been shown that the multiple families of 
 checkboard pressure modes actually lie in the kernel of $\G$. \cite{sagl81a,sagl81b}
 

@@ -1,5 +1,5 @@
 \begin{flushright} {\tiny {\color{gray} elements2D.tex}} \end{flushright}
-
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Let us for a moment consider a single quadrilateral element in the $xy$-plane, 
 as shown on the following figure:
@@ -32,11 +32,11 @@ of $M$ in a continuous fashion:
 u(x_M,y_M) = \sum_{i=1}^4 \bN_i(x_M,y_M)\;  u_i
 = \bN_1(x_M,y_M) u_1 + \bN_2(x_M,y_M) u_2 + \bN_3(x_M,y_M) u_3 + \bN_4(x_M,y_M) u_4 
 \end{equation}
-where the $N_i$ are continuous (and also "well behaved") functions which have the property:
+where the $bN_i$ are continuous (and also "well behaved") functions which have the property:
 \[
 \bN_i(x_j,y_j)=\delta_{ij}
 \]
-or, in other words: 
+or, in other words for example: 
 \begin{eqnarray}
 \bN_3(x_1,y_1) &=& 0 \nn\\
 \bN_3(x_2,y_2) &=& 0 \nn\\
@@ -45,56 +45,51 @@ or, in other words:
 \end{eqnarray}
 The functions $\bN_i$ are commonly called basis functions. \index{general}{basis functions}
 
-Omitting the $M$ subscripts, the velocity components $u$ and $v$ for a point inside the element
+Omitting the $M$ subscripts (yet stil assuming the point being inside the element), the velocity 
+components $u$ and $v$ for a point inside the element
  are given by:
 \begin{eqnarray}
 u^h(x,y) &=& \sum_{i=1}^4 \bN_i(x,y)\;  u_i \\
 v^h(x,y) &=& \sum_{i=1}^4 \bN_i(x,y)\;  v_i \label{bf01}
 \end{eqnarray}
 where we have added the superscript $h$ to denote that it is an approximation of the functions 
-of this element of diameter $h$. 
+of this element of diameter $h$ (by diameter we mean here a representative scalar value of the dimension
+of the element). 
 
 One can now easily compute velocity gradients (and therefore the 
 strain rate tensor) since we have assumed the basis functions to be "well behaved" 
 (in this case first-order differentiable):
 \begin{eqnarray}
-\dot{\epsilon}^h_{xx}(x,y) 
+\dot{\varepsilon}^h_{xx}(x,y) 
 &=& \frac{\partial u^h}{\partial x} = \sum_{i=1}^4 \frac{\partial \bN_i}{\partial x}\;  u_i \\
-\dot{\epsilon}^h_{yy}(x,y) 
+\dot{\varepsilon}^h_{yy}(x,y) 
 &=& \frac{\partial v^h}{\partial y} = \sum_{i=1}^4 \frac{\partial \bN_i}{\partial y}\;  v_i \\
-\dot{\epsilon}^h_{xy}(x,y) 
+\dot{\varepsilon}^h_{xy}(x,y) 
 &=& \frac{1}{2}\left(\frac{\partial u^h}{\partial y} + \frac{\partial v^h}{\partial x} \right) 
 = \frac{1}{2}\sum_{i=1}^4 \frac{\partial \bN_i}{\partial y}\;  u_i
 + \frac{1}{2}\sum_{i=1}^4 \frac{\partial \bN_i}{\partial x}\;  v_i
 \end{eqnarray}
 How we actually obtain the exact form of the basis functions $\bN_i$ is explained in the coming sections.
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Bilinear basis functions in 2D ($Q_1$)} \label{ss:q12d}
 \index{general}{$Q_1$}
 
 \input{basis_Q1_2D}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Biquadratic basis functions in 2D ($Q_2$)}\label{ss:q22d}
 \index{general}{$Q_2$}
 
 \input{basis_Q2_2D}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Bicubic basis functions in 2D ($Q_3$)}
 \index{general}{$Q_3$}
 
 \input{basis_Q3_2D}
 
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Eight node serendipity basis functions in 2D ($Q_2^{(8)}$)}
 \label{sec:serendipity2D}
 \index{general}{$Q_2^{(8)}$} 
@@ -102,83 +97,14 @@ How we actually obtain the exact form of the basis functions $\bN_i$ is explaine
 
 \input{basis_Q28_2D}
 
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Eight node serendipity basis functions in 2D ($QH8-C1$)}
 \label{sec:serendipity2Db}
 \index{general}{$QH8-C1$} \index{general}{Serendipity element}
 
-This element is proposed in Zhang \& Xiang (2020) \cite{zhxi20}. Two remarks
-must be made: 1) Eq.~(29) of their publication which is the definition
-of the basis functions contains an error\footnote{
-Answer from the author: "N5 to N8 is missing an A in the denominator and 
-the calculation program does not have this problem"}. 2) The authors use a rather 
-uncommon and annoying rotated numbering:
-\begin{verbatim}
-      y
-      |
-2=====5=====1             3=====6=====2
-|           |             |           |   (r_0,s_0)=(-1,-1)   (r_4,s_4)=( 0,-1)
-|           |             |           |   (r_1,s_1)=(+1,-1)   (r_5,s_5)=(+1, 0)
-6           8--x          7     +     5   (r_2,s_2)=(+1,+1)   (r_6,s_6)=( 0,+1)
-|           |             |           |   (r_3,s_3)=(-1,+1)   (r_7,s_7)=(-1, 0)
-|           |             |           |    
-3=====7=====4             0=====4=====1
-Zhang & Xiang             our numbering
-\end{verbatim}
+\input{basis_QH8_2D}
 
-For each element they define (their numbering):
-\begin{eqnarray}
-A   &=& \frac{1}{2} [ (x_1-x_3)(y_2-y_4)-(x_2-x_4)(y_1-y_3) ] \nn\\
-m_x &=& (x_1-x_4)(y_2-y_3)-(x_2-x_3)(y_1-y_4) \nn\\
-m_y &=& (x_3-x_4)(y_1-y_2)-(x_1-x_2)(y_3-y_4) \nn
-\end{eqnarray}
-
-Note that $A$ is the area of the element, and that in the case when 
-the element is a rectangle then $m_x=m_y=0$.
-
-\begin{eqnarray}
-\bN_1(r,s)&=& n_1(r,s) +(m_x^2 - m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
-\bN_2(r,s)&=& n_2(r,s) +(m_x^2 + m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
-\bN_3(r,s)&=& n_3(r,s) +(m_x^2 - m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
-\bN_4(r,s)&=& n_4(r,s) +(m_x^2 + m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
-\bN_5(r,s)&=& n_5(r,s) -m_x(2Am_x+m_y^2)\frac{E(r,s)}{AD} \nn\\
-\bN_6(r,s)&=& n_6(r,s) -m_y(2Am_y+m_x^2)\frac{E(r,s)}{AD} \nn\\
-\bN_7(r,s)&=& n_7(r,s) +m_x(-2Am_x+m_y^2)\frac{E(r,s)}{AD} \nn\\
-\bN_8(r,s)&=& n_8(r,s) +m_y(-2Am_y+m_x^2)\frac{E(r,s)}{AD} \nn
-\end{eqnarray}
-with 
-\[
-E(r,s)=(1-r^2)(1-s^2)
-\qquad
-D=4(4A^2+m_x^2+m_y^2)
-\]
-and where the $n_i$ functions are the basis functions of the 'regular' 
-8-node element (see Section~\ref{sec:serendipity2D}).
-
-This is implemented in \stone 52.
-
-\todo[inline]{not finished. SHOW CONSISTENCY !! like in paper
-email sent to author about mistake.  }
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Biquartic basis functions in 2D ($Q_4$)}
 \index{general}{$Q_4$}
 
@@ -186,707 +112,62 @@ Inside an element the local numbering of the nodes is as follows:
 
 \input{tikz/tikz_q42d}
 
-%.....................................................................
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Linear basis functions for triangles in 2D ($P_1$)}\label{ss:p1}
 \index{general}{$P_1$}
 
 \input{basis_P1_2D}
 
-%.....................................................................
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Linear basis functions for quadrilaterals in 2D ($P_1$)}\label{ss:lbfq2D}
 \index{general}{$P_1$}
 
 \input{basis_pm1_2D}
 
-%.....................................................................
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Enriched linear basis functions in triangles ($P_1^+$)}
 \index{general}{$P_1^+$}
 
-As we will see in Section~\ref{pair:mini} the above $P_1$ can be enriched 
-with a so-called bubble function.
-The \index{general}{Bubble Function} bubble function of the MINI element 
-is described in \cite{arbf84} as being $\lambda_1\lambda_2\lambda_3$
-where $\lambda_i$ are the so-called barycentric 
-coordinates\footnote{\url{https://en.wikipedia.org/wiki/Barycentric\_coordinate\_system }}.
-\index{general}{Barycentric Coordinates}
+\input{basis_p1p_2D}
 
-\begin{eqnarray}
-\lambda_1 &=& \frac{(y2-y3)(x-x3)+(x3-x2)(y-y3)}{(y2-y3)(x1-x3)+(x3-x2)(y1-y3)} \nn\\
-\lambda_2 &=& \frac{(y3-y1)(x-x3)+(x1-x3)(y-y3)}{(y2-y3)(x1-x3)+(x3-x2)(y1-y3)} \nn\\
-\lambda_3 &=& 1-\lambda_1-\lambda_2 \nn
-\end{eqnarray}
-
-\begin{center}
-\includegraphics[width=12cm]{images/mini/minielement2}\\
-{\small representation of the element in the real coordinate system $(x,y)$
-and in the reduced coordinate system $(r,s)$}
-\end{center}
-
-\begin{center}
-\includegraphics[width=5cm]{images/mini/barycoord}\\
-{\small Barycentric coordinates ($\lambda _{1},\lambda _{2},\lambda _{3}$) on an equilateral triangle and on a right triangle.}
-\end{center}
-
-In the reference triangle, the barycentric coordinates write
-\begin{eqnarray}
-\lambda_1 &=& \frac{(s_2-s_3)(r-r_3)+(r_3-r_2)(s-s_3)}{(s_2-s_3)(r_1-r_3)+(r_3-r_2)(s_1-s_3)} = \frac{(-1)(r)+(-1)(s-1)}{(-1)(0)+(-1)(-1)} = -r-s+1  \nn\\
-\lambda_2 &=& \frac{(s3-s1)(r-r3)+(r1-r3)(s-s3)}{(s2-s3)(r1-r3)+(r3-r2)(s1-s3)} = \frac{(1)(r)+(0)(s-1)}{(-1)(0)+(-1)(-1)} = r \nn\\
-\lambda_3 &=& 1-\lambda_1-\lambda_2 = 1 - (-r-s+1) - r = s \nn
-\end{eqnarray}
-As we have seen before the bubble function is given by $\lambda_1\lambda_2\lambda_3 = (1-r-s)rs$
-and the polynomial form for the basis functions is given by:
-\[
-f(r,s) =a+br+cs + d (1-r-s)rs
-\]
-Setting the location of the bubble at $r=s=1/3$, i.e. $\lambda_1\lambda_2\lambda_3 = 1/3$, 
-we then have 
-\begin{eqnarray}
-f(r_1,s_1)&=&f_1 = a+br_1+cs_1 + d (1-r_1-s_1)r_1s_1 = a \nn\\
-f(r_2,s_2)&=&f_2 = a+br_2+cs_2 + d (1-r_2-s_2)r_2s_2 = a + b \nn\\
-f(r_3,s_3)&=&f_3 = a+br_3+cs_3 + d (1-r_3-s_3)r_3s_3 = a + c \nn\\
-f(r_4,s_4)&=&f_4 = a+br_4+cs_4 + d (1-r_4-s_4)r_4s_4 = a + \frac{b}{3} + \frac{c}{3} + \frac{1}{27} \nn
-\end{eqnarray}
-where point 4 is the location of the bubble.
-This yields
-\[
-a=f_1 
-\quad\quad\qquad
-b=f_2-a = f_2-f_1
-\quad\quad\qquad
-c=f_3-a = f_3-f_1
-\]
-and
-\[
-d=27(f_4-a-\frac{b}{3} - \frac{c}{3}) = 27 (f_4 - f_1 - \frac{f_2-f_1}{3} - \frac{f_3-f_1}{3} )
-=27(f_4 - \frac{f_1}{3}  - \frac{f_2}{3}  - \frac{f_3}{3} )
-\] 
-
-Finally
-\begin{eqnarray}
-f(r,s) 
-&=&a+br+cs + d (1-r-s)rs \nn\\
-&=& f_1 + (f_2-f_1)r + (f_3-f_1)s + 27(f_4 - \frac{f_1}{3}  - \frac{f_2}{3}  - \frac{f_3}{3} ) (1-r-s)rs \nn\\
-&=& [1-r-s-9(1-r-s)rs] f_1 + [r-9(1-r-s)rs ]f_2 + [s-9(1-r-s)rs ]f_3 + [27(1-r-s)rs]f_4 \nn
-\end{eqnarray}
-so that 
-\[
-f(r,s)=\sum_{i=1}^4 N_i(r,s) f_i
-\]
-with 
-%\begin{mdframed}[backgroundcolor=blue!15]
-\begin{eqnarray}
-N_1(r,s) &=& 1-r-s-9(1-r-s)rs \nn\\
-N_2(r,s) &=& r-9(1-r-s)rs \nn\\
-N_3(r,s) &=& s-9(1-r-s)rs \nn\\
-N_4(r,s) &=& 27(1-r-s)rs \nn
-\end{eqnarray}
-%\end{mdframed}
-It is trivial to verify that $\sum_i N_i =1$ for all values of $r,s$
-and the gradients of the basis functions are:
-\begin{eqnarray}
-\frac{\partial N_1}{\partial r}(r,s) &=& -1 - 9(1-2r-s)s \\ 
-\frac{\partial N_2}{\partial r}(r,s) &=&  +1 - 9(1-2r-s)s \\ 
-\frac{\partial N_3}{\partial r}(r,s) &=&  - 9(1-2r-s)s \\ 
-\frac{\partial N_4}{\partial r}(r,s) &=&  27(1-2r-s)s \\ 
-\\
-\frac{\partial N_1}{\partial s}(r,s) &=& -1 - 9(1-r-2s)r \\ 
-\frac{\partial N_2}{\partial s}(r,s) &=&    - 9(1-r-2s)r \\ 
-\frac{\partial N_3}{\partial s}(r,s) &=& +1 - 9(1-r-2s)r \\ 
-\frac{\partial N_4}{\partial s}(r,s) &=&     27(1-r-2s)r 
-\end{eqnarray}
-
-We have two coordinate systems for the element: the global coordinates $(x,y)$ 
-and the natural coordinates $(r,s)$. Inside the element, the relation between the two is given by
-\begin{eqnarray}
-x &=& N_1 x_1 + N_2 x_2 + N_3 x_3 + N_4 x_4 = \sum_i N_i(r,s) x_i\nn\\
-y &=& N_1 y_1 + N_2 y_2 + N_3 y_3 + N_4 y_4 = \sum_i N_i(r,s) y_i
-\end{eqnarray}
-or,
-\begin{eqnarray}
-x &=& [ 1-r-s-9(1-r-s)rs] x_1 + [r-9(1-r-s)rs] x_2 + [s-9(1-r-s)rs] x_3 + [27(1-r-s)rs] x_4 \nn\\
-&=& x_1 -r (x_1-x_2) -s (x_1-x_3) + (1-r-s)rs (-9 x_1 - 9 x_2  -9 x_3 +27 x_4)  \nn\\
-&=& x_1 -r (x_1-x_2) -s (x_1-x_3) + (1-r-s)rs (-9 x_1 - 9 x_2  -9 x_3 +27 (x_1+x_2+x_3)/3) \nn\\ 
-&=& x_1 -r (x_1-x_2) -s (x_1-x_3) \nn\\ 
-&=& x_1 -r x_{12} -s x_{13} \nn\\ 
-y &=& [ 1-r-s-9(1-r-s)rs] y_1 + [r-9(1-r-s)rs] y_2 + [s-9(1-r-s)rs] y_3 + [27(1-r-s)rs] y_4 \nn\\
-&=& y_1 -r (y_1-y_2) -s (y_1-y_3) + (1-r-s)rs (-9 y_1 - 9 y_2  -9 y_3 +27 y_4)  \nn\\
-&=& y_1 -r (y_1-y_2) -s (y_1-y_3) + (1-r-s)rs (-9 y_1 - 9 y_2  -9 y_3 +27 (y_1+y_2+y_3)/3) \nn\\ 
-&=& y_1 -r (y_1-y_2) -s (y_1-y_3) \nn \\
-&=& y_1 -r y_{12} -s y_{13} \nn 
-\end{eqnarray}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Quadratic basis functions for triangles in 2D ($P_2$)}
 \index{general}{$P_2$}
 
-\begin{verbatim}
-2            
-|\
-| \        (r_0,s_0)=(0,0) (r_3,s_3)=(1/2,0)
-5   4      (r_1,s_1)=(1,0) (r_4,s_4)=(1/2,1/2)
-|     \    (r_2,s_2)=(0,1) (r_5,s_5)=(0,1/2)
-|      \ 
-0===3===1
-\end{verbatim}
-The basis polynomial is then
-\[
-f(r,s) = c_1 + c_2 r + c_3 s + c_4  r^2 + c_5 rs  + c_6 s^2
-\]
-We have 
-\begin{eqnarray}
-f_1 = f(r_1,s_1) &=& c_1 \nonumber\\
-f_2 = f(r_2,s_2) &=& c_1 + c_2 + c_4\nonumber\\
-f_3 = f(r_3,s_3) &=& c_1 + c_3 + c_6\nonumber\\
-f_4 = f(r_4,s_4) &=& c_1 + c_2/2 + c_4/4\nonumber\\
-f_5 = f(r_5,s_5) &=& c_1 + c_2/2 + c_3/2 \nonumber\\
-                 &+& c_4/4 + c_5/4 + c_6/4\nonumber\\
-f_6 = f(r_6,s_6) &=& c_1 + c_3/2 + c_6/4\nonumber
-\end{eqnarray}
+\input{basis_p2_2D}
 
-This can be cast as ${\bm f}={\bm A}\cdot {\bm c}$ where ${\bm A}$ is a 6x6 matrix:
-\[
-{\bm A}=
-\left(
-\begin{array}{cccccc}
-1&0   &  0  & 0   & 0   & 0\\
-1&1   &  0  & 1   & 0   & 0\\
-1&0   &  1  & 0   & 0   & 1\\
-1&1/2 &  0  & 1/4 & 0   & 0\\
-1&1/2 &  1/2& 1/4 & 1/4 & 1/4\\
-1&0   &  1/2& 0   & 0   & 1/4
-\end{array}
-\right)
-\]
-It is rather trivial to compute the inverse of this matrix:
-\[
-{\bm A}^{-1}=
-\left(
-\begin{array}{cccccc}
-1  & 0 & 0  & 0  & 0 & 0  \\
--3 & -1& 0  & 4  & 0 & 0 \\
--3 & 0 & -1 & 0  & 0 & 4 \\
-2  & 2 & 0  & -4 & 0 & 0  \\
-4  & 0 & 0  & -4 & 4 & -4 \\
-2  & 0 & 2  & 0  & 0 & -4
-\end{array}
-\right)
-\]
-In the end, one obtains:
-\begin{eqnarray}
-f(r,s) 
-&=& f_1 + (-3f_1-f_2+4f_4) r + (-3f_1-f_3+4f_6)s \nonumber\\
-&& +(2f_1+2f_2-4f_4)r^2 + (4f_1-4f_4+4f_5-4f_6) rs \nn\\
-&&+ (2f_1+2f_3-4f_6)s^2 \nonumber\\
-&=& \sum_{i=1}^6 N_i(r,s) f_i
-\end{eqnarray}
-with
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
-N_1(r,s) &=& 1-3r-3s+2r^2+4rs+2s^2 \nonumber\\
-N_2(r,s) &=& -r+2r^2 \nonumber\\
-N_3(r,s) &=& -s+2s^2 \nonumber\\
-N_4(r,s) &=& 4r-4r^2-4rs \nonumber\\
-N_5(r,s) &=& 4rs \nonumber\\
-N_6(r,s) &=& 4s-4rs-4s^2 \nonumber
-\end{eqnarray}
-\end{mdframed}
-
-The derivatives are as follows:
-\begin{eqnarray}
-\frac{\partial N_1}{\partial r}(r,s) &=&  -3+4r+4s \nn\\ 
-\frac{\partial N_2}{\partial r}(r,s) &=&  -1+4r\nn\\ 
-\frac{\partial N_3}{\partial r}(r,s) &=&  0\nn\\ 
-\frac{\partial N_4}{\partial r}(r,s) &=&  4-8r-4s\nn\\ 
-\frac{\partial N_5}{\partial r}(r,s) &=&  4s\nn\\ 
-\frac{\partial N_6}{\partial r}(r,s) &=&  -4s\nn
-\end{eqnarray}
-
-\begin{eqnarray}
-\frac{\partial N_1}{\partial s}(r,s) &=&  -3+4r+4s\nn\\ 
-\frac{\partial N_2}{\partial s}(r,s) &=&  0\nn\\ 
-\frac{\partial N_3}{\partial s}(r,s) &=&  -1+4s\nn\\ 
-\frac{\partial N_4}{\partial s}(r,s) &=&  -4r\nn\\ 
-\frac{\partial N_5}{\partial s}(r,s) &=&  4r\nn\\ 
-\frac{\partial N_6}{\partial s}(r,s) &=&  4-4r-8s\nn
-\end{eqnarray}
-
-
-
-%.....................................................................
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Enriched quadratic basis functions in triangles ($P_2^+$)}
 \index{general}{$P_2^+$}
 
-This is used by the Crouzeix-Raviart element, see Section~\ref{sec:crouzeix-raviart}. 
-\index{general}{Crouzeix-Raviart}
+\input{basis_p2p_2D}
 
-\begin{verbatim}
-03             (r_1,s_1)=(0,0)
-||\\           (r_2,s_2)=(1,0)
-|| \\          (r_3,s_3)=(0,1)
-||  \\         (r_4,s_4)=(1/2,0)
-06   05        (r_5,s_5)=(1/2,1/2)
-|| 07 \\       (r_6,s_6)=(0,1/2)
-||     \\      (r_7,s_7)=(1/3,1/3)
-01==04==02    
-\end{verbatim}
-
-The basis functions are given by:
-\todo[inline]{find reference}
-
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
-N_1(r,s) &=&  (1-r-s)(1-2r-2s+ 3rs) \\
-N_2(r,s) &=& r (2 r -1 + 3s-3rs-3s^2 ) \\
-N_3(r,s) &=& s (2s -1 + 3r-3r^2-3rs )\\
-N_4(r,s) &=& 4(1-r-s)r(1 -3s ) \\
-N_5(r,s) &=& 4rs [-2+3r+3s]\\
-N_6(r,s) &=& 4(1-r-s)s(1-3r)\\
-N_7(r,s) &=& 27 (1-r-s)rs 
-\end{eqnarray}
-\end{mdframed}
-It is then easy to verify that for all basis functions we have 
-$N_i(r_j,s_j)=\delta_{ij}$ where $j$ denotes one of the seven nodes. 
-
-The derivatives are as follows:
-\begin{eqnarray}
-\frac{\partial N_1}{\partial r}(r,s) &=& r(4-6s)-3s^2+7s-3\\
-\frac{\partial N_2}{\partial r}(r,s) &=& r(4-6s)-3s^2+3s-1\\
-\frac{\partial N_3}{\partial r}(r,s) &=& -3s(2r+s-1)  \\
-\frac{\partial N_4}{\partial r}(r,s) &=& 4(3s-1)(2r+s-1) \\
-\frac{\partial N_5}{\partial r}(r,s) &=& 4s(6r+3s-2) \\
-\frac{\partial N_6}{\partial r}(r,s) &=& 4s(6r+3s-4)\\
-\frac{\partial N_7}{\partial r}(r,s) &=& -27s(2r+s-1)
-\end{eqnarray}
-
-\begin{eqnarray}
-\frac{\partial N_1}{\partial s}(r,s) &=& -3r^2+r(7-6s)+4s-3\\
-\frac{\partial N_2}{\partial s}(r,s) &=& -3r(r+2s-1)\\
-\frac{\partial N_3}{\partial s}(r,s) &=& -3r^2+r(3-6s)+4s-1 \\
-\frac{\partial N_4}{\partial s}(r,s) &=& 4r(3r+6s-4)  \\
-\frac{\partial N_5}{\partial s}(r,s) &=& 4r(3r+6s-2) \\
-\frac{\partial N_6}{\partial s}(r,s) &=& 4(3r-1)(r+2s-1)\\
-\frac{\partial N_7}{\partial s}(r,s) &=& -27r(r+2s-1)
-\end{eqnarray}
-
-
-Note that the basis functions can also be expressed as a function of the barycentric coordinates, 
-as in the MILAMIN code \cite{daks08} or in Cuvelier \etal, 1986 \cite{cuss86}\footnote{Note
-that the numbering of the nodes in the book is different with respect to the one above. }
-
-\begin{verbatim}
-03          
-||\\        
-|| \\       
-||  \\      
-05   04     
-|| 07 \\    
-||     \\   
-01==06==02    
-\end{verbatim}
-
-\begin{eqnarray}
-N_1(\lambda_1,\lambda_2,\lambda_3) &=& \eta_1(2\eta_1-1)+ 3\eta_1\eta_2\eta_3\\
-N_2(\lambda_1,\lambda_2,\lambda_3) &=& \eta_2(2\eta_2-1)+ 3\eta_1\eta_2\eta_3\\
-N_3(\lambda_1,\lambda_2,\lambda_3) &=& \eta_3(2\eta_3-1)+ 3\eta_1\eta_2\eta_3\\
-N_4(\lambda_1,\lambda_2,\lambda_3) &=& 4\eta_2\eta_3 - 12\eta_1\eta_2\eta_3\\
-N_5(\lambda_1,\lambda_2,\lambda_3) &=& 4\eta_1\eta_3 - 12\eta_1\eta_2\eta_3\\
-N_6(\lambda_1,\lambda_2,\lambda_3) &=& 4\eta_1\eta_2 - 12\eta_1\eta_2\eta_3\\
-N_7(\lambda_1,\lambda_2,\lambda_3) &=& 27\eta_1\eta_2\eta_3 
-\end{eqnarray}
-
-\todo[inline]{
-VERIFY that when $\eta_1=1-r-s$, $\eta_2=r$ and $\eta_3=s$ we find the above $r,s$ basis functions
-}
-
-
-%1-4*eta1+3*eta1*eta3-3*eta2*eta3 ...
-%-1+4*eta2+3*eta1*eta3-3*eta2*eta3 ...
-%3*eta1*eta3-3*eta2*eta3 ...
-%4*eta3+12*eta2*eta3-12*eta1*eta3 ...
-%-4*eta3+12*eta2*eta3-12*eta1*eta3 ...
-%4*eta1-4*eta2+12*eta2*eta3-12*eta1*eta3 ...
-%-27*eta2*eta3+27*eta1*eta3
-
-%1-4*eta1+3*eta1*eta2-3*eta2*eta3 ...
-%+3*eta1*eta2-3*eta2*eta3 ...
-%-1+4*eta3+3*eta1*eta2-3*eta2*eta3 ...
-%4*eta2-12*eta1*eta2+12*eta2*eta3 ...
-%4*eta1-4*eta3-12*eta1*eta2+12*eta2*eta3 ...
-%-4*eta2-12*eta1*eta2+12*eta2*eta3 ...
-%27*eta1*eta2-27*eta2*eta3];  
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Cubic basis functions for triangles ($P_3$)}
 \index{general}{$P_3$}
 
-\begin{verbatim}
-2
-|\          (r_0,s_0)=(0,0)   (r_5,s_5)=(2/3,1/3)
-|  \        (r_1,s_1)=(1,0)   (r_6,s_6)=(1/3,2/3)
-7   6       (r_2,s_2)=(0,1)   (r_7,s_7)=(0,2/3)
-|    \      (r_3,s_3)=(1/3,0) (r_8,s_8)=(0,1/3)
-8  9   5    (r_4,s_4)=(2/3,0) (r_9,s_9)=(1/3,1/3)
-|       \ 
-0==3==4==1
-\end{verbatim}
-The basis polynomial is then
-\[
-f(r,s) = c_1 + c_2r + c_3s + c_4 r^2 + c_5 rs + c_6 s^2 + c_7 r^3 +c_8 r^2s + c_9 rs^2 + c_{10}s^3
-\]
-\begin{eqnarray}
-N_0(r,s) &=& \frac{9}{2}(1-r-s)\left(\frac13-r-s\right)\left(\frac23-r-s\right) \\
-N_1(r,s) &=& \frac{9}{2}r\left(r-\frac13\right)\left(r-\frac23 \right) \\
-N_2(r,s) &=& \frac{9}{2}s\left(s-\frac13\right)\left(s-\frac23\right) \\
-N_3(r,s) &=& \frac{27}{2}(1-r-s)r \left(\frac23-r-s\right) \\
-N_4(r,s) &=& \frac{27}{2}(1-r-s)r\left(r-\frac13\right) \\
-N_5(r,s) &=& \frac{27}{2}rs\left(r-\frac13\right) \\
-N_6(r,s) &=& \frac{27}{2}rs\left(r-\frac23\right) \\
-N_7(r,s) &=& \frac{27}{2}(1-r-s)s\left(s-\frac13\right) \\
-N_8(r,s) &=& \frac{27}{2}(1-r-s)s \left(\frac23-r-s\right) \\
-N_9(r,s) &=& 27 rs(1-r-s)
-\end{eqnarray}
+\input{basis_p3_2D}
 
-
-
-%..........................................................................
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Enriched linear basis functions in quadrilaterals ($Q_1^+$) -WIP} \label{ss:quadmini}
 \index{general}{$Q_1^+$}
 
-\begin{verbatim}
-4===========3
-|           |   (r_1,s_1)=(-1,-1)
-|           |   (r_2,s_2)=(1,-1)
-|     5     |   (r_3,s_3)=(1,1)
-|           |   (r_4,s_4)=(-1,1)
-|           |   (r_5,s_5)=(0,0)
-1===========2
-\end{verbatim}
+\input{basis_q1p_2D}
 
-\begin{itemize}
-\item 
-In Bai (1997) \cite{bai97}: "It is well known that the equal-order bilinear velocity-bilinear 
-continuous pressure element - the $Q_1\times Q_1$, element - exhibits a certain spurious pressure mode.
-In the paper we propose a new stabilized $Q_1\times Q_1$ combination for the velocity and
-pressure with three internal degrees of freedom added to the velocity space, that is, one degree of
-freedom for each component of the velocity and one degree of freedom shared by both components of
-the velocity."
-
-Two versions are proposed, if I understand it correctly.
-The first one is given in Eq.~(7) (three extra dofs: $u_5$, $v_5$, $w$):
-\begin{eqnarray}
-u^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) u_i + \left[ u_5 - \frac{w}{4}(1-s) \right] (1-r^2)(1-s^2) \nonumber\\
-v^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) v_i + \left[ v_5 - \frac{w}{4}(1-r) \right] (1-r^2)(1-s^2) 
-\end{eqnarray}
-The second one in Eq.~(23) (four extra dofs: $u_5$, $v_5$, $u_6$, $v_6$):
-\begin{eqnarray}
-u^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) u_i + \left[ u_5 +u_6(r+s) \right] (1-r^2)(1-s^2) \nonumber\\
-v^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) v_i + \left[ v_5 +v_6(r+s) \right] (1-r^2)(1-s^2) 
-\end{eqnarray}
-
-\item In Franca \etal (2007) \cite{fros07}: 
-"Stabilized finite element method for Stokes equations with piecewise continuous 
-bilinear approximations for both velocity and pressure variables. The velocity
-field is enriched with piecewise polynomial bubble functions with null average at element
-edges."
-
-It looks like they are proposing (see their Eq.~(2.6)):
-\begin{eqnarray}
-u^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) u_i + (\alpha + \gamma s)\frac{1}{2}(r^2+s^2-\frac43) \nn\\ 
-v^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) v_i + (\beta + \gamma r) \frac{1}{2}(r^2+s^2-\frac43)  
-\end{eqnarray}
-
-\item In Kwon \& Park \cite{kwpa14}: 
-"We introduce a new stable MINI-element pair for incompressible Stokes equations on
-quadrilateral meshes, which uses the smallest number of bubbles for the velocity. The pressure is 
-discretized with the $P_1$-midpoint-edge-continuous elements and each component of the velocity field is
-done with the standard $Q_1$-conforming elements enriched by one bubble a quadrilateral."
-
-\item  In Lamichhane (2017) \cite{lami17}: "We consider a quadrilateral MINI
-finite element for approximating the solution
-of Stokes equations using a quadrilateral mesh. We use the standard bilinear finite
-element space enriched with element-wise defined bubble functions for the velocity
-and the standard bilinear finite element space for the pressure space. With a simple
-modification of the standard bubble function we show that a single bubble function is
-sufficient to ensure the inf-sup condition.
-This is a refinement of \cite{bai97} where the author enriches the velocity space with
-more than a single vector bubble function per element. In this article we show that 
-with a small modification of the standard bubble function we can get the stability just 
-by using a single vector bubble function per element."
-
-\input{lamichhane2D}
-
-\end{itemize}
-
-
-\Literature Mons \& Roge (1992) \cite{moro92}, 
-Li \etal (2009) \cite{lihc09}, Knobloch \& Tobiska (2000) \cite{knto00}, 
-Franca \etal (1993) \cite{frha93}, Idelsohn \etal (1995) \cite{idsn95}.
-
-
-
-
-
-\newpage
-%-----------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{The rotated $Q_1$} \label{ss:rq1}
 \index{general}{$\tilde{Q}_1$}
 
-The nodes are not on the corners of the element but in the middle of the
-element edges:
+\input{basis_q1rc_2D}
 
-\input{tikz/tikz_RTQ1P0}
-
-\begin{verbatim}
-+======3======+
-|             |
-|      s      |
-|      |      |
-4      +--r   2
-|             |
-|             |
-|             |
-+======1======+
-\end{verbatim}
-
-There are two types of basis functions: the Middle Point (MP) variant
-such that $N_i({\bm r}_j)=\delta_{ij}$ and the Mid Value (MV) variant
-such that $\frac{1}{|\Gamma_i|} \int_{\Gamma_i} N_j d\Gamma = \delta_{ij}$.
-
-%.............................................
-\paragraph{The Middle Point (MP) variant}. 
-We have $\tilde{Q}_1=span \{ 1,r,s,r^2-s^2 \}$
-so a function $f \in \tilde{Q}_1$  is such that 
-\begin{equation}
-f(r,s)= a + b r + c s + d(r^2-s^2 )
-\label{nonpsf}
-\end{equation}
-
-This function must be so that 
-\begin{eqnarray}
-f_1 &=& f(r=0 ,s=-1) = a -c -d \\
-f_2 &=& f(r=+1,s=0)  = a +b +d \\
-f_3 &=& f(r=0 ,s=+1) = a +c -d \\
-f_4 &=& f(r=-1,s=0)  = a -b +d 
-\end{eqnarray}
-and then 
-\[
-\left(
-\begin{array}{c}
-f_A \\ f_b \\ f_C \\ f_D
-\end{array}
-\right)
-=
-\left(
-\begin{array}{cccc}
-1 &0 &-1 &-1 \\
-1 &1 &0 &1 \\
-1 &0 &1 &-1 \\
-1 &-1 &0 &1
-\end{array}
-\right)
-\left(
-\begin{array}{c}
-a \\ b \\ c \\ d
-\end{array}
-\right)
-\]
-This system can easily be solved, $a,b,c,d$ are then replaced in Eq.~\eqref{nonpsf},
-which yields 
-\begin{eqnarray}
-f(r,t) &=& N_1(r,s)f_1 +N_2(r,s)f_1 + N_3(r,s)f_3 +N_4(r,s)f_4
-\end{eqnarray}
-inside the element with
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
-N_1(r,s) &=& \frac{1}{4} (1-2s-(r^2-s^2)) \nonumber\\
-N_2(r,s) &=& \frac{1}{4} (1+2r+(r^2-s^2)) \nonumber\\
-N_3(r,s) &=& \frac{1}{4} (1+2s-(r^2-s^2)) \nonumber\\
-N_4(r,s) &=& \frac{1}{4} (1-2r+(r^2-s^2)) \nonumber
-\end{eqnarray}
-\end{mdframed}
-We of course recover the partition of unity property, i.e. $\sum N_i(r,s)=1$ for any coordinate $r,s$ inside 
-the reference element.
-
-\begin{remark}
-These basis functions have been independently proposed by Donea \etal. \cite{dogm81}. The authors
-prove herein that this element is checkerboard-free (although they do no show any example
-of simulation carried out with this element).
-\end{remark}
-
-\begin{eqnarray}
-\frac{\partial N_1}{\partial r} &=& \frac{1}{2}(-r)\\
-\frac{\partial N_2}{\partial r} &=& \frac{1}{2}(1+r)\\
-\frac{\partial N_3}{\partial r} &=& \frac{1}{2}(-r)\\
-\frac{\partial N_4}{\partial r} &=& \frac{1}{2}(-1+r)
-\end{eqnarray}
-
-\begin{eqnarray}
-\frac{\partial N_1}{\partial s} &=& \frac{1}{2}(-1+s)\\
-\frac{\partial N_2}{\partial s} &=& \frac{1}{2}(-s)\\
-\frac{\partial N_3}{\partial s} &=& \frac{1}{2}(1+s)\\
-\frac{\partial N_4}{\partial s} &=& \frac{1}{2}(-s)
-\end{eqnarray}
-
-\begin{center}
-\includegraphics[width=6cm]{images/rannacherturek/N1}
-\includegraphics[width=6cm]{images/rannacherturek/N2}\\
-\includegraphics[width=6cm]{images/rannacherturek/N3}
-\includegraphics[width=6cm]{images/rannacherturek/N4}\\
-{\captionfont Graphical representation of the $\tilde{Q}_1$ basis functions}
-\end{center}
-
-%......................................
-\paragraph{The Mid Value (MV) variant}. 
-
-These basis functions are implemented in deal.II
-\footnote{\url{https://www.dealii.org/8.5.0/doxygen/deal.II/polynomials_rannacher_turek_8cc_source.html}}
-for $x\in[0,1]$ and $y\in[0,1]$:
-
-\begin{eqnarray}
-N_1(x,y) &=&  0.75 + 1.5x - 2.5y -1.5(x^2-y^2) \quad bottom\\
-N_2(x,y) &=& -0.25 - 0.5x + 1.5y +1.5(x^2-y^2) \quad right\\
-N_3(x,y) &=& -0.25 + 1.5x - 0.5y -1.5(x^2-y^2) \quad top\\
-N_4(x,y) &=&  0.75 - 2.5x + 1.5y +1.5(x^2-y^2) \quad left
-\end{eqnarray}
-We then proceed to rewrite these for $r\in[-1,1]$ and $t\in[-1:1]$:
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
-N_1(r,s) &=& \frac{1}{4} -\frac{1}{2}s - \frac{3}{8}(r^2-s^2) \quad bottom \\
-N_2(r,s) &=& \frac{1}{4} +\frac{1}{2}r + \frac{3}{8}(r^2-s^2) \quad right \\
-N_3(r,s) &=& \frac{1}{4} +\frac{1}{2}s - \frac{3}{8}(r^2-s^2) \quad top \\
-N_4(r,s) &=& \frac{1}{4} -\frac{1}{2}r + \frac{3}{8}(r^2-s^2) \quad left
-\end{eqnarray}
-\end{mdframed}
-It is easy to verify that these functions verify the property
-\[
-\frac{1}{|\Gamma_i|} \int_{\Gamma_i} N_j d\Gamma = \delta_{ij}
-\]
-
-These basis functions are used in \cite{shzh06} and mentioned in John \cite[p.722]{john16}.
-
-\begin{eqnarray}
-\frac{\partial N_1}{\partial r} &=& -\frac{3}{4}r \nonumber\\
-\frac{\partial N_2}{\partial r} &=& \frac{1}{2}+\frac{3}{4}r \nonumber\\
-\frac{\partial N_3}{\partial r} &=& -\frac{3}{4}r \nonumber\\
-\frac{\partial N_4}{\partial r} &=& -\frac{1}{2}+\frac{3}{4}r \nonumber
-\end{eqnarray}
-
-\begin{eqnarray}
-\frac{\partial N_1}{\partial t} &=& -\frac{1}{2}+\frac{3}{4}t \nonumber\\
-\frac{\partial N_2}{\partial t} &=& -\frac{3}{4}t \nonumber\\
-\frac{\partial N_3}{\partial t} &=& \frac{1}{2}+\frac{3}{4}t \nonumber\\
-\frac{\partial N_4}{\partial t} &=& -\frac{3}{4}t \nonumber
-\end{eqnarray}
-
-
-\newpage
-%-----------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{The 2D enriched $Q_1^+\times P_0$ of Fortin} \label{ss:Q1pP02D}
 
-We here consider the enriched $Q_1\times P_0$ element introduced first by 
-Fortin (1981) \cite{fort81}.
-The layout of the degrees of freedom is as follows:
+\input{basis_q1fortin_2D}
 
-\input{tikz/tikz_q1pp02D}
-
-\noindent The approximation of the velocity components $u$ and $v$ inside the element is
-\[
-u^h(r,s) = a^u \; N_1(r,s) + b^u \;  N_2(r,s) + c^u \; N_3(r,s) +d^u \; N_4(r,s) 
-+ d\; b_5^u(r,s) + e\; b_{6}^u(r,s)
-\]
-\[
-v^h(r,s) = a^v \; N_1(r,s) + b^v \;  N_2(r,s) + c^v \; N_3(r,s) +d^v \; N_4(r,s) 
-+ d^v b_5^v(r,s) + e^v b_{6}^v(r,s)
-\]
-where $N_{1,2,3,4}$ are the standard $Q_1$ basis functions in 2D and with 
-\[
-b_5^u(r,s) = \frac{1}{2}(1-r)(1-s^2)
-\qquad
-b_6^u(r,s) = \frac{1}{2}(1+r)(1-s^2)
-\]
-and
-\[
-b_5^v(r,s) = \frac{1}{2}(1-r^2)(1-s)
-\qquad
-b_6^v(r,s) = \frac{1}{2}(1-r^2)(1+s)
-\]
-In the end one arrives at
-
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
-{N}_1^u(r,s) &=&  N_1(r,s) - \frac{1}{2} b_5^u(r,s)\nn\\
-{N}_2^u(r,s) &=&  N_2(r,s) - \frac{1}{2} b_6^u(r,s)\nn\\
-{N}_3^u(r,s) &=&  N_3(r,s) - \frac{1}{2} b_6^u(r,s)\nn\\
-{N}_4^u(r,s) &=&  N_4(r,s) - \frac{1}{2} b_5^u(r,s)\nn\\
-{N}_5^u(r,s) &=&  b_5^u(r,s) \nn\\
-{N}_6^u(r,s) &=&  b_6^u(r,s) \nn\\
-\nn\\
-{N}_1^v(r,s) &=&  N_1(r,s) - \frac{1}{2} b_5^v(r,s)\nn\\
-{N}_2^v(r,s) &=&  N_2(r,s) - \frac{1}{2} b_5^v(r,s)\nn\\
-{N}_3^v(r,s) &=&  N_3(r,s) - \frac{1}{2} b_6^v(r,s)\nn\\
-{N}_4^v(r,s) &=&  N_4(r,s) - \frac{1}{2} b_6^v(r,s)\nn\\
-{N}_5^v(r,s) &=&  b_5^v(r,s) \nn\\
-{N}_6^v(r,s) &=&  b_6^v(r,s) 
-\end{eqnarray}
-\end{mdframed}
-
-We can check for the zero-th order consistency: Let $u(r,s)=C$, then 
-\begin{eqnarray}
-u^h(r,s) 
-= \sum_{i=1}^6 N_i^u(r,s) u_i 
-= C \sum_{i=1}^6 N_i^u(r,s) 
-= C \sum_{i=1}^4 N_i(r,s)  
-= C
-\end{eqnarray}
-
-
-
-\newpage
-%-----------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{The DSSY element} \label{ss:dssy_2D}
+\index{general}{DSSY}
+
 \input{dssy2D}
-
-
-
-
-
-
-
-
-
-
-
 

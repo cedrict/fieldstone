@@ -1,0 +1,74 @@
+
+This element is proposed in Zhang \& Xiang (2020) \cite{zhxi20}. Two remarks
+must be made: 1) Eq.~(29) of their publication which is the definition
+of the basis functions contains an error\footnote{
+Answer from the author: ``N5 to N8 is missing an A in the denominator and 
+the calculation program does not have this problem''}. 
+2) The authors use a rather 
+uncommon and annoying rotated numbering:
+\begin{verbatim}
+      y
+      |
+2=====5=====1             3=====6=====2
+|           |             |           |   (r_0,s_0)=(-1,-1)   (r_4,s_4)=( 0,-1)
+|           |             |           |   (r_1,s_1)=(+1,-1)   (r_5,s_5)=(+1, 0)
+6           8--x          7     +     5   (r_2,s_2)=(+1,+1)   (r_6,s_6)=( 0,+1)
+|           |             |           |   (r_3,s_3)=(-1,+1)   (r_7,s_7)=(-1, 0)
+|           |             |           |    
+3=====7=====4             0=====4=====1
+Zhang & Xiang             our numbering
+\end{verbatim}
+
+For each element they define (their numbering):
+\begin{eqnarray}
+A   &=& \frac{1}{2} [ (x_1-x_3)(y_2-y_4)-(x_2-x_4)(y_1-y_3) ] \nn\\
+m_x &=& (x_1-x_4)(y_2-y_3)-(x_2-x_3)(y_1-y_4) \nn\\
+m_y &=& (x_3-x_4)(y_1-y_2)-(x_1-x_2)(y_3-y_4) \nn
+\end{eqnarray}
+Note that $A$ is the area of the element, and that in the case when 
+the element is a rectangle then $m_x=m_y=0$.
+\begin{eqnarray}
+\bN_1(r,s)&=& n_1(r,s) +(m_x^2 - m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
+\bN_2(r,s)&=& n_2(r,s) +(m_x^2 + m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
+\bN_3(r,s)&=& n_3(r,s) +(m_x^2 - m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
+\bN_4(r,s)&=& n_4(r,s) +(m_x^2 + m_xm_y + m_y^2)\frac{E(r,s)}{D} \nn\\
+\bN_5(r,s)&=& n_5(r,s) -m_x(2Am_x+m_y^2)\frac{E(r,s)}{AD} \nn\\
+\bN_6(r,s)&=& n_6(r,s) -m_y(2Am_y+m_x^2)\frac{E(r,s)}{AD} \nn\\
+\bN_7(r,s)&=& n_7(r,s) +m_x(-2Am_x+m_y^2)\frac{E(r,s)}{AD} \nn\\
+\bN_8(r,s)&=& n_8(r,s) +m_y(-2Am_y+m_x^2)\frac{E(r,s)}{AD} \nn
+\end{eqnarray}
+with 
+\[
+E(r,s)=(1-r^2)(1-s^2)
+\qquad
+D=4(4A^2+m_x^2+m_y^2)
+\]
+and where the $n_i$ functions are the basis functions of the 'regular' 
+8-node element (see Section~\ref{sec:serendipity2D}).
+
+This is implemented in \stone 52.
+
+\todo[inline]{not finished. SHOW CONSISTENCY !! like in paper
+email sent to author about mistake.  }
+
+Let us verify consistency:
+\begin{eqnarray}
+\sum_{i=1}^8 \bN_i(r,s) 
+&=& \underbrace{\sum_{i=1}^8 n_i(r,s)}_{=0} + \frac{E(r,s)}{D} 
+\left[
+(m_x^2 - m_xm_y + m_y^2)
++(m_x^2 + m_xm_y + m_y^2)
++(m_x^2 - m_xm_y + m_y^2)
++(m_x^2 + m_xm_y + m_y^2) \right. \nn\\
+&& \left.
+-m_x(2Am_x+m_y^2)\frac{1}{A}
+-m_y(2Am_y+m_x^2)\frac{1}{A}
++m_x(-2Am_x+m_y^2)\frac{1}{A}
++m_y(-2Am_y+m_x^2)\frac{1}{A}
+\right] \nn\\
+&=& \frac{E(r,s)}{D}
+\left[(4m_x^2 + 4m_y^2) + \frac{1}{A} (-4Am_x^2 - 4A m_y^2) \right]  \\
+&=& 0
+\end{eqnarray}
+
+

@@ -6,12 +6,12 @@ arrows are the limits when $nel_x=nel_y=nel_z >> 1$):
 \begin{itemize}
 
 \item $Q_1 \times P_0$, $Q_1 \times Q_1$
-\begin{eqnarray}
-ndof_{2D}     &=&2 (nel_x+1) \cdot (nel_y+1) 
-\qquad \rightarrow \qquad 2 \cdot nel_x^2   \nonumber\\
-ndof_{3D}&=&3 (nel_x+1) \cdot (nel_y+1) \cdot (nel_z+1)
-\qquad \rightarrow \qquad 3 \cdot nel_x^3 \nonumber
-\end{eqnarray}
+\begin{align}
+ndof_{2D}&= 2 (nel_x+1) \cdot (nel_y+1) 
+& \rightarrow  2 \cdot nel_x^2   \\
+ndof_{3D}&= 3 (nel_x+1) \cdot (nel_y+1) \cdot (nel_z+1)
+& \rightarrow 3 \cdot nel_x^3 
+\end{align}
 
 \item $Q_2 \times P_{-1}$, $Q_2 \times Q_1$
 \begin{eqnarray}
@@ -75,7 +75,7 @@ If we now assume $nel_x=nel_y=nel_z$, we can then plot the values above as a fun
 \end{center}
 
 We see that the $Q_1^+\times Q_1$ and $Q_1^+ \times P_0$ actually 
-ield the same number of velocity dofs. 
+yield the same number of velocity dofs. 
 
 Simply based on the dof count and wishing for a (bi/tri)linear approximation 
 for pressure, we must conclude that the $Q_1\times Q_1$+2 bubbles is the most desirable 

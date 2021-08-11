@@ -114,25 +114,25 @@ Then
 4f^h(r,s)
 &=&4 [a+br+cs+drs+e (1-r^2) (1-s^2) \phi(r,s)] \nn\\
 &=&  (f_1 + f_2 +f_3 +f_4) \nn\\
-&+& (-f_1 + f_2 +f_3 -f_4)r \nn\\
-&+&(-f_1 - f_2 +f_3 +f_4)s \nn\\
-&+& (f_1 - f_2 +f_3 -f_4)rs \nn\\
-&+& (-f_1 - f_2 -f_3 -f_4 + 4f_5) (1-r^2) (1-s^2) \phi(r,s) \nn\\
+&&+ (-f_1 + f_2 +f_3 -f_4)r \nn\\
+&&+(-f_1 - f_2 +f_3 +f_4)s \nn\\
+&&+ (f_1 - f_2 +f_3 -f_4)rs \nn\\
+&&+ (-f_1 - f_2 -f_3 -f_4 + 4f_5) (1-r^2) (1-s^2) \phi(r,s) \nn\\
 &=& (1-r-s+rs - b(r,s))f_1 \nn\\
-&+& (1+r-s-rs-b(r,s))f_2 \nn\\
-&+& (1+r+s+rs-b(r,s))f_3 \nn\\
-&+& (1-r+s-rs- b(r,s))f_4 \\
-&+& 4b(r,s) f_5
+&&+ (1+r-s-rs-b(r,s))f_2 \nn\\
+&&+ (1+r+s+rs-b(r,s))f_3 \nn\\
+&&+ (1-r+s-rs- b(r,s))f_4 \nn\\
+&&+ 4b(r,s) f_5
 \end{eqnarray}
 or, 
 \begin{eqnarray}
 f^h(r,s)&=&
-\underbrace{\left(\frac{1}{4}(1-r)(1-s)-\frac{1}{4}b(r,s)\right)}_{N_1} f_1 + 
-\underbrace{\left(\frac{1}{4}(1+r)(1-s)-\frac{1}{4}b(r,s)\right)}_{N_2} f_2\\
+\underbrace{\left(\frac{1}{4}(1-r)(1-s)-\frac{1}{4}b(r,s)\right)}_{\bN_1} f_1 + 
+\underbrace{\left(\frac{1}{4}(1+r)(1-s)-\frac{1}{4}b(r,s)\right)}_{\bN_2} f_2\\
 &+& 
-\underbrace{\left(\frac{1}{4}(1+r)(1+s)-\frac{1}{4}b(r,s)\right)}_{N_3} f_3 +
-\underbrace{\left(\frac{1}{4}(1-r)(1+s)-\frac{1}{4}b(r,s)\right)}_{N_4} f_4 \\
-&+& \underbrace{b(r,s)}_{N_5} f_5
+\underbrace{\left(\frac{1}{4}(1+r)(1+s)-\frac{1}{4}b(r,s)\right)}_{\bN_3} f_3 +
+\underbrace{\left(\frac{1}{4}(1-r)(1+s)-\frac{1}{4}b(r,s)\right)}_{\bN_4} f_4 \\
+&+& \underbrace{b(r,s)}_{\bN_5} f_5
 \end{eqnarray}
 
 As in the $P_1^+$ case the resulting basis functions are a combination 
@@ -143,8 +143,8 @@ of the regular $Q_1$ basis functions and the bubble.
 Zeroth-order consistency check $f(r,s)=C$:
 \begin{equation}
 f^h(r,s) 
-= \sum_{i=1}^5 N_i(r,s) f_i \\
-= C \sum_{i=1}^5 N_i(r,s)  \\
+= \sum_{i=1}^5 \bN_i(r,s) f_i \\
+= C \sum_{i=1}^5 \bN_i(r,s)  \\
 = C
 \end{equation}
 
@@ -152,9 +152,9 @@ f^h(r,s)
 First-order consistency check $f(r,s)=r$ (or $f(r,s)=s)$:
 \begin{eqnarray}
 f^h(r,s) 
-&=& \sum_{i=1}^5 N_i(r,s) f_i \nn\\
-&=& N_1(r,s) (-1) + N_2(r,s) (+1) + N_3(r,s) (+1) + N_4(r,s) (-1) + N_5(r,s) (0) \nn\\
-&=& -N_1(r,s)+N_2(r,s)+N_3(r,s)-N_4(r,s) \nn\\
+&=& \sum_{i=1}^5 \bN_i(r,s) f_i \nn\\
+&=& \bN_1(r,s) (-1) + \bN_2(r,s) (+1) + \bN_3(r,s) (+1) + \bN_4(r,s) (-1) + \bN_5(r,s) (0) \nn\\
+&=& -\bN_1(r,s)+\bN_2(r,s)+\bN_3(r,s)-\bN_4(r,s) \nn\\
 &=& r
 \end{eqnarray}
 
@@ -162,9 +162,9 @@ f^h(r,s)
 Second-order consistency check $f(r,s)=rs$ ($f_1=(-1)(-1)=1$, $f_2=(+1)(-1)=-1$, etc ...)
 \begin{eqnarray}
 f^h(r,s) 
-&=& \sum_{i=1}^5 N_i(r,s) f_i \nn\\
-&=& N_1(r,s) (+1) + N_2(r,s) (-1) + N_3(r,s) (+1) + N_4(r,s) (-1) + N_5(r,s) (0) \nn\\
-&=& N_1-N_2+N_3-N_4 \nn\\
+&=& \sum_{i=1}^5 \bN_i(r,s) f_i \nn\\
+&=& \bN_1(r,s) (+1) + \bN_2(r,s) (-1) + \bN_3(r,s) (+1) + \bN_4(r,s) (-1) + \bN_5(r,s) (0) \nn\\
+&=& \bN_1-\bN_2+\bN_3-\bN_4 \nn\\
 &=& 
 \left(\frac{1}{4}(1-r)(1-s)-\frac{1}{4}b(r,s)\right)
 -\left(\frac{1}{4}(1+r)(1-s)-\frac{1}{4}b(r,s)\right) \nn\\
@@ -188,8 +188,8 @@ We find that the basis functions can represent  a bilinear field exactly.
 Consistency check for quadratic terms, i.e. $f(r,s)=r^2$ (or $f(r,s)=s^2$): 
 \begin{eqnarray}
 f^h(r,s) 
-&=& \sum_{i=1}^5 N_i(r,s) f_i \nn\\
-&=& N_1(r,s)\cdot (+1) + N_2(r,s)\cdot (+1) + N_3(r,s)\cdot (+1) + N_4(r,s)\cdot (+1) + N_5(r,s)\cdot (0) \nn\\
+&=& \sum_{i=1}^5 \bN_i(r,s) f_i \nn\\
+&=& \bN_1(r,s)\cdot (+1) + \bN_2(r,s)\cdot (+1) + \bN_3(r,s)\cdot (+1) + \bN_4(r,s)\cdot (+1) + \bN_5(r,s)\cdot (0) \nn\\
 &=& 
 \left(\frac{1}{4}(1-r)(1-s)-\frac{1}{4}b(r,s)\right)
 +\left(\frac{1}{4}(1+r)(1-s)-\frac{1}{4}b(r,s)\right) \nn\\
@@ -201,7 +201,6 @@ f^h(r,s)
 &=& 
 1 - b(r,s) 
 \end{eqnarray}
-
 We have 
 \begin{eqnarray}
 \int_{-1}^{+1} \int_{-1}^{+1} (1-b_1(r,s)) dr ds  

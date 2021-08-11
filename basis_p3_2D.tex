@@ -1,0 +1,31 @@
+\begin{flushright} {\tiny {\color{gray} basis\_p3\_2D.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\todo[inline]{TIKZ!}
+\begin{verbatim}
+2
+|\          (r_0,s_0)=(0,0)   (r_5,s_5)=(2/3,1/3)
+|  \        (r_1,s_1)=(1,0)   (r_6,s_6)=(1/3,2/3)
+7   6       (r_2,s_2)=(0,1)   (r_7,s_7)=(0,2/3)
+|    \      (r_3,s_3)=(1/3,0) (r_8,s_8)=(0,1/3)
+8  9   5    (r_4,s_4)=(2/3,0) (r_9,s_9)=(1/3,1/3)
+|       \ 
+0==3==4==1
+\end{verbatim}
+The basis polynomial is then
+\[
+f(r,s) = c_1 + c_2r + c_3s + c_4 r^2 + c_5 rs + c_6 s^2 + c_7 r^3 +c_8 r^2s + c_9 rs^2 + c_{10}s^3
+\]
+\begin{eqnarray}
+\bN_0(r,s) &=& \frac{9}{2}(1-r-s)\left(\frac13-r-s\right)\left(\frac23-r-s\right) \\
+\bN_1(r,s) &=& \frac{9}{2}r\left(r-\frac13\right)\left(r-\frac23 \right) \\
+\bN_2(r,s) &=& \frac{9}{2}s\left(s-\frac13\right)\left(s-\frac23\right) \\
+\bN_3(r,s) &=& \frac{27}{2}(1-r-s)r \left(\frac23-r-s\right) \\
+\bN_4(r,s) &=& \frac{27}{2}(1-r-s)r\left(r-\frac13\right) \\
+\bN_5(r,s) &=& \frac{27}{2}rs\left(r-\frac13\right) \\
+\bN_6(r,s) &=& \frac{27}{2}rs\left(r-\frac23\right) \\
+\bN_7(r,s) &=& \frac{27}{2}(1-r-s)s\left(s-\frac13\right) \\
+\bN_8(r,s) &=& \frac{27}{2}(1-r-s)s \left(\frac23-r-s\right) \\
+\bN_9(r,s) &=& 27 rs(1-r-s)
+\end{eqnarray}
+

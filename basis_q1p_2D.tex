@@ -1,0 +1,72 @@
+\begin{flushright} {\tiny {\color{gray} basis\_q1p\_2D.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{verbatim}
+4===========3
+|           |   (r_1,s_1)=(-1,-1)
+|           |   (r_2,s_2)=(1,-1)
+|     5     |   (r_3,s_3)=(1,1)
+|           |   (r_4,s_4)=(-1,1)
+|           |   (r_5,s_5)=(0,0)
+1===========2
+\end{verbatim}
+
+\begin{itemize}
+\item 
+In Bai (1997) \cite{bai97}: "It is well known that the equal-order bilinear velocity-bilinear 
+continuous pressure element - the $Q_1\times Q_1$, element - exhibits a certain spurious pressure mode.
+In the paper we propose a new stabilized $Q_1\times Q_1$ combination for the velocity and
+pressure with three internal degrees of freedom added to the velocity space, that is, one degree of
+freedom for each component of the velocity and one degree of freedom shared by both components of
+the velocity."
+
+Two versions are proposed, if I understand it correctly.
+The first one is given in Eq.~(7) (three extra dofs: $u_5$, $v_5$, $w$):
+\begin{eqnarray}
+u^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) u_i + \left[ u_5 - \frac{w}{4}(1-s) \right] (1-r^2)(1-s^2) \nonumber\\
+v^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) v_i + \left[ v_5 - \frac{w}{4}(1-r) \right] (1-r^2)(1-s^2) 
+\end{eqnarray}
+The second one in Eq.~(23) (four extra dofs: $u_5$, $v_5$, $u_6$, $v_6$):
+\begin{eqnarray}
+u^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) u_i + \left[ u_5 +u_6(r+s) \right] (1-r^2)(1-s^2) \nonumber\\
+v^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) v_i + \left[ v_5 +v_6(r+s) \right] (1-r^2)(1-s^2) 
+\end{eqnarray}
+
+\item In Franca \etal (2007) \cite{fros07}: 
+"Stabilized finite element method for Stokes equations with piecewise continuous 
+bilinear approximations for both velocity and pressure variables. The velocity
+field is enriched with piecewise polynomial bubble functions with null average at element
+edges."
+
+It looks like they are proposing (see their Eq.~(2.6)):
+\begin{eqnarray}
+u^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) u_i + (\alpha + \gamma s)\frac{1}{2}(r^2+s^2-\frac43) \nn\\ 
+v^h(r,s) &=& \sum_{i=1}^4 N_i (r,s) v_i + (\beta + \gamma r) \frac{1}{2}(r^2+s^2-\frac43)  
+\end{eqnarray}
+
+\item In Kwon \& Park (2014) \cite{kwpa14}: 
+"We introduce a new stable MINI-element pair for incompressible Stokes equations on
+quadrilateral meshes, which uses the smallest number of bubbles for the velocity. The pressure is 
+discretized with the $P_1$-midpoint-edge-continuous elements and each component of the velocity field is
+done with the standard $Q_1$-conforming elements enriched by one bubble a quadrilateral."
+
+\item  In Lamichhane (2017) \cite{lami17}: "We consider a quadrilateral MINI
+finite element for approximating the solution
+of Stokes equations using a quadrilateral mesh. We use the standard bilinear finite
+element space enriched with element-wise defined bubble functions for the velocity
+and the standard bilinear finite element space for the pressure space. With a simple
+modification of the standard bubble function we show that a single bubble function is
+sufficient to ensure the inf-sup condition.
+This is a refinement of Bai (1997) \cite{bai97} where the author enriches the velocity space with
+more than a single vector bubble function per element. In this article we show that 
+with a small modification of the standard bubble function we can get the stability just 
+by using a single vector bubble function per element."
+
+\input{lamichhane2D}
+
+\end{itemize}
+
+
+\Literature: Mons \& Roge (1992) \cite{moro92}, 
+Li \etal (2009) \cite{lihc09}, Knobloch \& Tobiska (2000) \cite{knto00}, 
+Franca \etal (1993) \cite{frha93}, Idelsohn \etal (1995) \cite{idsn95}.

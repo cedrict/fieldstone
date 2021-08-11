@@ -1,0 +1,53 @@
+\begin{flushright} {\tiny {\color{gray} basis\_p1p\_3D.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The location of the four notes are:
+\begin{verbatim}
+(r_0,s_0) = (0,0,0)
+(r_1,s_1) = (1,0,0)
+(r_2,s_2) = (0,1,0)
+(r_3,s_3) = (0,0,1)
+\end{verbatim}
+
+The basis polynomial is given by
+\[
+f(r,s,t)=c_0 + c_1 r + c_2 s + c_3 t
+\]
+and it needs to satisfy these four conditions:
+\begin{eqnarray}
+f_1 &=& f(r_1,s_1,t_1) = c_0 \\
+f_2 &=& f(r_2,s_2,t_2) = c_0 + c_1\\
+f_3 &=& f(r_3,s_3,t_3) = c_0 + c_2\\
+f_4 &=& f(r_4,s_4,t_4) = c_0 + c_3
+\end{eqnarray}
+which yields:
+\[
+c_0=f_1
+\quad
+\quad
+c_1=f_2-f_1
+\quad
+\quad
+c_2=f_3-f_1
+\quad
+\quad
+c_3=f_4-f_1
+\]
+Finally,
+\begin{eqnarray}
+f(r,s,t) 
+&=& c_0 + c_1 r + c_2 s + c_3 t \nonumber\\
+&=& f_1 + (f_2-f_1) r + (f_3-f_1) s + (f_4-f_1) t \nonumber\\
+&=& f_1 (1-r-s-t) + f_2 r + f_3 s + f_4 t \nonumber\\
+&=& \sum_i \bN_i(r,s,t) f_i \nonumber
+\end{eqnarray}
+Finally,
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\bN_1(r,s,t) &=& 1-r-s-t \nonumber\\
+\bN_2(r,s,t) &=& r \nonumber\\
+\bN_3(r,s,t) &=& s \nonumber\\
+\bN_4(r,s,t) &=& t \nonumber
+\end{eqnarray}
+\end{mdframed}
+Derivatives are trivial to obtain.

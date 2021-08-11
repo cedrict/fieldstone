@@ -1,0 +1,80 @@
+\begin{flushright} {\tiny {\color{gray} basis\_p1p\_3D.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These basis functions would be used in the MINI element, see Section~\ref{pair:mini}.
+
+In 3D the bubble function lools like $rst(1-r-s-t)$ so that 
+\[
+f(r,s,t)=a+b\; r+c\; s+d\; t+e \; rst(1-r-s-t)
+\]
+We have node 1 at location $(r,s,t)=(0,0,0)$, node 2 at $(r,s,t)=(1,0,0)$, node 3 at $(r,s,t)=(0,1,0)$ , 
+node 4 at $(r,s,t)=(0,0,1)$ and we 
+set the location of the bubble (node 5) at $r=s=t=1/4$ so that 
+\begin{eqnarray}
+f(r_1,s_1,t_1)&=&f_1 = a+b\; r_1+c\; s_1+d\; t_1+e\; r_1s_1t_1(1-r_1-s_1-t_1) \nn\\
+f(r_2,s_2,t_2)&=&f_2 = a+b\; r_2+c\; s_2+d\; t_2+e\; r_2s_2t_2(1-r_2-s_2-t_2) \nn\\
+f(r_3,s_3,t_3)&=&f_3 = a+b\; r_3+c\; s_3+d\; t_3+e\; r_3s_3t_3(1-r_3-s_3-t_3) \nn\\
+f(r_4,s_4,t_4)&=&f_4 = a+b\; r_4+c\; s_4+d\; t_4+e\; r_4s_4t_4(1-r_4-s_4-t_4) \nn\\ 
+f(r_5,s_5,t_5)&=&f_5 = a+b\; r_5+c\; s_5+d\; t_5+e\; r_5s_5t_5(1-r_5-s_5-t_5) 
+\end{eqnarray}
+i.e.,
+\begin{eqnarray}
+f_1 &=& a  \nn\\
+f_2 &=& a+b \nn\\
+f_3 &=& a+c \nn\\
+f_4 &=& a+d \nn\\
+f_5 &=& a+b/4+c/4+d/4+e/64 (1-1/4-1/4-1/4) \nn\\ 
+    &=& a+b/4+c/4+d/4+e/256  \nn
+\end{eqnarray}
+Then 
+
+\begin{eqnarray}
+a&=&f_1     \nn\\
+b&=&f_2-f_1 \nn\\
+c&=&f_3-f_1 \nn\\
+d&=&f_4-f_1 \nn\\
+e&=&256(f_5-a-b/4-c/4-d/4) \nn\\
+&=&256(f_5-f_1-(f_2-f_1)/4-(f_3-f_1)/4-(f_4-f_1)/4) \nn\\
+&=&256(-f_1/4 - f_2/4 - f_3/4 - f_4/4 + f_5  ) \nn\\
+&=&64(-f_1 - f_2 - f_3 - f_4 + 4f_5  )
+\end{eqnarray}
+Finally:
+\begin{eqnarray}
+f(r,s,t)
+&=& a+br+cs+dt+erst(1-r-s-t) \nn\\
+&=& f_1 + (f_2-f_1)r + (f_3-f_1)s + (f_4-f_1)t+ 64(-f_1 - f_2 - f_3 - f_4 + 4f_5  ) rst(1-r-s-t)  \nn\\
+&=& f_1 [1-r-s-t - 64rst(1-r-s-t)]\nn\\
+&+& f_2 [r- 64rst(1-r-s-t)]\nn\\
+&+& f_3 [s- 64rst(1-r-s-t)]\nn\\
+&+& f_4 [t- 64rst(1-r-s-t)]\nn\\
+&+& f_5 [256 rst(1-r-s-t)] \nn\\
+&=&\sum_{i=1}^5 \bN_i(r,s,t) f_i
+\end{eqnarray}
+with
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\bN_1(r,s,t) &=& 1-r-s-t - 64rst(1-r-s-t) \\
+\bN_2(r,s,t) &=& r - 64rst(1-r-s-t) \\
+\bN_3(r,s,t) &=& s - 64rst(1-r-s-t) \\
+\bN_4(r,s,t) &=& t - 64rst(1-r-s-t) \\
+\bN_5(r,s,t) &=&  + 256rst(1-r-s-t) 
+\end{eqnarray}
+\end{mdframed}
+The derivatives are given by:
+\begin{eqnarray}
+\frac{\partial \bN_1}{\partial r}(r,s,t) &=& -1 - 64st(1-2r-s-t) \nn\\
+\frac{\partial \bN_2}{\partial r}(r,s,t) &=& +1 - 64st(1-2r-s-t) \nn\\
+\frac{\partial \bN_3}{\partial r}(r,s,t) &=&    - 64st(1-2r-s-t) \nn\\
+\frac{\partial \bN_4}{\partial r}(r,s,t) &=&    - 64st(1-2r-s-t) \nn\\
+\frac{\partial \bN_5}{\partial r}(r,s,t) &=&     256st(1-2r-s-t) \nn\\ \nn\\ 
+\frac{\partial \bN_1}{\partial s}(r,s,t) &=& -1 - 64rt(1-r-2s-t) \nn\\
+\frac{\partial \bN_2}{\partial s}(r,s,t) &=&    - 64rt(1-r-2s-t) \nn\\
+\frac{\partial \bN_3}{\partial s}(r,s,t) &=& +1 - 64rt(1-r-2s-t) \nn\\
+\frac{\partial \bN_4}{\partial s}(r,s,t) &=&    - 64rt(1-r-2s-t) \nn\\
+\frac{\partial \bN_5}{\partial s}(r,s,t) &=&     256rt(1-r-2s-t) \nn\\ \nn\\ 
+\frac{\partial \bN_1}{\partial t}(r,s,t) &=& -1 - 64rs(1-r-s-2t) \nn\\
+\frac{\partial \bN_2}{\partial t}(r,s,t) &=&    - 64rs(1-r-s-2t) \nn\\
+\frac{\partial \bN_3}{\partial t}(r,s,t) &=&    - 64rs(1-r-s-2t) \nn\\
+\frac{\partial \bN_4}{\partial t}(r,s,t) &=& +1 - 64rs(1-r-s-2t) \nn\\
+\frac{\partial \bN_5}{\partial t}(r,s,t) &=&     256rs(1-r-s-2t) \nn
+\end{eqnarray}

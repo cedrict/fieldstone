@@ -12,7 +12,7 @@ reduced coordinates but instead for the whole domain in the natural coordinate $
 
 The four cases a,b,c,d are examples of combinations of these basis functions:
 \[
-f_h(x)=\sum_{i=1}^4 \bN_i(x) f_i
+f^h(x)=\sum_{i=1}^4 \bN_i(x) f_i
 \]
 Where $f_i$ are the values associated to the four nodes. 
 We assume that the distance $h$ between nodes is 1.
@@ -25,7 +25,7 @@ Example b) illustrates a somewhat random combination of the basis functions, yie
 
 Example c) illustrates the fact that these linear basis functions can exactly represent a
 linear function. When $f(x)=x-2$, then $f_1=f(0)=-2$, $f_2=f(1)=-1$, $f_3=f(2)=0$ and $f_4=f(3)=+1$, 
-then $f_h(x)$ is exactly $f(x)$ on the domain.
+then $f^h(x)$ is exactly $f(x)$ on the domain.
 
 Example d) illustrates the fact that linear basis functions cannot represent a parabola. Smaller and 
 smaller elements will do an increasingly better job and will get closer to the curve but a 
@@ -33,7 +33,7 @@ systematic error will subsist.
 
 
 Note that these drawings are trivial to produce since $\bN_i(x_j)=\delta_{ij}$ by definition, so that 
-$f_h(x_j)=f_j$.
+$f^h(x_j)=f_j$.
 
 %........................................................................
 \subsubsection{In two dimensions}
