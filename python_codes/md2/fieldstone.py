@@ -57,9 +57,9 @@ nely = 100
 
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
-nnp=nnx*nny  # number of nodes
+NV=nnx*nny  # number of nodes
 nel=nelx*nely  # number of elements, total
-NfemT=nnp        # number of T dofs
+NfemT=NV        # number of T dofs
 
 hx=Lx/nelx
 hy=Ly/nely
@@ -72,8 +72,8 @@ sqrt3=np.sqrt(3.)
 #################################################################
 start = time.time()
 
-x = np.empty(nnp,dtype=np.float64)  # x coordinates
-y = np.empty(nnp,dtype=np.float64)  # y coordinates
+x = np.empty(NV,dtype=np.float64)  # x coordinates
+y = np.empty(NV,dtype=np.float64)  # y coordinates
 
 counter = 0
 for j in range(0, nny):
@@ -113,7 +113,7 @@ start = time.time()
 bc_fixT=np.zeros(NfemT,dtype=np.bool) # boundary condition, yes/no
 bc_valT=np.zeros(NfemT,dtype=np.float64)  # boundary condition, value
 
-for i in range(0,nnp):
+for i in range(0,NV):
     if y[i]<eps:
        bc_fixT[i] = True ; bc_valT[i] = 4000. 
     #end if
@@ -129,10 +129,10 @@ print("setup: boundary conditions: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-u=np.zeros(nnp,dtype=np.float64)
-v=np.zeros(nnp,dtype=np.float64)
+u=np.zeros(NV,dtype=np.float64)
+v=np.zeros(NV,dtype=np.float64)
 
-for i in range(0,nnp):
+for i in range(0,NV):
     u[i]= np.sin(np.pi*x[i]/Lx)*np.cos(np.pi*y[i]/Ly)
     v[i]=-np.cos(np.pi*x[i]/Lx)*np.sin(np.pi*y[i]/Ly)
 
@@ -272,11 +272,11 @@ filename = 'solution_{:04d}.vtu'.format(istep)
 vtufile=open(filename,"w")
 vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
 vtufile.write("<UnstructuredGrid> \n")
-vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnp,nel))
+vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
 #####
 vtufile.write("<Points> \n")
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-for i in range(0,nnp):
+for i in range(0,NV):
     vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
 vtufile.write("</DataArray>\n")
 vtufile.write("</Points> \n")
@@ -284,12 +284,12 @@ vtufile.write("</Points> \n")
 vtufile.write("<PointData Scalars='scalars'>\n")
 #--
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-for i in range(0,nnp):
+for i in range(0,NV):
     vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='T' Format='ascii'> \n")
-for i in range(0,nnp):
+for i in range(0,NV):
     vtufile.write("%10e \n" % T[i])
 vtufile.write("</DataArray>\n")
 #--

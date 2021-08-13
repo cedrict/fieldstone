@@ -10,13 +10,12 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 We here consider the enriched $Q_1\times P_0$ element introduced first by Fortin (1981) \cite{fort81}.
 The shape functions in 2D and 3D are in derived in Section~\ref{ss:Q1pP02D} and Section~\ref{ss:Q1pP03D} respectively.
 
-
-Per element:
+The list of velocity degrees of freedom per element is as follows:
 \[
 \vec{V} = (u_1,v_1,u_2,v_2,u_3,v_3,u_4,v_4,u_5,v_5,u_6,v_6)
 \]
-
-Here is a 4x3 element mesh. Bubble $u$ dofs are represented in blue and bubble $v$ dofs are shown in green.
+We start with a simple $4\times 3$ element mesh. 
+Bubble $u$ dofs are represented in blue and bubble $v$ dofs are shown in green.
 
 
 \begin{center}
@@ -181,9 +180,10 @@ while the total number of pressure dofs remains
 NfemP=NP*ndofP (=nel) 
 \end{lstlisting}
 
-
-There are two connectivity arrays {\tt iconu} and {\tt iconv}, both of size $mV\times nel$, where 
-$mV=6$ is the number of nodes linked to an element. For each element, and depending on whether we are considering 
+What makes this element pair rather swkward to implement is the fact that 
+there are two connectivity arrays {\tt iconu} and {\tt iconv}, both of size $mV\times nel$, where 
+$mV=6$ is the number of nodes linked to an element for each velocity component. 
+For each element, and depending on whether we are considering 
 the polynomial approximation $u^h(x,y)$ or $v^h(x,y)$ in the element, there are the standard 4 $Q_1$ nodes and 2 additional 
 dofs, so $mV=6$.
 \begin{itemize}
@@ -416,12 +416,12 @@ nodal pressure profile on the $x=L_x/2$ line.}
 
 
 \begin{center}
-\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/rhog}
-\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/vel}\\
-\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/u}
-\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/v}\\
-\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/p}
-\includegraphics[width=7.7cm]{python_codes/fieldstone_80/results/block/q}\\
+\includegraphics[width=7.cm]{python_codes/fieldstone_80/results/block/rhog}
+\includegraphics[width=7.cm]{python_codes/fieldstone_80/results/block/vel}\\
+\includegraphics[width=7.cm]{python_codes/fieldstone_80/results/block/u}
+\includegraphics[width=7.cm]{python_codes/fieldstone_80/results/block/v}\\
+\includegraphics[width=7.cm]{python_codes/fieldstone_80/results/block/p}
+\includegraphics[width=7.cm]{python_codes/fieldstone_80/results/block/q}\\
 {\captionfont Resolution 128x128}
 \end{center}
 The elemental pressure does not showcase any sign of checkerboard and converges to a unique solution. 
@@ -432,9 +432,5 @@ The elemental pressure does not showcase any sign of checkerboard and converges 
 
 This element is very much usable: it is accurate for both buoyancy-driven problems and 
 analytical solutions. 
-
-
-
-\todo[inline]{theory and code for non-square elements}
-
-\todo[inline]{Compute nullspace size for macroelement}
+However, one last set of tests should be carried out with regards to its implementation 
+and usability when the mesh deforms, or when an annulus geometry is used.

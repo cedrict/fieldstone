@@ -40,29 +40,36 @@ Two corrections have been proposed be Habermann and by Faxen.
 
 We start by writing the drag force
 \[
-F_H = 6 \pi \eta_f R \upnu_{sphere}  \gamma(r/R) 
+F_H = 6 \pi \eta_f R \upnu_{sphere}\;  \gamma\left(\frac{r}{R}\right) 
 \]
 In the case of the Stokes sphere in an infinite medium then $\gamma =1$ and equating
 $F_H$ with the buoyancy force $4/3 \pi R^3 \delta\rho g$ yields the above velocity.
 Habermann gives a coefficient $\gamma$ such that 
 \[
-\gamma(r/R)  = \frac{1-0.75857 (r/R)^5}{1+f_H(r/R)}
+\gamma\left(\frac{r}{R}\right)  = \frac{1-0.75857 \left(\frac{r}{R}\right)^5}{1+f_H\left(\frac{r}{R}\right)}
 \]
 with 
 \[
-f_H(r/R) = -2.1050(r/R)+ 2.0865(r/R)^3-  1.7068(r/R)^5 + 0.72603(r/R)^6 
+f_H\left(\frac{r}{R}\right) = -2.1050\left(\frac{r}{R}\right)+ 2.0865\left(\frac{r}{R}\right)^3
+- 1.7068\left(\frac{r}{R}\right)^5 + 0.72603\left(\frac{r}{R}\right)^6 
 \]
 Faxen gives a coefficient $\gamma$ such that 
 \[
-\gamma(r/R) = \frac{1}{1 + f_F(r/R)} 
+\gamma\left(\frac{r}{R}\right) = \frac{1}{1 + f_F\left(\frac{r}{R}\right)} 
 \]
 with 
 \[
-f_F(r/R) = -2.10444(r/R) + 2.08877(r/R)^3 - 0.94813(r/R)^5 -1.372(r/R)^6 + 3.87(r/R)^8 - 4.19(r/R)^{10}
+f_F\left(\frac{r}{R}\right) 
+= -2.10444(\frac{r}{R}) 
++ 2.08877(\frac{r}{R})^3 
+- 0.94813(\frac{r}{R})^5 
+- 1.372(\frac{r}{R})^6 
++ 3.87(\frac{r}{R})^8 
+- 4.19(\frac{r}{R})^{10}
 \]
 In all three cases we have 
 \[
-\upnu_{sphere} = \frac{2}{9} \frac{\delta \rho}{\eta_f} R_s^2 g \frac{1}{\gamma(r/R)}
+\upnu_{sphere} = \frac{2}{9} \frac{\delta \rho}{\eta_f} R_s^2 g \frac{1}{\gamma(\frac{r}{R})}
 \]
 Note that the Habermann \& Faxen expressions are copy-pasted from the GALE manual and 
 are extremely comparable in value. I did not verify these yet. 

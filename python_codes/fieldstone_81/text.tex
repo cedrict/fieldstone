@@ -279,7 +279,7 @@ skyline of the matrix.
 This benchmark is presented in Section~\ref{mms3} and is called the 'Burstedde' benchmark in the ASPECT manual after 
 the paper by Burstedde et al (2013) \cite{busa13}, although it originates in Dohrmann \& Bochev (2004) \cite{dobo04}. 
 It was run with 3 different quadrature levels, $nq=2^3,3^3,4^3$. 
-Unfortunately a resolution 20x20x20 is the maximum which can be run as demonstrated 
+Unfortunately a resolution $24\times 24\times 24$ is the maximum which can be run as demonstrated 
 by the following table:
 
 \begin{center}
@@ -305,9 +305,15 @@ similarly to the $Q_1\times P_0$ element:
 \includegraphics[width=10cm]{python_codes/fieldstone_81/results/bench1/conv.pdf}
 \end{center}
 
+It appears that a $2 \times 2\times 2$ is sufficient and yields the best results.
+
 %----------------------------------------------------
 \subsection*{Horizontal shear ({\tt bench=2})}
 
+Gravity is set to zero so that density values are irrelevant. Viscosity is set to 1.
+Velocity boundary conditions $\frac12-z,0,0$ are prescribed at the top and bottom, 
+while the side boundaries are left free. We expect this same velocity field everywhere in the 
+domain and given the pressure normalisation a zero pressure in the domain. 
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_81/results/bench2/vel}
@@ -323,7 +329,8 @@ similarly to the $Q_1\times P_0$ element:
 \subsection*{Stokes sphere benchmark ({\tt bench=3})}
 
 It is described in Section~\ref{ss:stokes_sphere3D}. We here focus on the 'NS' case, i.e. no slip 
-boundary conditions are prescribed on all six faces.
+boundary conditions are prescribed on all six faces. Unfortunately the resolution is so limited 
+that it is hard to really see a convergence in the results.
 
 \begin{center}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_81/results/bench3/u}

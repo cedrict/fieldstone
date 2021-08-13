@@ -1,4 +1,4 @@
-set term pdf enhanced font "Times,11pt"
+set term pdf enhanced font "Times,12pt"
 set grid
 set log xy
 set ylabel 'ndof'
