@@ -469,6 +469,8 @@ for iel in range(0,nel):
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area (meas) %.6f " %(area.sum()))
 print("     -> total area (anal) %.6f " %(np.pi*R_outer**2/2))
+print("     -> total vol  (meas) %.6f " %(arear.sum()))
+print("     -> total vol  (anal) %.6f " %(4*np.pi*R_outer**3/3))
 
 print("compute elements areas: %.3f s" % (timing.time() - start))
 
