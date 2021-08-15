@@ -211,17 +211,12 @@ Also available on Wikipedia is a (naive) MATLAB implementation of the CG algorit
 We see that its implementation is actually rather simple and straightforward!
 
 \Literature: Shewchuk, An Introduction to the Conjugate 
-Gradient Method Without the Agonizing Pain \cite{shew94}
+Gradient Method Without the Agonizing Pain \cite{shew94}.
+CG using mpi \cite{siho04}.
+Een kwart eeuw iteratieve methoden \cite{vuik09}.
 
 The CG and PCG algorithms are used in Section~\ref{ss:schurpcg}.
 It is implemented in \stone~15,16,82.
-
-
-
-
-
-
-
 
 \index{general}{BiCG solver}
 \item Biconjugate Gradient method
@@ -231,8 +226,6 @@ It is implemented in \stone~15,16,82.
 \item MINRES: For iterative solution of symmetric systems Ax = b, the conjugate gradient method
 (CG) is commonly used when A is positive definite, while the minimum residual method (MINRES)
 is typically reserved for indefinite systems.
-
-
 \item Generalized minimal residual method (GMRES)
 \footnote{\url{https://en.wikipedia.org/wiki/Generalized_minimal_residual_method}}
 \end{itemize}
