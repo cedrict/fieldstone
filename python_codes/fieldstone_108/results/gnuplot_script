@@ -1,0 +1,106 @@
+set terminal pdf enhanced font "Times,12pt"
+set grid
+set xlabel 'r (km)'
+set ylabel 'w (m)'
+set key outside
+
+set style rect fc lt -1 fs solid 0.15 noborder
+set obj rect from -200, graph 0 to 200, graph 1
+
+########################################################################
+
+set output 'w_eta.pdf'
+plot[]\
+'data_a.txt' u ($1-1200):($2)    w lp lt -1 ps .4 t 'fig 4a',\
+'data_b.txt' u ($1-1200+63):($2) w lp lt -1 ps .4 t 'fig 4b',\
+'data_c.txt' u ($1-1200):($2)    w lp lt -1 ps .4 t 'fig 4c',\
+'w.ascii' u ($1-10000):2          w l lt 1 t '{/Symbol h}=2e18',\
+'eta/w_1e18.ascii' u ($1-10000):2 w l lt 2 t '{/Symbol h}=1e18',\
+'eta/w_2e17.ascii' u ($1-10000):2 w l lt 3 t '{/Symbol h}=2e17'
+
+set output 'w_eta_zoom.pdf'
+plot[-1000:0]\
+'data_a.txt' u ($1-1200):($2)    w lp lt -1 ps .4 t 'fig 4a',\
+'data_b.txt' u ($1-1200+63):($2) w lp lt -1 ps .4 t 'fig 4b',\
+'data_c.txt' u ($1-1200):($2)    w lp lt -1 ps .4 t 'fig 4c',\
+'w.ascii' u ($1-10000):2          w l lt 1 t '{/Symbol h}=2e18',\
+'eta/w_1e18.ascii' u ($1-10000):2 w l lt 2 t '{/Symbol h}=1e18',\
+'eta/w_2e17.ascii' u ($1-10000):2 w l lt 3 t '{/Symbol h}=2e17'
+
+########################################################################
+
+set output 'w_theta.pdf'
+plot[]\
+'data_a.txt' u ($1-1200):($2)    w lp lt -1 ps .4 t 'fig 4a',\
+'data_b.txt' u ($1-1200+63):($2) w lp lt -1 ps .4 t 'fig 4b',\
+'data_c.txt' u ($1-1200):($2)    w lp lt -1 ps .4 t 'fig 4c',\
+'w.ascii' u ($1-10000):2          w l lt 1 t '{/Symbol Q}=0^o',\
+'theta/w_30.ascii' u ($1-10000):2 w l lt 2 t '{/Symbol Q}=30^o',\
+'theta/w_60.ascii' u ($1-10000):2 w l lt 3 t '{/Symbol Q}=60^o',\
+'theta/w_90.ascii' u ($1-10000):2 w l lt 4 t '{/Symbol Q}=90^o',\
+
+set output 'w_theta_zoom.pdf'
+plot[-1000:0]\
+'data_a.txt' u ($1-1200):($2)    w lp lt -1 ps .4 t 'fig 4a',\
+'data_b.txt' u ($1-1200+63):($2) w lp lt -1 ps .4 t 'fig 4b',\
+'data_c.txt' u ($1-1200):($2)    w lp lt -1 ps .4 t 'fig 4c',\
+'w.ascii' u ($1-10000):2          w l lt 1 t '{/Symbol Q}=0^o',\
+'theta/w_30.ascii' u ($1-10000):2 w l lt 2 t '{/Symbol Q}=30^o',\
+'theta/w_60.ascii' u ($1-10000):2 w l lt 3 t '{/Symbol Q}=60^o',\
+'theta/w_90.ascii' u ($1-10000):2 w l lt 4 t '{/Symbol Q}=90^o',\
+
+
+########################################################################
+
+set output 'w_Te.pdf'
+plot[]\
+'data_a.txt' u ($1-1200):($2)    w lp lt -1 ps .4 t 'fig 4a (5km)',\
+'data_b.txt' u ($1-1200+63):($2) w lp lt -1 ps .4 t 'fig 4b (5km)',\
+'data_c.txt' u ($1-1200):($2)    w lp lt -1 ps .4 t 'fig 4c (5km)',\
+'data_a_80km.txt' u ($1-1200):($2)  w lp lt -1 ps .4 dt 2 t 'fig 4a (80km)',\
+'Te/w_01.ascii' u ($1-10000):2 w l lt 1 t 'Te=1km',\
+'w.ascii' u ($1-10000):2       w l lt 2 t 'Te=5km',\
+'Te/w_10.ascii' u ($1-10000):2 w l lt 3 t 'Te=10km',\
+'Te/w_30.ascii' u ($1-10000):2 w l lt 4 t 'Te=30km',\
+'Te/w_50.ascii' u ($1-10000):2 w l lt 5 t 'Te=50km',\
+'Te/w_80.ascii' u ($1-10000):2 w l lt 6 t 'Te=80',\
+
+
+set output 'w_Te_zoom.pdf'
+plot[-1000:0]\
+'data_a.txt' u ($1-1200):($2)    w lp lt -1 ps .4 t 'fig 4a (5km)',\
+'data_b.txt' u ($1-1200+63):($2) w lp lt -1 ps .4 t 'fig 4b (5km)',\
+'data_c.txt' u ($1-1200):($2)    w lp lt -1 ps .4 t 'fig 4c (5km)',\
+'data_a_80km.txt' u ($1-1200):($2)  w lp lt -1 ps .4 dt 2 t 'fig 4a (80km)',\
+'Te/w_01.ascii' u ($1-10000):2 w l lt 1 t 'Te=1',\
+'w.ascii' u ($1-10000):2       w l lt 2 t 'Te=5',\
+'Te/w_10.ascii' u ($1-10000):2 w l lt 3 t 'Te=10',\
+'Te/w_30.ascii' u ($1-10000):2 w l lt 4 t 'Te=30',\
+'Te/w_50.ascii' u ($1-10000):2 w l lt 5 t 'Te=50',\
+'Te/w_80.ascii' u ($1-10000):2 w l lt 6 t 'Te=80',\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
