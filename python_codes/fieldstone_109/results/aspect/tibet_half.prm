@@ -1,0 +1,136 @@
+
+############### Global parameters
+
+set Dimension                              = 3
+set Start time                             = 0
+set End time                               = 0
+set Use years in output instead of seconds = true
+set CFL number                             = .5
+set Output directory                       = output_tibet
+#set Nonlinear solver scheme                = single Advection, iterated Stokes
+set Pressure normalization                 = volume
+set Timing output frequency                = 1
+
+subsection Solver parameters
+  subsection Stokes solver parameters
+    set Number of cheap Stokes solver steps = 0
+  end
+end
+
+############### Parameters describing the model
+
+subsection Geometry model
+  set Model name = box
+  subsection Box
+    set X extent  = 1000e3
+    set Y extent  = 500e3
+    set Z extent  = 15e3
+    set X repetitions  = 10
+    set Y repetitions  = 5
+  end
+end
+
+subsection Compositional fields
+  set Number of fields = 1
+end
+
+# first  is lc
+# second is obstacle
+#subsection Material model
+#  set Model name = multicomponent
+#  subsection Multicomponent
+#    set Reference temperature = 0.0
+#    set Densities = 3000
+#    set Specific heats = 1250
+#    set Thermal conductivities = 4.7
+#    set Thermal expansivities = 0
+#    set Viscosities =  2e18, 2e21
+#    set Viscosity averaging scheme = harmonic
+#  end
+#end
+
+subsection Initial composition model
+  set Model name = function
+  subsection Function
+    set Variable names      = x,y,z
+    set Function constants  = a=200e3
+    set Function expression = if ( (x-500e3)^2+(y)^2 < a^2 ,1,0)
+  end
+end
+
+subsection Material model
+  set Model name = simple
+  subsection Simple model
+    set Reference density = 3000
+    set Viscosity = 2e18
+    set Density differential for compositional field 1 = 10
+    set Composition viscosity prefactor = 1000
+  end
+  set Material averaging = harmonic average
+end
+
+subsection Gravity model
+  set Model name = vertical
+  subsection Vertical
+    set Magnitude = 0
+  end
+end
+
+subsection Boundary velocity model
+  set Tangential velocity boundary indicators = front,back
+  set Zero velocity boundary indicators = bottom,top
+  set Prescribed velocity boundary indicators = left: function, right:function
+  subsection Function
+    set Variable names      = x,y,z
+    set Function constants  = cm=0.01, year=1 , b=7.5e3
+    set Function expression =  0.8*cm/year*(1-((z-b)/b)^2) ; 0 ; 0
+  end
+end
+
+############### Parameters describing the temperature field
+# As above, there is no need to set anything for the
+# temperature boundary conditions.
+
+subsection Initial temperature model
+  set Model name = function
+
+  subsection Function
+    set Function expression = 0
+  end
+end
+
+############### Parameters describing the discretization
+# The following parameters describe how often we want to refine
+# the mesh globally and adaptively, what fraction of cells should
+# be refined in each adaptive refinement step, and what refinement
+# indicator to use when refining the mesh adaptively.
+
+subsection Mesh refinement
+  set Initial global refinement          = 3
+  set Strategy                           = composition
+  set Initial adaptive refinement        = 0
+  set Refinement fraction                = 0.999
+  set Coarsening fraction                = 0.
+
+  set Minimum refinement level           = 1
+  set Time steps between mesh refinement = 1
+  #set Run postprocessors on initial refinement = true
+end
+
+
+############### Parameters describing what to do with the solution
+# The final section allows us to choose which postprocessors to
+# run at the end of each time step. We select to generate graphical
+# output that will consist of the primary variables (velocity, pressure,
+# temperature and the compositional fields) as well as the density and
+# viscosity. We also select to compute some statistics about the
+# velocity field.
+
+subsection Postprocess
+  set List of postprocessors = visualization, velocity statistics, topography, pressure statistics
+  subsection Visualization
+    set List of output variables = density, viscosity, strain rate
+    set Time between graphical output = 0
+  end
+end
+

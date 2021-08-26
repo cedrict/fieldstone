@@ -1,0 +1,16 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+set ylabel 'u (cm/year)'
+set xlabel 'z (km)'
+set output 'vel.pdf'
+plot[0:15]\
+'velocity.ascii' u ($3/1e3):($4/0.01*3600*24*365.25) w lp notitle,\
+0.8*4/15**2*x*(15-x) lt -1 t 'analytical'
+
+set xlabel 'x (km)'
+set ylabel 'pressure (Pa)'
+set output 'press.pdf'
+plot[][]\
+'pressure.ascii' u ($1/1e3):4 notitle,\
+9013500.533768233*(1-2*x/1000) w l lt -1 t 'analytical'
