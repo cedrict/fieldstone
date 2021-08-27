@@ -17,11 +17,12 @@ The domain is $1000\times500\times15~\si{\km}$. Gravity is set to zero so densit
 Boundary conditions are no slip at the top and bottom, free slip on $y=0$ and $y=L_y$ and 
 a parabolic Poiseuille flow is prescribed on $x=0$ and $x=L_x$:
 \[
-u(z)=U \frac{4z(L_z-z)  }{L_z^2}
+u(z)=U_0 \frac{4z(L_z-z)  }{L_z^2}
 \]
-with $U=8~\si{\mm\per\year}$.
+with $U_0=80~\si{\mm\per\year}$.
 
-The obstacle is centered on $(Lx/2,0)$ and has a radius of $a=200~\si{\km}$.
+The obstacle is centered on $(L_x/2,0)$ and has a radius of $a=200~\si{\km}$ (because of the symmetry of the problem
+I only model half of the domain).
 It is assigned a viscosity $\eta=2\cdot 10^{21}~\si{\pascal\second}$ which is 1000 times larger than the viscosity
 of the channel $\eta=2\cdot 10^{18}~\si{\pascal\second}$.
 
@@ -35,7 +36,7 @@ removed by enforcing that pressure is volume normalised, i.e. $\int_\Omega p \; 
 Taylor-Hood pair $Q_2\times Q_1$ (see Section~\ref{ss:pairq2q1}).
 The numbering of the nodes follows the one of the VTK format as shown hereunder. 
 In retrospect it is not the most straightforward one but it is irrelevant with regards 
-to the calculations. A complete layout of the nodes is present in the images folder. 
+to the calculations. A complete layout of the nodes is present in the images folder of this stone. 
 
 \begin{center}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_109/images/numbering}
@@ -51,7 +52,7 @@ p(r,\theta) =
  -\frac{U a^2 }{\kappa r}  \cos \theta
 \]
 is also computed and projected onto the mesh (pressure is then set to zero inside the 
-obstacle). 
+obstacle) (where $U=2U_0/3$, see \stone 108). 
 
 %------------------------------
 \subsubsection*{Benchmarking}
@@ -69,11 +70,11 @@ there is more pressure applied to the left than to the right of the channel.
 
 Looking above at our applied boundary velocity we find that 
 \[
-\frac{1}{2}\frac{|\Pi|}{\eta_0} = \frac{4U}{L_z^2}
+\frac{1}{2}\frac{|\Pi|}{\eta_0} = \frac{4U_0}{L_z^2}
 \]
 or, $|\Pi|\simeq 18.03$. The domain is 1000~\si{\km} long 
 so $\Delta P = |\Pi| L_x \simeq 18,027,001$ i.e. we expect the pressure to 
-be $9,013,500~\si{\pascal}$ at $x=0$ and $-9,013,500~\si{\pascal}$ at $x=L_x$. 
+be $90,135,005~\si{\pascal}$ at $x=0$ and $-90,135,005~\si{\pascal}$ at $x=L_x$. 
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_109/results/bench/vel}
@@ -106,6 +107,10 @@ Note that the computed pressure does not depend on the $z$-coordinate (while of 
 is rather large and this is likely to alter the accuracy of the calculations.}
 \end{center}
 
+The recovered pressure is rather similar to the analytical one. Indeed we find that an increase in resolution and 
+an increase in domain size (especially $L_z$) brings the computed pressure closer and closer to the 
+analytical one. At the max resolution that fits on my 32Gb laptop pressures are off by less than 10\%.
+
 I have also run this experiment with the \aspect code and the prm file is present in 
 the folder of this stone. Resolution was higher than above ($160 \times 80 \times 16 =204,800$ elements).
 
@@ -120,7 +125,7 @@ We find that the results obtained with \aspect do not differ substantially from 
 obtained with this stone, despite a much higher resolution.
 
 We find that the pressure min and max are quite larger than the isoviscous case (about 12.35MPa instead 
-of 9.014MPa). 
+of 9.014MPa).  
 
 
 

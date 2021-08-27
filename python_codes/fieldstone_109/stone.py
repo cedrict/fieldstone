@@ -176,21 +176,22 @@ print("-----------------------------")
 ndim=3
 ndofV=3
 ndofP=1
+mV=27
+mP=8
 
 Lx=1000e3
 Ly=500e3
 Lz=15e3
 
+nelx=28
+nely=14
 nelz=5
-nelx=26
-nely=13
 
+nnx=2*nelx+1
+nny=2*nely+1
+nnz=2*nelz+1
 nel=nelx*nely*nelz
-
 NV=(2*nelx+1)*(2*nely+1)*(2*nelz+1)
-mV=27
-mP=8
-
 NP=(nelx+1)*(nely+1)*(nelz+1)
 NfemV=NV*ndofV
 NfemP=NP*ndofP
@@ -199,10 +200,6 @@ Nfem=NfemV+NfemP
 hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
-
-nnx=2*nelx+1
-nny=2*nely+1
-nnz=2*nelz+1
 
 print('nelx =',nelx)
 print('nely =',nely)
@@ -226,7 +223,7 @@ gx=0
 gy=0
 gz=0
 
-U=0.8*cm/year
+U0=8*cm/year
 
 rho=3000
 
@@ -239,8 +236,8 @@ tVnodes=[-1,-1,-1,-1,1,1,1,1, -1,-1,-1,-1,1,1,1,1,0,0,0,0, -1,0,0,0,0,1,0 ]
 
 eta_ref=1e21
 
-Pi2=8*0.8*cm/year*2e18/Lz**2 * Lx /2
-print('Pi/2=',Pi)
+Pi2=8*U0*2e18/Lz**2 * Lx /2
+print('Pi/2=',Pi2)
 
 #################################################################
 # grid point setup
@@ -365,9 +362,13 @@ bc_val = np.zeros(NfemV, dtype=np.float64)  # boundary condition, value
 
 for i in range(0,NV):
     if xV[i]/Lx<eps:
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = U*zV[i]*(Lz-zV[i])*4/Lz**2
+       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV+0]   = U0*zV[i]*(Lz-zV[i])*4/Lz**2
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       bc_fix[i*ndofV+2] = True ; bc_val[i*ndofV+2] = 0.
     if xV[i]/Lx>(1-eps):
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = U*zV[i]*(Lz-zV[i])*4/Lz**2
+       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV+0]   = U0*zV[i]*(Lz-zV[i])*4/Lz**2
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       bc_fix[i*ndofV+2] = True ; bc_val[i*ndofV+2] = 0.
     if yV[i]/Ly<eps:
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
     if yV[i]/Ly>(1-eps):
@@ -648,19 +649,40 @@ print("project p onto Vnodes: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 p_analytical=np.zeros(NV,dtype=np.float64)
+p_analytical1=np.zeros(NV,dtype=np.float64)
+p_analytical2=np.zeros(NV,dtype=np.float64)
 theta=np.zeros(NV,dtype=np.float64)
 
 kappa=(Lz/2)**2/3/eta(0,0,0)
 
 a=200e3
 
+U=U0*2/3
+    
+plinefile=open('p_line.ascii',"w")
+psurffile=open('p_surf.ascii',"w")
+
 for i in range(0,NV):
     ri=np.sqrt((xV[i]-Lx/2)**2+(yV[i])**2)
     theta[i]=math.atan2(yV[i],xV[i]-Lx/2)    
     if ri>=a:
        p_analytical[i]=-U/kappa*(ri+a**2/ri)*np.cos(theta[i])
+       p_analytical1[i]=-U/kappa*(ri)*np.cos(theta[i])
+       p_analytical2[i]=-U/kappa*(a**2/ri)*np.cos(theta[i])
+
+       if abs(yV[i]/Ly)<eps and abs(zV[i]-Lz)/Lz<eps:
+          plinefile.write("%e %e %e %e %e %e %e \n" %(xV[i],q[i],p_analytical[i],p_analytical1[i],\
+                                                p_analytical2[i],q[i]-p_analytical[i],p_analytical[i]/q[i]))
+       if abs(zV[i]-Lz)/Lz<eps:
+          psurffile.write("%e %e %e %e %e %e %e %e\n" %(xV[i],yV[i],q[i],p_analytical[i],p_analytical1[i],\
+                                                p_analytical2[i],q[i]-p_analytical[i],p_analytical[i]/q[i]))
     else:
        p_analytical[i]=0
+       p_analytical1[i]=0
+       p_analytical2[i]=0
+
+plinefile.close()
+psurffile.close()
 
 print("compute analytical pressure: %.3f s" % (timing.time() - start))
 
@@ -704,6 +726,16 @@ if True:
     vtufile.write("<DataArray type='Float32' Name='p_analytical' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%10e \n" %p_analytical[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='p_analytical(1)' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" %p_analytical1[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='p_analytical(2)' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" %p_analytical2[i])
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='theta' Format='ascii'> \n")

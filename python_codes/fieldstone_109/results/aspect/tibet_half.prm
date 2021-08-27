@@ -22,8 +22,8 @@ end
 subsection Geometry model
   set Model name = box
   subsection Box
-    set X extent  = 1000e3
-    set Y extent  = 500e3
+    set X extent  = 1200e3
+    set Y extent  = 600e3
     set Z extent  = 15e3
     set X repetitions  = 10
     set Y repetitions  = 5
@@ -54,7 +54,7 @@ subsection Initial composition model
   subsection Function
     set Variable names      = x,y,z
     set Function constants  = a=200e3
-    set Function expression = if ( (x-500e3)^2+(y)^2 < a^2 ,1,0)
+    set Function expression = if ( (x-600e3)^2+(y)^2 < a^2 ,1,0)
   end
 end
 
@@ -83,7 +83,7 @@ subsection Boundary velocity model
   subsection Function
     set Variable names      = x,y,z
     set Function constants  = cm=0.01, year=1 , b=7.5e3
-    set Function expression =  0.8*cm/year*(1-((z-b)/b)^2) ; 0 ; 0
+    set Function expression =  8*cm/year*(1-((z-b)/b)^2) ; 0 ; 0
   end
 end
 
@@ -129,6 +129,7 @@ end
 subsection Postprocess
   set List of postprocessors = visualization, velocity statistics, topography, pressure statistics
   subsection Visualization
+    set Output format = vtu
     set List of output variables = density, viscosity, strain rate
     set Time between graphical output = 0
   end
