@@ -3,7 +3,6 @@ import numpy as np
 R_outer=3.397e6
 R_inner=R_outer-1600e3
 
-eta_core=1e21
 
 eta_max=1e25
 
@@ -16,7 +15,7 @@ np_moho=nnt
 R_trans=R_outer-500e3
 np_trans=nnt
 
-rho_surf=3000 # dyn topo
+rho_surf=3700 # dyn topo
 
 #-------------------------------------
 # elasto-viscous rheology
@@ -36,16 +35,23 @@ dt=50*year
 
 viscosity_model = 3
 
-rho_crust=3300
+rho_crust=0#3300
 eta_crust=1e25
 
-rho_lith=3500
+rho_lith=0#3500
 eta_lith=1e21
 
-rho_mantle=3700
+rho_mantle=0#3700
 eta_mantle=6e20
 
 eta0=6e20 # isoviscous case
+
+eta_core=1e21
+rho_core=0 #7200
+
+rho_crust+=3700
+rho_lith+=3700
+rho_mantle+=3700
 
 #-------------------------------------
 # blob setup 
@@ -64,7 +70,7 @@ eta_blob=6e20
 #1: free-slip
 #2: free top surface
 
-surface_bc=2
+surface_bc=1
 
 #-------------------------------------
 # gravity acceleration

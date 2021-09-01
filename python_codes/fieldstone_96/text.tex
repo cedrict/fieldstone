@@ -128,6 +128,19 @@ ONE problem remains: I have not yet found out how to remove the core altogether!
 so for now I set zero velocity at cmb nodes (equivalent to no slip).
 
 %__________________________________________________________________
+\paragraph{About pressure normalisation}
+
+We actually want to compute 
+\[
+\langle p \rangle _\Gamma = \frac{1}{4\pi R_o^2} \iiint \delta(r-R_o) p(\theta) r^2 \sin\theta \; dr d\theta d\phi 
+= \frac{1}{2} \int_0^\pi p(\theta) \sin\theta \; d\theta
+\]
+The integral is then carried out by finding the elements for which two vertices are on the outside boundary, 
+computing the angular opening $d\theta$, the average pressure along the edge and the value of $\sin\theta$ at the
+middle of the edge. 
+The obtained value is then subtracted from the pressure. 
+
+%__________________________________________________________________
 \paragraph{From Cylindrical to Cartesian coordinates}
 
 In cylindrical coordinates, and in the axisymmetric case
@@ -511,5 +524,7 @@ The first integral is carried out for each triangle and the result is stored in 
 NOT FINISHED/TESTED
 
 Look at Morgan (1965) \cite{morg65} for gravity anomalies above sinking sphere. 
+
+
 
 

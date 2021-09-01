@@ -356,7 +356,7 @@ for iel in range(0,nel):
           rho[iel]=rho_mantle
        else:
           eta[iel]=eta_core
-          rho[iel]=5000
+          rho[iel]=rho_core
 
     if x_c**2+(z_c-z_blob)**2<R_blob**2:
        rho[iel]=rho_blob
@@ -786,14 +786,57 @@ for istep in range(0,1):
 
     if surface_bc==0 or surface_bc==1:
 
-       avrg_p=0
-       counter=0
-       for i in range(NfemP):
-           if rP[i]>0.99999*R_outer:
-              avrg_p+=p[i]
-              counter+=1
+       #not accurate enough!!
+       #avrg_p=0
+       #counter=0
+       #for i in range(NfemP):
+       #    if rP[i]>0.99999*R_outer:
+       #       avrg_p+=p[i]
+       #       counter+=1
+       #p-=(avrg_p/counter) 
+       #print(avrg_p/counter)
 
-       p-=(avrg_p/counter) 
+       counter=0
+       perim=0
+       avrg_p=0
+       for iel in range(0,nel):
+           if surface_node[iconP[0,iel]] and surface_node[iconP[1,iel]]:
+              xxp=(xP[iconP[0,iel]]+xP[iconP[1,iel]])/2
+              yyp=(yP[iconP[0,iel]]+yP[iconP[1,iel]])/2
+              ppp=( p[iconP[0,iel]]+ p[iconP[1,iel]])/2
+              theta0=np.arctan2(xP[iconP[0,iel]],yP[iconP[0,iel]])
+              theta1=np.arctan2(xP[iconP[1,iel]],yP[iconP[1,iel]])
+              dtheta=abs(theta0-theta1)
+              thetap=np.arctan2(xxp,yyp)
+              dist=np.sqrt((xP[iconP[0,iel]]-xP[iconP[1,iel]])**2+(yP[iconP[0,iel]]-yP[iconP[1,iel]])**2)
+              perim+=dist
+              avrg_p+=ppp*dtheta*np.sin(thetap)*0.5
+           if surface_node[iconP[1,iel]] and surface_node[iconP[2,iel]]:
+              xxp=(xP[iconP[1,iel]]+xP[iconP[2,iel]])/2
+              yyp=(yP[iconP[1,iel]]+yP[iconP[2,iel]])/2
+              ppp=( p[iconP[1,iel]]+ p[iconP[2,iel]])/2
+              theta1=np.arctan2(xP[iconP[1,iel]],yP[iconP[1,iel]])
+              theta2=np.arctan2(xP[iconP[2,iel]],yP[iconP[2,iel]])
+              dtheta=abs(theta1-theta2)
+              thetap=np.arctan2(xxp,yyp)
+              dist=np.sqrt((xP[iconP[1,iel]]-xP[iconP[2,iel]])**2+(yP[iconP[1,iel]]-yP[iconP[2,iel]])**2)
+              perim+=dist
+              avrg_p+=ppp*dtheta*np.sin(thetap)*0.5
+           if surface_node[iconP[2,iel]] and surface_node[iconP[0,iel]]:
+              xxp=(xP[iconP[2,iel]]+xP[iconP[0,iel]])/2
+              yyp=(yP[iconP[2,iel]]+yP[iconP[0,iel]])/2
+              ppp=( p[iconP[2,iel]]+ p[iconP[0,iel]])/2
+              theta2=np.arctan2(xP[iconP[2,iel]],yP[iconP[2,iel]])
+              theta0=np.arctan2(xP[iconP[0,iel]],yP[iconP[0,iel]])
+              dtheta=abs(theta2-theta0)
+              thetap=np.arctan2(xxp,yyp)
+              dist=np.sqrt((xP[iconP[2,iel]]-xP[iconP[0,iel]])**2+(yP[iconP[2,iel]]-yP[iconP[0,iel]])**2)
+              perim+=dist
+              avrg_p+=ppp*dtheta*np.sin(thetap)*0.5
+
+       p-=avrg_p 
+
+       #print (perim, np.pi*R_outer)
 
        #np.savetxt('p_solution_normalised.ascii',np.array([xP,yP,p,rP]).T)
 
@@ -975,17 +1018,9 @@ for istep in range(0,1):
     tracfile=open('surface_traction_nodal.ascii',"w")
     for i in range(0,NV):
         if surface_node[i]: 
-           tracfile.write("%10e %10e %10e %10e \n" \
-                          %(theta_nodal[i],tau_rr_nodal[i]-q[i],xV[i],zV[i]))
+           tracfile.write("%e %e %e %e %e %e\n" \
+                          %(theta_nodal[i],tau_rr_nodal[i]-q[i],xV[i],zV[i],tau_rr_nodal[i],q[i]))
     tracfile.close()
-
-    tracfile=open('surface_traction_elemental.ascii',"w")
-    for iel in range(0,nel):
-        if surface_node[iconV[0,iel]] or surface_node[iconV[1,iel]] or\
-           surface_node[iconV[2,iel]] or surface_node[iconV[3,iel]] or\
-           surface_node[iconV[4,iel]] or surface_node[iconV[5,iel]]:
-           pel=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3.
-           tracfile.write("%10e %10e %10e %10e \n" %(theta[iel],tau_rr[iel]-pel,xc[iel],zc[iel]))
 
     tracfile=open('surface_vr.ascii',"w")
     for i in range(0,NV):
@@ -999,23 +1034,6 @@ for istep in range(0,1):
         if surface_node[i]: 
            tracfile.write("%10e %10e \n" \
                           %(theta_nodal[i],u[i]*np.cos(theta_nodal[i])-v[i]*np.sin(theta_nodal[i]) ) )
-    tracfile.close()
-
-
-
-#        if np.sqrt(xc[iel]**2+zc[iel]**2)>R_outer-dr:
-#           if surface_node[iconV[3,iel]] and xV[iconV[3,iel]]>0:
-#              flag[iel]=1
-#              pel=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3.
-#              tracfile.write("%10e %10e %10e %10e \n" %(theta[iel],tau_rr[iel]-pel,xc[iel],zc[iel]))
-#           if surface_node[iconV[4,iel]] and xV[iconV[4,iel]]>0:
-#              flag[iel]=1
-#              pel=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3.
-#              tracfile.write("%10e %10e %10e %10e \n" %(theta[iel],tau_rr[iel]-pel,xc[iel],zc[iel]))
-#           if surface_node[iconV[5,iel]] and xV[iconV[5,iel]]>0:
-#              flag[iel]=1
-#              pel=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3.
-#              tracfile.write("%10e %10e %10e %10e \n" %(theta[iel],tau_rr[iel]-pel,xc[iel],zc[iel]))
     tracfile.close()
         
     print("compute surface tractions: %.3f s" % (timing.time() - start))
@@ -1065,9 +1083,11 @@ for istep in range(0,1):
     #for iel in range (0,nel):
     #    vtufile.write("%7e\n" % (etaeff[iel]))
     #vtufile.write("</DataArray>\n")
-
-
-
+    #--
+    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%7e\n" % ((p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3.))
+    vtufile.write("</DataArray>\n")
     #--
     #vtufile.write("<DataArray type='Float32' Name='xc' Format='ascii'> \n")
     #for iel in range (0,nel):
@@ -1192,7 +1212,6 @@ for istep in range(0,1):
         else:
            vtufile.write("%d \n" %0)
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Int32' Name='dyn topo' Format='ascii'> \n")
     for i in range(0,NV):
@@ -1201,22 +1220,11 @@ for istep in range(0,1):
         else:
            vtufile.write("%d \n" % 0)
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' Name='theta (sph.coords)' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%e \n" %theta_nodal[i])
     vtufile.write("</DataArray>\n")
-    #--
-    #vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
-    #for i in range(0,NV):
-    #    vtufile.write("%e \n" %eta_nodal[i])
-    #vtufile.write("</DataArray>\n")
-    #--
-    #vtufile.write("<DataArray type='Float32' Name='viscosity (effective)' Format='ascii'> \n")
-    #for i in range(0,NV):
-    #    vtufile.write("%e \n" %etaeff_nodal[i])
-    #vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
     for i in range(0,NV):
