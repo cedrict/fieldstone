@@ -84,7 +84,7 @@ print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
 
-CR=False
+CR=True
 
 if CR:
    mV=7     # number of velocity nodes making up an element
@@ -121,7 +121,7 @@ print ('nel', nel)
 print ('NV0', NV0)
 print ('NfemV', NfemV)
 
-eta_ref=1e23
+eta_ref=1e22
 
 #---------------------------------------
 # 6 point integration coeffs and weights 
@@ -250,16 +250,18 @@ print("setup: connectivity V: %.3f s" % (timing.time() - start))
 theta_nodal=np.zeros(NV,dtype=np.float64)
 r_nodal=np.zeros(NV,dtype=np.float64)
 surface_node=np.zeros(NV,dtype=np.bool) 
+cmb_node=np.zeros(NV,dtype=np.bool) 
 
 for i in range(0,NV):
     theta_nodal[i]=np.arctan2(xV[i],zV[i])
     r_nodal[i]=np.sqrt(xV[i]**2+zV[i]**2)
-
     if r_nodal[i]>0.9999*R_outer:
        r_nodal[i]=R_outer*0.99999999
        xV[i]=r_nodal[i]*np.sin(theta_nodal[i])
        zV[i]=r_nodal[i]*np.cos(theta_nodal[i])
        surface_node[i]=True
+    if r_nodal[i]<1.0001*R_inner:
+       cmb_node[i]=True
 
 print("     -> theta_nodal (m,M) %.6e %.6e " %(np.min(theta_nodal),np.max(theta_nodal)))
 print("     -> r_nodal (m,M) %.6e %.6e "     %(np.min(r_nodal),np.max(r_nodal)))
@@ -303,10 +305,14 @@ else:
        yP[iconP[0,iel]]=zV[iconP[0,iel]]
        yP[iconP[1,iel]]=zV[iconP[1,iel]]
        yP[iconP[2,iel]]=zV[iconP[2,iel]]
-   rP[:]=np.sqrt(xP[:]**2+yP[:]**2)
 
+surface_Pnode=np.zeros(NfemP,dtype=np.bool) 
+for i in range(0,NfemP):
+    rP[i]=np.sqrt(xP[i]**2+yP[i]**2)
+    if rP[i]>=0.999*R_outer: 
+       surface_Pnode[i]=True
 
-#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+#np.savetxt('gridP.ascii',np.array([xP,yP,rP,surface_Pnode]).T,header='# x,y')
 
 #for iel in range (0,nel):
 #    print ("iel=",iel)
@@ -414,13 +420,8 @@ for i in range(0, NV):
     #Left boundary  
     if xV[i]<0.000001*R_inner:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
-       if abs(zV[i])<R_inner:
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    #bottom boundary  
-    #if zV[i]<0.000001*R_inner:
-    #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    #   if abs(xV[i])<R_inner:
-    #      bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = 0.
+       #if abs(zV[i])<R_inner:
+       #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
 
     #planet surface
     if surface_node[i] and surface_bc==0: #no-slip surface
@@ -428,7 +429,7 @@ for i in range(0, NV):
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
 
     #core mantle boundary
-    if abs(np.sqrt(xV[i]**2+zV[i]**2)-R_inner)<0.001*R_inner:
+    if cmb_node[i] and cmb_bc==0: #no-slip surface
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
 
@@ -496,15 +497,23 @@ print("compute surface normal vector: %.3f s" % (timing.time() - start))
 
 #################################################################
 # flag all elements with a node touching the surface r=R_outer
-# used later for free slip b.c.
+# or r=R_inner, used later for free slip b.c.
 #################################################################
 
-flag=np.zeros(nel,dtype=np.float64)  
+flag_top=np.zeros(nel,dtype=np.float64)  
+flag_bot=np.zeros(nel,dtype=np.float64)  
 for iel in range(0,nel):
     if surface_node[iconV[0,iel]] or surface_node[iconV[1,iel]] or\
        surface_node[iconV[2,iel]] or surface_node[iconV[3,iel]] or\
        surface_node[iconV[4,iel]] or surface_node[iconV[5,iel]]:
-       flag[iel]=1
+       flag_top[iel]=1
+    if cmb_node[iconV[0,iel]] or cmb_node[iconV[1,iel]] or\
+       cmb_node[iconV[2,iel]] or cmb_node[iconV[3,iel]] or\
+       cmb_node[iconV[4,iel]] or cmb_node[iconV[5,iel]]:
+       flag_bot[iel]=1
+
+
+
 
 ################################################################################################
 
@@ -619,10 +628,10 @@ for istep in range(0,1):
 
         #end for kq
 
-        if surface_bc==1 and flag[iel]:
+        if (surface_bc==1 and flag_top[iel]) or (cmb_bc==1 and flag_bot[iel]):
            for k in range(0,mV):
                inode=iconV[k,iel]
-               if surface_node[inode]:
+               if surface_node[inode] or cmb_node[inode]:
                   RotMat=np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
                   for i in range(0,mV*ndofV):
                       RotMat[i,i]=1.
@@ -726,7 +735,8 @@ for istep in range(0,1):
     u,v=np.reshape(sol[0:NfemV],(NV,2)).T
     p=sol[NfemV:Nfem]*eta_ref/R_outer
 
-    #np.savetxt('p_solution.ascii',np.array([xP,yP,p]).T,header='# x,y')
+    np.savetxt('solution_velocity.ascii',np.array([xV,zV,u,v]).T,header='# x,y,u,v')
+    np.savetxt('solution_pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
     print("     -> u (m,M) %.6e %.6e " %(np.min(u),np.max(u)))
     print("     -> v (m,M) %.6e %.6e " %(np.min(v),np.max(v)))
@@ -800,7 +810,7 @@ for istep in range(0,1):
        perim=0
        avrg_p=0
        for iel in range(0,nel):
-           if surface_node[iconP[0,iel]] and surface_node[iconP[1,iel]]:
+           if surface_Pnode[iconP[0,iel]] and surface_Pnode[iconP[1,iel]]:
               xxp=(xP[iconP[0,iel]]+xP[iconP[1,iel]])/2
               yyp=(yP[iconP[0,iel]]+yP[iconP[1,iel]])/2
               ppp=( p[iconP[0,iel]]+ p[iconP[1,iel]])/2
@@ -811,7 +821,7 @@ for istep in range(0,1):
               dist=np.sqrt((xP[iconP[0,iel]]-xP[iconP[1,iel]])**2+(yP[iconP[0,iel]]-yP[iconP[1,iel]])**2)
               perim+=dist
               avrg_p+=ppp*dtheta*np.sin(thetap)*0.5
-           if surface_node[iconP[1,iel]] and surface_node[iconP[2,iel]]:
+           if surface_Pnode[iconP[1,iel]] and surface_Pnode[iconP[2,iel]]:
               xxp=(xP[iconP[1,iel]]+xP[iconP[2,iel]])/2
               yyp=(yP[iconP[1,iel]]+yP[iconP[2,iel]])/2
               ppp=( p[iconP[1,iel]]+ p[iconP[2,iel]])/2
@@ -822,7 +832,7 @@ for istep in range(0,1):
               dist=np.sqrt((xP[iconP[1,iel]]-xP[iconP[2,iel]])**2+(yP[iconP[1,iel]]-yP[iconP[2,iel]])**2)
               perim+=dist
               avrg_p+=ppp*dtheta*np.sin(thetap)*0.5
-           if surface_node[iconP[2,iel]] and surface_node[iconP[0,iel]]:
+           if surface_Pnode[iconP[2,iel]] and surface_Pnode[iconP[0,iel]]:
               xxp=(xP[iconP[2,iel]]+xP[iconP[0,iel]])/2
               yyp=(yP[iconP[2,iel]]+yP[iconP[0,iel]])/2
               ppp=( p[iconP[2,iel]]+ p[iconP[0,iel]])/2
@@ -836,9 +846,9 @@ for istep in range(0,1):
 
        p-=avrg_p 
 
-       #print (perim, np.pi*R_outer)
+       print ('perim=',perim, np.pi*R_outer)
 
-       #np.savetxt('p_solution_normalised.ascii',np.array([xP,yP,p,rP]).T)
+       np.savetxt('solution_pressure_normalised.ascii',np.array([xP,yP,p,rP]).T)
 
     print("normalise pressure: %.3f s" % (timing.time() - start))
 
@@ -917,6 +927,9 @@ for istep in range(0,1):
     ######################################################################
     start = timing.time()
 
+    e_xx_nodal = np.zeros(NV,dtype=np.float64)  
+    e_zz_nodal = np.zeros(NV,dtype=np.float64)  
+    e_xz_nodal = np.zeros(NV,dtype=np.float64)  
     tau_xx_nodal = np.zeros(NV,dtype=np.float64)  
     tau_zz_nodal = np.zeros(NV,dtype=np.float64)  
     tau_xz_nodal = np.zeros(NV,dtype=np.float64)  
@@ -926,11 +939,14 @@ for istep in range(0,1):
     rVnodes=[0,1,0,0.5,0.5,0,1./3.] # valid for CR and P2P1
     sVnodes=[0,0,1,0,0.5,0.5,1./3.]
 
+    #u[:]=xV[:]
+    #v[:]=zV[:]
+
     for iel in range(0,nel):
-        for k in range(0,mV):
-            inode=iconV[k,iel]
-            rq = rVnodes[k]
-            sq = sVnodes[k]
+        for kk in range(0,mV):
+            inode=iconV[kk,iel]
+            rq = rVnodes[kk]
+            sq = sVnodes[kk]
             NNNV[0:mV]=NNV(rq,sq)
             dNNNVdr[0:mV]=dNNVdr(rq,sq)
             dNNNVds[0:mV]=dNNVds(rq,sq)
@@ -947,21 +963,36 @@ for istep in range(0,1):
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
             for k in range(0,mV):
-                tau_xx_nodal[inode] += dNNNVdx[k]*u[iconV[k,iel]]*2*eta[iel]        
-                tau_zz_nodal[inode] += dNNNVdy[k]*v[iconV[k,iel]]*2*eta[iel]        
-                tau_xz_nodal[inode] += 0.5*dNNNVdy[k]*u[iconV[k,iel]]*2*eta[iel]+\
-                                       0.5*dNNNVdx[k]*v[iconV[k,iel]]*2*eta[iel]   
+                tau_xx_nodal[inode] += dNNNVdx[k]*u[iconV[k,iel]]*2*(eta[iel]/eta_ref)        
+                tau_zz_nodal[inode] += dNNNVdy[k]*v[iconV[k,iel]]*2*(eta[iel]/eta_ref)                
+                tau_xz_nodal[inode] += 0.5*dNNNVdy[k]*u[iconV[k,iel]]*2*(eta[iel]/eta_ref)+\
+                                       0.5*dNNNVdx[k]*v[iconV[k,iel]]*2*(eta[iel]/eta_ref)                   
+                e_xx_nodal[inode] += dNNNVdx[k]*u[iconV[k,iel]]
+                e_zz_nodal[inode] += dNNNVdy[k]*v[iconV[k,iel]]
+                e_xz_nodal[inode] += 0.5*dNNNVdy[k]*u[iconV[k,iel]] + 0.5*dNNNVdx[k]*v[iconV[k,iel]]
             for k in range(0,mP):
                 q[inode]+= NNNP[k]*p[iconP[k,iel]]   
             #end for
             cc[inode]+=1
         #end for
     #end for
+    e_xx_nodal/=cc
+    e_zz_nodal/=cc
+    e_xz_nodal/=cc
     tau_xx_nodal/=cc
     tau_zz_nodal/=cc
     tau_xz_nodal/=cc
+    tau_xx_nodal*=eta_ref
+    tau_zz_nodal*=eta_ref
+    tau_xz_nodal*=eta_ref
     q[:]/=cc[:]
 
+    np.savetxt('solution_q.ascii',np.array([xV,zV,q]).T)
+    np.savetxt('solution_tau_cartesian.ascii',np.array([xV,zV,tau_xx_nodal,tau_zz_nodal,tau_xz_nodal]).T)
+
+    print("     -> e_xx_nodal   (m,M) %.6e %.6e " %(np.min(e_xx_nodal),np.max(e_xx_nodal)))
+    print("     -> e_zz_nodal   (m,M) %.6e %.6e " %(np.min(e_zz_nodal),np.max(e_zz_nodal)))
+    print("     -> e_xz_nodal   (m,M) %.6e %.6e " %(np.min(e_xz_nodal),np.max(e_xz_nodal)))
     print("     -> tau_xx_nodal (m,M) %.6e %.6e " %(np.min(tau_xx_nodal),np.max(tau_xx_nodal)))
     print("     -> tau_zz_nodal (m,M) %.6e %.6e " %(np.min(tau_zz_nodal),np.max(tau_zz_nodal)))
     print("     -> tau_xz_nodal (m,M) %.6e %.6e " %(np.min(tau_xz_nodal),np.max(tau_xz_nodal)))
@@ -977,7 +1008,6 @@ for istep in range(0,1):
     for iel in range(0,nel):
         theta[iel]=np.arctan2(xc[iel],zc[iel])
 
-
     print("     -> theta       (m,M) %.6e %.6e " %(np.min(theta),np.max(theta)))
 
     print("compute theta: %.3f s" % (timing.time() - start))
@@ -987,6 +1017,9 @@ for istep in range(0,1):
     #####################################################################
     start = timing.time()
 
+    e_rr_nodal=np.zeros(NV,dtype=np.float64)  
+    e_tt_nodal=np.zeros(NV,dtype=np.float64)  
+    e_rt_nodal=np.zeros(NV,dtype=np.float64)  
     tau_rr_nodal=np.zeros(NV,dtype=np.float64)  
     tau_tt_nodal=np.zeros(NV,dtype=np.float64)  
     tau_rt_nodal=np.zeros(NV,dtype=np.float64)  
@@ -994,6 +1027,10 @@ for istep in range(0,1):
     tau_rr_nodal=tau_xx_nodal*np.sin(theta_nodal)**2+2*tau_xz_nodal*np.sin(theta_nodal)*np.cos(theta_nodal)+tau_zz_nodal*np.cos(theta_nodal)**2
     tau_tt_nodal=tau_xx_nodal*np.cos(theta_nodal)**2-2*tau_xz_nodal*np.sin(theta_nodal)*np.cos(theta_nodal)+tau_zz_nodal*np.sin(theta_nodal)**2
     tau_rt_nodal=(tau_xx_nodal-tau_zz_nodal)*np.sin(theta_nodal)*np.cos(theta_nodal)+tau_xz_nodal*(-np.sin(theta_nodal)**2+np.cos(theta_nodal)**2)
+
+    e_rr_nodal=e_xx_nodal*np.sin(theta_nodal)**2+2*e_xz_nodal*np.sin(theta_nodal)*np.cos(theta_nodal)+e_zz_nodal*np.cos(theta_nodal)**2
+    e_tt_nodal=e_xx_nodal*np.cos(theta_nodal)**2-2*e_xz_nodal*np.sin(theta_nodal)*np.cos(theta_nodal)+e_zz_nodal*np.sin(theta_nodal)**2
+    e_rt_nodal=(e_xx_nodal-e_zz_nodal)*np.sin(theta_nodal)*np.cos(theta_nodal)+e_xz_nodal*(-np.sin(theta_nodal)**2+np.cos(theta_nodal)**2)
 
     tau_rr=np.zeros(nel,dtype=np.float64)  
     tau_tt=np.zeros(nel,dtype=np.float64)  
@@ -1007,19 +1044,20 @@ for istep in range(0,1):
     sigma_tt_nodal=-q+tau_tt_nodal
     sigma_rt_nodal=   tau_rr_nodal
 
+    np.savetxt('solution_tau_spherical.ascii',np.array([xV,zV,tau_rr_nodal,tau_tt_nodal,tau_rt_nodal]).T)
 
     print("rotate stresses: %.3f s" % (timing.time() - start))
 
     #####################################################################
-    # compute traction at surface
+    # compute traction at surface and cmb
     #####################################################################
     start = timing.time()
 
     tracfile=open('surface_traction_nodal.ascii',"w")
     for i in range(0,NV):
         if surface_node[i]: 
-           tracfile.write("%e %e %e %e %e %e\n" \
-                          %(theta_nodal[i],tau_rr_nodal[i]-q[i],xV[i],zV[i],tau_rr_nodal[i],q[i]))
+           tracfile.write("%e %e %e %e %e %e %e\n" \
+                          %(theta_nodal[i],tau_rr_nodal[i]-q[i],xV[i],zV[i],tau_rr_nodal[i],q[i],e_rr_nodal[i]))
     tracfile.close()
 
     tracfile=open('surface_vr.ascii',"w")
@@ -1032,6 +1070,27 @@ for istep in range(0,1):
     tracfile=open('surface_vt.ascii',"w")
     for i in range(0,NV):
         if surface_node[i]: 
+           tracfile.write("%10e %10e \n" \
+                          %(theta_nodal[i],u[i]*np.cos(theta_nodal[i])-v[i]*np.sin(theta_nodal[i]) ) )
+    tracfile.close()
+
+    tracfile=open('cmb_traction_nodal.ascii',"w")
+    for i in range(0,NV):
+        if cmb_node[i]: 
+           tracfile.write("%e %e %e %e %e %e %e\n" \
+                          %(theta_nodal[i],tau_rr_nodal[i]-q[i],xV[i],zV[i],tau_rr_nodal[i],q[i],e_rr_nodal[i]))
+    tracfile.close()
+
+    tracfile=open('cmb_vr.ascii',"w")
+    for i in range(0,NV):
+        if cmb_node[i]: 
+           tracfile.write("%10e %10e \n" \
+                          %(theta_nodal[i],u[i]*np.sin(theta_nodal[i])+v[i]*np.cos(theta_nodal[i])  ))
+    tracfile.close()
+
+    tracfile=open('cmb_vt.ascii',"w")
+    for i in range(0,NV):
+        if cmb_node[i]: 
            tracfile.write("%10e %10e \n" \
                           %(theta_nodal[i],u[i]*np.cos(theta_nodal[i])-v[i]*np.sin(theta_nodal[i]) ) )
     tracfile.close()
@@ -1114,9 +1173,14 @@ for istep in range(0,1):
         vtufile.write("%10e\n" % (e_xz[iel]))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='flag' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='flag_top' Format='ascii'> \n")
     for iel in range (0,nel):
-        vtufile.write("%10e\n" % (flag[iel]))
+        vtufile.write("%10e\n" % (flag_top[iel]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='flag_bot' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (flag_bot[iel]))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='dev stress (tau_xx)' Format='ascii'> \n")
@@ -1149,10 +1213,10 @@ for istep in range(0,1):
         vtufile.write("%10e\n" % (tau_rt[iel]))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='theta (sph.coords)' Format='ascii'> \n")
-    for iel in range(0,nel):
-        vtufile.write("%e \n" %theta[iel])
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='theta (sph.coords)' Format='ascii'> \n")
+    #for iel in range(0,nel):
+    #    vtufile.write("%e \n" %theta[iel])
+    #vtufile.write("</DataArray>\n")
     #--
     #vtufile.write("<DataArray type='Float32' Name='theta_p(dev stress)' Format='ascii'> \n")
     #for iel in range(0,nel):
@@ -1213,23 +1277,31 @@ for istep in range(0,1):
            vtufile.write("%d \n" %0)
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Int32' Name='dyn topo' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Int32' Name='cmb' Format='ascii'> \n")
     for i in range(0,NV):
-        if surface_node[i]:
-           vtufile.write("%d \n" % (-(tau_rr_nodal[i]-q[i])/g0/rho_surf) ) # (-pI + tau).vec{n} / rho g0
+        if cmb_node[i]:
+           vtufile.write("%d \n" %1)
         else:
-           vtufile.write("%d \n" % 0)
+           vtufile.write("%d \n" %0)
     vtufile.write("</DataArray>\n")
+    #--
+    #vtufile.write("<DataArray type='Int32' Name='dyn topo' Format='ascii'> \n")
+    #for i in range(0,NV):
+    #    if surface_node[i]:
+    #       vtufile.write("%d \n" % (-(tau_rr_nodal[i]-q[i])/g0/rho_surf) ) # (-pI + tau).vec{n} / rho g0
+    #    else:
+    #       vtufile.write("%d \n" % 0)
+    #vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='theta (sph.coords)' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%e \n" %theta_nodal[i])
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%e \n" %rho_nodal[i])
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
+    #for i in range(0,NV):
+    #    vtufile.write("%e \n" %rho_nodal[i])
+    #vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='dev. stress (tau_xx)' Format='ascii'> \n")
     for i in range (0,NV):
@@ -1260,7 +1332,36 @@ for istep in range(0,1):
     for i in range (0,NV):
         vtufile.write("%10e\n" % tau_rt_nodal[i])
     vtufile.write("</DataArray>\n")
-
+    #--
+    vtufile.write("<DataArray type='Float32' Name='strain rate (e_rr)' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % e_rr_nodal[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='strain rate (e_tt)' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % e_tt_nodal[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='strain rate (e_rt)' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % e_rt_nodal[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='strain rate (e_xx)' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % e_xx_nodal[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='strain rate (e_zz)' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % e_zz_nodal[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='strain rate (e_xz)' Format='ascii'> \n")
+    for i in range (0,NV):
+        vtufile.write("%10e\n" % e_xz_nodal[i])
+    vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='stress (sigma_rr)' Format='ascii'> \n")
     for i in range (0,NV):
@@ -1276,15 +1377,14 @@ for istep in range(0,1):
     for i in range (0,NV):
         vtufile.write("%10e\n" % sigma_rt_nodal[i])
     vtufile.write("</DataArray>\n")
-
     #--
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='traction' Format='ascii'> \n")
-    for i in range(0,NV):
-        if surface_node[i]:
-           vtufile.write("%10e %10e %10e \n" % (tau_rr_nodal[i],0.,tau_rt_nodal[i]))
-        else:
-           vtufile.write("%e %e %e \n" % (0,0,0))
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='traction' Format='ascii'> \n")
+    #for i in range(0,NV):
+    #    if surface_node[i]:
+    #       vtufile.write("%10e %10e %10e \n" % (tau_rr_nodal[i],0.,tau_rt_nodal[i]))
+    #    else:
+    #       vtufile.write("%e %e %e \n" % (0,0,0))
+    #vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='fix_u' Format='ascii'> \n")
     for i in range(0,NV):
@@ -1315,7 +1415,8 @@ for istep in range(0,1):
     #--
     vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
     for iel in range (0,nel):
-        vtufile.write("%d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel],iconV[4,iel],iconV[5,iel]))
+        vtufile.write("%d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],\
+                                              iconV[3,iel],iconV[4,iel],iconV[5,iel]))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")

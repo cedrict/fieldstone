@@ -133,6 +133,6 @@ for i in range(0,nnr):
 
 nodesfile.write("%5d %3d \n" %(counter_segment,1))
 
-segmentfile.write("%5d \n" %(1))
-segmentfile.write("%5d %e %e \n" %(1,0.1,0.1))
+#segmentfile.write("%5d \n" %(1))
+#segmentfile.write("%5d %e %e \n" %(1,0.1,0.1))
 

@@ -3,19 +3,14 @@ import numpy as np
 R_outer=3.397e6
 R_inner=R_outer-1600e3
 
-
 eta_max=1e25
 
-nnr=100
-nnt=250
+# main parameter which controls resolution
+# shound be 1,2,3,4, or 5
+res=5
 
-R_moho=R_outer-100e3
-np_moho=nnt
-
-R_trans=R_outer-500e3
-np_trans=nnt
-
-rho_surf=3700 # dyn topo
+nnr=res*16+1 
+nnt=res*80 
 
 #-------------------------------------
 # elasto-viscous rheology
@@ -46,18 +41,18 @@ eta_mantle=6e20
 
 eta0=6e20 # isoviscous case
 
-eta_core=1e21
+eta_core=1e25
 rho_core=0 #7200
 
-rho_crust+=3700
-rho_lith+=3700
-rho_mantle+=3700
+#rho_crust+=3700
+#rho_lith+=3700
+#rho_mantle+=3700
 
 #-------------------------------------
 # blob setup 
 #-------------------------------------
 
-np_blob=150
+np_blob=res*30
 R_blob=300e3
 z_blob=R_outer-1000e3
 rho_blob=rho_mantle-200
@@ -68,9 +63,11 @@ eta_blob=6e20
 #-------------------------------------
 #0: no-slip
 #1: free-slip
-#2: free top surface
+#2: free (only top surface)
 
 surface_bc=1
+
+cmb_bc=1
 
 #-------------------------------------
 # gravity acceleration
@@ -83,6 +80,4 @@ g0=3.72
 #do not change
 np_grav=0
 nel_phi=20
-
-#rho_ref=3389
 

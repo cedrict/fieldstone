@@ -1,0 +1,24 @@
+#! /bin/bash
+
+for res in 1 2 3 4 5; do
+    echo res= $res
+    sed -i "s/res=.*/res="$res"/" parameters.py
+    ./run_script > screen
+    mkdir results_$res
+    mv screen results_$res
+    mv *.ascii results_$res
+    mv *.vtu results_$res
+done
+
+
+
+#for eta in 1e22 1e23 1e24 1e25; do
+#    echo eta= $eta
+#    sed -i "s/eta_crust=.*/eta_crust="$eta"/" parameters.py
+#    ./run_script > screen
+#    mkdir results_$eta
+#    mv screen results_$eta
+#    mv *.ascii results_$eta
+#    mv *.vtu results_$eta
+#done
+
