@@ -126,33 +126,69 @@ Runge-Kutta methods are used to this effect but only their spatial component is 
 the velocity solution is not recomputed at the intermediate fractional timesteps, i.e. 
 only the coefficients of the right hand side of the tableaus is used.
 
-The RK1 method is simple. Carry out a loop over markers and 
+\begin{itemize}
+\item The RK1 method is simple.
+
+\begin{tabular}{c|c}
+0 & \\
+\hline
+ & 1
+\end{tabular}
+
+\noindent Carry out a loop over markers and 
 \begin{enumerate}
 \item interpolate velocity $\vec\upnu_{m}$ onto each marker $m$
 \item compute new position as follows: $\vec r_m(t+\delta t)=\vec r_m(t) + \vec\upnu_m \delta t$
 \end{enumerate}
 
-The RK2 method is also simple but requires a bit more work. Carry out a loop over markers and 
+\item The RK2 method is also simple but requires a bit more work.
+
+\begin{tabular}{c|cccccc}
+0 & \\
+1 & 1 \\
+\hline
+ & 1/2 & 1/2 
+\end{tabular}
+
+\noindent Carry out a loop over markers and 
 \begin{enumerate}
 \item interpolate velocity $\vec\upnu_{m}$ onto each marker $m$ at position $\vec r_m$
 \item compute new intermediate position as follows: $\vec r_m^{(1)}(t+\delta t)=\vec r_m(t) + \vec\upnu_m \delta t/2$
 \item compute velocity $\vec\upnu_{m}^{(1)}$ at position $\vec r_m^{(1)}$
 \item compute new position: $\vec r_m(t+\delta t)=\vec r_m(t) + \vec\upnu_m^{(1)} \delta t$ 
 \end{enumerate}
-Note that the intermediate positions could be in a different element of the mesh so extra care must be taken when 
-computing intermediate velocities. 
+Note that the intermediate positions could be in a different element of the mesh so extra 
+care must be taken when computing intermediate velocities. 
 
-The RK3 method introduces two intermediate steps. Carry out a loop over markers and 
+\item 
+The RK3 method introduces two intermediate steps. 
+
+\begin{tabular}{c|ccccc}
+0 & \\
+1/2 & {\color{chestnut} $\frac{1}{2}$ } \\
+1 & {\color{violet}-1} & {\color{violet}2} \\ 
+\hline
+ & {\color{carrotorange} $\frac16$} & {\color{carrotorange} $\frac46$}  & {\color{carrotorange} $\frac16$}
+\end{tabular}
+
+Carry out a loop over markers and 
 \begin{enumerate}
 \item interpolate velocity $\vec\upnu_{m}$ onto each marker $m$ at position $\vec r_m$
-\item compute new intermediate position as follows: $\vec r_m^{(1)}(t+\delta t)=\vec r_m(t) + \vec\upnu_m \delta t/2$
+\item compute new intermediate position as follows: 
+$\vec r_m^{(1)}(t+\delta t)=\vec r_m(t) + {\color{chestnut} \frac{1}{2}} \vec\upnu_m \delta t$
 \item compute velocity $\vec\upnu_{m}^{(1)}$ at position $\vec r_m^{(1)}$
 \item compute new intermediate position as follows: 
-$\vec r_m^{(2)}(t+\delta t)=\vec r_m(t) + (2\vec\upnu_m^{(1)}-\vec\upnu_m) \delta t/2$
+$\vec r_m^{(2)}(t+\delta t)=\vec r_m(t) + ( {\color{violet}-1} \vec\upnu_m 
++ {\color{violet}2} \vec\upnu_m^{(1)} ) \delta t$
 \item compute velocity $\vec\upnu_{m}^{(2)}$ at position $\vec r_m^{(2)}$
 \item compute new position: 
-$\vec r_m(t+\delta t)=\vec r_m(t) + (\vec\upnu_m +4 \vec\upnu_m^{(1)} + \vec\upnu_m^{(2)}    )\delta t/6$ 
+$\vec r_m(t+\delta t)=\vec r_m(t) + ( 
+{\color{carrotorange} \frac16} \vec\upnu_m + 
+{\color{carrotorange} \frac46} \vec\upnu_m^{(1)} + 
+{\color{carrotorange} \frac16} \vec\upnu_m^{(2)}    )\delta t$ 
 \end{enumerate}
+
+\end{itemize}
 
 The following example is borrowed from \cite{maie12}, itself borrowed from Fullsack \cite[Section 5.4]{full95}.
 It is a whirl flow \cite{otti89}, a flow with rotational symmetry in which concentric layers of material

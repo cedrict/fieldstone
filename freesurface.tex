@@ -7,7 +7,7 @@ is very small compared to the depth of the mantle ($\sim$ 3000km).
 
 However, it has long been regognised that there is a feedback between topography and crust/lithosphere
 deformation: the surface of the Earth reflects the deeper processes, from orogeny, back-arc basins, 
-rifts, mid-ocean ridges, etc ... (see for instance \cite{brau10}).
+rifts, mid-ocean ridges, etc ... (see for instance Braun (2010) \cite{brau10}).
 
 \begin{remark}
 Free surface flows are not unique to Earth sciences, and their modelling has given rise to many studies 
@@ -15,24 +15,27 @@ and textbooks. A typical free-surface flow problem in the CFD literature is the 
 problem \cite{moeb99,bacp07,liir07,lemx08,homa09,anco09}. Other occurrences involve 
 sea waves, flow over structures, flow around ships, mould filling, flow with bubbles \cite{liir07}.
 \end{remark}
+
+\begin{remark}
+Free surface flows have also been extensively studied and even benchmarked
+in the ice-sheet modelling community, see \cite{XXX}.
+\end{remark}
  
 What distinguishes geodynamics free surface modelling from its engineering 
 counterpart is (i) the absence of surface tension, (ii) the fact that the fluids under consideration are
 Stokesian, (iii) their rheology is complex (the elastic and plastic components can be 
 dominant at the surface).
 
-%There are to main modelling approaches employed in Computational Geodynamics: the so-called 
-%'sticky air' approach and the Arbitrary-Lagrangian approach.
-
 The problem of dealing with a free surface can be deceptively simple at first glance: as mentioned before the
 amplitude of surface movement is often less than 1\% of the domain size. Isostacy-driven movements are
-easy to deal with since the movement is vertical (and often characteried by  long wavelength). However, computational 
-problems quickly arise in subduction modelling: the downgoing lithosphere subducts below the 
-overriding plate and the relative convergence of the two is likely to generate a cusp at the trench. The presence
-of shear bands intersecting the surface accentuates the problem:
+easy to deal with since the movement is vertical (and often characteried by long wavelength). 
+However, computational problems quickly arise for example in subduction modelling: the downgoing 
+lithosphere subducts below the overriding plate and the relative convergence of the two is 
+likely to generate a cusp at the trench. The presence of shear bands intersecting 
+the surface accentuates the problem:
 
 \begin{center}
-\includegraphics[width=13cm]{images/freesurface/matv15} \\
+\includegraphics[width=15cm]{images/freesurface/matv15} \\
 {\tiny Taken from Maffione \etal \cite{matv15}. Example of free surface deformation above 
 intra-oceanic subduction initiation}
 \end{center}
@@ -48,9 +51,9 @@ should be read alongside Section~\ref{sec:meshes}.
 
 In this case the mesh is deformed with the velocity (or displacement) computed on its nodes. 
 It is sometimes called 'body fitting' \cite{crsg12} or 'boundary fitted'. 
-In the case when large deformation occurs (which is rather frequent in geodynamics - 
-think about subduction or rifting processes where materials end up moving 100's or 1000's of km, horizontally
-and/or vertically), it leads to highly deformed elements, and in some case even bow-tied:
+In the case when large deformation occurs (which is rather frequent in geodynamics -- think 
+about subduction or rifting processes where materials end up moving 100's or 1000's of km, horizontally
+and/or vertically) -- it leads to highly deformed elements, and in some case even bow-tied:
 
 \begin{center}
 \frame{\includegraphics[width=4.5cm]{images/freesurface/b00}}
@@ -74,28 +77,39 @@ especially when angles between edges become small or large.
 One way to overcome this problem is to remesh, i.e. generate a better mesh based on the 
 available information on the deformed one. In 2D this is routinely done, especially when 
 triangular elements are used. In 3D, multiple remeshing are very costly and it is generally
-avoided.  
-Note also that re-meshing often involves some form of interpolation and therefore some unwanted 
-numerical diffusion. 
-When deformation is reasonably small, fully lagrangian methods work and have been used in 
-geodynamics \cite{hach96b,mera80,labp00}.
+avoided. Note also that re-meshing often involves some form of interpolation and therefore some unwanted 
+numerical diffusion. When deformation is reasonably small, fully lagrangian methods work and 
+have been used in geodynamics, see for example  Hassani \& Ch\'ery (1996) \cite{hach96b},
+Melosh \& Raefsky (1980) \cite{mera80}, or Lavier \etal (2000) \cite{labp00}.
 
 \begin{center}
-\includegraphics[width=8cm]{images/freesurface/labp00}\\
-{\captionfont Taken from \cite{labp00}. Upper-crustal faulting, note that the bottom and the top surface are deformed.}
+\begin{minipage}{0.45\textwidth}
+\centering
+\includegraphics[width=7cm]{images/freesurface/labp00}\\
+{\captionfont Taken from Lavier \etal (2000) \cite{labp00}. Upper-crustal faulting, note that 
+the bottom and the top surface are deformed.}
+\end{minipage}\hfill
+\begin{minipage}{0.45\textwidth}
+\centering
+\includegraphics[width=7cm]{images/freesurface/befh94}\\
+{\captionfont Taken from Beaumon \etal (1994) \cite{befh94}. Strain rate and 
+velocity field for crustal S-point models.}
+\end{minipage}
 \end{center}
+
 
 
 \begin{center}
 \begin{minipage}{0.45\textwidth}
 \centering
 \includegraphics[width=7cm]{images/freesurface/guez96}\\
-{\captionfont Taken from \cite{guez96}. Subduction model, topographic expression is shown without vertical exaggeration}. 
+{\captionfont Taken from Gurnis \etal (1996) \cite{guez96}. Subduction model, topographic 
+expression is shown without vertical exaggeration}. 
 \end{minipage}\hfill
 \begin{minipage}{0.45\textwidth}
 \centering
 \includegraphics[width=6cm]{images/freesurface/gowo93}\\
-{\captionfont Taken from \cite{gowo93}. Asymmetric lithospheric extension.}
+{\captionfont Taken from Govers \& Wortel \cite{gowo93}. Asymmetric lithospheric extension.}
 \end{minipage}
 \end{center}
 
@@ -103,39 +117,39 @@ geodynamics \cite{hach96b,mera80,labp00}.
 
 
 
-GET:
-Crook \etal 2006, and references therein \cite{crwy06})
-Beaumont \etal 1994;  \cite{befh94}
-
 
 %.......................................
 \subsubsection{The Eulerian approach: using sticky air} \label{sss:stickyair}
 \index{general}{Sticky Air}
 
-Sticky air is the default option for numerical methods which mesh 
+'Sticky air' is the default option for numerical methods which mesh 
 cannot be deformed (typically the finite difference method).
-In this case, the air above the crust/sediments is modelled as a zero-density fluid with 
+In this case, the air above the crust/sediments is modelled as a 
+zero-density\footnote{Sometimes a zero value is problematic and one 
+then resorts to a very low value instead.} fluid with 
 very low viscosity (see for instance the early article by Zaleski and Julien \cite{zaju92}). 
 One problem quickly arises when one realises that the viscosity of the 
 air ($\sim 18.5\cdot10^{-6}$ Pa$\cdot$s\footnote{\url{https://en.wikipedia.org/wiki/Viscosity}})
 is almost 25-30 orders of magnitude lower than the (effective) viscosity of Earth materials. 
 Real air viscosity cannot therefore be used because of 1) round-off errors, 2) extremely 
-poorly-conditioned matrices. Low viscosities around $10^{16}-10^{19}$Pa$\cdot$s are then 
+poorly-conditioned matrices. Low viscosities around $10^{16}-10^{19}~\si{\pascal\second}$ are then 
 commonly used as they are still negligible next to those of the (plastic) crust, and the 
 flow of air parallel to Earth materials only generates extremely small shear and normal stress values
 (thereby approaching the true nature of a free surface). 
-This approach is the one employed in all the papers based on the I2/I3(EL)VIS code (see Appendix~\ref{app:codes})
-and has been benchmarked in Crameri \etal \cite{crsg12}.
+This approach is the one employed in all the papers based on the I2/I3(EL)VIS 
+code (see Appendix~\ref{app:codes}) and has been benchmarked in Crameri \etal (2012) \cite{crsg12}.
 
 This approach has a few advantages:
 \begin{enumerate}
 \item it is simple to implement 
 \item it is compatible with all the standard numerical methods (FEM, FDM,FVM)
-\item it avoids (potentially complicated) remeshing
+\item it avoids (potentially complicated or costly ) remeshing
 \end{enumerate}
 and quite a few drawbacks:
 \begin{enumerate}
-\item it increases the size of the computational domain, thereby adding more unknowns to the linear system: in \cite{scbe08} the air layer is set to 50km while the lithospheric domain underneath is 700km thick;
+\item it increases the size of the computational domain, thereby adding more unknowns to the 
+linear system: in Schmeling \etal (2008) \cite{scbe08} the air layer is set to 
+50~\si{\km} while the lithospheric domain underneath is 700~\si{\km} thick;
 \item it requires the use of averaging all along the free-surface
 where very large viscosity contrasts are present. Here is what Poliakov and Podlachikov \cite{popo92}
 say about the sticky air method:
@@ -147,32 +161,30 @@ contrast and diffusion between the top layer and the
 underlying layers, calculations sometimes become unstable
 and give significant errors."
 
-\item it can showcase air entrainment:
+\item it can yield air entrainment in the mantle:
 \begin{center}
-\includegraphics[width=8cm]{images/freesurface/scbe08}\\
-{\small Taken from \cite{scbe08}. Details of the entrainment and lubrication of the soft surface layer. 
+\includegraphics[width=9cm]{images/freesurface/scbe08}\\
+{\captionfont Taken from Schmeling \etal (2008) \cite{scbe08}. 
+Details of the entrainment and lubrication of the soft surface layer. 
 Light blue particles are sticky air particle and are found to greatly alter the viscosity
 of the subduction channel.}
 \end{center}
 \item it is not clear how thick the air layer must be
 \item it often requires to ascribe thermal parameters to the air;
-\item it makes the implementation of Dirichlet or Neuman boundary conditions for temperature at the surface less
-obvious.
+\item it makes the implementation of Dirichlet or Neuman boundary conditions for 
+temperature at the surface less obvious.
 \item it makes the coupling with surface processes codes less straightforward.
 \item its accuracy depends on the method used to track materials in the rest of the code (markers, level sets, ...). If markers are used, the free surface position is then known up to the average distance between markers.
 \item it negatively impacts the condition number of the matrix.
 \end{enumerate}
 
-The sticky air approach is employed by various codes in the subduction benchmark study \cite{scbe08}
-
 The term 'sticky water' is sometimes employed too. The dynamic viscosity of water is about 
-$10^{-3}$Pa$\cdot$s so that it is also negligible compared to the viscosity of Earth materials
-and the same reasonng as air applies. However, in such a case a density of about 1000kg/m$^3$ 
-is then assigned to the layer (e.g. Gerya \& Burg (2007) \cite{gebu07}).
+$10^{-3}~\si{\pascal\second}$ so that it is also negligible compared to the viscosity of Earth materials
+and the same reasonng as air applies. However, in such a case a density of about 
+$1000~\si{\kg\per\cubic\meter}$ is then assigned to the layer (e.g. Gerya \& Burg (2007) \cite{gebu07}).
 
-In conclusion, as stated in \cite{crsg12}: "the sticky air method is a good way to
-simulate a free surface for Eulerian approaches, provided that its
-parameters are chosen carefully."
+In conclusion, as stated in Crameri \etal (2012) \cite{crsg12}: "the sticky air method is a good way to
+simulate a free surface for Eulerian approaches, provided that its parameters are chosen carefully."
 
 
 %..........................................................
@@ -180,12 +192,14 @@ parameters are chosen carefully."
 \index{general}{Arbitrary Lagrangian Eulerian} \index{general}{ALE}
 
 It is a very widely used approach in FEM-based geodynamics codes but originates in the field of 
-CFD \cite{hiac74,hulz81} and is described at length in \cite{sozo01,dohp04,dohu03}.
+CFD (Hirt \etal (1974)\cite{hiac74}, Hughes \etal (1981) \cite{hulz81}) 
+and is described at length in Souli \& Zolesio (2001) \cite{sozo01},
+Donea \etal (2004) \cite{dohp04}, Donea \& Huerta \cite{dohu03}.
 To put it very simply, the key idea in the ALE formulation is
 the introduction of a computational mesh which can move and deform with a velocity 
 independent of the velocity carried by the material particles.
 
-\paragraph{The simple approach in \cite{thie11}.}
+\paragraph{The simple approach in Thieulot (2011) \cite{thie11}.}
 What follows is written with a 2D Cartesian model in mind ($Q_1\times P_0$ elements are used).
 The computational domain is a rectangle of size $L_x \times  L_y$ 
 and a nnx $\times$ nny rectangular grid spanning the simulation
@@ -214,7 +228,7 @@ deformation.
 
 \begin{center}
 \includegraphics[width=9cm]{images/freesurface/ale2d}\\
- {\small The ALE algorithm of \cite{thie11} in 2D. 
+{\captionfont The ALE algorithm of \cite{thie11} in 2D. 
 (a) Grid and free surface at a given time $t$; 
 (b) advection of the free surface; 
 (c) resampling of the free surface at equidistant abscissae; 
@@ -222,8 +236,9 @@ deformation.
 \end{center}
 
 The ALE method is used in the \sopale, \sulec, \fantom, \elefant, 
-and \aspect{} codes to name a few (see Appendix~\ref{app:codes}).
-
+and \aspect{} codes to name a few (see Appendix~\ref{app:codes}) 
+although each code has its own specific implementation, as detailed
+in what follows for \aspect.
 
 \paragraph{The not-so-simple but rather elegant approach of \aspect{}}
 
@@ -233,7 +248,6 @@ nor a number of dimensions. It is also designed to work in parallel and on octre
 meshes, and with various combinations of boundary conditions.
 Note that the authors specify that "for moderate mesh deformation, the mesh stays smooth and well
 conditioned, though it breaks down for large deformations".
-
 
 This approach is obtained by simply imposing the obvious condition 
 that no particle (fluid parcel) can cross the free surface (because it is a material surface). 
@@ -245,9 +259,9 @@ normal to the fluid domain).
 The mesh position, normal to the free surface, is determined from the normal component of 
 the particle velocity 
 and remeshing can be performed along the tangent; 
-see, for instance Huerta and Liu, 1989 \cite{huli88} or Braess and Wriggers, 2000 \cite{brwr00} 
+see, for instance Huerta and Liu (1988) \cite{huli88} or Braess and Wriggers (2000) \cite{brwr00}.
 
-As mentioned above the mesh velocity in normal direction at the free surface (with
+As mentioned above, the mesh velocity in normal direction at the free surface (with
 unit normal $\vec{n}$) has to be consistent with the velocity of the Stokes
 velocity solution $\vec{\upnu}(t)$:
 \begin{equation}
@@ -270,9 +284,9 @@ one must solve:
 \end{equation}
 subjected to the following boundary conditions:
 \begin{eqnarray}
-\vec{\upnu}_{\text{mesh}} &=& \vec{0} \qquad\qquad \text{on } \Gamma_0 \\
-\vec{\upnu}_{\text{mesh}} &=& (\vec{\upnu}\cdot\vec{n})\vec{n} \qquad \text{on } \Gamma_F \\
-\vec{\upnu}_{\text{mesh}}\cdot \vec{n} &=& 0 \qquad\qquad \text{on } \Gamma_{FS} \label{eq:fsaspect2}
+\vec{\upnu}_{\text{mesh}} &=& \vec{0} \qquad\qquad\quad \text{on } \Gamma_0 \nn\\
+\vec{\upnu}_{\text{mesh}} &=& (\vec{\upnu}\cdot\vec{n})\vec{n} \qquad \text{on } \Gamma_F \nn\\
+\vec{\upnu}_{\text{mesh}}\cdot \vec{n} &=& 0 \qquad\qquad\quad \text{on } \Gamma_{FS} \label{eq:fsaspect2}
 \end{eqnarray}
 where $\Gamma_{FS}$ is the part of the boundary with free slip boundary conditions, 
 $\Gamma_0$ is the no-slip part and $\Gamma_{FS}$ is the free slip part.
@@ -282,7 +296,9 @@ said velocity. However, it must be noted that the multiple occurences of the nor
 in the above equations is not without problem as the normal vectors are not well defined on the
 mesh vertices, which is where the mesh velocity is defined.
 
-This yields what the author coin the 'quasi-implicit' scheme 
+\todo[inline]{INSERT FIGURE}
+
+This yields what the authors coin the 'quasi-implicit' scheme 
 (we have so far neglected any kind of stabilisation):
 \begin{enumerate}
 \item Solve the Stokes system;
@@ -291,10 +307,6 @@ This yields what the author coin the 'quasi-implicit' scheme
 \item Advect the mesh forward in time using displacements determined by
 the forward Euler scheme: $\vec{x}(t^{n+1} ) = \vec{x}(t^n ) + \vec{\upnu}_{\text{mesh}} \delta t$.
 \end{enumerate}
-
-Note that Rose \etal (2017) \cite{robh17} go further than this, 
-propose a 'nonstandard finite difference scheme' 
-and make a link with the stabilisation presented in Kaus \etal (2010) \cite{kamm10}.
 
 The authors list two simple methods of computing the normals:
 \begin{itemize}
@@ -307,10 +319,7 @@ have good mass conservation properties.
 
 A better approach is proposed in the form of an $L_2$ projection of the 
 normal velocity $\vec{v}\cdot\vec{n}$ onto the free surface $\Gamma_F$. 
-Multiplying the boundary conditions 
-\[
-\vec{\upnu}_{\text{mesh}} = (\vec{\upnu}\cdot\vec{n})\vec{n} 
-\]
+Multiplying the boundary conditions $ \vec{\upnu}_{\text{mesh}} = (\vec{\upnu}\cdot\vec{n})\vec{n}  $
 by a test function $\vec{w}$ and integrating over the free surface part of the boundary, we find:
 \begin{equation}
 \int_{\Gamma_F} \vec{w}\cdot\vec{\upnu}_{\text{mesh}} d\Gamma 
@@ -424,9 +433,6 @@ Having obtained the boundary condition velocity for the Laplace equation, we can
 to solving this ODE. 
 
 
-Note that Rose \etal (2017) \cite{robh17} go further than this and 
-propose a 'nonstandard finite difference scheme' and make a 
-link with the stabilisation presented in Kaus \etal (2010) \cite{kamm10}.
 
 In what follows I omit the subscript 'mesh' and focus on the 2D case. The components of the (mesh) velocity
 are given by
@@ -555,6 +561,11 @@ The integration by parts should have a minus appear but since the left hand side
 is 0, it is not taken into account. 
 \end{remark}
 
+
+Note that Rose \etal (2017) \cite{robh17} go further than this and 
+propose a 'nonstandard finite difference scheme' and make a 
+link with the stabilisation presented in Kaus \etal (2010) \cite{kamm10}.
+
 \todo[inline]{surface terms arising from the integration by parts are neglected. EXPLAIN WHY!}
 
 
@@ -571,7 +582,7 @@ by Ramaswamy and Kawahara (1987), Huerta and Liu, 1988b, 1990; Souli and Zolesio
 
 
 
-\underline{Idea:} Eq. (\ref{eqfs1}) is a simple advection equation. 
+Eq. (\ref{eqfs1}) is a simple advection equation. 
 One could also add a diffusion operator with a diffusion coefficient $D$.
 Low values of $D$ could be used to stabilise the surface while 
 higher values (possibly nonlinear ones) could be used to account for simple 
@@ -582,18 +593,16 @@ surface processes.
 \end{equation}
 
 Also, Hansen and Nielsen \cite{hanl00,hani03} write:
-During the entire model evolution surface processes act to re-distribute sediments. 
+``During the entire model evolution surface processes act to re-distribute sediments. 
 These processes are modelled by a diffusion equation with a source term enabling the transport 
 of sediments to and from the model profile. The transport equation is written
 \[
 \dot{h}=\nabla\cdot (\kappa \nabla h) + \dot{s}(w)
 \]
 where $\kappa=200 km^2/Ma$ is the diffusivity of topography and $\dot{s}(w)$ 
-is a linear function of water depth. 
+is a linear function of water depth.''
 
-
-
-The following pictures are taken from Naliboff \etal \cite{nabp17} on the topic 
+The following pictures are taken from Naliboff \etal (2017) \cite{nabp17} on the topic 
 of how complex fault interaction controls continental rifting. It is a beautiful
 example (among many) of the importance of free surface geodynamical expression
 and large deformation:
@@ -652,7 +661,7 @@ Ellis \etal (2004) \cite{elsp04}
 Braess \& Wriggers (2000) \cite{brwr00}
 Parsons \& Daly (1983) \cite{pada83}
 
-Free surface treatment in FDM: Duretz \etal \cite{dumg11}, \cite{dumy16}. 
+Free surface treatment in FDM: \cite{dumy16}. 
 
 
 %-------------------------------------------------------
@@ -660,15 +669,15 @@ Free surface treatment in FDM: Duretz \etal \cite{dumg11}, \cite{dumy16}.
 \index{general}{Free Surface Stabilisation Algorithm}
 \index{general}{FSSA}
 
-Duretz \etal (2011) \cite{dumg11} is concerned with the Finite Difference method so I will 
+To start with, Duretz \etal (2011) \cite{dumg11} is concerned with the Finite Difference method so I will 
 not expore this one further (see Gerya's book \cite{gery19book} for all things FDM).
 Note that their approach is similar to what follows. 
 
 There are then four articles left: 
 Kaus \etal (2010) \cite{kamm10},
 Quinquis \& Buiter (2011) \cite{qube11},
-Rose \etal \cite{robh17}, and 
-Schuh-Senlis \etal \cite{sctc20}.
+Rose \etal (2017) \cite{robh17}, and 
+Schuh-Senlis \etal (2020) \cite{sctc20}.
 
 The first one is rather technical while the second is more to the point with some simple reasoning. 
 Apparently both author groups arrived at about the same formulation/algorithm 
@@ -685,7 +694,7 @@ In essence when the timestep $\delta t$ exceeds (or is comparable) to a characte
 time $t_s$ then body and surface forces will be out of balance with the updated free surface. 
 As a consequence oscillations will occur and get amplified with sometimes a sloshing effect, also 
 called 'drunken sailor'. \index{general}{Drunken Sailor}.
-The solution is to add a term of the FE matrix which takes into account
+The solution is to add a term in the FE matrix which takes into account
 the incremental change in normal forces across density interfaces during
 each timestep:
 \[
@@ -696,12 +705,11 @@ $\Delta \rho$ is the change in density across the interface, and
 $v_y$ is the vertical velocity on the interface.
 This extra term is applied to
 the free surface, and at any other interface with a density contrast.
-
 Unfortunately, although this is easy to understand, it is not very clear 
-how to implement it, which is when the first paper becomes useful.
-I first present results from my doomed 2014 paper
-\footnote{This 
-paper is about my \elefant code which relied at the time solely on $Q_1\times P_0$ elements
+how to implement it, which is when Kaus \etal (2010) becomes useful.
+
+I first present results from my doomed 2014 \elefant paper
+\footnote{This paper is about my \elefant code which relied at the time solely on $Q_1\times P_0$ elements
 with the penalty formulation.} 
 \cite{thie14} in which I carried out the Rayleigh-Taylor instability experiment described in \cite{kamm10}
 where a dense fluid overlays another fluid 
@@ -709,11 +717,9 @@ in a square domain with their initial interface being of sinusoidal shape.
 
 \begin{center}
 \includegraphics[width=10cm]{images/fssa/drawing}\\
-{\captionfont 
-Taken from Thieulot (2014) \cite{thie14} When the time step $\delta t$ is small, 
-the simulation evolves smoothly, but 
-too large a time step leads to a sloshing instability, also called 'drunken sailor effect'
-in the community.}
+{\captionfont Taken from Thieulot (2014) \cite{thie14} When the time step $\delta t$ is small, 
+the simulation evolves smoothly, but too large a time step leads to a sloshing instability, 
+also called 'drunken sailor effect' in the community.}
 \end{center}
 
 The position $y(t)$ of the free surface point situated at $x=L_x$ is monitored over time:
@@ -742,7 +748,7 @@ and deviate in the end by about 5 meters.
 Finally, let us look at the mathematical details behind this stabilisation, as 
 presented in Kaus \etal (2010) \cite{kamm10}.
 
-FINISH!!
+\todo[inline]{FINISH!!}
 
  
 
