@@ -37,7 +37,8 @@ r&=& \frac{(y_2-y_3)(x-x_3)-(x_2-x_3)(y-y_3)}{(x_1-x_3)(y_2-y_3)-(y_1-y_3)(x_2-x
 s&=& \frac{-(y_1-y_3)(x-x_3)+(x_1-x_3)(y-y_3)}{(x_1-x_3)(y_2-y_3)-(y_1-y_3)(x_2-x_3)} 
 \end{eqnarray} 
 \begin{remark}
-The denominator will not vanish, because it is a multiple of the area of the triangle.
+The denominator will not vanish, because it is a multiple of the area of the triangle. If the three points
+are distinct then the area cannot be zero.
 \end{remark}
 
 %................................................
@@ -45,7 +46,8 @@ The denominator will not vanish, because it is a multiple of the area of the tri
 
 The \index{general}{reference element} reference element 
 is in the $(r,s)$ space. It is a square of size $2\times2$ 
-centered around the origin. We wish to map it to the quadrilateral in the $(x,y)$ space:
+centered around the origin, i.e. $(r,s)\in[-1,1]\times[-1,1]$. 
+We wish to map it to the quadrilateral in the $(x,y)$ space:
 
 \begin{center}
 \includegraphics[width=8cm]{images/mappings/bilinear/mapping_bilinear.png}
@@ -60,7 +62,7 @@ can be mapped to the physical quadrilateral as follows:
 x&=& \bN_1(r,s) x_1 + \bN_2(r,s) x_2 + \bN_3(r,s) x_3 + \bN_4(r,s) x_4 \\
 y&=& \bN_1(r,s) y_1 + \bN_2(r,s) y_2 + \bN_3(r,s) y_3 + \bN_4(r,s) y_4 
 \end{eqnarray} 
-where the basis functions $\bN_i(r,s)$ are defined in Section~\ref{sec:elts1D}.
+where the $Q_1$ basis functions $\bN_i(r,s)$ are defined in Section~\ref{sec:elts1D}.
 
 In the following example the program randomly generates 10000 points inside the reference 
 element and computes their mapping into the $(x,y)$ space. 
@@ -106,7 +108,8 @@ the inverse mapping is trivial:
 r&=&\frac{x-x_1}{x_2-x_1} \\
 s&=&\frac{y-y_1}{y_4-y_1} 
 \end{eqnarray}
-Also in this case the basis functions can easily be written as functions of $(x,y)$:
+Also in the case of rectangular elements of size $(h_x,h_y)$
+the basis functions can easily be written as functions of $(x,y)$:
 \begin{eqnarray}
 \bN_1(x,y) &=& \left( \frac{x_3 -x }{h_x}  \right) \left( \frac{y_3 -y }{h_y}  \right) \nn\\
 \bN_2(x,y) &=& \left( \frac{x - x_1}{h_x}  \right) \left( \frac{y_3 -y }{h_y}  \right) \nn\\
@@ -260,7 +263,7 @@ To avoid problems linked to badly shaped elements, it is recommended that the in
 angles of an element are larger than $15\degree$ and less than $165\degree$.
 \end{remark}
 
-From Eq.~\ref{eqxy}, we can also write:
+From Eq.~\eqref{eqxy}, we can also write:
 \begin{eqnarray}
 dx &=& \frac{\partial x}{\partial r} dr + \frac{\partial x}{\partial s} ds \\
 dy &=& \frac{\partial y}{\partial r} dr + \frac{\partial y}{\partial s} ds 

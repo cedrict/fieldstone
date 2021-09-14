@@ -1,10 +1,9 @@
 \begin{flushright} {\tiny {\color{gray} cvi.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This chapter is still Work in progress.  
 
 To my knowledge the conservative velocity interpolation (CVI) was introduced to 
-the community in Wang \etal (2015) \cite{waav15}. 
+the computational geodynamics community in Wang \etal (2015) \cite{waav15}. 
 As mentioned in the paper 
 ``An improved velocity interpolation scheme that conserves the divergence of the flow field has 
 been developed by Jenny \etal (2001) \cite{jepm01} and the simplified scheme for incompressible 
@@ -18,7 +17,6 @@ The article by Wang \etal (2015) comes with supplementary material with more det
 derivation of the corrective velocities but that material is a Word
 document printed to pdf with an annoying layout of equations, different font sizes,
 lack of alignment, etc ... 
-
 Also, Fig.~1 of the paper is reproduced here:
 \begin{center}
 \includegraphics[width=4cm]{images/cvi/wang15}
@@ -96,7 +94,7 @@ initial tracers 100X100, random distribution"
 
 Looking at their Fig.~2a,b we see black arrow tips in the blue region where 
 velocity should be zero. Velocity is indeed zero and the authors confirmed that 
-the arrow tips are an artefact of their visualisation software.
+the arrow tips are an artefact of their visualisation software (!).
 
 \Literature: 
 McNally (2011) \cite{mcna11} proposed
@@ -108,14 +106,13 @@ Pusok \etal (2016) \cite{pukp16} has applied the CVI to staggered grid FDM.
 %-------------------------------------------------------------
 \subsubsection{In 2D with $Q_1$ basis functions - Naive approach}
 
-Let us start directly in reduced coordinates $(r,s)\in [-1:1]^2$:
-\[
-u^h(r,s)=\sum_i \bN_i(r,s) u_i
-\quad
-\quad
-v^h(r,s)=\sum_i \bN_i(r,s) v_i
-\]
-with 
+Let us start directly in reduced coordinates $(r,s)\in [-1:1]^2$ (i.e. the reference element).
+The velocity components inside of the element are given by:
+\begin{eqnarray}
+u^h(r,s)&=&\sum_i \bN_i(r,s) u_i \nn\\
+v^h(r,s)&=&\sum_i \bN_i(r,s) v_i \nn
+\end{eqnarray}
+where $\bN_i$ are the four $Q_1$ basis functions defined as follows:
 \begin{eqnarray}
 \bN_1(r,s)&=& \frac{1}{4}(1-r)(1-s)  \nonumber\\ 
 \bN_2(r,s)&=& \frac{1}{4}(1+r)(1-s)  \nonumber\\ 
@@ -146,7 +143,8 @@ u^h(r,s)&=&\sum_i \bN_i(r,s) u_i + (a s + b)(1-r)(1+r) \nn\\
 v^h(r,s)&=&\sum_i \bN_i(r,s) v_i + (c r + d)(1-s)(1+s) \nn
 \end{eqnarray}
 Note that in this way the correction is zero on the $x=-1$ and $x=+1$ sides 
-of the element for $u$, and likewise for $v$ on the top and bottom sides.
+of the element for $u$, and likewise for $v$ on the top and bottom sides (in 
+other words the velocity remains continuous from one element to another).
 In this case,
 \begin{eqnarray}
 \frac{\partial u^h}{\partial r}&=&\sum_i \frac{\partial \bN_i}{\partial r} u_i + (a s + b) (-2r) \nn\\
@@ -159,24 +157,16 @@ We start with:
 &=& -\frac{1}{4} (1-s) u_1 + \frac{1}{4} (1-s) u_2 +\frac{1}{4} (1+s) u_3 -\frac{1}{4} (1+s) u_4 \nn\\
 &=& (1-s) \frac{u_2-u_1}{4} + (1+s) \frac{u_3-u_4}{4} \nn\\
 &=& (1-s) u_{21} + (1+s) u_{34} \nn\\
-\nn\\
 \sum_i \frac{\partial N_i}{\partial s} v_i 
 &=& -\frac{1}{4} (1-r) v_1 - \frac{1}{4} (1+r) v_2 +\frac{1}{4} (1+r) v_3 +\frac{1}{4} (1-r) v_4 \nn\\
 &=& (1-r) \frac{v_4-v_1}{4} + (1+r)\frac{v_3-v_2}{4} \nn\\
 &=& (1-r) v_{41} + (1+r) v_{32} \nn
 \end{eqnarray}
-where $u_{ij}=(u_i-u_j)/4$ and $v_{ij}=(v_i-v_j)/4$, so that
-\[
-\frac{\partial u}{\partial r}=
-(1-s) u_{21} + (1+s) u_{34} 
-+ (a s + b) (-2r)
-\]
-
-\[
-\frac{\partial v}{\partial s}=
-(1-r) v_{41} + (1+r) v_{32}
-+ (c r + d)(-2s)
-\]
+where $u_{ij}=(u_i-u_j)/4$ and $v_{ij}=(v_i-v_j)/4$, so that in the end
+\begin{eqnarray}
+\frac{\partial u^h}{\partial r} &=& (1-s) u_{21} + (1+s) u_{34} + (a s + b)(-2r) \\
+\frac{\partial v^h}{\partial s} &=& (1-r) v_{41} + (1+r) v_{32} + (c r + d)(-2s)
+\end{eqnarray}
 The incompressibility condition is now:
 \[
 (\vec\nabla\cdot\vec\upnu)^h =
@@ -186,7 +176,6 @@ The incompressibility condition is now:
 + (c r + d)(-2s)
 =0
 \]
-
 This can be rewritten as
 \[
 (\vec\nabla\cdot\vec\upnu)^h =
@@ -205,8 +194,12 @@ C_3   &(rs) &  -2a -2c =0\nn
 
 The first line is simply the incompressibility condition
 expressed in the center of the element (i.e. $r=s=0$),
-so we set it aside for now (will come back to it later)
+so we set it aside for now (I will come back to it later!)
 and focus on the remaining three.
+
+At this stage it is important to note that in the absence of corrective terms (i.e. $a=b=c=d=0$)
+then only $C_3=0$ and the divergence inside the element is a linear field.
+
 We obtain
 \[
 c=-a
@@ -215,7 +208,7 @@ b=\frac{1}{2}(-v_{41} + v_{32})
 \qquad
 d=\frac{1}{2} (-u_{21} + u_{34})
 \]
-Since $a$ and $c$ and not otherwise constrained, we can set them to zero, and we then have:
+Since $a$ and $c$ are not otherwise constrained, we can set them to zero, and we then have:
 \[
 b=\frac{1}{2}(v_{14} + v_{32})
 \quad\quad
@@ -242,10 +235,10 @@ To be clear, let us now compute the velocity divergence of the corrected
 velocity field above:
 \begin{eqnarray}
 (\vec\nabla\cdot\vec\upnu)^h 
-&=& \sum_i \left(  
-\frac{\partial \bN_i}{\partial r} u_i+
-\frac{\partial \bN_i}{\partial s} v_i
-\right) \nn\\
+&=&
+\frac{\partial u^h}{\partial r}+
+\frac{\partial v^h}{\partial s}
+\nn\\
 &=& (1-s) u_{21} + (1+s) u_{34} +  \frac{1}{2}(v_{14} + v_{32})(-2r)
 + (1-r) v_{41} + (1+r) v_{32}  + \frac{1}{2} (u_{12} + u_{34})(-2s) \nn\\
 &=& u_{21} + u_{34} + v_{41} + v_{32}
@@ -254,7 +247,7 @@ velocity field above:
 &=& u_{21} + u_{34} + v_{41} + v_{32} 
 \end{eqnarray}
 A point must then be made crystal clear: the divergence is
-not zero. The quantity above is constant inside the element 
+{\it not} zero. The quantity above is constant inside the element 
 (it does not depend on $r$ nor $s$). 
 All what the CVI algorithm does is to remove the spatial dependence
 of the velocity divergence inside the element.
@@ -262,45 +255,46 @@ of the velocity divergence inside the element.
 %-------------------------------------------------------------------
 \subsubsection{In 2D with $Q_1$ basis functions - better approach}
 
-We start from
+We now consider a generic quadrilateral in the $x,y$-coordinate space and its equivalent in the 
+reference space $r,s$. One can easily show that the gradient of a field $f$ verifies 
 \[
 \left(
 \begin{array}{c}
-\frac{\partial u}{\partial x} \\ \\
-\frac{\partial u}{\partial y} 
+\frac{\partial f}{\partial x} \\ \\
+\frac{\partial f}{\partial y} 
 \end{array}
 \right)
 =
 \tilde{\bm J} \cdot
 \left(
 \begin{array}{c}
-\frac{\partial u}{\partial r} \\ \\
-\frac{\partial u}{\partial s} 
+\frac{\partial f}{\partial r} \\ \\
+\frac{\partial f}{\partial s} 
 \end{array}
 \right)
 \]
 where $\tilde{\bm J}$ in the inverse of the Jacobian matrix.
 We then postulate again
 \begin{eqnarray}
-u(r,s)&=&\sum_i \bN_i(r,s) u_i + (a s + b)(1-r)(1+r) \nn\\
-v(r,s)&=&\sum_i \bN_i(r,s) v_i + (c r + d)(1-s)(1+s) \nn
+u^h(r,s)&=&\sum_i \bN_i(r,s) u_i + (a s + b)(1-r)(1+r) \nn\\
+v^h(r,s)&=&\sum_i \bN_i(r,s) v_i + (c r + d)(1-s)(1+s) \nn
 \end{eqnarray}
 In this case,
 \begin{eqnarray}
-\frac{\partial u}{\partial r}&=&\sum_i \frac{\partial \bN_i}{\partial r} u_i + (a s + b) (-2r)   \nn\\
-\frac{\partial u}{\partial s}&=&\sum_i \frac{\partial \bN_i}{\partial s} u_i + a (1-r^2) \nn\\
-\frac{\partial v}{\partial r}&=&\sum_i \frac{\partial \bN_i}{\partial s} v_i + c (1-s^2) \nn\\
-\frac{\partial v}{\partial s}&=&\sum_i \frac{\partial \bN_i}{\partial s} v_i + (c r + d)(-2s) \nn
+\frac{\partial u^h}{\partial r}&=&\sum_i \frac{\partial \bN_i}{\partial r} u_i + (a s + b) (-2r)   \nn\\
+\frac{\partial u^h}{\partial s}&=&\sum_i \frac{\partial \bN_i}{\partial s} u_i + a (1-r^2) \nn\\
+\frac{\partial v^h}{\partial r}&=&\sum_i \frac{\partial \bN_i}{\partial s} v_i + c (1-s^2) \nn\\
+\frac{\partial v^h}{\partial s}&=&\sum_i \frac{\partial \bN_i}{\partial s} v_i + (c r + d)(-2s) \nn
 \end{eqnarray}
 We have introduced 4 coefficients  $(a,b,c,d)$ which remain to be determined.
-We have
+In order to compute the velocity divergence inside the element we will need 
 \begin{eqnarray}
 \frac{\partial u}{\partial x} 
 &=& \tilde{J}_{xx} \frac{\partial u}{\partial r} +  \tilde{J}_{xy} \frac{\partial u}{\partial s}  \nn\\
 &=& \tilde{J}_{xx} \left( \sum_i \frac{\partial \bN_i}{\partial r} u_i + (a s + b) (-2r)  \right) 
  +  \tilde{J}_{xy} \left( \sum_i \frac{\partial \bN_i}{\partial s} u_i + a (1-r^2) \right)  \nn\\
 &=& \tilde{J}_{xx} \left(  -(1-s) u_{12} + (1+s) u_{34} + (a s + b) (-2r)  \right) \nn\\ 
-&+&  \tilde{J}_{xy} \left(  -(1-r) u_{14} - (1+r) u_{23} + a (1-r^2) \right) \nn\\ 
+&+&  \tilde{J}_{xy} \left(  -(1-r) u_{14} - (1+r) u_{23} + a (1-r^2) \right)
 \nn\\
 \frac{\partial v}{\partial y} 
 &=& \tilde{J}_{yx} \left(  -(1-s) v_{12} + (1+s) v_{34} + c (1-s^2)   \right)  \nn\\
@@ -322,11 +316,13 @@ C_4 &=& -a J_{xy}  \nn\\
 C_5 &=& -c J_{yx}  \nn\\
 \end{eqnarray}
 where the six $C_i$ coefficients are functions of the velocities and the other coefficients.
-In order for this expression to be exactly null {\it everywhere}, each $C$ coefficient has
+In order for this expression to be exactly null {\it everywhere}\footnote{We know by now 
+that this is not possible}, each $C$ coefficient has
 to be independently null.
 
 This immediately yields $a=c=0$ (since the components of the $\tilde{\bm J}$ tensor
-are not necessarily zero) and the equation for $C_3$ is immediately satisfied.
+are not necessarily zero - and if $J_{xy}$ and $J_{yr}$ are zero then the equation 
+for $C_3$ remains and we would still take $a=c=0$ for simplicity) and the equation for $C_3$ is immediately satisfied.
 We then have:
 \begin{eqnarray}
 b&=&\frac{1}{2J_{xx}} ( J_{xy} (u_{14} - u_{23}) + J_{yy} (v_{14} - v_{23})  )  \nn\\
@@ -350,7 +346,8 @@ and finally the velocity correction is
 \delta v&=&\frac{1}{2} ( u_{12} + u_{34} ) (1-s)(1+s)\label{eq:cvi_corr1}
 \end{eqnarray}
 
-
+%-------------------------------------------------------------------
+\subsubsection{Comparison with Wang \etal (2015) for 2D}
 
 Rather annoyingly Wang \etal (2015) use a reference element that is $[0,1]\times[0,1]$
 as opposed to the standard $[-1,1]\times[-1,1]$:
@@ -367,27 +364,20 @@ a--b            1--2
 Setting $\Delta x_1=\Delta x_2=1$, replacing $a$ by $1$, $b$ by 2, 
 $c$ by 4 and $d$ by 3, $x_1$ by $r'$ and $x_2$ by $s'$, $U_1$ by $u$
 and $U_2$ by $v$, we arrive at 
-\[
-\Delta u 
-= \frac12 r'(1-r')(v_1-v_2-v_4+v_3)
-= \frac12 r'(1-r')(4v_{14}-4v_{23})
-\]
-\[
-\Delta v 
-= \frac12 s'(1-s')(u_1-u_2-u_4+u_3)
-= \frac12 s'(1-s')(4u_{12}+4u_{34})
-\]
+(in order to render the notations a bit lighter I have set $U=U_1$ and $V=U_2$)
+\begin{eqnarray}
+\Delta U &=& \frac12 r'(1-r')(v_1-v_2-v_4+v_3) = \frac12 r'(1-r')(4v_{14}-4v_{23}) \nn\\
+\Delta V &=& \frac12 s'(1-s')(u_1-u_2-u_4+u_3) = \frac12 s'(1-s')(4u_{12}+4u_{34}) \nn
+\end{eqnarray}
 Since $r=2r'-1$ and $s=2s'-1$ then we find that 
 \begin{eqnarray}
-\Delta u &=& \frac12 (1-r^2)(v_{14}-v_{23}) \nn\\
-\Delta v &=& \frac12 (1-s^2)(u_{12}+u_{34})
+\Delta U &=& \frac12 (1-r^2)(v_{14}-v_{23}) \nn\\
+\Delta V &=& \frac12 (1-s^2)(u_{12}+u_{34})
 \end{eqnarray}
 which is Eq.~\eqref{eq:cvi_corr1}. In the case of the reference element then 
 my velocity corrections are identical to theirs.
 
-
-Let us look at the equations of the figure above (in order to render the notations
-a bit lighter I have set $U=U_1$ and $V=U_2$).
+Let us look at the equations of the figure above. 
 Since the authors state that they ``transform the rectangular cells into unit squares'' 
 we do away with $\Delta x_1 = \Delta x_2 = 1$. Eqs. 3 and 1 together yield:
 \begin{eqnarray}
@@ -405,9 +395,7 @@ Then
 \end{eqnarray}
 So 
 \begin{eqnarray}
-&&\frac{\partial U}{\partial x_1}
-+
-\frac{\partial V}{\partial x_2} \nonumber\\
+\frac{\partial U}{\partial x_1} \! + \! \frac{\partial V}{\partial x_2} 
 &=&
 -(1-x_2) U^a+(1-x_2)U^b -x_2 U^c + x_2 U^d + \frac12 (1-2x_1)(V^a-V^b-V^c+V^d) \nonumber\\
 &&-(1-x_1) V^a - x_1V^b + (1-x_1) V^c + x_1 V^d + \frac12 (1-2x_2)(U^a-U^b-U^c+U^d) \nonumber\\
@@ -450,9 +438,7 @@ The incompressibility constraint imposes:
 \frac{\partial u^h}{\partial r}+
 \frac{\partial v^h}{\partial s}+
 \frac{\partial w^h}{\partial t}=0
-\]
-i.e.
-\[
+=
 \sum_i \left(  
 \frac{\partial \bN_i}{\partial r} u_i+
 \frac{\partial \bN_i}{\partial s} v_i+
@@ -469,15 +455,17 @@ which would add just enough degrees of freedoms so as to insure an exact
 incompressibility in the element.
 Let us then write:
 \begin{eqnarray}
-u(r,s,t)&=&\sum_i \bN_i(r,s,t) u_i + (a s + b t +c)(1-r)(1+r) \nn\\
-v(r,s,t)&=&\sum_i \bN_i(r,s,t) v_i + (d r + e t +f)(1-s)(1+s) \nn\\
-w(r,s,t)&=&\sum_i \bN_i(r,s,t) w_i + (g r + h s +i)(1-t)(1+t) \nn
+u^h(r,s,t)&=&\sum_i \bN_i(r,s,t) u_i + (a s + b t +c)(1-r)(1+r) \nn\\
+v^h(r,s,t)&=&\sum_i \bN_i(r,s,t) v_i + (d r + e t +f)(1-s)(1+s) \nn\\
+w^h(r,s,t)&=&\sum_i \bN_i(r,s,t) w_i + (g r + h s +i)(1-t)(1+t) \nn
 \end{eqnarray}
+We thereby make sure that the corrections are zero on the edges 
+so that velocity remains continuous from one element to another.
 In this case,
 \begin{eqnarray}
-\frac{\partial u}{\partial r}&=&\sum_i \frac{\partial \bN_i}{\partial r} u_i + (a s + b t +c)(-2r)\nn\\
-\frac{\partial v}{\partial s}&=&\sum_i \frac{\partial \bN_i}{\partial s} v_i + (d r + e t +f)(-2s)\nn\\
-\frac{\partial w}{\partial t}&=&\sum_i \frac{\partial \bN_i}{\partial t} w_i + (g r + h s +i)(-2t)\nn
+\frac{\partial u^h}{\partial r}&=&\sum_i \frac{\partial \bN_i}{\partial r} u_i + (a s + b t +c)(-2r)\nn\\
+\frac{\partial v^h}{\partial s}&=&\sum_i \frac{\partial \bN_i}{\partial s} v_i + (d r + e t +f)(-2s)\nn\\
+\frac{\partial w^h}{\partial t}&=&\sum_i \frac{\partial \bN_i}{\partial t} w_i + (g r + h s +i)(-2t)\nn
 \end{eqnarray}
 We have introduced 9 coefficients  $(a,b,c,d,e,f,g,h,i)$ which remain to be determined.
 The incompressibility condition is now:
@@ -495,7 +483,8 @@ This can be rewritten as
 C_0  + C_1 r + C_2 s + C_3 t + C_4 rs + C_5 st + C_6 rt = 0
 \]
 where the seven $C_i$ coefficients are functions of the velocities and the other coefficients.
-In order for this expression to be exactly zero {\it everywhere}, each $C$ coefficient has
+In order for this expression to be exactly zero {\it everywhere}\footnote{By now we know 
+this is not possible -- see 2D}, each $C$ coefficient has
 to be independently zero.
 
 We start with:
@@ -547,7 +536,7 @@ C_5   &(st) &  u_{21} -u_{34} -u_{65} + u_{78}  -2e -2h =0  \nn\\
 C_6   &(rt) &  v_{41} -v_{32} -v_{85} + v_{76}  -2b -2g =0  \nn
 \end{eqnarray}
 
-I unfortunately end up with 6 equations and 9 unknowns $a,b,c,d,e,f,g,h$.
+I leave $C_0$ alone but I still unfortunately end up with 6 equations and 9 unknowns $a,b,c,d,e,f,g,h$.
 Coming up with additional constraints is not trivial, so I will instead further assume 
 $\alpha_r=b=a$, $\alpha_s=e=d$ and $\alpha_t=h=g$, and rename 
 $\beta_r=c$, $\beta_s=f$ and $\beta_t=i$ so that
@@ -799,6 +788,8 @@ C_5 &=& J_{xx} u_{r4} + J_{yx} v_{r4} + J_{zx} w_{r4} +2J_{yy} \frac{J_{yx}}{J_{
 C_6 &=& J_{xy} u_{s4} + J_{yy} v_{s4} + J_{zy} w_{s4} +2J_{xx} \frac{J_{xy}}{J_{xz}} a - J_{zz} 2g  \nn\\ % rt
 \end{eqnarray}
 
+%-------------------------------------------------------------------
+\subsubsection{Comparison with Wang \etal (2015) for 3D}
 
 The following is taken from the supplementary material of Wang \etal (2015):
 \begin{center}
@@ -812,7 +803,7 @@ In my opinion, it is quite unbelievable that such a document was accepted for pu
 There is not much justification for why their equation 7 only contains $x_2$ and not also 
 $x_3$, same for the other two equations. 
 Rather surprising is also the fact that although equations 3,6,7,8,9 do not contain 
-any $\Delta x_{1,2,3}$term  then equations 11,12,13 do feature them. 
+any $\Delta x_{\{1,2,3\}}$term  then equations 11,12,13 do feature them. 
 Nevertheless, we must make sense of this mess. 
 
 Since the authors state that they ``transform the rectangular cells into unit squares'' 
@@ -915,7 +906,8 @@ F &=& -U^a +U^e +U^b -U^f +U^c -U^g -U^d +U^h   -2C_{23}
 G &=&   -V^a +V^e +V^b -V^f +V^c -V^g -V^d + V^h -2C_{31}
 \end{eqnarray}
 A term by term comparison of these equations shows that these are identical to the 
-7 equations in the supplementary material between Eq.~13 and Eq.~14.
+7 equations in the supplementary material between Eq.~13 and Eq.~14 (why are these not 
+numbered in the supplementary material?).
 
 Ideally we wish to have all 7 coefficients $A$ to $G$ equal to zero. 
 This leaves us with 7 equations involving 6 unknowns.
