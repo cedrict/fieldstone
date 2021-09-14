@@ -1,11 +1,10 @@
-set term pdf enhanced font "Times,11pt"
+set term pdf enhanced
 set xlabel 'time'
-set ylabel 'n(t)/n(0) - min/max'
-set key left
-set log x
+set key outside
 
 npel=25
 
+set ylabel 'n(t)/n(0) - min/max'
 set output 'markercount_rk12345.pdf'
 plot[][0:2.5]\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk0_cvi0_Q1.ascii' u 1:($2/npel) w l lt -1 t 'RK1^*',\
@@ -21,6 +20,19 @@ plot[][0:2.5]\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk5_cvi0_Q1.ascii' u 1:($2/npel) w l lt 5 t 'RK5',\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk5_cvi0_Q1.ascii' u 1:($3/npel) w l lt 5 notitle,\
 
+set ylabel 'standard deviation'
+set output 'stdev_rk12345.pdf'
+plot[][]\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk0_cvi0_Q1.ascii' u 1:($6/npel) w l lt -1 t 'RK1^*',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk1_cvi0_Q1.ascii' u 1:($6/npel) w l lt 1 t 'RK1',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 2 t 'RK2',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk3_cvi0_Q1.ascii' u 1:($6/npel) w l lt 3 t 'RK3',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk4_cvi0_Q1.ascii' u 1:($6/npel) w l lt 4 t 'RK4',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk5_cvi0_Q1.ascii' u 1:($6/npel) w l lt 5 t 'RK5',\
+
+###################################################################################################
+
+set ylabel 'n(t)/n(0) - min/max'
 set output 'markercount_q12.pdf'
 plot[][0:2.5]\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($2/npel) w l lt 1 t 'Q_1',\
@@ -28,7 +40,15 @@ plot[][0:2.5]\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q2.ascii' u 1:($2/npel) w l lt 2 t 'Q_2',\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q2.ascii' u 1:($3/npel) w l lt 2 notitle,\
 
+set ylabel 'standard deviation'
+set output 'stdev_q12.pdf'
+plot[][]\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 1 t 'Q_1',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q2.ascii' u 1:($6/npel) w l lt 2 t 'Q_2',\
 
+###################################################################################################
+
+set ylabel 'n(t)/n(0) - min/max'
 set output 'markercount_npd.pdf'
 plot[][0:2.5]\
 'markercount_stats_nelx32_nm4_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($2/16)   w l lt 1 t 'npdim=4',\
@@ -42,6 +62,18 @@ plot[][0:2.5]\
 'markercount_stats_nelx32_nm8_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($2/64)   w l lt 5 t 'npdim=8',\
 'markercount_stats_nelx32_nm8_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($3/64)   w l lt 5 notitle,\
 
+set ylabel 'standard deviation'
+set output 'stdev_npd.pdf'
+plot[][]\
+'markercount_stats_nelx32_nm4_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/16)  w l lt 1 t 'npdim=4',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/25)  w l lt 2 t 'npdim=5',\
+'markercount_stats_nelx32_nm6_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/36)  w l lt 3 t 'npdim=6',\
+'markercount_stats_nelx32_nm7_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/49)  w l lt 4 t 'npdim=7',\
+'markercount_stats_nelx32_nm8_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/64)  w l lt 5 t 'npdim=8',\
+
+###################################################################################################
+
+set ylabel 'n(t)/n(0) - min/max'
 set output 'markercount_cflnb.pdf'
 plot[][0:2.5]\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.1_rk2_cvi0_Q1.ascii' u 1:($2/npel) w l lt 1 t 'CFLnb=0.1',\
@@ -51,6 +83,19 @@ plot[][0:2.5]\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($2/npel) w l lt 3 t 'CFLnb=0.5',\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($3/npel) w l lt 3 notitle,\
 
+set ylabel 'standard deviation'
+set output 'stdev_cflnb.pdf'
+plot[][]\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.1_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 1 t 'CFLnb=0.1',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.1_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 1 notitle,\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.3_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 2 t 'CFLnb=0.3',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.3_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 2 notitle,\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 3 t 'CFLnb=0.5',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 3 notitle,\
+
+###################################################################################################
+
+set ylabel 'n(t)/n(0) - min/max'
 set output 'markercount_reg.pdf'
 plot[][0:2.5]\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($2/npel) w l lt 1 t 'rand',\
@@ -58,6 +103,16 @@ plot[][0:2.5]\
 'markercount_stats_nelx32_nm5_rand0_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($2/npel) w l lt 2 t 'reg',\
 'markercount_stats_nelx32_nm5_rand0_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($3/npel) w l lt 2 notitle,\
 
+set ylabel 'standard deviation'
+set output 'stdev_reg.pdf'
+plot[][]\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 1 t 'rand',\
+'markercount_stats_nelx32_nm5_rand0_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 2 t 'reg',\
+
+
+###################################################################################################
+
+set ylabel 'n(t)/n(0) - min/max'
 set output 'markercount_res.pdf'
 plot[][0:2.5]\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($2/npel) w l lt 1 t '32x32',\
@@ -69,7 +124,30 @@ plot[][0:2.5]\
 'markercount_stats_nelx80_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($2/npel) w l lt 4 t '80x80',\
 'markercount_stats_nelx80_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($3/npel) w l lt 4 notitle,\
 
+set ylabel 'standard deviation'
+set output 'stdev_res.pdf'
+plot[][]\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 1 t '32x32',\
+'markercount_stats_nelx48_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 2 t '48x48',\
+'markercount_stats_nelx64_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 3 t '64x64',\
+'markercount_stats_nelx80_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 4 t '80x80',\
+
+###################################################################################################
+
+set ylabel 'n(t)/n(0) - min/max'
+set output 'markercount_cvi.pdf'
+plot[][]\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($2/npel) w l lt 1 t 'no CVI',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($3/npel) w l lt 1 notitle,\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi1_Q1.ascii' u 1:($2/npel) w l lt 2 t 'CVI',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi1_Q1.ascii' u 1:($3/npel) w l lt 2 notitle,\
 
 
 
+set output 'stdev_cvi.pdf'
+set ylabel 'standard deviation'
+plot[][]\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:6 w l lt 1 t 'no CVI',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi1_Q1.ascii' u 1:6 w l lt 2 t 'CVI',\
 
+#########################################################
