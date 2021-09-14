@@ -23,7 +23,7 @@ plot[][0:2.5]\
 set ylabel 'standard deviation'
 set output 'stdev_rk12345.pdf'
 plot[][]\
-'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk0_cvi0_Q1.ascii' u 1:($6/npel) w l lt -1 t 'RK1',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk0_cvi0_Q1.ascii' u 1:($6/npel) w l lt -1 t 'RK1^*',\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk1_cvi0_Q1.ascii' u 1:($6/npel) w l lt 1 t 'RK1',\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 2 t 'RK2',\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk3_cvi0_Q1.ascii' u 1:($6/npel) w l lt 3 t 'RK3',\
@@ -132,6 +132,22 @@ plot[][]\
 'markercount_stats_nelx64_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 3 t '64x64',\
 'markercount_stats_nelx80_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 4 t '80x80',\
 
+###################################################################################################
+
+set ylabel 'n(t)/n(0) - min/max'
+set output 'markercount_cvi.pdf'
+plot[][]\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($2/npel) w l lt 1 t 'no CVI',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($3/npel) w l lt 1 notitle,\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi1_Q1.ascii' u 1:($2/npel) w l lt 2 t 'CVI',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi1_Q1.ascii' u 1:($3/npel) w l lt 2 notitle,\
 
 
 
+set output 'stdev_cvi.pdf'
+set ylabel 'standard deviation'
+plot[][]\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:6 w l lt 1 t 'no CVI',\
+'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi1_Q1.ascii' u 1:6 w l lt 2 t 'CVI',\
+
+#########################################################

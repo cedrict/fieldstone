@@ -1,0 +1,4 @@
+In order to produce these plots dt must be zero, so CFLnb=0, and nstep=1.
+We wish to interpolate velocity on markers, no advection, and then compare the 
+interpolated velocity (with and without cvi) with analytical velocity.
+use_cvi must be true in any case to trigger the export of the corrections to file.

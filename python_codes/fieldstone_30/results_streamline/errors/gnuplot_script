@@ -1,6 +1,6 @@
 n=100 #number of intervals
-min=-8. #min value
-max=-2. #max value
+min=-6.5 #min value
+max=-0.5 #max value
 width=(max-min)/n #interval width
 
 #function used to map a value to the intervals
@@ -8,7 +8,6 @@ width=(max-min)/n #interval width
 hist(x,width)=width*floor(x/width)+width/2.0
 
 set term pdf
-set output "histogram.pdf"
 set xrange [min:max] 
 set yrange [0:]
 #to put an empty boundary around the
@@ -18,9 +17,27 @@ set xtics min,(max-min)/5,max
 set boxwidth width*0.9
 set style fill solid 0.5 #fillstyle
 set tics out nomirror
-set xlabel "velocity error"
+set xlabel "velocity error (log_{10})"
 set ylabel "Frequency"
 #count and plot
+
+
+
+set output "histogram1.pdf"
+plot[][]\
+ "velocityQ1.ascii" u (hist(log10( (sqrt(($3-$5)**2)+($6-$8)**2)       ),width)):(1.0) smooth freq w boxes lc rgb"green" t 'Q_1, no cvi' 
+
+set output "histogram2.pdf"
+plot[][]\
+ "velocityQ1.ascii" u (hist(log10( (sqrt(($3+$4-$5)**2)+($6+$7-$8)**2) ),width)):(1.0) smooth freq w boxes lc rgb"blue" t 'Q_1, cvi'
+
+set output "histogram3.pdf"
+plot[][]\
+ "velocityQ2.ascii" u (hist(log10( (sqrt(($3+$4-$5)**2)+($6+$7-$8)**2) ),width)):(1.0) smooth freq w boxes lc rgb"red" t 'Q_2'
+
+
+
+set output "histogram.pdf"
 plot[][]\
  "velocityQ1.ascii" u (hist(log10( (sqrt(($3-$5)**2)+($6-$8)**2)       ),width)):(1.0) smooth freq w boxes lc rgb"green" t 'Q_1, no cvi' ,\
  "velocityQ1.ascii" u (hist(log10( (sqrt(($3+$4-$5)**2)+($6+$7-$8)**2) ),width)):(1.0) smooth freq w boxes lc rgb"blue" t 'Q_1, cvi',\
