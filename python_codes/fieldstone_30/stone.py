@@ -3,9 +3,10 @@ import math as math
 import sys as sys
 import time as time
 import random
-#import solcx as solcx
-import streamlines as solcx
-#import couette as solcx
+#import solcx as model
+#import streamlines as model
+#import couette as model
+import box as model 
 
 #------------------------------------------------------------------------------
 #def viscosity(x,y):
@@ -18,6 +19,10 @@ import streamlines as solcx
 #def density(x,y):
 #    val=math.sin(math.pi*y)*math.cos(math.pi*x)
 #    return val
+
+#------------------------------------------------------------------------------
+# first order basis functions and their derivatives
+#------------------------------------------------------------------------------
 
 def NQ1(rq,sq):
     N_0=0.25*(1.-rq)*(1.-sq)
@@ -39,6 +44,10 @@ def dNQ1ds(rq,sq):
     dNds_2=+0.25*(1.+rq)
     dNds_3=+0.25*(1.-rq)
     return dNds_0,dNds_1,dNds_2,dNds_3
+
+#------------------------------------------------------------------------------
+# second order basis functions and their derivatives
+#------------------------------------------------------------------------------
 
 def NQ2(rq,sq):
     N_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
@@ -76,6 +85,8 @@ def dNQ2ds(rq,sq):
     dNds_8=     (1.-rq**2) *       (-2.*sq)
     return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8
 
+#------------------------------------------------------------------------------
+
 def interpolate_vel_on_pt(xm,ym,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q):
     ielx=int(xm/Lx*nelx)
     iely=int(ym/Ly*nely)
@@ -93,7 +104,57 @@ def interpolate_vel_on_pt(xm,ym,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q):
     for k in range(0,m):
         um+=N[k]*u[icon[k,iel]]
         vm+=N[k]*v[icon[k,iel]]
-    return um,vm,rm,sm,iel 
+    C0=(u[icon[1,iel]]-u[icon[0,iel]])/4\
+      +(u[icon[2,iel]]-u[icon[3,iel]])/4\
+      +(v[icon[3,iel]]-v[icon[0,iel]])/4\
+      +(v[icon[2,iel]]-v[icon[1,iel]])/4
+    return um,vm,rm,sm,iel,C0 
+
+#------------------------------------------------------------------------------
+
+def compute_divv_on_pt(xm,ym,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q):
+    dNdx = np.zeros(m,dtype=np.float64)            # shape functions derivatives
+    dNdy = np.zeros(m,dtype=np.float64)            # shape functions derivatives
+    dNdr = np.zeros(m,dtype=np.float64)            # shape functions derivatives
+    dNds = np.zeros(m,dtype=np.float64)            # shape functions derivatives
+    jcb  = np.zeros((2,2),dtype=np.float64)
+
+    ielx=int(xm/Lx*nelx)
+    iely=int(ym/Ly*nely)
+    iel=nelx*(iely)+ielx
+    xmin=x[icon[0,iel]] ; xmax=x[icon[2,iel]]
+    ymin=y[icon[0,iel]] ; ymax=y[icon[2,iel]]
+    rm=((xm-xmin)/(xmax-xmin)-0.5)*2
+    sm=((ym-ymin)/(ymax-ymin)-0.5)*2
+
+    dNdr[0]=-0.25*(1.-sm) ; dNds[0]=-0.25*(1.-rm)
+    dNdr[1]=+0.25*(1.-sm) ; dNds[1]=-0.25*(1.+rm)
+    dNdr[2]=+0.25*(1.+sm) ; dNds[2]=+0.25*(1.+rm)
+    dNdr[3]=-0.25*(1.+sm) ; dNds[3]=+0.25*(1.-rm)
+
+    jcb=np.zeros((2,2),dtype=np.float64)
+    for k in range(0, m):
+        jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+        jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+        jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+        jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+
+    # calculate the inverse of the jacobian
+    jcbi=np.linalg.inv(jcb)
+
+    for k in range(0, m):
+        dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+        dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+
+    divv=0.
+    for k in range(0, m):
+        divv+= dNdx[k]*u[icon[k,iel]]+ dNdy[k]*v[icon[k,iel]]
+
+    return divv
+
+
+
+#------------------------------------------------------------------------------
 
 def compute_CVI_corr (u,v,icon,rm,sm,iel,use_cvi,Q):
     if use_cvi==1 and Q==1:
@@ -164,6 +225,8 @@ def compute_CVI_corr (u,v,icon,rm,sm,iel,use_cvi,Q):
        v_corr=0.
     return u_corr,v_corr
 
+#------------------------------------------------------------------------------
+
 def stay_in (x,y):
     if (y>=-x+1. and x>1. ):
        delta=2.-(x+y)
@@ -190,9 +253,9 @@ def stay_in (x,y):
 
 #------------------------------------------------------------------------------
 
-print("-----------------------------")
-print("----------fieldstone---------")
-print("-----------------------------")
+print("----------------------------------------------------")
+print("----------------------fieldstone--------------------")
+print("----------------------------------------------------")
 
 ndof=2  # number of degrees of freedom per node
 
@@ -212,16 +275,16 @@ if int(len(sys.argv) == 11):
    Q              =int(sys.argv[9])
    nstep          =int(sys.argv[10])
 else:
-   nelx = 32
+   nelx = 32         # default: 32
    nely = 32
    visu = 1
-   nmarker_per_dim=5
-   random_markers=0
-   CFL_nb=0.5
-   RKorder=1
-   use_cvi=0
-   Q=1
-   nstep=251
+   nmarker_per_dim=5 # default: 5
+   random_markers=1  # default: 1
+   CFL_nb=0.5        # default: 0.5
+   RKorder=2         # default: 2 
+   use_cvi=0         # default: 0
+   Q=1               # default: 1
+   nstep=501         # default: 501
     
 if Q==1:
    nnx=nelx+1    # number of elements, x direction
@@ -240,6 +303,7 @@ hy=Ly/float(nely)
 
 every=1      # vtu output frequency
 
+#Runge-Kutta-Fehlberg coefficients
 rkf_c2=1./4.      
 rkf_c3=3./8.    
 rkf_c4=12./13.   
@@ -268,7 +332,6 @@ rkf_b6=    2./55.
 
 tijd=0.
 
-
 print("markercount_stats_nelx"+str(nelx)+\
                                   '_nm'+str(nmarker_per_dim)+\
                                 "_rand"+str(random_markers)+\
@@ -276,7 +339,6 @@ print("markercount_stats_nelx"+str(nelx)+\
                                   "_rk"+str(RKorder)+\
                                  "_cvi"+str(use_cvi)+\
                                    "_Q"+str(Q)+".ascii")
-
 
 countfile=open("markercount_stats_nelx"+str(nelx)+\
                                   '_nm'+str(nmarker_per_dim)+\
@@ -294,9 +356,6 @@ distrfile=open("markerdistr_stats_nelx"+str(nelx)+\
                                  "_cvi"+str(use_cvi)+\
                                    "_Q"+str(Q)+".ascii","w")
 
-
-#################################################################
-
 #################################################################
 # grid point setup
 #################################################################
@@ -313,6 +372,9 @@ if Q==1:
            x[counter]=i*hx
            y[counter]=j*hy
            counter += 1
+       #end for
+   #end for
+#end if
 
 if Q==2:
    counter = 0
@@ -321,15 +383,18 @@ if Q==2:
            x[counter]=i*hx/2.
            y[counter]=j*hy/2.
            counter += 1
+       #end for
+   #end for
+#end if
 
 #################################################################
 # connectivity
 #
-#  04===07===03
-#  ||   ||   ||
-#  08===09===06
-#  ||   ||   ||
-#  01===05===02
+#  04========03  04===07===03
+#  ||        ||  ||   ||   ||
+#  ||        ||  08===09===06
+#  ||        ||  ||   ||   ||
+#  01========02  01===05===02
 #
 #################################################################
 print("connectivity")
@@ -345,6 +410,9 @@ if Q==1:
            icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
            icon[3, counter] = i + (j + 1) * (nelx + 1)
            counter += 1
+       #end for
+   #end for
+#end if
 
 if Q==2:
    counter = 0
@@ -360,6 +428,9 @@ if Q==2:
            icon[7,counter]=(i)*2+1+(j)*2*nnx+nnx -1
            icon[8,counter]=(i)*2+2+(j)*2*nnx+nnx -1
            counter += 1
+       #end for
+   #end for
+#end if
 
 #################################################################
 # assign nodal field values 
@@ -369,7 +440,7 @@ v = np.empty(nnp,dtype=np.float64)
 p = np.empty(nnp,dtype=np.float64)
 
 for i in range(0,nnp):
-    u[i],v[i],p[i]=solcx.Solution(x[i],y[i]) 
+    u[i],v[i],p[i]=model.Solution(x[i],y[i]) 
 
 #################################################################
 
@@ -391,6 +462,8 @@ swarm_u=np.zeros(nmarker,dtype=np.float64)
 swarm_v=np.zeros(nmarker,dtype=np.float64)  
 swarm_u_corr=np.zeros(nmarker,dtype=np.float64)  
 swarm_v_corr=np.zeros(nmarker,dtype=np.float64)  
+swarm_C0=np.zeros(nmarker,dtype=np.float64)  
+swarm_divv=np.zeros(nmarker,dtype=np.float64)  
 
 if random_markers==1:
    counter=0
@@ -410,7 +483,8 @@ if random_markers==1:
            swarm_x[counter]=N1*x1+N2*x2+N3*x3+N4*x4
            swarm_y[counter]=N1*y1+N2*y2+N3*y3+N4*y4
            counter+=1
-
+       #end for
+   #end for
 else:
    counter=0
    for iel in range(0,nel):
@@ -429,10 +503,15 @@ else:
                swarm_x[counter]=N1*x1+N2*x2+N3*x3+N4*x4
                swarm_y[counter]=N1*y1+N2*y2+N3*y3+N4*y4
                counter+=1
+           #end for
+       #end for
+   #end for
+#end if
 
 print("     -> nmarker %d " % nmarker)
-print("     -> swarm_x (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))
-print("     -> swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
+print("     -> swarm_x  (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))
+print("     -> swarm_y  (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
+print("     -> swarm_C0 (m,M) %e %e " %(np.min(swarm_C0),np.max(swarm_C0)))
 
 #################################################################
 # compute population stats
@@ -445,12 +524,15 @@ for im in range (0,nmarker):
     iely=int(swarm_y[im]/Ly*nely)
     iel=nelx*(iely)+ielx
     count[iel]+=1
+    
+standard_deviation=np.std(count,dtype=np.float64)
 
 print("     -> count (m,M) %.5d %.5d " %(np.min(count),np.max(count)))
     
-countfile.write(" %e %d %d %e %e\n" % (tijd, np.min(count),np.max(count),\
-                                             np.min(count)/nmarker_per_dim**2,\
-                                             np.max(count)/nmarker_per_dim**2 ))
+countfile.write(" %e %d %d %e %e %e \n" % (tijd, np.min(count),np.max(count),\
+                                           np.min(count)/nmarker_per_dim**2,\
+                                           np.max(count)/nmarker_per_dim**2,\
+                                           standard_deviation))
 
 #################################################################
 # marker paint
@@ -482,11 +564,13 @@ for istep in range (0,nstep):
     print("istep= ", istep)
     print("----------------------------------")
 
+    # see section 8.4 of Gerya book, 2nd edition
+
     if RKorder==0:
 
        for im in range(0,nmarker):
 
-           swarm_u[im],swarm_v[im],ptemp=solcx.Solution(swarm_x[im],swarm_y[im]) 
+           swarm_u[im],swarm_v[im],ptemp=model.Solution(swarm_x[im],swarm_y[im]) 
            swarm_x[im]+=swarm_u[im]*dt
            swarm_y[im]+=swarm_v[im]*dt
 
@@ -496,7 +580,7 @@ for istep in range (0,nstep):
 
        for im in range(0,nmarker):
 
-           swarm_u[im],swarm_v[im],rm,sm,iel =interpolate_vel_on_pt(swarm_x[im],swarm_y[im],\
+           swarm_u[im],swarm_v[im],rm,sm,iel,C0 =interpolate_vel_on_pt(swarm_x[im],swarm_y[im],\
                                                                  x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            swarm_u_corr[im],swarm_v_corr[im] =compute_CVI_corr (u,v,icon,rm,sm,iel,use_cvi,Q)
 
@@ -504,6 +588,11 @@ for istep in range (0,nstep):
            swarm_y[im]+=(swarm_v[im]+swarm_v_corr[im])*dt
 
            swarm_x[im],swarm_y[im]= stay_in (swarm_x[im],swarm_y[im])
+
+           swarm_C0[im]=C0
+
+           swarm_divv[im]=compute_divv_on_pt(swarm_x[im],swarm_y[im],\
+                                             x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
 
        # end for im
 
@@ -513,20 +602,23 @@ for istep in range (0,nstep):
            #--------------
            xA=swarm_x[im]
            yA=swarm_y[im]
-           uA,vA,rm,sm,iel = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           uA,vA,rm,sm,iel,C0 = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uAcorr,vAcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uA+=uAcorr
            vA+=vAcorr
            #--------------
            xB=xA+uA*dt/2.
            yB=yA+vA*dt/2.
-           uB,vB,rm,sm,iel = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           uB,vB,rm,sm,iel,C0 = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uBcorr,vBcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uB+=uBcorr
            vB+=vBcorr
            #--------------
            swarm_x[im]=xA+uB*dt
            swarm_y[im]=yA+vB*dt
+           swarm_C0[im]=C0
+           swarm_u[im]=uB
+           swarm_v[im]=vB
        # end for im
 
     elif RKorder==3:
@@ -535,27 +627,30 @@ for istep in range (0,nstep):
            #--------------
            xA=swarm_x[im]
            yA=swarm_y[im]
-           uA,vA,rm,sm,iel = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           uA,vA,rm,sm,iel,C0 = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uAcorr,vAcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uA+=uAcorr
            vA+=vAcorr
            #--------------
            xB=xA+uA*dt/2.
            yB=yA+vA*dt/2.
-           uB,vB,rm,sm,iel = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           uB,vB,rm,sm,iel,C0 = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uBcorr,vBcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uB+=uBcorr
            vB+=vBcorr
            #--------------
-           xC=xA+(2*uB-uA)*dt/2.
-           yC=yA+(2*vB-vA)*dt/2.
-           uC,vC,rm,sm,iel = interpolate_vel_on_pt(xC,yC,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           xC=xA+(2*uB-uA)*dt 
+           yC=yA+(2*vB-vA)*dt 
+           uC,vC,rm,sm,iel,C0 = interpolate_vel_on_pt(xC,yC,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uCcorr,vCcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uC+=uCcorr
            vC+=vCcorr
            #--------------
            swarm_x[im]=xA+(uA+4*uB+uC)*dt/6.
            swarm_y[im]=yA+(vA+4*vB+vC)*dt/6.
+           swarm_C0[im]=C0
+           swarm_u[im]=(uA+4*uB+uC)/6.
+           swarm_v[im]=(vA+4*vB+vC)/6.
        # end for im
 
     elif RKorder==4:
@@ -564,34 +659,37 @@ for istep in range (0,nstep):
            #--------------
            xA=swarm_x[im]
            yA=swarm_y[im]
-           uA,vA,rm,sm,iel = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           uA,vA,rm,sm,iel,C0 = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uAcorr,vAcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uA+=uAcorr
            vA+=vAcorr
            #--------------
            xB=xA+uA*dt/2.
            yB=yA+vA*dt/2.
-           uB,vB,rm,sm,iel = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           uB,vB,rm,sm,iel,C0 = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uBcorr,vBcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uB+=uBcorr
            vB+=vBcorr
            #--------------
            xC=xA+(2*uB-uA)*dt/2.
            yC=yA+(2*vB-vA)*dt/2.
-           uC,vC,rm,sm,iel = interpolate_vel_on_pt(xC,yC,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           uC,vC,rm,sm,iel,C0 = interpolate_vel_on_pt(xC,yC,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uCcorr,vCcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uC+=uCcorr
            vC+=vCcorr
            #--------------
            xD=xA+uC*dt
            yD=yA+vC*dt
-           uD,vD,rm,sm,iel = interpolate_vel_on_pt(xD,yD,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           uD,vD,rm,sm,iel,C0 = interpolate_vel_on_pt(xD,yD,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uDcorr,vDcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uD+=uDcorr
            vD+=vDcorr
            #--------------
            swarm_x[im]=xA+(uA+2*uB+2*uC+uD)*dt/6.
            swarm_y[im]=yA+(vA+2*vB+2*vC+vD)*dt/6.
+           swarm_C0[im]=C0
+           swarm_u[im]=(uA+2*uB+2*uC+uD)/6.
+           swarm_v[im]=(vA+2*vB+2*vC+vD)/6.
        # end for im
 
     elif RKorder==5: # Runge-Kutta Fehlberg method
@@ -600,48 +698,51 @@ for istep in range (0,nstep):
            #--------------
            xA=swarm_x[im]
            yA=swarm_y[im]
-           uA,vA,rm,sm,iel = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           uA,vA,rm,sm,iel,C0 = interpolate_vel_on_pt(xA,yA,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uAcorr,vAcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uA+=uAcorr
            vA+=vAcorr
            #--------------
            xB=xA+(uA*rkf_a21)*dt
            yB=yA+(vA*rkf_a21)*dt
-           uB,vB,rm,sm,iel = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           uB,vB,rm,sm,iel,C0 = interpolate_vel_on_pt(xB,yB,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uBcorr,vBcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uB+=uBcorr
            vB+=vBcorr
            #--------------
            xC=xA+(uA*rkf_a31+uB*rkf_a32)*dt
            yC=yA+(vA*rkf_a31+vB*rkf_a32)*dt
-           uC,vC,rm,sm,iel = interpolate_vel_on_pt(xC,yC,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           uC,vC,rm,sm,iel,C0 = interpolate_vel_on_pt(xC,yC,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uCcorr,vCcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uC+=uCcorr
            vC+=vCcorr
            #--------------
            xD=xA+(uA*rkf_a41+uB*rkf_a42+uC*rkf_a43)*dt
            yD=yA+(vA*rkf_a41+vB*rkf_a42+vC*rkf_a43)*dt
-           uD,vD,rm,sm,iel = interpolate_vel_on_pt(xD,yD,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           uD,vD,rm,sm,iel,C0 = interpolate_vel_on_pt(xD,yD,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uDcorr,vDcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uD+=uDcorr
            vD+=vDcorr
            #--------------
            xE=xA+(uA*rkf_a51+uB*rkf_a52+uC*rkf_a53+uD*rkf_a54)*dt
            yE=yA+(vA*rkf_a51+vB*rkf_a52+vC*rkf_a53+vD*rkf_a54)*dt
-           uE,vE,rm,sm,iel = interpolate_vel_on_pt(xE,yE,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           uE,vE,rm,sm,iel,C0 = interpolate_vel_on_pt(xE,yE,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uEcorr,vEcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uE+=uEcorr
            vE+=vEcorr
            #--------------
            xF=xA+(uA*rkf_a61+uB*rkf_a62+uC*rkf_a63+uD*rkf_a64+uE*rkf_a65)*dt
            yF=yA+(vA*rkf_a61+vB*rkf_a62+vC*rkf_a63+vD*rkf_a64+vE*rkf_a65)*dt
-           uF,vF,rm,sm,iel = interpolate_vel_on_pt(xF,yF,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+           uF,vF,rm,sm,iel,C0 = interpolate_vel_on_pt(xF,yF,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            uFcorr,vFcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uF+=uFcorr
            vF+=vFcorr
            #--------------
            swarm_x[im]=xA+(uA*rkf_b1+uC*rkf_b3+uD*rkf_b4+uE*rkf_b5+uF*rkf_b6)*dt
            swarm_y[im]=yA+(vA*rkf_b1+vC*rkf_b3+vD*rkf_b4+vE*rkf_b5+vF*rkf_b6)*dt
+           swarm_C0[im]=C0
+           swarm_u[im]=(uA*rkf_b1+uC*rkf_b3+uD*rkf_b4+uE*rkf_b5+uF*rkf_b6)*dt
+           swarm_v[im]=(vA*rkf_b1+vC*rkf_b3+vD*rkf_b4+vE*rkf_b5+vF*rkf_b6)*dt
 
        # end for im
 
@@ -676,14 +777,14 @@ for istep in range (0,nstep):
     print("     -> count (m,M) %.5d %.5d " %(np.min(count),np.max(count)))
     print("     -> count (avrg) %f " % avrg)
     print("     -> count (stdev) %f " % standard_deviation)
+    print("     -> swarm_C0 (m,M) %e %e " %(np.min(swarm_C0),np.max(swarm_C0)))
+    print("     -> swarm_divv (m,M) %e %e " %(np.min(swarm_divv),np.max(swarm_divv)))
 
     countfile.write(" %e %d %d %e %e %e \n" % (tijd, np.min(count),np.max(count),\
                                                  np.min(count)/nmarker_per_dim**2,\
                                                  np.max(count)/nmarker_per_dim**2,\
                                                  standard_deviation))
-
     countfile.flush()
-
 
     distrcount=np.zeros(10,dtype=np.int32)
     maxx=2*nmarker_per_dim**2
@@ -722,11 +823,10 @@ for istep in range (0,nstep):
 
        velfile=open("velocity.ascii","w")
        for im in range(0,nmarker):
-           if swarm_x[im]<0.5:
-              ui,vi,pi=solcx.Solution(swarm_x[im],swarm_y[im]) 
-              velfile.write("%e %e %e %e %e %e %e %e\n " % (swarm_x[im],swarm_y[im],\
-                                                            swarm_u[im],swarm_u_corr[im],ui,\
-                                                            swarm_v[im],swarm_v_corr[im],vi))
+           ui,vi,pi=model.Solution(swarm_x[im],swarm_y[im]) 
+           velfile.write("%e %e %e %e %e %e %e %e\n " % (swarm_x[im],swarm_y[im],\
+                                                         swarm_u[im],swarm_u_corr[im],ui,\
+                                                         swarm_v[im],swarm_v_corr[im],vi))
        velfile.close()
 
        filename = 'markers_{:04d}.vtu'.format(istep) 
@@ -764,7 +864,7 @@ for istep in range (0,nstep):
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='error' Format='ascii'> \n")
        for im in range(0,nmarker):
-           ui,vi,pi=solcx.Solution(swarm_x[im],swarm_y[im]) 
+           ui,vi,pi=model.Solution(swarm_x[im],swarm_y[im]) 
            vtufile.write("%10e %10e %10e \n" %(swarm_u[im]+swarm_u_corr[im]-ui,swarm_v[im]+swarm_v_corr[im]-vi,0.))
        vtufile.write("</DataArray>\n")
        #--
@@ -772,6 +872,17 @@ for istep in range (0,nstep):
        for im in range(0,nmarker):
            vtufile.write("%10e \n" % swarm_mat[im])
        vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='C0' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           vtufile.write("%10e \n" % swarm_C0[im])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='div(v)' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           vtufile.write("%10e \n" % swarm_divv[im])
+       vtufile.write("</DataArray>\n")
+
        #--
        vtufile.write("</PointData>\n")
        #####
@@ -800,7 +911,6 @@ for istep in range (0,nstep):
        vtufile.close()
 
 
-
        filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -821,10 +931,10 @@ for istep in range (0,nstep):
            vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
-       for i in range(0,nnp):
-           vtufile.write("%10e \n" %p[i])
-       vtufile.write("</DataArray>\n")
+       #vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+       #for i in range(0,nnp):
+       #    vtufile.write("%10e \n" %p[i])
+       #vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</PointData>\n")
        #####
@@ -882,10 +992,5 @@ for istep in range (0,nstep):
 
 countfile.close()
 
-print("-----------------------------")
-print("------------the end----------")
-print("-----------------------------")
-
-
-
-
+print("----------------------------------------------------")
+print("----------------------------------------------------")
