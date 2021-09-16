@@ -6,22 +6,11 @@ import random
 #import solcx as model
 #import streamlines as model
 #import couette as model
-import box as model 
+#import box as model 
+import box2 as model 
 
 #------------------------------------------------------------------------------
-#def viscosity(x,y):
-#    if x<0.5:
-#       val=1.
-#    else:
-#       val=1.e6
-#    return val
-
-#def density(x,y):
-#    val=math.sin(math.pi*y)*math.cos(math.pi*x)
-#    return val
-
-#------------------------------------------------------------------------------
-# first order basis functions and their derivatives
+# Q1 basis functions and their derivatives
 #------------------------------------------------------------------------------
 
 def NQ1(rq,sq):
@@ -46,7 +35,29 @@ def dNQ1ds(rq,sq):
     return dNds_0,dNds_1,dNds_2,dNds_3
 
 #------------------------------------------------------------------------------
-# second order basis functions and their derivatives
+# P1 basis functions and their derivatives
+#------------------------------------------------------------------------------
+
+def NP1(rq,sq):
+    N_0=1-rq-sq
+    N_1=rq
+    N_2=sq
+    return N_0,N_1,N_2
+
+def dNP1dr(rq,sq):
+    dNdr_0=-1
+    dNdr_1=1
+    dNdr_2=0
+    return dNdr_0,dNdr_1,dNdr_2
+
+def dNP1ds(rq,sq):
+    dNds_0=-1
+    dNds_1=0
+    dNds_2=1
+    return dNds_0,dNds_1,dNds_2
+
+#------------------------------------------------------------------------------
+# Q2 basis functions and their derivatives
 #------------------------------------------------------------------------------
 
 def NQ2(rq,sq):
@@ -86,28 +97,86 @@ def dNQ2ds(rq,sq):
     return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8
 
 #------------------------------------------------------------------------------
+# P2 basis functions and their derivatives
+#------------------------------------------------------------------------------
+
+def NP2(rq,sq):
+     N_0= 1-3*rq-3*sq+2*rq**2+4*rq*sq+2*sq**2
+     N_1= -rq+2*rq**2
+     N_2= -sq+2*sq**2
+     N_3= 4*rq-4*rq**2-4*rq*sq
+     N_4= 4*rq*sq
+     N_5= 4*sq-4*rq*sq-4*sq**2
+     return N_0,N_1,N_2,N_3,N_4,N_5
+
+def dNP2dr(rq,sq):
+    dNdr_0= -3+4*rq+4*sq
+    dNdr_1= -1+4*rq
+    dNdr_2= 0
+    dNdr_3= 4-8*rq-4*sq
+    dNdr_4= 4*sq
+    dNdr_5= -4*sq
+    return dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5
+
+def dNP2ds(rq,sq):
+    dNds_0= -3+4*rq+4*sq
+    dNds_1= 0
+    dNds_2= -1+4*sq
+    dNds_3= -4*rq
+    dNds_4= +4*rq
+    dNds_5= 4-4*rq-8*sq
+    return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5
+
+#------------------------------------------------------------------------------
 
 def interpolate_vel_on_pt(xm,ym,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q):
-    ielx=int(xm/Lx*nelx)
-    iely=int(ym/Ly*nely)
-    iel=nelx*(iely)+ielx
-    xmin=x[icon[0,iel]] ; xmax=x[icon[2,iel]]
-    ymin=y[icon[0,iel]] ; ymax=y[icon[2,iel]]
-    rm=((xm-xmin)/(xmax-xmin)-0.5)*2
-    sm=((ym-ymin)/(ymax-ymin)-0.5)*2
+    #find reduced coordinates
+    ielx=int(xm/Lx*nelx) # row
+    iely=int(ym/Ly*nely) # column
+    if Q>0: # quadrilaterals
+       iel=nelx*(iely)+ielx
+       xmin=x[icon[0,iel]] ; xmax=x[icon[2,iel]]
+       ymin=y[icon[0,iel]] ; ymax=y[icon[2,iel]]
+       rm=((xm-xmin)/(xmax-xmin)-0.5)*2
+       sm=((ym-ymin)/(ymax-ymin)-0.5)*2
+    else: 
+       iel=2*(nelx*(iely)+ielx) # target lower left triangle
+       xmin=x[icon[0,iel]] ; xmax=x[icon[1,iel]]
+       ymin=y[icon[0,iel]] ; ymax=y[icon[2,iel]]
+       rm=(xm-xmin)/(xmax-xmin)
+       sm=(ym-ymin)/(ymax-ymin)
+       if sm>1-rm: # pt is in triangle above
+           iel+=1
+           rm=1-rm
+           sm=1-sm
+
     if Q==1:
        N[0:m]=NQ1(rm,sm)
     if Q==2:
        N[0:m]=NQ2(rm,sm)
+    if Q==-1:
+       N[0:m]=NP1(rm,sm)
+    if Q==-2:
+       N[0:m]=NP2(rm,sm)
+
     um=0.
     vm=0.
     for k in range(0,m):
         um+=N[k]*u[icon[k,iel]]
         vm+=N[k]*v[icon[k,iel]]
-    C0=(u[icon[1,iel]]-u[icon[0,iel]])/4\
-      +(u[icon[2,iel]]-u[icon[3,iel]])/4\
-      +(v[icon[3,iel]]-v[icon[0,iel]])/4\
-      +(v[icon[2,iel]]-v[icon[1,iel]])/4
+
+    if Q==1:
+       C0=(u[icon[1,iel]]-u[icon[0,iel]])/4\
+         +(u[icon[2,iel]]-u[icon[3,iel]])/4\
+         +(v[icon[3,iel]]-v[icon[0,iel]])/4\
+         +(v[icon[2,iel]]-v[icon[1,iel]])/4
+    if Q==2:
+       C0=0.
+    if Q==-1:
+       C0=0.
+    if Q==-2:
+       C0=0.
+
     return um,vm,rm,sm,iel,C0 
 
 #------------------------------------------------------------------------------
@@ -121,19 +190,38 @@ def compute_divv_on_pt(xm,ym,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q):
 
     ielx=int(xm/Lx*nelx)
     iely=int(ym/Ly*nely)
-    iel=nelx*(iely)+ielx
-    xmin=x[icon[0,iel]] ; xmax=x[icon[2,iel]]
-    ymin=y[icon[0,iel]] ; ymax=y[icon[2,iel]]
-    rm=((xm-xmin)/(xmax-xmin)-0.5)*2
-    sm=((ym-ymin)/(ymax-ymin)-0.5)*2
+    if Q>0:
+       iel=nelx*(iely)+ielx
+       xmin=x[icon[0,iel]] ; xmax=x[icon[2,iel]]
+       ymin=y[icon[0,iel]] ; ymax=y[icon[2,iel]]
+       rm=((xm-xmin)/(xmax-xmin)-0.5)*2
+       sm=((ym-ymin)/(ymax-ymin)-0.5)*2
+    else: 
+       iel=2*(nelx*(iely)+ielx) # target lower left triangle
+       xmin=x[icon[0,iel]] ; xmax=x[icon[1,iel]]
+       ymin=y[icon[0,iel]] ; ymax=y[icon[2,iel]]
+       rm=(xm-xmin)/(xmax-xmin)
+       sm=(ym-ymin)/(ymax-ymin)
+       if sm>1-rm: # pt is in triangle above
+           iel+=1
+           rm=1-rm
+           sm=1-sm
 
-    dNdr[0]=-0.25*(1.-sm) ; dNds[0]=-0.25*(1.-rm)
-    dNdr[1]=+0.25*(1.-sm) ; dNds[1]=-0.25*(1.+rm)
-    dNdr[2]=+0.25*(1.+sm) ; dNds[2]=+0.25*(1.+rm)
-    dNdr[3]=-0.25*(1.+sm) ; dNds[3]=+0.25*(1.-rm)
+    if Q==1:
+       dNdr=dNQ1dr(rm,sm)
+       dNds=dNQ1ds(rm,sm)
+    if Q==2:
+       dNdr=dNQ2dr(rm,sm)
+       dNds=dNQ2ds(rm,sm)
+    if Q==-1:
+       dNdr=dNP1dr(rm,sm)
+       dNds=dNP1ds(rm,sm)
+    if Q==-2:
+       dNdr=dNP2dr(rm,sm)
+       dNds=dNP2ds(rm,sm)
 
     jcb=np.zeros((2,2),dtype=np.float64)
-    for k in range(0, m):
+    for k in range(0,m):
         jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
         jcb[1,0]+=dNds[k]*x[icon[k,iel]]
@@ -142,17 +230,15 @@ def compute_divv_on_pt(xm,ym,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q):
     # calculate the inverse of the jacobian
     jcbi=np.linalg.inv(jcb)
 
-    for k in range(0, m):
+    for k in range(0,m):
         dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
         dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
 
     divv=0.
-    for k in range(0, m):
+    for k in range(0,m):
         divv+= dNdx[k]*u[icon[k,iel]]+ dNdy[k]*v[icon[k,iel]]
 
     return divv
-
-
 
 #------------------------------------------------------------------------------
 
@@ -280,23 +366,39 @@ else:
    visu = 1
    nmarker_per_dim=5 # default: 5
    random_markers=1  # default: 1
-   CFL_nb=0.5        # default: 0.5
-   RKorder=2         # default: 2 
+   CFL_nb=0.        # default: 0.5
+   RKorder=1         # default: 2 
    use_cvi=0         # default: 0
-   Q=1               # default: 1
-   nstep=501         # default: 501
+   Q=-2              # default: 1
+   nstep=1       # default: 501
     
 if Q==1:
-   nnx=nelx+1    # number of elements, x direction
-   nny=nely+1    # number of elements, y direction
-   m=4           # number of nodes making up an element
-if Q==2:
-   nnx=2*nelx+1  # number of elements, x direction
-   nny=2*nely+1  # number of elements, y direction
-   m=9           # number of nodes making up an element
+   nnx=nelx+1    
+   nny=nely+1    
+   m=4           
+   nnp=nnx*nny     
+   nel=nelx*nely   
 
-nnp=nnx*nny      # number of nodes
-nel=nelx*nely    # number of elements, total
+if Q==2:
+   nnx=2*nelx+1  
+   nny=2*nely+1  
+   m=9         
+   nnp=nnx*nny    
+   nel=nelx*nely
+
+if Q==-1:
+   nnx=nelx+1   
+   nny=nely+1 
+   m=3        
+   nnp=nnx*nny     
+   nel=2*nelx*nely 
+
+if Q==-2:
+   nnx=2*nelx+1   
+   nny=2*nely+1 
+   m=6        
+   nnp=nnx*nny     
+   nel=2*nelx*nely 
 
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
@@ -348,14 +450,6 @@ countfile=open("markercount_stats_nelx"+str(nelx)+\
                                  "_cvi"+str(use_cvi)+\
                                    "_Q"+str(Q)+".ascii","w")
 
-distrfile=open("markerdistr_stats_nelx"+str(nelx)+\
-                                  '_nm'+str(nmarker_per_dim)+\
-                                "_rand"+str(random_markers)+\
-                                "_CFL_"+str(CFL_nb)+\
-                                  "_rk"+str(RKorder)+\
-                                 "_cvi"+str(use_cvi)+\
-                                   "_Q"+str(Q)+".ascii","w")
-
 #################################################################
 # grid point setup
 #################################################################
@@ -365,7 +459,7 @@ print("grid point setup")
 x = np.empty(nnp, dtype=np.float64)  # x coordinates
 y = np.empty(nnp, dtype=np.float64)  # y coordinates
 
-if Q==1:
+if Q==1 or Q==-1:
    counter = 0
    for j in range(0, nny):
        for i in range(0, nnx):
@@ -376,7 +470,7 @@ if Q==1:
    #end for
 #end if
 
-if Q==2:
+if Q==2 or Q==-2:
    counter = 0
    for j in range(0, nny):
        for i in range(0, nnx):
@@ -390,18 +484,22 @@ if Q==2:
 #################################################################
 # connectivity
 #
-#  04========03  04===07===03
-#  ||        ||  ||   ||   ||
-#  ||        ||  08===09===06
-#  ||        ||  ||   ||   ||
-#  01========02  01===05===02
+#  03========02  03===06===02  02           02
+#  ||        ||  ||   ||   ||  ||\\         ||\\
+#  ||        ||  ||   ||   ||  ||  \\       ||  \\
+#  ||        ||  07===08===05  ||   \\      05   04
+#  ||        ||  ||   ||   ||  ||    \\     ||    \\
+#  ||        ||  ||   ||   ||  ||      \\   ||      \\
+#  00========01  00===04===01  00=======01  00===03===01
+#
+#       Q=1          Q=2          Q=-1         Q=-2
 #
 #################################################################
 print("connectivity")
 
 icon =np.zeros((m, nel),dtype=np.int32)
 
-if Q==1:
+if Q==1: #linear quadrilateral 
    counter = 0
    for j in range(0, nely):
        for i in range(0, nelx):
@@ -414,7 +512,23 @@ if Q==1:
    #end for
 #end if
 
-if Q==2:
+if Q==-1: # linear triangle
+   counter = 0
+   for j in range(0, nely):
+       for i in range(0, nelx):
+           icon[0, counter] = i + j * (nelx + 1)
+           icon[1, counter] = i + 1 + j * (nelx + 1)
+           icon[2, counter] = i + (j + 1) * (nelx + 1)
+           counter += 1
+           icon[2, counter] = i + 1 + j * (nelx + 1)
+           icon[0, counter] = i + 1 + (j + 1) * (nelx + 1)
+           icon[1, counter] = i + (j + 1) * (nelx + 1)
+           counter += 1
+       #end for
+   #end for
+#end if
+
+if Q==2: # quadratic quadrilateral
    counter = 0
    for j in range(0,nely):
        for i in range(0,nelx):
@@ -427,6 +541,28 @@ if Q==2:
            icon[6,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1
            icon[7,counter]=(i)*2+1+(j)*2*nnx+nnx -1
            icon[8,counter]=(i)*2+2+(j)*2*nnx+nnx -1
+           counter += 1
+       #end for
+   #end for
+#end if
+
+if Q==-2: # quadratic triangle
+   counter = 0
+   for j in range(0,nely):
+       for i in range(0,nelx):
+           icon[0,counter]=(i)*2+1+(j)*2*nnx -1
+           icon[1,counter]=(i)*2+3+(j)*2*nnx -1
+           icon[2,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1
+           icon[3,counter]=(i)*2+2+(j)*2*nnx -1
+           icon[4,counter]=(i)*2+2+(j)*2*nnx+nnx -1
+           icon[5,counter]=(i)*2+1+(j)*2*nnx+nnx -1
+           counter += 1
+           icon[0,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1
+           icon[1,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1
+           icon[2,counter]=(i)*2+3+(j)*2*nnx -1
+           icon[3,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1
+           icon[4,counter]=(i)*2+2+(j)*2*nnx+nnx -1
+           icon[5,counter]=(i)*2+3+(j)*2*nnx+nnx -1
            counter += 1
        #end for
    #end for
@@ -456,36 +592,81 @@ start = time.time()
 nmarker_per_element=nmarker_per_dim**2
 nmarker=nel*nmarker_per_element
 
-swarm_x=np.empty(nmarker,dtype=np.float64)  
-swarm_y=np.empty(nmarker,dtype=np.float64)  
+swarm_x=np.zeros(nmarker,dtype=np.float64)  
+swarm_y=np.zeros(nmarker,dtype=np.float64)  
 swarm_u=np.zeros(nmarker,dtype=np.float64)  
 swarm_v=np.zeros(nmarker,dtype=np.float64)  
 swarm_u_corr=np.zeros(nmarker,dtype=np.float64)  
 swarm_v_corr=np.zeros(nmarker,dtype=np.float64)  
 swarm_C0=np.zeros(nmarker,dtype=np.float64)  
 swarm_divv=np.zeros(nmarker,dtype=np.float64)  
+swarm_r=np.zeros(nmarker,dtype=np.float64)  
+swarm_s=np.zeros(nmarker,dtype=np.float64)  
+swarm_iel=np.zeros(nmarker,dtype=np.float64)  
+N = np.zeros(m,dtype=np.float64) # shape functions
 
 if random_markers==1:
+   #counter=0
+   #for iel in range(0,nel):
+   #    x1=x[icon[0,iel]] ; y1=y[icon[0,iel]]
+   #    x2=x[icon[1,iel]] ; y2=y[icon[1,iel]]
+   #    x3=x[icon[2,iel]] ; y3=y[icon[2,iel]]
+   #    x4=x[icon[3,iel]] ; y4=y[icon[3,iel]]
+   #    for im in range(0,nmarker_per_element):
+   #        # generate random numbers r,s between 0 and 1
+   #        r=random.uniform(-1.,+1)
+   #        s=random.uniform(-1.,+1)
+   #        N1=0.25*(1-r)*(1-s)
+   #        N2=0.25*(1+r)*(1-s)
+   #        N3=0.25*(1+r)*(1+s)
+   #        N4=0.25*(1-r)*(1+s)
+   #        swarm_x[counter]=N1*x1+N2*x2+N3*x3+N4*x4
+   #        swarm_y[counter]=N1*y1+N2*y2+N3*y3+N4*y4
+   #        counter+=1
+   #    #end for
+   #end for
+
    counter=0
    for iel in range(0,nel):
-       x1=x[icon[0,iel]] ; y1=y[icon[0,iel]]
-       x2=x[icon[1,iel]] ; y2=y[icon[1,iel]]
-       x3=x[icon[2,iel]] ; y3=y[icon[2,iel]]
-       x4=x[icon[3,iel]] ; y4=y[icon[3,iel]]
        for im in range(0,nmarker_per_element):
-           # generate random numbers r,s between 0 and 1
-           r=random.uniform(-1.,+1)
-           s=random.uniform(-1.,+1)
-           N1=0.25*(1-r)*(1-s)
-           N2=0.25*(1+r)*(1-s)
-           N3=0.25*(1+r)*(1+s)
-           N4=0.25*(1-r)*(1+s)
-           swarm_x[counter]=N1*x1+N2*x2+N3*x3+N4*x4
-           swarm_y[counter]=N1*y1+N2*y2+N3*y3+N4*y4
+           if Q==1:
+              r=random.uniform(-1.,+1)
+              s=random.uniform(-1.,+1)
+              N[0:m]=NQ1(r,s)
+           if Q==2:
+              r=random.uniform(-1.,+1)
+              s=random.uniform(-1.,+1)
+              N[0:m]=NQ2(r,s)
+           if Q==-1 or Q==-2:
+              #borrowed from https://stackoverflow.com/questions/47410054/generate-random-locations-within-a-triangular-domain  
+              #The idea is to compute a weighted average of the three vertices, with the weights given by a random break of 
+              #the unit interval [0, 1] into three pieces (uniformly over all such breaks). Here xx and yy represent the places 
+              #at which we break the unit interval, and ss, tt and uu are the length of the pieces following that break. We 
+              #then use ss, tt and uu as the barycentric coordinates of the point in the triangle.
+              #original coordinates of vetrices have been replaced by those of reference element (0,0), (1,0), (0,1)
+              xx, yy = sorted([random.random(), random.random()])
+              ss, tt, uu = xx, yy - xx, 1 - yy
+              r= ss * 0 + tt * 1 + uu * 0 
+              s= ss * 0 + tt * 0 + uu * 1
+              if Q==-1:
+                 N[0:m]=NP1(r,s)
+              if Q==-2:
+                 N[0:m]=NP2(r,s)
+           for k in range(0,m):
+               swarm_x[counter]+=N[k]*x[icon[k,iel]]
+               swarm_y[counter]+=N[k]*y[icon[k,iel]]
            counter+=1
+           #end for
        #end for
    #end for
+
+   #np.savetxt('swarm.ascii',np.array([swarm_x,swarm_y]).T)
+
 else:
+
+   if Q<0:
+      exit('Q<0 not ok')
+
    counter=0
    for iel in range(0,nel):
        x1=x[icon[0,iel]] ; y1=y[icon[0,iel]]
@@ -519,12 +700,8 @@ print("     -> swarm_C0 (m,M) %e %e " %(np.min(swarm_C0),np.max(swarm_C0)))
 
 count=np.zeros(nel,dtype=np.int32)
 
-for im in range (0,nmarker):
-    ielx=int(swarm_x[im]/Lx*nelx)
-    iely=int(swarm_y[im]/Ly*nely)
-    iel=nelx*(iely)+ielx
-    count[iel]+=1
-    
+count[:]=nmarker_per_dim**2
+
 standard_deviation=np.std(count,dtype=np.float64)
 
 print("     -> count (m,M) %.5d %.5d " %(np.min(count),np.max(count)))
@@ -558,6 +735,9 @@ for i in [0,2,4,6,8,10,12,14]:
 ################################################################################################
 N = np.zeros(m,dtype=np.float64) # shape functions
 
+#u[:]=y[:]
+#v[:]=x[:]
+
 for istep in range (0,nstep):
 
     print("----------------------------------")
@@ -584,6 +764,8 @@ for istep in range (0,nstep):
                                                                  x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
            swarm_u_corr[im],swarm_v_corr[im] =compute_CVI_corr (u,v,icon,rm,sm,iel,use_cvi,Q)
 
+           swarm_r[im]=rm
+           swarm_s[im]=sm
            swarm_x[im]+=(swarm_u[im]+swarm_u_corr[im])*dt
            swarm_y[im]+=(swarm_v[im]+swarm_v_corr[im])*dt
 
@@ -614,6 +796,8 @@ for istep in range (0,nstep):
            uB+=uBcorr
            vB+=vBcorr
            #--------------
+           swarm_r[im]=rm
+           swarm_s[im]=sm
            swarm_x[im]=xA+uB*dt
            swarm_y[im]=yA+vB*dt
            swarm_C0[im]=C0
@@ -646,6 +830,8 @@ for istep in range (0,nstep):
            uC+=uCcorr
            vC+=vCcorr
            #--------------
+           swarm_r[im]=rm
+           swarm_s[im]=sm
            swarm_x[im]=xA+(uA+4*uB+uC)*dt/6.
            swarm_y[im]=yA+(vA+4*vB+vC)*dt/6.
            swarm_C0[im]=C0
@@ -685,6 +871,8 @@ for istep in range (0,nstep):
            uD+=uDcorr
            vD+=vDcorr
            #--------------
+           swarm_r[im]=rm
+           swarm_s[im]=sm
            swarm_x[im]=xA+(uA+2*uB+2*uC+uD)*dt/6.
            swarm_y[im]=yA+(vA+2*vB+2*vC+vD)*dt/6.
            swarm_C0[im]=C0
@@ -738,6 +926,8 @@ for istep in range (0,nstep):
            uF+=uFcorr
            vF+=vFcorr
            #--------------
+           swarm_r[im]=rm
+           swarm_s[im]=sm
            swarm_x[im]=xA+(uA*rkf_b1+uC*rkf_b3+uD*rkf_b4+uE*rkf_b5+uF*rkf_b6)*dt
            swarm_y[im]=yA+(vA*rkf_b1+vC*rkf_b3+vD*rkf_b4+vE*rkf_b5+vF*rkf_b6)*dt
            swarm_C0[im]=C0
@@ -756,18 +946,21 @@ for istep in range (0,nstep):
 
     count=np.zeros(nel,dtype=np.int32)
     for im in range (0,nmarker):
-        ielx=int(swarm_x[im]/Lx*nelx)
-        iely=int(swarm_y[im]/Ly*nely)
-        if ielx<0:
-           exit('ielx<0')
-        if iely<0:
-           exit('iely<0')
-        if ielx>nelx-1:
-           print (swarm_x[im],swarm_y[im],ielx,iely)
-           exit('ielx>nelx-1')
-        if iely>nely-1:
-           exit('iely>nely-1')
-        iel=nelx*(iely)+ielx
+        X,Y,rm,sm,iel,C0 =interpolate_vel_on_pt(swarm_x[im],swarm_y[im],\
+                                                x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
+        swarm_iel[im]=iel
+        #ielx=int(swarm_x[im]/Lx*nelx)
+        #iely=int(swarm_y[im]/Ly*nely)
+        #if ielx<0:
+        #   exit('ielx<0')
+        #if iely<0:
+        #   exit('iely<0')
+        #if ielx>nelx-1:
+        #   print (swarm_x[im],swarm_y[im],ielx,iely)
+        #   exit('ielx>nelx-1')
+        #if iely>nely-1:
+        #   exit('iely>nely-1')
+        #iel=nelx*(iely)+ielx
         count[iel]+=1
 
     avrg=np.sum(count)/nel
@@ -786,42 +979,13 @@ for istep in range (0,nstep):
                                                  standard_deviation))
     countfile.flush()
 
-    distrcount=np.zeros(10,dtype=np.int32)
-    maxx=2*nmarker_per_dim**2
-    for iel in range(0,nel):
-        if count[iel]<0.1*maxx:
-           distrcount[0]+=1
-        elif count[iel]<0.2*maxx:
-           distrcount[1]+=1
-        elif count[iel]<0.3*maxx:
-           distrcount[2]+=1
-        elif count[iel]<0.4*maxx:
-           distrcount[3]+=1
-        elif count[iel]<0.5*maxx:
-           distrcount[4]+=1
-        elif count[iel]<0.6*maxx:
-           distrcount[5]+=1
-        elif count[iel]<0.7*maxx:
-           distrcount[6]+=1
-        elif count[iel]<0.8*maxx:
-           distrcount[7]+=1
-        elif count[iel]<0.9*maxx:
-           distrcount[8]+=1
-        else:
-           distrcount[9]+=1
-
-    for i in range(0,10):
-        distrfile.write("%e %d %d\n" % (tijd,i,distrcount[i]))
-    distrfile.write(" \n")
-    distrfile.flush()
-
     #############################
     # export markers to vtk file
     #############################
 
     if visu==1 and istep%every==0:
 
-       velfile=open("velocity.ascii","w")
+       velfile=open("markers_velocity.ascii","w")
        for im in range(0,nmarker):
            ui,vi,pi=model.Solution(swarm_x[im],swarm_y[im]) 
            velfile.write("%e %e %e %e %e %e %e %e\n " % (swarm_x[im],swarm_y[im],\
@@ -851,16 +1015,17 @@ for istep in range (0,nstep):
            vtufile.write("%10e %10e %10e \n" %(swarm_u[im],swarm_v[im],0.))
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (correction)' Format='ascii'> \n")
-       for im in range(0,nmarker):
-           vtufile.write("%10e %10e %10e \n" %(swarm_u_corr[im],swarm_v_corr[im],0.))
-       vtufile.write("</DataArray>\n")
+       if use_cvi==1:
+          vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (correction)' Format='ascii'> \n")
+          for im in range(0,nmarker):
+              vtufile.write("%10e %10e %10e \n" %(swarm_u_corr[im],swarm_v_corr[im],0.))
+          vtufile.write("</DataArray>\n")
        #--
-#       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (analytical)' Format='ascii'> \n")
-#       for im in range(0,nmarker):
-#           ui,vi,pi=solcx.SolCxSolution(swarm_x[im],swarm_y[im]) 
-#           vtufile.write("%10e %10e %10e \n" %(ui,vi,0.))
-#       vtufile.write("</DataArray>\n")
+       #vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (analytical)' Format='ascii'> \n")
+       #for im in range(0,nmarker):
+       #    ui,vi,pi=solcx.SolCxSolution(swarm_x[im],swarm_y[im]) 
+       #    vtufile.write("%10e %10e %10e \n" %(ui,vi,0.))
+       #vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='error' Format='ascii'> \n")
        for im in range(0,nmarker):
@@ -873,16 +1038,32 @@ for istep in range (0,nstep):
            vtufile.write("%10e \n" % swarm_mat[im])
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='C0' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='r' Format='ascii'> \n")
        for im in range(0,nmarker):
-           vtufile.write("%10e \n" % swarm_C0[im])
+           vtufile.write("%10e \n" % swarm_r[im])
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='div(v)' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='s' Format='ascii'> \n")
        for im in range(0,nmarker):
-           vtufile.write("%10e \n" % swarm_divv[im])
+           vtufile.write("%10e \n" % swarm_s[im])
        vtufile.write("</DataArray>\n")
-
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='iel' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           vtufile.write("%10e \n" % swarm_iel[im])
+       vtufile.write("</DataArray>\n")
+       #--
+       if Q==1:
+          vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='C0' Format='ascii'> \n")
+          for im in range(0,nmarker):
+              vtufile.write("%10e \n" % swarm_C0[im])
+          vtufile.write("</DataArray>\n")
+       #--
+       if RKorder==1:
+          vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='div(v)' Format='ascii'> \n")
+          for im in range(0,nmarker):
+              vtufile.write("%10e \n" % swarm_divv[im])
+          vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</PointData>\n")
        #####
@@ -931,11 +1112,6 @@ for istep in range (0,nstep):
            vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
        #--
-       #vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
-       #for i in range(0,nnp):
-       #    vtufile.write("%10e \n" %p[i])
-       #vtufile.write("</DataArray>\n")
-       #--
        vtufile.write("</PointData>\n")
        #####
        vtufile.write("<CellData Scalars='scalars'>\n")
@@ -948,9 +1124,16 @@ for istep in range (0,nstep):
        vtufile.write("<Cells>\n")
        #--
        vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       if Q==-1:
+          for iel in range (0,nel):
+              vtufile.write("%d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel]))
        if Q==1:
           for iel in range (0,nel):
               vtufile.write("%d %d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel]))
+       if Q==-2:
+          for iel in range (0,nel):
+              vtufile.write("%d %d %d %d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel],\
+                                                    icon[4,iel],icon[5,iel]))
        if Q==2:
           for iel in range (0,nel):
               vtufile.write("%d %d %d %d %d %d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel],\
@@ -959,7 +1142,7 @@ for istep in range (0,nstep):
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-       if Q==1:
+       if Q==1 or Q==-1 or Q==-2:
           for iel in range (0,nel):
               vtufile.write("%d \n" %((iel+1)*m))
        if Q==2:
@@ -968,12 +1151,18 @@ for istep in range (0,nstep):
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       if Q==-1:
+          for iel in range (0,nel):
+              vtufile.write("%d \n" %5)
        if Q==1:
           for iel in range (0,nel):
               vtufile.write("%d \n" %9)
        if Q==2:
           for iel in range (0,nel):
               vtufile.write("%d \n" %23)
+       if Q==-2:
+          for iel in range (0,nel):
+              vtufile.write("%d \n" %22)
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</Cells>\n")

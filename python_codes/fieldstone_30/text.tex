@@ -16,12 +16,13 @@ of Wang \etal (2015) are presented in Section~\ref{sec:cvi}.
 $Q_1$ and $Q_2$ basis functions are used and in both cases the CVI algorithm can be toggled on/off. 
 Particles can be distributed regularly or randomly at startup.
 
-Four velocity fields can be prescribed on the mesh:
+Five velocity fields can be prescribed on the mesh:
 \begin{itemize}
 \item the so-called Couette flow of Wang \etal (2015) \cite{waav15} 
 \item the SolCx solution (see Section~\ref{sec:geobench}, and  other stones too)
 \item a flow created by means of a stream line function (see \stone 32)
 \item a convection cell 
+\item Donea \& Huerta manufactured solution, see Section~\ref{mms1}
 \end{itemize}
 
 The array {\python count} is {\python nel} long and contains the number of markers present in each element.
@@ -326,3 +327,94 @@ is directly computed on the particle, no interpolation).}
 Despite similarities with SolCx (a convection cell in a rectangular domain),
 advection without CVI does not yield areas with too little/many markers.
 When CVI is used it does not alter results substantially.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\subsection*{Convection in square domain - Donea \& Huerta velocity field}
+
+The domain is a unit square and the velocity field is the one of the 
+Donea \& Huerta manufactured solution, see Section~\ref{mms1}:
+\begin{eqnarray}
+u(x,y) &=& x^2(1- x)^2 (2y - 6y^2 + 4y^3) = x^2(1-x)^2 2y (1-3y+2y^2) \nonumber\\
+v(x,y) &=& -y^2 (1 - y)^2 (2x - 6x^2 + 4x^3) = -y^2 (1 - y)^2 2x (1-3x+2x^2) 
+\end{eqnarray}
+
+After a few hundreds of timesteps we find that 4 zones in the domain 
+progressively contain less and less markers:
+
+\begin{center}
+\includegraphics[width=4.3cm]{python_codes/fieldstone_30/results_dh/count0000}
+\includegraphics[width=4.3cm]{python_codes/fieldstone_30/results_dh/count0010}
+\includegraphics[width=4.3cm]{python_codes/fieldstone_30/results_dh/count0040}
+\includegraphics[width=4.3cm]{python_codes/fieldstone_30/results_dh/count0070}\\
+\includegraphics[width=4.3cm]{python_codes/fieldstone_30/results_dh/mmm0000}
+\includegraphics[width=4.3cm]{python_codes/fieldstone_30/results_dh/mmm0010}
+\includegraphics[width=4.3cm]{python_codes/fieldstone_30/results_dh/mmm0040}
+\includegraphics[width=4.3cm]{python_codes/fieldstone_30/results_dh/mmm0070}\\
+{\captionfont Reference model.}
+\end{center}
+
+Looking at the marker count statistics we see that its minimum value reaches zero no 
+matter what option is used, except for CVI: 
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_dh/markercount_rk12345}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_dh/stdev_rk12345}\\
+{\captionfont Ref model + varying RKorder (the star means that velocity 
+is directly computed on the particle, no interpolation).}
+\end{center} 
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_dh/markercount_q12}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_dh/stdev_q12}\\
+{\captionfont Ref model + $Q_1$ vs $Q_2$. }
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_dh/markercount_npd}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_dh/stdev_npd}\\
+{\captionfont Ref model + initial nparticle per element between 4 and 8.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_dh/markercount_cflnb}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_dh/stdev_cflnb}\\
+{\captionfont Ref model + CFL nb}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_dh/markercount_reg}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_dh/stdev_reg}\\
+{\captionfont Ref model + random vs regular.} 
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_dh/markercount_res}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_dh/stdev_res}\\
+{\captionfont Ref model + different resolutions.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_dh/markercount_cvi}
+\includegraphics[width=8cm]{python_codes/fieldstone_30/results_dh/stdev_cvi}\\
+{\captionfont Ref model + influence of CVI.}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
