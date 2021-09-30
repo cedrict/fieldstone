@@ -226,8 +226,6 @@ def compute_divv_on_pt(xm,ym,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q):
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
         jcb[1,0]+=dNds[k]*x[icon[k,iel]]
         jcb[1,1]+=dNds[k]*y[icon[k,iel]]
-
-    # calculate the inverse of the jacobian
     jcbi=np.linalg.inv(jcb)
 
     for k in range(0,m):
@@ -238,7 +236,19 @@ def compute_divv_on_pt(xm,ym,x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q):
     for k in range(0,m):
         divv+= dNdx[k]*u[icon[k,iel]]+ dNdy[k]*v[icon[k,iel]]
 
-    return divv
+    exx=0
+    eyy=0
+    exy=0
+    for k in range(0,m):
+        exx+= dNdx[k]*u[icon[k,iel]]
+        eyy+= dNdy[k]*v[icon[k,iel]]
+        exy+= 0.5*dNdy[k]*u[icon[k,iel]]+0.5*dNdx[k]*v[icon[k,iel]]
+
+    divv=exx+eyy
+
+    sr=np.sqrt(0.5*(exx*exx+eyy*eyy)+exy*exy)
+
+    return divv,sr
 
 #------------------------------------------------------------------------------
 
@@ -251,61 +261,42 @@ def compute_CVI_corr (u,v,icon,rm,sm,iel,use_cvi,Q):
        u_corr=0.5*(v03+v21)*(1.-rm)*(1+rm) 
        v_corr=0.5*(u01+u23)*(1.-sm)*(1+sm) 
     elif use_cvi==1 and Q==2:
-       hx=0.125
-       hy=0.125
-       Jxx=2./hx ; Jxy=0.
-       Jyx=0.    ; Jyy=2./hy
-       #
-       U1=Jxx*u[icon[0,iel]]+Jyx*v[icon[0,iel]]
-       U2=Jxx*u[icon[1,iel]]+Jyx*v[icon[1,iel]]
-       U3=Jxx*u[icon[2,iel]]+Jyx*v[icon[2,iel]]
-       U4=Jxx*u[icon[3,iel]]+Jyx*v[icon[3,iel]]
-       U5=Jxx*u[icon[4,iel]]+Jyx*v[icon[4,iel]]
-       U6=Jxx*u[icon[5,iel]]+Jyx*v[icon[5,iel]]
-       U7=Jxx*u[icon[6,iel]]+Jyx*v[icon[6,iel]]
-       U8=Jxx*u[icon[7,iel]]+Jyx*v[icon[7,iel]]
-       U9=Jxx*u[icon[8,iel]]+Jyx*v[icon[8,iel]]
-
-       V1=Jxy*u[icon[0,iel]]+Jyy*v[icon[0,iel]]
-       V2=Jxy*u[icon[1,iel]]+Jyy*v[icon[1,iel]]
-       V3=Jxy*u[icon[2,iel]]+Jyy*v[icon[2,iel]]
-       V4=Jxy*u[icon[3,iel]]+Jyy*v[icon[3,iel]]
-       V5=Jxy*u[icon[4,iel]]+Jyy*v[icon[4,iel]]
-       V6=Jxy*u[icon[5,iel]]+Jyy*v[icon[5,iel]]
-       V7=Jxy*u[icon[6,iel]]+Jyy*v[icon[6,iel]]
-       V8=Jxy*u[icon[7,iel]]+Jyy*v[icon[7,iel]]
-       V9=Jxy*u[icon[8,iel]]+Jyy*v[icon[8,iel]]
-
-       D0=(-2*U8+2*U6-2*V5+2*V7)*0.25
-       D1=(4*U8-8*U9+4*U6+V1-V4-V2+V3)*0.25
-       D2=(U1-U4-U2+U3+4*V5-8*V9+4*V7)*0.25
-       D3=(-2*U1+2*U4+4*U5-4*U7-2*U2+2*U3\
-           -2*V1+4*V8-2*V4+2*V2-4*V6+2*V3)*0.25
-       D4=(-V1+V4+2*V5-2*V7-V2+V3)*0.25
-       D5=(-U1+2*U8-U4+U2-2*U6+U3)*0.25
-       D6=(2*V1-4*V8+2*V4-4*V5+8*V9-4*V7+2*V2-4*V6+2*V3)*0.25
-       D7=(2*U1-4*U8+2*U4-4*U5+8*U9-4*U7+2*U2-4*U6+2*U3)*0.25
-
-       alpha4=D3/2./(Jxx+Jyy)
-       a1=(D4-Jxy*alpha4)/(3*Jxx)
-       b1=(D5-Jyx*alpha4)/(3*Jyy)
-       b3=(Jxx*D6-Jxy*D7)/(Jxx*Jyy-Jxy*Jyx)/2.
-       a3=(D7-2*Jyx*b3)/(2*Jxx)
-       a0=(D1+2*Jyx*b3)/(2*Jxx)
-       b0=(D2+2*Jxy*a3)/(2*Jyy)
-
-       #verification
-       #print (-2*Jxx*a0+2*Jyx*b3+D1)
-       #print (-2*Jxy*a3-2*Jyy*b0+D2)
-       #print (-2*Jxy*a3-2*Jyy*b3+D6)
-       #print (-2*Jxx*a3-2*Jyx*b3+D7)
-       #print (-2*Jxx*alpha4-2*Jyy*alpha4+D3)
-       #print (-3*Jxx*a1-Jxy*alpha4+D4)
-       #print (-Jyx*alpha4-3*Jyy*b1+D5)
-
-       u_corr=(1-rm**2)*(a0+a1*rm+a3*sm**2+alpha4*sm)
-       v_corr=(1-sm**2)*(b0+b1*sm+b3*rm**2+alpha4*rm)
-
+       u0=u[icon[0,iel]]
+       u1=u[icon[1,iel]]
+       u2=u[icon[2,iel]]
+       u3=u[icon[3,iel]]
+       u4=u[icon[4,iel]]
+       u5=u[icon[5,iel]]
+       u6=u[icon[6,iel]]
+       u7=u[icon[7,iel]]
+       u8=u[icon[8,iel]]
+       v0=v[icon[0,iel]]
+       v1=v[icon[1,iel]]
+       v2=v[icon[2,iel]]
+       v3=v[icon[3,iel]]
+       v4=v[icon[4,iel]]
+       v5=v[icon[5,iel]]
+       v6=v[icon[6,iel]]
+       v7=v[icon[7,iel]]
+       v8=v[icon[8,iel]]
+       C0=0.25*(2*u5-2*u7-2*v4+2*v6)
+       C1=0.25*(4*u5+4*u7-8*u8+v0-v1+v2-v3)
+       C2=0.25*(u0-u1+u2-u3+4*v4+4*v6-8*v8)
+       C3=0.25*(-2*u0-2*u1+2*u2+2*u3+4*u4-4*u6-2*v0+2*v1+2*v2-2*v3-4*v5+4*v7)
+       C4=0.25*(-v0-v1+v2+v3+2*v4-2*v6)
+       C5=0.25*(-u0+u1+u2-u3-2*u5+2*u7)
+       C6=0.25*(2*v0+2*v1+2*v2+2*v3-4*v4-4*v5-4*v6-4*v7+8*v8)
+       C7=0.25*(2*u0+2*u1+2*u2+2*u3-4*u4-4*u5-4*u6-4*u7+8*u8)
+       a00=0.5*(C1+C7/3)
+       a01=C3/4
+       a10=C4/3
+       a11=C6/3
+       b00=0.5*(C2+C6/3)
+       b01=C5/3
+       b10=C3/4
+       b11=C7/3
+       u_corr=(1-rm**2)*(a00+a10*rm+a01*sm+a11*rm*sm) 
+       v_corr=(1-sm**2)*(b00+b10*rm+b01*sm+b11*rm*sm)
     else:
        u_corr=0.
        v_corr=0.
@@ -360,17 +351,18 @@ if int(len(sys.argv) == 11):
    use_cvi        =int(sys.argv[8])
    Q              =int(sys.argv[9])
    nstep          =int(sys.argv[10])
+   print('succesful read of input')
 else:
    nelx = 32         # default: 32
    nely = 32
    visu = 1
    nmarker_per_dim=5 # default: 5
    random_markers=1  # default: 1
-   CFL_nb=0.        # default: 0.5
-   RKorder=1         # default: 2 
-   use_cvi=0         # default: 0
-   Q=-2              # default: 1
-   nstep=1       # default: 501
+   CFL_nb=0.5        # default: 0.5
+   RKorder=2         # default: 2 
+   use_cvi=1         # default: 0
+   Q=2               # default: 1
+   nstep=50001         # default: 501
     
 if Q==1:
    nnx=nelx+1    
@@ -403,7 +395,7 @@ if Q==-2:
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
 
-every=1      # vtu output frequency
+every=10      # vtu output frequency
 
 #Runge-Kutta-Fehlberg coefficients
 rkf_c2=1./4.      
@@ -600,6 +592,7 @@ swarm_u_corr=np.zeros(nmarker,dtype=np.float64)
 swarm_v_corr=np.zeros(nmarker,dtype=np.float64)  
 swarm_C0=np.zeros(nmarker,dtype=np.float64)  
 swarm_divv=np.zeros(nmarker,dtype=np.float64)  
+swarm_sr=np.zeros(nmarker,dtype=np.float64)  
 swarm_r=np.zeros(nmarker,dtype=np.float64)  
 swarm_s=np.zeros(nmarker,dtype=np.float64)  
 swarm_iel=np.zeros(nmarker,dtype=np.float64)  
@@ -728,6 +721,11 @@ for i in [0,2,4,6,8,10,12,14]:
         if swarm_y[im]>i*dy and swarm_y[im]<(i+1)*dy:
            swarm_mat[im]+=1
 
+for im in range (0,nmarker):
+    if swarm_x[im]<Lx/2 and swarm_y[im]>Ly/2:
+           swarm_mat[im]+=3
+
+
 ################################################################################################
 ################################################################################################
 # TIME STEPPING
@@ -773,7 +771,7 @@ for istep in range (0,nstep):
 
            swarm_C0[im]=C0
 
-           swarm_divv[im]=compute_divv_on_pt(swarm_x[im],swarm_y[im],\
+           swarm_divv[im],swarm_sr[im]=compute_divv_on_pt(swarm_x[im],swarm_y[im],\
                                              x,y,u,v,icon,Lx,Ly,nelx,nely,m,Q)
 
        # end for im
@@ -795,6 +793,8 @@ for istep in range (0,nstep):
            uBcorr,vBcorr = compute_CVI_corr(u,v,icon,rm,sm,iel,use_cvi,Q)
            uB+=uBcorr
            vB+=vBcorr
+           swarm_u_corr[im]=uBcorr
+           swarm_v_corr[im]=vBcorr
            #--------------
            swarm_r[im]=rm
            swarm_s[im]=sm
@@ -972,6 +972,7 @@ for istep in range (0,nstep):
     print("     -> count (stdev) %f " % standard_deviation)
     print("     -> swarm_C0 (m,M) %e %e " %(np.min(swarm_C0),np.max(swarm_C0)))
     print("     -> swarm_divv (m,M) %e %e " %(np.min(swarm_divv),np.max(swarm_divv)))
+    print("     -> swarm_sr (m,M) %e %e " %(np.min(swarm_sr),np.max(swarm_sr)))
 
     countfile.write(" %e %d %d %e %e %e \n" % (tijd, np.min(count),np.max(count),\
                                                  np.min(count)/nmarker_per_dim**2,\
@@ -1064,6 +1065,17 @@ for istep in range (0,nstep):
           for im in range(0,nmarker):
               vtufile.write("%10e \n" % swarm_divv[im])
           vtufile.write("</DataArray>\n")
+          vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='eff. strain rate' Format='ascii'> \n")
+          for im in range(0,nmarker):
+              vtufile.write("%10e \n" % swarm_sr[im])
+          vtufile.write("</DataArray>\n")
+          vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='divv/sr' Format='ascii'> \n")
+          for im in range(0,nmarker):
+              vtufile.write("%10e \n" % (abs(swarm_divv[im])/swarm_sr[im]))
+          vtufile.write("</DataArray>\n")
+
+
+
        #--
        vtufile.write("</PointData>\n")
        #####
