@@ -11,31 +11,53 @@ We define 4 fundamental reference quantities:
 \end{itemize}
 From these reference quantities one can form secondary ones, such as
 \begin{itemize}
-\item a time $t_{ref} = L_{ref}^2 / \kappa_{ref}$ (diffusion time)
+\item a time $t_{ref} = L_{ref}^2 / \kappa_{ref}$ (aka the diffusion time)
 \item a velocity $\upnu_{ref} = L_{ref} / t_{ref} = \kappa_{ref}/L_{ref}$
 \item an acceleration $g_{ref} = \upnu_{ref} / t_{ref} = \kappa_{ref}^2/L_{ref}^3$
 \item a strain rate $\dot{\varepsilon}_{ref} = t_{ref}^{-1} = \kappa_{ref} / L_{ref}^2$
-\item a pressure $p_{ref} = \eta_{ref} \dot{\varepsilon}_{ref} $
+\item a pressure $p_{ref} = \eta_{ref} \dot{\varepsilon}_{ref} = \eta_{ref} t_{ref}^{-1}$
 \item a reference density $\rho_{ref} = \eta_{ref} L_{ref} t_{ref}/L_{ref}^3 = \eta_{ref} L_{ref}^{-2} t_{ref}$
+\item a reference mass $M_{ref} = \eta_{ref} L_{ref} t_{ref}$
+\item a reference energy $E_{ref} = \eta_{ref} L_{ref} t_{ref} \frac{L_{ref}^2}{t_{ref}^2} 
+= \eta_{ref} \frac{L_{ref}^3}{t_{ref}}$
+\item a reference heat conductivity\footnote{Units: W/m/K} $k_{ref}= E_{ref}/t_{ref}/L_{ref}/T_{ref}
+= \eta_{ref} L_{ref}^2/t_{ref}^2/T_{ref}$
+\item a reference heat capacity\footnote{Units: J/kg/K} 
+$C_{ref}=E_{ref}/M_{ref}/T_{ref} = L_{ref}^2 /t_{ref}^2/T_{ref} $
+\item a reference heat production coefficient\footnote{Units: W/kg}
+$H_{ref}= E_{ref}/t_{ref}/M_{ref} = \frac{L_{ref}^2}{t_{ref}^3}$
+\item a reference heat flux\footnote{Units: \si{\watt\per\square\meter}, or \si{\kg\per\cubic\second}} 
+$q_{ref}= \eta_{ref} L_{ref} t_{ref}^{-2}$
 \end{itemize}
 We define {\color{teal}dimensionless} quantities as follows:
-\[
+\begin{equation}
 {\color{teal}x} = \frac{x}{L_{ref}}
-\qquad
+\quad
 {\color{teal}\vec\upnu} = \frac{\vec\upnu}{\upnu_{ref}}
-\qquad
+\quad
 {\color{teal}t} = \frac{t}{t_{ref}}
-\qquad
+\quad
 {\color{teal} \eta} = \frac{\eta}{\eta_{ref}}
-\qquad
+\quad
 {\color{teal} g} =\frac{g}{g_{ref}}
-\qquad
+\quad
+{\color{teal} k} = \frac{k}{k_{ref}}
+\quad
+{\color{teal} C_p} = \frac{C_p}{C_{ref}}
+\end{equation}
+
+\begin{equation}
+{\color{teal} H} = \frac{H}{H_{ref}}
+\quad
 {\color{teal} \vec\nabla} = L_{ref}\; \vec\nabla
-\qquad
+\quad
 {\color{teal} \partial_t} = t_{ref}\; \partial_t 
-\qquad
+\quad
 {\color{teal} T} = \frac{T}{T_{ref}}
-\]
+\quad
+{\color{teal} \dot{\varepsilon}} = \dot{\varepsilon} t_{ref}
+\label{eq:physics_adimrels}
+\end{equation}
 We start from the standard Navier-Stokes equation\footnote{\url{https://en.wikipedia.org/wiki/Navier-Stokes_equations}}
 \[
 \rho \frac{D \vec\upnu}{D t}
@@ -129,7 +151,8 @@ We divide each side by $T_{ref}$ so that
 We now divide each side by the reference velocity $\upnu_{ref}$ 
 and we obtain
 \[
-\frac{L_{ref}}{\kappa_{ref}} \frac{\partial {\color{teal}T}}{\partial t} + {\color{teal} \vec\upnu} \cdot\vec\nabla {\color{teal}T} 
+\frac{L_{ref}}{\kappa_{ref}} \frac{\partial {\color{teal}T}}{\partial t} 
++ {\color{teal} \vec\upnu} \cdot\vec\nabla {\color{teal}T} 
 =  \frac{L_{ref}}{\kappa_{ref}}  \kappa \Delta {\color{teal}T}
 \]
 We multiply each side by $L_{ref}$ and we finally get
@@ -151,6 +174,98 @@ The set of dimensionless equations is then:
 \frac{ {\color{teal} \partial T}}{ {\color{teal} \partial t}} 
 + {\color{teal} \vec\upnu} \cdot  {\color{teal}\vec\nabla} {\color{teal}T} &=&  {\color{teal} \kappa} {\color{teal}\Delta} {\color{teal}T}
 \end{eqnarray}
+
+\index{general}{Extended Boussinesq Approximation}
+\index{general}{EBA}
+Looking now at the Extended Boussinesq Approximation (EBA), we have to conside two additional terms in the 
+energy equation:
+\begin{itemize}
+\item the shear heating $\Phi$ (See Eq.\eqref{eq:physicsshearheating}) 
+$\Phi = 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d$ 
+\item the adiabatic heating $\alpha T \vec\upnu\cdot\vec\nabla p$
+\end{itemize}
+We start this time from 
+\[
+\rho C_p \left(\frac{\partial T}{\partial t} + \vec \upnu\cdot\vec\nabla T\right)
+- \vec\nabla\cdot k\vec\nabla T 
+= \rho H + 2\eta\dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
++\alpha T  \vec\upnu \cdot \vec\nabla p 
+\]
+
+\[
+\rho C_p \left(\frac{\partial T}{\partial t} + \vec \upnu\cdot\vec\nabla T\right)
+- \vec\nabla\cdot k\vec\nabla T 
+= \rho H + 2\eta\dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
++\alpha T  \vec\upnu \cdot \vec\nabla p 
+\]
+
+\[
+\rho C_p \frac{T_{ref}}{t_{ref}} \left(\frac{\partial {\color{teal}T}}{\partial {\color{teal}t}} 
++ {\color{teal} \vec \upnu}\cdot {\color{teal}\vec\nabla} {\color{teal}T}\right)
+- \frac{T_{ref}}{L_{ref}^2} {\color{teal}\vec\nabla}\cdot k
+{\color{teal}\vec\nabla} {\color{teal}T} 
+= \rho_{ref} {\color{teal}\rho} H + \frac{\eta_{ref}}{t_{ref}^2} 2 {\color{teal}\eta} 
+{\color{teal}\dot{\bm \varepsilon}^d} : 
+{\color{teal}\dot{\bm \varepsilon}^d} 
++ \frac{p_{ref}}{t_{ref}} {\color{teal} \alpha T}  
+{\color{teal}\vec\upnu} \cdot {\color{teal} \vec\nabla}
+{\color{teal} p} 
+\]
+we then use $p_{ref} = \eta_{ref} t_{ref}^{-1}$ and
+$\rho_{ref} = \eta_{ref} L_{ref}^{-2} t_{ref}$
+\[
+\rho_{ref} C_{ref} \frac{T_{ref}}{t_{ref}} {\color{teal} \rho} {\color{teal}C_p} 
+\left(\frac{ {\color{teal} \partial T}}{ {\color{teal} \partial t}} 
++ {\color{teal} \vec \upnu}\cdot {\color{teal}\vec\nabla} {\color{teal}T}\right)
+- \frac{T_{ref} k_{ref}}{L_{ref}^2} 
+{\color{teal}\vec\nabla}\cdot {\color{teal} k}
+{\color{teal}\vec\nabla} {\color{teal}T} 
+= \frac{\eta_{ref}}{L_{ref}^2} t_{ref}  \frac{L_{ref}^2}{t_{ref}^3} 
+{\color{teal}\rho} {\color{teal} H} 
++ \frac{\eta_{ref}}{t_{ref}^2} 2 {\color{teal}\eta} 
+{\color{teal}\dot{\bm \varepsilon}^d} : 
+{\color{teal}\dot{\bm \varepsilon}^d} 
++ \frac{\eta_{ref}}{t_{ref}^2} {\color{teal} \alpha T}  
+{\color{teal}\vec\upnu} \cdot {\color{teal} \vec\nabla}
+{\color{teal} p} 
+\]
+or, multiplying all by $t^2_{ref}/\eta_{ref}$:
+\[
+\frac{t_{ref}^2}{\eta_{ref}}
+\rho_{ref} C_{ref} \frac{T_{ref}}{t_{ref}} {\color{teal} \rho} {\color{teal}C_p} 
+\left(\frac{ {\color{teal} \partial T}}{ {\color{teal} \partial t}} 
++ {\color{teal} \vec \upnu}\cdot {\color{teal}\vec\nabla} {\color{teal}T}\right)
+- \frac{t_{ref}^2}{\eta_{ref}} \frac{T_{ref} k_{ref}}{L_{ref}^2} 
+{\color{teal}\vec\nabla}\cdot {\color{teal} k}
+{\color{teal}\vec\nabla} {\color{teal}T} 
+=  
+{\color{teal}\rho} {\color{teal} H} 
++  2 {\color{teal}\eta} 
+{\color{teal}\dot{\bm \varepsilon}^d} : 
+{\color{teal}\dot{\bm \varepsilon}^d} 
++  {\color{teal} \alpha T}  
+{\color{teal}\vec\upnu} \cdot {\color{teal} \vec\nabla}
+{\color{teal} p} 
+\]
+We then make use of $C_{ref}=L_{ref}^2 /t_{ref}^2/T_{ref}$
+and $k_{ref}= \eta_{ref} L_{ref}^2/t_{ref}^2/T_{ref}$
+to arrive at
+\[
+{\color{teal} \rho} {\color{teal}C_p} 
+\left(\frac{ {\color{teal} \partial T}}{ {\color{teal} \partial t}} 
++ {\color{teal} \vec \upnu}\cdot {\color{teal}\vec\nabla} {\color{teal}T}\right)
+- 
+{\color{teal}\vec\nabla}\cdot {\color{teal} k}
+{\color{teal}\vec\nabla} {\color{teal}T} 
+=  
+{\color{teal}\rho} {\color{teal} H} 
++  2 {\color{teal}\eta} 
+{\color{teal}\dot{\bm \varepsilon}^d} : 
+{\color{teal}\dot{\bm \varepsilon}^d} 
++  {\color{teal} \alpha T}  
+{\color{teal}\vec\upnu} \cdot {\color{teal} \vec\nabla}
+{\color{teal} p} 
+\]
 
 
 

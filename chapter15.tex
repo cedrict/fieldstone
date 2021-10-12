@@ -1,7 +1,59 @@
 
 {\color{orange} I am by no means an expert when it comes to porous media. I hope to revisit the topic regularly in the coming years and improve this section. Any help or comment welcome.}
 
-\subsection{The equations of fluid flow in a porous medium}
+
+QUESTOIN: What is head? 
+
+%-----------------------------------------------------
+\subsection{Darcy's law for groundwater movement}
+
+[Taken from MODFLOW manual]
+The three-dimensional movement of groundwater of constant density through porous earth material is
+described by Darcy's Law:
+\[
+\vec{q} = - {\bm K}\cdot \vec\nabla h
+\]
+where $\vec{q}$ is a vector of specific discharge (L/T), or fluid-flux vector,
+${\bm K}$ is the hydraulic-conductivity tensor (L/T),
+$h$ is the potentiometric head (L).
+
+When combined with a water balance on a small control volume, Darcy's
+Law leads to a partial-differential equation that describes the distribution of hydraulic head:
+\begin{equation}
+SS \frac{\partial h}{\partial t} = - \vec\nabla\cdot \vec{q} + Q'_s = \vec\nabla \cdot ({\bm K} \cdot \vec\nabla h) + Q_s'
+\label{eq:darcyfl1}
+\end{equation}
+where $Q_s'$ is a volumetric flux per unit volume representing sources and sinks of water, with $Q_s'$ 
+being negative for flow out of the groundwater system, and $Q_s'$ being positive for flow into the system $(T^{-1})$.
+$SS$ is the specific storage of the porous material ($L^{-1}$); and $t$ is time ($T$).
+
+Eq.~\eqref{eq:darcyfl1} describes transient groundwater flow in a 
+heterogeneous and anisotropic medium. This equation, together with specification of flow and head conditions
+at the boundaries of an aquifer system and specification of initial-head conditions, constitutes a mathematical
+representation of a groundwater flow system.
+
+QUESTION: why no gravity in there ?
+
+%end of modflow manual
+
+
+At this stage we have to acknowledge similarities with the heat equation
+with the heat flux $\vec{q}$ being given by
+\[
+\vec{q} = - k \vec\nabla T
+\]
+where $k$ is the heat conductivity (which can also be a tensor if the medium is anisotropic)
+and 
+\[
+\rho C_p \frac{\partial h}{\partial t} = - \vec\nabla\cdot \vec{q} + H = \vec\nabla \cdot (k\vec\nabla T )+ H 
+\]
+This means that in the absence of other physics in the system, we know how to solve the groundwater equation,
+as explained in Chapter~\ref{chapt5}.
+
+
+
+%-----------------------------------------------------
+\subsection{The equations of non-isothermal fluid flow in a porous medium}
 
 A porous medium is a material containing pores. These pores can 
 be filled with a gas or a fluid. Often the pore space forms a network which allows fluids to pass through.

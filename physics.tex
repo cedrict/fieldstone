@@ -240,12 +240,12 @@ In what follows I use the index notation as it makes for easier derivations:
 &=& 2 \eta  \dot{\bm \varepsilon}^d : \left( \dot{\bm \varepsilon}^d +\frac{1}{3} ({\vec \nabla}\cdot{\vec \upnu}) {\bm 1} \right)\nonumber\\
 &=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
 + 2 \eta  \dot{\bm \varepsilon}^d : {\bm 1} ({\vec \nabla}\cdot{\vec \upnu}) \nonumber\\ 
-&=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
+&=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d \label{eq:physicsshearheating} 
 \end{eqnarray}
 Finally (in Cartesian coordinates)
 \begin{equation}
 \Phi = {\bm \tau}:{\vec \nabla}{\vec \upnu} = 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d
-= 2 \eta \left( (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + 2(\dot{\varepsilon}_{xy}^d)^2 \right) \nn
+= 2 \eta \left( (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + 2(\dot{\varepsilon}_{xy}^d)^2 \right) 
 \end{equation}
 See Schubert \& Yuen (1978) \cite{scyu78} for an analysis of shear heating instability in the upper mantle.
 
@@ -362,8 +362,7 @@ by differences in the gravitational force due to a density that depends on
 the temperature. In the following, we largely follow the exposition of this
 material in Schubert, Turcotte and Olson \cite{scto01}.
 
-Specifically, we consider the following set of equations for velocity $\mathbf
-u$, pressure $p$ and temperature $T$:
+Specifically, we consider the following set of equations for velocity $\vec\upnu$, pressure $p$ and temperature $T$:
 \begin{align}
   \label{eq:stokes-1}
   -\vec\nabla \cdot \left[2\eta \left(\dot{\bm \varepsilon}(\vec \upnu)
@@ -374,7 +373,7 @@ u$, pressure $p$ and temperature $T$:
   & \textrm{in $\Omega$},
   \\
   \label{eq:stokes-2}
-  \vec\nabla \cdot (\rho \vec v) &= 0
+  \vec\nabla \cdot (\rho \vec \upnu) &= 0
   &
   & \textrm{in $\Omega$},
   \\
@@ -388,22 +387,22 @@ u$, pressure $p$ and temperature $T$:
   &\quad
   +
   2\eta
-  \left(\dot\varepsilon(\bm v) - \frac{1}{3}(\vec\nabla \cdot \vec \upnu)\mathbf 1\right)
+  \left(\dot\varepsilon(\vec\upnu) - \frac{1}{3}(\vec\nabla \cdot \vec \upnu)\mathbf 1\right)
   :
-  \left(\dot\varepsilon(\bm v) - \frac{1}{3}(\vec\nabla \cdot \vec \upnu)\mathbf 1\right)
+  \left(\dot\varepsilon(\vec\upnu) - \frac{1}{3}(\vec\nabla \cdot \vec \upnu)\mathbf 1\right)
   \\
   &\quad
-  +\alpha T \left( \bm v \cdot \vec\nabla p \right)
+  +\alpha T \left( \vec \upnu \cdot \vec\nabla p \right)
   && \textrm{in $\Omega$},
   \notag
 \end{align}
 where $\dot{\bm \varepsilon}(\vec\upnu) = \frac{1}{2}(\vec\nabla \vec\upnu + \vec\nabla \vec\upnu^T)$ 
 is the symmetric gradient of the velocity (often called the
-\textit{strain rate}).
+\textit{strain rate} tensor).
 
 In this set of equations, \eqref{eq:stokes-1} and \eqref{eq:stokes-2}
-represent the compressible Stokes equations in which $\mathbf v=\mathbf
-v(\mathbf x,t)$ is the velocity field and $p=p(\mathbf x,t)$ the pressure
+represent the compressible Stokes equations in which $\vec\upnu =\vec\upnu (\mathbf x,t)$ 
+is the velocity field and $p=p(\mathbf x,t)$ the pressure
 field. Both fields depend on space $\mathbf x$ and time $t$. Fluid flow is
 driven by the gravity force that acts on the fluid and that is proportional to
 both the density of the fluid and the strength of the gravitational pull.
@@ -430,7 +429,7 @@ from equations above. A partial answer is given in the next section.
 
 Also, their definition of the shear heating term $\Phi$ is:
 \[
-\Phi = k_B ({\bm \nabla}\cdot{\bm v})^2 + 2\eta \dot{\bm \varepsilon}^d:\dot{\bm \varepsilon}^d
+\Phi = k_B ({\vec \nabla}\cdot{\vec \upnu})^2 + 2\eta \dot{\bm \varepsilon}^d:\dot{\bm \varepsilon}^d
 \]
 For many fluids the bulk viscosity $k_B$ is very small and is often taken to be zero, an assumption known
 as the Stokes assumption: $k_B=\lambda+2\eta/3=0$. \index{general}{Bulk Viscosity}
@@ -439,13 +438,14 @@ Note that $\eta$ is the dynamic viscosity and $\lambda$ the second viscosity.
 \index{general}{Second Viscosity}
 Also, 
 \[
-{\bm \tau}=2\eta \dot{\bm \varepsilon} + \lambda ({\bm \nabla}\cdot{\bm v}) {\bm 1}
+{\bm \tau}=2\eta \dot{\bm \varepsilon} + \lambda ({\bm \nabla}\cdot{\vec \upnu}) {\bm 1}
 \]
 but since $k_B=\lambda+2\eta/3=0$, then $\lambda=-2\eta/3$ so 
 \[
-{\bm \tau}=2\eta \dot{\bm \varepsilon} -\frac{2}{3}\eta ({\bm \nabla}\cdot{\bm v}) {\bm 1} = 2\eta \dot{\bm \varepsilon}^d
+{\bm \tau}=2\eta \dot{\bm \varepsilon} -\frac{2}{3}\eta ({\bm \nabla}\cdot{\vec \upnu}) {\bm 1} = 2\eta \dot{\bm \varepsilon}^d
 \]
 
+\newpage
 %---------------------------------------------------------------------------------------------------
 \subsection{Equations for thermal convection in an anelastic, compressible, self-gravitating spherical mantle }
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
