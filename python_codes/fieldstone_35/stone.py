@@ -8,38 +8,70 @@ import time as time
 import matplotlib.pyplot as plt
 
 #------------------------------------------------------------------------------
-def density(x,y,R1,R2,k,rho0,g0):
+# main geometry parameters
+#------------------------------------------------------------------------------
+
+R1=1.
+R2=2.
+kk=2
+
+a=1
+b=-2*R1-2*R2
+c=R1**2+R2**2+4*R1*R2
+d=-2*R1*R2**2-2*R1**2*R2
+e=R1**2*R2**2
+
+print('a=',a)
+print('b=',b)
+print('c=',c)
+print('d=',d)
+print('e=',e)
+
+A=(kk**2-4)*(kk**2-16)
+B=(kk**4-10*kk**2+9)
+C=kk**2*(kk**2-4)
+D=(kk**2-1)*(kk**2-1)
+E=kk**2*(kk**2-4)
+
+print('A=',A)
+print('B=',B)
+print('C=',C)
+print('D=',D)
+print('E=',E)
+
+#------------------------------------------------------------------------------
+def density(x,y,R1,R2,k):
     r=np.sqrt(x*x+y*y)
     theta=math.atan2(y,x)
-    val=1.
+    val=np.sin(k*theta)/k*(A*a*r**4+B*b*r**3+C*c*r**2+D*d*r+E*e)/r**3
     return val
 
 def Psi(x,y,R1,R2,k):
     r=np.sqrt(x*x+y*y)
     theta=math.atan2(y,x)
-    val=(r-R1)**2*(r-R2)**2 *math.cos(k*theta)
+    val=(a*r**4+b*r**3+c*r**2+d*r+e)*np.cos(k*theta)
     return val
 
-def velocity_x(x,y,R1,R2,k,rho0,g0):
+def velocity_x(x,y,R1,R2,k,g0):
     r=np.sqrt(x*x+y*y)
     theta=math.atan2(y,x)
-    vr= -1./r * (r-R1)**2*(r-R2)**2*k*math.sin(k*theta)
-    vtheta = - 2*(r-R1)*(r-R2)**2*math.cos(k*theta) - 2*(r-R1)**2*(r-R2)*math.cos(k*theta)
-    val=vr*math.cos(theta)-vtheta*math.sin(theta)
+    v_r=-(a*r**4+b*r**3+c*r**2+d*r+e)/r*k*np.sin(k*theta)    
+    v_t=-(4*a*r**3+3*b*r**2+2*c*r+d)*np.cos(k*theta)
+    val=v_r*math.cos(theta)-v_t*math.sin(theta)
     return val
 
-def velocity_y(x,y,R1,R2,k,rho0,g0):
+def velocity_y(x,y,R1,R2,k,g0):
     r=np.sqrt(x*x+y*y)
     theta=math.atan2(y,x)
-    vr= -1./r * (r-R1)**2*(r-R2)**2*k*math.sin(k*theta)
-    vtheta = - 2*(r-R1)*(r-R2)**2*math.cos(k*theta) - 2*(r-R1)**2*(r-R2)*math.cos(k*theta)
-    val=vr*math.sin(theta)+vtheta*math.cos(theta)
+    v_r=-(a*r**4+b*r**3+c*r**2+d*r+e)/r*k*np.sin(k*theta)    
+    v_t=-(4*a*r**3+3*b*r**2+2*c*r+d)*np.cos(k*theta)
+    val=v_r*math.sin(theta)+v_t*math.cos(theta)
     return val
 
-def pressure(x,y,R1,R2,k,rho0,g0):
+def pressure(x,y,R1,R2,k):
     r=np.sqrt(x*x+y*y)
     theta=math.atan2(y,x)
-    val=1.
+    val=np.sin(k*theta)/k*( 2*(k**2-16)*a*r**2 +(k**2-9)*b*r +(1-k**2)*d/r -2*k**2*e/r**2 )
     return val
 
 def gx(x,y,g0):
@@ -63,13 +95,8 @@ if int(len(sys.argv) == 3):
    nelr = int(sys.argv[1])
    visu = int(sys.argv[2])
 else:
-   nelr = 32
+   nelr = 40
    visu = 1
-
-assert (nelr>0.), "nnx should be positive" 
-
-R1=1.
-R2=2.
 
 dr=(R2-R1)/nelr
 nelt=int(2.*math.pi*R2/dr)
@@ -79,8 +106,6 @@ nnr=nelr+1
 nnt=nelt
 nnp=nnr*nnt  # number of nodes
 
-rho0=0.
-kk=3
 g0=1.
 
 viscosity=1.  # dynamic viscosity \mu
@@ -114,6 +139,8 @@ for j in range(0,nnr):
         x[counter]=i*sx
         y[counter]=j*sz
         counter += 1
+    #end for
+#end for
 
 counter=0
 for j in range(0,nnr):
@@ -128,6 +155,8 @@ for j in range(0,nnr):
         if theta[counter]<0.:
            theta[counter]+=2.*math.pi
         counter+=1
+    #end for
+#end for
 
 #################################################################
 # connectivity
@@ -135,7 +164,7 @@ for j in range(0,nnr):
 
 print("connectivity")
 
-icon =np.zeros((m, nel),dtype=np.int32)
+icon=np.zeros((m,nel),dtype=np.int32)
 
 counter = 0
 for j in range(0, nelr):
@@ -152,6 +181,8 @@ for j in range(0, nelr):
         icon[2, counter] = icon4
         icon[3, counter] = icon3
         counter += 1
+    #end for
+#end for
 
 #################################################################
 # define boundary conditions
@@ -163,11 +194,14 @@ bc_val = np.zeros(Nfem, dtype=np.float64)
 
 for i in range(0, nnp):
     if r[i]<R1+eps:
-       bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = velocity_x(x[i],y[i],R1,R2,kk,rho0,g0)
-       bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = velocity_y(x[i],y[i],R1,R2,kk,rho0,g0)
-    if r[i]>(R2-eps):
-       bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = velocity_x(x[i],y[i],R1,R2,kk,rho0,g0)
-       bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = velocity_y(x[i],y[i],R1,R2,kk,rho0,g0)
+       bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0 #velocity_x(x[i],y[i],R1,R2,kk,g0)
+       bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0 #velocity_y(x[i],y[i],R1,R2,kk,g0)
+    if r[i]>(R2-eps): 
+       #bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = np.sin(theta[i]) #velocity_x(x[i],y[i],R1,R2,kk,g0)
+       #bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = -np.cos(theta[i]) #velocity_y(x[i],y[i],R1,R2,kk,g0)
+       bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0 #velocity_x(x[i],y[i],R1,R2,kk,g0)
+       bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0 #velocity_y(x[i],y[i],R1,R2,kk,g0)
+#end for
 
 print("defining boundary conditions (%.3fs)" % (time.time() - start))
 
@@ -189,11 +223,11 @@ v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
 k_mat = np.array([[1,1,0],[1,1,0],[0,0,0]],dtype=np.float64) 
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
-for iel in range(0, nel):
+for iel in range(0,nel):
 
     # set 2 arrays to 0 every loop
-    b_el = np.zeros(m * ndof)
-    a_el = np.zeros((m * ndof, m * ndof), dtype=float)
+    b_el = np.zeros(m*ndof)
+    a_el = np.zeros((m*ndof,m*ndof), dtype=np.float64)
 
     # integrate viscous term at 4 quadrature points
     for iq in [-1, 1]:
@@ -217,7 +251,7 @@ for iel in range(0, nel):
             dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
             # calculate jacobian matrix
-            jcb = np.zeros((2, 2),dtype=float)
+            jcb = np.zeros((2, 2),dtype=np.float64)
             for k in range(0,m):
                 jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
                 jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
@@ -250,8 +284,11 @@ for iel in range(0, nel):
 
             # compute elemental rhs vector
             for i in range(0, m):
-                b_el[2*i  ]+=N[i]*jcob*wq*gx(xq,yq,g0)*density(xq,yq,R1,R2,kk,rho0,g0)
-                b_el[2*i+1]+=N[i]*jcob*wq*gy(xq,yq,g0)*density(xq,yq,R1,R2,kk,rho0,g0)
+                b_el[2*i  ]+=N[i]*jcob*wq*gx(xq,yq,g0)*density(xq,yq,R1,R2,kk)
+                b_el[2*i+1]+=N[i]*jcob*wq*gy(xq,yq,g0)*density(xq,yq,R1,R2,kk)
+
+        #end for
+    #end for
 
     # integrate penalty term at 1 point
     rq=0.
@@ -269,17 +306,14 @@ for iel in range(0, nel):
     dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
     # compute the jacobian
-    jcb=np.zeros((2,2),dtype=float)
+    jcb=np.zeros((2,2),dtype=np.float64)
     for k in range(0, m):
         jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
         jcb[1,0]+=dNds[k]*x[icon[k,iel]]
         jcb[1,1]+=dNds[k]*y[icon[k,iel]]
 
-    # calculate determinant of the jacobian
     jcob = np.linalg.det(jcb)
-
-    # calculate the inverse of the jacobian
     jcbi = np.linalg.inv(jcb)
 
     # compute dNdx and dNdy
@@ -331,6 +365,7 @@ print("build FE matrixs & rhs (%.3fs)" % (time.time() - start))
 start = time.time()
 
 sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+
 print("solving system (%.3fs)" % (time.time() - start))
 
 #####################################################################
@@ -343,7 +378,7 @@ u,v=np.reshape(sol,(nnp,2)).T
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
-np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+#np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
 vr= np.cos(theta)*u+np.sin(theta)*v
 vt=-np.sin(theta)*u+np.cos(theta)*v
@@ -352,7 +387,6 @@ print("     -> vr (m,M) %.4f %.4f " %(np.min(vr),np.max(vr)))
 print("     -> vt (m,M) %.4f %.4f " %(np.min(vt),np.max(vt)))
 
 print("reshape solution (%.3fs)" % (time.time() - start))
-    
 
 #####################################################################
 # retrieve pressure
@@ -365,6 +399,7 @@ p  = np.zeros(nel,dtype=np.float64)
 exx = np.zeros(nel,dtype=np.float64)  
 eyy = np.zeros(nel,dtype=np.float64)  
 exy = np.zeros(nel,dtype=np.float64)  
+divv= np.zeros(nel,dtype=np.float64)  
 
 for iel in range(0,nel):
 
@@ -382,17 +417,14 @@ for iel in range(0,nel):
     dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
     dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
-    jcb=np.zeros((2,2),dtype=float)
+    jcb=np.zeros((2,2),dtype=np.float64)
     for k in range(0,m):
         jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
         jcb[1,0]+=dNds[k]*x[icon[k,iel]]
         jcb[1,1]+=dNds[k]*y[icon[k,iel]]
 
-    # calculate determinant of the jacobian
     jcob=np.linalg.det(jcb)
-
-    # calculate the inverse of the jacobian
     jcbi=np.linalg.inv(jcb)
 
     for k in range(0, m):
@@ -407,14 +439,17 @@ for iel in range(0,nel):
         exy[iel] += 0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
 
     p[iel]=-penalty*(exx[iel]+eyy[iel])
+    divv[iel]=exx[iel]+eyy[iel]
+
+#end for
 
 print("p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 print("exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
 print("eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
 print("exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 
-np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
-np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+#np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
+#np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
 print("compute p & sr | time: %.3f s" % (time.time() - start))
 
@@ -455,8 +490,11 @@ for iel in range (0,nel):
                 yq+=N[k]*y[icon[k,iel]]
                 uq+=N[k]*u[icon[k,iel]]
                 vq+=N[k]*v[icon[k,iel]]
-            errv+=((uq-velocity_x(xq,yq,R1,R2,kk,rho0,g0))**2+(vq-velocity_y(xq,yq,R1,R2,kk,rho0,g0))**2)*wq*jcob
-            errp+=(p[iel]-pressure(xq,yq,R1,R2,kk,rho0,g0))**2*wq*jcob
+            errv+=((uq-velocity_x(xq,yq,R1,R2,kk,g0))**2+(vq-velocity_y(xq,yq,R1,R2,kk,g0))**2)*wq*jcob
+            errp+=(p[iel]-pressure(xq,yq,R1,R2,kk))**2*wq*jcob
+        #end for
+    #end for
+#end for
 
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
@@ -497,12 +535,17 @@ if visu==1:
    #--
    vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
    for iel in range (0,nel):
-       vtufile.write("%f\n" % pressure(xc[iel],yc[iel],R1,R2,kk,rho0,g0))
+       vtufile.write("%f\n" % pressure(xc[iel],yc[iel],R1,R2,kk))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' Name='p (error)' Format='ascii'> \n")
    for iel in range (0,nel):
-       vtufile.write("%f\n" % (p[iel]-pressure(xc[iel],yc[iel],R1,R2,kk,rho0,g0)))
+       vtufile.write("%e\n" % (p[iel]-pressure(xc[iel],yc[iel],R1,R2,kk)))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='div(v)' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % (divv[iel]))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("</CellData>\n")
@@ -526,12 +569,12 @@ if visu==1:
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (th)' Format='ascii'> \n")
    for i in range(0,nnp):
-       vtufile.write("%10f %10f %10f \n" %(velocity_x(x[i],y[i],R1,R2,kk,rho0,g0),velocity_y(x[i],y[i],R1,R2,kk,rho0,g0),0.))
+       vtufile.write("%10f %10f %10f \n" %(velocity_x(x[i],y[i],R1,R2,kk,g0),velocity_y(x[i],y[i],R1,R2,kk,g0),0.))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (error)' Format='ascii'> \n")
    for i in range(0,nnp):
-       vtufile.write("%10f %10f %10f \n" %(u[i]-velocity_x(x[i],y[i],R1,R2,kk,rho0,g0),v[i]-velocity_y(x[i],y[i],R1,R2,kk,rho0,g0),0.))
+       vtufile.write("%10f %10f %10f \n" %(u[i]-velocity_x(x[i],y[i],R1,R2,kk,g0),v[i]-velocity_y(x[i],y[i],R1,R2,kk,g0),0.))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='r' Format='ascii'> \n")
@@ -546,7 +589,7 @@ if visu==1:
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='density' Format='ascii'> \n")
    for i in range(0,nnp):
-       vtufile.write("%10f \n" %density(x[i],y[i],R1,R2,kk,rho0,g0))
+       vtufile.write("%10f \n" %density(x[i],y[i],R1,R2,kk))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='Psi' Format='ascii'> \n")
