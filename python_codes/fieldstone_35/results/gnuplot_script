@@ -2,16 +2,22 @@ set term pdf enhanced font "Times,12pt"
 set grid
 set log xy
 set xlabel 'h'
-set ylabel  'error in L_2 norm'
 set key outside
 
-set output 'errors.pdf'
+set ylabel  'velocity error in L_2 norm'
+set output 'errors_v.pdf'
 plot[][]\
-'errors_k3.ascii' u (1/sqrt($2)):5 w lp ps .4  t 'v, k=3',\
-'errors_k3.ascii' u (1/sqrt($2)):8 w lp ps .4  t 'p, k=3',\
-'errors_k4.ascii' u (1/sqrt($2)):5 w lp ps .4  t 'v, k=4',\
-'errors_k4.ascii' u (1/sqrt($2)):8 w lp ps .4  t 'p, k=4',\
-'errors_k5.ascii' u (1/sqrt($2)):5 w lp ps .4  t 'v, k=5',\
-'errors_k5.ascii' u (1/sqrt($2)):8 w lp ps .4  t 'p, k=5',\
-x**2*10 lt -1 t 'h^2' ,\
-2*x*10 lt -1 dt 2 t 'h' 
+'errors_k2.ascii' u (1/sqrt($2)):5 w lp ps .4  t 'k=2',\
+'errors_k3.ascii' u (1/sqrt($2)):5 w lp ps .4  t 'k=3',\
+'errors_k4.ascii' u (1/sqrt($2)):5 w lp ps .4  t 'k=4',\
+'errors_k5.ascii' u (1/sqrt($2)):5 w lp ps .4  t 'k=5',\
+x**2*10 lt -1 t 'h^2'
+
+set ylabel  'pressure error in L_2 norm'
+set output 'errors_p.pdf'
+plot[][]\
+'errors_k2.ascii' u (1/sqrt($2)):8 w lp ps .4  t 'k=2',\
+'errors_k3.ascii' u (1/sqrt($2)):8 w lp ps .4  t 'k=3',\
+'errors_k4.ascii' u (1/sqrt($2)):8 w lp ps .4  t 'k=4',\
+'errors_k5.ascii' u (1/sqrt($2)):8 w lp ps .4  t 'k=5',\
+2*x*10 lt -1 t 'h' 

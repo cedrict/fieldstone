@@ -7,8 +7,9 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The domain is an annulus of inner radius $R_1$ and outer radius $R_2$. Gravity is radial 
+The domain is an annulus with inner radius $R_1$ and outer radius $R_2$. Gravity is radial 
 and has norm 1. 
+Boundary conditions are no-slip on the inner and outer boundaries.
 The velocity, pressure and density fields have been derived in Section~\ref{ss:anconv2}:
 \begin{eqnarray}
 \upnu_r (r,\theta)&=& -\frac{1}{r} (
@@ -24,7 +25,6 @@ p(r,\theta) &= &
 \left[
 2(k^2-16)ar^2
 +(k^2-9)br
--k^2c
 +(1-k^2)\frac{d}{r}
 -2k^2\frac{e}{r^2}
 \right] \\
@@ -51,10 +51,12 @@ D &=& (k^2-1)(k^2-1) \nn     \\
 E &=& k^2(k^2-4) \nn
 \end{eqnarray}
 
-boundary conditions are then no-slip on the inner and outer boundaries.
+I have computed the velocity and pressure discretisation errors for $k=3,4,5$ and 
+have recovered the expected rates for this type of element.
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_35/results/errors}
+\includegraphics[width=7cm]{python_codes/fieldstone_35/results/errors_v}
+\includegraphics[width=7cm]{python_codes/fieldstone_35/results/errors_p}
 \end{center}
 
 \newpage
@@ -80,7 +82,9 @@ boundary conditions are then no-slip on the inner and outer boundaries.
 \includegraphics[width=7.3cm]{python_codes/fieldstone_35/results/iso_k2}
 \includegraphics[width=7.3cm]{python_codes/fieldstone_35/results/iso_k3}\\
 \includegraphics[width=7.3cm]{python_codes/fieldstone_35/results/iso_k4}
-\includegraphics[width=7.3cm]{python_codes/fieldstone_35/results/iso_k5}
+\includegraphics[width=7.3cm]{python_codes/fieldstone_35/results/iso_k5}\\
+{\captionfont Isocontours of the stream function $\Psi$. Velocity vectors
+are of course tangent to these.}
 \end{center}
 
 

@@ -1,0 +1,700 @@
+
+We seek an exact solution to the incompressible Stokes equations for an isoviscous, isothermal fluid in an  annulus.
+Given the geometry of the problem, we work in polar coordinates.
+We denote the orthonormal basis vectors by $\vec{e}_r$ and $\vec{e}_\theta$, the inner radius of the annulus by $R_1$ and the outer radius by $R_2$.
+Further, we assume that the viscosity $\eta$ is constant, 
+which we set to $\eta = 1$, we set the gravity vector to $\vec{g} = -g_r \, \vec{e}_r$ with $g_r = 1$. 
+
+Given these assumptions, the incompressible Stokes equations in the annulus are (see Schubert, Turcotte \& Olson ~\cite{scto01}):
+\begin{eqnarray}
+A_r =     \frac{\partial^2 \upnu_r}{\partial r^2} + \frac{1}{r} \frac{\partial \upnu_r}{\partial r} +   
+      \frac{1}{r^2} \frac{\partial^2 \upnu_r}{\partial \theta^2}
+    - \frac{\upnu_r}{r^2} - \frac{2}{r^2} \frac{\partial \upnu_\theta}{\partial \theta} 
+-\frac{\partial p}{\partial r}  &=& \rho g_r \label{f35:eq1} \\
+A_\theta=
+\frac{\partial^2 \upnu_\theta}{\partial r^2} + \frac{1}{r} \frac{\partial \upnu_\theta}{\partial r} + \frac{1}{r^2} \frac{\partial^2 \upnu_\theta}{\partial \theta^2}
++\frac{2}{r^2} \frac{\partial \upnu_r}{\partial \theta} - \frac{\upnu_\theta}{r^2} 
+-\frac{1}{r}\frac{\partial p}{\partial \theta} &=& 0
+\label{f35:eq2} \\
+\frac{1}{r} \frac{\partial (r\upnu_r)}{\partial r} + \frac{1}{r} \frac{\partial \upnu_\theta}{\partial \theta} &=&0 \label{f35:eq3}
+\end{eqnarray}
+Equations (\ref{f35:eq1}) and (\ref{f35:eq2}) are the momentum equations in polar coordinates while
+Equation (\ref{f35:eq3}) is the mass conservation equation (also called continuity equation).
+The components of the velocity are obtained from the stream function $\Psi$ as follows:
+\[
+\upnu_r = \frac{1}{r}\frac{\partial \Psi}{\partial \theta}
+\quad\quad
+\upnu_\theta = - \frac{\partial \Psi}{\partial r}
+\]
+where $\upnu_r$ is the radial component and $\upnu_\theta$ is the tangential component of the velocity vector.
+
+The stream function is defined for incompressible (divergence-free) 
+flows in 2D (as well as in 3D with axisymmetry).
+The stream function can be used to plot streamlines, 
+which represent the trajectories of particles in a steady flow.
+From calculus it is known that the gradient vector $\nabla \Psi$
+is normal to the curve $\Psi =C$. 
+It can be shown that everywhere ${\vec{\upnu}}\cdot \nabla \Psi =0$ 
+using the formula for $\vec{u}$ in terms of 
+$\Psi$ which proves that level curves of $\Psi$ are streamlines:
+\[
+{\vec \upnu}\cdot \nabla \Psi 
+= \upnu_r \frac{\partial \Psi}{\partial r} + \upnu_\theta \frac{1}{r} \frac{\partial \Psi}{\partial \theta} 
+= \frac{1}{r}\frac{\partial \Psi}{\partial \theta} \frac{\partial \Psi}{\partial r} 
+- \frac{\partial \Psi}{\partial r} \frac{1}{r} \frac{\partial \Psi}{\partial \theta} 
+=0
+\] 
+In polar coordinates the curl of a vector ${\vec A}$ is
+\footnote{\url{https://en.wikipedia.org/wiki/Del_in_cylindrical_and_spherical_coordinates}}:
+\[
+{\vec \nabla}\times {\vec A}
+=
+\frac{1}{r}\left(  
+\frac{\partial (r A_\theta)}{\partial r}
+-
+\frac{\partial A_r}{\partial \theta}
+\right) \vec{e}_z
+\]
+Taking the curl of vector ${\vec A}$ (see Eqs.~\eqref{f35:eq1} and \eqref{f35:eq2}) yields:
+\[
+\frac{1}{r}\left(  
+\frac{\partial (r A_\theta)}{\partial r}
+- \frac{\partial A_r}{\partial \theta}
+\right)
+=
+\frac{1}{r}\left(  
+- \frac{\partial (\rho g_r)}{\partial \theta}
+\right)
+\]
+Multiplying on each side by $r$ 
+\[
+\frac{\partial (r A_\theta)}{\partial r}
+- \frac{\partial A_r}{\partial \theta}
+=
+- \frac{\partial \rho g_r}{\partial \theta}
+\]
+If we now replace $A_r$ and $A_\theta$ by their expressions as a function of velocity and pressure, 
+we will see that the pressure terms cancel out (which is one of the advantages of working with stream line formulations).
+
+Let us assume the following separation of variables $\boxed{\Psi(r,\theta)=\phi(r)\xi(\theta)}$.
+Then 
+\[
+\upnu_r = \frac{1}{r}\frac{\partial \Psi}{\partial \theta} = \frac{\phi \xi'}{r}
+\quad\quad
+\upnu_\theta = - \frac{\partial \Psi}{\partial r} = -\phi' \xi
+\]
+Let us first express $A_r$ and $A_\theta$ as functions of $\phi$ and $\xi$:
+\begin{eqnarray}
+A_r 
+&=& 
+\frac{\partial^2 \upnu_r}{\partial r^2} 
++ \frac{1}{r} \frac{\partial \upnu_r}{\partial r} +   
+\frac{1}{r^2} \frac{\partial^2 \upnu_r}{\partial \theta^2}
+- \frac{\upnu_r}{r^2} 
+- \frac{2}{r^2} \frac{\partial \upnu_\theta}{\partial \theta} -\frac{\partial p}{\partial r}\nn\\ 
+&=& 
+\frac{\partial^2 }{\partial r^2}  \left(\frac{\phi \xi'}{r} \right)
++ \frac{1}{r} \frac{\partial }{\partial r}  \left(\frac{\phi \xi'}{r}\right)  
++\frac{1}{r^2} \frac{\partial^2 }{\partial \theta^2}
+\left(\frac{\phi \xi'}{r}\right)
+- \frac{1}{r^2} \left(\frac{\phi \xi'}{r}\right)
+- \frac{2}{r^2} \frac{\partial }{\partial \theta} 
+\left(-\phi' \xi \right) -\frac{\partial p}{\partial r}\nn\\
+&=& 
+\left(\frac{\phi''}{r} -2\frac{\phi'}{r^2} + 2\frac{\phi}{r^3} \right)\xi'
++ \left(\frac{\phi'}{r^2} - \frac{\phi}{r^3} \right ) \xi' 
++\frac{\phi }{r^3} \xi'''  
+-  \frac{\phi \xi'}{r^3}
++ \frac{2}{r^2} \phi' \xi' -\frac{\partial p}{\partial r}\nn\\
+&=&
+\frac{\phi'' \xi'}{r} + \frac{\phi' \xi'}{r^2} + \frac{\phi\xi''' }{r^3}
+-\frac{\partial p}{\partial r}
+\nn\\
+\frac{\partial A_r}{\partial \theta} &=& 
+\frac{\phi'' \xi''}{r} + \frac{\phi' \xi''}{r^2} + \frac{\phi\xi'''' }{r^3}
+-\frac{\partial^2 p}{\partial r \partial \theta}
+\end{eqnarray}
+
+\begin{eqnarray}
+A_\theta 
+&=&
+\frac{\partial^2 \upnu_\theta}{\partial r^2} 
++ \frac{1}{r} \frac{\partial \upnu_\theta}{\partial r} 
++ \frac{1}{r^2} \frac{\partial^2 \upnu_\theta}{\partial \theta^2}
++\frac{2}{r^2} \frac{\partial \upnu_r}{\partial \theta} 
+- \frac{\upnu_\theta}{r^2} 
+-\frac{1}{r}\frac{\partial p}{\partial \theta}
+\nn\\
+&=&
+\frac{\partial^2 }{\partial r^2}(-\phi' \xi) 
++ \frac{1}{r} \frac{\partial }{\partial r} (-\phi' \xi)
++ \frac{1}{r^2} \frac{\partial^2 }{\partial \theta^2}(-\phi' \xi)
++\frac{2}{r^2} \frac{\partial }{\partial \theta} 
+\left(\frac{\phi \xi'}{r} \right)
+- \frac{1}{r^2} (-\phi' \xi) -\frac{1}{r}\frac{\partial p}{\partial \theta} \nn\\
+&=& - \phi''' \xi 
+- \frac{\phi'' \xi}{r} 
++ \frac{\phi' (\xi -\xi'')}{r^2} 
++\frac{2 \phi \xi''}{r^3} 
+-\frac{1}{r}\frac{\partial p}{\partial \theta} \nn\\
+r A_\theta &=& 
+- \phi''' \xi r
+- \phi'' \xi
++ \frac{\phi' (\xi -\xi'')}{r} 
++\frac{2 \phi \xi''}{r^2} 
+  -\frac{\partial p}{\partial \theta}\nn\\
+\frac{\partial (r A_\theta)}{\partial r} 
+&=& 
+- \left( \phi''' \xi + \phi'''' \xi r \right)
+- \phi''' \xi 
++ (\xi -\xi'') \left( \frac{\phi'' }{r} - \frac{\phi' }{r^2} \right)
++ \left(\frac{2 \phi' \xi''}{r^2} - 2 \frac{2 \phi \xi''}{r^3}\right)
+-\frac{\partial^2 p}{\partial \theta \partial r}\nn\\
+&=& -2\phi''' \xi - \phi'''' \xi r
++ \frac{1}{r  } \phi'' (\xi -\xi'')
++ \frac{1}{r^2} ( -\phi' (\xi-\xi'') + 2 \phi' \xi'' )
++ \frac{1}{r^3} (-4 \phi \xi''  )
+-\frac{\partial^2 p}{\partial \theta \partial r} \nn\\
+&=& -2\phi''' \xi - \phi'''' \xi r
++ \frac{\phi''}{r  }  (\xi -\xi'')
++ \frac{\phi'}{r^2}  ( - \xi +3\xi''  )
++ \frac{\phi}{r^3} (-4  \xi''  )
+-\frac{\partial^2 p}{\partial \theta \partial r} 
+\end{eqnarray}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+\subsubsection*{No slip boundary conditions}
+
+No-slip boundary conditions inside and outside impose that all components of the velocity
+must be zero on both boundaries, i.e.
+\[
+\vec{\upnu}(r=R_1,\theta)=\vec{\upnu}(r=R_2,\theta)=\vec{0}
+\]
+Due to the separation of variables, and choosing 
+$\boxed{\xi(\theta)=\cos(k\theta)}$ we have
+\begin{eqnarray}
+\upnu_r(r,\theta) 
+&=& \frac{1}{r}\frac{\partial \Psi}{\partial \theta} 
+=\frac{\phi \xi'}{r}  
+=-\frac{1}{r} \phi(r) k \sin(k \theta)  \\
+\upnu_\theta(r,\theta) 
+&=& - \frac{\partial \Psi}{\partial r} 
+= - \phi'(r) \xi (\theta)
+= - \phi'(r) \cos(k\theta)
+\end{eqnarray}
+The velocity divergence is given by
+\[
+\vec\nabla\cdot\vec\upnu = 
+\frac{1}{r} \frac{\partial (r\upnu_r)}{\partial r} + \frac{1}{r} \frac{\partial \upnu_\theta}{\partial \theta} 
+=
+\frac{1}{r}
+\left(
+- \phi'(r) k \sin(k\theta) + \phi'(r) k \sin(k\theta) 
+\right)=0
+\]
+so the flow is indeed incompressible.
+
+Since $\xi$ is a function of $\theta$ it is obvious that the only way to insure no-slip boundary conditions for any $\theta$ value is to have all the following four conditions satisfied
+\begin{eqnarray}
+\phi(R_1)=\phi'(R_1) &=& 0 \\
+\phi(R_2)=\phi'(R_2) &=& 0 
+\end{eqnarray}
+We could then choose
+\begin{eqnarray}
+\phi(r)&=&(r-R_1)^2(r-R_2)^2 {\cal F}(r) \\
+\phi'(r)&=&2(r-R_1)(r-R_2)^2 {\cal F}(r)  +2(r-R_1)^2(r-R_2) {\cal F}(r) +(r-R_1)^2(r-R_2)^2 {\cal F}'(r)
+\end{eqnarray}
+which are indeed identically zero on both boundaries. Here ${\cal F}(r)$ is any (smooth enough) function of $r$.
+A generic form for $\Psi$ could then be
+\[
+\boxed{
+\Psi(r,\theta) = (r-R_1)^2(r-R_2)^2 {\cal F}(r) \cos(k\theta)
+}
+\]
+In what follows I take ${\cal F}(r)=1$ for simplicity.
+Then 
+\begin{eqnarray}
+\phi(r)&=&(r-R_1)^2(r-R_2)^2  \nn\\
+&=& (r^2-2rR_1 + R_1^2)(r^2-2rR_2+R_2^2)\nn\\
+&=& \underbrace{1}_{a} r^4 + \underbrace{(-2R_1 -2R_2)}_{b}r^3 + \underbrace{(R_1^2+R_2^2+4R_1R_2)}_{c}r^2 
++ \underbrace{(-2R_1R_2^2-2R_1^2R_2)}_{d}r + \underbrace{R_1^2R_2^2}_{e} \nn\\
+&=& ar^4 + br^3 + cr^2 + dr + e
+\end{eqnarray}    
+and then
+\begin{eqnarray}
+\phi'(r)&=&2(r-R_1)(r-R_2)^2 +2(r-R_1)^2(r-R_2) \\
+        &=&2(r-R_1)(r-R_2) (r-R_2+r-R_1) \\
+        &=&4(r-R_1)(r-R_2) \left(r-\frac{R_1+R_2}{2}\right) \\
+\phi''(r) &=& 8   \left(r-\frac{R_1+R_2}{2}\right)^2  + 4(r-R_1)(r-R_2)\\
+\phi'''(r) &=& 24 \left(r-\frac{R_1+R_2}{2}\right) \\
+\phi''''(r) &=& 24 \\
+\upnu_r(r,\theta) &=& -\frac{1}{r} (r-R_1)^2(r-R_2)^2 \;  k \sin(k \theta)  \\
+\upnu_\theta(r,\theta) 
+&=&  - 4(r-R_1)(r-R_2) \left(r-\frac{R_1+R_2}{2}\right) \cos(k\theta)
+\end{eqnarray}
+
+
+\noindent In the end the functions $\phi$ and $\xi$ are of the form:
+\begin{eqnarray}
+\xi(\theta) &=& \cos (k\theta) \\
+\phi(r) &=& {\color{orange}ar^4}+{\color{blue}br^3}+
+{\color{teal}cr^2}+{\color{red} dr}+ {\color{purple}e}
+\end{eqnarray}
+with
+\begin{eqnarray}
+\xi'(\theta) &=& -k \sin (k\theta) \nn\\
+\xi''(\theta) &=& -k^2 \cos (k\theta) = -k^2 \xi(\theta)\nn\\
+\xi'''(\theta) &=& k^3 \sin (k\theta)\nn\\
+\xi''''(\theta) &=& k^4\cos (k\theta) = k^4 \xi(\theta)\nn\\
+\phi'(r) &=& 4ar^3+3br^2 +2cr + d \nn\\
+\phi''(r) &=& 12 ar^2 + 6 br + 2c \nn\\
+\phi'''(r) &=& 24 ar + 6b \nn\\
+\phi''''(r) &=& 24a \nn
+\end{eqnarray}
+
+
+\subsubsection*{Finding the pressure and density fields}
+We start from the relationship
+\[
+A_\theta=
+\frac{\partial^2 \upnu_\theta}{\partial r^2} + \frac{1}{r} \frac{\partial \upnu_\theta}{\partial r} + \frac{1}{r^2} \frac{\partial^2 \upnu_\theta}{\partial \theta^2}
++\frac{2}{r^2} \frac{\partial \upnu_r}{\partial \theta} - \frac{\upnu_\theta}{r^2} 
+-\frac{1}{r}\frac{\partial p}{\partial \theta} 
+=
+- \phi''' \xi 
+- \frac{\phi'' \xi}{r} 
++ \frac{\phi' (\xi -\xi'')}{r^2} 
++\frac{2 \phi \xi''}{r^3} 
+-\frac{1}{r}\frac{\partial p}{\partial \theta} 
+= 0 
+\]
+Then, after multiplying all by $r^3$ we have
+\begin{eqnarray}
+&&r^2\frac{\partial p}{\partial \theta}\\
+&=&- r^3\phi''' \xi 
+- r^2 \phi'' \xi
++ r \phi' (\xi -\xi'') 
++ 2 \phi \xi''
+\\
+%&=& - r^3(24 ar + 6b )\cos (k\theta)
+%- r^2 (12 ar^2 + 6 br + 2c)  \cos (k\theta) \\
+%&&+ r (4ar^3+3br^2 +2cr + d ) (\cos (k\theta) +k^2 %\cos (k\theta))
+%+ 2 ( ar^4+br^3+cr^2+dr+e) (-k^2 \cos (k\theta) ) %\\
+&=& \cos(k\theta) 
+\left[ - r^3(24 ar + 6b )
+- r^2 (12 ar^2 + 6 br + 2c)  
++ r (4ar^3+3br^2 +2cr + d ) (1 +k^2 )
++ 2 ( ar^4+br^3+cr^2+dr+e) (-k^2  ) \right]\\
+&=& \cos(k\theta) \left[  
+-{\color{orange}24 ar^4} - {\color{blue}6br^3} 
+-  {\color{orange}12 ar^4} - {\color{blue}6 br^3} 
+- {\color{teal} 2cr^2 }
++  ({\color{orange}4ar^4}+{\color{blue}3br^3} + {\color{teal}2cr^2} + {\color{red}dr} )(1+k^2)
+- 2k^2({\color{orange}ar^4}+ {\color{blue}br^3}+{\color{teal}cr^2}
++{\color{red}dr}+{\color{purple}e})
+\right] \nn\\
+&=&  \cos(k\theta) \left[
+(-24-12+4+4k^2-2k^2) {\color{orange} ar^4}
++(-6-6+3+3k^2-2k^2) {\color{blue}br^3}
++(-2+2+2k^2-2k^2) {\color{teal}cr^2}
++(1+k^2-2k^2) {\color{red}dr}
++(-2k^2){\color{purple}e}
+\right] \nn\\
+&=& \cos(k\theta) \left[
+2(k^2-16){\color{orange} ar^4}
++(k^2-9){\color{blue}br^3}
++(1-k^2){\color{red}dr}
+-2k^2{\color{purple}e}
+\right]
+\end{eqnarray}
+or, 
+\[
+\frac{\partial p}{\partial \theta}\\
+= \cos(k\theta) 
+\left[
+2(k^2-16)ar^2
++(k^2-9)br
++(1-k^2)\frac{d}{r}
+-2k^2\frac{e}{r^2}
+\right]
+\]
+i.e. after integration with respect to $\theta$:
+\[
+p(r,\theta) = 
+\frac{1}{k}\sin(k\theta) 
+\left[
+2(k^2-16)ar^2
++(k^2-9)br
++(1-k^2)\frac{d}{r}
+-2k^2\frac{e}{r^2}
+\right]
++f(r)
+\]
+For simplicity we set $f(r)=0$ and then
+\[
+\frac{\partial p}{\partial r}
+=
+\frac{1}{k}\sin(k\theta) 
+\left[
+4(k^2-16)ar
++(k^2-9)b
+-(1-k^2)\frac{d}{r^2}
++4k^2\frac{e}{r^3}
+\right]
+%+f'(r)
+\]
+and since we will need it later:
+\[
+r^3 \frac{\partial p}{\partial r}
+=
+\frac{1}{k}\sin(k\theta) 
+\left[
+4(k^2-16) {\color{orange}ar^4}
++(k^2-9) {\color{blue} b r^3}
+-(1-k^2) {\color{red} dr}
++4k^2 {\color{purple} e}
+\right]
+%+r^3 f'(r)
+\]
+We now turn to
+\[
+A_r= \frac{\phi'' \xi'}{r} + \frac{\phi' \xi'}{r^2} + \frac{\phi\xi''' }{r^3}
+-\frac{\partial p}{\partial r} = \rho g_r
+\]
+or, after multiplying both sides by $r^3$:
+\begin{eqnarray}
+r^2  \phi'' \xi' 
++ r \phi' \xi'  
++ \phi\xi''' 
+- r^3\frac{\partial p}{\partial r} &=& r^3\rho g_r \nn\\
+r^2( 12 ar^2 + 6 br + 2c) (-k \sin (k\theta))
++ r (4ar^3+3br^2 +2cr + d) (-k \sin (k\theta))
++ ( ar^4+br^3+cr^2+dr+e) k^3 \sin (k\theta)  && \nn\\
+-\frac{1}{k}\sin(k\theta) 
+\left[
+4(k^2-16)ar^4
++(k^2-9)b r^3
+-(1-k^2)dr
++4k^2e
+\right]
+%-r^3 f'(r)
+ &=& r^3\rho g_r \nn\\
+\sin(k\theta)
+\left[-k^2( 12 ar^4 + 6 br^3 + 2cr^2)
+-k^2  (4ar^4+3br^3 +2cr^2 + dr) 
++k^4 ( ar^4+br^3+cr^2+dr+e)  \right]  && \nn\\
+-\sin(k\theta) 
+\left[
+4(k^2-16)ar^4
++(k^2-9)b r^3
+-(1-k^2)dr
++4k^2e
+\right]
+%-k r^3 f'(r)
+&=& k r^3\rho g_r \nn\\
+\sin(k\theta)
+\left[
+(-12k^2-4k^2+k^4-4(k^2-16) )ar^4+
+(-6k^2-3k^2+k^4 -(k^2-9))br^3  \right. && \nn\\
+\left.
+(-2k^2-2k^2+k^4 )cr^2+
+(-k^2+k^4+(1-k^2) )dr+
+(k^4-4k^2e )
+\right] &=& k r^3\rho g_r \nn\\
+\sin(k\theta)
+\left[
+(k^4-20k^2+64) {\color{orange} ar^4}+
+(k^4-10k^2+9) {\color{blue} br^3}  
++(k^4-4k^2) {\color{teal}c r^2}
++(k^4-2k^2+1) {\color{red}dr}+
+k^2(k^2-4) {\color{purple}e}
+\right] &=& k r^3\rho g_r \nn
+%\sin(k\theta)
+%\left[
+%(k^2-4)(k^2-16)a r^4+
+%(k^2-1)(k^2-1)br^3  
+%+k^2(k^2-4)c r^2
+%+(k^2-1)(k^2-1)dr+
+%k^2(k^2-4) e
+%\right] &=& k r^3\rho g_r \nn\\
+\end{eqnarray}
+So, assuming $g_r=1$, 
+\[
+\rho(r,\theta)=\frac{\sin(k\theta)}{k}
+\frac{
+A{\color{orange} ar^4}
++B{\color{blue} br^3}
++C {\color{teal}c r^2}
++D {\color{red}dr}
++E {\color{purple}e}
+}{r^3}
+\]
+with 
+\begin{eqnarray}
+A &=& (k^2-4)(k^2-16)\nn \\
+B &=& k^4-10k^2+9\nn    \\
+C &=& k^2(k^2-4)  \nn    \\
+D &=& (k^2-1)(k^2-1) \nn     \\
+E &=& k^2(k^2-4)
+\end{eqnarray}
+
+In the end:
+\begin{eqnarray}
+\upnu_r (r,\theta)&=& -\frac{1}{r} (
+{\color{orange} ar^4}
++{\color{blue} br^3}
++{\color{teal}c r^2}
++ {\color{red}dr}
++{\color{purple}e}
+)k\sin(k\theta)\\
+\upnu_\theta(r,\theta)&=& -(4ar^3+3br^2 +2cr + d ) \cos(k\theta) \\
+p(r,\theta) &= &
+\frac{1}{k}\sin(k\theta) 
+\left[
+2(k^2-16)ar^2
++(k^2-9)br
++(1-k^2)\frac{d}{r}
+-2k^2\frac{e}{r^2}
+\right] \\
+\rho(r,\theta)&=&\frac{\sin(k\theta)}{k}
+\frac{
+A{\color{orange} ar^4}+
+B{\color{blue} br^3}+
+C{\color{teal}c r^2} +
+D {\color{red}dr}+
+E{\color{purple}e}
+}{r^3}
+\end{eqnarray}
+%with
+%\begin{eqnarray}
+%a &=& 1  \nn\\
+%b &=& -2R_1-2R_2 \nn\\
+%c &=& R_1^2+R_2^2+4R_1R_2 \nn\\
+%d &=& -2R_1R_2^2-2R_1^2R_2 \nn\\
+%e &=& R_1^2R_2^2 \nn\\
+%A &=& (k^2-4)(k^2-16)\nn \\
+%B &=& k^4-10k^2+9\nn    \\
+%C &=& k^2(k^2-4)  \nn    \\
+%D &=& (k^2-1)(k^2-1) \nn     \\
+%E &=& k^2(k^2-4) \nn
+%\end{eqnarray}
+
+\subsubsection*{Finding the density field - alternate \& easier take}
+We start this time from 
+\[
+\frac{\partial (r A_\theta)}{\partial r}
+- \frac{\partial A_r}{\partial \theta}
+= - \frac{\partial \rho g_r}{\partial \theta}
+\]
+or, with $g_r=1$,
+\begin{eqnarray}
+ -2\phi''' \xi - \phi'''' \xi r
++ \frac{\phi''}{r  }  (\xi -\xi'')
++ \frac{\phi'}{r^2}  ( - \xi +3\xi''  )
++ \frac{\phi}{r^3} (-4  \xi''  )
+-\frac{\partial^2 p}{\partial \theta \partial r} 
+-\frac{\phi'' \xi''}{r} - \frac{\phi' \xi''}{r^2} - \frac{\phi\xi'''' }{r^3}
++\frac{\partial^2 p}{\partial r \partial \theta}
+&=&
+- \frac{\partial \rho }{\partial \theta} 
+\nn\\
+ -2\phi''' \xi - \phi'''' \xi r
++ \frac{\phi''}{r  }  (\xi -\xi'')
++ \frac{\phi'}{r^2}  ( - \xi +3\xi''  )
++ \frac{\phi}{r^3} (-4  \xi''  )
+-\frac{\phi'' \xi''}{r} - \frac{\phi' \xi''}{r^2} - \frac{\phi\xi'''' }{r^3}
+&=&
+- \frac{\partial \rho }{\partial \theta} \nn
+\end{eqnarray}
+
+Then we note that $\xi''=-k^2 \xi$ and $\xi''''=k^4 \xi$ so that
+\begin{eqnarray}
+ -2\phi''' \xi - \phi'''' \xi r
++ \frac{\phi''}{r  }  (\xi +k^2\xi)
++ \frac{\phi'}{r^2}  ( - \xi -3k^2\xi  )
++ \frac{\phi}{r^3} (4k^2  \xi  )
+-\frac{- k^2\phi'' \xi}{r} - \frac{- k^2 \phi' \xi}{r^2} 
+- \frac{k ^4 \phi\xi }{r^3}
+&=&
+- \frac{\partial \rho }{\partial \theta} \nn\\
+\xi \left[ 
+-2\phi'''  - \phi''''  r
++ \frac{\phi''}{r  }  (1+k^2)
++ \frac{\phi'}{r^2}  ( - 1 -3k^2  )
++ \frac{\phi}{r^3} (4k^2    )
+-\frac{- k^2\phi'' }{r} - \frac{- k^2 \phi' }{r^2} 
+- \frac{k ^4 \phi }{r^3}
+\right]
+&=& 
+- \frac{\partial \rho }{\partial \theta} 
+\nn\\
+\xi(\theta) \left[ 
+-2\phi'''  - \phi''''  r
++ \frac{\phi''}{r  }  (1+2k^2)
++ \frac{\phi'}{r^2}  ( - 1 -2k^2  )
++ \frac{\phi}{r^3} (4k^2 -k^4)
+\right]
+&=& 
+- \frac{\partial \rho }{\partial \theta} \nn 
+\end{eqnarray}
+i.e.
+\[
+\rho(r,\theta) = -\frac{1}{k}\sin (k\theta) \frac{{\cal G}(r)}{r^3}
+\]
+with 
+\begin{eqnarray}
+{\cal G}(r)  
+&=&  
+- \phi''''  r^4
+-2\phi''' r^3 
++ \phi'' r^2  (1+2k^2)
++ \phi' r  ( - 1 -2k^2  )
++ \phi (4k^2 -k^4) \nn\\
+&=& - 24a r^4
+-2 (24 ar + 6b) r^3
++ ( 12 ar^2 + 6 br + 2c) r^2 (1+2k^2) \nn\\
+&&+  (4ar^3+3br^2 +2cr + d) r ( - 1 -2k^2  )
++ (ar^4+br^3+cr^2+dr+e) (4k^2 -k^4) \nn\\
+&=& - 24{\color{orange} ar^4}
+-2 (24 {\color{orange} ar^4} + 6{\color{blue} br^3})
++ ( 12 {\color{orange} ar^4} + 6 {\color{blue} br^3} + 2{\color{teal}c r^2}) (1+2k^2) \nn\\
+&&+  (4{\color{orange} ar^4}+3{\color{blue} br^3} +2{\color{teal}c r^2} + {\color{red}dr})  ( - 1 -2k^2  )
++ ({\color{orange} ar^4}+{\color{blue} br^3}+{\color{teal}c r^2}+{\color{red}dr}+{\color{purple}e}) (4k^2 -k^4) \nn\\
+&=& -A{\color{orange} ar^4} - B{\color{blue} br^3} - 
+C{\color{teal}c r^2} - D{\color{red}dr} -E{\color{purple}e} \nn
+\end{eqnarray}
+with 
+\begin{eqnarray}
+-A &=& -24 -48 +12(1+2k^2) + 4(- 1 -2k^2)+(4k^2 -k^4) \nn\\
+  &=& -24 -48 +12 +24k^2 -4 -8k^2 +4k^2 - k^4 \nn\\
+  &=& -64 +20k^2 -k^4 \nn\\
+  &=& -(k^2-4)(k^2-16) \nn\\
+-B &=& -12 + 6(1+2k^2) +3( - 1 -2k^2  ) + (4k^2 -k^4) \nn\\
+  &=& -12 +6 + 12k^2 -3-6k^2 + 4k^2 - k^4 \nn\\
+  &=& -(k^4 -10k^2 +9)  \nn\\
+-C &=& 2(1+2k^2) + 2( - 1 -2k^2  ) + (4k^2 -k^4)\nn \\
+  &=& 2 + 4k^2 -2 -4k^2 + 4k^2 -k^4 \nn\\
+  &=& 4k^2 -k^4 \nn\\
+  &=& -k^2(k^2-4) \nn\\
+-D &=& ( - 1 -2k^2  ) + (4k^2 -k^4) \nn\\
+  &=& -1 -2k^2 +4k^2 -k^4 \nn\\
+  &=& -1 +2k^2 -k^4 \nn\\
+  &=& -(k^2-1)(k^2-1) \nn\\
+-E &=&  4k^2 -k^4 \nn\\
+  &=& -k^2 (k^2-4) \nn
+\end{eqnarray}
+so in the end we recover
+\begin{eqnarray}
+\rho(r,\theta) &=& \frac{1}{k}\sin (k\theta) 
+\frac{
+A{\color{orange} ar^4}+
+B{\color{blue} br^3}+
+C{\color{teal}c r^2} +
+D {\color{red}dr}+
+E{\color{purple}e}
+}{r^3}
+\nn\\
+A &=& (k^2-4)(k^2-16)\nn \\
+B &=& k^4-10k^2+9\nn    \\
+C &=& k^2(k^2-4)  \nn    \\
+D &=& (k^2-1)(k^2-1) \nn     \\
+E &=& k^2(k^2-4) \nn
+\end{eqnarray}
+The pressure is obtained as presented before.
+
+
+\subsubsection*{Root mean square velocity}
+
+\begin{eqnarray}
+\upnu_{rms}^2 
+&=&  \iint (\upnu_r^2 + \upnu_\theta^2) r drd\theta \nn\\
+&=&  \iint \left[ 
+(\frac{\phi \xi'}{r})^2 + ( -\phi' \xi)^2
+\right] r drd\theta \nn\\
+&=&  \iint (\frac{\phi \xi'}{r})^2 rdrd\theta
++ \iint (-\phi' \xi)^2 r drd\theta \nn\\
+&=&  \underbrace{\int_{R_1}^{R_2} (\frac{\phi }{r})^2 rdr}_{I_1}
+\underbrace{\int_0^{2\pi} (\xi')^2  d\theta}_{I_2}
++
+\underbrace{\int_{R_1}^{R_2} (\phi') ^2 r dr}_{I_3} 
+\underbrace{\int_0^{2\pi} \xi^2  d\theta}_{I_4} \nn
+\end{eqnarray}
+
+\begin{eqnarray}
+I_1 &=&     \nn\\
+I_2 &=&     \nn\\
+I_3 &=&     \nn\\
+I_4 &=&     \nn
+\end{eqnarray}
+
+Unfinished! Also compute strain rate tensor, stress, total mass, etc ...
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+\subsubsection*{Free slip boundary conditions}
+
+\todo[inline]{what follows needs to be checked!!!}
+
+Before postulating the form of $\phi(r)$, let us now turn to the boundary conditions that the flow must fulfill, i.e. free-slip on both boundaries.
+Two conditions must be met:
+
+\begin{itemize}
+\item ${\bm v} \cdot {\bm n}=0$ (no flow through the boundaries) which yields $u(r=R_1)=0$ and $u(r=R_2)=0$, :
+\[
+\frac{1}{r}\frac{\partial \Psi}{\partial \theta} (r=R_1,R_2)=0   \quad\quad \forall \theta
+\]
+which gives us the first constraint since $\Psi(r,\theta)=\phi(r)\xi(\theta)$:
+\[
+\phi(r=R_1)=\phi(r=R_2)=0  
+\]
+\item $({\bm \sigma} \cdot {\bm n}) \times {\bm n} = {\bm 0} $  (the tangential stress at the boundary is zero)
+which imposes: $\sigma_{\theta r}=0$, with
+\[
+\sigma_{\theta r}=
+2 \eta \cdot \frac{1}{2} \left( \frac{\partial v}{\partial r} - \frac{v}{r} + \frac{1}{r} \frac{\partial u}{\partial \theta}    \right)
+= \eta \left( \frac{\partial }{\partial r} (- \frac{\partial \Psi}{\partial r}) -
+\frac{1}{r} (- \frac{\partial \Psi}{\partial r}) + \frac{1}{r} \frac{\partial }{\partial \theta} (\frac{1}{r}\frac{\partial \Psi}{\partial \theta})    \right)
+\]
+Finally $\Psi$ must fulfill (on the boundaries!):
+\[
+-\frac{\partial^2 \Psi}{\partial r^2} + \frac{1}{r}  \frac{\partial \Psi}{\partial r} + \frac{1}{r^2} \frac{\partial^2 \Psi}{\partial \theta^2}=0
+\]
+\[
+- \phi'' \xi + \frac{1}{r} \phi' \xi +  \frac{1}{r^2}  \phi \xi'' = 0
+\]
+or, 
+\[
+- \phi''  + \frac{1}{r} \phi'  -k^2  \frac{1}{r^2}  \phi  = 0
+\]
+Note that this equation is a so-called Euler Differential 
+Equation\footnote{http://mathworld.wolfram.com/EulerDifferentialEquation.html}.
+Since we are looking for a solution $\phi$ such that $\phi(R_1)=\phi(R_2)=0 $ then 
+the 3rd term of the equation above is by definition zero on the boundaries.
+We have to ensure the following equality on the boundary:
+\[
+- \phi''  + \frac{1}{r} \phi'   = 0\quad\quad \text{for} \quad r=R_1,R_2
+\]
+The solution of this ODE is of the form $\phi(r)=ar^2+b$ and it becomes 
+evident that it cannot satisfy $\phi(r=R_1)=\phi(r=R_2)=0$.
+
+
+
+
+\end{itemize}
+
+{\color{red} Separation of variables leads to solutions which cannot fulfill the free slip 
+boundary conditions}
+
+
+
+
+
+
+
+
