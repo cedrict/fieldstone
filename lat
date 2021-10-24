@@ -1,5 +1,6 @@
+biber --output-safechars manual
 pdflatex manual.tex
-bibtex manual
+
 #authorindex manual
 
 makeindex general

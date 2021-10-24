@@ -1,0 +1,7 @@
+perl -ne 'print "$. $_" if m/[\x80-\xFF]/' biblio_geosciences.bib
+perl -ne 'print "$. $_" if m/[\x80-\xFF]/' topics.tex
+perl -ne 'print "$. $_" if m/[\x80-\xFF]/' app*.tex
+perl -ne 'print "$. $_" if m/[\x80-\xFF]/' codes*.tex
+perl -ne 'print "$. $_" if m/[\x80-\xFF]/' basis*.tex
+perl -ne 'print "$. $_" if m/[\x80-\xFF]/' myco*.tex
+perl -ne 'print "$. $_" if m/[\x80-\xFF]/' *.tex
