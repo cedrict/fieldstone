@@ -249,6 +249,11 @@ Finally (in Cartesian coordinates)
 \end{equation}
 See Schubert \& Yuen (1978) \cite{scyu78} for an analysis of shear heating instability in the upper mantle.
 
+Let us quickly look at the $DP/Dt$ term. Often the term $\partial p/\partial t$
+is neglected and the pressure is assumed to be mostly hydrostatic in this term so 
+that $\vec\nabla p = - \rho \vec{g}$ which yields a much simpler formulation. 
+
+
 See discussions about shear heating (``viscous dissipation'') -- meaning and application-- in 
 Froidevaux (1973) \cite{froi73},
 Stein (1978) \cite{stei78},
@@ -461,12 +466,12 @@ We start from the conservation mass, momentum and energy equations (the full Nav
 In solving for the mantle flow field that satisfies the equation of momentum conservation, 
 we incorporate all effects arising from
 self-gravitation and we must therefore explicitly consider the 3-D variation of 
-gravity throughout Earth’s interior. The
+gravity throughout Earth's interior. The
 gravitational acceleration is written as
 \[
 \vec{g} = \vec\nabla \phi
 \]
-where $\phi$ is Earth’s gravitational potential which satisfies Poisson's equation
+where $\phi$ is Earth's gravitational potential which satisfies Poisson's equation
 \[
 \Delta \phi = - 4 \pi {\cal G} \rho
 \]
@@ -1195,139 +1200,7 @@ heterogeneous coefficients \cite{samb20}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 \newpage
 \subsection{The strain rate tensor in all coordinate systems}
-\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
-
-The strain rate tensor $\dot{\bm\varepsilon}$ is given by
-\begin{equation}
-\dot{\bm \varepsilon}({\vec \upnu}) = \frac{1}{2}( {\vec \nabla}{\vec \upnu}+ ({\vec \nabla}{\vec \upnu})^T) 
-\end{equation}
-
-%.....................................
-\subsubsection{Cartesian coordinates}
-\begin{eqnarray}
-\dot\varepsilon_{xx} &=& \frac{\partial u}{\partial x} \\
-\dot\varepsilon_{yy} &=& \frac{\partial v}{\partial y} \\
-\dot\varepsilon_{zz} &=& \frac{\partial w}{\partial z} \\
-\dot\varepsilon_{yx} =
-\dot\varepsilon_{xy} &=& \frac{1}{2} \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x}  \right)\\
-\dot\varepsilon_{zx} =
-\dot\varepsilon_{xz} &=& \frac{1}{2} \left( \frac{\partial u}{\partial z} + \frac{\partial w}{\partial x}  \right)\\
-\dot\varepsilon_{zy} =
-\dot\varepsilon_{yz} &=& \frac{1}{2} \left( \frac{\partial v}{\partial z} + \frac{\partial w}{\partial y}  \right)
-\end{eqnarray}
-
-%.....................................
-\subsubsection{Polar coordinates}
-
-\begin{eqnarray}
-\dot\varepsilon_{rr} 
-&=& \frac{\partial \upnu_r}{\partial r} \\
-\dot\varepsilon_{\theta\theta} 
-&=& \frac{\upnu_r}{r} + \frac{1}{r} \frac{\partial \upnu_\theta}{\partial \theta}  \\
-\dot\varepsilon_{\theta r} = \dot\varepsilon_{r\theta} 
-&=& \frac{1}{2} \left(   \frac{\partial \upnu_\theta}{\partial r} - \frac{\upnu_\theta}{r} 
-+\frac{1}{r} \frac{\partial \upnu_r}{\partial \theta}  \right) 
-\end{eqnarray}
-
-%........................................................
-\subsubsection{Cylindrical coordinates \label{ss:srcc}}
-
-\begin{eqnarray}
-\dot\varepsilon_{rr} 
-&=& \frac{\partial \upnu_r}{\partial r} 
-\\
-\dot\varepsilon_{\theta\theta} 
-&=& \frac{\upnu_r}{r} + \frac{1}{r} \frac{\partial \upnu_\theta}{\partial \theta}  
-\\
-\dot\varepsilon_{\theta r} = \dot\varepsilon_{r\theta} 
-&=& \frac{1}{2} \left(   \frac{\partial \upnu_\theta}{\partial r} - \frac{\upnu_\theta}{r} 
-+\frac{1}{r} \frac{\partial \upnu_r}{\partial \theta}  \right)
-\\
-\dot\varepsilon_{zz} 
-&=& \frac{\partial \upnu_z}{\partial z} 
-\\
-\dot{\varepsilon}_{rz} = \dot{\varepsilon}_{zr} 
-&=& \frac{1}{2}\left( \frac{\partial \upnu_r}{\partial z} + \frac{\partial \upnu_z}{\partial r}  \right) 
-\\
-\dot{\varepsilon}_{\theta z} = \dot{\varepsilon}_{z \theta} &=& \frac{1}{2}\left( 
-\frac{1}{r} \frac{\partial \upnu_z}{\partial \theta} + \frac{\partial \upnu_\theta}{\partial z}  \right) 
-\end{eqnarray}
-
-%......................................................
-\subsubsection{Spherical coordinates \label{ss:srsc}}
-
-\begin{eqnarray}
-\dot\varepsilon_{rr} 
-&=& \frac{\partial \upnu_r}{\partial r} \\
-\dot\varepsilon_{\theta\theta} 
-&=& \frac{\upnu_r}{r} + \frac{1}{r} \frac{\partial \upnu_\theta}{\partial \theta}  \\
-\dot\varepsilon_{\phi\phi} 
-&=& \frac{1}{r \sin\theta} \frac{\partial \upnu_\phi}{\partial \phi} +
-\frac{\upnu_r}{r} +\frac{\upnu_\theta \cot \theta}{r} \\
-\dot\varepsilon_{\theta r} = \dot\varepsilon_{r\theta}   
-&=& \frac{1}{2} \left( r \frac{\partial}{\partial r} (\frac{\upnu_\theta}{r} ) 
-+\frac{1}{r} \frac{\partial \upnu_r}{\partial \theta} \right) \\
-\dot\varepsilon_{\phi r} = \dot\varepsilon_{r\phi}      
-&=&  \frac{1}{2} \left(  \frac{1}{r \sin\theta} \frac{\partial \upnu_r}{\partial \phi} 
-+ r \frac{\partial }{\partial r} (\frac{\upnu_\phi}{r}) \right)  \\
-\dot\varepsilon_{\phi \theta} = \dot\varepsilon_{\theta\phi} 
-&=& \frac{1}{2} \left( \frac{\sin \theta}{r} \frac{\partial }{\partial \theta} (\frac{\upnu_\phi}{\sin\theta}) + \frac{1}{r \sin\theta} \frac{\partial \upnu_\theta}{\partial \phi}    \right) 
-\end{eqnarray}
-
-
-%...............................................................................
-\subsubsection{Relationship between Cartesian and polar coordinates expressions}
-
-We can go from Cartesian to polar coordinates  via the $2\times 2$ transformation matrix:
-\begin{equation}
-{\cal P}=
-\left(
-\begin{array}{ccc}
-\cos\theta & \sin\theta \\
--\sin\theta & \cos\theta
-\end{array}
-\right)
-\end{equation}
-The rows correspond to the components of $\vec{e}_r$ and $\vec{e}_\theta$ in the Cartesian basis.
-A vector $\vec{\upnu}$ transforms from one orthonormal basis to another by multiplying it by 
-the matrix ${\cal P}$. As we have seen before, this yields
-\begin{eqnarray}
-\upnu_r &=& u \cos\theta + v \sin\theta \\
-\upnu_\theta &=& -u \sin\theta + v \cos\theta
-\end{eqnarray}
-A second-order tensor ${\bm a}$ is Cartesian coordinates transforms into ${\bm a}^\star$
-in polar coordinates by 
-\[
-{\bm a}^\star = {\cal P} \cdot {\bm a} \cdot {\cal P}^T
-\]
-and obviously 
-\[
-{\bm a} = {\cal P}^T \cdot {\bm a}^\star \cdot {\cal P}
-\]
-We obtain for the strain rate tensor (or the stress tensor):
-
-\begin{eqnarray}
-\dot{\varepsilon}_{rr} 
-&=& \dot{\varepsilon}_{xx} \cos^2\theta + \dot{\varepsilon}_{yy} \sin^2\theta 
-+ 2 \dot{\varepsilon}_{xy} \sin\theta\cos\theta \\
-\dot{\varepsilon}_{\theta\theta}
-&=& \dot{\varepsilon}_{xx} \sin^2\theta + \dot{\varepsilon}_{yy} \cos^2\theta 
-- 2 \dot{\varepsilon}_{xy} \sin\theta\cos\theta \\
-\dot{\varepsilon}_{r\theta} 
-&=& \dot{\varepsilon}_{xy} (\cos^2\theta-\sin^2\theta) + 
-(\dot{\varepsilon}_{yy} - \dot{\varepsilon}_{xx})\sin\theta \cos\theta
-\end{eqnarray}
-and likewise:
-\begin{eqnarray}
-\dot{\varepsilon}_{xx} 
-&=& \dot{\varepsilon}_{rr} \cos^2\theta + \dot{\varepsilon}_{\theta\theta} \sin^2\theta - 2 \dot{\varepsilon}_{r\theta} \sin\theta\cos\theta \\
-\dot{\varepsilon}_{yy}
-&=& \dot{\varepsilon}_{rr} \sin^2\theta + \dot{\varepsilon}_{\theta\theta} \cos^2\theta + 2 \dot{\varepsilon}_{r\theta} \sin\theta\cos\theta \\
-\dot{\varepsilon}_{xy} 
-&=& \dot{\varepsilon}_{r\theta} (\cos^2\theta-\sin^2\theta) + 
-(\dot{\varepsilon}_{rr} - \dot{\varepsilon}_{\theta\theta})\sin\theta \cos\theta \label{ss:srboth}
-\end{eqnarray}
-
+\input{strainrate_tensor}
 
 
 \newpage

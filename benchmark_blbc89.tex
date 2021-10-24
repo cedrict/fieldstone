@@ -3,12 +3,12 @@ The abstract of the original publication by Blankenbach \etal (1989) \cite{blbc8
 \begin{center}
 {\it 
 We have carried out a comparison study for a set of benchmark problems 
-which are relevant for convection in the Earth’s mantle. The cases comprise 
+which are relevant for convection in the Earth's mantle. The cases comprise 
 steady isoviscous convection, variable viscosity convection and time-dependent 
 convection with internal heating. We compare Nusselt numbers, velocity, 
 temperature, heat-flow , topography and geoid data. Among the applied codes 
 are finite-difference, finite-element and spectral methods. In a synthesis 
-we give best estimates of the ‘true’ solutions and ranges of uncertainty. We
+we give best estimates of the `true' solutions and ranges of uncertainty. We
 recommend these data for the validation of convection codes in the future.
 }
 \end{center}
@@ -56,23 +56,54 @@ the indicated numbers provide a typical range.}
 \end{center}
 
 
+%\begin{center}
+%\begin{tabular}{llcccc}
+%\hline
+%          &           & Blankenbach \etal (1989) &  Tackley (1994)  & King (2009) &   \\
+%          &           & \cite{blbc89} &  \cite{tack94}  & \cite{king09}  & \elefant  \\
+%\hline
+%\hline
+%$\Ranb=10^4$ & $\upnu_{rms}$ &  $42.864947  \pm 0.000020$ & 42.775 (0.2\%) & 42.867  (0.005\%) & 42.867 (0.01\%) \\ 
+%             & $\Nunb$       &  $4.884409   \pm 0.000010$ & 4.878  (0.1\%) & 4.885   (0.02\%)  & 4.882  (0.05\%)\\
+%$\Ranb=10^5$ & $\upnu_{rms}$ &  $193.21454  \pm 0.00010 $ & 193.11 (0.05\%)& 193.248 (0.02\%)  & 193.255 (0.02\%)\\
+%             & $\Nunb$       &  $10.534095  \pm 0.000010$ & 10.531 (0.03\%)& 10.536  (0.02\%)  & 10.507 (0.26\%) \\
+%$\Ranb=10^6$ & $\upnu_{rms}$ &  $833.98977  \pm 0.00020 $ & 833.55 (0.05\%)& 834.353 (0.04\%)  & 834.712   (0.08\%)\\
+%             & $\Nunb$       &  $21.972465  \pm 0.000020$ & 21.998 (0.1\%)& 21.981  (0.04\%)  & 21.695  (1.2\%)\\
+%\hline
+%\end{tabular} \\
+%{\captionfont Steady state Nusselt number and Vrms measurements as reported in the literature and 
+%obtained with \elefant on a $200\times 200$ grid.}
+%\end{center} 
+
+
 \begin{center}
-\begin{tabular}{llcccc}
+\begin{tabular}{llll}
 \hline
-          &           & Blankenbach \etal (1989) &  Tackley (1994)  & King (2009) &   \\
-          &           & \cite{blbc89} &  \cite{tack94}  & \cite{king09}  & \elefant  \\
+                                       &              & $\upnu_{rms}$             & $\Nunb$                   \\
 \hline
+Blankenbach \etal (1989) \cite{blbc89} & $\Ranb=10^4$ & $42.864947  \pm 0.000020$ & $4.884409   \pm 0.000010$ \\
+                                       & $\Ranb=10^5$ & $193.21454  \pm 0.00010 $ & $10.534095  \pm 0.000010$ \\
+                                       & $\Ranb=10^6$ & $833.98977  \pm 0.00020 $ & $21.972465  \pm 0.000020$ \\
 \hline
-$\Ranb=10^4$ & $\upnu_{rms}$ &  $42.864947  \pm 0.000020$ & 42.775 (0.2\%) & 42.867  (0.005\%) & 42.867 (0.01\%) \\ 
-             & $\Nunb$       &  $4.884409   \pm 0.000010$ & 4.878  (0.1\%) & 4.885   (0.02\%)  & 4.882  (0.05\%)\\
-$\Ranb=10^5$ & $\upnu_{rms}$ &  $193.21454  \pm 0.00010 $ & 193.11 (0.05\%)& 193.248 (0.02\%)  & 193.255 (0.02\%)\\
-             & $\Nunb$       &  $10.534095  \pm 0.000010$ & 10.531 (0.03\%)& 10.536  (0.02\%)  & 10.507 (0.26\%) \\
-$\Ranb=10^6$ & $\upnu_{rms}$ &  $833.98977  \pm 0.00020 $ & 833.55 (0.05\%)& 834.353 (0.04\%)  & 834.712   (0.08\%)\\
-             & $\Nunb$       &  $21.972465  \pm 0.000020$ & 21.998 (0.1\%)& 21.981  (0.04\%)  & 21.695  (1.2\%)\\
+Tackley (1994) \cite{tack94}           & $\Ranb=10^4$ & 42.775                    & 4.878  \\
+                                       & $\Ranb=10^5$ & 193.11                    & 10.531 \\
+                                       & $\Ranb=10^6$ & 833.55                    & 21.998 \\
 \hline
-\end{tabular} \\
+King (2009) \cite{king09}              & $\Ranb=10^4$ & 42.867                    & 4.885   \\
+                                       & $\Ranb=10^5$ & 193.248                   & 10.536  \\
+                                       & $\Ranb=10^6$ & 834.353                   & 21.981  \\
+\hline
+Thieulot (2014) \cite{thie14}          & $\Ranb=10^4$ & 42.867                    & 4.882   \\
+                                       & $\Ranb=10^5$ & 193.255                   & 10.507  \\
+                                       & $\Ranb=10^6$ & 834.712                   & 21.695  \\
+\hline
+\aspect  \cite{aspectmanual}           & $\Ranb=10^4$ &       &       \\
+                                       & $\Ranb=10^5$ &       &       \\
+                                       & $\Ranb=10^6$ &       &       \\
+\hline
+\end{tabular}\\
 {\captionfont Steady state Nusselt number and Vrms measurements as reported in the literature and 
-obtained with \elefant on a $200\times 200$ grid.}
+obtained with \elefant on a $200\times 200$ grid. King (2009) results on 200x200 grid with ConMan.}
 \end{center} 
 
 
@@ -87,7 +118,6 @@ Beuchert \& Podlachikov (2010) \cite{bepo10},
 Leng \& Zhong (2011) \cite{lezh11},
 Davies \etal (2011) \cite{dawk11},
 Vynnytska \etal (2013) \cite{vyrc13},
-\aspect{} manual \cite{aspectmanual},
 Trim \etal (2021) \cite{trbs21},
 \stone 3.
 

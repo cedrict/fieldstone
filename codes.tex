@@ -215,7 +215,7 @@ Gerardi \etal \cite{gert19}
 Citcom (California Institute of Technology COnvection in the Mantle) was  developed by Louis
 Moresi at the California Institute of Technology (Moresi, 1992). This code solved the equations
 of viscous fluid dynamics, and, as the name implies, was geared towards modelling convection in
-the Earth’s mantle. Moresi and Solomatov (nineteenninetyfive) provide a detailed description of the multigrid
+the Earth's mantle. Moresi and Solomatov (\nineteenninetyfive) provide a detailed description of the multigrid
 finite element algorithm. After this and during his time at CSIRO, Dr. Moresi modified the code to
 include mobile integration points. The code became a particle-in-cell finite-element code named
 CIItcom , which was able to track and evolve material properties on particles. This work at
@@ -259,7 +259,7 @@ These codes are hosted by CIG at\\
 \item[\twothousandfour] Ke \& Solomatov \cite{keso04}, Solomatov \cite{solo04},
                     Freeman \etal \cite{frmm04}, Lenardic \etal \cite{lenm04},
                     Cooper \etal \cite{colm04}, McNamara \etal \cite{mczh04}, 
-                    Vezolainen \etal \cite{vesb04}
+                    Vezolainen \etal \cite{vesb04}, Roberts \& Zhong \cite{rozh04}
 \item[\twothousandfive] van Hunen \etal \cite{vazs05}, Billen \& Hirth \cite{bihi05},
                     McNamara \& Zhong \cite{mczh05a}\cite{mczh05b},
                     Lenardic \etal \cite{lemj05}, Zhong \cite{zhon05}
@@ -386,7 +386,8 @@ These codes are hosted by CIG at\\
                     Billen \cite{bill20}, Semple \& Lenardic \cite{sele20},
                     Dang \etal \cite{dazl20}, Wang \& Li \cite{wali20}, Paul \& Ghosh \cite{pagh20}
 \item[\twothousandtwentyone] Cao \etal \cite{cafm21}, Liu \etal \cite{ligl21},
-                             Schliffke \etal \cite{scvg21}, Liu \etal \cite{ligl21b}
+                             Schliffke \etal \cite{scvg21}, Liu \etal \cite{ligl21b},
+                             Wang \& Li \cite{wali21}
 \end{itemize}
 \end{scriptsize}
 
@@ -454,7 +455,8 @@ This code is hosted by CIG at \url{https://geodynamics.org/cig/software/conman/}
 SCAM (Spherical Convection in an Axisymmetric Mantle) is a spherical, axisymmetric version 
 of the finite element code ConMan (!). It is used in Kellogg \& King (1997) \cite{keki97}, 
 King (1997) \cite{king97}, Kiefer \& Kellogg (1998) \cite{kike98}, Kiefer (2003)\cite{kief03}, 
-Redmond \& King (2004) \cite{reki04}.
+Redmond \& King (2004) \cite{reki04}, Li \& Kiefer \cite{liki07}.
+Also probably \cite{fari94} and \cite{fari95}.
 
 %------------------------------------------------------------------------------
 \item {\codefont ConvRS/ConvGS} 
@@ -462,14 +464,11 @@ Redmond \& King (2004) \cite{reki04}.
 
 \begin{scriptsize}
 \noindent
-\twothousandeight:
-Yoshida \cite{yosh08}\\
-\twothousandtwelve:
-Yoshida \etal \cite{yoth12}\\
-\twothousandthirteen:
-Yoshida \cite{yosh13} \\
-\twothousandtwenty:
-Yoshida \etal \cite{yosy20}
+\twothousandeight: Yoshida \cite{yosh08}\\
+\twothousandnine: Yoshida \& Nakakuki \cite{yona09}\\
+\twothousandtwelve: Yoshida \etal \cite{yoth12}\\
+\twothousandthirteen: Yoshida \cite{yosh13} \\
+\twothousandtwenty: Yoshida \etal \cite{yosy20}
 \end{scriptsize} 
 
 %------------------------------------------------------------------------------
@@ -510,7 +509,7 @@ Yoshida \etal \cite{yosy20}
 
 MC3D utilises a hybrid spectral finite difference scheme flow
 solver and a finite volume scheme for the solution of the energy equation.
-It was originally developed at Los Alamos in the late 1980’s for Cray/Vector architecture. 
+It was originally developed at Los Alamos in the late 1980's for Cray/Vector architecture. 
 and later parallelized (MPI) to run on clusters (1999).
 MC3D is second-order accurate in time and space.
 
@@ -647,11 +646,11 @@ Some technical issues\\
 pressure oscilations\\
 Slow UZAWA convergence\\
 Some non-functional rheologies (users need to be warned!)\\
-Easiest to fall back on our individual “known” codes\\
+Easiest to fall back on our individual ``known'' codes\\
 Difficulty in translating geology to/from GALE (difficult I/O interface)\\
 Community engagement in development has not materialized \\
 Opaque code\\
-Limited time for PI’s to invest in getting involved in development\\
+Limited time for PI's to invest in getting involved in development\\
 Lack of understanding of the St. Germain infrastructure\\
 Numerous tutorial workshops (focusing mainly on how to run the cookbook examples)\\
 CIG rapid responses to (as yet limited) user requests for help
@@ -1343,7 +1342,7 @@ For an explanation of nested version of the numerical model, see appendix A of \
 \item[\twothousandfour] \cite{xita04b}\cite{xita04}
                         \cite{nata04}\cite{nata04b}
                         \cite{nata04c}\cite{scmo04}\cite{yoog04}
-\item[\twothousandfive] \cite{grlt05}\cite{fasa05}
+\item[\twothousandfive] \cite{grlt05}, Farnetani \& Samuel \cite{fasa05}
                         \cite{nata05}\cite{nata05b}
                         \cite{nabu05}\cite{yoog05}
 \item[\twothousandsix] Mittelstaedt \& Tackley \cite{mita06}
@@ -1475,21 +1474,21 @@ Particles were added in \cite{strb02}.
                            Reese \etal \cite{resb99}
 \item[\twothousandone] Bunge \& Davies \cite{buda01}, Bunge \etal \cite{burm01}, 
                        Davies \& Bunge \cite{dabu01}
-\item[\twothousandtwo] \cite{burb02}\cite{strb02}
+\item[\twothousandtwo] Bunge \etal \cite{burb02}, Stegman \etal \cite{strb02}
 \item[\twothousandthree] Bunge \etal \cite{buht03}
 \item[\twothousandfour] Reese \etal \cite{resb04}
 \item[\twothousandfive] Reese \etal \cite{resb05}, \cite{phbu05}
 \item[\twothousandsix] Davies \& Bunge \cite{dabu06}
 \item[\twothousandseven] Philips \& Bunge \cite{phbu07}
-\item[\twothousandeight] \cite{heib08}\cite{shlj08}
-\item[\twothousandnine] \cite{phbs09}\cite{wodd09}
-                        \cite{gows09}\cite{iabu09}
-                        \cite{scbs09}\cite{scbs09b}
-                        \cite{scbr09}\cite{oebm09}
-\item[\twothousandten] \cite{yayh10}
-\item[\twothousandeleven] \cite{woda11}\cite{iahb11}
-\item[\twothousandtwelve] \cite{dagd12}\cite{shbs12}
-\item[\twothousandthirteen] \cite{dadb13}\cite{oflb13}
+\item[\twothousandeight] Heidbach \etal \cite{heib08}, Shahnas \etal \cite{shlj08}
+\item[\twothousandnine] \cite{phbs09}, \cite{wodd09}
+                        \cite{gows09}, \cite{iabu09}
+                        \cite{scbs09}, \cite{scbs09b}
+                        \cite{scbr09}, \cite{oebm09}
+\item[\twothousandten] Yanagisawa \etal \cite{yayh10}
+\item[\twothousandeleven] Wolstencroft \& Davies \cite{woda11}, Iaffaldano \etal \cite{iahb11}
+\item[\twothousandtwelve] Davies \etal \cite{dagd12}, Shepard \etal \cite{shbs12}
+\item[\twothousandthirteen] Davies \etal \cite{dadb13}, O'Farrell \cite{oflb13}
 \item[\twothousandfourteen] Butterworth \etal \cite{butm14}
 \item[\twothousandfifteen] Amodeo \etal \cite{amsb15}, Colli \etal \cite{cobs15}
 \item[\twothousandsixteen] van Heck \etal \cite{vade16}, Nerlich \etal \cite{necg16}, 
