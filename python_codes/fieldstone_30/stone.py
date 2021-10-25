@@ -360,9 +360,9 @@ else:
    random_markers=1  # default: 1
    CFL_nb=0.5        # default: 0.5
    RKorder=2         # default: 2 
-   use_cvi=1         # default: 0
-   Q=2               # default: 1
-   nstep=50001         # default: 501
+   use_cvi=0         # default: 0
+   Q=1               # default: 1
+   nstep=501         # default: 501
     
 if Q==1:
    nnx=nelx+1    
@@ -395,7 +395,7 @@ if Q==-2:
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
 
-every=10      # vtu output frequency
+every=1      # vtu output frequency
 
 #Runge-Kutta-Fehlberg coefficients
 rkf_c2=1./4.      
@@ -573,7 +573,10 @@ for i in range(0,nnp):
 #################################################################
 
 dt=CFL_nb*min(Lx/nelx,Ly/nely)/np.max(np.sqrt(u**2+v**2))
-    
+   
+#CHANGE THAT to individual components
+
+ 
 print('     -> dt= %.3e ' % dt)
 
 #################################################################
@@ -1021,18 +1024,69 @@ for istep in range (0,nstep):
           for im in range(0,nmarker):
               vtufile.write("%10e %10e %10e \n" %(swarm_u_corr[im],swarm_v_corr[im],0.))
           vtufile.write("</DataArray>\n")
+          vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (corrected)' Format='ascii'> \n")
+          for im in range(0,nmarker):
+              vtufile.write("%10e %10e %10e \n" %(swarm_u[im]+swarm_u_corr[im],swarm_v[im]+swarm_v_corr[im],0.))
+          vtufile.write("</DataArray>\n")
        #--
-       #vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (analytical)' Format='ascii'> \n")
-       #for im in range(0,nmarker):
-       #    ui,vi,pi=solcx.SolCxSolution(swarm_x[im],swarm_y[im]) 
-       #    vtufile.write("%10e %10e %10e \n" %(ui,vi,0.))
-       #vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (analytical)' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           #ui,vi,pi=solcx.SolCxSolution(swarm_x[im],swarm_y[im]) 
+           ui,vi,pi=model.Solution(swarm_x[im],swarm_y[im]) 
+           vtufile.write("%10e %10e %10e \n" %(ui,vi,0.))
+       vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='error' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='error (no cvi)' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           ui,vi,pi=model.Solution(swarm_x[im],swarm_y[im]) 
+           vtufile.write("%10e %10e %10e \n" %(swarm_u[im]-ui,swarm_v[im]-vi,0.))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='error (w/ cvi)' Format='ascii'> \n")
        for im in range(0,nmarker):
            ui,vi,pi=model.Solution(swarm_x[im],swarm_y[im]) 
            vtufile.write("%10e %10e %10e \n" %(swarm_u[im]+swarm_u_corr[im]-ui,swarm_v[im]+swarm_v_corr[im]-vi,0.))
        vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='error-norm (no cvi)' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           ui,vi,pi=model.Solution(swarm_x[im],swarm_y[im]) 
+           velnorm=np.sqrt(ui**2+vi**2)
+           vtufile.write("%10e %10e %10e \n" %((swarm_u[im]-ui)/velnorm,(swarm_v[im]-vi)/velnorm,0.))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='error-norm (w/ cvi)' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           ui,vi,pi=model.Solution(swarm_x[im],swarm_y[im]) 
+           velnorm=np.sqrt(ui**2+vi**2)
+           vtufile.write("%10e %10e %10e \n" %((swarm_u[im]+swarm_u_corr[im]-ui)/velnorm,(swarm_v[im]+swarm_v_corr[im]-vi)/velnorm,0.))
+       vtufile.write("</DataArray>\n")
+
+       #--
+       vtufile.write("<DataArray type='Float32' Name='error-angle (no cvi)' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           ui,vi,pi=model.Solution(swarm_x[im],swarm_y[im]) 
+           vtufile.write("%12e \n" % (180/np.pi*np.arccos(min(0.99999999,((swarm_u[im]*ui+swarm_v[im]*vi)\
+                                       /np.sqrt(ui**2+vi**2)\
+                                       /np.sqrt(swarm_u[im]**2+swarm_v[im]**2)))  )))
+       vtufile.write("</DataArray>\n")
+
+       #--
+       vtufile.write("<DataArray type='Float32' Name='error-angle (w/ cvi)' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           ui,vi,pi=model.Solution(swarm_x[im],swarm_y[im]) 
+           value=((swarm_u[im]+swarm_u_corr[im])*ui+(swarm_v[im]+swarm_v_corr[im])*vi)\
+                  /np.sqrt(ui**2+vi**2)\
+                  /np.sqrt((swarm_u[im]+swarm_u_corr[im])**2+(swarm_v[im]+swarm_v_corr[im])**2)
+           value=min(value, 0.9999999)
+           value=max(value,-0.9999999)
+           value=180/np.pi*np.arccos(value)
+           vtufile.write("%12e \n" % value)
+       vtufile.write("</DataArray>\n")
+
+
+
+
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='paint' Format='ascii'> \n")
        for im in range(0,nmarker):
