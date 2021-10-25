@@ -183,36 +183,119 @@ unset log y
 ###########################################################
 set xlabel 'T'
 set ylabel 'y'
+set xtics .1
+set ytics .1
 
 set output 'T_profile_Ra1e4.pdf'
 plot[0:1][0:1]\
-'T_profile_10000.Q2_16.ascii' u 2:1 w lp ps .2 t '16^2',\
-'T_profile_10000.Q2_24.ascii' u 2:1 w lp ps .2 t '24^2',\
-'T_profile_10000.Q2_32.ascii' u 2:1 w lp ps .2 t '32^2',\
-'T_profile_10000.Q2_40.ascii' u 2:1 w lp ps .2 t '40^2',\
-'T_profile_10000.Q2_48.ascii' u 2:1 w lp ps .2 t '48^2',\
-'T_profile_10000.Q2_56.ascii' u 2:1 w lp ps .2 t '56^2',\
-'T_profile_10000.Q2_64.ascii' u 2:1 w lp ps .2 t '64^2',\
+'T_profile_10000.Q2_16.ascii' u 2:1 w lp lw .4 ps .2 t '16^2',\
+'T_profile_10000.Q2_24.ascii' u 2:1 w lp lw .4 ps .2 t '24^2',\
+'T_profile_10000.Q2_32.ascii' u 2:1 w lp lw .4 ps .2 t '32^2',\
+'T_profile_10000.Q2_40.ascii' u 2:1 w lp lw .4 ps .2 t '40^2',\
+'T_profile_10000.Q2_48.ascii' u 2:1 w lp lw .4 ps .2 t '48^2',\
+'T_profile_10000.Q2_56.ascii' u 2:1 w lp lw .4 ps .2 t '56^2',\
+'T_profile_10000.Q2_64.ascii' u 2:1 w lp lw .4 ps .2 t '64^2',\
+'T_profile_10000.Q2_80.ascii' u 2:1 w lp lw .4 ps .2 t '80^2',\
+'aspect/output_1e4_gr4/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
+'aspect/output_1e4_gr5/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
+'aspect/output_1e4_gr6/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 64^2',\
 
 set output 'T_profile_Ra1e5.pdf'
 plot[0:1][0:1]\
-'T_profile_100000.Q2_16.ascii' u 2:1 w lp ps .2 t '16^2',\
-'T_profile_100000.Q2_24.ascii' u 2:1 w lp ps .2 t '24^2',\
-'T_profile_100000.Q2_32.ascii' u 2:1 w lp ps .2 t '32^2',\
-'T_profile_100000.Q2_40.ascii' u 2:1 w lp ps .2 t '40^2',\
-'T_profile_100000.Q2_48.ascii' u 2:1 w lp ps .2 t '48^2',\
-'T_profile_100000.Q2_56.ascii' u 2:1 w lp ps .2 t '56^2',\
-'T_profile_100000.Q2_64.ascii' u 2:1 w lp ps .2 t '64^2',\
+'T_profile_100000.Q2_16.ascii' u 2:1 w lp lw .4 ps .2 t '16^2',\
+'T_profile_100000.Q2_24.ascii' u 2:1 w lp lw .4 ps .2 t '24^2',\
+'T_profile_100000.Q2_32.ascii' u 2:1 w lp lw .4 ps .2 t '32^2',\
+'T_profile_100000.Q2_40.ascii' u 2:1 w lp lw .4 ps .2 t '40^2',\
+'T_profile_100000.Q2_48.ascii' u 2:1 w lp lw .4 ps .2 t '48^2',\
+'T_profile_100000.Q2_56.ascii' u 2:1 w lp lw .4 ps .2 t '56^2',\
+'T_profile_100000.Q2_64.ascii' u 2:1 w lp lw .4 ps .2 t '64^2',\
+'T_profile_100000.Q2_80.ascii' u 2:1 w lp lw .4 ps .2 t '80^2',\
+'aspect/output_1e5_gr4/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
+'aspect/output_1e5_gr5/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
+'aspect/output_1e5_gr6/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 64^2',\
 
 set output 'T_profile_Ra1e6.pdf'
 plot[0:1][0:1]\
-'T_profile_1000000.Q2_16.ascii' u 2:1 w lp ps .2 t '16^2',\
-'T_profile_1000000.Q2_24.ascii' u 2:1 w lp ps .2 t '24^2',\
-'T_profile_1000000.Q2_32.ascii' u 2:1 w lp ps .2 t '32^2',\
-'T_profile_1000000.Q2_40.ascii' u 2:1 w lp ps .2 t '40^2',\
-'T_profile_1000000.Q2_48.ascii' u 2:1 w lp ps .2 t '48^2',\
-'T_profile_1000000.Q2_56.ascii' u 2:1 w lp ps .2 t '56^2',\
-'T_profile_1000000.Q2_64.ascii' u 2:1 w lp ps .2 t '64^2',\
+'T_profile_1000000.Q2_16.ascii' u 2:1 w lp lw .4 ps .2 t '16^2',\
+'T_profile_1000000.Q2_24.ascii' u 2:1 w lp lw .4 ps .2 t '24^2',\
+'T_profile_1000000.Q2_32.ascii' u 2:1 w lp lw .4 ps .2 t '32^2',\
+'T_profile_1000000.Q2_40.ascii' u 2:1 w lp lw .4 ps .2 t '40^2',\
+'T_profile_1000000.Q2_48.ascii' u 2:1 w lp lw .4 ps .2 t '48^2',\
+'T_profile_1000000.Q2_56.ascii' u 2:1 w lp lw .4 ps .2 t '56^2',\
+'T_profile_1000000.Q2_64.ascii' u 2:1 w lp lw .4 ps .2 t '64^2',\
+'T_profile_1000000.Q2_80.ascii' u 2:1 w lp lw .4 ps .2 t '80^2',\
+'aspect/output_1e6_gr4/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
+'aspect/output_1e6_gr5/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
+'aspect/output_1e6_gr6/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 64^2',\
+
+###########################################################
+set xlabel '|v|'
+set ylabel 'y'
+set xtics 10
+set ytics .1
+
+set output 'vel_profile_Ra1e4.pdf'
+plot[][0:1]\
+'vel_profile_10000.Q2_16.ascii' u 2:1 w lp lw .4 ps .2 t '16^2',\
+'vel_profile_10000.Q2_24.ascii' u 2:1 w lp lw .4 ps .2 t '24^2',\
+'vel_profile_10000.Q2_32.ascii' u 2:1 w lp lw .4 ps .2 t '32^2',\
+'vel_profile_10000.Q2_40.ascii' u 2:1 w lp lw .4 ps .2 t '40^2',\
+'vel_profile_10000.Q2_48.ascii' u 2:1 w lp lw .4 ps .2 t '48^2',\
+'vel_profile_10000.Q2_56.ascii' u 2:1 w lp lw .4 ps .2 t '56^2',\
+'vel_profile_10000.Q2_64.ascii' u 2:1 w lp lw .4 ps .3 t '64^2',\
+'vel_profile_10000.Q2_80.ascii' u 2:1 w lp lw .4 ps .3 t '80^2',\
+'aspect/output_1e4_gr4/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
+'aspect/output_1e4_gr5/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
+'aspect/output_1e4_gr6/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .3 t 'aspect, 64^2',\
+
+set xtics 25
+set output 'vel_profile_Ra1e5.pdf'
+plot[][0:1]\
+'vel_profile_100000.Q2_16.ascii' u 2:1 w lp lw .4 ps .2 t '16^2',\
+'vel_profile_100000.Q2_24.ascii' u 2:1 w lp lw .4 ps .2 t '24^2',\
+'vel_profile_100000.Q2_32.ascii' u 2:1 w lp lw .4 ps .2 t '32^2',\
+'vel_profile_100000.Q2_40.ascii' u 2:1 w lp lw .4 ps .2 t '40^2',\
+'vel_profile_100000.Q2_48.ascii' u 2:1 w lp lw .4 ps .2 t '48^2',\
+'vel_profile_100000.Q2_56.ascii' u 2:1 w lp lw .4 ps .2 t '56^2',\
+'vel_profile_100000.Q2_64.ascii' u 2:1 w lp lw .4 ps .3 t '64^2',\
+'vel_profile_100000.Q2_80.ascii' u 2:1 w lp lw .4 ps .3 t '80^2',\
+'aspect/output_1e5_gr4/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
+'aspect/output_1e5_gr5/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
+'aspect/output_1e5_gr6/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .3 t 'aspect, 64^2',\
+
+set xtics 150
+set output 'vel_profile_Ra1e6.pdf'
+plot[][0:1]\
+'vel_profile_1000000.Q2_16.ascii' u 2:1 w lp lw .4 ps .2 t '16^2',\
+'vel_profile_1000000.Q2_24.ascii' u 2:1 w lp lw .4 ps .2 t '24^2',\
+'vel_profile_1000000.Q2_32.ascii' u 2:1 w lp lw .4 ps .2 t '32^2',\
+'vel_profile_1000000.Q2_40.ascii' u 2:1 w lp lw .4 ps .2 t '40^2',\
+'vel_profile_1000000.Q2_48.ascii' u 2:1 w lp lw .4 ps .2 t '48^2',\
+'vel_profile_1000000.Q2_56.ascii' u 2:1 w lp lw .4 ps .2 t '56^2',\
+'vel_profile_1000000.Q2_64.ascii' u 2:1 w lp lw .4 ps .3 t '64^2',\
+'vel_profile_1000000.Q2_80.ascii' u 2:1 w lp lw .4 ps .3 t '80^2',\
+'aspect/output_1e6_gr4/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
+'aspect/output_1e6_gr5/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
+'aspect/output_1e6_gr6/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .3 t 'aspect, 64^2',\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
