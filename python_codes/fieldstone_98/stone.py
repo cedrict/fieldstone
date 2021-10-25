@@ -49,7 +49,10 @@ T[:]=(1-rho[:]/3300)/3e-5
 
 print('Temperature (m/M):',np.min(T),np.max(T))
 
-benchfile=open('bench2.txt',"w")
+#I write in the file the same temperature value at two different depths/radii, 
+#i.e. 1km above and below the actual radii of the layer. 
+
+benchfile=open('bench2.ascii',"w")
 benchfile.write("# POINTS: 2 720 360 \n")
 for j in range(0,360):
     for i in range(0,720):
@@ -59,11 +62,12 @@ for j in range(0,360):
         
 benchfile.close
 
-print('produced bench2.txt')
+print('produced bench2.ascii')
 
 ###############################################################################
 # part1a: producing input file bench3.txt for aspect, Root et al 2021, case 3 
 ###############################################################################
+# the file Global_Moho_CRUST1.0_version2.xyz also contains 259,200 lines
 
 depths=np.zeros(N,dtype=np.float64)   
 
@@ -90,8 +94,7 @@ print('colatitude (m/M): ',np.min(colat),np.max(colat))
 theta=colat
 phi=lon
 
-
-nrad=160
+nrad=180
 nlon=720
 nlat=360
 radmin=6371e3-80e3
@@ -120,8 +123,6 @@ benchfile.close
 print('produced bench3.ascii')
 
 exit()
-
-
 
 ###############################################################################
 # part2: producing vtu file of the original lon-lat datas set 

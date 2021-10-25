@@ -13,8 +13,10 @@ __pycache__/
 *.aux
 *.log
 *.blg
+*.bcf
 *.bbl
 *.idx
+*.xml
 *.bst
 *.bak
 *.ilg
