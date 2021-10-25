@@ -12,16 +12,11 @@ import time as timing
 #------------------------------------------------------------------------------
 
 def rho(rho0,alphaT,T,T0):
-    val=rho0*(1.-alphaT*(T-T0))-rho0
+    val=rho0*(1.-alphaT*(T-T0)) 
     return val
 
-#------------------------------------------------------------------------------
-# viscosity function
-#------------------------------------------------------------------------------
-
-def eta(T):
-    val=1.
-    return val
+def eta(T,eta0):
+    return eta0
 
 #------------------------------------------------------------------------------
 # velocity shape functions
@@ -369,17 +364,17 @@ if int(len(sys.argv) == 7):
    nely  = int(sys.argv[2])
    visu  = int(sys.argv[3])
    order = int(sys.argv[4])
-   Ra    = float(sys.argv[5])
+   Ra_nb = float(sys.argv[5])
    nstep = int(sys.argv[6])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 24
+   nely = 24
    visu = 1
    order= 2
-   Ra = 14
-   nstep=1000
+   Ra_nb= 1e4
+   nstep= 1000
 
-tol_ss=1e-6   # tolerance for steady state 
+tol_ss=1e-7   # tolerance for steady state 
 
 top_bc_noslip=False
 bot_bc_noslip=False
@@ -432,16 +427,35 @@ hy=Ly/nely # element size in y direction
 
 sparse=False # storage of FEM matrix 
 
+EBA=True
+
+#################################################################
+# definition: Ra_nb=alphaT*abs(gy)*Ly**3*rho0**2*hcapa/hcond/eta
+
+alphaT=2.5e-3   # thermal expansion coefficient
+hcond=1.      # thermal conductivity
+hcapa=1e-2      # heat capacity
+rho0=20        # reference density
+T0=0          # reference temperature
+relax=0.5    # relaxation coefficient (0,1)
+gx=0.         # gravity vector component
+gy=-1 #Ra/alphaT # vertical component of gravity vector
+
+eta0 = alphaT*abs(gy)*Ly**3*rho0**2*hcapa/hcond/Ra_nb
+
+Di_nb=alphaT*abs(gy)*Ly/hcapa
+
 #################################################################
 
-alphaT=1e-4   # thermal expansion coefficient
-hcond=1.      # thermal conductivity
-hcapa=1.      # heat capacity
-rho0=1        # reference density
-T0=0          # reference temperature
-relax=0.95    # relaxation coefficient (0,1)
-gx=0.         # gravity vector component
-gy=-Ra/alphaT # vertical component of gravity vector
+L_ref=Ly
+
+T_ref=1
+
+eta_ref=eta0
+
+kappa_ref=hcond/hcapa/rho0
+
+vel_ref=kappa_ref/L_ref
 
 #################################################################
 
@@ -497,7 +511,9 @@ conv_file=open('conv.ascii',"w")
 
 #################################################################
 
-print ('Ra       =',Ra)
+print ('Ra       =',Ra_nb)
+print ('Di       =',Di_nb)
+print ('eta0     =',eta0)
 print ('order    =',order)
 print ('nnx      =',nnx)
 print ('nny      =',nny)
@@ -509,6 +525,7 @@ print ('NfemP    =',NfemP)
 print ('Nfem     =',Nfem)
 print ('nqperdim =',nqperdim)
 print("-----------------------------")
+
 
 #################################################################
 # checking that all velocity shape functions are 1 on their node 
@@ -831,7 +848,7 @@ for istep in range(0,nstep):
                 #end for
 
                 # compute elemental a_mat matrix
-                K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(Tq)*weightq*jcob
+                K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(Tq,eta0)*weightq*jcob
 
                 # compute elemental rhs vector
                 for i in range(0,mV):
@@ -982,6 +999,69 @@ for istep in range(0,nstep):
     u=relax*u+(1-relax)*u_prev
     v=relax*v+(1-relax)*v_prev
 
+    #####################################################################
+    # compute nodal strainrate and heat flux 
+    #####################################################################
+    start = timing.time()
+    
+    exx_n = np.zeros(NV,dtype=np.float64)  
+    eyy_n = np.zeros(NV,dtype=np.float64)  
+    exy_n = np.zeros(NV,dtype=np.float64)  
+    count = np.zeros(NV,dtype=np.int32)  
+    q=np.zeros(NV,dtype=np.float64)
+    c=np.zeros(NV,dtype=np.float64)
+
+    for iel in range(0,nel):
+        for i in range(0,mV):
+            rq=rVnodes[i]
+            sq=sVnodes[i]
+            NNNV[0:mV]=NNV(rq,sq,order)
+            dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
+            dNNNVds[0:mV]=dNNVds(rq,sq,order)
+            NNNP[0:mP]=NNP(rq,sq,order)
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,mV):
+                jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+                jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
+                jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+                jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+            #end for
+            jcbi=np.linalg.inv(jcb)
+            for k in range(0,mV):
+                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+            #end for
+            e_xx=0.
+            e_yy=0.
+            e_xy=0.
+            for k in range(0,mV):
+                e_xx += dNNNVdx[k]*u[iconV[k,iel]]
+                e_yy += dNNNVdy[k]*v[iconV[k,iel]]
+                e_xy += 0.5*(dNNNVdy[k]*u[iconV[k,iel]]+dNNNVdx[k]*v[iconV[k,iel]])
+            #end for
+            inode=iconV[i,iel]
+            exx_n[inode]+=e_xx
+            eyy_n[inode]+=e_yy
+            exy_n[inode]+=e_xy
+            q[inode]+=np.dot(p[iconP[0:mP,iel]],NNNP[0:mP])
+            count[inode]+=1
+        #end for
+    #end for
+    
+    exx_n/=count
+    eyy_n/=count
+    exy_n/=count
+    q/=count
+
+    print("     -> exx_n (m,M) %.6e %.6e " %(np.min(exx_n),np.max(exx_n)))
+    print("     -> eyy_n (m,M) %.6e %.6e " %(np.min(eyy_n),np.max(eyy_n)))
+    print("     -> exy_n (m,M) %.6e %.6e " %(np.min(exy_n),np.max(exy_n)))
+
+    #np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
+    #np.savetxt('strainrate.ascii',np.array([xV,yV,exx_n,eyy_n,exy_n]).T,header='# x,y,exx,eyy,exy')
+
+    print("compute nodal press & sr: %.3f s" % (timing.time() - start))
+
     #################################################################
     # build temperature matrix
     #################################################################
@@ -1029,11 +1109,23 @@ for istep in range(0,nstep):
                 # compute dNdx & dNdy
                 vel[0,0]=0.
                 vel[0,1]=0.
+                Tq=0
+                exxq=0.
+                eyyq=0.
+                exyq=0.
+                dpdxq=0
+                dpdyq=0
                 for k in range(0,mV):
                     vel[0,0]+=N_mat[k,0]*u[iconV[k,iel]]
                     vel[0,1]+=N_mat[k,0]*v[iconV[k,iel]]
+                    Tq+=NNNV[k]*T[iconV[k,iel]]
                     dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                     dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                    exxq += dNNNVdx[k]*u[iconV[k,iel]]
+                    eyyq += dNNNVdy[k]*v[iconV[k,iel]]
+                    exyq += 0.5*(dNNNVdy[k]*u[iconV[k,iel]]+dNNNVdx[k]*v[iconV[k,iel]])
+                    dpdxq += dNNNVdx[k]*q[iconV[k,iel]]
+                    dpdyq += dNNNVdy[k]*q[iconV[k,iel]]
                     B_mat[0,k]=dNNNVdx[k]
                     B_mat[1,k]=dNNNVdy[k]
                 #end for
@@ -1046,6 +1138,10 @@ for istep in range(0,nstep):
 
                 # compute advection matrix
                 Ka+=N_mat.dot(vel.dot(B_mat))*rho0*hcapa*weightq*jcob
+
+                if EBA:
+                   b_el[:]+=N_mat[:,0]*weightq*jcob* 2*eta(Tq,eta0)*(exxq**2+eyyq**2+2*exyq**2)      # viscous dissipation
+                   b_el[:]+=N_mat[:,0]*weightq*jcob* alphaT*Tq*(vel[0,0]*dpdxq+vel[0,1]*dpdyq)  # adiabatic heating
 
             #end for
         #end for
@@ -1136,8 +1232,8 @@ for istep in range(0,nstep):
         #end for iq
     #end for iel
 
-    vrms=np.sqrt(vrms/(Lx*Ly))
-    Tavrg/=(Lx*Ly)
+    vrms=np.sqrt(vrms/(Lx*Ly)) / vel_ref
+    Tavrg/=(Lx*Ly)             / T_ref
 
     Tavrg_file.write("%10e %10e\n" % (istep,Tavrg))
     Tavrg_file.flush()
@@ -1151,13 +1247,11 @@ for istep in range(0,nstep):
     #####################################################################
     start = timing.time()
     
-    exx_n = np.zeros(NV,dtype=np.float64)  
-    eyy_n = np.zeros(NV,dtype=np.float64)  
-    exy_n = np.zeros(NV,dtype=np.float64)  
     count = np.zeros(NV,dtype=np.int32)  
     qx_n = np.zeros(NV,dtype=np.float64)  
     qy_n = np.zeros(NV,dtype=np.float64)  
-    q=np.zeros(NV,dtype=np.float64)
+    dpdx_n = np.zeros(NV,dtype=np.float64)  
+    dpdy_n = np.zeros(NV,dtype=np.float64)  
     c=np.zeros(NV,dtype=np.float64)
 
     for iel in range(0,nel):
@@ -1180,58 +1274,66 @@ for istep in range(0,nstep):
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
             #end for
-            e_xx=0.
-            e_yy=0.
-            e_xy=0.
             q_x=0.
             q_y=0.
+            dp_dx=0
+            dp_dy=0
             for k in range(0,mV):
-                e_xx += dNNNVdx[k]*u[iconV[k,iel]]
-                e_yy += dNNNVdy[k]*v[iconV[k,iel]]
-                e_xy += 0.5*(dNNNVdy[k]*u[iconV[k,iel]]+dNNNVdx[k]*v[iconV[k,iel]])
-                q_x -= hcond*dNNNVdx[k]*T[iconV[k,iel]]
-                q_y -= hcond*dNNNVdy[k]*T[iconV[k,iel]]
+                q_x-=hcond*dNNNVdx[k]*T[iconV[k,iel]]
+                q_y-=hcond*dNNNVdy[k]*T[iconV[k,iel]]
+                dp_dx+=dNNNVdx[k]*q[iconV[k,iel]]
+                dp_dy+=dNNNVdy[k]*q[iconV[k,iel]]
             #end for
             inode=iconV[i,iel]
-            exx_n[inode]+=e_xx
-            eyy_n[inode]+=e_yy
-            exy_n[inode]+=e_xy
             qx_n[inode]+=q_x
             qy_n[inode]+=q_y
-            q[inode]+=np.dot(p[iconP[0:mP,iel]],NNNP[0:mP])
+            dpdx_n[inode]+=dp_dx
+            dpdy_n[inode]+=dp_dy
             count[inode]+=1
         #end for
     #end for
     
-    exx_n/=count
-    eyy_n/=count
-    exy_n/=count
     qx_n/=count
     qy_n/=count
-    q/=count
+    dpdx_n/=count
+    dpdy_n/=count
 
-    print("     -> exx_n (m,M) %.6e %.6e " %(np.min(exx_n),np.max(exx_n)))
-    print("     -> eyy_n (m,M) %.6e %.6e " %(np.min(eyy_n),np.max(eyy_n)))
-    print("     -> exy_n (m,M) %.6e %.6e " %(np.min(exy_n),np.max(exy_n)))
     print("     -> qx_n (m,M) %.6e %.6e " %(np.min(qx_n),np.max(qx_n)))
     print("     -> qy_n (m,M) %.6e %.6e " %(np.min(qy_n),np.max(qy_n)))
 
-    #np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
-    np.savetxt('strainrate.ascii',np.array([xV,yV,exx_n,eyy_n,exy_n]).T,header='# x,y,exx,eyy,exy')
-
-    print("compute press & sr: %.3f s" % (timing.time() - start))
+    print("compute nodal heat flux: %.3f s" % (timing.time() - start))
 
     #################################################################
     # compute Nusselt number at top
     #################################################################
     start = timing.time()
 
+    qy_top=0
+    qy_bot=0
     Nusselt=0
     for iel in range(0,nel):
         if yV[iconV[mV-1,iel]]>1-eps: 
            for iq in range(0,nqperdim):
                rq=qcoords[iq]
-               sq=+1.
+               sq=+1
+               weightq=qweights[iq]
+               NNNV[0:mV]=NNV(rq,sq,order)
+               xq=0.
+               q_y=0.
+               for k in range(0,mV):
+                   xq += NNNV[k]*xV[iconV[k,iel]]
+                   q_y += NNNV[k]*qy_n[iconV[k,iel]]
+               #end for
+               jcob=hx/2.
+               Nusselt+=q_y*jcob*weightq
+               qy_top+=q_y*jcob*weightq
+               #print (xq,q_y)
+           #end for
+        #end if
+        if yV[iconV[0,iel]]<eps: 
+           for iq in range(0,nqperdim):
+               rq=qcoords[iq]
+               sq=-1
                weightq=qweights[iq]
                NNNV[0:mV]=NNV(rq,sq,order)
                xq=0.
@@ -1241,18 +1343,16 @@ for istep in range(0,nstep):
                    q_y -= NNNV[k]*qy_n[iconV[k,iel]]
                #end for
                jcob=hx/2.
-               Nusselt+=q_y*jcob*weightq
-               #print (xq,q_y)
-           #end for
+               qy_bot+=q_y*jcob*weightq
         #end if
     #end for
 
     Nusselt=np.abs(Nusselt)/Lx
 
-    Nu_vrms_file.write("%10e %.10f %.10f\n" % (istep,Nusselt,vrms))
+    Nu_vrms_file.write("%10e %.10f %.10f %.10f %.10f \n" % (istep,Nusselt,vrms,qy_bot,qy_top))
     Nu_vrms_file.flush()
 
-    print("     istep= %d ; Nusselt= %e ; Ra= %e " %(istep,Nusselt,Ra))
+    print("     istep= %d ; Nusselt= %e ; Ra= %e " %(istep,Nusselt,Ra_nb))
 
     print("compute Nu: %.3f s" % (timing.time() - start))
 
@@ -1328,10 +1428,38 @@ for istep in range(0,nstep):
            vtufile.write("%.15f \n" %exy_n[i])
        vtufile.write("</DataArray>\n")
        #--
+       vtufile.write("<DataArray type='Float32' Name='shear heating (2*eta*e)' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%.15f \n" % (2*eta(T[i],eta0)*np.sqrt(exx_n[i]**2+eyy_n[i]**2+exy_n[i]**2)))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='adiab heating (linearised)' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%.15f \n" % (alphaT*T[i]*rho0*v[i]*gy))
+       vtufile.write("</DataArray>\n")
+       #
+       vtufile.write("<DataArray type='Float32' Name='adiab heating (true)' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%.15f \n" % (alphaT*T[i]*(u[i]*dpdx_n[i]+v[i]*dpdy_n[i]))) 
+       vtufile.write("</DataArray>\n")
+       #
+       vtufile.write("<DataArray type='Float32' Name='adiab heating (diff)' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%.15f \n" % (alphaT*T[i]*(u[i]*dpdx_n[i]+v[i]*dpdy_n[i])-\
+                                       alphaT*T[i]*rho0*v[i]*gy))
+       vtufile.write("</DataArray>\n")
+       #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%10f %10f %10f \n" %(qx_n[i],qy_n[i],0.))
        vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='pressure gradient' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10f %10f %10f \n" %(dpdx_n[i],dpdy_n[i],0.))
+       vtufile.write("</DataArray>\n")
+
+
        #--
        vtufile.write("</PointData>\n")
        #####
@@ -1383,7 +1511,7 @@ for istep in range(0,nstep):
 
 #end for istep
     
-print("     script ; Nusselt= %e ; Ra= %e ; order= %d" %(Nusselt,Ra,order))
+print("     script ; Nusselt= %e ; Ra= %e ; order= %d" %(Nusselt,Ra_nb,order))
 
 print("-----------------------------")
 print("------------the end----------")
