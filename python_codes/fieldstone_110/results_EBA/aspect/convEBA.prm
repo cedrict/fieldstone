@@ -1,0 +1,97 @@
+#EBA based on aspect/tests/visco_plastic_adiabatic_heating_density.prm 
+
+set Dimension                              = 2
+set Use years in output instead of seconds = false
+set End time                               = 0.1
+set Output directory                       = output_1e6_gr6
+set Pressure normalization                 = surface
+set Surface pressure                       = 0
+
+subsection Geometry model
+  set Model name = box
+  subsection Box
+    set X extent = 1
+    set Y extent = 1
+  end
+end
+
+subsection Initial temperature model
+  set Model name = function
+  subsection Function
+    set Variable names      = x,z
+    set Function constants  = p=0.01, L=1, pi=3.1415926536, k=1
+    set Function expression = (1.0-z) - p*cos(k*pi*x/L)*sin(pi*z)
+  end
+end
+
+subsection Boundary temperature model
+  set Fixed temperature boundary indicators = bottom, top
+  set List of model names = box
+  subsection Box
+    set Bottom temperature = 1
+    set Top temperature    = 0
+  end
+end
+
+subsection Boundary velocity model
+  set Tangential velocity boundary indicators = left, right, bottom, top
+end
+
+subsection Gravity model
+  set Model name = vertical
+  subsection Vertical
+    set Magnitude = 1  
+  end
+end
+
+subsection Material model
+  set Model name = simple
+  subsection Simple model
+    set Reference density             = 20
+    set Reference specific heat       = 0.01
+    set Reference temperature         = 0
+    set Thermal conductivity          = 1
+    set Thermal expansion coefficient = 2.5e-3
+    set Viscosity                     = 1e-8
+  end
+end
+
+subsection Formulation
+  set Formulation          = custom
+  set Mass conservation    = incompressible
+  set Temperature equation = reference density profile
+end
+subsection Heating model
+  set List of model names = shear heating, adiabatic heating
+  subsection Adiabatic heating
+    set Use simplified adiabatic heating = true
+  end
+end
+
+
+subsection Mesh refinement
+  set Initial global refinement                = 6
+  set Initial adaptive refinement              = 0
+  set Time steps between mesh refinement       = 0
+end
+
+subsection Postprocess
+  set List of postprocessors = velocity statistics, temperature statistics, heat flux statistics, visualization, depth average
+  subsection Visualization
+    set List of output variables = density, viscosity, strain rate, heat flux map
+    set Time between graphical output = 0.025
+    subsection Heat flux map
+      set Output point wise heat flux = true
+    end
+    #set Interpolate output = true
+  end
+  subsection Depth average
+    set Number of zones = 127
+    set Time between graphical output = 0.05
+    set List of output variables = temperature, velocity magnitude, adiabatic density
+  end
+end
+
+subsection Solver parameters
+  set Temperature solver tolerance = 1e-10
+end
