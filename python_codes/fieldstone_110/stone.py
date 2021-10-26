@@ -340,6 +340,28 @@ def NNP(r,s,order):
        return N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
               N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15
 
+def dNNPdr(r,s,order):
+    if order==1:
+       print("pressure basis fct derivative does not exist")
+       exit()
+    if order==2:
+       dNdr_0=-0.25*(1-s)
+       dNdr_1=+0.25*(1-s)
+       dNdr_2=-0.25*(1+s)
+       dNdr_3=+0.25*(1+s)
+       return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+
+def dNNPds(r,s,order):
+    if order==1:
+       print("pressure basis fct derivative does not exist")
+       exit()
+    if order==2:
+       dNds_0=-0.25*(1-r)
+       dNds_1=-0.25*(1+r)
+       dNds_2=+0.25*(1-r)
+       dNds_3=+0.25*(1+r)
+       return dNds_0,dNds_1,dNds_2,dNds_3
+
 #------------------------------------------------------------------------------
 # constants
 
@@ -367,11 +389,11 @@ if int(len(sys.argv) == 7):
    Ra_nb = float(sys.argv[5])
    nstep = int(sys.argv[6])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 32
+   nely = 32
    visu = 1
    order= 2
-   Ra_nb= 1e4
+   Ra_nb= 1e6
    nstep= 1000
 
 tol_ss=1e-7   # tolerance for steady state 
@@ -427,7 +449,7 @@ hy=Ly/nely # element size in y direction
 
 sparse=False # storage of FEM matrix 
 
-EBA=False
+EBA=True
 
 #################################################################
 # definition: Ra_nb=alphaT*abs(gy)*Ly**3*rho0**2*hcapa/hcond/eta
@@ -437,7 +459,7 @@ hcond=1.      # thermal conductivity
 hcapa=1e-2      # heat capacity
 rho0=20        # reference density
 T0=0          # reference temperature
-relax=0.5    # relaxation coefficient (0,1)
+relax=0.25    # relaxation coefficient (0,1)
 gx=0.         # gravity vector component
 gy=-1 #Ra/alphaT # vertical component of gravity vector
 
@@ -1077,6 +1099,10 @@ for istep in range(0,nstep):
     rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
     B_mat=np.zeros((2,ndofT*mV),dtype=np.float64)     # gradient matrix B 
     N_mat = np.zeros((mV,1),dtype=np.float64)         # shape functions
+    dNNNPdx = np.zeros(mP,dtype=np.float64)           # shape functions derivatives
+    dNNNPdy = np.zeros(mP,dtype=np.float64)           # shape functions derivatives
+    dNNNPdr = np.zeros(mP,dtype=np.float64)           # shape functions derivatives
+    dNNNPds = np.zeros(mP,dtype=np.float64)           # shape functions derivatives
 
     for iel in range (0,nel):
 
@@ -1112,6 +1138,9 @@ for istep in range(0,nstep):
                 jcob = np.linalg.det(jcb)
                 jcbi = np.linalg.inv(jcb)
 
+                #print(jcbi)
+                #print(2/hx)
+
                 # compute dNdx & dNdy
                 vel[0,0]=0.
                 vel[0,1]=0.
@@ -1136,8 +1165,19 @@ for istep in range(0,nstep):
                     B_mat[1,k]=dNNNVdy[k]
                 #end for
 
+                dNNNPdr[0:mP]=dNNPdr(rq,sq,order)
+                dNNNPds[0:mP]=dNNPds(rq,sq,order)
+                dNNNPdx[0:mP]=dNNNPdr[0:mP]*2/hx
+                dNNNPdy[0:mP]=dNNNPds[0:mP]*2/hy
+                dpdxq=0
+                dpdyq=0
+                for k in range(0,mP):
+                    dpdxq += dNNNPdx[k]*p[iconP[k,iel]]
+                    dpdyq += dNNNPdy[k]*p[iconP[k,iel]]
+                
+
                 # compute mass matrix
-                MM+=N_mat.dot(N_mat.T)*rho0*hcapa*weightq*jcob
+                #MM+=N_mat.dot(N_mat.T)*rho0*hcapa*weightq*jcob
 
                 # compute diffusion matrix
                 Kd+=B_mat.T.dot(B_mat)*hcond*weightq*jcob
@@ -1146,13 +1186,15 @@ for istep in range(0,nstep):
                 Ka+=N_mat.dot(vel.dot(B_mat))*rho0*hcapa*weightq*jcob
 
                 if EBA:
-                   b_el[:]+=N_mat[:,0]*weightq*jcob* 2*eta(Tq,eta0)*(exxq**2+eyyq**2+2*exyq**2)      # viscous dissipation
-                   b_el[:]+=N_mat[:,0]*weightq*jcob* alphaT*Tq*(vel[0,0]*dpdxq+vel[0,1]*dpdyq)  # adiabatic heating
+                   #b_el[:]+=N_mat[:,0]*weightq*jcob* 2*eta(Tq,eta0)*(exxq**2+eyyq**2+2*exyq**2) # viscous dissipation
+                   #b_el[:]+=N_mat[:,0]*weightq*jcob* alphaT*Tq*(vel[0,0]*dpdxq+vel[0,1]*dpdyq)  # adiabatic heating
+                   b_el[:]+=N_mat[:,0]*weightq*jcob* 2*eta(Tq,eta0)*(2./3*exxq**2+2./3*eyyq**2-2./3*exxq*eyyq+2*exyq**2) # viscous dissipation
+                   MM-=N_mat.dot(N_mat.T)*weightq*jcob*alphaT*(vel[0,0]*dpdxq+vel[0,1]*dpdyq)
 
             #end for
         #end for
 
-        a_el=Ka+Kd
+        a_el=Ka+Kd+MM
 
         # apply boundary conditions
         for k1 in range(0,mV):
@@ -1402,25 +1444,28 @@ for istep in range(0,nstep):
     #print("     istep= %d ; Nusselt= %e ; Ra= %e " %(istep,Nusselt,Ra_nb))
 
     #####################################################################
-    # compute temperature profile
+    # compute temperature and vel profile
     #####################################################################
     start = timing.time()
 
     T_profile = np.zeros(nny,dtype=np.float64)  
     y_profile = np.zeros(nny,dtype=np.float64)  
+    v_profile = np.zeros(nny,dtype=np.float64)  
 
     counter=0    
     for j in range(0,nny):
         for i in range(0,nnx):
             T_profile[j]+=T[counter]/nnx
             y_profile[j]=yV[counter]
+            v_profile[j]+=np.sqrt(u[counter]**2+v[counter]**2)/nnx
             counter+=1
         #end for
     #end for
 
     np.savetxt('T_profile.ascii',np.array([y_profile,T_profile]).T,header='#y,T')
+    np.savetxt('vel_profile.ascii',np.array([y_profile,v_profile]).T,header='#y,vel')
 
-    print("compute T profile: %.3f s" % (timing.time() - start))
+    print("compute T & vel profile: %.3f s" % (timing.time() - start))
 
     ###################################
     # assess convergence of iterations
@@ -1478,6 +1523,11 @@ for istep in range(0,nstep):
            vtufile.write("%.15f \n" %T[i])
        vtufile.write("</DataArray>\n")
        #--
+       vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%.15f \n" % (rho(rho0,alphaT,T[i],T0)))
+       vtufile.write("</DataArray>\n")
+       #--
        vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%.15f \n" %exx_n[i])
@@ -1493,9 +1543,14 @@ for istep in range(0,nstep):
            vtufile.write("%.15f \n" %exy_n[i])
        vtufile.write("</DataArray>\n")
        #--
+       vtufile.write("<DataArray type='Float32' Name='eff. strain rate' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%.15f \n" % (np.sqrt(0.5*(exx_n[i]**2+eyy_n[i]**2)+exy_n[i]**2)))
+       vtufile.write("</DataArray>\n")
+       #--
        vtufile.write("<DataArray type='Float32' Name='shear heating (2*eta*e)' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%.15f \n" % (2*eta(T[i],eta0)*np.sqrt(exx_n[i]**2+eyy_n[i]**2+exy_n[i]**2)))
+           vtufile.write("%.15f \n" % (2*eta(T[i],eta0)*np.sqrt(exx_n[i]**2+eyy_n[i]**2+2*exy_n[i]**2)))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='adiab heating (linearised)' Format='ascii'> \n")
