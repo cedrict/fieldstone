@@ -1,0 +1,208 @@
+set terminal pdf enhanced font "12,Times"
+set key outside
+set xlabel '# it'
+
+set ylabel 'Nu'
+set output 'Nu_Ra1e4.pdf'
+plot[][]\
+'Nu_vrms_10000.Q2_16.ascii' u 1:2 w lp ps .2 t '16^2',\
+'Nu_vrms_10000.Q2_24.ascii' u 1:2 w lp ps .2 t '24^2',\
+'Nu_vrms_10000.Q2_32.ascii' u 1:2 w lp ps .2 t '32^2',\
+'Nu_vrms_10000.Q2_40.ascii' u 1:2 w lp ps .2 t '40^2',\
+'Nu_vrms_10000.Q2_48.ascii' u 1:2 w lp ps .2 t '48^2',\
+'Nu_vrms_10000.Q2_56.ascii' u 1:2 w lp ps .2 t '56^2',\
+'Nu_vrms_10000.Q2_64.ascii' u 1:2 w lp ps .2 t '64^2',\
+4.88459731e+00  lt -1 dt 2 t 'ASPECT',\
+4.88 lt -1 lw .3 
+
+set output 'Nu_Ra1e5.pdf'
+plot[][]\
+'Nu_vrms_100000.Q2_16.ascii' u 1:2 w lp ps .2 t '16^2',\
+'Nu_vrms_100000.Q2_24.ascii' u 1:2 w lp ps .2 t '24^2',\
+'Nu_vrms_100000.Q2_32.ascii' u 1:2 w lp ps .2 t '32^2',\
+'Nu_vrms_100000.Q2_40.ascii' u 1:2 w lp ps .2 t '40^2',\
+'Nu_vrms_100000.Q2_48.ascii' u 1:2 w lp ps .2 t '48^2',\
+'Nu_vrms_100000.Q2_56.ascii' u 1:2 w lp ps .2 t '56^2',\
+'Nu_vrms_100000.Q2_64.ascii' u 1:2 w lp ps .2 t '64^2',\
+1.04951125e+01 lt -1 dt 2 t 'ASPECT',\
+10.53 lt -1 lw .3 
+
+set output 'Nu_Ra1e6.pdf'
+plot[][]\
+'Nu_vrms_1000000.Q2_16.ascii' u 1:2 w lp ps .2 t '16^2',\
+'Nu_vrms_1000000.Q2_24.ascii' u 1:2 w lp ps .2 t '24^2',\
+'Nu_vrms_1000000.Q2_32.ascii' u 1:2 w lp ps .2 t '32^2',\
+'Nu_vrms_1000000.Q2_40.ascii' u 1:2 w lp ps .2 t '40^2',\
+'Nu_vrms_1000000.Q2_48.ascii' u 1:2 w lp ps .2 t '48^2',\
+'Nu_vrms_1000000.Q2_56.ascii' u 1:2 w lp ps .2 t '56^2',\
+'Nu_vrms_1000000.Q2_64.ascii' u 1:2 w lp ps .2 t '64^2',\
+2.12315845e+01 lt -1 dt 2 t 'ASPECT',\
+21.98 lt -1 lw .3
+
+###########################################################
+
+set ylabel 'v_{rms}'
+set output 'vrms_Ra1e4.pdf'
+plot[][]\
+'Nu_vrms_10000.Q2_16.ascii' u 1:3 w lp ps .2 t '16^2',\
+'Nu_vrms_10000.Q2_24.ascii' u 1:3 w lp ps .2 t '24^2',\
+'Nu_vrms_10000.Q2_32.ascii' u 1:3 w lp ps .2 t '32^2',\
+'Nu_vrms_10000.Q2_40.ascii' u 1:3 w lp ps .2 t '40^2',\
+'Nu_vrms_10000.Q2_48.ascii' u 1:3 w lp ps .2 t '48^2',\
+'Nu_vrms_10000.Q2_56.ascii' u 1:3 w lp ps .2 t '56^2',\
+'Nu_vrms_10000.Q2_64.ascii' u 1:3 w lp ps .2 t '64^2',\
+4.28656928e+01 lt -1 dt 2 t 'ASPECT',\
+42.87 lt -1 lw .3  
+
+set ylabel 'v_{rms}'
+set output 'vrms_Ra1e5.pdf'
+plot[][]\
+'Nu_vrms_100000.Q2_16.ascii' u 1:3 w lp ps .2 t '16^2',\
+'Nu_vrms_100000.Q2_24.ascii' u 1:3 w lp ps .2 t '24^2',\
+'Nu_vrms_100000.Q2_32.ascii' u 1:3 w lp ps .2 t '32^2',\
+'Nu_vrms_100000.Q2_40.ascii' u 1:3 w lp ps .2 t '40^2',\
+'Nu_vrms_100000.Q2_48.ascii' u 1:3 w lp ps .2 t '48^2',\
+'Nu_vrms_100000.Q2_56.ascii' u 1:3 w lp ps .2 t '56^2',\
+'Nu_vrms_100000.Q2_64.ascii' u 1:3 w lp ps .2 t '64^2',\
+1.93087842e+02 lt -1 dt 2 t 'ASPECT',\
+193.2 lt -1 
+
+set ylabel 'v_{rms}'
+set output 'vrms_Ra1e6.pdf'
+plot[][]\
+'Nu_vrms_1000000.Q2_16.ascii' u 1:3 w lp ps .2 t '16^2',\
+'Nu_vrms_1000000.Q2_24.ascii' u 1:3 w lp ps .2 t '24^2',\
+'Nu_vrms_1000000.Q2_32.ascii' u 1:3 w lp ps .2 t '32^2',\
+'Nu_vrms_1000000.Q2_40.ascii' u 1:3 w lp ps .2 t '40^2',\
+'Nu_vrms_1000000.Q2_48.ascii' u 1:3 w lp ps .2 t '48^2',\
+'Nu_vrms_1000000.Q2_56.ascii' u 1:3 w lp ps .2 t '56^2',\
+'Nu_vrms_1000000.Q2_64.ascii' u 1:3 w lp ps .2 t '64^2',\
+8.39487712e+02  lt -1 dt 2 t 'ASPECT',\
+834 lt -1 
+
+###########################################################
+
+set ylabel 'q_b+q_t'
+
+set output 'q_Ra1e4.pdf'
+plot[][]\
+'Nu_vrms_10000.Q2_16.ascii' u 1:($4+$5) w lp ps .2 t '16^2',\
+'Nu_vrms_10000.Q2_24.ascii' u 1:($4+$5) w lp ps .2 t '24^2',\
+'Nu_vrms_10000.Q2_32.ascii' u 1:($4+$5) w lp ps .2 t '32^2',\
+'Nu_vrms_10000.Q2_40.ascii' u 1:($4+$5) w lp ps .2 t '40^2',\
+'Nu_vrms_10000.Q2_48.ascii' u 1:($4+$5) w lp ps .2 t '48^2',\
+'Nu_vrms_10000.Q2_56.ascii' u 1:($4+$5) w lp ps .2 t '56^2',\
+'Nu_vrms_10000.Q2_64.ascii' u 1:($4+$5) w lp ps .2 t '64^2',\
+0 lt -1 
+
+set output 'q_Ra1e5.pdf'
+plot[][]\
+'Nu_vrms_100000.Q2_16.ascii' u 1:($4+$5) w lp ps .2 t '16^2',\
+'Nu_vrms_100000.Q2_24.ascii' u 1:($4+$5) w lp ps .2 t '24^2',\
+'Nu_vrms_100000.Q2_32.ascii' u 1:($4+$5) w lp ps .2 t '32^2',\
+'Nu_vrms_100000.Q2_40.ascii' u 1:($4+$5) w lp ps .2 t '40^2',\
+'Nu_vrms_100000.Q2_48.ascii' u 1:($4+$5) w lp ps .2 t '48^2',\
+'Nu_vrms_100000.Q2_56.ascii' u 1:($4+$5) w lp ps .2 t '56^2',\
+'Nu_vrms_100000.Q2_64.ascii' u 1:($4+$5) w lp ps .2 t '64^2',\
+0 lt -1 
+
+set output 'q_Ra1e6.pdf'
+plot[][]\
+'Nu_vrms_1000000.Q2_16.ascii' u 1:($4+$5) w lp ps .2 t '16^2',\
+'Nu_vrms_1000000.Q2_24.ascii' u 1:($4+$5) w lp ps .2 t '24^2',\
+'Nu_vrms_1000000.Q2_32.ascii' u 1:($4+$5) w lp ps .2 t '32^2',\
+'Nu_vrms_1000000.Q2_40.ascii' u 1:($4+$5) w lp ps .2 t '40^2',\
+'Nu_vrms_1000000.Q2_48.ascii' u 1:($4+$5) w lp ps .2 t '48^2',\
+'Nu_vrms_1000000.Q2_56.ascii' u 1:($4+$5) w lp ps .2 t '56^2',\
+'Nu_vrms_1000000.Q2_64.ascii' u 1:($4+$5) w lp ps .2 t '64^2',\
+0 lt -1 
+
+###########################################################
+
+set ylabel '<T>'
+
+set output 'T_avrg_Ra1e4.pdf'
+plot[][]\
+'T_avrg_10000.Q2_16.ascii' u 1:2 w lp ps .2 t '16^2',\
+'T_avrg_10000.Q2_24.ascii' u 1:2 w lp ps .2 t '24^2',\
+'T_avrg_10000.Q2_32.ascii' u 1:2 w lp ps .2 t '32^2',\
+'T_avrg_10000.Q2_40.ascii' u 1:2 w lp ps .2 t '40^2',\
+'T_avrg_10000.Q2_48.ascii' u 1:2 w lp ps .2 t '48^2',\
+'T_avrg_10000.Q2_56.ascii' u 1:2 w lp ps .2 t '56^2',\
+'T_avrg_10000.Q2_64.ascii' u 1:2 w lp ps .2 t '64^2',\
+
+set output 'T_avrg_Ra1e5.pdf'
+plot[][]\
+'T_avrg_100000.Q2_16.ascii' u 1:2 w lp ps .2 t '16^2',\
+'T_avrg_100000.Q2_24.ascii' u 1:2 w lp ps .2 t '24^2',\
+'T_avrg_100000.Q2_32.ascii' u 1:2 w lp ps .2 t '32^2',\
+'T_avrg_100000.Q2_40.ascii' u 1:2 w lp ps .2 t '40^2',\
+'T_avrg_100000.Q2_48.ascii' u 1:2 w lp ps .2 t '48^2',\
+'T_avrg_100000.Q2_56.ascii' u 1:2 w lp ps .2 t '56^2',\
+'T_avrg_100000.Q2_64.ascii' u 1:2 w lp ps .2 t '64^2',\
+
+set output 'T_avrg_Ra1e6.pdf'
+plot[][]\
+'T_avrg_1000000.Q2_16.ascii' u 1:2 w lp ps .2 t '16^2',\
+'T_avrg_1000000.Q2_24.ascii' u 1:2 w lp ps .2 t '24^2',\
+'T_avrg_1000000.Q2_32.ascii' u 1:2 w lp ps .2 t '32^2',\
+'T_avrg_1000000.Q2_40.ascii' u 1:2 w lp ps .2 t '40^2',\
+'T_avrg_1000000.Q2_48.ascii' u 1:2 w lp ps .2 t '48^2',\
+'T_avrg_1000000.Q2_56.ascii' u 1:2 w lp ps .2 t '56^2',\
+'T_avrg_1000000.Q2_64.ascii' u 1:2 w lp ps .2 t '64^2',\
+
+###########################################################
+set xlabel 'T'
+set ylabel 'y'
+
+set xtics 0.1
+
+set output 'T_profile_Ra1e4.pdf'
+plot[0:1][0:1]\
+'T_profile_10000.Q2_16.ascii' u 2:1 w lp ps .2 t '16^2',\
+'T_profile_10000.Q2_24.ascii' u 2:1 w lp ps .2 t '24^2',\
+'T_profile_10000.Q2_32.ascii' u 2:1 w lp ps .2 t '32^2',\
+'T_profile_10000.Q2_40.ascii' u 2:1 w lp ps .2 t '40^2',\
+'T_profile_10000.Q2_48.ascii' u 2:1 w lp ps .2 t '48^2',\
+'T_profile_10000.Q2_56.ascii' u 2:1 w lp ps .2 t '56^2',\
+'T_profile_10000.Q2_64.ascii' u 2:1 w lp ps .2 t '64^2',\
+
+set output 'T_profile_Ra1e5.pdf'
+plot[0:1][0:1]\
+'T_profile_100000.Q2_16.ascii' u 2:1 w lp ps .2 t '16^2',\
+'T_profile_100000.Q2_24.ascii' u 2:1 w lp ps .2 t '24^2',\
+'T_profile_100000.Q2_32.ascii' u 2:1 w lp ps .2 t '32^2',\
+'T_profile_100000.Q2_40.ascii' u 2:1 w lp ps .2 t '40^2',\
+'T_profile_100000.Q2_48.ascii' u 2:1 w lp ps .2 t '48^2',\
+'T_profile_100000.Q2_56.ascii' u 2:1 w lp ps .2 t '56^2',\
+'T_profile_100000.Q2_64.ascii' u 2:1 w lp ps .2 t '64^2',\
+
+set output 'T_profile_Ra1e6.pdf'
+plot[0:1][0:1]\
+'T_profile_1000000.Q2_16.ascii' u 2:1 w lp ps .2 t '16^2',\
+'T_profile_1000000.Q2_24.ascii' u 2:1 w lp ps .2 t '24^2',\
+'T_profile_1000000.Q2_32.ascii' u 2:1 w lp ps .2 t '32^2',\
+'T_profile_1000000.Q2_40.ascii' u 2:1 w lp ps .2 t '40^2',\
+'T_profile_1000000.Q2_48.ascii' u 2:1 w lp ps .2 t '48^2',\
+'T_profile_1000000.Q2_56.ascii' u 2:1 w lp ps .2 t '56^2',\
+'T_profile_1000000.Q2_64.ascii' u 2:1 w lp ps .2 t '64^2',\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
