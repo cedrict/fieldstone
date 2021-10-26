@@ -1,0 +1,72 @@
+set term pdf enhanced
+
+set xlabel 't'
+set ylabel 'v_{rms}/v_{ref}'
+
+vel_ref=5
+
+set output 'vrms_1e4.pdf'
+plot[:0.1][]\
+'output_1e4_gr4/statistics' u 2:($11/vel_ref) w l t '16^2',\
+'output_1e4_gr5/statistics' u 2:($11/vel_ref) w l t '32^2',\
+'output_1e4_gr6/statistics' u 2:($11/vel_ref) w l t '64^2',\
+39.16 lt -1 dt 2 lw .25 
+
+set output 'vrms_1e5.pdf'
+plot[:0.05][:400]\
+'output_1e5_gr4/statistics' u 2:($11/vel_ref) w l t '16^2',\
+'output_1e5_gr5/statistics' u 2:($11/vel_ref) w l t '32^2',\
+'output_1e5_gr6/statistics' u 2:($11/vel_ref) w l t '64^2',\
+176.83 lt -1 dt 2 lw .25 
+
+set output 'vrms_1e6.pdf'
+plot[:0.05][:1500]\
+'output_1e6_gr4/statistics' u 2:($11/vel_ref) w l t '16^2',\
+'output_1e6_gr5/statistics' u 2:($11/vel_ref) w l t '32^2',\
+'output_1e6_gr6/statistics' u 2:($11/vel_ref) w l t '64^2',\
+591.34 lt -1 dt 2lw .25 
+
+set ylabel 'q_b+q_t'
+
+set output 'qsum_1e4.pdf'
+plot[:0.1][]\
+'output_1e4_gr4/statistics' u 2:($19+$20) w l t '16^2',\
+'output_1e4_gr5/statistics' u 2:($19+$20) w l t '32^2',\
+'output_1e4_gr6/statistics' u 2:($19+$20) w l t '64^2',\
+
+set output 'qsum_1e5.pdf'
+plot[:0.1][]\
+'output_1e5_gr4/statistics' u 2:($19+$20) w l t '16^2',\
+'output_1e5_gr5/statistics' u 2:($19+$20) w l t '32^2',\
+'output_1e5_gr6/statistics' u 2:($19+$20) w l t '64^2',\
+
+set output 'qsum_1e6.pdf'
+plot[:0.05][]\
+'output_1e6_gr4/statistics' u 2:($19+$20) w l t '16^2',\
+'output_1e6_gr5/statistics' u 2:($19+$20) w l t '32^2',\
+'output_1e6_gr6/statistics' u 2:($19+$20) w l t '64^2',\
+
+set ylabel 'q_{top}'
+
+set output 'qtop_1e4.pdf'
+plot[:0.1][]\
+'output_1e4_gr4/statistics' u 2:($20) w l t '16^2',\
+'output_1e4_gr5/statistics' u 2:($20) w l t '32^2',\
+'output_1e4_gr6/statistics' u 2:($20) w l t '64^2',\
+4.214 lt -1 dt 2 
+
+set output 'qtop_1e5.pdf'
+plot[:0.1][]\
+'output_1e5_gr4/statistics' u 2:($20) w l t '16^2',\
+'output_1e5_gr5/statistics' u 2:($20) w l t '32^2',\
+'output_1e5_gr6/statistics' u 2:($20) w l t '64^2',\
+8.930 lt -1 dt 2 
+
+set output 'qtop_1e6.pdf'
+plot[:0.05][]\
+'output_1e6_gr4/statistics' u 2:($20) w l t '16^2',\
+'output_1e6_gr5/statistics' u 2:($20) w l t '32^2',\
+'output_1e6_gr6/statistics' u 2:($20) w l t '64^2',\
+16.02 lt -1 dt 2 
+
+
