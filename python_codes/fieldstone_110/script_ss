@@ -4,11 +4,10 @@ rm *.ascii
 
 nstep=500
 
-#for res in 16 24 32 40 48 56 64; do
-#    for R in 10000 100000 1000000; do
-
-for res in 80; do
-    for R in 100000 1000000; do
+for res in 16 24 32 40 48 56 64; do
+    for R in 10000 100000 1000000; do
+#for res in 80; do
+#    for R in 1000000 ; do
         echo res= $res - Ra= $R - order=2
         python3 stone.py  $res $res 0 2 $R $nstep > opla_${R}_${res}
         mv Nu_vrms.ascii Nu_vrms_$R.Q2_$res.ascii
@@ -17,6 +16,8 @@ for res in 80; do
         mv T_avrg.ascii T_avrg_$R.Q2_$res.ascii
         mv solution.vtu solution_$R.Q2_$res.vtu
         mv conv.ascii conv_$R.Q2_$res.ascii
+        mv heatflux_top.ascii heatflux_top_$R.Q2_$res.ascii
+        mv heatflux_bot.ascii heatflux_bot_$R.Q2_$res.ascii
     done
 done
 

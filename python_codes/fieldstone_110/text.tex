@@ -15,7 +15,9 @@ The setup is taken from Blankenbach \etal (1989) \cite{blbc89} (See \stone 3, an
 The equations that we are solving are presented in Section~\ref{ss:dimeqs2}. 
 Boundary conditions are free slip on all sides. There is therefore a pressure nullspace
 so a normalisation condition is needed.
-$Q_2\times Q_1$ elements are used here. 
+$Q_2\times Q_1$ elements are used in what follows, although the code also implements 
+the $Q_3\times Q_2$ and $Q_4\times Q_3$ elements, although it must be said that the 
+postprocessors will most likely not work with these (yet). 
 
 Since we are only interested in the steady state and not the path to steady state, 
 then the $\partial_t T$ term in the energy equation is zeroed and Picard iterations
@@ -55,17 +57,17 @@ The Boussinesq Approximation only relies on the Rayleigh number but the
 Extended Boussinesq Approximation relies on both Rayleigh and Dissipation numbers\footnote{Note that 
 the temperature at the surface is also necessary to define the setup in a unique manner. This observation
 has been a major source of headache in efforts to replicate benchmark papers.}. 
-Because we target this specific value of $\Dinb$ we could not choose the 
+Because we target a specific value of the dissipation number $\Dinb$ we cannot choose the 
 parameters entering the Rayleigh number as freely as before.
 
 The shear heating term is $\Phi=2 \eta_0 \dot{\bm \varepsilon}:\dot{\bm \varepsilon}$ since the flow
-is incompressible. With regards to solving the energy equation this term is trivial since it does not
-depend on temperature at all.
+is incompressible. With regards to solving the energy equation this term is trivial to implement 
+since it does not depend on temperature at all and it ends up in the right hand side.
 
 The adiabatic term is $\alpha T \vec{\upnu}\cdot\vec\nabla p$. 
-First we see that it depends on temperature so it should normally be discretised in such a 
-way that it contributes to the FE matrix. However, since we are solving for the steady state
-iteratively we decide to leave it as a rhs term.
+We see that it depends on temperature so it is discretised in such a 
+way that it contributes to the FE matrix via a mass matrix. 
+%However, since we are solving for the steady state iteratively we decide to leave it as a rhs term.
 The pressure is bilinear so its gradient at the quadrature points is easy to compute.  
 Also because it is the gradient and not the pressure itself that enters this term then 
 the normalisation constant does not influence results.
@@ -73,11 +75,10 @@ Note that this term is often linearised by assuming that the pressure is mostly 
 so that it then becomes: $- \alpha T \rho_0 \vec\upnu\cdot\vec{g}$.
 Both expressions are exported to the vtu file for visual comparison.
 
-Since no work is done on the domain and there are no heat sources/sinks, we then 
+Since no work is done on the domain and there are no internal heat sources/sinks, we then 
 expect that energy conservation yields a zero heat flux balance on the boundary of the domain. 
 Since no temperature is imposed on the sides this implies a zero heat flux. 
 We can then monitor the bottom and top heat fluxes and sum them, expecting zero.  
-
 
 As explained in Section~\ref{ss:dimeqs2}, the above choice of parameters yields the following 
 fundamental reference quantities:
@@ -92,17 +93,32 @@ When written to file the root mean square velocity is divided by $\upnu_{ref}$ s
 for a direct comparison with existing published values.
 In what follows we monitor:
 \begin{itemize}
-\item the dimensionless root mean square velocity $\upnu_{rms}/\upnu_{ref}$
-\item the average temperature $\langle T \rangle$
-\item the dimensionless Nusselt number $\Nunb$
-\item the heat flow balance $\vec{q}_{top}+\vec{q}_{bottom}$
-\item the steady state average vertical temperature and velocity profiles
+\item the dimensionless root mean square velocity $\upnu_{rms}/\upnu_{ref}$,
+\item the average temperature $\langle T \rangle$,
+\item the dimensionless Nusselt number $\Nunb$,
+\item the heat flow balance $\vec{q}_{top}+\vec{q}_{bottom}$,
+\item the steady state average vertical temperature and velocity profiles.
 \end{itemize}
 
 The way the code is written now means that resolution is limited to 80x80 elements 
 because of the memory cost (approx. 30Gb).
 
 Note that the \aspect results may not be true steady state, but the first 3 digits are good.
+Also \aspect relies on a stabilisation scheme for the advection term of the energy equation
+unlike this \stone. Turning the stabilisation off was found not to alter results in any 
+significant way.
+
+Vertical average profiles are computed as follows:
+\[
+\langle T \rangle (y) = \int_0^{Lx} T(x,y) \; dx 
+\qquad
+\langle \upnu \rangle (y) = \int_0^{Lx} \sqrt{u(x,y)^2+v(x,y)^2} \; dx 
+\]
+The integrals are carried out inside each element on the bottom face (nodes 0,1,2),
+the 'middle face' (nodes 3,4,5) and the top face (nodes 6,7,8) and then summed together
+to arrive at the profile (the profiles arrays are nny long). 
+Note that in \stone~1 I had implemented a simple nodal average
+per row of nodes and this approach turned out to be very inaccurate here.   
 
 \newpage
 %------------------------------------------------------------------------------
@@ -263,7 +279,7 @@ probably slight bug in shear heating values.redo
 \end{center}
 
 \newpage
-\aspect results for 16x16, 32x32, 64x64 meshes
+\aspect results for 16x16, 32x32, 64x64 and 128x128 meshes
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_110/results_EBA/aspect/vrms_1e4}
@@ -281,23 +297,23 @@ probably slight bug in shear heating values.redo
 \vspace{5mm}
 
 \begin{center}
-\begin{tabular}{llcccccc}
+\begin{tabular}{llccccccc}
 \hline
-$\Ranb$  &  &\aspect  &\aspect  & \aspect & \stone 110  & \stone 110 & \stone 110\\
-         &  &(16x16)  & (32x32) & (64x64) & (32x32)     & (64x64)    & (80x80) \\
+$\Ranb$  &  &\aspect  &\aspect  & \aspect & \aspect   &\stone 110  & \stone 110 & \stone 110\\
+         &  &(16x16)  & (32x32) & (64x64) & (128x128) &(32x32)     & (64x64)    & (80x80) \\
 \hline
 \hline
-$10^4$ & $\upnu_{rms}$ &     & 39.159131    & 39.1590718  &  39.1220715117  & 39.1427811339 & 39.1469649726 \\
-       & $q_{bot}$     &     & -4.21461224  & -4.21459920 &  -4.2526699758  & -4.2241736047 & -4.2207111697 \\
-       & $q_{top}$     &     & +4.21466572  & +4.21465118 &  +4.2561018386  & 4.2260501790  & 4.2223536559  \\  
+$10^4$ & $\upnu_{rms}$ &     & 39.159131    & 39.1590718  & 39.1637782  &  39.1220715117  & 39.1427811339 & 39.1469649726 \\
+       & $q_{bot}$     &     & -4.21461224  & -4.21459920 & -4.21497114 &  -4.2526699758  & -4.2241736047 & -4.2207111697 \\
+       & $q_{top}$     &     & +4.21466572  & +4.21465118 & +4.21595249 &  +4.2561018386  & 4.2260501790  & 4.2223536559  \\  
 \hline
-$10^5$ & $\upnu_{rms}$ &     & 176.8339244  & 176.7353244 &  176.3717700756 & 176.6073765137& 176.6555842304 \\
-       & $q_{bot}$     &     & -8.93023781  & -8.90386799 & -9.2311968388   & -9.0088339160 & -8.9775516981  \\ 
-       & $q_{top}$     &     & +8.93021403  & +8.90519202 & +9.2584172686   & 9.0239878253  & +8.9908296677  \\
+$10^5$ & $\upnu_{rms}$ &     & 176.8339244  & 176.7353244 & 176.8536186 &  176.3717700756 & 176.6073765137& 176.6555842304 \\
+       & $q_{bot}$     &     & -8.93023781  & -8.90386799 & -8.93084342 & -9.2311968388   & -9.0088339160 & -8.9775516981  \\ 
+       & $q_{top}$     &     & +8.93021403  & +8.90519202 & +8.93331108 & +9.2584172686   & 9.0239878253  & +8.9908296677  \\
 \hline
-$10^6$ & $\upnu_{rms}$ &     & 590.707916   & 591.340132  &  556.3611676986 & 570.1830724535&  \\
-       & $q_{bot}$     &     & -15.9490236  & -16.0182326 & -16.1081289993  & -16.1217624933&  \\
-       & $q_{top}$     &     & +15.9661980  & +16.0184006 & +16.7479398662  & 16.2626758191 &  \\ 
+$10^6$ & $\upnu_{rms}$ &     & 590.707916   & 591.340132  &  &  556.3611676986 & 570.1830724535&  \\
+       & $q_{bot}$     &     & -15.9490236  & -16.0182326 &  & -16.1081289993  & -16.1217624933&  \\
+       & $q_{top}$     &     & +15.9661980  & +16.0184006 &  & +16.7479398662  & 16.2626758191 &  \\ 
 \hline
 \end{tabular}
 \end{center}
@@ -305,6 +321,11 @@ $10^6$ & $\upnu_{rms}$ &     & 590.707916   & 591.340132  &  556.3611676986 & 57
 At high Rayleigh numbers the $v_{rms}$ values are still 3\% off.
 I should rerun stone and make sure it did reach steady state. 
 
-Also the velocity profiles are somewhat off still. 
+TODO: there remains a problem with regards to the heat flux values: fieldstone values 
+are reasonable but do not converge as fast as aspect. Implement CBF?
+
+\includegraphics[width=5.7cm]{python_codes/fieldstone_110/results_EBA/heatflux_Ra1e4.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_110/results_EBA/heatflux_Ra1e5.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_110/results_EBA/heatflux_Ra1e6.pdf}
 
 

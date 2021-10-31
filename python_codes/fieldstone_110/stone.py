@@ -394,7 +394,7 @@ else:
    visu = 1
    order= 2
    Ra_nb= 1e6
-   nstep= 1000
+   nstep= 100
 
 tol_ss=1e-7   # tolerance for steady state 
 
@@ -1291,7 +1291,7 @@ for istep in range(0,nstep):
     print("compute vrms: %.3f s" % (timing.time() - start))
 
     #####################################################################
-    # compute nodal strainrate and heat flux 
+    # compute nodal pressure gradient and heat flux 
     #####################################################################
     start = timing.time()
     
@@ -1351,7 +1351,9 @@ for istep in range(0,nstep):
 
     print("compute nodal heat flux: %.3f s" % (timing.time() - start))
 
-    #np.savetxt('heatflux.ascii',np.array([xV,yV,qx_n,qy_n]).T,header='#y,T')
+    np.savetxt('heatflux_bot.ascii',np.array([xV[0:nnx],qx_n[0:nnx],qy_n[0:nnx]]).T)
+    np.savetxt('heatflux_top.ascii',np.array([xV[NV-nnx:NV],qx_n[NV-nnx:NV],qy_n[NV-nnx:NV]]).T)
+    #np.savetxt('heatflux.ascii',np.array([xV,yV,qx_n,qy_n]).T)
 
     #################################################################
     # compute heat flux and Nusselt number
@@ -1381,7 +1383,6 @@ for istep in range(0,nstep):
                jcob=hx/2.
                Nusselt+=q_y*jcob*weightq
                qy_top+=q_y*jcob*weightq
-               #print (xq,q_y)
            #end for
            qy_top2+=qy_n[iconV[7,iel]]*hx
         #end if
@@ -1400,6 +1401,7 @@ for istep in range(0,nstep):
                #end for
                jcob=hx/2.
                qy_bot+=q_y*jcob*weightq
+           #end for
         #end if
     #end for
 
@@ -1444,28 +1446,114 @@ for istep in range(0,nstep):
     #print("     istep= %d ; Nusselt= %e ; Ra= %e " %(istep,Nusselt,Ra_nb))
 
     #####################################################################
-    # compute temperature and vel profile
+    # compute temperature and vel profile 
+    # this approach is actually too naive and yield results which 
+    # are quite off with respect to aspect
+    #####################################################################
+    #start = timing.time()
+    #T_profile = np.zeros(nny,dtype=np.float64)  
+    #y_profile = np.zeros(nny,dtype=np.float64)  
+    #v_profile = np.zeros(nny,dtype=np.float64)  
+    #counter=0    
+    #for j in range(0,nny):
+    #    for i in range(0,nnx):
+    #        T_profile[j]+=T[counter]/nnx
+    #        y_profile[j]=yV[counter]
+    #        v_profile[j]+=np.sqrt(u[counter]**2+v[counter]**2)/nnx
+    #        counter+=1
+    #    #end for
+    #end for
+    #np.savetxt('T_profile.ascii',np.array([y_profile,T_profile]).T,header='#y,T')
+    #np.savetxt('vel_profile.ascii',np.array([y_profile,v_profile]).T,header='#y,vel')
+    #print("compute T & vel profile: %.3f s" % (timing.time() - start))
+
+    #####################################################################
+    # compute temperature and vel profile 
+    # looping over each element. Considering the bottom 3 nodes, 
+    # middle three nodes and top three nodes (only for elements at the 
+    # surface). Integrate velocity and temperature on each face and 
+    # add to the profile.
     #####################################################################
     start = timing.time()
 
     T_profile = np.zeros(nny,dtype=np.float64)  
     y_profile = np.zeros(nny,dtype=np.float64)  
-    v_profile = np.zeros(nny,dtype=np.float64)  
+    vel_profile = np.zeros(nny,dtype=np.float64)  
 
-    counter=0    
-    for j in range(0,nny):
-        for i in range(0,nnx):
-            T_profile[j]+=T[counter]/nnx
-            y_profile[j]=yV[counter]
-            v_profile[j]+=np.sqrt(u[counter]**2+v[counter]**2)/nnx
-            counter+=1
+    iel=0
+    for j in range(0,nely):
+        for i in range(0,nelx):
+            for iq in range(0,nqperdim):
+                rq=qcoords[iq]
+                weightq=qweights[iq]
+                jcob=hx/2.
+
+                #-----bottom row-----
+                sq=-1
+                NNNV[0:mV]=NNV(rq,sq,order)
+                yq=0.
+                uq=0.
+                vq=0.
+                Tq=0.
+                for k in range(0,mV):
+                    yq += NNNV[k]*yV[iconV[k,iel]]
+                    uq += NNNV[k]*u[iconV[k,iel]]
+                    vq += NNNV[k]*v[iconV[k,iel]]
+                    Tq += NNNV[k]*T[iconV[k,iel]]
+                #end for
+                jnode=2*j     
+                y_profile[jnode]=yq
+                vel_profile[jnode]+=np.sqrt(uq**2+vq**2)*jcob*weightq
+                T_profile[jnode]+=Tq*jcob*weightq
+
+                #-----middle row-----
+                sq=0
+                NNNV[0:mV]=NNV(rq,sq,order)
+                yq=0.
+                uq=0.
+                vq=0.
+                Tq=0.
+                for k in range(0,mV):
+                    yq += NNNV[k]*yV[iconV[k,iel]]
+                    uq += NNNV[k]*u[iconV[k,iel]]
+                    vq += NNNV[k]*v[iconV[k,iel]]
+                    Tq += NNNV[k]*T[iconV[k,iel]]
+                #end for
+                jnode=2*j+1     
+                y_profile[jnode]=yq
+                vel_profile[jnode]+=np.sqrt(uq**2+vq**2)*jcob*weightq
+                T_profile[jnode]+=Tq*jcob*weightq
+
+                #-----top row-----
+                if j==nely-1:
+                   sq=1
+                   NNNV[0:mV]=NNV(rq,sq,order)
+                   yq=0.
+                   uq=0.
+                   vq=0.
+                   Tq=0.
+                   for k in range(0,mV):
+                       yq += NNNV[k]*yV[iconV[k,iel]]
+                       uq += NNNV[k]*u[iconV[k,iel]]
+                       vq += NNNV[k]*v[iconV[k,iel]]
+                       Tq += NNNV[k]*T[iconV[k,iel]]
+                   #end for
+                   jnode=2*j+2
+                   y_profile[jnode]=yq
+                   vel_profile[jnode]+=np.sqrt(uq**2+vq**2)*jcob*weightq
+                   T_profile[jnode]+=Tq*jcob*weightq
+                #end if
+
+            #end for
+            iel+=1
+
         #end for
     #end for
 
     np.savetxt('T_profile.ascii',np.array([y_profile,T_profile]).T,header='#y,T')
-    np.savetxt('vel_profile.ascii',np.array([y_profile,v_profile]).T,header='#y,vel')
+    np.savetxt('vel_profile.ascii',np.array([y_profile,vel_profile]).T,header='#y,vel')
 
-    print("compute T & vel profile: %.3f s" % (timing.time() - start))
+    print("compute T & vel profile fancy: %.3f s" % (timing.time() - start))
 
     ###################################
     # assess convergence of iterations
