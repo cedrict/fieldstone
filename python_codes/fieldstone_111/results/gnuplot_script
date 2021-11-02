@@ -1,0 +1,38 @@
+set term pdf enhanced font "times,12pt"
+set grid
+set key outside 
+set xlabel 'nLayers'
+set ylabel 'v_{rms}'
+
+set output 'vrms.pdf'
+plot[][]\
+'vrms_2_2.ascii' u 9:4 w lp ps .25 t 'n=2, k=2',\
+'vrms_2_3.ascii' u 9:4 w lp ps .25 t 'n=2, k=3',\
+'vrms_2_4.ascii' u 9:4 w lp ps .25 t 'n=2, k=4',\
+'vrms_3_2.ascii' u 9:4 w lp ps .25 t 'n=3, k=2',\
+'vrms_3_3.ascii' u 9:4 w lp ps .25 t 'n=3, k=3',\
+'vrms_3_4.ascii' u 9:4 w lp ps .25 t 'n=3, k=4',\
+'vrms_4_2.ascii' u 9:4 w lp ps .25 t 'n=4, k=2',\
+'vrms_4_3.ascii' u 9:4 w lp ps .25 t 'n=4, k=3',\
+'vrms_4_4.ascii' u 9:4 w lp ps .25 t 'n=4, k=4',\
+'vrms_2_2.ascii' u 9:7 w l lt -1 dt 2 t 'analytical, n=2',\
+'vrms_3_2.ascii' u 9:7 w l lt -1 dt 3 t 'analytical, n=3',\
+'vrms_4_2.ascii' u 9:7 w l lt -1 dt 4 t 'analytical, n=4',\
+
+set log xy
+set xlabel 'h_r'
+set ylabel 'displacement error'
+set output 'errors.pdf'
+plot[][]\
+'errors_2_2.ascii' u (1./$7):5 w lp ps .25 t 'n=2, k=2',\
+'errors_2_3.ascii' u (1./$7):5 w lp ps .25 t 'n=2, k=3',\
+'errors_2_4.ascii' u (1./$7):5 w lp ps .25 t 'n=2, k=4',\
+'errors_3_2.ascii' u (1./$7):5 w lp ps .25 t 'n=3, k=2',\
+'errors_3_3.ascii' u (1./$7):5 w lp ps .25 t 'n=3, k=3',\
+'errors_3_4.ascii' u (1./$7):5 w lp ps .25 t 'n=3, k=4',\
+'errors_4_2.ascii' u (1./$7):5 w lp ps .25 t 'n=4, k=2',\
+'errors_4_3.ascii' u (1./$7):5 w lp ps .25 t 'n=4, k=3',\
+'errors_4_4.ascii' u (1./$7):5 w lp ps .25 t 'n=4, k=4',\
+x**2 lt -1 dt 2 t 'h^2'
+
+

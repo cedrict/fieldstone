@@ -1,0 +1,17 @@
+#! /bin/bash
+
+rm *.ascii
+
+for k in 2 3 4; do
+    for n in 2 3 4; do
+        for res in 5 6 7 9 11 15 19 24 30 35 40 48 55; do
+            echo k= $k n= $n res= $res 
+            python3 stone.py  $res $n $k 0 > opla 
+            grep vrms opla | grep = >> vrms_${n}_${k}.ascii 
+            grep err opla | grep displ >> errors_${n}_${k}.ascii 
+            mv solution.vtu solution_${n}_${k}_${res}.vtu
+            mv opla opla_${n}_${k}_${res} 
+        done
+    done
+done
+
