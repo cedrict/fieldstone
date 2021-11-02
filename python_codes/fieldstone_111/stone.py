@@ -163,9 +163,9 @@ if int(len(sys.argv) == 5):
    kkk = int(sys.argv[3])
    visu = int(sys.argv[4])
 else:
-   nLayers = 31  
-   nnn=2
-   kkk=3
+   nLayers = 51  
+   nnn=3
+   kkk=5
    visu = 1
 
 v0=1
