@@ -11,17 +11,19 @@ The same source term and boundary conditions will then be used in a numerical
 simulation so that the computed solution can be compared with the (postulated)
 true analytical solution. 
 
-Examples of this approach are to be found in \cite{dohu03,busa13,bodg06,polp14,polp14b,lopp14,blmp16}.
+Examples of this approach are to be found in 
+\textcite{dohu03}, \textcite{busa13}, \textcite{bodg06}, \textcite{polp14},
+\textcite{polp14b}, \textcite{lopp14}, \textcite{blmp16}, \textcite{thba21}.
 
 %-----------------------------------------------------------------------------
 \subsubsection{Analytical benchmark I \label{mms1} - "DH"}
 
 Taken from \cite{dohu03}. We consider a two-dimensional problem 
 in the square domain $\Omega=[0,1]\times[0,1]$, which possesses a closed-form analytical 
-solution. The problem consists of determining the velocity field ${\vec \upnu} = (u,v)$ 
+solution. The problem consists of determining the incompressible flow velocity field ${\vec \upnu} = (u,v)$ 
 and the pressure $p$ such that 
 \begin{eqnarray}
-\eta \Delta {\vec \upnu} - {\vec \nabla} p + {\vec b} &=& \vec 0 \quad\quad {\rm in} \; \Omega\\
+\vec\nabla (2 \eta \dot{\bm \varepsilon}({\vec \upnu})) -{\vec \nabla} p + {\vec b} &=& \vec 0 \quad\quad {\rm in} \; \Omega\\
 \vec{\nabla} \cdot \vec{v} &=& 0 \quad\quad {\rm in} \; \Omega\\
 \vec{v}&=&\vec{0} \quad\quad {\rm on} \; \Gamma_D
 \end{eqnarray}
@@ -61,6 +63,37 @@ The velocity and pressure fields look like:
 \includegraphics[height=4cm]{images/mms/Ex1_Q2Q1_pres.png}\\
 {\small http://ww2.lacan.upc.edu/huerta/exercises/Incompressible/Incompressible\_Ex1.htm}
 \end{center}
+
+Then the velocity magnitude is given by 
+\begin{eqnarray}
+|\vec\upnu|(x,y) 
+&=& \sqrt{u^2+v^2} \\
+&=& \sqrt{   
+[x^2(1-x)^2 2y (1-3y+2y^2)]^2
++ [-y^2 (1 - y)^2 2x (1-3x+2x^2)]^2
+} \\
+&=& 
+\sqrt{   
+x^4(1-x)^4 4y^2 (1-3y+2y^2)^2
++ y^4 (1-y)^4 4x^2 (1-3x+2x^2)^2
+} \\
+&=& 
+\sqrt{ 4x^2 y^2} 
+\sqrt{   
+x^2(1-x)^4 (1-3y+2y^2)^2
++ y^2 (1-y)^4 (1-3x+2x^2)^2
+} \\
+&=& 
+2xy
+\sqrt{   
+x^2(1-x)^4 (1-3y+2y^2)^2
++ y^2 (1-y)^4 (1-3x+2x^2)^2
+} \label{eq:dhvelnorm} 
+\end{eqnarray}
+This expression is unfortunately not very useful for later postprocessing...
+
+\vspace{.5cm}
+
 
 As shown in \cite{dohu03}, If the LBB condition is not satisfied, spurious oscillations spoil the pressure approximation. 
 Figures below show results obtained with a mesh of 20x20 $Q_1\times P_0$ (left) and $P_1\times P_1$ (right) elements:
@@ -102,8 +135,32 @@ so the root mean square velocity is
 v_{rms} = \sqrt{ \frac{1}{L_x L_y}  \int_0^1 \int_0^1 (u^2+v^2) dx dy } \simeq 0.00777615791
 \]
 
+We can also look at depth averages. The vertical depth average of the horizontal component
+of the velocity is given by
+\begin{eqnarray}
+\langle u \rangle (y) 
+&=& \frac{1}{L_x} \int_0^{L_x} u(x,y)\; dx \nn\\
+&=& \int_0^{L_x} x^2(1-x)^2 2y (1-3y+2y^2) ; dx \nn\\
+&=& \left( \int_0^{1} x^2(1-x)^2 \; dx \right) \;   2y (1-3y+2y^2)  \nn\\
+&=& \frac{1}{30}2y (1-3y+2y^2) 
+\end{eqnarray}
+Likewise, the vertical depth average of the vertical component of the velocity is given by
+\begin{eqnarray}
+\langle v \rangle (y) 
+&=& \frac{1}{L_x} \int_0^{L_x} v(x,y)\; dx \nn\\
+&=& - \int_0^{1} y^2 (1 - y)^2 2x (1-3x+2x^2)  \; dx \nn\\
+&=& - y^2 (1 - y)^2  \left( \int_0^{1}  2x (1-3x+2x^2)  \; dx \right) \nn\\
+&=& 0 
+\end{eqnarray}
+
+Unfortunately we have seen in Eq.\eqref{eq:dhvelnorm} that the velocity magnitude is 
+a rather complex function and we won't be able to compute a depth average analytically.
 
 
+
+
+%-----------------------------------------------------------------------------
+%-----------------------------------------------------------------------------
 %-----------------------------------------------------------------------------
 \subsubsection{Analytical benchmark II \label{ss:mms2} - "DB2D"}
 
@@ -2186,6 +2243,10 @@ This expression is used to generate the Dirichlet boundary conditions on the inn
 \subsubsection{Simple shear heating} \label{ss:shearheating} 
 \input{benchmark_shearheating}
 
+
+%..........................................................
+\subsubsection{Elastic disc} \label{ss:mms_elasticdisc} 
+\input{mms_elastic_disc}
 
 
 

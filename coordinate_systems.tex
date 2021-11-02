@@ -205,6 +205,45 @@ Cylindrical coordinates can also be denoted by $(\rho,\theta)$, $(r,\phi)$ or ev
 They are sometimes called "cylindrical polar coordinates" or "polar cylindrical coordinates".
 \end{remark}
 
+
+The divergence of the second order tensor field ${\bm S}$ in cylindrical polar coordinates is given 
+by
+%\footnote{\url{https://en.wikipedia.org/wiki/Tensors_in_curvilinear_coordinates#Divergence_of_a_second-order_tensor_field}}
+
+\begin{align}
+{\vec\nabla}\cdot {\bm S} & = \frac{\partial S_{rr}}{\partial r}~\vec{e}_r 
++ \frac{\partial S_{r\theta}}{\partial r}~\vec{e}_\theta
++ \frac{\partial S_{rz}}{\partial r}~\vec{e}_z  \nn\\
+&  + \cfrac{1}{r}\left[\frac{\partial S_{r \theta}}{\partial \theta} + (S_{rr}-S_{\theta\theta})\right]~\vec{e}_r  +
+\cfrac{1}{r}\left[\frac{\partial S_{\theta\theta}}{\partial \theta} + (S_{r\theta}+S_{\theta r})\right]~\vec{e}_\theta   +\cfrac{1}{r}\left[\frac{\partial S_{\theta z}}{\partial \theta} + S_{rz}\right]~\vec{e}_z \nn\\
+ &  +
+\frac{\partial S_{zr}}{\partial z}~\vec{e}_r +
+\frac{\partial S_{z\theta}}{\partial z}~\vec{e}_\theta +
+\frac{\partial S_{zz}}{\partial z}~\vec{e}_z \nn
+\end{align}
+In the case of polar coordinates then all quantities featuring $z$ (or $\partial_z$) are removed:
+\begin{align}
+{\vec\nabla}\cdot {\bm S} 
+& = \frac{\partial S_{rr}}{\partial r}~\vec{e}_r 
++ \frac{\partial S_{r\theta}}{\partial r}~\vec{e}_\theta
++ \cfrac{1}{r}\left[\frac{\partial S_{r \theta}}{\partial \theta} + (S_{rr}-S_{\theta\theta})\right]~\vec{e}_r  +
+\cfrac{1}{r}\left[\frac{\partial S_{\theta\theta}}{\partial \theta} + (S_{r\theta}+S_{\theta r})\right]~\vec{e}_\theta \nn\\
+& = \left[\frac{\partial S_{rr}}{\partial r} +
+\cfrac{1}{r} \frac{\partial S_{r \theta}}{\partial \theta}
++ \cfrac{1}{r} (S_{rr}-S_{\theta\theta})
+\right] ~\vec{e}_r
++ \left[
+\frac{\partial S_{r\theta}}{\partial r}
++\cfrac{1}{r} \frac{\partial S_{\theta\theta}}{\partial \theta}
++\cfrac{2}{r}  S_{r\theta}
+\right]~\vec{e}_\theta
+\label{eq:divtensor}
+\end{align}
+where we have assumed that the tensor ${\bm S}$ is symmetric (i.e. $S_{r\theta}=S_{\theta r}$).
+
+
+
+
 %........................................
 \subsubsection{Spherical coordinates \label{ss:sphercoord}}
 

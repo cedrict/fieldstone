@@ -1,3 +1,4 @@
+\subsection{gnuplot}
 
 gnuplot is a famous and widely used command-line program that can 
 generate two- and three-dimensional plots of functions, data, and data fits.
@@ -12,7 +13,7 @@ It dates back to 1986 and runs on all operating systems (Linux, Unix, Microsoft 
 The gray boxes indicate that its content takes place in the terminal.
 
 %----------------------------------------
-\subsection*{Installing gnuplot}
+\subsubsection*{Installing gnuplot}
 
 If you are using Ubuntu, you can install gnuplot as follows:
 
@@ -25,7 +26,7 @@ If you are using Ubuntu, you can install gnuplot as follows:
 
 
 %----------------------------------------
-\subsection*{Interactive use}
+\subsubsection*{Interactive use}
 
 In the following pages I explain how to use the gnuplot program from the terminal.
 Having done so, in the terminal simply type
@@ -172,7 +173,7 @@ gnuplot> exit
 You should find {\filenamefont results.pdf} in your folder next to {\filenamefont results.dat}.
 
 %----------------------------------------
-\subsection*{Scripting gnuplot}
+\subsubsection*{Scripting gnuplot}
 
 Although the interactive approach is very useful its workflow 
 is not practical if one wishes (for instance) to produce the same plot 
@@ -203,11 +204,6 @@ plot 'results.dat' u 1:6 w lp lw 2 t 'velocity', 1e7/x lw 3 t 'fit' , 6e-11 t 't
 \end{center}
 Note that I have added a title to the plot as well. 
 
-
-
-
-%----------------------------------------
-\subsection*{How to}
 
 
 %----------------------------------------

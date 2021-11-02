@@ -1,3 +1,7 @@
+
+
+
+%--------------------------
 \subsection{Sparse matrices}
 \begin{flushright} {\tiny {\color{gray} useful\_python.tex}} \end{flushright}
 
@@ -22,6 +26,7 @@ Finally the solver can be called:
 sol=sps.linalg.spsolve(A_mat,rhs)
 \end{lstlisting}
 
+%--------------------------
 \subsection{condition number}
 
 if the matrix has been declared as lil\_matrix, first convert it to a dense matrix:
@@ -33,4 +38,71 @@ The condition number of the matrix is simply obtained as follows:
 from numpy import linalg as LA
 print(LA.cond(A_mat))
 \end{lstlisting}
+
+%--------------------------
+\subsection{Weird stuff}
+
+Python is touted as the one language students should learn and master. However it is a language which allows *way* too much liberty in its syntax and encourages students to be sloppy. 
+
+For instance the following code runs just fine:
+
+\begin{lstlisting}
+for k in range(0,5): 
+    for k in range(0,5):
+        for k in range(0,5):
+            print (k)
+\end{lstlisting}
+
+This alone should disqualify this language. It is easy to see the obvious problem with this code, but adding a few lines of code in between each 'for' line hides the problem and the absence of any warning makes this code a nightmare to debug.
+
+
+
+\begin{verbatim}
+https://www.w3schools.com/python/default.asp
+
+https://www.codecademy.com/learn/learn-python
+
+https://learnpythonthehardway.org/book/
+\end{verbatim}
+
+
+%----------------------------------
+\subsection{How to debug your code}
+
+
+Debugging a FE code is by no means trivial. There is (at least) a grid, a connectivity array, basis functions and their derivatives, the elemental matrices and rhs, the assembly, boundary conditions, and a call to a solver before the solution (if the solver returns one!) can be visualised. 
+\begin{itemize}
+\item First and foremost, make sure that your grid of points is correct.
+For instance, you can resort to exporting it to an ascii file as follows:
+\begin{lstlisting}
+np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+\end{lstlisting}
+In two dimensions, you should set for example nelx=3 and nely=2, so that 
+for $Q_1$ elements the grid counts 12 points. Then make sure the coordinates and the order of the points makes sense. 
+Repeat the process for pressure nodes, temperature nodes, etc ...
+
+\item Then it is time to check the connectivity array(s). 
+\begin{lstlisting}
+for iel in range (0,nel):
+   print ("iel=",iel)
+   for k in range(0,m)
+      print ("node ",icon[0,iel],"at pos.",x[icon[0,iel]], y[icon[0,iel]])
+\end{lstlisting}
+This displays the list of nodes and their positions making each element.
+Repeat the process for every connectivity array.
+
+\item We can go on with testing that the all basis functions are 1 on their node and  zero elsewhere:
+\begin{lstlisting}
+for i in range(0,m):
+   print ('node',i,':',NNV(rnodes[i],snodes[i]))
+\end{lstlisting}
+here the arrays rnodes and snodes contain the (r,s) coordinates of the m nodes 
+
+\item test jacobian, compute volume of domain
+
+\item sum(dNNNdx)=0
+
+\item print nodes where bc 
+
+\end{itemize}
 

@@ -17,7 +17,8 @@ The velocity gradient ${\bm L}$ is given in Cartesian coordinates by:
 \end{equation}
 It can be decomposed into its symmetric and skew-symmetric parts according to:
 \begin{equation}
-\vec\nabla\vec\upnu = \vec\nabla^s\vec\upnu + \vec\nabla^w\vec\upnu = \dot{\bm \varepsilon}(\vec \upnu) +  \dot{\bm \omega}(\vec \upnu)
+\vec\nabla\vec\upnu = (\vec\nabla\vec\upnu)^s + (\vec\nabla\vec\upnu)^w 
+= \dot{\bm \varepsilon}(\vec \upnu) +  \dot{\bm \omega}(\vec \upnu)
 \end{equation}
 The symmetric part is called the strain rate (or rate of deformation)\footnote{Note that often the dot is ommitted and for example the \aspect manual uses the ${\bm \varepsilon}$ notation.}:
 \begin{equation}
@@ -168,7 +169,7 @@ This is an obvious conflict of notations.
 %\]
 
 
-
+\noindent 
 Let us start from the heat transport equation as shown in Eq.(6.9.1)
 of Schubert, Turcotte and Olson \cite{scto01}:
 \begin{equation}
@@ -270,6 +271,7 @@ As explained in Section~\ref{ss:nondim}, in Earth science applications the Navie
 equations reduce to the Stokes equation:
 \begin{equation}
 {\vec \nabla}\cdot {\bm \sigma} + \rho {\vec g} = \vec{0}
+\label{eq:forcebal}
 \end{equation}
 Since 
 \begin{equation}
@@ -285,6 +287,17 @@ Using the relationship ${\bm \tau} = 2 \eta \dot{\bm \varepsilon}^d(\vec\upnu)$ 
 -{\vec \nabla}p + {\vec \nabla}\cdot (2 \eta \dot{\bm \varepsilon}^d(\vec\upnu) ) + \rho {\vec g} = \vec{0}
 \end{equation}
 \end{mdframed}
+
+The divergence of a tensor field in cylindrical coordinates ($r,\theta,z$)
+has been obtained in Section~\ref{ss:cylcoord}.
+The equations of motion \eqref{eq:forcebal} becomes\footnote{\url{https://en.wikipedia.org/wiki/Linear_elasticity}}
+
+ \begin{align}
+\frac{\partial \sigma_{rr}}{\partial r} + \cfrac{1}{r}\frac{\partial \sigma_{r\theta}}{\partial \theta} + \frac{\partial \sigma_{rz}}{\partial z} + \cfrac{1}{r}(\sigma_{rr}-\sigma_{\theta\theta}) + \rho g_r &= 0 \label{eq:momelr}\\
+\frac{\partial \sigma_{r\theta}}{\partial r} + \cfrac{1}{r}\frac{\partial \sigma_{\theta\theta}}{\partial \theta} + \frac{\partial \sigma_{\theta z}}{\partial z} + \cfrac{2}{r}\sigma_{r\theta} + \rho g_\theta &=  0 \label{eq:momeltheta}\\
+\frac{\partial \sigma_{rz}}{\partial r} + \cfrac{1}{r}\frac{\partial \sigma_{\theta z}}{\partial \theta} + \frac{\partial \sigma_{zz}}{\partial z} + \cfrac{1}{r}\sigma_{rz} + \rho g_z &= 0
+\end{align}
+
 
 %------------------------------------------------------------------------
 \subsection{The mass conservation equations} 
