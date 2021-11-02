@@ -80,8 +80,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 96
+   nely = 96
    visu = 1
 
 assert (nelx>0.), "nnx should be positive" 
@@ -487,6 +487,28 @@ errp=np.sqrt(errp)
 print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
 
 print("compute errors: %.3f s" % (time.time() - start))
+
+#####################################################################
+# naive depth averaging
+#####################################################################
+
+avrg_u_profile= np.zeros(nny,dtype=np.float64)
+avrg_v_profile=np.zeros(nny,dtype=np.float64)
+avrg_vel_profile=np.zeros(nny,dtype=np.float64)
+avrg_y_profile=np.zeros(nny,dtype=np.float64)
+
+counter = 0
+for j in range(0, nny):
+    for i in range(0, nnx):
+        avrg_y_profile[j]  +=y[counter]/nnx
+        avrg_u_profile[j]  +=u[counter]/nnx
+        avrg_v_profile[j]  +=v[counter]/nnx
+        avrg_vel_profile[j]+=np.sqrt(u[counter]**2+v[counter]**2)/nnx
+        counter += 1
+    #end for
+#end for
+
+np.savetxt('profiles.ascii',np.array([avrg_y_profile,avrg_u_profile,avrg_v_profile,avrg_vel_profile]).T)
 
 #####################################################################
 # plot of solution

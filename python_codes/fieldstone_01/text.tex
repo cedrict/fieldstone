@@ -34,6 +34,17 @@ linear convergence for pressure error, as expected.}
 \includegraphics[width=15cm]{python_codes/fieldstone_01/solution.pdf}
 \end{center}
 
+One can also compute vertical/depth averages of the velocity, see Eq.~\eqref{eq:dhvelnorm}.
+Note that the averages are computed somewhat naively: instead of computing integrals in the $x$-direction
+at many depths I simply take an arithmetic average over rows of nodes. At high resolution the profiles
+converge to the analytical profiles for the individual components and to the results 
+obtained with \aspect. Please check \stone~110 for a better implementation.
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_01/results/vel_profile}\\
+{\captionfont Vertical average of velocity. \aspect was run with the 'depth average' postprocessor
+added to the prm file.}
+\end{center}
+
 
 \includegraphics[width=1cm]{images/fortran/fortran} I wrote the first ever version of this stone in
 Fortran90 around 2011. It is available in the {\foldernamefont simplefem} folder in this stone.
