@@ -1,3 +1,6 @@
+\begin{flushright} {\tiny {\color{gray} vMcriterion.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 The von Mises yield criterion suggests that the yielding of materials begins when the second 
 deviatoric stress invariant ${\cal I}_2({\bm \tau})$ reaches a critical value. 
 For this reason, it is sometimes called the $J_2$-plasticity or $J_2$ flow 
@@ -12,9 +15,10 @@ yielding of materials under any loading condition from results of simple uniaxia
 von Mises stress satisfies the property that two stress states with equal distortion energy have equal 
 von Mises stress. 
 
-Because the von Mises yield criterion is independent of the first stress invariant, ${\cal I}_1({\bm \sigma})$, 
-it is applicable 
-for the analysis of plastic deformation for ductile materials such as metals, as the onset of yield for these materials does not depend on the hydrostatic component of the stress tensor. 
+Because the von Mises yield criterion is independent of the first stress 
+invariant, ${\cal I}_1({\bm \sigma})$, it is applicable 
+for the analysis of plastic deformation for ductile materials such as metals, as the 
+onset of yield for these materials does not depend on the hydrostatic component of the stress tensor. 
 
 Although formulated by Maxwell in 1865, it is generally attributed to von Mises \cite{vonm13}. 
 Huber (1904), in a paper in Polish, anticipated to some extent this criterion. 
@@ -35,15 +39,17 @@ The von Mises yield criterion writes:
 F^{\text{\tiny VM}}= \sqrt{{\cal I}_2({\bm \tau})  } - c  \label{vmcrit}
 \end{equation}
 \end{mdframed}
-which is the Drucker-Prager criterion with $\phi=0$.
+which is the Drucker-Prager criterion with $\phi=0$ (see Section~\ref{sec:druckerprager}).
 
 The following figure shows the von Mises yield surface in the three-dimensional space of principal stresses. 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{images/rheology/vonmises/vonmises.pdf}
+\includegraphics[width=0.6\textwidth]{images/rheology/vonmises/vonmises.pdf}\\
+{\captionfont Most likely taken from Wikipedia...}
 \end{center}
 It is a circular cylinder of infinite length with its axis inclined at equal angles to the three principal stresses. 
 
-\Literature: \cite{papa87},Tin-Loi \& Ngo (2003) \cite{ting03}
+\Literature: 
+\fullcite{papa87}, \fullcite{ting03}
 
 %\begin{center}
 %\includegraphics[width=0.6\textwidth]{RHEOLOGY/viscoplasticity/vMcriterion.pdf}

@@ -243,10 +243,10 @@ both quadrilateral and triangular elements:
 elastic medium \cite{fige95}}
 \end{center}
 
-\Literature \cite{musd15}\cite{vemm09}
+\Literature \fullcite{musd15}\fullcite{vemm09}
 
 \begin{remark} 
-The Natural Neighbour Interpolation method \cite{sabm95,sabm96} is based on the Delaunay triangulation.
+The Natural Neighbour Interpolation method of Sambridge \etal \cite{sabm95,sabm96} is based on the Delaunay triangulation.
 \end{remark}
 
 \begin{remark} 
@@ -257,8 +257,8 @@ in Cartesian coordinates and on a sphere, which is based on Stripack \cite{renk9
 \todo[inline]{write about gmesh}
 
 \begin{center}
-\includegraphics[width=5cm]{images/meshes/gusa98a}
-\includegraphics[width=5cm]{images/meshes/gusa98b}\\
+\includegraphics[width=6cm]{images/meshes/gusa98a}
+\includegraphics[width=6cm]{images/meshes/gusa98b}\\
 {\captionfont Taken from Gudmundsson \& Sambridge (1998) \cite{gusa98}.
 Boundaries of Voronoi cells around 4100 of the original 16,200 2x2 degree cells
 selected to sample the details of the regionalization.}
@@ -286,14 +286,19 @@ Right: Structural reactivation in plate tectonics controlled by olivine crystal 
 
 
 \begin{center}
-\includegraphics[width=5cm]{images/meshes/paml14b}\\
-{\captionfont Mesh used for the three-dimensional model. A high resolution mesh is used in
+\includegraphics[width=6cm]{images/meshes/paml14b}
+\includegraphics[width=6.3cm]{images/meshes/codh08}\\
+{\captionfont Left: Mesh used for the three-dimensional model. A high resolution mesh is used in
 the wedge and subslab domains, while the mesh resolution decays to lower values
 toward the edge of the model. All elements are quadratic, allowing for twice the
-resolution visualized here. Paczkowski \etal, 2014 \cite{paml14b}.}
+resolution visualized here. Paczkowski \etal (2014) \cite{paml14b}.
+Right: Mid-Ocean Ridge Hydrothermal System: 3D mesh consisting of 2.5m tetrahedron elements. 
+Resolution is refined toward the axial center, with the finest resolution between the dashed
+lines, and colors indicate computational domains assigned to separate processors.
+Coumou \etal (2008) \cite{codh08}.}
 \end{center}
 
-Check TetGen mesher \cite{si15}. 
+Check TetGen mesher \fullcite{si15}. 
 
 %............................................
 \subsubsection{Hexahedra}

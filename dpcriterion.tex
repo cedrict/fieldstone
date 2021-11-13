@@ -3,7 +3,7 @@
 
 The von Mises yield criterion is not suitable for modelling the yielding of frictional material 
 as it does not include the effect of mean stress as observed in experiments. To overcome this 
-limitation, Drucker and Prager \cite{drpr52} proposed a revised function for frictional materials.
+limitation, Drucker and Prager (1952) \cite{drpr52} proposed a revised function for frictional materials.
 
 The Drucker-Prager yield criterion has the function form
 \begin{equation}
@@ -11,9 +11,12 @@ F^{\text{\tiny DP}}({\bm \sigma})=F \left( {\cal I}_1({\bm \sigma}), {\cal I}_2(
 \end{equation}
 This criterion is most often used for concrete where both normal and shear stresses 
 can determine failure. The Drucker-Prager yield criterion may be expressed as
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-F^{\text{\tiny DP}}= \sqrt{{\cal I}_2({\bm \tau})} + \alpha {\cal I}_1({\bm \sigma}) + k =0  \label{dpcriterion} 
+F^{\text{\tiny DP}}= \sqrt{{\cal I}_2({\bm \tau})} + \alpha {\cal I}_1({\bm \sigma}) + k =0  
+\label{dpcriterion} 
 \end{equation}
+\end{mdframed}
 Using the parameters $\sigma_m$, $\tau_m$, $a=-\sqrt{3}\tan\theta$, ${\cal I}_1({\bm \sigma})$ 
 and ${\cal I}_2({\bm \tau})$ of Section~\ref{sec:altinv} we have
 \begin{eqnarray}
@@ -121,7 +124,22 @@ F^{\text{\tiny DP}}
 &=& \sqrt{{\cal I}_2({\bm \tau})} 
 - \frac{ 6 p \sin \phi + 6\; c \cos \phi }{ \sqrt{3}(3 - \sin\phi)} \label{eq:dpc}
 \end{eqnarray}
+i.e.
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+F^{\text{\tiny DP}}
+= \sqrt{{\cal I}_2({\bm \tau})} 
++ \frac{ 6 \sin \phi }{ \sqrt{3}(3 - \sin\phi)} \frac{{\cal I}_1({\bm\sigma})}{3}
+- \frac{ 6\; c \cos \phi }{ \sqrt{3}(3 - \sin\phi)} 
+\end{equation}
+\end{mdframed}
+
 which is the formula used in Glerum \etal (2018) \cite{gltf18}.
+This is also Eq.~(14a) in Zienkiewicz \& Cormeau (1974) \cite{zico74}
+and Eq.~(13.10a) in Zienkiewicz (1975) \cite{zien75} provided it is divided 
+altogether by $\sqrt 3$. 
+
 
 For $\theta=-\pi/6$, the DP yield surface {\bf middle circumscribes} the MC yield surface 
 and Eq.~\eqref{eq:Fdp} writes:
@@ -240,8 +258,6 @@ here introduced to relax the singularity at the cone's tip of the Drucker-Prager
 \end{remark}
 
 \Literature:
-\begin{itemize}
-\item deformation and stress fields around a magma chamber \cite{cuwi14}
-\end{itemize}
+\fullcite{cuwi14}
 
 \newpage

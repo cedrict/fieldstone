@@ -9,7 +9,7 @@ In structural engineering it is used to determine failure load as well as the an
 %It can be shown that a material failing according to Coulomb's friction hypothesis will show the displacement introduced at failure forming an angle to the line of fracture equal to the angle of friction. This makes the strength of the material determinable by comparing the external mechanical work introduced by the displacement and the external load with the internal mechanical work introduced by the strain and stress at the line of failure. By conservation of energy the sum of these must be zero and this will make it possible to calculate the failure load of the construction.
 
 The Mohr-Coulomb failure criterion represents the linear envelope that is obtained from a plot of the shear strength of a material 
-versus the applied normal stress. This relation is expressed as \cite[p219]{owhi}
+versus the applied normal stress. This relation is expressed as (Owen \& Hinton book \cite[p219]{owhi})
 %\[
 %\tau = c- \sigma~\tan(\phi) 
 %\]
@@ -23,12 +23,15 @@ versus the applied normal stress. This relation is expressed as \cite[p219]{owhi
 \end{equation}
 where $\tau_m$ is the magnitude of the shear stress, 
 $\sigma_m$ is the normal stress, $c$ is the intercept of the failure envelope with the $\tau$ axis, 
-and $\phi$ is the slope of the failure envelope. 
+and $\phi$ is the slope of the failure envelope.
+The minus sign in the above equation is for the case where compression is assumed to be 
+negative\footnote{\url{https://en.wikipedia.org/wiki/Mohr-Coulomb_theory}}.
 The quantity $c$ is often called the cohesion and the angle $\phi$ is called the angle of internal friction.
  
 We have  
 \[
 \tau_m=\frac{\sigma_1-\sigma_3}{2}
+\qquad
 \qquad
 \sigma_m = \frac{\sigma_1+\sigma_3}{2}
 \]
@@ -39,11 +42,9 @@ with $\sigma_1$ is the maximum principal stress and $\sigma_3$ is the minimum pr
 %\[
 %\sigma_1-\sigma_3 = 2 c \cos \phi - (\sigma_1+\sigma_3) \sin\phi
 %\]
-\[
-\cfrac{\sigma_1-\sigma_3}{2} = 
--\cfrac{\sigma_1+\sigma_3}{2}~\sin\phi 
-+c\; \cos\phi 
-\]
+\begin{equation}
+\cfrac{\sigma_1-\sigma_3}{2} = -\cfrac{\sigma_1+\sigma_3}{2}~\sin\phi +c\; \cos\phi 
+\end{equation}
 Using Eqs.~\eqref{eq:sig13a} and \eqref{eq:sig13b} 
 for $(\sigma_1 - \sigma_3 )/2$ and $(\sigma_1 + \sigma_3 )/2$:
 \begin{eqnarray}
@@ -63,7 +64,7 @@ F^{\text{\tiny MC}}=\frac{1}{3} {\cal I}_1({\bm \sigma}) \sin \phi  +
 \label{eq:mcF} 
 \end{equation}
 \end{mdframed}
-This formula (without the cohesion) is used in \cite{will92}.
+This formula (without the cohesion) is used in \textcite{will92}.
 Since $p=-\frac{1}{3} {\cal I}_1({\bm \sigma})$, we also have:
 %\begin{equation}
 %F^{\text{\tiny MC}}= -p \sin \phi  + 
@@ -79,12 +80,12 @@ F^{\text{\tiny MC}}=
 
 \begin{remark}
 The expression for $F$ in the Mohr-Coulomb case in Zienkiewicz \& Cormeau (1974) \cite{zico74} 
-contains errors which are later corrected in \cite[p102]{book_zitf}. 
+contains errors which are later corrected in \textcite[p102]{book_zitf}. 
 \end{remark}
 
 \Literature: this criterion is also used in computer graphics animation \cite{zhbr05}
 
-
+\todo{when $\phi=0$ we should recover Tresca but factor 2 is wrong ?}
 
 
 
