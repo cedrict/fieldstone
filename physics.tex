@@ -1498,6 +1498,7 @@ one can compute the averaged viscosity in a domain as follows:
 \todo[inline]{check aspect manual The 2D cylindrical shell benchmarks by Davies \etal 5.4.12}
 
 
+\newpage
 %------------------------------------------------------
 \subsection{Principal stress and principal invariants} \label{sec:princ_stress}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
@@ -1609,8 +1610,10 @@ The roots are given by:
 The two principal stresses are then:
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
-\sigma_1 &=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} + \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \nn\\
-\sigma_2 &=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} - \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \label{eq:princ_stress_2D} 
+\sigma_1 &=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} 
++ \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \nn\\
+\sigma_2 &=& \frac{ \sigma_{xx}+\sigma_{yy}}{2} 
+- \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 } \label{eq:princ_stress_2D} 
 \end{eqnarray}
 \end{mdframed}
 with the convention $\sigma_1>\sigma_2$.
@@ -1748,79 +1751,66 @@ a & 0 \\
 then $\tan 2\theta_p = 0$, and then $\theta_p=0$. The principal directions are the horizontal and 
 vertical directions, i.e. the Cartesian axis system, which is consistent.
 
+
+\todo[inline]{add a remark that 2D does not exist and that plane strain incompressible actually is
+what is going on above}
+
+
 %...................................... 
 \subsubsection{In three dimensions}
 
 We are looking for the stress tensor eigenvector vector $\vec{n}=(n_x,n_y,n_z)$ associated to the
 eigenvalue $\lambda$ such that 
 \[
-\left(
-\begin{array}{ccc}
+\left(\begin{array}{ccc}
 \sigma_{xx} & \sigma_{xy} & \sigma_{xz} \\
 \sigma_{xy} & \sigma_{yy} & \sigma_{yz} \\
 \sigma_{xz} & \sigma_{yz} & \sigma_{zz}
-\end{array}
-\right)
+\end{array}\right)
 \cdot
-\left(
-\begin{array}{c}
+\left(\begin{array}{c}
 n_x \\ n_y \\ n_z
-\end{array}
-\right)
+\end{array}\right)
 =
 \lambda
-\left(
-\begin{array}{c}
+\left(\begin{array}{c}
 n_x \\ n_y \\ n_z
-\end{array}
-\right)
+\end{array}\right)
 \]
 or,
 \[
-\left(
-\begin{array}{ccc}
+\left(\begin{array}{ccc}
 \sigma_{xx} & \sigma_{xy} & \sigma_{xz} \\
 \sigma_{xy} & \sigma_{yy} & \sigma_{yz} \\
 \sigma_{xz} & \sigma_{yz} & \sigma_{zz}
-\end{array}
-\right)
+\end{array}\right)
 \cdot
-\left(
-\begin{array}{c}
+\left(\begin{array}{c}
 n_x \\ n_y \\ n_z
-\end{array}
-\right)
+\end{array}\right)
 -
-\left(
-\begin{array}{ccc}
+\left(\begin{array}{ccc}
 \lambda & 0 & 0\\ 
 0 & \lambda  & 0 \\
 0 & 0 & \lambda 
-\end{array}
-\right)
+\end{array}\right)
 \cdot
-\left(
-\begin{array}{c}
+\left(\begin{array}{c}
 n_x \\ n_y \\ n_z
-\end{array}
-\right)
+\end{array}\right)
 = \vec{0}
 \]
 
 \[
-\left(
-\begin{array}{ccc}
+\left(\begin{array}{ccc}
 \sigma_{xx}-\lambda & \sigma_{xy} & \sigma_{xz} \\
 \sigma_{xy} & \sigma_{yy}-\lambda & \sigma_{yz} \\
 \sigma_{xz} & \sigma_{yz} & \sigma_{zz} -\lambda
-\end{array}
-\right)
+\end{array}\right)
 \cdot
-\left(
-\begin{array}{c}
+\left(\begin{array}{c}
 n_x \\ n_y \\ n_z
-\end{array}
-\right)
+\end{array}\right)
 = \vec{0}
 \]
 Non-trivial solutions of this equation require 
@@ -1852,14 +1842,14 @@ Expanding the determinant results in the following cubic equation:
 \end{eqnarray}
 or, after multiplying the last line by -1,
 \begin{equation}
-\lambda^3 - K_1({\bm \sigma}) \lambda^2 + K_2({\bm \sigma}) \lambda -K_3({\bm \sigma})=0
+\lambda^3 - {\cal K}_1({\bm \sigma}) \lambda^2 + {\cal K}_2({\bm \sigma}) \lambda -{\cal K}_3({\bm \sigma})=0
 \end{equation}
 with:
 \begin{eqnarray}
-K_1({\bm \sigma}) &=& \sigma_{xx}+\sigma_{yy}+\sigma_{zz}\nn\\
-K_2({\bm \sigma}) &=& \sigma_{xx}\sigma_{yy}+\sigma_{yy}\sigma_{zz}+\sigma_{xx}\sigma_{zz}
+{\cal K}_1({\bm \sigma}) &=& \sigma_{xx}+\sigma_{yy}+\sigma_{zz}\nn\\
+{\cal K}_2({\bm \sigma}) &=& \sigma_{xx}\sigma_{yy}+\sigma_{yy}\sigma_{zz}+\sigma_{xx}\sigma_{zz}
 -\sigma_{xy}^2 -\sigma_{xz}^2 -\sigma_{yz}^2 \nn\\
-K_3({\bm \sigma}) 
+{\cal K}_3({\bm \sigma}) 
 &=& \det ({\bm \sigma}) \nn\\
 &=& \sigma_{xx}\sigma_{yy}\sigma_{zz}-\sigma_{xx}\sigma_{yz}^2
 -\sigma_{xy}^2\sigma_{zz}+\sigma_{xy}\sigma_{yz}\sigma_{xz}
@@ -1870,28 +1860,31 @@ K_3({\bm \sigma})
 \end{eqnarray}
 \index{general}{Principal Invariants}
 
-\noindent $K_1$, $K_2$ and $K_3$ are called {\bf principal}
+\noindent ${\cal K}_1$, ${\cal K}_2$ and ${\cal K}_3$ are called {\bf principal}
 invariants\footnote{\url{https://en.wikipedia.org/wiki/Invariants_of_tensors}} 
 (see also Appendix A.1 of Zienkiewicz \& Taylor \cite{zita2}). 
 These invariants can be written in a coordinate-free manner:
 \begin{eqnarray}
-K_1({\bm \sigma}) &=& {\rm tr}({\bm \sigma})  \nn\\
-K_2({\bm \sigma}) &=& \frac{1}{2}(  {\rm tr}({\bm \sigma}) ^2 - {\rm tr}({\bm \sigma}^2)  ) \nn\\
-K_3({\bm \sigma}) &=& \det ({\bm \sigma}) \nn
+{\cal K}_1({\bm \sigma}) &=& {\rm tr}({\bm \sigma})  \nn\\
+{\cal K}_2({\bm \sigma}) &=& \frac{1}{2}(  {\rm tr}({\bm \sigma}) ^2 - {\rm tr}({\bm \sigma}^2)  ) \nn\\
+{\cal K}_3({\bm \sigma}) &=& \det ({\bm \sigma}) \nn
 \end{eqnarray}
 and if the stress tensor is diagonal, we have
 \begin{eqnarray}
-K_1({\bm \sigma}) &=& \sigma_{1}+\sigma_{2}+\sigma_{3}\nn\\
-K_2({\bm \sigma}) &=& \sigma_{1}\sigma_{2}+\sigma_{2}\sigma_{3}+\sigma_{1}\sigma_{3} \nn\\
-K_3({\bm \sigma}) &=& \sigma_1\sigma_2\sigma_3 \nn
+{\cal K}_1({\bm \sigma}) &=& \sigma_{1}+\sigma_{2}+\sigma_{3}\nn\\
+{\cal K}_2({\bm \sigma}) &=& \sigma_{1}\sigma_{2}+\sigma_{2}\sigma_{3}+\sigma_{1}\sigma_{3} \nn\\
+{\cal K}_3({\bm \sigma}) &=& \sigma_1\sigma_2\sigma_3 \nn
 \end{eqnarray}
-The principal invariants $K_{\{1,2,3\}}$ are related to the {\bf moment} invariants ${\cal I}_{\{1,2,3\}}$ 
+The principal invariants ${\cal K}_{\{1,2,3\}}$ are related to the {\bf moment} 
+invariants ${\cal I}_{\{1,2,3\}}$ 
 (see Section~\ref{sec:invariants}) as follows (Appendix A.2 of Zienkiewicz \& Taylor \cite{zita2}):
 \begin{eqnarray}
-{\cal I}_1({\bm \sigma})&=& K_1({\bm \sigma}) \\ 
-{\cal I}_2({\bm \sigma})&=& \frac{1}{2}K_1({\bm \sigma})^2 -K_2({\bm \sigma}) \label{eq:IK2}\\
-{\cal I}_3({\bm \sigma})&=& \frac{1}{6}K_1({\bm \sigma})^3 -K_1({\bm \sigma}) K_2({\bm \sigma}) +K_3({\bm \sigma}) \label{eq:IK3}
+{\cal I}_1({\bm \sigma})&=& {\cal K}_1({\bm \sigma}) \\ 
+{\cal I}_2({\bm \sigma})&=& \frac{1}{2}{\cal K}_1({\bm \sigma})^2 -{\cal K}_2({\bm \sigma}) \label{eq:IK2}\\
+{\cal I}_3({\bm \sigma})&=& \frac{1}{3}{\cal K}_1({\bm \sigma})^3 -{\cal K}_1({\bm \sigma}) 
+{\cal K}_2({\bm \sigma}) + {\cal K}_3({\bm \sigma}) \label{eq:IK3}
 \end{eqnarray}
+\todo[inline]{write proofs in appendix}
 Very often we will find ourselves interested in the principal components 
 of the deviatoric stress tensor $\bm \tau$ so that we now have the following determinant to compute:
 \[
@@ -1906,12 +1899,13 @@ of the deviatoric stress tensor $\bm \tau$ so that we now have the following det
 \]
 and therefore obtain the following cubic equation
 \begin{equation}
-\lambda^3 - K_1({\bm \tau}) \lambda^2 + K_2({\bm \tau}) \lambda -K_3({\bm \tau})=0
+\lambda^3 - {\cal K}_1({\bm \tau}) \lambda^2 + {\cal K}_2({\bm \tau}) \lambda -{\cal K}_3({\bm \tau})=0
 \end{equation}
-By definition of a deviatoric tensor we have $K_1({\bm \tau})=0$ and then Eqs.~(\ref{eq:IK2}) and (\ref{eq:IK3}) become
+By definition of a deviatoric tensor we have ${\cal K}_1({\bm \tau})=0$ and 
+then Eqs.~\eqref{eq:IK2} and \eqref{eq:IK3} become
 \begin{eqnarray}
-{\cal I}_2({\bm \tau}) &=&  - K_2({\bm \tau}) \\
-{\cal I}_3({\bm \tau}) &=&  K_3({\bm \tau}) 
+{\cal I}_2({\bm \tau}) &=&  - {\cal K}_2({\bm \tau}) \\
+{\cal I}_3({\bm \tau}) &=&  {\cal K}_3({\bm \tau}) 
 \end{eqnarray}
 so that the cubic equation becomes
 \begin{equation} 
@@ -1939,7 +1933,8 @@ r&=&\frac{2}{\sqrt{3}}\sqrt{ {\cal I}_2({\bm \tau})  }\label{pc_eq4bis} \\
 The so-called Lode angle  \cite{zico74} is then given by \index{general}{Lode Angle}
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-\theta=\frac{1}{3} \sin^{-1} \left( -\frac{3\sqrt{3}}{2} \frac{{\cal I}_3({\bm \tau})}{{\cal I}_2({\bm \tau})^{3/2}} \right)
+\theta=\frac{1}{3} \sin^{-1} 
+\left( -\frac{3\sqrt{3}}{2} \frac{{\cal I}_3({\bm \tau})}{{\cal I}_2({\bm \tau})^{3/2}} \right)
 \label{eq:lodang}
 \end{equation}
 \end{mdframed}
@@ -2179,20 +2174,76 @@ Given a tensor $\bm{T}$,  one can compute its (moment) invariants as follows
 {\cal I}_2({\bm T}) 
 &=& \frac{1}{2} {\rm tr}[{\bm T}\cdot{\bm T}] \\
 &=& \frac{1}{2} \sum_{ij} T_{ij} T_{ji} \\
-&=& \frac{1}{2} (T_{xx}^2 + T_{yy}^2 + T_{zz}^2) + T_{xy}^2 + T_{xz}^2 + T_{yz}^2 \\ 
+&=& \frac{1}{2} (T_{xx}^2 + T_{yy}^2 + T_{zz}^2) + T_{xy}^2 + T_{xz}^2 + T_{yz}^2 \\
 {\cal I}_3({\bm T}) 
 &=& \frac{1}{3} {\rm tr}[{\bm T}\cdot{\bm T}\cdot {\bm T}]   \\
-&=& \frac{1}{3}\sum_i\sum_j \sum_k T_{ij} T_{jk} T_{ki}  \\
-&=& \frac{1}{3} (T_{xx} ( T_{xx}T_{xx} + T_{xy}T_{xy} + T_{xz}T_{xz} )) \qquad (i=j=x,k=x,y,z)\nn\\ 
-&+& \frac{1}{3} (T_{yy} ( T_{yx}T_{yx} + T_{yy}T_{yy} + T_{yz}T_{yz} )) \qquad (i=j=y,k=x,y,z)\nn\\ 
-&+& \frac{1}{3} (T_{zz} ( T_{zx}T_{zx} + T_{zy}T_{zy} + T_{zz}T_{zz} )) \qquad (i=j=z,k=x,y,z)\nn\\ 
-&+& \frac{2}{3} (T_{xy} ( T_{xx}T_{yx} + T_{xy}T_{yy} + T_{xz}T_{yz} )) \qquad (i=x,j=y,k=x,y,z)\nn\\ 
-&+& \frac{2}{3} (T_{xz} ( T_{xx}T_{zx} + T_{xy}T_{zy} + T_{xz}T_{zz} )) \qquad (i=x,j=z,k=x,y,z)\nn\\ 
-&+& \frac{2}{3} (T_{yz} ( T_{yx}T_{zx} + T_{yy}T_{zy} + T_{yz}T_{zz} )) \qquad (i=y,j=z,k=x,y,z)\nn\\ 
+&=& \frac{1}{3}\sum_i\sum_j \sum_k T_{ij} T_{jk} T_{ki}  
+%&=& \frac{1}{3} (T_{xx} ( T_{xx}T_{xx} + T_{xy}T_{xy} + T_{xz}T_{xz} )) \qquad (i=j=x,k=x,y,z)\nn\\ 
+%&&+ \frac{1}{3} (T_{yy} ( T_{yx}T_{yx} + T_{yy}T_{yy} + T_{yz}T_{yz} )) \qquad (i=j=y,k=x,y,z)\nn\\ 
+%&&+ \frac{1}{3} (T_{zz} ( T_{zx}T_{zx} + T_{zy}T_{zy} + T_{zz}T_{zz} )) \qquad (i=j=z,k=x,y,z)\nn\\ 
+%&&+\frac{2}{3} (T_{xy} ( T_{xx}T_{yx} + T_{xy}T_{yy} + T_{xz}T_{yz} )) \qquad (i=x,j=y,k=x,y,z)\nn\\ 
+%&&+ \frac{2}{3} (T_{xz} ( T_{xx}T_{zx} + T_{xy}T_{zy} + T_{xz}T_{zz} )) \qquad (i=x,j=z,k=x,y,z)\nn\\ 
+%&&+ \frac{2}{3} (T_{yz} ( T_{yx}T_{zx} + T_{yy}T_{zy} + T_{yz}T_{zz} )) \qquad (i=y,j=z,k=x,y,z)\nn\\ 
+\end{eqnarray}
+
+
+\[
+\begin{array}{ccccc}
+i & j & k & T_{ij}T_{jk}T_{ki} & symm \\
+\hline
+x&x&x&  T_{xx}T_{xx}T_{xx}  & T_{xx}^3  \\
+y&x&x&  T_{yx}T_{xx}T_{xy}  & T_{xx}T_{xy}^2 \\
+z&x&x&  T_{zx}T_{xx}T_{xz}  & T_{xx}T_{xz}^2 \\
+x&y&x&  T_{xy}T_{yx}T_{xx}  & T_{xx}T_{xy}^2 \\
+y&y&x&  T_{yy}T_{yx}T_{xy}  & T_{yy}T_{xy}^2 \\
+z&y&x&  T_{zy}T_{yx}T_{xz}  & T_{xy}T_{xz}T_{yz} \\
+x&z&x&  T_{xz}T_{zx}T_{xx}  & T_{xx}T_{xz}^2 \\
+y&z&x&  T_{yz}T_{zx}T_{xy}  & T_{xy}T_{xz}T_{yz} \\
+z&z&x&  T_{zz}T_{zx}T_{xz}  & T_{zz}T_{xz}^2 \\
+\hline
+x&x&y&  T_{xx}T_{xy}T_{yx}  & T_{xx}T_{xy}^2 \\
+y&x&y&  T_{yx}T_{xy}T_{yy}  & T_{yy}T_{xy}^2 \\
+z&x&y&  T_{zx}T_{xy}T_{yz}  & T_{xy}T_{xz}T_{yz} \\
+x&y&y&  T_{xy}T_{yy}T_{yx}  & T_{yy}T_{xy}^2 \\
+y&y&y&  T_{yy}T_{yy}T_{yy}  & T_{yy}^3  \\
+z&y&y&  T_{zy}T_{yy}T_{yz}  & T_{yy}T_{yz}^2 \\
+x&z&y&  T_{xz}T_{zy}T_{yx}  & T_{xy}T_{xz}T_{yz} \\
+y&z&y&  T_{yz}T_{zy}T_{yy}  & T_{yy}T_{yz}^2 \\
+z&z&y&  T_{zz}T_{zy}T_{yz}  & T_{zz}T_{yz}^2 \\
+\hline
+x&x&z&  T_{xx}T_{xz}T_{zx}  & T_{xx}T_{xz}^2 \\
+y&x&z&  T_{yx}T_{xz}T_{zy}  & T_{xy}T_{xz}T_{yz}\\
+z&x&z&  T_{zx}T_{xz}T_{zz}  & T_{zz}T_{xz}^2\\
+x&y&z&  T_{xy}T_{yz}T_{zx}  & T_{xy}T_{yz}T_{yz}\\
+y&y&z&  T_{yy}T_{yz}T_{zy}  & T_{yy}T_{yz}^2\\
+z&y&z&  T_{zy}T_{yz}T_{zz}  & T_{zz}T_{yz}^2\\
+x&z&z&  T_{xz}T_{zz}T_{zx}  & T_{zz}T_{xz}^2\\
+y&z&z&  T_{yz}T_{zz}T_{zy}  & T_{zz}T_{yz}^2\\
+z&z&z&  T_{zz}T_{zz}T_{zz}  & T_{zz}^3  \\
+\hline
+\end{array}
+\]
+In the end 
+\[
+\sum_{i=x,y,z} \sum_{j=x,y,z} \sum_{k=x,y,z}
+T_{ij}T_{jk}T_{ki}
+= T_{xx}( T_{xx}^2 + 3T_{xy}^2 + 3T_{xz}^2)
++ T_{yy}(3T_{xy}^2 +  T_{yy}^2 + 3T_{yz}^2   )
++ T_{zz}(3T_{xz}^2 + 3T_{yz}^2 + T_{zz}^2  )
++6T_{xy}T_{yz}T_{yz}
+\]
+and then the third moment invariant of the symmetric tensor ${\bm T}$
+is given by:
+\begin{eqnarray}
+{\cal I}_3({\bm T}) 
 &=& \frac{1}{3} T_{xx} (  T_{xx}^2 + 3 T_{xy}^2 + 3 T_{xz}^2  )     \nonumber\\
 &+& \frac{1}{3} T_{yy} (3 T_{xy}^2 +   T_{yy}^2 + 3 T_{yz}^2  )     \nonumber\\
 &+& \frac{1}{3} T_{zz} (3 T_{xz}^2 + 3 T_{yz}^2 +   T_{zz}^2)       \nonumber\\
-&+& 2 T_{xy} T_{xz} T_{yz}  
+&+& 2 T_{xy} T_{xz} T_{yz} \\
+&=& \frac{1}{3} (T_{xx}^3+T_{yy}^3+T_{zz}^3) 
++T_{xx} ( T_{xy}^2 +  T_{xz}^2  ) 
++T_{yy} ( T_{xy}^2 +  T_{yz}^2  ) 
++T_{zz} ( T_{xz}^2 +  T_{yz}^2  ) + 2 T_{xy} T_{xz} T_{yz} 
 \end{eqnarray}
 
 
@@ -2200,306 +2251,15 @@ Given a tensor $\bm{T}$,  one can compute its (moment) invariants as follows
 
 %----------------------------------------------------------------
 \subsection{Stress \& strain rate invariants}\label{sec:stress_invariants}
-\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
-The implementation of the plasticity criterions relies essentially 
-on the invariants of the (deviatoric) stress ${\bm \tau}$ 
-and the (deviatoric) strainrate tensors $\dot{\bm \varepsilon}$:
+\input{stress_sr_invariants}
 
-\begin{eqnarray}
-{\cal I}_1({\bm \sigma}) &=& \sigma_{xx}+\sigma_{yy}+\sigma_{zz}\\
-{\cal I}_2({\bm \tau})   
-&=&\frac{1}{2}(\tau_{xx}^2 + \tau_{yy}^2 + \tau_{zz}^2 ) + \tau_{xy}^2 + \tau_{xz}^2 + \tau_{yz}^2  \\
-&=&\frac{1}{6}\left[(\sigma_{xx}-\sigma_{yy})^2 + (\sigma_{yy}-\sigma_{zz})^2 + (\sigma_{xx}-\sigma_{zz})^2 \right]  + \sigma_{xy}^2 + \sigma_{xz}^2 + \sigma_{yz}^2  \\
-\nonumber\\
-{\cal I}_3({\bm \tau}) 
-&=& \frac{1}{3} \tau_{xx} (  \tau_{xx}^2 + 3 \tau_{xy}^2 + 3 \tau_{xz}^2  )     \nonumber\\
-&+& \frac{1}{3} \tau_{yy} (3 \tau_{xy}^2 +   \tau_{yy}^2 + 3 \tau_{yz}^2  )     \nonumber\\
-&+& \frac{1}{3} \tau_{zz} (3 \tau_{xz}^2 + 3 \tau_{yz}^2 +   \tau_{zz}^2)       \nonumber\\
-&+& 2 \tau_{xy} \tau_{xz} \tau_{yz}  
-\end{eqnarray}
-
-and also the second invariant of the deviatoric strain rate is:
-\begin{eqnarray}
-{\cal I}_2(\dot{\bm{\varepsilon}}^d)
-&=& \frac{1}{2} \left[ (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + (\dot{\varepsilon}_{zz}^d)^2   \right] 
-+ (\dot{\varepsilon}_{xy}^d)^2  
-+ (\dot{\varepsilon}_{xz}^d)^2  
-+ (\dot{\varepsilon}_{yz}^d)^2  \nonumber\\
-&=& \frac{1}{6} \left[ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{yy})^2 
-+ (\dot{\varepsilon}_{yy}-\dot{\varepsilon}_{zz})^2 
-+ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{zz})^2 \right] 
-+ \dot{\varepsilon}_{xy}^2 + \dot{\varepsilon}_{xz}^2 + \dot{\varepsilon}_{yz}^2 \label{eq:I2epsd} 
-\end{eqnarray}
-
-\begin{remark}
-${\cal I}_2({\bm \tau})$ is often called $J_2$ or $J_2'$ so that one sometimes speaks of $J_2$-plasticity.
-\end{remark}
-
-These (second) invariants are almost always used under a square root so we define:
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{equation}
-\tau_{e}=\sqrt{{\cal I}_2({\bm \tau})}
-\quad\quad
-\quad\quad
-\dot{\varepsilon}_{e}=\sqrt{{\cal I}_2(\dot{\bm \varepsilon}^d)}
-\label{eq:tauepse}
-\end{equation}
-\end{mdframed}
-Note that these quantities have the same dimensions as their tensor counterparts, i.e. Pa for stresses and s$^{-1}$ for strain rates.
-
-If the stress tensor is such that it is diagonal, i.e.
-\[
-{\bm \sigma}= \left( \begin{array}{ccc}
-\sigma_1 & 0 & 0 \\
-0 & \sigma_2 & 0 \\
-0 & 0 & \sigma_3
-\end{array}\right)
-\qquad
-{\rm and}
-\qquad
-{\bm \tau}= \left( \begin{array}{ccc}
-\tau_1 & 0 & 0 \\
-0 & \tau_2 & 0 \\
-0 & 0 & \tau_3
-\end{array}\right)
-\]
-then the invariants are 
-\begin{eqnarray}
-{\cal I}_1({\bm \sigma}) &=& \sigma_1 + \sigma_2+ \sigma_3 \nonumber\\
-%{\cal I}_2({\bm \tau})|^{2D} &=& \frac{1}{4} (\sigma_{1} - \sigma_{2})^2 \nonumber\\
-{\cal I}_2({\bm \tau}) &=& \frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 
-+ (\sigma_{1}-\sigma_{3})^2 \right] \\ 
-{\cal I}_3({\bm \tau}) 
-&=& \frac{1}{3} tr[{\bm \tau}\cdot{\bm \tau}\cdot {\bm \tau}]  \nn\\
-&=& \frac{1}{3} tr
-\left[
-\left(
-\begin{array}{ccc}
-\tau_1 & 0 & 0 \\
-0 & \tau_2 & 0 \\
-0 & 0 & \tau_3 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-\tau_1 & 0 & 0 \\
-0 & \tau_2 & 0 \\
-0 & 0 & \tau_3 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-\tau_1 & 0 & 0 \\
-0 & \tau_2 & 0 \\
-0 & 0 & \tau_3 
-\end{array}
-\right)
-\right] \nn\\
-&=&  \frac{1}{3} tr
-\left(
-\begin{array}{ccc}
-\tau_1^3 & 0 & 0 \\
-0 & \tau_2^3 & 0 \\
-0 & 0 & \tau_3^3 
-\end{array}
-\right) \nn\\
-&=& \frac{1}{3}(\tau_1^3+\tau_2^3+\tau_3^3) \nn\\
-&=&  \frac{1}{3} [ 
-(\sigma_1-{\cal I}_1({\bm \sigma})/3)^3+  
-(\sigma_2-{\cal I}_1({\bm \sigma})/3)^3+
-(\sigma_3-{\cal I}_1({\bm \sigma})/3)^3 ]   \nonumber\\ 
-&=&  \frac{1}{3\cdot 27} [ 
-(3\sigma_1-{\cal I}_1({\bm \sigma}))^3+  
-(3\sigma_2-{\cal I}_1({\bm \sigma}))^3+
-(3\sigma_3-{\cal I}_1({\bm \sigma}))^3 ]   \nonumber\\ 
-&=& \frac{1}{81}
-\left[
-(2\sigma_1-\sigma_2-\sigma_3)^3+
-(2\sigma_2-\sigma_1-\sigma_3)^3+
-(2\sigma_3-\sigma_1-\sigma_2)^3
-\right] 
-\label{eq:3rdinvb} \label{eq:I3tau}
-\end{eqnarray}
-The formulation of the third invariant of ${\bm \tau}$  in Eq.~\ref{eq:I3tau} 
-is used in Wojciechowski \cite{wojc18}.
-
-\vspace{1cm}
-
-{\color{gray} 
-NOT SURE AT ALL. One can prove that (REF?)\footnote{Near identical equations are to be found at 
-\url{https://en.wikipedia.org/wiki/Cauchy_stress_tensor}} 
-\begin{eqnarray}
-{\cal I}_3({\bm \tau}) 
-&=& \frac{1}{27} \left( 2 {\cal I}_1({\bm \sigma})^3 + 
-9 {\cal I}_1({\bm \sigma}) {\cal I}_2({\bm \sigma}) 
-+27 {\cal I}_3({\bm \sigma})   \right) \nn\\
-&=& det ({\bm\tau}) \nn\\
-&=& \tau_1 \tau_2\tau_3 \nn
-\end{eqnarray}
-}
-
+%-----------------------------------------------------------
 \index{general}{Plain Strain}
-\paragraph{Two-dimensional plane strain calculations} 
+\subsection{Two-dimensional plane strain calculations} 
 
-We start from the 3D strain rate tensor 
-\[
-\dot{\bm \varepsilon}(\vec\upnu) = 
-\left(
-\begin{array}{ccc}
-\dot{\varepsilon}_{xx} & \dot{\varepsilon}_{xy} & \dot{\varepsilon}_{xz} \\
-\dot{\varepsilon}_{yx} & \dot{\varepsilon}_{yy} & \dot{\varepsilon}_{yz} \\
-\dot{\varepsilon}_{zx} & \dot{\varepsilon}_{zy} & \dot{\varepsilon}_{zz} 
-\end{array}
-\right)
-\]
+\input{plane_strain}
 
-The plane strain assumption is such that the problem at hand is assumed to be infinite in a given direction. 
-In the case of computational geodynamics, most 2D modelling is a vertical section of the crust-lithosphere-mantle
-and the underlying implicit assumption is then that the orogen/rift/subduction/etc ... is infinite in the 
-direction perpendicular to the screen/paper.  
-
-For example, let us assume that the deformation takes place in the $x,y$-plane,
-so that $w=0$ (velocity in the $z$ direction is zero) and $\partial_z \rightarrow 0$ (no change in the $z$ direction).
-We then have $\dot{\varepsilon}_{zz}=0$ as well as $\dot{\varepsilon}_{xz}=0$ and $\dot{\varepsilon}_{yz}=0$, so
-that the strain rate tensor is 
-\[
-\dot{\bm \varepsilon}(\vec\upnu)=
-\left( \begin{array}{ccc}
-\dot{\varepsilon}_{xx} & \dot{\varepsilon}_{xy} & 0 \\
-\dot{\varepsilon}_{xy} & \dot{\varepsilon}_{yy} & 0 \\
-0 & 0 & 0
-\end{array}\right)
-\]
-However, very importantly, this does not mean that the stress is zero in the $z$-direction! Pressure is 
-isotropic and the stress tensor is then 
-\[
-{\bm \sigma}=
--p {\bm 1} + {\bm \tau} =
-\left( \begin{array}{ccc}
-{\sigma}_{xx} & {\sigma}_{xy} & 0 \\
-{\sigma}_{xy} & {\sigma}_{yy} & 0 \\
-0 & 0 & -p
-\end{array}\right)
-\]
-However, it is important to keep in mind that the invariants we need to implement 
-the rheologies are ${\cal I}_1({\bm \sigma})$,  ${\cal I}_2({\bm \tau})$ and ${\cal I}_3({\bm \tau})$.
-By formulating our yield surfaces with pressure $p=-{\cal I}_1({\bm \sigma})/3$ we can then 
-avoid confusion, and since the other two invariants are functions of ${\bm \tau}$ the pressure 
-term does not pose any problem: simply set $\tau_{xz}$, $\tau_{yz}$ and $\tau_{zz}$ to zero in the 
-equations of Section~\ref{sec:stress_invariants} and we obtain:
-\begin{eqnarray}
-{\cal I}_2({\bm \tau}) &=&\frac{1}{2}(\tau_{xx}^2 + \tau_{yy}^2 ) + \tau_{xy}^2 \\ 
-{\cal I}_3({\bm \tau}) 
-&=& \frac{1}{3} \tau_{xx} (  \tau_{xx}^2 + 3 \tau_{xy}^2 ) 
-+ \frac{1}{3} \tau_{yy} (3 \tau_{xy}^2 +   \tau_{yy}^2 )   \nn\\
-&=& \frac{1}{3}(  \tau_{xx}^3 + 3 \tau_{xx}\tau_{xy}^2  
-+ 3 \tau_{yy} \tau_{xy}^2 +   \tau_{yy}^3 )   \nn\\
-&=& \frac{1}{3}(  \tau_{xx}^3 + 3 (\tau_{xx}+\tau_{yy}) \tau_{xy}^2  +  \tau_{yy}^3 )   \nn\\
-&=& \frac{1}{3}(  \tau_{xx}^3 +  \tau_{yy}^3 )  \qquad \text{since } \tau_{ii}=0 
-\end{eqnarray}
-Let us now think about compressible flow in this context. 
-The deviatoric strain rate tensor is defined as 
-\[
-\dot{\bm \varepsilon}^d 
-= \dot{\bm \varepsilon} -\frac{1}{3} {\rm tr}[\dot{\bm \varepsilon}]   {\bm 1} 
-= \dot{\bm \varepsilon} -\frac{1}{3} (\dot{\varepsilon}_{xx} +\dot{\varepsilon}_{yy}   )  {\bm 1} 
-\]
-or,
-\[
-\dot{\bm \varepsilon}^d = 
-\left(
-\begin{array}{ccc}
-\frac{2}{3}\dot{\varepsilon}_{xx} -\frac{1}{3}\dot{\varepsilon}_{yy} & \dot{\varepsilon}_{xy} & 0 \\
-\dot{\varepsilon}_{yx} & -\frac{1}{3}\dot{\varepsilon}_{xx} +\frac{2}{3} \dot{\varepsilon}_{yy} & 0 \\
-0 & 0 & -\frac{1}{3} \dot{\varepsilon}_{xx} -\frac{1}{3}\dot{\varepsilon}_{yy}
-\end{array}
-\right)
-\]
-which is the equation in Section 2.1.3 in \aspect{} manual\footnote{This may have changed since 
-the last time I checked the manual!}. 
-
-Let us now turn to the second invariant of the deviatoric strain rate 
-(see Eq.~\eqref{eq:I2epsd}):
-\begin{eqnarray}
-{\cal I}_2(\dot{\bm{\varepsilon}}^d)
-&=& \frac{1}{2} \dot{\bm{\varepsilon}}^d:\dot{\bm{\varepsilon}}^d \\
-&=& \frac{1}{2} \left[ (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + (\dot{\varepsilon}_{zz}^d)^2   \right] 
-+ (\dot{\varepsilon}_{xy}^d)^2  
-+ (\dot{\varepsilon}_{xz}^d)^2  
-+ (\dot{\varepsilon}_{yz}^d)^2  
-\end{eqnarray}
-But there is also an expression for ${\cal I}_2(\dot{\bm{\varepsilon}}^d)$ directly as a function of the $\dot{\bm\varepsilon}_{ij}$ components 
-(see Eq.~\eqref{eq:I2epsd}):
-\begin{eqnarray}
-{\cal I}_2(\dot{\bm{\varepsilon}}^d)
-&=& \frac{1}{6} \left[ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{yy})^2 
-+ (\dot{\varepsilon}_{yy}-\dot{\varepsilon}_{zz})^2 
-+ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{zz})^2 \right] 
-+ \dot{\varepsilon}_{xy}^2 + \dot{\varepsilon}_{xz}^2 + \dot{\varepsilon}_{yz}^2 \\
-&=& 
-\frac{1}{6} \left[ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{yy})^2 
-+ (\dot{\varepsilon}_{yy})^2 
-+ (\dot{\varepsilon}_{xx})^2 \right] 
-+ \dot{\varepsilon}_{xy}^2 \\
-&=& \frac{1}{6} \left[ \dot{\varepsilon}_{xx}^2 
--2\dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy}
-+\dot{\varepsilon}_{yy}^2 
-+ \dot{\varepsilon}_{yy}^2 
-+ \dot{\varepsilon}_{xx}^2 \right] 
-+ \dot{\varepsilon}_{xy}^2 \\
-&=& \frac{1}{6} \left[ 
-2\dot{\varepsilon}_{xx}^2 
--2\dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy}
-+2\dot{\varepsilon}_{yy}^2 
-\right] 
-+ \dot{\varepsilon}_{xy}^2 \\
-&=& 
-\frac{1}{3} \left[ 
-\dot{\varepsilon}_{xx}^2 
--\dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy}
-+\dot{\varepsilon}_{yy}^2 
-\right] 
-+ \dot{\varepsilon}_{xy}^2 
-\end{eqnarray}
-If we now do things the old/wrong(?) way, one would start directly from the 2D strain rate tensor 
-\[
-\dot{\bm \varepsilon} = 
-\left(
-\begin{array}{cc}
-\dot{\varepsilon}_{xx} & \dot{\varepsilon}_{xy}  \\
-\dot{\varepsilon}_{yx} & \dot{\varepsilon}_{yy}  
-\end{array}
-\right)
-\]
-The deviatoric strain rate tensor is then logically defined as 
-\[
-\dot{\bm \varepsilon}^d 
-= \dot{\bm \varepsilon} -\frac{1}{2} Tr[\dot{\bm \varepsilon}]   {\bm 1} 
-= \dot{\bm \varepsilon} -\frac{1}{2} (\dot{\varepsilon}_{xx} +\dot{\varepsilon}_{yy}   )  {\bm 1} 
-\]
-or,
-\[
-\dot{\bm \varepsilon}^d = 
-\left(
-\begin{array}{cc}
-\frac{1}{2}\dot{\varepsilon}_{xx} -\frac{1}{2}\dot{\varepsilon}_{yy} & \dot{\varepsilon}_{xy}  \\
-\dot{\varepsilon}_{yx} & -\frac{1}{2}\dot{\varepsilon}_{xx} +\frac{1}{2} \dot{\varepsilon}_{yy}  \\
-\end{array}
-\right)
-\]
-Let us now turn to the second invariant of the deviatoric strain rate 
-(see Section 3.21 in fieldstone)
-\begin{eqnarray}
-{\cal I}_2(\dot{\bm{\varepsilon}}^d)
-&=& \frac{1}{2} \dot{\bm{\varepsilon}}^d:\dot{\bm{\varepsilon}}^d \\
-&=& \frac{1}{2}[ (\frac{1}{2}\dot{\varepsilon}_{xx} -\frac{1}{2}\dot{\varepsilon}_{yy})^2 + (-\frac{1}{2}\dot{\varepsilon}_{xx} +\frac{1}{2} \dot{\varepsilon}_{yy})^2  ] + \dot{\varepsilon}_{xy}^2 \\
-&=& \frac12 [ \frac14 (2\dot{\varepsilon}_{xx}^2  -4 \dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy} +2\dot{\varepsilon}_{yy}^2 )  ] + \dot{\varepsilon}_{xy}^2 \\
-&=& \frac14 [ \dot{\varepsilon}_{xx}^2  -2 \dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy} +\dot{\varepsilon}_{yy}^2   ] + \dot{\varepsilon}_{xy}^2 
-\end{eqnarray}
-which is not the same as the previous expression! 
 
 
 
@@ -2635,6 +2395,105 @@ a
 &=& -\sqrt{3} \tan\theta
 \end{eqnarray}
 Here again we arrive at the opposite of Eq. (16) of Wojciechowski \cite{wojc18}. 
+
+\newpage
+%====================================================================================
+%====================================================================================
+
+\begin{center}
+{\Large Recap of notations and definitions of stress invariants}
+\end{center}
+
+When it comes to stress invariants, I urge the reader to be extremely careful when considering 
+their source(s). As we have seen these come in two main flavours (principal and moment invariants)
+and they are often written for the full stress or deviatoric tensor. On top of it all, 
+typos are common like in any source and the occasional minus sign or factor 2 or 3 can be missing.
+This is the reason why I have spent substantial time re-deriving those in the past pages 
+with a consistent set of notations:
+\begin{center}
+\begin{tabular}{ll}
+\hline
+${\bm \sigma}$ & (full) stress tensor \\
+$\sigma_1$, $\sigma_2$, $\sigma_3$ & principal stresses \\ 
+${\bm \tau}$   & deviatoric stress tensor \\
+$\tau_1$, $\tau_2$, $\tau_3$ & principal deviatoric stresses \\ 
+${\cal I}_1({\bm T})$ & first moment invariant of tensor ${\bm T}$ \\
+${\cal I}_2({\bm T})$ & second moment invariant of tensor ${\bm T}$ \\
+${\cal I}_3({\bm T})$ & third moment invariant of tensor ${\bm T}$ \\
+${\tau}_{e}=\sqrt{{\cal I}_2({\bm \tau})}$ & effective deviatoric stress \\
+$\dot{{\varepsilon}}_{e}=\sqrt{{\cal I}_2(\dot{\bm \varepsilon}^d)}$ & effective deviatoric strain rate \\
+\hline
+\end{tabular}
+\end{center}
+Proofs of all the following relationships are given in Appendix~\ref{app:invariants}.
+
+\begin{itemize}
+\item First invariant %-----------------------------------
+
+\begin{eqnarray}
+{\cal I}_1(\bm\sigma) &=& \sigma_{xx}+\sigma_{yy}+\sigma_{zz} \nn\\
+{\cal I}_1(\bm\tau) &=& 0 \nn\\ 
+\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} &=& {\bm 1}  \nn
+\end{eqnarray}
+
+
+\item Second invariant %-----------------------------------
+
+
+\begin{eqnarray}
+{\cal I}_2(\bm\tau) 
+&=& \frac12 {\bm \tau}:{\bm \tau} \nn\\
+&=& \frac12 {\rm tr} [{\bm \tau}\cdot {\bm \tau}] \nn\\
+&=& \frac12 \sum_{ij} \tau_{ij}\tau_{ji}  \nn\\
+&=& \frac12 ( \tau_{xx}^2 + \tau_{yy}^2 +\tau_{zz}^2 + 2\tau_{xy}^2+ 2\tau_{xz}^2+ 2\tau_{yz}^2) \nn\\
+&=& \frac{1}{6}\left[(\sigma_{xx}-\sigma_{yy})^2 + (\sigma_{yy}-\sigma_{zz})^2 
++ (\sigma_{xx}-\sigma_{zz})^2 \right]  + \sigma_{xy}^2 + \sigma_{xz}^2 + \sigma_{yz}^2 \nn\\
+&=&  -\frac16 {\cal I}_1(\bm\sigma)^2 + {\cal I}_2(\bm\sigma) \nn\\
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} &=& \bm\tau   \nn
+\end{eqnarray}
+
+\item Third invariant %-----------------------------------
+
+\begin{eqnarray}
+{\cal I}_3(\bm\tau) 
+&=& \frac13 \sum_{ijk} \tau_{ij}\tau_{jk}\tau_{ki} \nn\\
+&=& {\rm det}(\bm\tau) \nn\\
+&=& \frac13 {\rm tr} [{\bm \tau}\cdot {\bm \tau} \cdot {\bm \tau}] \nn\\
+&=& \frac{2}{27}  {\cal I}_1(\bm\sigma)^3 - \frac23{\cal I}_1(\bm\sigma) {\cal I}_2(\bm\sigma)
++{\cal I}_3(\bm\sigma) \nn\\
+\frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma} &=&
+\end{eqnarray}
+
+\begin{equation}
+\theta=\frac{1}{3} \sin^{-1} 
+\left( -\frac{3\sqrt{3}}{2} \frac{{\cal I}_3({\bm \tau})}{{\cal I}_2({\bm \tau})^{3/2}} \right)
+\label{eq:lodang}
+\end{equation}
+
+
+\end{itemize}
+
+
+\begin{eqnarray}
+\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} &=& {\bm 1} \\
+\frac{\partial {\cal I}_2(\bm\sigma)}{\partial \bm\sigma} &=& {\bm \sigma} \\
+\frac{\partial {\cal I}_3(\bm\sigma)}{\partial \bm\sigma} &=& \bm\sigma \cdot \bm\sigma
+\end{eqnarray}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

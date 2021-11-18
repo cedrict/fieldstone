@@ -1,0 +1,379 @@
+\begin{flushright} {\tiny {\color{gray} plane\_strain.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We start from the 3D strain rate tensor 
+\[
+\dot{\bm \varepsilon}(\vec\upnu) = 
+\left(
+\begin{array}{ccc}
+\dot{\varepsilon}_{xx} & \dot{\varepsilon}_{xy} & \dot{\varepsilon}_{xz} \\
+\dot{\varepsilon}_{yx} & \dot{\varepsilon}_{yy} & \dot{\varepsilon}_{yz} \\
+\dot{\varepsilon}_{zx} & \dot{\varepsilon}_{zy} & \dot{\varepsilon}_{zz} 
+\end{array}
+\right)
+\]
+
+The plane strain assumption is such that the problem at hand is assumed to be 
+infinite in a given direction. In the case of computational geodynamics, most 2D 
+modelling is a vertical section of the crust-lithosphere-mantle
+and the underlying implicit assumption is then that the orogen/rift/subduction/etc ... 
+is infinite in the direction perpendicular to the screen/paper.  
+
+Let us assume that the deformation takes place in the $x,y$-plane,
+so that $w=0$ (velocity in the $z$ direction is zero) and $\partial_z \rightarrow 0$ 
+(no change in the $z$ direction).
+We then have $\dot{\varepsilon}_{zz}=0$ as well as $\dot{\varepsilon}_{xz}=0$ 
+and $\dot{\varepsilon}_{yz}=0$, so that the strain rate tensor is 
+\[
+\dot{\bm \varepsilon}(\vec\upnu)=
+\left( \begin{array}{ccc}
+\dot{\varepsilon}_{xx} & \dot{\varepsilon}_{xy} & 0 \\
+\dot{\varepsilon}_{yx} & \dot{\varepsilon}_{yy} & 0 \\
+0 & 0 & 0
+\end{array}\right)
+\]
+
+%------------------------------------
+\subsubsection{Incompressible flow}
+
+If the flow is incompressible then the deviatoric stress tensor is given by
+\[
+\bm\tau 
+= 2 \eta \dot{\bm \varepsilon}^d(\vec\upnu)
+= 2 \eta \left(\dot{\bm \varepsilon}(\vec\upnu) 
+-\frac13 \underbrace{{\rm tr}[\dot{\bm \varepsilon}]}_{=0} 
+{\bm 1}\right)
+= 2 \eta \dot{\bm \varepsilon}(\vec\upnu) 
+=
+\left(\begin{array}{ccc}
+\tau_{xx} & \tau_{xy} & 0 \\
+\tau_{yx} & \tau_{yy} & 0 \\
+0 & 0 & 0
+\end{array}\right)
+\]
+One then discards the unnecessary line and column in the tensor, leaving a $2\times 2$ matrix.
+Finding the principal stress components is then trivial since we have done it in 2D already.
+
+
+
+It is important to keep in mind that the invariants we need to implement 
+the rheologies are ${\cal I}_1({\bm \sigma})$,  ${\cal I}_2({\bm \tau})$ and ${\cal I}_3({\bm \tau})$.
+By formulating our yield surfaces with pressure $p=-{\cal I}_1({\bm \sigma})/3$ we can then 
+avoid confusion, and since the other two invariants are functions of ${\bm \tau}$ the pressure 
+term does not pose any problem: simply set $\tau_{xz}$, $\tau_{yz}$ and $\tau_{zz}$ to zero in the 
+equations of Section~\ref{sec:stress_invariants} and we obtain:
+\begin{eqnarray}
+{\cal I}_2({\bm \tau}) &=&\frac{1}{2}(\tau_{xx}^2 + \tau_{yy}^2 ) + \tau_{xy}^2 \\ 
+{\cal I}_3({\bm \tau}) 
+&=& \frac{1}{3} \tau_{xx} (  \tau_{xx}^2 + 3 \tau_{xy}^2 ) 
++ \frac{1}{3} \tau_{yy} (3 \tau_{xy}^2 +   \tau_{yy}^2 )   \nn\\
+&=& \frac{1}{3}(  \tau_{xx}^3 + 3 \tau_{xx}\tau_{xy}^2  
++ 3 \tau_{yy} \tau_{xy}^2 +   \tau_{yy}^3 )   \nn\\
+&=& \frac{1}{3}(  \tau_{xx}^3 + 3 (\tau_{xx}+\tau_{yy}) \tau_{xy}^2  +  \tau_{yy}^3 )   \nn\\
+&=& \frac{1}{3}(  \tau_{xx}^3 +  \tau_{yy}^3 )  \qquad \text{since } \tau_{ii}=0 
+\end{eqnarray}
+
+
+
+The principal stresses of the deviatoric stress tensor $\bm\tau$ are given by
+\begin{eqnarray}
+\tau_1 &=& \frac{ \tau_{xx}+\tau_{yy}}{2} 
++ \sqrt{ \left(\frac{\tau_{xx}-\tau_{yy}}{2}\right)^2 +\tau_{xy}^2 } \nn\\
+\tau_2 &=& \frac{ \tau_{xx}+\tau_{yy}}{2} 
+- \sqrt{ \left(\frac{\tau_{xx}-\tau_{yy}}{2}\right)^2 +\tau_{xy}^2 } \label{eq:princ_stress_2D} 
+\end{eqnarray}
+The full stress tensor is then
+\[
+\bm\sigma = -p \bm 1 + \bm\tau
+= \left(\begin{array}{ccc}
+-p+\tau_{xx} & \tau_{xy} & 0 \\
+\tau_{yx} & -p+\tau_{yy} & 0 \\
+0 & 0 & -p
+\end{array}\right)
+\]
+so it remains a $3\times 3$ tensor!
+
+However, looking at the conservation of momentum, 
+\[
+\vec\nabla \cdot \bm\sigma + \rho \vec g = \vec 0
+\]
+Given the conditions for plane-strain then $\vec g$ is likely to be in 
+the $xy$-plane so that the $z$ component of the equation becomes:
+\[
+-\partial_z p = 0
+\]
+and since we have $\partial_z \rightarrow 0$ anyways this equation 
+is automatically fulfilled. Then, we might as well proceed 
+by considering that the stress tensor is in fact 2D as the third row/column
+has no incidence. In that case the pressure is given by $p=-{\cal I}_1(\bm\sigma)/2$.
+In the plasticity yield criterion or plastic potential we will 
+need the full stress ${\bm \sigma}$ only via its first invariant (i.e. the pressure). 
+The other two invariants are those of the deviatoric stress. 
+
+Let us start from the deviatoric stress tensor:
+\[
+\bm\tau
+=
+\bm\sigma - \frac12 {\cal I}_1(\bm\sigma)
+=
+\left(\begin{array}{cc}
+\sigma_{xx} & \sigma_{xy} \\ 
+\sigma_{xy} & \sigma_{yy} 
+\end{array}\right)
+-\frac{\sigma_{xx}+\sigma_{yy}}{2} 
+\left(\begin{array}{cc}
+1 & 0 \\ 0 & 1
+\end{array}\right)
+=
+\left(
+\begin{array}{cc}
+(\sigma_{xx}-\sigma_{yy})/2 & \sigma_{xy} \\
+\sigma_{xy} & -(\sigma_{xx}-\sigma_{yy})/2
+\end{array}
+\right)
+\]
+The second invariant of the deviatoric stress tensor is then 
+\[
+{\cal I}_2(\bm\tau) = \frac12 \bm\tau:\bm\tau
+= \frac12 \left( 2 (\sigma_{xx}-\sigma_{yy})^2/4 + 2 \sigma_{xy}^2 \right)
+%= \left(\frac{\sigma_{xx}-\sigma_{yy}}{2} \right)^2 + \sigma_{xy}^2
+\]
+or
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+{\cal I}_2(\bm\tau) 
+= \left(\frac{\sigma_{xx}-\sigma_{yy}}{2} \right)^2 + \sigma_{xy}^2
+\]
+\end{mdframed}
+
+
+and the effective deviatoric stress
+\[
+\tau_e = 
+\sqrt{\left(\frac{\sigma_{xx}-\sigma_{yy}}{2} \right)^2 + \sigma_{xy}^2}
+\]
+
+
+Remark: Using the form of ${\cal I}_2(\bm\tau)$ above one arrives at  
+\begin{eqnarray}
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{xx}} 
+&=&  2 \frac{1}{2}  \frac{\sigma_{xx}-\sigma_{yy}}{2} = \tau_{xx}\nn \\
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{yy}} 
+&=& -2 \frac{1}{2}  \frac{\sigma_{xx}-\sigma_{yy}}{2} = \tau_{yy} \nn\\
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{xy}} 
+&=& 2 \sigma_{xy} =  2 \tau_{xy}\nn
+\end{eqnarray}
+which is ...wrong! One should first write the second invariant 
+for the generic case of the deviatoric stress tensor (without 
+assuming it is symmetric):
+\[
+{\cal I}_2(\bm\tau) = \frac12 \bm\tau:\bm\tau
+= \frac12 \left( 2 (\sigma_{xx}-\sigma_{yy})^2/4 + \sigma_{xy}^2 + \sigma_{yx}^2 \right)
+= \left(\frac{\sigma_{xx}-\sigma_{yy}}{2} \right)^2 + \frac12\sigma_{xy}^2 + \frac12\sigma_{yx}^2
+\]
+Then
+\begin{eqnarray}
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{xx}} 
+&=&  2 \frac{1}{2}  \frac{\sigma_{xx}-\sigma_{yy}}{2} = \tau_{xx} \nn\\
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{yy}} 
+&=& -2 \frac{1}{2}  \frac{\sigma_{xx}-\sigma_{yy}}{2} =  \tau_{yy} \nn\\
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{xy}} 
+&=&  \sigma_{xy} =  \tau_{xy} \nn\\
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{yx}} 
+&=&  \sigma_{yx} =  \tau_{yx} \nn
+\end{eqnarray}
+which concludes to prove that 
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
+=\bm\tau
+\]
+\end{mdframed}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%------------------------------------
+\subsubsection{Compressible flow}
+If the flow is not incompressible, then the deviatoric strain rate tensor is
+\[
+\dot{\bm \varepsilon}^d(\vec\upnu) 
+= \dot{\bm \varepsilon}(\vec\upnu) -\frac{1}{3} {\rm tr}[\dot{\bm \varepsilon}]   {\bm 1} 
+= \dot{\bm \varepsilon}(\vec\upnu) -\frac{1}{3} (\dot{\varepsilon}_{xx} +\dot{\varepsilon}_{yy}   )  {\bm 1} 
+=
+\left(
+\begin{array}{ccc}
+\frac{2}{3}\dot{\varepsilon}_{xx} -\frac{1}{3}\dot{\varepsilon}_{yy} & \dot{\varepsilon}_{xy} & 0 \\
+\dot{\varepsilon}_{yx} & -\frac{1}{3}\dot{\varepsilon}_{xx} +\frac{2}{3} \dot{\varepsilon}_{yy} & 0 \\
+0 & 0 & -\frac{1}{3} \dot{\varepsilon}_{xx} -\frac{1}{3}\dot{\varepsilon}_{yy}
+\end{array}
+\right)
+\]
+The deviatoric stress tensor now has the form
+\[
+\bm\tau=
+\left(\begin{array}{ccc}
+\tau_{xx} & \tau_{xy} & 0 \\
+\tau_{yx} & \tau_{yy} & 0 \\
+0 & 0 & \tau_{zz}
+\end{array}\right)
+\]
+
+We are interested in the principal components
+of the deviatoric stress tensor $\bm \tau$ so that we now have the following determinant to compute:
+\[
+\left|  
+\begin{array}{ccc}
+\tau_{xx}-\lambda & \tau_{xy} & 0 \\
+\tau_{xy} & \tau_{yy}-\lambda & 0 \\
+0 &0 & \tau_{zz} -\lambda
+\end{array}
+\right|
+=0
+\]
+which yields the following characteristic equation:
+\[
+(\tau_{zz} -\lambda)(\lambda-\tau_1)(\lambda-\tau_2) =0
+\]
+where $\tau_{1,2}$ have previously been obtained in the 2D case:
+\begin{eqnarray}
+\tau_1 
+&=& \frac{ \tau_{xx}+\tau_{yy}}{2} 
++ \sqrt{ \left(\frac{\tau_{xx}-\tau_{yy}}{2}\right)^2 +\tau_{xy}^2 } 
+\nn\\
+\tau_2 &=& \frac{ \tau_{xx}+\tau_{yy}}{2} 
+- \sqrt{ \left(\frac{\tau_{xx}-\tau_{yy}}{2}\right)^2 +\tau_{xy}^2 } \label{eq:princ_stress_2D} 
+\end{eqnarray}
+We have 
+\begin{eqnarray}
+\tau_{xx}+\tau_{yy} &=& 2\eta \frac13 (\dot{\varepsilon}_{xx} + \dot{\varepsilon}_{yy}) \nn\\
+\tau_{xx}-\tau_{yy} &=& 2\eta (\dot{\varepsilon}_{xx} - \dot{\varepsilon}_{yy})
+\end{eqnarray}
+Then 
+\begin{eqnarray}
+\tau_1 
+&=& \frac{ \tau_{xx}+\tau_{yy}}{2} 
++ \sqrt{ \left(\frac{\tau_{xx}-\tau_{yy}}{2}\right)^2 +\tau_{xy}^2 } 
+\nn\\
+&=& \eta \frac13 (\dot{\varepsilon}_{xx} + \dot{\varepsilon}_{yy})
++ \eta \sqrt{ (\dot{\varepsilon}_{xx} - \dot{\varepsilon}_{yy})^2 +4  \dot{\varepsilon}_{xy}^2  } 
+\nn\\
+\tau_2 
+&=& \frac{ \tau_{xx}+\tau_{yy}}{2} 
+- \sqrt{ \left(\frac{\tau_{xx}-\tau_{yy}}{2}\right)^2 +\tau_{xy}^2 } \nn\\
+&=& \eta \frac13 (\dot{\varepsilon}_{xx} + \dot{\varepsilon}_{yy})
+- \eta \sqrt{ (\dot{\varepsilon}_{xx} - \dot{\varepsilon}_{yy})^2 +4  \dot{\varepsilon}_{xy}^2  } 
+\end{eqnarray}
+It does not look like it is going to simplify down the road ... Also, 
+the third eigenvalue/principal stress remains and it is not clear whether it is 
+larger or smaller than the other two.
+The 3D framework is then probably the most appropriate.
+
+
+
+
+
+
+
+
+
+
+
+Let us now turn to the second invariant of the deviatoric strain rate 
+(see Eq.~\eqref{eq:I2epsd}):
+\begin{eqnarray}
+{\cal I}_2(\dot{\bm{\varepsilon}}^d)
+&=& \frac{1}{2} \dot{\bm{\varepsilon}}^d:\dot{\bm{\varepsilon}}^d \\
+&=& \frac{1}{2} \left[ (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + (\dot{\varepsilon}_{zz}^d)^2   \right] 
++ (\dot{\varepsilon}_{xy}^d)^2  
++ (\dot{\varepsilon}_{xz}^d)^2  
++ (\dot{\varepsilon}_{yz}^d)^2  
+\end{eqnarray}
+But there is also an expression for ${\cal I}_2(\dot{\bm{\varepsilon}}^d)$ directly as a function of the $\dot{\bm\varepsilon}_{ij}$ components 
+(see Eq.~\eqref{eq:I2epsd}):
+\begin{eqnarray}
+{\cal I}_2(\dot{\bm{\varepsilon}}^d)
+&=& \frac{1}{6} \left[ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{yy})^2 
++ (\dot{\varepsilon}_{yy}-\dot{\varepsilon}_{zz})^2 
++ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{zz})^2 \right] 
++ \dot{\varepsilon}_{xy}^2 + \dot{\varepsilon}_{xz}^2 + \dot{\varepsilon}_{yz}^2 \\
+&=& 
+\frac{1}{6} \left[ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{yy})^2 
++ (\dot{\varepsilon}_{yy})^2 
++ (\dot{\varepsilon}_{xx})^2 \right] 
++ \dot{\varepsilon}_{xy}^2 \\
+&=& \frac{1}{6} \left[ \dot{\varepsilon}_{xx}^2 
+-2\dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy}
++\dot{\varepsilon}_{yy}^2 
++ \dot{\varepsilon}_{yy}^2 
++ \dot{\varepsilon}_{xx}^2 \right] 
++ \dot{\varepsilon}_{xy}^2 \\
+&=& \frac{1}{6} \left[ 
+2\dot{\varepsilon}_{xx}^2 
+-2\dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy}
++2\dot{\varepsilon}_{yy}^2 
+\right] 
++ \dot{\varepsilon}_{xy}^2 \\
+&=& 
+\frac{1}{3} \left[ 
+\dot{\varepsilon}_{xx}^2 
+-\dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy}
++\dot{\varepsilon}_{yy}^2 
+\right] 
++ \dot{\varepsilon}_{xy}^2 
+\end{eqnarray}
+If we now do things the old/wrong(?) way, one would start directly from the 2D strain rate tensor 
+\[
+\dot{\bm \varepsilon} = 
+\left(
+\begin{array}{cc}
+\dot{\varepsilon}_{xx} & \dot{\varepsilon}_{xy}  \\
+\dot{\varepsilon}_{yx} & \dot{\varepsilon}_{yy}  
+\end{array}
+\right)
+\]
+The deviatoric strain rate tensor is then logically defined as 
+\[
+\dot{\bm \varepsilon}^d 
+= \dot{\bm \varepsilon} -\frac{1}{2} Tr[\dot{\bm \varepsilon}]   {\bm 1} 
+= \dot{\bm \varepsilon} -\frac{1}{2} (\dot{\varepsilon}_{xx} +\dot{\varepsilon}_{yy}   )  {\bm 1} 
+\]
+or,
+\[
+\dot{\bm \varepsilon}^d = 
+\left(
+\begin{array}{cc}
+\frac{1}{2}\dot{\varepsilon}_{xx} -\frac{1}{2}\dot{\varepsilon}_{yy} & \dot{\varepsilon}_{xy}  \\
+\dot{\varepsilon}_{yx} & -\frac{1}{2}\dot{\varepsilon}_{xx} +\frac{1}{2} \dot{\varepsilon}_{yy}  \\
+\end{array}
+\right)
+\]
+Let us now turn to the second invariant of the deviatoric strain rate 
+(see Section 3.21 in fieldstone)
+\begin{eqnarray}
+{\cal I}_2(\dot{\bm{\varepsilon}}^d)
+&=& \frac{1}{2} \dot{\bm{\varepsilon}}^d:\dot{\bm{\varepsilon}}^d \nn\\
+&=& \frac{1}{2}[ (\frac{1}{2}\dot{\varepsilon}_{xx} -\frac{1}{2}\dot{\varepsilon}_{yy})^2 + (-\frac{1}{2}\dot{\varepsilon}_{xx} +\frac{1}{2} \dot{\varepsilon}_{yy})^2  ] + \dot{\varepsilon}_{xy}^2 \nn\\
+&=& \frac12 [ \frac14 (2\dot{\varepsilon}_{xx}^2  -4 \dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy} +2\dot{\varepsilon}_{yy}^2 )  ] + \dot{\varepsilon}_{xy}^2 \nn\\
+&=& \frac14 [ \dot{\varepsilon}_{xx}^2  -2 \dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy} +\dot{\varepsilon}_{yy}^2   ] + \dot{\varepsilon}_{xy}^2 
+\end{eqnarray}
+which is not the same as the previous expression! 
+
+
+
+
