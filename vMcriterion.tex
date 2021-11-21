@@ -39,7 +39,7 @@ The von Mises yield criterion writes:
 F^{\text{\tiny VM}}= \sqrt{{\cal I}_2({\bm \tau})  } - c  \label{vmcrit}
 \end{equation}
 \end{mdframed}
-which is the Drucker-Prager criterion with $\phi=0$ (see Section~\ref{sec:druckerprager}).
+which is the Drucker-Prager criterion with $\phi=0$ (see Section~\ref{sec:dpcriterion}).
 
 The following figure shows the von Mises yield surface in the three-dimensional space of principal stresses. 
 \begin{center}
@@ -114,5 +114,28 @@ The plane normal to this line is given by $z=-2(x+y)$.
 
 This approach is reasonably simple for the von Mises criterion but 
 quickly becomes intractable for other criteria.
+
+\vspace{.5cm}
+
+We now look into the derivatives of the von Mises plastic potential $Q^{\text{\tiny vM}}(\bm\sigma)$.
+We have
+\begin{equation}
+Q^{\text{\tiny vM}}(\bm\sigma) =\sqrt{{\cal I}_2({\bm \tau})  } - c  
+\end{equation}
+Then
+\begin{eqnarray}
+\frac{\partial Q^{\text{\tiny vM}} }{\partial {\cal I}_1(\bm\sigma)} &=& 0 \\
+\frac{\partial Q^{\text{\tiny vM}} }{\partial \sqrt{{\cal I}_2(\bm\tau)}}&=& 1 \\
+\frac{\partial Q^{\text{\tiny vM}} }{\partial \theta_{\rm L}(\bm\tau)} &=& 0 
+\end{eqnarray}
+so 
+\begin{eqnarray}
+C_1^{\text{\tiny vM}} &=& 0  \\ 
+C_2^{\text{\tiny vM}} 
+&=& \frac{1}{2  \sqrt{{\cal I}_2(\bm\tau)}   } (1-0) 
+= \frac{1}{2  \sqrt{{\cal I}_2(\bm\tau)}   } \\ 
+C_3^{\text{\tiny vM}} &=& 0  
+\end{eqnarray}
+
 
 \newpage

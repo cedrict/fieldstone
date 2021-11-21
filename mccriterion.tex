@@ -89,6 +89,124 @@ contains errors which are later corrected in \textcite[p102]{book_zitf}.
 
 
 
+\vspace{.5cm}
+
+We now look into the derivatives of the Drucker-Prager plastic potential $Q^{\text{\tiny MC}}(\bm\sigma)$.
+We have
+\[
+Q^{\text{\tiny MC}}=
+\frac{1}{3} {\cal I}_1({\bm \sigma}) \sin \phi  + 
+\sqrt{  {\cal I}_2({\bm \tau})  } \left(\cos\theta_{\rm L}(\bm\tau)-\frac{1}{\sqrt{3}} 
+\sin\theta_{\rm L} (\bm\tau) \sin\phi \right) -c \cos \phi
+\]
+Then
+\begin{eqnarray}
+\frac{\partial Q^{\text{\tiny MC}}  }{\partial {\cal I}_1(\bm\sigma)} &=& \frac13 \sin\phi \\
+\frac{\partial Q^{\text{\tiny MC}}  }{\partial \sqrt {{\cal I}_2(\bm\tau)}}
+&=&  
+\cos \theta_{\rm L} - \frac{1}{\sqrt{3}} \sin \theta_{\rm L}  \sin \phi  
++  \sqrt{  {\cal I}_2({\bm \tau})  } 
+\left(-\sin \theta_{\rm L} - \frac{1}{\sqrt{3}} \cos \theta_{\rm L}  \sin \phi \right) 
+\frac{\partial \theta_{\rm L}}{\partial \sqrt {{\cal I}_2(\bm\tau)}   } \nn \\
+&=&  
+\cos \theta_{\rm L} - \frac{1}{\sqrt{3}} \sin \theta_{\rm L}  \sin \phi  
++  \sqrt{  {\cal I}_2({\bm \tau})  } 
+\left(-\sin \theta_{\rm L} - \frac{1}{\sqrt{3}} \cos \theta_{\rm L}  \sin \phi \right) 
+\frac{\partial \theta_{\rm L}}{\partial  {{\cal I}_2(\bm\tau)}   }  
+\frac{\partial   {{\cal I}_2(\bm\tau)}     }{\partial \sqrt {{\cal I}_2(\bm\tau)}   }  \nn\\
+&=&  
+\cos \theta_{\rm L} - \frac{1}{\sqrt{3}} \sin \theta_{\rm L}  \sin \phi  
++  \sqrt{  {\cal I}_2({\bm \tau})  } 
+\left(-\sin \theta_{\rm L} - \frac{1}{\sqrt{3}} \cos \theta_{\rm L}  \sin \phi \right) 
+\left(
+-\frac12 \tan 3\theta_{\rm L} \frac{1}{ {\cal I}_2(\bm\tau)} 
+\right)
+2 \sqrt {{\cal I}_2(\bm\tau)} \nn \\
+&=&  
+\cos \theta_{\rm L} - \frac{1}{\sqrt{3}} \sin \theta_{\rm L}  \sin \phi  
++  
+\left(\sin \theta_{\rm L} + \frac{1}{\sqrt{3}}\cos\theta_{\rm L}\sin\phi\right) \tan 3\theta_{\rm L} \nn\\
+&=&  
+\cos \theta_{\rm L}
+\left[
+1 - \frac{1}{\sqrt{3}} \tan \theta_{\rm L}  \sin \phi  
++  
+\left(\tan \theta_{\rm L} + \frac{1}{\sqrt{3}}   \sin \phi \right)  \tan 3\theta_{\rm L} 
+\right] \nn\\
+&=&
+\cos \theta_{\rm L}
+\left[
+(1 +  \tan \theta_{\rm L}   \tan 3\theta_{\rm L})
++\frac{1}{\sqrt{3}} \sin\phi
+( \tan 3\theta_{\rm L} - \tan\theta_{\rm L})
+\right]
+\\ 
+\frac{\partial Q^{\text{\tiny MC}} }{\partial \theta_{\rm L}(\bm\tau)} 
+&=&  
+\sqrt{{\cal I}_2(\bm \tau)} (-\sin\theta_{\rm L}-\frac{1}{\sqrt{3}} \cos\theta_{\rm L} \sin\phi )\nn\\
+&=&  
+-\frac{1}{\sqrt{3}} \sqrt{{\cal I}_2(\bm \tau)} (\sqrt{3} \sin\theta_{\rm L}+\cos\theta_{\rm L} \sin\phi )
+\end{eqnarray}
+so
+\begin{eqnarray}
+C_1^{\text{\tiny MC}} &=& \frac13 \sin\phi  \\ 
+C_2^{\text{\tiny MC}} 
+&=& 
+\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
+\left( \frac{\partial Q}{\partial \sqrt{{\cal I}_2(\bm\tau)}} 
+- \frac{\tan 3\theta_{\rm L}}{\sqrt {{\cal I}_2(\bm\tau)}}
+\frac{\partial Q}{\partial \theta_{\rm L}(\bm\tau)}  
+\right) \nn\\
+&=& 
+\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
+\left( \cos \theta_{\rm L} \left[
+(1 +  \tan \theta_{\rm L}   \tan 3\theta_{\rm L})
++\frac{1}{\sqrt{3}} \sin\phi ( \tan 3\theta_{\rm L} - \tan\theta_{\rm L}) \right]
++ \frac{\tan 3\theta_{\rm L}}{\sqrt {{\cal I}_2(\bm\tau)}}
+\frac{1}{\sqrt{3}} \sqrt{{\cal I}_2(\bm \tau)} (\sqrt{3} \sin\theta_{\rm L}+\cos\theta_{\rm L} \sin\phi )
+\right) \nn\\
+&=& 
+\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
+\left( \cos \theta_{\rm L}
+\left[ (1 +  \tan \theta_{\rm L}   \tan 3\theta_{\rm L})
++\frac{1}{\sqrt{3}} \sin\phi
+( \tan 3\theta_{\rm L} - \tan\theta_{\rm L}) \right]
++ \tan 3\theta_{\rm L}  ( \sin\theta_{\rm L}+\frac{1}{\sqrt{3}}\cos\theta_{\rm L} \sin\phi )
+\right) \nn\\
+&=& 
+\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
+\left( \cos \theta_{\rm L} \left[
+(1 +  \tan \theta_{\rm L}   \tan 3\theta_{\rm L})
++\frac{1}{\sqrt{3}} \sin\phi
+( \tan 3\theta_{\rm L} - \tan\theta_{\rm L})
++ \tan 3\theta_{\rm L}   ( \tan\theta_{\rm L}+\frac{1}{\sqrt{3}} \sin\phi )
+\right] \right) \nn\\
+&=& 
+\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
+\cos \theta_{\rm L} \left[
+(1 +  2\tan \theta_{\rm L}   \tan 3\theta_{\rm L})
++\frac{1}{\sqrt{3}} \sin\phi ( 2\tan 3\theta_{\rm L} - \tan\theta_{\rm L})
+\right] \nn\\
+C_3^{\text{\tiny MC}} 
+&=&  - \frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
+\frac{1}{{\cal I}_2(\bm\tau)^{3/2}} 
+\frac{\partial Q}{\partial \theta_{\rm L}(\bm\tau)} \nn\\ 
+&=&  - \frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
+\frac{1}{{\cal I}_2(\bm\tau)^{3/2}} 
+\left[-\frac{1}{\sqrt{3}} \sqrt{{\cal I}_2(\bm \tau)} (\sqrt{3} \sin\theta_{\rm L}+\cos\theta_{\rm L} 
+\sin\phi ) \right]  \nn\\
+&=&  \frac{\sqrt{3}\sin\theta_{\rm L} +  \sin \phi \cos \theta_{\rm L}}
+{2 {\cal I}_2({\bm \tau}) \cos 3\theta_{\rm L}}
+\end{eqnarray}
+
+
+
+
+
+
+
+
+
 
 %\newpage
 %\paragraph{two-dimensional space}

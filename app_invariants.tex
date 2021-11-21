@@ -621,6 +621,11 @@ Using ${\cal I}_2(\bm\tau) = -\frac16 {\cal I}_1(\bm\sigma)^2 + {\cal I}_2(\bm\s
 \end{eqnarray}
 which is the so-called Hill tensor\footnote{\url{https://en.wikipedia.org/wiki/Lode_coordinates}}.
 
+Note that this tensor is deviatoric:
+\[
+{\rm tr}\left[  \bm\tau\cdot\bm\tau - \frac23  {\cal I}_2(\bm\tau)  {\bm 1}  \right] =
+{\rm tr}[\bm\tau\cdot\bm\tau] - 2  {\cal I}_2(\bm\tau) = 2  {\cal I}_2(\bm\tau) -2  {\cal I}_2(\bm\tau) = 0 
+\]
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -724,17 +729,141 @@ $\sigma_{xz}$ and $\sigma_{zx}$ are distinct quantities.
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The Lod\'e angle $\theta_{\rm L}(\bm\tau)$ 
+is actually a function of ${\cal I}_2(\bm\tau)$ and ${\cal I}_3(\bm\tau)$ as follows:
+\[
+\sin 3\theta_{\rm L}(\bm\tau) = 
+-\frac{3\sqrt{3}}{2}  \frac{{\cal I}_3(\bm\tau)}{{\cal I}_2(\bm\tau)^{3/2}} 
+\]
+Since this quantity unambiguously depends on the deviatoric stress tensor, 
+I will omit the '$(\bm\tau)$' dependency in what follows.
+Then
+\begin{eqnarray}
+\frac{\partial }{\partial {\cal I}_2(\bm\tau)} \sin 3\theta_{\rm L}
+&=&3\cos 3\theta_{\rm L}(\bm\tau)  \frac{\partial \theta_{\rm L}}{\partial {\cal I}_2(\bm\tau)}\nn\\
+\frac{\partial }{\partial {\cal I}_3(\bm\tau)} \sin 3\theta_{\rm L}
+&=&3 \cos 3\theta_{\rm L}(\bm\tau)  \frac{\partial \theta_{\rm L}}{\partial {\cal I}_3(\bm\tau)}\nn
+\end{eqnarray}
+so that 
+\begin{eqnarray}
+\frac{\partial \theta_{\rm L}}{\partial {\cal I}_2(\bm\tau)}
+&=&\frac{1}{3 \cos 3\theta_{\rm L}} 
+\frac{\partial }{\partial {\cal I}_2(\bm\tau)} \sin 3\theta_{\rm L}  \nonumber\\
+&=&\frac{1}{3 \cos 3\theta_{\rm L}} 
+\frac{\partial }{\partial {\cal I}_2(\bm\tau)}
+\left(-\frac{3\sqrt{3}}{2}  \frac{{\cal I}_3(\bm\tau)}{{\cal I}_2(\bm\tau)^{3/2}} \right) \nonumber\\
+&=&\frac{1}{3 \cos 3\theta_{\rm L}} 
+\left(-\frac{3\sqrt{3}}{2}  \frac{{\cal I}_3(\bm\tau)}{{\cal I}_2(\bm\tau)^{3/2}} \right)
+\left( -\frac32 \frac{1}{ {\cal I}_2(\bm\tau)}\right) \nonumber\\
+&=&\frac{1}{3 \cos 3\theta_{\rm L}} 
+\sin 3\theta_{\rm L}
+\left( -\frac32 \frac{1}{ {\cal I}_2(\bm\tau)}\right) \nonumber\\
+&=& -\frac12 \tan 3\theta_{\rm L} \frac{1}{ {\cal I}_2(\bm\tau)}  
+\nn\\
+\nn\\
+\frac{\partial \theta_{\rm L}}{\partial {\cal I}_3(\bm\tau)}
+&=&\frac{1}{3 \cos 3\theta_{\rm L}} 
+\frac{\partial }{\partial {\cal I}_3(\bm\tau)} \sin 3\theta_{\rm L} \nonumber \\
+&=&\frac{1}{3 \cos 3\theta_{\rm L}} 
+\frac{\partial }{\partial {\cal I}_3(\bm\tau)} 
+\left(
+-\frac{3\sqrt{3}}{2}  \frac{{\cal I}_3(\bm\tau)}{{\cal I}_2(\bm\tau)^{3/2}} 
+\right) \nonumber\\
+&=&\frac{1}{3 \cos 3\theta_{\rm L}} 
+\left(
+-\frac{3\sqrt{3}}{2}  \frac{1}{ {\cal I}_2(\bm\tau)^{3/2}} 
+\right) \nonumber\\
+&=&\frac{1}{3 \cos 3\theta_{\rm L}} 
+\left(
+-\frac{3\sqrt{3}}{2}  \frac{{\cal I}_3(\bm\tau)}{{\cal I}_2(\bm\tau)^{3/2}} 
+\right)
+\frac{1}{{\cal I}_3(\bm\tau)} \nn\\
+&=&\frac{1}{3 \cos 3\theta_{\rm L}} 
+\sin 3 \theta_{\rm L}
+\frac{1}{{\cal I}_3(\bm\tau)}\nn \\
+&=& \frac13 \tan 3\theta_{\rm L} \frac{1}{{\cal I}_3(\bm\tau)} \nn
+\end{eqnarray}
+We have just established the useful relationships
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\frac{\partial \theta_{\rm L}}{\partial {\cal I}_2(\bm\tau)}
+&=& -\frac12 \tan 3\theta_{\rm L} \frac{1}{ {\cal I}_2(\bm\tau)}  \label{eq:dthetadI2} \\
+\frac{\partial \theta_{\rm L}}{\partial {\cal I}_3(\bm\tau)}
+&=& \frac13 \tan 3\theta_{\rm L} \frac{1}{{\cal I}_3(\bm\tau)}   \label{eq:dthetadI2}
+\end{eqnarray}
+\end{mdframed}
+and in the end we can write
+\begin{eqnarray}
+\frac{\partial \theta_{\rm L}}{\partial \bm\sigma}
+&=&
+\frac{\partial \theta_{\rm L}(\bm\tau)}{\partial {\cal I}_2(\bm\tau)}
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma}
++
+\frac{\partial \theta_{\rm L}(\bm\tau)}{\partial {\cal I}_3(\bm\tau)}
+\frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma} \nn\\
+&=&
+\left(-\frac12 \tan 3\theta_{\rm L} \frac{1}{ {\cal I}_2(\bm\tau)}  \right)
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
++ 
+\left(\frac13 \tan 3\theta_{\rm L} \frac{1}{{\cal I}_3(\bm\tau)} \right)
+ \frac{\partial  {\cal I}_3(\bm\tau)}{\partial \bm\sigma} \nn\\
+&=&
+\tan 3\theta_{\rm L}
+\left[
+-\frac12  \frac{1}{ {\cal I}_2(\bm\tau)}
+ \frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
++ \frac13 \frac{1}{{\cal I}_3(\bm\tau)} 
+ \frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma} 
+\right]
+\nn\\
+&=&
+\frac{\sin 3\theta_{\rm L}}{\cos 3\theta_{\rm L}}
+\left[
+-\frac12  \frac{1}{ {\cal I}_2(\bm\tau)}
+ \frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
++ \frac13 \frac{1}{{\cal I}_3(\bm\tau)} 
+ \frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma} 
+\right]
+\nn\\
+&=&
+\frac{1}{\cos 3\theta_{\rm L}}
+\left(-\frac{3\sqrt{3}}{2}  \frac{{\cal I}_3(\bm\tau)}{{\cal I}_2(\bm\tau)^{3/2}} \right)
+\left[
+-\frac12  \frac{1}{ {\cal I}_2(\bm\tau)}
+ \frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
++ \frac13 \frac{1}{{\cal I}_3(\bm\tau)} 
+ \frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma} 
+\right]
+\nn\\
+&=&
+-\frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
+\left[
+-\frac32  \frac{ {\cal I}_3(\bm\tau)   }{ {\cal I}_2(\bm\tau)^{5/2}}
+\; \frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
++  \frac{1}{{\cal I}_2(\bm\tau)^{3/2}} 
+\; \frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma} 
+\right]
+\end{eqnarray}
+i.e.
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\frac{\partial \theta_{\rm L}}{\partial \bm\sigma}
+=
+&=&
+-\frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
+\left[
+-\frac32  \frac{ {\cal I}_3(\bm\tau)   }{ {\cal I}_2(\bm\tau)^{5/2}}
+\; \frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
++  \frac{1}{{\cal I}_2(\bm\tau)^{3/2}} 
+\; \frac{\partial  {\cal I}_3(\bm\tau)}{\partial \bm\sigma} 
+\right]
+\end{eqnarray}
+\end{mdframed}
+which is Eq.~(7.68) of Owen \& Hinton:
+\begin{center}
+\fbox{\includegraphics[width=10cm]{images/invariants/owenhinton3}}\\
+{\captionfont Taken from \textcite{owhi}}
+\end{center}
 
 
