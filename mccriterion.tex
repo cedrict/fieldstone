@@ -8,7 +8,13 @@ In structural engineering it is used to determine failure load as well as the an
 
 %It can be shown that a material failing according to Coulomb's friction hypothesis will show the displacement introduced at failure forming an angle to the line of fracture equal to the angle of friction. This makes the strength of the material determinable by comparing the external mechanical work introduced by the displacement and the external load with the internal mechanical work introduced by the strain and stress at the line of failure. By conservation of energy the sum of these must be zero and this will make it possible to calculate the failure load of the construction.
 
-The Mohr-Coulomb failure criterion represents the linear envelope that is obtained from a plot of the shear strength of a material 
+\begin{center}
+\includegraphics[width=6cm]{images/rheology/owenhinton5}\\
+{\captionfont Taken from \textcite{owhi}.}
+\end{center}
+
+The Mohr-Coulomb failure criterion represents the linear envelope that is obtained 
+from a plot of the shear strength of a material 
 versus the applied normal stress. This relation is expressed as (Owen \& Hinton book \cite[p219]{owhi})
 %\[
 %\tau = c- \sigma~\tan(\phi) 
@@ -46,7 +52,8 @@ with $\sigma_1$ is the maximum principal stress and $\sigma_3$ is the minimum pr
 \cfrac{\sigma_1-\sigma_3}{2} = -\cfrac{\sigma_1+\sigma_3}{2}~\sin\phi +c\; \cos\phi 
 \end{equation}
 Using Eqs.~\eqref{eq:sig13a} and \eqref{eq:sig13b} 
-for $(\sigma_1 - \sigma_3 )/2$ and $(\sigma_1 + \sigma_3 )/2$:
+for $(\sigma_1 - \sigma_3 )/2$ and $(\sigma_1 + \sigma_3 )/2$ we get\footnote{This is 
+Eq.~(7.16) of \textcite{owhi}}:
 \begin{eqnarray}
 && \frac{\sigma_1 - \sigma_3}{2} = -\frac{\sigma_1 + \sigma_3}{2} \sin \phi  + c \cos \phi \nn\\
 &\Rightarrow&
