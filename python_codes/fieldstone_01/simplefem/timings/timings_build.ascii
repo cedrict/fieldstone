@@ -1,0 +1,9 @@
+
+Time build matrix=  0.0152 seconds. nelx=  32
+Time build matrix=  0.0718 seconds. nelx=  48
+Time build matrix=  0.2201 seconds. nelx=  64
+Time build matrix=  0.5030 seconds. nelx=  80
+Time build matrix=  1.0418 seconds. nelx=  96
+Time build matrix=  3.1800 seconds. nelx= 128
+Time build matrix=  6.7948 seconds. nelx= 160
+

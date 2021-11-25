@@ -1,0 +1,7 @@
+Time apply bc=  0.0042 seconds. nelx=  32
+Time apply bc=  0.0167 seconds. nelx=  48
+Time apply bc=  0.0471 seconds. nelx=  64
+Time apply bc=  0.1000 seconds. nelx=  80
+Time apply bc=  0.2281 seconds. nelx=  96
+Time apply bc=  0.5833 seconds. nelx= 128
+Time apply bc=  1.2620 seconds. nelx= 160

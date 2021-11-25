@@ -56,6 +56,8 @@ real(8) rcond                                  !
                                                !
 logical, dimension(:), allocatable :: bc_fix   ! prescribed b.c. array
                                                !
+real :: start, finish                          !
+                                               !
 !==============================================!
 !=====[setup]==================================!
 !==============================================!
@@ -63,8 +65,8 @@ logical, dimension(:), allocatable :: bc_fix   ! prescribed b.c. array
 Lx=1.d0
 Ly=1.d0
 
-nnx=21
-nny=21
+nnx=161
+nny=nnx
 
 np=nnx*nny
 
@@ -109,6 +111,7 @@ allocate(press(nel))
 !==============================================!
 !===[grid points setup]========================!
 !==============================================!
+call cpu_time(start)
 
 counter=0
 do j=0,nely
@@ -119,16 +122,21 @@ do j=0,nely
    end do
 end do
 
-open(unit=123,file='OUT/gridnodes.ascii',status='replace')
-write(123,'(a)') '#     xpos      ypos    node '
-do i=1,np
-   write(123,'(2f10.5,i8)') x(i),y(i),i
-end do
-close(123)
+!open(unit=123,file='OUT/gridnodes.ascii',status='replace')
+!write(123,'(a)') '#     xpos      ypos    node '
+!do i=1,np
+!   write(123,'(2f10.5,i8)') x(i),y(i),i
+!end do
+!close(123)
+
+call cpu_time(finish)
+
+print '("Time build grid= ",f7.4," seconds. nelx=",i4)',finish-start,nelx
 
 !==============================================!
 !===[connectivity]=============================!
 !==============================================!
+call cpu_time(start)
 
 counter=0
 do j=1,nely
@@ -141,21 +149,26 @@ do j=1,nely
    end do
 end do
 
-open(unit=123,file='OUT/icon.ascii',status='replace')
-do iel=1,nel
-   write(123,'(a)') '----------------------------'
-   write(123,'(a,i4,a)') '---element #',iel,' -----------'
-   write(123,'(a)') '----------------------------'
-   write(123,'(a,i8,a,2f20.10)') '  node 1 ', icon(1,iel),' at pos. ',x(icon(1,iel)),y(icon(1,iel))
-   write(123,'(a,i8,a,2f20.10)') '  node 2 ', icon(2,iel),' at pos. ',x(icon(2,iel)),y(icon(2,iel))
-   write(123,'(a,i8,a,2f20.10)') '  node 3 ', icon(3,iel),' at pos. ',x(icon(3,iel)),y(icon(3,iel))
-   write(123,'(a,i8,a,2f20.10)') '  node 4 ', icon(4,iel),' at pos. ',x(icon(4,iel)),y(icon(4,iel))
-end do
-close(123)
+!open(unit=123,file='OUT/icon.ascii',status='replace')
+!do iel=1,nel
+!   write(123,'(a)') '----------------------------'
+!   write(123,'(a,i4,a)') '---element #',iel,' -----------'
+!   write(123,'(a)') '----------------------------'
+!   write(123,'(a,i8,a,2f20.10)') '  node 1 ', icon(1,iel),' at pos. ',x(icon(1,iel)),y(icon(1,iel))
+!   write(123,'(a,i8,a,2f20.10)') '  node 2 ', icon(2,iel),' at pos. ',x(icon(2,iel)),y(icon(2,iel))
+!   write(123,'(a,i8,a,2f20.10)') '  node 3 ', icon(3,iel),' at pos. ',x(icon(3,iel)),y(icon(3,iel))
+!   write(123,'(a,i8,a,2f20.10)') '  node 4 ', icon(4,iel),' at pos. ',x(icon(4,iel)),y(icon(4,iel))
+!end do
+!close(123)
+
+call cpu_time(finish)
+
+print '("Time build connectivity= ",f7.4," seconds. nelx=",i4)',finish-start,nelx
 
 !==============================================!
 !=====[define bc]==============================!
 !==============================================!
+call cpu_time(start)
 
 bc_fix=.false.
 
@@ -178,18 +191,23 @@ do i=1,np
    endif
 end do
 
-open(unit=123,file='OUT/bc_u.ascii',status='replace')
-open(unit=234,file='OUT/bc_v.ascii',status='replace')
-do i=1,np
-   if (bc_fix((i-1)*ndof+1)) write(123,'(3f20.10)') x(i),y(i),bc_val((i-1)*ndof+1) 
-   if (bc_fix((i-1)*ndof+2)) write(234,'(3f20.10)') x(i),y(i),bc_val((i-1)*ndof+2) 
-end do
-close(123)
-close(234)
+!open(unit=123,file='OUT/bc_u.ascii',status='replace')
+!open(unit=234,file='OUT/bc_v.ascii',status='replace')
+!do i=1,np
+!   if (bc_fix((i-1)*ndof+1)) write(123,'(3f20.10)') x(i),y(i),bc_val((i-1)*ndof+1) 
+!   if (bc_fix((i-1)*ndof+2)) write(234,'(3f20.10)') x(i),y(i),bc_val((i-1)*ndof+2) 
+!end do
+!close(123)
+!close(234)
+
+call cpu_time(finish)
+
+print '("Time define bc= ",f7.4," seconds. nelx=",i4)',finish-start,nelx
 
 !==============================================!
 !=====[build FE matrix]========================!
 !==============================================!
+call cpu_time(start)
 
 A=0.d0
 B=0.d0
@@ -344,9 +362,14 @@ do iel=1,nel
 
 end do
 
+call cpu_time(finish)
+
+print '("Time build matrix= ",f7.4," seconds. nelx=",i4)',finish-start,nelx
+
 !==============================================!
 !=====[impose b.c.]============================!
 !==============================================!
+call cpu_time(start)
 
 do i=1,Nfem
     if (bc_fix(i)) then
@@ -361,9 +384,14 @@ do i=1,Nfem
    endif
 enddo
 
+call cpu_time(finish)
+
+print '("Time apply bc= ",f7.4," seconds. nelx=",i4)',finish-start,nelx
+
 !==============================================!
 !=====[solve system]===========================!
 !==============================================!
+call cpu_time(start)
 
 job=0
 allocate(work(Nfem))
@@ -372,6 +400,10 @@ call DGECO (A, Nfem, Nfem, ipvt, rcond, work)
 call DGESL (A, Nfem, Nfem, ipvt, B, job)
 deallocate(ipvt)
 deallocate(work)
+
+call cpu_time(finish)
+
+print '("Time solve= ",f9.4," seconds. nelx=",i4)',finish-start,nelx
 
 do i=1,np
    u(i)=B((i-1)*ndof+1)
@@ -390,6 +422,7 @@ close(234)
 !==============================================!
 !=====[retrieve pressure]======================!
 !==============================================!
+call cpu_time(start)
 
 open(unit=123,file='OUT/solution_p.ascii',status='replace')
 
@@ -447,7 +480,9 @@ end do
 
 close(123)
 
+call cpu_time(finish)
 
+print '("Time compute pressure= ",f7.4," seconds. nelx=",i4)',finish-start,nelx
 
 
 end program
