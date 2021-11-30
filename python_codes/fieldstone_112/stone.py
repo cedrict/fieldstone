@@ -175,7 +175,7 @@ def pressure(x,y):
 elt='MINI'
 elt='CR'
 elt='P2P1'
-elt='Q2Q1' 
+#elt='Q2Q1' 
 
 #------------------------------------------------------------------------------
 
@@ -225,7 +225,7 @@ if elt=='P2P1':
    nny=2*nely+1
    NV=nnx*nny
    NP=(nelx+1)*(nely+1)
-   nqel=7
+   nqel=6
 if elt=='Q2Q1':
    mV=9
    mP=4
@@ -259,17 +259,12 @@ eps=1e-9
 eta=1.
 
 #----------------------------------------------------------
-# 3, 6 or 7 point integration coeffs and weights 
+# 6 or 7 point integration coeffs and weights 
 #----------------------------------------------------------
 
 qcoords_r=np.empty(nqel,dtype=np.float64)  
 qcoords_s=np.empty(nqel,dtype=np.float64)  
 qweights=np.empty(nqel,dtype=np.float64)  
-
-if nqel==3:
-   qcoords_r[0]=1./6.; qcoords_s[0]=1./6.; qweights[0]=1./6.
-   qcoords_r[1]=2./3.; qcoords_s[1]=1./6.; qweights[1]=1./6.
-   qcoords_r[2]=1./6.; qcoords_s[2]=2./3.; qweights[2]=1./6.
 
 if nqel==6:
    qcoords_r[0]=0.091576213509771 ; qcoords_s[0]=0.091576213509771 ; qweights[0]=0.109951743655322/2.0 
@@ -304,17 +299,6 @@ if nqel==9:
    qcoords_r[6]=rq1 ; qcoords_s[6]=rq3 ; qweights[6]=wq1*wq3
    qcoords_r[7]=rq2 ; qcoords_s[7]=rq3 ; qweights[7]=wq2*wq3
    qcoords_r[8]=rq3 ; qcoords_s[8]=rq3 ; qweights[8]=wq3*wq3
-
-#################################################################
-# checking that all shape functions are 1 on their node and 
-# zero elsewhere
-print ('node1:',NNV(0,0))
-print ('node2:',NNV(1,0))
-print ('node3:',NNV(0,1))
-print ('node4:',NNV(0.5,0))
-print ('node5:',NNV(0.5,0.5))
-print ('node6:',NNV(0,0.5))
-#print ('node7:',NNV(1/3.,1/3.))
 
 #################################################################
 # build velocity nodes coordinates 
@@ -370,10 +354,12 @@ if elt=='CR':
              iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx  -1  # 6 of Q2
              iconV[6,counter]=nnx*nny+counter
              counter=counter+1
-
+       #end for
+   #end for
    for iel in range (0,nel): #bubble nodes
        xV[nnx*nny+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
        yV[nnx*nny+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
+   #end for
 
 if elt=='P2P1':
    counter=0
@@ -395,6 +381,8 @@ if elt=='P2P1':
              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1  
              iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx  -1  
              counter=counter+1
+       #end for
+   #end for
 
 if elt=='MINI':
    counter=0
@@ -412,11 +400,12 @@ if elt=='MINI':
              iconV[2,counter]=i + (j + 1) * (nelx + 1)
              iconV[3,counter]=counter+nnx*nny  
              counter=counter+1
-
+       #end for
+   #end for
    for iel in range (0,nel): #bubble nodes
        xV[nnx*nny+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
        yV[nnx*nny+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
-
+   #end for
 
 if elt=='Q2Q1':
    counter = 0
@@ -435,9 +424,6 @@ if elt=='Q2Q1':
        #end for
    #end for
 
-
-
-
 #for iel in range (0,nel):
 #    print ("iel=",iel)
 #    print ("node 0",iconV[0,iel],"at pos.",xV[iconV[0,iel]], yV[iconV[0,iel]])
@@ -450,13 +436,6 @@ if elt=='Q2Q1':
 #    print ("node 7",iconV[7,iel],"at pos.",xV[iconV[7,iel]], yV[iconV[7,iel]])
 #    print ("node 8",iconV[8,iel],"at pos.",xV[iconV[8,iel]], yV[iconV[8,iel]])
 
-#print("iconV (min/max): %d %d" %(np.min(iconV[0,:]),np.max(iconV[0,:])))
-#print("iconV (min/max): %d %d" %(np.min(iconV[1,:]),np.max(iconV[1,:])))
-#print("iconV (min/max): %d %d" %(np.min(iconV[2,:]),np.max(iconV[2,:])))
-#print("iconV (min/max): %d %d" %(np.min(iconV[3,:]),np.max(iconV[3,:])))
-#print("iconV (min/max): %d %d" %(np.min(iconV[4,:]),np.max(iconV[4,:])))
-#print("iconV (min/max): %d %d" %(np.min(iconV[5,:]),np.max(iconV[5,:])))
-
 #np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
 
 print("connectivity V: %.3f s" % (timing.time() - start))
@@ -467,8 +446,8 @@ print("connectivity V: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 iconP=np.zeros((mP,nel),dtype=np.int32)
-xP=np.empty(NfemP,dtype=np.float64)     # x coordinates
-yP=np.empty(NfemP,dtype=np.float64)     # y coordinates
+xP=np.empty(NfemP,dtype=np.float64)  
+yP=np.empty(NfemP,dtype=np.float64) 
 
 if elt=='CR':
    counter=0
@@ -502,9 +481,9 @@ if elt=='P2P1':
              iconP[2,counter]=i+(j+1)*(nelx+1)
              counter=counter+1
              # upper right triangle
-             iconP[0,counter]=i + 1 + (j + 1) * (nelx + 1)
-             iconP[1,counter]=i + (j + 1) * (nelx + 1)
-             iconP[2,counter]=i + 1 + j * (nelx + 1)
+             iconP[0,counter]=i+1+(j+1)*(nelx+1)
+             iconP[1,counter]=i+(j+1)*(nelx+1)
+             iconP[2,counter]=i+1+j*(nelx+1)
              counter=counter+1
       #end for
    #end for
@@ -516,7 +495,6 @@ if elt=='P2P1':
            counter+=1
       #end for
    #end for
-
 
 if elt=='Q2Q1':
    counter = 0
@@ -538,7 +516,7 @@ if elt=='Q2Q1':
       #end for
    #end for
 
-np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
 
 #for iel in range (0,nel):
 #    print ("iel=",iel,'-------------------------')
@@ -611,22 +589,18 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
-#a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)
-#K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-#G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
-f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
-h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
-
-b_mat = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
-N_mat = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
-NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
-NNNP    = np.zeros(mP,dtype=np.float64)           # shape functions P
-dNNNVdx  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-dNNNVdy  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-dNNNVdr  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-dNNNVds  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-u     = np.zeros(NV,dtype=np.float64)          # x-component velocity
-v     = np.zeros(NV,dtype=np.float64)          # y-component velocity
+f_rhs = np.zeros(NfemV,dtype=np.float64)            # right hand side f 
+h_rhs = np.zeros(NfemP,dtype=np.float64)            # right hand side h 
+b_mat = np.zeros((3,ndofV*mV),dtype=np.float64)     # gradient matrix B 
+N_mat = np.zeros((3,ndofP*mP),dtype=np.float64)     # matrix N 
+NNNV = np.zeros(mV,dtype=np.float64)                # shape functions V
+NNNP = np.zeros(mP,dtype=np.float64)                # shape functions P
+dNNNVdx = np.zeros(mV,dtype=np.float64)             # shape functions derivatives
+dNNNVdy = np.zeros(mV,dtype=np.float64)             # shape functions derivatives
+dNNNVdr = np.zeros(mV,dtype=np.float64)             # shape functions derivatives
+dNNNVds = np.zeros(mV,dtype=np.float64)             # shape functions derivatives
+u = np.zeros(NV,dtype=np.float64)                   # x-component velocity
+v = np.zeros(NV,dtype=np.float64)                   # y-component velocity
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 for iel in range(0,nel):
@@ -714,12 +688,10 @@ for iel in range(0,nel):
                 for i2 in range(0,ndofV):
                     jkk=ndofV*k2          +i2
                     m2 =ndofV*iconV[k2,iel]+i2
-                    #K_mat[m1,m2]+=K_el[ikk,jkk]
                     A_sparse[m1,m2] += K_el[ikk,jkk]
             for k2 in range(0,mP):
                 jkk=k2
                 m2 =iconP[k2,iel]
-                #G_mat[m1,m2]+=G_el[ikk,jkk]
                 A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
                 A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
 
@@ -727,9 +699,6 @@ for iel in range(0,nel):
     for k2 in range(0,mP):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
-
-#print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
-#print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
 
 print("build FE matrix: %.3f s" % (timing.time() - start))
 
@@ -739,18 +708,10 @@ print("build FE matrix: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 rhs = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-#a_mat[0:NfemV,0:NfemV]=K_mat
-#a_mat[0:NfemV,NfemV:Nfem]=G_mat
-#a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
 
 #assign extra pressure b.c. to remove null space
-#a_mat[Nfem-1,:]=0
-#a_mat[:,Nfem-1]=0
-#a_mat[Nfem-1,Nfem-1]=1
-#rhs[Nfem-1]=0
-
 A_sparse[Nfem-1,:]=0
 A_sparse[:,Nfem-1]=0
 A_sparse[Nfem-1,Nfem-1]=1
@@ -845,10 +806,6 @@ for i in range(0,NP):
 #################################################################
 start = timing.time()
 
-#u[:]=xV[:]**2
-#v[:]=yV[:]**2
-#p[:]=xP[:]
-
 errv=0.
 errp=0.
 vrms=0.
@@ -870,7 +827,6 @@ for iel in range (0,nel):
             jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
             jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
         jcob = np.linalg.det(jcb)
-
         # compute dNdx & dNdy
         xq=0.
         yq=0.
@@ -883,7 +839,6 @@ for iel in range (0,nel):
             vq+=NNNV[k]*v[iconV[k,iel]]
         errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
         vrms+=(uq**2+vq**2)*weightq*jcob
-        #print(xq,yq,uq,vq) 
         # end for k
         xq=0.
         yq=0.
@@ -892,18 +847,14 @@ for iel in range (0,nel):
             xq+=NNNP[k]*xP[iconP[k,iel]]
             yq+=NNNP[k]*yP[iconP[k,iel]]
             pq+=NNNP[k]*p[iconP[k,iel]]
-        errp+=(pq-pressure(xq,yq))**2*weightq*jcob
-        pavrg+=pq*weightq*jcob
-        #print(xq,yq,pq) 
         # end for k
+        errp+=(pq-pressure(xq,yq))**2*weightq*jcob
     # end for kq
 # end for iel
 
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 vrms=np.sqrt(vrms)
-
-#print (pavrg)
 
 print("     -> hx= %.8f ; errv= %.10f ; errp= %.10f ; vrms= %.10f" %(Lx/nelx,errv,errp,vrms))
 
@@ -966,7 +917,7 @@ if visu==1:
     vtufile=open('solution'+elt+'.vtu',"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
     vtufile.write("<UnstructuredGrid> \n")
-    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %((nnx)*(nny),nel))
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnx*nny,nel))
     #####
     vtufile.write("<Points> \n")
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
@@ -975,14 +926,14 @@ if visu==1:
     vtufile.write("</DataArray>\n")
     vtufile.write("</Points> \n")
     #####
-    vtufile.write("<CellData Scalars='scalars'>\n")
+    #vtufile.write("<CellData Scalars='scalars'>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (area[iel]))
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%10e\n" % (area[iel]))
+    #vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("</CellData>\n")
+    #vtufile.write("</CellData>\n")
     #####
     vtufile.write("<PointData Scalars='scalars'>\n")
     #--
