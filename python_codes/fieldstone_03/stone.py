@@ -37,7 +37,7 @@ hcond=1.     # thermal conductivity
 hcapa=1.     # heat capacity
 rho0=1       # reference density
 T0=0         # reference temperature
-CFL=1.       # CFL number 
+CFL=1       # CFL number 
 gy=-Ra/alpha # vertical component of gravity vector
 penalty=1.e7 # penalty coefficient value
 nstep=15000   # maximum number of timestep   
@@ -49,8 +49,8 @@ if int(len(sys.argv) == 3):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
 else:
-   nelx = 64
-   nely = 64
+   nelx = 32
+   nely = 32
 
 assert (nelx>0.), "nnx should be positive" 
 assert (nely>0.), "nny should be positive" 
@@ -189,8 +189,8 @@ for istep in range(0,nstep):
     #################################################################
     # build FE matrix
     #################################################################
+    start = timing.time()
 
-    print("building Stokes matrix and rhs")
 
     A_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # FE matrix 
     rhs   = np.zeros(NfemV,dtype=np.float64)         # FE rhs 
@@ -314,6 +314,25 @@ for istep in range(0,nstep):
         # compute elemental matrix
         a_el += B_mat.T.dot(k_mat.dot(B_mat))*penalty*wq*jcob
 
+        # apply boundary conditions
+        for k1 in range(0,m):
+            for i1 in range(0,ndofV):
+                m1 =ndofV*icon[k1,iel]+i1
+                if bc_fixV[m1]: 
+                   fixt=bc_valV[m1]
+                   ikk=ndofV*k1+i1
+                   aref=a_el[ikk,ikk]
+                   for jkk in range(0,m*ndofV):
+                       b_el[jkk]-=a_el[jkk,ikk]*fixt
+                       a_el[ikk,jkk]=0.
+                       a_el[jkk,ikk]=0.
+                   #end for
+                   a_el[ikk,ikk]=aref
+                   b_el[ikk]=aref*fixt
+                #end if
+            #end for
+        #end for
+
         # assemble matrix A_mat and right hand side rhs
         for k1 in range(0,m):
             for i1 in range(0,ndofV):
@@ -332,24 +351,27 @@ for istep in range(0,nstep):
 
     #end for iel
 
+    print("building Stokes matrix and rhs: %.3f s" % (timing.time() - start))
+
     #################################################################
     # impose boundary conditions
     #################################################################
+    #start = timing.time()
 
-    print("imposing boundary conditions")
-
-    for i in range(0,NfemV):
-        if bc_fixV[i]:
-           A_matref = A_mat[i,i]
-           for j in range(0,NfemV):
-               rhs[j]-= A_mat[i,j]*bc_valV[i]
-               A_mat[i,j]=0.
-               A_mat[j,i]=0.
-               A_mat[i,i]=A_matref
-           #end for
-           rhs[i]=A_matref*bc_valV[i]
-        #end if
+    #for i in range(0,NfemV):
+    #    if bc_fixV[i]:
+    #       A_matref = A_mat[i,i]
+    #       for j in range(0,NfemV):
+    #           rhs[j]-= A_mat[i,j]*bc_valV[i]
+    #           A_mat[i,j]=0.
+    #           A_mat[j,i]=0.
+    #           A_mat[i,i]=A_matref
+    #       #end for
+    #       rhs[i]=A_matref*bc_valV[i]
+    #    #end if
     #end for
+
+    #print("imposing boundary conditions: %.3f s" % (timing.time() - start))
 
     #################################################################
     # solve system
@@ -390,8 +412,7 @@ for istep in range(0,nstep):
     #################################################################
     # build temperature matrix
     #################################################################
-
-    print("building temperature matrix and rhs")
+    start = timing.time()
 
     A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
     rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
@@ -467,45 +488,64 @@ for istep in range(0,nstep):
                 # compute advection matrix
                 Ka=N_mat.dot(vel.dot(B_mat))*rho0*hcapa*wq*jcob
 
-                a_el=MM+(Ka+Kd)*dt
+                a_el+=MM+(Ka+Kd)*dt
 
-                b_el=MM.dot(Tvect)
+                b_el+=MM.dot(Tvect)
 
-                # assemble matrix A_mat and right hand side rhs
-                for k1 in range(0,m):
-                    m1=icon[k1,iel]
-                    for k2 in range(0,m):
-                        m2=icon[k2,iel]
-                        A_mat[m1,m2]+=a_el[k1,k2]
-                    #end for
-                    rhs[m1]+=b_el[k1]
-                #end for
             #end for
+        #end for
+
+        # apply boundary conditions
+        for k1 in range(0,m):
+            m1=icon[k1,iel]
+            if bc_fixT[m1]:
+               Aref=a_el[k1,k1]
+               for k2 in range(0,m):
+                   m2=icon[k2,iel]
+                   b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
+                   a_el[k1,k2]=0
+                   a_el[k2,k1]=0
+               a_el[k1,k1]=Aref
+               b_el[k1]=Aref*bc_valT[m1]
+            #end if
+        #end for
+
+        # assemble matrix A_mat and right hand side rhs
+        for k1 in range(0,m):
+            m1=icon[k1,iel]
+            for k2 in range(0,m):
+                m2=icon[k2,iel]
+                A_mat[m1,m2]+=a_el[k1,k2]
+            #end for
+            rhs[m1]+=b_el[k1]
         #end for
 
     #end for iel
 
+    print("building temperature matrix and rhs: %.3f s" % (timing.time() - start))
+
     #################################################################
     # apply boundary conditions
     #################################################################
+    #start = timing.time()
 
-    print("imposing boundary conditions temperature")
-
-    for i in range(0,NfemT):
-        if bc_fixT[i]:
-           A_matref = A_mat[i,i]
-           for j in range(0,NfemT):
-               rhs[j]-= A_mat[i, j] * bc_valT[i]
-               A_mat[i,j]=0.
-               A_mat[j,i]=0.
-               A_mat[i,i] = A_matref
-           #end for
-           rhs[i]=A_matref*bc_valT[i]
-        #end if 
+    #for i in range(0,NfemT):
+    #    if bc_fixT[i]:
+    #       A_matref = A_mat[i,i]
+    #       for j in range(0,NfemT):
+    #           rhs[j]-= A_mat[i, j] * bc_valT[i]
+    #           A_mat[i,j]=0.
+    #           A_mat[j,i]=0.
+    #           A_mat[i,i] = A_matref
+    #       #end for
+    #       rhs[i]=A_matref*bc_valT[i]
+    #    #end if 
     #end for
 
     #print("A_mat (m,M) = %.4f %.4f" %(np.min(A_mat),np.max(A_mat)))
     #print("rhs   (m,M) = %.6f %.6f" %(np.min(rhs),np.max(rhs)))
+
+    #print("imposing bc T: %.3f s" % (timing.time() - start))
 
     #################################################################
     # solve system

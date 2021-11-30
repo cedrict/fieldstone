@@ -96,6 +96,7 @@ Because it is much simpler to compute the temperature gradient in the middle of 
 element alongside other quantities such as pressure, this (elemental) quantity is 
 used in the Nusselt number calculations, which makes it inaccurate and therefore 
 explains the discrepancy between the computed values and those of other publications.
+Check the Consistent Boundary Flux method in Section~\ref{ss:cbf}.
 
 Finally, it is expected that the thickness of the 
 boundary layers decreases with higher Rayleigh number values.
@@ -103,11 +104,14 @@ As a consequence, in order to appropriately capture those, one needs
 a higher resolution than at low $\Ranb$ numbers. This explains why 
 acceptable results are obtained for $\Ranb=10^4$  at low resolution 32x32.
 
+Note that the results obtained with \aspect at comparable resolution ought to be 
+more accurate since \aspect relies on quadratic elements for both velocity and 
+temperature. 
 
 \newpage
 \paragraph{Results for $\Ranb=10^4$}.
 \begin{center}
-\includegraphics[width=16cm]{python_codes/fieldstone_03/results_1e4/48x48/solution.pdf}\\
+\includegraphics[width=16cm]{python_codes/fieldstone_03/results_1e4/64x64/solution.pdf}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e4/Tavrg.pdf}
 \includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e4/vrms.pdf}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e4/Nu.pdf}
@@ -117,7 +121,7 @@ acceptable results are obtained for $\Ranb=10^4$  at low resolution 32x32.
 \newpage
 \paragraph{Results for $\Ranb=10^5$}.
 \begin{center}
-\includegraphics[width=16cm]{python_codes/fieldstone_03/results_1e5/48x48/solution.pdf}\\
+\includegraphics[width=16cm]{python_codes/fieldstone_03/results_1e5/64x64/solution.pdf}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e5/Tavrg.pdf}
 \includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e5/vrms.pdf}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e5/Nu.pdf}
