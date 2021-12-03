@@ -12,10 +12,12 @@ plot[][]\
 'Nu_vrms_10000.Q2_48.ascii' u 1:2 w lp ps .2 t '48^2',\
 'Nu_vrms_10000.Q2_56.ascii' u 1:2 w lp ps .2 t '56^2',\
 'Nu_vrms_10000.Q2_64.ascii' u 1:2 w lp ps .2 t '64^2',\
+'Nu_vrms_10000.Q2_80.ascii' u 1:2 w lp ps .2 t '80^2',\
+'Nu_vrms_10000.Q2_96.ascii' u 1:2 w lp ps .2 t '96^2',\
 4.21 lt -1 
 
 set output 'Nu_Ra1e5.pdf'
-plot[][]\
+plot[][7:]\
 'Nu_vrms_100000.Q2_16.ascii' u 1:2 w lp ps .2 t '16^2',\
 'Nu_vrms_100000.Q2_24.ascii' u 1:2 w lp ps .2 t '24^2',\
 'Nu_vrms_100000.Q2_32.ascii' u 1:2 w lp ps .2 t '32^2',\
@@ -23,15 +25,19 @@ plot[][]\
 'Nu_vrms_100000.Q2_48.ascii' u 1:2 w lp ps .2 t '48^2',\
 'Nu_vrms_100000.Q2_56.ascii' u 1:2 w lp ps .2 t '56^2',\
 'Nu_vrms_100000.Q2_64.ascii' u 1:2 w lp ps .2 t '64^2',\
+'Nu_vrms_100000.Q2_80.ascii' u 1:2 w lp ps .2 t '80^2',\
+'Nu_vrms_100000.Q2_96.ascii' u 1:2 w lp ps .2 t '96^2',\
 8.93 lt -1 
 
 set output 'Nu_Ra1e6.pdf'
-plot[][]\
+plot[][10:]\
 'Nu_vrms_1000000.Q2_32.ascii' u 1:2 w lp lt 3 ps .2 t '32^2',\
 'Nu_vrms_1000000.Q2_40.ascii' u 1:2 w lp lt 4 ps .2 t '40^2',\
 'Nu_vrms_1000000.Q2_48.ascii' u 1:2 w lp lt 5 ps .2 t '48^2',\
 'Nu_vrms_1000000.Q2_56.ascii' u 1:2 w lp lt 6 ps .2 t '56^2',\
 'Nu_vrms_1000000.Q2_64.ascii' u 1:2 w lp lt 7 ps .2 t '64^2',\
+'Nu_vrms_1000000.Q2_80.ascii' u 1:2 w lp lt 8 ps .2 t '80^2',\
+'Nu_vrms_1000000.Q2_96.ascii' u 1:2 w lp lt 9 ps .2 t '96^2',\
 16. lt -1 
 
 ###########################################################
@@ -46,7 +52,7 @@ plot[][]\
 'Nu_vrms_10000.Q2_48.ascii' u 1:3 w lp ps .2 t '48^2',\
 'Nu_vrms_10000.Q2_56.ascii' u 1:3 w lp ps .2 t '56^2',\
 'Nu_vrms_10000.Q2_64.ascii' u 1:3 w lp ps .2 t '64^2',\
-39.16 lt -1 
+39.1637782  lt -1 dt 2 t 'ASPECT gr7'
 
 set ylabel 'v_{rms}'
 set output 'vrms_Ra1e5.pdf'
@@ -58,7 +64,7 @@ plot[][]\
 'Nu_vrms_100000.Q2_48.ascii' u 1:3 w lp ps .2 t '48^2',\
 'Nu_vrms_100000.Q2_56.ascii' u 1:3 w lp ps .2 t '56^2',\
 'Nu_vrms_100000.Q2_64.ascii' u 1:3 w lp ps .2 t '64^2',\
-176.8 lt -1 
+176.8 lt -1 dt 2 t 'ASPECT gr7'
 
 set ylabel 'v_{rms}'
 set output 'vrms_Ra1e6.pdf'
@@ -68,7 +74,7 @@ plot[][]\
 'Nu_vrms_1000000.Q2_48.ascii' u 1:3 w lp lt 5 ps .2 t '48^2',\
 'Nu_vrms_1000000.Q2_56.ascii' u 1:3 w lp lt 6 ps .2 t '56^2',\
 'Nu_vrms_1000000.Q2_64.ascii' u 1:3 w lp lt 7 ps .2 t '64^2',\
-591 lt -1 
+591.408084 lt -1 dt 2 t 'ASPECT gr7'
 
 ###########################################################
 
@@ -83,6 +89,8 @@ plot[][]\
 'Nu_vrms_10000.Q2_48.ascii' u 1:($4+$5) w lp ps .2 t '48^2',\
 'Nu_vrms_10000.Q2_56.ascii' u 1:($4+$5) w lp ps .2 t '56^2',\
 'Nu_vrms_10000.Q2_64.ascii' u 1:($4+$5) w lp ps .2 t '64^2',\
+'Nu_vrms_10000.Q2_80.ascii' u 1:($4+$5) w lp ps .2 t '80^2',\
+'Nu_vrms_10000.Q2_96.ascii' u 1:($4+$5) w lp ps .2 t '96^2',\
 0 lt -1 
 
 set output 'q_Ra1e5.pdf'
@@ -94,6 +102,8 @@ plot[][]\
 'Nu_vrms_100000.Q2_48.ascii' u 1:($4+$5) w lp ps .2 t '48^2',\
 'Nu_vrms_100000.Q2_56.ascii' u 1:($4+$5) w lp ps .2 t '56^2',\
 'Nu_vrms_100000.Q2_64.ascii' u 1:($4+$5) w lp ps .2 t '64^2',\
+'Nu_vrms_100000.Q2_80.ascii' u 1:($4+$5) w lp ps .2 t '80^2',\
+'Nu_vrms_100000.Q2_96.ascii' u 1:($4+$5) w lp ps .2 t '96^2',\
 0 lt -1 
 
 set output 'q_Ra1e6.pdf'
@@ -103,6 +113,8 @@ plot[][]\
 'Nu_vrms_1000000.Q2_48.ascii' u 1:($4+$5) w lp lt 5 ps .2 t '48^2',\
 'Nu_vrms_1000000.Q2_56.ascii' u 1:($4+$5) w lp lt 6 ps .2 t '56^2',\
 'Nu_vrms_1000000.Q2_64.ascii' u 1:($4+$5) w lp lt 7 ps .2 t '64^2',\
+'Nu_vrms_1000000.Q2_80.ascii' u 1:($4+$5) w lp lt 8 ps .2 t '80^2',\
+'Nu_vrms_1000000.Q2_96.ascii' u 1:($4+$5) w lp lt 9 ps .2 t '96^2',\
 0 lt -1 
 
 ###########################################################
@@ -111,31 +123,40 @@ set ylabel '<T>'
 
 set output 'T_avrg_Ra1e4.pdf'
 plot[][]\
-'T_avrg_10000.Q2_16.ascii' u 1:2 w lp ps .2 t '16^2',\
-'T_avrg_10000.Q2_24.ascii' u 1:2 w lp ps .2 t '24^2',\
-'T_avrg_10000.Q2_32.ascii' u 1:2 w lp ps .2 t '32^2',\
-'T_avrg_10000.Q2_40.ascii' u 1:2 w lp ps .2 t '40^2',\
-'T_avrg_10000.Q2_48.ascii' u 1:2 w lp ps .2 t '48^2',\
-'T_avrg_10000.Q2_56.ascii' u 1:2 w lp ps .2 t '56^2',\
-'T_avrg_10000.Q2_64.ascii' u 1:2 w lp ps .2 t '64^2',\
+'T_avrg_10000.Q2_16.ascii' u 1:2 w lp ps .12 t '16^2',\
+'T_avrg_10000.Q2_24.ascii' u 1:2 w lp ps .12 t '24^2',\
+'T_avrg_10000.Q2_32.ascii' u 1:2 w lp ps .12 t '32^2',\
+'T_avrg_10000.Q2_40.ascii' u 1:2 w lp ps .12 t '40^2',\
+'T_avrg_10000.Q2_48.ascii' u 1:2 w lp ps .12 t '48^2',\
+'T_avrg_10000.Q2_56.ascii' u 1:2 w lp ps .12 t '56^2',\
+'T_avrg_10000.Q2_64.ascii' u 1:2 w lp ps .12 t '64^2',\
+'T_avrg_10000.Q2_80.ascii' u 1:2 w lp ps .12 t '80^2',\
+'T_avrg_10000.Q2_96.ascii' u 1:2 w lp ps .12 t '96^2',\
+0.491294 lt -1 dt 2 t 'ASPECT, gr7'
 
 set output 'T_avrg_Ra1e5.pdf'
 plot[][]\
-'T_avrg_100000.Q2_16.ascii' u 1:2 w lp ps .2 t '16^2',\
-'T_avrg_100000.Q2_24.ascii' u 1:2 w lp ps .2 t '24^2',\
-'T_avrg_100000.Q2_32.ascii' u 1:2 w lp ps .2 t '32^2',\
-'T_avrg_100000.Q2_40.ascii' u 1:2 w lp ps .2 t '40^2',\
-'T_avrg_100000.Q2_48.ascii' u 1:2 w lp ps .2 t '48^2',\
-'T_avrg_100000.Q2_56.ascii' u 1:2 w lp ps .2 t '56^2',\
-'T_avrg_100000.Q2_64.ascii' u 1:2 w lp ps .2 t '64^2',\
+'T_avrg_100000.Q2_16.ascii' u 1:2 w lp ps .12 t '16^2',\
+'T_avrg_100000.Q2_24.ascii' u 1:2 w lp ps .12 t '24^2',\
+'T_avrg_100000.Q2_32.ascii' u 1:2 w lp ps .12 t '32^2',\
+'T_avrg_100000.Q2_40.ascii' u 1:2 w lp ps .12 t '40^2',\
+'T_avrg_100000.Q2_48.ascii' u 1:2 w lp ps .12 t '48^2',\
+'T_avrg_100000.Q2_56.ascii' u 1:2 w lp ps .12 t '56^2',\
+'T_avrg_100000.Q2_64.ascii' u 1:2 w lp ps .12 t '64^2',\
+'T_avrg_100000.Q2_80.ascii' u 1:2 w lp ps .12 t '80^2',\
+'T_avrg_100000.Q2_96.ascii' u 1:2 w lp ps .12 t '96^2',\
+0.505192 lt -1 dt 2 t 'ASPECT, gr7'
 
 set output 'T_avrg_Ra1e6.pdf'
 plot[][]\
-'T_avrg_1000000.Q2_32.ascii' u 1:2 w lp lt 3 ps .2 t '32^2',\
-'T_avrg_1000000.Q2_40.ascii' u 1:2 w lp lt 4 ps .2 t '40^2',\
-'T_avrg_1000000.Q2_48.ascii' u 1:2 w lp lt 5 ps .2 t '48^2',\
-'T_avrg_1000000.Q2_56.ascii' u 1:2 w lp lt 6 ps .2 t '56^2',\
-'T_avrg_1000000.Q2_64.ascii' u 1:2 w lp lt 7 ps .2 t '64^2',\
+'T_avrg_1000000.Q2_32.ascii' u 1:2 w lp lt 3 ps .12 t '32^2',\
+'T_avrg_1000000.Q2_40.ascii' u 1:2 w lp lt 4 ps .12 t '40^2',\
+'T_avrg_1000000.Q2_48.ascii' u 1:2 w lp lt 5 ps .12 t '48^2',\
+'T_avrg_1000000.Q2_56.ascii' u 1:2 w lp lt 6 ps .12 t '56^2',\
+'T_avrg_1000000.Q2_64.ascii' u 1:2 w lp lt 7 ps .12 t '64^2',\
+'T_avrg_1000000.Q2_80.ascii' u 1:2 w lp lt 8 ps .12 t '80^2',\
+'T_avrg_1000000.Q2_96.ascii' u 1:2 w lp lt 9 ps .12 t '96^2',\
+0.520278 lt -1 dt 2 t 'ASPECT, gr7'
 
 ###########################################################
 set ylabel 'xi'
@@ -150,6 +171,8 @@ plot[][]\
 'conv_10000.Q2_48.ascii' w lp ps .2 t '48^2',\
 'conv_10000.Q2_56.ascii' w lp ps .2 t '56^2',\
 'conv_10000.Q2_64.ascii' w lp ps .2 t '64^2',\
+'conv_10000.Q2_80.ascii' w lp ps .2 t '80^2',\
+'conv_10000.Q2_96.ascii' w lp ps .2 t '96^2',\
 
 set output 'conv_Ra1e5.pdf'
 plot[][]\
@@ -160,6 +183,8 @@ plot[][]\
 'conv_100000.Q2_48.ascii' w lp ps .2 t '48^2',\
 'conv_100000.Q2_56.ascii' w lp ps .2 t '56^2',\
 'conv_100000.Q2_64.ascii' w lp ps .2 t '64^2',\
+'conv_100000.Q2_80.ascii' w lp ps .2 t '80^2',\
+'conv_100000.Q2_96.ascii' w lp ps .2 t '96^2',\
 
 set output 'conv_Ra1e6.pdf'
 plot[][]\
@@ -170,6 +195,8 @@ plot[][]\
 'conv_1000000.Q2_48.ascii' w lp ps .2 t '48^2',\
 'conv_1000000.Q2_56.ascii' w lp ps .2 t '56^2',\
 'conv_1000000.Q2_64.ascii' w lp ps .2 t '64^2',\
+'conv_1000000.Q2_80.ascii' w lp ps .2 t '80^2',\
+'conv_1000000.Q2_96.ascii' w lp ps .2 t '96^2',\
 
 unset log y
 ###########################################################
@@ -188,9 +215,11 @@ plot[0:1][0:1]\
 'T_profile_10000.Q2_56.ascii' u 2:1 w lp lw .4 ps .2 t '56^2',\
 'T_profile_10000.Q2_64.ascii' u 2:1 w lp lw .4 ps .2 t '64^2',\
 'T_profile_10000.Q2_80.ascii' u 2:1 w lp lw .4 ps .2 t '80^2',\
-'aspect/output_1e4_gr4/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
-'aspect/output_1e4_gr5/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
-'aspect/output_1e4_gr6/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 64^2',\
+'T_profile_10000.Q2_96.ascii' u 2:1 w lp lw .4 ps .2 t '96^2',\
+'aspect/output_Ra4_gr4/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
+'aspect/output_Ra4_gr5/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
+'aspect/output_Ra4_gr6/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 64^2',\
+'aspect/output_Ra4_gr7/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 128^2',\
 
 set output 'T_profile_Ra1e5.pdf'
 plot[0:1][0:1]\
@@ -202,9 +231,11 @@ plot[0:1][0:1]\
 'T_profile_100000.Q2_56.ascii' u 2:1 w lp lw .4 ps .2 t '56^2',\
 'T_profile_100000.Q2_64.ascii' u 2:1 w lp lw .4 ps .2 t '64^2',\
 'T_profile_100000.Q2_80.ascii' u 2:1 w lp lw .4 ps .2 t '80^2',\
-'aspect/output_1e5_gr4/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
-'aspect/output_1e5_gr5/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
-'aspect/output_1e5_gr6/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 64^2',\
+'T_profile_100000.Q2_96.ascii' u 2:1 w lp lw .4 ps .2 t '96^2',\
+'aspect/output_Ra5_gr4/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
+'aspect/output_Ra5_gr5/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
+'aspect/output_Ra5_gr6/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 64^2',\
+'aspect/output_Ra5_gr7/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 128^2',\
 
 set output 'T_profile_Ra1e6.pdf'
 plot[0:1][0:1]\
@@ -214,8 +245,10 @@ plot[0:1][0:1]\
 'T_profile_1000000.Q2_56.ascii' u 2:1 w lp lt 6 lw .4 ps .2 t '56^2',\
 'T_profile_1000000.Q2_64.ascii' u 2:1 w lp lt 7 lw .4 ps .2 t '64^2',\
 'T_profile_1000000.Q2_80.ascii' u 2:1 w lp lt 8 lw .4 ps .2 t '80^2',\
-'aspect/output_1e6_gr5/depth_average.txt' u 3:(1-$2) w lp lt 2 lw .4 ps .2 t 'aspect, 32^2',\
-'aspect/output_1e6_gr6/depth_average.txt' u 3:(1-$2) w lp lt 3 lw .4 ps .2 t 'aspect, 64^2',\
+'T_profile_1000000.Q2_96.ascii' u 2:1 w lp lt 8 lw .4 ps .2 t '96^2',\
+'aspect/output_Ra6_gr5/depth_average.txt' u 3:(1-$2) w lp lt 2 lw .4 ps .2 t 'aspect, 32^2',\
+'aspect/output_Ra6_gr6/depth_average.txt' u 3:(1-$2) w lp lt 3 lw .4 ps .2 t 'aspect, 64^2',\
+'aspect/output_Ra6_gr7/depth_average.txt' u 3:(1-$2) w lp lt 4 lw .4 ps .2 t 'aspect, 128^2',\
 
 ###########################################################
 set xlabel '|v|'
@@ -233,9 +266,11 @@ plot[][0:1]\
 'vel_profile_10000.Q2_56.ascii' u 2:1 w lp lw .4 ps .2 t '56^2',\
 'vel_profile_10000.Q2_64.ascii' u 2:1 w lp lw .4 ps .3 t '64^2',\
 'vel_profile_10000.Q2_80.ascii' u 2:1 w lp lw .4 ps .3 t '80^2',\
-'aspect/output_1e4_gr4/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
-'aspect/output_1e4_gr5/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
-'aspect/output_1e4_gr6/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .3 t 'aspect, 64^2',\
+'vel_profile_10000.Q2_96.ascii' u 2:1 w lp lw .4 ps .3 t '96^2',\
+'aspect/output_Ra4_gr4/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
+'aspect/output_Ra4_gr5/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
+'aspect/output_Ra4_gr6/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 64^2',\
+'aspect/output_Ra4_gr7/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 128^2',\
 
 set xtics 25
 set output 'vel_profile_Ra1e5.pdf'
@@ -248,9 +283,11 @@ plot[][0:1]\
 'vel_profile_100000.Q2_56.ascii' u 2:1 w lp lw .4 ps .2 t '56^2',\
 'vel_profile_100000.Q2_64.ascii' u 2:1 w lp lw .4 ps .3 t '64^2',\
 'vel_profile_100000.Q2_80.ascii' u 2:1 w lp lw .4 ps .3 t '80^2',\
-'aspect/output_1e5_gr4/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
-'aspect/output_1e5_gr5/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
-'aspect/output_1e5_gr6/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .3 t 'aspect, 64^2',\
+'vel_profile_100000.Q2_96.ascii' u 2:1 w lp lw .4 ps .3 t '96^2',\
+'aspect/output_Ra5_gr4/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
+'aspect/output_Ra5_gr5/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
+'aspect/output_Ra5_gr6/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 64^2',\
+'aspect/output_Ra5_gr7/depth_average.txt' u 5:(1-$2) w lp lw .4 ps .2 t 'aspect, 128^2',\
 
 set xtics 150
 set output 'vel_profile_Ra1e6.pdf'
@@ -261,8 +298,10 @@ plot[][0:1]\
 'vel_profile_1000000.Q2_56.ascii' u 2:1 w lp lt 6 lw .4 ps .2 t '56^2',\
 'vel_profile_1000000.Q2_64.ascii' u 2:1 w lp lt 7 lw .4 ps .3 t '64^2',\
 'vel_profile_1000000.Q2_80.ascii' u 2:1 w lp lt 8 lw .4 ps .3 t '80^2',\
-'aspect/output_1e6_gr5/depth_average.txt' u 5:(1-$2) w lp lw .4 lt 2 ps .2 t 'aspect, 32^2',\
-'aspect/output_1e6_gr6/depth_average.txt' u 5:(1-$2) w lp lw .4 lt 3 ps .3 t 'aspect, 64^2',\
+'vel_profile_1000000.Q2_96.ascii' u 2:1 w lp lt 9 lw .4 ps .3 t '96^2',\
+'aspect/output_Ra6_gr5/depth_average.txt' u 5:(1-$2) w lp lw .4 lt 2 ps .2 t 'aspect, 32^2',\
+'aspect/output_Ra6_gr6/depth_average.txt' u 5:(1-$2) w lp lw .4 lt 3 ps .2 t 'aspect, 64^2',\
+'aspect/output_Ra6_gr7/depth_average.txt' u 5:(1-$2) w lp lw .4 lt 4 ps .2 t 'aspect, 128^2',\
 
 ###########################################################
 
@@ -272,62 +311,82 @@ set key outside
 set grid
 set xlabel 'x'
 set ylabel 'heat flux'
+set xtics 0.1
 
+set ytics 2
 set output 'heatflux_Ra1e4.pdf'
 plot[][]\
-'heatflux_top_10000.Q2_32.ascii' u 1:3 w lp ps .3 t 'top',\
-'heatflux_bot_10000.Q2_32.ascii' u 1:(-$3) w lp ps .3 t 'bot',\
-'aspect/output_1e4_gr5/solution-00002.0000.gnuplot' u 1:10 w l t 'aspect'
+'heatflux_top_10000.Q2_32.ascii' u 1:3 w l lt 3 t '32^2, top',\
+'heatflux_top_10000.Q2_32.ascii' u 1:3 w l lt 4 t '40^2, top',\
+'heatflux_top_10000.Q2_48.ascii' u 1:3 w l lt 5 t '48^2, top',\
+'heatflux_top_10000.Q2_48.ascii' u 1:3 w l lt 6 t '56^2, top',\
+'heatflux_top_10000.Q2_64.ascii' u 1:3 w l lt 7 t '64^2, top',\
+'heatflux_top_10000.Q2_80.ascii' u 1:3 w l lt 8 t '80^2, top',\
+'heatflux_top_10000.Q2_96.ascii' u 1:3 w l lt 9 t '96^2, top',\
+'heatflux_bot_10000.Q2_32.ascii' u 1:(-$3) w l lt 3  t '32^2, bot',\
+'heatflux_bot_10000.Q2_40.ascii' u 1:(-$3) w l lt 4  t '40^2, bot',\
+'heatflux_bot_10000.Q2_48.ascii' u 1:(-$3) w l lt 5  t '48^2, bot',\
+'heatflux_bot_10000.Q2_56.ascii' u 1:(-$3) w l lt 6  t '56^2, bot',\
+'heatflux_bot_10000.Q2_64.ascii' u 1:(-$3) w l lt 7  t '64^2, bot',\
+'heatflux_bot_10000.Q2_80.ascii' u 1:(-$3) w l lt 8  t '80^2, bot',\
+'heatflux_bot_10000.Q2_96.ascii' u 1:(-$3) w l lt 9  t '96^2, bot',\
+'aspect/output_Ra4_gr7/solution/solution-00002.0000.gnuplot' u 1:10 w l lt -1 t 'aspect gr7'
 
+
+
+
+
+
+
+
+
+set ytics 2
 set output 'heatflux_Ra1e5.pdf'
 plot[][]\
-'heatflux_top_100000.Q2_32.ascii' u 1:3 w lp ps .3 t 'top',\
-'heatflux_bot_100000.Q2_32.ascii' u 1:(-$3) w lp ps .3 t 'bot',\
-'aspect/output_1e5_gr5/solution-00002.0000.gnuplot' u 1:10 w l t 'aspect'
+'heatflux_top_100000.Q2_32.ascii' u 1:3 w l lt 3 t '32^2, top',\
+'heatflux_top_100000.Q2_32.ascii' u 1:3 w l lt 4 t '40^2, top',\
+'heatflux_top_100000.Q2_48.ascii' u 1:3 w l lt 5 t '48^2, top',\
+'heatflux_top_100000.Q2_48.ascii' u 1:3 w l lt 6 t '56^2, top',\
+'heatflux_top_100000.Q2_64.ascii' u 1:3 w l lt 7 t '64^2, top',\
+'heatflux_top_100000.Q2_80.ascii' u 1:3 w l lt 8 t '80^2, top',\
+'heatflux_top_100000.Q2_96.ascii' u 1:3 w l lt 9 t '96^2, top',\
+'heatflux_bot_100000.Q2_32.ascii' u 1:(-$3) w l lt 3  t '32^2, bot',\
+'heatflux_bot_100000.Q2_40.ascii' u 1:(-$3) w l lt 4  t '40^2, bot',\
+'heatflux_bot_100000.Q2_48.ascii' u 1:(-$3) w l lt 5  t '48^2, bot',\
+'heatflux_bot_100000.Q2_56.ascii' u 1:(-$3) w l lt 6  t '56^2, bot',\
+'heatflux_bot_100000.Q2_64.ascii' u 1:(-$3) w l lt 7  t '64^2, bot',\
+'heatflux_bot_100000.Q2_80.ascii' u 1:(-$3) w l lt 8  t '80^2, bot',\
+'heatflux_bot_100000.Q2_96.ascii' u 1:(-$3) w l lt 9  t '96^2, bot',\
+'aspect/output_Ra5_gr7/solution/solution-00002.0000.gnuplot' u 1:10 w l lt -1 t 'aspect gr7'
 
+
+
+
+
+
+
+
+
+
+
+set ytics 4
 set output 'heatflux_Ra1e6.pdf'
 plot[][]\
-'heatflux_top_1000000.Q2_32.ascii' u 1:3 w lp ps .3 t 'top',\
-'heatflux_bot_1000000.Q2_32.ascii' u 1:(-$3) w lp ps .3 t 'bot',\
-'aspect/output_1e6_gr5/solution-00002.0000.gnuplot' u 1:10 w l t 'aspect'
-
-
-
-
- 
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+'heatflux_top_1000000.Q2_32.ascii' u 1:3 w l lt 3 t '32^2, top',\
+'heatflux_top_1000000.Q2_32.ascii' u 1:3 w l lt 4 t '40^2, top',\
+'heatflux_top_1000000.Q2_48.ascii' u 1:3 w l lt 5 t '48^2, top',\
+'heatflux_top_1000000.Q2_48.ascii' u 1:3 w l lt 6 t '56^2, top',\
+'heatflux_top_1000000.Q2_64.ascii' u 1:3 w l lt 7 t '64^2, top',\
+'heatflux_top_1000000.Q2_80.ascii' u 1:3 w l lt 8 t '80^2, top',\
+'heatflux_top_1000000.Q2_96.ascii' u 1:3 w l lt 9 t '96^2, top',\
+'heatflux_bot_1000000.Q2_32.ascii' u 1:(-$3) w l lt 3  t '32^2, bot',\
+'heatflux_bot_1000000.Q2_40.ascii' u 1:(-$3) w l lt 4  t '40^2, bot',\
+'heatflux_bot_1000000.Q2_48.ascii' u 1:(-$3) w l lt 5  t '48^2, bot',\
+'heatflux_bot_1000000.Q2_56.ascii' u 1:(-$3) w l lt 6  t '56^2, bot',\
+'heatflux_bot_1000000.Q2_64.ascii' u 1:(-$3) w l lt 7  t '64^2, bot',\
+'heatflux_bot_1000000.Q2_80.ascii' u 1:(-$3) w l lt 8  t '80^2, bot',\
+'heatflux_bot_1000000.Q2_96.ascii' u 1:(-$3) w l lt 9  t '96^2, bot',\
+'aspect/output_Ra6_gr7/solution/solution-00001.0000.gnuplot' u 1:10 w l lt -1 t 'aspect gr7'
 
 
 
