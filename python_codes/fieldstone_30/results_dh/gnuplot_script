@@ -123,14 +123,17 @@ set output 'markercount_reg.pdf'
 plot[][0:2.5]\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($2/npel) w l lt 1 t 'rand',\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($3/npel) w l lt 1 notitle,\
-'markercount_stats_nelx32_nm5_rand0_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($2/npel) w l lt 2 t 'reg',\
-'markercount_stats_nelx32_nm5_rand0_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($3/npel) w l lt 2 notitle,\
+'markercount_stats_nelx32_nm5_rand2_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($2/npel) w l lt 2 t 'semi',\
+'markercount_stats_nelx32_nm5_rand2_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($3/npel) w l lt 2 notitle,\
+'markercount_stats_nelx32_nm5_rand0_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($2/npel) w l lt 3 t 'reg',\
+'markercount_stats_nelx32_nm5_rand0_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($3/npel) w l lt 3 notitle,\
 
 set ylabel 'standard deviation'
 set output 'stdev_reg.pdf'
 plot[][]\
 'markercount_stats_nelx32_nm5_rand1_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 1 t 'rand',\
-'markercount_stats_nelx32_nm5_rand0_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 2 t 'reg',\
+'markercount_stats_nelx32_nm5_rand2_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 2 t 'semi',\
+'markercount_stats_nelx32_nm5_rand0_CFL_0.5_rk2_cvi0_Q1.ascii' u 1:($6/npel) w l lt 3 t 'reg',\
 
 
 ###################################################################################################

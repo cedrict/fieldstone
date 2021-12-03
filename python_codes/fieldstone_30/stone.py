@@ -658,6 +658,36 @@ if random_markers==1:
 
    #np.savetxt('swarm.ascii',np.array([swarm_x,swarm_y]).T)
 
+elif random_markers==2: # regular+random
+
+   if Q<0:
+      exit('Q<0 not ok')
+
+   counter=0
+   for iel in range(0,nel):
+       x1=x[icon[0,iel]] ; y1=y[icon[0,iel]]
+       x2=x[icon[1,iel]] ; y2=y[icon[1,iel]]
+       x3=x[icon[2,iel]] ; y3=y[icon[2,iel]]
+       x4=x[icon[3,iel]] ; y4=y[icon[3,iel]]
+       for j in range(0,nmarker_per_dim):
+           for i in range(0,nmarker_per_dim):
+               r=-1.+i*2./nmarker_per_dim + 1./nmarker_per_dim
+               s=-1.+j*2./nmarker_per_dim + 1./nmarker_per_dim
+               rr=random.uniform(-1.,+1)/nmarker_per_dim 
+               ss=random.uniform(-1.,+1)/nmarker_per_dim
+               r+=rr
+               s+=ss
+               N1=0.25*(1-r)*(1-s)
+               N2=0.25*(1+r)*(1-s)
+               N3=0.25*(1+r)*(1+s)
+               N4=0.25*(1-r)*(1+s)
+               swarm_x[counter]=N1*x1+N2*x2+N3*x3+N4*x4
+               swarm_y[counter]=N1*y1+N2*y2+N3*y3+N4*y4
+               counter+=1
+           #end for
+       #end for
+   #end for
+
 else:
 
    if Q<0:

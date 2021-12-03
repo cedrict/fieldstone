@@ -1,6 +1,10 @@
 #      res res visu nmarker_per_dim random CFLnb RKorder cvi  Q nstep
 #REF:   32  32    0               5      1   0.5       2   0  1   501
 
+# changing random to regular
+python3 stone.py  32 32  0 5 2  0.5 2 0 1  501
+python3 stone.py  32 32  0 5 0  0.5 2 0 1  501
+
 # using cvi
 python3 stone.py  32 32  0 5 1  0.5 2 1 1 501
 
@@ -26,8 +30,6 @@ python3 stone.py  32 32  0 5 1  0.5 2 0 2  501
 python3 stone.py  32 32  0 5 1  0.3 2 0 1  1001
 python3 stone.py  32 32  0 5 1  0.1 2 0 1  1501
 
-# changing random to regular
-python3 stone.py  32 32  0 5 0  0.5 2 0 1  501
 
 # changing marker density
 python3 stone.py  32 32  0 4 1  0.5 2 0 1  501
