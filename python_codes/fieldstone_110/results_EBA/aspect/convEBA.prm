@@ -2,10 +2,32 @@
 
 set Dimension                              = 2
 set Use years in output instead of seconds = false
-set End time                               = 0.1
-set Output directory                       = output_1e6_gr6
+set End time                               = 0.5
+set Output directory                       = output_1e4_gr4
 set Pressure normalization                 = surface
 set Surface pressure                       = 0
+set Nonlinear solver scheme                = single Advection, single Stokes
+
+# Stop the model run when a steady state heat flux is reached.
+# Some of the models do not reach steady state and will continue
+# until the end time is reached.
+
+subsection Termination criteria
+  set Termination criteria      = steady state heat flux 
+  subsection Steady state heat flux
+    set Maximum relative deviation = 1e-4 
+    set Time in steady state       = 0.01
+    set Boundary indicators = top,bottom
+  end
+end
+
+#subsection Discretization
+#  subsection Stabilization parameters
+#    set alpha                                              = 2
+#    set beta                                               = 0.
+#    set cR                                                 = 0.
+#  end 
+#end
 
 subsection Geometry model
   set Model name = box
@@ -52,7 +74,7 @@ subsection Material model
     set Reference temperature         = 0
     set Thermal conductivity          = 1
     set Thermal expansion coefficient = 2.5e-3
-    set Viscosity                     = 1e-8
+    set Viscosity                     = 1e-6
   end
 end
 
@@ -63,23 +85,23 @@ subsection Formulation
 end
 subsection Heating model
   set List of model names = shear heating, adiabatic heating
-  subsection Adiabatic heating
-    set Use simplified adiabatic heating = true
-  end
+  #subsection Adiabatic heating
+  #  set Use simplified adiabatic heating = true
+  #end
 end
 
 
 subsection Mesh refinement
-  set Initial global refinement                = 6
+  set Initial global refinement                = 4
   set Initial adaptive refinement              = 0
   set Time steps between mesh refinement       = 0
 end
 
 subsection Postprocess
-  set List of postprocessors = velocity statistics, temperature statistics, heat flux statistics, visualization, depth average
+  set List of postprocessors = velocity statistics, temperature statistics, heat flux statistics, visualization, depth average, viscous dissipation statistics, heating statistics
   subsection Visualization
-    set List of output variables = density, viscosity, strain rate, heat flux map
-    set Time between graphical output = 0.025
+    set List of output variables = density, viscosity, strain rate, heat flux map, artificial viscosity, strain rate tensor, vertical heat flux
+    set Time between graphical output = 0.05
     subsection Heat flux map
       set Output point wise heat flux = true
     end
