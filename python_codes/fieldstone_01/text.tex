@@ -3,7 +3,11 @@
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_01/keywords}
 
 \begin{center}
-Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_01}
+
+\fbox{\textbf{\huge \color{teal} P}}
+\fbox{\textbf{\huge \color{purple} J}}
+\fbox{\textbf{\huge \color{orange} F}}
+Codes at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_01}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -45,7 +49,40 @@ obtained with \aspect. Please check \stone~110 for a better implementation.
 added to the prm file.}
 \end{center}
 
+\newpage
+\subsection*{About the Fortran code}
 
-\includegraphics[width=1cm]{images/fortran/fortran} I wrote the first ever version of this stone in
+I wrote the first ever version of this \stone in
 Fortran90 around 2011. It is available in the {\foldernamefont simplefem} folder in this stone.
 \index{general}{fortran90}
+
+The code can be compiled as follows:
+\begin{verbatim}
+> gfortran -O3 linpack_d.f90 blas_routines.f simplefem.f90
+\end{verbatim}
+and run as follows:
+\begin{verbatim}
+> ./a.out 
+\end{verbatim}
+The solver used here does not make use of a sparse storage and relies on a dense matrix 
+set of subroutine from BLAS and LinPACK\footnote{\url{https://en.wikipedia.org/wiki/LINPACK}}.
+\begin{center}
+\includegraphics[width=9cm]{python_codes/fieldstone_01/simplefem/timings/timings.pdf}\\
+{\captionfont Despite a very naive application of the boundary conditions to the entire
+assembled FE matrix, we find here that this part of the code is not taking long at all.}
+\end{center}
+There is no export of the results to ParaView format, only ascii text files.
+
+
+
+\newpage
+\subsection*{About the Julia code}
+
+
+
+
+
+
+
+
+

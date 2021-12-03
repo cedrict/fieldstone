@@ -129,8 +129,8 @@ else:
    deltax=0.
    deltay=0.
 
-#---------------------------------------
-# 6 point integration coeffs and weights 
+#----------------------------------------------------------
+# 3, 6 or 7 point integration coeffs and weights 
 
 qcoords_r=np.empty(nqel,dtype=np.float64)  
 qcoords_s=np.empty(nqel,dtype=np.float64)  

@@ -20,12 +20,11 @@ used to solve the analytical problem "Donea \& Huerta" (see Section~\ref{mms1}).
 Out of convenience the pressure is set to zero at location $(x,y)=(1,1)$, so that the 
 analytical solution is now $p(x,y)=x(1-x)$. 
 
-As an experiment I have run convergence tests for two cases: using {\tt nqel=3} 
-quadrature points and using {\tt nqel=6} quadrature points.
-We find that the velocity and pressure errors converge depend on this crucial
-parameter. 
+As an experiment I have run convergence tests for two cases: using {\tt nqel=3},  
+{\tt nqel=6} and {\tt nqel=7} quadrature points.
+We find that the velocity and pressure errors convergence depends on this crucial parameter. 
 For {\tt nqel=3} the velocity and pressure errors converge quadratically and linearly respectively
-but for {\tt nqel=6} they converge as $h^2$ and $h^{1.5}$ respectively:
+but for {\tt nqel=6,7} they converge as $h^2$ and $h^{1.5}$ respectively:
 
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_47/images/reg/errors}
