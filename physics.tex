@@ -1133,23 +1133,114 @@ where ${\bm C}$ is the fourth-order elastic tensor.
 
 Due to the inherent symmetries of ${\bm \sigma}$, ${\bm \varepsilon}$, and ${\bm C}$, 
 only 21 elastic coefficients of the latter are independent. 
-For isotropic media (which have the same physical properties in any direction), ${\bm C}$ 
+For isotropic linear media (which have the same physical properties in any direction), ${\bm C}$ 
 can be reduced to only two independent numbers (for example the bulk modulus $K$ and the shear modulus $G$ 
-that quantify the material's resistance to changes in volume and to shearing deformations, respectively). 
-
-One often then write Eq.~\eqref{eq:oone} as follows:
-%\sigma_{ij}=\lambda \varepsilon_{kk} \delta_{ij} + 2\mu \varepsilon_{ij}
-
+that quantify the material's resistance to changes in volume and to shearing deformations, respectively).
+Thus
+\[
+C_{ijkl} = \lambda \delta_{ij}\delta_{kl} + \mu (\delta_{ik}\delta_{jl}+\delta_{il}\delta_{jk})
+\]
+so that Eq.~\eqref{eq:oone} becomes:
+\[
+\sigma_{ij}=\lambda \varepsilon_{kk} \delta_{ij} + 2\mu \varepsilon_{ij}
+\]
+or
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-{\bm \sigma} = \lambda (\vec{\nabla}\cdot\vec{u}) {\bm 1} + 2\mu {\bm \varepsilon}(\vec{u})   \label{eq:twoELAST}
+{\bm \sigma}=\lambda (\vec{\nabla}\cdot\vec{u}) {\bm 1} +2\mu {\bm \varepsilon}(\vec{u}) \label{eq:twoELAST}
 \end{equation}
 \end{mdframed}
-where $\lambda$ is the Lam\'e parameter and $\mu$ is the shear modulus\footnote{It is also sometimes written $G$}.
+where $\lambda$ is the Lam\'e parameter and $\mu$ is the shear 
+modulus\footnote{It is also sometimes written $G$}.
 The term $\vec{\nabla}\cdot\vec{u}$ is the isotropic dilation.
 
 \index{general}{Lam\'e Parameter} 
 \index{general}{Shear Modulus}
+
+This can be re-written in the 6-dimensional stress/strain space as
+\[
+\underbrace{
+\left(
+\begin{array}{c}
+\sigma_{xx} \\
+\sigma_{yy} \\
+\sigma_{zz} \\
+\sigma_{xy} \\
+\sigma_{xz} \\
+\sigma_{yz} 
+\end{array}
+\right)}
+_{\vec{\sigma}}
+=
+\underbrace{
+\left(
+\begin{array}{cccccc}
+\lambda+2\mu & \lambda & \lambda & 0 & 0 & 0 \\ 
+\lambda & \lambda+2\mu & \lambda & 0 & 0 & 0 \\ 
+\lambda & \lambda & \lambda+2\mu & 0 & 0 & 0 \\
+0 & 0 & 0 & \mu & 0 & 0 \\ 
+0 & 0 & 0 & 0 & \mu & 0 \\ 
+0 & 0 & 0 & 0 & 0 & \mu  
+\end{array}
+\right)}
+_{{\bm C}}
+\cdot
+\underbrace{
+\left(
+\begin{array}{c}
+\varepsilon_{xx} \\
+\varepsilon_{yy} \\
+\varepsilon_{zz} \\
+\varepsilon_{xy} \\
+\varepsilon_{xz} \\
+\varepsilon_{yz} 
+\end{array}
+\right)}
+_{\vec{\varepsilon}}
+\]
+or, in terms of the compliance matrix ${\bm C}^{-1}$,
+\index{general}{Compliance Matrix}
+\[
+\vec{\varepsilon} 
+= {\bm C}^{-1} \cdot \vec{\sigma}
+\]
+with
+\[
+{\bm C}^{-1}
+=
+\frac{1}{\mu(3\lambda+2\mu)}
+\left(
+\begin{array}{cccccc}
+\lambda+\mu & -\lambda/2 & -\lambda/2 & 0 & 0 & 0 \\
+-\lambda/2 & \lambda+\mu & -\lambda/2 & 0 & 0 & 0 \\
+-\lambda/2 & -\lambda/2 & \lambda+\mu & 0 & 0 & 0 \\
+0 & 0 & 0 & 3\lambda+2\mu & 0 & 0 \\ 
+0 & 0 & 0 & 0 & 3\lambda+2\mu & 0 \\ 
+0 & 0 & 0 & 0 & 0 & 3\lambda+2\mu  
+\end{array}
+\right)
+\]
+If we define the Young's modulus as $E=\mu(3\lambda+2\mu)/(\lambda+\mu)$ 
+and the Poisson's ratio as $\nu=\lambda(\lambda+\mu)/2$, then
+\[
+{\bm C}^{-1}
+=
+\frac{1}{E}
+\left(
+\begin{array}{cccccc}
+1 & -\nu & -\nu & 0 & 0 & 0 \\
+-\nu & 1 & -\nu & 0 & 0 & 0 \\
+-\nu & -\nu & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 2(1+\nu) & 0 & 0 \\ 
+0 & 0 & 0 & 0 & 2(1+\nu) & 0 \\ 
+0 & 0 & 0 & 0 & 0 & 2(1+\nu) 
+\end{array}
+\right)
+\]
+Note that the determinant  of ${\bm C}^{-1}$ is $8(1+\nu)^5(1-2\nu)E^{-6}$,
+so that when $\nu\rightarrow 1/2$ (incompressible material), the compliance
+matrix is singular and the stress cannot be given as a function of strain \cite{lubliner}.
+
 
 The strain tensor is related to the displacement as follows: \index{general}{Strain Tensor}
 \[
@@ -2472,7 +2563,6 @@ Proofs of all the following relationships are given in Appendix~\ref{app:invaria
 \begin{equation}
 \theta_{\rm L}=\frac{1}{3} \sin^{-1} 
 \left( -\frac{3\sqrt{3}}{2} \frac{{\cal I}_3({\bm \tau})}{{\cal I}_2({\bm \tau})^{3/2}} \right)
-\label{eq:lodang}
 \end{equation}
 
 

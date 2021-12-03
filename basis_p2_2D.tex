@@ -1,17 +1,8 @@
 \begin{flushright} {\tiny {\color{gray} basis\_p2\_2D.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\todo[inline]{TIKZ!}
+\input{tikz/tikz_P2}
 
-\begin{verbatim}
-2            
-|\
-| \        (r_0,s_0)=(0,0) (r_3,s_3)=(1/2,0)
-5   4      (r_1,s_1)=(1,0) (r_4,s_4)=(1/2,1/2)
-|     \    (r_2,s_2)=(0,1) (r_5,s_5)=(0,1/2)
-|      \ 
-0===3===1
-\end{verbatim}
 The basis polynomial is then
 \[
 f(r,s) = c_1 + c_2 r + c_3 s + c_4  r^2 + c_5 rs  + c_6 s^2
@@ -22,8 +13,7 @@ f_1 = f(r_1,s_1) &=& c_1 \nonumber\\
 f_2 = f(r_2,s_2) &=& c_1 + c_2 + c_4\nonumber\\
 f_3 = f(r_3,s_3) &=& c_1 + c_3 + c_6\nonumber\\
 f_4 = f(r_4,s_4) &=& c_1 + c_2/2 + c_4/4\nonumber\\
-f_5 = f(r_5,s_5) &=& c_1 + c_2/2 + c_3/2 \nonumber\\
-                 &+& c_4/4 + c_5/4 + c_6/4\nonumber\\
+f_5 = f(r_5,s_5) &=& c_1 + c_2/2 + c_3/2  + c_4/4 + c_5/4 + c_6/4\nonumber\\
 f_6 = f(r_6,s_6) &=& c_1 + c_3/2 + c_6/4\nonumber
 \end{eqnarray}
 This can be cast as $\vec{f}={\bm A}\cdot \vec{c}$ where ${\bm A}$ is a $6\times6$ matrix:
@@ -67,8 +57,7 @@ and then
 \begin{eqnarray}
 f(r,s) 
 &=& f_1 + (-3f_1-f_2+4f_4) r + (-3f_1-f_3+4f_6)s \nonumber\\
-&& +(2f_1+2f_2-4f_4)r^2 + (4f_1-4f_4+4f_5-4f_6) rs \nn\\
-&&+ (2f_1+2f_3-4f_6)s^2 \nonumber\\
+&& +(2f_1+2f_2-4f_4)r^2 + (4f_1-4f_4+4f_5-4f_6) rs + (2f_1+2f_3-4f_6)s^2 \nonumber\\
 &=& \sum_{i=1}^6 \bN_i(r,s) f_i
 \end{eqnarray}
 with
