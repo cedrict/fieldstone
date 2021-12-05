@@ -9,8 +9,9 @@ set ylabel 'error ||v-v^h||_2'
 plot[][]\
 'errors_MINI' u (($3)):6 w lp ps .5 t 'MINI',\
 'errors_P2P1' u (($3)):6 w lp ps .5 t 'P_2P_1',\
-'errors_Q2Q1' u (($3)):6 w lp ps .5 t 'Q_2Q_1',\
+'errors_Q2Q1' u (($3)):6 w lp ps .6 t 'Q_2Q_1',\
 'errors_CR'   u (($3)):6 w lp ps .5 t 'C-R',\
+'errors_Q2P1' u (($3)):6 w lp ps .25 t 'Q_2P_{-1}',\
 0.05*x**2 lt -1 dt 2 t 'h^2',\
 0.012*x**3 lt -1 dt 3 t 'h^3' 
 
@@ -22,6 +23,7 @@ plot[][]\
 'errors_P2P1' u (($3)):9 w lp ps .5 t 'P_2P_1',\
 'errors_Q2Q1' u (($3)):9 w lp ps .5 t 'Q_2Q_1',\
 'errors_CR'   u (($3)):9 w lp ps .5 t 'C-R',\
+'errors_Q2P1' u (($3)):9 w lp ps .25 t 'Q_2P_{-1}',\
 0.5*x**1.5 lt -1 dt 2 t 'h^{1.5}',\
 0.5*x**2 lt -1 dt 3 t 'h^2'
 
@@ -32,8 +34,9 @@ set output 'vrms.pdf'
 plot[][0.0077:]\
 'errors_MINI' u (($3)):12 w lp ps .5 t 'MINI',\
 'errors_P2P1' u (($3)):12 w lp ps .5 t 'P_2P_1',\
-'errors_Q2Q1' u (($3)):12 w lp ps .5 t 'Q_2Q_1',\
+'errors_Q2Q1' u (($3)):12 w lp ps .6 t 'Q_2Q_1',\
 'errors_CR'   u (($3)):12 w lp ps .5 t 'C-R',\
+'errors_Q2P1' u (($3)):12 w lp ps .25 t 'Q_2P_{-1}',\
 0.00777615791 lt -1 dt 2 t 'analytical'
 
 #######################################################
