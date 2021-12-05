@@ -12,41 +12,84 @@
 This \stone showcases the MINI (Section~\ref{pair:mini}), 
 $P_2\times P_1$ (Section~\ref{ss:p2p1}), $Q_2\times Q_1$ (Section~\ref{ss:pairq2q1}) 
 and Crouzeix-Raviart  (Section~\ref{sec:crouzeix-raviart})
-elements which are used to solve the manufactured solution problem "Donea \& Huerta" (see Section~\ref{mms1}).
+elements
+
 
 The mesh is composed of $nel_x \times nel_y$ elements which are cut in half via the same diagonal (NW-SE) into 2 triangles
 for simplicity: 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_112/results/grid_quads}
-\includegraphics[width=7cm]{python_codes/fieldstone_112/results/grid_triangles}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp1/grid_quads}
+\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp1/grid_triangles}\\
 {\captionfont Quadrilaterals and triangles mesh for a resolution of $16\times 16$ cells.} 
 \end{center}
 
 A pressure dof is fixed so remove the nullspace and the obtained pressure field
 is then normalised so that $\int_\Omega p dV = 0$.
 
+%========================================================
+\subsection*{Donea \& Huerta manufactured solution}
+
+We start with the manufactured solution problem "Donea \& Huerta" (see Section~\ref{mms1}).
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/errors_V.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/errors_P.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/errors_V.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/errors_P.pdf}\\
 {\captionfont Velocity (left) and pressure (right) $L_2$ error as a function of the element size $h$}
 \end{center}
 
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_112/results/vrms.pdf}\\
+\includegraphics[width=9cm]{python_codes/fieldstone_112/results/exp1/vrms.pdf}\\
 {\captionfont Root mean square velocity as a function of of the element size $h$}
 \end{center}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/pressMINI}
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/pressP2P1}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/pressQ2Q1}
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/pressCR}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/pressMINI}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/pressP2P1}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/pressQ2Q1}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/pressCR}\\
 {\captionfont Pressure field as a function of the $x$-coordinate on a $16\times16$,
 $32\times 32$ and $64\times 64$ mesh.} 
 \end{center}
 
-TODO: implement Q2Pm1, SolCx, SolVi, SolKz, cylindrical sinker + mesh.
+TODO: implement SolCx, SolVi, SolKz, cylindrical sinker + mesh.
 compare accuracy wrt ndofs
 
-check and probably remove stone 46, 47 ?
+check and probably remove stone 46, 47 ,76?
+
+%========================================================
+\subsection*{Sinking block}
+
+The setup is described in Section~\ref{ss:sinking_block}. No-slip boundary conditions case.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/vprofile_u.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/vprofile_v.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/vprofile_p.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/vprofile_pdyn.pdf}\\
+{\captionfont Vertical profiles}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/hprofile_u.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/hprofile_v.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/hprofile_p.pdf}\\
+{\captionfont Horizontal profiles}
+\end{center}
+
+all pressures are q pressures!
+
+\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/vrms.pdf}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -33,7 +33,7 @@ def NNV(r,s):
        NV_4= 4*r*s 
        NV_5= 4*s-4*r*s-4*s**2
        return NV_0,NV_1,NV_2,NV_3,NV_4,NV_5
-    if elt=='Q2Q1':
+    if elt=='Q2Q1' or elt=='Q2P1':
        NV_0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
        NV_1= 0.5*r*(r+1.) * 0.5*s*(s-1.)
        NV_2= 0.5*r*(r+1.) * 0.5*s*(s+1.)
@@ -69,7 +69,7 @@ def dNNVdr(r,s):
        dNVdr_4= 4*s
        dNVdr_5= -4*s
        return dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5
-    if elt=='Q2Q1':
+    if elt=='Q2Q1' or elt=='Q2P1':
        dNVdr_0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
        dNVdr_1= 0.5*(2.*r+1.) * 0.5*s*(s-1)
        dNVdr_2= 0.5*(2.*r+1.) * 0.5*s*(s+1)
@@ -105,7 +105,7 @@ def dNNVds(r,s):
        dNVds_4= +4*r
        dNVds_5= 4-4*r-8*s
        return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5
-    if elt=='Q2Q1':
+    if elt=='Q2Q1' or elt=='Q2P1':
        dNVds_0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
        dNVds_1= 0.5*r*(r+1.) * 0.5*(2.*s-1.)
        dNVds_2= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
@@ -134,18 +134,37 @@ def NNP(r,s):
 
 #------------------------------------------------------------------------------
 
-def bx(x, y):
-    val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
-         (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
-         (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
-         1.-4.*y+12.*y*y-8.*y*y*y)
+def bx(x,y):
+    if experiment==1:
+       val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
+            (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
+            (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
+            1.-4.*y+12.*y*y-8.*y*y*y)
+    if experiment==2:
+       val=0
     return val
 
-def by(x, y):
-    val=((8.-48.*y+48.*y*y)*x*x*x+
-         (-12.+72.*y-72.*y*y)*x*x+
-         (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
-         12.*y*y+24.*y*y*y-12.*y**4)
+def by(x,y):
+    if experiment==1:
+       val=((8.-48.*y+48.*y*y)*x*x*x+
+            (-12.+72.*y-72.*y*y)*x*x+
+            (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
+            12.*y*y+24.*y*y*y-12.*y**4)
+    if experiment==2:
+       if np.abs(x-0.5)<0.0625 and np.abs(y-0.5)<0.0625:
+          val=-1.01#+1
+       else:
+          val=-1#+1
+    return val
+
+def eta(x,y):
+    if experiment==1:
+       val=1.
+    if experiment==2:
+       if np.abs(x-0.5)<0.0625 and np.abs(y-0.5)<0.0625:
+          val=1e3
+       else:
+          val=1
     return val
 
 def velocity_x(x,y):
@@ -161,23 +180,21 @@ def pressure(x,y):
     return val
 
 #------------------------------------------------------------------------------
-#  C-R       P2P1     MINI     Q2Q1
+#  C-R       P2P1     MINI    Q2Q1,Q2P-1
 #
-# 2         2        2        3--6--2
-# |\        |\       |\       |     |
-# | \       | \      | \      |     |
-# 5  4      5  4     |  \     7  8  5
-# | 6 \     |   \    | 3 \    |     |
-# |    \    |    \   |    \   |     |
-# 0--3--1   0--3--1  0-----1  0--4--1
+# 2         2        2         3--6--2
+# |\        |\       |\        |     |
+# | \       | \      | \       |     |
+# 5  4      5  4     |  \      7  8  5
+# | 6 \     |   \    | 3 \     |     |
+# |    \    |    \   |    \    |     |
+# 0--3--1   0--3--1  0-----1   0--4--1
 #------------------------------------------------------------------------------
 
-elt='MINI'
-elt='CR'
-elt='P2P1'
-#elt='Q2Q1' 
+# experiment=1: d&h
+# experiment=2: sinker
 
-#------------------------------------------------------------------------------
+experiment=2
 
 print("-----------------------------")
 print("----------fieldstone---------")
@@ -190,14 +207,23 @@ ndofP=1  # number of pressure degrees of freedom
 Lx=1
 Ly=1
 
-if int(len(sys.argv) == 4):
+if int(len(sys.argv) == 5):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
+   elt  = int(sys.argv[4])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 32
+   nely = 32
    visu = 1
+   elt  = 4
+
+if elt==1: elt='MINI'
+if elt==2: elt='CR'
+if elt==3: elt='P2P1'
+if elt==4: elt='Q2Q1' 
+if elt==5: elt='Q2P1'
+
 
 if elt=='CR':
    mV=7 
@@ -208,6 +234,8 @@ if elt=='CR':
    NV=nnx*nny+nel
    NP=nel*mP
    nqel=6
+   rVnodes=[0,1,0,0.5,0.5,0,1./3.]
+   sVnodes=[0,0,1,0,0.5,0.5,1./3.]
 if elt=='MINI':
    mV=4 
    mP=3 
@@ -217,6 +245,8 @@ if elt=='MINI':
    NV=nnx*nny+nel
    NP=nnx*nny
    nqel=6
+   rVnodes=[0,1,0,1./3.]
+   sVnodes=[0,0,1,1./3.]
 if elt=='P2P1':
    mV=6
    mP=3
@@ -226,6 +256,8 @@ if elt=='P2P1':
    NV=nnx*nny
    NP=(nelx+1)*(nely+1)
    nqel=6
+   rVnodes=[0,1,0,0.5,0.5,0]
+   sVnodes=[0,0,1,0,0.5,0.5]
 if elt=='Q2Q1':
    mV=9
    mP=4
@@ -235,6 +267,19 @@ if elt=='Q2Q1':
    NV=nnx*nny
    NP=(nelx+1)*(nely+1)
    nqel=9
+   rVnodes=[-1,1,1,-1,0,1,0,-1,0]
+   sVnodes=[-1,-1,1,1,-1,0,1,0,0]
+if elt=='Q2P1':
+   mV=9
+   mP=3
+   nel=nelx*nely
+   nnx=2*nelx+1
+   nny=2*nely+1
+   NV=nnx*nny
+   NP=nel*3
+   nqel=9
+   rVnodes=[-1,1,1,-1,0,1,0,-1,0]
+   sVnodes=[-1,-1,1,1,-1,0,1,0,0]
 
 ndofV=2
 ndofP=1
@@ -256,10 +301,8 @@ print("-----------------------------")
 
 eps=1e-9
 
-eta=1.
-
 #----------------------------------------------------------
-# 6 or 7 point integration coeffs and weights 
+# integration points coeffs and weights 
 #----------------------------------------------------------
 
 qcoords_r=np.empty(nqel,dtype=np.float64)  
@@ -308,7 +351,7 @@ start = timing.time()
 xV=np.empty(NV,dtype=np.float64)  # x coordinates
 yV=np.empty(NV,dtype=np.float64)  # y coordinates
 
-if elt=='CR' or elt=='P2P1' or elt=='Q2Q1':
+if elt=='CR' or elt=='P2P1' or elt=='Q2Q1' or elt=='Q2P1':
    counter=0    
    for j in range(0,nny):
        for i in range(0,nnx):
@@ -407,7 +450,7 @@ if elt=='MINI':
        yV[nnx*nny+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
    #end for
 
-if elt=='Q2Q1':
+if elt=='Q2Q1' or elt=='Q2P1':
    counter = 0
    for j in range(0,nely):
        for i in range(0,nelx):
@@ -515,6 +558,25 @@ if elt=='Q2Q1':
            counter+=1
       #end for
    #end for
+
+if elt=='Q2P1':
+   for iel in range(nel):
+       iconP[0,iel]=3*iel
+       iconP[1,iel]=3*iel+1
+       iconP[2,iel]=3*iel+2
+
+   counter=0
+   for iel in range(nel):
+       xP[counter]=xV[iconV[8,iel]]
+       yP[counter]=yV[iconV[8,iel]]
+       counter+=1
+       xP[counter]=xV[iconV[8,iel]]+Lx/nelx/2
+       yP[counter]=yV[iconV[8,iel]]
+       counter+=1
+       xP[counter]=xV[iconV[8,iel]]
+       yP[counter]=yV[iconV[8,iel]]+Ly/nely/2
+       counter+=1
+
 
 #np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
 
@@ -649,7 +711,7 @@ for iel in range(0,nel):
                                      [dNNNVdy[i],dNNNVdx[i]]]
 
         # compute elemental a_mat matrix
-        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta*weightq*jcob
+        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(xq,yq)*weightq*jcob
 
         # compute elemental rhs vector
         for i in range(0,mV):
@@ -798,8 +860,8 @@ for i in range(0,NV):
     error_u[i]=u[i]-velocity_x(xV[i],yV[i])
     error_v[i]=v[i]-velocity_y(xV[i],yV[i])
 
-for i in range(0,NP): 
-    error_p[i]=p[i]-pressure(xP[i],yP[i])
+#for i in range(0,NP): 
+#    error_p[i]=p[i]-pressure(xP[i],yP[i])
 
 #################################################################
 # compute L2 errors
@@ -865,47 +927,62 @@ print("compute errors: %.3f s" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
+profile=open('diag_profile'+elt+'.ascii',"w")
+
 q=np.zeros(NV,dtype=np.float64)
 temp=np.zeros(NV,dtype=np.float64)
 
 for iel in range(0,nel):
-    q[iconV[0,iel]]+=p[iconP[0,iel]]
-    q[iconV[1,iel]]+=p[iconP[1,iel]]
-    q[iconV[2,iel]]+=p[iconP[2,iel]]
-    temp[iconV[0,iel]]+=1
-    temp[iconV[1,iel]]+=1
-    temp[iconV[2,iel]]+=1
-    if elt=='CR' or elt=='P2P1':
-       q[iconV[3,iel]]+=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
-       q[iconV[4,iel]]+=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
-       q[iconV[5,iel]]+=(p[iconP[0,iel]]+p[iconP[2,iel]])*0.5
-       temp[iconV[3,iel]]+=1
-       temp[iconV[4,iel]]+=1
-       temp[iconV[5,iel]]+=1
-    if elt=='CR':
-       q[iconV[6,iel]]+=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3
-       temp[iconV[6,iel]]+=1
-    if elt=='MINI':
-       q[iconV[3,iel]]+=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3
-       temp[iconV[3,iel]]+=1
-    if elt=='Q2Q1':
-       q[iconV[3,iel]]+=p[iconP[3,iel]]
-       temp[iconV[3,iel]]+=1
-       q[iconV[4,iel]]+=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
-       q[iconV[5,iel]]+=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
-       q[iconV[6,iel]]+=(p[iconP[2,iel]]+p[iconP[3,iel]])*0.5
-       q[iconV[7,iel]]+=(p[iconP[3,iel]]+p[iconP[0,iel]])*0.5
-       temp[iconV[4,iel]]+=1
-       temp[iconV[5,iel]]+=1
-       temp[iconV[6,iel]]+=1
-       temp[iconV[7,iel]]+=1
-       q[iconV[8,iel]]+=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]]+p[iconP[3,iel]])/4
-       temp[iconV[8,iel]]+=1
+    for i in range(0,mV):
+        rq=rVnodes[i]
+        sq=sVnodes[i]
+        NNNP[0:mP]=NNP(rq,sq)
+        xq=0.
+        yq=0.
+        pq=0.
+        for k in range(0,mP):
+            xq+=NNNP[k]*xP[iconP[k,iel]]
+            yq+=NNNP[k]*yP[iconP[k,iel]]
+            pq+=NNNP[k]*p[iconP[k,iel]]
+        q[iconV[i,iel]]+=pq
+        temp[iconV[i,iel]]+=1   
+        if np.abs(yq-xq)<1e-6:
+           profile.write("%10e %10e %10e\n" %(xq,yq,pq))
+    #end for
 #end for
 
 q=q/temp
 
+profile.close()
+
 print("compute pressure q: %.3f s" % (timing.time() - start))
+
+#####################################################################
+# compute element center 
+#####################################################################
+
+xc=np.zeros(nel,dtype=np.float64)
+yc=np.zeros(nel,dtype=np.float64)
+
+for iel in range(0,nel):
+    xc[iel]=np.sum(xV[iconV[0:mV,iel]])/mV
+    yc[iel]=np.sum(yV[iconV[0:mV,iel]])/mV
+
+#####################################################################
+# export profiles
+#####################################################################
+
+profile=open('hprofile'+elt+'.ascii',"w")
+for i in range(0,NV):
+    if np.abs(yV[i]-0.5)<1e-6:
+       profile.write("%10e %10e %10e %10e\n" %(xV[i],u[i],v[i],q[i]))
+profile.close()       
+
+profile=open('vprofile'+elt+'.ascii',"w")
+for i in range(0,NV):
+    if np.abs(xV[i]-0.5)<1e-6:
+       profile.write("%10e %10e %10e %10e\n" %(yV[i],u[i],v[i],q[i]))
+profile.close()       
 
 #####################################################################
 # plot of solution
@@ -926,14 +1003,14 @@ if visu==1:
     vtufile.write("</DataArray>\n")
     vtufile.write("</Points> \n")
     #####
-    #vtufile.write("<CellData Scalars='scalars'>\n")
+    vtufile.write("<CellData Scalars='scalars'>\n")
     #--
-    #vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
-    #for iel in range (0,nel):
-    #    vtufile.write("%10e\n" % (area[iel]))
-    #vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (eta(xc[iel],yc[iel])))
+    vtufile.write("</DataArray>\n")
     #--
-    #vtufile.write("</CellData>\n")
+    vtufile.write("</CellData>\n")
     #####
     vtufile.write("<PointData Scalars='scalars'>\n")
     #--
@@ -963,7 +1040,7 @@ if visu==1:
     #--
     vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
     for iel in range (0,nel):
-        if elt=='Q2Q1':
+        if elt=='Q2Q1' or elt=='Q2P1':
            vtufile.write("%d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel]))
         else:
            vtufile.write("%d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel]))
@@ -971,7 +1048,7 @@ if visu==1:
     #--
     vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
     for iel in range (0,nel):
-        if elt=='Q2Q1':
+        if elt=='Q2Q1' or elt=='Q2P1':
            vtufile.write("%d \n" %((iel+1)*4))
         else:
            vtufile.write("%d \n" %((iel+1)*3))
@@ -979,7 +1056,7 @@ if visu==1:
     #--
     vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
     for iel in range (0,nel):
-        if elt=='Q2Q1':
+        if elt=='Q2Q1' or elt=='Q2P1':
            vtufile.write("%d \n" %9)
         else:
            vtufile.write("%d \n" %5)

@@ -1,0 +1,6 @@
+rm *.vtu
+rm *.ascii
+rm *.pdf
+rm opla_*
+rm errors_*
+

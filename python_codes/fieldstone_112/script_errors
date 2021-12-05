@@ -1,20 +1,15 @@
-rm -f errors
-python3 stone.py   8   8 0 | grep errv >> errors
-python3 stone.py   9   9 0 | grep errv >> errors
-python3 stone.py  10  10 0 | grep errv >> errors
-python3 stone.py  11  11 0 | grep errv >> errors
-python3 stone.py  12  12 0 | grep errv >> errors
-python3 stone.py  16  16 0 | grep errv >> errors
-python3 stone.py  20  20 0 | grep errv >> errors
-python3 stone.py  24  24 0 | grep errv >> errors
-python3 stone.py  28  28 0 | grep errv >> errors
-python3 stone.py  32  32 0 | grep errv >> errors
-python3 stone.py  40  40 0 | grep errv >> errors
-python3 stone.py  48  48 0 | grep errv >> errors
-python3 stone.py  64  64 0 | grep errv >> errors
-python3 stone.py  80  80 0 | grep errv >> errors
-python3 stone.py  96  96 0 | grep errv >> errors
-python3 stone.py 128 128 0 | grep errv >> errors
+#! /bin/bash
+rm -f errors_*
+
+for e in 1 2 3 4 5; do
+    echo element= $e
+    python3 stone.py   8   8 0 $e | grep errv >> errors_$e
+    python3 stone.py  16  16 0 $e | grep errv >> errors_$e
+    python3 stone.py  32  32 0 $e | grep errv >> errors_$e
+    python3 stone.py  64  64 0 $e | grep errv >> errors_$e
+    python3 stone.py 128 128 0 $e | grep errv >> errors_$e
+done
+
 
 
 
