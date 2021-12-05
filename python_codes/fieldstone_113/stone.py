@@ -74,44 +74,40 @@ def export_tetrahedron_to_vtu(pt_1,pt_2,pt_3,pt_4,name):
 #------------------------------------------------------------------------------
 
 def compute_face_edge_normal(vec_nface,pt_start,pt_end,pt_midface,name):
+    #pt_start,pt_end are the vertices making the edge
     pt_mid=0.5*(pt_start+pt_end)
     vec_l=pt_end-pt_start
-    vec_n=np.empty(3)
-    det=vec_nface[yy]*vec_l[zz]-vec_nface[zz]*vec_l[yy]
-    vec_n[xx]=1
-    vec_n[yy]=(-vec_l[zz]*vec_nface[xx]+vec_nface[zz]*vec_l[xx] )/det
-    vec_n[zz]=(+vec_l[yy]*vec_nface[xx]-vec_nface[yy]*vec_l[xx] )/det
+    #vec_n=np.empty(3)
+    #det=vec_nface[yy]*vec_l[zz]-vec_nface[zz]*vec_l[yy]
+    #vec_n[xx]=1
+    #vec_n[yy]=(-vec_l[zz]*vec_nface[xx]+vec_nface[zz]*vec_l[xx] )/det
+    #vec_n[zz]=(+vec_l[yy]*vec_nface[xx]-vec_nface[yy]*vec_l[xx] )/det
+    vec_n=np.cross(vec_nface,vec_l)
     vec_n/=LA.norm(vec_n,2)
     #print('in',np.dot(vec_n,vec_nface))
     #print('in',np.dot(vec_n,vec_l))
     vec_n*=np.sign(np.dot(vec_n,pt_mid-pt_midface))
-    #export_vector_to_vtu(pt_mid,vec_n,name)
+    export_vector_to_vtu(pt_mid,vec_n,name)
     return vec_n
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
 def compute_gravity_tetrahedron_pointmass(pt_1,pt_2,pt_3,pt_4,pt_M,rho0):
-
     #compute volume of tet
-
     vec_l1 = pt_2-pt_1
     vec_l2 = pt_3-pt_1
     vec_l3 = pt_4-pt_1
     volume = np.abs(np.dot(np.cross(vec_l3,vec_l2),vec_l1))/6
 
     #compute center of mass N
-
     pt_N = (pt_1+pt_2+pt_3+pt_4)*0.25
 
     # compute distance \vec{MN}
-
     vec_rN=pt_N-pt_M
-
     dist = LA.norm(vec_rN,2)
 
     vec_g = Ggrav*rho0*volume/dist**3*vec_rN
-
     U=Ggrav*rho0*volume/dist
 
     return vec_g,U
@@ -434,22 +430,24 @@ if test==3:
    #right angles
    pt_one=np.array([0,0,0],dtype=np.float64)
    pt_two=np.array([1,0,0],dtype=np.float64)
-   pt_three=np.array([0,1,0],dtype=np.float64)
-   pt_four=np.array([0,0,1],dtype=np.float64)
+   pt_three=np.array([0,0,1],dtype=np.float64)
+   pt_four=np.array([0,1,0],dtype=np.float64)
     
 
+#------------------------------------------------------------------------------
+# export tetrahedron and axes to vtu 
+#------------------------------------------------------------------------------
 
 export_tetrahedron_to_vtu(pt_one,pt_two,pt_three,pt_four,'tetrahedron')
-    
 pt_O=np.array([0,0,0],dtype=np.float64)
 vec_ex=np.array([1,0,0],dtype=np.float64)
-vec_ey=np.array([0,1,0],dtype=np.float64)
+vec_ey=np.array([0,1,1],dtype=np.float64)
 vec_ez=np.array([0,0,1],dtype=np.float64)
 export_vector_to_vtu(pt_O,vec_ex,'e_x')
 export_vector_to_vtu(pt_O,vec_ey,'e_y')
 export_vector_to_vtu(pt_O,vec_ez,'e_z')
 
-#---------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 if test==2:
 
@@ -486,8 +484,17 @@ pt_N = (pt_one+pt_two+pt_three+pt_four)*0.25
 
 myfile=open('grav.ascii',"w")
 
-for i in range(2,51):
-    pt_meas = np.array([i,0.5,0.5],dtype=np.float64)
+for i in range(0,51):
+    if test==1:
+       val=0.5+1/50*i
+       print(val,val,0)
+       pt_meas = np.array([val,1.1*val,2.2*val],dtype=np.float64)
+    if test==2:
+       val=1.+4/50*i
+       pt_meas = np.array([val,0.5,0.5],dtype=np.float64)
+    if test==3:
+       val=1.+2/50*i
+       pt_meas = np.array([val,val,val],dtype=np.float64)
     vec_g,U = compute_gravity_tetrahedron(pt_one,pt_two,pt_three,pt_four,pt_meas,rho0)
     vec_g_pm,U_pm = compute_gravity_tetrahedron_pointmass(pt_one,pt_two,pt_three,pt_four,pt_meas,rho0)
     myfile.write("%e %e %e %e %e \n" %(LA.norm(pt_meas-pt_N,2),\
