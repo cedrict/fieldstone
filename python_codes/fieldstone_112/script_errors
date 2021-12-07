@@ -1,13 +1,31 @@
 #! /bin/bash
 rm -f errors_*
+rm -f middle_*
+rm opla
 
 for e in 1 2 3 4 5; do
     echo element= $e
-    python3 stone.py   8   8 0 $e | grep errv >> errors_$e
-    python3 stone.py  16  16 0 $e | grep errv >> errors_$e
-    python3 stone.py  32  32 0 $e | grep errv >> errors_$e
-    python3 stone.py  64  64 0 $e | grep errv >> errors_$e
-    python3 stone.py 128 128 0 $e | grep errv >> errors_$e
+    python3 stone.py   8   8 0 $e > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
+    python3 stone.py  16  16 0 $e > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
+    python3 stone.py  32  32 0 $e > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
+    python3 stone.py  64  64 0 $e > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
+    python3 stone.py 128 128 0 $e > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
+    python3 stone.py 192 192 0 $e > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
+    python3 stone.py 256 256 0 $e > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
 done
 
 

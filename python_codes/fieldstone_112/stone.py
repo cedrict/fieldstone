@@ -6,7 +6,12 @@ import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 import time as timing
 from scipy.sparse import lil_matrix
+import solcx as solcx
+import solkz as solkz
+import solvi as solvi
 
+#------------------------------------------------------------------------------
+# velocity basis functions
 #------------------------------------------------------------------------------
 
 def NNV(r,s):
@@ -118,6 +123,8 @@ def dNNVds(r,s):
        return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8
 
 #------------------------------------------------------------------------------
+# pressure basis functions
+#------------------------------------------------------------------------------
 
 def NNP(r,s):
     if elt=='Q2Q1':
@@ -133,6 +140,8 @@ def NNP(r,s):
        return NP_0,NP_1,NP_2
 
 #------------------------------------------------------------------------------
+# rhs buoyancy force
+#------------------------------------------------------------------------------
 
 def bx(x,y):
     if experiment==1:
@@ -141,6 +150,12 @@ def bx(x,y):
             (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
             1.-4.*y+12.*y*y-8.*y*y*y)
     if experiment==2:
+       val=0
+    if experiment==3:
+       val=0
+    if experiment==4:
+       val=0
+    if experiment==5:
        val=0
     return val
 
@@ -155,6 +170,12 @@ def by(x,y):
           val=-1.01#+1
        else:
           val=-1#+1
+    if experiment==3:
+       val=np.sin(np.pi*y)*np.cos(np.pi*x)
+    if experiment==4:
+       val=np.sin(2.*y)*np.cos(3.*np.pi*x)
+    if experiment==5:
+       val=0
     return val
 
 def eta(x,y):
@@ -165,18 +186,61 @@ def eta(x,y):
           val=1e3
        else:
           val=1
+    if experiment==3:
+       if x<0.5:
+          val=1.
+       else:
+          val=1.e6
+    if experiment==4:
+       val= np.exp(13.8155*y) 
+    if experiment==5:
+       if (np.sqrt(x*x+y*y) < 0.2):
+          val=1e3
+       else:
+          val=1.
     return val
 
+#------------------------------------------------------------------------------
+# analytical solution
+#------------------------------------------------------------------------------
+
 def velocity_x(x,y):
-    val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+    if experiment==1:
+       val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+    if experiment==2:
+       val=0
+    if experiment==3:
+       val,vi,pi=solcx.SolCxSolution(x,y) 
+    if experiment==4:
+       val,vi,pi=solkz.SolKzSolution(x,y) 
+    if experiment==5:
+       val,vi,pi=solvi.SolViSolution(x,y) 
     return val
 
 def velocity_y(x,y):
-    val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    if experiment==1:
+       val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    if experiment==2:
+       val=0
+    if experiment==3:
+       ui,val,pi=solcx.SolCxSolution(x,y) 
+    if experiment==4:
+       ui,val,pi=solkz.SolKzSolution(x,y) 
+    if experiment==5:
+       ui,val,pi=solvi.SolViSolution(x,y) 
     return val
 
 def pressure(x,y):
-    val=x*(1.-x)-1./6.
+    if experiment==1:
+       val=x*(1.-x)-1./6.
+    if experiment==2:
+       val=0
+    if experiment==3:
+       ui,vi,val=solcx.SolCxSolution(x,y) 
+    if experiment==4:
+       ui,vi,val=solkz.SolKzSolution(x,y) 
+    if experiment==5:
+       ui,vi,val=solvi.SolViSolution(x,y) 
     return val
 
 #------------------------------------------------------------------------------
@@ -193,8 +257,11 @@ def pressure(x,y):
 
 # experiment=1: d&h
 # experiment=2: sinker
+# experiment=3: solCx
+# experiment=4: solKz
+# experiment=5: solVi
 
-experiment=2
+experiment=5
 
 print("-----------------------------")
 print("----------fieldstone---------")
@@ -216,11 +283,11 @@ else:
    nelx = 32
    nely = 32
    visu = 1
-   elt  = 4
+   elt  = 5
 
 if elt==1: elt='MINI'
-if elt==2: elt='CR'
-if elt==3: elt='P2P1'
+if elt==2: elt='P2P1'
+if elt==3: elt='CR'
 if elt==4: elt='Q2Q1' 
 if elt==5: elt='Q2P1'
 
@@ -596,19 +663,48 @@ start = timing.time()
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
-for i in range(0,NV):
-    if xV[i]<eps:
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if xV[i]>(Lx-eps):
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if yV[i]<eps:
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if yV[i]>(Ly-eps):
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+if experiment==1 or experiment==2:
+   for i in range(0,NV):
+       if xV[i]<eps:
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if xV[i]>(Lx-eps):
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if yV[i]<eps:
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if yV[i]>(Ly-eps):
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+if experiment==3 or experiment==4:
+   for i in range(0,NV):
+       if xV[i]<eps:
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+       if xV[i]>(Lx-eps):
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
+       if yV[i]<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if yV[i]>(Ly-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+if experiment==5:
+   for i in range(0,NV):
+       ui,vi,pi=solvi.SolViSolution(xV[i],yV[i])
+       if xV[i]<eps:
+          bc_fix[i*ndofV+0]   = True ; bc_val[i*ndofV+0] = ui
+          bc_fix[i*ndofV+1]   = True ; bc_val[i*ndofV+1] = vi
+       if xV[i]>(Lx-eps):
+          bc_fix[i*ndofV+0]   = True ; bc_val[i*ndofV+0] = ui
+          bc_fix[i*ndofV+1]   = True ; bc_val[i*ndofV+1] = vi
+       if yV[i]<eps:
+          bc_fix[i*ndofV+0]   = True ; bc_val[i*ndofV+0] = ui
+          bc_fix[i*ndofV+1]   = True ; bc_val[i*ndofV+1] = vi
+       if yV[i]>(Ly-eps):
+          bc_fix[i*ndofV+0]   = True ; bc_val[i*ndofV+0] = ui
+          bc_fix[i*ndofV+1]   = True ; bc_val[i*ndofV+1] = vi
+
+
+
 
 print("boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -918,7 +1014,8 @@ errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 vrms=np.sqrt(vrms)
 
-print("     -> hx= %.8f ; errv= %.10f ; errp= %.10f ; vrms= %.10f" %(Lx/nelx,errv,errp,vrms))
+print("     -> hx= %.8f ; errv= %.10f ; errp= %.10f ; vrms= %.10f ; NV= %d ; NP= %d" \
+      %(Lx/nelx,errv,errp,vrms,NV,NP))
 
 print("compute errors: %.3f s" % (timing.time() - start))
 
@@ -983,6 +1080,10 @@ for i in range(0,NV):
     if np.abs(xV[i]-0.5)<1e-6:
        profile.write("%10e %10e %10e %10e\n" %(yV[i],u[i],v[i],q[i]))
 profile.close()       
+
+for i in range(0,NV):
+    if np.abs(xV[i]-0.5)<1e-6 and np.abs(yV[i]-0.5)<1e-6:
+       print('middle h,u,v,q:', Lx/nelx,u[i],v[i],q[i],NV,NP)
 
 #####################################################################
 # plot of solution
