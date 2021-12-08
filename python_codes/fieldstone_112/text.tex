@@ -8,15 +8,13 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 This \stone showcases the MINI (Section~\ref{pair:mini}), 
-$P_2\times P_1$ (Section~\ref{ss:p2p1}), $Q_2\times Q_1$ (Section~\ref{ss:pairq2q1}) 
-and Crouzeix-Raviart  (Section~\ref{sec:crouzeix-raviart})
-elements
+$P_2\times P_1$ (Section~\ref{ss:p2p1}), $Q_2\times Q_1$ (Section~\ref{ss:pairq2q1}), 
+$Q_2\times P_{-1}$ (Section~\ref{ss:pairq2pm1}) and Crouzeix-Raviart  (Section~\ref{sec:crouzeix-raviart})
+elements.
 
-
-The mesh is composed of $nel_x \times nel_y$ elements which are cut in half via the same diagonal (NW-SE) into 2 triangles
-for simplicity: 
+The mesh is composed of $nel_x \times nel_y$ cells which are cut in half via the same 
+diagonal (NW-SE) into 2 triangles for simplicity when triangular elements are used: 
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp1/grid_quads}
@@ -27,67 +25,233 @@ for simplicity:
 A pressure dof is fixed so remove the nullspace and the obtained pressure field
 is then normalised so that $\int_\Omega p dV = 0$.
 
+Resolutions ranging from 8x8 to 256x256.  
+
+\newpage
 %========================================================
 \subsection*{Donea \& Huerta manufactured solution}
 
 We start with the manufactured solution problem "Donea \& Huerta" (see Section~\ref{mms1}).
+
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/errors_V.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/errors_P.pdf}\\
-{\captionfont Velocity (left) and pressure (right) $L_2$ error as a function of the element size $h$}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/errors_V_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/errors_P.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/errors_P_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/vrms_ndof.pdf}\\
+{\captionfont Velocity $L_2$ error (top row), pressure $L_2$ error (middle row) and root
+mean square velocity (bottom row) as a function of the element size $h$ (left column) 
+and the total number of degrees of freedom (right column).}
 \end{center}
 
+\newpage
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_112/results/exp1/vrms.pdf}\\
-{\captionfont Root mean square velocity as a function of of the element size $h$}
-\end{center}
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/pressMINI}
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/pressP2P1}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/pressQ2Q1}
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1/pressCR}\\
+\includegraphics[width=8.5cm]{python_codes/fieldstone_112/results/exp1/pressMINI}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_112/results/exp1/pressP2P1}\\
+\includegraphics[width=8.5cm]{python_codes/fieldstone_112/results/exp1/pressCR}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_112/results/exp1/pressQ2Q1}\\
+\includegraphics[width=8.5cm]{python_codes/fieldstone_112/results/exp1/pressQ2P1}\\
 {\captionfont Pressure field as a function of the $x$-coordinate on a $16\times16$,
-$32\times 32$ and $64\times 64$ mesh.} 
+$32\times 32$ and $64\times 64$ mesh for all 5 elements.} 
 \end{center}
 
-TODO: implement SolCx, SolVi, SolKz, cylindrical sinker + mesh.
-compare accuracy wrt ndofs
+\newpage
 
-check and probably remove stone 46, 47 ,76?
+Influence of mesh quality:
+A random perturbation is added to the interior nodes. 
 
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp1_rand/area_quads}
+\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp1_rand/area_tris}\\
+{\captionfont Mesh and element areas for quadrilaterals and triangles on a 32x32 cell mesh.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1_rand/errors_V.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1_rand/errors_V_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1_rand/errors_P.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1_rand/errors_P_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1_rand/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp1_rand/vrms_ndof.pdf}\\
+{\captionfont Velocity $L_2$ error (top row), pressure $L_2$ error (middle row) and root
+mean square velocity (bottom row) as a function of the element size $h$ (left column) 
+and the total number of degrees of freedom (right column).}
+\end{center}
+
+\newpage
+\begin{center}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_112/results/exp1_rand/pressMINI}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_112/results/exp1_rand/pressP2P1}\\
+\includegraphics[width=8.5cm]{python_codes/fieldstone_112/results/exp1_rand/pressCR}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_112/results/exp1_rand/pressQ2Q1}\\
+\includegraphics[width=8.5cm]{python_codes/fieldstone_112/results/exp1_rand/pressQ2P1}\\
+{\captionfont Pressure field as a function of the $x$-coordinate on a $16\times16$,
+$32\times 32$ and $64\times 64$ mesh for all 5 elements.} 
+\end{center}
+
+
+
+\newpage
 %========================================================
 \subsection*{Sinking block}
 
 The setup is described in Section~\ref{ss:sinking_block}. No-slip boundary conditions case.
+A sinker of size $0.125\times 0.125$ is placed in the middle of the domain. It has density
+$\rho=1.01$ while the surrounding fluid has density $\rho=1$. Their respective viscosity is
+$\eta=10^3$ and $\eta_1$. Gravity is vertical pointing downwards with $|\vec g|=1$.
+
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/vprofile_u.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/vprofile_v.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/vprofile_p.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/vprofile_pdyn.pdf}\\
-{\captionfont Vertical profiles. Pressure is projected onto the V nodes.}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp2/eta}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp2/vel}\\
+{\captionfont $32\times 32$ grid, $Q_2\times P_{-1}$ element.}
+\end{center}
+
+We run this experiment on a $32\times 32$ cell mesh (these cells are then cut in half
+in the case of triangular elements). Velocity and pressure are measured on two profiles,
+one vertical and one horizontal passing through the middle of the domain.   
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp2/vprofile_u.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp2/vprofile_v.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp2/vprofile_p.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp2/vprofile_pdyn.pdf}\\
+{\captionfont Vertical profiles. Pressure is projected onto the velocity nodes.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/hprofile_u.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/hprofile_v.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/hprofile_p.pdf}\\
-{\captionfont Horizontal profiles. Pressure is projected onto the V nodes.}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp2/hprofile_u.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp2/hprofile_v.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp2/hprofile_p.pdf}\\
+{\captionfont Horizontal profiles. Pressure is projected onto the velocity nodes.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/diag_profile_p.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp2/vrms.pdf}\\
-{\captionfont Left: dynamic pressure field on SW-NE diagonal. Right: root mean square velocity.}
+\includegraphics[height=6cm]{python_codes/fieldstone_112/results/exp2/diag.png}
+\includegraphics[height=6cm]{python_codes/fieldstone_112/results/exp2/diag_profile_p.pdf}\\
+{\captionfont Dynamic pressure $p-p_{lith}$ field on SW-NE diagonal}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp2/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp2/v_center.pdf}\\
+{\captionfont Left: root mean square velocity; Right: vertical velocity in the middle of the domain/sinker.}
+\end{center}
+
+\newpage
+%========================================================
+\subsection*{SolCx}
+
+The setup is described in Section~\ref{ss:solcx}. The viscosity is discontinuous 
+along the vertical line $x=1/2$ so discontinuous pressure elements perform better:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp3/errors_V.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp3/errors_V_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp3/errors_P.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp3/errors_P_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp3/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp3/vrms_ndof.pdf}\\
+{\captionfont Velocity $L_2$ error (top row), pressure $L_2$ error (middle row) and vrms (bottom row) 
+as a function of the element size $h$ (left column) and the total number of dofs (right column).}
+\end{center}
+
+Thieulot \& Bangerth (2021) \cite{thba21} report $O(h^3)$ for velocity for both Q2Q1 and Q2P1
+and $O(h^{0.5})$ for Q2Q1 and  $O(h^{2})$ for Q2P1 for pressure. 
+
+\newpage
+%========================================================
+\subsection*{SolKz}
+
+The setup is described in Section~\ref{ss:solkz}. 
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp4/errors_V.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp4/errors_V_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp4/errors_P.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp4/errors_P_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp4/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp4/vrms_ndof.pdf}\\
+{\captionfont Velocity $L_2$ error (top row), pressure $L_2$ error (middle row) and vrms (bottom row) 
+as a function of the element size $h$ (left column) and the total number of dofs (right column).}
+\end{center}
+
+Note the 1.4 convergence of pressure for MINI
+
+\newpage
+%========================================================
+\subsection*{SolVi}
+
+The setup is described in Section~\ref{ss:solvi}. 
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5/errors_V.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5/errors_V_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5/errors_P.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5/errors_P_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5/vrms_ndof.pdf}\\
+{\captionfont Velocity $L_2$ error (top row), pressure $L_2$ error (middle row) and vrms (bottom row) 
+as a function of the element size $h$ (left column) and the total number of dofs (right column).}
+\end{center}
+
+Thieulot \& Bangerth (2021) \cite{thba21} report $O(h)$ convergence for 
+velocity and $O(h^{0.5})$ for pressure across all four elements that they tested.
+
+
+\begin{center}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_112/results/exp5/bottom64}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_112/results/exp5/bottom128}\\
+{\captionfont Pressure at the bottom of the domain. Grey area corresponds to the 
+high viscosity disc. Left: 64x64 cells; right: 128x128 cells.}
 \end{center}
 
 
 
 
+%========================================================
+\subsection*{Preliminary Conclusions}
+
+\begin{tabular}{|l|ll|ll|ll|ll|ll|}
+\hline
+                & MINI       &          &  P2P1 & & CR & & Q2Q1 & & Q2P1 &  \\
+experiment      & $\alpha_v$ & ranking  &    $\alpha_v$ & ranking  &    $\alpha_v$ & ranking  &    $\alpha_v$ & ranking  &    $\alpha_v$ & ranking  \\ 
+\hline
+\hline
+D\& H & &     \\
+Sinker & &  \\
+SolCx & &  \\
+SolKz & &  \\
+SolVi & & \\
+\hline
+total  & & \\
+\hline
+\end{tabular}
 
 
+\begin{itemize}
+\item the MINI element is very appealing (a single bubble added to $P_1$) and cheap. However it is also 
+the least accurate element, even looking at the errors as function of ndof and not h
+\item P2P1 always more accurate than CR 
+\item P2P1 about as accurate as Q2Q1
+\end{itemize}
+
+\vspace{1cm}
+
+Open questions:
+
+\begin{itemize}
+%\item what is a good measure $h$ for triangles in general ? sqrt of area ? hypothenuse ? min of edges length? 
+\item at the moment I build the entire Stokes matrix in a sparse format and send it to the default 
+python solver. This means that no iterative solver is used (inner or outer) so that the discussion 
+on the nb of FGMRES iterations of our paper cannot be carried out here. 
+\item Right now viscosity is computed on quadrature point. No averaging. It probably only really matters 
+for SolVi. Should we go down that rabbit hole?
+\item  are there other elements you wish to add to this list?
+\item should I better randomize the triangles by alternating the quadrilateral diagonals (SW-NE and NW-SE)?
+\end{itemize}
 
 
-
-
+to myself: check and probably remove stone 46, 47 ,76?

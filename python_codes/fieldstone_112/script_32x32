@@ -1,22 +1,28 @@
 rm -f opla
 
 #elt='MINI'
-#elt='CR'
 #elt='P2P1'
+#elt='CR'
 #elt='Q2Q1' 
 #elt='Q2P1'
+
 echo "doing MINI"
 python3 stone.py  32  32 1 1 > opla_1
-
-echo "doing CR"
-python3 stone.py  32  32 1 2 > opla_2
+mv pressureMINI.ascii pressureMINI32.ascii
 
 echo "doing P2P1"
+python3 stone.py  32  32 1 2 > opla_2
+mv pressureP2P1.ascii pressureP2P132.ascii
+
+echo "doing CR"
 python3 stone.py  32  32 1 3 > opla_3
+mv pressureCR.ascii pressureCR32.ascii
 
 echo "doing Q2Q1"
 python3 stone.py  32  32 1 4 > opla_4
+mv pressureQ2Q1.ascii pressureQ2Q132.ascii
 
 echo "doing Q2P-1"
 python3 stone.py  32  32 1 5 > opla_5
+mv pressureQ2P1.ascii pressureQ2P132.ascii
 

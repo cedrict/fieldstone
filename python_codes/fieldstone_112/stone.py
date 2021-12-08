@@ -9,6 +9,7 @@ from scipy.sparse import lil_matrix
 import solcx as solcx
 import solkz as solkz
 import solvi as solvi
+import random
 
 #------------------------------------------------------------------------------
 # velocity basis functions
@@ -261,7 +262,9 @@ def pressure(x,y):
 # experiment=4: solKz
 # experiment=5: solVi
 
-experiment=5
+experiment=1
+
+randomize_mesh=True
 
 print("-----------------------------")
 print("----------fieldstone---------")
@@ -283,7 +286,7 @@ else:
    nelx = 32
    nely = 32
    visu = 1
-   elt  = 5
+   elt  = 2
 
 if elt==1: elt='MINI'
 if elt==2: elt='P2P1'
@@ -434,6 +437,8 @@ else:
            counter+=1
 
 print("grid: %.3f s" % (timing.time() - start))
+
+
 
 #################################################################
 # build connectivity array 
@@ -656,6 +661,77 @@ if elt=='Q2P1':
 print("grid and connectivity P: %.3f s" % (timing.time() - start))
 
 #################################################################
+# randomize mesh 
+#################################################################
+
+if randomize_mesh:
+
+   hx=Lx/nelx
+   hy=Lx/nelx
+
+   for i in range(0,NV):
+       if xV[i]>eps and xV[i]<1-eps and yV[i]>eps and yV[i]<1-eps:
+          rand1=random.randrange(-100,100,1)/1000    
+          rand2=random.randrange(-100,100,1)/1000    
+          xV[i]+=rand1*hx
+          yV[i]+=rand2*hy
+
+   if elt=='P2P1' or elt=='CR':
+      for iel in range(0,nel):
+          xV[iconV[3,iel]]=0.5*(xV[iconV[0,iel]]+xV[iconV[1,iel]])
+          yV[iconV[3,iel]]=0.5*(yV[iconV[0,iel]]+yV[iconV[1,iel]])
+          xV[iconV[4,iel]]=0.5*(xV[iconV[1,iel]]+xV[iconV[2,iel]])
+          yV[iconV[4,iel]]=0.5*(yV[iconV[1,iel]]+yV[iconV[2,iel]])
+          xV[iconV[5,iel]]=0.5*(xV[iconV[2,iel]]+xV[iconV[0,iel]])
+          yV[iconV[5,iel]]=0.5*(yV[iconV[2,iel]]+yV[iconV[0,iel]])
+          xP[iconP[0,iel]]=xV[iconV[0,iel]] 
+          yP[iconP[0,iel]]=yV[iconV[0,iel]] 
+          xP[iconP[1,iel]]=xV[iconV[1,iel]] 
+          yP[iconP[1,iel]]=yV[iconV[1,iel]] 
+          xP[iconP[2,iel]]=xV[iconV[2,iel]] 
+          yP[iconP[2,iel]]=yV[iconV[2,iel]] 
+          if elt=='CR':
+             xV[iconV[6,iel]]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3
+             yV[iconV[6,iel]]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3
+
+   if elt=='MINI':
+      for iel in range(0,nel):
+          xV[iconV[3,iel]]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3
+          yV[iconV[3,iel]]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3
+
+   if elt=='Q2Q1' or elt=='Q2P1':
+      for iel in range(0,nel):
+          xV[iconV[4,iel]]=0.5*(xV[iconV[0,iel]]+xV[iconV[1,iel]])
+          yV[iconV[4,iel]]=0.5*(yV[iconV[0,iel]]+yV[iconV[1,iel]])
+          xV[iconV[5,iel]]=0.5*(xV[iconV[1,iel]]+xV[iconV[2,iel]])
+          yV[iconV[5,iel]]=0.5*(yV[iconV[1,iel]]+yV[iconV[2,iel]])
+          xV[iconV[6,iel]]=0.5*(xV[iconV[2,iel]]+xV[iconV[3,iel]])
+          yV[iconV[6,iel]]=0.5*(yV[iconV[2,iel]]+yV[iconV[3,iel]])
+          xV[iconV[7,iel]]=0.5*(xV[iconV[3,iel]]+xV[iconV[0,iel]])
+          yV[iconV[7,iel]]=0.5*(yV[iconV[3,iel]]+yV[iconV[0,iel]])
+          xV[iconV[8,iel]]=0.25*(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]]+xV[iconV[3,iel]])
+          yV[iconV[8,iel]]=0.25*(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]]+yV[iconV[3,iel]])
+          if elt=='Q2Q1':
+             xP[iconP[0,iel]]=xV[iconV[0,iel]] 
+             yP[iconP[0,iel]]=yV[iconV[0,iel]] 
+             xP[iconP[1,iel]]=xV[iconV[1,iel]] 
+             yP[iconP[1,iel]]=yV[iconV[1,iel]] 
+             xP[iconP[2,iel]]=xV[iconV[2,iel]] 
+             yP[iconP[2,iel]]=yV[iconV[2,iel]] 
+             xP[iconP[3,iel]]=xV[iconV[3,iel]] 
+             yP[iconP[3,iel]]=yV[iconV[3,iel]] 
+          if elt=='Q2P1':
+             xP[iconP[0,iel]]=xV[iconV[8,iel]]
+             yP[iconP[0,iel]]=yV[iconV[8,iel]]
+             xP[iconP[1,iel]]=xV[iconV[5,iel]]
+             yP[iconP[1,iel]]=yV[iconV[5,iel]]
+             xP[iconP[2,iel]]=xV[iconV[6,iel]]
+             yP[iconP[2,iel]]=yV[iconV[6,iel]]
+
+#np.savetxt('gridV_rand.ascii',np.array([xV,yV]).T,header='# x,y')
+#np.savetxt('gridP_rand.ascii',np.array([xP,yP]).T,header='# x,y')
+
+#################################################################
 # define boundary conditions
 #################################################################
 start = timing.time()
@@ -702,9 +778,6 @@ if experiment==5:
        if yV[i]>(Ly-eps):
           bc_fix[i*ndofV+0]   = True ; bc_val[i*ndofV+0] = ui
           bc_fix[i*ndofV+1]   = True ; bc_val[i*ndofV+1] = vi
-
-
-
 
 print("boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -941,7 +1014,7 @@ print("normalise pressure: %.3f s" % (timing.time() - start))
 
 #################################################################
 
-np.savetxt('velocity'+elt+'.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+#np.savetxt('velocity'+elt+'.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 np.savetxt('pressure'+elt+'.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
 #################################################################
@@ -1014,7 +1087,7 @@ errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 vrms=np.sqrt(vrms)
 
-print("     -> hx= %.8f ; errv= %.10f ; errp= %.10f ; vrms= %.10f ; NV= %d ; NP= %d" \
+print("     -> hx= %.8f ; errv= %.12f ; errp= %.10f ; vrms= %.10f ; NV= %d ; NP= %d" \
       %(Lx/nelx,errv,errp,vrms,NV,NP))
 
 print("compute errors: %.3f s" % (timing.time() - start))
@@ -1085,6 +1158,15 @@ for i in range(0,NV):
     if np.abs(xV[i]-0.5)<1e-6 and np.abs(yV[i]-0.5)<1e-6:
        print('middle h,u,v,q:', Lx/nelx,u[i],v[i],q[i],NV,NP)
 
+#for iel in range(0,nel):
+#    if yV[iconV[0,iel]]<eps or yV[iconV[1,iel]]<eps or yV[iconV[2,iel]]:
+profile=open('bottom'+elt+'.ascii',"w")
+for i in range(0,NV):
+    if yV[i]<1e-6:
+       profile.write("%10e %10e %10e\n" %(xV[i],q[i],pressure(xV[i],0)))
+profile.close()       
+       
+
 #####################################################################
 # plot of solution
 #####################################################################
@@ -1109,6 +1191,10 @@ if visu==1:
     vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (eta(xc[iel],yc[iel])))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (area[iel]))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("</CellData>\n")
