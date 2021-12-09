@@ -12,36 +12,36 @@ set ylabel 'v_x'
 set output 'vprofile_u.pdf'
 plot[][]\
 'vprofile_MINI.ascii' u 1:2 w lp ps 0.24 t 'MINI',\
-'vprofile_P2P1.ascii' u 1:2 w lp ps 0.24 t 'P2P1',\
+'vprofile_P2P1.ascii' u 1:2 w lp ps 0.24 t 'P_2xP_1',\
 'vprofile_CR.ascii'   u 1:2 w lp ps 0.24 t 'CR',\
-'vprofile_Q2Q1.ascii' u 1:2 w lp ps 0.24 t 'Q2Q1',\
-'vprofile_Q2P1.ascii' u 1:2 w lp ps 0.24 t 'Q2P1',\
+'vprofile_Q2Q1.ascii' u 1:2 w lp ps 0.24 t 'Q_2xQ_1',\
+'vprofile_Q2P1.ascii' u 1:2 w lp ps 0.24 t 'Q_2xP_{-1}',\
 
 set ylabel 'v_y'
 set output 'vprofile_v.pdf'
 plot[][]\
 'vprofile_MINI.ascii' u 1:3 w lp ps 0.24 t 'MINI',\
-'vprofile_P2P1.ascii' u 1:3 w lp ps 0.24 t 'P2P1',\
+'vprofile_P2P1.ascii' u 1:3 w lp ps 0.24 t 'P_2xP_1',\
 'vprofile_CR.ascii'   u 1:3 w lp ps 0.24 t 'CR',\
-'vprofile_Q2Q1.ascii' u 1:3 w lp ps 0.24 t 'Q2Q1',\
-'vprofile_Q2P1.ascii' u 1:3 w lp ps 0.24 t 'Q2P1',\
+'vprofile_Q2Q1.ascii' u 1:3 w lp ps 0.24 t 'Q_2xQ_1',\
+'vprofile_Q2P1.ascii' u 1:3 w lp ps 0.24 t 'Q_2xP_{-1}',\
 
 set ylabel 'pressure'
 set output 'vprofile_p.pdf'
 plot[][]\
 'vprofile_MINI.ascii' u 1:4 w lp ps 0.24 t 'MINI',\
-'vprofile_P2P1.ascii' u 1:4 w lp ps 0.24 t 'P2P1',\
+'vprofile_P2P1.ascii' u 1:4 w lp ps 0.24 t 'P_2xP_1',\
 'vprofile_CR.ascii'   u 1:4 w lp ps 0.24 t 'CR',\
-'vprofile_Q2Q1.ascii' u 1:4 w lp ps 0.24 t 'Q2Q1',\
-'vprofile_Q2P1.ascii' u 1:4 w lp ps 0.24 t 'Q2P1',\
+'vprofile_Q2Q1.ascii' u 1:4 w lp ps 0.24 t 'Q_2xQ_1',\
+'vprofile_Q2P1.ascii' u 1:4 w lp ps 0.24 t 'Q_2xP_{-1}',\
 
 set output 'vprofile_pdyn.pdf'
 plot[][]\
 'vprofile_MINI.ascii' u 1:($4-(0.5-$1)) w lp ps 0.24 t 'MINI',\
-'vprofile_P2P1.ascii' u 1:($4-(0.5-$1)) w lp ps 0.24 t 'P2P1',\
+'vprofile_P2P1.ascii' u 1:($4-(0.5-$1)) w lp ps 0.24 t 'P_2xP_1',\
 'vprofile_CR.ascii'   u 1:($4-(0.5-$1)) w lp ps 0.24 t 'CR',\
-'vprofile_Q2Q1.ascii' u 1:($4-(0.5-$1)) w lp ps 0.24 t 'Q2Q1',\
-'vprofile_Q2P1.ascii' u 1:($4-(0.5-$1)) w lp ps 0.24 t 'Q2P1',\
+'vprofile_Q2Q1.ascii' u 1:($4-(0.5-$1)) w lp ps 0.24 t 'Q_2xQ_1',\
+'vprofile_Q2P1.ascii' u 1:($4-(0.5-$1)) w lp ps 0.24 t 'Q_2xP_{-1}',\
 
 
 
@@ -53,28 +53,28 @@ set ylabel 'v_x'
 set output 'hprofile_u.pdf'
 plot[][]\
 'hprofile_MINI.ascii' u 1:2 w lp ps 0.24 t 'MINI',\
-'hprofile_P2P1.ascii' u 1:2 w lp ps 0.24 t 'P2P1',\
+'hprofile_P2P1.ascii' u 1:2 w lp ps 0.24 t 'P_2xP_1',\
 'hprofile_CR.ascii'   u 1:2 w lp ps 0.24 t 'CR',\
-'hprofile_Q2Q1.ascii' u 1:2 w lp ps 0.24 t 'Q2Q1',\
-'hprofile_Q2P1.ascii' u 1:2 w lp ps 0.24 t 'Q2P1',\
+'hprofile_Q2Q1.ascii' u 1:2 w lp ps 0.24 t 'Q_2xQ_1',\
+'hprofile_Q2P1.ascii' u 1:2 w lp ps 0.24 t 'Q_2xP_{-1}',\
 
 set ylabel 'v_y'
 set output 'hprofile_v.pdf'
 plot[][]\
 'hprofile_MINI.ascii' u 1:3 w lp ps 0.24 t 'MINI',\
-'hprofile_P2P1.ascii' u 1:3 w lp ps 0.24 t 'P2P1',\
+'hprofile_P2P1.ascii' u 1:3 w lp ps 0.24 t 'P_2xP_1',\
 'hprofile_CR.ascii'   u 1:3 w lp ps 0.24 t 'CR',\
-'hprofile_Q2Q1.ascii' u 1:3 w lp ps 0.24 t 'Q2Q1',\
-'hprofile_Q2P1.ascii' u 1:3 w lp ps 0.24 t 'Q2P1',\
+'hprofile_Q2Q1.ascii' u 1:3 w lp ps 0.24 t 'Q_2xQ_1',\
+'hprofile_Q2P1.ascii' u 1:3 w lp ps 0.24 t 'Q_2xP_{-1}',\
 
 set ylabel 'pressure'
 set output 'hprofile_p.pdf'
 plot[][]\
 'hprofile_MINI.ascii' u 1:4 w lp ps 0.24 t 'MINI',\
-'hprofile_P2P1.ascii' u 1:4 w lp ps 0.24 t 'P2P1',\
+'hprofile_P2P1.ascii' u 1:4 w lp ps 0.24 t 'P_2xP_1',\
 'hprofile_CR.ascii'   u 1:4 w lp ps 0.24 t 'CR',\
-'hprofile_Q2Q1.ascii' u 1:4 w lp ps 0.24 t 'Q2Q1',\
-'hprofile_Q2P1.ascii' u 1:4 w lp ps 0.24 t 'Q2P1',\
+'hprofile_Q2Q1.ascii' u 1:4 w lp ps 0.24 t 'Q_2xQ_1',\
+'hprofile_Q2P1.ascii' u 1:4 w lp ps 0.24 t 'Q_2xP_{-1}',\
 
 ################################################
 
@@ -82,12 +82,10 @@ set ylabel 'pressure'
 set output 'diag_profile_p.pdf'
 plot[][]\
 'diag_profileMINI.ascii' u 1:($3-(0.5-$2)) w lp ps 0.24 t 'MINI',\
-'diag_profileP2P1.ascii' u 1:($3-(0.5-$2)) w lp ps 0.24 t 'P2P1',\
+'diag_profileP2P1.ascii' u 1:($3-(0.5-$2)) w lp ps 0.24 t 'P_2xP_1',\
 'diag_profileCR.ascii'   u 1:($3-(0.5-$2)) w lp ps 0.24 t 'CR',\
-'diag_profileQ2Q1.ascii' u 1:($3-(0.5-$2)) w lp ps 0.24 t 'Q2Q1',\
-'diag_profileQ2P1.ascii' u 1:($3-(0.5-$2)) w lp ps 0.24 t 'Q2P1',\
-
-
+'diag_profileQ2Q1.ascii' u 1:($3-(0.5-$2)) w lp ps 0.24 t 'Q_2xQ_1',\
+'diag_profileQ2P1.ascii' u 1:($3-(0.5-$2)) w lp ps 0.24 t 'Q_2xP_{-1}',\
 
 ################################################
 set log x
@@ -96,10 +94,37 @@ set ylabel 'v_{rms} (x10^{-6})'
 set output 'vrms.pdf'
 plot[][3:]\
 'errors_1' u (($3)):($12*1e6) w lp ps .25 t 'MINI',\
+'errors_3' u (($3)):($12*1e6) w lp ps .25 t 'P_2xP_1',\
 'errors_2' u (($3)):($12*1e6) w lp ps .25 t 'C-R',\
-'errors_3' u (($3)):($12*1e6) w lp ps .25 t 'P_2P_1',\
-'errors_4' u (($3)):($12*1e6) w lp ps .25 t 'Q_2Q_1',\
-'errors_5' u (($3)):($12*1e6) w lp ps .25 t 'Q_2P_{-1}'
+'errors_4' u (($3)):($12*1e6) w lp ps .25 t 'Q_2xQ_1',\
+'errors_5' u (($3)):($12*1e6) w lp ps .25 t 'Q_2xP_{-1}'
+
+
+
+################################################
+unset log y
+set log x
+set xlabel 'h'
+set ylabel 'v(0.5,0.5) (x10^{-6})'
+set output 'v_center.pdf'
+plot[][]\
+'middle_1' u 3:($5*1e6) w lp ps .25 t 'MINI',\
+'middle_2' u 3:($5*1e6) w lp ps .25 t 'P_2xP_1',\
+'middle_3' u 3:($5*1e6) w lp ps .25 t 'C-R',\
+'middle_4' u 3:($5*1e6) w lp ps .25 t 'Q_2xQ_1',\
+'middle_5' u 3:($5*1e6) w lp ps .25 t 'Q_2xP_{-1}'
+
+set xlabel 'h'
+set ylabel 'q(0.5,0.5)'
+set output 'q_center.pdf'
+plot[][]\
+'middle_1' u 3:6 w lp ps .25 t 'MINI',\
+'middle_2' u 3:6 w lp ps .25 t 'P_2xP_1',\
+'middle_3' u 3:6 w lp ps .25 t 'C-R',\
+'middle_4' u 3:6 w lp ps .25 t 'Q_2xQ_1',\
+'middle_5' u 3:6 w lp ps .25 t 'Q_2xP_{-1}'
+
+
 
 
 
