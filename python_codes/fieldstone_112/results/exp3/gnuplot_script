@@ -1,0 +1,77 @@
+set term pdf enhanced font 'Times,12pt'
+set log xy
+set format y "10^{%L}"
+set key outside
+
+set xlabel 'h'
+set output 'errors_V.pdf'
+set ylabel 'error ||v-v^h||_2'
+plot[][]\
+'errors_1' u (($3)):6 w lp ps .5  pt 9 t 'MINI',\
+'errors_2' u (($3)):6 w lp ps .5  pt 9 t 'P_2xP_1',\
+'errors_3' u (($3)):6 w lp ps .5  pt 9 t 'C-R',\
+'errors_4' u (($3)):6 w lp ps .6  pt 5 t 'Q_2xQ_1',\
+'errors_5' u (($3)):6 w lp ps .25 pt 5 t 'Q_2xP_{-1}',\
+0.05*x**2 lt -1 dt 2 t 'h^2',\
+0.012*x**3 lt -1 dt 3 t 'h^3' 
+
+set xlabel 'Ndof=2*NV+NP'
+set output 'errors_V_ndof.pdf'
+set ylabel 'error ||v-v^h||_2'
+plot[][]\
+'errors_1' u (2*$15+$18):6 w lp pt 9 ps .5 t 'MINI',\
+'errors_2' u (2*$15+$18):6 w lp pt 9 ps .5 t 'P_2xP_1',\
+'errors_3' u (2*$15+$18):6 w lp pt 9 ps .5 t 'C-R',\
+'errors_4' u (2*$15+$18):6 w lp pt 5 ps .6 t 'Q_2xQ_1',\
+'errors_5' u (2*$15+$18):6 w lp pt 5 ps .25 t 'Q_2xP_{-1}',\
+
+
+set xlabel 'h'
+set ylabel 'error ||p-p^h||_2'
+set output 'errors_P.pdf'
+plot[][]\
+'errors_1' u ($3):9 w lp pt 9 ps .5 t 'MINI',\
+'errors_2' u ($3):9 w lp pt 9 ps .6 t 'P_2xP_1',\
+'errors_3' u ($3):9 w lp pt 9 ps .5 t 'C-R',\
+'errors_4' u ($3):9 w lp pt 5 ps .25 t 'Q_2xQ_1',\
+'errors_5' u ($3):9 w lp pt 5 ps .25 t 'Q_2xP_{-1}',\
+0.05*x**0.5 lt -1 dt 2 t 'h^{0.5}',\
+0.2*x**2 lt -1 dt 3 t 'h^2'
+
+set xlabel 'Ndof=2*NV+NP'
+set ylabel 'error ||p-p^h||_2'
+set output 'errors_P_ndof.pdf'
+plot[][]\
+'errors_1' u (2*$15+$18):9 w lp pt 9 ps .5 t 'MINI',\
+'errors_2' u (2*$15+$18):9 w lp pt 9 ps .6 t 'P_2xP_1',\
+'errors_3' u (2*$15+$18):9 w lp pt 9 ps .5 t 'C-R',\
+'errors_4' u (2*$15+$18):9 w lp pt 5 ps .25 t 'Q_2xQ_1',\
+'errors_5' u (2*$15+$18):9 w lp pt 5 ps .25 t 'Q_2xP_{-1}',\
+
+set xlabel 'h'
+unset format y
+set ylabel 'v_{rms}'
+unset log y
+set output 'vrms.pdf'
+plot[][]\
+'errors_1' u (($3)):12 w lp pt 9 ps .5 t 'MINI',\
+'errors_2' u (($3)):12 w lp pt 9 ps .6 t 'P_2xP_1',\
+'errors_3' u (($3)):12 w lp pt 9 ps .5 t 'C-R',\
+'errors_4' u (($3)):12 w lp pt 5 ps .5 t 'Q_2xQ_1',\
+'errors_5' u (($3)):12 w lp pt 5 ps .25 t 'Q_2xP_{-1}',\
+
+set xlabel 'Ndof=2*NV+NP'
+unset format y
+set ylabel 'v_{rms}'
+unset log y
+set output 'vrms_ndof.pdf'
+plot[][]\
+'errors_1' u (2*$15+$18):12 w lp pt 9 ps .5 t 'MINI',\
+'errors_2' u (2*$15+$18):12 w lp pt 9 ps .6 t 'P_2xP_1',\
+'errors_3' u (2*$15+$18):12 w lp pt 9 ps .5 t 'C-R',\
+'errors_4' u (2*$15+$18):12 w lp pt 5 ps .6 t 'Q_2xQ_1',\
+'errors_5' u (2*$15+$18):12 w lp pt 5 ps .25 t 'Q_2xP_{-1}',\
+
+
+
+
