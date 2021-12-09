@@ -1,0 +1,106 @@
+set term pdf enhanced font 'Times,12pt'
+set log xy
+set format y "10^{%L}"
+set key outside
+
+set xlabel 'h'
+set output 'errors_V.pdf'
+set ylabel 'error ||v-v^h||_2'
+plot[][]\
+'errors_1' u (($3)):6 w lp ps .5 t 'MINI',\
+'errors_2' u (($3)):6 w lp ps .5 t 'P_2xP_1',\
+'errors_3' u (($3)):6 w lp ps .5 t 'C-R',\
+'errors_4' u (($3)):6 w lp ps .6 t 'Q_2xQ_1',\
+'errors_5' u (($3)):6 w lp ps .25 t 'Q_2xP_{-1}',\
+0.09*x**1 lt -1 dt 2 t 'h^1'
+
+set xlabel 'Ndof=2*NV+NP'
+set output 'errors_V_ndof.pdf'
+set ylabel 'error ||v-v^h||_2'
+plot[][]\
+'errors_1' u (2*$15+$18):6 w lp ps .5 t 'MINI',\
+'errors_2' u (2*$15+$18):6 w lp ps .5 t 'P_2xP_1',\
+'errors_3' u (2*$15+$18):6 w lp ps .5 t 'C-R',\
+'errors_4' u (2*$15+$18):6 w lp ps .6 t 'Q_2xQ_1',\
+'errors_5' u (2*$15+$18):6 w lp ps .25 t 'Q_2xP_{-1}',\
+
+
+set xlabel 'h'
+set ylabel 'error ||p-p^h||_2'
+set output 'errors_P.pdf'
+plot[][]\
+'errors_1' u ($3):9 w lp ps .5 t 'MINI',\
+'errors_2' u ($3):9 w lp ps .5 t 'P_2xP_1',\
+'errors_3' u ($3):9 w lp ps .5 t 'C-R',\
+'errors_4' u ($3):9 w lp ps .5 t 'Q_2xQ_1',\
+'errors_5' u ($3):9 w lp ps .25 t 'Q_2xP_{-1}',\
+5*x**0.5 lt -1 dt 2 t 'h^{0.5}'
+
+set xlabel 'Ndof=2*NV+NP'
+set ylabel 'error ||p-p^h||_2'
+set output 'errors_P_ndof.pdf'
+plot[][]\
+'errors_1' u (2*$15+$18):9 w lp ps .5 t 'MINI',\
+'errors_2' u (2*$15+$18):9 w lp ps .5 t 'P_2xP_1',\
+'errors_3' u (2*$15+$18):9 w lp ps .5 t 'C-R',\
+'errors_4' u (2*$15+$18):9 w lp ps .5 t 'Q_2xQ_1',\
+'errors_5' u (2*$15+$18):9 w lp ps .25 t 'Q_2xP_{-1}',\
+
+set xlabel 'h'
+unset format y
+set ylabel 'v_{rms}'
+unset log y
+set output 'vrms.pdf'
+plot[][]\
+'errors_1' u (($3)):12 w lp ps .5 t 'MINI',\
+'errors_2' u (($3)):12 w lp ps .5 t 'P_2xP_1',\
+'errors_3' u (($3)):12 w lp ps .5 t 'C-R',\
+'errors_4' u (($3)):12 w lp ps .6 t 'Q_2xQ_1',\
+'errors_5' u (($3)):12 w lp ps .25 t 'Q_2xP_{-1}',\
+
+set xlabel 'Ndof=2*NV+NP'
+unset format y
+set ylabel 'v_{rms}'
+unset log y
+set output 'vrms_ndof.pdf'
+plot[][]\
+'errors_1' u (2*$15+$18):12 w lp ps .5 t 'MINI',\
+'errors_2' u (2*$15+$18):12 w lp ps .5 t 'P_2xP_1',\
+'errors_3' u (2*$15+$18):12 w lp ps .5 t 'C-R',\
+'errors_4' u (2*$15+$18):12 w lp ps .6 t 'Q_2xQ_1',\
+'errors_5' u (2*$15+$18):12 w lp ps .25 t 'Q_2xP_{-1}',\
+
+
+
+
+
+set style rect fc lt -1 fs solid 0.15 noborder
+set obj rect from 0, graph 0 to 0.2, graph 1
+
+unset log x
+set xlabel 'x'
+set ylabel 'pressure'
+set output 'bottom64.pdf'
+plot [:0.5][]\
+'bottomMINI64.ascii'  u 1:2 w lp ps .2 t 'MINI',\
+'bottomP2P164.ascii'  u 1:2 w lp ps .2 t 'P2P1',\
+'bottomCR64.ascii'    u 1:2 w lp ps .2 t 'CR',\
+'bottomQ2Q164.ascii'  u 1:2 w lp ps .2 t 'Q2Q1',\
+'bottomQ2P164.ascii'  u 1:2 w lp ps .2 t 'Q2P1',\
+'bottomQ2P164.ascii'  u 1:3 w l lt -1 t 'analytical'
+
+
+set output 'bottom128.pdf'
+plot [:0.5][-35:20]\
+'bottomMINI128.ascii'  u 1:2 w lp ps .2 t 'MINI',\
+'bottomP2P1128.ascii'  u 1:2 w lp ps .2 t 'P2P1',\
+'bottomCR128.ascii'    u 1:2 w lp ps .2 t 'CR',\
+'bottomQ2Q1128.ascii'  u 1:2 w lp ps .2 t 'Q2Q1',\
+'bottomQ2P1128.ascii'  u 1:2 w lp ps .2 t 'Q2P1',\
+'bottomQ2P1128.ascii'  u 1:3 w l lt -1 t 'analytical'
+
+
+
+
+
+
