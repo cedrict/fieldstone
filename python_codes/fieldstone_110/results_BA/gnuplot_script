@@ -166,6 +166,10 @@ plot[0:1][0:1]\
 'T_profile_10000.Q2_48.ascii' u 2:1 w lp ps .2 t '48^2',\
 'T_profile_10000.Q2_56.ascii' u 2:1 w lp ps .2 t '56^2',\
 'T_profile_10000.Q2_64.ascii' u 2:1 w lp ps .2 t '64^2',\
+'aspect/output_Ra4_gr4/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
+'aspect/output_Ra4_gr5/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
+'aspect/output_Ra4_gr6/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 64^2',\
+'aspect/output_Ra4_gr7/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 128^2',\
 
 set output 'T_profile_Ra1e5.pdf'
 plot[0:1][0:1]\
@@ -176,6 +180,10 @@ plot[0:1][0:1]\
 'T_profile_100000.Q2_48.ascii' u 2:1 w lp ps .2 t '48^2',\
 'T_profile_100000.Q2_56.ascii' u 2:1 w lp ps .2 t '56^2',\
 'T_profile_100000.Q2_64.ascii' u 2:1 w lp ps .2 t '64^2',\
+'aspect/output_Ra5_gr4/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
+'aspect/output_Ra5_gr5/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
+'aspect/output_Ra5_gr6/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 64^2',\
+'aspect/output_Ra5_gr7/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 128^2',\
 
 set output 'T_profile_Ra1e6.pdf'
 plot[0:1][0:1]\
@@ -186,6 +194,10 @@ plot[0:1][0:1]\
 'T_profile_1000000.Q2_48.ascii' u 2:1 w lp ps .2 t '48^2',\
 'T_profile_1000000.Q2_56.ascii' u 2:1 w lp ps .2 t '56^2',\
 'T_profile_1000000.Q2_64.ascii' u 2:1 w lp ps .2 t '64^2',\
+'aspect/output_Ra6_gr4/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 16^2',\
+'aspect/output_Ra6_gr5/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 32^2',\
+'aspect/output_Ra6_gr6/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 64^2',\
+'aspect/output_Ra6_gr7/depth_average.txt' u 3:(1-$2) w lp lw .4 ps .2 t 'aspect, 128^2',\
 
 
 

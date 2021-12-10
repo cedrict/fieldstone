@@ -7,44 +7,50 @@ vel_ref=5
 
 set output 'vrms_1e4.pdf'
 plot[:0.1][]\
-'output_1e4_gr4/statistics' u 2:($11/vel_ref) w l t '16^2',\
-'output_1e4_gr5/statistics' u 2:($11/vel_ref) w l t '32^2',\
-'output_1e4_gr6/statistics' u 2:($11/vel_ref) w l t '64^2',\
+'output_Ra4_gr4/statistics' u 2:($11/vel_ref) w l t '16^2',\
+'output_Ra4_gr5/statistics' u 2:($11/vel_ref) w l t '32^2',\
+'output_Ra4_gr6/statistics' u 2:($11/vel_ref) w l t '64^2',\
+'output_Ra4_gr7/statistics' u 2:($11/vel_ref) w l t '128^2',\
 42.865 lt -1 lw .25 
 
 set output 'vrms_1e5.pdf'
 plot[:0.05][:400]\
-'output_1e5_gr4/statistics' u 2:($11/vel_ref) w l t '16^2',\
-'output_1e5_gr5/statistics' u 2:($11/vel_ref) w l t '32^2',\
-'output_1e5_gr6/statistics' u 2:($11/vel_ref) w l t '64^2',\
+'output_Ra5_gr4/statistics' u 2:($11/vel_ref) w l t '16^2',\
+'output_Ra5_gr5/statistics' u 2:($11/vel_ref) w l t '32^2',\
+'output_Ra5_gr6/statistics' u 2:($11/vel_ref) w l t '64^2',\
+'output_Ra5_gr7/statistics' u 2:($11/vel_ref) w l t '128^2',\
 193.215 lt -1 lw .25 
 
 set output 'vrms_1e6.pdf'
 plot[:0.05][:1500]\
-'output_1e6_gr4/statistics' u 2:($11/vel_ref) w l t '16^2',\
-'output_1e6_gr5/statistics' u 2:($11/vel_ref) w l t '32^2',\
-'output_1e6_gr6/statistics' u 2:($11/vel_ref) w l t '64^2',\
+'output_Ra6_gr4/statistics' u 2:($11/vel_ref) w l t '16^2',\
+'output_Ra6_gr5/statistics' u 2:($11/vel_ref) w l t '32^2',\
+'output_Ra6_gr6/statistics' u 2:($11/vel_ref) w l t '64^2',\
+'output_Ra6_gr7/statistics' u 2:($11/vel_ref) w l t '128^2',\
 833.99 lt -1 lw .25 
 
 set ylabel 'q_b+q_t'
 
 set output 'qsum_1e4.pdf'
 plot[:0.1][]\
-'output_1e4_gr4/statistics' u 2:($19+$20) w l t '16^2',\
-'output_1e4_gr5/statistics' u 2:($19+$20) w l t '32^2',\
-'output_1e4_gr6/statistics' u 2:($19+$20) w l t '64^2',\
+'output_Ra4_gr4/statistics' u 2:($19+$20) w l t '16^2',\
+'output_Ra4_gr5/statistics' u 2:($19+$20) w l t '32^2',\
+'output_Ra4_gr6/statistics' u 2:($19+$20) w l t '64^2',\
+'output_Ra4_gr7/statistics' u 2:($19+$20) w l t '128^2',\
 
 set output 'qsum_1e5.pdf'
 plot[:0.1][]\
-'output_1e5_gr4/statistics' u 2:($19+$20) w l t '16^2',\
-'output_1e5_gr5/statistics' u 2:($19+$20) w l t '32^2',\
-'output_1e5_gr6/statistics' u 2:($19+$20) w l t '64^2',\
+'output_Ra5_gr4/statistics' u 2:($19+$20) w l t '16^2',\
+'output_Ra5_gr5/statistics' u 2:($19+$20) w l t '32^2',\
+'output_Ra5_gr6/statistics' u 2:($19+$20) w l t '64^2',\
+'output_Ra5_gr7/statistics' u 2:($19+$20) w l t '128^2',\
 
 set output 'qsum_1e6.pdf'
 plot[:0.05][]\
-'output_1e6_gr4/statistics' u 2:($19+$20) w l t '16^2',\
-'output_1e6_gr5/statistics' u 2:($19+$20) w l t '32^2',\
-'output_1e6_gr6/statistics' u 2:($19+$20) w l t '64^2',\
+'output_Ra6_gr4/statistics' u 2:($19+$20) w l t '16^2',\
+'output_Ra6_gr5/statistics' u 2:($19+$20) w l t '32^2',\
+'output_Ra6_gr6/statistics' u 2:($19+$20) w l t '64^2',\
+'output_Ra6_gr7/statistics' u 2:($19+$20) w l t '128^2',\
 
 
 
