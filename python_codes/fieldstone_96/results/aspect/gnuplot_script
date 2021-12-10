@@ -1,0 +1,17 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set ylabel 'dyn topo (m)'
+set xlabel 'angle theta'
+
+set output 'dyn_topo_raw.pdf'
+plot[:pi/2][]\
+'surface_traction_nodal.ascii'     u 1:(-$2/3.72/3700) w p  ps .2 t 'nodal',\
+'dynamic_topography_surface_1+1.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4 ps .2 t 'aspect, 1+1',\
+'dynamic_topography_surface_0+2.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4 ps .2 t 'aspect, 0+2',\
+
+set output 'dyn_topo_shifted.pdf'
+plot[:pi/2][]\
+'surface_traction_nodal.ascii'     u 1:(-$2/3.72/3700-190) w p  ps .2 t 'nodal',\
+'dynamic_topography_surface_1+1.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4 ps .2 t 'aspect, 1+1',\
+'dynamic_topography_surface_0+2.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4 ps .2 t 'aspect, 0+2',\
