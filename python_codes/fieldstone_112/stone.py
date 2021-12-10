@@ -283,10 +283,10 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    elt  = int(sys.argv[4])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 16
+   nely = 16
    visu = 1
-   elt  = 2
+   elt  = 5
 
 if elt==1: elt='MINI'
 if elt==2: elt='P2P1'
@@ -1014,8 +1014,8 @@ print("normalise pressure: %.3f s" % (timing.time() - start))
 
 #################################################################
 
-#np.savetxt('velocity'+elt+'.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
-np.savetxt('pressure'+elt+'.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+#np.savetxt('velocity'+elt+'.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v',fmt='%.3e')
+np.savetxt('pressure'+elt+'.ascii',np.array([xP,yP,p]).T,header='# x,y,p',fmt='%.3e')
 
 #################################################################
 # compute error fields for plotting
@@ -1130,6 +1130,7 @@ print("compute pressure q: %.3f s" % (timing.time() - start))
 #####################################################################
 # compute element center 
 #####################################################################
+start = timing.time()
 
 xc=np.zeros(nel,dtype=np.float64)
 yc=np.zeros(nel,dtype=np.float64)
@@ -1138,9 +1139,12 @@ for iel in range(0,nel):
     xc[iel]=np.sum(xV[iconV[0:mV,iel]])/mV
     yc[iel]=np.sum(yV[iconV[0:mV,iel]])/mV
 
+print("compute elt center coords: %.3f s" % (timing.time() - start))
+
 #####################################################################
 # export profiles
 #####################################################################
+start = timing.time()
 
 profile=open('hprofile'+elt+'.ascii',"w")
 for i in range(0,NV):
@@ -1158,14 +1162,13 @@ for i in range(0,NV):
     if np.abs(xV[i]-0.5)<1e-6 and np.abs(yV[i]-0.5)<1e-6:
        print('middle h,u,v,q:', Lx/nelx,u[i],v[i],q[i],NV,NP)
 
-#for iel in range(0,nel):
-#    if yV[iconV[0,iel]]<eps or yV[iconV[1,iel]]<eps or yV[iconV[2,iel]]:
 profile=open('bottom'+elt+'.ascii',"w")
 for i in range(0,NV):
     if yV[i]<1e-6:
        profile.write("%10e %10e %10e\n" %(xV[i],q[i],pressure(xV[i],0)))
 profile.close()       
        
+print("export profiles: %.3f s" % (timing.time() - start))
 
 #####################################################################
 # plot of solution

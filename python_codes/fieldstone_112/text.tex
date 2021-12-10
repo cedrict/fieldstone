@@ -25,7 +25,8 @@ diagonal (NW-SE) into 2 triangles for simplicity when triangular elements are us
 A pressure dof is fixed so remove the nullspace and the obtained pressure field
 is then normalised so that $\int_\Omega p dV = 0$.
 
-Resolutions ranging from 8x8 to 256x256.  
+Resolutions are ranging from 8x8 to 512x512. The high resolution runs take hours 
+because python is slow. Most of what follows only goes up to 256x256.   
 
 \newpage
 %========================================================
@@ -62,8 +63,8 @@ Influence of mesh quality:
 A random perturbation is added to the interior nodes. 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp1_rand/area_quads}
-\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp1_rand/area_tris}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_112/results/exp1_rand/area_quads}
+\includegraphics[width=6cm]{python_codes/fieldstone_112/results/exp1_rand/area_tris}\\
 {\captionfont Mesh and element areas for quadrilaterals and triangles on a 32x32 cell mesh.}
 \end{center}
 
@@ -90,7 +91,9 @@ and the total number of degrees of freedom (right column).}
 $32\times 32$ and $64\times 64$ mesh for all 5 elements.} 
 \end{center}
 
-
+Convergence rate for Q2P1 very suspicious. My guess is that I never implement Q2P1 
+outside of square/rectangular elements and I must be doing something quite not 
+right here.
 
 \newpage
 %========================================================
@@ -158,8 +161,9 @@ along the vertical line $x=1/2$ so discontinuous pressure elements perform bette
 as a function of the element size $h$ (left column) and the total number of dofs (right column).}
 \end{center}
 
-Thieulot \& Bangerth (2021) \cite{thba21} report $O(h^3)$ for velocity for both Q2Q1 and Q2P1
-and $O(h^{0.5})$ for Q2Q1 and  $O(h^{2})$ for Q2P1 for pressure. 
+Thieulot \& Bangerth (2021) \cite{thba21} report ${\cal O}(h^3)$ for velocity for both $Q_2\times Q_1$ and $Q_2\times P_1$
+and ${\cal O}(h^{0.5})$ for $Q_2\times Q_1$ and  ${\cal O}(h^{2})$ for $Q_2\times P_{-1}$ for pressure. 
+Our measurements are similar here.
 
 \newpage
 %========================================================
@@ -197,8 +201,9 @@ The setup is described in Section~\ref{ss:solvi}.
 as a function of the element size $h$ (left column) and the total number of dofs (right column).}
 \end{center}
 
-Thieulot \& Bangerth (2021) \cite{thba21} report $O(h)$ convergence for 
-velocity and $O(h^{0.5})$ for pressure across all four elements that they tested.
+Thieulot \& Bangerth (2021) \cite{thba21} report ${\cal O}(h)$ convergence for 
+velocity and ${\cal O}(h^{0.5})$ for pressure across all four elements that they tested.
+Our measurements are similar here.
 
 
 \begin{center}
@@ -209,38 +214,99 @@ high viscosity disc. Left: 64x64 cells; right: 128x128 cells.}
 \end{center}
 
 
+\newpage
 
+
+
+
+Assuming that $
+\| {\bm u} - {\bm u}_h \|_{L_2} = {\cal O}(h^{\alpha_v})
+$ and $
+\| p - p_h \|_{L_2} = {\cal O}(h^{\alpha_p})
+$
+I have gathered the exponent values in the following 
+table. 
+
+
+\begin{tabular}{|l|llll|llll|llll|llll|llll|}
+\hline
+& 
+\multicolumn{4}{c|}{MINI}&  
+\multicolumn{4}{c|}{$P_2\times P_1$}  & 
+\multicolumn{4}{c|}{C-R}  & 
+\multicolumn{4}{c|}{$Q_2\times Q_1$} &  
+\multicolumn{4}{c|}{$Q_2\times P_1$}  \\
+experiment      & 
+$\alpha_v$ & r  &  $\alpha_p$ & r &  
+$\alpha_v$ & r  &  $\alpha_p$ & r &  
+$\alpha_v$ & r  &  $\alpha_p$ & r &  
+$\alpha_v$ & r  & $\alpha_p$ & r &   
+$\alpha_v$ & r  & $\alpha_p$ & r \\
+\hline
+\hline
+D \& H 
+&{2}&4&1.5&3
+&{3}&2&2&1
+&{3}&3&2&2
+&{3}&1&2&1
+&{3}&1&2&1\\
+D \& H (rand)
+&2&5&1.3&4
+&3&2&2&1
+&3&3&2&4
+&3&1&2&1
+&\textbf{?}&?&?&? \\
+SolCx 
+&2&4&0.5&4
+&3&2&0.5&3
+&3&3&2&2
+&3&1&0.5&3
+&3&1&2&1\\
+SolKz 
+&2&4&1.4&5
+&3&2&2&2
+&3&3&2&4
+&3&1&2&1
+&3&1&2&3\\
+SolVi 
+&1&-&0.5&3
+&1&-&0.5&1
+&1&-&0.5&4
+&1&-&0.5&2
+&1&-&0.5&5\\
+\hline
+total  
+&-&17&-&16
+&-&8&-&7
+&-&12&-&12
+&-&4&-&6
+&-&?&-&?\\
+\hline
+\end{tabular}
+
+The r value corresponds to the \textbf{r}anking. For instance if Q2Q1 is the most accurate for velocity on D \& H then it gets a 1, then P2P1 gets a 2 because it was the second best accurate element, etc ...
+In the end I would sum all the r values per column 
+and the smaller the value the better the element. 
+
+Note that SolVi measurements will be updated when the 512x512 runs have completed so for now Solvi is not 
+taken into account.
+
+Also as mentioned before the rates for Q2P1 for D \& H with randomised mesh are weird.
 
 %========================================================
 \subsection*{Preliminary Conclusions}
 
-\begin{tabular}{|l|ll|ll|ll|ll|ll|}
-\hline
-                & MINI       &          &  P2P1 & & CR & & Q2Q1 & & Q2P1 &  \\
-experiment      & $\alpha_v$ & ranking  &    $\alpha_v$ & ranking  &    $\alpha_v$ & ranking  &    $\alpha_v$ & ranking  &    $\alpha_v$ & ranking  \\ 
-\hline
-\hline
-D\& H & &     \\
-Sinker & &  \\
-SolCx & &  \\
-SolKz & &  \\
-SolVi & & \\
-\hline
-total  & & \\
-\hline
-\end{tabular}
-
-
 \begin{itemize}
 \item the MINI element is very appealing (a single bubble added to $P_1$) and cheap. However it is also 
-the least accurate element, even looking at the errors as function of ndof and not h
-\item P2P1 always more accurate than CR 
-\item P2P1 about as accurate as Q2Q1
+the least accurate element, even looking at the errors as function of number of dofs and not $h$
+\item P2P1 always more accurate than CR except for SolCx where disc pressure elements are way more accurate.
+\item P2P1 about as accurate as Q2Q1 in all benchmarks
 \end{itemize}
 
-\vspace{1cm}
 
-Open questions:
+
+%========================================================
+\subsection*{Open questions}
 
 \begin{itemize}
 %\item what is a good measure $h$ for triangles in general ? sqrt of area ? hypothenuse ? min of edges length? 
@@ -248,9 +314,13 @@ Open questions:
 python solver. This means that no iterative solver is used (inner or outer) so that the discussion 
 on the nb of FGMRES iterations of our paper cannot be carried out here. 
 \item Right now viscosity is computed on quadrature point. No averaging. It probably only really matters 
-for SolVi. Should we go down that rabbit hole?
-\item  are there other elements you wish to add to this list?
+for SolVi (and may be a bit for SolKz). Should I implement elemental averaging and try?  
+\item are there other elements you wish to add to this list? $P_3\times P_2$ ? 
 \item should I better randomize the triangles by alternating the quadrilateral diagonals (SW-NE and NW-SE)?
+\item should I run SolKz with randomised mesh?
+\item I plot now the velocity and pressure errors as a function of the total number of dofs. Does this make sense? or should I 
+plot the velocity errors as a fct of the velocity dofs and the pressure errors  as a fct of pressure dofs?
+\item any thoughts about my ranking system ?like it ? hate it ?
 \end{itemize}
 
 
