@@ -1,0 +1,57 @@
+set term pdf enhanced font "Times,12pt"
+set key outside 
+set xlabel 'theta - colatitude'
+set ylabel 'tau_{rr}'
+
+
+
+set output 'tau_rr.pdf'
+plot[:pi][]\
+'results_2/surface_traction_nodal.ascii' ps .125 t 'level 2',\
+'results_3/surface_traction_nodal.ascii' ps .125 t 'level 3',\
+'results_4/surface_traction_nodal.ascii' ps .125 t 'level 4',\
+'results_5/surface_traction_nodal.ascii' ps .125 t 'level 5',\
+'results_6/surface_traction_nodal.ascii' ps .125 t 'level 6',\
+'results_7/surface_traction_nodal.ascii' ps .125 t 'level 7',\
+'results_8/surface_traction_nodal.ascii' ps .125 t 'level 8',\
+0 lt -1 dt 2 notitle 
+
+set output 'tau_rr_zoom1.pdf'
+plot[:pi/8][]\
+'results_2/surface_traction_nodal.ascii' ps .125 t 'level 2',\
+'results_3/surface_traction_nodal.ascii' ps .125 t 'level 3',\
+'results_4/surface_traction_nodal.ascii' ps .125 t 'level 4',\
+'results_5/surface_traction_nodal.ascii' ps .125 t 'level 5',\
+'results_6/surface_traction_nodal.ascii' ps .125 t 'level 6',\
+'results_7/surface_traction_nodal.ascii' ps .125 t 'level 7',\
+'results_8/surface_traction_nodal.ascii' ps .125 t 'level 8',\
+0 lt -1 dt 2 notitle 
+
+
+g=3.72
+rho=3700
+
+set ytics 250
+
+set output 'dyn_topo.pdf'
+plot[:pi][]\
+'results_2/surface_traction_nodal.ascii' u 1:(-($2)/g/rho) ps .125 t 'level 2',\
+'results_3/surface_traction_nodal.ascii' u 1:(-($2)/g/rho) ps .125 t 'level 3',\
+'results_4/surface_traction_nodal.ascii' u 1:(-($2)/g/rho) ps .125 t 'level 4',\
+'results_5/surface_traction_nodal.ascii' u 1:(-($2)/g/rho) ps .125 t 'level 5',\
+'results_6/surface_traction_nodal.ascii' u 1:(-($2)/g/rho) ps .125 t 'level 6',\
+'results_7/surface_traction_nodal.ascii' u 1:(-($2)/g/rho) ps .125 t 'level 7',\
+'results_8/surface_traction_nodal.ascii' u 1:(-($2)/g/rho) ps .125 t 'level 8',\
+0 lt -1 dt 2 notitle 
+
+set output 'dyn_topo_zoom1.pdf'
+plot[:pi/8][]\
+'results_2/surface_traction_nodal.ascii' u 1:(-($2)/g/rho)  ps .125 t 'level 2',\
+'results_3/surface_traction_nodal.ascii' u 1:(-($2)/g/rho) ps .125 t 'level 3',\
+'results_4/surface_traction_nodal.ascii' u 1:(-($2)/g/rho) ps .125 t 'level 4',\
+'results_5/surface_traction_nodal.ascii' u 1:(-($2)/g/rho) ps .125 t 'level 5',\
+'results_6/surface_traction_nodal.ascii' u 1:(-($2)/g/rho) ps .125 t 'level 6',\
+'results_7/surface_traction_nodal.ascii' u 1:(-($2)/g/rho) ps .125 t 'level 7',\
+'results_8/surface_traction_nodal.ascii' u 1:(-($2)/g/rho) ps .125 t 'level 8',\
+0 lt -1 dt 2 notitle 
+
