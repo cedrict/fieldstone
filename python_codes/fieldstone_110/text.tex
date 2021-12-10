@@ -101,7 +101,8 @@ In what follows we monitor:
 \end{itemize}
 
 The way the code is written now means that resolution is limited to 80x80 elements 
-because of the memory cost (approx. 30Gb).
+because of the memory cost (approx. 30Gb). Higher resolutions (96x96 were run on my 
+super-desktop machine shrek with 128Gb RAM).
 
 Note that the \aspect results may not be true steady state, but the first 3 digits are good.
 Also \aspect relies on a stabilisation scheme for the advection term of the energy equation
@@ -147,7 +148,7 @@ per row of nodes and this approach turned out to be very inaccurate here.
 \end{center}
 
 \newpage
-\aspect results for 16x16 and 32x32 meshes
+\aspect results for 16x16, 32x32, 64x64 and 128x128 meshes
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_110/results_BA/aspect/vrms_1e4}
@@ -190,6 +191,34 @@ $10^6$ & $\upnu_{rms}$ & 839.48771    & 833.32106   & 833.972142  & 833.32113081
 {\captionfont Velocity values are dimensionless in order to compare with Blankenbach \etal (1989)
 but not the heat flux values.}
 \end{center}
+
+\begin{small}
+\begin{center}
+\begin{tabular}{llcccccccc}
+\hline
+$\Ranb$  &  &\aspect  &\aspect  & \aspect & \stone 110  & \stone 110 & \stone 110 &\stone 110  & Blankenbach  \\
+         &  &(32x32)  & (64x64) & (128x128) & (32x32)   & (64x64)    & (80x80)    & (96x96)    & \etal (1989) \\
+\hline
+\hline
+$10^4$ & $\upnu_{rms}$ &   42.865026  &  42.8649502 &   42.864945  &    \\  
+       & $q_{bot}$     &  -4.88443000 & -4.88441060 &  -4.88440926 &    \\ 
+       & $q_{top}$     &   4.88443000 &  4.88441060 &   4.88440926 &    \\ 
+\hline
+$10^5$ & $\upnu_{rms}$ &   193.214561 & 193.2147924  & 193.2145528 &  \\ 
+       & $q_{bot}$     &  -10.5340940 & -10.5341271  & -10.5340972 &  \\ 
+       & $q_{top}$     &   10.5340940 &  10.5341271  &  10.5340972 &  \\ 
+\hline
+$10^6$ & $\upnu_{rms}$ &  833.321056 &  833.972142 &  833.990308 &   \\ 
+       & $q_{bot}$     & -21.8584327 & -21.9710401 & -21.9725040 &   \\ 
+       & $q_{top}$     &  21.8584326 &  21.9710400 &  21.9725040 &   \\ 
+\hline
+\end{tabular}\\
+\end{center}
+\end{small}
+
+
+
+
 
 It looks like the heat flux calculations are much more accurate in \aspect, most likely 
 due to the CBF algorithm. Also \aspect relies on the entropy stabilisation for the 
@@ -274,12 +303,11 @@ near identical I am def leaning towards the CBF for the reason why aspect$>$ston
 \includegraphics[width=5.7cm]{python_codes/fieldstone_110/results_EBA/adiab_1e4}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_110/results_EBA/adiab_1e5}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_110/results_EBA/adiab_1e6}\\
-{\captionfont Left: $\Ranb=10^4$, middle: $\Ranb=10^5$, right: $\Ranb=10^6$}\\
-probably slight bug in shear heating values.redo 
+{\captionfont Left: $\Ranb=10^4$, middle: $\Ranb=10^5$, right: $\Ranb=10^6$}
 \end{center}
 
 \newpage
-\aspect results for 16x16, 32x32, 64x64 and 128x128 meshes
+\aspect results for $16\times 16$, $32\times 32$, $64\times 64$ and $128\times 128$ meshes
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_110/results_EBA/aspect/vrms_1e4}
@@ -296,36 +324,39 @@ probably slight bug in shear heating values.redo
 
 \vspace{5mm}
 
+\begin{small}
 \begin{center}
 \begin{tabular}{llccccccc}
 \hline
-$\Ranb$  &  &\aspect  &\aspect  & \aspect & \aspect   &\stone 110  & \stone 110 & \stone 110\\
-         &  &(16x16)  & (32x32) & (64x64) & (128x128) &(32x32)     & (64x64)    & (80x80) \\
+$\Ranb$  &  &\aspect  & \aspect & \aspect   &\stone 110  & \stone 110 & \stone 110 & \stone 110\\
+         &  & (32x32) & (64x64) & (128x128) &(32x32)     & (64x64)    & (80x80)    & $96\times 96$\\
 \hline
 \hline
-$10^4$ & $\upnu_{rms}$ &     & 39.159131    & 39.1590718  & 39.1637782  &  39.1220715117  & 39.1427811339 & 39.1469649726 \\
-       & $q_{bot}$     &     & -4.21461224  & -4.21459920 & -4.21497114 &  -4.2526699758  & -4.2241736047 & -4.2207111697 \\
-       & $q_{top}$     &     & +4.21466572  & +4.21465118 & +4.21595249 &  +4.2561018386  & 4.2260501790  & 4.2223536559  \\  
+$10^4$ & $\upnu_{rms}$ & 39.159131    & 39.1590718  & 39.1637782  &  39.1220715117  & 39.1427811339 &  39.1637762658v &39.1637753398v\\
+       & $q_{bot}$     & -4.21461224  & -4.21459920 & -4.21497114 &  -4.2526699758  & -4.2241736047 &  -4.2219231712v &-4.2198089315v\\
+       & $q_{top}$     & +4.21466572  & +4.21465118 & +4.21595249 &  +4.2561018386  & 4.2260501790  &  4.2224541900v & 4.2204784358v\\  
 \hline
-$10^5$ & $\upnu_{rms}$ &     & 176.8339244  & 176.7353244 & 176.8536186 &  176.3717700756 & 176.6073765137& 176.6555842304 \\
-       & $q_{bot}$     &     & -8.93023781  & -8.90386799 & -8.93084342 & -9.2311968388   & -9.0088339160 & -8.9775516981  \\ 
-       & $q_{top}$     &     & +8.93021403  & +8.90519202 & +8.93331108 & +9.2584172686   & 9.0239878253  & +8.9908296677  \\
+$10^5$ & $\upnu_{rms}$ & 176.8339244  & 176.7353244 & 176.8536186 &  176.3717700756 & 176.6073765137& 176.8532981837v & 176.8532544805v\\ 
+       & $q_{bot}$     & -8.93023781  & -8.90386799 & -8.93084342 & -9.2311968388   & -9.0088339160 &  -9.0034702435v   & -8.9818632866v \\
+       & $q_{top}$     & +8.93021403  & +8.90519202 & +8.93331108 & +9.2584172686   & 9.0239878253  &   8.9981639734v    & 8.9788497308v \\
 \hline
-$10^6$ & $\upnu_{rms}$ &     & 590.707916   & 591.340132  &  &  556.3611676986 & 570.1830724535&  \\
-       & $q_{bot}$     &     & -15.9490236  & -16.0182326 &  & -16.1081289993  & -16.1217624933&  \\
-       & $q_{top}$     &     & +15.9661980  & +16.0184006 &  & +16.7479398662  & 16.2626758191 &  \\ 
+$10^6$ & $\upnu_{rms}$ & 590.707916   & 591.340132  & 591.408084v   &  556.3611676986 & 570.1830724535&  591.4131298027v   &  591.4206892740v \\ 
+       & $q_{bot}$     & -15.9490236  & -16.0182326 & -16.0198829v   & -16.1081289993  & -16.1217624933&  -16.5082181546v  &  -16.3811960529v  \\
+       & $q_{top}$     & +15.9661980  & +16.0184006 &  16.0247946v  & +16.7479398662  & 16.2626758191 &  16.3927306028v   &  16.2913779028v  \\
 \hline
-\end{tabular}
+\end{tabular}\\
+{\captionfont Note that the vrms values of aspect in the statistics file must be divided by the reference velocity (i.e. 5).} 
 \end{center}
+\end{small}
 
-At high Rayleigh numbers the $v_{rms}$ values are still 3\% off.
-I should rerun stone and make sure it did reach steady state. 
-
-TODO: there remains a problem with regards to the heat flux values: fieldstone values 
-are reasonable but do not converge as fast as aspect. Implement CBF?
-
+\begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_110/results_EBA/heatflux_Ra1e4.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_110/results_EBA/heatflux_Ra1e5.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_110/results_EBA/heatflux_Ra1e6.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_110/results_EBA/heatflux_Ra1e6.pdf}\\
+{\captionfont Top and bottom heat flux obtained with \stone 110 and \aspect.
+There is a very good match for $\Ranb=10^{4,5}$ but still a small discrepancy at $\Ranb=10^6$.
+Implementing the CMB algorithm in the \stone would most likely yield much better results.
+}
+\end{center}
 
 

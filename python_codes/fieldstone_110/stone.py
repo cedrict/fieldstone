@@ -393,7 +393,7 @@ else:
    nely = 32
    visu = 1
    order= 2
-   Ra_nb= 1e6
+   Ra_nb= 1e4
    nstep= 100
 
 tol_ss=1e-7   # tolerance for steady state 
