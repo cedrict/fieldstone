@@ -1,0 +1,49 @@
+\begin{flushright} {\tiny {\color{gray} peierls.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Looking at the literature, there seem to be many formulations for the Peierls creep deformation
+mechanism, but it it appears that a standard formulation for the Peierls creep writes:
+\[
+\dot{\varepsilon} = A \sigma^n \exp \left[ -\frac{Q+pV}{RT} \left(1-(\frac{\sigma}{\sigma_P})^k\right)^q  \right]
+\]
+and it seems common to take $k=1$, and $n=2$ \cite{gery10,kaka08}
+\[
+\dot{\varepsilon} = A \sigma^2 \exp \left[ -\frac{Q+pV}{RT} \left(1-\frac{\sigma}{\sigma_P}\right)^q  \right]
+\]
+Elbeshausen \& Melosh (2018) \cite{elme18} use 
+\[
+\dot{\varepsilon} = A  \exp \left[ -\frac{Q}{RT} \left(1-\frac{\sigma}{\sigma_P}\right)^q  \right]
+\]
+In Chenin \etal (2019) \cite{chmd19} the authors state that their Peierls creep implementation
+relies on parameters from Evans and Goetze (1979) \cite{evgo79} using the approach of 
+Kameyama \etal (1999) \cite{kayk99}:
+\[
+\eta^{pe}=\frac{2}{3} \frac{(1-s)/s}{(1+s)/2s} A \; (\varepsilon_e^{ds})^{\frac{1}{n}-1} 
+\]
+with $A$ for this formulation:
+\[
+A = \left[ A_p \exp \left( -\frac{Q(1-\gamma)^2}{RT} \right)  \right]^{-1/s} \gamma \sigma_p
+\]
+where $s$ is an effective stress exponent that depends on the temperature:
+\[
+s = 2 \gamma \frac{Q}{RT} (1-\gamma)
+\]
+where $\gamma$ is a fitting parameter. 
+
+
+\Literature 
+\textcite{basv06},
+\textcite{buro11},
+\textcite{faff11},
+\textcite{gagd14},
+\textcite{gery10},
+\textcite{goev79},
+\textcite{kaka08},
+\textcite{kako09},
+\textcite{kary01},
+\textcite{mesk10},
+\textcite{zhwa13},
+\textcite{chsm18},
+\textcite{shwl17},
+Review article from 1966: Guyot \& Dorn \cite{gudo67}
+

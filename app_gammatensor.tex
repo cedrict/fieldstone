@@ -1,0 +1,482 @@
+
+
+WARNING: this is not finished. 
+
+Let us start from 
+\[
+\vec{\dot{\varepsilon}} = {\bm \Gamma}(\vec\sigma)\cdot \vec\sigma
+\]
+Note that we will later need $\bm\Gamma^{-1}$ which begs the question 
+of it being invertible... 
+In \textcite{zien75}, the author states: ``In many forms of the 
+visco-plastic law the relationship $\vec{\dot{\varepsilon}} = {\bm \Gamma}(\vec\sigma)\cdot \vec\sigma$ is such that no volumetric strain rate 
+exists i.e. the material is incompressible. 
+Now ${\bm \Gamma}$ does not posses an inverse''.
+
+
+%-------------------------------------------
+\subsection{Computing the ${\Gamma}$ matrix}
+
+
+Let us first establish that we can write quite generally in the isotropic case
+\[
+\frac{\partial Q}{\partial \vec\sigma} = {\bm \Gamma}_0 \cdot \vec{\sigma}
+\]
+By applying the chain rule we can write
+\begin{eqnarray}
+\frac{\partial Q}{\partial \vec\sigma} 
+&=&
+\frac{\partial Q}{\partial {\cal I}_1(\bm\sigma)} 
+\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \vec\sigma} 
++
+\frac{\partial Q}{\partial {\cal I}_2(\bm\tau)} 
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \vec\sigma}
++
+\frac{\partial Q}{\partial {\cal I}_3(\bm\tau)} 
+\frac{\partial {\cal I}_3(\bm\tau)}{\partial \vec\sigma} \nonumber\\
+&=&\left(
+\frac{\partial Q}{\partial {\cal I}_1(\bm\sigma)} {\bm M}_1(\bm\sigma)
++
+\frac{\partial Q}{\partial {\cal I}_2(\bm\tau)}  {\bm M}_2(\bm\sigma)
++
+\frac{\partial Q}{\partial {\cal I}_3(\bm\tau)}  {\bm M}_3(\bm\sigma)
+\right) \cdot \vec\sigma
+\end{eqnarray}
+All we have to do now is to compute the three symmetric matrices ${\bm M}_{1,2,3}(\bm\sigma)$ which independent of $F$ or $Q$.
+
+%............................
+\subsubsection{Computing matrix $M_1$}
+
+
+\begin{eqnarray}
+\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \vec\sigma} 
+&=& \frac{\partial }{\partial \vec\sigma} (\sigma_{xx}+\sigma_{yy}+\sigma_{zz})\nonumber\\
+&=& \left(
+\begin{array}{c}
+\frac{\partial }{\partial \sigma_{xx}} (\sigma_{xx}+\sigma_{yy}+\sigma_{zz}) \\
+\frac{\partial }{\partial \sigma_{yy}} (\sigma_{xx}+\sigma_{yy}+\sigma_{zz}) \\
+\frac{\partial }{\partial \sigma_{zz}} (\sigma_{xx}+\sigma_{yy}+\sigma_{zz}) \\
+\frac{\partial }{\partial \sigma_{xy}} (\sigma_{xx}+\sigma_{yy}+\sigma_{zz}) \\
+\frac{\partial }{\partial \sigma_{xz}} (\sigma_{xx}+\sigma_{yy}+\sigma_{zz}) \\
+\frac{\partial }{\partial \sigma_{yz}} (\sigma_{xx}+\sigma_{yy}+\sigma_{zz}) 
+\end{array}
+\right) \nonumber\\
+&=& \left(
+\begin{array}{c}
+1 \\ 1 \\ 1 \\ 0 \\ 0 \\ 0 
+\end{array}
+\right) \nonumber\\
+&=&
+\frac{1}{\sigma_{xx}+\sigma_{yy}+\sigma_{zz}}
+\left(
+\begin{array}{cccccc}
+1 & 1 & 1 & 0 & 0 & 0 \\
+1 & 1 & 1 & 0 & 0 & 0 \\
+1 & 1 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 
+\end{array}
+\right) \cdot \vec\sigma \nonumber\\
+&=&
+\underbrace{
+\frac{1}{{\cal I}_1(\bm\sigma)}
+\left(
+\begin{array}{cccccc}
+1 & 1 & 1 & 0 & 0 & 0 \\
+1 & 1 & 1 & 0 & 0 & 0 \\
+1 & 1 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 
+\end{array}
+\right)}_{{\bm M}_1(\bm\sigma)}
+\cdot \vec\sigma
+\end{eqnarray}
+
+
+%.......................................
+\subsubsection{Computing matrix $M_2$}
+
+
+We start from 
+\begin{eqnarray}
+{\cal I}_2({\bm \tau})   
+%&=&
+%\frac{1}{2}(\tau_{xx}^2 + \tau_{yy}^2 + \tau_{zz}^2 ) + \tau_{xy}^2 + %\tau_{xz}^2 + \tau_{yz}^2  \nonumber\\
+&=&
+\frac{1}{6}\left[(\sigma_{xx}-\sigma_{yy})^2 + (\sigma_{yy}-\sigma_{zz})^2 + (\sigma_{xx}-\sigma_{zz})^2 \right]  + \sigma_{xy}^2 + \sigma_{xz}^2 + \sigma_{yz}^2  
+\end{eqnarray}
+Then
+\begin{eqnarray}
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \vec\sigma}  
+&=& \left(
+\begin{array}{c}
+\frac{\partial }{\partial \sigma_{xx}} {\cal I}_2(\bm\tau) \\
+\frac{\partial }{\partial \sigma_{yy}} {\cal I}_2(\bm\tau) \\
+\frac{\partial }{\partial \sigma_{zz}} {\cal I}_2(\bm\tau) \\
+\frac{\partial }{\partial \sigma_{xy}} {\cal I}_2(\bm\tau) \\
+\frac{\partial }{\partial \sigma_{xz}} {\cal I}_2(\bm\tau) \\
+\frac{\partial }{\partial \sigma_{yz}} {\cal I}_2(\bm\tau) 
+\end{array}
+\right) \nonumber\\
+&=&
+\left(
+\begin{array}{c}
+\frac16(2 (\sigma_{xx}-\sigma_{yy}) + 2(\sigma_{xx}-\sigma_{zz}) ) \\
+\frac16(-2(\sigma_{xx}-\sigma_{yy}) + 2(\sigma_{yy}-\sigma_{zz}) ) \\
+\frac16(-2(\sigma_{yy}-\sigma_{zz}) - 2(\sigma_{xx}-\sigma_{zz}) ) \\
+2 \sigma_{xy} \\
+2 \sigma_{xz} \\
+2 \sigma_{yz} 
+\end{array}
+\right) \nonumber\\
+&=&
+\left(
+\begin{array}{c}
+\frac23 \sigma_{xx} -\frac13\sigma_{yy} -\frac13\sigma_{zz}  \\
+-\frac23 \sigma_{xx} +\frac43\sigma_{yy} -\frac23\sigma_{zz}  \\
+-\frac23\sigma_{xx} -\frac23\sigma_{yy} +\frac43\sigma_{zz} \\
+2 \sigma_{xy} \\
+2 \sigma_{xz} \\
+2 \sigma_{yz} 
+\end{array}
+\right) \nonumber\\
+&=&
+\underbrace{
+\left(
+\begin{array}{cccccc}
+2/3 & -1/3 & -1/3 & 0 & 0 & 0 \\
+-1/3 & 2/3 & -1/3 & 0 & 0 & 0 \\
+-1/3 & -1/3 & 2/3 & 0 & 0 & 0 \\
+0 & 0 & 0 & 2 & 0 & 0 \\
+0 & 0 & 0 & 0 & 2 & 0 \\
+0 & 0 & 0 & 0 & 0 & 2
+\end{array}
+\right)}_{{\bm M}_2(\bm\sigma)}
+\cdot \vec\sigma
+\end{eqnarray}
+This is the same matrix as in Eq.~(13.11) in \textcite{zien75} (1975).
+
+Another look at it using tensors: we start this time from 
+\begin{eqnarray}
+{\cal I}_2({\bm \tau})   
+%&=&
+%\frac{1}{2}(\tau_{xx}^2 + \tau_{yy}^2 + \tau_{zz}^2 
+%+ \tau_{xy}^2 + \tau_{xz}^2 + \tau_{yz}^2 + \tau_{yx}^2 + \tau_{zx}^2 + \tau_{zy}^2) \\
+&=&
+\frac{1}{6}\left[(\sigma_{xx}-\sigma_{yy})^2 + (\sigma_{yy}-\sigma_{zz})^2 + (\sigma_{xx}-\sigma_{zz})^2 \right]  
++\frac12( \sigma_{xy}^2 + \sigma_{xz}^2 + \sigma_{yz}^2  
++ \sigma_{yx}^2 + \sigma_{zx}^2 + \sigma_{zy}^2) 
+\end{eqnarray}
+Then
+\begin{eqnarray}
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma}  
+&=&
+\left(
+\begin{array}{ccc}
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{xx}} &   
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{xy}} &   
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{xz}} \\
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{yx}} &   
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{yy}} &   
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{yz}} \\
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{zx}} &   
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{zy}} &   
+\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{zz}} 
+\end{array}
+\right) \nonumber\\
+&=&
+\left(
+\begin{array}{ccc}
+\frac23 \sigma_{xx} -\frac13\sigma_{yy} -\frac13\sigma_{zz} & \sigma_{xy}& \sigma_{xz} \\
+\sigma_{yx}&-\frac23 \sigma_{xx} +\frac43\sigma_{yy} -\frac23\sigma_{zz} & \sigma_{yz}\\
+\sigma_{zx}& \sigma_{zy}& -\frac23\sigma_{xx} -\frac23\sigma_{yy} +\frac43\sigma_{zz} 
+\end{array}
+\right) \nonumber\\
+&=&{\bm\sigma} - \frac13 {\cal I}_1(\bm\sigma)\bm 1 \nonumber\\
+&=& \bm \tau \label{eq:dI2dtau}
+\end{eqnarray}
+
+
+
+
+
+
+
+
+
+%............................
+\subsubsection{Computing matrix $M_3$}
+
+The third invariant proves to be the most annoying:
+\begin{eqnarray}
+{\cal I}_3({\bm \tau}) 
+&=& \frac13 \sum_{i,j,k} \tau_{ij}\tau_{jk}\tau_{ki} \\
+&=& \frac{1}{3} \tau_{xx} (  \tau_{xx}^2 + 3 \tau_{xy}^2 + 3 \tau_{xz}^2  )     \nonumber\\
+&+& \frac{1}{3} \tau_{yy} (3 \tau_{xy}^2 +   \tau_{yy}^2 + 3 \tau_{yz}^2  )     \nonumber\\
+&+& \frac{1}{3} \tau_{zz} (3 \tau_{xz}^2 + 3 \tau_{yz}^2 +   \tau_{zz}^2)       \nonumber\\
+&+& 2 \tau_{xy} \tau_{xz} \tau_{yz}  
+\end{eqnarray}
+Then 
+
+\begin{eqnarray}
+\frac{\partial {\cal I}_3(\bm\tau)}{\partial \vec\sigma}  
+&=& \left(
+\begin{array}{c}
+\frac{\partial }{\partial \sigma_{xx}} {\cal I}_3(\bm\tau) \\
+\frac{\partial }{\partial \sigma_{yy}} {\cal I}_3(\bm\tau) \\
+\frac{\partial }{\partial \sigma_{zz}} {\cal I}_3(\bm\tau) \\
+\frac{\partial }{\partial \sigma_{xy}} {\cal I}_3(\bm\tau) \\
+\frac{\partial }{\partial \sigma_{xz}} {\cal I}_3(\bm\tau) \\
+\frac{\partial }{\partial \sigma_{yz}} {\cal I}_3(\bm\tau) 
+\end{array}
+\right) \nonumber\\
+&=& \left(
+\begin{array}{c}
+\frac{\partial }{\partial \tau_{xx}} {\cal I}_3(\bm\tau) 
+\frac{\partial \tau_{xx}}{\partial \sigma_{xx}}\\
+\frac{\partial }{\partial \tau_{yy}} {\cal I}_3(\bm\tau) 
+\frac{\partial \tau_{yy}}{\partial \sigma_{yy}}\\
+\frac{\partial }{\partial \tau_{zz}} {\cal I}_3(\bm\tau)
+\frac{\partial \tau_{zz}}{\partial \sigma_{zz}}\\
+\frac{\partial }{\partial \tau_{xy}} {\cal I}_3(\bm\tau)
+\frac{\partial \tau_{xy}}{\partial \sigma_{xy}}\\
+\frac{\partial }{\partial \tau_{xz}} {\cal I}_3(\bm\tau)
+\frac{\partial \tau_{xz}}{\partial \sigma_{xz}}\\
+\frac{\partial }{\partial \tau_{yz}} {\cal I}_3(\bm\tau)
+\frac{\partial \tau_{yz}}{\partial \sigma_{yz}}\\
+\end{array}
+\right) \nonumber\\
+&=& \left(
+\begin{array}{c}
+\frac{\partial }{\partial \tau_{xx}} {\cal I}_3(\bm\tau) \frac23 \\
+\frac{\partial }{\partial \tau_{yy}} {\cal I}_3(\bm\tau) \frac23 \\
+\frac{\partial }{\partial \tau_{zz}} {\cal I}_3(\bm\tau) \frac23 \\
+\frac{\partial }{\partial \tau_{xy}} {\cal I}_3(\bm\tau)  1\\
+\frac{\partial }{\partial \tau_{xz}} {\cal I}_3(\bm\tau)  1\\
+\frac{\partial }{\partial \tau_{yz}} {\cal I}_3(\bm\tau)  1\\
+\end{array}
+\right) \nonumber\\
+&=& \left(
+\begin{array}{c}
+\frac{\partial }{\partial \tau_{xx}} {\cal I}_3(\bm\tau) \frac23 \\
+\frac{\partial }{\partial \tau_{yy}} {\cal I}_3(\bm\tau) \frac23 \\
+\frac{\partial }{\partial \tau_{zz}} {\cal I}_3(\bm\tau) \frac23 \\
+2\tau_{xx}\tau_{xy} +2 \tau_{yy}\tau_{xy} + 2 \tau_{xz}\tau_{yz} \\
+2\tau_{xx}\tau_{xz} +2 \tau_{zz}\tau_{xz} + 2 \tau_{xy}\tau_{yz} \\
+2\tau_{yy}\tau_{yz} +2 \tau_{zz}\tau_{yz} + 2 \tau_{xy}\tau{xz} 
+\end{array}
+\right) \\
+&=& \left(
+\begin{array}{c}
+(\tau_{xx}^2 +  \tau_{xy}^2 +  \tau_{xz}^2 ) \frac23 \\
+(\tau_{xy}^2 +  \tau_{yy}^2 +  \tau_{yz}^2 ) \frac23 \\
+(\tau_{xz}^2 +  \tau_{yz}^2 +  \tau_{zz}^2 ) \frac23 \\
+2\tau_{xx}\tau_{xy} +2 \tau_{yy}\tau_{xy} + 2 \tau_{xz}\tau_{yz} \\
+2\tau_{xx}\tau_{xz} +2 \tau_{zz}\tau_{xz} + 2 \tau_{xy}\tau_{yz} \\
+2\tau_{yy}\tau_{yz} +2 \tau_{zz}\tau_{yz} + 2 \tau_{xy}\tau{xz} 
+\end{array}
+\right) 
+\end{eqnarray}
+
+We have ${\bm\tau}=\bm\sigma -\frac13 {\cal I}_1(\bm\sigma) {\bm 1}$
+so 
+\begin{align}
+\tau_{xx} &= \sigma_{xx}-\frac13{\cal I}_1 & \Rightarrow 
+\tau_{xx}^2 &= (\sigma_{xx}-\frac13{\cal I}_1)^2
+=\sigma_{xx}^2 -\frac23 \sigma_{xx} {\cal I}_1 + \frac19{\cal I}_1^2
+\\
+\tau_{yy} &= \sigma_{yy}-\frac13{\cal I}_1 & \Rightarrow 
+\tau_{yy}^2 &= (\sigma_{yy}-\frac13{\cal I}_1)^2
+=\sigma_{yy}^2 -\frac23 \sigma_{yy} {\cal I}_1 + \frac19{\cal I}_1^2
+\\
+\tau_{zz} &= \sigma_{zz}-\frac13{\cal I}_1 & \Rightarrow
+\tau_{zz}^2 &= (\sigma_{zz}-\frac13{\cal I}_1)^2
+=\sigma_{zz}^2 -\frac23 \sigma_{zz} {\cal I}_1 + \frac19{\cal I}_1^2
+\end{align}
+
+Finally
+\begin{eqnarray}
+\frac{\partial {\cal I}_3(\bm\tau)}{\partial \vec\sigma}  
+&=& \left(
+\begin{array}{c}
+(\sigma_{xx}^2 -\frac23 \sigma_{xx} {\cal I}_1 + \frac19{\cal I}_1^2 +  \sigma_{xy}^2 +  \sigma_{xz}^2 ) \frac23 \\
+(\sigma_{xy}^2 +  \sigma_{yy}^2 -\frac23 \sigma_{yy} {\cal I}_1 + \frac19{\cal I}_1^2 +  \sigma_{yz}^2 ) \frac23 \\
+(\sigma_{xz}^2 +  \sigma_{yz}^2 + \sigma_{zz}^2 -\frac23 \sigma_{zz} {\cal I}_1 + \frac19{\cal I}_1^2 ) \frac23 \\
+2(\sigma_{xx}-\frac13{\cal I}_1)\sigma_{xy} +2 (\sigma_{yy}-\frac13{\cal I}_1)\sigma_{xy} + 2 \sigma_{xz}\sigma_{yz} \\
+2(\sigma_{xx}-\frac13{\cal I}_1)\sigma_{xz} +2 (\sigma_{zz}-\frac13{\cal I}_1)\sigma_{xz} + 2 \sigma_{xy}\sigma_{yz} \\
+2(\sigma_{yy}-\frac13{\cal I}_1)\sigma_{yz} +2 (\sigma_{zz}-\frac13{\cal I}_1)\sigma_{yz} + 2 \sigma_{xy}\sigma{xz} 
+\end{array}
+\right) \\
+&=& \left(
+\begin{array}{c}
+(\sigma_{xx}^2 -\frac23 \sigma_{xx} {\cal I}_1  +  \sigma_{xy}^2 +  \sigma_{xz}^2 ) \frac23 \\
+(\sigma_{xy}^2 +  \sigma_{yy}^2 -\frac23 \sigma_{yy} {\cal I}_1  +  \sigma_{yz}^2 ) \frac23 \\
+(\sigma_{xz}^2 +  \sigma_{yz}^2 + \sigma_{zz}^2 -\frac23 \sigma_{zz} {\cal I}_1  ) \frac23 \\
+2\sigma_{xx}\sigma_{xy} +2 \sigma_{yy}\sigma_{xy} + 2 \sigma_{xz}\sigma_{yz} \\
+2\sigma_{xx}\sigma_{xz} +2 \sigma_{zz}\sigma_{xz} + 2 \sigma_{xy}\sigma_{yz} \\
+2\sigma_{yy}\sigma_{yz} +2 \sigma_{zz}\sigma_{yz} + 2 \sigma_{xy}\sigma{xz} 
+\end{array}
+\right) 
++
+\left(
+\begin{array}{c}
+\frac19{\cal I}_1^2 \frac23\\
+\frac19{\cal I}_1^2 \frac23\\
+\frac19{\cal I}_1^2 \frac23\\
+-\frac43{\cal I}_1 \sigma_{xy} \\
+-\frac43{\cal I}_1 \sigma_{xz} \\
+-\frac43{\cal I}_1 \sigma_{yz} \\
+\end{array}
+\right) \nonumber\\
+&=&
+\left(
+\begin{array}{c}
+(\sigma_{xx}^2 -\frac23 \sigma_{xx} {\cal I}_1  +  \sigma_{xy}^2 +  \sigma_{xz}^2 ) \frac23 \\
+(\sigma_{xy}^2 +  \sigma_{yy}^2 -\frac23 \sigma_{yy} {\cal I}_1  +  \sigma_{yz}^2 ) \frac23 \\
+(\sigma_{xz}^2 +  \sigma_{yz}^2 + \sigma_{zz}^2 -\frac23 \sigma_{zz} {\cal I}_1  ) \frac23 \\
+2(\sigma_{xx}+\sigma_{yy})\sigma_{xy} + 2 \sigma_{xz}\sigma_{yz} \\
+2(\sigma_{xx}+\sigma_{zz})\sigma_{xz} + 2 \sigma_{xy}\sigma_{yz} \\
+2(\sigma_{yy}+\sigma_{zz})\sigma_{yz} + 2 \sigma_{xy}\sigma{xz} 
+\end{array}
+\right) 
++
+\frac{2}{3}{\cal I}_1
+\left(
+\begin{array}{c}
+\frac19{\cal I}_1 \\
+\frac19{\cal I}_1 \\
+\frac19{\cal I}_1 \\
+-2\sigma_{xy} \\
+-2\sigma_{xz} \\
+-2\sigma_{yz} \\
+\end{array}
+\right) \\
+&=&
+\left(
+\begin{array}{c}
+(\sigma_{xx}^2 -\frac23 \sigma_{xx} {\cal I}_1  +  \sigma_{xy}^2 +  \sigma_{xz}^2 ) \frac23 \\
+(\sigma_{xy}^2 +  \sigma_{yy}^2 -\frac23 \sigma_{yy} {\cal I}_1  +  \sigma_{yz}^2 ) \frac23 \\
+(\sigma_{xz}^2 +  \sigma_{yz}^2 + \sigma_{zz}^2 -\frac23 \sigma_{zz} {\cal I}_1  ) \frac23 \\
+2({\cal I}_1-\sigma_{zz})\sigma_{xy} + 2 \sigma_{xz}\sigma_{yz} \\
+2({\cal I}_1-\sigma_{yy})\sigma_{xz} + 2 \sigma_{xy}\sigma_{yz} \\
+2({\cal I}_1-\sigma_{xx})\sigma_{yz} + 2 \sigma_{xy}\sigma{xz} 
+\end{array}
+\right) 
++
+\frac{2}{3}{\cal I}_1
+\left(
+\begin{array}{cccccc}
+\frac13 \sigma_{xx} & \frac13 \sigma_{yy} & \frac13 \sigma_{zz} && \\
+\frac13 \sigma_{xx} & \frac13 \sigma_{yy} & \frac13 \sigma_{zz} && \\
+\frac13 \sigma_{xx} & \frac13 \sigma_{yy} & \frac13 \sigma_{zz} && \\
+ &&&-2 \\
+&&&&-2 \\
+&&&&&-2 \\
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\sigma_{xx}\\
+\sigma_{yy}\\
+\sigma_{zz}\\
+\sigma_{xy}\\
+\sigma_{xz}\\
+\sigma_{yz}
+\end{array}
+\right)
+\end{eqnarray}
+
+
+
+
+FINISH!!!!! not complicated but no rush. Also try to see whether it matches
+table I of \textcite{zico74} - note the different ordering of terms in vector
+\begin{eqnarray}
+&&
+\left(
+\begin{array}{cccccc}
+\frac13 \sigma_{xx} & \frac13\sigma_{zz} & \frac13\sigma_{yy} & 
+-\frac23 \sigma_{yz} & \frac13\sigma_{xz} & \frac13\sigma_{xy}\\
+\frac13\sigma_{zz} & \frac13\sigma_{yy} & \frac13 \sigma_{xx} &
+\frac13 \sigma_{yz} & -\frac23\sigma_{xz} & \frac13\sigma_{xy}\\
+\frac13\sigma_{yy} & \frac13 \sigma_{xx} & \frac13\sigma_{zz} &
+\frac13 \sigma_{yz} & \frac13\sigma_{xz} & -\frac23\sigma_{xy}\\
+-\frac23 \sigma_{yz} & \frac13 \sigma_{yz} & \frac13 \sigma_{yz}&
+-\sigma_{xx} & \sigma_{xy} & \sigma_{xz} \\
+\frac13\sigma_{xz} & -\frac23\sigma_{xz} & \frac13\sigma_{xz} &
+\sigma_{xy} & -\sigma_{yy} & \sigma_{yz} \\
+\frac13\sigma_{xy} & \frac13\sigma_{xy} & -\frac23\sigma_{xy} &
+\sigma_{xz} & \sigma_{yz} & -\sigma_{zz}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\sigma_{xx}\\
+\sigma_{yy}\\
+\sigma_{zz}\\
+\sigma_{yz}\\
+\sigma_{xz}\\
+\sigma_{xy}
+\end{array}
+\right)\\
+&=&
+\frac13
+\left(
+\begin{array}{cccccc}
+ \sigma_{xx} & \sigma_{zz} & \sigma_{yy} & 
+-2 \sigma_{yz} & \sigma_{xz} & \sigma_{xy}\\
+\sigma_{zz} & \sigma_{yy} &  \sigma_{xx} &
+ \sigma_{yz} & -2\sigma_{xz} & \sigma_{xy}\\
+\sigma_{yy} & \sigma_{xx} & \sigma_{zz} &
+ \sigma_{yz} & \sigma_{xz} & -2\sigma_{xy}\\
+-2 \sigma_{yz} & \sigma_{yz} &  \sigma_{yz} &
+-3\sigma_{xx} & 3\sigma_{xy} & 3\sigma_{xz} \\
+\sigma_{xz} & -2\sigma_{xz} & \sigma_{xz} &
+3\sigma_{xy} & -3\sigma_{yy} & 3\sigma_{yz} \\
+\sigma_{xy} & \sigma_{xy} & -2\sigma_{xy} &
+3\sigma_{xz} & 3\sigma_{yz} & -3\sigma_{zz}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\sigma_{xx}\\
+\sigma_{yy}\\
+\sigma_{zz}\\
+\sigma_{yz}\\
+\sigma_{xz}\\
+\sigma_{xy}
+\end{array}
+\right)\\
+&=&
+\left(
+\begin{array}{c}
+\sigma_{xx}^2+2\sigma_{yy}\sigma_{zz}
+-\sigma_{xy}\sigma_{yz}+\sigma_{xz}^2\\
+\sigma_{yy}^2+2\sigma_{xx}\sigma_{zz}
++2\sigma_{xy}\sigma_{yz}-2\sigma_{xz}^2\\
+\sigma_{zz}^2+2\sigma_{xx}\sigma_{yy}
+-\sigma_{xy}\sigma_{yz}+\sigma_{xz}^2\\
+(-2\sigma_{xx}+\sigma_{yy}+\sigma_{zz})\sigma_{yz} 
+-3\sigma_{xx}\sigma_{xy}
++3\sigma_{xy}\sigma_{xz}
++3\sigma_{xz}\sigma_{yz}\\
+(\sigma_{xx}-2\sigma_{yy}+\sigma_{zz})\sigma_{xz} 
++3\sigma_{xy}^2
+-3\sigma_{yy}\sigma_{xz}
++3\sigma_{yz}^2\\
+(\sigma_{xx}+\sigma_{yy}-2\sigma_{zz})\sigma_{xy} \\
+
++3\sigma_{xy}\sigma_{xz}
++3\sigma_{xz}\sigma_{xz}
+-3\sigma_{xz}\sigma_{yz}\\
+
+
+\end{array}
+\right)
+\end{eqnarray}
+
