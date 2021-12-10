@@ -7,7 +7,7 @@ eta_max=1e25
 
 # main parameter which controls resolution
 # shound be 1,2,3,4, or 5
-res=5
+res=1
 
 nnr=res*16+1 
 nnt=res*80 
