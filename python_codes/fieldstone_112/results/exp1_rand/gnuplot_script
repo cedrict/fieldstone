@@ -88,44 +88,44 @@ set ylabel 'pressure'
 unset log x
 
 set output 'pressMINI.pdf'
-plot[][-0.2:]\
-'pressureMINI16.ascii'  u 1:3 w p ps .125 t 'MINI, 16^2',\
-'pressureMINI32.ascii'  u 1:3 w p ps .125 t 'MINI, 32^2',\
-'pressureMINI64.ascii'  u 1:3 w p ps .125 t 'MINI, 64^2',\
-'pressureMINI128.ascii' u 1:3 w p ps .125 t 'MINI, 128^2',\
+plot[0:1][-0.2:]\
+'pressures/pressureMINI16.ascii'  u 1:3 w p ps .125 t 'MINI, 16^2',\
+'pressures/pressureMINI32.ascii'  u 1:3 w p ps .125 t 'MINI, 32^2',\
+'pressures/pressureMINI64.ascii'  u 1:3 w p ps .125 t 'MINI, 64^2',\
+'pressures/pressureMINI128.ascii' u 1:3 w p ps .125 t 'MINI, 128^2',\
 x*(1-x)-1./6 lt -1 dt 2 t 'analytical' 
 
 set output 'pressP2P1.pdf'
-plot[][]\
-'pressureP2P116.ascii'  u 1:3 w p ps .125 t 'P_2xP_1, 16^2',\
-'pressureP2P132.ascii'  u 1:3 w p ps .125 t 'P_2xP_1, 32^2',\
-'pressureP2P164.ascii'  u 1:3 w p ps .125 t 'P_2xP_1, 64^2',\
-'pressureP2P1128.ascii' u 1:3 w p ps .125 t 'P_2xP_1, 128^2',\
+plot[0:1][]\
+'pressures/pressureP2P116.ascii'  u 1:3 w p ps .125 t 'P_2xP_1, 16^2',\
+'pressures/pressureP2P132.ascii'  u 1:3 w p ps .125 t 'P_2xP_1, 32^2',\
+'pressures/pressureP2P164.ascii'  u 1:3 w p ps .125 t 'P_2xP_1, 64^2',\
+'pressures/pressureP2P1128.ascii' u 1:3 w p ps .125 t 'P_2xP_1, 128^2',\
 x*(1-x)-1./6 lt -1 dt 2  t 'analytical' 
 
 set output 'pressQ2Q1.pdf'
-plot[][]\
-'pressureQ2Q116.ascii'  u 1:3 w p ps .125 t 'Q_2xQ_1, 16^2',\
-'pressureQ2Q132.ascii'  u 1:3 w p ps .125 t 'Q_2xQ_1, 32^2',\
-'pressureQ2Q164.ascii'  u 1:3 w p ps .125 t 'Q_2xQ_1, 64^2',\
-'pressureQ2Q1128.ascii' u 1:3 w p ps .125 t 'Q_2xQ_1, 128^2',\
+plot[0:1][]\
+'pressures/pressureQ2Q116.ascii'  u 1:3 w p ps .125 t 'Q_2xQ_1, 16^2',\
+'pressures/pressureQ2Q132.ascii'  u 1:3 w p ps .125 t 'Q_2xQ_1, 32^2',\
+'pressures/pressureQ2Q164.ascii'  u 1:3 w p ps .125 t 'Q_2xQ_1, 64^2',\
+'pressures/pressureQ2Q1128.ascii' u 1:3 w p ps .125 t 'Q_2xQ_1, 128^2',\
 x*(1-x)-1./6 lt -1 dt 2  t 'analytical' 
 
 set output 'pressCR.pdf'
-plot[][]\
-'pressureCR16.ascii'   u 1:3 w p ps .125 t 'C-R, 16^2',\
-'pressureCR32.ascii'   u 1:3 w p ps .125 t 'C-R, 32^2',\
-'pressureCR64.ascii'   u 1:3 w p ps .125 t 'C-R, 64^2',\
-'pressureCR128.ascii'  u 1:3 w p ps .125 t 'C-R, 128^2',\
+plot[0:1][]\
+'pressures/pressureCR16.ascii'   u 1:3 w p ps .125 t 'C-R, 16^2',\
+'pressures/pressureCR32.ascii'   u 1:3 w p ps .125 t 'C-R, 32^2',\
+'pressures/pressureCR64.ascii'   u 1:3 w p ps .125 t 'C-R, 64^2',\
+'pressures/pressureCR128.ascii'  u 1:3 w p ps .125 t 'C-R, 128^2',\
 x*(1-x)-1./6 lt -1 dt 2  t 'analytical' 
 
 
 set output 'pressQ2P1.pdf'
-plot[][]\
-'pressureQ2P116.ascii'   u 1:3 w p ps .125 t 'Q_2xP_{-1}, 16^2',\
-'pressureQ2P132.ascii'   u 1:3 w p ps .125 t 'Q_2xP_{-1}, 32^2',\
-'pressureQ2P164.ascii'   u 1:3 w p ps .125 t 'Q_2xP_{-1}, 64^2',\
-'pressureQ2P1128.ascii'  u 1:3 w p ps .125 t 'Q_2xP_{-1}, 128^2',\
+plot[0:1][]\
+'pressures/pressureQ2P116.ascii'   u 1:3 w p ps .125 t 'Q_2xP_{-1}, 16^2',\
+'pressures/pressureQ2P132.ascii'   u 1:3 w p ps .125 t 'Q_2xP_{-1}, 32^2',\
+'pressures/pressureQ2P164.ascii'   u 1:3 w p ps .125 t 'Q_2xP_{-1}, 64^2',\
+'pressures/pressureQ2P1128.ascii'  u 1:3 w p ps .125 t 'Q_2xP_{-1}, 128^2',\
 x*(1-x)-1./6 lt -1 dt 2  t 'analytical' 
 
 
