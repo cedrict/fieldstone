@@ -3,4 +3,5 @@ rm stress*.vtu
 rm *.ascii
 rm temp
 rm opla
-
+rm errors_*
+rm vrms_*

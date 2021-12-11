@@ -190,21 +190,23 @@ mP=3
 # bench=3 : Donea & Huerta
 # bench=9 : mms #2 (lami17)
 
-bench=3
+bench=9
 
 Lx=1
 Ly=1
 
-if int(len(sys.argv) == 5):
+if int(len(sys.argv) == 6):
    nelx=int(sys.argv[1])
    nely=int(sys.argv[2])
    visu=int(sys.argv[3])
    nqperdim=int(sys.argv[4])
+   meth=int(sys.argv[5])
 else:
    nelx = 16
    nely = 16
    visu = 1
    nqperdim=3
+   meth = 2
 
 nnx=2*nelx+1
 nny=2*nely+1
@@ -225,8 +227,9 @@ print('NV   =',NV)
 print('NP   =',NP)
 print('NfemV=',NfemV)
 print('NfemP=',NfemP)
+print('method=',meth)
 
-nqperdim=4
+#nqperdim=4
 
 if nqperdim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
@@ -334,6 +337,18 @@ for i in range(0,NV):
        yV[i]+=random.uniform(-1.,+1)*hy*xi
     #end if
 #end for
+
+for iel in range(0,nel):
+    xV[iconV[4,iel]]=0.5*(xV[iconV[0,iel]]+xV[iconV[1,iel]])
+    yV[iconV[4,iel]]=0.5*(yV[iconV[0,iel]]+yV[iconV[1,iel]])
+    xV[iconV[5,iel]]=0.5*(xV[iconV[1,iel]]+xV[iconV[2,iel]])
+    yV[iconV[5,iel]]=0.5*(yV[iconV[1,iel]]+yV[iconV[2,iel]])
+    xV[iconV[6,iel]]=0.5*(xV[iconV[2,iel]]+xV[iconV[3,iel]])
+    yV[iconV[6,iel]]=0.5*(yV[iconV[2,iel]]+yV[iconV[3,iel]])
+    xV[iconV[7,iel]]=0.5*(xV[iconV[3,iel]]+xV[iconV[0,iel]])
+    yV[iconV[7,iel]]=0.5*(yV[iconV[3,iel]]+yV[iconV[0,iel]])
+    xV[iconV[8,iel]]=0.25*(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]]+xV[iconV[3,iel]])
+    yV[iconV[8,iel]]=0.25*(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]]+yV[iconV[3,iel]])
 
 #################################################################
 # build pressure grid and iconP 
@@ -483,6 +498,21 @@ c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64)
 
 for iel in range(0,nel):
 
+    if meth==2:
+       det=xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]]\
+          -xP[iconP[0,iel]]*yP[iconP[2,iel]]+xP[iconP[2,iel]]*yP[iconP[0,iel]]\
+          +xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]]
+       m11=(xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]])/det
+       m12=(xP[iconP[2,iel]]*yP[iconP[0,iel]]-xP[iconP[0,iel]]*yP[iconP[2,iel]])/det
+       m13=(xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]])/det
+       m21=(yP[iconP[1,iel]]-yP[iconP[2,iel]])/det
+       m22=(yP[iconP[2,iel]]-yP[iconP[0,iel]])/det
+       m23=(yP[iconP[0,iel]]-yP[iconP[1,iel]])/det
+       m31=(xP[iconP[2,iel]]-xP[iconP[1,iel]])/det
+       m32=(xP[iconP[0,iel]]-xP[iconP[2,iel]])/det
+       m33=(xP[iconP[1,iel]]-xP[iconP[0,iel]])/det
+
+
     # set arrays to 0 every loop
     f_el =np.zeros((mV*ndofV),dtype=np.float64)
     K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
@@ -499,7 +529,6 @@ for iel in range(0,nel):
             NNNV[0:mV]=NNV(rq,sq)
             dNNNVdr[0:mV]=dNNVdr(rq,sq)
             dNNNVds[0:mV]=dNNVds(rq,sq)
-            NNNP[0:mP]=NNP(rq,sq)
 
             # calculate jacobian matrix
             jcb=np.zeros((ndim,ndim),dtype=np.float64)
@@ -519,6 +548,14 @@ for iel in range(0,nel):
                 yq+=NNNV[k]*yV[iconV[k,iel]]
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+
+            if meth==1:
+               NNNP[0:mP]=NNP(rq,sq)
+            else:
+               NNNP[0]=(m11+m21*xq+m31*yq)
+               NNNP[1]=(m12+m22*xq+m32*yq)
+               NNNP[2]=(m13+m23*xq+m33*yq)
+            #print(NNNP[0],NNNP[1],NNNP[2])
 
             # construct 3x8 b_mat matrix
             for i in range(0,mV):

@@ -6,11 +6,13 @@ rm *.ascii
 
 nq=3
 
+m=1
+
 for rs in 16 32 48 64 80 96; do
 
     echo $rs 
 
-    python3 stone.py $rs $rs 0 $nq > opla
+    python3 stone.py $rs $rs 0 $nq $m > opla
 
     grep vrms opla >> vrms_nq$nq
 
