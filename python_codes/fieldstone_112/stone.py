@@ -262,9 +262,9 @@ def pressure(x,y):
 # experiment=4: solKz
 # experiment=5: solVi
 
-experiment=1
+experiment=5
 
-randomize_mesh=True
+randomize_mesh=False
 
 print("-----------------------------")
 print("----------fieldstone---------")
@@ -283,10 +283,10 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    elt  = int(sys.argv[4])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 320
+   nely = 320
    visu = 1
-   elt  = 5
+   elt  = 2
 
 if elt==1: elt='MINI'
 if elt==2: elt='P2P1'
@@ -370,6 +370,8 @@ print ('Nfem =',Nfem)
 print("-----------------------------")
 
 eps=1e-9
+
+unmappedQ2P1=True
 
 #----------------------------------------------------------
 # integration points coeffs and weights 
@@ -785,32 +787,35 @@ print("boundary conditions: %.3f s" % (timing.time() - start))
 # compute area of elements
 #################################################################
 start = timing.time()
-
+   
 area    = np.zeros(nel,dtype=np.float64) 
-dNNNVdr = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
-dNNNVds = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
 
-for iel in range(0,nel):
-    for kq in range (0,nqel):
-        rq=qcoords_r[kq]
-        sq=qcoords_s[kq]
-        weightq=qweights[kq]
-        dNNNVdr[0:mV]=dNNVdr(rq,sq)
-        dNNNVds[0:mV]=dNNVds(rq,sq)
-        jcb=np.zeros((ndim,ndim),dtype=np.float64)
-        for k in range(0,mV):
-            jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-            jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-            jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-            jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-        jcob = np.linalg.det(jcb)
-        area[iel]+=jcob*weightq
+if randomize_mesh:
 
-print("     -> area (m,M) %.4e %.4e " %(np.min(area),np.max(area)))
-print("     -> total area %.6f " %(area.sum()))
-print("     -> analytical area %.6f " %(Lx*Ly))
+   dNNNVdr = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
+   dNNNVds = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
 
-print("compute elements areas: %.3f s" % (timing.time() - start))
+   for iel in range(0,nel):
+       for kq in range (0,nqel):
+           rq=qcoords_r[kq]
+           sq=qcoords_s[kq]
+           weightq=qweights[kq]
+           dNNNVdr[0:mV]=dNNVdr(rq,sq)
+           dNNNVds[0:mV]=dNNVds(rq,sq)
+           jcb=np.zeros((ndim,ndim),dtype=np.float64)
+           for k in range(0,mV):
+               jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+               jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+               jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+               jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+           jcob = np.linalg.det(jcb)
+           area[iel]+=jcob*weightq
+
+   print("     -> area (m,M) %.4e %.4e " %(np.min(area),np.max(area)))
+   print("     -> total area %.6f " %(area.sum()))
+   print("     -> analytical area %.6f " %(Lx*Ly))
+
+   print("compute elements areas: %.3f s" % (timing.time() - start))
 
 #################################################################
 # build FE matrix
@@ -836,6 +841,21 @@ c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64)
 
 for iel in range(0,nel):
 
+    if elt=='Q2P1' and unmappedQ2P1:
+       det=xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]]\
+          -xP[iconP[0,iel]]*yP[iconP[2,iel]]+xP[iconP[2,iel]]*yP[iconP[0,iel]]\
+          +xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]]
+       m11=(xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]])/det
+       m12=(xP[iconP[2,iel]]*yP[iconP[0,iel]]-xP[iconP[0,iel]]*yP[iconP[2,iel]])/det
+       m13=(xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]])/det
+       m21=(yP[iconP[1,iel]]-yP[iconP[2,iel]])/det
+       m22=(yP[iconP[2,iel]]-yP[iconP[0,iel]])/det
+       m23=(yP[iconP[0,iel]]-yP[iconP[1,iel]])/det
+       m31=(xP[iconP[2,iel]]-xP[iconP[1,iel]])/det
+       m32=(xP[iconP[0,iel]]-xP[iconP[2,iel]])/det
+       m33=(xP[iconP[1,iel]]-xP[iconP[0,iel]])/det
+
+
     # set arrays to 0 every loop
     f_el =np.zeros((mV*ndofV),dtype=np.float64)
     K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
@@ -852,7 +872,6 @@ for iel in range(0,nel):
         NNNV[0:mV]=NNV(rq,sq)
         dNNNVdr[0:mV]=dNNVdr(rq,sq)
         dNNNVds[0:mV]=dNNVds(rq,sq)
-        NNNP[0:mP]=NNP(rq,sq)
 
         # calculate jacobian matrix
         jcb=np.zeros((ndim,ndim),dtype=np.float64)
@@ -886,6 +905,12 @@ for iel in range(0,nel):
         for i in range(0,mV):
             f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*bx(xq,yq)
             f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*by(xq,yq)
+
+        NNNP[0:mP]=NNP(rq,sq)
+        if elt=='Q2P1' and unmappedQ2P1:
+           NNNP[0]=(m11+m21*xq+m31*yq)
+           NNNP[1]=(m12+m22*xq+m32*yq)
+           NNNP[2]=(m13+m23*xq+m33*yq)
 
         for i in range(0,mP):
             N_mat[0,i]=NNNP[i]
@@ -1195,10 +1220,16 @@ if visu==1:
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (eta(xc[iel],yc[iel])))
     vtufile.write("</DataArray>\n")
+
     vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (area[iel]))
     vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (np.sum(p[iconP[0:mP,iel]])/mP))
+    vtufile.write("</DataArray>\n")
+
     #--
     vtufile.write("</CellData>\n")
     #####

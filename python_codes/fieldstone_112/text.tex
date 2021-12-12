@@ -10,8 +10,8 @@
 
 This \stone showcases the MINI (Section~\ref{pair:mini}), 
 $P_2\times P_1$ (Section~\ref{ss:p2p1}), $Q_2\times Q_1$ (Section~\ref{ss:pairq2q1}), 
-$Q_2\times P_{-1}$ (Section~\ref{ss:pairq2pm1}) and Crouzeix-Raviart  (Section~\ref{sec:crouzeix-raviart})
-elements.
+$Q_2\times P_{-1}$ (Section~\ref{ss:pairq2pm1} - unmapped approach, see \stone~76) 
+and Crouzeix-Raviart  (Section~\ref{sec:crouzeix-raviart}) elements.
 
 The mesh is composed of $nel_x \times nel_y$ cells which are cut in half via the same 
 diagonal (NW-SE) into 2 triangles for simplicity when triangular elements are used: 
@@ -26,7 +26,8 @@ A pressure dof is fixed so remove the nullspace and the obtained pressure field
 is then normalised so that $\int_\Omega p dV = 0$.
 
 Resolutions are ranging from 8x8 to 512x512. The high resolution runs take hours 
-because python is slow. Most of what follows only goes up to 256x256.   
+because python is slow. Most of what follows only goes up to 256x256. 320x320 seems 
+to be the limit on my 32Gb-RAM laptop.  
 
 \newpage
 %========================================================
@@ -90,10 +91,6 @@ and the total number of degrees of freedom (right column).}
 {\captionfont Pressure field as a function of the $x$-coordinate on a $16\times16$,
 $32\times 32$ and $64\times 64$ mesh for all 5 elements.} 
 \end{center}
-
-Convergence rate for Q2P1 very suspicious. My guess is that I never implement Q2P1 
-outside of square/rectangular elements and I must be doing something quite not 
-right here.
 
 \newpage
 %========================================================
@@ -251,11 +248,11 @@ D \& H
 &{3}&1&2&1
 &{3}&1&2&1\\
 D \& H (rand)
-&2&5&1.3&4
+&2&5&1.3&3
 &3&2&2&1
-&3&3&2&4
+&3&3&2&2
 &3&1&2&1
-&\textbf{?}&?&?&? \\
+&3&1&2&1 \\
 SolCx 
 &2&4&0.5&4
 &3&2&0.5&3
@@ -291,8 +288,6 @@ and the smaller the value the better the element.
 Note that SolVi measurements will be updated when the 512x512 runs have completed so for now Solvi is not 
 taken into account.
 
-Also as mentioned before the rates for Q2P1 for D \& H with randomised mesh are weird.
-
 %========================================================
 \subsection*{Preliminary Conclusions}
 
@@ -324,4 +319,4 @@ plot the velocity errors as a fct of the velocity dofs and the pressure errors  
 \end{itemize}
 
 
-to myself: check and probably remove stone 46, 47 ,76?
+note to myself: check and probably remove stone 46, 47 ?

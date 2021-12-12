@@ -3,4 +3,5 @@ rm *.ascii
 rm *.pdf
 rm opla_*
 rm errors_*
+rm middle_*
 
