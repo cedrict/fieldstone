@@ -179,6 +179,10 @@ def by(x,y):
        val=0
     return val
 
+#------------------------------------------------------------------------------
+# viscosity 
+#------------------------------------------------------------------------------
+
 def eta(x,y):
     if experiment==1:
        val=1.
@@ -284,11 +288,11 @@ if int(len(sys.argv) == 6):
    elt    = int(sys.argv[4])
    tridiag= int(sys.argv[5])
 else:
-   nelx    = 128
-   nely    = 128
+   nelx    = 16
+   nely    = 16
    visu    = 1
    elt     = 1
-   tridiag = 0
+   tridiag = 2
 
 if elt==1: elt='MINI'
 if elt==2: elt='P2P1'
@@ -443,10 +447,9 @@ else:
 
 print("grid: %.3f s" % (timing.time() - start))
 
-
-
 #################################################################
 # build connectivity array 
+# tridiag is an array of size nelx*nely, i.e. the nb of cells
 #################################################################
 start = timing.time()
 
@@ -462,8 +465,6 @@ else:
        for i in range(0,nelx):
            flip[counter2] = random.randint(0, 1)
            counter2+=1
-   print(flip)
-   print(np.sum(flip))
 
 if elt=='CR':
    counter=0
@@ -592,6 +593,8 @@ if elt=='MINI':
               iconV[2,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
               iconV[3,counter]=counter+nnx*nny   
               counter=counter+1
+
+           counter2+=1
        #end for
    #end for
    for iel in range (0,nel): #bubble nodes
@@ -1132,21 +1135,6 @@ print("normalise pressure: %.3f s" % (timing.time() - start))
 np.savetxt('pressure'+elt+'.ascii',np.array([xP,yP,p]).T,header='# x,y,p',fmt='%.3e')
 
 #################################################################
-# compute error fields for plotting
-#################################################################
-
-error_u = np.empty(NV,dtype=np.float64)
-error_v = np.empty(NV,dtype=np.float64)
-error_p = np.empty(NP,dtype=np.float64)
-
-for i in range(0,NV): 
-    error_u[i]=u[i]-velocity_x(xV[i],yV[i])
-    error_v[i]=v[i]-velocity_y(xV[i],yV[i])
-
-#for i in range(0,NP): 
-#    error_p[i]=p[i]-pressure(xP[i],yP[i])
-
-#################################################################
 # compute L2 errors
 #################################################################
 start = timing.time()
@@ -1182,9 +1170,9 @@ for iel in range (0,nel):
             yq+=NNNV[k]*yV[iconV[k,iel]]
             uq+=NNNV[k]*u[iconV[k,iel]]
             vq+=NNNV[k]*v[iconV[k,iel]]
+        # end for k
         errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
         vrms+=(uq**2+vq**2)*weightq*jcob
-        # end for k
         xq=0.
         yq=0.
         pq=0.
@@ -1285,10 +1273,8 @@ profile.close()
 print("export profiles: %.3f s" % (timing.time() - start))
 
 #####################################################################
-# plot of solution
+# export of solution in vtu format
 #####################################################################
-# the 7-node P2+ element does not exist in vtk, but the 6-node one 
-# does, i.e. type=22. 
 
 if visu==1:
     vtufile=open('solution'+elt+'.vtu',"w")
@@ -1318,7 +1304,6 @@ if visu==1:
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (np.sum(p[iconP[0:mP,iel]])/mP))
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("</CellData>\n")
     #####
@@ -1332,16 +1317,6 @@ if visu==1:
     vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
     for i in range(0,nnx*nny):
         vtufile.write("%10e \n" %q[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='error u' Format='ascii'> \n")
-    for i in range(0,nnx*nny):
-        vtufile.write("%10e \n" %error_u[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='error v' Format='ascii'> \n")
-    for i in range(0,nnx*nny):
-        vtufile.write("%10e \n" %error_v[i])
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("</PointData>\n")
@@ -1505,8 +1480,6 @@ if visu==1:
        vtufile.write("</UnstructuredGrid>\n")
        vtufile.write("</VTKFile>\n")
        vtufile.close()
-
-
 
 print("-----------------------------")
 print("------------the end----------")

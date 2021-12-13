@@ -3,30 +3,32 @@ rm -f errors_*
 rm -f middle_*
 rm opla
 
+t=1
+
 for e in 1 2 3 4 5; do
     echo ========element= $e =======================
     echo 8x8
-    python3 stone.py   8   8 0 $e 0 > opla
+    python3 stone.py   8   8 0 $e $t > opla
     grep errv opla >> errors_$e
     grep middle opla >> middle_$e
     echo 16x16
-    python3 stone.py  16  16 0 $e 0 > opla
+    python3 stone.py  16  16 0 $e $t > opla
     grep errv opla >> errors_$e
     grep middle opla >> middle_$e
     echo 32x32
-    python3 stone.py  32  32 0 $e 0 > opla
+    python3 stone.py  32  32 0 $e $t > opla
     grep errv opla >> errors_$e
     grep middle opla >> middle_$e
     echo 64x64
-    python3 stone.py  64  64 0 $e 0 > opla
+    python3 stone.py  64  64 0 $e $t > opla
     grep errv opla >> errors_$e
     grep middle opla >> middle_$e
     echo 128x128
-    python3 stone.py 128 128 0 $e 0 > opla
+    python3 stone.py 128 128 0 $e $t > opla
     grep errv opla >> errors_$e
     grep middle opla >> middle_$e
     echo 192x192
-    python3 stone.py 192 192 0 $e 0 > opla
+    python3 stone.py 192 192 0 $e $t > opla
     grep errv opla >> errors_$e
     grep middle opla >> middle_$e
 
