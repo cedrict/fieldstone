@@ -1,0 +1,19 @@
+#! /bin/bash
+rm -f errors_*
+rm opla*
+
+for e in 1 2 3 ; do
+    echo ========element= $e =======================
+    for l in {0..50} ; do
+
+        for r in {8..64}; do 
+
+            echo res=$r
+            python3 stone.py  $r  $r 0 $e 2 > opla_$l
+            grep errv opla_$l >> errors_$e
+
+        done
+    done
+done
+
+

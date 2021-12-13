@@ -277,16 +277,18 @@ ndofP=1  # number of pressure degrees of freedom
 Lx=1
 Ly=1
 
-if int(len(sys.argv) == 5):
-   nelx = int(sys.argv[1])
-   nely = int(sys.argv[2])
-   visu = int(sys.argv[3])
-   elt  = int(sys.argv[4])
+if int(len(sys.argv) == 6):
+   nelx   = int(sys.argv[1])
+   nely   = int(sys.argv[2])
+   visu   = int(sys.argv[3])
+   elt    = int(sys.argv[4])
+   tridiag= int(sys.argv[5])
 else:
-   nelx = 320
-   nely = 320
-   visu = 1
-   elt  = 2
+   nelx    = 128
+   nely    = 128
+   visu    = 1
+   elt     = 1
+   tridiag = 0
 
 if elt==1: elt='MINI'
 if elt==2: elt='P2P1'
@@ -367,6 +369,7 @@ print ('nel  =',nel)
 print ('NfemV=',NfemV)
 print ('NfemP=',NfemP)
 print ('Nfem =',Nfem)
+print ('tridiag =',tridiag)
 print("-----------------------------")
 
 eps=1e-9
@@ -448,29 +451,65 @@ print("grid: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 iconV=np.zeros((mV,nel),dtype=np.int32)
+flip=np.zeros(nelx*nely,dtype=np.int32)
+if tridiag==0:
+   flip[:]=0
+elif tridiag==1:
+   flip[:]=1
+else:
+   counter2=0
+   for j in range(0,nely):
+       for i in range(0,nelx):
+           flip[counter2] = random.randint(0, 1)
+           counter2+=1
+   print(flip)
+   print(np.sum(flip))
 
 if elt=='CR':
    counter=0
+   counter2=0
    for j in range(0,nely):
        for i in range(0,nelx):
-             # lower left triangle
-             iconV[0,counter]=(i)*2+1+(j)*2*nnx      -1  # 1 of q2
-             iconV[1,counter]=(i)*2+3+(j)*2*nnx      -1  # 3 of q2
-             iconV[2,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1  # 7 of q2
-             iconV[3,counter]=(i)*2+2+(j)*2*nnx      -1  # 2 of q2
-             iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1  # 5 of q2
-             iconV[5,counter]=(i)*2+1+(j)*2*nnx+nnx  -1  # 4 of q2
-             iconV[6,counter]=nnx*nny+counter
-             counter=counter+1
-             # upper right triangle
-             iconV[0,counter]=(i)*2+3+(j)*2*nnx+nnx*2-1  # 9 of Q2
-             iconV[1,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1  # 7 of Q2
-             iconV[2,counter]=(i)*2+3+(j)*2*nnx      -1  # 3 of Q2
-             iconV[3,counter]=(i)*2+2+(j)*2*nnx+nnx*2-1  # 8 of Q2
-             iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1  # 5 of Q2
-             iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx  -1  # 6 of Q2
-             iconV[6,counter]=nnx*nny+counter
-             counter=counter+1
+           if flip[counter2]==0:
+              # lower left triangle
+              iconV[0,counter]=(i)*2+1+(j)*2*nnx      -1 #0 of Q2
+              iconV[1,counter]=(i)*2+3+(j)*2*nnx      -1 #1 of Q2
+              iconV[2,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1 #3 of Q2
+              iconV[3,counter]=(i)*2+2+(j)*2*nnx      -1 #4 of Q2
+              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1 #8 of Q2
+              iconV[5,counter]=(i)*2+1+(j)*2*nnx+nnx  -1 #7 of Q2
+              iconV[6,counter]=nnx*nny+counter
+              counter=counter+1
+              # upper right triangle
+              iconV[0,counter]=(i)*2+3+(j)*2*nnx+nnx*2-1 #2 of Q2 
+              iconV[1,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1 #3 of Q2
+              iconV[2,counter]=(i)*2+3+(j)*2*nnx      -1 #1 of Q2
+              iconV[3,counter]=(i)*2+2+(j)*2*nnx+nnx*2-1 #6 of Q2
+              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1 #8 of Q2
+              iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx  -1 #5 of Q2
+              iconV[6,counter]=nnx*nny+counter
+              counter=counter+1
+           else:
+              # lower right triangle
+              iconV[0,counter]=(i)*2+3+(j)*2*nnx       -1 #1
+              iconV[1,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+              iconV[2,counter]=(i)*2+1+(j)*2*nnx       -1 #0
+              iconV[3,counter]=(i)*2+3+(j)*2*nnx+nnx   -1 #5
+              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
+              iconV[5,counter]=(i)*2+2+(j)*2*nnx       -1 #4
+              iconV[6,counter]=nnx*nny+counter
+              counter=counter+1
+              # upper left triangle
+              iconV[0,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+              iconV[1,counter]=(i)*2+1+(j)*2*nnx       -1 #0
+              iconV[2,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+              iconV[3,counter]=(i)*2+1+(j)*2*nnx+nnx   -1 #7
+              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
+              iconV[5,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
+              iconV[6,counter]=nnx*nny+counter
+              counter=counter+1
+
+           counter2+=1
        #end for
    #end for
    for iel in range (0,nel): #bubble nodes
@@ -480,43 +519,79 @@ if elt=='CR':
 
 if elt=='P2P1':
    counter=0
+   counter2=0
    for j in range(0,nely):
        for i in range(0,nelx):
-             # lower left triangle
-             iconV[0,counter]=(i)*2+1+(j)*2*nnx      -1  
-             iconV[1,counter]=(i)*2+3+(j)*2*nnx      -1  
-             iconV[2,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1  
-             iconV[3,counter]=(i)*2+2+(j)*2*nnx      -1  
-             iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1  
-             iconV[5,counter]=(i)*2+1+(j)*2*nnx+nnx  -1  
-             counter=counter+1
-             # upper right triangle
-             iconV[0,counter]=(i)*2+3+(j)*2*nnx+nnx*2-1  
-             iconV[1,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1  
-             iconV[2,counter]=(i)*2+3+(j)*2*nnx      -1  
-             iconV[3,counter]=(i)*2+2+(j)*2*nnx+nnx*2-1  
-             iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1  
-             iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx  -1  
-             counter=counter+1
+           if flip[counter2]==0:
+              # lower left triangle
+              iconV[0,counter]=(i)*2+1+(j)*2*nnx      -1 #0 of Q2
+              iconV[1,counter]=(i)*2+3+(j)*2*nnx      -1 #1 of Q2
+              iconV[2,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1 #3 of Q2
+              iconV[3,counter]=(i)*2+2+(j)*2*nnx      -1 #4 of Q2
+              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1 #8 of Q2
+              iconV[5,counter]=(i)*2+1+(j)*2*nnx+nnx  -1 #7 of Q2
+              counter=counter+1
+              # upper right triangle
+              iconV[0,counter]=(i)*2+3+(j)*2*nnx+nnx*2-1 #2 of Q2 
+              iconV[1,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1 #3 of Q2
+              iconV[2,counter]=(i)*2+3+(j)*2*nnx      -1 #1 of Q2
+              iconV[3,counter]=(i)*2+2+(j)*2*nnx+nnx*2-1 #6 of Q2
+              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1 #8 of Q2
+              iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx  -1 #5 of Q2
+              counter=counter+1
+           else:
+              # lower right triangle
+              iconV[0,counter]=(i)*2+3+(j)*2*nnx       -1 #1
+              iconV[1,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+              iconV[2,counter]=(i)*2+1+(j)*2*nnx       -1 #0
+              iconV[3,counter]=(i)*2+3+(j)*2*nnx+nnx   -1 #5
+              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
+              iconV[5,counter]=(i)*2+2+(j)*2*nnx       -1 #4
+              counter=counter+1
+              # upper left triangle
+              iconV[0,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+              iconV[1,counter]=(i)*2+1+(j)*2*nnx       -1 #0
+              iconV[2,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+              iconV[3,counter]=(i)*2+1+(j)*2*nnx+nnx   -1 #7
+              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
+              iconV[5,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
+              counter=counter+1
+
+           counter2+=1
        #end for
    #end for
 
 if elt=='MINI':
    counter=0
+   counter2=0
    for j in range(0,nely):
        for i in range(0,nelx):
-             # lower left triangle
-             iconV[0,counter]=i+j*(nelx+1)   
-             iconV[1,counter]=i+1+j*(nelx+1) 
-             iconV[2,counter]=i+(j+1)*(nelx+1)
-             iconV[3,counter]=counter+nnx*nny   
-             counter=counter+1
-             # upper right triangle
-             iconV[0,counter]=i + 1 + j * (nelx + 1)
-             iconV[1,counter]=i + 1 + (j + 1) * (nelx + 1)
-             iconV[2,counter]=i + (j + 1) * (nelx + 1)
-             iconV[3,counter]=counter+nnx*nny  
-             counter=counter+1
+           if flip[counter2]==0:
+              # lower left triangle
+              iconV[0,counter]=i+j*(nelx+1)   
+              iconV[1,counter]=i+1+j*(nelx+1) 
+              iconV[2,counter]=i+(j+1)*(nelx+1)
+              iconV[3,counter]=counter+nnx*nny   
+              counter=counter+1
+              # upper right triangle
+              iconV[0,counter]=i+1+j*(nelx+1)
+              iconV[1,counter]=i+1+(j+1) *(nelx+1)
+              iconV[2,counter]=i+(j+1)*(nelx+1)
+              iconV[3,counter]=counter+nnx*nny  
+              counter=counter+1
+           else:
+              # lower right triangle
+              iconV[0,counter]=i+1+j*(nelx+1)     #1 of Q1
+              iconV[1,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
+              iconV[2,counter]=i+j*(nelx+1)       #0 of Q1
+              iconV[3,counter]=counter+nnx*nny   
+              counter+=1
+              # upper left triangle
+              iconV[0,counter]=i+(j+1)*(nelx+1)   #3 of Q1
+              iconV[1,counter]=i+j*(nelx+1)       #0 of Q1
+              iconV[2,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
+              iconV[3,counter]=counter+nnx*nny   
+              counter=counter+1
        #end for
    #end for
    for iel in range (0,nel): #bubble nodes
@@ -528,15 +603,15 @@ if elt=='Q2Q1' or elt=='Q2P1':
    counter = 0
    for j in range(0,nely):
        for i in range(0,nelx):
-           iconV[0,counter]=(i)*2+1+(j)*2*nnx -1
-           iconV[1,counter]=(i)*2+3+(j)*2*nnx -1
-           iconV[2,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1
-           iconV[3,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1
-           iconV[4,counter]=(i)*2+2+(j)*2*nnx -1
-           iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx -1
-           iconV[6,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1
-           iconV[7,counter]=(i)*2+1+(j)*2*nnx+nnx -1
-           iconV[8,counter]=(i)*2+2+(j)*2*nnx+nnx -1
+           iconV[0,counter]=(i)*2+1+(j)*2*nnx       -1 #0
+           iconV[1,counter]=(i)*2+3+(j)*2*nnx       -1 #1
+           iconV[2,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+           iconV[3,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+           iconV[4,counter]=(i)*2+2+(j)*2*nnx       -1 #4
+           iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx   -1 #5
+           iconV[6,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
+           iconV[7,counter]=(i)*2+1+(j)*2*nnx+nnx   -1 #7
+           iconV[8,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
            counter += 1
        #end for
    #end for
@@ -590,18 +665,32 @@ if elt=='MINI':
 
 if elt=='P2P1':
    counter=0
+   counter2=0
    for j in range(0,nely):
        for i in range(0,nelx):
-             # lower left triangle
-             iconP[0,counter]=i+j*(nelx+1)   
-             iconP[1,counter]=i+1+j*(nelx+1) 
-             iconP[2,counter]=i+(j+1)*(nelx+1)
-             counter=counter+1
-             # upper right triangle
-             iconP[0,counter]=i+1+(j+1)*(nelx+1)
-             iconP[1,counter]=i+(j+1)*(nelx+1)
-             iconP[2,counter]=i+1+j*(nelx+1)
-             counter=counter+1
+           if flip[counter2]==0:
+              # lower left triangle
+              iconP[0,counter]=i+j*(nelx+1)     #0 of Q1
+              iconP[1,counter]=i+1+j*(nelx+1)   #1 of Q1
+              iconP[2,counter]=i+(j+1)*(nelx+1) #3 of Q1
+              counter+=1
+              # upper right triangle
+              iconP[0,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
+              iconP[1,counter]=i+(j+1)*(nelx+1)   #3 of Q1
+              iconP[2,counter]=i+1+j*(nelx+1)     #1 of Q1
+              counter+=1
+           else:
+              # lower right triangle
+              iconP[0,counter]=i+1+j*(nelx+1)     #1 of Q1
+              iconP[1,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
+              iconP[2,counter]=i+j*(nelx+1)       #0 of Q1
+              counter+=1
+              # upper left triangle
+              iconP[0,counter]=i+(j+1)*(nelx+1)   #3 of Q1
+              iconP[1,counter]=i+j*(nelx+1)       #0 of Q1
+              iconP[2,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
+              counter+=1
+           counter2+=1
       #end for
    #end for
    counter=0    
@@ -1289,6 +1378,135 @@ if visu==1:
     vtufile.write("</UnstructuredGrid>\n")
     vtufile.write("</VTKFile>\n")
     vtufile.close()
+
+
+    if elt=='MINI' or elt=='P2P1' or elt=='CR':
+       vtufile=open('solutionPtri_'+elt+'.vtu',"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nel*mP,nel))
+       #####
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+       for iel in range(0,nel):
+           vtufile.write("%10e %10e %10e \n" %(xP[iconP[0,iel]],yP[iconP[0,iel]],0.))
+           vtufile.write("%10e %10e %10e \n" %(xP[iconP[1,iel]],yP[iconP[1,iel]],0.))
+           vtufile.write("%10e %10e %10e \n" %(xP[iconP[2,iel]],yP[iconP[2,iel]],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
+       #####
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+       for iel in range(0,nel):
+           vtufile.write("%10e \n" %p[iconP[0,iel]])
+           vtufile.write("%10e \n" %p[iconP[1,iel]])
+           vtufile.write("%10e \n" %p[iconP[2,iel]])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</PointData>\n")
+       #####
+       vtufile.write("<Cells>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d %d %d\n" %(3*iel,3*iel+1,3*iel+2))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %((iel+1)*3))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %5)
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</Cells>\n")
+       #####
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
+
+    if elt=='Q2Q1' or elt=='Q2P1':
+       vtufile=open('solutionPquad_'+elt+'.vtu',"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nel*4,nel))
+       #####
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+       for iel in range(0,nel):
+           vtufile.write("%10e %10e %10e \n" %(xV[iconV[0,iel]],yV[iconV[0,iel]],0.))
+           vtufile.write("%10e %10e %10e \n" %(xV[iconV[1,iel]],yV[iconV[1,iel]],0.))
+           vtufile.write("%10e %10e %10e \n" %(xV[iconV[2,iel]],yV[iconV[2,iel]],0.))
+           vtufile.write("%10e %10e %10e \n" %(xV[iconV[3,iel]],yV[iconV[3,iel]],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
+       #####
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+       for iel in range(0,nel):
+           if elt=='Q2Q1':
+              vtufile.write("%10e \n" %p[iconP[0,iel]])
+              vtufile.write("%10e \n" %p[iconP[1,iel]])
+              vtufile.write("%10e \n" %p[iconP[2,iel]])
+              vtufile.write("%10e \n" %p[iconP[3,iel]])
+           if elt=='Q2P1':
+              NNNP[0:mP]=NNP(-1,-1)
+              pq=0.
+              for k in range(0,mP):
+                  pq+=NNNP[k]*p[iconP[k,iel]]
+              vtufile.write("%10e \n" %pq)
+
+              NNNP[0:mP]=NNP(+1,-1)
+              pq=0.
+              for k in range(0,mP):
+                  pq+=NNNP[k]*p[iconP[k,iel]]
+              vtufile.write("%10e \n" %pq)
+
+              NNNP[0:mP]=NNP(+1,+1)
+              pq=0.
+              for k in range(0,mP):
+                  pq+=NNNP[k]*p[iconP[k,iel]]
+              vtufile.write("%10e \n" %pq)
+
+              NNNP[0:mP]=NNP(-1,+1)
+              pq=0.
+              for k in range(0,mP):
+                  pq+=NNNP[k]*p[iconP[k,iel]]
+              vtufile.write("%10e \n" %pq)
+
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</PointData>\n")
+       #####
+       vtufile.write("<Cells>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d %d %d %d\n" %(4*iel,4*iel+1,4*iel+2,4*iel+3))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %((iel+1)*4))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %9)
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</Cells>\n")
+       #####
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
+
+
 
 print("-----------------------------")
 print("------------the end----------")

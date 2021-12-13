@@ -182,6 +182,25 @@ as a function of the element size $h$ (left column) and the total number of dofs
 Note the 1.4 convergence of pressure for MINI
 
 \newpage
+Influence of mesh quality: A random perturbation is added to the interior nodes. 
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp4_rand/errors_V.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp4_rand/errors_V_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp4_rand/errors_P.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp4_rand/errors_P_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp4_rand/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp4_rand/vrms_ndof.pdf}\\
+{\captionfont Velocity $L_2$ error (top row), pressure $L_2$ error (middle row) and root
+mean square velocity (bottom row) as a function of the element size $h$ (left column) 
+and the total number of degrees of freedom (right column).}
+\end{center}
+
+
+
+
+
+\newpage
 %========================================================
 \subsection*{SolVi}
 
@@ -265,6 +284,12 @@ SolKz
 &3&3&2&4
 &3&1&2&1
 &3&1&2&3\\
+SolKz (rand)
+&2&4&1.2&5
+&3&2&2&2
+&3&3&2&4
+&3&1&2&1
+&3&1&2&3\\
 SolVi 
 &1&-&0.5&3
 &1&-&0.5&1
@@ -312,7 +337,6 @@ on the nb of FGMRES iterations of our paper cannot be carried out here.
 for SolVi (and may be a bit for SolKz). Should I implement elemental averaging and try?  
 \item are there other elements you wish to add to this list? $P_3\times P_2$ ? 
 \item should I better randomize the triangles by alternating the quadrilateral diagonals (SW-NE and NW-SE)?
-\item should I run SolKz with randomised mesh?
 \item I plot now the velocity and pressure errors as a function of the total number of dofs. Does this make sense? or should I 
 plot the velocity errors as a fct of the velocity dofs and the pressure errors  as a fct of pressure dofs?
 \item any thoughts about my ranking system ?like it ? hate it ?
