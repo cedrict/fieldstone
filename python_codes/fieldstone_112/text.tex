@@ -12,9 +12,12 @@ This \stone showcases the MINI (Section~\ref{pair:mini}),
 $P_2\times P_1$ (Section~\ref{ss:p2p1}), $Q_2\times Q_1$ (Section~\ref{ss:pairq2q1}), 
 $Q_2\times P_{-1}$ (Section~\ref{ss:pairq2pm1} - unmapped approach, see \stone~76) 
 and Crouzeix-Raviart  (Section~\ref{sec:crouzeix-raviart}) elements.
+All experiments take place in the unit square. Boundary conditions are either
+no-slip or free-slip.
 
 The mesh is composed of $nel_x \times nel_y$ cells which are cut in half via the same 
-diagonal (NW-SE) into 2 triangles for simplicity when triangular elements are used: 
+diagonal (NW-SE) into 2 triangles for simplicity\footnote{I revisit this for SolVi} 
+when triangular elements are used: 
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_112/results/exp1/grid_quads}
@@ -25,9 +28,18 @@ diagonal (NW-SE) into 2 triangles for simplicity when triangular elements are us
 A pressure dof is fixed so remove the nullspace and the obtained pressure field
 is then normalised so that $\int_\Omega p dV = 0$.
 
-Resolutions are ranging from 8x8 to 512x512. The high resolution runs take hours 
-because python is slow. Most of what follows only goes up to 256x256. 320x320 seems 
-to be the limit on my 32Gb-RAM laptop.  
+Resolutions are ranging from $8\times 8$ to $256\times256$. The high resolution runs take hours 
+because python is slow. 320x320 seems to be the limit on my 32Gb-RAM laptop.  
+
+There are a number of important parameters which allow to control the type of calculation:
+\begin{itemize}
+\item {\tt elt}=MINI, P2P1, CR, Q2Q1 or Q2P1.
+\item {\tt experiment}: 1$\rightarrow$ Donea \& Huerta manufactured solution;
+2 $\rightarrow$ high viscosity sinker; 3$\rightarrow$ SolCx; 4$\rightarrow$ SolCx; 
+5$\rightarrow$ SolVi.
+\item {\tt nelx,nely}:  the number of cells in each direction
+\item {\tt randomize\_mesh} allows to add a small random perturbation to the nodes
+\end{itemize}
 
 \newpage
 %========================================================
@@ -231,6 +243,61 @@ high viscosity disc. Left: 64x64 cells; right: 128x128 cells.}
 
 
 \newpage
+A study on the influence of how quadrilaterals are split:
+The mesh consists of $nelx \times nely$ cells. When triangular elements are used, 
+each quadrilateral cell can be split either along one diagonal or the other. 
+There are then three options in the code: if {\tt tridiag}=0, then all cells are split 
+along the NW-SE diagonal, if {\tt tridiag}=1, then all cells are split
+along the SW-NE diagonal, and if {\tt tridiag}=2, then cells are split 
+randomly across one or the other diagonal, as shown in the following figure:
+
+\begin{center}
+\includegraphics[width=4.5cm]{python_codes/fieldstone_112/results/exp5_tridiag/tridiag0}
+\includegraphics[width=4.5cm]{python_codes/fieldstone_112/results/exp5_tridiag/tridiag1}
+\includegraphics[width=4.5cm]{python_codes/fieldstone_112/results/exp5_tridiag/tridiag2}\\
+{\captionfont From left to right: tridiag=0,1,2. 16x16 cells.}
+\end{center}
+
+\begin{center}
+\input{python_codes/fieldstone_112/tikz_split}
+\end{center}
+
+
+\newpage
+The following plot are similar to those before but each element/resolution combination has been run 
+20 times so as to generate 20 different meshes with different random cell splits. 
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_V_MINI.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_V_P2P1.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_V_CR.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_P_MINI.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_P_P2P1.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_P_CR.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_V_ndof.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_P_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_tridiag/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_tridiag/vrms_ndof.pdf}\\
+{\captionfont Velocity $L_2$ error (top row), pressure $L_2$ error (middle row) and vrms (bottom row) 
+as a function of the element size $h$ (left column) and the total number of dofs (right column).}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_112/results/exp5_tridiag/64x64_tridiag1/MINI}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_112/results/exp5_tridiag/64x64_tridiag1/P2P1}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_112/results/exp5_tridiag/64x64_tridiag1/CR}\\
+{\captionfont From left to right: pressure field obtained with MINI, P2P1 and CR elements on 64x64 mesh.}
+\end{center}
+
+
+
+
+
+
+
+
+\newpage
 
 
 
@@ -296,6 +363,7 @@ SolVi
 &1&-&0.5&4
 &1&-&0.5&2
 &1&-&0.5&5\\
+SolVi (multi) \\ 
 \hline
 total  
 &-&17&-&16
@@ -324,7 +392,6 @@ the least accurate element, even looking at the errors as function of number of 
 \end{itemize}
 
 
-
 %========================================================
 \subsection*{Open questions}
 
@@ -336,11 +403,12 @@ on the nb of FGMRES iterations of our paper cannot be carried out here.
 \item Right now viscosity is computed on quadrature point. No averaging. It probably only really matters 
 for SolVi (and may be a bit for SolKz). Should I implement elemental averaging and try?  
 \item are there other elements you wish to add to this list? $P_3\times P_2$ ? 
-\item should I better randomize the triangles by alternating the quadrilateral diagonals (SW-NE and NW-SE)?
-\item I plot now the velocity and pressure errors as a function of the total number of dofs. Does this make sense? or should I 
-plot the velocity errors as a fct of the velocity dofs and the pressure errors  as a fct of pressure dofs?
+\item I plot now the velocity and pressure errors as a function of the total number of dofs. 
+Does this make sense? or should I plot the velocity errors as a fct of the velocity dofs and 
+the pressure errors  as a fct of pressure dofs?
 \item any thoughts about my ranking system ?like it ? hate it ?
 \end{itemize}
 
+\vspace{0.5cm}
 
 note to myself: check and probably remove stone 46, 47 ?
