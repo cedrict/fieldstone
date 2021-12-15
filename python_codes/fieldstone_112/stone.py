@@ -9,6 +9,7 @@ from scipy.sparse import lil_matrix
 import solcx as solcx
 import solkz as solkz
 import solvi as solvi
+import solvg as solvg
 import random
 
 #------------------------------------------------------------------------------
@@ -158,6 +159,8 @@ def bx(x,y):
        val=0
     if experiment==5:
        val=0
+    if experiment==6:
+       val,xx=solvg.SolVgGravity(x,y)
     return val
 
 def by(x,y):
@@ -177,6 +180,8 @@ def by(x,y):
        val=np.sin(2.*y)*np.cos(3.*np.pi*x)
     if experiment==5:
        val=0
+    if experiment==6:
+       xx,val=solvg.SolVgGravity(x,y)
     return val
 
 #------------------------------------------------------------------------------
@@ -203,6 +208,8 @@ def eta(x,y):
           val=1e3
        else:
           val=1.
+    if experiment==6:
+       val=-np.sin(x*x*y*y+x*y+5.)+1.+0.001 #epsilon
     return val
 
 #------------------------------------------------------------------------------
@@ -220,6 +227,8 @@ def velocity_x(x,y):
        val,vi,pi=solkz.SolKzSolution(x,y) 
     if experiment==5:
        val,vi,pi=solvi.SolViSolution(x,y) 
+    if experiment==6:
+       val=x**3*y+x**2+x*y+x
     return val
 
 def velocity_y(x,y):
@@ -233,6 +242,8 @@ def velocity_y(x,y):
        ui,val,pi=solkz.SolKzSolution(x,y) 
     if experiment==5:
        ui,val,pi=solvi.SolViSolution(x,y) 
+    if experiment==6:
+       val=-1.5*x**2*y**2-2*x*y-0.5*y**2-y
     return val
 
 def pressure(x,y):
@@ -246,6 +257,8 @@ def pressure(x,y):
        ui,vi,val=solkz.SolKzSolution(x,y) 
     if experiment==5:
        ui,vi,val=solvi.SolViSolution(x,y) 
+    if experiment==6:
+       val=x**2*y**2+x*y+5. - Lx**4/9.-Lx**2/4.-5.
     return val
 
 #------------------------------------------------------------------------------
@@ -266,7 +279,7 @@ def pressure(x,y):
 # experiment=4: solKz
 # experiment=5: solVi
 
-experiment=5
+experiment=6
 
 randomize_mesh=False
 
@@ -288,10 +301,10 @@ if int(len(sys.argv) == 6):
    elt    = int(sys.argv[4])
    tridiag= int(sys.argv[5])
 else:
-   nelx    = 16
-   nely    = 16
+   nelx    = 64
+   nely    = 64
    visu    = 1
-   elt     = 1
+   elt     = 4
    tridiag = 2
 
 if elt==1: elt='MINI'
@@ -379,6 +392,10 @@ print("-----------------------------")
 eps=1e-9
 
 unmappedQ2P1=True
+
+if experiment==6: 
+   Lx=2
+   Ly=2
 
 #----------------------------------------------------------
 # integration points coeffs and weights 
@@ -857,9 +874,12 @@ if experiment==3 or experiment==4:
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
        if yV[i]>(Ly-eps):
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-if experiment==5:
+if experiment==5 or experiment==6:
    for i in range(0,NV):
-       ui,vi,pi=solvi.SolViSolution(xV[i],yV[i])
+       #   ui,vi,pi=solvi.SolViSolution(xV[i],yV[i])
+       #if experiment==6:
+       ui=velocity_x(xV[i],yV[i])
+       vi=velocity_y(xV[i],yV[i])
        if xV[i]<eps:
           bc_fix[i*ndofV+0]   = True ; bc_val[i*ndofV+0] = ui
           bc_fix[i*ndofV+1]   = True ; bc_val[i*ndofV+1] = vi
@@ -1123,7 +1143,7 @@ for iel in range (0,nel):
     # end for kq
 # end for iel
 
-p[:]-=pavrg
+p[:]-=pavrg/Lx/Ly
 
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
@@ -1185,9 +1205,9 @@ for iel in range (0,nel):
     # end for kq
 # end for iel
 
-errv=np.sqrt(errv)
-errp=np.sqrt(errp)
-vrms=np.sqrt(vrms)
+errv=np.sqrt(errv/Lx/Ly)
+errp=np.sqrt(errp/Lx/Ly)
+vrms=np.sqrt(vrms/Lx/Ly)
 
 print("     -> hx= %.8f ; errv= %.12f ; errp= %.10f ; vrms= %.10f ; NV= %d ; NP= %d" \
       %(Lx/nelx,errv,errp,vrms,NV,NP))
@@ -1314,10 +1334,21 @@ if visu==1:
         vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
     vtufile.write("</DataArray>\n")
     #--
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (th)' Format='ascii'> \n")
+    for i in range(0,nnx*nny):
+        vtufile.write("%10e %10e %10e \n" %(velocity_x(xV[i],yV[i]),velocity_y(xV[i],yV[i]),0.))
+    vtufile.write("</DataArray>\n")
+    #--
     vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
     for i in range(0,nnx*nny):
         vtufile.write("%10e \n" %q[i])
     vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='q (th)' Format='ascii'> \n")
+    for i in range(0,nnx*nny):
+        vtufile.write("%10e \n" % (pressure(xV[i],yV[i])))
+    vtufile.write("</DataArray>\n")
+
     #--
     vtufile.write("</PointData>\n")
     #####

@@ -11,12 +11,24 @@ for e in 1 2 3 4 5; do
     python3 stone.py   8   8 0 $e $t > opla
     grep errv opla >> errors_$e
     grep middle opla >> middle_$e
+    echo 12x12
+    python3 stone.py  12  12 0 $e $t > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
     echo 16x16
     python3 stone.py  16  16 0 $e $t > opla
     grep errv opla >> errors_$e
     grep middle opla >> middle_$e
+    echo 24x24
+    python3 stone.py  24  24 0 $e $t > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
     echo 32x32
     python3 stone.py  32  32 0 $e $t > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
+    echo 48x48
+    python3 stone.py  48  48 0 $e $t > opla
     grep errv opla >> errors_$e
     grep middle opla >> middle_$e
     echo 64x64

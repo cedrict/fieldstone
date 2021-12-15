@@ -12,8 +12,7 @@ This \stone showcases the MINI (Section~\ref{pair:mini}),
 $P_2\times P_1$ (Section~\ref{ss:p2p1}), $Q_2\times Q_1$ (Section~\ref{ss:pairq2q1}), 
 $Q_2\times P_{-1}$ (Section~\ref{ss:pairq2pm1} - unmapped approach, see \stone~76) 
 and Crouzeix-Raviart  (Section~\ref{sec:crouzeix-raviart}) elements.
-All experiments take place in the unit square. Boundary conditions are either
-no-slip or free-slip.
+All experiments take place in the unit square (except SolVg). 
 
 The mesh is composed of $nel_x \times nel_y$ cells which are cut in half via the same 
 diagonal (NW-SE) into 2 triangles for simplicity\footnote{I revisit this for SolVi} 
@@ -25,18 +24,18 @@ when triangular elements are used:
 {\captionfont Quadrilaterals and triangles mesh for a resolution of $16\times 16$ cells.} 
 \end{center}
 
-A pressure dof is fixed so remove the nullspace and the obtained pressure field
+The last pressure dof is fixed to remove the nullspace and the obtained pressure field
 is then normalised so that $\int_\Omega p dV = 0$.
 
-Resolutions are ranging from $8\times 8$ to $256\times256$. The high resolution runs take hours 
-because python is slow. 320x320 seems to be the limit on my 32Gb-RAM laptop.  
+Resolutions are ranging from $8\times 8$ to maximum $256\times256$. The high resolution runs take hours 
+because python is slow. $320\times 320$ seems to be the limit on my 32Gb-RAM laptop.  
 
-There are a number of important parameters which allow to control the type of calculation:
+These are the important numerical parameters which allow to control the type of calculation in the code:
 \begin{itemize}
 \item {\tt elt}=MINI, P2P1, CR, Q2Q1 or Q2P1.
 \item {\tt experiment}: 1$\rightarrow$ Donea \& Huerta manufactured solution;
 2 $\rightarrow$ high viscosity sinker; 3$\rightarrow$ SolCx; 4$\rightarrow$ SolCx; 
-5$\rightarrow$ SolVi.
+5$\rightarrow$ SolVi; 6$\rightarrow$ SolVg (viscosity grooves).
 \item {\tt nelx,nely}:  the number of cells in each direction
 \item {\tt randomize\_mesh} allows to add a small random perturbation to the nodes
 \end{itemize}
@@ -243,7 +242,8 @@ high viscosity disc. Left: 64x64 cells; right: 128x128 cells.}
 
 
 \newpage
-A study on the influence of how quadrilaterals are split:
+%===================================================================================
+\subsection*{SolVi - focus on triangular elements and how quadrilaterals are split}
 The mesh consists of $nelx \times nely$ cells. When triangular elements are used, 
 each quadrilateral cell can be split either along one diagonal or the other. 
 There are then three options in the code: if {\tt tridiag}=0, then all cells are split 
@@ -260,34 +260,81 @@ randomly across one or the other diagonal, as shown in the following figure:
 
 \begin{center}
 \input{python_codes/fieldstone_112/tikz_split}
+{\captionfont How the biquadratic quadrilateral is split into two quadratic triangles. 
+Numbers correspond to internal numbering.}
 \end{center}
 
-
-\newpage
-The following plot are similar to those before but each element/resolution combination has been run 
-20 times so as to generate 20 different meshes with different random cell splits. 
-
-\begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_V_MINI.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_V_P2P1.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_V_CR.pdf}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_P_MINI.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_P_P2P1.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_P_CR.pdf}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_V_ndof.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_P_ndof.pdf}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_tridiag/vrms.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_tridiag/vrms_ndof.pdf}\\
-{\captionfont Velocity $L_2$ error (top row), pressure $L_2$ error (middle row) and vrms (bottom row) 
-as a function of the element size $h$ (left column) and the total number of dofs (right column).}
-\end{center}
-
+\vspace{1cm}
 
 \begin{center}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_112/results/exp5_tridiag/64x64_tridiag1/MINI}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_112/results/exp5_tridiag/64x64_tridiag1/P2P1}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_112/results/exp5_tridiag/64x64_tridiag1/CR}\\
-{\captionfont From left to right: pressure field obtained with MINI, P2P1 and CR elements on 64x64 mesh.}
+{\captionfont From left to right: pressure field obtained with MINI, P2P1 and CR elements on 64x64 mesh
+with SE-NW splitting.}
+\end{center}
+
+
+
+\newpage
+The following plot are similar to those before but each element/resolution combination has been run 
+25 times so as to generate 25 different meshes with different random cell splits. The important conclusion
+is that the maximum of the error across the 25 meshes converges faster for the pressure than for velocity
+(at least up to 100x100 resolutions)!
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_V_MINI.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_V_P2P1.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_V_CR.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_P_MINI.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_P_P2P1.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_P_CR.pdf}\\
+{\captionfont Velocity (top row) and pressure (bottom row) error as a function of the element size
+for the MINI (left), $P_2\times P_1$ (middle) and C-R element (right).}
+\end{center}
+
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_V_ndof.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_P_ndof.pdf}\\
+{\captionfont Velocity $L_2$ error (left), pressure $L_2$ error (right) as a function of the total 
+number of degrees of freedom.} 
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_tridiag/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_tridiag/vrms_ndof.pdf}\\
+{\captionfont vrms as a function of the element size $h$ (left) and the total number of dofs (right).}
+\end{center}
+
+SAY SOMETHING ABOUT RATES!
+
+\newpage
+%========================================================
+\subsection*{SolVg (Viscosity grooves)}
+
+This manufactured solution is presented in Section~\ref{mms7} and is also implemented in \aspect.
+Domain is 2x2. The $\epsilon$ parameter controls the viscosity amplitude and is set to 0.001.
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp6/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp6/press}
+\includegraphics[width=5cm]{python_codes/fieldstone_112/results/exp6/eta}\\
+{\captionfont Velocity, pressure and (elemental) viscosity field for $\epsilon=0.001$ on a 64x64 mesh}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp6/errors_V.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp6/errors_V_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp6/errors_P.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp6/errors_P_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp6/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp6/vrms_ndof.pdf}\\
+{\captionfont Velocity $L_2$ error (top row), pressure $L_2$ error (middle row) and vrms (bottom row) 
+as a function of the element size $h$ (left column) and the total number of dofs (right column).}
 \end{center}
 
 
@@ -295,8 +342,9 @@ as a function of the element size $h$ (left column) and the total number of dofs
 
 
 
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 
 
@@ -364,6 +412,12 @@ SolVi
 &1&-&0.5&2
 &1&-&0.5&5\\
 SolVi (multi) \\ 
+SolVg &
+2&4&1.15&4&
+3&2&2&2&
+3&3&2&3&
+3&1&2&1&
+3&1&2&2\\
 \hline
 total  
 &-&17&-&16
@@ -380,6 +434,12 @@ and the smaller the value the better the element.
 
 Note that SolVi measurements will be updated when the 512x512 runs have completed so for now Solvi is not 
 taken into account.
+
+
+
+
+
+
 
 %========================================================
 \subsection*{Preliminary Conclusions}
@@ -401,7 +461,7 @@ the least accurate element, even looking at the errors as function of number of 
 python solver. This means that no iterative solver is used (inner or outer) so that the discussion 
 on the nb of FGMRES iterations of our paper cannot be carried out here. 
 \item Right now viscosity is computed on quadrature point. No averaging. It probably only really matters 
-for SolVi (and may be a bit for SolKz). Should I implement elemental averaging and try?  
+for SolVi and SolVg (and may be a bit for SolKz). Should I implement elemental averaging and try?  
 \item are there other elements you wish to add to this list? $P_3\times P_2$ ? 
 \item I plot now the velocity and pressure errors as a function of the total number of dofs. 
 Does this make sense? or should I plot the velocity errors as a fct of the velocity dofs and 
