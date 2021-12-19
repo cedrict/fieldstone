@@ -8,49 +8,36 @@ import time as time
 import matplotlib.pyplot as plt
 
 #------------------------------------------------------------------------------
-def rho(x,y):
+
+def density(x,y):
     if (x-.5)**2+(y-0.5)**2<0.123456789**2:
        val=1.01
     else:
        val=1.
     return val
 
-def mu(x,y):
+def viscosity(x,y):
     if (x-.5)**2+(y-0.5)**2<0.123456789**2:
        val=1.e3
     else:
        val=1.
     return val
 
-def onePlot(variable, plotX, plotY, title, labelX, labelY, extVal, limitX, limitY, colorMap):
-    im = axes[plotX][plotY].imshow(np.flipud(variable),extent=extVal, cmap=colorMap, interpolation="nearest")
-    axes[plotX][plotY].set_title(title,fontsize=10, y=1.01)
-    if (limitX != 0.0):
-       axes[plotX][plotY].set_xlim(0,limitX)
-    if (limitY != 0.0):
-       axes[plotX][plotY].set_ylim(0,limitY)
-    axes[plotX][plotY].set_xlabel(labelX)
-    axes[plotX][plotY].set_ylabel(labelY)
-    fig.colorbar(im,ax=axes[plotX][plotY])
-    return
-
 #------------------------------------------------------------------------------
+#160x160 is maximum resolution for full square on 32Gb RAM laptop
 
 print("-----------------------------")
 print("--------fieldstone 02--------")
 print("-----------------------------")
 
-# declare variables
-print("variable declaration")
-
 m=4     # number of nodes making up an element
 ndof=2  # number of degrees of freedom per node
 
-#160x160 is maximum resolution for full square on 32Gb RAM laptop
+#0: Free slip
+#1: No slip
+#2: Open top
+bc_type=2
 
-FS=False
-NS=True
-OT=False
 half=False
 
 # allowing for argument parsing through command line
@@ -69,18 +56,14 @@ else:
    nelx=nely
    Lx=1. 
    Ly=1. 
-
     
-nnx=nelx+1  # number of elements, x direction
-nny=nely+1  # number of elements, y direction
-
-NV=nnx*nny  # number of nodes
-
+nnx=nelx+1     # number of elements, x direction
+nny=nely+1     # number of elements, y direction
+NV=nnx*nny     # number of nodes
 nel=nelx*nely  # number of elements, total
+Nfem=NV*ndof   # Total number of degrees of freedom
 
 penalty=1.e7  # penalty coefficient value
-
-Nfem=NV*ndof  # Total number of degrees of freedom
 
 eps=1.e-10
 
@@ -89,21 +72,17 @@ gy=-1.  # gravity vector, y component
 
 sqrt3=np.sqrt(3.)
 
-
 print('nelx=',nelx)
 print('nely=',nely)
-
-# declare arrays
-print("declaring arrays")
 
 #################################################################
 # grid point setup
 #################################################################
-
-print("grid point setup")
+start = time.time()
 
 x = np.empty(NV,dtype=np.float64)  # x coordinates
 y = np.empty(NV,dtype=np.float64)  # y coordinates
+
 counter = 0
 for j in range(0, nny):
     for i in range(0, nnx):
@@ -111,11 +90,12 @@ for j in range(0, nny):
         y[counter]=j*Ly/float(nely)
         counter += 1
 
+print("mesh setup: %.3f s" % (time.time() - start))
+
 #################################################################
 # connectivity
 #################################################################
-
-print("connectivity")
+start = time.time()
 
 icon =np.zeros((m,nel),dtype=np.int32)
 counter = 0
@@ -134,16 +114,17 @@ for j in range(0,nely):
 #     print ("node 3",icon[2][iel],"at pos.",x[icon[2][iel]], y[icon[2][iel]])
 #     print ("node 4",icon[3][iel],"at pos.",x[icon[3][iel]], y[icon[3][iel]])
 
+print("build icon: %.3f s" % (time.time() - start))
+
 #################################################################
 # define boundary conditions
 #################################################################
-
-print("defining boundary conditions")
+start = time.time()
 
 bc_fix=np.zeros(Nfem,dtype=np.bool)    # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=np.float64) # boundary condition, value
 
-if FS:
+if bc_type==0:
    for i in range(0,NV):
        if x[i]<eps:
           bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
@@ -154,7 +135,7 @@ if FS:
        if y[i]>(Ly-eps):
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
-if NS:
+if bc_type==1:
    for i in range(0,NV):
        if x[i]<eps:
           bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
@@ -170,7 +151,7 @@ if NS:
           bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
-if OT:
+if bc_type==2:
    for i in range(0,NV):
        if x[i]<eps:
           bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
@@ -179,11 +160,12 @@ if OT:
        if y[i]<eps:
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
+print("define b.c.: %.3f s" % (time.time() - start))
+
 #################################################################
 # build FE matrix
 #################################################################
-
-print("building FE matrix")
+start = time.time()
 
 a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
 b_mat = np.zeros((3,ndof*m),dtype=np.float64)   # gradient matrix B 
@@ -255,12 +237,15 @@ for iel in range(0, nel):
                                          [dNdy[i],dNdx[i]]]
 
             # compute elemental a_mat matrix
-            a_el += b_mat.T.dot(c_mat.dot(b_mat))*mu(xq,yq)*wq*jcob
+            a_el += b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq,yq)*wq*jcob
 
             # compute elemental rhs vector
             for i in range(0, m):
-                b_el[2*i  ]+=N[i]*jcob*wq*rho(xq,yq)*gx
-                b_el[2*i+1]+=N[i]*jcob*wq*rho(xq,yq)*gy
+                b_el[2*i  ]+=N[i]*jcob*wq*density(xq,yq)*gx
+                b_el[2*i+1]+=N[i]*jcob*wq*density(xq,yq)*gy
+
+        #end for
+    #end for
 
     # integrate penalty term at 1 point
     rq=0.
@@ -317,11 +302,14 @@ for iel in range(0, nel):
                     a_mat[m1,m2]+=a_el[ikk,jkk]
             rhs[m1]+=b_el[ikk]
 
+#end for iel 
+
+print("build matrix: %.3f s" % (time.time() - start))
+
 #################################################################
 # impose boundary conditions
 #################################################################
-
-print("imposing boundary conditions")
+start = time.time()
 
 for i in range(0, Nfem):
     if bc_fix[i]:
@@ -332,33 +320,38 @@ for i in range(0, Nfem):
            a_mat[j,i]=0.
            a_mat[i,i] = a_matref
        rhs[i]=a_matref*bc_val[i]
+    #end if
+#end for
 
-#print("a_mat (m,M) = %.4f %.4f" %(np.min(a_mat),np.max(a_mat)))
-#print("rhs   (m,M) = %.6f %.6f" %(np.min(rhs),np.max(rhs)))
+print("impose b.c.: %.3f s" % (time.time() - start))
 
 #################################################################
 # solve system
 #################################################################
-
 start = time.time()
+
 sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+
 print("solve time: %.3f s" % (time.time() - start))
-print("-----------------------------")
 
 #####################################################################
 # put solution into separate x,y velocity arrays
 #####################################################################
+start = time.time()
 
 u,v=np.reshape(sol,(NV,2)).T
 
-print("u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-print("v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
+print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
+print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
-np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+#np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+
+print("split solution: %.3f s" % (time.time() - start))
 
 #####################################################################
-# retrieve pressure
+# retrieve pressure and strain rate tensor 
 #####################################################################
+start = time.time()
 
 xc = np.zeros(nel,dtype=np.float64)  
 yc = np.zeros(nel,dtype=np.float64)  
@@ -366,7 +359,7 @@ p  = np.zeros(nel,dtype=np.float64)
 exx = np.zeros(nel,dtype=np.float64)  
 eyy = np.zeros(nel,dtype=np.float64)  
 exy = np.zeros(nel,dtype=np.float64)  
-visc = np.zeros(nel,dtype=np.float64)  
+eta = np.zeros(nel,dtype=np.float64)  
 dens = np.zeros(nel,dtype=np.float64)  
 sr = np.zeros(nel,dtype=np.float64)  
 
@@ -411,24 +404,26 @@ for iel in range(0,nel):
         exy[iel] += 0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
 
     p[iel]=-penalty*(exx[iel]+eyy[iel])
-    visc[iel]=mu(xc[iel],yc[iel])
-    dens[iel]=rho(xc[iel],yc[iel])
+    eta[iel]=viscosity(xc[iel],yc[iel])
+    dens[iel]=density(xc[iel],yc[iel])
     sr[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
 
-print("p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
-print("exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-print("eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-print("exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
-print("visc (m,M) %.4f %.4f " %(np.min(visc),np.max(visc)))
-print("dens (m,M) %.4f %.4f " %(np.min(dens),np.max(dens)))
+print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
+print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
+print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+print("     -> eta (m,M) %.4f %.4f " %(np.min(eta),np.max(eta)))
+print("     -> dens (m,M) %.4f %.4f " %(np.min(dens),np.max(dens)))
 
-np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
+#np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
+#np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
-np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+print("compute p & sr: %.3f s" % (time.time() - start))
 
 #####################################################################
 # compute vrms 
 #####################################################################
+start = time.time()
 
 vrms=0.
 
@@ -471,11 +466,18 @@ for iel in range(0, nel):
 
             vrms+=(uq**2+vq**2)*jcob*weightq
 
+        #end for
+    #end for
+#end for
+
 vrms=np.sqrt(vrms/Lx/Ly)
+
+print("compute vrms: %.3f s" % (time.time() - start))
 
 #####################################################################
 # export various measurements for stokes sphere benchmark 
 #####################################################################
+start = time.time()
 
 vel=np.sqrt(u**2+v**2)
 print('bench ',Lx/nelx,nel,Nfem,\
@@ -486,40 +488,80 @@ print('bench ',Lx/nelx,nel,Nfem,\
       np.min(p),np.max(p),
       vrms)
 
+print("measurements: %.3f s" % (time.time() - start))
+
 #####################################################################
-# plot of solution
+# export to vtu 
 #####################################################################
+start = time.time()
 
-u_temp=np.reshape(u,(nny,nnx))
-v_temp=np.reshape(v,(nny,nnx))
-p_temp=np.reshape(p,(nely,nelx))
-exx_temp=np.reshape(exx,(nely,nelx))
-eyy_temp=np.reshape(eyy,(nely,nelx))
-exy_temp=np.reshape(exy,(nely,nelx))
-visc_temp=np.reshape(visc,(nely,nelx))
-dens_temp=np.reshape(dens,(nely,nelx))
-sr_temp=np.reshape(sr,(nely,nelx))
+vtufile=open("solution.vtu","w")
+vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+vtufile.write("<UnstructuredGrid> \n")
+vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+#####
+vtufile.write("<Points> \n")
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+for i in range(0,NV):
+    vtufile.write("%10f %10f %10f \n" %(x[i],y[i],0.))
+vtufile.write("</DataArray>\n")
+vtufile.write("</Points> \n")
+#####
+vtufile.write("<CellData Scalars='scalars'>\n")
+vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%e \n" % p[iel])
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%e \n" % exx[iel])
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%e \n" % eyy[iel])
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%e \n" % exy[iel])
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='sr' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%e \n" % sr[iel])
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%e \n" % eta[iel])
+vtufile.write("</DataArray>\n")
+vtufile.write("</CellData>\n")
+#####
+vtufile.write("<PointData Scalars='scalars'>\n")
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+for i in range(0,NV):
+    vtufile.write("%e %e %e \n" %(u[i],v[i],0.))
+vtufile.write("</DataArray>\n")
+vtufile.write("</PointData>\n")
+#####
+vtufile.write("<Cells>\n")
+vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%d %d %d %d\n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel]))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%d \n" %((iel+1)*4))
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+for iel in range (0,nel):
+    vtufile.write("%d \n" %9)
+vtufile.write("</DataArray>\n")
+vtufile.write("</Cells>\n")
+#####
+vtufile.write("</Piece>\n")
+vtufile.write("</UnstructuredGrid>\n")
+vtufile.write("</VTKFile>\n")
+vtufile.close()
 
-fig,axes = plt.subplots(nrows=3,ncols=3,figsize=(18,18))
-
-uextent=(np.amin(x),np.amax(x),np.amin(y),np.amax(y))
-pextent=(np.amin(xc),np.amax(xc),np.amin(yc),np.amax(yc))
-
-onePlot(u_temp,       0, 0, "$v_x$",                 "x", "y", uextent,  0,  0, 'Spectral_r')
-onePlot(v_temp,       0, 1, "$v_y$",                 "x", "y", uextent,  0,  0, 'Spectral_r')
-onePlot(p_temp,       0, 2, "$p$",                   "x", "y", pextent, Lx, Ly, 'RdGy_r')
-onePlot(exx_temp,     1, 0, "$\dot{\epsilon}_{xx}$", "x", "y", pextent, Lx, Ly, 'viridis')
-onePlot(eyy_temp,     1, 1, "$\dot{\epsilon}_{yy}$", "x", "y", pextent, Lx, Ly, 'viridis')
-onePlot(exy_temp,     1, 2, "$\dot{\epsilon}_{xy}$", "x", "y", pextent, Lx, Ly, 'viridis')
-onePlot(sr_temp,      2, 0, "$\dot{\epsilon}$",      "x", "y", pextent,  0,  0, 'viridis')
-onePlot(dens_temp,    2, 1, "density",               "x", "y", uextent,  0,  0, 'copper_r')
-onePlot(visc_temp,    2, 2, "viscosity",             "x", "y", uextent,  0,  0, 'bone_r')
-
-plt.subplots_adjust(hspace=0.5)
-
-if visu==1:
-   plt.savefig('solution.pdf', bbox_inches='tight')
-   plt.show()
+print("export to vtu: %.3f s" % (time.time() - start))
 
 print("-----------------------------")
 print("------------the end----------")
