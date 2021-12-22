@@ -2,8 +2,6 @@
 
 \begin{itemize}
 \item ask Taka to finish/write grain contact benchmark
-\item extract know-how and notes about $Q_1 \times P_0$-stab off \elefant and 
-make \stone(s). mention \cite{lisi12}
 \item revisit CBF and produce \stone(s)
 \item produce \stone for Taka's notch
 \item priduce \stone for cicrle/ellipse hole in place - taka
@@ -27,7 +25,6 @@ Aitken method for accelerate nonlinear problems, Chow \& Kay (1984) \cite{chka84
 Wang \& Wang (1994) \cite{wawa94}. Richardson extrapolation. 
 \item implementation of fault in FEM codes \cite{zhgu94,zhgu95}
 \item remove nnp from all \stones
-\item check $Q_2 \times Q_{-1}$ element, \cite{grsa} p 697. pressure basis function based at the four 2x2 gauss points.
 \item use 3D benchmark of s75 for s82 !
 \item write generic ker program for LBB stab check
 \item look at Sobol sequences in Numerical recipes for tracer layout\\
@@ -78,7 +75,6 @@ https://people.sc.fsu.edu/\~{}jburkardt/f\_src/sobol/sobol.html
 %----------------------------------
 \subsection{GR thesis topics}
 \begin{itemize} 
-\item re-incorporate W.Klesses inversion as stone with python Stokes solver
 \item implement Navier-Stokes eqs a la http://ww2.lacan.upc.edu/huerta/exercises/Incompressible/Incompressible\_Ex2.htm
 \item FSSA implementation, derivation, everywhere in domain \cite{sctc20}, implementation, derivation. Build elefant paper
       setup with boundary fitted mesh.
@@ -98,9 +94,8 @@ https://people.sc.fsu.edu/\~{}jburkardt/f\_src/sobol/sobol.html
 %----------------------------------
 \subsection{MSc thesis topics}
 \begin{itemize} 
-\item implement Newton solver in a stone for power-law rheologies. Use existing fortran code. Test it thoroughly.
 \item write surface processes code
-\item surface tension see \cite{reddybook2}p28-29 - see ibuprofem, \cite{dett04} 
+\item surface tension see \cite{reddybook2}p28-29 - see ibuprofem, \cite{dett04}. benchmarks in \cite{chcc12} 
 \item elasticity with markers
 \item navier-stokes ? (LUKAS) use dohu matlab code
 \item pure shear deformation of inclusions \cite{trla00}
@@ -115,8 +110,6 @@ https://people.sc.fsu.edu/\~{}jburkardt/f\_src/sobol/sobol.html
 \item redo improved method of Nusselt number calculation \cite{hohr87}
 \item redo magma chamber studies \cite{cuwi14,gehn18}
 \item implement multigrid: Taras' book: translate matlab code to fortran? Use the one in Trim et al?
-\item adjoint methods in geodynamics \cite{bugs09,ghbu16,hobo14,isks07,ligs17,wahg15,wama09,wosp14}.
-Also see {\tt johnson\_Notes on Adjoint Methods.pdf} and {\tt bradley-PDE-constrained optimization and the adjoint method.pdf} 
 \item Write Stone to redo Salt tectonics experiments of \cite{dacl94}
 \item look at quinquis and buiter paper about H20 release and transport, water migration in subduction
 \end{itemize}

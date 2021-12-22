@@ -1,8 +1,10 @@
 \begin{flushright} {\tiny {\color{gray} pair\_q1p0stab.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-WARNING: this entire subsection is copied from an old document. It needs to be revised and 
-updated. I intend to write a Stone implementing this element.
+Much has been written about the $Q_1\times P_0$ element and the fact that it is not LBB-stable
+and that the pressure field contains a chequerboard mode that needs to be filtered out. 
+It was also compared to other quadrilateral elements for geodynamic applications 
+in \textcite{thba21} (2021).
 
 \Literature: Explore these 2 refs which I found after my q1p0-stab work of 2015 \cite{chke20,eguc03}
 
@@ -10,9 +12,15 @@ Many techniques have been proposed to stabilise this element:
 
 \begin{itemize}
 \item method ? : \cite{bbgs04},  \cite{bodg06} , \cite{bogl07}
-\item stabilisation through macro-elements: \cite{fobo90}, \cite{leru86}, \cite{leta81}
-\item local jump stabilisation: \cite{sike90}, \cite{kesi92,vibo92,qizh07,chri02,chco01,lisi12,lica06}
-\item global jump stabilisation: \cite{hufr87}, \cite{nosi98}, \cite{dowa89} \cite{chco01}
+\item stabilisation through macro-elements: 
+\textcite{fobo90} (1990), \textcite{leru86} (1986), \textcite{leta81} (1981)
+\item local jump stabilisation: 
+\textcite{sike90} (1990), \textcite{kesi92} (1992), \textcite{vibo92} (1992),
+\textcite{qizh07} (2007), \textcite{chri02} (2002), \textcite{chco01} (2001),
+\textcite{lisi12} (2012), \textcite{lica06} (2006)
+\item global jump stabilisation: 
+\textcite{hufr87} (1987), \textcite{nosi98} (1998), \textcite{dowa89} (1989),
+\textcite{chco01} (2001)
 \item supg like stabilisation: \cite{teos00}, \cite{tezd92,hufb86}
 \item enrichment through velocity and/or pressure bubble function \cite{frol03}(only triangles)
 \item additional (normal) velocity degrees of freedom on faces \cite{fofo85}, 
@@ -20,12 +28,14 @@ mentioned in \cite{sofo87}, \cite{fort81}.
 adding 1 dof mid-side on each face with buble function \cite{rota87}
 \end{itemize}
 
-In effect, both jump stabilisation techniques provide an a-priori filter for the weakly unstable pressure modes associated 
-with the Q1P0 element. The global jump stabilisation formulation introduces a pressure diffusion operator
-that perturbs the incompressibility constraint. The global jump formulation insures mass conservation in a global  
-sense since the null space of the stabilising matrix constains the constant-pressure vector. However, the global 
-jump stabilisation smears the div-free constraint over a small region, i.e., the divergence is not 
-zero at the element level \cite{chri00}.
+In effect, both jump stabilisation techniques provide an a-priori filter 
+for the weakly unstable pressure modes associated 
+with the $Q_1\times P_0$ element. The global jump stabilisation formulation 
+introduces a pressure diffusion operator that perturbs the incompressibility constraint. 
+The global jump formulation insures mass conservation in a global  
+sense since the null space of the stabilising matrix constains the constant-pressure vector. 
+However, the global jump stabilisation smears the div-free constraint over a small 
+region, i.e., the divergence is not zero at the element level \cite{chri00}.
 
 The stability of mixed finite element methods boils down to properties of the null space of the matrix $\G$. 
 An approximation is unstable if $\G \cdot \vec{\cal P} = \vec{0}$ where $\vec{\cal P}$ 
@@ -60,14 +70,10 @@ in large, sparse saddle-point systems of the form
 \end{array}
 \right)
 \end{equation}
-where $\C$ is a stabilisation matrix to be stpecified.
+where $\C$ is a stabilisation matrix to be specified.
 
-The dimension of the $\C$ matrix is that of $h^{dim}/\eta$ where 
+The physical dimension of the $\C$ matrix is that of $h^{dim}/\eta$ where 
 $h$ is the element size and $\eta$ a viscosity.
-
-
-
-
 
 
 
@@ -76,17 +82,17 @@ $h$ is the element size and $\eta$ a viscosity.
 
 The conventional way of computing a regularisation matrix $\C$
 is to use a penalty formulation.
-In the framework presented in \cite{sike90}, the standard penalty
+In the framework presented in \textcite{sike90} (1990), the standard penalty
 method corresponds to the specific choice of
 \[
-C(q^h,p^h)=\epsilon \int_\Omega q^h p^h d\Omega = \epsilon {\bm M}_p
+C(q^h,p^h)=\epsilon \int_\Omega q^h p^h dV = \epsilon {\M}_p
 \]
-with $\epsilon > 0$ and ${\bm M}_p$ is the pressure mass matrix. 
+with $\epsilon > 0$ and ${\M}_p$ is the pressure mass matrix. 
 For a regular grid of squares with size $h$, it follows that 
 \[
 C_{ij}=0 \quad {\rm if} \; i\neq j
-\quad\quad\quad
-C_{ii}=\epsilon \int_{elt. i} d\Omega = h^2 \epsilon
+\quad\quad {\text and} \quad\quad
+C_{ii}=\epsilon \int_{\Omega_i} dV = h^2 \epsilon
 \]
 so that the stabilisation matrix is diagonal (see red matrix hereunder).
 
@@ -94,7 +100,11 @@ It is stressed here that the penalty technique does not stabilise an
 unstable mixed method \cite{sike90}. A small penalty parameter 
 means that the original problem is solved quite accurately.
 
-See \cite{cuss86} for some more details about the penalty method.
+See \textcite{cuss86} (1986) for some more details about the penalty method.
+The approach above is similar to the one presented in Section~\ref{XYZ}. The only 
+difference is that instead of replacing pressure in the momentum equation
+by $p = \lambda \vec\nabla\cdot\vec\upnu$ we keep both velocity and pressure
+as unknowns and we take $\epsilon=\lambda^{-1}$.
 
 %-----------------------------------------------------
 \paragraph{Global jump stabilisation}
@@ -146,15 +156,16 @@ The resulting assembled $\C$ matrix is shown in green on the figure here after.
 The global jump stabilisation is effective in
 practice, although a careful choice of the parameter $\beta$
 is required in order to prevent a loss of accuracy in the solution.
-The only other deficiency is the fact that the global nature of the jump terms makes the method awkward to implement into existing codes
-\footnote{I don't understand this remark}.\cite{sike90}
+According to \textcite{sike90} the only other deficiency is the fact that the global 
+nature of the jump terms makes the method awkward to implement into existing 
+codes \footnote{I don't understand this remark}.
 
 A general theoretical framework for analysing global stabilisation techniques is
-presented in \cite{hufr87}.
+presented in \textcite{hufr87} (1987).
 Using this framework, optimum rates of convergence for the $Q_1\times P_0$
 method stabilised with global jumps are established.
 
-In \cite{cao03} the parameter $\beta$ is set to 1.
+In \textcite{cao03} (2003) the parameter $\beta$ is set to 1.
 
 Note that this approach is somewhat linked to the idea of a pressure smoother 
 via a discrete Laplace\footnote{\url{http://en.wikipedia.org/wiki/Discrete_Laplace_operator}}:
@@ -173,9 +184,7 @@ D^{(1)}=
 \end{array}
 \right]
 \]
-
-Other filters can also be found:
-
+Note that other filters can also be found although we will not use them here in this context:
 \[
 D^{(2)}=
 \left[
@@ -209,11 +218,10 @@ D^{(4)}=
 %-----------------------------------------------------------------------------------
 \paragraph{Local jump stabilisation}
 
-%sike90
-The deficiencies of the global jump method can be overcome by  
+According to \textcite{sike90}, the deficiencies of the global jump method can be overcome by  
 a straightforward modification. Assume that the elements in  
 can now be assembled into $N_m$ disjoint macro-elements 
-of 2x2 elements, as shown in grey on the following figure: 
+of $2\times 2$ elements, as shown in grey on the following figure: 
 
 \begin{center}
 \input{tikz/tikz_localjump}
@@ -232,16 +240,15 @@ is similar to that above except that there is now a
 local basis.
 
 For instance, considering again element 9, it now belongs to the second macro-element
-and therefore only 'sees' neighbours 4 and 9.
+and therefore only 'sees' neighbours 3 and 10.
 The resulting $\C$ matrix is shown in blue on the figure here after and 
-is structure is obviously different than in the global stabilisation case, albeit 
+its structure is obviously different than in the global stabilisation case, albeit 
 also pentadiagonal. 
 
-
-%sike90
-The advantages of this local method over the global jump formulation are 
+According to \textcite{sike90}, the advantages of this local method over the global jump 
+formulation are: 
 \begin{enumerate}
-\item implementation is more straightforward because for assembly purposes each 2x2 block
+\item implementation is more straightforward because for assembly purposes each $2\times 2$ block
 of elements can be treated as a single macroelement \footnote{same here, not sure what they mean by this}
 \item mass is conserved locally (over a macroelement), using the global jump formulation
 mass is only conserved globally
@@ -278,22 +285,21 @@ p_1 \\ p_2 \\ p_3 \\ p_4
 \right)
 \]
 and the row/column sum of its entries is always nul.
-%gresho & sani
+
+Gresho \& Sani \cite{grsa} state:``
 This is crucially important to the success of the method since it implies
-that the local incompressibility of the $Q_1P_0$ method is retained
+that the local incompressibility of the $Q_1\times P_0$ method is retained
 after stabilisation (albeit over macro-elements).
 It also suggests that a good strategy when constructing the partition 
 is to form macro-elements containing as few elements as possible. 
 Once a suitable macro-element partitioning has been formed, the local stabilisation
 matrices can be calculated by running through the component elements, 
-summing jump contributions corresponding to the internal edges. 
+summing jump contributions corresponding to the internal edges.'' 
 
 If one now considers the following irregular macro-element,
 \begin{center}
 \input{tikz/tikz_macro2}
 \end{center}
-
-
 the corresponding matrix is given by\footnote{I suspect it should involve the normal vectors
 to the edges ...?}
 \[
@@ -317,21 +323,22 @@ The reference length $\tilde{h}$ may be computed by simply defining it to be the
 diameter of the constituent elements. 
 
 %grsa
-In three dimensions, the 2x2x2 block is the obvious starting point for stabilising $Q_1P_0$.
+In three dimensions, the $2\times 2 \times 2$ block is the obvious starting point 
+for stabilising $Q_1\times P_0$.
 
 Perhaps the most serious potential drawback of the local framework is that 
 stability is only guaranteed if the stabilisation parameter $\beta$ is bigger than some 
 critical value $\beta_0$, which needs to be estimated.
 
-It can be estimated that $\beta=1/4$ in 2D and $\beta=1/6$ in 3D (see \cite[p636]{grsa} 
-for a detailed derivation, see also \cite{vibo92}). 
+It can be estimated that $\beta=1/4$ in 2D and $\beta=1/6$ in 3D (see Gresho \& Sani \cite[p636]{grsa} 
+for a detailed derivation, see also \textcite{vibo92} (1992)). 
 
 %sike90
 The advantages of the stabilisation procedures over the penalty method 
 are especially relevant to the discretisation of 3D incompressible flow problems, 
 since iterative solution methods have to be used. 
 Similar stabilisation techniques to those described here are applicable to  
-the three-dimensional version of the $Q_1P_0$ mixed method.
+the three-dimensional version of the $Q_1 \times P_0$ mixed method.
 
 The conclusion in \cite{sike90} is as follows:
 The local jump formulation proves to be an efficient method for a priori filtering of  
@@ -339,14 +346,11 @@ spurious pressure modes. It cleanly stabilises the $Q_1\times P_0$ mixed method 
 its simplicity and resulting efficiency; in particular, it is very robust with respect to the magnitude
 of the stabilisation parameter. 
 
-It is reported in \cite{grsa} that when using an iterative solver, iteration counts 
+It is reported in Gresho \& Sani \cite{grsa} that when using an iterative solver, iteration counts 
 are only independent of the grid in the stabilised cases: using the raw $Q_1\times P_0$ method
 the iteration counts significantly increase with decreasing $h$. Note that the deterioration
 of the condition number of the matrix with decreasing $h$ is worse in 3D than in 2D (but
 bear in mind that one almost always use higher resolutions in 2D than in 3D, so it does not help).
-
-
-
 
 A way to look at the global vs. local stabilisation schemes is presented 
 on the following figure from Christon (2002) \cite{chri02}:
@@ -460,7 +464,7 @@ spurious pressure modes $\vec{\cal P}_\star \neq 1$ in $null(\G)$ \cite[p239]{el
 
 
 The matrix $\SSS$ is obtained by assembling the submatrices 
-for the macroelements which, in general, are made up of 8 (i.e., 2x2x2) 
+for the macroelements which, in general, are made up of 8 (i.e., $2\times 2 \times 2$) 
 adjacent elements, as shown in the following sketch \cite{chsu97}:
 
 \begin{center}
