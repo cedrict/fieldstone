@@ -52,23 +52,20 @@ we find that the Nusselt number is simply 1.
 
 The steady state root mean square velocity and Nusselt number measurements
 are indicated in the following Table alongside those of \cite{blbc89} and \cite{tack94}.
-(Note that this benchmark was also carried out and published in  
-other publications \cite{trha98,albe00,gery10,bepo10,dawk11,lezh11} but 
-since they did not provide  a complete set
-of measurement values, they are not included in the table.)
+(Note that this benchmark was also carried out by many others (see Section~\ref{ss:blbc89}).
 
 \begin{center}
-\begin{tabular}{llcc}
+\begin{tabular}{llccccc}
 \hline
-          &           & Blankenbach et al (1989) & Tackley (1994) \cite{tack94}    \\
+          &           & Blankenbach et al (1989) & Tackley (1994)  & 32x32 & 48x48 & 64x64  \\
 \hline
 \hline
-$\Ranb=10^4$ & $V_{rms}$ &  $42.864947  \pm 0.000020$ & 42.775 \\
-          & $Nu$      &  $4.884409   \pm 0.000010$ & 4.878  \\
-$\Ranb=10^5$ & $V_{rms}$ &  $193.21454  \pm 0.00010 $ & 193.11 \\
-          & $Nu$      &  $10.534095  \pm 0.000010$ & 10.531 \\
-$\Ranb=10^6$ & $V_{rms}$ &  $833.98977  \pm 0.00020 $ & 833.55 \\
-          & $Nu$      &  $21.972465  \pm 0.000020$ & 21.998 \\
+$\Ranb=10^4$ & $V_{rms}$ &  $42.864947  \pm 0.000020$ & 42.775 & 42.89111& 42.87938& 42.87360\\  
+          & $Nu$      &  $4.884409   \pm 0.000010$ & 4.878  & 4.783252 & 4.837800& 4.857373\\
+$\Ranb=10^5$ & $V_{rms}$ &  $193.21454  \pm 0.00010 $ & 193.11 & 194.1032 & 193.6264 &  193.4519  \\ 
+          & $Nu$      &  $10.534095  \pm 0.000010$ & 10.531 & 9.604454& 10.08087 &  10.26830  \\
+$\Ranb=10^6$ & $V_{rms}$ &  $833.98977  \pm 0.00020 $ & 833.55 & & & \\
+          & $Nu$      &  $21.972465  \pm 0.000020$ & 21.998 & & & \\
 \hline
 \end{tabular}\\
 {\small Steady state Nusselt number $Nu$ and $\upnu_{rms}$ measurements as reported in the literature. }
@@ -86,9 +83,8 @@ one wishes to compute the steady state of the system rather than an accurate tim
 of the system. Better schemes are available and one example thereof is explained in Kronbichler et al (2012) 
 \cite{krhb12}.
 
-Also, the current version of this stone uses a simple time discretisation of the $\partial T/\partial t$ term
-as explained in Section~\ref{sec:diff1D}. A Crank-Nicolson algorithm could easily be 
-implemented as explained in Section~\ref{sec:timediscr}.
+Also, the current version of this \stone uses a Crank-Nicolson approach for the 
+time discretisation of the $\partial T/\partial t$ term as explained in Section~\ref{sec:timediscr}.
 
 Something must be said about how the Nusselt number is computed. 
 Its calculation requires the integral of the temperature gradient along an edge. 
@@ -102,11 +98,20 @@ Finally, it is expected that the thickness of the
 boundary layers decreases with higher Rayleigh number values.
 As a consequence, in order to appropriately capture those, one needs 
 a higher resolution than at low $\Ranb$ numbers. This explains why 
-acceptable results are obtained for $\Ranb=10^4$  at low resolution 32x32.
+acceptable results are obtained for $\Ranb=10^4$  even at low resolution $32\times 32$.
 
 Note that the results obtained with \aspect at comparable resolution ought to be 
 more accurate since \aspect relies on quadratic elements for both velocity and 
 temperature. 
+
+A few remarks about the code. It relies on $Q_1\times P_0$ elements with a penalty
+formulation so that the pressure degrees of freedom are not taken into account. 
+The temperature is also bi-linear ($Q_1$) so that the temperature and velocity nodes 
+are identical and no distinction is made between them.
+
+Steady state has been reached when the relative velocity and temperature difference between two consecutive 
+time steps is less than a tolerance set to $10^{-6}$. 
+
 
 \newpage
 \paragraph{Results for $\Ranb=10^4$}.
@@ -116,6 +121,9 @@ temperature.
 \includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e4/vrms.pdf}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e4/Nu.pdf}
 \includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e4/Nu_vrms.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e4/convergence.pdf}\\
+{\captionfont Note that the \aspect data have been shifted so that the location of the 
+first vrms peak coincides with the one of the 64x64 run.}
 \end{center}
 
 \newpage
@@ -125,7 +133,8 @@ temperature.
 \includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e5/Tavrg.pdf}
 \includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e5/vrms.pdf}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e5/Nu.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e5/Nu_vrms.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e5/Nu_vrms.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_03/results_1e5/convergence.pdf}\\
 \end{center}
 
 \newpage
