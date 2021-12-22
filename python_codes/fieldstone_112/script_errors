@@ -3,7 +3,7 @@ rm -f errors_*
 rm -f middle_*
 rm opla
 
-t=1
+t=0
 
 for e in 1 2 3 4 5; do
     echo ========element= $e =======================
@@ -35,6 +35,10 @@ for e in 1 2 3 4 5; do
     python3 stone.py  64  64 0 $e $t > opla
     grep errv opla >> errors_$e
     grep middle opla >> middle_$e
+    echo 96x96
+    python3 stone.py  96  96 0 $e $t > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
     echo 128x128
     python3 stone.py 128 128 0 $e $t > opla
     grep errv opla >> errors_$e
@@ -43,11 +47,14 @@ for e in 1 2 3 4 5; do
     python3 stone.py 192 192 0 $e $t > opla
     grep errv opla >> errors_$e
     grep middle opla >> middle_$e
-
-    #echo 256x256
-    #python3 stone.py 256 256 0 $e > opla
-    #grep errv opla >> errors_$e
-    #grep middle opla >> middle_$e
+    echo 256x256
+    python3 stone.py 256 256 0 $e $t > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
+    echo 320x320
+    python3 stone.py 320 320 0 $e $t > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
 done
 
 

@@ -27,8 +27,9 @@ when triangular elements are used:
 The last pressure dof is fixed to remove the nullspace and the obtained pressure field
 is then normalised so that $\int_\Omega p dV = 0$.
 
-Resolutions are ranging from $8\times 8$ to maximum $256\times256$. The high resolution runs take hours 
-because python is slow. $320\times 320$ seems to be the limit on my 32Gb-RAM laptop.  
+Resolutions are ranging from $8\times 8$ to maximum $320\times320$. The high resolution runs take hours 
+because python is slow. $320\times 320$ seems to be the limit on my 32Gb-RAM laptop (I build and feed 
+the entire Stokes matrix to the solver).  
 
 These are the important numerical parameters which allow to control the type of calculation in the code:
 \begin{itemize}
@@ -240,6 +241,40 @@ Our measurements are similar here.
 high viscosity disc. Left: 64x64 cells; right: 128x128 cells.}
 \end{center}
 
+\newpage
+%===================================================================================
+\subsection*{SolVi - A quick look at how viscosity is prescribed}
+
+The interface between the inclusion and the matrix is never aligned with 
+element edges so that inside the elements cut by this interface some 
+quadrature points are assigned $\eta_q=\eta_{i}=10^3$ and other 
+quadrature points are assigned $\eta_q=\eta_{m}=1$. 
+
+It is well known that such an approach often yields less accurate results
+than when the viscosity in the element is either constant or linear (see 
+current work by Gerry and also \aspect manual).
+
+In order to avoid the discussion of which averaging is best suited, 
+I have simply here explored the possibility of assigning a constant 
+viscosity inside each element based on whether or not its barycenter is 
+inside or outside the inclusion.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_avrg/errors_V.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_avrg/errors_V_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_avrg/errors_P.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_avrg/errors_P_ndof.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_avrg/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_112/results/exp5_avrg/vrms_ndof.pdf}\\
+{\captionfont Velocity $L_2$ error (top row), pressure $L_2$ error (middle row) and vrms (bottom row) 
+as a function of the element size $h$ (left column) and the total number of dofs (right column).
+Dashed lines correspond to the reference case (see previous section) while continuous lines
+correspond to elemental viscosities. }
+\end{center}
+ 
+We find that results seem to be more accurate but the convergence rates for both 
+velocity and pressure are not significantly improved.
+
 
 \newpage
 %===================================================================================
@@ -277,10 +312,12 @@ with SE-NW splitting.}
 
 
 \newpage
-The following plot are similar to those before but each element/resolution combination has been run 
-25 times so as to generate 25 different meshes with different random cell splits. The important conclusion
-is that the maximum of the error across the 25 meshes converges faster for the pressure than for velocity
-(at least up to 100x100 resolutions)!
+The following plot are similar to those before but each element/resolution combination is (\textit{still}) being run 
+250 times so as to generate 250 different meshes with different random cell splits. The important conclusion
+are that a) the maximum of the error across the 250 meshes converges faster for the pressure than for velocity
+up to about $100\times 100$ resolutions b) it then takes converges at a lower rate, i.e. $\propto h^{0.5}$. 
+
+Resolutions on the following plots range from 8x8 to 200x200. I will run up to 300x300 during the xmas break.
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_112/results/exp5_tridiag/errors_V_MINI.pdf}
@@ -309,7 +346,6 @@ number of degrees of freedom.}
 {\captionfont vrms as a function of the element size $h$ (left) and the total number of dofs (right).}
 \end{center}
 
-SAY SOMETHING ABOUT RATES!
 
 \newpage
 %========================================================
@@ -420,20 +456,19 @@ SolVg &
 3&1&2&2\\
 \hline
 total  
-&-&17&-&16
-&-&8&-&7
-&-&12&-&12
-&-&4&-&6
+&-&?&-&?
+&-&?&-&?
+&-&?&-&?
+&-&?&-&?
 &-&?&-&?\\
 \hline
 \end{tabular}
 
 The r value corresponds to the \textbf{r}anking. For instance if Q2Q1 is the most accurate for velocity on D \& H then it gets a 1, then P2P1 gets a 2 because it was the second best accurate element, etc ...
-In the end I would sum all the r values per column 
+In the end I would sum all the $r$ values per column (replacing the '?') 
 and the smaller the value the better the element. 
 
-Note that SolVi measurements will be updated when the 512x512 runs have completed so for now Solvi is not 
-taken into account.
+Note that SolVi measurements will be updated when all the runs have completed.  
 
 
 
@@ -467,6 +502,8 @@ for SolVi and SolVg (and may be a bit for SolKz). Should I implement elemental a
 Does this make sense? or should I plot the velocity errors as a fct of the velocity dofs and 
 the pressure errors  as a fct of pressure dofs?
 \item any thoughts about my ranking system ?like it ? hate it ?
+\item am I right to think that $Q_2\times P_{-1}$ in \aspect is of the unmapped type ?  (\textcite{boga02} (2002))
+\item should I repeat the same statistical study with 250 different triangular meshes per element for SolVg ? 
 \end{itemize}
 
 \vspace{0.5cm}

@@ -278,10 +278,13 @@ def pressure(x,y):
 # experiment=3: solCx
 # experiment=4: solKz
 # experiment=5: solVi
+# experiment=6: solVg
 
-experiment=6
+experiment=5
 
 randomize_mesh=False
+        
+elemental_viscosity=True
 
 print("-----------------------------")
 print("----------fieldstone---------")
@@ -301,11 +304,11 @@ if int(len(sys.argv) == 6):
    elt    = int(sys.argv[4])
    tridiag= int(sys.argv[5])
 else:
-   nelx    = 64
-   nely    = 64
+   nelx    = 16 
+   nely    = 16
    visu    = 1
-   elt     = 4
-   tridiag = 2
+   elt     = 3
+   tridiag = 0
 
 if elt==1: elt='MINI'
 if elt==2: elt='P2P1'
@@ -929,6 +932,20 @@ if randomize_mesh:
 
    print("compute elements areas: %.3f s" % (timing.time() - start))
 
+#####################################################################
+# compute element center 
+#####################################################################
+start = timing.time()
+
+xc=np.zeros(nel,dtype=np.float64)
+yc=np.zeros(nel,dtype=np.float64)
+
+for iel in range(0,nel):
+    xc[iel]=np.sum(xV[iconV[0:mV,iel]])/mV
+    yc[iel]=np.sum(yV[iconV[0:mV,iel]])/mV
+
+print("compute elt center coords: %.3f s" % (timing.time() - start))
+
 #################################################################
 # build FE matrix
 # [ K G ][u]=[f]
@@ -966,7 +983,6 @@ for iel in range(0,nel):
        m31=(xP[iconP[2,iel]]-xP[iconP[1,iel]])/det
        m32=(xP[iconP[0,iel]]-xP[iconP[2,iel]])/det
        m33=(xP[iconP[1,iel]]-xP[iconP[0,iel]])/det
-
 
     # set arrays to 0 every loop
     f_el =np.zeros((mV*ndofV),dtype=np.float64)
@@ -1011,7 +1027,10 @@ for iel in range(0,nel):
                                      [dNNNVdy[i],dNNNVdx[i]]]
 
         # compute elemental a_mat matrix
-        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(xq,yq)*weightq*jcob
+        if elemental_viscosity:
+           K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(xc[iel],yc[iel])*weightq*jcob
+        else:
+           K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(xq,yq)*weightq*jcob
 
         # compute elemental rhs vector
         for i in range(0,mV):
@@ -1080,8 +1099,9 @@ rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
 
 #assign extra pressure b.c. to remove null space
-A_sparse[Nfem-1,:]=0
-A_sparse[:,Nfem-1]=0
+for i in range(0,Nfem):
+    A_sparse[Nfem-1,i]=0
+    A_sparse[i,Nfem-1]=0
 A_sparse[Nfem-1,Nfem-1]=1
 rhs[Nfem-1]=0
 
@@ -1249,19 +1269,6 @@ profile.close()
 
 print("compute pressure q: %.3f s" % (timing.time() - start))
 
-#####################################################################
-# compute element center 
-#####################################################################
-start = timing.time()
-
-xc=np.zeros(nel,dtype=np.float64)
-yc=np.zeros(nel,dtype=np.float64)
-
-for iel in range(0,nel):
-    xc[iel]=np.sum(xV[iconV[0:mV,iel]])/mV
-    yc[iel]=np.sum(yV[iconV[0:mV,iel]])/mV
-
-print("compute elt center coords: %.3f s" % (timing.time() - start))
 
 #####################################################################
 # export profiles
@@ -1384,7 +1391,6 @@ if visu==1:
     vtufile.write("</UnstructuredGrid>\n")
     vtufile.write("</VTKFile>\n")
     vtufile.close()
-
 
     if elt=='MINI' or elt=='P2P1' or elt=='CR':
        vtufile=open('solutionPtri_'+elt+'.vtu',"w")
