@@ -18,6 +18,8 @@ def bx(x, y):
             1.-4.*y+12.*y*y-8.*y*y*y)
     if experiment==2:
        val=0.
+    if experiment==3:
+       val=0
     return val
 
 def by(x, y):
@@ -28,6 +30,8 @@ def by(x, y):
             12.*y*y+24.*y*y*y-12.*y**4)
     if experiment==2:
        val=-1
+    if experiment==3:
+       val=0
     return val
 
 #------------------------------------------------------------------------------
@@ -37,12 +41,16 @@ def velocity_x(x,y):
        val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
     if experiment==2:
        val=0
+    if experiment==3:
+       val=0
     return val
 
 def velocity_y(x,y):
     if experiment==1:
        val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
     if experiment==2:
+       val=0
+    if experiment==3:
        val=0
     return val
 
@@ -51,13 +59,16 @@ def pressure(x,y):
        val=x*(1.-x)-1./6.
     if experiment==2:
        val=0.5-y
+    if experiment==3:
+       val=0
     return val
 
 #------------------------------------------------------------------------------
 # 1: donea & huerta
 # 2: aquarium 
+# 3: lid driven cavity
 
-experiment=1
+experiment=3
 
 #------------------------------------------------------------------------------
 
@@ -108,7 +119,7 @@ Gscaling=1 #eta/(Ly/nely)
 #3: local
 
 stabilisation=3
-epsi=1e-10
+epsi=1e-3
 
 if stabilisation==3 and nelx%2==1: exit()
 if stabilisation==3 and nely%2==1: exit()
@@ -172,6 +183,7 @@ if experiment==1:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
    #end for
+#end if
 if experiment==2:
    for i in range(0,NV):
        if x[i]<eps:
@@ -183,6 +195,20 @@ if experiment==2:
        if y[i]>(Ly-eps):
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
    #end for
+#end if
+if experiment==3:
+   for i in range(0,NV):
+       if y[i]>(Ly-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 1.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if x[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if y[i]<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+   #end for
+#end if
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 

@@ -10,11 +10,11 @@ eta0=1e21
 eta_star=1e3
 rho0=3000
 
-nrad=50
+nrad=100
 rmin=10e3
 rmax=100e3
 
-ndrho=50
+ndrho=100
 drhomin=-500
 drhomax=-50
 

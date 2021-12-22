@@ -12,8 +12,8 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
     m=4     # number of nodes making up an element
     ndofV=2  # number of degrees of freedom per node
 
-    nelx = 64
-    nely = 64
+    nelx = 100
+    nely = 100
 
     Lx=500e3 
     Ly=500e3
@@ -40,6 +40,8 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
     hy=Ly/nely
 
     Ggrav=6.67e-11
+
+    solve_stokes=False
 
     #################################################################
     # grid point setup
@@ -70,220 +72,239 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
             counter += 1
 
     #################################################################
-    # define boundary conditions
-    # free slip on left and top, no slip on bottom and right
+    # element center coordinates 
     #################################################################
 
-    bc_fix=np.zeros(Nfem,dtype=np.bool)    # boundary condition, yes/no
-    bc_val=np.zeros(Nfem,dtype=np.float64) # boundary condition, value
-
-    for i in range(0,NV):
-        if x[i]/Lx<eps:
-           bc_fix[i*ndofV+0] = True ; bc_val[i*ndofV+0] = 0.
-        if x[i]/Lx>1-eps:
-           bc_fix[i*ndofV+0] = True ; bc_val[i*ndofV+0] = 0.
-           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-        if y[i]/Ly<eps:
-           bc_fix[i*ndofV+0] = True ; bc_val[i*ndofV+0] = 0.
-           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-        if y[i]/Ly>1-eps:
-           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-
-    #################################################################
-    # build FE matrix
-    #################################################################
-
+    xc = np.zeros(nel,dtype=np.float64)
+    yc = np.zeros(nel,dtype=np.float64)
     elt_in_sphere=np.zeros(Nfem,dtype=np.bool)  
-    a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-    b_mat = np.zeros((3,ndofV*m),dtype=np.float64)   # gradient matrix B 
-    rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-    N     = np.zeros(m,dtype=np.float64)            # shape functions
-    dNdx  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-    dNdy  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-    dNdr  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-    dNds  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-    u     = np.zeros(NV,dtype=np.float64)          # x-component velocity
-    v     = np.zeros(NV,dtype=np.float64)          # y-component velocity
-    k_mat = np.array([[1,1,0],[1,1,0],[0,0,0]],dtype=np.float64) 
-    c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
-    for iel in range(0, nel):
+    for iel in range(0,nel):
+        xc[iel]=0.5*(x[icon[0,iel]]+x[icon[2,iel]])
+        yc[iel]=0.5*(y[icon[0,iel]]+y[icon[2,iel]])
+        if xc[iel]**2+(yc[iel]-0.5*Ly)**2<radius2:
+           elt_in_sphere[iel]=True
 
-        # set 2 arrays to 0 every loop
-        b_el = np.zeros(m*ndofV)
-        a_el = np.zeros((m*ndofV,m*ndofV), dtype=np.float64)
+    if solve_stokes:
 
-        # integrate viscous term at 4 quadrature points
-        for iq in [-1, 1]:
-            for jq in [-1, 1]:
+       #################################################################
+       # define boundary conditions
+       # free slip on left and top, no slip on bottom and right
+       #################################################################
 
-                # position & weight of quad. point
-                rq=iq/sqrt3
-                sq=jq/sqrt3
-                weightq=1.
+       bc_fix=np.zeros(Nfem,dtype=np.bool)    # boundary condition, yes/no
+       bc_val=np.zeros(Nfem,dtype=np.float64) # boundary condition, value
 
-                # calculate shape functions
-                N[0]=0.25*(1.-rq)*(1.-sq)
-                N[1]=0.25*(1.+rq)*(1.-sq)
-                N[2]=0.25*(1.+rq)*(1.+sq)
-                N[3]=0.25*(1.-rq)*(1.+sq)
+       for i in range(0,NV):
+           if x[i]/Lx<eps:
+              bc_fix[i*ndofV+0] = True ; bc_val[i*ndofV+0] = 0.
+           if x[i]/Lx>1-eps:
+              bc_fix[i*ndofV+0] = True ; bc_val[i*ndofV+0] = 0.
+              bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+           if y[i]/Ly<eps:
+              bc_fix[i*ndofV+0] = True ; bc_val[i*ndofV+0] = 0.
+              bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+           if y[i]/Ly>1-eps:
+              bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
 
-                # calculate shape function derivatives
-                dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
-                dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
-                dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
-                dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
+       #################################################################
+       # build FE matrix
+       #################################################################
 
-                # calculate jacobian matrix
-                #jcb = np.zeros((2, 2),dtype=np.float64)
-                #for k in range(0,m):
-                #    jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
-                #    jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
-                #    jcb[1, 0] += dNds[k]*x[icon[k,iel]]
-                #    jcb[1, 1] += dNds[k]*y[icon[k,iel]]
-                #jcob = np.linalg.det(jcb)
-                #jcbi = np.linalg.inv(jcb)
+       a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+       b_mat = np.zeros((3,ndofV*m),dtype=np.float64)   # gradient matrix B 
+       rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+       N     = np.zeros(m,dtype=np.float64)            # shape functions
+       dNdx  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
+       dNdy  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
+       dNdr  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
+       dNds  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
+       u     = np.zeros(NV,dtype=np.float64)          # x-component velocity
+       v     = np.zeros(NV,dtype=np.float64)          # y-component velocity
+       k_mat = np.array([[1,1,0],[1,1,0],[0,0,0]],dtype=np.float64) 
+       c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
-                jcb = np.array([[hx/2,0],[0,hy/2]],dtype=np.float64) 
-                jcob = hx*hy/4
-                jcbi = np.array([[2/hx,0],[0,2/hy]],dtype=np.float64) 
+       for iel in range(0, nel):
 
-                # compute dNdx & dNdy
-                xq=0.0
-                yq=0.0
-                for k in range(0, m):
-                    xq+=N[k]*x[icon[k,iel]]
-                    yq+=N[k]*y[icon[k,iel]]
-                    dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-                    dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+           # set 2 arrays to 0 every loop
+           b_el = np.zeros(m*ndofV)
+           a_el = np.zeros((m*ndofV,m*ndofV), dtype=np.float64)
 
-                # construct 3x8 b_mat matrix
-                for i in range(0, m):
-                    b_mat[0:3, 2*i:2*i+2] = [[dNdx[i],0.     ],
-                                             [0.     ,dNdy[i]],
-                                             [dNdy[i],dNdx[i]]]
+           # integrate viscous term at 4 quadrature points
+           for iq in [-1, 1]:
+               for jq in [-1, 1]:
 
-                if xq**2+(yq-0.5*Ly)**2<radius2:
-                   etaq=eta0*eta_star
-                   rhoq=rho0+drho
-                   elt_in_sphere[iel]=True
-                else:
-                   rhoq=rho0
-                   etaq=eta0
+                   # position & weight of quad. point
+                   rq=iq/sqrt3
+                   sq=jq/sqrt3
+                   weightq=1.
 
-                # compute elemental a_mat matrix
-                a_el += b_mat.T.dot(c_mat.dot(b_mat))*etaq*weightq*jcob
+                   # calculate shape functions
+                   N[0]=0.25*(1.-rq)*(1.-sq)
+                   N[1]=0.25*(1.+rq)*(1.-sq)
+                   N[2]=0.25*(1.+rq)*(1.+sq)
+                   N[3]=0.25*(1.-rq)*(1.+sq)
 
-                # compute elemental rhs vector
-                for i in range(0, m):
-                    b_el[2*i+1]+=N[i]*jcob*weightq*rhoq*gy
+                   # calculate shape function derivatives
+                   dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
+                   dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
+                   dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
+                   dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
-            #end for jq
-        #end for iq
+                   # calculate jacobian matrix
+                   #jcb = np.zeros((2, 2),dtype=np.float64)
+                   #for k in range(0,m):
+                   #    jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
+                   #    jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
+                   #    jcb[1, 0] += dNds[k]*x[icon[k,iel]]
+                   #    jcb[1, 1] += dNds[k]*y[icon[k,iel]]
+                   #jcob = np.linalg.det(jcb)
+                   #jcbi = np.linalg.inv(jcb)
 
-        # integrate penalty term at 1 point
-        rq=0.
-        sq=0.
-        weightq=4
+                   jcb = np.array([[hx/2,0],[0,hy/2]],dtype=np.float64) 
+                   jcob = hx*hy/4
+                   jcbi = np.array([[2/hx,0],[0,2/hy]],dtype=np.float64) 
 
-        N[0]=0.25#(1.-rq)*(1.-sq)
-        N[1]=0.25#(1.+rq)*(1.-sq)
-        N[2]=0.25#(1.+rq)*(1.+sq)
-        N[3]=0.25#(1.-rq)*(1.+sq)
+                   # compute dNdx & dNdy
+                   xq=0.0
+                   yq=0.0
+                   for k in range(0, m):
+                       xq+=N[k]*x[icon[k,iel]]
+                       yq+=N[k]*y[icon[k,iel]]
+                       dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+                       dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
 
-        dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
-        dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
-        dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
-        dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
+                   # construct 3x8 b_mat matrix
+                   for i in range(0, m):
+                       b_mat[0:3, 2*i:2*i+2] = [[dNdx[i],0.     ],
+                                                [0.     ,dNdy[i]],
+                                                [dNdy[i],dNdx[i]]]
 
-        # compute the jacobian
-        #jcb=np.zeros((2,2),dtype=np.float64)
-        #for k in range(0, m):
-        #    jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
-        #    jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
-        #    jcb[1,0]+=dNds[k]*x[icon[k,iel]]
-        #    jcb[1,1]+=dNds[k]*y[icon[k,iel]]
-        #jcob = np.linalg.det(jcb)
-        #jcbi = np.linalg.inv(jcb)
+                   if elt_in_sphere[iel]:
+                      etaq=eta0*eta_star
+                      rhoq=rho0+drho
+                   else:
+                      rhoq=rho0
+                      etaq=eta0
 
-        jcb = np.array([[hx/2,0],[0,hy/2]],dtype=np.float64) 
-        jcob = hx*hy/4
-        jcbi = np.array([[2/hx,0],[0,2/hy]],dtype=np.float64) 
+                   # compute elemental a_mat matrix
+                   a_el += b_mat.T.dot(c_mat.dot(b_mat))*etaq*weightq*jcob
 
-        # compute dNdx and dNdy
-        for k in range(0,m):
-            dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-            dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+                   # compute elemental rhs vector
+                   for i in range(0, m):
+                       b_el[2*i+1]+=N[i]*jcob*weightq*rhoq*gy
 
-        # compute gradient matrix
-        for i in range(0,m):
-            b_mat[0:3,2*i:2*i+2]=[[dNdx[i],0.     ],
-                                  [0.     ,dNdy[i]],
-                                  [dNdy[i],dNdx[i]]]
+               #end for jq
+           #end for iq
 
-        # compute elemental matrix
-        a_el += b_mat.T.dot(k_mat.dot(b_mat))*penalty*weightq*jcob
+           # integrate penalty term at 1 point
+           rq=0.
+           sq=0.
+           weightq=4
 
-        # apply boundary conditions
-        for k1 in range(0,m):
-                for i1 in range(0,ndofV):
-                    m1 =ndofV*icon[k1,iel]+i1
-                    if bc_fix[m1]: 
-                       fixt=bc_val[m1]
-                       ikk=ndofV*k1+i1
-                       aref=a_el[ikk,ikk]
-                       for jkk in range(0,m*ndofV):
-                           b_el[jkk]-=a_el[jkk,ikk]*fixt
-                           a_el[ikk,jkk]=0.
-                           a_el[jkk,ikk]=0.
-                       #end for
-                       a_el[ikk,ikk]=aref
-                       b_el[ikk]=aref*fixt
-                    #end if
-                #end for
-        #end for
+           N[0]=0.25#(1.-rq)*(1.-sq)
+           N[1]=0.25#(1.+rq)*(1.-sq)
+           N[2]=0.25#(1.+rq)*(1.+sq)
+           N[3]=0.25#(1.-rq)*(1.+sq)
+
+           dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
+           dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
+           dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
+           dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
+
+           # compute the jacobian
+           #jcb=np.zeros((2,2),dtype=np.float64)
+           #for k in range(0, m):
+           #    jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+           #    jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+           #    jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+           #    jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+           #jcob = np.linalg.det(jcb)
+           #jcbi = np.linalg.inv(jcb)
+
+           jcb = np.array([[hx/2,0],[0,hy/2]],dtype=np.float64) 
+           jcob = hx*hy/4
+           jcbi = np.array([[2/hx,0],[0,2/hy]],dtype=np.float64) 
+
+           # compute dNdx and dNdy
+           for k in range(0,m):
+               dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+               dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+
+           # compute gradient matrix
+           for i in range(0,m):
+               b_mat[0:3,2*i:2*i+2]=[[dNdx[i],0.     ],
+                                     [0.     ,dNdy[i]],
+                                     [dNdy[i],dNdx[i]]]
+
+           # compute elemental matrix
+           a_el += b_mat.T.dot(k_mat.dot(b_mat))*penalty*weightq*jcob
+
+           # apply boundary conditions
+           for k1 in range(0,m):
+                   for i1 in range(0,ndofV):
+                       m1 =ndofV*icon[k1,iel]+i1
+                       if bc_fix[m1]: 
+                          fixt=bc_val[m1]
+                          ikk=ndofV*k1+i1
+                          aref=a_el[ikk,ikk]
+                          for jkk in range(0,m*ndofV):
+                              b_el[jkk]-=a_el[jkk,ikk]*fixt
+                              a_el[ikk,jkk]=0.
+                              a_el[jkk,ikk]=0.
+                          #end for
+                          a_el[ikk,ikk]=aref
+                          b_el[ikk]=aref*fixt
+                       #end if
+                   #end for
+           #end for
     
-        # assemble matrix a_mat and right hand side rhs
-        for k1 in range(0,m):
-            for i1 in range(0,ndofV):
-                ikk=ndofV*k1          +i1
-                m1 =ndofV*icon[k1,iel]+i1
-                for k2 in range(0,m):
-                    for i2 in range(0,ndofV):
-                        jkk=ndofV*k2          +i2
-                        m2 =ndofV*icon[k2,iel]+i2
-                        a_mat[m1,m2]+=a_el[ikk,jkk]
-                    #end for i2
-                #end for k2
-                rhs[m1]+=b_el[ikk]
-            #end for i1
-        #end for k1
+           # assemble matrix a_mat and right hand side rhs
+           for k1 in range(0,m):
+               for i1 in range(0,ndofV):
+                   ikk=ndofV*k1          +i1
+                   m1 =ndofV*icon[k1,iel]+i1
+                   for k2 in range(0,m):
+                       for i2 in range(0,ndofV):
+                           jkk=ndofV*k2          +i2
+                           m2 =ndofV*icon[k2,iel]+i2
+                           a_mat[m1,m2]+=a_el[ikk,jkk]
+                       #end for i2
+                   #end for k2
+                   rhs[m1]+=b_el[ikk]
+               #end for i1
+           #end for k1
 
-    #end for iel
+       #end for iel
 
-    #################################################################
-    # solve system
-    #################################################################
+       #################################################################
+       # solve system
+       #################################################################
 
-    sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+       sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
 
-    #####################################################################
-    # put solution into separate x,y velocity arrays
-    #####################################################################
+       #####################################################################
+       # put solution into separate x,y velocity arrays
+       #####################################################################
 
-    u,v=np.reshape(sol,(NV,2)).T
+       u,v=np.reshape(sol,(NV,2)).T
 
-    #print("u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
-    #print("v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
+       #print("u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
+       #print("v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
 
-    #np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+       #np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
-    #np.savetxt('velocity.ascii',np.array([x[0:nnx],u[NV-nnx:NV]]).T,header='# x,u')
+       #np.savetxt('velocity.ascii',np.array([x[0:nnx],u[NV-nnx:NV]]).T,header='# x,u')
+
+
+    #end if
 
     #####################################################################
     # compute gravity
     # because half the disc is missing we on the fly mirror it
     #####################################################################
+
+    N = np.zeros(m,dtype=np.float64)            # shape functions
 
     volume=np.pi*Rsphere**2
 
