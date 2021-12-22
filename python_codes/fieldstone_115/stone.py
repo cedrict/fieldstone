@@ -11,34 +11,56 @@ import matplotlib.pyplot as plt
 #------------------------------------------------------------------------------
 
 def bx(x, y):
-    val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
-         (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
-         (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
-         1.-4.*y+12.*y*y-8.*y*y*y)
+    if experiment==1:
+       val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
+            (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
+            (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
+            1.-4.*y+12.*y*y-8.*y*y*y)
+    if experiment==2:
+       val=0.
     return val
 
 def by(x, y):
-    val=((8.-48.*y+48.*y*y)*x*x*x+
-         (-12.+72.*y-72.*y*y)*x*x+
-         (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
-         12.*y*y+24.*y*y*y-12.*y**4)
+    if experiment==1:
+       val=((8.-48.*y+48.*y*y)*x*x*x+
+            (-12.+72.*y-72.*y*y)*x*x+
+            (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
+            12.*y*y+24.*y*y*y-12.*y**4)
+    if experiment==2:
+       val=-1
     return val
 
 #------------------------------------------------------------------------------
 
 def velocity_x(x,y):
-    val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+    if experiment==1:
+       val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+    if experiment==2:
+       val=0
     return val
 
 def velocity_y(x,y):
-    val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    if experiment==1:
+       val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    if experiment==2:
+       val=0
     return val
 
 def pressure(x,y):
-    val=x*(1.-x)-1./6.
+    if experiment==1:
+       val=x*(1.-x)-1./6.
+    if experiment==2:
+       val=0.5-y
     return val
 
 #------------------------------------------------------------------------------
+# 1: donea & huerta
+# 2: aquarium 
+
+experiment=1
+
+#------------------------------------------------------------------------------
+
 
 eps=1.e-10
 sqrt3=np.sqrt(3.)
@@ -86,7 +108,7 @@ Gscaling=1 #eta/(Ly/nely)
 #3: local
 
 stabilisation=3
-epsi=1e-3
+epsi=1e-10
 
 if stabilisation==3 and nelx%2==1: exit()
 if stabilisation==3 and nely%2==1: exit()
@@ -125,13 +147,6 @@ for j in range(0, nely):
     #end for
 #end for
 
-# for iel in range (0,nel):
-#     print ("iel=",iel)
-#     print ("node 1",icon[0][iel],"at pos.",x[icon[0][iel]], y[icon[0][iel]])
-#     print ("node 2",icon[1][iel],"at pos.",x[icon[1][iel]], y[icon[1][iel]])
-#     print ("node 3",icon[2][iel],"at pos.",x[icon[2][iel]], y[icon[2][iel]])
-#     print ("node 4",icon[3][iel],"at pos.",x[icon[3][iel]], y[icon[3][iel]])
-
 print("setup: connectivity: %.3f s" % (time.time() - start))
 
 #################################################################
@@ -142,20 +157,32 @@ start = time.time()
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
-for i in range(0,NV):
-    if x[i]<eps:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if x[i]>(Lx-eps):
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if y[i]<eps:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if y[i]>(Ly-eps):
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-#end for
+if experiment==1:
+   for i in range(0,NV):
+       if x[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if y[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if y[i]>(Ly-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+   #end for
+if experiment==2:
+   for i in range(0,NV):
+       if x[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if y[i]<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if y[i]>(Ly-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+   #end for
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
@@ -332,8 +359,6 @@ if stabilisation==3: #local
    # +-----+
    # |LL|LR|
    # -------
-
-
    counter = 0
    for j in range(0, nely):
        for i in range(0, nelx):
@@ -365,7 +390,7 @@ if stabilisation==3: #local
 
 A_mat=A_mat.tocsr()
 
-#plt.spy(A_mat, markersize=0.1)
+#plt.spy(A_mat, markersize=0.25)
 #plt.savefig('matrix.png', bbox_inches='tight')
 #plt.clf()
 
@@ -392,7 +417,7 @@ print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
-np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+#np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
 print("split vel into u,v: %.3f s" % (time.time() - start))
 
@@ -432,10 +457,7 @@ for iel in range(0,nel):
         jcb[1,0]+=dNds[k]*x[icon[k,iel]]
         jcb[1,1]+=dNds[k]*y[icon[k,iel]]
 
-    # calculate determinant of the jacobian
     jcob=np.linalg.det(jcb)
-
-    # calculate the inverse of the jacobian
     jcbi=np.linalg.inv(jcb)
 
     for k in range(0,mV):
@@ -552,7 +574,7 @@ for iel in range (0,nel):
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 
-print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
+print("     -> nel= %6d ; errv= %e ; errp= %e" %(nel,errv,errp))
 
 print("compute errors: %.3f s" % (time.time() - start))
 
@@ -575,15 +597,12 @@ if visu==1:
    vtufile.write("</DataArray>\n")
    vtufile.write("</Points> \n")
    #####
-   #vtufile.write("<CellData Scalars='scalars'>\n")
-   #vtufile.write("</CellData>\n")
-   #####
    vtufile.write("<PointData Scalars='scalars'>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
    for iel in range(0,nel):
        for i in range(0,mV):
-           vtufile.write("%10f %10f %10f \n" %(u[icon[i,iel]],v[icon[i,iel]],0.))
+           vtufile.write("%e %e %e \n" %(u[icon[i,iel]],v[icon[i,iel]],0.))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (error)' Format='ascii'> \n")

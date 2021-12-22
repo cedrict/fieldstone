@@ -40,3 +40,13 @@ python3 stone.py  129 129 0  > opla
 grep errv opla >> errors
 grep divv opla >> divv
 
+echo 144 x 144 
+python3 stone.py  144 144 0  > opla
+grep errv opla >> errors
+grep divv opla >> divv
+
+echo 160 x 160 
+python3 stone.py  160 160 0  > opla
+grep errv opla >> errors
+grep divv opla >> divv
+
