@@ -38,6 +38,26 @@ by imposing (Lagrange multiplier) that $\int_\Omega p \; dV=0$.
 techniques. The zero average pressure approach yields smaller errors.}
 \end{center}
 
+
+%-----------------------------------------
+\subsubsection*{Burman \& Hansbo manufactured solution}
+
+The details of the numerical setup are presented in Section \ref{ss:mms_buha06}.
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_18/results/buha06/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_18/results/buha06/p}\\
+{\captionfont velocity and pressure fields for $64\times 64$ elements grid}
+\end{center}
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_18/results/buha06/errors}\\
+{\captionfont Velocity and pressure error convergence. Zero average.}
+\end{center}
+
+No good reason to run such higher numbers of quadrature points.
+
+
 %-----------------------------------------
 \subsubsection*{Stokes sphere benchmark}
 

@@ -18,6 +18,8 @@ def bx(x,y):
        val=0 
     if bench==3:
        val=0 
+    if bench==4:
+       val=0 
     return val
 
 def by(x,y):
@@ -36,6 +38,8 @@ def by(x,y):
           val=-1.01
        else:
           val=-1.
+    if bench==4:
+       val=0 
 
     return val
 
@@ -52,20 +56,37 @@ def eta(x,y):
           val=1000
        else:
           val=1
+    if bench==4:
+       val=1
     return val
 
 #------------------------------------------------------------------------------
 
 def uth(x,y):
-    val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+    if bench==1:
+       val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+    if bench==2 or bench==3:
+       val=0
+    if bench==4:
+       val=20*x*y**3
     return val
 
 def vth(x,y):
-    val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    if bench==1:
+       val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    if bench==2 or bench==3:
+       val=0
+    if bench==4:
+       val=5*x**4-5*y**4
     return val
 
 def pth(x,y):
-    val=x*(1.-x)-1./6.
+    if bench==1:
+       val=x*(1.-x)-1./6.
+    if bench==2 or bench==3:
+       val=0
+    if bench==4:
+       val=60*x**2*y-20*y**3-5
     return val
 
 #------------------------------------------------------------------------------
@@ -156,17 +177,19 @@ Nfem=NfemV+NfemP # total number of dofs
 hx=Lx/nelx
 hy=Ly/nely
 
-pnormalise=True
+#pnormalise=True
 
-bench=3
+bench=4
 
 FS=False
 NS=True
 OT=False
 BO=False
 
-#################################################################
+if bench==4:
+   NS=True
 
+#################################################################
 
 if nqperdim==3:
    qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
@@ -335,17 +358,17 @@ bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 if NS:
    for i in range(0,NV):
        if x[i]<eps:
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = uth(x[i],y[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vth(x[i],y[i])
        if x[i]>(Lx-eps):
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = uth(x[i],y[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vth(x[i],y[i])
        if y[i]<eps:
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = uth(x[i],y[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vth(x[i],y[i])
        if y[i]>(Ly-eps):
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = uth(x[i],y[i])
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vth(x[i],y[i])
        #end if
    #end for
 
