@@ -1,0 +1,57 @@
+#! /bin/bash
+
+rm -f errors
+rm -f divv
+
+e=1
+
+for res in {7..81}; do 
+    echo $res X $res
+    python3 stone.py  $res  $res 0 $e > opla
+    grep errv opla >> errors
+    grep divv opla >> divv
+done 
+
+echo 96 x 96
+python3 stone.py  96   96 0 $e  > opla
+grep errv opla >> errors
+grep divv opla >> divv
+
+echo 97 x 97
+python3 stone.py  97   97 0 $e > opla
+grep errv opla >> errors
+grep divv opla >> divv
+
+echo 112 x 112
+python3 stone.py  112 112 0 $e > opla
+grep errv opla >> errors
+grep divv opla >> divv
+
+echo 113 x 113
+python3 stone.py  113 113 0 $e > opla
+grep errv opla >> errors
+grep divv opla >> divv
+
+echo 128 x 128
+python3 stone.py  128 128 0 $e > opla
+grep errv opla >> errors
+grep divv opla >> divv
+
+echo 129 x 129 
+python3 stone.py  129 129 0 $e > opla
+grep errv opla >> errors
+grep divv opla >> divv
+
+echo 144 x 144 
+python3 stone.py  144 144 0 $e > opla
+grep errv opla >> errors
+grep divv opla >> divv
+
+echo 160 x 160 
+python3 stone.py  160 160 0 $e > opla
+grep errv opla >> errors
+grep divv opla >> divv
+
+
+
+

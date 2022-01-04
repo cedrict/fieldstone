@@ -20,6 +20,8 @@ def bx(x, y):
        val=0.
     if experiment==3:
        val=0
+    if experiment==4:
+       val=0
     return val
 
 def by(x, y):
@@ -32,6 +34,8 @@ def by(x, y):
        val=-1
     if experiment==3:
        val=0
+    if experiment==4:
+       val=0
     return val
 
 #------------------------------------------------------------------------------
@@ -43,6 +47,8 @@ def velocity_x(x,y):
        val=0
     if experiment==3:
        val=0
+    if experiment==4:
+       val=20*x*y**3
     return val
 
 def velocity_y(x,y):
@@ -52,6 +58,8 @@ def velocity_y(x,y):
        val=0
     if experiment==3:
        val=0
+    if experiment==4:
+       val=5*x**4-5*y**4
     return val
 
 def pressure(x,y):
@@ -61,17 +69,19 @@ def pressure(x,y):
        val=0.5-y
     if experiment==3:
        val=0
+    if experiment==4:
+       val=60*x**2*y-20*y**3-5
     return val
 
 #------------------------------------------------------------------------------
 # 1: donea & huerta
 # 2: aquarium 
 # 3: lid driven cavity
+# 4: buha06
 
-experiment=3
+experiment=4
 
 #------------------------------------------------------------------------------
-
 
 eps=1.e-10
 sqrt3=np.sqrt(3.)
@@ -88,14 +98,16 @@ ndofP=1  # number of pressure degrees of freedom
 Lx=1.  # horizontal extent of the domain 
 Ly=1.  # vertical extent of the domain 
 
-if int(len(sys.argv) == 4):
+if int(len(sys.argv) == 5):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
+   epsi = float(sys.argv[4])
 else:
    nelx = 32
    nely = 32
    visu = 1
+   epsi = 0.1
     
 nnx=nelx+1       # number of elements, x direction
 nny=nely+1       # number of elements, y direction
@@ -109,7 +121,7 @@ hy=Ly/nely
 
 eta=1.  # dynamic viscosity 
 
-pnormalise=False
+pnormalise=True
 
 Gscaling=1 #eta/(Ly/nely)
 
@@ -118,8 +130,7 @@ Gscaling=1 #eta/(Ly/nely)
 #2: global 
 #3: local
 
-stabilisation=3
-epsi=1e-3
+stabilisation=1
 
 if stabilisation==3 and nelx%2==1: exit()
 if stabilisation==3 and nely%2==1: exit()
@@ -207,6 +218,22 @@ if experiment==3:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        if y[i]<eps:
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+   #end for
+#end if
+if experiment==4:
+   for i in range(0,NV):
+       if x[i]/Lx<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(x[i],y[i]) 
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(x[i],y[i]) 
+       if x[i]/Lx>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(x[i],y[i]) 
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(x[i],y[i]) 
+       if y[i]/Ly<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(x[i],y[i]) 
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(x[i],y[i]) 
+       if y[i]/Ly>(1-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = velocity_x(x[i],y[i]) 
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(x[i],y[i]) 
    #end for
 #end if
 
@@ -439,9 +466,11 @@ start = time.time()
 u,v=np.reshape(sol[0:NfemV],(NV,2)).T
 p=sol[NfemV:Nfem]*Gscaling
 
-print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
-print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
+print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
+print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
+print("     -> lagr. mult. %e" %sol[NfemV])
+
 
 #np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
@@ -605,6 +634,11 @@ print("     -> nel= %6d ; errv= %e ; errp= %e" %(nel,errv,errp))
 print("compute errors: %.3f s" % (time.time() - start))
 
 #####################################################################
+
+if experiment==3 or experiment==4:
+   np.savetxt('psurf.ascii',np.array([xc[nel-nelx:nel],p[nel-nelx:nel]]).T)
+
+#####################################################################
 # plot of solution export to vtu format
 #####################################################################
 start = time.time()
@@ -686,7 +720,6 @@ if visu==1:
    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
    counter=0
    for iel in range(0,nel):
-       #for i in range(0,mV):
        vtufile.write("%d %d %d %d \n" %(counter,counter+1,counter+2,counter+3))
        counter+=4
    vtufile.write("</DataArray>\n")
