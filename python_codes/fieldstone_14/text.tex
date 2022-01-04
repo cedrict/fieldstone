@@ -7,6 +7,8 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\subsection*{Donea \& Huerta manufactured solution}
+
 The details of the numerical setup are presented in Section~\ref{mms1}.
 
 In this stone we do not use the penalty formulation and therefore 
@@ -52,9 +54,9 @@ The pressure nullspace is removed by imposing that $\int_\Omega p \; dV =0$ thro
 a Lagrange multiplier (see Section~\ref{ss_pnorm}).
 
 \begin{center}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/vel}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/p}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/sr}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/dh/vel}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/dh/p}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/dh/sr}\\
 {\captionfont From left to right: velocity, pressure and second invariant 
 of strain rate for 32x32 mesh.}
 \end{center}
@@ -65,9 +67,9 @@ in \cite{dohu03}. The amplitude of this checkerboard is unpredictable
 and changes from one resolution to the other.
 
 \begin{center}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/doneahuerta}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/p_3D}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/q_3D}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/dh/doneahuerta}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/dh/p_3D}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/dh/q_3D}\\
 {\captionfont Left: pressure solution as shown in \cite{dohu03}; Right: elemental 
 pressure solution obtained with fieldstone on a 32x32 grid. 
 Note that the vtu file was build in such a way so as to allow for 
@@ -102,11 +104,33 @@ It seems that option $b$ yields slightly better velocity accuracy, but the press
 checkerboard derails pressure error measurements for both cases:
 
 \begin{center}
-\includegraphics[width=11cm]{python_codes/fieldstone_14/results/errors.pdf}
+\includegraphics[width=12cm]{python_codes/fieldstone_14/results/dh/errors.pdf}
 \end{center}
 
 
 \begin{center}
-\includegraphics[width=15cm]{python_codes/fieldstone_14/results/p128x128}\\
+\includegraphics[width=15cm]{python_codes/fieldstone_14/results/dh/p128x128}\\
 {\captionfont Elemental pressure for 128x128 mesh.}
 \end{center}
+
+\newpage
+%-------------------------------------------------------------------------------
+\subsection*{Burman \& Hansbo manufactured solution}
+
+Details of this solution are in Section~\ref{ss:mms_buha06}.
+
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_14/results/buha06/vel}
+\includegraphics[width=6cm]{python_codes/fieldstone_14/results/buha06/p}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_14/results/buha06/exx}
+\includegraphics[width=4cm]{python_codes/fieldstone_14/results/buha06/exy}
+\includegraphics[width=4cm]{python_codes/fieldstone_14/results/buha06/eyy}\\
+{\captionfont Mesh is 32x32 - ${\bm C}^{(b)}$}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=11cm]{python_codes/fieldstone_14/results/buha06/errors.pdf}
+\end{center}
+
