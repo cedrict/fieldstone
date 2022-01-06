@@ -107,7 +107,7 @@ else:
    nelx = 32
    nely = 32
    visu = 1
-   epsi = 0.1
+   epsi = 1e-1
     
 nnx=nelx+1       # number of elements, x direction
 nny=nely+1       # number of elements, y direction
@@ -129,11 +129,20 @@ Gscaling=1 #eta/(Ly/nely)
 #1: penalty
 #2: global 
 #3: local
+#4: macro-element
 
-stabilisation=1
+stabilisation=2
 
 if stabilisation==3 and nelx%2==1: exit()
 if stabilisation==3 and nely%2==1: exit()
+if stabilisation==4 and nelx%2==1: exit()
+if stabilisation==4 and nely%2==1: exit()
+
+#################################################################
+
+print('nelx,nely    =',nelx,nely)
+print('epsi         =',epsi)
+print('stabilisation=',stabilisation)
 
 #################################################################
 # grid point setup
@@ -439,7 +448,44 @@ if stabilisation==3: #local
            counter += 1
        #end for
    #end for
-   
+
+if stabilisation==4: #macro-element
+   # -------
+   # |UL|UR|
+   # +-----+
+   # |LL|LR|
+   # -------
+   counter = 0
+   for j in range(0, nely):
+       for i in range(0, nelx):
+           if j%2==0 and i%2==0:
+              elt_LL=counter 
+              elt_LR=counter+1
+              elt_UL=counter+nelx
+              elt_UR=counter+nelx+1
+              #lower left element LL
+              A_mat[NfemV+ elt_LL, NfemV+ elt_LL] -=epsi*hx*hy
+              A_mat[NfemV+ elt_LL, NfemV+ elt_LR] +=epsi*hx*hy
+              A_mat[NfemV+ elt_LL, NfemV+ elt_UL] +=epsi*hx*hy
+              A_mat[NfemV+ elt_LL, NfemV+ elt_UR] -=epsi*hx*hy
+              #lower right element LR
+              A_mat[NfemV+ elt_LR, NfemV+ elt_LR] -=epsi*hx*hy
+              A_mat[NfemV+ elt_LR, NfemV+ elt_LL] +=epsi*hx*hy   
+              A_mat[NfemV+ elt_LR, NfemV+ elt_UR] +=epsi*hx*hy
+              A_mat[NfemV+ elt_LR, NfemV+ elt_UL] -=epsi*hx*hy
+              #upper left element LL
+              A_mat[NfemV+ elt_UL, NfemV+ elt_UL] -=epsi*hx*hy
+              A_mat[NfemV+ elt_UL, NfemV+ elt_UR] +=epsi*hx*hy
+              A_mat[NfemV+ elt_UL, NfemV+ elt_LL] +=epsi*hx*hy
+              A_mat[NfemV+ elt_UL, NfemV+ elt_LR] -=epsi*hx*hy
+              #upper right element UR
+              A_mat[NfemV+ elt_UR, NfemV+ elt_UR] -=epsi*hx*hy
+              A_mat[NfemV+ elt_UR, NfemV+ elt_UL] +=epsi*hx*hy   
+              A_mat[NfemV+ elt_UR, NfemV+ elt_LR] +=epsi*hx*hy
+              A_mat[NfemV+ elt_UR, NfemV+ elt_LL] -=epsi*hx*hy
+           counter += 1
+       #end for
+   #end for
 
 A_mat=A_mat.tocsr()
 
@@ -629,7 +675,7 @@ for iel in range (0,nel):
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 
-print("     -> nel= %6d ; errv= %e ; errp= %e" %(nel,errv,errp))
+print("     -> nel= %6d ; errv= %e ; errp= %e ; epsi= %e" %(nel,errv,errp,epsi))
 
 print("compute errors: %.3f s" % (time.time() - start))
 
@@ -711,6 +757,12 @@ if visu==1:
    for iel in range(0,nel):
        for i in range(0,mV):
            vtufile.write("%e \n" %e[iel])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='div(v)' Format='ascii'> \n")
+   for iel in range(0,nel):
+       for i in range(0,mV):
+           vtufile.write("%.6e \n" % (exx[iel]+eyy[iel]))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("</PointData>\n")

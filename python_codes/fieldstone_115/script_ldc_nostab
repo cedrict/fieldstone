@@ -1,0 +1,14 @@
+#! /bin/bash
+
+
+e=1
+
+for res in 16 32 64 128; do 
+    echo $res X $res
+    python3 stone.py  $res  $res 0 $e > opla
+    grep errv opla >> errors
+    grep divv opla >> divv
+    mv psurf.ascii psurf_${res}.ascii
+done 
+
+
