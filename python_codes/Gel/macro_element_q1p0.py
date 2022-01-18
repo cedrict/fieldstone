@@ -63,10 +63,6 @@ Nfem=NfemV+NfemP # total number of dofs
 
 viscosity=1.  # dynamic viscosity \mu
 
-use_SchurComplementApproach=True
-niter_stokes=100
-solver_tolerance=1e-8
-
 eps=1.e-10
 sqrt3=np.sqrt(3.)
 
@@ -211,7 +207,15 @@ for iel in range(0, nel):
                 G_el[ndofV*i+1,0]-=dNdy[i]*jcob*wq
 
 
+    print('-----------------------------------')
     print(G_el)
+
+    print(K_el)
+
+    #print(np.linalg.det(K_el))
+    #K_elm1= np.linalg.inv(K_el)
+    #print(K_elm1)
+    #print( G_el.T.dot(K_elm1.dot(G_el)))
 
     # impose b.c. 
     for k1 in range(0,m):
