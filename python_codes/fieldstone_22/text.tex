@@ -91,34 +91,34 @@ Note that this approach is not used in practice as we'll see hereafter.
 
 The pressure inside an element is given by 
 \[
-p^h(\vec x) = \sum_k N_k^p(\vec x) p_k
+p^h(\vec x) = \sum_k \bN_k^p(\vec x) p_k
 \]
 so that 
 \begin{eqnarray}
 \Pi p^h 
-&=& \frac{1}{|\Omega_e|} \int_{\Omega_e} \sum_k N_k^p p_k d\Omega 
-= \sum_k \left(\underbrace{\frac{1}{|\Omega_e|} \int_{\Omega_e} N_k^p  d\Omega}_{\tilde{N}_k^p} \right) p_k
+&=& \frac{1}{|\Omega_e|} \int_{\Omega_e} \sum_k \bN_k^p p_k d\Omega 
+= \sum_k \left(\underbrace{\frac{1}{|\Omega_e|} \int_{\Omega_e} \bN_k^p  d\Omega}_{\tilde{\bN}_k^p} \right) p_k
 \end{eqnarray}
 and then
 \[
 p^h -\Pi p^h 
-= \sum_k N_k^p(\vec x) p_k - \sum_k \tilde{N}_k^p p_k  
-= \sum_k (N_k^p(\vec x) - \tilde{N}_k^p) p_k  
+= \sum_k \bN_k^p(\vec x) p_k - \sum_k \tilde{\bN}_k^p p_k  
+= \sum_k (\bN_k^p(\vec x) - \tilde{\bN}_k^p) p_k  
 \]
 The algorithm is straighforward and as follows:
 In the loop over elements, a) Compute the average of each shape function $N_k^p(\vec x)$ over the element;
 b) Substract this average to the shape function; c) Build mass matrix with modified/offset shape functions
 (taking in account the viscosity).
  
-In the case of rectangular elements of size $(h_x,h_y)$, $\tilde{N}_k^p$ simplifies even more:
+In the case of rectangular elements of size $(h_x,h_y)$, $\tilde{\bN}_k^p$ simplifies even more:
 \begin{eqnarray}
-\tilde{N}_k^p 
-&=& \frac{1}{|\Omega_e|} \int_{\Omega_e} N_k^p(\vec x)   d\Omega  
-= \frac{1}{h_xh_y} \frac{h_xh_y}{4} \int_{-1}^{+1} \int_{-1}^{+1} N_k^p(r,s)   drds 
-= \frac{1}{4} \int_{-1}^{+1} \int_{-1}^{+1} N_k^p(r,s)   drds 
+\tilde{\bN}_k^p 
+&=& \frac{1}{|\Omega_e|} \int_{\Omega_e} \bN_k^p(\vec x)   d\Omega  
+= \frac{1}{h_xh_y} \frac{h_xh_y}{4} \int_{-1}^{+1} \int_{-1}^{+1} \bN_k^p(r,s)   drds 
+= \frac{1}{4} \int_{-1}^{+1} \int_{-1}^{+1} \bN_k^p(r,s)   drds 
 \end{eqnarray}
 It is easy to show that the average of the $Q_1$ shape functions of over the reference 
-element is 1, so that $ \tilde{N}_k^p=1/4$. 
+element is 1, so that $ \tilde{\bN}_k^p=1/4$. 
 This explains why in the code we have:
 \begin{lstlisting}
 Navrg = np.zeros(m,dtype=np.float64)
@@ -258,7 +258,7 @@ As in \cite{dobo04} we solve the benchmark problem presented in section \ref{mms
 %--------------------------------------------------
 \subsection*{The sinking block experiment (case 3)} 
 
-The setup is described in \cite{thba21}. 
+The setup is described in \cite{thba22}. 
 It consists of a two-dimensional $512\times 512$km domain filled with a fluid (the "mantle") 
 of density $\rho_1=3200$kg/m$^3$ and viscosity $\eta_1$. A square block of 
 size $128\times 128$km is placed in the domain and is centered at location 
