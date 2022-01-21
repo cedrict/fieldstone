@@ -12,8 +12,8 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
     m=4     # number of nodes making up an element
     ndofV=2  # number of degrees of freedom per node
 
-    nelx = 100
-    nely = 100
+    nelx = 64
+    nely = 64
 
     Lx=500e3 
     Ly=500e3
@@ -41,7 +41,9 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
 
     Ggrav=6.67e-11
 
-    solve_stokes=False
+    vrms_ref=8.988643046707479e-10
+
+    solve_stokes=True
 
     #################################################################
     # grid point setup
@@ -82,14 +84,13 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
     for iel in range(0,nel):
         xc[iel]=0.5*(x[icon[0,iel]]+x[icon[2,iel]])
         yc[iel]=0.5*(y[icon[0,iel]]+y[icon[2,iel]])
-        if xc[iel]**2+(yc[iel]-0.5*Ly)**2<radius2:
+        if (xc[iel])**2+(yc[iel]-0.5*Ly)**2<radius2:
            elt_in_sphere[iel]=True
 
     if solve_stokes:
 
        #################################################################
-       # define boundary conditions
-       # free slip on left and top, no slip on bottom and right
+       # define boundary conditions; free slip on all boundaries
        #################################################################
 
        bc_fix=np.zeros(Nfem,dtype=np.bool)    # boundary condition, yes/no
@@ -100,9 +101,7 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
               bc_fix[i*ndofV+0] = True ; bc_val[i*ndofV+0] = 0.
            if x[i]/Lx>1-eps:
               bc_fix[i*ndofV+0] = True ; bc_val[i*ndofV+0] = 0.
-              bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
            if y[i]/Ly<eps:
-              bc_fix[i*ndofV+0] = True ; bc_val[i*ndofV+0] = 0.
               bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
            if y[i]/Ly>1-eps:
               bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
@@ -112,22 +111,21 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
        #################################################################
 
        a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-       b_mat = np.zeros((3,ndofV*m),dtype=np.float64)   # gradient matrix B 
+       b_mat = np.zeros((3,ndofV*m),dtype=np.float64)  # gradient matrix B 
        rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
        N     = np.zeros(m,dtype=np.float64)            # shape functions
        dNdx  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
        dNdy  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
        dNdr  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
        dNds  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-       u     = np.zeros(NV,dtype=np.float64)          # x-component velocity
-       v     = np.zeros(NV,dtype=np.float64)          # y-component velocity
+       u     = np.zeros(NV,dtype=np.float64)           # x-component velocity
+       v     = np.zeros(NV,dtype=np.float64)           # y-component velocity
        k_mat = np.array([[1,1,0],[1,1,0],[0,0,0]],dtype=np.float64) 
        c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
        for iel in range(0, nel):
 
-           # set 2 arrays to 0 every loop
-           b_el = np.zeros(m*ndofV)
+           b_el = np.zeros(m*ndofV, dtype=np.float64)
            a_el = np.zeros((m*ndofV,m*ndofV), dtype=np.float64)
 
            # integrate viscous term at 4 quadrature points
@@ -161,7 +159,7 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
                    #jcob = np.linalg.det(jcb)
                    #jcbi = np.linalg.inv(jcb)
 
-                   jcb = np.array([[hx/2,0],[0,hy/2]],dtype=np.float64) 
+                   #jcb = np.array([[hx/2,0],[0,hy/2]],dtype=np.float64) 
                    jcob = hx*hy/4
                    jcbi = np.array([[2/hx,0],[0,2/hy]],dtype=np.float64) 
 
@@ -222,7 +220,7 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
            #jcob = np.linalg.det(jcb)
            #jcbi = np.linalg.inv(jcb)
 
-           jcb = np.array([[hx/2,0],[0,hy/2]],dtype=np.float64) 
+           #jcb = np.array([[hx/2,0],[0,hy/2]],dtype=np.float64) 
            jcob = hx*hy/4
            jcbi = np.array([[2/hx,0],[0,2/hy]],dtype=np.float64) 
 
@@ -291,11 +289,47 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
 
        #print("u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
        #print("v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
-
        #np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
-
        #np.savetxt('velocity.ascii',np.array([x[0:nnx],u[NV-nnx:NV]]).T,header='# x,u')
 
+       #####################################################################
+       # compute vrms 
+       #####################################################################
+
+       vrms=0.
+
+       for iel in range(0,nel):
+           for iq in [-1,1]:
+               for jq in [-1,1]:
+                   rq=iq/sqrt3
+                   sq=jq/sqrt3
+                   weightq=1.*1.
+
+                   # calculate shape functions
+                   N[0]=0.25*(1.-rq)*(1.-sq)
+                   N[1]=0.25*(1.+rq)*(1.-sq)
+                   N[2]=0.25*(1.+rq)*(1.+sq)
+                   N[3]=0.25*(1.-rq)*(1.+sq)
+
+                   jcob = hx*hy/4
+
+                   uq=0.0
+                   vq=0.0
+                   for k in range(0,m):
+                       uq+=N[k]*u[icon[k,iel]]
+                       vq+=N[k]*v[icon[k,iel]]
+
+                   vrms+=(uq**2+vq**2)*jcob*weightq
+
+               #end for
+           #end for
+       #end for
+
+       vrms=np.sqrt(vrms/Lx/Ly)
+
+       misfit_vrms=abs(vrms-vrms_ref)
+
+       #print('misfit vrms=',misfit_vrms)
 
     #end if
 
@@ -304,7 +338,7 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
     # because half the disc is missing we on the fly mirror it
     #####################################################################
 
-    N = np.zeros(m,dtype=np.float64)            # shape functions
+    N = np.zeros(m,dtype=np.float64)
 
     volume=np.pi*Rsphere**2
 
@@ -335,9 +369,9 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
                        gravy[i]+=Ggrav*drho*weightq*jcob/dist2*(Ly-yq)
 
     for i in range(0,nnx):
-        gravy_th[i]=Ggrav*volume*deltarho/(x[i]**2+(y[i]-Ly/2)**2)*(Ly-Ly/2)
+        gravy_th[i]=Ggrav*volume*deltarho/((x[i])**2+(Ly-Ly/2)**2)*(Ly-Ly/2)
 
-    #np.savetxt('gravity.ascii',np.array([x[0:nnx],gravy,gravy_th]).T)
+    np.savetxt('gravity.ascii',np.array([x[0:nnx],gravy,gravy_th]).T)
 
     misfit_grav=LA.norm(gravy-gravy_th,2)
 
@@ -397,6 +431,4 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
-    misfit_vel=0.
-
-    return  misfit_grav,misfit_vel
+    return  misfit_grav,misfit_vrms

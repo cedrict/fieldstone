@@ -14,7 +14,7 @@ Codes at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fie
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This \stone is based on \textcite{bakp14} (2014).
+This \stone is inspired by \textcite{bakp14} (2014).
 The setup is as follows:
 
 \begin{center}
@@ -43,7 +43,7 @@ The setup is as follows:
 \end{center}
 
 When the sphere is lighter than its surrounding it goes up and creates a 
-divergent flow at the surface. As explained in \cite{bakp14} an analytical 
+divergent flow at the surface. As explained in \textcite{bakp14} an analytical 
 solution exists for the horizontal component of the velocity at the surface in 3D. 
 Also, the lower density of the sphere (or rather the density difference $\delta\rho$
 between the sphere and its surrounding) yields a gravity field 
@@ -51,23 +51,24 @@ above the sphere that is lower and for which an analytical solution exists too.
 
 Assuming we have determined what the depth of the sphere is (and assuming that 
 it is rigid by taking its viscosity $\eta_s >> \eta_0$), then the two main 
-unknowns are its density difference $\delta \rho$ with regard to the surrounding mantle
-and its radius. 
++unknowns are its density difference $\delta \rho$ with regard to the surrounding mantle
+and its radius $R$. 
 
 To start with, we can compute analytically the gravity and velocity that a 
-$\delta\rho^\dag=-300$ and $R^\dag=50~\si{\km}$ sphere generates at the surface of the model
-and write a simple inversion code which would operate in the $(R,\delta\rho)$-space 
+$\delta\rho^\dag=-300$ and $R^\dag=50~\si{\km}$ disc generates at the surface of the model,
+write a simple inversion code which would operate in the $(R,\delta\rho)$-space 
 and automatically looks for the real values of the sphere by computing a gravity misfit $\xi_g$ 
-and velocity misfit $\xi_v$ and using these quantities to zero-in on the correct values.
+and velocity misfit $\xi_v$ and using these quantities to zero-in on the correct values 
+of $\delta \rho$ and $R$.
 
 
 Three ideas:
 
-- pure 2D stokes and gravity
-
 - axisymmetric
 
 - full 3D
+
+- try JIT? julia?
 
 
 %--------------------------------------------------------
@@ -121,15 +122,21 @@ to target the contribution of the elements 'inside' the sphere.
 \subsection*{Stokes forward model - analytical solution}
 
 The surface velocity signal of a rising sphere is computed in Appendix~A of \textcite{bakp14} (2014).
-It is based on \textcite{bren61} (1961), \cite{stje26} (1926) and \textcite{paso05} (2005). See also 
+It is based on \textcite{bren61} (1961), \textcite{stje26} (1926) and \textcite{pacy05} (2005). See also 
 \textcite{burg16} (1916). The solution is only available in 3D with axisymmetric geometry. 
+The analytical expression is rather complex and in order to keep simple for now, we
+will use a different reference velocity quantity to carry out the inversion. 
+In the folder {\tt reference\_code} a modified version of \stone~2 is placed. 
+It computes the velocity field for the reference case
+at a 150x150 resolution. The root mean square velocity 
+$\upnu_{rms}=7.740432578645655e-10~\si{\meter\per\second}$ 
+will serve as our reference value to drive the inversion.
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_114/results/sphere}
-\includegraphics[width=8cm]{python_codes/fieldstone_114/results/vel}\\
-{\captionfont sphere radius is $50~\si{\km}$, $\rho_m=3000$, $\delta\rho=-300$, $\eta^\star=10^3$.}
+\includegraphics[width=6cm]{python_codes/fieldstone_114/reference_code/vel}
+\includegraphics[width=6cm]{python_codes/fieldstone_114/reference_code/eta}\\
+{\captionfont Sphere radius is $R=50~\si{\km}$, $\rho_m=3000$, $\delta\rho=-300$, $\eta^\star=10^3$.}
 \end{center}
-
 
 %--------------------------------------------------------
 \subsection*{The code}
@@ -137,38 +144,31 @@ It is based on \textcite{bren61} (1961), \cite{stje26} (1926) and \textcite{paso
 In order to produce a reasonably fast Stokes solver the code relies on 
 the $Q_1\times P_0$ element with a penalty approach (see for example \stone~01).
 The Cartesian domain is overlain with a mesh counting $nel_x\times nel_y=nel$
-elements which are all rectangular, so that the Jacobian of the transformation
+elements which are all square, so that the Jacobian of the transformation
 between global and local coordinates is diagonal. Its value has been 
 hard-wired in the code so as to save time. 
-
 The entire Stokes solver + gravity calculator is inserted into a single function
 {\tt compute\_misfits} in the {\pythonfile forward.py} file.
 
 Note that depending on the mesh resolution a call to the function will take betweem 1s 
-(50x50)
-2.5s (64x64), 
- and 8s (100x100). 
-
-try Julia ? JIT ?
-
+(50x50) 2.5s (64x64), and 8s (100x100). 
 
 %--------------------------------------------------------
 \subsection*{Inversion}
 
-The first inversion code {\tt driver1.py} is very simple. The user defines the bounds of the 
+The first inversion code {\pythonfile driver1.py} is very simple. The user defines the bounds of the 
 parameter space, i.e. $\delta\rho_{min}$, $\delta\rho_{max}$, $R_{min}$ and $R_{max}$.
 Then a regular grid composed of $n_{\delta\rho} \times n_{R}$ is used to compute 
 both misfits $\xi_g$ and $\xi_v$ at each node of the grid and these are 
 exported in a vtu file. No refinement or clever search takes place. 
 
-
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_114/results/mg}\\
-{\captionfont horizontal axis is radius $R$, vertical axis is $\delta\rho$. } 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_114/results/min}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_114/results/mg}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_114/results/mv}\\
+{\captionfont horizontal axis is radius $R$, vertical axis is $\delta\rho$. 60x60 points. about 2.5h.
+Left: location of the true minimum, i.e. the reference model; Middle: gravity misfit; Right: vrms misfit.} 
 \end{center}
-
-
-
 
 
 
