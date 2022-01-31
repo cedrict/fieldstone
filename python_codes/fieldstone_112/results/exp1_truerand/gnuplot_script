@@ -1,0 +1,43 @@
+set term pdf enhanced font 'Times,12pt'
+set log xy
+set format y "10^{%L}"
+set key outside
+
+set xlabel 'Ndof=2*NV+NP'
+set output 'errors_V_ndof.pdf'
+set ylabel 'error ||v-v^h||_2'
+plot[][]\
+'errors_1' u (2*$15+$18):6 w lp ps .5 t 'MINI',\
+'errors_2' u (2*$15+$18):6 w lp ps .5 t 'P_2xP_1',\
+'errors_3' u (2*$15+$18):6 w lp ps .5 t 'C-R',\
+
+
+set xlabel 'Ndof=2*NV+NP'
+set ylabel 'error ||p-p^h||_2'
+set output 'errors_P_ndof.pdf'
+plot[][]\
+'errors_1' u (2*$15+$18):9 w lp ps .5 t 'MINI',\
+'errors_2' u (2*$15+$18):9 w lp ps .5 t 'P_2xP_1',\
+'errors_3' u (2*$15+$18):9 w lp ps .5 t 'C-R',\
+
+set xlabel 'Ndof=2*NV+NP'
+unset format y
+set ylabel 'v_{rms}'
+unset log y
+set output 'vrms_ndof.pdf'
+plot[][0.007:]\
+'errors_1' u (2*$15+$18):12 w lp ps .5 t 'MINI',\
+'errors_2' u (2*$15+$18):12 w lp ps .5 t 'P_2xP_1',\
+'errors_3' u (2*$15+$18):12 w lp ps .5 t 'C-R',\
+
+
+
+
+
+
+
+
+
+
+
+ 

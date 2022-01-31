@@ -1,0 +1,78 @@
+#gnuplot script
+
+set term pdf enhanced font "Times,12pt"
+set grid
+set log xy
+set key outside
+set xlabel 'Ndof=2*NV+NP'
+
+###############################################################################################
+set title 'Donea & Huerta benchmark'
+
+set output 'errors_V_ndof_exp1.pdf'
+set ylabel 'error ||v-v^h||_2'
+plot[][]\
+'exp1/errors_1'          u (2*$15+$18):6 w lp lt 1 pt 1 ps .5 t 'MINI, reg',\
+'exp1/errors_2'          u (2*$15+$18):6 w lp lt 2 pt 1 ps .5 t 'P_2xP_1, reg',\
+'exp1/errors_3'          u (2*$15+$18):6 w lp lt 3 pt 1 ps .5 t 'C-R, reg',\
+'exp1/errors_4'          u (2*$15+$18):6 w lp pt 4 ps .25 t 'Q_2xQ_1, reg',\
+'exp1/errors_5'          u (2*$15+$18):6 w lp pt 5 ps .25 t 'Q_2xP_{-1}, reg',\
+'exp1_rand/errors_1'     u (2*$15+$18):6 w lp lt 1 pt 2 ps .5 t 'MINI, reg+rand',\
+'exp1_rand/errors_2'     u (2*$15+$18):6 w lp lt 2 pt 2 ps .5 t 'P_2xP_1, reg+rand',\
+'exp1_rand/errors_3'     u (2*$15+$18):6 w lp lt 3 pt 2 ps .5 t 'C-R, reg+rand',\
+'exp1_truerand/errors_1' u (2*$15+$18):6 w lp lt 1 pt 4 ps .5 t 'MINI, gmsh',\
+'exp1_truerand/errors_2' u (2*$15+$18):6 w lp lt 2 pt 4 ps .5 t 'P_2xP_1, gmsh',\
+'exp1_truerand/errors_3' u (2*$15+$18):6 w lp lt 3 pt 4 ps .5 t 'C-R, gmsh',\
+
+
+set xlabel 'Ndof=2*NV+NP'
+set ylabel 'error ||p-p^h||_2'
+set output 'errors_P_ndof_exp1.pdf'
+plot[][]\
+'exp1/errors_1'          u (2*$15+$18):9 w lp lt 1 pt 1 ps .5 t 'MINI, reg',\
+'exp1/errors_2'          u (2*$15+$18):9 w lp lt 2 pt 1 ps .5 t 'P_2xP_1, reg',\
+'exp1/errors_3'          u (2*$15+$18):9 w lp lt 3 pt 1 ps .5 t 'C-R, reg',\
+'exp1_rand/errors_1'     u (2*$15+$18):9 w lp lt 1 pt 2 ps .5 t 'MINI, reg+rand',\
+'exp1_rand/errors_2'     u (2*$15+$18):9 w lp lt 2 pt 2 ps .5 t 'P_2xP_1, reg+rand',\
+'exp1_rand/errors_3'     u (2*$15+$18):9 w lp lt 3 pt 2 ps .5 t 'C-R, reg+rand',\
+'exp1_truerand/errors_1' u (2*$15+$18):9 w lp lt 1 pt 4 ps .5 t 'MINI, gmsh',\
+'exp1_truerand/errors_2' u (2*$15+$18):9 w lp lt 2 pt 4 ps .5 t 'P_2xP_1, gmsh',\
+'exp1_truerand/errors_3' u (2*$15+$18):9 w lp lt 3 pt 4 ps .5 t 'C-R, gmsh',\
+
+###############################################################################################
+set title 'SolKz benchmark'
+
+set output 'errors_V_ndof_exp4.pdf'
+set ylabel 'error ||v-v^h||_2'
+plot[][]\
+'exp4/errors_1'          u (2*$15+$18):6 w lp lt 1 pt 1 ps .5 t 'MINI, reg',\
+'exp4/errors_2'          u (2*$15+$18):6 w lp lt 2 pt 1 ps .5 t 'P_2xP_1, reg',\
+'exp4/errors_3'          u (2*$15+$18):6 w lp lt 3 pt 1 ps .5 t 'C-R, reg',\
+'exp4/errors_4'          u (2*$15+$18):6 w lp pt 4 ps .25 t 'Q_2xQ_1, reg',\
+'exp4/errors_5'          u (2*$15+$18):6 w lp pt 5 ps .25 t 'Q_2xP_{-1}, reg',\
+'exp4_rand/errors_1'     u (2*$15+$18):6 w lp lt 1 pt 2 ps .5 t 'MINI, reg+rand',\
+'exp4_rand/errors_2'     u (2*$15+$18):6 w lp lt 2 pt 2 ps .5 t 'P_2xP_1, reg+rand',\
+'exp4_rand/errors_3'     u (2*$15+$18):6 w lp lt 3 pt 2 ps .5 t 'C-R, reg+rand',\
+'exp4_truerand/errors_1' u (2*$15+$18):6 w lp lt 1 pt 4 ps .5 t 'MINI, gmsh',\
+'exp4_truerand/errors_2' u (2*$15+$18):6 w lp lt 2 pt 4 ps .5 t 'P_2xP_1, gmsh',\
+'exp4_truerand/errors_3' u (2*$15+$18):6 w lp lt 3 pt 4 ps .5 t 'C-R, gmsh',\
+
+
+set xlabel 'Ndof=2*NV+NP'
+set ylabel 'error ||p-p^h||_2'
+set output 'errors_P_ndof_exp4.pdf'
+plot[][]\
+'exp4/errors_1'          u (2*$15+$18):9 w lp lt 1 pt 1 ps .5 t 'MINI, reg',\
+'exp4/errors_2'          u (2*$15+$18):9 w lp lt 2 pt 1 ps .5 t 'P_2xP_1, reg',\
+'exp4/errors_3'          u (2*$15+$18):9 w lp lt 3 pt 1 ps .5 t 'C-R, reg',\
+'exp4_rand/errors_1'     u (2*$15+$18):9 w lp lt 1 pt 2 ps .5 t 'MINI, reg+rand',\
+'exp4_rand/errors_2'     u (2*$15+$18):9 w lp lt 2 pt 2 ps .5 t 'P_2xP_1, reg+rand',\
+'exp4_rand/errors_3'     u (2*$15+$18):9 w lp lt 3 pt 2 ps .5 t 'C-R, reg+rand',\
+'exp4_truerand/errors_1' u (2*$15+$18):9 w lp lt 1 pt 4 ps .5 t 'MINI, gmsh',\
+'exp4_truerand/errors_2' u (2*$15+$18):9 w lp lt 2 pt 4 ps .5 t 'P_2xP_1, gmsh',\
+'exp4_truerand/errors_3' u (2*$15+$18):9 w lp lt 3 pt 4 ps .5 t 'C-R, gmsh',\
+
+###############################################################################################
+
+
+
