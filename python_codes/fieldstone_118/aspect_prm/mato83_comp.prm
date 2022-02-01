@@ -1,10 +1,11 @@
+#parameter file for replicating Matsumoto & Tomoda 1983
+
 set Dimension                              = 2
 set Start time                             = 0
 set End time                               = 50e6
 set Use years in output instead of seconds = true
 set CFL number                             = 0.25
-set Output directory                       = output-stokes
-#set Maximum time step                      = 0.5
+set Output directory                       = output_stokes_comp
 set Pressure normalization                 = surface
 
 subsection Solver parameters
@@ -18,7 +19,7 @@ subsection Geometry model
   subsection Box
     set X extent  = 400e3
     set Y extent  = 180e3
-    set X repetitions = 3
+    set X repetitions = 2
   end
 end
 
@@ -95,5 +96,6 @@ subsection Postprocess
   subsection Visualization
     set List of output variables = density, viscosity, strain rate
     set Time between graphical output = 0
+    set Interpolate output = false
   end
 end

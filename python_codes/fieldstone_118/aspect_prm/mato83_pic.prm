@@ -1,10 +1,11 @@
+#parameter file for replicating Matsumoto & Tomoda 1983
+
 set Dimension                              = 2
 set Start time                             = 0
 set End time                               = 50e6
 set Use years in output instead of seconds = true
 set CFL number                             = 0.25
-set Output directory                       = output_stokes
-#set Maximum time step                      = 0.5
+set Output directory                       = output_stokes_pic
 set Pressure normalization                 = surface
 
 subsection Solver parameters
@@ -18,7 +19,7 @@ subsection Geometry model
   subsection Box
     set X extent  = 400e3
     set Y extent  = 180e3
-    set X repetitions = 3
+    set X repetitions = 2
   end
 end
 
@@ -29,14 +30,15 @@ end
 subsection Material model
   set Model name = multicomponent
   subsection Multicomponent
-    set Densities = 100000, 3200, 3200, 3300, 3300, 1030
+    set Densities = 0, 3200, 3200, 3300, 3300, 1030
     set Viscosities = 1e30, 1e21, 1e21, 1e22, 1e22, 1e19
-    set Viscosity averaging scheme = maximum composition 
+    #set Viscosity averaging scheme = maximum composition 
     #set Viscosity averaging scheme = arithmetic
     #set Viscosity averaging scheme = geometric
-    #set Viscosity averaging scheme = harmonic
+    set Viscosity averaging scheme = harmonic
     set Thermal expansivities = 0 
   end 
+  set Material averaging = harmonic average
 end
 
 subsection Gravity model
@@ -53,7 +55,6 @@ end
 
 subsection Initial temperature model
   set Model name = function
-
   subsection Function
     set Function expression = 0
   end
@@ -92,12 +93,15 @@ subsection Postprocess
     set Number of particles      = 350000
     set Time between data output = 0 
     set Data output format       = vtu 
-    set List of particle properties = initial composition
+    set List of particle properties = initial composition, velocity
     set Particle generator name = random uniform
+    set Interpolation scheme = cell average #default
+    set Update ghost particles = true
   end 
 
   subsection Visualization
     set List of output variables = density, viscosity, strain rate
     set Time between graphical output = 0
+    set Interpolate output = false
   end
 end
