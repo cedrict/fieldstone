@@ -54,12 +54,13 @@ no stabilisation, penalty, global, local, macro-elt.}
 
 We find that all three stabilisation $\C$ matrices are enough to suppress the chequerboard mode:
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_115/results/dh/p0}
-\includegraphics[width=5cm]{python_codes/fieldstone_115/results/dh/p1}
-\includegraphics[width=5cm]{python_codes/fieldstone_115/results/dh/p2}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_115/results/dh/p3}
-\includegraphics[width=5cm]{python_codes/fieldstone_115/results/dh/p4}\\
-{\captionfont 32x32. From left to right: no stabilisation, penalty, global, local, macro-elt. $\epsilon=10^{-1}$}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_115/results/dh/p0}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_115/results/dh/p1}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_115/results/dh/p2}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_115/results/dh/p3}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_115/results/dh/p4}\\
+{\captionfont resolution $32\times 32$. From left to right: no stabilisation, penalty, 
+global, local, macro-elt. $\epsilon=10^{-1}$}
 \end{center}
 
 We can now explore the influence of the stabilisation parameter $\epsilon$. Obviously, 
@@ -84,20 +85,19 @@ The pressure field is shown in the following figure for various values of $\epsi
 
 Let us now turn to the velocity and pressure error convergence rates: 
 \begin{center}
-\includegraphics[width=4cm]{python_codes/fieldstone_115/results/dh/errorsV_penalty.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_115/results/dh/errorsV_global.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_115/results/dh/errorsV_local.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_115/results/dh/errorsV_macro.pdf}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_115/results/dh/errorsP_penalty.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_115/results/dh/errorsP_global.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_115/results/dh/errorsP_local.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_115/results/dh/errorsP_macro.pdf}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_115/results/dh/divv_penalty.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_115/results/dh/divv_global.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_115/results/dh/divv_local.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_115/results/dh/divv_macro.pdf}\\
-{\captionfont Velocity and pressure errors as a function of the element size for meshes 6x6 to 128x128.
-Left is penalty, middle is global, right is local.}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/dh/errorsV_penalty.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/dh/errorsV_global.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/dh/errorsV_local.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/dh/errorsV_macro.pdf}\\
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/dh/errorsP_penalty.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/dh/errorsP_global.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/dh/errorsP_local.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/dh/errorsP_macro.pdf}\\
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/dh/divv_penalty.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/dh/divv_global.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/dh/divv_local.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/dh/divv_macro.pdf}\\
+{\captionfont Velocity and pressure errors as a function of the element size for meshes 6x6 to 144x144}
 \end{center}
 We find that the error convergence rate for velocity is always quadratic as expected, 
 while the error convergence for pressure becomes monotonous and linear as expected too.
@@ -109,7 +109,7 @@ system so well. could it be because this benchmark is very smooth?
 \includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/dh/errorsP_32_eps}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/dh/errorsP_64_eps}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/dh/errorsP_96_eps}\\
-{\captionfont Influence of $\epsilon$ parameter on pressure error for global, local, macro-elt}
+{\captionfont Influence of $\epsilon$ parameter on pressure error.}
 \end{center}
 
 {\bf Conclusion}: macro-element technique yields best results: lower velocity divergence, 
@@ -133,22 +133,32 @@ term, we find in the penalty case that it is proportional to $\epsilon$ and
 in the global and local cases that it converges quadratically.
 
 The analytical pressure field, on the other hand is a linear polynomial which cannot 
-be represented exactly by a set of discontinuous $C^0$ functions. We then expect and receover 
-a linear convergence.
+be represented exactly by a set of discontinuous $C^0$ functions. We then expect and 
+indeed recover a linear convergence.
 
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/aquarium/errorsV_penalty.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/aquarium/errorsP_penalty.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/aquarium/divv_penalty.pdf}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/aquarium/errorsV_global.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/aquarium/errorsP_global.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/aquarium/divv_global.pdf}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/aquarium/errorsV_local.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/aquarium/errorsP_local.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/aquarium/divv_local.pdf}\\
-{\captionfont Left to right: vel error, press error, and max(div(v)). top to bottom: 
-penalty, global, local.}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/aquarium/errorsV_penalty.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/aquarium/errorsV_global.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/aquarium/errorsV_local.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/aquarium/errorsV_macro.pdf}\\
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/aquarium/errorsP_penalty.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/aquarium/errorsP_global.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/aquarium/errorsP_local.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/aquarium/errorsP_macro.pdf}\\
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/aquarium/divv_penalty.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/aquarium/divv_global.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/aquarium/divv_local.pdf}
+\includegraphics[width=4.21cm]{python_codes/fieldstone_115/results/aquarium/divv_macro.pdf}\\
+{\captionfont Velocity and pressure errors as a function of the element size for meshes 6x6 to 144x144}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/aquarium/errorsP_32_eps}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/aquarium/errorsP_64_eps}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_115/results/aquarium/errorsP_96_eps}\\
+{\captionfont Influence of $\epsilon$ parameter on pressure error.}
 \end{center}
 
 

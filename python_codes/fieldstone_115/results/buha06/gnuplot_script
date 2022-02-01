@@ -1,0 +1,205 @@
+#gnuplot script
+set term pdf enhanced font "times,12pt"
+set grid
+set xlabel 'x'
+set ylabel 'p'
+set key outside 
+
+#################################################################
+
+set log xy
+set xlabel 'h'
+
+set ylabel '|v-v_{th}|_2'
+set output 'errorsV_penalty.pdf'
+plot[][:1]\
+'nostab/errors'           u (1/$3**0.5):6 w lp ps .2 t 'no stab',\
+'penalty/errors_0.000001' u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-6}',\
+'penalty/errors_0.00001'  u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-5}',\
+'penalty/errors_0.0001'   u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-4}',\
+'penalty/errors_0.001'    u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-3}',\
+'penalty/errors_0.01'     u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-2}',\
+x**2 lt -1 dt 2 t 'h^2'
+
+set ylabel '|p-p_{th}|_2'
+set output 'errorsP_penalty.pdf'
+plot[][]\
+'nostab/errors'           u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'penalty/errors_0.000001' u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-6}',\
+'penalty/errors_0.00001'  u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-5}',\
+'penalty/errors_0.0001'   u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-4}',\
+'penalty/errors_0.001'    u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-3}',\
+'penalty/errors_0.01'     u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-2}',\
+x*10 lt -1 dt 2 t 'h'
+
+set ylabel 'max(div(v))'
+set output 'divv_penalty.pdf'
+plot[][]\
+'nostab/divv'           u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'penalty/divv_0.000001' u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-6}',\
+'penalty/divv_0.00001'  u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-5}',\
+'penalty/divv_0.0001'   u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-4}',\
+'penalty/divv_0.001'    u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-3}',\
+'penalty/divv_0.01'     u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-2}',\
+
+
+#######################################################################
+
+set ylabel '|v-v_{th}|_2'
+set output 'errorsV_global.pdf'
+plot[][:1]\
+'nostab/errors'          u (1/$3**0.5):6 w lp ps .2 t 'no stab',\
+'global/errors_0.000001' u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-6}',\
+'global/errors_0.00001'  u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-5}',\
+'global/errors_0.0001'   u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-4}',\
+'global/errors_0.001'    u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-3}',\
+'global/errors_0.01'     u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-2}',\
+'global/errors_0.1'      u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-1}',\
+x**2 lt -1 dt 2 t 'h^2'
+
+set ylabel '|p-p_{th}|_2'
+set output 'errorsP_global.pdf'
+plot[][]\
+'nostab/errors'          u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'global/errors_0.000001' u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-6}',\
+'global/errors_0.00001'  u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-5}',\
+'global/errors_0.0001'   u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-4}',\
+'global/errors_0.001'    u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-3}',\
+'global/errors_0.01'     u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-2}',\
+'global/errors_0.1'      u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-1}',\
+x*10 lt -1 dt 2 t 'h'
+
+set ylabel 'max(div(v))'
+set output 'divv_global.pdf'
+plot[][:]\
+'nostab/divv'          u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'global/divv_0.000001' u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-6}',\
+'global/divv_0.00001'  u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-5}',\
+'global/divv_0.0001'   u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-4}',\
+'global/divv_0.001'    u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-3}',\
+'global/divv_0.01'     u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-2}',\
+'global/divv_0.1'      u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-1}',\
+
+
+#######################################################################
+
+set ylabel '|v-v_{th}|_2'
+set output 'errorsV_local.pdf'
+plot[][:1]\
+'nostab/errors'         u (1/$3**0.5):6 w lp ps .2 t 'no stab',\
+'local/errors_0.000001' u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-6}',\
+'local/errors_0.00001'  u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-5}',\
+'local/errors_0.0001'   u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-4}',\
+'local/errors_0.001'    u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-3}',\
+'local/errors_0.01'     u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-2}',\
+'local/errors_0.1'      u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-1}',\
+x**2 lt -1 dt 2 t 'h^2'
+
+
+set ylabel '|p-p_{th}|_2'
+set output 'errorsP_local.pdf'
+plot[][]\
+'nostab/errors'         u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'local/errors_0.000001' u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-6}',\
+'local/errors_0.00001'  u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-5}',\
+'local/errors_0.0001'   u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-4}',\
+'local/errors_0.001'    u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-3}',\
+'local/errors_0.01'     u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-2}',\
+'local/errors_0.1'      u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-1}',\
+x*10 lt -1 dt 2 t 'h'
+
+set ylabel 'max(div(v))'
+set output 'divv_local.pdf'
+plot[][:]\
+'nostab/divv'         u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'local/divv_0.000001' u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-6}',\
+'local/divv_0.00001'  u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-5}',\
+'local/divv_0.0001'   u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-4}',\
+'local/divv_0.001'    u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-3}',\
+'local/divv_0.01'     u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-2}',\
+'local/divv_0.1'      u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-1}',\
+
+#######################################################################
+
+set ylabel '|v-v_{th}|_2'
+set output 'errorsV_macro.pdf'
+plot[][:1]\
+'nostab/errors'         u (1/$3**0.5):6 w lp ps .2 t 'no stab',\
+'macro/errors_0.000001' u (1/$3**0.5):6 w lp ps .2 t '{/Symbol e}=10^{-6}',\
+'macro/errors_0.00001'  u (1/$3**0.5):6 w lp ps .2 t '{/Symbol e}=10^{-5}',\
+'macro/errors_0.0001'   u (1/$3**0.5):6 w lp ps .2 t '{/Symbol e}=10^{-4}',\
+'macro/errors_0.001'    u (1/$3**0.5):6 w lp ps .2 t '{/Symbol e}=10^{-3}',\
+'macro/errors_0.01'     u (1/$3**0.5):6 w lp ps .2 t '{/Symbol e}=10^{-2}',\
+'macro/errors_0.1'      u (1/$3**0.5):6 w lp ps .2 t '{/Symbol e}=10^{-1}',\
+x**2 lt -1 dt 2 t 'h^2'
+
+set ylabel '|p-p_{th}|_2'
+set output 'errorsP_macro.pdf'
+plot[][]\
+'nostab/errors'         u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'macro/errors_0.000001' u (1/$3**0.5):9 w lp ps .2 t '{/Symbol e}=10^{-6}',\
+'macro/errors_0.00001'  u (1/$3**0.5):9 w lp ps .2 t '{/Symbol e}=10^{-5}',\
+'macro/errors_0.0001'   u (1/$3**0.5):9 w lp ps .2 t '{/Symbol e}=10^{-4}',\
+'macro/errors_0.001'    u (1/$3**0.5):9 w lp ps .2 t '{/Symbol e}=10^{-3}',\
+'macro/errors_0.01'     u (1/$3**0.5):9 w lp ps .2 t '{/Symbol e}=10^{-2}',\
+'macro/errors_0.1'      u (1/$3**0.5):9 w lp ps .2 t '{/Symbol e}=10^{-1}',\
+x*10 lt -1 dt 2 t 'h'
+
+set ylabel 'max(div(v))'
+set output 'divv_macro.pdf'
+plot[][:]\
+'nostab/divv'         u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'macro/divv_0.000001' u (1/$3**0.5):9 w lp ps .2 t '{/Symbol e}=10^{-6}',\
+'macro/divv_0.00001'  u (1/$3**0.5):9 w lp ps .2 t '{/Symbol e}=10^{-5}',\
+'macro/divv_0.0001'   u (1/$3**0.5):9 w lp ps .2 t '{/Symbol e}=10^{-4}',\
+'macro/divv_0.001'    u (1/$3**0.5):9 w lp ps .2 t '{/Symbol e}=10^{-3}',\
+'macro/divv_0.01'     u (1/$3**0.5):9 w lp ps .2 t '{/Symbol e}=10^{-2}',\
+'macro/divv_0.1'      u (1/$3**0.5):9 w lp ps .2 t '{/Symbol e}=10^{-1}',\
+
+
+########################################################################
+unset log y
+set xlabel '{/Symbol e}'
+set ylabel '|p-p_{th}|_2'
+
+set title 'resolution 32x32'
+set output 'errorsP_32_eps.pdf'
+plot[][0.426:0.435]\
+'global/errors_32' u 12:9 w lp ps .4 t 'global',\
+'local/errors_32' u 12:9 w lp ps .4 t 'local',\
+'macro/errors_32' u 12:9 w lp ps .4 t 'macro' 
+
+set title 'resolution 96x96'
+set output 'errorsP_64_eps.pdf'
+plot[][:0.214]\
+'global/errors_64' u 12:9 w lp ps .4 t 'global',\
+'local/errors_64' u 12:9 w lp ps .4 t 'local',\
+'macro/errors_64' u 12:9 w lp ps .4 t 'macro' 
+
+set title 'resolution 96x96'
+set output 'errorsP_96_eps.pdf'
+plot[][:0.1425]\
+'global/errors_96' u 12:9 w lp ps .4 t 'global',\
+'local/errors_96' u 12:9 w lp ps .4 t 'local',\
+'macro/errors_96' u 12:9 w lp ps .4 t 'macro' 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -79,7 +79,7 @@ def pressure(x,y):
 # 3: lid driven cavity
 # 4: buha06
 
-experiment=4
+experiment=1
 
 #------------------------------------------------------------------------------
 
@@ -104,8 +104,8 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    epsi = float(sys.argv[4])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 16
+   nely = 16
    visu = 1
    epsi = 1e-1
     
@@ -131,7 +131,7 @@ Gscaling=1 #eta/(Ly/nely)
 #3: local
 #4: macro-element
 
-stabilisation=2
+stabilisation=0
 
 if stabilisation==3 and nelx%2==1: exit()
 if stabilisation==3 and nely%2==1: exit()
@@ -273,6 +273,7 @@ dNds  = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 u     = np.zeros(NV,dtype=np.float64)            # x-component velocity
 v     = np.zeros(NV,dtype=np.float64)            # y-component velocity
 p     = np.zeros(nel,dtype=np.float64)           # pressure field 
+S     = np.zeros(nel,dtype=np.float64)           # pressure field 
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) # a
 #c_mat = np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64)  #b
 
@@ -281,6 +282,7 @@ for iel in range(0, nel):
     # set arrays to 0 every loop
     f_el =np.zeros((mV*ndofV),dtype=np.float64)
     K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
+    K_L  =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
     G_el=np.zeros((mV*ndofV,1),dtype=np.float64)
     h_el=np.zeros((1,1),dtype=np.float64)
     C_el=np.zeros((1,1),dtype=np.float64)
@@ -349,6 +351,12 @@ for iel in range(0, nel):
     #end for iq
 
     G_el*=Gscaling
+
+    for i in range(0,8):
+        for j in range(0,8):
+            K_L[i,i]+=abs(K_el[i,j])
+
+    S[iel]=G_el.T.dot(K_L.dot(G_el))/hx/hy
 
     # impose b.c. 
     for k1 in range(0,mV):
@@ -493,6 +501,8 @@ A_mat=A_mat.tocsr()
 #plt.savefig('matrix.png', bbox_inches='tight')
 #plt.clf()
 
+print("     -> S (m,M) %.4e %.4e " %(np.min(S),np.max(S)))
+
 print("build FE matrix: %.3f s" % (time.time() - start))
 
 ######################################################################
@@ -595,21 +605,25 @@ np.savetxt('p.ascii',np.array([xc,yc,p]).T,header='# x,y,p')
 print("compute press & sr: %.3f s" % (time.time() - start))
 
 ######################################################################
-# compute nodal pressure q
+# compute nodal pressure q following section 6 of bodg06
+# nodal values are area weighed averages of the surrounding 
+# constant pressure values.
 ######################################################################
 
 q=np.zeros(NV,dtype=np.float64)  
 count=np.zeros(NV,dtype=np.float64)  
+area=np.zeros(nel,dtype=np.float64)  
 
 for iel in range(0,nel):
-    q[icon[0,iel]]+=p[iel]
-    q[icon[1,iel]]+=p[iel]
-    q[icon[2,iel]]+=p[iel]
-    q[icon[3,iel]]+=p[iel]
-    count[icon[0,iel]]+=1
-    count[icon[1,iel]]+=1
-    count[icon[2,iel]]+=1
-    count[icon[3,iel]]+=1
+    area[iel]=hx*hy
+    q[icon[0,iel]]+=p[iel]*area[iel]/4
+    q[icon[1,iel]]+=p[iel]*area[iel]/4
+    q[icon[2,iel]]+=p[iel]*area[iel]/4
+    q[icon[3,iel]]+=p[iel]*area[iel]/4
+    count[icon[0,iel]]+=area[iel]/4
+    count[icon[1,iel]]+=area[iel]/4
+    count[icon[2,iel]]+=area[iel]/4
+    count[icon[3,iel]]+=area[iel]/4
 #end for
 
 q=q/count
@@ -728,6 +742,13 @@ if visu==1:
        for i in range(0,mV):
            vtufile.write("%e \n" %p[iel])
    vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='S' Format='ascii'> \n")
+   for iel in range(0,nel):
+       for i in range(0,mV):
+           vtufile.write("%e \n" %S[iel])
+   vtufile.write("</DataArray>\n")
+
    #--
    vtufile.write("<DataArray type='Float32' Name='p (error)' Format='ascii'> \n")
    for iel in range(0,nel):

@@ -1,0 +1,225 @@
+#gnuplot script
+set term pdf enhanced font "times,12pt"
+set grid
+set key outside
+
+##############################################################
+set xlabel 'x'
+set ylabel 'pressure'
+
+set title 'no stabilisation'
+set output 'psurf_nostab.pdf'
+plot[][]\
+'nostab/psurf_16.ascii'  w lp ps 0.1 t '16x16',\
+'nostab/psurf_32.ascii'  w lp ps 0.1 t '32x32',\
+'nostab/psurf_64.ascii'  w lp ps 0.1 t '64x64',\
+'nostab/psurf_128.ascii' w lp ps 0.1 t '128x128',\
+
+set title 'local stabilisation'
+set output 'psurf_local.pdf'
+plot[][]\
+'local/psurf_128_0.000001.ascii' w lp ps 0.1 t 'eps=10^{-6}',\
+'local/psurf_128_0.00001.ascii'  w lp ps 0.1 t 'eps=10^{-5}',\
+'local/psurf_128_0.0001.ascii'   w lp ps 0.1 t 'eps=10^{-4}',\
+'local/psurf_128_0.001.ascii'    w lp ps 0.1 t 'eps=10^{-3}',\
+'local/psurf_128_0.01.ascii'     w lp ps 0.1 t 'eps=10^{-2}',\
+'local/psurf_128_0.1.ascii'      w lp ps 0.1 t 'eps=10^{-1}',\
+
+set title 'global stabilisation'
+set output 'psurf_global.pdf'
+plot[][]\
+'global/psurf_128_0.000001.ascii' w lp ps 0.1 t 'eps=10^{-6}',\
+'global/psurf_128_0.00001.ascii'  w lp ps 0.1 t 'eps=10^{-5}',\
+'global/psurf_128_0.0001.ascii'   w lp ps 0.1 t 'eps=10^{-4}',\
+'global/psurf_128_0.001.ascii'    w lp ps 0.1 t 'eps=10^{-3}',\
+'global/psurf_128_0.01.ascii'     w lp ps 0.1 t 'eps=10^{-2}',\
+'global/psurf_128_0.1.ascii'      w lp ps 0.1 t 'eps=10^{-1}',\
+
+set title 'penalty stabilisation'
+set output 'psurf_penalty.pdf'
+plot[][]\
+'penalty/psurf_128_0.000001.ascii' w lp ps 0.1 t 'eps=10^{-6}',\
+'penalty/psurf_128_0.00001.ascii'  w lp ps 0.1 t 'eps=10^{-5}',\
+'penalty/psurf_128_0.0001.ascii'   w lp ps 0.1 t 'eps=10^{-4}',\
+'penalty/psurf_128_0.001.ascii'    w lp ps 0.1 t 'eps=10^{-3}',\
+'penalty/psurf_128_0.01.ascii'     w lp ps 0.1 t 'eps=10^{-2}',\
+'penalty/psurf_128_0.1.ascii'      w lp ps 0.1 t 'eps=10^{-1}',\
+
+set title 'macro-element stabilisation'
+set output 'psurf_macro.pdf'
+plot[][]\
+'macro/psurf_128_0.000001.ascii' w lp ps 0.1 t 'eps=10^{-6}',\
+'macro/psurf_128_0.00001.ascii'  w lp ps 0.1 t 'eps=10^{-5}',\
+'macro/psurf_128_0.0001.ascii'   w lp ps 0.1 t 'eps=10^{-4}',\
+'macro/psurf_128_0.001.ascii'    w lp ps 0.1 t 'eps=10^{-3}',\
+'macro/psurf_128_0.01.ascii'     w lp ps 0.1 t 'eps=10^{-2}',\
+'macro/psurf_128_0.1.ascii'      w lp ps 0.1 t 'eps=10^{-1}',\
+
+unset title
+set key inside bottom
+set output 'psurf_128all.pdf'
+plot[][-450:450]\
+'nostab/psurf_128.ascii'      w lp ps 0.1 t 'no stab',\
+'penalty/psurf_128_0.1.ascii' w lp ps 0.1 t 'penalty, eps=10^{-1}',\
+'global/psurf_128_0.1.ascii'  w lp ps 0.1 t 'global, eps=10^{-1}',\
+'local/psurf_128_0.1.ascii'   w lp ps 0.1 t 'local, eps=10^{-1}',\
+'macro/psurf_128_0.1.ascii'   w lp ps 0.1 t 'macro, eps=10^{-1}',\
+
+set key outside top
+
+##############################################################
+set log x
+set xlabel 'h'
+set title 'global stabilisation'
+
+set ylabel 'v_{rms}'
+set output 'vrms_global.pdf'
+plot[][0.349:]\
+'nostab/errors'          u (1/$3**0.5):6 w lp ps .2 t 'no stab',\
+'global/errors_0.000001' u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-6}',\
+'global/errors_0.00001'  u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-5}',\
+'global/errors_0.0001'   u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-4}',\
+'global/errors_0.001'    u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-3}',\
+'global/errors_0.01'     u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-2}',\
+'global/errors_0.1'      u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-1}',\
+
+set ylabel 'p_{rms}'
+set output 'prms_global.pdf'
+plot[][]\
+'nostab/errors'          u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'global/errors_0.000001' u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-6}',\
+'global/errors_0.00001'  u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-5}',\
+'global/errors_0.0001'   u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-4}',\
+'global/errors_0.001'    u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-3}',\
+'global/errors_0.01'     u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-2}',\
+'global/errors_0.1'      u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-1}',\
+
+set log y
+set ylabel 'max(div(v))'
+set output 'divv_global.pdf'
+plot[][]\
+'nostab/divv'     u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'global/divv_0.000001' u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-6}',\
+'global/divv_0.00001'  u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-5}',\
+'global/divv_0.0001'   u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-4}',\
+'global/divv_0.001'    u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-3}',\
+'global/divv_0.01'     u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-2}',\
+'global/divv_0.1'      u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-1}',\
+
+#######################################################################
+unset log y
+set title 'local stabilisation'
+
+set ylabel 'v_{rms}'
+set output 'vrms_local.pdf'
+plot[][0.349:]\
+'nostab/errors'         u (1/$3**0.5):6 w lp ps .2 t 'no stab',\
+'local/errors_0.000001' u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-6}',\
+'local/errors_0.00001'  u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-5}',\
+'local/errors_0.0001'   u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-4}',\
+'local/errors_0.001'    u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-3}',\
+'local/errors_0.01'     u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-2}',\
+'local/errors_0.1'      u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-1}',\
+
+set ylabel 'p_{rms}'
+set output 'prms_local.pdf'
+plot[][]\
+'nostab/errors'         u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'local/errors_0.000001' u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-6}',\
+'local/errors_0.00001'  u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-5}',\
+'local/errors_0.0001'   u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-4}',\
+'local/errors_0.001'    u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-3}',\
+'local/errors_0.01'     u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-2}',\
+'local/errors_0.1'      u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-1}',\
+
+set log y
+set ylabel 'max(div(v))'
+set output 'divv_local.pdf'
+plot[][]\
+'nostab/divv'         u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'local/divv_0.000001' u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-6}',\
+'local/divv_0.00001'  u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-5}',\
+'local/divv_0.0001'   u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-4}',\
+'local/divv_0.001'    u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-3}',\
+'local/divv_0.01'     u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-2}',\
+'local/divv_0.1'      u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-1}',\
+
+#######################################################################
+unset log y
+set title 'penalty stabilisation'
+
+set ylabel 'v_{rms}'
+set output 'vrms_penalty.pdf'
+plot[][0.349:]\
+'nostab/errors'         u (1/$3**0.5):6 w lp ps .2 t 'no stab',\
+'penalty/errors_0.000001' u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-6}',\
+'penalty/errors_0.00001'  u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-5}',\
+'penalty/errors_0.0001'   u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-4}',\
+'penalty/errors_0.001'    u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-3}',\
+'penalty/errors_0.01'     u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-2}',\
+'penalty/errors_0.1'      u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-1}',\
+
+set ylabel 'p_{rms}'
+set output 'prms_penalty.pdf'
+plot[][]\
+'nostab/errors'         u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'penalty/errors_0.000001' u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-6}',\
+'penalty/errors_0.00001'  u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-5}',\
+'penalty/errors_0.0001'   u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-4}',\
+'penalty/errors_0.001'    u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-3}',\
+'penalty/errors_0.01'     u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-2}',\
+'penalty/errors_0.1'      u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-1}',\
+
+set log y
+set ylabel 'max(div(v))'
+set output 'divv_penalty.pdf'
+plot[][]\
+'nostab/divv'         u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'penalty/divv_0.000001' u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-6}',\
+'penalty/divv_0.00001'  u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-5}',\
+'penalty/divv_0.0001'   u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-4}',\
+'penalty/divv_0.001'    u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-3}',\
+'penalty/divv_0.01'     u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-2}',\
+'penalty/divv_0.1'      u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-1}',\
+
+#######################################################################
+unset log y
+set title 'macro-element stabilisation'
+
+set ylabel 'v_{rms}'
+set output 'vrms_macro.pdf'
+plot[][0.349:]\
+'nostab/errors'         u (1/$3**0.5):6 w lp ps .2 t 'no stab',\
+'macro/errors_0.000001' u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-6}',\
+'macro/errors_0.00001'  u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-5}',\
+'macro/errors_0.0001'   u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-4}',\
+'macro/errors_0.001'    u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-3}',\
+'macro/errors_0.01'     u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-2}',\
+'macro/errors_0.1'      u (1/$3**0.5):6 w lp ps .2 t 'eps=10^{-1}',\
+
+set ylabel 'p_{rms}'
+set output 'prms_macro.pdf'
+plot[][]\
+'nostab/errors'         u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'macro/errors_0.000001' u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-6}',\
+'macro/errors_0.00001'  u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-5}',\
+'macro/errors_0.0001'   u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-4}',\
+'macro/errors_0.001'    u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-3}',\
+'macro/errors_0.01'     u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-2}',\
+'macro/errors_0.1'      u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-1}',\
+
+set log y
+set ylabel 'max(div(v))'
+set output 'divv_macro.pdf'
+plot[][]\
+'nostab/divv'         u (1/$3**0.5):9 w lp ps .2 t 'no stab',\
+'macro/divv_0.000001' u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-6}',\
+'macro/divv_0.00001'  u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-5}',\
+'macro/divv_0.0001'   u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-4}',\
+'macro/divv_0.001'    u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-3}',\
+'macro/divv_0.01'     u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-2}',\
+'macro/divv_0.1'      u (1/$3**0.5):9 w lp ps .2 t 'eps=10^{-1}',\
+
+#######################################################################
+
+

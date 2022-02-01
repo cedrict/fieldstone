@@ -1,0 +1,4 @@
+     -> nel=    256 ; min(divv)= -5.053742e-02 ; max(divv)= 5.053742e-02
+     -> nel=   1024 ; min(divv)= -1.005622e-01 ; max(divv)= 1.005622e-01
+     -> nel=   4096 ; min(divv)= -2.009578e-01 ; max(divv)= 2.009578e-01
+     -> nel=  16384 ; min(divv)= -4.018539e-01 ; max(divv)= 4.018539e-01
