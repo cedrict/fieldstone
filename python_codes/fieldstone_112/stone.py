@@ -11,6 +11,7 @@ import solkz as solkz
 import solvi as solvi
 import solvg as solvg
 import random
+import matplotlib.pyplot as plt
 
 #------------------------------------------------------------------------------
 # velocity basis functions
@@ -280,11 +281,11 @@ def pressure(x,y):
 # experiment=5: solVi
 # experiment=6: solVg
 
-experiment=5
+experiment=4
 
 randomize_mesh=False
         
-elemental_viscosity=True
+elemental_viscosity=False
 
 print("-----------------------------")
 print("----------fieldstone---------")
@@ -304,11 +305,13 @@ if int(len(sys.argv) == 6):
    elt    = int(sys.argv[4])
    tridiag= int(sys.argv[5])
 else:
-   nelx    = 16 
+   nelx    = -3
    nely    = 16
    visu    = 1
    elt     = 3
    tridiag = 0
+
+read_mesh= nelx<0
 
 if elt==1: elt='MINI'
 if elt==2: elt='P2P1'
@@ -323,6 +326,7 @@ if elt=='CR':
    nel=nelx*nely*2
    nnx=2*nelx+1
    nny=2*nely+1
+   NV0=nnx*nny
    NV=nnx*nny+nel
    NP=nel*mP
    nqel=6
@@ -334,6 +338,7 @@ if elt=='MINI':
    nel=nelx*nely*2
    nnx=nelx+1
    nny=nely+1
+   NV0=nnx*nny
    NV=nnx*nny+nel
    NP=nnx*nny
    nqel=6
@@ -345,6 +350,7 @@ if elt=='P2P1':
    nel=nelx*nely*2
    nnx=2*nelx+1
    nny=2*nely+1
+   NV0=nnx*nny
    NV=nnx*nny
    NP=(nelx+1)*(nely+1)
    nqel=6
@@ -356,6 +362,7 @@ if elt=='Q2Q1':
    nel=nelx*nely
    nnx=2*nelx+1
    nny=2*nely+1
+   NV0=nnx*nny
    NV=nnx*nny
    NP=(nelx+1)*(nely+1)
    nqel=9
@@ -367,6 +374,7 @@ if elt=='Q2P1':
    nel=nelx*nely
    nnx=2*nelx+1
    nny=2*nely+1
+   NV0=nnx*nny
    NV=nnx*nny
    NP=nel*3
    nqel=9
@@ -376,13 +384,141 @@ if elt=='Q2P1':
 ndofV=2
 ndofP=1
 
+
+eps=1e-9
+
+unmappedQ2P1=True
+   
+if elt=='Q2Q1' and read_mesh==True: exit()
+if elt=='Q2P1' and read_mesh==True: exit()
+
+#------------------------------------------------------------------------------
+
+if experiment==6: 
+   Lx=2
+   Ly=2
+
+if (experiment==1 or experiment==4) and read_mesh==True:
+   if elt=='MINI':
+      f_vel = open('./meshes/square_lvl'+str(abs(nelx))+'_P1.mesh', 'r') 
+      lines_vel = f_vel.readlines()
+      nlines=np.size(lines_vel)
+      print('P1 mesh file counts ',nlines,' lines')
+      for i in range(0,nlines):
+          line=lines_vel[i].strip()
+          columns=line.split()
+          if np.size(columns)>0 and columns[0]=='Vertices':
+             nextline=lines_vel[i+1].strip()
+             print('mesh counts ',nextline, 'vertices')
+             NV0=int(nextline)
+             vline_vel=i+2
+          if np.size(columns)>0 and columns[0]=='Triangles':
+             nextline=lines_vel[i+1].strip()
+             print('mesh counts ',nextline, 'triangles')
+             nel=int(nextline)
+             tline_vel=i+2
+      #end for
+      NV=NV0+nel # adding bubble dofs
+      NP=NV0
+   if elt=='P2P1':
+      f_vel = open('./meshes/square_lvl'+str(abs(nelx))+'_P2.mesh', 'r') 
+      lines_vel = f_vel.readlines()
+      nlines=np.size(lines_vel)
+      print('P2 mesh file counts ',nlines,' lines')
+      for i in range(0,nlines):
+          line=lines_vel[i].strip()
+          columns=line.split()
+          if np.size(columns)>0 and columns[0]=='Vertices':
+             nextline=lines_vel[i+1].strip()
+             print('mesh counts ',nextline, 'vertices')
+             NV0=int(nextline)
+             vline_vel=i+2
+          if np.size(columns)>0 and columns[0]=='Triangles':
+             nextline=lines_vel[i+1].strip()
+             print('mesh counts ',nextline, 'triangles')
+             nel=int(nextline)
+             tline_vel=i+2
+      #end for
+      f_press = open('./meshes/square_lvl'+str(abs(nelx))+'_P1.mesh', 'r') 
+      lines_press = f_press.readlines()
+      nlines=np.size(lines_press)
+      print('P1 mesh file counts ',nlines,' lines')
+      for i in range(0,nlines):
+          line=lines_press[i].strip()
+          columns=line.split()
+          if np.size(columns)>0 and columns[0]=='Vertices':
+             nextline=lines_press[i+1].strip()
+             print('mesh counts ',nextline, 'vertices')
+             NP=int(nextline)
+             vline_press=i+2
+          if np.size(columns)>0 and columns[0]=='Triangles':
+             nextline=lines_press[i+1].strip()
+             print('mesh counts ',nextline, 'triangles')
+             nel=int(nextline)
+             tline_press=i+2
+      #end for
+      NV=NV0
+   if elt=='CR':
+      f_vel = open('./meshes/square_lvl'+str(abs(nelx))+'_P2.mesh', 'r') 
+      lines_vel = f_vel.readlines()
+      nlines=np.size(lines_vel)
+      print('P2 mesh file counts ',nlines,' lines')
+      for i in range(0,nlines):
+          line=lines_vel[i].strip()
+          columns=line.split()
+          if np.size(columns)>0 and columns[0]=='Vertices':
+             nextline=lines_vel[i+1].strip()
+             print('mesh counts ',nextline, 'vertices')
+             NV0=int(nextline)
+             vline_vel=i+2
+          if np.size(columns)>0 and columns[0]=='Triangles':
+             nextline=lines_vel[i+1].strip()
+             print('mesh counts ',nextline, 'triangles')
+             nel=int(nextline)
+             tline_vel=i+2
+      #end for
+      NV=NV0+nel
+      NP=nel*mP
+
+
+
+
+
+if experiment==5 and elt=='MINI' and read_mesh==True:
+   f_vel = open('./meshes_solvi/pointCoordinates_vel.dat', 'r') 
+   lines_vel = f_vel.readlines()
+   line=lines_vel[0].strip()
+   columns=line.split()
+   NV0=int(columns[0])
+
+   f_press = open('./meshes_solvi/pointCoordinates_press.dat', 'r') 
+   lines_press = f_press.readlines()
+   line=lines_press[0].strip()
+   columns=line.split()
+   NP=int(columns[0])
+
+   g_vel = open('./meshes_solvi/connectivity_vel.dat', 'r') 
+   lines_iconV = g_vel.readlines()
+   line=lines_iconV[0].strip()
+   columns=line.split()
+   nel0=int(columns[0])
+
+   g_press = open('./meshes_solvi/connectivity_press.dat', 'r') 
+   lines_iconP = g_press.readlines()
+   line=lines_iconP[0].strip()
+   columns=line.split()
+   nel0=int(columns[0])
+
+   nel=nel0*2     # splitting quads into triangles
+   NV=NV0+nel # adding bubble dofs
+
+#------------------------------------------------------------------------------
+
 NfemV=NV*ndofV   # number of velocity dofs
 NfemP=NP*ndofP   # number of pressure dofs
 Nfem=NfemV+NfemP # total nb of dofs
 
 print ('elt  =',elt)
-print ('nnx  =',nnx)
-print ('nny  =',nny)
 print ('NV   =',NV)
 print ('NP   =',NP)
 print ('nel  =',nel)
@@ -392,17 +528,9 @@ print ('Nfem =',Nfem)
 print ('tridiag =',tridiag)
 print("-----------------------------")
 
-eps=1e-9
-
-unmappedQ2P1=True
-
-if experiment==6: 
-   Lx=2
-   Ly=2
-
-#----------------------------------------------------------
+#------------------------------------------------------------------------------
 # integration points coeffs and weights 
-#----------------------------------------------------------
+#------------------------------------------------------------------------------
 
 qcoords_r=np.empty(nqel,dtype=np.float64)  
 qcoords_s=np.empty(nqel,dtype=np.float64)  
@@ -442,202 +570,323 @@ if nqel==9:
    qcoords_r[7]=rq2 ; qcoords_s[7]=rq3 ; qweights[7]=wq2*wq3
    qcoords_r[8]=rq3 ; qcoords_s[8]=rq3 ; qweights[8]=wq3*wq3
 
-#################################################################
+#------------------------------------------------------------------------------
 # build velocity nodes coordinates 
-#################################################################
+#------------------------------------------------------------------------------
 start = timing.time()
 
 xV=np.empty(NV,dtype=np.float64)  # x coordinates
 yV=np.empty(NV,dtype=np.float64)  # y coordinates
 
-if elt=='CR' or elt=='P2P1' or elt=='Q2Q1' or elt=='Q2P1':
-   counter=0    
-   for j in range(0,nny):
-       for i in range(0,nnx):
-           xV[counter]=i*Lx/(2*nelx) 
-           yV[counter]=j*Ly/(2*nely) 
-           counter+=1
+if read_mesh==True:
+
+   if (experiment==1 or experiment==4) and (elt=='MINI' or elt=='P2P1' or elt=='CR'):
+      counter=0
+      for i in range(vline_vel,vline_vel+NV0):
+          line=lines_vel[i].strip()
+          columns=line.split()
+          xV[counter]=float(columns[0])
+          yV[counter]=float(columns[1])
+          counter+=1
+      #end for
+      np.savetxt('mesh.ascii',np.array([xV,yV]).T)
+   elif experiment==5 and elt=='MINI':
+      for i in range(0,NV0):
+          line=lines_vel[i+1].strip()
+          columns=line.split()
+          xV[i]=float(columns[0])
+          yV[i]=float(columns[1])
+      #end for
+
 else:
-   counter=0    
-   for j in range(0,nny):
-       for i in range(0,nnx):
-           xV[counter]=i*Lx/nelx 
-           yV[counter]=j*Ly/nely
-           counter+=1
+
+   if elt=='CR' or elt=='P2P1' or elt=='Q2Q1' or elt=='Q2P1':
+      counter=0    
+      for j in range(0,nny):
+          for i in range(0,nnx):
+              xV[counter]=i*Lx/(2*nelx) 
+              yV[counter]=j*Ly/(2*nely) 
+              counter+=1
+          #end for
+      #end for
+   else:
+      counter=0    
+      for j in range(0,nny):
+          for i in range(0,nnx):
+              xV[counter]=i*Lx/nelx 
+              yV[counter]=j*Ly/nely
+              counter+=1
+          #end for
+      #end for
+
+#end if read_mesh
 
 print("grid: %.3f s" % (timing.time() - start))
 
-#################################################################
+#------------------------------------------------------------------------------
 # build connectivity array 
 # tridiag is an array of size nelx*nely, i.e. the nb of cells
-#################################################################
+#------------------------------------------------------------------------------
 start = timing.time()
-
+   
 iconV=np.zeros((mV,nel),dtype=np.int32)
-flip=np.zeros(nelx*nely,dtype=np.int32)
-if tridiag==0:
-   flip[:]=0
-elif tridiag==1:
-   flip[:]=1
+
+if read_mesh==True:
+
+   if elt=='MINI':
+      if experiment==1 or experiment==4:
+         counter=0
+         for i in range(tline_vel,tline_vel+nel):
+             line=lines_vel[i].strip()
+             columns=line.split()
+             iconV[0,counter]=int(columns[0])-1
+             iconV[1,counter]=int(columns[1])-1
+             iconV[2,counter]=int(columns[2])-1
+             iconV[3,counter]=counter+NV0
+             counter+=1
+         #end for
+      #end if
+      if experiment==5:
+         counter=0
+         for i in range(0,nel0):
+             line=lines_iconV[i+1].strip()
+             columns=line.split()
+             node0=int(columns[0])-1
+             node1=int(columns[1])-1
+             node2=int(columns[2])-1
+             node3=int(columns[3])-1
+             #lower right triangle
+             iconV[0,counter]=node0
+             iconV[1,counter]=node3
+             iconV[2,counter]=node2
+             iconV[3,counter]=counter+NV0
+             counter+=1
+             #upper left triangle
+             iconV[0,counter]=node0
+             iconV[1,counter]=node2
+             iconV[2,counter]=node1
+             iconV[3,counter]=counter+NV0
+             counter+=1
+         #end for
+      #end if
+      for iel in range (0,nel): #bubble nodes
+          xV[NV0+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
+          yV[NV0+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
+      #end for
+      #np.savetxt('mesh.ascii',np.array([xV,yV]).T)
+      #np.savetxt('mesh2.ascii',np.array([xV[0:NV0],yV[0:NV0]]).T)
+      #print(iconV[:,0])
+      #print(iconV[:,1])
+      #print(np.min(iconV))
+      #print(np.max(iconV))
+
+   #end if MINI
+
+   if elt=='P2P1':
+      if experiment==1 or experiment==4:
+         counter=0
+         for i in range(tline_vel,tline_vel+nel):
+             line=lines_vel[i].strip()
+             columns=line.split()
+             iconV[0,counter]=int(columns[0])-1
+             iconV[1,counter]=int(columns[1])-1
+             iconV[2,counter]=int(columns[2])-1
+             iconV[3,counter]=int(columns[3])-1
+             iconV[4,counter]=int(columns[4])-1
+             iconV[5,counter]=int(columns[5])-1
+             counter+=1
+         #end for
+      #end if
+
+   if elt=='CR':
+      if experiment==1 or experiment==4:
+         counter=0
+         for i in range(tline_vel,tline_vel+nel):
+             line=lines_vel[i].strip()
+             columns=line.split()
+             iconV[0,counter]=int(columns[0])-1
+             iconV[1,counter]=int(columns[1])-1
+             iconV[2,counter]=int(columns[2])-1
+             iconV[3,counter]=int(columns[3])-1
+             iconV[4,counter]=int(columns[4])-1
+             iconV[5,counter]=int(columns[5])-1
+             iconV[6,counter]=NV0+counter
+             counter+=1
+         #end for
+      #end if
+      for iel in range (0,nel): #bubble nodes
+          xV[NV0+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
+          yV[NV0+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
+      #end for
+
 else:
-   counter2=0
-   for j in range(0,nely):
-       for i in range(0,nelx):
-           flip[counter2] = random.randint(0, 1)
-           counter2+=1
 
-if elt=='CR':
-   counter=0
-   counter2=0
-   for j in range(0,nely):
-       for i in range(0,nelx):
-           if flip[counter2]==0:
-              # lower left triangle
-              iconV[0,counter]=(i)*2+1+(j)*2*nnx      -1 #0 of Q2
-              iconV[1,counter]=(i)*2+3+(j)*2*nnx      -1 #1 of Q2
-              iconV[2,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1 #3 of Q2
-              iconV[3,counter]=(i)*2+2+(j)*2*nnx      -1 #4 of Q2
-              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1 #8 of Q2
-              iconV[5,counter]=(i)*2+1+(j)*2*nnx+nnx  -1 #7 of Q2
-              iconV[6,counter]=nnx*nny+counter
-              counter=counter+1
-              # upper right triangle
-              iconV[0,counter]=(i)*2+3+(j)*2*nnx+nnx*2-1 #2 of Q2 
-              iconV[1,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1 #3 of Q2
-              iconV[2,counter]=(i)*2+3+(j)*2*nnx      -1 #1 of Q2
-              iconV[3,counter]=(i)*2+2+(j)*2*nnx+nnx*2-1 #6 of Q2
-              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1 #8 of Q2
-              iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx  -1 #5 of Q2
-              iconV[6,counter]=nnx*nny+counter
-              counter=counter+1
-           else:
-              # lower right triangle
-              iconV[0,counter]=(i)*2+3+(j)*2*nnx       -1 #1
-              iconV[1,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
-              iconV[2,counter]=(i)*2+1+(j)*2*nnx       -1 #0
-              iconV[3,counter]=(i)*2+3+(j)*2*nnx+nnx   -1 #5
-              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
-              iconV[5,counter]=(i)*2+2+(j)*2*nnx       -1 #4
-              iconV[6,counter]=nnx*nny+counter
-              counter=counter+1
-              # upper left triangle
-              iconV[0,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
-              iconV[1,counter]=(i)*2+1+(j)*2*nnx       -1 #0
+   flip=np.zeros(nelx*nely,dtype=np.int32)
+   if tridiag==0:
+      flip[:]=0
+   elif tridiag==1:
+      flip[:]=1
+   else:
+      counter2=0
+      for j in range(0,nely):
+          for i in range(0,nelx):
+              flip[counter2] = random.randint(0, 1)
+              counter2+=1
+
+   if elt=='CR':
+      counter=0
+      counter2=0
+      for j in range(0,nely):
+          for i in range(0,nelx):
+              if flip[counter2]==0:
+                 # lower left triangle
+                 iconV[0,counter]=(i)*2+1+(j)*2*nnx      -1 #0 of Q2
+                 iconV[1,counter]=(i)*2+3+(j)*2*nnx      -1 #1 of Q2
+                 iconV[2,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1 #3 of Q2
+                 iconV[3,counter]=(i)*2+2+(j)*2*nnx      -1 #4 of Q2
+                 iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1 #8 of Q2
+                 iconV[5,counter]=(i)*2+1+(j)*2*nnx+nnx  -1 #7 of Q2
+                 iconV[6,counter]=nnx*nny+counter
+                 counter=counter+1
+                 # upper right triangle
+                 iconV[0,counter]=(i)*2+3+(j)*2*nnx+nnx*2-1 #2 of Q2 
+                 iconV[1,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1 #3 of Q2
+                 iconV[2,counter]=(i)*2+3+(j)*2*nnx      -1 #1 of Q2
+                 iconV[3,counter]=(i)*2+2+(j)*2*nnx+nnx*2-1 #6 of Q2
+                 iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1 #8 of Q2
+                 iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx  -1 #5 of Q2
+                 iconV[6,counter]=nnx*nny+counter
+                 counter=counter+1
+              else:
+                 # lower right triangle
+                 iconV[0,counter]=(i)*2+3+(j)*2*nnx       -1 #1
+                 iconV[1,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+                 iconV[2,counter]=(i)*2+1+(j)*2*nnx       -1 #0
+                 iconV[3,counter]=(i)*2+3+(j)*2*nnx+nnx   -1 #5
+                 iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
+                 iconV[5,counter]=(i)*2+2+(j)*2*nnx       -1 #4
+                 iconV[6,counter]=nnx*nny+counter
+                 counter=counter+1
+                 # upper left triangle
+                 iconV[0,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+                 iconV[1,counter]=(i)*2+1+(j)*2*nnx       -1 #0
+                 iconV[2,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+                 iconV[3,counter]=(i)*2+1+(j)*2*nnx+nnx   -1 #7
+                 iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
+                 iconV[5,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
+                 iconV[6,counter]=nnx*nny+counter
+                 counter=counter+1
+              counter2+=1
+          #end for
+      #end for
+      for iel in range (0,nel): #bubble nodes
+          xV[nnx*nny+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
+          yV[nnx*nny+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
+      #end for
+
+   if elt=='P2P1':
+      counter=0
+      counter2=0
+      for j in range(0,nely):
+          for i in range(0,nelx):
+              if flip[counter2]==0:
+                 # lower left triangle
+                 iconV[0,counter]=(i)*2+1+(j)*2*nnx      -1 #0 of Q2
+                 iconV[1,counter]=(i)*2+3+(j)*2*nnx      -1 #1 of Q2
+                 iconV[2,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1 #3 of Q2
+                 iconV[3,counter]=(i)*2+2+(j)*2*nnx      -1 #4 of Q2
+                 iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1 #8 of Q2
+                 iconV[5,counter]=(i)*2+1+(j)*2*nnx+nnx  -1 #7 of Q2
+                 counter=counter+1
+                 # upper right triangle
+                 iconV[0,counter]=(i)*2+3+(j)*2*nnx+nnx*2-1 #2 of Q2 
+                 iconV[1,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1 #3 of Q2
+                 iconV[2,counter]=(i)*2+3+(j)*2*nnx      -1 #1 of Q2
+                 iconV[3,counter]=(i)*2+2+(j)*2*nnx+nnx*2-1 #6 of Q2
+                 iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1 #8 of Q2
+                 iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx  -1 #5 of Q2
+                 counter=counter+1
+              else:
+                 # lower right triangle
+                 iconV[0,counter]=(i)*2+3+(j)*2*nnx       -1 #1
+                 iconV[1,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+                 iconV[2,counter]=(i)*2+1+(j)*2*nnx       -1 #0
+                 iconV[3,counter]=(i)*2+3+(j)*2*nnx+nnx   -1 #5
+                 iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
+                 iconV[5,counter]=(i)*2+2+(j)*2*nnx       -1 #4
+                 counter=counter+1
+                 # upper left triangle
+                 iconV[0,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+                 iconV[1,counter]=(i)*2+1+(j)*2*nnx       -1 #0
+                 iconV[2,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+                 iconV[3,counter]=(i)*2+1+(j)*2*nnx+nnx   -1 #7
+                 iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
+                 iconV[5,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
+                 counter=counter+1
+   
+              counter2+=1
+          #end for
+      #end for
+
+   if elt=='MINI':
+
+      counter=0
+      counter2=0
+      for j in range(0,nely):
+          for i in range(0,nelx):
+              if flip[counter2]==0:
+                 # lower left triangle
+                 iconV[0,counter]=i+j*(nelx+1)   
+                 iconV[1,counter]=i+1+j*(nelx+1) 
+                 iconV[2,counter]=i+(j+1)*(nelx+1)
+                 iconV[3,counter]=counter+nnx*nny   
+                 counter=counter+1
+                 # upper right triangle
+                 iconV[0,counter]=i+1+j*(nelx+1)
+                 iconV[1,counter]=i+1+(j+1) *(nelx+1)
+                 iconV[2,counter]=i+(j+1)*(nelx+1)
+                 iconV[3,counter]=counter+nnx*nny  
+                 counter=counter+1
+              else:
+                 # lower right triangle
+                 iconV[0,counter]=i+1+j*(nelx+1)     #1 of Q1
+                 iconV[1,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
+                 iconV[2,counter]=i+j*(nelx+1)       #0 of Q1
+                 iconV[3,counter]=counter+nnx*nny   
+                 counter+=1
+                 # upper left triangle
+                 iconV[0,counter]=i+(j+1)*(nelx+1)   #3 of Q1
+                 iconV[1,counter]=i+j*(nelx+1)       #0 of Q1
+                 iconV[2,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
+                 iconV[3,counter]=counter+nnx*nny   
+                 counter=counter+1
+              counter2+=1
+          #end for
+      #end for
+      for iel in range (0,nel): #bubble nodes
+          xV[nnx*nny+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
+          yV[nnx*nny+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
+      #end for
+   #end if
+
+   if elt=='Q2Q1' or elt=='Q2P1':
+      counter = 0
+      for j in range(0,nely):
+          for i in range(0,nelx):
+              iconV[0,counter]=(i)*2+1+(j)*2*nnx       -1 #0
+              iconV[1,counter]=(i)*2+3+(j)*2*nnx       -1 #1
               iconV[2,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
-              iconV[3,counter]=(i)*2+1+(j)*2*nnx+nnx   -1 #7
-              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
-              iconV[5,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
-              iconV[6,counter]=nnx*nny+counter
-              counter=counter+1
+              iconV[3,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+              iconV[4,counter]=(i)*2+2+(j)*2*nnx       -1 #4
+              iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx   -1 #5
+              iconV[6,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
+              iconV[7,counter]=(i)*2+1+(j)*2*nnx+nnx   -1 #7
+              iconV[8,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
+              counter += 1
+          #end for
+      #end for
 
-           counter2+=1
-       #end for
-   #end for
-   for iel in range (0,nel): #bubble nodes
-       xV[nnx*nny+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
-       yV[nnx*nny+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
-   #end for
-
-if elt=='P2P1':
-   counter=0
-   counter2=0
-   for j in range(0,nely):
-       for i in range(0,nelx):
-           if flip[counter2]==0:
-              # lower left triangle
-              iconV[0,counter]=(i)*2+1+(j)*2*nnx      -1 #0 of Q2
-              iconV[1,counter]=(i)*2+3+(j)*2*nnx      -1 #1 of Q2
-              iconV[2,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1 #3 of Q2
-              iconV[3,counter]=(i)*2+2+(j)*2*nnx      -1 #4 of Q2
-              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1 #8 of Q2
-              iconV[5,counter]=(i)*2+1+(j)*2*nnx+nnx  -1 #7 of Q2
-              counter=counter+1
-              # upper right triangle
-              iconV[0,counter]=(i)*2+3+(j)*2*nnx+nnx*2-1 #2 of Q2 
-              iconV[1,counter]=(i)*2+1+(j)*2*nnx+nnx*2-1 #3 of Q2
-              iconV[2,counter]=(i)*2+3+(j)*2*nnx      -1 #1 of Q2
-              iconV[3,counter]=(i)*2+2+(j)*2*nnx+nnx*2-1 #6 of Q2
-              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx  -1 #8 of Q2
-              iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx  -1 #5 of Q2
-              counter=counter+1
-           else:
-              # lower right triangle
-              iconV[0,counter]=(i)*2+3+(j)*2*nnx       -1 #1
-              iconV[1,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
-              iconV[2,counter]=(i)*2+1+(j)*2*nnx       -1 #0
-              iconV[3,counter]=(i)*2+3+(j)*2*nnx+nnx   -1 #5
-              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
-              iconV[5,counter]=(i)*2+2+(j)*2*nnx       -1 #4
-              counter=counter+1
-              # upper left triangle
-              iconV[0,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
-              iconV[1,counter]=(i)*2+1+(j)*2*nnx       -1 #0
-              iconV[2,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
-              iconV[3,counter]=(i)*2+1+(j)*2*nnx+nnx   -1 #7
-              iconV[4,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
-              iconV[5,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
-              counter=counter+1
-
-           counter2+=1
-       #end for
-   #end for
-
-if elt=='MINI':
-   counter=0
-   counter2=0
-   for j in range(0,nely):
-       for i in range(0,nelx):
-           if flip[counter2]==0:
-              # lower left triangle
-              iconV[0,counter]=i+j*(nelx+1)   
-              iconV[1,counter]=i+1+j*(nelx+1) 
-              iconV[2,counter]=i+(j+1)*(nelx+1)
-              iconV[3,counter]=counter+nnx*nny   
-              counter=counter+1
-              # upper right triangle
-              iconV[0,counter]=i+1+j*(nelx+1)
-              iconV[1,counter]=i+1+(j+1) *(nelx+1)
-              iconV[2,counter]=i+(j+1)*(nelx+1)
-              iconV[3,counter]=counter+nnx*nny  
-              counter=counter+1
-           else:
-              # lower right triangle
-              iconV[0,counter]=i+1+j*(nelx+1)     #1 of Q1
-              iconV[1,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
-              iconV[2,counter]=i+j*(nelx+1)       #0 of Q1
-              iconV[3,counter]=counter+nnx*nny   
-              counter+=1
-              # upper left triangle
-              iconV[0,counter]=i+(j+1)*(nelx+1)   #3 of Q1
-              iconV[1,counter]=i+j*(nelx+1)       #0 of Q1
-              iconV[2,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
-              iconV[3,counter]=counter+nnx*nny   
-              counter=counter+1
-
-           counter2+=1
-       #end for
-   #end for
-   for iel in range (0,nel): #bubble nodes
-       xV[nnx*nny+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
-       yV[nnx*nny+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
-   #end for
-
-if elt=='Q2Q1' or elt=='Q2P1':
-   counter = 0
-   for j in range(0,nely):
-       for i in range(0,nelx):
-           iconV[0,counter]=(i)*2+1+(j)*2*nnx       -1 #0
-           iconV[1,counter]=(i)*2+3+(j)*2*nnx       -1 #1
-           iconV[2,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
-           iconV[3,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
-           iconV[4,counter]=(i)*2+2+(j)*2*nnx       -1 #4
-           iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx   -1 #5
-           iconV[6,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
-           iconV[7,counter]=(i)*2+1+(j)*2*nnx+nnx   -1 #7
-           iconV[8,counter]=(i)*2+2+(j)*2*nnx+nnx   -1 #8
-           counter += 1
-       #end for
-   #end for
+#end if read_mesh
 
 #for iel in range (0,nel):
 #    print ("iel=",iel)
@@ -655,14 +904,20 @@ if elt=='Q2Q1' or elt=='Q2P1':
 
 print("connectivity V: %.3f s" % (timing.time() - start))
 
-#################################################################
+#------------------------------------------------------------------------------
 # build pressure grid (nodes and icon)
-#################################################################
+# it makes no difference for MINI and CR whether the mesh is read or not
+#------------------------------------------------------------------------------
 start = timing.time()
 
 iconP=np.zeros((mP,nel),dtype=np.int32)
 xP=np.empty(NfemP,dtype=np.float64)  
 yP=np.empty(NfemP,dtype=np.float64) 
+
+if elt=='MINI':
+   xP[0:NP]=xV[0:NP]
+   yP[0:NP]=yV[0:NP]
+   iconP[0:mP,0:nel]=iconV[0:mP,0:nel]
 
 if elt=='CR':
    counter=0
@@ -681,88 +936,108 @@ if elt=='CR':
        counter+=1
    #end for
 
-if elt=='MINI':
-   xP[0:NP]=xV[0:NP]
-   yP[0:NP]=yV[0:NP]
-   iconP[0:mP,0:nel]=iconV[0:mP,0:nel]
+if read_mesh==True:
 
-if elt=='P2P1':
-   counter=0
-   counter2=0
-   for j in range(0,nely):
-       for i in range(0,nelx):
-           if flip[counter2]==0:
-              # lower left triangle
-              iconP[0,counter]=i+j*(nelx+1)     #0 of Q1
-              iconP[1,counter]=i+1+j*(nelx+1)   #1 of Q1
-              iconP[2,counter]=i+(j+1)*(nelx+1) #3 of Q1
-              counter+=1
-              # upper right triangle
-              iconP[0,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
-              iconP[1,counter]=i+(j+1)*(nelx+1)   #3 of Q1
-              iconP[2,counter]=i+1+j*(nelx+1)     #1 of Q1
-              counter+=1
-           else:
-              # lower right triangle
-              iconP[0,counter]=i+1+j*(nelx+1)     #1 of Q1
-              iconP[1,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
-              iconP[2,counter]=i+j*(nelx+1)       #0 of Q1
-              counter+=1
-              # upper left triangle
-              iconP[0,counter]=i+(j+1)*(nelx+1)   #3 of Q1
-              iconP[1,counter]=i+j*(nelx+1)       #0 of Q1
-              iconP[2,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
-              counter+=1
-           counter2+=1
+   if elt=='P2P1':
+      if experiment==1 or experiment==4:
+         counter=0
+         for i in range(vline_press,vline_press+NP):
+             line=lines_press[i].strip()
+             columns=line.split()
+             xP[counter]=float(columns[0])
+             yP[counter]=float(columns[1])
+             counter+=1
+         #end for
+         np.savetxt('meshP.ascii',np.array([xP,yP]).T)
+         counter=0
+         for i in range(tline_press,tline_press+nel):
+             line=lines_press[i].strip()
+             columns=line.split()
+             iconP[0,counter]=int(columns[0])-1
+             iconP[1,counter]=int(columns[1])-1
+             iconP[2,counter]=int(columns[2])-1
+             counter+=1
+         #end for
+
+else:
+
+   if elt=='P2P1':
+      counter=0
+      counter2=0
+      for j in range(0,nely):
+          for i in range(0,nelx):
+              if flip[counter2]==0:
+                 # lower left triangle
+                 iconP[0,counter]=i+j*(nelx+1)     #0 of Q1
+                 iconP[1,counter]=i+1+j*(nelx+1)   #1 of Q1
+                 iconP[2,counter]=i+(j+1)*(nelx+1) #3 of Q1
+                 counter+=1
+                 # upper right triangle
+                 iconP[0,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
+                 iconP[1,counter]=i+(j+1)*(nelx+1)   #3 of Q1
+                 iconP[2,counter]=i+1+j*(nelx+1)     #1 of Q1
+                 counter+=1
+              else:
+                 # lower right triangle
+                 iconP[0,counter]=i+1+j*(nelx+1)     #1 of Q1
+                 iconP[1,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
+                 iconP[2,counter]=i+j*(nelx+1)       #0 of Q1
+                 counter+=1
+                 # upper left triangle
+                 iconP[0,counter]=i+(j+1)*(nelx+1)   #3 of Q1
+                 iconP[1,counter]=i+j*(nelx+1)       #0 of Q1
+                 iconP[2,counter]=i+1+(j+1)*(nelx+1) #2 of Q1
+                 counter+=1
+              counter2+=1
+         #end for
       #end for
-   #end for
-   counter=0    
-   for j in range(0,nely+1):
-       for i in range(0,nelx+1):
-           xP[counter]=i*Lx/nelx 
-           yP[counter]=j*Ly/nely
-           counter+=1
+      counter=0    
+      for j in range(0,nely+1):
+          for i in range(0,nelx+1):
+              xP[counter]=i*Lx/nelx 
+              yP[counter]=j*Ly/nely
+              counter+=1
+         #end for
       #end for
-   #end for
 
-if elt=='Q2Q1':
-   counter = 0
-   for j in range(0,nely):
-      for i in range(0,nelx):
-          iconP[0,counter]=i+j*(nelx+1)
-          iconP[1,counter]=i+1+j*(nelx+1)
-          iconP[2,counter]=i+1+(j+1)*(nelx+1)
-          iconP[3,counter]=i+(j+1)*(nelx+1)
-          counter += 1
+   if elt=='Q2Q1':
+      counter = 0
+      for j in range(0,nely):
+         for i in range(0,nelx):
+             iconP[0,counter]=i+j*(nelx+1)
+             iconP[1,counter]=i+1+j*(nelx+1)
+             iconP[2,counter]=i+1+(j+1)*(nelx+1)
+             iconP[3,counter]=i+(j+1)*(nelx+1)
+             counter += 1
+         #end for
       #end for
-   #end for
-   counter=0    
-   for j in range(0,nely+1):
-       for i in range(0,nelx+1):
-           xP[counter]=i*Lx/nelx 
-           yP[counter]=j*Ly/nely
-           counter+=1
+      counter=0    
+      for j in range(0,nely+1):
+          for i in range(0,nelx+1):
+              xP[counter]=i*Lx/nelx 
+              yP[counter]=j*Ly/nely
+              counter+=1
+         #end for
       #end for
-   #end for
 
-if elt=='Q2P1':
-   for iel in range(nel):
-       iconP[0,iel]=3*iel
-       iconP[1,iel]=3*iel+1
-       iconP[2,iel]=3*iel+2
+   if elt=='Q2P1':
+      for iel in range(nel):
+          iconP[0,iel]=3*iel
+          iconP[1,iel]=3*iel+1
+          iconP[2,iel]=3*iel+2
+      counter=0
+      for iel in range(nel):
+          xP[counter]=xV[iconV[8,iel]]
+          yP[counter]=yV[iconV[8,iel]]
+          counter+=1
+          xP[counter]=xV[iconV[8,iel]]+Lx/nelx/2
+          yP[counter]=yV[iconV[8,iel]]
+          counter+=1
+          xP[counter]=xV[iconV[8,iel]]
+          yP[counter]=yV[iconV[8,iel]]+Ly/nely/2
+          counter+=1
 
-   counter=0
-   for iel in range(nel):
-       xP[counter]=xV[iconV[8,iel]]
-       yP[counter]=yV[iconV[8,iel]]
-       counter+=1
-       xP[counter]=xV[iconV[8,iel]]+Lx/nelx/2
-       yP[counter]=yV[iconV[8,iel]]
-       counter+=1
-       xP[counter]=xV[iconV[8,iel]]
-       yP[counter]=yV[iconV[8,iel]]+Ly/nely/2
-       counter+=1
-
+#end if read_mesh
 
 #np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
 
@@ -774,9 +1049,9 @@ if elt=='Q2P1':
 
 print("grid and connectivity P: %.3f s" % (timing.time() - start))
 
-#################################################################
+#------------------------------------------------------------------------------
 # randomize mesh 
-#################################################################
+#------------------------------------------------------------------------------
 
 if randomize_mesh:
 
@@ -845,9 +1120,9 @@ if randomize_mesh:
 #np.savetxt('gridV_rand.ascii',np.array([xV,yV]).T,header='# x,y')
 #np.savetxt('gridP_rand.ascii',np.array([xP,yP]).T,header='# x,y')
 
-#################################################################
+#------------------------------------------------------------------------------
 # define boundary conditions
-#################################################################
+#------------------------------------------------------------------------------
 start = timing.time()
 
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
@@ -898,14 +1173,14 @@ if experiment==5 or experiment==6:
 
 print("boundary conditions: %.3f s" % (timing.time() - start))
 
-#################################################################
+#------------------------------------------------------------------------------
 # compute area of elements
-#################################################################
+#------------------------------------------------------------------------------
 start = timing.time()
    
 area    = np.zeros(nel,dtype=np.float64) 
 
-if randomize_mesh:
+if True: #randomize_mesh:
 
    dNNNVdr = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
    dNNNVds = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
@@ -924,6 +1199,9 @@ if randomize_mesh:
                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
            jcob = np.linalg.det(jcb)
+           if (jcob<0): 
+              print('element pb=',iel)
+              exit('jcob<0')
            area[iel]+=jcob*weightq
 
    print("     -> area (m,M) %.4e %.4e " %(np.min(area),np.max(area)))
@@ -932,9 +1210,9 @@ if randomize_mesh:
 
    print("compute elements areas: %.3f s" % (timing.time() - start))
 
-#####################################################################
+#------------------------------------------------------------------------------
 # compute element center 
-#####################################################################
+#------------------------------------------------------------------------------
 start = timing.time()
 
 xc=np.zeros(nel,dtype=np.float64)
@@ -946,11 +1224,11 @@ for iel in range(0,nel):
 
 print("compute elt center coords: %.3f s" % (timing.time() - start))
 
-#################################################################
+#------------------------------------------------------------------------------
 # build FE matrix
 # [ K G ][u]=[f]
 # [GT 0 ][p] [h]
-#################################################################
+#------------------------------------------------------------------------------
 start = timing.time()
 
 A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
@@ -1089,9 +1367,14 @@ for iel in range(0,nel):
 
 print("build FE matrix: %.3f s" % (timing.time() - start))
 
-######################################################################
+
+plt.spy(A_sparse, markersize=0.25)
+plt.savefig('matrix.png', bbox_inches='tight')
+plt.clf()
+
+#------------------------------------------------------------------------------
 # assemble K, G, GT, f, h into A and rhs
-######################################################################
+#------------------------------------------------------------------------------
 start = timing.time()
 
 rhs = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
@@ -1107,18 +1390,18 @@ rhs[Nfem-1]=0
 
 print("assemble blocks: %.3f s" % (timing.time() - start))
 
-######################################################################
+#------------------------------------------------------------------------------
 # solve system
-######################################################################
+#------------------------------------------------------------------------------
 start = timing.time()
 
 sol=sps.linalg.spsolve(sps.csr_matrix(A_sparse),rhs)
 
 print("solve time: %.3f s" % (timing.time() - start))
 
-######################################################################
+#------------------------------------------------------------------------------
 # put solution into separate x,y velocity arrays
-######################################################################
+#------------------------------------------------------------------------------
 start = timing.time()
 
 u,v=np.reshape(sol[0:NfemV],(NV,2)).T
@@ -1130,9 +1413,9 @@ print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))
 
-#################################################################
+#------------------------------------------------------------------------------
 #normalise pressure
-#################################################################
+#------------------------------------------------------------------------------
 start = timing.time()
 
 pavrg=0.
@@ -1169,14 +1452,14 @@ print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
 print("normalise pressure: %.3f s" % (timing.time() - start))
 
-#################################################################
+#------------------------------------------------------------------------------
 
 #np.savetxt('velocity'+elt+'.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v',fmt='%.3e')
 np.savetxt('pressure'+elt+'.ascii',np.array([xP,yP,p]).T,header='# x,y,p',fmt='%.3e')
 
-#################################################################
+#------------------------------------------------------------------------------
 # compute L2 errors
-#################################################################
+#------------------------------------------------------------------------------
 start = timing.time()
 
 errv=0.
@@ -1234,9 +1517,9 @@ print("     -> hx= %.8f ; errv= %.12f ; errp= %.10f ; vrms= %.10f ; NV= %d ; NP=
 
 print("compute errors: %.3f s" % (timing.time() - start))
 
-#####################################################################
+#------------------------------------------------------------------------------
 # compute field q for plotting
-#####################################################################
+#------------------------------------------------------------------------------
 start = timing.time()
 
 profile=open('diag_profile'+elt+'.ascii',"w")
@@ -1267,12 +1550,14 @@ q=q/temp
 
 profile.close()
 
+print("     -> q (m,M) %.4f %.4f " %(np.min(q),np.max(q)))
+
 print("compute pressure q: %.3f s" % (timing.time() - start))
 
 
-#####################################################################
+#------------------------------------------------------------------------------
 # export profiles
-#####################################################################
+#------------------------------------------------------------------------------
 start = timing.time()
 
 profile=open('hprofile'+elt+'.ascii',"w")
@@ -1299,19 +1584,50 @@ profile.close()
        
 print("export profiles: %.3f s" % (timing.time() - start))
 
-#####################################################################
+#------------------------------------------------------------------------------
+# compute angles 
+# a: egde between nodes 1&2
+# b: egde between nodes 2&3
+# c: egde between nodes 3&1
+#------------------------------------------------------------------------------
+
+edge_min=np.zeros(nel,dtype=np.float64)
+edge_max=np.zeros(nel,dtype=np.float64)
+angle_1=np.zeros(nel,dtype=np.float64)
+angle_2=np.zeros(nel,dtype=np.float64)
+angle_3=np.zeros(nel,dtype=np.float64)
+
+for iel in range(0,nel):
+    x1=xV[iconV[0,iel]] ; y1=yV[iconV[0,iel]] 
+    x2=xV[iconV[1,iel]] ; y2=yV[iconV[1,iel]] 
+    x3=xV[iconV[2,iel]] ; y3=yV[iconV[2,iel]] 
+
+    a=np.sqrt((x1-x2)**2+(y1-y2)**2)
+    b=np.sqrt((x2-x3)**2+(y2-y3)**2)
+    c=np.sqrt((x3-x1)**2+(y3-y1)**2)
+
+    edge_min[iel]=min(a,b,c)
+    edge_max[iel]=max(a,b,c)
+
+    angle_1[iel]=np.arccos((a**2+c**2-b**2)/(2*a*c)) *180/np.pi
+    angle_2[iel]=np.arccos((a**2+b**2-c**2)/(2*a*b)) *180/np.pi
+    angle_3[iel]=np.arccos((c**2+b**2-a**2)/(2*c*b)) *180/np.pi
+
+    #print(angle_1[iel]+angle_2[iel]+angle_3[iel])
+
+#------------------------------------------------------------------------------
 # export of solution in vtu format
-#####################################################################
+#------------------------------------------------------------------------------
 
 if visu==1:
     vtufile=open('solution'+elt+'.vtu',"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
     vtufile.write("<UnstructuredGrid> \n")
-    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnx*nny,nel))
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV0,nel))
     #####
     vtufile.write("<Points> \n")
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-    for i in range(0,nnx*nny):
+    for i in range(0,NV0):
         vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
     vtufile.write("</DataArray>\n")
     vtufile.write("</Points> \n")
@@ -1327,6 +1643,29 @@ if visu==1:
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (area[iel]))
     vtufile.write("</DataArray>\n")
+
+    vtufile.write("<DataArray type='Float32' Name='edge_min' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (edge_min[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='edge_max' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (edge_max[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='angle_1' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (angle_1[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='angle_2' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (angle_2[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='angle_3' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (angle_3[iel]))
+    vtufile.write("</DataArray>\n")
+
+
     vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (np.sum(p[iconP[0:mP,iel]])/mP))
@@ -1337,22 +1676,22 @@ if visu==1:
     vtufile.write("<PointData Scalars='scalars'>\n")
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-    for i in range(0,nnx*nny):
+    for i in range(0,NV0):
         vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (th)' Format='ascii'> \n")
-    for i in range(0,nnx*nny):
+    for i in range(0,NV0):
         vtufile.write("%10e %10e %10e \n" %(velocity_x(xV[i],yV[i]),velocity_y(xV[i],yV[i]),0.))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
-    for i in range(0,nnx*nny):
+    for i in range(0,NV0):
         vtufile.write("%10e \n" %q[i])
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='q (th)' Format='ascii'> \n")
-    for i in range(0,nnx*nny):
+    for i in range(0,NV0):
         vtufile.write("%10e \n" % (pressure(xV[i],yV[i])))
     vtufile.write("</DataArray>\n")
 

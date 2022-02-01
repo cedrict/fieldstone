@@ -1,0 +1,46 @@
+#! /bin/bash
+rm -f errors_*
+rm -f middle_*
+rm opla
+
+t=0
+
+for e in 1 2 3; do
+    echo ========element= $e =======================
+
+    echo lvl 1
+    python3 stone.py   -1  0 0 $e $t > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
+
+    echo lvl 2
+    python3 stone.py   -2  0 0 $e $t > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
+
+    echo lvl 3
+    python3 stone.py   -3  0 0 $e $t > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
+
+    echo lvl 4
+    python3 stone.py   -4  0 0 $e $t > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
+
+    echo lvl 5
+    python3 stone.py   -5  0 0 $e $t > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
+
+    echo lvl 6
+    python3 stone.py   -6  0 0 $e $t > opla
+    grep errv opla >> errors_$e
+    grep middle opla >> middle_$e
+
+done
+
+
+
+
+

@@ -1,0 +1,119 @@
+set term pdf enhanced font 'Times,12pt'
+set log xy
+set format y "10^{%L}"
+set key outside
+
+set xlabel 'h'
+set ylabel 'error ||v-v^h||_2'
+
+set title 'MINI element'
+set output 'errors_V_MINI.pdf'
+plot[][]\
+'errors_1' u (($3)):6  ps .125 t 'rand',\
+'errors_1_t0' u 3:6  w lp ps .5 t 'NW-SE',\
+'errors_1_t1' u 3:6  w lp ps .5 t 'SW-NE',\
+0.8*x**1.15 lt -1 dt 2 t 'h^{1.15}'
+
+set title 'P_2xP_1 element'
+set output 'errors_V_P2P1.pdf'
+plot[][]\
+'errors_2' u (($3)):6  ps .25 t 'rand',\
+'errors_2_t0' u 3:6  w lp ps .5 t 'NW-SE',\
+'errors_2_t1' u 3:6  w lp ps .5 t 'SW-NE',\
+0.3*x**1.1 lt -1 dt 2 t 'h^{1.1}'
+
+set title 'C-R element'
+set output 'errors_V_CR.pdf'
+plot[][]\
+'errors_3' u (($3)):6  ps .25 t 'rand',\
+'errors_3_t0' u 3:6 w lp ps .5 t 'NW-SE',\
+'errors_3_t1' u 3:6 w lp ps .5 t 'SW-NE',\
+ 0.4*x**1.15 lt -1 dt 2 t 'h^{1.15}' 
+
+
+#################################################################
+
+set xlabel 'h'
+set ylabel 'error ||p-p^h||_2'
+
+set title 'MINI element'
+set output 'errors_P_MINI.pdf'
+plot[][]\
+'errors_1' u ($3):9  ps .5 t 'rand',\
+'errors_1_t0' u 3:9  w lp ps .5 t 'NW-SE',\
+'errors_1_t1' u 3:9  w lp ps .5 t 'SW-NE',\
+5200*x**1.8 lt -1 dt 2 t 'h^{1.8}',\
+3.2*x**0.6 lt -1 dt 4 t 'h^{0.6}' 
+
+set title 'P_2xP_1 element'
+set output 'errors_P_P2P1.pdf'
+plot[][]\
+'errors_2' u ($3):9  ps .5 t 'rand',\
+'errors_2_t0' u 3:9  w lp ps .5 t 'NW-SE',\
+'errors_2_t1' u 3:9  w lp ps .5 t 'SW-NE',\
+1500*x**1.8 lt -1 dt 2 t 'h^{1.8}',\
+2.2*x**0.5 lt -1 dt 4 t 'h^{0.5}' 
+
+set title 'C-R element'
+set output 'errors_P_CR.pdf'
+plot[][]\
+'errors_3' u ($3):9  ps .5 t 'rand',\
+'errors_3_t0' u 3:9  w lp ps .5 t 'NW-SE',\
+'errors_3_t1' u 3:9  w lp ps .5 t 'SW-NE',\
+3300*x**1.75 lt -1 dt 1 t 'h^{1.75}',\
+7.2*x**0.5 lt -1 dt 4 t 'h^{0.5}' 
+
+
+
+##############################################################
+
+unset title
+
+set xlabel 'Ndof=2*NV+NP'
+set output 'errors_V_ndof.pdf'
+set ylabel 'error ||v-v^h||_2'
+plot[][]\
+'errors_1' u (2*$15+$18):6  ps .5 t 'MINI',\
+'errors_2' u (2*$15+$18):6  ps .5 t 'P_2xP_1',\
+'errors_3' u (2*$15+$18):6  ps .5 t 'C-R',\
+
+set xlabel 'Ndof=2*NV+NP'
+set ylabel 'error ||p-p^h||_2'
+set output 'errors_P_ndof.pdf'
+plot[][]\
+'errors_1' u (2*$15+$18):9  ps .5 t 'MINI',\
+'errors_2' u (2*$15+$18):9  ps .5 t 'P_2xP_1',\
+'errors_3' u (2*$15+$18):9  ps .5 t 'C-R',\
+
+##############################################################
+
+set xlabel 'h'
+unset format y
+set ylabel 'v_{rms}'
+unset log y
+set output 'vrms.pdf'
+plot[][]\
+'errors_1' u (($3)):12  ps .5 t 'MINI',\
+'errors_2' u (($3)):12  ps .5 t 'P_2xP_1',\
+'errors_3' u (($3)):12  ps .5 t 'C-R',\
+
+set xlabel 'Ndof=2*NV+NP'
+unset format y
+set ylabel 'v_{rms}'
+unset log y
+set output 'vrms_ndof.pdf'
+plot[][]\
+'errors_1' u (2*$15+$18):12  ps .5 t 'MINI',\
+'errors_2' u (2*$15+$18):12  ps .5 t 'P_2xP_1',\
+'errors_3' u (2*$15+$18):12  ps .5 t 'C-R',\
+
+
+
+
+
+
+
+
+
+
+
