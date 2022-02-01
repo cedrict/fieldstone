@@ -1,0 +1,6 @@
+rm *.vtu
+rm *.ascii
+rm opla
+rm error*
+rm divv*
+
