@@ -98,8 +98,9 @@ ndofP=1  # number of pressure degrees of freedom
 
 #model=1 # quinquis et al, EGU 2010
 #model=2 # schmeling et al,PEPI 2008
-model=3 # falling block 
+#model=3 # falling block 
 #model=4 # dripping instability
+model=5 #mota83 
 
 #...........
 if model==1:
@@ -191,8 +192,35 @@ if model==4: # dripping instability
    nparticle_per_dim=10
    marker_random=True
    eta_ref=10      # scaling of G blocks
-   
 
+#...........
+if model==5: # mota83 
+   Lx=400e3
+   Ly=180e3
+   nelx=160
+   nely=72
+   grav=9.81
+   use_stretching_x=False
+   use_stretching_y=False
+   #material 1: mantle left
+   #material 2: mantle right 
+   #material 3: lithosphere left
+   #material 4: lithosphere right
+   #material 5: water
+   nmat=5
+   rho_mat = np.array([3200,3200,3300,3300,1030],dtype=np.float64) 
+   eta_mat = np.array([1e21,1e21,1e22,1e22,1e19],dtype=np.float64) 
+   Dw=10e3
+   dw=8e3
+   Dl=50e3
+   dl=10e3
+   mass0=0.75*Lx*( (Ly-Dw-Dl)*rho_mat[0] + Dl*rho_mat[2] + Dw*rho_mat[4] )\
+        +0.25*Lx*( (Ly-dw-dl)*rho_mat[1] + dl*rho_mat[3] + dw*rho_mat[4] )
+   rk=3
+   nparticle_per_dim=6
+   marker_random=True
+   eta_ref=1e21      # scaling of G blocks
+   
 nnx=2*nelx+1                  # number of V nodes, x direction
 nny=2*nely+1                  # number of V nodes, y direction
 NV=nnx*nny                    # total number of nodes
@@ -205,7 +233,7 @@ Nfem=NfemV+NfemP              # total number of dofs
 hx=Lx/nelx                    # mesh spacing in x direction
 hy=Ly/nely                    # mesh spacing in y direction
 
-nstep=200
+nstep=50
 
 CFL_nb=0.25
 
@@ -216,7 +244,7 @@ nparticle_per_element=nparticle_per_dim**2
 nparticle=nparticle_per_element*nel
 
 #1: use elemental values for all q points
-#2: use nodal values + P shape functions to interp on q points
+#2: use nodal values + Q1 shape functions to interp on q points
 #3: use avrg nodal values to assign to all q points (elemental avrg)
 #4: nodal rho, elemental eta
 particle_projection=2
@@ -574,6 +602,7 @@ if model==2:
           swarm_mat[im]=2
        if xi>1000e3 and xi<1100e3 and yi<700e3 and yi>500e3: 
           swarm_mat[im]=2
+    #end for
 
 if model==3:
    for im in range(0,nparticle):
@@ -582,6 +611,7 @@ if model==3:
        swarm_mat[im]=1
        if abs(xi-Lx/2)<50e3 and abs(yi-400e3)<50e3:
           swarm_mat[im]=2
+    #end for
 
 if model==4:
    for im in range(0,nparticle):
@@ -594,6 +624,22 @@ if model==4:
              swarm_mat[im]=2
        else:
           swarm_mat[im]=3
+    #end for
+
+if model==5:
+   for im in range(0,nparticle):
+       xi=swarm_x[im]
+       yi=swarm_y[im]
+       swarm_mat[im]=5
+       if xi<300e3 and yi<120e3:
+          swarm_mat[im]=1
+       if xi>300e3 and yi<162e3:
+          swarm_mat[im]=2
+       if xi<300e3 and yi>120e3 and yi<170e3:
+          swarm_mat[im]=3
+       if xi>300e3 and yi>162e3 and yi<172e3:
+          swarm_mat[im]=4
+    #end for
 
 
 print("marker layout: %.3f s" % (time.time() - start))
@@ -642,7 +688,7 @@ if model==1:
    #end for 
 #end if
 
-if model==2 or model==3:
+if model==2 or model==3 or model==5:
    for i in range(0,NV):
        if x[i]/Lx<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
@@ -676,6 +722,12 @@ print("setup: boundary conditions: %.3f s" % (time.time() - start))
 # layout interface markers
 #################################################################
 start = time.time()
+
+if model==1:
+   nmarker=0
+
+if model==2:
+   nmarker=0
 
 if model==3:
    hh=1e3
@@ -740,6 +792,10 @@ if model==4:
        m_y[counter]=1.9+i*hh -eps
        counter+=1
     #end for
+
+if model==5:
+   nmarker=0
+
 
 #np.savetxt('markers.ascii',np.array([m_x,m_y]).T,header='# x,y')
 
@@ -1147,7 +1203,7 @@ for istep in range(0,nstep):
     else:
        sparse_matrix=sps.csr_matrix(a_mat)
 
-    print("convert to csr format: %.3f s" % (time.time() - start))
+    print("convert from lil to csr format: %.3f s" % (time.time() - start))
 
     ######################################################################
     # solve system
@@ -1440,8 +1496,9 @@ for istep in range(0,nstep):
            m_y[im]+=(vA+4*vB+vC)*dt/6
        #end for
 
-    filename = 'markers_{:04d}.ascii'.format(istep) 
-    np.savetxt(filename,np.array([m_x,m_y,m_u,m_v]).T,header='# x,y')
+    if nmarker>0:
+       filename = 'markers_{:04d}.ascii'.format(istep) 
+       np.savetxt(filename,np.array([m_x,m_y,m_u,m_v]).T,header='# x,y')
 
     #####################################################################
     # compute nodal strainrate and heat flux 
@@ -1538,7 +1595,7 @@ for istep in range(0,nstep):
     
     if istep%every==0:
 
-       filename = 'Solution_{:04d}.vtu'.format(istep) 
+       filename = 'mesh_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
@@ -1601,7 +1658,7 @@ for istep in range(0,nstep):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
-       filename = 'solution_{:04d}.vtu'.format(istep) 
+       filename = 'solution_4xQ1_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
@@ -1734,41 +1791,42 @@ for istep in range(0,nstep):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
-       filename = 'markers_{:04d}.vtu'.format(istep) 
-       vtufile=open(filename,"w")
-       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-       vtufile.write("<UnstructuredGrid> \n")
-       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nmarker,nmarker-1))
-       vtufile.write("<Points> \n")
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
-       for i in range(0,nmarker):
-           vtufile.write("%.10e %.10e %.10e \n" %(m_x[i],m_y[i],0.))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("</Points> \n")
-       vtufile.write("<PointData Scalars='scalars'>\n")
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/s)' Format='ascii'> \n")
-       for i in range(0,nmarker):
-           vtufile.write("%10e %10e %10e \n" %(m_u[i],m_v[i],0.))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("</PointData>\n")
-       vtufile.write("<Cells>\n")
-       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-       for i in range(0,nmarker-1):
-           vtufile.write("%d %d " % (i,i+1))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-       for i in range(0,nmarker):
-           vtufile.write("%d " % ((i+1)*2))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-       for i in range(0,nmarker):
-           vtufile.write("%d " % 3)
-       vtufile.write("</DataArray>\n")
-       vtufile.write("</Cells>\n")
-       vtufile.write("</Piece>\n")
-       vtufile.write("</UnstructuredGrid>\n")
-       vtufile.write("</VTKFile>\n")
-       vtufile.close()
+       if nmarker>0:
+          filename = 'markers_{:04d}.vtu'.format(istep) 
+          vtufile=open(filename,"w")
+          vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+          vtufile.write("<UnstructuredGrid> \n")
+          vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nmarker,nmarker-1))
+          vtufile.write("<Points> \n")
+          vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+          for i in range(0,nmarker):
+              vtufile.write("%.10e %.10e %.10e \n" %(m_x[i],m_y[i],0.))
+          vtufile.write("</DataArray>\n")
+          vtufile.write("</Points> \n")
+          vtufile.write("<PointData Scalars='scalars'>\n")
+          vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/s)' Format='ascii'> \n")
+          for i in range(0,nmarker):
+              vtufile.write("%10e %10e %10e \n" %(m_u[i],m_v[i],0.))
+          vtufile.write("</DataArray>\n")
+          vtufile.write("</PointData>\n")
+          vtufile.write("<Cells>\n")
+          vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+          for i in range(0,nmarker-1):
+              vtufile.write("%d %d " % (i,i+1))
+          vtufile.write("</DataArray>\n")
+          vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+          for i in range(0,nmarker):
+              vtufile.write("%d " % ((i+1)*2))
+          vtufile.write("</DataArray>\n")
+          vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+          for i in range(0,nmarker):
+              vtufile.write("%d " % 3)
+          vtufile.write("</DataArray>\n")
+          vtufile.write("</Cells>\n")
+          vtufile.write("</Piece>\n")
+          vtufile.write("</UnstructuredGrid>\n")
+          vtufile.write("</VTKFile>\n")
+          vtufile.close()
 
        filename = 'qpts_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
