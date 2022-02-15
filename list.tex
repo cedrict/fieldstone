@@ -1,5 +1,44 @@
 
 
+\begin{tabular}{|llll|}
+\hline
+Element & ndim & geometry  &\stone \\
+\hline\hline
+$Q_1\times P_0$ penalty & 2D & &1,2,3,4,5,6,7,8,9,12,38,73,101,102, \\
+$Q_1\times P_0$ penalty & 3D & &10, \\
+$Q_1\times P_0$         & 2D & &14,15,16,23,24,25,26,27,28,29,32,33,35,42,48,50,78,103+\\
+$Q_1\times P_0$         & 3D & &11,20 \\
+$Q_1\times P_0$-stab    & 2D & &115,116 \\
+$Q_1\times P_0$-stab    & 3D & & \\
+$Q_1\times Q_1$-stab    & 2D & &22, \\
+$Q_1\times Q_1$-stab    & 3D & & \\
+$Q_1^+\times Q_1$       & 2D & & \\
+\hline
+$Q_2\times Q_1$         & 2D & Cartesian &18,25,39,40,41,42,48,52,53,54,59,61,64,67,70,87,88,104,110,112 \\
+$Q_2\times Q_1$         & 2D & Annulus   &21,71 \\
+$Q_2\times Q_1$         & 2D & Axisymmetric & 91,106 \\
+$Q_2\times Q_1$         & 3D & Cartesian & 17,109 \\
+\hline
+$Q_2\times P_{-1}$      & 2D & &76,104,112 \\
+$Q_2\times P_{-1}$      & 3D & & \\
+$Q_3\times Q_2$         & 2D & &19,42,48 \\
+$Q_3\times Q_2$         & 3D & & \\
+$Q_4\times Q_3$         & 2D & &48 \\
+$Q_2^{(8)}\times Q_1$   & 2D & &52,53 \\
+$Q_1^+ \times P_0$      & 2D & &80 \\
+$Q_1^+ \times P_0$      & 3D & &81 \\
+\hline
+$P_2 \times P_1$      & 2D & &95,96,112 \\
+$P_2 \times P_1$      & 3D & & \\
+$P_1^+ \times P_1$    & 2D & &47,51,95,112 \\
+$P_1^+ \times P_1$    & 3D & & \\
+$P_2^+ \times P_{-1}$ & 2D & &46,55,62,68,92,93,95,96,112 \\
+\hline
+\end{tabular}
+
+
+\vspace{1cm}
+
 {\small 
 
 \noindent stone 01: simple analytical solution: "Donea \& Huerta" mms \ref{mms1} 
@@ -20,7 +59,7 @@
 \noindent stone 06: SolKz
 \lstinputlisting[language=bash,basicstyle=\tiny]{python_codes/fieldstone_06/keywords}
 
-\noindent stone 07: SolKz
+\noindent stone 07: SolVi
 \lstinputlisting[language=bash,basicstyle=\tiny]{python_codes/fieldstone_07/keywords}
 
 \noindent stone 08: The indentor (punch problem) 

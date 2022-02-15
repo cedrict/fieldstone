@@ -1,0 +1,55 @@
+\begin{flushright} {\tiny {\color{gray} pair\_crouzeixraviart.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Since the $P_2\times P_{-1}$ pair is not LBB stable \cite[p179]{reddybook2}, 
+it is enhanced by a cubic bubble and is therefore called $P_2^+\times P_{-1}$. 
+
+This element was first introduced in \cite{crra73}.
+It is the element used in the MILAMIN code \cite{daks08}.
+It is a seven-node triangle with quadratic velocity shape 
+functions enhanced by a cubic bubble function and discontinuous linear interpolation for 
+the pressure field \cite{cuss86}. 
+This element is LBB stable and no additional stabilization techniques are required\cite{elsw}.
+The '+' in its name stands for the bubble while the '-' stands for the discontinuous
+character of the pressure field: once again, it is $P_1$ over the element, but discontinuous
+across element edges.
+
+\begin{remark}
+Cuvelier \etal, 1986 \cite{cuss86} recommend a 6-point or 7-point quadrature rule for this element.
+\end{remark}
+
+\begin{remark}
+Segal \cite{segal} explains 
+for output purposes (printing, plotting etc.) the discontinuous pressures are averaged 
+in vertices for all the adjoining elements. See also Fig. 7.3 of \cite{cuss86}.
+\end{remark}
+
+\begin{remark}
+The simplest Crouzeix-Raviart element is the non-conforming linear triangle 
+with constant pressure ($P_1\times P_0$) \cite{cuss86}. 
+\end{remark}
+
+It is worth noting that this element has more degrees of freedom  than the 
+Taylor-Hood element for the same order of accuracy. However, since the 
+bubble can be eliminated, one can design a modified version of this element.
+\todo[inline]{Check Cuvelier book chapter 8 for modified element}
+
+
+\begin{remark}
+I have once asked the (main) author of MILAMIN why he chose this element, for 
+example over the $P_2\times P_1$. His answer is as follows:
+"Elements with continuous pressure  are incapable of converging in the Linf 
+norm for mechanical problems exhibiting pressure jumps such as the inclusion-host setup. 
+During my MSc and PhD I was focusing on sharp heterogeneities, so this is why I decided 
+to choose $P_2^+\times P_{-1}$. 
+You will see that it is also easy to invert the pressure mass matrix for such elements, 
+which is really useful (both for the augmentation and preconditioning)."
+\end{remark}
+
+This element is used by Poliakov and Podlachikov \cite{popo92} to study the deformation of the surface above a rising diapir. Note that they actually use a "13 point integration formula (Hughes
+1987) for calculation of the stiffness matrix was used in order
+t o conserve detailed information from the marker field in
+the coarse FEM mesh". 
+It is also used in \cite{anmp15} in the context of a new free-surface stabilization scheme. 
+It is the element used in LaCoDe \cite{demh19}.
+

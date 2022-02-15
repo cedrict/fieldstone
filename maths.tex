@@ -1,0 +1,157 @@
+\begin{flushright} {\tiny {\color{gray} maths.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+%----------------------------------------------------
+\subsubsection{About vectors}
+
+\begin{remark}
+In this document I have chosen to (when possible) use the notation $\vec{a}$
+to denote a vector and ${\bm a}$ to denote a tensor/matrix. More often than not 
+the same notation ${\bm a}$ is used for both in the literature.
+\end{remark}
+
+In mathematics, physics and engineering, a Euclidean vector or simply a vector 
+is a geometric object that has magnitude (or length) and direction. 
+Many algebraic operations on real numbers such as addition, subtraction, multiplication, 
+and negation have close analogues for vectors.
+
+Let $\vec{v}$ be a vector in 3D space. 
+Its Euclidean norm (or magnitude) is given in a coordinate-free way by 
+\[
+|\vec{v}|:=\sqrt{\vec{v}\cdot\vec{v}}
+\]
+This definition makes use of the do product, see next section.
+The Euclidean norm is also called the $L_2-$norm, or $2-$norm. It is also 
+sometimes noted $||\cdot ||_2$. 
+
+In Cartesian coordinates the vector $\vec{v}$ is given by
+\[
+\vec{v}=
+\left(
+\begin{array}{c}
+v_x \\ v_y \\ v_z
+\end{array}
+\right)
+=
+v_x \vec{e}_x + 
+v_y \vec{e}_y + 
+v_z \vec{e}_z 
+\qquad
+\text{with}
+\qquad
+\vec{e}_x=
+\left(
+\begin{array}{c}
+1 \\ 0 \\ 0
+\end{array}
+\right)
+\quad
+\vec{e}_y=
+\left(
+\begin{array}{c}
+0 \\ 1 \\ 0
+\end{array}
+\right)
+\quad
+\vec{e}_z=
+\left(
+\begin{array}{c}
+0 \\ 0 \\ 1
+\end{array}
+\right)
+\]
+Its norm then simply writes
+\[
+|\vec{v}| = \sqrt{v_x^2 + v_y^2 + v_z^2}
+\]
+
+A unit vector is any vector with a length of one. 
+A vector of arbitrary length can be divided by its length to create a unit vector.
+If $\vec{a}$ is a vector, the corresponding unit vector is often denoted
+\[
+\vec{e}_a = \frac{\vec{a}}{|\vec{a}|}
+\]
+
+
+%---------------------------------------------------------------
+\subsubsection{dot products, cross products and dyadic products}
+
+The {\bf dot product} (or sometimes called inner product, or even scalar product) of two vectors is denoted by 
+$\vec{a}\cdot \vec{b}$ and is defined as:
+\[
+\vec{a}\cdot \vec{b} = |\vec{a}| \; |\vec{b}| \; \cos\theta
+\]
+where $\theta$  is the measure of the angle between $\vec{a}$ and ${b}$.
+
+\todo[inline]{FIGURE}
+
+The dot product can also be defined as the sum of the products of the components of each vector as
+\[
+\vec{a}\cdot\vec{b} = a_xb_x + a_yb_y + a_zb_z  
+\]
+The dot product can also be interpreted as an answer to the question ``how similar are vectors $\vec{a}$
+and $\vec{b}$ ?'' Indeed, if $\vec{a}=\vec{b}$ then $\theta=0$ and $\cos\theta=1$, while if 
+$\vec{a}$ is perpendicular to $\vec{b}$, then $\theta=\pi/2$, $\cos\theta=0$ and $\vec{a}\cdot \vec{b}=0$. 
+
+In Cartesian coordinates, we find that 
+\[
+\vec{v} \cdot \vec{e}_x 
+= (v_x \vec{e}_x + v_y \vec{e}_y + v_z \vec{e}_z ) \cdot \vec{e}_x
+= v_x \underbrace{\vec{e}_x \cdot \vec{e}_x}_{=1}
++ v_y \underbrace{\vec{e}_y \cdot \vec{e}_x}_{=0}
++ v_z \underbrace{\vec{e}_z \cdot \vec{e}_x}_{=0} 
+=v_x
+\]
+In this case the interpretation of $\vec{v} \cdot \vec{e}_x$ could be ``how much of $\vec{v}$
+is in the direction $\vec{e}_x$''.
+
+The {\bf cross product} (also  called the vector product or outer product) of two vectors is also a vector and 
+it is denoted $\vec{a} \times \vec{b}$ and defined as 
+\[
+\vec{c} = \vec{a} \times \vec{b} = |\vec{a}| \; |\vec{b}|\; \sin\theta \; \vec{n}
+\]
+where $\theta$  is the measure of the angle between $\vec{a}$ and ${b}$ and
+and $\vec{n}$ is a unit vector perpendicular to both $\vec{a}$ and $\vec{b}$ 
+which completes a right-handed system.
+
+\todo[inline]{FIGURE}
+
+The norm of the cross product, say $|\vec{c}|=|\vec{a} \times \vec{b}|$, is actually the 
+area of the parallelogram having $\vec{a}$ and $\vec{b}$ as sides.
+
+Also note that $\vec{a} \times \vec{b} = - \vec{b} \times \vec{a}$ (think about the direction of the 
+normal vector in each case). The cross product can be written as
+\[
+\vec{a} \times \vec{b} = (a_yb_z-a_zb_y) \vec{e}_x + (a_zb_x-a_xb_z) \vec{e}_y + (a_xb_y-a_yb_x) \vec{e}_z  
+\]
+
+Finally, let us look at the {\bf dyadic product} of two vectors $\vec{a}$ and $\vec{b}$ which denoted by
+$\vec{a}\vec{b}^T$ (juxtaposed; no symbols, multiplication signs, crosses, dots, etc...). The 
+result is a tensor:
+\[
+\vec{a}\vec{b}^T 
+=
+\left(
+\begin{array}{c}
+a_x \\ a_y \\ a_z
+\end{array}
+\right)
+(b_x \; b_y \; b_z)
+=
+\left(
+\begin{array}{ccc}
+a_x b_x & a_xb_y & a_xb_z \\
+a_y b_x & a_yb_y & a_yb_z \\
+a_z b_x & a_zb_y & a_zb_z 
+\end{array}
+\right)
+\]
+
+In conclusion the dot product yields a scalar, the cross product yields a vector and the dyadic 
+product yields a tensor. 
+
+
+
+
+
+
