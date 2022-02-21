@@ -1,0 +1,9 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set output 'profile.pdf'
+set ylabel 'pressure'
+set xlabel 'y'
+plot[][:1]\
+'pressure1.ascii' u 2:3 w lp ps .5 t 'p_1',\
+'pressure2.ascii' u 2:3 w lp ps .5 t 'p_2',\
+1-x lt -1 dt 2
