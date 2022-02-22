@@ -17,7 +17,7 @@ def NNV(r,s,element):
        N_2=0.25*(1.+r)*(1.+s)
        N_3=0.25*(1.-r)*(1.+s)
        return N_0,N_1,N_2,N_3
-    if element==2 or element==5:
+    if element==2 or element==5 or element==6:
        N_0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
        N_1= 0.5*r*(r+1.) * 0.5*s*(s-1.)
        N_2= 0.5*r*(r+1.) * 0.5*s*(s+1.)
@@ -37,22 +37,10 @@ def NNV(r,s,element):
        N2t=(+9 -27*s -9*s**2 +27*s**3)/16
        N3t=(+9 +27*s -9*s**2 -27*s**3)/16
        N4t=(-1    -s +9*s**2 + 9*s**3)/16
-       N_00= N1r*N1t 
-       N_01= N2r*N1t 
-       N_02= N3r*N1t 
-       N_03= N4r*N1t 
-       N_04= N1r*N2t 
-       N_05= N2r*N2t 
-       N_06= N3r*N2t 
-       N_07= N4r*N2t 
-       N_08= N1r*N3t 
-       N_09= N2r*N3t 
-       N_10= N3r*N3t 
-       N_11= N4r*N3t 
-       N_12= N1r*N4t 
-       N_13= N2r*N4t 
-       N_14= N3r*N4t 
-       N_15= N4r*N4t 
+       N_00= N1r*N1t ; N_01= N2r*N1t ; N_02= N3r*N1t ; N_03= N4r*N1t 
+       N_04= N1r*N2t ; N_05= N2r*N2t ; N_06= N3r*N2t ; N_07= N4r*N2t 
+       N_08= N1r*N3t ; N_09= N2r*N3t ; N_10= N3r*N3t ; N_11= N4r*N3t 
+       N_12= N1r*N4t ; N_13= N2r*N4t ; N_14= N3r*N4t ; N_15= N4r*N4t 
        return N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
               N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15
     if element==4:
@@ -66,31 +54,11 @@ def NNV(r,s,element):
        N3s=(1     - 5*s**2         + 4*s**4) 
        N4s=(  8*s +16*s**2 -8*s**3 -16*s**4)/6
        N5s=(   -s -   s**2 +4*s**3 + 4*s**4)/6
-       N_00= N1r*N1s
-       N_01= N2r*N1s
-       N_02= N3r*N1s
-       N_03= N4r*N1s
-       N_04= N5r*N1s
-       N_05= N1r*N2s
-       N_06= N2r*N2s
-       N_07= N3r*N2s
-       N_08= N4r*N2s
-       N_09= N5r*N2s
-       N_10= N1r*N3s
-       N_11= N2r*N3s
-       N_12= N3r*N3s
-       N_13= N4r*N3s
-       N_14= N5r*N3s
-       N_15= N1r*N4s
-       N_16= N2r*N4s
-       N_17= N3r*N4s
-       N_18= N4r*N4s
-       N_19= N5r*N4s
-       N_20= N1r*N5s
-       N_21= N2r*N5s
-       N_22= N3r*N5s
-       N_23= N4r*N5s
-       N_24= N5r*N5s
+       N_00= N1r*N1s ; N_01= N2r*N1s ; N_02= N3r*N1s ; N_03= N4r*N1s ; N_04= N5r*N1s
+       N_05= N1r*N2s ; N_06= N2r*N2s ; N_07= N3r*N2s ; N_08= N4r*N2s ; N_09= N5r*N2s
+       N_10= N1r*N3s ; N_11= N2r*N3s ; N_12= N3r*N3s ; N_13= N4r*N3s ; N_14= N5r*N3s
+       N_15= N1r*N4s ; N_16= N2r*N4s ; N_17= N3r*N4s ; N_18= N4r*N4s ; N_19= N5r*N4s
+       N_20= N1r*N5s ; N_21= N2r*N5s ; N_22= N3r*N5s ; N_23= N4r*N5s ; N_24= N5r*N5s
        return N_00,N_01,N_02,N_03,N_04,\
               N_05,N_06,N_07,N_08,N_09,\
               N_10,N_11,N_12,N_13,N_14,\
@@ -104,7 +72,7 @@ def dNNVdr(r,s,element):
        dNdr_2=+0.25*(1.+s) 
        dNdr_3=-0.25*(1.+s) 
        return dNdr_0,dNdr_1,dNdr_2,dNdr_3
-    if element==2 or element==5:
+    if element==2 or element==5 or element==6:
        dNdr_0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
        dNdr_1= 0.5*(2.*r+1.) * 0.5*s*(s-1)
        dNdr_2= 0.5*(2.*r+1.) * 0.5*s*(s+1)
@@ -124,22 +92,10 @@ def dNNVdr(r,s,element):
        N2s=(+9 -27*s -9*s**2 +27*s**3)/16
        N3s=(+9 +27*s -9*s**2 -27*s**3)/16
        N4s=(-1    -s +9*s**2 + 9*s**3)/16
-       dNdr_00= dN1rdr* N1s 
-       dNdr_01= dN2rdr* N1s 
-       dNdr_02= dN3rdr* N1s 
-       dNdr_03= dN4rdr* N1s 
-       dNdr_04= dN1rdr* N2s 
-       dNdr_05= dN2rdr* N2s 
-       dNdr_06= dN3rdr* N2s 
-       dNdr_07= dN4rdr* N2s 
-       dNdr_08= dN1rdr* N3s 
-       dNdr_09= dN2rdr* N3s 
-       dNdr_10= dN3rdr* N3s 
-       dNdr_11= dN4rdr* N3s 
-       dNdr_12= dN1rdr* N4s 
-       dNdr_13= dN2rdr* N4s 
-       dNdr_14= dN3rdr* N4s 
-       dNdr_15= dN4rdr* N4s 
+       dNdr_00=dN1rdr*N1s ; dNdr_01=dN2rdr*N1s ; dNdr_02=dN3rdr*N1s ; dNdr_03=dN4rdr*N1s 
+       dNdr_04=dN1rdr*N2s ; dNdr_05=dN2rdr*N2s ; dNdr_06=dN3rdr*N2s ; dNdr_07=dN4rdr*N2s 
+       dNdr_08=dN1rdr*N3s ; dNdr_09=dN2rdr*N3s ; dNdr_10=dN3rdr*N3s ; dNdr_11=dN4rdr*N3s 
+       dNdr_12=dN1rdr*N4s ; dNdr_13=dN2rdr*N4s ; dNdr_14=dN3rdr*N4s ; dNdr_15=dN4rdr*N4s 
        return dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,dNdr_05,dNdr_06,dNdr_07,\
               dNdr_08,dNdr_09,dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,dNdr_15
     if element==4:
@@ -153,31 +109,11 @@ def dNNVdr(r,s,element):
        N3s=(1     - 5*s**2         + 4*s**4) 
        N4s=(  8*s +16*s**2 -8*s**3 -16*s**4)/6
        N5s=(   -s -   s**2 +4*s**3 + 4*s**4)/6
-       dNdr_00= dN1dr*N1s
-       dNdr_01= dN2dr*N1s
-       dNdr_02= dN3dr*N1s
-       dNdr_03= dN4dr*N1s
-       dNdr_04= dN5dr*N1s
-       dNdr_05= dN1dr*N2s
-       dNdr_06= dN2dr*N2s
-       dNdr_07= dN3dr*N2s
-       dNdr_08= dN4dr*N2s
-       dNdr_09= dN5dr*N2s
-       dNdr_10= dN1dr*N3s
-       dNdr_11= dN2dr*N3s
-       dNdr_12= dN3dr*N3s
-       dNdr_13= dN4dr*N3s
-       dNdr_14= dN5dr*N3s
-       dNdr_15= dN1dr*N4s
-       dNdr_16= dN2dr*N4s
-       dNdr_17= dN3dr*N4s
-       dNdr_18= dN4dr*N4s
-       dNdr_19= dN5dr*N4s
-       dNdr_20= dN1dr*N5s
-       dNdr_21= dN2dr*N5s
-       dNdr_22= dN3dr*N5s
-       dNdr_23= dN4dr*N5s
-       dNdr_24= dN5dr*N5s
+       dNdr_00=dN1dr*N1s ; dNdr_01=dN2dr*N1s ; dNdr_02=dN3dr*N1s ; dNdr_03=dN4dr*N1s ; dNdr_04=dN5dr*N1s
+       dNdr_05=dN1dr*N2s ; dNdr_06=dN2dr*N2s ; dNdr_07=dN3dr*N2s ; dNdr_08=dN4dr*N2s ; dNdr_09=dN5dr*N2s
+       dNdr_10=dN1dr*N3s ; dNdr_11=dN2dr*N3s ; dNdr_12=dN3dr*N3s ; dNdr_13=dN4dr*N3s ; dNdr_14=dN5dr*N3s
+       dNdr_15=dN1dr*N4s ; dNdr_16=dN2dr*N4s ; dNdr_17=dN3dr*N4s ; dNdr_18=dN4dr*N4s ; dNdr_19=dN5dr*N4s
+       dNdr_20=dN1dr*N5s ; dNdr_21=dN2dr*N5s ; dNdr_22=dN3dr*N5s ; dNdr_23=dN4dr*N5s ; dNdr_24=dN5dr*N5s
        return dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,\
               dNdr_05,dNdr_06,dNdr_07,dNdr_08,dNdr_09,\
               dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,\
@@ -191,7 +127,7 @@ def dNNVds(r,s,element):
        dNds_2=+0.25*(1.+r)
        dNds_3=+0.25*(1.-r)
        return dNds_0,dNds_1,dNds_2,dNds_3
-    if element==2 or element==5:
+    if element==2 or element==5 or element==6:
        dNds_0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
        dNds_1= 0.5*r*(r+1.) * 0.5*(2.*s-1.)
        dNds_2= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
@@ -211,22 +147,10 @@ def dNNVds(r,s,element):
        dN2sds=(-27 -18*s +81*s**2)/16
        dN3sds=(+27 -18*s -81*s**2)/16
        dN4sds=( -1 +18*s +27*s**2)/16
-       dNds_00= N1r*dN1sds 
-       dNds_01= N2r*dN1sds 
-       dNds_02= N3r*dN1sds 
-       dNds_03= N4r*dN1sds 
-       dNds_04= N1r*dN2sds 
-       dNds_05= N2r*dN2sds 
-       dNds_06= N3r*dN2sds 
-       dNds_07= N4r*dN2sds 
-       dNds_08= N1r*dN3sds 
-       dNds_09= N2r*dN3sds 
-       dNds_10= N3r*dN3sds 
-       dNds_11= N4r*dN3sds 
-       dNds_12= N1r*dN4sds 
-       dNds_13= N2r*dN4sds 
-       dNds_14= N3r*dN4sds 
-       dNds_15= N4r*dN4sds
+       dNds_00=N1r*dN1sds ; dNds_01=N2r*dN1sds ; dNds_02=N3r*dN1sds ; dNds_03=N4r*dN1sds 
+       dNds_04=N1r*dN2sds ; dNds_05=N2r*dN2sds ; dNds_06=N3r*dN2sds ; dNds_07=N4r*dN2sds 
+       dNds_08=N1r*dN3sds ; dNds_09=N2r*dN3sds ; dNds_10=N3r*dN3sds ; dNds_11=N4r*dN3sds 
+       dNds_12=N1r*dN4sds ; dNds_13=N2r*dN4sds ; dNds_14=N3r*dN4sds ; dNds_15=N4r*dN4sds
        return dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,dNds_05,dNds_06,dNds_07,\
               dNds_08,dNds_09,dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,dNds_15
     if element==4:
@@ -240,37 +164,18 @@ def dNNVds(r,s,element):
        dN3ds=(      -10*s          +16*s**3) 
        dN4ds=(  8   +32*s -24*s**2 -64*s**3)/6
        dN5ds=(   -1 - 2*s +12*s**2 +16*s**3)/6
-       dNds_00= N1r*dN1ds
-       dNds_01= N2r*dN1ds
-       dNds_02= N3r*dN1ds
-       dNds_03= N4r*dN1ds
-       dNds_04= N5r*dN1ds
-       dNds_05= N1r*dN2ds
-       dNds_06= N2r*dN2ds
-       dNds_07= N3r*dN2ds
-       dNds_08= N4r*dN2ds
-       dNds_09= N5r*dN2ds
-       dNds_10= N1r*dN3ds
-       dNds_11= N2r*dN3ds
-       dNds_12= N3r*dN3ds
-       dNds_13= N4r*dN3ds
-       dNds_14= N5r*dN3ds
-       dNds_15= N1r*dN4ds
-       dNds_16= N2r*dN4ds
-       dNds_17= N3r*dN4ds
-       dNds_18= N4r*dN4ds
-       dNds_19= N5r*dN4ds
-       dNds_20= N1r*dN5ds
-       dNds_21= N2r*dN5ds
-       dNds_22= N3r*dN5ds
-       dNds_23= N4r*dN5ds
-       dNds_24= N5r*dN5ds
+       dNds_00=N1r*dN1ds ; dNds_01=N2r*dN1ds ; dNds_02=N3r*dN1ds ; dNds_03=N4r*dN1ds ; dNds_04=N5r*dN1ds
+       dNds_05=N1r*dN2ds ; dNds_06=N2r*dN2ds ; dNds_07=N3r*dN2ds ; dNds_08=N4r*dN2ds ; dNds_09=N5r*dN2ds
+       dNds_10=N1r*dN3ds ; dNds_11=N2r*dN3ds ; dNds_12=N3r*dN3ds ; dNds_13=N4r*dN3ds ; dNds_14=N5r*dN3ds
+       dNds_15=N1r*dN4ds ; dNds_16=N2r*dN4ds ; dNds_17=N3r*dN4ds ; dNds_18=N4r*dN4ds ; dNds_19=N5r*dN4ds
+       dNds_20=N1r*dN5ds ; dNds_21=N2r*dN5ds ; dNds_22=N3r*dN5ds ; dNds_23=N4r*dN5ds ; dNds_24=N5r*dN5ds
        return dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,\
               dNds_05,dNds_06,dNds_07,dNds_08,dNds_09,\
               dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,\
               dNds_15,dNds_16,dNds_17,dNds_18,dNds_19,\
               dNds_20,dNds_21,dNds_22,dNds_23,dNds_24
 
+#------------------------------------------------------------------------------
 
 def NNP(r,s,element):
     if element==1:
@@ -302,22 +207,10 @@ def NNP(r,s,element):
        N2t=(+9 -27*s -9*s**2 +27*s**3)/16
        N3t=(+9 +27*s -9*s**2 -27*s**3)/16
        N4t=(-1    -s +9*s**2 + 9*s**3)/16
-       N_00= N1r*N1t 
-       N_01= N2r*N1t 
-       N_02= N3r*N1t 
-       N_03= N4r*N1t 
-       N_04= N1r*N2t 
-       N_05= N2r*N2t 
-       N_06= N3r*N2t 
-       N_07= N4r*N2t 
-       N_08= N1r*N3t 
-       N_09= N2r*N3t 
-       N_10= N3r*N3t 
-       N_11= N4r*N3t 
-       N_12= N1r*N4t 
-       N_13= N2r*N4t 
-       N_14= N3r*N4t 
-       N_15= N4r*N4t 
+       N_00= N1r*N1t ; N_01= N2r*N1t ; N_02= N3r*N1t ; N_03= N4r*N1t 
+       N_04= N1r*N2t ; N_05= N2r*N2t ; N_06= N3r*N2t ; N_07= N4r*N2t 
+       N_08= N1r*N3t ; N_09= N2r*N3t ; N_10= N3r*N3t ; N_11= N4r*N3t 
+       N_12= N1r*N4t ; N_13= N2r*N4t ; N_14= N3r*N4t ; N_15= N4r*N4t 
        return N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
               N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15
     if element==5:
@@ -325,7 +218,9 @@ def NNP(r,s,element):
        N_1=2*r
        N_2=2*s
        return N_0,N_1,N_2
-       
+    if element==6:
+       return 0,0,0
+
 #------------------------------------------------------------------------------
 
 def bx(x,y):
@@ -398,7 +293,7 @@ Ly=1.
 
 experiment=1
 
-element= 2
+element= 3
 
 if element==1:
    mV=4
@@ -420,7 +315,7 @@ if element==4:
    mP=16
    rVnodes=[-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1]
    sVnodes=[-1,-1,-1,-1,-1,-0.5,-0.5,-0.5,-0.5,-0.5,0,0,0,0,0,0.5,0.5,0.5,0.5,0.5,1,1,1,1,1]
-if element==5:
+if element==5 or element==6:
    mV=9
    mP=3
    rVnodes=[-1,1,1,-1,0,1,0,-1,0]
@@ -432,12 +327,22 @@ sparse=True
 
 mode=1
 
+# allowing for argument parsing through command line
+if int(len(sys.argv) == 2):
+   folder=sys.argv[1]
+else:
+   folder='15'
+
+print (folder)
+
 ###############################################################################
 
-if element==1:               nqperdim=2
-if element==2 or element==5: nqperdim=3
-if element==3:               nqperdim=4
-if element==4:               nqperdim=5
+if element==1: nqperdim=2
+if element==2: nqperdim=3
+if element==3: nqperdim=4
+if element==4: nqperdim=5
+if element==5: nqperdim=3
+if element==6: nqperdim=3
 
 if nqperdim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
@@ -516,28 +421,31 @@ if element==5: # Q2P1
    orderV='Q2'
    orderP='P1'
 
-print(orderP[0])
+if element==6: # Q2P1
+   orderV='Q2'
+   orderP='P1'
 
-f_vel = open('./meshes/coordinates_'+orderV+'.dat', 'r') 
+
+f_vel = open('./meshes/'+folder+'/coordinates_'+orderV+'.dat', 'r') 
 lines_vel = f_vel.readlines()
 line=lines_vel[0].strip()
 columns=line.split()
 NV=int(columns[0])
 
-g_vel = open('./meshes/connectivity_'+orderV+'.dat', 'r') 
+g_vel = open('./meshes/'+folder+'/connectivity_'+orderV+'.dat', 'r') 
 lines_iconV = g_vel.readlines()
 line=lines_iconV[0].strip()
 columns=line.split()
 nel=int(columns[0])
 
 if orderP[0]=='Q':
-   f_press = open('./meshes/coordinates_'+orderP+'.dat', 'r') 
+   f_press = open('./meshes/'+folder+'/coordinates_'+orderP+'.dat', 'r') 
    lines_press = f_press.readlines()
    line=lines_press[0].strip()
    columns=line.split()
    NP=int(columns[0])
 
-   g_press = open('./meshes/connectivity_'+orderP+'.dat', 'r') 
+   g_press = open('./meshes/'+folder+'/connectivity_'+orderP+'.dat', 'r') 
    lines_iconP = g_press.readlines()
    line=lines_iconP[0].strip()
    columns=line.split()
@@ -545,7 +453,6 @@ if orderP[0]=='Q':
 
 if orderP=='P1':
    NP=3*nel
-
 
 NfemV=NV*ndofV       # number of velocity dofs
 NfemP=NP*ndofP       # number of pressure dofs
@@ -776,6 +683,20 @@ c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64)
 
 for iel in range(0,nel):
 
+    if element==6:
+       det=xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]]\
+          -xP[iconP[0,iel]]*yP[iconP[2,iel]]+xP[iconP[2,iel]]*yP[iconP[0,iel]]\
+          +xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]]
+       m11=(xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]])/det
+       m12=(xP[iconP[2,iel]]*yP[iconP[0,iel]]-xP[iconP[0,iel]]*yP[iconP[2,iel]])/det
+       m13=(xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]])/det
+       m21=(yP[iconP[1,iel]]-yP[iconP[2,iel]])/det
+       m22=(yP[iconP[2,iel]]-yP[iconP[0,iel]])/det
+       m23=(yP[iconP[0,iel]]-yP[iconP[1,iel]])/det
+       m31=(xP[iconP[2,iel]]-xP[iconP[1,iel]])/det
+       m32=(xP[iconP[0,iel]]-xP[iconP[2,iel]])/det
+       m33=(xP[iconP[1,iel]]-xP[iconP[0,iel]])/det
+
     # set arrays to 0 every loop
     f_el =np.zeros((mV*ndofV),dtype=np.float64)
     K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
@@ -819,6 +740,11 @@ for iel in range(0,nel):
                 yq+=NNNV[k]*yV[iconV[k,iel]]
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+
+            if element==6:
+               NNNP[0]=(m11+m21*xq+m31*yq)
+               NNNP[1]=(m12+m22*xq+m32*yq)
+               NNNP[2]=(m13+m23*xq+m33*yq)
 
             # construct 3x8 b_mat matrix
             for i in range(0,mV):
@@ -1028,6 +954,21 @@ start = timing.time()
 
 pavrg=0.
 for iel in range (0,nel):
+
+    if element==6:
+       det=xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]]\
+          -xP[iconP[0,iel]]*yP[iconP[2,iel]]+xP[iconP[2,iel]]*yP[iconP[0,iel]]\
+          +xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]]
+       m11=(xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]])/det
+       m12=(xP[iconP[2,iel]]*yP[iconP[0,iel]]-xP[iconP[0,iel]]*yP[iconP[2,iel]])/det
+       m13=(xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]])/det
+       m21=(yP[iconP[1,iel]]-yP[iconP[2,iel]])/det
+       m22=(yP[iconP[2,iel]]-yP[iconP[0,iel]])/det
+       m23=(yP[iconP[0,iel]]-yP[iconP[1,iel]])/det
+       m31=(xP[iconP[2,iel]]-xP[iconP[1,iel]])/det
+       m32=(xP[iconP[0,iel]]-xP[iconP[2,iel]])/det
+       m33=(xP[iconP[1,iel]]-xP[iconP[0,iel]])/det
+
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
             rq=qcoords[iq]
@@ -1047,6 +988,13 @@ for iel in range (0,nel):
                 jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
             jcob = np.linalg.det(jcb)
 
+            if element==6:
+               xq=NNNV[:].dot(xV[iconV[:,iel]])
+               yq=NNNV[:].dot(yV[iconV[:,iel]])
+               NNNP[0]=(m11+m21*xq+m31*yq)
+               NNNP[1]=(m12+m22*xq+m32*yq)
+               NNNP[2]=(m13+m23*xq+m33*yq)
+
             pq=0.
             for k in range(0,mP):
                 pq+=NNNP[k]*p[iconP[k,iel]]
@@ -1058,7 +1006,7 @@ for iel in range (0,nel):
 
 p[:]-=pavrg/Lx/Ly
 
-print(pavrg)
+print("     -> pavrg=",pavrg)
 
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
@@ -1216,7 +1164,10 @@ errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 errq=np.sqrt(errq)
 
-print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errq= %.8e" %(nel,errv,errp,errq))
+hmin=np.sqrt(min(area))
+hmax=np.sqrt(max(area))
+
+print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errq= %.8e ; hmin/max= %.6e %.6e" %(nel,errv,errp,errq,hmin,hmax))
 
 print("compute errors: %.3f s" % (timing.time() - start))
 
@@ -1257,7 +1208,7 @@ if True==1:
         vtufile.write("%10e\n" % (eta(xc[iel],yc[iel])))
     vtufile.write("</DataArray>\n")
     #--
-    if element==1 or element==5:
+    if element==1 or element==5 or element==6:
        vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
        for iel in range(0,nel):
            vtufile.write("%12e \n" %p[iconP[0,iel]])
@@ -1313,7 +1264,7 @@ if True==1:
     if element==1:
        for iel in range (0,nel):
            vtufile.write("%d %d %d %d \n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel]))
-    if element==2 or element==5:
+    if element==2 or element==5 or element==6:
        for iel in range (0,nel):
            vtufile.write("%d %d %d %d \n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel]))
     if element==3:

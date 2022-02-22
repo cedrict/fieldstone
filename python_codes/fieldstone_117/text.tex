@@ -21,15 +21,18 @@ Codes at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fie
 
 The mesh(es) used in this \stone are obtained by means of the quilt mesher program written by Lukas. 
 
+in quilt.f: 
+elementType = Q4
 
-
-
+in examples.f, in subroutine meshThirteenPatches:
+nElemsBase=10
 
 
 %-------------------------------
 \subsection*{The benchmarks}
 
-I have implemented four finite element pairs: $Q_1\times P_0$, $Q_2\times Q_1$, $Q_3\times Q_2$, $Q_4\times Q_3$.
+I have implemented five finite element pairs: $Q_1\times P_0$, $Q_2\times Q_1$, $Q_2 \times P_{-1}$,
+$Q_3\times Q_2$, $Q_4\times Q_3$.
 Note that unfortunately the vtu format does not allow the representation of $Q_3$ or $Q_4$ fields. 
 
 Two benchmarks are implemented in the code: Donea \& Huerta (see Section~\ref{mms:dh}) and SolVi (see Section~\ref{mms:solvi}).
@@ -44,4 +47,10 @@ inclusion and matrix aligns exactly with the mesh:
  
 
 dafuq is going on with Nxx Nyy ? 
+
+
+do Q2P1 unmapped
+
+do Q2(8)Q1
+
 
