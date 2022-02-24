@@ -90,7 +90,6 @@ print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
 
-ndim=2   # number of physical dimensions
 mV=9     # number of velocity nodes making up an element
 mP=4     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
@@ -100,7 +99,8 @@ ndofP=1  # number of pressure degrees of freedom
 #model=2 # schmeling et al,PEPI 2008
 #model=3 # falling block 
 #model=4 # dripping instability
-model=5 #mota83 
+#model=5 #mota83 
+model=6 # quinquis-like 
 
 #...........
 if model==1:
@@ -220,6 +220,31 @@ if model==5: # mota83
    nparticle_per_dim=6
    marker_random=True
    eta_ref=1e21      # scaling of G blocks
+
+#...........
+if model==6: #  
+   Lx=3000e3
+   Ly=670e3
+   nelx=150
+   nely=int(nelx*Ly/Lx*1.4)
+   grav=9.81
+   use_stretching_x=True
+   use_stretching_y=True
+   #material 1: mantle 
+   #material 2: 
+   #material 3: 
+   #material 4: upper crust left
+   #material 5: 
+   #material 6: 
+   #material 7: upper crust right
+   nmat=7
+   rho_mat = np.array([3200,3240,3250,330,3250,3250,3300],dtype=np.float64) 
+   eta_mat = np.array([1e20,1e22,1e23,1e19,1e22,1e23,1e19],dtype=np.float64) 
+   mass0=10
+   rk=1
+   nparticle_per_dim=10
+   marker_random=True
+   eta_ref=1e21      # scaling of G blocks
    
 nnx=2*nelx+1                  # number of V nodes, x direction
 nny=2*nely+1                  # number of V nodes, y direction
@@ -247,7 +272,7 @@ nparticle=nparticle_per_element*nel
 #2: use nodal values + Q1 shape functions to interp on q points
 #3: use avrg nodal values to assign to all q points (elemental avrg)
 #4: nodal rho, elemental eta
-particle_projection=2
+particle_projection=1
 
 avrg=2
 
@@ -284,8 +309,6 @@ if nq_per_dim==5:
 
 print("Lx",Lx)
 print("Ly",Ly)
-print("hx",hx)
-print("hy",hy)
 print("nelx",nelx)
 print("nely",nely)
 print("nel",nel)
@@ -320,27 +343,9 @@ for j in range(0, nny):
     #end for
 #end for
 
-#np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
+#np.savetxt('grid_bef.ascii',np.array([x,y]).T,header='# x,y')
 
 print("grid setup: %.3f s" % (time.time() - start))
-
-#################################################################
-# mesh stretching
-#################################################################
-
-if use_stretching_x:
-   beta1=0.25
-   beta2=0.375
-   for i in range(0,NV):
-       x[i]=stretch_towards_center(x[i],Lx,beta1,beta2)
-
-if use_stretching_y:
-   beta1=0.25
-   beta2=0.5
-   for i in range(0,NV):
-       y[i]=stretch_towards_top(y[i],Ly,beta1,beta2)
-
-#np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
 
 #################################################################
 # connectivity
@@ -401,6 +406,68 @@ for j in range(0,nny-1):
 #end for
 
 print("connectivity: %.3f s" % (time.time() - start))
+
+#################################################################
+# mesh stretching
+#################################################################
+
+if use_stretching_x:
+   beta1=0.25
+   beta2=0.375
+   for i in range(0,NV):
+       x[i]=stretch_towards_center(x[i],Lx,beta1,beta2)
+
+if use_stretching_y:
+   beta1=0.25
+   beta2=0.5
+   for i in range(0,NV):
+       y[i]=stretch_towards_top(y[i],Ly,beta1,beta2)
+
+for iel in range(0,nel):
+    x[iconV[4,iel]]=(x[iconV[0,iel]]+x[iconV[1,iel]])*0.5
+    y[iconV[4,iel]]=(y[iconV[0,iel]]+y[iconV[1,iel]])*0.5
+ 
+    x[iconV[5,iel]]=(x[iconV[1,iel]]+x[iconV[2,iel]])*0.5
+    y[iconV[5,iel]]=(y[iconV[1,iel]]+y[iconV[2,iel]])*0.5
+
+    x[iconV[6,iel]]=(x[iconV[2,iel]]+x[iconV[3,iel]])*0.5
+    y[iconV[6,iel]]=(y[iconV[2,iel]]+y[iconV[3,iel]])*0.5
+
+    x[iconV[7,iel]]=(x[iconV[3,iel]]+x[iconV[0,iel]])*0.5
+    y[iconV[7,iel]]=(y[iconV[3,iel]]+y[iconV[0,iel]])*0.5
+
+    x[iconV[8,iel]]=(x[iconV[0,iel]]+x[iconV[2,iel]])*0.5
+    y[iconV[8,iel]]=(y[iconV[0,iel]]+y[iconV[2,iel]])*0.5
+
+#np.savetxt('grid_aft.ascii',np.array([x,y]).T,header='# x,y')
+
+#################################################################
+# compute smallest element dimensions
+#################################################################
+
+hx_min=1e30
+hy_min=1e30
+
+if use_stretching_x:
+   for ielx in range(0,nelx):
+       xmin=x[iconV[0,ielx]]
+       xmax=x[iconV[2,ielx]]
+       hx_min=min(hx_min,xmax-xmin)
+else:
+   hx_min=hx
+
+
+if use_stretching_y:
+   for iely in range(0,nely):
+       iel=iely*nelx
+       ymin=y[iconV[0,iel]]
+       ymax=y[iconV[2,iel]]
+       hy_min=min(hy_min,ymax-ymin)
+else:
+   hy_min=hy
+
+print("     ->hx_min=",hx_min)
+print("     ->hy_min=",hy_min)
 
 #################################################################
 # compute coordinates of pressure nodes
@@ -482,6 +549,7 @@ print("     -> swarm_x (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))
 print("     -> swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
 
 print("marker setup: %.3f s" % (time.time() - start))
+
 
 #################################################################
 # assign material id to particles  
@@ -641,8 +709,47 @@ if model==5:
           swarm_mat[im]=4
     #end for
 
+if model==6:
+   xM=Lx/2
+   yM=Ly-150e3
+   for im in range(0,nparticle):
+       xi=swarm_x[im]
+       yi=swarm_y[im]
+       if xi<Lx/2:
+          if yi>Ly-7e3:
+             swarm_mat[im]=4
+          elif yi>Ly-39e3:
+             swarm_mat[im]=3
+          elif yi>Ly-82e3:
+             swarm_mat[im]=2
+          else:
+             swarm_mat[im]=1
+       else:
+          if yi>Ly-8e3:
+             swarm_mat[im]=7
+          elif yi>Ly-40e3:
+             swarm_mat[im]=6
+          elif yi>Ly-110e3:
+             swarm_mat[im]=5
+          else:
+             swarm_mat[im]=1
+       #end if
+       if xi<xM and yi>yM:
+          if np.sqrt((xi-xM)**2+(yi-yM)**2)<150e3 and\
+             np.sqrt((xi-xM)**2+(yi-yM)**2)>142e3:
+             swarm_mat[im]=7
+          if np.sqrt((xi-xM)**2+(yi-yM)**2)<142e3 and\
+             np.sqrt((xi-xM)**2+(yi-yM)**2)>110e3:
+             swarm_mat[im]=6
+          if np.sqrt((xi-xM)**2+(yi-yM)**2)<110e3 and\
+             np.sqrt((xi-xM)**2+(yi-yM)**2)>40e3:
+             swarm_mat[im]=5
+       #end if
 
 print("marker layout: %.3f s" % (time.time() - start))
+
+#np.savetxt('swarm.ascii',np.array([swarm_x,swarm_y,swarm_mat]).T,header='# x,y')
+#exit()
 
 #################################################################
 # paint particles 
@@ -653,8 +760,6 @@ for im in range (0,nparticle):
     swarm_paint[im]=(np.sin(2*np.pi*swarm_x[im]/Lx*4)*\
                      np.sin(2*np.pi*swarm_y[im]/Ly*4))
 #end for 
-
-#np.savetxt('particles.ascii',np.array([swarm_x,swarm_y,swarm_mat]).T,header='# x,y,mat')
 
 #################################################################
 # define boundary conditions
@@ -688,7 +793,7 @@ if model==1:
    #end for 
 #end if
 
-if model==2 or model==3 or model==5:
+if model==2 or model==3 or model==5 or model==6:
    for i in range(0,NV):
        if x[i]/Lx<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
@@ -796,6 +901,8 @@ if model==4:
 if model==5:
    nmarker=0
 
+if model==6:
+   nmarker=0
 
 #np.savetxt('markers.ascii',np.array([m_x,m_y]).T,header='# x,y')
 
@@ -819,10 +926,31 @@ for istep in range(0,nstep):
     start = time.time()
 
     for im in range(0,nparticle):
-        ielx=int(swarm_x[im]/Lx*nelx)
-        iely=int(swarm_y[im]/Ly*nely)
+        #-----
+        if use_stretching_x:
+           for ielx in range(0,nelx):
+               xmin=x[iconV[0,ielx]]
+               xmax=x[iconV[2,ielx]]
+               if swarm_x[im]>xmin and swarm_x[im]<xmax:
+                  break
+        else:
+           ielx=int(swarm_x[im]/Lx*nelx)
+        #-----
+        if use_stretching_y:
+           for iely in range(0,nely):
+               iel=iely*nelx
+               ymin=y[iconV[0,iel]]
+               ymax=y[iconV[2,iel]]
+               if swarm_y[im]>ymin and swarm_y[im]<ymax:
+                  break
+        else:
+           iely=int(swarm_y[im]/Ly*nely)
+        #-----
         swarm_iel[im]=nelx*(iely)+ielx
     #end for
+
+    #np.savetxt('swarm.ascii',np.array([swarm_x,swarm_y,swarm_iel]).T,header='# x,y')
+    #exit()
 
     print("locate particles: %.3f s" % (time.time() - start))
 
@@ -1236,7 +1364,7 @@ for istep in range(0,nstep):
     # compute timestep 
     ######################################################################
 
-    dt=CFL_nb*min(hx,hy)/max(max(abs(u)),max(abs(v)))
+    dt=CFL_nb*min(hx_min,hy_min)/max(max(abs(u)),max(abs(v)))
 
     print("dt= %.3e yr" %(dt/year))
 
@@ -1310,8 +1438,26 @@ for istep in range(0,nstep):
 
     if rk==1:
        for im in range(0,nparticle):
-           ielx=int(swarm_x[im]/Lx*nelx)
-           iely=int(swarm_y[im]/Ly*nely)
+           #-----
+           if use_stretching_x:
+              for ielx in range(0,nelx):
+                  xmin=x[iconV[0,ielx]]
+                  xmax=x[iconV[1,ielx]]
+                  hx=xmax-xmin
+                  if swarm_x[im]>xmin and swarm_x[im]<xmax: break
+           else:
+              ielx=int(swarm_x[im]/Lx*nelx)
+           #-----
+           if use_stretching_y:
+              for iely in range(0,nely):
+                  iel=iely*nelx
+                  ymin=y[iconV[0,iel]]
+                  ymax=y[iconV[2,iel]]
+                  hy=ymax-ymin
+                  if swarm_y[im]>ymin and swarm_y[im]<ymax: break
+           else:
+              iely=int(swarm_y[im]/Ly*nely)
+           #-----
            iel=nelx*(iely)+ielx
            x0=x[iconV[0,iel]]
            y0=y[iconV[0,iel]]
@@ -1323,8 +1469,11 @@ for istep in range(0,nstep):
            swarm_x[im]+=um*dt
            swarm_y[im]+=vm*dt
        #end for
+       #np.savetxt('swarm.ascii',np.array([swarm_x,swarm_y,swarm_iel,swarm_r,swarm_s]).T)
+       #exit()
 
     elif rk==2:
+       if use_stretching_x or use_stretching_y: exit('rk2 not available with stretching')
        for im in range(0,nparticle):
            ielx=int(swarm_x[im]/Lx*nelx)
            iely=int(swarm_y[im]/Ly*nely)
@@ -1354,6 +1503,7 @@ for istep in range(0,nstep):
        #end for
 
     elif rk==3:
+       if use_stretching_x or use_stretching_y: exit('rk3 not available with stretching')
        for im in range(0,nparticle):
            ielx=int(swarm_x[im]/Lx*nelx)
            iely=int(swarm_y[im]/Ly*nely)
@@ -1404,101 +1554,105 @@ for istep in range(0,nstep):
     ######################################################################
     start = time.time()
 
-    if rk==1:
-       for im in range(0,nmarker):
-           ielx=int(m_x[im]/Lx*nelx)
-           iely=int(m_y[im]/Ly*nely)
-           iel=nelx*(iely)+ielx
-           #print (ielx,iely,iel)
-           x0=x[iconV[0,iel]]
-           y0=y[iconV[0,iel]]
-           rm=-1.+2*(m_x[im]-x0)/hx
-           sm=-1.+2*(m_y[im]-y0)/hy
-           m_r[im]=rm
-           m_s[im]=sm
-           NNNV[0:mV]=NNV(rm,sm)
-           m_u[im]=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
-           m_v[im]=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
-           m_x[im]+=m_u[im]*dt
-           m_y[im]+=m_v[im]*dt
-       #end for
-
-    elif rk==2:
-       for im in range(0,nmarker):
-           ielx=int(m_x[im]/Lx*nelx)
-           iely=int(m_y[im]/Ly*nely)
-           iel=nelx*(iely)+ielx
-           x0=x[iconV[0,iel]]
-           y0=y[iconV[0,iel]]
-           rm=-1.+2*(m_x[im]-x0)/hx
-           sm=-1.+2*(m_y[im]-y0)/hy
-           NNNV[0:mV]=NNV(rm,sm)
-           um=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
-           vm=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
-           xm=m_x[im]+um*dt/2
-           ym=m_y[im]+vm*dt/2
-
-           ielx=int(xm/Lx*nelx)
-           iely=int(ym/Ly*nely)
-           iel=nelx*(iely)+ielx
-           x0=x[iconV[0,iel]]
-           y0=y[iconV[0,iel]]
-           m_r[im]=-1+2*(xm-x0)/hx
-           m_s[im]=-1+2*(ym-y0)/hy
-           NNNV[0:mV]=NNV(m_r[im],m_s[im])
-           m_u[im]=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
-           m_v[im]=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
-           m_x[im]+=m_u[im]*dt
-           m_y[im]+=m_v[im]*dt
-       #end for
-
-    elif rk==3:
-       for im in range(0,nmarker):
-           ielx=int(m_x[im]/Lx*nelx)
-           iely=int(m_y[im]/Ly*nely)
-           iel=nelx*(iely)+ielx
-           x0=x[iconV[0,iel]]
-           y0=y[iconV[0,iel]]
-           rm=-1.+2*(m_x[im]-x0)/hx
-           sm=-1.+2*(m_y[im]-y0)/hy
-           NNNV[0:mV]=NNV(rm,sm)
-           uA=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
-           vA=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
-           xB=m_x[im]+uA*dt/2
-           yB=m_y[im]+vA*dt/2
-
-           ielx=int(xB/Lx*nelx)
-           iely=int(yB/Ly*nely)
-           iel=nelx*(iely)+ielx
-           x0=x[iconV[0,iel]]
-           y0=y[iconV[0,iel]]
-           r=-1+2*(xB-x0)/hx
-           s=-1+2*(yB-y0)/hy
-           NNNV[0:mV]=NNV(r,s)
-           uB=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
-           vB=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
-           xC=m_x[im]+(2*uB-uA)*dt/2
-           yC=m_y[im]+(2*vB-vA)*dt/2
-
-           ielx=int(xC/Lx*nelx)
-           iely=int(yC/Ly*nely)
-           iel=nelx*(iely)+ielx
-           x0=x[iconV[0,iel]]
-           y0=y[iconV[0,iel]]
-           m_r[im]=-1+2*(xC-x0)/hx
-           m_s[im]=-1+2*(yC-y0)/hy
-           NNNV[0:mV]=NNV(m_r[im],m_s[im])
-           uC=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
-           vC=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
-           m_u[im]=uC
-           m_v[im]=vC
-           m_x[im]+=(uA+4*uB+uC)*dt/6
-           m_y[im]+=(vA+4*vB+vC)*dt/6
-       #end for
-
     if nmarker>0:
+       if rk==1:
+          if use_stretching_x or use_stretching_y: exit('not available with stretching')
+          for im in range(0,nmarker):
+              ielx=int(m_x[im]/Lx*nelx)
+              iely=int(m_y[im]/Ly*nely)
+              iel=nelx*(iely)+ielx
+              #print (ielx,iely,iel)
+              x0=x[iconV[0,iel]]
+              y0=y[iconV[0,iel]]
+              rm=-1.+2*(m_x[im]-x0)/hx
+              sm=-1.+2*(m_y[im]-y0)/hy
+              m_r[im]=rm
+              m_s[im]=sm
+              NNNV[0:mV]=NNV(rm,sm)
+              m_u[im]=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+              m_v[im]=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+              m_x[im]+=m_u[im]*dt
+              m_y[im]+=m_v[im]*dt
+          #end for
+
+       elif rk==2:
+          if use_stretching_x or use_stretching_y: exit('not available with stretching')
+          for im in range(0,nmarker):
+              ielx=int(m_x[im]/Lx*nelx)
+              iely=int(m_y[im]/Ly*nely)
+              iel=nelx*(iely)+ielx
+              x0=x[iconV[0,iel]]
+              y0=y[iconV[0,iel]]
+              rm=-1.+2*(m_x[im]-x0)/hx
+              sm=-1.+2*(m_y[im]-y0)/hy
+              NNNV[0:mV]=NNV(rm,sm)
+              um=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+              vm=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+              xm=m_x[im]+um*dt/2
+              ym=m_y[im]+vm*dt/2
+
+              ielx=int(xm/Lx*nelx)
+              iely=int(ym/Ly*nely)
+              iel=nelx*(iely)+ielx
+              x0=x[iconV[0,iel]]
+              y0=y[iconV[0,iel]]
+              m_r[im]=-1+2*(xm-x0)/hx
+              m_s[im]=-1+2*(ym-y0)/hy
+              NNNV[0:mV]=NNV(m_r[im],m_s[im])
+              m_u[im]=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+              m_v[im]=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+              m_x[im]+=m_u[im]*dt
+              m_y[im]+=m_v[im]*dt
+          #end for
+
+       elif rk==3:
+          if use_stretching_x or use_stretching_y: exit('not available with stretching')
+          for im in range(0,nmarker):
+              ielx=int(m_x[im]/Lx*nelx)
+              iely=int(m_y[im]/Ly*nely)
+              iel=nelx*(iely)+ielx
+              x0=x[iconV[0,iel]]
+              y0=y[iconV[0,iel]]
+              rm=-1.+2*(m_x[im]-x0)/hx
+              sm=-1.+2*(m_y[im]-y0)/hy
+              NNNV[0:mV]=NNV(rm,sm)
+              uA=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+              vA=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+              xB=m_x[im]+uA*dt/2
+              yB=m_y[im]+vA*dt/2
+
+              ielx=int(xB/Lx*nelx)
+              iely=int(yB/Ly*nely)
+              iel=nelx*(iely)+ielx
+              x0=x[iconV[0,iel]]
+              y0=y[iconV[0,iel]]
+              r=-1+2*(xB-x0)/hx
+              s=-1+2*(yB-y0)/hy
+              NNNV[0:mV]=NNV(r,s)
+              uB=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+              vB=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+              xC=m_x[im]+(2*uB-uA)*dt/2
+              yC=m_y[im]+(2*vB-vA)*dt/2
+
+              ielx=int(xC/Lx*nelx)
+              iely=int(yC/Ly*nely)
+              iel=nelx*(iely)+ielx
+              x0=x[iconV[0,iel]]
+              y0=y[iconV[0,iel]]
+              m_r[im]=-1+2*(xC-x0)/hx
+              m_s[im]=-1+2*(yC-y0)/hy
+              NNNV[0:mV]=NNV(m_r[im],m_s[im])
+              uC=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+              vC=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+              m_u[im]=uC
+              m_v[im]=vC
+              m_x[im]+=(uA+4*uB+uC)*dt/6
+              m_y[im]+=(vA+4*vB+vC)*dt/6
+          #end for
+       #end if
        filename = 'markers_{:04d}.ascii'.format(istep) 
        np.savetxt(filename,np.array([m_x,m_y,m_u,m_v]).T,header='# x,y')
+    #end if
 
     #####################################################################
     # compute nodal strainrate and heat flux 
@@ -1524,6 +1678,8 @@ for istep in range(0,nstep):
     mats_Q2=np.zeros((nmat,NV),dtype=np.float64)
     c=np.zeros(NV,dtype=np.float64)
 
+    np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
+
     for iel in range(0,nel):
         for i in range(0,mV):
             rq=rVnodes[i]
@@ -1532,7 +1688,7 @@ for istep in range(0,nstep):
             dNNNVdr[0:mV]=dNNVdr(rq,sq)
             dNNNVds[0:mV]=dNNVds(rq,sq)
             NNNP[0:mP]=NNP(rq,sq)
-            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            jcb=np.zeros((2,2),dtype=np.float64)
             for k in range(0,mV):
                 jcb[0,0]+=dNNNVdr[k]*x[iconV[k,iel]]
                 jcb[0,1]+=dNNNVdr[k]*y[iconV[k,iel]]

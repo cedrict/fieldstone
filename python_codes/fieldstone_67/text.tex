@@ -1,4 +1,22 @@
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_67/text.tex}} \end{flushright}
+
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_67/keywords}
+
+\begin{center}
+
+\fbox{\textbf{\huge \color{teal} P}}
+Codes at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_67}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Note that none of the results below should be really trusted. All setups should be rerun 
+properly with the last version of the code, with different averagings, projections, resolutions...
+
+
+
 
 %----------------------------------------------
 \subsubsection*{Setup1: Sinking block} 
@@ -345,7 +363,7 @@ of a finite volume code \cite{saev10,samu12}
 %----------------------------------------------
 \subsubsection*{Setup5: mota83}
 
-See \stone~118. 
+The setup is decribed in \stone~118 and stems from \textcite{mota83} (1983). 
 
 total mass is:
 \[
@@ -353,6 +371,73 @@ M=\frac34 L_x \left( (L_y-D_w-D_l) \rho_a + D_l \rho_l + D_w \rho_w \right)
 + \frac14 L_x \left( (L_y-d_w-d_l) \rho_a + d_l \rho_l + d_w \rho_w \right)
 \]
 
+
+
+
+
+%----------------------------------------------------
+\subsubsection*{Setup6: another Quinquis-like setup}
+
+The domain is $3000\times 670~\si{\km}$. The setup is as follows:
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_67/images/setup01}\\
+\includegraphics[width=9cm]{python_codes/fieldstone_67/images/setup02}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_67/images/setup03}
+\includegraphics[width=6cm]{python_codes/fieldstone_67/images/setup04}\\
+{\captionfont $x_M=x_N=1500~\si{\km}$, $y_M=L_y-150~\si{\km}=520~\si{\km}$}
+\end{center}
+
+Materials are incompressible and with linear viscous rheology. The
+flow is isothermal. Boundary conditions are free slip on all
+sides. Gravity is set to -9.81
+
+\begin{center}
+\begin{tabular}{llllllll}
+\hline
+material & density & viscosity \\
+\hline\hline
+1& 3200& 1e20\\ 
+2& 3240& 1e22\\
+3& 3250& 1e23\\
+4& 3300& 1e19\\
+5& 3250& 1e22\\
+6& 3250& 1e23\\
+7& 3300& 1e19\\
+\hline
+\end{tabular}
+\end{center}
+
+In aspect input file ({\tt ||} is 'or', {\tt \&\&}  is 'and'):
+\begin{itemize}
+\item material 2
+\begin{verbatim}
+(x<=L0 && y>= 588e3 && y<= 631e3 && (x-L0)^2+(y-yC)^2>=150e3^2 ) ; 
+\end{verbatim}
+\item material 3
+\begin{verbatim}
+(x<=L0 && y>= 631e3 && y<= 663e3 && (x-L0)^2+(y-yC)^2>=150e3^2 ) 
+\end{verbatim}
+\item material 4
+\begin{verbatim}
+(x<=L0 && y>= 663e3 && (x-L0)^2+(y-yC)^2>=150e3^2 )
+\end{verbatim}
+\item material 5
+\begin{verbatim}
+(x>=L0 && y>= 560e3 && y<= 630e3) || 
+((x-L0)^2+(y-yC)^2<110e3^2 && (x-L0)^2+(y-yC)^2>40e3^2 && y>520e3 && x<L0) 
+\end{verbatim}
+\item material 6
+\begin{verbatim}
+(x>=L0 && y>= 630e3 && y<= 662e3) || 
+((x-L0)^2+(y-yC)^2<143e3^2 && (x-L0)^2+(y-yC)^2>110e3^2 && y>520e3 && x<L0) 
+\end{verbatim}
+\item material 7
+\begin{verbatim}
+(x>=L0 && y>= 662e3 )  
+|| ((x-L0)^2+(y-yC)^2<150e3^2 && (x-L0)^2+(y-yC)^2>143e3^2 && y>520e3 && x<L0) 
+\end{verbatim}
+\end{itemize}
 
 
 
