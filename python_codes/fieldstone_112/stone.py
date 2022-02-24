@@ -13,9 +13,11 @@ import solvg as solvg
 import random
 import matplotlib.pyplot as plt
 
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 # velocity basis functions
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 
 def NNV(r,s):
     if elt=='MINI':
@@ -125,9 +127,11 @@ def dNNVds(r,s):
        dNVds_8=    (1.-r**2) *       (-2.*s)
        return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8
 
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 # pressure basis functions
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 
 def NNP(r,s):
     if elt=='Q2Q1':
@@ -142,9 +146,11 @@ def NNP(r,s):
        NP_2=s
        return NP_0,NP_1,NP_2
 
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 # rhs buoyancy force
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 
 def bx(x,y):
     if experiment==1:
@@ -162,6 +168,8 @@ def bx(x,y):
        val=0
     if experiment==6:
        val,xx=solvg.SolVgGravity(x,y)
+    if experiment==7:
+       val=0
     return val
 
 def by(x,y):
@@ -183,11 +191,15 @@ def by(x,y):
        val=0
     if experiment==6:
        xx,val=solvg.SolVgGravity(x,y)
+    if experiment==7:
+       val=0
     return val
 
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 # viscosity 
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 
 def eta(x,y):
     if experiment==1:
@@ -204,7 +216,7 @@ def eta(x,y):
           val=1.e6
     if experiment==4:
        val= np.exp(13.8155*y) 
-    if experiment==5:
+    if experiment==5 or experiment==7:
        if (np.sqrt(x*x+y*y) < 0.2):
           val=1e3
        else:
@@ -213,9 +225,11 @@ def eta(x,y):
        val=-np.sin(x*x*y*y+x*y+5.)+1.+0.001 #epsilon
     return val
 
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 # analytical solution
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 
 def velocity_x(x,y):
     if experiment==1:
@@ -230,6 +244,8 @@ def velocity_x(x,y):
        val,vi,pi=solvi.SolViSolution(x,y) 
     if experiment==6:
        val=x**3*y+x**2+x*y+x
+    if experiment==7:
+       val,vi,pi=solvi.SolViSolution(x,y) 
     return val
 
 def velocity_y(x,y):
@@ -245,6 +261,8 @@ def velocity_y(x,y):
        ui,val,pi=solvi.SolViSolution(x,y) 
     if experiment==6:
        val=-1.5*x**2*y**2-2*x*y-0.5*y**2-y
+    if experiment==7:
+       ui,val,pi=solvi.SolViSolution(x,y) 
     return val
 
 def pressure(x,y):
@@ -260,9 +278,11 @@ def pressure(x,y):
        ui,vi,val=solvi.SolViSolution(x,y) 
     if experiment==6:
        val=x**2*y**2+x*y+5. - Lx**4/9.-Lx**2/4.-5.
+    if experiment==7:
+       ui,vi,val=solvi.SolViSolution(x,y) 
     return val
 
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 #  C-R       P2P1     MINI    Q2Q1,Q2P-1
 #
 # 2         2        2         3--6--2
@@ -272,16 +292,17 @@ def pressure(x,y):
 # | 6 \     |   \    | 3 \     |     |
 # |    \    |    \   |    \    |     |
 # 0--3--1   0--3--1  0-----1   0--4--1
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 
 # experiment=1: d&h
 # experiment=2: sinker
-# experiment=3: solCx
-# experiment=4: solKz
-# experiment=5: solVi
-# experiment=6: solVg
+# experiment=3: SolCx
+# experiment=4: SolKz
+# experiment=5: SolVi
+# experiment=6: SolVg
+# experiment=7: SolVi-quiltmesh
 
-experiment=4
+experiment=7
 
 randomize_mesh=False
         
@@ -308,7 +329,7 @@ else:
    nelx    = -3
    nely    = 16
    visu    = 1
-   elt     = 3
+   elt     = 5
    tridiag = 0
 
 read_mesh= nelx<0
@@ -319,6 +340,8 @@ if elt==3: elt='CR'
 if elt==4: elt='Q2Q1' 
 if elt==5: elt='Q2P1'
 
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 
 if elt=='CR':
    mV=7 
@@ -384,19 +407,18 @@ if elt=='Q2P1':
 ndofV=2
 ndofP=1
 
-
 eps=1e-9
 
 unmappedQ2P1=True
-   
-if elt=='Q2Q1' and read_mesh==True: exit()
-if elt=='Q2P1' and read_mesh==True: exit()
-
-#------------------------------------------------------------------------------
 
 if experiment==6: 
    Lx=2
    Ly=2
+
+#--------------------------------------------------------------------------------------------------
+# reading meshes obtained via gmsh or stone 117
+# not all experiments are compatible with all meshes!
+#--------------------------------------------------------------------------------------------------
 
 if (experiment==1 or experiment==4) and read_mesh==True:
    if elt=='MINI':
@@ -481,38 +503,74 @@ if (experiment==1 or experiment==4) and read_mesh==True:
       NP=nel*mP
 
 
-
-
-
 if experiment==5 and elt=='MINI' and read_mesh==True:
    f_vel = open('./meshes_solvi/pointCoordinates_vel.dat', 'r') 
    lines_vel = f_vel.readlines()
    line=lines_vel[0].strip()
    columns=line.split()
    NV0=int(columns[0])
-
    f_press = open('./meshes_solvi/pointCoordinates_press.dat', 'r') 
    lines_press = f_press.readlines()
    line=lines_press[0].strip()
    columns=line.split()
    NP=int(columns[0])
-
    g_vel = open('./meshes_solvi/connectivity_vel.dat', 'r') 
    lines_iconV = g_vel.readlines()
    line=lines_iconV[0].strip()
    columns=line.split()
    nel0=int(columns[0])
-
    g_press = open('./meshes_solvi/connectivity_press.dat', 'r') 
    lines_iconP = g_press.readlines()
    line=lines_iconP[0].strip()
    columns=line.split()
    nel0=int(columns[0])
-
    nel=nel0*2     # splitting quads into triangles
    NV=NV0+nel # adding bubble dofs
 
-#------------------------------------------------------------------------------
+
+if experiment==7 and elt=='Q2Q1' and read_mesh==True:
+   f_vel = open('./meshes_solvi2/Q2/pointCoordinates.dat', 'r') 
+   lines_vel = f_vel.readlines()
+   line=lines_vel[0].strip()
+   columns=line.split()
+   NV0=int(columns[0])
+   f_press = open('./meshes_solvi2/Q1/pointCoordinates.dat', 'r') 
+   lines_press = f_press.readlines()
+   line=lines_press[0].strip()
+   columns=line.split()
+   NP=int(columns[0])
+   g_vel = open('./meshes_solvi2/Q2/connectivity.dat', 'r') 
+   lines_iconV = g_vel.readlines()
+   line=lines_iconV[0].strip()
+   columns=line.split()
+   nel0=int(columns[0])
+   g_press = open('./meshes_solvi2/Q1/connectivity.dat', 'r') 
+   lines_iconP = g_press.readlines()
+   line=lines_iconP[0].strip()
+   columns=line.split()
+   nel0=int(columns[0])
+   NV=NV0
+   nel=nel0
+
+
+if experiment==7 and elt=='Q2P1' and read_mesh==True:
+   f_vel = open('./meshes_solvi2/Q2/pointCoordinates.dat', 'r') 
+   lines_vel = f_vel.readlines()
+   line=lines_vel[0].strip()
+   columns=line.split()
+   NV0=int(columns[0])
+   g_vel = open('./meshes_solvi2/Q2/connectivity.dat', 'r') 
+   lines_iconV = g_vel.readlines()
+   line=lines_iconV[0].strip()
+   columns=line.split()
+   nel0=int(columns[0])
+   NV=NV0
+   nel=nel0
+   NP=3*nel
+
+
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 
 NfemV=NV*ndofV   # number of velocity dofs
 NfemP=NP*ndofP   # number of pressure dofs
@@ -528,9 +586,11 @@ print ('Nfem =',Nfem)
 print ('tridiag =',tridiag)
 print("-----------------------------")
 
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 # integration points coeffs and weights 
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 
 qcoords_r=np.empty(nqel,dtype=np.float64)  
 qcoords_s=np.empty(nqel,dtype=np.float64)  
@@ -570,9 +630,11 @@ if nqel==9:
    qcoords_r[7]=rq2 ; qcoords_s[7]=rq3 ; qweights[7]=wq2*wq3
    qcoords_r[8]=rq3 ; qcoords_s[8]=rq3 ; qweights[8]=wq3*wq3
 
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 # build velocity nodes coordinates 
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 start = timing.time()
 
 xV=np.empty(NV,dtype=np.float64)  # x coordinates
@@ -597,6 +659,14 @@ if read_mesh==True:
           xV[i]=float(columns[0])
           yV[i]=float(columns[1])
       #end for
+   elif experiment==7 and (elt=='Q2Q1' or elt=='Q2P1'):
+      for i in range(0,NV0):
+          line=lines_vel[i+1].strip()
+          columns=line.split()
+          xV[i]=float(columns[0])
+          yV[i]=float(columns[1])
+      #end for
+      np.savetxt('meshV.ascii',np.array([xV,yV]).T)
 
 else:
 
@@ -624,8 +694,10 @@ else:
 print("grid: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
-# build connectivity array 
+#------------------------------------------------------------------------------
+# build velocity connectivity array  
 # tridiag is an array of size nelx*nely, i.e. the nb of cells
+#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 start = timing.time()
    
@@ -718,6 +790,25 @@ if read_mesh==True:
           xV[NV0+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
           yV[NV0+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
       #end for
+
+   if elt=='Q2Q1' or elt=='Q2P1':
+      if experiment==7:
+         counter=0
+         for i in range(1,nel+1):
+             line=lines_iconV[i].strip()
+             columns=line.split()
+             iconV[0,counter]=int(columns[0])-1
+             iconV[1,counter]=int(columns[1])-1
+             iconV[2,counter]=int(columns[2])-1
+             iconV[3,counter]=int(columns[3])-1
+             iconV[4,counter]=int(columns[4])-1
+             iconV[5,counter]=int(columns[5])-1
+             iconV[6,counter]=int(columns[6])-1
+             iconV[7,counter]=int(columns[7])-1
+             iconV[8,counter]=int(columns[8])-1
+             counter+=1
+         #end for
+      #end if
 
 else:
 
@@ -888,31 +979,36 @@ else:
 
 #end if read_mesh
 
-#for iel in range (0,nel):
-#    print ("iel=",iel)
-#    print ("node 0",iconV[0,iel],"at pos.",xV[iconV[0,iel]], yV[iconV[0,iel]])
-#    print ("node 1",iconV[1,iel],"at pos.",xV[iconV[1,iel]], yV[iconV[1,iel]])
-#    print ("node 2",iconV[2,iel],"at pos.",xV[iconV[2,iel]], yV[iconV[2,iel]])
-#    print ("node 3",iconV[3,iel],"at pos.",xV[iconV[3,iel]], yV[iconV[3,iel]])
-#    print ("node 4",iconV[4,iel],"at pos.",xV[iconV[4,iel]], yV[iconV[4,iel]])
-#    print ("node 5",iconV[5,iel],"at pos.",xV[iconV[5,iel]], yV[iconV[5,iel]])
-#    print ("node 6",iconV[6,iel],"at pos.",xV[iconV[6,iel]], yV[iconV[6,iel]])
-#    print ("node 7",iconV[7,iel],"at pos.",xV[iconV[7,iel]], yV[iconV[7,iel]])
-#    print ("node 8",iconV[8,iel],"at pos.",xV[iconV[8,iel]], yV[iconV[8,iel]])
+for iel in range (0,1):
+    print ("iel=",iel)
+    print ("node 0",iconV[0,iel],"at pos.",xV[iconV[0,iel]], yV[iconV[0,iel]])
+    print ("node 1",iconV[1,iel],"at pos.",xV[iconV[1,iel]], yV[iconV[1,iel]])
+    print ("node 2",iconV[2,iel],"at pos.",xV[iconV[2,iel]], yV[iconV[2,iel]])
+    print ("node 3",iconV[3,iel],"at pos.",xV[iconV[3,iel]], yV[iconV[3,iel]])
+    print ("node 4",iconV[4,iel],"at pos.",xV[iconV[4,iel]], yV[iconV[4,iel]])
+    print ("node 5",iconV[5,iel],"at pos.",xV[iconV[5,iel]], yV[iconV[5,iel]])
+    print ("node 6",iconV[6,iel],"at pos.",xV[iconV[6,iel]], yV[iconV[6,iel]])
+    print ("node 7",iconV[7,iel],"at pos.",xV[iconV[7,iel]], yV[iconV[7,iel]])
+    print ("node 8",iconV[8,iel],"at pos.",xV[iconV[8,iel]], yV[iconV[8,iel]])
 
 #np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
+exit()
 
 print("connectivity V: %.3f s" % (timing.time() - start))
 
-#------------------------------------------------------------------------------
-# build pressure grid (nodes and icon)
-# it makes no difference for MINI and CR whether the mesh is read or not
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
+# build pressure grid (nodes and icon array)
+# it makes no difference for Q2P-1, MINI and CR whether the mesh is read or not
+# since the location of pressure nodes can be computed from vel nodes alone
+#--------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 start = timing.time()
 
 iconP=np.zeros((mP,nel),dtype=np.int32)
 xP=np.empty(NfemP,dtype=np.float64)  
 yP=np.empty(NfemP,dtype=np.float64) 
+NNNV = np.zeros(mV,dtype=np.float64)                # shape functions V
 
 if elt=='MINI':
    xP[0:NP]=xV[0:NP]
@@ -936,6 +1032,47 @@ if elt=='CR':
        counter+=1
    #end for
 
+if elt=='Q2P1':
+   for iel in range(nel):
+       iconP[0,iel]=3*iel
+       iconP[1,iel]=3*iel+1
+       iconP[2,iel]=3*iel+2
+   #end for
+   counter=0
+   for iel in range(nel):
+       #xP[counter]=xV[iconV[8,iel]]
+       #yP[counter]=yV[iconV[8,iel]]
+       #counter+=1
+       #xP[counter]=xV[iconV[8,iel]]+Lx/nelx/2    #probably wrong!
+       #yP[counter]=yV[iconV[8,iel]]
+       #counter+=1
+       #xP[counter]=xV[iconV[8,iel]]
+       #yP[counter]=yV[iconV[8,iel]]+Ly/nely/2
+       #counter+=1
+
+       rq=0
+       sq=0
+       NNNV[0:mV]=NNV(rq,sq)
+       xP[counter]=NNNV.dot(xV[iconV[0:mV,iel]])
+       yP[counter]=NNNV.dot(yV[iconV[0:mV,iel]])
+       counter+=1
+       rq=1
+       sq=0
+       NNNV[0:mV]=NNV(rq,sq)
+       xP[counter]=NNNV.dot(xV[iconV[0:mV,iel]])
+       yP[counter]=NNNV.dot(yV[iconV[0:mV,iel]])
+       counter+=1
+       rq=0
+       sq=1
+       NNNV[0:mV]=NNV(rq,sq)
+       xP[counter]=NNNV.dot(xV[iconV[0:mV,iel]])
+       yP[counter]=NNNV.dot(yV[iconV[0:mV,iel]])
+       counter+=1
+   #end for
+   #np.savetxt('meshP.ascii',np.array([xP,yP]).T)
+   #exit()
+
+
 if read_mesh==True:
 
    if elt=='P2P1':
@@ -948,7 +1085,7 @@ if read_mesh==True:
              yP[counter]=float(columns[1])
              counter+=1
          #end for
-         np.savetxt('meshP.ascii',np.array([xP,yP]).T)
+         #np.savetxt('meshP.ascii',np.array([xP,yP]).T)
          counter=0
          for i in range(tline_press,tline_press+nel):
              line=lines_press[i].strip()
@@ -958,6 +1095,29 @@ if read_mesh==True:
              iconP[2,counter]=int(columns[2])-1
              counter+=1
          #end for
+
+   if elt=='Q2Q1':
+      if experiment==7:
+         counter=0
+         for i in range(1,NP+1):
+             line=lines_press[i].strip()
+             columns=line.split()
+             xP[counter]=float(columns[0])
+             yP[counter]=float(columns[1])
+             counter+=1
+         #end for
+         #np.savetxt('meshP.ascii',np.array([xP,yP]).T)
+         counter=0
+         for i in range(1,nel+1):
+             line=lines_iconP[i].strip()
+             columns=line.split()
+             iconP[0,counter]=int(columns[0])-1
+             iconP[1,counter]=int(columns[1])-1
+             iconP[2,counter]=int(columns[2])-1
+             iconP[3,counter]=int(columns[3])-1
+             counter+=1
+         #end for
+         #exit()
 
 else:
 
@@ -1020,23 +1180,6 @@ else:
          #end for
       #end for
 
-   if elt=='Q2P1':
-      for iel in range(nel):
-          iconP[0,iel]=3*iel
-          iconP[1,iel]=3*iel+1
-          iconP[2,iel]=3*iel+2
-      counter=0
-      for iel in range(nel):
-          xP[counter]=xV[iconV[8,iel]]
-          yP[counter]=yV[iconV[8,iel]]
-          counter+=1
-          xP[counter]=xV[iconV[8,iel]]+Lx/nelx/2
-          yP[counter]=yV[iconV[8,iel]]
-          counter+=1
-          xP[counter]=xV[iconV[8,iel]]
-          yP[counter]=yV[iconV[8,iel]]+Ly/nely/2
-          counter+=1
-
 #end if read_mesh
 
 #np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
@@ -1050,7 +1193,8 @@ else:
 print("grid and connectivity P: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
-# randomize mesh 
+# randomize mesh
+# make sure that element edges are straight 
 #------------------------------------------------------------------------------
 
 if randomize_mesh:
@@ -1122,6 +1266,7 @@ if randomize_mesh:
 
 #------------------------------------------------------------------------------
 # define boundary conditions
+# TODO: simplify!!
 #------------------------------------------------------------------------------
 start = timing.time()
 
@@ -1152,10 +1297,8 @@ if experiment==3 or experiment==4:
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
        if yV[i]>(Ly-eps):
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-if experiment==5 or experiment==6:
+if experiment==5 or experiment==6 or experiment==7:
    for i in range(0,NV):
-       #   ui,vi,pi=solvi.SolViSolution(xV[i],yV[i])
-       #if experiment==6:
        ui=velocity_x(xV[i],yV[i])
        vi=velocity_y(xV[i],yV[i])
        if xV[i]<eps:
@@ -1180,35 +1323,35 @@ start = timing.time()
    
 area    = np.zeros(nel,dtype=np.float64) 
 
-if True: #randomize_mesh:
+dNNNVdr = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
+dNNNVds = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
 
-   dNNNVdr = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
-   dNNNVds = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
+for iel in range(0,nel):
+    for kq in range (0,nqel):
+        rq=qcoords_r[kq]
+        sq=qcoords_s[kq]
+        weightq=qweights[kq]
+        dNNNVdr[0:mV]=dNNVdr(rq,sq)
+        dNNNVds[0:mV]=dNNVds(rq,sq)
+        jcb=np.zeros((ndim,ndim),dtype=np.float64)
+        for k in range(0,mV):
+           jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+           jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+           jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+           jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+        jcob = np.linalg.det(jcb)
+        if (jcob<0): 
+           print('element pb=',iel)
+           exit('jcob<0')
+        area[iel]+=jcob*weightq
+    #end for
+#end for
 
-   for iel in range(0,nel):
-       for kq in range (0,nqel):
-           rq=qcoords_r[kq]
-           sq=qcoords_s[kq]
-           weightq=qweights[kq]
-           dNNNVdr[0:mV]=dNNVdr(rq,sq)
-           dNNNVds[0:mV]=dNNVds(rq,sq)
-           jcb=np.zeros((ndim,ndim),dtype=np.float64)
-           for k in range(0,mV):
-               jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-               jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-               jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-               jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-           jcob = np.linalg.det(jcb)
-           if (jcob<0): 
-              print('element pb=',iel)
-              exit('jcob<0')
-           area[iel]+=jcob*weightq
+print("     -> area (m,M) %.4e %.4e " %(np.min(area),np.max(area)))
+print("     -> total area %.6f " %(area.sum()))
+print("     -> analytical area %.6f " %(Lx*Ly))
 
-   print("     -> area (m,M) %.4e %.4e " %(np.min(area),np.max(area)))
-   print("     -> total area %.6f " %(area.sum()))
-   print("     -> analytical area %.6f " %(Lx*Ly))
-
-   print("compute elements areas: %.3f s" % (timing.time() - start))
+print("compute elements areas: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
 # compute element center 
