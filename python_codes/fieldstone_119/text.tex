@@ -10,7 +10,8 @@ Codes at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fie
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-{\sl This fieldstone was developed in collaboration with Anthony Jourdon}. %\index{contributors}{J. Mos}
+{\sl This stone was developed with input from Anthony Jourdon, Wolfgang Bangerth and Bob Myhill}. 
+%\index{contributors}{J. Mos}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,7 +100,7 @@ At the bottom $\vec{g} \propto \vec{e}_y$ and $\vec{n} \propto \vec{e}_y$ so we 
 in effect prescribing a pressure gradient to be $\rho g$ in the vertical direction. 
 
 We have $p=0$ on $\Gamma_s$ so the test function $q$ is zero there, 
-so the integral over $\Gamma_i$ is also taken care of. 
+so the integral over $\Gamma_s$ is also taken care of. 
 
 %The Cartesian domain is a square and the mesh is partitioned in $nelx \times nely$ $Q_1$ elements. 
 After discretisation we arrive at a linear system 
@@ -132,21 +133,82 @@ is identical we would expect to recover the same lithostatic pressure, which is 
 equation approach is used (see experiments 3 and 4).
 
 ... Which begs the question: {\sl is the pressure computed via the Poisson equation the lithostatic pressure?} 
-If not, what is it? and what does it mean to prescribe it on the sides of a model? 
+If not, what is it? and what does it mean to prescribe it on the sides of a model? Also, is there a single definition of the lithostatic pressure? 
 
-\vspace{.5cm}
+After exchanging a few emails with W. Bangerth and B. Myhill, the following remarks were made:
+
+\begin{itemize}
+\item  As a separate consideration, essentiall all of the quotes from the literature above are actually wrong. 
+They are correct if you consider a box geometry in which density only changes with y, and gravity is in a constant 
+direction $\vec{e}_y$ and also only changes with $y$. All of this is also approximately true close to the surface.
+But it is not in general true for the whole earth. There, the "column" that sits above a certain area $A$ 
+is cone-shaped and widens as we get higher and higher. In that case, the relationship
+$  p(y) = P_0 + \int_0^y \rho(z) g(z) dz$
+is not in fact true. It misses a factor that describes the geometric widening of the cone. 
+The equation with the Laplace of $p$ is correct, however, because the right hand side has $div(\vec{g})$
+(if you take $\rho=const$ for a moment), and $div(\vec{g})$ is going to be nonzero *even if the magnitude of 
+$\vec{g}$ is constant* if $\vec{g}$ is a radial vector.
+
+\item what the experiments you show [see after] illustrate is that it isn't actually quite obvious what 
+the ``lithostatic pressure'' should actually be. If you think of the lithosphere as a fluid, 
+then lithospheric pressure = hydrostatic pressure, and the idea of that pressure is that that is 
+what the pressure would be in the absence of dynamic effects (=in the absence of fluid flow). 
+That would mean that the lithostatic pressure would satisfy the Stokes equations
+\begin{align}
+-\vec\nabla p + \eta \Delta \vec{\upnu} + \rho \vec{g} &= \vec{0} \\
+\vec\nabla \cdot \vec{\upnu} &= 0 
+\end{align}
+if you set $\vec\upnu=\vec{0}$ everywhere. But this concept only makes sense if you have an arrangement 
+of $\rho \vec{g}$ that actually allows for a zero velocity. That's the case if you have a vertical layering of 
+materials, for example. If the layering is so that the density increases with depth, then that's even 
+a stable layering, but otherwise you have something that in the absence of perturbations will also 
+stay as it is. But the arrangements in experiments 3, 4 \& 5 don't have that, and so one can argue 
+that there is not actually any well defined lithostatic pressure, and that the definition of
+$Delta p = \vec\nabla \cdot (\rho \vec{g})$ is as good as any other.
+
+\item If you consider the lithosphere a solid, then the pressure would be the trace of the stress tensor. 
+For your piecewise constant $rho g$ on the right hand side, the elasticity equation will have a 
+continuously differentiable function as displacement, making the stress tensor continuous, 
+and consequently the pressure is also continuous. That is again in contrast to the column view you show, 
+which assumes that neighboring columns are mechanically decoupled (think about a steel column in air: 
+Clearly, the pressure increases from top to bottom in the steel column, and it is independent of the surrounding air), 
+but that just isn't the case for actual rocks -- if you give the rocks just a little bit of compressibility, 
+then the heavy rock column will settle a bit *and it will pull the neighboring light column down with it 
+along their mutual contact*. Pulling the neighboring column down compresses it as well, 
+increasing its pressure. In other words, the pressure in that neighboring column is not just determined 
+by the weight of the overlying material, but also by the neighboring column.
+
+\item There is not always a solution to $\vec\nabla p + \rho \vec{g} = \vec{0}$. 
+Take, for example, the case where
+$\rho \vec{g} = (x,x)^T$ in a 2d coordinate system. This means
+\begin{align}
+  dp/dx  &= x  &\Rightarrow   p(x,y) = \frac12 x^2 + f(y) \\
+  dp/dy  &= x  &\Rightarrow   p(x,y) = xy + f(x) 
+\end{align}
+This cannot be reconciled. There is only a solution if $\vec{g}$ is the gradient of a potential.
+On the other hand, $\vec\nabla\cdot \vec\nabla  p = \vec\nabla \cdot (\rho \vec{g})$ always has a solution. 
+
+\item B.M.: ``1) what we have in ASPECT\footnote{vertical integration} follows the usual definition of 
+lithostatic pressure. I don't think we should change it.
+2) Jourdon and May's approach isn't the usual definition of lithostatic pressure. I don't know what I would call it.
+3) Jourdon and May's approach may result in more stable boundary conditions than naive application of lithostatic 
+pressure, but I have little intuition for whether it would be a reasonable approximation.
+4) I don't have an intuitive feel for what they are modelling - their models do not satisfy the hydrostatic equation (their Eq. 5).''
+\end{itemize}
+
+\vspace{1cm}
 
 In order to investigate this further, I have written a short python code which solves the Poisson equation 
 on a $nelx\times nely$ $Q_1$ elements.
 In what follows $p_1$ is the pressure computed with Eq.~\eqref{eq:plith} while $p_2$ denotes the pressure
 obtained by integrating $\rho {g}$ over each column of nodes, having set $p_2=0$ at the surface and 
 using a simple 1 point quadrature for each segment.
-	The code also computes the pressure gradient $\vec\nabla p$ in the middle of each element for both 
+The code also computes the pressure gradient $\vec\nabla p$ in the middle of each element for both 
 pressure fields $p_1$ and $p_2$. 
 
 \newpage
 %------------------------------------------------------------------------------
-\subsection*{Experiment \#1}
+\subsection*{Experiment \#1 - benchmark}
 
 The domain is a unit square. Density is constant with $\rho=1$. Gravity vector is $\vec{g}=-\vec{e}_y$.
 
@@ -169,7 +231,7 @@ Resolution 100$\times$100.}
 \end{center}
 
 %------------------------------------------------------------------------------
-\subsection*{Experiment \#2}
+\subsection*{Experiment \#2 - benchmark}
 
 Same setup as Experiment \# 1, but now $\rho=1$ in the top half of the domain and $\rho=2$ in the bottom half.
 
@@ -270,8 +332,64 @@ we find that $p_1$ and the results sent by Jourdon are identical (which validate
 
 Obviously we here again do not have $\vec{\nabla}p=-\rho\vec{g}$ for the pressure obtained with 
 the Poisson equation!
-The pressure at the bottom for $x<0.25$ should be constant and equal to 10, but this is not 
-the case for the Poisson pressure, so it is not a lithostatic pressure. Only $p_2$ is. 
+%The pressure at the bottom for $x<0.25$ should be constant and equal to 10, but this is not 
+%the case for the Poisson pressure, so it is not a lithostatic pressure. Only $p_2$ is. 
+
+\newpage
+%------------------------------------------------------------------------------
+\subsection*{Experiment \#5}
+
+In this experiment the density is 1 except in a centered disc of radius 0.1 in which it is 10, 
+and $g=10$. 
+I have also written a $Q_2\times Q_1$ FE Stokes solver so as to look at the computed 
+full pressure. Viscosity of the ball is 100 while viscosity of the fluid is 1. 
+Free slip boundary conditions are prescribed on the sides and on the bottom. 
+Either the top surface is free, either free slip is also imposed in 
+conjunction with a zero average surface pressure normalisation.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_119/results/exp5/rho}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_119/results/exp5/p1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_119/results/exp5/p2}\\
+{\captionfont Left: density field on 100x100 mesh. Middle: $p_1$ pressure; Right: $p_2$ pressure.} 
+\end{center}
+
+We find that for this example the pressure $p_1$ is closer to the full pressure than $p_2$:
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_119/results/exp5/comp1}
+\hspace{0.5cm}
+\includegraphics[width=7cm]{python_codes/fieldstone_119/results/exp5/comp2}\\
+{\captionfont Left panel: pressure $p_1$ surrounded by full pressure fields (free surface
+on the left, free slip on the right). Right panel: same with $p_2$ instead.}
+\end{center}
+
+Finally one can explore the effect of the aspect ratio:
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_119/results/exp5/all}\\
+{\captionfont Left column: $p_1$ pressure; Right column: $p_2$ pressure. From 
+top to bottom: aspect ratio 1:1, 2:1 and 4:1.}
+\end{center}
+We not-so-surprisingly find that 'far away from the source of buoyancy' 
+pressure $p_1$ slowly becomes close to $p_2$. On the one hand, this means that 
+if a long enough domain is used then prescribing $p_1$ or $p_2$ on the sides should not 
+have much consequences. On the other hand, the conclusion of \textcite{chgv12} (2012) 
+(the 'first' paper documenting the use of open boundary conditions in subduction modelling)
+pertaining to the advantage of using such boundary conditions is then problematic: 
+``Other advantages are the independence of the aspect ratio of the model domain, 
+which allows for smaller models with increased resolution for modelling detail.''
+Note that in this paper the authors do not specify how they compute the lithostatic pressure that 
+they use for boundary conditions...
+
+W.B.: ``This is again a case where $\rho g$ is not the gradient of a potential, 
+and as a consequence there is no function $p(x,y)$ that would satisfy $\nabla p = \rho g$.
+It {\it is} worth pointing out, I believe, that you don't actually solve
+$\vec\nabla p = \rho \vec{g}$ in your experiments. You are solving $dp/dz = \rho g_z$
+but these are not the same. If you have a vertical gravity vector, then the first equation 
+implies $dp/dx=0$ (i.e., $p$ has no horizontal variation) but that is clearly not the case in your experiments.''
+ 
+
+
+
 
 
 

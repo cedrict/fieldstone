@@ -26,6 +26,11 @@ def rho(x,y):
           val=2
        else:
           val=1
+    if experiment==5:
+       if (x-0.5*Lx)**2+(y-0.5*Ly)**2<0.1**2:
+          val=10
+       else:
+          val=1
     return val
 
 ###############################################################################
@@ -39,8 +44,8 @@ m=4     # number of nodes making up an element
 Lx=1.  # horizontal extent of the domain 
 Ly=1.  # vertical extent of the domain 
 
-nelx = 200
-nely = 200
+nelx = 100
+nely = 100
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
@@ -57,7 +62,7 @@ sqrt3=np.sqrt(3.)
 
 gy=-10
 
-experiment=4
+experiment=5
 
 ###############################################################################
 # grid point setup
@@ -246,8 +251,8 @@ hy=Ly/nely
 
 for i in range(0,nnx):
     for j in range(nny-2,-1,-1):
-        k=j*nny+i
-        k_above=(j+1)*nny+i
+        k=j*nnx+i
+        k_above=(j+1)*nnx+i
         sol2[k]=sol2[k_above]+hy*(rhon[k]+rhon[k_above])/2*abs(gy)
 
 
@@ -370,6 +375,10 @@ vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='pressure2' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%e \n" % sol2[i])
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='p1-p2' Format='ascii'> \n")
+for i in range(0,NV):
+    vtufile.write("%e \n" % (sol1[i]-sol2[i]))
 vtufile.write("</DataArray>\n")
 
 vtufile.write("</PointData>\n")
