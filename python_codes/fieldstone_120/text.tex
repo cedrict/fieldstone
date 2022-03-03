@@ -1,0 +1,59 @@
+
+The idea here is to create a library of basis functions and quadrature rules, as well as 
+other FE-related tools so as to be able to write much more compact FE codes. 
+
+There are three files which contain all the required tools to build most of a FE code:
+At the moment it supports $Q_{0,1,2,3,4}$
+\begin{itemize}
+
+\item {\pythonfile FEbasis2D.py} contains 
+\begin{lstlisting}
+def NNN(r,s,element):
+def dNNNdr(r,s,element):
+def dNNNds(r,s,element):
+def NNN_r(element):
+def NNN_s(element):
+def NNN_m(element):
+\end{lstlisting}
+
+
+\begin{tabular}{lllll}
+\hline
+FE space  & $m$ & type  & Section  \\
+\hline
+\hline
+$Q_0/P_0$ & 1   & $\square$ & \\
+$Q_1$     & 4   &       & \\
+$P_1$     & 3   & $bigtriangleup$ & \\
+$P_1^+$   & 4   &   &    \\
+$Q_2$     & 9   &   &    \\
+$P_2$     & 6   &   &    \\
+$P_2^+$   & 7   &   &    \\
+$Q_3$     & 16  &   &    \\
+$Q_4$     & 25  &   &    \\
+\hline
+\end{tabular}
+
+
+\item {\pythonfile FEtools.py} contains
+
+\begin{lstlisting}
+def cartesian_mesh(Lx,Ly,nelx,nely,element):
+def export_mesh_to_ascii(x,y,filename):
+def export_connectivity_array_to_ascii(x,y,icon,filename):
+def export_mesh_to_vtu(x,y,icon,element,filename):
+def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
+def J(m,dNdr,dNds,x,y):
+\end{lstlisting}
+
+\item {\pythonfile FEquadrature.py} contains
+
+\begin{lstlisting}
+def qcoords(nqperdim):
+def qweights(nqperdim):
+\end{lstlisting}
+
+\end{itemize}
+
+
+
