@@ -417,52 +417,6 @@ def NNN_m(element):
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def NNN_nqperdim(element):
-
-    if element=='Q0':
-       return 1
-
-    if element=='Q1':
-       return 2
-
-    if element=='Q2':
-       return 3
-
-    if element=='Q3':
-       return 4
-
-    if element=='Q4':
-       return 5
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-def NNN_nqpertriangle(element):
-
-    #only 3.10
-    #match element:
-    #   case 'P1':  return 3
-    #   case 'P2':  return 3
-    #   case 'P1+': return 3
-    #   case 'P2+': return 3
-    #   default:
-    #      exit('NNN_nqpertriangle: space not supported')
-
-    if element=='P1':
-       return 3
-
-    if element=='P2':
-       return 6
-
-    if element=='P1+':
-       return 6
-
-    if element=='P2+':
-       return 7
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
 def visualise_nodes(space):
     r=NNN_r(space)
     s=NNN_s(space)
@@ -483,7 +437,8 @@ def visualise_nodes(space):
        plt.ylim([-0.1,+1.1])
        plt.plot([0,0,1,0],[0,1,0,0],color='teal',linewidth=2)
     plt.savefig(space+'_nodes.pdf',bbox_inches='tight')
-
+    print('     -> generated '+space+'_nodes.pdf')
+    plt.close()
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------

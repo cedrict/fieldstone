@@ -31,8 +31,8 @@ def viscosity(x,y):
 Lx=1
 Ly=1
 
-nelx=16
-nely=16
+nelx=3
+nely=2
 
 left_bc  ='free_slip'
 right_bc ='free_slip'
@@ -42,13 +42,13 @@ top_bc   ='free_slip'
 ndofV=2
 ndofP=1
 
-Vspace='Q1'
-Pspace='Q0'
+Vspace='Q2'
+Pspace='Q1'
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
 
-nqpts=2
+nqpts=3
 
 #--------------------------------------------------------------------
 # mesh: node layout and connectivity
@@ -58,7 +58,7 @@ start = timing.time()
 mV=FE.NNN_m(Vspace)
 mP=FE.NNN_m(Pspace)
 
-nq,qcoords_r,qcoords_s,qweights=Q.quadrature(Vspace,nqpts)
+nqel,qcoords_r,qcoords_s,qweights=Q.quadrature(Vspace,nqpts)
 
 NV,nel,xV,yV,iconV,iconV2=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
 NP,nel,xP,yP,iconP,iconP2=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Pspace)
@@ -68,6 +68,7 @@ Tools.export_mesh_to_vtu(xV,yV,iconV2,Vspace,'meshV2.vtu')
 Tools.export_mesh_to_ascii(xV,yV,'meshV.ascii')
 Tools.export_mesh_to_ascii(xP,yP,'meshP.ascii')
 
+nq=nqel*nel
 NfemV=NV*ndofV
 NfemP=NP*ndofP
 Nfem=NfemV+NfemP
@@ -82,7 +83,38 @@ start = timing.time()
 bc_fix,bc_val=Tools.bc_setup(xV,yV,Lx,Ly,ndofV,left_bc,right_bc,bottom_bc,top_bc)
 
 print("bc setup: %.3f s" % (timing.time() - start))
-exit()
+
+#--------------------------------------------------------------------
+# compute area of elements 
+# This is a good test because it uses the quadrature points and 
+# weights as well as the shape functions. If any area comes out
+# negative or zero, or if the sum does not equal to the area of the 
+# whole domain then there is a major problem which needs to 
+# be addressed before FE are set into motion.
+#--------------------------------------------------------------------
+start = timing.time()
+
+area=np.zeros(nel,dtype=np.float64) 
+
+for iel in range(0,nel):
+    for iq in range(0,nqel):
+        rq=qcoords_r[iq]
+        sq=qcoords_s[iq]
+        weightq=qweights[iq]
+        NNNV=FE.NNN(rq,sq,Vspace)
+        dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
+        dNNNVds=FE.dNNNds(rq,sq,Vspace)
+        jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+        area[iel]+=jcob*weightq
+    #end for
+#end for
+
+print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
+print("     -> total area meas %.8e " %(area.sum()))
+print("     -> total area anal %.8e " %(Lx*Ly))
+
+print("compute elements areas: %.3f s" % (timing.time() - start))
+
 #--------------------------------------------------------------------
 # build FE matrix
 #--------------------------------------------------------------------
@@ -94,6 +126,11 @@ rhs = np.zeros(Nfem,dtype=np.float64)
 b_mat = np.zeros((3,ndofV*mV),dtype=np.float64)
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64)
 N_mat = np.zeros((3,ndofP*mP),dtype=np.float64) 
+    
+xq = np.zeros(nq,dtype=np.float64)
+yq = np.zeros(nq,dtype=np.float64)
+
+counterq=0
 
 for iel in range(0,nel):
 
@@ -101,7 +138,7 @@ for iel in range(0,nel):
     G_el = np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
     b_el = np.zeros(mV*ndofV,dtype=np.float64)
 
-    for iq in range(0,nq):
+    for iq in range(0,nqel):
 
         rq=qcoords_r[iq]
         sq=qcoords_s[iq]
@@ -111,8 +148,8 @@ for iel in range(0,nel):
         dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
         dNNNVds=FE.dNNNds(rq,sq,Vspace)
         NNNP=FE.NNN(rq,sq,Pspace)
-        xq=NNNV.dot(xV[iconV[0:mV,iel]])
-        yq=NNNV.dot(yV[iconV[0:mV,iel]])
+        xq[counterq]=NNNV.dot(xV[iconV[0:mV,iel]])
+        yq[counterq]=NNNV.dot(yV[iconV[0:mV,iel]])
 
         jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
 
@@ -121,11 +158,11 @@ for iel in range(0,nel):
                                     [0.        ,dNNNVdy[k]],
                                     [dNNNVdy[k],dNNNVdx[k]]]
 
-        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq,yq)*weightq*jcob
+        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq[counterq],yq[counterq])*weightq*jcob
 
         for k in range(0,mV): 
-            b_el[2*k+0]+=NNNV[k]*jcob*weightq*bx(xq,yq)
-            b_el[2*k+1]+=NNNV[k]*jcob*weightq*by(xq,yq)
+            b_el[2*k+0]+=NNNV[k]*jcob*weightq*bx(xq[counterq],yq[counterq])
+            b_el[2*k+1]+=NNNV[k]*jcob*weightq*by(xq[counterq],yq[counterq])
 
         for k in range(0,mP):
             N_mat[0,k]=NNNP[k]
@@ -134,18 +171,25 @@ for iel in range(0,nel):
 
         G_el-=b_mat.T.dot(N_mat)*weightq*jcob
 
+        counterq+=1
+
     #end for iq
 
     # apply bc
 
     # assemble 
-    Tools.assemble_K(K_el,A_sparse,NfemV,mV,ndofV)
-    Tools.assemble_G(G_el,A_sparse,NfemV,NfemP,mV,mP,ndofV,ndofP)
+    #Tools.assemble_K(K_el,A_sparse,NfemV,mV,ndofV)
+    #Tools.assemble_G(G_el,A_sparse,NfemV,NfemP,mV,mP,ndofV,ndofP)
 
 
 #end for iel
 
 print("build FE matrix: %.3f s" % (timing.time() - start))
+
+Tools.export_mesh_to_ascii(xq,yq,'meshq.ascii')
+Tools.export_swarm_to_vtu(xq,yq,'meshq.vtu')
+
+exit()
 
 #------------------------------------------------------------------------------
 # solve system
