@@ -3,6 +3,7 @@ import FEquadrature as Q
 import FEtools as Tools 
 import numpy as np
 import time as timing
+import matplotlib.pyplot as plt
 from scipy.sparse import lil_matrix
 from scipy.sparse.linalg import spsolve
 
@@ -26,23 +27,24 @@ def by(x, y):
 def viscosity(x,y):
     return 1
 
-#--------------------------------------
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 Lx=1
 Ly=1
 
-nelx=3
-nely=2
+nelx=7
+nely=5
 
-left_bc  ='free_slip'
-right_bc ='free_slip'
-bottom_bc='free_slip'
-top_bc   ='free_slip'
+left_bc  ='no_slip'
+right_bc ='no_slip'
+bottom_bc='no_slip'
+top_bc   ='no_slip'
 
 ndofV=2
 ndofP=1
 
-Vspace='Q2'
+Vspace='Q4'
 Pspace='Q1'
 
 # if quadrilateral nqpts is nqperdim
@@ -67,6 +69,8 @@ Tools.export_mesh_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu')
 Tools.export_mesh_to_vtu(xV,yV,iconV2,Vspace,'meshV2.vtu')
 Tools.export_mesh_to_ascii(xV,yV,'meshV.ascii')
 Tools.export_mesh_to_ascii(xP,yP,'meshP.ascii')
+Tools.export_swarm_to_vtu(xV,yV,'meshV_nodes.vtu')
+Tools.export_swarm_to_vtu(xP,yP,'meshP_nodes.vtu')
 
 nq=nqel*nel
 NfemV=NV*ndofV
@@ -136,7 +140,8 @@ for iel in range(0,nel):
 
     K_el = np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
     G_el = np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
-    b_el = np.zeros(mV*ndofV,dtype=np.float64)
+    f_el = np.zeros(mV*ndofV,dtype=np.float64)
+    h_el = np.zeros(mP*ndofP,dtype=np.float64)
 
     for iq in range(0,nqel):
 
@@ -161,8 +166,8 @@ for iel in range(0,nel):
         K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq[counterq],yq[counterq])*weightq*jcob
 
         for k in range(0,mV): 
-            b_el[2*k+0]+=NNNV[k]*jcob*weightq*bx(xq[counterq],yq[counterq])
-            b_el[2*k+1]+=NNNV[k]*jcob*weightq*by(xq[counterq],yq[counterq])
+            f_el[2*k+0]+=NNNV[k]*jcob*weightq*bx(xq[counterq],yq[counterq])
+            f_el[2*k+1]+=NNNV[k]*jcob*weightq*by(xq[counterq],yq[counterq])
 
         for k in range(0,mP):
             N_mat[0,k]=NNNP[k]
@@ -176,10 +181,11 @@ for iel in range(0,nel):
     #end for iq
 
     # apply bc
+    Tools.apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel)
 
     # assemble 
-    #Tools.assemble_K(K_el,A_sparse,NfemV,mV,ndofV)
-    #Tools.assemble_G(G_el,A_sparse,NfemV,NfemP,mV,mP,ndofV,ndofP)
+    Tools.assemble_K(K_el,A_sparse,iconV,mV,ndofV,iel)
+    Tools.assemble_G(G_el,A_sparse,iconV,iconP,NfemV,mV,mP,ndofV,ndofP,iel)
 
 
 #end for iel
@@ -188,6 +194,10 @@ print("build FE matrix: %.3f s" % (timing.time() - start))
 
 Tools.export_mesh_to_ascii(xq,yq,'meshq.ascii')
 Tools.export_swarm_to_vtu(xq,yq,'meshq.vtu')
+
+
+plt.spy(A_sparse)
+plt.savefig('matrix_'+Vspace+'_'+Pspace+'.pdf', bbox_inches='tight')
 
 exit()
 

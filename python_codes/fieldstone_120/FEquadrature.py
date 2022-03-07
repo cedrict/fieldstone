@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 def quadrature(space,nqperdim):
 
-    if space=='Q1' or space=='Q2' or space=='Q3' or space=='Q4':
+    if space=='Q1' or space=='Q2' or space=='Q3' or space=='Q4' or space=='Q1+':
        coords=qcoords_1D(nqperdim)
        weights=qweights_1D(nqperdim)
        nq=nqperdim**2 
@@ -22,7 +22,7 @@ def quadrature(space,nqperdim):
                val_w[counter]=weights[iq]*weights[jq]
                counter+=1
 
-    else:
+    elif space=='P1' or space=='P2' or space=='P1+' or space=='P2+' or space=='P3':
 
        nq=nqperdim
        val_r = np.zeros(nq,dtype=np.float64) 
@@ -79,6 +79,9 @@ def quadrature(space,nqperdim):
           val_r[:]=0
           val_s[:]=0
           val_w[:]=0
+
+    else:
+       exit('quadrature: unknown space')
 
     return nq,val_r,val_s,val_w
 
@@ -255,14 +258,16 @@ def visualise_quadrature_points(space,nqpts):
     plt.xlabel('s')
     plt.title(space)
 
-    if space=='Q1' or space=='Q2' or space=='Q3' or space=='Q4':
+    if space=='Q1' or space=='Q2' or space=='Q3' or space=='Q4' or space=='Q1+':
        plt.xlim([-1.1,+1.1])
        plt.ylim([-1.1,+1.1])
        plt.plot([-1,1,1,-1,-1],[-1,-1,1,1,-1],color='teal',linewidth=2)
-    else:
+    elif space=='P1' or space=='P2' or space=='P1+' or space=='P2+' or space=='P3':
        plt.xlim([-0.1,+1.1])
        plt.ylim([-0.1,+1.1])
        plt.plot([0,0,1,0],[0,1,0,0],color='teal',linewidth=2)
+    else:
+       exit('visualise_quadrature_points: unknown space')
     plt.savefig(space+'_quadrature_points'+str(nqpts)+'.pdf',bbox_inches='tight')
     print('     -> generated '+space+'_quadrature_points'+str(nqpts)+'.pdf')
     plt.close()

@@ -3,19 +3,50 @@ The idea here is to create a library of basis functions and quadrature rules, as
 other FE-related tools so as to be able to write much more compact FE codes. 
 
 There are three files which contain all the required tools to build most of a FE code:
-At the moment it supports $Q_{0,1,2,3,4}$
+
 \begin{itemize}
 
 \item {\pythonfile FEbasis2D.py} contains 
 \begin{lstlisting}
-def NNN(r,s,element):
-def dNNNdr(r,s,element):
-def dNNNds(r,s,element):
-def NNN_r(element):
-def NNN_s(element):
-def NNN_m(element):
+NNN(r,s,space):
+dNNNdr(r,s,space):
+dNNNds(r,s,space):
+NNN_r(space):
+NNN_s(space):
+NNN_m(space):
+visualise_nodes(space):
 \end{lstlisting}
 
+
+
+\item {\pythonfile FEtools.py} contains
+
+\begin{lstlisting}
+cartesian_mesh(Lx,Ly,nelx,nely,element):
+export_mesh_to_ascii(x,y,filename):
+export_connectivity_array_to_ascii(x,y,icon,filename):
+export_mesh_to_vtu(x,y,icon,space,filename):
+export_swarm_to_vtu(x,y,filename):
+bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
+J(m,dNdr,dNds,x,y):
+assemble_K(K_el,A_sparse,iconV,mV,ndofV,iel):
+assemble_G(G_el,A_sparse,iconV,iconP,NfemV,mV,mP,ndofV,ndofP,iel):
+apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel):
+\end{lstlisting}
+
+\item {\pythonfile FEquadrature.py} contains
+
+\begin{lstlisting}
+quadrature(space,nqperdim):
+qcoords_1D(nqperdim):
+qweights_1D(nqperdim):
+visualise_quadrature_points(space,nqpts):
+\end{lstlisting}
+
+\end{itemize}
+
+%--------------------------------------------------------------------
+\section*{Supported element spaces}
 
 \begin{tabular}{lllll}
 \hline
@@ -24,6 +55,7 @@ FE space  & $m$ & type  & Section  \\
 \hline
 $Q_0/P_0$ & 1   & $\square$ & \\
 $Q_1$     & 4   &       & \\
+$Q_1+$    & 5   &       & \\
 $P_1$     & 3   & $bigtriangleup$ & \\
 $P_1^+$   & 4   &   &    \\
 $Q_2$     & 9   &   &    \\
@@ -35,25 +67,15 @@ $Q_4$     & 25  &   &    \\
 \end{tabular}
 
 
-\item {\pythonfile FEtools.py} contains
+\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/Q1}
+\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/Q1+}
+\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/Q2}
+\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/Q3}
+\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/Q4}
 
-\begin{lstlisting}
-def cartesian_mesh(Lx,Ly,nelx,nely,element):
-def export_mesh_to_ascii(x,y,filename):
-def export_connectivity_array_to_ascii(x,y,icon,filename):
-def export_mesh_to_vtu(x,y,icon,element,filename):
-def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
-def J(m,dNdr,dNds,x,y):
-\end{lstlisting}
-
-\item {\pythonfile FEquadrature.py} contains
-
-\begin{lstlisting}
-def qcoords(nqperdim):
-def qweights(nqperdim):
-\end{lstlisting}
-
-\end{itemize}
-
+\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/P1}
+\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/P1+}
+\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/P2}
+\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/P2+}
 
 

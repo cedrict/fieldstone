@@ -30,7 +30,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
        icon2[:]=icon[:]
 
     #---------------------------------
-    if element=='Q1':
+    elif element=='Q1':
        N=(nelx+1)*(nely+1)
        x = np.empty(N,dtype=np.float64) 
        y = np.empty(N,dtype=np.float64)
@@ -53,7 +53,36 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
        icon2[:]=icon[:]
 
     #---------------------------------
-    if element=='Q2':
+    elif element=='Q1+':
+       N=(nelx+1)*(nely+1)+nel
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64)
+       counter = 0
+       for j in range(0,nely+1):
+           for i in range(0,nelx+1):
+               x[counter]=i*hx
+               y[counter]=j*hy
+               counter += 1
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               x[counter]=i*hx+1/2.*hx
+               y[counter]=j*hy+1/2.*hy
+               counter += 1
+       icon=np.zeros((5,nel),dtype=np.int32)
+       counter = 0
+       for j in range(0, nely):
+           for i in range(0, nelx):
+               icon[0,counter]=i+j*(nelx+1)
+               icon[1,counter]=i+1+j*(nelx+1)
+               icon[2,counter]=i+1+(j+1)*(nelx+1)
+               icon[3,counter]=i+(j+1)*(nelx+1)
+               icon[4,counter]=(nelx+1)*(nely+1)+counter
+               counter += 1
+       icon2=np.zeros((4,nel),dtype=np.int32)
+       icon2[0:4,0:nel]=icon[0:4,0:nel]
+
+    #---------------------------------
+    elif element=='Q2':
        N=(2*nelx+1)*(2*nely+1)
        nnx=2*nelx+1
        nny=2*nely+1
@@ -96,12 +125,76 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
 
 
     #---------------------------------
-    if element=='Q3':
-       exit('Q3 not implemented')
+    elif element=='Q3':
+       N=(3*nelx+1)*(3*nely+1)
+       nnx=3*nelx+1
+       nny=3*nely+1
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64)
+       counter = 0
+       for j in range(0,nny):
+           for i in range(0,nnx):
+               x[counter]=i*hx/3
+               y[counter]=j*hy/3
+               counter += 1
+           #end for
+       #end for
+       icon=np.zeros((16,nel),dtype=np.int32)
+       counter=0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               counter2=0
+               for k in range(0,4):
+                   for l in range(0,4):
+                       icon[counter2,counter]=i*3+l+j*3*nnx+nnx*k
+                       counter2+=1
+               counter += 1 
+       icon2 =np.zeros((4,9*nel),dtype=np.int32)
+       counter = 0 
+       for j in range(0,3*nely):
+           for i in range(0,3*nelx):
+               icon2[0,counter]=i+j*(3*nelx+1)
+               icon2[1,counter]=i+1+j*(3*nelx+1)
+               icon2[2,counter]=i+1+(j+1)*(3*nelx+1)
+               icon2[3,counter]=i+(j+1)*(3*nelx+1)
+               counter += 1
 
     #---------------------------------
-    if element=='Q4':
-       exit('Q4 not implemented')
+    elif element=='Q4':
+       N=(4*nelx+1)*(4*nely+1)
+       nnx=4*nelx+1
+       nny=4*nely+1
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64)
+       counter = 0
+       for j in range(0,nny):
+           for i in range(0,nnx):
+               x[counter]=i*hx/4
+               y[counter]=j*hy/4
+               counter += 1
+           #end for
+       #end for
+       icon=np.zeros((25,nel),dtype=np.int32)
+       counter=0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               counter2=0
+               for k in range(0,5):
+                   for l in range(0,5):
+                       icon[counter2,counter]=i*4+l+j*4*nnx+nnx*k
+                       counter2+=1
+               counter += 1 
+       icon2 =np.zeros((4,16*nel),dtype=np.int32)
+       counter = 0 
+       for j in range(0,4*nely):
+           for i in range(0,4*nelx):
+               icon2[0,counter]=i+j*(4*nelx+1)
+               icon2[1,counter]=i+1+j*(4*nelx+1)
+               icon2[2,counter]=i+1+(j+1)*(4*nelx+1)
+               icon2[3,counter]=i+(j+1)*(4*nelx+1)
+               counter += 1
+
+
 
     #---------------------------------
     #
@@ -114,7 +207,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
     # 0-------1
 
 
-    if element=='P1':
+    elif element=='P1':
        N=(nelx+1)*(nely+1)+nel
        nel*=4
        x = np.empty(N,dtype=np.float64) 
@@ -163,7 +256,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
        icon2 =np.zeros((3,nel),dtype=np.int32)
        icon2[:]=icon[:]
 
-
+    else:
+       exit("FEtools:cartesian_mesh: space unknown ")
 
     return N,nel,x,y,icon,icon2
 
@@ -268,9 +362,6 @@ def export_swarm_to_vtu(x,y,filename):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
-
-
-
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
@@ -331,3 +422,54 @@ def J(m,dNdr,dNds,x,y):
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
+
+def assemble_K(K_el,A_sparse,iconV,mV,ndofV,iel):
+
+    for k1 in range(0,mV):
+        for i1 in range(0,ndofV):
+            ikk=ndofV*k1+i1
+            m1 =ndofV*iconV[k1,iel]+i1
+            for k2 in range(0,mV):
+                for i2 in range(0,ndofV):
+                    jkk=ndofV*k2+i2
+                    m2 =ndofV*iconV[k2,iel]+i2
+                    A_sparse[m1,m2] += K_el[ikk,jkk]
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+def assemble_G(G_el,A_sparse,iconV,iconP,NfemV,mV,mP,ndofV,ndofP,iel):
+
+    for k1 in range(0,mV):
+        for i1 in range(0,ndofV):
+            ikk=ndofV*k1+i1
+            m1 =ndofV*iconV[k1,iel]+i1
+            for k2 in range(0,mP):
+                m2 =iconP[k2,iel]
+                A_sparse[m1,NfemV+m2]+=G_el[ikk,k2]
+                A_sparse[NfemV+m2,m1]+=G_el[ikk,k2]
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+def apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel):
+
+    for k1 in range(0,mV):
+        for i1 in range(0,ndofV):
+            ikk=ndofV*k1+i1
+            m1 =ndofV*iconV[k1,iel]+i1
+            if bc_fix[m1]:
+               K_ref=K_el[ikk,ikk] 
+               for jkk in range(0,mV*ndofV):
+                   f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
+                   K_el[ikk,jkk]=0
+                   K_el[jkk,ikk]=0
+               K_el[ikk,ikk]=K_ref
+               f_el[ikk]=K_ref*bc_val[m1]
+               h_el[:]-=G_el[ikk,:]*bc_val[m1]
+               G_el[ikk,:]=0
+
+
+
+
+
