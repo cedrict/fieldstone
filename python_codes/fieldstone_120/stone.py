@@ -33,8 +33,8 @@ def viscosity(x,y):
 Lx=1
 Ly=1
 
-nelx=7
-nely=5
+nelx=32
+nely=32
 
 left_bc  ='no_slip'
 right_bc ='no_slip'
@@ -44,8 +44,8 @@ top_bc   ='no_slip'
 ndofV=2
 ndofP=1
 
-Vspace='Q4'
-Pspace='Q1'
+Vspace='P1'
+Pspace='P0'
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
@@ -65,12 +65,6 @@ nqel,qcoords_r,qcoords_s,qweights=Q.quadrature(Vspace,nqpts)
 NV,nel,xV,yV,iconV,iconV2=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
 NP,nel,xP,yP,iconP,iconP2=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Pspace)
 
-Tools.export_mesh_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu')
-Tools.export_mesh_to_vtu(xV,yV,iconV2,Vspace,'meshV2.vtu')
-Tools.export_mesh_to_ascii(xV,yV,'meshV.ascii')
-Tools.export_mesh_to_ascii(xP,yP,'meshP.ascii')
-Tools.export_swarm_to_vtu(xV,yV,'meshV_nodes.vtu')
-Tools.export_swarm_to_vtu(xP,yP,'meshP_nodes.vtu')
 
 nq=nqel*nel
 NfemV=NV*ndofV
@@ -183,23 +177,18 @@ for iel in range(0,nel):
     # apply bc
     Tools.apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel)
 
-    # assemble 
+    # assemble (missing h_el)
     Tools.assemble_K(K_el,A_sparse,iconV,mV,ndofV,iel)
     Tools.assemble_G(G_el,A_sparse,iconV,iconP,NfemV,mV,mP,ndofV,ndofP,iel)
-
+    Tools.assemble_f(f_el,rhs,iconV,mV,ndofV,iel)
 
 #end for iel
 
 print("build FE matrix: %.3f s" % (timing.time() - start))
 
-Tools.export_mesh_to_ascii(xq,yq,'meshq.ascii')
-Tools.export_swarm_to_vtu(xq,yq,'meshq.vtu')
-
 
 plt.spy(A_sparse)
 plt.savefig('matrix_'+Vspace+'_'+Pspace+'.pdf', bbox_inches='tight')
-
-exit()
 
 #------------------------------------------------------------------------------
 # solve system
@@ -211,10 +200,33 @@ sol=spsolve(sparse_matrix,rhs)
 
 print("solve time: %.3f s" % (timing.time() - start))
 
+#------------------------------------------------------------------------------
+# put solution into separate x,y velocity arrays
+#------------------------------------------------------------------------------
+start = timing.time()
 
+u,v=np.reshape(sol[0:NfemV],(NV,2)).T
+p=sol[NfemV:Nfem]
 
+print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
+print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
+print("split vel into u,v: %.3f s" % (timing.time() - start))
 
+#------------------------------------------------------------------------------
+
+Tools.export_mesh_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu')
+Tools.export_mesh_to_vtu(xV,yV,iconV2,Vspace,'meshV2.vtu')
+Tools.export_mesh_to_ascii(xV,yV,'meshV.ascii')
+Tools.export_mesh_to_ascii(xP,yP,'meshP.ascii')
+Tools.export_swarm_to_vtu(xV,yV,'meshV_nodes.vtu')
+Tools.export_swarm_to_vtu(xP,yP,'meshP_nodes.vtu')
+
+Tools.export_mesh_to_ascii(xq,yq,'meshq.ascii')
+Tools.export_swarm_to_vtu(xq,yq,'meshq.vtu')
+
+Tools.export_swarm_vector_to_vtu(xV,yV,u,v,'solution_velocity.vtu')
+Tools.export_swarm_scalar_to_vtu(xP,yP,p,'solution_pressure.vtu')
 
 Tools.export_connectivity_array_to_ascii(xV,yV,iconV,'iconV.ascii')
 Tools.export_connectivity_array_to_ascii(xP,yP,iconP,'iconP.ascii')

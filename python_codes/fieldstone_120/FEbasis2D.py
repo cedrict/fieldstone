@@ -10,7 +10,7 @@ from pylab import cm
 # triangle referemce space is lower left of [0,1]X[0,1]
 #------------------------------------------------------------------------------
 #
-# P0, Q1, P1, P1+, Q2, P2, P2+, Q3, Q4
+# P0, Q1, P1, P1+, Q2, P2, P2+, Q3, P3, Q4
 #
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -505,17 +505,22 @@ def visualise_basis_functions(space):
     rmax=+1
     smin=-1
     smax=+1
-    zz = np.zeros((NNN_m(space),40,40),dtype=np.float64)
-    rr,ss=np.meshgrid(np.arange(rmin,rmax,0.05), np.arange(smin,smax, 0.05))
-    for i in range (40):
-        for j in range (40):
+    zz = np.zeros((NNN_m(space),100,100),dtype=np.float64)
+    rr,ss=np.meshgrid(np.arange(rmin,rmax,0.01), np.arange(smin,smax, 0.01))
+    for i in range (100):
+        for j in range (100):
             zz[0:NNN_m(space),i,j]=NNN(rr[i,j],ss[i,j],space)
+            if space[0]=='P' and i+j>100: zz[:,i,j]=0
 
     plt.figure()
     #plt.colorbar()
     for k in range(NNN_m(space)):
-        plt.imshow(zz[k,:,:],extent=[rmin,rmax,smin,smax], cmap=cm.jet, origin='lower')
+        plt.imshow(zz[k,:,:],extent=[rmin,rmax,smin,smax], cmap=cm.RdBu ,origin='lower')
         plt.title("basis function #"+str(k), fontsize=8)
         plt.savefig(space+'_basis_function'+str(k)+'.png', bbox_inches='tight')
     plt.close()
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
 

@@ -206,6 +206,43 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
     # |/  A  \|
     # 0-------1
 
+    elif element=='P0':
+       nel*=4
+       N=nel
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64)
+       counter = 0 
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               x[counter]=(i+1/2)*hx #A
+               y[counter]=(j+1/6)*hy
+               counter += 1
+               x[counter]=(i+5/6)*hx #B
+               y[counter]=(j+1/2)*hy
+               counter += 1
+               x[counter]=(i+1/2)*hx #C
+               y[counter]=(j+5/6)*hy
+               counter += 1
+               x[counter]=(i+1/6)*hx #D
+               y[counter]=(j+1/2)*hy
+               counter += 1
+       icon =np.zeros((1,nel),dtype=np.int32)
+       counter = 0 
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               icon[0,counter]=counter
+               counter += 1
+               icon[0,counter]=counter
+               counter += 1
+               icon[0,counter]=counter
+               counter += 1
+               icon[0,counter]=counter
+               counter += 1
+
+       icon2 =np.zeros((1,nel),dtype=np.int32)
+       icon2[:]=icon[:]
+
+
 
     elif element=='P1':
        N=(nelx+1)*(nely+1)+nel
@@ -365,6 +402,94 @@ def export_swarm_to_vtu(x,y,filename):
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
+def export_swarm_vector_to_vtu(x,y,vx,vy,filename):
+       N=np.size(x)
+       vtufile=open(filename,"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(N,N))
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+       for i in range(0,N):
+           vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+       for i in range(0,N):
+           vtufile.write("%10e %10e %10e \n" %(vx[i],vy[i],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</PointData>\n")
+
+       vtufile.write("<Cells>\n")
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       for i in range(0,N):
+           vtufile.write("%d " % i)
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       for i in range(0,N):
+           vtufile.write("%d " % (i+1))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       for i in range(0,N):
+           vtufile.write("%d " % 1)
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Cells>\n")
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+def export_swarm_scalar_to_vtu(x,y,scalar,filename):
+       N=np.size(x)
+       vtufile=open(filename,"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(N,N))
+       #--
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+       for i in range(0,N):
+           vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
+       for i in range(0,N):
+           vtufile.write("%10e \n" %(scalar[i]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</PointData>\n")
+       vtufile.write("<Cells>\n")
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       for i in range(0,N):
+           vtufile.write("%d " % i)
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       for i in range(0,N):
+           vtufile.write("%d " % (i+1))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       for i in range(0,N):
+           vtufile.write("%d " % 1)
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Cells>\n")
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
 def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
     eps=1e-8
     N=np.size(x)
@@ -452,8 +577,17 @@ def assemble_G(G_el,A_sparse,iconV,iconP,NfemV,mV,mP,ndofV,ndofP,iel):
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel):
+def assemble_f(f_el,rhs,iconV,mV,ndofV,iel):
+    for k1 in range(0,mV):
+        for i1 in range(0,ndofV):
+            ikk=ndofV*k1+i1
+            m1 =ndofV*iconV[k1,iel]+i1
+            rhs[m1]+=f_el[ikk]
 
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+def apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel):
     for k1 in range(0,mV):
         for i1 in range(0,ndofV):
             ikk=ndofV*k1+i1
@@ -469,7 +603,5 @@ def apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel):
                h_el[:]-=G_el[ikk,:]*bc_val[m1]
                G_el[ikk,:]=0
 
-
-
-
-
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
