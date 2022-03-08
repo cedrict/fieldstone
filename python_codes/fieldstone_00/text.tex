@@ -1,6 +1,9 @@
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_00/text.tex}} \end{flushright}
 
 
+%--------------------------------------------
+\subsection*{The node layout}
+
 Let us start in one dimension. We wish to generate a 
 set of $N$ discrete and equidistant $x$ coordinates 
 between $0$ and $L_x$:
@@ -708,7 +711,291 @@ for j in range(0,Ny-1):
         counter+=1
 \end{lstlisting}
 
+%--------------------------------------------
+\subsection*{The connectivity array}
+
+Let us consider 3 points in a plane:
+\begin{center}
+\begin{tikzpicture}
+\draw[step=0.5cm,gray!25,very thin] (0.5,0.5) grid (4.5,4.5); 
+\draw[black,fill=black] (1,1)   circle (2pt);
+\draw[black,fill=black] (3,1.5)   circle (2pt);
+\draw[black,fill=black] (1.5,3.5)   circle (2pt);
+\end{tikzpicture}
+\end{center}
+Since they are not aligned they form a triangle:
+\begin{center}
+\begin{tikzpicture}
+\draw[step=0.5cm,gray!25,very thin] (0.5,0.5) grid (4.5,4.5); 
+\draw[black,fill=black] (1,1)   circle (2pt);
+\draw[black,fill=black] (3,1.5)   circle (2pt);
+\draw[black,fill=black] (1.5,3.5)   circle (2pt);
+\draw[-,thick] (1,1)--(3,1.5)--(1.5,3.5)--cycle;
+\end{tikzpicture}
+\end{center}
+When it comes to assigning these points an identity (or a number), I can arbitrarily assign them the following numbers:
+\begin{center}
+\begin{tikzpicture}
+\draw[step=0.5cm,gray!25,very thin] (0.5,0.5) grid (4.5,4.5); 
+\draw[black,fill=black] (1,1)   circle (2pt);
+\draw[black,fill=black] (3,1.5)   circle (2pt);
+\draw[black,fill=black] (1.5,3.5)   circle (2pt);
+\draw[-,thick] (1,1)--(3,1.5)--(1.5,3.5)--cycle;
+\node[] at (0.8,0.8) {\small \color{violet}0};
+\node[] at (3.2,1.3) {\small \color{violet}1};
+\node[] at (1.5,3.75) {\small \color{violet}2};
+\node[] at (2,0) {\small counterclockwise};
+\end{tikzpicture}
+\end{center}
+This triangle is then made of nodes {\color{violet}0}, 
+{\color{violet}1}, and {\color{violet}2}.
+
+Let us now add one more point in the plane as follows:
+\begin{center}
+\begin{tikzpicture}
+\draw[step=0.5cm,gray!25,very thin] (0.5,0.5) grid (4.5,4.5); 
+\draw[black,fill=black] (1,1)   circle (2pt);
+\draw[black,fill=black] (3,1.5)   circle (2pt);
+\draw[black,fill=black] (1.5,3.5)   circle (2pt);
+\draw[black,fill=black] (4,4)   circle (2pt);
+\end{tikzpicture}
+\end{center}
+I will here number them as follows:
+\begin{center}
+\begin{tikzpicture}
+\draw[step=0.5cm,gray!25,very thin] (0.5,0.5) grid (4.5,4.5); 
+\draw[black,fill=black] (1,1)   circle (2pt);
+\draw[black,fill=black] (3,1.5)   circle (2pt);
+\draw[black,fill=black] (1.5,3.5)   circle (2pt);
+\draw[black,fill=black] (4,4)   circle (2pt);
+\node[] at (0.8,0.8) {\small \color{violet}0};
+\node[] at (3.2,1.3) {\small \color{violet}1};
+\node[] at (1.5,3.75) {\small \color{violet}2};
+\node[] at (4.2,4.2) {\small \color{violet}3};
+\end{tikzpicture}
+\end{center}
+
+I can either decide to see them as the vertices of a quadrilateral, or
+as the vertices of two triangles. However, there are two possibilities for the triangles:
+
+\begin{center}
+\begin{tikzpicture}
+\draw[step=0.5cm,gray!25,very thin] (0.5,0) grid (4.5,4.5); 
+\draw[black,fill=black] (1,1)   circle (2pt);
+\draw[black,fill=black] (3,1.5)   circle (2pt);
+\draw[black,fill=black] (1.5,3.5)   circle (2pt);
+\draw[black,fill=black] (4,4)   circle (2pt);
+\draw[-,thick] (1,1)--(3,1.5)--(4,4)--(1.5,3.5)--cycle;
+\node[] at (0.8,0.8) {\small \color{violet}0};
+\node[] at (3.2,1.3) {\small \color{violet}1};
+\node[] at (1.5,3.75) {\small \color{violet}2};
+\node[] at (4.2,4.2) {\small \color{violet}3};
+\node[] at (2.5,0.25) {\small 1 quadrilateral};
+\end{tikzpicture}
+\hspace{1cm}
+\begin{tikzpicture}
+\draw[step=0.5cm,gray!25,very thin] (0.5,0) grid (4.5,4.5); 
+\draw[black,fill=black] (1,1)   circle (2pt);
+\draw[black,fill=black] (3,1.5)   circle (2pt);
+\draw[black,fill=black] (1.5,3.5)   circle (2pt);
+\draw[black,fill=black] (4,4)   circle (2pt);
+\draw[-,thick] (1,1)--(3,1.5)--(4,4)--(1.5,3.5)--cycle;
+\draw[-,thick] (1,1)--(4,4);
+\node[] at (0.8,0.8) {\small \color{violet}0};
+\node[] at (3.2,1.3) {\small \color{violet}1};
+\node[] at (1.5,3.75) {\small \color{violet}2};
+\node[] at (4.2,4.2) {\small \color{violet}3};
+\node[] at (2.5,0.25) {\small 2 triangles (option 1)};
+\end{tikzpicture}
+\hspace{1cm}
+\begin{tikzpicture}
+\draw[step=0.5cm,gray!25,very thin] (0.5,0) grid (4.5,4.5); 
+\draw[black,fill=black] (1,1)   circle (2pt);
+\draw[black,fill=black] (3,1.5)   circle (2pt);
+\draw[black,fill=black] (1.5,3.5)   circle (2pt);
+\draw[black,fill=black] (4,4)   circle (2pt);
+\draw[-,thick] (1,1)--(3,1.5)--(4,4)--(1.5,3.5)--cycle;
+\draw[-,thick] (3,1.5)--(1.5,3.5);
+\node[] at (0.8,0.8) {\small \color{violet}0};
+\node[] at (3.2,1.3) {\small \color{violet}1};
+\node[] at (1.5,3.75) {\small \color{violet}2};
+\node[] at (4.2,4.2) {\small \color{violet}3};
+\node[] at (2.5,0.25) {\small 2 triangles (option 2)};
+\end{tikzpicture}
+\end{center}
+
+When it comes to the quadrilateral, assuming a counterclockwise numbering, I can say that this quadrilaterals is then made of nodes 
+{\color{violet}0}, {\color{violet}1},
+{\color{violet}3} and {\color{violet}2}.
+Note that I could also say it is made of nodes 
+{\color{violet}3}, {\color{violet}2},
+{\color{violet}0} and {\color{violet}1}.
+
+Looking at the cases with 2 triangles I first need to label/number the triangles themselves:
+\begin{center}
+\begin{tikzpicture}
+\draw[step=0.5cm,gray!25,very thin] (0.5,0.5) grid (4.5,4.5); 
+\draw[black,fill=black] (1,1)   circle (2pt);
+\draw[black,fill=black] (3,1.5)   circle (2pt);
+\draw[black,fill=black] (1.5,3.5)   circle (2pt);
+\draw[black,fill=black] (4,4)   circle (2pt);
+\draw[-,thick] (1,1)--(3,1.5)--(4,4)--(1.5,3.5)--cycle;
+\draw[-,thick] (1,1)--(4,4);
+\node[] at (0.8,0.8) {\small \color{violet}0};
+\node[] at (3.2,1.3) {\small \color{violet}1};
+\node[] at (1.5,3.75) {\small \color{violet}2};
+\node[] at (4.2,4.2) {\small \color{violet}3};
+\node[] at (2,3) {\bf \color{teal}0};
+\node[] at (2.5,2) {\bf \color{teal}1};
+\node[] at (2.5,0.25) {\small 2 triangles (option 1)};
+\end{tikzpicture}
+\hspace{1cm}
+\begin{tikzpicture}
+\draw[step=0.5cm,gray!25,very thin] (0.5,0.5) grid (4.5,4.5); 
+\draw[black,fill=black] (1,1)   circle (2pt);
+\draw[black,fill=black] (3,1.5)   circle (2pt);
+\draw[black,fill=black] (1.5,3.5)   circle (2pt);
+\draw[black,fill=black] (4,4)   circle (2pt);
+\draw[-,thick] (1,1)--(3,1.5)--(4,4)--(1.5,3.5)--cycle;
+\draw[-,thick] (3,1.5)--(1.5,3.5);
+\node[] at (0.8,0.8) {\small \color{violet}0};
+\node[] at (3.2,1.3) {\small \color{violet}1};
+\node[] at (1.5,3.75) {\small \color{violet}2};
+\node[] at (4.2,4.2) {\small \color{violet}3};
+\node[] at (1.75,2) {\bf \color{teal}0};
+\node[] at (2.75,3) {\bf \color{teal}1};
+\node[] at (2.5,0.25) {\small 2 triangles (option 2)};
+\end{tikzpicture}
+\end{center}
+
+In option 1, and still using a counterclockwise approach, triangle {\color{teal} 0} is made of nodes 
+\{{\color{violet}0},{\color{violet}3},{\color{violet}2}\} and 
+triangle {\color{teal} 1} is made of nodes 
+\{{\color{violet}0},{\color{violet}1},{\color{violet}3}\}. 
+In option 2, 
+triangle {\color{teal} 0} is made of nodes 
+\{{\color{violet}0},{\color{violet}1},{\color{violet}2}\} and 
+triangle {\color{teal} 1} is made of nodes 
+\{{\color{violet}1},{\color{violet}3},{\color{violet}2}\}. 
+
+If I keep adding points, I will ultimately end up with a mesh which 
+counts many quadrilaterals and/or triangles. In order to characterise this mesh, I need two numbers: $nel$, the number of elements (or cells) and $N$ the total number of vertices. However, this is not enough because I also need to know which vertex belongs to which element. 
+
+Concretely, I need to store for each element a list of $m=3$ (triangles) or $m=4$ (quadrilaterals) numbers. The resulting array is often called the connectivity array. In FieldStone this array is always {\tt icon}, of size $m \times nel$.
+
+In the cases above, $m=3$, $nel=2$, $N=4$ and 
+\[
+{\tt icon}_{\rm option\; 1}=
+\left(
+\begin{array}{cc}
+{\color{violet}0}&{\color{violet}0}\\
+{\color{violet}3}&{\color{violet}1}\\
+{\color{violet}2}&{\color{violet}3}\\
+\end{array}
+\right)
+\qquad
+{\tt icon}_{\rm option\; 2}=
+\left(
+\begin{array}{cc}
+{\color{violet}0}&{\color{violet}1}\\
+{\color{violet}1}&{\color{violet}3}\\
+{\color{violet}2}&{\color{violet}2}
+\end{array}
+\right)
+\]
+The way to understand these is as follows: for option 1,
+\begin{itemize}
+\item
+icon[0,0]='the identity of node \#0 of element \#0' $\rightarrow$ {\color{violet}1}
+\item
+icon[1,0]='the identity of node \#1 of element \#0' $\rightarrow$ {\color{violet}4}
+\item
+icon[2,0]='the identity of node \#2 of element \#0' $\rightarrow$ {\color{violet}3}
+\item
+icon[0,1]='the identity of node \#0 of element \#1' $\rightarrow$ {\color{violet}1}
+\item
+icon[1,1]='the identity of node \#1 of element \#1' $\rightarrow$ {\color{violet}2}
+\item
+icon[2,1]='the identity of node \#2 of element \#1' $\rightarrow$ {\color{violet}4}
+\end{itemize}
+
+Finally, let us consider the following case:
+
+\begin{center}
+\begin{tikzpicture}
+\draw[step=0.5cm,gray!25,very thin] (-0.5,-1) grid (6.5,4.5); 
+\draw[black,fill=black] (1,1)   circle (2pt);
+\draw[black,fill=black] (3,1.5)   circle (2pt);
+\draw[black,fill=black] (1.5,3.5)   circle (2pt);
+\draw[black,fill=black] (4,4)   circle (2pt);
+\draw[black,fill=black] (5.5,1)   circle (2pt);
+\draw[black,fill=black] (2.,-0.5)   circle (2pt);
+\draw[black,fill=black] (4,0)   circle (2pt);
+
+\draw[-,thick] (1,1)--(3,1.5)--(4,4)--(1.5,3.5)--cycle;
+\draw[-,thick] (3,1.5)--(1.5,3.5);
+\draw[-,thick] (3,1.5)--(5.5,1)--(4,4);
+\draw[-,thick] (1,1)--(2,-0.5)--(4,0)--(5.5,1);
+\draw[-,thick] (2,-0.5)--(3,1.5)--(4,0);
+\node[] at (0.8,0.8) {\small \color{violet}0};
+\node[] at (2.95,1.8) {\small \color{violet}1};
+\node[] at (1.5,3.75) {\small \color{violet}2};
+\node[] at (4.2,4.2) {\small \color{violet}3};
+\node[] at (2,-0.7) {\small \color{violet}4};
+\node[] at (4.1,-0.2) {\small \color{violet}5};
+\node[] at (5.7,1) {\small \color{violet}6};
+
+\node[] at (1.75,2) {\bf \color{teal}0};
+\node[] at (2.75,3) {\bf \color{teal}1};
+\node[] at (4,2) {\bf \color{teal}2};
+\node[] at (1.9,0.5) {\bf \color{teal}3};
+\node[] at (3,0.45) {\bf \color{teal}4};
+\node[] at (4,0.75) {\bf \color{teal}5};
 
 
+\draw[->] (0,0)--(1,0); 
+\node[] at (1,-0.2) {$x$};
+\draw[->] (0,0)--(0,1);
+\node[] at (-0.2,1) {$y$};
+\end{tikzpicture}
+\end{center}
+This mesh counts $nel=6$ elements/cells and $N=7$ points. 
+The connectivity array is then of size $3\times 6$:
+\[
+{\tt icon}=
+\left(
+\begin{array}{cccccc}
+{\color{violet}0}&{\color{violet}1}&{\color{violet}1}&{\color{violet}0}&{\color{violet}4}&{\color{violet}5}\\
+{\color{violet}1}&{\color{violet}3}&{\color{violet}6}&{\color{violet}4}&{\color{violet}5}&{\color{violet}6}\\
+{\color{violet}2}&{\color{violet}2}&{\color{violet}3}&{\color{violet}1}&{\color{violet}1}&{\color{violet}1}
+\end{array}
+\right)
+\]
+with 
+\begin{align}
+{\tt x}&=
+\left(
+\begin{array}{p{0.58cm}p{0.58cm}p{0.58cm}p{0.58cm}p{0.58cm}p{0.58cm}p{0.58cm}}
+1 & 3 & 1.5 & 4 & 2 & 4 & 5.5
+\end{array}
+\right) \\
+{\tt y}&=
+\left(
+\begin{array}{p{0.58cm}p{0.58cm}p{0.58cm}p{0.58cm}p{0.58cm}p{0.58cm}p{0.58cm}}
+1 & 1.5 & 3.5 & 4 & -0.5 & 0 & 1
+\end{array}
+\right)
+\end{align}
 
+Let us then compute the barycenter coordinates of all triangles in arrays 
+{\tt xb} and {\tt yb} of size $N=7$.
+We need to loop over all triangles and for each compute the average of 
+its nodes coordinates:
+\begin{verbatim}
+for iel in range(0,nel):
+    xb[iel]=(x[icon[0,iel]]+x[icon[1,iel]]+x[icon[2,iel]])/3
+    yb[iel]=(y[icon[0,iel]]+y[icon[1,iel]]+y[icon[2,iel]])/3
+\end{verbatim}
+
+The same concepts of course apply in 3D. In the case of tetrahedra then $m=4$ and in the case of hexahedra then $m=8$.
 

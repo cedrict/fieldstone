@@ -174,9 +174,68 @@ inside the terminal without using a text editor. In other words, you can look in
 
 
 
-\item {\color{teal} \bf wget}: to do 
-\item {\color{teal} \bf ssh}:   to do 
-\item {\color{teal} \bf sftp}:   to do 
+\item {\color{teal} \bf wget}: it is a computer program that retrieves content from web servers. 
+It is part of the GNU Project. Its name derives from "World Wide Web" and "get." 
+It supports downloading via HTTP, HTTPS, and FTP.  
+\begin{mdframed}[backgroundcolor=gray!10]
+\begin{verbatim}
+> wget address.of.file.online.on.server
+\end{verbatim}
+\end{mdframed}
+See example of use in Section \ref{ss:1416wget}.
+
+
+\item {\color{teal} \bf ssh}:  This command is necessary to connect to a remote computer from the terminal. 
+By default most Linux computers run a client and server ssh program so that one can connect to 
+any other computer if its address is known (as well as the username and password).
+Here is how I connect to my shrek desktop computer:
+\begin{mdframed}[backgroundcolor=gray!10]
+\begin{verbatim}
+> ssh shrek.geo.uu.nl -Y -l thieulot
+\end{verbatim}
+\end{mdframed}
+The -Y option ensures that I have X11 support. If successful, the prompt of the terminal points
+to the default folder on the remote machine and I can control the remote computer via the command line. 
+Type exit to break the connection.
+
+This is used to log in on remote servers like clusters where large calculations take place. 
+ 
+
+\item {\color{teal} \bf sftp}: allows to get or put files on a remote computer via a secrured connection. By default, SFTP uses the SSH protocol to authenticate and establish a secure connection. Because of this, the same authentication methods are available that are present in SSH.
+\begin{mdframed}[backgroundcolor=gray!10]
+\begin{verbatim}
+> sftp garfield@remote.univ.nl 
+\end{verbatim}
+\end{mdframed}
+This will prompt for the password of the remote machine associated to user garfield.
+If succesful the prompt in the terminal then points to the default folder on the remote computer.
+Once connected simply type exit to break the connection. 
+All shell commands are available: pwd, ls, cd, etc ...
+you can list the contents of the current directory on the local machine using {\tt lls}.
+If we want to download files from our remote host, you can do so using the get command:
+\begin{mdframed}[backgroundcolor=gray!10]
+\begin{verbatim}
+> get remotefile 
+\end{verbatim}
+\end{mdframed}
+If you wish to download an entire folder, simply use 
+\begin{mdframed}[backgroundcolor=gray!10]
+\begin{verbatim}
+> get -r remotefolder 
+\end{verbatim}
+\end{mdframed}
+Conversely, you can transfer files from your local machine onto the remote one:
+\begin{mdframed}[backgroundcolor=gray!10]
+\begin{verbatim}
+> put remotefile 
+\end{verbatim}
+\end{mdframed}
+
+
+ 
+
+
+
 \item {\color{teal} \bf scp}:   to do 
 
 

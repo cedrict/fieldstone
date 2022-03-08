@@ -271,6 +271,51 @@ The recommended value is ${\cal G}=6.67430(15)\cdot 10^{-11} \si{\cubic\meter\pe
 see for instance \url{https://physics.nist.gov/cgi-bin/cuu/Value?bg}.
 
 %---------------------------------------------------------
+\subsubsection{Multipole expansion}
+
+The idea behind the multipole expansion is simple: the denominator in Eq.~\eqref{grav_potential}
+can be rewritten in such a way that it can be expanded as a Taylor series. 
+We have 
+\[
+\frac{1}{|\vec{r}-\vec{r}'|} 
+= \frac{1}{\sqrt{ (\vec{r}-\vec{r}') \cdot (\vec{r}-\vec{r}')   }}
+= \frac{1}{\sqrt{ \vec{r}\cdot\vec{r} - 2 \vec{r}\cdot \vec{r}' + \vec{r}'\cdot \vec{r}'   }}
+= \frac{1}{r^2} \frac{1}{\sqrt{ 1 - 2 \frac{\vec{r}\cdot \vec{r}'}{r^2} + \left(\frac{r'}{r} \right)^2   }}
+\]
+
+The potential can be expanded in a series of Legendre polynomials. 
+\[
+(1-2XZ+Z^2)^{-1/2} = \sum_{n=0}^\infty Z^n P_n(X)
+\]
+valid for $|X|\le 1$ and $|Z|\le q$. The coefficients $P_n$ are the Legendre polynomials of degree $n$.
+
+
+FINISH!
+
+%---------------------------------------------------------
+\subsubsection{Gravitational potential energy}
+
+
+For two pairwise interacting point particles, the gravitational potential energy ${\cal U}$
+is given by 
+\[
+{\cal U} = \frac{-{\cal G} Mm}{R}
+\]
+where $M$ and $m$ are the masses of the two particles, $R$ is the distance between them.
+Close to the Earth's surface, the gravitational field is approximately constant, and the gravitational potential energy of an object reduces to
+\[
+{\cal U} = m g h 
+\]
+where $m$ is the object's mass, $g = {\cal G} M_E/ R_E^2$ 
+is the gravity of Earth, and $h$ is the height of the object's center of mass above a chosen reference level.
+
+
+
+
+
+
+
+%---------------------------------------------------------
 \subsubsection{Let us talk units}
  
 The SI units for (gravity) acceleration are $\si{\metre\per\square\second}$.

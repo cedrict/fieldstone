@@ -1,11 +1,12 @@
-
+\begin{flushright} {\tiny {\color{gray} gravity\_exercises.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 %The JuPyTer notebook is to be found at:
 
 %\url{https://github.com/ashimrijal/uu_gravity_exercises_2020}
 
 
-\subsubsection{Background}
+\subsubsection*{Background}
 
 We have seen that the calculation of the gravity vector and/or the gravity potential 
 for a mass distribution in 3D space is of the form 
@@ -37,18 +38,12 @@ And finally the integral term is simply the volume of the element $V_e$:
 In the end, assuming that the body of interest can be split into many small 
 elements of constant density, the gravity fields at a location $\vec{r}=(x,y,z)$
 can be computed as follows:
-\[
-g_x(x,y,z) = {\cal G} \sum_{e=1}^{N_e} \rho_e V_e  \frac{x-x_e}{|\vec{r}-\vec{r}_e|^3}
-\]
-\[
-g_y(x,y,z) = {\cal G} \sum_{e=1}^{N_e} \rho_e V_e  \frac{y-y_e}{|\vec{r}-\vec{r}_e|^3}
-\]
-\[
-g_z(x,y,z) = {\cal G} \sum_{e=1}^{N_e} \rho_e V_e  \frac{z-z_e}{|\vec{r}-\vec{r}_e|^3}
-\]
-\[
-U(x,y,z) = -{\cal G} \sum_{e=1}^{N_e} \rho_e V_e  \frac{1}{|\vec{r}-\vec{r}_e|}
-\]
+\begin{eqnarray}
+g_x(x,y,z) &=& {\cal G} \sum_{e=1}^{N_e} \rho_e V_e  \frac{x-x_e}{|\vec{r}-\vec{r}_e|^3} \label{eq:gravdiscr1}\\
+g_y(x,y,z) &=& {\cal G} \sum_{e=1}^{N_e} \rho_e V_e  \frac{y-y_e}{|\vec{r}-\vec{r}_e|^3} \label{eq:gravdiscr2}\\
+g_z(x,y,z) &=& {\cal G} \sum_{e=1}^{N_e} \rho_e V_e  \frac{z-z_e}{|\vec{r}-\vec{r}_e|^3} \label{eq:gravdiscr3}\\
+U(x,y,z)   &=& -{\cal G} \sum_{e=1}^{N_e} \rho_e V_e  \frac{1}{|\vec{r}-\vec{r}_e|}      \label{eq:gravdiscr4}
+\end{eqnarray}
 where 
 \[
 |\vec{r}-\vec{r}_e|=\sqrt{ (x-x_e)^2+(y-y_e)^2+(z-z_e)^2   }
@@ -66,6 +61,7 @@ compare these values with the analytical solutions we derived for simple spheric
 {\color{red} All quantities in the code(s) must be expressed in S.I. units, i.e. \si{\metre}, \si{\second}, \si{\kilo\gram}. }
 
 
+
 %........................................
 \subsubsection*{Exercise 1: Full sphere}
 
@@ -80,22 +76,22 @@ partitioned in $N\times N \times N$ cells as shown in the following figure.
 \end{center}
 
 
+Store in {\tt NP} the total number of points as a function of {\tt N}.
 Compute the associated volume {\tt dV} of a point as a function of $R$ and $N$ and  
-compute the size of a cell {\tt h}. Store in {\tt N} the total number of points.
-
+compute the size of a cell {\tt h} as a function of $R$ and $N$. 
 
 \item[(1B)] 
 In the middle of each cell we place a point. Compute and store the coordinates 
 of the $N^3$ points (use $R=6371\si{\kilo\metre}$). Please use 
 arrays {\tt x}, {\tt y} and {\tt z} to store the coordinates.
-Important: these arrays are $N^3$ long because they contain the coordinates of all points (cell centers).\\
+Important: these arrays are $N^3$ long because they contain the coordinates of {\it all} points (cell centers).\\
 Help: draw on paper a $3\times3\times3$ grid. Place the axis system on the plot and explicitely write the arrays 
 for all 27 points. Example:
 \begin{verbatim}
-x1=..... y1=..... z1=.....
-x2=..... y2=..... z2=.....
+x[0]=..... y[1]=..... z[0]=.....
+x[1]=..... y[2]=..... z[1]=.....
+x[2]=..... y[3]=..... z[2]=.....
 ...
-x27=.... y27=.... z27=....
 \end{verbatim}
 Once you have done so, run your code for $N=3$, print the arrays and compare their content with what you 
 have on paper.
@@ -107,13 +103,12 @@ and zero otherwise, store these values in the {\tt rho} array.
 
 \item[(1D)] Fix $N=10$. Compute the total mass of the sphere
 \[
-M_s = \int_V \rho \; dV \simeq \sum_{e} \rho_e V_e
+M_s = \int_V \rho \; dV = \sum_{e} \rho_e V_e
 \] 
-and its volume 
+and its volume\footnote{Note that the sums run over the cells which center lies inside the sphere.}
 \[
-V_s = \int_V \; dV \simeq \sum_{e}  V_e
+V_s = \int_V \; dV = \sum_{e}  V_e.
 \] 
-Note that the sums run over the cells which center lies inside the sphere.
 
 \item[(1E)] Fix $N=10$. Compute the moment of inertia of the sphere 
 with respect to rotation axis $z$ using Eq.~\eqref{eq:momI}. 
@@ -125,15 +120,17 @@ with respect to rotation axis $z$ using Eq.~\eqref{eq:momI}.
 %\]
 %where $d_i$ is the distance of point $i$ to the axis.
 
-\item[(1F)] Repeat the last measurements with different values of $N\in(20,30,40,50,...?)$ .
+\item[(1F)] Repeat the last measurements (1D \& 1E) with different values of $N\in(20,30,40,50,...?)$ .
 For both the mass and moment of inertia report on the relative error as a function of $h$.
 
-\item[(1G)] Compute the coordinates of 9 points situated at $z=10^m$ meters 
-{\it above the north pole} with $m=0,1,2,3,4,5,6,7,8$ and 
+\item[(1G)] Compute the coordinates of 5 points situated at $z=10^m$ meters 
+{\it above the north pole} with $m=0,1,2,3,4$ and 
 store these coordinates in arrays {\tt xm}, {\tt ym} {\tt zm}. 
 
 \item[(1H)] Fix $N=10$ for now. Compute the gravity potential $U$ and acceleration vector 
-components $g_x,g_y,g_z$ at each of these 9 points using Eq.~\eqref{eq:gUexo} 
+components $g_x,g_y,g_z$ at each of these 5 points using Eq.~\eqref{eq:gUexo} (actually its 
+discretised version, i.e. Eqs.~\eqref{eq:gravdiscr1}, \eqref{eq:gravdiscr2}, 
+\eqref{eq:gravdiscr3} and \eqref{eq:gravdiscr4}.
  
 \item[(1I)] Plot the computed quantities as a function of $z$ and plot on 
 the same graphic the analytical values. 
@@ -144,7 +141,7 @@ as a function of $h$. Plot this in log-log scale. Discuss.
 \item[(1K)] Use the {\tt prem\_density} function to assign the PREM \cite{dzan81} density to the points. 
 Compute the mass of the planet with this 
 new density distribution and compare it with the mass of the Earth. Compute the gravity at the surface.
-hint: use a large(r) $N$ for good results. How long are you willing to wait. 
+hint: use a large(r) $N$ for good results. How long are you willing to wait? 
 
 \item[(1L)] Bonus: time how long it takes to compute $U,gx,gy,gz$ at a single location for $N=20$. Report these times. 
 Can you think of a way (and implement it) to arrive at the same results in less time?  
@@ -170,7 +167,7 @@ with steps of $R/100$.
 %....................................................
 \subsubsection*{Exercise 3: Full sphere - revisited}
 
-...NOT for 2021...
+...NOT for 2022...
 
 We are now going to re-do the first exercise but this time we do not want any point outside of the sphere. 
 We shall therefore use the spherical coordinates (see Section~\ref{ss:sphercoord}).
@@ -193,9 +190,9 @@ these in arrays {\tt r}, {\tt theta}, {\tt phi}.
 \subsubsection*{Report}
 
 The report should contain results from exercises 1 and 2. I expect one pdf file per pair of students
-(maximum 10 pages) and the corresponding python file(s). 
+(maximum 10 pages) and the corresponding python file(s), all delivered in a single zip file.
 Your report does not have to follow questions 1A to 1K in sequential order. 
-Please send all files in a single email per {\bf April 4th, 2021, 23:59}. 
+Please send all files in a single email per {\bf April 3rd, 2022, 23:59}. 
 
 You should have the following guidelines in mind when writing your report:
 \begin{itemize}
@@ -205,14 +202,14 @@ and numbers present ?
 \item Introduction: is the context clear? Are the methods presented?
 \item Figures: Are they properly numbered? captioned? all figures must be referenced in the text. 
 Are they of good quality? are they readable? are all axis labelled?
-\item Text: Overall quality of the language. Are there still typos ? Do all sentence make sense?
+\item Text: Overall quality of the language. Are there still typos ? Do all sentences make sense?
 \item If results are wrong, was an attempt made to document/explain the (probable) source
 of the problem?
 \item Discussion: are the results properly discussed, analyzed? are potential problems, 
 errors, limitations discussed?
 \item Conclusion: Are the report's findings summarized and when applicable generalized?
 \end{itemize}
-
+For concrete examples of what not to do, check Appendix~\ref{app:grading}.
 
 
 %what is the resolution one would need to represent the ellipsity of the Earth ?
