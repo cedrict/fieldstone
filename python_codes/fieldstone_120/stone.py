@@ -33,8 +33,8 @@ def viscosity(x,y):
 Lx=1
 Ly=1
 
-nelx=32
-nely=32
+nelx=6
+nely=6
 
 left_bc  ='no_slip'
 right_bc ='no_slip'
@@ -44,13 +44,13 @@ top_bc   ='no_slip'
 ndofV=2
 ndofP=1
 
-Vspace='P1'
-Pspace='P0'
+Vspace='Q4'
+Pspace='Q3'
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
 
-nqpts=3
+nqpts=6
 
 #--------------------------------------------------------------------
 # mesh: node layout and connectivity
@@ -72,6 +72,16 @@ NfemP=NP*ndofP
 Nfem=NfemV+NfemP
 
 print("mesh setup: %.3f s" % (timing.time() - start))
+
+#--------------------------------------------------------------------
+
+print ('NV   =',NV)
+print ('NP   =',NP)
+print ('nel  =',nel)
+print ('NfemV=',NfemV)
+print ('NfemP=',NfemP)
+print ('Nfem =',Nfem)
+print("-----------------------------")
 
 #--------------------------------------------------------------------
 # boundary conditions setup 
@@ -187,7 +197,7 @@ for iel in range(0,nel):
 print("build FE matrix: %.3f s" % (timing.time() - start))
 
 
-plt.spy(A_sparse)
+plt.spy(A_sparse,markersize=1)
 plt.savefig('matrix_'+Vspace+'_'+Pspace+'.pdf', bbox_inches='tight')
 
 #------------------------------------------------------------------------------
@@ -210,6 +220,7 @@ p=sol[NfemV:Nfem]
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
+print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))
 

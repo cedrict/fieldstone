@@ -5,6 +5,8 @@ import numpy as np
 
 def cartesian_mesh(Lx,Ly,nelx,nely,element):
 
+    mtype=0
+
     hx=Lx/nelx
     hy=Ly/nely
     nel=nelx*nely
@@ -122,8 +124,6 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                icon2[3,counter]=i+(j+1)*(2*nelx+1)
                counter += 1
 
-
-
     #---------------------------------
     elif element=='Q3':
        N=(3*nelx+1)*(3*nely+1)
@@ -195,6 +195,35 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                counter += 1
 
 
+    #---------------------------------
+    elif element=='P0' and mtype==0:
+       nel*=2
+       N=nel
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64)
+       counter = 0 
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               x[counter]=(i+1/3)*hx #A
+               y[counter]=(j+1/3)*hy
+               counter += 1
+               x[counter]=(i+2/3)*hx #B
+               y[counter]=(j+2/3)*hy
+               counter += 1
+
+       icon =np.zeros((1,nel),dtype=np.int32)
+       counter = 0 
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               icon[0,counter]=counter
+               counter += 1
+               icon[0,counter]=counter
+               counter += 1
+
+       icon2 =np.zeros((1,nel),dtype=np.int32)
+       icon2[:]=icon[:]
+
+
 
     #---------------------------------
     #
@@ -206,7 +235,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
     # |/  A  \|
     # 0-------1
 
-    elif element=='P0':
+    elif element=='P0' and mtype==2:
        nel*=4
        N=nel
        x = np.empty(N,dtype=np.float64) 
@@ -242,9 +271,42 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
        icon2 =np.zeros((1,nel),dtype=np.int32)
        icon2[:]=icon[:]
 
+    #---------------------------------
+    elif element=='P1' and mtype==0:
+       nel*=2
+       N=(nelx+1)*(nely+1)
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64)
+       counter = 0 
+       for j in range(0,nely+1):
+           for i in range(0,nelx+1):
+               x[counter]=i*hx
+               y[counter]=j*hy
+               counter += 1
+       icon =np.zeros((3,nel),dtype=np.int32)
+       counter = 0 
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               inode0=i+j*(nelx+1)
+               inode1=i+1+j*(nelx+1)
+               inode2=i+1+(j+1)*(nelx+1)
+               inode3=i+(j+1)*(nelx+1)
+               icon[0,counter]=inode0
+               icon[1,counter]=inode1
+               icon[2,counter]=inode3
+               counter += 1
+               icon[0,counter]=inode2
+               icon[1,counter]=inode3
+               icon[2,counter]=inode1
+               counter += 1
+
+       icon2 =np.zeros((3,nel),dtype=np.int32)
+       icon2[:]=icon[:]
 
 
-    elif element=='P1':
+
+    #---------------------------------
+    elif element=='P1' and mtype==2:
        N=(nelx+1)*(nely+1)+nel
        nel*=4
        x = np.empty(N,dtype=np.float64) 
@@ -293,6 +355,56 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
        icon2 =np.zeros((3,nel),dtype=np.int32)
        icon2[:]=icon[:]
 
+    #---------------------------------
+    #
+    # 3--6--2
+    # |\  B |
+    # 7  8  5
+    # | A  \|
+    # 0--4--1
+
+    elif element=='P2':
+       nel*=2
+       N=(2*nelx+1)*(2*nely+1)
+       nnx=2*nelx+1
+       nny=2*nely+1
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64)
+       counter = 0
+       for j in range(0,nny):
+           for i in range(0,nnx):
+               x[counter]=i*hx/2.
+               y[counter]=j*hy/2.
+               counter += 1
+           #end for
+       #end for
+       icon=np.zeros((6,nel),dtype=np.int32)
+       counter = 0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               #A
+               icon[0,counter]=(i)*2+1+(j)*2*nnx -1       #0
+               icon[1,counter]=(i)*2+3+(j)*2*nnx -1       #1
+               icon[2,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+               icon[3,counter]=(i)*2+2+(j)*2*nnx -1       #4
+               icon[4,counter]=(i)*2+2+(j)*2*nnx+nnx -1   #8
+               icon[5,counter]=(i)*2+1+(j)*2*nnx+nnx -1   #7
+               counter += 1
+               #B
+               icon[0,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+               icon[1,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+               icon[2,counter]=(i)*2+3+(j)*2*nnx -1       #1
+               icon[3,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
+               icon[4,counter]=(i)*2+2+(j)*2*nnx+nnx -1   #8
+               icon[5,counter]=(i)*2+3+(j)*2*nnx+nnx -1   #5
+               counter += 1
+           #end for
+       #end for
+
+       icon2 =np.zeros((3,nel),dtype=np.int32)
+       icon2[0:3,:]=icon[0:3,:]
+
+
     else:
        exit("FEtools:cartesian_mesh: space unknown ")
 
@@ -311,7 +423,7 @@ def export_connectivity_array_to_ascii(x,y,icon,filename):
     m,nel=np.shape(icon)
     iconfile=open(filename,"w")
     for iel in range (0,nel):
-        iconfile.write('--------'+str(iel)+'-------\n')
+        iconfile.write('--------elt:'+str(iel)+'-------\n')
         for k in range(0,m):
             iconfile.write("node "+str(k)+' | '+str(icon[k,iel])+" at pos. "+str(x[icon[k,iel]])+','+str(y[icon[k,iel]])+'\n')
 
