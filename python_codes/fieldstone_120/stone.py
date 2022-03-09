@@ -28,13 +28,28 @@ def viscosity(x,y):
     return 1
 
 #------------------------------------------------------------------------------
+# analytical solution
+
+def velocity_x(x,y):
+    val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+    return val 
+
+def velocity_y(x,y):
+    val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    return val 
+
+def pressure(x,y):
+    val=x*(1.-x)-1./6.
+    return val 
+
+#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
 Lx=1
 Ly=1
 
-nelx=6
-nely=6
+nelx=16
+nely=16
 
 left_bc  ='no_slip'
 right_bc ='no_slip'
@@ -44,8 +59,8 @@ top_bc   ='no_slip'
 ndofV=2
 ndofP=1
 
-Vspace='Q4'
-Pspace='Q3'
+Vspace='Q2'
+Pspace='Q1'
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
@@ -62,26 +77,28 @@ mP=FE.NNN_m(Pspace)
 
 nqel,qcoords_r,qcoords_s,qweights=Q.quadrature(Vspace,nqpts)
 
-NV,nel,xV,yV,iconV,iconV2=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
-NP,nel,xP,yP,iconP,iconP2=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Pspace)
-
+NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
+NP,nel,xP,yP,iconP=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Pspace)
 
 nq=nqel*nel
 NfemV=NV*ndofV
 NfemP=NP*ndofP
 Nfem=NfemV+NfemP
 
-print("mesh setup: %.3f s" % (timing.time() - start))
-
-#--------------------------------------------------------------------
-
-print ('NV   =',NV)
-print ('NP   =',NP)
-print ('nel  =',nel)
-print ('NfemV=',NfemV)
-print ('NfemP=',NfemP)
-print ('Nfem =',Nfem)
 print("-----------------------------")
+print("           daSTONE           ")
+print("-----------------------------")
+print ('Vspace =',Vspace)
+print ('Pspace =',Pspace)
+print ('NV     =',NV)
+print ('NP     =',NP)
+print ('nel    =',nel)
+print ('NfemV  =',NfemV)
+print ('NfemP  =',NfemP)
+print ('Nfem   =',Nfem)
+print("-----------------------------")
+
+print("mesh setup: %.3f s" % (timing.time() - start))
 
 #--------------------------------------------------------------------
 # boundary conditions setup 
@@ -137,6 +154,9 @@ N_mat = np.zeros((3,ndofP*mP),dtype=np.float64)
     
 xq = np.zeros(nq,dtype=np.float64)
 yq = np.zeros(nq,dtype=np.float64)
+uq = np.zeros(nq,dtype=np.float64)
+vq = np.zeros(nq,dtype=np.float64)
+pq = np.zeros(nq,dtype=np.float64)
 
 counterq=0
 
@@ -196,7 +216,6 @@ for iel in range(0,nel):
 
 print("build FE matrix: %.3f s" % (timing.time() - start))
 
-
 plt.spy(A_sparse,markersize=1)
 plt.savefig('matrix_'+Vspace+'_'+Pspace+'.pdf', bbox_inches='tight')
 
@@ -225,16 +244,53 @@ print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 print("split vel into u,v: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
+# compute vrms
+#------------------------------------------------------------------------------
 
-Tools.export_mesh_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu')
-Tools.export_mesh_to_vtu(xV,yV,iconV2,Vspace,'meshV2.vtu')
-Tools.export_mesh_to_ascii(xV,yV,'meshV.ascii')
-Tools.export_mesh_to_ascii(xP,yP,'meshP.ascii')
-Tools.export_swarm_to_vtu(xV,yV,'meshV_nodes.vtu')
-Tools.export_swarm_to_vtu(xP,yP,'meshP_nodes.vtu')
+errv=0
+errp=0
+vrms=0
+counterq=0
+for iel in range(0,nel):
+    for iq in range(0,nqel):
+        rq=qcoords_r[iq]
+        sq=qcoords_s[iq]
+        weightq=qweights[iq]
+        NNNV=FE.NNN(rq,sq,Vspace)
+        dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
+        dNNNVds=FE.dNNNds(rq,sq,Vspace)
+        NNNP=FE.NNN(rq,sq,Pspace)
+        jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+        uq[counterq]=NNNV.dot(u[iconV[0:mV,iel]])
+        vq[counterq]=NNNV.dot(v[iconV[0:mV,iel]])
+        pq[counterq]=NNNP.dot(p[iconP[0:mP,iel]])
+        vrms+=(uq[counterq]**2+vq[counterq]**2)*weightq*jcob
+        errv+=(uq[counterq]-velocity_x(xq[counterq],yq[counterq]))**2*weightq*jcob+\
+              (vq[counterq]-velocity_y(xq[counterq],yq[counterq]))**2*weightq*jcob
+        errp+=(pq[counterq]-pressure(xq[counterq],yq[counterq]))**2*weightq*jcob
+        counterq+=1
 
-Tools.export_mesh_to_ascii(xq,yq,'meshq.ascii')
-Tools.export_swarm_to_vtu(xq,yq,'meshq.vtu')
+vrms=np.sqrt(vrms/(Lx*Ly))
+errv=np.sqrt(errv)
+errp=np.sqrt(errp)
+
+print("     -> nel= %6d ; vrms= %.8f " %(nel,vrms))
+print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
+
+#------------------------------------------------------------------------------
+
+Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'mesh.vtu')
+#Tools.export_mesh_to_vtu(xV,yV,iconV2,Vspace,'meshV2.vtu')
+
+Tools.export_swarm_to_ascii(xV,yV,'Vnodes.ascii')
+Tools.export_swarm_to_ascii(xP,yP,'Pnodes.ascii')
+Tools.export_swarm_to_vtu(xV,yV,'Vnodes.vtu')
+Tools.export_swarm_to_vtu(xP,yP,'Pnodes.vtu')
+
+Tools.export_swarm_to_ascii(xq,yq,'Qnodes.ascii')
+Tools.export_swarm_to_vtu(xq,yq,'Qnodes.vtu')
+Tools.export_swarm_vector_to_vtu(xq,yq,uq,vq,'Qnodes_vel.vtu')
+Tools.export_swarm_scalar_to_vtu(xq,yq,pq,'Qnodes_p.vtu')
 
 Tools.export_swarm_vector_to_vtu(xV,yV,u,v,'solution_velocity.vtu')
 Tools.export_swarm_scalar_to_vtu(xP,yP,p,'solution_pressure.vtu')

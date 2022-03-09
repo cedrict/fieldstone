@@ -28,8 +28,6 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
            for i in range(0,nelx):
                icon[0,counter]=counter
                counter += 1
-       icon2 =np.zeros((1,nel),dtype=np.int32)
-       icon2[:]=icon[:]
 
     #---------------------------------
     elif element=='Q1':
@@ -51,8 +49,6 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                icon[2,counter]=i+1+(j+1)*(nelx+1)
                icon[3,counter]=i+(j+1)*(nelx+1)
                counter += 1
-       icon2 =np.zeros((4,nel),dtype=np.int32)
-       icon2[:]=icon[:]
 
     #---------------------------------
     elif element=='Q1+':
@@ -80,8 +76,6 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                icon[3,counter]=i+(j+1)*(nelx+1)
                icon[4,counter]=(nelx+1)*(nely+1)+counter
                counter += 1
-       icon2=np.zeros((4,nel),dtype=np.int32)
-       icon2[0:4,0:nel]=icon[0:4,0:nel]
 
     #---------------------------------
     elif element=='Q2':
@@ -114,15 +108,6 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                counter += 1
            #end for
        #end for
-       icon2 =np.zeros((4,4*nel),dtype=np.int32)
-       counter = 0 
-       for j in range(0,2*nely):
-           for i in range(0,2*nelx):
-               icon2[0,counter]=i+j*(2*nelx+1)
-               icon2[1,counter]=i+1+j*(2*nelx+1)
-               icon2[2,counter]=i+1+(j+1)*(2*nelx+1)
-               icon2[3,counter]=i+(j+1)*(2*nelx+1)
-               counter += 1
 
     #---------------------------------
     elif element=='Q3':
@@ -149,15 +134,6 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                        icon[counter2,counter]=i*3+l+j*3*nnx+nnx*k
                        counter2+=1
                counter += 1 
-       icon2 =np.zeros((4,9*nel),dtype=np.int32)
-       counter = 0 
-       for j in range(0,3*nely):
-           for i in range(0,3*nelx):
-               icon2[0,counter]=i+j*(3*nelx+1)
-               icon2[1,counter]=i+1+j*(3*nelx+1)
-               icon2[2,counter]=i+1+(j+1)*(3*nelx+1)
-               icon2[3,counter]=i+(j+1)*(3*nelx+1)
-               counter += 1
 
     #---------------------------------
     elif element=='Q4':
@@ -184,16 +160,6 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                        icon[counter2,counter]=i*4+l+j*4*nnx+nnx*k
                        counter2+=1
                counter += 1 
-       icon2 =np.zeros((4,16*nel),dtype=np.int32)
-       counter = 0 
-       for j in range(0,4*nely):
-           for i in range(0,4*nelx):
-               icon2[0,counter]=i+j*(4*nelx+1)
-               icon2[1,counter]=i+1+j*(4*nelx+1)
-               icon2[2,counter]=i+1+(j+1)*(4*nelx+1)
-               icon2[3,counter]=i+(j+1)*(4*nelx+1)
-               counter += 1
-
 
     #---------------------------------
     elif element=='P0' and mtype==0:
@@ -219,11 +185,6 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                counter += 1
                icon[0,counter]=counter
                counter += 1
-
-       icon2 =np.zeros((1,nel),dtype=np.int32)
-       icon2[:]=icon[:]
-
-
 
     #---------------------------------
     #
@@ -268,8 +229,6 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                icon[0,counter]=counter
                counter += 1
 
-       icon2 =np.zeros((1,nel),dtype=np.int32)
-       icon2[:]=icon[:]
 
     #---------------------------------
     elif element=='P1' and mtype==0:
@@ -299,11 +258,6 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                icon[1,counter]=inode3
                icon[2,counter]=inode1
                counter += 1
-
-       icon2 =np.zeros((3,nel),dtype=np.int32)
-       icon2[:]=icon[:]
-
-
 
     #---------------------------------
     elif element=='P1' and mtype==2:
@@ -352,9 +306,6 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                icon[2,counter]=inode4
                counter += 1
 
-       icon2 =np.zeros((3,nel),dtype=np.int32)
-       icon2[:]=icon[:]
-
     #---------------------------------
     #
     # 3--6--2
@@ -401,19 +352,15 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
            #end for
        #end for
 
-       icon2 =np.zeros((3,nel),dtype=np.int32)
-       icon2[0:3,:]=icon[0:3,:]
-
-
     else:
        exit("FEtools:cartesian_mesh: space unknown ")
 
-    return N,nel,x,y,icon,icon2
+    return N,nel,x,y,icon
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def export_mesh_to_ascii(x,y,filename):
+def export_swarm_to_ascii(x,y,filename):
     np.savetxt(filename,np.array([x,y]).T,header='# x,y')
 
 #------------------------------------------------------------------------------
@@ -430,51 +377,78 @@ def export_connectivity_array_to_ascii(x,y,icon,filename):
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def export_mesh_to_vtu(x,y,icon,space,filename):
+def export_elements_to_vtu(x,y,icon,space,filename):
     N=np.size(x)
     m,nel=np.shape(icon)
-    if m==3 or m==4: 
-       vtufile=open(filename,"w")
-       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-       vtufile.write("<UnstructuredGrid> \n")
-       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(N,nel))
-       #####
-       vtufile.write("<Points> \n")
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-       for i in range(0,N):
-           vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("</Points> \n")
-       #####
-       vtufile.write("<Cells>\n")
-       #--
-       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-       for iel in range (0,nel):
-           if m==3:
-              vtufile.write("%d %d %d \n" %(icon[0,iel],icon[1,iel],icon[2,iel]))
-           if m==4:
-              vtufile.write("%d %d %d %d \n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel]))
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%d \n" %((iel+1)*m))
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-       for iel in range (0,nel):
-           if m==3:
-              vtufile.write("%d \n" %5)
-           else:
-              vtufile.write("%d \n" %9)
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("</Cells>\n")
-       #####
-       vtufile.write("</Piece>\n")
-       vtufile.write("</UnstructuredGrid>\n")
-       vtufile.write("</VTKFile>\n")
-       vtufile.close()
+ 
+    if space=='P0' or space=='Q0':
+       return
+
+    if space=='Q1' or space=='Q1+' or space=='Q2':
+       node0=0
+       node1=1
+       node2=2
+       node3=3
+       m=4
+    if space=='Q3':
+       node0=0
+       node1=3
+       node2=12
+       node3=15
+       m=4
+    if space=='Q4':
+       node0=0
+       node1=4
+       node2=20
+       node3=24
+       m=4
+    if space=='P1' or space=='P1+' or space=='P2' or space=='P2+':
+       node0=0
+       node1=1
+       node2=2
+       m=3       
+
+    vtufile=open(filename,"w")
+    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+    vtufile.write("<UnstructuredGrid> \n")
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(N,nel))
+    #####
+    vtufile.write("<Points> \n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+    for i in range(0,N):
+        vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Points> \n")
+    #####
+    vtufile.write("<Cells>\n")
+    #--
+    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+    for iel in range (0,nel):
+        if m==3:
+           vtufile.write("%d %d %d \n" %(icon[node0,iel],icon[node1,iel],icon[node2,iel]))
+        if m==4:
+           vtufile.write("%d %d %d %d \n" %(icon[node0,iel],icon[node1,iel],icon[node2,iel],icon[node3,iel]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%d \n" %((iel+1)*m))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+    for iel in range (0,nel):
+        if m==3:
+           vtufile.write("%d \n" %5)
+        else:
+           vtufile.write("%d \n" %9)
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("</Cells>\n")
+    #####
+    vtufile.write("</Piece>\n")
+    vtufile.write("</UnstructuredGrid>\n")
+    vtufile.write("</VTKFile>\n")
+    vtufile.close()
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
