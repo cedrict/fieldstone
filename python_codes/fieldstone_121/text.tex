@@ -71,6 +71,8 @@ to allow for strain weakening. What form should the strain weakening take?
 
 
 \newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Project rheoology: Strain localisation a la \textcite{gupr14}}
 
 The deformation mechanism equations are from \textcite{gupr14} (2014):
 \[
@@ -78,13 +80,139 @@ The deformation mechanism equations are from \textcite{gupr14} (2014):
 \]
 with
 \begin{eqnarray}
-\dot\varepsilon_{dsl} &=& A_{dsl} \exp \left(-\frac{Q_{dsl}}{RT} \right)  \tau^{n_{dsl}}  \\
-\dot\varepsilon_{dif} &=& A_{dif} \exp    \\
-\dot\varepsilon_{gbs} &=& A_{gbs} \exp    \\
-\dot\varepsilon_{exp} &=& A_{exp} \exp    
+\dot\varepsilon_{dsl}&=&A_{dsl}\exp\left(-\frac{Q_{dsl}}{RT} \right) \tau^{n_{dsl}}  \\
+\dot\varepsilon_{dif}&=&A_{dif}\exp\left(-\frac{Q_{dif}}{RT} \right) \tau^{n_{dif}} d^{m_{dif}} \\
+\dot\varepsilon_{gbs}&=&A_{gbs}\exp\left(-\frac{Q_{gbs}}{RT} \right) \tau^{n_{gbs}} d^{m_{gbs}} \\
+\dot\varepsilon_{exp}&=&A_{exp}\exp\left[-\frac{Q_{exp}}{RT} \left(1 -\frac{\tau}{\tau_p}\right)^{n_{exp}} \right]   
+\end{eqnarray}
+where $d$ is the grain size, $m$ is the grain size exponent, $\tau_p$ is the Peierls stress defined
+for low-temperature plasticity.
+
+We will come back to how the strain rate partitioning is done later. 
+Assuming the strain rate known (as well as the temperature) these relationships can 
+be reversed so as to give the stress as a function of strain rate and temperature:
+\begin{eqnarray}
+\tau &=& A_{dsl}^{-1/n_{dsl}} \dot\varepsilon_{dsl}^{1/n_{dsl}}  \exp \left(\frac{Q_{dsl}}{n_{dsl} RT} \right)  \\
+\tau &=& A_{dif}^{-1}         \dot\varepsilon_{dif}              \exp \left(\frac{Q_{dsl}}{        RT} \right) d^{-mdif/ndif} \\
+\tau &=& A_{gbs}^{-1}         \dot\varepsilon_{gbs}              \exp \left(\frac{Q_{gbs}}{        RT} \right) d^{-mgbs/ngbs} \\
+\tau &=& A_{exp}
+%\dot\varepsilon_{exp}&=&A_{exp}\exp\left[-\frac{Q_{exp}}{RT} \left(1 -\frac{\tau}{\tau_p}\right)^{n_{exp}} \right]   
 \end{eqnarray}
 
 
+\begin{center}
+\begin{tabular}{lllllll}
+\hline
+& $A$ & $Q$ & $n$ & $m$ & $\tau_p$ & ref. \\
+\hline\hline
+ & $\si{\mega\pascal^{-n}\per\second}$ & $\si{\kilo\joule\per\mole}$ &&& \si{\mega\pascal}?\\
+\textbf{Mantle} (olivine)  &  \\ 
+Dislocation       & $1.1\cdot10^5$    &530& 3.5 & -  &-   &\cite{hiko03}\\
+Diffusion         & $3.98\cdot 10^7$  &370& 1   & 3  &-   &\\
+Dry GBS           & $6.5\cdot10^3$    &400& 3.5 & 2  &-   &\\
+Dry GBS           & $6.31\cdot10^4$   &445& 2.9 & 0.7&-   &\cite{hazk11}\\
+Exponential       & $5.7\cdot10^{11}$ &535& 2   & -  &8500&\cite{goet78}\\
+\hline
+\textbf{Crust} (quartz) &\\
+Dislocation (weak)   &  $3.2\cdot10^{-4}$    & 154 & 2.3&- & - & \cite{kikr87}\\
+Dislocation (strong) &  $6.31\cdot 10^{-12}$ & 135 & 4&- & - & \cite{hitd01}\\
+\hline
+\end{tabular}
+\end{center}
 
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_121/images/gupr14a}
+\includegraphics[width=7cm]{python_codes/fieldstone_121/images/gupr14b}\\
+{\captionfont Taken from \textcite{gupr14} (2014). Olivine deformation maps 
+(shear stress vs. mean grain size) at a constant strain rate ($10^{-15}~\si{\per\second}$) 
+showing the four deformation mechanisms that compete to control the mantle rheology: 
+low-temperature plasticity (exponential creep), dislocation creep, disGBS
+and diffusion creep. Iso-temperature curves are provided to show stress/grain sizes for
+temperatures ranging from 1000 to 400~\si{\celsius}. 
+A) deformation map including the disGBS
+flow law from \textcite{hiko03} (2003); 
+B) deformation map including the disGBS flow law from \textcite{hazk11} (2011). 
+Hypotheses for the recrystallized grain size are either
+equilibrium (at the boundary between grain size sensitive and grain size insensitive
+creeps, thick dashed line; de Bresser et al., 1998) or experimentally constrained paleo-
+piezometer (thin dashed line; Van der Wal et al., 1993). Values of the ductile flow laws
+are given in the Table above}
+\end{center}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Project inclusion}
+
+The domain is $1~\si{\cm}$ thick. It contains two materials:
+\begin{itemize}
+\item material 1: ab $A=$, $n=$, $Q=$ (the matrix)
+\item material 2: cpx $A=$, $n=$, $Q=$ (the inclusion)
+\end{itemize}
+The effective viscosity is computed assuming a dislocation creep mechanism
+in which pressure dependence has been removed:
+\[
+\eta_{eff} = A^{-1/n} \dot{\varepsilon}^{-1+1/n} \exp\left( \frac{Q}{nRT}\right)
+\]
+The temperature is assumed to be constant in the domain, i.e. $T=T_{background}$.
+Boundary conditions are $\vec{\upnu}=(+u_0,0)$ on the top, $\vec{\upnu}=(-u_0,0)$ on the 
+bottom, and $v=0$ on the left and right boundaries. We thereby obtain a flow 
+that is parallel to the $x$-axis. $u_0$ is set so that the strain rate is $10^{-15}~\si{\per\second}$.
+
+A single inclusion of radius $R_i$ is placed in the middle of the domain.
+
+The particle in cell technique is used here in combination with 
+periodic boundary conditions in the horizontal direction.
+Viscosity is computed on each particle and then these particle-based 
+viscosities are projected onto the quadrature points (note: many options to 
+explore here - elemental averaging is used for now). 
+Because the viscosity depends on the strain rate, this makes the equations 
+to be solved nonlinear. We deal with this by resorting to Picard iterations. 
+Nonlinear iterations stop when a given tolerance ({\tt tol}) is reached or when the 
+allowed maximum number of iterations is reached ({\tt niter}).
+
+Time stepping is implemented and the value of the timestep $\delta t$ is obtained 
+by means of a CFL condition, controlled by the CFL coefficient {\tt CFL\_nb} which 
+should remain somewhere between 0 and 0.5. For simplicity a first order Euler scheme is implemented 
+for the advection of these particles . 
+
+\vspace{1cm}
+
+FUTUR stuff:
+Following \textcite{begu18} (2018), we 
+express pore fluid pressure variations using Darcy’s law and the fluid mass 
+conservation (Gratier et al., 2003) leading to 
+\[
+\phi_m C \frac{\partial P_f}{\partial t}
++\frac{\partial \phi_m}{\partial t}
+= 
+\frac{\partial}{\partial x} K \frac{\partial P_f}{\partial x} + F
+\]
+where $\phi_m$ is the mean porosity, $C$ is the mean matrix-fluid compressibility, 
+$t$ is time, $x$ is the distance across the
+shear zone, $K$ is the permeability, and $F$ is the fluid pumping parameter. 
+We relate porosity and permeability following \textcite{skre16} (2016):
+\[
+K = K_0 \left( \frac{\phi}{\phi_0} \right)^{\alpha_k}
+\]
+where $K_0$ is the permeability at a reference porosity $\phi_0$ 
+and $\alpha_k$ is the permeability exponent
+(set here to 3, see \textcite{skre16} 2016)
+
+Observations on midcrustal granitic shear zones show that porosity concentrates
+along grain boundaries and decreases with the distance to the core of the shear zone (Fusseis et al., 2009).
+Therefore, we assume that porosity is inversely proportional to grain size (see supporting information S2).
+
+Finally, we model the enhancement of fluid pumping by ductile deformation as
+\[
+\dot{F} = \phi_f F \dot{\varepsilon}
+\]
+where $F$ is the fluid pumping and $\phi_F$ is the kinematic of the fluid pumping. 
+The strain rate-dependent fluid pumping assumption is required to describe both strong 
+fluid circulation in the core of the shear zone and nearly no fluid circulation at 
+the rim. We set the kinematic of fluid pumping $\phi_F$ to $7\cdot10^4$ in order to have a 
+characteristic time of fluid pumping of 5,000 days (~14 years). 
+Note that a lower fluid pumping rate inhibits strain
+localization described below while a larger fluid pumping rate implies numerical instabilities.
 
 
