@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 
 def quadrature(space,nqperdim):
 
-    if space=='Q1' or space=='Q2' or space=='Q3' or space=='Q4' or space=='Q1+':
+    if space=='Q1' or space=='Q2' or space=='Q2s' or space=='Q3' or space=='Q4' or\
+       space=='Q1+' or space=='DSSY1' or space=='DSSY2' or space=='RT1' or space=='RT2':
        coords=qcoords_1D(nqperdim)
        weights=qweights_1D(nqperdim)
        nq=nqperdim**2 
@@ -33,9 +34,7 @@ def quadrature(space,nqperdim):
           val_r[0]=1/3 ; val_s[0]=1/3 ; val_w[0]=1/2
 
        if nq==2: 
-          val_r[:]=0
-          val_s[:]=0
-          val_w[:]=0
+          val_r[:]=0 ; val_s[:]=0 ; val_w[:]=0
 
        if nq==3: #quadratic 2nd order
           val_r[0]=1/6 ; val_s[0]=1/6 ; val_w[0]=1/3/2
@@ -49,9 +48,7 @@ def quadrature(space,nqperdim):
           val_r[3]=3/5 ; val_r[3]=1/5 ; val_w[3]= 25/48
 
        if nq==5:
-          val_r[:]=0
-          val_s[:]=0
-          val_w[:]=0
+          val_r[:]=0 ; val_s[:]=0 ; val_w[:]=0
 
        if nq==6: #4th order
           val_r[0]=0.091576213509771 ; val_s[0]=0.091576213509771 ; val_w[0]=0.109951743655322/2.0 
@@ -306,10 +303,11 @@ def visualise_quadrature_points(space,nqpts):
     plt.scatter(r,s,color='teal',s=10)
     plt.grid(color = 'gray', linestyle = '--', linewidth = 0.25)
     plt.xlabel('r')
-    plt.xlabel('s')
+    plt.ylabel('s')
     plt.title(space)
 
-    if space=='Q1' or space=='Q2' or space=='Q3' or space=='Q4' or space=='Q1+':
+    if space=='Q1' or space=='Q2' or space=='Q3' or space=='Q4' or space=='Q1+' or\
+       space=='DSSY1' or space=='DSSY2' or space=='RT1' or space=='RT2' or space=='Q2s':
        plt.xlim([-1.1,+1.1])
        plt.ylim([-1.1,+1.1])
        plt.plot([-1,1,1,-1,-1],[-1,-1,1,1,-1],color='teal',linewidth=2)

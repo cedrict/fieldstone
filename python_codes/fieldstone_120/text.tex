@@ -1,4 +1,15 @@
 
+Boundary conditions of this exercise
+\begin{itemize}
+\item two-dimensional
+\item Cartesian domain
+\item Continuous Galerkin method
+\item most of commonly used elements 
+\item Dirichlet boundary conditions
+\end{itemize}
+
+
+
 The idea here is to create a library of basis functions and quadrature rules, as well as 
 other FE-related tools so as to be able to write much more compact FE codes. 
 
@@ -66,28 +77,176 @@ $Q_4$     & 25  &   &    \\
 \hline
 \end{tabular}
 
-
-\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/Q1_nodes}
-\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/Q1+_nodes}
-\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/Q2_nodes}
-\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/Q3_nodes}
-\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/Q4_nodes}
-
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q1_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q1+_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q2_nodes}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q2s_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q3_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q4_nodes}\\
+\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/RT1_nodes}
+\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/RT2_nodes}
+\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/DSSY1_nodes}
+\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/DSSY2_nodes}\\
 \includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/P1_nodes}
 \includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/P1+_nodes}
 \includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/P2_nodes}
 \includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/P2+_nodes}
 \includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/P3_nodes}
+\end{center}
 
-mesher: Q0,Q1,Q2,Q3,Q4, P0,P1,P2   missing P1+, P2+, Q1+
+mesher: Q0,Q1,Q2,Q3,Q4, P0,P1,P2   missing P1+, P2+
 
-\begin{tabular}{ccccccccccc}
+\begin{tabular}{ccccccccccccc}
       & Q1P0 & Q1Q1 & Q2Q1 & Q3Q2 & Q4Q3 & Q1+Q1 & P1P0 & P2P1 & P3P2 & P2+P1 & P1+P1 \\
 \hline
-areas  &  &&&&&&&&& \\ 
+areas  & ok & & ok & ok &&&&&& \\ 
 D\&H   &  \\
 errors &  \\
 vrms   &  \\
 \hline
 \end{tabular}
+
+
+%-----------------------------------------------------------------------------
+\section*{Finite element pairs for the Stokes equation}
+
+\begin{itemize}
+\item $Q_1\times Q_0$: see Section~\ref{ss:}
+\item $Q_2\times Q_1$: see Section~\ref{ss:}
+\item $Q_2\times P_{-1}$: see Section~\ref{ss:}
+\item $Q_3\times Q_2$: see Section~\ref{ss:}
+\item $Q_4\times Q_3$: see Section~\ref{ss:}
+\item $Q_1^+\times Q_1$: Quadrilateral mini, see Section~\ref{ss:}
+\item $Q_2^{(8)}\times Q_1$: Serendipity, see Section~\ref{ss:}
+\item $Q_1\times Q_0$-DSSY1: see Section~\ref{ss:}
+\item $Q_1\times Q_0$-DSSY2: see Section~\ref{ss:}
+\item $Q_1\times Q_0$-RT1: see Section~\ref{ss:}
+\item $Q_1\times Q_0$-RT2: see Section~\ref{ss:}
+\item $P_1\times P_0$: see Section~\ref{ss:}
+\item $P_2\times P_1$: see Section~\ref{ss:}
+\item $P_3\times P_2$: see Section~\ref{ss:}
+\item $P_1^{+}\times P_{1}$: MINI, see Section~\ref{ss:}
+\item $P_2^+\times P_{-1}$: Crouzeix-Raviart, see Section~\ref{ss:}
+\end{itemize}
+
+ADD stabilised elements?
+chinese Q2Q1 stone 52
+
+%-----------------------------------------------------------------------------
+\section*{Breakdown of the code}
+
+One starts by loading the required finite element functions 
+for the basis functions, the numerical quadrature and various tools:
+\begin{lstlisting}
+import FEbasis2D as FE
+import FEquadrature as Q
+import FEtools as Tools 
+\end{lstlisting}
+
+The domain is a unit square:
+\begin{lstlisting}
+Lx=1
+Ly=1
+\end{lstlisting}
+
+It is discretised by means of a $nelx\times nely$ cells. If quadrilateral 
+elements are to be used then there are $nelx\times nely$ elements. If 
+triangular elements are to be used then the cells are cut into two 
+triangles and there are then $2\times nelx\times nely$ elements.
+
+\begin{lstlisting}
+nelx=16
+nely=16
+\end{lstlisting}
+
+There are four boundaries to the domain (left, right, bottom and top). For the 
+benchmark under consideration we need to impose no slip boundary conditions 
+on all sides of the domain:
+\begin{lstlisting}
+left_bc  ='no_slip'
+right_bc ='no_slip'
+bottom_bc='no_slip'
+top_bc   ='no_slip'
+\end{lstlisting}
+
+In two dimensions there are two velocity degrees of freedom per 
+velocity node but only one pressure degree of freedom per pressure node:
+\begin{lstlisting}
+ndofV=2
+ndofP=1
+\end{lstlisting}
+
+A finite element space must be assigned to both velocity and pressure. 
+\begin{lstlisting}
+Vspace='Q2'
+Pspace='Q1'
+\end{lstlisting}
+
+A quadrature order must be assigned. If quadrilateral elements are used
+this parameter is the number of quadrature points per dimension. 
+If triangular elements are used it is the total number of quadrature points 
+inside the element.  
+\begin{lstlisting}
+nqpts=6
+\end{lstlisting}
+
+For the chosen velocity and pressure spaces we retrieve the number of nodes 
+('support points') inside an element.
+\begin{lstlisting}
+mV=FE.NNN_m(Vspace)
+mP=FE.NNN_m(Pspace)
+\end{lstlisting}
+
+We then setup the quadrature rule for an element. This function 
+returns the number of quadrature points inside the element, 
+their coordinates in the $r,s$ space and their weights: 
+\begin{lstlisting}
+nqel,qcoords_r,qcoords_s,qweights=Q.quadrature(Vspace,nqpts)
+\end{lstlisting}
+
+The mesh is then created, or rather the meshes: one for the 
+velocity nodes, one for the pressure nodes. They both count the 
+same number of elements. There are \lstinline{NV} velocity nodes and their
+coordinates are stored in the \lstinline{xV} and \lstinline{yV} arrays.
+Likewise there are \lstinline{NP} pressure nodes and their
+coordinates are stored in the \lstinline{xP} and \lstinline{yP} arrays. 
+
+\begin{lstlisting}
+NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
+NP,nel,xP,yP,iconP=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Pspace)
+\end{lstlisting}
+
+Now that we know the number of elements and nodes we can compute the 
+total number of quadrature points \lstinline{nq}, 
+the total number of velocity dofs \lstinline{NfemV}, 
+the total number of pressure dofs \lstinline{NfemP}, 
+and the total number of dofs:
+
+\begin{lstlisting}
+nq=nqel*nel
+NfemV=NV*ndofV
+NfemP=NP*ndofP
+Nfem=NfemV+NfemP
+\end{lstlisting}
+
+We will later need two arrays of size \lstinline{NfemV} (we are only imposing
+velocity boundary conditions). \lstinline{bc_fix} is a boolean array.
+We set \lstinline{bc_fix[i]=True} if the value of a given velocity dof \lstinline{i} is set. 
+and the value of \lstinline{bc_val[i]} is the value of the desired boundary condition.
+
+\begin{lstlisting}
+bc_fix,bc_val=Tools.bc_setup(xV,yV,Lx,Ly,ndofV,left_bc,right_bc,bottom_bc,top_bc)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
 

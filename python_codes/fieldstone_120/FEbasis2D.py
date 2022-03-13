@@ -7,22 +7,29 @@ from pylab import cm
 # r is horizontal coordinate
 # s is vertical coordinate
 # quadrilateral reference space is [-1,1]X[-1,1]
-# triangle referemce space is lower left of [0,1]X[0,1]
+# triangle reference space is lower left of [0,1]X[0,1]
 #------------------------------------------------------------------------------
 #
-# P0, Q1, P1, P1+, Q2, P2, P2+, Q3, P3, Q4
+# P0, Q1, P1, P1+, Q2, Q2s, P2, P2+, Q3, P3, Q4, DSSY1, DSSY2, RT1, RT2
 #
 #------------------------------------------------------------------------------
+# notes:
+# DSSY1: Douglas, Santos, Sheen and Ye element with theta_1 function
+# DSSY2: Douglas, Santos, Sheen and Ye element with theta_2 function
+# RT1: mid point variant of Rannacher-Turek (non-conforming element)
+# RT2: mid value variant of Rannacher-Turek (non-conforming element)
+# Q2s: 8-node serendipity Q2
 #------------------------------------------------------------------------------
-#  C-R       P2P1     MINI    Q2Q1,Q2P-1
+#------------------------------------------------------------------------------
+#  C-R       P2P1     MINI    Q2Q1,Q2P-1    Q2s   
 #
-# 2         2        2         3--6--2
-# |\        |\       |\        |     |
-# | \       | \      | \       |     |
-# 5  4      5  4     |  \      7  8  5
-# | 6 \     |   \    | 3 \     |     |
-# |    \    |    \   |    \    |     |
-# 0--3--1   0--3--1  0-----1   0--4--1
+# 2         2        2         3--6--2    3--6--2
+# |\        |\       |\        |     |    |     |
+# | \       | \      | \       |     |    |     |
+# 5  4      5  4     |  \      7  8  5    7     5
+# | 6 \     |   \    | 3 \     |     |    |     |
+# |    \    |    \   |    \    |     |    |     |
+# 0--3--1   0--3--1  0-----1   0--4--1    0--4--1
 #
 #------------------------------------------------------------------------------
 
@@ -72,6 +79,17 @@ def NNN(r,s,space):
        val[6]=    (1.-r**2) * 0.5*s*(s+1.)
        val[7]= 0.5*r*(r-1.) *    (1.-s**2)
        val[8]=    (1.-r**2) *    (1.-s**2)
+
+    if space=='Q2s':
+       val=np.zeros(8,dtype=np.float64)
+       val[0]=(1-r)*(1-s)*(-r-s-1)*0.25
+       val[1]=(1+r)*(1-s)*(r-s-1) *0.25
+       val[2]=(1+r)*(1+s)*(r+s-1) *0.25
+       val[3]=(1-r)*(1+s)*(-r+s-1)*0.25
+       val[4]=(1-r**2)*(1-s)*0.5
+       val[5]=(1+r)*(1-s**2)*0.5
+       val[6]=(1-r**2)*(1+s)*0.5
+       val[7]=(1-r)*(1-s**2)*0.5
 
     if space=='P2':
        val = np.zeros(6,dtype=np.float64)
@@ -138,6 +156,34 @@ def NNN(r,s,space):
        val[15]= N1r*N4s ; val[16]= N2r*N4s ; val[17]= N3r*N4s ; val[18]= N4r*N4s ; val[19]= N5r*N4s
        val[20]= N1r*N5s ; val[21]= N2r*N5s ; val[22]= N3r*N5s ; val[23]= N4r*N5s ; val[24]= N5r*N5s
 
+    if space=='DSSY1':
+       val = np.zeros(4,dtype=np.float64)
+       val[3]=0.25-0.5*r+(theta1(r)-theta1(s))/(4*theta1(1))
+       val[1]=0.25+0.5*r+(theta1(r)-theta1(s))/(4*theta1(1))
+       val[0]=0.25-0.5*s-(theta1(r)-theta1(s))/(4*theta1(1))
+       val[2]=0.25+0.5*s-(theta1(r)-theta1(s))/(4*theta1(1))
+
+    if space=='DSSY2':
+       val = np.zeros(4,dtype=np.float64)
+       val[3]=0.25-0.5*r+(theta2(r)-theta2(s))/(4*theta2(1))
+       val[1]=0.25+0.5*r+(theta2(r)-theta2(s))/(4*theta2(1))
+       val[0]=0.25-0.5*s-(theta2(r)-theta2(s))/(4*theta2(1))
+       val[2]=0.25+0.5*s-(theta2(r)-theta2(s))/(4*theta2(1))
+
+    if space=='RT1':
+       val = np.zeros(4,dtype=np.float64)
+       val[0]=0.25*(1-r**2-2*s+s**2)
+       val[1]=0.25*(1+2*r+r**2-s**2)
+       val[2]=0.25*(1-r**2+2*s+s**2)
+       val[3]=0.25*(1-2*r+r**2-s**2)
+
+    if space=='RT2':
+       val = np.zeros(4,dtype=np.float64)
+       val[0]=0.25*(1-2*s-1.5*(r**2-s**2))
+       val[1]=0.25*(1+2*r+1.5*(r**2-s**2))
+       val[2]=0.25*(1+2*s-1.5*(r**2-s**2))
+       val[3]=0.25*(1-2*r+1.5*(r**2-s**2))
+
     return val
 
 #------------------------------------------------------------------------------
@@ -189,6 +235,17 @@ def dNNNdr(r,s,space):
        val[6]=       (-2.*r) * 0.5*s*(s+1)
        val[7]= 0.5*(2.*r-1.) *   (1.-s**2)
        val[8]=       (-2.*r) *   (1.-s**2)
+
+    if space=='Q2s':
+       val=np.zeros(8,dtype=np.float64)
+       val[0]= -0.25*(s-1)*(2*r+s)
+       val[1]= -0.25*(s-1)*(2*r-s)
+       val[2]= 0.25*(s+1)*(2*r+s)
+       val[3]= 0.25*(s+1)*(2*r-s)
+       val[4]= r*(s-1)
+       val[5]= 0.5*(1-s**2)
+       val[6]= -r*(s+1)
+       val[7]= -0.5*(1-s**2)
 
     if space=='P2':
        val=np.zeros(6,dtype=np.float64)
@@ -245,6 +302,34 @@ def dNNNdr(r,s,space):
        val[15]=dN1dr*N4s ; val[16]=dN2dr*N4s ; val[17]=dN3dr*N4s ; val[18]=dN4dr*N4s ; val[19]=dN5dr*N4s
        val[20]=dN1dr*N5s ; val[21]=dN2dr*N5s ; val[22]=dN3dr*N5s ; val[23]=dN4dr*N5s ; val[24]=dN5dr*N5s
 
+    if space=='DSSY1':
+       val = np.zeros(4,dtype=np.float64)
+       val[3]=-0.5+theta1p(r)/(4*theta1(1))
+       val[1]=+0.5+theta1p(r)/(4*theta1(1))
+       val[0]=    -theta1p(r)/(4*theta1(1))
+       val[2]=    -theta1p(r)/(4*theta1(1))
+
+    if space=='DSSY2':
+       val = np.zeros(4,dtype=np.float64)
+       val[3]=-0.5+theta2p(r)/(4*theta2(1))
+       val[1]=+0.5+theta2p(r)/(4*theta2(1))
+       val[0]=    -theta2p(r)/(4*theta2(1))
+       val[2]=    -theta2p(r)/(4*theta2(1))
+
+    if space=='RT1':
+       val = np.zeros(4,dtype=np.float64)
+       val[0]=0.5*(-r)  
+       val[1]=0.5*(1+r) 
+       val[2]=0.5*(-r)  
+       val[3]=0.5*(-1+r)
+
+    if space=='RT2':
+       val = np.zeros(4,dtype=np.float64)
+       val[0]=-0.75*r     
+       val[1]=0.5+0.75*r  
+       val[2]=-0.75*r     
+       val[3]=-0.5+0.75*r 
+
     return val 
 
 #------------------------------------------------------------------------------
@@ -296,6 +381,17 @@ def dNNNds(r,s,space):
        val[6]=    (1.-r**2) * 0.5*(2.*s+1.)
        val[7]= 0.5*r*(r-1.) *       (-2.*s)
        val[8]=    (1.-r**2) *       (-2.*s)
+
+    if space=='Q2s':
+       val=np.zeros(8,dtype=np.float64)
+       val[0]= -0.25*(r-1)*(r+2*s)
+       val[1]= -0.25*(r+1)*(r-2*s)
+       val[2]= 0.25*(r+1)*(r+2*s)
+       val[3]= 0.25*(r-1)*(r-2*s)
+       val[4]= -0.5*(1-r**2)
+       val[5]= -(r+1)*s
+       val[6]= 0.5*(1-r**2)
+       val[7]= (r-1)*s
 
     if space=='P2':
        val=np.zeros(6,dtype=np.float64)
@@ -352,6 +448,34 @@ def dNNNds(r,s,space):
        val[15]=N1r*dN4ds ; val[16]=N2r*dN4ds ; val[17]=N3r*dN4ds ; val[18]=N4r*dN4ds ; val[19]=N5r*dN4ds
        val[20]=N1r*dN5ds ; val[21]=N2r*dN5ds ; val[22]=N3r*dN5ds ; val[23]=N4r*dN5ds ; val[24]=N5r*dN5ds
 
+    if space=='DSSY1':
+       val = np.zeros(4,dtype=np.float64)
+       val[3]=    -theta1p(s)/(4*theta1(1))
+       val[1]=    -theta1p(s)/(4*theta1(1))
+       val[0]=-0.5+theta1p(s)/(4*theta1(1))
+       val[2]=+0.5+theta1p(s)/(4*theta1(1))
+
+    if space=='DSSY2':
+       val = np.zeros(4,dtype=np.float64)
+       val[3]=    -theta2p(s)/(4*theta2(1))
+       val[1]=    -theta2p(s)/(4*theta2(1))
+       val[0]=-0.5+theta2p(s)/(4*theta2(1))
+       val[2]=+0.5+theta2p(s)/(4*theta2(1))
+
+    if space=='RT1':
+       val = np.zeros(4,dtype=np.float64)
+       val[0]=0.5*(-1+s)
+       val[1]=0.5*(-s)
+       val[2]=0.5*(1+s)
+       val[3]=0.5*(-s)
+
+    if space=='RT2':
+       val = np.zeros(4,dtype=np.float64)
+       val[0]=-0.5+0.75*s
+       val[1]=-0.75*s
+       val[2]=0.5+0.75*s
+       val[3]=-0.75*s
+
     return val 
 
 #------------------------------------------------------------------------------
@@ -393,7 +517,11 @@ def NNN_r(space):
 
     if space=='Q2':
        val = np.zeros(9,dtype=np.float64)
-       val[:]=[-1,+1,+1,-1, 0,+1, 0,-1,0]
+       val[:]=[-1,+1,+1,-1,0,+1,0,-1,0]
+
+    if space=='Q2s':
+       val = np.zeros(8,dtype=np.float64)
+       val[:]=[-1,+1,+1,-1,0,+1,0,-1]
 
     if space=='Q3':
        val = np.zeros(16,dtype=np.float64)
@@ -406,6 +534,14 @@ def NNN_r(space):
     if space=='Q4':
        val = np.zeros(25,dtype=np.float64)
        val[:]=[-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1]
+
+    if space=='DSSY1' or space=='DSSY2':
+       val = np.zeros(4,dtype=np.float64)
+       val[:]=[-1,1,0,0]
+
+    if space=='RT1' or space=='RT2':
+       val = np.zeros(4,dtype=np.float64)
+       val[:]=[0,1,0,-1]
 
     return val
 
@@ -450,6 +586,10 @@ def NNN_s(space):
        val = np.zeros(9,dtype=np.float64)
        val[:]=[-1,-1,+1,+1,-1,0,+1,0,0]
 
+    if space=='Q2s':
+       val = np.zeros(8,dtype=np.float64)
+       val[:]=[-1,-1,+1,+1,-1,0,+1,0]
+
     if space=='Q3':
        val = np.zeros(16,dtype=np.float64)
        val[:]=[-1,-1,-1,-1,-1/3,-1/3,-1/3,-1/3,+1/3,+1/3,+1/3,+1/3,+1,+1,+1,+1]
@@ -462,6 +602,14 @@ def NNN_s(space):
        val = np.zeros(25,dtype=np.float64)
        val[:]=[-1,-1,-1,-1,-1,-0.5,-0.5,-0.5,-0.5,-0.5,0,0,0,0,0,0.5,0.5,0.5,0.5,0.5,1,1,1,1,1]
 
+    if space=='DSSY1' or space=='DSSY2':
+       val = np.zeros(4,dtype=np.float64)
+       val[:]=[0,0,-1,1]
+
+    if space=='RT1' or space=='RT2':
+       val = np.zeros(4,dtype=np.float64)
+       val[:]=[-1,0,1,0]
+
     return val
 
 #------------------------------------------------------------------------------
@@ -469,18 +617,23 @@ def NNN_s(space):
 
 def NNN_m(space):
 
-    if space=='Q0':  return 1
-    if space=='P0':  return 1
-    if space=='Q1':  return 4
-    if space=='Q1+': return 5
-    if space=='P1':  return 3
-    if space=='P1+': return 4
-    if space=='Q2':  return 9
-    if space=='P2':  return 6
-    if space=='P2+': return 7
-    if space=='P3':  return 10
-    if space=='Q3':  return 16
-    if space=='Q4':  return 25
+    if space=='Q0':     return 1
+    if space=='P0':     return 1
+    if space=='Q1':     return 4
+    if space=='Q1+':    return 5
+    if space=='P1':     return 3
+    if space=='P1+':    return 4
+    if space=='Q2':     return 9
+    if space=='Q2s':    return 8
+    if space=='P2':     return 6
+    if space=='P2+':    return 7
+    if space=='P3':     return 10
+    if space=='Q3':     return 16
+    if space=='Q4':     return 25
+    if space=='DSSY1':  return 4
+    if space=='DSSY2':  return 4
+    if space=='RT1':    return 4
+    if space=='RT2':    return 4
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -494,7 +647,8 @@ def visualise_nodes(space):
     plt.xlabel('r')
     plt.xlabel('s')
     plt.title(space)
-    if space=='Q1' or space=='Q2' or space=='Q3' or space=='Q4' or space=='Q1+':
+    if space=='Q1' or space=='Q2' or space=='Q3' or space=='Q4' or space=='Q1+' or \
+       space=='DSSY1' or space=='DSSY2' or space=='RT1' or space=='RT2' or space=='Q2s':
        plt.xlim([-1.1,+1.1])
        plt.ylim([-1.1,+1.1])
        plt.plot([-1,1,1,-1,-1],[-1,-1,1,1,-1],color='teal',linewidth=2)
@@ -533,5 +687,18 @@ def visualise_basis_functions(space):
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
+# theta1 and theta2 functions for DSSY element
 
+def theta1(x):
+    return x*x-5/3*x**4
 
+def theta1p(x):
+    return 2*x-20/3*x**3
+
+def theta2(x):
+    return x*x-25/6*x**4+3.5*x**6
+
+def theta2p(x):
+    return 2*x-50/3*x**3+21*x**5
+
+#------------------------------------------------------------------------------

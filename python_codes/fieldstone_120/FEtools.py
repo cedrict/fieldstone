@@ -3,16 +3,16 @@ import numpy as np
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def cartesian_mesh(Lx,Ly,nelx,nely,element):
+def cartesian_mesh(Lx,Ly,nelx,nely,space):
 
-    mtype=0
+    mtype=0 #make it an argument later
 
     hx=Lx/nelx
     hy=Ly/nely
     nel=nelx*nely
 
     #---------------------------------
-    if element=='Q0':
+    if space=='Q0':
        N=nelx*nely
        x = np.empty(N,dtype=np.float64) 
        y = np.empty(N,dtype=np.float64)
@@ -30,7 +30,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                counter += 1
 
     #---------------------------------
-    elif element=='Q1':
+    elif space=='Q1':
        N=(nelx+1)*(nely+1)
        x = np.empty(N,dtype=np.float64) 
        y = np.empty(N,dtype=np.float64)
@@ -51,7 +51,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                counter += 1
 
     #---------------------------------
-    elif element=='Q1+':
+    elif space=='Q1+':
        N=(nelx+1)*(nely+1)+nel
        x = np.empty(N,dtype=np.float64) 
        y = np.empty(N,dtype=np.float64)
@@ -78,7 +78,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                counter += 1
 
     #---------------------------------
-    elif element=='Q2':
+    elif space=='Q2':
        N=(2*nelx+1)*(2*nely+1)
        nnx=2*nelx+1
        nny=2*nely+1
@@ -110,12 +110,51 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
        #end for
 
     #---------------------------------
-    elif element=='Q3':
+    elif space=='Q2s':
+       N=(nelx+1)*(nely+1)+nelx*(nely+1)+(nelx+1)*nely
+       x=np.empty(N,dtype=np.float64) 
+       y=np.empty(N,dtype=np.float64)
+       counter = 0
+       for j in range(0,nely+1):
+           for i in range(0,nelx+1):
+               x[counter]=i*hx
+               y[counter]=j*hy
+               counter += 1
+       for j in range(nely):
+           for i in range(0,nelx):
+               x[counter]=i*hx+hx/2
+               y[counter]=j*hy
+               counter+=1
+           for i in range(0,nelx+1):
+               x[counter]=i*hx
+               y[counter]=j*hy+hy/2
+               counter+=1
+       for i in range(0,nelx):
+           x[counter]=i*hx+hx/2
+           y[counter]=nely*hy
+           counter+=1
+       #end for
+       icon=np.zeros((8,nel),dtype=np.int32)
+       counter = 0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               icon[0,counter] = i + j * (nelx + 1)
+               icon[1,counter] = i + 1 + j * (nelx + 1)
+               icon[2,counter] = i + 1 + (j + 1) * (nelx + 1)
+               icon[3,counter] = i + (j + 1) * (nelx + 1)
+               icon[4,counter] = (nelx+1)*(nely+1)+i +(2*nelx+1)*j
+               icon[5,counter] = (nelx+1)*(nely+1)+i +(2*nelx+1)*j + (nelx+1)
+               icon[6,counter] = (nelx+1)*(nely+1)+i +(2*nelx+1)*(j+1)
+               icon[7,counter] = (nelx+1)*(nely+1)+i +(2*nelx+1)*j + (nelx+1)-1
+               counter += 1
+
+    #---------------------------------
+    elif space=='Q3':
        N=(3*nelx+1)*(3*nely+1)
        nnx=3*nelx+1
        nny=3*nely+1
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x=np.empty(N,dtype=np.float64) 
+       y=np.empty(N,dtype=np.float64)
        counter = 0
        for j in range(0,nny):
            for i in range(0,nnx):
@@ -136,7 +175,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                counter += 1 
 
     #---------------------------------
-    elif element=='Q4':
+    elif space=='Q4':
        N=(4*nelx+1)*(4*nely+1)
        nnx=4*nelx+1
        nny=4*nely+1
@@ -162,7 +201,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                counter += 1 
 
     #---------------------------------
-    elif element=='P0' and mtype==0:
+    elif space=='P0' and mtype==0:
        nel*=2
        N=nel
        x = np.empty(N,dtype=np.float64) 
@@ -196,7 +235,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
     # |/  A  \|
     # 0-------1
 
-    elif element=='P0' and mtype==2:
+    elif space=='P0' and mtype==2:
        nel*=4
        N=nel
        x = np.empty(N,dtype=np.float64) 
@@ -231,7 +270,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
 
 
     #---------------------------------
-    elif element=='P1' and mtype==0:
+    elif space=='P1' and mtype==0:
        nel*=2
        N=(nelx+1)*(nely+1)
        x = np.empty(N,dtype=np.float64) 
@@ -260,7 +299,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
                counter += 1
 
     #---------------------------------
-    elif element=='P1' and mtype==2:
+    elif space=='P1' and mtype==2:
        N=(nelx+1)*(nely+1)+nel
        nel*=4
        x = np.empty(N,dtype=np.float64) 
@@ -314,7 +353,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
     # | A  \|
     # 0--4--1
 
-    elif element=='P2':
+    elif space=='P2':
        nel*=2
        N=(2*nelx+1)*(2*nely+1)
        nnx=2*nelx+1
@@ -352,6 +391,39 @@ def cartesian_mesh(Lx,Ly,nelx,nely,element):
            #end for
        #end for
 
+    #---------------------------------
+    elif space=='DSSY1' or space=='DSSY2' or\
+         space=='RT1' or space=='RT2':
+       N=(nely+1)*nelx + nely*(nelx+1)
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64) 
+       counter=0
+       for j in range(0,nely):
+           # bottom line
+           for i in range(0,nelx):
+               x[counter]=(i+1-0.5)*hx
+               y[counter]=(j+1-1)*hy
+               counter+=1
+           # middle line
+           for i in range(0,nelx+1):
+               x[counter]=(i)*hx
+               y[counter]=(j+1-0.5)*hy
+               counter+=1
+       #top line
+       for i in range(0,nelx):
+           x[counter]=(i+1-0.5)*hx
+           y[counter]=Ly
+           counter+=1
+       icon =np.zeros((4,nel),dtype=np.int32)
+       counter = 0 
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               icon[0,counter] = (j)*(2*nelx+1)+i+1   -1   
+               icon[1,counter] = icon[0,counter]+nelx+1
+               icon[2,counter] = icon[0,counter]+2*nelx+1
+               icon[3,counter] = icon[0,counter]+nelx
+               counter += 1
+
     else:
        exit("FEtools:cartesian_mesh: space unknown ")
 
@@ -384,7 +456,8 @@ def export_elements_to_vtu(x,y,icon,space,filename):
     if space=='P0' or space=='Q0':
        return
 
-    if space=='Q1' or space=='Q1+' or space=='Q2':
+    if space=='Q1' or space=='Q1+' or space=='Q2' or space=='Q2s' or \
+       space=='RT1' or space=='RT2' or space=='DSSY1' or space=='DSSY2':
        node0=0
        node1=1
        node2=2
@@ -567,12 +640,6 @@ def export_swarm_scalar_to_vtu(x,y,scalar,filename):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
-
-
-
-
-
-
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
@@ -584,6 +651,7 @@ def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
     bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
     for i in range(0,N):
 
+        #left
         if x[i]/Lx<eps:
            if left=='free_slip':
               bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
@@ -591,6 +659,7 @@ def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
               bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
+        #right
         if x[i]/Lx>(1-eps):
            if right=='free_slip':
               bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
@@ -598,6 +667,7 @@ def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
               bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
+        #bottom
         if y[i]/Ly<eps:
            if bottom=='free_slip':
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
@@ -605,6 +675,7 @@ def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
               bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
+        #top
         if y[i]/Ly>(1-eps):
            if top=='free_slip':
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.

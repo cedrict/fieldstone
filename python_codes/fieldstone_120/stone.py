@@ -6,41 +6,7 @@ import time as timing
 import matplotlib.pyplot as plt
 from scipy.sparse import lil_matrix
 from scipy.sparse.linalg import spsolve
-
-#------------------------------------------------------------------------------
-# bx and by are the body force components
-
-def bx(x, y):
-    val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
-         (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
-         (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
-         1.-4.*y+12.*y*y-8.*y*y*y)
-    return val
-
-def by(x, y):
-    val=((8.-48.*y+48.*y*y)*x*x*x+
-         (-12.+72.*y-72.*y*y)*x*x+
-         (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
-         12.*y*y+24.*y*y*y-12.*y**4)
-    return val
-
-def viscosity(x,y):
-    return 1
-
-#------------------------------------------------------------------------------
-# analytical solution
-
-def velocity_x(x,y):
-    val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
-    return val 
-
-def velocity_y(x,y):
-    val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
-    return val 
-
-def pressure(x,y):
-    val=x*(1.-x)-1./6.
-    return val 
+import dh
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -59,13 +25,13 @@ top_bc   ='no_slip'
 ndofV=2
 ndofP=1
 
-Vspace='Q2'
+Vspace='Q2s'
 Pspace='Q1'
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
 
-nqpts=6
+nqpts=4
 
 #--------------------------------------------------------------------
 # mesh: node layout and connectivity
@@ -85,9 +51,9 @@ NfemV=NV*ndofV
 NfemP=NP*ndofP
 Nfem=NfemV+NfemP
 
-print("-----------------------------")
+print("*****************************")
 print("           daSTONE           ")
-print("-----------------------------")
+print("*****************************")
 print ('Vspace =',Vspace)
 print ('Pspace =',Pspace)
 print ('NV     =',NV)
@@ -96,7 +62,7 @@ print ('nel    =',nel)
 print ('NfemV  =',NfemV)
 print ('NfemP  =',NfemP)
 print ('Nfem   =',Nfem)
-print("-----------------------------")
+print("*****************************")
 
 print("mesh setup: %.3f s" % (timing.time() - start))
 
@@ -187,11 +153,11 @@ for iel in range(0,nel):
                                     [0.        ,dNNNVdy[k]],
                                     [dNNNVdy[k],dNNNVdx[k]]]
 
-        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq[counterq],yq[counterq])*weightq*jcob
+        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*dh.eta(xq[counterq],yq[counterq])*weightq*jcob
 
         for k in range(0,mV): 
-            f_el[2*k+0]+=NNNV[k]*jcob*weightq*bx(xq[counterq],yq[counterq])
-            f_el[2*k+1]+=NNNV[k]*jcob*weightq*by(xq[counterq],yq[counterq])
+            f_el[2*k+0]+=NNNV[k]*jcob*weightq*dh.bx(xq[counterq],yq[counterq])
+            f_el[2*k+1]+=NNNV[k]*jcob*weightq*dh.by(xq[counterq],yq[counterq])
 
         for k in range(0,mP):
             N_mat[0,k]=NNNP[k]
@@ -224,8 +190,8 @@ plt.savefig('matrix_'+Vspace+'_'+Pspace+'.pdf', bbox_inches='tight')
 #------------------------------------------------------------------------------
 start = timing.time()
 
-sparse_matrix=A_sparse.tocsr()
-sol=spsolve(sparse_matrix,rhs)
+matrix=A_sparse.tocsr()
+sol=spsolve(matrix,rhs)
 
 print("solve time: %.3f s" % (timing.time() - start))
 
@@ -244,8 +210,9 @@ print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 print("split vel into u,v: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
-# compute vrms
+# compute vrms and errors
 #------------------------------------------------------------------------------
+start = timing.time()
 
 errv=0
 errp=0
@@ -265,22 +232,23 @@ for iel in range(0,nel):
         vq[counterq]=NNNV.dot(v[iconV[0:mV,iel]])
         pq[counterq]=NNNP.dot(p[iconP[0:mP,iel]])
         vrms+=(uq[counterq]**2+vq[counterq]**2)*weightq*jcob
-        errv+=(uq[counterq]-velocity_x(xq[counterq],yq[counterq]))**2*weightq*jcob+\
-              (vq[counterq]-velocity_y(xq[counterq],yq[counterq]))**2*weightq*jcob
-        errp+=(pq[counterq]-pressure(xq[counterq],yq[counterq]))**2*weightq*jcob
+        errv+=(uq[counterq]-dh.u_th(xq[counterq],yq[counterq]))**2*weightq*jcob+\
+              (vq[counterq]-dh.v_th(xq[counterq],yq[counterq]))**2*weightq*jcob
+        errp+=(pq[counterq]-dh.p_th(xq[counterq],yq[counterq]))**2*weightq*jcob
         counterq+=1
 
 vrms=np.sqrt(vrms/(Lx*Ly))
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 
-print("     -> nel= %6d ; vrms= %.8f " %(nel,vrms))
+print("     -> nel= %6d ; vrms= %.8f | vrms_th= %.8f" %(nel,vrms,dh.vrms_th()))
 print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
+
+print("compute vrms & errors: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
 
 Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'mesh.vtu')
-#Tools.export_mesh_to_vtu(xV,yV,iconV2,Vspace,'meshV2.vtu')
 
 Tools.export_swarm_to_ascii(xV,yV,'Vnodes.ascii')
 Tools.export_swarm_to_ascii(xP,yP,'Pnodes.ascii')
@@ -297,3 +265,6 @@ Tools.export_swarm_scalar_to_vtu(xP,yP,p,'solution_pressure.vtu')
 
 Tools.export_connectivity_array_to_ascii(xV,yV,iconV,'iconV.ascii')
 Tools.export_connectivity_array_to_ascii(xP,yP,iconP,'iconP.ascii')
+
+print("*****************************")
+print("*****************************")
