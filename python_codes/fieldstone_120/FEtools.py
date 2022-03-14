@@ -345,6 +345,44 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                icon[2,counter]=inode4
                counter += 1
 
+
+
+    #---------------------------------
+    elif space=='P1+' and mtype==0:
+       nel*=2
+       N=(nelx+1)*(nely+1)+nel
+       nnx=nelx+1
+       nny=nely+1
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64)
+       counter = 0 
+       for j in range(0,nely+1):
+           for i in range(0,nelx+1):
+               x[counter]=i*hx
+               y[counter]=j*hy
+               counter += 1
+       icon =np.zeros((4,nel),dtype=np.int32)
+       counter = 0 
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               inode0=i+j*(nelx+1)
+               inode1=i+1+j*(nelx+1)
+               inode2=i+1+(j+1)*(nelx+1)
+               inode3=i+(j+1)*(nelx+1)
+               icon[0,counter]=inode0
+               icon[1,counter]=inode1
+               icon[2,counter]=inode3
+               icon[3,counter]=counter+nnx*nny
+               counter += 1
+               icon[0,counter]=inode2
+               icon[1,counter]=inode3
+               icon[2,counter]=inode1
+               icon[3,counter]=counter+nnx*nny
+               counter += 1
+       for iel in range (0,nel): #bubble nodes
+           x[nnx*nny+iel]=(x[icon[0,iel]]+x[icon[1,iel]]+x[icon[2,iel]])/3.
+           y[nnx*nny+iel]=(y[icon[0,iel]]+y[icon[1,iel]]+y[icon[2,iel]])/3.
+
     #---------------------------------
     #
     # 3--6--2

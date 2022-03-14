@@ -26,7 +26,7 @@ top_bc   ='no_slip'
 ndofV=2
 ndofP=1
 
-Vspace='Q2'
+Vspace='Q1+'
 Pspace='Q1'
 
 visu=1

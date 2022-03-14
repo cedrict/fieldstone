@@ -6,8 +6,12 @@ Boundary conditions of this exercise
 \item Continuous Galerkin method
 \item most of commonly used elements 
 \item Dirichlet boundary conditions
+\item isoparametric mapping
 \end{itemize}
 
+
+
+is there still a need for dNNNN and dNNN ?
 
 
 The idea here is to create a library of basis functions and quadrature rules, as well as 
@@ -61,21 +65,21 @@ visualise_quadrature_points(space,nqpts):
 \section*{Supported element spaces}
 
 \begin{center}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q1_nodes}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q1+_nodes}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q2_nodes}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q2s_nodes}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q3_nodes}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q4_nodes}\\
-\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/RT1_nodes}
-\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/RT2_nodes}
-\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/DSSY1_nodes}
-\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/DSSY2_nodes}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P1_nodes}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P2_nodes}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P3_nodes}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P1+_nodes}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P2+_nodes}
+\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/Q1_nodes}
+\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/Q1+_nodes}
+\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/Q2_nodes}\\
+\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/Q2s_nodes}
+\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/Q3_nodes}
+\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/Q4_nodes}\\
+\includegraphics[width=3.3cm]{python_codes/fieldstone_120/spaces/RT1_nodes}
+\includegraphics[width=3.3cm]{python_codes/fieldstone_120/spaces/RT2_nodes}
+\includegraphics[width=3.3cm]{python_codes/fieldstone_120/spaces/DSSY1_nodes}
+\includegraphics[width=3.3cm]{python_codes/fieldstone_120/spaces/DSSY2_nodes}\\
+\includegraphics[width=4.cm]{python_codes/fieldstone_120/spaces/P1_nodes}
+\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/P2_nodes}
+\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/P3_nodes}\\
+\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/P1+_nodes}
+\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/P2+_nodes}
 \end{center}
 
 mesher: Q0,Q1,Q2,Q3,Q4, P0,P1,P2   missing P1+, P2+
@@ -250,23 +254,61 @@ for iel in range(0,nel):
 \includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1Q0-velocity-h.pdf}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1Q0-pressure-h.pdf}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1Q0-velocity-Nfem.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1Q0-velocity-Nfem.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1Q0-pressure-Nfem.pdf}
 \\
 \includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q2Q1-velocity-h.pdf}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q2Q1-pressure-h.pdf}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q2Q1-velocity-Nfem.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q2Q1-velocity-Nfem.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q2Q1-pressure-Nfem.pdf}
 \\
 \includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q3Q2-velocity-h.pdf}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q3Q2-pressure-h.pdf}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q3Q2-velocity-Nfem.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q3Q2-velocity-Nfem.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q3Q2-pressure-Nfem.pdf}
+\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1+Q1-velocity-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1+Q1-pressure-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1+Q1-velocity-Nfem.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1+Q1-pressure-Nfem.pdf}
+\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P1+P1-velocity-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P1+P1-pressure-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P1+P1-velocity-Nfem.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P1+P1-pressure-Nfem.pdf}
+\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P2P1-velocity-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P2P1-pressure-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P2P1-velocity-Nfem.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P2P1-pressure-Nfem.pdf}
+\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT1Q0-velocity-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT1Q0-pressure-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT1Q0-velocity-Nfem.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT1Q0-pressure-Nfem.pdf}
+\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT2Q0-velocity-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT2Q0-pressure-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT2Q0-velocity-Nfem.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT2Q0-pressure-Nfem.pdf}
+\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY1Q0-velocity-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY1Q0-pressure-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY1Q0-velocity-Nfem.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY1Q0-pressure-Nfem.pdf}
+\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY2Q0-velocity-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY2Q0-pressure-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY2Q0-velocity-Nfem.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY2Q0-pressure-Nfem.pdf}
 \\
 \end{center}
 
 
 
-
-
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/results/errors-velocity-all}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/results/errors-pressure-all}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/results/vrms-Nfem}
+\end{center}
 
 

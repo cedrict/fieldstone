@@ -2,5 +2,7 @@ rm *.pdf
 rm *.vtu
 rm *.ascii
 rm *.png
-
+rm errors*
+rm vrms*
+rm opla*
 

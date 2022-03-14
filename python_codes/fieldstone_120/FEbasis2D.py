@@ -218,7 +218,7 @@ def dNNNdr(r,s,space):
        val[2]= 0
 
     if space=='P1+':
-       val = np.zeros(3,dtype=np.float64)
+       val = np.zeros(4,dtype=np.float64)
        val[0]= -1-9*(1-2*r-s)*s
        val[1]=  1-9*(1-2*r-s)*s
        val[2]=   -9*(1-2*r-s)*s
@@ -364,7 +364,7 @@ def dNNNds(r,s,space):
        val[2]= 1
 
     if space=='P1+':
-       val=np.zeros(3,dtype=np.float64)
+       val=np.zeros(4,dtype=np.float64)
        val[0]=-1-9*(1-r-2*s)*r
        val[1]=  -9*(1-r-2*s)*r
        val[2]= 1-9*(1-r-2*s)*r

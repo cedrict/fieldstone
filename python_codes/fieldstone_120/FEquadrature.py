@@ -41,7 +41,7 @@ def quadrature(space,nqperdim):
           val_r[1]=2/3 ; val_s[1]=1/6 ; val_w[1]=1/3/2
           val_r[2]=1/6 ; val_s[2]=2/3 ; val_w[2]=1/3/2
 
-       if nq==4: #cubic - 3rd order
+       if nq==4: #cubic - 3rd order                          #suspicious ?!
           val_r[0]=1/3 ; val_r[0]=1/3 ; val_w[0]=-27/48/2
           val_r[1]=1/5 ; val_r[1]=3/5 ; val_w[1]= 25/48/2
           val_r[2]=1/5 ; val_r[2]=1/5 ; val_w[2]= 25/48/2
