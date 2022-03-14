@@ -438,6 +438,18 @@ def export_swarm_to_ascii(x,y,filename):
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
+def export_swarm_scalar_to_ascii(x,y,f,filename):
+    np.savetxt(filename,np.array([x,y,f]).T,header='# x,y,field')
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+def export_swarm_vector_to_ascii(x,y,u,v,filename):
+    np.savetxt(filename,np.array([x,y,u,v]).T,header='# x,y,vx,vy')
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
 def export_connectivity_array_to_ascii(x,y,icon,filename):
     m,nel=np.shape(icon)
     iconfile=open(filename,"w")

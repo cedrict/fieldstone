@@ -56,26 +56,9 @@ visualise_quadrature_points(space,nqpts):
 
 \end{itemize}
 
+\newpage
 %--------------------------------------------------------------------
 \section*{Supported element spaces}
-
-\begin{tabular}{lllll}
-\hline
-FE space  & $m$ & type  & Section  \\
-\hline
-\hline
-$Q_0/P_0$ & 1   & $\square$ & \\
-$Q_1$     & 4   &       & \\
-$Q_1+$    & 5   &       & \\
-$P_1$     & 3   & $bigtriangleup$ & \\
-$P_1^+$   & 4   &   &    \\
-$Q_2$     & 9   &   &    \\
-$P_2$     & 6   &   &    \\
-$P_2^+$   & 7   &   &    \\
-$Q_3$     & 16  &   &    \\
-$Q_4$     & 25  &   &    \\
-\hline
-\end{tabular}
 
 \begin{center}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q1_nodes}
@@ -88,11 +71,11 @@ $Q_4$     & 25  &   &    \\
 \includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/RT2_nodes}
 \includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/DSSY1_nodes}
 \includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/DSSY2_nodes}\\
-\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/P1_nodes}
-\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/P1+_nodes}
-\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/P2_nodes}
-\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/P2+_nodes}
-\includegraphics[width=3cm]{python_codes/fieldstone_120/spaces/P3_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P1_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P2_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P3_nodes}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P1+_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P2+_nodes}
 \end{center}
 
 mesher: Q0,Q1,Q2,Q3,Q4, P0,P1,P2   missing P1+, P2+
@@ -112,26 +95,26 @@ vrms   &  \\
 \section*{Finite element pairs for the Stokes equation}
 
 \begin{itemize}
-\item $Q_1\times Q_0$: see Section~\ref{ss:}
-\item $Q_2\times Q_1$: see Section~\ref{ss:}
-\item $Q_2\times P_{-1}$: see Section~\ref{ss:}
-\item $Q_3\times Q_2$: see Section~\ref{ss:}
-\item $Q_4\times Q_3$: see Section~\ref{ss:}
+\item $Q_1\times Q_0$: see Section~\ref{ss:pairq1p0}
+\item $Q_2\times Q_1$: see Section~\ref{ss:pairq2q1}
+\item $Q_2\times P_{-1}$: see Section~\ref{ss:pairq2pm1}
+\item $Q_3\times Q_2$: see Section~\ref{XXX}
+\item $Q_4\times Q_3$: see Section~\ref{YYY}
 \item $Q_1^+\times Q_1$: Quadrilateral mini, see Section~\ref{ss:}
 \item $Q_2^{(8)}\times Q_1$: Serendipity, see Section~\ref{ss:}
 \item $Q_1\times Q_0$-DSSY1: see Section~\ref{ss:}
 \item $Q_1\times Q_0$-DSSY2: see Section~\ref{ss:}
-\item $Q_1\times Q_0$-RT1: see Section~\ref{ss:}
-\item $Q_1\times Q_0$-RT2: see Section~\ref{ss:}
+\item $Q_1\times Q_0$-RT1: see Section~\ref{ss:RTq1p0}
+\item $Q_1\times Q_0$-RT2: see Section~\ref{ss:RTq1p0}
 \item $P_1\times P_0$: see Section~\ref{ss:}
-\item $P_2\times P_1$: see Section~\ref{ss:}
+\item $P_2\times P_1$: see Section~\ref{ss:p2p1}
 \item $P_3\times P_2$: see Section~\ref{ss:}
-\item $P_1^{+}\times P_{1}$: MINI, see Section~\ref{ss:}
-\item $P_2^+\times P_{-1}$: Crouzeix-Raviart, see Section~\ref{ss:}
+\item $P_1^{+}\times P_{1}$: MINI, see Section~\ref{pair:mini}
+\item $P_2^+\times P_{-1}$: Crouzeix-Raviart, see Section~\ref{sec:crouzeix-raviart}
 \end{itemize}
 
 ADD stabilised elements?
-chinese Q2Q1 stone 52
+chinese Q2Q1 stone 52 ? only for deformed
 
 %-----------------------------------------------------------------------------
 \section*{Breakdown of the code}
@@ -239,10 +222,47 @@ and the value of \lstinline{bc_val[i]} is the value of the desired boundary cond
 bc_fix,bc_val=Tools.bc_setup(xV,yV,Lx,Ly,ndofV,left_bc,right_bc,bottom_bc,top_bc)
 \end{lstlisting}
 
+Then we proceed to compute the volume of each element, i.e. 
+\[
+V_e = \int_{\Omega_e} dV = \sum_{iq=1}^{n_q} \omega_{i_q} |J_{i_q}|
+\]
+which translates as follows: 
+\begin{lstlisting}
+for iel in range(0,nel):
+    for iq in range(0,nqel):
+        rq=qcoords_r[iq]
+        sq=qcoords_s[iq]
+        weightq=qweights[iq]
+        NNNV=FE.NNN(rq,sq,Vspace)
+        dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
+        dNNNVds=FE.dNNNds(rq,sq,Vspace)
+        jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+        area[iel]+=jcob*weightq
+\end{lstlisting}
 
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Results}
 
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1Q0-velocity-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1Q0-pressure-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1Q0-velocity-Nfem.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1Q0-velocity-Nfem.pdf}
+\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q2Q1-velocity-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q2Q1-pressure-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q2Q1-velocity-Nfem.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q2Q1-velocity-Nfem.pdf}
+\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q3Q2-velocity-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q3Q2-pressure-h.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q3Q2-velocity-Nfem.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q3Q2-velocity-Nfem.pdf}
+\\
+\end{center}
 
 
 

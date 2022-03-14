@@ -42,10 +42,10 @@ def quadrature(space,nqperdim):
           val_r[2]=1/6 ; val_s[2]=2/3 ; val_w[2]=1/3/2
 
        if nq==4: #cubic - 3rd order
-          val_r[0]=1/3 ; val_r[0]=1/3 ; val_w[0]=-27/48
-          val_r[1]=1/5 ; val_r[1]=3/5 ; val_w[1]= 25/48
-          val_r[2]=1/5 ; val_r[2]=1/5 ; val_w[2]= 25/48
-          val_r[3]=3/5 ; val_r[3]=1/5 ; val_w[3]= 25/48
+          val_r[0]=1/3 ; val_r[0]=1/3 ; val_w[0]=-27/48/2
+          val_r[1]=1/5 ; val_r[1]=3/5 ; val_w[1]= 25/48/2
+          val_r[2]=1/5 ; val_r[2]=1/5 ; val_w[2]= 25/48/2
+          val_r[3]=3/5 ; val_r[3]=1/5 ; val_w[3]= 25/48/2
 
        if nq==5:
           val_r[:]=0 ; val_s[:]=0 ; val_w[:]=0

@@ -4,6 +4,7 @@ import FEtools as Tools
 import numpy as np
 import time as timing
 import matplotlib.pyplot as plt
+import sys as sys
 from scipy.sparse import lil_matrix
 from scipy.sparse.linalg import spsolve
 import dh
@@ -14,8 +15,8 @@ import dh
 Lx=1
 Ly=1
 
-nelx=16
-nely=16
+nelx=32
+nely=32
 
 left_bc  ='no_slip'
 right_bc ='no_slip'
@@ -25,13 +26,27 @@ top_bc   ='no_slip'
 ndofV=2
 ndofP=1
 
-Vspace='Q2s'
+Vspace='Q2'
 Pspace='Q1'
+
+visu=1
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
 
-nqpts=4
+nqpts=3
+
+#--------------------------------------------------------------------
+# allowing for argument parsing through command line
+#--------------------------------------------------------------------
+
+if int(len(sys.argv) == 6):
+   nelx = int(sys.argv[1])
+   nely = int(sys.argv[2])
+   Vspace = sys.argv[3]
+   Pspace = sys.argv[4]
+   nqpts = int(sys.argv[5])
+   visu=0
 
 #--------------------------------------------------------------------
 # mesh: node layout and connectivity
@@ -182,8 +197,8 @@ for iel in range(0,nel):
 
 print("build FE matrix: %.3f s" % (timing.time() - start))
 
-plt.spy(A_sparse,markersize=1)
-plt.savefig('matrix_'+Vspace+'_'+Pspace+'.pdf', bbox_inches='tight')
+#plt.spy(A_sparse,markersize=1)
+#plt.savefig('matrix_'+Vspace+'_'+Pspace+'.pdf', bbox_inches='tight')
 
 #------------------------------------------------------------------------------
 # solve system
@@ -208,6 +223,30 @@ print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))
+
+#------------------------------------------------------------------------------
+# normalise pressure 
+#------------------------------------------------------------------------------
+start = timing.time()
+
+avrg_p=0
+for iel in range(0,nel):
+    for iq in range(0,nqel):
+
+        rq=qcoords_r[iq]
+        sq=qcoords_s[iq]
+        weightq=qweights[iq]
+        jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+        NNNP=FE.NNN(rq,sq,Pspace)
+        avrg_p+=NNNP.dot(p[iconP[0:mP,iel]])*jcob*weightq
+
+print('     -> avrg_p=',avrg_p)
+
+p-=avrg_p/Lx/Ly
+
+print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+            
+print("pressure normalisation: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
 # compute vrms and errors
@@ -236,35 +275,41 @@ for iel in range(0,nel):
               (vq[counterq]-dh.v_th(xq[counterq],yq[counterq]))**2*weightq*jcob
         errp+=(pq[counterq]-dh.p_th(xq[counterq],yq[counterq]))**2*weightq*jcob
         counterq+=1
+    #end for iq
+#end for iq
 
 vrms=np.sqrt(vrms/(Lx*Ly))
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 
-print("     -> nel= %6d ; vrms= %.8f | vrms_th= %.8f" %(nel,vrms,dh.vrms_th()))
-print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
+print("     -> nel= %6d ; vrms= %.8e | vrms_th= %.8e | %7d %7d" %(nel,vrms,dh.vrms_th(),NfemV,NfemP))
+print("     -> nel= %6d ; errv= %.8e ; errp= %.8e | %7d %7d" %(nel,errv,errp,NfemV,NfemP))
 
 print("compute vrms & errors: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
 
-Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'mesh.vtu')
+if visu:
 
-Tools.export_swarm_to_ascii(xV,yV,'Vnodes.ascii')
-Tools.export_swarm_to_ascii(xP,yP,'Pnodes.ascii')
-Tools.export_swarm_to_vtu(xV,yV,'Vnodes.vtu')
-Tools.export_swarm_to_vtu(xP,yP,'Pnodes.vtu')
+   Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'mesh.vtu')
 
-Tools.export_swarm_to_ascii(xq,yq,'Qnodes.ascii')
-Tools.export_swarm_to_vtu(xq,yq,'Qnodes.vtu')
-Tools.export_swarm_vector_to_vtu(xq,yq,uq,vq,'Qnodes_vel.vtu')
-Tools.export_swarm_scalar_to_vtu(xq,yq,pq,'Qnodes_p.vtu')
+   Tools.export_swarm_to_ascii(xV,yV,'Vnodes.ascii')
+   Tools.export_swarm_to_ascii(xP,yP,'Pnodes.ascii')
+   Tools.export_swarm_to_vtu(xV,yV,'Vnodes.vtu')
+   Tools.export_swarm_to_vtu(xP,yP,'Pnodes.vtu')
 
-Tools.export_swarm_vector_to_vtu(xV,yV,u,v,'solution_velocity.vtu')
-Tools.export_swarm_scalar_to_vtu(xP,yP,p,'solution_pressure.vtu')
+   Tools.export_swarm_to_ascii(xq,yq,'Qnodes.ascii')
+   Tools.export_swarm_to_vtu(xq,yq,'Qnodes.vtu')
+   Tools.export_swarm_vector_to_vtu(xq,yq,uq,vq,'Qnodes_vel.vtu')
+   Tools.export_swarm_scalar_to_vtu(xq,yq,pq,'Qnodes_p.vtu')
 
-Tools.export_connectivity_array_to_ascii(xV,yV,iconV,'iconV.ascii')
-Tools.export_connectivity_array_to_ascii(xP,yP,iconP,'iconP.ascii')
+   Tools.export_swarm_vector_to_vtu(xV,yV,u,v,'solution_velocity.vtu')
+   Tools.export_swarm_scalar_to_vtu(xP,yP,p,'solution_pressure.vtu')
+   Tools.export_swarm_vector_to_ascii(xV,yV,u,v,'solution_u.ascii')
+   Tools.export_swarm_scalar_to_ascii(xP,yP,p,'solution_pressure.ascii')
+
+   Tools.export_connectivity_array_to_ascii(xV,yV,iconV,'iconV.ascii')
+   Tools.export_connectivity_array_to_ascii(xP,yP,iconP,'iconP.ascii')
 
 print("*****************************")
 print("*****************************")

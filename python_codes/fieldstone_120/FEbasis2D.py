@@ -642,7 +642,7 @@ def visualise_nodes(space):
     r=NNN_r(space)
     s=NNN_s(space)
     plt.figure()
-    plt.scatter(r,s,color='teal',s=30)
+    plt.scatter(r,s,color='teal',s=50)
     plt.grid(color = 'gray', linestyle = '--', linewidth = 0.25)
     plt.xlabel('r')
     plt.xlabel('s')
