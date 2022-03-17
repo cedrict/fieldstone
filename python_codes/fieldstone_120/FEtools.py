@@ -299,6 +299,48 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                counter += 1
 
     #---------------------------------
+    elif space=='P-1' and mtype==0:
+       nel*=2
+       N=3*nel
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64)
+       icon=np.zeros((3,nel),dtype=np.int32)
+       iel=0
+       counter=0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               # A
+               x[counter]=i*hx
+               y[counter]=j*hy
+               icon[0,iel]=counter
+               counter+=1
+               x[counter]=i*hx+hx
+               y[counter]=j*hy
+               icon[1,iel]=counter
+               counter+=1
+               x[counter]=i*hx
+               y[counter]=j*hy+hy
+               icon[2,iel]=counter
+               counter+=1
+               iel+=1
+               # B
+               x[counter]=i*hx+hx
+               y[counter]=j*hy+hy
+               icon[0,iel]=counter
+               counter+=1
+               x[counter]=i*hx
+               y[counter]=j*hy+hy
+               icon[1,iel]=counter
+               counter+=1
+               x[counter]=i*hx+hx
+               y[counter]=j*hy
+               icon[2,iel]=counter
+               counter+=1
+               iel+=1
+           #end for
+       #end for
+
+    #---------------------------------
     elif space=='P1' and mtype==2:
        N=(nelx+1)*(nely+1)+nel
        nel*=4
@@ -429,6 +471,123 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
            #end for
        #end for
 
+    #-----------------
+    # 2         
+    # |\        
+    # | \       
+    # 5  4      
+    # | 6 \     
+    # |    \    
+    # 0--3--1   
+
+    elif space=='P2+':
+       nel*=2
+       nnx=2*nelx+1
+       nny=2*nely+1
+       N=nnx*nny+nel
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64)
+       counter=0
+       for j in range(0,nny):
+           for i in range(0,nnx):
+               x[counter]=i*hx/2.
+               y[counter]=j*hy/2.
+               counter += 1
+           #end for
+       #end for
+       icon=np.zeros((7,nel),dtype=np.int32)
+       counter=0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               #A
+               icon[0,counter]=(i)*2+1+(j)*2*nnx -1       #0
+               icon[1,counter]=(i)*2+3+(j)*2*nnx -1       #1
+               icon[2,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+               icon[3,counter]=(i)*2+2+(j)*2*nnx -1       #4
+               icon[4,counter]=(i)*2+2+(j)*2*nnx+nnx -1   #8
+               icon[5,counter]=(i)*2+1+(j)*2*nnx+nnx -1   #7
+               icon[6,counter]=nnx*nny+counter
+               counter += 1
+               #B
+               icon[0,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+               icon[1,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+               icon[2,counter]=(i)*2+3+(j)*2*nnx -1       #1
+               icon[3,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
+               icon[4,counter]=(i)*2+2+(j)*2*nnx+nnx -1   #8
+               icon[5,counter]=(i)*2+3+(j)*2*nnx+nnx -1   #5
+               icon[6,counter]=nnx*nny+counter
+               counter += 1
+       for iel in range (0,nel): #bubble nodes
+           x[nnx*nny+iel]=(x[icon[0,iel]]+x[icon[1,iel]]+x[icon[2,iel]])/3.
+           y[nnx*nny+iel]=(y[icon[0,iel]]+y[icon[1,iel]]+y[icon[2,iel]])/3.
+       #end for
+
+    #-----------------
+    elif space=='P3':
+
+       #              
+       # 12=13==14==15     9        
+       # |   |   |   |     | \      
+       # 8===9==10==11     7   8    
+       # |   |   |   |     |    \    
+       # 4===5===6===7     4  5  6  
+       # |   |   |   |     |       \ 
+       # 0===1===2===3     0==1==2==3
+
+       nel*=2
+       N=(3*nelx+1)*(3*nely+1)
+       nnx=3*nelx+1
+       nny=3*nely+1
+       x=np.empty(N,dtype=np.float64) 
+       y=np.empty(N,dtype=np.float64)
+       counter = 0
+       for j in range(0,nny):
+           for i in range(0,nnx):
+               x[counter]=i*hx/3
+               y[counter]=j*hy/3
+               counter += 1
+           #end for
+       #end for
+       icon=np.zeros((10,nel),dtype=np.int32)
+       counter = 0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               
+               inode=np.zeros(16,dtype=np.int32)
+               counter2=0
+               for k in range(0,4):
+                   for l in range(0,4):
+                       inode[counter2]=i*3+l+j*3*nnx+nnx*k
+                       counter2+=1
+                   # end for
+               # end for
+               #A
+               icon[0,counter]=inode[0]
+               icon[1,counter]=inode[1]
+               icon[2,counter]=inode[2]
+               icon[3,counter]=inode[3]
+               icon[4,counter]=inode[4]
+               icon[5,counter]=inode[5]
+               icon[6,counter]=inode[6]
+               icon[7,counter]=inode[8]
+               icon[8,counter]=inode[9]
+               icon[9,counter]=inode[12]
+               counter += 1
+               #B
+               icon[0,counter]=inode[15]
+               icon[1,counter]=inode[14]
+               icon[2,counter]=inode[13]
+               icon[3,counter]=inode[12]
+               icon[4,counter]=inode[11]
+               icon[5,counter]=inode[10]
+               icon[6,counter]=inode[9]
+               icon[7,counter]=inode[7]
+               icon[8,counter]=inode[6]
+               icon[9,counter]=inode[3]
+               counter += 1
+           #end for
+       #end for
+
     #---------------------------------
     elif space=='DSSY1' or space=='DSSY2' or\
          space=='RT1' or space=='RT2':
@@ -503,7 +662,7 @@ def export_elements_to_vtu(x,y,icon,space,filename):
     N=np.size(x)
     m,nel=np.shape(icon)
  
-    if space=='P0' or space=='Q0':
+    if space=='P0' or space=='Q0' or space=='P-1':
        return
 
     if space=='Q1' or space=='Q1+' or space=='Q2' or space=='Q2s' or \
@@ -529,6 +688,11 @@ def export_elements_to_vtu(x,y,icon,space,filename):
        node0=0
        node1=1
        node2=2
+       m=3       
+    if space=='P3':
+       node0=0
+       node1=3
+       node2=9
        m=3       
 
     vtufile=open(filename,"w")

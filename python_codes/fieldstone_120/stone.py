@@ -15,8 +15,8 @@ import dh
 Lx=1
 Ly=1
 
-nelx=32
-nely=32
+nelx=16
+nely=16
 
 left_bc  ='no_slip'
 right_bc ='no_slip'
@@ -26,15 +26,15 @@ top_bc   ='no_slip'
 ndofV=2
 ndofP=1
 
-Vspace='Q1+'
-Pspace='Q1'
+Vspace='P2+'
+Pspace='P-1'
 
 visu=1
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
 
-nqpts=3
+nqpts=7
 
 #--------------------------------------------------------------------
 # allowing for argument parsing through command line
@@ -79,6 +79,7 @@ print ('NfemP  =',NfemP)
 print ('Nfem   =',Nfem)
 print("*****************************")
 
+
 print("mesh setup: %.3f s" % (timing.time() - start))
 
 #--------------------------------------------------------------------
@@ -108,13 +109,18 @@ for iel in range(0,nel):
         sq=qcoords_s[iq]
         weightq=qweights[iq]
         NNNV=FE.NNN(rq,sq,Vspace)
+        xq=NNNV.dot(xV[iconV[:,iel]]) 
+        yq=NNNV.dot(yV[iconV[:,iel]]) 
+        #uq=NNNV.dot(xV[iconV[:,iel]]**3) 
+        #vq=NNNV.dot(yV[iconV[:,iel]]**3) 
         dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
         dNNNVds=FE.dNNNds(rq,sq,Vspace)
         jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+        #uq=dNNNVdx.dot(xV[iconV[:,iel]]**2) 
+        #vq=dNNNVdx.dot(yV[iconV[:,iel]]**2) ; print(xq,yq,uq,vq)
         area[iel]+=jcob*weightq
     #end for
 #end for
-
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area meas %.8e " %(area.sum()))
 print("     -> total area anal %.8e " %(Lx*Ly))

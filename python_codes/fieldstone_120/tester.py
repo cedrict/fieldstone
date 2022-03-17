@@ -1,5 +1,43 @@
+import numpy as np
 import FEbasis2D as FE
 import FEquadrature as Q
+
+#------------------------------------------------------------------------------
+# testing P3
+#------------------------------------------------------------------------------
+
+elt='P3'
+
+m=FE.NNN_m(elt)
+
+rnodes=FE.NNN_r(elt)
+snodes=FE.NNN_s(elt)
+
+print('P3')
+print('m=',m)
+
+for i in range(0,m):
+   print ('node',i,':',FE.NNN(rnodes[i],snodes[i],elt))
+
+
+exit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 jcb=np.zeros((2,2),dtype=np.float64)
 
@@ -109,10 +147,6 @@ print('m=',m)
 
 for i in range(0,m):
    print ('node',i,':',FE.NNN(rnodes[i],snodes[i],elt))
-
-
-
-
 
 
 

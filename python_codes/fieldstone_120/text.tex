@@ -233,15 +233,15 @@ V_e = \int_{\Omega_e} dV = \sum_{iq=1}^{n_q} \omega_{i_q} |J_{i_q}|
 which translates as follows: 
 \begin{lstlisting}
 for iel in range(0,nel):
-    for iq in range(0,nqel):
-        rq=qcoords_r[iq]
-        sq=qcoords_s[iq]
-        weightq=qweights[iq]
-        NNNV=FE.NNN(rq,sq,Vspace)
-        dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
-        dNNNVds=FE.dNNNds(rq,sq,Vspace)
-        jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
-        area[iel]+=jcob*weightq
+  for iq in range(0,nqel):
+    rq=qcoords_r[iq]
+    sq=qcoords_s[iq]
+    weightq=qweights[iq]
+    NNNV=FE.NNN(rq,sq,Vspace)
+    dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
+    dNNNVds=FE.dNNNds(rq,sq,Vspace)
+    jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+    area[iel]+=jcob*weightq
 \end{lstlisting}
 
 
@@ -250,65 +250,130 @@ for iel in range(0,nel):
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results}
 
+%----------------------------
+\subsection*{$Q_1\times Q_0$}
+
 \begin{center}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1Q0-velocity-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1Q0-pressure-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1Q0-velocity-Nfem.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1Q0-pressure-Nfem.pdf}
-\\
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q2Q1-velocity-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q2Q1-pressure-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q2Q1-velocity-Nfem.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q2Q1-pressure-Nfem.pdf}
-\\
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q3Q2-velocity-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q3Q2-pressure-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q3Q2-velocity-Nfem.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q3Q2-pressure-Nfem.pdf}
-\\
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1+Q1-velocity-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1+Q1-pressure-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1+Q1-velocity-Nfem.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/Q1+Q1-pressure-Nfem.pdf}
-\\
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P1+P1-velocity-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P1+P1-pressure-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P1+P1-velocity-Nfem.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P1+P1-pressure-Nfem.pdf}
-\\
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P2P1-velocity-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P2P1-pressure-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P2P1-velocity-Nfem.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/P2P1-pressure-Nfem.pdf}
-\\
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT1Q0-velocity-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT1Q0-pressure-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT1Q0-velocity-Nfem.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT1Q0-pressure-Nfem.pdf}
-\\
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT2Q0-velocity-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT2Q0-pressure-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT2Q0-velocity-Nfem.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/RT2Q0-pressure-Nfem.pdf}
-\\
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY1Q0-velocity-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY1Q0-pressure-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY1Q0-velocity-Nfem.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY1Q0-pressure-Nfem.pdf}
-\\
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY2Q0-velocity-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY2Q0-pressure-h.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY2Q0-velocity-Nfem.pdf}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/results/DSSY2Q0-pressure-Nfem.pdf}
-\\
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1Q0-velocity-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1Q0-pressure-h.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1Q0-velocity-Nfem.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1Q0-pressure-Nfem.pdf}
+\end{center}
+
+
+%----------------------------
+\subsection*{$Q_2\times Q_1$}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q2Q1-velocity-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q2Q1-pressure-h.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q2Q1-velocity-Nfem.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q2Q1-pressure-Nfem.pdf}
+\end{center}
+
+%----------------------------
+\subsection*{$Q_3\times Q_2$}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q3Q2-velocity-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q3Q2-pressure-h.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q3Q2-velocity-Nfem.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q3Q2-pressure-Nfem.pdf}
+\end{center}
+
+%----------------------------
+\subsection*{$Q_1^+\times Q_1$}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1+Q1-velocity-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1+Q1-pressure-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1+Q1-velocity-Nfem.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1+Q1-pressure-Nfem.pdf}
+\end{center}
+
+%----------------------------
+\subsection*{$P_1^+\times P_1$}
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P1+P1-velocity-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P1+P1-pressure-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P1+P1-velocity-Nfem.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P1+P1-pressure-Nfem.pdf}
+\end{center}
+
+%----------------------------
+\subsection*{$P_2\times P_1$}
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2P1-velocity-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2P1-pressure-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2P1-velocity-Nfem.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2P1-pressure-Nfem.pdf}
+\end{center}
+
+%----------------------------
+\subsection*{$P_2^+\times P_{-1}$}
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2+P-1-velocity-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2+P-1-pressure-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2+P-1-velocity-Nfem.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2+P-1-pressure-Nfem.pdf}
+\end{center}
+
+%----------------------------
+\subsection*{$P_3\times P_2$}
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P3P2-velocity-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P3P2-pressure-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P3P2-velocity-Nfem.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P3P2-pressure-Nfem.pdf}
+\end{center}
+
+%----------------------------
+\subsection*{$Q_1\times Q_0$-RT1}
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT1Q0-velocity-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT1Q0-pressure-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT1Q0-velocity-Nfem.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT1Q0-pressure-Nfem.pdf}
+\end{center}
+
+%----------------------------
+\subsection*{$Q_1\times Q_0$-RT2}
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT2Q0-velocity-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT2Q0-pressure-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT2Q0-velocity-Nfem.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT2Q0-pressure-Nfem.pdf}
+\end{center}
+
+%----------------------------
+\subsection*{$Q_1\times Q_0$-DSSY1}
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY1Q0-velocity-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY1Q0-pressure-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY1Q0-velocity-Nfem.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY1Q0-pressure-Nfem.pdf}
+\end{center}
+
+%----------------------------
+\subsection*{$Q_1\times Q_0$-DSSY2}
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY2Q0-velocity-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY2Q0-pressure-h.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY2Q0-velocity-Nfem.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY2Q0-pressure-Nfem.pdf}
 \end{center}
 
 
 
+\newpage
+%------------------------------
+\subsection*{Altogether}
+
+
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/results/errors-velocity-all}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/results/errors-pressure-all}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/results/vrms-Nfem}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/errors-velocity-all}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/errors-pressure-all}\\
+\includegraphics[width=10cm]{python_codes/fieldstone_120/results/vrms-Nfem}
 \end{center}
 
 

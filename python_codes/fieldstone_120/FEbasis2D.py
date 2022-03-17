@@ -55,7 +55,7 @@ def NNN(r,s,space):
        val[3]=0.25*(1-r)*(1+s)-0.25*B
        val[4]=B
 
-    if space=='P1':
+    if space=='P1' or space=='P-1':
        val = np.zeros(3,dtype=np.float64)
        val[0]=1-r-s
        val[1]=r
@@ -127,16 +127,16 @@ def NNN(r,s,space):
 
     if space=='P3':
        val = np.zeros(10,dtype=np.float64)
-       val[0]=4.5*(1-r-s)*(1/3-r-s)*(2/3-r-s)
-       val[1]=4.5*r*(r-1/3)*(r-2/3)
-       val[2]=4.5*s*(s-1/3)*(s-2/3)
-       val[3]=13.5*(1-r-s)*r*(2/3-r-s)
-       val[4]=13.5*(1-r-s)*r*(r-1/3)
-       val[5]=13.5*r*s*(r-1/3)
-       val[6]=13.5*r*s*(r-2/3)
-       val[7]=13.5*(1-r-s)*s*(s-1/3)
-       val[8]=13.5*(1-r-s)*s*(2/3-r-s)
-       val[9]=27*r*s*(1-r-s)
+       val[0]=0.5*(2 -11*r - 11*s + 18*r**2 + 36*r*s + 18*s**2 -9*r**3 -27*r**2*s -27*r*s**2 -9*s**3)
+       val[1]=0.5*(18*r-45*r**2-45*r*s +27*r**3 +54*r**2*s+27*r*s**2  )   
+       val[2]=0.5*(-9*r+36*r**2+9*r*s -27*r**3 -27*r**2*s  )   
+       val[3]=0.5*(2*r-9*r**2+9*r**3  )   
+       val[4]=0.5*(18*s -45*r*s-45*s**2+27*r**2*s+54*r*s**2+27*s**3  )   
+       val[5]=0.5*(54*r*s-54*r**2*s-54*r*s**2   )   
+       val[6]=0.5*(-9*r*s+27*r**2*s   )   
+       val[7]=0.5*(-9*s+9*r*s+36*s**2-27*r*s**2-27*s**3  )   
+       val[8]=0.5*(-9*r*s+27*r*s**2 ) 
+       val[9]=0.5*(2*s-9*s**2+9*s**3  )   
 
     if space=='Q4':
        val = np.zeros(25,dtype=np.float64)
@@ -283,6 +283,16 @@ def dNNNdr(r,s,space):
 
     if space=='P3':
        val = np.zeros(10,dtype=np.float64)
+       val[0]=0.5*(-11+36*r+36*s-27*r**2-54*r*s-27*s**2)
+       val[1]=0.5*(18-90*r-45*s+81*r**2+108*r*s+27*s**2)
+       val[2]=0.5*(-9+72*r+9*s-81*r**2-54*r*s)
+       val[3]=0.5*(2-18*r+27*r**2)
+       val[4]=0.5*(-45*s+54*r*s+54*s**2)
+       val[5]=0.5*(54*s-108*r*s-54*s**2)
+       val[6]=0.5*(-9*s+54*r*s)
+       val[7]=0.5*(9*s-27*s**2)
+       val[8]=0.5*(-9*s+27*s**2)
+       val[9]=0.
 
     if space=='Q4':
        val=np.zeros(25,dtype=np.float64)
@@ -429,6 +439,16 @@ def dNNNds(r,s,space):
 
     if space=='P3':
        val = np.zeros(10,dtype=np.float64)
+       val[0]=0.5*(-11+36*r+36*s-27*r**2-54*r*s-27*s**2)
+       val[1]=0.5*(-45*r+54*r**2+54*r*s)
+       val[2]=0.5*(9*r-27*r**2)
+       val[3]=0.
+       val[4]=0.5*(18-45*r-90*s+27*r**2+108*r*s+81*s**2)
+       val[5]=0.5*(54*r-54*r**2-108*r*s)
+       val[6]=0.5*(-9*r+27*r**2)
+       val[7]=0.5*(-9+9*r+72*s-54*r*s-81*s**2)
+       val[8]=0.5*(-9*r+54*r*s)
+       val[9]=0.5*(2-18*s+27*s**2)
 
     if space=='Q4':
        val=np.zeros(25,dtype=np.float64)
@@ -529,7 +549,7 @@ def NNN_r(space):
 
     if space=='P3':
        val = np.zeros(10,dtype=np.float64)
-       val[:]=[0,1,0,1/3,2/3,2/3,1/3,0,0,1/3]
+       val[:]=[0,1/3,2/3,1,0,1/3,2/3,0,1/3,0]
 
     if space=='Q4':
        val = np.zeros(25,dtype=np.float64)
@@ -580,7 +600,7 @@ def NNN_s(space):
 
     if space=='P2+':
        val = np.zeros(7,dtype=np.float64)
-       val[:]=[0,0,1,0,0.5,0.5,1./3.]
+       val[:]=[0,0,1,0,0.5,0.5,1/3]
 
     if space=='Q2':
        val = np.zeros(9,dtype=np.float64)
@@ -596,7 +616,7 @@ def NNN_s(space):
 
     if space=='P3':
        val = np.zeros(10,dtype=np.float64)
-       val[:]=[0,0,1,0,0,1/3,2/3,2/3,1/3,1/3] 
+       val[:]=[0,0,0,0,1/3,1/3,1/3,2/3,2/3,1]
 
     if space=='Q4':
        val = np.zeros(25,dtype=np.float64)
@@ -622,6 +642,7 @@ def NNN_m(space):
     if space=='Q1':     return 4
     if space=='Q1+':    return 5
     if space=='P1':     return 3
+    if space=='P-1':    return 3
     if space=='P1+':    return 4
     if space=='Q2':     return 9
     if space=='Q2s':    return 8
