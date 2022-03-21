@@ -41,7 +41,7 @@ in the buoyancy term of the momentum conservation equation. We consider two-dime
 {\vec \nabla}\cdot {\bm \sigma} + \rho(T) {\vec g} &=& {\vec 0} \label{eq_moce}\\
 {\vec \nabla}\cdot {\vec \upnu} &=& 0 \label{eq_mace}\\
 {\bm \sigma} &=& -p {\bm 1} + {\bm \tau} \label{steq}\\
-{\bm s} &=& 2 \eta \dot{\bm \varepsilon} \label{stwomu}\\
+{\bm \tau} &=& 2 \eta \dot{\bm \varepsilon} \label{stwomu}\\
 \dot{\bm \varepsilon}  &=& \frac{1}{2} \left( {\vec \nabla}{\vec \upnu} 
 + ({\vec \nabla}{\vec \upnu})^T  \right) \label{epsdot} \\
 \rho_0 C_p \left( \frac{\partial T}{\partial t}  + {\vec \upnu}\cdot {\vec \nabla} T\right) 
@@ -235,7 +235,7 @@ as reported in the literature.}
 %\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Obtaining the python code}
+\subsubsection{Obtaining the python code \label{ss:1416wget}}
 
 The code is to be downloaded as follows in a terminal:
 {\small
@@ -260,7 +260,7 @@ You can run the code in a terminal, in Anaconda, Spyder, etc ...
 To conduct the exercise you can change the following parameters (and run the code until convergence):
 \begin{itemize}
 \item {\tt Lx}: horizontal extent of the domain
-\item {\tt Ra}: the Rayleigh number $\Ranb$
+\item {\tt Ra\_nb}: the Rayleigh number $\Ranb$
 \item {\tt tol\_ss}: the steady state detection tolerance
 \item {\tt nelx,nely}: the number of elements in $x$ and $y$ directions 
 \item {\tt nstep}: the maximum number of iterations to reach steady state
