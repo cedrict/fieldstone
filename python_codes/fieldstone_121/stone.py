@@ -46,21 +46,35 @@ c2=-1.14e-5
 #    |                                                     |
 #    +-----------------------------------------------------+
 
-A_cpx=6.80220477
-Q_cpx=534e3
-n_cpx=5.52
 
-A_ab=398.1
-n_ab=3
-Q_ab=356e3
+#mat 1: A_ab=398.1, n_ab=3, Q_ab=356e3
+#mat 2: A_cpx=6.80220477, Q_cpx=534e3, n_cpx=5.52
 
-cohesion=[20e6,20e6]
-phi=[30/180*np.pi,30/180*np.pi]
+eps1=0.5
+eps2=1.5
+weakening_factor_phi=0.5
+weakening_factor_cohesion=0.5
+
+A_values=[398.1,6.80220477]
+Q_values=[356e3,534e3]
+n_values=[3,5.52]
+cohesion_values=[20e6,20e6]
+phi_values=[30/180*np.pi,30/180*np.pi]
+   
+depth=40e3 # 30 to 60km
+background_pressure=3000*9.81*depth
+background_temperature=500+273 #between 300 and 500C
+pf_coefficient=0.4
+       
+#if imat==1:
+       #   val=A_ab**(-1/n_ab)*sr**(1/n_ab-1)*np.exp(Q_ab/Rgas/T/n_ab)*MPa
+       #else:
+       #   val=A_cpx**(-1./n_cpx)*sr**(1./n_cpx-1)*np.exp(Q_cpx/Rgas/T/n_cpx)*MPa
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def viscosity(x,y,ee,T,imat,iter):
+def viscosity(x,y,ee,T,imat,iter,plastic_strain_marker):
     if experiment==0:
        if iter==0:
           xxxx
@@ -75,13 +89,39 @@ def viscosity(x,y,ee,T,imat,iter):
        val=1e21
 
     if experiment==2:
-       sr=max(1e-20,ee) # minimum strain rate
-       if imat==1:
-          val=A_ab**(-1/n_ab)*sr**(1/n_ab-1)*np.exp(Q_ab/Rgas/T/n_ab)*MPa
-       else:
-          val=A_cpx**(-1./n_cpx)*sr**(1./n_cpx-1)*np.exp(Q_cpx/Rgas/T/n_cpx)*MPa
+       sr=max(1e-19,ee) # minimum strain rate
 
-    return val
+       eta_dsl=A_values[imat-1]**(-1/n_values[imat-1])*sr**(1/n_values[imat-1]-1)*\
+               np.exp(Q_values[imat-1]/Rgas/T/n_values[imat-1])*MPa
+
+       #strain weakening
+       if plastic_strain_marker <eps1:
+          phi_sw=phi_values[imat-1]
+          c_sw=cohesion_values[imat-1]
+       elif plastic_strain<eps2:
+          phi_sw=phi_values[imat-1]*(weakening_factor_phi-1)/(eps2-eps1)*(strain_marker-eps1)+phi_values[imat-1] 
+          c_sw=cohesion_values[imat-1]*(weakening_factor_cohesion-1)/(eps2-eps1)*(strain_marker-eps1)+cohesion_values[imat-1] 
+       else:
+          phi_sw=phi_values[imat-1]*weakening_factor_phi
+          c_sw=cohesion_values[imat-1]*weakening_factor_cohesion
+
+       yield_vM=background_pressure*(1-pf_coefficient)*np.sin(phi_sw)+c_sw*np.cos(phi_sw)
+       if use_plasticity:
+          eta_pl=yield_vM/2/ee
+          val=min(eta_pl,eta_dsl)
+          if eta_pl<eta_dsl: 
+             is_plastic=1 
+          else:
+             is_plastic=0 
+       else:
+          val=eta_dsl
+          is_plastic=0
+
+       #viscosity cutoffs
+       val=min(val,1e26)
+       val=max(val,1e18)
+
+    return val,is_plastic,yield_vM
 
 #------------------------------------------------------------------------------
 #   Vspace=Q2     Pspace=Q1       
@@ -172,7 +212,7 @@ if experiment==0:
 if experiment==2:
    Lx=4e-2 # horizontal extent of the domain in m 
    Ly=1e-2 # vertical extent of the domain in m
-   nelx = 100             #number of elements in horizontal direction
+   nelx = 128             #number of elements in horizontal direction
    nely = int(nelx*Ly/Lx) #number of elements in vertical direction
    v0=1e-15*Ly # bc velocity so that shear strain rate is 10^-15
    x_inclusion=Lx/2
@@ -181,18 +221,14 @@ if experiment==2:
    b_inclusion=Ly/2.5
    angle_inclusion=np.pi/10
    #time stepping
-   nstep=50
+   nstep=500
    CFL_nb=0.25
-   depth=40e3 # 30 to 60km
-   background_pressure=3000*9.81*depth
-   background_temperature=500+273 #between 300 and 500C
-   pf1=0.4*background_pressure
-   pf2=0.9*background_pressure
    nmarker_per_dim=5
    avrg=3
    #nonlinear iterations parameters
-   niter=4
+   niter=5
    tol=1e-2
+   use_plasticity=False
 
 #################################################################
     
@@ -399,9 +435,16 @@ swarm_exx=np.empty(nmarker,dtype=np.float64)      # strain rate xx
 swarm_exy=np.empty(nmarker,dtype=np.float64)      # strain rate yy
 swarm_eyy=np.empty(nmarker,dtype=np.float64)      # strain rate xy
 swarm_ee=np.empty(nmarker,dtype=np.float64)       # effective strain rate
-swarm_strainxx=np.empty(nmarker,dtype=np.float64) # strain xx
-swarm_strainxy=np.empty(nmarker,dtype=np.float64) # strain yy
-swarm_strainyy=np.empty(nmarker,dtype=np.float64) # strain xy
+
+swarm_total_strainxx=np.empty(nmarker,dtype=np.float64) # strain xx
+swarm_total_strainxy=np.empty(nmarker,dtype=np.float64) # strain yy
+swarm_total_strainyy=np.empty(nmarker,dtype=np.float64) # strain xy
+swarm_total_strain_eff=np.empty(nmarker,dtype=np.float64) # effective strain 
+swarm_plastic_strainxx=np.empty(nmarker,dtype=np.float64) # strain xx
+swarm_plastic_strainxy=np.empty(nmarker,dtype=np.float64) # strain yy
+swarm_plastic_strainyy=np.empty(nmarker,dtype=np.float64) # strain xy
+swarm_plastic_strain_eff=np.empty(nmarker,dtype=np.float64) # effective plastic strain xx
+
 swarm_tauxx=np.empty(nmarker,dtype=np.float64)    # dev stress xx
 swarm_tauxy=np.empty(nmarker,dtype=np.float64)    # dev stress yy
 swarm_tauyy=np.empty(nmarker,dtype=np.float64)    # dev stress xy
@@ -410,8 +453,8 @@ swarm_iel=np.empty(nmarker,dtype=np.int32)        # element identity
 swarm_eta=np.empty(nmarker,dtype=np.float64)      # viscosity
 swarm_p_dyn=np.empty(nmarker,dtype=np.float64)    # computed pressure 
 swarm_p_tot=np.empty(nmarker,dtype=np.float64)    # comp pressure + backgr
-swarm_yield1=np.empty(nmarker,dtype=np.float64)   # yield value
-swarm_yield2=np.empty(nmarker,dtype=np.float64)   # yield value
+swarm_yield=np.empty(nmarker,dtype=np.float64)   # yield value
+swarm_is_plastic=np.empty(nmarker,dtype=np.int32)  
 
 counter=0
 for iel in range(0,nel):
@@ -559,7 +602,9 @@ for istep in range(0,nstep):
             swarm_eyy[im]=sum(NNNV[0:mV]*eyy[iconV[0:mV,iel]])
             swarm_exy[im]=sum(NNNV[0:mV]*exy[iconV[0:mV,iel]])
             swarm_ee[im]=np.sqrt(0.5*(swarm_exx[im]**2+swarm_eyy[im]**2+2*swarm_exy[im]**2) ) 
-            swarm_eta[im]=viscosity(swarm_x[im],swarm_y[im],swarm_ee[im],background_temperature,swarm_mat[im],iter)
+            swarm_eta[im],swarm_is_plastic[im],swarm_yield[im]=\
+            viscosity(swarm_x[im],swarm_y[im],swarm_ee[im],\
+                      background_temperature,swarm_mat[im],iter,swarm_plastic_strain_eff[im])
 
             if abs(avrg)==1 : # arithmetic
                eta_elemental[iel]     +=swarm_eta[im]
@@ -928,16 +973,26 @@ for istep in range(0,nstep):
            swarm_x[im]+=um*dt
            swarm_y[im]+=vm*dt
            #update its strain tensor components
-           swarm_strainxx[im]+=exxm*dt
-           swarm_strainyy[im]+=eyym*dt
-           swarm_strainxy[im]+=exym*dt
+           swarm_total_strainxx[im]+=exxm*dt
+           swarm_total_strainyy[im]+=eyym*dt
+           swarm_total_strainxy[im]+=exym*dt
+           if swarm_is_plastic[im]==1: 
+              swarm_plastic_strainxx[im]+=exxm*dt
+              swarm_plastic_strainyy[im]+=eyym*dt
+              swarm_plastic_strainxy[im]+=exym*dt
+
+           swarm_total_strain_eff[im]  =np.sqrt(0.5*(swarm_total_strainxx[im]**2+swarm_total_strainyy[im]**2+2*swarm_total_strainxy[im]**2))
+           swarm_plastic_strain_eff[im]=np.sqrt(0.5*(swarm_plastic_strainxx[im]**2+swarm_plastic_strainyy[im]**2+2*swarm_plastic_strainxy[im]**2))
+
            #assign strain rate tensor components
            swarm_exx[im]=exxm
            swarm_eyy[im]=eyym
            swarm_exy[im]=exym
            #assign effective strain rate and viscosity
            swarm_ee[im]=np.sqrt(0.5*(swarm_exx[im]**2+swarm_eyy[im]**2+2*swarm_exy[im]**2) ) 
-           swarm_eta[im]=viscosity(swarm_x[im],swarm_y[im],swarm_ee[im],background_temperature,swarm_mat[im],iter)
+           swarm_eta[im],swarm_is_plastic[im],swarm_yield[im]=\
+           viscosity(swarm_x[im],swarm_y[im],swarm_ee[im],\
+                     background_temperature,swarm_mat[im],iter,swarm_plastic_strain_eff[im])
            #assign dev stress values
            swarm_tauxx[im]=2*exxm*swarm_eta[im]
            swarm_tauyy[im]=2*eyym*swarm_eta[im]
@@ -945,10 +1000,6 @@ for istep in range(0,nstep):
            #assign pressure
            swarm_p_dyn[im]=NNNP.dot(p[iconP[0:mP,iel]])
            swarm_p_tot[im]=background_pressure
-           swarm_yield1[im]=(swarm_p_tot[im]-pf1)*np.sin(phi[swarm_mat[im]-1])+\
-                            cohesion[swarm_mat[im]-1]*np.cos(phi[swarm_mat[im]-1])
-           swarm_yield2[im]=(swarm_p_tot[im]-pf2)*np.sin(phi[swarm_mat[im]-1])+\
-                            cohesion[swarm_mat[im]-1]*np.cos(phi[swarm_mat[im]-1])
 
            if swarm_x[im]>Lx: swarm_x[im]-=Lx #periodic b.c. on right side
            if swarm_x[im]<0:  swarm_x[im]+=Lx #periodic b.c. on left side
@@ -1097,26 +1148,51 @@ for istep in range(0,nstep):
     for i in range(0,nmarker):
         vtufile.write("%3e \n" %swarm_paint[i])
     vtufile.write("</DataArray>\n")
+
     #--
-    vtufile.write("<DataArray type='Float32' Name='strain (xx)' Format='ascii'>\n")
+    vtufile.write("<DataArray type='Float32' Name='total strain (xx)' Format='ascii'>\n")
     for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_strainxx[i])
+        vtufile.write("%3e \n" %swarm_total_strainxx[i])
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='strain (yy)' Format='ascii'>\n")
+    vtufile.write("<DataArray type='Float32' Name='total strain (yy)' Format='ascii'>\n")
     for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_strainyy[i])
+        vtufile.write("%3e \n" %swarm_total_strainyy[i])
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='strain (xy)' Format='ascii'>\n")
+    vtufile.write("<DataArray type='Float32' Name='total strain (xy)' Format='ascii'>\n")
     for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_strainxy[i])
+        vtufile.write("%3e \n" %swarm_total_strainxy[i])
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='strain (eff.)' Format='ascii'>\n")
+    vtufile.write("<DataArray type='Float32' Name='total strain (eff.)' Format='ascii'>\n")
     for i in range(0,nmarker):
-        vtufile.write("%3e \n" % np.sqrt(0.5*(swarm_strainxx[i]**2+swarm_strainyy[i]**2+2*swarm_strainxy[i]**2) ) )
+        vtufile.write("%3e \n" % swarm_total_strain_eff[i] )
     vtufile.write("</DataArray>\n")
+
+    #--
+    vtufile.write("<DataArray type='Float32' Name='plastic strain (xx)' Format='ascii'>\n")
+    for i in range(0,nmarker):
+        vtufile.write("%3e \n" %swarm_plastic_strainxx[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='plastic strain (yy)' Format='ascii'>\n")
+    for i in range(0,nmarker):
+        vtufile.write("%3e \n" %swarm_plastic_strainyy[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='plastic strain (xy)' Format='ascii'>\n")
+    for i in range(0,nmarker):
+        vtufile.write("%3e \n" %swarm_plastic_strainxy[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='plastic strain (eff.)' Format='ascii'>\n")
+    for i in range(0,nmarker):
+        vtufile.write("%3e \n" % swarm_plastic_strain_eff[i] )
+    vtufile.write("</DataArray>\n")
+
+
+
     #--
     vtufile.write("<DataArray type='Float32' Name='strain rate (xx)' Format='ascii'>\n")
     for i in range(0,nmarker):
@@ -1173,14 +1249,9 @@ for istep in range(0,nstep):
         vtufile.write("%10e \n" %(swarm_p_tot[i]/MPa))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='yield value 1 (MPa)' Format='ascii'>\n")
+    vtufile.write("<DataArray type='Float32' Name='yield value(MPa)' Format='ascii'>\n")
     for i in range(0,nmarker):
-        vtufile.write("%10e \n" %(swarm_taue[i]/MPa-swarm_yield1[i]/MPa))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='yield value 2 (MPa)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%10e \n" %(swarm_taue[i]/MPa-swarm_yield2[i]/MPa))
+        vtufile.write("%10e \n" %(swarm_taue[i]/MPa-swarm_yield[i]/MPa))
     vtufile.write("</DataArray>\n")
     #--
     #vtufile.write("<DataArray type='Float32' Name='r,s,t' NumberOfComponents='3' Format='ascii'>\n")
