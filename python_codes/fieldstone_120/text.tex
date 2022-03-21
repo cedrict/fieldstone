@@ -1,62 +1,75 @@
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_120/keywords}
 
-Boundary conditions of this exercise
-\begin{itemize}
-\item two-dimensional
-\item Cartesian domain
-\item Continuous Galerkin method
-\item most of commonly used elements 
-\item Dirichlet boundary conditions
-\item isoparametric mapping
-\end{itemize}
+\begin{center}
+\inpython~Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_120}
+\end{center}
 
+\par\noindent\rule{\textwidth}{0.4pt}
 
-
-is there still a need for dNNNN and dNNN ?
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The idea here is to create a library of basis functions and quadrature rules, as well as 
 other FE-related tools so as to be able to write much more compact FE codes. 
+The boundary conditions of this exercise are:
+\begin{itemize}
+\item two-dimensional space
+\item Cartesian domain
+\item Continuous Galerkin method
+\item most of commonly used element pairs for Stokes equations 
+\item Dirichlet boundary conditions 
+\item isoparametric mapping
+\end{itemize}
 
 There are three files which contain all the required tools to build most of a FE code:
 
 \begin{itemize}
 
 \item {\pythonfile FEbasis2D.py} contains 
-\begin{lstlisting}
-NNN(r,s,space):
-dNNNdr(r,s,space):
-dNNNds(r,s,space):
-NNN_r(space):
-NNN_s(space):
-NNN_m(space):
-visualise_nodes(space):
-\end{lstlisting}
 
+\begin{itemize}
+\item \lstinline{NNN(r,s,space)}: returns the basis functions $\bN_i (i=1,...m)$ at position $r,s$.
+\item \lstinline{dNNNdr(r,s,space)}: returns basis function derivative $\partial_r\bN_i (i=1,...m)$ at position $r,s$.
+\item \lstinline{dNNNds(r,s,space)}: returns basis function derivative $\partial_s\bN_i (i=1,...m)$ at position $r,s$.
+\item \lstinline{NNN_r(space)}: returns the $r_i (i=1,...m)$ coordinates of the support nodes.
+\item \lstinline{NNN_s(space)}: returns the $s_i (i=1,...m)$ coordinates of the support nodes.
+\item \lstinline{NNN_m(space)}: returns the number of support nodes.
+\item \lstinline{visualise_nodes(space)}: generates a png file with the support nodes and the shape of the reference element.
+\end{itemize}
+
+
+\item {\pythonfile FEquadrature.py} contains
+\begin{itemize}
+\item \lstinline{quadrature(space,nqpts)}: it returns the number of quadrature points in the element, 
+their coordinates and associated weights. If the element is a quadrilateral then it contains 
+\lstinline{nqpts}$\times$\lstinline{nqpts} quadrature points. 
+If it is a triangle then it contains \lstinline{nqpts} quadrature points in total. 
+In that case only 3,6,7,12,13,16 are authorized.   
+\item \lstinline{qcoords_1D(nqpts)}: returns the coordinates of the \lstinline{nqpts} quadrature points between -1 and 1.
+\item \lstinline{qweights_1D(nqpts)}:returns the weights of the \lstinline{nqpts} quadrature points.
+\item \lstinline{visualise_quadrature_points(space,nqpts)}: generates a png file.
+\end{itemize}
 
 
 \item {\pythonfile FEtools.py} contains
 
-\begin{lstlisting}
-cartesian_mesh(Lx,Ly,nelx,nely,element):
-export_mesh_to_ascii(x,y,filename):
-export_connectivity_array_to_ascii(x,y,icon,filename):
-export_mesh_to_vtu(x,y,icon,space,filename):
-export_swarm_to_vtu(x,y,filename):
-bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
-J(m,dNdr,dNds,x,y):
-assemble_K(K_el,A_sparse,iconV,mV,ndofV,iel):
-assemble_G(G_el,A_sparse,iconV,iconP,NfemV,mV,mP,ndofV,ndofP,iel):
-apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel):
-\end{lstlisting}
+\begin{itemize}
+\item \lstinline{cartesian_mesh(Lx,Ly,nelx,nely,space)}:
+\item \lstinline{export_swarm_to_ascii(x,y,filename)}:
+\item \lstinline{export_swarm_scalar_to_ascii(x,y,f,filename)}:
+\item \lstinline{export_swarm_vector_to_ascii(x,y,u,v,filename)}:
+\item \lstinline{export_connectivity_array_to_ascii(x,y,icon,filename)}:
+\item \lstinline{export_elements_to_vtu(x,y,icon,space,filename)}:
+\item \lstinline{export_swarm_to_vtu(x,y,filename)}:
+\item \lstinline{export_swarm_vector_to_vtu(x,y,vx,vy,filename)}:
+\item \lstinline{export_swarm_scalar_to_vtu(x,y,scalar,filename)}:
+\item \lstinline{bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top)}:
+\item \lstinline{J(m,dNdr,dNds,x,y)}:
+\item \lstinline{assemble_K(K_el,A_sparse,iconV,mV,ndofV,iel)}:
+\item \lstinline{assemble_G(G_el,A_sparse,iconV,iconP,NfemV,mV,mP,ndofV,ndofP,iel)}:
+\item \lstinline{assemble_f(f_el,rhs,iconV,mV,ndofV,iel)}:
+\item \lstinline{apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel)}:
+\end{itemize}
 
-\item {\pythonfile FEquadrature.py} contains
-
-\begin{lstlisting}
-quadrature(space,nqperdim):
-qcoords_1D(nqperdim):
-qweights_1D(nqperdim):
-visualise_quadrature_points(space,nqpts):
-\end{lstlisting}
 
 \end{itemize}
 
@@ -65,35 +78,22 @@ visualise_quadrature_points(space,nqpts):
 \section*{Supported element spaces}
 
 \begin{center}
-\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/Q1_nodes}
-\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/Q1+_nodes}
-\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/Q2_nodes}\\
-\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/Q2s_nodes}
-\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/Q3_nodes}
-\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/Q4_nodes}\\
-\includegraphics[width=3.3cm]{python_codes/fieldstone_120/spaces/RT1_nodes}
-\includegraphics[width=3.3cm]{python_codes/fieldstone_120/spaces/RT2_nodes}
-\includegraphics[width=3.3cm]{python_codes/fieldstone_120/spaces/DSSY1_nodes}
-\includegraphics[width=3.3cm]{python_codes/fieldstone_120/spaces/DSSY2_nodes}\\
-\includegraphics[width=4.cm]{python_codes/fieldstone_120/spaces/P1_nodes}
-\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/P2_nodes}
-\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/P3_nodes}\\
-\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/P1+_nodes}
-\includegraphics[width=4.5cm]{python_codes/fieldstone_120/spaces/P2+_nodes}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q1_nodes}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q1+_nodes}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q2_nodes}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q2s_nodes}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q3_nodes}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q4_nodes}\\
+\includegraphics[width=3.53cm]{python_codes/fieldstone_120/spaces/RT1_nodes}
+\includegraphics[width=3.53cm]{python_codes/fieldstone_120/spaces/RT2_nodes}
+\includegraphics[width=3.53cm]{python_codes/fieldstone_120/spaces/DSSY1_nodes}
+\includegraphics[width=3.53cm]{python_codes/fieldstone_120/spaces/DSSY2_nodes}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P1_nodes}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P2_nodes}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P3_nodes}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P1+_nodes}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P2+_nodes}
 \end{center}
-
-mesher: Q0,Q1,Q2,Q3,Q4, P0,P1,P2   missing P1+, P2+
-
-\begin{tabular}{ccccccccccccc}
-      & Q1P0 & Q1Q1 & Q2Q1 & Q3Q2 & Q4Q3 & Q1+Q1 & P1P0 & P2P1 & P3P2 & P2+P1 & P1+P1 \\
-\hline
-areas  & ok & & ok & ok &&&&&& \\ 
-D\&H   &  \\
-errors &  \\
-vrms   &  \\
-\hline
-\end{tabular}
-
 
 %-----------------------------------------------------------------------------
 \section*{Finite element pairs for the Stokes equation}
@@ -103,11 +103,10 @@ vrms   &  \\
 \item $Q_2\times Q_1$: see Section~\ref{ss:pairq2q1}
 \item $Q_2\times P_{-1}$: see Section~\ref{ss:pairq2pm1}
 \item $Q_3\times Q_2$: see Section~\ref{XXX}
-\item $Q_4\times Q_3$: see Section~\ref{YYY}
-\item $Q_1^+\times Q_1$: Quadrilateral mini, see Section~\ref{ss:}
-\item $Q_2^{(8)}\times Q_1$: Serendipity, see Section~\ref{ss:}
-\item $Q_1\times Q_0$-DSSY1: see Section~\ref{ss:}
-\item $Q_1\times Q_0$-DSSY2: see Section~\ref{ss:}
+\item $Q_1^+\times Q_1$: Quadrilateral mini, see Section~\ref{ss:quadmini}
+\item $Q_2^{(8)}\times Q_1$: Serendipity, see Section~\ref{sec:serendipity2D}
+\item $Q_1\times Q_0$-DSSY1: see Section~\ref{ss:dssy_2D}
+\item $Q_1\times Q_0$-DSSY2: see Section~\ref{ss:dssy_2D}
 \item $Q_1\times Q_0$-RT1: see Section~\ref{ss:RTq1p0}
 \item $Q_1\times Q_0$-RT2: see Section~\ref{ss:RTq1p0}
 \item $P_1\times P_0$: see Section~\ref{ss:}
@@ -119,6 +118,8 @@ vrms   &  \\
 
 ADD stabilised elements?
 chinese Q2Q1 stone 52 ? only for deformed
+P2/P1+P0 element ?!!?!
+Q2/Q1+Q0
 
 %-----------------------------------------------------------------------------
 \section*{Breakdown of the code}
@@ -248,122 +249,126 @@ for iel in range(0,nel):
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Results}
+\section*{Results - VJ3 mms}
 
 %----------------------------
 \subsection*{$Q_1\times Q_0$}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1Q0-velocity-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1Q0-pressure-h.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1Q0-velocity-Nfem.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1Q0-pressure-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1Q0-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1Q0-pressure-h.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1Q0-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1Q0-pressure-Nfem.pdf}
 \end{center}
-
 
 %----------------------------
 \subsection*{$Q_2\times Q_1$}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q2Q1-velocity-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q2Q1-pressure-h.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q2Q1-velocity-Nfem.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q2Q1-pressure-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q1-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q1-pressure-h.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q1-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q1-pressure-Nfem.pdf}
 \end{center}
 
+higher convergence when less quadrature points are used ?!
+
+\newpage
 %----------------------------
 \subsection*{$Q_3\times Q_2$}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q3Q2-velocity-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q3Q2-pressure-h.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q3Q2-velocity-Nfem.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q3Q2-pressure-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q3Q2-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q3Q2-pressure-h.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q3Q2-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q3Q2-pressure-Nfem.pdf}
 \end{center}
 
 %----------------------------
 \subsection*{$Q_1^+\times Q_1$}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1+Q1-velocity-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1+Q1-pressure-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1+Q1-velocity-Nfem.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/Q1+Q1-pressure-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1+Q1-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1+Q1-pressure-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1+Q1-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1+Q1-pressure-Nfem.pdf}
 \end{center}
 
+\newpage
 %----------------------------
 \subsection*{$P_1^+\times P_1$}
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P1+P1-velocity-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P1+P1-pressure-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P1+P1-velocity-Nfem.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P1+P1-pressure-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P1+P1-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P1+P1-pressure-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P1+P1-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P1+P1-pressure-Nfem.pdf}
 \end{center}
 
 %----------------------------
 \subsection*{$P_2\times P_1$}
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2P1-velocity-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2P1-pressure-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2P1-velocity-Nfem.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2P1-pressure-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P1-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P1-pressure-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P1-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P1-pressure-Nfem.pdf}
 \end{center}
 
+\newpage
 %----------------------------
 \subsection*{$P_2^+\times P_{-1}$}
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2+P-1-velocity-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2+P-1-pressure-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2+P-1-velocity-Nfem.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P2+P-1-pressure-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P-1-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P-1-pressure-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P-1-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P-1-pressure-Nfem.pdf}
 \end{center}
 
 %----------------------------
 \subsection*{$P_3\times P_2$}
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P3P2-velocity-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P3P2-pressure-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P3P2-velocity-Nfem.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/P3P2-pressure-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P3P2-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P3P2-pressure-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P3P2-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P3P2-pressure-Nfem.pdf}
 \end{center}
 
+\newpage
 %----------------------------
 \subsection*{$Q_1\times Q_0$-RT1}
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT1Q0-velocity-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT1Q0-pressure-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT1Q0-velocity-Nfem.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT1Q0-pressure-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT1Q0-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT1Q0-pressure-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT1Q0-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT1Q0-pressure-Nfem.pdf}
 \end{center}
 
 %----------------------------
 \subsection*{$Q_1\times Q_0$-RT2}
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT2Q0-velocity-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT2Q0-pressure-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT2Q0-velocity-Nfem.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/RT2Q0-pressure-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT2Q0-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT2Q0-pressure-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT2Q0-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT2Q0-pressure-Nfem.pdf}
 \end{center}
 
+\newpage
 %----------------------------
 \subsection*{$Q_1\times Q_0$-DSSY1}
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY1Q0-velocity-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY1Q0-pressure-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY1Q0-velocity-Nfem.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY1Q0-pressure-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY1Q0-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY1Q0-pressure-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY1Q0-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY1Q0-pressure-Nfem.pdf}
 \end{center}
 
 %----------------------------
 \subsection*{$Q_1\times Q_0$-DSSY2}
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY2Q0-velocity-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY2Q0-pressure-h.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY2Q0-velocity-Nfem.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_120/results/DSSY2Q0-pressure-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY2Q0-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY2Q0-pressure-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY2Q0-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY2Q0-pressure-Nfem.pdf}
 \end{center}
-
-
 
 \newpage
 %------------------------------
@@ -371,9 +376,75 @@ for iel in range(0,nel):
 
 
 \begin{center}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/errors-velocity-all}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/errors-pressure-all}\\
-\includegraphics[width=10cm]{python_codes/fieldstone_120/results/vrms-Nfem}
+\includegraphics[width=13.5cm]{python_codes/fieldstone_120/results/errors-velocity-all}\\
+\includegraphics[width=13.5cm]{python_codes/fieldstone_120/results/errors-pressure-all}\\
+\includegraphics[width=13.5cm]{python_codes/fieldstone_120/results/vrms}
 \end{center}
+
+
+\newpage
+\begin{tabular}{l|cc|cc|}
+\hline
+                     & d\&h &   & vj3 & \\
+                     & v    & p & v & p \\
+\hline
+\hline
+$P_1\times P_0$       &      &   &  &   \\
+$P_2\times P_1$       &      &   & 3 & 2  \\
+$P_3\times P_2$       &      &   & 4 & 3  \\
+$P_1^+\times P_{1}$   &      &   & 2 & {\bf 1.5}  \\
+$P_2^+\times P_{-1}$  &      &   & 3 & 2  \\
+$Q_1\times Q_0$       & 2    & X & 2 & X  \\
+$Q_2\times Q_1$       &      &   & 3 & 2  \\
+$Q_3\times Q_2$       &      &   & 4 & 3  \\
+$Q_1^+\times Q_1$     &      &   & 2 & {\bf 1.5}  \\
+$Q_1\times Q_0$-RT1   &      &   & 2 & 1(?)  \\
+$Q_1\times Q_0$-RT2   &      &   & 2 & 1  \\
+$Q_1\times Q_0$-DSSY1 &      &   & 2 & 1  \\
+$Q_1\times Q_0$-DSSY2 &      &   & 2 & 1  \\
+\hline
+\end{tabular} 
+
+\vspace{1cm}
+
+Conclusions:
+\begin{itemize}
+\item ...
+\end{itemize}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Results - square sinker}
+
+Unit square. No-slip boundary conditions. domain filled with fluid with $\eta_f=1$ and $\rho_f=1$.
+Square sinker in the middle of the domain of size $0.25\times 0.25$ with $\eta_s=100$ and
+$\rho_s=1.001$. Gravity is $\vec{g}=-\vec{e}_y$. Resolutions nelx=8, 16, 32, 64, 128 
+are chosen so that element boundaries align with sinker boundaries 
+(material averaging is irrelevant). 
+
+There is no analytical solution so by setting $\vec{\upnu}^{th}=\vec{0}$ and 
+$p^{th}=0$ the computed errors are in fact the vrms and prms shown hereunder.
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_120/results_sinker/velocity}
+\includegraphics[width=6cm]{python_codes/fieldstone_120/results_sinker/pressure}\\
+{\captionfont Velocity and pressure field on $64\times 64$ mesh of $Q_2\times Q_1$ elements.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results_sinker/errors-velocity-all}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results_sinker/errors-velocity-subset}\\
+\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results_sinker/errors-pressure-all}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results_sinker/errors-pressure-subset}\\
+{\captionfont We find that the DSSY and RT elements yield very abnormal results at low resolution
+so they are removed from the plots in the right column. The prms of the regular $Q_1\times Q_0$ element 
+is also removed.}
+\end{center}
+
+
+
+
+
 
 

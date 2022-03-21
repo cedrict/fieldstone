@@ -1,0 +1,526 @@
+#gnuplot script
+set term pdf enhanced font "times,11pt"
+unset grid
+#set grid
+set log x
+set log y
+set key outside
+set format y "10^{%L}"
+
+
+################################################################
+set title 'Q_1xQ_0'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'Q1Q0-velocity-h.pdf'
+plot[][]\
+'errors_Q1_Q0_nqpts2' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q1_Q0_nqpts3' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q1_Q0_nqpts4' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=4',\
+x**2*2 lt -1 dt 2 t 'h^2'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'Q1Q0-pressure-h.pdf'
+plot[][]\
+'errors_Q1_Q0_nqpts2' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q1_Q0_nqpts3' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q1_Q0_nqpts4' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=4',\
+x**1*10 lt -1 dt 2 t 'h'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'Q1Q0-velocity-Nfem.pdf'
+plot[][]\
+'errors_Q1_Q0_nqpts2' u ($11+$12):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q1_Q0_nqpts3' u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q1_Q0_nqpts4' u ($11+$12):6 w lp ps 0.6 t 'nqpts=4',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'Q1Q0-pressure-Nfem.pdf'
+plot[][]\
+'errors_Q1_Q0_nqpts2' u ($11+$12):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q1_Q0_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q1_Q0_nqpts4' u ($11+$12):9 w lp ps 0.6 t 'nqpts=4',\
+
+################################################################
+set title 'Q_2xQ_1'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'Q2Q1-velocity-h.pdf'
+plot[][]\
+'errors_Q2_Q1_nqpts2' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q2_Q1_nqpts3' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q2_Q1_nqpts4' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=4',\
+x**3/2 lt -1 dt 2 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'Q2Q1-pressure-h.pdf'
+plot[][]\
+'errors_Q2_Q1_nqpts2' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q2_Q1_nqpts3' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q2_Q1_nqpts4' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=4',\
+x**2/4 lt -1 dt 2 t 'h^2'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'Q2Q1-velocity-Nfem.pdf'
+plot[][]\
+'errors_Q2_Q1_nqpts2' u ($11+$12):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q2_Q1_nqpts3' u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q2_Q1_nqpts4' u ($11+$12):6 w lp ps 0.6 t 'nqpts=4',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'Q2Q1-pressure-Nfem.pdf'
+plot[][]\
+'errors_Q2_Q1_nqpts2' u ($11+$12):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q2_Q1_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q2_Q1_nqpts4' u ($11+$12):9 w lp ps 0.6 t 'nqpts=4',\
+
+################################################################
+set title 'Q_3xQ_2'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'Q3Q2-velocity-h.pdf'
+plot[][]\
+'errors_Q3_Q2_nqpts3' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q3_Q2_nqpts4' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=4',\
+'errors_Q3_Q2_nqpts5' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=5',\
+x**4/15 lt -1 dt 2 t 'h^4'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'Q3Q2-pressure-h.pdf'
+plot[][]\
+'errors_Q3_Q2_nqpts3' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q3_Q2_nqpts4' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=4',\
+'errors_Q3_Q2_nqpts5' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=5',\
+x**3/10 lt -1 dt 2 t 'h^3'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'Q3Q2-velocity-Nfem.pdf'
+plot[][]\
+'errors_Q3_Q2_nqpts3' u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q3_Q2_nqpts4' u ($11+$12):6 w lp ps 0.6 t 'nqpts=4',\
+'errors_Q3_Q2_nqpts5' u ($11+$12):6 w lp ps 0.6 t 'nqpts=5',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'Q3Q2-pressure-Nfem.pdf'
+plot[][]\
+'errors_Q3_Q2_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q3_Q2_nqpts4' u ($11+$12):9 w lp ps 0.6 t 'nqpts=4',\
+'errors_Q3_Q2_nqpts5' u ($11+$12):9 w lp ps 0.6 t 'nqpts=5',\
+
+################################################################
+set title 'P_2xP_1'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'P2P1-velocity-h.pdf'
+plot[][]\
+'errors_P2_P1_nqpts3' u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_P2_P1_nqpts6' u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2_P1_nqpts7' u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=7',\
+x**3*2 lt -1 dt 2 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'P2P1-pressure-h.pdf'
+plot[][]\
+'errors_P2_P1_nqpts3' u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_P2_P1_nqpts6' u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2_P1_nqpts7' u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=7',\
+x**2/4 lt -1 dt 2 t 'h^2'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'P2P1-velocity-Nfem.pdf'
+plot[][]\
+'errors_P2_P1_nqpts3' u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_P2_P1_nqpts6' u ($11+$12):6 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2_P1_nqpts7' u ($11+$12):6 w lp ps 0.6 t 'nqpts=7',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'P2P1-pressure-Nfem.pdf'
+plot[][]\
+'errors_P2_P1_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_P2_P1_nqpts6' u ($11+$12):9 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2_P1_nqpts7' u ($11+$12):9 w lp ps 0.6 t 'nqpts=7',\
+
+################################################################
+set title 'P_2^+xP_{-1}'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'P2+P-1-velocity-h.pdf'
+plot[][]\
+'errors_P2+_P-1_nqpts6'  u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2+_P-1_nqpts7'  u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2+_P-1_nqpts12' u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=12',\
+x**3*5 lt -1 dt 2 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'P2+P-1-pressure-h.pdf'
+plot[][]\
+'errors_P2+_P-1_nqpts6'  u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2+_P-1_nqpts7'  u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2+_P-1_nqpts12' u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=12',\
+x**2*100 lt -1 dt 2 t 'h^2'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'P2+P-1-velocity-Nfem.pdf'
+plot[][]\
+'errors_P2+_P-1_nqpts6'  u ($11+$12):6 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2+_P-1_nqpts7'  u ($11+$12):6 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2+_P-1_nqpts12' u ($11+$12):6 w lp ps 0.6 t 'nqpts=12',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'P2+P-1-pressure-Nfem.pdf'
+plot[][]\
+'errors_P2+_P-1_nqpts6'  u ($11+$12):9 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2+_P-1_nqpts7'  u ($11+$12):9 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2+_P-1_nqpts12' u ($11+$12):9 w lp ps 0.6 t 'nqpts=12',\
+
+################################################################
+set title 'P_3xP_2'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'P3P2-velocity-h.pdf'
+plot[][]\
+'errors_P3_P2_nqpts6'  u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=6',\
+'errors_P3_P2_nqpts7'  u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=7',\
+'errors_P3_P2_nqpts12' u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=12',\
+x**4*2 lt -1 dt 2 t 'h^4'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'P3P2-pressure-h.pdf'
+plot[][]\
+'errors_P3_P2_nqpts6'  u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=6',\
+'errors_P3_P2_nqpts7'  u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=7',\
+'errors_P3_P2_nqpts12' u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=12',\
+x**3*8 lt -1 dt 2 t 'h^3',\
+x**3.5*12 lt -1 dt 3 t 'h^{3.5}'
+
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'P3P2-velocity-Nfem.pdf'
+plot[][]\
+'errors_P3_P2_nqpts6'  u ($11+$12):6 w lp ps 0.6 t 'nqpts=6',\
+'errors_P3_P2_nqpts7'  u ($11+$12):6 w lp ps 0.6 t 'nqpts=7',\
+'errors_P3_P2_nqpts12' u ($11+$12):6 w lp ps 0.6 t 'nqpts=12',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'P3P2-pressure-Nfem.pdf'
+plot[][]\
+'errors_P3_P2_nqpts6'  u ($11+$12):9 w lp ps 0.6 t 'nqpts=6',\
+'errors_P3_P2_nqpts7'  u ($11+$12):9 w lp ps 0.6 t 'nqpts=7',\
+'errors_P3_P2_nqpts12' u ($11+$12):9 w lp ps 0.6 t 'nqpts=12',\
+
+
+################################################################
+set title 'Q_1xQ_0 (RT_1)'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'RT1Q0-velocity-h.pdf'
+plot[][]\
+'errors_RT1_Q0_nqpts2' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_RT1_Q0_nqpts3' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_RT1_Q0_nqpts4' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=4',\
+x**2 lt -1 dt 2 t 'h^2'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'RT1Q0-pressure-h.pdf'
+plot[][]\
+'errors_RT1_Q0_nqpts2' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_RT1_Q0_nqpts3' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_RT1_Q0_nqpts4' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=4',\
+x**1/2 lt -1 dt 2 t 'h'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'RT1Q0-velocity-Nfem.pdf'
+plot[][]\
+'errors_RT1_Q0_nqpts2' u ($11+$12):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_RT1_Q0_nqpts3' u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_RT1_Q0_nqpts4' u ($11+$12):6 w lp ps 0.6 t 'nqpts=4',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'RT1Q0-pressure-Nfem.pdf'
+plot[][]\
+'errors_RT1_Q0_nqpts2' u ($11+$12):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_RT1_Q0_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_RT1_Q0_nqpts4' u ($11+$12):9 w lp ps 0.6 t 'nqpts=4',\
+
+################################################################
+set title 'Q_1xQ_0 (RT_2)'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'RT2Q0-velocity-h.pdf'
+plot[][]\
+'errors_RT2_Q0_nqpts2' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_RT2_Q0_nqpts3' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_RT2_Q0_nqpts4' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=4',\
+x**2 lt -1 dt 2 t 'h^2'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'RT2Q0-pressure-h.pdf'
+plot[][]\
+'errors_RT2_Q0_nqpts2' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_RT2_Q0_nqpts3' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_RT2_Q0_nqpts4' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=4',\
+x**1/2.5 lt -1 dt 2 t 'h'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'RT2Q0-velocity-Nfem.pdf'
+plot[][]\
+'errors_RT2_Q0_nqpts2' u ($11+$12):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_RT2_Q0_nqpts3' u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_RT2_Q0_nqpts4' u ($11+$12):6 w lp ps 0.6 t 'nqpts=4',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'RT2Q0-pressure-Nfem.pdf'
+plot[][]\
+'errors_RT2_Q0_nqpts2' u ($11+$12):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_RT2_Q0_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_RT2_Q0_nqpts4' u ($11+$12):9 w lp ps 0.6 t 'nqpts=4',\
+
+
+################################################################
+set title 'Q_1xQ_0 (DSSY_1)'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'DSSY1Q0-velocity-h.pdf'
+plot[][]\
+'errors_DSSY1_Q0_nqpts2' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_DSSY1_Q0_nqpts3' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_DSSY1_Q0_nqpts4' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=4',\
+'errors_DSSY1_Q0_nqpts5' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=5',\
+x**2 lt -1 dt 2 t 'h^2'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'DSSY1Q0-pressure-h.pdf'
+plot[][]\
+'errors_DSSY1_Q0_nqpts2' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_DSSY1_Q0_nqpts3' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_DSSY1_Q0_nqpts4' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=4',\
+'errors_DSSY1_Q0_nqpts5' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=5',\
+x**1/2.5 lt -1 dt 2 t 'h'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'DSSY1Q0-velocity-Nfem.pdf'
+plot[][]\
+'errors_DSSY1_Q0_nqpts2' u ($11+$12):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_DSSY1_Q0_nqpts3' u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_DSSY1_Q0_nqpts4' u ($11+$12):6 w lp ps 0.6 t 'nqpts=4',\
+'errors_DSSY1_Q0_nqpts5' u ($11+$12):6 w lp ps 0.6 t 'nqpts=5',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'DSSY1Q0-pressure-Nfem.pdf'
+plot[][]\
+'errors_DSSY1_Q0_nqpts2' u ($11+$12):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_DSSY1_Q0_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_DSSY1_Q0_nqpts4' u ($11+$12):9 w lp ps 0.6 t 'nqpts=4',\
+'errors_DSSY1_Q0_nqpts5' u ($11+$12):9 w lp ps 0.6 t 'nqpts=5',\
+
+################################################################
+set title 'Q_1xQ_0 (DSSY_2)'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'DSSY2Q0-velocity-h.pdf'
+plot[][]\
+'errors_DSSY2_Q0_nqpts2' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_DSSY2_Q0_nqpts3' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_DSSY2_Q0_nqpts4' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=4',\
+'errors_DSSY2_Q0_nqpts5' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=5',\
+x**2 lt -1 dt 2 t 'h^2'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'DSSY2Q0-pressure-h.pdf'
+plot[][]\
+'errors_DSSY2_Q0_nqpts2' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_DSSY2_Q0_nqpts3' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_DSSY2_Q0_nqpts4' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=4',\
+'errors_DSSY2_Q0_nqpts5' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=5',\
+x**1/3 lt -1 dt 2 t 'h'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'DSSY2Q0-velocity-Nfem.pdf'
+plot[][]\
+'errors_DSSY2_Q0_nqpts2' u ($11+$12):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_DSSY2_Q0_nqpts3' u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_DSSY2_Q0_nqpts4' u ($11+$12):6 w lp ps 0.6 t 'nqpts=4',\
+'errors_DSSY2_Q0_nqpts5' u ($11+$12):6 w lp ps 0.6 t 'nqpts=5',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'DSSY2Q0-pressure-Nfem.pdf'
+plot[][]\
+'errors_DSSY2_Q0_nqpts2' u ($11+$12):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_DSSY2_Q0_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_DSSY2_Q0_nqpts4' u ($11+$12):9 w lp ps 0.6 t 'nqpts=4',\
+'errors_DSSY2_Q0_nqpts5' u ($11+$12):9 w lp ps 0.6 t 'nqpts=5',\
+
+################################################################
+set title 'P_1^+xP_1'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'P1+P1-velocity-h.pdf'
+plot[][]\
+'errors_P1+_P1_nqpts3' u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_P1+_P1_nqpts6' u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=6',\
+'errors_P1+_P1_nqpts7' u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=7',\
+x**2*10 lt -1 dt 2 t 'h^2'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'P1+P1-pressure-h.pdf'
+plot[][]\
+'errors_P1+_P1_nqpts3' u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_P1+_P1_nqpts6' u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=6',\
+'errors_P1+_P1_nqpts7' u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=7',\
+x**1.5*100 lt -1 dt 2 t 'h^{1.5}'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'P1+P1-velocity-Nfem.pdf'
+plot[][]\
+'errors_P1+_P1_nqpts3' u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_P1+_P1_nqpts6' u ($11+$12):6 w lp ps 0.6 t 'nqpts=6',\
+'errors_P1+_P1_nqpts7' u ($11+$12):6 w lp ps 0.6 t 'nqpts=7',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'P1+P1-pressure-Nfem.pdf'
+plot[][]\
+'errors_P1+_P1_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_P1+_P1_nqpts6' u ($11+$12):9 w lp ps 0.6 t 'nqpts=6',\
+'errors_P1+_P1_nqpts7' u ($11+$12):9 w lp ps 0.6 t 'nqpts=7',\
+
+################################################################
+set title 'Q_1^+xQ_1'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'Q1+Q1-velocity-h.pdf'
+plot[][]\
+'errors_Q1+_Q1_nqpts2' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q1+_Q1_nqpts3' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q1+_Q1_nqpts4' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=4',\
+'errors_Q1+_Q1_nqpts5' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=5',\
+x**2 lt -1 dt 2 t 'h^2'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'Q1+Q1-pressure-h.pdf'
+plot[][]\
+'errors_Q1+_Q1_nqpts2' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q1+_Q1_nqpts3' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q1+_Q1_nqpts4' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=4',\
+'errors_Q1+_Q1_nqpts5' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=5',\
+x**1.5*10 lt -1 dt 2 t 'h^{1.5}'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'Q1+Q1-velocity-Nfem.pdf'
+plot[][]\
+'errors_Q1+_Q1_nqpts2' u ($11+$12):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q1+_Q1_nqpts3' u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q1+_Q1_nqpts4' u ($11+$12):6 w lp ps 0.6 t 'nqpts=4',\
+'errors_Q1+_Q1_nqpts5' u ($11+$12):6 w lp ps 0.6 t 'nqpts=5',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'Q1+Q1-pressure-Nfem.pdf'
+plot[][]\
+'errors_Q1+_Q1_nqpts2' u ($11+$12):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q1+_Q1_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q1+_Q1_nqpts4' u ($11+$12):9 w lp ps 0.6 t 'nqpts=4',\
+'errors_Q1+_Q1_nqpts5' u ($11+$12):9 w lp ps 0.6 t 'nqpts=5',\
+
+
+#####################################################################################
+#####################################################################################
+#####################################################################################
+#####################################################################################
+#####################################################################################
+#####################################################################################
+
+unset title
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+
+set output 'errors-velocity-all.pdf'
+plot[][]\
+'errors_Q1_Q0_nqpts2'    u (1/sqrt($3)):6   w lp lt 1 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0',\
+'errors_Q2_Q1_nqpts3'    u (1/sqrt($3)):6   w lp lt 1 pt 2 lw .7 ps 0.36 t 'Q_2xQ_1',\
+'errors_Q3_Q2_nqpts3'    u (1/sqrt($3)):6   w lp lt 1 pt 3 lw .7 ps 0.36 t 'Q_3xQ_2',\
+'errors_Q1+_Q1_nqpts3'   u (1/sqrt($3)):6   w lp lt 2      lw .7 ps 0.36 t 'Q_1^+xQ_1',\
+'errors_P2_P1_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 1 lw .7 ps 0.36 t 'P_2xP_1',\
+'errors_P3_P2_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 2 lw .7 ps 0.36 t 'P_3xP_2',\
+'errors_P1+_P1_nqpts6'   u (1/sqrt($3/2)):6 w lp lt 4 pt 1 lw .7 ps 0.36 t 'P_1^+xP_1',\
+'errors_P2+_P-1_nqpts6'  u (1/sqrt($3/2)):6 w lp lt 4 pt 2 lw .7 ps 0.36 t 'P_2^+xP_{-1}',\
+'errors_RT1_Q0_nqpts2'   u (1/sqrt($3)):6   w lp lt 5 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (RT_1)',\
+'errors_RT2_Q0_nqpts2'   u (1/sqrt($3)):6   w lp lt 5 pt 2 lw .7 ps 0.36 t 'Q_1xQ_0 (RT_2)',\
+'errors_DSSY1_Q0_nqpts3' u (1/sqrt($3)):6   w lp lt 6 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (DSSY_1)',\
+'errors_DSSY2_Q0_nqpts3' u (1/sqrt($3)):6   w lp lt 6 pt 2 lw .7 ps 0.36 t 'Q_1xQ_0 (DSSY_2)',\
+
+
+
+
+
+
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'errors-pressure-all.pdf'
+plot[][]\
+'errors_Q1_Q0_nqpts2'    u (1/sqrt($3)):9   w lp lt 1 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0',\
+'errors_Q2_Q1_nqpts3'    u (1/sqrt($3)):9   w lp lt 1 pt 2 lw .7 ps 0.36 t 'Q_2xQ_1',\
+'errors_Q3_Q2_nqpts3'    u (1/sqrt($3)):9   w lp lt 1 pt 3 lw .7 ps 0.36 t 'Q_3xQ_2',\
+'errors_Q1+_Q1_nqpts3'   u (1/sqrt($3)):9   w lp lt 2      lw .7 ps 0.36 t 'Q_1^+xQ_1',\
+'errors_P2_P1_nqpts6'    u (1/sqrt($3/2)):9 w lp lt 3 pt 1 lw .7 ps 0.36 t 'P_2xP_1',\
+'errors_P3_P2_nqpts6'    u (1/sqrt($3/2)):9 w lp lt 3 pt 2 lw .7 ps 0.36 t 'P_3xP_2',\
+'errors_P1+_P1_nqpts6'   u (1/sqrt($3/2)):9 w lp lt 4 pt 1 lw .7 ps 0.36 t 'P_1^+xP_1',\
+'errors_P2+_P-1_nqpts6'  u (1/sqrt($3/2)):9 w lp lt 4 pt 2 lw .7 ps 0.36 t 'P_2^+xP_{-1}',\
+'errors_RT1_Q0_nqpts2'   u (1/sqrt($3)):9   w lp lt 5 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (RT_1)',\
+'errors_RT2_Q0_nqpts2'   u (1/sqrt($3)):9   w lp lt 5 pt 2 lw .7 ps 0.36 t 'Q_1xQ_0 (RT_2)',\
+'errors_DSSY1_Q0_nqpts3' u (1/sqrt($3)):9   w lp lt 6 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (DSSY_1)',\
+'errors_DSSY2_Q0_nqpts3' u (1/sqrt($3)):9   w lp lt 6 pt 2 lw .7 ps 0.36 t 'Q_1xQ_0 (DSSY_2)',\
+
+set format y "%g"
+unset log y
+
+set ylabel 'u_{rms}'
+set output 'errors-velocity-subset.pdf'
+plot[][]\
+'errors_Q1_Q0_nqpts2'    u (1/sqrt($3)):6   w lp lt 1 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0',\
+'errors_Q2_Q1_nqpts3'    u (1/sqrt($3)):6   w lp lt 1 pt 2 lw .7 ps 0.36 t 'Q_2xQ_1',\
+'errors_Q3_Q2_nqpts3'    u (1/sqrt($3)):6   w lp lt 1 pt 3 lw .7 ps 0.36 t 'Q_3xQ_2',\
+'errors_Q1+_Q1_nqpts3'   u (1/sqrt($3)):6   w lp lt 2      lw .7 ps 0.36 t 'Q_1^+xQ_1',\
+'errors_P2_P1_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 1 lw .7 ps 0.36 t 'P_2xP_1',\
+'errors_P3_P2_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 2 lw .7 ps 0.36 t 'P_3xP_2',\
+'errors_P1+_P1_nqpts6'   u (1/sqrt($3/2)):6 w lp lt 4 pt 1 lw .7 ps 0.36 t 'P_1^+xP_1',\
+'errors_P2+_P-1_nqpts6'  u (1/sqrt($3/2)):6 w lp lt 4 pt 2 lw .7 ps 0.36 t 'P_2^+xP_{-1}',\
+
+set ylabel 'p_{rms}'
+set output 'errors-pressure-subset.pdf'
+plot[][]\
+'errors_Q2_Q1_nqpts3'    u (1/sqrt($3)):9   w lp lt 1 pt 2 lw .7 ps 0.36 t 'Q_2xQ_1',\
+'errors_Q3_Q2_nqpts3'    u (1/sqrt($3)):9   w lp lt 1 pt 3 lw .7 ps 0.36 t 'Q_3xQ_2',\
+'errors_Q1+_Q1_nqpts3'   u (1/sqrt($3)):9   w lp lt 2      lw .7 ps 0.36 t 'Q_1^+xQ_1',\
+'errors_P2_P1_nqpts6'    u (1/sqrt($3/2)):9 w lp lt 3 pt 1 lw .7 ps 0.36 t 'P_2xP_1',\
+'errors_P3_P2_nqpts6'    u (1/sqrt($3/2)):9 w lp lt 3 pt 2 lw .7 ps 0.36 t 'P_3xP_2',\
+'errors_P1+_P1_nqpts6'   u (1/sqrt($3/2)):9 w lp lt 4 pt 1 lw .7 ps 0.36 t 'P_1^+xP_1',\
+'errors_P2+_P-1_nqpts6'  u (1/sqrt($3/2)):9 w lp lt 4 pt 2 lw .7 ps 0.36 t 'P_2^+xP_{-1}',\
+
+
+
+
+
+

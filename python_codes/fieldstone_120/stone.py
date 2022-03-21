@@ -7,7 +7,9 @@ import matplotlib.pyplot as plt
 import sys as sys
 from scipy.sparse import lil_matrix
 from scipy.sparse.linalg import spsolve
-import dh
+#import dh
+#import vj3 as mms
+import sinker as mms
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -15,8 +17,8 @@ import dh
 Lx=1
 Ly=1
 
-nelx=16
-nely=16
+nelx=64
+nely=64
 
 left_bc  ='no_slip'
 right_bc ='no_slip'
@@ -26,8 +28,8 @@ top_bc   ='no_slip'
 ndofV=2
 ndofP=1
 
-Vspace='P2+'
-Pspace='P-1'
+Vspace='RT1'
+Pspace='Q0'
 
 visu=1
 
@@ -111,13 +113,9 @@ for iel in range(0,nel):
         NNNV=FE.NNN(rq,sq,Vspace)
         xq=NNNV.dot(xV[iconV[:,iel]]) 
         yq=NNNV.dot(yV[iconV[:,iel]]) 
-        #uq=NNNV.dot(xV[iconV[:,iel]]**3) 
-        #vq=NNNV.dot(yV[iconV[:,iel]]**3) 
         dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
         dNNNVds=FE.dNNNds(rq,sq,Vspace)
         jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
-        #uq=dNNNVdx.dot(xV[iconV[:,iel]]**2) 
-        #vq=dNNNVdx.dot(yV[iconV[:,iel]]**2) ; print(xq,yq,uq,vq)
         area[iel]+=jcob*weightq
     #end for
 #end for
@@ -174,11 +172,11 @@ for iel in range(0,nel):
                                     [0.        ,dNNNVdy[k]],
                                     [dNNNVdy[k],dNNNVdx[k]]]
 
-        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*dh.eta(xq[counterq],yq[counterq])*weightq*jcob
+        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*mms.eta(xq[counterq],yq[counterq])*weightq*jcob
 
         for k in range(0,mV): 
-            f_el[2*k+0]+=NNNV[k]*jcob*weightq*dh.bx(xq[counterq],yq[counterq])
-            f_el[2*k+1]+=NNNV[k]*jcob*weightq*dh.by(xq[counterq],yq[counterq])
+            f_el[2*k+0]+=NNNV[k]*jcob*weightq*mms.bx(xq[counterq],yq[counterq])
+            f_el[2*k+1]+=NNNV[k]*jcob*weightq*mms.by(xq[counterq],yq[counterq])
 
         for k in range(0,mP):
             N_mat[0,k]=NNNP[k]
@@ -277,9 +275,9 @@ for iel in range(0,nel):
         vq[counterq]=NNNV.dot(v[iconV[0:mV,iel]])
         pq[counterq]=NNNP.dot(p[iconP[0:mP,iel]])
         vrms+=(uq[counterq]**2+vq[counterq]**2)*weightq*jcob
-        errv+=(uq[counterq]-dh.u_th(xq[counterq],yq[counterq]))**2*weightq*jcob+\
-              (vq[counterq]-dh.v_th(xq[counterq],yq[counterq]))**2*weightq*jcob
-        errp+=(pq[counterq]-dh.p_th(xq[counterq],yq[counterq]))**2*weightq*jcob
+        errv+=(uq[counterq]-mms.u_th(xq[counterq],yq[counterq]))**2*weightq*jcob+\
+              (vq[counterq]-mms.v_th(xq[counterq],yq[counterq]))**2*weightq*jcob
+        errp+=(pq[counterq]-mms.p_th(xq[counterq],yq[counterq]))**2*weightq*jcob
         counterq+=1
     #end for iq
 #end for iq
@@ -288,7 +286,7 @@ vrms=np.sqrt(vrms/(Lx*Ly))
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 
-print("     -> nel= %6d ; vrms= %.8e | vrms_th= %.8e | %7d %7d" %(nel,vrms,dh.vrms_th(),NfemV,NfemP))
+print("     -> nel= %6d ; vrms= %.8e | vrms_th= %.8e | %7d %7d" %(nel,vrms,mms.vrms_th(),NfemV,NfemP))
 print("     -> nel= %6d ; errv= %.8e ; errp= %.8e | %7d %7d" %(nel,errv,errp,NfemV,NfemP))
 
 print("compute vrms & errors: %.3f s" % (timing.time() - start))
