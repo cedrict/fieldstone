@@ -10,6 +10,8 @@ from numpy import linalg as LA
 import matplotlib.pyplot as plt
 
 #------------------------------------------------------------------------------
+# basic physical constants
+#------------------------------------------------------------------------------
 
 Rgas=8.3145
 Tkelvin=273
@@ -65,11 +67,6 @@ depth=40e3 # 30 to 60km
 background_pressure=3000*9.81*depth
 background_temperature=500+273 #between 300 and 500C
 pf_coefficient=0.4
-       
-#if imat==1:
-       #   val=A_ab**(-1/n_ab)*sr**(1/n_ab-1)*np.exp(Q_ab/Rgas/T/n_ab)*MPa
-       #else:
-       #   val=A_cpx**(-1./n_cpx)*sr**(1./n_cpx-1)*np.exp(Q_cpx/Rgas/T/n_cpx)*MPa
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -212,9 +209,10 @@ if experiment==0:
 if experiment==2:
    Lx=4e-2 # horizontal extent of the domain in m 
    Ly=1e-2 # vertical extent of the domain in m
-   nelx = 128             #number of elements in horizontal direction
+   nelx = 150             #number of elements in horizontal direction
    nely = int(nelx*Ly/Lx) #number of elements in vertical direction
    v0=1e-15*Ly # bc velocity so that shear strain rate is 10^-15
+   #inclusion parameters
    x_inclusion=Lx/2
    y_inclusion=Ly/2
    a_inclusion=Ly/5
@@ -222,13 +220,16 @@ if experiment==2:
    angle_inclusion=np.pi/10
    #time stepping
    nstep=500
-   CFL_nb=0.25
+   CFL_nb=0.5
+   #markers parameters
    nmarker_per_dim=5
    avrg=3
    #nonlinear iterations parameters
    niter=5
    tol=1e-2
    use_plasticity=False
+
+make_png=False
 
 #################################################################
     
@@ -243,7 +244,6 @@ NfemV=NV*ndofV   # number of velocity dofs
 NfemP=NP*ndofP   # number of pressure dofs
 Nfem=NfemV+NfemP # total number of dofs
 
-#quadrature points
 nqperdim=3
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
@@ -435,24 +435,21 @@ swarm_exx=np.empty(nmarker,dtype=np.float64)      # strain rate xx
 swarm_exy=np.empty(nmarker,dtype=np.float64)      # strain rate yy
 swarm_eyy=np.empty(nmarker,dtype=np.float64)      # strain rate xy
 swarm_ee=np.empty(nmarker,dtype=np.float64)       # effective strain rate
-
 swarm_total_strainxx=np.empty(nmarker,dtype=np.float64) # strain xx
 swarm_total_strainxy=np.empty(nmarker,dtype=np.float64) # strain yy
 swarm_total_strainyy=np.empty(nmarker,dtype=np.float64) # strain xy
 swarm_total_strain_eff=np.empty(nmarker,dtype=np.float64) # effective strain 
-swarm_plastic_strainxx=np.empty(nmarker,dtype=np.float64) # strain xx
-swarm_plastic_strainxy=np.empty(nmarker,dtype=np.float64) # strain yy
-swarm_plastic_strainyy=np.empty(nmarker,dtype=np.float64) # strain xy
+swarm_plastic_strainxx=np.empty(nmarker,dtype=np.float64) # plastic strain xx
+swarm_plastic_strainxy=np.empty(nmarker,dtype=np.float64) # plastic strain yy
+swarm_plastic_strainyy=np.empty(nmarker,dtype=np.float64) # plastic strain xy
 swarm_plastic_strain_eff=np.empty(nmarker,dtype=np.float64) # effective plastic strain xx
-
 swarm_tauxx=np.empty(nmarker,dtype=np.float64)    # dev stress xx
 swarm_tauxy=np.empty(nmarker,dtype=np.float64)    # dev stress yy
 swarm_tauyy=np.empty(nmarker,dtype=np.float64)    # dev stress xy
-swarm_taue=np.empty(nmarker,dtype=np.float64)     # effective dev stress
+swarm_tau_eff=np.empty(nmarker,dtype=np.float64)     # effective dev stress
 swarm_iel=np.empty(nmarker,dtype=np.int32)        # element identity
 swarm_eta=np.empty(nmarker,dtype=np.float64)      # viscosity
 swarm_p_dyn=np.empty(nmarker,dtype=np.float64)    # computed pressure 
-swarm_p_tot=np.empty(nmarker,dtype=np.float64)    # comp pressure + backgr
 swarm_yield=np.empty(nmarker,dtype=np.float64)   # yield value
 swarm_is_plastic=np.empty(nmarker,dtype=np.int32)  
 
@@ -999,14 +996,13 @@ for istep in range(0,nstep):
            swarm_tauxy[im]=2*exym*swarm_eta[im]
            #assign pressure
            swarm_p_dyn[im]=NNNP.dot(p[iconP[0:mP,iel]])
-           swarm_p_tot[im]=background_pressure
 
            if swarm_x[im]>Lx: swarm_x[im]-=Lx #periodic b.c. on right side
            if swarm_x[im]<0:  swarm_x[im]+=Lx #periodic b.c. on left side
        #end for
     #end for
 
-    swarm_taue[:]=np.sqrt(0.5*(swarm_tauxx[:]**2+swarm_tauyy[:]**2+2*swarm_tauxy[:]**2))
+    swarm_tau_eff[:]=np.sqrt(0.5*(swarm_tauxx[:]**2+swarm_tauyy[:]**2+2*swarm_tauxy[:]**2))
 
     print("     advect markers: %.3f s" % (time.time() - start))
 
@@ -1148,7 +1144,6 @@ for istep in range(0,nstep):
     for i in range(0,nmarker):
         vtufile.write("%3e \n" %swarm_paint[i])
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' Name='total strain (xx)' Format='ascii'>\n")
     for i in range(0,nmarker):
@@ -1169,7 +1164,6 @@ for istep in range(0,nstep):
     for i in range(0,nmarker):
         vtufile.write("%3e \n" % swarm_total_strain_eff[i] )
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' Name='plastic strain (xx)' Format='ascii'>\n")
     for i in range(0,nmarker):
@@ -1190,9 +1184,6 @@ for istep in range(0,nstep):
     for i in range(0,nmarker):
         vtufile.write("%3e \n" % swarm_plastic_strain_eff[i] )
     vtufile.write("</DataArray>\n")
-
-
-
     #--
     vtufile.write("<DataArray type='Float32' Name='strain rate (xx)' Format='ascii'>\n")
     for i in range(0,nmarker):
@@ -1231,7 +1222,7 @@ for istep in range(0,nstep):
     #--
     vtufile.write("<DataArray type='Float32' Name='tau (eff.) (MPa)' Format='ascii'>\n")
     for i in range(0,nmarker):
-        vtufile.write("%3e \n" % (swarm_taue[i]/MPa))
+        vtufile.write("%3e \n" % (swarm_tau_eff[i]/MPa))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='viscosity (Pa.s)' Format='ascii'>\n")
@@ -1244,14 +1235,14 @@ for istep in range(0,nstep):
         vtufile.write("%10e \n" %(swarm_p_dyn[i]/MPa))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='pressure tot. (MPa)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%10e \n" %(swarm_p_tot[i]/MPa))
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='pressure tot. (MPa)' Format='ascii'>\n")
+    #for i in range(0,nmarker):
+    #    vtufile.write("%10e \n" %(swarm_p_tot[i]/MPa))
+    #vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='yield value(MPa)' Format='ascii'>\n")
     for i in range(0,nmarker):
-        vtufile.write("%10e \n" %(swarm_taue[i]/MPa-swarm_yield[i]/MPa))
+        vtufile.write("%10e \n" %(swarm_tau_eff[i]/MPa-swarm_yield[i]/MPa))
     vtufile.write("</DataArray>\n")
     #--
     #vtufile.write("<DataArray type='Float32' Name='r,s,t' NumberOfComponents='3' Format='ascii'>\n")
@@ -1293,25 +1284,23 @@ for istep in range(0,nstep):
     print("     export to vtu: %.3f s" % (time.time() - start))
 
     #----------------------------------
-    start = time.time()
-
-    plt.figure(figsize=(20,5))
-    plt.scatter(swarm_x,swarm_y,c=np.log10(swarm_eta),s=1)
-    plt.title('effective viscosity')
-    plt.xlim([0,Lx])
-    plt.ylim([0,Ly])
-    filename = 'swarm_eta_{:04d}.png'.format(istep)
-    plt.savefig(filename,bbox_inches='tight')
-
-    plt.figure(figsize=(20,5))
-    plt.scatter(swarm_x,swarm_y,c=swarm_mat,s=1)
-    plt.title('material')
-    plt.xlim([0,Lx])
-    plt.ylim([0,Ly])
-    filename = 'swarm_mat_{:04d}.png'.format(istep)
-    plt.savefig(filename,bbox_inches='tight')
-
-    print("     export to png: %.3f s" % (time.time() - start))
+    if make_png:
+       start = time.time()
+       plt.figure(figsize=(20,5))
+       plt.scatter(swarm_x,swarm_y,c=np.log10(swarm_eta),s=1)
+       plt.title('effective viscosity')
+       plt.xlim([0,Lx])
+       plt.ylim([0,Ly])
+       filename = 'swarm_eta_{:04d}.png'.format(istep)
+       plt.savefig(filename,bbox_inches='tight')
+       plt.figure(figsize=(20,5))
+       plt.scatter(swarm_x,swarm_y,c=swarm_mat,s=1)
+       plt.title('material')
+       plt.xlim([0,Lx])
+       plt.ylim([0,Ly])
+       filename = 'swarm_mat_{:04d}.png'.format(istep)
+       plt.savefig(filename,bbox_inches='tight')
+       print("     export to png: %.3f s" % (time.time() - start))
 
 ###################################################################################################
 # end for istep
