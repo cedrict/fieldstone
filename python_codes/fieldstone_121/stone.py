@@ -95,7 +95,7 @@ def viscosity(x,y,ee,T,imat,iter,plastic_strain_marker):
        if plastic_strain_marker <eps1:
           phi_sw=phi_values[imat-1]
           c_sw=cohesion_values[imat-1]
-       elif plastic_strain<eps2:
+       elif plastic_strain_marker<eps2:
           phi_sw=phi_values[imat-1]*(weakening_factor_phi-1)/(eps2-eps1)*(strain_marker-eps1)+phi_values[imat-1] 
           c_sw=cohesion_values[imat-1]*(weakening_factor_cohesion-1)/(eps2-eps1)*(strain_marker-eps1)+cohesion_values[imat-1] 
        else:
