@@ -13,23 +13,25 @@ from pylab import cm
 # P0, Q1, P1, P1+, Q2, Q2s, P2, P2+, Q3, P3, Q4, DSSY1, DSSY2, RT1, RT2
 #
 #------------------------------------------------------------------------------
-# notes:
+# notes/remarks:
 # DSSY1: Douglas, Santos, Sheen and Ye element with theta_1 function
 # DSSY2: Douglas, Santos, Sheen and Ye element with theta_2 function
 # RT1: mid point variant of Rannacher-Turek (non-conforming element)
 # RT2: mid value variant of Rannacher-Turek (non-conforming element)
 # Q2s: 8-node serendipity Q2
+# P-1: discontinuous pressure over triangle
+# Pm1: discontinuous pressure over quadrilateral
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-#  C-R       P2P1     MINI    Q2Q1,Q2P-1    Q2s   
+#  C-R       P2P1     MINI    Q2Q1,Q2Pm1    Q2s     P1-NC
 #
-# 2         2        2         3--6--2    3--6--2
-# |\        |\       |\        |     |    |     |
-# | \       | \      | \       |     |    |     |
-# 5  4      5  4     |  \      7  8  5    7     5
-# | 6 \     |   \    | 3 \     |     |    |     |
-# |    \    |    \   |    \    |     |    |     |
-# 0--3--1   0--3--1  0-----1   0--4--1    0--4--1
+# 2         2        2         3--6--2    3--6--2   +
+# |\        |\       |\        |     |    |     |   |\
+# | \       | \      | \       |     |    |     |   | \
+# 5  4      5  4     |  \      7  8  5    7     5   2  1
+# | 6 \     |   \    | 3 \     |     |    |     |   |   \
+# |    \    |    \   |    \    |     |    |     |   |    \
+# 0--3--1   0--3--1  0-----1   0--4--1    0--4--1   +--0--+
 #
 #------------------------------------------------------------------------------
 
@@ -55,7 +57,7 @@ def NNN(r,s,space):
        val[3]=0.25*(1-r)*(1+s)-0.25*B
        val[4]=B
 
-    if space=='P1' or space=='P-1':
+    if space=='P1' or space=='P-1' or space=='Pm1':
        val = np.zeros(3,dtype=np.float64)
        val[0]=1-r-s
        val[1]=r
@@ -183,6 +185,22 @@ def NNN(r,s,space):
        val[1]=0.25*(1+2*r+1.5*(r**2-s**2))
        val[2]=0.25*(1+2*s-1.5*(r**2-s**2))
        val[3]=0.25*(1-2*r+1.5*(r**2-s**2))
+
+    if space=='Han':
+       val = np.zeros(5,dtype=np.float64)
+       phir=0.5*(5*r**4-3*r**2)
+       phis=0.5*(5*s**4-3*s**2)
+       val[1]=0.5*(r+phir)
+       val[2]=0.5*(s+phis)
+       val[3]=-0.5*(r-phir)
+       val[0]=-0.5*(s-phis)
+       val[4]=1-phir-phis
+
+    if space=='P1NC':
+       val = np.zeros(3,dtype=np.float64)
+       val[0]=1-2*s
+       val[1]=-1+2*r+2*s
+       val[2]=1-2*r
 
     return val
 
@@ -340,6 +358,21 @@ def dNNNdr(r,s,space):
        val[2]=-0.75*r     
        val[3]=-0.5+0.75*r 
 
+    if space=='Han':
+       val = np.zeros(5,dtype=np.float64)
+       dphidr=0.5*(20*r**3-6*r)
+       val[1]=0.5*(1+dphidr)
+       val[2]=0
+       val[3]=-0.5*(1-dphidr)
+       val[0]=0
+       val[4]=-dphidr
+
+    if space=='P1NC':
+       val = np.zeros(3,dtype=np.float64)
+       val[0]=0
+       val[1]=2
+       val[2]=-2
+
     return val 
 
 #------------------------------------------------------------------------------
@@ -496,6 +529,21 @@ def dNNNds(r,s,space):
        val[2]=0.5+0.75*s
        val[3]=-0.75*s
 
+    if space=='Han':
+       val = np.zeros(5,dtype=np.float64)
+       dphids=0.5*(20*s**3-6*s)
+       val[1]=0
+       val[2]=0.5*(1+dphids)
+       val[3]=0
+       val[0]=-0.5*(1-dphids)
+       val[4]=-dphids
+
+    if space=='P1NC':
+       val = np.zeros(3,dtype=np.float64)
+       val[0]=-2
+       val[1]=2
+       val[2]=0
+
     return val 
 
 #------------------------------------------------------------------------------
@@ -557,11 +605,19 @@ def NNN_r(space):
 
     if space=='DSSY1' or space=='DSSY2':
        val = np.zeros(4,dtype=np.float64)
-       val[:]=[-1,1,0,0]
+       val[:]=[0,1,0,-1]
 
     if space=='RT1' or space=='RT2':
        val = np.zeros(4,dtype=np.float64)
        val[:]=[0,1,0,-1]
+
+    if space=='Han':
+       val = np.zeros(5,dtype=np.float64)
+       val[:]=[0,1,0,-1,0]
+
+    if space=='P1NC':
+       val = np.zeros(3,dtype=np.float64)
+       val[:]=[0.5,0.5,0]
 
     return val
 
@@ -624,11 +680,19 @@ def NNN_s(space):
 
     if space=='DSSY1' or space=='DSSY2':
        val = np.zeros(4,dtype=np.float64)
-       val[:]=[0,0,-1,1]
+       val[:]=[-1,0,1,0]
 
     if space=='RT1' or space=='RT2':
        val = np.zeros(4,dtype=np.float64)
        val[:]=[-1,0,1,0]
+
+    if space=='Han':
+       val = np.zeros(5,dtype=np.float64)
+       val[:]=[-1,0,1,0,0]
+
+    if space=='P1NC':
+       val = np.zeros(3,dtype=np.float64)
+       val[:]=[0,0.5,0.5]
 
     return val
 
@@ -642,7 +706,9 @@ def NNN_m(space):
     if space=='Q1':     return 4
     if space=='Q1+':    return 5
     if space=='P1':     return 3
+    if space=='P1NC':   return 3
     if space=='P-1':    return 3
+    if space=='Pm1':    return 3
     if space=='P1+':    return 4
     if space=='Q2':     return 9
     if space=='Q2s':    return 8
@@ -655,6 +721,7 @@ def NNN_m(space):
     if space=='DSSY2':  return 4
     if space=='RT1':    return 4
     if space=='RT2':    return 4
+    if space=='Han':    return 5
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -669,11 +736,12 @@ def visualise_nodes(space):
     plt.xlabel('s')
     plt.title(space)
     if space=='Q1' or space=='Q2' or space=='Q3' or space=='Q4' or space=='Q1+' or \
-       space=='DSSY1' or space=='DSSY2' or space=='RT1' or space=='RT2' or space=='Q2s':
+       space=='DSSY1' or space=='DSSY2' or space=='RT1' or space=='RT2' or space=='Q2s' or\
+       space=='Han':
        plt.xlim([-1.1,+1.1])
        plt.ylim([-1.1,+1.1])
        plt.plot([-1,1,1,-1,-1],[-1,-1,1,1,-1],color='teal',linewidth=2)
-    elif space=='P1' or space=='P2' or space=='P1+' or space=='P2+' or space=='P3':
+    elif space=='P1' or space=='P2' or space=='P1+' or space=='P2+' or space=='P3' or space=='P1NC':
        plt.xlim([-0.1,+1.1])
        plt.ylim([-0.1,+1.1])
        plt.plot([0,0,1,0],[0,1,0,0],color='teal',linewidth=2)

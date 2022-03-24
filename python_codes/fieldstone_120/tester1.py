@@ -2,22 +2,71 @@ import numpy as np
 import FEbasis2D as FE
 import FEquadrature as Q
 
-#------------------------------------------------------------------------------
-# testing P3
-#------------------------------------------------------------------------------
+for elt in ['Q0','Q1','Q1+','Q2','Q3','Q2s','P0','P1','P1+','P1NC','P2','P3','DSSY1','DSSY2','RT1','RT2','Han']:
+    print('=========================================')
+    print(' '+elt)
+    print('=========================================')
+    m=FE.NNN_m(elt)
+    rnodes=FE.NNN_r(elt)
+    snodes=FE.NNN_s(elt)
+    print('m=',m)
+    for i in range(0,m):
+        print ('node',i,':',FE.NNN(rnodes[i],snodes[i],elt))
 
-elt='P3'
+exit()
 
-m=FE.NNN_m(elt)
 
-rnodes=FE.NNN_r(elt)
-snodes=FE.NNN_s(elt)
 
-print('P3')
-print('m=',m)
 
-for i in range(0,m):
-   print ('node',i,':',FE.NNN(rnodes[i],snodes[i],elt))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 exit()

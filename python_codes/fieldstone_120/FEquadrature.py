@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 def quadrature(space,nqpts):
 
     if space=='Q1' or space=='Q2' or space=='Q2s' or space=='Q3' or space=='Q4' or\
-       space=='Q1+' or space=='DSSY1' or space=='DSSY2' or space=='RT1' or space=='RT2':
+       space=='Q1+' or space=='DSSY1' or space=='DSSY2' or space=='RT1' or space=='RT2' or\
+       space=='Han':
        coords=qcoords_1D(nqpts)
        weights=qweights_1D(nqpts)
        nq=nqpts**2 
@@ -23,7 +24,8 @@ def quadrature(space,nqpts):
                val_w[counter]=weights[iq]*weights[jq]
                counter+=1
 
-    elif space=='P1' or space=='P2' or space=='P1+' or space=='P2+' or space=='P3':
+    elif space=='P1' or space=='P2' or space=='P1+' or\
+          space=='P2+' or space=='P3' or space=='P1NC':
 
        nq=nqpts
        val_r = np.zeros(nq,dtype=np.float64) 

@@ -299,6 +299,33 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                counter += 1
 
     #---------------------------------
+    # disc space for Q2Pm1 element
+    elif space=='Pm1': 
+       N=3*nel
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64)
+       icon=np.zeros((3,nel),dtype=np.int32)
+
+       iel=0
+       counter=0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               x[counter]=i*hx+hx/2
+               y[counter]=j*hy+hy/2
+               icon[0,iel]=counter
+               counter+=1
+               x[counter]=i*hx+hx/2+hx/2
+               y[counter]=j*hy+hy/2
+               icon[1,iel]=counter
+               counter+=1
+               x[counter]=i*hx+hx/2
+               y[counter]=j*hy+hy/2+hy/2
+               icon[2,iel]=counter
+               counter+=1
+               iel+=1
+
+    #---------------------------------
+    # disc space for P2P-1 element
     elif space=='P-1' and mtype==0:
        nel*=2
        N=3*nel
@@ -621,6 +648,94 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                icon[3,counter] = icon[0,counter]+nelx
                counter += 1
 
+    #---------------------------------
+    elif space=='Han':
+       N=(nely+1)*nelx + nely*(nelx+1)+nel
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64) 
+       counter=0
+       for j in range(0,nely):
+           # bottom line
+           for i in range(0,nelx):
+               x[counter]=(i+1-0.5)*hx
+               y[counter]=(j+1-1)*hy
+               counter+=1
+           # middle line
+           for i in range(0,nelx+1):
+               x[counter]=(i)*hx
+               y[counter]=(j+1-0.5)*hy
+               counter+=1
+       #top line
+       for i in range(0,nelx):
+           x[counter]=(i+1-0.5)*hx
+           y[counter]=Ly
+           counter+=1
+       #center nodes
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               x[counter]=(i+0.5)*hx
+               y[counter]=(j+0.5)*hx
+               counter+=1
+
+       icon =np.zeros((5,nel),dtype=np.int32)
+       counter = 0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               icon[0, counter] = (j)*(2*nelx+1)+i+1   -1
+               icon[1, counter] = icon[0,counter]+nelx+1
+               icon[2, counter] = icon[0,counter]+2*nelx+1
+               icon[3, counter] = icon[0,counter]+nelx
+               icon[4, counter] = (nely+1)*nelx + nely*(nelx+1) + counter
+               counter += 1
+
+    #---------------------------------
+    elif space=='P1NC':
+       N=(nely+1)*nelx + nely*(nelx+1)+nel
+       nel*=2
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64) 
+       counter=0
+       for j in range(0,nely):
+           # bottom line
+           for i in range(0,nelx):
+               x[counter]=(i+1-0.5)*hx
+               y[counter]=(j+1-1)*hy
+               counter+=1
+           # middle line
+           for i in range(0,nelx+1):
+               x[counter]=(i)*hx
+               y[counter]=(j+1-0.5)*hy
+               counter+=1
+       #top line
+       for i in range(0,nelx):
+           x[counter]=(i+1-0.5)*hx
+           y[counter]=Ly
+           counter+=1
+       #center nodes
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               x[counter]=(i+0.5)*hx
+               y[counter]=(j+0.5)*hx
+               counter+=1
+
+       icon =np.zeros((3,nel),dtype=np.int32)
+       counter = 0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               node0= (j)*(2*nelx+1)+i+1 -1
+               node1= node0+nelx+1
+               node2= node0+2*nelx+1
+               node3= node0+nelx
+               node4= (nely+1)*nelx + nely*(nelx+1) + j*nelx+i
+               icon[0, counter] = node0
+               icon[1, counter] = node4
+               icon[2, counter] = node3
+               counter += 1
+               icon[0, counter] = node2
+               icon[1, counter] = node4
+               icon[2, counter] = node1
+               counter += 1
+
     else:
        exit("FEtools:cartesian_mesh: space unknown ")
 
@@ -662,7 +777,7 @@ def export_elements_to_vtu(x,y,icon,space,filename):
     N=np.size(x)
     m,nel=np.shape(icon)
  
-    if space=='P0' or space=='Q0' or space=='P-1':
+    if space=='P0' or space=='Q0' or space=='P-1' or space=='Pm1':
        return
 
     if space=='Q1' or space=='Q1+' or space=='Q2' or space=='Q2s' or \
@@ -684,7 +799,7 @@ def export_elements_to_vtu(x,y,icon,space,filename):
        node2=20
        node3=24
        m=4
-    if space=='P1' or space=='P1+' or space=='P2' or space=='P2+':
+    if space=='P1' or space=='P1+' or space=='P2' or space=='P2+' or space=='P1NC':
        node0=0
        node1=1
        node2=2

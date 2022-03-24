@@ -8,17 +8,80 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The idea here is to create a library of basis functions and quadrature rules, as well as 
-other FE-related tools so as to be able to write much more compact FE codes. 
-The boundary conditions of this exercise are:
+The rationale behind this stone is as follows:
 \begin{itemize}
-\item two-dimensional space
-\item Cartesian domain
+\item create a library of basis functions and quadrature rules, as well as 
+other FE-related tools so as to be able to write much more compact FE codes. 
+So far the boundary conditions of this exercise are:
+\begin{itemize}
+\item two-dimensional Cartesian domain
 \item Continuous Galerkin method
+\item incompressible isothermal Stokes flow, but not isoviscous
 \item most of commonly used element pairs for Stokes equations 
 \item Dirichlet boundary conditions 
 \item isoparametric mapping
+\item sequential direct solver is used
 \end{itemize}
+\item Run a suite of manufactured solution benchmarks with all 
+these finite elements and assess their accuracy.
+\end{itemize}
+
+
+%-----------------------------------------------------------------------------
+\subsection*{Finite element pairs for the Stokes equation}
+
+\begin{tabular}{p{2cm}p{2cm}p{12cm}}
+\hline
+pair & type & information \\
+\hline
+\hline
+$Q_1\times Q_0$ & & see Section~\ref{ss:pairq1p0}  \\
+$Q_2\times Q_1$ & & see Section~\ref{ss:pairq2q1} \\
+$Q_2\times P_{-1}$ & &  see Section~\ref{ss:pairq2pm1} \\
+$Q_3\times Q_2$ & &  see Section~\ref{ss:q32d} \\
+$Q_1^+\times Q_1$ & & Quadrilateral MINI, see Section~\ref{ss:quadmini} \\
+$Q_2^{(8)}\times Q_1$ & & Serendipity, see Section~\ref{sec:serendipity2D} \\
+$Q_1\times Q_0$ &DSSY1& see Section~\ref{ss:dssy_2D}\\
+$Q_1\times Q_0$ &DSSY2& see Section~\ref{ss:dssy_2D}\\
+$Q_1\times Q_0$ &RT1& see Section~\ref{ss:RTq1p0}\\
+$Q_1\times Q_0$ &RT2& see Section~\ref{ss:RTq1p0}\\
+$Q_1\times Q_0$ &Han& \textcite{han84} (1984), \cite{shee20}\\
+$P_1\times P_0$ &  &see Section~\ref{ss:} \\
+$P_1^{NC}\times P_0$ & & see Section~\ref{ss:p1nc} non conforming Crouzeix Raviart \cite{crra73}, \cite{shee20} \\
+$P_2\times P_0$ & &\cite{bobf08}, \cite{cakp18} \\
+$P_2\times P_1$ & &see Section~\ref{ss:p2p1}\\
+$P_3\times P_2$ & &see Section~\ref{ss:} \\
+$P_1^{+}\times P_{1}$ &&  MINI, see Section~\ref{pair:mini}. \textcite{arbf84} (1984) \\
+$P_2^+\times P_{-1}$ && Crouzeix-Raviart, see Section~\ref{sec:crouzeix-raviart}. \textcite{crra73} (1973) \\
+\hline
+\end{tabular}
+
+Remaining questions/ideas:
+
+- what about stabilised elements?
+
+- chinese Q2Q1 stone 52 ? only for deformed
+
+- P2/P1+P0 element ?!!?!
+
+- Q2/Q1+Q0 ??
+
+- Q2P-1 mapped vs unmapped. does it make a difference on square elements ?
+
+- scott-vogelius ? Chen says: ($P^k ,P^{k-1}$) : stable if $k \ge 4$ in $R^2$ and for meshes without
+singular-vertex. Exact divergence free. Not easy to code due to the high degree.
+
+- from cakp18: The BR-FEM after Bernardi and Raugel \cite{bera85} is a modification of the P2P0 - FEM.
+It is sometimes also called reduced P2P0 -FEM. \cite{}
+
+- Raviart Thomas 0 RT0 \cite{rath77} ? 
+
+- can will P1NC-P0 work with mtype=2 (elements divided in 4 triangles)
+
+
+
+%-----------------------------------
+\subsection*{The libraries}
 
 There are three files which contain all the required tools to build most of a FE code:
 
@@ -70,12 +133,13 @@ In that case only 3,6,7,12,13,16 are authorized.
 \item \lstinline{apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel)}:
 \end{itemize}
 
-
 \end{itemize}
 
 \newpage
 %--------------------------------------------------------------------
-\section*{Supported element spaces}
+\subsection*{Supported element spaces}
+
+These figures are obtained by running ...
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q1_nodes}
@@ -92,37 +156,22 @@ In that case only 3,6,7,12,13,16 are authorized.
 \includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P2_nodes}
 \includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P3_nodes}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P1+_nodes}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P1NC_nodes}
 \includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P2+_nodes}
 \end{center}
 
+\newpage
 %-----------------------------------------------------------------------------
-\section*{Finite element pairs for the Stokes equation}
+\subsection*{Testers}
 
-\begin{itemize}
-\item $Q_1\times Q_0$: see Section~\ref{ss:pairq1p0}
-\item $Q_2\times Q_1$: see Section~\ref{ss:pairq2q1}
-\item $Q_2\times P_{-1}$: see Section~\ref{ss:pairq2pm1}
-\item $Q_3\times Q_2$: see Section~\ref{XXX}
-\item $Q_1^+\times Q_1$: Quadrilateral mini, see Section~\ref{ss:quadmini}
-\item $Q_2^{(8)}\times Q_1$: Serendipity, see Section~\ref{sec:serendipity2D}
-\item $Q_1\times Q_0$-DSSY1: see Section~\ref{ss:dssy_2D}
-\item $Q_1\times Q_0$-DSSY2: see Section~\ref{ss:dssy_2D}
-\item $Q_1\times Q_0$-RT1: see Section~\ref{ss:RTq1p0}
-\item $Q_1\times Q_0$-RT2: see Section~\ref{ss:RTq1p0}
-\item $P_1\times P_0$: see Section~\ref{ss:}
-\item $P_2\times P_1$: see Section~\ref{ss:p2p1}
-\item $P_3\times P_2$: see Section~\ref{ss:}
-\item $P_1^{+}\times P_{1}$: MINI, see Section~\ref{pair:mini}
-\item $P_2^+\times P_{-1}$: Crouzeix-Raviart, see Section~\ref{sec:crouzeix-raviart}
-\end{itemize}
+describe here testers
 
-ADD stabilised elements?
-chinese Q2Q1 stone 52 ? only for deformed
-P2/P1+P0 element ?!!?!
-Q2/Q1+Q0
+tester1.py: pb with  RT2(?) 
 
+
+\newpage
 %-----------------------------------------------------------------------------
-\section*{Breakdown of the code}
+\subsection*{Breakdown of the code}
 
 One starts by loading the required finite element functions 
 for the basis functions, the numerical quadrature and various tools:
@@ -251,6 +300,14 @@ for iel in range(0,nel):
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results - VJ3 mms}
 
+This benchmark comes from John \etal \cite{jolm17} and is presented in Section~\ref{mms10}:
+\begin{eqnarray}
+u(x,y) &=& 200x^2(1-x)^2y(1-y)(1-2y) \\
+v(x,y) &=& -200x(1-x)(1-2x)y^2(1-y)^2 \\
+p(x,y) &=& 10\left[(x-1/2)^3y^2+(1-x)^3(y-1/2)^3 \right]
+\end{eqnarray}
+The highest polynomial terms for the velocity are quartic and cubic for the pressure.
+
 %----------------------------
 \subsection*{$Q_1\times Q_0$}
 
@@ -271,7 +328,26 @@ for iel in range(0,nel):
 \includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q1-pressure-Nfem.pdf}
 \end{center}
 
-higher convergence when less quadrature points are used ?!
+\newpage
+%----------------------------
+\subsection*{$Q_2\times P_{-1}$}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1-pressure-h.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1-pressure-Nfem.pdf}
+\end{center}
+
+%----------------------------
+\subsection*{$Q_2^{(8)}\times Q_1$}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2sQ1-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2sQ1-pressure-h.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2sQ1-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2sQ1-pressure-Nfem.pdf}
+\end{center}
 
 \newpage
 %----------------------------
@@ -315,6 +391,16 @@ higher convergence when less quadrature points are used ?!
 
 \newpage
 %----------------------------
+\subsection*{$P_2\times P_0$}
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P0-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P0-pressure-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P0-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P0-pressure-Nfem.pdf}
+\end{center}
+
+
+%----------------------------
 \subsection*{$P_2^+\times P_{-1}$}
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P-1-velocity-h.pdf}
@@ -323,6 +409,7 @@ higher convergence when less quadrature points are used ?!
 \includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P-1-pressure-Nfem.pdf}
 \end{center}
 
+\newpage
 %----------------------------
 \subsection*{$P_3\times P_2$}
 \begin{center}
@@ -331,6 +418,16 @@ higher convergence when less quadrature points are used ?!
 \includegraphics[width=8cm]{python_codes/fieldstone_120/results/P3P2-velocity-Nfem.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_120/results/P3P2-pressure-Nfem.pdf}
 \end{center}
+
+%----------------------------
+\subsection*{$Q_1\times Q_0$ (Han)}
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/HanQ0-velocity-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/HanQ0-pressure-h.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/HanQ0-velocity-Nfem.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results/HanQ0-pressure-Nfem.pdf}
+\end{center}
+
 
 \newpage
 %----------------------------
@@ -383,6 +480,9 @@ higher convergence when less quadrature points are used ?!
 
 
 \newpage
+convergence orders:
+
+\begin{center}
 \begin{tabular}{l|cc|cc|}
 \hline
                      & d\&h &   & vj3 & \\
@@ -396,6 +496,8 @@ $P_1^+\times P_{1}$   &      &   & 2 & {\bf 1.5}  \\
 $P_2^+\times P_{-1}$  &      &   & 3 & 2  \\
 $Q_1\times Q_0$       & 2    & X & 2 & X  \\
 $Q_2\times Q_1$       &      &   & 3 & 2  \\
+$Q_2^{(8)}\times Q_1$ &      &   & 3 & 2  \\
+$Q_2\times P_{-1}$    &      &   & 3 & 2  \\
 $Q_3\times Q_2$       &      &   & 4 & 3  \\
 $Q_1^+\times Q_1$     &      &   & 2 & {\bf 1.5}  \\
 $Q_1\times Q_0$-RT1   &      &   & 2 & 1(?)  \\
@@ -404,12 +506,17 @@ $Q_1\times Q_0$-DSSY1 &      &   & 2 & 1  \\
 $Q_1\times Q_0$-DSSY2 &      &   & 2 & 1  \\
 \hline
 \end{tabular} 
+\end{center}
 
 \vspace{1cm}
 
 Conclusions:
 \begin{itemize}
-\item ...
+\item Q1Q0 pressure is plagued by checkeboard mode
+\item P1+P1 and Q1+Q1 exhibit the same convergence order: 2 for velocity and 1.5 for pressure.
+\item compare Q2Q1 and Q2P-1
+\item compare Q2Q1 and Q28Q1
+\item P2P0 vel convergence not cubic ?
 \end{itemize}
 
 \newpage
@@ -442,9 +549,23 @@ so they are removed from the plots in the right column. The prms of the regular 
 is also removed.}
 \end{center}
 
+conclusion:
+
+\begin{itemize}
+\item DSSY and RT elements are not usable for buoyancy-driven flows in the presence of a hydrostatic 
+background. RETRIEVE email correspondance with Rannacher! show velocity field modes. 
+\end{itemize}
 
 
+\newpage
+TODO:
 
+Write code which computes null space of G 
 
+randomize mesh
 
+write function in FEtools with interpolates v and p on point
 
+mms with nonzero dirichlet bc?
+
+Korn inequality something ?

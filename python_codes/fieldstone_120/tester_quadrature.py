@@ -15,22 +15,20 @@ for nqpts in 1,2,3,4,5,6,7,8,9,10:
 print('**********************************************************')
 print('TRIANGLES')
 print('**********************************************************')
-for nqpts in 1,3,4,6,7,12,13,16:
+for nqpts in 1,3,6,7,12,13,16:
     nqel,qcoords_r,qcoords_s,qweights=Q.quadrature('P1',nqpts)
     print('nqpts=',nqpts,'| sum(weights) 2D=',np.sum(qweights))
 
-
 print('**********************************************************')
 
-for space in 'Q1','Q1+','Q2','Q2s','Q3','Q4','P1','P2','P1+','P2+','P3','DSSY1','DSSY2','RT1','RT2':
+for space in 'Q1','Q1+','Q2','Q2s','Q3','Q4','P1','P2','P1+','P2+','P3','DSSY1','DSSY2','RT1','RT2','Han','P1NC':
     print('*****-> '+space)
     FE.visualise_nodes(space)
 
-    for nqpts in 2,3,4,5,6,7,8,9,10:
-        nq,rq,sq,wq=Q.quadrature(space,nqpts)
-        Q.visualise_quadrature_points(space,nqpts)
+    #for nqpts in 2,3,4,5,6,7,8,9,10:
+    #    nq,rq,sq,wq=Q.quadrature(space,nqpts)
+    #    Q.visualise_quadrature_points(space,nqpts)
 
-
-    FE.visualise_basis_functions(space)
+    #FE.visualise_basis_functions(space)
 
 

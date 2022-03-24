@@ -7,18 +7,18 @@ import matplotlib.pyplot as plt
 import sys as sys
 from scipy.sparse import lil_matrix
 from scipy.sparse.linalg import spsolve
-#import dh
-#import vj3 as mms
-import sinker as mms
+#import dh as mms
+import vj3 as mms
+#import sinker as mms
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-Lx=1
-Ly=1
+Lx=3
+Ly=2
 
-nelx=64
-nely=64
+nelx=3
+nely=2
 
 left_bc  ='no_slip'
 right_bc ='no_slip'
@@ -28,7 +28,7 @@ top_bc   ='no_slip'
 ndofV=2
 ndofP=1
 
-Vspace='RT1'
+Vspace='DSSY1'
 Pspace='Q0'
 
 visu=1
@@ -36,7 +36,7 @@ visu=1
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
 
-nqpts=7
+nqpts=6
 
 #--------------------------------------------------------------------
 # allowing for argument parsing through command line
@@ -73,6 +73,8 @@ print("           daSTONE           ")
 print("*****************************")
 print ('Vspace =',Vspace)
 print ('Pspace =',Pspace)
+print ('nelx   =',nelx)
+print ('nely   =',nely)
 print ('NV     =',NV)
 print ('NP     =',NP)
 print ('nel    =',nel)
@@ -80,7 +82,6 @@ print ('NfemV  =',NfemV)
 print ('NfemP  =',NfemP)
 print ('Nfem   =',Nfem)
 print("*****************************")
-
 
 print("mesh setup: %.3f s" % (timing.time() - start))
 
@@ -105,6 +106,9 @@ start = timing.time()
 
 area=np.zeros(nel,dtype=np.float64) 
 
+#u=xV**2
+#v=yV**2
+
 for iel in range(0,nel):
     for iq in range(0,nqel):
         rq=qcoords_r[iq]
@@ -113,9 +117,16 @@ for iel in range(0,nel):
         NNNV=FE.NNN(rq,sq,Vspace)
         xq=NNNV.dot(xV[iconV[:,iel]]) 
         yq=NNNV.dot(yV[iconV[:,iel]]) 
+        #uq=NNNV.dot(u[iconV[:,iel]]) 
+        #vq=NNNV.dot(v[iconV[:,iel]]) 
+        #print(xq,yq,uq,vq)
         dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
         dNNNVds=FE.dNNNds(rq,sq,Vspace)
         jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+        #exxq=dNNNVdx.dot(u[iconV[:,iel]]) 
+        #eyyq=dNNNVdy.dot(v[iconV[:,iel]]) 
+        #print(xq,yq,exxq,eyyq)
+
         area[iel]+=jcob*weightq
     #end for
 #end for
@@ -188,6 +199,7 @@ for iel in range(0,nel):
         counterq+=1
 
     #end for iq
+    #print(K_el)
 
     # apply bc
     Tools.apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel)
@@ -309,7 +321,7 @@ if visu:
 
    Tools.export_swarm_vector_to_vtu(xV,yV,u,v,'solution_velocity.vtu')
    Tools.export_swarm_scalar_to_vtu(xP,yP,p,'solution_pressure.vtu')
-   Tools.export_swarm_vector_to_ascii(xV,yV,u,v,'solution_u.ascii')
+   Tools.export_swarm_vector_to_ascii(xV,yV,u,v,'solution_velocity.ascii')
    Tools.export_swarm_scalar_to_ascii(xP,yP,p,'solution_pressure.ascii')
 
    Tools.export_connectivity_array_to_ascii(xV,yV,iconV,'iconV.ascii')

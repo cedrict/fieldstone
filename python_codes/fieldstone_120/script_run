@@ -6,6 +6,121 @@ rm errors*
 
 
 ###############################################################################
+Vspace=P1NC
+Pspace=P0
+
+echo ---------- $Vspace X $Pspace ----------
+
+for nqpts in  3 6 7 ; do
+    for n in 8 12 16 20 24 32 ; do
+        echo mesh: $n X $n - nqpts: $nqpts
+        python3 stone.py $n $n $Vspace $Pspace $nqpts >> opla
+    done
+    grep errv opla > errors_${Vspace}_${Pspace}_nqpts$nqpts
+    grep vrms= opla > vrms_${Vspace}_${Pspace}_nqpts$nqpts
+    mv opla opla_${Vspace}_${Pspace}_nqpts$nqpts
+done
+
+exit
+
+
+###############################################################################
+Vspace=Han
+Pspace=Q0
+
+echo ---------- $Vspace X $Pspace ----------
+
+for nqpts in  2 3 4 ; do
+    for n in 8 9 12 13 16 17 24 25 32 33 40 41 45 48 49 52 56 57 61 64 65 71 76 80 96 104 128 160 ; do
+        echo mesh: $n X $n - nqpts: $nqpts
+        python3 stone.py $n $n $Vspace $Pspace $nqpts >> opla
+    done
+    grep errv opla > errors_${Vspace}_${Pspace}_nqpts$nqpts
+    grep vrms= opla > vrms_${Vspace}_${Pspace}_nqpts$nqpts
+    mv opla opla_${Vspace}_${Pspace}_nqpts$nqpts
+done
+
+exit
+
+
+###############################################################################
+Vspace=Q1
+Pspace=Q0
+
+echo ---------- $Vspace X $Pspace ----------
+
+for nqpts in  2 3 4 ; do
+    for n in 8 9 12 13 16 17 24 25 32 33 40 41 45 48 49 52 56 57 61 64 65 71 76 80 96 104 128 160 ; do
+        echo mesh: $n X $n - nqpts: $nqpts
+        python3 stone.py $n $n $Vspace $Pspace $nqpts >> opla
+    done
+    grep errv opla > errors_${Vspace}_${Pspace}_nqpts$nqpts
+    grep vrms= opla > vrms_${Vspace}_${Pspace}_nqpts$nqpts
+    mv opla opla_${Vspace}_${Pspace}_nqpts$nqpts
+done
+
+exit
+
+###############################################################################
+Vspace=P2
+Pspace=P0
+
+echo ---------- $Vspace X $Pspace ----------
+
+for nqpts in  3 6 7 12; do
+    for n in 8 12 16 24 32 40 48 56 64 72 80 96 104 112 120 144 192 256; do
+        echo mesh: $n X $n - nqpts: $nqpts
+        python3 stone.py $n $n $Vspace $Pspace $nqpts >> opla
+    done
+    grep errv opla > errors_${Vspace}_${Pspace}_nqpts$nqpts
+    grep vrms= opla > vrms_${Vspace}_${Pspace}_nqpts$nqpts
+    mv opla opla_${Vspace}_${Pspace}_nqpts$nqpts
+done
+
+
+
+
+
+###############################################################################
+Vspace=Q2
+Pspace=Pm1
+
+echo ---------- $Vspace X $Pspace ----------
+
+for nqpts in  2 3 4 ; do
+    for n in 8 9 12 13 16 17 24 25 32 33 40 41 48 49 56 64 80 96 112 128 144 160 ; do
+        echo mesh: $n X $n - nqpts: $nqpts
+        python3 stone.py $n $n $Vspace $Pspace $nqpts >> opla
+    done
+    grep errv opla > errors_${Vspace}_${Pspace}_nqpts$nqpts
+    grep vrms= opla > vrms_${Vspace}_${Pspace}_nqpts$nqpts
+    mv opla opla_${Vspace}_${Pspace}_nqpts$nqpts
+done
+
+exit
+
+###############################################################################
+Vspace=Q2s
+Pspace=Q1
+
+echo ---------- $Vspace X $Pspace ----------
+
+for nqpts in  2 3 4 ; do
+    for n in 8 9 10 11 12 16 24 32 40 48 56 64 80 96 112 128 144 160; do
+        echo mesh: $n X $n - nqpts: $nqpts
+        python3 stone.py $n $n $Vspace $Pspace $nqpts >> opla
+    done
+    grep errv opla > errors_${Vspace}_${Pspace}_nqpts$nqpts
+    grep vrms= opla > vrms_${Vspace}_${Pspace}_nqpts$nqpts
+    mv opla opla_${Vspace}_${Pspace}_nqpts$nqpts
+done
+
+exit
+
+
+
+
+###############################################################################
 Vspace=P2+
 Pspace=P-1
 
@@ -108,8 +223,6 @@ exit
 
 
 
-
-
 ###############################################################################
 Vspace=Q2
 Pspace=Q1
@@ -195,22 +308,6 @@ echo ---------- $Vspace X $Pspace ----------
 
 for nqpts in  3 6 7 12; do
     for n in 8 9 12 13 16 17 24 25 32 33 40 41 48 49 56 57 64 72 80 96 104 112 120 ; do
-        echo mesh: $n X $n - nqpts: $nqpts
-        python3 stone.py $n $n $Vspace $Pspace $nqpts >> opla
-    done
-    grep errv opla > errors_${Vspace}_${Pspace}_nqpts$nqpts
-    grep vrms= opla > vrms_${Vspace}_${Pspace}_nqpts$nqpts
-    mv opla opla_${Vspace}_${Pspace}_nqpts$nqpts
-done
-
-###############################################################################
-Vspace=Q1
-Pspace=Q0
-
-echo ---------- $Vspace X $Pspace ----------
-
-for nqpts in  2 3 4 ; do
-    for n in 8 9 12 13 16 17 24 25 32 33 40 41 45 48 49 52 56 57 61 64 65 71 76 80 96 ; do
         echo mesh: $n X $n - nqpts: $nqpts
         python3 stone.py $n $n $Vspace $Pspace $nqpts >> opla
     done
