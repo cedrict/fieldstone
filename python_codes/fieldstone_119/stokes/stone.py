@@ -89,10 +89,10 @@ mP=4     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-Lx=2. # horizontal extent of the domain 
+Lx=1. # horizontal extent of the domain 
 Ly=1. # vertical extent of the domain 
 
-nelx = 200
+nelx = 100
 nely = 100
 visu = 1
     
@@ -122,6 +122,8 @@ gx=0
 gy=-10
 
 eta_ref=100
+
+freesurface=True
 
 #################################################################
 #################################################################
@@ -280,8 +282,9 @@ for i in range(0, NV):
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
     if yV[i]<eps:
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    #if yV[i]>(Ly-eps):
-    #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+    if not freesurface:
+       if yV[i]>(Ly-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
 #end for
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
@@ -476,14 +479,15 @@ print("split vel into u,v: %.3f s" % (time.time() - start))
 # normalise pressure at top
 ######################################################################
 
-psurf=0.
-for iel in range(0,nel):
-    if yP[iconP[3,iel]]/Ly>1-eps:
-       psurf+=hx*(p[iconP[3,iel]]+p[iconP[3,iel]])/2
-
-print('     -> avrg pressure at surface=',psurf/Lx)
-
-#p[:]-=psurf
+if not freesurface:
+   psurf=0.
+   for iel in range(0,nel):
+       if yP[iconP[3,iel]]/Ly>1-eps:
+          psurf+=hx*(p[iconP[3,iel]]+p[iconP[3,iel]])/2
+       #end if
+   #end for
+   print('     -> avrg pressure at surface=',psurf/Lx)
+   p[:]-=psurf
 
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 

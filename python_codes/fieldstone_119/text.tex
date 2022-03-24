@@ -194,7 +194,30 @@ lithostatic pressure. I don't think we should change it.
 3) Jourdon and May's approach may result in more stable boundary conditions than naive application of lithostatic 
 pressure, but I have little intuition for whether it would be a reasonable approximation.
 4) I don't have an intuitive feel for what they are modelling - their models do not satisfy the hydrostatic equation (their Eq. 5).''
+
+\item another WB comment: If the equation 
+  grad p = rho*g
+has a solution (that is, all 3 components of this equation are the same), then that means that rho*g is the gradient of a potential, 
+and p is that potential. In that case, p also solves   Delta p = div(rho*g)
+so the two formulations are the same.
+
+If rho*g is not the gradient of the potential, as in experiments 3,4,5, then the equation
+  grad p = rho*g
+does not have a solution. But there will be a pressure that solves
+  d/dz p(x,y,z) = rho*g
+for every x,y -- that's the integration into depth direction. This pressure does not solve
+  grad p = rho*g
+and does not solve
+  Delta p = div(rho*p)
+either, and furthermore neither will not be a pressure that would guarantee a zero velocity.
+
+So my interpretation is that if there is a meaningful litho*static* pressure, then the two definitions are the same. 
+If there is not a meaningful lithostatic pressure, then they have an equation that nevertheless provides them with a 
+solvable problem that gives them something that can be used; whether that something is meaningful is a different question.
+
 \end{itemize}
+
+
 
 \vspace{1cm}
 
@@ -353,6 +376,14 @@ conjunction with a zero average surface pressure normalisation.
 \includegraphics[width=5.7cm]{python_codes/fieldstone_119/results/exp5/p2}\\
 {\captionfont Left: density field on 100x100 mesh. Middle: $p_1$ pressure; Right: $p_2$ pressure.} 
 \end{center}
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_119/results/exp5/q_viscs}\\
+{\captionfont Full pressure computed with a sphere of viscosity 1 (left, isoviscous case), 
+10 (middle) and 100 (right). Free surface boundary conditions at the top. 
+We find that this parameter does not significantly alter the pressure outside the sphere.}
+\end{center}
+
 
 We find that for this example the pressure $p_1$ is closer to the full pressure than $p_2$:
 \begin{center}
