@@ -79,6 +79,90 @@ plot[][]\
 'errors_Q2_Q1_nqpts4' u ($11+$12):9 w lp ps 0.6 t 'nqpts=4',\
 
 ################################################################
+set title 'Q_2^{(8)}xQ_1'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'Q2sQ1-velocity-h.pdf'
+plot[][]\
+'errors_Q2s_Q1_nqpts2' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q2s_Q1_nqpts3' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q2s_Q1_nqpts4' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=4',\
+x**3/2 lt -1 dt 2 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'Q2sQ1-pressure-h.pdf'
+plot[][]\
+'errors_Q2s_Q1_nqpts2' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q2s_Q1_nqpts3' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q2s_Q1_nqpts4' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=4',\
+x**2/4 lt -1 dt 2 t 'h^2'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'Q2sQ1-velocity-Nfem.pdf'
+plot[][]\
+'errors_Q2s_Q1_nqpts2' u ($11+$12):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q2s_Q1_nqpts3' u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q2s_Q1_nqpts4' u ($11+$12):6 w lp ps 0.6 t 'nqpts=4',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'Q2sQ1-pressure-Nfem.pdf'
+plot[][]\
+'errors_Q2s_Q1_nqpts2' u ($11+$12):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q2s_Q1_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q2s_Q1_nqpts4' u ($11+$12):9 w lp ps 0.6 t 'nqpts=4',\
+
+
+
+
+
+
+
+
+
+
+
+################################################################
+set title 'Q_2xP_{-1}'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'Q2Pm1-velocity-h.pdf'
+plot[][]\
+'errors_Q2_Pm1_nqpts2' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q2_Pm1_nqpts3' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q2_Pm1_nqpts4' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=4',\
+x**3/2 lt -1 dt 2 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'Q2Pm1-pressure-h.pdf'
+plot[][]\
+'errors_Q2_Pm1_nqpts2' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q2_Pm1_nqpts3' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q2_Pm1_nqpts4' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=4',\
+x**2/4 lt -1 dt 2 t 'h^2'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'Q2Pm1-velocity-Nfem.pdf'
+plot[][]\
+'errors_Q2_Pm1_nqpts2' u ($11+$12):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q2_Pm1_nqpts3' u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q2_Pm1_nqpts4' u ($11+$12):6 w lp ps 0.6 t 'nqpts=4',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'Q2Pm1-pressure-Nfem.pdf'
+plot[][]\
+'errors_Q2_Pm1_nqpts2' u ($11+$12):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_Q2_Pm1_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_Q2_Pm1_nqpts4' u ($11+$12):9 w lp ps 0.6 t 'nqpts=4',\
+
+
+
+
+
+################################################################
 set title 'Q_3xQ_2'
 
 set xlabel 'h'
@@ -120,33 +204,76 @@ set xlabel 'h'
 set ylabel '||u-u_h||_{L_2}'
 set output 'P2P1-velocity-h.pdf'
 plot[][]\
-'errors_P2_P1_nqpts3' u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=3',\
-'errors_P2_P1_nqpts6' u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=6',\
-'errors_P2_P1_nqpts7' u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2_P1_nqpts3'  u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_P2_P1_nqpts6'  u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2_P1_nqpts7'  u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2_P1_nqpts12' u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=12',\
 x**3*2 lt -1 dt 2 t 'h^3'
 
 set ylabel '||p-p_h||_{L_2}'
 set output 'P2P1-pressure-h.pdf'
 plot[][]\
-'errors_P2_P1_nqpts3' u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=3',\
-'errors_P2_P1_nqpts6' u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=6',\
-'errors_P2_P1_nqpts7' u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2_P1_nqpts3'  u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_P2_P1_nqpts6'  u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2_P1_nqpts7'  u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2_P1_nqpts12' u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=12',\
 x**2/4 lt -1 dt 2 t 'h^2'
 
 set xlabel 'Nfem'
 set ylabel '||u-u_h||_{L_2}'
 set output 'P2P1-velocity-Nfem.pdf'
 plot[][]\
-'errors_P2_P1_nqpts3' u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
-'errors_P2_P1_nqpts6' u ($11+$12):6 w lp ps 0.6 t 'nqpts=6',\
-'errors_P2_P1_nqpts7' u ($11+$12):6 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2_P1_nqpts3'  u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_P2_P1_nqpts6'  u ($11+$12):6 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2_P1_nqpts7'  u ($11+$12):6 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2_P1_nqpts12' u ($11+$12):6 w lp ps 0.6 t 'nqpts=12',\
 
 set ylabel '||p-p_h||_{L_2}'
 set output 'P2P1-pressure-Nfem.pdf'
 plot[][]\
-'errors_P2_P1_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
-'errors_P2_P1_nqpts6' u ($11+$12):9 w lp ps 0.6 t 'nqpts=6',\
-'errors_P2_P1_nqpts7' u ($11+$12):9 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2_P1_nqpts3'  u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_P2_P1_nqpts6'  u ($11+$12):9 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2_P1_nqpts7'  u ($11+$12):9 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2_P1_nqpts12' u ($11+$12):9 w lp ps 0.6 t 'nqpts=12',\
+
+################################################################
+set title 'P_2xP0'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'P2P0-velocity-h.pdf'
+plot[][]\
+'errors_P2_P0_nqpts3'  u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_P2_P0_nqpts6'  u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2_P0_nqpts7'  u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2_P0_nqpts12' u (1/sqrt($3/2)):6 w lp ps 0.6 t 'nqpts=12',\
+x**3*2 lt -1 dt 2 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'P2P0-pressure-h.pdf'
+plot[][]\
+'errors_P2_P0_nqpts3'  u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_P2_P0_nqpts6'  u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2_P0_nqpts7'  u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2_P0_nqpts12' u (1/sqrt($3/2)):9 w lp ps 0.6 t 'nqpts=12',\
+x**1/4 lt -1 dt 2 t 'h'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'P2P0-velocity-Nfem.pdf'
+plot[][]\
+'errors_P2_P0_nqpts3'  u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_P2_P0_nqpts6'  u ($11+$12):6 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2_P0_nqpts7'  u ($11+$12):6 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2_P0_nqpts12' u ($11+$12):6 w lp ps 0.6 t 'nqpts=12',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'P2P0-pressure-Nfem.pdf'
+plot[][]\
+'errors_P2_P0_nqpts3'  u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_P2_P0_nqpts6'  u ($11+$12):9 w lp ps 0.6 t 'nqpts=6',\
+'errors_P2_P0_nqpts7'  u ($11+$12):9 w lp ps 0.6 t 'nqpts=7',\
+'errors_P2_P0_nqpts12' u ($11+$12):9 w lp ps 0.6 t 'nqpts=12',\
 
 ################################################################
 set title 'P_2^+xP_{-1}'
@@ -290,6 +417,44 @@ plot[][]\
 'errors_RT2_Q0_nqpts2' u ($11+$12):9 w lp ps 0.6 t 'nqpts=2',\
 'errors_RT2_Q0_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
 'errors_RT2_Q0_nqpts4' u ($11+$12):9 w lp ps 0.6 t 'nqpts=4',\
+
+################################################################
+set title 'Q_1xQ_0 (Han)'
+
+set xlabel 'h'
+set ylabel '||u-u_h||_{L_2}'
+set output 'HanQ0-velocity-h.pdf'
+plot[][]\
+'errors_Han_Q0_nqpts2' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_Han_Q0_nqpts3' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_Han_Q0_nqpts4' u (1/sqrt($3)):6 w lp ps 0.6 t 'nqpts=4',\
+x**2 lt -1 dt 2 t 'h^2'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'HanQ0-pressure-h.pdf'
+plot[][]\
+'errors_Han_Q0_nqpts2' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_Han_Q0_nqpts3' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_Han_Q0_nqpts4' u (1/sqrt($3)):9 w lp ps 0.6 t 'nqpts=4',\
+x**1/2.5 lt -1 dt 2 t 'h'
+
+set xlabel 'Nfem'
+set ylabel '||u-u_h||_{L_2}'
+set output 'HanQ0-velocity-Nfem.pdf'
+plot[][]\
+'errors_Han_Q0_nqpts2' u ($11+$12):6 w lp ps 0.6 t 'nqpts=2',\
+'errors_Han_Q0_nqpts3' u ($11+$12):6 w lp ps 0.6 t 'nqpts=3',\
+'errors_Han_Q0_nqpts4' u ($11+$12):6 w lp ps 0.6 t 'nqpts=4',\
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'HanQ0-pressure-Nfem.pdf'
+plot[][]\
+'errors_Han_Q0_nqpts2' u ($11+$12):9 w lp ps 0.6 t 'nqpts=2',\
+'errors_Han_Q0_nqpts3' u ($11+$12):9 w lp ps 0.6 t 'nqpts=3',\
+'errors_Han_Q0_nqpts4' u ($11+$12):9 w lp ps 0.6 t 'nqpts=4',\
+
+
+
 
 
 ################################################################
@@ -460,18 +625,22 @@ plot[][]\
 'errors_Q1_Q0_nqpts2'    u (1/sqrt($3)):6   w lp lt 1 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0',\
 'errors_Q2_Q1_nqpts3'    u (1/sqrt($3)):6   w lp lt 1 pt 2 lw .7 ps 0.36 t 'Q_2xQ_1',\
 'errors_Q3_Q2_nqpts3'    u (1/sqrt($3)):6   w lp lt 1 pt 3 lw .7 ps 0.36 t 'Q_3xQ_2',\
+'errors_Q2_Pm1_nqpts3'   u (1/sqrt($3)):6   w lp lt 2 pt 4 lw .7 ps 0.36 t 'Q_2xP_{-1}',\
+'errors_Q2s_Q1_nqpts3'   u (1/sqrt($3)):6   w lp lt 2 pt 5 lw .7 ps 0.36 t 'Q_2^{(8)}xQ_1',\
 'errors_Q1+_Q1_nqpts3'   u (1/sqrt($3)):6   w lp lt 2      lw .7 ps 0.36 t 'Q_1^+xQ_1',\
-'errors_P2_P1_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 1 lw .7 ps 0.36 t 'P_2xP_1',\
-'errors_P3_P2_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 2 lw .7 ps 0.36 t 'P_3xP_2',\
+'errors_P2_P0_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 1 lw .7 ps 0.36 t 'P_2xP_0',\
+'errors_P2_P1_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 2 lw .7 ps 0.36 t 'P_2xP_1',\
+'errors_P3_P2_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 3 lw .7 ps 0.36 t 'P_3xP_2',\
 'errors_P1+_P1_nqpts6'   u (1/sqrt($3/2)):6 w lp lt 4 pt 1 lw .7 ps 0.36 t 'P_1^+xP_1',\
 'errors_P2+_P-1_nqpts6'  u (1/sqrt($3/2)):6 w lp lt 4 pt 2 lw .7 ps 0.36 t 'P_2^+xP_{-1}',\
 'errors_RT1_Q0_nqpts2'   u (1/sqrt($3)):6   w lp lt 5 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (RT_1)',\
 'errors_RT2_Q0_nqpts2'   u (1/sqrt($3)):6   w lp lt 5 pt 2 lw .7 ps 0.36 t 'Q_1xQ_0 (RT_2)',\
 'errors_DSSY1_Q0_nqpts3' u (1/sqrt($3)):6   w lp lt 6 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (DSSY_1)',\
 'errors_DSSY2_Q0_nqpts3' u (1/sqrt($3)):6   w lp lt 6 pt 2 lw .7 ps 0.36 t 'Q_1xQ_0 (DSSY_2)',\
-x**2*5  lt -1 dt 2 t 'h^2',\
-x**3*3 lt -1 dt 3 t 'h^3',\
-x**4/1 lt -1 dt 4 t 'h^4'
+'errors_Han_Q0_nqpts3'   u (1/sqrt($3)):6   w lp lt 7 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (Han)',\
+x**2*5 lt -1 dt 2 lw .5  t 'h^2',\
+x**3*3 lt -1 dt 3 lw .5 t 'h^3',\
+x**4/1.5 lt -1 dt 4 lw .5 t 'h^4'
 
 
 set ylabel '||p-p_h||_{L_2}'
@@ -480,15 +649,19 @@ plot[][]\
 'errors_Q1_Q0_nqpts2'    u (1/sqrt($3)):9   w lp lt 1 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0',\
 'errors_Q2_Q1_nqpts3'    u (1/sqrt($3)):9   w lp lt 1 pt 2 lw .7 ps 0.36 t 'Q_2xQ_1',\
 'errors_Q3_Q2_nqpts3'    u (1/sqrt($3)):9   w lp lt 1 pt 3 lw .7 ps 0.36 t 'Q_3xQ_2',\
+'errors_Q2_Pm1_nqpts3'   u (1/sqrt($3)):9   w lp lt 2 pt 4 lw .7 ps 0.36 t 'Q_2xP_{-1}',\
+'errors_Q2s_Q1_nqpts3'   u (1/sqrt($3)):9   w lp lt 2 pt 5 lw .7 ps 0.36 t 'Q_2^{(8)}xQ_1',\
 'errors_Q1+_Q1_nqpts3'   u (1/sqrt($3)):9   w lp lt 2      lw .7 ps 0.36 t 'Q_1^+xQ_1',\
-'errors_P2_P1_nqpts6'    u (1/sqrt($3/2)):9 w lp lt 3 pt 1 lw .7 ps 0.36 t 'P_2xP_1',\
-'errors_P3_P2_nqpts6'    u (1/sqrt($3/2)):9 w lp lt 3 pt 2 lw .7 ps 0.36 t 'P_3xP_2',\
+'errors_P2_P0_nqpts6'    u (1/sqrt($3/2)):9 w lp lt 3 pt 1 lw .7 ps 0.36 t 'P_2xP_0',\
+'errors_P2_P1_nqpts6'    u (1/sqrt($3/2)):9 w lp lt 3 pt 2 lw .7 ps 0.36 t 'P_2xP_1',\
+'errors_P3_P2_nqpts6'    u (1/sqrt($3/2)):9 w lp lt 3 pt 3 lw .7 ps 0.36 t 'P_3xP_2',\
 'errors_P1+_P1_nqpts6'   u (1/sqrt($3/2)):9 w lp lt 4 pt 1 lw .7 ps 0.36 t 'P_1^+xP_1',\
 'errors_P2+_P-1_nqpts6'  u (1/sqrt($3/2)):9 w lp lt 4 pt 2 lw .7 ps 0.36 t 'P_2^+xP_{-1}',\
 'errors_RT1_Q0_nqpts2'   u (1/sqrt($3)):9   w lp lt 5 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (RT_1)',\
 'errors_RT2_Q0_nqpts2'   u (1/sqrt($3)):9   w lp lt 5 pt 2 lw .7 ps 0.36 t 'Q_1xQ_0 (RT_2)',\
 'errors_DSSY1_Q0_nqpts3' u (1/sqrt($3)):9   w lp lt 6 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (DSSY_1)',\
 'errors_DSSY2_Q0_nqpts3' u (1/sqrt($3)):9   w lp lt 6 pt 2 lw .7 ps 0.36 t 'Q_1xQ_0 (DSSY_2)',\
+'errors_Han_Q0_nqpts3'   u (1/sqrt($3)):9   w lp lt 7 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (Han)',\
 x**1*100  lt -1 dt 2 lw .5 t 'h^1',\
 x**1/1.5  lt -1 dt 2 lw .5 notitle,\
 x**2/2    lt -1 dt 3 lw .5 t 'h^2',\
@@ -498,29 +671,59 @@ x**1.5*75 lt -1 dt 4 lw .5 t 'h^{1.5}'
 
 #################################################
 reset 
-set term pdf enhanced font "times,12pt"
+set term pdf enhanced font "times,11pt"
 set grid
 set log x
 set key outside
 set title 'all elements'
 
 set xlabel 'h'
-set output 'vrms.pdf'
 set ylabel 'v_{rms}'
+
+set output 'vrms.pdf'
 plot[][0.74:0.81]\
 'vrms_Q1_Q0_nqpts2'    u (1/sqrt($3)):6 w lp lt 1 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0',\
 'vrms_Q2_Q1_nqpts3'    u (1/sqrt($3)):6 w lp lt 1 pt 2 lw .7 ps 0.36 t 'Q_2xQ_1',\
 'vrms_Q3_Q2_nqpts3'    u (1/sqrt($3)):6 w lp lt 1 pt 3 lw .7 ps 0.36 t 'Q_3xQ_2',\
+'vrms_Q2_Pm1_nqpts3'   u (1/sqrt($3)):6 w lp lt 2 pt 4 lw .7 ps 0.36 t 'Q_2xP_{-1}',\
+'vrms_Q2s_Q1_nqpts3'   u (1/sqrt($3)):6 w lp lt 2 pt 5 lw .7 ps 0.36 t 'Q_2^{(8)}xQ1',\
 'vrms_Q1+_Q1_nqpts3'   u (1/sqrt($3)):6 w lp lt 2      lw .7 ps 0.36 t 'Q_1^+xQ_1',\
-'vrms_P2_P1_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 1 lw .7 ps 0.36 t 'P_2xP_1',\
-'vrms_P3_P2_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 2 lw .7 ps 0.36 t 'P_3xP_2',\
+'vrms_P2_P0_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 1 lw .7 ps 0.36 t 'P_2xP_0',\
+'vrms_P2_P1_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 2 lw .7 ps 0.36 t 'P_2xP_1',\
+'vrms_P3_P2_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 3 lw .7 ps 0.36 t 'P_3xP_2',\
 'vrms_P1+_P1_nqpts6'   u (1/sqrt($3/2)):6 w lp lt 4 pt 1 lw .7 ps 0.36 t 'P_1^+xP_1',\
 'vrms_P2+_P-1_nqpts6'  u (1/sqrt($3/2)):6 w lp lt 4 pt 2 lw .7 ps 0.36 t 'P_2^+xP_{-1}',\
 'vrms_RT1_Q0_nqpts2'   u (1/sqrt($3)):6 w lp lt 5 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (RT_1)',\
 'vrms_RT2_Q0_nqpts2'   u (1/sqrt($3)):6 w lp lt 5 pt 2 lw .7 ps 0.36 t 'Q_1xQ_0 (RT_2)',\
 'vrms_DSSY1_Q0_nqpts3' u (1/sqrt($3)):6 w lp lt 6 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (DSSY_1)',\
 'vrms_DSSY2_Q0_nqpts3' u (1/sqrt($3)):6 w lp lt 6 pt 2 lw .7 ps 0.36 t 'Q_1xQ_0 (DSSY_2)',\
+'vrms_Han_Q0_nqpts3'   u (1/sqrt($3)):6 w lp lt 7 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (Han)',\
 7.77615791e-01 lt -1 dt 2 t 'analytical' 
+
+set output 'vrms_zoom.pdf'
+plot[][0.776:0.779]\
+'vrms_Q1_Q0_nqpts2'    u (1/sqrt($3)):6 w lp lt 1 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0',\
+'vrms_Q2_Q1_nqpts3'    u (1/sqrt($3)):6 w lp lt 1 pt 2 lw .7 ps 0.36 t 'Q_2xQ_1',\
+'vrms_Q3_Q2_nqpts3'    u (1/sqrt($3)):6 w lp lt 1 pt 3 lw .7 ps 0.36 t 'Q_3xQ_2',\
+'vrms_Q2_Pm1_nqpts3'   u (1/sqrt($3)):6 w lp lt 2 pt 4 lw .7 ps 0.36 t 'Q_2xP_{-1}',\
+'vrms_Q2s_Q1_nqpts3'   u (1/sqrt($3)):6 w lp lt 2 pt 5 lw .7 ps 0.36 t 'Q_2^{(8)}xQ1',\
+'vrms_Q1+_Q1_nqpts3'   u (1/sqrt($3)):6 w lp lt 2      lw .7 ps 0.36 t 'Q_1^+xQ_1',\
+'vrms_P2_P0_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 1 lw .7 ps 0.36 t 'P_2xP_0',\
+'vrms_P2_P1_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 2 lw .7 ps 0.36 t 'P_2xP_1',\
+'vrms_P3_P2_nqpts6'    u (1/sqrt($3/2)):6 w lp lt 3 pt 3 lw .7 ps 0.36 t 'P_3xP_2',\
+'vrms_P1+_P1_nqpts6'   u (1/sqrt($3/2)):6 w lp lt 4 pt 1 lw .7 ps 0.36 t 'P_1^+xP_1',\
+'vrms_P2+_P-1_nqpts6'  u (1/sqrt($3/2)):6 w lp lt 4 pt 2 lw .7 ps 0.36 t 'P_2^+xP_{-1}',\
+'vrms_RT1_Q0_nqpts2'   u (1/sqrt($3)):6 w lp lt 5 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (RT_1)',\
+'vrms_RT2_Q0_nqpts2'   u (1/sqrt($3)):6 w lp lt 5 pt 2 lw .7 ps 0.36 t 'Q_1xQ_0 (RT_2)',\
+'vrms_DSSY1_Q0_nqpts3' u (1/sqrt($3)):6 w lp lt 6 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (DSSY_1)',\
+'vrms_DSSY2_Q0_nqpts3' u (1/sqrt($3)):6 w lp lt 6 pt 2 lw .7 ps 0.36 t 'Q_1xQ_0 (DSSY_2)',\
+'vrms_Han_Q0_nqpts3'   u (1/sqrt($3)):6 w lp lt 7 pt 1 lw .7 ps 0.36 t 'Q_1xQ_0 (Han)',\
+7.77615791e-01 lt -1 dt 2 t 'analytical' 
+
+
+
+
+
 
 
 
