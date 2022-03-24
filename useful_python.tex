@@ -1,9 +1,7 @@
-
-
+\begin{flushright} {\tiny {\color{gray} useful\_python.tex}} \end{flushright}
 
 %--------------------------
 \subsection{Sparse matrices}
-\begin{flushright} {\tiny {\color{gray} useful\_python.tex}} \end{flushright}
 
 So far, the best way I have found to deal with sparse matrices is to 
 declare the matrix as a 'lil\_matrix' (linked list).
@@ -65,6 +63,37 @@ https://www.codecademy.com/learn/learn-python
 https://learnpythonthehardway.org/book/
 \end{verbatim}
 
+%----------------------------------
+\subsection{Making simple 2D plots}
+
+\begin{lstlisting}
+import matplotlib.pyplot as plt
+
+# number of points
+N=100
+
+# a despicable way of filling two arrays
+x_data=[]
+y_data=[]
+for i in range(0,N):
+    x=i
+    y=i**2+2*i+1.
+    x_data.append(x)
+    y_data.append(y)
+
+# generating a 2D figure with the data
+plt.figure()
+plt.plot(x_data,y_data, label = 'name of data')
+plt.xlabel('x-axis label')
+plt.ylabel('y-axis label')
+plt.legend()
+plt.savefig('myplot.pdf', bbox_inches='tight')
+plt.show()
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=7cm]{images/python/myplot}
+\end{center}
 
 %----------------------------------
 \subsection{How to debug your code}

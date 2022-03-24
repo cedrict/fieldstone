@@ -1,0 +1,107 @@
+\begin{flushright} {\tiny {\color{gray} p1nc.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{verbatim}
+P1       P1NC
+2        .           (r0,s0)=(1/2,0)
+| \      | \         
+|  \     2  1        (r1,s1)=(1/2,1/2)
+|   \    |   \
+0----1   .--0--.     (r2,s2)=(0,1/2)
+\end{verbatim}
+
+The basis functions are $1-2\lambda_i$, where $\lambda_i$ are the barycentric coordinates, so we arrive at
+\begin{eqnarray}
+\bN_0(r,s)&=& 1- 2\lambda_3 = 1-2s \nn\\ 
+\bN_1(r,s)&=& 1- 2\lambda_1 = 1-2(1-r-s) = -1+2r+2s\nn\\ 
+\bN_2(r,s)&=& 1- 2\lambda_2 =1-2r \nn
+\end{eqnarray}
+with of course
+\[
+\bN_0(r,s)+\bN_1(r,s)+\bN_2(r,s) =  (1-2s) + (-1+2r+2s) + (1-2r) = 1
+\]
+We have
+\begin{eqnarray}
+\bN_0(r_0,s_0)&=&  1-2\cdot 0 =1 \nn\\
+\bN_0(r_1,s_1)&=&  1-2\cdot 1/2 =0\nn\\
+\bN_0(r_2,s_2)&=&  1-2\cdot 1/2 =0\nn\\
+\bN_1(r_0,s_0)&=&  1-2(1-1/2-0)= 0 \nn\\
+\bN_1(r_1,s_1)&=&  1-2(1-1/2-1/2)= 1 \nn\\
+\bN_1(r_2,s_2)&=&  1-2(1-0-1/2)= 0 \nn\\
+\bN_2(r_0,s_0)&=&  1-2\cdot 1/2 =0\nn\\
+\bN_2(r_1,s_1)&=&  1-2\cdot 1/2 =0\nn\\
+\bN_2(r_2,s_2)&=&  1-2\cdot 0 =1 \nn
+\end{eqnarray}
+Automatically,
+\begin{eqnarray}
+\partial_r \bN_0(r,s)&=& 0 \nn \\ 
+\partial_r \bN_1(r,s)&=& 2 \nn\\
+\partial_r \bN_2(r,s)&=& -2 \nn\\
+\partial_s \bN_0(r,s)&=& -2 \nn\\ 
+\partial_s \bN_1(r,s)&=& 2 \nn\\
+\partial_s \bN_2(r,s)&=& 0 \nn
+\end{eqnarray}
+
+Another way to obtain the basis functions is as follows.
+\[
+f^h(r,s)=a+br+cs
+\]
+\begin{eqnarray}
+f_0 &=& f^h(r_0,s_0) = a +b/2 \nn\\
+f_1 &=& f^h(r_1,s_1) = a +b/2+c/2 \nn\\
+f_2 &=& f^h(r_2,s_2) = a +c/2 \nn
+\end{eqnarray}
+or,
+\[
+\left(
+\begin{array}{ccc}
+1 & 1/2 & 0 \\
+1 & 1/2 & 1/2 \\
+1 & 0 & 1/2
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+a \\ b \\ c
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+f_0 \\ f_1 \\ f_2
+\end{array}
+\right)
+\]
+i.e. 
+\[
+\left(
+\begin{array}{ccc}
+a \\ b \\ c
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+1 & -1 & 1 \\
+0 & 2 & -2 \\
+-2 & 2 & 0
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+f_0 \\ f_1 \\ f_2
+\end{array}
+\right)
+\]
+so 
+\begin{eqnarray}
+f^h(r,s) 
+&=& a + br + cs \nn\\
+&=& (f_0-f_1+f_2) + 2(f_1-f_2)r + 2(-f_0+f_1)s \nn\\
+&=& (1-2s)f_0 + (-1+2r+2s)f_1 + (1-2r)f_2 \nn\\
+&=& \sum_{i=0}^2 \bN_i (r,s) f_i \nn
+\end{eqnarray}
+
+
