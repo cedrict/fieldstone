@@ -293,7 +293,9 @@ Ly=1.
 
 experiment=1
 
-element= 3
+element= 2
+
+correct_mesh=True
 
 if element==1:
    mV=4
@@ -323,15 +325,11 @@ if element==5 or element==6:
 
 eps=1e-9
 
-sparse=True
-
-mode=1
-
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 2):
    folder=sys.argv[1]
 else:
-   folder='15'
+   folder='08'
 
 print (folder)
 
@@ -570,6 +568,53 @@ if element==2:
 #     print ("node 4",iconV[3][iel],"at pos.",xV[iconV[3][iel]], yV[iconV[3][iel]])
 
 ###############################################################################
+# flag nodes on viscosity contrast interface
+###############################################################################
+interface=np.zeros(NV,dtype=np.int16)  
+r=np.zeros(NV,dtype=np.float64)  
+theta=np.zeros(NV,dtype=np.float64)  
+
+for i in range(0,NV):
+    r[i]=np.sqrt(xV[i]**2+yV[i]**2)
+    theta[i]=np.arctan2(yV[i],xV[i])
+    if abs(r[i]-0.2)<1e-6:
+       interface[i]=1
+       r[i]=0.2
+
+if correct_mesh:
+
+   for iel in range(0,nel):
+       if element==2:
+          if interface[iconV[0,iel]]==1 and interface[iconV[1,iel]]==1: 
+             mid=iconV[4,iel] 
+             r[mid]=0.2
+             xV[mid]=r[mid]*np.cos(theta[mid])
+             yV[mid]=r[mid]*np.sin(theta[mid])
+             interface[mid]=1
+          if interface[iconV[1,iel]]==1 and interface[iconV[2,iel]]==1: 
+             mid=iconV[5,iel] 
+             r[mid]=0.2
+             xV[mid]=r[mid]*np.cos(theta[mid])
+             yV[mid]=r[mid]*np.sin(theta[mid])
+             interface[mid]=1
+          if interface[iconV[2,iel]]==1 and interface[iconV[3,iel]]==1: 
+             mid=iconV[6,iel] 
+             r[mid]=0.2
+             xV[mid]=r[mid]*np.cos(theta[mid])
+             yV[mid]=r[mid]*np.sin(theta[mid])
+             interface[mid]=1
+          if interface[iconV[3,iel]]==1 and interface[iconV[0,iel]]==1: 
+             mid=iconV[7,iel] 
+             r[mid]=0.2
+             xV[mid]=r[mid]*np.cos(theta[mid])
+             yV[mid]=r[mid]*np.sin(theta[mid])
+             interface[mid]=1
+
+   np.savetxt('meshV3.ascii',np.array([xV,yV,interface,r,theta]).T)
+
+#exit()
+
+###############################################################################
 # define boundary conditions
 ###############################################################################
 start = timing.time()
@@ -601,6 +646,7 @@ print("boundary conditions: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 area    = np.zeros(nel,dtype=np.float64) 
+area_inc= np.zeros(nel,dtype=np.float64) 
 dNNNVdr = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
 dNNNVds = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
 
@@ -626,9 +672,13 @@ for iel in range(0,nel):
                print(yV[iconV[:,iel]])
                exit('opla')
             area[iel]+=jcob*weightq
+            if r[iconV[8,iel]]<=0.2:
+               area_inc[iel]+=jcob*weightq
+         
 
 print("     -> area (m,M) %.4e %.4e " %(np.min(area),np.max(area)))
 print("     -> total area %.6f " %(area.sum()))
+print("     -> area inclusion %.10f %.10f %d" %(area_inc.sum(),0.25*np.pi*0.2**2,nel))
 
 print("compute elements areas: %.3f s" % (timing.time() - start))
 
@@ -658,28 +708,20 @@ for i in range(0,NP):
 ###############################################################################
 start = timing.time()
 
-if sparse:
-   A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
-   AA_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
-else:   
-   K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-   G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
-
-f_rhs   = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
-ff_rhs  = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
-h_rhs   = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
-hh_rhs  = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
-b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
-N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
-NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
-NNNP    = np.zeros(mP,dtype=np.float64)           # shape functions P
-dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVdr = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-u       = np.zeros(NV,dtype=np.float64)           # x-component velocity
-v       = np.zeros(NV,dtype=np.float64)           # y-component velocity
-c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
+f_rhs    = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
+h_rhs    = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
+b_mat    = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
+N_mat    = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
+NNNV     = np.zeros(mV,dtype=np.float64)           # shape functions V
+NNNP     = np.zeros(mP,dtype=np.float64)           # shape functions P
+dNNNVdx  = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVdy  = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVdr  = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVds  = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+u        = np.zeros(NV,dtype=np.float64)           # x-component velocity
+v        = np.zeros(NV,dtype=np.float64)           # y-component velocity
+c_mat    = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 for iel in range(0,nel):
 
@@ -702,19 +744,12 @@ for iel in range(0,nel):
     K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
     G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
     h_el=np.zeros((mP*ndofP),dtype=np.float64)
-    fx_el =np.zeros((mV),dtype=np.float64)
-    fy_el =np.zeros((mV),dtype=np.float64)
-    Nxx_el =np.zeros((mV,mV),dtype=np.float64)
-    Nyy_el =np.zeros((mV,mV),dtype=np.float64)
-    Gx_el=np.zeros((mV,mP),dtype=np.float64)
-    Gy_el=np.zeros((mV,mP),dtype=np.float64)
 
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
-
 
             NNNV[0:mV]=NNV(rq,sq,element)
             dNNNVdr[0:mV]=dNNVdr(rq,sq,element)
@@ -730,7 +765,6 @@ for iel in range(0,nel):
                 jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
             jcob = np.linalg.det(jcb)
             jcbi = np.linalg.inv(jcb)
-            
 
             # compute dNdx & dNdy
             xq=0.0
@@ -767,15 +801,6 @@ for iel in range(0,nel):
 
             G_el-=b_mat.T.dot(N_mat)*weightq*jcob
 
-            #-----------------------------------------------------------------------
-            Nxx_el+=(np.outer(dNNNVdx,dNNNVdx)+np.outer(dNNNVdy,dNNNVdy))*weightq*jcob
-            Nyy_el+=(np.outer(dNNNVdx,dNNNVdx)+np.outer(dNNNVdy,dNNNVdy))*weightq*jcob
-            Gx_el-=np.outer(dNNNVdx,NNNP)*weightq*jcob
-            Gy_el-=np.outer(dNNNVdy,NNNP)*weightq*jcob
-            fx_el+=NNNV*jcob*weightq*bx(xq,yq)
-            fy_el+=NNNV*jcob*weightq*by(xq,yq)
-            #-----------------------------------------------------------------------
-
         # end for jq
     # end for iq
 
@@ -795,29 +820,6 @@ for iel in range(0,nel):
                h_el[:]-=G_el[ikk,:]*bc_val[m1]
                G_el[ikk,:]=0
 
-    for k1 in range(0,mV): # only no slip !!!
-        # x bc
-        m1 =ndofV*iconV[k1,iel]
-        if bc_fix[m1]:
-           #print(xV[iconV[k1,iel]],yV[iconV[k1,iel]])
-           N_ref=Nxx_el[k1,k1]
-           Nxx_el[k1,:]=0.
-           Nxx_el[:,k1]=0.
-           Nxx_el[k1,k1]=N_ref
-           fx_el[k1]=0.
-           Gx_el[k1,:]=0.
-        # y bc
-        m1 =ndofV*iconV[k1,iel]+1
-        if bc_fix[m1]:
-           #print(xV[iconV[k1,iel]],yV[iconV[k1,iel]])
-           N_ref=Nyy_el[k1,k1]
-           Nyy_el[k1,:]=0.
-           Nyy_el[:,k1]=0.
-           Nyy_el[k1,k1]=N_ref
-           fy_el[k1]=0.
-           Gy_el[k1,:]=0.
-
-
     # assemble matrix K_mat and right hand side rhs
     for k1 in range(0,mV):
         for i1 in range(0,ndofV):
@@ -827,42 +829,16 @@ for iel in range(0,nel):
                 for i2 in range(0,ndofV):
                     jkk=ndofV*k2          +i2
                     m2 =ndofV*iconV[k2,iel]+i2
-                    if sparse:
-                       A_sparse[m1,m2] += K_el[ikk,jkk]
-                    else:
-                       K_mat[m1,m2]+=K_el[ikk,jkk]
+                    A_sparse[m1,m2] += K_el[ikk,jkk]
             for k2 in range(0,mP):
                 jkk=k2
                 m2 =iconP[k2,iel]
-                if sparse:
-                   A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
-                   A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
-                else:
-                   G_mat[m1,m2]+=G_el[ikk,jkk]
+                A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
+                A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
             f_rhs[m1]+=f_el[ikk]
     for k2 in range(0,mP):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
-
-
-    for k1 in range(0,mV):
-        m1 =iconV[k1,iel]
-        for k2 in range(0,mV):
-            m2 =iconV[k2,iel]
-            AA_sparse[m1   ,m2   ] += Nxx_el[k1,k2]
-            AA_sparse[m1+NV,m2+NV] += Nyy_el[k1,k2]
-        ff_rhs[m1   ]+=fx_el[k1]
-        ff_rhs[m1+NV]+=fy_el[k1]
-        for k2 in range(0,mP):
-            m2 =iconP[k2,iel]
-            AA_sparse[m1   ,m2+NfemV] += Gx_el[k1,k2]
-            AA_sparse[m1+NV,m2+NfemV] += Gy_el[k1,k2]
-            AA_sparse[m2+NfemV,m1   ] += Gx_el[k1,k2]
-            AA_sparse[m2+NfemV,m1+NV] += Gy_el[k1,k2]
-
-if not sparse:
-   print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
-   print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
 
 print("build FE matrix: %.3fs - %d elts" % (timing.time()-start, nel))
 
@@ -872,18 +848,8 @@ print("build FE matrix: %.3fs - %d elts" % (timing.time()-start, nel))
 start = timing.time()
    
 rhs = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-
-if mode==1:
-   rhs[0:NfemV]=f_rhs
-   rhs[NfemV:Nfem]=h_rhs
-   if not sparse:
-      a_mat = np.zeros((Nfem,Nfem),dtype=np.float64) 
-      a_mat[0:NfemV,0:NfemV]=K_mat
-      a_mat[0:NfemV,NfemV:Nfem]=G_mat
-      a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-else:
-   rhs[0:NfemV]=ff_rhs
-   rhs[NfemV:Nfem]=hh_rhs
+rhs[0:NfemV]=f_rhs
+rhs[NfemV:Nfem]=h_rhs
 
 print("assemble blocks: %.3f s" % (timing.time() - start))
 
@@ -891,37 +857,18 @@ print("assemble blocks: %.3f s" % (timing.time() - start))
 # assign extra pressure b.c. to remove null space
 ######################################################################
 
-if mode==1:
-   if sparse:
-      A_sparse[Nfem-1,:]=0
-      A_sparse[:,Nfem-1]=0
-      A_sparse[Nfem-1,Nfem-1]=1
-      rhs[Nfem-1]=0
-   else:
-      a_mat[Nfem-1,:]=0
-      a_mat[:,Nfem-1]=0
-      a_mat[Nfem-1,Nfem-1]=1
-      rhs[Nfem-1]=0
-else:
-   AA_sparse[Nfem-1,:]=0
-   AA_sparse[:,Nfem-1]=0
-   AA_sparse[Nfem-1,Nfem-1]=1
-   rhs[Nfem-1]=0
-
+for i in range(0,Nfem):
+    A_sparse[Nfem-1,i]=0
+    A_sparse[i,Nfem-1]=0
+A_sparse[Nfem-1,Nfem-1]=1
+rhs[Nfem-1]=0
 
 ######################################################################
 # solve system
 ######################################################################
 start = timing.time()
 
-if mode==1:
-   if sparse:
-      sparse_matrix=A_sparse.tocsr()
-   else:
-      sparse_matrix=sps.csr_matrix(a_mat)
-else:
-      sparse_matrix=AA_sparse.tocsr()
-
+sparse_matrix=A_sparse.tocsr()
 sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
 print("solve time: %.3f s" % (timing.time() - start))
@@ -931,12 +878,7 @@ print("solve time: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-if mode==1:
-   u,v=np.reshape(sol[0:NfemV],(NV,2)).T
-else:
-   u=sol[0:NV]
-   v=sol[NV:NfemV]
-
+u,v=np.reshape(sol[0:NfemV],(NV,2)).T
 p=sol[NfemV:Nfem]
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
@@ -1114,6 +1056,20 @@ errp=0.
 errq=0.
 for iel in range (0,nel):
 
+    if element==6:
+       det=xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]]\
+          -xP[iconP[0,iel]]*yP[iconP[2,iel]]+xP[iconP[2,iel]]*yP[iconP[0,iel]]\
+          +xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]]
+       m11=(xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]])/det
+       m12=(xP[iconP[2,iel]]*yP[iconP[0,iel]]-xP[iconP[0,iel]]*yP[iconP[2,iel]])/det
+       m13=(xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]])/det
+       m21=(yP[iconP[1,iel]]-yP[iconP[2,iel]])/det
+       m22=(yP[iconP[2,iel]]-yP[iconP[0,iel]])/det
+       m23=(yP[iconP[0,iel]]-yP[iconP[1,iel]])/det
+       m31=(xP[iconP[2,iel]]-xP[iconP[1,iel]])/det
+       m32=(xP[iconP[0,iel]]-xP[iconP[2,iel]])/det
+       m33=(xP[iconP[1,iel]]-xP[iconP[0,iel]])/det
+
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
             rq=qcoords[iq]
@@ -1147,12 +1103,12 @@ for iel in range (0,nel):
             errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
             errq+=(qq-pressure(xq,yq))**2*weightq*jcob
 
-            xq=0.
-            yq=0.
+            if element==6:
+               NNNP[0]=(m11+m21*xq+m31*yq)
+               NNNP[1]=(m12+m22*xq+m32*yq)
+               NNNP[2]=(m13+m23*xq+m33*yq)
             pq=0.
             for k in range(0,mP):
-                xq+=NNNP[k]*xP[iconP[k,iel]]
-                yq+=NNNP[k]*yP[iconP[k,iel]]
                 pq+=NNNP[k]*p[iconP[k,iel]]
             errp+=(pq-pressure(xq,yq))**2*weightq*jcob
 
@@ -1239,6 +1195,16 @@ if True==1:
     vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%10e \n" %q[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='interface' Format='ascii'> \n")
+    for i in range(0,NV):
+           vtufile.write("%2e \n" %interface[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='theta' Format='ascii'> \n")
+    for i in range(0,NV):
+           vtufile.write("%2e \n" %theta[i])
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='error u' Format='ascii'> \n")

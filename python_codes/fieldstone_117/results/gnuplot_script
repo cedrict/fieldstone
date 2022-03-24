@@ -1,0 +1,37 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+set xlabel 'h_{max}'
+set ylabel 'error'
+set log xy
+set key outside 
+
+set output 'errorsV.pdf'
+plot[][]\
+'01/errors' u 16:6 w lp ps .5 lt 1 t 'Q_1xQ_0',\
+'02/errors' u 16:6 w lp ps .5 lt 2 t 'Q_2xQ_1',\
+'03/errors' u 16:6 w lp ps .5 lt 3 t 'Q_3xQ_2',\
+'04/errors' u 16:6 w lp ps .5 lt 4 t 'Q_4xQ_3',\
+'05/errors' u 16:6 w lp ps .5 lt 5 t 'Q_2xP_{-1}-mapped',\
+'06/errors' u 16:6 w lp ps .5 lt 6 t 'Q_2xP_{-1}-unmapped',\
+x**2/20 lt -1 dt 2 t 'h^2'
+
+set output 'errorsP.pdf'
+plot[][]\
+'01/errors' u 16:9 w lp ps .5 lt 1 t 'Q_1xQ_0',\
+'02/errors' u 16:9 w lp ps .5 lt 2 t 'Q_2xQ_1',\
+'03/errors' u 16:9 w lp ps .5 lt 3 t 'Q_3xQ_2',\
+'04/errors' u 16:9 w lp ps .5 lt 4 t 'Q_4xQ_3',\
+'05/errors' u 16:9 w lp ps .5 lt 5 t 'Q_2xP_{-1}-mapped',\
+'06/errors' u 16:9 w lp ps .5 lt 6 t 'Q_2xP_{-1}-unmapped',\
+x**2*3 lt -1 dt 2 t 'h^2',\
+x**0.5/3 lt -1 dt 3 t 'h^{0.5}'
+
+set ylabel 'inclusion area'
+unset log y
+set output 'areas.pdf'
+plot[][]\
+'02/area_bef' u 6:4 w lp ps 0.5 t 'straight',\
+'02/area_aft' u 6:4 w lp ps 0.5 t 'rounded',\
+'02/area_aft' u 6:5 w l lt -1 dt 3 t 'analytical'
+

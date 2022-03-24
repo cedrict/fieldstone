@@ -1,0 +1,16 @@
+ #!/bin/sh -x
+xmin=-0.200000E-01
+xmax=0.102000E+01
+ymin=-0.200000E-01
+ymax=0.102000E+01
+PROJ=-JX15c/15c
+LABEL=-Ba0.240000E+00f0.120000E+00:'x':/a0.240000E+00f0.120000E+00:'y':
+VIEW=
+VERBOSE=
+FRAME=-R${xmin}/${xmax}/${ymin}/${ymax}
+gmt set PS_MEDIA A4
+gmt psbasemap     ${PROJ} ${FRAME} ${LABEL} ${VIEW} ${VERBOSE} -K > grid.ps || exit 1
+gmt psxy GMTgrid_Q0.dat ${PROJ} ${FRAME} ${LABEL} ${VIEW} ${VERBOSE} -W0.1,black -K -O >> grid.ps || exit 1
+gmt psbasemap     ${PROJ} ${FRAME} ${LABEL} ${VIEW} ${VERBOSE} -K > allPoints.ps || exit 1
+gmt psxy GMTgrid_Q0.dat ${PROJ} ${FRAME} ${LABEL} ${VIEW} ${VERBOSE} -W0.1,black -K  -O >> allPoints.ps || exit 1
+gmt psxy GMTallPoints_Q0.dat ${PROJ} ${FRAME} ${LABEL} ${VIEW} ${VERBOSE} -Sp   -K -O >> allPoints.ps || exit 1
