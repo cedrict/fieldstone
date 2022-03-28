@@ -98,8 +98,8 @@ def viscosity(x,y,ee,T,imat,iter,plastic_strain_marker):
           c_sw=cohesion_values[imat-1]
           strain_level=0
        elif plastic_strain_marker<eps2:
-          phi_sw=phi_values[imat-1]*(weakening_factor_phi-1)/(eps2-eps1)*(strain_marker-eps1)+phi_values[imat-1] 
-          c_sw=cohesion_values[imat-1]*(weakening_factor_cohesion-1)/(eps2-eps1)*(strain_marker-eps1)+cohesion_values[imat-1] 
+          phi_sw=phi_values[imat-1]*(weakening_factor_phi-1)/(eps2-eps1)*(plastic_strain_marker-eps1)+phi_values[imat-1] 
+          c_sw=cohesion_values[imat-1]*(weakening_factor_cohesion-1)/(eps2-eps1)*(plastic_strain_marker-eps1)+cohesion_values[imat-1] 
           strain_level=(plastic_strain_marker-eps1)/(eps2-eps1)
        else:
           phi_sw=phi_values[imat-1]*weakening_factor_phi
@@ -286,7 +286,7 @@ print("------------------------------")
 rVnodes=[-1,+1,+1,-1, 0,+1, 0,-1,0]
 sVnodes=[-1,-1,+1,+1,-1,0,+1,0,0]
 
-eta_ref=1e19 # purely numerical parameter - do not change
+eta_ref=1e20 # purely numerical parameter - do not change
 
 pnormalise=False 
 
@@ -1026,11 +1026,11 @@ for istep in range(0,nstep):
     swarm_sigmaxx[:]=-swarm_p_dyn[:]+swarm_tauxx[:]
     swarm_sigmayy[:]=-swarm_p_dyn[:]+swarm_tauyy[:]
     swarm_sigmaxy[:]=               +swarm_tauxy[:]
-    swarm_sigma_angle[:]=0.5*np.arctan(2*swarm_sigmaxy[:]/(swarm_sigmayy[:]-swarm_sigmaxx[:])) * (180/np.pi)
+    swarm_sigma_angle[:]=0.5*np.arctan(2*swarm_sigmaxy[:]/(swarm_sigmayy[:]-swarm_sigmaxx[:])) 
 
     swarm_tau_eff[:]=np.sqrt(0.5*(swarm_tauxx[:]**2+swarm_tauyy[:]**2+2*swarm_tauxy[:]**2))
 
-    swarm_tau_angle[:]=0.5*np.arctan(2*swarm_tauxy[:]/(swarm_tauyy[:]-swarm_tauxx[:])) * (180/np.pi)
+    swarm_tau_angle[:]=0.5*np.arctan(2*swarm_tauxy[:]/(swarm_tauyy[:]-swarm_tauxx[:])) 
 
     swarm_sigma1[:]=(swarm_sigmaxx[:]+swarm_sigmayy[:])/2. \
                    + np.sqrt( (swarm_sigmaxx[:]-swarm_sigmayy[:])**2/4 +swarm_sigmaxy[:]**2 ) 
@@ -1270,22 +1270,22 @@ for istep in range(0,nstep):
     #--
     vtufile.write("<DataArray type='Float32' Name='tau angle' Format='ascii'>\n")
     for i in range(0,nmarker):
-        vtufile.write("%3e \n" % (swarm_tau_angle[i]))
+        vtufile.write("%3e \n" % (swarm_tau_angle[i]/np.pi*180))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='sigma angle' Format='ascii'>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma angle (abs)' Format='ascii'>\n")
     for i in range(0,nmarker):
-        vtufile.write("%3e \n" % (swarm_sigma_angle[i]))
+        vtufile.write("%3e \n" % (np.abs(swarm_sigma_angle[i])/np.pi*180))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='sigma 1' Format='ascii'>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma 1 (MPa)' Format='ascii'>\n")
     for i in range(0,nmarker):
-        vtufile.write("%e \n" % (swarm_sigma1[i]))
+        vtufile.write("%e \n" % (swarm_sigma1[i]/MPa))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='sigma 2' Format='ascii'>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma 2 (MPa)' Format='ascii'>\n")
     for i in range(0,nmarker):
-        vtufile.write("%e \n" % (swarm_sigma2[i]))
+        vtufile.write("%e \n" % (swarm_sigma2[i]/MPa))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='sigma_1 (dir)' NumberOfComponents='3' Format='ascii'> \n")
