@@ -16,6 +16,16 @@ Examples of this approach are to be found in
 \textcite{polp14b}, \textcite{lopp14}, \textcite{blmp16}, \textcite{thba22}.
 
 %-----------------------------------------------------------------------------
+\subsubsection{The repository}
+
+I have created in folder {\tt mms} a template python script for incompressible
+isoviscous isothermal Stokes flow. All one has to do is to provide the velocity and 
+pressure, the strain rate tensor components and its spatial derivatives.
+
+\lstinputlisting[language=python]{mms/template.py}
+
+
+%-----------------------------------------------------------------------------
 \subsubsection{Analytical benchmark I \label{mms1} - "DH"}
 
 Taken from \cite{dohu03}. We consider a two-dimensional problem 
@@ -811,6 +821,13 @@ Finally we can verify that the pressure has zero average:
 \int_0^1 \int_0^1  x(1-x)(1-2y) dxdy= 
 \int_0^1  x(1-x) dx \int_0^1  (1-2y) dy=0 
 \]
+
+
+%-----------------------------------------------------------------------------
+\subsubsection{Manufactured solution in \textcite{muye17}} \label{ss:mms_muye17a}
+\input{mms_muye17a}
+
+
 
 
 %-----------------------------------------------------------------------------

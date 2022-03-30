@@ -1,0 +1,73 @@
+We first consider the Stokes equations with homogeneous boundary condition
+defined on the unit square. The exact solutions are given by
+\begin{eqnarray}
+u(x,y) &=& 2\pi \sin^2(\pi x)  \cos(\pi y) \sin(\pi y) \nn\\
+v(x,y) &=& -2\pi \sin(\pi x) \cos(\pi x) \sin^2(\pi y)  \nn\\
+p(x,y) &=& \cos(\pi x) \cos(\pi y)
+\end{eqnarray}
+
+Then, since $\cos' = -\sin$:
+\begin{eqnarray}
+\partial_x p &=& -\pi \sin(\pi x) \cos(\pi y) \nn\\
+\partial_y p &=& -\pi \cos(\pi x) \sin(\pi y) \nn
+\end{eqnarray}
+and 
+\begin{eqnarray}
+\partial_x u &=& 4\pi^2 \sin(\pi x) \cos(\pi x) \cos(\pi y) \sin(\pi y)  \nn\\
+\partial_y u &=& 2\pi^2 \sin^2(\pi x) [\cos^2(\pi y) - \sin^2(\pi y) ] \nn\\
+\partial_x v &=& -2\pi^2 [ \cos^2(\pi x) - \sin^2(\pi x)] \sin^2(\pi y)  \nn\\
+\partial_y v &=& -4\pi^2 \sin(\pi x) \cos(\pi x) \sin(\pi y) \cos(\pi y)  \nn
+\end{eqnarray}
+with as expected
+\[
+\partial_x u + \partial_y v 
+= 
+4\pi^2 \sin(\pi x) \cos(\pi x) \cos(\pi y) \sin(\pi y)
+-
+4\pi^2 \sin(\pi x) \cos(\pi x) \sin(\pi y) \cos(\pi y)
+=0
+\]
+
+The strain rate components are then 
+\begin{eqnarray}
+\dot\varepsilon_{xx} &=& \partial_x u \nn\\
+\dot\varepsilon_{yy} &=& \partial_y v \nn\\
+\dot\varepsilon_{xy} 
+&=& \frac12 (\partial_x v + \partial_y u) \nn\\
+&=& \frac12 \left(-2\pi^2 [ \cos^2(\pi x) - \sin^2(\pi x)] \sin^2(\pi y) +2\pi^2 \sin^2(\pi x) [\cos^2(\pi y) - \sin^2(\pi y) ] \right) \nn\\
+&=& \pi^2 [ \sin^2(\pi x) - \cos^2(\pi x)] \sin^2(\pi y) + \pi^2 \sin^2(\pi x) [\cos^2(\pi y) - \sin^2(\pi y) ] \nn\\
+&=& \pi^2 \left( \sin^2(\pi x) \cos^2(\pi y) - \cos^2(\pi x) \sin^2(\pi y)  \right) \nn
+\end{eqnarray}
+
+We will also need 
+\begin{eqnarray}
+\partial_x \dot\varepsilon_{xx} &=& 4\pi^3 [\cos^2(\pi x)-\sin^2(\pi x)] \cos(\pi y) \sin(\pi y)  \nn\\
+\partial_x \dot\varepsilon_{xy} 
+&=& \pi^3 \left(2 \cos(\pi x) \sin(\pi x) \cos^2(\pi y) + 2\sin(\pi x) \cos(\pi x) \sin^2(\pi y)  \right) \nn\\
+&=& 2 \pi^3 \sin(\pi x) \cos(\pi x) \nn\\
+\partial_y \dot\varepsilon_{xy} 
+&=& \pi^3 \left( -2\sin^2(\pi x) \sin(\pi y)\cos(\pi y) - 2\cos^2(\pi x) \sin(\pi y)\cos(\pi y)  \right)  \nn\\
+&=& -2 \pi^3 \sin(\pi y) \cos(\pi y) \nn\\
+\partial_y \dot\varepsilon_{yy} &=& 
+-4\pi^3  \sin(\pi x) \cos(\pi x) [\cos^2(\pi y)- \sin^2(\pi y) ] \nn
+\end{eqnarray}
+Finally we need to compute the root mean square velocity (integrals were obtained with Wolframalpha):
+\[
+\iint u^2 dxdy 
+= 4 \pi^2 
+\underbrace{\int_0^1  \sin^4(\pi x) dx}_{3/8} 
+\cdot  
+\underbrace{\int_0^1 \cos^2(\pi y) \sin^2(\pi y) dy}_{1/8}
+\]
+\[
+\iint v^2 dxdy 
+= 4\pi^2 
+\underbrace{\int_0^1 \sin^2(\pi x) \cos^2(\pi x) dx}_{1/8} \cdot \underbrace{\int_0^1 \sin^4(\pi y) dy}_{3/8} 
+\]
+so that 
+\[
+\upnu_{rms}=\sqrt{ \frac{1}{L_xL_y} \iint (u^2+v^2) dxdy   } = \sqrt{ \frac38\frac18+\frac18\frac38  }
+=\sqrt{ \frac{3}{32}} \simeq 0.05412658773
+\]
+
+Python script: 
