@@ -2,6 +2,10 @@ import numpy as np
 import FEbasis2D as FE
 import FEquadrature as Q
 
+print('=========================================')
+print(' tester 1: nodes')
+print('=========================================')
+
 for elt in ['Q0','Q1','Q1+','Q2','Q3','Q2s','P0','P1','P1+','P1NC','P2','P3','DSSY1','DSSY2','RT1','RT2','Han']:
     print('=========================================')
     print(' '+elt)

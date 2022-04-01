@@ -300,7 +300,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
 
     #---------------------------------
     # disc space for Q2Pm1 element
-    elif space=='Pm1': 
+    elif space=='Pm1' or space=='Pm1u': 
        N=3*nel
        x = np.empty(N,dtype=np.float64) 
        y = np.empty(N,dtype=np.float64)
@@ -417,7 +417,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
 
 
     #---------------------------------
-    elif space=='P1+' and mtype==0:
+    elif (space=='P1+' or space=='P1+P0') and mtype==0:
        nel*=2
        N=(nelx+1)*(nely+1)+nel
        nnx=nelx+1
@@ -770,6 +770,14 @@ def export_connectivity_array_to_ascii(x,y,icon,filename):
         for k in range(0,m):
             iconfile.write("node "+str(k)+' | '+str(icon[k,iel])+" at pos. "+str(x[icon[k,iel]])+','+str(y[icon[k,iel]])+'\n')
 
+def export_connectivity_array_elt1_to_ascii(x,y,icon,filename):
+    m,nel=np.shape(icon)
+    iconfile=open(filename,"w")
+    iel=0
+    iconfile.write('--------elt:'+str(iel)+'-------\n')
+    for k in range(0,m):
+        iconfile.write("node "+str(k)+' | '+str(icon[k,iel])+" at pos. "+str(x[icon[k,iel]])+','+str(y[icon[k,iel]])+'\n')
+
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
@@ -777,7 +785,7 @@ def export_elements_to_vtu(x,y,icon,space,filename):
     N=np.size(x)
     m,nel=np.shape(icon)
  
-    if space=='P0' or space=='Q0' or space=='P-1' or space=='Pm1':
+    if space=='P0' or space=='Q0' or space=='P-1' or space=='Pm1' or space=='Pm1u':
        return
 
     if space=='Q1' or space=='Q1+' or space=='Q2' or space=='Q2s' or \
@@ -1091,3 +1099,40 @@ def apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel):
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
+
+def visualise_with_tikz(x,y,space):
+    N=np.size(x)
+    tikzfile=open('3x2_'+space+'.tex',"w")
+    scale=2
+    offset=0.15
+
+    tikzfile.write("\\begin{center} \n")
+    tikzfile.write("\\begin{tikzpicture} \n")
+
+    tikzfile.write("\\node[violet] at (3,4.5) {"+space+"}; \n")
+
+    tikzfile.write("\\draw[thick] (0,0) -- (6,0) -- (6,4) -- (0,4) -- cycle; \n")
+    tikzfile.write("\\draw[thick] (0,2) -- (6,2) ; \n")
+    tikzfile.write("\\draw[thick] (2,0) -- (2,4) ; \n")
+    tikzfile.write("\\draw[thick] (4,0) -- (4,4) ; \n")
+
+    if space=='P1' or space=='P2' or space=='P3' or space=='P1+' or space=='P1NC' or space=='P2+':
+       tikzfile.write("\\draw[thick] (0,2) -- (2,0) ; \n")
+       tikzfile.write("\\draw[thick] (0,4) -- (4,0) ; \n")
+       tikzfile.write("\\draw[thick] (2,4) -- (6,0) ; \n")
+       tikzfile.write("\\draw[thick] (4,4) -- (6,2) ; \n")
+
+    for i in range(0,N):
+         tikzfile.write("\\draw[black,fill=teal] ( %f , %f)     circle (2pt); \n" %(x[i]*scale,y[i]*scale)) 
+         tikzfile.write("\\node[] at ( %f, %f ) {\\tiny %d }; \n" %(x[i]*scale-offset,y[i]*scale-offset,i))
+
+    tikzfile.write("\\end{tikzpicture} \n")
+    tikzfile.write("\\end{center} \n")
+    tikzfile.close()
+        
+
+
+
+
+
+

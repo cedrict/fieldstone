@@ -14,8 +14,13 @@ nqpts=3
 eps=1e-12
     
 print('=========================================')
+print(' tester 4: quadratic fields')
+print('=========================================')
 
 for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','P1','P1+','P1NC','P2','P3']:
+
+    pb=False
+
     mV=FE.NNN_m(Vspace)
     rnodes=FE.NNN_r(Vspace)
     snodes=FE.NNN_s(Vspace)
@@ -43,10 +48,11 @@ for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','P1'
             eyyq=dNNNVdy.dot(v[iconV[:,iel]]) 
             
             if abs(exxq-xq)>eps or abs(eyyq-yq)>eps:
-               print(exxq,eyyq)
+               #print(exxq,eyyq)
+               pb=True
                #exit('pb')
     #end for
-    print(Vspace+' passed')
+    if not pb: print(Vspace+' passed')
 
 exit()
 

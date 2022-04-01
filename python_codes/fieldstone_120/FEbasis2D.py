@@ -20,7 +20,8 @@ from pylab import cm
 # RT2: mid value variant of Rannacher-Turek (non-conforming element)
 # Q2s: 8-node serendipity Q2
 # P-1: discontinuous pressure over triangle
-# Pm1: discontinuous pressure over quadrilateral
+# Pm1: discontinuous pressure over quadrilateral (mapped)
+# Pm1u: discontinuous pressure over quadrilateral (unmapped)
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 #  C-R       P2P1     MINI    Q2Q1,Q2Pm1    Q2s     P1-NC
@@ -35,7 +36,7 @@ from pylab import cm
 #
 #------------------------------------------------------------------------------
 
-def NNN(r,s,space):
+def NNN(r,s,space,**keyword_arguments):
 
     if space=='Q0' or space=='P0':
        val = np.zeros(1,dtype=np.float64)
@@ -201,6 +202,35 @@ def NNN(r,s,space):
        val[0]=1-2*s
        val[1]=-1+2*r+2*s
        val[2]=1-2*r
+
+    if space=='Pm1u':
+       val = np.zeros(3,dtype=np.float64)
+       xxP=keyword_arguments.get("xxP", None)
+       yyP=keyword_arguments.get("yyP", None)
+       xxq=keyword_arguments.get("xxq", None)
+       yyq=keyword_arguments.get("yyq", None)
+       det=xxP[1]*yyP[2]-xxP[2]*yyP[1]\
+          -xxP[0]*yyP[2]+xxP[2]*yyP[0]\
+          +xxP[0]*yyP[1]-xxP[1]*yyP[0]
+       m11=(xxP[1]*yyP[2]-xxP[2]*yyP[1])/det
+       m12=(xxP[2]*yyP[0]-xxP[0]*yyP[2])/det
+       m13=(xxP[0]*yyP[1]-xxP[1]*yyP[0])/det
+       m21=(yyP[1]-yyP[2])/det
+       m22=(yyP[2]-yyP[0])/det
+       m23=(yyP[0]-yyP[1])/det
+       m31=(xxP[2]-xxP[1])/det
+       m32=(xxP[0]-xxP[2])/det
+       m33=(xxP[1]-xxP[0])/det
+       val[0]=(m11+m21*xxq+m31*yyq)
+       val[1]=(m12+m22*xxq+m32*yyq)
+       val[2]=(m13+m23*xxq+m33*yyq)
+
+    if space=='P1+P0':
+       val = np.zeros(4,dtype=np.float64)
+       val[0]=0.5*(1-r-s)
+       val[1]=0.5*r
+       val[2]=0.5*s
+       val[3]=0.5
 
     return val
 
@@ -571,7 +601,7 @@ def NNN_r(space):
        val = np.zeros(3,dtype=np.float64)
        val[:]=[0,1,0]
 
-    if space=='P1+':
+    if space=='P1+' or space=='P1+P0':
        val = np.zeros(4,dtype=np.float64)
        val[:]=[0,1,0,1/3]
 
@@ -646,7 +676,7 @@ def NNN_s(space):
        val = np.zeros(3,dtype=np.float64)
        val[:]=[0,0,1]
 
-    if space=='P1+':
+    if space=='P1+' or space=='P1+P0':
        val = np.zeros(4,dtype=np.float64)
        val[:]=[0,0,1,1/3]
 
@@ -709,7 +739,9 @@ def NNN_m(space):
     if space=='P1NC':   return 3
     if space=='P-1':    return 3
     if space=='Pm1':    return 3
+    if space=='Pm1u':   return 3
     if space=='P1+':    return 4
+    if space=='P1+P0':  return 4
     if space=='Q2':     return 9
     if space=='Q2s':    return 8
     if space=='P2':     return 6

@@ -14,11 +14,11 @@ import vj3 as mms
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-Lx=3
-Ly=2
+Lx=1
+Ly=1
 
-nelx=3
-nely=2
+nelx=32
+nely=32
 
 left_bc  ='no_slip'
 right_bc ='no_slip'
@@ -28,15 +28,15 @@ top_bc   ='no_slip'
 ndofV=2
 ndofP=1
 
-Vspace='DSSY1'
-Pspace='Q0'
+Vspace='P2+'
+Pspace='P1'
 
 visu=1
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
 
-nqpts=6
+nqpts=3
 
 #--------------------------------------------------------------------
 # allowing for argument parsing through command line
@@ -106,9 +106,6 @@ start = timing.time()
 
 area=np.zeros(nel,dtype=np.float64) 
 
-#u=xV**2
-#v=yV**2
-
 for iel in range(0,nel):
     for iq in range(0,nqel):
         rq=qcoords_r[iq]
@@ -117,16 +114,9 @@ for iel in range(0,nel):
         NNNV=FE.NNN(rq,sq,Vspace)
         xq=NNNV.dot(xV[iconV[:,iel]]) 
         yq=NNNV.dot(yV[iconV[:,iel]]) 
-        #uq=NNNV.dot(u[iconV[:,iel]]) 
-        #vq=NNNV.dot(v[iconV[:,iel]]) 
-        #print(xq,yq,uq,vq)
         dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
         dNNNVds=FE.dNNNds(rq,sq,Vspace)
         jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
-        #exxq=dNNNVdx.dot(u[iconV[:,iel]]) 
-        #eyyq=dNNNVdy.dot(v[iconV[:,iel]]) 
-        #print(xq,yq,exxq,eyyq)
-
         area[iel]+=jcob*weightq
     #end for
 #end for
@@ -172,9 +162,9 @@ for iel in range(0,nel):
         NNNV=FE.NNN(rq,sq,Vspace)
         dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
         dNNNVds=FE.dNNNds(rq,sq,Vspace)
-        NNNP=FE.NNN(rq,sq,Pspace)
         xq[counterq]=NNNV.dot(xV[iconV[0:mV,iel]])
         yq[counterq]=NNNV.dot(yV[iconV[0:mV,iel]])
+        NNNP=FE.NNN(rq,sq,Pspace,xxP=xP[iconP[:,iel]],yyP=yP[iconP[:,iel]],xxq=xq[counterq],yyq=yq[counterq])
 
         jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
 
@@ -246,15 +236,16 @@ print("split vel into u,v: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 avrg_p=0
+counterq=0
 for iel in range(0,nel):
     for iq in range(0,nqel):
-
         rq=qcoords_r[iq]
         sq=qcoords_s[iq]
         weightq=qweights[iq]
         jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
-        NNNP=FE.NNN(rq,sq,Pspace)
+        NNNP=FE.NNN(rq,sq,Pspace,xxP=xP[iconP[:,iel]],yyP=yP[iconP[:,iel]],xxq=xq[counterq],yyq=yq[counterq])
         avrg_p+=NNNP.dot(p[iconP[0:mP,iel]])*jcob*weightq
+        counterq+=1
 
 print('     -> avrg_p=',avrg_p)
 
@@ -281,7 +272,7 @@ for iel in range(0,nel):
         NNNV=FE.NNN(rq,sq,Vspace)
         dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
         dNNNVds=FE.dNNNds(rq,sq,Vspace)
-        NNNP=FE.NNN(rq,sq,Pspace)
+        NNNP=FE.NNN(rq,sq,Pspace,xxP=xP[iconP[:,iel]],yyP=yP[iconP[:,iel]],xxq=xq[counterq],yyq=yq[counterq])
         jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
         uq[counterq]=NNNV.dot(u[iconV[0:mV,iel]])
         vq[counterq]=NNNV.dot(v[iconV[0:mV,iel]])
