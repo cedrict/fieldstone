@@ -1,0 +1,23 @@
+#!/bin/bash
+
+rm opla*
+rm vrms*
+rm errors* 
+
+###############################################################################
+# 19
+###############################################################################
+Vspace=P2+
+Pspace=P1
+
+echo ---------- $Vspace X $Pspace ----------
+
+for nqpts in 6 7 12; do
+    for n in 7 8 9 10 11 14 21 28 35 42 49 56 63 70 84 98 112 126 140 168 182  ; do
+        echo mesh: $n X $n - nqpts: $nqpts
+        python3 stone.py $n $n $Vspace $Pspace $nqpts >> opla
+    done
+    grep errv opla > errors_${Vspace}_${Pspace}_nqpts$nqpts
+    grep vrms= opla > vrms_${Vspace}_${Pspace}_nqpts$nqpts
+    mv opla opla_${Vspace}_${Pspace}_nqpts$nqpts
+done

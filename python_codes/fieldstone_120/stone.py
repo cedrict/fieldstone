@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 import sys as sys
 from scipy.sparse import lil_matrix
 from scipy.sparse.linalg import spsolve
-#import dh as mms
-import vj3 as mms
-#import sinker as mms
+#import mms_dh as mms
+import mms_vj3 as mms
+#import mms_sinker as mms
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -28,15 +28,15 @@ top_bc   ='no_slip'
 ndofV=2
 ndofP=1
 
-Vspace='P2+'
-Pspace='P1'
+Vspace='P1'
+Pspace='P0'
 
 visu=1
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
 
-nqpts=3
+nqpts=7
 
 #--------------------------------------------------------------------
 # allowing for argument parsing through command line
@@ -260,6 +260,7 @@ print("pressure normalisation: %.3f s" % (timing.time() - start))
 #------------------------------------------------------------------------------
 start = timing.time()
 
+errdivv=0
 errv=0
 errp=0
 vrms=0
@@ -281,18 +282,36 @@ for iel in range(0,nel):
         errv+=(uq[counterq]-mms.u_th(xq[counterq],yq[counterq]))**2*weightq*jcob+\
               (vq[counterq]-mms.v_th(xq[counterq],yq[counterq]))**2*weightq*jcob
         errp+=(pq[counterq]-mms.p_th(xq[counterq],yq[counterq]))**2*weightq*jcob
+        exxq=dNNNVdx.dot(u[iconV[0:mV,iel]])
+        eyyq=dNNNVdy.dot(v[iconV[0:mV,iel]])
+        divvq=exxq+eyyq
+        errdivv+=divvq**2*weightq*jcob
         counterq+=1
     #end for iq
 #end for iq
 
 vrms=np.sqrt(vrms/(Lx*Ly))
-errv=np.sqrt(errv)
-errp=np.sqrt(errp)
+errv=np.sqrt(errv/(Lx*Ly))
+errp=np.sqrt(errp/(Lx*Ly))
+errdivv=np.sqrt(errdivv/(Lx*Ly))
 
 print("     -> nel= %6d ; vrms= %.8e | vrms_th= %.8e | %7d %7d" %(nel,vrms,mms.vrms_th(),NfemV,NfemP))
-print("     -> nel= %6d ; errv= %.8e ; errp= %.8e | %7d %7d" %(nel,errv,errp,NfemV,NfemP))
+print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errdivv= %.8e | %7d %7d" %(nel,errv,errp,errdivv,NfemV,NfemP))
 
 print("compute vrms & errors: %.3f s" % (timing.time() - start))
+
+#------------------------------------------------------------------------------
+
+uth = np.zeros(NV,dtype=np.float64)
+vth = np.zeros(NV,dtype=np.float64)
+pth = np.zeros(NP,dtype=np.float64)
+
+for i in range(NV):        
+    uth[i]=mms.u_th(xV[i],yV[i])
+    vth[i]=mms.v_th(xV[i],yV[i])
+
+for i in range(NP):        
+    pth[i]=mms.p_th(xP[i],yP[i])
 
 #------------------------------------------------------------------------------
 
@@ -313,7 +332,9 @@ if visu:
    Tools.export_swarm_vector_to_vtu(xV,yV,u,v,'solution_velocity.vtu')
    Tools.export_swarm_scalar_to_vtu(xP,yP,p,'solution_pressure.vtu')
    Tools.export_swarm_vector_to_ascii(xV,yV,u,v,'solution_velocity.ascii')
+   Tools.export_swarm_vector_to_ascii(xV,yV,uth,vth,'solution_velocity_analytical.ascii')
    Tools.export_swarm_scalar_to_ascii(xP,yP,p,'solution_pressure.ascii')
+   Tools.export_swarm_scalar_to_ascii(xP,yP,pth,'solution_pressure_analytical.ascii')
 
    Tools.export_connectivity_array_to_ascii(xV,yV,iconV,'iconV.ascii')
    Tools.export_connectivity_array_to_ascii(xP,yP,iconP,'iconP.ascii')

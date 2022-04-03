@@ -227,10 +227,10 @@ def NNN(r,s,space,**keyword_arguments):
 
     if space=='P1+P0':
        val = np.zeros(4,dtype=np.float64)
-       val[0]=0.5*(1-r-s)
-       val[1]=0.5*r
-       val[2]=0.5*s
-       val[3]=0.5
+       val[0]=1-r-s
+       val[1]=r
+       val[2]=s
+       val[3]=1
 
     return val
 

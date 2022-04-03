@@ -28,6 +28,13 @@ these finite elements and assess their accuracy.
 \end{itemize}
 
 
+Following \textcite{bocg12} (2012), I use a symmetric grid for triangular elements:
+\begin{center} 
+\includegraphics[width=8cm]{python_codes/fieldstone_120/images/bocg12}\\
+{\captionfont Taken from \textcite{bocg12} (2012).}
+\end{center} 
+
+
 %-----------------------------------------------------------------------------
 \subsection*{Finite element pairs for the Stokes equation}
 
@@ -37,24 +44,27 @@ these finite elements and assess their accuracy.
 \hline
 \hline
  1&$Q_1\times Q_0$       &                  & Section~\ref{ss:pairq1p0}\\
- 2&$Q_2\times Q_1$       &                  & Section~\ref{ss:pairq2q1}\\
- 3&$Q_2\times P_{-1}$    &                  & Section~\ref{ss:pairq2pm1}\\
- 4&$Q_3\times Q_2$       &                  & Section~\ref{ss:q32d}\\
- 5&$Q_1^+\times Q_1$     & Quad. MINI       & Section~\ref{ss:quadmini}\\
- 6&$Q_2^{(8)}\times Q_1$ & Serendipity      & Section~\ref{sec:serendipity2D}\\
- 7&$Q_1\times Q_0$       & DSSY1            & Section~\ref{ss:dssy_2D}\\
- 8&$Q_1\times Q_0$       & DSSY2            & Section~\ref{ss:dssy_2D}\\
- 9&$Q_1\times Q_0$       & RT1              & Section~\ref{ss:RTq1p0}\\
-10&$Q_1\times Q_0$       & RT2              & Section~\ref{ss:RTq1p0}\\
-11&$Q_1\times Q_0$       & Han              & Section~\ref{ss:han}\\
-12&$P_1\times P_0$       &                  & Section~\ref{ss:p1p0}\\ 
-13&$P_1^{NC}\times P_0$  &                  & Section~\ref{ss:p1nc}\\
-14&$P_2\times P_0$       &                  & Section~\ref{ss:p2p0}\\ 
-15&$P_2\times P_1$       &                  & Section~\ref{ss:p2p1}\\
-16&$P_3\times P_2$       &                  & Section~\ref{ss:p3p2}\\
-17&$P_1^{+}\times P_{1}$ & MINI             & Section~\ref{pair:mini}\\
+ 2&$Q_2\times Q_0$       &                  & Section~\ref{ss:pairq2q0}\\
+ 3&$P_2\times P_0$       &                  & Section~\ref{ss:p2p0}\\ 
+ 4&$Q_2\times Q_1$       &                  & Section~\ref{ss:pairq2q1}\\
+ 5&$P_2\times P_1$       &                  & Section~\ref{ss:p2p1}\\
+ 6&$Q_3\times Q_2$       &                  & Section~\ref{ss:q32d}\\
+ 7&$P_3\times P_2$       &                  & Section~\ref{ss:p3p2}\\
+ 8&$Q_1^+\times Q_1$     & Quad. MINI       & Section~\ref{ss:quadmini}\\
+ 9&$P_1^{+}\times P_{1}$ & MINI             & Section~\ref{pair:mini}\\
+10&$RT_1\times Q_0$      &                  & Section~\ref{ss:RTq1p0}\\
+11&$RT_2\times Q_0$      &                  & Section~\ref{ss:RTq1p0}\\
+12&$DSSY_1\times Q_0$    &                  & Section~\ref{ss:dssy_2D}\\
+13&$DSSY_2\times Q_0$    &                  & Section~\ref{ss:dssy_2D}\\
+14&$Han\times Q_0$       &                  & Section~\ref{ss:han}\\
+15&$Q_2\times P_{-1}$    &                  & Section~\ref{ss:pairq2pm1}\\
+16&$Q_2\times P_{-1}(u)$ &                  & Section~\ref{ss:pairq2pm1}\\
+17&$Q_2^{(8)}\times Q_1$ & Serendipity      & Section~\ref{sec:serendipity2D}\\
 18&$P_2^+\times P_{-1}$  & Crouzeix-Raviart & Section~\ref{sec:crouzeix-raviart}\\
 19&$P_2^+\times P_{1}$   &                  & Section~\ref{sec:p2pp1}\\
+20&$P_2\times (P_1+P_0)$ &                  & Section~\ref{ss:p2p1p0}\\
+21&$P_1^{NC}\times P_0$  &                  & Section~\ref{ss:p1ncp0}\\
+22&$P_1\times P_0$       &                  & Section~\ref{ss:p1p0}\\ 
 \hline
 \end{tabular}
 
@@ -595,25 +605,25 @@ The highest polynomial terms for the velocity are quartic and cubic for the pres
 optimal quadrature \& convergence orders:
 
 \begin{center}
-\begin{tabular}{l|cc|cc|}
+\begin{tabular}{l|ccc|ccc|}
 \hline
                      & d\&h &   & vj3 & \\
-                     & v    & p & v & p \\
+                     & nq &v    & nq & p & v & p \\
 \hline
 \hline
 $Q_1\times Q_0$       & 2    & X & 2 & X  \\%1
-$Q_2\times Q_0$       &     &  &  &   \\%2
-$P_2\times Q_0$       &     &  &  &   \\%3
+$Q_2\times Q_0$       &     &  &  &       \\%2
+$P_2\times Q_0$       &     &  &  &       \\%3
 $Q_2\times Q_1$       &      &   & 3 & 2  \\%4 
 $P_2\times P_1$       &      &   & 3 & 2  \\%5
 $Q_3\times Q_2$       &      &   & 4 & 3  \\%6
 $P_3\times P_2$       &      &   & 4 & 3  \\%7
 $Q_1^+\times Q_1$     &      &   & 2 & {\bf 1.5}  \\%8
 $P_1^+\times P_{1}$   &      &   & 2 & {\bf 1.5}  \\%9
-$Q_1\times Q_0$-RT1   &      &   & 2 & 1(?)\\%10
-$Q_1\times Q_0$-RT2   &      &   & 2 & 1   \\%11
-$Q_1\times Q_0$-DSSY1 &      &   & 2 & 1   \\%12
-$Q_1\times Q_0$-DSSY2 &      &   & 2 & 1   \\%13
+$RT_1\times Q_0$      &      &   & 2 & 1(?)\\%10
+$RT_2\times Q_0$      &      &   & 2 & 1   \\%11
+$DSSY_1\times Q_0$    &      &   & 2 & 1   \\%12
+$DSSY_2\times Q_0$    &      &   & 2 & 1   \\%13
 $Han\times Q_0$       &      &   & 2 & 1   \\%14
 $Q_2\times P_{-1}$    &      &   & 3 & 2   \\%15
 $Q_2\times P_{-1}(u)$ &      &   &  &      \\%16
@@ -628,7 +638,7 @@ $P_2^+\times P_{1}$   &      &   & 3 & 2   \\%19
 
 Conclusions:
 \begin{itemize}
-\item Q1Q0 pressure is plagued by checkeboard mode
+\item $Q_1\times Q_0$ pressure is plagued by checkeboard mode
 \item P1+P1 and Q1+Q1 exhibit the same convergence order: 2 for velocity and 1.5 for pressure.
 \item compare Q2Q1 and Q2P-1
 \item compare Q2Q1 and Q28Q1
@@ -655,15 +665,15 @@ $p^{th}=0$ the computed errors are in fact the vrms and prms shown hereunder.
 \end{center}
 
 
-\begin{center}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results_sinker/errors-velocity-all}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results_sinker/errors-velocity-subset}\\
-\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results_sinker/errors-pressure-all}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results_sinker/errors-pressure-subset}\\
-{\captionfont We find that the DSSY and RT elements yield very abnormal results at low resolution
-so they are removed from the plots in the right column. The prms of the regular $Q_1\times Q_0$ element 
-is also removed.}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results_sinker/errors-velocity-all}
+%\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results_sinker/errors-velocity-subset}\\
+%\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results_sinker/errors-pressure-all}
+%\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results_sinker/errors-pressure-subset}\\
+%{\captionfont We find that the DSSY and RT elements yield very abnormal results at low resolution
+%so they are removed from the plots in the right column. The prms of the regular $Q_1\times Q_0$ element 
+%is also removed.}
+%\end{center}
 
 conclusion:
 
@@ -686,13 +696,24 @@ mms with nonzero dirichlet bc?
 
 Korn inequality something ?
 
+no P1-iso-P2
+
+try Q2xQ1+Q0 !
+
 Remaining questions/ideas:
 
 - chinese Q2Q1 stone 52 ? only for deformed
 
-- Q2/Q1+Q0 ??  P2xQ1+Q0  ? source ? stable ?
-
 - Q3P-1 mentioned in Kanschat book 3.2.54
+
+- why P1P0 not work?
+
+- why P1NC-P0 not work?
+
+- why P2-P1+P0 not work?
+
+
+
 
 
 

@@ -28,6 +28,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
            for i in range(0,nelx):
                icon[0,counter]=counter
                counter += 1
+           #end for
+       #end for
 
     #---------------------------------
     elif space=='Q1':
@@ -49,6 +51,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                icon[2,counter]=i+1+(j+1)*(nelx+1)
                icon[3,counter]=i+(j+1)*(nelx+1)
                counter += 1
+           #end for
+       #end for
 
     #---------------------------------
     elif space=='Q1+':
@@ -76,6 +80,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                icon[3,counter]=i+(j+1)*(nelx+1)
                icon[4,counter]=(nelx+1)*(nely+1)+counter
                counter += 1
+           #end for
+       #end for
 
     #---------------------------------
     elif space=='Q2':
@@ -147,6 +153,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                icon[6,counter] = (nelx+1)*(nely+1)+i +(2*nelx+1)*(j+1)
                icon[7,counter] = (nelx+1)*(nely+1)+i +(2*nelx+1)*j + (nelx+1)-1
                counter += 1
+           #end for
+       #end for
 
     #---------------------------------
     elif space=='Q3':
@@ -173,6 +181,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                        icon[counter2,counter]=i*3+l+j*3*nnx+nnx*k
                        counter2+=1
                counter += 1 
+           #end for
+       #end for
 
     #---------------------------------
     elif space=='Q4':
@@ -199,8 +209,17 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                        icon[counter2,counter]=i*4+l+j*4*nnx+nnx*k
                        counter2+=1
                counter += 1 
+           #end for
+       #end for
 
     #---------------------------------
+    #
+    # +-----+    +-----+
+    # |\  B |    | D  /|
+    # |  \  | or |  /  |
+    # | A  \|    |/  C |
+    # +-----+    +-----+
+
     elif space=='P0' and mtype==0:
        nel*=2
        N=nel
@@ -209,13 +228,28 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
        counter = 0 
        for j in range(0,nely):
            for i in range(0,nelx):
-               x[counter]=(i+1/3)*hx #A
-               y[counter]=(j+1/3)*hy
-               counter += 1
-               x[counter]=(i+2/3)*hx #B
-               y[counter]=(j+2/3)*hy
-               counter += 1
-
+               if (i<nelx/2 and j<nely/2) or\
+                  (i>=nelx/2 and j>=nely/2) : 
+                  #C
+                  x[counter]=(i+2/3)*hx 
+                  y[counter]=(j+1/3)*hy
+                  counter += 1
+                  #D
+                  x[counter]=(i+1/3)*hx 
+                  y[counter]=(j+2/3)*hy
+                  counter += 1
+               else:
+                  #A
+                  x[counter]=(i+1/3)*hx 
+                  y[counter]=(j+1/3)*hy
+                  counter += 1
+                  #B
+                  x[counter]=(i+2/3)*hx 
+                  y[counter]=(j+2/3)*hy
+                  counter += 1
+               #end if
+           #end for
+       #end for
        icon =np.zeros((1,nel),dtype=np.int32)
        counter = 0 
        for j in range(0,nely):
@@ -224,6 +258,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                counter += 1
                icon[0,counter]=counter
                counter += 1
+           #end for
+       #end for
 
     #---------------------------------
     #
@@ -270,6 +306,13 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
 
 
     #---------------------------------
+    #    A        B
+    #  3---2    3---2
+    #  |\ B|    |D /|
+    #  | \ | or | / |
+    #  |A \|    |/ C|
+    #  0---1    0---1
+
     elif space=='P1' and mtype==0:
        nel*=2
        N=(nelx+1)*(nely+1)
@@ -289,14 +332,32 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                inode1=i+1+j*(nelx+1)
                inode2=i+1+(j+1)*(nelx+1)
                inode3=i+(j+1)*(nelx+1)
-               icon[0,counter]=inode0
-               icon[1,counter]=inode1
-               icon[2,counter]=inode3
-               counter += 1
-               icon[0,counter]=inode2
-               icon[1,counter]=inode3
-               icon[2,counter]=inode1
-               counter += 1
+               if (i<nelx/2 and j<nely/2) or\
+                  (i>=nelx/2 and j>=nely/2):
+                  #C
+                  icon[0,counter]=inode1 
+                  icon[1,counter]=inode2
+                  icon[2,counter]=inode0
+                  counter += 1
+                  #D
+                  icon[0,counter]=inode3 
+                  icon[1,counter]=inode0
+                  icon[2,counter]=inode2
+                  counter += 1
+               else: 
+                  #A
+                  icon[0,counter]=inode0 
+                  icon[1,counter]=inode1
+                  icon[2,counter]=inode3
+                  counter += 1
+                  #B
+                  icon[0,counter]=inode2 
+                  icon[1,counter]=inode3
+                  icon[2,counter]=inode1
+                  counter += 1
+            #end if
+        #end for
+    #end for
 
     #---------------------------------
     # disc space for Q2Pm1 element
@@ -323,9 +384,18 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                icon[2,iel]=counter
                counter+=1
                iel+=1
+           #end for
+       #end for
 
     #---------------------------------
-    # disc space for P2P-1 element
+    # disc P1 space for P2P-1 element
+    #
+    # +-----+    +-----+
+    # |\  B |    | D  /|
+    # |  \  | or |  /  |
+    # | A  \|    |/  C |
+    # +-----+    +-----+
+
     elif space=='P-1' and mtype==0:
        nel*=2
        N=3*nel
@@ -336,34 +406,66 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
        counter=0
        for j in range(0,nely):
            for i in range(0,nelx):
-               # A
-               x[counter]=i*hx
-               y[counter]=j*hy
-               icon[0,iel]=counter
-               counter+=1
-               x[counter]=i*hx+hx
-               y[counter]=j*hy
-               icon[1,iel]=counter
-               counter+=1
-               x[counter]=i*hx
-               y[counter]=j*hy+hy
-               icon[2,iel]=counter
-               counter+=1
-               iel+=1
-               # B
-               x[counter]=i*hx+hx
-               y[counter]=j*hy+hy
-               icon[0,iel]=counter
-               counter+=1
-               x[counter]=i*hx
-               y[counter]=j*hy+hy
-               icon[1,iel]=counter
-               counter+=1
-               x[counter]=i*hx+hx
-               y[counter]=j*hy
-               icon[2,iel]=counter
-               counter+=1
-               iel+=1
+               if (i<nelx/2 and j<nely/2) or\
+                  (i>=nelx/2 and j>=nely/2):
+                  # C
+                  x[counter]=i*hx+hx
+                  y[counter]=j*hy
+                  icon[0,iel]=counter
+                  counter+=1
+                  x[counter]=i*hx+hx
+                  y[counter]=j*hy+hy
+                  icon[1,iel]=counter
+                  counter+=1
+                  x[counter]=i*hx
+                  y[counter]=j*hy
+                  icon[2,iel]=counter
+                  counter+=1
+                  iel+=1
+                  # D
+                  x[counter]=i*hx
+                  y[counter]=j*hy+hy
+                  icon[0,iel]=counter
+                  counter+=1
+                  x[counter]=i*hx
+                  y[counter]=j*hy
+                  icon[1,iel]=counter
+                  counter+=1
+                  x[counter]=i*hx+hx
+                  y[counter]=j*hy+hy
+                  icon[2,iel]=counter
+                  counter+=1
+                  iel+=1
+               else:
+                  # A
+                  x[counter]=i*hx
+                  y[counter]=j*hy
+                  icon[0,iel]=counter
+                  counter+=1
+                  x[counter]=i*hx+hx
+                  y[counter]=j*hy
+                  icon[1,iel]=counter
+                  counter+=1
+                  x[counter]=i*hx
+                  y[counter]=j*hy+hy
+                  icon[2,iel]=counter
+                  counter+=1
+                  iel+=1
+                  # B
+                  x[counter]=i*hx+hx
+                  y[counter]=j*hy+hy
+                  icon[0,iel]=counter
+                  counter+=1
+                  x[counter]=i*hx
+                  y[counter]=j*hy+hy
+                  icon[1,iel]=counter
+                  counter+=1
+                  x[counter]=i*hx+hx
+                  y[counter]=j*hy
+                  icon[2,iel]=counter
+                  counter+=1
+                  iel+=1
+               #end if
            #end for
        #end for
 
@@ -413,10 +515,19 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                icon[1,counter]=inode0
                icon[2,counter]=inode4
                counter += 1
+           #end for
+       #end for
 
 
 
     #---------------------------------
+    #    A        B
+    #  3---2    3---2
+    #  |\  |    |  /|
+    #  | \ | or | / |
+    #  |  \|    |/  |
+    #  0---1    0---1
+
     elif (space=='P1+' or space=='P1+P0') and mtype==0:
        nel*=2
        N=(nelx+1)*(nely+1)+nel
@@ -438,27 +549,47 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                inode1=i+1+j*(nelx+1)
                inode2=i+1+(j+1)*(nelx+1)
                inode3=i+(j+1)*(nelx+1)
-               icon[0,counter]=inode0
-               icon[1,counter]=inode1
-               icon[2,counter]=inode3
-               icon[3,counter]=counter+nnx*nny
-               counter += 1
-               icon[0,counter]=inode2
-               icon[1,counter]=inode3
-               icon[2,counter]=inode1
-               icon[3,counter]=counter+nnx*nny
-               counter += 1
+               if (i<nelx/2 and j<nely/2) or\
+                  (i>=nelx/2 and j>=nely/2):
+                  #C 
+                  icon[0,counter]=inode1
+                  icon[1,counter]=inode2
+                  icon[2,counter]=inode0
+                  icon[3,counter]=counter+nnx*nny
+                  counter += 1
+                  #D 
+                  icon[0,counter]=inode3
+                  icon[1,counter]=inode0
+                  icon[2,counter]=inode2
+                  icon[3,counter]=counter+nnx*nny
+                  counter += 1
+               else: 
+                  #A
+                  icon[0,counter]=inode0
+                  icon[1,counter]=inode1
+                  icon[2,counter]=inode3
+                  icon[3,counter]=counter+nnx*nny
+                  counter += 1
+                  #B
+                  icon[0,counter]=inode2
+                  icon[1,counter]=inode3
+                  icon[2,counter]=inode1
+                  icon[3,counter]=counter+nnx*nny
+                  counter += 1
+               #end if
+           #end for
+       #end for
        for iel in range (0,nel): #bubble nodes
            x[nnx*nny+iel]=(x[icon[0,iel]]+x[icon[1,iel]]+x[icon[2,iel]])/3.
            y[nnx*nny+iel]=(y[icon[0,iel]]+y[icon[1,iel]]+y[icon[2,iel]])/3.
 
     #---------------------------------
     #
-    # 3--6--2
-    # |\  B |
-    # 7  8  5
-    # | A  \|
-    # 0--4--1
+    # 3--6--2    3--6--2
+    # |\  B |    | D  /|
+    # 7  8  5 or 7  8  5
+    # | A  \|    |/  C |
+    # 0--4--1    0--4--1
 
     elif space=='P2':
        nel*=2
@@ -479,22 +610,51 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
        counter = 0
        for j in range(0,nely):
            for i in range(0,nelx):
-               #A
-               icon[0,counter]=(i)*2+1+(j)*2*nnx -1       #0
-               icon[1,counter]=(i)*2+3+(j)*2*nnx -1       #1
-               icon[2,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
-               icon[3,counter]=(i)*2+2+(j)*2*nnx -1       #4
-               icon[4,counter]=(i)*2+2+(j)*2*nnx+nnx -1   #8
-               icon[5,counter]=(i)*2+1+(j)*2*nnx+nnx -1   #7
-               counter += 1
-               #B
-               icon[0,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
-               icon[1,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
-               icon[2,counter]=(i)*2+3+(j)*2*nnx -1       #1
-               icon[3,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
-               icon[4,counter]=(i)*2+2+(j)*2*nnx+nnx -1   #8
-               icon[5,counter]=(i)*2+3+(j)*2*nnx+nnx -1   #5
-               counter += 1
+               inode0=(i)*2+1+(j)*2*nnx -1       #0
+               inode1=(i)*2+3+(j)*2*nnx -1       #1
+               inode2=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+               inode3=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+               inode4=(i)*2+2+(j)*2*nnx -1       #4
+               inode5=(i)*2+3+(j)*2*nnx+nnx -1   #5
+               inode6=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
+               inode7=(i)*2+1+(j)*2*nnx+nnx -1   #7
+               inode8=(i)*2+2+(j)*2*nnx+nnx -1   #8
+               if (i<nelx/2 and j<nely/2) or\
+                  (i>=nelx/2 and j>=nely/2):
+                  #C
+                  icon[0,counter]=inode1
+                  icon[1,counter]=inode2
+                  icon[2,counter]=inode0
+                  icon[3,counter]=inode5
+                  icon[4,counter]=inode8
+                  icon[5,counter]=inode4
+                  counter += 1
+                  #D
+                  icon[0,counter]=inode3
+                  icon[1,counter]=inode0
+                  icon[2,counter]=inode2
+                  icon[3,counter]=inode7
+                  icon[4,counter]=inode8
+                  icon[5,counter]=inode6
+                  counter += 1
+               else:
+                  #A
+                  icon[0,counter]=inode0
+                  icon[1,counter]=inode1
+                  icon[2,counter]=inode3
+                  icon[3,counter]=inode4
+                  icon[4,counter]=inode8
+                  icon[5,counter]=inode7
+                  counter += 1
+                  #B
+                  icon[0,counter]=inode2
+                  icon[1,counter]=inode3
+                  icon[2,counter]=inode1
+                  icon[3,counter]=inode6
+                  icon[4,counter]=inode8
+                  icon[5,counter]=inode5
+                  counter += 1
+              #end if
            #end for
        #end for
 
@@ -526,24 +686,59 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
        counter=0
        for j in range(0,nely):
            for i in range(0,nelx):
-               #A
-               icon[0,counter]=(i)*2+1+(j)*2*nnx -1       #0
-               icon[1,counter]=(i)*2+3+(j)*2*nnx -1       #1
-               icon[2,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
-               icon[3,counter]=(i)*2+2+(j)*2*nnx -1       #4
-               icon[4,counter]=(i)*2+2+(j)*2*nnx+nnx -1   #8
-               icon[5,counter]=(i)*2+1+(j)*2*nnx+nnx -1   #7
-               icon[6,counter]=nnx*nny+counter
-               counter += 1
-               #B
-               icon[0,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
-               icon[1,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
-               icon[2,counter]=(i)*2+3+(j)*2*nnx -1       #1
-               icon[3,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
-               icon[4,counter]=(i)*2+2+(j)*2*nnx+nnx -1   #8
-               icon[5,counter]=(i)*2+3+(j)*2*nnx+nnx -1   #5
-               icon[6,counter]=nnx*nny+counter
-               counter += 1
+               inode0=(i)*2+1+(j)*2*nnx -1       #0
+               inode1=(i)*2+3+(j)*2*nnx -1       #1
+               inode2=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+               inode3=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+               inode4=(i)*2+2+(j)*2*nnx -1       #4
+               inode5=(i)*2+3+(j)*2*nnx+nnx -1   #5
+               inode6=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
+               inode7=(i)*2+1+(j)*2*nnx+nnx -1   #7
+               inode8=(i)*2+2+(j)*2*nnx+nnx -1   #8
+
+               if (i<nelx/2 and j<nely/2) or\
+                  (i>=nelx/2 and j>=nely/2) : 
+                  #C
+                  icon[0,counter]=inode1
+                  icon[1,counter]=inode2
+                  icon[2,counter]=inode0
+                  icon[3,counter]=inode5
+                  icon[4,counter]=inode8
+                  icon[5,counter]=inode4
+                  icon[6,counter]=nnx*nny+counter
+                  counter += 1
+                  #D
+                  icon[0,counter]=inode3
+                  icon[1,counter]=inode0
+                  icon[2,counter]=inode2
+                  icon[3,counter]=inode7
+                  icon[4,counter]=inode8
+                  icon[5,counter]=inode6
+                  icon[6,counter]=nnx*nny+counter
+                  counter += 1
+
+               else:
+                  #A
+                  icon[0,counter]=(i)*2+1+(j)*2*nnx -1       #0
+                  icon[1,counter]=(i)*2+3+(j)*2*nnx -1       #1
+                  icon[2,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+                  icon[3,counter]=(i)*2+2+(j)*2*nnx -1       #4
+                  icon[4,counter]=(i)*2+2+(j)*2*nnx+nnx -1   #8
+                  icon[5,counter]=(i)*2+1+(j)*2*nnx+nnx -1   #7
+                  icon[6,counter]=nnx*nny+counter
+                  counter += 1
+                  #B
+                  icon[0,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+                  icon[1,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+                  icon[2,counter]=(i)*2+3+(j)*2*nnx -1       #1
+                  icon[3,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
+                  icon[4,counter]=(i)*2+2+(j)*2*nnx+nnx -1   #8
+                  icon[5,counter]=(i)*2+3+(j)*2*nnx+nnx -1   #5
+                  icon[6,counter]=nnx*nny+counter
+                  counter += 1
+               #end if
+           #end for
+       #end for
        for iel in range (0,nel): #bubble nodes
            x[nnx*nny+iel]=(x[icon[0,iel]]+x[icon[1,iel]]+x[icon[2,iel]])/3.
            y[nnx*nny+iel]=(y[icon[0,iel]]+y[icon[1,iel]]+y[icon[2,iel]])/3.
@@ -588,30 +783,59 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                        counter2+=1
                    # end for
                # end for
-               #A
-               icon[0,counter]=inode[0]
-               icon[1,counter]=inode[1]
-               icon[2,counter]=inode[2]
-               icon[3,counter]=inode[3]
-               icon[4,counter]=inode[4]
-               icon[5,counter]=inode[5]
-               icon[6,counter]=inode[6]
-               icon[7,counter]=inode[8]
-               icon[8,counter]=inode[9]
-               icon[9,counter]=inode[12]
-               counter += 1
-               #B
-               icon[0,counter]=inode[15]
-               icon[1,counter]=inode[14]
-               icon[2,counter]=inode[13]
-               icon[3,counter]=inode[12]
-               icon[4,counter]=inode[11]
-               icon[5,counter]=inode[10]
-               icon[6,counter]=inode[9]
-               icon[7,counter]=inode[7]
-               icon[8,counter]=inode[6]
-               icon[9,counter]=inode[3]
-               counter += 1
+
+               if (i<nelx/2 and j<nely/2) or\
+                  (i>=nelx/2 and j>=nely/2) : 
+                  #C
+                  icon[0,counter]=inode[3]
+                  icon[1,counter]=inode[7]
+                  icon[2,counter]=inode[11]
+                  icon[3,counter]=inode[15]
+                  icon[4,counter]=inode[2]
+                  icon[5,counter]=inode[6]
+                  icon[6,counter]=inode[10]
+                  icon[7,counter]=inode[1]
+                  icon[8,counter]=inode[5]
+                  icon[9,counter]=inode[0]
+                  counter += 1
+                  #D
+                  icon[0,counter]=inode[12]
+                  icon[1,counter]=inode[8]
+                  icon[2,counter]=inode[4]
+                  icon[3,counter]=inode[0]
+                  icon[4,counter]=inode[13]
+                  icon[5,counter]=inode[9]
+                  icon[6,counter]=inode[5]
+                  icon[7,counter]=inode[14]
+                  icon[8,counter]=inode[10]
+                  icon[9,counter]=inode[15]
+                  counter += 1
+               else:
+                  #A
+                  icon[0,counter]=inode[0]
+                  icon[1,counter]=inode[1]
+                  icon[2,counter]=inode[2]
+                  icon[3,counter]=inode[3]
+                  icon[4,counter]=inode[4]
+                  icon[5,counter]=inode[5]
+                  icon[6,counter]=inode[6]
+                  icon[7,counter]=inode[8]
+                  icon[8,counter]=inode[9]
+                  icon[9,counter]=inode[12]
+                  counter += 1
+                  #B
+                  icon[0,counter]=inode[15]
+                  icon[1,counter]=inode[14]
+                  icon[2,counter]=inode[13]
+                  icon[3,counter]=inode[12]
+                  icon[4,counter]=inode[11]
+                  icon[5,counter]=inode[10]
+                  icon[6,counter]=inode[9]
+                  icon[7,counter]=inode[7]
+                  icon[8,counter]=inode[6]
+                  icon[9,counter]=inode[3]
+                  counter += 1
+              #end if
            #end for
        #end for
 
@@ -647,6 +871,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                icon[2,counter] = icon[0,counter]+2*nelx+1
                icon[3,counter] = icon[0,counter]+nelx
                counter += 1
+           #end for
+       #end for
 
     #---------------------------------
     elif space=='Han':
@@ -660,11 +886,14 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                x[counter]=(i+1-0.5)*hx
                y[counter]=(j+1-1)*hy
                counter+=1
+           #end for
            # middle line
            for i in range(0,nelx+1):
                x[counter]=(i)*hx
                y[counter]=(j+1-0.5)*hy
                counter+=1
+           #end for
+       #end for
        #top line
        for i in range(0,nelx):
            x[counter]=(i+1-0.5)*hx
@@ -676,6 +905,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                x[counter]=(i+0.5)*hx
                y[counter]=(j+0.5)*hx
                counter+=1
+           #end for
+       #end for
 
        icon =np.zeros((5,nel),dtype=np.int32)
        counter = 0
@@ -687,6 +918,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                icon[3, counter] = icon[0,counter]+nelx
                icon[4, counter] = (nely+1)*nelx + nely*(nelx+1) + counter
                counter += 1
+           #end for
+       #end for
 
     #---------------------------------
     elif space=='P1NC':
@@ -727,14 +960,32 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
                node2= node0+2*nelx+1
                node3= node0+nelx
                node4= (nely+1)*nelx + nely*(nelx+1) + j*nelx+i
-               icon[0, counter] = node0
-               icon[1, counter] = node4
-               icon[2, counter] = node3
-               counter += 1
-               icon[0, counter] = node2
-               icon[1, counter] = node4
-               icon[2, counter] = node1
-               counter += 1
+               if (i<nelx/2 and j<nely/2) or\
+                  (i>=nelx/2 and j>=nely/2) : 
+                  #C
+                  icon[0, counter] = node1
+                  icon[1, counter] = node4
+                  icon[2, counter] = node0
+                  counter += 1
+                  #D
+                  icon[0, counter] = node3
+                  icon[1, counter] = node4
+                  icon[2, counter] = node2
+                  counter += 1
+               else:
+                  #A
+                  icon[0, counter] = node0
+                  icon[1, counter] = node4
+                  icon[2, counter] = node3
+                  counter += 1
+                  #B
+                  icon[0, counter] = node2
+                  icon[1, counter] = node4
+                  icon[2, counter] = node1
+                  counter += 1
+               #end if
+           #end for
+       #end for
 
     else:
        exit("FEtools:cartesian_mesh: space unknown ")
@@ -1116,11 +1367,11 @@ def visualise_with_tikz(x,y,space):
     tikzfile.write("\\draw[thick] (2,0) -- (2,4) ; \n")
     tikzfile.write("\\draw[thick] (4,0) -- (4,4) ; \n")
 
-    if space=='P1' or space=='P2' or space=='P3' or space=='P1+' or space=='P1NC' or space=='P2+':
-       tikzfile.write("\\draw[thick] (0,2) -- (2,0) ; \n")
-       tikzfile.write("\\draw[thick] (0,4) -- (4,0) ; \n")
-       tikzfile.write("\\draw[thick] (2,4) -- (6,0) ; \n")
-       tikzfile.write("\\draw[thick] (4,4) -- (6,2) ; \n")
+    if space=='P1' or space=='P2' or space=='P3' or space=='P1+' or\
+       space=='P1NC' or space=='P2+' or space=='P1+P0':
+       tikzfile.write("\\draw[thick] (0,0) -- (2,2) -- (0,4) ; \n")
+       tikzfile.write("\\draw[thick] (2,0) -- (4,2) -- (2,4) ; \n")
+       tikzfile.write("\\draw[thick] (6,0) -- (4,2) -- (6,4) ; \n")
 
     for i in range(0,N):
          tikzfile.write("\\draw[black,fill=teal] ( %f , %f)     circle (2pt); \n" %(x[i]*scale,y[i]*scale)) 
