@@ -1,0 +1,32 @@
+
+$P_1\times P_0$: example 3.70 in \textcite{john16} (book),
+\index{general}{$P_1\times P_0$}
+
+
+Elman Silvester Wathen say (5.3.3) that 
+``it can be readily stabilized using the pressure jump
+stabilization together with an appropriate macroelement subdivision.'' 
+
+\textcite{qizh07b} (2007) states: ``the element is unstable for any mesh since
+the dimension of the discrete velocity space is always less than that of the pressure space (with
+Dirichlet boundary condition).'' The authors explain a filter algorithm to make the
+element usable. 
+
+\textcite{arno93} (1993) states: ''Unfortunately, this simplest possible Stokes element is notoriously unstable. On any tri-
+angulation with at least three vertices on the boundary the dimension of the pressure
+space exceeds that of the velocity space [...] and the finite
+dimensional problem is singular. 
+Moreover, while the discrete velocity field $u_h$ is uniquely
+determined (as it is for any conforming method for the Stokes problem), for this choice of
+elements $u_h$ belongs to the space of divergence-free fields piecewise linear fields, and on
+many meshes, for example on a uniform diagonal mesh of the square [...],
+this space is known to reduce to zero. So even after accounting for the indeterminancy of
+the pressure we have no convergence.''
+
+Example 3.2 of \textcite{bobf08} (2008) explains neatly the locking phenomenon and how 
+to circumvent it via a so-called cross-grid macroelement.
+
+I have not found a paper yet which showcases its accuracy on a mms and compares it to other 
+element pairs.
+
+

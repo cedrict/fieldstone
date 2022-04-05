@@ -135,3 +135,30 @@ here the arrays rnodes and snodes contain the (r,s) coordinates of the m nodes
 
 \end{itemize}
 
+%----------------------------------
+\subsection{Optional arguments}
+
+Courtesy of Henry Brett.
+
+\begin{lstlisting}
+def myfunc(a,b, *optional_arguments, **keyword_arguments):
+    print(a)
+    print(b)
+    for ar in optional_arguments:
+        print(ar)
+    d=keyword_arguments.get("d", None)
+    print(d)
+    
+
+a="dog"
+b="cat"
+myfunc(a,b,"shrek","fiona",d="donkey")
+\end{lstlisting}
+
+
+
+
+
+
+
+

@@ -16,7 +16,7 @@ I hereunder show vtk file corresponding to a 3x2 grid made of linear elements.
 In this particular example there are:
 \begin{itemize}
 \item 12 nodes and 6 elements
-\item 1 elemental field: the pressure {\tt p})
+\item 1 elemental field (the pressure {\tt p}
 \item 2 nodal fields: 1 scalar (the smoothed pressure {\tt q}), 1 vector (the velocity field {\tt u,v,0})
 \end{itemize}
 Note that vtk files are inherently 3D so that even in the case of a 2D simulation the $z$-coordinate 
@@ -39,9 +39,10 @@ Nodal quantities are written next:
 
 To these informations we must append 3 more datasets. The first one is the connectivity, 
 the second one is the offsets and the third one is the type. The first one is trivial
-since said connectivity is needed for the Finite Elements. The second must be understood as follows:
+since the required connectivity array is the same as the one needed for the Finite Elements. 
+The second must be understood as follows:
 when reading the connectivity information in a linear manner the offset values 
-indicate the beginning of each element (omitting the zero value). The third simply is the type of element 
+indicate the beginning of each element (omitting the zero value). The third is simply the type of element 
 as given in the vtk format document (9 corresponds to a generic quadrilateral with an 
 internal numbering consistent with ours). 
 
@@ -51,12 +52,53 @@ The file is then closed with
 
 \lstinputlisting[language=python,firstline=86,lastline=88]{images/vtk/solution.vtu}
 
-The {\sl solution.vtu} file can then be opened with ParaView, MayaVi or Visit and the reader 
-is advised to find tutorials online on how to install and use these softwares. 
+The {\sl solution.vtu}\footnote{\url{https://raw.githubusercontent.com/cedrict/fieldstone/master/images/vtk/solution.vtu}}  
+can then be opened with ParaView, MayaVi or Visit and the reader 
+is advised to find tutorials online on how to install and use these softwares. Also check Appendix~\ref{app:paraview}.
 
 \begin{center}
 \includegraphics[width=4cm]{images/vtk/grid}
 \includegraphics[width=4cm]{images/vtk/vel}
 \includegraphics[width=4cm]{images/vtk/press}
 \end{center}
+
+In the same folder {\tt images/vtk} there is the python script 
+{\pythonfile makevtu.py}\footnote{\url{https://raw.githubusercontent.com/cedrict/fieldstone/master/images/vtk/makevtu.py}} which produces 3 different vtu files. The first one {\sl solution1.vtu} is a similar to the one above: an \lstinline{nelx*nely} quadrilateral-based mesh in a unit square. 
+The second one ({\sl solution2.vtu}) looks identical when opened in Paraview but it is rather different: each element is exported as its own sub-mesh, so that if the mesh counts nel elements the number of vertices is \lstinline{4*nel}, and not \lstinline{(nelx+1)(nely+1)}. As such this file is larger. The icon array is needed to write down the positions of the four vertices of each element but not to write down the connectivity since the first 4 points are making the 1st element, the next four points are making the second element, etc ...
+
+\begin{lstlisting}
+vtufile.write("<Points> \n")
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+for iel in range(0,nel):
+    if not flag[iel]:
+       for k in range(0,m):
+           vtufile.write("%10e %10e %10e \n" %(x[icon[k,iel]],y[icon[k,iel]],0.))
+vtufile.write("</DataArray>\n")
+vtufile.write("</Points> \n")
+vtufile.write("<Cells>\n")
+vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+for iel in range (0,nel_left):
+    vtufile.write("%d %d %d %d \n" %(iel*4,iel*4+1,iel*4+2,iel*4+3))
+vtufile.write("</DataArray>\n")
+...
+vtufile.write("</Cells>\n")
+\end{lstlisting}
+
+This format is rather practical in the case of linear or higher order discontinuous fields. For example, in the case of the $Q_2\times P_{-1}$ element pair, the pressure is linear inside each element and discontinuous across element edges. One can then assign pressure values at the four vertices of each element.
+
+Finally a third mesh {\sl solution3.vtu} is produced. It is based on the 2nd one, but since elements are now somewhat de-coupled, then one can export only a subset of the mesh. For instance one could not show elements which are two distorted, or below a certain line, or outside a certain volume, etc ... In {\pythonfile makevtu.py} all elements which center is inside a circle are flagged and will not be exported into the vtu file:
+\begin{lstlisting}
+for iel in range(0,nel):
+    flag[iel]= (xc[iel]-0.333*Lx)**2+(yc[iel]-0.666*Ly)**2<0.234**2
+nel_flagged=np.sum(flag)
+nel_left=nel-nel_flagged
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=11cm]{images/vtk/mesh3}
+\end{center}
+
+
+
+
 

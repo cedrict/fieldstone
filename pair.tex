@@ -8,6 +8,22 @@ The success of a mixed finite element formulation crucially depends on a proper 
 
 \input{lbb}
 
+\begin{tabular}{lcl}
+\hline
+name & LBB stable? & source \\
+\hline
+\hline
+$Q_1 \times P_0$ & N & fig.~ 6.1 \cite{dohu} \\
+$Q_1 \times Q_1$ & N & fig.~ 6.1 \cite{dohu} \\
+$Q_2 \times Q_1$ & Y & fig.~ 6.1 \cite{dohu} \\
+Crouzeix-Raviart & Y & fig.~ 6.1 \cite{dohu} \\
+Mini             & Y & fig.~ 6.1 \cite{dohu} \\
+\hline
+$P_2 \times P_1$ & Y & fig.~ 6.1 \cite{dohu} \\
+\hline
+\end{tabular}
+
+
 
 %........................................................................................
 \subsubsection{Families}
@@ -32,9 +48,7 @@ since the center node ('$x^2y^2$') and its associated degrees of freedom have be
 has also been proved to be LBB stable. These are also called {\color{olive} Serendipity} elements. 
 \end{remark}
 
-The {\color{olive} Raviart-Thomas} family... 
 
-Check Scott \& Vogelius (1985) \cite{scvo85} element, see John \cite[p70]{john16}.
 
 %........................................................................................
 \subsubsection{The bi/tri-linear velocity - constant pressure element ($Q_1\times P_0$)}
@@ -52,30 +66,23 @@ Check Scott \& Vogelius (1985) \cite{scvo85} element, see John \cite[p70]{john16
 \input{pair_q2pm1}
 
 %----------------------------------------------------------------------
+\subsubsection{The biquadratic velocity - discontinuous bilinear pressure element ($Q_2 \times Q_{-1}$)}
+\label{ss:pair_q2qm1}
+\input{pair_q2qm1}
+
+
+
+%----------------------------------------------------------------------
 \subsubsection{The stabilised bi/tri-linear velocity - constant pressure element ($Q_1\times P_0$-stab)}
 \label{ss:pairq1p0stab}
 \input{pair_q1p0stab}
 
 
-%----------------------------------------------------------------------
-\subsubsection{The stabilised bi/tri-linear velocity -  bi/tri-linear pressure element ($Q_1\times Q_1$-stab)}
+%--------------------------------------------------------------------------------------------------
+\subsubsection{The stabilised bi/tri-linear velocity - bi/tri-linear pressure element ($Q_1\times Q_1$-stab)}
 \label{ss:pairq1q1stab}
 \input{pair_q1q1stab}
 
-%----------------------------------------------------------------------
-\subsubsection{The MINI triangular element ($P_1^+\times P_1$) in 2D}
-\label{pair:mini}
-\input{pair_mini}
-
-%----------------------------------------------------------------------
-\subsubsection{The quadratic velocity - linear pressure triangle ($P_2\times P_1$)}
-\label{ss:p2p1}
-\input{pair_p2p1}
-
-%----------------------------------------------------------------------
-\subsubsection{The Crouzeix-Raviart triangle ($P_2^+\times P_{-1}$)}
-\label{sec:crouzeix-raviart}
-\input{pair_crouzeixraviart}
 
 %-----------------------------------------------------------------
 \subsubsection{The Rannacher-Turek element - rotated $Q_1\times P_0$} \label{ss:RTq1p0}
@@ -83,63 +90,25 @@ Check Scott \& Vogelius (1985) \cite{scvo85} element, see John \cite[p70]{john16
 \index{general}{Korn's inequality}
 \index{general}{Rannacher-Turek element}
 \index{general}{Nonconforming element}
-
-This element is the natural quadrilateral analogue
-of the well-known triangular Stokes element of Crouzeix-Raviart \cite{crra73}.
-This element is sometimes called $Q_1^{rot} \times Q_0$ or the Rannacher-Turek element 
-\cite[Section 3.6.5]{john16}.
-This rectangular nonconforming \cite{crfa89} element is termed the rotated $Q_1$ element 
-because of the fact that $r^2-s^2$ can be generated from $rs$ (occurring in the bilinear $Q_1$ 
-element) by a rotation of 45$\degree$ \cite[p93]{chen}.
-The velocity approximation is achieved by rotated dim-linear functions that have 
-continuous degrees of freedom on
-the faces of the mesh cells as we have seen in Section~\ref{ss:rq1}.
-This element was introduced in Rannacher \& Turek (1992) \cite{ratu92} 
-has been proven to satisfy the inf-sup condition. It has been studied comprehensively in Schieweck 
-(1997)\footnote{Habilitation thesis in German}, \cite{shzh06} and in Turek \cite{ture94,ture96}.
-Superconvergence properties have also been reported \cite{misx06,misx07}.
-It has been used in 2D \cite{maky17} and 3D \cite{klll96,gekm08} and forms the basis of the FeatFlow 
-software\footnote{\url{http://www.featflow.de/en/index.html}}. 
-It is used in the PhD thesis of Gastaldo \cite{gast07} and Ouazzi \cite{ouaz05}.
-It has been 
-successfully coupled to multigrid solvers \cite{chos98,tuos02}.
-This element has been compared to the stabilised $Q_1\times P_0$ element \cite{lisi13}.
-It is mentioned in \cite{hans11}
-
-It essentially comes in two flavours, the Middle Point (MP) and the Mid Value (MV) one.
-
-\begin{remark} 
-John \cite{john16} explains that: "For the point-value-oriented non-conforming finite element spaces (MP), 
-the value of the Dirichlet boundary
-condition in the barycenter of the faces at the boundary is taken. Using the mean-
-value-oriented spaces (MV), one computes the integrals of the boundary condition on
-these faces and normalizes with the area of the faces to set the boundary values.
-In the case of homogeneous Dirichlet boundary conditions, the boundary values
-computed in both ways are zero."
-\end{remark}
-
-\begin{remark} 
-John also makes a very important point: "There are also unmapped (non-parametric) versions of 
-these finite element spaces, which define the polynomials directly on the mesh cell K. It is shown in Rannacher
-and Turek (1992) \cite{ratu92} that these versions are inf-sup stable on more general meshes than
-the mapped (parametric) version of the $Q_1^{rot}\times Q_0$ finite element, e.g., on strongly
-nonuniform meshes. Considering all four types of $Q_1^{rot}\times Q_0$ finite elements, the
-optimal order of convergence on perturbed meshes is achieved only by the mean-
-value-oriented version of the unmapped $Q_1^{rot}\times Q_0$   finite element.
-\end{remark}
-
-Mahmood \etal \cite{maky17} mention a very important fact: "The chosen nonconforming element requires
-additional stabilization for handling the deformation tensor formulation due to missing Korn's inequality 
-\cite{horg95,knob00}.
-To this end we employ the standard edge oriented stabilization \cite{tuos02,tuou07} in our simulations."
-This is a rather unfortunate fact that although LBB stable this element needs an additional 
-term in the weak form (see Turek \etal (2002) \cite{tuos02}) 
-so as to suppress parasitic velocity modes when the div-grad formulation 
-of the Stokes equation is used (as opposed to the Laplace formulation -- see \cite[Section 6.5.2]{dohu03}).
-
-\Literature Sheen (2020) \cite{shee20}
+\input{pair_rannacher_turek}
 
 
+
+%------------------------------------------------------------------
+\subsubsection{The $P_1\times P_0$} \label{ss:p1p0}
+\input{pair_p1p0}
+
+%------------------------------------------------------------------
+\subsubsection{The $P_2\times P_0$} \label{ss:p2p0}
+\input{pair_p2p0}
+
+%------------------------------------------------------------------
+\subsubsection{The $Q_2\times Q_0$} \label{ss:pairq2q0}
+\index{general}{$Q_2 \times Q_0$}
+
+Quadratic velocities, constant pressure. The element satisfies the inf-sup condition, 
+but the constant pressure assumption may require fine discretisation.
+source?
 
 
 %------------------------------------------------------------------
@@ -149,29 +118,83 @@ Like its quadrilateral counterpart $Q_1\times Q_1$, the
 $P_1\times P_1$ pair is not stable and needs to be stabilised \cite{nosi98,tasu00}.
 TerraNeo code uses stabilised with PSPG \cite{babd20}.
 
+%--------------------------------------------------------------------------------------------------
+\subsubsection{The MINI triangular element ($P_1^+\times P_1$) in 2D \label{pair:mini}}
+\input{pair_mini}
+
+%--------------------------------------------------------------------------------------------------
+\subsubsection{The quadratic velocity - linear pressure triangle ($P_2\times P_1$) \label{ss:p2p1}}
+\input{pair_p2p1}
+
+%----------------------------------------------------------------------
+\subsubsection{The Crouzeix-Raviart triangle ($P_2^+\times P_{-1}$)}
+\label{sec:crouzeix-raviart}
+\input{pair_crouzeixraviart}
+
+%----------------------------------------------------------------------
+\subsubsection{The $P_2^+\times P_{1}$ \label{ss:p2pp1}}
+\input{pair_p2pp1}
+
+%------------------------------------------------------------------
+\subsubsection{The Raviart-Thomas family} \label{ss:raviart_thomas}
+\input{pair_raviart_thomas}
 
 
+%------------------------------------------------------------------
+\subsubsection{The $P_2\times (P_1+P_0)$} \label{ss:p2p1p0}
+\input{pair_p2p1p0}
+
+%------------------------------------------------------------------
+\subsubsection{The $P_3\times P_2$} \label{ss:p3p2}
+\input{pair_p3p2}
+
+%------------------------------------------------------------------
+\subsubsection{The Bernaudi-Raugel pair} \label{ss:bernaudi_raugel}
+\input{pair_bernaudi_raugel}
+
+%------------------------------------------------------------------
+\subsubsection{The Scott-Vogelius pair} \label{ss:scott_vogelius}
+\input{pair_scott_vogelius}
+
+%------------------------------------------------------------------
+\subsubsection{The BDM (Brezzi-Douglas-Marini) pair} \label{ss:bdm}
+\index{general}{BDM element}
+\input{pair_bdm}
+
+%------------------------------------------------------------------
+\subsubsection{The DSSY pair} \label{ss:pair_dssy2D}
+\index{general}{Nonconforming element}
+\index{general}{DSSY element}
+\input{pair_dssy2D}
+
+%------------------------------------------------------------------
+\subsubsection{The Han pair} \label{ss:han}
+\index{general}{Han element}
+\index{general}{Nonconforming element}
+\input{pair_han}
+
+
+%------------------------------------------------------------------
+\subsubsection{The Divergence-free nonconforming $P_1^{NC}\times P_0$ pair} \label{ss:p1ncp0}
+\input{pair_p1ncp0}
 
 
 %----------------------------
 \subsubsection{Other elements}
 
 \begin{itemize}
-\item $P_1\times P_0$: example 3.70 in \cite{john16}, also \cite{john98}. \index{general}{$P_1\times P_0$}
-\item $Q_2\times P_0$: \index{general}{$Q_2 \times P_0$}: 
-Quadratic velocities, constant pressure. The element satisfies the inf-sup condition, but the constant pressure assumption may require fine discretisation.
 
 \item $Q_2\times Q_2$: This element is never used, probably because a) it is unstable, b) it is very costly. 
 There is one reference to it in \cite{hufb86}.
-\item $Q_1\times P_{-1}$ Bilinear velocities,  piecewise linear discontinuous polynomial pressure.
-\item See Fortin \cite{fort81} for various stable low order elements other than the enriched $Q_1^+ \times P_0$
-\item $Q_1\times Q_1$ + nonconforming null edge average \cite{fros07}
-\item $P_3\times P_2$ mentioned in \cite{sten90}   \index{general}{$P_3\times P_2 element$}
 
-\item $Q_2 \times Q_{-1}$: shown in Table~3.13-2 of Gresho \& Sani's book \cite{grsa}, 
-and discussed in Section~3.13.6b of the book too. Not LBB stable, 1 chequerboard mode.
-Used in \textcite{grsu02} (2002) and compared with $Q_1\times P_0$, $Q_2\times P_{-1}$ and 
-$Q_2\times Q_1$ for thermal cavity problem with NS equations.
+\item $Q_1\times P_{-1}$ Bilinear velocities,  piecewise linear discontinuous polynomial pressure.
+
+\item See Fortin \cite{fort81} for various stable low order elements other than the enriched $Q_1^+ \times P_0$
+
+\item $Q_1\times Q_1$ + nonconforming null edge average \cite{fros07}
+
+
+\item Bercovier-Pironneau element pair, or $P_1isoP_2$. \textcite{bocg12}.
 
 \end{itemize}
 
@@ -189,7 +212,5 @@ convection problems, where the pressure is larger than the velocity by orders
 of magnitude. In such situations, one cannot expect to compute accurate
 velocity fields with classical mixed methods, at least for low order methods.
 }
-
-
 
 

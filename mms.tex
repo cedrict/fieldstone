@@ -25,6 +25,42 @@ pressure, the strain rate tensor components and its spatial derivatives.
 \lstinputlisting[language=python]{mms/template.py}
 
 
+\begin{eqnarray}
+u(x,y) &=&  \nn\\
+v(x,y) &=&  \nn\\
+p(x,y) &=&  \nn
+\end{eqnarray}
+
+\begin{eqnarray}
+\partial_x u (x,y)&=& \nn\\
+\partial_y u (x,y)&=& \nn\\
+\partial_x v (x,y)&=& \nn\\
+\partial_y v (x,y)&=& \nn
+\end{eqnarray}
+
+\begin{eqnarray}
+\dot\varepsilon_{xx}(x,y) &=&  \nn\\
+\dot\varepsilon_{yy}(x,y) &=&  \nn\\
+\dot\varepsilon_{xy}(x,y) &=&  \nn
+\end{eqnarray}
+
+\begin{eqnarray}
+\frac{\partial p}{\partial x} (x,y)&=& \nn\\
+\frac{\partial p}{\partial y} (x,y)&=& \nn
+\end{eqnarray}
+
+\begin{eqnarray}
+\partial_x \dot\varepsilon_{xx} (x,y)&=& \nn\\
+\partial_x \dot\varepsilon_{xy} (x,y)&=& \nn\\
+\partial_y \dot\varepsilon_{xy} (x,y)&=& \nn\\
+\partial_y \dot\varepsilon_{yy} (x,y)&=& \nn
+\end{eqnarray}
+
+\[
+\upnu_{rms}=\sqrt{ \frac{1}{L_xL_y} \iint (u^2+v^2) dxdy   } = 
+\]
+
+
 %-----------------------------------------------------------------------------
 \subsubsection{Analytical benchmark I \label{mms1} - "DH"}
 
@@ -344,7 +380,7 @@ p &=& (x-1/2)(y-1/2)
 %-----------------------------------------------------------------------------
 \subsubsection{Analytical benchmark V \label{mms5} - "VJ1"}
 
-This is taken from Appendix D1 of \cite{john16}.
+This is taken from Appendix D.1 of \cite{john16}.
 
 The domain $\Omega$ is a unit square. We consider the stream function
 \[
@@ -364,7 +400,7 @@ p(x,y)=\pi^2( xy^3\cos(2\pi x^2y) - x^2y \sin(2\pi xy)) + \frac{1}{8}
 
 \begin{center}
 \includegraphics[width=8cm]{images/mms/mms5}\\
-Taken from \cite{john16}.
+{\captionfont Taken from \cite{john16}.}
 \end{center}
 
 \bscthesis \index{general}{BSc Thesis}
@@ -827,7 +863,30 @@ Finally we can verify that the pressure has zero average:
 \subsubsection{Manufactured solution in \textcite{muye17}} \label{ss:mms_muye17a}
 \input{mms_muye17a}
 
+%-----------------------------------------------------------------------------
+\subsubsection{Manufactured solution in \textcite{bocg12}} \label{ss:mms_bocg12}
+\input{mms_bocg12}
 
+
+%-----------------------------------------------------------------------------
+\subsubsection{Manufactured solution in \textcite{john18} on a disc} \label{ss:mms_john18}
+
+Let $\Omega$ be the disc with the center (0,0( and the radius 1 which has a crack
+along the $x-$axis between the points (0,0) and (1,0).
+\[
+\vec\upnu(x,y) = \frac32 \sqrt{r} \left( \cos\frac{\theta}{2} -\cos \frac{3\theta}{2} , 
+3\sin\frac{\theta}{2} -\sin \frac{3\theta}{2} \right)
+\]
+\[
+p(x,y)=-\frac{6}{\sqrt{r}} \cos\frac{\theta}{2}
+\]
+Viscosity is 1. Note that the solution has a singularity 
+in the origin.
+
+\begin{center}
+\includegraphics[height=8cm]{images/mms/john98}\\
+{\captionfont Taken from \textcite{john98} (1998).} 
+\end{center}
 
 
 %-----------------------------------------------------------------------------
