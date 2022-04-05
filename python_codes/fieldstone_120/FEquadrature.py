@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 
 def quadrature(space,nqpts):
 
+    if nqpts==0: exit('nqpts=0!')
+
     if space=='Q1' or space=='Q2' or space=='Q2s' or space=='Q3' or space=='Q4' or\
        space=='Q1+' or space=='DSSY1' or space=='DSSY2' or space=='RT1' or space=='RT2' or\
        space=='Han':

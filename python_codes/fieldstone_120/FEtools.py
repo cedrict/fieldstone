@@ -387,6 +387,37 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
            #end for
        #end for
 
+    elif space=='Q-1': 
+       N=4*nel
+       x = np.empty(N,dtype=np.float64) 
+       y = np.empty(N,dtype=np.float64)
+       icon=np.zeros((4,nel),dtype=np.int32)
+
+       iel=0
+       counter=0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               x[counter]=i*hx
+               y[counter]=j*hy
+               icon[0,iel]=counter
+               counter+=1
+               x[counter]=i*hx+hx
+               y[counter]=j*hy
+               icon[1,iel]=counter
+               counter+=1
+               x[counter]=i*hx+hx
+               y[counter]=j*hy+hy
+               icon[2,iel]=counter
+               counter+=1
+               x[counter]=i*hx
+               y[counter]=j*hy+hy
+               icon[3,iel]=counter
+               counter+=1
+               iel+=1
+           #end for
+       #end for
+
+
     #---------------------------------
     # disc P1 space for P2P-1 element
     #
@@ -1246,6 +1277,8 @@ def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
            if left=='no_slip':
               bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+           if left=='v_zero':
+              bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
         #right
         if x[i]/Lx>(1-eps):
@@ -1253,6 +1286,8 @@ def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
               bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
            if right=='no_slip':
               bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
+              bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+           if left=='v_zero':
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
         #bottom
@@ -1262,6 +1297,9 @@ def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
            if bottom=='no_slip':
               bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+           if bottom=='mone':
+              bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = -1.
+              bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
         #top
         if y[i]/Ly>(1-eps):
@@ -1269,6 +1307,9 @@ def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
            if top=='no_slip':
               bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
+              bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+           if top=='one':
+              bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 1.
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
     return bc_fix,bc_val
@@ -1284,6 +1325,7 @@ def J(m,dNdr,dNds,x,y):
     jcb[1,1] = dNds.dot(y)
     jcbi=np.linalg.inv(jcb)
     jcob=np.linalg.det(jcb)
+    if jcob<0: exit('jcob<0')
     dNdx= np.zeros(m,dtype=np.float64)
     dNdy= np.zeros(m,dtype=np.float64)
     dNdx[:]=jcbi[0,0]*dNdr[:]+jcbi[0,1]*dNds[:]

@@ -4,12 +4,17 @@ import FEtools as Tools
 import numpy as np
 import time as timing
 import matplotlib.pyplot as plt
-import sys as sys
+import sys 
 from scipy.sparse import lil_matrix
 from scipy.sparse.linalg import spsolve
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
 #import mms_dh as mms
 import mms_vj3 as mms
 #import mms_sinker as mms
+#import mms_poiseuille as mms
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -20,23 +25,29 @@ Ly=1
 nelx=32
 nely=32
 
-left_bc  ='no_slip'
-right_bc ='no_slip'
-bottom_bc='no_slip'
-top_bc   ='no_slip'
-
 ndofV=2
 ndofP=1
 
-Vspace='P1'
-Pspace='P0'
+Vspace='P2'
+Pspace='P1'
 
 visu=1
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
 
-nqpts=7
+if Vspace=='P1':    nqpts=3
+if Vspace=='P2':    nqpts=6
+if Vspace=='P3':    nqpts=6
+if Vspace=='P1+':   nqpts=6
+if Vspace=='P2+':   nqpts=6
+if Vspace=='P1NC':  nqpts=3
+
+if Vspace=='Q1':   nqpts=2
+if Vspace=='Q2':   nqpts=3
+if Vspace=='Q3':   nqpts=4
+if Vspace=='Q1+':  nqpts=3
+if Vspace=='Q2+':  nqpts=3
 
 #--------------------------------------------------------------------
 # allowing for argument parsing through command line
@@ -73,6 +84,8 @@ print("           daSTONE           ")
 print("*****************************")
 print ('Vspace =',Vspace)
 print ('Pspace =',Pspace)
+print ('nqpts  =',nqpts)
+print ('nqel   =',nqel)
 print ('nelx   =',nelx)
 print ('nely   =',nely)
 print ('NV     =',NV)
@@ -90,7 +103,7 @@ print("mesh setup: %.3f s" % (timing.time() - start))
 #--------------------------------------------------------------------
 start = timing.time()
 
-bc_fix,bc_val=Tools.bc_setup(xV,yV,Lx,Ly,ndofV,left_bc,right_bc,bottom_bc,top_bc)
+bc_fix,bc_val=Tools.bc_setup(xV,yV,Lx,Ly,ndofV,mms.left_bc,mms.right_bc,mms.bottom_bc,mms.top_bc)
 
 print("bc setup: %.3f s" % (timing.time() - start))
 
@@ -189,7 +202,6 @@ for iel in range(0,nel):
         counterq+=1
 
     #end for iq
-    #print(K_el)
 
     # apply bc
     Tools.apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel)
@@ -235,25 +247,28 @@ print("split vel into u,v: %.3f s" % (timing.time() - start))
 #------------------------------------------------------------------------------
 start = timing.time()
 
-avrg_p=0
-counterq=0
-for iel in range(0,nel):
-    for iq in range(0,nqel):
-        rq=qcoords_r[iq]
-        sq=qcoords_s[iq]
-        weightq=qweights[iq]
-        jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
-        NNNP=FE.NNN(rq,sq,Pspace,xxP=xP[iconP[:,iel]],yyP=yP[iconP[:,iel]],xxq=xq[counterq],yyq=yq[counterq])
-        avrg_p+=NNNP.dot(p[iconP[0:mP,iel]])*jcob*weightq
-        counterq+=1
+if mms.pnormalise:
+   avrg_p=0
+   counterq=0
+   for iel in range(0,nel):
+       for iq in range(0,nqel):
+           rq=qcoords_r[iq]
+           sq=qcoords_s[iq]
+           weightq=qweights[iq]
+           jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+           NNNP=FE.NNN(rq,sq,Pspace,xxP=xP[iconP[:,iel]],yyP=yP[iconP[:,iel]],xxq=xq[counterq],yyq=yq[counterq])
+           avrg_p+=NNNP.dot(p[iconP[0:mP,iel]])*jcob*weightq
+           counterq+=1
+       #end if
+   #end if
 
-print('     -> avrg_p=',avrg_p)
+   print('     -> avrg_p=',avrg_p)
 
-p-=avrg_p/Lx/Ly
+   p-=avrg_p/Lx/Ly
 
-print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+   print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
             
-print("pressure normalisation: %.3f s" % (timing.time() - start))
+   print("pressure normalisation: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
 # compute vrms and errors
@@ -330,7 +345,10 @@ if visu:
    Tools.export_swarm_scalar_to_vtu(xq,yq,pq,'Qnodes_p.vtu')
 
    Tools.export_swarm_vector_to_vtu(xV,yV,u,v,'solution_velocity.vtu')
+   Tools.export_swarm_vector_to_vtu(xV,yV,uth,vth,'solution_velocity_analytical.vtu')
    Tools.export_swarm_scalar_to_vtu(xP,yP,p,'solution_pressure.vtu')
+   Tools.export_swarm_scalar_to_vtu(xP,yP,pth,'solution_pressure_analytical.vtu')
+
    Tools.export_swarm_vector_to_ascii(xV,yV,u,v,'solution_velocity.ascii')
    Tools.export_swarm_vector_to_ascii(xV,yV,uth,vth,'solution_velocity_analytical.ascii')
    Tools.export_swarm_scalar_to_ascii(xP,yP,p,'solution_pressure.ascii')

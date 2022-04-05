@@ -54,3 +54,11 @@ def by(x,y):
 def vrms_th():
     return 0
 
+left_bc  ='free_slip'
+right_bc ='free_slip'
+bottom_bc='no_slip'
+top_bc   ='nothing'
+
+pnormalise=False
+
+
