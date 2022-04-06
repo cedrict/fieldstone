@@ -22,14 +22,14 @@ import mms_vj3 as mms
 Lx=1
 Ly=1
 
-nelx=32
-nely=32
+nelx=3
+nely=2
 
 ndofV=2
 ndofP=1
 
-Vspace='P2'
-Pspace='P1'
+Vspace='P1'
+Pspace='P0'
 
 visu=1
 
@@ -159,14 +159,14 @@ pq = np.zeros(nq,dtype=np.float64)
 
 counterq=0
 
-for iel in range(0,nel):
+for iel in range(0,nel): # loop over elements
 
     K_el = np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
     G_el = np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
     f_el = np.zeros(mV*ndofV,dtype=np.float64)
     h_el = np.zeros(mP*ndofP,dtype=np.float64)
 
-    for iq in range(0,nqel):
+    for iq in range(0,nqel): # loop over quadrature points inside element
 
         rq=qcoords_r[iq]
         sq=qcoords_s[iq]

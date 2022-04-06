@@ -1324,6 +1324,7 @@ def J(m,dNdr,dNds,x,y):
     jcb[1,0] = dNds.dot(x)
     jcb[1,1] = dNds.dot(y)
     jcbi=np.linalg.inv(jcb)
+    #print(jcbi)
     jcob=np.linalg.det(jcb)
     if jcob<0: exit('jcob<0')
     dNdx= np.zeros(m,dtype=np.float64)

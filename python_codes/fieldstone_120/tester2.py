@@ -39,9 +39,10 @@ for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','P1'
             dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
             dNNNVds=FE.dNNNds(rq,sq,Vspace)
             jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+            print('iel= %d | iq= %d | jcob= %.2f %.2f %.2f %.2f %.2f' %(iel,iq,jcbi[0,0],jcbi[0,1],jcbi[1,0],jcbi[1,1],jcob))
             area[iel]+=jcob*weightq
     #end for
-    print(area)
+    print('areas=',area)
 
 exit()
 
