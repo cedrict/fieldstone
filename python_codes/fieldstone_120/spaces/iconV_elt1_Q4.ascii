@@ -1,0 +1,26 @@
+--------elt:0-------
+node 0 | 0 at pos. 0.0,0.0
+node 1 | 1 at pos. 0.25,0.0
+node 2 | 2 at pos. 0.5,0.0
+node 3 | 3 at pos. 0.75,0.0
+node 4 | 4 at pos. 1.0,0.0
+node 5 | 13 at pos. 0.0,0.25
+node 6 | 14 at pos. 0.25,0.25
+node 7 | 15 at pos. 0.5,0.25
+node 8 | 16 at pos. 0.75,0.25
+node 9 | 17 at pos. 1.0,0.25
+node 10 | 26 at pos. 0.0,0.5
+node 11 | 27 at pos. 0.25,0.5
+node 12 | 28 at pos. 0.5,0.5
+node 13 | 29 at pos. 0.75,0.5
+node 14 | 30 at pos. 1.0,0.5
+node 15 | 39 at pos. 0.0,0.75
+node 16 | 40 at pos. 0.25,0.75
+node 17 | 41 at pos. 0.5,0.75
+node 18 | 42 at pos. 0.75,0.75
+node 19 | 43 at pos. 1.0,0.75
+node 20 | 52 at pos. 0.0,1.0
+node 21 | 53 at pos. 0.25,1.0
+node 22 | 54 at pos. 0.5,1.0
+node 23 | 55 at pos. 0.75,1.0
+node 24 | 56 at pos. 1.0,1.0
