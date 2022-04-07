@@ -13,7 +13,7 @@ Pspace=P1
 echo ---------- $Vspace X $Pspace ----------
 
 for nqpts in 6 7 12; do
-    for n in 7 8 9 10 11 14 21 28 35 42 49 56 63 70 84 98 112 126 140 168 182  ; do
+    for n in 8 9 10 11 12 16 24 32 40 48 56 64 80 96 112 128 160 ; do
         echo mesh: $n X $n - nqpts: $nqpts
         python3 stone.py $n $n $Vspace $Pspace $nqpts >> opla
     done

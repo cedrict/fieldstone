@@ -12,9 +12,10 @@ from scipy.sparse.linalg import spsolve
 #------------------------------------------------------------------------------
 
 #import mms_dh as mms
-import mms_vj3 as mms
+#import mms_vj3 as mms
 #import mms_sinker as mms
 #import mms_poiseuille as mms
+import mms_johnbook as mms
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -22,14 +23,14 @@ import mms_vj3 as mms
 Lx=1
 Ly=1
 
-nelx=3
-nely=2
+nelx=48
+nely=48
 
 ndofV=2
 ndofP=1
 
-Vspace='P1'
-Pspace='P0'
+Vspace='Q2'
+Pspace='Q1'
 
 visu=1
 

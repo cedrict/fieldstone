@@ -14,23 +14,28 @@ The rationale behind this stone is as follows:
 other FE-related tools so as to be able to write much more compact FE codes. 
 So far the boundary conditions of this exercise are:
 \begin{itemize}
-\item two-dimensional Cartesian domain
+\item Two-dimensional Cartesian domain
 \item Continuous Galerkin method
-\item incompressible isothermal Stokes flow, but not isoviscous
-\item most of commonly used element pairs for Stokes equations + rarer ones 
+\item Incompressible isothermal Stokes flow, but not isoviscous
+\item Most of commonly used element pairs for Stokes equations + some rarer ones 
 \item Dirichlet boundary conditions 
-\item isoparametric mapping
-\item sequential direct solver is used
-\item no stabilised formulations, i.e. no Q1Q1-stab, Q1P0-stab, P1P1-stab
+\item Isoparametric mapping\footnote{Should I change it to (bi)-linear mapping? all my elements are either 
+rectangles or right triangles, so that it should not matter, right?  }
+\item Stokes matrix fully built and sequential direct solver is used
+\item No stabilised formulations, i.e. no $Q_1\times Q_1$-stab, $Q_1\times P_0$-stab, or 
+      $P_1\times P_1$-stab
+\item No $P_1isoP_2$ or similar spaces
 \end{itemize}
 \item Run a suite of manufactured solution benchmarks with all 
-these finite elements and assess their accuracy.
+these finite element pairs and assess their accuracy.
+\item show $L_2$ errors ($v$, $p$, $div(\vec\upnu)$) as function of $h$ and the total number of dofs (as in \cite{cakp15})
 \end{itemize}
 
 
-Following \textcite{bocg12} (2012), I use a symmetric grid for triangular elements:
+{\bf Remark 1}:For reasons explained in \textcite{bocg12} (2012) I use 
+a symmetric grid ('SYMM') for triangular elements:
 \begin{center} 
-\includegraphics[width=8cm]{python_codes/fieldstone_120/images/bocg12}\\
+\includegraphics[width=10cm]{python_codes/fieldstone_120/images/bocg12}\\
 {\captionfont Taken from \textcite{bocg12} (2012).}
 \end{center} 
 
@@ -38,12 +43,13 @@ Following \textcite{bocg12} (2012), I use a symmetric grid for triangular elemen
 %-----------------------------------------------------------------------------
 \subsection*{Finite element pairs for the Stokes equation}
 
-\begin{tabular}{p{1cm}p{2cm}p{4cm}p{12cm}}
+\begin{center}
+\begin{tabular}{p{1cm}p{2cm}p{4cm}p{8cm}}
 \hline
- &pair & type & information \\
+ &pair & other name & information \\
 \hline
 \hline
- 1&$Q_1\times Q_0$       &                  & Section~\ref{ss:pairq1p0}\\
+ 1&$Q_1\times Q_0$       & $Q_1\times P_0$  & Section~\ref{ss:pairq1p0} (NOT LBB STABLE but usable)\\
  2&$Q_2\times Q_0$       &                  & Section~\ref{ss:pairq2q0}\\
  3&$P_2\times P_0$       &                  & Section~\ref{ss:p2p0}\\ 
  4&$Q_2\times Q_1$       &                  & Section~\ref{ss:pairq2q1}\\
@@ -54,23 +60,80 @@ Following \textcite{bocg12} (2012), I use a symmetric grid for triangular elemen
  9&$P_1^{+}\times P_{1}$ & MINI             & Section~\ref{pair:mini}\\
 10&$RT_1\times Q_0$      &                  & Section~\ref{ss:RTq1p0}\\
 11&$RT_2\times Q_0$      &                  & Section~\ref{ss:RTq1p0}\\
-12&$DSSY_1\times Q_0$    &                  & Section~\ref{ss:dssy_2D}\\
-13&$DSSY_2\times Q_0$    &                  & Section~\ref{ss:dssy_2D}\\
+12&$DSSY_1\times Q_0$    &                  & Section~\ref{ss:pair_dssy2D}\\
+13&$DSSY_2\times Q_0$    &                  & Section~\ref{ss:pair_dssy2D}\\
 14&$Han\times Q_0$       &                  & Section~\ref{ss:han}\\
 15&$Q_2\times P_{-1}$    &                  & Section~\ref{ss:pairq2pm1}\\
 16&$Q_2\times P_{-1}(u)$ &                  & Section~\ref{ss:pairq2pm1}\\
 17&$Q_2^{(8)}\times Q_1$ & Serendipity      & Section~\ref{sec:serendipity2D}\\
 18&$P_2^+\times P_{-1}$  & Crouzeix-Raviart & Section~\ref{sec:crouzeix-raviart}\\
 19&$P_2^+\times P_{1}$   &                  & Section~\ref{sec:p2pp1}\\
-20&$P_2\times (P_1+P_0)$ &                  & Section~\ref{ss:p2p1p0}\\
-21&$P_1^{NC}\times P_0$  &                  & Section~\ref{ss:p1ncp0}\\
-22&$P_1\times P_0$       &                  & Section~\ref{ss:p1p0}\\ 
+20&$P_2\times (P_1+P_0)$ & Augmented $P_2\times P_1$ & Section~\ref{ss:p2p1p0}\\
+21&$P_1^{NC}\times P_0$  & Crouzeix-Raviart & Section~\ref{ss:p1ncp0}\\
+22&$P_1\times P_0$       &                  & Section~\ref{ss:p1p0}  (NOT LBB STABLE and unusable)\\
+23&$Q_2\times Q_{-1}$    &                  & Section~\ref{ss:pair_q2qm1} (NOT LBB STABLE)\\
 \hline
 \end{tabular}
+\end{center}
+
+
+{\bf Remark 2}: I have indeed built support for 3 unstable elements but 
+these should not be included in the publication. 
+
+{\bf Remark 3}: The augmented $P_2\times (P_1+P_0)$ element pair is LBB stable 
+but special care must be taken with respect to the rank-deficiency 
+as explained in \textcite{bocg12} (2012). As of now, it is unusable.
+I expect the same kind of trouble with $Q_2\times (Q_1+Q_0)$ so I have not tried yet.
+
+{\bf Remark 4}: The nonconforming $P_1^{NC}\times P_0$ gives me a headache and does not 
+yield accurate results (esp. the pressure). Not sure why... mapping?
+
+{\bf Remark 5} Following \textcite{john16} book, I could also do 
+$P_3^+\times P_{-2}$, $Q_3\times P_{-2}$, $P_4\times P_3$, $Q_4\times Q_3$, $Q_4 \times P_{-3}$.
+
+{\bf Remark 6}: A modified $Q_2$ Serendipity element was proposed by \textcite{zhxi20} (2020) 
+(see Section~\ref{sec:serendipity2Db}) but it is only different from the standard serendipity 
+element when the elements are not rectangles. 
+
+
+\vspace{1cm}
+
+\begin{center}
+Quadrilateral elements\\
+\begin{tabular}{lccccc}
+\hline
+Pspace $\downarrow$ / Vspace $\rightarrow$   
+            & $Q_1$     & $Q_2$     & $Q_2^{(8)}$ & $Q_3$  & $Q_1^+$       \\ 
+$Q_0$       & $\sqrt{}$ & $\sqrt{}$ & ?           & ?         & ?          \\
+$Q_1$       & $\times$  & $\sqrt{}$ & $\sqrt{}$   & ?         & $\sqrt{}$  \\
+$Q_2$       & $\times$  & $\times$  & $\times$    & $\sqrt{}$ & $\times$   \\
+$P_{-1}$    & ?         & $\sqrt{}$ & ?           & ?         & ?          \\
+$P_{-1}(u)$ & ?         & $\sqrt{}$ & ?           & ?         & ?          \\
+\hline
+\end{tabular}
+\end{center}
 
 
 
 
+\begin{center}
+Triangular elements\\
+\begin{tabular}{ccccccc}
+\hline
+Pspace $\downarrow$ | Vspace $\rightarrow$   
+         & $P_1$    & $P_2$     & $P_3$     & $P_1^+$   & $P_2^+$   & $P_1^{NC}$  \\
+$P_0$    & $\times$ & $\sqrt{}$ & ?         &  ?        &  ?        & $\sqrt{}$   \\
+$P_1$    & $\times$ & $\sqrt{}$ & ?         & $\sqrt{}$ &  ?        & ?           \\
+$P_2$    & $\times$ & $\times$  & $\sqrt{}$ & $\times$  & $\times$  & $\times$    \\
+$P_{-1}$ & $\times$ & $\sqrt{}$ & ?         &  ?        & $\sqrt{}$ & ?           \\
+\hline
+\end{tabular}
+\end{center}
+
+
+
+
+\newpage
 %-----------------------------------
 \subsection*{The libraries}
 
@@ -130,7 +193,8 @@ In that case only 3,6,7,12,13,16 are authorized.
 %--------------------------------------------------------------------
 \subsection*{Supported element spaces}
 
-These figures are obtained by running ...
+These figures are obtained by running \lstinline{tester6.py}.
+{\color{red} I should try to make these square}
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q1_nodes}
@@ -139,10 +203,9 @@ These figures are obtained by running ...
 \includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q2s_nodes}
 \includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q3_nodes}
 \includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q4_nodes}\\
-\includegraphics[width=3.53cm]{python_codes/fieldstone_120/spaces/RT1_nodes}
-\includegraphics[width=3.53cm]{python_codes/fieldstone_120/spaces/RT2_nodes}
-\includegraphics[width=3.53cm]{python_codes/fieldstone_120/spaces/DSSY1_nodes}
-\includegraphics[width=3.53cm]{python_codes/fieldstone_120/spaces/DSSY2_nodes}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/RT1_nodes}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/DSSY1_nodes}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Han_nodes}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P1_nodes}
 \includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P2_nodes}
 \includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P3_nodes}\\
@@ -152,6 +215,8 @@ These figures are obtained by running ...
 \end{center}
 
 \newpage
+%--------------------------------------------------------------------
+\subsection*{$3\times 2$ meshes with velocity nodes}
 
 %------------------
 \begin{multicols}{2}
@@ -180,6 +245,7 @@ These figures are obtained by running ...
 \end{tiny}
 \end{multicols}
 
+\newpage
 %------------------
 \begin{multicols}{2}
 \input{python_codes/fieldstone_120/spaces/3x2_P1+}
@@ -207,6 +273,7 @@ These figures are obtained by running ...
 \end{tiny}
 \end{multicols}
 
+\newpage
 %------------------
 \begin{multicols}{2}
 \input{python_codes/fieldstone_120/spaces/3x2_Q1}
@@ -243,6 +310,7 @@ These figures are obtained by running ...
 \end{tiny}
 \end{multicols}
 
+\newpage
 %------------------
 \begin{multicols}{2}
 \input{python_codes/fieldstone_120/spaces/3x2_Q1+}
@@ -262,13 +330,13 @@ These figures are obtained by running ...
 \end{multicols}
 
 %------------------
-\begin{multicols}{2}
-\input{python_codes/fieldstone_120/spaces/3x2_DSSY2}
+%\begin{multicols}{2}
+%\input{python_codes/fieldstone_120/spaces/3x2_DSSY2}
 
-\begin{tiny}
-\verbatiminput{python_codes/fieldstone_120/spaces/iconV_elt1_DSSY2.ascii}
-\end{tiny}
-\end{multicols}
+%\begin{tiny}
+%\verbatiminput{python_codes/fieldstone_120/spaces/iconV_elt1_DSSY2.ascii}
+%\end{tiny}
+%\end{multicols}
 
 %------------------
 \begin{multicols}{2}
@@ -280,13 +348,13 @@ These figures are obtained by running ...
 \end{multicols}
 
 %------------------
-\begin{multicols}{2}
-\input{python_codes/fieldstone_120/spaces/3x2_RT2}
+%\begin{multicols}{2}
+%\input{python_codes/fieldstone_120/spaces/3x2_RT2}
 
-\begin{tiny}
-\verbatiminput{python_codes/fieldstone_120/spaces/iconV_elt1_RT2.ascii}
-\end{tiny}
-\end{multicols}
+%\begin{tiny}
+%\verbatiminput{python_codes/fieldstone_120/spaces/iconV_elt1_RT2.ascii}
+%\end{tiny}
+%\end{multicols}
 
 %------------------
 \begin{multicols}{2}
@@ -302,14 +370,15 @@ These figures are obtained by running ...
 
 \newpage
 %-----------------------------------------------------------------------------
-\subsection*{Testers}
+\subsection*{Python testers}
 
 \begin{itemize}
 \item \lstinline{tester1.py}: checks that each basis function is 1 on its support node and zero at all other nodes.
 \item \lstinline{tester2.py}: computes the area of each element by means of numerical quadrature. The domain is 3x2 and there are 3x2 elements so that we expect 1 for quadrilateral elements and 0.5 for triangular elements.  
 \item \lstinline{tester3.py}: computes the space derivatives of each coordinate minus one, so that we expect zero (down to machine precision). It returns 'passed' if the results is less than $10^{-12}$.   
 \item \lstinline{tester4.py}: computes the gradient of $x^2/2$ and $y^2/2$ (i.e. resp. $x$ and $y$) to which the coordinate of the quadrature point is subtracted so that one expect zero again. This test can only be passed by quadratic and higher order elements.
-\item \lstinline{tester5.py}: not really a test. rename ?
+\item \lstinline{tester5.py}: produces 3x2 tikz files and corresponding iconV files. 
+\item \lstinline{tester6.py}: produces pdf files of reference elements.
 \end{itemize}
 
 
@@ -341,15 +410,15 @@ nelx=16
 nely=16
 \end{lstlisting}
 
-There are four boundaries to the domain (left, right, bottom and top). For the 
-benchmark under consideration we need to impose no slip boundary conditions 
-on all sides of the domain:
-\begin{lstlisting}
-left_bc  ='no_slip'
-right_bc ='no_slip'
-bottom_bc='no_slip'
-top_bc   ='no_slip'
-\end{lstlisting}
+%There are four boundaries to the domain (left, right, bottom and top). For the 
+%benchmark under consideration we need to impose no slip boundary conditions 
+%on all sides of the domain:
+%\begin{lstlisting}
+%left_bc  ='no_slip'
+%right_bc ='no_slip'
+%bottom_bc='no_slip'
+%top_bc   ='no_slip'
+%\end{lstlisting}
 
 In two dimensions there are two velocity degrees of freedom per 
 velocity node but only one pressure degree of freedom per pressure node:
@@ -358,7 +427,7 @@ ndofV=2
 ndofP=1
 \end{lstlisting}
 
-A finite element space must be assigned to both velocity and pressure. 
+A finite element space must be assigned to both velocity and pressure. For example: 
 \begin{lstlisting}
 Vspace='Q2'
 Pspace='Q1'
@@ -367,7 +436,7 @@ Pspace='Q1'
 A quadrature order must be assigned. If quadrilateral elements are used
 this parameter is the number of quadrature points per dimension. 
 If triangular elements are used it is the total number of quadrature points 
-inside the element.  
+inside the element. For example: 
 \begin{lstlisting}
 nqpts=6
 \end{lstlisting}
@@ -438,17 +507,17 @@ for iel in range(0,nel):
     area[iel]+=jcob*weightq
 \end{lstlisting}
 
-
+FINISH!!!
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Results - VJ3 manufactured solution}
+\section*{Results - 'vj3' manufactured solution}
 
 This benchmark comes from John \etal \cite{jolm17} and is presented in Section~\ref{mms10}:
 \begin{eqnarray}
-u(x,y) &=& 200x^2(1-x)^2y(1-y)(1-2y) \\
-v(x,y) &=& -200x(1-x)(1-2x)y^2(1-y)^2 \\
-p(x,y) &=& 10\left[(x-1/2)^3y^2+(1-x)^3(y-1/2)^3 \right]
+u(x,y) &=& 200x^2(1-x)^2y(1-y)(1-2y) \nn\\
+v(x,y) &=& -200x(1-x)(1-2x)y^2(1-y)^2 \nn\\
+p(x,y) &=& 10\left[(x-1/2)^3y^2+(1-x)^3(y-1/2)^3 \right] \nn
 \end{eqnarray}
 The highest polynomial terms for the velocity are quartic and cubic for the pressure.
 
@@ -501,6 +570,7 @@ The highest polynomial terms for the velocity are quartic and cubic for the pres
 \includegraphics[width=8cm]{python_codes/fieldstone_120/results/P3P2-vp-Nfem.pdf}
 \end{center}
 
+\newpage
 %8----------------------------
 \subsection*{$Q_1^+\times Q_1$}
 \begin{center}
@@ -638,12 +708,52 @@ $P_2^+\times P_{1}$   &      &   & 3 & 2   \\%19
 
 Conclusions:
 \begin{itemize}
-\item $Q_1\times Q_0$ pressure is plagued by checkeboard mode
+\item $Q_1\times Q_0$ pressure is plagued by checkeboard mode (nothing new, won't be included in paper anyways)
 \item P1+P1 and Q1+Q1 exhibit the same convergence order: 2 for velocity and 1.5 for pressure.
 \item compare Q2Q1 and Q2P-1
 \item compare Q2Q1 and Q28Q1
 \item P2P0 vel convergence not cubic ?
 \end{itemize}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Results - \textcite{john16} (book) mms}
+
+The stream function is given by
+\[
+\Phi(x,y) = 1000x^2(1-x)^4 y^3 (1-y)^2
+\]
+so that
+\[
+\vec\upnu = 
+\left(
+\begin{array}{c}
+\partial_y \Phi \\
+-\partial_x \Phi \\
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+1000 x^2 (1-x)^4 y^2 (1-y) (3-5y) \\
+-2000 x (1-x)^3 (1-3x) y^3 (1-y)^2 
+\end{array}
+\right)
+\]
+with
+\[
+p(x,y)=\pi^2 [xy^3 \cos(2\pi x^2 y) - x^2y \sin(2\pi xy) ] +1/8
+\]
+
+
+\begin{center} 
+\includegraphics[width=8.5cm]{python_codes/fieldstone_120/images/john_a}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_120/images/john_b}\\
+{\captionfont Taken from \textcite{john16} (book).}
+\end{center} 
+
+
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -679,9 +789,13 @@ conclusion:
 
 \begin{itemize}
 \item DSSY and RT elements are not usable for buoyancy-driven flows in the presence of a hydrostatic 
-background. RETRIEVE email correspondance with Rannacher! show velocity field modes. 
+background. RETRIEVE email correspondance with Rannacher! show velocity field modes. Has smthg to do with 
+Korn stuff.
 \end{itemize}
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Results - shear flow}
 
 \newpage
 TODO:
@@ -696,24 +810,18 @@ mms with nonzero dirichlet bc?
 
 Korn inequality something ?
 
-no P1-iso-P2
-
-try Q2xQ1+Q0 !
-
 Remaining questions/ideas:
 
-- chinese Q2Q1 stone 52 ? only for deformed
 
-- Q3P-1 mentioned in Kanschat book 3.2.54
+- plot divv = fct(h)
 
-- why P1P0 not work?
+- no flow benchmark ? i.e bent downwards 2D domain. 
 
-- why P1NC-P0 not work?
+- compute jcb, jci, jcob for 3x2 with all elements.
 
-- why P2-P1+P0 not work?
+Remark:
 
-
-
+- P1NC-P0, MINI, BR and P2P0 compared on mms in \cite{cakp15}
 
 
 
