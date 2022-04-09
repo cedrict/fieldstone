@@ -232,6 +232,14 @@ def NNN(r,s,space,**keyword_arguments):
        val[2]=s
        val[3]=1
 
+    if space=='Q1+Q0':
+       val = np.zeros(5,dtype=np.float64)
+       val[0]=0.25*(1.-r)*(1.-s)
+       val[1]=0.25*(1.+r)*(1.-s)
+       val[2]=0.25*(1.+r)*(1.+s)
+       val[3]=0.25*(1.-r)*(1.+s)
+       val[4]=1
+
     return val
 
 #------------------------------------------------------------------------------
@@ -593,7 +601,7 @@ def NNN_r(space):
        val = np.zeros(4,dtype=np.float64)
        val[:]=[-1,1,1,-1]
 
-    if space=='Q1+':
+    if space=='Q1+' or space=='Q1+Q0':
        val = np.zeros(5,dtype=np.float64)
        val[:]=[-1,1,1,-1,0]
 
@@ -668,7 +676,7 @@ def NNN_s(space):
        val = np.zeros(4,dtype=np.float64)
        val[:]=[-1,-1,1,1]
 
-    if space=='Q1+':
+    if space=='Q1+' or space=='Q1+Q0':
        val = np.zeros(5,dtype=np.float64)
        val[:]=[-1,-1,1,1,0]
 
@@ -743,6 +751,7 @@ def NNN_m(space):
     if space=='Pm1u':   return 3
     if space=='P1+':    return 4
     if space=='P1+P0':  return 4
+    if space=='Q1+Q0':  return 5
     if space=='Q2':     return 9
     if space=='Q2s':    return 8
     if space=='P2':     return 6

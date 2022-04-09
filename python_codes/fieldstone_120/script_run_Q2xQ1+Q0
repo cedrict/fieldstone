@@ -1,14 +1,14 @@
 #!/bin/bash
 
 ###############################################################################
-# 20
+# 24
 ###############################################################################
-Vspace=P2
-Pspace=P1+P0
+Vspace=Q2
+Pspace=Q1+Q0
 
 echo ---------- $Vspace X $Pspace ----------
 
-for nqpts in  6 7; do
+for nqpts in  3 4 ; do
     for n in 8 9 10 11 12 16 24 32 40 48 56 64 80 96 112 128 160 ; do
         echo mesh: $n X $n - nqpts: $nqpts
         python3 stone.py $n $n $Vspace $Pspace $nqpts >> opla
@@ -17,4 +17,3 @@ for nqpts in  6 7; do
     grep vrms= opla > vrms_${Vspace}_${Pspace}_nqpts$nqpts
     mv opla opla_${Vspace}_${Pspace}_nqpts$nqpts
 done
-

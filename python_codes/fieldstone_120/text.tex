@@ -72,6 +72,7 @@ a symmetric grid ('SYMM') for triangular elements:
 21&$P_1^{NC}\times P_0$  & Crouzeix-Raviart & Section~\ref{ss:p1ncp0}\\
 22&$P_1\times P_0$       &                  & Section~\ref{ss:p1p0}  (NOT LBB STABLE and unusable)\\
 23&$Q_2\times Q_{-1}$    &                  & Section~\ref{ss:pair_q2qm1} (NOT LBB STABLE)\\
+24&$Q_2\times Q_1+Q_0$   & Augmented $Q_2\times Q_1$ & Section~\ref{ss:pair_q2q1q0} \\
 \hline
 \end{tabular}
 \end{center}
@@ -82,8 +83,8 @@ these should not be included in the publication.
 
 {\bf Remark 3}: The augmented $P_2\times (P_1+P_0)$ element pair is LBB stable 
 but special care must be taken with respect to the rank-deficiency 
-as explained in \textcite{bocg12} (2012). As of now, it is unusable.
-I expect the same kind of trouble with $Q_2\times (Q_1+Q_0)$ so I have not tried yet.
+as explained in \textcite{bocg12} (2012). The same applies to $Q_2\times (Q_1+Q_0)$. 
+We propose a simple fix later. 
 
 {\bf Remark 4}: The nonconforming $P_1^{NC}\times P_0$ gives me a headache and does not 
 yield accurate results (esp. the pressure). Not sure why... mapping?
@@ -384,6 +385,55 @@ These figures are obtained by running \lstinline{tester6.py}.
 
 \newpage
 %-----------------------------------------------------------------------------
+\subsection*{Pressure normalisation for augmented Taylor-Hood elements}
+
+
+I tried both $P_2\times (P_1+P_0)$ and $Q_2\times (Q_1+Q_0)$ on different manufactured solutions 
+and I observed for both that the pressure I obtained visually consisted of 2 fields: (for quads) 
+the continuous $Q_1$ which looked similar to the expected analytical field although offset by what 
+seemed a constant (bottom green points), and the $Q_0$ field (top green points) which was 
+very different than the $Q_1$ pressure:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/images/q2q1q0pb}
+\end{center}
+
+I of course make sure in my code that the pressure fulfills $\int p dV=0$ but since 
+the global constant function $p=constant$ is both in the $Q_1$ and $Q_0$ spaces the 
+resulting normalised pressure was never good (see green line on plot below). 
+This got me thinking about the '2 hydrostatic modes' of Gresho \& Sani and
+I ended up looking at pressure normalisation in the following way (for quads again):
+\begin{eqnarray}
+0 
+&=& \int_\Omega p dV \nn\\
+&=& \sum_e \int_{\Omega_e} p dV \nn\\
+&=& \sum_e \int_{\Omega_e} \left( \sum_{i=1}^5 \bN_i(x,y) p_i \right) dV \nn\\
+&=& \sum_e \int_{\Omega_e} \left( \sum_{i=1}^4 \bN_i(x,y) p_i + \bN_5 p_5 \right) dV
+\end{eqnarray}
+with $\bN_{1,2,3,4}(r,s)=\frac14(1\pm r)(1\pm s)$ being
+the $Q_1$ basis functions, $p_{1,2,3,4}$ the pressures at the corners
+of the quad and $\bN_5(r,s)=1$ the $Q_0$ basis functions with $p_5$ the elemental pressure.
+I then obtain 
+\begin{eqnarray}
+0 
+&=& \underbrace{\sum_e \int_{\Omega_e} \left( \sum_{i=1}^4 \bN_i(x,y) p_i \right) dV}_{<p>_{Q_1}}
++ \underbrace{\sum_e \int_{\Omega_e} p_5  dV}_{<p>_{Q_0}}
+\end{eqnarray}
+and proceed to normalise the pressure by imposing both $<p>_{Q_1}=0$ and $<p>_{Q_0}=0$.
+In this case the 'doubly normalised' pressure agrees with the analytical solution 
+and I obtain the following error convergence plot:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/images/q2q1q0}\\
+{\captionfont 'doubly normalised' pressure error convergence is quadratic (blue line) and 
+velocity error convergence is cubic (purple line). The green line is the 'wrong/raw' pressure. }
+\end{center}
+
+
+
+
+\newpage
+%-----------------------------------------------------------------------------
 \subsection*{Breakdown of the code}
 
 One starts by loading the required finite element functions 
@@ -521,8 +571,12 @@ v(x,y) &=& -1000 2x(1-3x) (1-x)^3  y^3(1-y)^2   \\
 p(x,y) &=& \pi^2 [xy^3 \cos(2\pi x^2 y) - x^2y \sin(2\pi xy) ]+1/8
 \end{eqnarray}
 
-
-
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/errors-velocity-all}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/errors-pressure-all}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/errors-divv-all}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/vrms_zoom}
+\end{center}
 
 
 

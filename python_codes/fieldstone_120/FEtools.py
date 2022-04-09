@@ -54,8 +54,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
            #end for
        #end for
 
-    #---------------------------------
-    elif space=='Q1+':
+    #-----------------------------------
+    elif space=='Q1+' or space=='Q1+Q0':
        N=(nelx+1)*(nely+1)+nel
        x = np.empty(N,dtype=np.float64) 
        y = np.empty(N,dtype=np.float64)
@@ -1071,7 +1071,8 @@ def export_elements_to_vtu(x,y,icon,space,filename):
        return
 
     if space=='Q1' or space=='Q1+' or space=='Q2' or space=='Q2s' or \
-       space=='RT1' or space=='RT2' or space=='DSSY1' or space=='DSSY2':
+       space=='RT1' or space=='RT2' or space=='DSSY1' or space=='DSSY2' or\
+       space=='Q1+Q0' :
        node0=0
        node1=1
        node2=2

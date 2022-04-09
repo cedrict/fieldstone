@@ -13,9 +13,10 @@ from scipy.sparse.linalg import spsolve
 
 #import mms_dh as mms
 #import mms_vj3 as mms
-#import mms_sinker as mms
+import mms_sinker as mms
 #import mms_poiseuille as mms
-import mms_johnbook as mms
+#import mms_johnbook as mms
+#import mms_bocg12 as mms
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -23,14 +24,14 @@ import mms_johnbook as mms
 Lx=1
 Ly=1
 
-nelx=48
-nely=48
+nelx=62
+nely=62
 
 ndofV=2
 ndofP=1
 
-Vspace='Q2'
-Pspace='Q1'
+Vspace='P2'
+Pspace='P1+P0'
 
 visu=1
 
@@ -248,6 +249,49 @@ print("split vel into u,v: %.3f s" % (timing.time() - start))
 #------------------------------------------------------------------------------
 start = timing.time()
 
+if mms.pnormalise and Pspace=='Q1+Q0':
+   # normalise Q1 pressure (this will alter the Q0 
+   # pressures too but these get normalised anyways after)
+
+   avrg_p_q1=0
+   for iel in range(0,nel):
+       avrg_p_q1+=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]]+p[iconP[3,iel]])/4*area[iel]
+   print('avrg_p_q1=',avrg_p_q1)
+   for i in range(0,NP):
+       p[i]-=avrg_p_q1
+
+   #normalise Q0 pressure
+   avrg_p_q0=0
+   for iel in range(0,nel):
+       avrg_p_q0+=p[iconP[4,iel]]*area[iel]
+   print('avrg_p_q0=',avrg_p_q0)
+   for iel in range(0,nel):
+       p[iconP[4,iel]]-=avrg_p_q0
+
+if mms.pnormalise and Pspace=='P1+P0':
+   # normalise P1 pressure (this will alter the P0 
+   # pressures too but these get normalised anyways after)
+
+   avrg_p_p1=0
+   for iel in range(0,nel):
+       avrg_p_p1+=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3*area[iel]
+   print('avrg_p_p1=',avrg_p_p1)
+   for i in range(0,NP):
+       p[i]-=avrg_p_p1
+
+   #normalise P0 pressure
+   avrg_p_p0=0
+   for iel in range(0,nel):
+       avrg_p_p0+=p[iconP[3,iel]]*area[iel]
+   print('avrg_p_p0=',avrg_p_p0)
+   for iel in range(0,nel):
+       p[iconP[3,iel]]-=avrg_p_p0
+
+
+
+
+
+
 if mms.pnormalise:
    avrg_p=0
    counterq=0
@@ -340,10 +384,12 @@ if visu:
    Tools.export_swarm_to_vtu(xV,yV,'Vnodes.vtu')
    Tools.export_swarm_to_vtu(xP,yP,'Pnodes.vtu')
 
-   Tools.export_swarm_to_ascii(xq,yq,'Qnodes.ascii')
-   Tools.export_swarm_to_vtu(xq,yq,'Qnodes.vtu')
-   Tools.export_swarm_vector_to_vtu(xq,yq,uq,vq,'Qnodes_vel.vtu')
-   Tools.export_swarm_scalar_to_vtu(xq,yq,pq,'Qnodes_p.vtu')
+   Tools.export_swarm_to_ascii(xq,yq,'qpts.ascii')
+   Tools.export_swarm_to_vtu(xq,yq,'qpts.vtu')
+   Tools.export_swarm_vector_to_vtu(xq,yq,uq,vq,'qpts_vel.vtu')
+   Tools.export_swarm_scalar_to_vtu(xq,yq,pq,'qpts_p.vtu')
+   Tools.export_swarm_vector_to_ascii(xq,yq,uq,vq,'qpts_vel.ascii')
+   Tools.export_swarm_scalar_to_ascii(xq,yq,pq,'qpts_p.ascii')
 
    Tools.export_swarm_vector_to_vtu(xV,yV,u,v,'solution_velocity.vtu')
    Tools.export_swarm_vector_to_vtu(xV,yV,uth,vth,'solution_velocity_analytical.vtu')
