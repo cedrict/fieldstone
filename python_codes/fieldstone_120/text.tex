@@ -19,8 +19,8 @@ So far the boundary conditions of this exercise are:
 \item Incompressible isothermal Stokes flow, but not isoviscous
 \item Most of commonly used element pairs for Stokes equations + some rarer ones 
 \item Dirichlet boundary conditions 
-\item Isoparametric mapping\footnote{Should I change it to (bi)-linear mapping? all my elements are either 
-rectangles or right triangles, so that it should not matter, right?  }
+\item Isoparametric mapping (Should I change it to (bi)-linear mapping? all my elements are either 
+rectangles or right triangles, so that it should not matter, right?)
 \item Stokes matrix fully built and sequential direct solver is used
 \item No stabilised formulations, i.e. no $Q_1\times Q_1$-stab, $Q_1\times P_0$-stab, or 
       $P_1\times P_1$-stab
@@ -28,7 +28,7 @@ rectangles or right triangles, so that it should not matter, right?  }
 \end{itemize}
 \item Run a suite of manufactured solution benchmarks with all 
 these finite element pairs and assess their accuracy.
-\item show $L_2$ errors ($v$, $p$, $div(\vec\upnu)$) as function of $h$ and the total number of dofs (as in \cite{cakp15})
+\item show $L_2$ errors ($v$, $p$, $div(\vec\upnu)$) as function of $h$ and the total number of dofs (as in \textcite{cakp15} (2015))
 \end{itemize}
 
 
@@ -87,7 +87,7 @@ as explained in \textcite{bocg12} (2012). The same applies to $Q_2\times (Q_1+Q_
 We propose a simple fix later. 
 
 {\bf Remark 4}: The nonconforming $P_1^{NC}\times P_0$ gives me a headache and does not 
-yield accurate results (esp. the pressure). Not sure why... mapping?
+yield accurate results (esp. the pressure). Not sure why... Coercivity/Korn stuff? 
 
 {\bf Remark 5} Following \textcite{john16} book, I could also do 
 $P_3^+\times P_{-2}$, $Q_3\times P_{-2}$, $P_4\times P_3$, $Q_4\times Q_3$, $Q_4 \times P_{-3}$.
@@ -579,6 +579,11 @@ p(x,y) &=& \pi^2 [xy^3 \cos(2\pi x^2 y) - x^2y \sin(2\pi xy) ]+1/8
 \end{center}
 
 
+\begin{center} 
+\includegraphics[width=8.5cm]{python_codes/fieldstone_120/images/john_a}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_120/images/john_b}\\
+{\captionfont Taken from \textcite{john16} (book).}
+\end{center} 
 
 
 
@@ -789,42 +794,7 @@ Conclusions:
 \item P2P0 vel convergence not cubic ?
 \end{itemize}
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Results - \textcite{john16} (book) mms}
 
-The stream function is given by
-\[
-\Phi(x,y) = 1000x^2(1-x)^4 y^3 (1-y)^2
-\]
-so that
-\[
-\vec\upnu = 
-\left(
-\begin{array}{c}
-\partial_y \Phi \\
--\partial_x \Phi \\
-\end{array}
-\right)
-=
-\left(
-\begin{array}{c}
-1000 x^2 (1-x)^4 y^2 (1-y) (3-5y) \\
--2000 x (1-x)^3 (1-3x) y^3 (1-y)^2 
-\end{array}
-\right)
-\]
-with
-\[
-p(x,y)=\pi^2 [xy^3 \cos(2\pi x^2 y) - x^2y \sin(2\pi xy) ] +1/8
-\]
-
-
-\begin{center} 
-\includegraphics[width=8.5cm]{python_codes/fieldstone_120/images/john_a}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_120/images/john_b}\\
-{\captionfont Taken from \textcite{john16} (book).}
-\end{center} 
 
 
 

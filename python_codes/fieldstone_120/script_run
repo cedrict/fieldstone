@@ -23,4 +23,5 @@ rm errors*
 ./script_run_Q2sxQ1   #17
 ./script_run_P2+xP-1  #18
 ./script_run_P2+xP1   #19
-
+./script_run_P2xP1+P0 #20
+./script_run_Q2xQ1+Q0 #24
