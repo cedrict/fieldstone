@@ -590,15 +590,28 @@ p(x,y) &=& \pi^2 [xy^3 \cos(2\pi x^2 y) - x^2y \sin(2\pi xy) ]+1/8
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Results - 'vj3' manufactured solution}
+\section*{Results - \textcite{jolm17} manufactured solution}
 
-This benchmark comes from John \etal \cite{jolm17} and is presented in Section~\ref{mms10}:
+This benchmark comes from John \etal \cite{jolm17} and is presented in Section~\ref{ss:mms_jolm17}:
 \begin{eqnarray}
 u(x,y) &=& 200x^2(1-x)^2y(1-y)(1-2y) \nn\\
 v(x,y) &=& -200x(1-x)(1-2x)y^2(1-y)^2 \nn\\
 p(x,y) &=& 10\left[(x-1/2)^3y^2+(1-x)^3(y-1/2)^3 \right] \nn
 \end{eqnarray}
 The highest polynomial terms for the velocity are quartic and cubic for the pressure.
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/errors-velocity-all}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/errors-pressure-all}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/errors-divv-all}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/vrms_zoom}
+\end{center}
+
+
+
+
+
 
 %1----------------------------
 \subsection*{$Q_1\times Q_0$}
@@ -734,20 +747,6 @@ The highest polynomial terms for the velocity are quartic and cubic for the pres
 \includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P1-vp-Nfem.pdf}
 \end{center}
 
-
-
-
-
-\newpage
-%------------------------------
-\subsection*{Altogether}
-
-
-\begin{center}
-\includegraphics[width=13.5cm]{python_codes/fieldstone_120/results/errors-velocity-all}\\
-\includegraphics[width=13.5cm]{python_codes/fieldstone_120/results/errors-pressure-all}\\
-\includegraphics[width=13.5cm]{python_codes/fieldstone_120/results/vrms_zoom}
-\end{center}
 
 
 \newpage

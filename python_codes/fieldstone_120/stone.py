@@ -12,7 +12,7 @@ from scipy.sparse.linalg import spsolve
 #------------------------------------------------------------------------------
 
 #import mms_dh as mms
-#import mms_vj3 as mms
+#import mms_jolm17 as mms
 import mms_sinker as mms
 #import mms_poiseuille as mms
 #import mms_johnbook as mms
@@ -24,14 +24,14 @@ import mms_sinker as mms
 Lx=1
 Ly=1
 
-nelx=62
-nely=62
+nelx=32
+nely=32
 
 ndofV=2
 ndofP=1
 
-Vspace='P2'
-Pspace='P1+P0'
+Vspace='Q2'
+Pspace='Q1+Q0'
 
 visu=1
 
@@ -238,9 +238,9 @@ start = timing.time()
 u,v=np.reshape(sol[0:NfemV],(NV,2)).T
 p=sol[NfemV:Nfem]
 
-print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
-print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
+print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
+print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))
 

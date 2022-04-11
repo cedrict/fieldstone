@@ -56,9 +56,9 @@ def vrms_th():
 
 left_bc  ='free_slip'
 right_bc ='free_slip'
-bottom_bc='no_slip'
-top_bc   ='nothing'
+bottom_bc='free_slip'
+top_bc   ='free_slip'
 
-pnormalise=False
+pnormalise=True
 
 
