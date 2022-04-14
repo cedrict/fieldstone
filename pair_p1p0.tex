@@ -26,7 +26,19 @@ the pressure we have no convergence.''
 Example 3.2 of \textcite{bobf08} (2008) explains neatly the locking phenomenon and how 
 to circumvent it via a so-called cross-grid macroelement.
 
-I have not found a paper yet which showcases its accuracy on a mms and compares it to other 
-element pairs.
+In his lecture notes\footnote{\url{https://www.math.tamu.edu/~guermond/}}, 
+Guermond states ``A simple alternative to the 
+$Q_1\times P_0$ element consists of using the $P_1\times P_0$ element.
+Let ${\cal T}_h$  be a mesh of $D$ composed of affine simplices, and approximate the 
+velocity with continuous piecewise linear polynomials and the pressure with
+(discontinuous) piecewise constants. Since the velocity is piecewise linear, its
+divergence is constant on each simplex. As a result, testing the divergence
+of the velocity with piecewise constants enforces the divergence to be zero
+everywhere. That is to say, the $P_1\times P_0$ finite element yields a velocity 
+approximation that is exactly divergence-free [...]. Unfortunately,
+this pair does not satisfy the inf-sup condition.''
+
+I have not found a paper yet which showcases its accuracy on a manufactured solution
+and compares it to other element pairs.
 
 

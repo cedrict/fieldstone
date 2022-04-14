@@ -1,5 +1,5 @@
 
-INSERT FIGURE OF DOFS
+
 
 It belongs to the Crouzeix-Raviart family. 
 The midside nodes are used as degrees of freedom for the velocities.
@@ -8,13 +8,16 @@ It is exactly divergence free. Another important feature of this
 element is that it can be seen as a "mass conservation" scheme. The present element
 has been generalized to second order in \textcite{foso83} (1983).
 It must also be said that coerciveness may be a problem for the $P_1^{NC} \times P_0$ 
-element, as it does not satisfy the discrete version of Korn’s inequality. 
+element, as it does not satisfy the discrete version of Korn's inequality. 
 This issue has been deeply investigated and clearly illustrated in \textcite{arno93} (1993).''
+
+\input{tikz/tikz_p1ncp0}
 
 At page 170 of \cite{braess} it is stated that ``an analogous quadrilateral element was 
 developed and studied by \textcite{ratu92} (1992)''.
 
-\textcite{bobf13}: ``We consider the classical (almost) stable nonconforming triangular 
+In \textcite{bobf13} we find: ``We consider the classical (almost\footnote{What does that mean?!}) 
+stable nonconforming triangular 
 element introduced in \textcite{crra73}, in which mid-side nodes are used as degrees of 
 freedom for the velocities. This generates
 a piecewise linear nonconforming approximation; pressures are taken constant on
@@ -32,3 +35,6 @@ in \textcite{brfo} (example 8.1), and studied extensively in \textcite{john98} (
 {\captionfont Taken from \textcite{john98}.}
 \end{center}
 
+In \textcite{jolm17} (2017) the authors show results obtained with this element (fig 6) 
+but also explain that these are obtained with so-called reconstructed test functions.
+ 

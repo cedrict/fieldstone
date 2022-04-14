@@ -40,5 +40,8 @@ def bx(x,y):
 def by(x,y):
     return dpdy_th(x,y)-2*dexydx(x,y)-2*deyydy(x,y)
 
-def vrms(x,y):
+def vrms_th():
     return 0
+
+def eta(x,y):
+    return 1

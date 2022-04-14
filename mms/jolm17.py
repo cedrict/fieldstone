@@ -1,4 +1,4 @@
-# functions for the Volker John III benchmark (vj3)
+# functions for the John et al (2017) manufactured solution 
 
 def u_th(x,y):
     return 200*x**2*(1-x)**2*y*(1-y)*(1-2*y) 

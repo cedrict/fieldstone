@@ -1,6 +1,107 @@
 \begin{flushright} {\tiny {\color{gray} quadrature\_triangles.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+Our goal is to develop a quadrature rule of the form
+\[
+\iint_\triangle f(r,s) \; drds 
+\simeq \frac12 \sum_{i_q=1}^{n_q} \omega_{i_q} f(r_{i_q},s_{i_q})
+\]
+We will here add two requirements:
+a) we would like to find quadrature rules which achieve the highest possible accuracy for the lowest possible number of quadrature points; b) we would like the quadrature points to possess some kind of symmetry.
+Note that the factor $1/2$ in the equation above is a convention. If $f=1$ then 
+the left hand term is the area of the triangle which is 1/2. Since people 
+usually require that $\sum_i\omega_i=1$ then the factor 1/2 is necessary.
+
+Before we go any further, we need to establish that
+\[
+\iint_\triangle \{ 1,r,s,r^2,rs,t^2,r^3,r^2s,rs^2,s^3\}\; dr ds =
+\left\{
+\frac12,\frac16,\frac16,\frac{1}{12},\frac{1}{24},\frac{1}{12},
+\frac{1}{20},\frac{1}{60},\frac{1}{60},\frac{1}{20}
+\right\}
+\]
+where $\triangle$ stands for the reference triangle.
+
+%-----------------------------------------------
+\subsubsection*{Gaussian quadrature of degree 1}
+
+This means that the quadrature should be accurate for $f(r,s)=\{1,r,s\}$. 
+We then obtain:
+\begin{eqnarray}
+\iint_\triangle 1 \; drds = \frac12 &=& \frac12 \sum_{i_q=1}^{1} \omega_{i_q} f(r_{i_q},s_{i_q}) = \frac12 \omega_1 f(r_1,s_1) = \frac12 \omega_1 \nn\\
+\iint_\triangle r \; drds = \frac16 &=& \frac12 \sum_{i_q=1}^{1} \omega_{i_q} r_{i_q} 
+= \frac12 \omega_1 r_1 \nn\\
+\iint_\triangle s \; drds = \frac16 &=& \frac12 \sum_{i_q=1}^{1} \omega_{i_q} s_{i_q} 
+= \frac12 \omega_1 s_1 \nn
+\end{eqnarray}
+We then obtain $\omega_1=1$ and $r_1=s_1=\frac13$.
+
+
+%-----------------------------------------------
+\subsubsection*{Gaussian quadrature of degree 2}
+
+The quadrature should be accurate for $f(r,s)=\{1,r,s,r^2,rs,t^2\}$ so that
+\begin{eqnarray}
+\iint_\triangle 1 drds = \frac12 &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} \nn\\
+\iint_\triangle r drds = \frac16 &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} r_{i_q}\nn\\
+\iint_\triangle s drds = \frac16 &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} s_{i_q}\nn\\
+\iint_\triangle r^2 drds = \frac1{12} &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} r_{i_q}^2\nn\\
+\iint_\triangle rsdrds = \frac1{24} &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} r_{i_q}s_{i_q}\nn\\
+\iint_\triangle s^2 drds = \frac1{12} &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} s_{i_q}^2\nn\\
+\end{eqnarray}
+If we set $n_q=1$ then we have 6 equations and only three unknowns $\omega_1,r_1,s_1$
+so this will not work. 
+If we set $n_q=2$ then we have 6 equations and six unknowns $\omega_1,r_1,s_1,\omega_2,r_2,s_2$ but we find that the quadrature is not symmetric\footnote{proof to do}.
+If we set $n_q=3$ then we have 6 equations and 9 unknowns and the solution is not 
+unique. Because of symmetry we for instance have to impose $r_2=s_3$ and $s_2=r_3$ 
+(points 2 and 3 are symmetric with respect to the $r=s$ line).
+Two common quadratures are found:
+\[
+(r_1,s_1)=(\frac16,\frac16) \qquad
+(r_2,s_2)=(\frac23,\frac16) \qquad
+(r_3,s_3)=(\frac16,\frac23) \qquad \omega_1=\omega_2=\omega_3=\frac13
+\]
+and 
+\[
+(r_1,s_1)=(0,\frac12) \qquad
+(r_2,s_2)=(\frac12,0) \qquad
+(r_3,s_3)=(\frac12,\frac12) \qquad \omega_1=\omega_2=\omega_3=\frac13
+\]
+
+%-----------------------------------------------
+\subsubsection*{Gaussian quadrature of degree 3}
+
+The quadrature should be accurate for $f(r,s)=\{1,r,s,r^2,rs,t^2,r^3,r^2s,rs^2,t^2\}$ 
+so that
+\begin{eqnarray}
+\iint_\triangle 1 drds = \frac12 &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} \nn\\
+\iint_\triangle r drds = \frac16 &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} r_{i_q}\nn\\
+\iint_\triangle s drds = \frac16 &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} s_{i_q}\nn\\
+\iint_\triangle r^2 drds = \frac1{12} &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} r_{i_q}^2\nn\\
+\iint_\triangle rsdrds = \frac1{24} &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} r_{i_q}s_{i_q}\nn\\
+\iint_\triangle s^2 drds = \frac1{12} &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} s_{i_q}^2\nn\\
+\iint_\triangle r^3 drds = \frac1{20} &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} r_{i_q}^3\nn\\
+\iint_\triangle r^2s drds = \frac1{60} &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} r_{i_q}^2 s_{i_q}\nn\\
+\iint_\triangle rs^2 drds = \frac1{60} &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} r_{i_q} s_{i_q}^2\nn\\
+\iint_\triangle s^3 drds = \frac1{20} &=& \frac12 \sum_{i_q=1}^{n_q}\omega_{i_q} s_{i_q}^3\nn\\
+\end{eqnarray}
+This time $n_q=3$ will not work since we have 10 equations. Switching to $n_q=4$
+we now have 12 unknowns and 10 equations so there are many possibilities. 
+One of them is given in the table below. As a side note there could be cases where 
+having a negative weight $\omega$ could be problematic. 
+
+
+%-----------------------------------------------------------------
+\subsubsection*{Tabulated quadrature rules on the reference triangle}
+
+In what follows we use the following quadrature rule:
+\[
+\iint_\triangle f(r,s) \; drds 
+\simeq \sum_{i_q=1}^{n_q} \omega_{i_q} f(r_{i_q},s_{i_q})
+\]
+with $\sum_i\omega_i=1/2$.
+
 Quadrature rules for triangles can be found in \textcite{duna85} (1985).
 The following ones are identical to those in the {\sl ip\_triangle.m} 
 file of the MILAMIN code \cite{daks08}. See also \textcite{leth76} (1976)
@@ -13,51 +114,51 @@ on the topic of computation of double integrals over a triangle.
 &r_q & s_q & w_q &r_q & s_q & w_q \\ 
 &\text{exact} & \text{exact} & \text{exact} & \text{approx.}& \text{approx.}& \text{approx.}\\
 \hline\hline
-iq=1& 1/3 & 1/3 & 1/2\\
+i_q=1& 1/3 & 1/3 & 1/2\\
 \hline
-iq=1 & 1/6 & 1/6 & 1/6 \\
-iq=2 & 2/3 & 1/6 & 1/6 \\
-iq=3 & 1/6 & 2/3 & 1/6 \\
+i_q=1 & 1/6 & 1/6 & 1/6 \\
+i_q=2 & 2/3 & 1/6 & 1/6 \\
+i_q=3 & 1/6 & 2/3 & 1/6 \\
 \hline
-iq=1&1/3 & 1/3 & -27/96\\
-iq=2&0.6 & 0.2 &  25/96\\
-iq=3&0.2 & 0.6 &  25/96\\
-iq=4&0.2 & 0.2 &  25/96\\
+i_q=1&1/3 & 1/3 & -27/96\\
+i_q=2&0.6 & 0.2 &  25/96\\
+i_q=3&0.2 & 0.6 &  25/96\\
+i_q=4&0.2 & 0.2 &  25/96\\
 \hline
-iq=1& 1-2g_1 & g_1 & w_1/2  &  0.108103018168070 & 0.44594849091596  &   \\
-iq=2& g_1 & 1-2g_1 & w_1/2  &  0.445948490915965 & 0.108103018168070 &   \\
-iq=3& g_1 & g_1    & w_1/2  &  0.445948490915965 & 0.445948490915965 &   \\
-iq=4& 1-2g_2 & g_2 & w_2/2  &  0.816847572980459 & 0.091576213509771 &   \\
-iq=5& g_2 & 1-2g_2 & w_2/2  &  0.091576213509771 & 0.816847572980459 &   \\
-iq=6& g_2 & g_2    & w_2/2  &  0.091576213509771 & 0.091576213509771 &   \\
+i_q=1& 1-2g_1 & g_1 & w_1/2  &  0.108103018168070 & 0.44594849091596  &   \\
+i_q=2& g_1 & 1-2g_1 & w_1/2  &  0.445948490915965 & 0.108103018168070 &   \\
+i_q=3& g_1 & g_1    & w_1/2  &  0.445948490915965 & 0.445948490915965 &   \\
+i_q=4& 1-2g_2 & g_2 & w_2/2  &  0.816847572980459 & 0.091576213509771 &   \\
+i_q=5& g_2 & 1-2g_2 & w_2/2  &  0.091576213509771 & 0.816847572980459 &   \\
+i_q=6& g_2 & g_2    & w_2/2  &  0.091576213509771 & 0.091576213509771 &   \\
 \hline
-iq=1&&&&0.091576213509771 &  0.091576213509771    &    0.109951743655322/2.0 \\ 
-iq=2&&&&0.816847572980459 &  0.091576213509771    &    0.109951743655322/2.0 \\
-iq=3&&&&0.091576213509771 &  0.816847572980459    &    0.109951743655322/2.0 \\
-iq=4&&&&0.445948490915965 &  0.445948490915965    &    0.223381589678011/2.0 \\
-iq=5&&&&0.108103018168070 &  0.445948490915965    &    0.223381589678011/2.0 \\
-iq=6&&&&0.445948490915965 &  0.108103018168070    &    0.223381589678011/2.0 \\
+i_q=1&&&&0.091576213509771 &  0.091576213509771    &    0.109951743655322/2.0 \\ 
+i_q=2&&&&0.816847572980459 &  0.091576213509771    &    0.109951743655322/2.0 \\
+i_q=3&&&&0.091576213509771 &  0.816847572980459    &    0.109951743655322/2.0 \\
+i_q=4&&&&0.445948490915965 &  0.445948490915965    &    0.223381589678011/2.0 \\
+i_q=5&&&&0.108103018168070 &  0.445948490915965    &    0.223381589678011/2.0 \\
+i_q=6&&&&0.445948490915965 &  0.108103018168070    &    0.223381589678011/2.0 \\
 \hline
-iq=1 &&&&0.1012865073235 &  0.1012865073235  &     0.0629695902724 \\
-iq=2 &&&&0.7974269853531 &  0.1012865073235  &     0.0629695902724 \\
-iq=3 &&&&0.1012865073235 &  0.7974269853531  &     0.0629695902724 \\
-iq=4 &&&&0.4701420641051 &  0.0597158717898  &     0.0661970763942 \\
-iq=5 &&&&0.4701420641051 &  0.4701420641051  &     0.0661970763942 \\
-iq=6 &&&&0.0597158717898 &  0.4701420641051  &     0.0661970763942 \\
-iq=7 &&&&0.3333333333333 &  0.3333333333333  &     0.1125000000000 \\
+i_q=1 &&&&0.1012865073235 &  0.1012865073235  &     0.0629695902724 \\
+i_q=2 &&&&0.7974269853531 &  0.1012865073235  &     0.0629695902724 \\
+i_q=3 &&&&0.1012865073235 &  0.7974269853531  &     0.0629695902724 \\
+i_q=4 &&&&0.4701420641051 &  0.0597158717898  &     0.0661970763942 \\
+i_q=5 &&&&0.4701420641051 &  0.4701420641051  &     0.0661970763942 \\
+i_q=6 &&&&0.0597158717898 &  0.4701420641051  &     0.0661970763942 \\
+i_q=7 &&&&0.3333333333333 &  0.3333333333333  &     0.1125000000000 \\
 \hline
-iq=1&&&& 5.01426509658179e-01&  2.49286745170910e-01 &   5.83931378631895e-02 \\ 
-iq=2&&&& 2.49286745170910e-01&  5.01426509658179e-01 &   5.83931378631895e-02 \\ 
-iq=3&&&& 2.49286745170910e-01&  2.49286745170910e-01 &   5.83931378631895e-02 \\ 
-iq=4&&&& 8.73821971016996e-01&  6.30890144915020e-02 &   2.54224531851035e-02 \\ 
-iq=5&&&& 6.30890144915020e-02&  8.73821971016996e-01 &   2.54224531851035e-02 \\ 
-iq=6&&&& 6.30890144915020e-02&  6.30890144915020e-02 &   2.54224531851035e-02 \\ 
-iq=7&&&& 5.31450498448170e-02&  3.10352451033784e-01 &   4.14255378091870e-02 \\ 
-iq=8&&&& 6.36502499121399e-01&  5.31450498448170e-02 &   4.14255378091870e-02 \\ 
-iq=9&&&& 3.10352451033784e-01&  6.36502499121399e-01 &   4.14255378091870e-02 \\ 
-iq=10&&&& 5.31450498448170e-02&  6.36502499121399e-01 &   4.14255378091870e-02 \\ 
-iq=11&&&& 6.36502499121399e-01&  3.10352451033784e-01 &   4.14255378091870e-02 \\ 
-iq=12&&&& 3.10352451033784e-01&  5.31450498448170e-02 &   4.14255378091870e-02 \\ 
+i_q=1&&&& 5.01426509658179e-01&  2.49286745170910e-01 &   5.83931378631895e-02 \\ 
+i_q=2&&&& 2.49286745170910e-01&  5.01426509658179e-01 &   5.83931378631895e-02 \\ 
+i_q=3&&&& 2.49286745170910e-01&  2.49286745170910e-01 &   5.83931378631895e-02 \\ 
+i_q=4&&&& 8.73821971016996e-01&  6.30890144915020e-02 &   2.54224531851035e-02 \\ 
+i_q=5&&&& 6.30890144915020e-02&  8.73821971016996e-01 &   2.54224531851035e-02 \\ 
+i_q=6&&&& 6.30890144915020e-02&  6.30890144915020e-02 &   2.54224531851035e-02 \\ 
+i_q=7&&&& 5.31450498448170e-02&  3.10352451033784e-01 &   4.14255378091870e-02 \\ 
+i_q=8&&&& 6.36502499121399e-01&  5.31450498448170e-02 &   4.14255378091870e-02 \\ 
+i_q=9&&&& 3.10352451033784e-01&  6.36502499121399e-01 &   4.14255378091870e-02 \\ 
+i_q=10&&&& 5.31450498448170e-02&  6.36502499121399e-01 &   4.14255378091870e-02 \\ 
+i_q=11&&&& 6.36502499121399e-01&  3.10352451033784e-01 &   4.14255378091870e-02 \\ 
+i_q=12&&&& 3.10352451033784e-01&  5.31450498448170e-02 &   4.14255378091870e-02 \\ 
 \hline
 \end{array}
 \]
@@ -73,8 +174,79 @@ w_1 = \left(620+\sqrt{213125-53320\sqrt{10}}\right)/3720
 \qquad
 w_2 = \left(620-\sqrt{213125-53320\sqrt{10}}\right)/3720
 \]
+All these are implemented in \stone~120 (see also \stone~112).
 
-Note that when 4 points are used one of the weights is negative?
+
+%-----------------------------------------------------------------
+\subsubsection*{The case of a generic triangle}
+
+Let $T$ be a triangular element with straight edges defined by the three vertices $(x_i,y_i)$ ($i=1,2,3$)
+arranged in the counter-clockwise order:
+
+INSERT FIGURE
+
+We now need to evaluate the following integral over $T$:
+\[
+I = \iint_T f(x,y) \; dxdy
+\]
+We will proceed similarly to the quadrilateral case: first transform ('map') this triangle into 
+the reference triangle $\triangle$ and then use the adequate quadrature rule. 
+
+We can base this transformation ('mapping') on the linear ('$P_1$') basis functions\footnote{See
+Section~\ref{ss:mappings}}: 
+\begin{eqnarray} 
+\bN_1(r,s) &=&1-r-s \nn\\
+\bN_1(r,s) &=& r\nn\\
+\bN_1(r,s) &=& s\nn
+\end{eqnarray} 
+with 
+\begin{eqnarray} 
+x=P(r,s)=\sum_{i=1}^3 x_i \bN_i(r,s)= x_1 \bN_1(r,s) + x_2 \bN_2(r,s) + x_3 \bN_3(r,s)  \nn\\
+y=Q(r,s)=\sum_{i=1}^3 y_i \bN_i(r,s)= y_1 \bN_1(r,s) + y_2 \bN_2(r,s) + y_3 \bN_3(r,s)  \nn
+\end{eqnarray} 
+For example when $(r,s)\rightarrow(0,0)$ we find $(x,y)\rightarrow (x_1,y_1)$,
+when $(r,s)\rightarrow(1,0)$ we find $(x,y)\rightarrow (x_2,y_2)$,
+and when $(r,s)\rightarrow(0,1)$ we find $(x,y)\rightarrow (x_3,y_3)$.
+
+Then we have 
+\[
+I = \iint_T f(x,y) \; dxdy = \iint_\triangle f(P(r,s),Q(r,s))\; |J(r,s)| \; drds
+\]
+where $J(r,s)$ is the Jacobian of the transformation:
+\[
+J(r,s) = 
+\left|
+\begin{array}{cc}
+\frac{\partial x}{\partial r} & \frac{\partial y}{\partial r} \\ \\
+\frac{\partial x}{\partial s} & \frac{\partial y}{\partial s} 
+\end{array}
+\right|
+=
+\left|
+\begin{array}{cc}
+\frac{\partial }{\partial r} \sum\limits_{i=1}^3 x_i \bN(r_i,s_i) & 
+\frac{\partial }{\partial r} \sum\limits_{i=1}^3 y_i \bN(r_i,s_i) \\ \\
+\frac{\partial }{\partial s} \sum\limits_{i=1}^3 x_i \bN(r_i,s_i) & 
+\frac{\partial }{\partial s} \sum\limits_{i=1}^3 y_i \bN(r_i,s_i)
+\end{array}
+\right|
+=
+\left|
+\begin{array}{cc}
+(-x_1+x_2) & (-y_1+y_2) \\
+(-x_1+x_3) & (-y_1+y_3)
+\end{array}
+\right|
+=2 {\cal A}_T
+\]
+where ${\cal A}_T$ is the area of triangle $T$. In the end we have 
+\[
+I = \iint_T f(x,y) \; dxdy = 2 {\cal A}_T \iint_\triangle f(P(r,s),Q(r,s))\;  drds
+\]
+and the rhs integral can then be computed by means of quadrature.
+
+
+
 
 
 

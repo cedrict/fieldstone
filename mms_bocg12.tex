@@ -1,4 +1,5 @@
 This manufactured solution originates in \textcite{bocg12} (2012).
+The velocity field turns out to be identical to the \textcite{dohu03} manufactured solution.
 It is based on the stream function 
 \[
 \psi (x,y)=x^2(x-1)^2y^2(y-1)^2 =f(x)g(y)
@@ -27,7 +28,7 @@ g''(y)
 
 The manufactured 'smooth pressure' solution is then
 \begin{eqnarray}
-u(x,y) &=& \partial_y \psi = f(x)g'(y) \nn\\
+u(x,y) &=& \partial_y \psi = f(x)g'(y) = x^2(x-1)^2 2y(y-1)(2y-1) \nn\\
 v(x,y) &=& -\partial_x \psi = -f'(x)g(y) \nn\\
 p(x,y) &=& \frac12 x^2 -\frac16 \nn
 \end{eqnarray}
@@ -61,12 +62,15 @@ p(x,y) &=& \frac12 x^2 -\frac16 \nn
 \upnu_{rms}
 &=& \sqrt{ \frac{1}{L_xL_y} \iint (u^2+v^2) dxdy   } \nn\\
 &=& \sqrt{ \frac{1}{L_xL_y} \iint (f^2g'^2+f'^2g^2) dxdy   } \nn\\
-&=& \sqrt{ \frac{1}{L_xL_y} \left( 
+&=& \sqrt{ \left( 
 \underbrace{\int_0^1 f^2 dx}_{1/630} 
 \underbrace{\int_0^1 g'^2 dy}_{2/105}
 + 
 \underbrace{\int_0^1 f'^2 dx }_{2/105}
-\underbrace{\int_0^1g^2dy}_{1/630} \right) dxdy} 
+\underbrace{\int_0^1g^2dy}_{1/630} \right) dxdy} \nn\\
+1/33075 * 2
+&=& \frac{1}{105}\sqrt{\frac23} \nn\\
+&\simeq&  0.007776157913597390787927885951... 
 \end{eqnarray}
 
 The authors also define a non-smooth pressure case:
@@ -84,5 +88,8 @@ with
 \frac{\partial p}{\partial x} (x,y)&=& 2(x-1/2)y(1-y)\exp(x-1/2)^2 \nn\\
 \frac{\partial p}{\partial y} (x,y)&=& (1-2y) \exp(x-1/2)^2 \nn
 \end{eqnarray}
+However it is not clear to me how to implement this since only the gradient of the pressure appears 
+in the equations. 
+
 
 

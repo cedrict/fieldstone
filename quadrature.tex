@@ -446,79 +446,8 @@ We will use this result in the following section.
 
 %----------------------------------------
 \subsubsection{Quadrature on tetrahedra}
+\input{quadrature_tetrahedra}
 
-\begin{remark}
-In what follows the coefficients in the tables are not the reduced coordinates
-of the quadratue points but the coefficients corresponding to the 4 nodes.
-\end{remark}
-
-Quadrature rules on tetrahedra take the form:
-\[
-\int\int\int_{el} f(x,y,z) dxdydz = V_{el} \sum_{iq=1}^{nqel} 
-w_{iq} f(\xi^{iq}_1,\xi^{iq}_2,\xi^{iq}_3,\xi^{iq}_4) 
-\]
-or, that is to say:
-\[
-\int\int\int_{el} f(x,y,z) dxdydz = \sum_{iq=1}^{nqel} 
-(w_{iq}V_{el}) f(\xi^{iq}_1,\xi^{iq}_2,\xi^{iq}_3,\xi^{iq}_4) 
-\]
-with in our case $V_{el}=1/6$.
-
-In the literature it can be found that a one point quadrature is characterised by 
-\[
-w_{iq}=1 \quad\quad\quad \xi^{iq}_1=\xi^{iq}_2=\xi^{iq}_3=\xi^{iq}_4=0.25
-\]
-i.e, the coordinates of the single point are given by:
-\[
-x_{iq}=\sum_{i=1}^4 \xi_i^{iq} x_i = \frac{1}{4} (x_1+x_2+x_3+x_4)
-\]
-Same for $y$ and $z$ coordinates. 
-
-A four-point quadrature rule is characterised by $w_{iq}=V_{el}*0.25=1/24\simeq 04166666666666667$ and 
-
-\begin{tabular}{lcccc}
-\hline
- & $\xi_1$ & $\xi_2$ & $\xi_3$ & $\xi_4$ \\
-\hline\hline
-iq=1 & 0.585410196624969 & 0.138196601125011 & 0.138196601125011 & 0.138196601125011 \\
-iq=2 & 0.138196601125011 & 0.585410196624969 & 0.138196601125011 & 0.138196601125011 \\
-iq=3 & 0.138196601125011 & 0.138196601125011 & 0.585410196624969 & 0.138196601125011 \\
-iq=4 & 0.138196601125011 & 0.138196601125011 & 0.138196601125011 & 0.585410196624969 \\
-\hline
-\end{tabular}
-
-We then have:
-\[
-r_{iq}=\sum_{i=1}^4 \xi_i^{iq} x_i 
-= (\xi_1^{iq},\xi_2^{iq},\xi_3^{iq},\xi_4^{iq})\cdot(r_1,r_2,r_3,r_4) 
-= (\xi_1^{iq},\xi_2^{iq},\xi_3^{iq},\xi_4^{iq})\cdot(0,1,0,0) 
-= \xi_2^{iq}
-\]
-\[
-s_{iq}=\sum_{i=1}^4 \xi_i^{iq} y_i 
-= (\xi_1^{iq},\xi_2^{iq},\xi_3^{iq},\xi_4^{iq})\cdot(s_1,s_2,s_3,s_4) 
-= (\xi_1^{iq},\xi_2^{iq},\xi_3^{iq},\xi_4^{iq})\cdot(0,0,1,0) 
-= \xi_3^{iq}
-\]
-\[
-t_{iq}=\sum_{i=1}^4 \xi_i^{iq} z_i 
-= (\xi_1^{iq},\xi_2^{iq},\xi_3^{iq},\xi_4^{iq})\cdot(t_1,t_2,t_3,t_4) 
-= (\xi_1^{iq},\xi_2^{iq},\xi_3^{iq},\xi_4^{iq})\cdot(0,0,0,1) 
-= \xi_4^{iq}
-\]
-Finally:
-
-\begin{tabular}{ccccc}
-\hline
-     & $r_q$ & $s_q$ & $t_q$  & $w_q$ \\
-\hline
-\hline
-iq=1 & 0.138196601125011 & 0.138196601125011 & 0.138196601125011 & 0.04166666666666667\\
-iq=2 & 0.585410196624969 & 0.138196601125011 & 0.138196601125011 & 0.04166666666666667\\
-iq=3 & 0.138196601125011 & 0.585410196624969 & 0.138196601125011 & 0.04166666666666667\\
-iq=4 & 0.138196601125011 & 0.138196601125011 & 0.585410196624969 & 0.04166666666666667\\
-\hline
-\end{tabular}
 
 
 %------------------------------------------

@@ -1,0 +1,37 @@
+\begin{flushright} {\tiny {\color{gray} pair\_chen.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+What follows is tentative!
+
+This space is proposed in \textcite{chen93} (1993), albeit not in the 
+context of the Stokes equations.
+
+It is based on the mid-point variant of the RT basis functions, 
+\begin{eqnarray}
+\bN_1(r,s) &=& \frac{1}{4} (1-2s-(r^2-s^2)) \nonumber\\
+\bN_2(r,s) &=& \frac{1}{4} (1+2r+(r^2-s^2)) \nonumber\\
+\bN_3(r,s) &=& \frac{1}{4} (1+2s-(r^2-s^2)) \nonumber\\
+\bN_4(r,s) &=& \frac{1}{4} (1-2r+(r^2-s^2)) \nonumber
+\end{eqnarray}
+to which a $P_2$ bubble is added
+\[
+\phi(r,s) = 1-\frac34(r^2+s^2)
+\]
+Note thath this function is zero at locations $\pm 1/\sqrt{3}$ 
+on all four edges and exactly 1 in the middle. 
+
+A field $f$ is represented inside the element by 
+\[
+f^h(r,s)=a \bN_1(r,s)
++b \bN_2(r,s)
++c \bN_3(r,s)
++d \bN_4(r,s)
++e \phi(r,s)
+\]
+We immediately see that this space is not interpolatory, i.e. the basis function $\phi(r,s)$ cannot be 1 in the middle and 0 at the other four nodes. 
+
+\textcite{chen} also extends this to 3D in the paper. 
+
+This space is used for velocity and a $Q_0$ space is used for 
+pressure in \stone~120 (only because the basis functions above are
+based on the Rannacher-Turek ones).

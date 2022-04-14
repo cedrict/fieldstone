@@ -3,28 +3,25 @@
 It is based on \textcite{han84} (also mentioned in Sheen (2020) \cite{shee20}).
 The nodes are at the same location as for the RT element above, but 
 there is an additional bubble function in the middle:
-\begin{verbatim}
-+====3====+
-|         |
-4    5    2
-|         |
-+====1====+
-\end{verbatim}
+
+\input{tikz/tikz_han}
+
 Inside the reference element we assume that a field $f$
 can be represented by 
 \begin{eqnarray}
 f^h(r,s) 
-&=& a+ br +cs +d \phi(r) +e \phi(s) \nn\\
-&=& a+ br +cs +d \frac{5r^4-3r^2}{2}+e \frac{5s^4-3s^2}{2} \nn
+%&=& a+ br +cs +d \phi(r) +e \phi(s) \nn\\
+&=& a+ br +cs +d \underbrace{\frac{5r^4-3r^2}{2}}_{\phi(r)}
++e \underbrace{\frac{5s^4-3s^2}{2}}_{\phi(s)} \nn
 \end{eqnarray}
 We then must have 
-\begin{eqnarray}
-f_1 = f^h(r=1,s=0) &=& a+ b +d \nn\\
-f_2 = f^h(r=0,s=1) &=& a+ c +e \nn\\
-f_3 = f^h(r=-1,s=0) &=& a- b +d \nn\\
-f_4 = f^h(r=0,s=-1) &=& a -c +e \nn\\
-f_5 = f^h(r=0,s=0) &=& a  \nn
-\end{eqnarray}
+\begin{align}
+f_1 &= f^h(r=1,s=0) &= a+ b +d \nn\\
+f_2 &= f^h(r=0,s=1) &= a+ c +e \nn\\
+f_3 &= f^h(r=-1,s=0) &= a- b +d \nn\\
+f_4 &= f^h(r=0,s=-1) &= a -c +e \nn\\
+f_5 &= f^h(r=0,s=0) &= a  \nn
+\end{align}
 and we easily get 
 \[
 a = f_5 
@@ -67,8 +64,8 @@ which has us define
 \bN_4(r,s) &=& -\frac{s - \phi(s)}{2}\nn\\
 \bN_5(r,s) &=& 1-\phi(r)-\phi(s)\nn
 \end{eqnarray}
-We have of course the following properties $\sum_{i=1}^5 \bN_i(r,s) = 1$ and 
-$\bN_i(r_j,s_j) = \delta_{ij}  \qquad i,j \in 1,5$. 
+We have of course the following properties $\sum\limits_{i=1}^5 \bN_i(r,s) = 1$ and 
+$\bN_i(r_j,s_j) = \delta_{ij},\;  i,j \in 1,5$. 
 The partial derivatives of the basis functions are as follows
 \begin{eqnarray}
 \partial_r \bN_1(r,s) &=& \frac{1 + \phi'(r)}{2} \nn\\
