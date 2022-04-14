@@ -132,7 +132,12 @@ $P_{-1}$ & $\times$ & $\sqrt{}$ & ?         &  ?        & $\sqrt{}$ & ?         
 \end{center}
 
 
+\newpage
+%-----------------------------------
 
+\input{python_codes/fieldstone_120/tikz_potatoes}
+
+$P_1^{nc} \times P_0$ belongs to non-conforming but it does not work.
 
 \newpage
 %-----------------------------------
@@ -802,11 +807,12 @@ Conclusions:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results - square sinker}
 
-Unit square. No-slip boundary conditions. domain filled with fluid with $\eta_f=1$ and $\rho_f=1$.
+Unit square. Free-slip boundary conditions. domain filled with fluid with $\eta_f=1$ and $\rho_f=1$.
 Square sinker in the middle of the domain of size $0.25\times 0.25$ with $\eta_s=100$ and
-$\rho_s=1.001$. Gravity is $\vec{g}=-\vec{e}_y$. Resolutions nelx=8, 16, 32, 64, 128 
-are chosen so that element boundaries align with sinker boundaries 
-(material averaging is irrelevant). 
+$\rho_s=1.001$. Gravity is $\vec{g}=-\vec{e}_y$. 
+%Resolutions nelx=8, 16, 32, 64, 128 
+%are chosen so that element boundaries align with sinker boundaries 
+%(material averaging is irrelevant). 
 
 There is no analytical solution so by setting $\vec{\upnu}^{th}=\vec{0}$ and 
 $p^{th}=0$ the computed errors are in fact the vrms and prms shown hereunder.
@@ -816,6 +822,14 @@ $p^{th}=0$ the computed errors are in fact the vrms and prms shown hereunder.
 \includegraphics[width=6cm]{python_codes/fieldstone_120/results_sinker/pressure}\\
 {\captionfont Velocity and pressure field on $64\times 64$ mesh of $Q_2\times Q_1$ elements.}
 \end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results_sinker/errors-velocity-all}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results_sinker/errors-pressure-all}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results_sinker/errors-divv-all}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/results_sinker/vrms_zoom}
+\end{center}
+
 
 
 %\begin{center}
@@ -831,8 +845,10 @@ $p^{th}=0$ the computed errors are in fact the vrms and prms shown hereunder.
 conclusion:
 
 \begin{itemize}
-\item DSSY and RT elements are not usable for buoyancy-driven flows in the presence of a hydrostatic 
-background. RETRIEVE email correspondance with Rannacher! show velocity field modes. Has smthg to do with 
+\item DSSY, RT and Han elements are not usable for buoyancy-driven flows in the presence of a hydrostatic 
+background. Their velocity is all over the place, but their pressure seems to very slowly 
+converge at high resolution to the pressure of the other elements.
+RETRIEVE email correspondance with Rannacher! show velocity field modes. Has smthg to do with 
 Korn stuff.
 \end{itemize}
 
@@ -853,10 +869,9 @@ mms with nonzero dirichlet bc?
 
 Korn inequality something ?
 
+
+
 Remaining questions/ideas:
-
-
-- plot divv = fct(h)
 
 - no flow benchmark ? i.e bent downwards 2D domain. 
 
@@ -866,5 +881,5 @@ Remark:
 
 - P1NC-P0, MINI, BR and P2P0 compared on mms in \cite{cakp15}
 
-
+- check jolm17 results
 

@@ -10,13 +10,20 @@ from scipy.sparse.linalg import spsolve
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
+# all variables ending with '1' (nel1, icon1, x1, y1, ...) are those pertaining 
+# to the background mesh of either Q1 or P1 elements used for mapping.
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 #import mms_dh as mms
-#import mms_jolm17 as mms
-import mms_sinker as mms
+import mms_jolm17 as mms
+#import mms_sinker as mms
+#import mms_sinker_open as mms
 #import mms_poiseuille as mms
 #import mms_johnbook as mms
 #import mms_bocg12 as mms
+#import mms_solcx as mms
+#import mms_solkz as mms
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -24,16 +31,18 @@ import mms_sinker as mms
 Lx=1
 Ly=1
 
-nelx=32
-nely=32
+nelx=64
+nely=64
 
 ndofV=2
 ndofP=1
 
-Vspace='Q2'
-Pspace='Q1+Q0'
+Vspace='P2'
+Pspace='P1'
 
 visu=1
+
+isoparametric=True
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
@@ -45,11 +54,17 @@ if Vspace=='P1+':   nqpts=6
 if Vspace=='P2+':   nqpts=6
 if Vspace=='P1NC':  nqpts=3
 
-if Vspace=='Q1':   nqpts=2
-if Vspace=='Q2':   nqpts=3
-if Vspace=='Q3':   nqpts=4
-if Vspace=='Q1+':  nqpts=3
-if Vspace=='Q2+':  nqpts=3
+if Vspace=='Q1':    nqpts=2
+if Vspace=='Q2':    nqpts=3
+if Vspace=='Q3':    nqpts=4
+if Vspace=='Q1+':   nqpts=3
+if Vspace=='Q2+':   nqpts=3
+if Vspace=='Han':   nqpts=4
+if Vspace=='Chen':  nqpts=3
+if Vspace=='DSSY1': nqpts=3
+if Vspace=='DSSY2': nqpts=3
+if Vspace=='RT1':   nqpts=3
+if Vspace=='RT2':   nqpts=3
 
 #--------------------------------------------------------------------
 # allowing for argument parsing through command line
@@ -81,11 +96,15 @@ NfemV=NV*ndofV
 NfemP=NP*ndofP
 Nfem=NfemV+NfemP
 
+hx=Lx/nelx
+hy=Ly/nely
+
 print("*****************************")
 print("           daSTONE           ")
 print("*****************************")
 print ('Vspace =',Vspace)
 print ('Pspace =',Pspace)
+print ('space1 =',FE.mapping(Vspace))
 print ('nqpts  =',nqpts)
 print ('nqel   =',nqel)
 print ('nelx   =',nelx)
@@ -110,9 +129,19 @@ bc_fix,bc_val=Tools.bc_setup(xV,yV,Lx,Ly,ndofV,mms.left_bc,mms.right_bc,mms.bott
 print("bc setup: %.3f s" % (timing.time() - start))
 
 #--------------------------------------------------------------------
+# build Q1 or P1 background mesh
+#--------------------------------------------------------------------
+
+space1=FE.mapping(Vspace)
+m1=FE.NNN_m(space1)
+
+N1,nel1,x1,y1,icon1=Tools.cartesian_mesh(Lx,Ly,nelx,nely,space1)
+
+#--------------------------------------------------------------------
 # compute area of elements 
-# This is a good test because it uses the quadrature points and 
-# weights as well as the shape functions. If any area comes out
+# This can be a good test because it uses the quadrature points and 
+# weights as well as the shape functions (if non-isoparametric
+# mapping is used). If any area comes out
 # negative or zero, or if the sum does not equal to the area of the 
 # whole domain then there is a major problem which needs to 
 # be addressed before FE are set into motion.
@@ -131,10 +160,18 @@ for iel in range(0,nel):
         yq=NNNV.dot(yV[iconV[:,iel]]) 
         dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
         dNNNVds=FE.dNNNds(rq,sq,Vspace)
-        jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+        if isoparametric:
+           jcob,jcbi=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+        else:
+           dNNN1dr=FE.dNNNdr(rq,sq,space1)
+           dNNN1ds=FE.dNNNds(rq,sq,space1)
+           jcob,jcbi=Tools.J(m1,dNNN1dr,dNNN1ds,x1[icon1[0:m1,iel]],y1[icon1[0:m1,iel]])
         area[iel]+=jcob*weightq
     #end for
 #end for
+
+if np.abs(area.sum()-Lx*Ly)>1e-8: exit("pb with area calculations")
+
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area meas %.8e " %(area.sum()))
 print("     -> total area anal %.8e " %(Lx*Ly))
@@ -158,6 +195,9 @@ yq = np.zeros(nq,dtype=np.float64)
 uq = np.zeros(nq,dtype=np.float64)
 vq = np.zeros(nq,dtype=np.float64)
 pq = np.zeros(nq,dtype=np.float64)
+    
+dNNNVdx= np.zeros(mV,dtype=np.float64)
+dNNNVdy= np.zeros(mV,dtype=np.float64)
 
 counterq=0
 
@@ -177,11 +217,23 @@ for iel in range(0,nel): # loop over elements
         NNNV=FE.NNN(rq,sq,Vspace)
         dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
         dNNNVds=FE.dNNNds(rq,sq,Vspace)
-        xq[counterq]=NNNV.dot(xV[iconV[0:mV,iel]])
-        yq[counterq]=NNNV.dot(yV[iconV[0:mV,iel]])
-        NNNP=FE.NNN(rq,sq,Pspace,xxP=xP[iconP[:,iel]],yyP=yP[iconP[:,iel]],xxq=xq[counterq],yyq=yq[counterq])
 
-        jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+        if isoparametric:
+           xq[counterq]=NNNV.dot(xV[iconV[0:mV,iel]])
+           yq[counterq]=NNNV.dot(yV[iconV[0:mV,iel]])
+           jcob,jcbi=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+        else:
+           NNN1=FE.NNN(rq,sq,space1)
+           dNNN1dr=FE.dNNNdr(rq,sq,space1)
+           dNNN1ds=FE.dNNNds(rq,sq,space1)
+           xq[counterq]=NNN1.dot(x1[icon1[0:m1,iel]])
+           yq[counterq]=NNN1.dot(y1[icon1[0:m1,iel]])
+           jcob,jcbi=Tools.J(m1,dNNN1dr,dNNN1ds,x1[icon1[0:m1,iel]],y1[icon1[0:m1,iel]])
+
+        dNNNVdx[:]=jcbi[0,0]*dNNNVdr[:]+jcbi[0,1]*dNNNVds[:]
+        dNNNVdy[:]=jcbi[1,0]*dNNNVdr[:]+jcbi[1,1]*dNNNVds[:]
+
+        NNNP=FE.NNN(rq,sq,Pspace,xxP=xP[iconP[:,iel]],yyP=yP[iconP[:,iel]],xxq=xq[counterq],yyq=yq[counterq])
 
         for k in range(0,mV): 
             b_mat[0:3,2*k:2*k+2] = [[dNNNVdx[k],0.        ],  
@@ -287,11 +339,6 @@ if mms.pnormalise and Pspace=='P1+P0':
    for iel in range(0,nel):
        p[iconP[3,iel]]-=avrg_p_p0
 
-
-
-
-
-
 if mms.pnormalise:
    avrg_p=0
    counterq=0
@@ -300,7 +347,14 @@ if mms.pnormalise:
            rq=qcoords_r[iq]
            sq=qcoords_s[iq]
            weightq=qweights[iq]
-           jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+           if isoparametric:
+              dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
+              dNNNVds=FE.dNNNds(rq,sq,Vspace)
+              jcob,jcbi=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+           else:
+              dNNN1dr=FE.dNNNdr(rq,sq,space1)
+              dNNN1ds=FE.dNNNds(rq,sq,space1)
+              jcob,jcbi=Tools.J(m1,dNNN1dr,dNNN1ds,x1[icon1[0:m1,iel]],y1[icon1[0:m1,iel]])
            NNNP=FE.NNN(rq,sq,Pspace,xxP=xP[iconP[:,iel]],yyP=yP[iconP[:,iel]],xxq=xq[counterq],yyq=yq[counterq])
            avrg_p+=NNNP.dot(p[iconP[0:mP,iel]])*jcob*weightq
            counterq+=1
@@ -334,7 +388,14 @@ for iel in range(0,nel):
         dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
         dNNNVds=FE.dNNNds(rq,sq,Vspace)
         NNNP=FE.NNN(rq,sq,Pspace,xxP=xP[iconP[:,iel]],yyP=yP[iconP[:,iel]],xxq=xq[counterq],yyq=yq[counterq])
-        jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+        if isoparametric:
+           jcob,jcbi=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+        else:
+           dNNN1dr=FE.dNNNdr(rq,sq,space1)
+           dNNN1ds=FE.dNNNds(rq,sq,space1)
+           jcob,jcbi=Tools.J(m1,dNNN1dr,dNNN1ds,x1[icon1[0:m1,iel]],y1[icon1[0:m1,iel]])
+        dNNNVdx[:]=jcbi[0,0]*dNNNVdr[:]+jcbi[0,1]*dNNNVds[:]
+        dNNNVdy[:]=jcbi[1,0]*dNNNVdr[:]+jcbi[1,1]*dNNNVds[:]
         uq[counterq]=NNNV.dot(u[iconV[0:mV,iel]])
         vq[counterq]=NNNV.dot(v[iconV[0:mV,iel]])
         pq[counterq]=NNNP.dot(p[iconP[0:mP,iel]])
@@ -378,6 +439,7 @@ for i in range(NP):
 if visu:
 
    Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'mesh.vtu')
+   Tools.export_elements_to_vtu(x1,y1,icon1,space1,'mesh1.vtu')
 
    Tools.export_swarm_to_ascii(xV,yV,'Vnodes.ascii')
    Tools.export_swarm_to_ascii(xP,yP,'Pnodes.ascii')

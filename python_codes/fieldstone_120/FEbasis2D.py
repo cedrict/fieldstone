@@ -240,6 +240,14 @@ def NNN(r,s,space,**keyword_arguments):
        val[3]=0.25*(1.-r)*(1.+s)
        val[4]=1
 
+    if space=='Chen':
+       val = np.zeros(5,dtype=np.float64)
+       val[0]=0.25*(1-r**2-2*s+s**2)
+       val[1]=0.25*(1+2*r+r**2-s**2)
+       val[2]=0.25*(1-r**2+2*s+s**2)
+       val[3]=0.25*(1-2*r+r**2-s**2)
+       val[4]=1-3/4*(r**2+s**2)
+
     return val
 
 #------------------------------------------------------------------------------
@@ -410,6 +418,15 @@ def dNNNdr(r,s,space):
        val[0]=0
        val[1]=2
        val[2]=-2
+
+    if space=='Chen':
+       val = np.zeros(5,dtype=np.float64)
+       val[0]=0.5*(-r)  
+       val[1]=0.5*(1+r) 
+       val[2]=0.5*(-r)  
+       val[3]=0.5*(-1+r)
+       val[4]=-1.5*r
+
 
     return val 
 
@@ -582,6 +599,14 @@ def dNNNds(r,s,space):
        val[1]=2
        val[2]=0
 
+    if space=='Chen':
+       val = np.zeros(5,dtype=np.float64)
+       val[0]=0.5*(-1+s)
+       val[1]=0.5*(-s)
+       val[2]=0.5*(1+s)
+       val[3]=0.5*(-s)
+       val[4]=-1.5*s
+
     return val 
 
 #------------------------------------------------------------------------------
@@ -649,7 +674,7 @@ def NNN_r(space):
        val = np.zeros(4,dtype=np.float64)
        val[:]=[0,1,0,-1]
 
-    if space=='Han':
+    if space=='Han' or space=='Chen':
        val = np.zeros(5,dtype=np.float64)
        val[:]=[0,1,0,-1,0]
 
@@ -724,7 +749,7 @@ def NNN_s(space):
        val = np.zeros(4,dtype=np.float64)
        val[:]=[-1,0,1,0]
 
-    if space=='Han':
+    if space=='Han' or space=='Chen':
        val = np.zeros(5,dtype=np.float64)
        val[:]=[-1,0,1,0,0]
 
@@ -764,6 +789,20 @@ def NNN_m(space):
     if space=='RT1':    return 4
     if space=='RT2':    return 4
     if space=='Han':    return 5
+    if space=='Chen':   return 5
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+def mapping(Vspace):
+
+    if Vspace=='Q0' or Vspace=='Q1'  or Vspace=='Q2'  or Vspace=='Q3'  or\
+       Vspace=='Q4' or Vspace=='Q1+' or Vspace=='Q2s' or Vspace=='Han' or\
+       Vspace=='DSSY1' or Vspace=='DSSY2' or Vspace=='RT1' or Vspace=='RT2' or\
+       Vspace=='Chen':
+       return 'Q1'
+    else:
+       return 'P1' 
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -779,7 +818,7 @@ def visualise_nodes(space):
     plt.title(space)
     if space=='Q1' or space=='Q2' or space=='Q3' or space=='Q4' or space=='Q1+' or \
        space=='DSSY1' or space=='DSSY2' or space=='RT1' or space=='RT2' or space=='Q2s' or\
-       space=='Han':
+       space=='Han' or space=='Chen':
        plt.xlim([-1.1,+1.1])
        plt.ylim([-1.1,+1.1])
        plt.plot([-1,1,1,-1,-1],[-1,-1,1,1,-1],color='teal',linewidth=2)

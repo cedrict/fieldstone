@@ -906,7 +906,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
        #end for
 
     #---------------------------------
-    elif space=='Han':
+    elif space=='Han' or space=='Chen':
        N=(nely+1)*nelx + nely*(nelx+1)+nel
        x = np.empty(N,dtype=np.float64) 
        y = np.empty(N,dtype=np.float64) 
@@ -1319,20 +1319,15 @@ def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
 #------------------------------------------------------------------------------
 
 def J(m,dNdr,dNds,x,y):
-    jcb = np.zeros((2,2),dtype=np.float64)
-    jcb[0,0] = dNdr.dot(x)
-    jcb[0,1] = dNdr.dot(y)
-    jcb[1,0] = dNds.dot(x)
-    jcb[1,1] = dNds.dot(y)
+    jcb=np.zeros((2,2),dtype=np.float64)
+    jcb[0,0]=dNdr.dot(x)
+    jcb[0,1]=dNdr.dot(y)
+    jcb[1,0]=dNds.dot(x)
+    jcb[1,1]=dNds.dot(y)
     jcbi=np.linalg.inv(jcb)
-    #print(jcbi)
     jcob=np.linalg.det(jcb)
     if jcob<0: exit('jcob<0')
-    dNdx= np.zeros(m,dtype=np.float64)
-    dNdy= np.zeros(m,dtype=np.float64)
-    dNdx[:]=jcbi[0,0]*dNdr[:]+jcbi[0,1]*dNds[:]
-    dNdy[:]=jcbi[1,0]*dNdr[:]+jcbi[1,1]*dNds[:]
-    return jcob,jcbi,dNdx,dNdy
+    return jcob,jcbi
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------

@@ -17,7 +17,8 @@ print('=========================================')
 print(' tester 3: linear fields')
 print('=========================================')
 
-for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','P1','P1+','P1NC','P2','P2+','P3']:
+for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','Chen',\
+               'P1','P1+','P1NC','P2','P2+','P3']:
     mV=FE.NNN_m(Vspace)
     rnodes=FE.NNN_r(Vspace)
     snodes=FE.NNN_s(Vspace)
