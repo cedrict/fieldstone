@@ -795,7 +795,6 @@ def NNN_m(space):
 #------------------------------------------------------------------------------
 
 def mapping(Vspace):
-
     if Vspace=='Q0' or Vspace=='Q1'  or Vspace=='Q2'  or Vspace=='Q3'  or\
        Vspace=='Q4' or Vspace=='Q1+' or Vspace=='Q2s' or Vspace=='Han' or\
        Vspace=='DSSY1' or Vspace=='DSSY2' or Vspace=='RT1' or Vspace=='RT2' or\

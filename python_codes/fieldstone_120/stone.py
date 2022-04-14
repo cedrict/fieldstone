@@ -31,18 +31,18 @@ import mms_jolm17 as mms
 Lx=1
 Ly=1
 
-nelx=64
-nely=64
+nelx=8
+nely=8
 
 ndofV=2
 ndofP=1
 
-Vspace='P2'
-Pspace='P1'
+Vspace='Q4'
+Pspace='Q3'
 
 visu=1
 
-isoparametric=True
+isoparametric=False
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
@@ -57,6 +57,7 @@ if Vspace=='P1NC':  nqpts=3
 if Vspace=='Q1':    nqpts=2
 if Vspace=='Q2':    nqpts=3
 if Vspace=='Q3':    nqpts=4
+if Vspace=='Q4':    nqpts=4
 if Vspace=='Q1+':   nqpts=3
 if Vspace=='Q2+':   nqpts=3
 if Vspace=='Han':   nqpts=4
