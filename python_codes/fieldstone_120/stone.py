@@ -37,35 +37,19 @@ nely=8
 ndofV=2
 ndofP=1
 
-Vspace='Q4'
-Pspace='Q3'
+Vspace='P2+'
+Pspace='P-1'
 
 visu=1
 
 isoparametric=False
 
+randomize_mesh=False
+
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
 
-if Vspace=='P1':    nqpts=3
-if Vspace=='P2':    nqpts=6
-if Vspace=='P3':    nqpts=6
-if Vspace=='P1+':   nqpts=6
-if Vspace=='P2+':   nqpts=6
-if Vspace=='P1NC':  nqpts=3
-
-if Vspace=='Q1':    nqpts=2
-if Vspace=='Q2':    nqpts=3
-if Vspace=='Q3':    nqpts=4
-if Vspace=='Q4':    nqpts=4
-if Vspace=='Q1+':   nqpts=3
-if Vspace=='Q2+':   nqpts=3
-if Vspace=='Han':   nqpts=4
-if Vspace=='Chen':  nqpts=3
-if Vspace=='DSSY1': nqpts=3
-if Vspace=='DSSY2': nqpts=3
-if Vspace=='RT1':   nqpts=3
-if Vspace=='RT2':   nqpts=3
+nqpts=Q.nqpts_default(Vspace)
 
 #--------------------------------------------------------------------
 # allowing for argument parsing through command line
@@ -76,7 +60,8 @@ if int(len(sys.argv) == 6):
    nely = int(sys.argv[2])
    Vspace = sys.argv[3]
    Pspace = sys.argv[4]
-   nqpts = int(sys.argv[5])
+   if  int(sys.argv[5])>0:
+       nqpts = int(sys.argv[5])
    visu=0
 
 #--------------------------------------------------------------------
@@ -137,6 +122,11 @@ space1=FE.mapping(Vspace)
 m1=FE.NNN_m(space1)
 
 N1,nel1,x1,y1,icon1=Tools.cartesian_mesh(Lx,Ly,nelx,nely,space1)
+
+if randomize_mesh:
+   Tools.randomize_background_mesh(x1,y1,hx,hy,N1,Lx,Ly)
+   Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xV,yV,iconV,nel,Vspace)
+   Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xP,yP,iconP,nel,Pspace)
 
 #--------------------------------------------------------------------
 # compute area of elements 
@@ -418,7 +408,7 @@ errp=np.sqrt(errp/(Lx*Ly))
 errdivv=np.sqrt(errdivv/(Lx*Ly))
 
 print("     -> nel= %6d ; vrms= %.8e | vrms_th= %.8e | %7d %7d" %(nel,vrms,mms.vrms_th(),NfemV,NfemP))
-print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errdivv= %.8e | %7d %7d" %(nel,errv,errp,errdivv,NfemV,NfemP))
+print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errdivv= %.8e | %7d %7d %.8e" %(nel,errv,errp,errdivv,NfemV,NfemP,hx))
 
 print("compute vrms & errors: %.3f s" % (timing.time() - start))
 

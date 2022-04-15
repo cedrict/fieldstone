@@ -618,69 +618,72 @@ def NNN_r(space):
        val = np.zeros(1,dtype=np.float64)
        val[0]=0
 
-    if space=='P0':
+    elif space=='P0':
        val = np.zeros(1,dtype=np.float64)
        val[0]=1/3
 
-    if space=='Q1' or space=='Q-1':
+    elif space=='Q1' or space=='Q-1':
        val = np.zeros(4,dtype=np.float64)
        val[:]=[-1,1,1,-1]
 
-    if space=='Q1+' or space=='Q1+Q0':
+    elif space=='Q1+' or space=='Q1+Q0':
        val = np.zeros(5,dtype=np.float64)
        val[:]=[-1,1,1,-1,0]
 
-    if space=='P1':
+    elif space=='P1' or space=='P-1':
        val = np.zeros(3,dtype=np.float64)
        val[:]=[0,1,0]
 
-    if space=='P1+' or space=='P1+P0':
+    elif space=='P1+' or space=='P1+P0':
        val = np.zeros(4,dtype=np.float64)
        val[:]=[0,1,0,1/3]
 
-    if space=='P2':
+    elif space=='P2':
        val = np.zeros(6,dtype=np.float64)
        val[:]=[0,1,0,0.5,0.5,0]
 
-    if space=='P2+':
+    elif space=='P2+':
        val = np.zeros(7,dtype=np.float64)
        val[:]=[0,1,0,0.5,0.5,0,1./3.]
 
-    if space=='Q2':
+    elif space=='Q2':
        val = np.zeros(9,dtype=np.float64)
        val[:]=[-1,+1,+1,-1,0,+1,0,-1,0]
 
-    if space=='Q2s':
+    elif space=='Q2s':
        val = np.zeros(8,dtype=np.float64)
        val[:]=[-1,+1,+1,-1,0,+1,0,-1]
 
-    if space=='Q3':
+    elif space=='Q3':
        val = np.zeros(16,dtype=np.float64)
        val[:]=[-1,-1/3,+1/3,+1,-1,-1/3,+1/3,+1,-1,-1/3,+1/3,+1,-1,-1/3,+1/3,+1]
 
-    if space=='P3':
+    elif space=='P3':
        val = np.zeros(10,dtype=np.float64)
        val[:]=[0,1/3,2/3,1,0,1/3,2/3,0,1/3,0]
 
-    if space=='Q4':
+    elif space=='Q4':
        val = np.zeros(25,dtype=np.float64)
        val[:]=[-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1]
 
-    if space=='DSSY1' or space=='DSSY2':
+    elif space=='DSSY1' or space=='DSSY2':
        val = np.zeros(4,dtype=np.float64)
        val[:]=[0,1,0,-1]
 
-    if space=='RT1' or space=='RT2':
+    elif space=='RT1' or space=='RT2':
        val = np.zeros(4,dtype=np.float64)
        val[:]=[0,1,0,-1]
 
-    if space=='Han' or space=='Chen':
+    elif space=='Han' or space=='Chen':
        val = np.zeros(5,dtype=np.float64)
        val[:]=[0,1,0,-1,0]
 
-    if space=='P1NC':
+    elif space=='P1NC':
        val = np.zeros(3,dtype=np.float64)
        val[:]=[0.5,0.5,0]
+
+    else:
+       exit('space missing in NNN_r')
 
     return val
 
@@ -693,69 +696,72 @@ def NNN_s(space):
        val = np.zeros(1,dtype=np.float64)
        val[0]=0
 
-    if space=='P0':
+    elif space=='P0':
        val = np.zeros(1,dtype=np.float64)
        val[0]=1/3
 
-    if space=='Q1' or space=='Q-1':
+    elif space=='Q1' or space=='Q-1':
        val = np.zeros(4,dtype=np.float64)
        val[:]=[-1,-1,1,1]
 
-    if space=='Q1+' or space=='Q1+Q0':
+    elif space=='Q1+' or space=='Q1+Q0':
        val = np.zeros(5,dtype=np.float64)
        val[:]=[-1,-1,1,1,0]
 
-    if space=='P1':
+    elif space=='P1' or space=='P-1':
        val = np.zeros(3,dtype=np.float64)
        val[:]=[0,0,1]
 
-    if space=='P1+' or space=='P1+P0':
+    elif space=='P1+' or space=='P1+P0':
        val = np.zeros(4,dtype=np.float64)
        val[:]=[0,0,1,1/3]
 
-    if space=='P2':
+    elif space=='P2':
        val = np.zeros(6,dtype=np.float64)
        val[:]=[0,0,1,0,0.5,0.5]
 
-    if space=='P2+':
+    elif space=='P2+':
        val = np.zeros(7,dtype=np.float64)
        val[:]=[0,0,1,0,0.5,0.5,1/3]
 
-    if space=='Q2':
+    elif space=='Q2':
        val = np.zeros(9,dtype=np.float64)
        val[:]=[-1,-1,+1,+1,-1,0,+1,0,0]
 
-    if space=='Q2s':
+    elif space=='Q2s':
        val = np.zeros(8,dtype=np.float64)
        val[:]=[-1,-1,+1,+1,-1,0,+1,0]
 
-    if space=='Q3':
+    elif space=='Q3':
        val = np.zeros(16,dtype=np.float64)
        val[:]=[-1,-1,-1,-1,-1/3,-1/3,-1/3,-1/3,+1/3,+1/3,+1/3,+1/3,+1,+1,+1,+1]
 
-    if space=='P3':
+    elif space=='P3':
        val = np.zeros(10,dtype=np.float64)
        val[:]=[0,0,0,0,1/3,1/3,1/3,2/3,2/3,1]
 
-    if space=='Q4':
+    elif space=='Q4':
        val = np.zeros(25,dtype=np.float64)
        val[:]=[-1,-1,-1,-1,-1,-0.5,-0.5,-0.5,-0.5,-0.5,0,0,0,0,0,0.5,0.5,0.5,0.5,0.5,1,1,1,1,1]
 
-    if space=='DSSY1' or space=='DSSY2':
+    elif space=='DSSY1' or space=='DSSY2':
        val = np.zeros(4,dtype=np.float64)
        val[:]=[-1,0,1,0]
 
-    if space=='RT1' or space=='RT2':
+    elif space=='RT1' or space=='RT2':
        val = np.zeros(4,dtype=np.float64)
        val[:]=[-1,0,1,0]
 
-    if space=='Han' or space=='Chen':
+    elif space=='Han' or space=='Chen':
        val = np.zeros(5,dtype=np.float64)
        val[:]=[-1,0,1,0,0]
 
-    if space=='P1NC':
+    elif space=='P1NC':
        val = np.zeros(3,dtype=np.float64)
        val[:]=[0,0.5,0.5]
+
+    else:
+       exit('space missing in NNN_r')
 
     return val
 
@@ -794,11 +800,11 @@ def NNN_m(space):
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def mapping(Vspace):
-    if Vspace=='Q0' or Vspace=='Q1'  or Vspace=='Q2'  or Vspace=='Q3'  or\
-       Vspace=='Q4' or Vspace=='Q1+' or Vspace=='Q2s' or Vspace=='Han' or\
-       Vspace=='DSSY1' or Vspace=='DSSY2' or Vspace=='RT1' or Vspace=='RT2' or\
-       Vspace=='Chen':
+def mapping(space):
+    if space=='Q0' or space=='Q1'  or space=='Q2'  or space=='Q3'  or\
+       space=='Q4' or space=='Q1+' or space=='Q2s' or space=='Han' or\
+       space=='DSSY1' or space=='DSSY2' or space=='RT1' or space=='RT2' or\
+       space=='Chen':
        return 'Q1'
     else:
        return 'P1' 
@@ -815,6 +821,8 @@ def visualise_nodes(space):
     plt.xlabel('r')
     plt.xlabel('s')
     plt.title(space)
+    ax = plt.gca() #axis handle
+    ax.set_aspect(1)
     if space=='Q1' or space=='Q2' or space=='Q3' or space=='Q4' or space=='Q1+' or \
        space=='DSSY1' or space=='DSSY2' or space=='RT1' or space=='RT2' or space=='Q2s' or\
        space=='Han' or space=='Chen':

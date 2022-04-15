@@ -1,4 +1,6 @@
 import numpy as np
+import random 
+import FEbasis2D as FE
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -1022,6 +1024,29 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
        exit("FEtools:cartesian_mesh: space unknown ")
 
     return N,nel,x,y,icon
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+def randomize_background_mesh(x1,y1,hx,hy,N1,Lx,Ly):
+    alpha=0.1
+    for i in range(0,N1):
+        psi=random.uniform(-1.,+1)
+        phi=random.uniform(-1.,+1)
+        if x1[i]>0 and x1[i]<Lx and y1[i]>0 and y1[i]<Ly:
+           x1[i]+=hx*psi*alpha
+           y1[i]+=hy*phi*alpha
+
+def adapt_FE_mesh(x1,y1,icon1,m1,space1,x,y,icon,nel,space):
+    r=FE.NNN_r(space)
+    s=FE.NNN_s(space)
+    m=FE.NNN_m(space)
+    for iel in range(0,nel):
+        for i in range(0,m):
+            NNN1=FE.NNN(r[i],s[i],space1)
+            x[icon[i,iel]]=NNN1.dot(x1[icon1[0:m1,iel]])
+            y[icon[i,iel]]=NNN1.dot(y1[icon1[0:m1,iel]])
+    
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------

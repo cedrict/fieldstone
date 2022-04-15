@@ -19,8 +19,8 @@ So far the boundary conditions of this exercise are:
 \item Incompressible isothermal Stokes flow, but not isoviscous
 \item Most of commonly used element pairs for Stokes equations + some rarer ones 
 \item Dirichlet boundary conditions 
-\item Isoparametric mapping (Should I change it to (bi)-linear mapping? all my elements are either 
-rectangles or right triangles, so that it should not matter, right?)
+\item Isoparametric mapping or (bi)-linear mapping? 
+\item Interior nodes positions with added randomness
 \item Stokes matrix fully built and sequential direct solver is used
 \item No stabilised formulations, i.e. no $Q_1\times Q_1$-stab, $Q_1\times P_0$-stab, or 
       $P_1\times P_1$-stab
@@ -28,7 +28,8 @@ rectangles or right triangles, so that it should not matter, right?)
 \end{itemize}
 \item Run a suite of manufactured solution benchmarks with all 
 these finite element pairs and assess their accuracy.
-\item show $L_2$ errors ($v$, $p$, $div(\vec\upnu)$) as function of $h$ and the total number of dofs (as in \textcite{cakp15} (2015))
+\item show $L_2$ errors ($v$, $p$, $div(\vec\upnu)$) as function of $h$ and the 
+total number of dofs (as in \textcite{cakp15} (2015))
 \end{itemize}
 
 
@@ -73,7 +74,8 @@ a symmetric grid ('SYMM') for triangular elements:
 22&$P_1\times P_0$       &                  & Section~\ref{ss:p1p0}  (NOT LBB STABLE and unusable)\\
 23&$Q_2\times Q_{-1}$    &                  & Section~\ref{ss:pair_q2qm1} (NOT LBB STABLE)\\
 24&$Q_2\times Q_1+Q_0$   & Augmented $Q_2\times Q_1$ & Section~\ref{ss:pair_q2q1q0} \\
-26&$Q_4\times Q_3$       &                  & \\
+25&$Chen\times Q_0$      &                  & Section~\ref{ss:chenq0} (NOT SURE) \\
+26&$Q_4\times Q_3$       &                  & Section~\ref{ss:q42d}\\
 \hline
 \end{tabular}
 \end{center}
@@ -85,18 +87,21 @@ these should not be included in the publication.
 {\bf Remark 3}: The augmented $P_2\times (P_1+P_0)$ element pair is LBB stable 
 but special care must be taken with respect to the rank-deficiency 
 as explained in \textcite{bocg12} (2012). The same applies to $Q_2\times (Q_1+Q_0)$. 
-We propose a simple fix later. 
+I propose a simple fix later. 
 
 {\bf Remark 4}: The nonconforming $P_1^{NC}\times P_0$ gives me a headache and does not 
-yield accurate results (esp. the pressure). Not sure why... Coercivity/Korn stuff? 
+yield accurate results (esp. the pressure). Not sure why... Coercivity/Korn stuff? I
+have yet to find an article using the element 'as is'.
 
 {\bf Remark 5} Following \textcite{john16} book, I could also do 
-$P_3^+\times P_{-2}$, $Q_3\times P_{-2}$, $P_4\times P_3$, $Q_4\times Q_3$, $Q_4 \times P_{-3}$.
+$P_3^+\times P_{-2}$, $Q_3\times P_{-2}$, $P_4\times P_3$, $Q_4 \times P_{-3}$.
 
 {\bf Remark 6}: A modified $Q_2$ Serendipity element was proposed by \textcite{zhxi20} (2020) 
 (see Section~\ref{sec:serendipity2Db}) but it is only different from the standard serendipity 
 element when the elements are not rectangles. 
 
+{\bf Remark 7}: Using high-order element spaces ($Q_4$, $P_4$, ...) only makes sense in this context
+if the manufactured solution is also a high-order polynomial or contains non-polynomial terms.
 
 \vspace{1cm}
 
@@ -157,7 +162,9 @@ There are three files which contain all the required tools to build most of a FE
 \item \lstinline{NNN_r(space)}: returns the $r_i (i=1,...m)$ coordinates of the support nodes.
 \item \lstinline{NNN_s(space)}: returns the $s_i (i=1,...m)$ coordinates of the support nodes.
 \item \lstinline{NNN_m(space)}: returns the number of support nodes.
+\item \lstinline{mapping(space)}: returns the type of mapping, i.e. $Q_1$ or $P_1$.
 \item \lstinline{visualise_nodes(space)}: generates a png file with the support nodes and the shape of the reference element.
+\item \lstinline{visualise_basis_functions(space)}: is an attempt at making a colormap of the basis functions.
 \end{itemize}
 
 
@@ -177,7 +184,17 @@ In that case only 3,6,7,12,13,16 are authorized.
 \item {\pythonfile FEtools.py} contains
 
 \begin{itemize}
-\item \lstinline{cartesian_mesh(Lx,Ly,nelx,nely,space)}:
+\item \lstinline{cartesian_mesh(Lx,Ly,nelx,nely,space)}: Creates a cartesian mesh of \lstinline{nelx}
+$\times$\lstinline{nely} elements in the domain $[0,L_x]\times[0,L_y]$. It returns the total 
+number of nodes \lstinline{N}, the number of elements \lstinline{nel}, the coordinates of all the 
+nodes in \lstinline{x,y} arrays and the connectivity array \lstinline{icon}.
+\item \lstinline{randomize_background_mesh(x1,y1,hx,hy,N1,Lx,Ly)}: this adds a random perturbation
+to the coordinates of all the nodes of the background mesh inside the domain (i.e. not on the boundary!). 
+The amplitude of the perturbation is bounded by $0.1h_x$ and $0.1h_y$ in the $x$ and $y$ direction.
+\item \lstinline{adapt_FE_mesh(x1,y1,icon1,m1,space1,x,y,icon,nel,space)}: This makes sure that 
+all the support nodes for a given space are displaced so as to follow the randomized 
+background mesh, using a (bi-)linear mapping.
+
 \item \lstinline{export_swarm_to_ascii(x,y,filename)}:
 \item \lstinline{export_swarm_scalar_to_ascii(x,y,f,filename)}:
 \item \lstinline{export_swarm_vector_to_ascii(x,y,u,v,filename)}:
@@ -187,11 +204,14 @@ In that case only 3,6,7,12,13,16 are authorized.
 \item \lstinline{export_swarm_vector_to_vtu(x,y,vx,vy,filename)}:
 \item \lstinline{export_swarm_scalar_to_vtu(x,y,scalar,filename)}:
 \item \lstinline{bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top)}:
-\item \lstinline{J(m,dNdr,dNds,x,y)}:
+\item \lstinline{J(m,dNdr,dNds,x,y)}: computes the Jacobian matrix and its determinant 
+for the mapping. 
 \item \lstinline{assemble_K(K_el,A_sparse,iconV,mV,ndofV,iel)}:
 \item \lstinline{assemble_G(G_el,A_sparse,iconV,iconP,NfemV,mV,mP,ndofV,ndofP,iel)}:
 \item \lstinline{assemble_f(f_el,rhs,iconV,mV,ndofV,iel)}:
 \item \lstinline{apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel)}:
+\item \lstinline{visualise_with_tikz(x,y,space)}: generates a .tex file containing 
+a tikz drawing of the nodes layout. Only works for 3x3 meshes. 
 \end{itemize}
 
 \end{itemize}
@@ -201,24 +221,23 @@ In that case only 3,6,7,12,13,16 are authorized.
 \subsection*{Supported element spaces}
 
 These figures are obtained by running \lstinline{tester6.py}.
-{\color{red} I should try to make these square}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q1_nodes}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q1+_nodes}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q2_nodes}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q2s_nodes}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q3_nodes}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Q4_nodes}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/RT1_nodes}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/DSSY1_nodes}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/Han_nodes}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P1_nodes}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P2_nodes}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P3_nodes}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P1+_nodes}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P1NC_nodes}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/spaces/P2+_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q1_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q2_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q3_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q4_nodes}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q1+_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q2s_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/RT1_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/DSSY1_nodes}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Han_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P1_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P2_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P3_nodes}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P1+_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P1NC_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P2+_nodes}
 \end{center}
 
 \newpage
@@ -450,6 +469,12 @@ import FEquadrature as Q
 import FEtools as Tools 
 \end{lstlisting}
 
+Then the desired setup/manufacture solution is imported, say:
+\begin{lstlisting}
+import mms_jolm17 as mms
+\end{lstlisting}
+
+
 The domain is a unit square:
 \begin{lstlisting}
 Lx=1
@@ -489,12 +514,24 @@ Vspace='Q2'
 Pspace='Q1'
 \end{lstlisting}
 
+Whether a (bi-)linear mapping or isoparametric mapping is used is set with 
+this parameter:
+\begin{lstlisting}
+isoparametric=False
+\end{lstlisting}
+
+Whether the mesh is randominzed or not is set with 
+\begin{lstlisting}
+randomize_mesh=True
+\end{lstlisting}
+
+
 A quadrature order must be assigned. If quadrilateral elements are used
 this parameter is the number of quadrature points per dimension. 
 If triangular elements are used it is the total number of quadrature points 
 inside the element. For example: 
 \begin{lstlisting}
-nqpts=6
+nqpts=Q.nqpts_default(Vpsace)
 \end{lstlisting}
 
 For the chosen velocity and pressure spaces we retrieve the number of nodes 
@@ -542,8 +579,22 @@ We set \lstinline{bc_fix[i]=True} if the value of a given velocity dof \lstinlin
 and the value of \lstinline{bc_val[i]} is the value of the desired boundary condition.
 
 \begin{lstlisting}
-bc_fix,bc_val=Tools.bc_setup(xV,yV,Lx,Ly,ndofV,left_bc,right_bc,bottom_bc,top_bc)
+bc_fix,bc_val=Tools.bc_setup(xV,yV,Lx,Ly,ndofV,mms.left_bc,mms.right_bc,mms.bottom_bc,mms.top_bc)
 \end{lstlisting}
+
+We then build the background mesh used for the mapping:
+\begin{lstlisting}
+space1=FE.mapping(Vspace)
+m1=FE.NNN_m(space1)
+N1,nel1,x1,y1,icon1=Tools.cartesian_mesh(Lx,Ly,nelx,nely,space1)
+if randomize_mesh:
+   Tools.randomize_background_mesh(x1,y1,hx,hy,N1,Lx,Ly)
+   Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xV,yV,iconV,nel,Vspace)
+   Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xP,yP,iconP,nel,Pspace)
+\end{lstlisting}
+
+
+
 
 Then we proceed to compute the volume of each element, i.e. 
 \[
