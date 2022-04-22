@@ -4,6 +4,7 @@ import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from numpy import linalg as LA
+from scipy.sparse import lil_matrix
 
 def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
 
@@ -12,8 +13,8 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
     m=4     # number of nodes making up an element
     ndofV=2  # number of degrees of freedom per node
 
-    nelx = 64
-    nely = 64
+    nelx = 128
+    nely = 128
 
     Lx=500e3 
     Ly=500e3
@@ -110,7 +111,7 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
        # build FE matrix
        #################################################################
 
-       a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+       a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
        b_mat = np.zeros((3,ndofV*m),dtype=np.float64)  # gradient matrix B 
        rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
        N     = np.zeros(m,dtype=np.float64)            # shape functions

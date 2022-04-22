@@ -432,7 +432,7 @@ for iel in range(0, nel):
             dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
             # calculate jacobian matrix
-            jcb = np.zeros((2, 2),dtype=float)
+            jcb = np.zeros((2, 2),dtype=np.float64)
             for k in range(0,m):
                 jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
                 jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
@@ -460,6 +460,32 @@ vrms=np.sqrt(vrms/Lx/Ly)
 print('     -> vrms=',vrms)
 
 print("compute vrms: %.3f s" % (time.time() - start))
+
+#####################################################################
+# compute surface vrms and average velocity
+#####################################################################
+
+hx=Lx/nelx
+
+vrms_surf=0.
+avrgu_surf=0.
+for iel in range(0,nel):
+    if y[icon[3,iel]]/Ly>1-eps: 
+       for iq in [-1, 1]:
+           rq=iq/sqrt3
+           weightq=1.
+           N[0]=0.5*(1-rq)
+           N[1]=0.5*(1+rq)
+           uq=N[0]*u[icon[3,iel]]+N[1]*u[icon[2,iel]]
+           jcob=hx/2
+           vrms_surf+=jcob*weightq*uq**2
+           avrgu_surf+=jcob*weightq*abs(uq)
+
+vrms_surf=np.sqrt(vrms_surf/Lx)
+avrgu_surf/=Lx
+
+print('     -> vrms_surf=',vrms_surf)
+print('     -> avrgu_surf=',avrgu_surf)
 
 #####################################################################
 # export to vtu 

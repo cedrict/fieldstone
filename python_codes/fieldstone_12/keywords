@@ -1,6 +1,7 @@
 2D
 box
 penalty
+Q1P0
 analytical_benchmark
 error_convergence
 stokes_equation

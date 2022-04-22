@@ -8,7 +8,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The domain is a unit square and we solve the mms problem 'VJ3' (see Section~ \ref{mms10}):
+The domain is a unit square and we solve the manufactured solution problem of Section~\ref{ss:mms_jolm17}:
 \begin{eqnarray}
 u(x,y) &=& 200x^2(1-x)^2y(1-y)(1-2y) \nn\\
 v(x,y) &=& -200x(1-x)(1-2x)y^2(1-y)^2 \nn\\
@@ -17,8 +17,6 @@ p(x,y) &=& 10\left[(x-1/2)^3y^2+(1-x)^3(y-1/2)^3 \right] -5/4 \nn
 The 5/4 term in the pressure equation insures that the pressure is exactly zero in the 
 upper right corner (this boundary condition is implemented to get rid of 
 the pressure nullspace). It is also the value of the average pressure over the domain.
-
-
 
 We will look at three second order elements:
 \begin{itemize}

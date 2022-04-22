@@ -20,7 +20,7 @@ def NNV(r,s,A,mx,my):
        NV_6=(1+r)*(1-s**2)*0.5
        NV_7=(1-r**2)*(1+s)*0.5
        NV_8=(1-r)*(1-s**2)*0.5
-       if serendipity==2:
+       if serendipity==2: #eq 29 of zhxi20
           E=(1-r**2)*(1-s**2)
           denom=4*(4*A**2+mx**2+my**2)
           NV_3+=(mx**2-mx*my+my**2)/denom*E
