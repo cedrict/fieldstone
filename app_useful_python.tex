@@ -1,4 +1,4 @@
-\begin{flushright} {\tiny {\color{gray} useful\_python.tex}} \end{flushright}
+\begin{flushright} {\tiny {\color{gray} app\_useful\_python.tex}} \end{flushright}
 
 %--------------------------
 \subsection{Sparse matrices}
@@ -94,6 +94,22 @@ plt.show()
 \begin{center}
 \includegraphics[width=7cm]{images/python/myplot}
 \end{center}
+
+
+
+%----------------------------------
+\subsection{Making simple 3D plots of scatter}
+
+\begin{lstlisting}
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.set_title("insert here text for title")
+size = ..some value..
+ax.scatter3D(x, y, z, s = size)
+\end{lstlisting}
+
+
+
 
 %----------------------------------
 \subsection{How to debug your code}

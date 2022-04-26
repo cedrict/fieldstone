@@ -86,13 +86,7 @@ has also been proved to be LBB stable. These are also called {\color{olive} Sere
 
 %-----------------------------------------------------------------
 \subsubsection{The Rannacher-Turek element - rotated $Q_1\times P_0$} \label{ss:RTq1p0}
-\index{general}{$\tilde{Q}_1\times P_0$}
-\index{general}{Korn's inequality}
-\index{general}{Rannacher-Turek element}
-\index{general}{Nonconforming element}
 \input{pair_rannacher_turek}
-
-
 
 %------------------------------------------------------------------
 \subsubsection{The $P_1\times P_0$} \label{ss:p1p0}
@@ -112,33 +106,30 @@ source?
 
 
 %------------------------------------------------------------------
-\subsubsection{The (stabilised) $P_1\times P_1$} \label{ss:P1P1stab}
+\subsubsection{$P_1\times P_1$-stabilised} \label{ss:P1P1stab}
 
 Like its quadrilateral counterpart $Q_1\times Q_1$, the 
 $P_1\times P_1$ pair is not stable and needs to be stabilised \cite{nosi98,tasu00}.
 TerraNeo code uses stabilised with PSPG \cite{babd20}.
 
+\textcite{nosi98}
+
 %--------------------------------------------------------------------------------------------------
-\subsubsection{The MINI triangular element ($P_1^+\times P_1$) in 2D \label{pair:mini}}
+\subsubsection{$P_1^+\times P_1$ (MINI) in 2D \label{pair:mini}}
 \input{pair_mini}
 
 %--------------------------------------------------------------------------------------------------
-\subsubsection{The quadratic velocity - linear pressure triangle ($P_2\times P_1$) \label{ss:p2p1}}
+\subsubsection{$P_2\times P_1$ \label{ss:p2p1}}
 \input{pair_p2p1}
 
 %----------------------------------------------------------------------
-\subsubsection{The Crouzeix-Raviart triangle ($P_2^+\times P_{-1}$)}
+\subsubsection{$P_2^+\times P_{-1}$  (Crouzeix-Raviart) }
 \label{sec:crouzeix-raviart}
 \input{pair_crouzeixraviart}
 
 %----------------------------------------------------------------------
 \subsubsection{The $P_2^+\times P_{1}$ \label{ss:p2pp1}}
 \input{pair_p2pp1}
-
-%------------------------------------------------------------------
-\subsubsection{The Raviart-Thomas family} \label{ss:raviart_thomas}
-\input{pair_raviart_thomas}
-
 
 %------------------------------------------------------------------
 \subsubsection{The $P_2\times (P_1+P_0)$} \label{ss:p2p1p0}
@@ -151,6 +142,10 @@ TerraNeo code uses stabilised with PSPG \cite{babd20}.
 %------------------------------------------------------------------
 \subsubsection{The $P_3\times P_2$} \label{ss:p3p2}
 \input{pair_p3p2}
+
+%------------------------------------------------------------------
+\subsubsection{The Raviart-Thomas family} \label{ss:raviart_thomas}
+\input{pair_raviart_thomas}
 
 %------------------------------------------------------------------
 \subsubsection{The Bernaudi-Raugel pair} \label{ss:bernaudi_raugel}
@@ -188,7 +183,7 @@ TerraNeo code uses stabilised with PSPG \cite{babd20}.
 
 
 %----------------------------
-\subsubsection{Other elements}
+\subsubsection{Other FE element pairs}
 
 \begin{itemize}
 
@@ -203,7 +198,7 @@ There is one reference to it in \cite{hufb86}.
 
 \item check \textcite{dhhu86} (1986) many flavours of triangles and quads.
 
-\item Bercovier-Pironneau element pair, or $P_1isoP_2$. \textcite{bocg12}.
+\item Bercovier-Pironneau element pair, or $P_1isoP_2$.See \textcite{bocg12} (2012).
 
 \end{itemize}
 

@@ -1,4 +1,9 @@
 
+\index{general}{$\tilde{Q}_1\times P_0$}
+\index{general}{Korn's inequality}
+\index{general}{Rannacher-Turek element}
+\index{general}{Nonconforming element}
+
 This element is the natural quadrilateral analogue
 of the well-known triangular $P_1^{nc} $Stokes element of Crouzeix-Raviart \cite{crra73}.
 This element is sometimes called $Q_1^{rot} \times Q_0$ or the Rannacher-Turek element 
@@ -45,12 +50,16 @@ value-oriented version of the unmapped $Q_1^{rot}\times Q_0$   finite element.
 
 Mahmood \etal \cite{maky17} mention a very important fact: "The chosen nonconforming element requires
 additional stabilization for handling the deformation tensor formulation due to missing Korn's inequality 
-\cite{horg95,knob00}.
+\cite{horg95,knob00,bren04}.
 To this end we employ the standard edge oriented stabilization \cite{tuos02,tuou07} in our simulations."
 This is a rather unfortunate fact that although LBB stable this element needs an additional 
 term in the weak form (see Turek \etal (2002) \cite{tuos02}) 
 so as to suppress parasitic velocity modes when the div-grad formulation 
 of the Stokes equation is used (as opposed to the Laplace formulation -- see \cite[Section 6.5.2]{dohu03}).
+
+This element is used in \textcite{hala01} (2001) in the context of near incompressible elasticity. 
+It is mentioned that it does not fulfill the discrete Korn's inequality. It is then stabilised 
+in a discontinuous Galerkin framework.
 
 \Literature \textcite{shee20} (2020), \textcite{chen92} (1992) , \textcite{chen93} (1993) 
 
