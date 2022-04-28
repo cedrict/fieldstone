@@ -76,6 +76,7 @@ a symmetric grid ('SYMM') for triangular elements:
 24&$Q_2\times Q_1+Q_0$   & Augmented $Q_2\times Q_1$ & Section~\ref{ss:pair_q2q1q0} \\
 25&$Chen\times Q_0$      &                  & Section~\ref{ss:chenq0} (NOT SURE) \\
 26&$Q_4\times Q_3$       &                  & Section~\ref{ss:q42d}\\
+27&$P_4\times P_3$       &                  & Section~\ref{ss:p42d}\\
 \hline
 \end{tabular}
 \end{center}
@@ -107,36 +108,34 @@ if the manufactured solution is also a high-order polynomial or contains non-pol
 
 \begin{center}
 Quadrilateral elements\\
-\begin{tabular}{lccccc}
+\begin{tabular}{lcccccc}
 \hline
 Pspace $\downarrow$ / Vspace $\rightarrow$   
-            & $Q_1$     & $Q_2$     & $Q_2^{(8)}$ & $Q_3$  & $Q_1^+$       \\ 
-$Q_0$       & $\sqrt{}$ & $\sqrt{}$ & ?           & ?         & ?          \\
-$Q_1$       & $\times$  & $\sqrt{}$ & $\sqrt{}$   & ?         & $\sqrt{}$  \\
-$Q_2$       & $\times$  & $\times$  & $\times$    & $\sqrt{}$ & $\times$   \\
-$P_{-1}$    & ?         & $\sqrt{}$ & ?           & ?         & ?          \\
-$P_{-1}(u)$ & ?         & $\sqrt{}$ & ?           & ?         & ?          \\
+            & $Q_1$     & $Q_2$     & $Q_2^{(8)}$ & $Q_3$     & $Q_4$ & $Q_1^+$       \\ 
+$Q_0$       & $\sqrt{}$ & $\sqrt{}$ & ?           & ?         &   & ?          \\
+$Q_1$       & $\times$  & $\sqrt{}$ & $\sqrt{}$   & ?         &   & $\sqrt{}$  \\
+$Q_2$       & $\times$  & $\times$  & $\times$    & $\sqrt{}$ &   & $\times$   \\
+$Q_3$       & $\times$  & $\times$  & $\times$    & $\times$  & $\sqrt{}$ & $\times$ \\
+$P_{-1}$    & ?         & $\sqrt{}$ & ?           & ?         &   & ?          \\
+$P_{-1}(u)$ & ?         & $\sqrt{}$ & ?           & ?         &   & ?          \\
 \hline
 \end{tabular}
 \end{center}
-
-
-
 
 \begin{center}
 Triangular elements\\
-\begin{tabular}{ccccccc}
+\begin{tabular}{cccccccc}
 \hline
 Pspace $\downarrow$ | Vspace $\rightarrow$   
-         & $P_1$    & $P_2$     & $P_3$     & $P_1^+$   & $P_2^+$   & $P_1^{NC}$  \\
-$P_0$    & $\times$ & $\sqrt{}$ & ?         &  ?        &  ?        & $\sqrt{}$   \\
-$P_1$    & $\times$ & $\sqrt{}$ & ?         & $\sqrt{}$ &  ?        & ?           \\
-$P_2$    & $\times$ & $\times$  & $\sqrt{}$ & $\times$  & $\times$  & $\times$    \\
-$P_{-1}$ & $\times$ & $\sqrt{}$ & ?         &  ?        & $\sqrt{}$ & ?           \\
+         & $P_1$    & $P_2$     & $P_3$     & $P_4$    & $P_1^+$   & $P_2^+$   & $P_1^{NC}$  \\
+$P_0$    & $\times$ & $\sqrt{}$ & ?         & $\times$ &  ?        &  ?        & $\sqrt{}$   \\
+$P_1$    & $\times$ & $\sqrt{}$ & ?         & $\times$ & $\sqrt{}$ &  ?        & ?           \\
+$P_2$    & $\times$ & $\times$  & $\sqrt{}$ & $\times$ & $\times$  & $\times$  & $\times$    \\
+$P_3$    & $\times$ & $\times$  & $\times$  & TODO     &           &           &             \\ 
+$P_{-1}$ & $\times$ & $\sqrt{}$ & ?         &          &  ?        & $\sqrt{}$ & ?           \\
 \hline
 \end{tabular}
 \end{center}
-
 
 \newpage
 %-----------------------------------
@@ -928,6 +927,9 @@ Remaining questions/ideas:
 - no flow benchmark ? i.e bent downwards 2D domain. 
 
 - compute jcb, jci, jcob for 3x2 with all elements.
+
+- should I implement edge stab - dG stuff for R-T elements ? if not they should be  
+removed from study. Probably same with Han and Chen.
 
 Remark:
 

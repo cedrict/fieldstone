@@ -40,6 +40,7 @@ for e in {1..25}; do
     if test $e == 24 ; then Vspace=Q2    Pspace=Q1+Q0 nq1=2 nq2=3 nq3=4 ; fi
     if test $e == 25 ; then Vspace=Chen  Pspace=Q0    nq1=2 nq2=3 nq3=4 ; fi
     if test $e == 26 ; then Vspace=Q4    Pspace=Q3    nq1=3 nq2=4 nq3=5 ; fi
+    if test $e == 27 ; then Vspace=P4    Pspace=P3    nq1=6 nq2=7 nq3=12; fi
 
     echo $n ---------- $Vspace X $Pspace ----------
 
