@@ -8,47 +8,29 @@ The success of a mixed finite element formulation crucially depends on a proper 
 
 \input{lbb}
 
-\begin{tabular}{lcl}
-\hline
-name & LBB stable? & source \\
-\hline
-\hline
-$Q_1 \times P_0$ & N & fig.~ 6.1 \cite{dohu} \\
-$Q_1 \times Q_1$ & N & fig.~ 6.1 \cite{dohu} \\
-$Q_2 \times Q_1$ & Y & fig.~ 6.1 \cite{dohu} \\
-Crouzeix-Raviart & Y & fig.~ 6.1 \cite{dohu} \\
-Mini             & Y & fig.~ 6.1 \cite{dohu} \\
-\hline
-$P_2 \times P_1$ & Y & fig.~ 6.1 \cite{dohu} \\
-\hline
-\end{tabular}
-
-
-
 %........................................................................................
 \subsubsection{Families}
 \index{general}{Taylor-Hood}
 
 The family of {\color{olive} Taylor-Hood} finite element spaces on triangular/tetrahedral 
-grids is given by $P_k \times P_{k-1}$ with $k\geq 2$, 
-and on quadrilateral/hexahedral grids by $Q_k \times Q_{k-1}$ with $k\geq 2$.
+grids is given by ${\bm P}_k \times P_{k-1}$ with $k\geq 2$, 
+and on quadrilateral/hexahedral grids by ${\bm Q}_k \times Q_{k-1}$ with $k\geq 2$.
 This means that the pressure is then approximated by continuous functions. 
 
 These finite elements are very popular, in particular the pairs for $k=2$, i.e.
-$Q_2\times Q_1$ and $P_2\times P_1$.
+${\bm Q}_2\times Q_1$ and ${\bm P}_2\times P_1$.
 The reason why $k\geq 2$ comes from the fact that the 
-$Q_1 \times Q_0$ (i.e. $Q_1 \times P_0$) and $P_1\times P_0$
+${\bm Q}_1 \times Q_0$ (often referred to as ${\bm Q}_1 \times P_0$) and ${\bm P}_1\times P_0$
 are not stable elements (they are not inf-sup stable), as
 shown in John \cite[p64]{john16} and \cite[p67]{john16}. 
 
 \begin{remark}
-Note that a similar element to $Q_2 \times Q_1$ has been proposed
-and used succesfully used \cite{taho73,hota74}: it is denoted by $Q_2^{(8)} \times Q_1$ 
+Note that a similar element to ${\bm Q}_2 \times Q_1$ has been proposed
+and used succesfully used in \textcite{taho73} (1973) and \textcite{hota74} (1974): 
+it is denoted by ${\bm Q}_2^{(8)} \times Q_1$ 
 since the center node ('$x^2y^2$') and its associated degrees of freedom have been removed. It 
 has also been proved to be LBB stable. These are also called {\color{olive} Serendipity} elements. 
 \end{remark}
-
-
 
 %........................................................................................
 \subsubsection{The bi/tri-linear velocity - constant pressure element ($Q_1\times P_0$)}
@@ -70,8 +52,6 @@ has also been proved to be LBB stable. These are also called {\color{olive} Sere
 \label{ss:pair_q2qm1}
 \input{pair_q2qm1}
 
-
-
 %----------------------------------------------------------------------
 \subsubsection{The stabilised bi/tri-linear velocity - constant pressure element ($Q_1\times P_0$-stab)}
 \label{ss:pairq1p0stab}
@@ -85,20 +65,20 @@ has also been proved to be LBB stable. These are also called {\color{olive} Sere
 
 
 %-----------------------------------------------------------------
-\subsubsection{The Rannacher-Turek element - rotated $Q_1\times P_0$} \label{ss:RTq1p0}
+\subsubsection{The Rannacher-Turek element - rotated ${ Q}_1\times P_0$} \label{ss:RTq1p0}
 \input{pair_rannacher_turek}
 
 %------------------------------------------------------------------
-\subsubsection{The $P_1\times P_0$} \label{ss:p1p0}
+\subsubsection{The ${ P}_1\times P_0$ pair} \label{ss:p1p0}
 \input{pair_p1p0}
 
 %------------------------------------------------------------------
-\subsubsection{The $P_2\times P_0$} \label{ss:p2p0}
+\subsubsection{The ${ P}_2\times P_0$ pair} \label{ss:p2p0}
 \input{pair_p2p0}
 
 %------------------------------------------------------------------
-\subsubsection{The $Q_2\times Q_0$} \label{ss:pairq2q0}
-\index{general}{$Q_2 \times Q_0$}
+\subsubsection{The ${ Q}_2\times Q_0$ pair} \label{ss:pairq2q0}
+\index{general}{${\bm Q}_2 \times Q_0$}
 
 Quadratic velocities, constant pressure. The element satisfies the inf-sup condition, 
 but the constant pressure assumption may require fine discretisation.
@@ -106,41 +86,41 @@ source?
 
 
 %------------------------------------------------------------------
-\subsubsection{$P_1\times P_1$-stabilised} \label{ss:P1P1stab}
+\subsubsection{The ${ P}_1\times P_1$-stabilised pair} \label{ss:P1P1stab}
 
-Like its quadrilateral counterpart $Q_1\times Q_1$, the 
+Like its quadrilateral counterpart ${\bm Q}_1\times Q_1$, the 
 $P_1\times P_1$ pair is not stable and needs to be stabilised \cite{nosi98,tasu00}.
 TerraNeo code uses stabilised with PSPG \cite{babd20}.
 
 \textcite{nosi98}
 
 %--------------------------------------------------------------------------------------------------
-\subsubsection{$P_1^+\times P_1$ (MINI) in 2D \label{pair:mini}}
+\subsubsection{The ${ P}_1^+\times P_1$ (MINI) pair in 2D \label{pair:mini}}
 \input{pair_mini}
 
 %--------------------------------------------------------------------------------------------------
-\subsubsection{$P_2\times P_1$ \label{ss:p2p1}}
+\subsubsection{The ${ P}_2\times P_1$ pair \label{ss:p2p1}}
 \input{pair_p2p1}
 
 %----------------------------------------------------------------------
-\subsubsection{$P_2^+\times P_{-1}$  (Crouzeix-Raviart) }
+\subsubsection{The ${ P}_2^+\times P_{-1}$ pair  (Crouzeix-Raviart) }
 \label{sec:crouzeix-raviart}
 \input{pair_crouzeixraviart}
 
 %----------------------------------------------------------------------
-\subsubsection{The $P_2^+\times P_{1}$ \label{ss:p2pp1}}
+\subsubsection{The ${ P}_2^+\times P_{1}$ pair \label{ss:p2pp1}}
 \input{pair_p2pp1}
 
 %------------------------------------------------------------------
-\subsubsection{The $P_2\times (P_1+P_0)$} \label{ss:p2p1p0}
+\subsubsection{The ${ P}_2\times (P_1+P_0)$ pair} \label{ss:p2p1p0}
 \input{pair_p2p1p0}
 
 %------------------------------------------------------------------
-\subsubsection{The $Q_2\times (Q_1+Q_0)$} \label{ss:q2q1q0}
+\subsubsection{The ${ Q}_2\times (Q_1+Q_0)$ pair} \label{ss:q2q1q0}
 \input{pair_q2q1q0}
 
 %------------------------------------------------------------------
-\subsubsection{The $P_3\times P_2$} \label{ss:p3p2}
+\subsubsection{The ${ P}_3\times P_2$ pair} \label{ss:p3p2}
 \input{pair_p3p2}
 
 %------------------------------------------------------------------
@@ -172,29 +152,29 @@ TerraNeo code uses stabilised with PSPG \cite{babd20}.
 \index{general}{Nonconforming element}
 \input{pair_han}
 
-
 %------------------------------------------------------------------
 \subsubsection{The Divergence-free nonconforming $P_1^{NC}\times P_0$ pair} \label{ss:p1ncp0}
 \input{pair_p1ncp0}
 
 %------------------------------------------------------------------
-\subsubsection{The Chen nonconforming $Q_1\times Q_0$ pair (?)} \label{ss:chenq0}
+\subsubsection{The Chen nonconforming ${ Q}_1\times Q_0$ pair (?)} \label{ss:chenq0}
 \input{pair_chen}
-
 
 %----------------------------
 \subsubsection{Other FE element pairs}
 
 \begin{itemize}
 
-\item $Q_2\times Q_2$: This element is never used, probably because a) it is unstable, b) it is very costly. 
+\item ${\bm Q}_2\times Q_2$: This element is never used, probably because 
+a) it is unstable, b) it is very costly. 
 There is one reference to it in \cite{hufb86}.
 
-\item $Q_1\times P_{-1}$ Bilinear velocities,  piecewise linear discontinuous polynomial pressure.
+\item ${\bm Q}_1\times P_{-1}$ Bilinear velocities,  piecewise linear discontinuous polynomial pressure.
 
-\item See Fortin \cite{fort81} for various stable low order elements other than the enriched $Q_1^+ \times P_0$
+\item See Fortin \cite{fort81} for various stable low order elements other than the enriched 
+${\bm Q}_1^+ \times P_0$
 
-\item $Q_1\times Q_1$ + nonconforming null edge average \cite{fros07}
+\item ${\bm Q}_1\times Q_1$ + nonconforming null edge average \cite{fros07}
 
 \item check \textcite{dhhu86} (1986) many flavours of triangles and quads.
 

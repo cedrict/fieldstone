@@ -6,9 +6,9 @@
 
 This element is the natural quadrilateral analogue
 of the well-known triangular $P_1^{nc} $Stokes element of Crouzeix-Raviart \cite{crra73}.
-This element is sometimes called $Q_1^{rot} \times Q_0$ or the Rannacher-Turek element 
+This element is sometimes called ${\bm Q}_1^{rot} \times Q_0$ or the Rannacher-Turek element 
 \cite[Section 3.6.5]{john16} (see also Appendix~B.4, example B.53 of \textcite{john16}).
-This rectangular nonconforming \cite{crfa89} element is termed the rotated $Q_1$ element 
+This rectangular nonconforming \cite{crfa89} element is termed the rotated ${\bm Q}_1$ element 
 because of the fact that $r^2-s^2$ can be generated from $rs$ (occurring in the bilinear $Q_1$ 
 element) by a rotation of 45$\degree$ \cite[p93]{chen}.
 The velocity approximation is achieved by rotated dim-linear functions that have 
@@ -23,7 +23,7 @@ software\footnote{\url{http://www.featflow.de/en/index.html}}.
 It is used in the PhD thesis of Gastaldo \cite{gast07} and Ouazzi \cite{ouaz05}.
 It has been 
 successfully coupled to multigrid solvers \cite{chos98,tuos02}.
-This element has been compared to the stabilised $Q_1\times P_0$ element \cite{lisi13}.
+This element has been compared to the stabilised ${\bm Q}_1\times P_0$ element \cite{lisi13}.
 It is mentioned in \cite{hans11}
 
 It essentially comes in two flavours, the Middle Point (MP) and the Mid Value (MV) one.
@@ -42,10 +42,10 @@ computed in both ways are zero."
 John also makes a very important point: "There are also unmapped (non-parametric) versions of 
 these finite element spaces, which define the polynomials directly on the mesh cell K. It is shown in Rannacher
 and Turek (1992) \cite{ratu92} that these versions are inf-sup stable on more general meshes than
-the mapped (parametric) version of the $Q_1^{rot}\times Q_0$ finite element, e.g., on strongly
-nonuniform meshes. Considering all four types of $Q_1^{rot}\times Q_0$ finite elements, the
+the mapped (parametric) version of the ${\bm Q}_1^{rot}\times Q_0$ finite element, e.g., on strongly
+nonuniform meshes. Considering all four types of ${\bm Q}_1^{rot}\times Q_0$ finite elements, the
 optimal order of convergence on perturbed meshes is achieved only by the mean-
-value-oriented version of the unmapped $Q_1^{rot}\times Q_0$   finite element.
+value-oriented version of the unmapped ${\bm Q}_1^{rot}\times Q_0$   finite element.
 \end{remark}
 
 Mahmood \etal \cite{maky17} mention a very important fact: "The chosen nonconforming element requires

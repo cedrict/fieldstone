@@ -1,7 +1,8 @@
 \begin{flushright} {\tiny {\color{gray} lbb.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-WARNING: I am not comfortable writing about this topic. What follows is a rough attempt at making sense of it.
+WARNING: I am not comfortable (yet) writing about this topic. 
+What follows is a rough attempt at making sense of it.
 
 \hspace{.4cm}
 
@@ -9,7 +10,8 @@ The Lady{\v z}henskaya-Babu{\v s}ka-Brezzi (LBB\footnote{
 \url{https://en.wikipedia.org/wiki/Ladyzhenskaya-Babuska-Brezzi_condition}}) condition is a sufficient 
 condition for a saddle point problem to have a unique solution.
 For saddle point problems coming from the Stokes equations, 
-many discretizations are unstable, giving rise to artifacts such as spurious oscillations. 
+many discretizations (i.e. choices for the velocity and pressure polynomial spaces)
+are unstable, giving rise to artifacts such as spurious oscillations. 
 The LBB condition gives criteria for when a discretization of a saddle point problem is stable. 
 It also assures convergence at the optimal rate. 
 
@@ -28,7 +30,9 @@ velocity-pressure pair satisfies the LBB compatibility condition.''
 Elman \etal state: ``[...] Choosing spaces for which the discrete inf-sup condition holds
 and is a delicate matter, and seemingly natural choices of velocity and pressure approximation
 do not work. [...] In general, care must be taken to make the velocity space 
-rich enough compared to the pressure space.''
+rich enough compared to the pressure space.'' By rich enough the authors essentially mean that 
+the order of the polynomials used to represent velocity must be higher than the one used 
+for pressure.
 
 The LBB condition, or inf-sup condition can be proven in different ways, 
 and standard techniques have been designed
@@ -56,12 +60,12 @@ Again to quote Donea \& Huerta \cite{dohu03}: ``If this is the case, the partiti
 is non-singular and delivers uniquely defined velocity and pressure fields. If this is not the case, a
 stable and convergent velocity field might be obtained, but the pressure field is likely
 to present spurious and oscillatory results.'' 
-Note that in the case of the $Q_1 \times P_0$ element it has been shown that the multiple families of 
+Note that in the case of the ${\bm Q}_1 \times P_0$ element it has been shown that the multiple families of 
 checkboard pressure modes actually lie in the kernel of $\G$. \cite{sagl81a,sagl81b}
 
 \hspace{.4cm}
 
-We can look at this in a different manner, as explained in Elman \etal \cite{elsw}:
+We can look at this in a different manner, as explained in \textcite{elsw}:
 the unique solvability of the matrix system
 \begin{equation}
 \left(
@@ -122,8 +126,8 @@ in the system above gives $\G \cdot \vec{\cal P} = \vec{0}$, and implies that an
 up to the nullspace of the matrix $\G$. 
 The bottom line is that if Eq.~\eqref{eq:lbbsyst} is to properly represent a continuous Stokes
 problem, then the mixed approximation spaces need to be chosen carefully.
-Specifically, we have to ensure that $null(\G)=\{1\}$ in the case of enclosed flow,
-and that $null(\G)=\{0\}$, otherwise.
+Specifically, we have to ensure that $\text{null}(\G)=\{1\}$ in the case of enclosed flow,
+and that $\text{null}(\G)=\{0\}$, otherwise.
 
 \textcite{grsa} state: ``LBB stable elements assure the existence of a unique solution to Stokes flow and 
 assure convergence at optimal rate. [...] LBB-unstable elements may not converge, and if they do, they may not do so at the optimal rate.''

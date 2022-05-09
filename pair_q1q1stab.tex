@@ -8,23 +8,30 @@
 \input{tikz/tikz_q1q1_3D}
 \end{minipage}
 
-The $Q_1\times Q_1$ element is not LBB-stable but it can be stabilised. Despite
-some applications in geodnamics (it is used in \textcite{bugs09} (2009) 
+The ${\bm Q}_1\times Q_1$ element is not LBB-stable but it can be stabilised. Despite
+some applications in geodynamics (it is used in \textcite{bugs09} (2009) 
 and \textcite{busa13} (2013)), it is not appropriate for buoyancy-driven flows, 
 as shown in \textcite{thba22}.
 
 See \textcite{nosi01} (2001) for a fourier analysis of the normal 
-and stablised (a la \textcite{hufb86} (1986)) $Q_1\times Q_1$ element.
+and stablised (a la \textcite{hufb86} (1986)) ${\bm Q}_1\times Q_1$ element.
 Stabilisation is worked out out in \textcite{dobo04} (2004), \textcite{bodg06} (2006), 
 and \textcite{bodo06} (2006).
 
-$Q_1\times P_0$-stab. Pro: stabilisation can be switched off; Con: stabilisation for deformed elements? 
+\begin{itemize}
+\item 
+${\bm Q}_1\times P_0$-stab. Pro: stabilisation can be switched off; Con: stabilisation for deformed elements? 
 problem near boundaries: incomplete stencil? choice of parameter $\beta$.
-
-$Q_1\times Q_1$-stab. Pro: easier to implement than $Q_1\times P_0$-stab, stabilisation local to element, easier when elements are not rectangular, no free parameter; Con: stabilisation cannot be switched off.
+\item 
+${\bm Q}_1\times Q_1$-stab. Pro: easier to implement than ${\bm Q}_1\times P_0$-stab, stabilisation local to element, 
+easier when elements are not rectangular, no free parameter; Con: stabilisation cannot be switched off.
+\end{itemize}
 
 \Literature: \textcite{shry78,temr92,tezd92,grcc95,idsn95,knto00,fros07,lihc09}. 
 See \textcite{brlu09} for a review of local projection stabilisation for incompressible flow problems. 
 
 This unstable pair is also used in ice sheet modelling \textcite{heah18} , \textcite{zhjg11}, 
-\textcite{zwgg07}. A $P_1\times P_1$ version of it is used in \textcite{kahp20} (2020).
+\textcite{zwgg07}. A ${\bm P}_1\times P_1$ version of it is used in \textcite{kahp20} (2020).
+
+
+

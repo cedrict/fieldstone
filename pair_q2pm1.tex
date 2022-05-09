@@ -8,18 +8,19 @@ around a blackboard at the Banff Conference on Finite Elements in Flow Problems 
 \input{tikz/tikz_q2pm1}
 \end{center}
 
-This element is crowned "probably the most accurate 2D element" 
+This element is crowned ``probably the most accurate 2D element''
 in \textcite{grsa}.
 
-It is characterised by piecewise Biquadratic velocities, 
+It is characterised by piecewise bi/triquadratic velocities, 
 and piecewise linear discontinuous polynomial pressure. 
-The element satisfies the inf-sup condition, see page 211 of \textcite{hugh}, or 
-p138 of \textcite{elsw}.
+The element satisfies the inf-sup condition, see p.~211 of \textcite{hugh}, or 
+p.~138 of \textcite{elsw}.
 It is used in \textcite{vavs89} (1989) for steady laminar flow in a curved tube. 
 
-See \textcite{boga02} (2002) 
-for the two possible choices for the two definitions of the pressure space (mapped and un-mapped), 
-and check \stone~76 for their implementation.
+When using this element one must be aware of the fact that there are 
+two possible choices for the definitions of the pressure space (mapped and un-mapped) as explained
+in \textcite{boga02} (2002) 
+See \stone~76,120 for their implementation.
 \textcite{bobf08} state: ``On a general quadrilateral mesh, the [pressure] space 
 can be defined in two different ways: either [it] 
 consists of (discontinuous) piecewise linear functions, or it is built
@@ -28,7 +29,7 @@ them to the general elements like it is usually done for continuous finite eleme
 We shall refer to the first possibility as unmapped pressure approach and to the
 second one as mapped pressure approach.''
 Furthermore they state ``So far, we have shown that either the unmapped and the mapped pressure 
-approach gives rise to a stable $Q_2\times P_{-1}$ scheme. However, as a consequence of the
+approach gives rise to a stable ${\bm Q}_2\times P_{-1}$ scheme. However, as a consequence of the
 results proved in \textcite{arbf02} (2002), we have that the mapped pressure approach cannot achieve 
 optimal approximation order. Namely, the unmapped pressure space provides a second-order convergence 
 in $L_2$, while the mapped one achieves only ${\cal O}(h)$ in the same norm.''
@@ -38,14 +39,7 @@ This element is mentioned in \textcite{kaus10} (2010) and \textcite{pefc89} (198
 and it is used in \textcite{freh14} (2014) to study 3D fold growth rates 
 (see online supplementary material) and in \textcite{schm08} (2008).
 
-Note that the serendipity version of this pair, i.e. $Q_2^{(20)}\times P_{-1}$ is also LBB stable
+Note that the serendipity version of this pair, i.e. ${\bm Q}_2^{(20)}\times P_{-1}$ is also LBB stable
 as shown in p180 of Reddy \cite{reddybook2}.
-
-
-%\begin{minipage}{0.58\textwidth}
-%\end{minipage}
-%\hfill
-%\begin{minipage}{0.38\textwidth}
-%\end{minipage}
 
 

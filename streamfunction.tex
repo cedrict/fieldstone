@@ -1,10 +1,17 @@
 \index{general}{Stream Function}
 \begin{flushright} {\tiny {\color{gray} streamfunction.tex}} \end{flushright}
 
-\Literature \cite{giju98}\cite{scja81}\cite{chyu84}\cite{chri84}\cite{hayu94}\cite{olwh97}
-\cite{vanv08,vanj11}
+\Literature 
+\textcite{scja81} (1981),
+\textcite{chyu84} (1984),
+\textcite{chri84} (1984),
+\textcite{hayu94} (1994),
+\textcite{olwh97} (1997),
+\textcite{giju98} (1998),
+\textcite{vanv08} (2008),
+\textcite{vanj11} (2011).
 
-
+\vspace{0.5cm}
 
 The Stream function (commonly denoted by $\Phi$ or $\Psi$) approach is a useful approach in 
 fluid dynamics as it 
@@ -15,13 +22,13 @@ and pressure vanishes from the solution process.
 The stream function is a function of coordinates and time of an inviscid liquid.
 It allows to determine the components of velocity by differentiating the stream function 
 with respect to the space coordinates. 
-A family of curves $\Psi = const$ represent {\it streamlines}, i.e. 
+A family of curves $\Psi = constant$ represent {\color{olive} streamlines}, i.e. 
 the stream function remains constant along a streamline. 
 Although also valid in 3D, this approach is mostly used in 2D because of its 
-relative simplicity {\color{red} REFERENCES}.
+relative simplicity.
 
-%........................................
-\subsubsection{In Cartesian coordinates}
+%............................................
+\subsubsection{In Cartesian coordinates - 2D}
 
 In two dimensions the velocity is obtained as follows:
 \begin{equation}
@@ -39,19 +46,21 @@ Assuming constant viscosity, the Stokes equation writes:
 \begin{equation}
 -{\vec \nabla}p + \eta \Delta {\vec \upnu} + \rho {\vec g} = \vec{0}
 \end{equation}
-Let us introduce the vector ${\vec{W}}$ for convenience such that in each dimension:
+Let us introduce the vector $\vec{W}=(W_x,W_y)$ for convenience such that in each dimension:
 \begin{eqnarray}
 W_x&=&-\frac{\partial p}{\partial x} 
 + \eta\left( \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial x^y} \right) \\
 W_y&=&-\frac{\partial p}{\partial y} 
 + \eta \left(\frac{\partial^2 v}{\partial x^2} + \frac{\partial^2 v}{\partial x^y} \right) 
 \end{eqnarray}
-Taking the curl of the vector ${\vec{W}}$ and only considering the component perpendicular to the $xy$-plane:
+Taking the curl of the vector ${\vec{W}}$ and only considering the component 
+perpendicular to the $xy$-plane:
 \begin{equation}
 \frac{\partial W_y}{\partial x} - \frac{\partial W_x}{\partial y}  = 
 -\frac{\partial \rho g_y}{\partial x} + \frac{\partial \rho g_x}{\partial y}   
 \end{equation}
-The advantage of this approach is that the pressure terms cancel out (the curl of a gradient is always zero), 
+The advantage of this approach is that the pressure terms cancel out 
+(the curl of a gradient is always zero\footnote{\url{https://mathinsight.org/curl_gradient_zero}}), 
 so that:
 \begin{equation}
 \frac{\partial}{\partial x}\eta\left( \frac{\partial^2 v}{\partial x^2} + \frac{\partial^2 v}{\partial x^y}  \right) 
@@ -76,15 +85,13 @@ or,
 -\frac{\partial \rho g_y}{\partial x} + \frac{\partial \rho g_x}{\partial y}   
 \label{eq:sf1}
 \end{equation}
-Note that $\vec\nabla^2 \vec\nabla^2 = \vec\nabla^4 $ is known as the Biharmonic operator.
+Note that $\vec\nabla^2 \vec\nabla^2 = \vec\nabla^4 $ is known as the {\color{olive}Biharmonic operator}.
 \index{general}{Biharmonic Operator} 
-
 These equations are also to be found in the geodynamics literature, 
-see Eq. 1.43 \cite[eq. 1.43]{tack10} or \cite[p 70-71]{gery10}.
+see \cite[eq. 1.43]{tack10} or \cite[p 70-71]{gery10}.
 
 In the presence of temperature variations and multiple compositions, 
-Trim \etal (2020) \cite{trlb20}  use the  following nondimensional 
-equation:
+\textcite{trlb20} (2020)  use the  following nondimensional equation:
 \[
 \left(
 \frac{\partial^2 }{\partial x^2} - 
@@ -108,16 +115,17 @@ Ra_C \frac{\partial C}{\partial x}
 \]
 \todo[inline]{check/rederive this formula!}
 
-
 %........................................
-\subsubsection{In Cylindrical coordinates}
+%\subsubsection{In Cylindrical coordinates}
 
-TODO
+%TODO
 
-VERIFY THOSE! minus signs ?
-\[
-\upnu_r=\frac{1}{r}\frac{\partial \Phi}{\partial \theta} 
-\]
-\[
-\upnu_\theta=-\frac{\partial \Phi}{\partial r} 
-\]
+%VERIFY THOSE! minus signs ?
+%\[
+%\upnu_r=\frac{1}{r}\frac{\partial \Phi}{\partial \theta} 
+%\]
+%\[
+%\upnu_\theta=-\frac{\partial \Phi}{\partial r} 
+%\]
+
+
