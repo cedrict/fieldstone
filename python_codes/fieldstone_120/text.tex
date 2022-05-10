@@ -22,7 +22,7 @@ So far the boundary conditions of this exercise are:
 \item Isoparametric mapping or (bi)-linear mapping? 
 \item Interior nodes positions with added randomness
 \item Stokes matrix fully built and sequential direct solver is used
-\item No stabilised formulations, i.e. no $Q_1\times Q_1$-stab, $Q_1\times P_0$-stab, or 
+\item No stabilised formulations, i.e. no ${\bm Q}_1\times Q_1$-stab, ${\bm Q}_1\times P_0$-stab, or 
       $P_1\times P_1$-stab
 \item No $P_1isoP_2$ or similar spaces
 \end{itemize}
@@ -45,38 +45,38 @@ a symmetric grid ('SYMM') for triangular elements:
 \subsection*{Finite element pairs for the Stokes equation}
 
 \begin{center}
-\begin{tabular}{p{1cm}p{2cm}p{4cm}p{8cm}}
+\begin{tabular}{p{1cm}p{2cm}p{4cm}p{2.5cm}p{5cm}}
 \hline
- &pair & other name & information \\
+ &pair & other name & information & remark \\
 \hline
 \hline
- 1&$Q_1\times Q_0$       & $Q_1\times P_0$  & Section~\ref{ss:pairq1p0} (NOT LBB STABLE but usable)\\
- 2&$Q_2\times Q_0$       &                  & Section~\ref{ss:pairq2q0}\\
- 3&$P_2\times P_0$       &                  & Section~\ref{ss:p2p0}\\ 
- 4&$Q_2\times Q_1$       &                  & Section~\ref{ss:pairq2q1}\\
- 5&$P_2\times P_1$       &                  & Section~\ref{ss:p2p1}\\
- 6&$Q_3\times Q_2$       &                  & Section~\ref{ss:q32d}\\
- 7&$P_3\times P_2$       &                  & Section~\ref{ss:p3p2}\\
- 8&$Q_1^+\times Q_1$     & Quad. MINI       & Section~\ref{ss:quadmini}\\
- 9&$P_1^{+}\times P_{1}$ & MINI             & Section~\ref{pair:mini}\\
+ 1&${\bm Q}_1\times Q_0$   & ${\bm Q}_1\times P_0$  & Section~\ref{ss:pairq1p0} & NOT LBB STABLE but usable\\
+ 2&${\bm Q}_2\times Q_0$   &                  & Section~\ref{ss:pairq2q0}\\
+ 3&${\bm P}_2\times P_0$   &                  & Section~\ref{ss:p2p0}\\ 
+ 4&${\bm Q}_2\times Q_1$       &                  & Section~\ref{ss:pairq2q1}\\
+ 5&${\bm P}_2\times P_1$       &                  & Section~\ref{ss:p2p1}\\
+ 6&${\bm Q}_3\times Q_2$       &                  & Section~\ref{ss:q32d}\\
+ 7&${\bm P}_3\times P_2$       &                  & Section~\ref{ss:p3p2}\\
+ 8&${\bm Q}_1^+\times Q_1$     & Quad. MINI       & Section~\ref{ss:quadmini}\\
+ 9&${\bm P}_1^{+}\times P_{1}$ & MINI             & Section~\ref{pair:mini}\\
 10&$RT_1\times Q_0$      &                  & Section~\ref{ss:RTq1p0}\\
 11&$RT_2\times Q_0$      &                  & Section~\ref{ss:RTq1p0}\\
 12&$DSSY_1\times Q_0$    &                  & Section~\ref{ss:pair_dssy2D}\\
 13&$DSSY_2\times Q_0$    &                  & Section~\ref{ss:pair_dssy2D}\\
 14&$Han\times Q_0$       &                  & Section~\ref{ss:han}\\
-15&$Q_2\times P_{-1}$    &                  & Section~\ref{ss:pairq2pm1}\\
-16&$Q_2\times P_{-1}(u)$ &                  & Section~\ref{ss:pairq2pm1}\\
-17&$Q_2^{(8)}\times Q_1$ & Serendipity      & Section~\ref{sec:serendipity2D}\\
-18&$P_2^+\times P_{-1}$  & Crouzeix-Raviart & Section~\ref{sec:crouzeix-raviart}\\
-19&$P_2^+\times P_{1}$   &                  & Section~\ref{sec:p2pp1}\\
-20&$P_2\times (P_1+P_0)$ & Augmented $P_2\times P_1$ & Section~\ref{ss:p2p1p0}\\
-21&$P_1^{NC}\times P_0$  & Crouzeix-Raviart & Section~\ref{ss:p1ncp0}\\
-22&$P_1\times P_0$       &                  & Section~\ref{ss:p1p0}  (NOT LBB STABLE and unusable)\\
-23&$Q_2\times Q_{-1}$    &                  & Section~\ref{ss:pair_q2qm1} (NOT LBB STABLE)\\
-24&$Q_2\times Q_1+Q_0$   & Augmented $Q_2\times Q_1$ & Section~\ref{ss:pair_q2q1q0} \\
-25&$Chen\times Q_0$      &                  & Section~\ref{ss:chenq0} (NOT SURE) \\
-26&$Q_4\times Q_3$       &                  & Section~\ref{ss:q42d}\\
-27&$P_4\times P_3$       &                  & Section~\ref{ss:p42d}\\
+15&${\bm Q}_2\times P_{-1}$    &                  & Section~\ref{ss:pairq2pm1}\\
+16&${\bm Q}_2\times P_{-1}(u)$ &                  & Section~\ref{ss:pairq2pm1}\\
+17&${\bm Q}_2^{(8)}\times Q_1$ & Serendipity      & Section~\ref{sec:serendipity2D}\\
+18&${\bm P}_2^+\times P_{-1}$  & Crouzeix-Raviart & Section~\ref{sec:crouzeix-raviart}\\
+19&${\bm P}_2^+\times P_{1}$   &                  & Section~\ref{sec:p2pp1}\\
+20&${\bm P}_2\times (P_1+P_0)$ & Augmented $P_2\times P_1$ & Section~\ref{ss:p2p1p0}\\
+21&${\bm P}_1^{NC}\times P_0$  & Crouzeix-Raviart & Section~\ref{ss:p1ncp0}\\
+22&${\bm P}_1\times P_0$       &                  & Section~\ref{ss:p1p0}  &NOT LBB STABLE and unusable\\
+23&${\bm Q}_2\times Q_{-1}$    &                  & Section~\ref{ss:pair_q2qm1} & NOT LBB STABLE\\
+24&${\bm Q}_2\times Q_1+Q_0$   & Augmented ${\bm Q}_2\times Q_1$ & Section~\ref{ss:pair_q2q1q0} \\
+25&$Chen\times Q_0$      &                  & Section~\ref{ss:chenq0} & NOT SURE \\
+26&${\bm Q}_4\times Q_3$       &                  & Section~\ref{ss:q42d}\\
+27&${\bm P}_4\times P_3$       &                  & Section~\ref{ss:p42d}\\
 \hline
 \end{tabular}
 \end{center}
@@ -85,17 +85,17 @@ a symmetric grid ('SYMM') for triangular elements:
 {\bf Remark 2}: I have indeed built support for 3 unstable elements but 
 these should not be included in the publication. 
 
-{\bf Remark 3}: The augmented $P_2\times (P_1+P_0)$ element pair is LBB stable 
+{\bf Remark 3}: The augmented ${\bm P}_2\times (P_1+P_0)$ element pair is LBB stable 
 but special care must be taken with respect to the rank-deficiency 
-as explained in \textcite{bocg12} (2012). The same applies to $Q_2\times (Q_1+Q_0)$. 
+as explained in \textcite{bocg12} (2012). The same applies to ${\bm Q}_2\times (Q_1+Q_0)$. 
 I propose a simple fix later. 
 
-{\bf Remark 4}: The nonconforming $P_1^{NC}\times P_0$ gives me a headache and does not 
+{\bf Remark 4}: The nonconforming ${\bm P}_1^{NC}\times P_0$ gives me a headache and does not 
 yield accurate results (esp. the pressure). Not sure why... Coercivity/Korn stuff? I
 have yet to find an article using the element 'as is'.
 
 {\bf Remark 5} Following \textcite{john16} book, I could also do 
-$P_3^+\times P_{-2}$, $Q_3\times P_{-2}$, $P_4\times P_3$, $Q_4 \times P_{-3}$.
+${\bm P}_3^+\times P_{-2}$, ${\bm Q}_3\times P_{-2}$. 
 
 {\bf Remark 6}: A modified $Q_2$ Serendipity element was proposed by \textcite{zhxi20} (2020) 
 (see Section~\ref{sec:serendipity2Db}) but it is only different from the standard serendipity 
@@ -104,14 +104,14 @@ element when the elements are not rectangles.
 {\bf Remark 7}: Using high-order element spaces ($Q_4$, $P_4$, ...) only makes sense in this context
 if the manufactured solution is also a high-order polynomial or contains non-polynomial terms.
 
-\vspace{1cm}
+\vspace{0.5cm}
 
 \begin{center}
 Quadrilateral elements\\
 \begin{tabular}{lcccccc}
 \hline
 Pspace $\downarrow$ / Vspace $\rightarrow$   
-            & $Q_1$     & $Q_2$     & $Q_2^{(8)}$ & $Q_3$     & $Q_4$ & $Q_1^+$       \\ 
+  & ${\bm Q}_1$  & ${\bm Q}_2$     & ${\bm Q}_2^{(8)}$ & ${\bm Q}_3$  & ${\bm Q}_4$ & ${\bm Q}_1^+$       \\ 
 $Q_0$       & $\sqrt{}$ & $\sqrt{}$ & ?           & ?         &   & ?          \\
 $Q_1$       & $\times$  & $\sqrt{}$ & $\sqrt{}$   & ?         &   & $\sqrt{}$  \\
 $Q_2$       & $\times$  & $\times$  & $\times$    & $\sqrt{}$ &   & $\times$   \\
@@ -127,7 +127,7 @@ Triangular elements\\
 \begin{tabular}{cccccccc}
 \hline
 Pspace $\downarrow$ | Vspace $\rightarrow$   
-         & $P_1$    & $P_2$     & $P_3$     & $P_4$    & $P_1^+$   & $P_2^+$   & $P_1^{NC}$  \\
+         & ${\bm P}_1$    & ${\bm P}_2$     & ${\bm P}_3$     & ${\bm P}_4$    & ${\bm P}_1^+$   & ${\bm P}_2^+$   & ${\bm P}_1^{NC}$  \\
 $P_0$    & $\times$ & $\sqrt{}$ & ?         & $\times$ &  ?        &  ?        & $\sqrt{}$   \\
 $P_1$    & $\times$ & $\sqrt{}$ & ?         & $\times$ & $\sqrt{}$ &  ?        & ?           \\
 $P_2$    & $\times$ & $\times$  & $\sqrt{}$ & $\times$ & $\times$  & $\times$  & $\times$    \\
@@ -230,11 +230,12 @@ These figures are obtained by running \lstinline{tester6.py}.
 \includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Q2s_nodes}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/RT1_nodes}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/DSSY1_nodes}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Han_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/Han_nodes}\\
 \includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P1_nodes}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P2_nodes}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P3_nodes}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P1+_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P3_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P4_nodes}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P1+_nodes}\\
 \includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P1NC_nodes}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P2+_nodes}
 \end{center}
@@ -269,6 +270,19 @@ These figures are obtained by running \lstinline{tester6.py}.
 \verbatiminput{python_codes/fieldstone_120/spaces/iconV_elt1_P3.ascii}
 \end{tiny}
 \end{multicols}
+
+\newpage
+%------------------
+\begin{multicols}{2}
+\input{python_codes/fieldstone_120/spaces/3x2_P4}
+
+\begin{tiny}
+\verbatiminput{python_codes/fieldstone_120/spaces/iconV_elt1_P4.ascii}
+\end{tiny}
+\end{multicols}
+
+
+
 
 \newpage
 %------------------
@@ -412,7 +426,7 @@ These figures are obtained by running \lstinline{tester6.py}.
 \subsection*{Pressure normalisation for augmented Taylor-Hood elements}
 
 
-I tried both $P_2\times (P_1+P_0)$ and $Q_2\times (Q_1+Q_0)$ on different manufactured solutions 
+I tried both ${\bm P}_2\times (P_1+P_0)$ and ${\bm Q}_2\times (Q_1+Q_0)$ on different manufactured solutions 
 and I observed for both that the pressure I obtained visually consisted of 2 fields: (for quads) 
 the continuous $Q_1$ which looked similar to the expected analytical field although offset by what 
 seemed a constant (bottom green points), and the $Q_0$ field (top green points) which was 
@@ -641,9 +655,6 @@ p(x,y) &=& \pi^2 [xy^3 \cos(2\pi x^2 y) - x^2y \sin(2\pi xy) ]+1/8
 {\captionfont Taken from \textcite{john16} (book).}
 \end{center} 
 
-
-
-
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results - \textcite{jolm17} manufactured solution}
@@ -663,11 +674,6 @@ The highest polynomial terms for the velocity are quartic and cubic for the pres
 \includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/errors-divv-all}
 \includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/vrms_zoom}
 \end{center}
-
-
-
-
-
 
 %1----------------------------
 \subsection*{$Q_1\times Q_0$}

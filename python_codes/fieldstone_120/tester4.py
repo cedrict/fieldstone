@@ -17,8 +17,10 @@ print('=========================================')
 print(' tester 4: quadratic fields')
 print('=========================================')
 
-for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','Chen',\
-               'P1','P1+','P1NC','P2','P2+','P3']:
+#for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','Chen',\
+#               'P1','P1+','P1NC','P2','P2+','P3']:
+
+for Vspace in ['P2','P2+','P3','P4']:
 
     pb=False
 
@@ -33,6 +35,8 @@ for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','Che
     u=xV**2/2
     v=yV**2/2
 
+    dNNNVdx= np.zeros(mV,dtype=np.float64)
+    dNNNVdy= np.zeros(mV,dtype=np.float64)
     area=np.zeros(nel,dtype=np.float64) 
     for iel in range(0,nel):
         for iq in range(0,nqel):
@@ -44,7 +48,9 @@ for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','Che
             yq=NNNV.dot(yV[iconV[:,iel]]) 
             dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
             dNNNVds=FE.dNNNds(rq,sq,Vspace)
-            jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+            jcob,jcbi=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+            dNNNVdx[:]=jcbi[0,0]*dNNNVdr[:]+jcbi[0,1]*dNNNVds[:]
+            dNNNVdy[:]=jcbi[1,0]*dNNNVdr[:]+jcbi[1,1]*dNNNVds[:]
             exxq=dNNNVdx.dot(u[iconV[:,iel]]) 
             eyyq=dNNNVdy.dot(v[iconV[:,iel]]) 
             

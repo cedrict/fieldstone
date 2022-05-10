@@ -872,6 +872,128 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
            #end for
        #end for
 
+    #-----------------
+    elif space=='P4':
+
+       # 20==21==22==23==24    14
+       # |   |   |   |   |     |  \      
+       # 15==16==17==18==19    12  13        
+       # |   |   |   |   |     |    \      
+       # 10==11==12==13==14    9  10  11      
+       # |   |   |   |   |     |       \    
+       # 5===6===7===8===9     5  6  7  8  
+       # |   |   |   |   |     |          \ 
+       # 0===1===2===3===4     0==1==2==3==4
+
+       # +-----+    +-----+
+       # |\  B |    | D  /|
+       # |  \  | or |  /  |
+       # | A  \|    |/  C |
+       # +-----+    +-----+
+
+       nel*=2
+       N=(4*nelx+1)*(4*nely+1)
+       nnx=4*nelx+1
+       nny=4*nely+1
+       x=np.empty(N,dtype=np.float64) 
+       y=np.empty(N,dtype=np.float64)
+       counter = 0
+       for j in range(0,nny):
+           for i in range(0,nnx):
+               x[counter]=i*hx/4
+               y[counter]=j*hy/4
+               counter += 1
+           #end for
+       #end for
+       icon=np.zeros((15,nel),dtype=np.int32)
+       counter = 0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               
+               inode=np.zeros(25,dtype=np.int32)
+               counter2=0
+               for k in range(0,5):
+                   for l in range(0,5):
+                       inode[counter2]=i*4+l+j*4*nnx+nnx*k
+                       counter2+=1
+                   # end for
+               # end for
+
+               if (i<nelx/2 and j<nely/2) or\
+                  (i>=nelx/2 and j>=nely/2) : 
+                  #C
+                  icon[0,counter]=inode[4]
+                  icon[1,counter]=inode[9]
+                  icon[2,counter]=inode[14]
+                  icon[3,counter]=inode[19]
+                  icon[4,counter]=inode[24]
+                  icon[5,counter]=inode[3]
+                  icon[6,counter]=inode[8]
+                  icon[7,counter]=inode[13]
+                  icon[8,counter]=inode[18]
+                  icon[9,counter]=inode[2]
+                  icon[10,counter]=inode[7]
+                  icon[11,counter]=inode[12]
+                  icon[12,counter]=inode[1]
+                  icon[13,counter]=inode[6]
+                  icon[14,counter]=inode[0]
+                  counter += 1
+                  #D
+                  icon[0,counter]=inode[20]
+                  icon[1,counter]=inode[15]
+                  icon[2,counter]=inode[10]
+                  icon[3,counter]=inode[5]
+                  icon[4,counter]=inode[0]
+                  icon[5,counter]=inode[21]
+                  icon[6,counter]=inode[16]
+                  icon[7,counter]=inode[11]
+                  icon[8,counter]=inode[6]
+                  icon[9,counter]=inode[22]
+                  icon[10,counter]=inode[17]
+                  icon[11,counter]=inode[12]
+                  icon[12,counter]=inode[23]
+                  icon[13,counter]=inode[18]
+                  icon[14,counter]=inode[24]
+                  counter += 1
+               else:
+                  #A
+                  icon[0,counter]=inode[0]
+                  icon[1,counter]=inode[1]
+                  icon[2,counter]=inode[2]
+                  icon[3,counter]=inode[3]
+                  icon[4,counter]=inode[4]
+                  icon[5,counter]=inode[5]
+                  icon[6,counter]=inode[6]
+                  icon[7,counter]=inode[7]
+                  icon[8,counter]=inode[8]
+                  icon[9,counter]=inode[10]
+                  icon[10,counter]=inode[11]
+                  icon[11,counter]=inode[12]
+                  icon[12,counter]=inode[15]
+                  icon[13,counter]=inode[16]
+                  icon[14,counter]=inode[20]
+                  counter += 1
+                  #B
+                  icon[0,counter]=inode[24]
+                  icon[1,counter]=inode[23]
+                  icon[2,counter]=inode[22]
+                  icon[3,counter]=inode[21]
+                  icon[4,counter]=inode[20]
+                  icon[5,counter]=inode[19]
+                  icon[6,counter]=inode[18]
+                  icon[7,counter]=inode[17]
+                  icon[8,counter]=inode[16]
+                  icon[9,counter]=inode[14]
+                  icon[10,counter]=inode[13]
+                  icon[11,counter]=inode[12]
+                  icon[12,counter]=inode[9]
+                  icon[13,counter]=inode[8]
+                  icon[14,counter]=inode[4]
+                  counter += 1
+              #end if
+           #end for
+       #end for
+
     #---------------------------------
     elif space=='DSSY1' or space=='DSSY2' or\
          space=='RT1' or space=='RT2':
@@ -1124,6 +1246,11 @@ def export_elements_to_vtu(x,y,icon,space,filename):
        node0=0
        node1=3
        node2=9
+       m=3       
+    if space=='P4':
+       node0=0
+       node1=4
+       node2=14
        m=3       
 
     vtufile=open(filename,"w")
@@ -1432,7 +1559,7 @@ def visualise_with_tikz(x,y,space):
     tikzfile.write("\\draw[thick] (4,0) -- (4,4) ; \n")
 
     if space=='P1' or space=='P2' or space=='P3' or space=='P1+' or\
-       space=='P1NC' or space=='P2+' or space=='P1+P0':
+       space=='P1NC' or space=='P2+' or space=='P1+P0' or space=='P4':
        tikzfile.write("\\draw[thick] (0,0) -- (2,2) -- (0,4) ; \n")
        tikzfile.write("\\draw[thick] (2,0) -- (4,2) -- (2,4) ; \n")
        tikzfile.write("\\draw[thick] (6,0) -- (4,2) -- (6,4) ; \n")

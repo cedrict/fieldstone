@@ -21,7 +21,7 @@ import mms_jolm17 as mms
 #import mms_sinker_open as mms
 #import mms_poiseuille as mms
 #import mms_johnbook as mms
-#import mms_bocg12 as mms
+#:import mms_bocg12 as mms
 #import mms_solcx as mms
 #import mms_solkz as mms
 
@@ -31,14 +31,14 @@ import mms_jolm17 as mms
 Lx=1
 Ly=1
 
-nelx=8
-nely=8
+nelx=16
+nely=16
 
 ndofV=2
 ndofP=1
 
-Vspace='P2+'
-Pspace='P-1'
+Vspace='P4'
+Pspace='P3'
 
 visu=1
 

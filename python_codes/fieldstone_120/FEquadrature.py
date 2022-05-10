@@ -27,7 +27,7 @@ def quadrature(space,nqpts):
                counter+=1
 
     elif space=='P1' or space=='P2' or space=='P1+' or\
-          space=='P2+' or space=='P3' or space=='P1NC':
+          space=='P2+' or space=='P3' or space=='P4' or space=='P1NC':
 
        nq=nqpts
        val_r = np.zeros(nq,dtype=np.float64) 
@@ -303,7 +303,7 @@ def visualise_quadrature_points(space,nqpts):
        plt.xlim([-1.1,+1.1])
        plt.ylim([-1.1,+1.1])
        plt.plot([-1,1,1,-1,-1],[-1,-1,1,1,-1],color='teal',linewidth=2)
-    elif space=='P1' or space=='P2' or space=='P1+' or space=='P2+' or space=='P3':
+    elif space=='P1' or space=='P2' or space=='P1+' or space=='P2+' or space=='P3' or space=='P4':
        plt.xlim([-0.1,+1.1])
        plt.ylim([-0.1,+1.1])
        plt.plot([0,0,1,0],[0,1,0,0],color='teal',linewidth=2)
@@ -324,7 +324,7 @@ def nqpts_default(space):
     elif space=='Q3':    
        nqpts=4
     elif space=='Q4':    
-       nqpts=4
+       nqpts=5
     elif space=='Q1+':   
        nqpts=3
     elif space=='Q2+':   
@@ -347,6 +347,8 @@ def nqpts_default(space):
        nqpts=6
     elif space=='P3':    
        nqpts=6
+    elif space=='P4':    
+       nqpts=12
     elif space=='P1+':   
        nqpts=6
     elif space=='P2+':   
