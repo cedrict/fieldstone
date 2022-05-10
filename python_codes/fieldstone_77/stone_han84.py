@@ -148,7 +148,7 @@ def pressure(x,y,experiment):
 
 #------------------------------------------------------------------------------
 
-def NNV(r,s,sft):
+def NNV(r,s):
     phir=0.5*(5*r**4-3*r**2)
     phis=0.5*(5*s**4-3*s**2)
     NV_0=0.5*(r+phir)
@@ -158,7 +158,7 @@ def NNV(r,s,sft):
     NV_4=1-phir-phis
     return NV_0,NV_1,NV_2,NV_3,NV_4
 
-def dNNVdr(r,s,sft):
+def dNNVdr(r,s):
     dphidr=0.5*(20*r**3-6*r)
     dNVdr_0=0.5*(1+dphidr)
     dNVdr_1=0
@@ -167,7 +167,7 @@ def dNNVdr(r,s,sft):
     dNVdr_4=-dphidr
     return dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4
 
-def dNNVds(r,s,sft):
+def dNNVds(r,s):
     dphids=0.5*(20*s**3-6*s)
     dNVds_0=0
     dNVds_1=0.5*(1+dphids)
@@ -215,11 +215,6 @@ eps=1.e-10
 # experiment 6: solcx?
 
 experiment=2
-
-# shape fct type 1: mid point
-# shape fct type 2: mid value
-
-sft=2
 
 # formulation=1: div-div v 
 # formulation=2: laplace v
@@ -409,9 +404,9 @@ for iel in range(0, nel):
             weightq=qweights[iq]*qweights[jq]
 
             # calculate shape functions
-            NNNV[0:mV]=NNV(rq,sq,sft)
-            dNNNVdr[0:mV]=dNNVdr(rq,sq,sft)
-            dNNNVds[0:mV]=dNNVds(rq,sq,sft)
+            NNNV[0:mV]=NNV(rq,sq)
+            dNNNVdr[0:mV]=dNNVdr(rq,sq)
+            dNNNVds[0:mV]=dNNVds(rq,sq)
 
             # calculate jacobian matrix
             jcb = np.zeros((2,2),dtype=np.float64)
@@ -592,9 +587,9 @@ for iel in range(0,nel):
     sq = 0.0
     wq = 2.0 * 2.0
 
-    NNNV[0:mV]=NNV(rq,sq,sft)
-    dNNNVdr[0:mV]=dNNVdr(rq,sq,sft)
-    dNNNVds[0:mV]=dNNVds(rq,sq,sft)
+    NNNV[0:mV]=NNV(rq,sq)
+    dNNNVdr[0:mV]=dNNVdr(rq,sq)
+    dNNNVds[0:mV]=dNNVds(rq,sq)
 
     jcb=np.zeros((2,2),dtype=np.float64)
     for k in range(0,mV):
@@ -689,9 +684,9 @@ for iel in range (0,nel):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
-            NNNV[0:mV]=NNV(rq,sq,sft)
-            dNNNVdr[0:mV]=dNNVdr(rq,sq,sft)
-            dNNNVds[0:mV]=dNNVds(rq,sq,sft)
+            NNNV[0:mV]=NNV(rq,sq)
+            dNNNVdr[0:mV]=dNNVdr(rq,sq)
+            dNNNVds[0:mV]=dNNVds(rq,sq)
             jcb=np.zeros((2,2),dtype=np.float64)
             for k in range(0,mV):
                 jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
@@ -887,7 +882,7 @@ if visu==1:
       # lower left corner
       #----------------------------------  
       rq=-1 ; sq=-1
-      NNNV[0:mV]=NNV(rq,sq,sft)
+      NNNV[0:mV]=NNV(rq,sq)
       uuu=0.0
       vvv=0.0
       for k in range(0,mV):
@@ -901,7 +896,7 @@ if visu==1:
       # lower right corner
       #----------------------------------  
       rq=+1 ; sq=-1
-      NNNV[0:mV]=NNV(rq,sq,sft)
+      NNNV[0:mV]=NNV(rq,sq)
       uuu=0.0
       vvv=0.0
       for k in range(0,mV):
@@ -915,7 +910,7 @@ if visu==1:
       # upper right corner
       #----------------------------------  
       rq=+1 ; sq=+1
-      NNNV[0:mV]=NNV(rq,sq,sft)
+      NNNV[0:mV]=NNV(rq,sq)
       uuu=0.0
       vvv=0.0
       for k in range(0,mV):
@@ -929,7 +924,7 @@ if visu==1:
       # upper left corner
       #----------------------------------  
       rq=-1 ; sq=+1
-      NNNV[0:mV]=NNV(rq,sq,sft)
+      NNNV[0:mV]=NNV(rq,sq)
       uuu=0.0
       vvv=0.0
       for k in range(0,mV):

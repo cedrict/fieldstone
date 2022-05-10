@@ -15,8 +15,8 @@ def rho(rho0,alphaT,T,T0):
     val=rho0*(1.-alphaT*(T-T0)) 
     return val
 
-def eta(T,eta0):
-    return eta0
+def eta(T,x,y,eta0):
+    return eta0*exp(T)
 
 #------------------------------------------------------------------------------
 # velocity shape functions
@@ -427,7 +427,7 @@ hy=Ly/nely # element size in y direction
 
 sparse=False # storage of FEM matrix 
 
-EBA=True
+EBA=False
 
 #################################################################
 # definition: Ra_nb=alphaT*abs(gy)*Ly**3*rho0**2*hcapa/hcond/eta
@@ -848,7 +848,7 @@ for istep in range(0,nstep):
                 #end for
 
                 # compute elemental a_mat matrix
-                K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(Tq,eta0)*weightq*jcob
+                K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(Tq,xq,yq,eta0)*weightq*jcob
 
                 # compute elemental rhs vector
                 for i in range(0,mV):
@@ -1131,7 +1131,7 @@ for istep in range(0,nstep):
                 #end for
 
                 # compute mass matrix
-                MM+=N_mat.dot(N_mat.T)*rho0*hcapa*weightq*jcob
+                #MM+=N_mat.dot(N_mat.T)*rho0*hcapa*weightq*jcob
 
                 # compute diffusion matrix
                 Kd+=B_mat.T.dot(B_mat)*hcond*weightq*jcob

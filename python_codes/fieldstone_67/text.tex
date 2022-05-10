@@ -15,23 +15,35 @@ Codes at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fie
 Note that none of the results below should be really trusted. All setups should be rerun 
 properly with the last version of the code, with different averagings, projections, resolutions...
 
-
-
+This stone implements the particle in cell technique to track the multiple materials.
+Each particle carry a material information/identity. Since we are here considering 
+isothermal and linear viscous setups only, this means that each particle has a density
+and a viscosity. The values must then be projected back onto the Eulerian mesh, either 
+on the nodes or on the quadrature points directly.
+There are four types of projection, controlled by the value of the 
+{\python particle\_projection} parameter:
+\begin{enumerate}
+\item  use elemental values for all quadrature points;
+\item  use nodal values + $Q_1$ shape functions to interp on q points;
+\item  use average nodal values to assign to all q points (elemental avrg);
+\item  nodal density, elemental viscosity.
+\end{enumerate}
 
 %----------------------------------------------
 \subsubsection*{Setup1: Sinking block} 
 
 This simple benchark provides challenging numerical experiments dealing with large viscosity variations 
-within the simulation domain. It appears in \cite{gery10,thie11} 
-and consists of a bulk of fluid 1 ($\rho_1,\eta_1$)
+within the simulation domain. It appears in \textcite{gery10} (2010), \textcite{thie11} (2011) and
+\textcite{thba22} (2022). It consists of a bulk of fluid 1 ($\rho_1,\eta_1$)
 in which a block of fluid 2 ($\rho_2,\eta_2$) falls under its own weight.
-The domain is a square of size $L_x=L_y=500km$ and the block is initially centered at point ($x=250km,y=400km$) with size $100\times100km$. 
+The domain is a square of size $L_x=L_y=500~\si{\km}$ and the block is initially centered at 
+point ($x=250~\si{\km},y=400~\si{km}$) with size $100\times100~\si{\km}$. 
 
 The simulation is carried out on a $64\times64$ elements grid and each element contains $n^3$ markers
 at startup. Free slip boundary conditions are imposed on all sides of the domain. 
 
-The density of the surrounding fluid is $\rho_1=3200kg/m^3$
-and its viscosity $\eta_1=10^{20}$ Pa.s.
+The density of the surrounding fluid is $\rho_1=3200~\si{\kg\per\cubic\meter}$
+and its viscosity $\eta_1=10^{20}~\si{\pascal\second}$.
 The viscosity and density of the block is varied. We define
 \[
 \eta^\star=\eta_2/\eta_1
@@ -52,7 +64,7 @@ goes down).
 \includegraphics[width=7cm]{python_codes/fieldstone_67/sinking/vel.pdf}\\
 \includegraphics[width=7cm]{python_codes/fieldstone_67/sinking/mass.pdf}
 \includegraphics[width=7cm]{python_codes/fieldstone_67/sinking/nparticle_per_element.pdf}\\
-{\captionfont resolution 48x48. 100 random particles per element. rk=2. $\eta*=10$. CFL=0.25. 
+{\captionfont Resolution $48\times48$. 100 random particles per element. rk=2. $\eta*=10$. CFL=0.25. 
 projection=2}
 \end{center}
 
@@ -106,7 +118,7 @@ levels.}
 \end{center}
 
 \begin{center}
-\includegraphics[height=8cm]{python_codes/fieldstone_67/images/scbe08e}\\
+\includegraphics[height=7cm]{python_codes/fieldstone_67/images/scbe08e}\\
 {\captionfont 
 Temporal behaviour modelled by different codes with highest resolutions each. 
 Each curve shows the position of the deepest part of the slab (slab tip) as
@@ -121,20 +133,20 @@ and arith for arithmetic, respectively. }
 \end{center}
 
 The total mass of the system is given by
-\[
-M_0 = [3000x50x\rho_s + (100x100+ 2000x100)\rho_l + (1000x700 + 100x500 + 1900x600)\rho_m] 10^6
-=210,000 \rho_l + 1,890,000 \rho_m
-=6.741000e+15 \text{kg}
-\]
+\begin{eqnarray}
+M_0 &=& [3000\times 50\times \rho_s + (100\times 100+ 2000\times 100)\rho_l + 
+(1000\times 700 + 100\times 500 + 1900\times 600)\rho_m] 10^6\nn\\
+&=&210,000 \rho_l + 1,890,000 \rho_m \nn\\
+&=&6.741000e+15~\si{\kg}
+\end{eqnarray}
 
 Note that all published results are obtained with high resolutions (compared to what is 
 feasible with our code). On the following figure there seems to be 5 elements in the air layer, 
-i.e. a resolution of 10km, i.e. 300x75 elements (if mesh stretching was not used).
+i.e. a resolution of 10km, i.e. $300\times 75$ elements (if mesh stretching was not used).
 \begin{center}
 \includegraphics[width=9cm]{python_codes/fieldstone_67/images/scbe08f}\\
 {\captionfont Details of the entrainment and lubrication of the soft surface layer.}
 \end{center}
-
 
 %----------------------------------------------
 \subsubsection*{Setup3: Quinquis et al, 2010}
@@ -143,23 +155,23 @@ This setup is based on a poster by Quinquis et al, presented at EGU 2010, but it
 was never published in any journal.
 
 The code relies on $Q_2\times Q_1$ elements. 
-The domain is 2680$\times$670km, i.e. the aspect ratio is exactly 4.
+The domain is $2680\times 670~\si{\km}$, i.e. the aspect ratio is exactly 4.
 Boundary conditions are free slip on the left, bottom and top boundaries. 
 
-
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_67/images/setup}
+\includegraphics[width=13cm]{python_codes/fieldstone_67/images/setup}
 \end{center}
 
 There are 7 materials in the domain:
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_67/images/mats}
-\includegraphics[width=7cm]{python_codes/fieldstone_67/images/maats}
+\includegraphics[width=5cm]{python_codes/fieldstone_67/images/maats}
 \end{center}
 
-Depths of interfaces on the left are 7,39,82km and 8,40,110km on the right.
+Depths of interfaces on the left are 7, 39, and 82\si{\km} and 
+8, 40, and 110~\si{\km} on the right.
 The opening angle of the circular part is $45\degree$ and the 
-already subducted slab (i.e. LH=MI=NJ=OK) is 130km long:
+already subducted slab (i.e. LH=MI=NJ=OK) is 130~\si{\km} long:
 
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_67/images/mats3}
@@ -181,7 +193,7 @@ xO=xK-130e3*np.sqrt(2.)/2.   ; yO=yK-130e3*np.sqrt(2.)/2.
 A horizontal velocity profile is prescribed on the right boundary, but 
 only the horizontal component is prescribed. 
 The velocity profile is described in Section~\ref{kin_bc}, and we 
-impose $y_1=L_y-160$km and $y_2=L_y-128$km, and a $u_{in}=5$cm/year.
+impose $y_1=L_y-160~\si{\km}$ and $y_2=L_y-128~\si{\km}$, and a $u_{in}=5~\si{\cm\per\year}$.
 
 The mesh is first created so that all elements have the same dimensions $h_x=L_x/nelx$ and $h_y=L_y/nely$.
 It is then stretched using the two functions {\sl stretch\_towards\_center} and 
@@ -304,9 +316,10 @@ COMPUTE ANALYTICAL MASS ?!
 %----------------------------------------------
 \subsubsection*{Setup4: Samuel, 2018}
 
-This setup is propsed by Samuel (2018) \cite{samu18} in the context of his paper on the deformable particle-in-cell method (DPIC).
-The domain has dimensions $2 \times 1$, free slip on the sides, no slip on the top and bottom. Gravity acceleration is set to 1, 
-and the geometry is as follows:
+This setup is proposed by Samuel (2018) \cite{samu18} in the context of his paper 
+on the deformable particle-in-cell method (DPIC).
+The domain has dimensions $2 \times 1$, free slip on the sides, no slip on the top and bottom. 
+Gravity acceleration is set to 1, and the geometry is as follows:
 
 \begin{center}
 \includegraphics[width=3cm]{python_codes/fieldstone_67/images/samu18a}
@@ -361,20 +374,27 @@ of a finite volume code \cite{saev10,samu12}
 
 \newpage
 %----------------------------------------------
-\subsubsection*{Setup5: mota83}
+\subsubsection*{Setup5: subduction initiation}
 
-The setup is decribed in \stone~118 and stems from \textcite{mota83} (1983). 
+The setup is decribed in \stone~118 and stems from \textcite{mato83} (1983). 
 
 total mass is:
 \[
 M=\frac34 L_x \left( (L_y-D_w-D_l) \rho_a + D_l \rho_l + D_w \rho_w \right)
 + \frac14 L_x \left( (L_y-d_w-d_l) \rho_a + d_l \rho_l + d_w \rho_w \right)
+\simeq 223.754\cdot10^9 
 \]
 
 
+\begin{center}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_67/results/mato83/mats}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_67/results/mato83/sr}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_67/results/mato83/vel}
+\end{center}
 
 
 
+\newpage
 %----------------------------------------------------
 \subsubsection*{Setup6: another Quinquis-like setup}
 

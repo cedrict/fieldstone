@@ -99,8 +99,8 @@ ndofP=1  # number of pressure degrees of freedom
 #model=2 # schmeling et al,PEPI 2008
 #model=3 # falling block 
 #model=4 # dripping instability
-#model=5 #mota83 
-model=6 # quinquis-like 
+model=5 # mato83 
+#model=6 # quinquis-like 
 
 #...........
 if model==1:
@@ -194,7 +194,7 @@ if model==4: # dripping instability
    eta_ref=10      # scaling of G blocks
 
 #...........
-if model==5: # mota83 
+if model==5: # mato83 
    Lx=400e3
    Ly=180e3
    nelx=160
