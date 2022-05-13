@@ -100,6 +100,54 @@ On Mars, 1degree = $2\pi R_{mars}/360 \simeq 59~\si{\km}$, so that the highest r
 corresponds to a cell of side $\sim 3.7~\si{\km}$!
 
 
-idea/todo: divide columns radially so as to obtain almost cubic cells?
+idea/todo: 
+-divide columns radially so as to obtain almost cubic cells?
+-all cells are prisms. use tesseroid formula ?
+
+
+gravity data at \url{https://pgda.gsfc.nasa.gov/products/57}
+with format explaination at \url{https://pds-geosciences.wustl.edu/dataserv/gravity_model_desc.htm}
+
+\newpage
+%-----------------------------------------------------------------------
+\subsection*{Gravity calculations - 1degree resolution}
+
+When using loops (see slow method in code)
+for 1 degree resolution, I get 6.5-6.7microsecond per point per point. 
+so if grav resolution = data res, expect 7.6h. 
+same timing for 0.5degree, so approx 126h.
+For 1/4 degree, approx 2000h, i.e. 84j. lol.
+
+using jit around a dedicated function: 23s!
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_100/results/one/topography}
+\includegraphics[width=7cm]{python_codes/fieldstone_100/results/one/cell_volume}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_100/results/one/gx}
+\includegraphics[width=5cm]{python_codes/fieldstone_100/results/one/gy}
+\includegraphics[width=5cm]{python_codes/fieldstone_100/results/one/gz}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_100/results/one/gg}
+\includegraphics[width=7cm]{python_codes/fieldstone_100/results/one/UU}\\
+{\captionfont Top row: topography and cell volume; middle row: $g_x$, $g_y$, $g_z$;
+bottom row: gravity vector norm and potential}
+\end{center}
+
+\newpage
+%-----------------------------------------------------------------------
+\subsection*{Gravity calculations - 1/2 degree resolution}
+
+using jit around a dedicated function: 360s!
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_100/results/half/topography}
+\includegraphics[width=7cm]{python_codes/fieldstone_100/results/half/cell_volume}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_100/results/half/gx}
+\includegraphics[width=5cm]{python_codes/fieldstone_100/results/half/gy}
+\includegraphics[width=5cm]{python_codes/fieldstone_100/results/half/gz}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_100/results/half/gg}
+\includegraphics[width=7cm]{python_codes/fieldstone_100/results/half/UU}\\
+{\captionfont Top row: topography and cell volume; middle row: $g_x$, $g_y$, $g_z$;
+bottom row: gravity vector norm and potential}
+\end{center}
 
 
