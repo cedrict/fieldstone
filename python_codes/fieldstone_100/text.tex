@@ -108,45 +108,199 @@ idea/todo:
 gravity data at \url{https://pgda.gsfc.nasa.gov/products/57}
 with format explaination at \url{https://pds-geosciences.wustl.edu/dataserv/gravity_model_desc.htm}
 
-\newpage
+
 %-----------------------------------------------------------------------
 \subsection*{Gravity calculations - 1degree resolution}
 
-When using loops (see slow method in code)
-for 1 degree resolution, I get 6.5-6.7microsecond per point per point. 
-so if grav resolution = data res, expect 7.6h. 
-same timing for 0.5degree, so approx 126h.
-For 1/4 degree, approx 2000h, i.e. 84j. lol.
+Gravity fields $g_x$, $g_y$, $g_z$ and $U$ are computed at satellite height \lstinline{Rsat}
+on a regular grid of latitudes and longitudes counting \lstinline{nlat2,nlon2} points. 
+The Cartesian coordinates of these measurement points \lstinline{xM,yM,zM} 
+are computed as follows:
+\begin{lstlisting}
+xM =np.zeros((nlat2,nlon2),dtype=np.float64)
+yM =np.zeros((nlat2,nlon2),dtype=np.float64)
+zM =np.zeros((nlat2,nlon2),dtype=np.float64)
+for ilat2 in range(0,nlat2):
+    for ilon2 in range(0,nlon2): 
+        phi2=360/nlon2*(ilon2+0.5)  * np.pi/180
+        theta2=180/nlat2*(ilat2+0.5)* np.pi/180
+        xM[ilat2,ilon2]=Rsat*np.sin(theta2)*np.cos(phi2)
+        yM[ilat2,ilon2]=Rsat*np.sin(theta2)*np.sin(phi2)
+        zM[ilat2,ilon2]=Rsat*np.cos(theta2)
+\end{lstlisting}
+We now have the coordinates of all measurement points and the coordinates of all the 
+cells \lstinline{xC,yC,zC} which have a volume \lstinline{cell_volume}.
+As explained in Section~\ref{exgravptmass}, the gravity fields can be computed as 
+follows:
+\begin{eqnarray}
+g_x(x,y,z) &=& {\cal G}  \sum_{e=1}^{Ncell} \rho_e V_e  \frac{x-x_e}{|\vec{r}-\vec{r}_e|^3} \label{eqq:gravdiscr1}\\
+g_y(x,y,z) &=& {\cal G}  \sum_{e=1}^{Ncell} \rho_e V_e  \frac{y-y_e}{|\vec{r}-\vec{r}_e|^3} \label{eqq:gravdiscr2}\\
+g_z(x,y,z) &=& {\cal G}  \sum_{e=1}^{Ncell} \rho_e V_e  \frac{z-z_e}{|\vec{r}-\vec{r}_e|^3} \label{eqq:gravdiscr3}\\
+U(x,y,z)   &=& -{\cal G} \sum_{e=1}^{Ncell} \rho_e V_e  \frac{1}{|\vec{r}-\vec{r}_e|}       \label{eqq:gravdiscr4}
+\end{eqnarray}
+where 
+\[
+|\vec{r}-\vec{r}_e|=\sqrt{ (x-x_e)^2+(y-y_e)^2+(z-z_e)^2   }
+\]
+Since the gravity is assumed constant and equal for all cells, $\rho_e$ becomes $\rho_0$ and can be taken out of the 
+summations.
+The corresponding code is then 
+\begin{lstlisting}
+gx =np.zeros((nlat2,nlon2),dtype=np.float64)
+gy =np.zeros((nlat2,nlon2),dtype=np.float64)
+gz =np.zeros((nlat2,nlon2),dtype=np.float64)
+UU =np.zeros((nlat2,nlon2),dtype=np.float64)
+for ilat2 in range(0,nlat2):
+   for ilon2 in range(0,nlon2): # loop over measurement points
+       for ilat in range(0,nlat):
+           for ilon in range(0,nlon): # loop over cells
+               distx=xM[ilat2,ilon2]-xC[ilat,ilon]
+               disty=yM[ilat2,ilon2]-yC[ilat,ilon]
+               distz=zM[ilat2,ilon2]-zC[ilat,ilon]
+               dist=np.sqrt(distx**2+disty**2+distz**2)
+               K=cell_volume[ilat,ilon]/dist**3
+               gx[ilat2,ilon2]+=K*distx
+               gy[ilat2,ilon2]+=K*disty
+               gz[ilat2,ilon2]+=K*distz
+               UU[ilat2,ilon2]-=cell_volume[ilat,ilon]/dist
+x*=Ggrav*rho0
+y*=Ggrav*rho0
+z*=Ggrav*rho0
+U*=Ggrav*rho0
+\end{lstlisting}
+Let us call the algorithm above Alg-1.
+From experience we know that these calculations often take a lot of time since 
+Python is particularly not suited for imbricated for loops. 
+In general, accessing and updating a cell of a two-dimensional array has a cost
+higher than updating a scalar. The last four lines inside the inner most for loop 
+will be executed \lstinline{nlon}*\lstinline{nlat} times per measurement point
+so we can design a slightly modified algorithm coined Alg-2:
+\begin{lstlisting}
+for ilat2 in range(0,nlat2):
+   for ilon2 in range(0,nlon2): # loop over measurement points
+       ggx=0
+       ggy=0
+       ggz=0
+       UUU=0
+       for ilat in range(0,nlat):
+           for ilon in range(0,nlon): # loop over cells
+               distx=xM[ilat2,ilon2]-xC[ilat,ilon]
+               disty=yM[ilat2,ilon2]-yC[ilat,ilon]
+               distz=zM[ilat2,ilon2]-zC[ilat,ilon]
+               dist=np.sqrt(distx**2+disty**2+distz**2)
+               K=cell_volume[ilat,ilon]/dist**3
+               ggx+=K*distx
+               ggy+=K*disty
+               ggz+=K*distz
+               UUU-=cell_volume[ilat,ilon]/dist
+           #end for
+       #end for
+       gx[ilat2,ilon2]=ggx
+       gy[ilat2,ilon2]=ggy
+       gz[ilat2,ilon2]=ggz
+       UU[ilat2,ilon2]=UUU
+   #end for
+end for
+\end{lstlisting}
+The algorithms above can be split into loops over measurement points 
+and loops over the cells. With reusability in mind we could create a function which 
+computes the gravity at a single point. This function needs as arguments the coordinates
+of the measurement point, and the coordinates of all cells and their volumes:
+\begin{lstlisting}
+def compute_g_at_point(x,y,z,nlat,nlon,xC,yC,zC,volume):
+    ggx=0.
+    ggy=0.
+    ggz=0.
+    UUU=0.
+    for ilat in range(0,nlat):
+        for ilon in range(0,nlon):
+            distx=x-xC[ilat,ilon]
+            disty=y-yC[ilat,ilon]
+            distz=z-zC[ilat,ilon]
+            dist=np.sqrt(distx**2+disty**2+distz**2)
+            K=volume[ilat,ilon]/dist**3
+            ggx+=K*distx
+            ggy+=K*disty
+            ggz+=K*distz
+            UUU-=volume[ilat,ilon]/dist
+        #end for
+    #end for
+    return ggx,ggy,ggz,UUU
+\end{lstlisting}
+so that the gravity calculations now elegantly write:
+\begin{lstlisting}
+for ilat2 in range(0,nlat2):
+    for ilon2 in range(0,nlon2): 
+        gx[ilat2,ilon2],gy[ilat2,ilon2],gz[ilat2,ilon2],UU[ilat2,ilon2]=\
+          compute_g_at_point(xM[ilat2,ilon2],yM[ilat2,ilon2],zM[ilat2,ilon2],nlat,nlon,xC,yC,zC,cell_volume)
+\end{lstlisting}
+This is Alg-3.
 
-using jit around a dedicated function: 23s!
+Finally, we could then load the \lstinline{Numba} module\footnote{\url{https://numba.pydata.org/}} 
+and add a sinple decorator before the 
+function:
+\begin{lstlisting}
+import numba
+from numba import jit
+
+@jit(nopython=True)
+def compute_g_at_point(x,y,z,nlat,nlon,xC,yC,zC,volume):
+    [...]
+    return ggx,ggy,ggz,UUU
+\end{lstlisting}
+As explained on the website ``Numba translates Python functions to optimized machine code at runtime using 
+the industry-standard LLVM compiler library. Numba-compiled numerical algorithms in Python 
+can approach the speeds of C or FORTRAN.''
+This is Alg-4.
+
+We load the 1degree-resolution file and set \lstinline{nlat2=16,nlon2=32}. We time the 
+gravity calculations and find:
+\begin{center}
+\begin{tabular}{ll}
+\hline
+Alg-1 & 183.005 s \\
+Alg-2 & 165.774 s \\ 
+Alg-3 & 123.866 s \\
+Alg-4 & 0.442 s \\
+\hline
+\end{tabular}
+\end{center}
+We find that Alg-2 is a little bit faster than Alg-1. Alg-3 is about 20\% faster (why?!), 
+but Alg-4 is more than 100 times faster!  
+
+All four algorithms obviously yield the same results so in what follows we 
+only use Alg-4. \lstinline{Rsat} is set to \lstinline{Rmars}+100~km and \lstinline{nlat2=nlat}
+and \lstinline{nlon2=nlon}, i.e. the resolution of the measurements is as high as the 
+resolution of the data.
+
+\newpage
+%-----------------------------------------------------------------------
+\subsection*{1 degree resolution data}
+
+Compute time is about 21s. 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_100/results/one/topography}
-\includegraphics[width=7cm]{python_codes/fieldstone_100/results/one/cell_volume}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_100/results/one/gx}
 \includegraphics[width=5cm]{python_codes/fieldstone_100/results/one/gy}
 \includegraphics[width=5cm]{python_codes/fieldstone_100/results/one/gz}\\
 \includegraphics[width=7cm]{python_codes/fieldstone_100/results/one/gg}
 \includegraphics[width=7cm]{python_codes/fieldstone_100/results/one/UU}\\
-{\captionfont Top row: topography and cell volume; middle row: $g_x$, $g_y$, $g_z$;
+{\captionfont Top row: $g_x$, $g_y$, $g_z$;
 bottom row: gravity vector norm and potential}
 \end{center}
 
-\newpage
 %-----------------------------------------------------------------------
-\subsection*{Gravity calculations - 1/2 degree resolution}
+\subsection*{1/2 degree resolution data}
 
-using jit around a dedicated function: 360s!
+Compute time is about 344s. 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_100/results/half/topography}
-\includegraphics[width=7cm]{python_codes/fieldstone_100/results/half/cell_volume}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_100/results/half/gx}
 \includegraphics[width=5cm]{python_codes/fieldstone_100/results/half/gy}
 \includegraphics[width=5cm]{python_codes/fieldstone_100/results/half/gz}\\
 \includegraphics[width=7cm]{python_codes/fieldstone_100/results/half/gg}
 \includegraphics[width=7cm]{python_codes/fieldstone_100/results/half/UU}\\
-{\captionfont Top row: topography and cell volume; middle row: $g_x$, $g_y$, $g_z$;
+{\captionfont Top row: $g_x$, $g_y$, $g_z$;
 bottom row: gravity vector norm and potential}
 \end{center}
 

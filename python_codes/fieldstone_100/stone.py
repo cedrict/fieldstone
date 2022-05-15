@@ -82,14 +82,14 @@ Rmars=3389.508e3
 
 rho0=3000
 
-Rsat=3415e3
+Rsat=Rmars+100e3
 
 nlat2=nlat
 nlon2=nlon
 
 method_slow=False
 
-simple_shell=True
+simple_shell=False
 shell_thickness=200e3
 
 npts=nlon*nlat
