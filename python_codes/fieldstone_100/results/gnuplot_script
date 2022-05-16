@@ -1,0 +1,20 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set xlabel 'r'
+set ylabel '|g|'
+set output 'gravity_on_line.pdf'
+plot[:1e7][-0.1:1]\
+'one/gravity_on_line.ascii' w l t '1^o',\
+'half/gravity_on_line.ascii' w l t '0.5^o',\
+'quarter/gravity_on_line.ascii' w l t '0.25^o',\
+'one/gravity_on_line.ascii' u 1:4 lt -1 lw .5 dt 4 t 'analytical'
+
+
+set ytics 0.002
+set output 'gravity_above_olympus_mons.pdf'
+set xlabel 'co-latitude'
+plot[][]\
+'olympus/gravity_above_olympus_mons_one.ascii'       u ($5/pi*180):4 w l lw .5 t '1^o',\
+'olympus/gravity_above_olympus_mons_half.ascii'      u ($5/pi*180):4 w l lw .5 t '0.5^o',\
+'olympus/gravity_above_olympus_mons_quarter.ascii'   u ($5/pi*180):4 w l lw .5 t '0.25^o',\
+'olympus/gravity_above_olympus_mons_sixteenth.ascii' u ($5/pi*180):4 w l lw .5 t '0.0625^o',\
