@@ -1,0 +1,53 @@
+\begin{tikzpicture}
+%\draw[fill=gray!23,gray!23](0,0) rectangle (7,5);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (12,5); %background grid
+
+\node[] at (0.1,2.7) {$\tau$};
+\draw[line width=1mm] (0.5,1.5) -- (0.5,3.5) ;   
+\draw [->] (0,2.5) -- (0.45,2.5);
+\draw [->] (0,2) -- (0.45,2);
+\draw [->] (0,3) -- (0.45,3);
+
+\draw[thick] (0.5,2.5) -- (2,2.5) ;   
+\draw[thick] (2.5,2.5) -- (5,2.5) ;   
+\draw[thick] (5.5,2.5) -- (7.5,2.5) ;   
+\draw[thick] (10.5,2.5) -- (12,2.5) ;   
+
+% v damper
+\draw[thick] (1.5,3) -- (2.5,3) -- (2.5,2) -- (1.5,2);  
+% ds damper
+\draw[thick] (4.5,3) -- (5.5,3) -- (5.5,2) -- (4.5,2);  
+% m damper
+\draw[thick] (8.5,4) -- (9.5,4) -- (9.5,3) -- (8.5,3);  
+
+\node[] at (2,1.6) {$\eta_{\color{orange}v}$};
+\node[] at (5,1.6) {$\eta_{\color{OliveGreen}ds}$};
+\node[] at (9,4.4) {$\eta_m$};
+
+\draw[thick] (9,3.5) -- (7.5,3.5) -- (7.5,1.5) -- (8,1.5);  
+\draw[thick] (9.5,3.5) -- (10.5,3.5) -- (10.5,1.5) -- (10,1.5);  
+
+\draw[thick] (8,1.5) -- (8.5,1.4) -- (9.5,1.4) ;   
+\draw[thick] (8.5,1.6) -- (9.5,1.6) -- (10,1.5) ;   
+
+\node[] at (9,1.92) {$Y$};
+
+%wall
+\draw[line width=2mm] (12,1.5) -- (12,3.5) ;   
+\draw[thick] (12,1.5) -- (12.25,1.75) ;   
+\draw[thick] (12,1.75) -- (12.25,2) ;   
+\draw[thick] (12,2) -- (12.25,2.25) ;   
+\draw[thick] (12,2.25) -- (12.25,2.5) ;   
+\draw[thick] (12,2.5) -- (12.25,2.75) ;   
+\draw[thick] (12,2.75) -- (12.25,3) ;   
+\draw[thick] (12,3) -- (12.25,3.25) ;   
+\draw[thick] (12,3.25) -- (12.25,3.5) ;   
+
+\draw[>=triangle 45, <->] (0.5,0.95) -- (3.5,0.95);
+\draw[>=triangle 45, <->] (3.5,.95) -- (6.5,0.95);
+\draw[>=triangle 45, <->] (6.5,0.95) -- (12,0.95);
+\node[] at (2,0.75)   {$\dot\varepsilon_{\color{orange}v}$};
+\node[] at (5,0.75)   {$\dot\varepsilon_{\color{OliveGreen}ds}$};
+\node[] at (9.5,0.75) {$\dot\varepsilon_{\color{blue}vp}$};
+
+\end{tikzpicture}

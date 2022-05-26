@@ -11,14 +11,14 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 The setup is borrowed from Duretz et al (2020) \cite{dudy20}. 
 Two major differences with the paper: 1) no elasticity and 2) no Newton solver.
 
-The model consists of a $100\times 30\si{km}$ slice of Westerly Granite (Hansen \& Carter, 1983), 
+The model consists of a $100\times 30~\si{km}$ slice of Westerly Granite (Hansen \& Carter, 1983), 
 which comprises an imperfection at the center of the domain.
-This weak inclusion with a $2\si{km}$ radius serves to initiate
+This weak inclusion with a $2~\si{km}$ radius serves to initiate
 localized deformations. The model configuration is thus perfectly symmetric. 
-The model includes a vertical temperature gradient ($-15\si{\celsius\per\km}$) (starting 
-at $20\si{\celsius}$ at the surface), 
-a constant density ($2700\si{\kg\per\cubic\metre}$), and the acceleration of gravity ($g_y=-10\si{\metre\per\second\squared}$).
-The inclusion is characterised by $\eta=10^{20}\si{\pascal\second}$.
+The model includes a vertical temperature gradient ($-15~\si{\celsius\per\km}$) (starting 
+at $20~\si{\celsius}$ at the surface), a constant density ($\SI{2700}{\kg\per\cubic\metre}$), 
+and the acceleration of gravity ($g_y=-\SI{10}{\metre\per\second\squared}$).
+The inclusion is characterised by $\eta=\SI{1e20}{\pascal\second}$.
 The domain is subjected to kinematic boundary conditions, which cause a pure shear stress state:
 
 \begin{center}
@@ -29,12 +29,13 @@ The domain is subjected to kinematic boundary conditions, which cause a pure she
 All boundaries are free slip. The material can behave in a ductile manner in the lower, hot
 part of the domain (displaying temperature-dependent power law creep), and in a viscoplastic 
 manner in the upper, cold part of the domain. The parameters are 
-$A=3.1623\cdot 10^{-26}\si{\pascal^{-n}\per\second}$, 
-$Q=186.5\cdot 10^3 \si{\joule\per\mole}$, 
-$n=3.3$, $c=50\si{\mega\pascal}$, $\phi=\arctan(0.6)\simeq 31\degree$ and $\eta^{vp}=10^{21}\si{\pascal\second}$
+$A=3.1623\cdot 10^{-26}i~\si{\pascal^{-n}\per\second}$, 
+$Q=\SI{186.5e3}{\joule\per\mole}$, 
+$n=3.3$, $c=50\si{\mega\pascal}$, $\phi=\arctan(0.6)\simeq 31\degree$ and 
+$\eta^{m}=10^{21}\si{\pascal\second}$ (see figure).
 
-The background strainrate is set such that $\dot{\varepsilon}_{bc}=10^{-15}\si{\per\second}$, i.e. 
-$v_{bc}=\pm \dot{\varepsilon}_{bc} L_x/2 $ on the sides and $v=\pm \dot{\varepsilon}_{bc} L_y/2 $
+The background strainrate is set such that $\dot{\varepsilon}_{bc}=10^{-15}~\si{\per\second}$, i.e. 
+$u_{bc}=\pm \dot{\varepsilon}_{bc} L_x/2$ on the sides and $v_{bc}=\pm \dot{\varepsilon}_{bc} L_y/2 $
 on the top and bottom boundaries. Pressure is normalised such that it is on average zero on the top boundary. 
 Picard iterations are used. The 2-norm of the non-linear residual 
 is monitored, as well as the following quantities ($i$ and $i-1$ are two consecutive nonlinear iterations):
@@ -47,68 +48,125 @@ is monitored, as well as the following quantities ($i$ and $i-1$ are two consecu
 \qquad
 \xi_p = \frac{\|p^i-p^{i-1}\|_2}{ \|p^i+p^{i-1}\|_2}
 \] 
+For the first nonlinear iteration there is no pre-existing velocity or pressure field so 
+we simply use a constant strain rate value of $\SI{1e-15}{\per\second}$.
+
 
 As shown on the (modified) figure above, the rheological assemblage is as follows:
 \begin{center}
-\input{tikz/tikz_vvp}
+\input{python_codes/fieldstone_70/tikz_vvp}
 \end{center}
-
-The dislocation creep viscosity $\eta_{\color{green}ds}$ and effective viscoplastic viscosity $\eta_{vp}$ are given by 
+The dislocation creep viscosity $\eta_{\color{OliveGreen}ds}$ and effective 
+viscoplastic viscosity $\eta_{\color{blue}vp}$ are given by 
 \[
-\eta_{\color{green}ds}(\dot\varepsilon) = \frac{1}{2} A^{-1/n} \dot{\varepsilon}^{-1+1/n} \exp \frac{Q}{nRT}
+\eta_{\color{OliveGreen}ds}(\dot\varepsilon) = \frac{1}{2} A^{-1/n} \dot{\varepsilon}^{-1+1/n} \exp \frac{Q}{nRT}
 \qquad
 \text{and}
 \qquad
-\eta_{vp}(\dot\varepsilon) = \frac{p \sin \phi + c \cos \phi}{2 \dot{\varepsilon}}  + \eta_{vp}
+\eta_{\color{blue}vp}(\dot\varepsilon) = \frac{p \sin \phi + c \cos \phi}{2 \dot{\varepsilon}}  + \eta_{m}
 \]
 Note that these expressions are functions of $\dot\varepsilon$, the nature of which will be specified later. 
 As documented in Section~\ref{ss:srpart}, 
 the partitioning of the total strain rate into a viscous creep component and a viscoplastic component 
 is not trivial.  
-The algorithm goes then as follows:
+The algorithm then works as follows:
+
 \begin{enumerate}
+%%%%%%%%%%%%%%%%%
 \item Assume we know $\dot\varepsilon_T$ (from previous iteration), 
-as well as the yield value  $Y = p\; \sin\phi + c \; \cos \phi$ and $\eta_m$.
+as well as the yield value  $Y = p\; \sin\phi + c \; \cos \phi$ and $\eta_m$ (Here the 'T' stands 
+for 'total').
+
+%%%%%%%%%%%%%%%%%
 \item We start by assuming that the plasticity 'block' is not active 
-($\dot{\varepsilon}_{\color{blue}vp}=0$, $\dot{\varepsilon}_{\color{green}ds}=\dot{\varepsilon}_T$): 
-We are left with only one damper and compute its effective viscosity
+($\dot{\varepsilon}_{\color{blue}vp}=0$, $\dot{\varepsilon}_{\color{OliveGreen}ds}
++\dot{\varepsilon}_{\color{orange} v} =\dot{\varepsilon}_T$): 
+
+We use the technique explained here after to compute the partitioning of the strain rate
+and recover the stress $\tau$ and the dislocation creep effective viscosity
+is given by 
+\begin{eqnarray}
+\eta_{\color{OliveGreen}ds} &=& \frac{1}{2} A^{-1/n} 
+\dot{\varepsilon}_{\color{OliveGreen}ds}^{-1+1/n} \exp \left( \frac{Q}{nRT} \right) \nn\\
+\eta_v &=& \frac{\tau}{2 \dot{\varepsilon}_{\color{orange}v}}  \nn
+\end{eqnarray}
+\begin{lstlisting}
+eta_ds = 0.5*A**(-1./nnn)*np.exp(Q/nnn/Rgas/T)*eps_ds**(1./nnn-1.)
+eps_v=tau/2/eta_v
+\end{lstlisting}
+The effective viscosity of both dampers is given by 
 \[
-\eta_{\color{green}ds} = \frac{1}{2} A^{-1/n} \dot{\varepsilon}_T^{-1+1/n} \exp \left( \frac{Q}{nRT} \right)
-\] 
+\eta_{eff}=\frac{1}{1/\eta_{\color{orange}v}+1/\eta_{\color{OliveGreen}ds}}
+\]
+\begin{lstlisting}
+etaeff=1./(1./eta_v+1./eta_ds)
+\end{lstlisting}
 
-\item if $\tau =2 {\eta}_{\color{green}ds} \dot\varepsilon_T < Y$ the stress is below the yield stress value 
-and the plasticity element is indeed not active. Simply return ${\eta}_{\color{green}ds}$ in the material model.
+%%%%%%%%%%%%%%%%%
+\item if $\tau =2 {\eta}_{eff} \dot\varepsilon_T < Y$ the stress is below the yield stress value 
+and the plasticity element is indeed not active. 
+Simply return ${\eta}_{eff}$ in the material model.
+\begin{lstlisting}
+eps_vp=0
+\end{lstlisting}
 
-\item if $\tau=2 \eta_{\color{green}ds} \dot\varepsilon_T > Y$ the stress is above the 
+\item if $\tau=2 \eta_{eff} \dot\varepsilon_T > Y$ the stress is above the 
 yield value, which is not allowed. In this case the plastic element must be present 
-and active and the dislocation creep viscous damper is then 
-in series with the viscoplastic element. The former deforms 
-with a strain rate $\dot{\varepsilon}_{\color{green}ds}$ while the latter 
-with $\dot\varepsilon_{\color{blue}vp}$ (all under the same tress $\tau$) 
-and we have  $\dot\varepsilon_T = \dot{\varepsilon}_{\color{green}ds} + \dot\varepsilon_{\color{blue}vp}$ so:
+and active and the linear viscous and dislocation creep viscous dampers are then 
+in series with the viscoplastic element. 
+They  respectively deform with a strain rate $\dot{\varepsilon}_{\color{orange}v}$, 
+$\dot{\varepsilon}_{\color{OliveGreen}ds}$ and $\dot\varepsilon_{\color{blue}vp}$ 
+(all under the same tress $\tau$) 
+and we have  
+$\dot\varepsilon_T = \dot{\varepsilon}_{\color{orange}v} +
+\dot{\varepsilon}_{\color{OliveGreen}ds} + \dot\varepsilon_{\color{blue}vp}$ so:
 
 \begin{eqnarray}
-\dot\varepsilon_T - \dot{\varepsilon}_{\color{green}ds}(\tau) 
+\dot\varepsilon_T 
+-\dot{\varepsilon}_{\color{orange}v} 
+-\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau) 
 &=& \dot\varepsilon_{\color{blue}vp}(\tau)  \nonumber\\
+\dot\varepsilon_T 
+-\dot{\varepsilon}_{\color{orange}v} 
+-\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau) 
 &=& \frac{\tau}{2 \eta_{\color{blue}vp}}  \nn\\
+\dot\varepsilon_T 
+-\dot{\varepsilon}_{\color{orange}v} 
+-\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau) 
 &=& \frac{\tau}{2 \left( \frac{Y}{2\dot\varepsilon_{\color{blue}vp}(\tau)} + \eta_m  \right)} 
 \nonumber\\
-%&=&  \frac{\tau}{2 \left( \frac{Y}{2 (\dot\varepsilon_T -\dot{\varepsilon}_v(\tau) -\dot\varepsilon_{ds}(\tau) 
-%+ \dot\varepsilon_{df}(\tau)   )} + \eta_m  \right)} 
-%\nonumber\\
-\dot\varepsilon_T -  \dot{\varepsilon}_{\color{green}ds}(\tau) 
+\dot\varepsilon_T 
+-\dot{\varepsilon}_{\color{orange}v} 
+-\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau) 
 &=&
-\frac{\tau}{2 \left( \frac{Y}{2 (\dot\varepsilon_T -\dot{\varepsilon}_v(\tau)  )} + \eta_m  \right)} \nonumber 
+\frac{\tau}{2 \left( \frac{Y}{2 (
+\dot\varepsilon_T 
+-\dot{\varepsilon}_{\color{orange}v}   
+-\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau)  )} + \eta_m  \right)} \nonumber 
 \\
-2 [\dot\varepsilon_T -\dot{\varepsilon}_v(\tau)  ]
- \left( \frac{Y}{2 (\dot\varepsilon_T -\dot{\varepsilon}_{\color{green}ds}(\tau) )} + \eta_m  \right) &=& \tau 
+2 [
+\dot\varepsilon_T 
+-\dot{\varepsilon}_{\color{orange}v}(\tau) 
+-\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau)
+]
+\left( \frac{Y}{2 (
+\dot\varepsilon_T 
+-\dot{\varepsilon}_{\color{orange}v} 
+-\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau) )} + \eta_m  \right) &=& \tau 
 \nonumber\\
-Y + 2 (\dot\varepsilon_T - \dot{\varepsilon}_v(\tau)  -\dot{\varepsilon}_{\color{green}ds}(\tau) ) \eta_m  &=& \tau \nonumber 
+Y + 2 (
+\dot\varepsilon_T 
+-\dot{\varepsilon}_{\color{orange}v}(\tau)  
+-\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau) ) \eta_m  &=& \tau \nonumber 
 \end{eqnarray}
-As before, we must find the zero of the function ${\cal F}(\tau)$: 
+We must then find the zero of the function ${\cal F}(\tau)$: 
 \begin{eqnarray}
 {\cal F}(\tau) 
-&=& Y + 2 [\dot\varepsilon_T -\dot{\varepsilon}_v(\tau)   -\dot{\varepsilon}_{\color{green}ds}(\tau) ]\eta_m -\tau \nonumber\\
+&=& Y + 2 [
+\dot\varepsilon_T 
+-\dot{\varepsilon}_{\color{orange}v}(\tau)   
+-\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau) 
+]\eta_m -\tau \nonumber\\
 &=& Y + 2 \left[ 
 \dot\varepsilon_T -\frac{\tau}{2\eta_v} -A \tau^n \exp \left(-\frac{Q}{RT}\right) 
 \right]\eta_m -\tau \nn
@@ -123,46 +181,68 @@ and the iterations will be of the form:
 where the derivative of the function ${\cal F}$ with respect to $\tau$ reads:
 \begin{eqnarray}
 \frac{\partial {\cal F}}{\partial \tau} 
-&=& -\frac{\eta_m}{\eta_v} -2 \eta_m \frac{\partial  \dot\varepsilon_{v}(\tau) }{\partial \tau}    - 1 
+%&=& -\frac{\eta_m}{\eta_v} -2 \eta_m 
+%\frac{\partial  \dot\varepsilon_{\color{OliveGreen}ds}(\tau) }{\partial \tau} - 1 
 = -\frac{\eta_m}{\eta_v}-2 \eta_m n A \tau^{n-1} \exp \left(-\frac{Q}{RT}\right) -1 
 \end{eqnarray}
-{\it Say something about where we start from, multiplicity of roots}
-
-{\it Say something about when we stop iterating}
+Iterations require a starting value for $\tau$: we logically use the one obtained just 
+above. Iterations stop when ${\cal F}<10^{-6}$.  
 
 \item Once $\tau$ has been found, one can compute 
 \begin{eqnarray}
-\dot{\varepsilon}_{ds}(\tau)&=&A \tau^n \exp \left(-\frac{Q}{RT}\right)
-\qquad \Rightarrow \qquad 
-\eta_{ds}(\dot\varepsilon_{ds}) = \frac{1}{2} A^{-1/n} \dot{\varepsilon}_{ds}^{-1+1/n} \exp \frac{Q}{nRT} \nn\\
-\dot{\varepsilon}_{v}(\tau)=\frac{\tau}{2\eta_v}  \nn
+\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau)&=&A \tau^n \exp \left(-\frac{Q}{RT}\right)
+\qquad 
+\Rightarrow 
+\qquad 
+\eta_{\color{OliveGreen}ds}(\dot\varepsilon_{\color{OliveGreen}ds}) 
+= \frac{1}{2} A^{-1/n} \dot{\varepsilon}_{\color{OliveGreen}ds}^{-1+1/n} \exp \frac{Q}{nRT} \nn\\
+\dot{\varepsilon}_{\color{orange}v}(\tau)&=&\frac{\tau}{2\eta_v}  \nn
 \end{eqnarray}
-then $\dot{\varepsilon}_{\color{blue}vp}=\dot{\varepsilon}_T -\dot{\varepsilon}_v(\tau) -\dot{\varepsilon}_{ds}(\tau)$,
+\begin{lstlisting}
+eps_ds=A*tau**nnn*np.exp(-Q/Rgas/T)
+eta_ds = 0.5*A**(-1./nnn)*np.exp(Q/nnn/Rgas/T)*eps_ds**(1./nnn-1.)
+eps_v=tau/2/eta_v
+\end{lstlisting}
+then 
+$\dot{\varepsilon}_{\color{blue}vp}
+=\dot{\varepsilon}_T 
+-\dot{\varepsilon}_{\color{orange}v}(\tau) 
+-\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau)$,
 and then 
 \[
-\eta_{\color{blue} vp}(\dot\varepsilon_{\color{blue} vp}) = \frac{p \sin \phi + c \cos \phi}{2 \dot{\varepsilon}_{\color{blue}vp}}  + \eta_{\color{blue} vp}
+\eta_{\color{blue} vp}(\dot\varepsilon_{\color{blue} vp}) 
+= \frac{p \sin \phi + c \cos \phi}{2 \dot{\varepsilon}_{\color{blue}vp}}  + \eta_{m}
 \]
 \item 
 Ultimately the effective viscosity at every quadrature point is computed as follows:
 \[
-\eta_{eff} = \left(\frac{1}{\eta_v} + \frac{1}{\eta_{ds}}  + \frac{1}{\eta_{vp}}  \right)^{-1}
+\eta_{eff} = \left(
+\frac{1}{\eta_{\color{orange}v}} + 
+\frac{1}{\eta_{\color{OliveGreen}ds}}  + 
+\frac{1}{\eta_{\color{blue}vp}}  
+\right)^{-1}
 \]
-For the first nonlinear iteration there is no pre-existing velocity or pressure field so EXPLAIN 
-
+\begin{lstlisting}
+etaeff=1/(1/eta_v+1/eta_ds+1/eta_vp)
+\end{lstlisting}
 
 \end{enumerate}
-
-
 
 %I set $\dot{\varepsilon}=10^{-15}\si{\per\second}$ in the viscosity function, 
 %just so that the rheological model does not explode.
  
-The viscosity is also maintained between $\eta_{min}=10^{19}\text{Pa}\cdot\text{s}$ 
-and $\eta_{max}=10^{25}\text{Pa}\cdot\text{s}$.
+By construction, the viscosity is also maintained between $\eta_{m}\ge \SI{1e19}{\pascal}$ 
+and $\eta_{v}=\SI{1e25}{\pascal}$. 
 
 \begin{center}
 \includegraphics[width=11cm]{python_codes/fieldstone_70/images/fig2}\\
 {\captionfont Figure taken from \cite{dudy20}}
+\end{center}
+
+\begin{center}
+\includegraphics[width=9cm]{python_codes/fieldstone_70/images/aspect_sr}\\
+\includegraphics[width=9cm]{python_codes/fieldstone_70/images/aspect_eta}\\
+{\captionfont Obtained with \aspect (see cookbook)}
 \end{center}
 
 

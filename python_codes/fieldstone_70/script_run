@@ -23,6 +23,7 @@ mv *.ascii results_compression_22
 mv *.vtu results_compression_22
 
 ##############################################3
+# -1 reverses the boundary conditions
 
 #python3 stone.py 100 30 1 $niter -1  19
 #mkdir results_extension_19

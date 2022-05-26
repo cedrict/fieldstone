@@ -7,9 +7,12 @@ from scipy.sparse import csr_matrix
 from scipy.sparse import lil_matrix
 import time as time
 from numpy import linalg as LA
+import numba
+from numba import jit
 
 #------------------------------------------------------------------------------
 
+@jit(nopython=True)
 def NNV(rq,sq):
     NV_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
     NV_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
@@ -22,6 +25,7 @@ def NNV(rq,sq):
     NV_8=     (1.-rq**2) *     (1.-sq**2)
     return NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,NV_6,NV_7,NV_8
 
+@jit(nopython=True)
 def dNNVdr(rq,sq):
     dNVdr_0= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
     dNVdr_1= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
@@ -34,6 +38,7 @@ def dNNVdr(rq,sq):
     dNVdr_8=       (-2.*rq) *    (1.-sq**2)
     return dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,dNVdr_6,dNVdr_7,dNVdr_8
 
+@jit(nopython=True)
 def dNNVds(rq,sq):
     dNVds_0= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
     dNVds_1= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
@@ -46,6 +51,7 @@ def dNNVds(rq,sq):
     dNVds_8=     (1.-rq**2) *       (-2.*sq)
     return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8
 
+@jit(nopython=True)
 def NNP(rq,sq):
     NP_0=0.25*(1-rq)*(1-sq)
     NP_1=0.25*(1+rq)*(1-sq)
@@ -61,11 +67,9 @@ def material_model(xq,yq,exx,eyy,exy,p,T):
     nnn=3.3
     Q=186.5e3
     Rgas=8.314
-    #eta_min=1.e19
-    #eta_max=1.e25
     phi=31./180.*np.pi #(atan(0.6) in paper)
-    c=5e7
-    eta_m=0#1e21
+    c=50e6
+    eta_m=0 #1e21
     eta_v=1e25
     #-------------------
     if iter==0:
@@ -126,10 +130,6 @@ def material_model(xq,yq,exx,eyy,exy,p,T):
           eps_vp=0
        else: #----------------------visco-viscoplastic branch
 
-          #guess assumes 90% ds, 1% vp
-          #tau = A**(-1./nnn)*np.exp(Q/nnn/Rgas/T)*(0.9*E2)**(1./nnn)
-          #tau=1e6
-
           rh=2
           it=0
           func=1
@@ -161,7 +161,6 @@ def material_model(xq,yq,exx,eyy,exy,p,T):
           #viscosities and strain rates of v, ds and vp element
           eps_ds=A*tau**nnn*np.exp(-Q/Rgas/T)
           eta_ds = 0.5*A**(-1./nnn)*np.exp(Q/nnn/Rgas/T)*eps_ds**(1./nnn-1.)
-
           eps_v=tau/2/eta_v
 
           eps_vp=E2-eps_ds-eps_v
@@ -169,11 +168,9 @@ def material_model(xq,yq,exx,eyy,exy,p,T):
              print("eps_vp<0",E2,eps_ds)
           eta_vp=Y/2/eps_vp+eta_m
 
-          etaeff=1./(1/eta_v+1./eta_ds+1./eta_vp)
+          etaeff=1/(1/eta_v+1/eta_ds+1/eta_vp)
 
        #end if
-       #etaeff=min(etaeff,eta_max)
-       #etaeff=max(etaeff,eta_min)
     #end if
     return etaeff,rh,tau,eps_v,eps_ds,eps_vp
 
@@ -236,7 +233,9 @@ velbc=bc*1e-15*Lx/2
 
 eta_ref=1e23      # scaling of G blocks
     
-p_has_nullspace=False
+p_has_nullspace=True
+
+rho0=2700
 
 #################################################################
 #################################################################
@@ -333,9 +332,9 @@ for i in range(0,NV):
     if xV[i]/Lx>(1-eps):
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = -velbc 
     if yV[i]/Ly<eps:
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0#-velbc*Ly/Lx 
-    #if yV[i]/Ly>(1-eps):
-    #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = +velbc*Ly/Lx 
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = -velbc*Ly/Lx 
+    if yV[i]/Ly>(1-eps):
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = +velbc*Ly/Lx 
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
@@ -346,7 +345,7 @@ print("setup: boundary conditions: %.3f s" % (time.time() - start))
 T=np.zeros(NV,dtype=np.float64) 
 
 for i in range(0,NV):
-    T[i]=20+(Ly-yV[i])*15/1e3+ 273.15
+    T[i]=20+(Ly-yV[i])*0.015+273.15
 
 #========================================================================================
 #========================================================================================
@@ -359,7 +358,7 @@ p      = np.zeros(NP,dtype=np.float64)            # y-component velocity
 u_old  = np.zeros(NV,dtype=np.float64)            # x-component velocity
 v_old  = np.zeros(NV,dtype=np.float64)            # y-component velocity
 p_old  = np.zeros(NP,dtype=np.float64)            # y-component velocity
-sol    = np.zeros(Nfem,dtype=np.float64)         # solution vector 
+sol    = np.zeros(Nfem,dtype=np.float64)          # solution vector 
     
 c_mat   = np.array([[2,0,0],\
                     [0,2,0],\
@@ -461,14 +460,12 @@ for iter in range(0,niter):
                 etaq[counterq],rhq[counterq],tauq[counterq],srq_v[counterq],srq_ds[counterq],srq_vp[counterq]=\
                 material_model(xq[counterq],yq[counterq],exxq,eyyq,exyq,pq[counterq],Tq)
 
-                rhoq=2700
-
                 # compute elemental a_mat matrix
                 K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq[counterq]*weightq*jcob
 
                 # compute elemental rhs vector
                 for i in range(0,mV):
-                    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*rhoq*gy
+                    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*rho0*gy
 
                 for i in range(0,mP):
                     N_mat[0,i]=NNNP[i]
@@ -566,7 +563,7 @@ for iter in range(0,niter):
     print("split vel into u,v: %.3f s" % (time.time() - start))
 
     ######################################################################
-    #normalise pressure
+    #normalise pressure: average on top boundary is zero
     #pressure is Q1 so I need a single quad point in the middle of the 
     #face to carry out integration on edge.
     ######################################################################
