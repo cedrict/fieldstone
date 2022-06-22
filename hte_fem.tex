@@ -5,87 +5,89 @@ We start from the 'bare-bones' heat transport equation (source terms are omitted
 \end{equation}
 In what follows we assume that the velocity vield $\vec \upnu$ is known so that temperature is the 
 only unknown.
-Let $N^\uptheta$ be the temperature basis functions so that the temperature inside an element is 
+Let $\bN^\uptheta$ be the temperature basis functions so that the temperature inside an element is 
 given by\footnote{the $\uptheta$ superscript has been chosen to denote temperature so as to avoid confusion
 with the transpose operator}:
 \begin{equation}
-T^h({\vec r}) = \sum_{i=1}^{m_T} N^\uptheta_i ({\vec r}) T_i = \vec N^\uptheta \cdot \vec T
+T^h({\vec r}) = \sum_{i=1}^{m_T} \bN^\uptheta_i ({\vec r}) T_i = \vec \bN^\uptheta \cdot \vec T
 \end{equation}
 where $\vec T$ is a vector of length $m_T$
 The weak form is then 
 \begin{equation}
-\int_\Omega N^\uptheta_i \left[ 
+\int_\Omega \bN^\uptheta_i \left[ 
 \rho C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec\nabla T} \right) \right] d\Omega
-= \int_\Omega  N^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T  d\Omega
+= \int_\Omega  \bN^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T  d\Omega
 \end{equation}
 
 \begin{equation}
-\underbrace{\int_\Omega N^\uptheta_i  \rho C_p \frac{\partial T}{\partial t} d\Omega}_{I}
-+ \underbrace{\int_\Omega N^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T}   d\Omega}_{II}
-= \underbrace{\int_\Omega  N^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T d\Omega}_{III}
+\underbrace{\int_\Omega \bN^\uptheta_i  \rho C_p \frac{\partial T}{\partial t} d\Omega}_{I}
++ \underbrace{\int_\Omega \bN^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T}   d\Omega}_{II}
+= \underbrace{\int_\Omega  \bN^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T d\Omega}_{III}
 \quad\quad
 i=1,m_T
 \end{equation}
 
 Looking at the first term:
 \begin{eqnarray}
-\int_\Omega N^\uptheta_i  \rho C_p \frac{\partial T}{\partial t} d\Omega
-&=&  \int_\Omega N^\uptheta_i  \rho C_p \vec N^\uptheta \cdot \dot{\vec T}  d\Omega \\
+\int_\Omega \bN^\uptheta_i  \rho C_p \frac{\partial T}{\partial t} d\Omega
+&=&  \int_\Omega \bN^\uptheta_i  \rho C_p \vec \bN^\uptheta \cdot \dot{\vec T}  d\Omega \\
 \end{eqnarray}
 so that when we assemble all contributions for $i=1,m_T$ we get:
 \begin{equation}
 I 
-= \int_\Omega \vec N^\uptheta  \rho C_p \vec N^\uptheta \cdot \dot{\vec T}  d\Omega
-= \left( \int_\Omega \rho C_p  \vec N^\uptheta  \vec N^\uptheta  d\Omega \right) \cdot \dot{\vec T}
+= \int_\Omega \vec \bN^\uptheta  \rho C_p \vec \bN^\uptheta \cdot \dot{\vec T}  d\Omega
+= \left( \int_\Omega \rho C_p  \vec \bN^\uptheta  \vec \bN^\uptheta  d\Omega \right) \cdot \dot{\vec T}
 = {\bm M}^T \cdot \dot{\vec T}
  \end{equation}
 where ${\bm M}^T$ is the mass matrix of the system of size $(m_T \times m_T)$ with 
 \begin{equation}
-M_{ij}^T = \int_\Omega \rho C_p N_i^\uptheta N_j^\uptheta d\Omega
+M_{ij}^T = \int_\Omega \rho C_p \bN_i^\uptheta \bN_j^\uptheta d\Omega
 \end{equation}
 Turning now to the second term:
 \begin{eqnarray}
-\int_\Omega N^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T}   d\Omega
-&=& \int_\Omega N^\uptheta_i  \rho C_p (u \frac{\partial T}{\partial x} +  v \frac{\partial T}{\partial y} ) d\Omega \\
-&=& \int_\Omega N^\uptheta_i  \rho C_p (u \frac{\partial \vec N^\uptheta}{\partial x} +  v \frac{\partial \vec N^\uptheta}{\partial y} ) \cdot \vec T d\Omega \\
+\int_\Omega \bN^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T}   d\Omega
+&=& \int_\Omega \bN^\uptheta_i  \rho C_p (u \frac{\partial T}{\partial x} +  v \frac{\partial T}{\partial y} ) d\Omega \\
+&=& \int_\Omega \bN^\uptheta_i  \rho C_p (u \frac{\partial \vec \bN^\uptheta}{\partial x} +  v \frac{\partial \vec \bN^\uptheta}{\partial y} ) \cdot \vec T d\Omega \\
 \end{eqnarray}
 so that when we assemble all contributions for $i=1,m_T$ we get:
 \[
-II = \left(\int_\Omega \rho C_p \vec N^\uptheta (u \frac{\partial \vec N^\uptheta}{\partial x} +  v \frac{\partial \vec N^\uptheta}{\partial y} ) d\Omega \right)  \cdot \vec T = {\bm K}_a \cdot \vec T
+II = \left(\int_\Omega \rho C_p \vec \bN^\uptheta (u \frac{\partial \vec \bN^\uptheta}{\partial x} +  
+v \frac{\partial \vec \bN^\uptheta}{\partial y} ) d\Omega \right)  \cdot \vec T = {\bm K}_a \cdot \vec T
 \]
 where ${\bm K}_a$ is the advection term matrix of size $(m_T \times m_T)$ with
 \[
-(K_a)_{ij} = \int_\Omega \rho C_p N_i^\uptheta 
-\left(u \frac{\partial N_j^\uptheta}{\partial x} +  v \frac{\partial N_j^\uptheta}{\partial y} \right) d\Omega 
+(K_a)_{ij} = \int_\Omega \rho C_p \bN_i^\uptheta 
+\left(u \frac{\partial \bN_j^\uptheta}{\partial x} +  v \frac{\partial \bN_j^\uptheta}{\partial y} \right) d\Omega 
 \]
 Now looking at the third term, we carry out an integration by part and neglect the surface term for now, so that 
 \begin{eqnarray}
-\int_\Omega  N^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T d\Omega
-&=& - \int_\Omega  k \vec \nabla N^\uptheta_i \cdot \vec\nabla T d\Omega \\
-&=& - \int_\Omega  k \vec \nabla N^\uptheta_i \cdot \vec\nabla (\vec N^\uptheta \cdot \vec T) d\Omega \\
+\int_\Omega  \bN^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T d\Omega
+&=& - \int_\Omega  k \vec \nabla \bN^\uptheta_i \cdot \vec\nabla T d\Omega \\
+&=& - \int_\Omega  k \vec \nabla \bN^\uptheta_i \cdot \vec\nabla (\vec \bN^\uptheta \cdot \vec T) d\Omega \\
 \end{eqnarray}
 with 
 \[
 \vec \nabla \vec N^\uptheta = 
 \left(
 \begin{array}{cccc}
-\partial_x N_1^\uptheta & 
-\partial_x N_2^\uptheta & \dots &
-\partial_x N_{m_T}^\uptheta \\ \\
-\partial_y N_1^\uptheta & 
-\partial_y N_2^\uptheta & \dots &
-\partial_y N_{m_T}^\uptheta 
+\partial_x \bN_1^\uptheta & 
+\partial_x \bN_2^\uptheta & \dots &
+\partial_x \bN_{m_T}^\uptheta \\ \\
+\partial_y \bN_1^\uptheta & 
+\partial_y \bN_2^\uptheta & \dots &
+\partial_y \bN_{m_T}^\uptheta 
 \end{array}
 \right)
 \]
 so that finally:
 \[
-III = - \left( \int_\Omega k (\vec \nabla \vec N^\uptheta)^T \cdot \vec \nabla \vec N^\uptheta d\Omega \right) \cdot \vec T
+III = - \left( \int_\Omega k (\vec \nabla \vec \bN^\uptheta)^T \cdot 
+\vec \nabla \vec \bN^\uptheta d\Omega \right) \cdot \vec T
 = - {\bm K}_d \cdot \vec T
 \]
 where ${\bm K}_d$ is the diffusion term matrix:
 \[
-{\bm K}_d = \int_\Omega  k (\vec \nabla \vec N^\uptheta)^T \cdot \vec \nabla \vec N^\uptheta d\Omega 
+{\bm K}_d = \int_\Omega  k (\vec \nabla \vec \bN^\uptheta)^T \cdot \vec \nabla \vec \bN^\uptheta d\Omega 
 \]
  Ultimately terms $I,II,III$ together yield:
 \[

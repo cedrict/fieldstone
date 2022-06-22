@@ -1,9 +1,14 @@
 
+Remember: ${\cal I}_{1,2,3}$ are moment invariants while
+${\cal K}_{1,2,3}$ are principal invariants.
+
+\index{general}{Principal Invariant}
+\index{general}{Moment Invariant}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Second invariants}
 
-
-Assuming tensor ${\bm \tau}$ is symmetric:
+Remembering that the deviatoric stress tensor ${\bm \tau}$ is symmetric:
 \begin{eqnarray}
 {\cal I}_2(\bm\tau) 
 &=& \frac12 {\bm \tau}:{\bm \tau} \nn\\
@@ -40,6 +45,48 @@ Assuming tensor ${\bm \tau}$ is symmetric:
 \right] \qquad ( \rm {\bm\tau\;  is\; symm}) \nn\\
 &=& \frac12 ( \tau_{xx}^2 + \tau_{yy}^2 +\tau_{zz}^2 + 2\tau_{xy}^2+ 2\tau_{xz}^2+ 2\tau_{yz}^2)
 \end{eqnarray}
+
+
+\begin{eqnarray}
+{\cal K}_2({\bm \sigma}) 
+&=& \frac{1}{2}[{\rm tr}({\bm \sigma}) ^2 - {\rm tr}({\bm \sigma}^2)] \nonumber\\
+&=& \frac12 \left[  (\sigma_{xx}+\sigma_{yy}+\sigma_{zz})^2  
+- ( \sigma_{xx}^2 + \sigma_{xy}\sigma_{yx} + \sigma_{xz}\sigma_{zx}  
++\sigma_{yy}^2 + \sigma_{xy}\sigma_{yx} + \sigma_{yz}\sigma_{zy}
++\sigma_{zz}^2 + \sigma_{xz}\sigma_{zx} + \sigma_{yz}\sigma_{zy}
+) \right] \nn\\
+&=& \frac12 \left[  (\sigma_{xx}+\sigma_{yy}+\sigma_{zz})^2  
+- ( \sigma_{xx}^2 +\sigma_{yy}^2 +\sigma_{zz}^2
++ 2\sigma_{xy}\sigma_{yx} + 2\sigma_{xz}\sigma_{zx}  + 2\sigma_{yz}\sigma_{zy} ) \right] \nn\\
+&=& \frac12 \left[  
+\sigma_{xx}^2 + \sigma_{yy}^2 + \sigma_{zz}^2
++2 \sigma_{xx}\sigma_{yy}
++2 \sigma_{xx}\sigma_{zz}
++ 2 \sigma_{yy}\sigma_{zz}
+- ( \sigma_{xx}^2 +\sigma_{yy}^2 +\sigma_{zz}^2
++ 2\sigma_{xy}\sigma_{yx} + 2\sigma_{xz}\sigma_{zx}  + 2\sigma_{yz}\sigma_{zy} ) \right] \nn\\
+&=& \frac12 \left[  
+2 \sigma_{xx}\sigma_{yy}
++2 \sigma_{xx}\sigma_{zz}
++ 2 \sigma_{yy}\sigma_{zz}
+- ( 2\sigma_{xy}\sigma_{yx} + 2\sigma_{xz}\sigma_{zx}  + 2\sigma_{yz}\sigma_{zy} ) \right] \nn\\
+&=& 
+\sigma_{xx}\sigma_{yy} + \sigma_{xx}\sigma_{zz} + \sigma_{yy}\sigma_{zz}
+- \sigma_{xy}\sigma_{yx} - \sigma_{xz}\sigma_{zx}  - \sigma_{yz}\sigma_{zy} 
+\\
+&=& \sigma_{xx}\sigma_{yy}+\sigma_{yy}\sigma_{zz}+\sigma_{xx}\sigma_{zz}
+-\sigma_{xy}^2 -\sigma_{xz}^2 -\sigma_{yz}^2 
+\end{eqnarray}
+
+
+
+
+
+
+
+
+
+
 
 \newpage
 Let us now express the second invariant of the deviatoric stress tensor 
@@ -148,6 +195,15 @@ with ${\cal K}_1(\bm\sigma)={\cal I}_1(\bm\sigma)$ so that
 = -\frac16 {\cal K}_1(\bm\sigma)^2 + \frac12 {\cal K}_1(\bm\sigma)^2-{\cal K}_2(\bm\sigma) 
 = \frac13 {\cal K}_1(\bm\sigma)^2 - {\cal K}_2(\bm\sigma)
 \]
+that is:
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+{\cal I}_2(\bm\tau) =  
+\frac13 {\cal K}_1(\bm\sigma)^2 - {\cal K}_2(\bm\sigma)
+\]
+\end{mdframed}
+
+
 If one replaces ${\cal K}$'s by ${\cal I}$'s then one finds the formula in the literature 
 \footnote{\url{https://www.pantelisliolios.com/deviatoric-stress-and-invariants/}}
 \footnote{\url{https://en.wikipedia.org/wiki/Cauchy_stress_tensor}}.
@@ -563,11 +619,17 @@ following relationships:
 +{\cal K}_3({\bm \sigma}) 
 \end{eqnarray}
 
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+{\cal I}_3(\bm\tau) 
+= 
+\frac{2}{27} {\cal K}_1(\bm\sigma)^3 -\frac13 {\cal K}_1(\bm\sigma)  {\cal K}_2({\bm \sigma}) +{\cal K}_3({\bm \sigma}) 
+\end{equation}
+\end{mdframed}
+
 If one replaces the ${\cal K}$'s by $I$'s then one finds the formula in the literature 
 \footnote{\url{https://www.pantelisliolios.com/deviatoric-stress-and-invariants/}}
 \footnote{\url{https://en.wikipedia.org/wiki/Cauchy_stress_tensor}}.
-
-
 
 
 \begin{eqnarray}

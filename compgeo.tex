@@ -28,6 +28,50 @@ When possible, make a link with the Mantle Dynamics practical.
 Bonus: Compute and plot the heat flux $\vec{q}=-\vec\nabla T$ in the center of the elements.
 
 %-------------------------------------------
+\subsection{Corner flow subduction *}
+
+\begin{itemize}
+\item In this experiment the velocity is prescribed in geometrically simple subducting and overriding plates,
+while the velocity in the mantle is computed by means of an analytical solution coined 'corner flow velocity'.
+Details are to be found in G.K. Batchelor, {\it An introduction to fluid dynamics}. Cambridge University Press, 1967.
+\item Write a function which prescribes the velocity in a lithospheric sized domain.
+\item Use this velocity to drive the system in time (choose the appropriate values for the coefficients in the heat 
+transport equation)
+\item prescribe a constant temperature value at the top, and fix the temperature on both sides, but only in the 
+plates (along lengths $l_1$ and $l_2$. Choose an appropriate plate temperature model.
+\item Run the model over millions of years with different velocities.
+\item Measure the depth of the isotherm $800^\circ$ as a function of time (bonus). 
+\item Is steady state ever reached ?
+\end{itemize}
+
+If all goes well, you should be able to recover similar results:
+
+\begin{center}
+a)\includegraphics[width=6cm]{images/compgeo/corner1}
+\hspace{1cm}
+b)\includegraphics[width=7cm]{images/compgeo/corner2}\\
+{\captionfont 3D setup with prescribed velocity. b) example of temperature field evolution}
+\end{center}
+
+%-------------------------------------------
+\subsection{From 2D to 3D **}
+
+Rewrite your 2D FEM advection-diffusion code so that it now runs on a cube. 
+You will need to create a new connectivity array, compute new elemental matrices, etc ...
+Center the cube on the origin of the axis system.
+
+Compute the steady-state solution of a problem without heat advection. The domain is a unit cube,
+$k=\rho=C_p=1$. A temperature $T_{max}=1$ is prescribed at the bottom and $T_{min}=0$ at the top. 
+
+Same problem when these boundary conditions are now prescribed on the faces.
+
+Prescribe an temperature field such that it is 1 everywhere in the domain but 
+2 inside a sphere of radius 0.1 centered at $(0.66,0.66,0.66)$.
+This time no diffusion takes place but we wish to advect the field using the velocity
+$\vec\upnu=(y,x,0)$. What is the highest resolution that is achievable on your computer?
+
+
+%-------------------------------------------
 \subsection{Triangular linear elements */**}
 
 Redo the 2D advection-diffusion exercises with triangular elements.

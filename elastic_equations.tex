@@ -1,0 +1,197 @@
+\begin{flushright} {\tiny {\color{gray} elastic\_equations.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+What follows is mostly borrowed from Becker \& Kaus lecture notes \cite{beka}.
+
+The strong form of the PDE that governs force balance in a medium is given by
+\[
+\vec{\nabla}\cdot{\bm \sigma}  + \vec{f} = \vec{0}
+\]
+where ${\bm \sigma}$ is the stress tensor and $\vec{f}$ is a body force.
+
+The stress tensor is related to the strain tensor through the generalised 
+Hooke's law\footnote{\url{https://en.wikipedia.org/wiki/Hooke's_law}}:
+\begin{equation}
+\sigma_{ij}=\sum_{kl}C_{ijkl}\varepsilon_{kl} 
+\qquad
+\text{or}
+\qquad
+{\bm \sigma} = {\bm C} : {\bm \varepsilon}
+\label{eq:oone}
+\end{equation}
+where ${\bm C}$ is the fourth-order elastic tensor.
+
+Due to the inherent symmetries of ${\bm \sigma}$, ${\bm \varepsilon}$, and ${\bm C}$, 
+only 21 elastic coefficients of the latter are independent. 
+For isotropic linear media (which have the same physical properties in any direction), ${\bm C}$ 
+can be reduced to only two independent numbers (for example the bulk modulus $K$ and the shear modulus $G$ 
+that quantify the material's resistance to changes in volume and to shearing deformations, respectively).
+Thus
+\[
+C_{ijkl} = \lambda \delta_{ij}\delta_{kl} + \mu (\delta_{ik}\delta_{jl}+\delta_{il}\delta_{jk})
+\]
+so that Eq.~\eqref{eq:oone} becomes:
+\[
+\sigma_{ij}=\lambda \varepsilon_{kk} \delta_{ij} + 2\mu \varepsilon_{ij}
+\]
+or
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+{\bm \sigma}=\lambda (\vec{\nabla}\cdot\vec{u}) {\bm 1} +2\mu {\bm \varepsilon}(\vec{u}) \label{eq:twoELAST}
+\end{equation}
+\end{mdframed}
+where $\lambda$ is the Lam\'e parameter and $\mu$ is the shear 
+modulus\footnote{It is also sometimes written $G$}.
+The term $\vec{\nabla}\cdot\vec{u}$ is the isotropic dilation.
+
+\index{general}{Lam\'e Parameter} 
+\index{general}{Shear Modulus}
+
+This can be re-written in the 6-dimensional stress/strain space as
+\[
+\underbrace{
+\left(
+\begin{array}{c}
+\sigma_{xx} \\
+\sigma_{yy} \\
+\sigma_{zz} \\
+\sigma_{xy} \\
+\sigma_{xz} \\
+\sigma_{yz} 
+\end{array}
+\right)}
+_{\vec{\sigma}}
+=
+\underbrace{
+\left(
+\begin{array}{cccccc}
+\lambda+2\mu & \lambda & \lambda & 0 & 0 & 0 \\ 
+\lambda & \lambda+2\mu & \lambda & 0 & 0 & 0 \\ 
+\lambda & \lambda & \lambda+2\mu & 0 & 0 & 0 \\
+0 & 0 & 0 & \mu & 0 & 0 \\ 
+0 & 0 & 0 & 0 & \mu & 0 \\ 
+0 & 0 & 0 & 0 & 0 & \mu  
+\end{array}
+\right)}
+_{{\bm C}}
+\cdot
+\underbrace{
+\left(
+\begin{array}{c}
+\varepsilon_{xx} \\
+\varepsilon_{yy} \\
+\varepsilon_{zz} \\
+\varepsilon_{xy} \\
+\varepsilon_{xz} \\
+\varepsilon_{yz} 
+\end{array}
+\right)}
+_{\vec{\varepsilon}}
+\]
+or, in terms of the compliance matrix ${\bm C}^{-1}$,
+\index{general}{Compliance Matrix}
+\[
+\vec{\varepsilon} 
+= {\bm C}^{-1} \cdot \vec{\sigma}
+\]
+with
+\[
+{\bm C}^{-1}
+=
+\frac{1}{\mu(3\lambda+2\mu)}
+\left(
+\begin{array}{cccccc}
+\lambda+\mu & -\lambda/2 & -\lambda/2 & 0 & 0 & 0 \\
+-\lambda/2 & \lambda+\mu & -\lambda/2 & 0 & 0 & 0 \\
+-\lambda/2 & -\lambda/2 & \lambda+\mu & 0 & 0 & 0 \\
+0 & 0 & 0 & 3\lambda+2\mu & 0 & 0 \\ 
+0 & 0 & 0 & 0 & 3\lambda+2\mu & 0 \\ 
+0 & 0 & 0 & 0 & 0 & 3\lambda+2\mu  
+\end{array}
+\right)
+\]
+If we define the Young's modulus as $E=\mu(3\lambda+2\mu)/(\lambda+\mu)$ 
+and the Poisson's ratio as $\nu=\lambda(\lambda+\mu)/2$, then
+\[
+{\bm C}^{-1}
+=
+\frac{1}{E}
+\left(
+\begin{array}{cccccc}
+1 & -\nu & -\nu & 0 & 0 & 0 \\
+-\nu & 1 & -\nu & 0 & 0 & 0 \\
+-\nu & -\nu & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 2(1+\nu) & 0 & 0 \\ 
+0 & 0 & 0 & 0 & 2(1+\nu) & 0 \\ 
+0 & 0 & 0 & 0 & 0 & 2(1+\nu) 
+\end{array}
+\right)
+\]
+Note that the determinant  of ${\bm C}^{-1}$ is $8(1+\nu)^5(1-2\nu)E^{-6}$,
+so that when $\nu\rightarrow 1/2$ (incompressible material), the compliance
+matrix is singular and the stress cannot be given as a function of strain \cite{lubliner}.
+
+
+The strain tensor is related to the displacement as follows: \index{general}{Strain Tensor}
+\[
+{\bm \varepsilon}(\vec{u}) 
+= \frac{1}{2}(\vec{\nabla}\vec{u} + (\vec{\nabla}\vec{u})^T)
+\]
+The incompressibility (or bulk modulus) $K$ is defined as $p=-K \vec{\nabla}\cdot\vec{u}$ 
+where $p$ is the pressure with \index{general}{Bulk Modulus}
+\begin{eqnarray}
+p&=&-\frac{1}{3} \text{tr}({\bm \sigma}) \nonumber\\
+ &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u}) \text{tr}[{\bm 1}] + 2 \mu {\rm tr}[{\bm \varepsilon}(\vec{u})]] \nonumber\\
+ &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u})  3  + 2 \mu  (\vec{\nabla}\cdot\vec{u}) ] \nonumber\\
+ &=& -\left[ \lambda + \frac{2}{3} \mu \right] (\vec{\nabla}\cdot\vec{u})  
+\end{eqnarray}
+so that 
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+p=-K \vec{\nabla}\cdot\vec{u} 
+\qquad
+\text{with}
+\qquad
+K=\lambda+\frac{2}{3}\mu
+\]
+\end{mdframed}
+
+\begin{remark}
+Eq. (\ref{eq:oone}) and (\ref{eq:twoELAST}) are analogous to the ones that one has to solve
+in the context of viscous flow using the penalty method. In this case $\lambda$ is the penalty coefficient, 
+$\vec{u}$ is the velocity, and $\mu$ is then the dynamic viscosity.
+\end{remark}
+
+The Lam\'e parameter and the shear modulus are also linked to $\nu$ the poisson ratio, 
+and $E$, Young's modulus: \index{general}{Poisson Ratio} \index{general}{Young's Modulus}
+\[
+\lambda=\mu\frac{2\nu}{1-2\nu}
+=\frac{\nu E}{(1+\nu)(1-2\nu)}
+\quad\quad
+{\rm with}
+\quad\quad
+E=2\mu(1+\nu)
+\]
+The shear modulus, expressed often in GPa, describes the material's response to shear stress.
+The poisson ratio describes the response in the direction orthogonal to uniaxial stress.
+The Young modulus, expressed in GPa, describes the material's strain response to uniaxial stress in the 
+direction of this stress.
+
+
+\Literature: solvers for 3D Stokes and elasticity problems with
+heterogeneous coefficients \cite{samb20}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

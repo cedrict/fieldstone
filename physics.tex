@@ -1099,204 +1099,9 @@ Christensen and Yuen (1985) \cite{chyu85} and more completely in Matyska and Yue
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 \subsection{Stokes equation for elastic medium}
-\begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
-What follows is mostly borrowed from Becker \& Kaus lecture notes.
+\input{elastic_equations}
 
-%\begin{tabular}{|l|l|l|}
-%\hline
-%${\bm u}       $ & displacement vector &   \\
-%${\bm \sigma}  $ & full stress tensor  & Pa\\
-%${\bm \epsilon}$ & strain tensor       &   \\
-%${\bm 1}       $ & unit tensor         &   \\
-%${\bm f}       $ & body forces         &   \\
-%\hline
-%\end{tabular}
-
-The strong form of the PDE that governs force balance in a medium is given by
-\[
-\vec{\nabla}\cdot{\bm \sigma}  + \vec{f} = \vec{0}
-\]
-where ${\bm \sigma}$ is the stress tensor and $\vec{f}$ is a body force.
-
-The stress tensor is related to the strain tensor through the generalised 
-Hooke's law\footnote{\url{https://en.wikipedia.org/wiki/Hooke's_law}}:
-\begin{equation}
-\sigma_{ij}=\sum_{kl}C_{ijkl}\varepsilon_{kl} 
-\qquad
-\text{or}
-\qquad
-{\bm \sigma} = {\bm C} : {\bm \varepsilon}
-\label{eq:oone}
-\end{equation}
-where ${\bm C}$ is the fourth-order elastic tensor.
-
-Due to the inherent symmetries of ${\bm \sigma}$, ${\bm \varepsilon}$, and ${\bm C}$, 
-only 21 elastic coefficients of the latter are independent. 
-For isotropic linear media (which have the same physical properties in any direction), ${\bm C}$ 
-can be reduced to only two independent numbers (for example the bulk modulus $K$ and the shear modulus $G$ 
-that quantify the material's resistance to changes in volume and to shearing deformations, respectively).
-Thus
-\[
-C_{ijkl} = \lambda \delta_{ij}\delta_{kl} + \mu (\delta_{ik}\delta_{jl}+\delta_{il}\delta_{jk})
-\]
-so that Eq.~\eqref{eq:oone} becomes:
-\[
-\sigma_{ij}=\lambda \varepsilon_{kk} \delta_{ij} + 2\mu \varepsilon_{ij}
-\]
-or
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{equation}
-{\bm \sigma}=\lambda (\vec{\nabla}\cdot\vec{u}) {\bm 1} +2\mu {\bm \varepsilon}(\vec{u}) \label{eq:twoELAST}
-\end{equation}
-\end{mdframed}
-where $\lambda$ is the Lam\'e parameter and $\mu$ is the shear 
-modulus\footnote{It is also sometimes written $G$}.
-The term $\vec{\nabla}\cdot\vec{u}$ is the isotropic dilation.
-
-\index{general}{Lam\'e Parameter} 
-\index{general}{Shear Modulus}
-
-This can be re-written in the 6-dimensional stress/strain space as
-\[
-\underbrace{
-\left(
-\begin{array}{c}
-\sigma_{xx} \\
-\sigma_{yy} \\
-\sigma_{zz} \\
-\sigma_{xy} \\
-\sigma_{xz} \\
-\sigma_{yz} 
-\end{array}
-\right)}
-_{\vec{\sigma}}
-=
-\underbrace{
-\left(
-\begin{array}{cccccc}
-\lambda+2\mu & \lambda & \lambda & 0 & 0 & 0 \\ 
-\lambda & \lambda+2\mu & \lambda & 0 & 0 & 0 \\ 
-\lambda & \lambda & \lambda+2\mu & 0 & 0 & 0 \\
-0 & 0 & 0 & \mu & 0 & 0 \\ 
-0 & 0 & 0 & 0 & \mu & 0 \\ 
-0 & 0 & 0 & 0 & 0 & \mu  
-\end{array}
-\right)}
-_{{\bm C}}
-\cdot
-\underbrace{
-\left(
-\begin{array}{c}
-\varepsilon_{xx} \\
-\varepsilon_{yy} \\
-\varepsilon_{zz} \\
-\varepsilon_{xy} \\
-\varepsilon_{xz} \\
-\varepsilon_{yz} 
-\end{array}
-\right)}
-_{\vec{\varepsilon}}
-\]
-or, in terms of the compliance matrix ${\bm C}^{-1}$,
-\index{general}{Compliance Matrix}
-\[
-\vec{\varepsilon} 
-= {\bm C}^{-1} \cdot \vec{\sigma}
-\]
-with
-\[
-{\bm C}^{-1}
-=
-\frac{1}{\mu(3\lambda+2\mu)}
-\left(
-\begin{array}{cccccc}
-\lambda+\mu & -\lambda/2 & -\lambda/2 & 0 & 0 & 0 \\
--\lambda/2 & \lambda+\mu & -\lambda/2 & 0 & 0 & 0 \\
--\lambda/2 & -\lambda/2 & \lambda+\mu & 0 & 0 & 0 \\
-0 & 0 & 0 & 3\lambda+2\mu & 0 & 0 \\ 
-0 & 0 & 0 & 0 & 3\lambda+2\mu & 0 \\ 
-0 & 0 & 0 & 0 & 0 & 3\lambda+2\mu  
-\end{array}
-\right)
-\]
-If we define the Young's modulus as $E=\mu(3\lambda+2\mu)/(\lambda+\mu)$ 
-and the Poisson's ratio as $\nu=\lambda(\lambda+\mu)/2$, then
-\[
-{\bm C}^{-1}
-=
-\frac{1}{E}
-\left(
-\begin{array}{cccccc}
-1 & -\nu & -\nu & 0 & 0 & 0 \\
--\nu & 1 & -\nu & 0 & 0 & 0 \\
--\nu & -\nu & 1 & 0 & 0 & 0 \\
-0 & 0 & 0 & 2(1+\nu) & 0 & 0 \\ 
-0 & 0 & 0 & 0 & 2(1+\nu) & 0 \\ 
-0 & 0 & 0 & 0 & 0 & 2(1+\nu) 
-\end{array}
-\right)
-\]
-Note that the determinant  of ${\bm C}^{-1}$ is $8(1+\nu)^5(1-2\nu)E^{-6}$,
-so that when $\nu\rightarrow 1/2$ (incompressible material), the compliance
-matrix is singular and the stress cannot be given as a function of strain \cite{lubliner}.
-
-
-The strain tensor is related to the displacement as follows: \index{general}{Strain Tensor}
-\[
-{\bm \varepsilon}(\vec{u}) 
-= \frac{1}{2}(\vec{\nabla}\vec{u} + (\vec{\nabla}\vec{u})^T)
-\]
-The incompressibility (or bulk modulus) $K$ is defined as $p=-K \vec{\nabla}\cdot\vec{u}$ 
-where $p$ is the pressure with \index{general}{Bulk Modulus}
-\begin{eqnarray}
-p&=&-\frac{1}{3} \text{tr}({\bm \sigma}) \nonumber\\
- &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u}) \text{tr}[{\bm 1}] + 2 \mu {\rm tr}[{\bm \varepsilon}(\vec{u})]] \nonumber\\
- &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{u})  3  + 2 \mu  (\vec{\nabla}\cdot\vec{u}) ] \nonumber\\
- &=& -\left[ \lambda + \frac{2}{3} \mu \right] (\vec{\nabla}\cdot\vec{u})  
-\end{eqnarray}
-so that 
-\begin{mdframed}[backgroundcolor=blue!5]
-\[
-p=-K \vec{\nabla}\cdot\vec{u} 
-\qquad
-\text{with}
-\qquad
-K=\lambda+\frac{2}{3}\mu
-\]
-\end{mdframed}
-
-
-%or
-%\[
-%\mu=\frac{3K(1-2\nu)}{2(1+\nu)}
-%\]
-
-
-\begin{remark}
-Eq. (\ref{eq:oone}) and (\ref{eq:twoELAST}) are analogous to the ones that one has to solve
-in the context of viscous flow using the penalty method. In this case $\lambda$ is the penalty coefficient, 
-$\vec{u}$ is the velocity, and $\mu$ is then the dynamic viscosity.
-\end{remark}
-
-The Lam\'e parameter and the shear modulus are also linked to $\nu$ the poisson ratio, 
-and $E$, Young's modulus: \index{general}{Poisson Ratio} \index{general}{Young's Modulus}
-\[
-\lambda=\mu\frac{2\nu}{1-2\nu}
-=\frac{\nu E}{(1+\nu)(1-2\nu)}
-\quad\quad
-{\rm with}
-\quad\quad
-E=2\mu(1+\nu)
-\]
-The shear modulus, expressed often in GPa, describes the material's response to shear stress.
-The poisson ratio describes the response in the direction orthogonal to uniaxial stress.
-The Young modulus, expressed in GPa, describes the material's strain response to uniaxial stress in the 
-direction of this stress.
-
-
-\Literature: solvers for 3D Stokes and elasticity problems with
-heterogeneous coefficients \cite{samb20}
 
 
 
@@ -1956,12 +1761,15 @@ but not always. Be careful when reading literature!}:
 \noindent ${\cal K}_1$, ${\cal K}_2$ and ${\cal K}_3$ are called {\bf principal}
 invariants\footnote{\url{https://en.wikipedia.org/wiki/Invariants_of_tensors}} 
 (see also Appendix A.1 of Zienkiewicz \& Taylor \cite{zita2} or  Eq.~(6.4) of Freudenthal \& Geiringer \cite{frge58}). 
-These invariants can be written in a coordinate-free manner:
+These invariants can be written in a coordinate-free manner\footnote{Proofs are in 
+Appendix~\ref{app_invariants}}:
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
 {\cal K}_1({\bm \sigma}) &=& {\rm tr}({\bm \sigma})  \nn\\
 {\cal K}_2({\bm \sigma}) &=& \frac{1}{2}(  {\rm tr}({\bm \sigma}) ^2 - {\rm tr}({\bm \sigma}^2)  ) \nn\\
 {\cal K}_3({\bm \sigma}) &=& \det ({\bm \sigma}) \nn
 \end{eqnarray}
+\end{mdframed}
 and if the stress tensor is diagonal, we have
 \begin{eqnarray}
 {\cal K}_1({\bm \sigma}) &=& \sigma_{1}+\sigma_{2}+\sigma_{3}\nn\\
@@ -2250,6 +2058,37 @@ or,
 \begin{remark}
 The expression for the Lode angle is different in \cite[p101]{book_zitf} than in \cite{zico74} or \cite[p62]{zita2}. They all look suspiciously wrong too.
 \end{remark}
+
+
+%.........................................................................
+\subsubsection{About the 2nd principal invariant of the deviatoric stress}
+
+\begin{eqnarray}
+{\cal K}_2({\bm \tau}) 
+&=& \frac{1}{2}[{\rm Tr}({\bm \tau}) ^2 - {\rm Tr}({\bm \tau}^2)] \nonumber\\
+&=& \frac{1}{2}[ (\tau_{xx}+\tau_{yy})^2 - (\tau_{xx}^2+2\tau_{xy}^2+\tau_{yy}^2)] \nonumber\\
+&=& \frac{1}{2}[ \tau_{xx}^2+2\tau_{xx}\tau_{yy} +\tau_{yy}^2 - \tau_{xx}^2-2\tau_{xy}^2-\tau_{yy}^2] \nonumber\\
+&=& \frac{1}{2}[ 2\tau_{xx}\tau_{yy} -2\tau_{xy}^2] \nonumber\\
+&=& \tau_{xx}\tau_{yy} -\tau_{xy}^2 \nonumber\\
+&=& \left(\sigma_{xx}-\frac{\sigma_{xx}+\sigma_{yy}}{2}\right)
+\left(\sigma_{yy}-\frac{\sigma_{xx}+\sigma_{yy}}{2}\right)
+-\tau_{xy}^2 \nonumber\\
+&=& \left(\sigma_{xx}-\frac{\sigma_{xx}+\sigma_{yy}}{2}\right)
+\left(\sigma_{yy}-\frac{\sigma_{xx}+\sigma_{yy}}{2}\right)
+-\tau_{xy}^2 \nonumber\\
+&=& \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)
+\left(\frac{-\sigma_{xx}+\sigma_{yy}}{2}\right)
+-\tau_{xy}^2 \nonumber\\
+&=& -\left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2
+-\tau_{xy}^2 \nonumber
+\end{eqnarray}
+Looking at Eq.~\eqref{eq:max_shear_stress_2D}, we can then write
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+\tau_{max}= \sqrt{-{\cal K}_2(\bm\tau)}
+=\sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 +\sigma_{xy}^2 }
+\]
+\end{mdframed}
 
 
 %------------------------------------------------------

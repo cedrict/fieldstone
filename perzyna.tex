@@ -193,6 +193,10 @@ i.e.
 \begin{eqnarray}
 \frac{\partial Q}{\partial \bm\sigma}
 &=& 
+C_1 {\bm a}_1 +
+C_2 {\bm a}_2 +
+C_3 {\bm a}_3 
+=
 C_1  \frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} 
 +
 C_2  \frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
@@ -242,15 +246,18 @@ is absent in their Eq.~(7.71) but it is to be found in their Eq.~(7.70).}:
 
 \noindent Note that we already have established (see Section~\ref{ss:recapInv}) that  
 \begin{eqnarray}
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} &=& {\bm 1} \\
-\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} &=& {\bm \tau} \\
-\frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma} 
-&=& \bm\tau\cdot\bm\tau - \frac23  {\cal I}_2(\bm\tau)  {\bm 1}
+{\bm a}_1 =\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} &=& {\bm 1} \\
+{\bm a}_2 =\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} &=& {\bm \tau} \\
+{\bm a}_3 =\frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma} 
+&=& \bm\tau\cdot\bm\tau -\frac23  {\cal I}_2(\bm\tau){\bm 1}
 \end{eqnarray}
 with
 \begin{eqnarray}
+\textrm{Tr}[{\bm a}_1]=
 {\rm tr}\left[ \frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} \right] &=& 3 \\  
+\textrm{Tr}[{\bm a}_2]=
 {\rm tr}\left[ \frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma}   \right] &=& 0 \\
+\textrm{Tr}[{\bm a}_3]=
 {\rm tr}\left[ \frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma}   \right] &=& {\rm tr}[\bm\tau\cdot\bm\tau] - 2  {\cal I}_2(\bm\tau) = 2  {\cal I}_2(\bm\tau) -2  {\cal I}_2(\bm\tau) = 0 
 \end{eqnarray}
 

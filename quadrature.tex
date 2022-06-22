@@ -414,6 +414,114 @@ I=\int_{a}^{+b}\int_{c}^{+d} f(r,s) dr ds
 \end{equation}
 \end{mdframed}
 
+%-----------------------------
+\subsubsection{Exercises}
+
+%-------------
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\includegraphics[width=0.8cm]{images/garftr} \\
+{\color{orange}Exercise Quad-1}
+\end{center}
+
+Write a program which uses the midpoint rule to compute (subdivide the interval in $n$ subintervals)
+\[
+I=\int_{0}^{\pi/2} f(x) \; dx    \quad \qquad f(x)=x \qquad \text{and} \qquad f(x)=cos(x)
+\]
+Compute and plot the (absolute) error between the measured $I_n$ and the analytical value $I$ as a function of the subinterval size $h$.
+
+Bonus: same as before with $I=\int_{1}^{3}\int_{2}^{4} (x^2y^3 + xy +1)  dx dy$.
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+%-------------
+
+
+%-------------
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\includegraphics[width=0.8cm]{images/garftr} \\
+{\color{orange}Exercise Quad-2}
+\end{center}
+
+Same exercise as above but with the trapezoidal rule. 
+Which method is the most accurate?
+
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+%-------------
+
+%-------------
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\includegraphics[width=0.8cm]{images/garftr} \\
+{\color{orange}Exercise Quad-3}
+\end{center}
+
+The following Fortran program is an example of how Gauss quadrature 
+can be implemented:
+
+\begin{center}
+\includegraphics[width=8cm]{images/quadrature/gq3} 
+\end{center}
+
+Modify/translate this previous program to use 5 quadrature points instead of two.
+
+Integrate the functions
+\[
+f_1(x)=\sin(x\pi+\pi/2)
+\quad\quad\quad
+f_2(x)=\sqrt{x+1}
+\quad\quad\quad
+f_3(x)=x^4-x^3
+\]
+with the 2-point and the 5-point quadrature rules.
+
+Compare the results with the analytical values.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+%-------------
+
+%-------------
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\includegraphics[width=0.8cm]{images/garftr} \\
+{\color{orange}Exercise Quad-4}
+\end{center}
+
+Compute analytically the integral of the function $f(x,y)=x^2+4y$
+over the domain $\Omega = [11,14 ] \times [7,10]$.
+
+Write a code which integrates this function
+by means of a $2\times 2$, $3\times 3$ or $4\times 4$ Gauss-Legendre quadrature algorithm.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+%-------------
+
+
+
+
+
+
+
+
 %----------------------------------------
 \subsubsection{Quadrature on triangles}
 \input{quadrature_triangles}
