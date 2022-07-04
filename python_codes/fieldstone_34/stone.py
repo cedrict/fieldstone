@@ -5,20 +5,40 @@ import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix
 import time as time
-import matplotlib.pyplot as plt
+
+# exp=1: simple shear
+# exp=2: pure shear
+# exp=3: aquarium 
+
+experiment=2
 
 #------------------------------------------------------------------------------
 
-def velocity_x(x,y,rho,g,lambdaa,mu,L):
-    val=0.
+def disp_x(x,y,rho,g,lambdaa,mu,L):
+    if experiment==1:
+       val=y
+    if experiment==2:
+       val=2*(x-0.5)
+    if experiment==3:
+       val=0
     return val
 
-def velocity_y(x,y,rho,g,lambdaa,mu,L):
-    val=rho*g/(lambdaa+2*mu)*(0.5*y**2-L*y)
+def disp_y(x,y,rho,g,lambdaa,mu,L):
+    if experiment==1:
+       val=0
+    if experiment==2:
+       val=-2*(y-0.5)
+    if experiment==3:
+       val=rho*g/(lambdaa+2*mu)*(0.5*y**2-L*y)
     return val
 
 def pressure(x,y,rho,g,lambdaa,mu,L):
-    val=(lambdaa+2./3.*mu)/(lambdaa+2*mu)*rho*g*(L-y)
+    if experiment==1:
+       val=0.
+    if experiment==2:
+       val=0.
+    if experiment==3:
+       val=(lambdaa+2./3.*mu)/(lambdaa+2*mu)*rho*g*(L-y)
     return val
 
 #------------------------------------------------------------------------------
@@ -30,8 +50,6 @@ print("-----------------------------")
 m=4     # number of nodes making up an element
 ndof=2  # number of degrees of freedom per node
 
-Lx=1000.  # horizontal extent of the domain 
-Ly=1000.  # vertical extent of the domain 
 
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 4):
@@ -43,29 +61,45 @@ else:
    nely = 32
    visu = 1
     
-nnx=nelx+1  # number of elements, x direction
-nny=nely+1  # number of elements, y direction
-NV=nnx*nny  # number of nodes
-nel=nelx*nely  # number of elements, total
-Nfem=NV*ndof  # Total number of degrees of freedom
+nnx=nelx+1 
+nny=nely+1 
+NV=nnx*nny 
+nel=nelx*nely 
+Nfem=NV*ndof 
 
-gx=0
-gy=9.81
+if experiment==1:
+   Lx=1
+   Ly=1
+   gx=0
+   gy=0
+   rho=0
+   mu=1
+   nu=0.25   
+   lambdaa=2*mu*nu/(1-2*nu)
 
-E=6e10 # Young's modulus
-nu=0.25 # Poisson ratio
-rho=2800
+if experiment==2:
+   Lx=1
+   Ly=1
+   gx=0
+   gy=0
+   rho=0
+   mu=1
+   nu=0.25   
+   lambdaa=2*mu*nu/(1-2*nu)
 
-mu=E/2/(1+nu)
-lambdaa=E*nu/(1+nu)/(1-2*nu)
-
-print (mu,lambdaa)
+if experiment==3:
+   Lx=1000.  
+   Ly=1000.
+   gx=0
+   gy=9.81
+   E=6e10 # Young's modulus
+   nu=0.25 # Poisson ratio
+   rho=2800
+   mu=E/2/(1+nu)
+   lambdaa=E*nu/(1+nu)/(1-2*nu)
 
 eps=1.e-10
 sqrt3=np.sqrt(3.)
-
-# declare arrays
-print("declaring arrays")
 
 #################################################################
 # grid point setup
@@ -108,19 +142,40 @@ start = time.time()
 
 bc_fix = np.zeros(Nfem, dtype=np.bool)  # boundary condition, yes/no
 bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
-for i in range(0, NV):
-    if x[i]<eps:
-       bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
-       #bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
-    if x[i]>(Lx-eps):
-       bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
-       #bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
-    if y[i]<eps:
-       #bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
-       bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
-    #if y[i]>(Ly-eps):
-    #   bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
-    #   bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+
+if experiment==1:
+   for i in range(0, NV):
+       if x[i]<eps:
+          bc_fix[i*ndof+1]   = True ; bc_val[i*ndof+1]   = 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndof+1]   = True ; bc_val[i*ndof+1]   = 0.
+       if y[i]<eps:
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+       if y[i]>(Ly-eps):
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 1
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+
+if experiment==2:
+   for i in range(0, NV):
+       if x[i]<eps:
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = +1
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = -1
+       if y[i]<eps:
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = -1
+       if y[i]>(Ly-eps):
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = +1
+
+if experiment==3:
+
+   for i in range(0, NV):
+       if x[i]<eps:
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+       if y[i]<eps:
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
@@ -131,23 +186,23 @@ start = time.time()
 
 #a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)
 
-a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-b_mat = np.zeros((3,ndof*m),dtype=np.float64)   # gradient matrix B 
-rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-N     = np.zeros(m,dtype=np.float64)            # shape functions
-dNdx  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-dNdy  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-dNdr  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-dNds  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-u     = np.zeros(NV,dtype=np.float64)          # x-component velocity
-v     = np.zeros(NV,dtype=np.float64)          # y-component velocity
+a_mat = np.zeros((Nfem,Nfem),dtype=np.float64) # matrix of Ax=b
+b_mat = np.zeros((3,ndof*m),dtype=np.float64)  # gradient matrix B 
+rhs   = np.zeros(Nfem,dtype=np.float64)        # right hand side of Ax=b
+N     = np.zeros(m,dtype=np.float64)           # shape functions
+dNdx  = np.zeros(m,dtype=np.float64)           # shape functions derivatives
+dNdy  = np.zeros(m,dtype=np.float64)           # shape functions derivatives
+dNdr  = np.zeros(m,dtype=np.float64)           # shape functions derivatives
+dNds  = np.zeros(m,dtype=np.float64)           # shape functions derivatives
+u     = np.zeros(NV,dtype=np.float64)          # x-component displacement 
+v     = np.zeros(NV,dtype=np.float64)          # y-component displacement 
 c_mat = np.array([[2*mu+lambdaa,lambdaa,0],[lambdaa,2*mu+lambdaa,0],[0,0,mu]],dtype=np.float64) 
 
 for iel in range(0, nel):
 
     # set 2 arrays to 0 every loop
-    b_el = np.zeros(m * ndof)
-    a_el = np.zeros((m * ndof, m * ndof), dtype=float)
+    b_el = np.zeros(m*ndof)
+    a_el = np.zeros((m*ndof,m*ndof), dtype=np.float64)
 
     # integrate viscous term at 4 quadrature points
     for iq in [-1, 1]:
@@ -251,7 +306,7 @@ sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
 print("solve time: %.3f s" % (time.time() - start))
 
 #####################################################################
-# put solution into separate x,y velocity arrays
+# put solution into separate x,y arrays
 #####################################################################
 start = time.time()
 
@@ -260,7 +315,7 @@ u,v=np.reshape(sol,(NV,2)).T
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
-np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+np.savetxt('displacement.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
 print("split vel into u,v: %.3f s" % (time.time() - start))
 
@@ -366,8 +421,8 @@ for iel in range (0,nel):
                 yq+=N[k]*y[icon[k,iel]]
                 uq+=N[k]*u[icon[k,iel]]
                 vq+=N[k]*v[icon[k,iel]]
-            errv+=((uq-velocity_x(xq,yq,rho,gy,lambdaa,mu,Ly))**2\
-                  +(vq-velocity_y(xq,yq,rho,gy,lambdaa,mu,Ly))**2)*wq*jcob
+            errv+=((uq-disp_x(xq,yq,rho,gy,lambdaa,mu,Ly))**2\
+                  +(vq-disp_y(xq,yq,rho,gy,lambdaa,mu,Ly))**2)*wq*jcob
             errp+=(p[iel]-pressure(xq,yq,rho,gy,lambdaa,mu,Ly))**2*wq*jcob
 
 errv=np.sqrt(errv)
@@ -426,6 +481,21 @@ if visu==1:
            vtufile.write("%e\n" % exy[iel])
        vtufile.write("</DataArray>\n")
        #--
+       vtufile.write("<DataArray type='Float32' Name='sigma_xx' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%e\n" % (lambdaa*(exx[iel]+eyy[iel])+2*mu*exx[iel]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sigma_yy' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%e\n" % (lambdaa*(exx[iel]+eyy[iel])+2*mu*eyy[iel]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sigma_xy' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%e\n" % (2*mu*exy[iel]))
+       vtufile.write("</DataArray>\n")
+       #--
        vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
        for iel in range (0,nel):
            vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
@@ -435,14 +505,14 @@ if visu==1:
        #####
        vtufile.write("<PointData Scalars='scalars'>\n")
        #--
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='displacement' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (th)' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='displacement (th)' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10e %10e %10e \n" %(0.,velocity_y(x[i],y[i],rho,gy,lambdaa,mu,Ly),0.))
+           vtufile.write("%10e %10e %10e \n" %(0.,disp_y(x[i],y[i],rho,gy,lambdaa,mu,Ly),0.))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</PointData>\n")

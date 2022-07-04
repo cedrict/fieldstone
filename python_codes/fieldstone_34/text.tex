@@ -6,12 +6,37 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-{\sl This stone was developed in collaboration with Lukas van de Wiel}.
+{\sl Exp. 3 of this stone was developed in collaboration with Lukas van de Wiel}.
 \index{contributors}{L. van de Wiel}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%---------------------------------------
+\subsection*{Experiment 1: Simple shear}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp1/disp}
+\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp1/p}
+\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp1/eyy}
+\end{center}
+
+
+%---------------------------------------
+\subsection*{Experiment 2: Pure shear }
+
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp2/disp}
+\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp2/p}
+\end{center}
+
+
+
+
+
+%---------------------------------------
+\subsection*{Experiment 3: Aquarium}
 
 The setup is as follows: a 2D square of elastic material of size $L$ is 
 subjected to the following boundary conditions: free slip on the sides, no slip at the 
@@ -108,20 +133,19 @@ then logically converges to the well known formula:
 p=\rho g (L-y)
 \]
 
-
 In what follows we set $L=1000$m, $\rho=2800$, $\nu=0.25$, $E=6\cdot10^{10}$, $g=9.81$.
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_34/results/u}
-\includegraphics[width=5cm]{python_codes/fieldstone_34/results/v}
-\includegraphics[width=5cm]{python_codes/fieldstone_34/results/p}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exx}
-\includegraphics[width=5cm]{python_codes/fieldstone_34/results/eyy}
-\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exy}
+\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp3/u}
+\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp3/v}
+\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp3/p}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp3/exx}
+\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp3/eyy}
+\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp3/exy}
 \end{center}
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_34/results/errors.pdf}
+\includegraphics[width=12cm]{python_codes/fieldstone_34/results/exp3/errors.pdf}
 \end{center}
 
 
