@@ -1,0 +1,26 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set ylabel 'displacement'
+
+set output 'yprofile.pdf'
+set xlabel 'x'
+set title 'line y=L_y/2'
+plot[][]\
+'yprofile.ascii' u 1:4 ps .5 t 'u,32x32x16',\
+'yprofile.ascii' u 1:5 ps .5 t 'v,32x32x16',\
+'yprofile.ascii' u 1:6 ps .5 t 'v,32x32x16',\
+'yprofile.ascii' u 1:7 w l lt -1 t 'analytical',\
+'yprofile.ascii' u 1:8 w l lt -1 notitle,\
+'yprofile.ascii' u 1:9 w l lt -1 notitle
+
+set output 'xprofile.pdf'
+set xlabel 'y'
+set title 'line x=L_x/2'
+plot[][]\
+'xprofile.ascii' u 2:4 ps .5 t 'u,32x32x16',\
+'xprofile.ascii' u 2:5 ps .5 t 'v,32x32x16',\
+'xprofile.ascii' u 2:6 ps .5 t 'v,32x32x16',\
+'xprofile.ascii' u 2:7 w l lt -1 t 'analytical',\
+'xprofile.ascii' u 2:8 w l lt -1 notitle,\
+'xprofile.ascii' u 2:9 w l lt -1 notitle

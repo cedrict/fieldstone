@@ -1,0 +1,16 @@
+#! /bin/bash
+
+rm drms.ascii
+rm errors.ascii
+
+for res in 11 13 17 19 21 23 28 29 31 32 39; do
+
+    echo $res x $res x $res
+
+    python3 stone.py $res > opla
+
+    grep errv opla >> errors.ascii
+    grep drms opla >> drms.ascii
+
+done
+
