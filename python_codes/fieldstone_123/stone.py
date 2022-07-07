@@ -7,8 +7,7 @@ import time as time
 import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix, lil_matrix
 import love
-
-
+import boussinesq
 
 #------------------------------------------------------------------------------
 # exp1: Love problem
@@ -32,7 +31,6 @@ def by(x,y,z):
        val=0
     return val
 
-
 def bz(x,y,z):
     if experiment==1:
        val=0
@@ -46,32 +44,60 @@ def uth(x,y,z):
     if experiment==1:
        val=love.u_Love(x,y,Lz-z,a,b,pressbc,lambdaa,mu)
     if experiment==2:
-       val=0
+       val=boussinesq.u(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
     return val
 
 def vth(x,y,z):
     if experiment==1:
        val=love.v_Love(x,y,Lz-z,a,b,pressbc,lambdaa,mu)
     if experiment==2:
-       val=0
+       val=boussinesq.v(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
     return val
 
 def wth(x,y,z):
     if experiment==1:
        val=-love.w_Love(x,y,Lz-z,a,b,pressbc,lambdaa,mu)
     if experiment==2:
-       val=0
+       val=boussinesq.w(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
     return val
 
-def pth(x,y,z):
+def sigmaxx_th(x,y,z):
     if experiment==1:
-       val=0
+       return 0
     if experiment==2:
-       val=0
-    return val
+       return boussinesq.sigmaxx(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
+
+def sigmayy_th(x,y,z):
+    if experiment==1:
+       return 0
+    if experiment==2:
+       return boussinesq.sigmayy(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
+
+def sigmazz_th(x,y,z):
+    if experiment==1:
+       return 0
+    if experiment==2:
+       return boussinesq.sigmazz(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
+
+def sigmaxy_th(x,y,z):
+    if experiment==1:
+       return 0
+    if experiment==2:
+       return boussinesq.sigmaxy(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
+
+def sigmaxz_th(x,y,z):
+    if experiment==1:
+       return 0
+    if experiment==2:
+       return boussinesq.sigmaxz(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
+
+def sigmayz_th(x,y,z):
+    if experiment==1:
+       return 0
+    if experiment==2:
+       return boussinesq.sigmayz(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
 
 #------------------------------------------------------------------------------
-
 
 print("-----------------------------")
 print("--------- stone 123 ---------")
@@ -83,28 +109,31 @@ ndofV=3  # number of degrees of freedom per node
 if int(len(sys.argv) == 2):
    nelx = int(sys.argv[1])
 else:
-   nelx = 32
+   nelx = 33
 
-
-if experiment==1 or experiment==2:
-   Lx=5e3
-   Ly=5e3
-   Lz=2.5e3
-   nely=nelx
-   nelz=int(nelx/2)
-   E=0.6e11
-   nu=0.25 
-   mu=E/2/(1+nu)
-   lambdaa=E*nu/(1+nu)/(1-2*nu)
-   a=0.5e3
-   b=1e3
-   pressbc=1000*100*9.82 #rho g h
+Lx=5e3
+Ly=5e3
+Lz=2.5e3
+nely=nelx
+nelz=int(nelx/2)
+E=0.6e11
+nu=0.25 
+mu=E/2/(1+nu)
+lambdaa=E*nu/(1+nu)/(1-2*nu)
 
 hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
    
 surf=hx*hy
+
+if experiment==1:
+   a=0.5e3
+   b=1e3
+   pressbc=1000*100*9.82 #rho g h
+
+if experiment==2:
+   Pforce=100e9
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
@@ -127,8 +156,15 @@ print('Lz=',Lz)
 print('nelx=',nelx)
 print('nely=',nely)
 print('nelz=',nelz)
-print('lambda=',lambdaa)
-print('mu=',mu)
+print('lambda=',lambdaa/1e9,'GPa')
+print('mu=',mu/1e9,'GPa')
+print('nu=',nu)
+print('hx=',hx)
+print('hy=',hy)
+print('hz=',hz)
+print('surf=',surf)
+if experiment==1: print('pressbc=',pressbc)
+if experiment==2: print('Pforce=',Pforce)
 
 #################################################################
 # grid point setup
@@ -206,36 +242,7 @@ start = time.time()
 bc_fix=np.zeros(Nfem,dtype=np.bool)  # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=float)  # boundary condition, value
 
-if experiment==2:
-
-      for i in range(0,NV):
-          if x[i]/Lx<eps:
-             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
-             #bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
-             #bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0.
-          if x[i]/Lx>(1-eps):
-             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
-             #bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
-             #bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0.
-          if y[i]/Ly<eps:
-             #bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
-             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
-             #bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0.
-          if y[i]/Ly>(1-eps):
-             #bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
-             bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
-             #bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0.
-          if z[i]/Lz<eps:
-             #bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
-             #bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
-             bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0.
-          #if z[i]>(Lz-eps):
-          #   bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0.
-          #   bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
-          #   bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= 0.
-      #end for
-
-if experiment==1:
+if experiment==1 or experiment==2:
       for i in range(0,NV):
           if x[i]/Lx<eps:
              bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(x[i],y[i],z[i])
@@ -257,12 +264,6 @@ if experiment==1:
              bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(x[i],y[i],z[i])
              bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= vth(x[i],y[i],z[i])
              bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= wth(x[i],y[i],z[i])
-          #if z[i]>(Lz-eps):
-          #   bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(x[i],y[i],z[i])
-          #   bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= vth(x[i],y[i],z[i])
-          #   bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= wth(x[i],y[i],z[i])
-
-
 
 print("define b.c.: %.3f s" % (time.time() - start))
 
@@ -360,17 +361,16 @@ for iel in range(0,nel):
                 # calculate jacobian matrix
                 jcb=np.zeros((3,3),dtype=np.float64)
                 for k in range(0,m):
-                    jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
-                    jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
-                    jcb[0, 2] += dNdr[k]*z[icon[k,iel]]
-                    jcb[1, 0] += dNds[k]*x[icon[k,iel]]
-                    jcb[1, 1] += dNds[k]*y[icon[k,iel]]
-                    jcb[1, 2] += dNds[k]*z[icon[k,iel]]
-                    jcb[2, 0] += dNdt[k]*x[icon[k,iel]]
-                    jcb[2, 1] += dNdt[k]*y[icon[k,iel]]
-                    jcb[2, 2] += dNdt[k]*z[icon[k,iel]]
+                    jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+                    jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+                    jcb[0,2]+=dNdr[k]*z[icon[k,iel]]
+                    jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+                    jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+                    jcb[1,2]+=dNds[k]*z[icon[k,iel]]
+                    jcb[2,0]+=dNdt[k]*x[icon[k,iel]]
+                    jcb[2,1]+=dNdt[k]*y[icon[k,iel]]
+                    jcb[2,2]+=dNdt[k]*z[icon[k,iel]]
                 #end for 
-
                 jcob = np.linalg.det(jcb)
                 jcbi = np.linalg.inv(jcb)
 
@@ -401,23 +401,26 @@ for iel in range(0,nel):
                 a_el += b_mat.T.dot(D_mat.dot(b_mat))*wq*jcob
 
                 # compute elemental rhs vector
-                for i in range(0, m):
-                    b_el[ndofV*i+0]+=N[i]*jcob*wq*bx(xq,yq,zq)
-                    b_el[ndofV*i+1]+=N[i]*jcob*wq*by(xq,yq,zq)
-                    b_el[ndofV*i+2]+=N[i]*jcob*wq*bz(xq,yq,zq)
+                #for i in range(0, m):
+                #    b_el[ndofV*i+0]+=N[i]*jcob*wq*bx(xq,yq,zq)
+                #    b_el[ndofV*i+1]+=N[i]*jcob*wq*by(xq,yq,zq)
+                #    b_el[ndofV*i+2]+=N[i]*jcob*wq*bz(xq,yq,zq)
                 #end for 
 
             #end for kq 
         #end for jq  
     #end for iq  
 
-    # traction bc
+    # traction bc on top layer of elts
     if experiment==1 and xc[iel]<a and yc[iel]<b and zc[iel]>Lz-hz:
-       b_el[14]-=surf*pressbc*0.25
-       b_el[17]-=surf*pressbc*0.25
-       b_el[20]-=surf*pressbc*0.25
-       b_el[23]-=surf*pressbc*0.25
-    #end if
+          if not bc_fix[3*icon[4,iel]+2]:
+             b_el[14]-=surf*pressbc*0.25
+          if not bc_fix[3*icon[5,iel]+2]:
+             b_el[17]-=surf*pressbc*0.25
+          if not bc_fix[3*icon[6,iel]+2]:
+             b_el[20]-=surf*pressbc*0.25
+          if not bc_fix[3*icon[7,iel]+2]:
+             b_el[23]-=surf*pressbc*0.25
 
     # apply boundary conditions
     for k1 in range(0,m):
@@ -455,12 +458,15 @@ for iel in range(0,nel):
     #end for
 
 #end for iel
+    
+if experiment==2:
+   for i in range(0,NV):
+       if abs(x[i]-Lx/2)/Lx<eps and abs(y[i]-Ly/2)/Ly<eps and abs(z[i]-Lz)/Lz<eps:
+          rhs[3*i+2]-=Pforce
 
 a_mat=csr_matrix(a_mat)
 
 print("build FE system: %.3f s" % (time.time() - start))
-
-
 
 #################################################################
 # solve system
@@ -482,7 +488,7 @@ print("     -> u (m,M) %.5e %.5e " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.5e %.5e " %(np.min(v),np.max(v)))
 print("     -> w (m,M) %.5e %.5e " %(np.min(w),np.max(w)))
 
-np.savetxt('displacement.ascii',np.array([x,y,z,u,v,w]).T,header='# x,y,z,u,v,w')
+#np.savetxt('displacement.ascii',np.array([x,y,z,u,v,w]).T,header='# x,y,z,u,v,w')
 
 print("transfer solution: %.3f s" % (time.time() - start))
 #####################################################################
@@ -577,10 +583,10 @@ print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
 print("     -> exz (m,M) %.4e %.4e " %(np.min(exz),np.max(exz)))
 print("     -> eyz (m,M) %.4e %.4e " %(np.min(eyz),np.max(eyz)))
 
-np.savetxt('pressure.ascii',np.array([xc,yc,zc,p]).T,header='# xc,yc,zc,p')
-np.savetxt('strainrate.ascii',np.array([xc,yc,zc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+#np.savetxt('pressure.ascii',np.array([xc,yc,zc,p]).T,header='# xc,yc,zc,p')
+#np.savetxt('strain.ascii',np.array([xc,yc,zc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
-print("compute p and strainrate: %.3f s" % (time.time() - start))
+print("compute p and strain: %.3f s" % (time.time() - start))
 
 #####################################################################
 # compute drms
@@ -588,13 +594,12 @@ print("compute p and strainrate: %.3f s" % (time.time() - start))
 start = time.time()
 
 errv=0
-errp=0
 drms=0.
 
 for iel in range(0, nel):
-    for iq in [-1, 1]:
-        for jq in [-1, 1]:
-            for kq in [-1, 1]:
+    for iq in [-1,1]:
+        for jq in [-1,1]:
+            for kq in [-1,1]:
                 rq=iq/sqrt3
                 sq=jq/sqrt3
                 tq=kq/sqrt3
@@ -639,15 +644,15 @@ for iel in range(0, nel):
                 # calculate jacobian matrix
                 jcb=np.zeros((3,3),dtype=np.float64)
                 for k in range(0,m):
-                    jcb[0,0] += dNdr[k]*x[icon[k,iel]]
-                    jcb[0,1] += dNdr[k]*y[icon[k,iel]]
-                    jcb[0,2] += dNdr[k]*z[icon[k,iel]]
-                    jcb[1,0] += dNds[k]*x[icon[k,iel]]
-                    jcb[1,1] += dNds[k]*y[icon[k,iel]]
-                    jcb[1,2] += dNds[k]*z[icon[k,iel]]
-                    jcb[2,0] += dNdt[k]*x[icon[k,iel]]
-                    jcb[2,1] += dNdt[k]*y[icon[k,iel]]
-                    jcb[2,2] += dNdt[k]*z[icon[k,iel]]
+                    jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+                    jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+                    jcb[0,2]+=dNdr[k]*z[icon[k,iel]]
+                    jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+                    jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+                    jcb[1,2]+=dNds[k]*z[icon[k,iel]]
+                    jcb[2,0]+=dNdt[k]*x[icon[k,iel]]
+                    jcb[2,1]+=dNdt[k]*y[icon[k,iel]]
+                    jcb[2,2]+=dNdt[k]*z[icon[k,iel]]
                 jcob = np.linalg.det(jcb)
 
                 xq=0.0
@@ -671,19 +676,16 @@ for iel in range(0, nel):
                        (vq-vth(xq,yq,zq))**2+\
                        (wq-wth(xq,yq,zq))**2)*weightq*jcob
 
-                errp+=(p[iel]-pth(xq,yq,zq))**2*weightq*jcob
-
             #end for
         #end for
     #end for
 #end for
 
 errv=np.sqrt(errv/Lx/Ly/Lz)
-errp=np.sqrt(errp/Lx/Ly/Lz)
 
 dvrms=np.sqrt(drms/Lx/Ly/Lz)
 
-print("     -> nel= %6d ; errv: %e ; errp: %e " %(nel,errv,errp))
+print("     -> nel= %6d ; errv: %e " %(nel,errv))
 
 print("     -> nel= %6d ; drms: %e" % (nel,drms))
 
@@ -696,6 +698,7 @@ start = time.time()
    
 xprofile=open("xprofile.ascii","w")
 yprofile=open("yprofile.ascii","w")
+zprofile=open("zprofile.ascii","w")
 
 for i in range(0,NV):
     xi=x[i]
@@ -703,20 +706,17 @@ for i in range(0,NV):
     zi=z[i]
 
     if abs(zi-Lz)/Lz<eps and abs(xi-Lx/2)/Lx<eps:
-       xprofile.write("%e %e %e %e %e %e %e %e %e\n" %(x[i],y[i],z[i],\
-                                                       u[i],v[i],w[i],\
-                                                       uth(xi,yi,zi),\
-                                                       vth(xi,yi,zi),\
-                                                       wth(xi,yi,zi)))
+       xprofile.write("%e %e %e %e %e %e %e %e %e\n" %(x[i],y[i],z[i],u[i],v[i],w[i],\
+                                                       uth(xi,yi,zi),vth(xi,yi,zi),wth(xi,yi,zi)))
     if abs(zi-Lz)/Lz<eps and abs(yi-Ly/2)/Ly<eps:
-       yprofile.write("%e %e %e %e %e %e %e %e %e \n" %(xi,yi,zi,\
-                                                        u[i],v[i],w[i],\
-                                                        uth(xi,yi,zi),\
-                                                        vth(xi,yi,zi),\
-                                                        wth(xi,yi,zi)))
-
+       yprofile.write("%e %e %e %e %e %e %e %e %e \n" %(xi,yi,zi,u[i],v[i],w[i],\
+                                                        uth(xi,yi,zi),vth(xi,yi,zi),wth(xi,yi,zi)))
+    if abs(xi-Lx/2)/Lx<eps and abs(yi-Ly/2)/Ly<eps:
+       zprofile.write("%e %e %e %e %e %e %e %e %e \n" %(xi,yi,zi,u[i],v[i],w[i],\
+                                                        uth(xi,yi,zi),vth(xi,yi,zi),wth(xi,yi,zi)))
 xprofile.close()
 yprofile.close()
+zprofile.close()
 
 print("export profiles: %.3f s" % (time.time() - start))
 
@@ -745,12 +745,7 @@ if True:
        vtufile.write("%e\n" % p[iel])
    vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%f\n" % pth(xc[iel],yc[iel],zc[iel]))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='strainrate' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' Name='strain' Format='ascii'> \n")
    for iel in range (0,nel):
        vtufile.write("%e\n" % sr[iel])
    vtufile.write("</DataArray>\n")
@@ -780,6 +775,61 @@ if True:
        vtufile.write("%e\n" % eyz[iel])
    vtufile.write("</DataArray>\n")
    #--
+   vtufile.write("<DataArray type='Float32' Name='sigma_xx' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % (lambdaa*(exx[iel]+eyy[iel]+ezz[iel])+2*mu*exx[iel]))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='sigma_yy' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % (lambdaa*(exx[iel]+eyy[iel]+ezz[iel])+2*mu*eyy[iel]))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='sigma_zz' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % (lambdaa*(exx[iel]+eyy[iel]+ezz[iel])+2*mu*ezz[iel]))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='sigma_xy' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % (2*mu*exy[iel]))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='sigma_xz' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % (2*mu*exz[iel]))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='sigma_yz' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % (2*mu*eyz[iel]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sigma_xx (th)' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % (sigmaxx_th(xc[iel],yc[iel],zc[iel])))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sigma_yy (th)' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % (sigmayy_th(xc[iel],yc[iel],zc[iel])))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sigma_zz (th)' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % (sigmazz_th(xc[iel],yc[iel],zc[iel])))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sigma_xy (th)' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % (sigmaxy_th(xc[iel],yc[iel],zc[iel])))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sigma_xz (th)' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % (sigmaxz_th(xc[iel],yc[iel],zc[iel])))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sigma_yz (th)' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%e\n" % (sigmayz_th(xc[iel],yc[iel],zc[iel])))
+   vtufile.write("</DataArray>\n")
+   #--
    vtufile.write("</CellData>\n")
    #####
    vtufile.write("<PointData Scalars='scalars'>\n")
@@ -801,6 +851,36 @@ if True:
        vtufile.write("%.20f %.20f %.20f \n" %(u[i]-uth(x[i],y[i],z[i]),\
                                               v[i]-vth(x[i],y[i],z[i]),\
                                               w[i]-wth(x[i],y[i],z[i])))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sigma_xx (th)' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%e\n" % (sigmaxx_th(x[i],y[i],z[i])))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sigma_yy (th)' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%e\n" % (sigmayy_th(x[i],y[i],z[i])))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sigma_zz (th)' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%e\n" % (sigmazz_th(x[i],y[i],z[i])))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sigma_xy (th)' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%e\n" % (sigmaxy_th(x[i],y[i],z[i])))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sigma_xz (th)' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%e\n" % (sigmaxz_th(x[i],y[i],z[i])))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sigma_yz (th)' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%e\n" % (sigmayz_th(x[i],y[i],z[i])))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("</PointData>\n")

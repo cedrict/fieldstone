@@ -1,0 +1,31 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set key bottom
+
+set xlabel 'x'
+set output 'xprofile_uz.pdf'
+plot[][]\
+'20/xprofile.ascii' u 2:6 w lp ps .3 t 'nelx=20',\
+'30/xprofile.ascii' u 2:6 w lp ps .3 t 'nelx=30',\
+'40/xprofile.ascii' u 2:6 w lp ps .3 t 'nelx=40',\
+'50/xprofile.ascii' u 2:6 w lp ps .3 t 'nelx=50',\
+'50/xprofile.ascii' u 2:9 w l lt -1 dt 2 t 'analytical'
+
+set xlabel 'y'
+set output 'yprofile_uz.pdf'
+plot[][]\
+'20/yprofile.ascii' u 1:6 w lp ps .3 t 'nelx=20',\
+'30/yprofile.ascii' u 1:6 w lp ps .3 t 'nelx=30',\
+'40/yprofile.ascii' u 1:6 w lp ps .3 t 'nelx=40',\
+'50/yprofile.ascii' u 1:6 w lp ps .3 t 'nelx=50',\
+'50/yprofile.ascii' u 1:9 w l lt -1 dt 2 t 'analytical'
+
+set xlabel 'z'
+set output 'zprofile_uz.pdf'
+plot[][]\
+'20/zprofile.ascii' u 3:6 w lp ps .3 t 'nelx=20',\
+'30/zprofile.ascii' u 3:6 w lp ps .3 t 'nelx=30',\
+'40/zprofile.ascii' u 3:6 w lp ps .3 t 'nelx=40',\
+'50/zprofile.ascii' u 3:6 w lp ps .3 t 'nelx=50',\
+'50/zprofile.ascii' u 3:9 w l lt -1 dt 2 t 'analytical'
+
