@@ -1,0 +1,25 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+
+
+set xlabel 'y'
+set ylabel 'e_{xy}'
+set output 'topfile.pdf'
+plot[][]\
+'topfile_2.ascii' u 2:7 w lp ps .3 t '2x32x24',\
+'topfile_4.ascii' u 2:7 w lp ps .3 t '4x64x48',\
+'topfile_6.ascii' u 2:7 w lp ps .3 t '6x96x72',\
+'topfile_8.ascii' u 2:7 w lp ps .3 t '8x128x96',\
+2*0.25/2/pi/(x**2+0.25**2) lt -1 t 'analytical'
+
+set key bottom
+set xlabel 'y'
+set ylabel 'u_x'
+set output 'xprofile.pdf'
+plot[][]\
+'xprofile_2.ascii' u 2:4 w lp ps .3 t '2x32x24',\
+'xprofile_4.ascii' u 2:4 w lp ps .3 t '4x64x48',\
+'xprofile_6.ascii' u 2:4 w lp ps .3 t '6x96x72',\
+'xprofile_8.ascii' u 2:4 w lp ps .3 t '8x128x96',\
+'xprofile_6.ascii' u 2:($7*2) w l lt -1 t 'analytical',\

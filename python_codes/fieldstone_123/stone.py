@@ -10,32 +10,24 @@ import love
 import boussinesq
 
 #------------------------------------------------------------------------------
-# exp1: Love problem
-# exp2: Boussinesq problem
+# experiment=1: Love problem (Becker & Bevis, 2004)
+# experiment=2: Boussinesq problem
+# experiment=3: fault motion (Savage & Burford, 1973)
 
-experiment=1
+experiment=3
 
 #------------------------------------------------------------------------------
 
 def bx(x,y,z):
-    if experiment==1:
-       val=0
-    if experiment==2:
-       val=0
+    val=0
     return val
 
 def by(x,y,z):
-    if experiment==1:
-       val=0
-    if experiment==2:
-       val=0
+    val=0
     return val
 
 def bz(x,y,z):
-    if experiment==1:
-       val=0
-    if experiment==2:
-       val=0
+    val=0
     return val
 
 #------------------------------------------------------------------------------
@@ -45,6 +37,8 @@ def uth(x,y,z):
        val=love.u_Love(x,y,Lz-z,a,b,pressbc,lambdaa,mu)
     if experiment==2:
        val=boussinesq.u(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
+    if experiment==3:
+       val=1/np.pi*np.arctan(y/0.25)
     return val
 
 def vth(x,y,z):
@@ -52,6 +46,8 @@ def vth(x,y,z):
        val=love.v_Love(x,y,Lz-z,a,b,pressbc,lambdaa,mu)
     if experiment==2:
        val=boussinesq.v(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
+    if experiment==3:
+       val=0
     return val
 
 def wth(x,y,z):
@@ -59,6 +55,8 @@ def wth(x,y,z):
        val=-love.w_Love(x,y,Lz-z,a,b,pressbc,lambdaa,mu)
     if experiment==2:
        val=boussinesq.w(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
+    if experiment==3:
+       val=0
     return val
 
 def sigmaxx_th(x,y,z):
@@ -66,36 +64,48 @@ def sigmaxx_th(x,y,z):
        return 0
     if experiment==2:
        return boussinesq.sigmaxx(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
+    if experiment==3:
+       return 0
 
 def sigmayy_th(x,y,z):
     if experiment==1:
        return 0
     if experiment==2:
        return boussinesq.sigmayy(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
+    if experiment==3:
+       return 0
 
 def sigmazz_th(x,y,z):
     if experiment==1:
        return 0
     if experiment==2:
        return boussinesq.sigmazz(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
+    if experiment==3:
+       return 0
 
 def sigmaxy_th(x,y,z):
     if experiment==1:
        return 0
     if experiment==2:
        return boussinesq.sigmaxy(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
+    if experiment==3:
+       return 0
 
 def sigmaxz_th(x,y,z):
     if experiment==1:
        return 0
     if experiment==2:
        return boussinesq.sigmaxz(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
+    if experiment==3:
+       return 0
 
 def sigmayz_th(x,y,z):
     if experiment==1:
        return 0
     if experiment==2:
        return boussinesq.sigmayz(x-Lx/2,y-Ly/2,Lz-z,Pforce,nu,mu) 
+    if experiment==3:
+       return 0
 
 #------------------------------------------------------------------------------
 
@@ -109,17 +119,30 @@ ndofV=3  # number of degrees of freedom per node
 if int(len(sys.argv) == 2):
    nelx = int(sys.argv[1])
 else:
-   nelx = 33
+   nelx = 2
 
-Lx=5e3
-Ly=5e3
-Lz=2.5e3
-nely=nelx
-nelz=int(nelx/2)
-E=0.6e11
-nu=0.25 
-mu=E/2/(1+nu)
-lambdaa=E*nu/(1+nu)/(1-2*nu)
+if experiment==1 or experiment==2:
+   Lx=5e3
+   Ly=5e3
+   Lz=2.5e3
+   nely=nelx
+   nelz=int(nelx/2)
+   E=0.6e11
+   nu=0.25 
+   mu=E/2/(1+nu)
+   lambdaa=E*nu/(1+nu)/(1-2*nu)
+
+if experiment==3:
+   Lx=0.5
+   Ly=4
+   Lz=3
+   nely=nelx*16 #int(nelx*Ly/Lx)
+   nelz=nelx*12 #int(nelx*Lz/Lx)*2
+   nu=0.25
+   mu=2
+   E=2*mu/(1+nu)
+   lambdaa=E*nu/(1+nu)/(1-2*nu)
+
 
 hx=Lx/nelx
 hy=Ly/nely
@@ -156,8 +179,10 @@ print('Lz=',Lz)
 print('nelx=',nelx)
 print('nely=',nely)
 print('nelz=',nelz)
+print('nel=',nel)
 print('lambda=',lambdaa/1e9,'GPa')
 print('mu=',mu/1e9,'GPa')
+print('E=',E/1e9,'GPa')
 print('nu=',nu)
 print('hx=',hx)
 print('hy=',hy)
@@ -264,6 +289,20 @@ if experiment==1 or experiment==2:
              bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(x[i],y[i],z[i])
              bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= vth(x[i],y[i],z[i])
              bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]= wth(x[i],y[i],z[i])
+
+if experiment==3:
+      for i in range(0,NV):
+          if y[i]/Ly<eps:
+             if z[i]>Lz-0.25:
+                bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 0
+             else:
+                bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= 1
+          if z[i]/Lz<eps:
+             bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]=1 
+
+          bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]=0 
+          bc_fix[i*ndofV+2]=True ; bc_val[i*ndofV+2]=0
+
 
 print("define b.c.: %.3f s" % (time.time() - start))
 
@@ -699,6 +738,7 @@ start = time.time()
 xprofile=open("xprofile.ascii","w")
 yprofile=open("yprofile.ascii","w")
 zprofile=open("zprofile.ascii","w")
+topfile=open("topfile.ascii","w")
 
 for i in range(0,NV):
     xi=x[i]
@@ -714,9 +754,18 @@ for i in range(0,NV):
     if abs(xi-Lx/2)/Lx<eps and abs(yi-Ly/2)/Ly<eps:
        zprofile.write("%e %e %e %e %e %e %e %e %e \n" %(xi,yi,zi,u[i],v[i],w[i],\
                                                         uth(xi,yi,zi),vth(xi,yi,zi),wth(xi,yi,zi)))
+
+for iel in range(0,nel):
+    if zc[iel]>Lz-hz:
+       topfile.write("%e %e %e %e %e %e %e %e %e\n" %(xc[iel],yc[iel],zc[iel],
+                                                      exx[iel],eyy[iel],ezz[iel],
+                                                      exy[iel],exz[iel],eyz[iel]))
+       
+
 xprofile.close()
 yprofile.close()
 zprofile.close()
+topfile.close()
 
 print("export profiles: %.3f s" % (time.time() - start))
 

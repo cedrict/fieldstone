@@ -66,7 +66,7 @@ on $x=L_x/2$ and $y=L_y/2$ lines.}
 \end{center}
 
 
-%----------------------------------
+%--------------------------------------------------
 \subsubsection*{Boussinesq problem (experiment=2)}
 
 We now focus on the classical Boussinesq problem (also sometimes called Boussinesq–Cerruti 
@@ -128,6 +128,51 @@ vertical lines passing through the point load.}
 which seems to be about the maximum resolution. It takes over 10min to run and uses about 16Gb of RAM.}
 \end{center}
 
+%----------------------------------------------------------------------
+\subsubsection*{Fault motion - \textcite{sabu73} (1973) (experiment=3)}
 
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_123/images/sabu73}\\
+{\captionfont  Simple models for fault motion showing the distribution of shear 
+strain and strike slip displacement on the surface. The upper sketches refer to 
+a locked-fault model, in which slip on the fault occurs only at depths greater than $D$. 
+The lower sketches refer to the rigid-block model, in which slip is approximately uniform with depth.
+Taken from \textcite{sabu73}.}
+\end{center}
+
+Both $\upupsilon_y$ and $\upupsilon_z$ 
+components are entirely prescribed to be zero in the domain. 
+Only $\upupsilon_x$ is being solved for. It is prescribed to be zero 
+over a length $D=0.25$ on the left and $b=1$ underneath. 
+The bottom boundary can be left free or set to $b=1$ as well.
+In what follows the domain is $0.5\times 4\times 3$.
+Savage and Burford \cite{sabu73} show that the displacement $\upupsilon_x$ 
+and strain component ${\varepsilon}_{xy}$ at the surface $z=L_z$ are given by:
+
+\[
+\upupsilon_x=\frac{u_0}{\pi} \arctan\left(\frac{y}{D}\right)
+\quad\quad
+\quad\quad
+{\varepsilon}_{xy} = \frac{bD}{2\pi}  \frac{1}{y^2+D^2}
+\]
+
+Material properties are $\nu=0.25$, $\mu=\SI{2}{\pascal}$, $\lambda=\SI{1.25}{\pascal}$,
+$E=\SI{3.2}{\pascal}$. 
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp3/disp}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp3/exy}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp3/slice}\\
+{\captionfont Obtained on 8x128x96 mesh. Displacement prescribed at the bottom of the domain.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp3/xprofile.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp3/topfile.pdf}\\
+{\captionfont Note that in their publication $b$ is the fault displacement 
+and what I prescribe is only half of it so factor 2 is needed to recover the theoretical curves.}
+\end{center}
 
 
