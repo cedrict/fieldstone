@@ -5,12 +5,14 @@ import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix
 import time as time
+from scipy.sparse import lil_matrix
 
 # exp=1: simple shear
 # exp=2: pure shear
 # exp=3: aquarium 
+# exp=4: strip load
 
-experiment=2
+experiment=4
 
 #------------------------------------------------------------------------------
 
@@ -21,6 +23,8 @@ def disp_x(x,y,rho,g,lambdaa,mu,L):
        val=2*(x-0.5)
     if experiment==3:
        val=0
+    if experiment==4:
+       val=0
     return val
 
 def disp_y(x,y,rho,g,lambdaa,mu,L):
@@ -30,6 +34,8 @@ def disp_y(x,y,rho,g,lambdaa,mu,L):
        val=-2*(y-0.5)
     if experiment==3:
        val=rho*g/(lambdaa+2*mu)*(0.5*y**2-L*y)
+    if experiment==4:
+       val=0
     return val
 
 def pressure(x,y,rho,g,lambdaa,mu,L):
@@ -39,7 +45,33 @@ def pressure(x,y,rho,g,lambdaa,mu,L):
        val=0.
     if experiment==3:
        val=(lambdaa+2./3.*mu)/(lambdaa+2*mu)*rho*g*(L-y)
+    if experiment==4:
+       val=0
     return val
+
+def sigma_xx(x,y,p0,a):
+    xR=Lx/2+a
+    xL=Lx/2-a
+    theta1=np.arctan((x-xR)/(Ly-y))
+    theta2=np.arctan((x-xL)/(Ly-y))
+    val=p0/np.pi*(theta2-theta1-0.5*(np.sin(2*theta2)-np.sin(2*theta1)))
+    return -val
+
+def sigma_xy(x,y,p0,a):
+    xR=Lx/2+a
+    xL=Lx/2-a
+    theta1=np.arctan((x-xR)/(Ly-y))
+    theta2=np.arctan((x-xL)/(Ly-y))
+    val=p0/np.pi*((np.sin(theta2))**2-(np.sin(theta1))**2)
+    return val
+
+def sigma_yy(x,y,p0,a):
+    xR=Lx/2+a
+    xL=Lx/2-a
+    theta1=np.arctan((x-xR)/(Ly-y))
+    theta2=np.arctan((x-xL)/(Ly-y))
+    val=p0/np.pi*(theta2-theta1+0.5*(np.sin(2*theta2)-np.sin(2*theta1)))
+    return -val
 
 #------------------------------------------------------------------------------
 
@@ -57,8 +89,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 300
+   nely = 200
    visu = 1
     
 nnx=nelx+1 
@@ -98,6 +130,22 @@ if experiment==3:
    mu=E/2/(1+nu)
    lambdaa=E*nu/(1+nu)/(1-2*nu)
 
+if experiment==4:
+   Lx=3000.  
+   Ly=2000.
+   gx=0
+   gy=0
+   E=6e10 # Young's modulus
+   nu=0.25 # Poisson ratio
+   rho=2800
+   mu=E/2/(1+nu)
+   lambdaa=E*nu/(1+nu)/(1-2*nu)
+   a=50
+   p0=1e8
+
+hx=Lx/nelx
+hy=Ly/nely
+
 eps=1.e-10
 sqrt3=np.sqrt(3.)
 
@@ -136,6 +184,17 @@ for j in range(0, nely):
 print("setup: connectivity: %.3f s" % (time.time() - start))
 
 #################################################################
+
+xc = np.zeros(nel,dtype=np.float64)  
+yc = np.zeros(nel,dtype=np.float64)  
+    
+for iel in range(0,nel):
+    for k in range(0,m):
+        xc[iel]+=x[icon[k,iel]]*0.25
+        yc[iel]+=y[icon[k,iel]]*0.25
+
+
+#################################################################
 # define boundary conditions
 #################################################################
 start = time.time()
@@ -167,8 +226,7 @@ if experiment==2:
        if y[i]>(Ly-eps):
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = +1
 
-if experiment==3:
-
+if experiment==3 or experiment==4:
    for i in range(0, NV):
        if x[i]<eps:
           bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
@@ -184,9 +242,9 @@ print("setup: boundary conditions: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-#a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)
+a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)
 
-a_mat = np.zeros((Nfem,Nfem),dtype=np.float64) # matrix of Ax=b
+#a_mat = np.zeros((Nfem,Nfem),dtype=np.float64) # matrix of Ax=b
 b_mat = np.zeros((3,ndof*m),dtype=np.float64)  # gradient matrix B 
 rhs   = np.zeros(Nfem,dtype=np.float64)        # right hand side of Ax=b
 N     = np.zeros(m,dtype=np.float64)           # shape functions
@@ -262,6 +320,29 @@ for iel in range(0, nel):
                 b_el[2*i  ]-=N[i]*jcob*wq*gx*rho
                 b_el[2*i+1]-=N[i]*jcob*wq*gy*rho
 
+        #end for
+    #end for
+
+    if experiment==4 and abs(xc[iel]-Lx/2)<a and yc[iel]>Ly-hy:
+       b_el[2*2+1]-=0.5*p0*hx
+       b_el[2*3+1]-=0.5*p0*hx
+
+    # apply boundary conditions
+    for k1 in range(0,m):
+        for i1 in range(0,ndof):
+            m1 =ndof*icon[k1,iel]+i1
+            if bc_fix[m1]: 
+               fixt=bc_val[m1]
+               ikk=ndof*k1+i1
+               aref=a_el[ikk,ikk]
+               for jkk in range(0,m*ndof):
+                   b_el[jkk]-=a_el[jkk,ikk]*fixt
+                   a_el[ikk,jkk]=0.
+                   a_el[jkk,ikk]=0.
+               a_el[ikk,ikk]=aref
+               b_el[ikk]=aref*fixt
+
+
     # assemble matrix a_mat and right hand side rhs
     for k1 in range(0,m):
         for i1 in range(0,ndof):
@@ -279,22 +360,19 @@ print("build FE matrix: %.3f s" % (time.time() - start))
 #################################################################
 # impose boundary conditions
 #################################################################
-start = time.time()
-
-for i in range(0, Nfem):
-    if bc_fix[i]:
-       a_matref = a_mat[i,i]
-       for j in range(0,Nfem):
-           rhs[j]-= a_mat[i, j] * bc_val[i]
-           a_mat[i,j]=0.
-           a_mat[j,i]=0.
-           a_mat[i,i] = a_matref
-       rhs[i]=a_matref*bc_val[i]
-
+#start = time.time()
+#for i in range(0, Nfem):
+#    if bc_fix[i]:
+#       a_matref = a_mat[i,i]
+#       for j in range(0,Nfem):
+#           rhs[j]-= a_mat[i, j] * bc_val[i]
+#           a_mat[i,j]=0.
+#           a_mat[j,i]=0.
+#           a_mat[i,i] = a_matref
+#       rhs[i]=a_matref*bc_val[i]
 #print("a_mat (m,M) = %.4f %.4f" %(np.min(a_mat),np.max(a_mat)))
 #print("rhs   (m,M) = %.6f %.6f" %(np.min(rhs),np.max(rhs)))
-
-print("impose b.c.: %.3f s" % (time.time() - start))
+#print("impose b.c.: %.3f s" % (time.time() - start))
 
 #################################################################
 # solve system
@@ -324,8 +402,6 @@ print("split vel into u,v: %.3f s" % (time.time() - start))
 #####################################################################
 start = time.time()
 
-xc = np.zeros(nel,dtype=np.float64)  
-yc = np.zeros(nel,dtype=np.float64)  
 p  = np.zeros(nel,dtype=np.float64)  
 exx = np.zeros(nel,dtype=np.float64)  
 eyy = np.zeros(nel,dtype=np.float64)  
@@ -356,8 +432,6 @@ for iel in range(0,nel):
 
     # calculate determinant of the jacobian
     jcob=np.linalg.det(jcb)
-
-    # calculate the inverse of the jacobian
     jcbi=np.linalg.inv(jcb)
 
     for k in range(0, m):
@@ -365,8 +439,6 @@ for iel in range(0,nel):
         dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
 
     for k in range(0, m):
-        xc[iel] += N[k]*x[icon[k,iel]]
-        yc[iel] += N[k]*y[icon[k,iel]]
         exx[iel] += dNdx[k]*u[icon[k,iel]]
         eyy[iel] += dNdy[k]*v[icon[k,iel]]
         exy[iel] += 0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
@@ -500,6 +572,24 @@ if visu==1:
        for iel in range (0,nel):
            vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
        vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sigma_xx (th)' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (sigma_xx(xc[iel],yc[iel],p0,a)))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sigma_xy (th)' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (sigma_xy(xc[iel],yc[iel],p0,a)))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sigma_yy (th)' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (sigma_yy(xc[iel],yc[iel],p0,a)))
+       vtufile.write("</DataArray>\n")
+
+
+
        #--
        vtufile.write("</CellData>\n")
        #####

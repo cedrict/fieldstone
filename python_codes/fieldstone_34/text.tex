@@ -18,7 +18,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp1/disp}
 \includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp1/p}
-\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp1/eyy}
+\includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp1/exy}
 \end{center}
 
 
@@ -149,4 +149,48 @@ In what follows we set $L=1000$m, $\rho=2800$, $\nu=0.25$, $E=6\cdot10^{10}$, $g
 \end{center}
 
 
+%---------------------------------------
+\subsection*{Experiment 4: Strip load}
+
+The domain is $3 \times 2~\si{\km}$. Free slip boundary conditions are 
+applied on the sides and bottom boundaries. 
+Traction boundaries corresponding to a pressure of $\SI{100}{\mega\pascal}$
+are prescribed on the top boundaries for $|x-L_x/2|<a$ with $a=\SI{50}{\meter}$.
+Material parameters are identical to those of experiment 3.
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_34/images/dase96a}
+\includegraphics[width=5cm]{python_codes/fieldstone_34/images/dase96b}
+\includegraphics[width=5cm]{python_codes/fieldstone_34/images/dase96c}
+\end{center}
+
+
+The analytical solution is given in terms of the stress tensor.
+From \textcite{dase96}(section 4.6) we have the components of the stress tensor:
+\[
+\sigma_{xx}=\frac{p_0}{\pi}\left[ \theta - \frac{1}{2}\sin 2\theta  \right]^{\theta_2}_{\theta_1}
+\quad\quad\quad
+\sigma_{zz}=\frac{p_0}{\pi}\left[ \theta + \frac{1}{2}\sin 2\theta  \right]^{\theta_2}_{\theta_1}
+\quad\quad\quad
+\sigma_{xz}=\frac{p_0}{\pi}\left[ \sin^2 \theta  \right]^{\theta_2}_{\theta_1}
+\]
+or, 
+\begin{eqnarray}
+{\sigma}_{xx}&=&\frac{p_0}{\pi}\left[ \theta - \frac{1}{2}\sin 2\theta  \right]^{\theta_2}_{\theta_1} = \Theta - \frac{1}{2} ( \sin 2\theta_2 - \sin 2\theta_1) \nn\\
+{\sigma}_{zz}&=&\frac{p_0}{\pi}\left[ \theta + \frac{1}{2}\sin 2\theta  \right]^{\theta_2}_{\theta_1} = \Theta + \frac{1}{2} ( \sin 2\theta_2 - \sin 2\theta_1) \nn\\
+{\sigma}_{xz}&=&\frac{p_0}{\pi}\left[ \sin^2 \theta  \right]^{\theta_2}_{\theta_1} =  \sin^2 \theta_2 - \sin^2 \theta_1 \nn
+\end{eqnarray}
+with $\Theta=\theta_2-\theta_1$. 
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_34/results/exp4/disp}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_34/results/exp4/sigma_xx}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_34/results/exp4/sigma_yy}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_34/results/exp4/sigma_xy}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_34/results/exp4/sigma_xx_th}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_34/results/exp4/sigma_yy_th}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_34/results/exp4/sigma_xy_th}\\
+{\captionfont Results obtained on 300x200 mesh. Top row is recovered stresses. 
+Bottom row is analytical solution.}
+\end{center}
 
