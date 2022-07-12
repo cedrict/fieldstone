@@ -12,7 +12,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %--------------------------------------------------------------
 
-
+In what follows we rely on 2D plane strain calculations and $Q_1$ finite element space.
 
 
 %--------------------------------------------------------------
@@ -21,10 +21,10 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 The mesh is composed of 8 blocks, as shown here:
 
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_124/results/mesh1}
+\includegraphics[width=12cm]{python_codes/fieldstone_124/results/mesh1}
 \end{center}
 
-Blocks 1 and 2 are made from a regular $nelx\times nely$ mesh that is 
+Blocks 1 and 2 (purple and green respectively) are made from a regular $nelx\times nely$ mesh that is 
 mapped to conform to the desired shape. Blocks 3 to 8 are rotations 
 of either block 1 or 2. Note that in the current version $nelx$ and
 $nely$ should be equal.
@@ -32,12 +32,15 @@ When all 8 blocks are obtained nodes which appear twice are removed
 and a global connectivity array is made: 
 
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_124/results/mesh2}
+\includegraphics[width=8cm]{python_codes/fieldstone_124/results/mesh2}
 \end{center}
 
+This is unfortunately a rather slow algorithm and it will take 
+several minutes to generate a mesh for $nelx$ values above 60.
 
+\newpage
 %--------------------------------------------------------------
-\subsection*{Hassani experiment}
+\subsection*{Hassani experiment (experiment=1)}
 
 This is taken from Prof. Hassani's syllabus 'Mise en oeuvre de la m\'ethode des \'el\'ements finis'.
 The domain is a plate of $1\times 1~\si{\meter}$ with a $0.2~\si{\meter}$ diameter hole in its center.
@@ -63,20 +66,51 @@ which exact invariant was used in the right plot (private comm.).}
 \includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/press}
 \includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/e}
 \includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/sigma}\\
-{\captionfont Each block counts 64x64 elements.}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/exx}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/eyy}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/exy}\\
+{\captionfont Each block counts $64\times 64$ elements. Exceptionally a rainbow
+color scale is used for the pressure so as to allow for a comparison with 
+the figure from Hassani.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/corner_ux}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/corner_uy}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/corner_p}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/corner_sigmaxx}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/corner_sigmayy}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/corner_sigmaxy}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/west_ux}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/west_uy}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/west_p}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/west_sigmaxx}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/west_sigmayy}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/west_sigmaxy}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/south_ux}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/south_uy}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/south_p}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/south_sigmaxx}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/south_sigmayy}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_124/results/exp1/south_sigmaxy}
 \end{center}
 
 
 
+
+
+
+
 %--------------------------------------------------------------
-\subsection*{Ramachandran}
+\subsection*{Ramachandran (experiment=2)}
 
-
+To do.
 
 
 \newpage
 %--------------------------------------------------------------
-\subsection*{\textcite{rarr03} (2003)}
+\subsection*{\textcite{rarr03} (experiment=3)}
 
 This is section~11.2.2 of the book.
 The benchmark consists of a stretched plate with a circular central hole under plane strain condition. 
@@ -90,6 +124,10 @@ We use Young's modulus $E = \SI{206 900}{\kilo\newton\per\square\mm}$, and Poiss
 It is not clear what the boundary conditions are at the hole but we assume that no boundary
 condition is prescribed, which is confirmed by the results that follow.
 Because we model the whole plate we have $L_x=L_y=2h$.
+
+There are two translational nullspaces and these are removed by 
+prescribing horizontal or vertical displacements at key locations
+where they have to be zero because of the symmetry of the problem.
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_124/images/rarr03a}

@@ -39,7 +39,7 @@ print("-----------------------------")
 m=4     # number of nodes making up an element
 ndof=2  # number of degrees of freedom per node
 
-experiment=3
+experiment=1
 
 if experiment==1: #hassani
    E=1e10
@@ -74,7 +74,7 @@ if experiment==3: #Ramm et al 2003
 if int(len(sys.argv) == 2):
    nelx   = int(sys.argv[1])
 else:
-   nelx=10
+   nelx=64
 
 nely=nelx
 
@@ -795,6 +795,15 @@ print("     -> q (m,M) %e %e " %(np.min(q),np.max(q)))
 print("compute press & strain: %.3f s" % (time.time() - start))
 
 ###############################################################################
+
+if experiment==1:
+   for i in range(0,NV):
+       if abs(y[i])/Ly<eps and abs(x[i])/Lx<eps: #lower left corner
+          print('corner: ',u[i],v[i],sigma_xx_n[i],sigma_yy_n[i],sigma_xy_n[i],q[i],Nfem)
+       if abs(y[i]-Ly/2+rad)/Ly<eps and abs(x[i]-Lx/2)/Lx<eps: 
+          print('south: ',u[i],v[i],sigma_xx_n[i],sigma_yy_n[i],sigma_xy_n[i],q[i],Nfem)
+       if abs(y[i]-Ly/2)/Ly<eps and abs(x[i]-Lx/2+rad)/Lx<eps: 
+          print('west: ',u[i],v[i],sigma_xx_n[i],sigma_yy_n[i],sigma_xy_n[i],q[i],Nfem)
 
 if experiment==3:
    for i in range(0,NV):

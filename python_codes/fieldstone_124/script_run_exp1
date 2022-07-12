@@ -1,0 +1,70 @@
+rm opla
+rm corner.ascii
+rm west.ascii
+rm south.ascii
+
+python3 stone.py  20 > opla
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+ 
+python3 stone.py  22 > opla  
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+
+python3 stone.py  24 > opla
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+
+python3 stone.py  26 > opla
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+
+python3 stone.py  28 > opla
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+
+python3 stone.py  30 > opla
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+
+python3 stone.py  34 > opla
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+
+python3 stone.py  40 > opla
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+ 
+python3 stone.py  50 > opla  
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+
+python3 stone.py  60 > opla
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+
+python3 stone.py  70 > opla
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+
+python3 stone.py  80 > opla
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+
+python3 stone.py  90 > opla
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+
