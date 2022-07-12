@@ -3,6 +3,10 @@ import time
 from scipy.sparse import lil_matrix
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
+import math
+import sys as sys
+
+###############################################################################
 
 def NNV(r,s):
     N_0=0.25*(1-r)*(1-s)
@@ -10,6 +14,21 @@ def NNV(r,s):
     N_2=0.25*(1+r)*(1+s)
     N_3=0.25*(1-r)*(1+s)
     return N_0,N_1,N_2,N_3
+
+def sigma_xx_th(x,y,r,theta,rad,sigma_bc):
+    val=1-rad**2/r**2*(1.5*np.cos(2*theta)+np.cos(4*theta))+1.5*rad**4/r**4*np.cos(4*theta)
+    val*=sigma_bc
+    return val
+
+def sigma_yy_th(x,y,r,theta,rad,sigma_bc):
+    val=rad**2/r**2*(0.5*np.cos(2*theta)-np.cos(4*theta))-1.5*rad**4/r**4*np.cos(4*theta)
+    val*=-sigma_bc
+    return val
+
+def sigma_xy_th(x,y,r,theta,rad,sigma_bc):
+    val=rad**2/r**2*(0.5*np.sin(2*theta)+np.sin(4*theta))+1.5*rad**4/r**4*np.sin(4*theta)
+    val*=-sigma_bc
+    return val
 
 ###############################################################################
 
@@ -20,7 +39,7 @@ print("-----------------------------")
 m=4     # number of nodes making up an element
 ndof=2  # number of degrees of freedom per node
 
-experiment=2
+experiment=3
 
 if experiment==1: #hassani
    E=1e10
@@ -42,7 +61,21 @@ if experiment==2: #Ramachandran
    Ly=5
    sigma_bc=10
 
-nelx=20
+if experiment==3: #Ramm et al 2003
+   nu=0.29
+   E=2.069e14/1e6
+   mu=E/2/(1+nu)
+   lambdaa=E*nu/(1+nu)/(1-2*nu)
+   rad=0.01
+   Lx=0.1
+   Ly=0.1
+   sigma_bc=1e8*4.5
+   
+if int(len(sys.argv) == 2):
+   nelx   = int(sys.argv[1])
+else:
+   nelx=10
+
 nely=nelx
 
 sqrt2=np.sqrt(2.)
@@ -54,7 +87,12 @@ distance=eps*Lx
 hx=Lx/nelx
 hy=Ly/nely
 
+print('     -> experiment=',experiment)
+print('     -> nelx=',nelx)
+
 ###############################################################################
+#  The mesh is composed of eight blocks. Each is first built and warped
+# to fit the contour of the hole and they are subsequently merged.
 #
 #  G-----E-----C
 #  |   3 | 2   |
@@ -188,8 +226,6 @@ for j in range(0,b_nny):
    #end for
 #end for
 
-#np.savetxt('temp1.ascii',np.array([b1_x,b1_y]).T,header='# x,y')
-
 print("make block 1: %.3f s" % (time.time() - start))
 
 ###############################################################################
@@ -247,7 +283,6 @@ for j in range(0,b_nny):
    #end for
 #end for
 
-#np.savetxt('temp2.ascii',np.array([b2_x,b2_y]).T,header='# x,y')
 
 print("make block 2: %.3f s" % (time.time() - start))
 
@@ -279,6 +314,8 @@ b7_y[:]= b5_x[:]
 b8_x[:]=-b6_y[:]
 b8_y[:]= b6_x[:]
 
+#np.savetxt('temp1.ascii',np.array([b1_x,b1_y]).T,header='# x,y')
+#np.savetxt('temp2.ascii',np.array([b2_x,b2_y]).T,header='# x,y')
 #np.savetxt('temp3.ascii',np.array([b3_x,b3_y]).T,header='# x,y')
 #np.savetxt('temp4.ascii',np.array([b4_x,b4_y]).T,header='# x,y')
 #np.savetxt('temp5.ascii',np.array([b5_x,b5_y]).T,header='# x,y')
@@ -315,8 +352,6 @@ tempy[4*b_NV:5*b_NV]=b5_y[:]
 tempy[5*b_NV:6*b_NV]=b6_y[:]
 tempy[6*b_NV:7*b_NV]=b7_y[:]
 tempy[7*b_NV:8*b_NV]=b8_y[:]
-
-#np.savetxt('temps.ascii',np.array([tempx,tempy]).T,header='# x,y')
 
 doubble=np.zeros(nblock*b_NV,dtype=np.bool)  # boundary condition, yes/no
 pointto=np.zeros(nblock*b_NV,dtype=np.int32)
@@ -391,6 +426,9 @@ Ly*=2
 print("assemble blocks: %.3f s" % (time.time() - start))
 
 ###############################################################################
+# compute Cartesian and polar coordinates of element centers
+###############################################################################
+start = time.time()
 
 xc = np.zeros(nel,dtype=np.float64)  
 yc = np.zeros(nel,dtype=np.float64)  
@@ -399,6 +437,15 @@ for iel in range(0,nel):
     for k in range(0,m):
         xc[iel]+=x[icon[k,iel]]*0.25
         yc[iel]+=y[icon[k,iel]]*0.25
+
+rr = np.zeros(nel,dtype=np.float64)  
+theta = np.zeros(nel,dtype=np.float64)  
+
+for iel in range(0,nel):
+    rr[iel]=np.sqrt((xc[iel]-Lx/2)**2+(yc[iel]-Ly/2)**2)
+    theta[iel]=math.atan2((yc[iel]-Ly/2),(xc[iel]-Lx/2))
+
+print("compute coords.: %.3f s" % (time.time() - start))
 
 #################################################################
 # define boundary conditions
@@ -410,19 +457,42 @@ bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
 
 if experiment==1:
    for i in range(0, NV):
-       if y[i]<eps:
+       if abs(y[i])<eps:
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = +v_bc
+          #remove null space
+          if abs(x[i]-Lx/2)/Lx<eps:
+             bc_fix[i*ndof] = True ; bc_val[i*ndof] = 0
+             
        if y[i]>(Ly-eps):
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = -v_bc
-       if np.sqrt((x[i]-0.5*Lx)**2+(y[i]-0.5*Ly)**2)<rad*(1+eps):
-          bc_fix[i*ndof]   = True ; bc_val[i*ndof+0] = 0
-          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0
+       #if np.sqrt((x[i]-0.5*Lx)**2+(y[i]-0.5*Ly)**2)<rad*(1+eps):
+       #   bc_fix[i*ndof]   = True ; bc_val[i*ndof+0] = 0
+       #   bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0
 
 if experiment==2:
    for i in range(0, NV):
        if np.sqrt((x[i]-0.5*Lx)**2+(y[i]-0.5*Ly)**2)<rad*(1+eps):
           bc_fix[i*ndof]   = True ; bc_val[i*ndof+0] = 0
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0
+
+if experiment==3:
+   for i in range(0, NV):
+
+       if abs(y[i]-(Ly/2-rad))/Ly<eps and abs(x[i]-Lx/2)/Lx<eps: #bottom hole
+             bc_fix[i*ndof] = True ; bc_val[i*ndof] = 0
+
+       if abs(y[i]-(Ly/2+rad))/Ly<eps and abs(x[i]-Lx/2)/Lx<eps: #top hole
+             bc_fix[i*ndof] = True ; bc_val[i*ndof] = 0
+
+       if abs(y[i]-Ly/2)/Ly<eps and abs(x[i])/Lx<eps: #left
+             bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0
+
+       if abs(y[i]-Ly/2)/Ly<eps and abs(x[i]-Lx)/Lx<eps: #right
+             bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0
+
+       #if np.sqrt((x[i]-0.5*Lx)**2+(y[i]-0.5*Ly)**2)<rad*(1+eps):
+       #   bc_fix[i*ndof]   = True ; bc_val[i*ndof+0] = 0
+       #   bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0
 
 
 
@@ -536,6 +606,36 @@ for iel in range(0, nel):
           b_el[6]+=sigma_bc*hy*0.5
           b_el[0]+=sigma_bc*hy*0.5
 
+    if experiment==3:
+       if abs(y[icon[0,iel]])/Ly<eps and abs(y[icon[1,iel]])/Ly<eps: #bottom wall
+          b_el[1]-=sigma_bc*hy*0.5
+          b_el[3]-=sigma_bc*hy*0.5
+       if abs(y[icon[1,iel]])/Ly<eps and abs(y[icon[2,iel]])/Ly<eps: #bottom wall
+          b_el[3]-=sigma_bc*hy*0.5
+          b_el[5]-=sigma_bc*hy*0.5
+       if abs(y[icon[2,iel]])/Ly<eps and abs(y[icon[3,iel]])/Ly<eps: #bottom wall
+          b_el[5]-=sigma_bc*hy*0.5
+          b_el[7]-=sigma_bc*hy*0.5
+       if abs(y[icon[3,iel]])/Ly<eps and abs(y[icon[0,iel]])/Ly<eps: #bottom wall
+          b_el[7]-=sigma_bc*hy*0.5
+          b_el[1]-=sigma_bc*hy*0.5
+       if abs(y[icon[0,iel]]-Ly)/Ly<eps and abs(y[icon[1,iel]]-Ly)/Ly<eps: #top wall
+          b_el[1]+=sigma_bc*hy*0.5
+          b_el[3]+=sigma_bc*hy*0.5
+       if abs(y[icon[1,iel]]-Ly)/Ly<eps and abs(y[icon[2,iel]]-Ly)/Ly<eps: #top wall
+          b_el[3]+=sigma_bc*hy*0.5
+          b_el[5]+=sigma_bc*hy*0.5
+       if abs(y[icon[2,iel]]-Ly)/Ly<eps and abs(y[icon[3,iel]]-Ly)/Ly<eps: #top wall
+          b_el[5]+=sigma_bc*hy*0.5
+          b_el[7]+=sigma_bc*hy*0.5
+       if abs(y[icon[3,iel]]-Ly)/Ly<eps and abs(y[icon[0,iel]]-Ly)/Ly<eps: #top wall
+          b_el[7]+=sigma_bc*hy*0.5
+          b_el[1]+=sigma_bc*hy*0.5
+
+
+
+
+
     # apply boundary conditions
     for k1 in range(0,m):
         for i1 in range(0,ndof):
@@ -591,85 +691,119 @@ start = time.time()
 
 u,v=np.reshape(sol,(NV,2)).T
 
-print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
+print("     -> u (m,M) %e %e " %(np.min(u),np.max(u)))
+print("     -> v (m,M) %e %e " %(np.min(v),np.max(v)))
 
-np.savetxt('displacement.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+#np.savetxt('displacement.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
 print("split vel into u,v: %.3f s" % (time.time() - start))
 
 #####################################################################
-# retrieve pressure
+# retrieve pressure, stress, strain, ...
 #####################################################################
 start = time.time()
 
-p  = np.zeros(nel,dtype=np.float64)  
-e_xx = np.zeros(nel,dtype=np.float64)  
-e_yy = np.zeros(nel,dtype=np.float64)  
-e_xy = np.zeros(nel,dtype=np.float64)  
-e  = np.zeros(nel,dtype=np.float64)  
-sigma_xx = np.zeros(nel,dtype=np.float64)  
-sigma_yy = np.zeros(nel,dtype=np.float64)  
-sigma_xy = np.zeros(nel,dtype=np.float64)  
-sigma  = np.zeros(nel,dtype=np.float64)  
+q  = np.zeros(NV,dtype=np.float64)  
+cc = np.zeros(NV,dtype=np.float64)  
+e_n = np.zeros(NV,dtype=np.float64)  
+tau_n = np.zeros(NV,dtype=np.float64)  
+e_xx_n = np.zeros(NV,dtype=np.float64)  
+e_yy_n = np.zeros(NV,dtype=np.float64)  
+e_xy_n = np.zeros(NV,dtype=np.float64)  
+tau_xx_n = np.zeros(NV,dtype=np.float64)  
+tau_yy_n = np.zeros(NV,dtype=np.float64)  
+tau_zz_n = np.zeros(NV,dtype=np.float64)  
+tau_xy_n = np.zeros(NV,dtype=np.float64)  
+sigma_n = np.zeros(NV,dtype=np.float64)  
+sigma_xx_n = np.zeros(NV,dtype=np.float64)  
+sigma_yy_n = np.zeros(NV,dtype=np.float64)  
+sigma_zz_n = np.zeros(NV,dtype=np.float64)  
+sigma_xy_n = np.zeros(NV,dtype=np.float64)  
+
+rVnodes=[-1,+1,+1,-1]
+sVnodes=[-1,-1,+1,+1]
 
 for iel in range(0,nel):
+    for i in range(0,m):
+        rq = rVnodes[i]
+        sq = sVnodes[i]
 
-    rq = 0.0
-    sq = 0.0
-    wq = 2.0 * 2.0
+        dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
+        dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
+        dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
+        dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
-    N[0]=0.25*(1.-rq)*(1.-sq)
-    N[1]=0.25*(1.+rq)*(1.-sq)
-    N[2]=0.25*(1.+rq)*(1.+sq)
-    N[3]=0.25*(1.-rq)*(1.+sq)
+        jcb=np.zeros((2,2),dtype=np.float64)
+        for k in range(0,m):
+            jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+            jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+            jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+            jcb[1,1]+=dNds[k]*y[icon[k,iel]]
 
-    dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
-    dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
-    dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
-    dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
+        jcbi=np.linalg.inv(jcb)
 
-    jcb=np.zeros((2,2),dtype=np.float64)
-    for k in range(0,m):
-        jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
-        jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
-        jcb[1,0]+=dNds[k]*x[icon[k,iel]]
-        jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+        for k in range(0,m):
+            dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+            dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
 
-    # calculate determinant of the jacobian
-    jcob=np.linalg.det(jcb)
-    jcbi=np.linalg.inv(jcb)
+        exx=0
+        eyy=0
+        exy=0
+        for k in range(0,m):
+            exx += dNdx[k]*u[icon[k,iel]]
+            eyy += dNdy[k]*v[icon[k,iel]]
+            exy += 0.5*dNdy[k]*u[icon[k,iel]]+0.5*dNdx[k]*v[icon[k,iel]]
 
-    for k in range(0,m):
-        dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-        dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+        e_xx_n[icon[i,iel]]+=exx
+        e_yy_n[icon[i,iel]]+=eyy
+        e_xy_n[icon[i,iel]]+=exy
+        cc[icon[i,iel]]+=1.
 
-    for k in range(0,m):
-        e_xx[iel] += dNdx[k]*u[icon[k,iel]]
-        e_yy[iel] += dNdy[k]*v[icon[k,iel]]
-        e_xy[iel] += 0.5*dNdy[k]*u[icon[k,iel]]+0.5*dNdx[k]*v[icon[k,iel]]
+    #end for
+#end for
 
-    e[iel]=np.sqrt(0.5*(e_xx[iel]**2+e_yy[iel]**2)+e_xy[iel]**2)
+e_xx_n[:]/=cc[:]
+e_yy_n[:]/=cc[:]
+e_xy_n[:]/=cc[:]
 
-    p[iel]=-(lambdaa+2./3.*mu)*(e_xx[iel]+e_yy[iel])
+q[:]=-(lambdaa+2./3.*mu)*(e_xx_n[:]+e_yy_n[:])
 
-    sigma_xx[iel]=lambdaa*(e_xx[iel]+e_yy[iel])+2*mu*e_xx[iel]
-    sigma_yy[iel]=lambdaa*(e_xx[iel]+e_yy[iel])+2*mu*e_yy[iel]
-    sigma_xy[iel]=                              2*mu*e_xy[iel]
+e_n[:]=np.sqrt(0.5*(e_xx_n[:]**2+e_yy_n[:]**2)+e_xy_n[:]**2)
 
-    sigma[iel]=np.sqrt(0.5*(sigma_xx[iel]**2+sigma_yy[iel]**2)+sigma_xy[iel]**2)
-   
-#end for 
+sigma_xx_n[:]=lambdaa*(e_xx_n[:]+e_yy_n[:])+2*mu*e_xx_n[:]
+sigma_yy_n[:]=lambdaa*(e_xx_n[:]+e_yy_n[:])+2*mu*e_yy_n[:]
+sigma_xy_n[:]=2*mu*e_xy_n[:]
+sigma_zz_n[:]=nu*(sigma_xx_n[:]+sigma_yy_n[:])
 
-print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
-print("     -> exx (m,M) %.4f %.4f " %(np.min(e_xx),np.max(e_xx)))
-print("     -> eyy (m,M) %.4f %.4f " %(np.min(e_yy),np.max(e_yy)))
-print("     -> exy (m,M) %.4f %.4f " %(np.min(e_xy),np.max(e_xy)))
+sigma_n[:]=np.sqrt(0.5*(sigma_xx_n[:]**2+sigma_yy_n[:]**2+sigma_zz_n[:]**2)+sigma_xy_n[:]**2)
+
+tau_xx_n[:]=sigma_xx_n[:]-(1+nu)/3*(sigma_xx_n[:]+sigma_yy_n[:])
+tau_yy_n[:]=sigma_yy_n[:]-(1+nu)/3*(sigma_xx_n[:]+sigma_yy_n[:])
+tau_zz_n[:]=sigma_zz_n[:]-(1+nu)/3*(sigma_xx_n[:]+sigma_yy_n[:])
+tau_xy_n[:]=sigma_xy_n[:]
+
+tau_n[:]=np.sqrt(0.5*(tau_xx_n[:]**2+tau_yy_n[:]**2+tau_zz_n[:]**2)+tau_xy_n[:]**2)
+
+print("     -> exx_n (m,M) %e %e " %(np.min(e_xx_n),np.max(e_xx_n)))
+print("     -> eyy_n (m,M) %e %e " %(np.min(e_yy_n),np.max(e_yy_n)))
+print("     -> exy_n (m,M) %e %e " %(np.min(e_xy_n),np.max(e_xy_n)))
+print("     -> q (m,M) %e %e " %(np.min(q),np.max(q)))
 
 #np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
 #np.savetxt('strainrate.ascii',np.array([xc,yc,e_xx,e_yy,e_xy]).T,header='# xc,yc,exx,eyy,exy')
 
 print("compute press & strain: %.3f s" % (time.time() - start))
+
+###############################################################################
+
+if experiment==3:
+   for i in range(0,NV):
+       if abs(y[i]-Ly/2)/Ly<eps and abs(x[i]-(Lx/2-rad))/Lx<eps: #point2
+          print('point_2: ux: ',u[i],'m','| sigma_yy:',sigma_yy_n[i]/1e6,'N/mm^2', Nfem)
+       if abs(y[i]-Ly)/Ly<eps and abs(x[i]-Lx/2)/Lx<eps: #point4
+          print('point_4: uy: ',v[i],'m', Nfem)
+       if abs(y[i]-Ly)/Ly<eps and abs(x[i])/Lx<eps: #point5
+          print('point_5: ux: ',u[i],'m', Nfem)
 
 ###############################################################################
 # plot of solution
@@ -695,60 +829,86 @@ if True:
            vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
        #--
+       vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e  \n" %q[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='e_xx' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e  \n" %e_xx_n[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='e_yy' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e  \n" %e_yy_n[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='e_xy' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e  \n" %e_xy_n[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sigma_xx' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e  \n" %sigma_xx_n[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sigma_yy' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e  \n" %sigma_yy_n[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sigma_xy' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e  \n" %sigma_xy_n[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sigma_zz' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e  \n" %sigma_zz_n[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sigma' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e  \n" %sigma_n[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e  \n" %e_n[i])
+       vtufile.write("</DataArray>\n")
+       #--
        vtufile.write("</PointData>\n")
        #####
        vtufile.write("<CellData Scalars='scalars'>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='r' Format='ascii'> \n")
        for iel in range (0,nel):
-           vtufile.write("%e\n" % p[iel])
+           vtufile.write("%e\n" % rr[iel])
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='theta' Format='ascii'> \n")
        for iel in range (0,nel):
-           vtufile.write("%e\n" % e_xx[iel])
+           vtufile.write("%e\n" % theta[iel])
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%e\n" % e_yy[iel])
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%e\n" % e_xy[iel])
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%e\n" % e[iel])
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("<DataArray type='Float32' Name='sigma_xx' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%e\n" % sigma_xx[iel])
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("<DataArray type='Float32' Name='sigma_yy' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%e\n" % sigma_yy[iel])
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("<DataArray type='Float32' Name='sigma_xy' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%e\n" % sigma_xy[iel])
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("<DataArray type='Float32' Name='sigma' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%e\n" % sigma[iel])
-       vtufile.write("</DataArray>\n")
-       #--
-       vtufile.write("<DataArray type='Float32' Name='div(u)' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%10e\n" % (e_xx[iel]+e_yy[iel]))
-       vtufile.write("</DataArray>\n")
-       #--
+       if experiment==2:
+          vtufile.write("<DataArray type='Float32' Name='sigma_xx (th)' Format='ascii'> \n")
+          for iel in range (0,nel):
+              vtufile.write("%e\n" % sigma_xx_th(xc[iel],yc[iel],rr[iel],theta[iel],rad,sigma_bc))
+          vtufile.write("</DataArray>\n")
+          #--
+          vtufile.write("<DataArray type='Float32' Name='sigma_yy (th)' Format='ascii'> \n")
+          for iel in range (0,nel):
+              vtufile.write("%e\n" % sigma_yy_th(xc[iel],yc[iel],rr[iel],theta[iel],rad,sigma_bc))
+          vtufile.write("</DataArray>\n")
+          #--
+          vtufile.write("<DataArray type='Float32' Name='sigma_xy (th)' Format='ascii'> \n")
+          for iel in range (0,nel):
+              vtufile.write("%e\n" % sigma_xy_th(xc[iel],yc[iel],rr[iel],theta[iel],rad,sigma_bc))
+          vtufile.write("</DataArray>\n")
+          #--
        vtufile.write("</CellData>\n")
        #####
        vtufile.write("<Cells>\n")

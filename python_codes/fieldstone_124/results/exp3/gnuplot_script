@@ -1,0 +1,33 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set xlabel 'ndof'
+set log x
+
+set ylabel 'displacement u_x'
+set title 'point (2)'
+set output 'ux2.pdf'
+plot[][]\
+'rarr03_data.ascii' u 6:1 pt 5 ps .5 t 'rarr03',\
+'point2.ascii' u 9:3 w lp t 'fieldstone',\
+
+set ylabel 'displacement u_y'
+set title 'point (4)'
+set output 'uy4.pdf'
+plot[][]\
+'rarr03_data.ascii' u 6:3 pt 5 ps .5 t 'rarr03',\
+'point4.ascii' u 5:3 w lp t 'fieldstone',\
+
+set ylabel 'displacement u_x'
+set title 'point (5)'
+set output 'ux5.pdf'
+plot[][]\
+'rarr03_data.ascii' u 6:4 pt 5 ps .5 t 'rarr03',\
+'point5.ascii' u 5:3 w lp t 'fieldstone',\
+
+set title 'point (2)'
+set ylabel 'sigma_{yy}'
+set output 'sigmayy2.pdf'
+plot[][]\
+'rarr03_data.ascii' u 6:2 pt 5 ps .5 t 'rarr03',\
+'point2.ascii' u 9:7 w lp t 'fieldstone',\

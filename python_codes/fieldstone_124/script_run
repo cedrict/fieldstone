@@ -1,0 +1,65 @@
+rm opla
+rm point2.ascii
+rm point4.ascii
+rm point5.ascii
+
+python3 stone.py  20 > opla
+grep point_2 opla >> point2.ascii
+grep point_4 opla >> point4.ascii
+grep point_5 opla >> point5.ascii
+ 
+python3 stone.py  22 > opla  
+grep point_2 opla >> point2.ascii
+grep point_4 opla >> point4.ascii
+grep point_5 opla >> point5.ascii
+
+python3 stone.py  24 > opla
+grep point_2 opla >> point2.ascii
+grep point_4 opla >> point4.ascii
+grep point_5 opla >> point5.ascii
+
+python3 stone.py  26 > opla
+grep point_2 opla >> point2.ascii
+grep point_4 opla >> point4.ascii
+grep point_5 opla >> point5.ascii
+
+python3 stone.py  28 > opla
+grep point_2 opla >> point2.ascii
+grep point_4 opla >> point4.ascii
+grep point_5 opla >> point5.ascii
+
+python3 stone.py  30 > opla
+grep point_2 opla >> point2.ascii
+grep point_4 opla >> point4.ascii
+grep point_5 opla >> point5.ascii
+
+python3 stone.py  40 > opla
+grep point_2 opla >> point2.ascii
+grep point_4 opla >> point4.ascii
+grep point_5 opla >> point5.ascii
+ 
+python3 stone.py  50 > opla  
+grep point_2 opla >> point2.ascii
+grep point_4 opla >> point4.ascii
+grep point_5 opla >> point5.ascii
+
+python3 stone.py  60 > opla
+grep point_2 opla >> point2.ascii
+grep point_4 opla >> point4.ascii
+grep point_5 opla >> point5.ascii
+
+python3 stone.py  70 > opla
+grep point_2 opla >> point2.ascii
+grep point_4 opla >> point4.ascii
+grep point_5 opla >> point5.ascii
+
+python3 stone.py  80 > opla
+grep point_2 opla >> point2.ascii
+grep point_4 opla >> point4.ascii
+grep point_5 opla >> point5.ascii
+
+python3 stone.py  90 > opla
+grep point_2 opla >> point2.ascii
+grep point_4 opla >> point4.ascii
+grep point_5 opla >> point5.ascii
+
