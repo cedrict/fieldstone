@@ -183,18 +183,35 @@ and obviously
 {\bm a} = {\cal P}^T \cdot {\bm a}^\star \cdot {\cal P}
 \]
 We obtain for the strain rate tensor (or the stress tensor):
-
 \begin{eqnarray}
 \dot{\varepsilon}_{rr} 
 &=& \dot{\varepsilon}_{xx} \cos^2\theta + \dot{\varepsilon}_{yy} \sin^2\theta 
-+ 2 \dot{\varepsilon}_{xy} \sin\theta\cos\theta \\
++ 2 \dot{\varepsilon}_{xy} \sin\theta\cos\theta \nn\\
 \dot{\varepsilon}_{\theta\theta}
 &=& \dot{\varepsilon}_{xx} \sin^2\theta + \dot{\varepsilon}_{yy} \cos^2\theta 
-- 2 \dot{\varepsilon}_{xy} \sin\theta\cos\theta \\
+- 2 \dot{\varepsilon}_{xy} \sin\theta\cos\theta \nn\\
 \dot{\varepsilon}_{r\theta} 
 &=& \dot{\varepsilon}_{xy} (\cos^2\theta-\sin^2\theta) + 
-(\dot{\varepsilon}_{yy} - \dot{\varepsilon}_{xx})\sin\theta \cos\theta
+(\dot{\varepsilon}_{yy} - \dot{\varepsilon}_{xx})\sin\theta \cos\theta \nn
 \end{eqnarray}
+Using the trigonometric identities $\sin 2\theta = 2 \sin\theta\cos\theta$
+and $\cos^2\theta-\sin^2\theta = \cos 2\theta$
+, then 
+we obtain 
+\begin{eqnarray}
+\dot{\varepsilon}_{rr} 
+&=& \dot{\varepsilon}_{xx} \cos^2\theta + \dot{\varepsilon}_{yy} \sin^2\theta 
++  \dot{\varepsilon}_{xy} \sin 2\theta \nn\\
+\dot{\varepsilon}_{\theta\theta}
+&=& \dot{\varepsilon}_{xx} \sin^2\theta + \dot{\varepsilon}_{yy} \cos^2\theta 
+-  \dot{\varepsilon}_{xy} \sin 2\theta \nn\\
+\dot{\varepsilon}_{r\theta} 
+&=& \dot{\varepsilon}_{xy} \cos 2\theta + 
+\frac12(\dot{\varepsilon}_{yy} - \dot{\varepsilon}_{xx}) \sin 2\theta  \nn
+\end{eqnarray}
+
+
+
 and likewise:
 \begin{eqnarray}
 \dot{\varepsilon}_{xx} 

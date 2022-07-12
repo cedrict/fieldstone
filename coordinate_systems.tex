@@ -89,8 +89,8 @@ which should be read:
 {\vec e}_{r}      &=& \cos\theta \; {\vec e}_{x} + \sin\theta \;  {\vec e}_{y} \nn\\
 {\vec e}_{\theta} &=& -\sin\theta \; {\vec e}_{x} + \cos\theta \;  {\vec e}_{y} 
 \end{eqnarray}
-Obviously for $\theta=0$ we find $\vec{e}_r=\vec{e}_x$ and $\vec{e}_\theta = \vec{0}$, while for 
-$\theta=\pi/2$ then $\vec{e}_r=\vec{0}$ and $\vec{e}_\theta=\vec{e}_y$.
+Obviously for $\theta=0$ we find $\vec{e}_r=\vec{e}_x$ and $\vec{e}_\theta = \vec{e}_y$, 
+while for $\theta=\pi/2$ then $\vec{e}_r=\vec{e}_y$ and $\vec{e}_\theta=-\vec{e}_x$.
 
 Note that this $2\times 2$ matrix is a 
 rotation matrix\footnote{\url{https://en.wikipedia.org/wiki/Rotation_matrix}}
@@ -166,7 +166,6 @@ x &=& r \; \cos\theta \nn\\
 y &=& r \; \sin \theta \nn\\\ 
 r &=& \sqrt{x^2+y^2} \nn
 \end{eqnarray}
-
 Let $f(r,\theta)$ be a function of the spatial coordinates. Its gradient is then
 \[
 \vec \nabla f
@@ -296,7 +295,7 @@ The divergence of a vector $\vec{V}$ is
 \end{equation}
 The Laplacian of function $f$ is given by: \index{general}{Laplacian}
 \begin{equation}
-\Delta f= \vec\nabla \cdot\vec\nabla f= \vec\nabla^2 f
+\Delta f= \vec\nabla^2 f
 =
 \frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial f}{\partial r} \right)
 +\frac{1}{r^2 \sin\theta} \frac{\partial}{\partial \theta} \left( \sin\theta \frac{\partial f}{\partial \theta} \right)
@@ -399,8 +398,8 @@ Finally, the velocity vector $\vec{\upnu}$ then becomes
 \end{eqnarray}
 with 
 \begin{eqnarray}
-v_r      &=&  u \sin \theta  \cos \phi  + v \sin\theta \sin \phi + w \cos\theta \\
-v_\theta &=&  u \cos\theta\cos\phi + v \cos\theta\sin\phi -w \sin\theta   \\
+v_r      &=&  u \sin \theta  \cos \phi  + v \sin\theta \sin \phi + w \cos\theta \nn\\
+v_\theta &=&  u \cos\theta\cos\phi + v \cos\theta\sin\phi -w \sin\theta   \nn\\
 v_\phi   &=& -u \sin\phi  + v \cos\phi  
 \end{eqnarray}
 

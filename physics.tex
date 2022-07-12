@@ -31,7 +31,7 @@ The skew-symmetric tensor is called spin tensor (or vorticity tensor):
 
 \begin{remark}
 In the mathematical literature a different notation for the strain rate tensor is often used, i.e. 
-${\bm D}(\vec \upnu)$, such as for instance in Fullsack (1995) \cite{full95}.
+${\bm D}(\vec \upnu)$ - or simply ${\bm D}$, such as for instance in Fullsack (1995) \cite{full95}.
 \end{remark}
 
 %.............................................
@@ -250,18 +250,18 @@ Finally (in Cartesian coordinates)
 \end{equation}
 See Schubert \& Yuen (1978) \cite{scyu78} for an analysis of shear heating instability in the upper mantle.
 
-Let us quickly look at the $DP/Dt$ term. Often the term $\partial p/\partial t$
+Let us quickly look at the $Dp/Dt=\partial_t p + \vec\upnu\cdot\vec\nabla p$ term. 
+Often the term $\partial p/\partial t$
 is neglected and the pressure is assumed to be mostly hydrostatic in this term so 
 that $\vec\nabla p = - \rho \vec{g}$ which yields a much simpler formulation. 
 
-
 See discussions about shear heating (``viscous dissipation'') -- meaning and application-- in 
-Froidevaux (1973) \cite{froi73},
-Stein (1978) \cite{stei78},
-Bird \& Yuen (1979) \cite{biyu79},
-Sleep \etal (1979) \cite{slsg79},
-Winter (1987) \cite{wint87},
-Masek \& Duncan (1998) \cite{madu98}
+\textcite{froi73} (1973),
+\textcite{stei78} (1978),
+\textcite{biyu79} (1979),
+\textcite{slsg79} (1979),
+\textcite{wint87} (1987),
+\textcite{madu98} (1998).
 
 %------------------------------------------------------------------------
 \subsection{The momentum conservation equations} 
@@ -690,7 +690,7 @@ We define dimensionless variables through:
 \qquad
 {\color{teal} g} =\frac{g}{\underline{g}}
 \]
-where the teal color indicates dimensionless values.
+where the {\color{teal}teal} color indicates dimensionless values.
 
 Consequently, time and space derivatives will be rescaled as follows:
 \[
@@ -1618,7 +1618,9 @@ and then
 The left hand term is actually a trigonometric 
 identity\footnote{\url{https://en.wikipedia.org/wiki/List_of_trigonometric_identities}}:
 \[
-\frac{ \sin\theta_p \cos\theta_p}{ \cos^2\theta_p -\sin^2\theta_p } = \frac{1}{2} \tan 2\theta_p
+\frac{ \sin\theta_p \cos\theta_p}{ \cos^2\theta_p -\sin^2\theta_p } 
+= \frac{\frac12 \sin 2\theta_p}{\cos 2\theta_p}
+= \frac{1}{2} \tan 2\theta_p
 \]
 and finally:
 \[

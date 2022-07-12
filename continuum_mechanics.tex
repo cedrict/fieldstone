@@ -1,7 +1,8 @@
 \begin{flushright} {\tiny {\color{gray} continuum\_mechanics.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-{\sl Contains contributions by W. Spakman} \index{contributors}{W. Spakman}
+{\sl Contains contributions by W. Spakman - Continuum mechanics course syllabus} 
+\index{contributors}{W. Spakman}
 
 %......................................................................
 \subsubsection{Forces}
@@ -38,7 +39,7 @@ tractions to balance the exerted forces.
 \index{general}{Stress Vector} 
 \index{general}{Traction}
 
-The Cauchy tensor\footnote{\url{https://en.wikipedia.org/wiki/Cauchy_stress_tensor}} 
+The Cauchy stress tensor\footnote{\url{https://en.wikipedia.org/wiki/Cauchy_stress_tensor}} 
 consists of nine components $\sigma_{ij}$  that completely define the state of stress 
 at a point inside a material. 
 The tensor relates a unit-length direction vector $\vec{n}$ to the so-called 'stress vector' (most commonly called 'traction') $\vec{t}(\vec{n})$ across an imaginary surface perpendicular to $\vec{n}$:
@@ -67,19 +68,6 @@ is given by:
 \end{equation}
 The three diagonal elements are called normal stresses while the off-diagonal terms 
 are called shear stresses.
-
-\begin{tiny}
-\begin{equation}
-{\bm \sigma}=
-\left(
-\begin{array}{ccc}
-\sigma_{xx} & \sigma_{xy} & \sigma_{xz} \\
-\sigma_{yx} & \sigma_{yy} & \sigma_{yz} \\
-\sigma_{zx} & \sigma_{zy} & \sigma_{zz} 
-\end{array}
-\right)
-\end{equation}
-\end{tiny}
 
 One can easily prove (see for instance Section 3.3.6 of \cite{grbl09}) that the balance 
 of angular momentum leads reduces to the statement that the Cauchy stress tensor 
@@ -110,6 +98,8 @@ where the elements $\sigma _{x}$, $\sigma _{y}$, $\sigma _{z}$ are called the or
 normal stresses (relative to the chosen coordinate system), and $\tau _{xy}$, $\tau _{xz}$,
 $\tau _{yz}$ the orthogonal shear stresses. The left form is preferred in this document.
 As seen above, the SI units of both stress tensor and traction are \si{\newton\per\square\metre}.
+
+\todo[inline]{specify the underlying assumptions in what follows}
 
 In Cylindrical coordinates the stress tensor components are given by:
 \begin{eqnarray}

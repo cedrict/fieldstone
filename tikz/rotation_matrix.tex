@@ -1,0 +1,41 @@
+\begin{flushright} {\tiny {\color{gray} (rotation\_matrix.tex)}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[step=1cm,gray,very thin] (0,0) grid (16,7); %background grid
+
+\draw[->,thick] (1,3)--(3,3);
+\draw[->,thick] (1,3)--(1,5);
+\node[] at (3,2.75) {\small $x$};
+\node[] at (0.75,5) {\small $y$};
+\draw[->,thick,color=blue] (1,3)--(3,4);
+\node[] at (3.75,4) {\small $\vec{v}=(2,1)$};
+
+\draw[->,thick] (5.5,4)--(7.5,5.5);
+\draw[->,thick] (5.5,4)--(7.5,2.5);
+
+\node[] at (7,4) {\small $\theta=90^o$};
+
+\node[rotate=37] at (6.5,5.1) {\small rotate vector};
+\node[rotate=-37] at (6.5,2.9) {\small rotate axis system};
+
+\draw[->,thick] (10,4.5)--(12,4.5);
+\draw[->,thick] (10,4.5)--(10,6.5);
+\node[] at (12,4.25) {\small $x$};
+\node[] at (9.75,6.5) {\small $y$};
+\draw[->,thick,color=blue] (10,4.5)--(9,6.5);
+\node[] at (8.8,6.8) {\small $\vec{v}'=(-1,2)$};
+
+\draw[->,thick] (12,1)--(12,3);
+\draw[->,thick] (12,1)--(10,1);
+\node[] at (12,3.25) {\small $x$};
+\node[] at (9.75,1) {\small $y$};
+\draw[->,thick,color=blue] (12,1)--(14,2);
+\node[] at (14,2.25) {\small $\vec{v}'=(1,-2)$};
+
+\end{tikzpicture}
+\end{center}
+
+
+

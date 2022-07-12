@@ -20,7 +20,7 @@ Its Euclidean norm (or magnitude) is given in a coordinate-free way by
 \[
 |\vec{v}|:=\sqrt{\vec{v}\cdot\vec{v}}
 \]
-This definition makes use of the do product, see next section.
+This definition makes use of the dot product, see next section.
 The Euclidean norm is also called the $L_2-$norm, or $2-$norm. It is also 
 sometimes noted $||\cdot ||_2$. 
 
@@ -85,12 +85,13 @@ where $\theta$  is the measure of the angle between $\vec{a}$ and ${b}$.
 
 \todo[inline]{FIGURE}
 
-The dot product can also be defined as the sum of the products of the components of each vector as
+In Cartesian coordinates the dot product can also be defined as the sum 
+of the products of the components of each vector as
 \[
 \vec{a}\cdot\vec{b} = a_xb_x + a_yb_y + a_zb_z  
 \]
 The dot product can also be interpreted as an answer to the question ``how similar are vectors $\vec{a}$
-and $\vec{b}$ ?'' Indeed, if $\vec{a}=\vec{b}$ then $\theta=0$ and $\cos\theta=1$, while if 
+and $\vec{b}$ in magnitude and direction?'' Indeed, if $\vec{a}=\vec{b}$ then $\theta=0$ and $\cos\theta=1$, while if 
 $\vec{a}$ is perpendicular to $\vec{b}$, then $\theta=\pi/2$, $\cos\theta=0$ and $\vec{a}\cdot \vec{b}=0$. 
 
 In Cartesian coordinates, we find that 
@@ -105,8 +106,8 @@ In Cartesian coordinates, we find that
 In this case the interpretation of $\vec{v} \cdot \vec{e}_x$ could be ``how much of $\vec{v}$
 is in the direction $\vec{e}_x$''.
 
-The {\bf cross product} (also  called the vector product or outer product) of two vectors is also a vector and 
-it is denoted $\vec{a} \times \vec{b}$ and defined as 
+The {\bf cross product} (also  called the vector product or outer product) of two vectors is also a vector.
+It is denoted $\vec{a} \times \vec{b}$ and defined as 
 \[
 \vec{c} = \vec{a} \times \vec{b} = |\vec{a}| \; |\vec{b}|\; \sin\theta \; \vec{n}
 \]
@@ -120,15 +121,29 @@ The norm of the cross product, say $|\vec{c}|=|\vec{a} \times \vec{b}|$, is actu
 area of the parallelogram having $\vec{a}$ and $\vec{b}$ as sides.
 
 Also note that $\vec{a} \times \vec{b} = - \vec{b} \times \vec{a}$ (think about the direction of the 
-normal vector in each case). The cross product can be written as
+normal vector in each case). In Cartesian coordinates the cross product can be written as
 \[
 \vec{a} \times \vec{b} = (a_yb_z-a_zb_y) \vec{e}_x + (a_zb_x-a_xb_z) \vec{e}_y + (a_xb_y-a_yb_x) \vec{e}_z  
 \]
 
 Finally, let us look at the {\bf dyadic product} of two vectors $\vec{a}$ and $\vec{b}$ which denoted by
-$\vec{a}\vec{b}^T$ (juxtaposed; no symbols, multiplication signs, crosses, dots, etc...). The 
+$\vec{a}\; \vec{b}^T$ (juxtaposed; no symbols, multiplication signs, crosses, dots, etc...). The 
 result is a tensor:
 \[
+\vec{a}=
+\left(
+\begin{array}{c}
+a_x \\ a_y \\ a_z
+\end{array}
+\right),
+\qquad
+\vec{b}=
+\left(
+\begin{array}{c}
+b_x \\ b_y \\ b_z
+\end{array}
+\right),
+\qquad\qquad
 \vec{a}\vec{b}^T 
 =
 \left(
@@ -155,3 +170,63 @@ product yields a tensor.
 
 
 
+%---------------------------------------------------------------
+\subsubsection{Rotation matrix}
+
+After much confusion, \url{https://mathworld.wolfram.com/RotationMatrix.html}
+is a source of clarity: one must be careful when speaking of 'rotation matrix'.
+Indeed, there are two possible conventions: rotation of the axes, and rotation 
+of the object relative to fixed axes.
+
+We consider in $\R^2$ the matrix ${\bm R}$ that rotates a given vector $\vec{v}$
+by a counterclockwise angle $\theta$ in a fixed coordinate system.
+It writes
+\[
+{\bm R}=
+\left(
+\begin{array}{cc}
+\cos\theta & -\sin \theta \\
+\sin\theta & \cos\theta
+\end{array}
+\right)
+\]
+with $\vec{v}'={\bm R}\cdot \vec{v}$.
+
+On the other hand, consider the matrix that rotates the coordinate system through 
+a counterclockwise angle $\theta$. The coordinates of the fixed vector $\vec{v}$ in the rotated 
+coordinate system are now given by a rotation matrix which is the transpose of 
+the fixed-axis matrix and, as can be seen in the above diagram, is equivalent to rotating 
+the vector by a counterclockwise angle of $\theta$ relative to a fixed set of axes, giving 
+\[
+{\bm R}=
+\left(
+\begin{array}{cc}
+\cos\theta & \sin \theta \\
+-\sin\theta & \cos\theta
+\end{array}
+\right)
+\]
+In the following example we start from $\vec{v}=(2,1)$. If we rotate the vector by 90\si{\degree}, 
+the rotation matrix is given by 
+\[
+{\bm R}=
+\left(
+\begin{array}{cc}
+0 & -1 \\ 1 & 0 
+\end{array}
+\right)
+\]
+so that $\vec{v}'=(-1,2)$. 
+If we rotate the axis by 90\si{\degree}, the 
+rotation matrix is given by 
+\[
+{\bm R}=
+\left(
+\begin{array}{cc}
+0 & 1 \\ -1 & 0 
+\end{array}
+\right)
+\]
+and the coordinates of the resulting vector are $\vec{v}'=(1,-2)$.
+
+\input{tikz/rotation_matrix}
