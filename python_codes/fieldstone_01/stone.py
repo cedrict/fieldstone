@@ -80,8 +80,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 96
-   nely = 96
+   nelx = 16
+   nely = 16
    visu = 1
 
 assert (nelx>0.), "nnx should be positive" 
@@ -138,10 +138,10 @@ for j in range(0, nely):
 
 # for iel in range (0,nel):
 #     print ("iel=",iel)
-#     print ("node 1",icon[0][iel],"at pos.",x[icon[0][iel]], y[icon[0][iel]])
-#     print ("node 2",icon[1][iel],"at pos.",x[icon[1][iel]], y[icon[1][iel]])
-#     print ("node 3",icon[2][iel],"at pos.",x[icon[2][iel]], y[icon[2][iel]])
-#     print ("node 4",icon[3][iel],"at pos.",x[icon[3][iel]], y[icon[3][iel]])
+#     print ("node 1",icon[0,iel],"at pos.",x[icon[0,iel]], y[icon[0,iel]])
+#     print ("node 2",icon[1,iel],"at pos.",x[icon[1,iel]], y[icon[1,iel]])
+#     print ("node 3",icon[2,iel],"at pos.",x[icon[2,iel]], y[icon[2,iel]])
+#     print ("node 4",icon[3,iel],"at pos.",x[icon[3,iel]], y[icon[3,iel]])
 
 print("setup: connectivity: %.3f s" % (time.time() - start))
 
