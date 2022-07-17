@@ -52,7 +52,7 @@ def pressure(x,y,R1,R2,rho,g0,lambdaa,mu):
     k2 = lambdaa * C1 * (R1**2 * R2**3 - R1**3 * R2**2)
     C3 = (k1 + k2) / (( (R2**2+R1**2)*(2*mu+lambdaa) )  +  lambdaa * (R2**2-R1**2) )
     C2 = -C1 * R1 - C3 / R1**2
-    val=-lambdaa*(3*C1*r+2*C2)
+    val=-(lambdaa+2*mu/3)*(3*C1*r+2*C2)
     return val
 
 def gx(x,y,g0):
@@ -383,7 +383,7 @@ for iel in range(0,nel):
         eyy[iel] += dNdy[k]*v[icon[k,iel]]
         exy[iel] += 0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
 
-    p[iel]=-lambdaa*(exx[iel]+eyy[iel])
+    p[iel]=-(lambdaa+2*mu/3)*(exx[iel]+eyy[iel])
 
 print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))

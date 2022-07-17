@@ -1,10 +1,11 @@
-set term pdf enhanced
+set term pdf enhanced font 'Times,10pt'
 set xlabel 'r' 
 set ylabel 'radial displacement'
 set output 'displacement_rtheta.pdf'  
 plot[2890e3:6371e3][]\
 'displacement_rtheta.ascii' u 1:2 w lp notitle 
 
+set ylabel 'radial pressure'
 set output 'pressure_rtheta.pdf'  
 plot[2890e3:6371e3][]\
 'pressure.ascii' u 4:3 w lp notitle 
