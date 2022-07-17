@@ -8,12 +8,12 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The setup is borrowed from Duretz et al (2020) \cite{dudy20}. 
+The setup is borrowed from \textcite{dudy20} (2020). 
 Two major differences with the paper: 1) no elasticity and 2) no Newton solver.
 
 The model consists of a $100\times 30~\si{km}$ slice of Westerly Granite (Hansen \& Carter, 1983), 
 which comprises an imperfection at the center of the domain.
-This weak inclusion with a $2~\si{km}$ radius serves to initiate
+This weak inclusion with a $\SI{2}{km}$ radius serves to initiate
 localized deformations. The model configuration is thus perfectly symmetric. 
 The model includes a vertical temperature gradient ($-15~\si{\celsius\per\km}$) (starting 
 at $20~\si{\celsius}$ at the surface), a constant density ($\SI{2700}{\kg\per\cubic\metre}$), 
@@ -59,11 +59,13 @@ As shown on the (modified) figure above, the rheological assemblage is as follow
 The dislocation creep viscosity $\eta_{\color{OliveGreen}ds}$ and effective 
 viscoplastic viscosity $\eta_{\color{blue}vp}$ are given by 
 \[
-\eta_{\color{OliveGreen}ds}(\dot\varepsilon) = \frac{1}{2} A^{-1/n} \dot{\varepsilon}^{-1+1/n} \exp \frac{Q}{nRT}
+\eta_{\color{OliveGreen}ds}(\dot\varepsilon) 
+= \frac{1}{2} A^{-1/n} \dot{\varepsilon}^{-1+1/n} \exp \frac{Q}{nRT}
 \qquad
 \text{and}
 \qquad
-\eta_{\color{blue}vp}(\dot\varepsilon) = \frac{p \sin \phi + c \cos \phi}{2 \dot{\varepsilon}}  + \eta_{m}
+\eta_{\color{blue}vp}(\dot\varepsilon) 
+= \frac{p \sin \phi + c \cos \phi}{2 \dot{\varepsilon}}  + \eta_{m}
 \]
 Note that these expressions are functions of $\dot\varepsilon$, the nature of which will be specified later. 
 As documented in Section~\ref{ss:srpart}, 
@@ -78,7 +80,7 @@ as well as the yield value  $Y = p\; \sin\phi + c \; \cos \phi$ and $\eta_m$ (He
 for 'total').
 
 %%%%%%%%%%%%%%%%%
-\item We start by assuming that the plasticity 'block' is not active 
+\item We start by assuming that the plasticity element is not active 
 ($\dot{\varepsilon}_{\color{blue}vp}=0$, $\dot{\varepsilon}_{\color{OliveGreen}ds}
 +\dot{\varepsilon}_{\color{orange} v} =\dot{\varepsilon}_T$): 
 
@@ -96,7 +98,7 @@ eps_v=tau/2/eta_v
 \end{lstlisting}
 The effective viscosity of both dampers is given by 
 \[
-\eta_{eff}=\frac{1}{1/\eta_{\color{orange}v}+1/\eta_{\color{OliveGreen}ds}}
+\eta_{i\text eff}=\frac{1}{1/\eta_{\color{orange}v}+1/\eta_{\color{OliveGreen}ds}}
 \]
 \begin{lstlisting}
 etaeff=1./(1./eta_v+1./eta_ds)
@@ -181,12 +183,24 @@ and the iterations will be of the form:
 where the derivative of the function ${\cal F}$ with respect to $\tau$ reads:
 \begin{eqnarray}
 \frac{\partial {\cal F}}{\partial \tau} 
-%&=& -\frac{\eta_m}{\eta_v} -2 \eta_m 
-%\frac{\partial  \dot\varepsilon_{\color{OliveGreen}ds}(\tau) }{\partial \tau} - 1 
 = -\frac{\eta_m}{\eta_v}-2 \eta_m n A \tau^{n-1} \exp \left(-\frac{Q}{RT}\right) -1 
 \end{eqnarray}
 Iterations require a starting value for $\tau$: we logically use the one obtained just 
 above. Iterations stop when ${\cal F}<10^{-6}$.  
+A maximum of 30 iterations is allowed.
+
+\begin{lstlisting}
+while abs(func)>1e-6:
+   eps_ds=A*tau**nnn*np.exp(-Q/Rgas/T)
+   eps_v=tau/2/eta_v
+   func=Y + 2*(E2-eps_ds-eps_v)*eta_m - tau
+   funcp=-eta_m/eta_v -2*eta_m*nnn*A*tau**(nnn-1)*np.exp(-Q/Rgas/T)-1
+   tau-=func/funcp
+   it+=1
+   if it>30:
+      break
+#end while
+\end{lstlisting}
 
 \item Once $\tau$ has been found, one can compute 
 \begin{eqnarray}

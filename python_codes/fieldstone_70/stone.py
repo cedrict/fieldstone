@@ -69,7 +69,7 @@ def material_model(xq,yq,exx,eyy,exy,p,T):
     Rgas=8.314
     phi=31./180.*np.pi #(atan(0.6) in paper)
     c=50e6
-    eta_m=0 #1e21
+    eta_m=1e21
     eta_v=1e25
     #-------------------
     if iter==0:

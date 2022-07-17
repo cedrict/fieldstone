@@ -101,11 +101,79 @@ the figure from Hassani.}
 
 
 
-
+\newpage
 %--------------------------------------------------------------
-\subsection*{Ramachandran (experiment=2)}
+\subsection*{\textcite{rama16} (experiment=2)}
 
-To do.
+An infinite plate with a circular hole of radius $a$  
+is subjected to a unidirectional tensile load of $\sigma$ in the $x$ direction as shown
+in the figure. In this case, only one quarter of the domain could be analysed due
+to symmetry along $x$ and $y$ axis but we nevertheless model the full plate.
+
+\begin{center}
+\includegraphics[width=0.65\textwidth]{python_codes/fieldstone_124/images/yobu02}
+\includegraphics[width=0.25\textwidth]{python_codes/fieldstone_124/images/yobu02b}
+{\captionfont Left: An infinite plate with a circular hole subjected to unidirectional tension 
+and its quarter model with symmetric conditions imposed on the left and bottom edges.
+Right: Tangential stress distribution for $\theta=0$  and $\theta=\pi/2$. \cite{yobu02}}
+\end{center}
+
+
+The inner boundary of the hole is traction free. 
+On the left and right edges tractions based on the analytical solutions are prescribed.
+The {\color{red}plane stress} condition is considered and the parameters are: 
+Young modulus $E=\SI{3e7}{\mega\pascal}$, Poisson Ratio $\nu=0.3$, 
+Load $\sigma=10~\si{\newton\per\square\meter}$, $a=1~\si{\meter}$.
+
+The analytical stress components for this problem are  
+
+\begin{eqnarray}
+\sigma_{xx}(x,y) &=& \sigma \left(  1-\frac{a^2}{r^2}\left(\frac{3}{2}\cos 2\theta + \cos 4\theta \right) 
++ \frac{3a^4}{2r^4} \cos 4\theta \right) \\
+\sigma_{yy}(x,y) &=& -\sigma \left( \frac{a^2}{r^2} \left(\frac{1}{2}\cos 2\theta - \cos 4\theta \right) 
+- \frac{3a^4}{2r^4} \cos 4\theta \right) \\
+\sigma_{xy}(x,y) &=& -\sigma \left( \frac{a^2}{r^2} \left(\frac{1}{2}\sin 2\theta + \sin 4\theta\right) 
++ \frac{3a^4}{2r^4} \sin 4\theta \right) 
+\end{eqnarray}
+
+Note that on page 31 of \textcite{rama16} (2016) cites \textcite{chnn10} (2010)
+which cites the book \cite[p772]{yobu02} which cites \textcite{budynas} for the solution!
+\todo[inline]{there are discrepancies between \cite{rama16} and \cite{chnn10}. because of course.}
+
+Following \cite{yobu02}, it can be shown, from linear elasticity, that the tangential
+stress throughout the plate is given by
+\[
+\sigma_\theta = \frac{\sigma}{2} \left[ 1+\frac{a^2}{r^2} - 
+\left( 1+3\frac{a^4}{r^4}  \right) \cos 2\theta   \right]
+\]
+The maximum stress is $\sigma_\theta=3\sigma$ at $r=a$ and $\theta=\pm \pi/2$. Along the surface of the hole, 
+the tangential stress is $-\sigma$ at y $\theta=0$  and $\theta=\pi$, 
+and increases, as $\theta$ increases, to $3\sigma$ at $\theta=\pi/2$ and $\theta=3\pi/2$.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \newpage
