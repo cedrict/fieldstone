@@ -42,12 +42,12 @@ derivatives\footnote{\url{https://en.wikipedia.org/wiki/Finite_difference_coeffi
 \begin{eqnarray}
 \frac{d^2w}{dx^2} &=& \frac{w_{n-1}-2w_n+w_{n+1}}{h^2} 
 +{\cal O}(h^3) \\
-\frac{d^4w}{dx^4} &=& \frac{w_{n-2}-4w_{n-1}+6w_n-4w_{n+1}+w_{n+1}}{h^4}
+\frac{d^4w}{dx^4} &=& \frac{w_{n-2}-4w_{n-1}+6w_n-4w_{n+1}+w_{n+2}}{h^4}
 +{\cal O}(h^5)
 \end{eqnarray}
 Both are second-order accurate. We then obtain 
 \[
-D\frac{w_{n-2}-4w_{n-1}+6w_n-4w_{n+1}+w_{n+1}}{h^4}
+D\frac{w_{n-2}-4w_{n-1}+6w_n-4w_{n+1}+w_{n+2}}{h^4}
 +P\frac{w_{n-1}-2w_n+w_{n+1}}{h^2} 
 +(\rho_m-\rho_c)g w_n = q_n
 \]

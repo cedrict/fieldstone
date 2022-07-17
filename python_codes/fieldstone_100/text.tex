@@ -58,10 +58,10 @@ Please contact me.
 Each cell is characterised by a min/max latitude, longitude. We can convert these to 
 spherical coordinates with $\phi$ being the longitude and $\theta$ being the colatitude.
 The topography is given with respect to the Mars radius $R_{mars}$. Since the minimum 
-of the topography is about $-7.7~\si{\km}$ we define the inner radius of the hollow planet 
-as $R_{min}=R_{mars}-t$ with $t=8~\si{\km}$. The topography associated to the cell is the one in its middle
-so we define $R_{max}=R_{mars}+h$ where $h$ is the topography in the cell middle. 
-Each cell then has a volume
+of the topography is about $-8.177~\si{\km}$ we define the inner radius of the hollow planet 
+as $R_{min}=R_{mars}-t$ with $t=8.2~\si{\km}$. The topography associated to the cell 
+is the one in its middle so we define $R_{max}=R_{mars}+h$ where $h$ is the topography 
+in the cell middle. Each cell then has a volume
 \begin{eqnarray}
 V
 &=&
@@ -91,23 +91,21 @@ topography file. In the radial direction, we shall simply take
 \[
 r_c(\theta_c,\phi_c)=\frac12( R_{min}+R_{max})=\frac12 (R_{mars}+h(\theta_c,\phi_c)+R_{mars}-t)= R_{mars} + \frac12[h(\theta_c,\phi_c)-t]
 \]
-We can now proceed to compute the gravity field(s) 
-resulting from this thin crustal layer at a point $\vec{r}=(x,y,z)$, as 
-explained in Section~\ref{}.
-
 
 On Mars, 1degree = $2\pi R_{mars}/360 \simeq 59~\si{\km}$, so that the highest resolution
 corresponds to a cell of side $\sim 3.7~\si{\km}$!
 
-
 idea/todo: 
 -divide columns radially so as to obtain almost cubic cells?
--all cells are prisms. use tesseroid formula ?
-
+-use tesseroid formula ?
+-implement GLQ?
 
 gravity data at \url{https://pgda.gsfc.nasa.gov/products/57}
 with format explaination at \url{https://pds-geosciences.wustl.edu/dataserv/gravity_model_desc.htm}
 
+We can now proceed to compute the gravity field(s) 
+resulting from this thin crustal layer at a point $\vec{r}=(x,y,z)$, as 
+explained in Section~\ref{exgravptmass}.
 
 %-----------------------------------------------------------------------
 \subsection*{Gravity calculations - 1degree resolution}
@@ -275,6 +273,52 @@ resolution of the data.
 
 \newpage
 %-----------------------------------------------------------------------
+\subsection*{Analytical benchmark}
+
+In this case the topography is not used, only the coordinates of the cells. 
+The shell is 300~\si{\km} thick, i.e. $R_{mars}-300 \le r \le R_{mars}$.
+Gravity is computed on 5000 points on a line $r\in[0,4R_{mars}]$ parameterised by 
+$\theta=\phi=0.123456789~\si{rad}$ (so as to avoid any cancelling due to symmetry).
+
+\begin{center}
+\includegraphics[width=13cm]{python_codes/fieldstone_100/results/gravity_on_line.pdf}
+\end{center}
+
+Results agree with the analytical solution (see appendix A of \textcite{thie18} (2018))
+except inside the shell since it is only composed of a 
+single cell (represented by a point mass!) in the $r$ direction. 
+
+The gravity is also measured at $R_{mars}+100~\si{\km}$:
+
+\begin{center}
+\begin{tabular}{lllll}
+\hline
+resolution        & $\min(g)$ & $\max(g)$ & $\min(U)$ & $\max(U)$ \\
+\hline
+\hline
+1~\si{\degree}    & 0.651021 & 0.651818 & -2271938.557588 & -2271751.401358 \\
+1/2~\si{\degree}  & 0.651024 & 0.651225 & -2271804.046129 & -2271757.177753 \\
+1/4~\si{\degree}  & 0.651025 & 0.651075 & -2271770.343922 & -2271758.621926 \\
+\hline
+analytical & 0.65102561831 & & -2271759.10332  \\
+\hline
+\end{tabular}
+\end{center}
+We see that the errors are concentrated above the poles:
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_100/results/quarter/gravshell}\\
+{\captionfont Measured gravity $|\vec{g}|$ for 1/4-degree resolution dataset.}
+\end{center}
+
+
+
+
+
+
+\newpage
+%-----------------------------------------------------------------------
 \subsection*{1 degree resolution data}
 
 Compute time is about 21s. 
@@ -303,5 +347,85 @@ Compute time is about 344s.
 {\captionfont Top row: $g_x$, $g_y$, $g_z$;
 bottom row: gravity vector norm and potential}
 \end{center}
+
+%-----------------------------------------------------------------------
+\subsection*{1/4 degree resolution data}
+
+about 5800s
+
+
+
+\newpage
+%-----------------------------------------------------------------------
+\subsection*{Flying above Mount Olympus}
+
+Olympus Mons\footnote{\url{https://en.wikipedia.org/wiki/Olympus_Mons}} 
+is an enormous shield volcano on Mars. 
+The volcano has a height of over 21.9 km as measured by the Mars Orbiter Laser Altimeter (MOLA).
+Olympus Mons is about two and a half times Mount Everest's height above sea level. 
+It is the largest and highest mountain and volcano of the Solar System,
+and is associated with the Tharsis Montes, a large volcanic region on Mars.
+Its coordinates are $18\si{\degree}39'$N, $226\si{\degree}12'$E. 
+
+We then design a satellite flight path that follows the circle passing by the poles and above 
+the volcano, i.e. we fix $lon=226~\si{\degree}12'$, starting at the north pole and ending 
+at the south pole, i.e. co-latitudes between 0\si{\degree} and 180\si{\degree}:
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_100/results/olympus/line}
+\end{center}
+
+The measured gravity on this line for all 4 resolutions is as follows:
+
+\begin{center}
+\includegraphics[width=16cm]{python_codes/fieldstone_100/results/gravity_above_olympus_mons.pdf}\\
+{\captionfont Measured gravity $|\vec{g}|$ as a function of the co-latitude.}
+\end{center}
+
+TODO: plot topography underneath. Also plot $g_r$ and not $|\vec{g}|$ ?
+
+
+%----------------------------------
+\subsection*{Using tetrahedra}
+
+
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (8,7); 
+\draw[thick] (1,1)--(5,1)--(5,5)--(1,5)--cycle;
+\draw[thick] (5,1)--(8,2.5)--(8,6.5)--(5,5)--cycle;
+\draw[thick] (1,5)--(5,5)--(8,6.5)--(4,6.5)--cycle;
+\draw[] (1,1)--(4,2.5)--(8,2.5);
+\draw[] (4,2.5)--(4,6.5);
+\node[] at (3.8,2.6) {$1$};
+\node[] at (0.8,1) {$2$};
+\node[] at (5.2,0.8) {$3$};
+\node[] at (8.2,2.5) {$4$};
+\node[] at (3.8,6.6) {$5$};
+\node[] at (0.8,5) {$6$};
+\node[] at (5.2,4.8) {$7$};
+\node[] at (8.2,6.5) {$8$};
+\draw[-,thick,orange] (1,5)--(5,1)--(8,6.5)--cycle;
+\draw[thick,orange,dashed] (1,5)--(4,2.5)--(8,6.5);
+\draw[thick,orange,dashed] (4,2.5)--(5,1);
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tabular}{lcccc}
+\hline
+tetrahedron & node 1& node 2& node 3& node 4  \\
+\hline
+\hline
+1&2&3&6&1 \\
+2&4&1&8&3 \\
+3&5&1&6&8 \\
+4&7&8&6&3 \\
+5&3&6&1&8 \\
+\hline
+\end{tabular}
+\end{center}
+
 
 
