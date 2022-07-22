@@ -1,0 +1,114 @@
+See \textcite{grfr03}
+
+Two main relations are used, expressing fluid mass conservation
+\[
+\frac{\partial (\rho \phi)}{\partial t} + \vec\nabla\cdot (\rho \vec{\upnu}) = 0
+\]
+and Darcy's law
+\[
+\vec\upnu = {\bm K} \cdot (\vec{\nabla} P + \rho \vec{g})
+\]
+where $\rho$ is the density of the fluid, $\phi$ is the
+connected mean porosity of the rock, $\vec{\upnu}$ is the Darcy flow
+rate (fluid particle velocity times porosity), ${\bm K}$ is the
+permeability tensor, $P$ is the total pore pressure and $\vec{g}$ is
+the gravity.
+
+First, during the evolution, we consider that the density 
+$\rho = \rho' + \rho_m$ will evolve in time of an amount $\rho'$ 
+around its local mean value $\rho_m$ , and finally, we rewrite the fluid mass
+conservation by neglecting the terms $\rho'$ compared to $\rho_m$.
+
+TODO
+
+Second, we consider that the total pore pressure $P$ can
+be decomposed as $P = p + P_{hydro}$ such that $P_{hydro}$ is the
+hydrostatic pressure verifying $\vec\nabla P_{hydro} + \rho_m \vec{g} = \vec{0}$. Third, we
+consider that the principal directions of the permeability
+tensor K are the axes of the fault frame x, z, which means
+that the anisotropy of the permeability takes the natural
+direction of the fault. This last assumption seems reasonable
+if the fault has a constant straight and vertical shape. By
+applying these three simplifications, we rewrite the fluid
+mass conservation and Darcy’s law in the following
+simplified form:
+
+
+\[
+\phi \frac{\partial \rho'}{\partial t}
++ \rho_m \frac{\partial \phi}{\partial t} + \vec\nabla \cdot (\rho_m \vec\upnu) = f
+\]
+with $\vec{\upnu}$ the Darcy flow rate (minus sign in grfr03??)
+\[
+\vec\upnu = - {\bm K} \cdot \vec{\nabla} p
+\]
+and
+\[
+\phi \frac{\partial \rho'}{\partial t}
+=
+\rho_m C_f  \phi \frac{\partial p}{\partial t}
+\]
+so 
+\[
+\rho_m C_f  \phi \frac{\partial p}{\partial t}
++ \rho_m \frac{\partial \phi}{\partial t} 
+- \vec\nabla \cdot (\rho_m {\bm K} \cdot \vec{\nabla} p ) ) = f
+\]
+
+We assume an isotropic permeability so that the tensor now simply writes:
+\[
+K = K_0 \phi^3
+\]
+The porosity $\phi$ is given by:
+
+
+\[
+\underbrace{
+\left( \int_\Omega \vec{\bN}^T \rho_m C_f \phi \vec{\bN} dV  \right)
+}_{\bm M}
+ \cdot \frac{\partial \vec{\cal P}}{\partial t}
++
+\underbrace{
+\left( \int_\Omega {\bm B}^T \cdot \rho_m {\bm K} \cdot {\bm B} dV \right)
+}_{{\bm K}_d}
+ \cdot \vec{\cal P}
+=
+\int_\Omega \vec{\bN}^T f dV 
+-
+\int_\Omega \vec{\bN}^T   \rho_m \frac{\partial \phi}{\partial t} dV
+\]
+
+
+\[
+\frac{\partial \phi}{\partial t} = \alpha \dot{\varepsilon}_e
+\]
+
+\[
+\frac{\partial f}{\partial t} = \varphi f \dot{\varepsilon}_e
+\qquad
+\Rightarrow
+\qquad
+f^{t+\delta t} = f^t (1 + \varphi  \dot{\varepsilon}_e \delta t)
+\]
+
+
+characteristic time
+\[
+t_c 
+= \frac{\phi C_f h^2}{K} 
+= \frac{\phi^{-2} C_f h^2}{K_0} 
+\]
+
+
+TODO:
+- $f$ constant, derive analytical soltuion, compare with ss results
+
+critical time of dacry <<<< tectonics time step   -> solve ss darcy ?! only doable bc dphi/dt is freezed when darcy solved
+
+- dphi/dt remains constant=0 during a tectonic time step, dt-> dt_tect ~1e5 year. while solving Darcy, phi is fixed, so we can compute ss.
+
+same thing for \dot{f} equation: during Darcy f is fixed. incrementing f takes place before Darcy is called.  
+
+- cutoff on porosity - done
+
+
