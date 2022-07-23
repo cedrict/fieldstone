@@ -1,12 +1,13 @@
 import time as time
 import numpy as np
+import random
 
 #################################################################
 
-m=4
+m=4 # number of nodes for mackground cells
 
-nelx=24
-nely=24
+nelx=32
+nely=32
 Lx=1
 Ly=1
 
@@ -24,6 +25,8 @@ nmarker=nel*nmarker_per_dim**2
 print('nel=',nel)
 print('NV =',NV)
 print('nmarker=',nmarker)
+
+test=3
 
 #################################################################
 # grid point setup
@@ -48,13 +51,14 @@ print("setup: grid points: %.3f s" % (time.time() - start))
 start = time.time()
 
 icon =np.zeros((m, nel),dtype=np.int32)
+
 counter = 0
-for j in range(0, nely):
-    for i in range(0, nelx):
-        icon[0, counter] = i + j * (nelx + 1)
-        icon[1, counter] = i + 1 + j * (nelx + 1)
-        icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
-        icon[3, counter] = i + (j + 1) * (nelx + 1)
+for j in range(0,nely):
+    for i in range(0,nelx):
+        icon[0,counter] = i + j * (nelx + 1)
+        icon[1,counter] = i + 1 + j * (nelx + 1)
+        icon[2,counter] = i + 1 + (j + 1) * (nelx + 1)
+        icon[3,counter] = i + (j + 1) * (nelx + 1)
         counter += 1
 
 print("setup: connectivity: %.3f s" % (time.time() - start))
@@ -64,9 +68,9 @@ print("setup: connectivity: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-swarm_x=np.empty(nmarker,dtype=np.float64)        # x coordinates   
-swarm_y=np.empty(nmarker,dtype=np.float64)        # y coordinates 
-swarm_cell=np.empty(nmarker,dtype=np.int)   
+swarm_x=np.empty(nmarker,dtype=np.float64)   # x coordinates   
+swarm_y=np.empty(nmarker,dtype=np.float64)   # y coordinates 
+swarm_cell=np.empty(nmarker,dtype=np.int)    # associated V cell 
 
 counter=0
 for iel in range(0,nel):
@@ -96,31 +100,40 @@ print("swarm setup: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-nvo=7
+if test==1:
+   nvo=7
+   xvo = np.empty(nvo,dtype=np.float64)  # x coordinates
+   yvo = np.empty(nvo,dtype=np.float64)  # y coordinates
+   xvo[0]=0.129
+   yvo[0]=0.27
+   xvo[1]=0.67
+   yvo[1]=0.33
+   xvo[2]=0.76
+   yvo[2]=0.69
+   xvo[3]=0.31
+   yvo[3]=0.71
+   xvo[4]=0.499
+   yvo[4]=0.499
+   xvo[5]=0.89
+   yvo[5]=0.08
+   xvo[6]=0.53
+   yvo[6]=0.6
 
-xvo = np.empty(nvo,dtype=np.float64)  # x coordinates
-yvo = np.empty(nvo,dtype=np.float64)  # y coordinates
+if test==2:
+   nvo=27
+   xvo = np.empty(nvo,dtype=np.float64)  # x coordinates
+   yvo = np.empty(nvo,dtype=np.float64)  # y coordinates
+   for i in range(0,nvo):
+      xvo[i]=random.uniform(0.01,0.99)
+      yvo[i]=random.uniform(0.01,0.99)
 
-xvo[0]=0.129
-yvo[0]=0.27
-
-xvo[1]=0.67
-yvo[1]=0.33
-
-xvo[2]=0.76
-yvo[2]=0.69
-
-xvo[3]=0.31
-yvo[3]=0.71
-
-xvo[4]=0.499
-yvo[4]=0.499
-
-xvo[5]=0.89
-yvo[5]=0.08
-
-xvo[6]=0.53
-yvo[6]=0.6
+if test==3:
+   nvo=111
+   xvo = np.empty(nvo,dtype=np.float64)  # x coordinates
+   yvo = np.empty(nvo,dtype=np.float64)  # y coordinates
+   for i in range(0,nvo):
+      xvo[i]=random.uniform(0.01,0.99)
+      yvo[i]=random.uniform(0.01,0.99)
 
 print("cell centers setup: %.3f s" % (time.time() - start))
 
