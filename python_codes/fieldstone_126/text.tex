@@ -1,16 +1,30 @@
-See \textcite{grfr03}
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_126/text.tex}} \end{flushright}
 
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_125/keywords}
+
+\begin{center}
+
+\fbox{\textbf{\huge \color{teal} P}}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_126}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+What follows is borrowed from \textcite{grfr03} (2003).
 Two main relations are used, expressing fluid mass conservation
 \[
-\frac{\partial (\rho \phi)}{\partial t} + \vec\nabla\cdot (\rho \vec{\upnu}) = 0
+\frac{\partial (\rho \phi)}{\partial t} + \vec\nabla\cdot (\rho \vec{\upnu}) = f
 \]
 and Darcy's law
 \[
-\vec\upnu = {\bm K} \cdot (\vec{\nabla} P + \rho \vec{g})
+\vec\upnu = - {\bm K} \cdot (\vec{\nabla} P + \rho \vec{g})
 \]
 where $\rho$ is the density of the fluid, $\phi$ is the
 connected mean porosity of the rock, $\vec{\upnu}$ is the Darcy flow
-rate (fluid particle velocity times porosity), ${\bm K}$ is the
+rate (fluid particle velocity times porosity)\footnote{Whaaaat?}, ${\bm K}$ is the
 permeability tensor, $P$ is the total pore pressure and $\vec{g}$ is
 the gravity.
 
@@ -19,47 +33,51 @@ $\rho = \rho' + \rho_m$ will evolve in time of an amount $\rho'$
 around its local mean value $\rho_m$ , and finally, we rewrite the fluid mass
 conservation by neglecting the terms $\rho'$ compared to $\rho_m$.
 
-TODO
+Then,
+\[
+\frac{\partial ((\rho'+\rho_m) \phi)}{\partial t} + \vec\nabla\cdot ((\rho'+\rho_m) \vec{\upnu}) = f
+\]
+\[
+(\rho'+\rho_m) \frac{\partial \phi}{\partial t} 
++\phi \frac{\partial (\rho'+\rho_m)}{\partial t} 
++ \vec\nabla\cdot ((\rho'+\rho_m) \vec{\upnu}) = f
+\]
+Since $\rho_m$ is constant then $\partial_t \rho_m =0$ so we obtain
+\[
+\rho_m \frac{\partial \phi}{\partial t} 
++\phi \frac{\partial \rho' }{\partial t} 
++ \vec\nabla\cdot (\rho_m \vec{\upnu}) = f
+\]
+
 
 Second, we consider that the total pore pressure $P$ can
 be decomposed as $P = p + P_{hydro}$ such that $P_{hydro}$ is the
-hydrostatic pressure verifying $\vec\nabla P_{hydro} + \rho_m \vec{g} = \vec{0}$. Third, we
-consider that the principal directions of the permeability
-tensor K are the axes of the fault frame x, z, which means
-that the anisotropy of the permeability takes the natural
-direction of the fault. This last assumption seems reasonable
-if the fault has a constant straight and vertical shape. By
-applying these three simplifications, we rewrite the fluid
-mass conservation and Darcy’s law in the following
-simplified form:
+hydrostatic pressure verifying $\vec\nabla P_{hydro} + \rho_m \vec{g} = \vec{0}$. 
+Then 
+\begin{align}
+\vec\upnu &= {\bm K} \cdot (\vec{\nabla} (p + P_{hydro}) + (\rho'+\rho_m) \vec{g}) \nn\\
+\Rightarrow \vec\upnu &= {\bm K} \cdot (\vec{\nabla} p + \rho' \vec{g}) \nn
+\end{align}
 
 
-\[
-\phi \frac{\partial \rho'}{\partial t}
-+ \rho_m \frac{\partial \phi}{\partial t} + \vec\nabla \cdot (\rho_m \vec\upnu) = f
-\]
-with $\vec{\upnu}$ the Darcy flow rate (minus sign in grfr03??)
-\[
-\vec\upnu = - {\bm K} \cdot \vec{\nabla} p
-\]
-and
+
+Furthermore, JUSTIFY!! Why does grad rho' g disappear ?!?! 
 \[
 \phi \frac{\partial \rho'}{\partial t}
 =
 \rho_m C_f  \phi \frac{\partial p}{\partial t}
 \]
-so 
-\[
+so in the end 
+\begin{equation}
 \rho_m C_f  \phi \frac{\partial p}{\partial t}
 + \rho_m \frac{\partial \phi}{\partial t} 
 - \vec\nabla \cdot (\rho_m {\bm K} \cdot \vec{\nabla} p ) ) = f
-\]
+\end{equation}
 
 We assume an isotropic permeability so that the tensor now simply writes:
 \[
 K = K_0 \phi^3
 \]
-The porosity $\phi$ is given by:
 
 
 \[
@@ -79,10 +97,15 @@ The porosity $\phi$ is given by:
 \]
 
 
+The porosity $\phi$ evolution equation is given by:
 \[
 \frac{\partial \phi}{\partial t} = \alpha \dot{\varepsilon}_e
+\qquad
+\Rightarrow
+\qquad
+\phi^{t+\delta t} = \phi^t + \alpha \dot{\varepsilon}_e \delta t
 \]
-
+while the source term $f$ equation is:
 \[
 \frac{\partial f}{\partial t} = \varphi f \dot{\varepsilon}_e
 \qquad
@@ -90,6 +113,24 @@ The porosity $\phi$ is given by:
 \qquad
 f^{t+\delta t} = f^t (1 + \varphi  \dot{\varepsilon}_e \delta t)
 \]
+
+The PDE above contains two parameters $\phi$ (and therefore also $K$) and $f$
+which depend on the strainrate. 
+The strainrate field will ultimately come from the other code which 
+solves the Stokes equations in the shear band. The timestep of that code 
+is of the order of at least a few thousands of years. However the characteristic time step
+for Darcy is about a year. This means that in the span of 1 tectonic timestep
+the Darcy equations will be solved with $\phi$ and $f$ constant. 
+This simplifies things considerably since this renders the Darcy equation a linear 
+diffusion equation with a heat source. 
+
+In the end, when we incorporate the Darcy solver in the Stokes code
+we may even choose to solve the steady-state Darcy equation once per 
+tectonic time step! 
+
+Given the nature of the equation describing the evolution of the porosity
+it can and will ultimately exceed physically meaningful values so we 
+implement a cutoff value $\phi_{max}$.
 
 
 characteristic time
@@ -103,12 +144,5 @@ t_c
 TODO:
 - $f$ constant, derive analytical soltuion, compare with ss results
 
-critical time of dacry <<<< tectonics time step   -> solve ss darcy ?! only doable bc dphi/dt is freezed when darcy solved
 
-- dphi/dt remains constant=0 during a tectonic time step, dt-> dt_tect ~1e5 year. while solving Darcy, phi is fixed, so we can compute ss.
-
-same thing for \dot{f} equation: during Darcy f is fixed. incrementing f takes place before Darcy is called.  
-
-- cutoff on porosity - done
-
-
+dilatancy a la chpe15 ?

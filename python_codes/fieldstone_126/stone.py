@@ -56,12 +56,12 @@ print("----------fieldstone---------")
 print("-----------------------------")
 
 ndim=2       # number of space dimensions
-mV=9
+mV=9         # number of nodes per Q2 elt
 
 Lx=2e-2
 Ly=1e-2
-nelx = 40
-nely = 20
+nelx= 40
+nely= 20
 
 p_f=0.8
 depth=50e3
@@ -79,6 +79,7 @@ porosity_0=1e-2
 rho_m=1000
 C_f=1e-9
 porosity_max=5e-2
+f_0=0.01
 
 how_often=50
 
@@ -114,6 +115,8 @@ qweights=[5./9.,8./9.,5./9.]
 stats_Pf_file=open('stats_Pf.ascii',"w")
 stats_porosity_file=open('stats_porosity.ascii',"w")
 stats_f_file=open('stats_source.ascii',"w")
+stats_gradP_file=open('stats_gradP.ascii',"w")
+stats_vel_file=open('stats_vel.ascii',"w")
 
 #####################################################################
 
@@ -144,8 +147,6 @@ for j in range(0,nny):
         counter += 1
     #end for
 #end for
-
-#np.savetxt('grid.ascii',np.array([xV,yV]).T,header='# x,y')
 
 print("mesh (%.3fs)" % (timing.time() - start))
 
@@ -183,12 +184,16 @@ bc_fixT=np.zeros(NfemT,dtype=np.bool)
 bc_valT=np.zeros(NfemT,dtype=np.float64) 
 
 for i in range(0,NV):
+    #left
     #if xV[i]/Lx<eps:
     #   bc_fixT[i]=True ; bc_valT[i]=2*p_0
+    #right
     #if xV[i]/Lx>(1-eps):
     #   bc_fixT[i]=True ; bc_valT[i]=p_0
+    #bottom
     if yV[i]/Ly<eps:
        bc_fixT[i]=True ; bc_valT[i]=p_0
+    #top
     if yV[i]/Ly>(1-eps):
        bc_fixT[i]=True ; bc_valT[i]=p_0
 #end for
@@ -205,14 +210,11 @@ T = np.zeros(NV,dtype=np.float64)
 for i in range(0,NV):
     T[i]=p_0
 
-#np.savetxt('T_init.ascii',np.array([x,y,T]).T,header='# x,y,T')
-
 print("initial temperature (%.3fs)" % (timing.time() - start))
 
 #####################################################################
 # create porosity and permeability nodal arrays
 #####################################################################
-
 
 permeability = np.zeros(NV,dtype=np.float64) # K
 porosity     = np.zeros(NV,dtype=np.float64) # phi
@@ -222,12 +224,11 @@ strainrate   = np.zeros(NV,dtype=np.float64) # nodal strainrate
 
 porosity[:]=porosity_0
 
-f_source[:]=0.01 # min 0.01 , max 0.06
+f_source[:]=f_0 # min 0.01 , max 0.06
 
 for i in range(0,NV):
     if abs(yV[i]-Ly/2)/Ly<0.15 and abs(xV[i]-Lx/2)/Lx<0.333:
        strainrate[i]=1e-16
-
 
 #####################################################################
 # create necessary arrays 
@@ -266,7 +267,7 @@ for istep in range(0,nstep):
 
     if istep%how_often==0:
        print('****************UDATE******************')
-       strainrate*=5
+       strainrate*=2
        dporosity_dt[:]=alpha*strainrate[:]
        porosity[:]+=dporosity_dt[:]*dt*how_often
        for i in range(0,NV):
@@ -464,16 +465,27 @@ for istep in range(0,nstep):
     print("     -> dPdx_n (m,M) %.6e %.6e " %(np.min(dPdx_n),np.max(dPdx_n)))
     print("     -> dPdy_n (m,M) %.6e %.6e " %(np.min(dPdy_n),np.max(dPdy_n)))
 
-    print("compute nodal press & sr: %.3f s" % (timing.time() - start))
+    stats_gradP_file.write("%e %e %e %e %e\n" %(model_time/year,np.min(dPdx_n),np.max(dPdx_n)),\
+                                                                np.min(dPdy_n),np.max(dPdy_n))) 
+    stats_gradP_file.flush()
+
+    print("compute nodal press gradient: %.3f s" % (timing.time() - start))
 
     #################################################################
     #################################################################
+    start = timing.time()
 
     u_darcy = np.zeros(NV,dtype=np.float64)
     v_darcy = np.zeros(NV,dtype=np.float64) 
 
     u_darcy[:]=-permeability[:]*dPdx_n[:]
     v_darcy[:]=-permeability[:]*dPdy_n[:]
+
+    stats_vel_file.write("%e %e %e %e %e\n" %(model_time/year,np.min(u_darcy),np.max(u_darcy)),\
+                                                              np.min(v_darcy),np.max(v_darcy))) 
+    stats_vel_file.flush()
+
+    print("compute Darcy flow rate: %.3f s" % (timing.time() - start))
 
     #################################################################
     # visualisation 
@@ -527,7 +539,6 @@ for istep in range(0,nstep):
        for i in range(0,NV):
            vtufile.write("%f30 \n" %(dPdy_n[i]))
        vtufile.write("</DataArray>\n")
-
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='Darcy velocity' Format='ascii'> \n")
        for i in range(0,NV):
@@ -538,7 +549,6 @@ for istep in range(0,nstep):
        for i in range(0,NV):
            vtufile.write("%e %e %e \n" %(u_darcy[i]/cm*year,v_darcy[i]/cm*year,0))
        vtufile.write("</DataArray>\n")
-
        #--
        vtufile.write("<DataArray type='Float32' Name='strainrate' Format='ascii'> \n")
        for i in range(0,NV):
@@ -549,10 +559,6 @@ for istep in range(0,nstep):
        for i in range(0,NV):
            vtufile.write("%e \n" %(f_source[i]))
        vtufile.write("</DataArray>\n")
-
-
-
-
        #--
        vtufile.write("</PointData>\n")
        #####
