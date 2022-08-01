@@ -4,6 +4,10 @@ import random
 
 #################################################################
 
+print("-----------------------------")
+print("---------- stone 125 --------")
+print("-----------------------------")
+
 m=4 # number of nodes for mackground cells
 
 nelx=32
@@ -22,6 +26,9 @@ hy=Ly/nely
 nmarker_per_dim=10
 nmarker=nel*nmarker_per_dim**2
 
+print('Lx=',Lx)
+print('Ly=',Ly)
+print('nmarker_per_dim=',nmarker_per_dim)
 print('nel=',nel)
 print('NV =',NV)
 print('nmarker=',nmarker)
@@ -180,8 +187,26 @@ for im in range(0,nmarker):
 print("build Voronoi cells: %.3f s" % (time.time() - start))
 
 #################################################################
+# compute cells area
+#################################################################
+start = time.time()
+   
+area = np.zeros(nvo,dtype=np.float64)  # x coordinates
+
+marker_volume=(hx/nmarker_per_dim)*(hy/nmarker_per_dim)
+
+for im in range(0,nmarker):
+    area[swarm_cell[im]]+=marker_volume
+
+print('    -> area (m,M) = %.4f %.4f' %(np.min(area),np.max(area)))
+print('    -> sum(areas)=', np.sum(area))
+
+print("compute cells area: %.3f s" % (time.time() - start))
+
+#################################################################
 # export swarm to vtu 
 #################################################################
+start = time.time()
 
 if True:
     filename = 'swarm.vtu'
@@ -194,6 +219,11 @@ if True:
     vtufile.write("<DataArray type='Float32' Name='cell' Format='ascii'>\n")
     for i in range(0,nmarker):
         vtufile.write("%3e \n" %swarm_cell[i])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'>\n")
+    for i in range(0,nmarker):
+        vtufile.write("%3e \n" %area[swarm_cell[i]])
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("</PointData>\n")
@@ -251,3 +281,4 @@ if True:
     vtufile.write("</VTKFile>\n")
     vtufile.close()
 
+print("make vtu files: %.3f s" % (time.time() - start))
