@@ -89,7 +89,7 @@ some steady-state problems, where this is not so. Now this is commonly referred 
 + \upphi q_f + h (T_s-T_f)
 \end{eqnarray}
 
-When it is assumed that there is local thermal equilibrium then $T_f=T_s=T$ (Section 2.1 of Nield \& Bejan). 
+When it is assumed that there is local thermal equilibrium then $T_f=T_s=T$ (Section 2.1 of Nield \& Bejan's book). 
 Then one can add the equations together and obtain 
 \[
 (\rho C_p)_m \frac{\partial T}{\partial t} 
@@ -105,7 +105,7 @@ with
 q_m &=& (1-\upphi) q_s + \upphi q_f 
 \end{eqnarray}
 
-\item linearised equation of state in the form of the Oberbeck-Boussinesq approximation (Section 2.3 of Nield \& Bejan):
+\item linearised equation of state in the form of the Oberbeck-Boussinesq approximation (Section 2.3 of Nield \& Bejan's book):
 \[
 \rho=\rho_0(1-\alpha(T_f-T_0))
 \]
@@ -153,7 +153,8 @@ with
 \vec{\bN}^T &=& (\bN^T_1, \bN^T_2, \dots \bN^T_{m_T}).
 \end{eqnarray}
 
-The heat transport poses no real problem and the topic has been treated in Section~\ref{ss:hte_fem} so we will not repeat it here. When solving this equation we assume that the velocity of the advection term is known.
+The heat transport poses no real problem and the topic has been treated in 
+Section~\ref{ss:hte_fem} so we will not repeat it here. When solving this equation we assume that the velocity of the advection term is known.
 
 There are actually two approaches to solve the mass and momentum conservation equations.
 We wish to find the velocity and pressure fields assuming the temperature known. 
@@ -179,10 +180,9 @@ Let us go through each line separately and establish its weak form:
 -\int \vec{\bN}^\upnu L_{xy} \upnu_y \; dV
 -\int \vec{\bN}^\upnu \partial_x p  \; dV = \int \vec{\bN}^\upnu \rho g_x \]
 \[
-\underbrace{\left(-\int \vec{\bN}^\upnu L_{xx} \vec{\bN}^\upnu dV\right)}_{\N_{xx}} \cdot \vec{V}_x
+\underbrace{\left(-\int \vec{\bN}^\upnu L_{xx} \vec{\bN}^\upnu dV\right)}_{\N_{xx}} \cdot \vec{\cal V}_x
 +
-\underbrace{\left(-\int \vec{\bN}^\upnu L_{xy} \vec{\bN}^\upnu dV \right)}_{\N_{xy}} \cdot
-\vec{V}_y
+\underbrace{\left(-\int \vec{\bN}^\upnu L_{xy} \vec{\bN}^\upnu dV \right)}_{\N_{xy}} \cdot \vec{\cal V}_y
 +
 \underbrace{\left(-\int \vec{\bN}^\upnu \partial_x \vec{\bN}^p dV \right)}_{\G_x} \cdot \vec{P} 
 = 
@@ -190,20 +190,19 @@ Let us go through each line separately and establish its weak form:
 \]
 The second line yields
 \[
-\underbrace{\left(-\int \vec{\bN}^\upnu L_{yx} \vec{\bN}^\upnu dV\right)}_{\N_{yx}} \cdot \vec{V}_x
+\underbrace{\left(-\int \vec{\bN}^\upnu L_{yx} \vec{\bN}^\upnu dV\right)}_{\N_{yx}} \cdot \vec{\cal V}_x
 +
-\underbrace{\left(-\int \vec{\bN}^\upnu L_{yy} \vec{\bN}^\upnu dV \right)}_{\N_{yy}} \cdot
-\vec{V}_y
+\underbrace{\left(-\int \vec{\bN}^\upnu L_{yy} \vec{\bN}^\upnu dV\right)}_{\N_{yy}} \cdot \vec{\cal V}_y
 +
-\underbrace{\left(-\int \vec{\bN}^\upnu \partial_y \vec{\bN}^p dV \right)}_{\G_y} \cdot \vec{P} 
+\underbrace{\left(-\int \vec{\bN}^\upnu \partial_y \vec{\bN}^p dV\right)}_{\G_y} \cdot \vec{P} 
 = 
 \underbrace{\int \vec{\bN}^\upnu \rho g_y }_{\vec{f}_y}
 \]
 The third line yields
 \begin{eqnarray}
--\int \vec{\bN}^p ( \partial_x \upnu_x + \partial_y \upnu_y) \; dV &=& \vec{0}\\
-\underbrace{\left(-\int \vec{\bN}^p \partial_x \vec{\bN}^\upnu dV \right)}_{\HH_x} \cdot \vec{V}_x
-\underbrace{\left(-\int \vec{\bN}^p \partial_y \vec{\bN}^\upnu dV \right)}_{\HH_y}\cdot \vec{V}_y &=& \vec{0} 
+-\int \vec{\bN}^p ( \partial_x \upnu_x + \partial_y \upnu_y) \; dV &=& \vec{0} \nn\\
+\underbrace{\left(-\int \vec{\bN}^p \partial_x \vec{\bN}^\upnu dV \right)}_{\HH_x} \cdot \vec{\cal V}_x
+\underbrace{\left(-\int \vec{\bN}^p \partial_y \vec{\bN}^\upnu dV \right)}_{\HH_y} \cdot \vec{\cal V}_y &=& \vec{0} 
 \end{eqnarray}
 In the end:
 \[
@@ -274,11 +273,13 @@ $\G$ blocks contain the biquadratic basis velocity  and the derivatives of the b
 We could be tempted to integrate $\int \vec{\bN}^\upnu \partial_xp dV$ by parts in order to bring the space derivative on the velocity basis functions and thereby recover the $\HH$ blocks. However there is a surface term $[ \vec{\bN}^\upnu p]_\Gamma$ which I am not too sure what to do about... I have implemented this in the code (while disregarding the surface term) and found that the convergence was much much worse.
 
 
-\paragraph{Block scaling} As explained in Section~\ref{pscaling}, we need to scale the blocks so as to insure an accurate solution. Eq.~\eqref{eq:darcy4} can be written 
+\paragraph{Block scaling} As explained in Section~\ref{pscaling}, we need to scale the blocks so as to insure 
+an accurate solution. Eq.~\eqref{eq:darcy4} can be written 
 \[
 -\eta L^2 {\bm K}^{-1} \cdot \frac{\vec\upnu}{L^2} - \vec\nabla p = \rho \vec{g}
 \]
-where $L$ is a characteristic length. The term $\vec{\upnu}/L^2$ has the same dimensions as the Laplacian of the velocity in the Stokes equations and we obviously find that the dimension of 
+where $L$ is a characteristic length. The term $\vec{\upnu}/L^2$ has the same dimensions as the Laplacian of 
+the velocity in the Stokes equations and we obviously find that the dimension of 
 the $\eta'=\eta L^2 {\bm K}^{-1}$ term is one of viscosity. 
 Following the reasoning in Section~\ref{pscaling} the scaling coefficient for the $\G$ and $\HH$ blocks is 
 \[
@@ -312,7 +313,7 @@ or simply
 \[
 \Delta p + \vec\nabla\rho\cdot \vec{g} = 0.
 \]
-We end up with a simple Poisson equation. 
+and we end up with a simple Poisson equation. 
 
 Let us now establish the weak form of Eq.~\eqref{eq:second1} (without the above assumption): 
 \[
@@ -340,7 +341,7 @@ we find that
 Note that the discarded surface term are not trivial to formulate and that this approach does not easily allow to 
 prescribe velocities anywhere in the domain since the velocity 
 field is not solved for. 
-
+In fact prescribing flow in the boundary is akin to pressure Neumann boundary conditions.
 
 
 

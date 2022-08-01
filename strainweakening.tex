@@ -7,7 +7,7 @@ weakening mechanisms are often crudely parameterised in
 geodynamical codes with simple mathematical functions 
 and a limited number of parameters. 
 
-For example, in \cite{alht11} the authors use a von Mises plasticity formulation so that the 
+For example, \textcite{alht11} (2011) authors use a von Mises plasticity formulation so that the 
 rheology is parameterised by the cohesion $c$, or $c=\sigma_y$ in their notations. The
 yield strength $\sigma_y$ starts is constant until the strain
 $\varepsilon$ reaches the threshold value $\varepsilon_1$. It then decreases linearly
@@ -17,7 +17,7 @@ at $\sigma_y^{sw}$ .
 
 \begin{center}
 \includegraphics[width=6cm]{images/strainweakening/alht11}\\
-{\tiny Taken from \cite{alht11}}
+{\captionfont Taken from \textcite{alht11} (2011).}
 \end{center}
 
 The same authors in a subsequent study use a Drucker-Prager rheology parameterised by 
@@ -26,7 +26,7 @@ both parameters are subjected to strain weakening:
 
 \begin{center}
 \includegraphics[width=6cm]{images/strainweakening/alht12}\\
-{\tiny Taken from \cite{alht12}, see also \cite{thie11}}
+{\captionfont Taken from \textcite{alht12} (2012), see also \textcite{thie11} (2011).}
 \end{center}
 
 They further define the factor $R=C^0/C^{sw}=\phi^0/\phi^{sw}\geq 1$ which is a proxy
@@ -35,7 +35,7 @@ and carry out 3D crustal extensional models for $R$ between 2 and 5.
 
 
 \begin{itemize}
-\item In \cite{lemh17} the authors also define 
+\item In \textcite{lemh17} (2017) the authors also define 
 \[
 \tau_y = p \sin (\phi(\varepsilon^p))  + c_0 \cos(\phi(\varepsilon^p))
 \]
@@ -59,7 +59,7 @@ due to plastic yielding. Thus, the quantity $\varepsilon^p$ can be regarded as
 a simplified measure of material damage. 
 
 
-\item In Dyksterhuis \etal \cite{dyrm07} a variant of the above formulation is used:
+\item In Dyksterhuis \etal \textcite{dyrm07} (2007) a variant of the above formulation is used:
 \[
 f(\varepsilon)=
 \left\{
@@ -78,13 +78,13 @@ occurs. This equation leads to the following plot:
 
 \begin{center}
 \includegraphics[width=6cm]{images/strainweakening/dyrm07}\\
-{\tiny Strain-softening behaviour showing strength weakening from 100 to 20\% 
+{\captionfont Strain-softening behaviour showing strength weakening from 100 to 20\% 
 after an accumulated strain of 0.5, after which no further weakening occurs. 
 Dashed lines show the effect of the exponential parameter
-(En) on the curve. Taken from \cite{dyrm07}}
+(En) on the curve. Taken from \textcite{dyrm07} (2007).}
 \end{center}
 
-Although it is not specified in \cite{dyrm07} what $f$ is, other users of the code 
+Although it is not specified in \textcite{dyrm07} what $f$ is, other users of the code 
 specify that the yield strength is given by 
 \[
 \sigma_y = (B_0 + B_1 p ) f(\varepsilon)
@@ -93,7 +93,7 @@ where $p$ is the pressure, $B_0$ is the cohesion, or yield stress at
 zero pressure, and $B_p$ is the pressure dependence of the yield
 stress, equivalent to the friction coefficient in Byerlee's law. 
 
-In \cite{yamz18} the authors take a different approach:
+In \textcite{yamz18} (2018) the authors take a different approach:
 \[
 C=C_0+C_1 \exp \left( -\frac{\varepsilon_{plast}}{\varepsilon_{ref}} \right)
 \]
@@ -106,7 +106,7 @@ $\varepsilon_{plast}$ and $\varepsilon_{ref}$ represent accumulated plastic stra
 reference strain, respectively.
 
 \index{general}{Plastic Hardening}
-\item In \cite{leor89} the authors describe another formulation for plastic hardening. The angle of friction 
+\item In \textcite{leor89} (1989) the authors describe another formulation for plastic hardening. The angle of friction 
 changes with the accumulated plastic strain:
 \[
 \sin \phi = \sin \phi_i  + \frac{2(\sin \phi_f - \sin\phi_i)\sqrt{\varepsilon^p_c  \varepsilon^p }}{\varepsilon^p + \varepsilon^p_c}
@@ -118,4 +118,4 @@ then $\phi \rightarrow \phi_f$.
 \end{itemize}
 
 
-\Literature: \cite{ster99,nigo15}
+\Literature: \textcite{ster99} (1999), \textcite{nigo15} (2015).
