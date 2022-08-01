@@ -96,13 +96,13 @@ nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
 NV=nnx*nny    # number of nodes
 nel=nelx*nely # number of elements, total
-NfemT=NV      # Total number of degrees of temperature freedom
+NfemPf=NV      # Total number of degrees of temperature freedom
 
 # alphaT=1: implicit
 # alphaT=0: explicit
 # alphaT=0.5: Crank-Nicolson
 
-alphaT=1
+alphaT=1 # for now keep it implicit?
 
 #####################################################################
 
@@ -180,8 +180,8 @@ print("connectivity (%.3fs)" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
-bc_fixT=np.zeros(NfemT,dtype=np.bool)  
-bc_valT=np.zeros(NfemT,dtype=np.float64) 
+bc_fixPf=np.zeros(NfemPf,dtype=np.bool)  
+bc_valPf=np.zeros(NfemPf,dtype=np.float64) 
 
 for i in range(0,NV):
     #left
@@ -192,10 +192,10 @@ for i in range(0,NV):
     #   bc_fixT[i]=True ; bc_valT[i]=p_0
     #bottom
     if yV[i]/Ly<eps:
-       bc_fixT[i]=True ; bc_valT[i]=p_0
+       bc_fixPf[i]=True ; bc_valPf[i]=p_0
     #top
     if yV[i]/Ly>(1-eps):
-       bc_fixT[i]=True ; bc_valT[i]=p_0
+       bc_fixPf[i]=True ; bc_valPf[i]=p_0
 #end for
 
 print("boundary conditions (%.3fs)" % (timing.time() - start))
@@ -240,14 +240,14 @@ dNdx  = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
 dNdy  = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
 dNdr  = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
 dNds  = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
-Tvectm1 = np.zeros(mV,dtype=np.float64)   
-NNNT    = np.zeros(mV,dtype=np.float64)           # shape functions 
-dNNNTdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNTdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNTdr = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNTds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+P_old = np.zeros(mV,dtype=np.float64)    # previously obtained pressure
+NNNT    = np.zeros(mV,dtype=np.float64)  # shape functions 
+dNNNTdx = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
+dNNNTdy = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
+dNNNTdr = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
+dNNNTds = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
     
-print("create arrays (%.3fs)" % (timing.time() - start))
+print("create few arrays (%.3fs)" % (timing.time() - start))
 
 #==============================================================================
 # time stepping loop
@@ -266,7 +266,7 @@ for istep in range(0,nstep):
     #################################################################
 
     if istep%how_often==0:
-       print('****************UDATE******************')
+       print('***** update porosity and permeability *****') 
        strainrate*=2
        dporosity_dt[:]=alpha*strainrate[:]
        porosity[:]+=dporosity_dt[:]*dt*how_often
@@ -285,8 +285,8 @@ for istep in range(0,nstep):
     #################################################################
     start = timing.time()
 
-    A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
-    rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
+    A_mat = np.zeros((NfemPf,NfemPf),dtype=np.float64) # FE matrix 
+    rhs   = np.zeros(NfemPf,dtype=np.float64)         # FE rhs 
     B_mat=np.zeros((2,mV),dtype=np.float64)           # gradient matrix B 
     N_mat = np.zeros((mV,1),dtype=np.float64)         # shape functions
 
@@ -299,7 +299,7 @@ for istep in range(0,nstep):
         MM=np.zeros((mV,mV),dtype=np.float64)     # elemental mass matrix 
 
         for k in range(0,mV):
-            Tvectm1[k]=T[iconV[k,iel]]
+            P_old[k]=T[iconV[k,iel]]
         #end for
 
         for iq in range(0,nqperdim):
@@ -356,7 +356,7 @@ for istep in range(0,nstep):
 
                 # elemental matrix and rhs
                 a_el+=MM+alphaT*Kd*dt
-                b_el+=(MM-(1-alphaT)*Kd*dt).dot(Tvectm1) 
+                b_el+=(MM-(1-alphaT)*Kd*dt).dot(P_old) 
 
                 counterq+=1
             #end for jq
@@ -365,15 +365,15 @@ for istep in range(0,nstep):
         # apply boundary conditions
         for k1 in range(0,mV):
             m1=iconV[k1,iel]
-            if bc_fixT[m1]:
+            if bc_fixPf[m1]:
                Aref=a_el[k1,k1]
                for k2 in range(0,mV):
                    m2=iconV[k2,iel]
-                   b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
+                   b_el[k2]-=a_el[k2,k1]*bc_valPf[m1]
                    a_el[k1,k2]=0
                    a_el[k2,k1]=0
                a_el[k1,k1]=Aref
-               b_el[k1]=Aref*bc_valT[m1]
+               b_el[k1]=Aref*bc_valPf[m1]
             #end if
         #end for
 
@@ -423,8 +423,8 @@ for istep in range(0,nstep):
     rVnodes=[-1,1,1,-1,0,1,0,-1,0]
     sVnodes=[-1,-1,1,1,-1,0,1,0,0]
     
-    dPdx_n = np.zeros(NV,dtype=np.float64)  
-    dPdy_n = np.zeros(NV,dtype=np.float64)  
+    dPfdx_n = np.zeros(NV,dtype=np.float64)  
+    dPfdy_n = np.zeros(NV,dtype=np.float64)  
     count = np.zeros(NV,dtype=np.int32)  
 
     for iel in range(0,nel):
@@ -446,27 +446,27 @@ for istep in range(0,nstep):
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
             #end for
-            dPdx=0.
-            dPdy=0.
+            dPfdx=0.
+            dPfdy=0.
             for k in range(0,mV):
-                dPdx += dNNNVdx[k]*T[iconV[k,iel]]
-                dPdy += dNNNVdy[k]*T[iconV[k,iel]]
+                dPfdx += dNNNVdx[k]*T[iconV[k,iel]]
+                dPfdy += dNNNVdy[k]*T[iconV[k,iel]]
             #end for
             inode=iconV[i,iel]
-            dPdx_n[inode]+=dPdx
-            dPdy_n[inode]+=dPdy
+            dPfdx_n[inode]+=dPfdx
+            dPfdy_n[inode]+=dPfdy
             count[inode]+=1
         #end for
     #end for
     
-    dPdx_n/=count
-    dPdy_n/=count
+    dPfdx_n/=count
+    dPfdy_n/=count
 
-    print("     -> dPdx_n (m,M) %.6e %.6e " %(np.min(dPdx_n),np.max(dPdx_n)))
-    print("     -> dPdy_n (m,M) %.6e %.6e " %(np.min(dPdy_n),np.max(dPdy_n)))
+    print("     -> dPfdx_n (m,M) %.6e %.6e " %(np.min(dPfdx_n),np.max(dPfdx_n)))
+    print("     -> dPfdy_n (m,M) %.6e %.6e " %(np.min(dPfdy_n),np.max(dPfdy_n)))
 
-    stats_gradP_file.write("%e %e %e %e %e\n" %(model_time/year,np.min(dPdx_n),np.max(dPdx_n)),\
-                                                                np.min(dPdy_n),np.max(dPdy_n))) 
+    stats_gradP_file.write("%e %e %e %e %e\n" %(model_time/year,np.min(dPfdx_n),np.max(dPfdx_n),\
+                                                                np.min(dPfdy_n),np.max(dPfdy_n))) 
     stats_gradP_file.flush()
 
     print("compute nodal press gradient: %.3f s" % (timing.time() - start))
@@ -478,10 +478,10 @@ for istep in range(0,nstep):
     u_darcy = np.zeros(NV,dtype=np.float64)
     v_darcy = np.zeros(NV,dtype=np.float64) 
 
-    u_darcy[:]=-permeability[:]*dPdx_n[:]
-    v_darcy[:]=-permeability[:]*dPdy_n[:]
+    u_darcy[:]=-permeability[:]*dPfdx_n[:]
+    v_darcy[:]=-permeability[:]*dPfdy_n[:]
 
-    stats_vel_file.write("%e %e %e %e %e\n" %(model_time/year,np.min(u_darcy),np.max(u_darcy)),\
+    stats_vel_file.write("%e %e %e %e %e\n" %(model_time/year,np.min(u_darcy),np.max(u_darcy),\
                                                               np.min(v_darcy),np.max(v_darcy))) 
     stats_vel_file.flush()
 
@@ -530,14 +530,14 @@ for istep in range(0,nstep):
            vtufile.write("%f30 \n" %(porosity[i]))
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='dPdx' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='dPf_dx' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%f30 \n" %(dPdx_n[i]))
+           vtufile.write("%f30 \n" %(dPfdx_n[i]))
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='dPdy' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='dPf_dy' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%f30 \n" %(dPdy_n[i]))
+           vtufile.write("%f30 \n" %(dPfdy_n[i]))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='Darcy velocity' Format='ascii'> \n")

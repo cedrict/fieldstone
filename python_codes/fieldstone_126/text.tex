@@ -16,13 +16,13 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 What follows is borrowed from \textcite{grfr03} (2003).
 Two main relations are used, expressing fluid mass conservation
 \[
-\frac{\partial (\rho \phi)}{\partial t} + \vec\nabla\cdot (\rho \vec{\upnu}) = f
+\frac{\partial (\rho \upphi)}{\partial t} + \vec\nabla\cdot (\rho \vec{\upnu}) = f
 \]
 and Darcy's law
 \[
 \vec\upnu = - {\bm K} \cdot (\vec{\nabla} P + \rho \vec{g})
 \]
-where $\rho$ is the density of the fluid, $\phi$ is the
+where $\rho$ is the density of the fluid, $\upphi$ is the
 connected mean porosity of the rock, $\vec{\upnu}$ is the Darcy flow
 rate (fluid particle velocity times porosity)\footnote{Whaaaat?}, ${\bm K}$ is the
 permeability tensor, $P$ is the total pore pressure and $\vec{g}$ is
@@ -35,17 +35,17 @@ conservation by neglecting the terms $\rho'$ compared to $\rho_m$.
 
 Then,
 \[
-\frac{\partial ((\rho'+\rho_m) \phi)}{\partial t} + \vec\nabla\cdot ((\rho'+\rho_m) \vec{\upnu}) = f
+\frac{\partial ((\rho'+\rho_m) \upphi)}{\partial t} + \vec\nabla\cdot ((\rho'+\rho_m) \vec{\upnu}) = f
 \]
 \[
-(\rho'+\rho_m) \frac{\partial \phi}{\partial t} 
-+\phi \frac{\partial (\rho'+\rho_m)}{\partial t} 
+(\rho'+\rho_m) \frac{\partial \upphi}{\partial t} 
++\upphi \frac{\partial (\rho'+\rho_m)}{\partial t} 
 + \vec\nabla\cdot ((\rho'+\rho_m) \vec{\upnu}) = f
 \]
 Since $\rho_m$ is constant then $\partial_t \rho_m =0$ so we obtain
 \[
-\rho_m \frac{\partial \phi}{\partial t} 
-+\phi \frac{\partial \rho' }{\partial t} 
+\rho_m \frac{\partial \upphi}{\partial t} 
++\upphi \frac{\partial \rho' }{\partial t} 
 + \vec\nabla\cdot (\rho_m \vec{\upnu}) = f
 \]
 
@@ -61,28 +61,34 @@ Then
 
 
 
-Furthermore, JUSTIFY!! Why does grad rho' g disappear ?!?! 
+Furthermore, JUSTIFY!!\footnote{Why does grad rho' g disappear ?!? is it because 
+it is negligible in our context compared to pressure gradients?}
 \[
-\phi \frac{\partial \rho'}{\partial t}
+\upphi \frac{\partial \rho'}{\partial t}
 =
-\rho_m C_f  \phi \frac{\partial p}{\partial t}
+\rho_m C_f  \upphi \frac{\partial p}{\partial t}
 \]
 so in the end 
 \begin{equation}
-\rho_m C_f  \phi \frac{\partial p}{\partial t}
-+ \rho_m \frac{\partial \phi}{\partial t} 
+\rho_m C_f  \upphi \frac{\partial p}{\partial t}
++ \rho_m \frac{\partial \upphi}{\partial t} 
 - \vec\nabla \cdot (\rho_m {\bm K} \cdot \vec{\nabla} p ) ) = f
 \end{equation}
 
 We assume an isotropic permeability so that the tensor now simply writes:
 \[
-K = K_0 \phi^3
+K = K_0 \upphi^3
 \]
-
-
+and then 
+\begin{equation}
+\rho_m C_f  \upphi \frac{\partial p}{\partial t}
++ \rho_m \frac{\partial \upphi}{\partial t} 
+- \vec\nabla \cdot (\rho_m K \cdot \vec{\nabla} p ) ) = f
+\end{equation}
+The discretised weak form takes the form
 \[
 \underbrace{
-\left( \int_\Omega \vec{\bN}^T \rho_m C_f \phi \vec{\bN} dV  \right)
+\left( \int_\Omega \vec{\bN}^T \rho_m C_f \upphi \vec{\bN} dV  \right)
 }_{\bm M}
  \cdot \frac{\partial \vec{\cal P}}{\partial t}
 +
@@ -91,19 +97,21 @@ K = K_0 \phi^3
 }_{{\bm K}_d}
  \cdot \vec{\cal P}
 =
+\underbrace{
 \int_\Omega \vec{\bN}^T f dV 
 -
-\int_\Omega \vec{\bN}^T   \rho_m \frac{\partial \phi}{\partial t} dV
+\int_\Omega \vec{\bN}^T   \rho_m \frac{\partial \upphi}{\partial t} dV
+}_{\vec{b}}
 \]
 
 
-The porosity $\phi$ evolution equation is given by:
+The porosity $\upphi$ evolution equation is given by:
 \[
-\frac{\partial \phi}{\partial t} = \alpha \dot{\varepsilon}_e
+\frac{\partial \upphi}{\partial t} = \alpha \dot{\varepsilon}_e
 \qquad
 \Rightarrow
 \qquad
-\phi^{t+\delta t} = \phi^t + \alpha \dot{\varepsilon}_e \delta t
+\upphi^{t+\delta t} = \upphi^t + \alpha \dot{\varepsilon}_e \delta t
 \]
 while the source term $f$ equation is:
 \[
@@ -113,6 +121,18 @@ while the source term $f$ equation is:
 \qquad
 f^{t+\delta t} = f^t (1 + \varphi  \dot{\varepsilon}_e \delta t)
 \]
+Likewise the time derivative is discretised by means of a simple explict 
+scheme:
+\[
+\frac{\partial \vec{\cal P}}{\partial t} \simeq
+\frac{ \vec{\cal P}^{t+\delta t} - \vec{\cal P}^t  }{\delta t}
+\]
+
+We arrive at 
+\[
+( {\bm M} + {\bm K}_d) \cdot \vec{\cal P}^{t+\delta t} = {\bm M} \cdot \vec{\cal P}^t  + \vec{b}
+\]
+The matrix is symmetric positive definite which is good news.
 
 The PDE above contains two parameters $\phi$ (and therefore also $K$) and $f$
 which depend on the strainrate. 
@@ -120,7 +140,7 @@ The strainrate field will ultimately come from the other code which
 solves the Stokes equations in the shear band. The timestep of that code 
 is of the order of at least a few thousands of years. However the characteristic time step
 for Darcy is about a year. This means that in the span of 1 tectonic timestep
-the Darcy equations will be solved with $\phi$ and $f$ constant. 
+the Darcy equations will be solved with $\upphi$ and $f$ constant. 
 This simplifies things considerably since this renders the Darcy equation a linear 
 diffusion equation with a heat source. 
 
@@ -130,14 +150,14 @@ tectonic time step!
 
 Given the nature of the equation describing the evolution of the porosity
 it can and will ultimately exceed physically meaningful values so we 
-implement a cutoff value $\phi_{max}$.
+implement a cutoff value $\upphi_{max}$.
 
 
 characteristic time
 \[
 t_c 
-= \frac{\phi C_f h^2}{K} 
-= \frac{\phi^{-2} C_f h^2}{K_0} 
+= \frac{\upphi C_f h^2}{K} 
+= \frac{\upphi^{-2} C_f h^2}{K_0} 
 \]
 
 
