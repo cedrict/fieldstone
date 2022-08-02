@@ -5,6 +5,11 @@ from parameters import *
 from scipy.sparse import lil_matrix
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
+from numpy import linalg as LA
+
+Rgas=8.3145
+cm=0.01
+year=365.25*24*3600
 
 ###############################################################################
 
@@ -48,12 +53,17 @@ def NNP(rq,sq):
 
 def viscosity(imat,exx,eyy,exy,temp,rheology):
 
-    ee=np.sqrt(0.5*(exxq**2+eyyq**2)+exyq**2)
+    ee=np.sqrt(0.5*(exx**2+eyy**2)+exy**2)
 
-    # diffusion creep viscosity
+    # diffusion creep viscosity (gatt20)
     Ediff_UM=410e3
     Adiff_UM=1e-7
-    eta_diff = Adiff_UM**(-1.0)*np.exp(Ediff_UM/(Rgas*temp))
+    eta_diff=0.5*Adiff_UM**(-1)*np.exp(Ediff_UM/(Rgas*temp))
+
+    #--------------
+    if rheology==0: # constant viscosity
+
+       eta_eff=1e21 
 
     #--------------
     if rheology==1: #diffusion creep only
@@ -88,28 +98,44 @@ def viscosity(imat,exx,eyy,exy,temp,rheology):
        eta_eff=1/(1/eta_diff+1/eta_ERF)
 
     #--------------
-    if rheology==4: #diff + disl HT Gouriet 2019 :
+    if rheology==4: #diff + disl HT Gouriet 2019,gatt20 :
        A_disl=5.27e-29
        n_disl=4.5
        E_disl=443e3
-       eta_disl=A_disl**(1/n_disl)*ee**(-1+1/n_disl)*np.exp(E_disl/(n_disl*Rgas*temp))
+       eta_disl=0.5*A_disl**(-1./n_disl)*ee**(-1.+1./n_disl)*np.exp(E_disl/(n_disl*Rgas*temp))
        eta_eff=1/(1/eta_diff+1/eta_disl)
-
+       #print('ee=',ee,'disl=',eta_disl,'diff=',eta_diff,'eff=',eta_eff)
 
     #--------------
     if rheology==5: #diff + disl HT Garel 2014 subd
        n_disl=3.5
-       Adisl_UM=5.0e-16
-       Edisl_UM=540.0e3
-       eta_eff=1/(1/eta_diff+1/eta_disl)
+       A_disl=5e-16
+       E_disl=540e3
+       eta_disl=0.5*A_disl**(-1/n_disl)*ee**(-1.+1./n_disl)*np.exp(E_disl/(n_disl*Rgas*temp))
+       eta_eff=1./(1./eta_diff+1./eta_disl)
+       #print('ee=',ee,'disl=',eta_disl,'diff=',eta_diff,'eff=',eta_eff)
+
 
     if imat==2:
        eta_eff=1e25
 
-    eta_eff=min(1e26,eta_eff)
-    eta_eff=max(1e20,eta_eff)
+    #eta_eff=min(1e26,eta_eff)
+    #eta_eff=max(1e18,eta_eff)
 
     return eta_eff
+
+###############################################################################
+# testing rheologies
+#rheology=5
+#exx=0
+#eyy=0
+#imat=1
+#rheofile=open('rheology_test.ascii',"w")
+#for exy in (-14,-14.25,-14.5,-14.75,-15,-15.25,-15.5,-15.75,-16):
+#    for temp in (1300,1350,1400,1450,1500,1550,1600):
+#        rheofile.write("%10e %10e %10e \n" %(exy,temp,viscosity(imat,exx,eyy,10**exy,temp+273,rheology)))
+#rheofile.close()
+#exit()
 
 ###############################################################################
 # allowing for argument parsing through command line
@@ -120,24 +146,21 @@ if int(len(sys.argv) == 4):
    rheology= int(sys.argv[3])
 else:
    temperature = 1400.0 # range 1300:100:1600
-   strain_rate_background=-14 # range 1e-14, 1e-15, 1e-16
+   strain_rate_background=-15 # range 1e-14, 1e-15, 1e-16
    rheology=1
+
+temperature+=273.15
 
 strain_rate_background=10**strain_rate_background
 
-v_bc = Ly*strain_rate_background
+u_bc = Ly*strain_rate_background
 
 ###############################################################################
-
-Rgas=8.3145
-cm=0.01
-year=365.25*24*3600
 
 print("---------------------------------------")
 print("---------------fieldstone--------------")
 print("---------------------------------------")
 
-         # Crouzeix-Raviart elements
 mV=7     # number of velocity nodes making up an element
 mP=3     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
@@ -164,15 +187,18 @@ Nfem=NfemV+NfemP    # total number of dofs
 
 eta_ref=1e23
 
+tol=1e-4
+
 ###############################################################################
 
 print("temperature=",temperature)
 print("strain_rate_background=",strain_rate_background)
-print ('nel', nel)
-print ('NV0', NV0)
-print ('NfemV', NfemV)
-print ('NfemP', NfemP)
-print ('Nfem ', Nfem)
+print("u_bc=",u_bc)
+print('nel', nel)
+print('NV0', NV0)
+print('NfemV', NfemV)
+print('NfemP', NfemP)
+print('Nfem ', Nfem)
 print("---------------------------------------")
 
 ###############################################################################
@@ -205,7 +231,7 @@ xV[0:NV0],yV[0:NV0]=np.loadtxt('mesh.1.node',unpack=True,usecols=[1,2],skiprows=
 #print("xV (min/max): %.4f %.4f" %(np.min(xV[0:NV0]),np.max(xV[0:NV0])))
 #print("yV (min/max): %.4f %.4f" %(np.min(yV[0:NV0]),np.max(yV[0:NV0])))
 
-np.savetxt('gridV0.ascii',np.array([xV,yV]).T,header='# xV,yV')
+#np.savetxt('gridV0.ascii',np.array([xV,yV]).T,header='# xV,yV')
 
 print("setup: grid points: %.3f s" % (timing.time() - start))
 
@@ -251,7 +277,7 @@ for iel in range (0,nel): #bubble nodes
     xV[NV0+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
     yV[NV0+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
 
-np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# xV,yV')
+#np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# xV,yV')
 
 #################################################################
 # build pressure grid (nodes and icon)
@@ -277,7 +303,7 @@ for iel in range(0,nel):
     iconP[2,iel]=counter
     counter+=1
 
-np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
 
 print("setup: connectivity P: %.3f s" % (timing.time() - start))
 
@@ -315,25 +341,41 @@ for i in range(0, NV):
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0  
     #bottom boundary  
     if yV[i]/Lx<1e-6:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = -v_bc   
+       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = -u_bc   
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
     #top boundary  
     if yV[i]/Ly>0.9999999:
-       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = +v_bc  
+       bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = +u_bc  
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
 
 print("define boundary conditions: %.3f s" % (timing.time() - start))
 
 ################################################################################################
-################################################################################################
-# TIME STEPPING
-################################################################################################
+# initial velocity 
+# not strictly necessary but it will help with nl iterations
 ################################################################################################
 
 u=np.zeros(NV,dtype=np.float64)
 v=np.zeros(NV,dtype=np.float64)
+umem=np.zeros(NV,dtype=np.float64)
+vmem=np.zeros(NV,dtype=np.float64)
 
-for istep in range(0,1):
+for i in range(0,NV):
+    u[i]=(yV[i]-Ly/2)/(Ly/2)*u_bc
+
+#np.savetxt('velocity0.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+
+################################################################################################
+################################################################################################
+# non linear iterations 
+################################################################################################
+################################################################################################
+
+convfile=open('conv.ascii',"w")
+
+for iiter in range(0,25):
+
+    print('***** iteration: ',iiter,' *****')
 
     #################################################################
     # build FE matrix
@@ -398,20 +440,18 @@ for istep in range(0,1):
                exit("jacobian is negative - bad triangle")
 
             # compute dNdx & dNdy
-            xq=0.0
-            yq=0.0
             exxq=0.
             eyyq=0.
             exyq=0.
             for k in range(0,mV):
-                xq+=NNNV[k]*xV[iconV[k,iel]]
-                yq+=NNNV[k]*yV[iconV[k,iel]]
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
                 exxq+=dNNNVdx[k]*u[iconV[k,iel]]
                 eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
                 exyq+=0.5*dNNNVdx[k]*v[iconV[k,iel]]+\
                       0.5*dNNNVdy[k]*u[iconV[k,iel]]
+
+            #print(exxq,eyyq,exyq)
 
             # compute etaq, rhoq
             etaq=viscosity(mat[iel],exxq,eyyq,exyq,temperature,rheology)
@@ -720,7 +760,7 @@ for istep in range(0,1):
     #####################################################################
     start = timing.time()
 
-    filename = 'solution_{:04d}.vtu'.format(istep)
+    filename = 'solution_{:04d}.vtu'.format(iiter)
     vtufile=open(filename,"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
     vtufile.write("<UnstructuredGrid> \n")
@@ -830,6 +870,26 @@ for istep in range(0,1):
     vtufile.write("</UnstructuredGrid>\n")
     vtufile.write("</VTKFile>\n")
     vtufile.close()
+
+    ######################################################################
+    # convergence criterion is based on difference between two consecutively
+    # obtained velocity fields, normalised by the boundary condition velocity
+
+    chi_u=LA.norm(u-umem,2)/u_bc # vx convergence indicator
+    chi_v=LA.norm(v-vmem,2)/u_bc # vy convergence indicator
+
+    print('     -> convergence u,v: %.3e %.3e | tol= %.2e' %(chi_u,chi_v,tol))
+
+    convfile.write("%f %10e %10e %10e\n" %(iiter,chi_u,chi_v,tol))
+    convfile.flush()
+
+    umem[:]=u[:]
+    vmem[:]=v[:]
+
+    if chi_u<tol and chi_v<tol:
+       print('     ***converged***')
+       break
+
 
 #end for time step
 

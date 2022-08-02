@@ -10,7 +10,7 @@ cat mypoints mysegments > mesh.poly
 #../../../../triangle/triangle  -j -q25 -a0.00100 -o2 -pc mesh.poly
 #../../../../triangle/triangle  -j -q25 -a1500000000 -o2 -pc mesh.poly
 
-../../../../triangle/triangle  -j -q25 -a10000000   -o2 -pc mesh.poly
+../../../../triangle/triangle  -j -q25 -a1000000   -o2 -pc mesh.poly
 
 echo "nel="
 head -1 mesh.1.ele 
@@ -19,7 +19,7 @@ echo "NV0="
 head -1 mesh.1.node 
 head -1 mesh.1.node >> temp
 
-#python3 stone.py 
+python3 stone.py 
 
 #python3 stone.py > opla
 #grep benchmark opla > statistics.ascii
