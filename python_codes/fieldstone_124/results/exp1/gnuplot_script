@@ -1,0 +1,154 @@
+set term pdf enhanced font 'Times,12pt'
+set grid
+set xlabel 'ndof'
+set log x
+
+
+#########################################
+
+set title 'measured at (x=0,y=0)'
+
+set ylabel 'u_x' 
+set output 'corner_ux.pdf'
+plot[][]\
+'corner.ascii' u 8:2 w lp notitle
+
+set ylabel 'u_y' 
+set output 'corner_uy.pdf'
+plot[][]\
+'corner.ascii' u 8:3 w lp notitle
+
+set ylabel 'sigma_{xx}' 
+set output 'corner_sigmaxx.pdf'
+plot[][]\
+'corner.ascii' u 8:4 w lp notitle
+
+set ylabel 'sigma_{yy}' 
+set output 'corner_sigmayy.pdf'
+plot[][]\
+'corner.ascii' u 8:5 w lp notitle
+
+set ylabel 'sigma_{xy}' 
+set output 'corner_sigmaxy.pdf'
+plot[][]\
+'corner.ascii' u 8:6 w lp notitle
+
+set ylabel 'pressure' 
+set output 'corner_p.pdf'
+plot[][]\
+'corner.ascii' u 8:7 w lp notitle
+
+#########################################
+
+set title 'measured at (x=L_x/2,y=L_y/2-rad)'
+
+set ylabel 'u_x' 
+set output 'south_ux.pdf'
+plot[][]\
+'south.ascii' u 8:2 w lp notitle
+
+set ylabel 'u_y' 
+set output 'south_uy.pdf'
+plot[][]\
+'south.ascii' u 8:3 w lp notitle
+
+set ylabel 'sigma_{xx}' 
+set output 'south_sigmaxx.pdf'
+plot[][]\
+'south.ascii' u 8:4 w lp notitle
+
+set ylabel 'sigma_{yy}' 
+set output 'south_sigmayy.pdf'
+plot[][]\
+'south.ascii' u 8:5 w lp notitle
+
+set ylabel 'sigma_{xy}' 
+set output 'south_sigmaxy.pdf'
+plot[][]\
+'south.ascii' u 8:6 w lp notitle
+
+set ylabel 'pressure' 
+set output 'south_p.pdf'
+plot[][]\
+'south.ascii' u 8:7 w lp notitle
+
+#########################################
+
+set title 'measured at (x=L_x/2-rad,y=L_y/2)'
+
+set ylabel 'u_x' 
+set output 'west_ux.pdf'
+plot[][]\
+'west.ascii' u 8:2 w lp notitle
+
+set ylabel 'u_y' 
+set output 'west_uy.pdf'
+plot[][]\
+'west.ascii' u 8:3 w lp notitle
+
+set ylabel 'sigma_{xx}' 
+set output 'west_sigmaxx.pdf'
+plot[][]\
+'west.ascii' u 8:4 w lp notitle
+
+set ylabel 'sigma_{yy}' 
+set output 'west_sigmayy.pdf'
+plot[][]\
+'west.ascii' u 8:5 w lp notitle
+
+set ylabel 'sigma_{xy}' 
+set output 'west_sigmaxy.pdf'
+plot[][]\
+'west.ascii' u 8:6 w lp notitle
+
+set ylabel 'pressure' 
+set output 'west_p.pdf'
+plot[][]\
+'west.ascii' u 8:7 w lp notitle
+
+#########################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
