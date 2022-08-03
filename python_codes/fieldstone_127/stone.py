@@ -6,6 +6,7 @@ from scipy.sparse import lil_matrix
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from numpy import linalg as LA
+import math
 
 Rgas=8.3145
 cm=0.01
@@ -80,7 +81,7 @@ def viscosity(imat,exx,eyy,exy,temp,rheology):
        a2=-41.8
        b2=0.0421
        c2=-1.14e-05
-       stress = (a0+b0*temp)*(1+np.tanh((a1+b1*temp)*(np.log10(ee)-(a2+b2*temp+c2*temp**2.0))))
+       stress = (a0+b0*temp)*(1+np.tanh((a1+b1*temp)*(np.log10(ee)-(a2+b2*temp+c2*temp**2))))
        eta_TANH = stress/(2.0*ee)
        eta_eff=1/(1/eta_diff+1/eta_TANH)
 
@@ -126,16 +127,18 @@ def viscosity(imat,exx,eyy,exy,temp,rheology):
 
 ###############################################################################
 # testing rheologies
-#rheology=5
-#exx=0
-#eyy=0
-#imat=1
-#rheofile=open('rheology_test.ascii',"w")
-#for exy in (-14,-14.25,-14.5,-14.75,-15,-15.25,-15.5,-15.75,-16):
-#    for temp in (1300,1350,1400,1450,1500,1550,1600):
-#        rheofile.write("%10e %10e %10e \n" %(exy,temp,viscosity(imat,exx,eyy,10**exy,temp+273,rheology)))
-#rheofile.close()
-#exit()
+
+if False:
+   rheology=5
+   exx=0
+   eyy=0
+   imat=1
+   rheofile=open('rheology_test.ascii',"w")
+   for exy in (-14,-14.2,-14.4,-14.6,-14.8,-15,-15.2,-15.4,-15.6,-15.8,-16):
+       for temp in (1300,1325,1350,1375,1400,1425,1450,1475,1500,1525,1550,1575,1600):
+           rheofile.write("%10e %10e %10e \n" %(exy,temp,viscosity(imat,exx,eyy,10**exy,temp+273,rheology)))
+   rheofile.close()
+   exit()
 
 ###############################################################################
 # allowing for argument parsing through command line
