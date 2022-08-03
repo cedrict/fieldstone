@@ -12,8 +12,8 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %--------------------------------------------------------------
 
-In what follows we rely on 2D plane strain calculations and $Q_1$ finite element space.
-
+In what follows we rely on 2D plane strain calculations and the discrete displacement 
+solution lives in the $Q_1$ finite element space.
 
 %--------------------------------------------------------------
 \subsection*{Mesh generation}
@@ -21,22 +21,25 @@ In what follows we rely on 2D plane strain calculations and $Q_1$ finite element
 The mesh is composed of 8 blocks, as shown here:
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_124/results/mesh1}
+\includegraphics[width=8cm]{python_codes/fieldstone_124/results/mesh1}
+\includegraphics[width=8cm]{python_codes/fieldstone_124/results/mesh3}\\
+{\captionfont Left: nelx=nely=10; Right: nelx=32, nely=8.}
 \end{center}
 
 Blocks 1 and 2 (purple and green respectively) are made from a regular $nelx\times nely$ mesh that is 
 mapped to conform to the desired shape. Blocks 3 to 8 are rotations 
-of either block 1 or 2. Note that in the current version $nelx$ and
-$nely$ should be equal.
+of either block 1 or 2.  
 When all 8 blocks are obtained nodes which appear twice are removed
-and a global connectivity array is made: 
+and a global connectivity array is made, yielding the following mesh: 
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_124/results/mesh2}
+\includegraphics[width=8cm]{python_codes/fieldstone_124/results/mesh4}\\
+{\captionfont Left: nelx=nely=10; Right: nelx=32, nely=8.}
 \end{center}
 
 This is unfortunately a rather slow algorithm and it will take 
-several minutes to generate a mesh for $nelx$ values above 60.
+several minutes to generate a mesh for {\python nelx}={\python nely} values above 60.
 
 \newpage
 %--------------------------------------------------------------
@@ -108,7 +111,7 @@ the figure from Hassani.}
 An infinite plate with a circular hole of radius $a$  
 is subjected to a unidirectional tensile load of $\sigma$ in the $x$ direction as shown
 in the figure. In this case, only one quarter of the domain could be analysed due
-to symmetry along $x$ and $y$ axis but we nevertheless model the full plate.
+to symmetry along $x$ and $y$ axis (see figure below) but we nevertheless model the full plate.
 
 \begin{center}
 \includegraphics[width=0.65\textwidth]{python_codes/fieldstone_124/images/yobu02}
@@ -239,11 +242,10 @@ problem with 3 values of the reported $\upupsilon_y$ for point (4).}
 {\captionfont Each block counts $90\times 90$ elements.}
 \end{center}
 
-The values in the above tables are now plotted against our results. 
-We find a good agreement but 1) it looks like we need a {\it much higher}
-high resolution to recover the published results. 
-Even 8 blocks of $90\times 90$ elements each are not enough to reach a resolution-independent 
-numerical solution.
+The values in the above tables are now plotted (purple squares) against our results. 
+We find a good agreement but it looks like we need a {\it much higher}
+high resolution to recover the published results (although ajdusting the 
+ratio of nely to nelx does help). 
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_124/results/exp3/ux2}

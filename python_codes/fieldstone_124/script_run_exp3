@@ -3,61 +3,73 @@ rm point2.ascii
 rm point4.ascii
 rm point5.ascii
 
+echo nelx=20
 python3 stone.py  20 > opla
 grep point_2 opla >> point2.ascii
 grep point_4 opla >> point4.ascii
 grep point_5 opla >> point5.ascii
  
+echo nelx=22
 python3 stone.py  22 > opla  
 grep point_2 opla >> point2.ascii
 grep point_4 opla >> point4.ascii
 grep point_5 opla >> point5.ascii
 
+echo nelx=24
 python3 stone.py  24 > opla
 grep point_2 opla >> point2.ascii
 grep point_4 opla >> point4.ascii
 grep point_5 opla >> point5.ascii
 
+echo nelx=26
 python3 stone.py  26 > opla
 grep point_2 opla >> point2.ascii
 grep point_4 opla >> point4.ascii
 grep point_5 opla >> point5.ascii
 
+echo nelx=28
 python3 stone.py  28 > opla
 grep point_2 opla >> point2.ascii
 grep point_4 opla >> point4.ascii
 grep point_5 opla >> point5.ascii
 
+echo nelx=30
 python3 stone.py  30 > opla
 grep point_2 opla >> point2.ascii
 grep point_4 opla >> point4.ascii
 grep point_5 opla >> point5.ascii
 
+echo nelx=40
 python3 stone.py  40 > opla
 grep point_2 opla >> point2.ascii
 grep point_4 opla >> point4.ascii
 grep point_5 opla >> point5.ascii
  
+echo nelx=50
 python3 stone.py  50 > opla  
 grep point_2 opla >> point2.ascii
 grep point_4 opla >> point4.ascii
 grep point_5 opla >> point5.ascii
 
+echo nelx=60
 python3 stone.py  60 > opla
 grep point_2 opla >> point2.ascii
 grep point_4 opla >> point4.ascii
 grep point_5 opla >> point5.ascii
 
+echo nelx=70
 python3 stone.py  70 > opla
 grep point_2 opla >> point2.ascii
 grep point_4 opla >> point4.ascii
 grep point_5 opla >> point5.ascii
 
+echo nelx=80
 python3 stone.py  80 > opla
 grep point_2 opla >> point2.ascii
 grep point_4 opla >> point4.ascii
 grep point_5 opla >> point5.ascii
 
+echo nelx=90
 python3 stone.py  90 > opla
 grep point_2 opla >> point2.ascii
 grep point_4 opla >> point4.ascii

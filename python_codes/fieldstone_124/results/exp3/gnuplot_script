@@ -8,26 +8,47 @@ set ylabel 'displacement u_x'
 set title 'point (2)'
 set output 'ux2.pdf'
 plot[][]\
-'rarr03_data.ascii' u 6:1 pt 5 ps .5 t 'rarr03',\
-'point2.ascii' u 9:3 w lp t 'fieldstone',\
+'rarr03_data.ascii'    u 6:1 pt 5 ps .5 t 'Ramm et al',\
+'point2_equi.ascii'    u 9:3 w lp ps .5 t 'fieldstone (nely=nelx)',\
+'point2_half.ascii'    u 9:3 w lp ps .5 t 'fieldstone (nely=nelx/2)',\
+'point2_quarter.ascii' u 9:3 w lp ps .5 t 'fieldstone (nely=nelx/4)',\
+'point2_fifth.ascii'   u 9:3 w lp ps .5 t 'fieldstone (nely=nelx/5)',\
+'point2_tenth.ascii'   u 9:3 w lp ps .5 t 'fieldstone (nely=nelx/10)',\
+0.021290 lt -1 dt 2 t 'reference'  
 
 set ylabel 'displacement u_y'
 set title 'point (4)'
 set output 'uy4.pdf'
 plot[][]\
-'rarr03_data.ascii' u 6:3 pt 5 ps .5 t 'rarr03',\
-'point4.ascii' u 5:3 w lp t 'fieldstone',\
+'rarr03_data.ascii' u 6:3 pt 5 ps .5 t 'Ramm et al',\
+'point4.ascii'         u 5:3 w lp ps .5 t 'fieldstone (nely=nelx)',\
+'point4_half.ascii'    u 5:3 w lp ps .5 t 'fieldstone (nely=nelx/2)',\
+'point4_quarter.ascii' u 5:3 w lp ps .5 t 'fieldstone (nely=nelx/4)',\
+'point4_fifth.ascii'   u 5:3 w lp ps .5 t 'fieldstone (nely=nelx/5)',\
+'point4_tenth.ascii'   u 5:3 w lp ps .5 t 'fieldstone (nely=nelx/10)',\
+0.20951 lt -1 dt 2 t 'reference'  
 
 set ylabel 'displacement u_x'
 set title 'point (5)'
 set output 'ux5.pdf'
 plot[][]\
-'rarr03_data.ascii' u 6:4 pt 5 ps .5 t 'rarr03',\
-'point5.ascii' u 5:3 w lp t 'fieldstone',\
+'rarr03_data.ascii'    u 6:4 pt 5 ps .5 t 'Ramm et al',\
+'point5.ascii'         u 5:3 w lp ps .5 t 'fieldstone (nely=nelx)',\
+'point5_half.ascii'    u 5:3 w lp ps .5 t 'fieldstone (nely=nelx/2)',\
+'point5_quarter.ascii' u 5:3 w lp ps .5 t 'fieldstone (nely=nelx/4)',\
+'point5_fifth.ascii'   u 5:3 w lp ps .5 t 'fieldstone (nely=nelx/5)',\
+'point5_tenth.ascii'   u 5:3 w lp ps .5 t 'fieldstone (nely=nelx/10)',\
+0.076758 lt -1 dt 2 t 'reference'  
+
 
 set title 'point (2)'
 set ylabel 'sigma_{yy}'
 set output 'sigmayy2.pdf'
 plot[][]\
-'rarr03_data.ascii' u 6:2 pt 5 ps .5 t 'rarr03',\
-'point2.ascii' u 9:7 w lp t 'fieldstone',\
+'rarr03_data.ascii'    u 6:2 pt 5 ps .5 t 'Ramm et al',\
+'point2_equi.ascii'    u 9:7 w lp ps .5 t 'fieldstone (nely=nelx)',\
+'point2_half.ascii'    u 9:7 w lp ps .5 t 'fieldstone (nely=nelx/2)',\
+'point2_quarter.ascii' u 9:7 w lp ps .5 t 'fieldstone (nely=nelx/4)',\
+'point2_fifth.ascii'   u 9:7 w lp ps .5 t 'fieldstone (nely=nelx/5)',\
+'point2_tenth.ascii'   u 9:7 w lp ps .5 t 'fieldstone (nely=nelx/10)',\
+1388.7323 lt -1 dt 2 t 'reference'  

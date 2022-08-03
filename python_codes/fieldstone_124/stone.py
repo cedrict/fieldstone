@@ -39,7 +39,7 @@ print("-----------------------------")
 m=4     # number of nodes making up an element
 ndof=2  # number of degrees of freedom per node
 
-experiment=1
+experiment=3
 
 if experiment==1: #hassani
    E=1e10
@@ -74,9 +74,10 @@ if experiment==3: #Ramm et al 2003
 if int(len(sys.argv) == 2):
    nelx   = int(sys.argv[1])
 else:
-   nelx=64
+   nelx=40
 
-nely=nelx
+nely=int(nelx/4)
+#nely=nelx
 
 sqrt2=np.sqrt(2.)
 sqrt3=np.sqrt(3.)
@@ -89,6 +90,7 @@ hy=Ly/nely
 
 print('     -> experiment=',experiment)
 print('     -> nelx=',nelx)
+print('     -> nely=',nely)
 
 ###############################################################################
 #  The mesh is composed of eight blocks. Each is first built and warped
@@ -252,8 +254,8 @@ for j in range(0,b_nny):
         r=2*(b2_x[counter]/Lx-0.5)
         s=2*(b2_y[counter]/Ly-0.5)
         NNNV[0:m]=NNV(r,s)
-        b2_x[counter]=NNNV[0]*xF+NNNV[1]*xD+NNNV[2]*xC+NNNV[3]*xE
-        b2_y[counter]=NNNV[0]*yF+NNNV[1]*yD+NNNV[2]*yC+NNNV[3]*yE
+        b2_x[counter]=NNNV[0]*xD+NNNV[1]*xC+NNNV[2]*xE+NNNV[3]*xF
+        b2_y[counter]=NNNV[0]*yD+NNNV[1]*yC+NNNV[2]*yE+NNNV[3]*yF
         counter+=1
    #end for
 #end for
@@ -262,7 +264,7 @@ for j in range(0,b_nny):
 counter=0
 for j in range(0,b_nny):
     for i in range(0,b_nnx):
-        if j==0:
+        if i==0 and j<b_nny-1:
            angle=np.arctan(b2_y[counter]/b2_x[counter])
            b2_x[counter]=rad*np.cos(angle)
            b2_y[counter]=rad*np.sin(angle)
@@ -275,14 +277,13 @@ counter=0
 for j in range(0,b_nny):
     for i in range(0,b_nnx):
         if i!=0 and i!=b_nnx-1 and j!=0 and j!=b_nny-1:
-           inode_beg=i
-           inode_end=(b_nny-1)*b_nnx+i
-           b2_x[counter]=float(j)/b_nely*(b2_x[inode_end]-b2_x[inode_beg]) + b2_x[inode_beg]
-           b2_y[counter]=float(j)/b_nely*(b2_y[inode_end]-b2_y[inode_beg]) + b2_y[inode_beg]
+           inode_beg=j*b_nnx
+           inode_end=j*b_nnx+b_nnx-1
+           b2_x[counter]=float(i)/b_nelx*(b2_x[inode_end]-b2_x[inode_beg]) + b2_x[inode_beg]
+           b2_y[counter]=float(i)/b_nelx*(b2_y[inode_end]-b2_y[inode_beg]) + b2_y[inode_beg]
         counter+=1
    #end for
 #end for
-
 
 print("make block 2: %.3f s" % (time.time() - start))
 
