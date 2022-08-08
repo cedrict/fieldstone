@@ -309,7 +309,7 @@ for iel in range(0, nel):
                     a_mat[m1,m2]+=a_el[ikk,jkk]
             rhs[m1]+=b_el[ikk]
 
-print("build FE matrix: %.3f s" % (time.time() - start))
+print("Build FE matrix: %.5f s | Nfem= %d" % (time.time() - start,Nfem))
 
 #################################################################
 # impose boundary conditions
@@ -340,7 +340,7 @@ start = time.time()
 
 sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
 
-print("solve time: %.3f s" % (time.time() - start))
+print("Solve linear system: %.5f s | Nfem= %d " % (time.time() - start, Nfem))
 
 #####################################################################
 # put solution into separate x,y velocity arrays

@@ -79,9 +79,46 @@ There is no export of the results to ParaView format, only ascii text files.
 \newpage
 \subsection*{About the Julia code}
 
+The python code was translated to julia in a rather straightforward manner. 
+The matrix is still a full array (no sparse storage during the build process) 
+and the boundary conditions
+are applied naively. Even with a 80x80 resolution the memory use is under 2Gb. 
+Note that there seems to be a limit as to the maximum size of the matrix array 
+and for instance 96x96 yields to a crash.
+
+In this version the matrix is stored as a full array. 
+Before the linear system is solved, however, we must convert it to sparse storage:
+\begin{verbatim}
+Sps_amat=sparse(a_mat)
+\end{verbatim}
+When it comes to the solve, we have various options. The first and most 
+simple one is similar to Matlab's backslash:
+\begin{verbatim}
+sol= Sps_amat\rhs
+\end{verbatim}
+Another possibility is cholesky\footnote{This method uses the CHOLMOD library from SuiteSparse:
+\url{https://people.engr.tamu.edu/davis/suitesparse.html}} or ldlt or lu:
+\begin{verbatim}
+sol= cholesky(Sps_amat)\rhs
+sol= ldlt(Sps_amat)\rhs
+sol= lu(Sps_amat)\rhs
+\end{verbatim}
 
 
+The computed errors are of course identical to those of the python codes but we find that
+at low resolutions the python code is much faster than the julia code: 
+this is likely due to the time taken by julia to compile the code.
+ 
 
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_01/results/julia/timings_build.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_01/results/julia/timings_solve.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_01/results/julia/errors.pdf}\\
+{\captionfont Matrix building and solving times as obtained for nelx from 8 until 80, each 
+resolution being run 10 times.}
+\end{center}
+
+We find that the LU-based solver is the fasted in this case.
 
 
 
