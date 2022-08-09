@@ -61,5 +61,59 @@ The volume of each cell is also computed (based on the area assigned to each mar
 {\captionfont Examples with 111 random seeds. Approx 310s.}
 \end{center}
 
+%-----------------------------
+\subsubsection*{Test \# 4}
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_125/results/test4a}
+\includegraphics[width=6cm]{python_codes/fieldstone_125/results/test4b}\\
+{\captionfont Examples with 40,000 markers and 213 random seeds. Approx 275s. }
+\end{center}
+
+%------------------------------------------------------------------------------
+\noindent\rule{\textwidth}{1pt}
+
+This is a completely different exercise. A swarm of points is generated in a 3D Cartesian 
+domain using a random number generator for the coordinates.
+The code computes the so-called Radial Distribution Function
+\footnote{\url{https://en.wikipedia.org/wiki/Radial_distribution_function}}, 
+which is describes how density varies as a function of distance from a reference particle. 
+In simplest terms it is a measure of the probability of finding a particle at a distance of $r$ 
+away from a given reference particle, relative to that for an ideal gas. 
+The general algorithm involves determining how many particles are within a distance of $r$ and $r+dr$ away from a particle. 
+
+The implemented algorithm is rather simple. Loop over all particles, and for each of them 
+loop over the rest of the particles, compute the distance, find out in which bin of size $dr$ it belongs 
+to and increase the count in that bin. We end up with the raw distribution.
+Note that in order to avoid to count the same pair twice the second loop 
+runs over 0 to i, and not 0 to nmarker (It also saves a lot of time!).
+As explained on Wikipedia, one can also normalise it by $\rho 4\pi r^2 dr$, where $\rho$ is
+the average density of points (number of points / volume). This yields the 
+normalised rdf. 
+Also note that points close to the sides of the domain are not 'seeing' the ones 
+on the other side (no periodic conditions) so this is likely to alter the results.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_125/results/rdf/rdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_125/results/rdf/rdf_normalised}\\
+{\captionfont a }
+\end{center}
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -115,7 +115,6 @@ if ndim==3:
        #end for
    #end for
 
-
 print("setup: connectivity: %.3f s" % (time.time() - start))
 
 #################################################################
@@ -149,6 +148,7 @@ if ndim==2:
            #end for 
        #end for 
    #end for 
+
 if ndim==3:
    counter=0
    for iel in range(0,nel):

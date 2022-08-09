@@ -1,0 +1,15 @@
+set term pdf enhanced
+set grid
+
+set xlabel 'distance'
+set ylabel 'rdf'
+
+set output 'rdf.pdf'
+plot[][]\
+'rdf.ascii' w lp ps .5 notitle
+
+set ylabel 'normalised rdf'
+set output 'rdf_normalised.pdf'
+plot[][]\
+'rdf_normalised.ascii' w lp ps .5 notitle
+
