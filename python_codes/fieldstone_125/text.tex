@@ -20,11 +20,13 @@ that seed than to any other. The Voronoi diagram of a set of points is dual to i
 
 \Literature: \textcite{may12} (2012), \textcite{hust08b} (2008).
 
-The domain is a 2D Cartesian box. A regular grid spans this domain with resolution $nelx \times nely$. 
-In each cell $nmarker\_per\_dim^2$ markers are regularly placed. 
+The domain is a 2D ({\python ndim=2}) or 3D ({\python ndim=3}) 
+Cartesian box. A regular grid spans this domain with resolution 
+$nelx \times nely$ or $nelx \times nely \times nelz$. 
+In each cell $nmarker\_per\_dim^{ndim}$ markers are regularly placed. 
 Finally $nvo$ seeds are randomly placed in the domain and wish to compute the Voronoi cell attached to 
 each seed. There are three test cases in the code, differing only by the number of seeds (7,27,111 respectively).
-The are of each cell is also computed (based on the area assigned to each marker).
+The volume of each cell is also computed (based on the area assigned to each marker).
 
 %-----------------------------
 \subsubsection*{Test \# 1}
@@ -41,7 +43,13 @@ The are of each cell is also computed (based on the area assigned to each marker
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_125/results/test2_a}
 \includegraphics[width=6cm]{python_codes/fieldstone_125/results/test2_b}\\
-{\captionfont Examples with 27 random seeds.}
+{\captionfont Examples with two different sets of 27 random seeds in 2D.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_125/results/test2_3Da}
+\includegraphics[width=6cm]{python_codes/fieldstone_125/results/test2_3Db}\\
+{\captionfont Example with 27 random seeds in 2D (different views).}
 \end{center}
 
 %-----------------------------
