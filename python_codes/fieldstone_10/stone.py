@@ -120,10 +120,12 @@ print("-----------------------------")
 m=8     # number of nodes making up an element
 ndofV=3  # number of degrees of freedom per node
 
-if int(len(sys.argv) == 2):
+if int(len(sys.argv) == 3):
    nelx = int(sys.argv[1])
+   visu = int(sys.argv[2])
 else:
-   nelx = 12
+   nelx = 8
+   visu = 1
 
 if experiment==1:
    quarter=False
@@ -155,7 +157,6 @@ FS=True
 NS=False
 OT=False
 
-visu=1
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
@@ -183,6 +184,9 @@ print('Lz=',Lz)
 print('nelx=',nelx)
 print('nely=',nely)
 print('nelz=',nelz)
+print('nel=',nel)
+print('Nfem=',Nfem)
+print("-----------------------------")
 
 #################################################################
 # grid point setup
@@ -517,7 +521,7 @@ for iel in range(0, nel):
 
 a_mat=csr_matrix(a_mat)
 
-print("build FE system: %.3f s" % (time.time() - start))
+print("build FE system: %.3f s | nel= %d" % (time.time() - start,nel))
 
 #################################################################
 # solve system
@@ -526,7 +530,7 @@ start = time.time()
 
 sol = sps.linalg.spsolve(a_mat,rhs)
 
-print("solve time: %.3f s" % (time.time() - start))
+print("solve time: %.3f s | Nfem= %d " % (time.time() - start,Nfem))
 
 #####################################################################
 # put solution into separate x,y velocity arrays
