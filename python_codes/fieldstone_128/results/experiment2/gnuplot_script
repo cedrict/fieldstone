@@ -1,0 +1,26 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+year=365.25*24*3600
+
+set xlabel 'time' 
+
+set ylabel '<p>'
+set output 'pavrg.pdf'
+plot[][]\
+'stats_pavrg.ascii' w lp notitle
+
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
+plot[][]\
+'stats_vrms.ascii' w lp notitle
+
+set ylabel 'velocity (m/year)'
+set output 'velocity.pdf'
+plot[][]\
+'stats_vel.ascii'  u ($1/year):($2*year) w lp ps 0.2 t 'min(u)',\
+'stats_vel.ascii'  u ($1/year):($3*year) w lp ps 0.2 t 'max(u)',\
+'stats_vel.ascii'  u ($1/year):($4*year) w lp ps 0.2 t 'min(v)',\
+'stats_vel.ascii'  u ($1/year):($5*year) w lp ps 0.2 t 'max(v)'
+
+
