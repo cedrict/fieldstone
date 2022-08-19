@@ -8,11 +8,14 @@ from scipy.sparse.linalg.dsolve import linsolve
 from numpy import linalg as LA
 import math
 
+###############################################################################
+
 Rgas=8.3145
 cm=0.01
 year=365.25*24*3600
 
 ###############################################################################
+# basis functions for Crouzeix-Raviart elements
 
 def NNV(rq,sq):
     NV_0= (1.-rq-sq)*(1.-2.*rq-2.*sq+ 3.*rq*sq)
@@ -55,22 +58,22 @@ def NNP(rq,sq):
 def viscosity(imat,exx,eyy,exy,temp,rheology):
 
     ee=np.sqrt(0.5*(exx**2+eyy**2)+exy**2)
+    ee=max(ee,1e-20)
 
     # diffusion creep viscosity (gatt20)
     Ediff_UM=410e3
     Adiff_UM=1e-7
-    eta_diff=0.5*Adiff_UM**(-1)*np.exp(Ediff_UM/(Rgas*temp))
+    eta_diff=Adiff_UM**(-1.)*np.exp(Ediff_UM/(Rgas*temp)) #no 1/2 to match Garel
 
     #--------------
     if rheology==0: # constant viscosity
 
-       eta_eff=1e21 
+       eta_eff=1e22 
 
     #--------------
     if rheology==1: #diffusion creep only
 
        eta_eff=eta_diff
-
 
     #--------------
     if rheology==2: #diff + disl TANH 
@@ -116,9 +119,9 @@ def viscosity(imat,exx,eyy,exy,temp,rheology):
        eta_eff=1./(1./eta_diff+1./eta_disl)
        #print('ee=',ee,'disl=',eta_disl,'diff=',eta_diff,'eff=',eta_eff)
 
-
-    if imat==2:
-       eta_eff=1e25
+    #--------------
+    #inclusion
+    if imat==2: eta_eff=1e25
 
     #eta_eff=min(1e26,eta_eff)
     #eta_eff=max(1e18,eta_eff)
@@ -129,14 +132,14 @@ def viscosity(imat,exx,eyy,exy,temp,rheology):
 # testing rheologies
 
 if False:
-   rheology=5
+   rheology=1
    exx=0
    eyy=0
    imat=1
    rheofile=open('rheology_test.ascii',"w")
    for exy in (-14,-14.2,-14.4,-14.6,-14.8,-15,-15.2,-15.4,-15.6,-15.8,-16):
        for temp in (1300,1325,1350,1375,1400,1425,1450,1475,1500,1525,1550,1575,1600):
-           rheofile.write("%10e %10e %10e \n" %(exy,temp,viscosity(imat,exx,eyy,10**exy,temp+273,rheology)))
+           rheofile.write("%10e %10e %10e \n" %(exy,temp,viscosity(imat,exx,eyy,10**exy,temp,rheology)))
    rheofile.close()
    exit()
 
@@ -149,10 +152,8 @@ if int(len(sys.argv) == 4):
    rheology= int(sys.argv[3])
 else:
    temperature = 1400.0 # range 1300:100:1600
-   strain_rate_background=-15 # range 1e-14, 1e-15, 1e-16
-   rheology=1
-
-temperature+=273.15
+   strain_rate_background=-14 # range 1e-14, 1e-15, 1e-16
+   rheology=2
 
 strain_rate_background=10**strain_rate_background
 
@@ -190,7 +191,7 @@ Nfem=NfemV+NfemP    # total number of dofs
 
 eta_ref=1e23
 
-tol=1e-4
+tol=5e-3
 
 ###############################################################################
 
@@ -202,6 +203,8 @@ print('NV0', NV0)
 print('NfemV', NfemV)
 print('NfemP', NfemP)
 print('Nfem ', Nfem)
+print("---------------------------------------")
+print("mesh size on inclusion=",2*np.pi*rad/np_object,'m')
 print("---------------------------------------")
 
 ###############################################################################
@@ -315,7 +318,6 @@ print("setup: connectivity P: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-eta=np.zeros(nel,dtype=np.float64) 
 mat=np.zeros(nel,dtype=np.int16) 
 
 for iel in range(0,nel):
@@ -350,6 +352,12 @@ for i in range(0, NV):
     if yV[i]/Ly>0.9999999:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = +u_bc  
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+
+    #if (xV[i]-0.5*Lx)**2+(yV[i]-0.5*Ly)**2<rad**2*1.01 and\
+    #   (xV[i]-0.5*Lx)**2+(yV[i]-0.5*Ly)**2>rad**2*0.99:
+    #   bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0 
+    #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+
 
 print("define boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -454,9 +462,7 @@ for iiter in range(0,25):
                 exyq+=0.5*dNNNVdx[k]*v[iconV[k,iel]]+\
                       0.5*dNNNVdy[k]*u[iconV[k,iel]]
 
-            #print(exxq,eyyq,exyq)
-
-            # compute etaq, rhoq
+            # compute etaq
             etaq=viscosity(mat[iel],exxq,eyyq,exyq,temperature,rheology)
 
             # construct 3x8 b_mat matrix
@@ -548,6 +554,7 @@ for iiter in range(0,25):
     #print(sparse_matrix.min(),sparse_matrix.max())
 
     sol=sps.linalg.spsolve(sparse_matrix,rhs)
+    #sol=rhs
 
     u,v=np.reshape(sol[0:NfemV],(NV,2)).T
     p=sol[NfemV:Nfem]*eta_ref/Ly
@@ -556,7 +563,7 @@ for iiter in range(0,25):
     print("     -> v (m,M) %.6e %.6e " %(np.min(v),np.max(v)))
     print("     -> p (m,M) %.6e %.6e " %(np.min(p),np.max(p)))
 
-    #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+    np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 
     print("solve time: %.3f s" % (timing.time() - start))
 
@@ -627,6 +634,8 @@ for iiter in range(0,25):
     avrg_p/=(Lx*Ly)
     p-=avrg_p
 
+    np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+
     print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
     print("     -> total area (meas) %.6f " %(area.sum()))
     print("     -> total area (anal) %.6f " %(Lx*Ly))
@@ -652,7 +661,6 @@ for iiter in range(0,25):
     for iel in range(0,nel):
         rq = 0.0
         sq = 0.0
-        weightq = 2.0 * 2.0
         NNNV[0:mV]=NNV(rq,sq)
         dNNNVdr[0:mV]=dNNVdr(rq,sq)
         dNNNVds[0:mV]=dNNVds(rq,sq)
@@ -662,18 +670,19 @@ for iiter in range(0,25):
             jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
             jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
             jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
-        jcob=np.linalg.det(jcb)
         jcbi=np.linalg.inv(jcb)
         for k in range(0,mV):
             dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
             dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
         for k in range(0,mV):
-            xc[iel] += NNNV[k]*xV[iconV[k,iel]]
-            yc[iel] += NNNV[k]*yV[iconV[k,iel]]
-            exx[iel] += dNNNVdx[k]*u[iconV[k,iel]]
-            eyy[iel] += dNNNVdy[k]*v[iconV[k,iel]]
-            exy[iel] += 0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
+            xc[iel]+=NNNV[k]*xV[iconV[k,iel]]
+            yc[iel]+=NNNV[k]*yV[iconV[k,iel]]
+            exx[iel]+=dNNNVdx[k]*u[iconV[k,iel]]
+            eyy[iel]+=dNNNVdy[k]*v[iconV[k,iel]]
+            exy[iel]+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
         e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
+
+    np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# x,y,exx,eyy,exy')
 
     print("     -> exx (m,M) %.6e %.6e " %(np.min(exx),np.max(exx)))
     print("     -> eyy (m,M) %.6e %.6e " %(np.min(eyy),np.max(eyy)))
@@ -695,6 +704,7 @@ for iiter in range(0,25):
     #  00==03==01  #  00======01
     #
     #####################################################################
+    start = timing.time()
 
     q=np.zeros(NV,dtype=np.float64)
     p_el=np.zeros(nel,dtype=np.float64)
@@ -719,20 +729,12 @@ for iiter in range(0,25):
         if cc[i] != 0:
            q[i]=q[i]/cc[i]
 
+    print("compute nodal pressure: %.3f s" % (timing.time() - start))
+
     #####################################################################
     # interpolate strain rate onto velocity grid points
     #####################################################################
-    #
-    #  02          #  02
-    #  ||\\        #  ||\\
-    #  || \\       #  || \\
-    #  ||  \\      #  ||  \\
-    #  05   04     #  ||   \\
-    #  || 06 \\    #  ||    \\
-    #  ||     \\   #  ||     \\
-    #  00==03==01  #  00======01
-    #
-    #####################################################################
+    start = timing.time()
 
     sr=np.zeros(NV,dtype=np.float64)
     sr_el=np.zeros(nel,dtype=np.float64)
@@ -756,6 +758,25 @@ for iiter in range(0,25):
     for i in range(0,NV):
         if cc[i] != 0:
            sr[i]=sr[i]/cc[i]
+
+    print("compute nodal strain rate: %.3f s" % (timing.time() - start))
+
+    #####################################################################
+    # compute stress tensor 
+    #####################################################################
+    start = timing.time()
+
+    sigma_xx=np.zeros(nel,dtype=np.float64)
+    sigma_yy=np.zeros(nel,dtype=np.float64)
+    sigma_xy=np.zeros(nel,dtype=np.float64)
+    for iel in range(0,nel):
+        sigma_xx[iel]=-p_el[iel]+2*viscosity(mat[iel],exx[iel],eyy[iel],exy[iel],temperature,rheology)*exx[iel]
+        sigma_yy[iel]=-p_el[iel]+2*viscosity(mat[iel],exx[iel],eyy[iel],exy[iel],temperature,rheology)*eyy[iel]
+        sigma_xy[iel]=           2*viscosity(mat[iel],exx[iel],eyy[iel],exy[iel],temperature,rheology)*exy[iel]
+
+    np.savetxt('stress.ascii',np.array([xc,yc,sigma_xx,sigma_yy,sigma_xy]).T,header='# x,y,sigma_xx,sigma_yy,sigma_xy')
+
+    print("compute stress: %.3f s" % (timing.time() - start))
 
     #####################################################################
     # plot of solution
@@ -813,6 +834,18 @@ for iiter in range(0,25):
     vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (e[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_xx' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%e\n" % (sigma_xx[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_yy' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%e\n" % (sigma_yy[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_xy' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%e\n" % (sigma_xy[iel]))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("</CellData>\n")
@@ -874,6 +907,52 @@ for iiter in range(0,25):
     vtufile.write("</VTKFile>\n")
     vtufile.close()
 
+    filename = 'pressure_{:04d}.vtu'.format(iiter)
+    vtufile=open(filename,"w")
+    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+    vtufile.write("<UnstructuredGrid> \n")
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(3*nel,nel))
+    #####
+    vtufile.write("<Points> \n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+    for iel in range(nel):
+        vtufile.write("%10e %10e %10e \n" %(xP[iconP[0,iel]],yP[iconP[0,iel]],0.))
+        vtufile.write("%10e %10e %10e \n" %(xP[iconP[1,iel]],yP[iconP[1,iel]],0.))
+        vtufile.write("%10e %10e %10e \n" %(xP[iconP[2,iel]],yP[iconP[2,iel]],0.))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Points> \n")
+    #####
+    vtufile.write("<PointData Scalars='scalars'>\n")
+    vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
+    for iel in range(nel):
+        vtufile.write("%10e \n" %(p[iconP[0,iel]]))
+        vtufile.write("%10e \n" %(p[iconP[1,iel]]))
+        vtufile.write("%10e \n" %(p[iconP[2,iel]]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</PointData>\n")
+    #####
+    vtufile.write("<Cells>\n")
+    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+    counter=0
+    for iel in range(0,nel):
+        vtufile.write("%d %d %d \n" %(counter,counter+1,counter+2))
+        counter+=3
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%d \n" %((iel+1)*3))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+    for iel in range (0,nel):
+        vtufile.write("%d \n" %5) 
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Cells>\n")
+    #####
+    vtufile.write("</Piece>\n")
+    vtufile.write("</UnstructuredGrid>\n")
+    vtufile.write("</VTKFile>\n")
+    vtufile.close()
+
     ######################################################################
     # convergence criterion is based on difference between two consecutively
     # obtained velocity fields, normalised by the boundary condition velocity
@@ -893,12 +972,8 @@ for iiter in range(0,25):
        print('     ***converged***')
        break
 
-
 #end for time step
 
-
-
-
-
-
-
+print("-----------------------------")
+print("------------the end----------")
+print("-----------------------------")
