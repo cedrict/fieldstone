@@ -1,0 +1,7 @@
+rm *.vtu
+rm *.ascii
+rm mypoints
+rm mysegments
+rm mesh.poly
+rm temp
+
