@@ -153,7 +153,7 @@ if int(len(sys.argv) == 4):
 else:
    temperature = 1400.0 # range 1300:100:1600
    strain_rate_background=-14 # range 1e-14, 1e-15, 1e-16
-   rheology=2
+   rheology=1
 
 strain_rate_background=10**strain_rate_background
 
@@ -563,7 +563,7 @@ for iiter in range(0,25):
     print("     -> v (m,M) %.6e %.6e " %(np.min(v),np.max(v)))
     print("     -> p (m,M) %.6e %.6e " %(np.min(p),np.max(p)))
 
-    np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+    #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 
     print("solve time: %.3f s" % (timing.time() - start))
 
@@ -682,13 +682,69 @@ for iiter in range(0,25):
             exy[iel]+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
         e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
 
-    np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# x,y,exx,eyy,exy')
+    #np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# x,y,exx,eyy,exy')
 
     print("     -> exx (m,M) %.6e %.6e " %(np.min(exx),np.max(exx)))
     print("     -> eyy (m,M) %.6e %.6e " %(np.min(eyy),np.max(eyy)))
     print("     -> exy (m,M) %.6e %.6e " %(np.min(exy),np.max(exy)))
 
     print("compute sr and stress: %.3f s" % (timing.time() - start))
+
+    ######################################################################
+    # compute nodal strainrate 
+    ######################################################################
+    start = timing.time()
+
+    exx_nodal = np.zeros(3*nel,dtype=np.float64)  
+    eyy_nodal = np.zeros(3*nel,dtype=np.float64)  
+    exy_nodal = np.zeros(3*nel,dtype=np.float64)  
+    eta_nodal = np.zeros(3*nel,dtype=np.float64)  
+    sigma_xx_nodal = np.zeros(3*nel,dtype=np.float64)  
+    sigma_yy_nodal = np.zeros(3*nel,dtype=np.float64)  
+    sigma_xy_nodal = np.zeros(3*nel,dtype=np.float64)  
+
+    rVnodes=[0,1,0,0.5,0.5,0,1./3.]
+    sVnodes=[0,0,1,0,0.5,0.5,1./3.]
+
+    counter=0
+    for iel in range(0,nel):
+        for i in range(0,3):
+            inode=iconV[i,iel]
+            rq = rVnodes[i]
+            sq = sVnodes[i]
+            NNNV[0:mV]=NNV(rq,sq)
+            dNNNVdr[0:mV]=dNNVdr(rq,sq)
+            dNNNVds[0:mV]=dNNVds(rq,sq)
+            jcb=np.zeros((2,2),dtype=np.float64)
+            for k in range(0,mV):
+                jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+                jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
+                jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+                jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+            jcbi=np.linalg.inv(jcb)
+            for k in range(0,mV):
+                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+            for k in range(0,mV):
+                exx_nodal[counter]+=dNNNVdx[k]*u[iconV[k,iel]]
+                eyy_nodal[counter]+=dNNNVdy[k]*v[iconV[k,iel]]
+                exy_nodal[counter]+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+\
+                                    0.5*dNNNVdx[k]*v[iconV[k,iel]]
+            eta_nodal[counter]+=viscosity(mat[iel],exx_nodal[counter],eyy_nodal[counter],\
+                                                   exy_nodal[counter],temperature,rheology)
+            sigma_xx_nodal[counter]=-p[counter]+2*eta_nodal[counter]*exx_nodal[counter]
+            sigma_yy_nodal[counter]=-p[counter]+2*eta_nodal[counter]*eyy_nodal[counter]
+            sigma_xy_nodal[counter]=            2*eta_nodal[counter]*exy_nodal[counter]
+            counter+=1
+        #end for
+    #end for iel
+
+    print("     -> exx (m,M) %e %e" %(np.min(exx_nodal),np.max(exx_nodal)))
+    print("     -> eyy (m,M) %e %e" %(np.min(eyy_nodal),np.max(eyy_nodal)))
+    print("     -> exy (m,M) %e %e" %(np.min(exy_nodal),np.max(exy_nodal)))
+    print("     -> eta (m,M) %e %e" %(np.min(eta_nodal),np.max(eta_nodal)))
+        
+    print("compute nodal: %.3f s" % (timing.time() - start))
 
     #####################################################################
     # interpolate pressure onto velocity grid points
@@ -704,163 +760,163 @@ for iiter in range(0,25):
     #  00==03==01  #  00======01
     #
     #####################################################################
-    start = timing.time()
+    #start = timing.time()
 
-    q=np.zeros(NV,dtype=np.float64)
-    p_el=np.zeros(nel,dtype=np.float64)
-    cc=np.zeros(NV,dtype=np.float64)
+    #q=np.zeros(NV,dtype=np.float64)
+    #p_el=np.zeros(nel,dtype=np.float64)
+    #cc=np.zeros(NV,dtype=np.float64)
 
-    for iel in range(0,nel):
-        q[iconV[0,iel]]+=p[iconP[0,iel]]
-        cc[iconV[0,iel]]+=1.
-        q[iconV[1,iel]]+=p[iconP[1,iel]]
-        cc[iconV[1,iel]]+=1.
-        q[iconV[2,iel]]+=p[iconP[2,iel]]
-        cc[iconV[2,iel]]+=1.
-        q[iconV[3,iel]]+=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
-        cc[iconV[3,iel]]+=1.
-        q[iconV[4,iel]]+=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
-        cc[iconV[4,iel]]+=1.
-        q[iconV[5,iel]]+=(p[iconP[0,iel]]+p[iconP[2,iel]])*0.5
-        cc[iconV[5,iel]]+=1.
-        p_el[iel]=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3.
+    #for iel in range(0,nel):
+    #    q[iconV[0,iel]]+=p[iconP[0,iel]]
+    #    cc[iconV[0,iel]]+=1.
+    #    q[iconV[1,iel]]+=p[iconP[1,iel]]
+    #    cc[iconV[1,iel]]+=1.
+    #    q[iconV[2,iel]]+=p[iconP[2,iel]]
+    #    cc[iconV[2,iel]]+=1.
+    #    q[iconV[3,iel]]+=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
+    #    cc[iconV[3,iel]]+=1.
+    #    q[iconV[4,iel]]+=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
+    #    cc[iconV[4,iel]]+=1.
+    #    q[iconV[5,iel]]+=(p[iconP[0,iel]]+p[iconP[2,iel]])*0.5
+    #    cc[iconV[5,iel]]+=1.
+    #    p_el[iel]=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3.
 
-    for i in range(0,NV):
-        if cc[i] != 0:
-           q[i]=q[i]/cc[i]
+    #for i in range(0,NV):
+    #    if cc[i] != 0:
+    #       q[i]=q[i]/cc[i]
 
-    print("compute nodal pressure: %.3f s" % (timing.time() - start))
+    #print("compute nodal pressure: %.3f s" % (timing.time() - start))
 
     #####################################################################
     # interpolate strain rate onto velocity grid points
     #####################################################################
-    start = timing.time()
+    #start = timing.time()
 
-    sr=np.zeros(NV,dtype=np.float64)
-    sr_el=np.zeros(nel,dtype=np.float64)
-    cc=np.zeros(NV,dtype=np.float64)
+    #sr=np.zeros(NV,dtype=np.float64)
+    #sr_el=np.zeros(nel,dtype=np.float64)
+    #cc=np.zeros(NV,dtype=np.float64)
 
-    for iel in range(0,nel):
-        sr[iconV[0,iel]]+=e[iel]
-        cc[iconV[0,iel]]+=1.
-        sr[iconV[1,iel]]+=e[iel]
-        cc[iconV[1,iel]]+=1.
-        sr[iconV[2,iel]]+=e[iel]
-        cc[iconV[2,iel]]+=1.
-        sr[iconV[3,iel]]+=e[iel]
-        cc[iconV[3,iel]]+=1.
-        sr[iconV[4,iel]]+=e[iel]
-        cc[iconV[4,iel]]+=1.
-        sr[iconV[5,iel]]+=e[iel]
-        cc[iconV[5,iel]]+=1.
-        sr_el[iel]=e[iel]
+    #for iel in range(0,nel):
+    #    sr[iconV[0,iel]]+=e[iel]
+    #    cc[iconV[0,iel]]+=1.
+    #    sr[iconV[1,iel]]+=e[iel]
+    #    cc[iconV[1,iel]]+=1.
+    #    sr[iconV[2,iel]]+=e[iel]
+    #    cc[iconV[2,iel]]+=1.
+    #    sr[iconV[3,iel]]+=e[iel]
+    #    cc[iconV[3,iel]]+=1.
+    #    sr[iconV[4,iel]]+=e[iel]
+    #    cc[iconV[4,iel]]+=1.
+    #    sr[iconV[5,iel]]+=e[iel]
+    #    cc[iconV[5,iel]]+=1.
+    #    sr_el[iel]=e[iel]
 
-    for i in range(0,NV):
-        if cc[i] != 0:
-           sr[i]=sr[i]/cc[i]
+    #for i in range(0,NV):
+    #    if cc[i] != 0:
+    #       sr[i]=sr[i]/cc[i]
 
-    print("compute nodal strain rate: %.3f s" % (timing.time() - start))
+    #print("compute nodal strain rate: %.3f s" % (timing.time() - start))
 
     #####################################################################
     # compute stress tensor 
     #####################################################################
-    start = timing.time()
+    #start = timing.time()
 
-    sigma_xx=np.zeros(nel,dtype=np.float64)
-    sigma_yy=np.zeros(nel,dtype=np.float64)
-    sigma_xy=np.zeros(nel,dtype=np.float64)
-    for iel in range(0,nel):
-        sigma_xx[iel]=-p_el[iel]+2*viscosity(mat[iel],exx[iel],eyy[iel],exy[iel],temperature,rheology)*exx[iel]
-        sigma_yy[iel]=-p_el[iel]+2*viscosity(mat[iel],exx[iel],eyy[iel],exy[iel],temperature,rheology)*eyy[iel]
-        sigma_xy[iel]=           2*viscosity(mat[iel],exx[iel],eyy[iel],exy[iel],temperature,rheology)*exy[iel]
+    #sigma_xx=np.zeros(nel,dtype=np.float64)
+    #sigma_yy=np.zeros(nel,dtype=np.float64)
+    #sigma_xy=np.zeros(nel,dtype=np.float64)
+    #for iel in range(0,nel):
+    #    sigma_xx[iel]=-p_el[iel]+2*viscosity(mat[iel],exx[iel],eyy[iel],exy[iel],temperature,rheology)*exx[iel]
+    #    sigma_yy[iel]=-p_el[iel]+2*viscosity(mat[iel],exx[iel],eyy[iel],exy[iel],temperature,rheology)*eyy[iel]
+    #    sigma_xy[iel]=           2*viscosity(mat[iel],exx[iel],eyy[iel],exy[iel],temperature,rheology)*exy[iel]
 
-    np.savetxt('stress.ascii',np.array([xc,yc,sigma_xx,sigma_yy,sigma_xy]).T,header='# x,y,sigma_xx,sigma_yy,sigma_xy')
+    #np.savetxt('stress.ascii',np.array([xc,yc,sigma_xx,sigma_yy,sigma_xy]).T,header='# x,y,sigma_xx,sigma_yy,sigma_xy')
 
-    print("compute stress: %.3f s" % (timing.time() - start))
+    #print("compute stress: %.3f s" % (timing.time() - start))
 
     #####################################################################
     # plot of solution
     # the 7-node P2+ element does not exist in vtk, but the 6-node one does, i.e. type=22. 
     #####################################################################
-    start = timing.time()
+    #start = timing.time()
 
-    filename = 'solution_{:04d}.vtu'.format(iiter)
-    vtufile=open(filename,"w")
-    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-    vtufile.write("<UnstructuredGrid> \n")
-    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+    #filename = 'solution_vel_{:04d}.vtu'.format(iiter)
+    #vtufile=open(filename,"w")
+    #vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+    #vtufile.write("<UnstructuredGrid> \n")
+    #vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
     #####
-    vtufile.write("<Points> \n")
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</Points> \n")
+    #vtufile.write("<Points> \n")
+    #vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+    #for i in range(0,NV):
+    #    vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
+    #vtufile.write("</DataArray>\n")
+    #vtufile.write("</Points> \n")
     #####
-    vtufile.write("<CellData Scalars='scalars'>\n")
+    #vtufile.write("<CellData Scalars='scalars'>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (area[iel]))
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%10e\n" % (area[iel]))
+    #vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%7e\n" % (viscosity(mat[iel],exx[iel],eyy[iel],exy[iel],temperature,rheology)))
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%7e\n" % (viscosity(mat[iel],exx[iel],eyy[iel],exy[iel],temperature,rheology)))
+    #vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='mat' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d\n" % (mat[iel]))
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='mat' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%d\n" % (mat[iel]))
+    #vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='p (el)' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%7e\n" % (p_el[iel]))
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='p (el)' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%7e\n" % (p_el[iel]))
+    #vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (exx[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (eyy[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (exy[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (e[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_xx' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%e\n" % (sigma_xx[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_yy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%e\n" % (sigma_yy[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='sigma_xy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%e\n" % (sigma_xy[iel]))
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%10e\n" % (exx[iel]))
+    #vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%10e\n" % (eyy[iel]))
+    #vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%10e\n" % (exy[iel]))
+    #vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%10e\n" % (e[iel]))
+    #vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='sigma_xx' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%e\n" % (sigma_xx[iel]))
+    #vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='sigma_yy' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%e\n" % (sigma_yy[iel]))
+    #vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='sigma_xy' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%e\n" % (sigma_xy[iel]))
+    #vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("</CellData>\n")
+    #vtufile.write("</CellData>\n")
     #####
-    vtufile.write("<PointData Scalars='scalars'>\n")
+    #vtufile.write("<PointData Scalars='scalars'>\n")
     #--
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (cm/year)' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (cm/year)' Format='ascii'> \n")
+    #for i in range(0,NV):
+    #    vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
+    #vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='p (nod)' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e \n" %q[i])
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Float32' Name='p (nod)' Format='ascii'> \n")
+    #for i in range(0,NV):
+    #    vtufile.write("%10e \n" %q[i])
+    #vtufile.write("</DataArray>\n")
     #--
     #vtufile.write("<DataArray type='Float32' Name='fix_u' Format='ascii'> \n")
     #for i in range(0,NV):
@@ -880,34 +936,34 @@ for iiter in range(0,25):
     #    vtufile.write("%10e \n" %val)
     #vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("</PointData>\n")
+    #vtufile.write("</PointData>\n")
     #####
-    vtufile.write("<Cells>\n")
+    #vtufile.write("<Cells>\n")
     #--
-    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],\
-                                              iconV[3,iel],iconV[4,iel],iconV[5,iel]))
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],\
+    #                                          iconV[3,iel],iconV[4,iel],iconV[5,iel]))
+    #vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d \n" %((iel+1)*6))
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%d \n" %((iel+1)*6))
+    #vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-    for iel in range (0,nel):
-        vtufile.write("%d \n" %22)
-    vtufile.write("</DataArray>\n")
+    #vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+    #for iel in range (0,nel):
+    #    vtufile.write("%d \n" %22)
+    #vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("</Cells>\n")
+    #vtufile.write("</Cells>\n")
     #####
-    vtufile.write("</Piece>\n")
-    vtufile.write("</UnstructuredGrid>\n")
-    vtufile.write("</VTKFile>\n")
-    vtufile.close()
+    #vtufile.write("</Piece>\n")
+    #vtufile.write("</UnstructuredGrid>\n")
+    #vtufile.write("</VTKFile>\n")
+    #vtufile.close()
 
-    filename = 'pressure_{:04d}.vtu'.format(iiter)
+    filename = 'solution_{:04d}.vtu'.format(iiter)
     vtufile=open(filename,"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
     vtufile.write("<UnstructuredGrid> \n")
@@ -929,6 +985,78 @@ for iiter in range(0,25):
         vtufile.write("%10e \n" %(p[iconP[1,iel]]))
         vtufile.write("%10e \n" %(p[iconP[2,iel]]))
     vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
+    for i in range(0,nel):
+        vtufile.write("%10e \n" %eta_nodal[3*i])
+        vtufile.write("%10e \n" %eta_nodal[3*i+1])
+        vtufile.write("%10e \n" %eta_nodal[3*i+2])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+    for i in range(0,nel):
+        vtufile.write("%10e \n" %exx_nodal[3*i])
+        vtufile.write("%10e \n" %exx_nodal[3*i+1])
+        vtufile.write("%10e \n" %exx_nodal[3*i+2])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
+    for i in range(0,nel):
+        vtufile.write("%10e \n" %eyy_nodal[3*i])
+        vtufile.write("%10e \n" %eyy_nodal[3*i+1])
+        vtufile.write("%10e \n" %eyy_nodal[3*i+2])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+    for i in range(0,nel):
+        vtufile.write("%10e \n" %exy_nodal[3*i])
+        vtufile.write("%10e \n" %exy_nodal[3*i+1])
+        vtufile.write("%10e \n" %exy_nodal[3*i+2])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='sigma_xx' Format='ascii'> \n")
+    for i in range(0,nel):
+        vtufile.write("%10e \n" %sigma_xx_nodal[3*i])
+        vtufile.write("%10e \n" %sigma_xx_nodal[3*i+1])
+        vtufile.write("%10e \n" %sigma_xx_nodal[3*i+2])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='sigma_yy' Format='ascii'> \n")
+    for i in range(0,nel):
+        vtufile.write("%10e \n" %sigma_yy_nodal[3*i])
+        vtufile.write("%10e \n" %sigma_yy_nodal[3*i+1])
+        vtufile.write("%10e \n" %sigma_yy_nodal[3*i+2])
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='sigma_xy' Format='ascii'> \n")
+    for i in range(0,nel):
+        vtufile.write("%10e \n" %sigma_xy_nodal[3*i])
+        vtufile.write("%10e \n" %sigma_xy_nodal[3*i+1])
+        vtufile.write("%10e \n" %sigma_xy_nodal[3*i+2])
+    vtufile.write("</DataArray>\n")
+
+
+    vtufile.write("<DataArray type='Float32' Name='mat' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%d\n" % (mat[iel]))
+        vtufile.write("%d\n" % (mat[iel]))
+        vtufile.write("%d\n" % (mat[iel]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%e\n" % (area[iel]))
+        vtufile.write("%e\n" % (area[iel]))
+        vtufile.write("%e\n" % (area[iel]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (cm/year)' Format='ascii'> \n")
+    for iel in range(0,nel):
+        vtufile.write("%10e %10e %10e \n" %(u[iconV[0,iel]]/cm*year,v[iconV[0,iel]]/cm*year,0.))
+        vtufile.write("%10e %10e %10e \n" %(u[iconV[1,iel]]/cm*year,v[iconV[1,iel]]/cm*year,0.))
+        vtufile.write("%10e %10e %10e \n" %(u[iconV[2,iel]]/cm*year,v[iconV[2,iel]]/cm*year,0.))
+    vtufile.write("</DataArray>\n")
+    #--
     vtufile.write("</PointData>\n")
     #####
     vtufile.write("<Cells>\n")
