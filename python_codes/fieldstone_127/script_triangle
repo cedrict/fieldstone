@@ -11,10 +11,11 @@ cat mypoints mysegments > mesh.poly
 #../../../../triangle/triangle  -j -q25 -a1500000000 -o2 -pc mesh.poly
 
 #../../../../triangle/triangle  -j -q25 -a10000000   -o2 -pc mesh.poly
-#../../../../triangle/triangle  -j -q25 -a4000000   -o2 -pc mesh.poly
-#../../../../triangle/triangle  -j -q25 -a2000000   -o2 -pc mesh.poly
-#../../../../triangle/triangle  -j -q25 -a1000000   -o2 -pc mesh.poly
-../../../../triangle/triangle  -j -q25 -a800000   -o2 -pc mesh.poly
+#../../../../triangle/triangle  -j -q25  -a4000000   -o2 -pc mesh.poly
+#../../../../triangle/triangle  -j -q25  -a2000000   -o2 -pc mesh.poly
+../../../../triangle/triangle  -j -q25  -a1000000   -o2 -pc mesh.poly
+#../../../../triangle/triangle  -j -q25   -a800000   -o2 -pc mesh.poly
+#../../../../triangle/triangle  -j -q25   -a600000   -o2 -pc mesh.poly
 
 echo "nel="
 head -1 mesh.1.ele 

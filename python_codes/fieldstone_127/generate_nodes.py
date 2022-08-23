@@ -6,7 +6,7 @@ from parameters import *
 filename='mypoints'
 nodesfile=open(filename,"w")
 
-nodesfile.write("%5d %5d %3d %3d\n" %(np_left+np_right+np_top+np_bottom+np_object+1,2,0,1))
+nodesfile.write("%5d %5d %3d %3d\n" %(np_left+np_right+np_top+np_bottom+3*np_object+1,2,0,1))
 
 counter=0
 counter_segment=0
@@ -66,6 +66,30 @@ for i in range (0,np_object):
        if i<np_object-1:
           counter_segment+=1
           segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+
+for i in range (0,np_object):
+       angle=2*np.pi/(np_object-1)*i
+       x=xobject+(rad+ddr1)*np.cos(angle)
+       y=yobject+(rad+ddr1)*np.sin(angle)
+       nodesfile.write("%5d %10e %10e %3d\n" %(counter+1,x,y,0))
+       counter+=1
+       if i<np_object-1:
+          counter_segment+=1
+          segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+
+for i in range (0,np_object):
+       angle=2*np.pi/(np_object-1)*i
+       x=xobject+(rad+ddr2)*np.cos(angle)
+       y=yobject+(rad+ddr2)*np.sin(angle)
+       nodesfile.write("%5d %10e %10e %3d\n" %(counter+1,x,y,0))
+       counter+=1
+       if i<np_object-1:
+          counter_segment+=1
+          segmentfile.write("%5d %5d %5d %5d \n" %(counter_segment,counter,counter+1,0))
+
+
+
+
 
 
 #middle of object

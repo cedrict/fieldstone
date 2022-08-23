@@ -55,15 +55,18 @@ def NNP(rq,sq):
 
 ###############################################################################
 
+etas_diff=[1e19,8e19,2e20,5e20,1e21]
+
 def viscosity(imat,exx,eyy,exy,temp,rheology):
 
     ee=np.sqrt(0.5*(exx**2+eyy**2)+exy**2)
     ee=max(ee,1e-20)
 
     # diffusion creep viscosity (gatt20)
-    Ediff_UM=410e3
-    Adiff_UM=1e-7
-    eta_diff=Adiff_UM**(-1.)*np.exp(Ediff_UM/(Rgas*temp)) #no 1/2 to match Garel
+    #Ediff_UM=410e3
+    #Adiff_UM=1e-7
+    #eta_diff=Adiff_UM**(-1.)*np.exp(Ediff_UM/(Rgas*temp)) #no 1/2 to match Garel
+    eta_diff=etas_diff[idiff]
 
     #--------------
     if rheology==0: # constant viscosity
@@ -146,18 +149,22 @@ if False:
 ###############################################################################
 # allowing for argument parsing through command line
 
-if int(len(sys.argv) == 4):
+if int(len(sys.argv) == 5):
    temperature = float(sys.argv[1])
    strain_rate_background=float(sys.argv[2])
    rheology= int(sys.argv[3])
+   idiff= int(sys.argv[4])
 else:
-   temperature = 1400.0 # range 1300:100:1600
+   temperature = 1600.0 # range 1300:100:1600
    strain_rate_background=-14 # range 1e-14, 1e-15, 1e-16
    rheology=1
+   idiff= 2 
 
 strain_rate_background=10**strain_rate_background
 
 u_bc = Ly*strain_rate_background
+
+print(temperature,strain_rate_background,rheology,idiff)
 
 ###############################################################################
 
@@ -695,6 +702,7 @@ for iiter in range(0,25):
     ######################################################################
     start = timing.time()
 
+    e_nodal = np.zeros(3*nel,dtype=np.float64)  
     exx_nodal = np.zeros(3*nel,dtype=np.float64)  
     eyy_nodal = np.zeros(3*nel,dtype=np.float64)  
     exy_nodal = np.zeros(3*nel,dtype=np.float64)  
@@ -739,9 +747,12 @@ for iiter in range(0,25):
         #end for
     #end for iel
 
+    e_nodal[:]=np.sqrt(0.5*(exx_nodal[:]*exx_nodal[:]+eyy_nodal[:]*eyy_nodal[:])+exy_nodal[:]*exy_nodal[:])
+
     print("     -> exx (m,M) %e %e" %(np.min(exx_nodal),np.max(exx_nodal)))
     print("     -> eyy (m,M) %e %e" %(np.min(eyy_nodal),np.max(eyy_nodal)))
     print("     -> exy (m,M) %e %e" %(np.min(exy_nodal),np.max(exy_nodal)))
+    print("     -> e   (m,M) %e %e" %(np.min(e_nodal)  ,np.max(e_nodal)))
     print("     -> eta (m,M) %e %e" %(np.min(eta_nodal),np.max(eta_nodal)))
         
     print("compute nodal: %.3f s" % (timing.time() - start))
@@ -993,6 +1004,13 @@ for iiter in range(0,25):
         vtufile.write("%10e \n" %eta_nodal[3*i+2])
     vtufile.write("</DataArray>\n")
     #--
+    vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
+    for i in range(0,nel):
+        vtufile.write("%10e \n" %e_nodal[3*i])
+        vtufile.write("%10e \n" %e_nodal[3*i+1])
+        vtufile.write("%10e \n" %e_nodal[3*i+2])
+    vtufile.write("</DataArray>\n")
+    #--
     vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
     for i in range(0,nel):
         vtufile.write("%10e \n" %exx_nodal[3*i])
@@ -1048,6 +1066,13 @@ for iiter in range(0,25):
         vtufile.write("%e\n" % (area[iel]))
         vtufile.write("%e\n" % (area[iel]))
         vtufile.write("%e\n" % (area[iel]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='diameter' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%e\n" % (np.sqrt(area[iel])))
+        vtufile.write("%e\n" % (np.sqrt(area[iel])))
+        vtufile.write("%e\n" % (np.sqrt(area[iel])))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (cm/year)' Format='ascii'> \n")

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+
+python3 generate_nodes.py
+cat mypoints mysegments > mesh.poly
+../../../../triangle/triangle  -j -q25 -a1000000   -o2 -pc mesh.poly > momo
+#echo "nel="
+#head -1 mesh.1.ele 
+head -1 mesh.1.ele > temp
+#echo "NV0="
+#head -1 mesh.1.node 
+head -1 mesh.1.node >> temp
+
+for T in 1600 ; do
+
+    for sr in -14 -15 -16 ; do
+
+        for r in 1 2 3 ; do
+
+            for idiff in 0 1 2 3 4 ; do
+
+                echo T: $T  strainrate: $sr rheology: $r idiff: $idiff
+
+                python3 stone.py $T $sr $r $idiff > opla
+
+                mkdir results_strainrate${sr}_rheo${r}_etadiff${idiff}
+                mv *.vtu results_strainrate${sr}_rheo${r}_etadiff${idiff}
+                mv *.ascii results_strainrate${sr}_rheo${r}_etadiff${idiff}
+                mv opla results_strainrate${sr}_rheo${r}_etadiff${idiff}
+
+            done
+
+        done
+
+    done
+
+done 
+
+
+
