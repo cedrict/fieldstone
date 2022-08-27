@@ -27,3 +27,4 @@ build FE matrix 303.95608698 s | nel= 24389
 build FE matrix 395.815382969 s | nel= 27000
 build FE matrix 563.268242085 s | nel= 29791
 build FE matrix 604.922397342 s | nel= 32768
+build FE matrix 2170.553029 s | nel= 64000
