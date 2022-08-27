@@ -749,6 +749,8 @@ for iiter in range(0,25):
 
     e_nodal[:]=np.sqrt(0.5*(exx_nodal[:]*exx_nodal[:]+eyy_nodal[:]*eyy_nodal[:])+exy_nodal[:]*exy_nodal[:])
 
+    np.savetxt('strainrate.ascii',np.array([xP-Lx/2,yP-Ly/2,e_nodal,eta_nodal]).T,header='# x,y,e')
+
     print("     -> exx (m,M) %e %e" %(np.min(exx_nodal),np.max(exx_nodal)))
     print("     -> eyy (m,M) %e %e" %(np.min(eyy_nodal),np.max(eyy_nodal)))
     print("     -> exy (m,M) %e %e" %(np.min(exy_nodal),np.max(exy_nodal)))
