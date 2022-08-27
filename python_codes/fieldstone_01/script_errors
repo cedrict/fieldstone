@@ -1,14 +1,19 @@
+#! /bin/bash
+
 rm -f errors
-python3 fieldstone.py   8   8 0 | grep nel >> errors
-python3 fieldstone.py  12  12 0 | grep nel >> errors
-python3 fieldstone.py  16  16 0 | grep nel >> errors
-python3 fieldstone.py  24  24 0 | grep nel >> errors
-python3 fieldstone.py  32  32 0 | grep nel >> errors
-python3 fieldstone.py  48  48 0 | grep nel >> errors
-python3 fieldstone.py  64  64 0 | grep nel >> errors
-python3 fieldstone.py  96  96 0 | grep nel >> errors
-python3 fieldstone.py 128 128 0 | grep nel >> errors
+rm -f build
+rm -f solve
 
+for n in {8..80} ; do
 
+    for s in {1..10} ; do 
 
+        echo nelx=nely= $n
+        python3 stone.py  $n $n 0 > opla
+        grep errv opla >> errors
+        grep Build opla >> build 
+        grep Solve opla >> solve 
 
+    done
+
+done
