@@ -13,3 +13,10 @@ plot[][]\
 'stats_AB.ascii' u 1:3 w lp ps .34 t 'max(A)',\
 'stats_AB.ascii' u 1:4 w lp ps .34 t 'min(B)',\
 'stats_AB.ascii' u 1:5 w lp ps .34 t 'max(B)'
+
+set log y 
+set output 'convergence.pdf'
+plot[][]\
+'conv_AB.ascii' u 1:2 w lp ps .3 t 'A',\
+'conv_AB.ascii' u 1:3 w lp ps .3 t 'B',\
+'conv_AB.ascii' u 1:4 w l dt 2 lt -1  t 'tol'

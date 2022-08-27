@@ -7,6 +7,7 @@ import time as timing
 from scipy.sparse import csr_matrix, lil_matrix
 import random
 import matplotlib.pyplot as plt
+from numpy import linalg as LA
 
 #------------------------------------------------------------------------------
 
@@ -52,8 +53,8 @@ gamma=600  # kinetics
 nstep=2000 # maximum number of timestep   
 dt=1e-4    # time step
 
-nelx = 100
-nely = 100 
+nelx = 128
+nely = 128
 
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
@@ -64,7 +65,11 @@ NP=nnx*nny      # number of nodes
 nel=nelx*nely   # number of elements, total
 Nfem=2*NP*ndof  # Total number of degrees of freedom
 
+niter=10
+tol=1e-6
+
 stats_AB_file=open('stats_AB.ascii',"w")
+conv_AB_file=open('conv_AB.ascii',"w")
 
 #####################################################################
 
@@ -114,10 +119,8 @@ for j in range(0,nely):
 #####################################################################
 # define temperature boundary conditions
 #####################################################################
-
-bc_fix=np.zeros(Nfem,dtype=np.bool)  
-bc_val=np.zeros(Nfem,dtype=np.float64) 
-
+#bc_fix=np.zeros(Nfem,dtype=np.bool)  
+#bc_val=np.zeros(Nfem,dtype=np.float64) 
 #for i in range(0,NP):
 #    if y[i]/Ly<eps:
 #       bc_fix[i]=True ; bc_val[i]=Peb
@@ -131,6 +134,8 @@ bc_val=np.zeros(Nfem,dtype=np.float64)
 
 A = np.zeros(NP,dtype=np.float64)
 B = np.zeros(NP,dtype=np.float64)
+Amem = np.zeros(NP,dtype=np.float64)
+Bmem = np.zeros(NP,dtype=np.float64)
 
 for i in range(0,NP):
     A[i]=a+b+random.uniform(-0.01,0.01)
@@ -162,153 +167,179 @@ for istep in range(0,nstep):
     print("istep= ", istep)
     print("-----------------------------")
 
-    #################################################################
-    # build FE matrix
-    #################################################################
-    start = timing.time()
+    for iiter in range(0,niter):
 
-    A_mat = lil_matrix((Nfem,Nfem),dtype=np.float64) # FE matrix 
-    #A_mat = np.zeros((Nfem,Nfem),dtype=np.float64) # FE matrix 
-    rhs   = np.zeros(Nfem,dtype=np.float64)          # FE rhs 
-    B_mat=np.zeros((2,m),dtype=np.float64)           # gradient matrix B 
-    N_mat = np.zeros((m,1),dtype=np.float64)         # shape functions
-    N = np.zeros(m,dtype=np.float64)                 # shape functions
+        #################################################################
+        # build FE matrix
+        #################################################################
+        start = timing.time()
 
-    for iel in range (0,nel):
+        A_mat = lil_matrix((Nfem,Nfem),dtype=np.float64) # FE matrix 
+        #A_mat = np.zeros((Nfem,Nfem),dtype=np.float64) # FE matrix 
+        rhs   = np.zeros(Nfem,dtype=np.float64)          # FE rhs 
+        B_mat=np.zeros((2,m),dtype=np.float64)           # gradient matrix B 
+        N_mat = np.zeros((m,1),dtype=np.float64)         # shape functions
+        N = np.zeros(m,dtype=np.float64)                 # shape functions
 
-        a_el_A=np.zeros((m,m),dtype=np.float64)
-        a_el_B=np.zeros((m,m),dtype=np.float64)
-        b_el_A=np.zeros(m,dtype=np.float64)
-        b_el_B=np.zeros(m,dtype=np.float64)
-        Kd=np.zeros((m,m),dtype=np.float64)   # elemental diffusion matrix 
-        MM=np.zeros((m,m),dtype=np.float64)   # elemental mass matrix 
+        for iel in range (0,nel):
 
-        Avect=A[icon[:,iel]]
-        Bvect=B[icon[:,iel]]
+            a_el_A=np.zeros((m,m),dtype=np.float64)
+            a_el_B=np.zeros((m,m),dtype=np.float64)
+            b_el_A=np.zeros(m,dtype=np.float64)
+            b_el_B=np.zeros(m,dtype=np.float64)
+            Kd=np.zeros((m,m),dtype=np.float64)   # elemental diffusion matrix 
+            MM=np.zeros((m,m),dtype=np.float64)   # elemental mass matrix 
 
-        for iq in [-1,1]:
-            for jq in [-1,1]:
+            Avect=A[icon[:,iel]]
+            Bvect=B[icon[:,iel]]
 
-                # position & weight of quad. point
-                rq=iq/sqrt3
-                sq=jq/sqrt3
-                weightq=1.*1.
+            for iq in [-1,1]:
+                for jq in [-1,1]:
 
-                # calculate shape functions
-                N_mat[0,0]=0.25*(1.-rq)*(1.-sq)
-                N_mat[1,0]=0.25*(1.+rq)*(1.-sq)
-                N_mat[2,0]=0.25*(1.+rq)*(1.+sq)
-                N_mat[3,0]=0.25*(1.-rq)*(1.+sq)
+                    # position & weight of quad. point
+                    rq=iq/sqrt3
+                    sq=jq/sqrt3
+                    weightq=1.*1.
 
-                N[0]=0.25*(1.-rq)*(1.-sq)
-                N[1]=0.25*(1.+rq)*(1.-sq)
-                N[2]=0.25*(1.+rq)*(1.+sq)
-                N[3]=0.25*(1.-rq)*(1.+sq)
+                    # calculate shape functions
+                    N_mat[0,0]=0.25*(1.-rq)*(1.-sq)
+                    N_mat[1,0]=0.25*(1.+rq)*(1.-sq)
+                    N_mat[2,0]=0.25*(1.+rq)*(1.+sq)
+                    N_mat[3,0]=0.25*(1.-rq)*(1.+sq)
 
-                # calculate shape function derivatives
-                dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
-                dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
-                dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
-                dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
+                    N[0]=0.25*(1.-rq)*(1.-sq)
+                    N[1]=0.25*(1.+rq)*(1.-sq)
+                    N[2]=0.25*(1.+rq)*(1.+sq)
+                    N[3]=0.25*(1.-rq)*(1.+sq)
 
+                    # calculate shape function derivatives
+                    dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
+                    dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
+                    dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
+                    dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
-                # calculate jacobian matrix
-                jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                for k in range(0,m):
-                    jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
-                    jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
-                    jcb[1,0]+=dNds[k]*x[icon[k,iel]]
-                    jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+                    # calculate jacobian matrix
+                    jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                    for k in range(0,m):
+                        jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+                        jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+                        jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+                        jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+                    #end for
+                    jcob=np.linalg.det(jcb)
+                    jcbi=np.linalg.inv(jcb)
+
+                    # compute dNdx & dNdy
+                    Aq=0
+                    Bq=0
+                    for k in range(0,m):
+                        dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+                        dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+                        B_mat[0,k]=dNdx[k]
+                        B_mat[1,k]=dNdy[k]
+                        Aq+=N[k]*Amem[icon[k,iel]]
+                        Bq+=N[k]*Bmem[icon[k,iel]]
+                    #end for
+
+                    # compute mass matrix
+                    MM=N_mat.dot(N_mat.T)*weightq*jcob
+
+                    # compute diffusion matrix
+                    Kd=B_mat.T.dot(B_mat)*weightq*jcob
+
+                    a_el_A+=MM*(1+gamma*dt)+Kd*dt
+                    b_el_A+=MM.dot(Avect) + gamma*N*(a+Aq**2*Bq)*weightq*jcob*dt
+
+                    a_el_B+=MM+d*Kd*dt
+                    b_el_B+=MM.dot(Bvect) + gamma*N*(b-Aq**2*Bq)*weightq*jcob*dt
+
                 #end for
-                jcob=np.linalg.det(jcb)
-                jcbi=np.linalg.inv(jcb)
+            #end for
 
-                # compute dNdx & dNdy
-                Aq=0
-                Bq=0
-                for k in range(0,m):
-                    dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-                    dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
-                    B_mat[0,k]=dNdx[k]
-                    B_mat[1,k]=dNdy[k]
-                    Aq+=N[k]*A[icon[k,iel]]
-                    Bq+=N[k]*B[icon[k,iel]]
+            # apply boundary conditions
+            #for k1 in range(0,m):
+            #    m1=icon[k1,iel]
+            #    if bc_fix[m1]:
+            #       Aref=a_el[k1,k1]
+            #       for k2 in range(0,m):
+            #           m2=icon[k2,iel]
+            #           b_el[k2]-=a_el[k2,k1]*bc_val[m1]
+            #           a_el[k1,k2]=0
+            #           a_el[k2,k1]=0
+            #       a_el[k1,k1]=Aref
+            #       b_el[k1]=Aref*bc_val[m1]
+            #    #end if
+            #end for
+
+            # assemble matrix A_mat and right hand side rhs
+            for k1 in range(0,m):
+                m1=icon[k1,iel]
+                for k2 in range(0,m):
+                    m2=icon[k2,iel]
+                    A_mat[m1,m2]+=a_el_A[k1,k2]
                 #end for
-
-                # compute mass matrix
-                MM=N_mat.dot(N_mat.T)*weightq*jcob
-
-                # compute diffusion matrix
-                Kd=B_mat.T.dot(B_mat)*weightq*jcob
-
-                a_el_A+=MM*(1+gamma*dt)+Kd*dt
-                b_el_A+=MM.dot(Avect) + gamma*N*(a+Aq**2*Bq)*weightq*jcob*dt
-
-                a_el_B+=MM+d*Kd*dt
-                b_el_B+=MM.dot(Bvect) + gamma*N*(b-Aq**2*Bq)*weightq*jcob*dt
-
+                rhs[m1]+=b_el_A[k1]
             #end for
-        #end for
-
-        # apply boundary conditions
-        #for k1 in range(0,m):
-        #    m1=icon[k1,iel]
-        #    if bc_fix[m1]:
-        #       Aref=a_el[k1,k1]
-        #       for k2 in range(0,m):
-        #           m2=icon[k2,iel]
-        #           b_el[k2]-=a_el[k2,k1]*bc_val[m1]
-        #           a_el[k1,k2]=0
-        #           a_el[k2,k1]=0
-        #       a_el[k1,k1]=Aref
-        #       b_el[k1]=Aref*bc_val[m1]
-        #    #end if
-        #end for
-
-        # assemble matrix A_mat and right hand side rhs
-        for k1 in range(0,m):
-            m1=icon[k1,iel]
-            for k2 in range(0,m):
-                m2=icon[k2,iel]
-                A_mat[m1,m2]+=a_el_A[k1,k2]
+            for k1 in range(0,m):
+                m1=icon[k1,iel]+NP
+                for k2 in range(0,m):
+                    m2=icon[k2,iel]+NP
+                    A_mat[m1,m2]+=a_el_B[k1,k2]
+                #end for
+                rhs[m1]+=b_el_B[k1]
             #end for
-            rhs[m1]+=b_el_A[k1]
-        #end for
-        for k1 in range(0,m):
-            m1=icon[k1,iel]+NP
-            for k2 in range(0,m):
-                m2=icon[k2,iel]+NP
-                A_mat[m1,m2]+=a_el_B[k1,k2]
-            #end for
-            rhs[m1]+=b_el_B[k1]
-        #end for
 
-    #end for iel
+        #end for iel
 
-    print("building temperature matrix and rhs: %.3f s" % (timing.time() - start))
+        print("building temperature matrix and rhs: %.3f s" % (timing.time() - start))
 
-    #export matrix nonzero structure
-    #plt.spy(A_mat, markersize=2.5)
-    #plt.savefig('matrix.png', bbox_inches='tight')
-    #plt.clf()
+        #export matrix nonzero structure
+        #plt.spy(A_mat, markersize=2.5)
+        #plt.savefig('matrix.png', bbox_inches='tight')
+        #plt.clf()
 
-    #################################################################
-    # solve system
-    #################################################################
-    start = timing.time()
+        #################################################################
+        # solve system
+        #################################################################
+        start = timing.time()
 
-    sol = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
+        sol = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
 
-    A=sol[0:NP]
-    B=sol[NP:Nfem]
+        Asol=sol[0:NP]
+        Bsol=sol[NP:Nfem]
 
-    print("     -> A (m,M) %.4f %.4f " %(np.min(A),np.max(A)))
-    print("     -> B (m,M) %.4f %.4f " %(np.min(B),np.max(B)))
+        print("     -> A (m,M) %.4f %.4f " %(np.min(Asol),np.max(Asol)))
+        print("     -> B (m,M) %.4f %.4f " %(np.min(Bsol),np.max(Bsol)))
+
+
+        print("solve time: %.3f s" % (timing.time() - start))
+
+        #################################################################
+        # assess nl convergence 
+        #################################################################
+
+        chi_A=LA.norm(Asol-Amem,2) # A convergence indicator
+        chi_B=LA.norm(Bsol-Bmem,2) # B convergence indicator
+
+        print('     -> convergence A,B: %.3e %.3e | tol= %.2e' %(chi_A,chi_B,tol))
+
+        conv_AB_file.write("%f %10e %10e %10e\n" %(istep+iiter/100,chi_A,chi_B,tol))
+        conv_AB_file.flush()
+
+
+        if chi_A<tol and chi_B<tol:
+           A[:]=Asol[:]
+           B[:]=Bsol[:]
+           print('     ***converged***')
+           break
+
+        Amem[:]=Asol[:]
+        Bmem[:]=Bsol[:]
+
+    #end for iter
 
     stats_AB_file.write("%e %e %e %e %e\n" % (istep*dt,np.min(A),np.max(A),np.min(B),np.max(B)))
     stats_AB_file.flush()
-
-    print("solve time: %.3f s" % (timing.time() - start))
 
     #################################################################
     # compute averages
@@ -429,7 +460,10 @@ for istep in range(0,nstep):
     for i in range(0,NP):
         vtufile.write("%e \n" % B[i])
     vtufile.write("</DataArray>\n")
-
+    vtufile.write("<DataArray type='Float32' Name='A^2B' Format='ascii'> \n")
+    for i in range(0,NP):
+        vtufile.write("%e \n" % (A[i]*A[i]*B[i]))
+    vtufile.write("</DataArray>\n")
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='grad(A)' Format='ascii'> \n")
     for i in range(0,NP):
         vtufile.write("%10f %10f %10f \n" %(dAdx[i],dAdy[i],0.))

@@ -20,7 +20,7 @@ performed on systems of equations, we consider the following equations
 \frac{\partial B}{\partial t} &=& d \Delta B  + \gamma (b-A^2B) 
 \end{eqnarray}
 with the two unknowns, $A$ and $B$. This system of equations is used to model the interaction between
-two interacting chemicals $A$ and $B$.
+two interacting chemicals $A$ and $B$ \cite{mawb12}.
 
 $B$ represents the concentration of
 a ``substrate'' (inhibitor) chemical that is consumed in a reaction by some chemical ``activator'',
@@ -29,7 +29,7 @@ equations. Both substances are also produced at some background rate ($\gamma a$
 respectively) and $A$ decays with first-order kinetics at a rate $\gamma$.
 
 This ``substrate depletion'' reaction
-model is known as Schnakenberg kinetics. This
+model is known as Schnakenberg kinetics \cite{gime72,schn79}. This
 model is most widely applied in biology, but it might also be relevant in Earth science to explain
 the formation of self-organizing patterns, for example, related to mineral growth, stromatolites and
 corals, concretions, and so on.
@@ -61,23 +61,176 @@ nye = 50 ; % number of elements in y-direction
 dt = 5e-4 ; % time step
 \end{verbatim}
 
+The coupled PDEs are nonlinear: they both contain the term $A^2B$. As such 
+a specific algorithm must be employed so as to make sure that the 
+equations are adequately solved. Picard iterations are then used.
+Since the matrix does not change (only the rhs) we will be making use of this fact.
 
-\begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_130/results/AB_000}
-\includegraphics[width=10cm]{python_codes/fieldstone_130/results/AB_200}
-\includegraphics[width=10cm]{python_codes/fieldstone_130/results/AB_400}
-\includegraphics[width=10cm]{python_codes/fieldstone_130/results/AB_600}
-\includegraphics[width=10cm]{python_codes/fieldstone_130/results/AB_800}\\
-{\captionfont phases $A$ and $B$ at time steps 0,200,400,600,800.}
-\end{center}
+\begin{eqnarray}
+\int \vec{\bN}^T \vec{\bN} dV \cdot \frac{\partial \vec{\cal A}}{\partial t} + 
+\int {\bm B}^T \cdot {\bm B} dV \cdot \vec{\cal A} 
+&=& \int \vec{\bN}^T \gamma a dV 
+- \gamma\int \vec{bN}^T \vec{\bN} dV \cdot \vec{\cal A}
++ \int \vec{\bN}^T \gamma A^2 B dV \nn\\ 
+\int \vec{\bN}^T \vec{\bN} dV \cdot \frac{\partial \vec{\cal B}}{\partial t} + 
+\int d {\bm B}^T \cdot {\bm B} dV \cdot \vec{\cal B} 
+&=& \int \vec{\bN}^T \gamma b dV 
+- \int \vec{\bN}^T \gamma A^2 B dV 
+\end{eqnarray}
 
+We define the mass matrix $\M$ and the diffusion matrix $\K_D$ as follows:
+\[
+{\M} = 
+\int \vec{\bN}^T \vec{\bN} dV 
+\qquad
+\K_D = 
+\int {\bm B}^T \cdot {\bm B} dV  
+\]
+so that we have (note that  the $a$, $b$, $d$ and $\gamma$ coefficients are
+constant in space so we can take them out of the integrals)
+\begin{eqnarray}
+{\M} \cdot  \frac{\partial \vec{\cal A}}{\partial t} + 
+\K_D \cdot \vec{\cal A} 
+&=& \int \vec{\bN}^T \gamma a dV 
+- \gamma \int \vec{bN}^T \vec{\bN} dV \cdot \vec{\cal A}
++ \int \vec{\bN}^T A^2 B dV  \nn\\
+{\M} \cdot  \frac{\partial \vec{\cal B}}{\partial t} + 
+d\; \K_D \cdot \vec{\cal B} 
+&=& \int \vec{\bN}^T \gamma b dV 
+- \gamma \int \vec{\bN}^T A^2 B dV 
+\end{eqnarray}
+We approximate the time derivative by a simple forward step:
+\[
+\frac{\partial \vec{\cal A}}{\partial t}  \simeq
+\frac{ \vec{\cal A}^n - \vec{\cal A}^{n-1}  }{\delta t} 
+\]
+so that we have
+\begin{eqnarray}
+{\M} \cdot \frac{ \vec{\cal A}^n - \vec{\cal A}^{n-1}  }{\delta t}  +
+\K_D \cdot \vec{\cal A}^n 
+&=& \int \vec{\bN}^T \gamma a dV 
+- \gamma \int \vec{bN}^T \vec{\bN} dV \cdot \vec{\cal A}
++ \int \vec{\bN}^T (A^n)^2 B^n dV  \nn\\
+{\M} \cdot \frac{ \vec{\cal B}^n - \vec{\cal B}^{n-1}  }{\delta t}  +
+d \K_D \cdot \vec{\cal B}^n 
+&=& \int \vec{\bN}^T \gamma b dV 
+- \int \vec{\bN}^T (A^n)^2 B^n dV 
+\end{eqnarray}
+or,
+\begin{eqnarray}
+\underbrace{
+((1+\gamma \delta t) {\M} + \K_D  \delta t )}_{\K_A} \cdot \vec{\cal A}^n 
+&=& \delta t \int \vec{\bN}^T \gamma a dV 
++ \delta t\int \vec{\bN}^T (A^n)^2 B^n dV  
++ {\bm M} \cdot \vec{\cal A}^{n-1}
+\nn\\
+\underbrace{({\bm M} + \K_D \delta t)}_{\K_B} \cdot \vec{\cal B}^n 
+&=& 
+\underbrace{
+\delta t \int \vec{\bN}^T \gamma b dV 
+- \delta t\int \vec{\bN}^T (A^n)^2 B^n dV 
++ {\bm M} \cdot \vec{\cal B}^{n-1}}_{\vec{f}_B}
+\end{eqnarray}
+Note that the rhs vectors depend on An, Bn and ...
+
+We assume $\vec{\cal A}^{n-1}$ and $\vec{\cal B}^{n-1}$ known. 
+
+
+Inside the integrals, we have
+\[
+A^n = \vec{\cal N}\cdot \vec{\cal A}^n
+\qquad 
+B^n = \vec{\cal N}\cdot \vec{\cal B}^n
+\]
+
+
+
+\subsubsection*{simple approach} The FE matrix structure is as follows:
+\[
+\left(
+\begin{array}{cc}
+\K_A & 0 \\
+0 & \K_B
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal A}\\
+\vec{\cal B}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{f}_A\\
+\vec{f}_B
+\end{array}
+\right)
+\]
+
+
+\subsubsection*{different approach} The rhs of the first equation contains the term $\gamma A^2B$
+so that we have to compute
+\[
+\gamma \int \vec{\cal N}^T A^2 B dV
+\]
+In the previous approach we take $A$ and $B$ as obtained from the previous nonlinear iteration. 
+However, we could do things a little bit differently by only taking $A$ from the previous iteration (so $A_{k-1}$)
+while keeping $B_{k}$.
+
+\[
+\M_A \cdot \vec{\cal B}^n_k =  \int A_{k-1}^2 \vec{\bN}^T \vec{\bN} dV  \cdot \vec{B}_k^n
+\]
+
+
+The FE matrix structure is then as follows:
+\[
+\left(
+\begin{array}{cc}
+\K_A & \M_A \\
+0 & \K_B
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal A}_k\\
+\vec{\cal B}_k
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{f}_A\\
+\vec{f}_B
+\end{array}
+\right)
+\]
+
+
+
+
+\newpage
 
 This is a rough take.
 I need nonlinear iterations to take care of the nonlinearities introduced by the rhs
 I need to explaore whether part of the rhs could not make its way in the matrix. 
 Quid of the nl convergence ?
-Also need to document of the global matrix is partitioned and assembled.
-write about weak forms of PDEs.
-Plot statistics. What about steady state ?
 This is 1st order implicit in time. Crank-Nicolson ?
-Include refs of the book. 
+Check analytical solution 
+talk about implementation of bc
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_130/results/AB_000}
+\includegraphics[width=6cm]{python_codes/fieldstone_130/results/AB_200}
+\includegraphics[width=6cm]{python_codes/fieldstone_130/results/AB_400}
+\includegraphics[width=6cm]{python_codes/fieldstone_130/results/AB_600}
+\includegraphics[width=6cm]{python_codes/fieldstone_130/results/AB_800}\\
+{\captionfont phases $A$ and $B$ at time steps 0,200,400,600,800.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_130/results/stats_AB}
+\end{center}
