@@ -16,12 +16,12 @@ from scipy.sparse.linalg import spsolve
 #------------------------------------------------------------------------------
 
 #import mms_dh as mms
-import mms_jolm17 as mms
+#import mms_jolm17 as mms
 #import mms_sinker as mms
 #import mms_sinker_open as mms
 #import mms_poiseuille as mms
-#import mms_johnbook as mms
-#:import mms_bocg12 as mms
+import mms_johnbook as mms
+#import mms_bocg12 as mms
 #import mms_solcx as mms
 #import mms_solkz as mms
 
@@ -31,14 +31,14 @@ import mms_jolm17 as mms
 Lx=1
 Ly=1
 
-nelx=16
-nely=16
+nelx=32
+nely=32
 
 ndofV=2
 ndofP=1
 
-Vspace='P4'
-Pspace='P3'
+Vspace='Q2'
+Pspace='Pm1'
 
 visu=1
 

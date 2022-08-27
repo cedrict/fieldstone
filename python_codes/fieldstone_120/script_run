@@ -12,9 +12,13 @@ rm errors*
 exp=4
 
 
-for e in {1..27}; do
+#for e in {1..27}; do
 
 #for e in {26..27}; do
+
+for e in 4 5 6 7 9 15 16 18 ; do 
+
+#for e in 9 ; do # P1+P1 
 
     #--------------
     if test $e == 1  ; then Vspace=Q1    Pspace=Q0    nq1=2  nq2=3  nq3=4 ; fi
