@@ -101,13 +101,12 @@ we define an effective viscosity:
 = \frac{\eta \delta t}{\delta t + \eta/\mu} 
 \]
 
-When 
-\[
-\sigma_m 
-= \frac{1}{3}(\sigma_{xx}+\sigma_{yy}+\sigma_{zz})
-= \frac{1}{3}(\sigma_{xx}+\sigma_{yy}+\frac12(\sigma_{xx}+\sigma_{yy}))
-= \frac{1}{2}(\sigma_{xx}+\sigma_{yy})
-\]
+The 'stress memory' rhs is computed as follows:
+\begin{lstlisting}
+f_el-=b_mat.T.dot(stress_vector[:,counterq])*weightq*jcob
+\end{lstlisting}
+
+
 
 The mesh deforms with the material flow (Lagrangian approach)
 and this is simply implemented as follows 
@@ -117,10 +116,17 @@ xV[:]+=u[:]*dt
 yV[:]+=v[:]*dt
 \end{lstlisting}
 
+The mean stress can also be computed and visualised:
+\[
+\sigma_m 
+= \frac{1}{3}(\sigma_{xx}+\sigma_{yy}+\sigma_{zz})
+= \frac{1}{3}(\sigma_{xx}+\sigma_{yy}+\frac12(\sigma_{xx}+\sigma_{yy}))
+= \frac{1}{2}(\sigma_{xx}+\sigma_{yy})
+\]
 
 
 %------------------------------------------------------------------------------
-\subsection*{Folding}
+\subsection*{Folding (experiment=1)}
 
 Boundary conditions are free slip on the left, right and bottom boundaries, while
 a horizontal velocity of $\SI{5}{\mm\per\year}$ is prescribed on the right 
@@ -128,12 +134,10 @@ boundary\footnote{The vertical component of the velocity
 on the right wall is not clear, but looking at the figure we see that 
 the thickening is the same on the left and right, so that the
 vertical velocity on the right is unconstrained.}.
-The formulation is such that there are only velocity degrees of freedom, no pressure.
-Quadratic elements ($Q_2$) are used.
 
 In the book, the time step is fixed to 
 \[
-\delta t = 0.01/edot = 0.01*Lx/u_{bc} = 0.01*4/5e-3 = 0.8year
+\delta t = 0.01/edot = 0.01*Lx/u_{bc} = 0.01*4/5e-3 = \SI{0.8}{\year}
 \]
 
 \begin{center}
@@ -164,13 +168,12 @@ Unfortunately no color legend.}
 
 what about pre-stress, initial compaction?
 
+write about perturbation!
+
 Remark:
 - p191, viscosity values in 1) are wrong ? different?
 
 
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment1/result}
-\end{center}
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment1/stats_velocity}
@@ -179,8 +182,28 @@ Remark:
 {\captionfont a}
 \end{center} 
 
+
+\begin{center}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/eta0000}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/eta0099}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/eta0199}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/eta0299}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/eta0399}\\
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/vel0000}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/vel0099}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/vel0199}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/vel0299}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/vel0399}\\
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/sigmam0000}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/sigmam0099}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/sigmam0199}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/sigmam0299}
+\includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/sigmam0399}\\
+\end{center}
+
+
 %------------------------------------------------------------------------------
-\subsection*{Numerical benchmark - pure/simple shear?}
+\subsection*{Analytical benchmark - pure shear (experiment=2)}
 
 The domain is $\SI{50}{\km}\times\SI{50}{\km}$. There is a single 
 material in the domain characterised by $\eta=\SI{1e21}{\pascal\second}$,
@@ -199,7 +222,7 @@ The increase of the accumulated stress with time is given by an analytical solut
 where the Maxwell time is $t_M = \frac{\eta}{\mu} = \SI{1e11}{\second} \simeq 3171~\si{\year}$.
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment1/vel}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment2/vel}\\
 {\captionfont Velocity field.}
 \end{center}
 
@@ -212,20 +235,57 @@ We have
 \SI{3.0592e19}{\pascal\second} 
 \]
 
-The first time that the Stokes system is solved, there is no stored stress, i.e. the 
-$\vec{\sigma}_0$ rhs is identically zero, so that the system is solved with a viscosity equal to
-$\eta_{eff}$. 
-We can easily compute the analytical solution, and we see that $\dot{\varepsilon}_{xy}=0$
-
+The resolution is set to $10\times 10$ elements. 200 time steps are carried out.
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment2/stats_velocity}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment2/stats_strainrate}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment2/stats_stress}\\
-{\captionfont Evolution of velocity, strain rate and stress statistics over 20~kyr.}
+{\captionfont Evolution or $\sigma_{xx}$ statistics over 20~kyr for various values of $\nu$.}
 \end{center} 
 
 
-TRY different POISSSON!
+
+%------------------------------------------------------------------------------
+\subsection*{Numerical benchmark - Bending of elastic slab (experiment=3)}
+
+%------------------------------------------------------------------------------
+\subsection*{Numerical benchmark - Flexure of elastic plate (experiment=4)}
+
+This benchmark is presented in Choi et al (2013) \cite{chtl13}. 
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_129/images/chtl13a}
+\end{center}
+
+
+\begin{center}
+\begin{tabular}{llll}
+\hline 
+\textit{Material properties}& \textit{elastic plate (1)}  & \textit{elastic block (2)} & \textit{viscous mantle (3)} \\
+\hline 
+\hline 
+Density         $\rho$       \ \si{\kg\per\cubic\meter} & 2700&1890 &2700 \\  
+Viscosity       $\eta$       \ \si{\pascal\second}      & $10^{35}$& $10^{35}$ & $10^{17}$ \\  
+Shear modulus   $\mu $       \ \si{\pascal}             & $30\cdot10^9$& $30\cdot10^9$&  $10^{50}$ \\
+Maxwell time    $t_M$        \ \si{\year}               & 10569930 &  10569930 & 3.1709791983764584e-41 \\  
+eff. visc.      $\eta_{eff}$ \ \si{\pascal\second}      & 4.73039776e+18& 4.73039776e+18&  1e+17\\ 
+\hline 
+\end{tabular} 
+\end{center}
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_129/results/experiment4/phases}
+\includegraphics[width=6cm]{python_codes/fieldstone_129/results/experiment4/eta_eff}
+\end{center}
+
+This explodes when shear modulus contrast becomes too big.
+It showcases oscillations at the beginning too!
+
+
+%------------------------------------------------------------------------------
+\subsection*{Numerical benchmark - Parallel-plate viscosimeter (experiment=5)}
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_129/results/experiment5/setup}
+\end{center}
 
 

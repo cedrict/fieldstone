@@ -1,0 +1,41 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+cm=0.01
+year=365.25*3600*24
+
+set xlabel 'time'
+
+
+set ylabel 'velocity (min/max)'
+set output 'stats_velocity.pdf'
+plot[][]\
+'stats_velocity.ascii' u 1:($2/cm*year) w lp lt 1 ps .25 t 'u',\
+'stats_velocity.ascii' u 1:($3/cm*year) w lp lt 1 ps .25 notitle,\
+'stats_velocity.ascii' u 1:($4/cm*year) w lp lt 2 ps .25 t 'v',\
+'stats_velocity.ascii' u 1:($5/cm*year) w lp lt 2 ps .25 notitle
+
+
+
+set ylabel 'strain rate (min/max)'
+set output 'stats_strainrate.pdf'
+plot[][]\
+'stats_exx.ascii' u 1:2 w lp lt 1 ps .25 t 'exx',\
+'stats_exx.ascii' u 1:3 w lp lt 1 ps .25 notitle,\
+'stats_eyy.ascii' u 1:2 w lp lt 2 ps .25 t 'eyy',\
+'stats_eyy.ascii' u 1:3 w lp lt 2 ps .25 notitle,\
+'stats_exy.ascii' u 1:2 w lp lt 3 ps .25 t 'exy',\
+'stats_exy.ascii' u 1:3 w lp lt 3 ps .25 notitle
+
+
+set ylabel 'stress (min/max)'
+set output 'stats_stress.pdf'
+plot[][]\
+'stats_sxx.ascii' u 1:2 w lp lt 1 ps .25 t 'exx',\
+'stats_sxx.ascii' u 1:3 w lp lt 1 ps .25 notitle,\
+'stats_syy.ascii' u 1:2 w lp lt 2 ps .25 t 'eyy',\
+'stats_syy.ascii' u 1:3 w lp lt 2 ps .25 notitle,\
+'stats_sxy.ascii' u 1:2 w lp lt 3 ps .25 t 'exy',\
+'stats_sxy.ascii' u 1:3 w lp lt 3 ps .25 notitle
+
+
