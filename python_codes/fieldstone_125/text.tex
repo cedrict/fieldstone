@@ -12,6 +12,8 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %--------------------------------------------------------------------------------------------
 
+\index[general]{Voronoi Diagram}
+
 To quote Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Voronoi_diagram}}:
 ``In mathematics, a Voronoi diagram is a partition of a plane into regions close to each of a given set of objects. 
 In the simplest case, these objects are just finitely many points in the plane (called seeds, sites, or generators). 
@@ -24,9 +26,14 @@ The domain is a 2D ({\python ndim=2}) or 3D ({\python ndim=3})
 Cartesian box. A regular grid spans this domain with resolution 
 $nelx \times nely$ or $nelx \times nely \times nelz$. 
 In each cell $nmarker\_per\_dim^{ndim}$ markers are regularly placed. 
-Finally $nvo$ seeds are randomly placed in the domain and wish to compute the Voronoi cell attached to 
+Finally $nvo$ seeds are randomly placed in the domain $[0.01:0.99]\times[0.01:0.99]$ 
+and wish to compute the Voronoi cell attached to 
 each seed. There are three test cases in the code, differing only by the number of seeds (7,27,111 respectively).
 The volume of each cell is also computed (based on the area assigned to each marker).
+
+Note that this code is by no means fast. It simply does the job. If large number of points and/or cells are 
+used or one wishes to generate hundreds of diagrams then optimised algorithms should be used. 
+Also, the algorithm does not return the identity of the neighbouring cells.
 
 TODO: write a faster version which assigns a V cell to a marker using the cell number of its neighbour. 
 Credit Henry and link to his thesis appendix.
@@ -76,6 +83,8 @@ Credit Henry and link to his thesis appendix.
 
 %------------------------------------------------------------------------------
 \noindent\rule{\textwidth}{1pt}
+
+\index[general]{Radial Distribution Function}
 
 This is a completely different exercise. A swarm of points is generated in a 3D Cartesian 
 domain using a random number generator for the coordinates.

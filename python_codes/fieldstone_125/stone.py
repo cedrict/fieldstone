@@ -10,8 +10,8 @@ print("-----------------------------")
 print("---------- stone 125 --------")
 print("-----------------------------")
 
-if ndim==2: m=4 # number of nodes for mackground cells
-if ndim==3: m=8 # number of nodes for mackground cells
+if ndim==2: m=4 # number of nodes for background cells
+if ndim==3: m=8 # number of nodes for background cells
 
 nelx=20
 nely=nelx
@@ -46,7 +46,7 @@ print('nel=',nel)
 print('NV =',NV)
 print('nmarker=',nmarker)
 
-test=4
+test=3
 
 #################################################################
 # grid point setup
@@ -235,6 +235,9 @@ swarm_cell[:]=-1
 iin= np.empty(nvo,dtype=np.bool)  # x coordinates
 
 if ndim==2:
+   #this is the not so clever brute force approach
+   #remove the zero above to try it
+   start1 = time.time()
    for im in range(0,nmarker):
        iin[:]=True
        for i in range(0,nvo):
@@ -256,7 +259,69 @@ if ndim==2:
        where=np.where(iin)[0]
        swarm_cell[im]=where[0]
    #end for
-#end if
+   end1 = time.time()
+   print(end1-start1)
+
+if ndim==2:
+   #this is the cleverer semi-brute force approach
+   #about 3-4 times faster than brut force
+   start2 = time.time()
+
+   swarm_cell[:]=-1
+   for im in range(0,nmarker):
+       # note that for the 1st particle im-1 does not make
+       # sense but in python it actually targets the last 
+       # element of the array so it won't crash
+       #if im==0:
+       #   cell_guess=0
+       #else:
+       cell_guess=swarm_cell[im-1]
+       #test guess
+       good_guess=True
+       for j in range(0,nvo):
+           if j != cell_guess:
+              xim=swarm_x[im]-xvo[cell_guess]
+              yim=swarm_y[im]-yvo[cell_guess]
+              xjm=swarm_x[im]-xvo[j]
+              yjm=swarm_y[im]-yvo[j]
+              dim=np.sqrt(xim**2+yim**2)
+              djm=np.sqrt(xjm**2+yjm**2)
+              if dim>djm:
+                 good_guess=False 
+                 break
+              #end if
+          #end if
+       #end for
+       if good_guess:
+          swarm_cell[im]=cell_guess
+       else:
+           iin[:]=True
+           for i in range(0,nvo):
+               for j in range(0,nvo):
+                   if i != j:
+                      xim=swarm_x[im]-xvo[i]
+                      yim=swarm_y[im]-yvo[i]
+                      xjm=swarm_x[im]-xvo[j]
+                      yjm=swarm_y[im]-yvo[j]
+                      dim=np.sqrt(xim**2+yim**2)
+                      djm=np.sqrt(xjm**2+yjm**2)
+                      if dim>djm:
+                         iin[i]=False 
+                         break
+                      #end if
+                   #end if
+               #end for
+           #end for
+           where=np.where(iin)[0]
+           swarm_cell[im]=where[0]
+       #end if
+       if im%1000==0: print(im,nmarker)
+   #end for im
+
+   end2 = time.time()
+   print(end2-start2)
+
+#end if dim
 
 if ndim==3:
    for im in range(0,nmarker):
@@ -409,3 +474,7 @@ if True:
     vtufile.close()
 
 print("make vtu files: %.3f s" % (time.time() - start))
+
+print("-----------------------------")
+print("------------the end----------")
+print("-----------------------------")
