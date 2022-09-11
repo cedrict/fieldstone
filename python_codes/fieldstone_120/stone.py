@@ -20,10 +20,11 @@ from scipy.sparse.linalg import spsolve
 #import mms_sinker as mms
 #import mms_sinker_open as mms
 #import mms_poiseuille as mms
-import mms_johnbook as mms
+#import mms_johnbook as mms
 #import mms_bocg12 as mms
 #import mms_solcx as mms
 #import mms_solkz as mms
+import mms_solvi as mms
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -31,18 +32,20 @@ import mms_johnbook as mms
 Lx=1
 Ly=1
 
-nelx=32
-nely=32
+nelx=120
+nely=40
 
 ndofV=2
 ndofP=1
 
-Vspace='Q2'
-Pspace='Pm1'
+Vspace='P2'
+Pspace='P1'
 
 visu=1
 
-isoparametric=False
+unstructured=True # at the moment only for solvi meshes
+
+isoparametric=True
 
 randomize_mesh=False
 
@@ -74,16 +77,16 @@ mP=FE.NNN_m(Pspace)
 
 nqel,qcoords_r,qcoords_s,qweights=Q.quadrature(Vspace,nqpts)
 
-NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
-NP,nel,xP,yP,iconP=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Pspace)
+if not unstructured:
+   NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
+   NP,nel,xP,yP,iconP=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Pspace)
+else:
+   nel,NV,NP,xV,yV,iconV,xP,yP,iconP=Tools.read_mesh(Vspace,Pspace,nelx)
 
 nq=nqel*nel
 NfemV=NV*ndofV
 NfemP=NP*ndofP
 Nfem=NfemV+NfemP
-
-hx=Lx/nelx
-hy=Ly/nely
 
 print("*****************************")
 print("           daSTONE           ")
@@ -106,11 +109,29 @@ print("*****************************")
 print("mesh setup: %.3f s" % (timing.time() - start))
 
 #--------------------------------------------------------------------
+# create arrays containing analytical solution
+#--------------------------------------------------------------------
+start = timing.time()
+
+uth = np.zeros(NV,dtype=np.float64)
+vth = np.zeros(NV,dtype=np.float64)
+pth = np.zeros(NP,dtype=np.float64)
+
+for i in range(NV):        
+    uth[i]=mms.u_th(xV[i],yV[i])
+    vth[i]=mms.v_th(xV[i],yV[i])
+
+for i in range(NP):        
+    pth[i]=mms.p_th(xP[i],yP[i])
+
+print("analytical solution: %.3f s" % (timing.time() - start))
+
+#--------------------------------------------------------------------
 # boundary conditions setup 
 #--------------------------------------------------------------------
 start = timing.time()
 
-bc_fix,bc_val=Tools.bc_setup(xV,yV,Lx,Ly,ndofV,mms.left_bc,mms.right_bc,mms.bottom_bc,mms.top_bc)
+bc_fix,bc_val=Tools.bc_setup(xV,yV,uth,vth,Lx,Ly,ndofV,mms.left_bc,mms.right_bc,mms.bottom_bc,mms.top_bc)
 
 print("bc setup: %.3f s" % (timing.time() - start))
 
@@ -124,6 +145,8 @@ m1=FE.NNN_m(space1)
 N1,nel1,x1,y1,icon1=Tools.cartesian_mesh(Lx,Ly,nelx,nely,space1)
 
 if randomize_mesh:
+   hx=Lx/nelx
+   hy=Ly/nely
    Tools.randomize_background_mesh(x1,y1,hx,hy,N1,Lx,Ly)
    Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xV,yV,iconV,nel,Vspace)
    Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xP,yP,iconP,nel,Pspace)
@@ -135,7 +158,7 @@ if randomize_mesh:
 # mapping is used). If any area comes out
 # negative or zero, or if the sum does not equal to the area of the 
 # whole domain then there is a major problem which needs to 
-# be addressed before FE are set into motion.
+# be addressed before FE matrix building process is carried out. 
 #--------------------------------------------------------------------
 start = timing.time()
 
@@ -171,6 +194,8 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 
 #--------------------------------------------------------------------
 # build FE matrix
+# |K   G|.|V|=|f|
+# |G^T 0| |P| |h|
 #--------------------------------------------------------------------
 start = timing.time()
 
@@ -233,6 +258,8 @@ for iel in range(0,nel): # loop over elements
 
         K_el+=b_mat.T.dot(c_mat.dot(b_mat))*mms.eta(xq[counterq],yq[counterq])*weightq*jcob
 
+        #print(xq[counterq],yq[counterq],mms.eta(xq[counterq],yq[counterq]))
+
         for k in range(0,mV): 
             f_el[2*k+0]+=NNNV[k]*jcob*weightq*mms.bx(xq[counterq],yq[counterq])
             f_el[2*k+1]+=NNNV[k]*jcob*weightq*mms.by(xq[counterq],yq[counterq])
@@ -251,10 +278,11 @@ for iel in range(0,nel): # loop over elements
     # apply bc
     Tools.apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel)
 
-    # assemble (missing h_el)
+    # assemble
     Tools.assemble_K(K_el,A_sparse,iconV,mV,ndofV,iel)
     Tools.assemble_G(G_el,A_sparse,iconV,iconP,NfemV,mV,mP,ndofV,ndofP,iel)
     Tools.assemble_f(f_el,rhs,iconV,mV,ndofV,iel)
+    Tools.assemble_h(h_el,rhs,iconP,mP,NfemV,iel)
 
 #end for iel
 
@@ -361,6 +389,16 @@ if mms.pnormalise:
    print("pressure normalisation: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
+# compute h 
+#------------------------------------------------------------------------------
+
+hmin=min(np.sqrt(area))
+hmax=max(np.sqrt(area))
+havrg=sum(np.sqrt(area))/nel
+
+print('     -> h (m,M,avrg)=',hmin,hmax,havrg)
+
+#------------------------------------------------------------------------------
 # compute vrms and errors
 #------------------------------------------------------------------------------
 start = timing.time()
@@ -408,29 +446,17 @@ errp=np.sqrt(errp/(Lx*Ly))
 errdivv=np.sqrt(errdivv/(Lx*Ly))
 
 print("     -> nel= %6d ; vrms= %.8e | vrms_th= %.8e | %7d %7d" %(nel,vrms,mms.vrms_th(),NfemV,NfemP))
-print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errdivv= %.8e | %7d %7d %.8e" %(nel,errv,errp,errdivv,NfemV,NfemP,hx))
+print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errdivv= %.8e | %7d %7d %.8e" %(nel,errv,errp,errdivv,NfemV,NfemP,hmin))
 
 print("compute vrms & errors: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
 
-uth = np.zeros(NV,dtype=np.float64)
-vth = np.zeros(NV,dtype=np.float64)
-pth = np.zeros(NP,dtype=np.float64)
-
-for i in range(NV):        
-    uth[i]=mms.u_th(xV[i],yV[i])
-    vth[i]=mms.v_th(xV[i],yV[i])
-
-for i in range(NP):        
-    pth[i]=mms.p_th(xP[i],yP[i])
-
-#------------------------------------------------------------------------------
-
 if visu:
 
-   Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'mesh.vtu')
-   Tools.export_elements_to_vtu(x1,y1,icon1,space1,'mesh1.vtu')
+   Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu',area)
+   Tools.export_elements_to_vtu(xP,yP,iconP,Pspace,'meshP.vtu',area)
+   if not isoparametric: Tools.export_elements_to_vtu(x1,y1,icon1,space1,'mesh1.vtu')
 
    Tools.export_swarm_to_ascii(xV,yV,'Vnodes.ascii')
    Tools.export_swarm_to_ascii(xP,yP,'Pnodes.ascii')

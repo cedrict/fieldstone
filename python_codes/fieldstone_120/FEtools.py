@@ -1150,6 +1150,169 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
+def read_meshXX(Vspace,Pspace):
+
+    NV=393
+    nel=180
+
+    f_vel = open('square_lvl1_P2.mesh', 'r') 
+    lines_vel = f_vel.readlines()
+    nlines=np.size(lines_vel)
+    print('P2 mesh file counts ',nlines,' lines')
+    for i in range(0,nlines):
+          line=lines_vel[i].strip()
+          columns=line.split()
+          if np.size(columns)>0 and columns[0]=='Vertices':
+             nextline=lines_vel[i+1].strip()
+             print('mesh counts ',nextline, 'vertices')
+             NV=int(nextline)
+             vline_vel=i+2
+          if np.size(columns)>0 and columns[0]=='Triangles':
+             nextline=lines_vel[i+1].strip()
+             print('mesh counts ',nextline, 'triangles')
+             nel=int(nextline)
+             tline_vel=i+2
+    #end for
+    f_press = open('square_lvl1_P1.mesh', 'r') 
+    lines_press = f_press.readlines()
+    nlines=np.size(lines_press)
+    print('P1 mesh file counts ',nlines,' lines')
+    for i in range(0,nlines):
+          line=lines_press[i].strip()
+          columns=line.split()
+          if np.size(columns)>0 and columns[0]=='Vertices':
+             nextline=lines_press[i+1].strip()
+             print('mesh counts ',nextline, 'vertices')
+             NP=int(nextline)
+             vline_press=i+2
+          if np.size(columns)>0 and columns[0]=='Triangles':
+             nextline=lines_press[i+1].strip()
+             print('mesh counts ',nextline, 'triangles')
+             nel=int(nextline)
+             tline_press=i+2
+    #end for
+
+    xV=np.zeros(NV,dtype=np.float64)
+    yV=np.zeros(NV,dtype=np.float64)
+    counter=0
+    for i in range(vline_vel,vline_vel+NV):
+          line=lines_vel[i].strip()
+          columns=line.split()
+          xV[counter]=float(columns[0])
+          yV[counter]=float(columns[1])
+          counter+=1
+    #end for
+    np.savetxt('mesh.ascii',np.array([xV,yV]).T)
+
+    iconV=np.zeros((6,nel),dtype=np.int32)
+    counter=0
+    for i in range(tline_vel,tline_vel+nel):
+             line=lines_vel[i].strip()
+             columns=line.split()
+             iconV[0,counter]=int(columns[0])-1
+             iconV[1,counter]=int(columns[1])-1
+             iconV[2,counter]=int(columns[2])-1
+             iconV[3,counter]=int(columns[3])-1
+             iconV[4,counter]=int(columns[4])-1
+             iconV[5,counter]=int(columns[5])-1
+             counter+=1
+
+
+    xP=np.zeros(NP,dtype=np.float64)
+    yP=np.zeros(NP,dtype=np.float64)
+    counter=0
+    for i in range(vline_press,vline_press+NP):
+             line=lines_press[i].strip()
+             columns=line.split()
+             xP[counter]=float(columns[0])
+             yP[counter]=float(columns[1])
+             counter+=1
+    np.savetxt('meshP.ascii',np.array([xP,yP]).T)
+
+    iconP=np.zeros((3,nel),dtype=np.int32)
+    counter=0
+    for i in range(tline_press,tline_press+nel):
+             line=lines_press[i].strip()
+             columns=line.split()
+             iconP[0,counter]=int(columns[0])-1
+             iconP[1,counter]=int(columns[1])-1
+             iconP[2,counter]=int(columns[2])-1
+             counter+=1
+
+
+    return nel,NV,NP,xV,yV,iconV,xP,yP,iconP
+
+
+
+
+#------------------------------------------------------------------------------
+
+def read_mesh(Vspace,Pspace,nelx):
+
+    counter=0
+    file=open("meshes/solvi/"+str(nelx)+"/meshinfo", "r") 
+    for line in file:
+        fields = line.strip().split()
+        #print(fields[0], fields[1], fields[2])
+        if counter==0:
+           nel=int(fields[0])
+        if counter==1:
+           NV0=int(fields[0])
+        counter+=1
+    print('nel', nel) 
+    print('NV0', NV0)
+
+    if Vspace=='P2' and Pspace=='P1':
+       NV=NV0
+       # velocity
+       xV=np.zeros(NV,dtype=np.float64)
+       yV=np.zeros(NV,dtype=np.float64)
+       xV[0:NV],yV[0:NV]=np.loadtxt("meshes/solvi/"+str(nelx)+"/mesh.1.node",unpack=True,usecols=[1,2],skiprows=1)
+       iconV=np.zeros((6,nel),dtype=np.int32)
+       iconV[0,:],iconV[1,:],iconV[2,:],iconV[4,:],iconV[5,:],iconV[3,:]=\
+       np.loadtxt("meshes/solvi/"+str(nelx)+"/mesh.1.ele",unpack=True, usecols=[1,2,3,4,5,6],skiprows=1)
+       iconV[0,:]-=1
+       iconV[1,:]-=1
+       iconV[2,:]-=1
+       iconV[3,:]-=1
+       iconV[4,:]-=1
+       iconV[5,:]-=1
+       #for iel in range(0,nel):
+       #    print(iel,iconV[:,iel])
+    else:
+       exit('space not available in read_mesh')
+
+    if Pspace=='P1': # pressure
+       # from this information I must now extract the number of nodes 
+       # which make the P1 mesh for pressure.
+       P1bool=np.zeros(NV,dtype=np.bool) 
+       for iel in range(0,nel):
+           P1bool[iconV[0,iel]]=True
+           P1bool[iconV[1,iel]]=True
+           P1bool[iconV[2,iel]]=True
+       NP=np.count_nonzero(P1bool)
+       iconP=np.zeros((3,nel),dtype=np.int32)
+       iconP[0,:]=iconV[0,:]
+       iconP[1,:]=iconV[1,:]
+       iconP[2,:]=iconV[2,:]
+       xP=np.zeros(NP,dtype=np.float64)
+       yP=np.zeros(NP,dtype=np.float64)
+       for iel in range(0,nel):
+           xP[iconP[0,iel]]=xV[iconP[0,iel]]
+           xP[iconP[1,iel]]=xV[iconP[1,iel]]
+           xP[iconP[2,iel]]=xV[iconP[2,iel]]
+           yP[iconP[0,iel]]=yV[iconP[0,iel]]
+           yP[iconP[1,iel]]=yV[iconP[1,iel]]
+           yP[iconP[2,iel]]=yV[iconP[2,iel]]
+           #print(iel,iconP[:,iel])
+    else:
+       exit('space not available in read_mesh')
+
+    return nel,NV,NP,xV,yV,iconV,xP,yP,iconP
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
 def randomize_background_mesh(x1,y1,hx,hy,N1,Lx,Ly):
     alpha=0.1
     for i in range(0,N1):
@@ -1168,7 +1331,6 @@ def adapt_FE_mesh(x1,y1,icon1,m1,space1,x,y,icon,nel,space):
             NNN1=FE.NNN(r[i],s[i],space1)
             x[icon[i,iel]]=NNN1.dot(x1[icon1[0:m1,iel]])
             y[icon[i,iel]]=NNN1.dot(y1[icon1[0:m1,iel]])
-    
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -1210,7 +1372,7 @@ def export_connectivity_array_elt1_to_ascii(x,y,icon,filename):
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def export_elements_to_vtu(x,y,icon,space,filename):
+def export_elements_to_vtu(x,y,icon,space,filename,area):
     N=np.size(x)
     m,nel=np.shape(icon)
  
@@ -1264,6 +1426,13 @@ def export_elements_to_vtu(x,y,icon,space,filename):
         vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
     vtufile.write("</DataArray>\n")
     vtufile.write("</Points> \n")
+    #####
+    vtufile.write("<CellData Scalars='scalars'>\n")
+    vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (area[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</CellData>\n")
     #####
     vtufile.write("<Cells>\n")
     #--
@@ -1415,7 +1584,7 @@ def export_swarm_scalar_to_vtu(x,y,scalar,filename):
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
+def bc_setup(x,y,u,v,Lx,Ly,ndof,left,right,bottom,top):
     eps=1e-8
     N=np.size(x)
     Nfem=2*N
@@ -1432,6 +1601,9 @@ def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
            if left=='v_zero':
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+           if left=='analytical':
+              bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = u[i]
+              bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = v[i]
 
         #right
         if x[i]/Lx>(1-eps):
@@ -1440,8 +1612,11 @@ def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
            if right=='no_slip':
               bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 0.
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
-           if left=='v_zero':
+           if right=='v_zero':
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+           if right=='analytical':
+              bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = u[i]
+              bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = v[i]
 
         #bottom
         if y[i]/Ly<eps:
@@ -1453,6 +1628,9 @@ def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
            if bottom=='mone':
               bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = -1.
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+           if bottom=='analytical':
+              bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = u[i]
+              bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = v[i]
 
         #top
         if y[i]/Ly>(1-eps):
@@ -1464,6 +1642,9 @@ def bc_setup(x,y,Lx,Ly,ndof,left,right,bottom,top):
            if top=='one':
               bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 1.
               bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+           if top=='analytical':
+              bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = u[i]
+              bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = v[i]
 
     return bc_fix,bc_val
 
@@ -1523,6 +1704,14 @@ def assemble_f(f_el,rhs,iconV,mV,ndofV,iel):
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
+def assemble_h(h_el,rhs,iconP,mP,NfemV,iel):
+    for k2 in range(0,mP):
+        m2=iconP[k2,iel]
+        rhs[NfemV+m2]+=h_el[k2]
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
 def apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel):
     for k1 in range(0,mV):
         for i1 in range(0,ndofV):
@@ -1571,10 +1760,6 @@ def visualise_with_tikz(x,y,space):
     tikzfile.write("\\end{tikzpicture} \n")
     tikzfile.write("\\end{center} \n")
     tikzfile.close()
-        
 
-
-
-
-
-
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
