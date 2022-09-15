@@ -1247,66 +1247,141 @@ def read_meshXX(Vspace,Pspace):
 
 #------------------------------------------------------------------------------
 
-def read_mesh(Vspace,Pspace,nelx):
+def read_mesh(Vspace,Pspace,nelx,meshtype):
 
     counter=0
-    file=open("meshes/solvi/"+str(nelx)+"/meshinfo", "r") 
+    file=open("meshes/"+meshtype+"/"+str(nelx)+"/meshinfo", "r") 
     for line in file:
         fields = line.strip().split()
         #print(fields[0], fields[1], fields[2])
         if counter==0:
            nel=int(fields[0])
         if counter==1:
-           NV0=int(fields[0])
+           N_P2=int(fields[0])
         counter+=1
     print('nel', nel) 
-    print('NV0', NV0)
+    print('N_P2', N_P2)
 
-    if Vspace=='P2' and Pspace=='P1':
-       NV=NV0
-       # velocity
+    x_P2=np.zeros(N_P2,dtype=np.float64)
+    y_P2=np.zeros(N_P2,dtype=np.float64)
+    x_P2[0:N_P2],y_P2[0:N_P2]=np.loadtxt("meshes/"+meshtype+"/"+str(nelx)+"/mesh.1.node",unpack=True,usecols=[1,2],skiprows=1)
+    icon_P2=np.zeros((6,nel),dtype=np.int32)
+    icon_P2[0,:],icon_P2[1,:],icon_P2[2,:],icon_P2[4,:],icon_P2[5,:],icon_P2[3,:]=\
+    np.loadtxt("meshes/"+meshtype+"/"+str(nelx)+"/mesh.1.ele",unpack=True, usecols=[1,2,3,4,5,6],skiprows=1)
+    icon_P2[0,:]-=1
+    icon_P2[1,:]-=1
+    icon_P2[2,:]-=1
+    icon_P2[3,:]-=1
+    icon_P2[4,:]-=1
+    icon_P2[5,:]-=1
+    P1bool=np.zeros(N_P2,dtype=np.bool) 
+    for iel in range(0,nel):
+        P1bool[icon_P2[0,iel]]=True
+        P1bool[icon_P2[1,iel]]=True
+        P1bool[icon_P2[2,iel]]=True
+
+    N_P1=np.count_nonzero(P1bool)
+    icon_P1=np.zeros((3,nel),dtype=np.int32)
+    icon_P1[0,:]=icon_P2[0,:]
+    icon_P1[1,:]=icon_P2[1,:]
+    icon_P1[2,:]=icon_P2[2,:]
+    x_P1=np.zeros(N_P1,dtype=np.float64)
+    y_P1=np.zeros(N_P1,dtype=np.float64)
+    for iel in range(0,nel):
+        x_P1[icon_P1[0,iel]]=x_P2[icon_P1[0,iel]]
+        x_P1[icon_P1[1,iel]]=x_P2[icon_P1[1,iel]]
+        x_P1[icon_P1[2,iel]]=x_P2[icon_P1[2,iel]]
+        y_P1[icon_P1[0,iel]]=y_P2[icon_P1[0,iel]]
+        y_P1[icon_P1[1,iel]]=y_P2[icon_P1[1,iel]]
+        y_P1[icon_P1[2,iel]]=y_P2[icon_P1[2,iel]]
+
+    if Vspace=='P1+':
+       NV=N_P1+nel
        xV=np.zeros(NV,dtype=np.float64)
        yV=np.zeros(NV,dtype=np.float64)
-       xV[0:NV],yV[0:NV]=np.loadtxt("meshes/solvi/"+str(nelx)+"/mesh.1.node",unpack=True,usecols=[1,2],skiprows=1)
-       iconV=np.zeros((6,nel),dtype=np.int32)
-       iconV[0,:],iconV[1,:],iconV[2,:],iconV[4,:],iconV[5,:],iconV[3,:]=\
-       np.loadtxt("meshes/solvi/"+str(nelx)+"/mesh.1.ele",unpack=True, usecols=[1,2,3,4,5,6],skiprows=1)
-       iconV[0,:]-=1
-       iconV[1,:]-=1
-       iconV[2,:]-=1
-       iconV[3,:]-=1
-       iconV[4,:]-=1
-       iconV[5,:]-=1
-       #for iel in range(0,nel):
-       #    print(iel,iconV[:,iel])
-    else:
-       exit('space not available in read_mesh')
+       xV[0:N_P1]=x_P1[0:N_P1]
+       yV[0:N_P1]=y_P1[0:N_P1]
+       iconV=np.zeros((4,nel),dtype=np.int32)
+       iconV[0,:]=icon_P1[0,:]
+       iconV[1,:]=icon_P1[1,:]
+       iconV[2,:]=icon_P1[2,:]
+       for iel in range (0,nel): #bubble nodes
+           xV[N_P1+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
+           yV[N_P1+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
+           iconV[3,iel]=N_P1+iel
 
-    if Pspace=='P1': # pressure
-       # from this information I must now extract the number of nodes 
-       # which make the P1 mesh for pressure.
-       P1bool=np.zeros(NV,dtype=np.bool) 
-       for iel in range(0,nel):
-           P1bool[iconV[0,iel]]=True
-           P1bool[iconV[1,iel]]=True
-           P1bool[iconV[2,iel]]=True
-       NP=np.count_nonzero(P1bool)
-       iconP=np.zeros((3,nel),dtype=np.int32)
-       iconP[0,:]=iconV[0,:]
-       iconP[1,:]=iconV[1,:]
-       iconP[2,:]=iconV[2,:]
+    if Vspace=='P2':
+       NV=N_P2
+       xV=np.zeros(NV,dtype=np.float64)
+       yV=np.zeros(NV,dtype=np.float64)
+       xV[:]=x_P2[:]
+       yV[:]=y_P2[:]
+       iconV=np.zeros((6,nel),dtype=np.int32)
+       iconV[0,:]=icon_P2[0,:]
+       iconV[1,:]=icon_P2[1,:]
+       iconV[2,:]=icon_P2[2,:]
+       iconV[3,:]=icon_P2[3,:]
+       iconV[4,:]=icon_P2[4,:]
+       iconV[5,:]=icon_P2[5,:]
+
+    if Vspace=='P2+':
+       NV=N_P2+nel
+       xV=np.zeros(NV,dtype=np.float64)
+       yV=np.zeros(NV,dtype=np.float64)
+       xV[0:N_P2]=x_P2[0:N_P2]
+       yV[0:N_P2]=y_P2[0:N_P2]
+       iconV=np.zeros((7,nel),dtype=np.int32)
+       iconV[0,:]=icon_P2[0,:]
+       iconV[1,:]=icon_P2[1,:]
+       iconV[2,:]=icon_P2[2,:]
+       iconV[3,:]=icon_P2[3,:]
+       iconV[4,:]=icon_P2[4,:]
+       iconV[5,:]=icon_P2[5,:]
+       for iel in range (0,nel): #bubble nodes
+           xV[N_P2+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
+           yV[N_P2+iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
+           iconV[6,iel]=N_P2+iel
+
+    if Pspace=='P0':
+       NP=nel
        xP=np.zeros(NP,dtype=np.float64)
        yP=np.zeros(NP,dtype=np.float64)
+       iconP=np.zeros((1,nel),dtype=np.int32)
        for iel in range(0,nel):
-           xP[iconP[0,iel]]=xV[iconP[0,iel]]
-           xP[iconP[1,iel]]=xV[iconP[1,iel]]
-           xP[iconP[2,iel]]=xV[iconP[2,iel]]
-           yP[iconP[0,iel]]=yV[iconP[0,iel]]
-           yP[iconP[1,iel]]=yV[iconP[1,iel]]
-           yP[iconP[2,iel]]=yV[iconP[2,iel]]
-           #print(iel,iconP[:,iel])
-    else:
-       exit('space not available in read_mesh')
+           xP[iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
+           yP[iel]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
+           iconP[0,iel]=iel
+
+    if Pspace=='P1':
+       NP=N_P1
+       xP=np.zeros(NP,dtype=np.float64)
+       yP=np.zeros(NP,dtype=np.float64)
+       xP[:]=x_P1[:]
+       yP[:]=y_P1[:]
+       iconP=np.zeros((3,nel),dtype=np.int32)
+       iconP[0,:]=icon_P1[0,:]
+       iconP[1,:]=icon_P1[1,:]
+       iconP[2,:]=icon_P1[2,:]
+
+    if Pspace=='P-1': # and Vspace=='P2+' !
+       NP=3*nel
+       xP=np.zeros(NP,dtype=np.float64)
+       yP=np.zeros(NP,dtype=np.float64)
+       iconP=np.zeros((3,nel),dtype=np.int32)
+       counter=0
+       for iel in range(0,nel):
+           xP[counter]=xV[iconV[0,iel]]
+           yP[counter]=yV[iconV[0,iel]]
+           iconP[0,iel]=counter
+           counter+=1
+           xP[counter]=xV[iconV[1,iel]]
+           yP[counter]=yV[iconV[1,iel]]
+           iconP[1,iel]=counter
+           counter+=1
+           xP[counter]=xV[iconV[2,iel]]
+           yP[counter]=yV[iconV[2,iel]]
+           iconP[2,iel]=counter
+           counter+=1
 
     return nel,NV,NP,xV,yV,iconV,xP,yP,iconP
 

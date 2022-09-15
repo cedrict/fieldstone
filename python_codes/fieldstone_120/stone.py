@@ -10,30 +10,11 @@ from scipy.sparse.linalg import spsolve
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-# all variables ending with '1' (nel1, icon1, x1, y1, ...) are those pertaining 
-# to the background mesh of either Q1 or P1 elements used for mapping.
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-#import mms_dh as mms
-#import mms_jolm17 as mms
-#import mms_sinker as mms
-#import mms_sinker_open as mms
-#import mms_poiseuille as mms
-#import mms_johnbook as mms
-#import mms_bocg12 as mms
-#import mms_solcx as mms
-#import mms_solkz as mms
-import mms_solvi as mms
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
 
 Lx=1
 Ly=1
 
-nelx=120
-nely=40
+nelx=20
 
 ndofV=2
 ndofP=1
@@ -43,29 +24,49 @@ Pspace='P1'
 
 visu=1
 
-unstructured=True # at the moment only for solvi meshes
+experiment='solvi'
+
+unstructured=1
+meshtype='generic'
 
 isoparametric=True
-
 randomize_mesh=False
-
-# if quadrilateral nqpts is nqperdim
-# if triangle nqpts is total nb of qpoints 
-
-nqpts=Q.nqpts_default(Vspace)
 
 #--------------------------------------------------------------------
 # allowing for argument parsing through command line
 #--------------------------------------------------------------------
 
 if int(len(sys.argv) == 6):
+   print("arguments:",sys.argv)
    nelx = int(sys.argv[1])
-   nely = int(sys.argv[2])
-   Vspace = sys.argv[3]
-   Pspace = sys.argv[4]
-   if  int(sys.argv[5])>0:
-       nqpts = int(sys.argv[5])
-   visu=0
+   Vspace = sys.argv[2]
+   Pspace = sys.argv[3]
+   experiment = sys.argv[4]  
+   unstructured = int(sys.argv[5])
+   #visu=0
+
+nely=nelx
+
+unstructured=(unstructured==1) 
+
+if experiment=='dh'          : import mms_dh as mms
+if experiment=='jolm17'      : import mms_jolm17 as mms
+if experiment=='sinker'      : import mms_sinker as mms
+if experiment=='sinker_open' : import mms_sinker_open as mms
+if experiment=='poiseuille'  : import mms_poiseuille as mms
+if experiment=='johnbook'    : import mms_johnbook as mms
+if experiment=='bocg12'      : import mms_bocg12 as mms
+if experiment=='solcx'       : import mms_solcx as mms
+if experiment=='solkz'       : import mms_solkz as mms
+if experiment=='solvi'       : import mms_solvi as mms
+
+
+if experiment=='solvi'       : meshtype='solvi'
+
+# if quadrilateral nqpts is nqperdim
+# if triangle nqpts is total nb of qpoints 
+
+nqpts=Q.nqpts_default(Vspace)
 
 #--------------------------------------------------------------------
 # mesh: node layout and connectivity
@@ -81,7 +82,7 @@ if not unstructured:
    NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
    NP,nel,xP,yP,iconP=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Pspace)
 else:
-   nel,NV,NP,xV,yV,iconV,xP,yP,iconP=Tools.read_mesh(Vspace,Pspace,nelx)
+   nel,NV,NP,xV,yV,iconV,xP,yP,iconP=Tools.read_mesh(Vspace,Pspace,nelx,meshtype)
 
 nq=nqel*nel
 NfemV=NV*ndofV
@@ -91,19 +92,21 @@ Nfem=NfemV+NfemP
 print("*****************************")
 print("           daSTONE           ")
 print("*****************************")
-print ('Vspace =',Vspace)
-print ('Pspace =',Pspace)
-print ('space1 =',FE.mapping(Vspace))
-print ('nqpts  =',nqpts)
-print ('nqel   =',nqel)
-print ('nelx   =',nelx)
-print ('nely   =',nely)
-print ('NV     =',NV)
-print ('NP     =',NP)
-print ('nel    =',nel)
-print ('NfemV  =',NfemV)
-print ('NfemP  =',NfemP)
-print ('Nfem   =',Nfem)
+print ('Vspace       =',Vspace)
+print ('Pspace       =',Pspace)
+print ('space1       =',FE.mapping(Vspace))
+print ('nqpts        =',nqpts)
+print ('nqel         =',nqel)
+print ('nelx         =',nelx)
+print ('nely         =',nely)
+print ('NV           =',NV)
+print ('NP           =',NP)
+print ('nel          =',nel)
+print ('NfemV        =',NfemV)
+print ('NfemP        =',NfemP)
+print ('Nfem         =',Nfem)
+print ('experiment   =',experiment)
+print ('unstructured =',unstructured)
 print("*****************************")
 
 print("mesh setup: %.3f s" % (timing.time() - start))
@@ -137,6 +140,8 @@ print("bc setup: %.3f s" % (timing.time() - start))
 
 #--------------------------------------------------------------------
 # build Q1 or P1 background mesh
+# all variables ending with '1' (nel1, icon1, x1, y1, ...) are those pertaining 
+# to the background mesh of either Q1 or P1 elements used for mapping.
 #--------------------------------------------------------------------
 
 space1=FE.mapping(Vspace)
@@ -211,6 +216,7 @@ yq = np.zeros(nq,dtype=np.float64)
 uq = np.zeros(nq,dtype=np.float64)
 vq = np.zeros(nq,dtype=np.float64)
 pq = np.zeros(nq,dtype=np.float64)
+etaq = np.zeros(nq,dtype=np.float64)
     
 dNNNVdx= np.zeros(mV,dtype=np.float64)
 dNNNVdy= np.zeros(mV,dtype=np.float64)
@@ -256,7 +262,9 @@ for iel in range(0,nel): # loop over elements
                                     [0.        ,dNNNVdy[k]],
                                     [dNNNVdy[k],dNNNVdx[k]]]
 
-        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*mms.eta(xq[counterq],yq[counterq])*weightq*jcob
+        etaq[counterq]=mms.eta(xq[counterq],yq[counterq])
+
+        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq[counterq]*weightq*jcob
 
         #print(xq[counterq],yq[counterq],mms.eta(xq[counterq],yq[counterq]))
 
@@ -392,9 +400,14 @@ if mms.pnormalise:
 # compute h 
 #------------------------------------------------------------------------------
 
-hmin=min(np.sqrt(area))
-hmax=max(np.sqrt(area))
-havrg=sum(np.sqrt(area))/nel
+if Vspace[0]=='Q':
+   hmin=min(np.sqrt(area))
+   hmax=max(np.sqrt(area))
+   havrg=sum(np.sqrt(area))/nel
+else:
+   hmin=min(np.sqrt(2*area))
+   hmax=max(np.sqrt(2*area))
+   havrg=sum(np.sqrt(2*area))/nel
 
 print('     -> h (m,M,avrg)=',hmin,hmax,havrg)
 
@@ -445,7 +458,7 @@ errv=np.sqrt(errv/(Lx*Ly))
 errp=np.sqrt(errp/(Lx*Ly))
 errdivv=np.sqrt(errdivv/(Lx*Ly))
 
-print("     -> nel= %6d ; vrms= %.8e | vrms_th= %.8e | %7d %7d" %(nel,vrms,mms.vrms_th(),NfemV,NfemP))
+print("     -> nel= %6d ; vrms= %.8e | vrms_th= %.8e | %7d %7d %e" %(nel,vrms,mms.vrms_th(),NfemV,NfemP,hmin))
 print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errdivv= %.8e | %7d %7d %.8e" %(nel,errv,errp,errdivv,NfemV,NfemP,hmin))
 
 print("compute vrms & errors: %.3f s" % (timing.time() - start))
@@ -467,18 +480,20 @@ if visu:
    Tools.export_swarm_to_vtu(xq,yq,'qpts.vtu')
    Tools.export_swarm_vector_to_vtu(xq,yq,uq,vq,'qpts_vel.vtu')
    Tools.export_swarm_scalar_to_vtu(xq,yq,pq,'qpts_p.vtu')
+   Tools.export_swarm_scalar_to_vtu(xq,yq,etaq,'qpts_eta.vtu')
    Tools.export_swarm_vector_to_ascii(xq,yq,uq,vq,'qpts_vel.ascii')
    Tools.export_swarm_scalar_to_ascii(xq,yq,pq,'qpts_p.ascii')
+   Tools.export_swarm_scalar_to_ascii(xq,yq,etaq,'qpts_eta.ascii')
 
    Tools.export_swarm_vector_to_vtu(xV,yV,u,v,'solution_velocity.vtu')
-   Tools.export_swarm_vector_to_vtu(xV,yV,uth,vth,'solution_velocity_analytical.vtu')
+   Tools.export_swarm_vector_to_vtu(xV,yV,uth,vth,'velocity_analytical.vtu')
    Tools.export_swarm_scalar_to_vtu(xP,yP,p,'solution_pressure.vtu')
-   Tools.export_swarm_scalar_to_vtu(xP,yP,pth,'solution_pressure_analytical.vtu')
+   Tools.export_swarm_scalar_to_vtu(xP,yP,pth,'pressure_analytical.vtu')
 
    Tools.export_swarm_vector_to_ascii(xV,yV,u,v,'solution_velocity.ascii')
-   Tools.export_swarm_vector_to_ascii(xV,yV,uth,vth,'solution_velocity_analytical.ascii')
+   Tools.export_swarm_vector_to_ascii(xV,yV,uth,vth,'velocity_analytical.ascii')
    Tools.export_swarm_scalar_to_ascii(xP,yP,p,'solution_pressure.ascii')
-   Tools.export_swarm_scalar_to_ascii(xP,yP,pth,'solution_pressure_analytical.ascii')
+   Tools.export_swarm_scalar_to_ascii(xP,yP,pth,'pressure_analytical.ascii')
 
    Tools.export_connectivity_array_to_ascii(xV,yV,iconV,'iconV.ascii')
    Tools.export_connectivity_array_to_ascii(xP,yP,iconP,'iconP.ascii')
