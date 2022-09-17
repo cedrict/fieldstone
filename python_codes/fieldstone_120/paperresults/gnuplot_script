@@ -1,0 +1,366 @@
+#gnuplot script for paper figures
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set xlabel 'h'
+
+hmin=0.005
+hmax=0.1
+
+#################################################################
+#################################################################
+#################################################################
+set log x
+set log y
+set format y "10^{%L}"
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'dh_structured_errorsV.pdf'
+plot[hmin:hmax][]\
+'dh/structured/errors_Q2_Q1'   u 16:6 w lp ps .7 t 'Q_2xQ_1',\
+'dh/structured/errors_Q2_Pm1'  u 16:6 w lp ps .5 t 'Q_2xP_{-1}',\
+'dh/structured/errors_P1+_P1'  u 16:6 w lp ps .5 t 'P_1^+xP_1',\
+'dh/structured/errors_P2_P1'   u 16:6 w lp ps .5 t 'P_2xP_1',\
+'dh/structured/errors_P2_P0'   u 16:6 w lp ps .5 t 'P_2xP_0',\
+'dh/structured/errors_P2+_P-1' u 16:6 w lp ps .5 t 'P_2^+xP_{-1}',\
+x**2/30 lt -1 dt 2 t 'h^2',\
+x**3/35 lt -1 dt 3 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'dh_structured_errorsP.pdf'
+plot[hmin:hmax][]\
+'dh/structured/errors_Q2_Q1'   u 16:9 w lp ps .7 t 'Q_2xQ_1',\
+'dh/structured/errors_Q2_Pm1'  u 16:9 w lp ps .5 t 'Q_2xP_{-1}',\
+'dh/structured/errors_P1+_P1'  u 16:9 w lp ps .5 t 'P_1^+xP_1',\
+'dh/structured/errors_P2_P1'   u 16:9 w lp ps .5 t 'P_2xP_1',\
+'dh/structured/errors_P2_P0'   u 16:9 w lp ps .5 t 'P_2xP_0',\
+'dh/structured/errors_P2+_P-1' u 16:9 w lp ps .5 t 'P_2^+xP_{-1}',\
+x**1/5 lt -1 dt 2 t 'h^1',\
+x**1.5/3 lt -1 dt 4 t 'h^{1.5}',\
+x**2/3 lt -1 dt 3 t 'h^2'
+
+set ylabel 'v_{rms}'
+unset format y
+unset log y
+set output 'dh_structured_vrms.pdf'
+plot[hmin:hmax][]\
+'dh/structured/vrms_Q2_Q1'   u 13:6 w lp ps .7 t 'Q_2xQ_1',\
+'dh/structured/vrms_Q2_Pm1'  u 13:6 w lp ps .5 t 'Q_2xP_{-1}',\
+'dh/structured/vrms_P1+_P1'  u 13:6 w lp ps .5 t 'P_1^+xP_1',\
+'dh/structured/vrms_P2_P1'   u 13:6 w lp ps .5 t 'P_2xP_1',\
+'dh/structured/vrms_P2_P0'   u 13:6 w lp ps .5 t 'P_2xP_0',\
+'dh/structured/vrms_P2+_P-1' u 13:6 w lp ps .5 t 'P_2^+xP_{-1}'
+
+#################################################################
+set log x
+set log y
+set format y "10^{%L}"
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'dh_unstructured_errorsV.pdf'
+plot[hmin:hmax][]\
+'dh/unstructured/errors_P1+_P1'  u 16:6 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+'dh/unstructured/errors_P2_P1'   u 16:6 w lp ps .5 lt 4 t 'P_2xP_1',\
+'dh/unstructured/errors_P2_P0'   u 16:6 w lp ps .5 lt 5 t 'P_2xP_0',\
+'dh/unstructured/errors_P2+_P-1' u 16:6 w lp ps .5 lt 6 t 'P_2^+xP_{-1}',\
+x**2/30 lt -1 dt 2 t 'h^2',\
+x**3/35 lt -1 dt 3 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'dh_unstructured_errorsP.pdf'
+plot[hmin:hmax][]\
+'dh/unstructured/errors_P1+_P1'  u 16:9 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+'dh/unstructured/errors_P2_P1'   u 16:9 w lp ps .5 lt 4 t 'P_2xP_1',\
+'dh/unstructured/errors_P2_P0'   u 16:9 w lp ps .5 lt 5 t 'P_2xP_0',\
+'dh/unstructured/errors_P2+_P-1' u 16:9 w lp ps .5 lt 6 t 'P_2^+xP_{-1}',\
+x**1/5 lt -1 dt 2 t 'h^1',\
+x**1.5 lt -1 dt 4 t 'h^{1.5}',\
+x**2/3 lt -1 dt 3 t 'h^2'
+
+set ylabel 'v_{rms}'
+unset format y
+unset log y
+set output 'dh_unstructured_vrms.pdf'
+plot[hmin:hmax][]\
+'dh/unstructured/vrms_P1+_P1'  u 13:6 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+'dh/unstructured/vrms_P2_P1'   u 13:6 w lp ps .5 lt 4 t 'P_2xP_1',\
+'dh/unstructured/vrms_P2_P0'   u 13:6 w lp ps .5 lt 5 t 'P_2xP_0',\
+'dh/unstructured/vrms_P2+_P-1' u 13:6 w lp ps .5 lt 6 t 'P_2^+xP_{-1}'
+
+
+#################################################################
+#################################################################
+#################################################################
+set log x
+set log y
+set format y "10^{%L}"
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'solkz_structured_errorsV.pdf'
+plot[hmin:hmax][]\
+'solkz/structured/errors_Q2_Q1'   u 16:6 w lp ps .7 t 'Q_2xQ_1',\
+'solkz/structured/errors_Q2_Pm1'  u 16:6 w lp ps .5 t 'Q_2xP_{-1}',\
+'solkz/structured/errors_P1+_P1'  u 16:6 w lp ps .5 t 'P_1^+xP_1',\
+'solkz/structured/errors_P2_P1'   u 16:6 w lp ps .5 t 'P_2xP_1',\
+'solkz/structured/errors_P2_P0'   u 16:6 w lp ps .5 t 'P_2xP_0',\
+'solkz/structured/errors_P2+_P-1' u 16:6 w lp ps .5 t 'P_2^+xP_{-1}',\
+x**2/500 lt -1 dt 2 t 'h^2',\
+x**3/300 lt -1 dt 3 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'solkz_structured_errorsP.pdf'
+plot[hmin:hmax][]\
+'solkz/structured/errors_Q2_Q1'   u 16:9 w lp ps .7 t 'Q_2xQ_1',\
+'solkz/structured/errors_Q2_Pm1'  u 16:9 w lp ps .5 t 'Q_2xP_{-1}',\
+'solkz/structured/errors_P1+_P1'  u 16:9 w lp ps .5 t 'P_1^+xP_1',\
+'solkz/structured/errors_P2_P1'   u 16:9 w lp ps .5 t 'P_2xP_1',\
+'solkz/structured/errors_P2_P0'   u 16:9 w lp ps .5 t 'P_2xP_0',\
+'solkz/structured/errors_P2+_P-1' u 16:9 w lp ps .5 t 'P_2^+xP_{-1}',\
+x**1/10 lt -1 dt 2 t 'h^1',\
+x**2/2 lt -1 dt 3 t 'h^2'
+
+set ylabel 'v_{rms}'
+unset format y
+unset log y
+set output 'solkz_structured_vrms.pdf'
+plot[hmin:hmax][]\
+'solkz/structured/vrms_Q2_Q1'   u 13:6 w lp ps .7 t 'Q_2xQ_1',\
+'solkz/structured/vrms_Q2_Pm1'  u 13:6 w lp ps .5 t 'Q_2xP_{-1}',\
+'solkz/structured/vrms_P1+_P1'  u 13:6 w lp ps .5 t 'P_1^+xP_1',\
+'solkz/structured/vrms_P2_P1'   u 13:6 w lp ps .5 t 'P_2xP_1',\
+'solkz/structured/vrms_P2_P0'   u 13:6 w lp ps .5 t 'P_2xP_0',\
+'solkz/structured/vrms_P2+_P-1' u 13:6 w lp ps .5 t 'P_2^+xP_{-1}'
+
+#################################################################
+set log x
+set log y
+set format y "10^{%L}"
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'solkz_unstructured_errorsV.pdf'
+plot[hmin:hmax][]\
+'solkz/unstructured/errors_P1+_P1'  u 16:6 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+'solkz/unstructured/errors_P2_P1'   u 16:6 w lp ps .5 lt 4 t 'P_2xP_1',\
+'solkz/unstructured/errors_P2_P0'   u 16:6 w lp ps .5 lt 5 t 'P_2xP_0',\
+'solkz/unstructured/errors_P2+_P-1' u 16:6 w lp ps .5 lt 6 t 'P_2^+xP_{-1}',\
+x**2/500 lt -1 dt 2 t 'h^2',\
+x**3/300 lt -1 dt 3 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'solkz_unstructured_errorsP.pdf'
+plot[hmin:hmax][]\
+'solkz/unstructured/errors_P1+_P1'  u 16:9 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+'solkz/unstructured/errors_P2_P1'   u 16:9 w lp ps .5 lt 4 t 'P_2xP_1',\
+'solkz/unstructured/errors_P2_P0'   u 16:9 w lp ps .5 lt 5 t 'P_2xP_0',\
+'solkz/unstructured/errors_P2+_P-1' u 16:9 w lp ps .5 lt 6 t 'P_2^+xP_{-1}',\
+x**1/10 lt -1 dt 2 t 'h^1',\
+x**2/2 lt -1 dt 3 t 'h^2'
+
+set ylabel 'v_{rms}'
+unset format y
+unset log y
+set output 'solkz_unstructured_vrms.pdf'
+plot[hmin:hmax][]\
+'solkz/unstructured/vrms_P1+_P1'  u 13:6 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+'solkz/unstructured/vrms_P2_P1'   u 13:6 w lp ps .5 lt 4 t 'P_2xP_1',\
+'solkz/unstructured/vrms_P2_P0'   u 13:6 w lp ps .5 lt 5 t 'P_2xP_0',\
+'solkz/unstructured/vrms_P2+_P-1' u 13:6 w lp ps .5 lt 6 t 'P_2^+xP_{-1}'
+
+
+#################################################################
+#################################################################
+#################################################################
+set log x
+set log y
+set format y "10^{%L}"
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'solcx_structured_errorsV.pdf'
+plot[hmin:hmax][]\
+'solcx/structured/errors_Q2_Q1'   u 16:6 w lp ps .7 t 'Q_2xQ_1',\
+'solcx/structured/errors_Q2_Pm1'  u 16:6 w lp ps .5 t 'Q_2xP_{-1}',\
+'solcx/structured/errors_P1+_P1'  u 16:6 w lp ps .5 t 'P_1^+xP_1',\
+'solcx/structured/errors_P2_P1'   u 16:6 w lp ps .5 t 'P_2xP_1',\
+'solcx/structured/errors_P2_P0'   u 16:6 w lp ps .5 t 'P_2xP_0',\
+'solcx/structured/errors_P2+_P-1' u 16:6 w lp ps .5 t 'P_2^+xP_{-1}',\
+x**2/30 lt -1 dt 2 t 'h^2',\
+x**3/95 lt -1 dt 3 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'solcx_structured_errorsP.pdf'
+plot[hmin:hmax][]\
+'solcx/structured/errors_Q2_Q1'   u 16:9 w lp ps .7 t 'Q_2xQ_1',\
+'solcx/structured/errors_Q2_Pm1'  u 16:9 w lp ps .5 t 'Q_2xP_{-1}',\
+'solcx/structured/errors_P1+_P1'  u 16:9 w lp ps .5 t 'P_1^+xP_1',\
+'solcx/structured/errors_P2_P1'   u 16:9 w lp ps .5 t 'P_2xP_1',\
+'solcx/structured/errors_P2_P0'   u 16:9 w lp ps .5 t 'P_2xP_0',\
+'solcx/structured/errors_P2+_P-1' u 16:9 w lp ps .5 t 'P_2^+xP_{-1}',\
+x**1/12 lt -1 dt 2 t 'h^1',\
+x**0.5/15 lt -1 dt 4 t 'h^{0.5}',\
+x**2/4 lt -1 dt 3 t 'h^2'
+
+set ylabel 'v_{rms}'
+unset format y
+unset log y
+set output 'solcx_structured_vrms.pdf'
+plot[hmin:hmax][]\
+'solcx/structured/vrms_Q2_Q1'   u 13:6 w lp ps .7 t 'Q_2xQ_1',\
+'solcx/structured/vrms_Q2_Pm1'  u 13:6 w lp ps .5 t 'Q_2xP_{-1}',\
+'solcx/structured/vrms_P1+_P1'  u 13:6 w lp ps .5 t 'P_1^+xP_1',\
+'solcx/structured/vrms_P2_P1'   u 13:6 w lp ps .5 t 'P_2xP_1',\
+'solcx/structured/vrms_P2_P0'   u 13:6 w lp ps .5 t 'P_2xP_0',\
+'solcx/structured/vrms_P2+_P-1' u 13:6 w lp ps .5 t 'P_2^+xP_{-1}'
+
+#################################################################
+set log x
+set log y
+set format y "10^{%L}"
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'solcx_unstructured_errorsV.pdf'
+plot[hmin:hmax][]\
+'solcx/unstructured/errors_P1+_P1'  u 16:6 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+'solcx/unstructured/errors_P2_P1'   u 16:6 w lp ps .5 lt 4 t 'P_2xP_1',\
+'solcx/unstructured/errors_P2_P0'   u 16:6 w lp ps .5 lt 5 t 'P_2xP_0',\
+'solcx/unstructured/errors_P2+_P-1' u 16:6 w lp ps .5 lt 6 t 'P_2^+xP_{-1}',\
+x**2/30 lt -1 dt 2 t 'h^2',\
+x**3/95 lt -1 dt 3 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'solcx_unstructured_errorsP.pdf'
+plot[hmin:hmax][]\
+'solcx/unstructured/errors_P1+_P1'  u 16:9 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+'solcx/unstructured/errors_P2_P1'   u 16:9 w lp ps .5 lt 4 t 'P_2xP_1',\
+'solcx/unstructured/errors_P2_P0'   u 16:9 w lp ps .5 lt 5 t 'P_2xP_0',\
+'solcx/unstructured/errors_P2+_P-1' u 16:9 w lp ps .5 lt 6 t 'P_2^+xP_{-1}',\
+x**1/12 lt -1 dt 2 t 'h^1',\
+x**0.5/15 lt -1 dt 4 t 'h^{0.5}',\
+x**2/4 lt -1 dt 3 t 'h^2'
+
+set ylabel 'v_{rms}'
+unset format y
+unset log y
+set output 'solcx_unstructured_vrms.pdf'
+plot[hmin:hmax][]\
+'solcx/unstructured/vrms_P1+_P1'  u 13:6 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+'solcx/unstructured/vrms_P2_P1'   u 13:6 w lp ps .5 lt 4 t 'P_2xP_1',\
+'solcx/unstructured/vrms_P2_P0'   u 13:6 w lp ps .5 lt 5 t 'P_2xP_0',\
+'solcx/unstructured/vrms_P2+_P-1' u 13:6 w lp ps .5 lt 6 t 'P_2^+xP_{-1}'
+
+
+#################################################################
+#################################################################
+#################################################################
+set log x
+set log y
+set format y "10^{%L}"
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'solvi_structured_errorsV.pdf'
+plot[hmin:hmax][]\
+'solvi/structured/errors_Q2_Q1'   u 16:6 w lp ps .7 t 'Q_2xQ_1',\
+'solvi/structured/errors_Q2_Pm1'  u 16:6 w lp ps .5 t 'Q_2xP_{-1}',\
+'solvi/structured/errors_P1+_P1'  u 16:6 w lp ps .5 t 'P_1^+xP_1',\
+'solvi/structured/errors_P2_P1'   u 16:6 w lp ps .5 t 'P_2xP_1',\
+'solvi/structured/errors_P2_P0'   u 16:6 w lp ps .5 t 'P_2xP_0',\
+'solvi/structured/errors_P2+_P-1' u 16:6 w lp ps .5 t 'P_2^+xP_{-1}',\
+x**2/30 lt -1 dt 2 t 'h^2',\
+x**3/35 lt -1 dt 3 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'solvi_structured_errorsP.pdf'
+plot[hmin:hmax][]\
+'solvi/structured/errors_Q2_Q1'   u 16:9 w lp ps .7 t 'Q_2xQ_1',\
+'solvi/structured/errors_Q2_Pm1'  u 16:9 w lp ps .5 t 'Q_2xP_{-1}',\
+'solvi/structured/errors_P1+_P1'  u 16:9 w lp ps .5 t 'P_1^+xP_1',\
+'solvi/structured/errors_P2_P1'   u 16:9 w lp ps .5 t 'P_2xP_1',\
+'solvi/structured/errors_P2_P0'   u 16:9 w lp ps .5 t 'P_2xP_0',\
+'solvi/structured/errors_P2+_P-1' u 16:9 w lp ps .5 t 'P_2^+xP_{-1}',\
+4*x**0.5 lt -1 dt 2 t 'h^{0.5}'
+
+set ylabel 'v_{rms}'
+unset format y
+unset log y
+set output 'solvi_structured_vrms.pdf'
+plot[hmin:hmax][]\
+'solvi/structured/vrms_Q2_Q1'   u 13:6 w lp ps .7 t 'Q_2xQ_1',\
+'solvi/structured/vrms_Q2_Pm1'  u 13:6 w lp ps .5 t 'Q_2xP_{-1}',\
+'solvi/structured/vrms_P1+_P1'  u 13:6 w lp ps .5 t 'P_1^+xP_1',\
+'solvi/structured/vrms_P2_P1'   u 13:6 w lp ps .5 t 'P_2xP_1',\
+'solvi/structured/vrms_P2_P0'   u 13:6 w lp ps .5 t 'P_2xP_0',\
+'solvi/structured/vrms_P2+_P-1' u 13:6 w lp ps .5 t 'P_2^+xP_{-1}'
+
+unset log xy
+set output 'solvi_p_profile_structured_40.pdf'
+plot[][]\
+'solvi/structured/solvi_p_profileQ2xQ1_40.ascii'   w lp ps .25 t 'Q_2xQ_1',\
+'solvi/structured/solvi_p_profileQ2xPm1_40.ascii'  w lp ps .25 t 'Q_2xP_{-1}',\
+'solvi/structured/solvi_p_profileP1+xP1_40.ascii'  w lp ps .25 t 'P_1^+xP_1',\
+'solvi/structured/solvi_p_profileP2xP1_40.ascii'   w lp ps .25 t 'P_2xP_1',\
+'solvi/structured/solvi_p_profileP2xP0_40.ascii'   w lp ps .25 t 'P_2xP_0',\
+'solvi/structured/solvi_p_profileP2+xP-1_40.ascii' w lp ps .25 t 'P_2^+xP_{-1}',\
+
+set output 'solvi_p_profile_structured_100.pdf'
+plot[][]\
+'solvi/structured/solvi_p_profileQ2xQ1_100.ascii'   w lp ps .25 t 'Q_2xQ_1',\
+'solvi/structured/solvi_p_profileQ2xPm1_100.ascii'  w lp ps .25 t 'Q_2xP_{-1}',\
+'solvi/structured/solvi_p_profileP1+xP1_100.ascii'  w lp ps .25 t 'P_1^+xP_1',\
+'solvi/structured/solvi_p_profileP2xP1_100.ascii'   w lp ps .25 t 'P_2xP_1',\
+'solvi/structured/solvi_p_profileP2xP0_100.ascii'   w lp ps .25 t 'P_2xP_0',\
+'solvi/structured/solvi_p_profileP2+xP-1_100.ascii' w lp ps .25 t 'P_2^+xP_{-1}',\
+
+
+
+
+
+#################################################################
+set log x
+set log y
+set format y "10^{%L}"
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'solvi_unstructured_errorsV.pdf'
+plot[hmin:hmax][]\
+'solvi/unstructured/errors_P1+_P1'  u 16:6 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+'solvi/unstructured/errors_P2_P1'   u 16:6 w lp ps .5 lt 4 t 'P_2xP_1',\
+'solvi/unstructured/errors_P2_P0'   u 16:6 w lp ps .5 lt 5 t 'P_2xP_0',\
+'solvi/unstructured/errors_P2+_P-1' u 16:6 w lp ps .5 lt 6 t 'P_2^+xP_{-1}',\
+x**1/30 lt -1 dt 2 t 'h^1',\
+x**2/3 lt -1 dt 3 t 'h^2'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'solvi_unstructured_errorsP.pdf'
+plot[hmin:hmax][]\
+'solvi/unstructured/errors_P1+_P1'  u 16:9 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+'solvi/unstructured/errors_P2_P1'   u 16:9 w lp ps .5 lt 4 t 'P_2xP_1',\
+'solvi/unstructured/errors_P2_P0'   u 16:9 w lp ps .5 lt 5 t 'P_2xP_0',\
+'solvi/unstructured/errors_P2+_P-1' u 16:9 w lp ps .5 lt 6 t 'P_2^+xP_{-1}',\
+2*x**1 lt -1 dt 2 t 'h^1',\
+x**0.5 lt -1 dt 3 t 'h^{0.5}'
+
+set ylabel 'v_{rms}'
+unset format y
+unset log y
+set output 'solvi_unstructured_vrms.pdf'
+plot[hmin:hmax][]\
+'solvi/unstructured/vrms_P1+_P1'  u 13:6 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+'solvi/unstructured/vrms_P2_P1'   u 13:6 w lp ps .5 lt 4 t 'P_2xP_1',\
+'solvi/unstructured/vrms_P2_P0'   u 13:6 w lp ps .5 lt 5 t 'P_2xP_0',\
+'solvi/unstructured/vrms_P2+_P-1' u 13:6 w lp ps .5 lt 6 t 'P_2^+xP_{-1}'
+
+
+unset log xy
+set output 'solvi_p_profile_unstructured_40.pdf'
+plot[][]\
+'solvi/unstructured/solvi_p_profileP1+xP1_40.ascii'  w lp ps .25 t 'P_1^+xP_1',\
+'solvi/unstructured/solvi_p_profileP2xP1_40.ascii'   w lp ps .25 t 'P_2xP_1',\
+'solvi/unstructured/solvi_p_profileP2xP0_40.ascii'   w lp ps .25 t 'P_2xP_0',\
+'solvi/unstructured/solvi_p_profileP2+xP-1_40.ascii' w lp ps .25 t 'P_2^+xP_{-1}',\
+
+set output 'solvi_p_profile_unstructured_100.pdf'
+plot[][]\
+'solvi/unstructured/solvi_p_profileP1+xP1_100.ascii'  w lp ps .25 t 'P_1^+xP_1',\
+'solvi/unstructured/solvi_p_profileP2xP1_100.ascii'   w lp ps .25 t 'P_2xP_1',\
+'solvi/unstructured/solvi_p_profileP2xP0_100.ascii'   w lp ps .25 t 'P_2xP_0',\
+'solvi/unstructured/solvi_p_profileP2+xP-1_100.ascii' w lp ps .25 t 'P_2^+xP_{-1}',\
+

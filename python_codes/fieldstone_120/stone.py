@@ -19,14 +19,14 @@ nelx=20
 ndofV=2
 ndofP=1
 
-Vspace='P2'
-Pspace='P1'
+Vspace='Q2'
+Pspace='Pm1'
 
 visu=1
 
 experiment='solvi'
 
-unstructured=1
+unstructured=0
 meshtype='generic'
 
 isoparametric=True
@@ -62,6 +62,7 @@ if experiment=='solvi'       : import mms_solvi as mms
 
 
 if experiment=='solvi'       : meshtype='solvi'
+if experiment=='solcx'       : meshtype='solcx'
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
@@ -462,6 +463,85 @@ print("     -> nel= %6d ; vrms= %.8e | vrms_th= %.8e | %7d %7d %e" %(nel,vrms,mm
 print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errdivv= %.8e | %7d %7d %.8e" %(nel,errv,errp,errdivv,NfemV,NfemP,hmin))
 
 print("compute vrms & errors: %.3f s" % (timing.time() - start))
+
+#------------------------------------------------------------------------------
+
+eps=1e-6
+
+if experiment=='solvi':
+   xbottom=[]
+   pbottom=[]
+   if Vspace+Pspace=='P1+P1' or\
+      Vspace+Pspace=='P2P1'  or\
+      Vspace+Pspace=='Q2Q1' :
+      for iel in range(0,nel):
+          for k in range(0,mP):
+              inode=iconP[k,iel]
+              if yP[inode]/Ly<1e-6:
+                 xbottom.append(xP[inode])
+                 pbottom.append(p[inode])
+
+   if Vspace+Pspace=='Q2Pm1':
+      for iel in range(0,nel):
+          if yV[iconV[0,iel]]/Ly<1e-6:
+             rq=-1 ; sq=0
+             NNNP=FE.NNN(rq,sq,Pspace)
+             xbottom.append(NNNP.dot(xP[iconP[0:mP,iel]])+eps)
+             pbottom.append(NNNP.dot(p[iconP[0:mP,iel]]))
+             rq=+1 ; sq=0
+             NNNP=FE.NNN(rq,sq,Pspace)
+             xbottom.append(NNNP.dot(xP[iconP[0:mP,iel]])-eps)
+             pbottom.append(NNNP.dot(p[iconP[0:mP,iel]]))
+
+   if Vspace+Pspace=='P2P0':
+      for iel in range(0,nel):
+          inode0=iconV[0,iel]
+          inode1=iconV[1,iel]
+          inode2=iconV[2,iel]
+          if yV[inode0]/Ly<1e-6 and yV[inode1]/Ly<1e-6:
+             xbottom.append(xV[inode0]+eps)
+             pbottom.append(p[iel])
+             xbottom.append(xV[inode1]-eps)
+             pbottom.append(p[iel])
+          if yV[inode1]/Ly<1e-6 and yV[inode2]/Ly<1e-6:
+             xbottom.append(xV[inode1]+eps)
+             pbottom.append(p[iel])
+             xbottom.append(xV[inode2]-eps)
+             pbottom.append(p[iel])
+          if yV[inode2]/Ly<1e-6 and yV[inode0]/Ly<1e-6:
+             xbottom.append(xV[inode2]+eps)
+             pbottom.append(p[iel])
+             xbottom.append(xV[inode0]-eps)
+             pbottom.append(p[iel])
+
+   if Vspace+Pspace=='P2+P-1':
+      for iel in range(0,nel):
+          inode0=iconP[0,iel]
+          inode1=iconP[1,iel]
+          inode2=iconP[2,iel]
+          if yP[inode0]/Ly<1e-6 and yP[inode1]/Ly<1e-6:
+             xbottom.append(xP[inode0]+eps)
+             pbottom.append(p[inode0])
+             xbottom.append(xP[inode1]-eps)
+             pbottom.append(p[inode1])
+          if yP[inode1]/Ly<1e-6 and yP[inode2]/Ly<1e-6:
+             xbottom.append(xP[inode1]+eps)
+             pbottom.append(p[inode1])
+             xbottom.append(xP[inode2]-eps)
+             pbottom.append(p[inode2])
+          if yP[inode2]/Ly<1e-6 and yP[inode0]/Ly<1e-6:
+             xbottom.append(xP[inode2]+eps)
+             pbottom.append(p[inode2])
+             xbottom.append(xP[inode0]-eps)
+             pbottom.append(p[inode0])
+
+
+   xbottom=np.array(xbottom)
+   pbottom=np.array(pbottom)
+   sort = np.argsort(xbottom)
+   Tools.export_swarm_to_ascii(xbottom[sort],pbottom[sort],\
+                               'solvi_p_profile'+Vspace+'x'+Pspace+'_'+str(nelx)+'.ascii')
+            
 
 #------------------------------------------------------------------------------
 
