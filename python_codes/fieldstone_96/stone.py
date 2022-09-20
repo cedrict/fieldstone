@@ -8,7 +8,8 @@ import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 import time as timing
 from scipy.sparse import lil_matrix
-from parameters import *
+from tools import *
+import triangle as tr
 
 Ggrav = 6.67430e-11
 
@@ -84,7 +85,7 @@ print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
 
-CR=True
+CR=False
 
 if CR:
    mV=7     # number of velocity nodes making up an element
@@ -95,18 +96,191 @@ mP=3     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-#read nb of elements and nb of nodes from temp file 
+###############################################################################
+############# Parameters ######################################################
+###############################################################################
 
-counter=0
-file=open("temp", "r")
-for line in file:
-    fields = line.strip().split()
-    #print(fields[0], fields[1], fields[2])
-    if counter==0:
-       nel=int(fields[0])
-    if counter==1:
-       NV0=int(fields[0])
-    counter+=1
+R_outer=3.397e6
+R_inner=R_outer-1600e3
+
+# main parameter which controls resolution
+# shound be 1,2,3,4, or 5
+res=1
+nnr=res*16+1            #vertical boundary resolutions
+nnt=res*80              #sphere boundary resolutions
+
+#-------------------------------------
+# Moho setup
+#-------------------------------------
+R_moho = R_outer-500e3 #500km below the surface reside's the moho
+
+
+#-------------------------------------
+# viscosity model
+#-------------------------------------
+# 1: isoviscous
+# 2: steinberger data
+# 3: three layer model
+
+viscosity_model = 3
+
+rho_crust=0#3300
+eta_crust=1e25
+
+rho_lith=0#3500
+eta_lith=1e21
+
+rho_mantle=0#3700
+eta_mantle=6e20
+
+eta0=6e20 # isoviscous case
+
+eta_core=1e25
+rho_core=0 #7200
+
+#rho_crust+=3700
+#rho_lith+=3700
+
+eta_max=1e25
+
+#-------------------------------------
+# blob setup 
+#-------------------------------------
+np_blob=res*30          #blob resolution
+R_blob=300e3            #radius of blob
+z_blob=R_outer-1000e3   #starting depth
+rho_blob=rho_mantle-200
+eta_blob=6e20
+
+#-------------------------------------
+#boundary conditions at planet surface
+#-------------------------------------
+#0: no-slip
+#1: free-slip
+#2: free (only top surface)
+
+surface_bc=1
+
+cmb_bc=1
+
+
+#-------------------------------------
+# gravity acceleration
+#-------------------------------------
+
+use_isog=True
+g0=3.72
+
+#-------------------------------------
+#do not change
+np_grav=10
+nel_phi=20
+
+###############################################################################
+#############  Defining the nodes and vertices ################################
+###############################################################################
+
+#------------------------------------------------------------------------------
+# inner boundary counterclockwise
+#------------------------------------------------------------------------------
+theta = np.linspace(-np.pi*0.5, 0.5*np.pi,nnt, endpoint=False)          #half inner sphere in the x-positive domain
+pts_ib = np.stack([np.cos(theta), np.sin(theta)], axis=1) * R_inner     #nnt-points on inner boundary
+seg_ib = np.stack([np.arange(nnt), np.arange(nnt) + 1], axis=1)         #vertices on innerboundary (and the last vertices to the upper wall)
+for i in range(0,nnt):                                                  #first point must be exactly on the y-axis
+    if i==0:
+       pts_ib[i,0]=0
+
+#------------------------------------------------------------------------------
+# *top vertical (left) wall 
+#------------------------------------------------------------------------------
+topw_z = np.linspace(R_inner,R_outer,nnr,endpoint=False)                #vertical boundary wall from inner to outer boundary sphere
+pts_topw = np.stack([np.zeros(nnr),topw_z],axis=1)                      #nnr-points on vertical wall
+seg_topw = np.stack([nnt+np.arange(nnr),nnt+np.arange(nnr)+1], axis=1)  #vertices on vertical wall, starts where inner boundary vertices stopped
+
+#------------------------------------------------------------------------------
+# outer boundary clockwise
+#------------------------------------------------------------------------------
+theta = np.linspace(np.pi/2,-np.pi/2,num=nnt,endpoint=False)            #half outer sphere in the x-positive domain
+pts_ob = np.stack([np.cos(theta),np.sin(theta)], axis=1)*R_outer        #nnt-points on outer boundary
+seg_ob = np.stack([nnr+nnt+np.arange(nnt), nnr+nnt+np.arange(nnt)+1], axis=1) #vertices on outerboundary, starts where top wall vertices stopped
+for i in range(0,nnt):                                                  #first point must be exactly on the y-axis
+    if i==0:
+       pts_ob[i,0]=0
+
+#------------------------------------------------------------------------------
+# bottom vertical wall
+#------------------------------------------------------------------------------
+botw_z = np.linspace(-R_outer,-R_inner,nnr,endpoint=False)              #vertical boundary wall from outer to inner boundary sphere
+pts_botw = np.stack([np.zeros(nnr),botw_z],axis=1)                      #nnr-points on vertical wall
+seg_botw = np.stack([2*nnt+nnr+np.arange(nnr),2*nnt+nnr+np.arange(nnr)+1], axis=1) #vertices on bottem vertical wall, starts where outerboundary vertices stopped
+seg_botw[-1,1]=0                                                        #stitch last point to first point with last vertice
+
+#------------------------------------------------------------------------------
+# blob 
+#------------------------------------------------------------------------------
+theta_bl = np.linspace(-np.pi/2,np.pi-np.pi/2,num=np_blob,endpoint=True) #half-sphere in the x and y positive domain
+pts_bl = np.stack([R_blob*np.cos(theta_bl),z_blob+R_blob*np.sin(theta_bl)], axis=1) #points on blob outersurface 
+seg_bl = np.stack([2*nnt+2*nnr+np.arange(np_blob-1), 2*nnt+2*nnr+np.arange(np_blob-1)+1], axis=1) #vertices on outersurface blob, numbering starts after last bottemwall node)
+for i in range(0,np_blob):                                              #first and last point must be exactly on the y-axis.
+    if i==0 or i==np_blob-1:
+       pts_bl[i,0]=0
+
+#------------------------------------------------------------------------------
+# Moho
+#------------------------------------------------------------------------------
+theta = np.linspace(np.pi/2,-np.pi/2,num=nnt,endpoint=True)            #half outer sphere in the x-positive domain
+pts_mo = np.stack([np.cos(theta),np.sin(theta)], axis=1)*R_moho        #nnt-points on outer boundary
+seg_mo = np.stack([2*nnt+2*nnr+np_blob+np.arange(nnt-1), 2*nnt+2*nnr++np_blob+np.arange(nnt-1)+1], axis=1) #vertices on moho, numbering starts after last blob node)
+for i in range(0,nnt):                                                 #first and last point must be exactly on the y-axis
+    if i==0 or i==nnt-1:
+       pts_mo[i,0]=0    
+       
+###############################################################################
+#############  Stacking the nodes and vertices ################################
+###############################################################################
+
+seg = np.vstack([seg_ib,seg_topw,seg_ob,seg_botw,seg_bl,seg_mo])
+pts = np.vstack([pts_ib,pts_topw,pts_ob,pts_botw,pts_bl,pts_mo]) 
+
+#put all segments and nodes in a dictionary
+dict_nodes = dict(vertices=pts, segments=seg,holes=[[0,0]]) #no core so we add a hole at x=0,y=0
+
+###############################################################################
+#############  Create the P1 and P2 mesh ################################
+###############################################################################
+
+#P1 mesh:
+dict_mesh = tr.triangulate(dict_nodes,'pqa1000000000000')
+#compare mesh to node and vertice plot
+#tr.compare(plt, dict_nodes, dict_mesh)
+#plt.axis
+#plt.show()
+
+## define icon, x and z
+iconP=dict_mesh['triangles'] ; iconP=iconP.T
+xP=dict_mesh['vertices'][:,0]
+zP=dict_mesh['vertices'][:,1]
+NP=np.size(xP)
+mP,nel=np.shape(iconP)
+export_elements_to_vtu(xP,zP,iconP,'meshP.vtu')
+
+#P2 mesh:
+NV0,xV,zV,iconV=mesh_P1_to_P2(xP,zP,iconP)
+export_elements_to_vtuP2(xV,zV,iconV,'meshV.vtu')
+
+if CR:
+   for iel in range (0,nel):
+       iconV[6,iel]=NV0+iel
+   for iel in range (0,nel): #bubble nodes
+       xV[NV0+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
+       zV[NV0+iel]=(zV[iconV[0,iel]]+zV[iconV[1,iel]]+zV[iconV[2,iel]])/3.
+
+print("xV (min/max): %.4f %.4f" %(np.min(xV),np.max(xV)))
+print("zV (min/max): %.4f %.4f" %(np.min(zV),np.max(zV)))
+print("xP (min/max): %.4f %.4f" %(np.min(xP),np.max(xP)))
+print("zP (min/max): %.4f %.4f" %(np.min(zP),np.max(zP)))
+
+###############################################################################
 
 if CR:
    NV=NV0+nel
@@ -114,12 +288,19 @@ else:
    NV=NV0
 
 NfemV=NV*ndofV     # number of velocity dofs
+
 if CR:
    NfemP=nel*3*ndofP   # number of pressure dofs
+else:
+   NfemP=NP*ndofP     # number of pressure dofs
+
+Nfem=NfemV+NfemP    # total number of dofs
 
 print ('nel', nel)
-print ('NV0', NV0)
+print ('NV', NV)
 print ('NfemV', NfemV)
+print ('NfemP', NfemP)
+print ('Nfem', Nfem)
 
 eta_ref=1e22
 
@@ -171,19 +352,12 @@ for i in range(1,3390):
 #################################################################
 # grid point setup
 #################################################################
-start = timing.time()
-
-xV=np.zeros(NV,dtype=np.float64)     # x coordinates
-zV=np.zeros(NV,dtype=np.float64)     # y coordinates
-
-xV[0:NV0],zV[0:NV0]=np.loadtxt('mesh.1.node',unpack=True,usecols=[1,2],skiprows=1)
-
-print("xV (min/max): %.4f %.4f" %(np.min(xV[0:NV0]),np.max(xV[0:NV0])))
-print("zV (min/max): %.4f %.4f" %(np.min(zV[0:NV0]),np.max(zV[0:NV0])))
-
+#start = timing.time()
+#xV=np.zeros(NV,dtype=np.float64)     # x coordinates
+#zV=np.zeros(NV,dtype=np.float64)     # y coordinates
+#xV[0:NV0],zV[0:NV0]=np.loadtxt('mesh.1.node',unpack=True,usecols=[1,2],skiprows=1)
 #np.savetxt('gridV0.ascii',np.array([xV,zV]).T,header='# xV,zV')
-
-print("setup: grid points: %.3f s" % (timing.time() - start))
+#print("setup: grid points: %.3f s" % (timing.time() - start))
 
 #################################################################
 # connectivity
@@ -204,43 +378,28 @@ print("setup: grid points: %.3f s" % (timing.time() - start))
 # than mine: https://www.cs.cmu.edu/~quake/triangle.highorder.html.
 # note also that triangle returns nodes 0-5, but not 6.
 #################################################################
-start = timing.time()
 
-iconV=np.zeros((mV,nel),dtype=np.int32)
 
-iconV[0,:],iconV[1,:],iconV[2,:],iconV[4,:],iconV[5,:],iconV[3,:]=\
-np.loadtxt('mesh.1.ele',unpack=True, usecols=[1,2,3,4,5,6],skiprows=1)
-
-iconV[0,:]-=1
-iconV[1,:]-=1
-iconV[2,:]-=1
-iconV[3,:]-=1
-iconV[4,:]-=1
-iconV[5,:]-=1
-
-if CR:
-   for iel in range (0,nel):
-       iconV[6,iel]=NV0+iel
-   for iel in range (0,nel): #bubble nodes
-       xV[NV0+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
-       zV[NV0+iel]=(zV[iconV[0,iel]]+zV[iconV[1,iel]]+zV[iconV[2,iel]])/3.
-else:
-   # from this information I must now extract the number of nodes 
-   # which make the P1 mesh for pressure.
-   P1bool=np.zeros(NV,dtype=np.bool) 
-   for iel in range(0,nel):
-           P1bool[iconV[0,iel]]=True
-           P1bool[iconV[1,iel]]=True
-           P1bool[iconV[2,iel]]=True
-   NfemP=np.count_nonzero(P1bool)
-
-Nfem=NfemV+NfemP    # total number of dofs
-print ('NfemP', NfemP)
-print ('Nfem ', Nfem)
-
+#start = timing.time()
+#iconV=np.zeros((mV,nel),dtype=np.int32)
+#iconV[0,:],iconV[1,:],iconV[2,:],iconV[4,:],iconV[5,:],iconV[3,:]=\
+#np.loadtxt('mesh.1.ele',unpack=True, usecols=[1,2,3,4,5,6],skiprows=1)
+#iconV[0,:]-=1
+#iconV[1,:]-=1
+#iconV[2,:]-=1
+#iconV[3,:]-=1
+#iconV[4,:]-=1
+#iconV[5,:]-=1
+#   # from this information I must now extract the number of nodes 
+#   # which make the P1 mesh for pressure.
+#   P1bool=np.zeros(NV,dtype=np.bool) 
+#   for iel in range(0,nel):
+#           P1bool[iconV[0,iel]]=True
+#           P1bool[iconV[1,iel]]=True
+#           P1bool[iconV[2,iel]]=True
+#   NfemP=np.count_nonzero(P1bool)
 #np.savetxt('gridV.ascii',np.array([xV,zV]).T,header='# xV,zV')
-
-print("setup: connectivity V: %.3f s" % (timing.time() - start))
+#print("setup: connectivity V: %.3f s" % (timing.time() - start))
 
 #################################################################
 # project mid-edge nodes onto circle
@@ -269,46 +428,16 @@ print("     -> r_nodal (m,M) %.6e %.6e "     %(np.min(r_nodal),np.max(r_nodal)))
 #np.savetxt('gridV_after.ascii',np.array([xV,zV]).T,header='# xV,zV')
 
 #################################################################
-# build pressure grid (nodes and icon)
+# 
 #################################################################
 start = timing.time()
 
-iconP=np.zeros((mP,nel),dtype=np.int32)
-xP=np.empty(NfemP,dtype=np.float64)     # x coordinates
-yP=np.empty(NfemP,dtype=np.float64)     # y coordinates
 rP=np.empty(NfemP,dtype=np.float64)     # r coordinates
+rP[:]=np.sqrt(xP[:]**2+zP[:]**2)
 
-if CR:
-   counter=0
-   for iel in range(0,nel):
-       xP[counter]=xV[iconV[0,iel]]
-       yP[counter]=zV[iconV[0,iel]]
-       iconP[0,iel]=counter
-       counter+=1
-       xP[counter]=xV[iconV[1,iel]]
-       yP[counter]=zV[iconV[1,iel]]
-       iconP[1,iel]=counter
-       counter+=1
-       xP[counter]=xV[iconV[2,iel]]
-       yP[counter]=zV[iconV[2,iel]]
-       iconP[2,iel]=counter
-       rP[counter]=np.sqrt(xP[counter]**2+yP[counter]**2)
-       counter+=1
-else:
-   iconP[0,:]=iconV[0,:]
-   iconP[1,:]=iconV[1,:]
-   iconP[2,:]=iconV[2,:]
-   for iel in range(0,nel):
-       xP[iconP[0,iel]]=xV[iconP[0,iel]]
-       xP[iconP[1,iel]]=xV[iconP[1,iel]]
-       xP[iconP[2,iel]]=xV[iconP[2,iel]]
-       yP[iconP[0,iel]]=zV[iconP[0,iel]]
-       yP[iconP[1,iel]]=zV[iconP[1,iel]]
-       yP[iconP[2,iel]]=zV[iconP[2,iel]]
-
-surface_Pnode=np.zeros(NfemP,dtype=np.bool) 
-for i in range(0,NfemP):
-    rP[i]=np.sqrt(xP[i]**2+yP[i]**2)
+surface_Pnode=np.zeros(NP,dtype=np.bool) 
+for i in range(0,NP):
+    rP[i]=np.sqrt(xP[i]**2+zP[i]**2)
     if rP[i]>=0.999*R_outer: 
        surface_Pnode[i]=True
 
@@ -736,7 +865,7 @@ for istep in range(0,1):
     p=sol[NfemV:Nfem]*eta_ref/R_outer
 
     np.savetxt('solution_velocity.ascii',np.array([xV,zV,u,v]).T,header='# x,y,u,v')
-    np.savetxt('solution_pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+    np.savetxt('solution_pressure.ascii',np.array([xP,zP,p]).T,header='# x,y,p')
 
     print("     -> u (m,M) %.6e %.6e " %(np.min(u),np.max(u)))
     print("     -> v (m,M) %.6e %.6e " %(np.min(v),np.max(v)))
@@ -812,35 +941,35 @@ for istep in range(0,1):
        for iel in range(0,nel):
            if surface_Pnode[iconP[0,iel]] and surface_Pnode[iconP[1,iel]]:
               xxp=(xP[iconP[0,iel]]+xP[iconP[1,iel]])/2
-              yyp=(yP[iconP[0,iel]]+yP[iconP[1,iel]])/2
+              yyp=(zP[iconP[0,iel]]+zP[iconP[1,iel]])/2
               ppp=( p[iconP[0,iel]]+ p[iconP[1,iel]])/2
-              theta0=np.arctan2(xP[iconP[0,iel]],yP[iconP[0,iel]])
-              theta1=np.arctan2(xP[iconP[1,iel]],yP[iconP[1,iel]])
+              theta0=np.arctan2(xP[iconP[0,iel]],zP[iconP[0,iel]])
+              theta1=np.arctan2(xP[iconP[1,iel]],zP[iconP[1,iel]])
               dtheta=abs(theta0-theta1)
               thetap=np.arctan2(xxp,yyp)
-              dist=np.sqrt((xP[iconP[0,iel]]-xP[iconP[1,iel]])**2+(yP[iconP[0,iel]]-yP[iconP[1,iel]])**2)
+              dist=np.sqrt((xP[iconP[0,iel]]-xP[iconP[1,iel]])**2+(zP[iconP[0,iel]]-zP[iconP[1,iel]])**2)
               perim+=dist
               avrg_p+=ppp*dtheta*np.sin(thetap)*0.5
            if surface_Pnode[iconP[1,iel]] and surface_Pnode[iconP[2,iel]]:
               xxp=(xP[iconP[1,iel]]+xP[iconP[2,iel]])/2
-              yyp=(yP[iconP[1,iel]]+yP[iconP[2,iel]])/2
+              yyp=(zP[iconP[1,iel]]+zP[iconP[2,iel]])/2
               ppp=( p[iconP[1,iel]]+ p[iconP[2,iel]])/2
-              theta1=np.arctan2(xP[iconP[1,iel]],yP[iconP[1,iel]])
-              theta2=np.arctan2(xP[iconP[2,iel]],yP[iconP[2,iel]])
+              theta1=np.arctan2(xP[iconP[1,iel]],zP[iconP[1,iel]])
+              theta2=np.arctan2(xP[iconP[2,iel]],zP[iconP[2,iel]])
               dtheta=abs(theta1-theta2)
               thetap=np.arctan2(xxp,yyp)
-              dist=np.sqrt((xP[iconP[1,iel]]-xP[iconP[2,iel]])**2+(yP[iconP[1,iel]]-yP[iconP[2,iel]])**2)
+              dist=np.sqrt((xP[iconP[1,iel]]-xP[iconP[2,iel]])**2+(zP[iconP[1,iel]]-zP[iconP[2,iel]])**2)
               perim+=dist
               avrg_p+=ppp*dtheta*np.sin(thetap)*0.5
            if surface_Pnode[iconP[2,iel]] and surface_Pnode[iconP[0,iel]]:
               xxp=(xP[iconP[2,iel]]+xP[iconP[0,iel]])/2
-              yyp=(yP[iconP[2,iel]]+yP[iconP[0,iel]])/2
+              yyp=(zP[iconP[2,iel]]+zP[iconP[0,iel]])/2
               ppp=( p[iconP[2,iel]]+ p[iconP[0,iel]])/2
-              theta2=np.arctan2(xP[iconP[2,iel]],yP[iconP[2,iel]])
-              theta0=np.arctan2(xP[iconP[0,iel]],yP[iconP[0,iel]])
+              theta2=np.arctan2(xP[iconP[2,iel]],zP[iconP[2,iel]])
+              theta0=np.arctan2(xP[iconP[0,iel]],zP[iconP[0,iel]])
               dtheta=abs(theta2-theta0)
               thetap=np.arctan2(xxp,yyp)
-              dist=np.sqrt((xP[iconP[2,iel]]-xP[iconP[0,iel]])**2+(yP[iconP[2,iel]]-yP[iconP[0,iel]])**2)
+              dist=np.sqrt((xP[iconP[2,iel]]-xP[iconP[0,iel]])**2+(zP[iconP[2,iel]]-zP[iconP[0,iel]])**2)
               perim+=dist
               avrg_p+=ppp*dtheta*np.sin(thetap)*0.5
 
@@ -848,7 +977,7 @@ for istep in range(0,1):
 
        print ('perim=',perim, np.pi*R_outer)
 
-       np.savetxt('solution_pressure_normalised.ascii',np.array([xP,yP,p,rP]).T)
+       np.savetxt('solution_pressure_normalised.ascii',np.array([xP,zP,p,rP]).T)
 
     print("normalise pressure: %.3f s" % (timing.time() - start))
 
