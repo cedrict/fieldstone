@@ -80,12 +80,16 @@ def NNP(rq,sq):
     NP_2=sq
     return NP_0,NP_1,NP_2
 
-#------------------------------------------------------------------------------
+
+###############################################################################
+###############################################################################
+###############################################################################
+
 print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
 
-CR=False
+CR=True
 
 if CR:
    mV=7     # number of velocity nodes making up an element
@@ -110,10 +114,9 @@ nnr=res*16+1            #vertical boundary resolutions
 nnt=res*80              #sphere boundary resolutions
 
 #-------------------------------------
-# Moho setup
+# 'Moho' setup
 #-------------------------------------
 R_moho = R_outer-500e3 #500km below the surface reside's the moho
-
 
 #-------------------------------------
 # viscosity model
@@ -163,7 +166,6 @@ surface_bc=1
 
 cmb_bc=1
 
-
 #-------------------------------------
 # gravity acceleration
 #-------------------------------------
@@ -176,9 +178,30 @@ g0=3.72
 np_grav=10
 nel_phi=20
 
+eta_ref=1e22
+
+###############################################################################
+# 6 point integration coeffs and weights 
+###############################################################################
+
+nqel=6
+
+nb1=0.816847572980459
+nb2=0.091576213509771
+nb3=0.108103018168070
+nb4=0.445948490915965
+nb5=0.109951743655322/2.
+nb6=0.223381589678011/2.
+
+qcoords_r=[nb1,nb2,nb2,nb4,nb3,nb4]
+qcoords_s=[nb2,nb1,nb2,nb3,nb4,nb4]
+qweights =[nb5,nb5,nb5,nb6,nb6,nb6]
+
 ###############################################################################
 #############  Defining the nodes and vertices ################################
 ###############################################################################
+start = timing.time()
+
 
 #------------------------------------------------------------------------------
 # inner boundary counterclockwise
@@ -235,94 +258,169 @@ for i in range(0,nnt):                                                 #first an
     if i==0 or i==nnt-1:
        pts_mo[i,0]=0    
        
-###############################################################################
-#############  Stacking the nodes and vertices ################################
-###############################################################################
+# Stacking the nodes and vertices 
 
 seg = np.vstack([seg_ib,seg_topw,seg_ob,seg_botw,seg_bl,seg_mo])
 pts = np.vstack([pts_ib,pts_topw,pts_ob,pts_botw,pts_bl,pts_mo]) 
 
 #put all segments and nodes in a dictionary
+
 dict_nodes = dict(vertices=pts, segments=seg,holes=[[0,0]]) #no core so we add a hole at x=0,y=0
 
-###############################################################################
-#############  Create the P1 and P2 mesh ################################
-###############################################################################
+print("setup: generate nodes: %.3f s" % (timing.time() - start))
 
-#P1 mesh:
-dict_mesh = tr.triangulate(dict_nodes,'pqa1000000000000')
+###############################################################################
+#############  Create the P1 and P2 mesh ######################################
+###############################################################################
+#
+#  P_2^+           P_-1
+#
+#  02              02
+#  ||\\            ||\\
+#  || \\           || \\
+#  ||  \\          ||  \\
+#  05   04         ||   \\
+#  || 06 \\        ||    \\
+#  ||     \\       ||     \\
+#  00==03==01      00======01
+#
+# note also that triangle returns nodes 0-5, but not 6.
+###############################################################################
+start = timing.time()
+
+dict_mesh = tr.triangulate(dict_nodes,'pqa10000000000')
 #compare mesh to node and vertice plot
 #tr.compare(plt, dict_nodes, dict_mesh)
 #plt.axis
 #plt.show()
 
-## define icon, x and z
-iconP=dict_mesh['triangles'] ; iconP=iconP.T
-xP=dict_mesh['vertices'][:,0]
-zP=dict_mesh['vertices'][:,1]
-NP=np.size(xP)
-mP,nel=np.shape(iconP)
-export_elements_to_vtu(xP,zP,iconP,'meshP.vtu')
+## define icon, x and z for P1 mesh
+iconP1=dict_mesh['triangles'] ; iconP1=iconP1.T
+xP1=dict_mesh['vertices'][:,0]
+zP1=dict_mesh['vertices'][:,1]
+NP1=np.size(xP1)
+mP,nel=np.shape(iconP1)
+export_elements_to_vtu(xP1,zP1,iconP1,'meshP1.vtu')
 
-#P2 mesh:
-NV0,xV,zV,iconV=mesh_P1_to_P2(xP,zP,iconP)
-export_elements_to_vtuP2(xV,zV,iconV,'meshV.vtu')
+NV0,xP2,zP2,iconP2=mesh_P1_to_P2(xP1,zP1,iconP1)
+export_elements_to_vtuP2(xP2,zP2,iconP2,'meshP2.vtu')
 
-if CR:
-   for iel in range (0,nel):
-       iconV[6,iel]=NV0+iel
-   for iel in range (0,nel): #bubble nodes
-       xV[NV0+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
-       zV[NV0+iel]=(zV[iconV[0,iel]]+zV[iconV[1,iel]]+zV[iconV[2,iel]])/3.
-
-print("xV (min/max): %.4f %.4f" %(np.min(xV),np.max(xV)))
-print("zV (min/max): %.4f %.4f" %(np.min(zV),np.max(zV)))
-print("xP (min/max): %.4f %.4f" %(np.min(xP),np.max(xP)))
-print("zP (min/max): %.4f %.4f" %(np.min(zP),np.max(zP)))
+print("setup: generate P1 & P2 meshes: %.3f s" % (timing.time() - start))
 
 ###############################################################################
+# compute NP, NV, NfemV, NfemP, Nfem for both element pairs
+# and build xV,zV,iconV,xP,zP,iconP
+###############################################################################
+start = timing.time()
 
 if CR:
+   NP=3*nel*ndofP
    NV=NV0+nel
+   NfemV=NV*ndofV                       # number of velocity dofs
+   NfemP=NP*ndofP                       # number of pressure dofs
+   #-----
+   #iconV
+   #-----
+   iconV=np.zeros((mV,nel),dtype=np.int32)
+   iconV[0,:]=iconP2[0,:]
+   iconV[1,:]=iconP2[1,:]
+   iconV[2,:]=iconP2[2,:]
+   iconV[3,:]=iconP2[3,:]
+   iconV[4,:]=iconP2[4,:]
+   iconV[5,:]=iconP2[5,:]
+   for iel in range (0,nel):
+       iconV[6,iel]=NV0+iel
+   #-----
+   #xV,zV
+   #-----
+   xV=np.zeros(NV,dtype=np.float64)     # x coordinates
+   zV=np.zeros(NV,dtype=np.float64)     # y coordinates
+   xV[0:NV0]=xP2[0:NV0]
+   zV[0:NV0]=zP2[0:NV0]
+   for iel in range (0,nel):
+       xV[NV0+iel]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
+       zV[NV0+iel]=(zV[iconV[0,iel]]+zV[iconV[1,iel]]+zV[iconV[2,iel]])/3.
+   #-----------
+   #iconP,xP,zP
+   #-----------
+   xP=np.empty(NP,dtype=np.float64)  # x coordinates
+   zP=np.empty(NP,dtype=np.float64)  # y coordinates
+   rP=np.empty(NP,dtype=np.float64)  # x coordinates
+   iconP=np.zeros((mP,nel),dtype=np.int32)
+   counter=0
+   for iel in range(0,nel):
+       xP[counter]=xP1[iconP1[0,iel]]
+       zP[counter]=zP1[iconP1[0,iel]]
+       iconP[0,iel]=counter
+       counter+=1
+       xP[counter]=xP1[iconP1[1,iel]]
+       zP[counter]=zP1[iconP1[1,iel]]
+       iconP[1,iel]=counter
+       counter+=1
+       xP[counter]=xP1[iconP1[2,iel]]
+       zP[counter]=zP1[iconP1[2,iel]]
+       iconP[2,iel]=counter
+       rP[counter]=np.sqrt(xP[counter]**2+zP[counter]**2)
+       counter+=1
+
 else:
-   NV=NV0
+   NP=NP1
+   NV=NV0 #replace by NP2
+   NfemV=NV*ndofV    # number of velocity dofs
+   NfemP=NP*ndofP    # number of pressure dofs
+   #-----
+   #iconV
+   #-----
+   iconV=np.zeros((mV,nel),dtype=np.int32)
+   iconV[0,:]=iconP2[0,:]
+   iconV[1,:]=iconP2[1,:]
+   iconV[2,:]=iconP2[2,:]
+   iconV[3,:]=iconP2[3,:]
+   iconV[4,:]=iconP2[4,:]
+   iconV[5,:]=iconP2[5,:]
+   #-----
+   #xV,zV
+   #-----
+   xV=np.zeros(NV,dtype=np.float64)     # x coordinates
+   zV=np.zeros(NV,dtype=np.float64)     # y coordinates
+   xV[0:NV0]=xP2[0:NV0]
+   zV[0:NV0]=zP2[0:NV0]
+   #-----
+   #iconP
+   #-----
+   iconP=np.zeros((mP,nel),dtype=np.int32)
+   iconP[0,:]=iconP1[0,:]
+   iconP[1,:]=iconP1[1,:]
+   iconP[2,:]=iconP1[2,:]
+   #-----------
+   #xP,zP
+   #-----------
+   xP=np.empty(NfemP,dtype=np.float64)  # x coordinates
+   zP=np.empty(NfemP,dtype=np.float64)  # y coordinates
+   rP=np.empty(NfemP,dtype=np.float64)  # y coordinates
+   xP[0:NP]=xP1[0:NV]
+   zP[0:NP]=zP1[0:NV]
+   rP[:]=np.sqrt(xP[:]**2+zP[:]**2)
 
-NfemV=NV*ndofV     # number of velocity dofs
 
-if CR:
-   NfemP=nel*3*ndofP   # number of pressure dofs
-else:
-   NfemP=NP*ndofP     # number of pressure dofs
+Nfem=NfemV+NfemP  # total number of dofs
 
-Nfem=NfemV+NfemP    # total number of dofs
+print('     -> nel', nel)
+print('     -> NV', NV)
+print('     -> NfemV', NfemV)
+print('     -> NfemP', NfemP)
+print('     -> Nfem', Nfem)
+print("     -> xV (min/max): %.4f %.4f" %(np.min(xV),np.max(xV)))
+print("     -> zV (min/max): %.4f %.4f" %(np.min(zV),np.max(zV)))
+print("     -> xP (min/max): %.4f %.4f" %(np.min(xP),np.max(xP)))
+print("     -> zP (min/max): %.4f %.4f" %(np.min(zP),np.max(zP)))
 
-print ('nel', nel)
-print ('NV', NV)
-print ('NfemV', NfemV)
-print ('NfemP', NfemP)
-print ('Nfem', Nfem)
+print("setup: generate FE meshes: %.3f s" % (timing.time() - start))
 
-eta_ref=1e22
-
-#---------------------------------------
-# 6 point integration coeffs and weights 
-
-nqel=6
-
-nb1=0.816847572980459
-nb2=0.091576213509771
-nb3=0.108103018168070
-nb4=0.445948490915965
-nb5=0.109951743655322/2.
-nb6=0.223381589678011/2.
-
-qcoords_r=[nb1,nb2,nb2,nb4,nb3,nb4]
-qcoords_s=[nb2,nb1,nb2,nb3,nb4,nb4]
-qweights =[nb5,nb5,nb5,nb6,nb6,nb6]
-
-#################################################################
+###############################################################################
 # read profiles 
-#################################################################
+###############################################################################
+start = timing.time()
 
 profile_eta=np.empty(1968,dtype=np.float64) 
 profile_depth=np.empty(1968,dtype=np.float64) 
@@ -332,9 +430,12 @@ profile_rho=np.empty(3390,dtype=np.float64)
 profile_depth=np.empty(3390,dtype=np.float64) 
 profile_rho,profile_depth=np.loadtxt('data/rho.ascii',unpack=True,usecols=[0,1])
 
-#################################################################
+print("setup: read profiles: %.3f s" % (timing.time() - start))
+
+###############################################################################
 # from density profile build gravity profile
-#################################################################
+###############################################################################
+start = timing.time()
 
 profile_rad=np.empty(3390,dtype=np.float64) 
 profile_grav=np.zeros(3390,dtype=np.float64) 
@@ -349,62 +450,13 @@ for i in range(1,3390):
     
 #np.savetxt('profile_grav.ascii',np.array([profile_rad,profile_mass,profile_grav]).T)
 
-#################################################################
-# grid point setup
-#################################################################
-#start = timing.time()
-#xV=np.zeros(NV,dtype=np.float64)     # x coordinates
-#zV=np.zeros(NV,dtype=np.float64)     # y coordinates
-#xV[0:NV0],zV[0:NV0]=np.loadtxt('mesh.1.node',unpack=True,usecols=[1,2],skiprows=1)
-#np.savetxt('gridV0.ascii',np.array([xV,zV]).T,header='# xV,zV')
-#print("setup: grid points: %.3f s" % (timing.time() - start))
+print("setup: build more profiles: %.3f s" % (timing.time() - start))
 
-#################################################################
-# connectivity
-#################################################################
-#
-#  P_2^+           P_-1
-#
-#  02              02
-#  ||\\            ||\\
-#  || \\           || \\
-#  ||  \\          ||  \\
-#  05   04         ||   \\
-#  || 06 \\        ||    \\
-#  ||     \\       ||     \\
-#  00==03==01      00======01
-#
-# note that the ordering of nodes returned by triangle is different
-# than mine: https://www.cs.cmu.edu/~quake/triangle.highorder.html.
-# note also that triangle returns nodes 0-5, but not 6.
-#################################################################
-
-
-#start = timing.time()
-#iconV=np.zeros((mV,nel),dtype=np.int32)
-#iconV[0,:],iconV[1,:],iconV[2,:],iconV[4,:],iconV[5,:],iconV[3,:]=\
-#np.loadtxt('mesh.1.ele',unpack=True, usecols=[1,2,3,4,5,6],skiprows=1)
-#iconV[0,:]-=1
-#iconV[1,:]-=1
-#iconV[2,:]-=1
-#iconV[3,:]-=1
-#iconV[4,:]-=1
-#iconV[5,:]-=1
-#   # from this information I must now extract the number of nodes 
-#   # which make the P1 mesh for pressure.
-#   P1bool=np.zeros(NV,dtype=np.bool) 
-#   for iel in range(0,nel):
-#           P1bool[iconV[0,iel]]=True
-#           P1bool[iconV[1,iel]]=True
-#           P1bool[iconV[2,iel]]=True
-#   NfemP=np.count_nonzero(P1bool)
-#np.savetxt('gridV.ascii',np.array([xV,zV]).T,header='# xV,zV')
-#print("setup: connectivity V: %.3f s" % (timing.time() - start))
-
-#################################################################
+###############################################################################
 # project mid-edge nodes onto circle
 # and compute r,theta (spherical coordinates) for each node
-#################################################################
+###############################################################################
+start = timing.time()
 
 theta_nodal=np.zeros(NV,dtype=np.float64)
 r_nodal=np.zeros(NV,dtype=np.float64)
@@ -414,7 +466,7 @@ cmb_node=np.zeros(NV,dtype=np.bool)
 for i in range(0,NV):
     theta_nodal[i]=np.arctan2(xV[i],zV[i])
     r_nodal[i]=np.sqrt(xV[i]**2+zV[i]**2)
-    if r_nodal[i]>0.9999*R_outer:
+    if r_nodal[i]>0.999*R_outer:
        r_nodal[i]=R_outer*0.99999999
        xV[i]=r_nodal[i]*np.sin(theta_nodal[i])
        zV[i]=r_nodal[i]*np.cos(theta_nodal[i])
@@ -427,13 +479,10 @@ print("     -> r_nodal (m,M) %.6e %.6e "     %(np.min(r_nodal),np.max(r_nodal)))
 
 #np.savetxt('gridV_after.ascii',np.array([xV,zV]).T,header='# xV,zV')
 
-#################################################################
-# 
-#################################################################
-start = timing.time()
+print("setup: flag cmb nodes: %.3f s" % (timing.time() - start))
 
-rP=np.empty(NfemP,dtype=np.float64)     # r coordinates
-rP[:]=np.sqrt(xP[:]**2+zP[:]**2)
+###############################################################################
+start = timing.time()
 
 surface_Pnode=np.zeros(NP,dtype=np.bool) 
 for i in range(0,NP):
@@ -441,20 +490,20 @@ for i in range(0,NP):
     if rP[i]>=0.999*R_outer: 
        surface_Pnode[i]=True
 
-#np.savetxt('gridP.ascii',np.array([xP,yP,rP,surface_Pnode]).T,header='# x,y')
+#np.savetxt('gridP.ascii',np.array([xP,zP,rP,surface_Pnode]).T,header='# x,y')
 
 #for iel in range (0,nel):
 #    print ("iel=",iel)
-#    print ("node 0",iconP[0,iel],"at pos.",xP[iconP[0][iel]], yP[iconP[0][iel]])
-#    print ("node 1",iconP[1,iel],"at pos.",xP[iconP[1][iel]], yP[iconP[1][iel]])
-#    print ("node 2",iconP[2,iel],"at pos.",xP[iconP[2][iel]], yP[iconP[2][iel]])
+#    print ("node 0",iconP[0,iel],"at pos.",xP[iconP[0][iel]], zP[iconP[0][iel]])
+#    print ("node 1",iconP[1,iel],"at pos.",xP[iconP[1][iel]], zP[iconP[1][iel]])
+#    print ("node 2",iconP[2,iel],"at pos.",xP[iconP[2][iel]], zP[iconP[2][iel]])
 
-print("setup: connectivity P: %.3f s" % (timing.time() - start))
+print("setup: flag surface nodes: %.3f s" % (timing.time() - start))
 
-#################################################################
+###############################################################################
 # assigning material properties to elements
 # and assigning  density and viscosity 
-#################################################################
+###############################################################################
 start = timing.time()
 
 rho=np.zeros(nel,dtype=np.float64) 
@@ -467,7 +516,6 @@ for iel in range(0,nel):
     z_c=(zV[iconV[0,iel]]+zV[iconV[1,iel]]+zV[iconV[2,iel]])/3
     r_c=np.sqrt(x_c**2+z_c**2)
     j=int((R_outer-r_c)/1000)
-
 
     if viscosity_model==1: # isoviscous
        eta[iel]=eta0
@@ -536,9 +584,9 @@ print("     -> rho_elemental (m,M) %.6e %.6e " %(np.min(rho),np.max(rho)))
 
 print("material layout: %.3f s" % (timing.time() - start))
 
-#################################################################
+###############################################################################
 # define boundary conditions
-#################################################################
+###############################################################################
 start = timing.time()
 
 bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
@@ -564,9 +612,9 @@ for i in range(0, NV):
 
 print("define boundary conditions: %.3f s" % (timing.time() - start))
 
-#################################################################
+###############################################################################
 # compute area of elements
-#################################################################
+###############################################################################
 start = timing.time()
 
 area=np.zeros(nel,dtype=np.float64) 
@@ -641,10 +689,7 @@ for iel in range(0,nel):
        cmb_node[iconV[4,iel]] or cmb_node[iconV[5,iel]]:
        flag_bot[iel]=1
 
-
-
-
-################################################################################################
+###############################################################################
 
 u = np.zeros(NV,dtype=np.float64)           # x-component velocity
 v = np.zeros(NV,dtype=np.float64)           # y-component velocity
@@ -844,7 +889,7 @@ for istep in range(0,1):
     rhs[0:NfemV]=f_rhs
     rhs[NfemV:Nfem]=h_rhs
 
-    print('mass=',mass)
+    print('     -> mass=',mass)
 
     print("build FE matrix: %.3f s" % (timing.time() - start))
 
@@ -864,8 +909,8 @@ for istep in range(0,1):
     u,v=np.reshape(sol[0:NfemV],(NV,2)).T
     p=sol[NfemV:Nfem]*eta_ref/R_outer
 
-    np.savetxt('solution_velocity.ascii',np.array([xV,zV,u,v]).T,header='# x,y,u,v')
-    np.savetxt('solution_pressure.ascii',np.array([xP,zP,p]).T,header='# x,y,p')
+    #np.savetxt('solution_velocity.ascii',np.array([xV,zV,u,v]).T,header='# x,y,u,v')
+    #np.savetxt('solution_pressure.ascii',np.array([xP,zP,p]).T,header='# x,y,p')
 
     print("     -> u (m,M) %.6e %.6e " %(np.min(u),np.max(u)))
     print("     -> v (m,M) %.6e %.6e " %(np.min(v),np.max(v)))
@@ -941,43 +986,43 @@ for istep in range(0,1):
        for iel in range(0,nel):
            if surface_Pnode[iconP[0,iel]] and surface_Pnode[iconP[1,iel]]:
               xxp=(xP[iconP[0,iel]]+xP[iconP[1,iel]])/2
-              yyp=(zP[iconP[0,iel]]+zP[iconP[1,iel]])/2
+              zzp=(zP[iconP[0,iel]]+zP[iconP[1,iel]])/2
               ppp=( p[iconP[0,iel]]+ p[iconP[1,iel]])/2
               theta0=np.arctan2(xP[iconP[0,iel]],zP[iconP[0,iel]])
               theta1=np.arctan2(xP[iconP[1,iel]],zP[iconP[1,iel]])
               dtheta=abs(theta0-theta1)
-              thetap=np.arctan2(xxp,yyp)
+              thetap=np.arctan2(xxp,zzp)
               dist=np.sqrt((xP[iconP[0,iel]]-xP[iconP[1,iel]])**2+(zP[iconP[0,iel]]-zP[iconP[1,iel]])**2)
               perim+=dist
               avrg_p+=ppp*dtheta*np.sin(thetap)*0.5
            if surface_Pnode[iconP[1,iel]] and surface_Pnode[iconP[2,iel]]:
               xxp=(xP[iconP[1,iel]]+xP[iconP[2,iel]])/2
-              yyp=(zP[iconP[1,iel]]+zP[iconP[2,iel]])/2
+              zzp=(zP[iconP[1,iel]]+zP[iconP[2,iel]])/2
               ppp=( p[iconP[1,iel]]+ p[iconP[2,iel]])/2
               theta1=np.arctan2(xP[iconP[1,iel]],zP[iconP[1,iel]])
               theta2=np.arctan2(xP[iconP[2,iel]],zP[iconP[2,iel]])
               dtheta=abs(theta1-theta2)
-              thetap=np.arctan2(xxp,yyp)
+              thetap=np.arctan2(xxp,zzp)
               dist=np.sqrt((xP[iconP[1,iel]]-xP[iconP[2,iel]])**2+(zP[iconP[1,iel]]-zP[iconP[2,iel]])**2)
               perim+=dist
               avrg_p+=ppp*dtheta*np.sin(thetap)*0.5
            if surface_Pnode[iconP[2,iel]] and surface_Pnode[iconP[0,iel]]:
               xxp=(xP[iconP[2,iel]]+xP[iconP[0,iel]])/2
-              yyp=(zP[iconP[2,iel]]+zP[iconP[0,iel]])/2
+              zzp=(zP[iconP[2,iel]]+zP[iconP[0,iel]])/2
               ppp=( p[iconP[2,iel]]+ p[iconP[0,iel]])/2
               theta2=np.arctan2(xP[iconP[2,iel]],zP[iconP[2,iel]])
               theta0=np.arctan2(xP[iconP[0,iel]],zP[iconP[0,iel]])
               dtheta=abs(theta2-theta0)
-              thetap=np.arctan2(xxp,yyp)
+              thetap=np.arctan2(xxp,zzp)
               dist=np.sqrt((xP[iconP[2,iel]]-xP[iconP[0,iel]])**2+(zP[iconP[2,iel]]-zP[iconP[0,iel]])**2)
               perim+=dist
               avrg_p+=ppp*dtheta*np.sin(thetap)*0.5
 
        p-=avrg_p 
 
-       print ('perim=',perim, np.pi*R_outer)
+       print ('     -> perim=',perim, np.pi*R_outer)
 
-       np.savetxt('solution_pressure_normalised.ascii',np.array([xP,zP,p,rP]).T)
+       #np.savetxt('solution_pressure_normalised.ascii',np.array([xP,zP,p,rP]).T)
 
     print("normalise pressure: %.3f s" % (timing.time() - start))
 
@@ -1116,8 +1161,8 @@ for istep in range(0,1):
     tau_xz_nodal*=eta_ref
     q[:]/=cc[:]
 
-    np.savetxt('solution_q.ascii',np.array([xV,zV,q]).T)
-    np.savetxt('solution_tau_cartesian.ascii',np.array([xV,zV,tau_xx_nodal,tau_zz_nodal,tau_xz_nodal]).T)
+    #np.savetxt('solution_q.ascii',np.array([xV,zV,q]).T)
+    #np.savetxt('solution_tau_cartesian.ascii',np.array([xV,zV,tau_xx_nodal,tau_zz_nodal,tau_xz_nodal]).T)
 
     print("     -> e_xx_nodal   (m,M) %.6e %.6e " %(np.min(e_xx_nodal),np.max(e_xx_nodal)))
     print("     -> e_zz_nodal   (m,M) %.6e %.6e " %(np.min(e_zz_nodal),np.max(e_zz_nodal)))
@@ -1173,7 +1218,7 @@ for istep in range(0,1):
     sigma_tt_nodal=-q+tau_tt_nodal
     sigma_rt_nodal=   tau_rr_nodal
 
-    np.savetxt('solution_tau_spherical.ascii',np.array([xV,zV,tau_rr_nodal,tau_tt_nodal,tau_rt_nodal]).T)
+    #np.savetxt('solution_tau_spherical.ascii',np.array([xV,zV,tau_rr_nodal,tau_tt_nodal,tau_rt_nodal]).T)
 
     print("rotate stresses: %.3f s" % (timing.time() - start))
 
