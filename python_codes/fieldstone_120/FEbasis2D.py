@@ -698,6 +698,10 @@ def NNN_r(space):
        val = np.zeros(4,dtype=np.float64)
        val[:]=[0,1,0,1/3]
 
+    elif space=='Pm1':
+       val = np.zeros(3,dtype=np.float64)
+       val[:]=[0,1,0]
+
     elif space=='P2':
        val = np.zeros(6,dtype=np.float64)
        val[:]=[0,1,0,0.5,0.5,0]
@@ -779,6 +783,10 @@ def NNN_s(space):
     elif space=='P1+' or space=='P1+P0':
        val = np.zeros(4,dtype=np.float64)
        val[:]=[0,0,1,1/3]
+
+    elif space=='Pm1':
+       val = np.zeros(3,dtype=np.float64)
+       val[:]=[0,0,1]
 
     elif space=='P2':
        val = np.zeros(6,dtype=np.float64)

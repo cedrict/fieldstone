@@ -13,16 +13,16 @@ def p_th(x,y):
     uu,vv,pp=SolKzSolution(x,y)
     return pp
 
-def eta(x,y):
+def eta(x,y,param):
     return np.exp(13.8155*y) 
 
 def vrms_th():
     return 0 
 
-def bx(x,y):
+def bx(x,y,param):
     return 0 
 
-def by(x,y):
+def by(x,y,param):
     return np.sin(2.*y)*np.cos(3.*np.pi*x)
 
 left_bc  ='free_slip'

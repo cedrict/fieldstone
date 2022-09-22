@@ -1,5 +1,7 @@
 import math as math
 import numpy as np
+import numba
+from numba import jit
 
 def u_th(x,y):
     uu,vv,pp=SolCxSolution(x,y)
@@ -13,7 +15,7 @@ def p_th(x,y):
     uu,vv,pp=SolCxSolution(x,y)
     return pp
 
-def eta(x,y):
+def eta(x,y,param):
     if x<0.5:
        return 1
     else:
@@ -22,10 +24,10 @@ def eta(x,y):
 def vrms_th():
     return 0 
 
-def bx(x,y):
+def bx(x,y,param):
     return 0 
 
-def by(x,y):
+def by(x,y,param):
     return np.sin(np.pi*y)*np.cos(np.pi*x)
 
 left_bc  ='free_slip'
@@ -37,6 +39,7 @@ pnormalise=True
 
 ###############################################################################
 
+@jit(nopython=True)
 def SolCxSolution(xcoord,zcoord):
     eta_A=1.0
     eta_B=1.e6

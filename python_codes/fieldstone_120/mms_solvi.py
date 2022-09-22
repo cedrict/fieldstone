@@ -13,7 +13,7 @@ def p_th(x,y):
     uu,vv,pp=SolViSolution(x,y)
     return pp
 
-def eta(x,y):
+def eta(x,y,param):
     if (np.sqrt(x*x+y*y) < 0.2):
        return 1e3
     else:
@@ -22,10 +22,10 @@ def eta(x,y):
 def vrms_th():
     return 0 
 
-def bx(x,y):
+def bx(x,y,param):
     return 0 
 
-def by(x,y):
+def by(x,y,param):
     return 0 
 
 left_bc  ='analytical'

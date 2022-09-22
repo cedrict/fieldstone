@@ -11,26 +11,29 @@ from scipy.sparse.linalg import spsolve
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-Lx=1
-Ly=1
-
-nelx=20
-
 ndofV=2
 ndofP=1
 
+Lx=1
+Ly=1
+
+nelx=128
+
 Vspace='Q2'
-Pspace='Pm1'
+Pspace='Q1'
 
 visu=1
 
-experiment='solvi'
+experiment='RT'
 
 unstructured=0
 meshtype='generic'
 
 isoparametric=True
 randomize_mesh=False
+
+etastar=1
+drho=0.01
 
 #--------------------------------------------------------------------
 # allowing for argument parsing through command line
@@ -43,22 +46,37 @@ if int(len(sys.argv) == 6):
    Pspace = sys.argv[3]
    experiment = sys.argv[4]  
    unstructured = int(sys.argv[5])
-   #visu=0
+   visu=0
+
+if int(len(sys.argv) == 8):
+   print("arguments:",sys.argv)
+   nelx = int(sys.argv[1])
+   Vspace = sys.argv[2]
+   Pspace = sys.argv[3]
+   experiment = sys.argv[4]  
+   unstructured = int(sys.argv[5])
+   etastar=float(sys.argv[6]) ; etastar=10.**etastar
+   drho=float(sys.argv[7])
+   visu=0
+
+
 
 nely=nelx
 
 unstructured=(unstructured==1) 
 
-if experiment=='dh'          : import mms_dh as mms
-if experiment=='jolm17'      : import mms_jolm17 as mms
-if experiment=='sinker'      : import mms_sinker as mms
-if experiment=='sinker_open' : import mms_sinker_open as mms
-if experiment=='poiseuille'  : import mms_poiseuille as mms
-if experiment=='johnbook'    : import mms_johnbook as mms
-if experiment=='bocg12'      : import mms_bocg12 as mms
-if experiment=='solcx'       : import mms_solcx as mms
-if experiment=='solkz'       : import mms_solkz as mms
-if experiment=='solvi'       : import mms_solvi as mms
+if experiment=='dh'             : import mms_dh as mms
+if experiment=='jolm17'         : import mms_jolm17 as mms
+if experiment=='sinker'         : import mms_sinker as mms
+if experiment=='sinker_reduced' : import mms_sinker_reduced as mms
+if experiment=='sinker_open'    : import mms_sinker_open as mms
+if experiment=='poiseuille'     : import mms_poiseuille as mms
+if experiment=='johnbook'       : import mms_johnbook as mms
+if experiment=='bocg12'         : import mms_bocg12 as mms
+if experiment=='solcx'          : import mms_solcx as mms
+if experiment=='solkz'          : import mms_solkz as mms
+if experiment=='solvi'          : import mms_solvi as mms
+if experiment=='RT'             : import mms_RT as mms
 
 
 if experiment=='solvi'       : meshtype='solvi'
@@ -153,7 +171,12 @@ N1,nel1,x1,y1,icon1=Tools.cartesian_mesh(Lx,Ly,nelx,nely,space1)
 if randomize_mesh:
    hx=Lx/nelx
    hy=Ly/nely
-   Tools.randomize_background_mesh(x1,y1,hx,hy,N1,Lx,Ly)
+   #Tools.randomize_background_mesh(x1,y1,hx,hy,N1,Lx,Ly)
+   Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xV,yV,iconV,nel,Vspace)
+   Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xP,yP,iconP,nel,Pspace)
+
+if experiment=='RT':
+   Tools.deform_mesh_RT(x1,y1,N1,Lx,Ly,nelx,nely)
    Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xV,yV,iconV,nel,Vspace)
    Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xP,yP,iconP,nel,Pspace)
 
@@ -214,9 +237,6 @@ N_mat = np.zeros((3,ndofP*mP),dtype=np.float64)
     
 xq = np.zeros(nq,dtype=np.float64)
 yq = np.zeros(nq,dtype=np.float64)
-uq = np.zeros(nq,dtype=np.float64)
-vq = np.zeros(nq,dtype=np.float64)
-pq = np.zeros(nq,dtype=np.float64)
 etaq = np.zeros(nq,dtype=np.float64)
     
 dNNNVdx= np.zeros(mV,dtype=np.float64)
@@ -263,7 +283,7 @@ for iel in range(0,nel): # loop over elements
                                     [0.        ,dNNNVdy[k]],
                                     [dNNNVdy[k],dNNNVdx[k]]]
 
-        etaq[counterq]=mms.eta(xq[counterq],yq[counterq])
+        etaq[counterq]=mms.eta(xq[counterq],yq[counterq],etastar)
 
         K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq[counterq]*weightq*jcob
 
@@ -271,7 +291,7 @@ for iel in range(0,nel): # loop over elements
 
         for k in range(0,mV): 
             f_el[2*k+0]+=NNNV[k]*jcob*weightq*mms.bx(xq[counterq],yq[counterq])
-            f_el[2*k+1]+=NNNV[k]*jcob*weightq*mms.by(xq[counterq],yq[counterq])
+            f_el[2*k+1]+=NNNV[k]*jcob*weightq*mms.by(xq[counterq],yq[counterq],drho)
 
         for k in range(0,mP):
             N_mat[0,k]=NNNP[k]
@@ -417,6 +437,10 @@ print('     -> h (m,M,avrg)=',hmin,hmax,havrg)
 #------------------------------------------------------------------------------
 start = timing.time()
 
+uq = np.zeros(nq,dtype=np.float64)
+vq = np.zeros(nq,dtype=np.float64)
+pq = np.zeros(nq,dtype=np.float64)
+
 errdivv=0
 errv=0
 errp=0
@@ -542,13 +566,113 @@ if experiment=='solvi':
    Tools.export_swarm_to_ascii(xbottom[sort],pbottom[sort],\
                                'solvi_p_profile'+Vspace+'x'+Pspace+'_'+str(nelx)+'.ascii')
             
+#------------------------------------------------------------------------------
+
+if experiment=='sinker' or experiment=='sinker_reduced' or experiment=='sinker_open':
+
+   for i in range(0,NV):
+       if abs(xV[i]-0.5)<eps and abs(yV[i]-0.75)<eps:
+          print('     -> sinker_vel',xV[i],yV[i],v[i],etastar,drho,nelx)
+
+   if Vspace+Pspace=='Q2Pm1':
+      for iel in range(0,nel):
+          rq=-1 ; sq=-1
+          NNNP=FE.NNN(rq,sq,Pspace)
+          xx=NNNP.dot(xP[iconP[0:mP,iel]])
+          yy=NNNP.dot(yP[iconP[0:mP,iel]])
+          if abs(xx-0.5)<eps and abs(yy-0.75)<eps:
+             pp=NNNP.dot(p[iconP[0:mP,iel]])
+             print('     -> sinker_press',xx,yy,pp,etastar,drho,nelx)
+          rq=+1 ; sq=-1
+          NNNP=FE.NNN(rq,sq,Pspace)
+          xx=NNNP.dot(xP[iconP[0:mP,iel]])
+          yy=NNNP.dot(yP[iconP[0:mP,iel]])
+          if abs(xx-0.5)<eps and abs(yy-0.75)<eps:
+             pp=NNNP.dot(p[iconP[0:mP,iel]])
+             print('     -> sinker_press',xx,yy,pp,etastar,drho,nelx)
+          rq=-1 ; sq=+1
+          NNNP=FE.NNN(rq,sq,Pspace)
+          xx=NNNP.dot(xP[iconP[0:mP,iel]])
+          yy=NNNP.dot(yP[iconP[0:mP,iel]])
+          if abs(xx-0.5)<eps and abs(yy-0.75)<eps:
+             pp=NNNP.dot(p[iconP[0:mP,iel]])
+             print('     -> sinker_press',xx,yy,pp,etastar,drho,nelx)
+          rq=+1 ; sq=+1
+          NNNP=FE.NNN(rq,sq,Pspace)
+          xx=NNNP.dot(xP[iconP[0:mP,iel]])
+          yy=NNNP.dot(yP[iconP[0:mP,iel]])
+          if abs(xx-0.5)<eps and abs(yy-0.75)<eps:
+             pp=NNNP.dot(p[iconP[0:mP,iel]])
+             print('     -> sinker_press',xx,yy,pp,etastar,drho,nelx)
+   if Vspace+Pspace=='P2P0':
+      for iel in range(0,nel):
+          rq=0 ; sq=0
+          NNNV=FE.NNN(rq,sq,Vspace)
+          xx=NNNV.dot(xV[iconV[0:mV,iel]])
+          yy=NNNV.dot(yV[iconV[0:mV,iel]])
+          if abs(xx-0.5)<eps and abs(yy-0.75)<eps:
+             print('     -> sinker_press',xx,yy,p[iel],etastar,drho,nelx)
+          rq=1 ; sq=0
+          NNNV=FE.NNN(rq,sq,Vspace)
+          xx=NNNV.dot(xV[iconV[0:mV,iel]])
+          yy=NNNV.dot(yV[iconV[0:mV,iel]])
+          if abs(xx-0.5)<eps and abs(yy-0.75)<eps:
+             print('     -> sinker_press',xx,yy,p[iel],etastar,drho,nelx)
+          rq=0 ; sq=1
+          NNNV=FE.NNN(rq,sq,Vspace)
+          xx=NNNV.dot(xV[iconV[0:mV,iel]])
+          yy=NNNV.dot(yV[iconV[0:mV,iel]])
+          if abs(xx-0.5)<eps and abs(yy-0.75)<eps:
+             print('     -> sinker_press',xx,yy,p[iel],etastar,drho,nelx)
+   else:
+      for i in range(0,NP):
+          if abs(xP[i]-0.5)<eps and abs(yP[i]-0.75)<eps:
+             print('     -> sinker_press',xP[i],yP[i],p[i],etastar,drho,nelx)
+
+if experiment=='RT':
+   llambda=0.5
+   amplitude=0.01
+   phi1=2.*np.pi*(Ly/2.)/llambda
+   phi2=2.*np.pi*(Ly/2.)/llambda
+   rho1=1+drho
+   rho2=1
+   eta1=1
+   grav=1
+   eta2=etastar
+   c11 = (eta1*2*phi1**2)/(eta2*(np.cosh(2*phi1)-1-2*phi1**2)) \
+        - (2*phi2**2)/(np.cosh(2*phi2)-1-2*phi2**2)
+   d12 = (eta1*(np.sinh(2*phi1) -2*phi1))/(eta2*(np.cosh(2*phi1)-1-2*phi1**2)) \
+        + (np.sinh(2*phi2)-2*phi2)/(np.cosh(2*phi2)-1-2*phi2**2)
+   i21 = (eta1*phi2*(np.sinh(2*phi1)+2*phi1))/(eta2*(np.cosh(2*phi1)-1-2*phi1**2)) \
+        + (phi2*(np.sinh(2*phi2)+2*phi2))/(np.cosh(2*phi2)-1-2*phi2**2) 
+   j22 = (eta1*2*phi1**2*phi2)/(eta2*(np.cosh(2*phi1)-1-2*phi1**2))\
+        - (2*phi2**3)/(np.cosh(2*phi2)-1-2*phi2**2)
+   K=-d12/(c11*j22-d12*i21)
+   val=K*(rho1-rho2)/2/eta2*(Ly/2.)*grav*amplitude
+
+   print('     -> rt_wave',np.max(abs(v)),phi1,etastar,drho,nelx,val)
+   
+#------------------------------------------------------------------------------
+# 
+#------------------------------------------------------------------------------
+
+bxc = np.zeros(nel,dtype=np.float64)
+byc = np.zeros(nel,dtype=np.float64)
+etac = np.zeros(nel,dtype=np.float64)
+
+for iel in range(0,nel):
+    xc=np.sum(xV[iconV[:,iel]])/mV
+    yc=np.sum(yV[iconV[:,iel]])/mV
+    bxc[iel]=mms.bx(xc,yc)
+    byc[iel]=mms.by(xc,yc,drho)
+    etac[iel]=mms.eta(xc,yc,etastar)
 
 #------------------------------------------------------------------------------
 
 if visu:
 
-   Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu',area)
-   Tools.export_elements_to_vtu(xP,yP,iconP,Pspace,'meshP.vtu',area)
+   Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu',area,bxc,byc,etac)
+   Tools.export_elements_to_vtu(xP,yP,iconP,Pspace,'meshP.vtu',area,bxc,byc,etac)
    if not isoparametric: Tools.export_elements_to_vtu(x1,y1,icon1,space1,'mesh1.vtu')
 
    Tools.export_swarm_to_ascii(xV,yV,'Vnodes.ascii')

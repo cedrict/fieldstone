@@ -1,0 +1,75 @@
+#!/bin/bash
+
+###############################################################################
+#donea & huerta
+###############################################################################
+
+echo =================dh====================structured
+rm -f opla*
+rm -f vrms*
+rm -f errors* 
+mkdir paperresults/dh
+mkdir paperresults/dh/structured
+
+for e in 3 4 5 9 15 18 ; do 
+
+    if test $e == 3  ; then Vspace=P2    Pspace=P0  ; fi
+    if test $e == 4  ; then Vspace=Q2    Pspace=Q1  ; fi
+    if test $e == 5  ; then Vspace=P2    Pspace=P1  ; fi
+    if test $e == 9  ; then Vspace=P1+   Pspace=P1  ; fi
+    if test $e == 15 ; then Vspace=Q2    Pspace=Pm1 ; fi
+    if test $e == 18 ; then Vspace=P2+   Pspace=P-1 ; fi
+
+    echo ---------- $Vspace X $Pspace ----------
+
+    for n in 20 30 40 50 60 70 80 90 100; do
+        echo mesh: $n X $n 
+        python3 stone.py $n $Vspace $Pspace dh 0 >> opla
+    done
+    grep errv opla > errors_${Vspace}_${Pspace}
+    grep vrms= opla > vrms_${Vspace}_${Pspace}
+    mv opla opla_${Vspace}_${Pspace}
+
+done
+
+mv err* paperresults/dh/structured
+mv opla* paperresults/dh/structured
+mv vrms* paperresults/dh/structured
+#mv *.vtu paperresults/dh/structured
+#mv *.ascii paperresults/dh/structured
+
+echo =================dh====================unstructured
+rm -f opla*
+rm -f vrms*
+rm -f errors* 
+mkdir paperresults/dh
+mkdir paperresults/dh/unstructured
+
+for e in 3 5 9 18 ; do 
+
+    if test $e == 3  ; then Vspace=P2    Pspace=P0  ; fi
+    if test $e == 5  ; then Vspace=P2    Pspace=P1  ; fi
+    if test $e == 9  ; then Vspace=P1+   Pspace=P1  ; fi
+    if test $e == 18 ; then Vspace=P2+   Pspace=P-1 ; fi
+
+    echo ---------- $Vspace X $Pspace ----------
+
+    for n in 20 30 40 50 60 70 80 90 100; do
+        echo mesh: $n X $n 
+        python3 stone.py $n $Vspace $Pspace dh 1 >> opla
+    done
+    grep errv opla > errors_${Vspace}_${Pspace}
+    grep vrms= opla > vrms_${Vspace}_${Pspace}
+    mv opla opla_${Vspace}_${Pspace}
+
+done
+
+mv err* paperresults/dh/unstructured
+mv opla* paperresults/dh/unstructured
+mv vrms* paperresults/dh/unstructured
+#mv *.vtu paperresults/dh/unstructured
+#mv *.ascii paperresults/dh/unstructured
+
+
+
+

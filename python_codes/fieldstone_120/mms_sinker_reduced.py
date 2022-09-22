@@ -8,9 +8,9 @@ def eta(x,y,etastar):
 
 def by(x,y,drho):
     if abs(x-0.5)<0.125 and abs(y-0.75)<0.125:
-       return -(1+drho)
+       return -drho
     else:
-       return -1
+       return 0
 
 def u_th(x,y):
     return 0
@@ -58,6 +58,6 @@ def vrms_th():
 left_bc  ='free_slip'
 right_bc ='free_slip'
 bottom_bc='free_slip'
-top_bc   ='node'
+top_bc   ='free_slip'
 
-pnormalise=False
+pnormalise=True

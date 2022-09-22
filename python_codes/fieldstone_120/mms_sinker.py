@@ -1,10 +1,16 @@
 # 0.25x0.25 sinker cube in the middle of unit square 
 
-def eta(x,y):
-    if abs(x-0.5)<0.125 and abs(y-0.5)<0.125:
-       return 100
+def eta(x,y,etastar):
+    if abs(x-0.5)<0.125 and abs(y-0.75)<0.125:
+       return etastar
     else:
        return 1
+
+def by(x,y,drho):
+    if abs(x-0.5)<0.125 and abs(y-0.75)<0.125:
+       return -(1+drho)
+    else:
+       return -1
 
 def u_th(x,y):
     return 0
@@ -45,11 +51,6 @@ def deyydy(x,y):
 def bx(x,y):
     return 0 
 
-def by(x,y):
-    if abs(x-0.5)<0.125 and abs(y-0.5)<0.125:
-       return -1.001
-    else:
-       return -1
 
 def vrms_th():
     return 0
@@ -60,5 +61,3 @@ bottom_bc='free_slip'
 top_bc   ='free_slip'
 
 pnormalise=True
-
-

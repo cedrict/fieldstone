@@ -1,0 +1,48 @@
+#!/bin/bash
+
+###############################################################################
+# sinker
+###############################################################################
+
+echo =================sinker====================structured
+rm -f opla*
+rm -f vrms*
+rm -f errors* 
+rm -f sinker_vel* 
+rm -f sinker_press* 
+mkdir paperresults/sinker
+mkdir paperresults/sinker/structured
+
+for e in 3 4 5 9 15 18 ; do 
+
+    if test $e == 3  ; then Vspace=P2    Pspace=P0  ; fi
+    if test $e == 4  ; then Vspace=Q2    Pspace=Q1  ; fi
+    if test $e == 5  ; then Vspace=P2    Pspace=P1  ; fi
+    if test $e == 9  ; then Vspace=P1+   Pspace=P1  ; fi
+    if test $e == 15 ; then Vspace=Q2    Pspace=Pm1 ; fi
+    if test $e == 18 ; then Vspace=P2+   Pspace=P-1 ; fi
+
+    echo ---------- $Vspace X $Pspace ----------
+
+    for n in 16 32 48 64; do
+        for eta in -4 -3 -2 -1 0 1 2 3 4 ; do
+            for drho in 0.0025 0.01 0.4  ; do
+                echo mesh: $n X $n '; etastar=' $eta '; drho=' $drho
+                python3 stone.py $n $Vspace $Pspace sinker 0 $eta $drho > opla
+                grep errv opla >> errors_${Vspace}_${Pspace}_${n}
+                grep vrms= opla >> vrms_${Vspace}_${Pspace}_${n}
+                grep sinker_vel opla >> sinker_vel_${Vspace}_${Pspace}_${n}
+                grep sinker_press opla >> sinker_press_${Vspace}_${Pspace}_${n}
+                mv opla opla_${Vspace}_${Pspace}_${n}
+            done
+        done
+    done
+
+done
+
+mv err* paperresults/sinker/structured
+mv opla* paperresults/sinker/structured
+mv vrms* paperresults/sinker/structured
+mv sinker* paperresults/sinker/structured
+
+

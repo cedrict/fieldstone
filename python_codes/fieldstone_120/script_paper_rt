@@ -1,0 +1,45 @@
+#!/bin/bash
+
+###############################################################################
+# Rayleigh-Taylor wave 
+###############################################################################
+
+echo =================Rayleigh Taylor wave====================structured
+rm -f opla*
+rm -f vrms*
+rm -f errors* 
+rm -f rt_vel* 
+mkdir paperresults/rt
+mkdir paperresults/rt/structured
+
+for e in 3 4 5 9 15 18 ; do 
+
+    if test $e == 3  ; then Vspace=P2    Pspace=P0  ; fi
+    if test $e == 4  ; then Vspace=Q2    Pspace=Q1  ; fi
+    if test $e == 5  ; then Vspace=P2    Pspace=P1  ; fi
+    if test $e == 9  ; then Vspace=P1+   Pspace=P1  ; fi
+    if test $e == 15 ; then Vspace=Q2    Pspace=Pm1 ; fi
+    if test $e == 18 ; then Vspace=P2+   Pspace=P-1 ; fi
+
+    echo ---------- $Vspace X $Pspace ----------
+
+    for n in 16 32 48 64 80 ; do
+        for eta in -2 -1.5 -1 -0.5 0 0.5 1 1.5 2 ; do
+            for drho in 0.1  ; do
+                echo mesh: $n X $n '; etastar=' $eta '; drho=' $drho
+                python3 stone.py $n $Vspace $Pspace RT 0 $eta $drho > opla
+                grep errv opla >> errors_${Vspace}_${Pspace}_${n}
+                grep vrms= opla >> vrms_${Vspace}_${Pspace}_${n}
+                grep rt_wave opla >> rt_vel_${Vspace}_${Pspace}_${n}
+                mv opla opla_${Vspace}_${Pspace}_${n}
+            done
+        done
+    done
+
+done
+
+mv err* paperresults/rt/structured
+mv opla* paperresults/rt/structured
+mv vrms* paperresults/rt/structured
+mv rt_vel* paperresults/rt/structured
+

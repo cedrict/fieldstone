@@ -1397,6 +1397,31 @@ def randomize_background_mesh(x1,y1,hx,hy,N1,Lx,Ly):
            x1[i]+=hx*psi*alpha
            y1[i]+=hy*phi*alpha
 
+def deform_mesh_RT(x1,y1,N1,Lx,Ly,nelx,nely):
+    hx=Lx/nelx
+    hy=Ly/nely
+    eps=1e-8
+    llambda=0.5
+    amplitude=0.01
+    for i in range(0,N1):
+        if abs(y1[i]-Ly/2.)/Ly<eps:
+           y1[i]+=amplitude*np.cos(2*np.pi*x1[i]/llambda)
+
+    counter=0
+    for j in range(0,nely+1):
+        for i in range(0,nelx+1):
+            ya=0.5+amplitude*np.cos(2*np.pi*x1[counter]/llambda)
+            if j<(nely+1)/2:
+               dy=ya/(nely/2)
+               y1[counter]=j*dy
+            else:
+               dy=(Ly-ya)/(nely/2)
+               y1[counter]=ya+(j-nely/2)*dy
+            counter+=1
+
+
+
+
 def adapt_FE_mesh(x1,y1,icon1,m1,space1,x,y,icon,nel,space):
     r=FE.NNN_r(space)
     s=FE.NNN_s(space)
@@ -1447,7 +1472,7 @@ def export_connectivity_array_elt1_to_ascii(x,y,icon,filename):
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def export_elements_to_vtu(x,y,icon,space,filename,area):
+def export_elements_to_vtu(x,y,icon,space,filename,area,bx,by,eta):
     N=np.size(x)
     m,nel=np.shape(icon)
  
@@ -1457,10 +1482,7 @@ def export_elements_to_vtu(x,y,icon,space,filename,area):
     if space=='Q1' or space=='Q1+' or space=='Q2' or space=='Q2s' or \
        space=='RT1' or space=='RT2' or space=='DSSY1' or space=='DSSY2' or\
        space=='Q1+Q0' :
-       node0=0
-       node1=1
-       node2=2
-       node3=3
+       node0=0 ; node1=1 ; node2=2 ; node3=3
        m=4
     if space=='Q3':
        node0=0
@@ -1506,6 +1528,18 @@ def export_elements_to_vtu(x,y,icon,space,filename,area):
     vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (area[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='bx' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (bx[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='by' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (by[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (eta[iel]))
     vtufile.write("</DataArray>\n")
     vtufile.write("</CellData>\n")
     #####
@@ -1632,7 +1666,7 @@ def export_swarm_scalar_to_vtu(x,y,scalar,filename):
        vtufile.write("</DataArray>\n")
        vtufile.write("</Points> \n")
        vtufile.write("<PointData Scalars='scalars'>\n")
-       vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='field' Format='ascii'> \n")
        for i in range(0,N):
            vtufile.write("%10e \n" %(scalar[i]))
        vtufile.write("</DataArray>\n")
