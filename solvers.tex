@@ -403,7 +403,7 @@ $\vec{r}_0 = \underline{\vec{f}} - \SSS \cdot \vec{\cal P}_0$\\
 $\vec{p}_0 = \vec{r}_0$\\
 $k=0$ \\
 repeat\\
-\hspace{8mm} $\alpha_k = (\vec{r}_k^T\cdot \vec{r}_k )/(\vec{p}_k \cdot \SSS\cdot  \vec{p}_k )$\\
+\hspace{8mm} $\alpha_k = (\vec{r}_k^T\cdot \vec{r}_k )/(\vec{p}_k^T \cdot \SSS\cdot  \vec{p}_k )$\\
 \hspace{8mm} $\vec{\cal P}_{k+1} = \vec{\cal P}_k+\alpha_k \vec{p}_k$\\
 \hspace{8mm} $\vec{r}_{k+1} = \vec{r}_k - \alpha_k \; \SSS \cdot \vec{p}_k $ \\
 \hspace{8mm} $\beta_k=(\vec{r}_{k+1}^T \cdot \vec{r}_{k+1})/(\vec{r}_k^T \cdot \vec{r}_k)$ \\
@@ -446,7 +446,7 @@ We then define $\tilde{\vec{p}}_k = \G \cdot \vec{p}_k$, so that $\alpha_k$ can 
 \item compute 
 \[
 \alpha_k=\frac{\vec{r}_k^T \cdot \vec{r}_k}{\tilde{\vec{p}}_k^T \cdot \vec{d}_k 
-+ \vec{p}_k\cdot \C\cdot \vec{p}_k }
++ \vec{p}_k\cdot^T \C\cdot \vec{p}_k }
 \]
 \end{enumerate}
 Then we need to look at the term $\SSS\cdot \vec{p}_k$:
@@ -467,7 +467,7 @@ We can then rewrite the CG algorithm as follows:
 \item compute $\tilde{\vec{p}}_k = \G\cdot \vec{p}_k$
 \item solve $\K\cdot  \vec{d}_k = \tilde{\vec{p}}_k$
 \item compute $\alpha_k=(\vec{r}_k^T \cdot  \vec{r}_k)/
-              (\tilde{\vec{p}}_k^T\cdot \vec{d}_k + \vec{p}_k\cdot \C\cdot\vec{p}_k)$
+              (\tilde{\vec{p}}_k^T\cdot \vec{d}_k + \vec{p}_k^T\cdot \C\cdot\vec{p}_k)$
 \item $\vec{\cal P}_{k+1} = \vec{\cal P}_k+\alpha_k \vec{p}_k$
 \item $\vec{r}_{k+1} = \vec{r}_k - \alpha_k (\G^T \cdot \vec{d}_k + \C \cdot \vec{p}_k) $
 \item if $\vec{r}_{k+1}$ is sufficiently small, then exit loop
@@ -510,7 +510,7 @@ nearly for free. The final CG algorithm is then
 \item compute $\tilde{\vec{p}}_k = \G \cdot \vec{p}_k$
 \item solve $\K\cdot \vec{d}_k = \tilde{p}_k$
 \item compute $\alpha_k=(\vec{r}_k^T \cdot  \vec{r}_k)/(\tilde{\vec{p}}_k^T \cdot \vec{d}_k 
-      + \vec{p}_k\cdot \C\cdot \vec{p}_k)$
+      + \vec{p}_k^T \cdot \C\cdot \vec{p}_k)$
 \item $\vec{\cal P}_{k+1} = \vec{\cal P}_k+\alpha_k \vec{p}_k$
 \item $ \vec{\cal V}_{k+1} = \vec{\cal V}_k - \alpha_k \vec{d}_k$
 \item $\vec{r}_{k+1} = \vec{r}_k - \alpha_k (\G^T \cdot \vec{d}_k + \C \cdot \vec{p}_k) $
@@ -556,7 +556,7 @@ $\vec{z}_0= {\bm M}^{-1} \cdot \vec{r}_0$ \\
 $\vec{p}_0 = \vec{z}_0$\\
 $k=0$ \\
 repeat\\
-\hspace{8mm} $\alpha_k = (\vec{r}_k^T\cdot \vec{z}_k )/(\vec{p}_k \cdot \SSS\cdot  \vec{p}_k )$\\
+\hspace{8mm} $\alpha_k = (\vec{r}_k^T\cdot \vec{z}_k )/(\vec{p}_k^T \cdot \SSS\cdot  \vec{p}_k )$\\
 \hspace{8mm} $\vec{\cal P}_{k+1} = \vec{\cal P}_k+\alpha_k \vec{p}_k$\\
 \hspace{8mm} $\vec{r}_{k+1} = \vec{r}_k - \alpha_k \; \SSS \cdot \vec{p}_k $ \\
 \hspace{8mm} $\vec{z}_{k+1} = {\bm M}^{-1} \cdot \vec{r}_{k+1}$ \\
@@ -595,7 +595,7 @@ the Schur complement equation takes the form:
 \item compute $\tilde{\vec{p}}_k = \G \cdot \vec{p}_k$
 \item solve $\K\cdot  \vec{d}_k = \tilde{\vec{p}}_k$
 \item compute $\alpha_k=(\vec{r}_k^T \cdot \vec{z}_k)/(\tilde{\vec{p}}_k^T \cdot \vec{d}_k
-      + \vec{p}_k\cdot\C \cdot \vec{p}_k$)
+      + \vec{p}_k^T\cdot\C \cdot \vec{p}_k$)
 \item $\vec{\cal P}_{k+1} = {\cal P}_k+\alpha_k \vec{p}_k$
 \item $\vec{\cal V}_{k+1} = {\cal V}_k - \alpha_k \vec{d}_k$
 \item $\vec{r}_{k+1} = \vec{r}_k - \alpha_k (\G^T \cdot \vec{d}_k + \C \cdot \vec{p}_k) $
