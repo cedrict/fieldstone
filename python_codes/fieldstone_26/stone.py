@@ -1,6 +1,5 @@
 import numpy as np
 import sys as sys
-import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix, lil_matrix
@@ -81,7 +80,7 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 48
+   nelx = 250
    nely = int(nelx*Ly/Lx)
    visu = 1
 
@@ -99,6 +98,9 @@ nel=nelx*nely  # number of elements, total
 NfemV=NV*ndofV # number of velocity dofs
 NfemP=nel*ndofP # number of pressure dofs
 Nfem=NfemV+NfemP # total number of dofs
+
+hx=Lx/nelx
+hy=Ly/nely
 
 #################################################################
 
@@ -191,6 +193,9 @@ sol  =np.zeros(Nfem,dtype=np.float64)
 xi   =np.zeros(niter,dtype=np.float64) 
 c_mat=np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
+jcob = hx*hy/4 
+jcbi=np.array([[2/hx,0],[0,2/hy]],dtype=np.float64) 
+
 ###############################################################################
 # nonlinear iterations
 ###############################################################################
@@ -241,15 +246,15 @@ for iiter in range(0,niter):
                 dNds[0:mV]=dNNVds(rq,sq)
 
                 # calculate jacobian matrix
-                jcb = np.zeros((2,2),dtype=np.float64)
-                for k in range(0,mV):
-                    jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
-                    jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
-                    jcb[1,0]+=dNds[k]*x[icon[k,iel]]
-                    jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+                #jcb = np.zeros((2,2),dtype=np.float64)
+                #for k in range(0,mV):
+                #    jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+                #    jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+                #    jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+                #    jcb[1,1]+=dNds[k]*y[icon[k,iel]]
                 #end for 
-                jcob = np.linalg.det(jcb)
-                jcbi = np.linalg.inv(jcb)
+                #jcob = np.linalg.det(jcb)
+                #jcbi = np.linalg.inv(jcb)
 
                 # compute dNdx & dNdy
                 xq=0.0
@@ -393,58 +398,58 @@ for iiter in range(0,niter):
 
     print("split vel into u,v: %.3f s" % (time.time() - start))
 
-    ######################################################################
-    # compute elemental strainrate, density and viscosity
-    # these fields are only for visualisation purposes
-    ######################################################################
-    start = time.time()
+#end for iter
 
-    xc=np.zeros(nel,dtype=np.float64)  
-    yc=np.zeros(nel,dtype=np.float64)  
-    exx=np.zeros(nel,dtype=np.float64)  
-    eyy=np.zeros(nel,dtype=np.float64)  
-    exy=np.zeros(nel,dtype=np.float64)  
-    rho=np.zeros(nel,dtype=np.float64)    
-    eta=np.zeros(nel,dtype=np.float64)   
+######################################################################
+# compute elemental strainrate, density and viscosity
+# these fields are only for visualisation purposes
+######################################################################
+start = time.time()
 
-    for iel in range(0,nel):
-        rq = 0.0
-        sq = 0.0
-        NNNV[0:mV]=NNV(rq,sq)
-        dNdr[0:mV]=dNNVdr(rq,sq)
-        dNds[0:mV]=dNNVds(rq,sq)
+xc=np.zeros(nel,dtype=np.float64)  
+yc=np.zeros(nel,dtype=np.float64)  
+exx=np.zeros(nel,dtype=np.float64)  
+eyy=np.zeros(nel,dtype=np.float64)  
+exy=np.zeros(nel,dtype=np.float64)  
+rho=np.zeros(nel,dtype=np.float64)    
+eta=np.zeros(nel,dtype=np.float64)   
 
-        jcb=np.zeros((2,2),dtype=np.float64)
-        for k in range(0,mV):
-            jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
-            jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
-            jcb[1,0]+=dNds[k]*x[icon[k,iel]]
-            jcb[1,1]+=dNds[k]*y[icon[k,iel]]
-        #end for
-        jcbi=np.linalg.inv(jcb)
+for iel in range(0,nel):
+    rq = 0.0
+    sq = 0.0
+    NNNV[0:mV]=NNV(rq,sq)
+    dNdr[0:mV]=dNNVdr(rq,sq)
+    dNds[0:mV]=dNNVds(rq,sq)
 
-        for k in range(0,mV):
-            dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-            dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
-            xc[iel]+=NNNV[k]*x[icon[k,iel]]
-            yc[iel]+=NNNV[k]*y[icon[k,iel]]
-            exx[iel]+=dNdx[k]*u[icon[k,iel]]
-            eyy[iel]+=dNdy[k]*v[icon[k,iel]]
-            exy[iel]+=0.5*(dNdy[k]*u[icon[k,iel]]+dNdx[k]*v[icon[k,iel]])
-        #end for
+    jcb=np.zeros((2,2),dtype=np.float64)
+    for k in range(0,mV):
+        jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+        jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+        jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+        jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+    #end for
+    jcbi=np.linalg.inv(jcb)
 
-        rho[iel]=density(xc[iel],yc[iel],Lx,Ly)
-        eta[iel]=viscosity(xc[iel],yc[iel],Lx,Ly,exx[iel],eyy[iel],exy[iel])
-
+    for k in range(0,mV):
+        dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+        dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+        xc[iel]+=NNNV[k]*x[icon[k,iel]]
+        yc[iel]+=NNNV[k]*y[icon[k,iel]]
+        exx[iel]+=dNdx[k]*u[icon[k,iel]]
+        eyy[iel]+=dNdy[k]*v[icon[k,iel]]
+        exy[iel]+=0.5*(dNdy[k]*u[icon[k,iel]]+dNdx[k]*v[icon[k,iel]])
     #end for
 
-    print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
-    print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
-    print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
+    rho[iel]=density(xc[iel],yc[iel],Lx,Ly)
+    eta[iel]=viscosity(xc[iel],yc[iel],Lx,Ly,exx[iel],eyy[iel],exy[iel])
 
-    print("compute press & sr: %.3f s" % (time.time() - start))
+#end for
 
-#end for iter
+print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
+print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
+print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
+
+print("compute press & sr: %.3f s" % (time.time() - start))
 
 #####################################################################
 # compute pressure and strain rate onto Q1 grid
@@ -562,7 +567,8 @@ for i in range(0,npts):
     etap[i]=viscosity(xp[i],yp[i],Lx,Ly,exxp[i],eyyp[i],exyp[i])
 #end for
      
-np.savetxt('horizontal.ascii',np.array([xp,yp,rhop,etap,exxp,eyyp,exyp,exxp2,eyyp2,exyp2]).T,header='# x,y,rho,eta')
+np.savetxt('horizontal.ascii',np.array([xp/1000,yp/1000,rhop,etap,\
+            exxp,eyyp,exyp,exxp2,eyyp2,exyp2]).T,header='# x,y,rho,eta,exx,eyy,exy,exx,eyy,exp',fmt='%.6e')
 
 xp=np.zeros(npts,dtype=np.float64)  
 yp=np.zeros(npts,dtype=np.float64)  
@@ -612,7 +618,8 @@ for i in range(0,npts):
     etap[i]=viscosity(xp[i],yp[i],Lx,Ly,exxp[i],eyyp[i],exyp[i])
 #end for
      
-np.savetxt('vertical.ascii',np.array([xp,yp,rhop,etap,exxp,eyyp,exyp,exxp2,eyyp2,exyp2]).T,header='# x,y,rho,eta')
+np.savetxt('vertical.ascii',np.array([xp,yp,rhop,etap,\
+           exxp,eyyp,exyp,exxp2,eyyp2,exyp2]).T,header='# x,y,rho,eta',fmt='%.6e')
    
 print("export profiles: %.3fs" % (time.time() - start))
 
