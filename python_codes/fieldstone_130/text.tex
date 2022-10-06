@@ -70,7 +70,7 @@ Since the matrix does not change (only the rhs) we will be making use of this fa
 \int \vec{\bN}^T \vec{\bN} dV \cdot \frac{\partial \vec{\cal A}}{\partial t} + 
 \int {\bm B}^T \cdot {\bm B} dV \cdot \vec{\cal A} 
 &=& \int \vec{\bN}^T \gamma a dV 
-- \gamma\int \vec{bN}^T \vec{\bN} dV \cdot \vec{\cal A}
+- \gamma\int \vec{\bN}^T \vec{\bN} dV \cdot \vec{\cal A}
 + \int \vec{\bN}^T \gamma A^2 B dV \nn\\ 
 \int \vec{\bN}^T \vec{\bN} dV \cdot \frac{\partial \vec{\cal B}}{\partial t} + 
 \int d {\bm B}^T \cdot {\bm B} dV \cdot \vec{\cal B} 
@@ -92,7 +92,7 @@ constant in space so we can take them out of the integrals)
 {\M} \cdot  \frac{\partial \vec{\cal A}}{\partial t} + 
 \K_D \cdot \vec{\cal A} 
 &=& \int \vec{\bN}^T \gamma a dV 
-- \gamma \int \vec{bN}^T \vec{\bN} dV \cdot \vec{\cal A}
+- \gamma \int \vec{\bN}^T \vec{\bN} dV \cdot \vec{\cal A}
 + \int \vec{\bN}^T A^2 B dV  \nn\\
 {\M} \cdot  \frac{\partial \vec{\cal B}}{\partial t} + 
 d\; \K_D \cdot \vec{\cal B} 
@@ -108,28 +108,29 @@ so that we have
 \begin{eqnarray}
 {\M} \cdot \frac{ \vec{\cal A}^n - \vec{\cal A}^{n-1}  }{\delta t}  +
 \K_D \cdot \vec{\cal A}^n 
-&=& \int \vec{\bN}^T \gamma a dV 
-- \gamma \int \vec{bN}^T \vec{\bN} dV \cdot \vec{\cal A}
-+ \int \vec{\bN}^T (A^n)^2 B^n dV  \nn\\
+&=& \gamma a\int \vec{\bN}^T \;  dV 
+- \gamma \underbrace{\int \vec{\bN}^T \vec{\bN} \; dV}_{\M} \cdot \vec{\cal A}^n
++ \gamma \int \vec{\bN}^T (A^n)^2 B^n \; dV  \nn\\
 {\M} \cdot \frac{ \vec{\cal B}^n - \vec{\cal B}^{n-1}  }{\delta t}  +
 d \K_D \cdot \vec{\cal B}^n 
-&=& \int \vec{\bN}^T \gamma b dV 
-- \int \vec{\bN}^T (A^n)^2 B^n dV 
+&=& \gamma b\int \vec{\bN}^T \; dV 
+- \gamma \int \vec{\bN}^T (A^n)^2 B^n \; dV 
 \end{eqnarray}
-or,
+or, after multiplying both equations by $\delta t$,
 \begin{eqnarray}
 \underbrace{
 ((1+\gamma \delta t) {\M} + \K_D  \delta t )}_{\K_A} \cdot \vec{\cal A}^n 
-&=& \delta t \int \vec{\bN}^T \gamma a dV 
+&=& 
+\underbrace{\delta t \gamma a \int \vec{\bN}^T  dV 
 + \delta t\int \vec{\bN}^T (A^n)^2 B^n dV  
-+ {\bm M} \cdot \vec{\cal A}^{n-1}
++ {\M} \cdot \vec{\cal A}^{n-1}}_{\vec{f}_A}
 \nn\\
-\underbrace{({\bm M} + \K_D \delta t)}_{\K_B} \cdot \vec{\cal B}^n 
+\underbrace{(\M + d \K_D \delta t)}_{\K_B} \cdot \vec{\cal B}^n 
 &=& 
 \underbrace{
-\delta t \int \vec{\bN}^T \gamma b dV 
+\delta t \gamma b \int \vec{\bN}^T dV 
 - \delta t\int \vec{\bN}^T (A^n)^2 B^n dV 
-+ {\bm M} \cdot \vec{\cal B}^{n-1}}_{\vec{f}_B}
++ {\M} \cdot \vec{\cal B}^{n-1}}_{\vec{f}_B}
 \end{eqnarray}
 Note that the rhs vectors depend on An, Bn and ...
 

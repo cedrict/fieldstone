@@ -170,6 +170,8 @@ def bx(x,y):
        val,xx=solvg.SolVgGravity(x,y)
     if experiment==7:
        val=0
+    if experiment==8:
+       val=0
     return val
 
 def by(x,y):
@@ -192,6 +194,8 @@ def by(x,y):
     if experiment==6:
        xx,val=solvg.SolVgGravity(x,y)
     if experiment==7:
+       val=0
+    if experiment==8:
        val=0
     return val
 
@@ -223,6 +227,8 @@ def eta(x,y):
           val=1.
     if experiment==6:
        val=-np.sin(x*x*y*y+x*y+5.)+1.+0.001 #epsilon
+    if experiment==8:
+       val=1.
     return val
 
 #--------------------------------------------------------------------------------------------------
@@ -246,6 +252,8 @@ def velocity_x(x,y):
        val=x**3*y+x**2+x*y+x
     if experiment==7:
        val,vi,pi=solvi.SolViSolution(x,y) 
+    if experiment==8:
+       val=2*(y-0.5)
     return val
 
 def velocity_y(x,y):
@@ -263,6 +271,8 @@ def velocity_y(x,y):
        val=-1.5*x**2*y**2-2*x*y-0.5*y**2-y
     if experiment==7:
        ui,val,pi=solvi.SolViSolution(x,y) 
+    if experiment==8:
+       val=0
     return val
 
 def pressure(x,y):
@@ -280,6 +290,8 @@ def pressure(x,y):
        val=x**2*y**2+x*y+5. - Lx**4/9.-Lx**2/4.-5.
     if experiment==7:
        ui,vi,val=solvi.SolViSolution(x,y) 
+    if experiment==8:
+       val=0
     return val
 
 #--------------------------------------------------------------------------------------------------
@@ -301,8 +313,9 @@ def pressure(x,y):
 # experiment=5: SolVi
 # experiment=6: SolVg
 # experiment=7: SolVi-quiltmesh
+# experiment=8: poiseuille
 
-experiment=7
+experiment=8
 
 randomize_mesh=False
         
@@ -326,10 +339,10 @@ if int(len(sys.argv) == 6):
    elt    = int(sys.argv[4])
    tridiag= int(sys.argv[5])
 else:
-   nelx    = -3
+   nelx    = -1
    nely    = 16
    visu    = 1
-   elt     = 5
+   elt     = 2
    tridiag = 0
 
 read_mesh= nelx<0
@@ -420,7 +433,7 @@ if experiment==6:
 # not all experiments are compatible with all meshes!
 #--------------------------------------------------------------------------------------------------
 
-if (experiment==1 or experiment==4) and read_mesh==True:
+if (experiment==1 or experiment==4 or experiment==8) and read_mesh==True:
    if elt=='MINI':
       f_vel = open('./meshes/square_lvl'+str(abs(nelx))+'_P1.mesh', 'r') 
       lines_vel = f_vel.readlines()
@@ -642,7 +655,7 @@ yV=np.empty(NV,dtype=np.float64)  # y coordinates
 
 if read_mesh==True:
 
-   if (experiment==1 or experiment==4) and (elt=='MINI' or elt=='P2P1' or elt=='CR'):
+   if (experiment==1 or experiment==4 or experiment==8) and (elt=='MINI' or elt=='P2P1' or elt=='CR'):
       counter=0
       for i in range(vline_vel,vline_vel+NV0):
           line=lines_vel[i].strip()
@@ -755,7 +768,7 @@ if read_mesh==True:
    #end if MINI
 
    if elt=='P2P1':
-      if experiment==1 or experiment==4:
+      if experiment==1 or experiment==4 or experiment==8:
          counter=0
          for i in range(tline_vel,tline_vel+nel):
              line=lines_vel[i].strip()
@@ -987,12 +1000,12 @@ for iel in range (0,1):
     print ("node 3",iconV[3,iel],"at pos.",xV[iconV[3,iel]], yV[iconV[3,iel]])
     print ("node 4",iconV[4,iel],"at pos.",xV[iconV[4,iel]], yV[iconV[4,iel]])
     print ("node 5",iconV[5,iel],"at pos.",xV[iconV[5,iel]], yV[iconV[5,iel]])
-    print ("node 6",iconV[6,iel],"at pos.",xV[iconV[6,iel]], yV[iconV[6,iel]])
-    print ("node 7",iconV[7,iel],"at pos.",xV[iconV[7,iel]], yV[iconV[7,iel]])
-    print ("node 8",iconV[8,iel],"at pos.",xV[iconV[8,iel]], yV[iconV[8,iel]])
+    #print ("node 6",iconV[6,iel],"at pos.",xV[iconV[6,iel]], yV[iconV[6,iel]])
+    #print ("node 7",iconV[7,iel],"at pos.",xV[iconV[7,iel]], yV[iconV[7,iel]])
+    #print ("node 8",iconV[8,iel],"at pos.",xV[iconV[8,iel]], yV[iconV[8,iel]])
 
 #np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
-exit()
+#exit()
 
 print("connectivity V: %.3f s" % (timing.time() - start))
 
@@ -1076,7 +1089,7 @@ if elt=='Q2P1':
 if read_mesh==True:
 
    if elt=='P2P1':
-      if experiment==1 or experiment==4:
+      if experiment==1 or experiment==4 or experiment==8:
          counter=0
          for i in range(vline_press,vline_press+NP):
              line=lines_press[i].strip()
@@ -1297,7 +1310,7 @@ if experiment==3 or experiment==4:
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
        if yV[i]>(Ly-eps):
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-if experiment==5 or experiment==6 or experiment==7:
+if experiment==5 or experiment==6 or experiment==7 or experiment==8:
    for i in range(0,NV):
        ui=velocity_x(xV[i],yV[i])
        vi=velocity_y(xV[i],yV[i])
@@ -1440,6 +1453,8 @@ for iel in range(0,nel):
             yq+=NNNV[k]*yV[iconV[k,iel]]
             dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
             dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+
+        #print(xq,yq)
 
         # construct 3x8 b_mat matrix
         for i in range(0,mV):
@@ -1597,7 +1612,7 @@ print("normalise pressure: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
 
-#np.savetxt('velocity'+elt+'.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v',fmt='%.3e')
+np.savetxt('velocity'+elt+'.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v',fmt='%.3e')
 np.savetxt('pressure'+elt+'.ascii',np.array([xP,yP,p]).T,header='# x,y,p',fmt='%.3e')
 
 #------------------------------------------------------------------------------
