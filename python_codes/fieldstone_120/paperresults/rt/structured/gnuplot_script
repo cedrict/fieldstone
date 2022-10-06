@@ -1,0 +1,82 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+set log x
+
+set xlabel  '{/Symbol h}_2'
+set ylabel  'max(|v_y|)'
+
+set title 'Q2xQ_1'
+set output 'rt_wave_vel_Q2Q1.pdf'
+plot[][:0.00005]\
+'rt_vel_Q2_Q1_16'  u 5:3 w lp ps .4 t '16^2',\
+'rt_vel_Q2_Q1_32'  u 5:3 w lp ps .4 t '32^2',\
+'rt_vel_Q2_Q1_48'  u 5:3 w lp ps .4 t '48^2',\
+'rt_vel_Q2_Q1_64'  u 5:3 w lp ps .4 t '64^2',\
+'rt_vel_Q2_Q1_80'  u 5:3 w lp ps .4 t '80^2',\
+'rt_vel_Q2_Q1_16'  u 5:8 w lp lt -1 dt 2 pt 2 ps .6 t 'analytical'
+
+set title 'Q2xP_{-1}'
+set output 'rt_wave_vel_Q2Pm1.pdf'
+plot[][:0.00005]\
+'rt_vel_Q2_Pm1_16' u 5:3 w lp ps .4 t '16^2',\
+'rt_vel_Q2_Pm1_32' u 5:3 w lp ps .4 t '32^2',\
+'rt_vel_Q2_Pm1_48' u 5:3 w lp ps .4 t '48^2',\
+'rt_vel_Q2_Pm1_64' u 5:3 w lp ps .4 t '64^2',\
+'rt_vel_Q2_Pm1_80' u 5:3 w lp ps .4 t '80^2',\
+'rt_vel_Q2_Q1_16'  u 5:8 w lp lt -1 dt 2 pt 2 ps .6 t 'analytical'
+
+set title 'P_1^+xP_1'
+set output 'rt_wave_vel_P1+P1.pdf'
+plot[][:0.00005]\
+'rt_vel_P1+_P1_16' u 5:3 w lp ps .4 t '16^2',\
+'rt_vel_P1+_P1_32' u 5:3 w lp ps .4 t '32^2',\
+'rt_vel_P1+_P1_48' u 5:3 w lp ps .4 t '48^2',\
+'rt_vel_P1+_P1_64' u 5:3 w lp ps .4 t '64^2',\
+'rt_vel_P1+_P1_80' u 5:3 w lp ps .4 t '80^2',\
+'rt_vel_Q2_Q1_16'  u 5:8 w lp lt -1 dt 2 pt 2 ps .6 t 'analytical'
+
+set title 'P_2xP_1'
+set output 'rt_wave_vel_P2P1.pdf'
+plot[][:0.00005]\
+'rt_vel_P2_P1_16'  u 5:3 w lp ps .4 t '16^2',\
+'rt_vel_P2_P1_32'  u 5:3 w lp ps .4 t '32^2',\
+'rt_vel_P2_P1_48'  u 5:3 w lp ps .4 t '48^2',\
+'rt_vel_P2_P1_64'  u 5:3 w lp ps .4 t '64^2',\
+'rt_vel_P2_P1_80'  u 5:3 w lp ps .4 t '80^2',\
+'rt_vel_Q2_Q1_16'  u 5:8 w lp lt -1 dt 2 pt 2 ps .6 t 'analytical'
+
+set title 'P_2xP_0'
+set output 'rt_wave_vel_P2P0.pdf'
+plot[][:0.00005]\
+'rt_vel_P2_P0_16'  u 5:3 w lp ps .4 t '16^2',\
+'rt_vel_P2_P0_32'  u 5:3 w lp ps .4 t '32^2',\
+'rt_vel_P2_P0_48'  u 5:3 w lp ps .4 t '48^2',\
+'rt_vel_P2_P0_64'  u 5:3 w lp ps .4 t '64^2',\
+'rt_vel_P2_P0_80'  u 5:3 w lp ps .4 t '80^2',\
+'rt_vel_P2_P0_16'  u 5:8 w lp lt -1 dt 2 pt 2 ps .6 t 'analytical'
+
+set title 'P_2^+xP_{-1}'
+set output 'rt_wave_vel_P2+P-1.pdf'
+plot[][:0.00005]\
+'rt_vel_P2+_P-1_16'  u 5:3 w lp ps .4 t '16^2',\
+'rt_vel_P2+_P-1_32'  u 5:3 w lp ps .4 t '32^2',\
+'rt_vel_P2+_P-1_48'  u 5:3 w lp ps .4 t '48^2',\
+'rt_vel_P2+_P-1_64'  u 5:3 w lp ps .4 t '64^2',\
+'rt_vel_P2+_P-1_80'  u 5:3 w lp ps .4 t '80^2',\
+'rt_vel_Q2_Q1_16'  u 5:8 w lp lt -1 dt 2 pt 2 ps .6 t 'analytical'
+
+unset title
+
+set output 'rt_wave_vel_all.pdf'
+plot[][:0.00005]\
+'rt_vel_Q2_Q1_64'   u 5:3 w lp lt 1 ps .4 t 'Q_2xQ_1, 64^2',\
+'rt_vel_Q2_Pm1_64'  u 5:3 w lp lt 2 ps .4 t 'Q_2xP_{-1}, 64^2',\
+'rt_vel_P1+_P1_64'  u 5:3 w lp lt 3 ps .4 t 'P_1^+xP_1, 64^2',\
+'rt_vel_P2_P1_64'   u 5:3 w lp lt 4 ps .4 t 'P_2xP_1, 64^2',\
+'rt_vel_P2_P0_64'   u 5:3 w lp lt 5 pt 1 ps .4 t 'P_2xP_0, 64^2',\
+'rt_vel_P2_P0_80'   u 5:3 w lp lt 5 pt 2 ps .4 t 'P_2xP_0, 80^2',\
+'rt_vel_P2_P0_96'   u 5:3 w lp lt 5 pt 3 ps .4 t 'P_2xP_0, 96^2',\
+'rt_vel_P2_P0_128'  u 5:3 w lp lt 5 pt 4 ps .4 t 'P_2xP_0, 128^2',\
+'rt_vel_P2+_P-1_64' u 5:3 w lp lt 6 ps .4 t 'P_2^+xP_{-1}, 64^2',\
+'rt_vel_Q2_Q1_16'  u 5:8 w lp lt -1 dt 2 pt 2 ps .6 t 'analytical'

@@ -1574,6 +1574,85 @@ def export_elements_to_vtu(x,y,icon,space,filename,area,bx,by,eta):
     vtufile.close()
 
 #------------------------------------------------------------------------------
+
+def export_V_to_vtu(NV,xV,yV,iconV,Vspace,filename,u,v,Pspace,p,iconP):
+    mV,nel=np.shape(iconV)
+
+    if Vspace=='Q2': m=4
+    if Vspace=='P2': m=3
+    if Vspace=='P2+': m=3
+    if Vspace=='P1+': m=3
+
+    vtufile=open(filename,"w")
+    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+    vtufile.write("<UnstructuredGrid> \n")
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nel*m,nel))
+    #####
+    vtufile.write("<Points> \n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+    for iel in range(0,nel):
+        for k in range(0,m):
+            vtufile.write("%10e %10e %10e \n" %(xV[iconV[k,iel]],yV[iconV[k,iel]],0.))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Points> \n")
+    #####
+    vtufile.write("<PointData Scalars='scalars'>\n")
+
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+    for iel in range(0,nel):
+        for k in range(0,m):
+            vtufile.write("%10e %10e %10e \n" %(u[iconV[k,iel]],v[iconV[k,iel]],0.))
+    vtufile.write("</DataArray>\n")
+
+    if Pspace=='P0':
+       vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
+       for iel in range(0,nel):
+           vtufile.write("%10e \n" % p[iconP[0,iel]])
+           vtufile.write("%10e \n" % p[iconP[0,iel]])
+           vtufile.write("%10e \n" % p[iconP[0,iel]])
+       vtufile.write("</DataArray>\n")
+
+    if Pspace=='P1' or Pspace=='P-1' or Pspace=='Q1':
+       vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
+       for iel in range(0,nel):
+           for k in range(0,m):
+               vtufile.write("%10e \n" % p[iconP[k,iel]])
+       vtufile.write("</DataArray>\n")
+    vtufile.write("</PointData>\n")
+    #####
+    vtufile.write("<Cells>\n")
+    #--
+    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+    for iel in range (0,nel):
+        if m==3:
+           vtufile.write("%d %d %d \n" %(iel*m,iel*m+1,iel*m+2))
+        if m==4:
+           vtufile.write("%d %d %d %d \n" %(iel*m,iel*m+1,iel*m+2,iel*m+3))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%d \n" %((iel+1)*m))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+    for iel in range (0,nel):
+        if m==3:
+           vtufile.write("%d \n" %5)
+        else:
+           vtufile.write("%d \n" %9)
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("</Cells>\n")
+    #####
+    vtufile.write("</Piece>\n")
+    vtufile.write("</UnstructuredGrid>\n")
+    vtufile.write("</VTKFile>\n")
+    vtufile.close()
+
+
+
+#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
 def export_swarm_to_vtu(x,y,filename):

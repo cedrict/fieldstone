@@ -4,7 +4,7 @@ set grid
 set key outside
 set xlabel 'h'
 
-hmin=0.005
+hmin=0.001
 hmax=0.1
 
 #################################################################
@@ -264,8 +264,7 @@ plot[hmin:hmax][]\
 'solvi/structured/errors_P2_P1'   u 16:6 w lp ps .5 t 'P_2xP_1',\
 'solvi/structured/errors_P2_P0'   u 16:6 w lp ps .5 t 'P_2xP_0',\
 'solvi/structured/errors_P2+_P-1' u 16:6 w lp ps .5 t 'P_2^+xP_{-1}',\
-x**2/30 lt -1 dt 2 t 'h^2',\
-x**3/35 lt -1 dt 3 t 'h^3'
+x/3 lt -1 dt 2 t 'h^2'
 
 set ylabel '||p-p_h||_{L_2}'
 set output 'solvi_structured_errorsP.pdf'

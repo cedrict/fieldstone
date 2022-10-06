@@ -1,0 +1,41 @@
+arguments: ['stone.py', '48', 'P1+', 'P1', 'sinker_open', '0', '4', '0.0025']
+*****************************
+           daSTONE           
+*****************************
+Vspace       = P1+
+Pspace       = P1
+space1       = P1
+nqpts        = 6
+nqel         = 6
+nelx         = 48
+nely         = 48
+NV           = 7009
+NP           = 2401
+nel          = 4608
+NfemV        = 14018
+NfemP        = 2401
+Nfem         = 16419
+experiment   = sinker_open
+unstructured = False
+*****************************
+mesh setup: 0.017 s
+analytical solution: 0.007 s
+bc setup: 0.012 s
+     -> area (m,M) 2.170139e-04 2.170139e-04 
+     -> total area meas 1.00000000e+00 
+     -> total area anal 1.00000000e+00 
+compute elements areas: 1.268 s
+build FE matrix: 8.834 s
+solve time: 0.379 s
+     -> u (m,M) -5.3191e-06 5.3192e-06 
+     -> v (m,M) -1.0423e-05 1.0356e-05 
+     -> p (m,M) -5.8923e-05 1.0002e+00 
+split vel into u,v: 0.000 s
+     -> h (m,M,avrg)= 0.02083333333333313 0.020833333333333443 0.020833333333332385
+     -> nel=   4608 ; vrms= 5.88593696e-06 | vrms_th= 0.00000000e+00 |   14018    2401 2.083333e-02
+     -> nel=   4608 ; errv= 5.88593696e-06 ; errp= 5.77473789e-01 ; errdivv= 2.52523799e-06 |   14018    2401 2.08333333e-02
+compute vrms & errors: 2.164 s
+     -> sinker_vel 0.5 0.75 -1.0388942258285445e-05 10000.0 0.0025 48
+     -> sinker_press 0.5 0.75 0.25009754391629974 10000.0 0.0025 48
+*****************************
+*****************************

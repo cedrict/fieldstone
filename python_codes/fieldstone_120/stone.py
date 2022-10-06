@@ -17,17 +17,17 @@ ndofP=1
 Lx=1
 Ly=1
 
-nelx=128
+nelx=40
 
-Vspace='Q2'
-Pspace='Q1'
+Vspace='P2'
+Pspace='P-1'
 
 visu=1
 
-experiment='RT'
+experiment='solvi'
 
-unstructured=0
-meshtype='generic'
+unstructured=1
+meshtype='solvi'
 
 isoparametric=True
 randomize_mesh=False
@@ -290,7 +290,7 @@ for iel in range(0,nel): # loop over elements
         #print(xq[counterq],yq[counterq],mms.eta(xq[counterq],yq[counterq]))
 
         for k in range(0,mV): 
-            f_el[2*k+0]+=NNNV[k]*jcob*weightq*mms.bx(xq[counterq],yq[counterq])
+            f_el[2*k+0]+=NNNV[k]*jcob*weightq*mms.bx(xq[counterq],yq[counterq],drho)
             f_el[2*k+1]+=NNNV[k]*jcob*weightq*mms.by(xq[counterq],yq[counterq],drho)
 
         for k in range(0,mP):
@@ -663,7 +663,7 @@ etac = np.zeros(nel,dtype=np.float64)
 for iel in range(0,nel):
     xc=np.sum(xV[iconV[:,iel]])/mV
     yc=np.sum(yV[iconV[:,iel]])/mV
-    bxc[iel]=mms.bx(xc,yc)
+    bxc[iel]=mms.bx(xc,yc,drho)
     byc[iel]=mms.by(xc,yc,drho)
     etac[iel]=mms.eta(xc,yc,etastar)
 
@@ -674,6 +674,8 @@ if visu:
    Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu',area,bxc,byc,etac)
    Tools.export_elements_to_vtu(xP,yP,iconP,Pspace,'meshP.vtu',area,bxc,byc,etac)
    if not isoparametric: Tools.export_elements_to_vtu(x1,y1,icon1,space1,'mesh1.vtu')
+
+   Tools.export_V_to_vtu(NV,xV,yV,iconV,Vspace,'visu_V.vtu',u,v,Pspace,p,iconP)
 
    Tools.export_swarm_to_ascii(xV,yV,'Vnodes.ascii')
    Tools.export_swarm_to_ascii(xP,yP,'Pnodes.ascii')

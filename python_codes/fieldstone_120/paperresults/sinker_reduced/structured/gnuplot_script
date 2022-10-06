@@ -1,0 +1,214 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set log x
+set key outside
+set xlabel '{/Symbol h}^*'
+set ylabel 'v_y/{/Symbol d}{/Symbol r}'
+
+##################################################################
+set title '16x16'
+set output 'sinker_reduced_vel_16.pdf'
+plot[][-0.01:0]\
+'sinker_vel_Q2_Q1_16'   u 6:($5/$7) w lp ps .4 t 'Q_2xQ_1',\
+'sinker_vel_Q2_Pm1_16'  u 6:($5/$7) w lp ps .4 t 'Q_2xP_{-1}',\
+'sinker_vel_P1+_P1_16'  u 6:($5/$7) w lp ps .4 t 'P_1^+xP_1',\
+'sinker_vel_P2_P1_16'   u 6:($5/$7) w lp ps .4 t 'P_2xP_1',\
+'sinker_vel_P2_P0_16'   u 6:($5/$7) w lp ps .4 t 'P_2xP_0',\
+'sinker_vel_P2+_P-1_16' u 6:($5/$7) w lp ps .4 t 'P_2^+xP_{-1}',\
+'q2q1_reduced/my_point_values_8.dat' u ($2/1e21):($8/($3)*12) w lp ps .2 lt -1 t 'ASPECT, 256^2'
+
+
+set title '32x32'
+set output 'sinker_reduced_vel_32.pdf'
+plot[][]\
+'sinker_vel_Q2_Q1_32'   u 6:($5/$7) w lp ps .4 t 'Q_2xQ_1',\
+'sinker_vel_Q2_Pm1_32'  u 6:($5/$7) w lp ps .4 t 'Q_2xP_{-1}',\
+'sinker_vel_P1+_P1_32'  u 6:($5/$7) w lp ps .4 t 'P_1^+xP_1',\
+'sinker_vel_P2_P1_32'   u 6:($5/$7) w lp ps .4 t 'P_2xP_1',\
+'sinker_vel_P2_P0_32'   u 6:($5/$7) w lp ps .4 t 'P_2xP_0',\
+'sinker_vel_P2+_P-1_32' u 6:($5/$7) w lp ps .4 t 'P_2^+xP_{-1}',\
+'q2q1_reduced/my_point_values_8.dat' u ($2/1e21):($8/($3)*12) w lp ps .2 lt -1 t 'ASPECT, 256^2'
+
+
+set title '48x48'
+set output 'sinker_reduced_vel_48.pdf'
+plot[][-0.01:0]\
+'sinker_vel_Q2_Q1_48'   u 6:($5/$7) w lp ps .4 t 'Q_2xQ_1',\
+'sinker_vel_Q2_Pm1_48'  u 6:($5/$7) w lp ps .4 t 'Q_2xP_{-1}',\
+'sinker_vel_P1+_P1_48'  u 6:($5/$7) w lp ps .4 t 'P_1^+xP_1',\
+'sinker_vel_P2_P1_48'   u 6:($5/$7) w lp ps .4 t 'P_2xP_1',\
+'sinker_vel_P2_P0_48'   u 6:($5/$7) w lp ps .4 t 'P_2xP_0',\
+'sinker_vel_P2+_P-1_48' u 6:($5/$7) w lp ps .4 t 'P_2^+xP_{-1}',\
+'q2q1_reduced/my_point_values_8.dat' u ($2/1e21):($8/($3)*12) w lp ps .2 lt -1 t 'ASPECT, 256^2'
+
+set title '64x64'
+set output 'sinker_reduced_vel_64.pdf'
+plot[1e-4:1e4][-0.01:0]\
+'sinker_vel_Q2_Q1_64'   u 6:($5/$7) w lp ps .4 t 'Q_2xQ_1',\
+'sinker_vel_Q2_Pm1_64'  u 6:($5/$7) w lp ps .4 t 'Q_2xP_{-1}',\
+'sinker_vel_P1+_P1_64'  u 6:($5/$7) w lp ps .4 t 'P_1^+xP_1',\
+'sinker_vel_P2_P1_64'   u 6:($5/$7) w lp ps .4 t 'P_2xP_1',\
+'sinker_vel_P2_P0_64'   u 6:($5/$7) w lp ps .4 t 'P_2xP_0',\
+'sinker_vel_P2+_P-1_64' u 6:($5/$7) w lp ps .4 t 'P_2^+xP_{-1}',\
+'q2q1_reduced/my_point_values_8.dat' u ($2/1e21):($8/($3)*12) w lp ps .2 lt -1 t 'ASPECT, 256^2'
+
+set title '80x80'
+set output 'sinker_reduced_vel_80.pdf'
+plot[1e-4:1e4][-0.01:0]\
+'sinker_vel_Q2_Q1_80'   u 6:($5/$7) w lp ps .4 t 'Q_2xQ_1',\
+'sinker_vel_Q2_Pm1_80'  u 6:($5/$7) w lp ps .4 t 'Q_2xP_{-1}',\
+'sinker_vel_P1+_P1_80'  u 6:($5/$7) w lp ps .4 t 'P_1^+xP_1',\
+'sinker_vel_P2_P1_80'   u 6:($5/$7) w lp ps .4 t 'P_2xP_1',\
+'sinker_vel_P2_P0_64'   u 6:($5/$7) w lp ps .4 t 'P_2xP_0',\
+'sinker_vel_P2+_P-1_80' u 6:($5/$7) w lp ps .4 t 'P_2^+xP_{-1}',\
+'q2q1_reduced/my_point_values_8.dat' u ($2/1e21):($8/($3)*12) w lp ps .2 lt -1 t 'ASPECT, 256^2'
+
+set title '96x96'
+set output 'sinker_reduced_vel_96.pdf'
+plot[1e-4:1e4][-0.01:0]\
+'sinker_vel_Q2_Q1_96'   u 6:($5/$7) w lp ps .4 t 'Q_2xQ_1',\
+'sinker_vel_Q2_Pm1_96'  u 6:($5/$7) w lp ps .4 t 'Q_2xP_{-1}',\
+'sinker_vel_P1+_P1_96'  u 6:($5/$7) w lp ps .4 t 'P_1^+xP_1',\
+'sinker_vel_P2_P1_96'   u 6:($5/$7) w lp ps .4 t 'P_2xP_1',\
+'sinker_vel_P2_P0_96'   u 6:($5/$7) w lp ps .4 t 'P_2xP_0',\
+'sinker_vel_P2+_P-1_96' u 6:($5/$7) w lp ps .4 t 'P_2^+xP_{-1}',\
+'q2q1_reduced/my_point_values_8.dat' u ($2/1e21):($8/($3)*12) w lp ps .2 lt -1 t 'ASPECT, 256^2'
+
+
+
+
+##################################################################
+##################################################################
+##################################################################
+set ylabel 'p/{/Symbol d}{/Symbol r}/g/L_b'
+
+set title '16x16'
+set output 'sinker_reduced_press_16.pdf'
+plot[1e-4:1e4][-0.09:-0.06]\
+'sinker_press_Q2_Q1_16'   u 6:($5/$7/0.25) w lp ps .4 t 'Q_2xQ_1',\
+'sinker_press_Q2_Pm1_16'  u 6:($5/$7/0.25) w lp ps .4 t 'Q_2xP_{-1}',\
+'sinker_press_P1+_P1_16'  u 6:($5/$7/0.25) w lp ps .4 t 'P_1^+xP_1',\
+'sinker_press_P2_P1_16'   u 6:($5/$7/0.25) w lp ps .4 t 'P_2xP_1',\
+'sinker_press_P2_P0_16'   u 6:($5/$7/0.25) w lp ps .4 t 'P_2xP_0',\
+'sinker_press_P2+_P-1_16' u 6:($5/$7/0.25) w lp ps .4 t 'P_2^+xP_{-1}',\
+'q2q1_reduced/my_point_values_8.dat' u ($2/1e21):($9/$3/10/128e3) w lp ps .5 lt -1 t 'ASPECT, 256^2',\
+
+set title '32x32'
+set output 'sinker_reduced_press_32.pdf'
+plot[1e-4:1e4][-0.09:-0.06]\
+'sinker_press_Q2_Q1_32'   u 6:($5/$7/0.25) w lp ps .4 t 'Q_2xQ_1',\
+'sinker_press_Q2_Pm1_32'  u 6:($5/$7/0.25) w lp ps .4 t 'Q_2xP_{-1}',\
+'sinker_press_P1+_P1_32'  u 6:($5/$7/0.25) w lp ps .4 t 'P_1^+xP_1',\
+'sinker_press_P2_P1_32'   u 6:($5/$7/0.25) w lp ps .4 t 'P_2xP_1',\
+'sinker_press_P2_P0_32'   u 6:($5/$7/0.25) w lp ps .4 t 'P_2xP_0',\
+'sinker_press_P2+_P-1_32' u 6:($5/$7/0.25) w lp ps .4 t 'P_2^+xP_{-1}',\
+'q2q1_reduced/my_point_values_8.dat' u ($2/1e21):($9/$3/10/128e3) w lp ps .5 lt -1 t 'ASPECT, 256^2',\
+
+set title '48x48'
+set output 'sinker_reduced_press_48.pdf'
+plot[1e-4:1e4][-0.09:-0.06]\
+'sinker_press_Q2_Q1_48'   u 6:($5/$7/0.25) w lp ps .4 t 'Q_2xQ_1',\
+'sinker_press_Q2_Pm1_48'  u 6:($5/$7/0.25) w lp ps .4 t 'Q_2xP_{-1}',\
+'sinker_press_P1+_P1_48'  u 6:($5/$7/0.25) w lp ps .4 t 'P_1^+xP_1',\
+'sinker_press_P2_P1_48'   u 6:($5/$7/0.25) w lp ps .4 t 'P_2xP_1',\
+'sinker_press_P2_P0_48'   u 6:($5/$7/0.25) w lp ps .4 t 'P_2xP_0',\
+'sinker_press_P2+_P-1_48' u 6:($5/$7/0.25) w lp ps .4 t 'P_2^+xP_{-1}',\
+'q2q1_reduced/my_point_values_8.dat' u ($2/1e21):($9/$3/10/128e3) w lp ps .5 lt -1 t 'ASPECT, 256^2',\
+
+set title '64x64'
+set output 'sinker_reduced_press_64.pdf'
+plot[1e-4:1e4][-0.09:-0.06]\
+'sinker_press_Q2_Q1_64'   u 6:($5/$7/0.25) w lp ps .4 t 'Q_2xQ_1',\
+'sinker_press_Q2_Pm1_64'  u 6:($5/$7/0.25) w lp ps .4 t 'Q_2xP_{-1}',\
+'sinker_press_P1+_P1_64'  u 6:($5/$7/0.25) w lp ps .4 t 'P_1^+xP_1',\
+'sinker_press_P2_P1_64'   u 6:($5/$7/0.25) w lp ps .4 t 'P_2xP_1',\
+'sinker_press_P2_P0_64'   u 6:($5/$7/0.25) w lp ps .4 t 'P_2xP_0',\
+'sinker_press_P2+_P-1_64' u 6:($5/$7/0.25) w lp ps .4 t 'P_2^+xP_{-1}',\
+'q2q1_reduced/my_point_values_8.dat' u ($2/1e21):($9/$3/10/128e3) w p ps .8 lt -1 t 'ASPECT, 256^2',\
+
+set title '80x80'
+set output 'sinker_reduced_press_80.pdf'
+plot[1e-4:1e4][-0.09:-0.06]\
+'sinker_press_Q2_Q1_80'   u 6:($5/$7/0.25) w lp ps .4 t 'Q_2xQ_1',\
+'sinker_press_Q2_Pm1_80'  u 6:($5/$7/0.25) w lp ps .4 t 'Q_2xP_{-1}',\
+'sinker_press_P1+_P1_80'  u 6:($5/$7/0.25) w lp ps .4 t 'P_1^+xP_1',\
+'sinker_press_P2_P1_80'   u 6:($5/$7/0.25) w lp ps .4 t 'P_2xP_1',\
+'sinker_press_P2_P0_80'   u 6:($5/$7/0.25) w lp ps .4 t 'P_2xP_0',\
+'sinker_press_P2+_P-1_80' u 6:($5/$7/0.25) w lp ps .4 t 'P_2^+xP_{-1}',\
+'q2q1_reduced/my_point_values_8.dat' u ($2/1e21):($9/$3/10/128e3) w p ps .8 lt -1 t 'ASPECT, 256^2',\
+
+set title '96x96'
+set output 'sinker_reduced_press_96.pdf'
+plot[1e-4:1e4][-0.09:-0.06]\
+'sinker_press_Q2_Q1_96'   u 6:($5/$7/0.25) w lp ps .4 t 'Q_2xQ_1',\
+'sinker_press_Q2_Pm1_96'  u 6:($5/$7/0.25) w lp ps .4 t 'Q_2xP_{-1}',\
+'sinker_press_P1+_P1_96'  u 6:($5/$7/0.25) w lp ps .4 t 'P_1^+xP_1',\
+'sinker_press_P2_P1_96'   u 6:($5/$7/0.25) w lp ps .4 t 'P_2xP_1',\
+'sinker_press_P2_P0_96'   u 6:($5/$7/0.25) w lp ps .4 t 'P_2xP_0',\
+'sinker_press_P2+_P-1_96' u 6:($5/$7/0.25) w lp ps .4 t 'P_2^+xP_{-1}',\
+'q2q1_reduced/my_point_values_8.dat' u ($2/1e21):($9/$3/10/128e3) w p ps .8 lt -1 t 'ASPECT, 256^2',\
+
+###############################################################################3
+reset 
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside 
+set log xy 
+set xlabel 'h'
+set ylabel '<div(u)>'
+
+set output 'divv.pdf'
+plot[0.01:0.1][]\
+'errors_Q2_Q1_16'  u 16:12 lt 1 ps .4 t 'Q_2xQ_1',\
+'errors_Q2_Q1_32'  u 16:12 lt 1 ps .4 notitle,\
+'errors_Q2_Q1_48'  u 16:12 lt 1 ps .4 notitle,\
+'errors_Q2_Q1_64'  u 16:12 lt 1 ps .4 notitle,\
+'errors_Q2_Q1_80'  u 16:12 lt 1 ps .4 notitle,\
+'errors_Q2_Q1_96'  u 16:12 lt 1 ps .4 notitle,\
+'errors_Q2_Pm1_16'  u 16:12 lt 1 ps .4 t 'Q_2xP_{-1}',\
+'errors_Q2_Pm1_32'  u 16:12 lt 1 ps .4 notitle,\
+'errors_Q2_Pm1_48'  u 16:12 lt 1 ps .4 notitle,\
+'errors_Q2_Pm1_64'  u 16:12 lt 1 ps .4 notitle,\
+'errors_Q2_Pm1_80'  u 16:12 lt 1 ps .4 notitle,\
+'errors_Q2_Pm1_96'  u 16:12 lt 1 ps .4 notitle,\
+'errors_P1+_P1_16' u 16:12 lt 3 ps .4 t 'P_1^+xP_1',\
+'errors_P1+_P1_32' u 16:12 lt 3 ps .4 notitle,\
+'errors_P1+_P1_48' u 16:12 lt 3 ps .4 notitle,\
+'errors_P1+_P1_64' u 16:12 lt 3 ps .4 notitle,\
+'errors_P1+_P1_80' u 16:12 lt 3 ps .4 notitle,\
+'errors_P1+_P1_96' u 16:12 lt 3 ps .4 notitle,\
+'errors_P2_P1_16'  u 16:12 lt 4 ps .4 t 'P_2xP_1',\
+'errors_P2_P1_32'  u 16:12 lt 4 ps .4 notitle,\
+'errors_P2_P1_48'  u 16:12 lt 4 ps .4 notitle,\
+'errors_P2_P1_64'  u 16:12 lt 4 ps .4 notitle,\
+'errors_P2_P1_80'  u 16:12 lt 4 ps .4 notitle,\
+'errors_P2_P1_96'  u 16:12 lt 4 ps .4 notitle,\
+'errors_P2_P0_16'  u 16:12 lt 5 ps .4 t 'P_2xP_0',\
+'errors_P2_P0_32'  u 16:12 lt 5 ps .4 notitle,\
+'errors_P2_P0_48'  u 16:12 lt 5 ps .4 notitle,\
+'errors_P2_P0_64'  u 16:12 lt 5 ps .4 notitle,\
+'errors_P2_P0_80'  u 16:12 lt 5 ps .4 notitle,\
+'errors_P2_P0_96'  u 16:12 lt 5 ps .4 notitle,\
+'errors_P2+_P-1_16'  u 16:12 lt 6 ps .4 t 'P_2^+xP_{-1}',\
+'errors_P2+_P-1_32'  u 16:12 lt 6 ps .4 notitle,\
+'errors_P2+_P-1_48'  u 16:12 lt 6 ps .4 notitle,\
+'errors_P2+_P-1_64'  u 16:12 lt 6 ps .4 notitle,\
+'errors_P2+_P-1_80'  u 16:12 lt 6 ps .4 notitle,\
+'errors_P2+_P-1_96'  u 16:12 lt 6 ps .4 notitle,\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

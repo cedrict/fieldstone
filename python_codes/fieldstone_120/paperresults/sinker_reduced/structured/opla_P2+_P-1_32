@@ -1,0 +1,49 @@
+arguments: ['stone.py', '32', 'P2+', 'P-1', 'sinker_reduced', '0', '4', '0.4']
+*****************************
+           daSTONE           
+*****************************
+Vspace       = P2+
+Pspace       = P-1
+space1       = P1
+nqpts        = 7
+nqel         = 7
+nelx         = 32
+nely         = 32
+NV           = 6273
+NP           = 6144
+nel          = 2048
+NfemV        = 12546
+NfemP        = 6144
+Nfem         = 18690
+experiment   = sinker_reduced
+unstructured = False
+*****************************
+mesh setup: 0.011 s
+analytical solution: 0.008 s
+bc setup: 0.011 s
+     -> area (m,M) 4.882812e-04 4.882812e-04 
+     -> total area meas 1.00000000e+00 
+     -> total area anal 1.00000000e+00 
+compute elements areas: 0.894 s
+build FE matrix: 7.451 s
+solve time: 0.480 s
+     -> u (m,M) -1.1323e-03 1.1323e-03 
+     -> v (m,M) -7.8931e-04 6.7801e-04 
+     -> p (m,M) -1.4460e-01 1.0539e-01 
+split vel into u,v: 0.000 s
+     -> avrg_p= -0.00034542182363011425
+     -> p (m,M) -0.1443 0.1057 
+pressure normalisation: 0.780 s
+     -> h (m,M,avrg)= 0.03124999999999354 0.03124999999999394 0.031249999999993033
+     -> nel=   2048 ; vrms= 4.59621240e-04 | vrms_th= 0.00000000e+00 |   12546    6144 3.125000e-02
+     -> nel=   2048 ; errv= 4.59621240e-04 ; errp= 1.11730582e-02 ; errdivv= 1.95275014e-04 |   12546    6144 3.12500000e-02
+compute vrms & errors: 1.313 s
+     -> sinker_vel 0.5 0.75 -0.0007893027703548717 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.00875107927651016 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.00875107927627643 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.004539762532042534 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.010138585518507583 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.004539762552377469 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.010138585511274955 10000.0 0.4 32
+*****************************
+*****************************
