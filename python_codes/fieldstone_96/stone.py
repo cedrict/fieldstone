@@ -10,8 +10,12 @@ import time as timing
 from scipy.sparse import lil_matrix
 from tools import *
 import triangle as tr
+import os 
 
 Ggrav = 6.67430e-11
+year=365.25*3600*24
+cm=0.01
+km=1000
 
 #------------------------------------------------------------------------------
 # basis functions for Crouzeix-Raviart element and Taylor-Hood element
@@ -89,7 +93,7 @@ print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
 
-CR=True
+CR=False
 
 if CR:
    mV=7     # number of velocity nodes making up an element
@@ -109,9 +113,9 @@ R_inner=R_outer-1600e3
 
 # main parameter which controls resolution
 # shound be 1,2,3,4, or 5
-res=1
+res=3
 nnr=res*16+1            #vertical boundary resolutions
-nnt=res*80              #sphere boundary resolutions
+nnt=res*100              #sphere boundary resolutions
 
 #-------------------------------------
 # 'Moho' setup
@@ -125,18 +129,19 @@ R_moho = R_outer-500e3 #500km below the surface reside's the moho
 # 2: steinberger data
 # 3: three layer model
 
-viscosity_model = 3
+viscosity_model = 1
 
-rho_crust=0#3300
+rho_crust=3300
 eta_crust=1e25
 
-rho_lith=0#3500
+rho_lith=3300
 eta_lith=1e21
 
-rho_mantle=0#3700
+rho_mantle=3300
 eta_mantle=6e20
 
 eta0=6e20 # isoviscous case
+rho0=3300
 
 eta_core=1e25
 rho_core=0 #7200
@@ -149,7 +154,7 @@ eta_max=1e25
 #-------------------------------------
 # blob setup 
 #-------------------------------------
-np_blob=res*30          #blob resolution
+np_blob=res*20          #blob resolution
 R_blob=300e3            #radius of blob
 z_blob=R_outer-1000e3   #starting depth
 rho_blob=rho_mantle-200
@@ -175,10 +180,25 @@ g0=3.72
 
 #-------------------------------------
 #do not change
-np_grav=10
-nel_phi=20
+
+gravity_method=2
+np_grav=100
+nel_phi=100
+
+height=10e3
 
 eta_ref=1e22
+
+nstep=1
+
+###############################################################################
+
+print('R_inner=',R_inner)
+print('R_outer=',R_outer)
+print('Volume=',4*np.pi/3*(R_outer**3-R_inner**3))
+print('CR=',CR)
+print('height=',height)
+print("-----------------------------")
 
 ###############################################################################
 # 6 point integration coeffs and weights 
@@ -288,7 +308,7 @@ print("setup: generate nodes: %.3f s" % (timing.time() - start))
 ###############################################################################
 start = timing.time()
 
-dict_mesh = tr.triangulate(dict_nodes,'pqa10000000000')
+dict_mesh = tr.triangulate(dict_nodes,'pqa5000000000')
 #compare mesh to node and vertice plot
 #tr.compare(plt, dict_nodes, dict_mesh)
 #plt.axis
@@ -424,11 +444,18 @@ start = timing.time()
 
 profile_eta=np.empty(1968,dtype=np.float64) 
 profile_depth=np.empty(1968,dtype=np.float64) 
-profile_eta,profile_depth=np.loadtxt('data/eta.ascii',unpack=True,usecols=[0,1])
+#profile_eta,profile_depth=np.loadtxt('data/eta.ascii',unpack=True,usecols=[0,1])
 
 profile_rho=np.empty(3390,dtype=np.float64) 
 profile_depth=np.empty(3390,dtype=np.float64) 
-profile_rho,profile_depth=np.loadtxt('data/rho.ascii',unpack=True,usecols=[0,1])
+#profile_rho,profile_depth=np.loadtxt('data/rho.ascii',unpack=True,usecols=[0,1])
+
+# gets current file path as string 
+cfilepath = os.path.dirname(os.path.abspath(__file__)) 
+# changes the current working directory to current file path    
+os.chdir(cfilepath)
+profile_eta,profile_depth=np.loadtxt(cfilepath + '/data/eta.ascii',unpack=True,usecols=[0,1]) 
+profile_eta,profile_depth=np.loadtxt(cfilepath + '/data/rho.ascii',unpack=True,usecols=[0,1]) 
 
 print("setup: read profiles: %.3f s" % (timing.time() - start))
 
@@ -519,7 +546,7 @@ for iel in range(0,nel):
 
     if viscosity_model==1: # isoviscous
        eta[iel]=eta0
-       rho[iel]=0
+       rho[iel]=rho0
     elif viscosity_model==2: # steinberger 
        if r_c>R_inner:
           eta[iel]=10**profile_eta[j]
@@ -550,7 +577,6 @@ for iel in range(0,nel):
 for i in range(0,NV):
     r_c=np.sqrt(xV[i]**2+zV[i]**2)
     j=int((R_outer-r_c)/1000)
-
 
     if viscosity_model==1: # isoviscous
        eta_nodal[i]=eta0
@@ -642,13 +668,15 @@ for iel in range(0,nel):
         xq=0.
         for k in range(0,mV):
             xq+=NNNV[k]*xV[iconV[k,iel]]
-        arear[iel]+=jcob*weightq*xq
+        arear[iel]+=jcob*weightq*xq*2*np.pi
+
+VOL=4*np.pi*(R_outer**3-R_inner**3)/3
 
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area (meas) %.6f " %(area.sum()))
-print("     -> total area (anal) %.6f " %(np.pi*R_outer**2/2))
+print("     -> total area (anal) %.6f " %(np.pi*(R_outer**2-R_inner**2)/2))
 print("     -> total vol  (meas) %.6f " %(arear.sum()))
-print("     -> total vol  (anal) %.6f " %(4*np.pi*R_outer**3/3))
+print("     -> total vol  (error) %.6f percent" %((abs(arear.sum()/VOL)-1)*100))
 
 print("compute elements areas: %.3f s" % (timing.time() - start))
 
@@ -694,7 +722,11 @@ for iel in range(0,nel):
 u = np.zeros(NV,dtype=np.float64)           # x-component velocity
 v = np.zeros(NV,dtype=np.float64)           # y-component velocity
 
-for istep in range(0,1):
+for istep in range(0,nstep):
+
+    print("-----------------------------")
+    print("istep= ", istep)
+    print("-----------------------------")
 
     #################################################################
     # build FE matrix
@@ -721,7 +753,7 @@ for istep in range(0,1):
 
     for iel in range(0,nel):
 
-        if iel%5000==0:
+        if iel%1000==0:
            print(iel)
 
         # set arrays to 0 every loop
@@ -1227,42 +1259,42 @@ for istep in range(0,1):
     #####################################################################
     start = timing.time()
 
-    tracfile=open('surface_traction_nodal.ascii',"w")
+    tracfile=open('surface_traction_nodal_'+str(istep)+'.ascii',"w")
     for i in range(0,NV):
         if surface_node[i]: 
            tracfile.write("%e %e %e %e %e %e %e\n" \
                           %(theta_nodal[i],tau_rr_nodal[i]-q[i],xV[i],zV[i],tau_rr_nodal[i],q[i],e_rr_nodal[i]))
     tracfile.close()
 
-    tracfile=open('surface_vr.ascii',"w")
+    tracfile=open('surface_vr_'+str(istep)+'.ascii',"w")
     for i in range(0,NV):
         if surface_node[i]: 
            tracfile.write("%10e %10e \n" \
                           %(theta_nodal[i],u[i]*np.sin(theta_nodal[i])+v[i]*np.cos(theta_nodal[i])  ))
     tracfile.close()
 
-    tracfile=open('surface_vt.ascii',"w")
+    tracfile=open('surface_vt_'+str(istep)+'.ascii',"w")
     for i in range(0,NV):
         if surface_node[i]: 
            tracfile.write("%10e %10e \n" \
                           %(theta_nodal[i],u[i]*np.cos(theta_nodal[i])-v[i]*np.sin(theta_nodal[i]) ) )
     tracfile.close()
 
-    tracfile=open('cmb_traction_nodal.ascii',"w")
+    tracfile=open('cmb_traction_nodal_'+str(istep)+'.ascii',"w")
     for i in range(0,NV):
         if cmb_node[i]: 
            tracfile.write("%e %e %e %e %e %e %e\n" \
                           %(theta_nodal[i],tau_rr_nodal[i]-q[i],xV[i],zV[i],tau_rr_nodal[i],q[i],e_rr_nodal[i]))
     tracfile.close()
 
-    tracfile=open('cmb_vr.ascii',"w")
+    tracfile=open('cmb_vr_'+str(istep)+'.ascii',"w")
     for i in range(0,NV):
         if cmb_node[i]: 
            tracfile.write("%10e %10e \n" \
                           %(theta_nodal[i],u[i]*np.sin(theta_nodal[i])+v[i]*np.cos(theta_nodal[i])  ))
     tracfile.close()
 
-    tracfile=open('cmb_vt.ascii',"w")
+    tracfile=open('cmb_vt_'+str(istep)+'.ascii',"w")
     for i in range(0,NV):
         if cmb_node[i]: 
            tracfile.write("%10e %10e \n" \
@@ -1277,12 +1309,10 @@ for istep in range(0,1):
     #####################################################################
     start = timing.time()
 
-    year=365.25*3600*24
-    cm=0.01
-    u[:]/=(cm/year)
-    v[:]/=(cm/year)
+    #u[:]/=(cm/year)
+    #v[:]/=(cm/year)
 
-    filename = 'solution.vtu'
+    filename = 'solution_{:04d}.vtu'.format(istep)
     vtufile=open(filename,"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
     vtufile.write("<UnstructuredGrid> \n")
@@ -1410,7 +1440,7 @@ for istep in range(0,1):
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (cm/year)' Format='ascii'> \n")
     for i in range(0,NV):
-        vtufile.write("%10e %10e %10e \n" %(u[i],0.,v[i]))
+        vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,0.,v[i]/cm*year))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32'  Name='vr (cm/year)' Format='ascii'> \n")
@@ -1614,6 +1644,7 @@ for istep in range(0,1):
 
     #####################################################################
     # compute gravity
+    # phi goes from 0 to 2pi
     #####################################################################
     start = timing.time()
 
@@ -1625,48 +1656,146 @@ for istep in range(0,1):
     gvect_z=np.zeros(np_grav,dtype=np.float64)   
     angleM=np.zeros(np_grav,dtype=np.float64)   
 
-    dphi=2*np.pi/nel_phi
+    #-------------------
+    if gravity_method==1:
 
-    for i in range(0,np_grav):
+       dphi=2*np.pi/nel_phi
+       for i in range(0,np_grav):
+           angleM[i]=np.pi/2-np.pi/(np_grav-1)*i
+           xM[i]=(R_outer+height)*np.cos(angleM[i])
+           yM[i]=0
+           zM[i]=(R_outer+height)*np.sin(angleM[i])
 
-        #angleM[i]=np.pi/2-np.pi/(np_grav-1)*i
-        #xM[i]=R_outer*np.cos(angleM[i])
-        #yM[i]=0
-        #zM[i]=R_outer*np.sin(angleM[i])
+           #angleM[i]=np.pi/2 #np.pi/5
+           #xM[i]=(R_outer+i*R_outer/(np_grav-1))*np.cos(angleM[i])
+           #yM[i]=0
+           #zM[i]=(R_outer+i*R_outer/(np_grav-1))*np.sin(angleM[i])
 
-        angleM[i]=np.pi/2 #np.pi/5
-        xM[i]=(R_outer+i*R_outer/(np_grav-1))*np.cos(angleM[i])
-        yM[i]=0
-        zM[i]=(R_outer+i*R_outer/(np_grav-1))*np.sin(angleM[i])
+           total_mass=0
+           total_vol=0
+           for iel in range(0,nel):
+               r_c=np.sqrt(xc[iel]**2+zc[iel]**2)
+               z_c=zc[iel] 
+               theta=np.arccos(z_c/r_c)
+               for jel in range(0,nel_phi):
+                   x_c=r_c*np.sin(theta)*np.cos((jel+0.5)*dphi)
+                   y_c=r_c*np.sin(theta)*np.sin((jel+0.5)*dphi)
+                   vol=arear[iel]*dphi
+                   mass=vol*rho[iel]
+                   total_vol+=vol
+                   total_mass+=mass
+                   dist=np.sqrt((xM[i]-x_c)**2 + (yM[i]-y_c)**2 + (zM[i]-z_c)**2)
+                   gvect_x[i]-= Ggrav/dist**3*mass*(xM[i]-x_c)
+                   gvect_y[i]-= Ggrav/dist**3*mass*(yM[i]-y_c)
+                   gvect_z[i]-= Ggrav/dist**3*mass*(zM[i]-z_c)
+                   #print(x_c,y_c,z_c)
+               #end for
+           #end for
+           print('meas. point',i,':','M=',total_mass,' | V=',total_vol,4*np.pi/3*np.pi*(R_outer**3-R_inner**3))
+       #end for
 
-        total_mass=0
-        total_vol=0
-        for iel in range(0,nel):
-            r_c=np.sqrt(xc[iel]**2+zc[iel]**2)
-            z_c=zc[iel] 
-            theta=np.arccos(z_c/r_c)
-            for jel in range(0,nel_phi):
-                x_c=r_c*np.sin(theta)*np.cos((jel+0.5)*dphi)
-                y_c=r_c*np.sin(theta)*np.sin((jel+0.5)*dphi)
-                vol=arear[iel]*dphi
-                mass=vol*rho[iel]
-                total_vol+=vol
-                total_mass+=mass
-                dist=np.sqrt((xM[i]-x_c)**2 + (yM[i]-y_c)**2 + (zM[i]-z_c)**2)
-                gvect_x[i]-= Ggrav/dist**3*mass*(xM[i]-x_c)
-                gvect_y[i]-= Ggrav/dist**3*mass*(yM[i]-y_c)
-                gvect_z[i]-= Ggrav/dist**3*mass*(zM[i]-z_c)
-            #end for
-        #end for
-        print('meas. point',i,':','M=',total_mass,6.4171e23,' | V=',total_vol,1.333333*np.pi*R_outer**3)
-    #end for
+       gvect=np.sqrt(gvect_x**2+gvect_y**2+gvect_z**2)
+       rM=np.sqrt(xM**2+yM**2+zM**2)
 
-    gvect=np.sqrt(gvect_x**2+gvect_y**2+gvect_z**2)
-    rM=np.sqrt(xM**2+yM**2+zM**2)
+       np.savetxt('gravity_'+str(istep)+'.ascii',np.array([xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect]).T,fmt='%.6e')
 
-    #np.savetxt('gravity.ascii',np.array([xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect]).T)
+    #-------------------
+    if gravity_method==2:
+
+       dphi=2*np.pi/nel_phi
+       for i in range(0,np_grav):
+           angleM[i]=np.pi/2-np.pi/2/(np_grav-1)*i
+           xM[i]=(R_outer+height)*np.cos(angleM[i])
+           yM[i]=0
+           zM[i]=(R_outer+height)*np.sin(angleM[i])
+
+           total_mass=0
+           total_vol=0
+           for iel in range(0,nel):
+               for kq in range (0,nqel):
+                   rq=qcoords_r[kq]
+                   sq=qcoords_s[kq]
+                   weightq=qweights[kq]
+                   NNNV[0:mV]=NNV(rq,sq)
+                   dNNNVdr[0:mV]=dNNVdr(rq,sq)
+                   dNNNVds[0:mV]=dNNVds(rq,sq)
+                   jcb=np.zeros((2,2),dtype=np.float64)
+                   for k in range(0,mV):
+                       jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+                       jcb[0,1]+=dNNNVdr[k]*zV[iconV[k,iel]]
+                       jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+                       jcb[1,1]+=dNNNVds[k]*zV[iconV[k,iel]]
+                   jcob = np.linalg.det(jcb)
+                   xq=NNNV[:].dot(xV[iconV[:,iel]])
+                   zq=NNNV[:].dot(zV[iconV[:,iel]])
+                   rq=np.sqrt(xq**2+zq**2)
+                   thetaq=np.arccos(zq/rq)
+                   massq=rho[iel]*jcob*weightq*xq*dphi
+                   for jel in range(0,nel_phi):
+                       #x_c=rq*np.sin(thetaq)*np.cos((jel+0.5)*dphi)
+                       #y_c=rq*np.sin(thetaq)*np.sin((jel+0.5)*dphi)
+                       x_c=rq*np.sin(thetaq)*np.cos(jel*dphi)
+                       y_c=rq*np.sin(thetaq)*np.sin(jel*dphi)
+                       z_c=zq 
+                       mass=rho[iel]*jcob*weightq*xq*dphi
+                       dist=np.sqrt((xM[i]-x_c)**2 + (yM[i]-y_c)**2 + (zM[i]-z_c)**2)
+                       Kernel=Ggrav/dist**3*massq
+                       gvect_x[i]-= Kernel*(xM[i]-x_c)
+                       gvect_y[i]-= Kernel*(yM[i]-y_c)
+                       gvect_z[i]-= Kernel*(zM[i]-z_c)
+                       total_vol+=jcob*weightq*xq*dphi
+                       total_mass+=massq
+                       #print(x_c,y_c,z_c)
+                   #end for
+               #end for
+           #end for
+           print('meas. point',i,':','M=',total_mass,' | V=',total_vol,4*np.pi/3*(R_outer**3-R_inner**3),\
+                 'gx,gy,gz:',gvect_x[i],gvect_y[i],gvect_z[i])
+       #end for
+
+       gvect=np.sqrt(gvect_x**2+gvect_y**2+gvect_z**2)
+       rM=np.sqrt(xM**2+yM**2+zM**2)
+
+       np.savetxt('gravity_'+str(istep)+'.ascii',np.array([xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect]).T,fmt='%.6e')
+
 
     print("compute gravity: %.3fs" % (timing.time() - start))
+
+    #####################################################################
+    # compute timestep
+    #####################################################################
+
+    CFL_nb=0.5
+
+    dt=CFL_nb*(np.min(np.sqrt(area)))/np.max(np.sqrt(u**2+v**2))
+    print('     -> dt = %.6f yr' % (dt/year))
+
+    #dt=1000*year
+
+    #####################################################################
+    # evolve mesh
+    #####################################################################
+
+    np.savetxt('meshV_bef_'+str(istep)+'.ascii',np.array([xV/km,zV/km,u,v]).T,header='# x,y')
+    np.savetxt('meshP_bef_'+str(istep)+'.ascii',np.array([xP/km,zP/km]).T,header='# x,y')
+
+    for i in range(0,NV):
+        if not surface_node[i] and not cmb_node[i]:
+           xV[i]+=u[i]*dt
+           zV[i]+=v[i]*dt
+
+    for iel in range(0,nel):
+        xP[iconP[0,iel]]=xV[iconV[0,iel]]
+        xP[iconP[1,iel]]=xV[iconV[1,iel]]
+        xP[iconP[2,iel]]=xV[iconV[2,iel]]
+        zP[iconP[0,iel]]=zV[iconV[0,iel]]
+        zP[iconP[1,iel]]=zV[iconV[1,iel]]
+        zP[iconP[2,iel]]=zV[iconV[2,iel]]
+
+    np.savetxt('meshV_aft_'+str(istep)+'.ascii',np.array([xV/km,zV/km]).T,header='# x,y')
+    np.savetxt('meshP_aft_'+str(istep)+'.ascii',np.array([xP/km,zP/km]).T,header='# x,y')
+
+#end istep
 
 print("-----------------------------")
 print("------------the end----------")
