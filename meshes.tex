@@ -326,19 +326,19 @@ Edges are line segments, facets are strictly {\bf planar} convex polygons.
 \index{general}{AMR} \index{general}{Adaptive Mesh Refinement}
 
 Let us do a simple calculation and assume we wish to model mantle convection on Earth. 
-The inner radius is $R_1=$3485km and the bottom of the lithosphere is at $R_2=$6250km. 
+The inner radius is $R_1=3485~\si{\km}$ and the bottom of the lithosphere is at $R_2=6250~\si{\km}$. 
 The volume of fluid is then 
 \[
-V = \frac{4}{3}\pi (R_2^3-R_1^3) \simeq 8.5\times 10^{11} \text{km}^3
+V = \frac{4}{3}\pi (R_2^3-R_1^3) \simeq 8.5\times 10^{11}~\si{\km}^3
 \]
-Let us further assume that we are satisfied with an average resolution of 10km. 
-Each element/cell is then $10^3\text{km}^3$ and the total number of elements/cell is then 
+Let us further assume that we are satisfied with an average resolution of $10~\si{\km}$. 
+Each element/cell is then $10^3~\si{\km}^3$ and the total number of elements/cell is then 
 \[
 N \simeq 8.5 \times 10^8 \sim {\cal O}(10^9)
 \]
 This is a very large number. The resulting linear systems from the discretisation of the 
 equations on such a mesh will be very even larger for the Stokes equations and solving 
-these systems will require very large numbers of CPUs and long compute times. 
+these systems will require {\it very} large numbers of CPUs and long compute times. 
 
 Aside from these considerations it is quite obvious that a high resolution mesh is not needed 
 in parts of the mantle where large scale upwellings and downwellings occur, but 
@@ -357,7 +357,9 @@ in computatinal geodynamics. However, since the use and update of such meshes is
 complex in terms of numerical algorithms, its introduction came somewhat late (00's and later).
 The \douar code (see Section~\ref{app:codes}) developed originally by J. Braun and Ph. Fullsack 
 is a prime example of an early multi-purpose code relying on a self-written Octree library \cite{brtf08}.
-More recently the \aspect{} code was developed on top of the Octree library p4est \cite{buwg11}
+More recently the \aspect{} code was developed on top of the Octree library p4est \cite{buwg11}.
+Note the 2007 and 2008 papers by Davies et al \cite{dadh07,dadh08} which explore adaptive mesh 
+refinement with the ConMan code (see Appendix~\ref{app:codes}).
 
 For further reading I suggest you read the review by May, Schellart \& Moresi on this topic \cite{masm13}.
 
@@ -372,9 +374,13 @@ For further reading I suggest you read the review by May, Schellart \& Moresi on
 {\captionfont Taken from \cite{gltf18}}
 \end{center}
 
-
-\Literature: \cite{bugg08,bugg10}\cite{lezh11} \cite[sect 3]{bugs09} \cite{dadh07}
-\cite{svna18} \cite{mish11}
+\Literature: 
+\textcite{bugg08} (2008),
+\textcite{bugs09} (2009), 
+\textcite{bugg10} (2010),
+\textcite{lezh11} (2011),
+\textcite{mish11} (2011),
+\textcite{svna18} (2018)
 
 
 \newpage
