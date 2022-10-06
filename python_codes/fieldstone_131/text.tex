@@ -17,8 +17,17 @@ Codes at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fie
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+In previous stones we have used the {\tt triangle} code \url{https://www.cs.cmu.edu/~quake/triangle.html}.
+Although very fast and very stable, this code is written in C and the interface with python 
+is therefore not optimal. Typically one would generate the nodes on the convex hull and inner 
+material boundaries, write these into a file, have {\tt triangle} read these in, return the 
+generated mesh into a file, and read the latter in the FEM python code. 
 
+However, there is a python module which is capable of generating Delaunay triangulations like {\tt triangle}
+and we here explore its use. In order to install it:
+\begin{verbatim}
 pip3 install triangle
+\end{verbatim}
 
 https://rufat.be/triangle/delaunay.html
 
@@ -40,3 +49,12 @@ https://rufat.be/triangle/delaunay.html
 \includegraphics[width=7cm]{python_codes/fieldstone_131/example5/example5}
 {\captionfont Example 5 (left), example 6 (right)}
 \end{center}
+
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_131/P1P2/meshP1}
+\includegraphics[width=7cm]{python_codes/fieldstone_131/P1P2/meshP2}\\
+{\captionfont $P_1$ mesh (left), $P_2$ mesh (right)}
+\end{center}
+
