@@ -1,0 +1,22 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+
+
+set output 'setup.pdf'
+splot[][]\
+'circle.ascii' ps .5 notitle,\
+'gravity.ascii' ps .5 notitle
+
+
+
+set xlabel 'z'
+set ylabel 'g_z'
+
+set output 'gz.pdf'
+plot[][]\
+'gravity_N50.ascii'    u 3:6 w l t 'N=50',\
+'gravity_N100.ascii'   u 3:6 w l t 'N=100',\
+'gravity_N1000.ascii'  u 3:6 w l t 'N=1000',\
+'gravity_N10000.ascii' u 3:6 w l t 'N=10000',\
+'gravity_th.ascii' u 3:4 w l lt -1 dt 2 lw .5 t 'analytical' 
