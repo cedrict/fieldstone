@@ -11,78 +11,13 @@ from scipy.sparse import lil_matrix
 from tools import *
 import triangle as tr
 import os 
+from compute_gravity_at_point import *
+from basis_functions import *
 
 Ggrav = 6.67430e-11
 year=365.25*3600*24
 cm=0.01
 km=1000
-
-#------------------------------------------------------------------------------
-# basis functions for Crouzeix-Raviart element and Taylor-Hood element
-#------------------------------------------------------------------------------
-
-def NNV(rq,sq):
-    if CR:
-       NV_0= (1.-rq-sq)*(1.-2.*rq-2.*sq+ 3.*rq*sq)
-       NV_1= rq*(2.*rq -1. + 3.*sq-3.*rq*sq-3.*sq**2 )
-       NV_2= sq*(2.*sq -1. + 3.*rq-3.*rq**2-3.*rq*sq )
-       NV_3= 4.*(1.-rq-sq)*rq*(1.-3.*sq) 
-       NV_4= 4.*rq*sq*(-2.+3.*rq+3.*sq)
-       NV_5= 4.*(1.-rq-sq)*sq*(1.-3.*rq) 
-       NV_6= 27*(1.-rq-sq)*rq*sq
-       return NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,NV_6
-    else:
-       NV_0= 1-3*rq-3*sq+2*rq**2+4*rq*sq+2*sq**2 
-       NV_1= -rq+2*rq**2
-       NV_2= -sq+2*sq**2
-       NV_3= 4*rq-4*rq**2-4*rq*sq
-       NV_4= 4*rq*sq 
-       NV_5= 4*sq-4*rq*sq-4*sq**2
-       return NV_0,NV_1,NV_2,NV_3,NV_4,NV_5
-
-def dNNVdr(rq,sq):
-    if CR:
-       dNVdr_0= -3+4*rq+7*sq-6*rq*sq-3*sq**2
-       dNVdr_1= 4*rq-1+3*sq-6*rq*sq-3*sq**2
-       dNVdr_2= 3*sq-6*rq*sq-3*sq**2
-       dNVdr_3= -8*rq+24*rq*sq+4-16*sq+12*sq**2
-       dNVdr_4= -8*sq+24*rq*sq+12*sq**2
-       dNVdr_5= -16*sq+24*rq*sq+12*sq**2
-       dNVdr_6= -54*rq*sq+27*sq-27*sq**2
-       return dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,dNVdr_6
-    else:
-       dNVdr_0= -3+4*rq+4*sq 
-       dNVdr_1= -1+4*rq
-       dNVdr_2= 0
-       dNVdr_3= 4-8*rq-4*sq
-       dNVdr_4= 4*sq
-       dNVdr_5= -4*sq
-       return dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5
-
-def dNNVds(rq,sq):
-    if CR:
-       dNVds_0= -3+7*rq+4*sq-6*rq*sq-3*rq**2
-       dNVds_1= rq*(3-3*rq-6*sq)
-       dNVds_2= 4*sq-1+3*rq-3*rq**2-6*rq*sq
-       dNVds_3= -16*rq+24*rq*sq+12*rq**2
-       dNVds_4= -8*rq+12*rq**2+24*rq*sq
-       dNVds_5= 4-16*rq-8*sq+24*rq*sq+12*rq**2
-       dNVds_6= -54*rq*sq+27*rq-27*rq**2
-       return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6
-    else:
-       dNVds_0= -3+4*rq+4*sq 
-       dNVds_1= 0
-       dNVds_2= -1+4*sq
-       dNVds_3= -4*rq
-       dNVds_4= +4*rq
-       dNVds_5= 4-4*rq-8*sq
-       return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5
-
-def NNP(rq,sq):
-    NP_0=1.-rq-sq
-    NP_1=rq
-    NP_2=sq
-    return NP_0,NP_1,NP_2
 
 
 ###############################################################################
@@ -113,7 +48,7 @@ R_inner=R_outer-1600e3
 
 # main parameter which controls resolution
 # shound be 1,2,3,4, or 5
-res=3
+res=1
 nnr=res*16+1            #vertical boundary resolutions
 nnt=res*100              #sphere boundary resolutions
 
@@ -182,8 +117,8 @@ g0=3.72
 #do not change
 
 gravity_method=2
-np_grav=100
-nel_phi=100
+np_grav=50
+nel_phi=200
 
 height=10e3
 
@@ -221,7 +156,6 @@ qweights =[nb5,nb5,nb5,nb6,nb6,nb6]
 #############  Defining the nodes and vertices ################################
 ###############################################################################
 start = timing.time()
-
 
 #------------------------------------------------------------------------------
 # inner boundary counterclockwise
@@ -308,11 +242,14 @@ print("setup: generate nodes: %.3f s" % (timing.time() - start))
 ###############################################################################
 start = timing.time()
 
-dict_mesh = tr.triangulate(dict_nodes,'pqa5000000000')
+dict_mesh = tr.triangulate(dict_nodes,'pqa50000000000')
 #compare mesh to node and vertice plot
 #tr.compare(plt, dict_nodes, dict_mesh)
 #plt.axis
 #plt.show()
+
+print("setup: call mesher: %.3f s" % (timing.time() - start))
+start = timing.time()
 
 ## define icon, x and z for P1 mesh
 iconP1=dict_mesh['triangles'] ; iconP1=iconP1.T
@@ -320,12 +257,18 @@ xP1=dict_mesh['vertices'][:,0]
 zP1=dict_mesh['vertices'][:,1]
 NP1=np.size(xP1)
 mP,nel=np.shape(iconP1)
-export_elements_to_vtu(xP1,zP1,iconP1,'meshP1.vtu')
+#export_elements_to_vtu(xP1,zP1,iconP1,'meshP1.vtu')
+
+print("setup: make P1 mesh: %.3f s" % (timing.time() - start))
+start = timing.time()
 
 NV0,xP2,zP2,iconP2=mesh_P1_to_P2(xP1,zP1,iconP1)
-export_elements_to_vtuP2(xP2,zP2,iconP2,'meshP2.vtu')
 
-print("setup: generate P1 & P2 meshes: %.3f s" % (timing.time() - start))
+print("setup: make P2 mesh: %.3f s" % (timing.time() - start))
+
+#export_elements_to_vtuP2(xP2,zP2,iconP2,'meshP2.vtu')
+
+#print("setup: generate P1 & P2 meshes: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 # compute NP, NV, NfemV, NfemP, Nfem for both element pairs
@@ -645,18 +588,15 @@ start = timing.time()
 
 area=np.zeros(nel,dtype=np.float64) 
 arear=np.zeros(nel,dtype=np.float64) 
-NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
-dNNNVdr  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-dNNNVds  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 
 for iel in range(0,nel):
     for kq in range (0,nqel):
         rq=qcoords_r[kq]
         sq=qcoords_s[kq]
         weightq=qweights[kq]
-        NNNV[0:mV]=NNV(rq,sq)
-        dNNNVdr[0:mV]=dNNVdr(rq,sq)
-        dNNNVds[0:mV]=dNNVds(rq,sq)
+        NNNV=NNV(rq,sq,CR)
+        dNNNVdr=dNNVdr(rq,sq,CR)
+        dNNNVds=dNNVds(rq,sq,CR)
         jcb=np.zeros((2,2),dtype=np.float64)
         for k in range(0,mV):
             jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
@@ -665,9 +605,7 @@ for iel in range(0,nel):
             jcb[1,1] += dNNNVds[k]*zV[iconV[k,iel]]
         jcob = np.linalg.det(jcb)
         area[iel]+=jcob*weightq
-        xq=0.
-        for k in range(0,mV):
-            xq+=NNNV[k]*xV[iconV[k,iel]]
+        xq=NNNV.dot(xV[iconV[:,iel]])
         arear[iel]+=jcob*weightq*xq*2*np.pi
 
 VOL=4*np.pi*(R_outer**3-R_inner**3)/3
@@ -739,12 +677,9 @@ for istep in range(0,nstep):
     rhs      = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
     f_rhs    = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
     h_rhs    = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
-    NNNV     = np.zeros(mV,dtype=np.float64)           # shape functions V
     NNNP     = np.zeros(mP,dtype=np.float64)           # shape functions P
     dNNNVdx  = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
     dNNNVdy  = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-    dNNNVdr  = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-    dNNNVds  = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
     b_mat    = np.zeros((4,ndofV*mV),dtype=np.float64) # gradient matrix B 
     N_mat    = np.zeros((4,ndofP*mP),dtype=np.float64) # matrix  
     c_mat    = np.array([[2,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,1]],dtype=np.float64) 
@@ -770,9 +705,9 @@ for istep in range(0,nstep):
             sq=qcoords_s[kq]
             weightq=qweights[kq]
 
-            NNNV[0:mV]=NNV(rq,sq)
-            dNNNVdr[0:mV]=dNNVdr(rq,sq)
-            dNNNVds[0:mV]=dNNVds(rq,sq)
+            NNNV=NNV(rq,sq,CR)
+            dNNNVdr=dNNVdr(rq,sq,CR)
+            dNNNVds=dNNVds(rq,sq,CR)
             NNNP[0:mP]=NNP(rq,sq)
 
             # calculate jacobian matrix
@@ -962,9 +897,9 @@ for istep in range(0,nstep):
             rq=qcoords_r[kq]
             sq=qcoords_s[kq]
             weightq=qweights[kq]
-            NNNV[0:mV]=NNV(rq,sq)
-            dNNNVdr[0:mV]=dNNVdr(rq,sq)
-            dNNNVds[0:mV]=dNNVds(rq,sq)
+            NNNV[0:mV]=NNV(rq,sq,CR)
+            dNNNVdr[0:mV]=dNNVdr(rq,sq,CR)
+            dNNNVds[0:mV]=dNNVds(rq,sq,CR)
             NNNP[0:mP]=NNP(rq,sq)
             # calculate jacobian matrix
             jcb=np.zeros((2,2),dtype=np.float64)
@@ -989,7 +924,7 @@ for istep in range(0,nstep):
     #end for
     vrms=np.sqrt(vrms/(4/3*np.pi*R_outer**3))
 
-    print("     -> nel= %6d ; vrms= %e " %(nel,vrms))
+    print("     -> nel= %6d ; vrms (m/year)= %e " %(nel,vrms*year))
 
     print("compute vrms: %.3f s" % (timing.time() - start))
 
@@ -1026,7 +961,7 @@ for istep in range(0,nstep):
               thetap=np.arctan2(xxp,zzp)
               dist=np.sqrt((xP[iconP[0,iel]]-xP[iconP[1,iel]])**2+(zP[iconP[0,iel]]-zP[iconP[1,iel]])**2)
               perim+=dist
-              avrg_p+=ppp*dtheta*np.sin(thetap)*0.5
+              avrg_p+=ppp*dist
            if surface_Pnode[iconP[1,iel]] and surface_Pnode[iconP[2,iel]]:
               xxp=(xP[iconP[1,iel]]+xP[iconP[2,iel]])/2
               zzp=(zP[iconP[1,iel]]+zP[iconP[2,iel]])/2
@@ -1037,7 +972,7 @@ for istep in range(0,nstep):
               thetap=np.arctan2(xxp,zzp)
               dist=np.sqrt((xP[iconP[1,iel]]-xP[iconP[2,iel]])**2+(zP[iconP[1,iel]]-zP[iconP[2,iel]])**2)
               perim+=dist
-              avrg_p+=ppp*dtheta*np.sin(thetap)*0.5
+              avrg_p+=ppp*dist
            if surface_Pnode[iconP[2,iel]] and surface_Pnode[iconP[0,iel]]:
               xxp=(xP[iconP[2,iel]]+xP[iconP[0,iel]])/2
               zzp=(zP[iconP[2,iel]]+zP[iconP[0,iel]])/2
@@ -1048,13 +983,16 @@ for istep in range(0,nstep):
               thetap=np.arctan2(xxp,zzp)
               dist=np.sqrt((xP[iconP[2,iel]]-xP[iconP[0,iel]])**2+(zP[iconP[2,iel]]-zP[iconP[0,iel]])**2)
               perim+=dist
-              avrg_p+=ppp*dtheta*np.sin(thetap)*0.5
+              avrg_p+=ppp*dist
 
-       p-=avrg_p 
+       p-=avrg_p/perim 
 
-       print ('     -> perim=',perim, np.pi*R_outer)
+       print('     -> perim (meas) =',perim)
+       print('     -> perim (anal) =',np.pi*R_outer)
+       print('     -> perim (error)=',abs(perim-np.pi*R_outer)/(np.pi*R_outer)*100,'%')
+       print('     -> p (m,M) %.6e %.6e ' %(np.min(p),np.max(p)))
 
-       #np.savetxt('solution_pressure_normalised.ascii',np.array([xP,zP,p,rP]).T)
+       np.savetxt('solution_pressure_normalised.ascii',np.array([xP,zP,p,rP]).T)
 
     print("normalise pressure: %.3f s" % (timing.time() - start))
 
@@ -1081,9 +1019,9 @@ for istep in range(0,nstep):
     for iel in range(0,nel):
         rq = 1./3
         sq = 1./3
-        NNNV[0:mV]=NNV(rq,sq)
-        dNNNVdr[0:mV]=dNNVdr(rq,sq)
-        dNNNVds[0:mV]=dNNVds(rq,sq)
+        NNNV[0:mV]=NNV(rq,sq,CR)
+        dNNNVdr[0:mV]=dNNVdr(rq,sq,CR)
+        dNNNVds[0:mV]=dNNVds(rq,sq,CR)
         jcb=np.zeros((2,2),dtype=np.float64)
         for k in range(0,mV):
             jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
@@ -1153,9 +1091,9 @@ for istep in range(0,nstep):
             inode=iconV[kk,iel]
             rq = rVnodes[kk]
             sq = sVnodes[kk]
-            NNNV[0:mV]=NNV(rq,sq)
-            dNNNVdr[0:mV]=dNNVdr(rq,sq)
-            dNNNVds[0:mV]=dNNVds(rq,sq)
+            NNNV[0:mV]=NNV(rq,sq,CR)
+            dNNNVdr[0:mV]=dNNVdr(rq,sq,CR)
+            dNNNVds[0:mV]=dNNVds(rq,sq,CR)
             NNNP[0:mP]=NNP(rq,sq)
             jcb=np.zeros((2,2),dtype=np.float64)
             for k in range(0,mV):
@@ -1657,124 +1595,48 @@ for istep in range(0,nstep):
     angleM=np.zeros(np_grav,dtype=np.float64)   
 
     #-------------------
-    if gravity_method==1:
 
-       dphi=2*np.pi/nel_phi
-       for i in range(0,np_grav):
-           angleM[i]=np.pi/2-np.pi/(np_grav-1)*i
-           xM[i]=(R_outer+height)*np.cos(angleM[i])
-           yM[i]=0
-           zM[i]=(R_outer+height)*np.sin(angleM[i])
+    dphi=2*np.pi/nel_phi
+    for i in range(0,np_grav):
+        angleM[i]=np.pi/2-np.pi/2/(np_grav-1)*i
+        xM[i]=(R_outer+height)*np.cos(angleM[i])
+        yM[i]=0
+        zM[i]=(R_outer+height)*np.sin(angleM[i])
 
-           #angleM[i]=np.pi/2 #np.pi/5
-           #xM[i]=(R_outer+i*R_outer/(np_grav-1))*np.cos(angleM[i])
-           #yM[i]=0
-           #zM[i]=(R_outer+i*R_outer/(np_grav-1))*np.sin(angleM[i])
+        if gravity_method==1:
+           gvect_x[i],gvect_y[i],gvect_z[i]=compute_gravity_at_point1(xM[i],yM[i],zM[i],nel,xV,zV,iconV,rho,arear,dphi,nel_phi)
+           print('point',i,'gx,gy,gz',gvect_x[i],gvect_y[i],gvect_z[i])
 
-           total_mass=0
-           total_vol=0
-           for iel in range(0,nel):
-               r_c=np.sqrt(xc[iel]**2+zc[iel]**2)
-               z_c=zc[iel] 
-               theta=np.arccos(z_c/r_c)
-               for jel in range(0,nel_phi):
-                   x_c=r_c*np.sin(theta)*np.cos((jel+0.5)*dphi)
-                   y_c=r_c*np.sin(theta)*np.sin((jel+0.5)*dphi)
-                   vol=arear[iel]*dphi
-                   mass=vol*rho[iel]
-                   total_vol+=vol
-                   total_mass+=mass
-                   dist=np.sqrt((xM[i]-x_c)**2 + (yM[i]-y_c)**2 + (zM[i]-z_c)**2)
-                   gvect_x[i]-= Ggrav/dist**3*mass*(xM[i]-x_c)
-                   gvect_y[i]-= Ggrav/dist**3*mass*(yM[i]-y_c)
-                   gvect_z[i]-= Ggrav/dist**3*mass*(zM[i]-z_c)
-                   #print(x_c,y_c,z_c)
-               #end for
-           #end for
-           print('meas. point',i,':','M=',total_mass,' | V=',total_vol,4*np.pi/3*np.pi*(R_outer**3-R_inner**3))
-       #end for
+        if gravity_method==2:
+           gvect_x[i],gvect_y[i],gvect_z[i]=compute_gravity_at_point2(xM[i],yM[i],zM[i],nel,xV,zV,iconV,rho,\
+                                                                      dphi,nel_phi,qcoords_r,qcoords_s,qweights,CR,mV,nqel)
+           print('point',i,'gx,gy,gz',gvect_x[i],gvect_y[i],gvect_z[i])
 
-       gvect=np.sqrt(gvect_x**2+gvect_y**2+gvect_z**2)
-       rM=np.sqrt(xM**2+yM**2+zM**2)
+    #end for
 
-       np.savetxt('gravity_'+str(istep)+'.ascii',np.array([xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect]).T,fmt='%.6e')
+    gvect=np.sqrt(gvect_x**2+gvect_y**2+gvect_z**2)
+    rM=np.sqrt(xM**2+yM**2+zM**2)
 
-    #-------------------
-    if gravity_method==2:
-
-       dphi=2*np.pi/nel_phi
-       for i in range(0,np_grav):
-           angleM[i]=np.pi/2-np.pi/2/(np_grav-1)*i
-           xM[i]=(R_outer+height)*np.cos(angleM[i])
-           yM[i]=0
-           zM[i]=(R_outer+height)*np.sin(angleM[i])
-
-           total_mass=0
-           total_vol=0
-           for iel in range(0,nel):
-               for kq in range (0,nqel):
-                   rq=qcoords_r[kq]
-                   sq=qcoords_s[kq]
-                   weightq=qweights[kq]
-                   NNNV[0:mV]=NNV(rq,sq)
-                   dNNNVdr[0:mV]=dNNVdr(rq,sq)
-                   dNNNVds[0:mV]=dNNVds(rq,sq)
-                   jcb=np.zeros((2,2),dtype=np.float64)
-                   for k in range(0,mV):
-                       jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-                       jcb[0,1]+=dNNNVdr[k]*zV[iconV[k,iel]]
-                       jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-                       jcb[1,1]+=dNNNVds[k]*zV[iconV[k,iel]]
-                   jcob = np.linalg.det(jcb)
-                   xq=NNNV[:].dot(xV[iconV[:,iel]])
-                   zq=NNNV[:].dot(zV[iconV[:,iel]])
-                   rq=np.sqrt(xq**2+zq**2)
-                   thetaq=np.arccos(zq/rq)
-                   massq=rho[iel]*jcob*weightq*xq*dphi
-                   for jel in range(0,nel_phi):
-                       #x_c=rq*np.sin(thetaq)*np.cos((jel+0.5)*dphi)
-                       #y_c=rq*np.sin(thetaq)*np.sin((jel+0.5)*dphi)
-                       x_c=rq*np.sin(thetaq)*np.cos(jel*dphi)
-                       y_c=rq*np.sin(thetaq)*np.sin(jel*dphi)
-                       z_c=zq 
-                       mass=rho[iel]*jcob*weightq*xq*dphi
-                       dist=np.sqrt((xM[i]-x_c)**2 + (yM[i]-y_c)**2 + (zM[i]-z_c)**2)
-                       Kernel=Ggrav/dist**3*massq
-                       gvect_x[i]-= Kernel*(xM[i]-x_c)
-                       gvect_y[i]-= Kernel*(yM[i]-y_c)
-                       gvect_z[i]-= Kernel*(zM[i]-z_c)
-                       total_vol+=jcob*weightq*xq*dphi
-                       total_mass+=massq
-                       #print(x_c,y_c,z_c)
-                   #end for
-               #end for
-           #end for
-           print('meas. point',i,':','M=',total_mass,' | V=',total_vol,4*np.pi/3*(R_outer**3-R_inner**3),\
-                 'gx,gy,gz:',gvect_x[i],gvect_y[i],gvect_z[i])
-       #end for
-
-       gvect=np.sqrt(gvect_x**2+gvect_y**2+gvect_z**2)
-       rM=np.sqrt(xM**2+yM**2+zM**2)
-
-       np.savetxt('gravity_'+str(istep)+'.ascii',np.array([xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect]).T,fmt='%.6e')
-
+    np.savetxt('gravity_'+str(istep)+'.ascii',np.array([xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect]).T,fmt='%.6e')
 
     print("compute gravity: %.3fs" % (timing.time() - start))
 
     #####################################################################
     # compute timestep
     #####################################################################
+    start = timing.time()
 
     CFL_nb=0.5
 
     dt=CFL_nb*(np.min(np.sqrt(area)))/np.max(np.sqrt(u**2+v**2))
     print('     -> dt = %.6f yr' % (dt/year))
 
-    #dt=1000*year
+    print("compute dt: %.3fs" % (timing.time() - start))
 
     #####################################################################
     # evolve mesh
     #####################################################################
+    start = timing.time()
 
     np.savetxt('meshV_bef_'+str(istep)+'.ascii',np.array([xV/km,zV/km,u,v]).T,header='# x,y')
     np.savetxt('meshP_bef_'+str(istep)+'.ascii',np.array([xP/km,zP/km]).T,header='# x,y')
@@ -1794,6 +1656,8 @@ for istep in range(0,nstep):
 
     np.savetxt('meshV_aft_'+str(istep)+'.ascii',np.array([xV/km,zV/km]).T,header='# x,y')
     np.savetxt('meshP_aft_'+str(istep)+'.ascii',np.array([xP/km,zP/km]).T,header='# x,y')
+
+    print("evolve mesh: %.3fs" % (timing.time() - start))
 
 #end istep
 
