@@ -78,7 +78,7 @@ print('Mtp (m/M)',min(C_Mtp),max(C_Mtp))
 print('----------------------------------------')
 
 #np.savetxt('data.ascii',np.array([C_time,C_lat,C_lon,C_depth]).T)
-np.savetxt('data_M.ascii',np.array([C_Mrr,C_Mtt,C_Mpp,C_Mrt,C_Mrp,C_Mtp]).T)
+#np.savetxt('data_M.ascii',np.array([C_Mrr,C_Mtt,C_Mpp,C_Mrt,C_Mrp,C_Mtp]).T)
 
 #------------------------------------------------------------------------------
 
@@ -146,9 +146,6 @@ if True:
    for i in range(0,C_nb):
        vtufile.write("%10e \n" %(C_M[i]))
    vtufile.write("</DataArray>\n")
-
-
-
    #--
    vtufile.write("</PointData>\n")
    #####
