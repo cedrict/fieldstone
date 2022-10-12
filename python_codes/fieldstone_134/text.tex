@@ -13,15 +13,21 @@
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%taken from http://rcmt2.bo.ingv.it/
+The seismic moment tensor is a complete description of the earthquake size and source geometry. 
+The Centroid Moment Tensor (CMT) is a reliable method for calculating moment tensors, 
+by which the Global Centroid Moment Tensor Project systematically studies global seismicity 
+starting from the 80's.
+
+Q: what is a seimic tensor? \url{https://mxrap.com/moment-tensors-a-practical-guide/}
 
 
 All what follows is to be found at \url{https://www.globalcmt.org/}.
-\cite{eknd12}
+Also check \textcite{eknd12} (2012) for an overview of the project.
 
-This file contains an explanation of the "ndk" file format used to store
+The available data is stored in the "ndk" file format which used to store
 and distribute the Global Centroid-Moment-Tensor (CMT) catalog
 (formerly the Harvard CMT catalog).
-
 The format is ASCII and uses five 80-character lines per earthquake. 
 Example\footnote{I have added the blanklines. In the file there are none.}:
 
@@ -51,7 +57,7 @@ V10   3.376 16 149   0.611 43  44  -3.987 43 254   3.681 282 48  -23  28 73 -136
 \begin{itemize}
 \item First line: Hypocenter line\\
 \verb|[1-4]|   Hypocenter reference catalog (e.g., PDE for USGS location, ISC for
-               ISC catalog, SWE for surface-wave location, \textcite{ekst06})\\
+               ISC catalog, SWE for surface-wave location, \textcite{ekst06} (2006))\\
 \verb|[6-15]|  Date of reference event\\
 \verb|[17-26]| Time of reference event\\
 \verb|[28-33]| Latitude\\
@@ -101,7 +107,8 @@ V10   3.376 16 149   0.611 43  44  -3.987 43 254   3.681 282 48  -23  28 73 -136
 \verb|[1-2]| The exponent for all following moment values. For example, if the
         exponent is given as 24, the moment values that follow, expressed in 
         dyne-cm, should be multiplied by 10**24.\\
-\verb|[3-80]| The six moment-tensor elements: $M_{rr}$, $M_{tt}$, $M_{pp}$, $M_{rt}$, $M_{rp}$, $M_{tp}$, 
+\verb|[3-80]| The six moment-tensor elements: $M_{rr}$, $M_{tt}=M_{\theta\theta}$, 
+        $M_{pp}=M_{\phi\phi}$, $M_{rt}$, $M_{rp}$, $M_{tp}$, 
         where $r$ is up, $t$ is south, and $p$ is east. See Aki and Richards book \cite{akirichards}
         for conversions to other coordinate systems. The value of each moment-tensor
         element is followed by its estimated standard error. See note (4)
@@ -150,10 +157,29 @@ and we constrain these components to zero in the inversion. The standard
 errors for $M_{rt}$ and $M_{rp}$ are set to zero in this case.
 \end{enumerate}
 
+\vspace{1cm}
 
 Problems I have noticed with the data file:
-
 line 69823: 1.060.0 becomes 1060.0 ?
-line 73622: 6.010.0 becomes 6010.0 
+line 73622: 6.010.0 becomes 6010.0 ? 
 
- 
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_134/images/visu1}
+\includegraphics[width=5cm]{python_codes/fieldstone_134/images/visu2}
+\includegraphics[width=5cm]{python_codes/fieldstone_134/images/visu3}
+\end{center}
+
+%---------------------------------------------------------------------------------- 
+
+There seems to be another catalogue
+for the European-Mediterranean Regional Centroid-Moment Tensors
+at \url{http://rcmt2.bo.ingv.it/}.
+
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_134/images/visu5}
+\includegraphics[width=5cm]{python_codes/fieldstone_134/images/visu4}
+\end{center}
+
+
