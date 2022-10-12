@@ -2,17 +2,25 @@ import numpy as np
 import numpy.ma as ma
 import sys as sys
 import scipy
-import csv
+#import csv
 import math as math
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 import time as timing
 from scipy.sparse import lil_matrix
-from tools import *
 import triangle as tr
 import os 
-from compute_gravity_at_point import *
-from basis_functions import *
+
+use_numba=False
+
+if use_numba:
+    from tools_numba import *
+    from compute_gravity_at_point_numba import *
+    from basis_functions_numba import *
+else:
+    from tools import *
+    from compute_gravity_at_point import *
+    from basis_functions import *
 
 Ggrav = 6.67430e-11
 year=365.25*3600*24
@@ -48,7 +56,7 @@ R_inner=R_outer-1600e3
 
 # main parameter which controls resolution
 # shound be 1,2,3,4, or 5
-res=1
+res=2
 nnr=res*16+1            #vertical boundary resolutions
 nnt=res*100              #sphere boundary resolutions
 
@@ -262,7 +270,7 @@ mP,nel=np.shape(iconP1)
 print("setup: make P1 mesh: %.3f s" % (timing.time() - start))
 start = timing.time()
 
-NV0,xP2,zP2,iconP2=mesh_P1_to_P2(xP1,zP1,iconP1)
+NV0,xP2,zP2,iconP2=mesh_P1_to_P2(NP1,nel,xP1,zP1,iconP1)
 
 print("setup: make P2 mesh: %.3f s" % (timing.time() - start))
 
