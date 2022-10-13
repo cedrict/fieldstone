@@ -11,7 +11,7 @@ from scipy.sparse import lil_matrix
 import triangle as tr
 import os 
 
-use_numba=False
+use_numba=True
 
 if use_numba:
     from tools_numba import *
@@ -156,9 +156,9 @@ nb4=0.445948490915965
 nb5=0.109951743655322/2.
 nb6=0.223381589678011/2.
 
-qcoords_r=[nb1,nb2,nb2,nb4,nb3,nb4]
-qcoords_s=[nb2,nb1,nb2,nb3,nb4,nb4]
-qweights =[nb5,nb5,nb5,nb6,nb6,nb6]
+qcoords_r=np.array([nb1,nb2,nb2,nb4,nb3,nb4],dtype=np.float64) 
+qcoords_s=np.array([nb2,nb1,nb2,nb3,nb4,nb4],dtype=np.float64) 
+qweights =np.array([nb5,nb5,nb5,nb6,nb6,nb6],dtype=np.float64) 
 
 ###############################################################################
 #############  Defining the nodes and vertices ################################

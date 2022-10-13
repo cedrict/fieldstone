@@ -15,7 +15,7 @@ def NNV(rq,sq,CR):
        NV_4= 4.*rq*sq*(-2.+3.*rq+3.*sq)
        NV_5= 4.*(1.-rq-sq)*sq*(1.-3.*rq) 
        NV_6= 27*(1.-rq-sq)*rq*sq
-       arr=np.array([NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,NV_6])
+       arr=np.array([NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,NV_6],dtype=np.float64)
        return arr
     else:
        NV_0= 1-3*rq-3*sq+2*rq**2+4*rq*sq+2*sq**2 
@@ -24,7 +24,7 @@ def NNV(rq,sq,CR):
        NV_3= 4*rq-4*rq**2-4*rq*sq
        NV_4= 4*rq*sq 
        NV_5= 4*sq-4*rq*sq-4*sq**2
-       arr=np.array([NV_0,NV_1,NV_2,NV_3,NV_4,NV_5])
+       arr=np.array([NV_0,NV_1,NV_2,NV_3,NV_4,NV_5],dtype=np.float64)
        return arr
 
 @numba.njit

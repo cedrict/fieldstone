@@ -1,6 +1,6 @@
 import numpy as np
-from basis_functions import *
 import numba
+from basis_functions_numba import *
 
 Ggrav = 6.67430e-11
 
@@ -40,6 +40,7 @@ def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,rho,arear,dphi,nel_phi):
 @numba.njit(parallel=True)
 def compute_gravity_at_point2(xM,yM,zM,nel,xV,zV,iconV,rho,dphi,nel_phi,qcoords_r,qcoords_s,qweights,CR,mV,nqel):
 
+    #NNNV=np.zeros(6,dtype=np.float64)           # shape functions derivatives
     gx=0.
     gy=0.
     gz=0.
