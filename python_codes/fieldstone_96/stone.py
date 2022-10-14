@@ -2,7 +2,6 @@ import numpy as np
 import numpy.ma as ma
 import sys as sys
 import scipy
-#import csv
 import math as math
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
@@ -10,6 +9,8 @@ import time as timing
 from scipy.sparse import lil_matrix
 import triangle as tr
 import os 
+
+###############################################################################
 
 use_numba=True
 
@@ -22,11 +23,12 @@ else:
     from compute_gravity_at_point import *
     from basis_functions import *
 
+###############################################################################
+
 Ggrav = 6.67430e-11
 year=365.25*3600*24
 cm=0.01
 km=1000
-
 
 ###############################################################################
 ###############################################################################
@@ -72,7 +74,7 @@ R_moho = R_outer-500e3 #500km below the surface reside's the moho
 # 2: steinberger data
 # 3: three layer model
 
-viscosity_model = 1
+viscosity_model = 2
 
 rho_crust=3300
 eta_crust=1e25
@@ -406,7 +408,7 @@ cfilepath = os.path.dirname(os.path.abspath(__file__))
 # changes the current working directory to current file path    
 os.chdir(cfilepath)
 profile_eta,profile_depth=np.loadtxt(cfilepath + '/data/eta.ascii',unpack=True,usecols=[0,1]) 
-profile_eta,profile_depth=np.loadtxt(cfilepath + '/data/rho.ascii',unpack=True,usecols=[0,1]) 
+profile_rho,profile_depth=np.loadtxt(cfilepath + '/data/rho.ascii',unpack=True,usecols=[0,1]) 
 
 print("setup: read profiles: %.3f s" % (timing.time() - start))
 
