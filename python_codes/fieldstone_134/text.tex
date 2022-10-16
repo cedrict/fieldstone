@@ -21,7 +21,6 @@ starting from the 80's.
 
 Q: what is a seimic tensor? \url{https://mxrap.com/moment-tensors-a-practical-guide/}
 
-
 All what follows is to be found at \url{https://www.globalcmt.org/}.
 Also check \textcite{eknd12} (2012) for an overview of the project.
 
@@ -108,8 +107,9 @@ V10   3.376 16 149   0.611 43  44  -3.987 43 254   3.681 282 48  -23  28 73 -136
         exponent is given as 24, the moment values that follow, expressed in 
         dyne-cm, should be multiplied by 10**24.\\
 \verb|[3-80]| The six moment-tensor elements: $M_{rr}$, $M_{tt}=M_{\theta\theta}$, 
-        $M_{pp}=M_{\phi\phi}$, $M_{rt}$, $M_{rp}$, $M_{tp}$, 
-        where $r$ is up, $t$ is south, and $p$ is east. See Aki and Richards book \cite{akirichards}
+        $M_{pp}=M_{\phi\phi}$, $M_{rt}=M_{r\theta}$, $M_{rp}=M_{r\phi}$, $M_{tp}=M_{\theta\phi}$, 
+        where $r$ is up, $t=\theta$ is south, and $p=\phi$ is east. 
+        See Aki and Richards book \cite{akirichards}
         for conversions to other coordinate systems. The value of each moment-tensor
         element is followed by its estimated standard error. See note (4)
         below for cases in which some elements are constrained in the inversion.
@@ -143,8 +143,8 @@ of data types.
 \item The source duration is generally estimated using an empirically determined
 relationship such that the duration increases as the cube root of the scalar
 moment. Specifically, we currently use a relationship where the half duration
-for an event with moment 10**24 is 1.05 seconds, and for an event with moment
-10**27 is 10.5 seconds.
+for an event with moment $10^{24}$ is 1.05 seconds, and for an event with moment
+$10^{27}$ is 10.5 seconds.
 
 \item For some small earthquakes for which the azimuthal distribution of stations 
 with useful seismograms is poor, we constrain the epicenter of the event to
@@ -152,9 +152,9 @@ the reference location. This is reflected in the catalog by standard
 errors of 0.0 for both the centroid latitude and the centroid longitude.
 
 \item For some very shallow earthquakes, the CMT inversion does not well 
-constrain the vertical-dip-slip components of the moment tensor ($M_{rt}$ and $M_{rp}$),
+constrain the vertical-dip-slip components of the moment tensor ($M_{rt}=M_{r\theta}$ and $M_{rp}=M_{r\phi}$),
 and we constrain these components to zero in the inversion. The standard
-errors for $M_{rt}$ and $M_{rp}$ are set to zero in this case.
+errors for $M_{rt}=M_{r\theta}$ and $M_{rp}=M_{r\phi}$ are set to zero in this case.
 \end{enumerate}
 
 \vspace{1cm}
@@ -165,21 +165,22 @@ line 73622: 6.010.0 becomes 6010.0 ?
 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_134/images/visu1}
-\includegraphics[width=5cm]{python_codes/fieldstone_134/images/visu2}
-\includegraphics[width=5cm]{python_codes/fieldstone_134/images/visu3}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_134/images/visu1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_134/images/visu2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_134/images/visu3}\\
+{\captionfont note that the background topogrpahy shell is obtained 
+with \stone~69.}
 \end{center}
 
 %---------------------------------------------------------------------------------- 
 
-There seems to be another catalogue
-for the European-Mediterranean Regional Centroid-Moment Tensors
-at \url{http://rcmt2.bo.ingv.it/}.
+\subsubsection*{European-Mediterranean Regional Centroid-Moment Tensors}
 
+There is another catalogue at \url{http://rcmt2.bo.ingv.it/}.
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_134/images/visu5}
-\includegraphics[width=5cm]{python_codes/fieldstone_134/images/visu4}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_134/images/visu5}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_134/images/visu4}
 \end{center}
 
 

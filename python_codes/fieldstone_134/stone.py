@@ -280,8 +280,6 @@ if True:
        vtufile.write("%10e \n" %(C_Mb[i]))
    vtufile.write("</DataArray>\n")
    #--
-
-
    vtufile.write("</PointData>\n")
    #####
    vtufile.write("<Cells>\n")
@@ -303,6 +301,3 @@ if True:
    vtufile.write("</UnstructuredGrid>\n")
    vtufile.write("</VTKFile>\n")
    vtufile.close()
-
-
-
