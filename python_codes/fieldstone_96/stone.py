@@ -9,6 +9,7 @@ import time as timing
 from scipy.sparse import lil_matrix
 import triangle as tr
 import os 
+import matplotlib.pyplot as plt
 
 ###############################################################################
 
@@ -56,11 +57,10 @@ ndofP=1  # number of pressure degrees of freedom
 R_outer=3.397e6
 R_inner=R_outer-1600e3
 
-# main parameter which controls resolution
-# shound be 1,2,3,4, or 5
-res=2
-nnr=res*16+1            #vertical boundary resolutions
-nnt=res*100              #sphere boundary resolutions
+hhh=60e3 # element size at the surface
+
+nnt=int(np.pi*R_outer/hhh) ; print('nnt=',nnt)
+nnr=int((R_outer-R_inner)/hhh)+1 ; print('nnr=',nnr)
 
 #-------------------------------------
 # 'Moho' setup
@@ -99,11 +99,13 @@ eta_max=1e25
 #-------------------------------------
 # blob setup 
 #-------------------------------------
-np_blob=res*20          #blob resolution
 R_blob=300e3            #radius of blob
 z_blob=R_outer-1000e3   #starting depth
 rho_blob=rho_mantle-200
 eta_blob=6e20
+np_blob=int(np.pi*R_blob/hhh)
+
+print('np_blob=',np_blob)
 
 #-------------------------------------
 #boundary conditions at planet surface
@@ -124,17 +126,18 @@ use_isog=True
 g0=3.72
 
 #-------------------------------------
-#do not change
+#gravity calculation parameters
+#-------------------------------------
 
 gravity_method=2
-np_grav=50
-nel_phi=200
+np_grav=100
+nel_phi=int(2*np.pi*R_outer/hhh) ; print('nel_phi=',nel_phi)
 
 height=10e3
 
 eta_ref=1e22
 
-nstep=1
+nstep=3
 
 ###############################################################################
 
@@ -178,7 +181,7 @@ for i in range(0,nnt):                                                  #first p
        pts_ib[i,0]=0
 
 #------------------------------------------------------------------------------
-# *top vertical (left) wall 
+# top vertical (left) wall 
 #------------------------------------------------------------------------------
 topw_z = np.linspace(R_inner,R_outer,nnr,endpoint=False)                #vertical boundary wall from inner to outer boundary sphere
 pts_topw = np.stack([np.zeros(nnr),topw_z],axis=1)                      #nnr-points on vertical wall
@@ -252,11 +255,15 @@ print("setup: generate nodes: %.3f s" % (timing.time() - start))
 ###############################################################################
 start = timing.time()
 
-dict_mesh = tr.triangulate(dict_nodes,'pqa50000000000')
-#compare mesh to node and vertice plot
+target_area=str(int(hhh**2/2))
+print(target_area)
+
+dict_mesh = tr.triangulate(dict_nodes,'pqa'+target_area)
+
 #tr.compare(plt, dict_nodes, dict_mesh)
 #plt.axis
 #plt.show()
+#exit()
 
 print("setup: call mesher: %.3f s" % (timing.time() - start))
 start = timing.time()
@@ -698,7 +705,7 @@ for istep in range(0,nstep):
 
     for iel in range(0,nel):
 
-        if iel%1000==0:
+        if iel%2000==0:
            print(iel)
 
         # set arrays to 0 every loop
@@ -1002,7 +1009,7 @@ for istep in range(0,nstep):
        print('     -> perim (error)=',abs(perim-np.pi*R_outer)/(np.pi*R_outer)*100,'%')
        print('     -> p (m,M) %.6e %.6e ' %(np.min(p),np.max(p)))
 
-       np.savetxt('solution_pressure_normalised.ascii',np.array([xP,zP,p,rP]).T)
+       #np.savetxt('solution_pressure_normalised.ascii',np.array([xP,zP,p,rP]).T)
 
     print("normalise pressure: %.3f s" % (timing.time() - start))
 
@@ -1207,42 +1214,42 @@ for istep in range(0,nstep):
     #####################################################################
     start = timing.time()
 
-    tracfile=open('surface_traction_nodal_'+str(istep)+'.ascii',"w")
+    tracfile=open('surface_traction_nodal_{:04d}.ascii'.format(istep),"w")
     for i in range(0,NV):
         if surface_node[i]: 
            tracfile.write("%e %e %e %e %e %e %e\n" \
                           %(theta_nodal[i],tau_rr_nodal[i]-q[i],xV[i],zV[i],tau_rr_nodal[i],q[i],e_rr_nodal[i]))
     tracfile.close()
 
-    tracfile=open('surface_vr_'+str(istep)+'.ascii',"w")
+    tracfile=open('surface_vr_{:04d}.ascii'.format(istep),"w")
     for i in range(0,NV):
         if surface_node[i]: 
            tracfile.write("%10e %10e \n" \
                           %(theta_nodal[i],u[i]*np.sin(theta_nodal[i])+v[i]*np.cos(theta_nodal[i])  ))
     tracfile.close()
 
-    tracfile=open('surface_vt_'+str(istep)+'.ascii',"w")
+    tracfile=open('surface_vt_{:04d}.ascii'.format(istep),"w")
     for i in range(0,NV):
         if surface_node[i]: 
            tracfile.write("%10e %10e \n" \
                           %(theta_nodal[i],u[i]*np.cos(theta_nodal[i])-v[i]*np.sin(theta_nodal[i]) ) )
     tracfile.close()
 
-    tracfile=open('cmb_traction_nodal_'+str(istep)+'.ascii',"w")
+    tracfile=open('cmb_traction_nodal_{:04d}.ascii'.format(istep),"w")
     for i in range(0,NV):
         if cmb_node[i]: 
            tracfile.write("%e %e %e %e %e %e %e\n" \
                           %(theta_nodal[i],tau_rr_nodal[i]-q[i],xV[i],zV[i],tau_rr_nodal[i],q[i],e_rr_nodal[i]))
     tracfile.close()
 
-    tracfile=open('cmb_vr_'+str(istep)+'.ascii',"w")
+    tracfile=open('cmb_vr_{:04d}.ascii'.format(istep),"w")
     for i in range(0,NV):
         if cmb_node[i]: 
            tracfile.write("%10e %10e \n" \
                           %(theta_nodal[i],u[i]*np.sin(theta_nodal[i])+v[i]*np.cos(theta_nodal[i])  ))
     tracfile.close()
 
-    tracfile=open('cmb_vt_'+str(istep)+'.ascii',"w")
+    tracfile=open('cmb_vt_{:04d}.ascii'.format(istep),"w")
     for i in range(0,NV):
         if cmb_node[i]: 
            tracfile.write("%10e %10e \n" \
@@ -1602,6 +1609,9 @@ for istep in range(0,nstep):
     gvect_x=np.zeros(np_grav,dtype=np.float64)   
     gvect_y=np.zeros(np_grav,dtype=np.float64)   
     gvect_z=np.zeros(np_grav,dtype=np.float64)   
+    gvect_x_0=np.zeros(np_grav,dtype=np.float64)   
+    gvect_y_0=np.zeros(np_grav,dtype=np.float64)   
+    gvect_z_0=np.zeros(np_grav,dtype=np.float64)   
     angleM=np.zeros(np_grav,dtype=np.float64)   
 
     #-------------------
@@ -1627,7 +1637,17 @@ for istep in range(0,nstep):
     gvect=np.sqrt(gvect_x**2+gvect_y**2+gvect_z**2)
     rM=np.sqrt(xM**2+yM**2+zM**2)
 
-    np.savetxt('gravity_'+str(istep)+'.ascii',np.array([xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect]).T,fmt='%.6e')
+    filename = 'gravity_{:04d}.ascii'.format(istep)
+    np.savetxt(filename,np.array([xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect]).T,fmt='%.6e')
+
+    if istep>0:
+       filename = 'gravity_diff_{:04d}.ascii'.format(istep)
+       np.savetxt(filename,np.array([xM,yM,zM,rM,angleM,gvect_x-gvect_x_0,gvect_y-gvect_y_0,gvect_z,gvect-gvect_0]).T,fmt='%.6e')
+    else:
+       gvect_x_0[:]=gvect_x[:]
+       gvect_y_0[:]=gvect_y[:]
+       gvect_z_0[:]=gvect_z[:]
+       gvect_0=np.sqrt(gvect_x_0**2+gvect_y_0**2+gvect_z_0**2)
 
     print("compute gravity: %.3fs" % (timing.time() - start))
 
