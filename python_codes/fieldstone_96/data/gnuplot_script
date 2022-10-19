@@ -14,11 +14,17 @@ plot[][0:3500]\
 
 set xlabel 'viscosity (log_{10})'
 set output 'eta2.pdf'
-plot[20:30.5][0:3600]\
-'eta.ascii' u 1:(3389-$2) w l lw 2 notitle,\
-3389 lt -1 lw 0.2 t 'surface',\
-3389-50 lt -1 dt 3 lw 0.2 t 'moho',\
-1422 lt -1 dt 4 lw 0.2 t 'cmb'
+plot[20:30.5][1000:3389]\
+'eta.ascii' u 1:(3389-$2) w l lw 1.5 t 'Steinberg',\
+'samuel_eta.ascii' u (log10($1)):($2) w l lw 1.5 t 'Samuel',\
+3389        lt -1 lw 0.2,\
+3389-50     lt -1 dt 2 lw 0.2 ,\
+3389-309    lt -1 dt 2 lw 0.2 ,\
+3389-1076   lt -1 dt 2 lw 0.2 ,\
+3389-1576   lt -1 dt 2 lw 0.2 ,\
+3389-1714   lt -1 lw .2 dt 2,\
+3389-1967   lt -1 lw .2 dt 2,\
+3389-1111.5 lt -1 lw .2 dt 2 
 
 #-------------------------------------------
 

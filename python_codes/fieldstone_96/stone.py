@@ -583,8 +583,6 @@ for i in range(0, NV):
     #Left boundary  
     if xV[i]<0.000001*R_inner:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
-       #if abs(zV[i])<R_inner:
-       #   bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
 
     #planet surface
     if surface_node[i] and surface_bc==0: #no-slip surface
@@ -1642,7 +1640,7 @@ for istep in range(0,nstep):
 
     if istep>0:
        filename = 'gravity_diff_{:04d}.ascii'.format(istep)
-       np.savetxt(filename,np.array([xM,yM,zM,rM,angleM,gvect_x-gvect_x_0,gvect_y-gvect_y_0,gvect_z,gvect-gvect_0]).T,fmt='%.6e')
+       np.savetxt(filename,np.array([xM,yM,zM,rM,angleM,gvect_x-gvect_x_0,gvect_y-gvect_y_0,gvect_z-gvect_z_0,gvect-gvect_0]).T,fmt='%.6e')
     else:
        gvect_x_0[:]=gvect_x[:]
        gvect_y_0[:]=gvect_y[:]
