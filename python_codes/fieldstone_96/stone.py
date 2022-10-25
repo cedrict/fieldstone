@@ -115,7 +115,7 @@ if radial_model==2: #samuel
 
 #-------------------------------------
 
-hhh=80e3 # element size at the surface
+hhh=40e3 # element size at the surface
 nnt=int(np.pi*R_outer/hhh) 
 nnr=int((R_outer-R_inner)/hhh)+1 
 
@@ -126,7 +126,7 @@ R_blob=300e3            #radius of blob
 z_blob=R_outer-1000e3   #starting depth
 rho_blob=3200
 eta_blob=1e21
-np_blob=int(np.pi*R_blob/hhh)
+np_blob=int(2*np.pi*R_blob/hhh)
 
 #-------------------------------------
 #boundary conditions at planet surface
@@ -155,7 +155,7 @@ g0=3.72 #3.69?
 
 gravity_method=0
 np_grav=100
-nel_phi=int(2*np.pi*R_outer/hhh) 
+nel_phi=int(10*np.pi*R_outer/hhh) 
 height=10e3
 
 ###############################################################################
@@ -584,7 +584,9 @@ print("flag cmb nodes: %.3f s" % (timing.time() - start))
 ###############################################################################
 # make blob a sphere - push mid edges out
 ###############################################################################
-np.savetxt('gridV_before.ascii',np.array([xV,zV]).T,header='# xV,zV')
+start = timing.time()
+
+#np.savetxt('gridV_before.ascii',np.array([xV,zV]).T,header='# xV,zV')
 
 for iel in range(0,nel):
     inode1=iconV[0,iel]
@@ -614,9 +616,9 @@ for iel in range(0,nel):
        xV[inode_mid]=R_blob*np.sin(theta)
        zV[inode_mid]=R_blob*np.cos(theta)+z_blob
 
-np.savetxt('gridV_after.ascii',np.array([xV,zV]).T,header='# xV,zV')
+#np.savetxt('gridV_after.ascii',np.array([xV,zV]).T,header='# xV,zV')
 
-
+print("making blob a sphere: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 # flag surface P nodes (needed for p normalisation)
