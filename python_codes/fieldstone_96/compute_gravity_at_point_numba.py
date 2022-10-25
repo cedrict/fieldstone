@@ -1,6 +1,7 @@
 import numpy as np
 import numba
 from basis_functions_numba import *
+from material_model_numba import *
 
 Ggrav = 6.67430e-11
 
@@ -8,7 +9,9 @@ Ggrav = 6.67430e-11
 # this simple approach considers the middle of the triangle as a point mass.
 
 @numba.njit(parallel=True)
-def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,rho,arear,dphi,nel_phi):
+def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,arear,dphi,nel_phi,\
+                              eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+                              npt_eta,profile_rho,profile_eta):
 
     gx=0.
     gy=0.
@@ -24,7 +27,9 @@ def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,rho,arear,dphi,nel_phi):
             y_c=rc*np.sin(theta)*np.sin(jel*dphi)
             vol=arear[iel]/2/np.pi*dphi #arear contains 2pi already!
             #VOL+=vol
-            mass=vol*rho[iel]
+            dummy,local_rho=material_model(x_c,y_c,eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+                                           npt_eta,profile_rho,profile_eta)
+            mass=vol*local_rho
             dist=np.sqrt((xM-x_c)**2 + (yM-y_c)**2 + (zM-zc)**2)
             Kernel=Ggrav/dist**3*mass
             gx-= Kernel*(xM-x_c)
@@ -38,9 +43,10 @@ def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,rho,arear,dphi,nel_phi):
 ###############################################################################
 
 @numba.njit(parallel=True)
-def compute_gravity_at_point2(xM,yM,zM,nel,xV,zV,iconV,rho,dphi,nel_phi,qcoords_r,qcoords_s,qweights,CR,mV,nqel):
+def compute_gravity_at_point2(xM,yM,zM,nel,xV,zV,iconV,dphi,nel_phi,qcoords_r,qcoords_s,qweights,CR,mV,nqel,\
+                              eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+                              npt_eta,profile_rho,profile_eta):
 
-    #NNNV=np.zeros(6,dtype=np.float64)           # shape functions derivatives
     gx=0.
     gy=0.
     gz=0.
@@ -63,7 +69,9 @@ def compute_gravity_at_point2(xM,yM,zM,nel,xV,zV,iconV,rho,dphi,nel_phi,qcoords_
             zq=NNNV[:].dot(zV[iconV[:,iel]])
             rq=np.sqrt(xq**2+zq**2)
             thetaq=np.arccos(zq/rq)
-            massq=rho[iel]*jcob*weightq*xq*dphi
+            dummy,local_rho=material_model(xq,zq,eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+                                           npt_eta,profile_rho,profile_eta)
+            massq=local_rho*jcob*weightq*xq*dphi
             for jel in numba.prange(0,nel_phi):
                 x_c=rq*np.sin(thetaq)*np.cos(jel*dphi)
                 y_c=rq*np.sin(thetaq)*np.sin(jel*dphi)

@@ -1,12 +1,13 @@
 import numpy as np
 from basis_functions import *
+from material_model import *
 
 Ggrav = 6.67430e-11
 
 ###############################################################################
 # this simple approach considers the middle of the triangle as a point mass.
 
-def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,rho,arear,dphi,nel_phi):
+def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,arear,dphi,nel_phi):
 
     gx=0.
     gy=0.
@@ -22,7 +23,8 @@ def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,rho,arear,dphi,nel_phi):
             y_c=rc*np.sin(theta)*np.sin(jel*dphi)
             vol=arear[iel]/2/np.pi*dphi #arear contains 2pi already!
             #VOL+=vol
-            mass=vol*rho[iel]
+            dummy,local_rho=material_model(x_c,y_c)
+            mass=vol*local_rho
             dist=np.sqrt((xM-x_c)**2 + (yM-y_c)**2 + (zM-zc)**2)
             Kernel=Ggrav/dist**3*mass
             gx-= Kernel*(xM-x_c)
@@ -35,7 +37,7 @@ def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,rho,arear,dphi,nel_phi):
 
 ###############################################################################
 
-def compute_gravity_at_point2(xM,yM,zM,nel,xV,zV,iconV,rho,dphi,nel_phi,qcoords_r,qcoords_s,qweights,CR,mV,nqel):
+def compute_gravity_at_point2(xM,yM,zM,nel,xV,zV,iconV,dphi,nel_phi,qcoords_r,qcoords_s,qweights,CR,mV,nqel):
 
     gx=0.
     gy=0.
@@ -59,7 +61,8 @@ def compute_gravity_at_point2(xM,yM,zM,nel,xV,zV,iconV,rho,dphi,nel_phi,qcoords_
             zq=NNNV[:].dot(zV[iconV[:,iel]])
             rq=np.sqrt(xq**2+zq**2)
             thetaq=np.arccos(zq/rq)
-            massq=rho[iel]*jcob*weightq*xq*dphi
+            dummy,local_rho=material_model(xq,zq)
+            massq=local_rho*jcob*weightq*xq*dphi
             for jel in range(0,nel_phi):
                 x_c=rq*np.sin(thetaq)*np.cos(jel*dphi)
                 y_c=rq*np.sin(thetaq)*np.sin(jel*dphi)
