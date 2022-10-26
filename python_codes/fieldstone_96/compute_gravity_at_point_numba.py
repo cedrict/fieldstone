@@ -69,8 +69,8 @@ def compute_gravity_at_point2(xM,yM,zM,nel,xV,zV,iconV,dphi,nel_phi,qcoords_r,qc
             zq=NNNV[:].dot(zV[iconV[:,iel]])
             rq=np.sqrt(xq**2+zq**2)
             thetaq=np.arccos(zq/rq)
-            dummy,local_rho=material_model(xq,zq,eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
-                                           npt_eta,profile_rho,profile_eta)
+            dummy,local_rho=material_model(xq,zq,eta_blob,rho_blob,z_blob,R_blob,\
+                                           npt_rho,npt_eta,profile_rho,profile_eta)
             massq=local_rho*jcob*weightq*xq*dphi
             for jel in numba.prange(0,nel_phi):
                 x_c=rq*np.sin(thetaq)*np.cos(jel*dphi)

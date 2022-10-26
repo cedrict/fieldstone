@@ -65,11 +65,44 @@ eta_ref=1e22 # numerical parameter for FEM
 nstep=1 # number of time steps
 dt_user=1*year
 
+hhh=40e3 # element size at the surface
+
+#-------------------------------------
+# blob setup 
+#-------------------------------------
+R_blob=300e3            #radius of blob
+z_blob=R_outer-1000e3   #starting depth
+rho_blob=3200
+eta_blob=1e21
+np_blob=int(2*np.pi*R_blob/hhh)
+
+#-------------------------------------
 #0: 3 layer model
 #1: steinberger et al 2010
 #2: samuel et al 2021
 
-radial_model=0
+radial_model=-1
+
+#---------------------------------
+if radial_model==-1: 
+   nstep=1
+   dt_user=0
+   R_inner=R_outer-1500e3 
+   R_disc1 = R_outer-25e3 
+   R_disc2 = R_outer-50e3 
+   R_disc3 = R_outer-75e3 
+   R_blob=300e3            #radius of blob
+   z_blob=R_outer-1000e3   #starting depth
+   eta0=1e22
+   eta_blob=eta0
+   #constant density hollow sphere, no blob
+   test=1
+   rho0=4000
+   rho_blob=rho0
+   #zero density hollow sphere + blob
+   test=2
+   rho0=0
+   rho_blob=4000
 
 #---------------------------------
 if radial_model==0: # 4layer model 
@@ -115,18 +148,8 @@ if radial_model==2: #samuel
 
 #-------------------------------------
 
-hhh=40e3 # element size at the surface
 nnt=int(np.pi*R_outer/hhh) 
 nnr=int((R_outer-R_inner)/hhh)+1 
-
-#-------------------------------------
-# blob setup 
-#-------------------------------------
-R_blob=300e3            #radius of blob
-z_blob=R_outer-1000e3   #starting depth
-rho_blob=3200
-eta_blob=1e21
-np_blob=int(2*np.pi*R_blob/hhh)
 
 #-------------------------------------
 #boundary conditions at planet surface
@@ -144,7 +167,7 @@ cmb_bc=1
 #-------------------------------------
 
 use_isog=True
-g0=3.72 #3.69?
+g0=3.72076 #https://en.wikipedia.org/wiki/Mars
 
 #-------------------------------------
 #gravity calculation parameters
@@ -153,7 +176,7 @@ g0=3.72 #3.69?
 # gravity_method: 1 -> 1 point quad
 # gravity_method: 2 -> 6 point quad
 
-gravity_method=0
+gravity_method=2
 np_grav=100
 nel_phi=int(10*np.pi*R_outer/hhh) 
 height=10e3
@@ -448,14 +471,24 @@ print("generate FE meshes: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 #---------------------------
+if radial_model==-1: #constant density hollow sphere
+   npt_rho=1000
+   npt_eta=1000
+   profile_rho=np.empty((2,npt_rho),dtype=np.float64) 
+   profile_eta=np.empty((2,npt_rho),dtype=np.float64) 
+   for i in range(0,npt_rho):
+       profile_rho[0,i]=R_inner+(R_outer-R_inner)/(npt_rho-1)*i
+       profile_eta[0,i]=R_inner+(R_outer-R_inner)/(npt_eta-1)*i
+   profile_rho[1,:]=rho0
+   profile_eta[1,:]=eta0
+
+#---------------------------
 if radial_model==0: # 3 layer model
 
    npt_rho=1000
    npt_eta=1000
-
    profile_rho=np.empty((2,npt_rho),dtype=np.float64) 
    profile_eta=np.empty((2,npt_rho),dtype=np.float64) 
-
    for i in range(0,npt_rho):
        profile_rho[0,i]=R_inner+(R_outer-R_inner)/(npt_rho-1)*i
        profile_eta[0,i]=R_inner+(R_outer-R_inner)/(npt_eta-1)*i
@@ -672,6 +705,19 @@ print("     -> zc (m,M) %.6e %.6e " %(np.min(zc),np.max(zc)))
 print("compute element center coords: %.3f s" % (timing.time() - start))
 
 ###############################################################################
+# flag elements inside blob
+###############################################################################
+start = timing.time()
+
+blob=np.zeros(nel,dtype=np.bool) 
+
+for iel in range(0,nel):
+    if xc[iel]**2+(zc[iel]-z_blob)**2<R_blob**2:
+       blob[iel]=True
+
+print("flag elts in blob: %.3f s" % (timing.time() - start))
+
+###############################################################################
 # assigning material properties to elts- only for plotting
 ###############################################################################
 start = timing.time()
@@ -721,6 +767,7 @@ start = timing.time()
 
 area=np.zeros(nel,dtype=np.float64) 
 arear=np.zeros(nel,dtype=np.float64) 
+vol_blob=0
 
 for iel in range(0,nel):
     for kq in range (0,nqel):
@@ -740,6 +787,8 @@ for iel in range(0,nel):
         area[iel]+=jcob*weightq
         xq=NNNV.dot(xV[iconV[:,iel]])
         arear[iel]+=jcob*weightq*xq*2*np.pi
+    if blob[iel]:
+       vol_blob+=arear[iel]
 
 VOL=4*np.pi*(R_outer**3-R_inner**3)/3
 
@@ -748,6 +797,9 @@ print("     -> total area (meas) %.6f " %(area.sum()))
 print("     -> total area (anal) %.6f " %(np.pi*(R_outer**2-R_inner**2)/2))
 print("     -> total vol  (meas) %.6f " %(arear.sum()))
 print("     -> total vol  (error) %.6f percent" %((abs(arear.sum()/VOL)-1)*100))
+print("     -> blob vol (meas) %.6f " %(vol_blob))
+print("     -> blob vol (anal) %.6f " %(4/3*np.pi*R_blob**3))
+print("     -> blob vol (error) %.6f percent" % (abs(vol_blob/(4/3*np.pi*R_blob**3)-1)*100))
 
 print("compute elements areas: %.3f s" % (timing.time() - start))
 
@@ -1045,17 +1097,10 @@ for istep in range(0,nstep):
                 jcb[1,1] += dNNNVds[k]*zV[iconV[k,iel]]
             jcob = np.linalg.det(jcb)
             # compute dNdx & dNdy
-            xq=NNNV[:].dot(xV[iconV[:,iel]])  #FINISH
-             
-            xq=0.0
-            yq=0.0
-            uq=0.0
-            vq=0.0
-            for k in range(0,mV):
-                xq+=NNNV[k]*xV[iconV[k,iel]]
-                yq+=NNNV[k]*zV[iconV[k,iel]]
-                uq+=NNNV[k]*u[iconV[k,iel]]
-                vq+=NNNV[k]*v[iconV[k,iel]]
+            xq=NNNV[0:mV].dot(xV[iconV[0:mV,iel]])  
+            zq=NNNV[0:mV].dot(zV[iconV[0:mV,iel]])
+            uq=NNNV[0:mV].dot(u[iconV[0:mV,iel]])
+            vq=NNNV[0:mV].dot(v[iconV[0:mV,iel]])
             vrms+=(uq**2+vq**2)*jcob*weightq *xq*2*np.pi
         #end for
     #end for
@@ -1533,9 +1578,9 @@ for istep in range(0,nstep):
     #####################################################################
     start = timing.time()
 
-    xM=np.empty(np_grav,dtype=np.float64)     
-    yM=np.empty(np_grav,dtype=np.float64)     
-    zM=np.empty(np_grav,dtype=np.float64)     
+    xM=np.zeros(np_grav,dtype=np.float64)     
+    yM=np.zeros(np_grav,dtype=np.float64)     
+    zM=np.zeros(np_grav,dtype=np.float64)     
     gvect_x=np.zeros(np_grav,dtype=np.float64)   
     gvect_y=np.zeros(np_grav,dtype=np.float64)   
     gvect_z=np.zeros(np_grav,dtype=np.float64)   
@@ -1544,20 +1589,23 @@ for istep in range(0,nstep):
     gvect_z_0=np.zeros(np_grav,dtype=np.float64)   
     angleM=np.zeros(np_grav,dtype=np.float64)   
 
+    if radial_model==-1: 
+       testfile=open('gravity_benchmark.ascii',"w")
+       testfile.write("# angle gr_meas gr_anal \n")
+
     dphi=2*np.pi/nel_phi
     for i in range(0,np_grav):
         angleM[i]=np.pi/2-np.pi/2/(np_grav-1)*i
         xM[i]=(R_outer+height)*np.cos(angleM[i])
-        yM[i]=0
         zM[i]=(R_outer+height)*np.sin(angleM[i])
 
         if gravity_method==0:
            break
 
         elif gravity_method==1:
-           gvect_x[i],gvect_y[i],gvect_z[i]=compute_gravity_at_point1(xM[i],yM[i],zM[i],nel,xV,zV,iconV,arear,dphi,nel_phi)
-           print('point',i,'gx,gy,gz',gvect_x[i],gvect_y[i],gvect_z[i])
-
+           gvect_x[i],gvect_y[i],gvect_z[i]=compute_gravity_at_point1(xM[i],yM[i],zM[i],nel,xV,zV,iconV,arear,dphi,nel_phi,\
+                                                                      eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+                                                                      npt_eta,profile_rho,profile_eta)
         elif gravity_method==2:
            gvect_x[i],gvect_y[i],gvect_z[i]=compute_gravity_at_point2(xM[i],yM[i],zM[i],nel,xV,zV,iconV,\
                                                                       dphi,nel_phi,qcoords_r,qcoords_s,qweights,CR,mV,nqel,\
@@ -1566,13 +1614,24 @@ for istep in range(0,nstep):
         if i%20==0: 
            print('point',i,'gx,gy,gz',gvect_x[i],gvect_y[i],gvect_z[i])
 
+        if test==1:
+           dist2=xM[i]**2+zM[i]**2
+           gr=Ggrav*rho0*4/3*np.pi*(R_outer**3-R_inner**3)/dist2
+           testfile.write("%e %e %e\n" %(angleM[i],np.sqrt(gvect_x[i]**2+gvect_y[i]**2+gvect_z[i]**2),gr))
+           
+        if test==2:
+           dist2=xM[i]**2+(zM[i]-z_blob)**2
+           gr=Ggrav*rho_blob*4/3*np.pi*R_blob**3/dist2
+           testfile.write("%e %e %e\n" %(np.pi/2-angleM[i],np.sqrt(gvect_x[i]**2+gvect_y[i]**2+gvect_z[i]**2),gr))
+
     #end for
 
     gvect=np.sqrt(gvect_x**2+gvect_y**2+gvect_z**2)
     rM=np.sqrt(xM**2+yM**2+zM**2)
 
     filename = 'gravity_{:04d}.ascii'.format(istep)
-    np.savetxt(filename,np.array([xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect]).T,fmt='%.6e')
+    np.savetxt(filename,np.array([xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect]).T,fmt='%.6e',\
+               header='# xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect')
 
     if istep>0:
        filename = 'gravity_diff_{:04d}.ascii'.format(istep)

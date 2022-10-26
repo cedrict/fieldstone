@@ -7,7 +7,9 @@ Ggrav = 6.67430e-11
 ###############################################################################
 # this simple approach considers the middle of the triangle as a point mass.
 
-def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,arear,dphi,nel_phi):
+def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,arear,dphi,nel_phi,\
+                              eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+                              npt_eta,profile_rho,profile_eta):
 
     gx=0.
     gy=0.
@@ -37,7 +39,9 @@ def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,arear,dphi,nel_phi):
 
 ###############################################################################
 
-def compute_gravity_at_point2(xM,yM,zM,nel,xV,zV,iconV,dphi,nel_phi,qcoords_r,qcoords_s,qweights,CR,mV,nqel):
+def compute_gravity_at_point2(xM,yM,zM,nel,xV,zV,iconV,dphi,nel_phi,qcoords_r,qcoords_s,qweights,CR,mV,nqel,\
+                              eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+                              npt_eta,profile_rho,profile_eta):
 
     gx=0.
     gy=0.
