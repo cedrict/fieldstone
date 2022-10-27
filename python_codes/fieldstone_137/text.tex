@@ -1,0 +1,50 @@
+
+The system is divided into `bins' and for each bin $j=1,...M$ we evaluate the number $n_{j,c}$
+of particles of species $c=1,...C$.
+The joint probability that a particle of species $c$
+is in bin $j$ can be calculated by dividing $n_{j,c}$ by the overall system population.
+
+\begin{equation}
+p_{j,c} = \frac{\frac{n_{j,c}}{P_c}}{\sum\limits_{i=1}^M \sum\limits_{c=1}^C \frac{n_{i,c}}{P_c}}
+\label{eq:shannon1}
+\end{equation}
+with 
+\[
+P_c = \frac{n_c}{M}
+\]
+where $n_c$ is the total number of particles of $c$ in the domain.
+Using the joint probabilities of the equation above we then calculate the entropy:
+\begin{equation}
+S= -\sum_{j=1}^M \sum_{c=1}^C p_{j,c} \ln p_{j,c}
+\label{eq:shannon2}
+\end{equation}
+Note that if one starts with $n_1=n_2=...n_C$ then all values of $P_i$ are equal and 
+therefore can be removed from Eq.~\eqref{eq:shannon1} and the denominator is then simply 
+the total number of particles in the domain.
+
+Eq.~\eqref{eq:shannon2} can be expressed as the sum of two other entropies:
+the conditional entropy $S_{location}(species)$ and the entropy of spatial 
+distribution $S(location)$, i.e.:
+\[
+S=S_{location}(species) + S(location)
+\]
+
+
+
+--------------------------------------------------------------
+
+The domain is a unit square. Boundary conditions are no slip on the sides, 
+$\vec\upnu=(1,0)$ at the top and $\vec\upnu=(-1,0)$ at the bottom.
+The flow is assumed to be isoviscous ($\eta=1$), incompressible and isothermal. 
+Gravity is set to zero.
+
+Note that the original paper \cite{cakm06} solves the Navier-Stokes equations but with $Re=1$
+so as to avoid turbulence.
+
+As specified in the paper we also use a 4th order Runge-Kutta (in space only here)
+with a fixed timestep $\delta t=10^{-6}$.
+We then expect 3 stagnation points at $(0.5,0.5)$ and $(0.5,0.5\pm 0.161)$.
+
+This \stone borrows from \stone~76 (Q2P-1 element) and \stone~13 for PIC.
+
+
