@@ -8,6 +8,9 @@ Ggrav = 6.67430e-11
 ###############################################################################
 # this simple approach considers the middle of the triangle as a point mass.
 
+
+#######SLOOW#####
+
 @numba.njit(parallel=True)
 def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,arear,dphi,nel_phi,\
                               eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
@@ -22,13 +25,13 @@ def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,arear,dphi,nel_phi,\
         zc=np.sum(zV[iconV[0:3,iel]])/3
         rc=np.sqrt(xc**2+zc**2)
         theta=np.arccos(zc/rc)
+        dummy,local_rho=material_model(xc,zc,eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+                                       npt_eta,profile_rho,profile_eta)
         for jel in numba.prange(0,nel_phi):
             x_c=rc*np.sin(theta)*np.cos(jel*dphi)
             y_c=rc*np.sin(theta)*np.sin(jel*dphi)
             vol=arear[iel]/2/np.pi*dphi #arear contains 2pi already!
             #VOL+=vol
-            dummy,local_rho=material_model(x_c,y_c,eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
-                                           npt_eta,profile_rho,profile_eta)
             mass=vol*local_rho
             dist=np.sqrt((xM-x_c)**2 + (yM-y_c)**2 + (zM-zc)**2)
             Kernel=Ggrav/dist**3*mass

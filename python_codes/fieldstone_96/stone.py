@@ -65,7 +65,9 @@ eta_ref=1e22 # numerical parameter for FEM
 nstep=1 # number of time steps
 dt_user=1*year
 
-hhh=40e3 # element size at the surface
+hhh=80e3 # element size at the surface
+
+solve_stokes=True
 
 #-------------------------------------
 # blob setup 
@@ -77,14 +79,16 @@ eta_blob=1e21
 np_blob=int(2*np.pi*R_blob/hhh)
 
 #-------------------------------------
+#-1: gravity benchmarks
 #0: 3 layer model
 #1: steinberger et al 2010
 #2: samuel et al 2021
 
-radial_model=-1
+radial_model=1
 
 #---------------------------------
 if radial_model==-1: 
+   solve_stokes=False
    nstep=1
    dt_user=0
    R_inner=R_outer-1500e3 
@@ -99,10 +103,13 @@ if radial_model==-1:
    test=1
    rho0=4000
    rho_blob=rho0
+   np_blob=0
    #zero density hollow sphere + blob
-   test=2
-   rho0=0
-   rho_blob=4000
+   #test=2
+   #rho0=0
+   #rho_blob=4000
+   #test=3
+
 
 #---------------------------------
 if radial_model==0: # 4layer model 
@@ -127,11 +134,11 @@ if radial_model==0: # 4layer model
 
 #---------------------------------
 if radial_model==1: # steinberger 
-   R_inner=R_outer-1638.5e3
+   R_inner=R_outer-1967e3
 
-   R_disc1 = R_outer-0e3 
-   R_disc2 = R_outer-0e3 
-   R_disc3 = R_outer-0e3 
+   R_disc1 = R_outer-49e3 
+   R_disc2 = R_outer-1111e3 
+   R_disc3 = R_outer-1951e3 
 
    eta_max=1e25
 
@@ -174,12 +181,13 @@ g0=3.72076 #https://en.wikipedia.org/wiki/Mars
 #-------------------------------------
 # gravity_method: 0 -> none
 # gravity_method: 1 -> 1 point quad
-# gravity_method: 2 -> 6 point quad
+# gravity_method: 2 -> 6(?) point quad
 
 gravity_method=2
-np_grav=100
+np_grav=40
 nel_phi=int(10*np.pi*R_outer/hhh) 
 height=10e3
+nqel_grav=12 # 6,12
 
 ###############################################################################
 
@@ -189,6 +197,7 @@ print('Volume=',4*np.pi/3*(R_outer**3-R_inner**3))
 print('CR=',CR)
 print('height=',height)
 print('gravity_method=',gravity_method)
+print('radial_model=',radial_model)
 print('height=',height)
 print('np_blob=',np_blob)
 print('R_blob=',R_blob)
@@ -214,6 +223,30 @@ nb6=0.223381589678011/2.
 qcoords_r=np.array([nb1,nb2,nb2,nb4,nb3,nb4],dtype=np.float64) 
 qcoords_s=np.array([nb2,nb1,nb2,nb3,nb4,nb4],dtype=np.float64) 
 qweights =np.array([nb5,nb5,nb5,nb6,nb6,nb6],dtype=np.float64) 
+
+###############################################################################
+
+qcoords_r_grav=np.zeros(nqel_grav,dtype=np.float64)
+qcoords_s_grav=np.zeros(nqel_grav,dtype=np.float64)
+qweights_grav=np.zeros(nqel_grav,dtype=np.float64)
+
+if nqel_grav==nqel:
+   qcoords_r_grav=qcoords_r
+   qcoords_s_grav=qcoords_s
+   qweights_grav =qweights
+if nqel_grav==12:
+   qcoords_r_grav[ 0]=0.24928674517091 ; qcoords_s_grav[ 0]=0.24928674517091 ; qweights_grav[ 0]=0.11678627572638/2
+   qcoords_r_grav[ 1]=0.24928674517091 ; qcoords_s_grav[ 1]=0.50142650965818 ; qweights_grav[ 1]=0.11678627572638/2
+   qcoords_r_grav[ 2]=0.50142650965818 ; qcoords_s_grav[ 2]=0.24928674517091 ; qweights_grav[ 2]=0.11678627572638/2
+   qcoords_r_grav[ 3]=0.06308901449150 ; qcoords_s_grav[ 3]=0.06308901449150 ; qweights_grav[ 3]=0.05084490637021/2
+   qcoords_r_grav[ 4]=0.06308901449150 ; qcoords_s_grav[ 4]=0.87382197101700 ; qweights_grav[ 4]=0.05084490637021/2
+   qcoords_r_grav[ 5]=0.87382197101700 ; qcoords_s_grav[ 5]=0.06308901449150 ; qweights_grav[ 5]=0.05084490637021/2
+   qcoords_r_grav[ 6]=0.31035245103378 ; qcoords_s_grav[ 6]=0.63650249912140 ; qweights_grav[ 6]=0.08285107561837/2
+   qcoords_r_grav[ 7]=0.63650249912140 ; qcoords_s_grav[ 7]=0.05314504984482 ; qweights_grav[ 7]=0.08285107561837/2
+   qcoords_r_grav[ 8]=0.05314504984482 ; qcoords_s_grav[ 8]=0.31035245103378 ; qweights_grav[ 8]=0.08285107561837/2
+   qcoords_r_grav[ 9]=0.63650249912140 ; qcoords_s_grav[ 9]=0.31035245103378 ; qweights_grav[ 9]=0.08285107561837/2
+   qcoords_r_grav[10]=0.31035245103378 ; qcoords_s_grav[10]=0.05314504984482 ; qweights_grav[10]=0.08285107561837/2
+   qcoords_r_grav[11]=0.05314504984482 ; qcoords_s_grav[11]=0.63650249912140 ; qweights_grav[11]=0.08285107561837/2
 
 ###############################################################################
 #############  Defining the nodes and vertices ################################
@@ -256,21 +289,11 @@ seg_botw = np.stack([2*nnt+nnr+np.arange(nnr),2*nnt+nnr+np.arange(nnr)+1], axis=
 seg_botw[-1,1]=0                                                        #stitch last point to first point with last vertice
 
 #------------------------------------------------------------------------------
-# blob 
-#------------------------------------------------------------------------------
-theta_bl = np.linspace(-np.pi/2,np.pi-np.pi/2,num=np_blob,endpoint=True,dtype=np.float64) #half-sphere in the x and y positive domain
-pts_bl = np.stack([R_blob*np.cos(theta_bl),z_blob+R_blob*np.sin(theta_bl)], axis=1) #points on blob outersurface 
-seg_bl = np.stack([2*nnt+2*nnr+np.arange(np_blob-1), 2*nnt+2*nnr+np.arange(np_blob-1)+1], axis=1) #vertices on outersurface blob
-for i in range(0,np_blob):                                              #first and last point must be exactly on the y-axis.
-    if i==0 or i==np_blob-1:
-       pts_bl[i,0]=0
-
-#------------------------------------------------------------------------------
 # discontinuity #1
 #------------------------------------------------------------------------------
 theta = np.linspace(np.pi/2,-np.pi/2,num=nnt,endpoint=True)            #half outer sphere in the x-positive domain
 pts_mo1 = np.stack([np.cos(theta),np.sin(theta)], axis=1)*R_disc1        #nnt-points on outer boundary
-seg_mo1 = np.stack([2*nnt+2*nnr+np_blob+np.arange(nnt-1), 2*nnt+2*nnr+np_blob+np.arange(nnt-1)+1], axis=1) #vertices on disc1
+seg_mo1 = np.stack([2*nnt+2*nnr+np.arange(nnt-1), 2*nnt+2*nnr+np.arange(nnt-1)+1], axis=1) #vertices on disc1
 for i in range(0,nnt):                                                 #first and last point must be exactly on the y-axis
     if i==0 or i==nnt-1:
        pts_mo1[i,0]=0    
@@ -280,7 +303,7 @@ for i in range(0,nnt):                                                 #first an
 #------------------------------------------------------------------------------
 theta = np.linspace(np.pi/2,-np.pi/2,num=nnt,endpoint=True)            #half outer sphere in the x-positive domain
 pts_mo2 = np.stack([np.cos(theta),np.sin(theta)], axis=1)*R_disc2        #nnt-points on outer boundary
-seg_mo2 = np.stack([3*nnt+2*nnr+np_blob+np.arange(nnt-1), 3*nnt+2*nnr+np_blob+np.arange(nnt-1)+1], axis=1) #vertices on disc2
+seg_mo2 = np.stack([3*nnt+2*nnr+np.arange(nnt-1), 3*nnt+2*nnr+np.arange(nnt-1)+1], axis=1) #vertices on disc2
 for i in range(0,nnt):                                                 #first and last point must be exactly on the y-axis
     if i==0 or i==nnt-1:
        pts_mo2[i,0]=0    
@@ -290,15 +313,31 @@ for i in range(0,nnt):                                                 #first an
 #------------------------------------------------------------------------------
 theta = np.linspace(np.pi/2,-np.pi/2,num=nnt,endpoint=True)            #half outer sphere in the x-positive domain
 pts_mo3 = np.stack([np.cos(theta),np.sin(theta)], axis=1)*R_disc3        #nnt-points on outer boundary
-seg_mo3 = np.stack([4*nnt+2*nnr+np_blob+np.arange(nnt-1), 4*nnt+2*nnr+np_blob+np.arange(nnt-1)+1], axis=1) #vertices on disc3
+seg_mo3 = np.stack([4*nnt+2*nnr+np.arange(nnt-1), 4*nnt+2*nnr+np.arange(nnt-1)+1], axis=1) #vertices on disc3
 for i in range(0,nnt):                                                 #first and last point must be exactly on the y-axis
     if i==0 or i==nnt-1:
        pts_mo3[i,0]=0    
 
-# Stacking the nodes and vertices 
 
-seg = np.vstack([seg_ib,seg_topw,seg_ob,seg_botw,seg_bl,seg_mo1,seg_mo2,seg_mo3])
-pts = np.vstack([pts_ib,pts_topw,pts_ob,pts_botw,pts_bl,pts_mo1,pts_mo2,pts_mo3]) 
+if np_blob>0:
+   #------------------------------------------------------------------------------
+   # blob 
+   #------------------------------------------------------------------------------
+   theta_bl = np.linspace(-np.pi/2,np.pi-np.pi/2,num=np_blob,endpoint=True,dtype=np.float64) #half-sphere in the x and y positive domain
+   pts_bl = np.stack([R_blob*np.cos(theta_bl),z_blob+R_blob*np.sin(theta_bl)], axis=1) #points on blob outersurface 
+   seg_bl = np.stack([5*nnt+2*nnr+np.arange(np_blob-1), 5*nnt+2*nnr+np.arange(np_blob-1)+1], axis=1) #vertices on outersurface blob
+   for i in range(0,np_blob):                                              #first and last point must be exactly on the y-axis.
+       if i==0 or i==np_blob-1:
+          pts_bl[i,0]=0
+
+   # Stacking the nodes and vertices 
+   seg = np.vstack([seg_ib,seg_topw,seg_ob,seg_botw,seg_bl,seg_mo1,seg_mo2,seg_mo3])
+   pts = np.vstack([pts_ib,pts_topw,pts_ob,pts_botw,pts_bl,pts_mo1,pts_mo2,pts_mo3]) 
+
+else:
+   # Stacking the nodes and vertices 
+   seg = np.vstack([seg_ib,seg_topw,seg_ob,seg_botw,seg_mo1,seg_mo2,seg_mo3])
+   pts = np.vstack([pts_ib,pts_topw,pts_ob,pts_botw,pts_mo1,pts_mo2,pts_mo3]) 
 
 #put all segments and nodes in a dictionary
 
@@ -475,7 +514,7 @@ if radial_model==-1: #constant density hollow sphere
    npt_rho=1000
    npt_eta=1000
    profile_rho=np.empty((2,npt_rho),dtype=np.float64) 
-   profile_eta=np.empty((2,npt_rho),dtype=np.float64) 
+   profile_eta=np.empty((2,npt_eta),dtype=np.float64) 
    for i in range(0,npt_rho):
        profile_rho[0,i]=R_inner+(R_outer-R_inner)/(npt_rho-1)*i
        profile_eta[0,i]=R_inner+(R_outer-R_inner)/(npt_eta-1)*i
@@ -516,26 +555,41 @@ if radial_model==0: # 3 layer model
 #---------------------------
 if radial_model==1: #steinberger
 
-   npt_rho=3390
+   npt_rho=1968#3390
    npt_eta=1968
 
-   profile_eta=np.empty(npt_eta,dtype=np.float64) 
-   profile_depth=np.empty(npt_eta,dtype=np.float64) 
+   #profile_eta=np.empty(npt_eta,dtype=np.float64) 
+   #profile_depth=np.empty(npt_eta,dtype=np.float64) 
    #profile_eta,profile_depth=np.loadtxt('data/steinberger_eta.ascii',unpack=True,usecols=[0,1])
 
-   profile_rho=np.empty(npt_rho,dtype=np.float64) 
-   profile_depth=np.empty(npt_rho,dtype=np.float64) 
+   #profile_rho=np.empty(npt_rho,dtype=np.float64) 
+   #profile_depth=np.empty(npt_rho,dtype=np.float64) 
    #profile_rho,profile_depth=np.loadtxt('data/steinberger_rho.ascii',unpack=True,usecols=[0,1])
 
    # gets current file path as string 
    cfilepath = os.path.dirname(os.path.abspath(__file__)) 
    # changes the current working directory to current file path    
    os.chdir(cfilepath)
-   profile_eta,profile_depth=np.loadtxt(cfilepath + '/data/steinberger_eta.ascii',unpack=True,usecols=[0,1]) 
-   profile_rho,profile_depth=np.loadtxt(cfilepath + '/data/steinerger_rho.ascii',unpack=True,usecols=[0,1]) 
+   p_eta,p_depth=np.loadtxt(cfilepath + '/data/steinberger_eta.ascii',unpack=True,usecols=[0,1]) 
+   p_rho,p_depth=np.loadtxt(cfilepath + '/data/steinberger_rho.ascii',unpack=True,usecols=[0,1]) 
 
-   profile_eta[:]=10**profile_eta[:]
-   profile_rho[:]=1000*profile_rho[:]
+   p_depth[:]=1000*p_depth[:]
+   p_eta[:]=10**p_eta[:]
+   p_rho[:]=1000*p_rho[:]
+
+   #####################################################
+   profile_rho=np.empty((2,npt_rho),dtype=np.float64) 
+   profile_eta=np.empty((2,npt_eta),dtype=np.float64) 
+
+   profile_rho[0,0:npt_rho]=R_outer-p_depth[0:npt_rho]
+   profile_eta[0,0:npt_eta]=R_outer-p_depth[0:npt_eta]
+   profile_rho[1,0:npt_rho]=p_rho[0:npt_rho]
+   profile_eta[1,0:npt_eta]=p_eta[0:npt_eta]
+
+   profile_rho[0,:]=np.flip(profile_rho[0,:])
+   profile_rho[1,:]=np.flip(profile_rho[1,:])
+   profile_eta[0,:]=np.flip(profile_eta[0,:])
+   profile_eta[1,:]=np.flip(profile_eta[1,:])
 
 #---------------------------
 if radial_model==2: # samuel
@@ -560,7 +614,7 @@ if radial_model==2: # samuel
 
    #*MANIPULATE
 
-#np.savetxt('profile_rho.ascii',np.array([profile_rad,profile_rho]).T)
+#np.savetxt('profile_rho.ascii',np.array([profile_rho[0,:],profile_rho[1,:]]).T)
 
 print("read profiles: %.3f s" % (timing.time() - start))
 
@@ -680,10 +734,13 @@ for i in range(0,NV):
     eta_nodal[i],rho_nodal[i]=material_model(xV[i],zV[i],eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
                                              npt_eta,profile_rho,profile_eta)
 
+np.savetxt('nodals.ascii',np.array([xV,zV,eta_nodal,rho_nodal]).T,header='# x,y')
+
 print("     -> eta_nodal (m,M) %.6e %.6e " %(np.min(eta_nodal),np.max(eta_nodal)))
 print("     -> rho_nodal (m,M) %.6e %.6e " %(np.min(rho_nodal),np.max(rho_nodal)))
 
 print("compute nodal rho eta: %.3f s" % (timing.time() - start))
+
 
 ######################################################################
 # compute element center coordinates
@@ -875,202 +932,213 @@ for istep in range(0,nstep):
 
     mass=0
 
-    for iel in range(0,nel):
+    if solve_stokes:
 
-        if iel%2000==0:
-           print(iel)
+        for iel in range(0,nel):
 
-        # set arrays to 0 every loop
-        f_el =np.zeros((mV*ndofV),dtype=np.float64)
-        K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
-        G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
-        h_el=np.zeros((mP*ndofP),dtype=np.float64)
-        NNNP= np.zeros(mP*ndofP,dtype=np.float64)   
+            if iel%2000==0:
+               print(iel)
 
-        for kq in range (0,nqel):
+            # set arrays to 0 every loop
+            f_el =np.zeros((mV*ndofV),dtype=np.float64)
+            K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
+            G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
+            h_el=np.zeros((mP*ndofP),dtype=np.float64)
+            NNNP= np.zeros(mP*ndofP,dtype=np.float64)
 
-            # position & weight of quad. point
-            rq=qcoords_r[kq]
-            sq=qcoords_s[kq]
-            weightq=qweights[kq]
+            for kq in range (0,nqel):
 
-            NNNV=NNV(rq,sq,CR)
-            dNNNVdr=dNNVdr(rq,sq,CR)
-            dNNNVds=dNNVds(rq,sq,CR)
-            NNNP[0:mP]=NNP(rq,sq)
+                # position & weight of quad. point
+                rq=qcoords_r[kq]
+                sq=qcoords_s[kq]
+                weightq=qweights[kq]
 
-            # calculate jacobian matrix
-            jcb=np.zeros((2,2),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1] += dNNNVdr[k]*zV[iconV[k,iel]]
-                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1] += dNNNVds[k]*zV[iconV[k,iel]]
-            jcob = np.linalg.det(jcb)
-            jcbi = np.linalg.inv(jcb)
+                NNNV=NNV(rq,sq,CR)
+                dNNNVdr=dNNVdr(rq,sq,CR)
+                dNNNVds=dNNVds(rq,sq,CR)
+                NNNP[0:mP]=NNP(rq,sq)
 
-            if jcob<0:
-               exit("jacobian is negative - bad triangle")
+                # calculate jacobian matrix
+                jcb=np.zeros((2,2),dtype=np.float64)
+                for k in range(0,mV):
+                    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                    jcb[0,1] += dNNNVdr[k]*zV[iconV[k,iel]]
+                    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                    jcb[1,1] += dNNNVds[k]*zV[iconV[k,iel]]
+                jcob = np.linalg.det(jcb)
+                jcbi = np.linalg.inv(jcb)
 
-            # compute dNdx & dNdy
-            xq=0.0
-            yq=0.0
-            for k in range(0,mV):
-                xq+=NNNV[k]*xV[iconV[k,iel]]
-                yq+=NNNV[k]*zV[iconV[k,iel]]
-                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                if jcob<0:
+                   exit("jacobian is negative - bad triangle")
 
-            # compute etaq, rhoq
-            etaq,rhoq=material_model(xq,yq,eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
-                                     npt_eta,profile_rho,profile_eta)
+                # compute dNdx & dNdy
+                xq=0.0
+                yq=0.0
+                for k in range(0,mV):
+                    xq+=NNNV[k]*xV[iconV[k,iel]]
+                    yq+=NNNV[k]*zV[iconV[k,iel]]
+                    dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                    dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
 
-            for i in range(0,mV):
-                b_mat[0:4, 2*i:2*i+2] = [[dNNNVdx[i],0.       ],
-                                         [NNNV[i]/xq,0.       ],
-                                         [0.        ,dNNNVdy[i]],
-                                         [dNNNVdy[i],dNNNVdx[i]]]
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq*weightq*jcob * 2*np.pi*xq
-            for i in range(0,mP):
-                N_mat[0,i]=NNNP[i]
-                N_mat[1,i]=NNNP[i]
-                N_mat[2,i]=NNNP[i]
-                N_mat[3,i]=0.
-            G_el-=b_mat.T.dot(N_mat)*weightq*jcob * 2*np.pi*xq
+                # compute etaq, rhoq
+                etaq,rhoq=material_model(xq,yq,eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+                                         npt_eta,profile_rho,profile_eta)
 
-            mass+=jcob*weightq*rhoq * 2*np.pi*xq
+                for i in range(0,mV):
+                    b_mat[0:4, 2*i:2*i+2] = [[dNNNVdx[i],0.       ],
+                                             [NNNV[i]/xq,0.       ],
+                                             [0.        ,dNNNVdy[i]],
+                                             [dNNNVdy[i],dNNNVdx[i]]]
+                K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq*weightq*jcob * 2*np.pi*xq
+                for i in range(0,mP):
+                    N_mat[0,i]=NNNP[i]
+                    N_mat[1,i]=NNNP[i]
+                    N_mat[2,i]=NNNP[i]
+                    N_mat[3,i]=0.
+                G_el-=b_mat.T.dot(N_mat)*weightq*jcob * 2*np.pi*xq
 
-            #compute gx,gy
-            radq=np.sqrt(xq**2+yq**2)
-            if use_isog:
-               grav=g0
-            else:
-               grav=profile_grav[int(radq/1000)]
-            angle=np.arctan2(yq,xq)
-            gx=grav*np.cos(angle)
-            gy=grav*np.sin(angle)
-            #print(xq,yq,gx,gy)
+                mass+=jcob*weightq*rhoq * 2*np.pi*xq
 
-            for i in range(0,mV):
-                f_el[ndofV*i  ]-=NNNV[i]*jcob*weightq*gx*rhoq * 2*np.pi*xq
-                f_el[ndofV*i+1]-=NNNV[i]*jcob*weightq*gy*rhoq * 2*np.pi*xq
-            #end for 
+                #compute gx,gy
+                radq=np.sqrt(xq**2+yq**2)
+                if use_isog:
+                   grav=g0
+                else:
+                   grav=profile_grav[int(radq/1000)]
+                angle=np.arctan2(yq,xq)
+                gx=grav*np.cos(angle)
+                gy=grav*np.sin(angle)
+                #print(xq,yq,gx,gy)
 
-        #end for kq
+                for i in range(0,mV):
+                    f_el[ndofV*i  ]-=NNNV[i]*jcob*weightq*gx*rhoq * 2*np.pi*xq
+                    f_el[ndofV*i+1]-=NNNV[i]*jcob*weightq*gy*rhoq * 2*np.pi*xq
+                #end for
 
-        if (surface_bc==1 and flag_top[iel]) or (cmb_bc==1 and flag_bot[iel]):
-           for k in range(0,mV):
-               inode=iconV[k,iel]
-               if surface_node[inode] or cmb_node[inode]:
-                  RotMat=np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
-                  for i in range(0,mV*ndofV):
-                      RotMat[i,i]=1.
-                  angle=np.pi/2-theta_nodal[inode]
-                  #RotMat[2*k  ,2*k]= np.cos(theta_nodal[inode]) ; RotMat[2*k  ,2*k+1]=np.sin(theta_nodal[inode])  
-                  #RotMat[2*k+1,2*k]=-np.sin(theta_nodal[inode]) ; RotMat[2*k+1,2*k+1]=np.cos(theta_nodal[inode])  
-                  RotMat[2*k  ,2*k]= np.cos(angle) ; RotMat[2*k  ,2*k+1]=np.sin(angle)
-                  RotMat[2*k+1,2*k]=-np.sin(angle) ; RotMat[2*k+1,2*k+1]=np.cos(angle)
-                  # apply counter rotation 
-                  K_el=RotMat.dot(K_el.dot(RotMat.T))
-                  f_el=RotMat.dot(f_el)
-                  G_el=RotMat.dot(G_el)
-                  # apply boundary conditions
-                  # x-component set to 0
-                  ikk=ndofV*k                 
-                  K_ref=K_el[ikk,ikk] 
-                  for jkk in range(0,mV*ndofV):
-                      K_el[ikk,jkk]=0
-                      K_el[jkk,ikk]=0
-                  K_el[ikk,ikk]=K_ref
-                  f_el[ikk]=0#K_ref*bc_val[m1]
-                  #h_el[:]-=G_el[ikk,:]*bc_val[m1]
-                  G_el[ikk,:]=0
-                  # rotate back 
-                  K_el=RotMat.T.dot(K_el.dot(RotMat))
-                  f_el=RotMat.T.dot(f_el)
-                  G_el=RotMat.T.dot(G_el)
+            #end for kq
+
+            if (surface_bc==1 and flag_top[iel]) or (cmb_bc==1 and flag_bot[iel]):
+               for k in range(0,mV):
+                   inode=iconV[k,iel]
+                   if surface_node[inode] or cmb_node[inode]:
+                      RotMat=np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
+                      for i in range(0,mV*ndofV):
+                          RotMat[i,i]=1.
+                      angle=np.pi/2-theta_nodal[inode]
+                      #RotMat[2*k  ,2*k]= np.cos(theta_nodal[inode]) ; RotMat[2*k  ,2*k+1]=np.sin(theta_nodal[inode])
+                      #RotMat[2*k+1,2*k]=-np.sin(theta_nodal[inode]) ; RotMat[2*k+1,2*k+1]=np.cos(theta_nodal[inode])
+                      RotMat[2*k  ,2*k]= np.cos(angle) ; RotMat[2*k  ,2*k+1]=np.sin(angle)
+                      RotMat[2*k+1,2*k]=-np.sin(angle) ; RotMat[2*k+1,2*k+1]=np.cos(angle)
+                      # apply counter rotation
+                      K_el=RotMat.dot(K_el.dot(RotMat.T))
+                      f_el=RotMat.dot(f_el)
+                      G_el=RotMat.dot(G_el)
+                      # apply boundary conditions
+                      # x-component set to 0
+                      ikk=ndofV*k
+                      K_ref=K_el[ikk,ikk]
+                      for jkk in range(0,mV*ndofV):
+                          K_el[ikk,jkk]=0
+                          K_el[jkk,ikk]=0
+                      K_el[ikk,ikk]=K_ref
+                      f_el[ikk]=0#K_ref*bc_val[m1]
+                      #h_el[:]-=G_el[ikk,:]*bc_val[m1]
+                      G_el[ikk,:]=0
+                      # rotate back
+                      K_el=RotMat.T.dot(K_el.dot(RotMat))
+                      f_el=RotMat.T.dot(f_el)
+                      G_el=RotMat.T.dot(G_el)
 
 
-        # impose b.c. 
-        for k1 in range(0,mV):
-            for i1 in range(0,ndofV):
-                ikk=ndofV*k1          +i1
-                m1 =ndofV*iconV[k1,iel]+i1
-                if bc_fix[m1]:
-                   K_ref=K_el[ikk,ikk] 
-                   for jkk in range(0,mV*ndofV):
-                       f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
-                       K_el[ikk,jkk]=0
-                       K_el[jkk,ikk]=0
-                   K_el[ikk,ikk]=K_ref
-                   f_el[ikk]=K_ref*bc_val[m1]
-                   h_el[:]-=G_el[ikk,:]*bc_val[m1]
-                   G_el[ikk,:]=0
-                #end if
-            #end for 
-        #end for
+            # impose b.c.
+            for k1 in range(0,mV):
+                for i1 in range(0,ndofV):
+                    ikk=ndofV*k1          +i1
+                    m1 =ndofV*iconV[k1,iel]+i1
+                    if bc_fix[m1]:
+                       K_ref=K_el[ikk,ikk]
+                       for jkk in range(0,mV*ndofV):
+                           f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
+                           K_el[ikk,jkk]=0
+                           K_el[jkk,ikk]=0
+                       K_el[ikk,ikk]=K_ref
+                       f_el[ikk]=K_ref*bc_val[m1]
+                       h_el[:]-=G_el[ikk,:]*bc_val[m1]
+                       G_el[ikk,:]=0
+                    #end if
+                #end for
+            #end for
 
-        G_el*=eta_ref/R_outer
-        h_el*=eta_ref/R_outer
+            G_el*=eta_ref/R_outer
+            h_el*=eta_ref/R_outer
 
-        # assemble matrix K_mat and right hand side rhs
-        for k1 in range(0,mV):
-            for i1 in range(0,ndofV):
-                ikk=ndofV*k1          +i1
-                m1 =ndofV*iconV[k1,iel]+i1
-                for k2 in range(0,mV):
-                    for i2 in range(0,ndofV):
-                        jkk=ndofV*k2          +i2
-                        m2 =ndofV*iconV[k2,iel]+i2
-                        #K_mat[m1,m2]+=K_el[ikk,jkk]
-                        A_sparse[m1,m2] += K_el[ikk,jkk] 
+            # assemble matrix K_mat and right hand side rhs
+            for k1 in range(0,mV):
+                for i1 in range(0,ndofV):
+                    ikk=ndofV*k1          +i1
+                    m1 =ndofV*iconV[k1,iel]+i1
+                    for k2 in range(0,mV):
+                        for i2 in range(0,ndofV):
+                            jkk=ndofV*k2          +i2
+                            m2 =ndofV*iconV[k2,iel]+i2
+                            #K_mat[m1,m2]+=K_el[ikk,jkk]
+                            A_sparse[m1,m2] += K_el[ikk,jkk]
+                        #end for
                     #end for
+                    for k2 in range(0,mP):
+                        jkk=k2
+                        m2 =iconP[k2,iel]
+                        #G_mat[m1,m2]+=G_el[ikk,jkk]
+                        A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
+                        A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
+                    #end for
+                    f_rhs[m1]+=f_el[ikk]
                 #end for
-                for k2 in range(0,mP):
-                    jkk=k2
-                    m2 =iconP[k2,iel]
-                    #G_mat[m1,m2]+=G_el[ikk,jkk]
-                    A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk] 
-                    A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk] 
-                #end for
-                f_rhs[m1]+=f_el[ikk] 
+            #end for
+            for k2 in range(0,mP):
+                m2=iconP[k2,iel]
+                h_rhs[m2]+=h_el[k2]
             #end for
         #end for
-        for k2 in range(0,mP):
-            m2=iconP[k2,iel]
-            h_rhs[m2]+=h_el[k2]  
-        #end for
-    #end for
 
-    rhs[0:NfemV]=f_rhs
-    rhs[NfemV:Nfem]=h_rhs
+        rhs[0:NfemV]=f_rhs
+        rhs[NfemV:Nfem]=h_rhs
 
-    print('     -> mass=',mass)
+        print('     -> mass=',mass)
 
-    print("build FE matrix: %.3f s" % (timing.time() - start))
+        print("build FE matrix: %.3f s" % (timing.time() - start))
 
-    ######################################################################
-    # solve system
-    ######################################################################
-    start = timing.time()
+        ######################################################################
+        # solve system
+        ######################################################################
+        start = timing.time()
 
-    sol = np.zeros(Nfem,dtype=np.float64) 
+        sol = np.zeros(Nfem,dtype=np.float64)
 
-    sparse_matrix=A_sparse.tocsr()
+        sparse_matrix=A_sparse.tocsr()
 
-    sol=sps.linalg.spsolve(sparse_matrix,rhs)
+        sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
-    u,v=np.reshape(sol[0:NfemV],(NV,2)).T
-    p=sol[NfemV:Nfem]*eta_ref/R_outer
+        u,v=np.reshape(sol[0:NfemV],(NV,2)).T
+        p=sol[NfemV:Nfem]*eta_ref/R_outer
 
-    #np.savetxt('solution_velocity.ascii',np.array([xV,zV,u,v]).T,header='# x,y,u,v')
-    #np.savetxt('solution_pressure.ascii',np.array([xP,zP,p]).T,header='# x,y,p')
+        #np.savetxt('solution_velocity.ascii',np.array([xV,zV,u,v]).T,header='# x,y,u,v')
+        #np.savetxt('solution_pressure.ascii',np.array([xP,zP,p]).T,header='# x,y,p')
 
-    print("     -> u (m,M) %.6e %.6e " %(np.min(u),np.max(u)))
-    print("     -> v (m,M) %.6e %.6e " %(np.min(v),np.max(v)))
-    print("     -> p (m,M) %.6e %.6e " %(np.min(p),np.max(p)))
+        print("     -> u (m,M) %.6e %.6e " %(np.min(u),np.max(u)))
+        print("     -> v (m,M) %.6e %.6e " %(np.min(v),np.max(v)))
+        print("     -> p (m,M) %.6e %.6e " %(np.min(p),np.max(p)))
 
-    print("solve time: %.3f s" % (timing.time() - start))
+        print("solve time: %.3f s" % (timing.time() - start))
+
+    else:
+
+        print("****no Stokes solve*****")
+
+        u = np.zeros(NV,dtype=np.float64)
+        v = np.zeros(NV,dtype=np.float64)
+        p = np.zeros(NP,dtype=np.float64)
+
 
     ######################################################################
     # compute vrms 
@@ -1197,60 +1265,61 @@ for istep in range(0,nstep):
     #u[:]=xV[:]
     #v[:]=zV[:]
 
-    for iel in range(0,nel):
-        for kk in range(0,mV):
-            inode=iconV[kk,iel]
-            rq = rVnodes[kk]
-            sq = sVnodes[kk]
-            NNNV[0:mV]=NNV(rq,sq,CR)
-            dNNNVdr[0:mV]=dNNVdr(rq,sq,CR)
-            dNNNVds[0:mV]=dNNVds(rq,sq,CR)
-            NNNP[0:mP]=NNP(rq,sq)
-            jcb=np.zeros((2,2),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1]+=dNNNVdr[k]*zV[iconV[k,iel]]
-                jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1]+=dNNNVds[k]*zV[iconV[k,iel]]
-            jcob=np.linalg.det(jcb)
-            jcbi=np.linalg.inv(jcb)
-            for k in range(0,mV):
-                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-            for k in range(0,mV):
-                tau_xx_nodal[inode] += dNNNVdx[k]*u[iconV[k,iel]]*2*(eta_nodal[inode]/eta_ref)        
-                tau_zz_nodal[inode] += dNNNVdy[k]*v[iconV[k,iel]]*2*(eta_nodal[inode]/eta_ref)                
-                tau_xz_nodal[inode] += 0.5*dNNNVdy[k]*u[iconV[k,iel]]*2*(eta_nodal[inode]/eta_ref)+\
-                                       0.5*dNNNVdx[k]*v[iconV[k,iel]]*2*(eta_nodal[inode]/eta_ref)                   
-                e_xx_nodal[inode] += dNNNVdx[k]*u[iconV[k,iel]]
-                e_zz_nodal[inode] += dNNNVdy[k]*v[iconV[k,iel]]
-                e_xz_nodal[inode] += 0.5*dNNNVdy[k]*u[iconV[k,iel]] + 0.5*dNNNVdx[k]*v[iconV[k,iel]]
-            for k in range(0,mP):
-                q[inode]+= NNNP[k]*p[iconP[k,iel]]   
-            #end for
-            cc[inode]+=1
-        #end for
-    #end for
-    e_xx_nodal/=cc
-    e_zz_nodal/=cc
-    e_xz_nodal/=cc
-    tau_xx_nodal/=cc
-    tau_zz_nodal/=cc
-    tau_xz_nodal/=cc
-    tau_xx_nodal*=eta_ref
-    tau_zz_nodal*=eta_ref
-    tau_xz_nodal*=eta_ref
-    q[:]/=cc[:]
+    if solve_stokes:
+       for iel in range(0,nel):
+           for kk in range(0,mV):
+               inode=iconV[kk,iel]
+               rq = rVnodes[kk]
+               sq = sVnodes[kk]
+               NNNV[0:mV]=NNV(rq,sq,CR)
+               dNNNVdr[0:mV]=dNNVdr(rq,sq,CR)
+               dNNNVds[0:mV]=dNNVds(rq,sq,CR)
+               NNNP[0:mP]=NNP(rq,sq)
+               jcb=np.zeros((2,2),dtype=np.float64)
+               for k in range(0,mV):
+                   jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+                   jcb[0,1]+=dNNNVdr[k]*zV[iconV[k,iel]]
+                   jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+                   jcb[1,1]+=dNNNVds[k]*zV[iconV[k,iel]]
+               jcob=np.linalg.det(jcb)
+               jcbi=np.linalg.inv(jcb)
+               for k in range(0,mV):
+                   dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                   dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+               for k in range(0,mV):
+                   tau_xx_nodal[inode] += dNNNVdx[k]*u[iconV[k,iel]]*2*(eta_nodal[inode]/eta_ref)        
+                   tau_zz_nodal[inode] += dNNNVdy[k]*v[iconV[k,iel]]*2*(eta_nodal[inode]/eta_ref)                
+                   tau_xz_nodal[inode] += 0.5*dNNNVdy[k]*u[iconV[k,iel]]*2*(eta_nodal[inode]/eta_ref)+\
+                                          0.5*dNNNVdx[k]*v[iconV[k,iel]]*2*(eta_nodal[inode]/eta_ref)                   
+                   e_xx_nodal[inode] += dNNNVdx[k]*u[iconV[k,iel]]
+                   e_zz_nodal[inode] += dNNNVdy[k]*v[iconV[k,iel]]
+                   e_xz_nodal[inode] += 0.5*dNNNVdy[k]*u[iconV[k,iel]] + 0.5*dNNNVdx[k]*v[iconV[k,iel]]
+               for k in range(0,mP):
+                   q[inode]+= NNNP[k]*p[iconP[k,iel]]   
+               #end for
+               cc[inode]+=1
+           #end for
+       #end for
+       e_xx_nodal/=cc
+       e_zz_nodal/=cc
+       e_xz_nodal/=cc
+       tau_xx_nodal/=cc
+       tau_zz_nodal/=cc
+       tau_xz_nodal/=cc
+       tau_xx_nodal*=eta_ref
+       tau_zz_nodal*=eta_ref
+       tau_xz_nodal*=eta_ref
+       q[:]/=cc[:]
 
-    #np.savetxt('solution_q.ascii',np.array([xV,zV,q]).T)
-    #np.savetxt('solution_tau_cartesian.ascii',np.array([xV,zV,tau_xx_nodal,tau_zz_nodal,tau_xz_nodal]).T)
+       #np.savetxt('solution_q.ascii',np.array([xV,zV,q]).T)
+       #np.savetxt('solution_tau_cartesian.ascii',np.array([xV,zV,tau_xx_nodal,tau_zz_nodal,tau_xz_nodal]).T)
 
-    print("     -> e_xx_nodal   (m,M) %.6e %.6e " %(np.min(e_xx_nodal),np.max(e_xx_nodal)))
-    print("     -> e_zz_nodal   (m,M) %.6e %.6e " %(np.min(e_zz_nodal),np.max(e_zz_nodal)))
-    print("     -> e_xz_nodal   (m,M) %.6e %.6e " %(np.min(e_xz_nodal),np.max(e_xz_nodal)))
-    print("     -> tau_xx_nodal (m,M) %.6e %.6e " %(np.min(tau_xx_nodal),np.max(tau_xx_nodal)))
-    print("     -> tau_zz_nodal (m,M) %.6e %.6e " %(np.min(tau_zz_nodal),np.max(tau_zz_nodal)))
-    print("     -> tau_xz_nodal (m,M) %.6e %.6e " %(np.min(tau_xz_nodal),np.max(tau_xz_nodal)))
+       print("     -> e_xx_nodal   (m,M) %.6e %.6e " %(np.min(e_xx_nodal),np.max(e_xx_nodal)))
+       print("     -> e_zz_nodal   (m,M) %.6e %.6e " %(np.min(e_zz_nodal),np.max(e_zz_nodal)))
+       print("     -> e_xz_nodal   (m,M) %.6e %.6e " %(np.min(e_xz_nodal),np.max(e_xz_nodal)))
+       print("     -> tau_xx_nodal (m,M) %.6e %.6e " %(np.min(tau_xx_nodal),np.max(tau_xx_nodal)))
+       print("     -> tau_zz_nodal (m,M) %.6e %.6e " %(np.min(tau_zz_nodal),np.max(tau_zz_nodal)))
+       print("     -> tau_xz_nodal (m,M) %.6e %.6e " %(np.min(tau_xz_nodal),np.max(tau_xz_nodal)))
 
     print("compute sr and stress: %.3f s" % (timing.time() - start))
 
@@ -1392,12 +1461,12 @@ for istep in range(0,nstep):
     #--
     vtufile.write("<DataArray type='Float32'  Name='vr (cm/year)' Format='ascii'> \n")
     for i in range(0,NV):
-        vtufile.write("%10e \n" % (u[i]*np.sin(theta_nodal[i])+v[i]*np.cos(theta_nodal[i]) ) )
+        vtufile.write("%10e \n" % (u[i]/cm*year*np.sin(theta_nodal[i])+v[i]/cm*year*np.cos(theta_nodal[i]) ) )
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32'  Name='vt (cm/year)' Format='ascii'> \n")
     for i in range(0,NV):
-        vtufile.write("%10e \n" % (u[i]*np.cos(theta_nodal[i])-v[i]*np.sin(theta_nodal[i]) ) )
+        vtufile.write("%10e \n" % (u[i]/cm*year*np.cos(theta_nodal[i])-v[i]/cm*year*np.sin(theta_nodal[i]) ) )
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='gravity vector (norm)' Format='ascii'> \n")
@@ -1410,7 +1479,7 @@ for istep in range(0,nstep):
         vtufile.write("%10e \n" %grav)
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='p (nod)' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%e \n" %q[i])
     vtufile.write("</DataArray>\n")
@@ -1608,18 +1677,19 @@ for istep in range(0,nstep):
                                                                       npt_eta,profile_rho,profile_eta)
         elif gravity_method==2:
            gvect_x[i],gvect_y[i],gvect_z[i]=compute_gravity_at_point2(xM[i],yM[i],zM[i],nel,xV,zV,iconV,\
-                                                                      dphi,nel_phi,qcoords_r,qcoords_s,qweights,CR,mV,nqel,\
+                                                                      dphi,nel_phi,qcoords_r_grav,qcoords_s_grav,qweights_grav,\
+                                                                      CR,mV,nqel_grav,\
                                                                       eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
                                                                       npt_eta,profile_rho,profile_eta)
         if i%20==0: 
            print('point',i,'gx,gy,gz',gvect_x[i],gvect_y[i],gvect_z[i])
 
-        if test==1:
+        if radial_model==-1 and test==1:
            dist2=xM[i]**2+zM[i]**2
            gr=Ggrav*rho0*4/3*np.pi*(R_outer**3-R_inner**3)/dist2
            testfile.write("%e %e %e\n" %(angleM[i],np.sqrt(gvect_x[i]**2+gvect_y[i]**2+gvect_z[i]**2),gr))
            
-        if test==2:
+        if radial_model==-1 and test==2:
            dist2=xM[i]**2+(zM[i]-z_blob)**2
            gr=Ggrav*rho_blob*4/3*np.pi*R_blob**3/dist2
            testfile.write("%e %e %e\n" %(np.pi/2-angleM[i],np.sqrt(gvect_x[i]**2+gvect_y[i]**2+gvect_z[i]**2),gr))
