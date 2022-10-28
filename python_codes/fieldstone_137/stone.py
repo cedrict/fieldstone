@@ -131,40 +131,49 @@ mP=3
 
 #------------------------------------------------------------------------------
 
+print("-----------------------------")
+print("----------fieldstone---------")
+print("-----------------------------")
+
 # bench=1: cakm06
 # bench=3: Donea & Huerta
 
-bench=1
+bench=3
 
 Lx=1
 Ly=1
 
 nmarker_per_dim=5
-mdistribution=3
-
-CFL_nb=0.1
+mdistribution=1
     
 mx=10
 my=10
 M=mx*my # nb of bins
 C=2
 
-nstep=5000
+nstep=20000
 
-exp=1
+exp=2
 
-if int(len(sys.argv) == 6):
+
+tfinal=10
+
+if int(len(sys.argv) == 8):
    nelx=int(sys.argv[1])
    nely=int(sys.argv[2])
    visu=int(sys.argv[3])
    nqperdim=int(sys.argv[4])
    meth=int(sys.argv[5])
+   CFL_nb=float(sys.argv[6])
+   rk=int(sys.argv[7])
 else:
-   nelx = 100
-   nely = 100
+   nelx = 50
+   nely = 50
    visu = 1
    nqperdim=3
-   meth = 2
+   meth  = 2
+   CFL_nb=0.1
+   rk=1
 
 nnx=2*nelx+1
 nny=2*nely+1
@@ -186,6 +195,8 @@ print('NP   =',NP)
 print('NfemV=',NfemV)
 print('NfemP=',NfemP)
 print('method=',meth)
+print('CFL_nb=',CFL_nb)
+print("-----------------------------")
 
 if nqperdim==3:
    qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
@@ -618,14 +629,12 @@ if mdistribution==3: # pure random whole domain
        swarm_x[im]=random.uniform(0,1)
        swarm_y[im]=random.uniform(0,1)
 
-
-
 swarm_x0=np.empty(nmarker,dtype=np.float64)
 swarm_y0=np.empty(nmarker,dtype=np.float64)
 swarm_x0[:]=swarm_x[:]
 swarm_y0[:]=swarm_y[:]
 
-print(nmarker)
+print("nmarker=",nmarker)
 
 print("     -> swarm_x (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))
 print("     -> swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
@@ -670,12 +679,14 @@ print("dt= %.3e" %(dt))
 Sfile=open("S.ascii","w")
 mfile=open("marker0.ascii","w")
 
+total_time=0
 
 for istep in range(0,nstep):
 
+
     print ('---------------------------------------')
     print ('----------------istep= %i -------------' %istep)
-    print ('time = %e' % (istep*dt))
+    print ('time = %e' % (total_time))
 
     swarm_r=np.empty(nmarker,dtype=np.float64)
     swarm_s=np.empty(nmarker,dtype=np.float64)
@@ -692,6 +703,9 @@ for istep in range(0,nstep):
         iely=int(swarm_y[im]/Ly*my)
         iel=mx*(iely)+ielx
         n[iel,swarm_c[im]]+=1
+
+    for c in range(0,C):
+        print('c=',c,'n(j,c) (m/M): ',np.min(n[:,c]),np.max(n[:,c]))
 
     ###########################################################################
     # compute total entropy 
@@ -722,49 +736,99 @@ for istep in range(0,nstep):
     ###########################################################################
     start = timing.time()
 
-    for im in range(0,nmarker):
-        ielx=int(swarm_x[im]/Lx*nelx)
-        iely=int(swarm_y[im]/Ly*nely)
-        iel=nelx*(iely)+ielx
-        x0=xV[iconV[0,iel]]
-        y0=yV[iconV[0,iel]]
-        r=-1+2*(swarm_x[im]-x0)/hx
-        s=-1+2*(swarm_y[im]-y0)/hy
-        NNNV[0:mV]=NNV(r,s)
-        uA=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
-        vA=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
-        xB=swarm_x[im]+uA*dt/2
-        yB=swarm_y[im]+vA*dt/2
+    if rk==1:
+       for im in range(0,nmarker):
+           ielx=int(swarm_x[im]/Lx*nelx)
+           iely=int(swarm_y[im]/Ly*nely)
+           iel=nelx*(iely)+ielx
+           x0=xV[iconV[0,iel]]
+           y0=yV[iconV[0,iel]]
+           swarm_r[im]=-1+2*(swarm_x[im]-x0)/hx
+           swarm_s[im]=-1+2*(swarm_y[im]-y0)/hy
+           NNNV[0:mV]=NNV(swarm_r[im],swarm_s[im])
+           um=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+           vm=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+           swarm_u[im]=um
+           swarm_v[im]=vm
+           swarm_x[im]+=um*dt
+           swarm_y[im]+=vm*dt
+       #end for
 
-        ielx=int(xB/Lx*nelx)
-        iely=int(yB/Ly*nely)
-        iel=nelx*(iely)+ielx
-        x0=xV[iconV[0,iel]]
-        y0=yV[iconV[0,iel]]
-        r=-1+2*(xB-x0)/hx
-        s=-1+2*(yB-y0)/hy
-        NNNV[0:mV]=NNV(r,s)
-        uB=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
-        vB=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
-        xC=swarm_x[im]+(2*uB-uA)*dt/2
-        yC=swarm_y[im]+(2*vB-vA)*dt/2
+    if rk==2:
+       for im in range(0,nmarker):
+           ielx=int(swarm_x[im]/Lx*nelx)
+           iely=int(swarm_y[im]/Ly*nely)
+           iel=nelx*(iely)+ielx
+           x0=xV[iconV[0,iel]]
+           y0=yV[iconV[0,iel]]
+           r=-1+2*(swarm_x[im]-x0)/hx
+           s=-1+2*(swarm_y[im]-y0)/hy
+           NNNV[0:mV]=NNV(r,s)
+           um=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+           vm=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+           xm=swarm_x[im]+um*dt/2
+           ym=swarm_y[im]+vm*dt/2
 
-        ielx=int(xC/Lx*nelx)
-        iely=int(yC/Ly*nely)
-        iel=nelx*(iely)+ielx
-        number[iel]+=1
-        x0=xV[iconV[0,iel]]
-        y0=yV[iconV[0,iel]]
-        swarm_r[im]=-1+2*(xC-x0)/hx
-        swarm_s[im]=-1+2*(yC-y0)/hy
-        NNNV[0:mV]=NNV(swarm_r[im],swarm_s[im])
-        uC=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
-        vC=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
-        swarm_u[im]=uA+4*uB+uC
-        swarm_v[im]=vA+4*vB+vC
-        swarm_x[im]+=swarm_u[im]*dt/6
-        swarm_y[im]+=swarm_v[im]*dt/6
-    #end for
+           ielx=int(xm/Lx*nelx)
+           iely=int(ym/Ly*nely)
+           iel=nelx*(iely)+ielx
+           x0=xV[iconV[0,iel]]
+           y0=yV[iconV[0,iel]]
+           swarm_r[im]=-1+2*(xm-x0)/hx
+           swarm_s[im]=-1+2*(ym-y0)/hy
+           NNNV[0:mV]=NNV(swarm_r[im],swarm_s[im])
+           um=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+           vm=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+           swarm_u[im]=um
+           swarm_v[im]=vm
+           swarm_x[im]+=um*dt
+           swarm_y[im]+=vm*dt
+       #end for
+
+    if rk==3:
+       for im in range(0,nmarker):
+           ielx=int(swarm_x[im]/Lx*nelx)
+           iely=int(swarm_y[im]/Ly*nely)
+           iel=nelx*(iely)+ielx
+           x0=xV[iconV[0,iel]]
+           y0=yV[iconV[0,iel]]
+           r=-1+2*(swarm_x[im]-x0)/hx
+           s=-1+2*(swarm_y[im]-y0)/hy
+           NNNV[0:mV]=NNV(r,s)
+           uA=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+           vA=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+           xB=swarm_x[im]+uA*dt/2
+           yB=swarm_y[im]+vA*dt/2
+
+           ielx=int(xB/Lx*nelx)
+           iely=int(yB/Ly*nely)
+           iel=nelx*(iely)+ielx
+           x0=xV[iconV[0,iel]]
+           y0=yV[iconV[0,iel]]
+           r=-1+2*(xB-x0)/hx
+           s=-1+2*(yB-y0)/hy
+           NNNV[0:mV]=NNV(r,s)
+           uB=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+           vB=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+           xC=swarm_x[im]+(2*uB-uA)*dt/2
+           yC=swarm_y[im]+(2*vB-vA)*dt/2
+
+           ielx=int(xC/Lx*nelx)
+           iely=int(yC/Ly*nely)
+           iel=nelx*(iely)+ielx
+           number[iel]+=1
+           x0=xV[iconV[0,iel]]
+           y0=yV[iconV[0,iel]]
+           swarm_r[im]=-1+2*(xC-x0)/hx
+           swarm_s[im]=-1+2*(yC-y0)/hy
+           NNNV[0:mV]=NNV(swarm_r[im],swarm_s[im])
+           uC=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
+           vC=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
+           swarm_u[im]=uA+4*uB+uC
+           swarm_v[im]=vA+4*vB+vC
+           swarm_x[im]+=swarm_u[im]*dt/6
+           swarm_y[im]+=swarm_v[im]*dt/6
+       #end for
 
     mfile.write("%e %e \n" %(swarm_x[0],swarm_y[0]))
     mfile.flush()
@@ -886,6 +950,11 @@ for istep in range(0,nstep):
        np.savetxt('swarm_{:04d}.ascii'.format(istep),np.array([swarm_x,swarm_y,swarm_c]).T,header='# x,y,c')
 
     print("export to vtu: %.3f s" % (timing.time() - start))
+
+    total_time+=dt
+
+    if total_time>tfinal:
+       exit()
 
 print("-----------------------------")
 print("------------the end----------")

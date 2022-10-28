@@ -1,0 +1,27 @@
+#!/bin/bash
+
+
+echo CFL=0.01 rk=1
+python3 stone.py 100 100 1 3 2 0.01 1 > opla_CFL_0p01_rk1
+mv S.ascii S_0p01_rk1.ascii
+
+echo CFL=0.01 rk=2
+python3 stone.py 100 100 1 3 2 0.01 2 > opla_CFL_0p01_rk2
+mv S.ascii S_0p01_rk2.ascii
+
+echo CFL=0.01 rk=3
+python3 stone.py 100 100 1 3 2 0.01 3 > opla_CFL_0p01_rk3
+mv S.ascii S_0p01_rk3.ascii
+
+echo CFL=0.05
+python3 stone.py 100 100 1 3 2 0.05 2 > opla_CFL_0p05_rk2
+mv S.ascii S_0p05_rk2.ascii
+
+echo CFL=0.1
+python3 stone.py 100 100 1 3 2 0.1 2 > opla_CFL_0p10_rk2
+mv S.ascii S_0p10_rk2.ascii
+
+echo CFL=0.2
+python3 stone.py 100 100 1 3 2 0.2 2 > opla_CFL_0p20_rk2
+mv S.ascii S_0p20_rk2.ascii
+
