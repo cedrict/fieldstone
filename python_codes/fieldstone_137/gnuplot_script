@@ -1,0 +1,17 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set xlabel 'time'
+set ylabel 'S'
+set key outside
+set title 'exp=4'
+set output 'S.pdf'
+
+plot[][]\
+'S_0p005_rk2_100.ascii' u 1:3 w l t '100^2, rk=2, CFL=0.005',\
+'S_0p01_rk2_100.ascii' u 1:3 w l t '100^2, rk=2, CFL=0.01',\
+'S_0p05_rk1_100.ascii' u 1:3 w l t '100^2, rk=1, CFL=0.05',\
+'S_0p05_rk2_100.ascii' u 1:3 w l t '100^2, rk=2, CFL=0.05',\
+'S_0p05_rk2_150.ascii' u 1:3 w l t '150^2, rk=2, CFL=0.05',\
+'S_0p05_rk2_50.ascii'  u 1:3 w l t '50^2,  rk=2, CFL=0.05',\
+'S_0p05_rk3_100.ascii' u 1:3 w l t '100^2, rk=3, CFL=0.05',\
+'S_0p10_rk2_100.ascii' u 1:3 w l t '100^2, rk=2, CFL=0.10',\

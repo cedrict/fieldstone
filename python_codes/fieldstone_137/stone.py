@@ -143,37 +143,31 @@ bench=3
 Lx=1
 Ly=1
 
-nmarker_per_dim=5
-mdistribution=1
+nmarker_per_dim=3
+mdistribution=3
     
 mx=10
 my=10
 M=mx*my # nb of bins
 C=2
 
-nstep=20000
+nstep=10000
 
-exp=2
+tfinal=200
 
-
-tfinal=10
-
-if int(len(sys.argv) == 8):
+if int(len(sys.argv) == 6):
    nelx=int(sys.argv[1])
    nely=int(sys.argv[2])
-   visu=int(sys.argv[3])
-   nqperdim=int(sys.argv[4])
-   meth=int(sys.argv[5])
-   CFL_nb=float(sys.argv[6])
-   rk=int(sys.argv[7])
+   CFL_nb=float(sys.argv[3])
+   rk=int(sys.argv[4])
+   exp=int(sys.argv[5])
+   print('read stuff')
 else:
-   nelx = 50
-   nely = 50
-   visu = 1
-   nqperdim=3
-   meth  = 2
-   CFL_nb=0.1
-   rk=1
+   nelx = 100
+   nely = 100
+   CFL_nb=0.05
+   rk=2
+   exp=2
 
 nnx=2*nelx+1
 nny=2*nely+1
@@ -185,6 +179,8 @@ NfemP=NP*ndofP
 Nfem=NfemV+NfemP
 hx=Lx/nelx
 hy=Ly/nely
+
+meth  = 2
 
 print('bench=',bench)
 print('nelx =',nelx)
@@ -198,26 +194,15 @@ print('method=',meth)
 print('CFL_nb=',CFL_nb)
 print("-----------------------------")
 
-if nqperdim==3:
-   qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
-   qweights=[5./9.,8./9.,5./9.]
-
-if nqperdim==4:
-   qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
-   qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
-   qw4a=(18-np.sqrt(30.))/36.
-   qw4b=(18+np.sqrt(30.))/36.
-   qcoords=[-qc4a,-qc4b,qc4b,qc4a]
-   qweights=[qw4a,qw4b,qw4b,qw4a]
+nqperdim=3
+qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
+qweights=[5./9.,8./9.,5./9.]
 
 eps=1e-8
 
 eta_ref=1.
 pnormalise=False
 sparse=True
-
-#rVnodes=[-1,1,1,-1,0]
-#sVnodes=[-1,-1,1,1,0]
 
 #################################################################
 # grid point setup
@@ -710,27 +695,69 @@ for istep in range(0,nstep):
     ###########################################################################
     # compute total entropy 
 
-    denom=0
+    #compute denom for p_{j,c} 
+    denom1=0
     for i in range(0,M):
         for c in range(0,C):
-            denom+=n[i,c]/P[c]
+            denom1+=n[i,c]/P[c]
+    print('denom=',denom1)
 
-    print('denom=',denom)
-
-    pp=np.zeros((M,C),dtype=np.float64)
+    #computing p_{j,c}
+    pp1=np.zeros((M,C),dtype=np.float64)
     for j in range(0,M):
         for c in range(0,C):
-            pp[j,c]=n[j,c]/P[c]/denom    
+            pp1[j,c]=n[j,c]/P[c]/denom1    
 
-    S=0
+    S1=0
     for j in range(0,M):
         for c in range(0,C):
-            if pp[j,c]>0:
-               S-=pp[j,c]*np.log(pp[j,c])
+            if pp1[j,c]>0:
+               S1-=pp1[j,c]*np.log(pp1[j,c])
 
-    print('S=',S)
+    print('S(total)=',S1)
 
-    Sfile.write("%e %e %e \n" %(istep*dt,S,S/np.log(M)))
+    ###########################################################################
+    # compute S_location entropy 
+
+    #computing p_{j}
+    pp3=np.zeros(M,dtype=np.float64)
+    for j in range(0,M):
+        for c in range(0,C):
+            pp3[j]+=n[j,c]/P[c]/denom1    
+
+    S3=0
+    for j in range(0,M):
+          if pp3[j]>0:
+             S3-=pp3[j]*np.log(pp3[j])
+
+    print('S_location=',S3)
+
+
+    ###########################################################################
+    # compute S_location(species) entropy 
+
+    #compute denom array for p_{c|j} 
+    denom2=np.zeros(M,dtype=np.float64)
+    for j in range(0,M):
+        for c in range(0,C):
+            denom2[j]+=n[j,c]/P[c]
+
+    #computing p_{c|j}
+    pp2=np.zeros((M,C),dtype=np.float64)
+    for j in range(0,M):
+        for c in range(0,C):
+            pp2[j,c]=n[j,c]/P[c]/denom2[j]    
+
+    S2=0
+    for j in range(0,M):
+        for c in range(0,C):
+            if pp2[j,c]>0:
+               S2-=pp2[j,c]*np.log(pp2[j,c])
+        S2*=pp3[j]    
+    
+    print('S_location(species)=',S2)
+
+    Sfile.write("%e %e %e %e %e %e \n" %(istep*dt,S1,S1/np.log(M),S2,S3,S2+S3))
     Sfile.flush()
 
     ###########################################################################
@@ -839,7 +866,7 @@ for istep in range(0,nstep):
 
     start = timing.time()
 
-    if istep%10==0:
+    if istep%50==0:
 
        filename = 'swarm_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")

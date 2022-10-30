@@ -1,27 +1,48 @@
 #!/bin/bash
 
+exp=1
 
-echo CFL=0.01 rk=1
-python3 stone.py 100 100 1 3 2 0.01 1 > opla_CFL_0p01_rk1
-mv S.ascii S_0p01_rk1.ascii
+#----------------------------------------------------------
+#default is 100x100 CFlnb=0.05 rk 2 
 
-echo CFL=0.01 rk=2
-python3 stone.py 100 100 1 3 2 0.01 2 > opla_CFL_0p01_rk2
-mv S.ascii S_0p01_rk2.ascii
+echo 100x100 CFL=0.05 rk=2
+python3 stone.py 100 100 0.05 2 $exp > opla_CFL_0p05_rk2_100
+mv S.ascii S_0p05_rk2_100.ascii
 
-echo CFL=0.01 rk=3
-python3 stone.py 100 100 1 3 2 0.01 3 > opla_CFL_0p01_rk3
-mv S.ascii S_0p01_rk3.ascii
+#----------------------------------------------------------
+#influence of CFL nb
 
-echo CFL=0.05
-python3 stone.py 100 100 1 3 2 0.05 2 > opla_CFL_0p05_rk2
-mv S.ascii S_0p05_rk2.ascii
+echo 100x100 CFL=0.005 rk=2
+python3 stone.py 100 100 0.005 2 $exp > opla_CFL_0p005_rk2_100
+mv S.ascii S_0p005_rk2_100.ascii
 
-echo CFL=0.1
-python3 stone.py 100 100 1 3 2 0.1 2 > opla_CFL_0p10_rk2
-mv S.ascii S_0p10_rk2.ascii
+echo 100x100 CFL=0.01 rk=2
+python3 stone.py 100 100 0.01 2 $exp > opla_CFL_0p01_rk2_100
+mv S.ascii S_0p01_rk2_100.ascii
 
-echo CFL=0.2
-python3 stone.py 100 100 1 3 2 0.2 2 > opla_CFL_0p20_rk2
-mv S.ascii S_0p20_rk2.ascii
+echo 100x100 CFL=0.1 rk=2
+python3 stone.py 100 100 0.1 2 $exp > opla_CFL_0p10_rk2_100
+mv S.ascii S_0p10_rk2_100.ascii
+
+#----------------------------------------------------------
+# influence of rk
+
+echo 100x100 CFL=0.05 rk=1
+python3 stone.py 100 100 0.05 1 $exp > opla_CFL_0p05_rk1_100
+mv S.ascii S_0p05_rk1_100.ascii
+
+echo 100x100 CFL=0.05 rk=3
+python3 stone.py 100 100 0.05 3 $exp > opla_CFL_0p05_rk3_100
+mv S.ascii S_0p05_rk3_100.ascii
+
+#----------------------------------------------------------
+#influence of resolution
+
+echo 50x50 CFL=0.05 rk=2
+python3 stone.py 50 50 0.05 2 1 $exp > opla_CFL_0p05_rk2_50
+mv S.ascii S_0p05_rk2_50.ascii
+
+echo 150x150 CFL=0.05 rk=2
+python3 stone.py 150 150 0.05 2 $exp > opla_CFL_0p05_rk2_150
+mv S.ascii S_0p05_rk2_150.ascii
 
