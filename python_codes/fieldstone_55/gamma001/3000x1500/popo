@@ -1,0 +1,6 @@
+ -> vrms        = 1.345855e-05 m/s
+     -> avrg u      = -2.594479e-11 m/s
+     -> avrg u slab = 7.488148e-10 m/s
+     -> avrg v slab = -1.295905e-09 m/s
+compute vrms: 9.912s
+
