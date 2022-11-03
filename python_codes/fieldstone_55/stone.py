@@ -61,8 +61,18 @@ mP=3     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-nel=31765
-NV0=63914
+#nel=115731 #6000x3000
+#NV0=232206
+#nel=81544  #5000x2500
+#NV0=163735 
+#nel=53826  #4000
+#NV0=108149
+#nel=31765   #3000
+#NV0=63914
+nel=16400 #2000
+NV0=33099
+
+
 NV=NV0+nel
 
 NfemV=NV*ndofV     # number of velocity dofs
@@ -241,33 +251,34 @@ print("assign density, viscosity: %.3f s" % (timing.time() - start))
 # generate regular grid with composition for ASPECT ascii plugin
 #################################################################
 
-n_n=1499
-aspectfile=open('aspect_slab.ascii',"w")
-aspectfile.write("# POINTS: %8d %8d \n" %((n_n+1),(n_n+1)))
-aspectfile.write("# Columns: x y phase\n")
-for j in range(0,n_n+1):
-    for i in range(0,n_n+1):
-        x_c=i/n_n*Lx
-        y_c=j/n_n*Ly
-        if x_c>xmin and x_c<xmax and y_c>ymin and y_c<ymax:
-           dist = poly.is_inside(x_c,y_c)
-           if dist>0:
-              comp=1
+if False:
+   n_n=1499
+   aspectfile=open('aspect_slab.ascii',"w")
+   aspectfile.write("# POINTS: %8d %8d \n" %((n_n+1),(n_n+1)))
+   aspectfile.write("# Columns: x y phase\n")
+   for j in range(0,n_n+1):
+       for i in range(0,n_n+1):
+           x_c=i/n_n*Lx
+           y_c=j/n_n*Ly
+           if x_c>xmin and x_c<xmax and y_c>ymin and y_c<ymax:
+              dist = poly.is_inside(x_c,y_c)
+              if dist>0:
+                 comp=1
+              else:
+                 comp=0 
            else:
-              comp=0 
-        else:
-           comp=0
-        # end if
-        aspectfile.write("%10e %10e %10e \n" %(x_c,y_c,comp))
+              comp=0
+           # end if
+           aspectfile.write("%10e %10e %10e \n" %(x_c,y_c,comp))
+      #end for
    #end for
-#end for
 
-#np.savetxt('aspect_midpositions.ascii',np.array([xmid,ymid]).T)
+   #np.savetxt('aspect_midpositions.ascii',np.array([xmid,ymid]).T)
 
-#xxxp=np.concatenate([xmid,xperim])
-#yyyp=np.concatenate([ymid,yperim])
-#np.savetxt('aspect_allpositions.ascii',np.array([xxxp,yyyp]).T)
-exit()
+   #xxxp=np.concatenate([xmid,xperim])
+   #yyyp=np.concatenate([ymid,yperim])
+   #np.savetxt('aspect_allpositions.ascii',np.array([xxxp,yyyp]).T)
+   exit()
 
 #################################################################
 # define boundary conditions
@@ -308,6 +319,9 @@ NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
 dNNNVdr  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 dNNNVds  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 
+Rx=0
+Ry=0
+slab_area=0
 for iel in range(0,nel):
     for kq in range (0,nqel):
         rq=qcoords_r[kq]
@@ -325,9 +339,21 @@ for iel in range(0,nel):
         jcob = np.linalg.det(jcb)
         area[iel]+=jcob*weightq
 
+        xq=NNNV.dot(xV[iconV[:,iel]])
+        yq=NNNV.dot(yV[iconV[:,iel]])
+        if rho[iel]>0:
+           Rx+=jcob*weightq*xq
+           Ry+=jcob*weightq*yq
+           slab_area+=jcob*weightq
+
+Rx/=slab_area
+Ry/=slab_area
+
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area (meas) %.6f " %(area.sum()))
 print("     -> total area (anal) %.6f " %(Lx*Ly))
+
+print("     -> coords center mass: %e %e" %(Rx,Ry))
 
 #print( np.sum(area*rho))
 
@@ -357,7 +383,7 @@ c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64)
 
 for iel in range(0,nel):
 
-    if iel%1000==0:
+    if iel%5000==0:
        print(iel)
 
     # set arrays to 0 every loop
@@ -613,6 +639,8 @@ start = timing.time()
 
 vrms=0.
 avrg_u=0.
+avrg_u_slab=0.
+avrg_v_slab=0.
 
 for iel in range (0,nel):
     for kq in range (0,nqel):
@@ -636,13 +664,20 @@ for iel in range (0,nel):
             vq+=NNNV[k]*v[iconV[k,iel]]
         vrms+=(uq**2+vq**2)*weightq*jcob
         avrg_u+=uq*weightq*jcob
+        if rho[iel]>0:
+           avrg_u_slab+=uq*weightq*jcob
+           avrg_v_slab+=vq*weightq*jcob
     # end for kq
 # end for iel
 
 avrg_u/=(Lx*Ly)
+avrg_u_slab/=slab_area
+avrg_v_slab/=slab_area
 
-print("     -> vrms   = %.6e m/s" %(vrms))
-print("     -> avrg u = %.6e m/s" %(avrg_u))
+print("     -> vrms        = %.6e m/s" %(vrms))
+print("     -> avrg u      = %.6e m/s" %(avrg_u))
+print("     -> avrg u slab = %.6e m/s" %(avrg_u_slab))
+print("     -> avrg v slab = %.6e m/s" %(avrg_v_slab))
 
 print("compute vrms: %.3fs" % (timing.time() - start))
 
@@ -654,7 +689,7 @@ perimfile=open('perimeter.ascii',"w")
 for j in range (0,np_perim):
     for i in range(0,NV):
         if abs(xV[i]-xperim[j])<1 and abs(yV[i]-yperim[j])<1:
-           perimfile.write("%6e %6e %6e %6e \n" %(xperim[j],yperim[j],u[i],v[i]))
+           perimfile.write("%6e %6e %6e %6e %e \n" %(xperim[j],yperim[j],u[i],v[i],u[i]-avrg_u_slab))
         #end if
     #end for
 #end for
@@ -663,7 +698,7 @@ midfile=open('midsurface.ascii',"w")
 for j in range (0,np_mid):
     for i in range(0,NV):
         if abs(xV[i]-xmid[j])<1 and abs(yV[i]-ymid[j])<1:
-           midfile.write("%6e %6e %6e %6e \n" %(xmid[j],ymid[j],u[i],v[i]))
+           midfile.write("%6e %6e %6e %6e %e \n" %(xmid[j],ymid[j],u[i],v[i],u[i]-avrg_u_slab))
         #end if
     #end for
 #end for

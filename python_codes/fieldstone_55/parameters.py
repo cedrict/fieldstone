@@ -1,12 +1,12 @@
 
 import numpy as np
 
-Lx=3000e3
-Ly=1500e3
+Lx=2000e3
+Ly=1000e3
 d=50e3
 h=100e3
 eta1=1e21
-gamma=100.
+gamma=100.  #viscosity ratio
 drho=100.
 L=400e3
 theta=60./180.*np.pi

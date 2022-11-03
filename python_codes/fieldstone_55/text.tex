@@ -6,14 +6,13 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-{\sl This stone was developed in collaboration with E. van der Wiel}. \index{contributors}{E. van der Wiel}
+{\sl This stone was developed in collaboration with Erik van der Wiel and Neil Ribe}. 
+\index{contributors}{E. van der Wiel}
+\index{contributors}{N. Ribe}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
 %--------------------------------------------------------
-
-
-\index{contributors}{E. van der Wiel}
 
 
 \vspace{1cm}
@@ -41,9 +40,33 @@ These two files are then read in {\sl fieldstone.py} and stored in the xV, yV an
 
 Gravity is vertical and Earth-like. Free-slip boundary conditions are imposed on the top while 
 the other boundaries are free (in/outflow determined freely based on the internal dynamics). 
-In order to remove the horizontal null space the average horizontal velocity is set to zero. 
 Crouzeix-Raviart elements are used, see Section~\ref{sec:crouzeix-raviart}.
 The density of the mantle is set to zero while the subducting plate has a density $\delta\rho$. 
+
+In order to remove the horizontal null space (when the side boundaries are fully open) 
+the average horizontal velocity of the domain is set to zero,
+which we will revisit a bit later.
+
+As an exercise, we can ask ourselves where the center of mass of the slab is located.
+If the mass distribution is continuous with the density $\rho(\vec{r})$ 
+within a solid $Q$, then the integral of the weighted position coordinates 
+of the points in this volume relative to the center of mass $\vec{R}$ over the volume $V$ is zero, 
+that is
+\[
+\iiint_Q \rho(\vec{r}) (\vec{r}-\vec{R}) dV =0
+\]
+Since the density in the slab is constant this simplifies to 
+\[
+\iiint_Q  (\vec{r}-\vec{R}) dV =0
+\]
+or, 
+\[
+\vec{R} = \frac{ \iiint_Q  \vec{r} dV}{\iiint_Q  dV}
+\]
+We find $\vec{R}=(940.7808, 873.6642)km$ for a 2000x1000km domain.
+
+
+
 
 \begin{center}
 \includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/mesh}
@@ -85,7 +108,80 @@ free slip b.c. on left and right sides, open at the bottom; 'f.s. all' means
 free slip b.c. on sides and bottom.}
 \end{center}
 
+
+%----------------------------------------------------------------------
+\subsection*{Exploring the influence of the domain size}
+
+The BEM method is such that the domain is actually a semi-infinite plane.
+All I can do in a FEM code is prescribe no kinematic boundary conditions on the side and bottom 
+boundaries and use a 'large enough' domain. But what is large enough? Let us investigate.
+
+I have explored domains from size 2000x1000 up to 6000x3000 km. 
+The slab remains at the same location below the surface and in the middle of the domain
+in the $x$-direction as shown here:
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma001/small}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma001/mid}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma001/large}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/vx_small}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/vx_medium}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/vx_large}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/vy_small}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/vy_medium}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/vy_large}\\
+{\captionfont From left to right: 2000x1000, 4000x2000, 6000x3000km domains. Density field.}
+\end{center}
+
+I also revisit the null space removal algorithm. Because the domain size changes 
+using the total average horizontal velocity makes little sense. Instead 
+I compute the average horizontal velocity of the slab only. 
+
+We define also the reference velocity as:
+\[
+V_{ref}= \frac{h^2 g \delta \rho }{\eta} = \frac{100e3^2 \cdot 9.81 \cdot 100}{1e21}
+\]
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma001/vx_spine}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma001/vx_spine2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma001/vy_spine}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma001/vx_perimeter}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma001/vx_perimeter2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma001/vy_perimeter}\\
+{\captionfont Viscosity contrast $\gamma=1$. From left to right: $u$, zero slab velocity-normalised $u$ 
+and $v$ as measured on the spine (top row) and on the perimeter (bottom row). Velocities are normalised by $V_{ref}$}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/vx_spine}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/vx_spine2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/vy_spine}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/vx_perimeter}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/vx_perimeter2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/vy_perimeter}\\
+{\captionfont Viscosity contrast $\gamma=100$. From left to right: $u$, zero slab velocity-normalised $u$ 
+and $v$ as measured on the spine (top row) and on the perimeter (bottom row). Velocities are normalised by $V_{ref}$}
+\end{center}
+
+We see that results seem to converge to a domain size-independent profile, for both $u$ and $v$
+fiels as measured on the spine and on the perimeter of the slab. 
+
+I have also quickly explored the influence of the mesh resolution for a given domain size 
+and it appears that the resolution used for these calculations is sufficient to capture 
+a resolution independent velocity field.
+
+The question remains as to why BEM results still differ substantially from my high resolution
+large domain results.
+
+
+
+
+
+
 \newpage
+%----------------------------------------------------------------------
+\subsection*{Time evolution with ASPECT}
 Finally, we have run this experiment over time with ASPECT (unfortunately viscosities were 100 times 
 too small so that the times should be multiplied by 100):
 \begin{center}
@@ -119,6 +215,9 @@ too small so that the times should be multiplied by 100):
 %{\scriptsize Parallel and perpendicular velocity to midsurface. $s$ is measured from 
 %left to right on the midsurface and excludes the rounded edges of the slab.}
 %\end{center}
+
+
+
 
 
 Literature: \cite{fogm14}

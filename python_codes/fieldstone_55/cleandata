@@ -1,0 +1,6 @@
+rm *.vtu
+rm *.ascii
+rm subd.1.ele
+rm subd.1.node 
+rm subd.node
+
