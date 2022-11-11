@@ -1,6 +1,66 @@
 \begin{flushright} {\tiny {\color{gray} density\_profile.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+\begin{center}
 \includegraphics[width=12cm]{images/density_profile/density_profile}
+\end{center}
 
 \Literature: Kennett (1998) \cite{kenn98}
+
+Let us look at the density and pressure profiles in a 1D isothermal 'planet'. 
+We start from 
+\[
+-\vec\nabla p + \rho \vec{g} = \vec{0}
+\]
+In 1D, and assuming $\vec{g}=-g \vec{e}_z$:
+\[
+-\frac{dp}{dz}-\rho g=0
+\]
+or
+\[
+\frac{dp}{dz}= -\rho g
+\]
+Assuming $\rho$ and $g$ constant in the domain $z\in [0,L]$, we can solve this ODE and we obtain:
+\[
+p(z) = \rho g (L-z)
+\]
+Let us now turn to the case of an isothermal but compressible fluid. 
+Its density is now given by 
+\[
+\rho(p) = \rho_0(1-\beta p)
+\]
+where $\beta$ is the compressibility (assumed to be constant in the domain). We must then solve
+\begin{eqnarray}
+\frac{dp}{dz}= -\rho_0(1-\beta p) g
+&\Rightarrow&
+\frac{dp}{1-\beta p} = -\rho_0 g dz \nonumber\\
+&\Rightarrow&
+\int \frac{dp}{1-\beta p} = -\int \rho_0 g dz \nonumber\\
+&\Rightarrow&
+-\frac{1}{\beta} \ln (1-\beta p) = -\rho_0 g z + C \nonumber\\
+&\Rightarrow&
+\ln (1-\beta p) = \beta \rho_0 g z + D \nonumber\\
+&\Rightarrow&
+1 -\beta p = \exp \left( \beta \rho_0 g z + D  \right) \nonumber\\
+&\Rightarrow&
+p(z) = \frac{1}{\beta} \left[ 1- \exp \left( \beta \rho_0 g z + D  \right) \right] \nonumber\\
+\end{eqnarray}
+At $z=L$ we require $p=0$ so we obtain
+\[
+p(z) = \frac{1}{\beta} \left[ 1- \exp \left( \beta \rho_0 g (z-L)  \right) \right]
+\]
+Note that when the compressibility tends to zero, by virtue of 
+\[
+\exp x \sim 1 + x + \frac{x^2}{2} + ...
+\]
+for $x\rightarrow 0$ we then recover the linear pressure profile above.
+
+Let us now take $\rho_0=\SI{4000}{\kg\per\cubic\meter}$, 
+$g=\SI{10}{\meter\per\square\second}$ and $\beta=4\cdot 10^{-12}~\si{\per\pascal}$ \cite{gadb20} 
+and $L=3000~\si{\km}$.
+
+\begin{center}
+\includegraphics[width=12cm]{images/density_profile/pressure}
+\end{center}
+
+TODO: produce same plot with density

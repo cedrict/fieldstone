@@ -12,3 +12,21 @@ plot[:6000][3480:6400]\
 6371-400  lt -1 lw .5 dashtype 2 t '400km depth',\
 6371-670  lt -1 lw .5 dashtype 3 t '670km depth'
 
+#############################################################
+
+set xlabel 'r'
+set ylabel 'p'
+
+L=3000e3
+g=10
+rho0=4000
+
+f(x,b)=(1-exp(b*rho0*g*(x-L)))/b
+
+set output 'pressure.pdf'
+plot[0:L][]\
+f(x,1e-13) t '{/Symbol b}=1e-13',\
+f(x,1e-12) t '{/Symbol b}=1e-12',\
+f(x,5e-12) t '{/Symbol b}=5e-12',\
+-rho0*g*(x-L) lt -1 dt 2 t 'incompr.'
+
