@@ -1,4 +1,82 @@
 
+
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_138/images/Magnetic_field_due_to_dipole_moment.png}
+\end{center}
+
+Outside of the source region, this potential is the vector potential $\vec A$ of a magnetic dipole is (
+$\vec r$ is the vector from the position of the dipole to the position where the field is being measured):
+\[
+\vec A(\vec r) = \frac{\mu_0}{4 \pi} \frac{\vec m \times \vec r}{r^3}
+\]
+and the magnetic flux density field $\vec B$ (in Tesla) is a vector quantity given by
+\[
+\vec B (\vec r) = \vec \nabla \times \vec A 
+=
+\frac{\mu_0}{4\pi} \left[  \frac{3 \vec r (\vec m \cdot \vec r)}{r^5} - \frac{\vec m}{r^3}  \right]
+\]
+Note that a slightly different equation is presented on Wikipedia, which adds a term to the above one:
+\[
+\vec B (\vec r) = \vec \nabla \times \vec A 
+=
+\frac{\mu_0}{4\pi} \left[  \frac{3 \vec r (\vec m \cdot \vec r)}{r^5} - \frac{\vec m}{r^3}  \right]
++ \frac{2\mu_0}{3} \vec m \; \delta(\bm r)
+\]
+
+From Wiki\footnote{\url{https://en.wikipedia.org/wiki/Magnetization}}: In classical electromagnetism, magnetization or magnetic polarization is the vector field that expresses the density of permanent or induced magnetic dipole moments in a magnetic material. The origin of the magnetic moments responsible for magnetization can be either microscopic electric currents resulting from the motion of electrons in atoms, or the spin of the electrons or the nuclei. Net magnetization results from the response of a material to an external magnetic field, together with any unbalanced magnetic dipole moments that may be inherent in the material itself; for example, in ferromagnets. Magnetization is not always uniform within a body, but rather varies between different points. 
+Physicists and engineers usually define magnetization as the quantity of magnetic moment per unit volume. It is represented by a pseudovector $\vec M$.
+
+The magnetization field ($\vec M$-field) can be defined according to the following equation: 
+\[
+\vec M = \frac{\delta \vec m}{\delta V}
+\]
+Where $\delta \vec m$ is the elementary magnetic moment and $\delta V$  
+is the volume element; in other words, the $\vec M$-field 
+is the distribution of magnetic moments in the region or manifold concerned. 
+This is better illustrated through the following relation:
+\[
+\vec m = \int\int\int \vec M \; dV
+\]
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_138/images/01}
+\end{center}
+
+The 3D domain $\Omega$ is tesselated with many small volumes (cells).
+At any given position $\vec r$, the resulting fields $\vec A$ and $\vec B$
+are the sum of the contributions of all cells, assuming each one
+can be seen as a dipole $\delta \vec m$.
+We then have:
+\begin{eqnarray}
+\vec A(\vec r) 
+&=&  \sum_{i=1,cells} \frac{\mu_0}{4 \pi} \frac{ \delta \vec m_i \times (\vec r- \vec r_{i})}{|\vec r-\vec r_{i}|^3} \\
+&=&  \sum_{i=1,cells} \frac{\mu_0}{4 \pi} \frac{ \vec M_i \times (\vec r- \vec r_{i})}{|\vec r-\vec r_{i}|^3} \delta V_i 
+\end{eqnarray}
+And then, when the number of cells becomes infinitely large, we obtain:
+\begin{eqnarray}
+\vec A(\vec r) 
+&=&  \int_\Omega \frac{\mu_0}{4 \pi} \frac{ \vec M(\vec {r'}) \times (\vec r- \vec {r'})}{|\vec r-\vec{r'}|^3} d\vec{r'} 
+\end{eqnarray}
+Likewise, the magnetic field is given by 
+\begin{eqnarray}
+\vec B (\vec r) 
+&=& \sum_{i=1,cells} \frac{\mu_0}{4\pi} 
+\left[  \frac{3 (\vec r-\vec r_i) (\delta \vec m_i \cdot (\vec r-\vec r_i))}{|\vec r -\vec{r}_i|^5} - \frac{\delta \vec m_i}{|\vec r -\vec{r}_i|^3}  \right] \\
+&=& \sum_{i=1,cells} \frac{\mu_0}{4\pi} 
+\left[  \frac{3 (\vec r-\vec r_i) (\vec M_i \cdot (\vec r-\vec r_i))}{|\vec r -\vec{r}_i|^5} - \frac{\vec M_i}{|\vec r -\vec{r}_i|^3}  \right] \delta V_i \\
+&\dots& \nonumber\\
+&=& \int_\Omega \frac{\mu_0}{4\pi} 
+\left[ \frac{3 (\vec r-\vec {r'}) (\vec M(\vec {r'}) \cdot (\vec r-\vec{r'}))}{|\vec r -\vec{r'}|^5} - \frac{\vec M(\vec{r'})}{|\vec r -\vec{r'}|^3} \right] d\vec{r'} 
+\end{eqnarray}
+
+
+
+
+
+
+------------------------------------------------------------------------------
+FROM grape function comment latex
 This function receives as argument the coordinates {\tt x,y,z} of a point and 
 returns the magnetic vector potential ${\bm A}$ and the magnetic field ${\bm B}$
 defined by the equations
@@ -69,3 +147,17 @@ d^3{\vec r}'
 \end{eqnarray}
 
 
+
+
+
+TODO/TOCHECK:
+
+minus sign ?
+
+nqdim ? 
+
+atan2? f77 python 
+
+add dtype to arrrays
+
+compute field above vertical face!
