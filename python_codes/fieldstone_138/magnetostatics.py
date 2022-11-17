@@ -172,13 +172,50 @@ def NNN(r,s,t):
     N7=0.125*(1.-r)*(1.+s)*(1.+t)
     return np.array([N0,N1,N2,N3,N4,N5,N6,N7],dtype=np.float64)
 
+def dNNNdr(r,s,t):
+    dNdr0=-0.125*(1.-s)*(1.-t) 
+    dNdr1=+0.125*(1.-s)*(1.-t)
+    dNdr2=+0.125*(1.+s)*(1.-t)
+    dNdr3=-0.125*(1.+s)*(1.-t)
+    dNdr4=-0.125*(1.-s)*(1.+t)
+    dNdr5=+0.125*(1.-s)*(1.+t)
+    dNdr6=+0.125*(1.+s)*(1.+t)
+    dNdr7=-0.125*(1.+s)*(1.+t)
+    return np.array([dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,dNdr6,dNdr7],dtype=np.float64)
+
+def dNNNds(r,s,t):
+    dNds0=-0.125*(1.-r)*(1.-t) 
+    dNds1=-0.125*(1.+r)*(1.-t)
+    dNds2=+0.125*(1.+r)*(1.-t)
+    dNds3=+0.125*(1.-r)*(1.-t)
+    dNds4=-0.125*(1.-r)*(1.+t)
+    dNds5=-0.125*(1.+r)*(1.+t)
+    dNds6=+0.125*(1.+r)*(1.+t)
+    dNds7=+0.125*(1.-r)*(1.+t)
+    return np.array([dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6,dNds7],dtype=np.float64)
+
+def dNNNdt(r,s,t):
+    dNdt0=-0.125*(1.-r)*(1.-s) 
+    dNdt1=-0.125*(1.+r)*(1.-s)
+    dNdt2=-0.125*(1.+r)*(1.+s)
+    dNdt3=-0.125*(1.-r)*(1.+s)
+    dNdt4=+0.125*(1.-r)*(1.-s)
+    dNdt5=+0.125*(1.+r)*(1.-s)
+    dNdt6=+0.125*(1.+r)*(1.+s)
+    dNdt7=+0.125*(1.-r)*(1.+s)
+    return np.array([dNdt0,dNdt1,dNdt2,dNdt3,dNdt4,dNdt5,dNdt6,dNdt7],dtype=np.float64)
+
 ###############################################################################
 # computes magnetic field components based on a 2^3 quadrature point integration
-# produced by a single hexahedron of size hx,hy,hz carrying a magnetisation
+# produced by a single hexahedron (cuboid) carrying a magnetisation
 # vector (Mx,My,Mz) assumed to be constant inside the element/cell.
 # TODO: allow for higher quadrature  
 
-def compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,hx,hy,hz,Mx,My,Mz,nqdim):
+def compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz,nqdim):
+
+    hx=x[icon[6]]-x[icon[0]]
+    hy=y[icon[6]]-y[icon[0]]
+    hz=z[icon[6]]-z[icon[0]]
 
     Bx=0
     By=0
@@ -196,17 +233,23 @@ def compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,hx,hy,hz,Mx,My,Mz,nqdim):
                 tq=coordsq[kq]
                 weightq=weightsq[iq]*weightsq[jq]*weightsq[kq]
 
+                dNdr=dNNNdr(rq,sq,tq)
+                dNds=dNNNds(rq,sq,tq)
+                dNdt=dNNNdt(rq,sq,tq)
+                jcb=np.zeros((3,3),dtype=np.float64)
+                jcb[0,0]=dNdr.dot(x[icon[0:8]])
+                jcb[0,1]=dNdr.dot(y[icon[0:8]])
+                jcb[0,2]=dNdr.dot(z[icon[0:8]])
+                jcb[1,0]=dNds.dot(x[icon[0:8]])
+                jcb[1,1]=dNds.dot(y[icon[0:8]])
+                jcb[1,2]=dNds.dot(z[icon[0:8]])
+                jcb[2,0]=dNdt.dot(x[icon[0:8]])
+                jcb[2,1]=dNdt.dot(y[icon[0:8]])
+                jcb[2,2]=dNdt.dot(z[icon[0:8]])
+                jcob = np.linalg.det(jcb)
+                JxW=weightq*jcob
 
-    #for iq in [-1, 1]:
-    #    for jq in [-1, 1]:
-    #        for kq in [-1, 1]:
-                # position & weight of quad. point
-   #             rq=iq/np.sqrt(3)
-   #             sq=jq/np.sqrt(3)
-   #             tq=kq/np.sqrt(3)
-   #             weightq=1.*1.*1.
-
-                JxW=weightq*hx*hy*hz/8
+                #JxW=weightq*hx*hy*hz/8
 
                 N=NNN(rq,sq,tq)
 
@@ -246,7 +289,7 @@ def compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,hx,hy,hz,Mx,My,Mz,nqdim):
         #end for 
     #end for 
 
-    return np.array([Bx,By,Bz])
+    return np.array([Bx,By,Bz],dtype=np.float64)
 
 ###############################################################################
 # Subroutine plane computes the intersection (x,y,z) of a plane 
@@ -268,8 +311,8 @@ def plane(x0,y0,z0,x1,y1,z1,x2,y2,z2,x3,y3,z3):
     z3n=z3-z1
 
     #call cross(x3n,y3n,z3n,x2n,y2n,z2n,cx,cy,cz,c)
-    V3=np.array([x3n,y3n,z3n]) 
-    V2=np.array([x2n,y2n,z2n]) 
+    V3=np.array([x3n,y3n,z3n],dtype=np.float64)
+    V2=np.array([x2n,y2n,z2n],dtype=np.float64)
     C=np.cross(V3,V2)
     cx=C[0]
     cy=C[1]
@@ -322,8 +365,8 @@ def line(x0,y0,z0,x1,y1,z1,x2,y2,z2):
       tz2=z2-z1
       a=np.sqrt(tx2**2+ty2**2+tz2**2)
 
-      T2 = np.array([tx2,ty2,tz2])
-      T0 = np.array([tx0,ty0,tz0])
+      T2 = np.array([tx2,ty2,tz2],dtype=np.float64)
+      T0 = np.array([tx0,ty0,tz0],dtype=np.float64)
       C = np.cross(T2,T0)
       cx = C[0]
       cy = C[1]
@@ -368,8 +411,8 @@ def rot(ax,ay,az,bx,by,bz,nx,ny,nz,px,py,pz):
     y=by-ay
     z=bz-az
 
-    N=np.array([nx,ny,nz]) 
-    V=np.array([x,y,z]) 
+    N=np.array([nx,ny,nz],dtype=np.float64) 
+    V=np.array([x,y,z],dtype=np.float64) 
     C=np.cross(N,V)
     cx=C[0]
     cy=C[1]
@@ -425,8 +468,8 @@ def facmag(Mx,My,Mz,x0,y0,z0,x,y,z,n):
          zl[i]=zl[i]/rl
       #end for
 
-      L1=np.array([xl[1],yl[1],zl[1]])
-      L0=np.array([xl[0],yl[0],zl[0]])
+      L1=np.array([xl[1],yl[1],zl[1]],dtype=np.float64)
+      L0=np.array([xl[0],yl[0],zl[0]],dtype=np.float64)
       N=np.cross(L1,L0)
       nx=N[0]
       ny=N[1]
@@ -508,7 +551,7 @@ def facmag(Mx,My,Mz,x0,y0,z0,x,y,z,n):
       return np.array([Bx,By,Bz],dtype=np.float64)
 
 ###############################################################################
-# this function computes the magnetic field produced by a hexahedron cell
+# this function computes the magnetic field produced by a cuboid cell
 # using facmag function on each face. Here again the magnetisation vector 
 # (Mx,My,Mz) is assumed to be constant inside the cell.
 # The internal numbering of nodes is as follows: 
@@ -525,7 +568,7 @@ def facmag(Mx,My,Mz,x0,y0,z0,x,y,z,n):
 # x
 
 
-def compute_B_surface_integral(xmeas,ymeas,zmeas,x,y,z,icon,hx,hy,hz,Mx,My,Mz):
+def compute_B_surface_integral_cuboid(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz):
 
     Bx=0
     By=0
@@ -602,6 +645,167 @@ def compute_B_surface_integral(xmeas,ymeas,zmeas,x,y,z,icon,hx,hy,hz,Mx,My,Mz):
     By+=field[1]
     Bz+=field[2]
 
-    return np.array([Bx,By,Bz])
+    return np.array([Bx,By,Bz],dtype=np.float64)
 
 ###############################################################################
+# this function computes the magnetic field produced by a hexahedron cell
+# which vertical sides are planar. Only the top and bottom faces can 
+# contain 4 nodes which are not co-planar.
+# In light thereof we subdivide the top and bottom faces into two triangles
+# This feature is needed in the case when topography is prescribed at the
+# top of the domain and the vertical position of the nodes accomodates this.
+
+def compute_B_surface_integral_wtopo(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz):
+
+    Bx=0
+    By=0
+    Bz=0
+
+    nface=4 
+    xface=np.empty(nface+1,dtype=np.float64)
+    yface=np.empty(nface+1,dtype=np.float64)
+    zface=np.empty(nface+1,dtype=np.float64)
+
+    #face 'x=0'
+    xface[0]=x[icon[7]] ; yface[0]=y[icon[7]] ; zface[0]=z[icon[7]] 
+    xface[1]=x[icon[3]] ; yface[1]=y[icon[3]] ; zface[1]=z[icon[3]] 
+    xface[2]=x[icon[0]] ; yface[2]=y[icon[0]] ; zface[2]=z[icon[0]] 
+    xface[3]=x[icon[4]] ; yface[3]=y[icon[4]] ; zface[3]=z[icon[4]] 
+    xface[4]=xface[0]   ; yface[4]=yface[0]   ; zface[4]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #face 'x=1'
+    xface[0]=x[icon[1]] ; yface[0]=y[icon[1]] ; zface[0]=z[icon[1]] 
+    xface[1]=x[icon[2]] ; yface[1]=y[icon[2]] ; zface[1]=z[icon[2]] 
+    xface[2]=x[icon[6]] ; yface[2]=y[icon[6]] ; zface[2]=z[icon[6]] 
+    xface[3]=x[icon[5]] ; yface[3]=y[icon[5]] ; zface[3]=z[icon[5]] 
+    xface[4]=xface[0]   ; yface[4]=yface[0]   ; zface[4]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #face 'y=0'
+    xface[0]=x[icon[0]] ; yface[0]=y[icon[0]] ; zface[0]=z[icon[0]] 
+    xface[1]=x[icon[1]] ; yface[1]=y[icon[1]] ; zface[1]=z[icon[1]] 
+    xface[2]=x[icon[5]] ; yface[2]=y[icon[5]] ; zface[2]=z[icon[5]] 
+    xface[3]=x[icon[4]] ; yface[3]=y[icon[4]] ; zface[3]=z[icon[4]] 
+    xface[4]=xface[0]   ; yface[4]=yface[0]   ; zface[4]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #face 'y=1'
+    xface[0]=x[icon[2]] ; yface[0]=y[icon[2]] ; zface[0]=z[icon[2]] 
+    xface[1]=x[icon[3]] ; yface[1]=y[icon[3]] ; zface[1]=z[icon[3]] 
+    xface[2]=x[icon[7]] ; yface[2]=y[icon[7]] ; zface[2]=z[icon[7]] 
+    xface[3]=x[icon[6]] ; yface[3]=y[icon[6]] ; zface[3]=z[icon[6]] 
+    xface[4]=xface[0]   ; yface[4]=yface[0]   ; zface[4]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    nface=3 
+    xface=np.empty(nface+1,dtype=np.float64)
+    yface=np.empty(nface+1,dtype=np.float64)
+    zface=np.empty(nface+1,dtype=np.float64)
+
+    #bottom face 
+    x8=(x[icon[0]]+x[icon[1]]+x[icon[2]]+x[icon[3]])*0.25
+    y8=(y[icon[0]]+y[icon[1]]+y[icon[2]]+y[icon[3]])*0.25
+    z8=(z[icon[0]]+z[icon[1]]+z[icon[2]]+z[icon[3]])*0.25
+
+    #328
+    xface[0]=x[icon[3]] ; yface[0]=y[icon[3]] ; zface[0]=z[icon[3]] 
+    xface[1]=x[icon[2]] ; yface[1]=y[icon[2]] ; zface[1]=z[icon[2]] 
+    xface[2]=x8         ; yface[2]=y8         ; zface[2]=z8
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #821
+    xface[0]=x8         ; yface[0]=y8         ; zface[0]=z8 
+    xface[1]=x[icon[2]] ; yface[1]=y[icon[2]] ; zface[1]=z[icon[2]] 
+    xface[2]=x[icon[1]] ; yface[2]=y[icon[1]] ; zface[2]=z[icon[1]] 
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #108
+    xface[0]=x[icon[1]] ; yface[0]=y[icon[1]] ; zface[0]=z[icon[1]] 
+    xface[1]=x[icon[0]] ; yface[1]=y[icon[0]] ; zface[1]=z[icon[0]] 
+    xface[2]=x8         ; yface[2]=y8         ; zface[2]=z8 
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #803
+    xface[0]=x8         ; yface[0]=y8         ; zface[0]=z8
+    xface[1]=x[icon[0]] ; yface[1]=y[icon[0]] ; zface[1]=z[icon[0]] 
+    xface[2]=x[icon[3]] ; yface[2]=y[icon[3]] ; zface[2]=z[icon[3]] 
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+
+    #top face
+    x9=(x[icon[4]]+x[icon[5]]+x[icon[6]]+x[icon[7]])*0.25
+    y9=(y[icon[4]]+y[icon[5]]+y[icon[6]]+y[icon[7]])*0.25
+    z9=(z[icon[4]]+z[icon[5]]+z[icon[6]]+z[icon[7]])*0.25
+
+    #679
+    xface[0]=x[icon[6]] ; yface[0]=y[icon[6]] ; zface[0]=z[icon[6]] 
+    xface[1]=x[icon[7]] ; yface[1]=y[icon[7]] ; zface[1]=z[icon[7]] 
+    xface[2]=x9         ; yface[2]=y9         ; zface[2]=z9
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #974
+    xface[0]=x9         ; yface[0]=y9         ; zface[0]=z9
+    xface[1]=x[icon[7]] ; yface[1]=y[icon[7]] ; zface[1]=z[icon[7]] 
+    xface[2]=x[icon[4]] ; yface[2]=y[icon[4]] ; zface[2]=z[icon[4]] 
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #459
+    xface[0]=x[icon[4]] ; yface[0]=y[icon[4]] ; zface[0]=z[icon[4]] 
+    xface[1]=x[icon[5]] ; yface[1]=y[icon[5]] ; zface[1]=z[icon[5]] 
+    xface[2]=x9         ; yface[2]=y9         ; zface[2]=z9 
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #956
+    xface[0]=x9         ; yface[0]=y9         ; zface[0]=z9
+    xface[1]=x[icon[5]] ; yface[1]=y[icon[5]] ; zface[1]=z[icon[5]] 
+    xface[2]=x[icon[6]] ; yface[2]=y[icon[6]] ; zface[2]=z[icon[6]] 
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    return np.array([Bx,By,Bz],dtype=np.float64)
+
+ 

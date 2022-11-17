@@ -9,7 +9,6 @@ Mx=1
 My=1
 Mz=1
 
-
 ###########################################################
 # create cell coordinates and connectivity array
 #     z
@@ -63,11 +62,11 @@ zmeas=5
 
 nqdim=2
 
-B1=compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,hx,hy,hz,Mx,My,Mz,nqdim)
+B1=compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz,nqdim)
 
 print('Vol quad B:',B1)
 
-B2=compute_B_surface_integral(xmeas,ymeas,zmeas,x,y,z,icon,hx,hy,hz,Mx,My,Mz)
+B2=compute_B_surface_integral_cuboid(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz)
 
 print('Surf int B:',B2)
 
@@ -85,11 +84,11 @@ zmeas=5
 
 nqdim=2
 
-B1=compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,hx,hy,hz,Mx,My,Mz,nqdim)
+B1=compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz,nqdim)
 
 print('Vol quad B:',B1)
 
-B2=compute_B_surface_integral(xmeas,ymeas,zmeas,x,y,z,icon,hx,hy,hz,Mx,My,Mz)
+B2=compute_B_surface_integral_cuboid(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz)
 
 print('Surf int B:',B2)
 
@@ -105,19 +104,42 @@ xmeas=3
 ymeas=4
 zmeas=5
 
-B2=compute_B_surface_integral(xmeas,ymeas,zmeas,x,y,z,icon,hx,hy,hz,Mx,My,Mz)
+B2=compute_B_surface_integral_cuboid(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz)
 print('Surf int B:',B2)
 
 for nqdim in range(2,9):
 
     print('nqdim=',nqdim)
 
-    B1=compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,hx,hy,hz,Mx,My,Mz,nqdim)
+    B1=compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz,nqdim)
     print('Vol quad B:',B1)
 
     print('Difference:',B1+B2)
 
 
+###########################################################
+# fourth test: a point in space, cell is not a cuboid 
+###########################################################
 
+print('*****test4*****')
+
+z[6]+=0.1
+z[7]+=0.1
+
+xmeas=2
+ymeas=3
+zmeas=5
+
+nqdim=8
+
+B1=compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz,nqdim)
+
+print('Vol quad B:',B1)
+
+B2=compute_B_surface_integral_wtopo(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz)
+
+print('Surf int B:',B2)
+
+print('Difference:',B1+B2)
 
 
