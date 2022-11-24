@@ -182,3 +182,67 @@ add dtype to arrrays
 compute field above vertical face!
 
 explain difference btw m and M (dipole moment vs magnetisation)
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Benchmark 1 - magnetic field above a spherical anomaly/dipole}
+
+The domain is $2\times 2\times 2~\si{\meter}$. No background magnetisation. Single spherical inclusion 
+of radius \SI{1}{\meter} in the middle of the domain with magnetisation ${\bm M}=(0,1,0)$. 
+Note that the computational domain is such that its top surface is at $z=0$.
+
+If one now computes the magnetic field on a vertical line centered on the sphere, one 
+should recover the single dipole value at very large distances ($z>>L_z$). 
+
+We start from the vector potential of a single dipole (Eq. 5.83 of \cite{griffiths}) 
+\[
+{\bm A}_{dip}({\bm r}) = \frac{\mu_0}{4\pi} \frac{{\bm m}\times {\bm r}}{r^3}.
+\]
+Very far away from the sphere, one can see the sphere as a single dipole of volume $V=4\pi R^3/\pi$
+and $r$ is the distance between the measurement point and the center of the sphere, i.e. $r=z-z_c$:
+\[
+{\bm A}_{dip}({\bm r}) = \frac{\mu_0}{4\pi} \frac{{\bm M} V\times {\bm r}}{(z-z_c)^3}
+\]
+Also, ${\bm M}=(0,1,0)$ and ${\bm r}=(x-x_c,y-y_c,z-z_c)=(0,0,z-z_c)$ so that ${\bm M}\times {\bm r}=M (z-z_c) {\bm e}_x$.
+Finally:
+\[
+A_x(z)=\frac{\mu_0}{4\pi} \frac{MV}{(z-z_c)^2}  \quad\quad
+A_y=0 \quad\quad
+A_z=0
+\]
+%\begin{center}
+%\includegraphics[width=12cm]{images/benchmark_magfield_above_dipole/Ax.pdf}
+%\end{center}
+
+
+Turning to the magnetic field of a single dipole:
+\[
+{\bm B}_{dip}({\bm r}) = \frac{\mu_0}{4\pi} \frac{1}{r^3} \left[ \frac{3}{r^2} ({\bm m} \cdot {\bm r}) {\bm r} - {\bm m}\right]
+\]
+
+\[
+{\bm B}_{dip}({\bm r}) = \frac{\mu_0 V}{4\pi} \frac{1}{r^3} \left[ \frac{3}{r^2} ({\bm M} \cdot {\bm r}) {\bm r} - {\bm M}\right]
+\]
+We have ${\bm M} \cdot {\bm r}=0$ so
+\[
+{\bm B}_{dip}({\bm r}) = -\frac{\mu_0 V}{4\pi} \frac{M}{r^3}   {\bm e}_y
+\]
+%\begin{center}
+%\includegraphics[width=12cm]{images/benchmark_magfield_above_dipole/By.pdf}
+%\end{center}
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Benchmark 2}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Benchmark 3}
+
+
+

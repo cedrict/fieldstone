@@ -1,62 +1,73 @@
 import numpy as np
+from numba import jit
 
 epsilon=1e-20
 
 ###############################################################################
+# computes the vector product of two vectors; i.e.,
 
+@jit(nopython=True)
+def cross(a,b):
+    cx=a[1]*b[2]-a[2]*b[1]
+    cy=a[2]*b[0]-a[0]*b[2]
+    cz=a[0]*b[1]-a[1]*b[0]
+    return np.array([cx,cy,cz],dtype=np.float64)
+
+###############################################################################
+
+@jit(nopython=True)
 def qcoords_1D(nqpts):
 
-    val = np.zeros(nqpts,dtype=np.float64) 
-
     if nqpts==1: 
-       val[0]=0
+       return np.array([0],dtype=np.float64)
 
     if nqpts==2: 
-       val=[-1./np.sqrt(3.),1./np.sqrt(3.)]
+       return np.array([-1./np.sqrt(3.),1./np.sqrt(3.)],dtype=np.float64)
 
     if nqpts==3: 
-       val=[-np.sqrt(3/5),0.,np.sqrt(3/5)]
+       
+       return np.array([-np.sqrt(3/5),0.,np.sqrt(3/5)],dtype=np.float64)
 
     if nqpts==4: 
        qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
        qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
-       val=[-qc4a,-qc4b,qc4b,qc4a]
+       return np.array([-qc4a,-qc4b,qc4b,qc4a],dtype=np.float64)
 
     if nqpts==5: 
        qc5a=np.sqrt(5.+2.*np.sqrt(10./7.))/3.
        qc5b=np.sqrt(5.-2.*np.sqrt(10./7.))/3.
        qc5c=0.
-       val=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
+       return np.array([-qc5a,-qc5b,qc5c,qc5b,qc5a],dtype=np.float64)
 
     if nqpts==6:
-       val=[-0.932469514203152,\
-            -0.661209386466265,\
-            -0.238619186083197,\
-            +0.238619186083197,\
-            +0.661209386466265,\
-            +0.932469514203152]
+       return np.array([-0.932469514203152,\
+                        -0.661209386466265,\
+                        -0.238619186083197,\
+                        +0.238619186083197,\
+                        +0.661209386466265,\
+                        +0.932469514203152],dtype=np.float64)
 
     if nqpts==7:
-       val=[-0.9491079123427585,\
-            -0.7415311855993945,\
-            -0.4058451513773972,\
-             0.0000000000000000,\
-             0.4058451513773972,\
-             0.7415311855993945,\
-             0.9491079123427585]
+       return np.array([-0.9491079123427585,\
+               -0.7415311855993945,\
+             -0.4058451513773972,\
+              0.0000000000000000,\
+              0.4058451513773972,\
+              0.7415311855993945,\
+              0.9491079123427585],dtype=np.float64)
 
     if nqpts==8:
-       val=[-0.9602898564975363,\
+       return np.array([-0.9602898564975363,\
             -0.7966664774136267,\
             -0.5255324099163290,\
             -0.1834346424956498,\
              0.1834346424956498,\
              0.5255324099163290,\
              0.7966664774136267,\
-             0.9602898564975363]
+             0.9602898564975363],dtype=np.float64)
 
     if nqpts==9:
-       val=[-0.9681602395076261,\
+       return np.array([-0.9681602395076261,\
             -0.8360311073266358,\
             -0.6133714327005904,\
             -0.3242534234038089,\
@@ -64,10 +75,10 @@ def qcoords_1D(nqpts):
              0.3242534234038089,\
              0.6133714327005904,\
              0.8360311073266358,\
-             0.9681602395076261]
+             0.9681602395076261],dtype=np.float64)
 
     if nqpts==10:
-       val=[-0.973906528517172,\
+       return np.array([-0.973906528517172,\
             -0.865063366688985,\
             -0.679409568299024,\
             -0.433395394129247,\
@@ -76,65 +87,64 @@ def qcoords_1D(nqpts):
              0.433395394129247,\
              0.679409568299024,\
              0.865063366688985,\
-             0.973906528517172]
+             0.973906528517172],dtype=np.float64)
 
-    return val
 
 ###############################################################################
 
+@jit(nopython=True)
 def qweights_1D(nqpts):
 
-    val = np.zeros(nqpts,dtype=np.float64) 
 
     if nqpts==1:
-       val[0]=2
+       return np.array([2],dtype=np.float64)
 
     if nqpts==2:
-       val=[1.,1.]
+       return np.array([1.,1.],dtype=np.float64)
 
     if nqpts==3:
-       val=[5/9,8/9,5/9]
+       return np.array([5/9,8/9,5/9],dtype=np.float64)
 
     if nqpts==4:
        qw4a=(18-np.sqrt(30.))/36.
        qw4b=(18+np.sqrt(30.))/36
-       val=[qw4a,qw4b,qw4b,qw4a]
+       return np.array([qw4a,qw4b,qw4b,qw4a],dtype=np.float64)
 
     if nqpts==5: 
        qw5a=(322.-13.*np.sqrt(70.))/900.
        qw5b=(322.+13.*np.sqrt(70.))/900.
        qw5c=128./225.
-       val=[qw5a,qw5b,qw5c,qw5b,qw5a]
+       return np.array([qw5a,qw5b,qw5c,qw5b,qw5a],dtype=np.float64)
 
     if nqpts==6:
-       val=[0.171324492379170,\
+       return np.array([0.171324492379170,\
             0.360761573048139,\
             0.467913934572691,\
             0.467913934572691,\
             0.360761573048139,\
-            0.171324492379170]
+            0.171324492379170],dtype=np.float64)
 
     if nqpts==7:
-       val=[0.1294849661688697,\
+       return np.array([0.1294849661688697,\
             0.2797053914892766,\
             0.3818300505051189,\
             0.4179591836734694,\
             0.3818300505051189,\
             0.2797053914892766,\
-            0.1294849661688697]
+            0.1294849661688697],dtype=np.float64)
 
     if nqpts==8:
-       val=[0.1012285362903763,\
+       return np.array([0.1012285362903763,\
             0.2223810344533745,\
             0.3137066458778873,\
             0.3626837833783620,\
             0.3626837833783620,\
             0.3137066458778873,\
             0.2223810344533745,\
-            0.1012285362903763]
+            0.1012285362903763],dtype=np.float64)
 
     if nqpts==9:
-       val=[0.0812743883615744,\
+       return np.array([0.0812743883615744,\
             0.1806481606948574,\
             0.2606106964029354,\
             0.3123470770400029,\
@@ -142,10 +152,10 @@ def qweights_1D(nqpts):
             0.3123470770400029,\
             0.2606106964029354,\
             0.1806481606948574,\
-            0.0812743883615744]
+            0.0812743883615744],dtype=np.float64)
 
     if nqpts==10:
-       val=[0.066671344308688,\
+       return np.array([0.066671344308688,\
             0.149451349150581,\
             0.219086362515982,\
             0.269266719309996,\
@@ -154,13 +164,13 @@ def qweights_1D(nqpts):
             0.269266719309996,\
             0.219086362515982,\
             0.149451349150581,\
-            0.066671344308688]
+            0.066671344308688],dtype=np.float64)
 
-    return val
 
 ###############################################################################
 # Q1 basis functions inside the [-1:1]x[-1:1]x[-1:1] reference element/cell
 
+@jit(nopython=True)
 def NNN(r,s,t):
     N0=0.125*(1.-r)*(1.-s)*(1.-t)
     N1=0.125*(1.+r)*(1.-s)*(1.-t)
@@ -172,6 +182,7 @@ def NNN(r,s,t):
     N7=0.125*(1.-r)*(1.+s)*(1.+t)
     return np.array([N0,N1,N2,N3,N4,N5,N6,N7],dtype=np.float64)
 
+@jit(nopython=True)
 def dNNNdr(r,s,t):
     dNdr0=-0.125*(1.-s)*(1.-t) 
     dNdr1=+0.125*(1.-s)*(1.-t)
@@ -183,6 +194,7 @@ def dNNNdr(r,s,t):
     dNdr7=-0.125*(1.+s)*(1.+t)
     return np.array([dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,dNdr6,dNdr7],dtype=np.float64)
 
+@jit(nopython=True)
 def dNNNds(r,s,t):
     dNds0=-0.125*(1.-r)*(1.-t) 
     dNds1=-0.125*(1.+r)*(1.-t)
@@ -194,6 +206,7 @@ def dNNNds(r,s,t):
     dNds7=+0.125*(1.-r)*(1.+t)
     return np.array([dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6,dNds7],dtype=np.float64)
 
+@jit(nopython=True)
 def dNNNdt(r,s,t):
     dNdt0=-0.125*(1.-r)*(1.-s) 
     dNdt1=-0.125*(1.+r)*(1.-s)
@@ -211,6 +224,7 @@ def dNNNdt(r,s,t):
 # vector (Mx,My,Mz) assumed to be constant inside the element/cell.
 # TODO: allow for higher quadrature  
 
+@jit(nopython=True)
 def compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz,nqdim):
 
     hx=x[icon[6]]-x[icon[0]]
@@ -299,6 +313,7 @@ def compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz,nqdim):
 # transformation of coordinates systems.
 # Directly translated from Blakely 1995 book. 
 
+@jit(nopython=True)
 def plane(x0,y0,z0,x1,y1,z1,x2,y2,z2,x3,y3,z3):
     x2n=x2-x1
     y2n=y2-y1
@@ -313,14 +328,14 @@ def plane(x0,y0,z0,x1,y1,z1,x2,y2,z2,x3,y3,z3):
     #call cross(x3n,y3n,z3n,x2n,y2n,z2n,cx,cy,cz,c)
     V3=np.array([x3n,y3n,z3n],dtype=np.float64)
     V2=np.array([x2n,y2n,z2n],dtype=np.float64)
-    C=np.cross(V3,V2)
+    C=cross(V3,V2)
     cx=C[0]
     cy=C[1]
     cz=C[2]
     c=np.sqrt(cx**2+cy**2+cz**2)
 
     #call cross(x2n,y2n,z2n,cx,cy,cz,dx,dy,dz,d)
-    D=np.cross(V2,C)
+    D=cross(V2,C)
     dx=D[0]
     dy=D[1]
     dz=D[2]
@@ -356,6 +371,7 @@ def plane(x0,y0,z0,x1,y1,z1,x2,y2,z2,x3,y3,z3):
 # transformation of coordinate systems.
 # Directly translated from Blakely 1995 book. 
 
+@jit(nopython=True)
 def line(x0,y0,z0,x1,y1,z1,x2,y2,z2):
       tx0=x0-x1
       ty0=y0-y1
@@ -367,13 +383,13 @@ def line(x0,y0,z0,x1,y1,z1,x2,y2,z2):
 
       T2 = np.array([tx2,ty2,tz2],dtype=np.float64)
       T0 = np.array([tx0,ty0,tz0],dtype=np.float64)
-      C = np.cross(T2,T0)
+      C = cross(T2,T0)
       cx = C[0]
       cy = C[1]
       cz = C[2]
       c=np.sqrt(cx**2+cy**2+cz**2)
 
-      D = np.cross(C,T2)
+      D = cross(C,T2)
       dx = D[0]
       dy = D[1]
       dz = D[2]
@@ -406,6 +422,7 @@ def line(x0,y0,z0,x1,y1,z1,x2,y2,z2):
 # 1 if anticlockwise, -1 if clockwise, or 0 if colinear.
 # Directly translated from Blakely 1995 book. 
 
+@jit(nopython=True)
 def rot(ax,ay,az,bx,by,bz,nx,ny,nz,px,py,pz):
     x=bx-ax
     y=by-ay
@@ -413,7 +430,7 @@ def rot(ax,ay,az,bx,by,bz,nx,ny,nz,px,py,pz):
 
     N=np.array([nx,ny,nz],dtype=np.float64) 
     V=np.array([x,y,z],dtype=np.float64) 
-    C=np.cross(N,V)
+    C=cross(N,V)
     cx=C[0]
     cy=C[1]
     cz=C[2]
@@ -447,6 +464,7 @@ def rot(ax,ay,az,bx,by,bz,nx,ny,nz,px,py,pz):
 # Output parameters: Three components of magnetic field (Bx,By,Bz), in T.
 # Directly translated from Blakely 1995 book. 
 
+@jit(nopython=True)
 def facmag(Mx,My,Mz,x0,y0,z0,x,y,z,n):
       #x,y,z of size n+1!
 
@@ -470,7 +488,7 @@ def facmag(Mx,My,Mz,x0,y0,z0,x,y,z,n):
 
       L1=np.array([xl[1],yl[1],zl[1]],dtype=np.float64)
       L0=np.array([xl[0],yl[0],zl[0]],dtype=np.float64)
-      N=np.cross(L1,L0)
+      N=cross(L1,L0)
       nx=N[0]
       ny=N[1]
       nz=N[2]
@@ -482,7 +500,7 @@ def facmag(Mx,My,Mz,x0,y0,z0,x,y,z,n):
       dot=Mx*nx+My*ny+Mz*nz
 
       if abs(dot)<epsilon:
-         return np.array([0,0,0])
+         return np.array([0.,0.,0.])
 
       px,py,pz,w=plane(x0,y0,z0,x[0],y[0],z[0],x[1],y[1],z[1],x[2],y[2],z[2])
 
@@ -568,6 +586,7 @@ def facmag(Mx,My,Mz,x0,y0,z0,x,y,z,n):
 # x
 
 
+@jit(nopython=True)
 def compute_B_surface_integral_cuboid(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz):
 
     Bx=0
@@ -655,6 +674,7 @@ def compute_B_surface_integral_cuboid(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz):
 # This feature is needed in the case when topography is prescribed at the
 # top of the domain and the vertical position of the nodes accomodates this.
 
+@jit(nopython=True)
 def compute_B_surface_integral_wtopo(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz):
 
     Bx=0
@@ -806,6 +826,6 @@ def compute_B_surface_integral_wtopo(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz):
     By+=field[1]
     Bz+=field[2]
 
-    return np.array([Bx,By,Bz],dtype=np.float64)
+    return np.array([-Bx,-By,-Bz],dtype=np.float64)
 
  
