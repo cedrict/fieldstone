@@ -40,21 +40,21 @@ def NNV(rq,sq):
     N_1=0.25*(1.+rq)*(1.-sq)
     N_2=0.25*(1.+rq)*(1.+sq)
     N_3=0.25*(1.-rq)*(1.+sq)
-    return N_0,N_1,N_2,N_3
+    return np.array([N_0,N_1,N_2,N_3],dtype=np.float64) 
 
 def dNNVdr(rq,sq):
     dNdr_0=-0.25*(1.-sq) 
     dNdr_1=+0.25*(1.-sq) 
     dNdr_2=+0.25*(1.+sq) 
     dNdr_3=-0.25*(1.+sq) 
-    return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+    return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3],dtype=np.float64) 
 
 def dNNVds(rq,sq):
     dNds_0=-0.25*(1.-rq)
     dNds_1=-0.25*(1.+rq)
     dNds_2=+0.25*(1.+rq)
     dNds_3=+0.25*(1.-rq)
-    return dNds_0,dNds_1,dNds_2,dNds_3
+    return np.array([dNds_0,dNds_1,dNds_2,dNds_3],dtype=np.float64) 
 
 #------------------------------------------------------------------------------
 

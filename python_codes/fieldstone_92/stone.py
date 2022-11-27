@@ -2,7 +2,6 @@ import numpy as np
 import numpy.ma as ma
 import sys as sys
 import scipy
-import csv
 import math as math
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
