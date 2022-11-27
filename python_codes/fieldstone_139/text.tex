@@ -1,0 +1,72 @@
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_139/text.tex}} \end{flushright}
+
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_01/keywords}
+
+\begin{center}
+
+\fbox{\textbf{\huge \color{teal} P}}
+Codes at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_139}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+{\sl This stone was developed in collaboration with Rayane Meghezi}. \index{contributors}{R. Meghezi}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This \stone originates in \textcite{simp17} book, chapter 9.
+It investigates evolution of a one-dimensional (1D) river profile cutting into an uplifting
+block of crust.
+\[
+\frac{\partial h}{\partial t} + \vec{\upnu}\cdot \vec{\nabla} h = -\vec\nabla \cdot (q_s \vec{n}) + w
+\]
+where $h$ is the elevation of the topography, $\vec\upnu=(u,v)$ is the rate of horizontal tectonic 
+motion in the
+$x$- and $y$-directions, $w$ is the vertical rate of uplift or subsidence, $q_s$ is the volumetric
+sediment flux per unit width (with units \si{\square\meter\per\second}), and 
+$\vec{n}$ is a unit vector directed down the slope of
+the surface (i.e., $\vec{n} = -\vec\nabla h/S$ where $S$ is the local surface slope defined 
+as $|\vec\nabla h|$).
+
+Simpson further explains that ``The sediment flux
+depends on numerous factors, most notably the local slope and the discharge of water flowing over
+the surface. In situations where sediment transport is controlled by the supply of material rather
+than detachment processes (e.g., as would be the case in an alluvial river), one can write the sediment
+flux as
+\[
+q_s = c_0 S + b(q-q_c)^n S^m
+\]
+where $c_0$ , $b$, $n$, and $m$ are positive constants, $S$ is the local slope, 
+$q$ is the local water discharge, and $q_c$ is
+a critical discharge below which there is no sediment transport. This relation includes contributions
+from two terms, a {\it hillslope} flux that depends linearly on the local slope (term 1) 
+and a {\it fluvial} flux that depends nonlinearly on both the water discharge and the local slope (term 2).
+
+The discharge of water flowing over the surface accumulates, for example, due to run-off from rainfall. Here,
+rather than computing the discharge from the equations governing the conservation of mass and
+momentum of the surface water \textcite{sica06}, we use a simple empirically 
+based power law relationship between the water discharge and the upstream drainage area A,
+that is
+\[
+q=kA^p
+\]
+where $k$ and $p$ are positive constants. A similar relation can be introduced for the critical discharge
+\[
+q_c=kA_c^p
+\]
+where $A_c$ is the critical drainage area below which there is no fluvial sediment transport. Substituting
+equations 9.2, 9.3, and 9.4 into 9.1 leads to
+\[
+\frac{\partial h}{\partial t} + u \frac{\partial h}{\partial x}+ v \frac{\partial h}{\partial y}
+= \vec\nabla \cdot \left[
+(c_0 + c A_e^r S^{m-1}) \vec\nabla h
+\right] + w
+\]
+where $c=bk^n$, $r=pn$ and $A_e$ is the effective drainage area defined as $A_e = A-A_c$ 
+for $A>A_c$ and $A_e = 0$ for $A \le A_c$.
+
+
+
+
+''
