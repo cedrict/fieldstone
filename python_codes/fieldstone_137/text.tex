@@ -1,3 +1,21 @@
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_137/text.tex}} \end{flushright}
+
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_01/keywords}
+
+\begin{center}
+
+\fbox{\textbf{\huge \color{teal} P}}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_137}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+{\sl This stone was developed in collaboration with Erik van der Wiel}. \index{contributors}{E. van der Wiel}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+What follows is taken from \textcite{cakm06} (2006), entitled \textcite{cakm06}. 
 
 The system is divided into `bins' and for each bin $j=1,...M$ we evaluate the number $n_{j,c}$
 of particles of species $c=1,...C$.
@@ -13,6 +31,12 @@ with
 P_c = \frac{n_c}{M}
 \]
 where $n_c$ is the total number of particles of $c$ in the domain.
+
+In the code, we define
+\[
+{\tt denom1}=\sum\limits_{i=1}^M \sum\limits_{c=1}^C \frac{n_{i,c}}{P_c}
+\]
+
 Using the joint probabilities of the equation above we then calculate the entropy:
 \begin{equation}
 S= -\sum_{j=1}^M \sum_{c=1}^C p_{j,c} \ln p_{j,c}
@@ -39,8 +63,14 @@ p_{c|j}=\frac{\frac{n_{j,c}}{P_c}}{\sum\limits_{c=1}^C \frac{n_{j,c}}{P_c}}
 \qquad
 \text{and}
 \qquad
-p_j =\frac{\sum\limits_{c=1}^C \frac{n_{j,c}}{P_c}}{\sum\limits_{i=1}^M \sum\limits_{c=1}^C \frac{n_{i,c}}{P_c}} 
+p_j=\frac{\sum\limits_{c=1}^C \frac{n_{j,c}}{P_c}}{\sum\limits_{i=1}^M \sum\limits_{c=1}^C \frac{n_{i,c}}{P_c}} 
 \]
+In the code we define 
+\[
+{\tt denom2}[j]=\sum\limits_{c=1}^C \frac{n_{j,c}}{P_c}
+\]
+
+
 Substituting Eq.~\eqref{} into Eq.~\eqref{}:
 \begin{eqnarray}
 S
@@ -58,19 +88,16 @@ p_j \sum_{c=1}^C p_{c|j} \ln p_{c|j}
 -
 \sum_{j=1}^M p_j \ln p_j \nn\\
 &=& 
-\underbrace{S_{location}(species)}_{S_2} + \underbrace{S(location)}_{S_3}
+\underbrace{S_{location}(species)}_{S_3} + \underbrace{S(location)}_{S_2}
 \end{eqnarray}
 
 
 
---------------------------------------------------------------
-
-
 As specified in the paper we also use a 4th order Runge-Kutta (in space only here)
-with a fixed timestep $\delta t=10^{-6}$.
-We then expect 3 stagnation points at $(0.5,0.5)$ and $(0.5,0.5\pm 0.161)$.
+with a fixed timestep $\delta t$.
 
-This \stone borrows from \stone~76 (Q2P-1 element), \stone~13 for PIC, \stone~67 for Runge-Kutta algorithms.
+This \stone borrows from \stone~76 (Q2P-1 element), \stone~13 for PIC, 
+\stone~67 for Runge-Kutta algorithms.
 
 %--------------------------------------------------------------------
 
@@ -82,18 +109,19 @@ This \stone borrows from \stone~76 (Q2P-1 element), \stone~13 for PIC, \stone~67
 {\captionfont From left to right: exp=1,2,3,4.}
 \end{center}
 
-
-
 %--------------------------------------------------------------------
 \subsubsection*{Testing: Using the Donea \& Huerta manufactured solution}
 
 This benchmark is taken from Donea \& Huerta (2003) \cite{dohu03} and is described fully 
 in section \ref{mms1}. 
-We here explore the influence on $S$ of the Runge-Kutta order, the value of the CFL number and 
+We here explore the influence of the Runge-Kutta order on the entropy values, 
+as well as the value of the CFL number and 
 the mesh resolution for a given number of 10x10 bins. 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_137/exp1/S.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_137/exp1/S.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_137/exp1/S2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_137/exp1/S3.pdf}\\
 \includegraphics[width=7cm]{python_codes/fieldstone_137/exp2/S.pdf}\\
 \includegraphics[width=7cm]{python_codes/fieldstone_137/exp3/S.pdf}
 \includegraphics[width=7cm]{python_codes/fieldstone_137/exp4/S.pdf}\\
@@ -101,7 +129,6 @@ the mesh resolution for a given number of 10x10 bins.
 \end{center}
 
 Q: why is S equal to log(M) ?
-
 
 %--------------------------------------------------------------------
 \subsubsection*{Reproducing results of \textcite{cakm06}?}
@@ -115,3 +142,8 @@ so as to avoid turbulence.
 Also the authors state that ``the velocity is not a function of time'' which I interprete as 
 them solving the steady state N-S equations. 
 
+We then expect 3 stagnation points at $(0.5,0.5)$ and $(0.5,0.5\pm 0.161)$.
+
+
+\Literature: \textcite{widd19} (2019) use \textcite{cakm06} (2006) in the context of 
+\citetitle{widd19}

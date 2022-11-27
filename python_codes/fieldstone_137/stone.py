@@ -153,7 +153,7 @@ C=2
 
 nstep=10000
 
-tfinal=20000
+tfinal=25
 
 if int(len(sys.argv) == 6):
    nelx=int(sys.argv[1])
@@ -180,7 +180,9 @@ Nfem=NfemV+NfemP
 hx=Lx/nelx
 hy=Ly/nely
 
-meth  = 2
+meth = 2 #toggles =/= types of P-1
+    
+use_erik_approach=False
 
 print('bench=',bench)
 print('nelx =',nelx)
@@ -661,7 +663,7 @@ print("dt= %.3e" %(dt))
 # advecting markers and computing entropies
 #################################################################
 
-SfileC=open("S_Cedric.ascii","w")
+SfileC=open("S.ascii","w")
 SfileE=open("S_Erik.ascii","w")
 mfile=open("marker0.ascii","w")
 numberfile=open("number.ascii","w")
@@ -672,13 +674,11 @@ total_time=0
 S_entropy = np.zeros((nstep,6),float)
 particles_0 = np.zeros((nmarker,9),float) 
 
+particles_0[:,1]=swarm_x0 #erik arrays
+particles_0[:,2]=swarm_y0
 particles_0[:,4]=swarm_x0
 particles_0[:,5]=swarm_y0
-particles_0[:,1]=swarm_x0
-particles_0[:,2]=swarm_y0
-
 particles_0[:,7]=swarm_c
-
 
 for istep in range(0,nstep):
 
@@ -696,6 +696,7 @@ for istep in range(0,nstep):
     number=np.zeros(nel,dtype=np.int32)
     n=np.zeros((M,C),dtype=np.int32)
 
+    start = timing.time()
     ###########################################################################
     # compute nb of species c in each element
 
@@ -706,7 +707,7 @@ for istep in range(0,nstep):
         n[iel,swarm_c[im]]+=1
 
     for c in range(0,C):
-        print('c=',c,'n(j,c) (m/M): ',np.min(n[:,c]),np.max(n[:,c]))
+        print('     -> c=',c,'n(j,c) (m/M): ',np.min(n[:,c]),np.max(n[:,c]))
 
     nfile.write('%d %d %d %d %d \n'  %(istep,np.min(n[:,0]),np.max(n[:,0]),np.min(n[:,1]),np.max(n[:,1])))
     nfile.flush()
@@ -733,8 +734,6 @@ for istep in range(0,nstep):
             if pp1[j,c]>0:
                S1-=pp1[j,c]*np.log(pp1[j,c])
 
-    #print('C: S full= %e ' %S1)
-
     ###########################################################################
     # compute S_location entropy 
 
@@ -749,9 +748,6 @@ for istep in range(0,nstep):
           if pp3[j]>0:
              S2-=pp3[j]*np.log(pp3[j])
 
-    #print('C: S_location=',S2)
-
-
     ###########################################################################
     # compute S_location(species) entropy 
 
@@ -760,8 +756,6 @@ for istep in range(0,nstep):
     for j in range(0,M):
         for c in range(0,C):
             denom2[j]+=n[j,c]/P[c]
-
-    #print(denom2)
 
     #computing p_{c|j}
     pp2=np.zeros((M,C),dtype=np.float64)
@@ -778,117 +772,114 @@ for istep in range(0,nstep):
     S3=0
     for j in range(0,M):
         S3+=pp3[j]*SS3[j]    
-    
-    #print('C: S_location(species)=',S3)
 
     S1b=S1/np.log(M)
     S2b=S2/np.log(C)
     S3b=S3/np.log(C)
 
-    print('C: S full             : %e | normalised: %e ' %(S1,S1b))
-    print('C: S_location         : %e | normalised: %e ' %(S2,S2b))
-    print('C: S_location(species): %e | normalised: %e ' %(S3,S3b))
+    print('     -> S full             : %e | normalised: %e ' %(S1,S1b))
+    print('     -> S_location         : %e | normalised: %e ' %(S2,S2b))
+    print('     -> S_location(species): %e | normalised: %e ' %(S3,S3b))
 
     SfileC.write("%e %e %e %e %e %e %e \n" %(istep*dt,S1,S2,S3,S1b,S2b,S3b))
     SfileC.flush()
 
+    print("compute entropies: %.3f s" % (timing.time() - start))
+
     ###########################################################################
     # Erik vd Wiel approach
     ###########################################################################
+    if use_erik_approach:
 
-    c = np.zeros(C,float)
-    P_c = np.zeros(C,float) 
-    bins = np.zeros((M,C),float)
-    bins2 = np.zeros((M,C),float)
-    bins3= np.zeros(M,float)
-    bins4 = np.zeros((M,C),float)
-    S_entropy_array = np.zeros(M,float)  
+       start = timing.time()
 
-    l_x = 1.0 / mx
-    for j in range (0,nmarker):
-        for l in range(0,my):
-            cx =  l * l_x
-            cx2 = (l+1) * l_x
-            for k in range(0,mx):
-                cy = k * l_x
-                cy2 = (k+1) * l_x
-                counter = k + (mx*l)
-                if particles_0[j,1] >= cx and particles_0[j,1] <= cx2 and\
-                   particles_0[j,2] >= cy and particles_0[j,2] <= cy2:
-                    particles_0[j,8] = counter
-                    for m in range(0,C):
-                        if particles_0[j,7] == (m):
-                            bins[counter,m] +=   1
+       c = np.zeros(C,np.float64)
+       P_c = np.zeros(C,np.float64)
+       bins = np.zeros((M,C),np.float64)
+       bins2 = np.zeros((M,C),np.float64)
+       bins3= np.zeros(M,np.float64)
+       bins4 = np.zeros((M,C),np.float64)
+       S_entropy_array = np.zeros(M,np.float64)
 
-    #print (bins[:,0])
-    #print (bins[:,1])
+       l_x = 1.0 / mx
+       for j in range (0,nmarker):
+           for l in range(0,my):
+               cx =  l * l_x
+               cx2 = (l+1) * l_x
+               for k in range(0,mx):
+                   cy = k * l_x
+                   cy2 = (k+1) * l_x
+                   counter = k + (mx*l)
+                   if particles_0[j,1] >= cx and particles_0[j,1] <= cx2 and\
+                      particles_0[j,2] >= cy and particles_0[j,2] <= cy2:
+                       particles_0[j,8] = counter
+                       for m in range(0,C):
+                           if particles_0[j,7] == (m):
+                               bins[counter,m] +=   1
 
-    for j in range(0,M):
-        for k in range(0,C):
-            c[k] += bins[j][k] 
+       for j in range(0,M):
+           for k in range(0,C):
+               c[k] += bins[j][k] 
 
-    #print(c)
+       total = sum(c)
+       for k in range(0,C):
+           P_c[k] = c[k] / M 
 
-    total = sum(c)
-    for k in range(0,C):
-        P_c[k] = c[k] / M 
+       sum_Njc_Pc =0
+       for j in range(0,M):
+           for k in range(0,C):
+               sum_Njc_Pc += bins[j][k] / P_c[k]  #denom1
 
-    #print(P_c)
+       for j in range(0,M):
+           for k in range(0,C):
+               #   Ni,c / Pc (i: 1 tot bins, c: 1 tot species) voor Pj,c
+               bins2[j][k] = bins[j][k] / P_c[k] / sum_Njc_Pc                  #p_{j,c}
+               #   Nj,c / Pc (c: 1 tot species gesommeerd -> voor Pj
+               bins3[j] +=  bins[j][k] / P_c[k]                                #denom2=\sum_c n_j,c P_c
+           for k in range(0,C):
+               #   Nj,c / Pc ) / all part/all classes -> voor Pc,j
+               bins4[j,k] = bins[j,k] / P_c[k] / bins3[j]              #p_c|j 
+           bins3[j] /= sum_Njc_Pc
 
-    sum_Njc_Pc =0
-    for j in range(0,M):
-        for k in range(0,C):
-            sum_Njc_Pc += bins[j][k] / P_c[k]  #denom1
+       #---------------------------
+       #compute S_full
+       #---------------------------
+       for j in range(0,M):
+           for k in range(0,C):         
+               if bins2[j][k] != 0:
+                  S_entropy[istep][0] -= bins2[j][k] * np.log(bins2[j][k]) ## S(full)=-\sum_j\sum_c p_{j,c} log p_{j,c}
 
-    for j in range(0,M):
-        for k in range(0,C):
-            #   Ni,c / Pc (i: 1 tot bins, c: 1 tot species) voor Pj,c
-            bins2[j][k] = bins[j][k] / P_c[k] / sum_Njc_Pc                  #p_{j,c}
-            #   Nj,c / Pc (c: 1 tot species gesommeerd -> voor Pj
-            bins3[j] +=  bins[j][k] / P_c[k]                                #denom2=\sum_c n_j,c P_c
-        for k in range(0,C):
-            #   Nj,c / Pc ) / all part/all classes -> voor Pc,j
-            bins4[j,k] = bins[j,k] / P_c[k] / bins3[j]              #p_c|j 
-        bins3[j] /= sum_Njc_Pc
+       #---------------------------
+       #compute S_location
+       #---------------------------
+       for j in range(0,M):
+           if bins3[j] !=0:
+              S_entropy[istep,1] -= bins3[j] * np.log(bins3[j])   ## S(location)    
 
+       #---------------------------
+       #compute S_location(species)
+       #---------------------------
+       for j in range(0,M):
+           for k in range(0,C):
+               if bins4[j,k] !=0:
+                  S_entropy_array[j] -=  bins4[j][k] * np.log(bins4[j][k]) #S_j(species)=-\sum_c p_{c|j} log p_{c|j}
+       for j in range(0,M):
+           S_entropy[istep,2] +=  S_entropy_array[j] * bins3[j] ## S_location(species) = \sum_j p_j S_j(species)
 
-    #---------------------------
-    #compute S_full
-    #---------------------------
-    for j in range(0,M):
-        for k in range(0,C):         
-            if bins2[j][k] != 0:
-               S_entropy[istep][0] -= bins2[j][k] * np.log(bins2[j][k]) ## S(full)=-\sum_j\sum_c p_{j,c} log p_{j,c}
+       S_entropy[istep,3] = S_entropy[istep,0]/np.log(M)
+       S_entropy[istep,4] = S_entropy[istep,1]/np.log(C)
+       S_entropy[istep,5] = S_entropy[istep,2]/np.log(C)
 
-    #---------------------------
-    #compute S_location
-    #---------------------------
-    for j in range(0,M):
-        if bins3[j] !=0:
-           S_entropy[istep,1] -= bins3[j] * np.log(bins3[j])   ## S(location)    
+       print('     -> E: S full             : %e | normalised: %e ' %(S_entropy[istep,0],S_entropy[istep,3]))
+       print('     -> E: S_location         : %e | normalised: %e ' %(S_entropy[istep,1],S_entropy[istep,4]))
+       print('     -> E: S_location(species): %e | normalised: %e ' %(S_entropy[istep,2],S_entropy[istep,5]))
 
-    #---------------------------
-    #compute S_location(species)
-    #---------------------------
-    for j in range(0,M):
-        for k in range(0,C):
-            if bins4[j,k] !=0:
-               S_entropy_array[j] -=  bins4[j][k] * np.log(bins4[j][k]) #S_j(species)=-\sum_c p_{c|j} log p_{c|j}
-    for j in range(0,M):
-        S_entropy[istep,2] +=  S_entropy_array[j] * bins3[j] ## S_location(species) = \sum_j p_j S_j(species)
+       SfileE.write("%e %e %e %e %e %e %e \n" %(istep*dt,S_entropy[istep,0],S_entropy[istep,1],\
+                                                         S_entropy[istep,2],S_entropy[istep,3],\
+                                                         S_entropy[istep,4],S_entropy[istep,5]))
+       SfileE.flush()
 
-    S_entropy[istep,3] = S_entropy[istep,0]/np.log(M)
-    S_entropy[istep,4] = S_entropy[istep,1]/np.log(C)
-    S_entropy[istep,5] = S_entropy[istep,2]/np.log(C)
-
-    print('E: S full             : %e | normalised: %e ' %(S_entropy[istep,0],S_entropy[istep,3]))
-    print('E: S_location         : %e | normalised: %e ' %(S_entropy[istep,1],S_entropy[istep,4]))
-    print('E: S_location(species): %e | normalised: %e ' %(S_entropy[istep,2],S_entropy[istep,5]))
-
-    SfileE.write("%e %e %e %e %e %e %e \n" %(istep*dt,S_entropy[istep,0],S_entropy[istep,1],\
-                                                      S_entropy[istep,2],S_entropy[istep,3],\
-                                                      S_entropy[istep,4],S_entropy[istep,5]))
-    SfileE.flush()
+       print("E: compute entropies: %.3f s" % (timing.time() - start))
 
     ###########################################################################
     start = timing.time()
@@ -995,7 +986,6 @@ for istep in range(0,nstep):
            swarm_iely[im]=iely
        #end for
 
-
     particles_0[:,1]=swarm_x
     particles_0[:,2]=swarm_y
 
@@ -1010,7 +1000,7 @@ for istep in range(0,nstep):
 
     start = timing.time()
 
-    if istep%1==0:
+    if istep%10==0:
 
        filename = 'swarm_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
@@ -1126,7 +1116,7 @@ for istep in range(0,nstep):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
-       np.savetxt('swarm_{:04d}.ascii'.format(istep),np.array([swarm_x,swarm_y,swarm_c]).T,header='# x,y,c')
+       #np.savetxt('swarm_{:04d}.ascii'.format(istep),np.array([swarm_x,swarm_y,swarm_c]).T,header='# x,y,c')
 
     print("export to vtu: %.3f s" % (timing.time() - start))
 
