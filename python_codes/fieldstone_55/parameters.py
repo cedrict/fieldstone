@@ -1,8 +1,8 @@
 
 import numpy as np
 
-Lx=2000e3
-Ly=1000e3
+Lx=6000e3
+Ly=3000e3
 d=50e3
 h=100e3
 eta1=1e21

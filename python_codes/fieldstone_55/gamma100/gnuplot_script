@@ -35,6 +35,74 @@ plot[0:][]\
 '2000x1000/midsurface.ascii' u ($1- 600e3):($4/Vst) w l t '2000x1000',\
 '../images/BEM/cedric1_vmid.dat' u ($1*100000):4 w l lt -1 dt 2 t 'BEM' 
 
+set ylabel '{/Symbol t}_{xx}'
+set output 'tau_xx_spine.pdf'
+plot[0:][]\
+'6000x3000/midsurface.ascii' u ($1-2600e3):($6) w l t '6000x3000',\
+'5000x2500/midsurface.ascii' u ($1-2100e3):($6) w l t '5000x2500',\
+'4000x2000/midsurface.ascii' u ($1-1600e3):($6) w l t '4000x2000',\
+'3000x1500/midsurface.ascii' u ($1-1100e3):($6) w l t '3000x1500',\
+'2000x1000/midsurface.ascii' u ($1- 600e3):($6) w l t '2000x1000',\
+
+set ylabel '{/Symbol t}_{yy}'
+set output 'tau_yy_spine.pdf'
+plot[0:][]\
+'6000x3000/midsurface.ascii' u ($1-2600e3):($7) w l t '6000x3000',\
+'5000x2500/midsurface.ascii' u ($1-2100e3):($7) w l t '5000x2500',\
+'4000x2000/midsurface.ascii' u ($1-1600e3):($7) w l t '4000x2000',\
+'3000x1500/midsurface.ascii' u ($1-1100e3):($7) w l t '3000x1500',\
+'2000x1000/midsurface.ascii' u ($1- 600e3):($7) w l t '2000x1000',\
+
+set ylabel '{/Symbol t}_{xy}'
+set output 'tau_xy_spine.pdf'
+plot[0:][]\
+'6000x3000/midsurface.ascii' u ($1-2600e3):($8) w l t '6000x3000',\
+'5000x2500/midsurface.ascii' u ($1-2100e3):($8) w l t '5000x2500',\
+'4000x2000/midsurface.ascii' u ($1-1600e3):($8) w l t '4000x2000',\
+'3000x1500/midsurface.ascii' u ($1-1100e3):($8) w l t '3000x1500',\
+'2000x1000/midsurface.ascii' u ($1- 600e3):($8) w l t '2000x1000',\
+
+set ylabel '{/Symbol s}_{xx}'
+set output 'sigma_xx_spine.pdf'
+plot[0:][]\
+'6000x3000/midsurface.ascii' u ($1-2600e3):($9) w l t '6000x3000',\
+'5000x2500/midsurface.ascii' u ($1-2100e3):($9) w l t '5000x2500',\
+'4000x2000/midsurface.ascii' u ($1-1600e3):($9) w l t '4000x2000',\
+'3000x1500/midsurface.ascii' u ($1-1100e3):($9) w l t '3000x1500',\
+'2000x1000/midsurface.ascii' u ($1- 600e3):($9) w l t '2000x1000',\
+
+set ylabel '{/Symbol s}_{yy}'
+set output 'sigma_yy_spine.pdf'
+plot[0:][]\
+'6000x3000/midsurface.ascii' u ($1-2600e3):($10) w l t '6000x3000',\
+'5000x2500/midsurface.ascii' u ($1-2100e3):($10) w l t '5000x2500',\
+'4000x2000/midsurface.ascii' u ($1-1600e3):($10) w l t '4000x2000',\
+'3000x1500/midsurface.ascii' u ($1-1100e3):($10) w l t '3000x1500',\
+'2000x1000/midsurface.ascii' u ($1- 600e3):($10) w l t '2000x1000',\
+
+set ylabel '{/Symbol s}_{xy}'
+set output 'sigma_xy_spine.pdf'
+plot[0:][]\
+'6000x3000/midsurface.ascii' u ($1-2600e3):($11) w l t '6000x3000',\
+'5000x2500/midsurface.ascii' u ($1-2100e3):($11) w l t '5000x2500',\
+'4000x2000/midsurface.ascii' u ($1-1600e3):($11) w l t '4000x2000',\
+'3000x1500/midsurface.ascii' u ($1-1100e3):($11) w l t '3000x1500',\
+'2000x1000/midsurface.ascii' u ($1- 600e3):($11) w l t '2000x1000',\
+
+
+set ylabel 'p'
+set output 'p_spine.pdf'
+plot[0:][]\
+'6000x3000/midsurface.ascii' u ($1-2600e3):($12) w l t '6000x3000',\
+'5000x2500/midsurface.ascii' u ($1-2100e3):($12) w l t '5000x2500',\
+'4000x2000/midsurface.ascii' u ($1-1600e3):($12) w l t '4000x2000',\
+'3000x1500/midsurface.ascii' u ($1-1100e3):($12) w l t '3000x1500',\
+'2000x1000/midsurface.ascii' u ($1- 600e3):($12) w l t '2000x1000',\
+
+
+
+
+
 #################################################################
 set title 'perimeter'
 

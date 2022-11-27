@@ -45,7 +45,10 @@ The density of the mantle is set to zero while the subducting plate has a densit
 
 In order to remove the horizontal null space (when the side boundaries are fully open) 
 the average horizontal velocity of the domain is set to zero,
-which we will revisit a bit later.
+which we will revisit a bit later. Neil wrote: ``The BEM 
+solves the nullspace problem naturally because the Green functions
+all decay to zero at infinity. That means that the velocity solutions 
+are all relative to a state of rest at infinity.''
 
 As an exercise, we can ask ourselves where the center of mass of the slab is located.
 If the mass distribution is continuous with the density $\rho(\vec{r})$ 
@@ -69,14 +72,14 @@ We find $\vec{R}=(940.7808, 873.6642)km$ for a 2000x1000km domain.
 
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/mesh}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/area}\\
-\includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/u}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/v}\\
-\includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/sr}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/press}\\
-\includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/rho}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_55/images/eta}\\
+\includegraphics[width=7.75cm]{python_codes/fieldstone_55/images/mesh}
+\includegraphics[width=7.75cm]{python_codes/fieldstone_55/images/area}\\
+\includegraphics[width=7.75cm]{python_codes/fieldstone_55/images/u}
+\includegraphics[width=7.75cm]{python_codes/fieldstone_55/images/v}\\
+\includegraphics[width=7.75cm]{python_codes/fieldstone_55/images/sr}
+\includegraphics[width=7.75cm]{python_codes/fieldstone_55/images/press}\\
+\includegraphics[width=7.75cm]{python_codes/fieldstone_55/images/rho}
+\includegraphics[width=7.75cm]{python_codes/fieldstone_55/images/eta}\\
 {\captionfont Mesh composed of 31,765 triangles.
 Other parameters: $\theta_0=60\degree$, $\eta_1=10^{21}$, $\gamma=100$, 
 $L_x$=3000km, $L_y$=1500km, $\delta\rho=100$, $L=$400km, $h=$100km, $d=$50km. 
@@ -108,7 +111,7 @@ free slip b.c. on left and right sides, open at the bottom; 'f.s. all' means
 free slip b.c. on sides and bottom.}
 \end{center}
 
-
+\newpage
 %----------------------------------------------------------------------
 \subsection*{Exploring the influence of the domain size}
 
@@ -164,8 +167,19 @@ and $v$ as measured on the spine (top row) and on the perimeter (bottom row). Ve
 and $v$ as measured on the spine (top row) and on the perimeter (bottom row). Velocities are normalised by $V_{ref}$}
 \end{center}
 
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/tau_xx_spine}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/tau_yy_spine}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/tau_xy_spine}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/sigma_xx_spine}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/sigma_yy_spine}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_55/gamma100/sigma_xy_spine}\\
+{\captionfont Deviatoric and full stress components on the spine of the slab.}
+\end{center}
+
 We see that results seem to converge to a domain size-independent profile, for both $u$ and $v$
-fiels as measured on the spine and on the perimeter of the slab. 
+fields as measured on the spine and on the perimeter of the slab. 
 
 I have also quickly explored the influence of the mesh resolution for a given domain size 
 and it appears that the resolution used for these calculations is sufficient to capture 
@@ -173,6 +187,21 @@ a resolution independent velocity field.
 
 The question remains as to why BEM results still differ substantially from my high resolution
 large domain results.
+
+Neil wrote: ``From the point of view of thin-sheet theory, the dominant stress component
+should be $\sigma_{ss}$, where $s$ is the coordinate parallel to the spine. $\sigma_{ss}$
+should vary linearly across the plate is deformation is dominated by bending,
+and should be constant across the plate if it is dominated by stretching. In the 
+flat part of the plate, $sigma_{ss} = \sigma_{xx}$. So your image of $\tau_{xx}$, with
+a linear dependence across the flat part, corresponds to bending
+deformation. The bending here is so strong because the 
+lubrication layer is thick: that allows the slab to bend down the whole interior
+of the plate while not undergoing strong bending itself. If possible, it would
+probably be a good idea to decrease the lubrication layer thickness from
+$0.5 h$ to $0.3 h$ or (better yet) $0.2 h$. ''
+
+
+
 
 
 
