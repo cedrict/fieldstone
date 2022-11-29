@@ -1,48 +1,70 @@
-set term pdf enhanced font "Times,12pt"
+set term pdf enhanced font "Times,11pt"
 unset grid
 set ylabel 'r'
-set xlabel 'density'
 set key outside
 
-
-set output 'rho2.pdf'
-plot[][0:3500]\
-'rho.ascii' u ($1*1000):(3389-$2) w l lw 2 notitle,\
-3389 lt -1 dt 2 lw 0.2 t 'surface',\
-3389-50 lt -1 dt 3 lw 0.2 t 'moho',\
-1422 lt -1 dt 4 lw 0.2 t 'cmb'
+set ytics 100
 
 set xlabel 'viscosity (log_{10})'
 set output 'eta2.pdf'
-plot[20:30.5][1000:3389]\
-'eta.ascii' u 1:(3389-$2) w l lw 1.5 t 'Steinberg',\
-'samuel_eta.ascii' u (log10($1)):($2) w l lw 1.5 t 'Samuel',\
-3389        lt -1 lw 0.2,\
-3389-50     lt -1 dt 2 lw 0.2 ,\
-3389-309    lt -1 dt 2 lw 0.2 ,\
-3389-1076   lt -1 dt 2 lw 0.2 ,\
-3389-1576   lt -1 dt 2 lw 0.2 ,\
-3389-1714   lt -1 lw .2 dt 2,\
-3389-1967   lt -1 lw .2 dt 2,\
-3389-1111.5 lt -1 lw .2 dt 2 
+plot[20:30.5][1400:3400]\
+'steinberger_eta.ascii' u 1:(3389.5-$2) w l lw 1.5 lt 1  t 'Steinberger',\
+3389.5-50     lt 1  lw 0.35 ,\
+3389-1111.5 lt 1 lw .2  ,\
+3389-1967 lt 1 lw .2 dt 2  ,\
+'samuelA_eta.ascii' u (log10($1)):($2)  w l lw 1.5 lt 2 t 'Samuel, A',\
+2836.6008937146739 lt 2 lw .35,\
+2350.4998282194360 lt 2 lw .35,\
+1918.9611272185618 lt 2 lw .35,\
+1839.5976879540331 lt 2 dt 2 lw .35,\
+'samuelB_eta.ascii' u (log10($1)):($2) w l lw 1.5 lt 3 t 'Samuel, B',\
+3090.3851276356227 lt 3 lw .35,\
+2313.0549710614014 lt 3 lw .35,\
+1822.5068139999998 lt 3 lw .35,\
+1624.2975658322634 lt 3 dt 2 lw .35 
+
+
+set xlabel 'density'
+set output 'rho2.pdf'
+plot[2800:7000][1000:3500]\
+'steinberger_rho.ascii' u ($1*1000):(3389-$2) w l lw 2 lt 1  notitle,\
+3389.5-50     lt 1  lw 0.35 ,\
+3389-1111.5 lt 1 lw .2  ,\
+3389-1967 lt 1 lw .2 dt 2  ,\
+'samuelA_rho.ascii' u (($1)):($2) w l lw 1.5 lt 2 t 'Samuel, A',\
+2836.6008937146739 lt 2 lw .35,\
+2350.4998282194360 lt 2 lw .35,\
+1918.9611272185618 lt 2 lw .35,\
+1839.5976879540331 lt 2 dt 2 lw .35,\
+'samuelB_rho.ascii' u (($1)):($2) w l lw 1.5 lt 3 t 'Samuel, B',\
+3090.3851276356227 lt 3 lw .35,\
+2313.0549710614014 lt 3 lw .35,\
+1822.5068139999998 lt 3 lw .35,\
+1624.2975658322634 lt 3 dt 2 lw .35 
+
+
+#3389 lt -1 dt 2 lw 0.2 t 'surface',\
+#3389-50 lt -1 dt 3 lw 0.2 t 'moho',\
+#1422 lt -1 dt 4 lw 0.2 t 'cmb'
+
 
 #-------------------------------------------
 
-set ylabel 'depth'
-set xlabel 'density'
-set yrange [:] reverse 
-set output 'rho1.pdf'
-plot[][]\
-'rho.ascii' u ($1*1000):($2) w l lw 2  notitle,\
-50 lt -1 dt 3 lw 0.2 t 'moho',\
-3389-1422 lt -1 dt 4 lw 0.2 t 'cmb',\
-3389 lt -1 
+#set ylabel 'depth'
+#set xlabel 'density'
+#set yrange [:] reverse 
+#set output 'rho1.pdf'
+#plot[][]\
+#'rho.ascii' u ($1*1000):($2) w l lw 2  notitle,\
+#50 lt -1 dt 3 lw 0.2 t 'moho',\
+#3389-1422 lt -1 dt 4 lw 0.2 t 'cmb',\
+#3389 lt -1 
 
-set xlabel 'viscosity (log_{10})'
-set output 'eta1.pdf'
-plot[:30.5][3600:0]\
-'eta.ascii' u 1:2 w l lw 2  notitle,\
-50 lt -1 dt 3 lw 0.2 t 'moho',\
-3389-1422 lt -1 dt 4 lw 0.2 t 'cmb',\
-3389 lt -1 notitle
+#set xlabel 'viscosity (log_{10})'
+#set output 'eta1.pdf'
+#plot[:30.5][3600:0]\
+#'eta.ascii' u 1:2 w l lw 2  notitle,\
+#50 lt -1 dt 3 lw 0.2 t 'moho',\
+#3389-1422 lt -1 dt 4 lw 0.2 t 'cmb',\
+#3389 lt -1 notitle
 

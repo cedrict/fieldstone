@@ -3,7 +3,7 @@ import scipy
 
 ###############################################################################
 
-def material_model(x,z,eta_blob,rho_blob,z_blob,R_blob,npt_rho,npt_eta,prof_rho,prof_eta):
+def material_model(x,z,eta_blob,rho_blob,z_blob,R_blob,npt_rho,npt_eta,prof_rho,prof_eta,blobtype):
     rr=np.sqrt(x**2+z**2)
     
     for i in range(0,npt_rho-1):
