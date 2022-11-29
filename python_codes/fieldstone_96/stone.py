@@ -75,7 +75,7 @@ solve_stokes=True
 R_blob=300e3            #radius of blob
 z_blob=R_outer-1000e3   #starting depth
 rho_blob=3200
-eta_blob=1e21
+eta_blob=1e22
 np_blob=int(2*np.pi*R_blob/hhh)
 blobtype=1
 
@@ -98,13 +98,8 @@ use_isog=True
 g0=3.72076 #https://en.wikipedia.org/wiki/Mars
 
 #-------------------------------------
-#-1: gravity benchmarks
-#0: 3 layer model
-#1: steinberger et al 2010
-#2A,2B: samuel et al 2021
-#3: aspect comparison
 
-radial_model='samuelA'
+radial_model='samuelB'
 
 #---------------------------------
 if radial_model=='gravbench': 
@@ -710,6 +705,12 @@ if radial_model=='samuelA':
    for i in range(0,npt_eta):
        profile_eta[1,i]=min(eta_max,profile_eta[1,i])
 
+   #making sure nodes on surfaces are correctly seen
+   profile_rho[0,0]=0.9999*R_inner
+   profile_rho[0,-1]=1.0001*R_outer
+   profile_eta[0,0]=0.9999*R_inner
+   profile_eta[0,-1]=1.0001*R_outer
+
 #---------------------------
 if radial_model=='samuelB':
 
@@ -734,6 +735,12 @@ if radial_model=='samuelB':
 
    for i in range(0,npt_eta):
        profile_eta[1,i]=min(eta_max,profile_eta[1,i])
+
+   #making sure nodes on surfaces are correctly seen
+   profile_rho[0,0]=0.9999*R_inner
+   profile_rho[0,-1]=1.0001*R_outer
+   profile_eta[0,0]=0.9999*R_inner
+   profile_eta[0,-1]=1.0001*R_outer
 
 #---------------------------
 if radial_model=='aspect': #benchmark against aspect
@@ -1149,7 +1156,7 @@ for istep in range(0,nstep):
                 angle=np.arctan2(yq,xq)
                 gx=grav*np.cos(angle)
                 gy=grav*np.sin(angle)
-                #print(xq,yq,gx,gy)
+                #print(xq,yq,gx,gy,etaq,rhoq,radq)
 
                 for i in range(0,mV):
                     f_el[ndofV*i  ]-=NNNV[i]*jcob*weightq*gx*rhoq * 2*np.pi*xq
@@ -1538,7 +1545,7 @@ for istep in range(0,nstep):
     start = timing.time()
 
     tracfile=open('surface_traction_nodal_{:04d}.ascii'.format(istep),"w")
-    tracfile.write("# theta sigma_rr x z tau_rr pressure e_rr ")
+    tracfile.write("# theta sigma_rr x z tau_rr pressure e_rr \n")
     for i in range(0,NV):
         if surface_node[i]: 
            tracfile.write("%e %e %e %e %e %e %e\n" \
@@ -1703,7 +1710,7 @@ for istep in range(0,nstep):
     #--
     vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
     for i in range(0,NV):
-        vtufile.write("%e \n" % (e_nodal[i]-np.sqrt(2)*r_nodal[i]))
+        vtufile.write("%e \n" % (e_nodal[i]))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='cc' Format='ascii'> \n")
