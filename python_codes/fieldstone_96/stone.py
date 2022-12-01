@@ -65,7 +65,7 @@ eta_ref=1e22 # numerical parameter for FEM
 nstep=1 # number of time steps
 dt_user=1*year
 
-hhh=20e3 # element size at the surface
+hhh=50e3 # element size at the surface
 
 solve_stokes=True
 
@@ -99,7 +99,7 @@ g0=3.72076 #https://en.wikipedia.org/wiki/Mars
 
 #-------------------------------------
 
-radial_model='aspect'
+radial_model='samuelA'
 
 #---------------------------------
 if radial_model=='gravbench': 
@@ -110,6 +110,7 @@ if radial_model=='gravbench':
    R_disc1 = R_outer-25e3 
    R_disc2 = R_outer-50e3 
    R_disc3 = R_outer-75e3 
+   R_disc4 = R_outer-100e3 
    R_blob=300e3            #radius of blob
    z_blob=R_outer-1000e3   #starting depth
    eta0=1e22
@@ -134,6 +135,7 @@ if radial_model=='4layer': # 4layer model
    R_disc1 = R_outer-60e3   #crust
    R_disc2 = R_outer-450e3  # lith
    R_disc3 = R_inner+50e3   #arbitrary layer
+   R_disc4 = R_inner+100e3   #arbitrary layer
 
    rho_crust=3300
    eta_crust=1e25
@@ -154,9 +156,10 @@ if radial_model=='4layer': # 4layer model
 if radial_model=='steinberger':
    R_inner=R_outer-1967e3
 
-   R_disc1 = R_outer-49e3 
-   R_disc2 = R_outer-1111e3 
-   R_disc3 = R_outer-1951e3 
+   R_disc1 = R_outer-49.5e3 
+   R_disc2 = R_outer-1111.5e3 
+   R_disc3 = R_outer-1160e3 
+   R_disc4 = R_outer-1951.5e3
 
    eta_max=1e25
 
@@ -168,9 +171,10 @@ if radial_model=='samuelA':
 
    R_inner=1839.5976879540331e3
 
-   R_disc1 = 2836.6008937146739e3
-   R_disc2 = 2350.4998282194360e3
-   R_disc3 = 1918.9611272185618e3
+   R_disc1 = 3317.7417442558781e3
+   R_disc2 = 2836.6008937146739e3
+   R_disc3 = 2350.4998282194360e3
+   R_disc4 = 1918.9611272185618e3
 
    eta_max=1e25
 
@@ -182,9 +186,10 @@ if radial_model=='samuelB':
 
    R_inner=1624.2975658322634e3
 
-   R_disc1 = 3090.3851276356227e3
-   R_disc2 = 2313.0549710614014e3
-   R_disc3 = 1822.5068139999998e3
+   R_disc1 = 3324.3388640802909e3
+   R_disc2 = 3090.3851276356227e3
+   R_disc3 = 2313.0549710614014e3
+   R_disc4 = 1822.5068139999998e3
 
    eta_max=1e25
 
@@ -196,6 +201,7 @@ if radial_model=='aspect':
    R_disc1 = R_outer-100e3 
    R_disc2 = R_outer-200e3 
    R_disc3 = R_outer-300e3 
+   R_disc4 = R_outer-400e3 
 
    R_inner=R_outer-1700e3
    R_blob=300e3           
@@ -403,6 +409,18 @@ for i in range(0,nnt):                                                 #first an
 
 counter+=nnt
 
+#------------------------------------------------------------------------------
+# discontinuity #4
+#------------------------------------------------------------------------------
+theta = np.linspace(np.pi/2,-np.pi/2,num=nnt,endpoint=True)            #half outer sphere in the x-positive domain
+pts_mo4 = np.stack([np.cos(theta),np.sin(theta)], axis=1)*R_disc4        #nnt-points on outer boundary
+seg_mo4 = np.stack([counter+np.arange(nnt-1), counter+np.arange(nnt-1)+1], axis=1) #vertices on disc3
+for i in range(0,nnt):                                                 #first and last point must be exactly on the y-axis
+    if i==0 or i==nnt-1:
+       pts_mo4[i,0]=0    
+
+counter+=nnt
+
 if np_blob>0:
    #------------------------------------------------------------------------------
    # blob 
@@ -417,13 +435,13 @@ if np_blob>0:
           print('corrected:',pts_bl[i,0],pts_bl[i,1])
 
    # Stacking the nodes and vertices 
-   seg = np.vstack([seg_ib,seg_topw,seg_ob,seg_botw,seg_moA,seg_moB,seg_moC,seg_mo1,seg_mo2,seg_mo3,seg_bl])
-   pts = np.vstack([pts_ib,pts_topw,pts_ob,pts_botw,pts_moA,pts_moB,pts_moC,pts_mo1,pts_mo2,pts_mo3,pts_bl]) 
+   seg = np.vstack([seg_ib,seg_topw,seg_ob,seg_botw,seg_moA,seg_moB,seg_moC,seg_mo1,seg_mo2,seg_mo3,seg_mo4,seg_bl])
+   pts = np.vstack([pts_ib,pts_topw,pts_ob,pts_botw,pts_moA,pts_moB,pts_moC,pts_mo1,pts_mo2,pts_mo3,pts_mo4,pts_bl]) 
 
 else:
    # Stacking the nodes and vertices 
-   seg = np.vstack([seg_ib,seg_topw,seg_ob,seg_botw,seg_moA,seg_moB,seg_moC,seg_mo1,seg_mo2,seg_mo3])
-   pts = np.vstack([pts_ib,pts_topw,pts_ob,pts_botw,pts_moA,pts_moB,pts_moC,pts_mo1,pts_mo2,pts_mo3]) 
+   seg = np.vstack([seg_ib,seg_topw,seg_ob,seg_botw,seg_moA,seg_moB,seg_moC,seg_mo1,seg_mo2,seg_mo3,seg_mo4])
+   pts = np.vstack([pts_ib,pts_topw,pts_ob,pts_botw,pts_moA,pts_moB,pts_moC,pts_mo1,pts_mo2,pts_mo3,pts_mo4]) 
 
 #print(seg)
 

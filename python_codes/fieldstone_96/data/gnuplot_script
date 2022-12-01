@@ -1,51 +1,139 @@
+###############################################################
 set term pdf enhanced font "Times,11pt"
 unset grid
 set ylabel 'r'
 set key outside
-
 set ytics 100
 
-set xlabel 'viscosity (log_{10})'
-set output 'eta2.pdf'
-plot[20:30.5][1400:3400]\
-'steinberger_eta.ascii' u 1:(3389.5-$2) w l lw 1.5 lt 1  t 'Steinberger',\
-3389.5-50     lt 1  lw 0.35 ,\
-3389-1111.5 lt 1 lw .2  ,\
-3389-1967 lt 1 lw .2 dt 2  ,\
-'samuelA_eta.ascii' u (log10($1)):($2)  w l lw 1.5 lt 2 t 'Samuel, A',\
+set xlabel 'log_{10}(viscosity)'
+
+set output 'eta_all.pdf'
+plot[20:30.5][1200:3400]\
+'steinberger_eta.ascii' u 1:(3389.5-$2) w l lw 1 lt 1  t 'Steinberger',\
+3389.5-49.5    lt 1  lw 0.35 ,\
+3389.5-1111.5  lt 1 lw .2  ,\
+3389.5-1160    lt 1 lw .2  ,\
+3389.5-1951.5  lt 1 lw .2  ,\
+3389.5-1967    lt 1 lw .2 dt 2  ,\
+'samuelA_eta.ascii' u (log10($1)):($2)  w l lw 1 lt 2 t 'Samuel, A',\
+3317.7417442558781 lt 2 lw .35,\
 2836.6008937146739 lt 2 lw .35,\
 2350.4998282194360 lt 2 lw .35,\
 1918.9611272185618 lt 2 lw .35,\
 1839.5976879540331 lt 2 dt 2 lw .35,\
-'samuelB_eta.ascii' u (log10($1)):($2) w l lw 1.5 lt 3 t 'Samuel, B',\
+'samuelB_eta.ascii' u (log10($1)):($2) w l lw 1 lt 3 t 'Samuel, B',\
+3324.3388640802909 lt 3 lw .35,\
 3090.3851276356227 lt 3 lw .35,\
 2313.0549710614014 lt 3 lw .35,\
 1822.5068139999998 lt 3 lw .35,\
-1624.2975658322634 lt 3 dt 2 lw .35 
+1624.2975658322634 lt 3 dt 2 lw .35,\
+3389.5 lw 2 lt -1  
 
 
+set output 'eta_steinberger.pdf'
+plot[20:30.5][1200:3400]\
+'steinberger_eta.ascii' u 1:(3389.5-$2) w l lw 1.5 lt 1  notitle,\
+3389.5-49.5     lt 1  lw 0.35 ,\
+3389.5-1111.5 lt 1 lw .2  ,\
+3389.5-1160    lt 1 lw .2  ,\
+3389.5-1951.5   lt 1 lw .2  ,\
+3389.5-1967 lt 1 lw .2 dt 2  ,\
+3389.5 lw 2 lt -1  
+
+
+set output 'eta_samuelA.pdf'
+plot[20:30.5][1200:3400]\
+'samuelA_eta.ascii' u (log10($1)):($2)  w l lw 1.5 lt 2 notitle,\
+3317.7417442558781 lt 2 lw .35,\
+2836.6008937146739 lt 2 lw .35,\
+2350.4998282194360 lt 2 lw .35,\
+1918.9611272185618 lt 2 lw .35,\
+1839.5976879540331 lt 2 dt 2 lw .35,\
+3389.5 lw 2 lt -1  
+
+set output 'eta_samuelB.pdf'
+plot[20:30.5][1200:3400]\
+'samuelB_eta.ascii' u (log10($1)):($2) w l lw 1.5 lt 3 notitle,\
+3324.3388640802909 lt 3 lw .35,\
+3090.3851276356227 lt 3 lw .35,\
+2313.0549710614014 lt 3 lw .35,\
+1822.5068139999998 lt 3 lw .35,\
+1624.2975658322634 lt 3 dt 2 lw .35,\
+3389.5 lw 2 lt -1  
+
+
+
+
+
+
+
+
+
+###############################################################
 set xlabel 'density'
-set output 'rho2.pdf'
-plot[2800:7000][1000:3500]\
-'steinberger_rho.ascii' u ($1*1000):(3389-$2) w l lw 2 lt 1  notitle,\
+
+set output 'rho_all.pdf'
+plot[2800:7000][1200:3400]\
+'steinberger_rho.ascii' u ($1*1000):(3389.5-$2) w l lw 1 lt 1 t 'steinberger',\
 3389.5-50     lt 1  lw 0.35 ,\
-3389-1111.5 lt 1 lw .2  ,\
-3389-1967 lt 1 lw .2 dt 2  ,\
-'samuelA_rho.ascii' u (($1)):($2) w l lw 1.5 lt 2 t 'Samuel, A',\
+3389.5-1111.5 lt 1 lw .2  ,\
+3389.5-1160    lt 1 lw .2  ,\
+3389.5-1951.5   lt 1 lw .2  ,\
+3389.5-1967 lt 1 lw .2 dt 2  ,\
+'samuelA_rho.ascii' u (($1)):($2) w l lw 1 lt 2 t 'Samuel, A',\
+3317.7417442558781 lt 2 lw .35,\
 2836.6008937146739 lt 2 lw .35,\
 2350.4998282194360 lt 2 lw .35,\
 1918.9611272185618 lt 2 lw .35,\
 1839.5976879540331 lt 2 dt 2 lw .35,\
-'samuelB_rho.ascii' u (($1)):($2) w l lw 1.5 lt 3 t 'Samuel, B',\
+'samuelB_rho.ascii' u (($1)):($2) w l lw 1 lt 3 t 'Samuel, B',\
+3324.3388640802909 lt 3 lw .35,\
 3090.3851276356227 lt 3 lw .35,\
 2313.0549710614014 lt 3 lw .35,\
 1822.5068139999998 lt 3 lw .35,\
-1624.2975658322634 lt 3 dt 2 lw .35 
+1624.2975658322634 lt 3 dt 2 lw .35 ,\
+3389.5 lw 2 lt -1  
+
+set output 'rho_steinberger.pdf'
+plot[2800:7000][1200:3400]\
+'steinberger_rho.ascii' u ($1*1000):(3389.5-$2) w l lw 1.5 lt 1  notitle,\
+3389.5-49.5     lt 1  lw 0.35 ,\
+3389.5-1111.5 lt 1 lw .2  ,\
+3389.5-1160    lt 1 lw .2  ,\
+3389.5-1951.5   lt 1 lw .2  ,\
+3389.5-1967 lt 1 lw .2 dt 2  ,\
+3389.5 lw 2 lt -1  
+
+set output 'rho_samuelA.pdf'
+plot[2800:7000][1200:3400]\
+'samuelA_rho.ascii' u (($1)):($2) w l lw 1.5 lt 2 notitle,\
+3317.7417442558781 lt 2 lw .35,\
+2836.6008937146739 lt 2 lw .35,\
+2350.4998282194360 lt 2 lw .35,\
+1918.9611272185618 lt 2 lw .35,\
+1839.5976879540331 lt 2 dt 2 lw .35,\
+3389.5 lw 2 lt -1  
+
+set output 'rho_samuelB.pdf'
+plot[2800:7000][1200:3400]\
+'samuelB_rho.ascii' u (($1)):($2) w l lw 1.5 lt 3 notitle,\
+3324.3388640802909 lt 3 lw .35,\
+3090.3851276356227 lt 3 lw .35,\
+2313.0549710614014 lt 3 lw .35,\
+1822.5068139999998 lt 3 lw .35,\
+1624.2975658322634 lt 3 dt 2 lw .35 ,\
+3389.5 lw 2 lt -1  
 
 
-#3389 lt -1 dt 2 lw 0.2 t 'surface',\
-#3389-50 lt -1 dt 3 lw 0.2 t 'moho',\
-#1422 lt -1 dt 4 lw 0.2 t 'cmb'
+
+
+
+
+
+
+
+
+
 
 
 #-------------------------------------------
